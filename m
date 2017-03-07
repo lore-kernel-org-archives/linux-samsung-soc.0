@@ -1,70 +1,75 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] media: mfc: Fix race between interrupt routine and device
- functions
-Date: Mon, 6 Mar 2017 15:07:04 -0300
-Message-ID: <6918cc54-bf43-afe3-def7-9d5888bb837e@osg.samsung.com>
-References: <CGME20170223114347eucas1p21e5aed393511b41e51aac1df2762db83@eucas1p2.samsung.com>
- <1487850219-6482-1-git-send-email-m.szyprowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 4/4] drm/exynos/decon5433: signal frame done interrupt at
+ VSYNC
+Date: Tue, 07 Mar 2017 18:14:09 +0900
+Message-ID: <58BE79E1.6000108@samsung.com>
+References: <1487779505-4062-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170222160517eucas1p1a254801abe01ae5ee77681ff4f955ba8@eucas1p1.samsung.com>
+ <1487779505-4062-5-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:33460
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753037AbdCFSP2 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:32800 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754884AbdCGJS1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 13:15:28 -0500
-In-Reply-To: <1487850219-6482-1-git-send-email-m.szyprowski@samsung.com>
+        Tue, 7 Mar 2017 04:18:27 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OMF032P6TTUU750@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Mar 2017 18:17:54 +0900 (KST)
+In-reply-to: <1487779505-4062-5-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kamil Debski <kamil@wypas.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, stable@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hello Marek,
 
-On 02/23/2017 08:43 AM, Marek Szyprowski wrote:
-> Interrupt routine must wake process waiting for given interrupt AFTER
-> updating driver's internal structures and contexts. Doing it in-between
-> is a serious bug. This patch moves all calls to the wake() function to
-> the end of the interrupt processing block to avoid potential and real
-> races, especially on multi-core platforms. This also fixes following issue
-> reported from clock core (clocks were disabled in interrupt after being
-> unprepared from the other place in the driver, the stack trace however
-> points to the different place than s5p_mfc driver because of the race):
+
+2017년 02월 23일 01:05에 Andrzej Hajda 이(가) 쓴 글:
+> DECON in case of video mode generates interrupt by default at start
+> of vertical back porch. As this interrupt is used to generate VBLANK
+> events more optimal point is start of vertical front porch.
 > 
-> WARNING: CPU: 1 PID: 18 at drivers/clk/clk.c:544 clk_core_unprepare+0xc8/0x108
-> Modules linked in:
-> CPU: 1 PID: 18 Comm: kworker/1:0 Not tainted 4.10.0-next-20170223-00070-g04e18bc99ab9-dirty #2154
-> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> Workqueue: pm pm_runtime_work
-> [<c010d8b0>] (unwind_backtrace) from [<c010a534>] (show_stack+0x10/0x14)
-> [<c010a534>] (show_stack) from [<c033292c>] (dump_stack+0x74/0x94)
-> [<c033292c>] (dump_stack) from [<c011cef4>] (__warn+0xd4/0x100)
-> [<c011cef4>] (__warn) from [<c011cf40>] (warn_slowpath_null+0x20/0x28)
-> [<c011cf40>] (warn_slowpath_null) from [<c0387a84>] (clk_core_unprepare+0xc8/0x108)
-> [<c0387a84>] (clk_core_unprepare) from [<c0389d84>] (clk_unprepare+0x24/0x2c)
-> [<c0389d84>] (clk_unprepare) from [<c03d4660>] (exynos_sysmmu_suspend+0x48/0x60)
-> [<c03d4660>] (exynos_sysmmu_suspend) from [<c042b9b0>] (pm_generic_runtime_suspend+0x2c/0x38)
-> [<c042b9b0>] (pm_generic_runtime_suspend) from [<c0437580>] (genpd_runtime_suspend+0x94/0x220)
-> [<c0437580>] (genpd_runtime_suspend) from [<c042e240>] (__rpm_callback+0x134/0x208)
-> [<c042e240>] (__rpm_callback) from [<c042e334>] (rpm_callback+0x20/0x80)
-> [<c042e334>] (rpm_callback) from [<c042d3b8>] (rpm_suspend+0xdc/0x458)
-> [<c042d3b8>] (rpm_suspend) from [<c042ea24>] (pm_runtime_work+0x80/0x90)
-> [<c042ea24>] (pm_runtime_work) from [<c01322c4>] (process_one_work+0x120/0x318)
-> [<c01322c4>] (process_one_work) from [<c0132520>] (worker_thread+0x2c/0x4ac)
-> [<c0132520>] (worker_thread) from [<c0137ab0>] (kthread+0xfc/0x134)
-> [<c0137ab0>] (kthread) from [<c0107978>] (ret_from_fork+0x14/0x3c)
-> ---[ end trace 1ead49a7bb83f0d8 ]---
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: af93574678108 ("[media] MFC: Add MFC 5.1 V4L2 driver")
-> CC: stable@vger.kernel.org # v4.5+
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 > ---
+>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 2 +-
+>  include/video/exynos5433_decon.h              | 4 ++++
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> index bfa9396..2694b32 100644
+> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> @@ -105,7 +105,7 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
+>  		if (ctx->out_type & IFTYPE_I80)
+>  			val |= VIDINTCON0_FRAMEDONE;
+>  		else
+> -			val |= VIDINTCON0_INTFRMEN;
+> +			val |= VIDINTCON0_INTFRMEN | VIDINTCON0_FRAMESEL_FP;
+>  
+>  		writel(val, ctx->addr + DECON_VIDINTCON0);
+>  	}
+> diff --git a/include/video/exynos5433_decon.h b/include/video/exynos5433_decon.h
+> index beefc62..2391b03 100644
+> --- a/include/video/exynos5433_decon.h
+> +++ b/include/video/exynos5433_decon.h
+> @@ -128,6 +128,10 @@
+>  
+>  /* VIDINTCON0 */
+>  #define VIDINTCON0_FRAMEDONE		(1 << 17)
+> +#define VIDINTCON0_FRAMESEL_BP		(0 << 15)
+> +#define VIDINTCON0_FRAMESEL_VS		(1 << 15)
+> +#define VIDINTCON0_FRAMESEL_AC		(2 << 15)
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Above definitions are not used.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Thanks.
+
+> +#define VIDINTCON0_FRAMESEL_FP		(3 << 15)
+>  #define VIDINTCON0_INTFRMEN		(1 << 12)
+>  #define VIDINTCON0_INTEN		(1 << 0)
+>  
+> 
