@@ -1,47 +1,52 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: Add stmfts touchscreen node
- for TM2 and TM2E
-Date: Tue, 7 Mar 2017 21:55:33 +0200
-Message-ID: <20170307195533.biokjsffiri364vt@kozik-lap>
-References: <20170210021721.12218-1-andi.shyti@samsung.com>
- <CGME20170210021729epcas5p4101902873e65e0a8faeb2f9cbea5843c@epcas5p4.samsung.com>
- <20170210021721.12218-4-andi.shyti@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v10 3/3] arm64: dts: exynos: Add support for S6E3HA2
+ panel device on TM2 board
+Date: Tue, 7 Mar 2017 22:17:46 +0200
+Message-ID: <20170307201746.brpn4h2atvueg3l5@kozik-lap>
+References: <1487574582-15746-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170220071001epcas1p3c2b32665942ba55c3ed4e06d2c66d661@epcas1p3.samsung.com>
+ <5be15c1c-ba4c-94d9-30be-8d161e9be7b3@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20170210021721.12218-4-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+In-Reply-To: <5be15c1c-ba4c-94d9-30be-8d161e9be7b3@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, andi.shyti@samsung.com, a.hajda@samsung.com, airlied@linux.ie, catalin.marinas@arm.com, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, jh80.chung@samsung.com, inki.dae@samsung.com, javier@osg.samsung.com, thierry.reding@gmail.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 10, 2017 at 11:17:21AM +0900, Andi Shyti wrote:
-> TM2 and TM2E devices are provided with a ST-Microelectronics
-> Finger Tip S device with small differences:
+On Wed, Feb 22, 2017 at 10:09:54AM +0900, Hoegeun Kwon wrote:
+> From: Hyungwon Hwang <human.hwang@samsung.com>
 > 
->  - screen size
->  - TM2E uses the stmfts also as a touchkey for "back" and "menu"
+> This patch add the panel device tree node for S6E3HA2 display
+> controller to TM2 dts.
 > 
-> In this commit the initial value of the interrupt line is set to
-> EXYNOS_PIN_PULL_UP as the interrupt is triggered when the line
-> goes down.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 15 ++++++++++++++-
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts         |  5 +++++
->  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts        |  7 +++++++
->  3 files changed, 26 insertions(+), 1 deletion(-)
-> 
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 
-Thanks, applied.
+I tried to apply but:
+fatal: corrupt patch at line 37
+Patch failed at 0001 arm64: dts: exynos: Add support for S6E3HA2 panel
+device on TM2 board
+
+Please fix, rebase, add blank link as suggested by Javier and send a
+v11.
 
 Best regards,
 Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
