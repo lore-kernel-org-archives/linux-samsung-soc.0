@@ -1,58 +1,49 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] ARM: exynos_defconfig: increase
- CONFIG_CMA_SIZE_MBYTES to 96
-Date: Tue, 7 Mar 2017 21:03:17 +0200
-Message-ID: <20170307190317.5gbxy4nmj67tvimi@kozik-lap>
-References: <20170228191221.18135-1-shuahkh@osg.samsung.com>
+Subject: Re: [PATCH v2] arm64: dts: Enable ir-spi in the tm2 and tm2e boards
+Date: Tue, 7 Mar 2017 21:22:58 +0200
+Message-ID: <20170307192258.vi5z2haodwlgeey6@kozik-lap>
+References: <CGME20170210022252epcas1p2cad2a32fb74a5ecc17ed73387579c6ab@epcas1p2.samsung.com>
+ <20170210022238.12401-1-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35515 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755680AbdCGTvs (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 7 Mar 2017 14:51:48 -0500
 Content-Disposition: inline
-In-Reply-To: <20170228191221.18135-1-shuahkh@osg.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, cw00.choi@samsung.com, viresh.kumar@linaro.org, rafael.j.wysocki@intel.com, robie@justgohome.co.uk, linux@armlinux.org.uk, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, a.hajda@samsung.com, javier@osg.samsung.com, b.zolnierkie@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+In-Reply-To: <20170210022238.12401-1-andi.shyti@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-On Tue, Feb 28, 2017 at 12:12:21PM -0700, Shuah Khan wrote:
-> Current CMA size of 64 Mbytes is right on the edge of being small when
-> several drivers need to allocate large CMA buffers.
+On Fri, Feb 10, 2017 at 11:22:38AM +0900, Andi Shyti wrote:
+> Add the device tree node for the ir-spi driver which enable the
+> ir led for remote controlling.
 > 
-> For example, if the s5p-mfc driver needs to pre-allocate N MiB CMA memory
-> to decode a H.264 1080p video, then there won't be enough CMA memory left
-> for other drivers, such as the exynos-drm driver that may need to allocate
-> GEM buffers for the display manager.
+> This patch sets first the GPR3[3] gpio line as a regulator-fixed
+> for enabling an external regulator which powers the IR LED.
 > 
-> Increasing CMA size to 96 Mbytes in exynos_defconfig addresses use-cases
-> such as these.
+> Removes also the default assignment of GPG3[7] related to the
+> MOSI line of the SPI3 bus.
 > 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 > ---
+> Changelog v1 -> v2
+> ==================
+> v1: https://marc.info/?l=linux-kernel&m=148645523229894&w=2
 > 
-> Changes since v1:
-> Fix short and long commit log.
-> 
-> Reason for this patch:
-> With the proposed s5p_mfc patch series that pre-allocate buffers, when
-> display manager starts, it fails to get GEM buffers.  Increasing the CMA
-> size to 96 solved the problem.
-> 
->  arch/arm/configs/exynos_defconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  - used 'GPIO_ACTIVE_HIGH' instead of '0'
+>  - added back the gpg3-5 gpio initialization related to the SPI3
+>    CS line that was erroneously removed
+>    
+>  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 26 +++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
 > 
 
-Thanks, applied with slightly changed commit msg.
+Thanks, applied with fixed title prefix.
 
 Best regards,
 Krzysztof
