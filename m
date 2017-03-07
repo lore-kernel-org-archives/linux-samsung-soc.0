@@ -1,133 +1,69 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos/decon5433: implement frame counter
-Date: Tue, 07 Mar 2017 18:22:18 +0900
-Message-ID: <58BE7BCA.3080203@samsung.com>
-References: <CGME20170302083541eucas1p13c1c1f247f06714e6cf4b5732b22dc49@eucas1p1.samsung.com>
- <1488443736-5287-1-git-send-email-a.hajda@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH v2 0/7] PCI: dwc: miscellaneous fixes and cleanups
+Date: Tue, 7 Mar 2017 15:22:45 +0530
+Message-ID: <1488880372-7390-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1488443736-5287-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Joao Pinto <Joao.Pinto@synopsys.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com
+Cc: nsekhar@ti.com, Kishon Vijay Abraham I <kishon@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE364WEIDAz7JuUIDAy7J28IDE3OjM17JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBEZWNvbiBpbiBFeHlub3M1NDMzIGhhcyBmcmFtZSBjb3VudGVyLCBpdCBjYW4gYmUg
-dXNlZCB0byBpbXBsZW1lbnQKPiBnZXRfdmJsYW5rX2NvdW50ZXIgY2FsbGJhY2suCj4gCj4gU2ln
-bmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiBI
-aSBJbmtpLAo+IAo+IFRoZSBwYXRjaCBpcyBiYXNlZCBvbiBteSBsYXN0IHBhdGNoZXMsIG1heWJl
-IHRvIG1ha2UgaXQgY2xlYXIgSSB3aWxsIHJlc2VuZCBhbGwKPiB0aGVzZSBwYXRjaGVzIGluIG9u
-ZSBwYXRjaHNldCwgd2hhdCBkbyB5b3UgdGhpbms/CgpPbmUgcGF0Y2ggc2V0IGl0IGJldHRlci4g
-OikKClRoYW5rcy4KCj4gCj4gUmVnYXJkcwo+IEFuZHJ6ZWoKPiAKPiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgNzYgKysrKysrKysrKysrKysrKysrLS0t
-LS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgICAgICB8
-IDExICsrKysKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICAgICAg
-IHwgIDEgKwo+ICAzIGZpbGVzIGNoYW5nZWQsIDYzIGluc2VydGlvbnMoKyksIDI1IGRlbGV0aW9u
-cygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNf
-ZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29u
-LmMKPiBpbmRleCA0YjU5NmRjLi40YjVhZjY3IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYwo+IEBAIC0xMjMsNiArMTIzLDUzIEBAIHN0YXRp
-YyB2b2lkIGRlY29uX2Rpc2FibGVfdmJsYW5rKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMp
-Cj4gIAkJd3JpdGVsKDAsIGN0eC0+YWRkciArIERFQ09OX1ZJRElOVENPTjApOwo+ICB9Cj4gIAo+
-ICsvKiByZXR1cm4gbnVtYmVyIG9mIHN0YXJ0cy9lbmRzIG9mIGZyYW1lIHRyYW5zbWlzc2lvbnMg
-c2luY2UgcmVzZXQgKi8KPiArc3RhdGljIHUzMiBkZWNvbl9nZXRfZnJhbWVfY291bnQoc3RydWN0
-IGRlY29uX2NvbnRleHQgKmN0eCwgYm9vbCBlbmQpCj4gK3sKPiArCXUzMiBmcm0sIHBmcm0sIHN0
-YXR1cywgY250Owo+ICsKPiArCS8qIFRvIGdldCBjb25zaXN0ZW50IHJlc3VsdCByZXBlYXQgcmVh
-ZCB1bnRpbCBmcmFtZSBpZCBpcyBzdGFibGUuICovCj4gKwlmcm0gPSByZWFkbChjdHgtPmFkZHIg
-KyBERUNPTl9DUkZNSUQpOwo+ICsJY250ID0gMzsKPiArCWRvIHsKPiArCQlzdGF0dXMgPSByZWFk
-bChjdHgtPmFkZHIgKyBERUNPTl9WSURDT04xKTsKPiArCQlwZnJtID0gZnJtOwo+ICsJCWZybSA9
-IHJlYWRsKGN0eC0+YWRkciArIERFQ09OX0NSRk1JRCk7Cj4gKwl9IHdoaWxlIChmcm0gIT0gcGZy
-bSAmJiAtLWNudCk7Cj4gKwo+ICsJLyogQ1JGTUlEIGlzIGluY3JlbWVudGVkIG9uIEJQT1JDSCBp
-biBjYXNlIG9mIEk4MCBhbmQgb24gVlNZTkMgaW4gY2FzZQo+ICsJICogb2YgUkdCLCBpdCBzaG91
-bGQgYmUgdGFrZW4gaW50byBhY2NvdW50Lgo+ICsJICovCj4gKwlpZiAoIWZybSkKPiArCQlyZXR1
-cm4gMDsKPiArCj4gKwlzd2l0Y2ggKHN0YXR1cyAmIChWSURDT04xX1ZTVEFUVVNfTUFTSyB8IFZJ
-RENPTjFfSTgwX0FDVElWRSkpIHsKPiArCWNhc2UgVklEQ09OMV9WU1RBVFVTX1ZTOgo+ICsJCWlm
-ICghKGN0eC0+b3V0X3R5cGUgJiBJRlRZUEVfSTgwKSkKPiArCQkJLS1mcm07Cj4gKwkJYnJlYWs7
-Cj4gKwljYXNlIFZJRENPTjFfVlNUQVRVU19CUDoKPiArCQktLWZybTsKPiArCQlicmVhazsKPiAr
-CWNhc2UgVklEQ09OMV9JODBfQUNUSVZFOgo+ICsJY2FzZSBWSURDT04xX1ZTVEFUVVNfQUM6Cj4g
-KwkJaWYgKGVuZCkKPiArCQkJLS1mcm07Cj4gKwl9Cj4gKwo+ICsJcmV0dXJuIGZybTsKPiArfQo+
-ICsKPiArc3RhdGljIHUzMiBkZWNvbl9nZXRfdmJsYW5rX2NvdW50ZXIoc3RydWN0IGV4eW5vc19k
-cm1fY3J0YyAqY3J0YykKPiArewo+ICsJc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCA9IGNydGMt
-PmN0eDsKPiArCj4gKwlpZiAodGVzdF9iaXQoQklUX1NVU1BFTkRFRCwgJmN0eC0+ZmxhZ3MpKQo+
-ICsJCXJldHVybiAwOwo+ICsKPiArCXJldHVybiBkZWNvbl9nZXRfZnJhbWVfY291bnQoY3R4LCBm
-YWxzZSk7Cj4gK30KPiArCj4gIHN0YXRpYyB2b2lkIGRlY29uX3NldHVwX3RyaWdnZXIoc3RydWN0
-IGRlY29uX2NvbnRleHQgKmN0eCkKPiAgewo+ICAJaWYgKCEoY3R4LT5vdXRfdHlwZSAmIChJRlRZ
-UEVfSTgwIHwgSTgwX0hXX1RSRykpKQo+IEBAIC01MTgsNiArNTY1LDcgQEAgc3RhdGljIGNvbnN0
-IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzIGRlY29uX2NydGNfb3BzID0gewo+ICAJLmVuYWJs
-ZQkJCT0gZGVjb25fZW5hYmxlLAo+ICAJLmRpc2FibGUJCT0gZGVjb25fZGlzYWJsZSwKPiAgCS5l
-bmFibGVfdmJsYW5rCQk9IGRlY29uX2VuYWJsZV92YmxhbmssCj4gKwkuZ2V0X3ZibGFua19jb3Vu
-dGVyCT0gZGVjb25fZ2V0X3ZibGFua19jb3VudGVyLAo+ICAJLmRpc2FibGVfdmJsYW5rCQk9IGRl
-Y29uX2Rpc2FibGVfdmJsYW5rLAo+ICAJLmF0b21pY19iZWdpbgkJPSBkZWNvbl9hdG9taWNfYmVn
-aW4sCj4gIAkudXBkYXRlX3BsYW5lCQk9IGRlY29uX3VwZGF0ZV9wbGFuZSwKPiBAQCAtNTM2LDYg
-KzU4NCw3IEBAIHN0YXRpYyBpbnQgZGVjb25fYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVj
-dCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKPiAgCWludCByZXQ7Cj4gIAo+ICAJY3R4LT5k
-cm1fZGV2ID0gZHJtX2RldjsKPiArCWRybV9kZXYtPm1heF92YmxhbmtfY291bnQgPSAweGZmZmZm
-ZmZmOwo+ICAKPiAgCWZvciAod2luID0gY3R4LT5maXJzdF93aW47IHdpbiA8IFdJTkRPV1NfTlI7
-IHdpbisrKSB7Cj4gIAkJaW50IHRtcCA9ICh3aW4gPT0gY3R4LT5maXJzdF93aW4pID8gMCA6IHdp
-bjsKPiBAQCAtNTgxLDM0ICs2MzAsMTEgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBjb21wb25lbnRf
-b3BzIGRlY29uX2NvbXBvbmVudF9vcHMgPSB7Cj4gIAo+ICBzdGF0aWMgdm9pZCBkZWNvbl9oYW5k
-bGVfdmJsYW5rKHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgpCj4gIHsKPiAtCXUzMiBmcm0sIHBm
-cm0sIHN0YXR1cywgY250Owo+ICsJdTMyIGZybTsKPiAgCj4gIAlzcGluX2xvY2soJmN0eC0+dmJs
-YW5rX2xvY2spOwo+ICAKPiAtCS8qIFRvIGdldCBjb25zaXN0ZW50IHJlc3VsdCByZXBlYXQgcmVh
-ZCB1bnRpbCBmcmFtZSBpZCBpcyBzdGFibGUuICovCj4gLQlmcm0gPSByZWFkbChjdHgtPmFkZHIg
-KyBERUNPTl9DUkZNSUQpOwo+IC0JY250ID0gMzsKPiAtCWRvIHsKPiAtCQlzdGF0dXMgPSByZWFk
-bChjdHgtPmFkZHIgKyBERUNPTl9WSURDT04xKTsKPiAtCQlwZnJtID0gZnJtOwo+IC0JCWZybSA9
-IHJlYWRsKGN0eC0+YWRkciArIERFQ09OX0NSRk1JRCk7Cj4gLQl9IHdoaWxlIChmcm0gIT0gcGZy
-bSAmJiAtLWNudCk7Cj4gLQo+IC0Jc3RhdHVzICY9IFZJRENPTjFfVlNUQVRVU19NQVNLIHwgVklE
-Q09OMV9JODBfQUNUSVZFOwo+IC0KPiAtCS8qIEluIGNhc2Ugb2YgZGVsYXllZCB2YmxhbmsgQ1JG
-TUlEIGNvdWxkIGJlIGFscmVhZHkgaW5jcmVtZW50ZWQsCj4gLQkgKiBpdCBzaG91bGQgYmUgdGFr
-ZW4gaW50byBhY2NvdW50Lgo+IC0JICovCj4gLQlpZiAoZnJtID4gMCkKPiAtCQlzd2l0Y2ggKHN0
-YXR1cykgewo+IC0JCWNhc2UgVklEQ09OMV9WU1RBVFVTX1ZTOgo+IC0JCQlpZiAoY3R4LT5vdXRf
-dHlwZSAmIElGVFlQRV9JODApCj4gLQkJCQlicmVhazsKPiAtCQljYXNlIFZJRENPTjFfSTgwX0FD
-VElWRToKPiAtCQljYXNlIFZJRENPTjFfVlNUQVRVU19CUDoKPiAtCQljYXNlIFZJRENPTjFfVlNU
-QVRVU19BQzoKPiAtCQkJLS1mcm07Cj4gLQkJfQo+ICsJZnJtID0gZGVjb25fZ2V0X2ZyYW1lX2Nv
-dW50KGN0eCwgdHJ1ZSk7Cj4gIAo+ICAJaWYgKGZybSAhPSBjdHgtPmZyYW1lX2lkKSB7Cj4gIAkJ
-aWYgKGZybSA+IGN0eC0+ZnJhbWVfaWQpCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fY3J0Yy5jCj4gaW5kZXggMGM5YTc3NS4uZDcyNzc3ZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IEBAIC0xMzIsNiArMTMyLDE2IEBAIHN0YXRpYyB2
-b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2NydGMgKmNydGMp
-Cj4gIAkJZXh5bm9zX2NydGMtPm9wcy0+ZGlzYWJsZV92YmxhbmsoZXh5bm9zX2NydGMpOwo+ICB9
-Cj4gIAo+ICtzdGF0aWMgdTMyIGV4eW5vc19kcm1fY3J0Y19nZXRfdmJsYW5rX2NvdW50ZXIoc3Ry
-dWN0IGRybV9jcnRjICpjcnRjKQo+ICt7Cj4gKwlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlu
-b3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOwo+ICsKPiArCWlmIChleHlub3NfY3J0Yy0+
-b3BzLT5nZXRfdmJsYW5rX2NvdW50ZXIpCj4gKwkJcmV0dXJuIGV4eW5vc19jcnRjLT5vcHMtPmdl
-dF92YmxhbmtfY291bnRlcihleHlub3NfY3J0Yyk7Cj4gKwo+ICsJcmV0dXJuIDA7Cj4gK30KPiAr
-Cj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2NydGNfZnVuY3MgZXh5bm9zX2NydGNfZnVuY3Mg
-PSB7Cj4gIAkuc2V0X2NvbmZpZwk9IGRybV9hdG9taWNfaGVscGVyX3NldF9jb25maWcsCj4gIAku
-cGFnZV9mbGlwCT0gZHJtX2F0b21pY19oZWxwZXJfcGFnZV9mbGlwLAo+IEBAIC0xNDEsNiArMTUx
-LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fY3J0Y19mdW5jcyBleHlub3NfY3J0Y19mdW5j
-cyA9IHsKPiAgCS5hdG9taWNfZGVzdHJveV9zdGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX2NydGNf
-ZGVzdHJveV9zdGF0ZSwKPiAgCS5lbmFibGVfdmJsYW5rID0gZXh5bm9zX2RybV9jcnRjX2VuYWJs
-ZV92YmxhbmssCj4gIAkuZGlzYWJsZV92YmxhbmsgPSBleHlub3NfZHJtX2NydGNfZGlzYWJsZV92
-YmxhbmssCj4gKwkuZ2V0X3ZibGFua19jb3VudGVyID0gZXh5bm9zX2RybV9jcnRjX2dldF92Ymxh
-bmtfY291bnRlciwKPiAgfTsKPiAgCj4gIHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19k
-cm1fY3J0Y19jcmVhdGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+IGluZGV4IGU1MmY3MGEuLjUyN2JmMWQgMTAwNjQ0
-Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4gQEAgLTEzMSw2ICsxMzEs
-NyBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyB7Cj4gIAl2b2lkICgqZGlzYWJsZSkoc3Ry
-dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0Yyk7Cj4gIAlpbnQgKCplbmFibGVfdmJsYW5rKShzdHJ1
-Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKTsKPiAgCXZvaWQgKCpkaXNhYmxlX3ZibGFuaykoc3Ry
-dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0Yyk7Cj4gKwl1MzIgKCpnZXRfdmJsYW5rX2NvdW50ZXIp
-KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpOwo+ICAJaW50ICgqYXRvbWljX2NoZWNrKShz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAo+ICAJCQkgICAgc3RydWN0IGRybV9jcnRjX3N0
-YXRlICpzdGF0ZSk7Cj4gIAl2b2lkICgqYXRvbWljX2JlZ2luKShzdHJ1Y3QgZXh5bm9zX2RybV9j
-cnRjICpjcnRjKTsKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+This should be the final set of cleanups/fixes before endpoint
+support can be merged.
+
+Keerthy's patch is a general fix in dra7xx driver and is not
+directly related to endpoint mode.
+
+This series was previously sent with a different cover letter
+$subject [1]
+
+Changes from v1:
+*) included a patch to rename _unroll() to _ob_unroll() as
+   similar thing has to be done for inbound window in the case
+   of EP mode.
+*) used 'size_t' instead of 'int' for specifying the size
+   in read_dbi/write_dbi function arguments.
+*) Populate cpu_addr_fixup ops for artpec6 as suggested by
+   Niklas
+
+This series is based on 4.11-rc1
+
+[1] -> https://lkml.org/lkml/2017/2/16/270
+
+Keerthy (1):
+  PCI: dwc: dra7xx: Push request_irq call to the bottom of probe
+
+Kishon Vijay Abraham I (6):
+  PCI: dwc: designware: Add new *ops* for cpu addr fixup
+  PCI: dwc: dra7xx: Populate cpu_addr_fixup ops
+  PCI: dwc: artpec6: Populate cpu_addr_fixup ops
+  PCI: dwc: all: Modify dbi accessors to take dbi_base as argument
+  PCI: dwc: all: Modify dbi accessors to access data of 4/2/1  bytes
+  PCI: dwc: designware: Modify _unroll() to _ob_unroll()
+
+ drivers/pci/dwc/Kconfig                |   18 ++---
+ drivers/pci/dwc/pci-dra7xx.c           |   35 +++++----
+ drivers/pci/dwc/pci-exynos.c           |   14 ++--
+ drivers/pci/dwc/pci-imx6.c             |   62 +++++++++-------
+ drivers/pci/dwc/pci-keystone-dw.c      |   16 ++--
+ drivers/pci/dwc/pcie-armada8k.c        |   39 +++++-----
+ drivers/pci/dwc/pcie-artpec6.c         |   22 ++++--
+ drivers/pci/dwc/pcie-designware-host.c |   20 ++---
+ drivers/pci/dwc/pcie-designware.c      |  127 ++++++++++++++++++++------------
+ drivers/pci/dwc/pcie-designware.h      |   13 +++-
+ drivers/pci/dwc/pcie-hisi.c            |   17 +++--
+ 11 files changed, 226 insertions(+), 157 deletions(-)
+
+-- 
+1.7.9.5
