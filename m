@@ -1,31 +1,27 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 1/5] arm64: dts: exynos: Add the burst and esc clock
- frequency properties to DSI node
-Date: Wed, 8 Mar 2017 09:12:02 +0200
-Message-ID: <20170308071202.6fswc5v4bfwrckzz@kozik-lap>
+Subject: Re: [PATCH v5 2/5] arm: dts: Add the burst and esc clock frequency
+ properties to DSI node
+Date: Wed, 8 Mar 2017 09:14:24 +0200
+Message-ID: <20170308071424.a2bdotmsrr7lfmrx@kozik-lap>
 References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170308045502epcas1p2b16df118e0ad91dbd2446687dc5ee843@epcas1p2.samsung.com>
- <1488948852-5380-2-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308045502epcas1p26f050caaf6eeb79bc88afcb0e2eaeac2@epcas1p2.samsung.com>
+ <1488948852-5380-3-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35426 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756555AbdCHHOv (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 8 Mar 2017 02:14:51 -0500
 Content-Disposition: inline
-In-Reply-To: <1488948852-5380-2-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, andi.shyti@samsung.com, a.hajda@samsung.com, airlied@linux.ie, catalin.marinas@arm.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, inki.dae@samsung.com, javier@osg.samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1488948852-5380-3-git-send-email-hoegeun.kwon@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, javier@osg.samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, a.hajda@samsung.com, andi.shyti@samsung.com
 
-On Wed, Mar 08, 2017 at 01:54:08PM +0900, Hoegeun Kwon wrote:
+On Wed, Mar 08, 2017 at 01:54:09PM +0900, Hoegeun Kwon wrote:
 > Add the burst and esc clock frequency properties to the parent (DSI node).
 > Currently the clock is parsed from the port node, while it should be
 > taken from the dsi node.
@@ -34,8 +30,11 @@ On Wed, Mar 08, 2017 at 01:54:08PM +0900, Hoegeun Kwon wrote:
 > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 > Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/arm/boot/dts/exynos3250-rinato.dts | 2 ++
+>  arch/arm/boot/dts/exynos4210-trats.dts  | 2 ++
+>  arch/arm/boot/dts/exynos4412-trats2.dts | 2 ++
+>  3 files changed, 6 insertions(+)
+>
 
 If anyone needs this, then:
 
@@ -46,28 +45,31 @@ The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-clock-dsi-property-4.12
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-clock-dsi-property-4.12
 
-for you to fetch changes up to e3c07546747cdec07ff15c984bc6cebc9c9f788c:
+for you to fetch changes up to 4c74ea4e20b582bf90a2cf509d88aa7c2dbffb12:
 
-  arm64: dts: exynos: Add the burst and esc clock frequency properties to DSI node (2017-03-08 08:55:39 +0200)
+  ARM: dts: exynos: Add the burst and esc clock frequency properties to DSI node (2017-03-08 09:09:05 +0200)
 
 ----------------------------------------------------------------
-Add the burst and esc clock frequency properties to DSI node in Exynos ARM64
+Add the burst and esc clock frequency properties to DSI node in Exynos ARM
 DeviceTree, before the OF graph could be parsed.
 
 ----------------------------------------------------------------
-Andi Shyti (2):
-      arm64: dts: exynos: Enable ir-spi in the TM2 and TM2E boards
-      arm64: dts: exynos: Add stmfts touchscreen node for TM2 and TM2E
-
 Hoegeun Kwon (1):
-      arm64: dts: exynos: Add the burst and esc clock frequency properties to DSI node
+      ARM: dts: exynos: Add the burst and esc clock frequency properties to DSI node
 
-Hyungwon Hwang (1):
-      arm64: dts: exynos: Add support for S6E3HA2 panel device on TM2 board
+Jaehoon Chung (1):
+      ARM: dts: exynos: Add phy-pcie node for pcie to Exynos5440
 
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 43 +++++++++++++++++++++-
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 17 +++++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |  7 ++++
- 3 files changed, 65 insertions(+), 2 deletions(-)
+Krzysztof Kozlowski (1):
+      ARM: dts: exynos: Do not ignore real-world fuse values for thermal zone 0 on Exynos5420
+
+ arch/arm/boot/dts/exynos3250-rinato.dts           |  2 ++
+ arch/arm/boot/dts/exynos4210-trats.dts            |  2 ++
+ arch/arm/boot/dts/exynos4412-trats2.dts           |  2 ++
+ arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi | 25 +++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                 | 10 ++++----
+ arch/arm/boot/dts/exynos5440.dtsi                 | 30 +++++++++++++++--------
+ 6 files changed, 56 insertions(+), 15 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
