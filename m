@@ -1,108 +1,75 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 10/12] drm/exynos: set plane possible_crtcs in
- exynos_plane_init
-Date: Wed, 08 Mar 2017 15:58:44 +0100
-Message-ID: <1488985126-25288-11-git-send-email-a.hajda@samsung.com>
-References: <1488985126-25288-1-git-send-email-a.hajda@samsung.com>
- <CGME20170308145905eucas1p2b562042b430d53f74fc5bdd3097ef21d@eucas1p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
+ interrupts on s3c24xx
+Date: Wed, 8 Mar 2017 18:34:34 +0200
+Message-ID: <20170308163434.obhtg6fwmjwqv7jm@kozik-lap>
+References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
+ <20170304081504.unv6sihbmp76ynfy@kozik-lap>
+ <20170306131516.GA6095@n1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1488985126-25288-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:32909 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751906AbdCHQek (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 8 Mar 2017 11:34:40 -0500
+Content-Disposition: inline
+In-Reply-To: <20170306131516.GA6095@n1>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: kgene@kernel.org, javier@osg.samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-QWxsIEV4eW5vcyBwbGFuZXMgYXJlIGFzc2lnbmVkIHRvIGV4YWN0bHkgb25lIENSVEMsIGl0IGFs
-bG93cyB0byBzaW1wbGlmeQppbml0aWFsaXphdGlvbiBieSBtb3Zpbmcgc2V0dGluZyBvZiBwb3Nz
-aWJsZV9jcnRjcyB0byBleHlub3NfcGxhbmVfaW5pdC4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWog
-SGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3M1NDMzX2RybV9kZWNvbi5jIHwgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3M3X2RybV9kZWNvbi5jICAgIHwgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2ZpbWQuYyAgICAgIHwgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X3BsYW5lLmMgICAgIHwgNSArKy0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X3BsYW5lLmggICAgIHwgMSAtCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlk
-aS5jICAgICAgfCAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAg
-ICAgICAgfCAyICstCiA3IGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlv
-bnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJt
-X2RlY29uLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMK
-aW5kZXggZDkyMmIxMC4uYTYwZDQ2MSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3M1NDMzX2RybV9kZWNvbi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zNTQzM19kcm1fZGVjb24uYwpAQCAtNjA0LDcgKzYwNCw3IEBAIHN0YXRpYyBpbnQgZGVjb25f
-YmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0
-YSkKIAkJY3R4LT5jb25maWdzW3dpbl0udHlwZSA9IGRlY29uX3dpbl90eXBlc1t0bXBdOwogCiAJ
-CXJldCA9IGV4eW5vc19wbGFuZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1t3aW5dLCB3aW4s
-Ci0JCQkJCTEgPDwgY3R4LT5waXBlLCAmY3R4LT5jb25maWdzW3dpbl0pOworCQkJCQkmY3R4LT5j
-b25maWdzW3dpbl0pOwogCQlpZiAocmV0KQogCQkJcmV0dXJuIHJldDsKIAl9CmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKaW5kZXggMjA2ZTc3OS4uNDMyMGIzYiAx
-MDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCisr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwpAQCAtNjQyLDcg
-KzY0Miw3IEBAIHN0YXRpYyBpbnQgZGVjb25fYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVj
-dCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKIAkJY3R4LT5jb25maWdzW2ldLnR5cGUgPSBk
-ZWNvbl93aW5fdHlwZXNbaV07CiAKIAkJcmV0ID0gZXh5bm9zX3BsYW5lX2luaXQoZHJtX2Rldiwg
-JmN0eC0+cGxhbmVzW2ldLCBpLAotCQkJCQkxIDw8IGN0eC0+cGlwZSwgJmN0eC0+Y29uZmlnc1tp
-XSk7CisJCQkJCSZjdHgtPmNvbmZpZ3NbaV0pOwogCQlpZiAocmV0KQogCQkJcmV0dXJuIHJldDsK
-IAl9CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5j
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCA1ODg3MjNk
-Li5lZjI3NzU3IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAg
-LTEwMDksNyArMTAwOSw3IEBAIHN0YXRpYyBpbnQgZmltZF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRl
-diwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQogCQljdHgtPmNvbmZpZ3NbaV0u
-enBvcyA9IGk7CiAJCWN0eC0+Y29uZmlnc1tpXS50eXBlID0gZmltZF93aW5fdHlwZXNbaV07CiAJ
-CXJldCA9IGV4eW5vc19wbGFuZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1tpXSwgaSwKLQkJ
-CQkJMSA8PCBjdHgtPnBpcGUsICZjdHgtPmNvbmZpZ3NbaV0pOworCQkJCQkmY3R4LT5jb25maWdz
-W2ldKTsKIAkJaWYgKHJldCkKIAkJCXJldHVybiByZXQ7CiAJfQpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCBjMmYxN2YzLi42MTFiNmZkIDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYworKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMjczLDE0ICsyNzMsMTMgQEAg
-c3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0dGFjaF96cG9zX3Byb3BlcnR5KHN0cnVjdCBkcm1f
-cGxhbmUgKnBsYW5lLAogfQogCiBpbnQgZXh5bm9zX3BsYW5lX2luaXQoc3RydWN0IGRybV9kZXZp
-Y2UgKmRldiwKLQkJICAgICAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSwK
-LQkJICAgICAgdW5zaWduZWQgaW50IGluZGV4LCB1bnNpZ25lZCBsb25nIHBvc3NpYmxlX2NydGNz
-LAorCQkgICAgICBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lLCB1bnNpZ25l
-ZCBpbnQgaW5kZXgsCiAJCSAgICAgIGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX2NvbmZp
-ZyAqY29uZmlnKQogewogCWludCBlcnI7CiAKIAllcnIgPSBkcm1fdW5pdmVyc2FsX3BsYW5lX2lu
-aXQoZGV2LCAmZXh5bm9zX3BsYW5lLT5iYXNlLAotCQkJCSAgICAgICBwb3NzaWJsZV9jcnRjcywK
-KwkJCQkgICAgICAgMSA8PCBkZXYtPm1vZGVfY29uZmlnLm51bV9jcnRjLAogCQkJCSAgICAgICAm
-ZXh5bm9zX3BsYW5lX2Z1bmNzLAogCQkJCSAgICAgICBjb25maWctPnBpeGVsX2Zvcm1hdHMsCiAJ
-CQkJICAgICAgIGNvbmZpZy0+bnVtX3BpeGVsX2Zvcm1hdHMsCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9wbGFuZS5oCmluZGV4IDlhYWZhZDEuLjQ5NzA0N2IgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oCisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oCkBAIC0xMSw1ICsxMSw0IEBACiAKIGlu
-dCBleHlub3NfcGxhbmVfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCQkgICAgICBzdHJ1
-Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lLCB1bnNpZ25lZCBpbnQgaW5kZXgsCi0J
-CSAgICAgIHVuc2lnbmVkIGxvbmcgcG9zc2libGVfY3J0Y3MsCiAJCSAgICAgIGNvbnN0IHN0cnVj
-dCBleHlub3NfZHJtX3BsYW5lX2NvbmZpZyAqY29uZmlnKTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fdmlkaS5jCmluZGV4IGNiNWUzYzYuLjg4NjBmZjQgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYwpAQCAtNDA4LDcgKzQwOCw3IEBAIHN0YXRpYyBp
-bnQgdmlkaV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2
-b2lkICpkYXRhKQogCQlwbGFuZV9jb25maWcudHlwZSA9IHZpZGlfd2luX3R5cGVzW2ldOwogCiAJ
-CXJldCA9IGV4eW5vc19wbGFuZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1tpXSwgaSwKLQkJ
-CQkJMSA8PCBjdHgtPnBpcGUsICZwbGFuZV9jb25maWcpOworCQkJCQkmcGxhbmVfY29uZmlnKTsK
-IAkJaWYgKHJldCkKIAkJCXJldHVybiByZXQ7CiAJfQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X21peGVyLmMKaW5kZXggMTQ3NDk4Mi4uMzcyMmI1ZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19taXhlci5jCkBAIC0xMTU0LDcgKzExNTQsNyBAQCBzdGF0aWMgaW50IG1peGVyX2JpbmQo
-c3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYW5hZ2VyLCB2b2lkICpkYXRhKQog
-CQkJY29udGludWU7CiAKIAkJcmV0ID0gZXh5bm9zX3BsYW5lX2luaXQoZHJtX2RldiwgJmN0eC0+
-cGxhbmVzW2ldLCBpLAotCQkJCQkxIDw8IGN0eC0+cGlwZSwgJnBsYW5lX2NvbmZpZ3NbaV0pOwor
-CQkJCQkmcGxhbmVfY29uZmlnc1tpXSk7CiAJCWlmIChyZXQpCiAJCQlyZXR1cm4gcmV0OwogCX0K
-LS0gCjIuNy40CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Mon, Mar 06, 2017 at 09:15:16AM -0400, Sergio Prado wrote:
+> Hi Krzysztof,
+> 
+> > > This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
+> > 
+> > Checkpatch should complain here about commit format.
+> > 
+> > > 
+> > > Tested on FriendlyARM mini2440.
+> > > 
+> > 
+> > Please add:
+> >   Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+> >   Cc: <stable@vger.kernel.org>
+> > 
+> 
+> OK.
+> 
+> > > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> > > ---
+> > >  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> > > index b82a003546ae..1b8d887796e8 100644
+> > > --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> > > +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> > > @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+> > >  {
+> > >  	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+> > >  	struct irq_chip *chip = irq_desc_get_chip(desc);
+> > > -	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+> > > -	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+> > > +	struct samsung_pinctrl_drv_data *d = data->drvdata;
+> > > +	struct samsung_pin_bank *bank = d->pin_banks;
+> > 
+> > I think 'pin_banks' point to all banks of given controller not to the
+> > currently accessed one.
+> 
+> Understood. I think it worked in my tests because on s3c2440 all banks
+> have the same eint base address.
+> 
+> So what do you think is the best approach to solve this problem?
+
+Maybe you can get to this through:
+	s3c24xx_eint_domain_data = s3c24xx_eint_data->domains[virq].host_data;
+	s3c24xx_eint_domain_data->bank
+
+It is getting slightly more complicated...
+
+Best regards,
+Krzysztof
