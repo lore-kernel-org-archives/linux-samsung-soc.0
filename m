@@ -1,78 +1,39 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v5 5/5] arm: dts: Remove the OF graph from DSI node
-Date: Wed, 08 Mar 2017 13:54:12 +0900
-Message-ID: <1488948852-5380-6-git-send-email-hoegeun.kwon@samsung.com>
-References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170308045503epcas1p2759ce089ec0e0d0a79c7d88e45efe9cc@epcas1p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v11 3/3] arm64: dts: exynos: Add support for S6E3HA2
+ panel device on TM2 board
+Date: Wed, 8 Mar 2017 08:47:58 +0200
+Message-ID: <20170308064758.i6b6zu6rmmjrlo4w@kozik-lap>
+References: <1488937357-5623-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308014258epcas5p3eb57787aee92913e79bd467d5b285c0e@epcas5p3.samsung.com>
+ <1488937357-5623-4-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, andi.shyti@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1488937357-5623-4-git-send-email-hoegeun.kwon@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, inki.dae@samsung.com, a.hajda@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIE9GIGdyYXBoIGlzIG5vdCBuZWVkZWQgYmVjYXVzZSB0aGUgcGFuZWwgaXMgYSBjaGlsZCBv
-ZiBkc2kuIFJlbW92ZQp0aGUgcG9ydHMgbm9kZSBpbiBEU0kgbm9kZSwgYW5kIHBvcnQgbm9kZSBp
-biBwYW5lbCBub2RlLgoKU2lnbmVkLW9mZi1ieTogSG9lZ2V1biBLd29uIDxob2VnZXVuLmt3b25A
-c2Ftc3VuZy5jb20+ClJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcu
-Y29tPgpSZXZpZXdlZC1ieTogQW5kaSBTaHl0aSA8YW5kaS5zaHl0aUBzYW1zdW5nLmNvbT4KLS0t
-CiBhcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMgfCAyMSAtLS0tLS0tLS0t
-LS0tLS0tLS0tLS0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAtdHJhdHMuZHRzICB8IDIx
-IC0tLS0tLS0tLS0tLS0tLS0tLS0tLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDQxMi10cmF0
-czIuZHRzIHwgMjEgLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAzIGZpbGVzIGNoYW5nZWQsIDYzIGRl
-bGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmlu
-YXRvLmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cwppbmRleCBj
-OWYxOTFjLi44MmU2NzZhIDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUw
-LXJpbmF0by5kdHMKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRz
-CkBAIC0yMjAsMjEgKzIyMCw2IEBACiAJc2Ftc3VuZyxwbGwtY2xvY2stZnJlcXVlbmN5ID0gPDI0
-MDAwMDAwPjsKIAlzdGF0dXMgPSAib2theSI7CiAKLQlwb3J0cyB7Ci0JCSNhZGRyZXNzLWNlbGxz
-ID0gPDE+OwotCQkjc2l6ZS1jZWxscyA9IDwwPjsKLQotCQlwb3J0QDEgewotCQkJcmVnID0gPDE+
-OwotCi0JCQlkc2lfb3V0OiBlbmRwb2ludCB7Ci0JCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZkc2lf
-aW4+OwotCQkJCXNhbXN1bmcsYnVyc3QtY2xvY2stZnJlcXVlbmN5ID0gPDI1MDAwMDAwMD47Ci0J
-CQkJc2Ftc3VuZyxlc2MtY2xvY2stZnJlcXVlbmN5ID0gPDIwMDAwMDAwPjsKLQkJCX07Ci0JCX07
-Ci0JfTsKLQogCXBhbmVsQDAgewogCQljb21wYXRpYmxlID0gInNhbXN1bmcsczZlNjNqMHgwMyI7
-CiAJCXJlZyA9IDwwPjsKQEAgLTI2NCwxMiArMjQ5LDYgQEAKIAkJCQl2c3luYy1sZW4gPSA8Mj47
-CiAJCQl9OwogCQl9OwotCi0JCXBvcnQgewotCQkJZHNpX2luOiBlbmRwb2ludCB7Ci0JCQkJcmVt
-b3RlLWVuZHBvaW50ID0gPCZkc2lfb3V0PjsKLQkJCX07Ci0JCX07CiAJfTsKIH07CiAKZGlmZiAt
-LWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAtdHJhdHMuZHRzIGIvYXJjaC9hcm0v
-Ym9vdC9kdHMvZXh5bm9zNDIxMC10cmF0cy5kdHMKaW5kZXggMTc0M2NhOC4uOTQ1MmJlZCAxMDA2
-NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC10cmF0cy5kdHMKKysrIGIvYXJj
-aC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC10cmF0cy5kdHMKQEAgLTIwMiwyMSArMjAyLDYgQEAK
-IAlzYW1zdW5nLHBsbC1jbG9jay1mcmVxdWVuY3kgPSA8MjQwMDAwMDA+OwogCXN0YXR1cyA9ICJv
-a2F5IjsKIAotCXBvcnRzIHsKLQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47Ci0JCSNzaXplLWNlbGxz
-ID0gPDA+OwotCi0JCXBvcnRAMSB7Ci0JCQlyZWcgPSA8MT47Ci0KLQkJCWRzaV9vdXQ6IGVuZHBv
-aW50IHsKLQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9pbj47Ci0JCQkJc2Ftc3VuZyxidXJz
-dC1jbG9jay1mcmVxdWVuY3kgPSA8NTAwMDAwMDAwPjsKLQkJCQlzYW1zdW5nLGVzYy1jbG9jay1m
-cmVxdWVuY3kgPSA8MjAwMDAwMDA+OwotCQkJfTsKLQkJfTsKLQl9OwotCiAJcGFuZWxAMCB7CiAJ
-CXJlZyA9IDwwPjsKIAkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM2ZThhYTAiOwpAQCAtMjQ0LDEy
-ICsyMjksNiBAQAogCQkJCXZzeW5jLWxlbiA9IDwyPjsKIAkJCX07CiAJCX07Ci0KLQkJcG9ydCB7
-Ci0JCQlkc2lfaW46IGVuZHBvaW50IHsKLQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9vdXQ+
-OwotCQkJfTsKLQkJfTsKIAl9OwogfTsKIApkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMv
-ZXh5bm9zNDQxMi10cmF0czIuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDQxMi10cmF0
-czIuZHRzCmluZGV4IDgyMjIxYTAuLjg2Y2U1ZTUgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczQ0MTItdHJhdHMyLmR0cworKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M0
-NDEyLXRyYXRzMi5kdHMKQEAgLTM5MCwyMSArMzkwLDYgQEAKIAlzYW1zdW5nLHBsbC1jbG9jay1m
-cmVxdWVuY3kgPSA8MjQwMDAwMDA+OwogCXN0YXR1cyA9ICJva2F5IjsKIAotCXBvcnRzIHsKLQkJ
-I2FkZHJlc3MtY2VsbHMgPSA8MT47Ci0JCSNzaXplLWNlbGxzID0gPDA+OwotCi0JCXBvcnRAMSB7
-Ci0JCQlyZWcgPSA8MT47Ci0KLQkJCWRzaV9vdXQ6IGVuZHBvaW50IHsKLQkJCQlyZW1vdGUtZW5k
-cG9pbnQgPSA8JmRzaV9pbj47Ci0JCQkJc2Ftc3VuZyxidXJzdC1jbG9jay1mcmVxdWVuY3kgPSA8
-NTAwMDAwMDAwPjsKLQkJCQlzYW1zdW5nLGVzYy1jbG9jay1mcmVxdWVuY3kgPSA8MjAwMDAwMDA+
-OwotCQkJfTsKLQkJfTsKLQl9OwotCiAJcGFuZWxAMCB7CiAJCWNvbXBhdGlibGUgPSAic2Ftc3Vu
-ZyxzNmU4YWEwIjsKIAkJcmVnID0gPDA+OwpAQCAtNDMyLDEyICs0MTcsNiBAQAogCQkJCXZzeW5j
-LWxlbiA9IDwyPjsKIAkJCX07CiAJCX07Ci0KLQkJcG9ydCB7Ci0JCQlkc2lfaW46IGVuZHBvaW50
-IHsKLQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9vdXQ+OwotCQkJfTsKLQkJfTsKIAl9Owog
-fTsKIAotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+On Wed, Mar 08, 2017 at 10:42:37AM +0900, Hoegeun Kwon wrote:
+> From: Hyungwon Hwang <human.hwang@samsung.com>
+> 
+> This patch add the panel device tree node for S6E3HA2 display
+> controller to TM2 dts.
+> 
+> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+
+Thanks, applied.
+
+Best regards,
+Krzysztof
