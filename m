@@ -1,75 +1,49 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 2/5] arm: dts: Add the burst and esc clock frequency
- properties to DSI node
-Date: Wed, 8 Mar 2017 09:14:24 +0200
-Message-ID: <20170308071424.a2bdotmsrr7lfmrx@kozik-lap>
-References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170308045502epcas1p26f050caaf6eeb79bc88afcb0e2eaeac2@epcas1p2.samsung.com>
- <1488948852-5380-3-git-send-email-hoegeun.kwon@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: linux-4.11-rc1/drivers/gpu/drm/exynos/exynos5433_drm_decon.c:681:
+ suspicious mask ?
+Date: Wed, 08 Mar 2017 10:01:41 +0100
+Message-ID: <c489ede9-aca6-bee9-4d82-b35cf720dcbd@samsung.com>
+References: <CGME20170307005334epcas4p22a43a5c4e8348ec53d8b0fbc58cde358@epcas4p2.samsung.com>
+ <DB5PR08MB0967CD7B84545DE129126A619C2C0@DB5PR08MB0967.eurprd08.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35426 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756555AbdCHHOv (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Mar 2017 02:14:51 -0500
-Content-Disposition: inline
-In-Reply-To: <1488948852-5380-3-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <DB5PR08MB0967CD7B84545DE129126A619C2C0@DB5PR08MB0967.eurprd08.prod.outlook.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: David Binderman <dcb314@hotmail.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "jy0922.shim@samsung.com" <jy0922.shim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "airlied@linux.ie" <airlied@linux.ie>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, "javier@osg.samsung.com" <javier@osg.samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, javier@osg.samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, a.hajda@samsung.com, andi.shyti@samsung.com
 
-On Wed, Mar 08, 2017 at 01:54:09PM +0900, Hoegeun Kwon wrote:
-> Add the burst and esc clock frequency properties to the parent (DSI node).
-> Currently the clock is parsed from the port node, while it should be
-> taken from the dsi node.
-> 
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos3250-rinato.dts | 2 ++
->  arch/arm/boot/dts/exynos4210-trats.dts  | 2 ++
->  arch/arm/boot/dts/exynos4412-trats2.dts | 2 ++
->  3 files changed, 6 insertions(+)
->
-
-If anyone needs this, then:
-
-
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-clock-dsi-property-4.12
-
-for you to fetch changes up to 4c74ea4e20b582bf90a2cf509d88aa7c2dbffb12:
-
-  ARM: dts: exynos: Add the burst and esc clock frequency properties to DSI node (2017-03-08 09:09:05 +0200)
-
-----------------------------------------------------------------
-Add the burst and esc clock frequency properties to DSI node in Exynos ARM
-DeviceTree, before the OF graph could be parsed.
-
-----------------------------------------------------------------
-Hoegeun Kwon (1):
-      ARM: dts: exynos: Add the burst and esc clock frequency properties to DSI node
-
-Jaehoon Chung (1):
-      ARM: dts: exynos: Add phy-pcie node for pcie to Exynos5440
-
-Krzysztof Kozlowski (1):
-      ARM: dts: exynos: Do not ignore real-world fuse values for thermal zone 0 on Exynos5420
-
- arch/arm/boot/dts/exynos3250-rinato.dts           |  2 ++
- arch/arm/boot/dts/exynos4210-trats.dts            |  2 ++
- arch/arm/boot/dts/exynos4412-trats2.dts           |  2 ++
- arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi | 25 +++++++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi                 | 10 ++++----
- arch/arm/boot/dts/exynos5440.dtsi                 | 30 +++++++++++++++--------
- 6 files changed, 56 insertions(+), 15 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
+SGkgRGF2aWQsIElua2ksCgpUaGFua3MgZm9yIHJlcG9ydGluZy4KCk9uIDA2LjAzLjIwMTcgMTE6
+MDUsIERhdmlkIEJpbmRlcm1hbiB3cm90ZToKPiBIZWxsbyB0aGVyZSwKPgo+IGxpbnV4LTQuMTEt
+cmMxL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYzo2ODFdOiAo
+d2FybmluZykgUmVzdWx0IG9mIG9wZXJhdG9yICd8JyBpcyBhbHdheXMgdHJ1ZSBpZiBvbmUgb3Bl
+cmFuZCBpcyBub24temVyby4gRGlkIHlvdSBpbnRlbmQgdG8gdXNlICcmJz8KPgo+IFNvdXJjZSBj
+b2RlIGlzCj4KPiAgICAgaWYgKGN0eC0+b3V0X3R5cGUgfCBJODBfSFdfVFJHKSB7Cj4KPiBBbHNv
+IGluIHRoZSBzYW1lIGZpbGU6Cj4KPiBbZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMz
+X2RybV9kZWNvbi5jOjEzMV06IChzdHlsZSkgU2FtZSBleHByZXNzaW9uIG9uIGJvdGggc2lkZXMg
+b2YgJ3wnLgo+Cj4gU291cmNlIGNvZGUgaXMKPgo+ICAgICAgICB3cml0ZWwoVFJJR0NPTl9URV9B
+VVRPX01BU0sgfCBUUklHQ09OX1NXVFJJR0VOCj4gICAgICAgICAgICAgICAgfCBUUklHQ09OX1RF
+X0FVVE9fTUFTSyB8IFRSSUdDT05fU1dUUklHRU4sCgpUaGlzIHR5cG8gd2FzIGFscmVhZHkgcmVw
+b3J0ZWQgYnk6Ci0gSWxpYSBNaXJraW4sIEkgaGF2ZSB1cGxvYWRlZCAybmQgZml4ZWQgdmVyc2lv
+biBvZiB0aGUgcGF0Y2gsCmFwcGFyZW50bHkgdGhlIDFzdCB2ZXJzaW9uIGhhcyBiZWVuIG1lcmdl
+ZCBbMV0sCi0gRGFuIENhcnBlbnRlciwgaGUgcG9zdGVkIGFsc28gdGhlIGZpeFsyXSwKLSBhbmQg
+bm93IERhdmlkLgoKSSBndWVzcyBhdCB0aGUgbW9tZW50IHRoZSBiZXN0IHNvbHV0aW9uIGlzIHRv
+IGdldCBEYW4ncyBwYXRjaC4KClsxXTogaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRj
+aC85NDkzMTc3LwpbMl06IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTU3MTM3
+NS8KClJlZ2FyZHMKQW5kcnplagoKPgo+IFJlZ2FyZHMKPgo+IERhdmlkIEJpbmRlcm1hbgo+IF9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVs
+IG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
