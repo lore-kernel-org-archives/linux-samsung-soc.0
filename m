@@ -1,36 +1,34 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v11 3/3] arm64: dts: exynos: Add support for S6E3HA2
- panel device on TM2 board
-Date: Wed, 8 Mar 2017 08:47:58 +0200
-Message-ID: <20170308064758.i6b6zu6rmmjrlo4w@kozik-lap>
-References: <1488937357-5623-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170308014258epcas5p3eb57787aee92913e79bd467d5b285c0e@epcas5p3.samsung.com>
- <1488937357-5623-4-git-send-email-hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH v5 2/5] arm: dts: Add the burst and esc clock frequency
+ properties to DSI node
+Date: Wed, 8 Mar 2017 08:58:57 +0200
+Message-ID: <20170308065857.fe26iwlu3r5cmesx@kozik-lap>
+References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308045502epcas1p26f050caaf6eeb79bc88afcb0e2eaeac2@epcas1p2.samsung.com>
+ <1488948852-5380-3-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1488937357-5623-4-git-send-email-hoegeun.kwon@samsung.com>
+In-Reply-To: <1488948852-5380-3-git-send-email-hoegeun.kwon@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, inki.dae@samsung.com, a.hajda@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>
+Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, javier@osg.samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, a.hajda@samsung.com, andi.shyti@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 08, 2017 at 10:42:37AM +0900, Hoegeun Kwon wrote:
-> From: Hyungwon Hwang <human.hwang@samsung.com>
+On Wed, Mar 08, 2017 at 01:54:09PM +0900, Hoegeun Kwon wrote:
+> Add the burst and esc clock frequency properties to the parent (DSI node).
+> Currently the clock is parsed from the port node, while it should be
+> taken from the dsi node.
 > 
-> This patch add the panel device tree node for S6E3HA2 display
-> controller to TM2 dts.
-> 
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 > Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>  arch/arm/boot/dts/exynos3250-rinato.dts | 2 ++
+>  arch/arm/boot/dts/exynos4210-trats.dts  | 2 ++
+>  arch/arm/boot/dts/exynos4412-trats2.dts | 2 ++
+>  3 files changed, 6 insertions(+)
 > 
 
 Thanks, applied.
