@@ -1,43 +1,146 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: linux-4.11-rc1/drivers/gpu/drm/exynos/exynos5433_drm_decon.c:681:
- suspicious mask ?
-Date: Thu, 09 Mar 2017 16:34:09 +0900
-Message-ID: <58C10571.9050107@samsung.com>
-References: <CGME20170306100527epcas1p349cea73e30f7720a65d312808c4b2cc3@epcas1p3.samsung.com>
- <DB5PR08MB0967CD7B84545DE129126A619C2C0@DB5PR08MB0967.eurprd08.prod.outlook.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v2] i2c: exynos5: fix arbitration lost handling
+Date: Thu, 09 Mar 2017 08:51:04 +0100
+Message-ID: <7f287a39-a8a4-1b9d-2d9a-36e849bd726b@samsung.com>
+References: <CGME20170222110438eucas1p2329ece7afd9e22ba185da64ccf4b2981@eucas1p2.samsung.com>
+ <1487761474-11547-1-git-send-email-a.hajda@samsung.com>
+ <2fb11816-85e7-14f6-7b61-5d3eba6096aa@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <DB5PR08MB0967CD7B84545DE129126A619C2C0@DB5PR08MB0967.eurprd08.prod.outlook.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: David Binderman <dcb314@hotmail.com>, "jy0922.shim@samsung.com" <jy0922.shim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "airlied@linux.ie" <airlied@linux.ie>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, "javier@osg.samsung.com" <javier@osg.samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:23613 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752157AbdCIHvd (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 9 Mar 2017 02:51:33 -0500
+In-reply-to: <2fb11816-85e7-14f6-7b61-5d3eba6096aa@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>
 
-SGVsbG8gRGF2aWQsCgpUaGFua3MgZm9yIHJlcG9ydC4KCjIwMTfrhYQgMDPsm5QgMDbsnbwgMTk6
-MDXsl5AgRGF2aWQgQmluZGVybWFuIOydtCjqsIApIOyTtCDquIA6Cj4gSGVsbG8gdGhlcmUsCj4g
-Cj4gbGludXgtNC4xMS1yYzEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9k
-ZWNvbi5jOjY4MV06ICh3YXJuaW5nKSBSZXN1bHQgb2Ygb3BlcmF0b3IgJ3wnIGlzIGFsd2F5cyB0
-cnVlIGlmIG9uZSBvcGVyYW5kIGlzIG5vbi16ZXJvLiBEaWQgeW91IGludGVuZCB0byB1c2UgJyYn
-Pwo+IAoKUmlnaHQuIHRoaXMgaXMga25vd24gaXNzdWUgYW5kIGJlbG93IHBhdGNoIGZpeGVzIHRo
-aXMsCmh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvZHJpLWRldmVsL21zZzEzMjU4OS5odG1s
-CgpUaGlzIHBhdGNoIHdpbGwgZ28gdG8gLWZpeGVzLgoKPiBTb3VyY2UgY29kZSBpcwo+IAo+ICAg
-ICBpZiAoY3R4LT5vdXRfdHlwZSB8IEk4MF9IV19UUkcpIHsKPiAKPiBBbHNvIGluIHRoZSBzYW1l
-IGZpbGU6Cj4gCj4gW2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24u
-YzoxMzFdOiAoc3R5bGUpIFNhbWUgZXhwcmVzc2lvbiBvbiBib3RoIHNpZGVzIG9mICd8Jy4KPiAK
-PiBTb3VyY2UgY29kZSBpcwo+IAo+ICAgICAgICB3cml0ZWwoVFJJR0NPTl9URV9BVVRPX01BU0sg
-fCBUUklHQ09OX1NXVFJJR0VOCj4gICAgICAgICAgICAgICAgfCBUUklHQ09OX1RFX0FVVE9fTUFT
-SyB8IFRSSUdDT05fU1dUUklHRU4sCgpJbiB0aGlzIGNhc2UsIG9ubHkgcHJvYmxlbSBpcyB0d28g
-ZmxhZ3MgYXJlIHNldCBpbiBkdXBsaWNhdGUuIFRoaXMgc2hvdWxkIGJlIGNsZWFuZWQgdXAuIFRo
-YW5rcy4gOikKCj4gCj4gUmVnYXJkcwo+IAo+IERhdmlkIEJpbmRlcm1hbgo+IAo+IApfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 08.03.2017 21:05, Javier Martinez Canillas wrote:
+> Hello Andrzej,
+>
+> On 02/22/2017 08:04 AM, Andrzej Hajda wrote:
+>> In case of arbitration lost adequate interrupt sometimes is not signaled.
+>> As a result transfer timeouts and is not retried, as it should. To avoid
+>> such cases code is added to check transaction status in case of every
+>> interrupt.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+> This patch causes regressions on Exynos5 boards (at least I noticed it in
+> Exynos5800 Peach Pi board). I see transmission timeouts when accessing I2C
+> device registers, i.e:
+>
+> $ cat /sys/class/rtc/rtc0/time
+> [   25.924594] exynos5-hsi2c 12e10000.i2c: rx timeout
+> [   65.028365] max77686-rtc max77802-rtc: Fail to read time reg(-22)
+> cat: /sys/class/rtc/rtc0/time: Invalid argument
+
+Hmm, at 12e10000 Exynos5 has hsi2c_9, and on this bus I have found only
+infineon,slb9645tt TPM module. At least on mainline kernel.
+What kernel do you use? Any additional changes to kernel?
+Do you observe it on mainline kernel?
+
+Regarding the issue, how often it happens?
+Please verify that this is not just coincidence.
+
+>
+> Doing a partial revert of $SUBJECT (reading I2C_TRANS_STATUS register when
+> it was before) "fixes" the problem [0].
+
+That look crazy, the only difference for non-Exynos7 variant (which is
+in Exynos5 boards) is that with your change HSI2C_TRANS_STATUS is read
+only when HSI2C_INT_I2C happens, am I right?
+Anyway I have realized that in case of Exynos5 the device HSI2C driver
+works with is named "Universal Serial Interface" and has slightly
+different set of registers than HSI2C device present in Exynos52[56]0,
+but I do not know if it matters.
+
+If [0] really fixes the issue I think you can create real patch and send
+for testing, but it looks very suspicious.
+
+Regards
+Andrzej
+
+>
+> I've read the Exynos5800 and Exynos5433 SoC manuals and couldn't figure out
+> what's causing it. I first thought that the solution was to make I2C core
+> to retry when the TRANSFER_DONE_AUTO field isn't set [1] but that only makes
+> the issue less frequent, it still fails. I also tried to increment the retry
+> count [2] but it also didn't help.
+>
+> Any ideas about what could be happening here?
+>
+> [0]:
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index cbd93ce0661f..736a82472101 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -457,7 +457,6 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+>  
+>  	int_status = readl(i2c->regs + HSI2C_INT_STATUS);
+>  	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
+> -	trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
+>  
+>  	/* handle interrupt related to the transfer status */
+>  	if (i2c->variant->hw == HSI2C_EXYNOS7) {
+> @@ -482,11 +481,13 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+>  			goto stop;
+>  		}
+>  
+> +		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
+>  		if ((trans_status & HSI2C_MASTER_ST_MASK) == HSI2C_MASTER_ST_LOSE) {
+>  			i2c->state = -EAGAIN;
+>  			goto stop;
+>  		}
+>  	} else if (int_status & HSI2C_INT_I2C) {
+> +		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
+>  		if (trans_status & HSI2C_NO_DEV_ACK) {
+>  			dev_dbg(i2c->dev, "No ACK from device\n");
+>  			i2c->state = -ENXIO;
+>
+> [1]:
+> >From 3c60d3a0356563b33b739d309a4f64c003d83053 Mon Sep 17 00:00:00 2001
+> From: Javier Martinez Canillas <javier@osg.samsung.com>
+> Date: Mon, 6 Mar 2017 19:35:44 -0300
+> Subject: [PATCH] i2c: exynos5: Make transaction to retry if isn't successfully completed
+>
+> After commit 7999eecb7e56 ("i2c: exynos5: fix arbitration lost handling"),
+> some I2C transactions are failing because the TRANSFER_DONE_AUTO field is
+> not set in the I2C_TRANS_STATUS register so the i2c->status value is left
+> to -EINVAL causing the i2c->msg_complete completion to never be signaled.
+>
+> For example, when reading the time of an I2C rtc on an Exynos5800 machine:
+>
+> $ cat /sys/class/rtc/rtc0/time
+> [   25.924594] exynos5-hsi2c 12e10000.i2c: rx timeout
+> [   65.028365] max77686-rtc max77802-rtc: Fail to read time reg(-22)
+> cat: /sys/class/rtc/rtc0/time: Invalid argument
+>
+> To avoid this, set i2c->state to -EAGAIN if TRANSFER_DONE_AUTO is not set to
+> allow the I2C core to retry if the transaction wasn't successfully completed.
+>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+>  drivers/i2c/busses/i2c-exynos5.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index cbd93ce0661f..d294fb61520c 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -506,6 +506,10 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+>  		} else if (trans_status & HSI2C_TRANS_DONE) {
+>  			i2c->trans_done = 1;
+>  			i2c->state = 0;
+> +		} else {
+> +			dev_dbg(i2c->dev, "Transaction was not completed\n");
+> +			i2c->state = -EAGAIN;
+> +			goto stop;
+>  		}
+>  	}
+>  
