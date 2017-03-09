@@ -1,72 +1,153 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: mixer: document YCbCr magic numbers
-Date: Thu, 09 Mar 2017 11:18:05 +0100
-Message-ID: <cfc121ca-c27e-0eea-578a-c33ad74ce106@samsung.com>
-References: <1488548452-4011-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CGME20170303134142epcas1p2284a19f029d1ff9b567eb3ee2d61f5ee@epcas1p2.samsung.com>
- <1488548452-4011-2-git-send-email-tjakobi@math.uni-bielefeld.de>
- <96798b65-5a20-04ea-27f9-63a31ffbbb39@samsung.com>
- <386d4efb-ac80-8e84-4f88-ac2426a181a9@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2] i2c: exynos5: fix arbitration lost handling
+Date: Thu, 09 Mar 2017 12:03:03 +0100
+Message-ID: <20935f7d-a41c-2987-daea-50e4c3aa4ab6@samsung.com>
+References: <CGME20170222110438eucas1p2329ece7afd9e22ba185da64ccf4b2981@eucas1p2.samsung.com>
+ <1487761474-11547-1-git-send-email-a.hajda@samsung.com>
+ <2fb11816-85e7-14f6-7b61-5d3eba6096aa@osg.samsung.com>
+ <7f287a39-a8a4-1b9d-2d9a-36e849bd726b@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <386d4efb-ac80-8e84-4f88-ac2426a181a9@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-reply-to: <7f287a39-a8a4-1b9d-2d9a-36e849bd726b@samsung.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDYuMDMuMjAxNyAxMDo0MywgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZWxsbyBBbmRyemVq
-LAo+Cj4KPiBBbmRyemVqIEhhamRhIHdyb3RlOgo+PiBPbiAwMy4wMy4yMDE3IDE0OjQwLCBUb2Jp
-YXMgSmFrb2JpIHdyb3RlOgo+Pj4gVGhlIG91dHB1dCBzdGFnZSBvZiB0aGUgbWl4ZXIgdXNlcyBZ
-Q2JDciBmb3IgdGhlIGludGVybmFsCj4+PiBjb21wdXRhdGlvbnMsIHdoaWNoIGlzIHRoZSByZWFz
-b24gdGhhdCBzb21lIHJlZ2lzdGVycyB0YWtlCj4+PiBZQ2JDciByZWxhdGVkIGRhdGEgYXMgaW5w
-dXQuIEluIHBhcnRpY3VsYXIgdGhpcyBhcHBsaWVzCj4+PiB0byBNWFJfQkdfQ09MT1J7MCwxLDJ9
-IGFuZCBNWFJfQ01fQ09FRkZfe1ksQ0IsQ1J9Lgo+Pj4KPj4+IERvY3VtZW50IHRoZSBmb3JtYXR0
-aW5nIG9mIHRoZSBkYXRhIHdoaWNoIHdlIHdyaXRlIHRvCj4+PiB0aGVzZSByZWdpc3RlcnMuCj4+
-Pgo+Pj4gV2hpbGUgYXQgaXQsIHVuaWZ5IHdvcmRpbmcgb2YgY29tbWVudHMgaW4gdGhlIHJlZ2lz
-dGVyIGhlYWRlci4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2Jp
-QG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPj4+IC0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX21peGVyLmMgfCAzNSArKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0t
-LQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oICAgfCAgNyArKysrKy0t
-Cj4+PiAgMiBmaWxlcyBjaGFuZ2VkLCAzMiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkK
-Pj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIu
-YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+IGluZGV4IDQxZDBj
-MzYuLjNiMGIwN2QgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19taXhlci5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5j
-Cj4+PiBAQCAtNDUsNiArNDUsMjAgQEAKPj4+ICAjZGVmaW5lIE1JWEVSX1dJTl9OUgkJMwo+Pj4g
-ICNkZWZpbmUgVlBfREVGQVVMVF9XSU4JCTIKPj4+ICAKPj4+ICsvKgo+Pj4gKyAqIE1peGVyIGNv
-bG9yIHNwYWNlIGNvbnZlcnNpb24gY29lZmZpY2llbnQgdHJpcGxldC4KPj4+ICsgKiBVc2VkIGZv
-ciBDU0MgZnJvbSBSR0IgdG8gWUNiQ3IuCj4+PiArICogRWFjaCBjb2VmZmljaWVudCBpcyBhIDEw
-LWJpdCBmaXhlZCBwb2ludCBudW1iZXIgd2l0aAo+Pj4gKyAqIHNpZ24gYW5kIG5vIGludGVnZXIg
-cGFydCwgaS5lLgo+PiBNYXliZSBpdCB3b3VsZCBiZSBtb3JlIGNsZWFyIHRvIHNheSBpbiBleGNs
-dXNpdmUgcmFuZ2UgKC0xLDEpCj4+PiArICogWzA6OF0gPSBmcmFjdGlvbmFsIHBhcnQgKHJlcHJl
-c2VudGluZyBhIHZhbHVlIHkgPSB4IC8gMl45KQo+Pj4gKyAqIFs5XSA9IHNpZ24KPj4+ICsgKiBO
-ZWdhdGl2ZSB2YWx1ZXMgYXJlIGVuY29kZWQgd2l0aCB0d28ncyBjb21wbGVtZW50Lgo+Pj4gKyAq
-Lwo+Pj4gKyNkZWZpbmUgTVhSX0NTQ19DVChhMCwgYTEsIGEyKSAoKChhMCkgPDwgMjApIHwgKChh
-MSkgPDwgMTApIHwgKChhMikgPDwgMCkpCj4+IFdlIGNhbiB0YWtlIGFkdmFudGFnZSBvZiB0aGUg
-ZmFjdCB0aGF0IGZsb2F0aW5nIHBvaW50IG51bWJlcnMgYXJlCj4+IGFsbG93ZWQgaW4gY29tcGls
-ZSB0aW1lLCBhcmVuJ3QgdGhleT8KPj4KPj4gI2RlZmluZSBNWFJfQ1NDX0MoeCkgKChpbnQpKCh4
-KSAqIDUxMikgJiAweDNmZikKPj4gI2RlZmluZSBNWFJfQ1NDX0NUKGEwLCBhMSwgYTIpICgoTVhS
-X0NTQ19DKGEwKSA8PCAyMCkgfCAoTVhSX0NTQ19DKGExKQo+PiA8PCAxMCkgfCAoTVhSX0NTQ19D
-KGEyKSA8PCAwKSkKPj4KPj4gYW5kIHN0b3AgdXNpbmcgbWFnaWMgaGV4YWRlY2ltYWxzLCBub3cg
-d2Ugd2lsbCB1c2UgcmVhbCBjb2VmZmljaWVudHMuCj4+ICAgICBNWFJfQ1NDX0NUKDAuMTgzNSwg
-IDAuNjEzMiwgIDAuMDYyNSkKPiBJJ20gbm90IHN1cmUgaWYgdGhpcyBjaGFuZ2Ugb2YgYmFzZSBj
-YW4gYmUgZG9uZSBpbiBhIGxvc3NsZXNzIGZhc2hpb24KPiB3aXRob3V0IHR5cGluZyBvdXQgdG9v
-IG1hbnkgZGlnaXRzIFtzZWUgYmVsb3ddLiBJIGhhdmVuJ3QgZG9uZSB0aGUgbWF0aAo+IGhlcmUu
-IAoKRGlmZmVyZW5jZSBieSBvbmUgaW4gcmVwcmVzZW50YXRpb24gY29ycmVzcG9uZHMgdG8gMC4w
-MDE5LCBzbyBmb3VyCmRpZ2l0cyBhZnRlciBkb3QgaXMgZW5vdWdoLgoKPiBMaWtlIEkgc2FpZCwg
-bm8gZnVuY3Rpb25hbCBjaGFuZ2VzLgoKRGVjaXNpb24gaXMgeW91cnMsIEkgY2FuIG9ubHkgYWR2
-aWNlIHRvIGRvIG5vdCBnaXZlIHVwLgoKUmVnYXJkcwpBbmRyemVqCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi again,
+
+On 09.03.2017 08:51, Andrzej Hajda wrote:
+> On 08.03.2017 21:05, Javier Martinez Canillas wrote:
+>> Hello Andrzej,
+>>
+>> On 02/22/2017 08:04 AM, Andrzej Hajda wrote:
+>>> In case of arbitration lost adequate interrupt sometimes is not signaled.
+>>> As a result transfer timeouts and is not retried, as it should. To avoid
+>>> such cases code is added to check transaction status in case of every
+>>> interrupt.
+>>>
+>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> ---
+>> This patch causes regressions on Exynos5 boards (at least I noticed it in
+>> Exynos5800 Peach Pi board). I see transmission timeouts when accessing I2C
+>> device registers, i.e:
+>>
+>> $ cat /sys/class/rtc/rtc0/time
+>> [   25.924594] exynos5-hsi2c 12e10000.i2c: rx timeout
+>> [   65.028365] max77686-rtc max77802-rtc: Fail to read time reg(-22)
+>> cat: /sys/class/rtc/rtc0/time: Invalid argument
+> Hmm, at 12e10000 Exynos5 has hsi2c_9, and on this bus I have found only
+> infineon,slb9645tt TPM module. At least on mainline kernel.
+> What kernel do you use? Any additional changes to kernel?
+> Do you observe it on mainline kernel?
+>
+> Regarding the issue, how often it happens?
+> Please verify that this is not just coincidence.
+>
+>> Doing a partial revert of $SUBJECT (reading I2C_TRANS_STATUS register when
+>> it was before) "fixes" the problem [0].
+> That look crazy, the only difference for non-Exynos7 variant (which is
+> in Exynos5 boards) is that with your change HSI2C_TRANS_STATUS is read
+> only when HSI2C_INT_I2C happens, am I right?
+> Anyway I have realized that in case of Exynos5 the device HSI2C driver
+> works with is named "Universal Serial Interface" and has slightly
+> different set of registers than HSI2C device present in Exynos52[56]0,
+> but I do not know if it matters.
+>
+> If [0] really fixes the issue I think you can create real patch and send
+> for testing, but it looks very suspicious.
+
+Datasheet for Exynos5260 states clearly that TRANSFER_DONE_AUTO bit is
+cleared automatically after reading TRANS_STATUS register, so reading
+this register has side effect and in case of Exynos5 should be done only
+in 'if (int_status & HSI2C_INT_I2C)' clause. In case of Exynos7 (ie
+Exynos5433 :) ) reading TRANS_STATUS should not have side effects.
+Do you want to prepare fix patch from [0]?
+
+Regards
+Andrzej
+
+>
+> Regards
+> Andrzej
+>
+>> I've read the Exynos5800 and Exynos5433 SoC manuals and couldn't figure out
+>> what's causing it. I first thought that the solution was to make I2C core
+>> to retry when the TRANSFER_DONE_AUTO field isn't set [1] but that only makes
+>> the issue less frequent, it still fails. I also tried to increment the retry
+>> count [2] but it also didn't help.
+>>
+>> Any ideas about what could be happening here?
+>>
+>> [0]:
+>> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+>> index cbd93ce0661f..736a82472101 100644
+>> --- a/drivers/i2c/busses/i2c-exynos5.c
+>> +++ b/drivers/i2c/busses/i2c-exynos5.c
+>> @@ -457,7 +457,6 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+>>  
+>>  	int_status = readl(i2c->regs + HSI2C_INT_STATUS);
+>>  	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
+>> -	trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
+>>  
+>>  	/* handle interrupt related to the transfer status */
+>>  	if (i2c->variant->hw == HSI2C_EXYNOS7) {
+>> @@ -482,11 +481,13 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+>>  			goto stop;
+>>  		}
+>>  
+>> +		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
+>>  		if ((trans_status & HSI2C_MASTER_ST_MASK) == HSI2C_MASTER_ST_LOSE) {
+>>  			i2c->state = -EAGAIN;
+>>  			goto stop;
+>>  		}
+>>  	} else if (int_status & HSI2C_INT_I2C) {
+>> +		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
+>>  		if (trans_status & HSI2C_NO_DEV_ACK) {
+>>  			dev_dbg(i2c->dev, "No ACK from device\n");
+>>  			i2c->state = -ENXIO;
+>>
+>> [1]:
+>> >From 3c60d3a0356563b33b739d309a4f64c003d83053 Mon Sep 17 00:00:00 2001
+>> From: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Date: Mon, 6 Mar 2017 19:35:44 -0300
+>> Subject: [PATCH] i2c: exynos5: Make transaction to retry if isn't successfully completed
+>>
+>> After commit 7999eecb7e56 ("i2c: exynos5: fix arbitration lost handling"),
+>> some I2C transactions are failing because the TRANSFER_DONE_AUTO field is
+>> not set in the I2C_TRANS_STATUS register so the i2c->status value is left
+>> to -EINVAL causing the i2c->msg_complete completion to never be signaled.
+>>
+>> For example, when reading the time of an I2C rtc on an Exynos5800 machine:
+>>
+>> $ cat /sys/class/rtc/rtc0/time
+>> [   25.924594] exynos5-hsi2c 12e10000.i2c: rx timeout
+>> [   65.028365] max77686-rtc max77802-rtc: Fail to read time reg(-22)
+>> cat: /sys/class/rtc/rtc0/time: Invalid argument
+>>
+>> To avoid this, set i2c->state to -EAGAIN if TRANSFER_DONE_AUTO is not set to
+>> allow the I2C core to retry if the transaction wasn't successfully completed.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> ---
+>>  drivers/i2c/busses/i2c-exynos5.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+>> index cbd93ce0661f..d294fb61520c 100644
+>> --- a/drivers/i2c/busses/i2c-exynos5.c
+>> +++ b/drivers/i2c/busses/i2c-exynos5.c
+>> @@ -506,6 +506,10 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+>>  		} else if (trans_status & HSI2C_TRANS_DONE) {
+>>  			i2c->trans_done = 1;
+>>  			i2c->state = 0;
+>> +		} else {
+>> +			dev_dbg(i2c->dev, "Transaction was not completed\n");
+>> +			i2c->state = -EAGAIN;
+>> +			goto stop;
+>>  		}
+>>  	}
+>>  
+>
