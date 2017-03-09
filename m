@@ -1,16 +1,15 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 03/12] drm/exynos/decon5433: fix vblank event handling
-Date: Thu, 09 Mar 2017 07:54:44 +0100
-Message-ID: <288be3ac-8274-b8e4-ff9f-03101af6bdec@samsung.com>
-References: <1488985126-25288-1-git-send-email-a.hajda@samsung.com>
- <CGME20170308145902eucas1p24636df9b8eafd2b07f12a2c700c6bcea@eucas1p2.samsung.com>
- <1488985126-25288-4-git-send-email-a.hajda@samsung.com>
- <50f9ade8-4bb2-6071-6c2b-89ea8f525613@daenzer.net>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: linux-4.11-rc1/drivers/gpu/drm/exynos/exynos5433_drm_decon.c:681:
+ suspicious mask ?
+Date: Thu, 09 Mar 2017 16:34:09 +0900
+Message-ID: <58C10571.9050107@samsung.com>
+References: <CGME20170306100527epcas1p349cea73e30f7720a65d312808c4b2cc3@epcas1p3.samsung.com>
+ <DB5PR08MB0967CD7B84545DE129126A619C2C0@DB5PR08MB0967.eurprd08.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <50f9ade8-4bb2-6071-6c2b-89ea8f525613@daenzer.net>
+In-reply-to: <DB5PR08MB0967CD7B84545DE129126A619C2C0@DB5PR08MB0967.eurprd08.prod.outlook.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -20,40 +19,25 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>, Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: David Binderman <dcb314@hotmail.com>, "jy0922.shim@samsung.com" <jy0922.shim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "airlied@linux.ie" <airlied@linux.ie>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, "javier@osg.samsung.com" <javier@osg.samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDkuMDMuMjAxNyAwNDo1NCwgTWljaGVsIETDpG56ZXIgd3JvdGU6Cj4gT24gMDgvMDMvMTcg
-MTE6NTggUE0sIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+IEN1cnJlbnQgaW1wbGVtZW50YXRpb24g
-b2YgZXZlbnQgaGFuZGxpbmcgYXNzdW1lcyB0aGF0IHZibGFuayBpbnRlcnJ1cHQgaXMKPj4gYWx3
-YXlzIGNhbGxlZCBhdCB0aGUgcmlnaHQgdGltZS4gSXQgaXMgbm90IHRydWUsIGl0IGNhbiBiZSBk
-ZWxheWVkIGR1ZSB0bwo+PiB2YXJpb3VzIHJlYXNvbnMuIEFzIGEgcmVzdWx0IGRpZmZlcmVudCBy
-YWNlcyBjYW4gaGFwcGVuLiBUaGUgcGF0Y2ggZml4ZXMKPj4gdGhlIGlzc3VlIGJ5IHVzaW5nIGhh
-cmR3YXJlIGZyYW1lIGNvdW50ZXIgcHJlc2VudCBpbiBERUNPTiB0byBzZXJpYWxpemUKPj4gdmJs
-YW5rIGFuZCBjb21taXQgY29tcGxldGlvbiBldmVudHMuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEFu
-ZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiB2MjoKPj4gICAtIGFk
-ZGVkIGludGVybmFsIGRlY29uX2dldF9mcmFtZV9jb3VudCBmdW5jdGlvbiwKPj4gICAtIHVwZGF0
-ZWQgZnJhbWUgY291bnRlciBvbiBmbHVzaCwKPj4gICAtIG1pc2Mgc3R5bGUgZml4ZXMgKHRoYW5r
-IElua2kpCj4gWy4uLl0KPgo+PiBAQCAtNTc5LDYgKzYzNiwyMyBAQCBzdGF0aWMgY29uc3Qgc3Ry
-dWN0IGNvbXBvbmVudF9vcHMgZGVjb25fY29tcG9uZW50X29wcyA9IHsKPj4gIAkudW5iaW5kID0g
-ZGVjb25fdW5iaW5kLAo+PiAgfTsKPj4gIAo+PiArc3RhdGljIHZvaWQgZGVjb25faGFuZGxlX3Zi
-bGFuayhzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4KQo+PiArewo+PiArCXUzMiBmcm07Cj4+ICsK
-Pj4gKwlzcGluX2xvY2soJmN0eC0+dmJsYW5rX2xvY2spOwo+PiArCj4+ICsJZnJtID0gZGVjb25f
-Z2V0X2ZyYW1lX2NvdW50KGN0eCwgdHJ1ZSk7Cj4+ICsKPj4gKwlpZiAoZnJtICE9IGN0eC0+ZnJh
-bWVfaWQpIHsKPj4gKwkJaWYgKGZybSA+IGN0eC0+ZnJhbWVfaWQpCj4+ICsJCQlkcm1fY3J0Y19o
-YW5kbGVfdmJsYW5rKCZjdHgtPmNydGMtPmJhc2UpOwo+IFRoaXMgY29tcGFyaXNvbiBpc24ndCBz
-YWZlIFdSVCB0aGUgY291bnRlciB2YWx1ZSByZXR1cm5lZCBieQo+IGRlY29uX2dldF9mcmFtZV9j
-b3VudCB3cmFwcGluZyBhcm91bmQuCgpBbmQga25vd2luZyB0aGF0IG1heCBmcmFtZXJhdGUgaXMg
-NjBmcHMgaXQgd2lsbCBoYXBwZW4gYWZ0ZXI6CgoweGZmZmZmZmZmIC8gNjBmcHMgLyA2MHNlYyAv
-IDYwbWluIC8gMjRoIC8gMzY1ZGF5cyA9IDIuMyB5ZWFycwoKU28gYWZ0ZXIgMi4zIHllYXJzIG9m
-IHVuaW50ZXJydXB0ZWQgd29yayBvZiBwYW5lbC9UViB3ZSB3aWxsIGxvc2Ugb25lIG9yCnR3byB2
-YmxhbmtzIDopIEhpZ2hseSBpbXByb2JhYmxlIGFuZCBldmVuIHRoZW4gbG93IGRhbWFnZS4KCj4g
-SWYgaXQgZ29lcyBhbGwgdGhlIHdheSB1cCB0bwo+IDB4ZmZmZmZmZmYgYmVmb3JlIHdyYXBwaW5n
-IGFyb3VuZCB0byB6ZXJvLCBpdCBjYW4gYmUgaGFuZGxlZCBlLmcuIGJ5Cj4KPiAJCWlmICgoczMy
-KShmcm0gLSBjdHgtPmZyYW1lX2lkKSA+IDApCj4KPiBvdGhlcndpc2UgaXQgZ2V0cyBhIGJpdCBt
-b3JlIGNvbXBsaWNhdGVkLgo+Cj4KQnV0IHRoZSBmaXggbG9va3Mgc2ltcGxlIHNvIEkgdGhpbmsg
-aXQgaXMgd29ydGggdG8gZml4IGl0LiBUaGFua3MuCgpSZWdhcmRzCgpBbmRyemVqCgoKCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+SGVsbG8gRGF2aWQsCgpUaGFua3MgZm9yIHJlcG9ydC4KCjIwMTfrhYQgMDPsm5QgMDbsnbwgMTk6
+MDXsl5AgRGF2aWQgQmluZGVybWFuIOydtCjqsIApIOyTtCDquIA6Cj4gSGVsbG8gdGhlcmUsCj4g
+Cj4gbGludXgtNC4xMS1yYzEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9k
+ZWNvbi5jOjY4MV06ICh3YXJuaW5nKSBSZXN1bHQgb2Ygb3BlcmF0b3IgJ3wnIGlzIGFsd2F5cyB0
+cnVlIGlmIG9uZSBvcGVyYW5kIGlzIG5vbi16ZXJvLiBEaWQgeW91IGludGVuZCB0byB1c2UgJyYn
+Pwo+IAoKUmlnaHQuIHRoaXMgaXMga25vd24gaXNzdWUgYW5kIGJlbG93IHBhdGNoIGZpeGVzIHRo
+aXMsCmh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvZHJpLWRldmVsL21zZzEzMjU4OS5odG1s
+CgpUaGlzIHBhdGNoIHdpbGwgZ28gdG8gLWZpeGVzLgoKPiBTb3VyY2UgY29kZSBpcwo+IAo+ICAg
+ICBpZiAoY3R4LT5vdXRfdHlwZSB8IEk4MF9IV19UUkcpIHsKPiAKPiBBbHNvIGluIHRoZSBzYW1l
+IGZpbGU6Cj4gCj4gW2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24u
+YzoxMzFdOiAoc3R5bGUpIFNhbWUgZXhwcmVzc2lvbiBvbiBib3RoIHNpZGVzIG9mICd8Jy4KPiAK
+PiBTb3VyY2UgY29kZSBpcwo+IAo+ICAgICAgICB3cml0ZWwoVFJJR0NPTl9URV9BVVRPX01BU0sg
+fCBUUklHQ09OX1NXVFJJR0VOCj4gICAgICAgICAgICAgICAgfCBUUklHQ09OX1RFX0FVVE9fTUFT
+SyB8IFRSSUdDT05fU1dUUklHRU4sCgpJbiB0aGlzIGNhc2UsIG9ubHkgcHJvYmxlbSBpcyB0d28g
+ZmxhZ3MgYXJlIHNldCBpbiBkdXBsaWNhdGUuIFRoaXMgc2hvdWxkIGJlIGNsZWFuZWQgdXAuIFRo
+YW5rcy4gOikKCj4gCj4gUmVnYXJkcwo+IAo+IERhdmlkIEJpbmRlcm1hbgo+IAo+IApfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
