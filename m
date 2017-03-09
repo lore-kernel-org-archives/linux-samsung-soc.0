@@ -1,41 +1,95 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] i2c: exynos5: fix arbitration lost handling
-Date: Thu, 9 Mar 2017 11:23:57 -0300
-Message-ID: <496be91a-3908-eea0-a40e-c9c935fb13d7@osg.samsung.com>
-References: <CGME20170222110438eucas1p2329ece7afd9e22ba185da64ccf4b2981@eucas1p2.samsung.com>
- <1487761474-11547-1-git-send-email-a.hajda@samsung.com>
- <2fb11816-85e7-14f6-7b61-5d3eba6096aa@osg.samsung.com>
- <7f287a39-a8a4-1b9d-2d9a-36e849bd726b@samsung.com>
- <20935f7d-a41c-2987-daea-50e4c3aa4ab6@samsung.com>
- <1a9ff664-9321-70db-3a69-8adc0e04dca5@osg.samsung.com>
- <f772cc18-8115-17b4-fc2f-efe28e23db18@samsung.com>
- <804530d2-5ca2-4f15-4de0-006e27794865@osg.samsung.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: exynos5: Avoid transaction timeouts due
+ TRANSFER_DONE_AUTO not set
+Date: Thu, 9 Mar 2017 16:37:48 +0100
+Message-ID: <20170309153748.tayxxf44cru7nlo6@ninjato>
+References: <20170309140533.24618-1-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <804530d2-5ca2-4f15-4de0-006e27794865@osg.samsung.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>
+Content-Type: multipart/mixed; boundary="===============5327461751460324174=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170309140533.24618-1-javier@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Andrzej,
 
-On 03/09/2017 10:59 AM, Javier Martinez Canillas wrote:
->>
->> Your initial proposition [0] is the most suitable solution.
->>
-> 
-> Great, I'll add the fixes and your reviewed-by tags and post it as a patch.
-> 
+--===============5327461751460324174==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="roax3oy4uiuvtcm5"
+Content-Disposition: inline
 
-Ups, it seems I forgot to cc you when posting the patch, sorry about that...
 
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1349049.html
+--roax3oy4uiuvtcm5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+On Thu, Mar 09, 2017 at 11:05:33AM -0300, Javier Martinez Canillas wrote:
+> After commit 7999eecb7e56 ("i2c: exynos5: fix arbitration lost handling"),
+> some I2C transactions are failing because the TRANSFER_DONE_AUTO field is
+> not set in the I2C_TRANS_STATUS register so the i2c->status value is left
+> to -EINVAL causing the i2c->msg_complete completion to never be signaled.
+>=20
+> For example, when reading the time of an I2C rtc on an Exynos5800 machine:
+>=20
+> $ cat /sys/class/rtc/rtc0/time
+> [   25.924594] exynos5-hsi2c 12e10000.i2c: rx timeout
+> [   65.028365] max77686-rtc max77802-rtc: Fail to read time reg(-22)
+> cat: /sys/class/rtc/rtc0/time: Invalid argument
+>=20
+> The Exynos5422 manual states clearly that most I2C_TRANS_STATUS reg bits
+> (including TRANSFER_DONE_AUTO) are cleared after the register is read. So
+> reading has side effects and should only be done if HSI2C_INT_I2C was set.
+>=20
+> Fixes: 7999eecb7e56 ("i2c: exynos5: fix arbitration lost handling")
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>=20
+
+Applied to for-current, thanks!
+
+
+--roax3oy4uiuvtcm5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljBdssACgkQFA3kzBSg
+KbaLmw/+JVgx/lMoPt9MOnWiAy+4Yhw5IKR9PLqpaiSjAB1l9VP1+B6FRsvTMJpc
+zN1aUC++f9jCvS7O6DCYVDMcrk4w+nywvpe3hAVpOoJkY8N2EjhUOFL3MGPC++58
+myT2bf2hLesyt67b3IP0gG1dfzL4iXok5fStHC4i0SxmneuiolTQwW5MJa8Zu17m
+0tVp4espvuv+eAPR6b3uMI3ctEu+Rz8fyZiqhRWQYkUY0qNKISh3soNse3pGUedn
+R5+3+VrGNr2I4AUZ9xWU9GK7fU9fzVmtCDnDUhX7oIjx9ULDRSqnyD4dVQWJwT8J
+9CEJzGAGuYJH5RPrikuTbT19t5ksG12YHvKpL3cIyh68AxM9ksIRI01vUYd6d2Ix
+ptLWhwPj2cdPhKTv5P5b328FIph4t+CiAg7pzP4sFvKZvPAQkt0wrIdLjahHe+Qz
+7jNAUFzTTTP5JFrXuei0JANkM77Jn1oOrPbJZd3lb8FnEpfGYbNYBTPC9bWIv32U
+iSLGeG1SdhZcPyvsMz9yOTCivuUTKzu6l91fz27jXUXlfU4VKyamsTQQNThelIDR
+0/mI1pmcvSRy7kNxvvOz5RiOtitnuno3HC8ESIUxJW8VFz2lggHrTukS2Ed88K4G
+DAioKi7WrxaHh6/iQFzJrQa+gTE8jlSKRfK9PThKlUBRXsULm2w=
+=PFZj
+-----END PGP SIGNATURE-----
+
+--roax3oy4uiuvtcm5--
+
+
+--===============5327461751460324174==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5327461751460324174==--
