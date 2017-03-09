@@ -1,146 +1,55 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2] i2c: exynos5: fix arbitration lost handling
-Date: Thu, 09 Mar 2017 08:51:04 +0100
-Message-ID: <7f287a39-a8a4-1b9d-2d9a-36e849bd726b@samsung.com>
-References: <CGME20170222110438eucas1p2329ece7afd9e22ba185da64ccf4b2981@eucas1p2.samsung.com>
- <1487761474-11547-1-git-send-email-a.hajda@samsung.com>
- <2fb11816-85e7-14f6-7b61-5d3eba6096aa@osg.samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] phy: phy-exynos-pcie: fix the wrong error return
+Date: Thu, 9 Mar 2017 13:43:47 +0530
+Message-ID: <58C10EBB.1030107@ti.com>
+References: <CGME20170308082244epcas1p4e6509812a97b0bc9912b3deb296bae38@epcas1p4.samsung.com>
+ <20170308082242.15915-1-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:23613 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752157AbdCIHvd (ORCPT
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:34123 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752526AbdCIIOA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Mar 2017 02:51:33 -0500
-In-reply-to: <2fb11816-85e7-14f6-7b61-5d3eba6096aa@osg.samsung.com>
+        Thu, 9 Mar 2017 03:14:00 -0500
+In-Reply-To: <20170308082242.15915-1-jh80.chung@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>
+To: Jaehoon Chung <jh80.chung@samsung.com>, linux-kernel@vger.kernel.org
+Cc: krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com, linux-samsung-soc@vger.kernel.org
 
-On 08.03.2017 21:05, Javier Martinez Canillas wrote:
-> Hello Andrzej,
->
-> On 02/22/2017 08:04 AM, Andrzej Hajda wrote:
->> In case of arbitration lost adequate interrupt sometimes is not signaled.
->> As a result transfer timeouts and is not retried, as it should. To avoid
->> such cases code is added to check transaction status in case of every
->> interrupt.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
-> This patch causes regressions on Exynos5 boards (at least I noticed it in
-> Exynos5800 Peach Pi board). I see transmission timeouts when accessing I2C
-> device registers, i.e:
->
-> $ cat /sys/class/rtc/rtc0/time
-> [   25.924594] exynos5-hsi2c 12e10000.i2c: rx timeout
-> [   65.028365] max77686-rtc max77802-rtc: Fail to read time reg(-22)
-> cat: /sys/class/rtc/rtc0/time: Invalid argument
 
-Hmm, at 12e10000 Exynos5 has hsi2c_9, and on this bus I have found only
-infineon,slb9645tt TPM module. At least on mainline kernel.
-What kernel do you use? Any additional changes to kernel?
-Do you observe it on mainline kernel?
 
-Regarding the issue, how often it happens?
-Please verify that this is not just coincidence.
+On Wednesday 08 March 2017 01:52 PM, Jaehoon Chung wrote:
+> When it doesn't get the blk_base's resource, it was returned
+> the error about phy_base, not blk_base.
+> This patch is for fixing the wrong error return about blk_base.
+> 
+> Fixes: cf0adb8e281b ("phy: phy-exynos-pcie: Add support for Exynos PCIe PHY")
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 
->
-> Doing a partial revert of $SUBJECT (reading I2C_TRANS_STATUS register when
-> it was before) "fixes" the problem [0].
+merged, thanks.
 
-That look crazy, the only difference for non-Exynos7 variant (which is
-in Exynos5 boards) is that with your change HSI2C_TRANS_STATUS is read
-only when HSI2C_INT_I2C happens, am I right?
-Anyway I have realized that in case of Exynos5 the device HSI2C driver
-works with is named "Universal Serial Interface" and has slightly
-different set of registers than HSI2C device present in Exynos52[56]0,
-but I do not know if it matters.
-
-If [0] really fixes the issue I think you can create real patch and send
-for testing, but it looks very suspicious.
-
-Regards
-Andrzej
-
->
-> I've read the Exynos5800 and Exynos5433 SoC manuals and couldn't figure out
-> what's causing it. I first thought that the solution was to make I2C core
-> to retry when the TRANSFER_DONE_AUTO field isn't set [1] but that only makes
-> the issue less frequent, it still fails. I also tried to increment the retry
-> count [2] but it also didn't help.
->
-> Any ideas about what could be happening here?
->
-> [0]:
-> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-> index cbd93ce0661f..736a82472101 100644
-> --- a/drivers/i2c/busses/i2c-exynos5.c
-> +++ b/drivers/i2c/busses/i2c-exynos5.c
-> @@ -457,7 +457,6 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
->  
->  	int_status = readl(i2c->regs + HSI2C_INT_STATUS);
->  	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
-> -	trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
->  
->  	/* handle interrupt related to the transfer status */
->  	if (i2c->variant->hw == HSI2C_EXYNOS7) {
-> @@ -482,11 +481,13 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
->  			goto stop;
->  		}
->  
-> +		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
->  		if ((trans_status & HSI2C_MASTER_ST_MASK) == HSI2C_MASTER_ST_LOSE) {
->  			i2c->state = -EAGAIN;
->  			goto stop;
->  		}
->  	} else if (int_status & HSI2C_INT_I2C) {
-> +		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
->  		if (trans_status & HSI2C_NO_DEV_ACK) {
->  			dev_dbg(i2c->dev, "No ACK from device\n");
->  			i2c->state = -ENXIO;
->
-> [1]:
-> >From 3c60d3a0356563b33b739d309a4f64c003d83053 Mon Sep 17 00:00:00 2001
-> From: Javier Martinez Canillas <javier@osg.samsung.com>
-> Date: Mon, 6 Mar 2017 19:35:44 -0300
-> Subject: [PATCH] i2c: exynos5: Make transaction to retry if isn't successfully completed
->
-> After commit 7999eecb7e56 ("i2c: exynos5: fix arbitration lost handling"),
-> some I2C transactions are failing because the TRANSFER_DONE_AUTO field is
-> not set in the I2C_TRANS_STATUS register so the i2c->status value is left
-> to -EINVAL causing the i2c->msg_complete completion to never be signaled.
->
-> For example, when reading the time of an I2C rtc on an Exynos5800 machine:
->
-> $ cat /sys/class/rtc/rtc0/time
-> [   25.924594] exynos5-hsi2c 12e10000.i2c: rx timeout
-> [   65.028365] max77686-rtc max77802-rtc: Fail to read time reg(-22)
-> cat: /sys/class/rtc/rtc0/time: Invalid argument
->
-> To avoid this, set i2c->state to -EAGAIN if TRANSFER_DONE_AUTO is not set to
-> allow the I2C core to retry if the transaction wasn't successfully completed.
->
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+-Kishon
 > ---
->  drivers/i2c/busses/i2c-exynos5.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-> index cbd93ce0661f..d294fb61520c 100644
-> --- a/drivers/i2c/busses/i2c-exynos5.c
-> +++ b/drivers/i2c/busses/i2c-exynos5.c
-> @@ -506,6 +506,10 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
->  		} else if (trans_status & HSI2C_TRANS_DONE) {
->  			i2c->trans_done = 1;
->  			i2c->state = 0;
-> +		} else {
-> +			dev_dbg(i2c->dev, "Transaction was not completed\n");
-> +			i2c->state = -EAGAIN;
-> +			goto stop;
->  		}
->  	}
+>  drivers/phy/phy-exynos-pcie.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/phy/phy-exynos-pcie.c b/drivers/phy/phy-exynos-pcie.c
+> index 4f60b83..60baf25 100644
+> --- a/drivers/phy/phy-exynos-pcie.c
+> +++ b/drivers/phy/phy-exynos-pcie.c
+> @@ -254,8 +254,8 @@ static int exynos_pcie_phy_probe(struct platform_device *pdev)
 >  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>  	exynos_phy->blk_base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(exynos_phy->phy_base))
+> -		return PTR_ERR(exynos_phy->phy_base);
+> +	if (IS_ERR(exynos_phy->blk_base))
+> +		return PTR_ERR(exynos_phy->blk_base);
+>  
+>  	exynos_phy->drv_data = drv_data;
+>  
+> 
