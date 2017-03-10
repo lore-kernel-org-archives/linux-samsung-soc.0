@@ -1,81 +1,112 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [RFC PATCH] phy: samsung: move the Samsung specific phy files to
- "samsung" directory
-Date: Fri, 10 Mar 2017 15:19:38 +0530
-Message-ID: <58C276B2.9020707@ti.com>
-References: <CGME20170309113312epcas5p3eceb2a9cce9fc8ff6871bee7b45dc15e@epcas5p3.samsung.com>
- <20170309113311.15345-1-jh80.chung@samsung.com> <58C142F6.2030708@ti.com>
- <CAJKOXPeYpifDySTdvgk2ra4rjNtBdqGBQV8dsMeWkXCJQPP2zg@mail.gmail.com>
- <4b023d24-6d6b-94be-8895-7ff7f733e5b8@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v6 1/2] [media] exynos-gsc: Use user configured colorspace
+ if provided
+Date: Fri, 10 Mar 2017 11:31:08 +0100
+Message-ID: <624d41f9-bdcb-3a9d-b462-109d1442bd7f@xs4all.nl>
+References: <20170301115108.14187-1-thibault.saunier@osg.samsung.com>
+ <20170301115108.14187-2-thibault.saunier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4b023d24-6d6b-94be-8895-7ff7f733e5b8@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kgene@kernel.org, kamil@wypas.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20170301115108.14187-2-thibault.saunier@osg.samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 01/03/17 12:51, Thibault Saunier wrote:
+> Use colorspace provided by the user as we are only doing scaling and
+> color encoding conversion, we won't be able to transform the colorspace
+> itself and the colorspace won't mater in that operation.
+> 
+> Also always use output colorspace on the capture side.
+> 
+> If the user does not provide a colorspace do no make it up, we might
+> later while processing need to figure out the colorspace, which
+> is possible depending on the frame size but do not ever guess and
+> leak that guess to the userspace.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> 
+> ---
+> 
+> Changes in v6:
+> - Do not ever guess colorspace
+> 
+> Changes in v5:
+> - Squash commit to always use output colorspace on the capture side
+>   inside this one
+> - Fix typo in commit message
+> 
+> Changes in v4:
+> - Reword commit message to better back our assumptions on specifications
+> 
+> Changes in v3:
+> - Do not check values in the g_fmt functions as Andrzej explained in previous review
+> - Added 'Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>'
+> 
+> Changes in v2: None
+> 
+>  drivers/media/platform/exynos-gsc/gsc-core.c | 9 ++++-----
+>  drivers/media/platform/exynos-gsc/gsc-core.h | 1 +
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+> index 59a634201830..0241168c85af 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
+> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+> @@ -454,6 +454,7 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
+>  	} else {
+>  		min_w = variant->pix_min->target_rot_dis_w;
+>  		min_h = variant->pix_min->target_rot_dis_h;
+> +		pix_mp->colorspace = ctx->out_colorspace;
+>  	}
+>  
+>  	pr_debug("mod_x: %d, mod_y: %d, max_w: %d, max_h = %d",
+> @@ -472,10 +473,8 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
+>  
+>  	pix_mp->num_planes = fmt->num_planes;
+>  
+> -	if (pix_mp->width >= 1280) /* HD */
+> -		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+> -	else /* SD */
+> -		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+> +	if (V4L2_TYPE_IS_OUTPUT(f->type))
+> +		ctx->out_colorspace = pix_mp->colorspace;
+>  
+>  	for (i = 0; i < pix_mp->num_planes; ++i) {
+>  		struct v4l2_plane_pix_format *plane_fmt = &pix_mp->plane_fmt[i];
+> @@ -519,8 +518,8 @@ int gsc_g_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
+>  	pix_mp->height		= frame->f_height;
+>  	pix_mp->field		= V4L2_FIELD_NONE;
+>  	pix_mp->pixelformat	= frame->fmt->pixelformat;
+> -	pix_mp->colorspace	= V4L2_COLORSPACE_REC709;
+>  	pix_mp->num_planes	= frame->fmt->num_planes;
+> +	pix_mp->colorspace = ctx->out_colorspace;
 
-On Friday 10 March 2017 12:30 PM, Jaehoon Chung wrote:
-> Hi All,
-> 
-> On 03/09/2017 09:10 PM, Krzysztof Kozlowski wrote:
->> On Thu, Mar 9, 2017 at 1:56 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->>> Hi,
->>>
->>> On Thursday 09 March 2017 05:03 PM, Jaehoon Chung wrote:
->>>> Make the "samsung" directory and move the Samsung specific files to
->>>> there for maintaining the files relevant to Samsung.
->>>
->>> The number of phy drivers in drivers/phy is getting unmanageable. I think this
->>> is a good step to make it a little better. Can you also add a MAINTAINER for
->>> drivers/phy/samsung?
->>
->> There is such:
->>
->> 10903 SAMSUNG USB2 PHY DRIVER
->> 10904 M:      Kamil Debski <kamil@wypas.org>
->> 10905 M:      Sylwester Nawrocki <s.nawrocki@samsung.com>
->> 10906 L:      linux-kernel@vger.kernel.org
->> 10907 S:      Supported
->> 10908 F:      Documentation/devicetree/bindings/phy/samsung-phy.txt
->> 10909 F:      Documentation/phy/samsung-usb2.txt
->> 10910 F:      drivers/phy/phy-exynos4210-usb2.c
->> 10911 F:      drivers/phy/phy-exynos4x12-usb2.c
->> 10912 F:      drivers/phy/phy-exynos5250-usb2.c
->> 10913 F:      drivers/phy/phy-s5pv210-usb2.c
->> 10914 F:      drivers/phy/phy-samsung-usb2.c
->> 10915 F:      drivers/phy/phy-samsung-usb2.h
->>
->> but this patchset does not update it. Paths *everywhere* have to be updated.
-> 
-> Will update..How about the below updating?
-> M:      Kamil Debski <kamil@wypas.org>
-> M:      Sylwester Nawrocki <s.nawrocki@samsung.com>
-> M:	Jaehoon Chung <jh80.chung@samsung.com>
-> L:      linux-kernel@vger.kernel.org
-> S:      Supported
-> F:      Documentation/devicetree/bindings/phy/samsung-phy.txt
-> F:      Documentation/phy/samsung-usb2.txt
-> F: 	driver/phy/samsung/
-> 
-> Let me know your opinion.
+You need to do the same for the ycbcr_enc, xfer_func and quantization fields.
+With that in place it is fully 'colorspace compliant' :-)
 
-Looks good to me.
+Regards,
 
-Thanks
-Kishon
-> 
-> Best Regards,
-> Jaehoon Chung
-> 
->>
->> Best regards,
->> Krzysztof
->>
->>
->>
+	Hans
+
+>  
+>  	for (i = 0; i < pix_mp->num_planes; ++i) {
+>  		pix_mp->plane_fmt[i].bytesperline = (frame->f_width *
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.h b/drivers/media/platform/exynos-gsc/gsc-core.h
+> index 696217e9af66..715d9c9d8d30 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-core.h
+> +++ b/drivers/media/platform/exynos-gsc/gsc-core.h
+> @@ -376,6 +376,7 @@ struct gsc_ctx {
+>  	struct v4l2_ctrl_handler ctrl_handler;
+>  	struct gsc_ctrls	gsc_ctrls;
+>  	bool			ctrls_rdy;
+> +	enum v4l2_colorspace out_colorspace;
+>  };
+>  
+>  void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm);
 > 
