@@ -1,79 +1,60 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 3.16 229/370] clocksource/exynos_mct: Clear interrupt when
- cpu is shut down
-Date: Fri, 10 Mar 2017 11:46:23 +0000
-Message-ID: <lsq.1489146383.332922970@decadent.org.uk>
-References: <lsq.1489146380.780052105@decadent.org.uk>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
+Date: Fri, 10 Mar 2017 14:30:16 +0100
+Message-ID: <1489152617-10425-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <lsq.1489146380.780052105@decadent.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, cw00.choi@samsung.com, daniel.lezcano@linaro.org, Seung-Woo Kim <sw0312.kim@samsung.com>, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, akpm@linux-foundation.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-3.16.42-rc1 review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-
-commit bc7c36eedb0c7004aa06c2afc3c5385adada8fa3 upstream.
-
-When a CPU goes offline a potentially pending timer interrupt is not
-cleared. When the CPU comes online again then the pending interrupt is
-delivered before the per cpu clockevent device is initialized. As a
-consequence the tick interrupt handler dereferences a NULL pointer.
-
-[   51.251378] Unable to handle kernel NULL pointer dereference at virtual address 00000040
-[   51.289348] task: ee942d00 task.stack: ee960000
-[   51.293861] PC is at tick_periodic+0x38/0xb0
-[   51.298102] LR is at tick_handle_periodic+0x1c/0x90
-
-Clear the pending interrupt in the cpu dying path.
-
-Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
-Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: cw00.choi@samsung.com
-Cc: daniel.lezcano@linaro.org
-Cc: javier@osg.samsung.com
-Cc: kgene@kernel.org
-Cc: krzk@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1484628876-22065-1-git-send-email-jy0922.shim@samsung.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bwh: Backported to 3.16: add definition of the 'mevt' variable, added earlier
- upstream]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -458,10 +458,15 @@ static int exynos4_local_timer_setup(str
- 
- static void exynos4_local_timer_stop(struct clock_event_device *evt)
- {
-+	struct mct_clock_event_device *mevt;
-+
-+	mevt = container_of(evt, struct mct_clock_event_device, evt);
-+
- 	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
- 	if (mct_int_type == MCT_INT_SPI) {
- 		if (evt->irq != -1)
- 			disable_irq_nosync(evt->irq);
-+		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
- 	} else {
- 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
- 	}
+Q29udmVydCBpZi1zdGF0ZW1lbnRzIHRvIHN3aXRjaCBzdGF0ZW1lbnQuIFJlbW92ZXMKZHVwbGlj
+YXRlZCBjb2RlLgoKUmV2aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5j
+b20+ClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVm
+ZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAzMCAr
+KysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlv
+bnMoKyksIDIyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5j
+CmluZGV4IDcyMTQzYWMuLjQxZDBjMzYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX21peGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
+ZXIuYwpAQCAtMzgyLDI5ICszODIsMTQgQEAgc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3JnYl9mbXQo
+c3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGhlaWdodCkKIAlzdHJ1Y3Qg
+bWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7CiAJdTMyIHZhbDsKIAotCWlm
+IChoZWlnaHQgPT0gNDgwKSB7CisJc3dpdGNoIChoZWlnaHQpIHsKKwljYXNlIDQ4MDoKKwljYXNl
+IDU3NjoKIAkJdmFsID0gTVhSX0NGR19SR0I2MDFfMF8yNTU7Ci0JfSBlbHNlIGlmIChoZWlnaHQg
+PT0gNTc2KSB7Ci0JCXZhbCA9IE1YUl9DRkdfUkdCNjAxXzBfMjU1OwotCX0gZWxzZSBpZiAoaGVp
+Z2h0ID09IDcyMCkgewotCQl2YWwgPSBNWFJfQ0ZHX1JHQjcwOV8xNl8yMzU7Ci0JCW1peGVyX3Jl
+Z193cml0ZShyZXMsIE1YUl9DTV9DT0VGRl9ZLAotCQkJCSgxIDw8IDMwKSB8ICg5NCA8PCAyMCkg
+fCAoMzE0IDw8IDEwKSB8Ci0JCQkJKDMyIDw8IDApKTsKLQkJbWl4ZXJfcmVnX3dyaXRlKHJlcywg
+TVhSX0NNX0NPRUZGX0NCLAotCQkJCSg5NzIgPDwgMjApIHwgKDg1MSA8PCAxMCkgfCAoMjI1IDw8
+IDApKTsKLQkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0NNX0NPRUZGX0NSLAotCQkJCSgyMjUg
+PDwgMjApIHwgKDgyMCA8PCAxMCkgfCAoMTAwNCA8PCAwKSk7Ci0JfSBlbHNlIGlmIChoZWlnaHQg
+PT0gMTA4MCkgewotCQl2YWwgPSBNWFJfQ0ZHX1JHQjcwOV8xNl8yMzU7Ci0JCW1peGVyX3JlZ193
+cml0ZShyZXMsIE1YUl9DTV9DT0VGRl9ZLAotCQkJCSgxIDw8IDMwKSB8ICg5NCA8PCAyMCkgfCAo
+MzE0IDw8IDEwKSB8Ci0JCQkJKDMyIDw8IDApKTsKLQkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhS
+X0NNX0NPRUZGX0NCLAotCQkJCSg5NzIgPDwgMjApIHwgKDg1MSA8PCAxMCkgfCAoMjI1IDw8IDAp
+KTsKLQkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0NNX0NPRUZGX0NSLAotCQkJCSgyMjUgPDwg
+MjApIHwgKDgyMCA8PCAxMCkgfCAoMTAwNCA8PCAwKSk7Ci0JfSBlbHNlIHsKKwkJYnJlYWs7CisJ
+Y2FzZSA3MjA6CisJY2FzZSAxMDgwOgorCWRlZmF1bHQ6CiAJCXZhbCA9IE1YUl9DRkdfUkdCNzA5
+XzE2XzIzNTsKIAkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0NNX0NPRUZGX1ksCiAJCQkJKDEg
+PDwgMzApIHwgKDk0IDw8IDIwKSB8ICgzMTQgPDwgMTApIHwKQEAgLTQxMyw2ICszOTgsNyBAQCBz
+dGF0aWMgdm9pZCBtaXhlcl9jZmdfcmdiX2ZtdChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1
+bnNpZ25lZCBpbnQgaGVpZ2h0KQogCQkJCSg5NzIgPDwgMjApIHwgKDg1MSA8PCAxMCkgfCAoMjI1
+IDw8IDApKTsKIAkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0NNX0NPRUZGX0NSLAogCQkJCSgy
+MjUgPDwgMjApIHwgKDgyMCA8PCAxMCkgfCAoMTAwNCA8PCAwKSk7CisJCWJyZWFrOwogCX0KIAog
+CW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfQ0ZHLCB2YWwsIE1YUl9DRkdfUkdCX0ZNVF9N
+QVNLKTsKLS0gCjIuNy4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
