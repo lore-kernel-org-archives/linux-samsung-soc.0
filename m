@@ -1,99 +1,94 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
-Date: Fri, 10 Mar 2017 15:21:54 +0100
-Message-ID: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC PATCH] phy: samsung: move the Samsung specific phy files to
+ "samsung" directory
+Date: Fri, 10 Mar 2017 19:55:54 +0200
+Message-ID: <CAJKOXPcNPA+XQE4J1CpnvjFr56qW0gbHBZfZzsWXkEAQDjxuFA@mail.gmail.com>
+References: <CGME20170309113312epcas5p3eceb2a9cce9fc8ff6871bee7b45dc15e@epcas5p3.samsung.com>
+ <20170309113311.15345-1-jh80.chung@samsung.com> <58C142F6.2030708@ti.com>
+ <CAJKOXPeYpifDySTdvgk2ra4rjNtBdqGBQV8dsMeWkXCJQPP2zg@mail.gmail.com> <4b023d24-6d6b-94be-8895-7ff7f733e5b8@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:43854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932159AbdCJRz7 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 10 Mar 2017 12:55:59 -0500
+In-Reply-To: <4b023d24-6d6b-94be-8895-7ff7f733e5b8@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux-kernel@vger.kernel.org, kgene@kernel.org, kamil@wypas.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-VGhlIG91dHB1dCBzdGFnZSBvZiB0aGUgbWl4ZXIgdXNlcyBZQ2JDciBmb3IgdGhlIGludGVybmFs
-CmNvbXB1dGF0aW9ucywgd2hpY2ggaXMgdGhlIHJlYXNvbiB0aGF0IHNvbWUgcmVnaXN0ZXJzIHRh
-a2UKWUNiQ3IgcmVsYXRlZCBkYXRhIGFzIGlucHV0LiBJbiBwYXJ0aWN1bGFyIHRoaXMgYXBwbGll
-cwp0byBNWFJfQkdfQ09MT1J7MCwxLDJ9IGFuZCBNWFJfQ01fQ09FRkZfe1ksQ0IsQ1J9LgoKRG9j
-dW1lbnQgdGhlIGZvcm1hdHRpbmcgb2YgdGhlIGRhdGEgd2hpY2ggd2Ugd3JpdGUgdG8KdGhlc2Ug
-cmVnaXN0ZXJzLgoKV2hpbGUgYXQgaXQsIHVuaWZ5IHdvcmRpbmcgb2YgY29tbWVudHMgaW4gdGhl
-IHJlZ2lzdGVyIGhlYWRlci4KClJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNh
-bXN1bmcuY29tPgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5p
-LWJpZWxlZmVsZC5kZT4KLS0tCkNoYW5nZXMgaW4gdjI6Ci0gdXNlIGZsb2F0aW5nIHBvaW50IHZh
-bHVlcyBhcyBpbnB1dCBmb3IgdGhlIG1hY3JvcywgYXMKICBzdWdnZXN0ZWQgYnkgQW5kcnplagot
-IHRoZSBmbG9hdGluZyBwb2ludCB2YWx1ZXMgaGF2ZSBiZWVuIHR1bmVkIHRvIGV4YWN0bHkgbWF0
-Y2gKICB0aGUgdmFsdWVzIHRoYXQgYXJlIGN1cnJlbnRseSB1c2VkCgpDaGFuZ2VzIGluIHYzOgot
-IHVzZSBvbmx5IHRocmVlIGRpZ2l0IHZhbHVlcyAocG9pbnRlZCBvdXQgYnkgQW5kcnplaikKCiBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMzMgKysrKysrKysrKysrKysr
-KysrKysrKysrKy0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCAg
-IHwgIDcgKysrKystLQogMiBmaWxlcyBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspLCAxMCBkZWxl
-dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwppbmRleCA0MWQwYzM2
-Li45NjQ4ZGQ1IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAgLTQ1LDYg
-KzQ1LDIyIEBACiAjZGVmaW5lIE1JWEVSX1dJTl9OUgkJMwogI2RlZmluZSBWUF9ERUZBVUxUX1dJ
-TgkJMgogCisvKgorICogTWl4ZXIgY29sb3Igc3BhY2UgY29udmVyc2lvbiBjb2VmZmljaWVudCB0
-cmlwbGV0LgorICogVXNlZCBmb3IgQ1NDIGZyb20gUkdCIHRvIFlDYkNyLgorICogRWFjaCBjb2Vm
-ZmljaWVudCBpcyBhIDEwLWJpdCBmaXhlZCBwb2ludCBudW1iZXIgd2l0aAorICogc2lnbiBhbmQg
-bm8gaW50ZWdlciBwYXJ0LCBpLmUuCisgKiBbMDo4XSA9IGZyYWN0aW9uYWwgcGFydCAocmVwcmVz
-ZW50aW5nIGEgdmFsdWUgeSA9IHggLyAyXjkpCisgKiBbOV0gPSBzaWduCisgKiBOZWdhdGl2ZSB2
-YWx1ZXMgYXJlIGVuY29kZWQgd2l0aCB0d28ncyBjb21wbGVtZW50LgorICovCisjZGVmaW5lIE1Y
-Ul9DU0NfQyh4KSAoKGludCkoKHgpICogNTEyLjApICYgMHgzZmYpCisjZGVmaW5lIE1YUl9DU0Nf
-Q1QoYTAsIGExLCBhMikgXAorICAoKE1YUl9DU0NfQyhhMCkgPDwgMjApIHwgKE1YUl9DU0NfQyhh
-MSkgPDwgMTApIHwgKE1YUl9DU0NfQyhhMikgPDwgMCkpCisKKy8qIFlDYkNyIHZhbHVlLCB1c2Vk
-IGZvciBtaXhlciBiYWNrZ3JvdW5kIGNvbG9yIGNvbmZpZ3VyYXRpb24uICovCisjZGVmaW5lIE1Y
-Ul9ZQ0JDUl9WQUwoeSwgY2IsIGNyKSAoKCh5KSA8PCAxNikgfCAoKGNiKSA8PCA4KSB8ICgoY3Ip
-IDw8IDApKQorCiAvKiBUaGUgcGl4ZWxmb3JtYXRzIHRoYXQgYXJlIG5hdGl2ZWx5IHN1cHBvcnRl
-ZCBieSB0aGUgbWl4ZXIuICovCiAjZGVmaW5lIE1YUl9GT1JNQVRfUkdCNTY1CTQKICNkZWZpbmUg
-TVhSX0ZPUk1BVF9BUkdCMTU1NQk1CkBAIC0zOTEsMTMgKzQwNywxNCBAQCBzdGF0aWMgdm9pZCBt
-aXhlcl9jZmdfcmdiX2ZtdChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQg
-aGVpZ2h0KQogCWNhc2UgMTA4MDoKIAlkZWZhdWx0OgogCQl2YWwgPSBNWFJfQ0ZHX1JHQjcwOV8x
-Nl8yMzU7CisJCS8qIENvbmZpZ3VyZSB0aGUgQlQuNzA5IENTQyBtYXRyaXggZm9yIGZ1bGwgcmFu
-Z2UgUkdCLiAqLwogCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfWSwKLQkJCQko
-MSA8PCAzMCkgfCAoOTQgPDwgMjApIHwgKDMxNCA8PCAxMCkgfAotCQkJCSgzMiA8PCAwKSk7CisJ
-CQlNWFJfQ1NDX0NUKCAwLjE4NCwgIDAuNjE0LCAgMC4wNjMpIHwKKwkJCU1YUl9DTV9DT0VGRl9S
-R0JfRlVMTCk7CiAJCW1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9DTV9DT0VGRl9DQiwKLQkJCQko
-OTcyIDw8IDIwKSB8ICg4NTEgPDwgMTApIHwgKDIyNSA8PCAwKSk7CisJCQlNWFJfQ1NDX0NUKC0w
-LjEwMiwgLTAuMzM4LCAgMC40NDApKTsKIAkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0NNX0NP
-RUZGX0NSLAotCQkJCSgyMjUgPDwgMjApIHwgKDgyMCA8PCAxMCkgfCAoMTAwNCA8PCAwKSk7CisJ
-CQlNWFJfQ1NDX0NUKCAwLjQ0MCwgLTAuMzk5LCAtMC4wNDApKTsKIAkJYnJlYWs7CiAJfQogCkBA
-IC03MTUsMTAgKzczMiwxMCBAQCBzdGF0aWMgdm9pZCBtaXhlcl93aW5fcmVzZXQoc3RydWN0IG1p
-eGVyX2NvbnRleHQgKmN0eCkKIAkvKiByZXNldCBkZWZhdWx0IGxheWVyIHByaW9yaXR5ICovCiAJ
-bWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0xBWUVSX0NGRywgMCk7CiAKLQkvKiBzZXR0aW5nIGJh
-Y2tncm91bmQgY29sb3IgKi8KLQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1IwLCAw
-eDAwODA4MCk7Ci0JbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0JHX0NPTE9SMSwgMHgwMDgwODAp
-OwotCW1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9CR19DT0xPUjIsIDB4MDA4MDgwKTsKKwkvKiBz
-ZXQgYWxsIGJhY2tncm91bmQgY29sb3JzIHRvIFJHQiAoMCwwLDApICovCisJbWl4ZXJfcmVnX3dy
-aXRlKHJlcywgTVhSX0JHX0NPTE9SMCwgTVhSX1lDQkNSX1ZBTCgwLCAxMjgsIDEyOCkpOworCW1p
-eGVyX3JlZ193cml0ZShyZXMsIE1YUl9CR19DT0xPUjEsIE1YUl9ZQ0JDUl9WQUwoMCwgMTI4LCAx
-MjgpKTsKKwltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1IyLCBNWFJfWUNCQ1JfVkFM
-KDAsIDEyOCwgMTI4KSk7CiAKIAlpZiAodGVzdF9iaXQoTVhSX0JJVF9WUF9FTkFCTEVELCAmY3R4
-LT5mbGFncykpIHsKIAkJLyogY29uZmlndXJhdGlvbiBvZiBWaWRlbyBQcm9jZXNzb3IgUmVnaXN0
-ZXJzICovCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCmluZGV4IDdmMjJkZjUuLmMzMTFm
-NTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCisrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCkBAIC0xNDAsMTEgKzE0MCwxMSBA
-QAogI2RlZmluZSBNWFJfSU5UX0VOX1ZTWU5DCQkoMSA8PCAxMSkKICNkZWZpbmUgTVhSX0lOVF9F
-Tl9BTEwJCQkoMHgwZiA8PCA4KQogCi0vKiBiaXQgZm9yIE1YUl9JTlRfU1RBVFVTICovCisvKiBi
-aXRzIGZvciBNWFJfSU5UX1NUQVRVUyAqLwogI2RlZmluZSBNWFJfSU5UX0NMRUFSX1ZTWU5DCQko
-MSA8PCAxMSkKICNkZWZpbmUgTVhSX0lOVF9TVEFUVVNfVlNZTkMJCSgxIDw8IDApCiAKLS8qIGJp
-dCBmb3IgTVhSX0xBWUVSX0NGRyAqLworLyogYml0cyBmb3IgTVhSX0xBWUVSX0NGRyAqLwogI2Rl
-ZmluZSBNWFJfTEFZRVJfQ0ZHX0dSUDFfVkFMKHgpCU1YUl9NQVNLX1ZBTCh4LCAxMSwgOCkKICNk
-ZWZpbmUgTVhSX0xBWUVSX0NGR19HUlAxX01BU0sJCU1YUl9MQVlFUl9DRkdfR1JQMV9WQUwofjAp
-CiAjZGVmaW5lIE1YUl9MQVlFUl9DRkdfR1JQMF9WQUwoeCkJTVhSX01BU0tfVkFMKHgsIDcsIDQp
-CkBAIC0xNTIsNSArMTUyLDggQEAKICNkZWZpbmUgTVhSX0xBWUVSX0NGR19WUF9WQUwoeCkJCU1Y
-Ul9NQVNLX1ZBTCh4LCAzLCAwKQogI2RlZmluZSBNWFJfTEFZRVJfQ0ZHX1ZQX01BU0sJCU1YUl9M
-QVlFUl9DRkdfVlBfVkFMKH4wKQogCisvKiBiaXRzIGZvciBNWFJfQ01fQ09FRkZfWSAqLworI2Rl
-ZmluZSBNWFJfQ01fQ09FRkZfUkdCX0ZVTEwJCSgxIDw8IDMwKQorCiAjZW5kaWYgLyogU0FNU1VO
-R19SRUdTX01JWEVSX0ggKi8KIAotLSAKMi43LjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Fri, Mar 10, 2017 at 9:00 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Hi All,
+>
+> On 03/09/2017 09:10 PM, Krzysztof Kozlowski wrote:
+>> On Thu, Mar 9, 2017 at 1:56 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>> Hi,
+>>>
+>>> On Thursday 09 March 2017 05:03 PM, Jaehoon Chung wrote:
+>>>> Make the "samsung" directory and move the Samsung specific files to
+>>>> there for maintaining the files relevant to Samsung.
+>>>
+>>> The number of phy drivers in drivers/phy is getting unmanageable. I think this
+>>> is a good step to make it a little better. Can you also add a MAINTAINER for
+>>> drivers/phy/samsung?
+>>
+>> There is such:
+>>
+>> 10903 SAMSUNG USB2 PHY DRIVER
+>> 10904 M:      Kamil Debski <kamil@wypas.org>
+>> 10905 M:      Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> 10906 L:      linux-kernel@vger.kernel.org
+>> 10907 S:      Supported
+>> 10908 F:      Documentation/devicetree/bindings/phy/samsung-phy.txt
+>> 10909 F:      Documentation/phy/samsung-usb2.txt
+>> 10910 F:      drivers/phy/phy-exynos4210-usb2.c
+>> 10911 F:      drivers/phy/phy-exynos4x12-usb2.c
+>> 10912 F:      drivers/phy/phy-exynos5250-usb2.c
+>> 10913 F:      drivers/phy/phy-s5pv210-usb2.c
+>> 10914 F:      drivers/phy/phy-samsung-usb2.c
+>> 10915 F:      drivers/phy/phy-samsung-usb2.h
+>>
+>> but this patchset does not update it. Paths *everywhere* have to be updated.
+>
+> Will update..How about the below updating?
+> M:      Kamil Debski <kamil@wypas.org>
+> M:      Sylwester Nawrocki <s.nawrocki@samsung.com>
+> M:      Jaehoon Chung <jh80.chung@samsung.com>
+> L:      linux-kernel@vger.kernel.org
+> S:      Supported
+> F:      Documentation/devicetree/bindings/phy/samsung-phy.txt
+> F:      Documentation/phy/samsung-usb2.txt
+> F:      driver/phy/samsung/
+
+Hm? Except recent phy-exynos-pcie you did not contribute to other PHY
+drivers. You did not reviewed them on the lists. I think that
+maintenance starts with reviewing... which did not happen in this
+case.
+
+Did you discuss it with existing maintainers (I know that Sylwester is
+too polite... but I do not care about politics and I can say straight
+from the shoulder).
+
+Maybe you wanted:
+SAMSUNG PHY DRIVERS
+M:      Kamil Debski <kamil@wypas.org>
+M:      Sylwester Nawrocki <s.nawrocki@samsung.com>
+L:      linux-kernel@vger.kernel.org
+S:      Supported
+F:      Documentation/devicetree/bindings/phy/samsung-phy.txt
+F:      Documentation/phy/samsung-usb2.txt
+F:      driver/phy/samsung/
+
+SAMSUNG PCIE PHY DRIVER
+M:      Jaehoon Chung <jh80.chung@samsung.com>
+L:      linux-kernel@vger.kernel.org
+S:      Supported
+F:      driver/phy/samsung/phy-exynos-pcie.c
+
+That looks much more sensible to me.
+
+Best regards,
+Krzysztof
