@@ -1,74 +1,79 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH v2 2/3] Input: add support for the STMicroelectronics
- FingerTip touchscreen
-Date: Fri, 10 Mar 2017 20:43:29 +0900
-Message-ID: <20170310114329.qpspk32hkrt2v5gq@gangnam.samsung>
-References: <20170210021721.12218-1-andi.shyti@samsung.com>
- <CGME20170210021729epcas1p3e11cade2daa21d2dd23839975e29acb6@epcas1p3.samsung.com>
- <20170210021721.12218-3-andi.shyti@samsung.com> <58BF450C.8070000@samsung.com>
+From: Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 3.16 229/370] clocksource/exynos_mct: Clear interrupt when
+ cpu is shut down
+Date: Fri, 10 Mar 2017 11:46:23 +0000
+Message-ID: <lsq.1489146383.332922970@decadent.org.uk>
+References: <lsq.1489146380.780052105@decadent.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39015 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932793AbdCJLnj (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 06:43:39 -0500
-Content-disposition: inline
-In-reply-to: <58BF450C.8070000@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <lsq.1489146380.780052105@decadent.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, cw00.choi@samsung.com, daniel.lezcano@linaro.org, Seung-Woo Kim <sw0312.kim@samsung.com>, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, akpm@linux-foundation.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-Hi Chanwoo,
+3.16.42-rc1 review patch.  If anyone has any objections, please let me know.
 
-> > +			input_mt_slot(sdata->input, t_id);
-> > +			input_report_abs(sdata->input, ABS_MT_POSITION_X, x);
-> > +			input_report_abs(sdata->input, ABS_MT_POSITION_Y, y);
-> > +			input_report_abs(sdata->input, ABS_MT_TOUCH_MAJOR, maj);
-> > +			input_report_abs(sdata->input, ABS_MT_TOUCH_MINOR, min);
-> > +			input_report_abs(sdata->input, ABS_MT_PRESSURE, area);
-> > +			input_report_abs(sdata->input, ABS_MT_ORIENTATION,
-> > +								orientation);
-> > +			input_sync(sdata->input);
-> > +
-> 
-> When I tested this patch on TM2 board, It looks like it is not well working.
-> So, I tried to check the input event by using the evtest tool.
-> But, the result don't show the proper ABS_MT_TRACKING_ID event.
-> [1] https://cgit.freedesktop.org/evtest/
-> 
-> According to the mutlti-touch-protocol.txt[2], there are two multi-touch protocol.
-> As far as I knew, this driver supports the Protocol B which needs
-> the ABS_MT_TRACKING_ID according to the multi-touch-protocol.txt[2].
-> [2] Documentation/input/mutlti-touch-protocol.txt
->  
-> In our test, the ABS_MT_TRACKING_ID is showed only one time.
-> After pressing/releasing finger from touchscreen on first time,
-> there are no ABS_MT_TRACKING_ID information from second try with finger.
-> 
-> I guess that input_mt_report_slot_state() is not calling properly.
+------------------
 
-Thanks for testing it, with my own tests indeed I didn't check on
-that, there is a logical mistake here:
+From: Joonyoung Shim <jy0922.shim@samsung.com>
 
-> > +			if (id == STMFTS_EV_MULTI_TOUCH_ENTER) {
-> > +				if (!(sdata->in_touch++))
-> > +					input_mt_report_slot_state(
-> > +							sdata->input,
-> > +							MT_TOOL_FINGER, true);
-> > +			} else if (id == STMFTS_EV_MULTI_TOUCH_LEAVE) {
-> > +				if (!(--sdata->in_touch))
-> > +					input_mt_report_slot_state(
-> > +							sdata->input,
-> > +							MT_TOOL_FINGER, false);
-> > +			}
+commit bc7c36eedb0c7004aa06c2afc3c5385adada8fa3 upstream.
 
-the inner ifs should be removed, they prevent the
-ABS_MT_TRACKING_ID to be sent.
+When a CPU goes offline a potentially pending timer interrupt is not
+cleared. When the CPU comes online again then the pending interrupt is
+delivered before the per cpu clockevent device is initialized. As a
+consequence the tick interrupt handler dereferences a NULL pointer.
 
-I will fix it.
+[   51.251378] Unable to handle kernel NULL pointer dereference at virtual address 00000040
+[   51.289348] task: ee942d00 task.stack: ee960000
+[   51.293861] PC is at tick_periodic+0x38/0xb0
+[   51.298102] LR is at tick_handle_periodic+0x1c/0x90
 
-Thanks a lot,
-Andi
+Clear the pending interrupt in the cpu dying path.
+
+Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
+Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: cw00.choi@samsung.com
+Cc: daniel.lezcano@linaro.org
+Cc: javier@osg.samsung.com
+Cc: kgene@kernel.org
+Cc: krzk@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1484628876-22065-1-git-send-email-jy0922.shim@samsung.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[bwh: Backported to 3.16: add definition of the 'mevt' variable, added earlier
+ upstream]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -458,10 +458,15 @@ static int exynos4_local_timer_setup(str
+ 
+ static void exynos4_local_timer_stop(struct clock_event_device *evt)
+ {
++	struct mct_clock_event_device *mevt;
++
++	mevt = container_of(evt, struct mct_clock_event_device, evt);
++
+ 	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
+ 	if (mct_int_type == MCT_INT_SPI) {
+ 		if (evt->irq != -1)
+ 			disable_irq_nosync(evt->irq);
++		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
+ 	} else {
+ 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+ 	}
