@@ -1,53 +1,42 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 4/5] mfd: exynos-lpass: Use common soc/exynos-regs-pmu.h header
-Date: Sat, 11 Mar 2017 22:00:20 +0200
-Message-ID: <20170311200021.5827-5-krzk@kernel.org>
-References: <20170311200021.5827-1-krzk@kernel.org>
+Subject: [PATCH 0/3] arm64: exynos: Enable drivers for Exynos5433
+Date: Sat, 11 Mar 2017 23:38:53 +0200
+Message-ID: <20170311213856.21701-1-krzk@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:37774 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:45302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933424AbdCKUBR (ORCPT
+        id S1754017AbdCKVjM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Mar 2017 15:01:17 -0500
-In-Reply-To: <20170311200021.5827-1-krzk@kernel.org>
+        Sat, 11 Mar 2017 16:39:12 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, Inha Song <ideal.song@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-The MFD-specific header will go away because it duplicates defines from
-exynos-regs-pmu.h.
+Hi,
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/mfd/exynos-lpass.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index 2e064fb8826f..8bebad92a385 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -18,11 +18,11 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/mfd/syscon.h>
--#include <linux/mfd/syscon/exynos5-pmu.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/soc/samsung/exynos-regs-pmu.h>
- #include <linux/types.h>
- 
- /* LPASS Top register definitions */
-@@ -83,7 +83,7 @@ static void exynos_lpass_enable(struct exynos_lpass *lpass)
- 
- 	/* Activate related PADs from retention state */
- 	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION,
--		     EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR);
-+		     EXYNOS_WAKEUP_FROM_LOWPWR);
- 
- 	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
- 	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
+Patches are independent but I organized them into one patchset
+as they have common goal - enable more drivers for ARMv8 Exynos chips.
+
+If there are no objections, I can take it through samsung-soc.
+
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (3):
+  arm64: defconfig: Enable DRM and LPASS drivers for Exynos5433 and
+    Exynos7
+  soc: samsung: Do not build ARMv7 PMU drivers on ARMv8
+  arm64: exynos: Enable Exynos PMU and PM domains drivers
+
+ arch/arm64/Kconfig.platforms     |  2 ++
+ arch/arm64/configs/defconfig     | 18 ++++++++++++++++++
+ drivers/soc/samsung/Kconfig      |  8 +++++++-
+ drivers/soc/samsung/Makefile     |  4 +++-
+ drivers/soc/samsung/exynos-pmu.c | 22 ++++++++++++++++------
+ drivers/soc/samsung/exynos-pmu.h |  3 +++
+ 6 files changed, 49 insertions(+), 8 deletions(-)
+
 -- 
 2.9.3
