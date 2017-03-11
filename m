@@ -1,37 +1,54 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/8] watchdog: s3c2410: Remove confusing CONFIG prefix
- from local defines
-Date: Sat, 11 Mar 2017 19:28:41 +0200
-Message-ID: <20170311172841.plxclb45qyp6yyqd@kozik-lap>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 2/8] watchdog: s3c2410: Fix infinite interrupt in soft
+ mode
+Date: Sat, 11 Mar 2017 19:29:09 +0200
+Message-ID: <20170311172909.5brghl4szwijumtt@kozik-lap>
 References: <20170311172527.16368-1-krzk@kernel.org>
- <20170311172527.16368-2-krzk@kernel.org>
+ <20170311172527.16368-3-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20170311172527.16368-2-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20170311172527.16368-3-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Mar 11, 2017 at 07:25:20PM +0200, Krzysztof Kozlowski wrote:
-> The CONFIG prefix from defines in the s3c2410_wdt.c might suggest that
-> these constants come from Kconfig.
+On Sat, Mar 11, 2017 at 07:25:21PM +0200, Krzysztof Kozlowski wrote:
+> In soft (no-reboot) mode, the driver self-pings watchdog upon expiration
+> of an interrupt.  However the interrupt itself was not cleared thus on
+> first hit, the system enters infinite interrupt handling loop.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+> On Odroid U3 (Exynos4412), when booted with s3c2410_wdt.soft_noboot=1
+> argument the console is flooded:
+> 	# killall -9 watchdog
+> 	[   60.523760] s3c2410-wdt 10060000.watchdog: watchdog timer expired (irq)
+> 	[   60.536744] s3c2410-wdt 10060000.watchdog: watchdog timer expired (irq)
+> 
+> Fix this by writing something to the WTCLRINT register to clear the
+> interrupt.  The register WTCLRINT however appeared in S3C6410 so a new
+> watchdog quirk and flavor are needed.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Acked-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/watchdog/s3c2410_wdt.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+>  .../devicetree/bindings/watchdog/samsung-wdt.txt    |  9 +++++----
+>  drivers/watchdog/s3c2410_wdt.c                      | 21 ++++++++++++++++++---
+>  2 files changed, 23 insertions(+), 7 deletions(-)
 >
 
-Ah, my mistake, I looked at watchdog-master but this is already in
-watchdog-next. Sorry for confusion.
+This can be ignored, already applied.
+
 
 Best regards,
 Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
