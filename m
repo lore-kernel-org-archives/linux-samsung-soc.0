@@ -1,137 +1,141 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 3/3] watchdog: s3c2410: Minor code cleanup
-Date: Sat, 11 Mar 2017 19:42:55 +0200
-Message-ID: <20170311174255.23327-4-krzk@kernel.org>
-References: <20170311174255.23327-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170311174255.23327-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RESEND] drm/exynos: Remove support for Exynos4415 (SoC not supported anymore)
+Date: Sat, 11 Mar 2017 20:04:16 +0200
+Message-ID: <20170311180416.7071-1-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:55618 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754017AbdCKSE3 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sat, 11 Mar 2017 13:04:29 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Cleanup the code from minor readability issues (no functional changes):
-1. Fix checkpatch: ERROR: Do not include the paragraph about writing to
-   the Free Software Foundation's mailing address.
-2. Fix checkpatch: WARNING: quoted string split across lines
-3. Fix chechpatch: WARNING: Prefer 'unsigned int' to bare use of
-   'unsigned'
-4. Use 'dev' consistently in probe function instead of mixing dev with
-   &pdev->dev.
+Support for Exynos4415 is going away because there are no internal nor
+external users.
+
+Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
+the platform cannot be instantiated so remove also the drivers.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Kukjin Kim <kgene@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/watchdog/s3c2410_wdt.c | 35 +++++++++++++----------------------
- 1 file changed, 13 insertions(+), 22 deletions(-)
+ .../devicetree/bindings/display/exynos/exynos_dsim.txt |  1 -
+ .../bindings/display/exynos/samsung-fimd.txt           |  1 -
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c                | 15 +--------------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c               | 18 ++----------------
+ 4 files changed, 3 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index d7ddee0668c3..89c7e98ae278 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -1,5 +1,4 @@
--/* linux/drivers/char/watchdog/s3c2410_wdt.c
-- *
-+/*
-  * Copyright (c) 2004 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-@@ -17,11 +16,7 @@
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
--*/
-+ */
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+index a78265993665..ca5204b3bc21 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+@@ -4,7 +4,6 @@ Required properties:
+   - compatible: value should be one of the following
+ 		"samsung,exynos3250-mipi-dsi" /* for Exynos3250/3472 SoCs */
+ 		"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
+-		"samsung,exynos4415-mipi-dsi" /* for Exynos4415 SoC */
+ 		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
+ 		"samsung,exynos5422-mipi-dsi" /* for Exynos5422/5800 SoCs */
+ 		"samsung,exynos5433-mipi-dsi" /* for Exynos5433 SoCs */
+diff --git a/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt b/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
+index 18645e0228b0..5837402c3ade 100644
+--- a/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
++++ b/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
+@@ -11,7 +11,6 @@ Required properties:
+ 		"samsung,s5pv210-fimd"; /* for S5PV210 SoC */
+ 		"samsung,exynos3250-fimd"; /* for Exynos3250/3472 SoCs */
+ 		"samsung,exynos4210-fimd"; /* for Exynos4 SoCs */
+-		"samsung,exynos4415-fimd"; /* for Exynos4415 SoC */
+ 		"samsung,exynos5250-fimd"; /* for Exynos5250 SoCs */
+ 		"samsung,exynos5420-fimd"; /* for Exynos5420/5422/5800 SoCs */
  
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-@@ -95,8 +90,7 @@ MODULE_PARM_DESC(tmr_atboot,
- 			__MODULE_STRING(S3C2410_WATCHDOG_ATBOOT));
- MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
- 			__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
--MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
--			"0 to reboot (default 0)");
-+MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, 0 to reboot (default 0)");
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 812e2ec0761d..ef6f9c6de098 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -86,7 +86,7 @@
+ #define DSIM_SYNC_INFORM		(1 << 27)
+ #define DSIM_EOT_DISABLE		(1 << 28)
+ #define DSIM_MFLUSH_VS			(1 << 29)
+-/* This flag is valid only for exynos3250/3472/4415/5260/5430 */
++/* This flag is valid only for exynos3250/3472/5260/5430 */
+ #define DSIM_CLKLANE_STOP		(1 << 30)
  
- /**
-  * struct s3c2410_wdt_variant - Per-variant config data
-@@ -311,7 +305,8 @@ static inline int s3c2410wdt_is_running(struct s3c2410_wdt *wdt)
- 	return readl(wdt->reg_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
- }
+ /* DSIM_ESCMODE */
+@@ -473,17 +473,6 @@ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
+ 	.reg_values = reg_values,
+ };
  
--static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeout)
-+static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
-+				    unsigned int timeout)
- {
- 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
- 	unsigned long freq = clk_get_rate(wdt->clock);
-@@ -525,7 +520,7 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev)
- 
- static int s3c2410wdt_probe(struct platform_device *pdev)
- {
--	struct device *dev;
-+	struct device *dev = &pdev->dev;
- 	struct s3c2410_wdt *wdt;
- 	struct resource *wdt_mem;
- 	struct resource *wdt_irq;
-@@ -533,13 +528,11 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	int started = 0;
- 	int ret;
- 
--	dev = &pdev->dev;
+-static const struct exynos_dsi_driver_data exynos4415_dsi_driver_data = {
+-	.reg_ofs = exynos_reg_ofs,
+-	.plltmr_reg = 0x58,
+-	.has_clklane_stop = 1,
+-	.num_clks = 2,
+-	.max_freq = 1000,
+-	.wait_for_reset = 1,
+-	.num_bits_resol = 11,
+-	.reg_values = reg_values,
+-};
 -
- 	wdt = devm_kzalloc(dev, sizeof(*wdt), GFP_KERNEL);
- 	if (!wdt)
- 		return -ENOMEM;
+ static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
+ 	.reg_ofs = exynos_reg_ofs,
+ 	.plltmr_reg = 0x58,
+@@ -521,8 +510,6 @@ static const struct of_device_id exynos_dsi_of_match[] = {
+ 	  .data = &exynos3_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos4210-mipi-dsi",
+ 	  .data = &exynos4_dsi_driver_data },
+-	{ .compatible = "samsung,exynos4415-mipi-dsi",
+-	  .data = &exynos4415_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos5410-mipi-dsi",
+ 	  .data = &exynos5_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos5422-mipi-dsi",
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index a9fa444c6053..661b9fe049e2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -71,10 +71,10 @@
+ #define TRIGCON				0x1A4
+ #define TRGMODE_ENABLE			(1 << 0)
+ #define SWTRGCMD_ENABLE			(1 << 1)
+-/* Exynos3250, 3472, 4415, 5260 5410, 5420 and 5422 only supported. */
++/* Exynos3250, 3472, 5260 5410, 5420 and 5422 only supported. */
+ #define HWTRGEN_ENABLE			(1 << 3)
+ #define HWTRGMASK_ENABLE		(1 << 4)
+-/* Exynos3250, 3472, 4415, 5260, 5420 and 5422 only supported. */
++/* Exynos3250, 3472, 5260, 5420 and 5422 only supported. */
+ #define HWTRIGEN_PER_ENABLE		(1 << 31)
  
--	wdt->dev = &pdev->dev;
-+	wdt->dev = dev;
- 	spin_lock_init(&wdt->lock);
- 	wdt->wdt_device = s3c2410_wdd;
+ /* display mode change control register except exynos4 */
+@@ -138,18 +138,6 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
+ 	.has_vtsel = 1,
+ };
  
-@@ -595,7 +588,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	/* see if we can actually set the requested timer margin, and if
- 	 * not, try the default value */
- 
--	watchdog_init_timeout(&wdt->wdt_device, tmr_margin, &pdev->dev);
-+	watchdog_init_timeout(&wdt->wdt_device, tmr_margin, dev);
- 	ret = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
- 					wdt->wdt_device.timeout);
- 	if (ret) {
-@@ -604,11 +597,10 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 
- 		if (started == 0)
- 			dev_info(dev,
--			   "tmr_margin value out of range, default %d used\n",
--			       S3C2410_WATCHDOG_DEFAULT_TIME);
-+				 "tmr_margin value out of range, default %d used\n",
-+				 S3C2410_WATCHDOG_DEFAULT_TIME);
- 		else
--			dev_info(dev, "default timer value is out of range, "
--							"cannot start\n");
-+			dev_info(dev, "default timer value is out of range, cannot start\n");
- 	}
- 
- 	ret = devm_request_irq(dev, wdt_irq->start, s3c2410wdt_irq, 0,
-@@ -622,7 +614,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	watchdog_set_restart_priority(&wdt->wdt_device, 128);
- 
- 	wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
--	wdt->wdt_device.parent = &pdev->dev;
-+	wdt->wdt_device.parent = dev;
- 
- 	ret = watchdog_register_device(&wdt->wdt_device);
- 	if (ret) {
-@@ -757,7 +749,6 @@ static struct platform_driver s3c2410wdt_driver = {
- 
- module_platform_driver(s3c2410wdt_driver);
- 
--MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>, "
--	      "Dimitry Andric <dimitry.andric@tomtom.com>");
-+MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>, Dimitry Andric <dimitry.andric@tomtom.com>");
- MODULE_DESCRIPTION("S3C2410 Watchdog Device Driver");
- MODULE_LICENSE("GPL");
+-static struct fimd_driver_data exynos4415_fimd_driver_data = {
+-	.timing_base = 0x20000,
+-	.lcdblk_offset = 0x210,
+-	.lcdblk_vt_shift = 10,
+-	.lcdblk_bypass_shift = 1,
+-	.trg_type = I80_HW_TRG,
+-	.has_shadowcon = 1,
+-	.has_vidoutcon = 1,
+-	.has_vtsel = 1,
+-	.has_trigger_per_te = 1,
+-};
+-
+ static struct fimd_driver_data exynos5_fimd_driver_data = {
+ 	.timing_base = 0x20000,
+ 	.lcdblk_offset = 0x214,
+@@ -210,8 +198,6 @@ static const struct of_device_id fimd_driver_dt_match[] = {
+ 	  .data = &exynos3_fimd_driver_data },
+ 	{ .compatible = "samsung,exynos4210-fimd",
+ 	  .data = &exynos4_fimd_driver_data },
+-	{ .compatible = "samsung,exynos4415-fimd",
+-	  .data = &exynos4415_fimd_driver_data },
+ 	{ .compatible = "samsung,exynos5250-fimd",
+ 	  .data = &exynos5_fimd_driver_data },
+ 	{ .compatible = "samsung,exynos5420-fimd",
 -- 
 2.9.3
