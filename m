@@ -1,57 +1,37 @@
 From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v2 6/8] ARM: dts: exynos: Fix infinite interrupt in soft mode on Exynos4210 and Exynos5440
-Date: Sat, 11 Mar 2017 19:25:25 +0200
-Message-ID: <20170311172527.16368-7-krzk@kernel.org>
+Subject: Re: [PATCH v2 1/8] watchdog: s3c2410: Remove confusing CONFIG prefix
+ from local defines
+Date: Sat, 11 Mar 2017 19:28:41 +0200
+Message-ID: <20170311172841.plxclb45qyp6yyqd@kozik-lap>
 References: <20170311172527.16368-1-krzk@kernel.org>
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170311172527.16368-1-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ <20170311172527.16368-2-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170311172527.16368-2-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In soft (no-reboot) mode, the driver self-pings watchdog upon expiration
-of an interrupt.  The interrupt has to be cleared, because otherwise
-system enters infinite interrupt handling loop.
+On Sat, Mar 11, 2017 at 07:25:20PM +0200, Krzysztof Kozlowski wrote:
+> The CONFIG prefix from defines in the s3c2410_wdt.c might suggest that
+> these constants come from Kconfig.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+> ---
+>  drivers/watchdog/s3c2410_wdt.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
 
-Use a samsung,s3c6410-wdt compatible to select appropriate quirk for
-clearing the watchdog interrupt.
+Ah, my mistake, I looked at watchdog-master but this is already in
+watchdog-next. Sorry for confusion.
 
-Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- arch/arm/boot/dts/exynos4210.dtsi | 2 +-
- arch/arm/boot/dts/exynos5440.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 9d51d4d62d94..e6e62103a71f 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -120,7 +120,7 @@
- 	};
- 
- 	watchdog: watchdog@10060000 {
--		compatible = "samsung,s3c2410-wdt";
-+		compatible = "samsung,s3c6410-wdt";
- 		reg = <0x10060000 0x100>;
- 		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&clock CLK_WDT>;
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index 77d35bb92950..abfe054b2187 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -189,7 +189,7 @@
- 	};
- 
- 	watchdog@110000 {
--		compatible = "samsung,s3c2410-wdt";
-+		compatible = "samsung,s3c6410-wdt";
- 		reg = <0x110000 0x1000>;
- 		interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&clock CLK_B_125>;
--- 
-2.9.3
+Best regards,
+Krzysztof
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
