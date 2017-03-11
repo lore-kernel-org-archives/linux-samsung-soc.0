@@ -1,38 +1,61 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Add Krzysztof Kozlowski as maintainer of
- crypto/s5p-sss
-Date: Sat, 11 Mar 2017 08:02:25 +0200
-Message-ID: <20170311060225.vjj4ossn4miicmxe@kozik-lap>
-References: <20170310191038.7726-1-krzk@kernel.org>
- <6f86bed1-df24-9f0b-b32b-3e00674be8c0@mleia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34906 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751325AbdCKGCq (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Mar 2017 01:02:46 -0500
-Content-Disposition: inline
-In-Reply-To: <6f86bed1-df24-9f0b-b32b-3e00674be8c0@mleia.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v2 0/8] watchdog: s3c2410: Fixes and improvements
+Date: Sat, 11 Mar 2017 19:25:19 +0200
+Message-ID: <20170311172527.16368-1-krzk@kernel.org>
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Mar 10, 2017 at 11:18:13PM +0200, Vladimir Zapolskiy wrote:
-> Hi Krzysztof,
-> 
-> On 03/10/2017 09:10 PM, Krzysztof Kozlowski wrote:
-> > Beside developing of this driver recently, I handle also reviews and
-> > bug reports from users so having a maintainer entry will ensure that I
-> > will be CC-ed on important emails.
-> 
-> if you assume that the driver needs a special maintainership, can you
-> add me as a co-maintainer? I'll review new changes as usual and do
-> regression testing on legacy SoCs.
+Hi,
 
-Of course, I'll send a v2.
+Minor cleanup and some fixes for the watchdog used on all
+Samsung SoCs.
+
+The DTS patches should through samsung-soc tree but they depend
+on introducing new compatible. The patches waiting for new compatible will be
+deferred to next release.
+
+
+Changes since v1:
+=================
+1. Add Guenter's review and Rob's ack.
+2. Change compatible in patch 6/8 instead 3/8.
+
 
 Best regards,
 Krzysztof
+
+
+Krzysztof Kozlowski (8):
+  watchdog: s3c2410: Remove confusing CONFIG prefix from local defines
+  watchdog: s3c2410: Fix infinite interrupt in soft mode
+  ARM: dts: exynos: Fix watchdog reset on Exynos4412
+  ARM: dts: s3c64xx: Enable watchdog on all S3C64xx boards
+  ARM: dts: exynos: Enable watchdog on all Exynos4 boards
+  ARM: dts: exynos: Fix infinite interrupt in soft mode on Exynos4210
+    and Exynos5440
+  ARM: dts: s3c64xx: Fix infinite interrupt in soft mode
+  ARM: dts: s5pv210: Fix infinite interrupt in soft mode
+
+ .../devicetree/bindings/watchdog/samsung-wdt.txt   |  9 +++---
+ arch/arm/boot/dts/exynos4.dtsi                     |  9 ------
+ arch/arm/boot/dts/exynos4210-origen.dts            |  4 ---
+ arch/arm/boot/dts/exynos4210.dtsi                  |  8 +++++
+ arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi    |  4 ---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  4 ---
+ arch/arm/boot/dts/exynos4412-origen.dts            |  4 ---
+ arch/arm/boot/dts/exynos4412.dtsi                  |  9 ++++++
+ arch/arm/boot/dts/exynos5440.dtsi                  |  2 +-
+ arch/arm/boot/dts/s3c64xx.dtsi                     |  3 +-
+ arch/arm/boot/dts/s5pv210.dtsi                     |  2 +-
+ drivers/watchdog/s3c2410_wdt.c                     | 37 +++++++++++++++-------
+ 12 files changed, 51 insertions(+), 44 deletions(-)
+
+-- 
+2.9.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
