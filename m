@@ -1,83 +1,130 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] watchdog: s3c2410: Constify local structures
-Date: Mon, 13 Mar 2017 08:47:13 +0200
-Message-ID: <CAJKOXPdg4eUUB64GZJK2+AOfsQxLHPh6qceZGJfYfhOA=Gvqbw@mail.gmail.com>
-References: <20170311174255.23327-1-krzk@kernel.org> <20170311174255.23327-2-krzk@kernel.org>
- <d91a14cc-d741-f4ff-7411-64d4862b6e50@roeck-us.net>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v3 03/12] drm/exynos/decon5433: fix vblank event handling
+Date: Mon, 13 Mar 2017 08:31:47 +0100
+Message-ID: <1489390307-22816-1-git-send-email-a.hajda@samsung.com>
+References: <58C63D1F.3030701@samsung.com>
+ <CGME20170313073211eucas1p17a7cdf647b711343ef382adb792ed84e@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d91a14cc-d741-f4ff-7411-64d4862b6e50-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <58C63D1F.3030701@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Mar 12, 2017 at 10:56 PM, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org> wrote:
-> On 03/11/2017 09:42 AM, Krzysztof Kozlowski wrote:
->>
->> Structures watchdog_device, watchdog_ops and s3c2410_wdt_variant are not
->> modified so they can be made const to increase code safeness.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> ---
->>  drivers/watchdog/s3c2410_wdt.c | 10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/watchdog/s3c2410_wdt.c
->> b/drivers/watchdog/s3c2410_wdt.c
->> index 6ed97596ca80..5eaec319e499 100644
->> --- a/drivers/watchdog/s3c2410_wdt.c
->> +++ b/drivers/watchdog/s3c2410_wdt.c
->> @@ -131,7 +131,7 @@ struct s3c2410_wdt {
->>         unsigned long           wtdat_save;
->>         struct watchdog_device  wdt_device;
->>         struct notifier_block   freq_transition;
->> -       struct s3c2410_wdt_variant *drv_data;
->> +       const struct s3c2410_wdt_variant *drv_data;
->>         struct regmap *pmureg;
->>  };
->>
->> @@ -401,7 +401,7 @@ static const struct watchdog_ops s3c2410wdt_ops = {
->>         .restart = s3c2410wdt_restart,
->>  };
->>
->> -static struct watchdog_device s3c2410_wdd = {
->> +static const struct watchdog_device s3c2410_wdd = {
->>         .info = &s3c2410_wdt_ident,
->>         .ops = &s3c2410wdt_ops,
->>         .timeout = S3C2410_WATCHDOG_DEFAULT_TIME,
->> @@ -507,15 +507,15 @@ static inline unsigned int
->> s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
->>         return 0;
->>  }
->>
->> -static inline struct s3c2410_wdt_variant *
->> +static inline const struct s3c2410_wdt_variant *
->>  s3c2410_get_wdt_drv_data(struct platform_device *pdev)
->>  {
->>         if (pdev->dev.of_node) {
->>                 const struct of_device_id *match;
->>                 match = of_match_node(s3c2410_wdt_match,
->> pdev->dev.of_node);
->> -               return (struct s3c2410_wdt_variant *)match->data;
->> +               return (const struct s3c2410_wdt_variant *)match->data;
->
->
-> The const in this typecast isn't necessary.
->
->>         } else {
->> -               return (struct s3c2410_wdt_variant *)
->> +               return (const struct s3c2410_wdt_variant *)
->
->
-> Same here. Transition to const is automatic.
-
-Right, I'll fix this and resend.
-
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Q3VycmVudCBpbXBsZW1lbnRhdGlvbiBvZiBldmVudCBoYW5kbGluZyBhc3N1bWVzIHRoYXQgdmJs
+YW5rIGludGVycnVwdCBpcwphbHdheXMgY2FsbGVkIGF0IHRoZSByaWdodCB0aW1lLiBJdCBpcyBu
+b3QgdHJ1ZSwgaXQgY2FuIGJlIGRlbGF5ZWQgZHVlIHRvCnZhcmlvdXMgcmVhc29ucy4gQXMgYSBy
+ZXN1bHQgZGlmZmVyZW50IHJhY2VzIGNhbiBoYXBwZW4uIFRoZSBwYXRjaCBmaXhlcwp0aGUgaXNz
+dWUgYnkgdXNpbmcgaGFyZHdhcmUgZnJhbWUgY291bnRlciBwcmVzZW50IGluIERFQ09OIHRvIHNl
+cmlhbGl6ZQp2YmxhbmsgYW5kIGNvbW1pdCBjb21wbGV0aW9uIGV2ZW50cy4KClNpZ25lZC1vZmYt
+Ynk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQp2MzoKICAtIGhhbmRs
+ZSB3cmFwLWFyb3VuZCBvZiBmcmFtZSBjb3VudGVyCnYyOgogIC0gYWRkZWQgaW50ZXJuYWwgZGVj
+b25fZ2V0X2ZyYW1lX2NvdW50IGZ1bmN0aW9uLAogIC0gdXBkYXRlZCBmcmFtZSBjb3VudGVyIG9u
+IGZsdXNoLAogIC0gbWlzYyBzdHlsZSBmaXhlcyAodGhhbmsgSW5raSkKLS0tCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCA3OCArKysrKysrKysrKysrKysr
+KysrKysrKysrKy0KIGluY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oICAgICAgICAgICAg
+ICB8ICA4ICsrKwogMiBmaWxlcyBjaGFuZ2VkLCA4NSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9u
+KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9k
+ZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCmlu
+ZGV4IDE0NzkxMWUuLjczNDgyZDMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zNTQzM19kcm1fZGVjb24uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+czU0MzNfZHJtX2RlY29uLmMKQEAgLTY4LDYgKzY4LDggQEAgc3RydWN0IGRlY29uX2NvbnRleHQg
+ewogCXVuc2lnbmVkIGxvbmcJCQlmbGFnczsKIAl1bnNpZ25lZCBsb25nCQkJb3V0X3R5cGU7CiAJ
+aW50CQkJCWZpcnN0X3dpbjsKKwlzcGlubG9ja190CQkJdmJsYW5rX2xvY2s7CisJdTMyCQkJCWZy
+YW1lX2lkOwogfTsKIAogc3RhdGljIGNvbnN0IHVpbnQzMl90IGRlY29uX2Zvcm1hdHNbXSA9IHsK
+QEAgLTEyMiw2ICsxMjQsNDggQEAgc3RhdGljIHZvaWQgZGVjb25fZGlzYWJsZV92Ymxhbmsoc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIAkJd3JpdGVsKDAsIGN0eC0+YWRkciArIERFQ09O
+X1ZJRElOVENPTjApOwogfQogCisvKiByZXR1cm4gbnVtYmVyIG9mIHN0YXJ0cy9lbmRzIG9mIGZy
+YW1lIHRyYW5zbWlzc2lvbnMgc2luY2UgcmVzZXQgKi8KK3N0YXRpYyB1MzIgZGVjb25fZ2V0X2Zy
+YW1lX2NvdW50KHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgsIGJvb2wgZW5kKQoreworCXUzMiBm
+cm0sIHBmcm0sIHN0YXR1cywgY250ID0gMjsKKworCS8qIFRvIGdldCBjb25zaXN0ZW50IHJlc3Vs
+dCByZXBlYXQgcmVhZCB1bnRpbCBmcmFtZSBpZCBpcyBzdGFibGUuCisJICogVXN1YWxseSB0aGUg
+bG9vcCB3aWxsIGJlIGV4ZWN1dGVkIG9uY2UsIGluIHJhcmUgY2FzZXMgd2hlbiB0aGUgbG9vcAor
+CSAqIGlzIGV4ZWN1dGVkIGF0IGZyYW1lIGNoYW5nZSB0aW1lIDJuZCBwYXNzIHdpbGwgYmUgbmVl
+ZGVkLgorCSAqLworCWZybSA9IHJlYWRsKGN0eC0+YWRkciArIERFQ09OX0NSRk1JRCk7CisJZG8g
+eworCQlzdGF0dXMgPSByZWFkbChjdHgtPmFkZHIgKyBERUNPTl9WSURDT04xKTsKKwkJcGZybSA9
+IGZybTsKKwkJZnJtID0gcmVhZGwoY3R4LT5hZGRyICsgREVDT05fQ1JGTUlEKTsKKwl9IHdoaWxl
+IChmcm0gIT0gcGZybSAmJiAtLWNudCk7CisKKwkvKiBDUkZNSUQgaXMgaW5jcmVtZW50ZWQgb24g
+QlBPUkNIIGluIGNhc2Ugb2YgSTgwIGFuZCBvbiBWU1lOQyBpbiBjYXNlCisJICogb2YgUkdCLCBp
+dCBzaG91bGQgYmUgdGFrZW4gaW50byBhY2NvdW50LgorCSAqLworCWlmICghZnJtKQorCQlyZXR1
+cm4gMDsKKworCXN3aXRjaCAoc3RhdHVzICYgKFZJRENPTjFfVlNUQVRVU19NQVNLIHwgVklEQ09O
+MV9JODBfQUNUSVZFKSkgeworCWNhc2UgVklEQ09OMV9WU1RBVFVTX1ZTOgorCQlpZiAoIShjdHgt
+Pm91dF90eXBlICYgSUZUWVBFX0k4MCkpCisJCQktLWZybTsKKwkJYnJlYWs7CisJY2FzZSBWSURD
+T04xX1ZTVEFUVVNfQlA6CisJCS0tZnJtOworCQlicmVhazsKKwljYXNlIFZJRENPTjFfSTgwX0FD
+VElWRToKKwljYXNlIFZJRENPTjFfVlNUQVRVU19BQzoKKwkJaWYgKGVuZCkKKwkJCS0tZnJtOwor
+CQlicmVhazsKKwlkZWZhdWx0OgorCQlicmVhazsKKwl9CisKKwlyZXR1cm4gZnJtOworfQorCiBz
+dGF0aWMgdm9pZCBkZWNvbl9zZXR1cF90cmlnZ2VyKHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgp
+CiB7CiAJaWYgKCEoY3R4LT5vdXRfdHlwZSAmIChJRlRZUEVfSTgwIHwgSTgwX0hXX1RSRykpKQpA
+QCAtMzY1LDExICs0MDksMTQgQEAgc3RhdGljIHZvaWQgZGVjb25fZGlzYWJsZV9wbGFuZShzdHJ1
+Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAogc3RhdGljIHZvaWQgZGVjb25fYXRvbWljX2ZsdXNo
+KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0IGRlY29uX2NvbnRleHQg
+KmN0eCA9IGNydGMtPmN0eDsKKwl1bnNpZ25lZCBsb25nIGZsYWdzOwogCWludCBpOwogCiAJaWYg
+KHRlc3RfYml0KEJJVF9TVVNQRU5ERUQsICZjdHgtPmZsYWdzKSkKIAkJcmV0dXJuOwogCisJc3Bp
+bl9sb2NrX2lycXNhdmUoJmN0eC0+dmJsYW5rX2xvY2ssIGZsYWdzKTsKKwogCWZvciAoaSA9IGN0
+eC0+Zmlyc3Rfd2luOyBpIDwgV0lORE9XU19OUjsgaSsrKQogCQlkZWNvbl9zaGFkb3dfcHJvdGVj
+dF93aW4oY3R4LCBpLCBmYWxzZSk7CiAKQEAgLTM3OCwxMiArNDI1LDE4IEBAIHN0YXRpYyB2b2lk
+IGRlY29uX2F0b21pY19mbHVzaChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogCiAJaWYg
+KGN0eC0+b3V0X3R5cGUgJiBJRlRZUEVfSTgwKQogCQlzZXRfYml0KEJJVF9XSU5fVVBEQVRFRCwg
+JmN0eC0+ZmxhZ3MpOworCisJY3R4LT5mcmFtZV9pZCA9IGRlY29uX2dldF9mcmFtZV9jb3VudChj
+dHgsIHRydWUpOworCiAJZXh5bm9zX2NydGNfaGFuZGxlX2V2ZW50KGNydGMpOworCisJc3Bpbl91
+bmxvY2tfaXJxcmVzdG9yZSgmY3R4LT52YmxhbmtfbG9jaywgZmxhZ3MpOwogfQogCiBzdGF0aWMg
+dm9pZCBkZWNvbl9zd3Jlc2V0KHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgpCiB7CiAJdW5zaWdu
+ZWQgaW50IHRyaWVzOworCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CiAKIAl3cml0ZWwoMCwgY3R4LT5h
+ZGRyICsgREVDT05fVklEQ09OMCk7CiAJZm9yICh0cmllcyA9IDIwMDA7IHRyaWVzOyAtLXRyaWVz
+KSB7CkBAIC00MDEsNiArNDU0LDEwIEBAIHN0YXRpYyB2b2lkIGRlY29uX3N3cmVzZXQoc3RydWN0
+IGRlY29uX2NvbnRleHQgKmN0eCkKIAogCVdBUk4odHJpZXMgPT0gMCwgImZhaWxlZCB0byBzb2Z0
+d2FyZSByZXNldCBERUNPTlxuIik7CiAKKwlzcGluX2xvY2tfaXJxc2F2ZSgmY3R4LT52Ymxhbmtf
+bG9jaywgZmxhZ3MpOworCWN0eC0+ZnJhbWVfaWQgPSAwOworCXNwaW5fdW5sb2NrX2lycXJlc3Rv
+cmUoJmN0eC0+dmJsYW5rX2xvY2ssIGZsYWdzKTsKKwogCWlmICghKGN0eC0+b3V0X3R5cGUgJiBJ
+RlRZUEVfSERNSSkpCiAJCXJldHVybjsKIApAQCAtNTc5LDYgKzYzNiwyNCBAQCBzdGF0aWMgY29u
+c3Qgc3RydWN0IGNvbXBvbmVudF9vcHMgZGVjb25fY29tcG9uZW50X29wcyA9IHsKIAkudW5iaW5k
+ID0gZGVjb25fdW5iaW5kLAogfTsKIAorc3RhdGljIHZvaWQgZGVjb25faGFuZGxlX3ZibGFuayhz
+dHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4KQoreworCXUzMiBmcm07CisKKwlzcGluX2xvY2soJmN0
+eC0+dmJsYW5rX2xvY2spOworCisJZnJtID0gZGVjb25fZ2V0X2ZyYW1lX2NvdW50KGN0eCwgdHJ1
+ZSk7CisKKwlpZiAoZnJtICE9IGN0eC0+ZnJhbWVfaWQpIHsKKwkJLyogaGFuZGxlIG9ubHkgaWYg
+aW5jcmVtZW50ZWQsIHRha2UgY2FyZSBvZiB3cmFwLWFyb3VuZCAqLworCQlpZiAoKHMzMikoZnJt
+IC0gY3R4LT5mcmFtZV9pZCkgPiAwKQorCQkJZHJtX2NydGNfaGFuZGxlX3ZibGFuaygmY3R4LT5j
+cnRjLT5iYXNlKTsKKwkJY3R4LT5mcmFtZV9pZCA9IGZybTsKKwl9CisKKwlzcGluX3VubG9jaygm
+Y3R4LT52YmxhbmtfbG9jayk7Cit9CisKIHN0YXRpYyBpcnFyZXR1cm5fdCBkZWNvbl9pcnFfaGFu
+ZGxlcihpbnQgaXJxLCB2b2lkICpkZXZfaWQpCiB7CiAJc3RydWN0IGRlY29uX2NvbnRleHQgKmN0
+eCA9IGRldl9pZDsKQEAgLTU5OSw3ICs2NzQsNyBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgZGVjb25f
+aXJxX2hhbmRsZXIoaW50IGlycSwgdm9pZCAqZGV2X2lkKQogCQkJICAgIChWSURPVVRfSU5URVJM
+QUNFX0VOX0YgfCBWSURPVVRfSU5URVJMQUNFX0ZJRUxEX0YpKQogCQkJCXJldHVybiBJUlFfSEFO
+RExFRDsKIAkJfQotCQlkcm1fY3J0Y19oYW5kbGVfdmJsYW5rKCZjdHgtPmNydGMtPmJhc2UpOwor
+CQlkZWNvbl9oYW5kbGVfdmJsYW5rKGN0eCk7CiAJfQogCiBvdXQ6CkBAIC02NzIsNiArNzQ3LDcg
+QEAgc3RhdGljIGludCBleHlub3M1NDMzX2RlY29uX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
+Y2UgKnBkZXYpCiAJX19zZXRfYml0KEJJVF9TVVNQRU5ERUQsICZjdHgtPmZsYWdzKTsKIAljdHgt
+PmRldiA9IGRldjsKIAljdHgtPm91dF90eXBlID0gKHVuc2lnbmVkIGxvbmcpb2ZfZGV2aWNlX2dl
+dF9tYXRjaF9kYXRhKGRldik7CisJc3Bpbl9sb2NrX2luaXQoJmN0eC0+dmJsYW5rX2xvY2spOwog
+CiAJaWYgKGN0eC0+b3V0X3R5cGUgJiBJRlRZUEVfSERNSSkgewogCQljdHgtPmZpcnN0X3dpbiA9
+IDE7CmRpZmYgLS1naXQgYS9pbmNsdWRlL3ZpZGVvL2V4eW5vczU0MzNfZGVjb24uaCBiL2luY2x1
+ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oCmluZGV4IGVmOGUyYTguLjM1MmZjMGQgMTAwNjQ0
+Ci0tLSBhL2luY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oCisrKyBiL2luY2x1ZGUvdmlk
+ZW8vZXh5bm9zNTQzM19kZWNvbi5oCkBAIC00Niw2ICs0Niw3IEBACiAjZGVmaW5lIERFQ09OX0ZS
+QU1FRklGT19TVEFUVVMJCTB4MDUyNAogI2RlZmluZSBERUNPTl9DTVUJCQkweDE0MDQKICNkZWZp
+bmUgREVDT05fVVBEQVRFCQkJMHgxNDEwCisjZGVmaW5lIERFQ09OX0NSRk1JRAkJCTB4MTQxNAog
+I2RlZmluZSBERUNPTl9VUERBVEVfU0NIRU1FCQkweDE0MzgKICNkZWZpbmUgREVDT05fVklEQ09O
+MQkJCTB4MjAwMAogI2RlZmluZSBERUNPTl9WSURDT04yCQkJMHgyMDA0CkBAIC0xNDIsNiArMTQz
+LDEzIEBACiAjZGVmaW5lIFNUQU5EQUxPTkVfVVBEQVRFX0YJCSgxIDw8IDApCiAKIC8qIERFQ09O
+X1ZJRENPTjEgKi8KKyNkZWZpbmUgVklEQ09OMV9MSU5FQ05UX01BU0sJCSgweDBmZmYgPDwgMTYp
+CisjZGVmaW5lIFZJRENPTjFfSTgwX0FDVElWRQkJKDEgPDwgMTUpCisjZGVmaW5lIFZJRENPTjFf
+VlNUQVRVU19NQVNLCQkoMHgzIDw8IDEzKQorI2RlZmluZSBWSURDT04xX1ZTVEFUVVNfVlMJCSgw
+IDw8IDEzKQorI2RlZmluZSBWSURDT04xX1ZTVEFUVVNfQlAJCSgxIDw8IDEzKQorI2RlZmluZSBW
+SURDT04xX1ZTVEFUVVNfQUMJCSgyIDw8IDEzKQorI2RlZmluZSBWSURDT04xX1ZTVEFUVVNfRlAJ
+CSgzIDw8IDEzKQogI2RlZmluZSBWSURDT04xX1ZDTEtfTUFTSwkJKDB4MyA8PCA5KQogI2RlZmlu
+ZSBWSURDT04xX1ZDTEtfUlVOX1ZERU5fRElTQUJMRQkoMHgzIDw8IDkpCiAjZGVmaW5lIFZJRENP
+TjFfVkNMS19IT0xECQkoMHgwIDw8IDkpCi0tIAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
