@@ -1,102 +1,53 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC PATCH] phy: samsung: move the Samsung specific phy files to
- "samsung" directory
-Date: Mon, 13 Mar 2017 08:18:43 +0900
-Message-ID: <12173d9d-1fd3-139e-a016-17348e79b33e@samsung.com>
-References: <CGME20170309113312epcas5p3eceb2a9cce9fc8ff6871bee7b45dc15e@epcas5p3.samsung.com>
- <20170309113311.15345-1-jh80.chung@samsung.com> <58C142F6.2030708@ti.com>
- <CAFp+6iGj=me4uOpOy338oxiAi=0sLW4WnkCzzAMELkxp=ZmrVA@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 2/7] regulator: max77693: Constify regulator_ops
+Date: Mon, 13 Mar 2017 13:55:07 +0900
+Message-ID: <58C6262B.2020000@samsung.com>
+References: <20170311190124.11512-1-krzk@kernel.org>
+ <CGME20170311190145epcas1p3659851873074ec6c2a388363faa02ddf@epcas1p3.samsung.com>
+ <20170311190124.11512-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:54598 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755789AbdCLXSr (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:59208 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750772AbdCMEzL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 12 Mar 2017 19:18:47 -0400
-In-reply-to: <CAFp+6iGj=me4uOpOy338oxiAi=0sLW4WnkCzzAMELkxp=ZmrVA@mail.gmail.com>
+        Mon, 13 Mar 2017 00:55:11 -0400
+In-reply-to: <20170311190124.11512-2-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <vivek.gautam@codeaurora.org>, Kishon Vijay Abraham I <kishon@ti.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, krzk@kernel.org, kamil@wypas.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, javier@osg.samsung.com, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Vivek,
+Hi,
 
-On 03/12/2017 06:18 PM, Vivek Gautam wrote:
-> Hi Kishon,
+On 2017년 03월 12일 04:01, Krzysztof Kozlowski wrote:
+> Static struct regulator_ops is not modified so can be made const for
+> code safeness.
 > 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/regulator/max77693-regulator.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> On Thu, Mar 9, 2017 at 5:26 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->> Hi,
->>
->> On Thursday 09 March 2017 05:03 PM, Jaehoon Chung wrote:
->>> Make the "samsung" directory and move the Samsung specific files to
->>> there for maintaining the files relevant to Samsung.
->>
->> The number of phy drivers in drivers/phy is getting unmanageable. I think this
->> is a good step to make it a little better. Can you also add a MAINTAINER for
->> drivers/phy/samsung?
+> diff --git a/drivers/regulator/max77693-regulator.c b/drivers/regulator/max77693-regulator.c
+> index 3fce67982682..e7000e777292 100644
+> --- a/drivers/regulator/max77693-regulator.c
+> +++ b/drivers/regulator/max77693-regulator.c
+> @@ -150,7 +150,7 @@ static const struct regulator_ops max77693_safeout_ops = {
+>  	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+>  };
+>  
+> -static struct regulator_ops max77693_charger_ops = {
+> +static const struct regulator_ops max77693_charger_ops = {
+>  	.is_enabled		= regulator_is_enabled_regmap,
+>  	.enable			= regulator_enable_regmap,
+>  	.disable		= regulator_disable_regmap,
 > 
-> I remember making a similar attempt in past [1], but that time we couldn't
-> reach an agreement as to whether group the phy drivers based on
-> vendors or based on the type of phy.
-> 
-> If you are fine with grouping the drivers for each vendor, I hope you can
-> consider picking that patch (I can respin the patch based on linux-phy/next).
-> Other driver maintainers were also cool with that older patch.
-> 
-> Let me know your comments.
-> 
-> [1] https://patchwork.kernel.org/patch/8762561/
 
-I didn't know you had already sent the patches.
-My RFC patch can be dropped. I think it's good way.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
+-- 
 Best Regards,
-Jaehoon Chung
-
-> 
-> Regards
-> Vivek
-> 
->>
->> Thanks
->> Kishon
->>>
->>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->>> ---
->>>  drivers/phy/Kconfig                               | 96 +----------------------
->>>  drivers/phy/Makefile                              | 14 +---
->>>  drivers/phy/samsung/Kconfig                       | 92 ++++++++++++++++++++++
->>>  drivers/phy/samsung/Makefile                      | 11 +++
->>>  drivers/phy/{ => samsung}/phy-exynos-dp-video.c   |  0
->>>  drivers/phy/{ => samsung}/phy-exynos-mipi-video.c |  0
->>>  drivers/phy/{ => samsung}/phy-exynos-pcie.c       |  0
->>>  drivers/phy/{ => samsung}/phy-exynos4210-usb2.c   |  0
->>>  drivers/phy/{ => samsung}/phy-exynos4x12-usb2.c   |  0
->>>  drivers/phy/{ => samsung}/phy-exynos5-usbdrd.c    |  0
->>>  drivers/phy/{ => samsung}/phy-exynos5250-sata.c   |  0
->>>  drivers/phy/{ => samsung}/phy-exynos5250-usb2.c   |  0
->>>  drivers/phy/{ => samsung}/phy-s5pv210-usb2.c      |  0
->>>  drivers/phy/{ => samsung}/phy-samsung-usb2.c      |  0
->>>  drivers/phy/{ => samsung}/phy-samsung-usb2.h      |  0
->>>  15 files changed, 108 insertions(+), 105 deletions(-)
->>>  create mode 100644 drivers/phy/samsung/Kconfig
->>>  create mode 100644 drivers/phy/samsung/Makefile
->>>  rename drivers/phy/{ => samsung}/phy-exynos-dp-video.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-exynos-mipi-video.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-exynos-pcie.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-exynos4210-usb2.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-exynos4x12-usb2.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-exynos5-usbdrd.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-exynos5250-sata.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-exynos5250-usb2.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-s5pv210-usb2.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-samsung-usb2.c (100%)
->>>  rename drivers/phy/{ => samsung}/phy-samsung-usb2.h (100%)
-> 
-> [snip]
-> 
-> 
-> 
+Chanwoo Choi
+Samsung Electronics
