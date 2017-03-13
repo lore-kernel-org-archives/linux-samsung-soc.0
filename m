@@ -1,59 +1,95 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 1/7] regulator: max1586: Constify regulator_ops
-Date: Mon, 13 Mar 2017 14:00:06 +0900
-Message-ID: <58C62756.2000800@samsung.com>
-References: <CGME20170311190141epcas2p2721283aa79819ca89f11815414ae5b4a@epcas2p2.samsung.com>
- <20170311190124.11512-1-krzk@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 03/12] drm/exynos/decon5433: fix vblank event handling
+Date: Mon, 13 Mar 2017 15:33:03 +0900
+Message-ID: <58C63D1F.3030701@samsung.com>
+References: <1488985126-25288-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170308145902eucas1p24636df9b8eafd2b07f12a2c700c6bcea@eucas1p2.samsung.com>
+ <1488985126-25288-4-git-send-email-a.hajda@samsung.com>
+ <50f9ade8-4bb2-6071-6c2b-89ea8f525613@daenzer.net>
+ <288be3ac-8274-b8e4-ff9f-03101af6bdec@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42307 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750756AbdCMFLL (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:53996 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750943AbdCMGdM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 01:11:11 -0400
-In-reply-to: <20170311190124.11512-1-krzk@kernel.org>
+        Mon, 13 Mar 2017 02:33:12 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OMQ02I5YQ79GW80@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 13 Mar 2017 15:33:09 +0900 (KST)
+In-reply-to: <288be3ac-8274-b8e4-ff9f-03101af6bdec@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, =?UTF-8?B?TWljaGVsIETDpG56ZXI=?= <michel@daenzer.net>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Dear all,
 
-All patches in this series looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Best Regards,
-Chanwoo Choi
-
-On 2017년 03월 12일 04:01, Krzysztof Kozlowski wrote:
-> Static struct regulator_ops is not modified so can be made const for
-> code safeness.
+2017년 03월 09일 15:54에 Andrzej Hajda 이(가) 쓴 글:
+> On 09.03.2017 04:54, Michel Dänzer wrote:
+>> On 08/03/17 11:58 PM, Andrzej Hajda wrote:
+>>> Current implementation of event handling assumes that vblank interrupt is
+>>> always called at the right time. It is not true, it can be delayed due to
+>>> various reasons. As a result different races can happen. The patch fixes
+>>> the issue by using hardware frame counter present in DECON to serialize
+>>> vblank and commit completion events.
+>>>
+>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> ---
+>>> v2:
+>>>   - added internal decon_get_frame_count function,
+>>>   - updated frame counter on flush,
+>>>   - misc style fixes (thank Inki)
+>> [...]
+>>
+>>> @@ -579,6 +636,23 @@ static const struct component_ops decon_component_ops = {
+>>>  	.unbind = decon_unbind,
+>>>  };
+>>>  
+>>> +static void decon_handle_vblank(struct decon_context *ctx)
+>>> +{
+>>> +	u32 frm;
+>>> +
+>>> +	spin_lock(&ctx->vblank_lock);
+>>> +
+>>> +	frm = decon_get_frame_count(ctx, true);
+>>> +
+>>> +	if (frm != ctx->frame_id) {
+>>> +		if (frm > ctx->frame_id)
+>>> +			drm_crtc_handle_vblank(&ctx->crtc->base);
+>> This comparison isn't safe WRT the counter value returned by
+>> decon_get_frame_count wrapping around.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/regulator/max1586.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> And knowing that max framerate is 60fps it will happen after:
 > 
-> diff --git a/drivers/regulator/max1586.c b/drivers/regulator/max1586.c
-> index 2c1228d5796a..6779c2b53674 100644
-> --- a/drivers/regulator/max1586.c
-> +++ b/drivers/regulator/max1586.c
-> @@ -126,14 +126,14 @@ static int max1586_v6_set_voltage_sel(struct regulator_dev *rdev,
->   * The Maxim 1586 controls V3 and V6 voltages, but offers no way of reading back
->   * the set up value.
->   */
-> -static struct regulator_ops max1586_v3_ops = {
-> +static const struct regulator_ops max1586_v3_ops = {
->  	.get_voltage_sel = max1586_v3_get_voltage_sel,
->  	.set_voltage_sel = max1586_v3_set_voltage_sel,
->  	.list_voltage = regulator_list_voltage_linear,
->  	.map_voltage = regulator_map_voltage_linear,
->  };
->  
-> -static struct regulator_ops max1586_v6_ops = {
-> +static const struct regulator_ops max1586_v6_ops = {
->  	.get_voltage_sel = max1586_v6_get_voltage_sel,
->  	.set_voltage_sel = max1586_v6_set_voltage_sel,
->  	.list_voltage = regulator_list_voltage_table,
+> 0xffffffff / 60fps / 60sec / 60min / 24h / 365days = 2.3 years
+> 
+> So after 2.3 years of uninterrupted work of panel/TV we will lose one or
+> two vblanks :) Highly improbable and even then low damage.
+> 
+>> If it goes all the way up to
+>> 0xffffffff before wrapping around to zero, it can be handled e.g. by
+>>
+>> 		if ((s32)(frm - ctx->frame_id) > 0)
+>>
+>> otherwise it gets a bit more complicated.
+>>
+>>
+> But the fix looks simple so I think it is worth to fix it. Thanks.
+
+Andrzej, v3?
+
+> 
+> Regards
+> 
+> Andrzej
+> 
+> 
+> 
+> 
+> 
 > 
