@@ -1,47 +1,83 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos/dsi: make te-gpios optional
-Date: Mon, 13 Mar 2017 16:30:22 +0100
-Message-ID: <1489419022-20501-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170313153029eucas1p114f034a5dea7374f6d14d4d1636d0b68@eucas1p1.samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: s5m8767: Constify regulator_ops" to the regulator tree
+Date: Mon, 13 Mar 2017 16:56:42 +0000
+Message-ID: <E1cnTH0-0004ht-Rz@debutante>
+References: <20170311190124.11512-6-krzk@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:42414 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751089AbdCMPae (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37846 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754255AbdCMQ4w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 11:30:34 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OMR00GM8F2UDQ80@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 13 Mar 2017 15:30:30 +0000 (GMT)
+        Mon, 13 Mar 2017 12:56:52 -0400
+In-Reply-To: <20170311190124.11512-6-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.orglinux-kernel@vger.kernel.org
 
-In case of HW-TRIGGER te-gpios interrupt is not necessary. With this
-patch we can get rid of 60 interrupt callbacks per second.
+The patch
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+   regulator: s5m8767: Constify regulator_ops
+
+has been applied to the regulator tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 8a05eb190238d44a101a7db9addddbe74be0968e Mon Sep 17 00:00:00 2001
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Sat, 11 Mar 2017 21:01:23 +0200
+Subject: [PATCH] regulator: s5m8767: Constify regulator_ops
+
+Static struct regulator_ops is not modified so can be made const for
+code safeness.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/regulator/s5m8767.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 812e2ec..f95fac5 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1349,9 +1349,8 @@ static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi)
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 27343e1c43ef..383cd7533721 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -357,7 +357,7 @@ static int s5m8767_set_voltage_time_sel(struct regulator_dev *rdev,
+ 	return 0;
+ }
  
- 	dsi->te_gpio = of_get_named_gpio(dsi->panel_node, "te-gpios", 0);
- 	if (!gpio_is_valid(dsi->te_gpio)) {
--		dev_err(dsi->dev, "no te-gpios specified\n");
--		ret = dsi->te_gpio;
--		goto out;
-+		dev_info(dsi->dev, "no te-gpios specified\n");
-+		return 0;
- 	}
+-static struct regulator_ops s5m8767_ops = {
++static const struct regulator_ops s5m8767_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+ 	.enable			= regulator_enable_regmap,
+@@ -367,7 +367,7 @@ static struct regulator_ops s5m8767_ops = {
+ 	.set_voltage_time_sel	= s5m8767_set_voltage_time_sel,
+ };
  
- 	ret = gpio_request(dsi->te_gpio, "te_gpio");
+-static struct regulator_ops s5m8767_buck78_ops = {
++static const struct regulator_ops s5m8767_buck78_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+ 	.enable			= regulator_enable_regmap,
 -- 
-2.7.4
+2.11.0
