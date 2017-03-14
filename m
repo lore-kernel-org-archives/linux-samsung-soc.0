@@ -1,46 +1,165 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: RE: [RESEND PATCH v3 2/2] phy: Group vendor specific phy drivers
-Date: Tue, 14 Mar 2017 07:10:34 +0000
-Message-ID: <PS1PR06MB1692E831822DC1E7A085EE00D8240@PS1PR06MB1692.apcprd06.prod.outlook.com>
-References: <1489472080-23711-2-git-send-email-vivek.gautam@codeaurora.org>
- <1489472570-26434-1-git-send-email-vivek.gautam@codeaurora.org>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [2/3] soc: samsung: Do not build ARMv7 PMU drivers on ARMv8
+Date: Tue, 14 Mar 2017 13:21:10 +0530
+Message-ID: <2da8c346-dae9-6754-8349-df0946c89ae2@samsung.com>
+References: <20170311213856.21701-3-krzk@kernel.org>
+ <CGME20170314075427epcas5p19d137fbcc390e937172a17ae99f11a0c@epcas5p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:46098 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750861AbdCNHKl (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56260 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750850AbdCNHya (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 03:10:41 -0400
-In-Reply-To: <1489472570-26434-1-git-send-email-vivek.gautam@codeaurora.org>
-Content-Language: ja-JP
+        Tue, 14 Mar 2017 03:54:30 -0400
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OMS00KBVOMSWA50@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 14 Mar 2017 16:54:28 +0900 (KST)
+In-reply-to: <20170311213856.21701-3-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <vivek.gautam@codeaurora.org>, "kishon@ti.com" <kishon@ti.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Guenter Roeck <linux@roeck-us.net>, Heiko Stuebner <heiko@sntech.de>, Viresh Kumar <viresh.kumar@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, linux-rockchip@
+To: Krzysztof Kozlowski <krzk@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Krzysztof,
 
-> From: Vivek Gautam,  Sent: Tuesday, March 14, 2017 3:23 PM
->=20
-> Adding vendor specific directories in phy to group
-> phy drivers under their respective vendor umbrella.
->=20
-> Also updated the MAINTAINERS file to reflect the correct
-> directory structure for phy drivers.
->=20
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+On 03/12/2017 03:08 AM, Krzysztof Kozlowski wrote:
+> The Exynos Power Management Unit (PMU) drivers contain quite large
+> static arrays of register values necessary for given Exynos SoC to enter
+> low power mode.  All this data is useless for ARMv8 SoC like
+> Exynos5433, because the image will not be shared between ARMv7 and
+> ARMv8.
+>
+> Add additional Kconfig symbol for selecting the SoC-specific driver
+> addons thus skipping the useless data in the final image (this is
+> similar approach to chosen for Exynos clock controller drivers):
+>  - exynos-pmu driver will be compiled on both architectures ARMv7
+>    and ARMv8,
+>  - additional driver_data for ARMv7 SoCs will not be built on ARMv8
+>    and a macro will return NULL for them in of_device_id - this should
+>    be safe as these compatibles cannot match on ARMv7 and driver
+>    anyway handles NULL driver_data,
+>  - on ARMv8 compile only exynos-pmu driver which exposes the
+>    syscon-regmap for PMU address space.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/soc/samsung/Kconfig      |  8 +++++++-
+>  drivers/soc/samsung/Makefile     |  4 +++-
+>  drivers/soc/samsung/exynos-pmu.c | 22 ++++++++++++++++------
+>  drivers/soc/samsung/exynos-pmu.h |  3 +++
+>  4 files changed, 29 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index 245533907d1b..8b25bd55e648 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -8,7 +8,13 @@ if SOC_SAMSUNG
+>
+>  config EXYNOS_PMU
+>  	bool "Exynos PMU controller driver" if COMPILE_TEST
+> -	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
+> +	depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+> +	select EXYNOS_PMU_ARM_DRIVERS if ARM && ARCH_EXYNOS
+> +
 
-Thank you for the patch!
+In general this patch look ok, but I was think we should make these 
+configs configurable via _menuconfig_. Currently these are visible only 
+if COMPILE_TEST is enabled.
+Recently I was working on adding PMU support for Exynos7 and I face 
+issues when I want to disable this option and re-enable it for testing 
+purpose.
 
-Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> +# There is no need to enable these drivers for ARMv8
+> +config EXYNOS_PMU_ARM_DRIVERS
+> +	bool "Exynos PMU ARMv7-specific driver extensions" if COMPILE_TEST
+> +	depends on EXYNOS_PMU
+>
+>  config EXYNOS_PM_DOMAINS
+>  	bool "Exynos PM domains" if COMPILE_TEST
+> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> index 3619f2ecddaa..4d7694a4e7a4 100644
+> --- a/drivers/soc/samsung/Makefile
+> +++ b/drivers/soc/samsung/Makefile
+> @@ -1,3 +1,5 @@
+> -obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
+> +obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
+> +
+> +obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
+>  					exynos5250-pmu.o exynos5420-pmu.o
+>  obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
+> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> index 56d9244ff981..bd4a76f27bc2 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -69,27 +69,37 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
+>  }
+>
+>  /*
+> + * Split the data between ARM architectures because it is relatively big
+> + * and useless on other arch.
+> + */
+> +#ifdef CONFIG_EXYNOS_PMU_ARM_DRIVERS
+> +#define exynos_pmu_data_arm_ptr(data)	(&data)
+> +#else
+> +#define exynos_pmu_data_arm_ptr(data)	NULL
+> +#endif
+> +
+> +/*
+>   * PMU platform driver and devicetree bindings.
+>   */
+>  static const struct of_device_id exynos_pmu_of_device_ids[] = {
+>  	{
+>  		.compatible = "samsung,exynos3250-pmu",
+> -		.data = &exynos3250_pmu_data,
+> +		.data = exynos_pmu_data_arm_ptr(exynos3250_pmu_data),
+>  	}, {
+>  		.compatible = "samsung,exynos4210-pmu",
+> -		.data = &exynos4210_pmu_data,
+> +		.data = exynos_pmu_data_arm_ptr(exynos4210_pmu_data),
+>  	}, {
+>  		.compatible = "samsung,exynos4212-pmu",
+> -		.data = &exynos4212_pmu_data,
+> +		.data = exynos_pmu_data_arm_ptr(exynos4212_pmu_data),
+>  	}, {
+>  		.compatible = "samsung,exynos4412-pmu",
+> -		.data = &exynos4412_pmu_data,
+> +		.data = exynos_pmu_data_arm_ptr(exynos4412_pmu_data),
+>  	}, {
+>  		.compatible = "samsung,exynos5250-pmu",
+> -		.data = &exynos5250_pmu_data,
+> +		.data = exynos_pmu_data_arm_ptr(exynos5250_pmu_data),
+>  	}, {
+>  		.compatible = "samsung,exynos5420-pmu",
+> -		.data = &exynos5420_pmu_data,
+> +		.data = exynos_pmu_data_arm_ptr(exynos5420_pmu_data),
+>  	}, {
+>  		.compatible = "samsung,exynos5433-pmu",
+So, as I understand, the idea here to use something like
+	.data = &exynos5433_pmu_data or so in case ARMv8?
 
-Best regards,
-Yoshihiro Shimoda
+>  	},
+> diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
+> index a469e366fead..40d4229abfb5 100644
+> --- a/drivers/soc/samsung/exynos-pmu.h
+> +++ b/drivers/soc/samsung/exynos-pmu.h
+> @@ -31,6 +31,8 @@ struct exynos_pmu_data {
+>  };
+>
+>  extern void __iomem *pmu_base_addr;
+> +
+> +#ifdef CONFIG_EXYNOS_PMU_ARM_DRIVERS
+>  /* list of all exported SoC specific data */
+>  extern const struct exynos_pmu_data exynos3250_pmu_data;
+>  extern const struct exynos_pmu_data exynos4210_pmu_data;
+> @@ -38,6 +40,7 @@ extern const struct exynos_pmu_data exynos4212_pmu_data;
+>  extern const struct exynos_pmu_data exynos4412_pmu_data;
+>  extern const struct exynos_pmu_data exynos5250_pmu_data;
+>  extern const struct exynos_pmu_data exynos5420_pmu_data;
+> +#endif
+>
+>  extern void pmu_raw_writel(u32 val, u32 offset);
+>  extern u32 pmu_raw_readl(u32 offset);
+>
