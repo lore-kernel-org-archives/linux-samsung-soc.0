@@ -1,73 +1,45 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/4] pinctrl: samsung: Register pinctrl before GPIO
-Date: Tue, 14 Mar 2017 15:58:04 +0200
-Message-ID: <CAJKOXPf09Y7ojLP4reZpCy9D509fRSs08otnN4mHmZJjYO6EDw@mail.gmail.com>
-References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1487251636-2480-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com>
- <20170223172313.GF2742@localhost.localdomain> <CACRpkdZ+EQ=p_vGrBFYu6p-MnC0OvcY7P1-OWzebKgQRhGWQJQ@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 2/3] soc: samsung: Do not build ARMv7 PMU drivers on ARMv8
+Date: Tue, 14 Mar 2017 15:06:23 +0100
+Message-ID: <10434341.iCgJC0vsO4@amdc3058>
+References: <20170311213856.21701-1-krzk@kernel.org>
+ <20170311213856.21701-3-krzk@kernel.org>
+ <CGME20170314140626epcas5p20694a5324299c556fbaf7df1e9bf5955@epcas5p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ+EQ=p_vGrBFYu6p-MnC0OvcY7P1-OWzebKgQRhGWQJQ@mail.gmail.com>
+In-reply-to: <20170311213856.21701-3-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 14, 2017 at 3:44 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Feb 23, 2017 at 6:23 PM, Charles Keepax
-> <ckeepax@opensource.wolfsonmicro.com> wrote:
->> On Wed, Feb 22, 2017 at 03:37:37PM +0100, Linus Walleij wrote:
->>> On Thu, Feb 16, 2017 at 2:27 PM, Charles Keepax
->>> <ckeepax@opensource.wolfsonmicro.com> wrote:
->>>
->>> > If we request a GPIO hog, then gpiochip_add_data will attempt to request
->>> > some of its own GPIOs. The driver also uses gpiochip_generic_request
->>> > which means that for any GPIO request to succeed the pinctrl needs to be
->>> > registered. Currently however the driver registers the GPIO and then the
->>> > pinctrl meaning all GPIO hog requests will fail, which then in turn causes
->>> > the whole driver to fail probe. Fix this up by ensuring we register the
->>> > pinctrl first. Although currently there are no users of GPIO hogs in
->>> > mainline there are plenty of Samsung based boards that are widely used
->>> > for development purposes of other hardware. Indeed we hit this issue
->>> > whilst attaching some additional hardware to an Arndale system.
->>> >
->>> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
->>> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->>> > ---
->>> >
->>> > Changes since v1:
->>> >  - Updated commit message
->>>
->>> Patch applied. Will not be visible in -next until after the merge window
->>> though.
->>>
->>
->> Apologies but I think you might be best to drop this patch for
->> now, it seems this causes the ranges passed to
->> pinctrl_add_gpio_range to have the wrong .base, whilst I can
->> actually see no ill effects from this on Arndale. I suspect this
->> patch may be only part of the solution and may potentially cause
->> issues for others even though it seems fine for me.
->
-> OK I dropped it.
->
-> Resend it if you figure it out.
->
-> The Samsung driver traffic is increasing, and there are now
-> a bunch of developers starting to step on each others' toes.
->
-> Would you Samsung developers start considering someone who
-> can collect Samsung pin control patches and send them as
-> pull requests to me?
+On Saturday, March 11, 2017 11:38:55 PM Krzysztof Kozlowski wrote:
+> The Exynos Power Management Unit (PMU) drivers contain quite large
+> static arrays of register values necessary for given Exynos SoC to enter
+> low power mode.  All this data is useless for ARMv8 SoC like
+> Exynos5433, because the image will not be shared between ARMv7 and
+> ARMv8.
+> 
+> Add additional Kconfig symbol for selecting the SoC-specific driver
+> addons thus skipping the useless data in the final image (this is
+> similar approach to chosen for Exynos clock controller drivers):
+>  - exynos-pmu driver will be compiled on both architectures ARMv7
+>    and ARMv8,
+>  - additional driver_data for ARMv7 SoCs will not be built on ARMv8
+>    and a macro will return NULL for them in of_device_id - this should
+>    be safe as these compatibles cannot match on ARMv7 and driver
+>    anyway handles NULL driver_data,
+>  - on ARMv8 compile only exynos-pmu driver which exposes the
+>    syscon-regmap for PMU address space.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-For some reason, some days ago I had impression that Sylwester is
-doing this already... but I was corrected that you are taking them
-directly. If Tomasz and Sylwester are willing to do this, they got my
-Ack.
-
-If not, I can take it and set a separate repo on my kernel.org account.
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
 Best regards,
-Krzysztof
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
