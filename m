@@ -1,68 +1,43 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 4/8] ARM: dts: s3c64xx: Enable watchdog on all S3C64xx
- boards
-Date: Tue, 14 Mar 2017 15:34:24 +0200
-Message-ID: <CAJKOXPemHJ1ww3LkHwP+MKF4Wpp-C2b_Ww4GLkGnjbc9M-wpaQ@mail.gmail.com>
-References: <20170311172527.16368-1-krzk@kernel.org>
- <4386279.iJpUOasmTG@amdc3058>
- <CGME20170314133035epcas1p47a04430402688bbb6baebad69b8e5b24@epcas1p4.samsung.com>
- <CAJKOXPeCK1cjY78+PfcTprTnyXJ1k9zcUj8nW7onG8y0TWGzzQ@mail.gmail.com>
- <1633762.1QWnRjdako@amdc3058>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: samsung: Fix memory mapping code
+Date: Tue, 14 Mar 2017 14:35:31 +0100
+Message-ID: <CACRpkdbWxRVf5aVJYFMzYEzY+UvK3-vk59U=dNdK113wYOpkOw@mail.gmail.com>
+References: <CGME20170223101244eucas1p2eddf13a013d66f9ccdbe45f410b5939c@eucas1p2.samsung.com>
+ <20170222170202.heu35anyoziwv23n@kozik-lap> <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1633762.1QWnRjdako@amdc3058>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-io0-f182.google.com ([209.85.223.182]:34793 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751774AbdCNNfd (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 14 Mar 2017 09:35:33 -0400
+Received: by mail-io0-f182.google.com with SMTP id b140so10323889iof.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Mar 2017 06:35:33 -0700 (PDT)
+In-Reply-To: <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Tue, Mar 14, 2017 at 3:30 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> On Tuesday, March 14, 2017 03:04:28 PM Krzysztof Kozlowski wrote:
->> On Tue, Mar 14, 2017 at 2:58 PM, Bartlomiej Zolnierkiewicz
->> <b.zolnierkie@samsung.com> wrote:
->> >
->> > Hi,
->> >
->> > On Saturday, March 11, 2017 07:25:23 PM Krzysztof Kozlowski wrote:
->> >> Watchdog module does not have external dependencies so it can be safely
->> >> enabled in s3c64xx.dtsi thus making it available for all S3C64xx-based
->> >> boards.
->> >>
->> >> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> >
->> > Please first fix the driver w.r.t. infinite interrupt in soft mode
->> > issue and only then enable it on more hardware.  IOW this patch
->> > should be placed after patch #7 in the series.
->>
->> The soft-interrupt mode is not the default one so this should not
->> cause any issues by default but I got your point. Makes sense. The
->> pity is the timing. There wasn't much interest in the patchset (no
->> comments since 24 of Feb) so I merged it yesterday evening. Does it
->> brake any platform/board?
+On Thu, Feb 23, 2017 at 11:12 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+
+> Some pinctrls share memory regions, and devm_ioremap_resource does not
+> allow to share resources, in opposition to devm_ioremap.
+> This patch restores back usage of devm_ioremap function, but with proper
+> error handling and logging.
 >
-> OK, let it be as it as it doesn't break the default setup.
->
-> However please consider the fact that posting revised patches
-> (v2 was posted *yesterday*) for a review and then merging them
-> the same day is not a good practice..
+> Fixes: baafaca ("pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()")
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+> v2:
+> - added platform_get_resource error check (thanks to Krzysztof)
 
-v2 was posted on March 11, not yesterday but I got the point that the
-rest of world is working from Monday not Sunday. :) And v1 was on 24
-of Feb. Usually I try to give them more time but recently there is so
-less interest in this that I gave up waiting. I will give them more
-time in the future.
+This conflicts with the revert that Marek urged me to do for the
+fixes branch.
 
-Thanks for review!
+Please check the resulting tree on my fixes branch and rebase on
+that.
 
-Krzysztof
+Yours,
+Linus Walleij
