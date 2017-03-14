@@ -1,81 +1,43 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/3] arm64: defconfig: Enable DRM and LPASS drivers for
- Exynos5433 and Exynos7
-Date: Tue, 14 Mar 2017 16:18:23 +0200
-Message-ID: <CAJKOXPf5D+=Qdmbr03yCXcRiSbmfBJbd1T2HnKfsg5huQSQShA@mail.gmail.com>
-References: <20170311213856.21701-1-krzk@kernel.org> <CGME20170314141613epcas5p30fa91bf723a5e3a8f11ce9a8cfdb7dd7@epcas5p3.samsung.com>
- <20170311213856.21701-2-krzk@kernel.org> <2818068.EPOAvXIH6Z@amdc3058>
+Subject: Re: [PATCH v2 1/4] pinctrl: samsung: Fix the width of PINCFG_TYPE_DRV
+ bitfields for Exynos5433
+Date: Tue, 14 Mar 2017 16:27:26 +0200
+Message-ID: <CAJKOXPd1pRN47Ss5qTHUVAdPwxKqE5vGGevG1OhVH0uSZnotKA@mail.gmail.com>
+References: <CGME20161230041426epcas1p1f827d3cee8b607d81e9921b412ddf301@epcas1p1.samsung.com>
+ <20161230041421.24448-1-andi.shyti@samsung.com> <20161230041421.24448-2-andi.shyti@samsung.com>
+ <CACRpkdbR3x14h38Gg7qpeWnswwD9qsS0zDUrrXCEJH-AdEB+cQ@mail.gmail.com>
+ <58AF7CCB.5070303@samsung.com> <CACRpkda0-k7Vo9Y6yNtLNXu-gGnJW9y83t6W9p032KWjHYdMiw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2818068.EPOAvXIH6Z@amdc3058>
+In-Reply-To: <CACRpkda0-k7Vo9Y6yNtLNXu-gGnJW9y83t6W9p032KWjHYdMiw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 14, 2017 at 4:16 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
+On Tue, Mar 14, 2017 at 3:47 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Feb 24, 2017 at 1:22 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> On 2016년 12월 30일 22:28, Linus Walleij wrote:
+>>> On Fri, Dec 30, 2016 at 5:14 AM, Andi Shyti <andi.shyti@samsung.com> wrote:
+> Probably. Send a patch fixing it up so I can apply it.
 >
-> Hi,
+> There are now something like 5 different people submitting Samsung pinctrl
+> patches without coordination so this will start to happen a lot if you keep
+> up this development pace.
 >
-> On Saturday, March 11, 2017 11:38:54 PM Krzysztof Kozlowski wrote:
->> Enable drivers specific to Exynos5433 and Exynos7:
->> 1. MFD Low Power Audio SubSystem (LPASS),
->> 2. Entire DRM stack (display, outputs, additional sub-blocks),
->> 3. Drivers for video-related sub-blocks (JPEG, Multi Format Codec,
->>    GScaler).
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
->>  arch/arm64/configs/defconfig | 18 ++++++++++++++++++
->>  1 file changed, 18 insertions(+)
->>
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index 5e7fa211eb0a..81515cbd2fe8 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -302,6 +302,7 @@ CONFIG_RENESAS_WDT=y
->>  CONFIG_S3C2410_WATCHDOG=y
->>  CONFIG_MESON_GXBB_WATCHDOG=m
->>  CONFIG_MESON_WATCHDOG=m
->> +CONFIG_MFD_EXYNOS_LPASS=m
->>  CONFIG_MFD_MAX77620=y
->>  CONFIG_MFD_RK808=y
->>  CONFIG_MFD_SPMI_PMIC=y
->> @@ -327,10 +328,27 @@ CONFIG_MEDIA_CONTROLLER=y
->>  CONFIG_VIDEO_V4L2_SUBDEV_API=y
->>  # CONFIG_DVB_NET is not set
->>  CONFIG_V4L_MEM2MEM_DRIVERS=y
->> +CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
->> +CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
->> +CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
->>  CONFIG_VIDEO_RENESAS_FCP=m
->>  CONFIG_VIDEO_RENESAS_VSP1=m
->>  CONFIG_DRM=m
->>  CONFIG_DRM_NOUVEAU=m
->> +CONFIG_DRM_EXYNOS=m
->> +CONFIG_DRM_EXYNOS_FIMD=y
->> +CONFIG_DRM_EXYNOS5433_DECON=y
->> +CONFIG_DRM_EXYNOS7_DECON=y
->> +CONFIG_DRM_EXYNOS_MIXER=y
->> +CONFIG_DRM_EXYNOS_VIDI=y
->> +CONFIG_DRM_EXYNOS_DPI=y
->> +CONFIG_DRM_EXYNOS_DSI=y
->> +CONFIG_DRM_EXYNOS_HDMI=y
->> +CONFIG_DRM_EXYNOS_MIC=y
->> +CONFIG_DRM_EXYNOS_G2D=y
->> +CONFIG_DRM_EXYNOS_IPP=y
->> +CONFIG_DRM_EXYNOS_FIMC=y
->> +CONFIG_DRM_EXYNOS_ROTATOR=y
->
-> I would prefer to enable only sub-drivers that are actually
-> used on Exynos5433/Exynos7 hardware, i.e. currently only
-> exynos4.dtsi uses compatibles for FIMC and rotator drivers
-> (I have not checked all sub-drivers).
+> As I just wrote in another mail: I want someone to step up and collect
+> Samsung patches and send them to me using a pull request.
 
-I thought I enabled only these which are present but apparently I went
-too far. I'll fix it up. Thanks for review!
+I think we can handle it as there are three of us.
+
+> Samsung people also need to start reviewing each other's patches
+> more I guess, but mainly I need help with integration.
+
+More or less recently we do the reviews. Sure we can focus more... and
+actually having an entry gate for patches would ensure at least one
+more review from the applying person.
 
 Best regards,
 Krzysztof
