@@ -1,42 +1,90 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/3] soc: samsung: Do not build ARMv7 PMU drivers on ARMv8
-Date: Tue, 14 Mar 2017 15:06:23 +0100
-Message-ID: <10434341.iCgJC0vsO4@amdc3058>
+Subject: Re: [PATCH 1/3] arm64: defconfig: Enable DRM and LPASS drivers for
+ Exynos5433 and Exynos7
+Date: Tue, 14 Mar 2017 15:16:11 +0100
+Message-ID: <2818068.EPOAvXIH6Z@amdc3058>
 References: <20170311213856.21701-1-krzk@kernel.org>
- <20170311213856.21701-3-krzk@kernel.org>
- <CGME20170314140626epcas5p20694a5324299c556fbaf7df1e9bf5955@epcas5p2.samsung.com>
+ <20170311213856.21701-2-krzk@kernel.org>
+ <CGME20170314141613epcas5p30fa91bf723a5e3a8f11ce9a8cfdb7dd7@epcas5p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170311213856.21701-3-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20170311213856.21701-2-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Saturday, March 11, 2017 11:38:55 PM Krzysztof Kozlowski wrote:
-> The Exynos Power Management Unit (PMU) drivers contain quite large
-> static arrays of register values necessary for given Exynos SoC to enter
-> low power mode.  All this data is useless for ARMv8 SoC like
-> Exynos5433, because the image will not be shared between ARMv7 and
-> ARMv8.
-> 
-> Add additional Kconfig symbol for selecting the SoC-specific driver
-> addons thus skipping the useless data in the final image (this is
-> similar approach to chosen for Exynos clock controller drivers):
->  - exynos-pmu driver will be compiled on both architectures ARMv7
->    and ARMv8,
->  - additional driver_data for ARMv7 SoCs will not be built on ARMv8
->    and a macro will return NULL for them in of_device_id - this should
->    be safe as these compatibles cannot match on ARMv7 and driver
->    anyway handles NULL driver_data,
->  - on ARMv8 compile only exynos-pmu driver which exposes the
->    syscon-regmap for PMU address space.
+
+Hi,
+
+On Saturday, March 11, 2017 11:38:54 PM Krzysztof Kozlowski wrote:
+> Enable drivers specific to Exynos5433 and Exynos7:
+> 1. MFD Low Power Audio SubSystem (LPASS),
+> 2. Entire DRM stack (display, outputs, additional sub-blocks),
+> 3. Drivers for video-related sub-blocks (JPEG, Multi Format Codec,
+>    GScaler).
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm64/configs/defconfig | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 5e7fa211eb0a..81515cbd2fe8 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -302,6 +302,7 @@ CONFIG_RENESAS_WDT=y
+>  CONFIG_S3C2410_WATCHDOG=y
+>  CONFIG_MESON_GXBB_WATCHDOG=m
+>  CONFIG_MESON_WATCHDOG=m
+> +CONFIG_MFD_EXYNOS_LPASS=m
+>  CONFIG_MFD_MAX77620=y
+>  CONFIG_MFD_RK808=y
+>  CONFIG_MFD_SPMI_PMIC=y
+> @@ -327,10 +328,27 @@ CONFIG_MEDIA_CONTROLLER=y
+>  CONFIG_VIDEO_V4L2_SUBDEV_API=y
+>  # CONFIG_DVB_NET is not set
+>  CONFIG_V4L_MEM2MEM_DRIVERS=y
+> +CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
+> +CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
+> +CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
+>  CONFIG_VIDEO_RENESAS_FCP=m
+>  CONFIG_VIDEO_RENESAS_VSP1=m
+>  CONFIG_DRM=m
+>  CONFIG_DRM_NOUVEAU=m
+> +CONFIG_DRM_EXYNOS=m
+> +CONFIG_DRM_EXYNOS_FIMD=y
+> +CONFIG_DRM_EXYNOS5433_DECON=y
+> +CONFIG_DRM_EXYNOS7_DECON=y
+> +CONFIG_DRM_EXYNOS_MIXER=y
+> +CONFIG_DRM_EXYNOS_VIDI=y
+> +CONFIG_DRM_EXYNOS_DPI=y
+> +CONFIG_DRM_EXYNOS_DSI=y
+> +CONFIG_DRM_EXYNOS_HDMI=y
+> +CONFIG_DRM_EXYNOS_MIC=y
+> +CONFIG_DRM_EXYNOS_G2D=y
+> +CONFIG_DRM_EXYNOS_IPP=y
+> +CONFIG_DRM_EXYNOS_FIMC=y
+> +CONFIG_DRM_EXYNOS_ROTATOR=y
 
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+I would prefer to enable only sub-drivers that are actually
+used on Exynos5433/Exynos7 hardware, i.e. currently only
+exynos4.dtsi uses compatibles for FIMC and rotator drivers
+(I have not checked all sub-drivers).
+
+>  CONFIG_DRM_RCAR_DU=m
+>  CONFIG_DRM_RCAR_HDMI=y
+>  CONFIG_DRM_RCAR_LVDS=y
 
 Best regards,
 --
