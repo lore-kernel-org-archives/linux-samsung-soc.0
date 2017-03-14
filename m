@@ -1,54 +1,42 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH -next v2] pinctrl: samsung: Fix return value check in
- samsung_pinctrl_get_soc_data()
-Date: Tue, 14 Mar 2017 11:44:30 +0100
-Message-ID: <0eb09039-17c4-5c00-0501-812d4de1ab4a@samsung.com>
-References: <20170125140321.23911-1-weiyj.lk@gmail.com>
- <20170205155849.4362-1-weiyj.lk@gmail.com>
- <CGME20170213145008epcas3p119bdd6f76468a00fb8d796308ad37698@epcas3p1.samsung.com>
- <CACRpkda0BYLNpPFwpNaEMdeyx61KDUQz_6Y=FQj340pViFjVVQ@mail.gmail.com>
- <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
- <CACRpkda1tALy3rmk7FebnR3Xg4WOuUc0Gv1xAmxkd+RLhJ_1VQ@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 4/8] ARM: dts: s3c64xx: Enable watchdog on all S3C64xx
+ boards
+Date: Tue, 14 Mar 2017 13:58:35 +0100
+Message-ID: <4386279.iJpUOasmTG@amdc3058>
+References: <20170311172527.16368-1-krzk@kernel.org>
+ <20170311172527.16368-5-krzk@kernel.org>
+ <CGME20170314125837epcas1p481afc11bcf7fc11ef477edda28bccc74@epcas1p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-reply-to: <CACRpkda1tALy3rmk7FebnR3Xg4WOuUc0Gv1xAmxkd+RLhJ_1VQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Wei Yongjun <weiyj.lk@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20170311172527.16368-5-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Linus,
 
-I have posted proper fix some times ago[1], no need to revert.
+Hi,
 
-[1]: https://www.spinics.net/lists/linux-samsung-soc/msg58395.html
+On Saturday, March 11, 2017 07:25:23 PM Krzysztof Kozlowski wrote:
+> Watchdog module does not have external dependencies so it can be safely
+> enabled in s3c64xx.dtsi thus making it available for all S3C64xx-based
+> boards.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-Regards
-Andrzej
+Please first fix the driver w.r.t. infinite interrupt in soft mode
+issue and only then enable it on more hardware.  IOW this patch
+should be placed after patch #7 in the series.
 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-On 14.03.2017 11:29, Linus Walleij wrote:
-> On Tue, Feb 21, 2017 at 2:49 PM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->
->> Sadly this patch breaks support for IMEM pinctrl block on Exynos5433/TM2
->> and it took us some time to find the source of the problem.
->>
->> devm_ioremap_resource() is not functionally a full equivalent of
->> devm_ioremap(). The problem here is that registers for IMEM and ALIVE
->> pin controllers are shared and both devices have <0x11090000 0x1000>
->> range in their reg property. devm_ioremap_resource() maps given
->> resource exclusively for the device, while devm_ioremap() allows
->> non-exclusive mappings.
->>
->> This patch has to be reverted asap.
-> Patch reverted for fixes, copying the above text as commit message.
->
-> Yours,
-> Linus Walleij
->
->
->
-
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
