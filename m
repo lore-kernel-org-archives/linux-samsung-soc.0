@@ -1,105 +1,42 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [2/3] soc: samsung: Do not build ARMv7 PMU drivers on ARMv8
-Date: Tue, 14 Mar 2017 11:14:15 +0200
-Message-ID: <CAJKOXPfaUhw=vzKKZc=3RjoRsRWP7qmPborjg+qpv5hr6iff8g@mail.gmail.com>
-References: <CGME20170314075427epcas5p19d137fbcc390e937172a17ae99f11a0c@epcas5p1.samsung.com>
- <20170311213856.21701-3-krzk@kernel.org> <2da8c346-dae9-6754-8349-df0946c89ae2@samsung.com>
- <CAJKOXPd=K8rbBxV21ibubjgU8BV3g4AqDrXX0f6-N_VPkR=puQ@mail.gmail.com> <0ae4c538-a3af-a1b7-418d-4bccbf09faf4@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH -next v2] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
+Date: Tue, 14 Mar 2017 11:29:28 +0100
+Message-ID: <CACRpkda1tALy3rmk7FebnR3Xg4WOuUc0Gv1xAmxkd+RLhJ_1VQ@mail.gmail.com>
+References: <20170125140321.23911-1-weiyj.lk@gmail.com> <20170205155849.4362-1-weiyj.lk@gmail.com>
+ <CGME20170213145008epcas3p119bdd6f76468a00fb8d796308ad37698@epcas3p1.samsung.com>
+ <CACRpkda0BYLNpPFwpNaEMdeyx61KDUQz_6Y=FQj340pViFjVVQ@mail.gmail.com> <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:40224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750742AbdCNJOW (ORCPT
+Received: from mail-io0-f181.google.com ([209.85.223.181]:36207 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750785AbdCNK3b (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 05:14:22 -0400
-In-Reply-To: <0ae4c538-a3af-a1b7-418d-4bccbf09faf4@samsung.com>
+        Tue, 14 Mar 2017 06:29:31 -0400
+Received: by mail-io0-f181.google.com with SMTP id l7so101224305ioe.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Mar 2017 03:29:30 -0700 (PDT)
+In-Reply-To: <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Wei Yongjun <weiyj.lk@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>
 
-On Tue, Mar 14, 2017 at 10:40 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+On Tue, Feb 21, 2017 at 2:49 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+
+> Sadly this patch breaks support for IMEM pinctrl block on Exynos5433/TM2
+> and it took us some time to find the source of the problem.
 >
+> devm_ioremap_resource() is not functionally a full equivalent of
+> devm_ioremap(). The problem here is that registers for IMEM and ALIVE
+> pin controllers are shared and both devices have <0x11090000 0x1000>
+> range in their reg property. devm_ioremap_resource() maps given
+> resource exclusively for the device, while devm_ioremap() allows
+> non-exclusive mappings.
 >
-> On 03/14/2017 01:32 PM, Krzysztof Kozlowski wrote:
->> On Tue, Mar 14, 2017 at 9:51 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
->>> Hi Krzysztof,
->>>
->>> On 03/12/2017 03:08 AM, Krzysztof Kozlowski wrote:
->>>> The Exynos Power Management Unit (PMU) drivers contain quite large
->>>> static arrays of register values necessary for given Exynos SoC to enter
->>>> low power mode.  All this data is useless for ARMv8 SoC like
->>>> Exynos5433, because the image will not be shared between ARMv7 and
->>>> ARMv8.
->>>>
->>>> Add additional Kconfig symbol for selecting the SoC-specific driver
->>>> addons thus skipping the useless data in the final image (this is
->>>> similar approach to chosen for Exynos clock controller drivers):
->>>>  - exynos-pmu driver will be compiled on both architectures ARMv7
->>>>    and ARMv8,
->>>>  - additional driver_data for ARMv7 SoCs will not be built on ARMv8
->>>>    and a macro will return NULL for them in of_device_id - this should
->>>>    be safe as these compatibles cannot match on ARMv7 and driver
->>>>    anyway handles NULL driver_data,
->>>>  - on ARMv8 compile only exynos-pmu driver which exposes the
->>>>    syscon-regmap for PMU address space.
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>> ---
->>>>  drivers/soc/samsung/Kconfig      |  8 +++++++-
->>>>  drivers/soc/samsung/Makefile     |  4 +++-
->>>>  drivers/soc/samsung/exynos-pmu.c | 22 ++++++++++++++++------
->>>>  drivers/soc/samsung/exynos-pmu.h |  3 +++
->>>>  4 files changed, 29 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
->>>> index 245533907d1b..8b25bd55e648 100644
->>>> --- a/drivers/soc/samsung/Kconfig
->>>> +++ b/drivers/soc/samsung/Kconfig
->>>> @@ -8,7 +8,13 @@ if SOC_SAMSUNG
->>>>
->>>>  config EXYNOS_PMU
->>>>       bool "Exynos PMU controller driver" if COMPILE_TEST
->>>> -     depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
->>>> +     depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
->>>> +     select EXYNOS_PMU_ARM_DRIVERS if ARM && ARCH_EXYNOS
->>>> +
->>>
->>> In general this patch look ok, but I was think we should make these
->>> configs configurable via _menuconfig_. Currently these are visible only
->>> if COMPILE_TEST is enabled.
->>> Recently I was working on adding PMU support for Exynos7 and I face
->>> issues when I want to disable this option and re-enable it for testing
->>> purpose.
->>
->> These drivers are not available in menuconfig on purpose - these are
->> essential parts of SoC. Without them usually something will not work
->> so user should not be able to disable them. For all of such drivers,
->> we use the SELECT from mach approach.
->>
-> Well, what you are saying is very subjective. In past I have face issues
-> where to isolate or narrow down some issue, we do need to play with PMU
-> and power domains. So, having a configurable option won't hurt here.
-> Anyway if you (or anyone else) strongly feel we should be following
-> "SELECT from MACH approach" then lets follow it.
+> This patch has to be reverted asap.
 
-For ARMv7, in the past you could not do this. It behaved (almost)
-always the same as it is now. The PMU driver was being compiled in if
-ARCH_EXYNOS is selected.
+Patch reverted for fixes, copying the above text as commit message.
 
-On ARMv8 - Exynos7 - there was no PMU driver so indeed this behavior
-changes. However PMU driver now is necessary for pinctrl (and actually
-for some others referring by syscon) so really you cannot disable it
-and expect things to work. Menuconfig serves such purpose - user
-(distro config developer) can choose what he wants but he wants to
-boot the kernel. People in general and people setting up configs for
-distro usually do not know all the subtle SoC submodule relations for
-all of the SoCs. That is our responsibility to provide them something
-which is usable.
-
-On the other hand, for debugging we always had to change some things.
-That's debugging.
-
-Best regards,
-Krzysztof
+Yours,
+Linus Walleij
