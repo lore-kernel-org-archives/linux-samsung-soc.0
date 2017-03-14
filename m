@@ -1,64 +1,161 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 3/5] drm/exynos/decon5433: signal frame done interrupt at front
- porch
-Date: Tue, 14 Mar 2017 09:27:58 +0100
-Message-ID: <1489480080-25633-4-git-send-email-a.hajda@samsung.com>
-References: <1489480080-25633-1-git-send-email-a.hajda@samsung.com>
- <CGME20170314082811eucas1p1094922f9c35cf3ceeefa7d52d3a7259b@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57250 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750937AbdCNI2Q (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 04:28:16 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OMS00GSIQ71ZK50@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 Mar 2017 08:28:13 +0000 (GMT)
-In-reply-to: <1489480080-25633-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [2/3] soc: samsung: Do not build ARMv7 PMU drivers on ARMv8
+Date: Tue, 14 Mar 2017 14:10:02 +0530
+Message-ID: <0ae4c538-a3af-a1b7-418d-4bccbf09faf4@samsung.com>
+References: <CGME20170314075427epcas5p19d137fbcc390e937172a17ae99f11a0c@epcas5p1.samsung.com>
+ <20170311213856.21701-3-krzk@kernel.org>
+ <2da8c346-dae9-6754-8349-df0946c89ae2@samsung.com>
+ <CAJKOXPd=K8rbBxV21ibubjgU8BV3g4AqDrXX0f6-N_VPkR=puQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAJKOXPd=K8rbBxV21ibubjgU8BV3g4AqDrXX0f6-N_VPkR=puQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-DECON in case of video mode generates interrupt by default at start
-of vertical back porch. As this interrupt is used to generate VBLANK
-events more optimal point is start of vertical front porch.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 2 +-
- include/video/exynos5433_decon.h              | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index cfe6f8a..a43d0fa 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -105,7 +105,7 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
- 		if (ctx->out_type & IFTYPE_I80)
- 			val |= VIDINTCON0_FRAMEDONE;
- 		else
--			val |= VIDINTCON0_INTFRMEN;
-+			val |= VIDINTCON0_INTFRMEN | VIDINTCON0_FRAMESEL_FP;
- 
- 		writel(val, ctx->addr + DECON_VIDINTCON0);
- 	}
-diff --git a/include/video/exynos5433_decon.h b/include/video/exynos5433_decon.h
-index 352fc0d..6b083d3 100644
---- a/include/video/exynos5433_decon.h
-+++ b/include/video/exynos5433_decon.h
-@@ -127,6 +127,10 @@
- 
- /* VIDINTCON0 */
- #define VIDINTCON0_FRAMEDONE		(1 << 17)
-+#define VIDINTCON0_FRAMESEL_BP		(0 << 15)
-+#define VIDINTCON0_FRAMESEL_VS		(1 << 15)
-+#define VIDINTCON0_FRAMESEL_AC		(2 << 15)
-+#define VIDINTCON0_FRAMESEL_FP		(3 << 15)
- #define VIDINTCON0_INTFRMEN		(1 << 12)
- #define VIDINTCON0_INTEN		(1 << 0)
- 
--- 
-2.7.4
+On 03/14/2017 01:32 PM, Krzysztof Kozlowski wrote:
+> On Tue, Mar 14, 2017 at 9:51 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>> Hi Krzysztof,
+>>
+>> On 03/12/2017 03:08 AM, Krzysztof Kozlowski wrote:
+>>> The Exynos Power Management Unit (PMU) drivers contain quite large
+>>> static arrays of register values necessary for given Exynos SoC to enter
+>>> low power mode.  All this data is useless for ARMv8 SoC like
+>>> Exynos5433, because the image will not be shared between ARMv7 and
+>>> ARMv8.
+>>>
+>>> Add additional Kconfig symbol for selecting the SoC-specific driver
+>>> addons thus skipping the useless data in the final image (this is
+>>> similar approach to chosen for Exynos clock controller drivers):
+>>>  - exynos-pmu driver will be compiled on both architectures ARMv7
+>>>    and ARMv8,
+>>>  - additional driver_data for ARMv7 SoCs will not be built on ARMv8
+>>>    and a macro will return NULL for them in of_device_id - this should
+>>>    be safe as these compatibles cannot match on ARMv7 and driver
+>>>    anyway handles NULL driver_data,
+>>>  - on ARMv8 compile only exynos-pmu driver which exposes the
+>>>    syscon-regmap for PMU address space.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> ---
+>>>  drivers/soc/samsung/Kconfig      |  8 +++++++-
+>>>  drivers/soc/samsung/Makefile     |  4 +++-
+>>>  drivers/soc/samsung/exynos-pmu.c | 22 ++++++++++++++++------
+>>>  drivers/soc/samsung/exynos-pmu.h |  3 +++
+>>>  4 files changed, 29 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+>>> index 245533907d1b..8b25bd55e648 100644
+>>> --- a/drivers/soc/samsung/Kconfig
+>>> +++ b/drivers/soc/samsung/Kconfig
+>>> @@ -8,7 +8,13 @@ if SOC_SAMSUNG
+>>>
+>>>  config EXYNOS_PMU
+>>>       bool "Exynos PMU controller driver" if COMPILE_TEST
+>>> -     depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
+>>> +     depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+>>> +     select EXYNOS_PMU_ARM_DRIVERS if ARM && ARCH_EXYNOS
+>>> +
+>>
+>> In general this patch look ok, but I was think we should make these
+>> configs configurable via _menuconfig_. Currently these are visible only
+>> if COMPILE_TEST is enabled.
+>> Recently I was working on adding PMU support for Exynos7 and I face
+>> issues when I want to disable this option and re-enable it for testing
+>> purpose.
+>
+> These drivers are not available in menuconfig on purpose - these are
+> essential parts of SoC. Without them usually something will not work
+> so user should not be able to disable them. For all of such drivers,
+> we use the SELECT from mach approach.
+>
+Well, what you are saying is very subjective. In past I have face issues 
+where to isolate or narrow down some issue, we do need to play with PMU 
+and power domains. So, having a configurable option won't hurt here.
+Anyway if you (or anyone else) strongly feel we should be following 
+"SELECT from MACH approach" then lets follow it.
+
+
+>>> +# There is no need to enable these drivers for ARMv8
+>>> +config EXYNOS_PMU_ARM_DRIVERS
+>>> +     bool "Exynos PMU ARMv7-specific driver extensions" if COMPILE_TEST
+>>> +     depends on EXYNOS_PMU
+>>>
+>>>  config EXYNOS_PM_DOMAINS
+>>>       bool "Exynos PM domains" if COMPILE_TEST
+>>> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+>>> index 3619f2ecddaa..4d7694a4e7a4 100644
+>>> --- a/drivers/soc/samsung/Makefile
+>>> +++ b/drivers/soc/samsung/Makefile
+>>> @@ -1,3 +1,5 @@
+>>> -obj-$(CONFIG_EXYNOS_PMU)     += exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
+>>> +obj-$(CONFIG_EXYNOS_PMU)     += exynos-pmu.o
+>>> +
+>>> +obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS) += exynos3250-pmu.o exynos4-pmu.o \
+>>>                                       exynos5250-pmu.o exynos5420-pmu.o
+>>>  obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
+>>> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+>>> index 56d9244ff981..bd4a76f27bc2 100644
+>>> --- a/drivers/soc/samsung/exynos-pmu.c
+>>> +++ b/drivers/soc/samsung/exynos-pmu.c
+>>> @@ -69,27 +69,37 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
+>>>  }
+>>>
+>>>  /*
+>>> + * Split the data between ARM architectures because it is relatively big
+>>> + * and useless on other arch.
+>>> + */
+>>> +#ifdef CONFIG_EXYNOS_PMU_ARM_DRIVERS
+>>> +#define exynos_pmu_data_arm_ptr(data)        (&data)
+>>> +#else
+>>> +#define exynos_pmu_data_arm_ptr(data)        NULL
+>>> +#endif
+>>> +
+>>> +/*
+>>>   * PMU platform driver and devicetree bindings.
+>>>   */
+>>>  static const struct of_device_id exynos_pmu_of_device_ids[] = {
+>>>       {
+>>>               .compatible = "samsung,exynos3250-pmu",
+>>> -             .data = &exynos3250_pmu_data,
+>>> +             .data = exynos_pmu_data_arm_ptr(exynos3250_pmu_data),
+>>>       }, {
+>>>               .compatible = "samsung,exynos4210-pmu",
+>>> -             .data = &exynos4210_pmu_data,
+>>> +             .data = exynos_pmu_data_arm_ptr(exynos4210_pmu_data),
+>>>       }, {
+>>>               .compatible = "samsung,exynos4212-pmu",
+>>> -             .data = &exynos4212_pmu_data,
+>>> +             .data = exynos_pmu_data_arm_ptr(exynos4212_pmu_data),
+>>>       }, {
+>>>               .compatible = "samsung,exynos4412-pmu",
+>>> -             .data = &exynos4412_pmu_data,
+>>> +             .data = exynos_pmu_data_arm_ptr(exynos4412_pmu_data),
+>>>       }, {
+>>>               .compatible = "samsung,exynos5250-pmu",
+>>> -             .data = &exynos5250_pmu_data,
+>>> +             .data = exynos_pmu_data_arm_ptr(exynos5250_pmu_data),
+>>>       }, {
+>>>               .compatible = "samsung,exynos5420-pmu",
+>>> -             .data = &exynos5420_pmu_data,
+>>> +             .data = exynos_pmu_data_arm_ptr(exynos5420_pmu_data),
+>>>       }, {
+>>>               .compatible = "samsung,exynos5433-pmu",
+>> So, as I understand, the idea here to use something like
+>>         .data = &exynos5433_pmu_data or so in case ARMv8?
+>
+> In the future, yes. Now there is no low power mode support for
+> Exynos5433 so the data is left empty.
+>
+Ok, this is fine.
+
+> Best regards,
+> Krzysztof
+>
+>
+>
