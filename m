@@ -1,152 +1,76 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [RESEND] drm/exynos: Remove support for Exynos4415 (SoC not
- supported anymore)
-Date: Tue, 14 Mar 2017 10:21:03 +0900
-Message-ID: <58C7457F.4050405@samsung.com>
-References: <CGME20170311180431epcas2p10b35859d1f3eedd1e4dc4d4bb9833cce@epcas2p1.samsung.com>
- <20170311180416.7071-1-krzk@kernel.org>
+Subject: Re: [PATCH v2 00/12] drm/exynos: rework vblank handling
+Date: Tue, 14 Mar 2017 10:28:49 +0900
+Message-ID: <58C74751.30001@samsung.com>
+References: <CGME20170308145900eucas1p25d1fd7a33ad2bb9fa8c911a3b923546b@eucas1p2.samsung.com>
+ <1488985126-25288-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44236 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753898AbdCNBVH (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 21:21:07 -0400
-In-reply-to: <20170311180416.7071-1-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1488985126-25288-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Merged.
-
-Thanks.
-
-2017년 03월 12일 03:04에 Krzysztof Kozlowski 이(가) 쓴 글:
-> Support for Exynos4415 is going away because there are no internal nor
-> external users.
-> 
-> Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
-> the platform cannot be instantiated so remove also the drivers.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Kukjin Kim <kgene@kernel.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/display/exynos/exynos_dsim.txt |  1 -
->  .../bindings/display/exynos/samsung-fimd.txt           |  1 -
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c                | 15 +--------------
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c               | 18 ++----------------
->  4 files changed, 3 insertions(+), 32 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> index a78265993665..ca5204b3bc21 100644
-> --- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> @@ -4,7 +4,6 @@ Required properties:
->    - compatible: value should be one of the following
->  		"samsung,exynos3250-mipi-dsi" /* for Exynos3250/3472 SoCs */
->  		"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
-> -		"samsung,exynos4415-mipi-dsi" /* for Exynos4415 SoC */
->  		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
->  		"samsung,exynos5422-mipi-dsi" /* for Exynos5422/5800 SoCs */
->  		"samsung,exynos5433-mipi-dsi" /* for Exynos5433 SoCs */
-> diff --git a/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt b/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
-> index 18645e0228b0..5837402c3ade 100644
-> --- a/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
-> +++ b/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
-> @@ -11,7 +11,6 @@ Required properties:
->  		"samsung,s5pv210-fimd"; /* for S5PV210 SoC */
->  		"samsung,exynos3250-fimd"; /* for Exynos3250/3472 SoCs */
->  		"samsung,exynos4210-fimd"; /* for Exynos4 SoCs */
-> -		"samsung,exynos4415-fimd"; /* for Exynos4415 SoC */
->  		"samsung,exynos5250-fimd"; /* for Exynos5250 SoCs */
->  		"samsung,exynos5420-fimd"; /* for Exynos5420/5422/5800 SoCs */
->  
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index 812e2ec0761d..ef6f9c6de098 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -86,7 +86,7 @@
->  #define DSIM_SYNC_INFORM		(1 << 27)
->  #define DSIM_EOT_DISABLE		(1 << 28)
->  #define DSIM_MFLUSH_VS			(1 << 29)
-> -/* This flag is valid only for exynos3250/3472/4415/5260/5430 */
-> +/* This flag is valid only for exynos3250/3472/5260/5430 */
->  #define DSIM_CLKLANE_STOP		(1 << 30)
->  
->  /* DSIM_ESCMODE */
-> @@ -473,17 +473,6 @@ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
->  	.reg_values = reg_values,
->  };
->  
-> -static const struct exynos_dsi_driver_data exynos4415_dsi_driver_data = {
-> -	.reg_ofs = exynos_reg_ofs,
-> -	.plltmr_reg = 0x58,
-> -	.has_clklane_stop = 1,
-> -	.num_clks = 2,
-> -	.max_freq = 1000,
-> -	.wait_for_reset = 1,
-> -	.num_bits_resol = 11,
-> -	.reg_values = reg_values,
-> -};
-> -
->  static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
->  	.reg_ofs = exynos_reg_ofs,
->  	.plltmr_reg = 0x58,
-> @@ -521,8 +510,6 @@ static const struct of_device_id exynos_dsi_of_match[] = {
->  	  .data = &exynos3_dsi_driver_data },
->  	{ .compatible = "samsung,exynos4210-mipi-dsi",
->  	  .data = &exynos4_dsi_driver_data },
-> -	{ .compatible = "samsung,exynos4415-mipi-dsi",
-> -	  .data = &exynos4415_dsi_driver_data },
->  	{ .compatible = "samsung,exynos5410-mipi-dsi",
->  	  .data = &exynos5_dsi_driver_data },
->  	{ .compatible = "samsung,exynos5422-mipi-dsi",
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index a9fa444c6053..661b9fe049e2 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -71,10 +71,10 @@
->  #define TRIGCON				0x1A4
->  #define TRGMODE_ENABLE			(1 << 0)
->  #define SWTRGCMD_ENABLE			(1 << 1)
-> -/* Exynos3250, 3472, 4415, 5260 5410, 5420 and 5422 only supported. */
-> +/* Exynos3250, 3472, 5260 5410, 5420 and 5422 only supported. */
->  #define HWTRGEN_ENABLE			(1 << 3)
->  #define HWTRGMASK_ENABLE		(1 << 4)
-> -/* Exynos3250, 3472, 4415, 5260, 5420 and 5422 only supported. */
-> +/* Exynos3250, 3472, 5260, 5420 and 5422 only supported. */
->  #define HWTRIGEN_PER_ENABLE		(1 << 31)
->  
->  /* display mode change control register except exynos4 */
-> @@ -138,18 +138,6 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
->  	.has_vtsel = 1,
->  };
->  
-> -static struct fimd_driver_data exynos4415_fimd_driver_data = {
-> -	.timing_base = 0x20000,
-> -	.lcdblk_offset = 0x210,
-> -	.lcdblk_vt_shift = 10,
-> -	.lcdblk_bypass_shift = 1,
-> -	.trg_type = I80_HW_TRG,
-> -	.has_shadowcon = 1,
-> -	.has_vidoutcon = 1,
-> -	.has_vtsel = 1,
-> -	.has_trigger_per_te = 1,
-> -};
-> -
->  static struct fimd_driver_data exynos5_fimd_driver_data = {
->  	.timing_base = 0x20000,
->  	.lcdblk_offset = 0x214,
-> @@ -210,8 +198,6 @@ static const struct of_device_id fimd_driver_dt_match[] = {
->  	  .data = &exynos3_fimd_driver_data },
->  	{ .compatible = "samsung,exynos4210-fimd",
->  	  .data = &exynos4_fimd_driver_data },
-> -	{ .compatible = "samsung,exynos4415-fimd",
-> -	  .data = &exynos4415_fimd_driver_data },
->  	{ .compatible = "samsung,exynos5250-fimd",
->  	  .data = &exynos5_fimd_driver_data },
->  	{ .compatible = "samsung,exynos5420-fimd",
-> 
+SGkgQW5kcnplaiwKClRoYW5rcyBmb3IgZml4aW5nIHRoaXMuCgpBcyB5b3UgbWVudGlvbmVkLCB0
+aGlzIHBhdGNoIHNldCBkZXBlbmRzIG9uIFNoYXduIHBhdGNoIHNldFsxXS4KU28gY2FuIHlvdSBz
+ZXBhcmF0ZSB0aGlzIHBhdGNoIHNlcmllcyBpbnRvIHR3byBzZXRzPwoKT25lIGluY2x1ZGVzIG9u
+bHkgdGhlIHBhdGNoIHNldCByZWxhdGVkIHRvIGZpeGluZyBwYWdlIGZhdWx0IGlzc3VlIGFuZCBv
+dGhlciBpbmNsdWRlcyBjbGVhbnVwIGNvZGUgYmFzZWQgb24gU2hhd24gcGF0Y2hzZXQuCgpJJ2Qg
+bGlrZSB0byBtZXJnZSBmaXh1cCBzZXJpZXMgdG8gLWZpeGVzIGFuZCBmb3Igb3RoZXIgb25lIHRv
+IC1uZXh0LgoKWzFdIGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvZHJpLWRldmVsL21zZzEz
+MTkwMy5odG1sCgpUaGFua3MuCgoyMDE364WEIDAz7JuUIDA47J28IDIzOjU47JeQIEFuZHJ6ZWog
+SGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IFRoaXMgcGF0Y2hzZXQgZml4
+ZXMgbG9uZyBzdGFuZGluZyBpc3N1ZSB3aXRoIG9jY2Fzc2lvbmFsIHBhZ2UgZmF1bHRzCj4gb3Ig
+dmJsYW5rIGV2ZW50IHRpbWVvdXRzIG9uIFRNMiB0YXJnZXRzIGR1ZSB0byBkZWxheWVkIHZibGFu
+ayBoYW5kbGluZy4KPiBERUNPTiBkcml2ZXIgc2hvdWxkIG5vdyBoYW5kbGUgcHJvcGVybHkgYWxs
+IHNjZW5hcmlvcyBkZXNjcmliZWQgaW4gZHJtCj4gZG9jcyBbMV1bMl0sIGF0IGxlYXN0IGl0IHdh
+cyBteSBpbnRlbnRpb24uCj4gCj4gVGhlIHBhdGNoc2V0IGFsc286Cj4gLSBhZGRzIGZyYW1lIGNv
+dW50ZXIgY2FsbGJhY2ssCj4gLSBmaXhlcyBWQkxBTksgaW50ZXJydXB0IHRyaWdnZXIgdGltZSwK
+PiAtIGZpeGVzIHNvZnQtdHJpZ2dlciBtYXNrLAo+IC0gcmVtb3ZlcyByZWR1bmRhbnQgcGlwZSBy
+ZWxhdGVkIGZpZWxkcy4KPiAKPiBUaGUgcGF0Y2ggaXMgYmFzZWQgb24gdG9kYXlzIGxpbnV4LW5l
+eHQsIHRoZSByZWFsIGRlcGVuZGVuY3kgaXMgb24gdGhlIFNoYXduIHBhdGNoc2V0Cj4gJ0FkZCB2
+YmxhbmsgaG9va3MgdG8gc3RydWN0IGRybV9jcnRjX2Z1bmNzJy4KPiAKPiBJIGhhdmUgc3VjY2Vz
+c2Z1bGx5IHRlc3RlZCBpdCBvbiBUTTIgcGFuZWwsIFRWIGFuZCBib3RoLgo+IAo+IFsxXTogaHR0
+cHM6Ly9kcmkuZnJlZWRlc2t0b3Aub3JnL2RvY3MvZHJtL2dwdS9kcm0ta21zLmh0bWw/aGlnaGxp
+Z2h0PWRybV9jcnRjX3N0YXRlI2MuZHJtX2NydGNfYXJtX3ZibGFua19ldmVudAo+IFsyXTogaHR0
+cHM6Ly9kcmkuZnJlZWRlc2t0b3Aub3JnL2RvY3MvZHJtL2dwdS9kcm0ta21zLmh0bWw/aGlnaGxp
+Z2h0PWRybV9jcnRjX3N0YXRlI2MuZHJtX2NydGNfc3RhdGUKPiAKPiBSZWdhcmRzCj4gQW5kcnpl
+ago+IAo+IAo+IEFuZHJ6ZWogSGFqZGEgKDEyKToKPiAgIGRybS9leHlub3M6IG1vdmUgY3J0YyBl
+dmVudCBoYW5kbGluZyB0byBkcml2ZXJzIGNhbGxiYWNrcwo+ICAgZHJtL2V4eW5vczogc2ltcGxp
+ZnkgY29tcGxldGlvbiBldmVudCBoYW5kbGluZwo+ICAgZHJtL2V4eW5vcy9kZWNvbjU0MzM6IGZp
+eCB2YmxhbmsgZXZlbnQgaGFuZGxpbmcKPiAgIGRybS9leHlub3MvZGVjb241NDMzOiBpbXBsZW1l
+bnQgZnJhbWUgY291bnRlcgo+ICAgZHJtL2V4eW5vcy9kZWNvbjU0MzM6IHNpZ25hbCBmcmFtZSBk
+b25lIGludGVycnVwdCBhdCBmcm9udCBwb3JjaAo+ICAgZHJtL2V4eW5vcy9maW1kOiBzaWduYWwg
+ZnJhbWUgZG9uZSBpbnRlcnJ1cHQgYXQgZnJvbnQgcG9yY2gKPiAgIGRybS9leHlub3MvZGVjb241
+NDMzOiBmaXggc29mdHdhcmUgdHJpZ2dlciBtYXNrCj4gICBkcm0vZXh5bm9zOiBraWxsIGV4eW5v
+c19kcm1fY3J0Yzo6cGlwZQo+ICAgZHJtL2V4eW5vczoga2lsbCBleHlub3NfZHJtX3ByaXZhdGU6
+OnBpcGUKPiAgIGRybS9leHlub3M6IHNldCBwbGFuZSBwb3NzaWJsZV9jcnRjcyBpbiBleHlub3Nf
+cGxhbmVfaW5pdAo+ICAgZHJtL2V4eW5vczoga2lsbCBwaXBlIGZpZWxkIGZyb20gZHJpdmVycyBj
+b250ZXh0cwo+ICAgZHJtL2V4eW5vczoga2lsbCBtb2RlX3NldF9ub2ZiIGNhbGxiYWNrCj4gCj4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8IDExOSArKysr
+KysrKysrKysrKysrKysrKystLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdf
+ZHJtX2RlY29uLmMgICAgfCAgMjAgKystLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2NydGMuYyAgICAgIHwgIDY1ICsrKysrKystLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmggICAgICB8ICAgMyArLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgICAgfCAgMTQgKy0tCj4gIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICAgICB8ICAyOCArKy0tLS0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgICAgIHwgICA1ICstCj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oICAgICB8ICAgMSAtCj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgICAgICB8ICAyMyArLS0tLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAgMTQgKy0tCj4g
+IGluY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oICAgICAgICAgICAgICB8ICAxMiArKysK
+PiAgMTEgZmlsZXMgY2hhbmdlZCwgMTY2IGluc2VydGlvbnMoKyksIDEzOCBkZWxldGlvbnMoLSkK
+PiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
