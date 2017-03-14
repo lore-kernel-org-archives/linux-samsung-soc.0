@@ -1,167 +1,55 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/5] drm/exynos: move crtc event handling to drivers callbacks
-Date: Tue, 14 Mar 2017 09:27:56 +0100
-Message-ID: <1489480080-25633-2-git-send-email-a.hajda@samsung.com>
-References: <1489480080-25633-1-git-send-email-a.hajda@samsung.com>
- <CGME20170314082810eucas1p12ba172d02317c2d95c2eeba01d8c9733@eucas1p1.samsung.com>
+Subject: [PATCH 0/5] drm/exynos: rework vblank handling - fixes
+Date: Tue, 14 Mar 2017 09:27:55 +0100
+Message-ID: <1489480080-25633-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170314082810eucas1p1d35344332eca5f780db4c6d5c983827a@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59653 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbdCNI2P (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:56136 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750824AbdCNI2P (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Tue, 14 Mar 2017 04:28:15 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout1.w1.samsung.com
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OMS00DYSQ70SS50@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 Mar 2017 08:28:12 +0000 (GMT)
-In-reply-to: <1489480080-25633-1-git-send-email-a.hajda@samsung.com>
+ with ESMTP id <0OMS00FVDQ6ZIY50@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 14 Mar 2017 08:28:11 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-CRTC event is currently send with next vblank, or instantly in case crtc
-is being disabled. This approach usually works, but in corner cases it can
-result in premature event generation. Only device driver is able to verify
-if the event can be sent. This patch is a first step in that direction - it
-moves event handling to the drivers.
+Hi Inki,
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  1 +
+According to you request, this is actual resend of my patchset v3
+'drm/exynos: rework vblank handling' split into fixes and enhancements part.
+
+This 'fixes' part is based on today's exynos-drm-fixes branch, original
+patches applied without conflict.
+
+The last patch does not really fit into vblank category,
+but for sure it is a fix.
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (5):
+  drm/exynos: move crtc event handling to drivers callbacks
+  drm/exynos/decon5433: fix vblank event handling
+  drm/exynos/decon5433: signal frame done interrupt at front porch
+  drm/exynos/fimd: signal frame done interrupt at front porch
+  drm/exynos/decon5433: fix software trigger mask
+
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 85 +++++++++++++++++++++++++--
  drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  1 +
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 29 +++++++++++++++------------
- drivers/gpu/drm/exynos/exynos_drm_crtc.h      |  2 ++
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  2 ++
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 29 +++++----
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h      |  2 +
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  4 +-
  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  1 +
  drivers/gpu/drm/exynos/exynos_mixer.c         |  1 +
- 7 files changed, 24 insertions(+), 13 deletions(-)
+ include/video/exynos5433_decon.h              | 12 ++++
+ 8 files changed, 117 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index cca32a4..2130ccf 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -378,6 +378,7 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
- 
- 	if (ctx->out_type & IFTYPE_I80)
- 		set_bit(BIT_WIN_UPDATED, &ctx->flags);
-+	exynos_crtc_handle_event(crtc);
- }
- 
- static void decon_swreset(struct decon_context *ctx)
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index f9ab19e..4881180 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -526,6 +526,7 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
- 
- 	for (i = 0; i < WINDOWS_NR; i++)
- 		decon_shadow_protect_win(ctx, i, false);
-+	exynos_crtc_handle_event(crtc);
- }
- 
- static void decon_init(struct decon_context *ctx)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 5367b66..c65f450 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -85,16 +85,28 @@ static void exynos_crtc_atomic_flush(struct drm_crtc *crtc,
- 				     struct drm_crtc_state *old_crtc_state)
- {
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
--	struct drm_pending_vblank_event *event;
--	unsigned long flags;
- 
- 	if (exynos_crtc->ops->atomic_flush)
- 		exynos_crtc->ops->atomic_flush(exynos_crtc);
-+}
-+
-+static const struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
-+	.enable		= exynos_drm_crtc_enable,
-+	.disable	= exynos_drm_crtc_disable,
-+	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
-+	.atomic_check	= exynos_crtc_atomic_check,
-+	.atomic_begin	= exynos_crtc_atomic_begin,
-+	.atomic_flush	= exynos_crtc_atomic_flush,
-+};
-+
-+void exynos_crtc_handle_event(struct exynos_drm_crtc *exynos_crtc)
-+{
-+	struct drm_crtc *crtc = &exynos_crtc->base;
-+	struct drm_pending_vblank_event *event = crtc->state->event;
-+	unsigned long flags;
- 
--	event = crtc->state->event;
- 	if (event) {
- 		crtc->state->event = NULL;
--
- 		spin_lock_irqsave(&crtc->dev->event_lock, flags);
- 		if (drm_crtc_vblank_get(crtc) == 0)
- 			drm_crtc_arm_vblank_event(crtc, event);
-@@ -105,15 +117,6 @@ static void exynos_crtc_atomic_flush(struct drm_crtc *crtc,
- 
- }
- 
--static const struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
--	.enable		= exynos_drm_crtc_enable,
--	.disable	= exynos_drm_crtc_disable,
--	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
--	.atomic_check	= exynos_crtc_atomic_check,
--	.atomic_begin	= exynos_crtc_atomic_begin,
--	.atomic_flush	= exynos_crtc_atomic_flush,
--};
--
- static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
- {
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-index 6a581a8..abd5d6c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-@@ -40,4 +40,6 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
-  */
- void exynos_drm_crtc_te_handler(struct drm_crtc *crtc);
- 
-+void exynos_crtc_handle_event(struct exynos_drm_crtc *exynos_crtc);
-+
- #endif
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 661b9fe..a3162a4 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -709,6 +709,8 @@ static void fimd_atomic_flush(struct exynos_drm_crtc *crtc)
- 
- 	for (i = 0; i < WINDOWS_NR; i++)
- 		fimd_shadow_protect_win(ctx, i, false);
-+
-+	exynos_crtc_handle_event(crtc);
- }
- 
- static void fimd_update_plane(struct exynos_drm_crtc *crtc,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 57fe514..5d9a62a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -170,6 +170,7 @@ static const struct exynos_drm_crtc_ops vidi_crtc_ops = {
- 	.enable_vblank = vidi_enable_vblank,
- 	.disable_vblank = vidi_disable_vblank,
- 	.update_plane = vidi_update_plane,
-+	.atomic_flush = exynos_crtc_handle_event,
- };
- 
- static void vidi_fake_vblank_timer(unsigned long arg)
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 72143ac..25edb63 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1012,6 +1012,7 @@ static void mixer_atomic_flush(struct exynos_drm_crtc *crtc)
- 		return;
- 
- 	mixer_vsync_set_update(mixer_ctx, true);
-+	exynos_crtc_handle_event(crtc);
- }
- 
- static void mixer_enable(struct exynos_drm_crtc *crtc)
 -- 
 2.7.4
