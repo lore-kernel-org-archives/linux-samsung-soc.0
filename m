@@ -1,149 +1,64 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH v3 3/3] watchdog: s3c2410: Minor code cleanup
-Date: Tue, 14 Mar 2017 06:49:10 -0700
-Message-ID: <a2b69ffd-8573-ae9c-c338-c0c7589d1e45@roeck-us.net>
-References: <20170313190726.2988-1-krzk@kernel.org>
- <20170313190726.2988-4-krzk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/4] pinctrl: samsung: Register pinctrl before GPIO
+Date: Tue, 14 Mar 2017 14:44:15 +0100
+Message-ID: <CACRpkdZ+EQ=p_vGrBFYu6p-MnC0OvcY7P1-OWzebKgQRhGWQJQ@mail.gmail.com>
+References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1487251636-2480-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com> <20170223172313.GF2742@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170313190726.2988-4-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170223172313.GF2742@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/13/2017 12:07 PM, Krzysztof Kozlowski wrote:
-> Cleanup the code from minor readability issues (no functional changes):
-> 1. Fix checkpatch: ERROR: Do not include the paragraph about writing to
->    the Free Software Foundation's mailing address.
-> 2. Fix checkpatch: WARNING: quoted string split across lines
-> 3. Fix chechpatch: WARNING: Prefer 'unsigned int' to bare use of
->    'unsigned'
-> 4. Use 'dev' consistently in probe function instead of mixing dev with
->    &pdev->dev.
+On Thu, Feb 23, 2017 at 6:23 PM, Charles Keepax
+<ckeepax@opensource.wolfsonmicro.com> wrote:
+> On Wed, Feb 22, 2017 at 03:37:37PM +0100, Linus Walleij wrote:
+>> On Thu, Feb 16, 2017 at 2:27 PM, Charles Keepax
+>> <ckeepax@opensource.wolfsonmicro.com> wrote:
+>>
+>> > If we request a GPIO hog, then gpiochip_add_data will attempt to request
+>> > some of its own GPIOs. The driver also uses gpiochip_generic_request
+>> > which means that for any GPIO request to succeed the pinctrl needs to be
+>> > registered. Currently however the driver registers the GPIO and then the
+>> > pinctrl meaning all GPIO hog requests will fail, which then in turn causes
+>> > the whole driver to fail probe. Fix this up by ensuring we register the
+>> > pinctrl first. Although currently there are no users of GPIO hogs in
+>> > mainline there are plenty of Samsung based boards that are widely used
+>> > for development purposes of other hardware. Indeed we hit this issue
+>> > whilst attaching some additional hardware to an Arndale system.
+>> >
+>> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+>> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> > ---
+>> >
+>> > Changes since v1:
+>> >  - Updated commit message
+>>
+>> Patch applied. Will not be visible in -next until after the merge window
+>> though.
+>>
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Apologies but I think you might be best to drop this patch for
+> now, it seems this causes the ranges passed to
+> pinctrl_add_gpio_range to have the wrong .base, whilst I can
+> actually see no ill effects from this on Arndale. I suspect this
+> patch may be only part of the solution and may potentially cause
+> issues for others even though it seems fine for me.
 
-Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+OK I dropped it.
 
-> ---
->  drivers/watchdog/s3c2410_wdt.c | 35 +++++++++++++----------------------
->  1 file changed, 13 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 0532dc93e600..adaa43543f0a 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -1,5 +1,4 @@
-> -/* linux/drivers/char/watchdog/s3c2410_wdt.c
-> - *
-> +/*
->   * Copyright (c) 2004 Simtec Electronics
->   *	Ben Dooks <ben-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>
->   *
-> @@ -17,11 +16,7 @@
->   * but WITHOUT ANY WARRANTY; without even the implied warranty of
->   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->   * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-> -*/
-> + */
->
->  #include <linux/module.h>
->  #include <linux/moduleparam.h>
-> @@ -95,8 +90,7 @@ MODULE_PARM_DESC(tmr_atboot,
->  			__MODULE_STRING(S3C2410_WATCHDOG_ATBOOT));
->  MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
->  			__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-> -MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
-> -			"0 to reboot (default 0)");
-> +MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, 0 to reboot (default 0)");
->
->  /**
->   * struct s3c2410_wdt_variant - Per-variant config data
-> @@ -311,7 +305,8 @@ static inline int s3c2410wdt_is_running(struct s3c2410_wdt *wdt)
->  	return readl(wdt->reg_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
->  }
->
-> -static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeout)
-> +static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
-> +				    unsigned int timeout)
->  {
->  	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
->  	unsigned long freq = clk_get_rate(wdt->clock);
-> @@ -525,7 +520,7 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev)
->
->  static int s3c2410wdt_probe(struct platform_device *pdev)
->  {
-> -	struct device *dev;
-> +	struct device *dev = &pdev->dev;
->  	struct s3c2410_wdt *wdt;
->  	struct resource *wdt_mem;
->  	struct resource *wdt_irq;
-> @@ -533,13 +528,11 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->  	int started = 0;
->  	int ret;
->
-> -	dev = &pdev->dev;
-> -
->  	wdt = devm_kzalloc(dev, sizeof(*wdt), GFP_KERNEL);
->  	if (!wdt)
->  		return -ENOMEM;
->
-> -	wdt->dev = &pdev->dev;
-> +	wdt->dev = dev;
->  	spin_lock_init(&wdt->lock);
->  	wdt->wdt_device = s3c2410_wdd;
->
-> @@ -595,7 +588,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->  	/* see if we can actually set the requested timer margin, and if
->  	 * not, try the default value */
->
-> -	watchdog_init_timeout(&wdt->wdt_device, tmr_margin, &pdev->dev);
-> +	watchdog_init_timeout(&wdt->wdt_device, tmr_margin, dev);
->  	ret = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
->  					wdt->wdt_device.timeout);
->  	if (ret) {
-> @@ -604,11 +597,10 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->
->  		if (started == 0)
->  			dev_info(dev,
-> -			   "tmr_margin value out of range, default %d used\n",
-> -			       S3C2410_WATCHDOG_DEFAULT_TIME);
-> +				 "tmr_margin value out of range, default %d used\n",
-> +				 S3C2410_WATCHDOG_DEFAULT_TIME);
->  		else
-> -			dev_info(dev, "default timer value is out of range, "
-> -							"cannot start\n");
-> +			dev_info(dev, "default timer value is out of range, cannot start\n");
->  	}
->
->  	ret = devm_request_irq(dev, wdt_irq->start, s3c2410wdt_irq, 0,
-> @@ -622,7 +614,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->  	watchdog_set_restart_priority(&wdt->wdt_device, 128);
->
->  	wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
-> -	wdt->wdt_device.parent = &pdev->dev;
-> +	wdt->wdt_device.parent = dev;
->
->  	ret = watchdog_register_device(&wdt->wdt_device);
->  	if (ret) {
-> @@ -757,7 +749,6 @@ static struct platform_driver s3c2410wdt_driver = {
->
->  module_platform_driver(s3c2410wdt_driver);
->
-> -MODULE_AUTHOR("Ben Dooks <ben-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>, "
-> -	      "Dimitry Andric <dimitry.andric-Jdzig1fPfSTQT0dZR+AlfA@public.gmane.org>");
-> +MODULE_AUTHOR("Ben Dooks <ben-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>, Dimitry Andric <dimitry.andric-Jdzig1fPfSTQT0dZR+AlfA@public.gmane.org>");
->  MODULE_DESCRIPTION("S3C2410 Watchdog Device Driver");
->  MODULE_LICENSE("GPL");
->
+Resend it if you figure it out.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The Samsung driver traffic is increasing, and there are now
+a bunch of developers starting to step on each others' toes.
+
+Would you Samsung developers start considering someone who
+can collect Samsung pin control patches and send them as
+pull requests to me?
+
+Yours,
+Linus Walleij
