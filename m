@@ -1,55 +1,46 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 0/5] drm/exynos: rework vblank handling - fixes
-Date: Tue, 14 Mar 2017 09:27:55 +0100
-Message-ID: <1489480080-25633-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170314082810eucas1p1d35344332eca5f780db4c6d5c983827a@eucas1p1.samsung.com>
+Subject: [PATCH 4/5] drm/exynos/fimd: signal frame done interrupt at front porch
+Date: Tue, 14 Mar 2017 09:27:59 +0100
+Message-ID: <1489480080-25633-5-git-send-email-a.hajda@samsung.com>
+References: <1489480080-25633-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170314082811eucas1p1c5d00e38d863a54d8fb2585ffde8fa7b@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:56136 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750824AbdCNI2P (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:61000 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750861AbdCNI2Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 04:28:15 -0400
+        Tue, 14 Mar 2017 04:28:16 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout3.w1.samsung.com
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OMS00FVDQ6ZIY50@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 Mar 2017 08:28:11 +0000 (GMT)
+ with ESMTP id <0OMS00FRYQ71E250@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 14 Mar 2017 08:28:13 +0000 (GMT)
+In-reply-to: <1489480080-25633-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi Inki,
+VBLANK interrupt should be signalled as soon as scanout ends, front porch
+is the best moment.
 
-According to you request, this is actual resend of my patchset v3
-'drm/exynos: rework vblank handling' split into fixes and enhancements part.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This 'fixes' part is based on today's exynos-drm-fixes branch, original
-patches applied without conflict.
-
-The last patch does not really fit into vblank category,
-but for sure it is a fix.
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (5):
-  drm/exynos: move crtc event handling to drivers callbacks
-  drm/exynos/decon5433: fix vblank event handling
-  drm/exynos/decon5433: signal frame done interrupt at front porch
-  drm/exynos/fimd: signal frame done interrupt at front porch
-  drm/exynos/decon5433: fix software trigger mask
-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 85 +++++++++++++++++++++++++--
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  1 +
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 29 +++++----
- drivers/gpu/drm/exynos/exynos_drm_crtc.h      |  2 +
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  4 +-
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  1 +
- drivers/gpu/drm/exynos/exynos_mixer.c         |  1 +
- include/video/exynos5433_decon.h              | 12 ++++
- 8 files changed, 117 insertions(+), 18 deletions(-)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index a3162a4..3f04d72 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -243,7 +243,7 @@ static int fimd_enable_vblank(struct exynos_drm_crtc *crtc)
+ 			val |= VIDINTCON0_INT_FRAME;
+ 
+ 			val &= ~VIDINTCON0_FRAMESEL0_MASK;
+-			val |= VIDINTCON0_FRAMESEL0_VSYNC;
++			val |= VIDINTCON0_FRAMESEL0_FRONTPORCH;
+ 			val &= ~VIDINTCON0_FRAMESEL1_MASK;
+ 			val |= VIDINTCON0_FRAMESEL1_NONE;
+ 		}
 -- 
 2.7.4
