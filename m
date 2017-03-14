@@ -1,43 +1,64 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 1/4] pinctrl: samsung: Fix the width of PINCFG_TYPE_DRV
- bitfields for Exynos5433
-Date: Tue, 14 Mar 2017 16:27:26 +0200
-Message-ID: <CAJKOXPd1pRN47Ss5qTHUVAdPwxKqE5vGGevG1OhVH0uSZnotKA@mail.gmail.com>
-References: <CGME20161230041426epcas1p1f827d3cee8b607d81e9921b412ddf301@epcas1p1.samsung.com>
- <20161230041421.24448-1-andi.shyti@samsung.com> <20161230041421.24448-2-andi.shyti@samsung.com>
- <CACRpkdbR3x14h38Gg7qpeWnswwD9qsS0zDUrrXCEJH-AdEB+cQ@mail.gmail.com>
- <58AF7CCB.5070303@samsung.com> <CACRpkda0-k7Vo9Y6yNtLNXu-gGnJW9y83t6W9p032KWjHYdMiw@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v2] pinctrl: samsung: Fix memory mapping code
+Date: Tue, 14 Mar 2017 15:28:14 +0100
+Message-ID: <bfec244e-d522-432b-352d-4071ba09ef74@samsung.com>
+References: <CGME20170223101244eucas1p2eddf13a013d66f9ccdbe45f410b5939c@eucas1p2.samsung.com>
+ <20170222170202.heu35anyoziwv23n@kozik-lap>
+ <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
+ <CACRpkdbWxRVf5aVJYFMzYEzY+UvK3-vk59U=dNdK113wYOpkOw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda0-k7Vo9Y6yNtLNXu-gGnJW9y83t6W9p032KWjHYdMiw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>, Andi Shyti <andi@etezian.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:20858 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752300AbdCNO20 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 14 Mar 2017 10:28:26 -0400
+In-reply-to: <CACRpkdbWxRVf5aVJYFMzYEzY+UvK3-vk59U=dNdK113wYOpkOw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Tue, Mar 14, 2017 at 3:47 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Feb 24, 2017 at 1:22 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> On 2016년 12월 30일 22:28, Linus Walleij wrote:
->>> On Fri, Dec 30, 2016 at 5:14 AM, Andi Shyti <andi.shyti@samsung.com> wrote:
-> Probably. Send a patch fixing it up so I can apply it.
+Hi Linus,
+
+On 14.03.2017 14:35, Linus Walleij wrote:
+> On Thu, Feb 23, 2017 at 11:12 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
 >
-> There are now something like 5 different people submitting Samsung pinctrl
-> patches without coordination so this will start to happen a lot if you keep
-> up this development pace.
+>> Some pinctrls share memory regions, and devm_ioremap_resource does not
+>> allow to share resources, in opposition to devm_ioremap.
+>> This patch restores back usage of devm_ioremap function, but with proper
+>> error handling and logging.
+>>
+>> Fixes: baafaca ("pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()")
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>> v2:
+>> - added platform_get_resource error check (thanks to Krzysztof)
+> This conflicts with the revert that Marek urged me to do for the
+> fixes branch.
 >
-> As I just wrote in another mail: I want someone to step up and collect
-> Samsung patches and send them to me using a pull request.
+> Please check the resulting tree on my fixes branch and rebase on
+> that.
 
-I think we can handle it as there are three of us.
+I do not see your revert on fixes branch of [1].
+The most recent patch is:
+96e1ce8 pinctrl: uniphier: change pin names of aio/xirq for LD11
 
-> Samsung people also need to start reviewing each other's patches
-> more I guess, but mainly I need help with integration.
+And on this branch my patch applies cleanly :)
 
-More or less recently we do the reviews. Sure we can focus more... and
-actually having an entry gate for patches would ensure at least one
-more review from the applying person.
 
-Best regards,
-Krzysztof
+Regards
+Andrzej
+
+
+[1]:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+
+>
+> Yours,
+> Linus Walleij
+>
+>
+>
