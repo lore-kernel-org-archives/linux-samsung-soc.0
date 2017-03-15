@@ -1,78 +1,54 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 1/3] arm64: defconfig: Enable video,
- DRM and LPASS drivers for Exynos5433 and Exynos7
-Date: Wed, 15 Mar 2017 10:01:58 +0900
-Message-ID: <58C89286.20003@samsung.com>
-References: <20170314171028.20337-1-krzk@kernel.org>
- <CGME20170314171149epcas5p444bc8e7f4a338ab207c8e3f1bdbe267d@epcas5p4.samsung.com>
- <20170314171028.20337-2-krzk@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos/dsi: make te-gpios optional
+Date: Wed, 15 Mar 2017 12:48:27 +0900
+Message-ID: <58C8B98B.3070505@samsung.com>
+References: <CGME20170313153029eucas1p114f034a5dea7374f6d14d4d1636d0b68@eucas1p1.samsung.com>
+ <1489419022-20501-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52822 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbdCOBCB (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 21:02:01 -0400
-In-reply-to: <20170314171028.20337-2-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1489419022-20501-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>
 
-Hi,
-
-On 2017년 03월 15일 02:10, Krzysztof Kozlowski wrote:
-> Enable drivers specific to Exynos5433 and Exynos7:
-> 1. MFD Low Power Audio SubSystem (LPASS),
-> 2. DRM drivers (DECON display, outputs),
-> 3. Drivers for video-related sub-blocks (JPEG, Multi Format Codec,
->    GScaler).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm64/configs/defconfig | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 5e7fa211eb0a..3b54794d3166 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -302,6 +302,7 @@ CONFIG_RENESAS_WDT=y
->  CONFIG_S3C2410_WATCHDOG=y
->  CONFIG_MESON_GXBB_WATCHDOG=m
->  CONFIG_MESON_WATCHDOG=m
-> +CONFIG_MFD_EXYNOS_LPASS=m
->  CONFIG_MFD_MAX77620=y
->  CONFIG_MFD_RK808=y
->  CONFIG_MFD_SPMI_PMIC=y
-> @@ -327,10 +328,20 @@ CONFIG_MEDIA_CONTROLLER=y
->  CONFIG_VIDEO_V4L2_SUBDEV_API=y
->  # CONFIG_DVB_NET is not set
->  CONFIG_V4L_MEM2MEM_DRIVERS=y
-> +CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
-> +CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
-> +CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
->  CONFIG_VIDEO_RENESAS_FCP=m
->  CONFIG_VIDEO_RENESAS_VSP1=m
->  CONFIG_DRM=m
->  CONFIG_DRM_NOUVEAU=m
-> +CONFIG_DRM_EXYNOS=m
-> +CONFIG_DRM_EXYNOS5433_DECON=y
-> +CONFIG_DRM_EXYNOS7_DECON=y
-> +CONFIG_DRM_EXYNOS_DSI=y
-> +# CONFIG_DRM_EXYNOS_DP is not set
-> +CONFIG_DRM_EXYNOS_HDMI=y
-> +CONFIG_DRM_EXYNOS_MIC=y
->  CONFIG_DRM_RCAR_DU=m
->  CONFIG_DRM_RCAR_HDMI=y
->  CONFIG_DRM_RCAR_LVDS=y
-> 
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+CgoyMDE364WEIDAz7JuUIDE07J28IDAwOjMw7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
+IOq4gDoKPiBJbiBjYXNlIG9mIEhXLVRSSUdHRVIgdGUtZ3Bpb3MgaW50ZXJydXB0IGlzIG5vdCBu
+ZWNlc3NhcnkuIFdpdGggdGhpcwo+IHBhdGNoIHdlIGNhbiBnZXQgcmlkIG9mIDYwIGludGVycnVw
+dCBjYWxsYmFja3MgcGVyIHNlY29uZC4KCkFuZHJ6ZWosCgpTb3JyeSBidXQgYWJvdmUgZGVzY3Jp
+cHRpb24gaXMgbm90IGNsZWFyLgoKSWYgcGFuZWwgZGV2aWNlIG5vZGUgb2YgY29tbWFuZCBtb2Rl
+IHBhbmVsIGRldmljZSBkb2Vzbid0IHByb3ZpZGUgdGUtZ3Bpb3MgcHJvcGVydHkgdGhlbiBub3cg
+dGhlIHBhbmVsIGRyaXZlciB3aWxsIGZhaWwgdG8gcHJvYmUuClNlZW1zIHRoaXMgcGF0Y2ggbWFr
+ZXMgaXQgdG8gYWxsb3cgdGhlIHBhbmVsIGRyaXZlciBwcm9iaW5nIGlzIGFsd2F5cyBvayBldmVu
+IGlmIGdwaW8gaXMgaW52YWxpZC4KClNvIGhvdyBhYm91dCBoYW5kbGluZyB0aGlzIGF0IHRvcCBv
+ZiB0aGlzIGZ1bmN0aW9uIGxpa2UgYmVsb3c/CgppZiAoIW9mX3Byb3BlcnR5X3JlYWRfYm9vbChu
+b2RlLCAidGUtZ3Bpb3MiKSkKCXJldHVybiAwOwoKQW5kIEkgdGhpbmsgdGhlIGRlc2NyaXB0aW9u
+IHNob3VsZCBiZSBtb2RpZmllZCBwcm9wZXJseSBpbmNsdWRpbmcgc3ViamVjdCBvZiB0aGlzIHBh
+dGNoLiAKClRoYW5rcywKSW5raSBEYWUKCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpk
+YSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2RzaS5jIHwgNSArKy0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
+KCspLCAzIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHNpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHNpLmMKPiBpbmRleCA4MTJlMmVjLi5mOTVmYWM1IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kc2kuYwo+IEBAIC0xMzQ5LDkgKzEzNDksOCBAQCBzdGF0aWMgaW50IGV4
+eW5vc19kc2lfcmVnaXN0ZXJfdGVfaXJxKHN0cnVjdCBleHlub3NfZHNpICpkc2kpCj4gIAo+ICAJ
+ZHNpLT50ZV9ncGlvID0gb2ZfZ2V0X25hbWVkX2dwaW8oZHNpLT5wYW5lbF9ub2RlLCAidGUtZ3Bp
+b3MiLCAwKTsKPiAgCWlmICghZ3Bpb19pc192YWxpZChkc2ktPnRlX2dwaW8pKSB7Cj4gLQkJZGV2
+X2Vycihkc2ktPmRldiwgIm5vIHRlLWdwaW9zIHNwZWNpZmllZFxuIik7Cj4gLQkJcmV0ID0gZHNp
+LT50ZV9ncGlvOwo+IC0JCWdvdG8gb3V0Owo+ICsJCWRldl9pbmZvKGRzaS0+ZGV2LCAibm8gdGUt
+Z3Bpb3Mgc3BlY2lmaWVkXG4iKTsKPiArCQlyZXR1cm4gMDsKPiAgCX0KPiAgCj4gIAlyZXQgPSBn
+cGlvX3JlcXVlc3QoZHNpLT50ZV9ncGlvLCAidGVfZ3BpbyIpOwo+IApfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
