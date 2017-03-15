@@ -1,75 +1,74 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos/dsi: make te-gpios optional
-Date: Wed, 15 Mar 2017 08:58:57 +0100
-Message-ID: <2573ff3c-f04f-0270-329b-4ed626748300@samsung.com>
-References: <CGME20170313153029eucas1p114f034a5dea7374f6d14d4d1636d0b68@eucas1p1.samsung.com>
- <1489419022-20501-1-git-send-email-a.hajda@samsung.com>
- <58C8B98B.3070505@samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [RESEND PATCH v3 2/2] phy: Group vendor specific phy drivers
+Date: Wed, 15 Mar 2017 09:08:44 +0100
+Message-ID: <2492681.1VCl1nfEs0@diego>
+References: <1489472080-23711-2-git-send-email-vivek.gautam@codeaurora.org>
+ <1489472570-26434-1-git-send-email-vivek.gautam@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <58C8B98B.3070505@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1489472570-26434-1-git-send-email-vivek.gautam@codeaurora.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Viresh Kumar <viresh.kumar@linaro.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, kishon@ti.com, Jaehoon Chung <jh80.chung@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-msm@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-omap@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Guenter Roeck <linux@roeck-us.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMTUuMDMuMjAxNyAwNDo0OCwgSW5raSBEYWUgd3JvdGU6Cj4KPiAyMDE364WEIDAz7JuUIDE0
-7J28IDAwOjMw7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4gSW4gY2FzZSBv
-ZiBIVy1UUklHR0VSIHRlLWdwaW9zIGludGVycnVwdCBpcyBub3QgbmVjZXNzYXJ5LiBXaXRoIHRo
-aXMKPj4gcGF0Y2ggd2UgY2FuIGdldCByaWQgb2YgNjAgaW50ZXJydXB0IGNhbGxiYWNrcyBwZXIg
-c2Vjb25kLgo+IEFuZHJ6ZWosCj4KPiBTb3JyeSBidXQgYWJvdmUgZGVzY3JpcHRpb24gaXMgbm90
-IGNsZWFyLgoKSSBhZ3JlZSwgaXQgY291bGQgYmUgaW1wcm92ZWQuCgo+Cj4gSWYgcGFuZWwgZGV2
-aWNlIG5vZGUgb2YgY29tbWFuZCBtb2RlIHBhbmVsIGRldmljZSBkb2Vzbid0IHByb3ZpZGUgdGUt
-Z3Bpb3MgcHJvcGVydHkgdGhlbiBub3cgdGhlIHBhbmVsIGRyaXZlciB3aWxsIGZhaWwgdG8gcHJv
-YmUuCj4gU2VlbXMgdGhpcyBwYXRjaCBtYWtlcyBpdCB0byBhbGxvdyB0aGUgcGFuZWwgZHJpdmVy
-IHByb2JpbmcgaXMgYWx3YXlzIG9rIGV2ZW4gaWYgZ3BpbyBpcyBpbnZhbGlkLgoKSSBndWVzcyB5
-b3UgbWVhbiBEU0kgZHJpdmVyLgoKPgo+IFNvIGhvdyBhYm91dCBoYW5kbGluZyB0aGlzIGF0IHRv
-cCBvZiB0aGlzIGZ1bmN0aW9uIGxpa2UgYmVsb3c/Cj4KPiBpZiAoIW9mX3Byb3BlcnR5X3JlYWRf
-Ym9vbChub2RlLCAidGUtZ3Bpb3MiKSkKPiAJcmV0dXJuIDA7CgpMb29rcyBPSywgaXQgY2FuIGJl
-IGFsc28gZG9uZSB3aXRob3V0IGFkZGl0aW9uYWwgY2FsbDoKZHNpLT50ZV9ncGlvID0gb2ZfZ2V0
-X25hbWVkX2dwaW8oZHNpLT5wYW5lbF9ub2RlLCAidGUtZ3Bpb3MiLCAwKTsKaWYgKGRzaS0+dGVf
-Z3BpbyA9PSAtRU5PRU5UKQogICAgICAgIHJldHVybiAwOwoKPgo+IEFuZCBJIHRoaW5rIHRoZSBk
-ZXNjcmlwdGlvbiBzaG91bGQgYmUgbW9kaWZpZWQgcHJvcGVybHkgaW5jbHVkaW5nIHN1YmplY3Qg
-b2YgdGhpcyBwYXRjaC4gCgpPSywgSSB3aWxsIHBvc3QgdjIuCgpCVFcsIEkgdGhvdWdoIGxpdHRs
-ZSBiaXQgYWJvdXQgaXQgYW5kOgoxLiB0ZS1ncGlvcyBwcm9wZXJ0eSBpcyBpbiBwYW5lbCBub2Rl
-LCBidXQgcGFuZWwgZHJpdmVyIGRvIG5vdCB1c2UgaXQgYXQKYWxsLgoyLiBpdCBpcyBwYXJzZWQg
-YnkgRFNJIGRyaXZlciwgYnV0IERTSSBkcml2ZXIgZG9lcyBub3QgbmVlZCBpdCBhdCBhbGwsCml0
-IGp1c3QgZm9yd2FyZHMgaXQgdG8gREVDT04uCjMuIERFQ09OIGRyaXZlciB1c2VzIGl0LCBidXQg
-aXQgZG9lcyBub3QgY29udHJvbCBpdCBhdCBhbGw6IHBhcnNpbmcsCnN3aXRjaGluZyBvbi9vZmYs
-IGxpZmUgdGltZS4KClNvIG1heWJlIGl0IHdvdWxkIGJldHRlciB0byBtb3ZlIHdob2xlIHRlLWdw
-aW9zIHByb3BlcnR5IHRvIERFQ09OIG5vZGUsCm1heWJlIGV2ZW4gbWFrZSBpdCBpbnRlcnJ1cHQg
-cHJvcGVydHkgaW5zdGVhZCBvZiBncGlvLCBhcyBpdCBzZXJ2ZXJzCm9ubHkgdG8gaXJxLgpBZnRl
-ciBtb3ZlIERFQ09OIGRyaXZlciB3b3VsZCBrbm93IHdoZW4gdGhpcyBwcm9wZXJ0eSBpcyByZXF1
-aXJlZCBhbmQKcHJvYmUgc2hvdWxkIGZhaWwgKFNXIG1vZGUpLCBpdCBjb3VsZCBjb250cm9sIGVu
-YWJsZS9kaXNhYmxlIG9mCmFzc29jaWF0ZWQgaXJxIC0gY3VycmVudGx5IHRoZSBjb2RlIGlzIHJh
-Y3ksCmFuZCBmaW5hbGx5IHRoZXJlIHdpbGwgbm90IGJlIHBhcnNpbmcgb2YgcGFuZWwgbm9kZSBi
-eSBEU0kgZHJpdmVyIC0gaXQKdmlvbGF0ZXMgRFQgcHJpbmNpcGxlcy4KCldoYXQgZG8geW91IHRo
-aW5rIGFib3V0IGl0PwoKUmVnYXJkcwpBbmRyemVqCgo+Cj4gVGhhbmtzLAo+IElua2kgRGFlCj4K
-Pj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPj4g
-LS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgfCA1ICsrLS0t
-Cj4+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQo+Pgo+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+IGluZGV4IDgxMmUyZWMu
-LmY5NWZhYzUgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9kc2kuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMK
-Pj4gQEAgLTEzNDksOSArMTM0OSw4IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9yZWdpc3Rlcl90
-ZV9pcnEoc3RydWN0IGV4eW5vc19kc2kgKmRzaSkKPj4gIAo+PiAgCWRzaS0+dGVfZ3BpbyA9IG9m
-X2dldF9uYW1lZF9ncGlvKGRzaS0+cGFuZWxfbm9kZSwgInRlLWdwaW9zIiwgMCk7Cj4+ICAJaWYg
-KCFncGlvX2lzX3ZhbGlkKGRzaS0+dGVfZ3BpbykpIHsKPj4gLQkJZGV2X2Vycihkc2ktPmRldiwg
-Im5vIHRlLWdwaW9zIHNwZWNpZmllZFxuIik7Cj4+IC0JCXJldCA9IGRzaS0+dGVfZ3BpbzsKPj4g
-LQkJZ290byBvdXQ7Cj4+ICsJCWRldl9pbmZvKGRzaS0+ZGV2LCAibm8gdGUtZ3Bpb3Mgc3BlY2lm
-aWVkXG4iKTsKPj4gKwkJcmV0dXJuIDA7Cj4+ICAJfQo+PiAgCj4+ICAJcmV0ID0gZ3Bpb19yZXF1
-ZXN0KGRzaS0+dGVfZ3BpbywgInRlX2dwaW8iKTsKPj4KPgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Am Dienstag, 14. M=E4rz 2017, 11:52:50 CET schrieb Vivek Gautam:
+> Adding vendor specific directories in phy to group
+> phy drivers under their respective vendor umbrella.
+> =
+
+> Also updated the MAINTAINERS file to reflect the correct
+> directory structure for phy drivers.
+> =
+
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Jaehoon Chung <jh80.chung@samsung.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> ---
+> =
+
+> Corrected Krzysztof's email-id. Added linux-arm-msm.
+> =
+
+> Hi Heiko, Viresh,
+> It's been a year since the last version of this patch was posted.
+> Kishon has agreed to pull this change now. I am carrying forward
+> your Acks since there are no functional changes.
+> I have taken care of the drivers that were added/removed since
+> the last version.
+> Please feel free to jump in if you have any concerns.
+
+still looks all good and I gave that a try on 4.11-rc2 yesterday as well.
+
+
+Heiko
