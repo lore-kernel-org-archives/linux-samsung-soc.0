@@ -1,71 +1,49 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 4/5] mfd: exynos-lpass: Use common
- soc/exynos-regs-pmu.h header
-Date: Wed, 15 Mar 2017 10:10:07 +0000
-Message-ID: <20170315101007.xtnwz7mmkt446sgd@dell>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 4/5] mfd: exynos-lpass: Use common soc/exynos-regs-pmu.h
+ header
+Date: Wed, 15 Mar 2017 13:02:51 +0200
+Message-ID: <CAJKOXPeFw-qRcznSvw-+ZYxObXTPjE4bRM37=sGf8aWbR31WEg@mail.gmail.com>
 References: <20170314164653.15771-1-krzk@kernel.org>
  <20170314164653.15771-5-krzk@kernel.org>
+ <20170315101007.xtnwz7mmkt446sgd@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:37307 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751642AbdCOKKM (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Mar 2017 06:10:12 -0400
-Received: by mail-wm0-f42.google.com with SMTP id n11so18747616wma.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2017 03:10:11 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20170314164653.15771-5-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170315101007.xtnwz7mmkt446sgd@dell>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Tue, 14 Mar 2017, Krzysztof Kozlowski wrote:
+On Wed, Mar 15, 2017 at 12:10 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Tue, 14 Mar 2017, Krzysztof Kozlowski wrote:
+>
+>> The MFD-specific header will go away because it duplicates defines from
+>> exynos-regs-pmu.h.
+>>
+>> Reported-by: kbuild test robot <fengguang.wu@intel.com>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> ---
+>>  drivers/mfd/exynos-lpass.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> Applied, thanks.
 
-> The MFD-specific header will go away because it duplicates defines from
-> exynos-regs-pmu.h.
-> 
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/mfd/exynos-lpass.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Hi,
 
-Applied, thanks.
+This is also needed for patch 5/5 in the set so I was wondering if
+this can be put on separate branch and then shared if phy maintainers
+would need it?
 
-> diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-> index 2e064fb8826f..8bebad92a385 100644
-> --- a/drivers/mfd/exynos-lpass.c
-> +++ b/drivers/mfd/exynos-lpass.c
-> @@ -18,11 +18,11 @@
->  #include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/mfd/syscon.h>
-> -#include <linux/mfd/syscon/exynos5-pmu.h>
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/soc/samsung/exynos-regs-pmu.h>
->  #include <linux/types.h>
->  
->  /* LPASS Top register definitions */
-> @@ -83,7 +83,7 @@ static void exynos_lpass_enable(struct exynos_lpass *lpass)
->  
->  	/* Activate related PADs from retention state */
->  	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION,
-> -		     EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR);
-> +		     EXYNOS_WAKEUP_FROM_LOWPWR);
->  
->  	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
->  	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Best regards,
+Krzysztof
