@@ -1,41 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: samsung: Fix memory mapping code
-Date: Wed, 15 Mar 2017 14:44:19 +0100
-Message-ID: <CACRpkdZO2fspG7dQ6P7GoNvXwpQRDfdrfq7pj3Zb945PaZ_EqQ@mail.gmail.com>
-References: <CGME20170223101244eucas1p2eddf13a013d66f9ccdbe45f410b5939c@eucas1p2.samsung.com>
- <20170222170202.heu35anyoziwv23n@kozik-lap> <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
- <CACRpkdbWxRVf5aVJYFMzYEzY+UvK3-vk59U=dNdK113wYOpkOw@mail.gmail.com> <bfec244e-d522-432b-352d-4071ba09ef74@samsung.com>
+Subject: Re: [PATCH -next v2] pinctrl: samsung: Fix return value check in
+ samsung_pinctrl_get_soc_data()
+Date: Wed, 15 Mar 2017 14:45:20 +0100
+Message-ID: <CACRpkdbY9SJhoqmMQBSc169SgVagcrPb9DaYnLXT0atLc1pH1Q@mail.gmail.com>
+References: <20170125140321.23911-1-weiyj.lk@gmail.com>
+ <20170205155849.4362-1-weiyj.lk@gmail.com>
+ <CGME20170213145008epcas3p119bdd6f76468a00fb8d796308ad37698@epcas3p1.samsung.com>
+ <CACRpkda0BYLNpPFwpNaEMdeyx61KDUQz_6Y=FQj340pViFjVVQ@mail.gmail.com>
+ <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
+ <CACRpkda1tALy3rmk7FebnR3Xg4WOuUc0Gv1xAmxkd+RLhJ_1VQ@mail.gmail.com>
+ <0eb09039-17c4-5c00-0501-812d4de1ab4a@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:34061 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752016AbdCONo1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Mar 2017 09:44:27 -0400
-Received: by mail-io0-f174.google.com with SMTP id b140so20230155iof.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2017 06:44:22 -0700 (PDT)
-In-Reply-To: <bfec244e-d522-432b-352d-4071ba09ef74@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <0eb09039-17c4-5c00-0501-812d4de1ab4a@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wei Yongjun <weiyj.lk@gmail.com>, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 14, 2017 at 3:28 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+On Tue, Mar 14, 2017 at 11:44 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
 
->> Please check the resulting tree on my fixes branch and rebase on
->> that.
+> I have posted proper fix some times ago[1], no need to revert.
 >
-> I do not see your revert on fixes branch of [1].
-> The most recent patch is:
-> 96e1ce8 pinctrl: uniphier: change pin names of aio/xirq for LD11
+> [1]: https://www.spinics.net/lists/linux-samsung-soc/msg58395.html
 
-Yeah I had not had time to push it out until in the evening.
+OK fixed that now.
 
-> And on this branch my patch applies cleanly :)
-
-As per your advice in the other thread I took out the revert
-and applied this instead, thanks!
+Unreverted the revert, applied your patch.
 
 Yours,
 Linus Walleij
