@@ -1,63 +1,58 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: Print kernel pointers in a restricted form
-Date: Tue, 14 Mar 2017 21:41:50 +0100
-Message-ID: <e147ef15-0f7c-19f0-8e1b-db6a75930932@math.uni-bielefeld.de>
-References: <20170314183804.13788-1-krzk@kernel.org>
- <e1800491-0b60-74d1-1377-756d5b0bb371@math.uni-bielefeld.de>
- <20170314190859.y55wlc4z7xdsbbxg@kozik-lap>
- <de5e8583-748b-9df2-f7cc-c1b4fb499d17@math.uni-bielefeld.de>
- <20170314195240.gj7jbgql7hfziw42@kozik-lap>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 3/3] arm64: exynos: Enable Exynos PMU and PM domains
+ drivers
+Date: Wed, 15 Mar 2017 09:55:30 +0900
+Message-ID: <58C89102.6000408@samsung.com>
+References: <20170314171028.20337-1-krzk@kernel.org>
+ <CGME20170314171217epcas3p10a2dfd5bb9f157c49e5f20a2799e58ee@epcas3p1.samsung.com>
+ <20170314171028.20337-4-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170314195240.gj7jbgql7hfziw42@kozik-lap>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:41451 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750936AbdCOAze (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 14 Mar 2017 20:55:34 -0400
+In-reply-to: <20170314171028.20337-4-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>
 
-S3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBPbiBUdWUsIE1hciAxNCwgMjAxNyBhdCAwODox
-NzozNVBNICswMTAwLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+PiBLcnp5c3p0b2YgS296bG93c2tp
-IHdyb3RlOgo+Pj4gT24gVHVlLCBNYXIgMTQsIDIwMTcgYXQgMDg6MDE6NDFQTSArMDEwMCwgVG9i
-aWFzIEpha29iaSB3cm90ZToKPj4+PiBIZWxsbyBLcnp5c3p0b2YsCj4+Pj4KPj4+PiBJIHdhcyB3
-b25kZXJpbmcgYWJvdXQgdGhlIGJlbmVmaXQgb2YgdGhpcy4gRnJvbSBhIHF1aWNrIGxvb2sgdGhl
-c2UgYXJlCj4+Pj4gYWxsIG1lc3NhZ2VzIHRoYXQgZW5kIHVwIGluIHRoZSBrZXJuZWwgbG9nIC8g
-ZG1lc2cuCj4+Pj4KPj4+PiBJSVJDICVwSyBkb2VzIG5vdGhpbmcgdGhlcmUsIHNpbmNlIGRtZXN0
-X3Jlc3RyaWN0IGlzIHN1cHBvc2VkIHRvIGJlIHVzZWQKPj4+PiB0byBkZW55IGFuIHVucHJpdmls
-aWdlZCB1c2VyIHRoZSBhY2Nlc3MgdG8gdGhlIGtlcm5lbCBsb2cuCj4+Pj4KPj4+PiBPciBhbSBJ
-IG1pc3Npbmcgc29tZXRoaW5nIGhlcmU/Cj4+Pgo+Pj4gVGhlc2UgYXJlIHJlZ3VsYXIgcHJpbnRr
-cyBzbyBkZXBlbmRpbmcgb24ga2VybmVsIG9wdGlvbnMgKGUuZy4gZHluYW1pYwo+Pj4gZGVidWcs
-IGRybS5kZWJ1ZykgdGhlc2UgbWlnaHQgYmUgcHJpbnRlZCBhbHNvIGluIHRoZSBjb25zb2xlLiBP
-ZiBjb3Vyc2UKPj4+IHdlIGNvdWxkIGFyZ3VlIHRoZW4gaWYgYWNjZXNzIHRvIG9uZSBvZiB0aGUg
-Y29uc29sZXMgaXMgd29ydGgKPj4+IHNlY3VyaW5nLgo+PiBUaGlzIGhlcmUgc3VnZ2VzdHMgb3Ro
-ZXJ3aXNlLgo+PiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dp
-dC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9Eb2N1bWVudGF0aW9uL3N5c2N0bC9rZXJuZWwudHh0
-I24zODgKPj4KPj4gSSBoYXZlIG5vdCB0ZXN0ZWQgdGhpcywgYnV0IElJUkMgJXBLIGlzIG5vdCBo
-b25vcmVkIGJ5IHRoZSBrZXJuZWwKPj4gbG9nZ2luZyBpbmZyYXN0dWN0dXJlLiBUaGF0J3Mgd2h5
-IGRtZXNnX3Jlc3RyaWN0IGlzIHRoZXJlLgo+Pgo+PiBDb3JyZWN0IG1lIGlmIEknbSB3cm9uZy4K
-PiAKPiBUaGUgJXBLIHdpbGwgbm90IGhlbHAgZm9yIGRtZXNnIG9yIC9wcm9jL2ttc2cgYnV0IGl0
-IHdpbGwgaGVscCBmb3IKPiBjb25zb2xlICgvZGV2L3R0eVNBQ04sIHR0eVNOIGV0YykgYmVjYXVz
-ZSBlZmZlY3RpdmVseSBpdCB1c2VzIHRoZSBzYW1lCj4gdnNwcmludGYoKS9wb2ludGVyKCkgZnVu
-Y3Rpb25zLgpUaGFua3MgZm9yIHRoZSBleHBsYW5hdGlvbiwgSSBkaWRuJ3Qga25vdyB0aGF0IHRo
-ZXJlIHdhcyBhIGRpZmZlcmVuY2UKdGhlcmUuIEluIHRoYXQgY2FzZSwgbG9va3MgZ29vZCB0byBt
-ZS4KCgo+IEFzIEkgc2FpZCwgd2UgY291bGQgYXJndWUgd2hldGhlciBzZWN1cmluZyBjb25zb2xl
-IGlzIHdvcnRoLi4uIHVzdWFsbHkKPiBhdHRhY2tlciBoYXZpbmcgYWNjZXNzIHRvIGl0IGhhcyBh
-bHNvIHBoeXNpY2FsIGFjY2VzcyB0byB0aGUgbWFjaGluZSBzbwo+IGV2ZXJ5dGhpbmcgZ2V0cyBl
-YXNpZXIuLi4KU3RpbGwsIHB1dHRpbmcgJXBLIHRoZXJlIGNlcnRhaW5seSBkb2Vzbid0IGh1cnQu
-CgotIFRvYmlhcwoKPiAKPiBCZXN0IHJlZ2FyZHMsCj4gS3J6eXN6dG9mCj4gCj4gLS0KPiBUbyB1
-bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGlu
-dXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2
-Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJu
-ZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi,
+
+On 2017년 03월 15일 02:10, Krzysztof Kozlowski wrote:
+> Enable EXYNOS_PM_DOMAINS because recently Exynos5433 got support for
+> Power Management domains.  The Exynos5433 pinctrl driver requires
+> EXYNOS_PMU to get the syscon-regmap for PMU address space.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  arch/arm64/Kconfig.platforms | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 129cc5ae4091..9cdaecd3e583 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -54,6 +54,8 @@ config ARCH_BRCMSTB
+>  config ARCH_EXYNOS
+>  	bool "ARMv8 based Samsung Exynos SoC family"
+>  	select COMMON_CLK_SAMSUNG
+> +	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+> +	select EXYNOS_PMU
+>  	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>  	select HAVE_S3C_RTC if RTC_CLASS
+>  	select PINCTRL
+> 
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
