@@ -1,85 +1,115 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/4] pinctrl: samsung: Register pinctrl before GPIO
-Date: Thu, 16 Mar 2017 16:28:45 +0100
-Message-ID: <CACRpkda=ZmeftaTdqP3m2=NrSgr6=_HcrkTYcrH3AA7nNvhHiA@mail.gmail.com>
-References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1487251636-2480-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com>
- <20170223172313.GF2742@localhost.localdomain> <CACRpkdZ+EQ=p_vGrBFYu6p-MnC0OvcY7P1-OWzebKgQRhGWQJQ@mail.gmail.com>
- <CAJKOXPf09Y7ojLP4reZpCy9D509fRSs08otnN4mHmZJjYO6EDw@mail.gmail.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH] usb: dwc3 dwc3_exynos_probe() change goto labels to
+ meaningful names
+Date: Thu, 16 Mar 2017 09:32:34 -0600
+Message-ID: <8da7ab58-9d4c-2e71-df98-40bbceea8858@osg.samsung.com>
+References: <20170130192504.19046-1-shuahkh@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f177.google.com ([209.85.161.177]:34188 "EHLO
-        mail-yw0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752187AbdCPP3Q (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Mar 2017 11:29:16 -0400
-Received: by mail-yw0-f177.google.com with SMTP id p77so34683338ywg.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Mar 2017 08:28:47 -0700 (PDT)
-In-Reply-To: <CAJKOXPf09Y7ojLP4reZpCy9D509fRSs08otnN4mHmZJjYO6EDw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170130192504.19046-1-shuahkh@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Shuah Khan <shuahkh@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
 
-On Tue, Mar 14, 2017 at 2:58 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Tue, Mar 14, 2017 at 3:44 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Thu, Feb 23, 2017 at 6:23 PM, Charles Keepax
->> <ckeepax@opensource.wolfsonmicro.com> wrote:
->>> On Wed, Feb 22, 2017 at 03:37:37PM +0100, Linus Walleij wrote:
->>>> On Thu, Feb 16, 2017 at 2:27 PM, Charles Keepax
->>>> <ckeepax@opensource.wolfsonmicro.com> wrote:
->>>>
->>>> > If we request a GPIO hog, then gpiochip_add_data will attempt to request
->>>> > some of its own GPIOs. The driver also uses gpiochip_generic_request
->>>> > which means that for any GPIO request to succeed the pinctrl needs to be
->>>> > registered. Currently however the driver registers the GPIO and then the
->>>> > pinctrl meaning all GPIO hog requests will fail, which then in turn causes
->>>> > the whole driver to fail probe. Fix this up by ensuring we register the
->>>> > pinctrl first. Although currently there are no users of GPIO hogs in
->>>> > mainline there are plenty of Samsung based boards that are widely used
->>>> > for development purposes of other hardware. Indeed we hit this issue
->>>> > whilst attaching some additional hardware to an Arndale system.
->>>> >
->>>> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
->>>> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>> > ---
->>>> >
->>>> > Changes since v1:
->>>> >  - Updated commit message
->>>>
->>>> Patch applied. Will not be visible in -next until after the merge window
->>>> though.
->>>>
->>>
->>> Apologies but I think you might be best to drop this patch for
->>> now, it seems this causes the ranges passed to
->>> pinctrl_add_gpio_range to have the wrong .base, whilst I can
->>> actually see no ill effects from this on Arndale. I suspect this
->>> patch may be only part of the solution and may potentially cause
->>> issues for others even though it seems fine for me.
->>
->> OK I dropped it.
->>
->> Resend it if you figure it out.
->>
->> The Samsung driver traffic is increasing, and there are now
->> a bunch of developers starting to step on each others' toes.
->>
->> Would you Samsung developers start considering someone who
->> can collect Samsung pin control patches and send them as
->> pull requests to me?
->
-> For some reason, some days ago I had impression that Sylwester is
-> doing this already... but I was corrected that you are taking them
-> directly. If Tomasz and Sylwester are willing to do this, they got my
-> Ack.
->
-> If not, I can take it and set a separate repo on my kernel.org account.
+On 01/30/2017 12:25 PM, Shuah Khan wrote:
+> Change goto labels to meaningful names from a series of errNs.
+> 
+> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> ---
+> 
+> Rebased to usb-next
 
-That would be great, if there will be a lot of Samsung pin control work
-for this kernel cycle.
+Hi Felipe,
 
-Yours,
-Linus Walleij
+Are you planning to get this in or is there something you are
+waiting in for me to do?
+
+thanks,
+-- Shuah
+
+
+> 
+>  drivers/usb/dwc3/dwc3-exynos.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+> index 1515d45..98f74ff 100644
+> --- a/drivers/usb/dwc3/dwc3-exynos.c
+> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> @@ -147,53 +147,53 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>  	exynos->vdd33 = devm_regulator_get(dev, "vdd33");
+>  	if (IS_ERR(exynos->vdd33)) {
+>  		ret = PTR_ERR(exynos->vdd33);
+> -		goto err2;
+> +		goto vdd33_err;
+>  	}
+>  	ret = regulator_enable(exynos->vdd33);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to enable VDD33 supply\n");
+> -		goto err2;
+> +		goto vdd33_err;
+>  	}
+>  
+>  	exynos->vdd10 = devm_regulator_get(dev, "vdd10");
+>  	if (IS_ERR(exynos->vdd10)) {
+>  		ret = PTR_ERR(exynos->vdd10);
+> -		goto err3;
+> +		goto vdd10_err;
+>  	}
+>  	ret = regulator_enable(exynos->vdd10);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to enable VDD10 supply\n");
+> -		goto err3;
+> +		goto vdd10_err;
+>  	}
+>  
+>  	ret = dwc3_exynos_register_phys(exynos);
+>  	if (ret) {
+>  		dev_err(dev, "couldn't register PHYs\n");
+> -		goto err4;
+> +		goto phys_err;
+>  	}
+>  
+>  	if (node) {
+>  		ret = of_platform_populate(node, NULL, NULL, dev);
+>  		if (ret) {
+>  			dev_err(dev, "failed to add dwc3 core\n");
+> -			goto err5;
+> +			goto populate_err;
+>  		}
+>  	} else {
+>  		dev_err(dev, "no device node, failed to add dwc3 core\n");
+>  		ret = -ENODEV;
+> -		goto err5;
+> +		goto populate_err;
+>  	}
+>  
+>  	return 0;
+>  
+> -err5:
+> +populate_err:
+>  	platform_device_unregister(exynos->usb2_phy);
+>  	platform_device_unregister(exynos->usb3_phy);
+> -err4:
+> +phys_err:
+>  	regulator_disable(exynos->vdd10);
+> -err3:
+> +vdd10_err:
+>  	regulator_disable(exynos->vdd33);
+> -err2:
+> +vdd33_err:
+>  	clk_disable_unprepare(exynos->axius_clk);
+>  axius_clk_err:
+>  	clk_disable_unprepare(exynos->susp_clk);
+> 
