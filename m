@@ -1,37 +1,61 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 03/15] media: s5p-mfc: Replace mem_dev_* entries with an
- array
-Date: Fri, 17 Mar 2017 12:29:26 +0100
-Message-ID: <71641f66-1f15-e1b6-554e-f361ae131dab@samsung.com>
-References: <CGME20170220133912eucas1p19fece549b0759c7e6a308e309f6d3081@eucas1p1.samsung.com>
- <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
- <1487597944-2000-4-git-send-email-m.szyprowski@samsung.com>
- <CAKocOOOa98AJQg4YdV=HWf3QX2w5Fgf59RsrsJNf2yCi2xGM2g@mail.gmail.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH] usb: dwc3 dwc3_exynos_probe() change goto labels to
+ meaningful names
+Date: Fri, 17 Mar 2017 08:27:08 -0600
+Message-ID: <3abd0519-3435-4cd4-2c64-6d648aed944b@osg.samsung.com>
+References: <20170130192504.19046-1-shuahkh@osg.samsung.com>
+ <CAFp+6iEQxO7HcW5xJscc9ZWkTy+LoDm7AiNsK8YOd_S3okOGfg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <CAKocOOOa98AJQg4YdV=HWf3QX2w5Fgf59RsrsJNf2yCi2xGM2g@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Shuah Khan <shuahkhan@gmail.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, shuahkh@osg.samsung.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAFp+6iEQxO7HcW5xJscc9ZWkTy+LoDm7AiNsK8YOd_S3okOGfg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Felipe Balbi <balbi@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/22/2017 05:22 PM, Shuah Khan wrote:
-> On Mon, Feb 20, 2017 at 6:38 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> Internal MFC driver device structure contains two pointers to devices used
->> for DMA memory allocation: mem_dev_l and mem_dev_r. Replace them with the
->> mem_dev[] array and use defines for accessing particular banks. This will
->> help to simplify code in the next patches.
-> Hi Marek,
->
-> The change looks good to me. One comment thought that it would be
-> good to keep the left and right banks in the driver code to be in sync
-> with the DT nomenclature.
->
-> BANK_L_CTX instead of BANK1_CTX
-> BANK_R_CTX instead of BANK2_CTX
+On 03/17/2017 12:24 AM, Vivek Gautam wrote:
+> On Tue, Jan 31, 2017 at 12:55 AM, Shuah Khan <shuahkh@osg.samsung.com> wrote:
+>> Change goto labels to meaningful names from a series of errNs.
+>>
+>> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+>> ---
+>>
+>> Rebased to usb-next
+>>
+>>  drivers/usb/dwc3/dwc3-exynos.c | 22 +++++++++++-----------
+>>  1 file changed, 11 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+>> index 1515d45..98f74ff 100644
+>> --- a/drivers/usb/dwc3/dwc3-exynos.c
+>> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+>> @@ -147,53 +147,53 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>>         exynos->vdd33 = devm_regulator_get(dev, "vdd33");
+>>         if (IS_ERR(exynos->vdd33)) {
+>>                 ret = PTR_ERR(exynos->vdd33);
+>> -               goto err2;
+>> +               goto vdd33_err;
+> 
+> While you are changing this in probe, care to change in
+> dwc3_exynos_register_phys() as well ?
 
-This patch doesn't apply cleanly, could you please check and resend
-rebased onto my for-v4.12/media/next branch?
+Yes I can do that.
+
+> 
+> [snip]
+> 
+> Regards
+> Vivek
+
+thanks,
+-- Shuah
