@@ -1,68 +1,57 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl
- entry
-Date: Mon, 20 Mar 2017 18:58:41 +0200
-Message-ID: <20170320165841.gpbevoscf2fjvods@kozik-lap>
-References: <20170320164851.5999-1-krzk@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 06/14] mmc: dw_mmc: simplify optional reset handling
+Date: Mon, 20 Mar 2017 19:09:26 +0100
+Message-ID: <CAPDyKFpkcPVnoMs+eH4yo_tBJoKURd3O9VHd0jjvFbCiiNZsZw@mail.gmail.com>
+References: <20170315113139.17989-1-p.zabel@pengutronix.de>
+ <CGME20170320092255eucas1p1459c023fd9b479c8e5323a6ac97dbf58@eucas1p1.samsung.com>
+ <e70d77e9-bd60-a0f4-6510-48b72cb67624@samsung.com> <1490003602.2917.16.camel@pengutronix.de>
+ <b80ceee9-40e7-f32b-d44a-00dd4e7f6461@samsung.com> <1490005679.2917.32.camel@pengutronix.de>
+ <5f6c8c58-c4e4-39e6-2c29-e889bd6bf565@samsung.com> <1490007648.2917.41.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20170320164851.5999-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1490007648.2917.41.camel@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Szyprowski, Marek" <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 06:48:51PM +0200, Krzysztof Kozlowski wrote:
-> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
-> drivers.  The tree will be maintained in a shared model between current
-> Samsung pinctrl maintainers.  Pull requests will be going to Linus
-> Walleij.
-> 
-> Also add the patchwork for linux-samsung-soc mailing list which will be
-> used for handling the patches.
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> As of now, only I have the access to this git tree. Tomasz is welcomed
-> to join anytime. We are also waiting for Sywlester to get account on
-> kernel.org.
-> 
-> For the Patchwork, I use it also for Exynos/Samsung ARM architecture
-> maintenance.  I will add appropriate permissions to Sylwester so we can
-> share it.
-> ---
-
-Linus,
-
-I talked with Sylwester few days ago and we agreed on a shared mainainer
-model.  Mostly because:
-1. Only Sylwester from three of us works in Samsung,
-2. It helps distributing the load in case of any holidays/travel etc,
-3. It might also make easier for future transitions.
-
-For this release I can start taking the patches. Please let me know:
-1. Can I base on Torvalds' rc-1 or you prefer basing on top of your
-   branches? In the second case your branches should not be rebased.
-2. When do you expect pull requests (preferred time and acceptable late
-   stuff)?
-
-
-Also, I will add this tree to the linux-next + auto-builders.
-
-Best regards,
-Krzysztof
+On 20 March 2017 at 12:00, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> On Mon, 2017-03-20 at 11:49 +0100, Andrzej Hajda wrote:
+>> On 20.03.2017 11:27, Philipp Zabel wrote:
+> [...]
+>> > diff --git a/include/linux/reset.h b/include/linux/reset.h
+>> > index 86b4ed75359e8..c905ff1c21ec6 100644
+>> > --- a/include/linux/reset.h
+>> > +++ b/include/linux/reset.h
+>> > @@ -74,14 +74,14 @@ static inline struct reset_control *__of_reset_control_get(
+>> >                                     const char *id, int index, bool shared,
+>> >                                     bool optional)
+>> >  {
+>> > -   return ERR_PTR(-ENOTSUPP);
+>> > +   return optional ? NULL : ERR_PTR(-ENOTSUPP);
+>> >  }
+>> >
+>> >  static inline struct reset_control *__devm_reset_control_get(
+>> >                                     struct device *dev, const char *id,
+>> >                                     int index, bool shared, bool optional)
+>> >  {
+>> > -   return ERR_PTR(-ENOTSUPP);
+>> > +   return optional ? NULL : ERR_PTR(-ENOTSUPP);
+>> >  }
+>> >
+>> >  #endif /* CONFIG_RESET_CONTROLLER */
+>> > ---------->8----------
+>>
+>> In dw_mmc.c file there are also unconditional calls to
+>> reset_control_assert, with disabled RESET_CONTROLLER it will cause
+>> unexpected WARNs.
+>> Anyway if you change reset API as above I think you should remove all
+>> warns from reset stubs, because NULL reset is valid, but these warns are
+>> there for reason - contradiction.
+>
+> You are right, I have to let go of those, too.
+>
+> regards
+> Philipp
+>
