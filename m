@@ -1,61 +1,43 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH] usb: dwc3 dwc3_exynos_probe() change goto labels to
- meaningful names
-Date: Fri, 17 Mar 2017 08:27:08 -0600
-Message-ID: <3abd0519-3435-4cd4-2c64-6d648aed944b@osg.samsung.com>
-References: <20170130192504.19046-1-shuahkh@osg.samsung.com>
- <CAFp+6iEQxO7HcW5xJscc9ZWkTy+LoDm7AiNsK8YOd_S3okOGfg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAFp+6iEQxO7HcW5xJscc9ZWkTy+LoDm7AiNsK8YOd_S3okOGfg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Felipe Balbi <balbi@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 1/2] iommu/exynos: Block SYSMMU while invalidating FLPD cache
+Date: Mon, 20 Mar 2017 10:17:56 +0100
+Message-ID: <1490001484-18890-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170320091820eucas1p22b62f2d7e089cd997aecc62a4c5b7730@eucas1p2.samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>, Krzysztof Kozlowski <krzk@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/17/2017 12:24 AM, Vivek Gautam wrote:
-> On Tue, Jan 31, 2017 at 12:55 AM, Shuah Khan <shuahkh@osg.samsung.com> wrote:
->> Change goto labels to meaningful names from a series of errNs.
->>
->> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
->> ---
->>
->> Rebased to usb-next
->>
->>  drivers/usb/dwc3/dwc3-exynos.c | 22 +++++++++++-----------
->>  1 file changed, 11 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
->> index 1515d45..98f74ff 100644
->> --- a/drivers/usb/dwc3/dwc3-exynos.c
->> +++ b/drivers/usb/dwc3/dwc3-exynos.c
->> @@ -147,53 +147,53 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->>         exynos->vdd33 = devm_regulator_get(dev, "vdd33");
->>         if (IS_ERR(exynos->vdd33)) {
->>                 ret = PTR_ERR(exynos->vdd33);
->> -               goto err2;
->> +               goto vdd33_err;
-> 
-> While you are changing this in probe, care to change in
-> dwc3_exynos_register_phys() as well ?
+Documentation specifies that SYSMMU should be in blocked state while
+performing TLB/FLPD cache invalidation, so add needed calls to
+sysmmu_block/unblock.
 
-Yes I can do that.
+Fixes: 66a7ed84b345d ("iommu/exynos: Apply workaround of caching fault page table entries")
+CC: stable@vger.kernel.org # v4.10+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This issue has been introduced long time ago, but this fix applies only for
+v4.10+ kernels due to other changes in the surrounding code.
+---
+ drivers/iommu/exynos-iommu.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> 
-> [snip]
-> 
-> Regards
-> Vivek
-
-thanks,
--- Shuah
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index a7e0821c9967..32d43f1994e4 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -512,7 +512,10 @@ static void sysmmu_tlb_invalidate_flpdcache(struct sysmmu_drvdata *data,
+ 	spin_lock_irqsave(&data->lock, flags);
+ 	if (data->active && data->version >= MAKE_MMU_VER(3, 3)) {
+ 		clk_enable(data->clk_master);
+-		__sysmmu_tlb_invalidate_entry(data, iova, 1);
++		if (sysmmu_block(data)) {
++			__sysmmu_tlb_invalidate_entry(data, iova, 1);
++			sysmmu_unblock(data);
++		}
+ 		clk_disable(data->clk_master);
+ 	}
+ 	spin_unlock_irqrestore(&data->lock, flags);
+-- 
+1.9.1
