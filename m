@@ -1,179 +1,163 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 13/16] media: s5p-mfc: Remove special configuration of IOMMU
- domain
-Date: Mon, 20 Mar 2017 11:56:39 +0100
-Message-ID: <1490007402-30265-14-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v3 01/16] media: s5p-mfc: Remove unused structures and dead code
+Date: Mon, 20 Mar 2017 11:56:27 +0100
+Message-ID: <1490007402-30265-2-git-send-email-m.szyprowski@samsung.com>
 References: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170320105653eucas1p236609e0bbed00d32b41c3eb8b63a159d@eucas1p2.samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+ <CGME20170320105649eucas1p111bb7137d958831701debe9704844017@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:32748 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753339AbdCTK5J (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 06:57:09 -0400
 In-reply-to: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-The main reason for using special configuration of IOMMU domain was the
-problem with MFC firmware, which failed to operate properly when placed
-at 0 DMA address. Instead of adding custom code for configuring each
-variant of IOMMU domain and architecture specific glue code, simply use
-what arch code provides and if the DMA base address equals zero, skip
-first 128 KiB to keep required alignment. This patch also make the driver
-operational on ARM64 architecture, because it no longer depends on ARM
-specific DMA-mapping and IOMMU glue code functions.
+Remove unused structures, definitions and functions that are no longer
+called from the driver code.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Acked-by: Andrzej Hajda <a.hajda@samsung.com>
 Tested-by: Smitha T Murthy <smitha.t@samsung.com>
+Reviewed-by: Smitha T Murthy <smitha.t@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c       | 30 +++++++--------
- drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h | 51 +-------------------------
- 2 files changed, 14 insertions(+), 67 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc.c        | 21 ---------------------
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h | 13 -------------
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h   |  1 -
+ 3 files changed, 35 deletions(-)
 
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index ea01d0aa8303..f1528054a713 100644
+index b99a7d0466a8..4e9f349c1be3 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1179,18 +1179,6 @@ static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
- 	struct device *dev = &mfc_dev->plat_dev->dev;
- 	unsigned long mem_size = SZ_8M;
- 	unsigned int bitmap_size;
--	/*
--	 * When IOMMU is available, we cannot use the default configuration,
--	 * because of MFC firmware requirements: address space limited to
--	 * 256M and non-zero default start address.
--	 * This is still simplified, not optimal configuration, but for now
--	 * IOMMU core doesn't allow to configure device's IOMMUs channel
--	 * separately.
--	 */
--	int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
--					 S5P_MFC_IOMMU_DMA_SIZE);
--	if (ret)
--		return ret;
+@@ -1417,16 +1417,11 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.priv	= &mfc_buf_size_v5,
+ };
  
- 	if (mfc_mem_size)
- 		mem_size = memparse(mfc_mem_size, NULL);
-@@ -1198,10 +1186,8 @@ static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
- 	bitmap_size = BITS_TO_LONGS(mem_size >> PAGE_SHIFT) * sizeof(long);
- 
- 	mfc_dev->mem_bitmap = kzalloc(bitmap_size, GFP_KERNEL);
--	if (!mfc_dev->mem_bitmap) {
--		exynos_unconfigure_iommu(dev);
-+	if (!mfc_dev->mem_bitmap)
- 		return -ENOMEM;
--	}
- 
- 	mfc_dev->mem_virt = dma_alloc_coherent(dev, mem_size,
- 					       &mfc_dev->mem_base, GFP_KERNEL);
-@@ -1209,13 +1195,24 @@ static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
- 		kfree(mfc_dev->mem_bitmap);
- 		dev_err(dev, "failed to preallocate %ld MiB for the firmware and context buffers\n",
- 			(mem_size / SZ_1M));
--		exynos_unconfigure_iommu(dev);
- 		return -ENOMEM;
- 	}
- 	mfc_dev->mem_size = mem_size;
- 	mfc_dev->dma_base[BANK1_CTX] = mfc_dev->mem_base;
- 	mfc_dev->dma_base[BANK2_CTX] = mfc_dev->mem_base;
- 
-+	/*
-+	 * MFC hardware cannot handle 0 as a base address, so mark first 128K
-+	 * as used (to keep required base alignment) and adjust base address
-+	 */
-+	if (mfc_dev->mem_base == (dma_addr_t)0) {
-+		unsigned int offset = 1 << MFC_BASE_ALIGN_ORDER;
-+
-+		bitmap_set(mfc_dev->mem_bitmap, 0, offset >> PAGE_SHIFT);
-+		mfc_dev->dma_base[BANK1_CTX] += offset;
-+		mfc_dev->dma_base[BANK2_CTX] += offset;
-+	}
-+
- 	/* Firmware allocation cannot fail in this case */
- 	s5p_mfc_alloc_firmware(mfc_dev);
- 
-@@ -1232,7 +1229,6 @@ static void s5p_mfc_unconfigure_common_memory(struct s5p_mfc_dev *mfc_dev)
- {
- 	struct device *dev = &mfc_dev->plat_dev->dev;
- 
--	exynos_unconfigure_iommu(dev);
- 	dma_free_coherent(dev, mfc_dev->mem_size, mfc_dev->mem_virt,
- 			  mfc_dev->mem_base);
- 	kfree(mfc_dev->mem_bitmap);
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h b/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-index 6962132ae8fa..76667924ee2a 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-@@ -11,54 +11,13 @@
- #ifndef S5P_MFC_IOMMU_H_
- #define S5P_MFC_IOMMU_H_
- 
--#define S5P_MFC_IOMMU_DMA_BASE	0x20000000lu
--#define S5P_MFC_IOMMU_DMA_SIZE	SZ_256M
+-static struct s5p_mfc_buf_align mfc_buf_align_v5 = {
+-	.base = MFC_BASE_ALIGN_ORDER,
+-};
 -
--#if defined(CONFIG_EXYNOS_IOMMU) && defined(CONFIG_ARM_DMA_USE_IOMMU)
+ static struct s5p_mfc_variant mfc_drvdata_v5 = {
+ 	.version	= MFC_VERSION,
+ 	.version_bit	= MFC_V5_BIT,
+ 	.port_num	= MFC_NUM_PORTS,
+ 	.buf_size	= &buf_size_v5,
+-	.buf_align	= &mfc_buf_align_v5,
+ 	.fw_name[0]	= "s5p-mfc.fw",
+ 	.clk_names	= {"mfc", "sclk_mfc"},
+ 	.num_clocks	= 2,
+@@ -1447,16 +1442,11 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.priv	= &mfc_buf_size_v6,
+ };
+ 
+-static struct s5p_mfc_buf_align mfc_buf_align_v6 = {
+-	.base = 0,
+-};
 -
--#include <asm/dma-iommu.h>
-+#if defined(CONFIG_EXYNOS_IOMMU)
+ static struct s5p_mfc_variant mfc_drvdata_v6 = {
+ 	.version	= MFC_VERSION_V6,
+ 	.version_bit	= MFC_V6_BIT,
+ 	.port_num	= MFC_NUM_PORTS_V6,
+ 	.buf_size	= &buf_size_v6,
+-	.buf_align	= &mfc_buf_align_v6,
+ 	.fw_name[0]     = "s5p-mfc-v6.fw",
+ 	/*
+ 	 * v6-v2 firmware contains bug fixes and interface change
+@@ -1481,16 +1471,11 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.priv	= &mfc_buf_size_v7,
+ };
  
- static inline bool exynos_is_iommu_available(struct device *dev)
- {
- 	return dev->archdata.iommu != NULL;
- }
+-static struct s5p_mfc_buf_align mfc_buf_align_v7 = {
+-	.base = 0,
+-};
+-
+ static struct s5p_mfc_variant mfc_drvdata_v7 = {
+ 	.version	= MFC_VERSION_V7,
+ 	.version_bit	= MFC_V7_BIT,
+ 	.port_num	= MFC_NUM_PORTS_V7,
+ 	.buf_size	= &buf_size_v7,
+-	.buf_align	= &mfc_buf_align_v7,
+ 	.fw_name[0]     = "s5p-mfc-v7.fw",
+ 	.clk_names	= {"mfc", "sclk_mfc"},
+ 	.num_clocks	= 2,
+@@ -1510,16 +1495,11 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.priv	= &mfc_buf_size_v8,
+ };
  
--static inline void exynos_unconfigure_iommu(struct device *dev)
+-static struct s5p_mfc_buf_align mfc_buf_align_v8 = {
+-	.base = 0,
+-};
+-
+ static struct s5p_mfc_variant mfc_drvdata_v8 = {
+ 	.version	= MFC_VERSION_V8,
+ 	.version_bit	= MFC_V8_BIT,
+ 	.port_num	= MFC_NUM_PORTS_V8,
+ 	.buf_size	= &buf_size_v8,
+-	.buf_align	= &mfc_buf_align_v8,
+ 	.fw_name[0]     = "s5p-mfc-v8.fw",
+ 	.clk_names	= {"mfc"},
+ 	.num_clocks	= 1,
+@@ -1530,7 +1510,6 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.version_bit	= MFC_V8_BIT,
+ 	.port_num	= MFC_NUM_PORTS_V8,
+ 	.buf_size	= &buf_size_v8,
+-	.buf_align	= &mfc_buf_align_v8,
+ 	.fw_name[0]     = "s5p-mfc-v8.fw",
+ 	.clk_names	= {"pclk", "aclk", "aclk_xiu"},
+ 	.num_clocks	= 3,
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+index ab23236aa942..3e0e8eaf8bfe 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+@@ -44,14 +44,6 @@
+ 
+ #include <media/videobuf2-dma-contig.h>
+ 
+-static inline dma_addr_t s5p_mfc_mem_cookie(void *a, void *b)
 -{
--	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
+-	/* Same functionality as the vb2_dma_contig_plane_paddr */
+-	dma_addr_t *paddr = vb2_dma_contig_memops.cookie(b);
 -
--	arm_iommu_detach_device(dev);
--	arm_iommu_release_mapping(mapping);
+-	return *paddr;
 -}
 -
--static inline int exynos_configure_iommu(struct device *dev,
--					 unsigned int base, unsigned int size)
--{
--	struct dma_iommu_mapping *mapping = NULL;
--	int ret;
--
--	/* Disable the default mapping created by device core */
--	if (to_dma_iommu_mapping(dev))
--		exynos_unconfigure_iommu(dev);
--
--	mapping = arm_iommu_create_mapping(dev->bus, base, size);
--	if (IS_ERR(mapping)) {
--		pr_warn("Failed to create IOMMU mapping for device %s\n",
--			dev_name(dev));
--		return PTR_ERR(mapping);
--	}
--
--	ret = arm_iommu_attach_device(dev, mapping);
--	if (ret) {
--		pr_warn("Failed to attached device %s to IOMMU_mapping\n",
--				dev_name(dev));
--		arm_iommu_release_mapping(mapping);
--		return ret;
--	}
--
--	return 0;
--}
--
- #else
+ /* MFC definitions */
+ #define MFC_MAX_EXTRA_DPB       5
+ #define MFC_MAX_BUFFERS		32
+@@ -229,16 +221,11 @@ struct s5p_mfc_buf_size {
+ 	void *priv;
+ };
  
- static inline bool exynos_is_iommu_available(struct device *dev)
-@@ -66,14 +25,6 @@ static inline bool exynos_is_iommu_available(struct device *dev)
- 	return false;
- }
- 
--static inline int exynos_configure_iommu(struct device *dev,
--					 unsigned int base, unsigned int size)
--{
--	return -ENOSYS;
--}
+-struct s5p_mfc_buf_align {
+-	unsigned int base;
+-};
 -
--static inline void exynos_unconfigure_iommu(struct device *dev) { }
--
- #endif
+ struct s5p_mfc_variant {
+ 	unsigned int version;
+ 	unsigned int port_num;
+ 	u32 version_bit;
+ 	struct s5p_mfc_buf_size *buf_size;
+-	struct s5p_mfc_buf_align *buf_align;
+ 	char	*fw_name[MFC_FW_MAX_VERSIONS];
+ 	const char	*clk_names[MFC_MAX_CLOCKS];
+ 	int		num_clocks;
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
+index 8e5df041edf7..45c807bf19cc 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
+@@ -18,7 +18,6 @@
+ int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev);
+ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev);
+ int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev);
+-int s5p_mfc_reload_firmware(struct s5p_mfc_dev *dev);
  
- #endif /* S5P_MFC_IOMMU_H_ */
+ int s5p_mfc_init_hw(struct s5p_mfc_dev *dev);
+ void s5p_mfc_deinit_hw(struct s5p_mfc_dev *dev);
 -- 
 1.9.1
