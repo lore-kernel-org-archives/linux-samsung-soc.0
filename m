@@ -1,155 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 07/16] media: s5p-mfc: Put firmware to private buffer
- structure
-Date: Mon, 20 Mar 2017 11:56:33 +0100
-Message-ID: <1490007402-30265-8-git-send-email-m.szyprowski@samsung.com>
-References: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170320105651eucas1p2f4a367546f4f33c652b36415b8542e3b@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35464 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751467AbdCTK5N (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 06:57:13 -0400
-In-reply-to: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v2 06/14] mmc: dw_mmc: simplify optional reset handling
+Date: Mon, 20 Mar 2017 12:00:48 +0100
+Message-ID: <1490007648.2917.41.camel@pengutronix.de>
+References: <20170315113139.17989-1-p.zabel@pengutronix.de>
+         <CGME20170320092255eucas1p1459c023fd9b479c8e5323a6ac97dbf58@eucas1p1.samsung.com>
+         <e70d77e9-bd60-a0f4-6510-48b72cb67624@samsung.com>
+         <1490003602.2917.16.camel@pengutronix.de>
+         <b80ceee9-40e7-f32b-d44a-00dd4e7f6461@samsung.com>
+         <1490005679.2917.32.camel@pengutronix.de>
+         <5f6c8c58-c4e4-39e6-2c29-e889bd6bf565@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5f6c8c58-c4e4-39e6-2c29-e889bd6bf565@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-mmc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-kernel@vger.kernel.org, "Szyprowski, Marek" <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Use s5p_mfc_priv_buf structure for keeping the firmware image. This will
-help handling of firmware buffer allocation in the next patches.
+On Mon, 2017-03-20 at 11:49 +0100, Andrzej Hajda wrote:
+> On 20.03.2017 11:27, Philipp Zabel wrote:
+[...]
+> > diff --git a/include/linux/reset.h b/include/linux/reset.h
+> > index 86b4ed75359e8..c905ff1c21ec6 100644
+> > --- a/include/linux/reset.h
+> > +++ b/include/linux/reset.h
+> > @@ -74,14 +74,14 @@ static inline struct reset_control *__of_reset_control_get(
+> >  					const char *id, int index, bool shared,
+> >  					bool optional)
+> >  {
+> > -	return ERR_PTR(-ENOTSUPP);
+> > +	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+> >  }
+> >  
+> >  static inline struct reset_control *__devm_reset_control_get(
+> >  					struct device *dev, const char *id,
+> >  					int index, bool shared, bool optional)
+> >  {
+> > -	return ERR_PTR(-ENOTSUPP);
+> > +	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+> >  }
+> >  
+> >  #endif /* CONFIG_RESET_CONTROLLER */
+> > ---------->8----------
+> 
+> In dw_mmc.c file there are also unconditional calls to
+> reset_control_assert, with disabled RESET_CONTROLLER it will cause
+> unexpected WARNs.
+> Anyway if you change reset API as above I think you should remove all
+> warns from reset stubs, because NULL reset is valid, but these warns are
+> there for reason - contradiction.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Acked-by: Andrzej Hajda <a.hajda@samsung.com>
-Tested-by: Smitha T Murthy <smitha.t@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c |  2 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  3 +--
- drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c   | 36 ++++++++++++-------------
- 3 files changed, 20 insertions(+), 21 deletions(-)
+You are right, I have to let go of those, too.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c b/drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c
-index 8c4739ca16d6..4c80bb4243be 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c
-@@ -47,7 +47,7 @@ static int s5p_mfc_sys_init_cmd_v5(struct s5p_mfc_dev *dev)
- 	struct s5p_mfc_cmd_args h2r_args;
- 
- 	memset(&h2r_args, 0, sizeof(struct s5p_mfc_cmd_args));
--	h2r_args.arg[0] = dev->fw_size;
-+	h2r_args.arg[0] = dev->fw_buf.size;
- 	return s5p_mfc_cmd_host2risc_v5(dev, S5P_FIMV_H2R_CMD_SYS_INIT,
- 			&h2r_args);
- }
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index 9cf860f34c71..cea17a737ef7 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -314,8 +314,7 @@ struct s5p_mfc_dev {
- 	int int_type;
- 	unsigned int int_err;
- 	wait_queue_head_t queue;
--	size_t fw_size;
--	void *fw_virt_addr;
-+	struct s5p_mfc_priv_buf fw_buf;
- 	dma_addr_t dma_base[BANK_CTX_NUM];
- 	unsigned long hw_lock;
- 	struct s5p_mfc_ctx *ctx[MFC_NUM_CONTEXTS];
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-index c9bff3d0655f..50d698968049 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-@@ -29,21 +29,22 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
- 	void *bank2_virt;
- 	dma_addr_t bank2_dma_addr;
- 	unsigned int align_size = 1 << MFC_BASE_ALIGN_ORDER;
-+	struct s5p_mfc_priv_buf *fw_buf = &dev->fw_buf;
- 
--	dev->fw_size = dev->variant->buf_size->fw;
-+	fw_buf->size = dev->variant->buf_size->fw;
- 
--	if (dev->fw_virt_addr) {
-+	if (fw_buf->virt) {
- 		mfc_err("Attempting to allocate firmware when it seems that it is already loaded\n");
- 		return -ENOMEM;
- 	}
- 
--	dev->fw_virt_addr = dma_alloc_coherent(dev->mem_dev[BANK1_CTX],
--					dev->fw_size, &dev->dma_base[BANK1_CTX],
--					GFP_KERNEL);
--	if (!dev->fw_virt_addr) {
-+	fw_buf->virt = dma_alloc_coherent(dev->mem_dev[BANK1_CTX], fw_buf->size,
-+					 &fw_buf->dma, GFP_KERNEL);
-+	if (!fw_buf->virt) {
- 		mfc_err("Allocating bitprocessor buffer failed\n");
- 		return -ENOMEM;
- 	}
-+	dev->dma_base[BANK1_CTX] = fw_buf->dma;
- 
- 	if (HAS_PORTNUM(dev) && IS_TWOPORT(dev)) {
- 		bank2_virt = dma_alloc_coherent(dev->mem_dev[BANK2_CTX],
-@@ -51,10 +52,9 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
- 
- 		if (!bank2_virt) {
- 			mfc_err("Allocating bank2 base failed\n");
--			dma_free_coherent(dev->mem_dev[BANK1_CTX], dev->fw_size,
--					  dev->fw_virt_addr,
--					  dev->dma_base[BANK1_CTX]);
--			dev->fw_virt_addr = NULL;
-+			dma_free_coherent(dev->mem_dev[BANK1_CTX], fw_buf->size,
-+					  fw_buf->virt, fw_buf->dma);
-+			fw_buf->virt = NULL;
- 			return -ENOMEM;
- 		}
- 
-@@ -101,17 +101,17 @@ int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev)
- 		mfc_err("Firmware is not present in the /lib/firmware directory nor compiled in kernel\n");
- 		return -EINVAL;
- 	}
--	if (fw_blob->size > dev->fw_size) {
-+	if (fw_blob->size > dev->fw_buf.size) {
- 		mfc_err("MFC firmware is too big to be loaded\n");
- 		release_firmware(fw_blob);
- 		return -ENOMEM;
- 	}
--	if (!dev->fw_virt_addr) {
-+	if (!dev->fw_buf.virt) {
- 		mfc_err("MFC firmware is not allocated\n");
- 		release_firmware(fw_blob);
- 		return -EINVAL;
- 	}
--	memcpy(dev->fw_virt_addr, fw_blob->data, fw_blob->size);
-+	memcpy(dev->fw_buf.virt, fw_blob->data, fw_blob->size);
- 	wmb();
- 	release_firmware(fw_blob);
- 	mfc_debug_leave();
-@@ -123,11 +123,11 @@ int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev)
- {
- 	/* Before calling this function one has to make sure
- 	 * that MFC is no longer processing */
--	if (!dev->fw_virt_addr)
-+	if (!dev->fw_buf.virt)
- 		return -EINVAL;
--	dma_free_coherent(dev->mem_dev[BANK1_CTX], dev->fw_size,
--			  dev->fw_virt_addr, dev->dma_base[BANK1_CTX]);
--	dev->fw_virt_addr = NULL;
-+	dma_free_coherent(dev->mem_dev[BANK1_CTX], dev->fw_buf.size,
-+			  dev->fw_buf.virt, dev->fw_buf.dma);
-+	dev->fw_buf.virt = NULL;
- 	return 0;
- }
- 
-@@ -246,7 +246,7 @@ int s5p_mfc_init_hw(struct s5p_mfc_dev *dev)
- 	int ret;
- 
- 	mfc_debug_enter();
--	if (!dev->fw_virt_addr) {
-+	if (!dev->fw_buf.virt) {
- 		mfc_err("Firmware memory is not allocated.\n");
- 		return -EINVAL;
- 	}
--- 
-1.9.1
+regards
+Philipp
