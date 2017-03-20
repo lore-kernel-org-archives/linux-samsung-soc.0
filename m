@@ -1,50 +1,61 @@
-From: Hans Verkuil <hansverk@cisco.com>
-Subject: Re: [PATCHv2 1/4] video: add hotplug detect notifier support
-Date: Mon, 20 Mar 2017 15:41:17 +0100
-Message-ID: <12f23e88-dec6-c2f8-5d17-8f283d09a541@cisco.com>
-References: <1483366747-34288-1-git-send-email-hverkuil@xs4all.nl>
- <1483366747-34288-2-git-send-email-hverkuil@xs4all.nl>
- <20170320142616.GM21222@n2100.armlinux.org.uk>
- <20170320142727.GA11521@n2100.armlinux.org.uk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
+Date: Mon, 20 Mar 2017 18:48:51 +0200
+Message-ID: <20170320164851.5999-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20170320142727.GA11521@n2100.armlinux.org.uk>
-Sender: linux-media-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/20/2017 03:27 PM, Russell King - ARM Linux wrote:
-> On Mon, Mar 20, 2017 at 02:26:16PM +0000, Russell King - ARM Linux wrote:
->> On Mon, Jan 02, 2017 at 03:19:04PM +0100, Hans Verkuil wrote:
->>> From: Hans Verkuil <hans.verkuil@cisco.com>
->>>
->>> Add support for video hotplug detect and EDID/ELD notifiers, which is used
->>> to convey information from video drivers to their CEC and audio counterparts.
->>>
->>> Based on an earlier version from Russell King:
->>>
->>> https://patchwork.kernel.org/patch/9277043/
->>>
->>> The hpd_notifier is a reference counted object containing the HPD/EDID/ELD state
->>> of a video device.
->>
->> I thought we had decided to drop the ELD bits?
->
-> Ignore that - mailer wrapped around to the first message in my mailbox!
->
+Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
+drivers.  The tree will be maintained in a shared model between current
+Samsung pinctrl maintainers.  Pull requests will be going to Linus
+Walleij.
 
-Just FYI: I've removed anything not needed for CEC in this git repo:
+Also add the patchwork for linux-samsung-soc mailing list which will be
+used for handling the patches.
 
-https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=exynos4-cec2
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-It compiles, but it's otherwise untested.
+---
 
-And I still need to think more about Daniel's comments. I hope to work on this
-a bit more next week.
+As of now, only I have the access to this git tree. Tomasz is welcomed
+to join anytime. We are also waiting for Sywlester to get account on
+kernel.org.
 
-Regards,
+For the Patchwork, I use it also for Exynos/Samsung ARM architecture
+maintenance.  I will add appropriate permissions to Sylwester so we can
+share it.
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-	Hans
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e922e0b9f0d5..83f53534c47a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9979,6 +9979,8 @@ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
+ S:	Maintained
+ F:	drivers/pinctrl/samsung/
+ F:	include/dt-bindings/pinctrl/samsung.h
+-- 
+2.9.3
