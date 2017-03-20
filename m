@@ -1,100 +1,155 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 02/16] media: s5p-mfc: Use generic of_device_get_match_data
- helper
-Date: Mon, 20 Mar 2017 11:56:28 +0100
-Message-ID: <1490007402-30265-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v3 07/16] media: s5p-mfc: Put firmware to private buffer
+ structure
+Date: Mon, 20 Mar 2017 11:56:33 +0100
+Message-ID: <1490007402-30265-8-git-send-email-m.szyprowski@samsung.com>
 References: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170320105649eucas1p2e296c309f82d635df78b1e1ec1fe21aa@eucas1p2.samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+ <CGME20170320105651eucas1p2f4a367546f4f33c652b36415b8542e3b@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35464 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751467AbdCTK5N (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 06:57:13 -0400
 In-reply-to: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Replace custom code with generic helper to retrieve driver data.
+Use s5p_mfc_priv_buf structure for keeping the firmware image. This will
+help handling of firmware buffer allocation in the next patches.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Acked-by: Andrzej Hajda <a.hajda@samsung.com>
 Tested-by: Smitha T Murthy <smitha.t@samsung.com>
-Reviewed-by: Smitha T Murthy <smitha.t@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c        | 17 ++---------------
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  4 ++--
- 2 files changed, 4 insertions(+), 17 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c |  2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  3 +--
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c   | 36 ++++++++++++-------------
+ 3 files changed, 20 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 4e9f349c1be3..af223b0a41a3 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -22,6 +22,7 @@
- #include <media/v4l2-event.h>
- #include <linux/workqueue.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
- #include <media/videobuf2-v4l2.h>
- #include "s5p_mfc_common.h"
-@@ -1152,8 +1153,6 @@ static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 	device_unregister(mfc_dev->mem_dev_r);
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c b/drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c
+index 8c4739ca16d6..4c80bb4243be 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c
+@@ -47,7 +47,7 @@ static int s5p_mfc_sys_init_cmd_v5(struct s5p_mfc_dev *dev)
+ 	struct s5p_mfc_cmd_args h2r_args;
+ 
+ 	memset(&h2r_args, 0, sizeof(struct s5p_mfc_cmd_args));
+-	h2r_args.arg[0] = dev->fw_size;
++	h2r_args.arg[0] = dev->fw_buf.size;
+ 	return s5p_mfc_cmd_host2risc_v5(dev, S5P_FIMV_H2R_CMD_SYS_INIT,
+ 			&h2r_args);
  }
- 
--static void *mfc_get_drv_data(struct platform_device *pdev);
--
- /* MFC probe function */
- static int s5p_mfc_probe(struct platform_device *pdev)
- {
-@@ -1177,7 +1176,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	dev->variant = mfc_get_drv_data(pdev);
-+	dev->variant = of_device_get_match_data(&pdev->dev);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
-@@ -1536,18 +1535,6 @@ static int s5p_mfc_resume(struct device *dev)
- };
- MODULE_DEVICE_TABLE(of, exynos_mfc_match);
- 
--static void *mfc_get_drv_data(struct platform_device *pdev)
--{
--	struct s5p_mfc_variant *driver_data = NULL;
--	const struct of_device_id *match;
--
--	match = of_match_node(exynos_mfc_match, pdev->dev.of_node);
--	if (match)
--		driver_data = (struct s5p_mfc_variant *)match->data;
--
--	return driver_data;
--}
--
- static struct platform_driver s5p_mfc_driver = {
- 	.probe		= s5p_mfc_probe,
- 	.remove		= s5p_mfc_remove,
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index 3e0e8eaf8bfe..2f1387a4c386 100644
+index 9cf860f34c71..cea17a737ef7 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -192,7 +192,7 @@ struct s5p_mfc_buf {
-  */
- struct s5p_mfc_pm {
- 	struct clk	*clock_gate;
--	const char	**clk_names;
-+	const char * const *clk_names;
- 	struct clk	*clocks[MFC_MAX_CLOCKS];
- 	int		num_clocks;
- 	bool		use_clock_gating;
-@@ -304,7 +304,7 @@ struct s5p_mfc_dev {
- 	struct v4l2_ctrl_handler dec_ctrl_handler;
- 	struct v4l2_ctrl_handler enc_ctrl_handler;
- 	struct s5p_mfc_pm	pm;
--	struct s5p_mfc_variant	*variant;
-+	const struct s5p_mfc_variant	*variant;
- 	int num_inst;
- 	spinlock_t irqlock;	/* lock when operating on context */
- 	spinlock_t condlock;	/* lock when changing/checking if a context is
+@@ -314,8 +314,7 @@ struct s5p_mfc_dev {
+ 	int int_type;
+ 	unsigned int int_err;
+ 	wait_queue_head_t queue;
+-	size_t fw_size;
+-	void *fw_virt_addr;
++	struct s5p_mfc_priv_buf fw_buf;
+ 	dma_addr_t dma_base[BANK_CTX_NUM];
+ 	unsigned long hw_lock;
+ 	struct s5p_mfc_ctx *ctx[MFC_NUM_CONTEXTS];
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+index c9bff3d0655f..50d698968049 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+@@ -29,21 +29,22 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
+ 	void *bank2_virt;
+ 	dma_addr_t bank2_dma_addr;
+ 	unsigned int align_size = 1 << MFC_BASE_ALIGN_ORDER;
++	struct s5p_mfc_priv_buf *fw_buf = &dev->fw_buf;
+ 
+-	dev->fw_size = dev->variant->buf_size->fw;
++	fw_buf->size = dev->variant->buf_size->fw;
+ 
+-	if (dev->fw_virt_addr) {
++	if (fw_buf->virt) {
+ 		mfc_err("Attempting to allocate firmware when it seems that it is already loaded\n");
+ 		return -ENOMEM;
+ 	}
+ 
+-	dev->fw_virt_addr = dma_alloc_coherent(dev->mem_dev[BANK1_CTX],
+-					dev->fw_size, &dev->dma_base[BANK1_CTX],
+-					GFP_KERNEL);
+-	if (!dev->fw_virt_addr) {
++	fw_buf->virt = dma_alloc_coherent(dev->mem_dev[BANK1_CTX], fw_buf->size,
++					 &fw_buf->dma, GFP_KERNEL);
++	if (!fw_buf->virt) {
+ 		mfc_err("Allocating bitprocessor buffer failed\n");
+ 		return -ENOMEM;
+ 	}
++	dev->dma_base[BANK1_CTX] = fw_buf->dma;
+ 
+ 	if (HAS_PORTNUM(dev) && IS_TWOPORT(dev)) {
+ 		bank2_virt = dma_alloc_coherent(dev->mem_dev[BANK2_CTX],
+@@ -51,10 +52,9 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
+ 
+ 		if (!bank2_virt) {
+ 			mfc_err("Allocating bank2 base failed\n");
+-			dma_free_coherent(dev->mem_dev[BANK1_CTX], dev->fw_size,
+-					  dev->fw_virt_addr,
+-					  dev->dma_base[BANK1_CTX]);
+-			dev->fw_virt_addr = NULL;
++			dma_free_coherent(dev->mem_dev[BANK1_CTX], fw_buf->size,
++					  fw_buf->virt, fw_buf->dma);
++			fw_buf->virt = NULL;
+ 			return -ENOMEM;
+ 		}
+ 
+@@ -101,17 +101,17 @@ int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev)
+ 		mfc_err("Firmware is not present in the /lib/firmware directory nor compiled in kernel\n");
+ 		return -EINVAL;
+ 	}
+-	if (fw_blob->size > dev->fw_size) {
++	if (fw_blob->size > dev->fw_buf.size) {
+ 		mfc_err("MFC firmware is too big to be loaded\n");
+ 		release_firmware(fw_blob);
+ 		return -ENOMEM;
+ 	}
+-	if (!dev->fw_virt_addr) {
++	if (!dev->fw_buf.virt) {
+ 		mfc_err("MFC firmware is not allocated\n");
+ 		release_firmware(fw_blob);
+ 		return -EINVAL;
+ 	}
+-	memcpy(dev->fw_virt_addr, fw_blob->data, fw_blob->size);
++	memcpy(dev->fw_buf.virt, fw_blob->data, fw_blob->size);
+ 	wmb();
+ 	release_firmware(fw_blob);
+ 	mfc_debug_leave();
+@@ -123,11 +123,11 @@ int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev)
+ {
+ 	/* Before calling this function one has to make sure
+ 	 * that MFC is no longer processing */
+-	if (!dev->fw_virt_addr)
++	if (!dev->fw_buf.virt)
+ 		return -EINVAL;
+-	dma_free_coherent(dev->mem_dev[BANK1_CTX], dev->fw_size,
+-			  dev->fw_virt_addr, dev->dma_base[BANK1_CTX]);
+-	dev->fw_virt_addr = NULL;
++	dma_free_coherent(dev->mem_dev[BANK1_CTX], dev->fw_buf.size,
++			  dev->fw_buf.virt, dev->fw_buf.dma);
++	dev->fw_buf.virt = NULL;
+ 	return 0;
+ }
+ 
+@@ -246,7 +246,7 @@ int s5p_mfc_init_hw(struct s5p_mfc_dev *dev)
+ 	int ret;
+ 
+ 	mfc_debug_enter();
+-	if (!dev->fw_virt_addr) {
++	if (!dev->fw_buf.virt) {
+ 		mfc_err("Firmware memory is not allocated.\n");
+ 		return -EINVAL;
+ 	}
 -- 
 1.9.1
