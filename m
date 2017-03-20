@@ -1,35 +1,28 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 14/16] media: s5p-mfc: Use preallocated block allocator
- always for MFC v6+
-Date: Mon, 20 Mar 2017 11:56:40 +0100
-Message-ID: <1490007402-30265-15-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v3 16/16] ARM: dts: exynos: Remove MFC reserved buffers
+Date: Mon, 20 Mar 2017 11:56:42 +0100
+Message-ID: <1490007402-30265-17-git-send-email-m.szyprowski@samsung.com>
 References: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170320105654eucas1p13c5d9a82f7410c53e427340b8a572f96@eucas1p1.samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+ <CGME20170320105655eucas1p21706c33b5c1b413126fbfd1e23a34058@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:30564 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753678AbdCTK5T (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 06:57:19 -0400
 In-reply-to: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-It turned out that all versions of MFC v6+ hardware doesn't have a strict
-requirement for ALL buffers to be allocated on higher addresses than the
-firmware base like it was documented for MFC v5. This requirement is true
-only for the device and per-context buffers. All video data buffers can be
-allocated anywhere for all MFC v6+ versions. Basing on this fact, the
-special DMA configuration based on two reserved memory regions is not
-really needed for MFC v6+ devices, because the memory requirements for the
-firmware, device and per-context buffers can be fulfilled by the simple
-probe-time pre-allocated block allocator instroduced in previous patch.
-
-This patch enables support for such pre-allocated block based allocator
-always for MFC v6+ devices. Due to the limitations of the memory management
-subsystem the largest supported size of the pre-allocated buffer when no
-CMA (Contiguous Memory Allocator) is enabled is 4MiB.
-
-This patch also removes the requirement to provide two reserved memory
-regions for MFC v6+ devices in device tree. Now the driver is fully
-functional without them.
+During my research I found that some of the requirements for the memory
+buffers for MFC v6+ devices were blindly copied from the previous (v5)
+version and simply turned out to be excessive. The relaxed requirements
+are applied by the recent patches to the MFC driver and the driver is
+now fully functional even without the reserved memory blocks for all
+v6+ variants. This patch removes those reserved memory nodes from all
+boards having MFC v6+ hardware block.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
@@ -37,58 +30,111 @@ Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Acked-by: Andrzej Hajda <a.hajda@samsung.com>
 Tested-by: Smitha T Murthy <smitha.t@samsung.com>
 ---
- Documentation/devicetree/bindings/media/s5p-mfc.txt | 2 +-
- drivers/media/platform/s5p-mfc/s5p_mfc.c            | 9 ++++++---
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/exynos5250-arndale.dts           | 1 -
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          | 1 -
+ arch/arm/boot/dts/exynos5250-spring.dts            | 1 -
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 1 -
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         | 1 -
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          | 1 -
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 -
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          | 1 -
+ 8 files changed, 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-index 2c901286d818..d3404b5d4d17 100644
---- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
-+++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-@@ -28,7 +28,7 @@ Optional properties:
-   - memory-region : from reserved memory binding: phandles to two reserved
- 	memory regions, first is for "left" mfc memory bus interfaces,
- 	second if for the "right" mfc memory bus, used when no SYSMMU
--	support is available
-+	support is available; used only by MFC v5 present in Exynos4 SoCs
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index 6098dacd09f1..6a432460eb77 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -14,7 +14,6 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/input/input.h>
+ #include "exynos5250.dtsi"
+-#include "exynos-mfc-reserved-memory.dtsi"
  
- Obsolete properties:
-   - samsung,mfc-r, samsung,mfc-l : support removed, please use memory-region
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index f1528054a713..a56031c3263e 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1177,9 +1177,12 @@ static void s5p_mfc_unconfigure_2port_memory(struct s5p_mfc_dev *mfc_dev)
- static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
- {
- 	struct device *dev = &mfc_dev->plat_dev->dev;
--	unsigned long mem_size = SZ_8M;
-+	unsigned long mem_size = SZ_4M;
- 	unsigned int bitmap_size;
+ / {
+ 	model = "Insignal Arndale evaluation board based on EXYNOS5250";
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index a97a785ccc6b..6632f657394e 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -13,7 +13,6 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include "exynos5250.dtsi"
+-#include "exynos-mfc-reserved-memory.dtsi"
  
-+	if (IS_ENABLED(CONFIG_DMA_CMA) || exynos_is_iommu_available(dev))
-+		mem_size = SZ_8M;
-+
- 	if (mfc_mem_size)
- 		mem_size = memparse(mfc_mem_size, NULL);
+ / {
+ 	model = "SAMSUNG SMDK5250 board based on EXYNOS5250";
+diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
+index 4d7bdb735ed3..95c3bcace9dc 100644
+--- a/arch/arm/boot/dts/exynos5250-spring.dts
++++ b/arch/arm/boot/dts/exynos5250-spring.dts
+@@ -14,7 +14,6 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/input/input.h>
+ #include "exynos5250.dtsi"
+-#include "exynos-mfc-reserved-memory.dtsi"
  
-@@ -1239,7 +1242,7 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- {
- 	struct device *dev = &mfc_dev->plat_dev->dev;
+ / {
+ 	model = "Google Spring";
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 9cc83c51c925..ee1bb9b8b366 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -16,7 +16,6 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/clock/samsung,s2mps11.h>
+-#include "exynos-mfc-reserved-memory.dtsi"
  
--	if (exynos_is_iommu_available(dev))
-+	if (exynos_is_iommu_available(dev) || !IS_TWOPORT(mfc_dev))
- 		return s5p_mfc_configure_common_memory(mfc_dev);
- 	else
- 		return s5p_mfc_configure_2port_memory(mfc_dev);
-@@ -1250,7 +1253,7 @@ static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 	struct device *dev = &mfc_dev->plat_dev->dev;
+ / {
+ 	model = "Insignal Arndale Octa evaluation board based on EXYNOS5420";
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 1f964ec35c5e..2cd65699a29c 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -16,7 +16,6 @@
+ #include <dt-bindings/regulator/maxim,max77802.h>
+ #include "exynos5420.dtsi"
+ #include "exynos5420-cpus.dtsi"
+-#include "exynos-mfc-reserved-memory.dtsi"
  
- 	s5p_mfc_release_firmware(mfc_dev);
--	if (exynos_is_iommu_available(dev))
-+	if (exynos_is_iommu_available(dev) || !IS_TWOPORT(mfc_dev))
- 		s5p_mfc_unconfigure_common_memory(mfc_dev);
- 	else
- 		s5p_mfc_unconfigure_2port_memory(mfc_dev);
+ / {
+ 	model = "Google Peach Pit Rev 6+";
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index aaccd0da41e5..08c8ab173e87 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -13,7 +13,6 @@
+ #include "exynos5420.dtsi"
+ #include "exynos5420-cpus.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
+-#include "exynos-mfc-reserved-memory.dtsi"
+ 
+ / {
+ 	model = "Samsung SMDK5420 board based on EXYNOS5420";
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 05b9afdd6757..657535e2e3cc 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -18,7 +18,6 @@
+ #include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos5800.dtsi"
+ #include "exynos5422-cpus.dtsi"
+-#include "exynos-mfc-reserved-memory.dtsi"
+ 
+ / {
+ 	memory@40000000 {
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index f9ff7f07ae0c..ecf1c916e8fc 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -16,7 +16,6 @@
+ #include <dt-bindings/regulator/maxim,max77802.h>
+ #include "exynos5800.dtsi"
+ #include "exynos5420-cpus.dtsi"
+-#include "exynos-mfc-reserved-memory.dtsi"
+ 
+ / {
+ 	model = "Google Peach Pi Rev 10+";
 -- 
 1.9.1
