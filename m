@@ -1,28 +1,25 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 16/16] ARM: dts: exynos: Remove MFC reserved buffers
-Date: Mon, 20 Mar 2017 11:56:42 +0100
-Message-ID: <1490007402-30265-17-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v3 06/16] media: s5p-mfc: Move setting DMA max segment size to
+ DMA configure function
+Date: Mon, 20 Mar 2017 11:56:32 +0100
+Message-ID: <1490007402-30265-7-git-send-email-m.szyprowski@samsung.com>
 References: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170320105655eucas1p21706c33b5c1b413126fbfd1e23a34058@eucas1p2.samsung.com>
+ <CGME20170320105651eucas1p1c80766207bf60d211200f2f5daa2c799@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:30564 "EHLO
         mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753678AbdCTK5T (ORCPT
+        with ESMTP id S1753662AbdCTK5P (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 06:57:19 -0400
+        Mon, 20 Mar 2017 06:57:15 -0400
 In-reply-to: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-During my research I found that some of the requirements for the memory
-buffers for MFC v6+ devices were blindly copied from the previous (v5)
-version and simply turned out to be excessive. The relaxed requirements
-are applied by the recent patches to the MFC driver and the driver is
-now fully functional even without the reserved memory blocks for all
-v6+ variants. This patch removes those reserved memory nodes from all
-boards having MFC v6+ hardware block.
+Setting DMA max segment size to 32 bit mask is a part of DMA memory
+configuration, so move those calls to s5p_mfc_configure_dma_memory()
+function.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
@@ -30,111 +27,75 @@ Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Acked-by: Andrzej Hajda <a.hajda@samsung.com>
 Tested-by: Smitha T Murthy <smitha.t@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts           | 1 -
- arch/arm/boot/dts/exynos5250-smdk5250.dts          | 1 -
- arch/arm/boot/dts/exynos5250-spring.dts            | 1 -
- arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 1 -
- arch/arm/boot/dts/exynos5420-peach-pit.dts         | 1 -
- arch/arm/boot/dts/exynos5420-smdk5420.dts          | 1 -
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 -
- arch/arm/boot/dts/exynos5800-peach-pi.dts          | 1 -
- 8 files changed, 8 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 6098dacd09f1..6a432460eb77 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -14,7 +14,6 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/input/input.h>
- #include "exynos5250.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index c03ed1a737b7..1fe790d88e70 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1117,9 +1117,13 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+ 	if (exynos_is_iommu_available(dev)) {
+ 		int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
+ 						 S5P_MFC_IOMMU_DMA_SIZE);
+-		if (ret == 0)
++		if (ret == 0) {
+ 			mfc_dev->mem_dev[BANK1_CTX] =
+ 				mfc_dev->mem_dev[BANK2_CTX] = dev;
++			vb2_dma_contig_set_max_seg_size(dev,
++							DMA_BIT_MASK(32));
++		}
++
+ 		return ret;
+ 	}
  
- / {
- 	model = "Insignal Arndale evaluation board based on EXYNOS5250";
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index a97a785ccc6b..6632f657394e 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -13,7 +13,6 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include "exynos5250.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+@@ -1138,6 +1142,11 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+ 		return -ENODEV;
+ 	}
  
- / {
- 	model = "SAMSUNG SMDK5250 board based on EXYNOS5250";
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-index 4d7bdb735ed3..95c3bcace9dc 100644
---- a/arch/arm/boot/dts/exynos5250-spring.dts
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -14,7 +14,6 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/input/input.h>
- #include "exynos5250.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
++	vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK1_CTX],
++					DMA_BIT_MASK(32));
++	vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK2_CTX],
++					DMA_BIT_MASK(32));
++
+ 	return 0;
+ }
  
- / {
- 	model = "Google Spring";
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 9cc83c51c925..ee1bb9b8b366 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -16,7 +16,6 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/clock/samsung,s2mps11.h>
--#include "exynos-mfc-reserved-memory.dtsi"
+@@ -1147,11 +1156,14 @@ static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
  
- / {
- 	model = "Insignal Arndale Octa evaluation board based on EXYNOS5420";
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 1f964ec35c5e..2cd65699a29c 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -16,7 +16,6 @@
- #include <dt-bindings/regulator/maxim,max77802.h>
- #include "exynos5420.dtsi"
- #include "exynos5420-cpus.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+ 	if (exynos_is_iommu_available(dev)) {
+ 		exynos_unconfigure_iommu(dev);
++		vb2_dma_contig_clear_max_seg_size(dev);
+ 		return;
+ 	}
  
- / {
- 	model = "Google Peach Pit Rev 6+";
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index aaccd0da41e5..08c8ab173e87 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -13,7 +13,6 @@
- #include "exynos5420.dtsi"
- #include "exynos5420-cpus.dtsi"
- #include <dt-bindings/gpio/gpio.h>
--#include "exynos-mfc-reserved-memory.dtsi"
+ 	device_unregister(mfc_dev->mem_dev[BANK1_CTX]);
+ 	device_unregister(mfc_dev->mem_dev[BANK2_CTX]);
++	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK1_CTX]);
++	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK2_CTX]);
+ }
  
- / {
- 	model = "Samsung SMDK5420 board based on EXYNOS5420";
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 05b9afdd6757..657535e2e3cc 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -18,7 +18,6 @@
- #include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5800.dtsi"
- #include "exynos5422-cpus.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+ /* MFC probe function */
+@@ -1209,11 +1221,6 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 		goto err_dma;
+ 	}
  
- / {
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index f9ff7f07ae0c..ecf1c916e8fc 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -16,7 +16,6 @@
- #include <dt-bindings/regulator/maxim,max77802.h>
- #include "exynos5800.dtsi"
- #include "exynos5420-cpus.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+-	vb2_dma_contig_set_max_seg_size(dev->mem_dev[BANK1_CTX],
+-					DMA_BIT_MASK(32));
+-	vb2_dma_contig_set_max_seg_size(dev->mem_dev[BANK2_CTX],
+-					DMA_BIT_MASK(32));
+-
+ 	mutex_init(&dev->mfc_mutex);
+ 	init_waitqueue_head(&dev->queue);
+ 	dev->hw_lock = 0;
+@@ -1346,8 +1353,6 @@ static int s5p_mfc_remove(struct platform_device *pdev)
+ 	v4l2_device_unregister(&dev->v4l2_dev);
+ 	s5p_mfc_release_firmware(dev);
+ 	s5p_mfc_unconfigure_dma_memory(dev);
+-	vb2_dma_contig_clear_max_seg_size(dev->mem_dev[BANK1_CTX]);
+-	vb2_dma_contig_clear_max_seg_size(dev->mem_dev[BANK2_CTX]);
  
- / {
- 	model = "Google Peach Pi Rev 10+";
+ 	s5p_mfc_final_pm(dev);
+ 	return 0;
 -- 
 1.9.1
