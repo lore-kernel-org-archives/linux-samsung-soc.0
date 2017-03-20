@@ -1,122 +1,41 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v2 06/14] mmc: dw_mmc: simplify optional reset handling
-Date: Mon, 20 Mar 2017 11:27:59 +0100
-Message-ID: <1490005679.2917.32.camel@pengutronix.de>
-References: <20170315113139.17989-1-p.zabel@pengutronix.de>
-         <CGME20170320092255eucas1p1459c023fd9b479c8e5323a6ac97dbf58@eucas1p1.samsung.com>
-         <e70d77e9-bd60-a0f4-6510-48b72cb67624@samsung.com>
-         <1490003602.2917.16.camel@pengutronix.de>
-         <b80ceee9-40e7-f32b-d44a-00dd4e7f6461@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] iommu/exynos: Workaround FLPD cache flush issues for
+	SYSMMU v5
+Date: Mon, 20 Mar 2017 11:31:11 +0100
+Message-ID: <803c131d-5e45-c016-1d5e-a99ea7cd2247@samsung.com>
+References: <1490001484-18890-1-git-send-email-m.szyprowski@samsung.com>
+	<CGME20170320091825eucas1p19e9ee18390287c275c9406144e88eef8@eucas1p1.samsung.com>
+	<1490001484-18890-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:39357 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754151AbdCTK2V (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 06:28:21 -0400
-In-Reply-To: <b80ceee9-40e7-f32b-d44a-00dd4e7f6461@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <1490001484-18890-2-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-mmc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-kernel@vger.kernel.org, "Szyprowski, Marek" <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi Andrzej,
+On 20.03.2017 10:17, Marek Szyprowski wrote:
+> For some unknown reasons, in some cases, FLPD cache invalidation doesn't
+> work properly with SYSMMU v5 controllers found in Exynos5433 SoCs. This
+> can be observed by a firmware crash during initialization phase of MFC
+> video decoder available in the mentioned SoCs when IOMMU support is
+> enabled. To workaround this issue perform a full TLB/FLPD invalidation
+> in case of replacing any first level page descriptors in case of SYSMMU v5.
 
-On Mon, 2017-03-20 at 11:03 +0100, Andrzej Hajda wrote:
-> Hi Philipp,
-> 
-> On 20.03.2017 10:53, Philipp Zabel wrote:
-> > On Mon, 2017-03-20 at 10:22 +0100, Andrzej Hajda wrote:
-> >> Hi Philipp,
-> >>
-> >> Todays next branch does not work with exynos5433-tm2 board.
-> >> I guess this patch causes regression. On MMC without reset controller I
-> >> get errors:
-> >> [    4.938222] dwmmc_exynos 15540000.mshc: platform data not available
-> >> [    4.943268] dwmmc_exynos: probe of 15540000.mshc failed with error -22
+It fixes also crashes of MFC encoder on Exynos5433.
 
-I was thrown off by this. Should maybe dw_mci_probe return the error
-value reported by dw_mci_parse_dt instead of always returning -EINVAL?
+For both patches:
+Tested-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-> >> [    4.950184] dwmmc_exynos 15560000.mshc: platform data not available
-> >> [    4.955962] dwmmc_exynos: probe of 15560000.mshc failed with error -22
-> >>
-> >> Commenting out reset controller get and error checks 'fixes' the issue.
-> >>
-> >> On 15.03.2017 12:31, Philipp Zabel wrote:
-> >>> As of commit bb475230b8e5 ("reset: make optional functions really
-> >>> optional"), the reset framework API calls use NULL pointers to describe
-> >>> optional, non-present reset controls.
-> >>>
-> >>> This allows to return errors from devm_reset_control_get_optional and to
-> >>> call reset_control_(de)assert unconditionally.
-> >>>
-> >>> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> >>> ---
-> >>>  drivers/mmc/host/dw_mmc.c | 14 +++++---------
-> >>>  1 file changed, 5 insertions(+), 9 deletions(-)
-> >>>
-> >>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> >>> index a9ac0b4573131..3d62b0a1f81cb 100644
-> >>> --- a/drivers/mmc/host/dw_mmc.c
-> >>> +++ b/drivers/mmc/host/dw_mmc.c
-> >>> @@ -2968,10 +2968,8 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
-> >>>  
-> >>>  	/* find reset controller when exist */
-> >>>  	pdata->rstc = devm_reset_control_get_optional(dev, "reset");
-> >>> -	if (IS_ERR(pdata->rstc)) {
-> >>> -		if (PTR_ERR(pdata->rstc) == -EPROBE_DEFER)
-> >>> -			return ERR_PTR(-EPROBE_DEFER);
-> >>> -	}
-> >>> +	if (IS_ERR(pdata->rstc))
-> >>> +		return ERR_CAST(pdata->rstc);
-> >>
-> >> With three lines above commented out it works.
-> > So devm_reset_control_get_optional returns -EINVAL. Why?
-> >
-> > The mshc@15560000 node is compatible to "samsung,exynos7-dw-mshc-smu",
-> > so that's dw_mmc-exynos.c calling dw_mci_pltfm_register, which then
-> > calls dw_mci_probe, passing the original platform device as
-> > host->dev = &pdev->dev, and I expect __of_reset_control_get being called
-> > with a valid DT node (dev->of_node).
-> > Since id is set to "reset", of_property_match_string(node,
-> > "reset-names", id) should then be called and return -EINVAL because the
-> > "reset-names" property does not exist. Then __of_reset_control_get
-> > should return NULL because optional == true.
-> > Some of this obviously doesn't happen, where am I wrong?
-> 
-> 
-> When RESET_CONTROLLER is not enabled dummy stubs return -ENOSUPP error [1].
-> 
-> [1]: http://lxr.free-electrons.com/source/include/linux/reset.h#L77
-
-Thanks, I suppose that issue should be fixed by:
-
-----------8<----------
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index 86b4ed75359e8..c905ff1c21ec6 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -74,14 +74,14 @@ static inline struct reset_control *__of_reset_control_get(
- 					const char *id, int index, bool shared,
- 					bool optional)
- {
--	return ERR_PTR(-ENOTSUPP);
-+	return optional ? NULL : ERR_PTR(-ENOTSUPP);
- }
- 
- static inline struct reset_control *__devm_reset_control_get(
- 					struct device *dev, const char *id,
- 					int index, bool shared, bool optional)
- {
--	return ERR_PTR(-ENOTSUPP);
-+	return optional ? NULL : ERR_PTR(-ENOTSUPP);
- }
- 
- #endif /* CONFIG_RESET_CONTROLLER */
----------->8----------
-
-regards
-Philipp
+Regards
+Andrzej
