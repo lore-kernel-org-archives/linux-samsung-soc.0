@@ -1,62 +1,82 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2] pinctrl: samsung: Calculate GPIO base for
- pinctrl_add_gpio_range
-Date: Tue, 21 Mar 2017 09:32:20 +0000
-Message-ID: <20170321093220.GV6986@localhost.localdomain>
-References: <20170228090143.GG2742@localhost.localdomain>
- <1488301475-10804-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <CA+Ln22HUK2NBV7=NCeJ3r1J2E5-C_5qc+i9Co5js9VamAXF04g@mail.gmail.com>
- <20170306164909.GA6986@localhost.localdomain>
- <20170320183915.r4bfl466yyph74i4@kozik-lap>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH v2 06/14] mmc: dw_mmc: simplify optional reset handling
+Date: Tue, 21 Mar 2017 21:12:20 +0900
+Message-ID: <22bbae56-e019-8be3-ffcc-ffcbe8d6ec53@samsung.com>
+References: <20170315113139.17989-1-p.zabel@pengutronix.de>
+ <CGME20170320092255eucas1p1459c023fd9b479c8e5323a6ac97dbf58@eucas1p1.samsung.com>
+ <e70d77e9-bd60-a0f4-6510-48b72cb67624@samsung.com>
+ <1490003602.2917.16.camel@pengutronix.de>
+ <b80ceee9-40e7-f32b-d44a-00dd4e7f6461@samsung.com>
+ <1490005679.2917.32.camel@pengutronix.de>
+ <5f6c8c58-c4e4-39e6-2c29-e889bd6bf565@samsung.com>
+ <1490007648.2917.41.camel@pengutronix.de>
+ <CAPDyKFr-08ontZTfraOEAOROcb9pqFQkqzV4zMRA4OdsxXrvtQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170320183915.r4bfl466yyph74i4@kozik-lap>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAPDyKFr-08ontZTfraOEAOROcb9pqFQkqzV4zMRA4OdsxXrvtQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Szyprowski, Marek" <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 08:39:15PM +0200, Krzysztof Kozlowski wrote:
-> On Mon, Mar 06, 2017 at 04:49:09PM +0000, Charles Keepax wrote:
-> > On Sat, Mar 04, 2017 at 08:20:11PM +0900, Tomasz Figa wrote:
-> > > Hi Charles,
-> > > 
-> > > 2017-03-01 2:04 GMT+09:00 Charles Keepax <ckeepax@opensource.wolfsonmicro.com>:
-> > > > As the pinctrl is now added before the GPIOs are registered we need to
-> > > > manually calculate what the GPIO base will be, otherwise the base for
-> > > > each gpio_range will be set to zero. Fortunately the driver
-> > > > already assigns a GPIO base, in samsung_gpiolib_register, and uses the
-> > > > same calculation it does for the pin_base. Meaning the two will always
-> > > > be the same and allowing us to reuse the pinbase and avoid the issue.
-> > > 
-> > > Sorry, I didn't notice before and I don't see the offending patch in ,
-> > > but you should add
-> > > 
-> > > Fixes: XXXXXXXXXXXX ("pinctrl: Patch subject")
-> > > 
-> > > if you intend to submit this patch separately. Otherwise, maybe this
-> > > can be just squashed?
-> > > 
-> > 
-> > Yeah apologies for that as the original patch hasn't showed up in
-> > the tree yet I couldn't pull a commit ID to add the fixes tag.
-> > Squashing it in is probably the best way to go.
-> 
-> Hi Charles,
-> 
-> Thanks for the work.
-> 
-> This is a follow up of:
-> https://patchwork.kernel.org/patch/9577147/
-> Right?
-> 
-> None of these two were applied so can you squash them, rebase, retest
-> and send again?
-> 
+Hi All,
 
-Yeah no problem should be able to resend later today hopefully.
+On 03/21/2017 03:10 AM, Ulf Hansson wrote:
+> On 20 March 2017 at 12:00, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+>> On Mon, 2017-03-20 at 11:49 +0100, Andrzej Hajda wrote:
+>>> On 20.03.2017 11:27, Philipp Zabel wrote:
+>> [...]
+>>>> diff --git a/include/linux/reset.h b/include/linux/reset.h
+>>>> index 86b4ed75359e8..c905ff1c21ec6 100644
+>>>> --- a/include/linux/reset.h
+>>>> +++ b/include/linux/reset.h
+>>>> @@ -74,14 +74,14 @@ static inline struct reset_control *__of_reset_control_get(
+>>>>                                     const char *id, int index, bool shared,
+>>>>                                     bool optional)
+>>>>  {
+>>>> -   return ERR_PTR(-ENOTSUPP);
+>>>> +   return optional ? NULL : ERR_PTR(-ENOTSUPP);
+>>>>  }
+>>>>
+>>>>  static inline struct reset_control *__devm_reset_control_get(
+>>>>                                     struct device *dev, const char *id,
+>>>>                                     int index, bool shared, bool optional)
+>>>>  {
+>>>> -   return ERR_PTR(-ENOTSUPP);
+>>>> +   return optional ? NULL : ERR_PTR(-ENOTSUPP);
+>>>>  }
+>>>>
+>>>>  #endif /* CONFIG_RESET_CONTROLLER */
+>>>> ---------->8----------
+>>>
+>>> In dw_mmc.c file there are also unconditional calls to
+>>> reset_control_assert, with disabled RESET_CONTROLLER it will cause
+>>> unexpected WARNs.
+>>> Anyway if you change reset API as above I think you should remove all
+>>> warns from reset stubs, because NULL reset is valid, but these warns are
+>>> there for reason - contradiction.
+>>
+>> You are right, I have to let go of those, too.
+> 
+> 
+> Until fixed, I have dropped the three changes from my next branch
+> related to this. Please re-post when fixed.
 
-Thanks,
-Charles
+I missed this patch. If resend the patch, i will check.
+
+Best Regards,
+Jaehoon Chung
+
+> 
+> Kind regards
+> Uffe
+> 
+>>
+>> regards
+>> Philipp
+>>
+> 
+> 
+> 
