@@ -1,68 +1,109 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
-Date: Tue, 21 Mar 2017 09:54:34 +0900
-Message-ID: <CA+Ln22HW-oAtgdzrjcm2CXK4j4SURdVNV_eZsr51peg4n4AUSA@mail.gmail.com>
-References: <20170320164851.5999-1-krzk@kernel.org> <20170320165841.gpbevoscf2fjvods@kozik-lap>
+Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
+ interrupts on s3c24xx
+Date: Tue, 21 Mar 2017 10:31:37 +0900
+Message-ID: <CA+Ln22E55XD92vzG=+3DYxozQiXc=DOEzSg655fYY5gVep6Diw@mail.gmail.com>
+References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
+ <20170304081504.unv6sihbmp76ynfy@kozik-lap> <20170306131516.GA6095@n1>
+ <20170308163434.obhtg6fwmjwqv7jm@kozik-lap>
+ <CA+Ln22FEYfO2EmvLKTRSHNFPpKSOw38vSDvg-nPv_j08cApqCw@mail.gmail.com>
+ <CAJKOXPdUQ8DSPR_4cDs8WyrV9Mmy6isncW72BNiTyiRb79qf7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20170320165841.gpbevoscf2fjvods@kozik-lap>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAJKOXPdUQ8DSPR_4cDs8WyrV9Mmy6isncW72BNiTyiRb79qf7g@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sergio Prado <sergio.prado@e-labworks.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2017-03-21 1:58 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Mon, Mar 20, 2017 at 06:48:51PM +0200, Krzysztof Kozlowski wrote:
->> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
->> drivers.  The tree will be maintained in a shared model between current
->> Samsung pinctrl maintainers.  Pull requests will be going to Linus
->> Walleij.
+2017-03-09 15:42 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> On Thu, Mar 9, 2017 at 7:56 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> 2017-03-09 1:34 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+>>> On Mon, Mar 06, 2017 at 09:15:16AM -0400, Sergio Prado wrote:
+>>>> Hi Krzysztof,
+>>>>
+>>>> > > This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
+>>>> >
+>>>> > Checkpatch should complain here about commit format.
+>>>> >
+>>>> > >
+>>>> > > Tested on FriendlyARM mini2440.
+>>>> > >
+>>>> >
+>>>> > Please add:
+>>>> >   Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+>>>> >   Cc: <stable@vger.kernel.org>
+>>>> >
+>>>>
+>>>> OK.
+>>>>
+>>>> > > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+>>>> > > ---
+>>>> > >  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
+>>>> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>> > >
+>>>> > > diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+>>>> > > index b82a003546ae..1b8d887796e8 100644
+>>>> > > --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+>>>> > > +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+>>>> > > @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+>>>> > >  {
+>>>> > >   struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+>>>> > >   struct irq_chip *chip = irq_desc_get_chip(desc);
+>>>> > > - struct irq_data *irqd = irq_desc_get_irq_data(desc);
+>>>> > > - struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+>>>> > > + struct samsung_pinctrl_drv_data *d = data->drvdata;
+>>>> > > + struct samsung_pin_bank *bank = d->pin_banks;
+>>>> >
+>>>> > I think 'pin_banks' point to all banks of given controller not to the
+>>>> > currently accessed one.
+>>>>
+>>>> Understood. I think it worked in my tests because on s3c2440 all banks
+>>>> have the same eint base address.
+>>>>
+>>>> So what do you think is the best approach to solve this problem?
+>>>
+>>> Maybe you can get to this through:
+>>>         s3c24xx_eint_domain_data = s3c24xx_eint_data->domains[virq].host_data;
+>>>         s3c24xx_eint_domain_data->bank
+>>>
+>>> It is getting slightly more complicated...
 >>
->> Also add the patchwork for linux-samsung-soc mailing list which will be
->> used for handling the patches.
->>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
->>
->> ---
->>
->> As of now, only I have the access to this git tree. Tomasz is welcomed
->> to join anytime. We are also waiting for Sywlester to get account on
->> kernel.org.
-
-I'll stay alerted. :) Please let me know whenever you both guys are
-busy and I can kick in. Will keep reviewing the patches as well.
-
->>
->> For the Patchwork, I use it also for Exynos/Samsung ARM architecture
->> maintenance.  I will add appropriate permissions to Sylwester so we can
->> share it.
->> ---
+>> How about the suggestions I made in my reply from March 4 (JST)?
 >
-> Linus,
->
-> I talked with Sylwester few days ago and we agreed on a shared mainainer
-> model.  Mostly because:
-> 1. Only Sylwester from three of us works in Samsung,
-> 2. It helps distributing the load in case of any holidays/travel etc,
-> 3. It might also make easier for future transitions.
->
-> For this release I can start taking the patches. Please let me know:
-> 1. Can I base on Torvalds' rc-1 or you prefer basing on top of your
->    branches? In the second case your branches should not be rebased.
-> 2. When do you expect pull requests (preferred time and acceptable late
->    stuff)?
->
->
-> Also, I will add this tree to the linux-next + auto-builders.
+> Yes, this also looks like solution. I am not sure how much you would
+> like to revert but wouldn't it create duplicated members in pinctrl
+> structures? One for Exynos and other for S3C?
 
-Thanks Krzysztof, you're doing some really good work here! :)
+I would actually lean towards introducing one duplicated member
+(drvdata->pctl_base) versus adding unnecessarily complex special ways
+of calculating the addresses from current (unsuitable) set of data.
+
+
+By the way, I think I just found yet another bug introduced by that
+patch. In exynos_irq_request_resources() and
+exynos_irq_release_resources(), the address of CON register is
+calculated from bank->eint_base, while I believe it should be
+calculated from bank->pctl_base (which is also what
+samsung_pinmux_setup() uses).
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pinctrl/samsung/pinctrl-exynos.c?id=refs/tags/next-20170320#n174
+
+Ehh, I think I regret letting that patch be merged as it made some of
+the code quite messy and we actually found a better way to support
+those strange banks later (group banks by their pctl_base and only
+allow eint_base to be selectable per bank; then we could just keep
+drvdata->pctl_base constant over all related banks).
 
 Best regards,
 Tomasz
