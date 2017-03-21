@@ -1,11 +1,12 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
 Subject: Re: [PATCH v11 0/3] Add support for the S6E3HA2 panel on TM2 board
-Date: Tue, 21 Mar 2017 15:42:18 +0900
-Message-ID: <5512d06b-770e-d748-b835-0788b01eb684@samsung.com>
+Date: Tue, 21 Mar 2017 15:55:05 +0900
+Message-ID: <67497946-37d3-1a8d-f031-14db597886f5@samsung.com>
 References: <CGME20170308014258epcas5p35b908c56e003eb5d2ded8b503aa511be@epcas5p3.samsung.com>
  <1488937357-5623-1-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2090162361=="
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1488937357-5623-1-git-send-email-hoegeun.kwon@samsung.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
@@ -21,267 +22,79 @@ To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is a multi-part message in MIME format.
---===============2090162361==
-Content-type: multipart/alternative;
- boundary=------------EA7F2FF7AA0933A8FCEC512B
-
-This is a multi-part message in MIME format.
---------------EA7F2FF7AA0933A8FCEC512B
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-Content-Transfer-Encoding: 7bit
-
-Dear Thierry,
-
-I would like your review please.
-
-I try to modify it to your advice.
-Please let me know if you have any other advice.
-
-Best regards,
-Hoegeun
-
-On 03/08/2017 10:42 AM, Hoegeun Kwon wrote:
-> Dear Thierry,
->
-> I understand that your opinion is:
-> It is better to handle the error every time it is input to the
-> register, rather than error handling at once in the struct using
-> error. This not only makes the code easier to maintain, but also
-> reduces unnecessary computation.
->
-> So I modified the panel driver to code-by-code error handling.
-> If this is not your opinion, could you tell me what your opinion?
->
-> Best Regards,
-> Hoegeun
->
-> Changes for V11:
-> - Added the Reviewed-by: Javier Martinez Canillas<javier@osg.samsung.com>
->    (1/3, 3/3 patches)
-> - Checked for rebase 4.11 rc1.
->
-> Changes for V10:
-> - Fixed code-by-code error handling.
->
-> Changes for V9:
-> - Fixed the te-gpio to optional in bindings
->
-> Changes for V8:
-> - Applied below two patches: (drm/exynos)
->    : drm/exynos: mic: Add mode_set callback function
->    : drm/exynos: mic: Fix parse_dt function
-> - The dt-binding patch and driver patch were divided.
-> - Rebase these patches on samsung SoC tree[1] and tm2 touckey patch[2].
->
-> Change for V7:
-> - Fixed the mode_set callback function of mic device driver.
->    because the mic register is initialized when entering suspend
->    mode, so should set the reg value whenever pre_enable is
->    called.
->
-> Changes for V6:
-> - Fixed the parse_dt function of dsi device driver.
-> - Removed OF graph of panel in DT and DT binding document.
-> - Fixed the s6e3ha2 panel device driver.
->    - Fixed from number size to ARRAY_SIZE().
->    - Fixed error handling in mipi_dsi_dcs_* functions.
->    - Fixed the clock of display_mode.
->    - Removed unnecessary casting and error log.
->
-> Change for V5:
-> - The V5 has only one fix in V4 below.
-> - Removed the enable check of the mic driver in mode_set
->    callback, because mode_set should be performed every time.
->
-> Changes for V4:
-> - Removed display-timings in devicetree, the display-timings has
->    been fixed to be provided by the device driver.
-> - Added the mode_set callback function into exynos_drm_mic,
->    because the exynos_drm_mic driver can not parse a videomode
->    struct by removing the display-timings from the devicetree.
->
-> Changes for V3:
-> - In the DT binding document, made it clearly that the panel is a
->    child node of dsi.
-> - Fix reset-gpio active from high to low.
-> - Is the OF graph saying related to patch2?
->    Althogh the panel is a child of dsi, I think OF graph necessary.
->    because if a remote-endpoint is not specified, the dsi also
->    panel is not probed.
-> - The display-timings has been fixed to be provided by the device
->    driver. however, I think display-timings is necessary in dts.
->    because if dts does not have display-timings, dsi will not load.
->
-> Changes for V2:
-> - Fixed the samsung,s6e3ha2.txt DT document.
->    - Added active high or low after the description of the GPIOs.
->    - Removed the reg and added a description of the virtual
->      channel number of a DSI peripheral.
->
-> Depends on:
-> [1]https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/  (for-next branch)
-> [2]https://patchwork.kernel.org/patch/9504131/
->      - ("arm64: dts: exynos: Add tm2 touchkey node")
->
-> Hoegeun Kwon (2):
->    dt-bindings: Add support for samsung s6e3ha2 panel binding
->    drm/panel: Add support for S6E3HA2 panel driver on TM2 board
->
-> Hyungwon Hwang (1):
->    arm64: dts: exynos: Add support for S6E3HA2 panel device on TM2 board
->
->   .../bindings/display/panel/samsung,s6e3ha2.txt     |  28 +
->   arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  12 +
->   drivers/gpu/drm/panel/Kconfig                      |   6 +
->   drivers/gpu/drm/panel/Makefile                     |   1 +
->   drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 739 +++++++++++++++++++++
->   5 files changed, 786 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
->   create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c
->
-
-
---------------EA7F2FF7AA0933A8FCEC512B
-Content-Type: text/html; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-
-<html>
-  <head>
-    <meta content="text/html; charset=windows-1252"
-      http-equiv="Content-Type">
-  </head>
-  <body bgcolor="#FFFFFF" text="#000000">
-    Dear Thierry,<br>
-    <br>
-    I would like your review please.<br>
-    <br>
-    I try to modify it to your advice.<br>
-    Please let me know if you have any other advice.<br>
-    <br>
-    Best regards,<br>
-    Hoegeun<br>
-    <br>
-    <div class="moz-cite-prefix">On 03/08/2017 10:42 AM, Hoegeun Kwon
-      wrote:<br>
-    </div>
-    <blockquote
-      cite="mid:1488937357-5623-1-git-send-email-hoegeun.kwon@samsung.com"
-      type="cite">
-      <pre wrap="">Dear Thierry,
-
-I understand that your opinion is:
-It is better to handle the error every time it is input to the
-register, rather than error handling at once in the struct using
-error. This not only makes the code easier to maintain, but also
-reduces unnecessary computation.
-
-So I modified the panel driver to code-by-code error handling.
-If this is not your opinion, could you tell me what your opinion?
-
-Best Regards,
-Hoegeun
-
-Changes for V11:
-- Added the Reviewed-by: Javier Martinez Canillas <a class="moz-txt-link-rfc2396E" href="mailto:javier@osg.samsung.com">&lt;javier@osg.samsung.com&gt;</a>
-  (1/3, 3/3 patches)
-- Checked for rebase 4.11 rc1.
-
-Changes for V10:
-- Fixed code-by-code error handling.
-
-Changes for V9:
-- Fixed the te-gpio to optional in bindings
-
-Changes for V8:
-- Applied below two patches: (drm/exynos)
-  : drm/exynos: mic: Add mode_set callback function
-  : drm/exynos: mic: Fix parse_dt function
-- The dt-binding patch and driver patch were divided.
-- Rebase these patches on samsung SoC tree[1] and tm2 touckey patch[2].
-
-Change for V7:
-- Fixed the mode_set callback function of mic device driver.
-  because the mic register is initialized when entering suspend
-  mode, so should set the reg value whenever pre_enable is
-  called.
-
-Changes for V6:
-- Fixed the parse_dt function of dsi device driver.
-- Removed OF graph of panel in DT and DT binding document.
-- Fixed the s6e3ha2 panel device driver.
-  - Fixed from number size to ARRAY_SIZE().
-  - Fixed error handling in mipi_dsi_dcs_* functions.
-  - Fixed the clock of display_mode.
-  - Removed unnecessary casting and error log.
-
-Change for V5:
-- The V5 has only one fix in V4 below.
-- Removed the enable check of the mic driver in mode_set
-  callback, because mode_set should be performed every time.
-
-Changes for V4:
-- Removed display-timings in devicetree, the display-timings has
-  been fixed to be provided by the device driver.
-- Added the mode_set callback function into exynos_drm_mic,
-  because the exynos_drm_mic driver can not parse a videomode
-  struct by removing the display-timings from the devicetree.
-
-Changes for V3:
-- In the DT binding document, made it clearly that the panel is a
-  child node of dsi.
-- Fix reset-gpio active from high to low.
-- Is the OF graph saying related to patch2?
-  Althogh the panel is a child of dsi, I think OF graph necessary.
-  because if a remote-endpoint is not specified, the dsi also
-  panel is not probed.
-- The display-timings has been fixed to be provided by the device
-  driver. however, I think display-timings is necessary in dts.
-  because if dts does not have display-timings, dsi will not load.
-
-Changes for V2:
-- Fixed the samsung,s6e3ha2.txt DT document.
-  - Added active high or low after the description of the GPIOs.
-  - Removed the reg and added a description of the virtual
-    channel number of a DSI peripheral.
-
-Depends on:
-[1] <a class="moz-txt-link-freetext" href="https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/">https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/</a> (for-next branch)
-[2] <a class="moz-txt-link-freetext" href="https://patchwork.kernel.org/patch/9504131/">https://patchwork.kernel.org/patch/9504131/</a>
-    - ("arm64: dts: exynos: Add tm2 touchkey node")
-
-Hoegeun Kwon (2):
-  dt-bindings: Add support for samsung s6e3ha2 panel binding
-  drm/panel: Add support for S6E3HA2 panel driver on TM2 board
-
-Hyungwon Hwang (1):
-  arm64: dts: exynos: Add support for S6E3HA2 panel device on TM2 board
-
- .../bindings/display/panel/samsung,s6e3ha2.txt     |  28 +
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  12 +
- drivers/gpu/drm/panel/Kconfig                      |   6 +
- drivers/gpu/drm/panel/Makefile                     |   1 +
- drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 739 +++++++++++++++++++++
- 5 files changed, 786 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
- create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c
-
-</pre>
-    </blockquote>
-    <br>
-  </body>
-</html>
-
---------------EA7F2FF7AA0933A8FCEC512B--
-
---===============2090162361==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============2090162361==--
+RGVhciBUaGllcnJ5LAoKSSB3b3VsZCBsaWtlIHlvdXIgcmV2aWV3IHBsZWFzZS4KCkkgdHJ5IHRv
+IG1vZGlmeSBpdCB0byB5b3VyIGFkdmljZS4KUGxlYXNlIGxldCBtZSBrbm93IGlmIHlvdSBoYXZl
+IGFueSBvdGhlciBhZHZpY2UuCgpCZXN0IHJlZ2FyZHMsCkhvZWdldW4KCgpPbiAwMy8wOC8yMDE3
+IDEwOjQyIEFNLCBIb2VnZXVuIEt3b24gd3JvdGU6Cj4gRGVhciBUaGllcnJ5LAo+Cj4gSSB1bmRl
+cnN0YW5kIHRoYXQgeW91ciBvcGluaW9uIGlzOgo+IEl0IGlzIGJldHRlciB0byBoYW5kbGUgdGhl
+IGVycm9yIGV2ZXJ5IHRpbWUgaXQgaXMgaW5wdXQgdG8gdGhlCj4gcmVnaXN0ZXIsIHJhdGhlciB0
+aGFuIGVycm9yIGhhbmRsaW5nIGF0IG9uY2UgaW4gdGhlIHN0cnVjdCB1c2luZwo+IGVycm9yLiBU
+aGlzIG5vdCBvbmx5IG1ha2VzIHRoZSBjb2RlIGVhc2llciB0byBtYWludGFpbiwgYnV0IGFsc28K
+PiByZWR1Y2VzIHVubmVjZXNzYXJ5IGNvbXB1dGF0aW9uLgo+Cj4gU28gSSBtb2RpZmllZCB0aGUg
+cGFuZWwgZHJpdmVyIHRvIGNvZGUtYnktY29kZSBlcnJvciBoYW5kbGluZy4KPiBJZiB0aGlzIGlz
+IG5vdCB5b3VyIG9waW5pb24sIGNvdWxkIHlvdSB0ZWxsIG1lIHdoYXQgeW91ciBvcGluaW9uPwo+
+Cj4gQmVzdCBSZWdhcmRzLAo+IEhvZWdldW4KPgo+IENoYW5nZXMgZm9yIFYxMToKPiAtIEFkZGVk
+IHRoZSBSZXZpZXdlZC1ieTogSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIDxqYXZpZXJAb3NnLnNh
+bXN1bmcuY29tPgo+ICAgICgxLzMsIDMvMyBwYXRjaGVzKQo+IC0gQ2hlY2tlZCBmb3IgcmViYXNl
+IDQuMTEgcmMxLgo+Cj4gQ2hhbmdlcyBmb3IgVjEwOgo+IC0gRml4ZWQgY29kZS1ieS1jb2RlIGVy
+cm9yIGhhbmRsaW5nLgo+Cj4gQ2hhbmdlcyBmb3IgVjk6Cj4gLSBGaXhlZCB0aGUgdGUtZ3BpbyB0
+byBvcHRpb25hbCBpbiBiaW5kaW5ncwo+Cj4gQ2hhbmdlcyBmb3IgVjg6Cj4gLSBBcHBsaWVkIGJl
+bG93IHR3byBwYXRjaGVzOiAoZHJtL2V4eW5vcykKPiAgICA6IGRybS9leHlub3M6IG1pYzogQWRk
+IG1vZGVfc2V0IGNhbGxiYWNrIGZ1bmN0aW9uCj4gICAgOiBkcm0vZXh5bm9zOiBtaWM6IEZpeCBw
+YXJzZV9kdCBmdW5jdGlvbgo+IC0gVGhlIGR0LWJpbmRpbmcgcGF0Y2ggYW5kIGRyaXZlciBwYXRj
+aCB3ZXJlIGRpdmlkZWQuCj4gLSBSZWJhc2UgdGhlc2UgcGF0Y2hlcyBvbiBzYW1zdW5nIFNvQyB0
+cmVlWzFdIGFuZCB0bTIgdG91Y2tleSBwYXRjaFsyXS4KPgo+IENoYW5nZSBmb3IgVjc6Cj4gLSBG
+aXhlZCB0aGUgbW9kZV9zZXQgY2FsbGJhY2sgZnVuY3Rpb24gb2YgbWljIGRldmljZSBkcml2ZXIu
+Cj4gICAgYmVjYXVzZSB0aGUgbWljIHJlZ2lzdGVyIGlzIGluaXRpYWxpemVkIHdoZW4gZW50ZXJp
+bmcgc3VzcGVuZAo+ICAgIG1vZGUsIHNvIHNob3VsZCBzZXQgdGhlIHJlZyB2YWx1ZSB3aGVuZXZl
+ciBwcmVfZW5hYmxlIGlzCj4gICAgY2FsbGVkLgo+Cj4gQ2hhbmdlcyBmb3IgVjY6Cj4gLSBGaXhl
+ZCB0aGUgcGFyc2VfZHQgZnVuY3Rpb24gb2YgZHNpIGRldmljZSBkcml2ZXIuCj4gLSBSZW1vdmVk
+IE9GIGdyYXBoIG9mIHBhbmVsIGluIERUIGFuZCBEVCBiaW5kaW5nIGRvY3VtZW50Lgo+IC0gRml4
+ZWQgdGhlIHM2ZTNoYTIgcGFuZWwgZGV2aWNlIGRyaXZlci4KPiAgICAtIEZpeGVkIGZyb20gbnVt
+YmVyIHNpemUgdG8gQVJSQVlfU0laRSgpLgo+ICAgIC0gRml4ZWQgZXJyb3IgaGFuZGxpbmcgaW4g
+bWlwaV9kc2lfZGNzXyogZnVuY3Rpb25zLgo+ICAgIC0gRml4ZWQgdGhlIGNsb2NrIG9mIGRpc3Bs
+YXlfbW9kZS4KPiAgICAtIFJlbW92ZWQgdW5uZWNlc3NhcnkgY2FzdGluZyBhbmQgZXJyb3IgbG9n
+Lgo+Cj4gQ2hhbmdlIGZvciBWNToKPiAtIFRoZSBWNSBoYXMgb25seSBvbmUgZml4IGluIFY0IGJl
+bG93Lgo+IC0gUmVtb3ZlZCB0aGUgZW5hYmxlIGNoZWNrIG9mIHRoZSBtaWMgZHJpdmVyIGluIG1v
+ZGVfc2V0Cj4gICAgY2FsbGJhY2ssIGJlY2F1c2UgbW9kZV9zZXQgc2hvdWxkIGJlIHBlcmZvcm1l
+ZCBldmVyeSB0aW1lLgo+Cj4gQ2hhbmdlcyBmb3IgVjQ6Cj4gLSBSZW1vdmVkIGRpc3BsYXktdGlt
+aW5ncyBpbiBkZXZpY2V0cmVlLCB0aGUgZGlzcGxheS10aW1pbmdzIGhhcwo+ICAgIGJlZW4gZml4
+ZWQgdG8gYmUgcHJvdmlkZWQgYnkgdGhlIGRldmljZSBkcml2ZXIuCj4gLSBBZGRlZCB0aGUgbW9k
+ZV9zZXQgY2FsbGJhY2sgZnVuY3Rpb24gaW50byBleHlub3NfZHJtX21pYywKPiAgICBiZWNhdXNl
+IHRoZSBleHlub3NfZHJtX21pYyBkcml2ZXIgY2FuIG5vdCBwYXJzZSBhIHZpZGVvbW9kZQo+ICAg
+IHN0cnVjdCBieSByZW1vdmluZyB0aGUgZGlzcGxheS10aW1pbmdzIGZyb20gdGhlIGRldmljZXRy
+ZWUuCj4KPiBDaGFuZ2VzIGZvciBWMzoKPiAtIEluIHRoZSBEVCBiaW5kaW5nIGRvY3VtZW50LCBt
+YWRlIGl0IGNsZWFybHkgdGhhdCB0aGUgcGFuZWwgaXMgYQo+ICAgIGNoaWxkIG5vZGUgb2YgZHNp
+Lgo+IC0gRml4IHJlc2V0LWdwaW8gYWN0aXZlIGZyb20gaGlnaCB0byBsb3cuCj4gLSBJcyB0aGUg
+T0YgZ3JhcGggc2F5aW5nIHJlbGF0ZWQgdG8gcGF0Y2gyPwo+ICAgIEFsdGhvZ2ggdGhlIHBhbmVs
+IGlzIGEgY2hpbGQgb2YgZHNpLCBJIHRoaW5rIE9GIGdyYXBoIG5lY2Vzc2FyeS4KPiAgICBiZWNh
+dXNlIGlmIGEgcmVtb3RlLWVuZHBvaW50IGlzIG5vdCBzcGVjaWZpZWQsIHRoZSBkc2kgYWxzbwo+
+ICAgIHBhbmVsIGlzIG5vdCBwcm9iZWQuCj4gLSBUaGUgZGlzcGxheS10aW1pbmdzIGhhcyBiZWVu
+IGZpeGVkIHRvIGJlIHByb3ZpZGVkIGJ5IHRoZSBkZXZpY2UKPiAgICBkcml2ZXIuIGhvd2V2ZXIs
+IEkgdGhpbmsgZGlzcGxheS10aW1pbmdzIGlzIG5lY2Vzc2FyeSBpbiBkdHMuCj4gICAgYmVjYXVz
+ZSBpZiBkdHMgZG9lcyBub3QgaGF2ZSBkaXNwbGF5LXRpbWluZ3MsIGRzaSB3aWxsIG5vdCBsb2Fk
+Lgo+Cj4gQ2hhbmdlcyBmb3IgVjI6Cj4gLSBGaXhlZCB0aGUgc2Ftc3VuZyxzNmUzaGEyLnR4dCBE
+VCBkb2N1bWVudC4KPiAgICAtIEFkZGVkIGFjdGl2ZSBoaWdoIG9yIGxvdyBhZnRlciB0aGUgZGVz
+Y3JpcHRpb24gb2YgdGhlIEdQSU9zLgo+ICAgIC0gUmVtb3ZlZCB0aGUgcmVnIGFuZCBhZGRlZCBh
+IGRlc2NyaXB0aW9uIG9mIHRoZSB2aXJ0dWFsCj4gICAgICBjaGFubmVsIG51bWJlciBvZiBhIERT
+SSBwZXJpcGhlcmFsLgo+Cj4gRGVwZW5kcyBvbjoKPiBbMV0gaHR0cHM6Ly9naXQua2VybmVsLm9y
+Zy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQva3J6ay9saW51eC5naXQvIChmb3ItbmV4dCBicmFuY2gp
+Cj4gWzJdIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTUwNDEzMS8KPiAgICAg
+IC0gKCJhcm02NDogZHRzOiBleHlub3M6IEFkZCB0bTIgdG91Y2hrZXkgbm9kZSIpCj4KPiBIb2Vn
+ZXVuIEt3b24gKDIpOgo+ICAgIGR0LWJpbmRpbmdzOiBBZGQgc3VwcG9ydCBmb3Igc2Ftc3VuZyBz
+NmUzaGEyIHBhbmVsIGJpbmRpbmcKPiAgICBkcm0vcGFuZWw6IEFkZCBzdXBwb3J0IGZvciBTNkUz
+SEEyIHBhbmVsIGRyaXZlciBvbiBUTTIgYm9hcmQKPgo+IEh5dW5nd29uIEh3YW5nICgxKToKPiAg
+ICBhcm02NDogZHRzOiBleHlub3M6IEFkZCBzdXBwb3J0IGZvciBTNkUzSEEyIHBhbmVsIGRldmlj
+ZSBvbiBUTTIgYm9hcmQKPgo+ICAgLi4uL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxz
+NmUzaGEyLnR4dCAgICAgfCAgMjggKwo+ICAgYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5
+bm9zNTQzMy10bTIuZHRzICAgICAgfCAgMTIgKwo+ICAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL0tj
+b25maWcgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKwo+ICAgZHJpdmVycy9ncHUvZHJtL3Bh
+bmVsL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwo+ICAgZHJpdmVycy9ncHUv
+ZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlM2hhMi5jICAgICAgfCA3MzkgKysrKysrKysrKysr
+KysrKysrKysrCj4gICA1IGZpbGVzIGNoYW5nZWQsIDc4NiBpbnNlcnRpb25zKCspCj4gICBjcmVh
+dGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
+cGFuZWwvc2Ftc3VuZyxzNmUzaGEyLnR4dAo+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMv
+Z3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5nLXM2ZTNoYTIuYwo+CgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
