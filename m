@@ -1,109 +1,58 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
- interrupts on s3c24xx
-Date: Tue, 21 Mar 2017 10:31:37 +0900
-Message-ID: <CA+Ln22E55XD92vzG=+3DYxozQiXc=DOEzSg655fYY5gVep6Diw@mail.gmail.com>
-References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
- <20170304081504.unv6sihbmp76ynfy@kozik-lap> <20170306131516.GA6095@n1>
- <20170308163434.obhtg6fwmjwqv7jm@kozik-lap>
- <CA+Ln22FEYfO2EmvLKTRSHNFPpKSOw38vSDvg-nPv_j08cApqCw@mail.gmail.com>
- <CAJKOXPdUQ8DSPR_4cDs8WyrV9Mmy6isncW72BNiTyiRb79qf7g@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2] drm/exynos/dsi: make te-gpios optional
+Date: Tue, 21 Mar 2017 14:10:00 +0900
+Message-ID: <58D0B5A8.9020203@samsung.com>
+References: <CGME20170315112050eucas1p10ac34c1093b97a338e098c539b84ded6@eucas1p1.samsung.com>
+ <1489576842-17679-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAJKOXPdUQ8DSPR_4cDs8WyrV9Mmy6isncW72BNiTyiRb79qf7g@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sergio Prado <sergio.prado@e-labworks.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1489576842-17679-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2017-03-09 15:42 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Thu, Mar 9, 2017 at 7:56 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> 2017-03-09 1:34 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
->>> On Mon, Mar 06, 2017 at 09:15:16AM -0400, Sergio Prado wrote:
->>>> Hi Krzysztof,
->>>>
->>>> > > This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
->>>> >
->>>> > Checkpatch should complain here about commit format.
->>>> >
->>>> > >
->>>> > > Tested on FriendlyARM mini2440.
->>>> > >
->>>> >
->>>> > Please add:
->>>> >   Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
->>>> >   Cc: <stable@vger.kernel.org>
->>>> >
->>>>
->>>> OK.
->>>>
->>>> > > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
->>>> > > ---
->>>> > >  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
->>>> > >  1 file changed, 2 insertions(+), 2 deletions(-)
->>>> > >
->>>> > > diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->>>> > > index b82a003546ae..1b8d887796e8 100644
->>>> > > --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->>>> > > +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->>>> > > @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
->>>> > >  {
->>>> > >   struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
->>>> > >   struct irq_chip *chip = irq_desc_get_chip(desc);
->>>> > > - struct irq_data *irqd = irq_desc_get_irq_data(desc);
->>>> > > - struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
->>>> > > + struct samsung_pinctrl_drv_data *d = data->drvdata;
->>>> > > + struct samsung_pin_bank *bank = d->pin_banks;
->>>> >
->>>> > I think 'pin_banks' point to all banks of given controller not to the
->>>> > currently accessed one.
->>>>
->>>> Understood. I think it worked in my tests because on s3c2440 all banks
->>>> have the same eint base address.
->>>>
->>>> So what do you think is the best approach to solve this problem?
->>>
->>> Maybe you can get to this through:
->>>         s3c24xx_eint_domain_data = s3c24xx_eint_data->domains[virq].host_data;
->>>         s3c24xx_eint_domain_data->bank
->>>
->>> It is getting slightly more complicated...
->>
->> How about the suggestions I made in my reply from March 4 (JST)?
->
-> Yes, this also looks like solution. I am not sure how much you would
-> like to revert but wouldn't it create duplicated members in pinctrl
-> structures? One for Exynos and other for S3C?
-
-I would actually lean towards introducing one duplicated member
-(drvdata->pctl_base) versus adding unnecessarily complex special ways
-of calculating the addresses from current (unsuitable) set of data.
-
-
-By the way, I think I just found yet another bug introduced by that
-patch. In exynos_irq_request_resources() and
-exynos_irq_release_resources(), the address of CON register is
-calculated from bank->eint_base, while I believe it should be
-calculated from bank->pctl_base (which is also what
-samsung_pinmux_setup() uses).
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pinctrl/samsung/pinctrl-exynos.c?id=refs/tags/next-20170320#n174
-
-Ehh, I think I regret letting that patch be merged as it made some of
-the code quite messy and we actually found a better way to support
-those strange banks later (group banks by their pctl_base and only
-allow eint_base to be selectable per bank; then we could just keep
-drvdata->pctl_base constant over all related banks).
-
-Best regards,
-Tomasz
+CgoyMDE364WEIDAz7JuUIDE17J28IDIwOjIw7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
+IOq4gDoKPiBEU0kgZm9yd2FyZHMgdGUtZ3Bpb3MgaW50ZXJydXB0cyB0byBkaXNwbGF5IGNvbnRy
+b2xsZXIsIGJ1dCBpZiBkaXNwbGF5Cj4gY29udHJvbGxlciB3b3JrcyBpbiBIVy1UUklHR0VSIG1v
+ZGUgdGhpcyBpbnRlcnJ1cHQgaXMgbm90IG5lY2Vzc2FyeS4KPiBNYWtpbmcgdGUtZ3Bpb3MgcHJv
+cGVydHkgb3B0aW9uYWwgYWxsb3dzIHRvIGF2b2lkIGdlbmVyYXRpbmcgc3BhcmUKPiBpbnRlcnJ1
+cHRzLgo+IFdpdGggdGhpcyBwYXRjaCB3ZSBjYW4gZ2V0IHJpZCBvZiA2MCBpbnRlcnJ1cHQgY2Fs
+bGJhY2tzIHBlciBzZWNvbmQuCgpBcyBJIHNhaWQgYmVmb3JlIGxpa2UgYmVsb3csCiJJZiBwYW5l
+bCBkZXZpY2Ugbm9kZSBvZiBjb21tYW5kIG1vZGUgcGFuZWwgZGV2aWNlIGRvZXNuJ3QgcHJvdmlk
+ZSB0ZS1ncGlvcyBwcm9wZXJ0eSB0aGVuIG5vdyB0aGUgcGFuZWwgZHJpdmVyIHdpbGwgZmFpbCB0
+byBwcm9iZS4KU2VlbXMgdGhpcyBwYXRjaCBtYWtlcyBpdCB0byBhbGxvdyB0aGUgcGFuZWwgZHJp
+dmVyIHByb2JpbmcgaXMgYWx3YXlzIG9rIGV2ZW4gaWYgZ3BpbyBpcyBpbnZhbGlkLiIKClRoaXMg
+cGF0Y2ggd2lsbCBmaXggY3JpdGljYWwgaXNzdWUgdGhhdCB0aGUgcGFuZWwgZHJpdmVyIGZhaWxz
+IHRvIHByb2JlIGlmIHRoZSBwYW5lbCBkZXZpY2Ugbm9kZSBoYXMgbm8gdGUtZ3Bpb3MgcHJvcGVy
+dHkuCkkgdGhpbmsgYWRkaW5nIGFib3ZlIHNlbnRlbmNlIHRvIHRoaXMgZGVzY3JpcHRpb24gd291
+bGQgYmUgZ29vZC4gU28gSSB3aWxsIG1lcmdlIHRoaXMgcGF0Y2ggYWZ0ZXIgYWRkaW5nIHRoZSBk
+ZXNjcmlwdGlvbi4gSSBjYW4gZG8gdGhpcy4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gU2lnbmVk
+LW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIHwgNSArKysrLQo+ICAxIGZpbGUg
+Y2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+IGluZGV4IDgxMmUyZWMuLjgyMjA5NGQgMTAwNjQ0
+Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4gQEAgLTEzNDgsOSArMTM0
+OCwxMiBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfcmVnaXN0ZXJfdGVfaXJxKHN0cnVjdCBleHlu
+b3NfZHNpICpkc2kpCj4gIAlpbnQgdGVfZ3Bpb19pcnE7Cj4gIAo+ICAJZHNpLT50ZV9ncGlvID0g
+b2ZfZ2V0X25hbWVkX2dwaW8oZHNpLT5wYW5lbF9ub2RlLCAidGUtZ3Bpb3MiLCAwKTsKPiArCWlm
+IChkc2ktPnRlX2dwaW8gPT0gLUVOT0VOVCkKPiArCQlyZXR1cm4gMDsKPiArCj4gIAlpZiAoIWdw
+aW9faXNfdmFsaWQoZHNpLT50ZV9ncGlvKSkgewo+IC0JCWRldl9lcnIoZHNpLT5kZXYsICJubyB0
+ZS1ncGlvcyBzcGVjaWZpZWRcbiIpOwo+ICAJCXJldCA9IGRzaS0+dGVfZ3BpbzsKPiArCQlkZXZf
+ZXJyKGRzaS0+ZGV2LCAiY2Fubm90IGdldCB0ZS1ncGlvcywgJWRcbiIsIHJldCk7Cj4gIAkJZ290
+byBvdXQ7Cj4gIAl9Cj4gIAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
