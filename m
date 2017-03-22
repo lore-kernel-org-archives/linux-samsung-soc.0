@@ -1,15 +1,15 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 1/2] pinctrl: samsung: Add missing part for PINCFG_TYPE_DRV of
- Exynos5433
-Date: Wed, 22 Mar 2017 17:03:31 +0900
-Message-ID: <1490169812-25225-2-git-send-email-cw00.choi@samsung.com>
-References: <1490169812-25225-1-git-send-email-cw00.choi@samsung.com>
- <CGME20170322080335epcas5p2c169c15e1b9db200aee9ca83c71699f6@epcas5p2.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v8 2/3] dmaengine: pl330: remove pdata based initialization
+Date: Wed, 22 Mar 2017 09:22:23 +0100
+Message-ID: <f0d36362-ce75-02a0-0bfa-e265cba03b8b@samsung.com>
+References: <1486650171-20598-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170209142308eucas1p24d52db3d52e19228e8f423c3dc8b085b@eucas1p2.samsung.com>
+ <1486650171-20598-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1490169812-25225-1-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1486650171-20598-3-git-send-email-m.szyprowski@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,149 +19,193 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: tomasz.figa@gmail.com, krzk@kernel.org, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The commit 1259feddd0f8("pinctrl: samsung: Fix the width of
-PINCFG_TYPE_DRV bitfields for Exynos5433") already fixed
-the different width of PINCFG_TYPE_DRV from previous Exynos SoC.
+Hi Vinod
 
-But, when merged the multiple patches, the missing parts occurred.
-So, this patch adds the missing part using the EXYNOS5433_PIN_BANK_* macro.
 
-Fixes: 7f36f5d11cda ("Merge tag 'v4.10-rc6' into devel")
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 80 ++++++++++++++++----------------
- 1 file changed, 40 insertions(+), 40 deletions(-)
+On 2017-02-09 15:22, Marek Szyprowski wrote:
+> This driver is now used only on platforms which support device tree, so
+> it is safe to remove legacy platform data based initialization code.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> For plat-samsung:
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index f9b49967f512..63e51b56a22a 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -1468,82 +1468,82 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- 
- /* pin banks of exynos5433 pin-controller - ALIVE */
- static const struct samsung_pin_bank_data exynos5433_pin_banks0[] __initconst = {
--	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
--	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
--	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
--	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
--	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014, 1),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014, 1),
- };
- 
- /* pin banks of exynos5433 pin-controller - AUD */
- static const struct samsung_pin_bank_data exynos5433_pin_banks1[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
--	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
- };
- 
- /* pin banks of exynos5433 pin-controller - CPIF */
- static const struct samsung_pin_bank_data exynos5433_pin_banks2[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - eSE */
- static const struct samsung_pin_bank_data exynos5433_pin_banks3[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - FINGER */
- static const struct samsung_pin_bank_data exynos5433_pin_banks4[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - FSYS */
- static const struct samsung_pin_bank_data exynos5433_pin_banks5[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
--	EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
--	EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
--	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
--	EXYNOS_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
--	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
- };
- 
- /* pin banks of exynos5433 pin-controller - IMEM */
- static const struct samsung_pin_bank_data exynos5433_pin_banks6[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - NFC */
- static const struct samsung_pin_bank_data exynos5433_pin_banks7[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - PERIC */
- static const struct samsung_pin_bank_data exynos5433_pin_banks8[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
--	EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
--	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
--	EXYNOS_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
--	EXYNOS_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
--	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
--	EXYNOS_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
--	EXYNOS_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
--	EXYNOS_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
--	EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
--	EXYNOS_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
--	EXYNOS_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
--	EXYNOS_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
--	EXYNOS_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
--	EXYNOS_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
--	EXYNOS_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
--	EXYNOS_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
-+	EXYNOS5433_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
-+	EXYNOS5433_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
- };
- 
- /* pin banks of exynos5433 pin-controller - TOUCH */
- static const struct samsung_pin_bank_data exynos5433_pin_banks9[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
- };
- 
- /*
+Vinod: This patch is completely independent from the rest of the changes
+from that patchset. Could you apply it, or do you want me to resend it
+separately? Runtime pm related changes will wait until a new DMA engine API
+is ready.
+
+> ---
+>   arch/arm/plat-samsung/devs.c |  1 -
+>   drivers/dma/pl330.c          | 42 ++++++++----------------------------------
+>   include/linux/amba/pl330.h   | 35 -----------------------------------
+>   3 files changed, 8 insertions(+), 70 deletions(-)
+>   delete mode 100644 include/linux/amba/pl330.h
+>
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index 03fac123676d..dc269d9143bc 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -10,7 +10,6 @@
+>    * published by the Free Software Foundation.
+>   */
+>   
+> -#include <linux/amba/pl330.h>
+>   #include <linux/kernel.h>
+>   #include <linux/types.h>
+>   #include <linux/interrupt.h>
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index f37f4978dabb..8b0da7fa520d 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -22,7 +22,6 @@
+>   #include <linux/dma-mapping.h>
+>   #include <linux/dmaengine.h>
+>   #include <linux/amba/bus.h>
+> -#include <linux/amba/pl330.h>
+>   #include <linux/scatterlist.h>
+>   #include <linux/of.h>
+>   #include <linux/of_dma.h>
+> @@ -2077,18 +2076,6 @@ static void pl330_tasklet(unsigned long data)
+>   	}
+>   }
+>   
+> -bool pl330_filter(struct dma_chan *chan, void *param)
+> -{
+> -	u8 *peri_id;
+> -
+> -	if (chan->device->dev->driver != &pl330_driver.drv)
+> -		return false;
+> -
+> -	peri_id = chan->private;
+> -	return *peri_id == (unsigned long)param;
+> -}
+> -EXPORT_SYMBOL(pl330_filter);
+> -
+>   static struct dma_chan *of_dma_pl330_xlate(struct of_phandle_args *dma_spec,
+>   						struct of_dma *ofdma)
+>   {
+> @@ -2833,7 +2820,6 @@ static int __maybe_unused pl330_resume(struct device *dev)
+>   static int
+>   pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>   {
+> -	struct dma_pl330_platdata *pdat;
+>   	struct pl330_config *pcfg;
+>   	struct pl330_dmac *pl330;
+>   	struct dma_pl330_chan *pch, *_p;
+> @@ -2843,8 +2829,6 @@ static int __maybe_unused pl330_resume(struct device *dev)
+>   	int num_chan;
+>   	struct device_node *np = adev->dev.of_node;
+>   
+> -	pdat = dev_get_platdata(&adev->dev);
+> -
+>   	ret = dma_set_mask_and_coherent(&adev->dev, DMA_BIT_MASK(32));
+>   	if (ret)
+>   		return ret;
+> @@ -2857,7 +2841,7 @@ static int __maybe_unused pl330_resume(struct device *dev)
+>   	pd = &pl330->ddma;
+>   	pd->dev = &adev->dev;
+>   
+> -	pl330->mcbufsz = pdat ? pdat->mcbuf_sz : 0;
+> +	pl330->mcbufsz = 0;
+>   
+>   	/* get quirk */
+>   	for (i = 0; i < ARRAY_SIZE(of_quirks); i++)
+> @@ -2901,10 +2885,7 @@ static int __maybe_unused pl330_resume(struct device *dev)
+>   	INIT_LIST_HEAD(&pd->channels);
+>   
+>   	/* Initialize channel parameters */
+> -	if (pdat)
+> -		num_chan = max_t(int, pdat->nr_valid_peri, pcfg->num_chan);
+> -	else
+> -		num_chan = max_t(int, pcfg->num_peri, pcfg->num_chan);
+> +	num_chan = max_t(int, pcfg->num_peri, pcfg->num_chan);
+>   
+>   	pl330->num_peripherals = num_chan;
+>   
+> @@ -2916,11 +2897,8 @@ static int __maybe_unused pl330_resume(struct device *dev)
+>   
+>   	for (i = 0; i < num_chan; i++) {
+>   		pch = &pl330->peripherals[i];
+> -		if (!adev->dev.of_node)
+> -			pch->chan.private = pdat ? &pdat->peri_id[i] : NULL;
+> -		else
+> -			pch->chan.private = adev->dev.of_node;
+>   
+> +		pch->chan.private = adev->dev.of_node;
+>   		INIT_LIST_HEAD(&pch->submitted_list);
+>   		INIT_LIST_HEAD(&pch->work_list);
+>   		INIT_LIST_HEAD(&pch->completed_list);
+> @@ -2933,15 +2911,11 @@ static int __maybe_unused pl330_resume(struct device *dev)
+>   		list_add_tail(&pch->chan.device_node, &pd->channels);
+>   	}
+>   
+> -	if (pdat) {
+> -		pd->cap_mask = pdat->cap_mask;
+> -	} else {
+> -		dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+> -		if (pcfg->num_peri) {
+> -			dma_cap_set(DMA_SLAVE, pd->cap_mask);
+> -			dma_cap_set(DMA_CYCLIC, pd->cap_mask);
+> -			dma_cap_set(DMA_PRIVATE, pd->cap_mask);
+> -		}
+> +	dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+> +	if (pcfg->num_peri) {
+> +		dma_cap_set(DMA_SLAVE, pd->cap_mask);
+> +		dma_cap_set(DMA_CYCLIC, pd->cap_mask);
+> +		dma_cap_set(DMA_PRIVATE, pd->cap_mask);
+>   	}
+>   
+>   	pd->device_alloc_chan_resources = pl330_alloc_chan_resources;
+> diff --git a/include/linux/amba/pl330.h b/include/linux/amba/pl330.h
+> deleted file mode 100644
+> index fe93758e8403..000000000000
+> --- a/include/linux/amba/pl330.h
+> +++ /dev/null
+> @@ -1,35 +0,0 @@
+> -/* linux/include/linux/amba/pl330.h
+> - *
+> - * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+> - *	Jaswinder Singh <jassi.brar@samsung.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - */
+> -
+> -#ifndef	__AMBA_PL330_H_
+> -#define	__AMBA_PL330_H_
+> -
+> -#include <linux/dmaengine.h>
+> -
+> -struct dma_pl330_platdata {
+> -	/*
+> -	 * Number of valid peripherals connected to DMAC.
+> -	 * This may be different from the value read from
+> -	 * CR0, as the PL330 implementation might have 'holes'
+> -	 * in the peri list or the peri could also be reached
+> -	 * from another DMAC which the platform prefers.
+> -	 */
+> -	u8 nr_valid_peri;
+> -	/* Array of valid peripherals */
+> -	u8 *peri_id;
+> -	/* Operational capabilities */
+> -	dma_cap_mask_t cap_mask;
+> -	/* Bytes to allocate for MC buffer */
+> -	unsigned mcbuf_sz;
+> -};
+> -
+> -extern bool pl330_filter(struct dma_chan *chan, void *param);
+> -#endif	/* __AMBA_PL330_H_ */
+
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
