@@ -1,38 +1,119 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
-Date: Wed, 22 Mar 2017 11:09:30 +0100
-Message-ID: <10fb6332-402a-924e-8976-85c3b651d6d9@samsung.com>
-References: <CGME20170320164914epcas1p316c1dee152cb3a9c5a65014aa59006af@epcas1p3.samsung.com>
- <20170320164851.5999-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] media: s5p-mfc: Don't allocate codec buffers from
+ pre-allocated region
+Date: Wed, 22 Mar 2017 11:34:28 +0100
+Message-ID: <1490178868-8673-1-git-send-email-m.szyprowski@samsung.com>
+References: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170322103434eucas1p201996d20d01cdca113b9764117ce6167@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34749 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759032AbdCVKJt (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:59498 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934139AbdCVKep (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Mar 2017 06:09:49 -0400
-In-reply-to: <20170320164851.5999-1-krzk@kernel.org>
+        Wed, 22 Mar 2017 06:34:45 -0400
+In-reply-to: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-On 03/20/2017 05:48 PM, Krzysztof Kozlowski wrote:
-> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
-> drivers.  The tree will be maintained in a shared model between current
-> Samsung pinctrl maintainers.  Pull requests will be going to Linus
-> Walleij.
->
-> Also add the patchwork for linux-samsung-soc mailing list which will be
-> used for handling the patches.
->
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Further investigation revealed that codec buffers also don't need to
+be allocated at higher addresses than firmware base for MFC v6+ hardware.
+Those buffers can be quite large and its size depends on the selected
+format and framesize. This patch changes the way the codec buffers are
+allocated - driver will use generic allocator for them instead of the
+pre-allocated buffer for firmware and contexts.
 
-Thanks for your effort Krzysztof,
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This patch should solve failure of h264 encoding due to insufficient memory
+for codec temporary buffers. Please consider it as part of "[PATCH v3 00/16]
+Exynos MFC v6+ - remove the need for the reserved memory" patchset.
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.c    | 28 +++++++++++++++++++++++++
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.h    |  4 ++++
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |  4 ++--
+ 3 files changed, 34 insertions(+), 2 deletions(-)
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c
+index 34a66189d980..7f33cf23947f 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c
+@@ -79,6 +79,25 @@ int s5p_mfc_alloc_priv_buf(struct s5p_mfc_dev *dev, unsigned int mem_ctx,
+ 	return -ENOMEM;
+ }
+ 
++int s5p_mfc_alloc_generic_buf(struct s5p_mfc_dev *dev, unsigned int mem_ctx,
++			   struct s5p_mfc_priv_buf *b)
++{
++	struct device *mem_dev = dev->mem_dev[mem_ctx];
++
++	mfc_debug(3, "Allocating generic buf: %zu\n", b->size);
++
++	b->ctx = mem_ctx;
++	b->virt = dma_alloc_coherent(mem_dev, b->size, &b->dma, GFP_KERNEL);
++	if (!b->virt)
++		goto no_mem;
++
++	mfc_debug(3, "Allocated addr %p %pad\n", b->virt, &b->dma);
++	return 0;
++no_mem:
++	mfc_err("Allocating generic buffer of size %zu failed\n", b->size);
++	return -ENOMEM;
++}
++
+ void s5p_mfc_release_priv_buf(struct s5p_mfc_dev *dev,
+ 			      struct s5p_mfc_priv_buf *b)
+ {
+@@ -97,3 +116,12 @@ void s5p_mfc_release_priv_buf(struct s5p_mfc_dev *dev,
+ 	b->size = 0;
+ }
+ 
++void s5p_mfc_release_generic_buf(struct s5p_mfc_dev *dev,
++			      struct s5p_mfc_priv_buf *b)
++{
++	struct device *mem_dev = dev->mem_dev[b->ctx];
++	dma_free_coherent(mem_dev, b->size, b->virt, b->dma);
++	b->virt = NULL;
++	b->dma = 0;
++	b->size = 0;
++}
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h
+index 108e59382e0c..16d553fcff08 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h
+@@ -319,6 +319,10 @@ int s5p_mfc_alloc_priv_buf(struct s5p_mfc_dev *dev, unsigned int mem_ctx,
+ 			   struct s5p_mfc_priv_buf *b);
+ void s5p_mfc_release_priv_buf(struct s5p_mfc_dev *dev,
+ 			      struct s5p_mfc_priv_buf *b);
++int s5p_mfc_alloc_generic_buf(struct s5p_mfc_dev *dev, unsigned int mem_ctx,
++			   struct s5p_mfc_priv_buf *b);
++void s5p_mfc_release_generic_buf(struct s5p_mfc_dev *dev,
++			      struct s5p_mfc_priv_buf *b);
+ 
+ 
+ #endif /* S5P_MFC_OPR_H_ */
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+index 70071a12db16..85880e9106be 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -239,7 +239,7 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
+ 
+ 	/* Allocate only if memory from bank 1 is necessary */
+ 	if (ctx->bank1.size > 0) {
+-		ret = s5p_mfc_alloc_priv_buf(dev, BANK_L_CTX, &ctx->bank1);
++		ret = s5p_mfc_alloc_generic_buf(dev, BANK_L_CTX, &ctx->bank1);
+ 		if (ret) {
+ 			mfc_err("Failed to allocate Bank1 memory\n");
+ 			return ret;
+@@ -252,7 +252,7 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
+ /* Release buffers allocated for codec */
+ static void s5p_mfc_release_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
+ {
+-	s5p_mfc_release_priv_buf(ctx->dev, &ctx->bank1);
++	s5p_mfc_release_generic_buf(ctx->dev, &ctx->bank1);
+ }
+ 
+ /* Allocate memory for instance data buffer */
+-- 
+1.9.1
