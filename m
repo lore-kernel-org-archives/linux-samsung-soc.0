@@ -1,42 +1,55 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] iommu/exynos: Block SYSMMU while invalidating FLPD
-	cache
-Date: Wed, 22 Mar 2017 15:51:28 +0100
-Message-ID: <20170322145128.GB7315@8bytes.org>
-References: <CGME20170320091820eucas1p22b62f2d7e089cd997aecc62a4c5b7730@eucas1p2.samsung.com>
-	<1490001484-18890-1-git-send-email-m.szyprowski@samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH v3 2/2] pinctrl: samsung: Use devres version of gpiochip_add_data
+Date: Wed, 22 Mar 2017 17:15:35 +0000
+Message-ID: <1490202935-4708-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+References: <1490202935-4708-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1490001484-18890-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1490202935-4708-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: krzk@kernel.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com
+Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 10:17:56AM +0100, Marek Szyprowski wrote:
-> Documentation specifies that SYSMMU should be in blocked state while
-> performing TLB/FLPD cache invalidation, so add needed calls to
-> sysmmu_block/unblock.
-> 
-> Fixes: 66a7ed84b345d ("iommu/exynos: Apply workaround of caching fault page table entries")
-> CC: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # v4.10+
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> This issue has been introduced long time ago, but this fix applies only for
-> v4.10+ kernels due to other changes in the surrounding code.
-> ---
->  drivers/iommu/exynos-iommu.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+Use devm_gpiochip_add_data to simplify the error path in
+samsung_gpiolib_register.
 
-Applied both patches to iommu/fixes, thanks.
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+
+No changes since v2.
+
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 5d53370..934fc3b 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -936,20 +936,15 @@ static int samsung_gpiolib_register(struct platform_device *pdev,
+ 		gc->of_node = bank->of_node;
+ 		gc->label = bank->name;
+ 
+-		ret = gpiochip_add_data(gc, bank);
++		ret = devm_gpiochip_add_data(&pdev->dev, gc, bank);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "failed to register gpio_chip %s, error code: %d\n",
+ 							gc->label, ret);
+-			goto fail;
++			return ret;
+ 		}
+ 	}
+ 
+ 	return 0;
+-
+-fail:
+-	for (--i, --bank; i >= 0; --i, --bank)
+-		gpiochip_remove(&bank->gpio_chip);
+-	return ret;
+ }
+ 
+ /* retrieve the soc specific data */
+-- 
+2.1.4
