@@ -1,80 +1,42 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v6 4/4] clk: samsung: exynos-audss: Use runtime PM
-Date: Wed, 22 Mar 2017 14:32:32 +0100
-Message-ID: <42b06c10-4a80-ed62-a120-e6b86b2af0b2@samsung.com>
-References: <CGME20170322113556eucas1p1b3434935701aba1db7868415a9c3b4f9@eucas1p1.samsung.com>
- <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
- <1490182543-28550-5-git-send-email-m.szyprowski@samsung.com>
- <CAPDyKFrL9pvGQw+09rP52p72FqKuh6rLNt0NEUZ-TFxU838Nzw@mail.gmail.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] iommu/exynos: Block SYSMMU while invalidating FLPD
+	cache
+Date: Wed, 22 Mar 2017 15:51:28 +0100
+Message-ID: <20170322145128.GB7315@8bytes.org>
+References: <CGME20170320091820eucas1p22b62f2d7e089cd997aecc62a4c5b7730@eucas1p2.samsung.com>
+	<1490001484-18890-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <CAPDyKFrL9pvGQw+09rP52p72FqKuh6rLNt0NEUZ-TFxU838Nzw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1490001484-18890-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Ulf,
+On Mon, Mar 20, 2017 at 10:17:56AM +0100, Marek Szyprowski wrote:
+> Documentation specifies that SYSMMU should be in blocked state while
+> performing TLB/FLPD cache invalidation, so add needed calls to
+> sysmmu_block/unblock.
+> 
+> Fixes: 66a7ed84b345d ("iommu/exynos: Apply workaround of caching fault page table entries")
+> CC: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # v4.10+
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+> This issue has been introduced long time ago, but this fix applies only for
+> v4.10+ kernels due to other changes in the surrounding code.
+> ---
+>  drivers/iommu/exynos-iommu.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-On 2017-03-22 13:00, Ulf Hansson wrote:
-> On 22 March 2017 at 12:35, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> This patch adds support for runtime PM to Exynos Audio SubSystem driver to
->> enable full support for audio power domain on Exynos5 SoCs. The main change
->> is moving register saving and restoring code from system sleep PM ops to
->> runtime PM ops and implementing system sleep PM ops with generic
->> pm_runtime_force_suspend/resume helpers. Runtime PM of the Exynos AudSS
->> device is managed from clock core depending on the preparation status
->> of the provided clocks.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
->
-> Minor nitpick below.
->
-> [...]
->
->> -#ifdef CONFIG_PM_SLEEP
->>   static unsigned long reg_save[][2] = {
->>          { ASS_CLK_SRC,  0 },
->>          { ASS_CLK_DIV,  0 },
->>          { ASS_CLK_GATE, 0 },
->>   };
->>
->> -static int exynos_audss_clk_suspend(struct device *dev)
->> +static int __maybe_unused exynos_audss_clk_suspend(struct device *dev)
-> Instead of using "__maybe_unused", I would rather change from
-> "CONFIG_PM_SLEEP" to "CONFIG_PM". However, no strong opinion.
->
-> Perhaps you need something like this for patch 3/4 as well?
-
-Frankly, this matters only for compile-time tests. All Exynos platforms
-require CONFIG_PM, so that code will be always used in runtime.
-
-For compile-time tests probably it is better to use __maybe_unused approach
-to have higher coverage.
-
->>   {
->>          int i;
->>
->> @@ -54,7 +54,7 @@ static int exynos_audss_clk_suspend(struct device *dev)
->>          return 0;
->>   }
-> [...]
->
-> Kind regards
-> Uffe
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Applied both patches to iommu/fixes, thanks.
