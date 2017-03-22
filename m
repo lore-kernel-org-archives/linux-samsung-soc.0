@@ -1,122 +1,43 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH v3 1/2] pinctrl: samsung: Register pinctrl before GPIO
-Date: Wed, 22 Mar 2017 17:15:34 +0000
-Message-ID: <1490202935-4708-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] pinctrl: samsung: Add missing part for
+ PINCFG_TYPE_DRV of Exynos5433
+Date: Wed, 22 Mar 2017 20:00:00 +0200
+Message-ID: <20170322180000.z2u6syrxhaa752ha@kozik-lap>
+References: <1490169812-25225-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20170322080335epcas5p2c169c15e1b9db200aee9ca83c71699f6@epcas5p2.samsung.com>
+ <1490169812-25225-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: krzk@kernel.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com
-Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33307 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934813AbdCVSA6 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 22 Mar 2017 14:00:58 -0400
+Content-Disposition: inline
+In-Reply-To: <1490169812-25225-2-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, javier@osg.samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If we request a GPIO hog, then gpiochip_add_data will attempt
-to request some of its own GPIOs. The driver also uses
-gpiochip_generic_request which means that for any GPIO request to
-succeed the pinctrl needs to be registered. Currently however the
-driver registers the GPIO and then the pinctrl meaning all GPIO hog
-requests will fail, which then in turn causes the whole driver to fail
-probe.
+On Wed, Mar 22, 2017 at 05:03:31PM +0900, Chanwoo Choi wrote:
+> The commit 1259feddd0f8("pinctrl: samsung: Fix the width of
+> PINCFG_TYPE_DRV bitfields for Exynos5433") already fixed
+> the different width of PINCFG_TYPE_DRV from previous Exynos SoC.
+> 
+> But, when merged the multiple patches, the missing parts occurred.
+> So, this patch adds the missing part using the EXYNOS5433_PIN_BANK_* macro.
+> 
+> Fixes: 7f36f5d11cda ("Merge tag 'v4.10-rc6' into devel")
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c | 80 ++++++++++++++++----------------
+>  1 file changed, 40 insertions(+), 40 deletions(-)
+> 
 
-Fix this up by ensuring we register the pinctrl first. This
-does require us to manually set the GPIO base for the
-pinctrl. Fortunately the driver already assigns a fixed GPIO base, in
-samsung_gpiolib_register, and uses the same calculation it does for
-the pin_base. Meaning the two will always be the same and allowing us
-to reuse the pinbase and avoid the issue.
+Thanks, applied. I also verified that this would indeed be a proper
+merge conflict resolution.
 
-Although currently there are no users of GPIO hogs in mainline
-there are plenty of Samsung based boards that are widely used for
-development purposes of other hardware. Indeed we hit this issue
-whilst attaching some additional hardware to an Arndale system.
-
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
-
-Changes since v2:
- - Squash in fix to set the GPIO base on the pin_bank.
-
- drivers/pinctrl/samsung/pinctrl-samsung.c | 36 +++++++++++++++----------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index f9ddba7..5d53370 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -884,7 +884,7 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
- 		pin_bank->grange.id = bank;
- 		pin_bank->grange.pin_base = drvdata->pin_base
- 						+ pin_bank->pin_base;
--		pin_bank->grange.base = pin_bank->gpio_chip.base;
-+		pin_bank->grange.base = pin_bank->grange.pin_base;
- 		pin_bank->grange.npins = pin_bank->gpio_chip.ngpio;
- 		pin_bank->grange.gc = &pin_bank->gpio_chip;
- 		pinctrl_add_gpio_range(drvdata->pctl_dev, &pin_bank->grange);
-@@ -893,6 +893,19 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
- 	return 0;
- }
- 
-+/* unregister the pinctrl interface with the pinctrl subsystem */
-+static int samsung_pinctrl_unregister(struct platform_device *pdev,
-+				      struct samsung_pinctrl_drv_data *drvdata)
-+{
-+	struct samsung_pin_bank *bank = drvdata->pin_banks;
-+	int i;
-+
-+	for (i = 0; i < drvdata->nr_banks; ++i, ++bank)
-+		pinctrl_remove_gpio_range(drvdata->pctl_dev, &bank->grange);
-+
-+	return 0;
-+}
-+
- static const struct gpio_chip samsung_gpiolib_chip = {
- 	.request = gpiochip_generic_request,
- 	.free = gpiochip_generic_free,
-@@ -917,7 +930,7 @@ static int samsung_gpiolib_register(struct platform_device *pdev,
- 		bank->gpio_chip = samsung_gpiolib_chip;
- 
- 		gc = &bank->gpio_chip;
--		gc->base = drvdata->pin_base + bank->pin_base;
-+		gc->base = bank->grange.base;
- 		gc->ngpio = bank->nr_pins;
- 		gc->parent = &pdev->dev;
- 		gc->of_node = bank->of_node;
-@@ -939,19 +952,6 @@ static int samsung_gpiolib_register(struct platform_device *pdev,
- 	return ret;
- }
- 
--/* unregister the gpiolib interface with the gpiolib subsystem */
--static int samsung_gpiolib_unregister(struct platform_device *pdev,
--				      struct samsung_pinctrl_drv_data *drvdata)
--{
--	struct samsung_pin_bank *bank = drvdata->pin_banks;
--	int i;
--
--	for (i = 0; i < drvdata->nr_banks; ++i, ++bank)
--		gpiochip_remove(&bank->gpio_chip);
--
--	return 0;
--}
--
- /* retrieve the soc specific data */
- static const struct samsung_pin_ctrl *
- samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
-@@ -1062,13 +1062,13 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 			return PTR_ERR(drvdata->retention_ctrl);
- 	}
- 
--	ret = samsung_gpiolib_register(pdev, drvdata);
-+	ret = samsung_pinctrl_register(pdev, drvdata);
- 	if (ret)
- 		return ret;
- 
--	ret = samsung_pinctrl_register(pdev, drvdata);
-+	ret = samsung_gpiolib_register(pdev, drvdata);
- 	if (ret) {
--		samsung_gpiolib_unregister(pdev, drvdata);
-+		samsung_pinctrl_unregister(pdev, drvdata);
- 		return ret;
- 	}
- 
--- 
-2.1.4
+Best regards,
+Krzysztof
