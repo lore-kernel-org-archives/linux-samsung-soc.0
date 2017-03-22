@@ -1,48 +1,70 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 0/3] arm64: exynos: Enable drivers for Exynos5433
-Date: Tue, 21 Mar 2017 19:18:00 +0200
-Message-ID: <20170321171800.6kn5efw425np4h7h@kozik-lap>
-References: <20170314171028.20337-1-krzk@kernel.org>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH v5 3/5] drm/exynos: dsi: Fix the parse_dt function
+Date: Wed, 22 Mar 2017 10:36:44 +0900
+Message-ID: <93e79e92-a102-e931-8d63-843031848888@samsung.com>
+References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308045502epcas1p2d2f7a0f768082b7a54b2ebe260e78436@epcas1p2.samsung.com>
+ <1488948852-5380-4-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20170314171028.20337-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1488948852-5380-4-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, andi.shyti@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org, LW@KARO-electronics.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 14, 2017 at 07:10:25PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> 
-> Patches are independent but I organized them into one patchset
-> as they have common goal - enable more drivers for ARMv8 Exynos chips.
-> 
-> If there are no objections, I can take it through samsung-soc.
-> 
-> Changes since v1:
-> ================
-> 1. Patch 1/3: Do not enable entire DRM stack but only drivers
->    supporting Exynos5433 and Exynos7 (suggested by Bartlomiej).
-> 2. Add Bartlomiej's and Alim's reviews.
-> 
-> 
-> Best regards,
-> Krzysztof
->
-
-I appled all three to samsung-soc and I will push them through arm-soc.
-
-Best regards,
-Krzysztof
+SGkgaW5raSwKCkNvdWxkIHlvdSBjaGVjayB0aGUgdGhpcyBwYXRjaD8KRm9yIHJlZmVyZW5jZSwg
+cGF0Y2ggMS81IGFuZCAyLzUgaGF2ZSBhbHJlYWR5IGJlZW4gYXBwbGllZCB0byBLcnp5c3p0b2Yg
+CnRyZWUuCgpCZXN0IHJlZ2FyZHMsCkhvZWdldW4KCgpPbiAwMy8wOC8yMDE3IDAxOjU0IFBNLCBI
+b2VnZXVuIEt3b24gd3JvdGU6Cj4gVGhlIGRzaSArIHBhbmVsIGlzIGEgcGFyZW50YWwgcmVsYXRp
+b25zaGlwLCBzbyBPRiBncnBhaCBpcyBub3QgbmVlZGVkLgo+IFRoZXJlZm9yZSwgdGhlIGN1cnJl
+bnQgZHNpX3BhcnNlX2R0IGZ1bmN0aW9uIHdpbGwgdGhyb3cgYW4gZXJyb3IsCj4gYmVjYXVzZSB0
+aGVyZSBpcyBubyBsaW5rZWQgT0YgZ3JhcGggZm9yIHRoZSBjYXNlIGZpbWQgKyBkc2kgKyBwYW5l
+bC4KPgo+IFBhcnNlIHRoZSBQbGwgYnVyc3QgYW5kIGVzYyBjbG9jayBmcmVxdWVuY3kgcHJvcGVy
+dGllcyBpbiBkc2lfcGFyc2VfZHQoKQo+IGFuZCBjcmVhdGUgYSBicmlkZ2Vfbm9kZSBvbmx5IGlm
+IHRoZXJlIGlzIGFuIE9GIGdyYXBoIGFzc29jaWF0ZWQgd2l0aCBkc2kuCj4KPiBTaWduZWQtb2Zm
+LWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1zdW5nLmNvbT4KPiBSZXZpZXdlZC1i
+eTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiBSZXZpZXdlZC1ieTogQW5k
+aSBTaHl0aSA8YW5kaS5zaHl0aUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyB8IDMyICsrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tCj4gICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAyNCBkZWxldGlvbnMo
+LSkKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNp
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiBpbmRleCBmNWMw
+NGQwLi4yZDRlMTE4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kc2kuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2ku
+Ywo+IEBAIC0xNjUyLDM5ICsxNjUyLDIzIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9wYXJzZV9k
+dChzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpKQo+ICAgCWlmIChyZXQgPCAwKQo+ICAgCQlyZXR1cm4g
+cmV0Owo+ICAgCj4gLQllcCA9IG9mX2dyYXBoX2dldF9lbmRwb2ludF9ieV9yZWdzKG5vZGUsIERT
+SV9QT1JUX09VVCwgMCk7Cj4gLQlpZiAoIWVwKSB7Cj4gLQkJZGV2X2VycihkZXYsICJubyBvdXRw
+dXQgcG9ydCB3aXRoIGVuZHBvaW50IHNwZWNpZmllZFxuIik7Cj4gLQkJcmV0dXJuIC1FSU5WQUw7
+Cj4gLQl9Cj4gLQo+IC0JcmV0ID0gZXh5bm9zX2RzaV9vZl9yZWFkX3UzMihlcCwgInNhbXN1bmcs
+YnVyc3QtY2xvY2stZnJlcXVlbmN5IiwKPiArCXJldCA9IGV4eW5vc19kc2lfb2ZfcmVhZF91MzIo
+bm9kZSwgInNhbXN1bmcsYnVyc3QtY2xvY2stZnJlcXVlbmN5IiwKPiAgIAkJCQkgICAgICZkc2kt
+PmJ1cnN0X2Nsa19yYXRlKTsKPiAgIAlpZiAocmV0IDwgMCkKPiAtCQlnb3RvIGVuZDsKPiArCQly
+ZXR1cm4gcmV0Owo+ICAgCj4gLQlyZXQgPSBleHlub3NfZHNpX29mX3JlYWRfdTMyKGVwLCAic2Ft
+c3VuZyxlc2MtY2xvY2stZnJlcXVlbmN5IiwKPiArCXJldCA9IGV4eW5vc19kc2lfb2ZfcmVhZF91
+MzIobm9kZSwgInNhbXN1bmcsZXNjLWNsb2NrLWZyZXF1ZW5jeSIsCj4gICAJCQkJICAgICAmZHNp
+LT5lc2NfY2xrX3JhdGUpOwo+ICAgCWlmIChyZXQgPCAwKQo+IC0JCWdvdG8gZW5kOwo+IC0KPiAt
+CW9mX25vZGVfcHV0KGVwKTsKPiArCQlyZXR1cm4gcmV0Owo+ICAgCj4gICAJZXAgPSBvZl9ncmFw
+aF9nZXRfbmV4dF9lbmRwb2ludChub2RlLCBOVUxMKTsKPiAtCWlmICghZXApIHsKPiAtCQlyZXQg
+PSAtRUlOVkFMOwo+IC0JCWdvdG8gZW5kOwo+IC0JfQo+IC0KPiAtCWRzaS0+YnJpZGdlX25vZGUg
+PSBvZl9ncmFwaF9nZXRfcmVtb3RlX3BvcnRfcGFyZW50KGVwKTsKPiAtCWlmICghZHNpLT5icmlk
+Z2Vfbm9kZSkgewo+IC0JCXJldCA9IC1FSU5WQUw7Cj4gLQkJZ290byBlbmQ7Cj4gKwlpZiAoZXAp
+IHsKPiArCQlkc2ktPmJyaWRnZV9ub2RlID0gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9wb3J0X3BhcmVu
+dChlcCk7Cj4gKwkJb2Zfbm9kZV9wdXQoZXApOwo+ICAgCX0KPiAtZW5kOgo+IC0Jb2Zfbm9kZV9w
+dXQoZXApOwo+ICAgCj4gLQlyZXR1cm4gcmV0Owo+ICsJcmV0dXJuIDA7Cj4gICB9Cj4gICAKPiAg
+IHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRl
+dmljZSAqbWFzdGVyLAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
