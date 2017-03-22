@@ -1,151 +1,140 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 39/41] drm/bridge: analogix_dp: Split the platform-specific
- poweron in two parts
-Date: Wed, 22 Mar 2017 11:42:12 +0100
-Message-ID: <f41b1cdf-0e69-df53-0532-d810b609e892@samsung.com>
-References: <20170310043305.17216-1-seanpaul@chromium.org>
- <CGME20170310045205epcas2p2bb638cfe42b9b97be0bad5af0922e98e@epcas2p2.samsung.com>
- <20170310043305.17216-40-seanpaul@chromium.org>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
+Date: Wed, 22 Mar 2017 12:18:17 +0100
+Message-ID: <0df02c55-6a73-1ed2-ebfd-844a1e9c8a28@math.uni-bielefeld.de>
+References: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54795 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758808AbdCVKmS (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:56646 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933647AbdCVLST (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Mar 2017 06:42:18 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ON7002RNPQFKM00@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 22 Mar 2017 10:42:15 +0000 (GMT)
-In-reply-to: <20170310043305.17216-40-seanpaul@chromium.org>
+        Wed, 22 Mar 2017 07:18:19 -0400
+In-Reply-To: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>, linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Cc: Yakir Yang <ykk@rock-chips.com>, "Kristian H . Kristensen" <hoegsberg@chromium.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, zain wang <wzz@rock-chips.com>, Lin Huang <hl@rock-chips.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Douglas Anderson <dianders@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, a.hajda@samsung.com
 
-On 10.03.2017 05:32, Sean Paul wrote:
-> From: Douglas Anderson <dianders@chromium.org>
->
-> Some of the platform-specific stuff in rockchip_dp_poweron() needs to
-> happen before the generic code.  Some needs to happen after.  Let's
-> split the callback in two.
->
-> Specifically we can't start doing PSR work until _after_ the whole
-> controller is up, so don't set the enable until the end.
->
-> Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> [seanpaul added exynos change]
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Gentle ping.
 
-Sounds like mid-layer issue. I do not know bridge details so I can only
-guess but probably passing full control to drivers and call generic code
-via helpers could be better solution.
-Anyway it can be done later.
+- Tobias
 
-For now:
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-
-
-Regards
-Andrzej
-
+Tobias Jakobi wrote:
+> The output stage of the mixer uses YCbCr for the internal
+> computations, which is the reason that some registers take
+> YCbCr related data as input. In particular this applies
+> to MXR_BG_COLOR{0,1,2} and MXR_CM_COEFF_{Y,CB,CR}.
+> 
+> Document the formatting of the data which we write to
+> these registers.
+> 
+> While at it, unify wording of comments in the register header.
+> 
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 > ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  7 +++++--
->  drivers/gpu/drm/exynos/exynos_dp.c                 |  2 +-
->  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 12 ++++++++++--
->  include/drm/bridge/analogix_dp.h                   |  3 ++-
->  4 files changed, 18 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index a05bc0271188..bc9a0a28ab1d 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1254,8 +1254,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
->  		goto out_dp_clk_pre;
+> Changes in v2:
+> - use floating point values as input for the macros, as
+>   suggested by Andrzej
+> - the floating point values have been tuned to exactly match
+>   the values that are currently used
+> 
+> Changes in v3:
+> - use only three digit values (pointed out by Andrzej)
+> 
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 33 +++++++++++++++++++++++++--------
+>  drivers/gpu/drm/exynos/regs-mixer.h   |  7 +++++--
+>  2 files changed, 30 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 41d0c36..9648dd5 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -45,6 +45,22 @@
+>  #define MIXER_WIN_NR		3
+>  #define VP_DEFAULT_WIN		2
+>  
+> +/*
+> + * Mixer color space conversion coefficient triplet.
+> + * Used for CSC from RGB to YCbCr.
+> + * Each coefficient is a 10-bit fixed point number with
+> + * sign and no integer part, i.e.
+> + * [0:8] = fractional part (representing a value y = x / 2^9)
+> + * [9] = sign
+> + * Negative values are encoded with two's complement.
+> + */
+> +#define MXR_CSC_C(x) ((int)((x) * 512.0) & 0x3ff)
+> +#define MXR_CSC_CT(a0, a1, a2) \
+> +  ((MXR_CSC_C(a0) << 20) | (MXR_CSC_C(a1) << 10) | (MXR_CSC_C(a2) << 0))
+> +
+> +/* YCbCr value, used for mixer background color configuration. */
+> +#define MXR_YCBCR_VAL(y, cb, cr) (((y) << 16) | ((cb) << 8) | ((cr) << 0))
+> +
+>  /* The pixelformats that are natively supported by the mixer. */
+>  #define MXR_FORMAT_RGB565	4
+>  #define MXR_FORMAT_ARGB1555	5
+> @@ -391,13 +407,14 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
+>  	case 1080:
+>  	default:
+>  		val = MXR_CFG_RGB709_16_235;
+> +		/* Configure the BT.709 CSC matrix for full range RGB. */
+>  		mixer_reg_write(res, MXR_CM_COEFF_Y,
+> -				(1 << 30) | (94 << 20) | (314 << 10) |
+> -				(32 << 0));
+> +			MXR_CSC_CT( 0.184,  0.614,  0.063) |
+> +			MXR_CM_COEFF_RGB_FULL);
+>  		mixer_reg_write(res, MXR_CM_COEFF_CB,
+> -				(972 << 20) | (851 << 10) | (225 << 0));
+> +			MXR_CSC_CT(-0.102, -0.338,  0.440));
+>  		mixer_reg_write(res, MXR_CM_COEFF_CR,
+> -				(225 << 20) | (820 << 10) | (1004 << 0));
+> +			MXR_CSC_CT( 0.440, -0.399, -0.040));
+>  		break;
 >  	}
 >  
-> -	if (dp->plat_data->power_on)
-> -		dp->plat_data->power_on(dp->plat_data);
-> +	if (dp->plat_data->power_on_start)
-> +		dp->plat_data->power_on_start(dp->plat_data);
+> @@ -715,10 +732,10 @@ static void mixer_win_reset(struct mixer_context *ctx)
+>  	/* reset default layer priority */
+>  	mixer_reg_write(res, MXR_LAYER_CFG, 0);
 >  
->  	phy_power_on(dp->phy);
+> -	/* setting background color */
+> -	mixer_reg_write(res, MXR_BG_COLOR0, 0x008080);
+> -	mixer_reg_write(res, MXR_BG_COLOR1, 0x008080);
+> -	mixer_reg_write(res, MXR_BG_COLOR2, 0x008080);
+> +	/* set all background colors to RGB (0,0,0) */
+> +	mixer_reg_write(res, MXR_BG_COLOR0, MXR_YCBCR_VAL(0, 128, 128));
+> +	mixer_reg_write(res, MXR_BG_COLOR1, MXR_YCBCR_VAL(0, 128, 128));
+> +	mixer_reg_write(res, MXR_BG_COLOR2, MXR_YCBCR_VAL(0, 128, 128));
 >  
-> @@ -1278,6 +1278,9 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
->  		goto out_dp_init;
->  	}
+>  	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
+>  		/* configuration of Video Processor Registers */
+> diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
+> index 7f22df5..c311f57 100644
+> --- a/drivers/gpu/drm/exynos/regs-mixer.h
+> +++ b/drivers/gpu/drm/exynos/regs-mixer.h
+> @@ -140,11 +140,11 @@
+>  #define MXR_INT_EN_VSYNC		(1 << 11)
+>  #define MXR_INT_EN_ALL			(0x0f << 8)
 >  
-> +	if (dp->plat_data->power_on_end)
-> +		dp->plat_data->power_on_end(dp->plat_data);
+> -/* bit for MXR_INT_STATUS */
+> +/* bits for MXR_INT_STATUS */
+>  #define MXR_INT_CLEAR_VSYNC		(1 << 11)
+>  #define MXR_INT_STATUS_VSYNC		(1 << 0)
+>  
+> -/* bit for MXR_LAYER_CFG */
+> +/* bits for MXR_LAYER_CFG */
+>  #define MXR_LAYER_CFG_GRP1_VAL(x)	MXR_MASK_VAL(x, 11, 8)
+>  #define MXR_LAYER_CFG_GRP1_MASK		MXR_LAYER_CFG_GRP1_VAL(~0)
+>  #define MXR_LAYER_CFG_GRP0_VAL(x)	MXR_MASK_VAL(x, 7, 4)
+> @@ -152,5 +152,8 @@
+>  #define MXR_LAYER_CFG_VP_VAL(x)		MXR_MASK_VAL(x, 3, 0)
+>  #define MXR_LAYER_CFG_VP_MASK		MXR_LAYER_CFG_VP_VAL(~0)
+>  
+> +/* bits for MXR_CM_COEFF_Y */
+> +#define MXR_CM_COEFF_RGB_FULL		(1 << 30)
 > +
->  	enable_irq(dp->irq);
->  	return 0;
+>  #endif /* SAMSUNG_REGS_MIXER_H */
 >  
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-> index 1ef0be338b85..6b79c3b3802f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_dp.c
-> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
-> @@ -168,7 +168,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
->  	dp->drm_dev = drm_dev;
->  
->  	dp->plat_data.dev_type = EXYNOS_DP;
-> -	dp->plat_data.power_on = exynos_dp_poweron;
-> +	dp->plat_data.power_on_start = exynos_dp_poweron;
->  	dp->plat_data.power_off = exynos_dp_poweroff;
->  	dp->plat_data.attach = exynos_dp_bridge_attach;
->  	dp->plat_data.get_modes = exynos_dp_get_modes;
-> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> index 14f68e792e6f..07dd09e1e32f 100644
-> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> @@ -127,7 +127,7 @@ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
->  	return 0;
->  }
->  
-> -static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
-> +static int rockchip_dp_poweron_start(struct analogix_dp_plat_data *plat_data)
->  {
->  	struct rockchip_dp_device *dp = to_dp(plat_data);
->  	int ret;
-> @@ -145,6 +145,13 @@ static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
->  		return ret;
->  	}
->  
-> +	return ret;
-> +}
-> +
-> +static int rockchip_dp_poweron_end(struct analogix_dp_plat_data *plat_data)
-> +{
-> +	struct rockchip_dp_device *dp = to_dp(plat_data);
-> +
->  	return rockchip_drm_psr_activate(&dp->encoder);
->  }
->  
-> @@ -399,7 +406,8 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
->  	dp->plat_data.encoder = &dp->encoder;
->  
->  	dp->plat_data.dev_type = dp->data->chip_type;
-> -	dp->plat_data.power_on = rockchip_dp_poweron;
-> +	dp->plat_data.power_on_start = rockchip_dp_poweron_start;
-> +	dp->plat_data.power_on_end = rockchip_dp_poweron_end;
->  	dp->plat_data.power_off = rockchip_dp_powerdown;
->  	dp->plat_data.get_modes = rockchip_dp_get_modes;
->  	dp->plat_data.cleanup = rockchip_dp_cleanup;
-> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-> index c079ca1ffc76..1049ee56ae76 100644
-> --- a/include/drm/bridge/analogix_dp.h
-> +++ b/include/drm/bridge/analogix_dp.h
-> @@ -30,7 +30,8 @@ struct analogix_dp_plat_data {
->  	struct drm_encoder *encoder;
->  	struct drm_connector *connector;
->  
-> -	int (*power_on)(struct analogix_dp_plat_data *);
-> +	int (*power_on_start)(struct analogix_dp_plat_data *);
-> +	int (*power_on_end)(struct analogix_dp_plat_data *);
->  	int (*power_off)(struct analogix_dp_plat_data *);
->  	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
->  		      struct drm_connector *);
+> 
