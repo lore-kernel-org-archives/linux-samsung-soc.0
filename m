@@ -1,42 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
-Date: Thu, 23 Mar 2017 11:40:00 +0100
-Message-ID: <CACRpkdZPmkz-PxnkpHubcpyDoDv9yp8x6553K0XWg8LoccOgbg@mail.gmail.com>
-References: <20170320164851.5999-1-krzk@kernel.org> <20170320165841.gpbevoscf2fjvods@kozik-lap>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [GIT PULL] Immutable branch between MFD and PHY due for the v4.12
+ merge window
+Date: Thu, 23 Mar 2017 10:51:10 +0000
+Message-ID: <20170323105110.26w3g6jxrlgdtka7@dell>
+References: <20170314164653.15771-1-krzk@kernel.org>
+ <20170314164653.15771-5-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170320165841.gpbevoscf2fjvods@kozik-lap>
+Content-Disposition: inline
+In-Reply-To: <20170314164653.15771-5-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 5:58 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Enjoy!
 
-> I talked with Sylwester few days ago and we agreed on a shared mainainer
-> model.  Mostly because:
-> 1. Only Sylwester from three of us works in Samsung,
-> 2. It helps distributing the load in case of any holidays/travel etc,
-> 3. It might also make easier for future transitions.
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
-Awesome.
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
 
-> For this release I can start taking the patches. Please let me know:
-> 1. Can I base on Torvalds' rc-1 or you prefer basing on top of your
->    branches? In the second case your branches should not be rebased.
+are available in the git repository at:
 
-Whatever makes sense. -rc1 if nothing else.
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-phy-v4.12
 
-If you need to base on my devel branch then notify me so I
-don't rebase it.
+for you to fetch changes up to f7f6c060547c51691f9b943e6c33f63675c1a0a9:
 
-> 2. When do you expect pull requests (preferred time and acceptable late
->    stuff)?
+  mfd: exynos-lpass: Use common soc/exynos-regs-pmu.h header (2017-03-23 10:47:27 +0000)
 
-When you feel it is apropriate.
+----------------------------------------------------------------
+Immutable branch between MFD and PHY due for the v4.12 merge window
 
-Geert usually send me 1-2 pull requests for Renesas stuff.
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      mfd: exynos-lpass: Use common soc/exynos-regs-pmu.h header
 
-Yours,
-Linus Walleij
+ drivers/mfd/exynos-lpass.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
