@@ -1,35 +1,91 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 2/2] pinctrl: samsung: Use devres version of
- gpiochip_add_data
-Date: Thu, 23 Mar 2017 20:51:57 +0200
-Message-ID: <20170323185157.xsw4u7zkrbk75ta6@kozik-lap>
-References: <1490202935-4708-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1490202935-4708-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH V8 1/3] irq: Add flags to request_percpu_irq function
+Date: Thu, 23 Mar 2017 18:54:52 +0000
+Message-ID: <20170323185449.GA21359@leverpostej>
+References: <1490290924-12958-1-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:32896 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932579AbdCWSzP (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 23 Mar 2017 14:55:15 -0400
 Content-Disposition: inline
-In-Reply-To: <1490202935-4708-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
+In-Reply-To: <1490290924-12958-1-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: tglx@linutronix.de, nicolas.pitre@linaro.org, linux-samsung-soc@vger.kernel.org, vincent.guittot@linaro.org, kernel@stlinux.com, kvm@vger.kernel.org, rafael@kernel.org, peterz@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org, linux-snps-arc@lists.infradead.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org, will.deacon@arm.com, marc.zyngier@arm.com
 
-On Wed, Mar 22, 2017 at 05:15:35PM +0000, Charles Keepax wrote:
-> Use devm_gpiochip_add_data to simplify the error path in
-> samsung_gpiolib_register.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
-> 
-> No changes since v2.
-> 
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
-> 
+Hi Daniel,
 
-Thanks, applied.
+On Thu, Mar 23, 2017 at 06:42:01PM +0100, Daniel Lezcano wrote:
+> In the next changes, we track the interrupts but we discard the timers as
+> that does not make sense. The next interrupt on a timer is predictable.
 
-Best regards,
-Krzysztof
+Sorry, but I could not parse this. 
+
+[...]
+
+> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> index 9612b84..0f5ab4a 100644
+> --- a/drivers/perf/arm_pmu.c
+> +++ b/drivers/perf/arm_pmu.c
+> @@ -661,7 +661,7 @@ static int cpu_pmu_request_irq(struct arm_pmu *cpu_pmu, irq_handler_t handler)
+>  
+>  	irq = platform_get_irq(pmu_device, 0);
+>  	if (irq > 0 && irq_is_percpu(irq)) {
+> -		err = request_percpu_irq(irq, handler, "arm-pmu",
+> +		err = request_percpu_irq(irq, 0, handler, "arm-pmu",
+>  					 &hw_events->percpu_pmu);
+>  		if (err) {
+>  			pr_err("unable to request IRQ%d for ARM PMU counters\n",
+
+Please Cc myself and Will Deacon when modifying the arm_pmu driver, as
+per MAINTAINERS. I only spotted this patch by chance.
+
+This conflicts with arm_pmu changes I have queued for v4.12 [1].
+
+So, can we leave the prototype of request_percpu_irq() as-is?
+
+Why not add a new request_percpu_irq_flags() function, and leave
+request_percpu_irq() as a wrapper for that? e.g.
+
+static inline int
+request_percpu_irq(unsigned int irq, irq_handler_t handler,
+		   const char *devname, void __percpu *percpu_dev_id)
+{
+	return request_percpu_irq_flags(irq, handler, devname,
+					percpu_dev_id, 0);
+}
+
+... that would avoid having to touch any non-timer driver for now.
+
+[...]
+
+> -request_percpu_irq(unsigned int irq, irq_handler_t handler,
+> -		   const char *devname, void __percpu *percpu_dev_id);
+> +request_percpu_irq(unsigned int irq, unsigned long flags,
+> +		   irq_handler_t handler,  const char *devname,
+> +		   void __percpu *percpu_dev_id);
+>  
+
+Looking at request_irq, the prototype is:
+
+int __must_check
+request_irq(unsigned int irq, irq_handler_t handler,
+	    unsigned long flags, const char *name,
+	    void *dev);
+
+... surely it would be better to share the same argument order? i.e.
+
+int __must_check
+request_percpu_irq(unsigned int irq, irq_handler_t handler,
+		   unsigned long flags, const char *devname,
+		   void __percpu *percpu_dev_id);
+
+Thanks,
+Mark.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm/perf/refactoring
