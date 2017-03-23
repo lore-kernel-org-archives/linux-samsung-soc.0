@@ -1,42 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
-Date: Thu, 23 Mar 2017 11:38:23 +0100
-Message-ID: <CACRpkdZK=5hnNFZ=M6jf-YeGj_nZx4Xw3+UQfj_5kOQ5_Hhj5Q@mail.gmail.com>
-References: <20170320164851.5999-1-krzk@kernel.org>
+Date: Thu, 23 Mar 2017 11:40:00 +0100
+Message-ID: <CACRpkdZPmkz-PxnkpHubcpyDoDv9yp8x6553K0XWg8LoccOgbg@mail.gmail.com>
+References: <20170320164851.5999-1-krzk@kernel.org> <20170320165841.gpbevoscf2fjvods@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f175.google.com ([209.85.223.175]:36290 "EHLO
-        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751178AbdCWKjy (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Mar 2017 06:39:54 -0400
-Received: by mail-io0-f175.google.com with SMTP id l7so79590472ioe.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Mar 2017 03:38:25 -0700 (PDT)
-In-Reply-To: <20170320164851.5999-1-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170320165841.gpbevoscf2fjvods@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 5:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Mon, Mar 20, 2017 at 5:58 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
-> drivers.  The tree will be maintained in a shared model between current
-> Samsung pinctrl maintainers.  Pull requests will be going to Linus
-> Walleij.
->
-> Also add the patchwork for linux-samsung-soc mailing list which will be
-> used for handling the patches.
->
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> I talked with Sylwester few days ago and we agreed on a shared mainainer
+> model.  Mostly because:
+> 1. Only Sylwester from three of us works in Samsung,
+> 2. It helps distributing the load in case of any holidays/travel etc,
+> 3. It might also make easier for future transitions.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Awesome.
 
-Should I apply this patch by the way?
+> For this release I can start taking the patches. Please let me know:
+> 1. Can I base on Torvalds' rc-1 or you prefer basing on top of your
+>    branches? In the second case your branches should not be rebased.
+
+Whatever makes sense. -rc1 if nothing else.
+
+If you need to base on my devel branch then notify me so I
+don't rebase it.
+
+> 2. When do you expect pull requests (preferred time and acceptable late
+>    stuff)?
+
+When you feel it is apropriate.
+
+Geert usually send me 1-2 pull requests for Renesas stuff.
 
 Yours,
 Linus Walleij
