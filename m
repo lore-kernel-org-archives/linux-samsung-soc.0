@@ -1,58 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL] Immutable branch between MFD and PHY due for the v4.12
- merge window
-Date: Thu, 23 Mar 2017 13:58:30 +0200
-Message-ID: <CAJKOXPdd5H-oBnz74ay-oEtUqrQ-GZwgNoaf_cD9nOUHHRHWrg@mail.gmail.com>
-References: <20170314164653.15771-1-krzk@kernel.org> <20170314164653.15771-5-krzk@kernel.org>
- <20170323105110.26w3g6jxrlgdtka7@dell>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 2/2] serial: samsung: Add missing checks for dma_map_single
+ failure
+Date: Thu, 23 Mar 2017 12:59:18 +0100
+Message-ID: <1721523.vQEeMhhi8C@amdc3058>
+References: <1490255131-9597-1-git-send-email-m.szyprowski@samsung.com>
+ <1490255131-9597-2-git-send-email-m.szyprowski@samsung.com>
+ <3019209.fgIhMIWD3x@amdc3058>
+ <CGME20170323115923epcas5p341b3b74e98762fdc1b5af38e1d3ecf9b@epcas5p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:34058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751448AbdCWL6f (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Mar 2017 07:58:35 -0400
-In-Reply-To: <20170323105110.26w3g6jxrlgdtka7@dell>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <3019209.fgIhMIWD3x@amdc3058>
+Sender: stable-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 23, 2017 at 12:51 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> Enjoy!
->
-> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
->
->   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-phy-v4.12
->
-> for you to fetch changes up to f7f6c060547c51691f9b943e6c33f63675c1a0a9:
->
->   mfd: exynos-lpass: Use common soc/exynos-regs-pmu.h header (2017-03-23 10:47:27 +0000)
->
-> ----------------------------------------------------------------
-> Immutable branch between MFD and PHY due for the v4.12 merge window
->
-> ----------------------------------------------------------------
-> Krzysztof Kozlowski (1):
->       mfd: exynos-lpass: Use common soc/exynos-regs-pmu.h header
->
->  drivers/mfd/exynos-lpass.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Thursday, March 23, 2017 12:04:02 PM Bartlomiej Zolnierkiewicz wrote:
+> On Thursday, March 23, 2017 08:45:22 AM Marek Szyprowski wrote:
+> > This patch adds missing checks for dma_map_single() failure and proper error
+> > reporting. While touching this part of the code, it also removes unnecessary
+> > spinlock calls around dma_map_single() for TX buffer. This finally solves all
+> > the issues reported by DMA API debug framework.
+> > 
+> > Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+> > Fixes: 2c37eedb74c8 ("serial: samsung: add dma reqest/release functions")
+> 
+> The right commit id is 62c37eedb74c8.
 
-Thanks.
+BTW With this fixed you may add:
 
-Kishon,
-This is the dependency for last patch in v4 of:
-https://www.spinics.net/lists/arm-kernel/msg568609.html
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Everything else is acked and ready for you to apply.
+to both patches.
 
-Any comments?
+> > CC: stable@vger.kernel.org # v4.10+
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
 Best regards,
-Krzysztof
