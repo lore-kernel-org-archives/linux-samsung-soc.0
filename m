@@ -1,32 +1,51 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: Re: [PATCH V8 1/3] irq: Add flags to request_percpu_irq function
-Date: Thu, 23 Mar 2017 11:34:21 -0700
-Message-ID: <c025cd44-c8a2-1236-803a-5dc39315f2e3@synopsys.com>
-References: <1490290924-12958-1-git-send-email-daniel.lezcano@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/2] pinctrl: samsung: Register pinctrl before GPIO
+Date: Thu, 23 Mar 2017 20:51:43 +0200
+Message-ID: <20170323185143.7nfgddujuie6ccws@kozik-lap>
+References: <1490202935-4708-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1490290924-12958-1-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>
-Cc: "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>, "kernel@stlinux.com" <kernel@stlinux.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rafael@kernel.org" <rafael@kernel.org>, "peterz@infradead.org" <peterz@infradead.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1490202935-4708-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/23/2017 10:42 AM, Daniel Lezcano wrote:
-> In the next changes, we track the interrupts but we discard the timers as
-> that does not make sense. The next interrupt on a timer is predictable.
->
-> But, the API request_percpu_irq does not allow to pass a flag, hence specifying
-> if the interrupt type is a timer.
->
-> Solve this by passing a 'flags' parameter to the function and change all the
-> callers to pass IRQF_TIMER when the interrupt is a timer interrupt, zero
-> otherwise.
->
-> For now, in order to prevent a misusage of this parameter, only the IRQF_TIMER
-> flag is a valid parameter to be passed to the request_percpu_irq function.
->
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+On Wed, Mar 22, 2017 at 05:15:34PM +0000, Charles Keepax wrote:
+> If we request a GPIO hog, then gpiochip_add_data will attempt
+> to request some of its own GPIOs. The driver also uses
+> gpiochip_generic_request which means that for any GPIO request to
+> succeed the pinctrl needs to be registered. Currently however the
+> driver registers the GPIO and then the pinctrl meaning all GPIO hog
+> requests will fail, which then in turn causes the whole driver to fail
+> probe.
+> 
+> Fix this up by ensuring we register the pinctrl first. This
+> does require us to manually set the GPIO base for the
+> pinctrl. Fortunately the driver already assigns a fixed GPIO base, in
+> samsung_gpiolib_register, and uses the same calculation it does for
+> the pin_base. Meaning the two will always be the same and allowing us
+> to reuse the pinbase and avoid the issue.
+> 
+> Although currently there are no users of GPIO hogs in mainline
+> there are plenty of Samsung based boards that are widely used for
+> development purposes of other hardware. Indeed we hit this issue
+> whilst attaching some additional hardware to an Arndale system.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> ---
+> 
+> Changes since v2:
+>  - Squash in fix to set the GPIO base on the pin_bank.
+> 
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 36 +++++++++++++++----------------
+>  1 file changed, 18 insertions(+), 18 deletions(-)
+> 
 
-Acked-by: Vineet Gupta <vgupta@synopsys.com>   # for arch/arc, arc_timer bits
+Thanks, applied.
+
+Best regards,
+Krzysztof
+
