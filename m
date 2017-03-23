@@ -1,91 +1,43 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH V8 1/3] irq: Add flags to request_percpu_irq function
-Date: Thu, 23 Mar 2017 18:54:52 +0000
-Message-ID: <20170323185449.GA21359@leverpostej>
-References: <1490290924-12958-1-git-send-email-daniel.lezcano@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 1/6] pinctrl: samsung: Ensure that pad retention is
+ disabled on driver init
+Date: Thu, 23 Mar 2017 21:14:30 +0200
+Message-ID: <20170323191430.tdu33hh5ojwffb2e@kozik-lap>
+References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170323080347eucas1p2d0340709543b3ce128281e5a490216d4@eucas1p2.samsung.com>
+ <1490256207-10061-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:32896 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932579AbdCWSzP (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34350 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934993AbdCWTOh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Mar 2017 14:55:15 -0400
+        Thu, 23 Mar 2017 15:14:37 -0400
 Content-Disposition: inline
-In-Reply-To: <1490290924-12958-1-git-send-email-daniel.lezcano@linaro.org>
+In-Reply-To: <1490256207-10061-2-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: tglx@linutronix.de, nicolas.pitre@linaro.org, linux-samsung-soc@vger.kernel.org, vincent.guittot@linaro.org, kernel@stlinux.com, kvm@vger.kernel.org, rafael@kernel.org, peterz@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org, linux-snps-arc@lists.infradead.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org, will.deacon@arm.com, marc.zyngier@arm.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Daniel,
+On Thu, Mar 23, 2017 at 09:03:22AM +0100, Marek Szyprowski wrote:
+> When pin controller device is a part of power domain, there is no guarantee
+> that the power domain was not turned off and then on during boot process
+> before probing of the pin control driver. If it happened, then pin control
+> driver should ensure that pad retention is turned off during its probe call.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
 
-On Thu, Mar 23, 2017 at 06:42:01PM +0100, Daniel Lezcano wrote:
-> In the next changes, we track the interrupts but we discard the timers as
-> that does not make sense. The next interrupt on a timer is predictable.
+Thanks, applied.
 
-Sorry, but I could not parse this. 
+Let it settle for one day so auto-builders will catch up and then I will
+provide a stable tag for Lee (MFD).
 
-[...]
-
-> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-> index 9612b84..0f5ab4a 100644
-> --- a/drivers/perf/arm_pmu.c
-> +++ b/drivers/perf/arm_pmu.c
-> @@ -661,7 +661,7 @@ static int cpu_pmu_request_irq(struct arm_pmu *cpu_pmu, irq_handler_t handler)
->  
->  	irq = platform_get_irq(pmu_device, 0);
->  	if (irq > 0 && irq_is_percpu(irq)) {
-> -		err = request_percpu_irq(irq, handler, "arm-pmu",
-> +		err = request_percpu_irq(irq, 0, handler, "arm-pmu",
->  					 &hw_events->percpu_pmu);
->  		if (err) {
->  			pr_err("unable to request IRQ%d for ARM PMU counters\n",
-
-Please Cc myself and Will Deacon when modifying the arm_pmu driver, as
-per MAINTAINERS. I only spotted this patch by chance.
-
-This conflicts with arm_pmu changes I have queued for v4.12 [1].
-
-So, can we leave the prototype of request_percpu_irq() as-is?
-
-Why not add a new request_percpu_irq_flags() function, and leave
-request_percpu_irq() as a wrapper for that? e.g.
-
-static inline int
-request_percpu_irq(unsigned int irq, irq_handler_t handler,
-		   const char *devname, void __percpu *percpu_dev_id)
-{
-	return request_percpu_irq_flags(irq, handler, devname,
-					percpu_dev_id, 0);
-}
-
-... that would avoid having to touch any non-timer driver for now.
-
-[...]
-
-> -request_percpu_irq(unsigned int irq, irq_handler_t handler,
-> -		   const char *devname, void __percpu *percpu_dev_id);
-> +request_percpu_irq(unsigned int irq, unsigned long flags,
-> +		   irq_handler_t handler,  const char *devname,
-> +		   void __percpu *percpu_dev_id);
->  
-
-Looking at request_irq, the prototype is:
-
-int __must_check
-request_irq(unsigned int irq, irq_handler_t handler,
-	    unsigned long flags, const char *name,
-	    void *dev);
-
-... surely it would be better to share the same argument order? i.e.
-
-int __must_check
-request_percpu_irq(unsigned int irq, irq_handler_t handler,
-		   unsigned long flags, const char *devname,
-		   void __percpu *percpu_dev_id);
-
-Thanks,
-Mark.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm/perf/refactoring
+Best regards,
+Krzysztof
