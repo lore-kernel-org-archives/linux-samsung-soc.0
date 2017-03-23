@@ -1,59 +1,83 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 5/6] mfd: exynos-lpass: Add missing remove() function
-Date: Thu, 23 Mar 2017 09:03:26 +0100
-Message-ID: <1490256207-10061-6-git-send-email-m.szyprowski@samsung.com>
-References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170323080349eucas1p24093d55f6654274e0c0bdf02d477c906@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:36951 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932360AbdCWIEA (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Mar 2017 04:04:00 -0400
-In-reply-to: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v4 0/6] Pad retentions support for Exynos5433
+Date: Thu, 23 Mar 2017 09:03:21 +0100
+Message-ID: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170323080346eucas1p216eec41325d220774ecec05b397e83a6@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Disable device on driver remove and release allocated regmap.
+Hello,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/mfd/exynos-lpass.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+This patchset is a next step to add support for all power domains on
+Exynos5433 SoCs. This patchset contains patches for Exynos pin control
+driver and Exynos LPASS MFD driver, which are needed to make the
+platform ready for adding power domains support.
 
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index be264988bdc9..9dbbedad916f 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -137,6 +137,16 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	return of_platform_populate(dev->of_node, NULL, NULL, dev);
- }
- 
-+static int exynos_lpass_remove(struct platform_device *pdev)
-+{
-+	struct exynos_lpass *lpass = platform_get_drvdata(pdev);
-+
-+	exynos_lpass_disable(lpass);
-+	regmap_exit(lpass->top);
-+
-+	return 0;
-+}
-+
- static int __maybe_unused exynos_lpass_suspend(struct device *dev)
- {
- 	struct exynos_lpass *lpass = dev_get_drvdata(dev);
-@@ -171,6 +181,7 @@ static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
- 		.of_match_table	= exynos_lpass_of_match,
- 	},
- 	.probe	= exynos_lpass_probe,
-+	.remove	= exynos_lpass_remove,
- };
- module_platform_driver(exynos_lpass_driver);
- 
+Patches in this patchset have runtime dependency. They are order in such
+a way to make the changes bisectable (mfd lpass changes should be applied
+after pinctrl patches). Other dependencies mentioned previously in v3 of
+this patchset has been finally merged to v4.11-rc1.
+
+Patches have been rebased on top of linux v4.11-rc3.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Changelog:
+v4:
+- rebased onto v4.11-rc3
+- added missing Acks from Lee Jones and Rob Herring
+
+v3: https://lkml.org/lkml/2017/1/30/358
+- moved adding new PMU register defines to separate patch (requested by
+  Krzysztof Kozlowski)
+- rebased onto Linux next-20170130 (removed "soc: samsung: pmu: Add dummy
+  support for Exynos5433 SoC" and "arm64: dts: exynos: Add clocks to
+  Exynos5433 LPASS module" patches, which are already merged)
+
+v2: https://lkml.org/lkml/2017/1/26/57
+- fixed issues pointed by Krzysztof Kozlowski:
+  1. added more checks to Exynos PMU driver for NULL drvdata
+  2. reused EXYNOS_WAKEUP_FROM_LOWPWR in retention data for Exynos5433
+  3. converted lpass driver to devm_clk_get
+  4. added missing ->remove callback to lpass driver
+
+v1: https://lkml.org/lkml/2017/1/25/214
+- initial version
+
+
+Patch summary:
+
+Marek Szyprowski (6):
+  pinctrl: samsung: Ensure that pad retention is disabled on driver init
+  pinctrl: samsung: Add support for pad retention control for Exynos5433
+    SoCs
+  mfd: exynos-lpass: Remove pad retention control
+  mfd: exynos-lpass: Add support for clocks
+  mfd: exynos-lpass: Add missing remove() function
+  mfd: exynos-lpass: Add runtime PM support
+
+ .../bindings/mfd/samsung,exynos5433-lpass.txt      |  8 ++-
+ drivers/mfd/exynos-lpass.c                         | 48 ++++++++++-------
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 63 ++++++++++++++++++++++
+ include/linux/mfd/syscon/exynos5-pmu.h             |  3 --
+ 4 files changed, 99 insertions(+), 23 deletions(-)
+
 -- 
 1.9.1
