@@ -1,10 +1,9 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 1/6] pinctrl: samsung: Ensure that pad retention is disabled
- on driver init
-Date: Thu, 23 Mar 2017 09:03:22 +0100
-Message-ID: <1490256207-10061-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v4 3/6] mfd: exynos-lpass: Remove pad retention control
+Date: Thu, 23 Mar 2017 09:03:24 +0100
+Message-ID: <1490256207-10061-4-git-send-email-m.szyprowski@samsung.com>
 References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170323080347eucas1p2d0340709543b3ce128281e5a490216d4@eucas1p2.samsung.com>
+ <CGME20170323080348eucas1p29d1fb4eb06e4785d20341be7a374bfb3@eucas1p2.samsung.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
 In-reply-to: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -12,40 +11,109 @@ To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sams
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When pin controller device is a part of power domain, there is no guarantee
-that the power domain was not turned off and then on during boot process
-before probing of the pin control driver. If it happened, then pin control
-driver should ensure that pad retention is turned off during its probe call.
+Pad retention should be controlled from pin control driver, so remove it
+from Exynos LPASS driver. After this change, no more access to PMU regmap
+is needed, so remove also the code for handling PMU regmap.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/mfd/samsung,exynos5433-lpass.txt           |  2 --
+ drivers/mfd/exynos-lpass.c                              | 17 -----------------
+ include/linux/mfd/syscon/exynos5-pmu.h                  |  3 ---
+ 3 files changed, 22 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index f9b49967f512..fa8bdd9ae198 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -777,6 +777,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- {
- 	struct samsung_retention_ctrl *ctrl;
- 	struct regmap *pmu_regs;
-+	int i;
+diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+index c110e118b79f..a8deaee82c44 100644
+--- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
++++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+@@ -5,7 +5,6 @@ Required properties:
+  - compatible		: "samsung,exynos5433-lpass"
+  - reg			: should contain the LPASS top SFR region location
+ 			  and size
+- - samsung,pmu-syscon	: the phandle to the Power Management Unit node
+  - #address-cells	: should be 1
+  - #size-cells		: should be 1
+  - ranges		: must be present
+@@ -25,7 +24,6 @@ Example:
+ audio-subsystem {
+ 	compatible = "samsung,exynos5433-lpass";
+ 	reg = <0x11400000 0x100>, <0x11500000 0x08>;
+-	samsung,pmu-syscon = <&pmu_system_controller>;
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 	ranges;
+diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
+index 2e064fb8826f..17915daa2e80 100644
+--- a/drivers/mfd/exynos-lpass.c
++++ b/drivers/mfd/exynos-lpass.c
+@@ -18,7 +18,6 @@
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/mfd/syscon.h>
+-#include <linux/mfd/syscon/exynos5-pmu.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+@@ -51,8 +50,6 @@
+ #define  LPASS_INTR_SFR			BIT(0)
  
- 	ctrl = devm_kzalloc(drvdata->dev, sizeof(*ctrl), GFP_KERNEL);
- 	if (!ctrl)
-@@ -794,6 +795,10 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- 	ctrl->enable = exynos_retention_enable;
- 	ctrl->disable = exynos_retention_disable;
+ struct exynos_lpass {
+-	/* pointer to the Power Management Unit regmap */
+-	struct regmap *pmu;
+ 	/* pointer to the LPASS TOP regmap */
+ 	struct regmap *top;
+ };
+@@ -81,10 +78,6 @@ static void exynos_lpass_enable(struct exynos_lpass *lpass)
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK,
+ 		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S);
  
-+	/* Ensure that retention is disabled on driver init */
-+	for (i = 0; i < ctrl->nr_regs; i++)
-+		regmap_write(pmu_regs, ctrl->regs[i], ctrl->value);
-+
- 	return ctrl;
+-	/* Activate related PADs from retention state */
+-	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION,
+-		     EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR);
+-
+ 	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
+ 	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
+ 	exynos_lpass_core_sw_reset(lpass, LPASS_MEM_SW_RESET);
+@@ -95,9 +88,6 @@ static void exynos_lpass_disable(struct exynos_lpass *lpass)
+ 	/* Mask any unmasked IP interrupt sources */
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK, 0);
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK, 0);
+-
+-	/* Deactivate related PADs from retention state */
+-	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION, 0);
  }
  
+ static const struct regmap_config exynos_lpass_reg_conf = {
+@@ -131,13 +121,6 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+ 		return PTR_ERR(lpass->top);
+ 	}
+ 
+-	lpass->pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
+-						"samsung,pmu-syscon");
+-	if (IS_ERR(lpass->pmu)) {
+-		dev_err(dev, "Failed to lookup PMU regmap\n");
+-		return PTR_ERR(lpass->pmu);
+-	}
+-
+ 	platform_set_drvdata(pdev, lpass);
+ 	exynos_lpass_enable(lpass);
+ 
+diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
+index c28ff21ca4d2..0622ae86f9db 100644
+--- a/include/linux/mfd/syscon/exynos5-pmu.h
++++ b/include/linux/mfd/syscon/exynos5-pmu.h
+@@ -46,7 +46,4 @@
+ #define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
+ #define EXYNOS5_MIPI_PHY_M_RESETN		BIT(2)
+ 
+-#define EXYNOS5433_PAD_RETENTION_AUD_OPTION		(0x3028)
+-#define EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR	BIT(28)
+-
+ #endif /* _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_ */
 -- 
 1.9.1
 
