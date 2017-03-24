@@ -1,45 +1,66 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/3] ARM: multi_v7_defconfig: Enable Exynos RNG and user-space crypto API
-Date: Fri, 24 Mar 2017 17:24:46 +0300
-Message-ID: <20170324142446.31129-4-krzk@kernel.org>
-References: <20170324142446.31129-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:55734 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936240AbdCXOZt (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 10:25:49 -0400
-In-Reply-To: <20170324142446.31129-1-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+Subject: Re: [PATCH 1/3] crypto: hw_random - Add new Exynos RNG driver
+Date: Fri, 24 Mar 2017 15:37:59 +0100
+Message-ID: <2503592.nlbQnVP8UR@positron.chronox.de>
+References: <20170324142446.31129-1-krzk@kernel.org> <20170324142446.31129-2-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <20170324142446.31129-2-krzk@kernel.org>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <krzk@kernel.org>
 
-Enable the new Exynos pseudo random number generator driver and
-user-space API to access crypto algorithms and devices (not only RNG).
+Am Freitag, 24. März 2017, 15:24:44 CET schrieb Krzysztof Kozlowski:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/configs/multi_v7_defconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+Hi Krzysztof,
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 36c1b39cfb54..9bc1bd7f2afa 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -935,7 +935,13 @@ CONFIG_CPUFREQ_DT=y
- CONFIG_KEYSTONE_IRQ=y
- CONFIG_HW_RANDOM=y
- CONFIG_HW_RANDOM_ST=y
-+CONFIG_CRYPTO_USER=m
-+CONFIG_CRYPTO_USER_API_HASH=m
-+CONFIG_CRYPTO_USER_API_SKCIPHER=m
-+CONFIG_CRYPTO_USER_API_RNG=m
-+CONFIG_CRYPTO_USER_API_AEAD=m
- CONFIG_CRYPTO_DEV_MARVELL_CESA=m
-+CONFIG_CRYPTO_DEV_EXYNOS_RNG=m
- CONFIG_CRYPTO_DEV_S5P=m
- CONFIG_CRYPTO_DEV_SUN4I_SS=m
- CONFIG_CRYPTO_DEV_ROCKCHIP=m
--- 
-2.9.3
+> +
+> +static int exynos_rng_set_seed(struct exynos_rng_dev *rng,
+> +			       const u8 *seed, unsigned int slen)
+> +{
+> +	int ret, i;
+> +	u32 val;
+> +
+> +	dev_dbg(rng->dev, "Seeding with %u bytes\n", slen);
+> +
+> +	ret = clk_prepare_enable(rng->clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (slen < EXYNOS_RNG_SEED_SIZE) {
+> +		dev_warn(rng->dev, "Seed too short (only %u bytes)\n", slen);
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	for (i = 0 ; i < EXYNOS_RNG_SEED_REGS ; i++) {
+> +		val = seed[i * 4] << 24;
+> +		val |= seed[i * 4 + 1] << 16;
+> +		val |= seed[i * 4 + 2] << 8;
+> +		val |= seed[i * 4 + 3] << 0;
+> +
+> +		exynos_rng_writel(rng, val, EXYNOS_RNG_SEED(i));
+> +	}
+> +
+> +	val = exynos_rng_readl(rng, EXYNOS_RNG_STATUS);
+> +	if (!(val & EXYNOS_RNG_STATUS_SEED_SETTING_DONE)) {
+> +		dev_warn(rng->dev, "Seed setting not finished\n");
+> +		ret = -EIO;
+> +		goto out;
+> +	}
+> +
+> +	ret = 0;
+> +	/* Save seed for suspend */
+> +	memcpy(rng->seed_save, seed, slen);
+
+Is this really necessary? If you need to save some seed, shouldn't that be an 
+output of the DRNG and not the real seed?
+
+Besides, how do you know that slen is not larger than EXYNOS_RNG_SEED_SIZE?
+
+
+Ciao
+Stephan
