@@ -1,48 +1,77 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/3] crypto: hw_random - Add new Exynos RNG driver
-Date: Fri, 24 Mar 2017 20:01:48 +0300
-Message-ID: <20170324170148.ew7ozpt5jfwdx5yn@kozik-lap>
-References: <20170324142446.31129-1-krzk@kernel.org>
- <9265537.P6AeF50kg8@amdc3058>
- <20170324161934.kc6g36nazr3y32kp@kozik-lap>
- <CGME20170324164544epcas1p353b2eba5ecb6d5f7a69049c5ba9d667e@epcas1p3.samsung.com>
- <87677624.EBdhaJY1KM@amdc3058>
+Subject: [PATCH v2 0/3] crypto: hw_random - Add new Exynos RNG driver
+Date: Fri, 24 Mar 2017 21:26:03 +0300
+Message-ID: <20170324182606.23339-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <87677624.EBdhaJY1KM@amdc3058>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Olof Johansson <olof@lixom.net>, "David S. Miller" <davem@davemloft.net>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, =?UTF-8?q?Stephan=20M=C3=BCller?= <smueller@chronox.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 24, 2017 at 05:45:41PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> > > > And I think the probe might be called twice, for example in case of
-> > > > mistake in DTB.
-> > > 
-> > > Even if this is possible resource allocation code in the driver will
-> > > take take care of handling it just fine,
-> > 
-> > Indeed, the devm_ioremap_resource() solves the case. I can drop the
-> > check then.
-> 
-> Looking on this a bit more it seems that devm_ioremap_resource() will
-> not cover all mistakes (using compatible by mistake in some other DTB
-> node).
-> 
-> Leave the check, I take my objection back.
+Hi,
 
-Great! Thanks for feedback.
+
+This is a follow up of my questions around exynos-rng [1].
+
+Changes since v1:
+=================
+1. Re-work the code for seeding after system resume, following suggestions
+   and review by Stephan Müller.
+   The resume path was not tested.
+
+2. Re-seed itself from time to time (every 100 ms), suggested by Stephan
+   Müller.
+
+3. Use a define for retries (Bartlomiej Zolnierkiewicz).
+4. Add some docs.
+
+
+Description:
+============
+The existing exynos-rng has many issues.  The most important one is that
+it is a pseudo RNG device but uses hw_random interface which does not allow
+proper seeding.
+
+The RNG module on Exynos4 requires seeding.  On newer SoCs (like Exynos5420)
+it can seed itself from a true RNG.  Converting the existing driver
+to use TRNG would effectively drop support for Exynos4 and break
+compatibility with existing users.
+
+Instead I decided to convert it to crypto API.  In the future I hope
+to add support for seeding from TRNG module.
+
+Tested with app [2].
+
+Patches are independent. I will take the defconfig changes (2/3 and 3/3)
+through samsung-soc tree.
 
 Best regards,
 Krzysztof
+
+[1] https://www.spinics.net/lists/arm-kernel/msg569641.html
+[2] https://www.spinics.net/lists/arm-kernel/msg571184.html
+
+
+Krzysztof Kozlowski (3):
+  crypto: hw_random - Add new Exynos RNG driver
+  ARM: exynos_defconfig: Enable Exynos RNG and user-space crypto API
+  ARM: multi_v7_defconfig: Enable Exynos RNG and user-space crypto API
+
+ MAINTAINERS                         |   8 +
+ arch/arm/configs/exynos_defconfig   |   6 +
+ arch/arm/configs/multi_v7_defconfig |   6 +
+ drivers/char/hw_random/Kconfig      |  14 --
+ drivers/char/hw_random/Makefile     |   1 -
+ drivers/char/hw_random/exynos-rng.c | 231 ---------------------
+ drivers/crypto/Kconfig              |  15 ++
+ drivers/crypto/Makefile             |   1 +
+ drivers/crypto/exynos-rng.c         | 392 ++++++++++++++++++++++++++++++++++++
+ 9 files changed, 428 insertions(+), 246 deletions(-)
+ delete mode 100644 drivers/char/hw_random/exynos-rng.c
+ create mode 100644 drivers/crypto/exynos-rng.c
+
+-- 
+2.9.3
