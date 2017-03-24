@@ -1,73 +1,57 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] iommu/exynos: Use smarter TLB flush method for v5 SYSMMU
-Date: Fri, 24 Mar 2017 10:19:01 +0100
-Message-ID: <1490347141-17980-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170324091908eucas1p1afc5e0375908fd2e620b119eeb089cad@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:26340 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934719AbdCXJTN (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 05:19:13 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ONB00HNTB7XOD60@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 24 Mar 2017 09:19:09 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 0/3] crypto: hw_random - Add new Exynos RNG driver
+Date: Fri, 24 Mar 2017 17:24:43 +0300
+Message-ID: <20170324142446.31129-1-krzk@kernel.org>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>, Krzysztof Kozlowski <krzk@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-SYSMMU v5 has dedicated registers to perform TLB flush range operation,
-so use them instead of looping with FLUSH_ENTRY command.
+Hi,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/iommu/exynos-iommu.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+This is a follow up of my questions around exynos-rng [1].
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index c01bfcdb2383..48b5dabd06ce 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -171,6 +171,9 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
- #define REG_V5_PT_BASE_PFN	0x00C
- #define REG_V5_MMU_FLUSH_ALL	0x010
- #define REG_V5_MMU_FLUSH_ENTRY	0x014
-+#define REG_V5_MMU_FLUSH_RANGE	0x018
-+#define REG_V5_MMU_FLUSH_START	0x020
-+#define REG_V5_MMU_FLUSH_END	0x024
- #define REG_V5_INT_STATUS	0x060
- #define REG_V5_INT_CLEAR	0x064
- #define REG_V5_FAULT_AR_VA	0x070
-@@ -319,14 +322,23 @@ static void __sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
- {
- 	unsigned int i;
- 
--	for (i = 0; i < num_inv; i++) {
--		if (MMU_MAJ_VER(data->version) < 5)
-+	if (MMU_MAJ_VER(data->version) < 5) {
-+		for (i = 0; i < num_inv; i++) {
- 			writel((iova & SPAGE_MASK) | 1,
- 				     data->sfrbase + REG_MMU_FLUSH_ENTRY);
--		else
-+			iova += SPAGE_SIZE;
-+		}
-+	} else {
-+		if (num_inv == 1) {
- 			writel((iova & SPAGE_MASK) | 1,
- 				     data->sfrbase + REG_V5_MMU_FLUSH_ENTRY);
--		iova += SPAGE_SIZE;
-+		} else {
-+			writel((iova & SPAGE_MASK),
-+				     data->sfrbase + REG_V5_MMU_FLUSH_START);
-+			writel((iova & SPAGE_MASK) + (num_inv - 1) * SPAGE_SIZE,
-+				     data->sfrbase + REG_V5_MMU_FLUSH_END);
-+			writel(1, data->sfrbase + REG_V5_MMU_FLUSH_RANGE);
-+		}
- 	}
- }
- 
+The existing exynos-rng has many issues.  The most important one is that
+it is a pseudo RNG device but uses hw_random interface which does not allow
+proper seeding.
+
+The RNG module on Exynos4 requires seeding.  On newer SoCs (like Exynos5420)
+it can seed itself from a true RNG.  Converting the existing driver
+to use TRNG would effectively drop support for Exynos4 and break
+compatibility with existing users.
+
+Instead I decided to convert it to crypto API.  In the future I hope
+to add support for seeding from TRNG module.
+
+Tested with app [2].
+
+Patches are independent. I will take the defconfig changes (2/3 and 3/3)
+through samsung-soc tree.
+
+Best regards,
+Krzysztof
+
+[1] https://www.spinics.net/lists/arm-kernel/msg569641.html
+[2] https://www.spinics.net/lists/arm-kernel/msg571184.html
+
+Krzysztof Kozlowski (3):
+  crypto: hw_random - Add new Exynos RNG driver
+  ARM: exynos_defconfig: Enable Exynos RNG and user-space crypto API
+  ARM: multi_v7_defconfig: Enable Exynos RNG and user-space crypto API
+
+ MAINTAINERS                         |   8 +
+ arch/arm/configs/exynos_defconfig   |   6 +
+ arch/arm/configs/multi_v7_defconfig |   6 +
+ drivers/char/hw_random/Kconfig      |  14 --
+ drivers/char/hw_random/Makefile     |   1 -
+ drivers/char/hw_random/exynos-rng.c | 231 ---------------------------
+ drivers/crypto/Kconfig              |  15 ++
+ drivers/crypto/Makefile             |   1 +
+ drivers/crypto/exynos-rng.c         | 306 ++++++++++++++++++++++++++++++++++++
+ 9 files changed, 342 insertions(+), 246 deletions(-)
+ delete mode 100644 drivers/char/hw_random/exynos-rng.c
+ create mode 100644 drivers/crypto/exynos-rng.c
+
 -- 
-1.9.1
+2.9.3
