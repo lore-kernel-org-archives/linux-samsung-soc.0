@@ -1,92 +1,56 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/2] serial: samsung: Add missing checks for
- dma_map_single failure
-Date: Thu, 23 Mar 2017 22:04:13 +0200
-Message-ID: <20170323200413.3tfu6f73jcu5gzy3@kozik-lap>
-References: <1490270519-4046-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170323120213eucas1p2f288fa4f85c8d0db098d3ca2bf378b34@eucas1p2.samsung.com>
- <1490270519-4046-2-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] iommu/exynos: Don't open-code loop unrolling
+Date: Fri, 24 Mar 2017 10:18:44 +0100
+Message-ID: <1490347124-17937-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170324091857eucas1p1e7980473922826b7dba5f043be168e6a@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34276 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751355AbdCWUEU (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Mar 2017 16:04:20 -0400
-Content-Disposition: inline
-In-Reply-To: <1490270519-4046-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, stable@vger.kernel.org
 
-On Thu, Mar 23, 2017 at 01:01:53PM +0100, Marek Szyprowski wrote:
-> This patch adds missing checks for dma_map_single() failure and proper error
-> reporting. While touching this part of the code, it also removes unnecessary
-> spinlock calls around dma_map_single() for TX buffer. This finally solves all
-> the issues reported by DMA API debug framework.
-> 
-> Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-> Fixes: 62c37eedb74c8 ("serial: samsung: add dma reqest/release functions")
-> CC: stable@vger.kernel.org # v4.10+
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-> This issue was there since adding DMA support, but this patch applies cleanly
-> only to v4.10+ kernels due to other changes in the surrounding code.
-> 
-> v2:
-> - fixed commit id in 'fixes' tag, added 'reviewed-by' tag
-> ---
->  drivers/tty/serial/samsung.c | 35 ++++++++++++++++++++++++-----------
->  1 file changed, 24 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-> index 9f3759bdb44f..8aca18c4cdea 100644
-> --- a/drivers/tty/serial/samsung.c
-> +++ b/drivers/tty/serial/samsung.c
-> @@ -859,7 +859,7 @@ static void s3c24xx_serial_break_ctl(struct uart_port *port, int break_state)
->  static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
->  {
->  	struct s3c24xx_uart_dma	*dma = p->dma;
-> -	unsigned long flags;
-> +	int ret;
->  
->  	/* Default slave configuration parameters */
->  	dma->rx_conf.direction		= DMA_DEV_TO_MEM;
-> @@ -884,8 +884,8 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
->  
->  	dma->tx_chan = dma_request_chan(p->port.dev, "tx");
->  	if (IS_ERR(dma->tx_chan)) {
-> -		dma_release_channel(dma->rx_chan);
-> -		return PTR_ERR(dma->tx_chan);
-> +		ret = PTR_ERR(dma->tx_chan);
-> +		goto err_release_rx;
->  	}
->  
->  	dmaengine_slave_config(dma->tx_chan, &dma->tx_conf);
-> @@ -894,25 +894,38 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
->  	dma->rx_size = PAGE_SIZE;
->  
->  	dma->rx_buf = kmalloc(dma->rx_size, GFP_KERNEL);
-> -
->  	if (!dma->rx_buf) {
-> -		dma_release_channel(dma->rx_chan);
-> -		dma_release_channel(dma->tx_chan);
-> -		return -ENOMEM;
-> +		ret = -ENOMEM;
-> +		goto err_release_tx;
->  	}
->  
->  	dma->rx_addr = dma_map_single(p->port.dev, dma->rx_buf,
->  				dma->rx_size, DMA_FROM_DEVICE);
-> -
-> -	spin_lock_irqsave(&p->port.lock, flags);
+IOMMU domain allocation is not performance critical operation, so remove
+hand made optimisation of unrolled initialization loop and leave this to
+the compiler.
 
-Error paths look fine but how about splitting spinlock removal out of
-this patch?  Logically they are two different changes and unrelated code
-should not be backported.
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/iommu/exynos-iommu.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 48b5dabd06ce..2395478dde75 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -759,16 +759,8 @@ static struct iommu_domain *exynos_iommu_domain_alloc(unsigned type)
+ 		goto err_counter;
+ 
+ 	/* Workaround for System MMU v3.3 to prevent caching 1MiB mapping */
+-	for (i = 0; i < NUM_LV1ENTRIES; i += 8) {
+-		domain->pgtable[i + 0] = ZERO_LV2LINK;
+-		domain->pgtable[i + 1] = ZERO_LV2LINK;
+-		domain->pgtable[i + 2] = ZERO_LV2LINK;
+-		domain->pgtable[i + 3] = ZERO_LV2LINK;
+-		domain->pgtable[i + 4] = ZERO_LV2LINK;
+-		domain->pgtable[i + 5] = ZERO_LV2LINK;
+-		domain->pgtable[i + 6] = ZERO_LV2LINK;
+-		domain->pgtable[i + 7] = ZERO_LV2LINK;
+-	}
++	for (i = 0; i < NUM_LV1ENTRIES; i++)
++		domain->pgtable[i] = ZERO_LV2LINK;
+ 
+ 	handle = dma_map_single(dma_dev, domain->pgtable, LV1TABLE_SIZE,
+ 				DMA_TO_DEVICE);
+-- 
+1.9.1
