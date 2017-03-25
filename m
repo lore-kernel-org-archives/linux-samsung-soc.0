@@ -1,58 +1,43 @@
-From: Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
-Subject: Re: [PATCH v2 1/3] crypto: hw_random - Add new Exynos RNG driver
-Date: Fri, 24 Mar 2017 21:41:59 +0100
-Message-ID: <4248691.8fGIDmasva@tauon.atsec.com>
-References: <20170324182606.23339-1-krzk@kernel.org> <20170324182606.23339-2-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 0/7] dwc3 - bug fixes and use meaningful goto labels
+Date: Fri, 24 Mar 2017 18:04:58 -0600
+Message-ID: <cover.1490387086.git.shuahkh@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.eperm.de ([89.247.134.16]:58360 "EHLO mail.eperm.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965355AbdCXUmn (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:58292
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753554AbdCYAFL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 16:42:43 -0400
-In-Reply-To: <20170324182606.23339-2-krzk@kernel.org>
+        Fri, 24 Mar 2017 20:05:11 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+To: balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
-Am Freitag, 24. März 2017, 19:26:04 CET schrieb Krzysztof Kozlowski:
+This patch series consists of two fixes and changes to goto labels
+to use meaningful names.
 
-Hi Krzysztof,
-
-> +static unsigned int exynos_rng_copy_random(struct exynos_rng_dev *rng,
-> +					   u8 *dst, unsigned int dlen)
-> +{
-> +	unsigned int cnt = 0;
-> +	int i, j;
-> +	u32 val;
-> +
-> +	for (j = 0; j < EXYNOS_RNG_SEED_REGS; j++) {
-> +		val = exynos_rng_readl(rng, EXYNOS_RNG_OUT(j));
-> +
-> +		for (i = 0; i < 4; i++) {
-> +			dst[cnt] = val & 0xff;
-> +			val >>= 8;
-> +			if (++cnt >= dlen)
-> +				return cnt;
-> +		}
-> +		rng->seed_save[j] = val;
-
-Just to clarify: is this call right? Shouldn't that be removed? Any RNG that 
-is given to a caller is tainted and should not serve as seed.
-> +	}
-> +
-> +	/*
-> +	 * Engine filled all output registers, so read the remaining registers
-> +	 * for storing data as future seed.
-> +	 */
-> +	for (; j < EXYNOS_RNG_SEED_REGS; j++)
-> +		rng->seed_save[j] = exynos_rng_readl(rng, EXYNOS_RNG_OUT(j));
-
-With this call, I guess the questioned line above could go away, right?
+While working on goto label changes, I noticed  put_sync calls without
+successful get_sync in error legs.  The first two patches are the fixes
+and the rest of the patches are goto label changes.
 
 
-Ciao
-Stephan
+Shuah Khan (7):
+  usb: dwc3: core: fix dwc3_probe() to not do put_sync when get_sync
+    fails
+  usb: dwc3: dwc3-omap: fix dwc3_omap_probe() do put_sync when get_sync
+    works
+  usb: dwc3: core: change goto labels to meaningful names
+  usb: dwc3: exynos: change goto labels in this file to meaningful names
+  usb: dwc3: omap: change goto labels in this file to meaningful names
+  usb: dwc3: gadget: change goto labels in this file to meaningful names
+  usb: dwc3: host: change goto labels in this file to meaningful names
+
+ drivers/usb/dwc3/core.c        | 64 +++++++++++++++++++++---------------------
+ drivers/usb/dwc3/dwc3-exynos.c | 16 +++++------
+ drivers/usb/dwc3/dwc3-omap.c   | 11 ++++----
+ drivers/usb/dwc3/gadget.c      | 56 ++++++++++++++++++------------------
+ drivers/usb/dwc3/host.c        | 10 +++----
+ 5 files changed, 79 insertions(+), 78 deletions(-)
+
+-- 
+2.7.4
