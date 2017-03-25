@@ -1,34 +1,101 @@
-From: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/7] usb: dwc3: dwc3-omap: fix dwc3_omap_probe() do put_sync when get_sync works
-Date: Sat, 25 Mar 2017 09:53:17 +0200
-Message-ID: <87k27d23o2.fsf@linux.intel.com>
-References: <cover.1490387086.git.shuahkh@osg.samsung.com> <a7d3539cdb21ef9694869f97a357ce40ace0ddd3.1490387086.git.shuahkh@osg.samsung.com>
+From: Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+Subject: Re: [PATCH v2 1/3] crypto: hw_random - Add new Exynos RNG driver
+Date: Sat, 25 Mar 2017 13:48:35 +0100
+Message-ID: <2198038.IahjPeE5Ux@positron.chronox.de>
+References: <20170324182606.23339-1-krzk@kernel.org>
+ <4248691.8fGIDmasva@tauon.atsec.com>
+ <20170325073648.cbphcouvi6trmhcj@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a7d3539cdb21ef9694869f97a357ce40ace0ddd3.1490387086.git.shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org
-Cc: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170325073648.cbphcouvi6trmhcj@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Olof Johansson <olof@lixom.net>, "David S. Miller" <davem@davemloft.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Am Samstag, 25. M=E4rz 2017, 08:36:48 CET schrieb Krzysztof Kozlowski:
 
-Hi,
+Hi Krzysztof,
 
-Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org> writes:
-> dwc3_omap_probe() does pm_runtime_put_sync() in its err1 handling when
-> pm_runtime_get_sync() fails.  Fix it to do put_sync only when get_sync
-> succeeds.
->
-> Signed-off-by: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> On Fri, Mar 24, 2017 at 09:41:59PM +0100, Stephan M=FCller wrote:
+> > Am Freitag, 24. M=E4rz 2017, 19:26:04 CET schrieb Krzysztof Kozlowski:
+> > =
 
-sorry, not taking any of these pointless patches. There's nothing wrong
-with the goto labels, there's nothing wrong with the error path in any
-of these drivers.
+> > Hi Krzysztof,
+> > =
 
--- 
-balbi
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > > +static unsigned int exynos_rng_copy_random(struct exynos_rng_dev *rn=
+g,
+> > > +					   u8 *dst, unsigned int dlen)
+> > > +{
+> > > +	unsigned int cnt =3D 0;
+> > > +	int i, j;
+> > > +	u32 val;
+> > > +
+> > > +	for (j =3D 0; j < EXYNOS_RNG_SEED_REGS; j++) {
+> > > +		val =3D exynos_rng_readl(rng, EXYNOS_RNG_OUT(j));
+> > > +
+> > > +		for (i =3D 0; i < 4; i++) {
+> > > +			dst[cnt] =3D val & 0xff;
+> > > +			val >>=3D 8;
+> > > +			if (++cnt >=3D dlen)
+> > > +				return cnt;
+> > > +		}
+> > > +		rng->seed_save[j] =3D val;
+> > =
+
+> > Just to clarify: is this call right? Shouldn't that be removed? Any RNG
+> > that is given to a caller is tainted and should not serve as seed.
+> =
+
+> In that case I could either re-use RNGs not passed to the caller (like
+> in the block quoted below) or generate another round of them just for
+> purpose of next seeding.
+> =
+
+> With the first approach the problem is that I might wait for such unused
+> numbers pretty long. If user is requesting large amount of data, then I
+> will always give him all five output numbers. I will not have unused
+> numbers.
+> =
+
+> The second approach seems safe, but requires additional engine run which
+> will slow down some of the generate() calls.
+
+Random numbers should never be used twice.
+> =
+
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * Engine filled all output registers, so read the remaining regist=
+ers
+> > > +	 * for storing data as future seed.
+> > > +	 */
+> > > +	for (; j < EXYNOS_RNG_SEED_REGS; j++)
+> > > +		rng->seed_save[j] =3D exynos_rng_readl(rng, EXYNOS_RNG_OUT(j));
+> > =
+
+> > With this call, I guess the questioned line above could go away, right?
+> =
+
+> This is used in combination with the previous line so I will get five
+> seeds (for five registers).
+> =
+
+> Best regards,
+> Krzysztof
+
+
+Ciao
+Stephan
