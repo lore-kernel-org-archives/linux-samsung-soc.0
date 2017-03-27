@@ -1,48 +1,41 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/exynos: Properly release default ARM DMA-IOMMU mapping
-Date: Mon, 27 Mar 2017 10:04:32 +0200
-Message-ID: <1490601872-17369-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170327080438eucas1p28a1a20c1bfeafc037fe26d94639044a9@eucas1p2.samsung.com>
+From: Andrew Jones <drjones@redhat.com>
+Subject: Re: [PATCH V8 1/3] irq: Add flags to request_percpu_irq function
+Date: Mon, 27 Mar 2017 10:44:42 +0200
+Message-ID: <20170327084442.xdosrvdzh2pvn7xa@kamzik.brq.redhat.com>
+References: <1490290924-12958-1-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <kvmarm-bounces@lists.cs.columbia.edu>
+Content-Disposition: inline
+In-Reply-To: <1490290924-12958-1-git-send-email-daniel.lezcano@linaro.org>
+List-Unsubscribe: <https://lists.cs.columbia.edu/mailman/options/kvmarm>,
+ <mailto:kvmarm-request@lists.cs.columbia.edu?subject=unsubscribe>
+List-Archive: <https://lists.cs.columbia.edu/pipermail/kvmarm>
+List-Post: <mailto:kvmarm@lists.cs.columbia.edu>
+List-Help: <mailto:kvmarm-request@lists.cs.columbia.edu?subject=help>
+List-Subscribe: <https://lists.cs.columbia.edu/mailman/listinfo/kvmarm>,
+ <mailto:kvmarm-request@lists.cs.columbia.edu?subject=subscribe>
+Errors-To: kvmarm-bounces@lists.cs.columbia.edu
+Sender: kvmarm-bounces@lists.cs.columbia.edu
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: nicolas.pitre@linaro.org, linux-samsung-soc@vger.kernel.org, vincent.guittot@linaro.org, kernel@stlinux.com, kvm@vger.kernel.org, rafael@kernel.org, peterz@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org, tglx@linutronix.de, linux-snps-arc@lists.infradead.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RXh5bm9zIERSTSBvbiBBUk0gYXJjaGl0ZWN0dXJlIGNyZWF0ZXMgaXRzIG93biBETUEtSU9NTVUg
-bWFwcGluZywgc2hhcmVkCmJldHdlZW4gYWxsIGRldmljZXMgdGhhdCBidWlsZHMgdGhlIEV4eW5v
-cyBEUk0gc3Vic3lzdGVtLiBUaHVzLCB0aGUKZGVmYXVsdCBETUEtSU9NTVUgbWFwcGluZyBzdHJ1
-Y3R1cmUgY3JlYXRlZCBieSBwbGF0Zm9ybSBpbml0IGNvZGUgY2FuIGJlCnJlbGVhc2VkIHRvIGF2
-b2lkIGxlYWtpbmcgcmVzb3VyY2VzLCBiZWNhdXNlIGFmdGVyIGV4eW5vc19pb21tdV9hdHRhY2go
-KQp0aGUgZGVmYXVsdCBtYXBwaW5nIGlzIG5vIGxvbmdlciBhY2Nlc3NpYmxlLgoKUmVwb3J0ZWQt
-Ynk6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6
-IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faW9tbXUuaCB8IDcgKysrKysrLQogMSBmaWxlIGNo
-YW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5oIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2lvbW11LmgKaW5kZXggODdmNmI1NjcyZTExLi43YTQ1Mjg0NjFiYmEg
-MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5oCisr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5oCkBAIC0zNyw4ICsz
-NywxMyBAQCBzdGF0aWMgaW5saW5lIGludCBfX2V4eW5vc19pb21tdV9jcmVhdGVfbWFwcGluZyhz
-dHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpwcml2LAogc3RhdGljIGlubGluZSBpbnQgX19leHlu
-b3NfaW9tbXVfYXR0YWNoKHN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKnByaXYsCiAJCQkJCXN0
-cnVjdCBkZXZpY2UgKmRldikKIHsKLQlpZiAoZGV2LT5hcmNoZGF0YS5tYXBwaW5nKQorCXN0cnVj
-dCBkbWFfaW9tbXVfbWFwcGluZyAqbWFwcGluZyA9IHRvX2RtYV9pb21tdV9tYXBwaW5nKGRldik7
-CisKKwkvKiByZWxlYXNlIGRldmljZSBmcm9tIHRoZSBkZWZhdWx0IERNQS1JT01NVSBtYXBwaW5n
-ICovCisJaWYgKG1hcHBpbmcpIHsKIAkJYXJtX2lvbW11X2RldGFjaF9kZXZpY2UoZGV2KTsKKwkJ
-YXJtX2lvbW11X3JlbGVhc2VfbWFwcGluZyhtYXBwaW5nKTsKKwl9CiAKIAlyZXR1cm4gYXJtX2lv
-bW11X2F0dGFjaF9kZXZpY2UoZGV2LCBwcml2LT5tYXBwaW5nKTsKIH0KLS0gCjEuOS4xCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Thu, Mar 23, 2017 at 06:42:01PM +0100, Daniel Lezcano wrote:
+> diff --git a/drivers/clocksource/timer-nps.c b/drivers/clocksource/timer-nps.c
+> index da1f798..dbdb622 100644
+> --- a/drivers/clocksource/timer-nps.c
+> +++ b/drivers/clocksource/timer-nps.c
+> @@ -256,7 +256,7 @@ static int __init nps_setup_clockevent(struct device_node *node)
+>  		return ret;
+>  
+>  	/* Needs apriori irq_set_percpu_devid() done in intc map function */
+> -	ret = request_percpu_irq(nps_timer0_irq, timer_irq_handler,
+> +	ret = request_percpu_irq(nps_timer0_irq, timer_irq_handler, IRQF_TIMER,
+>  				 "Timer0 (per-cpu-tick)",
+>  				 &nps_clockevent_device);
+
+Wrong parameter order here.
+
+drew
