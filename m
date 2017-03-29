@@ -1,82 +1,321 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv5 08/11] sti: hdmi: add CEC notifier support
-Date: Wed, 29 Mar 2017 16:15:40 +0200
-Message-ID: <20170329141543.32935-9-hverkuil@xs4all.nl>
+Subject: [PATCHv5 02/11] media: add CEC notifier support
+Date: Wed, 29 Mar 2017 16:15:34 +0200
+Message-ID: <20170329141543.32935-3-hverkuil@xs4all.nl>
 References: <20170329141543.32935-1-hverkuil@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:48635 "EHLO
+        lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752133AbdC2OPt (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 29 Mar 2017 10:15:49 -0400
 In-Reply-To: <20170329141543.32935-1-hverkuil@xs4all.nl>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
 
-RnJvbTogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWduYXJkQGxpbmFyby5vcmc+CgpJ
-bXBsZW1lbnQgdGhlIENFQyBub3RpZmllciBzdXBwb3J0IHRvIGFsbG93IENFQyBkcml2ZXJzIHRv
-CmJlIGluZm9ybWVkIHdoZW4gdGhlcmUgaXMgYSBuZXcgcGh5c2ljYWwgYWRkcmVzcy4KClNpZ25l
-ZC1vZmYtYnk6IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3Jn
-PgpTaWduZWQtb2ZmLWJ5OiBIYW5zIFZlcmt1aWwgPGhhbnMudmVya3VpbEBjaXNjby5jb20+Ci0t
-LQogZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jIHwgMTEgKysrKysrKysrKysKIGRyaXZl
-cnMvZ3B1L2RybS9zdGkvc3RpX2hkbWkuaCB8ICAzICsrKwogMiBmaWxlcyBjaGFuZ2VkLCAxNCBp
-bnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5j
-IGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jCmluZGV4IGNlMmRjYmE2NzlkNS4uMzQ1
-ZDM2MzFjZjUwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMKKysr
-IGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jCkBAIC03NzEsNiArNzcxLDggQEAgc3Rh
-dGljIHZvaWQgc3RpX2hkbWlfZGlzYWJsZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQogCWNs
-a19kaXNhYmxlX3VucHJlcGFyZShoZG1pLT5jbGtfcGl4KTsKIAogCWhkbWktPmVuYWJsZWQgPSBm
-YWxzZTsKKworCWNlY19ub3RpZmllcl9zZXRfcGh5c19hZGRyKGhkbWktPm5vdGlmaWVyLCBDRUNf
-UEhZU19BRERSX0lOVkFMSUQpOwogfQogCiAvKioKQEAgLTk3Myw2ICs5NzUsNyBAQCBzdGF0aWMg
-aW50IHN0aV9oZG1pX2Nvbm5lY3Rvcl9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3IgKmNv
-bm5lY3RvcikKIAlEUk1fREVCVUdfS01TKCIlcyA6ICVkeCVkIGNtXG4iLAogCQkgICAgICAoaGRt
-aS0+aGRtaV9tb25pdG9yID8gImhkbWkgbW9uaXRvciIgOiAiZHZpIG1vbml0b3IiKSwKIAkJICAg
-ICAgZWRpZC0+d2lkdGhfY20sIGVkaWQtPmhlaWdodF9jbSk7CisJY2VjX25vdGlmaWVyX3NldF9w
-aHlzX2FkZHIoaGRtaS0+bm90aWZpZXIsIGNlY19nZXRfZWRpZF9waHlzX2FkZHIoZWRpZCkpOwog
-CiAJY291bnQgPSBkcm1fYWRkX2VkaWRfbW9kZXMoY29ubmVjdG9yLCBlZGlkKTsKIAlkcm1fbW9k
-ZV9jb25uZWN0b3JfdXBkYXRlX2VkaWRfcHJvcGVydHkoY29ubmVjdG9yLCBlZGlkKTsKQEAgLTEw
-MzUsNiArMTAzOCw3IEBAIHN0aV9oZG1pX2Nvbm5lY3Rvcl9kZXRlY3Qoc3RydWN0IGRybV9jb25u
-ZWN0b3IgKmNvbm5lY3RvciwgYm9vbCBmb3JjZSkKIAl9CiAKIAlEUk1fREVCVUdfRFJJVkVSKCJo
-ZG1pIGNhYmxlIGRpc2Nvbm5lY3RlZFxuIik7CisJY2VjX25vdGlmaWVyX3NldF9waHlzX2FkZHIo
-aGRtaS0+bm90aWZpZXIsIENFQ19QSFlTX0FERFJfSU5WQUxJRCk7CiAJcmV0dXJuIGNvbm5lY3Rv
-cl9zdGF0dXNfZGlzY29ubmVjdGVkOwogfQogCkBAIC0xNDIzLDYgKzE0MjcsMTAgQEAgc3RhdGlj
-IGludCBzdGlfaGRtaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCQlnb3Rv
-IHJlbGVhc2VfYWRhcHRlcjsKIAl9CiAKKwloZG1pLT5ub3RpZmllciA9IGNlY19ub3RpZmllcl9n
-ZXQoJnBkZXYtPmRldik7CisJaWYgKCFoZG1pLT5ub3RpZmllcikKKwkJZ290byByZWxlYXNlX2Fk
-YXB0ZXI7CisKIAloZG1pLT5yZXNldCA9IGRldm1fcmVzZXRfY29udHJvbF9nZXQoZGV2LCAiaGRt
-aSIpOwogCS8qIFRha2UgaGRtaSBvdXQgb2YgcmVzZXQgKi8KIAlpZiAoIUlTX0VSUihoZG1pLT5y
-ZXNldCkpCkBAIC0xNDQyLDExICsxNDUwLDE0IEBAIHN0YXRpYyBpbnQgc3RpX2hkbWlfcmVtb3Zl
-KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiB7CiAJc3RydWN0IHN0aV9oZG1pICpoZG1p
-ID0gZGV2X2dldF9kcnZkYXRhKCZwZGV2LT5kZXYpOwogCisJY2VjX25vdGlmaWVyX3NldF9waHlz
-X2FkZHIoaGRtaS0+bm90aWZpZXIsIENFQ19QSFlTX0FERFJfSU5WQUxJRCk7CisKIAlpMmNfcHV0
-X2FkYXB0ZXIoaGRtaS0+ZGRjX2FkYXB0KTsKIAlpZiAoaGRtaS0+YXVkaW9fcGRldikKIAkJcGxh
-dGZvcm1fZGV2aWNlX3VucmVnaXN0ZXIoaGRtaS0+YXVkaW9fcGRldik7CiAJY29tcG9uZW50X2Rl
-bCgmcGRldi0+ZGV2LCAmc3RpX2hkbWlfb3BzKTsKIAorCWNlY19ub3RpZmllcl9wdXQoaGRtaS0+
-bm90aWZpZXIpOwogCXJldHVybiAwOwogfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-c3RpL3N0aV9oZG1pLmggYi9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmgKaW5kZXggNDA3
-MDEyMzUwZjFhLi5jNjQ2OWI1NmNlN2UgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9zdGkv
-c3RpX2hkbWkuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmgKQEAgLTExLDYg
-KzExLDcgQEAKICNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KIAogI2luY2x1ZGUg
-PGRybS9kcm1QLmg+CisjaW5jbHVkZSA8bWVkaWEvY2VjLW5vdGlmaWVyLmg+CiAKICNkZWZpbmUg
-SERNSV9TVEEgICAgICAgICAgIDB4MDAxMAogI2RlZmluZSBIRE1JX1NUQV9ETExfTENLICAgQklU
-KDUpCkBAIC02NCw2ICs2NSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX3Byb3BfZW51bV9s
-aXN0IGNvbG9yc3BhY2VfbW9kZV9uYW1lc1tdID0gewogICogQGF1ZGlvX3BkZXY6IEFTb0MgaGRt
-aS1jb2RlYyBwbGF0Zm9ybSBkZXZpY2UKICAqIEBhdWRpbzogaGRtaSBhdWRpbyBwYXJhbWV0ZXJz
-LgogICogQGRybV9jb25uZWN0b3I6IGhkbWkgY29ubmVjdG9yCisgKiBAbm90aWZpZXI6IGhvdHBs
-dWcgZGV0ZWN0IG5vdGlmaWVyCiAgKi8KIHN0cnVjdCBzdGlfaGRtaSB7CiAJc3RydWN0IGRldmlj
-ZSBkZXY7CkBAIC04OSw2ICs5MSw3IEBAIHN0cnVjdCBzdGlfaGRtaSB7CiAJc3RydWN0IHBsYXRm
-b3JtX2RldmljZSAqYXVkaW9fcGRldjsKIAlzdHJ1Y3QgaGRtaV9hdWRpb19wYXJhbXMgYXVkaW87
-CiAJc3RydWN0IGRybV9jb25uZWN0b3IgKmRybV9jb25uZWN0b3I7CisJc3RydWN0IGNlY19ub3Rp
-ZmllciAqbm90aWZpZXI7CiB9OwogCiB1MzIgaGRtaV9yZWFkKHN0cnVjdCBzdGlfaGRtaSAqaGRt
-aSwgaW50IG9mZnNldCk7Ci0tIAoyLjExLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+From: Hans Verkuil <hans.verkuil@cisco.com>
+
+Add support for CEC notifiers, which is used to convey CEC physical address
+information from video drivers to their CEC counterpart driver(s).
+
+Based on an earlier version from Russell King:
+
+https://patchwork.kernel.org/patch/9277043/
+
+The cec_notifier is a reference counted object containing the CEC physical address
+state of a video device.
+
+When a new notifier is registered the current state will be reported to
+that notifier at registration time.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ MAINTAINERS                  |   4 +-
+ drivers/media/Kconfig        |   3 ++
+ drivers/media/Makefile       |   4 ++
+ drivers/media/cec-notifier.c | 116 +++++++++++++++++++++++++++++++++++++++++++
+ include/media/cec-notifier.h |  93 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 219 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/media/cec-notifier.c
+ create mode 100644 include/media/cec-notifier.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 83a42ef1d1a7..cfb2670aa372 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3066,7 +3066,7 @@ F:	drivers/net/ieee802154/cc2520.c
+ F:	include/linux/spi/cc2520.h
+ F:	Documentation/devicetree/bindings/net/ieee802154/cc2520.txt
+ 
+-CEC DRIVER
++CEC FRAMEWORK
+ M:	Hans Verkuil <hans.verkuil@cisco.com>
+ L:	linux-media@vger.kernel.org
+ T:	git git://linuxtv.org/media_tree.git
+@@ -3076,9 +3076,11 @@ F:	Documentation/media/kapi/cec-core.rst
+ F:	Documentation/media/uapi/cec
+ F:	drivers/media/cec/
+ F:	drivers/media/cec-edid.c
++F:	drivers/media/cec-notifier.c
+ F:	drivers/media/rc/keymaps/rc-cec.c
+ F:	include/media/cec.h
+ F:	include/media/cec-edid.h
++F:	include/media/cec-notifier.h
+ F:	include/uapi/linux/cec.h
+ F:	include/uapi/linux/cec-funcs.h
+ 
+diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
+index 3512316e7a46..799429f51d1a 100644
+--- a/drivers/media/Kconfig
++++ b/drivers/media/Kconfig
+@@ -99,6 +99,9 @@ config MEDIA_CEC_DEBUG
+ config MEDIA_CEC_EDID
+ 	bool
+ 
++config MEDIA_CEC_NOTIFIER
++	bool
++
+ #
+ # Media controller
+ #	Selectable only for webcam/grabbers, as other drivers don't use it
+diff --git a/drivers/media/Makefile b/drivers/media/Makefile
+index d87ccb8eeabe..8b36a571d443 100644
+--- a/drivers/media/Makefile
++++ b/drivers/media/Makefile
+@@ -6,6 +6,10 @@ ifeq ($(CONFIG_MEDIA_CEC_EDID),y)
+   obj-$(CONFIG_MEDIA_SUPPORT) += cec-edid.o
+ endif
+ 
++ifeq ($(CONFIG_MEDIA_CEC_NOTIFIER),y)
++  obj-$(CONFIG_MEDIA_SUPPORT) += cec-notifier.o
++endif
++
+ ifeq ($(CONFIG_MEDIA_CEC_SUPPORT),y)
+   obj-$(CONFIG_MEDIA_SUPPORT) += cec/
+ endif
+diff --git a/drivers/media/cec-notifier.c b/drivers/media/cec-notifier.c
+new file mode 100644
+index 000000000000..a5938c4d3ab4
+--- /dev/null
++++ b/drivers/media/cec-notifier.c
+@@ -0,0 +1,116 @@
++/*
++ * cec-notifier.c - notify CEC drivers of physical address changes
++ *
++ * Copyright 2016 Russell King <rmk+kernel@arm.linux.org.uk>
++ * Copyright 2016-2017 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
++ *
++ * This program is free software; you may redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
++ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ */
++
++#include <linux/export.h>
++#include <linux/string.h>
++#include <linux/slab.h>
++#include <linux/list.h>
++#include <linux/kref.h>
++
++#include <media/cec-notifier.h>
++
++struct cec_notifier {
++	struct mutex lock;
++	struct list_head head;
++	struct kref kref;
++	struct device *dev;
++	struct cec_adapter *cec_adap;
++	void (*callback)(struct cec_adapter *adap, u16 pa);
++
++	u16 phys_addr;
++};
++
++static LIST_HEAD(cec_notifiers);
++static DEFINE_MUTEX(cec_notifiers_lock);
++
++struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	struct cec_notifier *n;
++
++	mutex_lock(&cec_notifiers_lock);
++	list_for_each_entry(n, &cec_notifiers, head) {
++		if (n->dev == dev) {
++			mutex_unlock(&cec_notifiers_lock);
++			kref_get(&n->kref);
++			return n;
++		}
++	}
++	n = kzalloc(sizeof(*n), GFP_KERNEL);
++	if (!n)
++		goto unlock;
++	n->dev = dev;
++	n->phys_addr = CEC_PHYS_ADDR_INVALID;
++	mutex_init(&n->lock);
++	kref_init(&n->kref);
++	list_add_tail(&n->head, &cec_notifiers);
++unlock:
++	mutex_unlock(&cec_notifiers_lock);
++	return n;
++}
++EXPORT_SYMBOL_GPL(cec_notifier_get);
++
++static void cec_notifier_release(struct kref *kref)
++{
++	struct cec_notifier *n =
++		container_of(kref, struct cec_notifier, kref);
++
++	list_del(&n->head);
++	kfree(n);
++}
++
++void cec_notifier_put(struct cec_notifier *n)
++{
++	mutex_lock(&cec_notifiers_lock);
++	kref_put(&n->kref, cec_notifier_release);
++	mutex_unlock(&cec_notifiers_lock);
++}
++EXPORT_SYMBOL_GPL(cec_notifier_put);
++
++void cec_notifier_set_phys_addr(struct cec_notifier *n, u16 pa)
++{
++	mutex_lock(&n->lock);
++	n->phys_addr = pa;
++	if (n->callback)
++		n->callback(n->cec_adap, n->phys_addr);
++	mutex_unlock(&n->lock);
++}
++EXPORT_SYMBOL_GPL(cec_notifier_set_phys_addr);
++
++void cec_notifier_register(struct cec_notifier *n,
++			   struct cec_adapter *adap,
++			   void (*callback)(struct cec_adapter *adap, u16 pa))
++{
++	kref_get(&n->kref);
++	mutex_lock(&n->lock);
++	n->cec_adap = adap;
++	n->callback = callback;
++	n->callback(adap, n->phys_addr);
++	mutex_unlock(&n->lock);
++}
++EXPORT_SYMBOL_GPL(cec_notifier_register);
++
++void cec_notifier_unregister(struct cec_notifier *n)
++{
++	mutex_lock(&n->lock);
++	n->callback = NULL;
++	mutex_unlock(&n->lock);
++	cec_notifier_put(n);
++}
++EXPORT_SYMBOL_GPL(cec_notifier_unregister);
+diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
+new file mode 100644
+index 000000000000..79ad3a48361c
+--- /dev/null
++++ b/include/media/cec-notifier.h
+@@ -0,0 +1,93 @@
++/*
++ * cec-notifier.h - notify CEC drivers of physical address changes
++ *
++ * Copyright 2016 Russell King <rmk+kernel@arm.linux.org.uk>
++ * Copyright 2016-2017 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
++ *
++ * This program is free software; you may redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
++ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ */
++
++#ifndef LINUX_CEC_NOTIFIER_H
++#define LINUX_CEC_NOTIFIER_H
++
++#include <linux/types.h>
++#include <media/cec-edid.h>
++
++struct device;
++struct cec_adapter;
++struct cec_notifier;
++
++#ifdef CONFIG_MEDIA_CEC_NOTIFIER
++
++/**
++ * cec_notifier_get - find or create a new cec_notifier for the given device.
++ * @dev: device that sends the events.
++ *
++ * If a notifier for device @dev already exists, then increase the refcount
++ * and return that notifier.
++ *
++ * If it doesn't exist, then allocate a new notifier struct and return a
++ * pointer to that new struct.
++ *
++ * Return NULL if the memory could not be allocated.
++ */
++struct cec_notifier *cec_notifier_get(struct device *dev);
++
++/**
++ * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
++ * @n: notifier
++ */
++void cec_notifier_put(struct cec_notifier *n);
++
++/**
++ * cec_notifier_set_phys_addr - set a new physical address.
++ * @n: the CEC notifier
++ *
++ * Set a new CEC physical address.
++ */
++void cec_notifier_set_phys_addr(struct cec_notifier *n, u16 pa);
++
++/**
++ * cec_notifier_register - register a callback with the notifier
++ * @n: the CEC notifier
++ * @adap: the CEC adapter, passed as argument to the callback function
++ * @callback: the callback function
++ */
++void cec_notifier_register(struct cec_notifier *n,
++			   struct cec_adapter *adap,
++			   void (*callback)(struct cec_adapter *adap, u16 pa));
++
++/**
++ * cec_notifier_unregister - unregister the callback from the notifier.
++ * @n: the CEC notifier
++ */
++void cec_notifier_unregister(struct cec_notifier *n);
++
++#else
++static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	/* A non-NULL pointer is expected on success */
++	return (struct cec_notifier *)0xdeadfeed;
++}
++
++static inline void cec_notifier_put(struct cec_notifier *n)
++{
++}
++
++static inline void cec_notifier_set_phys_addr(struct cec_notifier *n, u16 pa)
++{
++}
++#endif
++
++#endif
+-- 
+2.11.0
