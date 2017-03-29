@@ -1,75 +1,68 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 0/4] ARM: exynos: Fix Odroid U3 USB/LAN when TFTP booting
- (power sequence)
-Date: Wed, 29 Mar 2017 13:12:21 +0200
-Message-ID: <308964a5-84f0-d144-6358-bd334f9dc603@xs4all.nl>
-References: <20170107085203.4431-1-krzk@kernel.org>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
+Date: Wed, 29 Mar 2017 13:55:22 +0200
+Message-ID: <7e2db947-882e-6b31-aa57-85ec28b49f0c@math.uni-bielefeld.de>
+References: <1489152617-10425-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170107085203.4431-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Peter Chen <peter.chen@nxp.com>, ulf.hansson@linaro.org, linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, sre@kernel.org, robh+dt@kernel.org, Markus Reichl <m.reichl@fivetechno.de>, broonie@kernel.org, stern@rowland.harvard.edu, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1489152617-10425-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On 07/01/17 09:51, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Thanks to Markus Reichl, I got an Odroid U3 to work with. Thanks to Peter
-> Chen, we got a power sequence generic library which solves my long
-> standing Odroid U3 problem - no LAN9730 if it was enabled by bootloader.
-> 
-> My previous attempts for this can be found here [0].
-> 
-> This patchset is based on Peter's v11 of power sequence [1].
-> Patchset is available also on my Github [2].
-> 
-> More detailed analysis is described in patch 2/4 ("ARM: dts: exynos: Fix
-> LAN9730 on Odroid U3 after tftpboot").
-
-It's rather late, but I finally had a chance to test this and it works.
-
-So:
-
-Tested-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-This was with u-boot version v2016.09.01 and kernel 4.11.0-rc1.
-
-Regards,
-
-	Hans
-
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> [0] http://www.spinics.net/lists/linux-mmc/msg37386.html
-> [1] https://lwn.net/Articles/710736/
-> [2] https://github.com/krzk/linux/commits/for-next/odroid-u3-usb3503-pwrseq
-> 
-> Krzysztof Kozlowski (4):
->   ARM: dts: exynos: Fix indentation of EHCI and OHCI ports
->   ARM: dts: exynos: Fix LAN9730 on Odroid U3 after tftpboot
->   ARM: exynos_defconfig: Enable power sequence for Odroid U3
->   ARM: multi_v7_defconfig: Enable power sequence for Odroid U3
-> 
->  arch/arm/boot/dts/exynos4.dtsi            | 24 ++++++++++++------------
->  arch/arm/boot/dts/exynos4412-odroidu3.dts | 21 +++++++++++++++++++++
->  arch/arm/configs/exynos_defconfig         |  2 ++
->  arch/arm/configs/multi_v7_defconfig       |  1 +
->  4 files changed, 36 insertions(+), 12 deletions(-)
-> 
+SGVsbG8gRGFuaWVsLAoKSSdtIG5vdCBnZXR0aW5nIGFueSByZXNwb25zZSBmcm9tIHRoZSBFeHlu
+b3MgRFJNIG1haW50YWluZXIgY29uY2VybmluZwp0aGlzIHBhdGNoLiBTaW5jZSB0aGlzIGlzIGp1
+c3QgYSBzaW1wbGUgY2xlYW51cCwgYW5kIEFuZHJ6ZWogaGFzIGFscmVhZHkKcmV2aWV3LCBjb3Vs
+ZCB5b3UgcGVyaGFwcyBtZXJnZSBpdCB0aHJvdWdoIGRybS1taXNjPwoKV2l0aCBiZXN0IHdpc2hl
+cywKVG9iaWFzCgoKClRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4gQ29udmVydCBpZi1zdGF0ZW1lbnRz
+IHRvIHN3aXRjaCBzdGF0ZW1lbnQuIFJlbW92ZXMKPiBkdXBsaWNhdGVkIGNvZGUuCj4gCj4gUmV2
+aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9m
+Zi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4gLS0t
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAzMCArKysrKysrKy0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwg
+MjIgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4g
+aW5kZXggNzIxNDNhYy4uNDFkMGMzNiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19taXhlci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+bWl4ZXIuYwo+IEBAIC0zODIsMjkgKzM4MiwxNCBAQCBzdGF0aWMgdm9pZCBtaXhlcl9jZmdfcmdi
+X2ZtdChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgaGVpZ2h0KQo+ICAJ
+c3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwo+ICAJdTMyIHZh
+bDsKPiAgCj4gLQlpZiAoaGVpZ2h0ID09IDQ4MCkgewo+ICsJc3dpdGNoIChoZWlnaHQpIHsKPiAr
+CWNhc2UgNDgwOgo+ICsJY2FzZSA1NzY6Cj4gIAkJdmFsID0gTVhSX0NGR19SR0I2MDFfMF8yNTU7
+Cj4gLQl9IGVsc2UgaWYgKGhlaWdodCA9PSA1NzYpIHsKPiAtCQl2YWwgPSBNWFJfQ0ZHX1JHQjYw
+MV8wXzI1NTsKPiAtCX0gZWxzZSBpZiAoaGVpZ2h0ID09IDcyMCkgewo+IC0JCXZhbCA9IE1YUl9D
+RkdfUkdCNzA5XzE2XzIzNTsKPiAtCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZf
+WSwKPiAtCQkJCSgxIDw8IDMwKSB8ICg5NCA8PCAyMCkgfCAoMzE0IDw8IDEwKSB8Cj4gLQkJCQko
+MzIgPDwgMCkpOwo+IC0JCW1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9DTV9DT0VGRl9DQiwKPiAt
+CQkJCSg5NzIgPDwgMjApIHwgKDg1MSA8PCAxMCkgfCAoMjI1IDw8IDApKTsKPiAtCQltaXhlcl9y
+ZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ1IsCj4gLQkJCQkoMjI1IDw8IDIwKSB8ICg4MjAg
+PDwgMTApIHwgKDEwMDQgPDwgMCkpOwo+IC0JfSBlbHNlIGlmIChoZWlnaHQgPT0gMTA4MCkgewo+
+IC0JCXZhbCA9IE1YUl9DRkdfUkdCNzA5XzE2XzIzNTsKPiAtCQltaXhlcl9yZWdfd3JpdGUocmVz
+LCBNWFJfQ01fQ09FRkZfWSwKPiAtCQkJCSgxIDw8IDMwKSB8ICg5NCA8PCAyMCkgfCAoMzE0IDw8
+IDEwKSB8Cj4gLQkJCQkoMzIgPDwgMCkpOwo+IC0JCW1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9D
+TV9DT0VGRl9DQiwKPiAtCQkJCSg5NzIgPDwgMjApIHwgKDg1MSA8PCAxMCkgfCAoMjI1IDw8IDAp
+KTsKPiAtCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ1IsCj4gLQkJCQkoMjI1
+IDw8IDIwKSB8ICg4MjAgPDwgMTApIHwgKDEwMDQgPDwgMCkpOwo+IC0JfSBlbHNlIHsKPiArCQli
+cmVhazsKPiArCWNhc2UgNzIwOgo+ICsJY2FzZSAxMDgwOgo+ICsJZGVmYXVsdDoKPiAgCQl2YWwg
+PSBNWFJfQ0ZHX1JHQjcwOV8xNl8yMzU7Cj4gIAkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0NN
+X0NPRUZGX1ksCj4gIAkJCQkoMSA8PCAzMCkgfCAoOTQgPDwgMjApIHwgKDMxNCA8PCAxMCkgfAo+
+IEBAIC00MTMsNiArMzk4LDcgQEAgc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3JnYl9mbXQoc3RydWN0
+IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGhlaWdodCkKPiAgCQkJCSg5NzIgPDwg
+MjApIHwgKDg1MSA8PCAxMCkgfCAoMjI1IDw8IDApKTsKPiAgCQltaXhlcl9yZWdfd3JpdGUocmVz
+LCBNWFJfQ01fQ09FRkZfQ1IsCj4gIAkJCQkoMjI1IDw8IDIwKSB8ICg4MjAgPDwgMTApIHwgKDEw
+MDQgPDwgMCkpOwo+ICsJCWJyZWFrOwo+ICAJfQo+ICAKPiAgCW1peGVyX3JlZ193cml0ZW1hc2so
+cmVzLCBNWFJfQ0ZHLCB2YWwsIE1YUl9DRkdfUkdCX0ZNVF9NQVNLKTsKPiAKCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
+c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
