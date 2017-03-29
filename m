@@ -1,73 +1,82 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv5 11/11] arm: sti: update sti-cec for CEC notifier support
-Date: Wed, 29 Mar 2017 16:15:43 +0200
-Message-ID: <20170329141543.32935-12-hverkuil@xs4all.nl>
+Subject: [PATCHv5 08/11] sti: hdmi: add CEC notifier support
+Date: Wed, 29 Mar 2017 16:15:40 +0200
+Message-ID: <20170329141543.32935-9-hverkuil@xs4all.nl>
 References: <20170329141543.32935-1-hverkuil@xs4all.nl>
-Return-path: <linux-media-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <20170329141543.32935-1-hverkuil@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-media@vger.kernel.org
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>, devicetree@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-
-To use CEC notifier sti CEC driver needs to get phandle
-of the hdmi device.
-
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-CC: devicetree@vger.kernel.org
----
- arch/arm/boot/dts/stih407-family.dtsi | 12 ------------
- arch/arm/boot/dts/stih410.dtsi        | 13 +++++++++++++
- 2 files changed, 13 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-index d753ac36788f..044184580326 100644
---- a/arch/arm/boot/dts/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/stih407-family.dtsi
-@@ -742,18 +742,6 @@
- 				 <&clk_s_c0_flexgen CLK_ETH_PHY>;
- 		};
- 
--		cec: sti-cec@094a087c {
--			compatible = "st,stih-cec";
--			reg = <0x94a087c 0x64>;
--			clocks = <&clk_sysin>;
--			clock-names = "cec-clk";
--			interrupts = <GIC_SPI 140 IRQ_TYPE_NONE>;
--			interrupt-names = "cec-irq";
--			pinctrl-names = "default";
--			pinctrl-0 = <&pinctrl_cec0_default>;
--			resets = <&softreset STIH407_LPM_SOFTRESET>;
--		};
--
- 		rng10: rng@08a89000 {
- 			compatible      = "st,rng";
- 			reg		= <0x08a89000 0x1000>;
-diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
-index 3c9672c5b09f..21fe72b183d8 100644
---- a/arch/arm/boot/dts/stih410.dtsi
-+++ b/arch/arm/boot/dts/stih410.dtsi
-@@ -281,5 +281,18 @@
- 				 <&clk_s_c0_flexgen CLK_ST231_DMU>,
- 				 <&clk_s_c0_flexgen CLK_FLASH_PROMIP>;
- 		};
-+
-+		sti-cec@094a087c {
-+			compatible = "st,stih-cec";
-+			reg = <0x94a087c 0x64>;
-+			clocks = <&clk_sysin>;
-+			clock-names = "cec-clk";
-+			interrupts = <GIC_SPI 140 IRQ_TYPE_NONE>;
-+			interrupt-names = "cec-irq";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_cec0_default>;
-+			resets = <&softreset STIH407_LPM_SOFTRESET>;
-+			hdmi-phandle = <&sti_hdmi>;
-+		};
- 	};
- };
--- 
-2.11.0
+RnJvbTogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWduYXJkQGxpbmFyby5vcmc+CgpJ
+bXBsZW1lbnQgdGhlIENFQyBub3RpZmllciBzdXBwb3J0IHRvIGFsbG93IENFQyBkcml2ZXJzIHRv
+CmJlIGluZm9ybWVkIHdoZW4gdGhlcmUgaXMgYSBuZXcgcGh5c2ljYWwgYWRkcmVzcy4KClNpZ25l
+ZC1vZmYtYnk6IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3Jn
+PgpTaWduZWQtb2ZmLWJ5OiBIYW5zIFZlcmt1aWwgPGhhbnMudmVya3VpbEBjaXNjby5jb20+Ci0t
+LQogZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jIHwgMTEgKysrKysrKysrKysKIGRyaXZl
+cnMvZ3B1L2RybS9zdGkvc3RpX2hkbWkuaCB8ICAzICsrKwogMiBmaWxlcyBjaGFuZ2VkLCAxNCBp
+bnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5j
+IGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jCmluZGV4IGNlMmRjYmE2NzlkNS4uMzQ1
+ZDM2MzFjZjUwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMKKysr
+IGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jCkBAIC03NzEsNiArNzcxLDggQEAgc3Rh
+dGljIHZvaWQgc3RpX2hkbWlfZGlzYWJsZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQogCWNs
+a19kaXNhYmxlX3VucHJlcGFyZShoZG1pLT5jbGtfcGl4KTsKIAogCWhkbWktPmVuYWJsZWQgPSBm
+YWxzZTsKKworCWNlY19ub3RpZmllcl9zZXRfcGh5c19hZGRyKGhkbWktPm5vdGlmaWVyLCBDRUNf
+UEhZU19BRERSX0lOVkFMSUQpOwogfQogCiAvKioKQEAgLTk3Myw2ICs5NzUsNyBAQCBzdGF0aWMg
+aW50IHN0aV9oZG1pX2Nvbm5lY3Rvcl9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3IgKmNv
+bm5lY3RvcikKIAlEUk1fREVCVUdfS01TKCIlcyA6ICVkeCVkIGNtXG4iLAogCQkgICAgICAoaGRt
+aS0+aGRtaV9tb25pdG9yID8gImhkbWkgbW9uaXRvciIgOiAiZHZpIG1vbml0b3IiKSwKIAkJICAg
+ICAgZWRpZC0+d2lkdGhfY20sIGVkaWQtPmhlaWdodF9jbSk7CisJY2VjX25vdGlmaWVyX3NldF9w
+aHlzX2FkZHIoaGRtaS0+bm90aWZpZXIsIGNlY19nZXRfZWRpZF9waHlzX2FkZHIoZWRpZCkpOwog
+CiAJY291bnQgPSBkcm1fYWRkX2VkaWRfbW9kZXMoY29ubmVjdG9yLCBlZGlkKTsKIAlkcm1fbW9k
+ZV9jb25uZWN0b3JfdXBkYXRlX2VkaWRfcHJvcGVydHkoY29ubmVjdG9yLCBlZGlkKTsKQEAgLTEw
+MzUsNiArMTAzOCw3IEBAIHN0aV9oZG1pX2Nvbm5lY3Rvcl9kZXRlY3Qoc3RydWN0IGRybV9jb25u
+ZWN0b3IgKmNvbm5lY3RvciwgYm9vbCBmb3JjZSkKIAl9CiAKIAlEUk1fREVCVUdfRFJJVkVSKCJo
+ZG1pIGNhYmxlIGRpc2Nvbm5lY3RlZFxuIik7CisJY2VjX25vdGlmaWVyX3NldF9waHlzX2FkZHIo
+aGRtaS0+bm90aWZpZXIsIENFQ19QSFlTX0FERFJfSU5WQUxJRCk7CiAJcmV0dXJuIGNvbm5lY3Rv
+cl9zdGF0dXNfZGlzY29ubmVjdGVkOwogfQogCkBAIC0xNDIzLDYgKzE0MjcsMTAgQEAgc3RhdGlj
+IGludCBzdGlfaGRtaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCQlnb3Rv
+IHJlbGVhc2VfYWRhcHRlcjsKIAl9CiAKKwloZG1pLT5ub3RpZmllciA9IGNlY19ub3RpZmllcl9n
+ZXQoJnBkZXYtPmRldik7CisJaWYgKCFoZG1pLT5ub3RpZmllcikKKwkJZ290byByZWxlYXNlX2Fk
+YXB0ZXI7CisKIAloZG1pLT5yZXNldCA9IGRldm1fcmVzZXRfY29udHJvbF9nZXQoZGV2LCAiaGRt
+aSIpOwogCS8qIFRha2UgaGRtaSBvdXQgb2YgcmVzZXQgKi8KIAlpZiAoIUlTX0VSUihoZG1pLT5y
+ZXNldCkpCkBAIC0xNDQyLDExICsxNDUwLDE0IEBAIHN0YXRpYyBpbnQgc3RpX2hkbWlfcmVtb3Zl
+KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiB7CiAJc3RydWN0IHN0aV9oZG1pICpoZG1p
+ID0gZGV2X2dldF9kcnZkYXRhKCZwZGV2LT5kZXYpOwogCisJY2VjX25vdGlmaWVyX3NldF9waHlz
+X2FkZHIoaGRtaS0+bm90aWZpZXIsIENFQ19QSFlTX0FERFJfSU5WQUxJRCk7CisKIAlpMmNfcHV0
+X2FkYXB0ZXIoaGRtaS0+ZGRjX2FkYXB0KTsKIAlpZiAoaGRtaS0+YXVkaW9fcGRldikKIAkJcGxh
+dGZvcm1fZGV2aWNlX3VucmVnaXN0ZXIoaGRtaS0+YXVkaW9fcGRldik7CiAJY29tcG9uZW50X2Rl
+bCgmcGRldi0+ZGV2LCAmc3RpX2hkbWlfb3BzKTsKIAorCWNlY19ub3RpZmllcl9wdXQoaGRtaS0+
+bm90aWZpZXIpOwogCXJldHVybiAwOwogfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+c3RpL3N0aV9oZG1pLmggYi9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmgKaW5kZXggNDA3
+MDEyMzUwZjFhLi5jNjQ2OWI1NmNlN2UgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9zdGkv
+c3RpX2hkbWkuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmgKQEAgLTExLDYg
+KzExLDcgQEAKICNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KIAogI2luY2x1ZGUg
+PGRybS9kcm1QLmg+CisjaW5jbHVkZSA8bWVkaWEvY2VjLW5vdGlmaWVyLmg+CiAKICNkZWZpbmUg
+SERNSV9TVEEgICAgICAgICAgIDB4MDAxMAogI2RlZmluZSBIRE1JX1NUQV9ETExfTENLICAgQklU
+KDUpCkBAIC02NCw2ICs2NSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX3Byb3BfZW51bV9s
+aXN0IGNvbG9yc3BhY2VfbW9kZV9uYW1lc1tdID0gewogICogQGF1ZGlvX3BkZXY6IEFTb0MgaGRt
+aS1jb2RlYyBwbGF0Zm9ybSBkZXZpY2UKICAqIEBhdWRpbzogaGRtaSBhdWRpbyBwYXJhbWV0ZXJz
+LgogICogQGRybV9jb25uZWN0b3I6IGhkbWkgY29ubmVjdG9yCisgKiBAbm90aWZpZXI6IGhvdHBs
+dWcgZGV0ZWN0IG5vdGlmaWVyCiAgKi8KIHN0cnVjdCBzdGlfaGRtaSB7CiAJc3RydWN0IGRldmlj
+ZSBkZXY7CkBAIC04OSw2ICs5MSw3IEBAIHN0cnVjdCBzdGlfaGRtaSB7CiAJc3RydWN0IHBsYXRm
+b3JtX2RldmljZSAqYXVkaW9fcGRldjsKIAlzdHJ1Y3QgaGRtaV9hdWRpb19wYXJhbXMgYXVkaW87
+CiAJc3RydWN0IGRybV9jb25uZWN0b3IgKmRybV9jb25uZWN0b3I7CisJc3RydWN0IGNlY19ub3Rp
+ZmllciAqbm90aWZpZXI7CiB9OwogCiB1MzIgaGRtaV9yZWFkKHN0cnVjdCBzdGlfaGRtaSAqaGRt
+aSwgaW50IG9mZnNldCk7Ci0tIAoyLjExLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
