@@ -1,108 +1,73 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
-Date: Wed, 29 Mar 2017 13:56:07 +0200
-Message-ID: <85a64d59-63d6-54b0-756b-63c36dc85d2b@math.uni-bielefeld.de>
-References: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.freedesktop.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCHv5 11/11] arm: sti: update sti-cec for CEC notifier support
+Date: Wed, 29 Mar 2017 16:15:43 +0200
+Message-ID: <20170329141543.32935-12-hverkuil@xs4all.nl>
+References: <20170329141543.32935-1-hverkuil@xs4all.nl>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20170329141543.32935-1-hverkuil@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gRGFuaWVsLAoKc2FtZSBxdWVzdGlvbiBoZXJlLiBQYXRjaCBkb2Vzbid0IGludHJvZHVj
-ZSBhbnkgZnVuY3Rpb25hbCBjaGFuZ2VzIChqdXN0CmFkZHMgY29kZSBkb2N1bWVudGF0aW9uKSwg
-c28gY2FuIHlvdSBtZXJnZSBpdCB0aHJvdWdoIGRybS1taXNjPwoKV2l0aCBiZXN0IHdpc2hlcywK
-VG9iaWFzCgoKVG9iaWFzIEpha29iaSB3cm90ZToKPiBUaGUgb3V0cHV0IHN0YWdlIG9mIHRoZSBt
-aXhlciB1c2VzIFlDYkNyIGZvciB0aGUgaW50ZXJuYWwKPiBjb21wdXRhdGlvbnMsIHdoaWNoIGlz
-IHRoZSByZWFzb24gdGhhdCBzb21lIHJlZ2lzdGVycyB0YWtlCj4gWUNiQ3IgcmVsYXRlZCBkYXRh
-IGFzIGlucHV0LiBJbiBwYXJ0aWN1bGFyIHRoaXMgYXBwbGllcwo+IHRvIE1YUl9CR19DT0xPUnsw
-LDEsMn0gYW5kIE1YUl9DTV9DT0VGRl97WSxDQixDUn0uCj4gCj4gRG9jdW1lbnQgdGhlIGZvcm1h
-dHRpbmcgb2YgdGhlIGRhdGEgd2hpY2ggd2Ugd3JpdGUgdG8KPiB0aGVzZSByZWdpc3RlcnMuCj4g
-Cj4gV2hpbGUgYXQgaXQsIHVuaWZ5IHdvcmRpbmcgb2YgY29tbWVudHMgaW4gdGhlIHJlZ2lzdGVy
-IGhlYWRlci4KPiAKPiBSZXZpZXdlZC1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5n
-LmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
-ZWxlZmVsZC5kZT4KPiAtLS0KPiBDaGFuZ2VzIGluIHYyOgo+IC0gdXNlIGZsb2F0aW5nIHBvaW50
-IHZhbHVlcyBhcyBpbnB1dCBmb3IgdGhlIG1hY3JvcywgYXMKPiAgIHN1Z2dlc3RlZCBieSBBbmRy
-emVqCj4gLSB0aGUgZmxvYXRpbmcgcG9pbnQgdmFsdWVzIGhhdmUgYmVlbiB0dW5lZCB0byBleGFj
-dGx5IG1hdGNoCj4gICB0aGUgdmFsdWVzIHRoYXQgYXJlIGN1cnJlbnRseSB1c2VkCj4gCj4gQ2hh
-bmdlcyBpbiB2MzoKPiAtIHVzZSBvbmx5IHRocmVlIGRpZ2l0IHZhbHVlcyAocG9pbnRlZCBvdXQg
-YnkgQW5kcnplaikKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8
-IDMzICsrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL3JlZ3MtbWl4ZXIuaCAgIHwgIDcgKysrKystLQo+ICAyIGZpbGVzIGNoYW5nZWQsIDMw
-IGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfbWl4ZXIuYwo+IGluZGV4IDQxZDBjMzYuLjk2NDhkZDUgMTAwNjQ0Cj4gLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBAQCAtNDUsNiArNDUsMjIgQEAKPiAgI2RlZmluZSBN
-SVhFUl9XSU5fTlIJCTMKPiAgI2RlZmluZSBWUF9ERUZBVUxUX1dJTgkJMgo+ICAKPiArLyoKPiAr
-ICogTWl4ZXIgY29sb3Igc3BhY2UgY29udmVyc2lvbiBjb2VmZmljaWVudCB0cmlwbGV0Lgo+ICsg
-KiBVc2VkIGZvciBDU0MgZnJvbSBSR0IgdG8gWUNiQ3IuCj4gKyAqIEVhY2ggY29lZmZpY2llbnQg
-aXMgYSAxMC1iaXQgZml4ZWQgcG9pbnQgbnVtYmVyIHdpdGgKPiArICogc2lnbiBhbmQgbm8gaW50
-ZWdlciBwYXJ0LCBpLmUuCj4gKyAqIFswOjhdID0gZnJhY3Rpb25hbCBwYXJ0IChyZXByZXNlbnRp
-bmcgYSB2YWx1ZSB5ID0geCAvIDJeOSkKPiArICogWzldID0gc2lnbgo+ICsgKiBOZWdhdGl2ZSB2
-YWx1ZXMgYXJlIGVuY29kZWQgd2l0aCB0d28ncyBjb21wbGVtZW50Lgo+ICsgKi8KPiArI2RlZmlu
-ZSBNWFJfQ1NDX0MoeCkgKChpbnQpKCh4KSAqIDUxMi4wKSAmIDB4M2ZmKQo+ICsjZGVmaW5lIE1Y
-Ul9DU0NfQ1QoYTAsIGExLCBhMikgXAo+ICsgICgoTVhSX0NTQ19DKGEwKSA8PCAyMCkgfCAoTVhS
-X0NTQ19DKGExKSA8PCAxMCkgfCAoTVhSX0NTQ19DKGEyKSA8PCAwKSkKPiArCj4gKy8qIFlDYkNy
-IHZhbHVlLCB1c2VkIGZvciBtaXhlciBiYWNrZ3JvdW5kIGNvbG9yIGNvbmZpZ3VyYXRpb24uICov
-Cj4gKyNkZWZpbmUgTVhSX1lDQkNSX1ZBTCh5LCBjYiwgY3IpICgoKHkpIDw8IDE2KSB8ICgoY2Ip
-IDw8IDgpIHwgKChjcikgPDwgMCkpCj4gKwo+ICAvKiBUaGUgcGl4ZWxmb3JtYXRzIHRoYXQgYXJl
-IG5hdGl2ZWx5IHN1cHBvcnRlZCBieSB0aGUgbWl4ZXIuICovCj4gICNkZWZpbmUgTVhSX0ZPUk1B
-VF9SR0I1NjUJNAo+ICAjZGVmaW5lIE1YUl9GT1JNQVRfQVJHQjE1NTUJNQo+IEBAIC0zOTEsMTMg
-KzQwNywxNCBAQCBzdGF0aWMgdm9pZCBtaXhlcl9jZmdfcmdiX2ZtdChzdHJ1Y3QgbWl4ZXJfY29u
-dGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgaGVpZ2h0KQo+ICAJY2FzZSAxMDgwOgo+ICAJZGVmYXVs
-dDoKPiAgCQl2YWwgPSBNWFJfQ0ZHX1JHQjcwOV8xNl8yMzU7Cj4gKwkJLyogQ29uZmlndXJlIHRo
-ZSBCVC43MDkgQ1NDIG1hdHJpeCBmb3IgZnVsbCByYW5nZSBSR0IuICovCj4gIAkJbWl4ZXJfcmVn
-X3dyaXRlKHJlcywgTVhSX0NNX0NPRUZGX1ksCj4gLQkJCQkoMSA8PCAzMCkgfCAoOTQgPDwgMjAp
-IHwgKDMxNCA8PCAxMCkgfAo+IC0JCQkJKDMyIDw8IDApKTsKPiArCQkJTVhSX0NTQ19DVCggMC4x
-ODQsICAwLjYxNCwgIDAuMDYzKSB8Cj4gKwkJCU1YUl9DTV9DT0VGRl9SR0JfRlVMTCk7Cj4gIAkJ
-bWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0NNX0NPRUZGX0NCLAo+IC0JCQkJKDk3MiA8PCAyMCkg
-fCAoODUxIDw8IDEwKSB8ICgyMjUgPDwgMCkpOwo+ICsJCQlNWFJfQ1NDX0NUKC0wLjEwMiwgLTAu
-MzM4LCAgMC40NDApKTsKPiAgCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ1Is
-Cj4gLQkJCQkoMjI1IDw8IDIwKSB8ICg4MjAgPDwgMTApIHwgKDEwMDQgPDwgMCkpOwo+ICsJCQlN
-WFJfQ1NDX0NUKCAwLjQ0MCwgLTAuMzk5LCAtMC4wNDApKTsKPiAgCQlicmVhazsKPiAgCX0KPiAg
-Cj4gQEAgLTcxNSwxMCArNzMyLDEwIEBAIHN0YXRpYyB2b2lkIG1peGVyX3dpbl9yZXNldChzdHJ1
-Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQo+ICAJLyogcmVzZXQgZGVmYXVsdCBsYXllciBwcmlvcml0
-eSAqLwo+ICAJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0xBWUVSX0NGRywgMCk7Cj4gIAo+IC0J
-Lyogc2V0dGluZyBiYWNrZ3JvdW5kIGNvbG9yICovCj4gLQltaXhlcl9yZWdfd3JpdGUocmVzLCBN
-WFJfQkdfQ09MT1IwLCAweDAwODA4MCk7Cj4gLQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdf
-Q09MT1IxLCAweDAwODA4MCk7Cj4gLQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1Iy
-LCAweDAwODA4MCk7Cj4gKwkvKiBzZXQgYWxsIGJhY2tncm91bmQgY29sb3JzIHRvIFJHQiAoMCww
-LDApICovCj4gKwltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1IwLCBNWFJfWUNCQ1Jf
-VkFMKDAsIDEyOCwgMTI4KSk7Cj4gKwltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1Ix
-LCBNWFJfWUNCQ1JfVkFMKDAsIDEyOCwgMTI4KSk7Cj4gKwltaXhlcl9yZWdfd3JpdGUocmVzLCBN
-WFJfQkdfQ09MT1IyLCBNWFJfWUNCQ1JfVkFMKDAsIDEyOCwgMTI4KSk7Cj4gIAo+ICAJaWYgKHRl
-c3RfYml0KE1YUl9CSVRfVlBfRU5BQkxFRCwgJmN0eC0+ZmxhZ3MpKSB7Cj4gIAkJLyogY29uZmln
-dXJhdGlvbiBvZiBWaWRlbyBQcm9jZXNzb3IgUmVnaXN0ZXJzICovCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9yZWdzLW1peGVyLmgKPiBpbmRleCA3ZjIyZGY1Li5jMzExZjU3IDEwMDY0NAo+IC0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9yZWdzLW1peGVyLmgKPiBAQCAtMTQwLDExICsxNDAsMTEgQEAKPiAgI2RlZmluZSBN
-WFJfSU5UX0VOX1ZTWU5DCQkoMSA8PCAxMSkKPiAgI2RlZmluZSBNWFJfSU5UX0VOX0FMTAkJCSgw
-eDBmIDw8IDgpCj4gIAo+IC0vKiBiaXQgZm9yIE1YUl9JTlRfU1RBVFVTICovCj4gKy8qIGJpdHMg
-Zm9yIE1YUl9JTlRfU1RBVFVTICovCj4gICNkZWZpbmUgTVhSX0lOVF9DTEVBUl9WU1lOQwkJKDEg
-PDwgMTEpCj4gICNkZWZpbmUgTVhSX0lOVF9TVEFUVVNfVlNZTkMJCSgxIDw8IDApCj4gIAo+IC0v
-KiBiaXQgZm9yIE1YUl9MQVlFUl9DRkcgKi8KPiArLyogYml0cyBmb3IgTVhSX0xBWUVSX0NGRyAq
-Lwo+ICAjZGVmaW5lIE1YUl9MQVlFUl9DRkdfR1JQMV9WQUwoeCkJTVhSX01BU0tfVkFMKHgsIDEx
-LCA4KQo+ICAjZGVmaW5lIE1YUl9MQVlFUl9DRkdfR1JQMV9NQVNLCQlNWFJfTEFZRVJfQ0ZHX0dS
-UDFfVkFMKH4wKQo+ICAjZGVmaW5lIE1YUl9MQVlFUl9DRkdfR1JQMF9WQUwoeCkJTVhSX01BU0tf
-VkFMKHgsIDcsIDQpCj4gQEAgLTE1Miw1ICsxNTIsOCBAQAo+ICAjZGVmaW5lIE1YUl9MQVlFUl9D
-RkdfVlBfVkFMKHgpCQlNWFJfTUFTS19WQUwoeCwgMywgMCkKPiAgI2RlZmluZSBNWFJfTEFZRVJf
-Q0ZHX1ZQX01BU0sJCU1YUl9MQVlFUl9DRkdfVlBfVkFMKH4wKQo+ICAKPiArLyogYml0cyBmb3Ig
-TVhSX0NNX0NPRUZGX1kgKi8KPiArI2RlZmluZSBNWFJfQ01fQ09FRkZfUkdCX0ZVTEwJCSgxIDw8
-IDMwKQo+ICsKPiAgI2VuZGlmIC8qIFNBTVNVTkdfUkVHU19NSVhFUl9IICovCj4gIAo+IAoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+
+To use CEC notifier sti CEC driver needs to get phandle
+of the hdmi device.
+
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+CC: devicetree@vger.kernel.org
+---
+ arch/arm/boot/dts/stih407-family.dtsi | 12 ------------
+ arch/arm/boot/dts/stih410.dtsi        | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+index d753ac36788f..044184580326 100644
+--- a/arch/arm/boot/dts/stih407-family.dtsi
++++ b/arch/arm/boot/dts/stih407-family.dtsi
+@@ -742,18 +742,6 @@
+ 				 <&clk_s_c0_flexgen CLK_ETH_PHY>;
+ 		};
+ 
+-		cec: sti-cec@094a087c {
+-			compatible = "st,stih-cec";
+-			reg = <0x94a087c 0x64>;
+-			clocks = <&clk_sysin>;
+-			clock-names = "cec-clk";
+-			interrupts = <GIC_SPI 140 IRQ_TYPE_NONE>;
+-			interrupt-names = "cec-irq";
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&pinctrl_cec0_default>;
+-			resets = <&softreset STIH407_LPM_SOFTRESET>;
+-		};
+-
+ 		rng10: rng@08a89000 {
+ 			compatible      = "st,rng";
+ 			reg		= <0x08a89000 0x1000>;
+diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
+index 3c9672c5b09f..21fe72b183d8 100644
+--- a/arch/arm/boot/dts/stih410.dtsi
++++ b/arch/arm/boot/dts/stih410.dtsi
+@@ -281,5 +281,18 @@
+ 				 <&clk_s_c0_flexgen CLK_ST231_DMU>,
+ 				 <&clk_s_c0_flexgen CLK_FLASH_PROMIP>;
+ 		};
++
++		sti-cec@094a087c {
++			compatible = "st,stih-cec";
++			reg = <0x94a087c 0x64>;
++			clocks = <&clk_sysin>;
++			clock-names = "cec-clk";
++			interrupts = <GIC_SPI 140 IRQ_TYPE_NONE>;
++			interrupt-names = "cec-irq";
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_cec0_default>;
++			resets = <&softreset STIH407_LPM_SOFTRESET>;
++			hdmi-phandle = <&sti_hdmi>;
++		};
+ 	};
+ };
+-- 
+2.11.0
