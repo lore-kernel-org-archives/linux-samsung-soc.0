@@ -1,172 +1,409 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCHv5 00/11] video/exynos/sti/cec: add CEC notifier & use in
- drivers
-Date: Wed, 29 Mar 2017 21:59:34 +0200
-Message-ID: <41757527-6953-6095-a18b-e5c75d93c966@xs4all.nl>
-References: <20170329141543.32935-1-hverkuil@xs4all.nl>
- <20170329174758.55vasy2gxqpg3yb5@phenom.ffwll.local>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v6 1/4] clk: Add support for runtime PM
+Date: Wed, 29 Mar 2017 13:22:54 -0700
+Message-ID: <149081897388.31513.7062843004022908296@resonance>
+References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170322113554eucas1p27471f0de278c55d5dce7fdf120395e09@eucas1p2.samsung.com>
+ <1490182543-28550-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170329174758.55vasy2gxqpg3yb5@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1490182543-28550-2-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGFuaWVsLAoKT24gMjkvMDMvMTcgMTk6NDcsIERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4gT24g
-V2VkLCBNYXIgMjksIDIwMTcgYXQgMDQ6MTU6MzJQTSArMDIwMCwgSGFucyBWZXJrdWlsIHdyb3Rl
-Ogo+PiBGcm9tOiBIYW5zIFZlcmt1aWwgPGhhbnMudmVya3VpbEBjaXNjby5jb20+Cj4+Cj4+IFRo
-aXMgcGF0Y2ggc2VyaWVzIGFkZHMgdGhlIENFQyBwaHlzaWNhbCBhZGRyZXNzIG5vdGlmaWVyIGNv
-ZGUsIGJhc2VkIG9uCj4+IFJ1c3NlbGwncyBjb2RlOgo+Pgo+PiBodHRwczovL3BhdGNod29yay5r
-ZXJuZWwub3JnL3BhdGNoLzkyNzcwNDMvCj4+Cj4+IEl0IGFkZHMgc3VwcG9ydCBmb3IgaXQgdG8g
-dGhlIGV4eW5vc19oZG1pIGRybSBkcml2ZXIsIGFkZHMgc3VwcG9ydCBmb3IKPj4gaXQgdG8gdGhl
-IENFQyBmcmFtZXdvcmsgYW5kIGZpbmFsbHkgYWRkcyBzdXBwb3J0IHRvIHRoZSBzNXAtY2VjIGRy
-aXZlciwKPj4gd2hpY2ggbm93IGNhbiBiZSBtb3ZlZCBvdXQgb2Ygc3RhZ2luZy4KPj4KPj4gQWxz
-byBpbmNsdWRlZCBpcyBzaW1pbGFyIGNvZGUgZm9yIHRoZSBTVEkgcGxhdGZvcm0sIGNvbnRyaWJ1
-dGVkIGJ5Cj4+IEJlbmphbWluIEdhaWduYXJkLgo+Pgo+PiBUZXN0ZWQgdGhlIGV4eW5vcyBjb2Rl
-IHdpdGggbXkgT2Ryb2lkIFUzIGV4eW5vczQgZGV2Ym9hcmQuCj4+Cj4+IEFmdGVyIGRpc2N1c3Np
-b25zIHdpdGggRGFuaWVsIFZldHRlciBhbmQgUnVzc2VsbCBLaW5nIEkgaGF2ZSByZW1vdmVkCj4+
-IHRoZSBFRElEL0VMRC9IUEQgY29ubmVjdC9kaXNjb25uZWN0IGV2ZW50cyBmcm9tIHRoZSBub3Rp
-ZmllciBhbmQgbm93Cj4+IGp1c3QgdXNlIGl0IHRvIHJlcG9ydCB0aGUgQ0VDIHBoeXNpY2FsIGFk
-ZHJlc3MuIFRoaXMgYWxzbyBtZWFucyB0aGF0Cj4+IGl0IGlzIG5vdyByZW5hbWVkIHRvIENFQyBu
-b3RpZmllciBpbnN0ZWFkIG9mIEhQRCBub3RpZmllciBhbmQgdGhhdAo+PiBpdCBpcyBub3cgaW4g
-ZHJpdmVycy9tZWRpYS4gVGhlIGJsb2NrX25vdGlmaWVyIHdhcyBkcm9wcGVkIGFzIHdlbGwKPj4g
-YW5kIGluc3RlYWQgYSBzaW1wbGUgY2FsbGJhY2sgaXMgcmVnaXN0ZXJlZC4gVGhpcyBtZWFucyB0
-aGF0IHRoZQo+PiByZWxhdGlvbnNoaXAgYmV0d2VlbiBIRE1JIGFuZCBDRUMgaXMgbm93IDE6MSBh
-bmQgbm8gbG9uZ2VyIDE6biwgYnV0Cj4+IHNob3VsZCB0aGlzIGJlIG5lZWRlZCBpbiB0aGUgZnV0
-dXJlLCB0aGVuIHRoYXQgY2FuIGVhc2lseSBiZSBhZGRlZAo+PiBiYWNrLgo+Pgo+PiBEYW5pZWws
-IHJlZ2FyZGluZyB5b3VyIHN1Z2dlc3Rpb25zIGhlcmU6Cj4+Cj4+IGh0dHA6Ly93d3cuc3Bpbmlj
-cy5uZXQvbGlzdHMvZHJpLWRldmVsL21zZzEzMzkwNy5odG1sCj4+Cj4+IHRoaXMgcGF0Y2ggc2Vy
-aWVzIG1hcHMgdG8geW91ciBtYWlsIGFib3ZlIGFzIGZvbGxvd3M6Cj4+Cj4+IHN0cnVjdCBjZWNf
-cGluID09IHN0cnVjdCBjZWNfbm90aWZpZXIKPj4gY2VjXyh1bilyZWdpc3Rlcl9waW4gPT0gY2Vj
-X25vdGlmaWVyX2dldC9wdXQKPj4gY2VjX3NldF9hZGRyZXNzID09IGNlY19ub3RpZmllcl9zZXRf
-cGh5c19hZGRyCj4+IGNlY18odW4pcmVnaXN0ZXJfY2FsbGJhY2tzID09IGNlY19ub3RpZmllcl8o
-dW4pcmVnaXN0ZXIKPj4KPj4gQ29tbWVudHMgYXJlIHdlbGNvbWUuIEknZCBsaWtlIHRvIGdldCB0
-aGlzIGluIGZvciB0aGUgNC4xMiBrZXJuZWwgYXMKPj4gdGhpcyBpcyBhIG1pc3NpbmcgcGllY2Ug
-bmVlZGVkIHRvIGludGVncmF0ZSBDRUMgZHJpdmVycy4KPj4KPj4gUmVnYXJkcywKPj4KPj4gCUhh
-bnMKPj4KPj4gQ2hhbmdlcyBzaW5jZSB2NDoKPj4gLSBEcm9wcGVkIEVESUQvRUxEL2Nvbm5lY3Qv
-ZGlzY29ubmVjdCBzdXBwb3J0LiBJbnN0ZWFkLCBqdXN0IHJlcG9ydCB0aGUKPj4gICBDRUMgcGh5
-c2ljYWwgYWRkcmVzcyAoYW5kIHVzZSBJTlZBTElEIHdoZW4gZGlzY29ubmVjdGluZykuCj4+IC0g
-U2luY2UgdGhpcyBpcyBub3cgY29tcGxldGVseSBDRUMgc3BlY2lmaWMsIG1vdmUgaXQgdG8gZHJp
-dmVycy9tZWRpYQo+PiAgIGFuZCByZW5hbWUgdG8gY2VjLW5vdGlmaWVyLgo+PiAtIERyb3AgYmxv
-Y2tfbm90aWZpZXIuIEluc3RlYWQganVzdCBzZXQgYSBjYWxsYmFjayBmb3IgdGhlIG5vdGlmaWVy
-Lgo+PiAtIFVzZSAnaGRtaS1waGFuZGxlJyBpbiB0aGUgYmluZGluZ3MgZm9yIGJvdGggZXh5bm9z
-IGFuZCBzdGkuIFNvIG5vCj4+ICAgdmVuZG9yIHByZWZpeCBhbmQgJ2hkbWktcGhhbmRsZScgaW5z
-dGVhZCBvZiAnaGRtaS1oYW5kbGUnLgo+PiAtIE1ha2Ugc3RydWN0IGNlY19ub3RpZmllciBvcGFx
-dWUuIEFkZCBhIGhlbHBlciBmdW5jdGlvbiB0byBnZXQgdGhlCj4+ICAgcGh5c2ljYWwgYWRkcmVz
-cyBmcm9tIGEgY2VjX25vdGlmaWVyIHN0cnVjdC4KPj4gLSBQcm92aWRlIGR1bW15IGZ1bmN0aW9u
-cyBpbiBjZWMtbm90aWZpZXIuaCBzbyBpdCBjYW4gYmUgdXNlZCB3aGVuCj4+ICAgQ09ORklHX01F
-RElBX0NFQ19OT1RJRklFUiBpcyB1bmRlZmluZWQuCj4+IC0gRG9uJ3Qgc2VsZWN0IHRoZSBDRUMg
-bm90aWZpZXIgaW4gdGhlIEhETUkgZHJpdmVycy4gSXQgc2hvdWxkIG9ubHkKPj4gICBiZSBlbmFi
-bGVkIGJ5IGFjdHVhbCBDRUMgZHJpdmVycy4KPiAKPiBJIGp1c3QgcXVpY2tseSBzY2FuZWQgdGhy
-b3VnaCBpdCwgYnV0IHRoaXMgc2VlbXMgdG8gYWRkcmVzcyBhbGwgbXkKPiBjb25jZXJucyBmdWxs
-eS4gVGhhbmtzIGZvciByZXNwaW5uaW5nLiBPbiB0aGUgZW50aXJlIHBpbGUgKG9yIGp1c3QgdGhl
-Cj4gY29yZSBjZWMgbm90aWZpZXIgYml0cyk6Cj4gCj4gQWNrZWQtYnk6IERhbmllbCBWZXR0ZXIg
-PGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+CgpGYW50YXN0aWMhIFRoYW5rIHlvdSB2ZXJ5IG11Y2gg
-Zm9yIHlvdXIgY29tbWVudHMuCgpPbmUgbGFzdCBxdWVzdGlvbjogdGhlIHBhdGNoZXMgZm9yIGRy
-aXZlcnMvZ3B1L2RybTogY2FuIHRoZXkgZ28gdGhyb3VnaAp0aGUgbWVkaWEgc3Vic3lzdGVtIG9y
-IGRvIHlvdSB3YW50IHRvIHRha2UgdGhlbT8gVGhleSBkbyBkZXBlbmQgb24gdGhlIGZpcnN0CnR3
-byBwYXRjaGVzIG9mIHRoaXMgc2VyaWVzIChjZWMtZWRpZCBhbmQgY2VjLW5vdGlmaWVyKSwgc28g
-aXQgaXMgYSBiaXQgbW9yZQpjb29yZGluYXRpb24gaWYgdGhleSBoYXZlIHRvIGdvIHRocm91Z2gg
-dGhlIGRybSBzdWJzeXN0ZW0uCgpSZWdhcmRzLAoKCUhhbnMKCj4gCj4+Cj4+IENoYW5nZXMgc2lu
-Y2UgdjM6Cj4+IC0gQWRkZWQgdGhlIFNUSSBwYXRjaGVzCj4+IC0gU3BsaXQgdGhlIGV4eW5vczQg
-YmluZGluZyBwYXRjaGVzIGluIG9uZSBmb3IgZG9jdW1lbnRhdGlvbiBhbmQgb25lCj4+ICAgZm9y
-IHRoZSBkdHMgY2hhbmdlIGl0c2VsZiwgYWxzbyB1c2UgdGhlIGNvcnJlY3Qgc3ViamVjdCBhbmQg
-Q0MgdG8KPj4gICB0aGUgY29ycmVjdCBtYWlsaW5nbGlzdHMgKEkgaG9wZSAgKQo+Pgo+PiBDaGFu
-Z2VzIHNpbmNlIHYyOgo+PiAtIFNwbGl0IG9mZiB0aGUgZHRzIGNoYW5nZXMgb2YgdGhlIHM1cC1j
-ZWMgcGF0Y2ggaW50byBhIHNlcGFyYXRlIHBhdGNoCj4+IC0gUmVuYW1lZCBIUERfTk9USUZJRVJT
-IHRvIEhQRF9OT1RJRklFUiB0byBiZSBjb25zaXN0ZW50IHdpdGggdGhlIG5hbWUKPj4gICBvZiB0
-aGUgc291cmNlLgo+Pgo+PiBDaGFuZ2VzIHNpbmNlIHYxOgo+Pgo+PiBSZW5hbWVkIEhETUkgbm90
-aWZpZXIgdG8gSFBEIChob3RwbHVnIGRldGVjdCkgbm90aWZpZXIgc2luY2UgdGhpcyBjb2RlIGlz
-Cj4+IG5vdCBIRE1JIHNwZWNpZmljLCBidXQgaXMgaW50ZXJlc3RpbmcgZm9yIGFueSB2aWRlbyBz
-b3VyY2UgdGhhdCBoYXMgdG8KPj4gZGVhbCB3aXRoIGhvdHBsdWcgZGV0ZWN0IGFuZCBFRElEL0VM
-RCAoSERNSSwgRFZJLCBWR0EsIERQLCAuLi4uKS4KPj4gT25seSB0aGUgdXNlIHdpdGggQ0VDIGFk
-YXB0ZXJzIGlzIEhETUkgc3BlY2lmaWMsIGJ1dCB0aGUgSFBEIG5vdGlmaWVyCj4+IGlzIG1vcmUg
-Z2VuZXJpYy4KPj4KPj4KPj4KPj4KPj4gQmVuamFtaW4gR2FpZ25hcmQgKDQpOgo+PiAgIHN0aTog
-aGRtaTogYWRkIENFQyBub3RpZmllciBzdXBwb3J0Cj4+ICAgc3RpaC1jZWMudHh0OiBkb2N1bWVu
-dCBuZXcgaGRtaSBwaGFuZGxlCj4+ICAgc3RpaC1jZWM6IGFkZCBDRUMgbm90aWZpZXIgc3VwcG9y
-dAo+PiAgIGFybTogc3RpOiB1cGRhdGUgc3RpLWNlYyBmb3IgQ0VDIG5vdGlmaWVyIHN1cHBvcnQK
-Pj4KPj4gSGFucyBWZXJrdWlsICg3KToKPj4gICBjZWMtZWRpZDogcmVuYW1lIGNlY19nZXRfZWRp
-ZF9waHlzX2FkZHIKPj4gICBtZWRpYTogYWRkIENFQyBub3RpZmllciBzdXBwb3J0Cj4+ICAgY2Vj
-OiBpbnRlZ3JhdGUgQ0VDIG5vdGlmaWVyIHN1cHBvcnQKPj4gICBleHlub3NfaGRtaTogYWRkIENF
-QyBub3RpZmllciBzdXBwb3J0Cj4+ICAgQVJNOiBkdHM6IGV4eW5vczogYWRkIEhETUkgY29udHJv
-bGxlciBwaGFuZGxlIHRvIGV4eW5vczQuZHRzaQo+PiAgIHM1cC1jZWMudHh0OiBkb2N1bWVudCB0
-aGUgSERNSSBjb250cm9sbGVyIHBoYW5kbGUKPj4gICBzNXAtY2VjOiBhZGQgY2VjLW5vdGlmaWVy
-IHN1cHBvcnQsIG1vdmUgb3V0IG9mIHN0YWdpbmcKPj4KPj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL21lZGlhL3M1cC1jZWMudHh0ICAgICAgICAgIHwgICAyICsKPj4gIC4uLi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL21lZGlhL3N0aWgtY2VjLnR4dCAgICAgICAgIHwgICAyICsKPj4gIE1BSU5UQUlO
-RVJTICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICstCj4+ICBh
-cmNoL2FybS9ib290L2R0cy9leHlub3M0LmR0c2kgICAgICAgICAgICAgICAgICAgICB8ICAgMSAr
-Cj4+ICBhcmNoL2FybS9ib290L2R0cy9zdGloNDA3LWZhbWlseS5kdHNpICAgICAgICAgICAgICB8
-ICAxMiAtLS0KPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3N0aWg0MTAuZHRzaSAgICAgICAgICAgICAg
-ICAgICAgIHwgIDEzICsrKwo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
-ICAgICAgICAgICAgICAgfCAgMjAgKysrLQo+PiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRt
-aS5jICAgICAgICAgICAgICAgICAgICAgfCAgMTEgKysKPj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkv
-c3RpX2hkbWkuaCAgICAgICAgICAgICAgICAgICAgIHwgICAzICsKPj4gIGRyaXZlcnMvbWVkaWEv
-S2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAzICsKPj4gIGRyaXZlcnMv
-bWVkaWEvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICsKPj4gIGRy
-aXZlcnMvbWVkaWEvY2VjLWVkaWQuYyAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDE1ICsr
-LQo+PiAgZHJpdmVycy9tZWRpYS9jZWMtbm90aWZpZXIuYyAgICAgICAgICAgICAgICAgICAgICAg
-fCAxMTYgKysrKysrKysrKysrKysrKysrKysrCj4+ICBkcml2ZXJzL21lZGlhL2NlYy9jZWMtY29y
-ZS5jICAgICAgICAgICAgICAgICAgICAgICB8ICAyMSArKysrCj4+ICBkcml2ZXJzL21lZGlhL2ky
-Yy9hZHY3NTExLmMgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNSArLQo+PiAgZHJpdmVycy9t
-ZWRpYS9pMmMvYWR2NzYwNC5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDMgKy0KPj4gIGRy
-aXZlcnMvbWVkaWEvaTJjL2Fkdjc4NDIuYyAgICAgICAgICAgICAgICAgICAgICAgIHwgICAyICst
-Cj4+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL0tjb25maWcgICAgICAgICAgICAgICAgICAgICB8
-ICAyOCArKysrKwo+PiAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9NYWtlZmlsZSAgICAgICAgICAg
-ICAgICAgICAgfCAgIDIgKwo+PiAgLi4uL21lZGlhID0+IG1lZGlhL3BsYXRmb3JtfS9zNXAtY2Vj
-L01ha2VmaWxlICAgICAgfCAgIDAKPj4gIC4uLi9wbGF0Zm9ybX0vczVwLWNlYy9leHlub3NfaGRt
-aV9jZWMuaCAgICAgICAgICAgIHwgICAwCj4+ICAuLi4vcGxhdGZvcm19L3M1cC1jZWMvZXh5bm9z
-X2hkbWlfY2VjY3RybC5jICAgICAgICB8ICAgMAo+PiAgLi4uL21lZGlhID0+IG1lZGlhL3BsYXRm
-b3JtfS9zNXAtY2VjL3JlZ3MtY2VjLmggICAgfCAgIDAKPj4gIC4uLi9tZWRpYSA9PiBtZWRpYS9w
-bGF0Zm9ybX0vczVwLWNlYy9zNXBfY2VjLmMgICAgIHwgIDM1ICsrKysrKy0KPj4gIC4uLi9tZWRp
-YSA9PiBtZWRpYS9wbGF0Zm9ybX0vczVwLWNlYy9zNXBfY2VjLmggICAgIHwgICAzICsKPj4gIC4u
-Li9zdC1jZWMgPT4gbWVkaWEvcGxhdGZvcm0vc3RpL2NlY30vTWFrZWZpbGUgICAgIHwgICAwCj4+
-ICAuLi4vc3QtY2VjID0+IG1lZGlhL3BsYXRmb3JtL3N0aS9jZWN9L3N0aWgtY2VjLmMgICB8ICAz
-MSArKysrKy0KPj4gIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vdml2aWQvdml2aWQtdmlkLWNhcC5j
-ICAgICAgIHwgICAzICstCj4+ICBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvS2NvbmZpZyAgICAgICAg
-ICAgICAgICAgICAgICB8ICAgNCAtCj4+ICBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvTWFrZWZpbGUg
-ICAgICAgICAgICAgICAgICAgICB8ICAgMiAtCj4+ICBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvczVw
-LWNlYy9LY29uZmlnICAgICAgICAgICAgICB8ICAgOSAtLQo+PiAgZHJpdmVycy9zdGFnaW5nL21l
-ZGlhL3M1cC1jZWMvVE9ETyAgICAgICAgICAgICAgICAgfCAgIDcgLS0KPj4gIGRyaXZlcnMvc3Rh
-Z2luZy9tZWRpYS9zdC1jZWMvS2NvbmZpZyAgICAgICAgICAgICAgIHwgICA4IC0tCj4+ICBkcml2
-ZXJzL3N0YWdpbmcvbWVkaWEvc3QtY2VjL1RPRE8gICAgICAgICAgICAgICAgICB8ICAgNyAtLQo+
-PiAgaW5jbHVkZS9tZWRpYS9jZWMtZWRpZC5oICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAg
-MTcgKystCj4+ICBpbmNsdWRlL21lZGlhL2NlYy1ub3RpZmllci5oICAgICAgICAgICAgICAgICAg
-ICAgICB8ICA5MyArKysrKysrKysrKysrKysrKwo+PiAgaW5jbHVkZS9tZWRpYS9jZWMuaCAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKysKPj4gIDM3IGZpbGVzIGNoYW5nZWQs
-IDQyMSBpbnNlcnRpb25zKCspLCA3MSBkZWxldGlvbnMoLSkKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBkcml2ZXJzL21lZGlhL2NlYy1ub3RpZmllci5jCj4+ICByZW5hbWUgZHJpdmVycy97c3RhZ2lu
-Zy9tZWRpYSA9PiBtZWRpYS9wbGF0Zm9ybX0vczVwLWNlYy9NYWtlZmlsZSAoMTAwJSkKPj4gIHJl
-bmFtZSBkcml2ZXJzL3tzdGFnaW5nL21lZGlhID0+IG1lZGlhL3BsYXRmb3JtfS9zNXAtY2VjL2V4
-eW5vc19oZG1pX2NlYy5oICgxMDAlKQo+PiAgcmVuYW1lIGRyaXZlcnMve3N0YWdpbmcvbWVkaWEg
-PT4gbWVkaWEvcGxhdGZvcm19L3M1cC1jZWMvZXh5bm9zX2hkbWlfY2VjY3RybC5jICgxMDAlKQo+
-PiAgcmVuYW1lIGRyaXZlcnMve3N0YWdpbmcvbWVkaWEgPT4gbWVkaWEvcGxhdGZvcm19L3M1cC1j
-ZWMvcmVncy1jZWMuaCAoMTAwJSkKPj4gIHJlbmFtZSBkcml2ZXJzL3tzdGFnaW5nL21lZGlhID0+
-IG1lZGlhL3BsYXRmb3JtfS9zNXAtY2VjL3M1cF9jZWMuYyAoODklKQo+PiAgcmVuYW1lIGRyaXZl
-cnMve3N0YWdpbmcvbWVkaWEgPT4gbWVkaWEvcGxhdGZvcm19L3M1cC1jZWMvczVwX2NlYy5oICg5
-NyUpCj4+ICByZW5hbWUgZHJpdmVycy97c3RhZ2luZy9tZWRpYS9zdC1jZWMgPT4gbWVkaWEvcGxh
-dGZvcm0vc3RpL2NlY30vTWFrZWZpbGUgKDEwMCUpCj4+ICByZW5hbWUgZHJpdmVycy97c3RhZ2lu
-Zy9tZWRpYS9zdC1jZWMgPT4gbWVkaWEvcGxhdGZvcm0vc3RpL2NlY30vc3RpaC1jZWMuYyAoOTMl
-KQo+PiAgZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9zNXAtY2VjL0tj
-b25maWcKPj4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvczVwLWNl
-Yy9UT0RPCj4+ICBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9zdGFnaW5nL21lZGlhL3N0LWNl
-Yy9LY29uZmlnCj4+ICBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9zdGFnaW5nL21lZGlhL3N0
-LWNlYy9UT0RPCj4+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9tZWRpYS9jZWMtbm90aWZp
-ZXIuaAo+Pgo+PiAtLSAKPj4gMi4xMS4wCj4+Cj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Marek,
+
+Quoting Marek Szyprowski (2017-03-22 04:35:40)
+> Registers for some clocks might be located in the SOC area, which are under the
+> power domain. To enable access to those registers respective domain has to be
+> turned on. Additionally, registers for such clocks will usually loose its
+> contents when power domain is turned off, so additional saving and restoring of
+> them might be needed in the clock controller driver.
+> 
+> This patch adds basic infrastructure in the clocks core to allow implementing
+> driver for such clocks under power domains. Clock provider can supply a
+> struct device pointer, which is the used by clock core for tracking and managing
+> clock's controller runtime pm state. Each clk_prepare() operation
+> will first call pm_runtime_get_sync() on the supplied device, while
+> clk_unprepare() will do pm_runtime_put_sync() at the end.
+> 
+> Additional calls to pm_runtime_get/put functions are required to ensure that any
+> register access (like calculating/changing clock rates and unpreparing/disabling
+> unused clocks on boot) will be done with clock controller in runtime resumend
+> state.
+
+The above is a bit confusing. Is clk_prepare really special? It seems to
+me that every single clk_ops callback will need this?
+
+That leads to my second question: why put this in the clk core? Can the
+clk provider driver simply add pm_runtime_{get,put} calls into its
+clk_ops callbacks instead? The clk core does not directly touch hardware
+(e.g. reading registers) so putting the pm runtime calls into the
+provider callbacks should be sufficient.
+
+> 
+> When one wants to register clock controller, which make use of this feature, he
+> has to:
+> 1. Provide a struct device to the core when registering the provider.
+> 2. Ensure to enable runtime PM for that device before registering clocks.
+> 3. Make sure that the runtime PM status of the controller device reflects
+>    the HW state.
+
+Third question: is there a case where more than one device is required?
+Is is possible that a single pm_runtime_get call against a single device
+will not be enough for some clk provider drivers? If so then this
+solution does not scale very well and the clk provider driver will have
+to implement this in the clk_ops callbacks (as I mentioned above in my
+second question).
+
+Fourth & final question: I'm under the impression that pm runtime calls
+be be nested and re-enter, but I want to make sure (Ulf?). For instance
+it is highly likely that this new feature would cause something like:
+
+pm_runtime_get()              - called by random driver
+-> clk_prepare_enable()       - genpd enables functioal clocks
+   -> pm_runtime_get()        - called by clk_pm_runtime_get in clk core
+      -> clk_prepare_enable() - genpd enables interface or bus clocks
+
+I guess this is safe from the pm_runtime_get/genpd perspective, but want
+to make sure first.
+
+Thanks,
+Mike
+
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/clk/clk.c | 129 +++++++++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 114 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0fb39fe217d1..a6001b6e49a7 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/of.h>
+>  #include <linux/device.h>
+>  #include <linux/init.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/sched.h>
+>  #include <linux/clkdev.h>
+>  
+> @@ -46,6 +47,7 @@ struct clk_core {
+>         const struct clk_ops    *ops;
+>         struct clk_hw           *hw;
+>         struct module           *owner;
+> +       struct device           *dev;
+>         struct clk_core         *parent;
+>         const char              **parent_names;
+>         struct clk_core         **parents;
+> @@ -87,6 +89,26 @@ struct clk {
+>         struct hlist_node clks_node;
+>  };
+>  
+> +/***           runtime pm          ***/
+> +static int clk_pm_runtime_get(struct clk_core *core)
+> +{
+> +       int ret = 0;
+> +
+> +       if (!core->dev)
+> +               return 0;
+> +
+> +       ret = pm_runtime_get_sync(core->dev);
+> +       return ret < 0 ? ret : 0;
+> +}
+> +
+> +static void clk_pm_runtime_put(struct clk_core *core)
+> +{
+> +       if (!core->dev)
+> +               return;
+> +
+> +       pm_runtime_put_sync(core->dev);
+> +}
+> +
+>  /***           locking             ***/
+>  static void clk_prepare_lock(void)
+>  {
+> @@ -150,6 +172,8 @@ static void clk_enable_unlock(unsigned long flags)
+>  
+>  static bool clk_core_is_prepared(struct clk_core *core)
+>  {
+> +       bool ret = false;
+> +
+>         /*
+>          * .is_prepared is optional for clocks that can prepare
+>          * fall back to software usage counter if it is missing
+> @@ -157,11 +181,18 @@ static bool clk_core_is_prepared(struct clk_core *core)
+>         if (!core->ops->is_prepared)
+>                 return core->prepare_count;
+>  
+> -       return core->ops->is_prepared(core->hw);
+> +       if (!clk_pm_runtime_get(core)) {
+> +               ret = core->ops->is_prepared(core->hw);
+> +               clk_pm_runtime_put(core);
+> +       }
+> +
+> +       return ret;
+>  }
+>  
+>  static bool clk_core_is_enabled(struct clk_core *core)
+>  {
+> +       bool ret = false;
+> +
+>         /*
+>          * .is_enabled is only mandatory for clocks that gate
+>          * fall back to software usage counter if .is_enabled is missing
+> @@ -169,7 +200,29 @@ static bool clk_core_is_enabled(struct clk_core *core)
+>         if (!core->ops->is_enabled)
+>                 return core->enable_count;
+>  
+> -       return core->ops->is_enabled(core->hw);
+> +       /*
+> +        * Check if clock controller's device is runtime active before
+> +        * calling .is_enabled callback. If not, assume that clock is
+> +        * disabled, because we might be called from atomic context, from
+> +        * which pm_runtime_get() is not allowed.
+> +        * This function is called mainly from clk_disable_unused_subtree,
+> +        * which ensures proper runtime pm activation of controller before
+> +        * taking enable spinlock, but the below check is needed if one tries
+> +        * to call it from other places.
+> +        */
+> +       if (core->dev) {
+> +               pm_runtime_get_noresume(core->dev);
+> +               if (!pm_runtime_active(core->dev)) {
+> +                       ret = false;
+> +                       goto done;
+> +               }
+> +       }
+> +
+> +       ret = core->ops->is_enabled(core->hw);
+> +done:
+> +       clk_pm_runtime_put(core);
+> +
+> +       return ret;
+>  }
+>  
+>  /***    helper functions   ***/
+> @@ -489,6 +542,8 @@ static void clk_core_unprepare(struct clk_core *core)
+>         if (core->ops->unprepare)
+>                 core->ops->unprepare(core->hw);
+>  
+> +       clk_pm_runtime_put(core);
+> +
+>         trace_clk_unprepare_complete(core);
+>         clk_core_unprepare(core->parent);
+>  }
+> @@ -530,10 +585,14 @@ static int clk_core_prepare(struct clk_core *core)
+>                 return 0;
+>  
+>         if (core->prepare_count == 0) {
+> -               ret = clk_core_prepare(core->parent);
+> +               ret = clk_pm_runtime_get(core);
+>                 if (ret)
+>                         return ret;
+>  
+> +               ret = clk_core_prepare(core->parent);
+> +               if (ret)
+> +                       goto runtime_put;
+> +
+>                 trace_clk_prepare(core);
+>  
+>                 if (core->ops->prepare)
+> @@ -541,15 +600,18 @@ static int clk_core_prepare(struct clk_core *core)
+>  
+>                 trace_clk_prepare_complete(core);
+>  
+> -               if (ret) {
+> -                       clk_core_unprepare(core->parent);
+> -                       return ret;
+> -               }
+> +               if (ret)
+> +                       goto unprepare;
+>         }
+>  
+>         core->prepare_count++;
+>  
+>         return 0;
+> +unprepare:
+> +       clk_core_unprepare(core->parent);
+> +runtime_put:
+> +       clk_pm_runtime_put(core);
+> +       return ret;
+>  }
+>  
+>  static int clk_core_prepare_lock(struct clk_core *core)
+> @@ -745,6 +807,9 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
+>         if (core->flags & CLK_IGNORE_UNUSED)
+>                 return;
+>  
+> +       if (clk_pm_runtime_get(core))
+> +               return;
+> +
+>         if (clk_core_is_prepared(core)) {
+>                 trace_clk_unprepare(core);
+>                 if (core->ops->unprepare_unused)
+> @@ -753,6 +818,8 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
+>                         core->ops->unprepare(core->hw);
+>                 trace_clk_unprepare_complete(core);
+>         }
+> +
+> +       clk_pm_runtime_put(core);
+>  }
+>  
+>  static void clk_disable_unused_subtree(struct clk_core *core)
+> @@ -768,6 +835,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+>         if (core->flags & CLK_OPS_PARENT_ENABLE)
+>                 clk_core_prepare_enable(core->parent);
+>  
+> +       if (clk_pm_runtime_get(core))
+> +               goto unprepare_out;
+> +
+>         flags = clk_enable_lock();
+>  
+>         if (core->enable_count)
+> @@ -792,6 +862,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+>  
+>  unlock_out:
+>         clk_enable_unlock(flags);
+> +       clk_pm_runtime_put(core);
+> +unprepare_out:
+>         if (core->flags & CLK_OPS_PARENT_ENABLE)
+>                 clk_core_disable_unprepare(core->parent);
+>  }
+> @@ -1036,9 +1108,13 @@ long clk_get_accuracy(struct clk *clk)
+>  static unsigned long clk_recalc(struct clk_core *core,
+>                                 unsigned long parent_rate)
+>  {
+> -       if (core->ops->recalc_rate)
+> -               return core->ops->recalc_rate(core->hw, parent_rate);
+> -       return parent_rate;
+> +       unsigned long rate = parent_rate;
+> +
+> +       if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
+> +               rate = core->ops->recalc_rate(core->hw, parent_rate);
+> +               clk_pm_runtime_put(core);
+> +       }
+> +       return rate;
+>  }
+>  
+>  /**
+> @@ -1563,6 +1639,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>  {
+>         struct clk_core *top, *fail_clk;
+>         unsigned long rate = req_rate;
+> +       int ret = 0;
+>  
+>         if (!core)
+>                 return 0;
+> @@ -1579,21 +1656,28 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>         if (!top)
+>                 return -EINVAL;
+>  
+> +       ret = clk_pm_runtime_get(core);
+> +       if (ret)
+> +               return ret;
+> +
+>         /* notify that we are about to change rates */
+>         fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
+>         if (fail_clk) {
+>                 pr_debug("%s: failed to set %s rate\n", __func__,
+>                                 fail_clk->name);
+>                 clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
+> -               return -EBUSY;
+> +               ret = -EBUSY;
+> +               goto err;
+>         }
+>  
+>         /* change the rates */
+>         clk_change_rate(top);
+>  
+>         core->req_rate = req_rate;
+> +err:
+> +       clk_pm_runtime_put(core);
+>  
+> -       return 0;
+> +       return ret;
+>  }
+>  
+>  /**
+> @@ -1824,12 +1908,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+>                 p_rate = parent->rate;
+>         }
+>  
+> +       ret = clk_pm_runtime_get(core);
+> +       if (ret)
+> +               goto out;
+> +
+>         /* propagate PRE_RATE_CHANGE notifications */
+>         ret = __clk_speculate_rates(core, p_rate);
+>  
+>         /* abort if a driver objects */
+>         if (ret & NOTIFY_STOP_MASK)
+> -               goto out;
+> +               goto runtime_put;
+>  
+>         /* do the re-parent */
+>         ret = __clk_set_parent(core, parent, p_index);
+> @@ -1842,6 +1930,8 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+>                 __clk_recalc_accuracies(core);
+>         }
+>  
+> +runtime_put:
+> +       clk_pm_runtime_put(core);
+>  out:
+>         clk_prepare_unlock();
+>  
+> @@ -2549,6 +2639,12 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+>                 goto fail_name;
+>         }
+>         core->ops = hw->init->ops;
+> +       if (dev && pm_runtime_enabled(dev)) {
+> +               core->dev = dev;
+> +               ret = clk_pm_runtime_get(core);
+> +               if (ret)
+> +                       goto fail_pm;
+> +       }
+>         if (dev && dev->driver)
+>                 core->owner = dev->driver->owner;
+>         core->hw = hw;
+> @@ -2595,12 +2691,13 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+>         }
+>  
+>         ret = __clk_core_init(core);
+> -       if (!ret)
+> +       if (!ret) {
+> +               clk_pm_runtime_put(core);
+>                 return hw->clk;
+> +       }
+>  
+>         __clk_free_clk(hw->clk);
+>         hw->clk = NULL;
+> -
+>  fail_parents:
+>         kfree(core->parents);
+>  fail_parent_names_copy:
+> @@ -2608,6 +2705,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+>                 kfree_const(core->parent_names[i]);
+>         kfree(core->parent_names);
+>  fail_parent_names:
+> +       clk_pm_runtime_put(core);
+> +fail_pm:
+>         kfree_const(core->name);
+>  fail_name:
+>         kfree(core);
+> -- 
+> 1.9.1
+> 
