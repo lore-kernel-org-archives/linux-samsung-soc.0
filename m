@@ -1,89 +1,74 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv5 03/11] cec: integrate CEC notifier support
-Date: Wed, 29 Mar 2017 16:15:35 +0200
-Message-ID: <20170329141543.32935-4-hverkuil@xs4all.nl>
+Subject: [PATCHv5.1 03/11] cec: integrate CEC notifier support
+Date: Wed, 29 Mar 2017 17:44:44 +0200
+Message-ID: <d88cff81-a689-716d-77d3-b8dc0ce9bebe@xs4all.nl>
 References: <20170329141543.32935-1-hverkuil@xs4all.nl>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20170329141543.32935-1-hverkuil@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
+ <20170329141543.32935-4-hverkuil@xs4all.nl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170329141543.32935-4-hverkuil@xs4all.nl>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-media@vger.kernel.org
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
-
-Support the CEC notifier framework, simplifying drivers that
-depend on this.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/cec/cec-core.c | 21 +++++++++++++++++++++
- include/media/cec.h          |  6 ++++++
- 2 files changed, 27 insertions(+)
-
-diff --git a/drivers/media/cec/cec-core.c b/drivers/media/cec/cec-core.c
-index 37217e205040..2bab6e00b663 100644
---- a/drivers/media/cec/cec-core.c
-+++ b/drivers/media/cec/cec-core.c
-@@ -195,6 +195,23 @@ static void cec_devnode_unregister(struct cec_devnode *devnode)
- 	put_device(&devnode->dev);
- }
- 
-+#ifdef CONFIG_MEDIA_CEC_NOTIFIER
-+static void cec_cec_notify(struct cec_adapter *adap, u16 pa)
-+{
-+	cec_s_phys_addr(adap, pa, false);
-+}
-+
-+void cec_register_cec_notifier(struct cec_adapter *adap,
-+			       struct cec_notifier *notifier)
-+{
-+	if (WARN_ON(!adap->devnode.registered))
-+		return;
-+
-+	cec_notifier_register(adap->notifier, adap, cec_cec_notify);
-+}
-+EXPORT_SYMBOL_GPL(cec_register_cec_notifier);
-+#endif
-+
- struct cec_adapter *cec_allocate_adapter(const struct cec_adap_ops *ops,
- 					 void *priv, const char *name, u32 caps,
- 					 u8 available_las)
-@@ -343,6 +360,10 @@ void cec_unregister_adapter(struct cec_adapter *adap)
- 	adap->rc = NULL;
- #endif
- 	debugfs_remove_recursive(adap->cec_dir);
-+#ifdef CONFIG_MEDIA_CEC_NOTIFIER
-+	if (adap->notifier)
-+		cec_notifier_unregister(adap->notifier);
-+#endif
- 	cec_devnode_unregister(&adap->devnode);
- }
- EXPORT_SYMBOL_GPL(cec_unregister_adapter);
-diff --git a/include/media/cec.h b/include/media/cec.h
-index 96a0aa770d61..e6474b567a25 100644
---- a/include/media/cec.h
-+++ b/include/media/cec.h
-@@ -30,6 +30,7 @@
- #include <linux/cec-funcs.h>
- #include <media/rc-core.h>
- #include <media/cec-edid.h>
-+#include <media/cec-notifier.h>
- 
- /**
-  * struct cec_devnode - cec device node
-@@ -213,6 +214,11 @@ void cec_transmit_done(struct cec_adapter *adap, u8 status, u8 arb_lost_cnt,
- 		       u8 nack_cnt, u8 low_drive_cnt, u8 error_cnt);
- void cec_received_msg(struct cec_adapter *adap, struct cec_msg *msg);
- 
-+#ifdef CONFIG_MEDIA_CEC_NOTIFIER
-+void cec_register_cec_notifier(struct cec_adapter *adap,
-+			       struct cec_notifier *notifier);
-+#endif
-+
- #else
- 
- static inline int cec_register_adapter(struct cec_adapter *adap,
--- 
-2.11.0
+U3VwcG9ydCB0aGUgQ0VDIG5vdGlmaWVyIGZyYW1ld29yaywgc2ltcGxpZnlpbmcgZHJpdmVycyB0
+aGF0CmRlcGVuZCBvbiB0aGlzLgoKU2lnbmVkLW9mZi1ieTogSGFucyBWZXJrdWlsIDxoYW5zLnZl
+cmt1aWxAY2lzY28uY29tPgpUZXN0ZWQtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3Nr
+aUBzYW1zdW5nLmNvbT4KLS0tCkFjY2lkZW50YWxseSByZW1vdmVkIGFkYXAtPm5vdGlmaWVyIGNh
+dXNpbmcgdGhpcyB0byBmYWlsLiBGaXhlZCB0aGlzCnN0dXBpZCBtaXN0YWtlLgotLS0KIGRyaXZl
+cnMvbWVkaWEvY2VjL2NlYy1jb3JlLmMgfCAyMiArKysrKysrKysrKysrKysrKysrKysrCiBpbmNs
+dWRlL21lZGlhL2NlYy5oICAgICAgICAgIHwgMTAgKysrKysrKysrKwogMiBmaWxlcyBjaGFuZ2Vk
+LCAzMiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS9jZWMvY2VjLWNv
+cmUuYyBiL2RyaXZlcnMvbWVkaWEvY2VjL2NlYy1jb3JlLmMKaW5kZXggMzcyMTdlMjA1MDQwLi5l
+NTA3MGIzNzQyNzYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbWVkaWEvY2VjL2NlYy1jb3JlLmMKKysr
+IGIvZHJpdmVycy9tZWRpYS9jZWMvY2VjLWNvcmUuYwpAQCAtMTk1LDYgKzE5NSwyNCBAQCBzdGF0
+aWMgdm9pZCBjZWNfZGV2bm9kZV91bnJlZ2lzdGVyKHN0cnVjdCBjZWNfZGV2bm9kZSAqZGV2bm9k
+ZSkKIAlwdXRfZGV2aWNlKCZkZXZub2RlLT5kZXYpOwogfQoKKyNpZmRlZiBDT05GSUdfTUVESUFf
+Q0VDX05PVElGSUVSCitzdGF0aWMgdm9pZCBjZWNfY2VjX25vdGlmeShzdHJ1Y3QgY2VjX2FkYXB0
+ZXIgKmFkYXAsIHUxNiBwYSkKK3sKKwljZWNfc19waHlzX2FkZHIoYWRhcCwgcGEsIGZhbHNlKTsK
+K30KKwordm9pZCBjZWNfcmVnaXN0ZXJfY2VjX25vdGlmaWVyKHN0cnVjdCBjZWNfYWRhcHRlciAq
+YWRhcCwKKwkJCSAgICAgICBzdHJ1Y3QgY2VjX25vdGlmaWVyICpub3RpZmllcikKK3sKKwlpZiAo
+V0FSTl9PTighYWRhcC0+ZGV2bm9kZS5yZWdpc3RlcmVkKSkKKwkJcmV0dXJuOworCisJYWRhcC0+
+bm90aWZpZXIgPSBub3RpZmllcjsKKwljZWNfbm90aWZpZXJfcmVnaXN0ZXIoYWRhcC0+bm90aWZp
+ZXIsIGFkYXAsIGNlY19jZWNfbm90aWZ5KTsKK30KK0VYUE9SVF9TWU1CT0xfR1BMKGNlY19yZWdp
+c3Rlcl9jZWNfbm90aWZpZXIpOworI2VuZGlmCisKIHN0cnVjdCBjZWNfYWRhcHRlciAqY2VjX2Fs
+bG9jYXRlX2FkYXB0ZXIoY29uc3Qgc3RydWN0IGNlY19hZGFwX29wcyAqb3BzLAogCQkJCQkgdm9p
+ZCAqcHJpdiwgY29uc3QgY2hhciAqbmFtZSwgdTMyIGNhcHMsCiAJCQkJCSB1OCBhdmFpbGFibGVf
+bGFzKQpAQCAtMzQzLDYgKzM2MSwxMCBAQCB2b2lkIGNlY191bnJlZ2lzdGVyX2FkYXB0ZXIoc3Ry
+dWN0IGNlY19hZGFwdGVyICphZGFwKQogCWFkYXAtPnJjID0gTlVMTDsKICNlbmRpZgogCWRlYnVn
+ZnNfcmVtb3ZlX3JlY3Vyc2l2ZShhZGFwLT5jZWNfZGlyKTsKKyNpZmRlZiBDT05GSUdfTUVESUFf
+Q0VDX05PVElGSUVSCisJaWYgKGFkYXAtPm5vdGlmaWVyKQorCQljZWNfbm90aWZpZXJfdW5yZWdp
+c3RlcihhZGFwLT5ub3RpZmllcik7CisjZW5kaWYKIAljZWNfZGV2bm9kZV91bnJlZ2lzdGVyKCZh
+ZGFwLT5kZXZub2RlKTsKIH0KIEVYUE9SVF9TWU1CT0xfR1BMKGNlY191bnJlZ2lzdGVyX2FkYXB0
+ZXIpOwpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9tZWRpYS9jZWMuaCBiL2luY2x1ZGUvbWVkaWEvY2Vj
+LmgKaW5kZXggOTZhMGFhNzcwZDYxLi4zMDdmNWRjYWYwMzQgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUv
+bWVkaWEvY2VjLmgKKysrIGIvaW5jbHVkZS9tZWRpYS9jZWMuaApAQCAtMzAsNiArMzAsNyBAQAog
+I2luY2x1ZGUgPGxpbnV4L2NlYy1mdW5jcy5oPgogI2luY2x1ZGUgPG1lZGlhL3JjLWNvcmUuaD4K
+ICNpbmNsdWRlIDxtZWRpYS9jZWMtZWRpZC5oPgorI2luY2x1ZGUgPG1lZGlhL2NlYy1ub3RpZmll
+ci5oPgoKIC8qKgogICogc3RydWN0IGNlY19kZXZub2RlIC0gY2VjIGRldmljZSBub2RlCkBAIC0x
+NzMsNiArMTc0LDEwIEBAIHN0cnVjdCBjZWNfYWRhcHRlciB7CiAJYm9vbCBwYXNzdGhyb3VnaDsK
+IAlzdHJ1Y3QgY2VjX2xvZ19hZGRycyBsb2dfYWRkcnM7CgorI2lmZGVmIENPTkZJR19NRURJQV9D
+RUNfTk9USUZJRVIKKwlzdHJ1Y3QgY2VjX25vdGlmaWVyICpub3RpZmllcjsKKyNlbmRpZgorCiAJ
+c3RydWN0IGRlbnRyeSAqY2VjX2RpcjsKIAlzdHJ1Y3QgZGVudHJ5ICpzdGF0dXNfZmlsZTsKCkBA
+IC0yMTMsNiArMjE4LDExIEBAIHZvaWQgY2VjX3RyYW5zbWl0X2RvbmUoc3RydWN0IGNlY19hZGFw
+dGVyICphZGFwLCB1OCBzdGF0dXMsIHU4IGFyYl9sb3N0X2NudCwKIAkJICAgICAgIHU4IG5hY2tf
+Y250LCB1OCBsb3dfZHJpdmVfY250LCB1OCBlcnJvcl9jbnQpOwogdm9pZCBjZWNfcmVjZWl2ZWRf
+bXNnKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwgc3RydWN0IGNlY19tc2cgKm1zZyk7CgorI2lm
+ZGVmIENPTkZJR19NRURJQV9DRUNfTk9USUZJRVIKK3ZvaWQgY2VjX3JlZ2lzdGVyX2NlY19ub3Rp
+ZmllcihzdHJ1Y3QgY2VjX2FkYXB0ZXIgKmFkYXAsCisJCQkgICAgICAgc3RydWN0IGNlY19ub3Rp
+ZmllciAqbm90aWZpZXIpOworI2VuZGlmCisKICNlbHNlCgogc3RhdGljIGlubGluZSBpbnQgY2Vj
+X3JlZ2lzdGVyX2FkYXB0ZXIoc3RydWN0IGNlY19hZGFwdGVyICphZGFwLAotLSAKMi4xMS4wCgoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
