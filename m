@@ -1,134 +1,77 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v6 1/4] clk: Add support for runtime PM
-Date: Thu, 30 Mar 2017 09:24:15 +0200
-Message-ID: <75509e0f-26cd-52e7-8c71-b004ab6abc81@samsung.com>
-References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170322113554eucas1p27471f0de278c55d5dce7fdf120395e09@eucas1p2.samsung.com>
- <1490182543-28550-2-git-send-email-m.szyprowski@samsung.com>
- <149081897388.31513.7062843004022908296@resonance>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: Re: [PATCHv5 11/11] arm: sti: update sti-cec for CEC notifier support
+Date: Thu, 30 Mar 2017 09:41:30 +0200
+Message-ID: <CA+M3ks442wftNR8+dctdSkKMCPSw9Rd2CH5UG-VEP7XySGjCjw@mail.gmail.com>
+References: <20170329141543.32935-1-hverkuil@xs4all.nl>
+ <20170329141543.32935-12-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <149081897388.31513.7062843004022908296@resonance>
-Sender: linux-clk-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170329141543.32935-12-hverkuil@xs4all.nl>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: devicetree@vger.kernel.org, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Patrice.chotard@st.com, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Michael,
-
-On 2017-03-29 22:22, Michael Turquette wrote:
-> Quoting Marek Szyprowski (2017-03-22 04:35:40)
->> Registers for some clocks might be located in the SOC area, which are under the
->> power domain. To enable access to those registers respective domain has to be
->> turned on. Additionally, registers for such clocks will usually loose its
->> contents when power domain is turned off, so additional saving and restoring of
->> them might be needed in the clock controller driver.
->>
->> This patch adds basic infrastructure in the clocks core to allow implementing
->> driver for such clocks under power domains. Clock provider can supply a
->> struct device pointer, which is the used by clock core for tracking and managing
->> clock's controller runtime pm state. Each clk_prepare() operation
->> will first call pm_runtime_get_sync() on the supplied device, while
->> clk_unprepare() will do pm_runtime_put_sync() at the end.
->>
->> Additional calls to pm_runtime_get/put functions are required to ensure that any
->> register access (like calculating/changing clock rates and unpreparing/disabling
->> unused clocks on boot) will be done with clock controller in runtime resumend
->> state.
-> The above is a bit confusing. Is clk_prepare really special? It seems to
-> me that every single clk_ops callback will need this?
-
-clk_prepare/unprepare are special, because they allow sleeping, so they 
-are natural
-candidates for the place for calling runtime PM operations. 
-clk_enable()/disable()
-is called under a spinlock, so runtime pm cannot be called efficiently 
-there, but
-core guarantees that they are called after clk_prepare(), so accessing 
-hw registers
-is safe. The only remaining calls are not guaranteed to be called always 
-after
-clk_prepare(), so those additional calls and checks in runtime pm are 
-needed there.
-
-> That leads to my second question: why put this in the clk core? Can the
-> clk provider driver simply add pm_runtime_{get,put} calls into its
-> clk_ops callbacks instead? The clk core does not directly touch hardware
-> (e.g. reading registers) so putting the pm runtime calls into the
-> provider callbacks should be sufficient.
-
-In theory is should be possible to duplicate all kind of clock build blocks
-(gates, muxes, dividers, ...) with additional runtime pm calls. This 
-would however
-end in much more code and a bit more complicated locking. Implementing 
-it in clk
-core made the code simpler. It also turned out that runtime pm 
-integration is
-needed for more that a single clock provider: besides Samsung SoCs 
-(Exynos 5433
-and newer, Exynos 4412 ISP, Exynos Audio Subsystem, hacks in Exynos 542x 
-can be
-also replaced by runtime PM calls), Ulf mentioned that exactly similar 
-pattern
-is used for some UX500 SoCs (STE). More will probably come once the 
-feature is
-in, because for now such drivers simply forces runtime active state as a
-workaround or don't instantiate related power domains at all.
-
-It is not that uncommon to have runtime PM integrated in the framework 
-(examples:
-mmc, scsi). Please not that this is optional for clock providers - if 
-they don't
-enable runtime PM for the provided clock controller device during clock
-registration, the clock core will behave exactly the same way as now.
-
->> When one wants to register clock controller, which make use of this feature, he
->> has to:
->> 1. Provide a struct device to the core when registering the provider.
->> 2. Ensure to enable runtime PM for that device before registering clocks.
->> 3. Make sure that the runtime PM status of the controller device reflects
->>     the HW state.
-> Third question: is there a case where more than one device is required?
-> Is is possible that a single pm_runtime_get call against a single device
-> will not be enough for some clk provider drivers? If so then this
-> solution does not scale very well and the clk provider driver will have
-> to implement this in the clk_ops callbacks (as I mentioned above in my
-> second question).
-
-This is a generic question about runtime PM. There are various methods to
-model hardware relations to control pm/runtime pm state of a set of devices:
-child-parent-bus relations (setting child to active state also activates a
-parent), gen_pd power domains and sub-domains and recently merged device pm
-links, which allows to model relations across the typical child-parent tree
-hierarchy. IMHO device core pm related framework provides enough features to
-solve the case when one needs to control more than one device - what is
-worth to mention - in all cases the client only need to call pm_runtime
-funtions on the ONE leaf device, everything else will be handled by pm core.
-
-> Fourth & final question: I'm under the impression that pm runtime calls
-> be be nested and re-enter, but I want to make sure (Ulf?). For instance
-> it is highly likely that this new feature would cause something like:
->
-> pm_runtime_get()              - called by random driver
-> -> clk_prepare_enable()       - genpd enables functioal clocks
->     -> pm_runtime_get()        - called by clk_pm_runtime_get in clk core
->        -> clk_prepare_enable() - genpd enables interface or bus clocks
->
-> I guess this is safe from the pm_runtime_get/genpd perspective, but want
-> to make sure first.
-
-Yes, this will work fine after recent fixes. Tested with Exynos IIS ASoC
-driver (which is also a clock provider), which in turn is a client for
-Exynos Audio Subsystem clock provider.
-
-> Thanks,
-
- >> [...]
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+KyBQYXRyaWNlIGZvciBzdGkgRFQKCjIwMTctMDMtMjkgMTY6MTUgR01UKzAyOjAwIEhhbnMgVmVy
+a3VpbCA8aHZlcmt1aWxAeHM0YWxsLm5sPjoKPiBGcm9tOiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVu
+amFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4KPgo+IFRvIHVzZSBDRUMgbm90aWZpZXIgc3RpIENF
+QyBkcml2ZXIgbmVlZHMgdG8gZ2V0IHBoYW5kbGUKPiBvZiB0aGUgaGRtaSBkZXZpY2UuCj4KPiBT
+aWduZWQtb2ZmLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJv
+Lm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBIYW5zIFZlcmt1aWwgPGhhbnMudmVya3VpbEBjaXNjby5j
+b20+Cj4gQ0M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnCj4gLS0tCj4gIGFyY2gvYXJtL2Jv
+b3QvZHRzL3N0aWg0MDctZmFtaWx5LmR0c2kgfCAxMiAtLS0tLS0tLS0tLS0KPiAgYXJjaC9hcm0v
+Ym9vdC9kdHMvc3RpaDQxMC5kdHNpICAgICAgICB8IDEzICsrKysrKysrKysrKysKPiAgMiBmaWxl
+cyBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAxMiBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1n
+aXQgYS9hcmNoL2FybS9ib290L2R0cy9zdGloNDA3LWZhbWlseS5kdHNpIGIvYXJjaC9hcm0vYm9v
+dC9kdHMvc3RpaDQwNy1mYW1pbHkuZHRzaQo+IGluZGV4IGQ3NTNhYzM2Nzg4Zi4uMDQ0MTg0NTgw
+MzI2IDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N0aWg0MDctZmFtaWx5LmR0c2kK
+PiArKysgYi9hcmNoL2FybS9ib290L2R0cy9zdGloNDA3LWZhbWlseS5kdHNpCj4gQEAgLTc0Miwx
+OCArNzQyLDYgQEAKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JmNsa19zX2Mw
+X2ZsZXhnZW4gQ0xLX0VUSF9QSFk+Owo+ICAgICAgICAgICAgICAgICB9Owo+Cj4gLSAgICAgICAg
+ICAgICAgIGNlYzogc3RpLWNlY0AwOTRhMDg3YyB7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAg
+Y29tcGF0aWJsZSA9ICJzdCxzdGloLWNlYyI7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgcmVn
+ID0gPDB4OTRhMDg3YyAweDY0PjsKPiAtICAgICAgICAgICAgICAgICAgICAgICBjbG9ja3MgPSA8
+JmNsa19zeXNpbj47Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgY2xvY2stbmFtZXMgPSAiY2Vj
+LWNsayI7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDE0
+MCBJUlFfVFlQRV9OT05FPjsKPiAtICAgICAgICAgICAgICAgICAgICAgICBpbnRlcnJ1cHQtbmFt
+ZXMgPSAiY2VjLWlycSI7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgcGluY3RybC1uYW1lcyA9
+ICJkZWZhdWx0IjsKPiAtICAgICAgICAgICAgICAgICAgICAgICBwaW5jdHJsLTAgPSA8JnBpbmN0
+cmxfY2VjMF9kZWZhdWx0PjsKPiAtICAgICAgICAgICAgICAgICAgICAgICByZXNldHMgPSA8JnNv
+ZnRyZXNldCBTVElINDA3X0xQTV9TT0ZUUkVTRVQ+Owo+IC0gICAgICAgICAgICAgICB9Owo+IC0K
+PiAgICAgICAgICAgICAgICAgcm5nMTA6IHJuZ0AwOGE4OTAwMCB7Cj4gICAgICAgICAgICAgICAg
+ICAgICAgICAgY29tcGF0aWJsZSAgICAgID0gInN0LHJuZyI7Cj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgcmVnICAgICAgICAgICAgID0gPDB4MDhhODkwMDAgMHgxMDAwPjsKPiBkaWZmIC0tZ2l0
+IGEvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQxMC5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3Rp
+aDQxMC5kdHNpCj4gaW5kZXggM2M5NjcyYzViMDlmLi4yMWZlNzJiMTgzZDggMTAwNjQ0Cj4gLS0t
+IGEvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQxMC5kdHNpCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9k
+dHMvc3RpaDQxMC5kdHNpCj4gQEAgLTI4MSw1ICsyODEsMTggQEAKPiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICA8JmNsa19zX2MwX2ZsZXhnZW4gQ0xLX1NUMjMxX0RNVT4sCj4gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPCZjbGtfc19jMF9mbGV4Z2VuIENMS19GTEFT
+SF9QUk9NSVA+Owo+ICAgICAgICAgICAgICAgICB9Owo+ICsKPiArICAgICAgICAgICAgICAgc3Rp
+LWNlY0AwOTRhMDg3YyB7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJz
+dCxzdGloLWNlYyI7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmVnID0gPDB4OTRhMDg3YyAw
+eDY0PjsKPiArICAgICAgICAgICAgICAgICAgICAgICBjbG9ja3MgPSA8JmNsa19zeXNpbj47Cj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgY2xvY2stbmFtZXMgPSAiY2VjLWNsayI7Cj4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDE0MCBJUlFfVFlQRV9OT05F
+PjsKPiArICAgICAgICAgICAgICAgICAgICAgICBpbnRlcnJ1cHQtbmFtZXMgPSAiY2VjLWlycSI7
+Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKPiAr
+ICAgICAgICAgICAgICAgICAgICAgICBwaW5jdHJsLTAgPSA8JnBpbmN0cmxfY2VjMF9kZWZhdWx0
+PjsKPiArICAgICAgICAgICAgICAgICAgICAgICByZXNldHMgPSA8JnNvZnRyZXNldCBTVElINDA3
+X0xQTV9TT0ZUUkVTRVQ+Owo+ICsgICAgICAgICAgICAgICAgICAgICAgIGhkbWktcGhhbmRsZSA9
+IDwmc3RpX2hkbWk+Owo+ICsgICAgICAgICAgICAgICB9Owo+ICAgICAgICAgfTsKPiAgfTsKPiAt
+LQo+IDIuMTEuMAo+CgoKCi0tIApCZW5qYW1pbiBHYWlnbmFyZAoKR3JhcGhpYyBTdHVkeSBHcm91
+cAoKTGluYXJvLm9yZyDilIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCgpGb2xs
+b3cgTGluYXJvOiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9nCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
