@@ -1,62 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCHv5 07/11] s5p-cec: add cec-notifier support, move out of
- staging
-Date: Fri, 31 Mar 2017 00:38:19 +0300
-Message-ID: <20170330213819.ccgsdo4h37bl5skg@kozik-lap>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCHv5 04/11] exynos_hdmi: add CEC notifier support
+Date: Thu, 30 Mar 2017 23:35:27 +0100
+Message-ID: <20170330223527.GK7909@n2100.armlinux.org.uk>
 References: <20170329141543.32935-1-hverkuil@xs4all.nl>
- <20170329141543.32935-8-hverkuil@xs4all.nl>
+ <20170329141543.32935-5-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-media-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:40922 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932377AbdC3Wfn (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 30 Mar 2017 18:35:43 -0400
 Content-Disposition: inline
-In-Reply-To: <20170329141543.32935-8-hverkuil@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
+In-Reply-To: <20170329141543.32935-5-hverkuil@xs4all.nl>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
 
-On Wed, Mar 29, 2017 at 04:15:39PM +0200, Hans Verkuil wrote:
-> From: Hans Verkuil <hans.verkuil@cisco.com>
-> 
-> By using the CEC notifier framework there is no longer any reason
-> to manually set the physical address. This was the one blocking
-> issue that prevented this driver from going out of staging, so do
-> this move as well.
-> 
-> Update the bindings documenting the new hdmi phandle and
-> update exynos4.dtsi accordingly.
-> 
-> Tested with my Odroid U3.
-> 
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> CC: linux-samsung-soc@vger.kernel.org
-> CC: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/media/platform/Kconfig                     | 18 +++++++++++
->  drivers/media/platform/Makefile                    |  1 +
->  .../media => media/platform}/s5p-cec/Makefile      |  0
->  .../platform}/s5p-cec/exynos_hdmi_cec.h            |  0
->  .../platform}/s5p-cec/exynos_hdmi_cecctrl.c        |  0
->  .../media => media/platform}/s5p-cec/regs-cec.h    |  0
->  .../media => media/platform}/s5p-cec/s5p_cec.c     | 35 ++++++++++++++++++----
->  .../media => media/platform}/s5p-cec/s5p_cec.h     |  3 ++
->  drivers/staging/media/Kconfig                      |  2 --
->  drivers/staging/media/Makefile                     |  1 -
->  drivers/staging/media/s5p-cec/Kconfig              |  9 ------
->  drivers/staging/media/s5p-cec/TODO                 |  7 -----
->  12 files changed, 52 insertions(+), 24 deletions(-)
->  rename drivers/{staging/media => media/platform}/s5p-cec/Makefile (100%)
->  rename drivers/{staging/media => media/platform}/s5p-cec/exynos_hdmi_cec.h (100%)
->  rename drivers/{staging/media => media/platform}/s5p-cec/exynos_hdmi_cecctrl.c (100%)
->  rename drivers/{staging/media => media/platform}/s5p-cec/regs-cec.h (100%)
->  rename drivers/{staging/media => media/platform}/s5p-cec/s5p_cec.c (89%)
->  rename drivers/{staging/media => media/platform}/s5p-cec/s5p_cec.h (97%)
->  delete mode 100644 drivers/staging/media/s5p-cec/Kconfig
->  delete mode 100644 drivers/staging/media/s5p-cec/TODO
-> 
+On Wed, Mar 29, 2017 at 04:15:36PM +0200, Hans Verkuil wrote:
+> +	cec_notifier_set_phys_addr(hdata->notifier,
+> +				   cec_get_edid_phys_addr(edid));
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+This pattern causes problems - can we have the notifier taking the EDID
+please, and stubs in cec-notifier.h to stub that out?
 
-Best regards,
-Krzysztof
+Maybe something like cec_notifier_set_phys_addr_from_edid(edid) ?
+
+Having converted the tda998x code over to your new notifier, the 0-day
+builder reported this tonight:
+
+>> ERROR: "cec_get_edid_phys_addr" [drivers/gpu/drm/i2c/tda998x.ko] undefined!
+
+which is caused exactly by this problem.  I can add #ifdefs into the
+tda998x driver, but as you're already stubbing out
+cec_notifier_set_phys_addr() in cec-notifier.h, it would be stupid to
+have to resort to #ifdefs in driver code to solve this issue.
+
+Thanks.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
