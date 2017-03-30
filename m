@@ -1,78 +1,113 @@
-From: Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>
+From: Hans Verkuil <hansverk@cisco.com>
 Subject: Re: [PATCHv5 11/11] arm: sti: update sti-cec for CEC notifier support
-Date: Thu, 30 Mar 2017 09:30:39 +0000
-Message-ID: <c29adefb-13e6-e723-eb96-3b0049b39ddd@st.com>
+Date: Thu, 30 Mar 2017 11:32:27 +0200
+Message-ID: <a966a94d-8031-88ec-f931-d521fa74b9a7@cisco.com>
 References: <20170329141543.32935-1-hverkuil@xs4all.nl>
  <20170329141543.32935-12-hverkuil@xs4all.nl>
  <CA+M3ks442wftNR8+dctdSkKMCPSw9Rd2CH5UG-VEP7XySGjCjw@mail.gmail.com>
+ <c29adefb-13e6-e723-eb96-3b0049b39ddd@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CA+M3ks442wftNR8+dctdSkKMCPSw9Rd2CH5UG-VEP7XySGjCjw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Content-ID: <DC90FABD8B6EC54BBF89C4F78634A12E-qxv4g6HH51o@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Cc: "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from aer-iport-3.cisco.com ([173.38.203.53]:58130 "EHLO
+        aer-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752667AbdC3Jcb (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 30 Mar 2017 05:32:31 -0400
+In-Reply-To: <c29adefb-13e6-e723-eb96-3b0049b39ddd@st.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Patrice CHOTARD <patrice.chotard@st.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-SGkgQmVuamFtaW4NCg0KT24gMDMvMzAvMjAxNyAwOTo0MSBBTSwgQmVuamFtaW4gR2FpZ25hcmQg
-d3JvdGU6DQo+ICsgUGF0cmljZSBmb3Igc3RpIERUDQoNCkluIG9yZGVyIHRvIGJlIGNvaGVyZW50
-IHdpdGggYWxsIHByZXZpb3VzIFNUaSBEVCBwYXRjaGVzLA0KDQpjYW4geW91IHVwZGF0ZSB0aGUg
-Y29tbWl0IG1lc3NhZ2Ugd2l0aCAiQVJNOiBkdHM6IFNUaUg0MTA6IHVwZGF0ZSANCnN0aS1jZWMg
-Zm9yIENFQyBub3RpZmllciBzdXBwb3J0Ig0KDQpUaGFua3MNCg0KUGF0cmljZQ0KDQo+DQo+IDIw
-MTctMDMtMjkgMTY6MTUgR01UKzAyOjAwIEhhbnMgVmVya3VpbCA8aHZlcmt1aWxAeHM0YWxsLm5s
-PjoNCj4+IEZyb206IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8u
-b3JnPg0KPj4NCj4+IFRvIHVzZSBDRUMgbm90aWZpZXIgc3RpIENFQyBkcml2ZXIgbmVlZHMgdG8g
-Z2V0IHBoYW5kbGUNCj4+IG9mIHRoZSBoZG1pIGRldmljZS4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5
-OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4NCj4+IFNp
-Z25lZC1vZmYtYnk6IEhhbnMgVmVya3VpbCA8aGFucy52ZXJrdWlsQGNpc2NvLmNvbT4NCj4+IEND
-OiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZw0KPj4gLS0tDQo+PiAgYXJjaC9hcm0vYm9vdC9k
-dHMvc3RpaDQwNy1mYW1pbHkuZHRzaSB8IDEyIC0tLS0tLS0tLS0tLQ0KPj4gIGFyY2gvYXJtL2Jv
-b3QvZHRzL3N0aWg0MTAuZHRzaSAgICAgICAgfCAxMyArKysrKysrKysrKysrDQo+PiAgMiBmaWxl
-cyBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAxMiBkZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZm
-IC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQwNy1mYW1pbHkuZHRzaSBiL2FyY2gvYXJt
-L2Jvb3QvZHRzL3N0aWg0MDctZmFtaWx5LmR0c2kNCj4+IGluZGV4IGQ3NTNhYzM2Nzg4Zi4uMDQ0
-MTg0NTgwMzI2IDEwMDY0NA0KPj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQwNy1mYW1p
-bHkuZHRzaQ0KPj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQwNy1mYW1pbHkuZHRzaQ0K
-Pj4gQEAgLTc0MiwxOCArNzQyLDYgQEANCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIDwmY2xrX3NfYzBfZmxleGdlbiBDTEtfRVRIX1BIWT47DQo+PiAgICAgICAgICAgICAgICAg
-fTsNCj4+DQo+PiAtICAgICAgICAgICAgICAgY2VjOiBzdGktY2VjQDA5NGEwODdjIHsNCj4+IC0g
-ICAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAic3Qsc3RpaC1jZWMiOw0KPj4gLSAg
-ICAgICAgICAgICAgICAgICAgICAgcmVnID0gPDB4OTRhMDg3YyAweDY0PjsNCj4+IC0gICAgICAg
-ICAgICAgICAgICAgICAgIGNsb2NrcyA9IDwmY2xrX3N5c2luPjsNCj4+IC0gICAgICAgICAgICAg
-ICAgICAgICAgIGNsb2NrLW5hbWVzID0gImNlYy1jbGsiOw0KPj4gLSAgICAgICAgICAgICAgICAg
-ICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDE0MCBJUlFfVFlQRV9OT05FPjsNCj4+IC0gICAg
-ICAgICAgICAgICAgICAgICAgIGludGVycnVwdC1uYW1lcyA9ICJjZWMtaXJxIjsNCj4+IC0gICAg
-ICAgICAgICAgICAgICAgICAgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7DQo+PiAtICAgICAg
-ICAgICAgICAgICAgICAgICBwaW5jdHJsLTAgPSA8JnBpbmN0cmxfY2VjMF9kZWZhdWx0PjsNCj4+
-IC0gICAgICAgICAgICAgICAgICAgICAgIHJlc2V0cyA9IDwmc29mdHJlc2V0IFNUSUg0MDdfTFBN
-X1NPRlRSRVNFVD47DQo+PiAtICAgICAgICAgICAgICAgfTsNCj4+IC0NCj4+ICAgICAgICAgICAg
-ICAgICBybmcxMDogcm5nQDA4YTg5MDAwIHsNCj4+ICAgICAgICAgICAgICAgICAgICAgICAgIGNv
-bXBhdGlibGUgICAgICA9ICJzdCxybmciOw0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgcmVn
-ICAgICAgICAgICAgID0gPDB4MDhhODkwMDAgMHgxMDAwPjsNCj4+IGRpZmYgLS1naXQgYS9hcmNo
-L2FybS9ib290L2R0cy9zdGloNDEwLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy9zdGloNDEwLmR0
-c2kNCj4+IGluZGV4IDNjOTY3MmM1YjA5Zi4uMjFmZTcyYjE4M2Q4IDEwMDY0NA0KPj4gLS0tIGEv
-YXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQxMC5kdHNpDQo+PiArKysgYi9hcmNoL2FybS9ib290L2R0
-cy9zdGloNDEwLmR0c2kNCj4+IEBAIC0yODEsNSArMjgxLDE4IEBADQo+PiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICA8JmNsa19zX2MwX2ZsZXhnZW4gQ0xLX1NUMjMxX0RNVT4sDQo+
-PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JmNsa19zX2MwX2ZsZXhnZW4gQ0xL
-X0ZMQVNIX1BST01JUD47DQo+PiAgICAgICAgICAgICAgICAgfTsNCj4+ICsNCj4+ICsgICAgICAg
-ICAgICAgICBzdGktY2VjQDA5NGEwODdjIHsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGNv
-bXBhdGlibGUgPSAic3Qsc3RpaC1jZWMiOw0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmVn
-ID0gPDB4OTRhMDg3YyAweDY0PjsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGNsb2NrcyA9
-IDwmY2xrX3N5c2luPjsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0g
-ImNlYy1jbGsiOw0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDxHSUNf
-U1BJIDE0MCBJUlFfVFlQRV9OT05FPjsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGludGVy
-cnVwdC1uYW1lcyA9ICJjZWMtaXJxIjsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHBpbmN0
-cmwtbmFtZXMgPSAiZGVmYXVsdCI7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICBwaW5jdHJs
-LTAgPSA8JnBpbmN0cmxfY2VjMF9kZWZhdWx0PjsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
-IHJlc2V0cyA9IDwmc29mdHJlc2V0IFNUSUg0MDdfTFBNX1NPRlRSRVNFVD47DQo+PiArICAgICAg
-ICAgICAgICAgICAgICAgICBoZG1pLXBoYW5kbGUgPSA8JnN0aV9oZG1pPjsNCj4+ICsgICAgICAg
-ICAgICAgICB9Ow0KPj4gICAgICAgICB9Ow0KPj4gIH07DQo+PiAtLQ0KPj4gMi4xMS4wDQo+Pg0K
-Pg0KPg0KPg==
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 03/30/2017 11:30 AM, Patrice CHOTARD wrote:
+> Hi Benjamin
+> 
+> On 03/30/2017 09:41 AM, Benjamin Gaignard wrote:
+>> + Patrice for sti DT
+> 
+> In order to be coherent with all previous STi DT patches,
+> 
+> can you update the commit message with "ARM: dts: STiH410: update 
+> sti-cec for CEC notifier support"
+
+Done.
+
+Regards,
+
+	Hans
+
+> 
+> Thanks
+> 
+> Patrice
+> 
+>>
+>> 2017-03-29 16:15 GMT+02:00 Hans Verkuil <hverkuil@xs4all.nl>:
+>>> From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+>>>
+>>> To use CEC notifier sti CEC driver needs to get phandle
+>>> of the hdmi device.
+>>>
+>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+>>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+>>> CC: devicetree@vger.kernel.org
+>>> ---
+>>>  arch/arm/boot/dts/stih407-family.dtsi | 12 ------------
+>>>  arch/arm/boot/dts/stih410.dtsi        | 13 +++++++++++++
+>>>  2 files changed, 13 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+>>> index d753ac36788f..044184580326 100644
+>>> --- a/arch/arm/boot/dts/stih407-family.dtsi
+>>> +++ b/arch/arm/boot/dts/stih407-family.dtsi
+>>> @@ -742,18 +742,6 @@
+>>>                                  <&clk_s_c0_flexgen CLK_ETH_PHY>;
+>>>                 };
+>>>
+>>> -               cec: sti-cec@094a087c {
+>>> -                       compatible = "st,stih-cec";
+>>> -                       reg = <0x94a087c 0x64>;
+>>> -                       clocks = <&clk_sysin>;
+>>> -                       clock-names = "cec-clk";
+>>> -                       interrupts = <GIC_SPI 140 IRQ_TYPE_NONE>;
+>>> -                       interrupt-names = "cec-irq";
+>>> -                       pinctrl-names = "default";
+>>> -                       pinctrl-0 = <&pinctrl_cec0_default>;
+>>> -                       resets = <&softreset STIH407_LPM_SOFTRESET>;
+>>> -               };
+>>> -
+>>>                 rng10: rng@08a89000 {
+>>>                         compatible      = "st,rng";
+>>>                         reg             = <0x08a89000 0x1000>;
+>>> diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
+>>> index 3c9672c5b09f..21fe72b183d8 100644
+>>> --- a/arch/arm/boot/dts/stih410.dtsi
+>>> +++ b/arch/arm/boot/dts/stih410.dtsi
+>>> @@ -281,5 +281,18 @@
+>>>                                  <&clk_s_c0_flexgen CLK_ST231_DMU>,
+>>>                                  <&clk_s_c0_flexgen CLK_FLASH_PROMIP>;
+>>>                 };
+>>> +
+>>> +               sti-cec@094a087c {
+>>> +                       compatible = "st,stih-cec";
+>>> +                       reg = <0x94a087c 0x64>;
+>>> +                       clocks = <&clk_sysin>;
+>>> +                       clock-names = "cec-clk";
+>>> +                       interrupts = <GIC_SPI 140 IRQ_TYPE_NONE>;
+>>> +                       interrupt-names = "cec-irq";
+>>> +                       pinctrl-names = "default";
+>>> +                       pinctrl-0 = <&pinctrl_cec0_default>;
+>>> +                       resets = <&softreset STIH407_LPM_SOFTRESET>;
+>>> +                       hdmi-phandle = <&sti_hdmi>;
+>>> +               };
+>>>         };
+>>>  };
+>>> --
+>>> 2.11.0
+>>>
+>>
+>>
+>>
+> 
