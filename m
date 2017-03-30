@@ -1,113 +1,151 @@
-From: Hans Verkuil <hansverk@cisco.com>
-Subject: Re: [PATCHv5 11/11] arm: sti: update sti-cec for CEC notifier support
-Date: Thu, 30 Mar 2017 11:32:27 +0200
-Message-ID: <a966a94d-8031-88ec-f931-d521fa74b9a7@cisco.com>
-References: <20170329141543.32935-1-hverkuil@xs4all.nl>
- <20170329141543.32935-12-hverkuil@xs4all.nl>
- <CA+M3ks442wftNR8+dctdSkKMCPSw9Rd2CH5UG-VEP7XySGjCjw@mail.gmail.com>
- <c29adefb-13e6-e723-eb96-3b0049b39ddd@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v9 00/12] Introducing Exynos ChipId driver
+Date: Thu, 30 Mar 2017 18:46:54 +0530
+Message-ID: <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
+References: <CGME20170330131417epcas1p48a7f41b90177294b7918ecf31df130d1@epcas1p4.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aer-iport-3.cisco.com ([173.38.203.53]:58130 "EHLO
-        aer-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752667AbdC3Jcb (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:44173 "EHLO
+        epoutp02.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933160AbdC3NOV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 05:32:31 -0400
-In-Reply-To: <c29adefb-13e6-e723-eb96-3b0049b39ddd@st.com>
+        Thu, 30 Mar 2017 09:14:21 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Patrice CHOTARD <patrice.chotard@st.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, javier@osg.samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 03/30/2017 11:30 AM, Patrice CHOTARD wrote:
-> Hi Benjamin
-> 
-> On 03/30/2017 09:41 AM, Benjamin Gaignard wrote:
->> + Patrice for sti DT
-> 
-> In order to be coherent with all previous STi DT patches,
-> 
-> can you update the commit message with "ARM: dts: STiH410: update 
-> sti-cec for CEC notifier support"
+Each Exynos SoC has ChipID block which can give information about SoC's
+product Id and revision number.
 
-Done.
+This patch series introduces Exynos Chipid SoC driver. At the same time
+it reduces dependency of mach-exynos files from plat-samsung, by removing
+soc_is_exynosMMMM and samsung_rev API. Instead of it now we can use
+soc_device_match API.
 
-Regards,
+Until now we are using static mapping of Exynos Chipid and using this
+static mapping to know about SoC name and revision via soc_is_exynosMMMM
+macro. This is quite cumbersome and every time new ARMv7 based Exynos SoC
+supports lands in mainline a bunch of such new macros needs to be added.
+Quite long back during support of Exynos5260 it has been discussed to
+solve this problem.
 
-	Hans
+To solve this issue this patchset replaces use of soc_is_exynosMMMM by
+either of_machine_is_compatible or soc_device_match depending upon usecase.
 
-> 
-> Thanks
-> 
-> Patrice
-> 
->>
->> 2017-03-29 16:15 GMT+02:00 Hans Verkuil <hverkuil@xs4all.nl>:
->>> From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
->>>
->>> To use CEC notifier sti CEC driver needs to get phandle
->>> of the hdmi device.
->>>
->>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
->>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
->>> CC: devicetree@vger.kernel.org
->>> ---
->>>  arch/arm/boot/dts/stih407-family.dtsi | 12 ------------
->>>  arch/arm/boot/dts/stih410.dtsi        | 13 +++++++++++++
->>>  2 files changed, 13 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
->>> index d753ac36788f..044184580326 100644
->>> --- a/arch/arm/boot/dts/stih407-family.dtsi
->>> +++ b/arch/arm/boot/dts/stih407-family.dtsi
->>> @@ -742,18 +742,6 @@
->>>                                  <&clk_s_c0_flexgen CLK_ETH_PHY>;
->>>                 };
->>>
->>> -               cec: sti-cec@094a087c {
->>> -                       compatible = "st,stih-cec";
->>> -                       reg = <0x94a087c 0x64>;
->>> -                       clocks = <&clk_sysin>;
->>> -                       clock-names = "cec-clk";
->>> -                       interrupts = <GIC_SPI 140 IRQ_TYPE_NONE>;
->>> -                       interrupt-names = "cec-irq";
->>> -                       pinctrl-names = "default";
->>> -                       pinctrl-0 = <&pinctrl_cec0_default>;
->>> -                       resets = <&softreset STIH407_LPM_SOFTRESET>;
->>> -               };
->>> -
->>>                 rng10: rng@08a89000 {
->>>                         compatible      = "st,rng";
->>>                         reg             = <0x08a89000 0x1000>;
->>> diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
->>> index 3c9672c5b09f..21fe72b183d8 100644
->>> --- a/arch/arm/boot/dts/stih410.dtsi
->>> +++ b/arch/arm/boot/dts/stih410.dtsi
->>> @@ -281,5 +281,18 @@
->>>                                  <&clk_s_c0_flexgen CLK_ST231_DMU>,
->>>                                  <&clk_s_c0_flexgen CLK_FLASH_PROMIP>;
->>>                 };
->>> +
->>> +               sti-cec@094a087c {
->>> +                       compatible = "st,stih-cec";
->>> +                       reg = <0x94a087c 0x64>;
->>> +                       clocks = <&clk_sysin>;
->>> +                       clock-names = "cec-clk";
->>> +                       interrupts = <GIC_SPI 140 IRQ_TYPE_NONE>;
->>> +                       interrupt-names = "cec-irq";
->>> +                       pinctrl-names = "default";
->>> +                       pinctrl-0 = <&pinctrl_cec0_default>;
->>> +                       resets = <&softreset STIH407_LPM_SOFTRESET>;
->>> +                       hdmi-phandle = <&sti_hdmi>;
->>> +               };
->>>         };
->>>  };
->>> --
->>> 2.11.0
->>>
->>
->>
->>
-> 
+I have tested this patch series on Exynos4210 based Origen board for normal
+SMP boot.
+
+Although I submitted this series as a whole of 12 patchsets, following are
+dependency details among the patches.
+
+Patch 1/12 to 3/12 can be taken without any dependency on other patches.
+Patch 4/12 to 6/12 can be taken witout any dependency on other patches.
+Patch 7/12 to 12/12 has dependency on patches 1/12 to 6/12
+
+Revision 8 and it's discussion can be found here:
+ - https://www.spinics.net/lists/arm-kernel/msg548384.html
+
+Revision 7 and it's discussion can be found here:
+ - https://www.spinics.net/lists/arm-kernel/msg540790.html
+
+Revision 6 and it's discussion can be found here:
+ - https://lkml.org/lkml/2016/5/25/101
+
+Revision 5 and it's discussion can be found here:
+ - http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/310046.html
+
+Revision 4 and it's discussion can be found here:
+ - https://lkml.org/lkml/2014/12/3/115
+
+Changes since v8:
+ - Reordered patch sequences so that independent patches can be taken
+   without any dependency issues among the patches.
+ - Broken down patche Patch v8 5/8 into three patches as per suggestion
+   from Krzysztof.
+ - Addressed concerns raised from Andrzej and Bartlomiej.
+ - Fixed mask values for exynos4 based SoCs.
+ - Rebased patches on latest krzk/for-next
+ - Addressed various comments from Krzysztof 
+
+Changes since v7:
+ - Added ARM64 based Exynos7 and Exynos5433 support in chipid driver.
+ - Removed Exynos4415 support from chipid driver, as exynos4415 has been removed from tree
+ - Added patch to enable chipid driver for ARM64 based Exynos platform
+ - Addressed review comments from Arnd for firmware.c, platsmp.c and pm.c files/
+ - Splitted changes in firmware.c, platsmp.c and pm.c in separate patches 
+   for better code review
+ - Included suggested code improvement in exynos-chipid.c from Marek Szyprowski
+
+Chances since v6:
+ - Removed platform driver from chipid, instead use early_init to register soc_device
+ - Removed export functions from exynos chipid driver
+ - Replace soc_is_exynosMMMM via either of_machine_is_compatible or soc_device_match in
+   files in arm/mach-exynos folder
+ - This patchset depends on the following patch series by Geert Uytterhoeven. This series
+   includes patch which introduces soc_device_match.
+   http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1261739.html
+ - Rebased on latest krzk/for-next branch and retested.
+
+Change since v5:
+ - Addressed Rob's review comments.
+ - Rebased on latest krzk/for-next branch and retested.
+
+Changes since v4:
+ - Removed custom sysfs entries as they were not providing any new information
+   as pointed out by Arnd.
+ - Removed functions exporting product_id and revision, instead we will export
+   exynos_chipid_info structure. It will be helpful when we need to provide more
+   fields of chipid outside of chipid, as commented by Yadwinder
+ - Converted all funcions as __init. 
+
+Change since v3: 
+ - This patch set contains 5/6 and 6/6 patch from v3 series.
+ - Made EXYNOS_CHIPID config option non-user selectable,
+   as suggested by Tomasz Figa.
+ - Made uniform macro for EXYNOS4/5_SOC_MASK as EXYNOS_SOC_MASK as
+   suggested by Tomasz Figa.
+ - Made local variables static in chipid driver.
+ - Added existing SoC's product id's.
+ - Added platform driver support.
+
+Changes since v2:
+ - Reorganized patches as suggested by Tomasz Figa.
+ - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
+
+
+Pankaj Dubey (12):
+  ARM: EXYNOS: refactor firmware specific routines
+  ARM: EXYNOS: remove usage of soc_is_exynosMMMM from pm.c
+  ARM: EXYNOS: remove secondary startup initialization from
+    smp_prepare_cpus
+  soc: samsung: add exynos chipid driver support
+  ARM: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
+  ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
+  ARM: EXYNOS: introduce soc specific pm ops
+  ARM: EXYNOS: move exynos_boot_vector_{addr,flag} ops to
+    exynos_s2r_data
+  ARM: EXYNOS: introduce exynos_cpu_info struct
+  ARM: EXYNOS: move power_{down,up} to per SoC struct exynos_cpu_info
+  ARM: EXYNOS: move cpu_restart as a SoC specific hook to
+    exynos_cpu_info
+  ARM: EXYNOS: refactor of mach-exynos to use chipid information
+
+ arch/arm/mach-exynos/Kconfig                 |   1 +
+ arch/arm/mach-exynos/common.h                |  97 -----------
+ arch/arm/mach-exynos/exynos.c                |  44 ++---
+ arch/arm/mach-exynos/firmware.c              | 114 +++++++++---
+ arch/arm/mach-exynos/platsmp.c               | 249 +++++++++++++++++++++------
+ arch/arm/mach-exynos/pm.c                    | 200 ++++++++++++++++++---
+ arch/arm/plat-samsung/cpu.c                  |  14 --
+ arch/arm/plat-samsung/include/plat/cpu.h     |   2 -
+ arch/arm/plat-samsung/include/plat/map-s5p.h |   2 -
+ arch/arm64/Kconfig.platforms                 |   1 +
+ drivers/soc/samsung/Kconfig                  |   5 +
+ drivers/soc/samsung/Makefile                 |   1 +
+ drivers/soc/samsung/exynos-chipid.c          | 109 ++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h  |   3 +
+ 14 files changed, 587 insertions(+), 255 deletions(-)
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
+
+-- 
+2.7.4
