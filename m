@@ -1,166 +1,80 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v9 10/12] ARM: EXYNOS: move power_{down,up} to per SoC struct
- exynos_cpu_info
-Date: Thu, 30 Mar 2017 18:47:04 +0530
-Message-ID: <1490879826-16754-11-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v9 11/12] ARM: EXYNOS: move cpu_restart as a SoC specific
+ hook to exynos_cpu_info
+Date: Thu, 30 Mar 2017 18:47:05 +0530
+Message-ID: <1490879826-16754-12-git-send-email-pankaj.dubey@samsung.com>
 References: <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170330131440epcas1p4f27192272761aa593b6cf083453e8adc@epcas1p4.samsung.com>
+        <CGME20170330131442epcas5p4f2be72cb3ec506847d8e832675e682c4@epcas5p4.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47280 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933545AbdC3NOo (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:42585 "EHLO
+        epoutp01.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933498AbdC3NOv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 09:14:44 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ONM009CUQ4HF350@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Mar 2017 22:14:41 +0900 (KST)
+        Thu, 30 Mar 2017 09:14:51 -0400
 In-reply-to: <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: krzk@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, javier@osg.samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Various Exynos SoC handles CPU power_up and power_down operation
-differently. To handle this difference until now we were using
-soc_is_exynosMMM helper functions, in an attempt to remove the dependency
-of such helper functions specific to each SoC, let's move power_{down,up}
-functionality as a SoC specific function pointer hooks in
-struct exynos_cpu_info.
+To handle differences in cpu_restart functionality among various Exynos SoC
+let's move cpu_restart as a SoC specific function hook to exynos_cpu_info.
 
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm/mach-exynos/platsmp.c | 61 +++++++++++++++++++++++++++++++-----------
- 1 file changed, 46 insertions(+), 15 deletions(-)
+ arch/arm/mach-exynos/platsmp.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index ff369b9..6f08b15 100644
+index 6f08b15..af9332c 100644
 --- a/arch/arm/mach-exynos/platsmp.c
 +++ b/arch/arm/mach-exynos/platsmp.c
-@@ -37,9 +37,13 @@ extern void exynos4_secondary_startup(void);
- /*
-  * struct exynos_cpu_info - Exynos CPU related info/operations
+@@ -39,11 +39,13 @@ extern void exynos4_secondary_startup(void);
   * @cpu_boot_reg: computes cpu boot address for requested cpu
-+ * @cpu_power_down: handles cpu power down routine for requested cpu
-+ * @cpu_power_up: handles cpu power up routine for requested cpu
+  * @cpu_power_down: handles cpu power down routine for requested cpu
+  * @cpu_power_up: handles cpu power up routine for requested cpu
++ * @cpu_restart: handles cpu restart routine for requested cpu
   */
  struct exynos_cpu_info {
  	void __iomem* (*cpu_boot_reg)(u32 cpu);
-+	void (*cpu_power_down)(u32 cpu);
-+	void (*cpu_power_up)(u32 cpu);
+ 	void (*cpu_power_down)(u32 cpu);
+ 	void (*cpu_power_up)(u32 cpu);
++	void (*cpu_restart)(u32 cpu);
  };
  
  static const struct exynos_cpu_info *cpu_info;
-@@ -92,19 +96,29 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+@@ -252,16 +254,19 @@ static inline void __iomem *cpu_boot_reg(int cpu)
  }
- #endif /* CONFIG_HOTPLUG_CPU */
  
--/**
-- * exynos_core_power_down : power down the specified cpu
-+/*
-+ * exynos_core_power_down - power down the specified cpu
-  * @cpu : the cpu to power down
+ /*
+- * Set wake up by local power mode and execute software reset for given core.
 - *
-- * Power down the specified cpu. The sequence must be finished by a
-- * call to cpu_do_idle()
-- *
-+ * The sequence must be finished by a call to cpu_do_idle()
++ * exynos_core_restart : restart the specified cpu
++ * @core_id : the cpu to be restarted
+  * Currently this is needed only when booting secondary CPU on Exynos3250.
   */
- void exynos_cpu_power_down(int cpu)
+ void exynos_core_restart(u32 core_id)
  {
-+	if (cpu_info && cpu_info->cpu_power_down)
-+		cpu_info->cpu_power_down(cpu);
-+}
-+
-+static void exynos_common_cpu_power_down(u32 cpu)
-+{
- 	u32 core_conf;
- 
--	if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
-+	core_conf = pmu_raw_readl(EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-+	core_conf &= ~S5P_CORE_LOCAL_PWR_EN;
-+	pmu_raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-+}
-+
-+static void exynos5420_cpu_power_down(u32 cpu)
-+{
-+	if (cpu == 0) {
- 		/*
- 		 * Bypass power down for CPU0 during suspend. Check for
- 		 * the SYS_PWR_REG value to decide if we are suspending
-@@ -116,24 +130,31 @@ void exynos_cpu_power_down(int cpu)
- 			return;
- 	}
- 
--	core_conf = pmu_raw_readl(EXYNOS_ARM_CORE_CONFIGURATION(cpu));
--	core_conf &= ~S5P_CORE_LOCAL_PWR_EN;
--	pmu_raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-+	exynos_common_cpu_power_down(cpu);
- }
- 
--/**
-+/*
-  * exynos_cpu_power_up : power up the specified cpu
-  * @cpu : the cpu to power up
-- *
-- * Power up the specified cpu
-  */
- void exynos_cpu_power_up(int cpu)
- {
-+	if (cpu_info && cpu_info->cpu_power_up)
-+		cpu_info->cpu_power_up(cpu);
-+}
-+
-+static void exynos_common_cpu_power_up(u32 cpu)
-+{
- 	u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
-+	pmu_raw_writel(core_conf,
-+			EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+-	u32 val;
++	if (cpu_info && cpu_info->cpu_restart)
++		cpu_info->cpu_restart(core_id);
 +}
  
--	if (soc_is_exynos3250())
--		core_conf |= S5P_CORE_AUTOWAKEUP_EN;
-+static void exynos3250_cpu_power_up(u32 cpu)
+-	if (!of_machine_is_compatible("samsung,exynos3250"))
+-		return;
++static void exynos3250_core_restart(u32 core_id)
 +{
-+	u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
++	u32 val;
  
-+	core_conf |= S5P_CORE_AUTOWAKEUP_EN;
- 	pmu_raw_writel(core_conf,
- 			EXYNOS_ARM_CORE_CONFIGURATION(cpu));
- }
-@@ -339,22 +360,32 @@ int exynos_get_boot_addr(u32 core_id, unsigned long *boot_addr)
- 
- static const struct exynos_cpu_info exynos3250_cpu_info = {
+ 	while (!pmu_raw_readl(S5P_PMU_SPARE2))
+ 		udelay(10);
+@@ -362,6 +367,7 @@ static const struct exynos_cpu_info exynos3250_cpu_info = {
  	.cpu_boot_reg = exynos_common_cpu_boot_reg,
-+	.cpu_power_down = exynos_common_cpu_power_down,
-+	.cpu_power_up = exynos3250_cpu_power_up,
+ 	.cpu_power_down = exynos_common_cpu_power_down,
+ 	.cpu_power_up = exynos3250_cpu_power_up,
++	.cpu_restart = exynos3250_core_restart,
  };
  
  static const struct exynos_cpu_info exynos5420_cpu_info = {
- 	.cpu_boot_reg = exynos5420_cpu_boot_reg,
-+	.cpu_power_down = exynos5420_cpu_power_down,
-+	.cpu_power_up = exynos_common_cpu_power_up,
- };
- 
- static const struct exynos_cpu_info exynos4210_rev11_cpu_info = {
- 	.cpu_boot_reg = exynos4210_rev11_cpu_boot_reg,
-+	.cpu_power_down = exynos_common_cpu_power_down,
-+	.cpu_power_up = exynos_common_cpu_power_up,
- };
- 
- static const struct exynos_cpu_info exynos4412_cpu_info = {
- 	.cpu_boot_reg = exynos4412_cpu_boot_reg,
-+	.cpu_power_down = exynos_common_cpu_power_down,
-+	.cpu_power_up = exynos_common_cpu_power_up,
- };
- 
- static const struct exynos_cpu_info exynos_common_cpu_info = {
- 	.cpu_boot_reg = exynos_common_cpu_boot_reg,
-+	.cpu_power_down = exynos_common_cpu_power_down,
-+	.cpu_power_up = exynos_common_cpu_power_up,
- };
- 
- static const struct soc_device_attribute exynos_soc_revision[] = {
 -- 
 2.7.4
