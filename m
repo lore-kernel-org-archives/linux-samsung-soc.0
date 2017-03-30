@@ -1,141 +1,166 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v9 08/12] ARM: EXYNOS: move exynos_boot_vector_{addr,flag} ops
- to exynos_s2r_data
-Date: Thu, 30 Mar 2017 18:47:02 +0530
-Message-ID: <1490879826-16754-9-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v9 10/12] ARM: EXYNOS: move power_{down,up} to per SoC struct
+ exynos_cpu_info
+Date: Thu, 30 Mar 2017 18:47:04 +0530
+Message-ID: <1490879826-16754-11-git-send-email-pankaj.dubey@samsung.com>
 References: <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170330131436epcas1p4a4f8bf7b64b4a5ff9ee692adc4e7d001@epcas1p4.samsung.com>
+ <CGME20170330131440epcas1p4f27192272761aa593b6cf083453e8adc@epcas1p4.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:51416 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933512AbdC3NOj (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:47280 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933545AbdC3NOo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 09:14:39 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
- by mailout3.samsung.com
+        Thu, 30 Mar 2017 09:14:44 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ONM007VTQ4DSO40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Mar 2017 22:14:37 +0900 (KST)
+ with ESMTP id <0ONM009CUQ4HF350@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Mar 2017 22:14:41 +0900 (KST)
 In-reply-to: <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: krzk@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, javier@osg.samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Various Exynos SoC needs different boot addresses and flags. Currently we
-are handling this difference by adding lots of soc_is_exynosMMM checks in
-the code, in an attempt to remove the dependency of such helper functions
-specific to each SoC, let's separate helper functions for these helper
-functions by moving them into SoC specific hooks in struct exynos_s2r_data.
+Various Exynos SoC handles CPU power_up and power_down operation
+differently. To handle this difference until now we were using
+soc_is_exynosMMM helper functions, in an attempt to remove the dependency
+of such helper functions specific to each SoC, let's move power_{down,up}
+functionality as a SoC specific function pointer hooks in
+struct exynos_cpu_info.
 
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm/mach-exynos/pm.c | 60 +++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 50 insertions(+), 10 deletions(-)
+ arch/arm/mach-exynos/platsmp.c | 61 +++++++++++++++++++++++++++++++-----------
+ 1 file changed, 46 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index fa24098..c3fa537 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -32,26 +32,56 @@
- #include "common.h"
- 
- struct exynos_s2r_data {
-+	void __iomem* (*boot_vector_addr)(void);
-+	void __iomem* (*boot_vector_flag)(void);
- 	void (*enter_aftr)(void);
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index ff369b9..6f08b15 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -37,9 +37,13 @@ extern void exynos4_secondary_startup(void);
+ /*
+  * struct exynos_cpu_info - Exynos CPU related info/operations
+  * @cpu_boot_reg: computes cpu boot address for requested cpu
++ * @cpu_power_down: handles cpu power down routine for requested cpu
++ * @cpu_power_up: handles cpu power up routine for requested cpu
+  */
+ struct exynos_cpu_info {
+ 	void __iomem* (*cpu_boot_reg)(u32 cpu);
++	void (*cpu_power_down)(u32 cpu);
++	void (*cpu_power_up)(u32 cpu);
  };
  
- static const struct exynos_s2r_data *s2r_data;
+ static const struct exynos_cpu_info *cpu_info;
+@@ -92,19 +96,29 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ }
+ #endif /* CONFIG_HOTPLUG_CPU */
  
--static inline void __iomem *exynos_boot_vector_addr(void)
-+static void __iomem *exynos_boot_vector_addr(void)
-+{
-+	if (s2r_data && s2r_data->boot_vector_addr)
-+		return s2r_data->boot_vector_addr();
-+
-+	return NULL;
-+}
-+
-+static inline void __iomem *exynos4210_rev11_boot_vector_addr(void)
-+{
-+	return pmu_base_addr + S5P_INFORM7;
-+}
-+
-+static inline void __iomem *exynos4210_rev10_boot_vector_addr(void)
-+{
-+	return sysram_base_addr + 0x24;
-+}
-+
-+static inline void __iomem *exynos_common_boot_vector_addr(void)
+-/**
+- * exynos_core_power_down : power down the specified cpu
++/*
++ * exynos_core_power_down - power down the specified cpu
+  * @cpu : the cpu to power down
+- *
+- * Power down the specified cpu. The sequence must be finished by a
+- * call to cpu_do_idle()
+- *
++ * The sequence must be finished by a call to cpu_do_idle()
+  */
+ void exynos_cpu_power_down(int cpu)
  {
--	if (samsung_rev() == EXYNOS4210_REV_1_1)
--		return pmu_base_addr + S5P_INFORM7;
--	else if (samsung_rev() == EXYNOS4210_REV_1_0)
--		return sysram_base_addr + 0x24;
- 	return pmu_base_addr + S5P_INFORM0;
++	if (cpu_info && cpu_info->cpu_power_down)
++		cpu_info->cpu_power_down(cpu);
++}
++
++static void exynos_common_cpu_power_down(u32 cpu)
++{
+ 	u32 core_conf;
+ 
+-	if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
++	core_conf = pmu_raw_readl(EXYNOS_ARM_CORE_CONFIGURATION(cpu));
++	core_conf &= ~S5P_CORE_LOCAL_PWR_EN;
++	pmu_raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
++}
++
++static void exynos5420_cpu_power_down(u32 cpu)
++{
++	if (cpu == 0) {
+ 		/*
+ 		 * Bypass power down for CPU0 during suspend. Check for
+ 		 * the SYS_PWR_REG value to decide if we are suspending
+@@ -116,24 +130,31 @@ void exynos_cpu_power_down(int cpu)
+ 			return;
+ 	}
+ 
+-	core_conf = pmu_raw_readl(EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+-	core_conf &= ~S5P_CORE_LOCAL_PWR_EN;
+-	pmu_raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
++	exynos_common_cpu_power_down(cpu);
  }
  
--static inline void __iomem *exynos_boot_vector_flag(void)
-+static void __iomem *exynos_boot_vector_flag(void)
-+{
-+	if (s2r_data && s2r_data->boot_vector_flag)
-+		return s2r_data->boot_vector_flag();
-+
-+	return NULL;
-+}
-+
-+static inline void __iomem *exynos4210_rev11_boot_vector_flag(void)
-+{
-+	return pmu_base_addr + S5P_INFORM6;
-+}
-+
-+static inline void __iomem *exynos4210_rev10_boot_vector_flag(void)
-+{
-+	return sysram_base_addr + 0x20;
-+}
-+
-+static inline void __iomem *exynos_common_boot_vector_flag(void)
+-/**
++/*
+  * exynos_cpu_power_up : power up the specified cpu
+  * @cpu : the cpu to power up
+- *
+- * Power up the specified cpu
+  */
+ void exynos_cpu_power_up(int cpu)
  {
--	if (samsung_rev() == EXYNOS4210_REV_1_1)
--		return pmu_base_addr + S5P_INFORM6;
--	else if (samsung_rev() == EXYNOS4210_REV_1_0)
--		return sysram_base_addr + 0x20;
- 	return pmu_base_addr + S5P_INFORM1;
++	if (cpu_info && cpu_info->cpu_power_up)
++		cpu_info->cpu_power_up(cpu);
++}
++
++static void exynos_common_cpu_power_up(u32 cpu)
++{
+ 	u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
++	pmu_raw_writel(core_conf,
++			EXYNOS_ARM_CORE_CONFIGURATION(cpu));
++}
+ 
+-	if (soc_is_exynos3250())
+-		core_conf |= S5P_CORE_AUTOWAKEUP_EN;
++static void exynos3250_cpu_power_up(u32 cpu)
++{
++	u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
+ 
++	core_conf |= S5P_CORE_AUTOWAKEUP_EN;
+ 	pmu_raw_writel(core_conf,
+ 			EXYNOS_ARM_CORE_CONFIGURATION(cpu));
  }
+@@ -339,22 +360,32 @@ int exynos_get_boot_addr(u32 core_id, unsigned long *boot_addr)
  
-@@ -218,22 +248,32 @@ static void exynos5_enter_aftr(void)
- }
- 
- static const struct exynos_s2r_data exynos_common_s2r_data = {
-+	.boot_vector_addr	= exynos_common_boot_vector_addr,
-+	.boot_vector_flag	= exynos_common_boot_vector_flag,
- 	.enter_aftr		= exynos5_enter_aftr,
+ static const struct exynos_cpu_info exynos3250_cpu_info = {
+ 	.cpu_boot_reg = exynos_common_cpu_boot_reg,
++	.cpu_power_down = exynos_common_cpu_power_down,
++	.cpu_power_up = exynos3250_cpu_power_up,
  };
  
- static const struct exynos_s2r_data exynos3250_s2r_data = {
-+	.boot_vector_addr	= exynos_common_boot_vector_addr,
-+	.boot_vector_flag	= exynos_common_boot_vector_flag,
- 	.enter_aftr		= exynos3_enter_aftr,
+ static const struct exynos_cpu_info exynos5420_cpu_info = {
+ 	.cpu_boot_reg = exynos5420_cpu_boot_reg,
++	.cpu_power_down = exynos5420_cpu_power_down,
++	.cpu_power_up = exynos_common_cpu_power_up,
  };
  
- static const struct exynos_s2r_data exynos4210_rev11_s2r_data = {
-+	.boot_vector_addr	= exynos4210_rev11_boot_vector_addr,
-+	.boot_vector_flag	= exynos4210_rev11_boot_vector_flag,
- 	.enter_aftr		= exynos4_enter_aftr,
+ static const struct exynos_cpu_info exynos4210_rev11_cpu_info = {
+ 	.cpu_boot_reg = exynos4210_rev11_cpu_boot_reg,
++	.cpu_power_down = exynos_common_cpu_power_down,
++	.cpu_power_up = exynos_common_cpu_power_up,
  };
  
- static const struct exynos_s2r_data exynos4210_rev10_s2r_data = {
-+	.boot_vector_addr	= exynos4210_rev10_boot_vector_addr,
-+	.boot_vector_flag	= exynos4210_rev10_boot_vector_flag,
- 	.enter_aftr		= exynos4_enter_aftr,
+ static const struct exynos_cpu_info exynos4412_cpu_info = {
+ 	.cpu_boot_reg = exynos4412_cpu_boot_reg,
++	.cpu_power_down = exynos_common_cpu_power_down,
++	.cpu_power_up = exynos_common_cpu_power_up,
  };
  
- static const struct exynos_s2r_data exynos4x12_s2r_data = {
-+	.boot_vector_addr	= exynos_common_boot_vector_addr,
-+	.boot_vector_flag	= exynos_common_boot_vector_flag,
- 	.enter_aftr		= exynos4_enter_aftr,
+ static const struct exynos_cpu_info exynos_common_cpu_info = {
+ 	.cpu_boot_reg = exynos_common_cpu_boot_reg,
++	.cpu_power_down = exynos_common_cpu_power_down,
++	.cpu_power_up = exynos_common_cpu_power_up,
  };
  
+ static const struct soc_device_attribute exynos_soc_revision[] = {
 -- 
 2.7.4
