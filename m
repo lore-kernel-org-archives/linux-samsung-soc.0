@@ -1,78 +1,134 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v9 03/12] ARM: EXYNOS: remove secondary startup initialization
- from smp_prepare_cpus
-Date: Thu, 30 Mar 2017 18:46:57 +0530
-Message-ID: <1490879826-16754-4-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v9 02/12] ARM: EXYNOS: remove usage of soc_is_exynosMMMM from
+ pm.c
+Date: Thu, 30 Mar 2017 18:46:56 +0530
+Message-ID: <1490879826-16754-3-git-send-email-pankaj.dubey@samsung.com>
 References: <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170330131424epcas5p4fccfab06e5d77d70d09c3835c3332ee5@epcas5p4.samsung.com>
+ <CGME20170330131421epcas5p40b0ad9c1003d3ab807667ae2b05d25bc@epcas5p4.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:53446 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933490AbdC3NO1 (ORCPT
+        with ESMTP id S933254AbdC3NOZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 09:14:27 -0400
+        Thu, 30 Mar 2017 09:14:25 -0400
 Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ONM004K3Q41AR50@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Mar 2017 22:14:25 +0900 (KST)
+ with ESMTP id <0ONM004K1Q3ZAR50@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Mar 2017 22:14:23 +0900 (KST)
 In-reply-to: <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: krzk@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, javier@osg.samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-We are taking care of setting secondary cpu boot address in
-exynos_boot_secondary just before sending ipi to secondary CPUs,
-so we can safely remove this setting from smp_prepare_cpus.
+soc_is_exynosMMMM is staged for removal after adopting to exynos-chipid
+driver, so let's remove/minimize usage of any such helper function usage
+from pm.c.
 
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm/mach-exynos/platsmp.c | 26 --------------------------
- 1 file changed, 26 deletions(-)
+ arch/arm/mach-exynos/pm.c                   | 22 ++++++++++++----------
+ include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 5a03bff..cb6d199 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -387,38 +387,12 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 
- static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
- 	exynos_sysram_init();
- 
- 	exynos_set_delayed_reset_assertion(true);
- 
- 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
- 		scu_enable(scu_base_addr());
--
--	/*
--	 * Write the address of secondary startup into the
--	 * system-wide flags register. The boot monitor waits
--	 * until it receives a soft interrupt, and then the
--	 * secondary CPU branches to this address.
--	 *
--	 * Try using firmware operation first and fall back to
--	 * boot register if it fails.
--	 */
--	for (i = 1; i < max_cpus; ++i) {
--		unsigned long boot_addr;
--		u32 mpidr;
--		u32 core_id;
--		int ret;
--
--		mpidr = cpu_logical_map(i);
--		core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
--		boot_addr = __pa_symbol(exynos4_secondary_startup);
--
--		ret = exynos_set_boot_addr(core_id, boot_addr);
--		if (ret)
--			break;
--	}
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 1a7e5b5..4a73b02 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -123,11 +123,13 @@ int exynos_pm_central_resume(void)
  }
  
- #ifdef CONFIG_HOTPLUG_CPU
+ /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+-static void exynos_set_wakeupmask(long mask)
++static void exynos_set_wakeupmask(void)
+ {
+-	pmu_raw_writel(mask, S5P_WAKEUP_MASK);
+-	if (soc_is_exynos3250())
++	if (of_machine_is_compatible("samsung,exynos3250")) {
++		pmu_raw_writel(EXYNOS3_WAKEUP_MASK_VAL, S5P_WAKEUP_MASK);
+ 		pmu_raw_writel(0x0, S5P_WAKEUP_MASK2);
++	} else
++		pmu_raw_writel(EXYNOS_WAKEUP_MASK_VAL, S5P_WAKEUP_MASK);
+ }
+ 
+ static void exynos_cpu_set_boot_vector(long flags)
+@@ -141,7 +143,7 @@ static int exynos_aftr_finisher(unsigned long flags)
+ {
+ 	int ret;
+ 
+-	exynos_set_wakeupmask(soc_is_exynos3250() ? 0x40003ffe : 0x0000ff3e);
++	exynos_set_wakeupmask();
+ 	/* Set value of power down register for aftr mode */
+ 	exynos_sys_powerdown_conf(SYS_AFTR);
+ 
+@@ -162,7 +164,7 @@ void exynos_enter_aftr(void)
+ 
+ 	cpu_pm_enter();
+ 
+-	if (soc_is_exynos3250())
++	if (of_machine_is_compatible("samsung,exynos3250"))
+ 		exynos_set_boot_flag(cpuid, C2_STATE);
+ 
+ 	exynos_pm_central_suspend();
+@@ -184,7 +186,7 @@ void exynos_enter_aftr(void)
+ 
+ 	exynos_pm_central_resume();
+ 
+-	if (soc_is_exynos3250())
++	if (of_machine_is_compatible("samsung,exynos3250"))
+ 		exynos_clear_boot_flag(cpuid, C2_STATE);
+ 
+ 	cpu_pm_exit();
+@@ -255,7 +257,7 @@ static int exynos_cpu0_enter_aftr(void)
+ 		while (exynos_cpu_power_state(1) != S5P_CORE_LOCAL_PWR_EN)
+ 			cpu_relax();
+ 
+-		if (soc_is_exynos3250()) {
++		if (of_machine_is_compatible("samsung,exynos3250")) {
+ 			while (!pmu_raw_readl(S5P_PMU_SPARE2) &&
+ 			       !atomic_read(&cpu1_wakeup))
+ 				cpu_relax();
+@@ -277,7 +279,7 @@ static int exynos_cpu0_enter_aftr(void)
+ 
+ 			call_firmware_op(cpu_boot, 1);
+ 
+-			if (soc_is_exynos3250())
++			if (of_machine_is_compatible("samsung,exynos3250"))
+ 				dsb_sev();
+ 			else
+ 				arch_send_wakeup_ipi_mask(cpumask_of(1));
+@@ -289,7 +291,7 @@ static int exynos_cpu0_enter_aftr(void)
+ 
+ static int exynos_wfi_finisher(unsigned long flags)
+ {
+-	if (soc_is_exynos3250())
++	if (of_machine_is_compatible("samsung,exynos3250"))
+ 		flush_cache_all();
+ 	cpu_do_idle();
+ 
+@@ -311,7 +313,7 @@ static int exynos_cpu1_powerdown(void)
+ 	 */
+ 	exynos_cpu_power_down(1);
+ 
+-	if (soc_is_exynos3250())
++	if (of_machine_is_compatible("samsung,exynos3250"))
+ 		pmu_raw_writel(0, S5P_PMU_SPARE2);
+ 
+ 	ret = cpu_suspend(0, exynos_wfi_finisher);
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index 49df0a01..3a7e63f 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -50,6 +50,9 @@
+ #define S5P_WAKEUP_MASK				0x0608
+ #define S5P_WAKEUP_MASK2				0x0614
+ 
++#define EXYNOS_WAKEUP_MASK_VAL			0x0000FF3E
++#define EXYNOS3_WAKEUP_MASK_VAL			0x40003FFE
++
+ #define S5P_INFORM0				0x0800
+ #define S5P_INFORM1				0x0804
+ #define S5P_INFORM5				0x0814
 -- 
 2.7.4
