@@ -1,71 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v9 07/12] ARM: EXYNOS: introduce soc specific pm ops
-Date: Thu, 30 Mar 2017 16:03:59 +0200
-Message-ID: <CAK8P3a3wTa0ckx3Uo37ptDxQCK_24aDK9dmETtog_qU7VrMygA@mail.gmail.com>
-References: <CGME20170330131434epcas1p4e42fe06bae3456c39e0f93a2f8ae4bc0@epcas1p4.samsung.com>
- <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-8-git-send-email-pankaj.dubey@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v6 1/4] clk: Add support for runtime PM
+Date: Thu, 30 Mar 2017 18:29:04 +0200
+Message-ID: <CAPDyKFpugXy0c0nx7ThsfQ7w7H_ZoA-f=k=a0xfRVHtiY9rNdg@mail.gmail.com>
+References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170322113554eucas1p27471f0de278c55d5dce7fdf120395e09@eucas1p2.samsung.com>
+ <1490182543-28550-2-git-send-email-m.szyprowski@samsung.com> <149081897388.31513.7062843004022908296@resonance>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34300 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933426AbdC3OEB (ORCPT
+Received: from mail-vk0-f54.google.com ([209.85.213.54]:35528 "EHLO
+        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934030AbdC3Q3H (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 10:04:01 -0400
-Received: by mail-oi0-f68.google.com with SMTP id t11so4738121oib.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Mar 2017 07:04:00 -0700 (PDT)
-In-Reply-To: <1490879826-16754-8-git-send-email-pankaj.dubey@samsung.com>
+        Thu, 30 Mar 2017 12:29:07 -0400
+Received: by mail-vk0-f54.google.com with SMTP id r69so60921473vke.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Mar 2017 09:29:06 -0700 (PDT)
+In-Reply-To: <149081897388.31513.7062843004022908296@resonance>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+[...]
 
-> +               .soc_id = "EXYNOS5250",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5260",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5440",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5410",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5420",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5800",
-> +               .data = &exynos_common_s2r_data
+>
+> Fourth & final question: I'm under the impression that pm runtime calls
+> be be nested and re-enter, but I want to make sure (Ulf?). For instance
+> it is highly likely that this new feature would cause something like:
+>
+> pm_runtime_get()              - called by random driver
+> -> clk_prepare_enable()       - genpd enables functioal clocks
+>    -> pm_runtime_get()        - called by clk_pm_runtime_get in clk core
+>       -> clk_prepare_enable() - genpd enables interface or bus clocks
+>
+> I guess this is safe from the pm_runtime_get/genpd perspective, but want
+> to make sure first.
 
-If these are all the same, just make that soc_id="EXYNOS5*"
-to match them all at once.
+I noticed Marek's reply, which perhaps is sufficient. However, to
+clarify also from genpd and runtime PM point of view the re-entrant
+issue is safe and it is already quite commonly used.
 
-> +int __init exynos_s2r_init(void)
-> +{
-> +       const struct soc_device_attribute *match;
-> +
-> +       match = soc_device_match(exynos_soc_revision);
-> +
-> +       if (match)
-> +               s2r_data = (const struct exynos_s2r_data *) match->data;
-> +
-> +       if (!s2r_data)
-> +               return -ENODEV;
-> +
-> +       return 0;
-> +}
-> +arch_initcall(exynos_s2r_init);
-> +
+For example, from a random driver's ->runtime_resume() callback
+clk_prepare_enable() is called. When such clock is managed behind a
+i2c interface the i2c controller also needs to be runtime resumed,
+meaning its driver calls pm_runtime_get_sync(), before it can serve
+the request and ungate the clock.
 
-Can you replace the arch_initcall with a direct call from the machine
-init function?
+[...]
 
-        Arnd
+Kind regards
+Uffe
