@@ -1,75 +1,221 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv6 02/10] cec: integrate CEC notifier support
-Date: Fri, 31 Mar 2017 14:20:28 +0200
-Message-ID: <20170331122036.55706-3-hverkuil@xs4all.nl>
+Subject: [PATCHv6 09/10] stih-cec: add CEC notifier support
+Date: Fri, 31 Mar 2017 14:20:35 +0200
+Message-ID: <20170331122036.55706-10-hverkuil@xs4all.nl>
 References: <20170331122036.55706-1-hverkuil@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:48001 "EHLO
+        lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933127AbdCaMUw (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 31 Mar 2017 08:20:52 -0400
 In-Reply-To: <20170331122036.55706-1-hverkuil@xs4all.nl>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Patrice.chotard@st.com, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Patrice.chotard@st.com, Hans Verkuil <hans.verkuil@cisco.com>, devicetree@vger.kernel.org
 
-RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgoKU3VwcG9ydCB0aGUg
-Q0VDIG5vdGlmaWVyIGZyYW1ld29yaywgc2ltcGxpZnlpbmcgZHJpdmVycyB0aGF0CmRlcGVuZCBv
-biB0aGlzLgoKU2lnbmVkLW9mZi1ieTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28u
-Y29tPgpUZXN0ZWQtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNv
-bT4KVGVzdGVkLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJv
-Lm9yZz4KQWNrZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+Ci0t
-LQogZHJpdmVycy9tZWRpYS9jZWMvY2VjLWNvcmUuYyB8IDIyICsrKysrKysrKysrKysrKysrKysr
-KysKIGluY2x1ZGUvbWVkaWEvY2VjLmggICAgICAgICAgfCAxMCArKysrKysrKysrCiAyIGZpbGVz
-IGNoYW5nZWQsIDMyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL2Nl
-Yy9jZWMtY29yZS5jIGIvZHJpdmVycy9tZWRpYS9jZWMvY2VjLWNvcmUuYwppbmRleCAzNzIxN2Uy
-MDUwNDAuLmU1MDcwYjM3NDI3NiAxMDA2NDQKLS0tIGEvZHJpdmVycy9tZWRpYS9jZWMvY2VjLWNv
-cmUuYworKysgYi9kcml2ZXJzL21lZGlhL2NlYy9jZWMtY29yZS5jCkBAIC0xOTUsNiArMTk1LDI0
-IEBAIHN0YXRpYyB2b2lkIGNlY19kZXZub2RlX3VucmVnaXN0ZXIoc3RydWN0IGNlY19kZXZub2Rl
-ICpkZXZub2RlKQogCXB1dF9kZXZpY2UoJmRldm5vZGUtPmRldik7CiB9CiAKKyNpZmRlZiBDT05G
-SUdfTUVESUFfQ0VDX05PVElGSUVSCitzdGF0aWMgdm9pZCBjZWNfY2VjX25vdGlmeShzdHJ1Y3Qg
-Y2VjX2FkYXB0ZXIgKmFkYXAsIHUxNiBwYSkKK3sKKwljZWNfc19waHlzX2FkZHIoYWRhcCwgcGEs
-IGZhbHNlKTsKK30KKwordm9pZCBjZWNfcmVnaXN0ZXJfY2VjX25vdGlmaWVyKHN0cnVjdCBjZWNf
-YWRhcHRlciAqYWRhcCwKKwkJCSAgICAgICBzdHJ1Y3QgY2VjX25vdGlmaWVyICpub3RpZmllcikK
-K3sKKwlpZiAoV0FSTl9PTighYWRhcC0+ZGV2bm9kZS5yZWdpc3RlcmVkKSkKKwkJcmV0dXJuOwor
-CisJYWRhcC0+bm90aWZpZXIgPSBub3RpZmllcjsKKwljZWNfbm90aWZpZXJfcmVnaXN0ZXIoYWRh
-cC0+bm90aWZpZXIsIGFkYXAsIGNlY19jZWNfbm90aWZ5KTsKK30KK0VYUE9SVF9TWU1CT0xfR1BM
-KGNlY19yZWdpc3Rlcl9jZWNfbm90aWZpZXIpOworI2VuZGlmCisKIHN0cnVjdCBjZWNfYWRhcHRl
-ciAqY2VjX2FsbG9jYXRlX2FkYXB0ZXIoY29uc3Qgc3RydWN0IGNlY19hZGFwX29wcyAqb3BzLAog
-CQkJCQkgdm9pZCAqcHJpdiwgY29uc3QgY2hhciAqbmFtZSwgdTMyIGNhcHMsCiAJCQkJCSB1OCBh
-dmFpbGFibGVfbGFzKQpAQCAtMzQzLDYgKzM2MSwxMCBAQCB2b2lkIGNlY191bnJlZ2lzdGVyX2Fk
-YXB0ZXIoc3RydWN0IGNlY19hZGFwdGVyICphZGFwKQogCWFkYXAtPnJjID0gTlVMTDsKICNlbmRp
-ZgogCWRlYnVnZnNfcmVtb3ZlX3JlY3Vyc2l2ZShhZGFwLT5jZWNfZGlyKTsKKyNpZmRlZiBDT05G
-SUdfTUVESUFfQ0VDX05PVElGSUVSCisJaWYgKGFkYXAtPm5vdGlmaWVyKQorCQljZWNfbm90aWZp
-ZXJfdW5yZWdpc3RlcihhZGFwLT5ub3RpZmllcik7CisjZW5kaWYKIAljZWNfZGV2bm9kZV91bnJl
-Z2lzdGVyKCZhZGFwLT5kZXZub2RlKTsKIH0KIEVYUE9SVF9TWU1CT0xfR1BMKGNlY191bnJlZ2lz
-dGVyX2FkYXB0ZXIpOwpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9tZWRpYS9jZWMuaCBiL2luY2x1ZGUv
-bWVkaWEvY2VjLmgKaW5kZXggOTZhMGFhNzcwZDYxLi4zMDdmNWRjYWYwMzQgMTAwNjQ0Ci0tLSBh
-L2luY2x1ZGUvbWVkaWEvY2VjLmgKKysrIGIvaW5jbHVkZS9tZWRpYS9jZWMuaApAQCAtMzAsNiAr
-MzAsNyBAQAogI2luY2x1ZGUgPGxpbnV4L2NlYy1mdW5jcy5oPgogI2luY2x1ZGUgPG1lZGlhL3Jj
-LWNvcmUuaD4KICNpbmNsdWRlIDxtZWRpYS9jZWMtZWRpZC5oPgorI2luY2x1ZGUgPG1lZGlhL2Nl
-Yy1ub3RpZmllci5oPgogCiAvKioKICAqIHN0cnVjdCBjZWNfZGV2bm9kZSAtIGNlYyBkZXZpY2Ug
-bm9kZQpAQCAtMTczLDYgKzE3NCwxMCBAQCBzdHJ1Y3QgY2VjX2FkYXB0ZXIgewogCWJvb2wgcGFz
-c3Rocm91Z2g7CiAJc3RydWN0IGNlY19sb2dfYWRkcnMgbG9nX2FkZHJzOwogCisjaWZkZWYgQ09O
-RklHX01FRElBX0NFQ19OT1RJRklFUgorCXN0cnVjdCBjZWNfbm90aWZpZXIgKm5vdGlmaWVyOwor
-I2VuZGlmCisKIAlzdHJ1Y3QgZGVudHJ5ICpjZWNfZGlyOwogCXN0cnVjdCBkZW50cnkgKnN0YXR1
-c19maWxlOwogCkBAIC0yMTMsNiArMjE4LDExIEBAIHZvaWQgY2VjX3RyYW5zbWl0X2RvbmUoc3Ry
-dWN0IGNlY19hZGFwdGVyICphZGFwLCB1OCBzdGF0dXMsIHU4IGFyYl9sb3N0X2NudCwKIAkJICAg
-ICAgIHU4IG5hY2tfY250LCB1OCBsb3dfZHJpdmVfY250LCB1OCBlcnJvcl9jbnQpOwogdm9pZCBj
-ZWNfcmVjZWl2ZWRfbXNnKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwgc3RydWN0IGNlY19tc2cg
-Km1zZyk7CiAKKyNpZmRlZiBDT05GSUdfTUVESUFfQ0VDX05PVElGSUVSCit2b2lkIGNlY19yZWdp
-c3Rlcl9jZWNfbm90aWZpZXIoc3RydWN0IGNlY19hZGFwdGVyICphZGFwLAorCQkJICAgICAgIHN0
-cnVjdCBjZWNfbm90aWZpZXIgKm5vdGlmaWVyKTsKKyNlbmRpZgorCiAjZWxzZQogCiBzdGF0aWMg
-aW5saW5lIGludCBjZWNfcmVnaXN0ZXJfYWRhcHRlcihzdHJ1Y3QgY2VjX2FkYXB0ZXIgKmFkYXAs
-Ci0tIAoyLjExLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+
+By using the CEC notifier framework there is no longer any reason
+to manually set the physical address. This was the one blocking
+issue that prevented this driver from going out of staging, so do
+this move as well.
+
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+CC: devicetree@vger.kernel.org
+---
+ drivers/media/platform/Kconfig                     | 10 +++++++
+ drivers/media/platform/Makefile                    |  1 +
+ .../st-cec => media/platform/sti/cec}/Makefile     |  0
+ .../st-cec => media/platform/sti/cec}/stih-cec.c   | 31 +++++++++++++++++++---
+ drivers/staging/media/Kconfig                      |  2 --
+ drivers/staging/media/Makefile                     |  1 -
+ drivers/staging/media/st-cec/Kconfig               |  8 ------
+ drivers/staging/media/st-cec/TODO                  |  7 -----
+ 8 files changed, 39 insertions(+), 21 deletions(-)
+ rename drivers/{staging/media/st-cec => media/platform/sti/cec}/Makefile (100%)
+ rename drivers/{staging/media/st-cec => media/platform/sti/cec}/stih-cec.c (93%)
+ delete mode 100644 drivers/staging/media/st-cec/Kconfig
+ delete mode 100644 drivers/staging/media/st-cec/TODO
+
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index 2c449b88fc94..7321f6123659 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -476,6 +476,16 @@ config VIDEO_SAMSUNG_S5P_CEC
+          CEC bus is present in the HDMI connector and enables communication
+          between compatible devices.
+ 
++config VIDEO_STI_HDMI_CEC
++       tristate "STMicroelectronics STiH4xx HDMI CEC driver"
++       depends on VIDEO_DEV && MEDIA_CEC_SUPPORT && (ARCH_STI || COMPILE_TEST)
++       select MEDIA_CEC_NOTIFIER
++       ---help---
++         This is a driver for STIH4xx HDMI CEC interface. It uses the
++         generic CEC framework interface.
++         CEC bus is present in the HDMI connector and enables communication
++         between compatible devices.
++
+ endif #V4L_CEC_DRIVERS
+ 
+ menuconfig V4L_TEST_DRIVERS
+diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+index 2f94d82afa4c..940724ab9b70 100644
+--- a/drivers/media/platform/Makefile
++++ b/drivers/media/platform/Makefile
+@@ -39,6 +39,7 @@ obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC)	+= exynos-gsc/
+ obj-$(CONFIG_VIDEO_STI_BDISP)		+= sti/bdisp/
+ obj-$(CONFIG_VIDEO_STI_HVA)		+= sti/hva/
+ obj-$(CONFIG_DVB_C8SECTPFE)		+= sti/c8sectpfe/
++obj-$(CONFIG_VIDEO_STI_HDMI_CEC) 	+= sti/cec/
+ 
+ obj-$(CONFIG_VIDEO_STI_DELTA)		+= sti/delta/
+ 
+diff --git a/drivers/staging/media/st-cec/Makefile b/drivers/media/platform/sti/cec/Makefile
+similarity index 100%
+rename from drivers/staging/media/st-cec/Makefile
+rename to drivers/media/platform/sti/cec/Makefile
+diff --git a/drivers/staging/media/st-cec/stih-cec.c b/drivers/media/platform/sti/cec/stih-cec.c
+similarity index 93%
+rename from drivers/staging/media/st-cec/stih-cec.c
+rename to drivers/media/platform/sti/cec/stih-cec.c
+index 3c25638a9610..636281c64c04 100644
+--- a/drivers/staging/media/st-cec/stih-cec.c
++++ b/drivers/media/platform/sti/cec/stih-cec.c
+@@ -1,6 +1,4 @@
+ /*
+- * drivers/staging/media/st-cec/stih-cec.c
+- *
+  * STIH4xx CEC driver
+  * Copyright (C) STMicroelectronic SA 2016
+  *
+@@ -15,9 +13,11 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ 
+ #include <media/cec.h>
++#include <media/cec-notifier.h>
+ 
+ #define CEC_NAME	"stih-cec"
+ 
+@@ -129,6 +129,7 @@ struct stih_cec {
+ 	void __iomem		*regs;
+ 	int			irq;
+ 	u32			irq_status;
++	struct cec_notifier	*notifier;
+ };
+ 
+ static int stih_cec_adap_enable(struct cec_adapter *adap, bool enable)
+@@ -303,12 +304,29 @@ static int stih_cec_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct resource *res;
+ 	struct stih_cec *cec;
++	struct device_node *np;
++	struct platform_device *hdmi_dev;
+ 	int ret;
+ 
+ 	cec = devm_kzalloc(dev, sizeof(*cec), GFP_KERNEL);
+ 	if (!cec)
+ 		return -ENOMEM;
+ 
++	np = of_parse_phandle(pdev->dev.of_node, "hdmi-phandle", 0);
++
++	if (!np) {
++		dev_err(&pdev->dev, "Failed to find hdmi node in device tree\n");
++		return -ENODEV;
++	}
++
++	hdmi_dev = of_find_device_by_node(np);
++	if (!hdmi_dev)
++		return -EPROBE_DEFER;
++
++	cec->notifier = cec_notifier_get(&hdmi_dev->dev);
++	if (!cec->notifier)
++		return -ENOMEM;
++
+ 	cec->dev = dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -335,7 +353,7 @@ static int stih_cec_probe(struct platform_device *pdev)
+ 	cec->adap = cec_allocate_adapter(&sti_cec_adap_ops, cec,
+ 			CEC_NAME,
+ 			CEC_CAP_LOG_ADDRS | CEC_CAP_PASSTHROUGH |
+-			CEC_CAP_PHYS_ADDR | CEC_CAP_TRANSMIT, 1);
++			CEC_CAP_TRANSMIT, 1);
+ 	ret = PTR_ERR_OR_ZERO(cec->adap);
+ 	if (ret)
+ 		return ret;
+@@ -346,12 +364,19 @@ static int stih_cec_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	cec_register_cec_notifier(cec->adap, cec->notifier);
++
+ 	platform_set_drvdata(pdev, cec);
+ 	return 0;
+ }
+ 
+ static int stih_cec_remove(struct platform_device *pdev)
+ {
++	struct stih_cec *cec = platform_get_drvdata(pdev);
++
++	cec_unregister_adapter(cec->adap);
++	cec_notifier_put(cec->notifier);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
+index c0d83cecf528..8ed8202da57a 100644
+--- a/drivers/staging/media/Kconfig
++++ b/drivers/staging/media/Kconfig
+@@ -32,6 +32,4 @@ source "drivers/staging/media/platform/bcm2835/Kconfig"
+ # Keep LIRC at the end, as it has sub-menus
+ source "drivers/staging/media/lirc/Kconfig"
+ 
+-source "drivers/staging/media/st-cec/Kconfig"
+-
+ endif
+diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
+index 97b29ece9a2c..3a6adeabede1 100644
+--- a/drivers/staging/media/Makefile
++++ b/drivers/staging/media/Makefile
+@@ -4,4 +4,3 @@ obj-$(CONFIG_LIRC_STAGING)	+= lirc/
+ obj-$(CONFIG_VIDEO_BCM2835)	+= platform/bcm2835/
+ obj-$(CONFIG_VIDEO_DM365_VPFE)	+= davinci_vpfe/
+ obj-$(CONFIG_VIDEO_OMAP4)	+= omap4iss/
+-obj-$(CONFIG_VIDEO_STI_HDMI_CEC) += st-cec/
+diff --git a/drivers/staging/media/st-cec/Kconfig b/drivers/staging/media/st-cec/Kconfig
+deleted file mode 100644
+index c04283db58d6..000000000000
+--- a/drivers/staging/media/st-cec/Kconfig
++++ /dev/null
+@@ -1,8 +0,0 @@
+-config VIDEO_STI_HDMI_CEC
+-       tristate "STMicroelectronics STiH4xx HDMI CEC driver"
+-       depends on VIDEO_DEV && MEDIA_CEC_SUPPORT && (ARCH_STI || COMPILE_TEST)
+-       ---help---
+-         This is a driver for STIH4xx HDMI CEC interface. It uses the
+-         generic CEC framework interface.
+-         CEC bus is present in the HDMI connector and enables communication
+-         between compatible devices.
+diff --git a/drivers/staging/media/st-cec/TODO b/drivers/staging/media/st-cec/TODO
+deleted file mode 100644
+index c61289742c5c..000000000000
+--- a/drivers/staging/media/st-cec/TODO
++++ /dev/null
+@@ -1,7 +0,0 @@
+-This driver requires that userspace sets the physical address.
+-However, this should be passed on from the corresponding
+-ST HDMI driver.
+-
+-We have to wait until the HDMI notifier framework has been merged
+-in order to handle this gracefully, until that time this driver
+-has to remain in staging.
+-- 
+2.11.0
