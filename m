@@ -1,82 +1,50 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v9 12/12] ARM: EXYNOS: refactor of mach-exynos to use
- chipid information
-Date: Fri, 31 Mar 2017 11:31:54 +0530
-Message-ID: <69ac19c2-76de-d614-492b-ccdc83d01d81@samsung.com>
-References: <CGME20170330131444epcas5p45051cf7e6ec7a993c2c9f84254b89a19@epcas5p4.samsung.com>
-        <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
-        <1490879826-16754-13-git-send-email-pankaj.dubey@samsung.com>
-        <CAK8P3a2oK1MvWe4B-4r2Rt7Q87juNJd3MsetN8-OeDYhBmKyUg@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCHv5 04/11] exynos_hdmi: add CEC notifier support
+Date: Fri, 31 Mar 2017 10:05:25 +0200
+Message-ID: <b4c6a816-fd67-35f2-c740-6abf77d5d9b6@xs4all.nl>
+References: <20170329141543.32935-1-hverkuil@xs4all.nl>
+ <20170329141543.32935-5-hverkuil@xs4all.nl>
+ <20170330223527.GK7909@n2100.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27641 "EHLO
-        epoutp02.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932299AbdCaF6y (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 31 Mar 2017 01:58:54 -0400
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by epoutp02.samsung.com (KnoxPortal) with ESMTP id 20170331055851epoutp025e606b57dbca8bd748710d4abe896f1a~w4fgAVYup2344623446epoutp02m
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Mar 2017 05:58:51 +0000 (GMT)
-In-Reply-To: <CAK8P3a2oK1MvWe4B-4r2Rt7Q87juNJd3MsetN8-OeDYhBmKyUg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170330223527.GK7909@n2100.armlinux.org.uk>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-samsung-soc@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
-
-
-On Thursday 30 March 2017 07:31 PM, Arnd Bergmann wrote:
-> On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> 
->>   * register the standard cpu IO areas
->>   */
->> -static void __init exynos_map_io(void)
->> +static int __init exynos_fdt_map_scu(unsigned long node, const char *uname,
->> +               int depth, void *data)
->>  {
->> -       if (soc_is_exynos4())
->> -               iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
->> +       if (!of_flat_dt_is_compatible(node, "samsung,exynos4210") &&
->> +                       !of_flat_dt_is_compatible(node, "samsung,exynos4212") &&
->> +                       !of_flat_dt_is_compatible(node, "samsung,exynos4412"))
->> +               return 0;
->> +
->> +       iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
->> +       return 1;
->>  }
-> 
-> This seems really overcomplicated. From what I can tell, this is only needed
-> to find the SCU address, but there are better ways to do that, either by
-> looking up the SCU in the DT at the time you actually need it,
-> or by calling scu_a9_get_base().
-
-Indeed it's complicated and ugly, for the same reason I attempted to
-clean-up this part for Exynos SoC in patch series [1], which was
-accepted by Samsung maintainer Krzysztof and later during pull request
-rejected by ARM maintainers [2]
-
-[1]: https://www.spinics.net/lists/arm-kernel/msg540498.html
-[2]: http://lkml.iu.edu/hypermail/linux/kernel/1612.0/01508.html
-
-Given the argument we can't adopt getting base address of SCU completely
-via DT without breaking OLD dtbs at some point, difficult to simplify
-these stuffs.
-
-Please guide which is the best way to handle such stuffs.
-
-In fact I made another attempt [3] to cleanup this SCU related stuffs
-for other ARM based platforms, but we could not arrive on some consensus
-at that time. I will try to attempt it again soon.
-
-[3]: http://www.spinics.net/lists/arm-kernel/msg542351.html
-
-Thanks,
-Pankaj Dubey
-
-> 
->       Arnd
-> 
-> 
-> 
+T24gMzEvMDMvMTcgMDA6MzUsIFJ1c3NlbGwgS2luZyAtIEFSTSBMaW51eCB3cm90ZToKPiBPbiBX
+ZWQsIE1hciAyOSwgMjAxNyBhdCAwNDoxNTozNlBNICswMjAwLCBIYW5zIFZlcmt1aWwgd3JvdGU6
+Cj4+ICsJY2VjX25vdGlmaWVyX3NldF9waHlzX2FkZHIoaGRhdGEtPm5vdGlmaWVyLAo+PiArCQkJ
+CSAgIGNlY19nZXRfZWRpZF9waHlzX2FkZHIoZWRpZCkpOwo+IAo+IFRoaXMgcGF0dGVybiBjYXVz
+ZXMgcHJvYmxlbXMgLSBjYW4gd2UgaGF2ZSB0aGUgbm90aWZpZXIgdGFraW5nIHRoZSBFRElECj4g
+cGxlYXNlLCBhbmQgc3R1YnMgaW4gY2VjLW5vdGlmaWVyLmggdG8gc3R1YiB0aGF0IG91dD8KPiAK
+PiBNYXliZSBzb21ldGhpbmcgbGlrZSBjZWNfbm90aWZpZXJfc2V0X3BoeXNfYWRkcl9mcm9tX2Vk
+aWQoZWRpZCkgPwoKR29vZCBwb2ludC4gSSd2ZSBhZGRlZCB0aGlzLCBhbmQgYXMgYW4gZXh0cmEg
+Ym9udXMgdGhpcyBhbGxvd2VkIG1lIHRvIGRyb3AKdGhlIGZpcnN0IGNlYy1lZGlkIHBhdGNoLgoK
+PiAKPiBIYXZpbmcgY29udmVydGVkIHRoZSB0ZGE5OTh4IGNvZGUgb3ZlciB0byB5b3VyIG5ldyBu
+b3RpZmllciwgdGhlIDAtZGF5Cj4gYnVpbGRlciByZXBvcnRlZCB0aGlzIHRvbmlnaHQ6Cj4gCj4+
+PiBFUlJPUjogImNlY19nZXRfZWRpZF9waHlzX2FkZHIiIFtkcml2ZXJzL2dwdS9kcm0vaTJjL3Rk
+YTk5OHgua29dIHVuZGVmaW5lZCEKPiAKPiB3aGljaCBpcyBjYXVzZWQgZXhhY3RseSBieSB0aGlz
+IHByb2JsZW0uICBJIGNhbiBhZGQgI2lmZGVmcyBpbnRvIHRoZQo+IHRkYTk5OHggZHJpdmVyLCBi
+dXQgYXMgeW91J3JlIGFscmVhZHkgc3R1YmJpbmcgb3V0Cj4gY2VjX25vdGlmaWVyX3NldF9waHlz
+X2FkZHIoKSBpbiBjZWMtbm90aWZpZXIuaCwgaXQgd291bGQgYmUgc3R1cGlkIHRvCj4gaGF2ZSB0
+byByZXNvcnQgdG8gI2lmZGVmcyBpbiBkcml2ZXIgY29kZSB0byBzb2x2ZSB0aGlzIGlzc3VlLgoK
+V2lsbCBwb3N0IGEgbmV3IHNlcmllcyB0b2RheS4gVGhhbmtzIGZvciBwb2ludGluZyB0aGlzIG91
+dC4KCkEgZ2VuZXJhbCBub3RlOiBJIGFtIGNvbnNpZGVyaW5nIG1lcmdpbmcgY2VjLW5vdGlmaWVy
+IGFuZCBjZWMtZWRpZCBpbnRvIHRoZQpDRUMgbW9kdWxlIGl0c2VsZi4gSG93ZXZlciwgSSB3YW50
+IHRvIGdldCB0aGlzIHNlcmllcyBpbiBmaXJzdCBiZWZvcmUgSSBzdGFydAptb3ZpbmcgdGhpbmdz
+IGFyb3VuZC4gSXQncyBiZWVuIGRlbGF5ZWQgbG9uZyBlbm91Z2ggYWxyZWFkeS4KClJlZ2FyZHMs
+CgoJSGFucwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
