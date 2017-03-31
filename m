@@ -1,221 +1,355 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv6 09/10] stih-cec: add CEC notifier support
-Date: Fri, 31 Mar 2017 14:20:35 +0200
-Message-ID: <20170331122036.55706-10-hverkuil@xs4all.nl>
+Subject: [PATCHv6 01/10] media: add CEC notifier support
+Date: Fri, 31 Mar 2017 14:20:27 +0200
+Message-ID: <20170331122036.55706-2-hverkuil@xs4all.nl>
 References: <20170331122036.55706-1-hverkuil@xs4all.nl>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:48001 "EHLO
+Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:41945 "EHLO
         lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933127AbdCaMUw (ORCPT
+        by vger.kernel.org with ESMTP id S932879AbdCaMUt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 31 Mar 2017 08:20:52 -0400
+        Fri, 31 Mar 2017 08:20:49 -0400
 In-Reply-To: <20170331122036.55706-1-hverkuil@xs4all.nl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Patrice.chotard@st.com, Hans Verkuil <hans.verkuil@cisco.com>, devicetree@vger.kernel.org
+Cc: Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Patrice.chotard@st.com, Hans Verkuil <hans.verkuil@cisco.com>
 
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-By using the CEC notifier framework there is no longer any reason
-to manually set the physical address. This was the one blocking
-issue that prevented this driver from going out of staging, so do
-this move as well.
+Add support for CEC notifiers, which is used to convey CEC physical address
+information from video drivers to their CEC counterpart driver(s).
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Based on an earlier version from Russell King:
+
+https://patchwork.kernel.org/patch/9277043/
+
+The cec_notifier is a reference counted object containing the CEC physical address
+state of a video device.
+
+When a new notifier is registered the current state will be reported to
+that notifier at registration time.
+
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-CC: devicetree@vger.kernel.org
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/media/platform/Kconfig                     | 10 +++++++
- drivers/media/platform/Makefile                    |  1 +
- .../st-cec => media/platform/sti/cec}/Makefile     |  0
- .../st-cec => media/platform/sti/cec}/stih-cec.c   | 31 +++++++++++++++++++---
- drivers/staging/media/Kconfig                      |  2 --
- drivers/staging/media/Makefile                     |  1 -
- drivers/staging/media/st-cec/Kconfig               |  8 ------
- drivers/staging/media/st-cec/TODO                  |  7 -----
- 8 files changed, 39 insertions(+), 21 deletions(-)
- rename drivers/{staging/media/st-cec => media/platform/sti/cec}/Makefile (100%)
- rename drivers/{staging/media/st-cec => media/platform/sti/cec}/stih-cec.c (93%)
- delete mode 100644 drivers/staging/media/st-cec/Kconfig
- delete mode 100644 drivers/staging/media/st-cec/TODO
+ MAINTAINERS                  |   4 +-
+ drivers/media/Kconfig        |   4 ++
+ drivers/media/Makefile       |   4 ++
+ drivers/media/cec-notifier.c | 129 +++++++++++++++++++++++++++++++++++++++++++
+ include/media/cec-notifier.h | 111 +++++++++++++++++++++++++++++++++++++
+ 5 files changed, 251 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/media/cec-notifier.c
+ create mode 100644 include/media/cec-notifier.h
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 2c449b88fc94..7321f6123659 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -476,6 +476,16 @@ config VIDEO_SAMSUNG_S5P_CEC
-          CEC bus is present in the HDMI connector and enables communication
-          between compatible devices.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 83a42ef1d1a7..cfb2670aa372 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3066,7 +3066,7 @@ F:	drivers/net/ieee802154/cc2520.c
+ F:	include/linux/spi/cc2520.h
+ F:	Documentation/devicetree/bindings/net/ieee802154/cc2520.txt
  
-+config VIDEO_STI_HDMI_CEC
-+       tristate "STMicroelectronics STiH4xx HDMI CEC driver"
-+       depends on VIDEO_DEV && MEDIA_CEC_SUPPORT && (ARCH_STI || COMPILE_TEST)
-+       select MEDIA_CEC_NOTIFIER
-+       ---help---
-+         This is a driver for STIH4xx HDMI CEC interface. It uses the
-+         generic CEC framework interface.
-+         CEC bus is present in the HDMI connector and enables communication
-+         between compatible devices.
+-CEC DRIVER
++CEC FRAMEWORK
+ M:	Hans Verkuil <hans.verkuil@cisco.com>
+ L:	linux-media@vger.kernel.org
+ T:	git git://linuxtv.org/media_tree.git
+@@ -3076,9 +3076,11 @@ F:	Documentation/media/kapi/cec-core.rst
+ F:	Documentation/media/uapi/cec
+ F:	drivers/media/cec/
+ F:	drivers/media/cec-edid.c
++F:	drivers/media/cec-notifier.c
+ F:	drivers/media/rc/keymaps/rc-cec.c
+ F:	include/media/cec.h
+ F:	include/media/cec-edid.h
++F:	include/media/cec-notifier.h
+ F:	include/uapi/linux/cec.h
+ F:	include/uapi/linux/cec-funcs.h
+ 
+diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
+index 3512316e7a46..9e9ded44e8a8 100644
+--- a/drivers/media/Kconfig
++++ b/drivers/media/Kconfig
+@@ -99,6 +99,10 @@ config MEDIA_CEC_DEBUG
+ config MEDIA_CEC_EDID
+ 	bool
+ 
++config MEDIA_CEC_NOTIFIER
++	bool
++	select MEDIA_CEC_EDID
 +
- endif #V4L_CEC_DRIVERS
- 
- menuconfig V4L_TEST_DRIVERS
-diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-index 2f94d82afa4c..940724ab9b70 100644
---- a/drivers/media/platform/Makefile
-+++ b/drivers/media/platform/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC)	+= exynos-gsc/
- obj-$(CONFIG_VIDEO_STI_BDISP)		+= sti/bdisp/
- obj-$(CONFIG_VIDEO_STI_HVA)		+= sti/hva/
- obj-$(CONFIG_DVB_C8SECTPFE)		+= sti/c8sectpfe/
-+obj-$(CONFIG_VIDEO_STI_HDMI_CEC) 	+= sti/cec/
- 
- obj-$(CONFIG_VIDEO_STI_DELTA)		+= sti/delta/
- 
-diff --git a/drivers/staging/media/st-cec/Makefile b/drivers/media/platform/sti/cec/Makefile
-similarity index 100%
-rename from drivers/staging/media/st-cec/Makefile
-rename to drivers/media/platform/sti/cec/Makefile
-diff --git a/drivers/staging/media/st-cec/stih-cec.c b/drivers/media/platform/sti/cec/stih-cec.c
-similarity index 93%
-rename from drivers/staging/media/st-cec/stih-cec.c
-rename to drivers/media/platform/sti/cec/stih-cec.c
-index 3c25638a9610..636281c64c04 100644
---- a/drivers/staging/media/st-cec/stih-cec.c
-+++ b/drivers/media/platform/sti/cec/stih-cec.c
-@@ -1,6 +1,4 @@
- /*
-- * drivers/staging/media/st-cec/stih-cec.c
-- *
-  * STIH4xx CEC driver
-  * Copyright (C) STMicroelectronic SA 2016
-  *
-@@ -15,9 +13,11 @@
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- 
- #include <media/cec.h>
-+#include <media/cec-notifier.h>
- 
- #define CEC_NAME	"stih-cec"
- 
-@@ -129,6 +129,7 @@ struct stih_cec {
- 	void __iomem		*regs;
- 	int			irq;
- 	u32			irq_status;
-+	struct cec_notifier	*notifier;
- };
- 
- static int stih_cec_adap_enable(struct cec_adapter *adap, bool enable)
-@@ -303,12 +304,29 @@ static int stih_cec_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
- 	struct stih_cec *cec;
-+	struct device_node *np;
-+	struct platform_device *hdmi_dev;
- 	int ret;
- 
- 	cec = devm_kzalloc(dev, sizeof(*cec), GFP_KERNEL);
- 	if (!cec)
- 		return -ENOMEM;
- 
-+	np = of_parse_phandle(pdev->dev.of_node, "hdmi-phandle", 0);
-+
-+	if (!np) {
-+		dev_err(&pdev->dev, "Failed to find hdmi node in device tree\n");
-+		return -ENODEV;
-+	}
-+
-+	hdmi_dev = of_find_device_by_node(np);
-+	if (!hdmi_dev)
-+		return -EPROBE_DEFER;
-+
-+	cec->notifier = cec_notifier_get(&hdmi_dev->dev);
-+	if (!cec->notifier)
-+		return -ENOMEM;
-+
- 	cec->dev = dev;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -335,7 +353,7 @@ static int stih_cec_probe(struct platform_device *pdev)
- 	cec->adap = cec_allocate_adapter(&sti_cec_adap_ops, cec,
- 			CEC_NAME,
- 			CEC_CAP_LOG_ADDRS | CEC_CAP_PASSTHROUGH |
--			CEC_CAP_PHYS_ADDR | CEC_CAP_TRANSMIT, 1);
-+			CEC_CAP_TRANSMIT, 1);
- 	ret = PTR_ERR_OR_ZERO(cec->adap);
- 	if (ret)
- 		return ret;
-@@ -346,12 +364,19 @@ static int stih_cec_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	cec_register_cec_notifier(cec->adap, cec->notifier);
-+
- 	platform_set_drvdata(pdev, cec);
- 	return 0;
- }
- 
- static int stih_cec_remove(struct platform_device *pdev)
- {
-+	struct stih_cec *cec = platform_get_drvdata(pdev);
-+
-+	cec_unregister_adapter(cec->adap);
-+	cec_notifier_put(cec->notifier);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
-index c0d83cecf528..8ed8202da57a 100644
---- a/drivers/staging/media/Kconfig
-+++ b/drivers/staging/media/Kconfig
-@@ -32,6 +32,4 @@ source "drivers/staging/media/platform/bcm2835/Kconfig"
- # Keep LIRC at the end, as it has sub-menus
- source "drivers/staging/media/lirc/Kconfig"
- 
--source "drivers/staging/media/st-cec/Kconfig"
--
+ #
+ # Media controller
+ #	Selectable only for webcam/grabbers, as other drivers don't use it
+diff --git a/drivers/media/Makefile b/drivers/media/Makefile
+index d87ccb8eeabe..8b36a571d443 100644
+--- a/drivers/media/Makefile
++++ b/drivers/media/Makefile
+@@ -6,6 +6,10 @@ ifeq ($(CONFIG_MEDIA_CEC_EDID),y)
+   obj-$(CONFIG_MEDIA_SUPPORT) += cec-edid.o
  endif
-diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
-index 97b29ece9a2c..3a6adeabede1 100644
---- a/drivers/staging/media/Makefile
-+++ b/drivers/staging/media/Makefile
-@@ -4,4 +4,3 @@ obj-$(CONFIG_LIRC_STAGING)	+= lirc/
- obj-$(CONFIG_VIDEO_BCM2835)	+= platform/bcm2835/
- obj-$(CONFIG_VIDEO_DM365_VPFE)	+= davinci_vpfe/
- obj-$(CONFIG_VIDEO_OMAP4)	+= omap4iss/
--obj-$(CONFIG_VIDEO_STI_HDMI_CEC) += st-cec/
-diff --git a/drivers/staging/media/st-cec/Kconfig b/drivers/staging/media/st-cec/Kconfig
-deleted file mode 100644
-index c04283db58d6..000000000000
---- a/drivers/staging/media/st-cec/Kconfig
-+++ /dev/null
-@@ -1,8 +0,0 @@
--config VIDEO_STI_HDMI_CEC
--       tristate "STMicroelectronics STiH4xx HDMI CEC driver"
--       depends on VIDEO_DEV && MEDIA_CEC_SUPPORT && (ARCH_STI || COMPILE_TEST)
--       ---help---
--         This is a driver for STIH4xx HDMI CEC interface. It uses the
--         generic CEC framework interface.
--         CEC bus is present in the HDMI connector and enables communication
--         between compatible devices.
-diff --git a/drivers/staging/media/st-cec/TODO b/drivers/staging/media/st-cec/TODO
-deleted file mode 100644
-index c61289742c5c..000000000000
---- a/drivers/staging/media/st-cec/TODO
-+++ /dev/null
-@@ -1,7 +0,0 @@
--This driver requires that userspace sets the physical address.
--However, this should be passed on from the corresponding
--ST HDMI driver.
--
--We have to wait until the HDMI notifier framework has been merged
--in order to handle this gracefully, until that time this driver
--has to remain in staging.
+ 
++ifeq ($(CONFIG_MEDIA_CEC_NOTIFIER),y)
++  obj-$(CONFIG_MEDIA_SUPPORT) += cec-notifier.o
++endif
++
+ ifeq ($(CONFIG_MEDIA_CEC_SUPPORT),y)
+   obj-$(CONFIG_MEDIA_SUPPORT) += cec/
+ endif
+diff --git a/drivers/media/cec-notifier.c b/drivers/media/cec-notifier.c
+new file mode 100644
+index 000000000000..1afeede8071a
+--- /dev/null
++++ b/drivers/media/cec-notifier.c
+@@ -0,0 +1,129 @@
++/*
++ * cec-notifier.c - notify CEC drivers of physical address changes
++ *
++ * Copyright 2016 Russell King <rmk+kernel@arm.linux.org.uk>
++ * Copyright 2016-2017 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
++ *
++ * This program is free software; you may redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
++ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ */
++
++#include <linux/export.h>
++#include <linux/string.h>
++#include <linux/slab.h>
++#include <linux/list.h>
++#include <linux/kref.h>
++
++#include <media/cec-notifier.h>
++#include <drm/drm_edid.h>
++
++struct cec_notifier {
++	struct mutex lock;
++	struct list_head head;
++	struct kref kref;
++	struct device *dev;
++	struct cec_adapter *cec_adap;
++	void (*callback)(struct cec_adapter *adap, u16 pa);
++
++	u16 phys_addr;
++};
++
++static LIST_HEAD(cec_notifiers);
++static DEFINE_MUTEX(cec_notifiers_lock);
++
++struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	struct cec_notifier *n;
++
++	mutex_lock(&cec_notifiers_lock);
++	list_for_each_entry(n, &cec_notifiers, head) {
++		if (n->dev == dev) {
++			mutex_unlock(&cec_notifiers_lock);
++			kref_get(&n->kref);
++			return n;
++		}
++	}
++	n = kzalloc(sizeof(*n), GFP_KERNEL);
++	if (!n)
++		goto unlock;
++	n->dev = dev;
++	n->phys_addr = CEC_PHYS_ADDR_INVALID;
++	mutex_init(&n->lock);
++	kref_init(&n->kref);
++	list_add_tail(&n->head, &cec_notifiers);
++unlock:
++	mutex_unlock(&cec_notifiers_lock);
++	return n;
++}
++EXPORT_SYMBOL_GPL(cec_notifier_get);
++
++static void cec_notifier_release(struct kref *kref)
++{
++	struct cec_notifier *n =
++		container_of(kref, struct cec_notifier, kref);
++
++	list_del(&n->head);
++	kfree(n);
++}
++
++void cec_notifier_put(struct cec_notifier *n)
++{
++	mutex_lock(&cec_notifiers_lock);
++	kref_put(&n->kref, cec_notifier_release);
++	mutex_unlock(&cec_notifiers_lock);
++}
++EXPORT_SYMBOL_GPL(cec_notifier_put);
++
++void cec_notifier_set_phys_addr(struct cec_notifier *n, u16 pa)
++{
++	mutex_lock(&n->lock);
++	n->phys_addr = pa;
++	if (n->callback)
++		n->callback(n->cec_adap, n->phys_addr);
++	mutex_unlock(&n->lock);
++}
++EXPORT_SYMBOL_GPL(cec_notifier_set_phys_addr);
++
++void cec_notifier_set_phys_addr_from_edid(struct cec_notifier *n,
++					  const struct edid *edid)
++{
++	u16 pa = CEC_PHYS_ADDR_INVALID;
++
++	if (edid && edid->extensions)
++		pa = cec_get_edid_phys_addr((const u8 *)edid,
++				EDID_LENGTH * (edid->extensions + 1), NULL);
++	cec_notifier_set_phys_addr(n, pa);
++}
++EXPORT_SYMBOL_GPL(cec_notifier_set_phys_addr_from_edid);
++
++void cec_notifier_register(struct cec_notifier *n,
++			   struct cec_adapter *adap,
++			   void (*callback)(struct cec_adapter *adap, u16 pa))
++{
++	kref_get(&n->kref);
++	mutex_lock(&n->lock);
++	n->cec_adap = adap;
++	n->callback = callback;
++	n->callback(adap, n->phys_addr);
++	mutex_unlock(&n->lock);
++}
++EXPORT_SYMBOL_GPL(cec_notifier_register);
++
++void cec_notifier_unregister(struct cec_notifier *n)
++{
++	mutex_lock(&n->lock);
++	n->callback = NULL;
++	mutex_unlock(&n->lock);
++	cec_notifier_put(n);
++}
++EXPORT_SYMBOL_GPL(cec_notifier_unregister);
+diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
+new file mode 100644
+index 000000000000..035712e0993d
+--- /dev/null
++++ b/include/media/cec-notifier.h
+@@ -0,0 +1,111 @@
++/*
++ * cec-notifier.h - notify CEC drivers of physical address changes
++ *
++ * Copyright 2016 Russell King <rmk+kernel@arm.linux.org.uk>
++ * Copyright 2016-2017 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
++ *
++ * This program is free software; you may redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
++ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ */
++
++#ifndef LINUX_CEC_NOTIFIER_H
++#define LINUX_CEC_NOTIFIER_H
++
++#include <linux/types.h>
++#include <media/cec-edid.h>
++
++struct device;
++struct edid;
++struct cec_adapter;
++struct cec_notifier;
++
++#ifdef CONFIG_MEDIA_CEC_NOTIFIER
++
++/**
++ * cec_notifier_get - find or create a new cec_notifier for the given device.
++ * @dev: device that sends the events.
++ *
++ * If a notifier for device @dev already exists, then increase the refcount
++ * and return that notifier.
++ *
++ * If it doesn't exist, then allocate a new notifier struct and return a
++ * pointer to that new struct.
++ *
++ * Return NULL if the memory could not be allocated.
++ */
++struct cec_notifier *cec_notifier_get(struct device *dev);
++
++/**
++ * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
++ * @n: notifier
++ */
++void cec_notifier_put(struct cec_notifier *n);
++
++/**
++ * cec_notifier_set_phys_addr - set a new physical address.
++ * @n: the CEC notifier
++ * @pa: the CEC physical address
++ *
++ * Set a new CEC physical address.
++ */
++void cec_notifier_set_phys_addr(struct cec_notifier *n, u16 pa);
++
++/**
++ * cec_notifier_set_phys_addr_from_edid - set parse the PA from the EDID.
++ * @n: the CEC notifier
++ * @edid: the struct edid pointer
++ *
++ * Parses the EDID to obtain the new CEC physical address and set it.
++ */
++void cec_notifier_set_phys_addr_from_edid(struct cec_notifier *n,
++					  const struct edid *edid);
++
++/**
++ * cec_notifier_register - register a callback with the notifier
++ * @n: the CEC notifier
++ * @adap: the CEC adapter, passed as argument to the callback function
++ * @callback: the callback function
++ */
++void cec_notifier_register(struct cec_notifier *n,
++			   struct cec_adapter *adap,
++			   void (*callback)(struct cec_adapter *adap, u16 pa));
++
++/**
++ * cec_notifier_unregister - unregister the callback from the notifier.
++ * @n: the CEC notifier
++ */
++void cec_notifier_unregister(struct cec_notifier *n);
++
++#else
++static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	/* A non-NULL pointer is expected on success */
++	return (struct cec_notifier *)0xdeadfeed;
++}
++
++static inline void cec_notifier_put(struct cec_notifier *n)
++{
++}
++
++static inline void cec_notifier_set_phys_addr(struct cec_notifier *n, u16 pa)
++{
++}
++
++static inline void cec_notifier_set_phys_addr_from_edid(struct cec_notifier *n,
++							const struct edid *edid)
++{
++}
++
++#endif
++
++#endif
 -- 
 2.11.0
