@@ -1,93 +1,127 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v9 12/12] ARM: EXYNOS: refactor of mach-exynos to use
- chipid information
-Date: Fri, 31 Mar 2017 10:22:12 +0200
-Message-ID: <CAK8P3a1GobLFjVXySXHGYBXscMaTcL8nzv183Reho87+U3Z5cA@mail.gmail.com>
-References: <CGME20170330131444epcas5p45051cf7e6ec7a993c2c9f84254b89a19@epcas5p4.samsung.com>
- <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
- <1490879826-16754-13-git-send-email-pankaj.dubey@samsung.com>
- <CAK8P3a2oK1MvWe4B-4r2Rt7Q87juNJd3MsetN8-OeDYhBmKyUg@mail.gmail.com> <69ac19c2-76de-d614-492b-ccdc83d01d81@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCHv6 00/10] video/exynos/sti/cec: add CEC notifier & use in
+ drivers
+Date: Fri, 31 Mar 2017 14:20:26 +0200
+Message-ID: <20170331122036.55706-1-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34769 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752024AbdCaIWO (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 31 Mar 2017 04:22:14 -0400
-Received: by mail-oi0-f65.google.com with SMTP id t11so8091912oib.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Mar 2017 01:22:13 -0700 (PDT)
-In-Reply-To: <69ac19c2-76de-d614-492b-ccdc83d01d81@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-media@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Patrice.chotard@st.com, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Fri, Mar 31, 2017 at 8:01 AM, pankaj.dubey <pankaj.dubey@samsung.com> wrote:
-> On Thursday 30 March 2017 07:31 PM, Arnd Bergmann wrote:
->> On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->>
->> This seems really overcomplicated. From what I can tell, this is only needed
->> to find the SCU address, but there are better ways to do that, either by
->> looking up the SCU in the DT at the time you actually need it,
->> or by calling scu_a9_get_base().
->
-> Indeed it's complicated and ugly, for the same reason I attempted to
-> clean-up this part for Exynos SoC in patch series [1], which was
-> accepted by Samsung maintainer Krzysztof and later during pull request
-> rejected by ARM maintainers [2]
->
-> [1]: https://www.spinics.net/lists/arm-kernel/msg540498.html
-> [2]: http://lkml.iu.edu/hypermail/linux/kernel/1612.0/01508.html
->
-> Given the argument we can't adopt getting base address of SCU completely
-> via DT without breaking OLD dtbs at some point, difficult to simplify
-> these stuffs.
->
-> Please guide which is the best way to handle such stuffs.
->
-> In fact I made another attempt [3] to cleanup this SCU related stuffs
-> for other ARM based platforms, but we could not arrive on some consensus
-> at that time. I will try to attempt it again soon.
->
-> [3]: http://www.spinics.net/lists/arm-kernel/msg542351.html
-
-I very much appreciate your attempts, this is very helpful. I'm sorry
-for making it so hard for you. I had remembered your previous series,
-but did not realize that you were the author of both this patch and
-the SCU cleanup.
-
-Let me try to understand the entire problem space better. These
-are my assumptions based on what  you write:
-
-- A clean solution would be to map the SCU based on the DT as
-  you implemented in the earlier patch series, but that breaks
-  running new kernels with old DTBs, which we don't want.
-
-- Another clean solution would be to map the SCU based on
-  scu_a9_get_base(), but that doesn't work on all variants of
-  exynos4, because there is at least one (which?) that has incorrect
-  data in the register
-
-- The approach in this patch works, but is really ugly as it
-  requires parsing the fdt.
-
-Assuming that we don't want any of the approaches above,
-here are some other ideas that might be a little better:
-
-- Map the SCU later, just before we first need for calling
-  scu_enable(): exynos_smp_prepare_cpus(),
-  exynos_enter_aftr() or exynos_pm_resume(). All three
-  are late enough that we can simply call ioremap()
-  on the known physical address for the first caller,
-  and they are all guarded by a
-  ARM_CPU_PART_CORTEX_A9 check that should
-  be equivalent to the EXYNOS4 check you have.
-
-- Split the exynos4 machine descriptor from the one
-  for exynos5, and exynos3, the call the iotable_init
-  unconditionally for exynos4. The same method would
-  also let us get rid of some of the other
-  of_machine_is_compatible() checks.
-
-       Arnd
+RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgoKVGhpcyBwYXRjaCBz
+ZXJpZXMgYWRkcyB0aGUgQ0VDIHBoeXNpY2FsIGFkZHJlc3Mgbm90aWZpZXIgY29kZSwgYmFzZWQg
+b24KUnVzc2VsbCdzIGNvZGU6CgpodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzky
+NzcwNDMvCgpJdCBhZGRzIHN1cHBvcnQgZm9yIGl0IHRvIHRoZSBleHlub3NfaGRtaSBkcm0gZHJp
+dmVyLCBhZGRzIHN1cHBvcnQgZm9yCml0IHRvIHRoZSBDRUMgZnJhbWV3b3JrIGFuZCBmaW5hbGx5
+IGFkZHMgc3VwcG9ydCB0byB0aGUgczVwLWNlYyBkcml2ZXIsCndoaWNoIG5vdyBjYW4gYmUgbW92
+ZWQgb3V0IG9mIHN0YWdpbmcuCgpBbHNvIGluY2x1ZGVkIGlzIHNpbWlsYXIgY29kZSBmb3IgdGhl
+IFNUSSBwbGF0Zm9ybSwgY29udHJpYnV0ZWQgYnkKQmVuamFtaW4gR2FpZ25hcmQuCgpUZXN0ZWQg
+dGhlIGV4eW5vcyBjb2RlIHdpdGggbXkgT2Ryb2lkIFUzIGV4eW5vczQgZGV2Ym9hcmQuCgpDb21t
+ZW50cyBhcmUgd2VsY29tZS4gSSdkIGxpa2UgdG8gZ2V0IHRoaXMgaW4gZm9yIHRoZSA0LjEyIGtl
+cm5lbCBhcwp0aGlzIGlzIGEgbWlzc2luZyBwaWVjZSBuZWVkZWQgdG8gaW50ZWdyYXRlIENFQyBk
+cml2ZXJzLgoKUmVnYXJkcywKCglIYW5zCgpDaGFuZ2VzIHNpbmNlIHY1OgotIEFkZCBjZWNfbm90
+aWZpZXJfc2V0X3BoeXNfYWRkcl9mcm9tX2VkaWQoKS4gVGhpcyBtYXBzIHRvIGFuIGVtcHR5CiAg
+ZnVuY3Rpb24gaWYgQ09ORklHX01FRElBX0NFQ19OT1RJRklFUiBpcyB1bmRlZmluZWQuCi0gRHJv
+cHBlZCB0aGUgZmlyc3QgY2VjLWVkaWQgcGF0Y2guIEl0J3Mgbm8gbG9uZ2VyIG5lZWRlZCBhZnRl
+ciB0aGUKICBwcmV2aW91cyBjaGFuZ2UuCgpDaGFuZ2VzIHNpbmNlIHY0OgotIERyb3BwZWQgRURJ
+RC9FTEQvY29ubmVjdC9kaXNjb25uZWN0IHN1cHBvcnQuIEluc3RlYWQsIGp1c3QgcmVwb3J0IHRo
+ZQogIENFQyBwaHlzaWNhbCBhZGRyZXNzIChhbmQgdXNlIElOVkFMSUQgd2hlbiBkaXNjb25uZWN0
+aW5nKS4KLSBTaW5jZSB0aGlzIGlzIG5vdyBjb21wbGV0ZWx5IENFQyBzcGVjaWZpYywgbW92ZSBp
+dCB0byBkcml2ZXJzL21lZGlhCiAgYW5kIHJlbmFtZSB0byBjZWMtbm90aWZpZXIuCi0gRHJvcCBi
+bG9ja19ub3RpZmllci4gSW5zdGVhZCBqdXN0IHNldCBhIGNhbGxiYWNrIGZvciB0aGUgbm90aWZp
+ZXIuCi0gVXNlICdoZG1pLXBoYW5kbGUnIGluIHRoZSBiaW5kaW5ncyBmb3IgYm90aCBleHlub3Mg
+YW5kIHN0aS4gU28gbm8KICB2ZW5kb3IgcHJlZml4IGFuZCAnaGRtaS1waGFuZGxlJyBpbnN0ZWFk
+IG9mICdoZG1pLWhhbmRsZScuCi0gTWFrZSBzdHJ1Y3QgY2VjX25vdGlmaWVyIG9wYXF1ZS4gQWRk
+IGEgaGVscGVyIGZ1bmN0aW9uIHRvIGdldCB0aGUKICBwaHlzaWNhbCBhZGRyZXNzIGZyb20gYSBj
+ZWNfbm90aWZpZXIgc3RydWN0LgotIFByb3ZpZGUgZHVtbXkgZnVuY3Rpb25zIGluIGNlYy1ub3Rp
+Zmllci5oIHNvIGl0IGNhbiBiZSB1c2VkIHdoZW4KICBDT05GSUdfTUVESUFfQ0VDX05PVElGSUVS
+IGlzIHVuZGVmaW5lZC4KLSBEb24ndCBzZWxlY3QgdGhlIENFQyBub3RpZmllciBpbiB0aGUgSERN
+SSBkcml2ZXJzLiBJdCBzaG91bGQgb25seQogIGJlIGVuYWJsZWQgYnkgYWN0dWFsIENFQyBkcml2
+ZXJzLgoKQ2hhbmdlcyBzaW5jZSB2MzoKLSBBZGRlZCB0aGUgU1RJIHBhdGNoZXMKLSBTcGxpdCB0
+aGUgZXh5bm9zNCBiaW5kaW5nIHBhdGNoZXMgaW4gb25lIGZvciBkb2N1bWVudGF0aW9uIGFuZCBv
+bmUKICBmb3IgdGhlIGR0cyBjaGFuZ2UgaXRzZWxmLCBhbHNvIHVzZSB0aGUgY29ycmVjdCBzdWJq
+ZWN0IGFuZCBDQyB0bwogIHRoZSBjb3JyZWN0IG1haWxpbmdsaXN0cyAoSSBob3BlICApCgpDaGFu
+Z2VzIHNpbmNlIHYyOgotIFNwbGl0IG9mZiB0aGUgZHRzIGNoYW5nZXMgb2YgdGhlIHM1cC1jZWMg
+cGF0Y2ggaW50byBhIHNlcGFyYXRlIHBhdGNoCi0gUmVuYW1lZCBIUERfTk9USUZJRVJTIHRvIEhQ
+RF9OT1RJRklFUiB0byBiZSBjb25zaXN0ZW50IHdpdGggdGhlIG5hbWUKICBvZiB0aGUgc291cmNl
+LgoKQ2hhbmdlcyBzaW5jZSB2MToKClJlbmFtZWQgSERNSSBub3RpZmllciB0byBIUEQgKGhvdHBs
+dWcgZGV0ZWN0KSBub3RpZmllciBzaW5jZSB0aGlzIGNvZGUgaXMKbm90IEhETUkgc3BlY2lmaWMs
+IGJ1dCBpcyBpbnRlcmVzdGluZyBmb3IgYW55IHZpZGVvIHNvdXJjZSB0aGF0IGhhcyB0bwpkZWFs
+IHdpdGggaG90cGx1ZyBkZXRlY3QgYW5kIEVESUQvRUxEIChIRE1JLCBEVkksIFZHQSwgRFAsIC4u
+Li4pLgpPbmx5IHRoZSB1c2Ugd2l0aCBDRUMgYWRhcHRlcnMgaXMgSERNSSBzcGVjaWZpYywgYnV0
+IHRoZSBIUEQgbm90aWZpZXIKaXMgbW9yZSBnZW5lcmljLgoKCkJlbmphbWluIEdhaWduYXJkICg0
+KToKICBzdGk6IGhkbWk6IGFkZCBDRUMgbm90aWZpZXIgc3VwcG9ydAogIHN0aWgtY2VjLnR4dDog
+ZG9jdW1lbnQgbmV3IGhkbWkgcGhhbmRsZQogIHN0aWgtY2VjOiBhZGQgQ0VDIG5vdGlmaWVyIHN1
+cHBvcnQKICBBUk06IGR0czogU1RpSDQxMDogdXBkYXRlIHN0aS1jZWMgZm9yIENFQyBub3RpZmll
+ciBzdXBwb3J0CgpIYW5zIFZlcmt1aWwgKDYpOgogIG1lZGlhOiBhZGQgQ0VDIG5vdGlmaWVyIHN1
+cHBvcnQKICBjZWM6IGludGVncmF0ZSBDRUMgbm90aWZpZXIgc3VwcG9ydAogIGV4eW5vc19oZG1p
+OiBhZGQgQ0VDIG5vdGlmaWVyIHN1cHBvcnQKICBBUk06IGR0czogZXh5bm9zOiBhZGQgSERNSSBj
+b250cm9sbGVyIHBoYW5kbGUgdG8gZXh5bm9zNC5kdHNpCiAgczVwLWNlYy50eHQ6IGRvY3VtZW50
+IHRoZSBIRE1JIGNvbnRyb2xsZXIgcGhhbmRsZQogIHM1cC1jZWM6IGFkZCBjZWMtbm90aWZpZXIg
+c3VwcG9ydCwgbW92ZSBvdXQgb2Ygc3RhZ2luZwoKIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL21l
+ZGlhL3M1cC1jZWMudHh0ICAgICAgICAgIHwgICAyICsKIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L21lZGlhL3N0aWgtY2VjLnR4dCAgICAgICAgIHwgICAyICsKIE1BSU5UQUlORVJTICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICstCiBhcmNoL2FybS9ib290L2R0
+cy9leHlub3M0LmR0c2kgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCiBhcmNoL2FybS9ib290
+L2R0cy9zdGloNDA3LWZhbWlseS5kdHNpICAgICAgICAgICAgICB8ICAxMiAtLQogYXJjaC9hcm0v
+Ym9vdC9kdHMvc3RpaDQxMC5kdHNpICAgICAgICAgICAgICAgICAgICAgfCAgMTMgKysrCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAgICAgICAgICB8ICAxOSArKy0K
+IGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkbWkuYyAgICAgICAgICAgICAgICAgICAgIHwgIDEx
+ICsrCiBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmggICAgICAgICAgICAgICAgICAgICB8
+ICAgMyArCiBkcml2ZXJzL21lZGlhL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICB8ICAgNCArCiBkcml2ZXJzL21lZGlhL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICB8ICAgNCArCiBkcml2ZXJzL21lZGlhL2NlYy1ub3RpZmllci5jICAgICAgICAgICAgICAg
+ICAgICAgICB8IDEyOSArKysrKysrKysrKysrKysrKysrKysKIGRyaXZlcnMvbWVkaWEvY2VjL2Nl
+Yy1jb3JlLmMgICAgICAgICAgICAgICAgICAgICAgIHwgIDIyICsrKysKIGRyaXZlcnMvbWVkaWEv
+cGxhdGZvcm0vS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgIHwgIDI4ICsrKysrCiBkcml2ZXJz
+L21lZGlhL3BsYXRmb3JtL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICB8ICAgMiArCiAuLi4v
+bWVkaWEgPT4gbWVkaWEvcGxhdGZvcm19L3M1cC1jZWMvTWFrZWZpbGUgICAgICB8ICAgMAogLi4u
+L3BsYXRmb3JtfS9zNXAtY2VjL2V4eW5vc19oZG1pX2NlYy5oICAgICAgICAgICAgfCAgIDAKIC4u
+Li9wbGF0Zm9ybX0vczVwLWNlYy9leHlub3NfaGRtaV9jZWNjdHJsLmMgICAgICAgIHwgICAwCiAu
+Li4vbWVkaWEgPT4gbWVkaWEvcGxhdGZvcm19L3M1cC1jZWMvcmVncy1jZWMuaCAgICB8ICAgMAog
+Li4uL21lZGlhID0+IG1lZGlhL3BsYXRmb3JtfS9zNXAtY2VjL3M1cF9jZWMuYyAgICAgfCAgMzUg
+KysrKystCiAuLi4vbWVkaWEgPT4gbWVkaWEvcGxhdGZvcm19L3M1cC1jZWMvczVwX2NlYy5oICAg
+ICB8ICAgMyArCiAuLi4vc3QtY2VjID0+IG1lZGlhL3BsYXRmb3JtL3N0aS9jZWN9L01ha2VmaWxl
+ICAgICB8ICAgMAogLi4uL3N0LWNlYyA9PiBtZWRpYS9wbGF0Zm9ybS9zdGkvY2VjfS9zdGloLWNl
+Yy5jICAgfCAgMzEgKysrKy0KIGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9LY29uZmlnICAgICAgICAg
+ICAgICAgICAgICAgIHwgICA0IC0KIGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9NYWtlZmlsZSAgICAg
+ICAgICAgICAgICAgICAgIHwgICAyIC0KIGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9zNXAtY2VjL0tj
+b25maWcgICAgICAgICAgICAgIHwgICA5IC0tCiBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvczVwLWNl
+Yy9UT0RPICAgICAgICAgICAgICAgICB8ICAgNyAtLQogZHJpdmVycy9zdGFnaW5nL21lZGlhL3N0
+LWNlYy9LY29uZmlnICAgICAgICAgICAgICAgfCAgIDggLS0KIGRyaXZlcnMvc3RhZ2luZy9tZWRp
+YS9zdC1jZWMvVE9ETyAgICAgICAgICAgICAgICAgIHwgICA3IC0tCiBpbmNsdWRlL21lZGlhL2Nl
+Yy1ub3RpZmllci5oICAgICAgICAgICAgICAgICAgICAgICB8IDExMSArKysrKysrKysrKysrKysr
+KysKIGluY2x1ZGUvbWVkaWEvY2VjLmggICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwg
+IDEwICsrCiAzMSBmaWxlcyBjaGFuZ2VkLCA0MjMgaW5zZXJ0aW9ucygrKSwgNjAgZGVsZXRpb25z
+KC0pCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZWRpYS9jZWMtbm90aWZpZXIuYwogcmVu
+YW1lIGRyaXZlcnMve3N0YWdpbmcvbWVkaWEgPT4gbWVkaWEvcGxhdGZvcm19L3M1cC1jZWMvTWFr
+ZWZpbGUgKDEwMCUpCiByZW5hbWUgZHJpdmVycy97c3RhZ2luZy9tZWRpYSA9PiBtZWRpYS9wbGF0
+Zm9ybX0vczVwLWNlYy9leHlub3NfaGRtaV9jZWMuaCAoMTAwJSkKIHJlbmFtZSBkcml2ZXJzL3tz
+dGFnaW5nL21lZGlhID0+IG1lZGlhL3BsYXRmb3JtfS9zNXAtY2VjL2V4eW5vc19oZG1pX2NlY2N0
+cmwuYyAoMTAwJSkKIHJlbmFtZSBkcml2ZXJzL3tzdGFnaW5nL21lZGlhID0+IG1lZGlhL3BsYXRm
+b3JtfS9zNXAtY2VjL3JlZ3MtY2VjLmggKDEwMCUpCiByZW5hbWUgZHJpdmVycy97c3RhZ2luZy9t
+ZWRpYSA9PiBtZWRpYS9wbGF0Zm9ybX0vczVwLWNlYy9zNXBfY2VjLmMgKDg5JSkKIHJlbmFtZSBk
+cml2ZXJzL3tzdGFnaW5nL21lZGlhID0+IG1lZGlhL3BsYXRmb3JtfS9zNXAtY2VjL3M1cF9jZWMu
+aCAoOTclKQogcmVuYW1lIGRyaXZlcnMve3N0YWdpbmcvbWVkaWEvc3QtY2VjID0+IG1lZGlhL3Bs
+YXRmb3JtL3N0aS9jZWN9L01ha2VmaWxlICgxMDAlKQogcmVuYW1lIGRyaXZlcnMve3N0YWdpbmcv
+bWVkaWEvc3QtY2VjID0+IG1lZGlhL3BsYXRmb3JtL3N0aS9jZWN9L3N0aWgtY2VjLmMgKDkzJSkK
+IGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvczVwLWNlYy9LY29uZmln
+CiBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9zdGFnaW5nL21lZGlhL3M1cC1jZWMvVE9ETwog
+ZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9zdC1jZWMvS2NvbmZpZwog
+ZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9zdC1jZWMvVE9ETwogY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvbWVkaWEvY2VjLW5vdGlmaWVyLmgKCi0tIAoyLjExLjAK
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
