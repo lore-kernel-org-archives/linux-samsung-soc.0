@@ -1,46 +1,61 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCHv5 04/11] exynos_hdmi: add CEC notifier support
-Date: Thu, 30 Mar 2017 23:35:27 +0100
-Message-ID: <20170330223527.GK7909@n2100.armlinux.org.uk>
-References: <20170329141543.32935-1-hverkuil@xs4all.nl>
- <20170329141543.32935-5-hverkuil@xs4all.nl>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v9 04/12] soc: samsung: add exynos chipid driver support
+Date: Fri, 31 Mar 2017 11:06:14 +0530
+Message-ID: <a1be4b9c-0f68-dbe3-7799-d5acf4ec31e0@samsung.com>
+References: <CGME20170330131427epcas5p4c3d238022dc75694ad3baa8a1018ea04@epcas5p4.samsung.com>
+        <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
+        <1490879826-16754-5-git-send-email-pankaj.dubey@samsung.com>
+        <CAK8P3a0dq-Ve2N3yFbpZ7LHzZJ=w6-pLRTSZJZ2=rnk2gWphJw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40922 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932377AbdC3Wfn (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:19380 "EHLO
+        epoutp01.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751422AbdCaFdT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 18:35:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20170329141543.32935-5-hverkuil@xs4all.nl>
+        Fri, 31 Mar 2017 01:33:19 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by epoutp01.samsung.com (KnoxPortal) with ESMTP id 20170331053316epoutp01c4ec6aae6a117e7ce3ea40ba25cb82d7~w4JKC5Fwb2128521285epoutp010
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Mar 2017 05:33:16 +0000 (GMT)
+In-Reply-To: <CAK8P3a0dq-Ve2N3yFbpZ7LHzZJ=w6-pLRTSZJZ2=rnk2gWphJw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-samsung-soc@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Wed, Mar 29, 2017 at 04:15:36PM +0200, Hans Verkuil wrote:
-> +	cec_notifier_set_phys_addr(hdata->notifier,
-> +				   cec_get_edid_phys_addr(edid));
+Hi Arnd,
 
-This pattern causes problems - can we have the notifier taking the EDID
-please, and stubs in cec-notifier.h to stub that out?
+On Thursday 30 March 2017 07:20 PM, Arnd Bergmann wrote:
+> On Thu, Mar 30, 2017 at 3:16 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+>>
+>> +config EXYNOS_CHIPID
+>> +       bool "Exynos Chipid controller driver" if COMPILE_TEST
+>> +       depends on ARCH_EXYNOS || COMPILE_TEST
+>> +       select SOC_BUS
+> 
+> This lets you disable the driver when COMPILE_TEST is set on exynos,
+> which is probably not what you wanted.
+> 
 
-Maybe something like cec_notifier_set_phys_addr_from_edid(edid) ?
+Sorry I could not get this point. EXYNOS_CHIPID is invisible menu
+option, when I enabled COMPILE_TEST, option is visible in make
+menuconfig but it does not allow to disable this driver. I have adopted
+this config same as EXYNOS_PMU in the same file.
 
-Having converted the tda998x code over to your new notifier, the 0-day
-builder reported this tonight:
+> I'd do
+> 
+>          bool "Exynos Chipid controller driver" if COMPILE_TEST && !ARCHEXYNOS
+>          default ARCH_EXYNOS
 
->> ERROR: "cec_get_edid_phys_addr" [drivers/gpu/drm/i2c/tda998x.ko] undefined!
+I can adopt, default ARCH_EXYNOS, which will allow me to drop patch 5/12
+and 6/12.
 
-which is caused exactly by this problem.  I can add #ifdefs into the
-tda998x driver, but as you're already stubbing out
-cec_notifier_set_phys_addr() in cec-notifier.h, it would be stupid to
-have to resort to #ifdefs in driver code to solve this issue.
+Thanks for review.
+Pankaj Dubey
 
-Thanks.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> 
+>      Arnd
+> 
+> 
+> 
