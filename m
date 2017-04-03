@@ -1,135 +1,209 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 2/3] serial: samsung: Add missing checks for dma_map_single
- failure
-Date: Mon, 03 Apr 2017 08:21:00 +0200
-Message-ID: <1491200468-28463-2-git-send-email-m.szyprowski@samsung.com>
-References: <1491200468-28463-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170403062119eucas1p1fb7d0ceba0bc104d5e78cbc3343cf9fe@eucas1p1.samsung.com>
+Subject: Re: [PATCH v9 04/12] soc: samsung: add exynos chipid driver support
+Date: Mon, 03 Apr 2017 09:57:11 +0200
+Message-ID: <e054813c-7566-61cc-21cb-733aadd1a9c7@samsung.com>
+References: <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
+ <CGME20170330131427epcas5p4c3d238022dc75694ad3baa8a1018ea04@epcas5p4.samsung.com>
+ <1490879826-16754-5-git-send-email-pankaj.dubey@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:40939 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751136AbdDCGVX (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52285 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751963AbdDCH5R (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 02:21:23 -0400
-In-reply-to: <1491200468-28463-1-git-send-email-m.szyprowski@samsung.com>
+        Mon, 3 Apr 2017 03:57:17 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0ONT005F4Q3ECQ30@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 03 Apr 2017 08:57:14 +0100 (BST)
+In-reply-to: <1490879826-16754-5-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, stable@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, arnd@arndb.de, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, javier@osg.samsung.com, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-This patch adds missing checks for dma_map_single() failure and proper error
-reporting. Although this issue was harmless on ARM architecture, it is always
-good to use the DMA mapping API in a proper way. This patch fixes the following
-DMA API debug warning:
+Hi Pankaj
 
-WARNING: CPU: 1 PID: 3785 at lib/dma-debug.c:1171 check_unmap+0x8a0/0xf28
-dma-pl330 121a0000.pdma: DMA-API: device driver failed to check map error[device address=0x000000006e0f9000] [size=4096 bytes] [mapped as single]
-Modules linked in:
-CPU: 1 PID: 3785 Comm: (agetty) Tainted: G        W       4.11.0-rc1-00137-g07ca963-dirty #59
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[<c011aaa4>] (unwind_backtrace) from [<c01127c0>] (show_stack+0x20/0x24)
-[<c01127c0>] (show_stack) from [<c06ba5d8>] (dump_stack+0x84/0xa0)
-[<c06ba5d8>] (dump_stack) from [<c0139528>] (__warn+0x14c/0x180)
-[<c0139528>] (__warn) from [<c01395a4>] (warn_slowpath_fmt+0x48/0x50)
-[<c01395a4>] (warn_slowpath_fmt) from [<c072a114>] (check_unmap+0x8a0/0xf28)
-[<c072a114>] (check_unmap) from [<c072a834>] (debug_dma_unmap_page+0x98/0xc8)
-[<c072a834>] (debug_dma_unmap_page) from [<c0803874>] (s3c24xx_serial_shutdown+0x314/0x52c)
-[<c0803874>] (s3c24xx_serial_shutdown) from [<c07f5124>] (uart_port_shutdown+0x54/0x88)
-[<c07f5124>] (uart_port_shutdown) from [<c07f522c>] (uart_shutdown+0xd4/0x110)
-[<c07f522c>] (uart_shutdown) from [<c07f6a8c>] (uart_hangup+0x9c/0x208)
-[<c07f6a8c>] (uart_hangup) from [<c07c426c>] (__tty_hangup+0x49c/0x634)
-[<c07c426c>] (__tty_hangup) from [<c07c78ac>] (tty_ioctl+0xc88/0x16e4)
-[<c07c78ac>] (tty_ioctl) from [<c03b5f2c>] (do_vfs_ioctl+0xc4/0xd10)
-[<c03b5f2c>] (do_vfs_ioctl) from [<c03b6bf4>] (SyS_ioctl+0x7c/0x8c)
-[<c03b6bf4>] (SyS_ioctl) from [<c010b4a0>] (ret_fast_syscall+0x0/0x3c)
+On 2017-03-30 15:16, Pankaj Dubey wrote:
+> Exynos SoCs have Chipid, for identification of product IDs and SoC
+> revisions. This patch intends to provide initialization code for all
+> these functionalities, at the same time it provides some sysfs entries
+> for accessing these information to user-space.
+>
+> This driver uses existing binding for exynos-chipid.
+>
+> CC: Grant Likely <grant.likely@linaro.org>
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> [m.szyprowski: for suggestion and code snippet of product_id_to_soc_id]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>   drivers/soc/samsung/Kconfig         |   5 ++
+>   drivers/soc/samsung/Makefile        |   1 +
+>   drivers/soc/samsung/exynos-chipid.c | 109 ++++++++++++++++++++++++++++++++++++
+>   3 files changed, 115 insertions(+)
+>   create mode 100644 drivers/soc/samsung/exynos-chipid.c
+>
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index 8b25bd5..a90a4ad 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -6,6 +6,11 @@ menuconfig SOC_SAMSUNG
+>   
+>   if SOC_SAMSUNG
+>   
+> +config EXYNOS_CHIPID
+> +	bool "Exynos Chipid controller driver" if COMPILE_TEST
+> +	depends on ARCH_EXYNOS || COMPILE_TEST
+> +	select SOC_BUS
+> +
+>   config EXYNOS_PMU
+>   	bool "Exynos PMU controller driver" if COMPILE_TEST
+>   	depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> index 4d7694a..be3b6bb 100644
+> --- a/drivers/soc/samsung/Makefile
+> +++ b/drivers/soc/samsung/Makefile
+> @@ -1,3 +1,4 @@
+> +obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
+>   obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
+>   
+>   obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
+> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> new file mode 100644
+> index 0000000..1e9fb6b
+> --- /dev/null
+> +++ b/drivers/soc/samsung/exynos-chipid.c
+> @@ -0,0 +1,109 @@
+> +/*
+> + * Copyright (c) 2017 Samsung Electronics Co., Ltd.
+> + *	      http://www.samsung.com/
+> + *
+> + * EXYNOS - CHIP ID support
+> + * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/sys_soc.h>
+> +
+> +#define EXYNOS_SUBREV_MASK	(0xF << 4)
+> +#define EXYNOS_MAINREV_MASK	(0xF << 0)
+> +#define EXYNOS_REV_MASK		(EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
+> +
+> +static const struct exynos_soc_id {
+> +	const char *name;
+> +	unsigned int id;
+> +	unsigned int mask;
+> +} soc_ids[] = {
+> +	{ "EXYNOS3250", 0xE3472000, 0xFFFFF000 },
+> +	{ "EXYNOS4210", 0x43210000, 0xFFFFF000 },
 
-Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Fixes: 62c37eedb74c8 ("serial: samsung: add dma reqest/release functions")
-CC: stable@vger.kernel.org # v4.10+
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-This issue was there since adding DMA support, but this patch applies cleanly
-only to v4.10+ kernels due to other changes in the surrounding code.
+You have once again changed the mask for Exynos4 SoCs, so please add
+following line to the above array:
 
-v3:
-- moved spinlock removal to separate patch, extended commit message
+{ "EXYNOS4210", 0x43200000, 0xFFFFF000 },       /* EVT0 revision */
 
-v2:
-- fixed commit id in 'fixes' tag, added 'reviewed-by' tag
----
- drivers/tty/serial/samsung.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
+Otherwise Exynos C210 (4210 EVT0) is not properly detected:
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 9f3759bdb44f..ca0bcd7fd61f 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -859,7 +859,7 @@ static void s3c24xx_serial_break_ctl(struct uart_port *port, int break_state)
- static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
- {
- 	struct s3c24xx_uart_dma	*dma = p->dma;
--	unsigned long flags;
-+	int ret;
- 
- 	/* Default slave configuration parameters */
- 	dma->rx_conf.direction		= DMA_DEV_TO_MEM;
-@@ -884,8 +884,8 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
- 
- 	dma->tx_chan = dma_request_chan(p->port.dev, "tx");
- 	if (IS_ERR(dma->tx_chan)) {
--		dma_release_channel(dma->rx_chan);
--		return PTR_ERR(dma->tx_chan);
-+		ret = PTR_ERR(dma->tx_chan);
-+		goto err_release_rx;
- 	}
- 
- 	dmaengine_slave_config(dma->tx_chan, &dma->tx_conf);
-@@ -894,15 +894,17 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
- 	dma->rx_size = PAGE_SIZE;
- 
- 	dma->rx_buf = kmalloc(dma->rx_size, GFP_KERNEL);
--
- 	if (!dma->rx_buf) {
--		dma_release_channel(dma->rx_chan);
--		dma_release_channel(dma->tx_chan);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto err_release_tx;
- 	}
- 
- 	dma->rx_addr = dma_map_single(p->port.dev, dma->rx_buf,
- 				dma->rx_size, DMA_FROM_DEVICE);
-+	if (dma_mapping_error(p->port.dev, dma->rx_addr)) {
-+		ret = -EIO;
-+		goto err_free_rx;
-+	}
- 
- 	spin_lock_irqsave(&p->port.lock, flags);
- 
-@@ -911,8 +913,23 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
- 				UART_XMIT_SIZE, DMA_TO_DEVICE);
- 
- 	spin_unlock_irqrestore(&p->port.lock, flags);
-+	if (dma_mapping_error(p->port.dev, dma->tx_addr)) {
-+		ret = -EIO;
-+		goto err_unmap_rx;
-+	}
- 
- 	return 0;
-+
-+err_unmap_rx:
-+	dma_unmap_single(p->port.dev, dma->rx_addr, dma->rx_size,
-+			 DMA_FROM_DEVICE);
-+err_free_rx:
-+	kfree(dma->rx_buf);
-+err_release_tx:
-+	dma_release_channel(dma->tx_chan);
-+err_release_rx:
-+	dma_release_channel(dma->rx_chan);
-+	return ret;
- }
- 
- static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
+soc soc0: Exynos: CPU[UNKNOWN] PRO_ID[0x43200200] REV[0x0] Detected
+
+> +	{ "EXYNOS4212", 0x43220000, 0xFFFFF000 },
+> +	{ "EXYNOS4412", 0xE4412000, 0xFFFFF000 },
+> +	{ "EXYNOS5250", 0x43520000, 0xFFFFF000 },
+> +	{ "EXYNOS5260", 0xE5260000, 0xFFFFF000 },
+> +	{ "EXYNOS5410", 0xE5410000, 0xFFFFF000 },
+> +	{ "EXYNOS5420", 0xE5420000, 0xFFFFF000 },
+> +	{ "EXYNOS5440", 0xE5440000, 0xFFFFF000 },
+> +	{ "EXYNOS5800", 0xE5422000, 0xFFFFF000 },
+> +	{ "EXYNOS7420", 0xE7420000, 0xFFFFF000 },
+> +	{ "EXYNOS5433", 0xE5433000, 0xFFFFF000 },
+> +};
+
+Now the mask is same for all revisions, so you can remove it from the above
+array and directly use some kind of define in the code.
+
+> +
+> +static const char * __init product_id_to_soc_id(unsigned int product_id)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
+> +		if ((product_id & soc_ids[i].mask) == soc_ids[i].id)
+> +			return soc_ids[i].name;
+> +	return "UNKNOWN";
+> +}
+> +
+> +int __init exynos_chipid_early_init(void)
+> +{
+> +	struct soc_device_attribute *soc_dev_attr;
+> +	void __iomem *exynos_chipid_base;
+> +	struct soc_device *soc_dev;
+> +	struct device_node *root;
+> +	struct device_node *np;
+> +	struct device *dev;
+> +	u32 product_id;
+> +	u32 revision;
+> +
+> +	/* look up for chipid node */
+> +	np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	exynos_chipid_base = of_iomap(np, 0);
+> +	of_node_put(np);
+> +
+> +	if (!exynos_chipid_base) {
+> +		pr_err("%s: failed to map chipid\n", np->name);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	product_id = readl_relaxed(exynos_chipid_base);
+> +	revision = product_id & EXYNOS_REV_MASK;
+> +	iounmap(exynos_chipid_base);
+> +
+> +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+> +	if (!soc_dev_attr)
+> +		return -ENODEV;
+> +
+> +	soc_dev_attr->family = "Samsung Exynos";
+> +
+> +	root = of_find_node_by_path("/");
+> +	of_property_read_string(root, "model", &soc_dev_attr->machine);
+> +	of_node_put(root);
+> +
+> +	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
+> +	soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
+> +
+> +	soc_dev = soc_device_register(soc_dev_attr);
+> +	if (IS_ERR(soc_dev)) {
+> +		kfree(soc_dev_attr->revision);
+> +		kfree_const(soc_dev_attr->soc_id);
+> +		kfree(soc_dev_attr);
+> +		return PTR_ERR(soc_dev);
+> +	}
+> +	dev = soc_device_to_device(soc_dev);
+> +
+> +	dev_info(dev, "Exynos: CPU[%s] PRO_ID[0x%x] REV[0x%x] Detected\n",
+> +			soc_dev_attr->soc_id, product_id, revision);
+> +
+> +	return 0;
+> +}
+> +early_initcall(exynos_chipid_early_init);
+
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
