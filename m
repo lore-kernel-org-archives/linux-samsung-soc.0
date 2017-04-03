@@ -1,74 +1,145 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3/3] hwmon: pwm-fan: remove no longer needed suspend/resume code
-Date: Mon, 03 Apr 2017 15:47:06 +0200
-Message-ID: <1491227226-12972-4-git-send-email-b.zolnierkie@samsung.com>
-References: <1491227226-12972-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20170403134742epcas1p42a7ea96e9c27d5752796ca9ff86d0f1e@epcas1p4.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1491227226-12972-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Kamil Debski <kamil@wypas.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-pwm@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
+From: Shuah Khan <shuahkhan@gmail.com>
+Subject: Re: [PATCH v3 2/3] serial: samsung: Add missing checks for
+ dma_map_single failure
+Date: Mon, 3 Apr 2017 07:50:44 -0600
+Message-ID: <CAKocOOO8irVarsM8xVvzHkoidEHXM_2F3jNXkDr1JEtiCBnsEg@mail.gmail.com>
+References: <CGME20170403062119eucas1p1fb7d0ceba0bc104d5e78cbc3343cf9fe@eucas1p1.samsung.com>
+ <1491200468-28463-1-git-send-email-m.szyprowski@samsung.com> <1491200468-28463-2-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1491200468-28463-2-git-send-email-m.szyprowski@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, stable <stable@vger.kernel.org>, shuahkh@osg.samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The suspend/resume is now properly handled by pwm-samsung driver
-(pwm-fan is currently only used by ARM Exynos boards) and the old
-code only handles ctx->pwm_value != 0 case. Just remove it.
+Hi Marek,
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/hwmon/pwm-fan.c | 32 --------------------------------
- 1 file changed, 32 deletions(-)
+On Mon, Apr 3, 2017 at 12:21 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> This patch adds missing checks for dma_map_single() failure and proper error
+> reporting. Although this issue was harmless on ARM architecture, it is always
+> good to use the DMA mapping API in a proper way. This patch fixes the following
+> DMA API debug warning:
+>
+> WARNING: CPU: 1 PID: 3785 at lib/dma-debug.c:1171 check_unmap+0x8a0/0xf28
+> dma-pl330 121a0000.pdma: DMA-API: device driver failed to check map error[device address=0x000000006e0f9000] [size=4096 bytes] [mapped as single]
+> Modules linked in:
+> CPU: 1 PID: 3785 Comm: (agetty) Tainted: G        W       4.11.0-rc1-00137-g07ca963-dirty #59
+> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> [<c011aaa4>] (unwind_backtrace) from [<c01127c0>] (show_stack+0x20/0x24)
+> [<c01127c0>] (show_stack) from [<c06ba5d8>] (dump_stack+0x84/0xa0)
+> [<c06ba5d8>] (dump_stack) from [<c0139528>] (__warn+0x14c/0x180)
+> [<c0139528>] (__warn) from [<c01395a4>] (warn_slowpath_fmt+0x48/0x50)
+> [<c01395a4>] (warn_slowpath_fmt) from [<c072a114>] (check_unmap+0x8a0/0xf28)
+> [<c072a114>] (check_unmap) from [<c072a834>] (debug_dma_unmap_page+0x98/0xc8)
+> [<c072a834>] (debug_dma_unmap_page) from [<c0803874>] (s3c24xx_serial_shutdown+0x314/0x52c)
+> [<c0803874>] (s3c24xx_serial_shutdown) from [<c07f5124>] (uart_port_shutdown+0x54/0x88)
+> [<c07f5124>] (uart_port_shutdown) from [<c07f522c>] (uart_shutdown+0xd4/0x110)
+> [<c07f522c>] (uart_shutdown) from [<c07f6a8c>] (uart_hangup+0x9c/0x208)
+> [<c07f6a8c>] (uart_hangup) from [<c07c426c>] (__tty_hangup+0x49c/0x634)
+> [<c07c426c>] (__tty_hangup) from [<c07c78ac>] (tty_ioctl+0xc88/0x16e4)
+> [<c07c78ac>] (tty_ioctl) from [<c03b5f2c>] (do_vfs_ioctl+0xc4/0xd10)
+> [<c03b5f2c>] (do_vfs_ioctl) from [<c03b6bf4>] (SyS_ioctl+0x7c/0x8c)
+> [<c03b6bf4>] (SyS_ioctl) from [<c010b4a0>] (ret_fast_syscall+0x0/0x3c)
+>
+> Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Fixes: 62c37eedb74c8 ("serial: samsung: add dma reqest/release functions")
+> CC: stable@vger.kernel.org # v4.10+
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index f9af393..9dc40f3 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -302,37 +302,6 @@ static int pwm_fan_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int pwm_fan_suspend(struct device *dev)
--{
--	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
--
--	if (ctx->pwm_value)
--		pwm_disable(ctx->pwm);
--	return 0;
--}
--
--static int pwm_fan_resume(struct device *dev)
--{
--	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
--	struct pwm_args pargs;
--	unsigned long duty;
--	int ret;
--
--	if (ctx->pwm_value == 0)
--		return 0;
--
--	pwm_get_args(ctx->pwm, &pargs);
--	duty = DIV_ROUND_UP(ctx->pwm_value * (pargs.period - 1), MAX_PWM);
--	ret = pwm_config(ctx->pwm, duty, pargs.period);
--	if (ret)
--		return ret;
--	return pwm_enable(ctx->pwm);
--}
--#endif
--
--static SIMPLE_DEV_PM_OPS(pwm_fan_pm, pwm_fan_suspend, pwm_fan_resume);
--
- static const struct of_device_id of_pwm_fan_match[] = {
- 	{ .compatible = "pwm-fan", },
- 	{},
-@@ -344,7 +313,6 @@ static int pwm_fan_resume(struct device *dev)
- 	.remove		= pwm_fan_remove,
- 	.driver	= {
- 		.name		= "pwm-fan",
--		.pm		= &pwm_fan_pm,
- 		.of_match_table	= of_pwm_fan_match,
- 	},
- };
--- 
-1.9.1
+Looks good.
+
+Reviewed-by: shuahkh@osg.samsung.com
+
+thanks,
+-- Shuah
+
+> This issue was there since adding DMA support, but this patch applies cleanly
+> only to v4.10+ kernels due to other changes in the surrounding code.
+>
+> v3:
+> - moved spinlock removal to separate patch, extended commit message
+>
+> v2:
+> - fixed commit id in 'fixes' tag, added 'reviewed-by' tag
+> ---
+>  drivers/tty/serial/samsung.c | 31 ++++++++++++++++++++++++-------
+>  1 file changed, 24 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index 9f3759bdb44f..ca0bcd7fd61f 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -859,7 +859,7 @@ static void s3c24xx_serial_break_ctl(struct uart_port *port, int break_state)
+>  static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+>  {
+>         struct s3c24xx_uart_dma *dma = p->dma;
+> -       unsigned long flags;
+> +       int ret;
+>
+>         /* Default slave configuration parameters */
+>         dma->rx_conf.direction          = DMA_DEV_TO_MEM;
+> @@ -884,8 +884,8 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+>
+>         dma->tx_chan = dma_request_chan(p->port.dev, "tx");
+>         if (IS_ERR(dma->tx_chan)) {
+> -               dma_release_channel(dma->rx_chan);
+> -               return PTR_ERR(dma->tx_chan);
+> +               ret = PTR_ERR(dma->tx_chan);
+> +               goto err_release_rx;
+>         }
+>
+>         dmaengine_slave_config(dma->tx_chan, &dma->tx_conf);
+> @@ -894,15 +894,17 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+>         dma->rx_size = PAGE_SIZE;
+>
+>         dma->rx_buf = kmalloc(dma->rx_size, GFP_KERNEL);
+> -
+>         if (!dma->rx_buf) {
+> -               dma_release_channel(dma->rx_chan);
+> -               dma_release_channel(dma->tx_chan);
+> -               return -ENOMEM;
+> +               ret = -ENOMEM;
+> +               goto err_release_tx;
+>         }
+>
+>         dma->rx_addr = dma_map_single(p->port.dev, dma->rx_buf,
+>                                 dma->rx_size, DMA_FROM_DEVICE);
+> +       if (dma_mapping_error(p->port.dev, dma->rx_addr)) {
+> +               ret = -EIO;
+> +               goto err_free_rx;
+> +       }
+>
+>         spin_lock_irqsave(&p->port.lock, flags);
+>
+> @@ -911,8 +913,23 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+>                                 UART_XMIT_SIZE, DMA_TO_DEVICE);
+>
+>         spin_unlock_irqrestore(&p->port.lock, flags);
+> +       if (dma_mapping_error(p->port.dev, dma->tx_addr)) {
+> +               ret = -EIO;
+> +               goto err_unmap_rx;
+> +       }
+>
+>         return 0;
+> +
+> +err_unmap_rx:
+> +       dma_unmap_single(p->port.dev, dma->rx_addr, dma->rx_size,
+> +                        DMA_FROM_DEVICE);
+> +err_free_rx:
+> +       kfree(dma->rx_buf);
+> +err_release_tx:
+> +       dma_release_channel(dma->tx_chan);
+> +err_release_rx:
+> +       dma_release_channel(dma->rx_chan);
+> +       return ret;
+>  }
+>
+>  static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
+> --
+> 1.9.1
+>
