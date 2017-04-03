@@ -1,131 +1,23 @@
-From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] iio: adc: Remove unnecessary cast on void pointer
-Date: Sun, 2 Apr 2017 09:47:32 +0100
-Message-ID: <fc8b71c3-bdd4-834e-70bb-439ea4228401@kernel.org>
-References: <20170401140613.GA20941@singhal-Inspiron-5558>
+From: Adrian Gillian Bayford <Pcvolante@loyola.edu>
+Subject: (unknown)
+Date: Mon, 3 Apr 2017 11:44:33 +0530
+Message-ID: <CY1PR01MB1263B3D272879A9E0B3067E6C0080__8887.07203926078$1491200157$gmane$org@CY1PR01MB1263.prod.exchangelabs.com>
+Reply-To: <bayford102@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170401140613.GA20941@singhal-Inspiron-5558>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: simran singhal <singhalsimran0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martine Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-cys01nam02hn0249.outbound.protection.outlook.com ([104.47.37.249]:61952
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751435AbdDCGPh (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 3 Apr 2017 02:15:37 -0400
+Content-Description: Mail message body
+Subject: 
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Recipients <Pcvolante@loyola.edu>
 
-On 01/04/17 15:06, simran singhal wrote:
-> The following Coccinelle script was used to detect this:
-> @r@
-> expression x;
-> void* e;
-> type T;
-> identifier f;
-> @@
-> (
->   *((T *)e)
-> |
->   ((T *)x)[...]
-> |
->   ((T*)x)->f
-> |
-> - (T*)
->   e
-> )
-> 
-> Signed-off-by: simran singhal <singhalsimran0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Given the set of void pointer casting cleanups you have posted
-are all doing the same thing to lots of drivers, I would have
-liked to have seen them as a series.  Keeps them nicely
-grouped in peoples email clients once replies start coming in!
-
-Anyhow, patch is good so applied.
-
-Jonathan
-> ---
->  drivers/iio/adc/exynos_adc.c      | 2 +-
->  drivers/iio/adc/imx7d_adc.c       | 2 +-
->  drivers/iio/adc/max1027.c         | 2 +-
->  drivers/iio/adc/rockchip_saradc.c | 2 +-
->  drivers/iio/adc/sun4i-gpadc-iio.c | 2 +-
->  drivers/iio/adc/vf610_adc.c       | 2 +-
->  6 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index ad1775b..6c5a7be 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -579,7 +579,7 @@ static int exynos_read_s3c64xx_ts(struct iio_dev *indio_dev, int *x, int *y)
->  
->  static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
->  {
-> -	struct exynos_adc *info = (struct exynos_adc *)dev_id;
-> +	struct exynos_adc *info = dev_id;
->  	u32 mask = info->data->mask;
->  
->  	/* Read value */
-> diff --git a/drivers/iio/adc/imx7d_adc.c b/drivers/iio/adc/imx7d_adc.c
-> index e2241ee..254b29a 100644
-> --- a/drivers/iio/adc/imx7d_adc.c
-> +++ b/drivers/iio/adc/imx7d_adc.c
-> @@ -365,7 +365,7 @@ static int imx7d_adc_read_data(struct imx7d_adc *info)
->  
->  static irqreturn_t imx7d_adc_isr(int irq, void *dev_id)
->  {
-> -	struct imx7d_adc *info = (struct imx7d_adc *)dev_id;
-> +	struct imx7d_adc *info = dev_id;
->  	int status;
->  
->  	status = readl(info->regs + IMX7D_REG_ADC_INT_STATUS);
-> diff --git a/drivers/iio/adc/max1027.c b/drivers/iio/adc/max1027.c
-> index 3b7c4f7..ebc7159 100644
-> --- a/drivers/iio/adc/max1027.c
-> +++ b/drivers/iio/adc/max1027.c
-> @@ -364,7 +364,7 @@ static int max1027_set_trigger_state(struct iio_trigger *trig, bool state)
->  
->  static irqreturn_t max1027_trigger_handler(int irq, void *private)
->  {
-> -	struct iio_poll_func *pf = (struct iio_poll_func *)private;
-> +	struct iio_poll_func *pf = private;
->  	struct iio_dev *indio_dev = pf->indio_dev;
->  	struct max1027_state *st = iio_priv(indio_dev);
->  
-> diff --git a/drivers/iio/adc/rockchip_saradc.c b/drivers/iio/adc/rockchip_saradc.c
-> index 85d7012..ae6d332 100644
-> --- a/drivers/iio/adc/rockchip_saradc.c
-> +++ b/drivers/iio/adc/rockchip_saradc.c
-> @@ -109,7 +109,7 @@ static int rockchip_saradc_read_raw(struct iio_dev *indio_dev,
->  
->  static irqreturn_t rockchip_saradc_isr(int irq, void *dev_id)
->  {
-> -	struct rockchip_saradc *info = (struct rockchip_saradc *)dev_id;
-> +	struct rockchip_saradc *info = dev_id;
->  
->  	/* Read value */
->  	info->last_val = readl_relaxed(info->regs + SARADC_DATA);
-> diff --git a/drivers/iio/adc/sun4i-gpadc-iio.c b/drivers/iio/adc/sun4i-gpadc-iio.c
-> index a8e134f..e531825 100644
-> --- a/drivers/iio/adc/sun4i-gpadc-iio.c
-> +++ b/drivers/iio/adc/sun4i-gpadc-iio.c
-> @@ -382,7 +382,7 @@ static int sun4i_gpadc_runtime_resume(struct device *dev)
->  
->  static int sun4i_gpadc_get_temp(void *data, int *temp)
->  {
-> -	struct sun4i_gpadc_iio *info = (struct sun4i_gpadc_iio *)data;
-> +	struct sun4i_gpadc_iio *info = data;
->  	int val, scale, offset;
->  
->  	if (sun4i_gpadc_temp_read(info->indio_dev, &val))
-> diff --git a/drivers/iio/adc/vf610_adc.c b/drivers/iio/adc/vf610_adc.c
-> index 228a003..01fc76f 100644
-> --- a/drivers/iio/adc/vf610_adc.c
-> +++ b/drivers/iio/adc/vf610_adc.c
-> @@ -584,7 +584,7 @@ static int vf610_adc_read_data(struct vf610_adc *info)
->  
->  static irqreturn_t vf610_adc_isr(int irq, void *dev_id)
->  {
-> -	struct iio_dev *indio_dev = (struct iio_dev *)dev_id;
-> +	struct iio_dev *indio_dev = dev_id;
->  	struct vf610_adc *info = iio_priv(indio_dev);
->  	int coco;
->  
-> 
+=A31.5 Million Has Been Granted To You As A Donation Visit www.bbc.co.uk/ne=
+ws/uk-england-19254228 Sendname Address Phone for more info
