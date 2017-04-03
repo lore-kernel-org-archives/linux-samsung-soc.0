@@ -1,121 +1,159 @@
 From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v9 12/12] ARM: EXYNOS: refactor of mach-exynos to use
- chipid information
-Date: Mon, 3 Apr 2017 14:55:43 +0530
-Message-ID: <485f9aaa-3c32-5996-e7f0-9fa1a589e39b@samsung.com>
-References: <CGME20170330131444epcas5p45051cf7e6ec7a993c2c9f84254b89a19@epcas5p4.samsung.com>
-        <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
-        <1490879826-16754-13-git-send-email-pankaj.dubey@samsung.com>
-        <CAK8P3a2oK1MvWe4B-4r2Rt7Q87juNJd3MsetN8-OeDYhBmKyUg@mail.gmail.com>
-        <69ac19c2-76de-d614-492b-ccdc83d01d81@samsung.com>
-        <CAK8P3a1GobLFjVXySXHGYBXscMaTcL8nzv183Reho87+U3Z5cA@mail.gmail.com>
+Subject: Re: [PATCH v9 04/12] soc: samsung: add exynos chipid driver support
+Date: Mon, 3 Apr 2017 15:05:16 +0530
+Message-ID: <f5b08b44-0bb2-e1a3-d834-1640cd37d066@samsung.com>
+References: <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
+        <CGME20170330131427epcas5p4c3d238022dc75694ad3baa8a1018ea04@epcas5p4.samsung.com>
+        <1490879826-16754-5-git-send-email-pankaj.dubey@samsung.com>
+        <e054813c-7566-61cc-21cb-733aadd1a9c7@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:62076 "EHLO
-        epoutp01.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751920AbdDCJWa (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13653 "EHLO
+        epoutp02.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751496AbdDCJcH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 05:22:30 -0400
+        Mon, 3 Apr 2017 05:32:07 -0400
 Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by epoutp01.samsung.com (KnoxPortal) with ESMTP id 20170403092228epoutp018cbf0aa4676710b297fc65b3e944df00~x2NIgePwE3151231512epoutp01g
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2017 09:22:28 +0000 (GMT)
-In-Reply-To: <CAK8P3a1GobLFjVXySXHGYBXscMaTcL8nzv183Reho87+U3Z5cA@mail.gmail.com>
+        by epoutp02.samsung.com (KnoxPortal) with ESMTP id 20170403093205epoutp02f94ae11444f08c7412bca24269f134df~x2Vh0b2Rk3082330823epoutp02F
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2017 09:32:05 +0000 (GMT)
+In-Reply-To: <e054813c-7566-61cc-21cb-733aadd1a9c7@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-samsung-soc@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, arnd@arndb.de, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, javier@osg.samsung.com, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
+Hi Marek,
 
-
-On Friday 31 March 2017 01:52 PM, Arnd Bergmann wrote:
-> On Fri, Mar 31, 2017 at 8:01 AM, pankaj.dubey <pankaj.dubey@samsung.com> wrote:
->> On Thursday 30 March 2017 07:31 PM, Arnd Bergmann wrote:
->>> On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->>>
->>> This seems really overcomplicated. From what I can tell, this is only needed
->>> to find the SCU address, but there are better ways to do that, either by
->>> looking up the SCU in the DT at the time you actually need it,
->>> or by calling scu_a9_get_base().
+On Monday 03 April 2017 01:27 PM, Marek Szyprowski wrote:
+> Hi Pankaj
+> 
+> On 2017-03-30 15:16, Pankaj Dubey wrote:
+>> Exynos SoCs have Chipid, for identification of product IDs and SoC
+>> revisions. This patch intends to provide initialization code for all
+>> these functionalities, at the same time it provides some sysfs entries
+>> for accessing these information to user-space.
 >>
->> Indeed it's complicated and ugly, for the same reason I attempted to
->> clean-up this part for Exynos SoC in patch series [1], which was
->> accepted by Samsung maintainer Krzysztof and later during pull request
->> rejected by ARM maintainers [2]
->>
->> [1]: https://www.spinics.net/lists/arm-kernel/msg540498.html
->> [2]: http://lkml.iu.edu/hypermail/linux/kernel/1612.0/01508.html
->>
->> Given the argument we can't adopt getting base address of SCU completely
->> via DT without breaking OLD dtbs at some point, difficult to simplify
->> these stuffs.
->>
->> Please guide which is the best way to handle such stuffs.
->>
->> In fact I made another attempt [3] to cleanup this SCU related stuffs
->> for other ARM based platforms, but we could not arrive on some consensus
->> at that time. I will try to attempt it again soon.
->>
->> [3]: http://www.spinics.net/lists/arm-kernel/msg542351.html
-> 
-> I very much appreciate your attempts, this is very helpful. I'm sorry
-> for making it so hard for you. I had remembered your previous series,
-> but did not realize that you were the author of both this patch and
-> the SCU cleanup.
-> 
-> Let me try to understand the entire problem space better. These
-> are my assumptions based on what  you write:
-> 
-> - A clean solution would be to map the SCU based on the DT as
->   you implemented in the earlier patch series, but that breaks
->   running new kernels with old DTBs, which we don't want.
-> 
-> - Another clean solution would be to map the SCU based on
->   scu_a9_get_base(), but that doesn't work on all variants of
->   exynos4, because there is at least one (which?) that has incorrect
->   data in the register
+>> This driver uses existing binding for exynos-chipid.
 
-Sorry, I am also not aware which variant does not support this.
-Currently for none of exynos4 we are using scu_a9_get_base(), and due to
-unavailability of all exynos4 based board with me, I can't test it.
+snip
+
+>> +
+>> +static const struct exynos_soc_id {
+>> +    const char *name;
+>> +    unsigned int id;
+>> +    unsigned int mask;
+>> +} soc_ids[] = {
+>> +    { "EXYNOS3250", 0xE3472000, 0xFFFFF000 },
+>> +    { "EXYNOS4210", 0x43210000, 0xFFFFF000 },
+> 
+> You have once again changed the mask for Exynos4 SoCs, so please add
+> following line to the above array:
+
+Yes, this time I cross-verified from the UM of respective SoC's and
+added it.
 
 > 
-> - The approach in this patch works, but is really ugly as it
->   requires parsing the fdt.
+> { "EXYNOS4210", 0x43200000, 0xFFFFF000 },       /* EVT0 revision */
 > 
-> Assuming that we don't want any of the approaches above,
-> here are some other ideas that might be a little better:
+> Otherwise Exynos C210 (4210 EVT0) is not properly detected:
 > 
-> - Map the SCU later, just before we first need for calling
->   scu_enable(): exynos_smp_prepare_cpus(),
->   exynos_enter_aftr() or exynos_pm_resume(). All three
->   are late enough that we can simply call ioremap()
->   on the known physical address for the first caller,
->   and they are all guarded by a
->   ARM_CPU_PART_CORTEX_A9 check that should
->   be equivalent to the EXYNOS4 check you have.
+> soc soc0: Exynos: CPU[UNKNOWN] PRO_ID[0x43200200] REV[0x0] Detected
+
+Thanks for testing, I will add support for this.
+
 > 
-
-OK, let me try this, I think I can shift it at a little later point of boot.
-
-> - Split the exynos4 machine descriptor from the one
->   for exynos5, and exynos3, the call the iotable_init
->   unconditionally for exynos4. The same method would
->   also let us get rid of some of the other
->   of_machine_is_compatible() checks.
+>> +    { "EXYNOS4212", 0x43220000, 0xFFFFF000 },
+>> +    { "EXYNOS4412", 0xE4412000, 0xFFFFF000 },
+>> +    { "EXYNOS5250", 0x43520000, 0xFFFFF000 },
+>> +    { "EXYNOS5260", 0xE5260000, 0xFFFFF000 },
+>> +    { "EXYNOS5410", 0xE5410000, 0xFFFFF000 },
+>> +    { "EXYNOS5420", 0xE5420000, 0xFFFFF000 },
+>> +    { "EXYNOS5440", 0xE5440000, 0xFFFFF000 },
+>> +    { "EXYNOS5800", 0xE5422000, 0xFFFFF000 },
+>> +    { "EXYNOS7420", 0xE7420000, 0xFFFFF000 },
+>> +    { "EXYNOS5433", 0xE5433000, 0xFFFFF000 },
+>> +};
 > 
+> Now the mask is same for all revisions, so you can remove it from the above
+> array and directly use some kind of define in the code.
 
-Once we move SCU mapping to later point of time, iotable_init can be
-dropped. Currently only for SCU mapping it is getting called. So this
-part will become more clean.
+Yes, I also observed, but somehow I missed to update this part. I will
+change this in next version.
+
+> 
+>> +
+>> +static const char * __init product_id_to_soc_id(unsigned int product_id)
+>> +{
+>> +    int i;
+>> +
+>> +    for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
+>> +        if ((product_id & soc_ids[i].mask) == soc_ids[i].id)
+>> +            return soc_ids[i].name;
+>> +    return "UNKNOWN";
+>> +}
+>> +
+>> +int __init exynos_chipid_early_init(void)
+>> +{
+>> +    struct soc_device_attribute *soc_dev_attr;
+>> +    void __iomem *exynos_chipid_base;
+>> +    struct soc_device *soc_dev;
+>> +    struct device_node *root;
+>> +    struct device_node *np;
+>> +    struct device *dev;
+>> +    u32 product_id;
+>> +    u32 revision;
+>> +
+>> +    /* look up for chipid node */
+>> +    np = of_find_compatible_node(NULL, NULL,
+>> "samsung,exynos4210-chipid");
+>> +    if (!np)
+>> +        return -ENODEV;
+>> +
+>> +    exynos_chipid_base = of_iomap(np, 0);
+>> +    of_node_put(np);
+>> +
+>> +    if (!exynos_chipid_base) {
+>> +        pr_err("%s: failed to map chipid\n", np->name);
+>> +        return -ENOMEM;
+>> +    }
+>> +
+>> +    product_id = readl_relaxed(exynos_chipid_base);
+>> +    revision = product_id & EXYNOS_REV_MASK;
+>> +    iounmap(exynos_chipid_base);
+>> +
+>> +    soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+>> +    if (!soc_dev_attr)
+>> +        return -ENODEV;
+>> +
+>> +    soc_dev_attr->family = "Samsung Exynos";
+>> +
+>> +    root = of_find_node_by_path("/");
+>> +    of_property_read_string(root, "model", &soc_dev_attr->machine);
+>> +    of_node_put(root);
+>> +
+>> +    soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
+>> +    soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
+>> +
+>> +    soc_dev = soc_device_register(soc_dev_attr);
+>> +    if (IS_ERR(soc_dev)) {
+>> +        kfree(soc_dev_attr->revision);
+>> +        kfree_const(soc_dev_attr->soc_id);
+>> +        kfree(soc_dev_attr);
+>> +        return PTR_ERR(soc_dev);
+>> +    }
+>> +    dev = soc_device_to_device(soc_dev);
+>> +
+>> +    dev_info(dev, "Exynos: CPU[%s] PRO_ID[0x%x] REV[0x%x] Detected\n",
+>> +            soc_dev_attr->soc_id, product_id, revision);
+>> +
+>> +    return 0;
+>> +}
+>> +early_initcall(exynos_chipid_early_init);
+> 
+> Best regards
 
 
-Thanks for suggestion. I will work on it and submit next version.
-
+Thanks,
 Pankaj Dubey
-
->        Arnd
-> 
-> 
-> 
