@@ -1,70 +1,62 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 4/8] drm/exynos: mixer: remove src offset from mixer_graph_buffer()
-Date: Tue,  4 Apr 2017 16:02:57 +0200
-Message-ID: <1491314581-18086-5-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [RFC 5/8] drm/exynos: introduce BYTE_PITCH capability
+Date: Tue,  4 Apr 2017 16:02:58 +0200
+Message-ID: <1491314581-18086-6-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40556 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754079AbdDDOEB (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Apr 2017 10:04:01 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, a.hajda@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-We always translate the dma address such that the offsets of
-the source image are zero. Hence we can remove manipulation of
-the MXR_GRAPHIC_SXY(win) register.
-
-We leave the register defines (in regs_mixer.h) in place, since
-they document the hardware.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 32970fb..b712f2a 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -585,7 +585,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 	unsigned long flags;
- 	unsigned int win = plane->index;
- 	unsigned int x_ratio = 0, y_ratio = 0;
--	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
-+	unsigned int dst_x_offset, dst_y_offset;
- 	dma_addr_t dma_addr;
- 	unsigned int fmt;
- 	u32 val;
-@@ -619,12 +619,10 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 	dst_x_offset = state->crtc.x;
- 	dst_y_offset = state->crtc.y;
- 
--	/* converting dma address base and source offset */
-+	/* translate dma address base s.t. the source image offset is zero */
- 	dma_addr = exynos_drm_fb_dma_addr(fb, 0)
- 		+ (state->src.x * fb->format->cpp[0])
- 		+ (state->src.y * fb->pitches[0]);
--	src_x_offset = 0;
--	src_y_offset = 0;
- 
- 	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
- 		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
-@@ -655,11 +653,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 	val |= MXR_GRP_WH_V_SCALE(y_ratio);
- 	mixer_reg_write(res, MXR_GRAPHIC_WH(win), val);
- 
--	/* setup offsets in source image */
--	val  = MXR_GRP_SXY_SX(src_x_offset);
--	val |= MXR_GRP_SXY_SY(src_y_offset);
--	mixer_reg_write(res, MXR_GRAPHIC_SXY(win), val);
--
- 	/* setup offsets in display image */
- 	val  = MXR_GRP_DXY_DX(dst_x_offset);
- 	val |= MXR_GRP_DXY_DY(dst_y_offset);
--- 
-2.7.3
+SW4gc29tZSBvZiBkcml2ZXJzIHdlIGNvbXB1dGUgc29tZXRoaW5nIGxpa2UgJ3BpdGNoIC8gY3Bw
+JyBhdCBzb21lCnBvaW50LCBzaWxlbnRseSBhc3N1bWluZyB0aGF0IHRoZSBwaXRjaCAod2hpY2gg
+aXMgaW4gYnl0ZXMpIGlzCmRpdmlzaWJsZSBieSB0aGUgYnVmZmVyJ3MgY3BwLiBUaGlzIGlzIG5v
+dCBhbHdheXMgdHJ1ZSwgaW4gcGFydGljdWxhcgpEUk0gY29yZSBkb2VzIG5vdCBjaGVjayBmb3Ig
+cGl0Y2ggYWxpZ25tZW50IGluIHRoZSBjb21tb24gY2FzZS4KCkludHJvZHVjZSBhIG5ldyBjYXAg
+d2hpY2ggc2lnbmFscyB0aGF0IHRoZSBoYXJkd2FyZSBzdXBwb3J0cyBhCnBpdGNoIHdpdGggJ2J5
+dGUtZ3JhbnVsYXJpdHknLiBJZiB0aGUgY2FwIGlzIG5vdCBzZXQsIGFzc3VtZSB0aGF0CndlIG5l
+ZWQgcGl0Y2ggYWxpZ25lZCB0byBjcHAuCgpXZSBzZXQgdGhlIGNhcCBsYXRlciBmb3IgdGhlIGRy
+aXZlcnMvcGxhbmVzIHRoYXQgc3VwcG9ydCBpdC4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtv
+YmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9kcnYuaCAgIHwgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX3BsYW5lLmMgfCAxMCArKysrKysrKysrCiAyIGZpbGVzIGNoYW5nZWQsIDExIGlu
+c2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXgg
+ZWU2MmIwYi4uOGQ5NTdhOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2Rydi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+aApAQCAtOTIsNiArOTIsNyBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSB7CiAjZGVmaW5lIEVY
+WU5PU19EUk1fUExBTkVfQ0FQX1NDQUxFCSgxIDw8IDEpCiAjZGVmaW5lIEVYWU5PU19EUk1fUExB
+TkVfQ0FQX1pQT1MJKDEgPDwgMikKICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9DQVBfVElMRQko
+MSA8PCAzKQorI2RlZmluZSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9CWVRFX1BJVENICSgxIDw8IDQp
+CiAKIC8qCiAgKiBFeHlub3MgRFJNIHBsYW5lIGNvbmZpZ3VyYXRpb24gc3RydWN0dXJlLgpkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCBmYTYzMzNkLi5iMzFh
+MjI2IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUu
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMTg1
+LDYgKzE4NSwxNiBAQCBleHlub3NfZHJtX3BsYW5lX2NoZWNrX2Zvcm1hdChjb25zdCBzdHJ1Y3Qg
+ZXh5bm9zX2RybV9wbGFuZV9jb25maWcgKmNvbmZpZywKIHsKIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVm
+ZmVyICpmYiA9IHN0YXRlLT5iYXNlLmZiOwogCisJLyoKKwkgKiBTb21lIGJsb2NrcyBvbmx5IGFs
+bG93IHRvIHNwZWNpZnkgYSBidWZmZXIgcGl0Y2ggaW4gdGVybXMKKwkgKiBvZiBwaXhlbHMuIElu
+IHRoZXNlIGNhc2VzLCB3ZSBuZWVkIHRvIGVuc3VyZSB0aGF0IHRoZSBwaXRjaAorCSAqIHByb3Zp
+ZGVkIGJ5IHVzZXJzcGFjZSBpcyBkaXZpc2libGUgYnkgdGhlIGNwcC4KKwkgKi8KKwlpZiAoIShj
+b25maWctPmNhcGFiaWxpdGllcyAmIEVYWU5PU19EUk1fUExBTkVfQ0FQX0JZVEVfUElUQ0gpKSB7
+CisJCWlmIChmYi0+cGl0Y2hlc1swXSAlIGZiLT5mb3JtYXQtPmNwcFswXSkKKwkJCXJldHVybiAt
+RU5PVFNVUFA7CisJfQorCiAJc3dpdGNoIChmYi0+bW9kaWZpZXIpIHsKIAljYXNlIERSTV9GT1JN
+QVRfTU9EX1NBTVNVTkdfNjRfMzJfVElMRToKIAkJaWYgKCEoY29uZmlnLT5jYXBhYmlsaXRpZXMg
+JiBFWFlOT1NfRFJNX1BMQU5FX0NBUF9USUxFKSkKLS0gCjIuNy4zCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
