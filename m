@@ -1,97 +1,70 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 3/8] drm/exynos: mixer: simplify {vp_video,mixer_graph}_buffer()
-Date: Tue,  4 Apr 2017 16:02:56 +0200
-Message-ID: <1491314581-18086-4-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [RFC 4/8] drm/exynos: mixer: remove src offset from mixer_graph_buffer()
+Date: Tue,  4 Apr 2017 16:02:57 +0200
+Message-ID: <1491314581-18086-5-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40552 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40556 "EHLO
         smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754278AbdDDODu (ORCPT
+        by vger.kernel.org with ESMTP id S1754079AbdDDOEB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Apr 2017 10:03:50 -0400
+        Tue, 4 Apr 2017 10:04:01 -0400
 In-Reply-To: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, a.hajda@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-DRM core already checks the validity of the pixelformats, to we
-can simplify the checks here. The same applies to the FB modifier,
-which is now check in common Exynos plane code.
+We always translate the dma address such that the offsets of
+the source image are zero. Hence we can remove manipulation of
+the MXR_GRAPHIC_SXY(win) register.
 
-Also rename the booleans to reflect what true/false actually
-encodes.
+We leave the register defines (in regs_mixer.h) in place, since
+they document the hardware.
 
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c | 31 +++++++------------------------
- 1 file changed, 7 insertions(+), 24 deletions(-)
+ drivers/gpu/drm/exynos/exynos_mixer.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 35edbf2..32970fb 100644
+index 32970fb..b712f2a 100644
 --- a/drivers/gpu/drm/exynos/exynos_mixer.c
 +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -485,32 +485,18 @@ static void vp_video_buffer(struct mixer_context *ctx,
- 	unsigned int priority = state->base.normalized_zpos + 1;
+@@ -585,7 +585,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
  	unsigned long flags;
- 	dma_addr_t luma_addr[2], chroma_addr[2];
--	bool tiled_mode = false;
--	bool crcb_mode = false;
-+	bool is_tiled, is_nv21;
+ 	unsigned int win = plane->index;
+ 	unsigned int x_ratio = 0, y_ratio = 0;
+-	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
++	unsigned int dst_x_offset, dst_y_offset;
+ 	dma_addr_t dma_addr;
+ 	unsigned int fmt;
  	u32 val;
+@@ -619,12 +619,10 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	dst_x_offset = state->crtc.x;
+ 	dst_y_offset = state->crtc.y;
  
--	switch (fb->format->format) {
--	case DRM_FORMAT_NV12:
--		crcb_mode = false;
--		break;
--	case DRM_FORMAT_NV21:
--		crcb_mode = true;
--		break;
--	default:
--		DRM_ERROR("pixel format for vp is wrong [%d].\n",
--				fb->format->format);
--		return;
--	}
--
--	if (fb->modifier == DRM_FORMAT_MOD_SAMSUNG_64_32_TILE)
--		tiled_mode = true;
-+	is_nv21 = (fb->format->format == DRM_FORMAT_NV21);
-+	is_tiled = (fb->modifier == DRM_FORMAT_MOD_SAMSUNG_64_32_TILE);
+-	/* converting dma address base and source offset */
++	/* translate dma address base s.t. the source image offset is zero */
+ 	dma_addr = exynos_drm_fb_dma_addr(fb, 0)
+ 		+ (state->src.x * fb->format->cpp[0])
+ 		+ (state->src.y * fb->pitches[0]);
+-	src_x_offset = 0;
+-	src_y_offset = 0;
  
- 	luma_addr[0] = exynos_drm_fb_dma_addr(fb, 0);
- 	chroma_addr[0] = exynos_drm_fb_dma_addr(fb, 1);
- 
- 	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
+ 	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
  		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
--		if (tiled_mode) {
-+		if (is_tiled) {
- 			luma_addr[1] = luma_addr[0] + 0x40;
- 			chroma_addr[1] = chroma_addr[0] + 0x40;
- 		} else {
-@@ -530,8 +516,8 @@ static void vp_video_buffer(struct mixer_context *ctx,
- 	vp_reg_writemask(res, VP_MODE, val, VP_MODE_LINE_SKIP);
+@@ -655,11 +653,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	val |= MXR_GRP_WH_V_SCALE(y_ratio);
+ 	mixer_reg_write(res, MXR_GRAPHIC_WH(win), val);
  
- 	/* setup format */
--	val = (crcb_mode ? VP_MODE_NV21 : VP_MODE_NV12);
--	val |= (tiled_mode ? VP_MODE_MEM_TILED : VP_MODE_MEM_LINEAR);
-+	val = (is_nv21 ? VP_MODE_NV21 : VP_MODE_NV12);
-+	val |= (is_tiled ? VP_MODE_MEM_TILED : VP_MODE_MEM_LINEAR);
- 	vp_reg_writemask(res, VP_MODE, val, VP_MODE_FMT_MASK);
- 
- 	/* setting size of input image */
-@@ -621,12 +607,9 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 
- 	case DRM_FORMAT_XRGB8888:
- 	case DRM_FORMAT_ARGB8888:
-+	default:
- 		fmt = MXR_FORMAT_ARGB8888;
- 		break;
+-	/* setup offsets in source image */
+-	val  = MXR_GRP_SXY_SX(src_x_offset);
+-	val |= MXR_GRP_SXY_SY(src_y_offset);
+-	mixer_reg_write(res, MXR_GRAPHIC_SXY(win), val);
 -
--	default:
--		DRM_DEBUG_KMS("pixelformat unsupported by mixer\n");
--		return;
- 	}
- 
- 	/* ratio is already checked by common plane code */
+ 	/* setup offsets in display image */
+ 	val  = MXR_GRP_DXY_DX(dst_x_offset);
+ 	val |= MXR_GRP_DXY_DY(dst_y_offset);
 -- 
 2.7.3
