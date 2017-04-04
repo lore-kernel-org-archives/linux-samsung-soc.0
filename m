@@ -1,76 +1,65 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL] mfd: exynos-lpass: Pinctrl dependency
-Date: Tue, 4 Apr 2017 11:57:51 +0200
-Message-ID: <20170404095751.GA28977@kozik-book>
-References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <20170328154217.5405-1-krzk@kernel.org>
- <20170403101824.rpvkqzyigonyi77p@dell>
- <CAJKOXPeVOMBZxXeh7=oXbgnxSrUtHa86eAtP2BppY=G4Uygarg@mail.gmail.com>
- <20170404095054.7m6nf6bxweskabuu@dell>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [RFC 0/8] drm/exynos: misc fixes and more
+Date: Tue,  4 Apr 2017 16:02:53 +0200
+Message-ID: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20170404095054.7m6nf6bxweskabuu@dell>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Apr 04, 2017 at 10:50:54AM +0100, Lee Jones wrote:
-> On Tue, 04 Apr 2017, Krzysztof Kozlowski wrote:
-> 
-> > On Mon, Apr 3, 2017 at 12:18 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> > > On Tue, 28 Mar 2017, Krzysztof Kozlowski wrote:
-> > >
-> > >>
-> > >> Hi Lee,
-> > >>
-> > >>
-> > >> This is dependency for mfd/exynos-lpass driver changes from Marek Szyprowski.
-> > >> That's a material for v4.12 and I will be pushing this later to Linus Walleij.
-> > >
-> > > This does not work, and *may* still break.
-> > >
-> > > The only way to guarantee the order of the patches is to have them
-> > > *all* as part of the pull-request.  Not just some of them.
-> > 
-> > What do you mean exactly? If these two patches come through my tree
-> > first, then everything will work fine because they do not break any
-> > other stuff.
-> > 
-> > If you pull it and apply the rest on top, then it should also work
-> > without problems because your history will contain everything needed
-> > in proper order.
-> > 
-> > In both cases bisectability is preserved. Did I missed something?
-> 
-> Okay, so you're suggesting that I rebase MFD *on-top* of your PR.  That
-> does work for me because I insist on being able to re-work my tree at
-> any time.  However, be aware that some Maintainers do not work this
-> way, thus *normally* you will have to send PR containing all of the
-> dependant patches.
-
-You could either rebased on top of this PR or merge it before applying
-rest of patches. It does not matter because in both cases all dependant
-patches will be after the dependency. Also in both cases you will be
-sending them in your PR.
-
-You can then rebase your stuff as well, keeping only the external
-commits untouced and merged.
-
-Really, that does not differ from all your stable immutable branches you
-have been providing for other folks.
-
-
-Best regards,
-Krzysztof
+SGVsbG8sCgpzb21lIHJlY2VudCB3b3JrIEkgZGlkIG9uIEV4eW5vcy4gUGF0Y2hlcyBhcmUgYmFz
+ZWQgb24gWzFdIGFuZCBbMl0uCgpTdW1tYXJ5OgooYSkgRW5hYmxlcyBzdXBwb3J0IGZvciBOVjEy
+TVQgaW4gdGhlIG1peGVyLgooYikgU2FuaXRpemVzIGJ1ZmZlciBwaXRjaCBmb3IgSFcgd2l0aCBy
+ZXN0cmljdGlvbnMuCihjKSBNaXNjIGZpeGVzCgpXaGlsZSB0ZXN0aW5nIHRoZSBOVjEyTVQgcGFy
+dCwgSSBtYWRlIHRoZXNlIGludGVyZXN0aW5nIG9ic2VydmF0aW9ucy4KCigxKSBJIHVzZWQgMTky
+MHgxMDgwIFhSR0I4ODg4IG9uIHRoZSBwcmltYXJ5IHBsYW5lLCBhbmQgMTI4MHg3Njggb24gdGhl
+CnZpZGVvIHBsYW5lLiBXaXRoIHRoaXMgY29uZmlndXJhdGlvbiwgaXQgZG9lcyBub3QgbWF0dGVy
+IGlmIHlvdSdyZQp1c2luZyBOVjEyIG9yIE5WMTJNVCwgdGhlIHZpZGVvIHBsYW5lIG9jY2FzaW9u
+YWxseSBmbGlja2VycyBvciBzaG93cwpoZWF2eSBhcnRpZmFjdGluZy4gUmVkdWNpbmcgdGhlIHNp
+emUgb2YgdGhlIHByaW1hcnkgcGxhbmUsIGUuZy4gdG8KMzJ4MzIgc29sdmVzIHRoaXMgaXNzdWUs
+IHNvIG15IGd1ZXNzIGlzIHRoYXQgdGhpcyBpcyBtZW1vcnkgYmFuZHdpZHRoCmlzc3VlLiBEb2Vz
+IHNvbWVvbmUga25vdyBpZiBvbmUgY2FuIGNoZWNrIGZvciBidWZmZXIgdW5kZXJmbG93cyBvZiB0
+aGUKbWl4ZXIgd2l0aCByZXNwZWN0IHRvIGRhdGEgcGFzc2VkIGZyb20gdGhlIFZQPwoKKDIpIFVz
+aW5nIDE5MjB4MTA4MGkgKHNvIGFuIGludGVybGFjZWQgbW9kZSkgYW5kIE5WMTIsIHRoZSBib2Fy
+ZAppbW1lZGlhdGVseSBkaWVzIHdpdGggYW4gSU9NTVUgcGFnZWZhdWx0IGF0IGFkZHJlc3MgemVy
+by4gSSdtCmN1cnJlbnRseSBpbnZlc3RpZ2F0aW5nIHRoaXMsIGFuZCBpdCBsb29rcyBsaWtlIHRo
+YXQgdGhlIFZQIHNldHVwCmlzIHdyb25nIGhlcmUuIEluIHBhcnRpY3VsYXIgaXQgc2hvdWxkIGJl
+IHRoZSBzb3VyY2UgKCEpIGhlaWdodAphbmQgdmVydGljYWwgcG9zaXRpb24gdGhhdCBzaG91bGQg
+YmUgaGFsZmVkIGluIGludGVybGFjZWQgbW9kZSwgYW5kCm5vdCB0aGUgZGVzdGluYXRpb24uIE5l
+ZWQgdG8gbG9vayBtb3JlIGludG8gdGhpcy4KCkFueXdheSwgYm90aCB0aGUgaXNzdWVzIGFyZSBp
+bmRlcGVuZGFudCBvZiB0aGUgcGF0Y2hlcywgc28gcGxlYXNlCnJldmlldyEgOi0pCgpXaXRoIGJl
+c3Qgd2lzaGVzLApUb2JpYXMKCgpbMV0gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51
+eC1zYW1zdW5nLXNvYy9tc2c1ODY0MC5odG1sClsyXSBodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xp
+c3RzL2xpbnV4LXNhbXN1bmctc29jL21zZzU4NjQ0Lmh0bWwKClRvYmlhcyBKYWtvYmkgKDgpOgog
+IGRybS9leHlub3M6IG1peGVyOiBmaXggY2hyb21hIGNvbW1lbnQgaW4gdnBfdmlkZW9fYnVmZmVy
+KCkKICBkcm0vZXh5bm9zOiBtaXhlcjogZW5hYmxlIE5WMTJNVCBzdXBwb3J0IGZvciB0aGUgdmlk
+ZW8gcGxhbmUKICBkcm0vZXh5bm9zOiBtaXhlcjogc2ltcGxpZnkge3ZwX3ZpZGVvLG1peGVyX2dy
+YXBofV9idWZmZXIoKQogIGRybS9leHlub3M6IG1peGVyOiByZW1vdmUgc3JjIG9mZnNldCBmcm9t
+IG1peGVyX2dyYXBoX2J1ZmZlcigpCiAgZHJtL2V4eW5vczogaW50cm9kdWNlIEJZVEVfUElUQ0gg
+Y2FwYWJpbGl0eQogIGRybS9leHlub3M6IGFkZCBCWVRFX1BJVENIIGNhcCBmb3IgYWxsIHN1cHBv
+cnRlZCBwbGFuZXMKICBkcm0vZXh5bm9zOiBjb25zaXN0ZW50IHVzZSBvZiBjcHAKICBkcm0vZXh5
+bm9zOiBzaW1wbGlmeSBzZXRfcGl4Zm10KCkgaW4gREVDT04gYW5kIEZJTUQgZHJpdmVycwoKIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8IDE3ICsrKysrLS0t
+LS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgfCAxMyAr
+KystLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICAgICAgIHwg
+IDIgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgICAgICB8ICAy
+ICsrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCAxNyAr
+KysrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgICAg
+IHwgMzcgKysrKysrKysrKysrKysrKysrKysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfbWl4ZXIuYyAgICAgICAgIHwgNDQgKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tCiA3IGZp
+bGVzIGNoYW5nZWQsIDcxIGluc2VydGlvbnMoKyksIDYxIGRlbGV0aW9ucygtKQoKLS0gCjIuNy4z
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
