@@ -1,62 +1,51 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 5/8] drm/exynos: introduce BYTE_PITCH capability
-Date: Tue,  4 Apr 2017 16:02:58 +0200
-Message-ID: <1491314581-18086-6-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [RFC 6/8] drm/exynos: add BYTE_PITCH cap for all supported planes
+Date: Tue,  4 Apr 2017 16:02:59 +0200
+Message-ID: <1491314581-18086-7-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40568 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752841AbdDDOE1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 4 Apr 2017 10:04:27 -0400
 In-Reply-To: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, a.hajda@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-SW4gc29tZSBvZiBkcml2ZXJzIHdlIGNvbXB1dGUgc29tZXRoaW5nIGxpa2UgJ3BpdGNoIC8gY3Bw
-JyBhdCBzb21lCnBvaW50LCBzaWxlbnRseSBhc3N1bWluZyB0aGF0IHRoZSBwaXRjaCAod2hpY2gg
-aXMgaW4gYnl0ZXMpIGlzCmRpdmlzaWJsZSBieSB0aGUgYnVmZmVyJ3MgY3BwLiBUaGlzIGlzIG5v
-dCBhbHdheXMgdHJ1ZSwgaW4gcGFydGljdWxhcgpEUk0gY29yZSBkb2VzIG5vdCBjaGVjayBmb3Ig
-cGl0Y2ggYWxpZ25tZW50IGluIHRoZSBjb21tb24gY2FzZS4KCkludHJvZHVjZSBhIG5ldyBjYXAg
-d2hpY2ggc2lnbmFscyB0aGF0IHRoZSBoYXJkd2FyZSBzdXBwb3J0cyBhCnBpdGNoIHdpdGggJ2J5
-dGUtZ3JhbnVsYXJpdHknLiBJZiB0aGUgY2FwIGlzIG5vdCBzZXQsIGFzc3VtZSB0aGF0CndlIG5l
-ZWQgcGl0Y2ggYWxpZ25lZCB0byBjcHAuCgpXZSBzZXQgdGhlIGNhcCBsYXRlciBmb3IgdGhlIGRy
-aXZlcnMvcGxhbmVzIHRoYXQgc3VwcG9ydCBpdC4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtv
-YmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9kcnYuaCAgIHwgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX3BsYW5lLmMgfCAxMCArKysrKysrKysrCiAyIGZpbGVzIGNoYW5nZWQsIDExIGlu
-c2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXgg
-ZWU2MmIwYi4uOGQ5NTdhOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2Rydi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
-aApAQCAtOTIsNiArOTIsNyBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSB7CiAjZGVmaW5lIEVY
-WU5PU19EUk1fUExBTkVfQ0FQX1NDQUxFCSgxIDw8IDEpCiAjZGVmaW5lIEVYWU5PU19EUk1fUExB
-TkVfQ0FQX1pQT1MJKDEgPDwgMikKICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9DQVBfVElMRQko
-MSA8PCAzKQorI2RlZmluZSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9CWVRFX1BJVENICSgxIDw8IDQp
-CiAKIC8qCiAgKiBFeHlub3MgRFJNIHBsYW5lIGNvbmZpZ3VyYXRpb24gc3RydWN0dXJlLgpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCBmYTYzMzNkLi5iMzFh
-MjI2IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUu
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMTg1
-LDYgKzE4NSwxNiBAQCBleHlub3NfZHJtX3BsYW5lX2NoZWNrX2Zvcm1hdChjb25zdCBzdHJ1Y3Qg
-ZXh5bm9zX2RybV9wbGFuZV9jb25maWcgKmNvbmZpZywKIHsKIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVm
-ZmVyICpmYiA9IHN0YXRlLT5iYXNlLmZiOwogCisJLyoKKwkgKiBTb21lIGJsb2NrcyBvbmx5IGFs
-bG93IHRvIHNwZWNpZnkgYSBidWZmZXIgcGl0Y2ggaW4gdGVybXMKKwkgKiBvZiBwaXhlbHMuIElu
-IHRoZXNlIGNhc2VzLCB3ZSBuZWVkIHRvIGVuc3VyZSB0aGF0IHRoZSBwaXRjaAorCSAqIHByb3Zp
-ZGVkIGJ5IHVzZXJzcGFjZSBpcyBkaXZpc2libGUgYnkgdGhlIGNwcC4KKwkgKi8KKwlpZiAoIShj
-b25maWctPmNhcGFiaWxpdGllcyAmIEVYWU5PU19EUk1fUExBTkVfQ0FQX0JZVEVfUElUQ0gpKSB7
-CisJCWlmIChmYi0+cGl0Y2hlc1swXSAlIGZiLT5mb3JtYXQtPmNwcFswXSkKKwkJCXJldHVybiAt
-RU5PVFNVUFA7CisJfQorCiAJc3dpdGNoIChmYi0+bW9kaWZpZXIpIHsKIAljYXNlIERSTV9GT1JN
-QVRfTU9EX1NBTVNVTkdfNjRfMzJfVElMRToKIAkJaWYgKCEoY29uZmlnLT5jYXBhYmlsaXRpZXMg
-JiBFWFlOT1NfRFJNX1BMQU5FX0NBUF9USUxFKSkKLS0gCjIuNy4zCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Both FIMD and DECON5433 support a pitch in bytes.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 0fd6f7a..099e22e 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -533,6 +533,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ 		ctx->configs[win].num_pixel_formats = ARRAY_SIZE(decon_formats);
+ 		ctx->configs[win].zpos = win;
+ 		ctx->configs[win].type = decon_win_types[tmp];
++		ctx->configs[win].capabilities = EXYNOS_DRM_PLANE_CAP_BYTE_PITCH;
+ 
+ 		ret = exynos_plane_init(drm_dev, &ctx->planes[win], win,
+ 					1 << ctx->pipe, &ctx->configs[win]);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index a9fa444..ae738b8 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -1007,6 +1007,7 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+ 		ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_formats);
+ 		ctx->configs[i].zpos = i;
+ 		ctx->configs[i].type = fimd_win_types[i];
++		ctx->configs[i].capabilities = EXYNOS_DRM_PLANE_CAP_BYTE_PITCH;
+ 		ret = exynos_plane_init(drm_dev, &ctx->planes[i], i,
+ 					1 << ctx->pipe, &ctx->configs[i]);
+ 		if (ret)
+-- 
+2.7.3
