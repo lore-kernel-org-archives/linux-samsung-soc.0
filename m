@@ -1,51 +1,71 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 6/8] drm/exynos: add BYTE_PITCH cap for all supported planes
-Date: Tue,  4 Apr 2017 16:02:59 +0200
-Message-ID: <1491314581-18086-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [RFC 8/8] drm/exynos: simplify set_pixfmt() in DECON and FIMD drivers
+Date: Tue,  4 Apr 2017 16:03:01 +0200
+Message-ID: <1491314581-18086-9-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40568 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752841AbdDDOE1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Apr 2017 10:04:27 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, a.hajda@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Both FIMD and DECON5433 support a pitch in bytes.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 1 +
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 0fd6f7a..099e22e 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -533,6 +533,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
- 		ctx->configs[win].num_pixel_formats = ARRAY_SIZE(decon_formats);
- 		ctx->configs[win].zpos = win;
- 		ctx->configs[win].type = decon_win_types[tmp];
-+		ctx->configs[win].capabilities = EXYNOS_DRM_PLANE_CAP_BYTE_PITCH;
- 
- 		ret = exynos_plane_init(drm_dev, &ctx->planes[win], win,
- 					1 << ctx->pipe, &ctx->configs[win]);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index a9fa444..ae738b8 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -1007,6 +1007,7 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
- 		ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_formats);
- 		ctx->configs[i].zpos = i;
- 		ctx->configs[i].type = fimd_win_types[i];
-+		ctx->configs[i].capabilities = EXYNOS_DRM_PLANE_CAP_BYTE_PITCH;
- 		ret = exynos_plane_init(drm_dev, &ctx->planes[i], i,
- 					1 << ctx->pipe, &ctx->configs[i]);
- 		if (ret)
--- 
-2.7.3
+RFJNIGNvcmUgYWxyZWFkeSBjaGVja3MgdGhlIHZhbGlkaXR5IG9mIHRoZSBwaXhlbGZvcm1hdC4K
+ClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxk
+LmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8
+IDQgKy0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jICAgIHwg
+NyArLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAg
+fCA4ICstLS0tLS0tCiAzIGZpbGVzIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMTYgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2Ry
+bV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5j
+CmluZGV4IDQzNDMyNTIuLjdlZmE5MmQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vczU0MzNfZHJtX2RlY29uLmMKQEAgLTIzOCwxMyArMjM4LDExIEBAIHN0YXRpYyB2b2lkIGRl
+Y29uX3dpbl9zZXRfcGl4Zm10KHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGlu
+dCB3aW4sCiAJCXZhbCB8PSBXSU5DT054X0JVUlNUTEVOXzE2V09SRDsKIAkJYnJlYWs7CiAJY2Fz
+ZSBEUk1fRk9STUFUX0FSR0I4ODg4OgorCWRlZmF1bHQ6CiAJCXZhbCB8PSBXSU5DT054X0JQUE1P
+REVfMzJCUFBfQTg4ODg7CiAJCXZhbCB8PSBXSU5DT054X1dTV1BfRiB8IFdJTkNPTnhfQkxEX1BJ
+WF9GIHwgV0lOQ09OeF9BTFBIQV9TRUxfRjsKIAkJdmFsIHw9IFdJTkNPTnhfQlVSU1RMRU5fMTZX
+T1JEOwogCQlicmVhazsKLQlkZWZhdWx0OgotCQlEUk1fRVJST1IoIlByb3BlciBwaXhlbCBmb3Jt
+YXQgaXMgbm90IHNldFxuIik7Ci0JCXJldHVybjsKIAl9CiAKIAlEUk1fREVCVUdfS01TKCJjcHAg
+PSAldVxuIiwgZmItPmZvcm1hdC0+Y3BwWzBdKTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zN19kcm1fZGVjb24uYwppbmRleCBjNmQwNmNjLi4wZDYwZTM4IDEwMDY0NAotLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCkBAIC0zMTgsMTYgKzMxOCwxMSBAQCBzdGF0
+aWMgdm9pZCBkZWNvbl93aW5fc2V0X3BpeGZtdChzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4LCB1
+bnNpZ25lZCBpbnQgd2luLAogCQl2YWwgfD0gV0lOQ09OeF9CVVJTVExFTl8xNldPUkQ7CiAJCWJy
+ZWFrOwogCWNhc2UgRFJNX0ZPUk1BVF9CR1JBODg4ODoKKwlkZWZhdWx0OgogCQl2YWwgfD0gV0lO
+Q09OeF9CUFBNT0RFXzMyQlBQX0JHUkEgfCBXSU5DT054X0JMRF9QSVggfAogCQkJV0lOQ09OeF9B
+TFBIQV9TRUw7CiAJCXZhbCB8PSBXSU5DT054X0JVUlNUTEVOXzE2V09SRDsKIAkJYnJlYWs7Ci0J
+ZGVmYXVsdDoKLQkJRFJNX0RFQlVHX0tNUygiaW52YWxpZCBwaXhlbCBzaXplIHNvIHVzaW5nIHVu
+cGFja2VkIDI0YnBwLlxuIik7Ci0KLQkJdmFsIHw9IFdJTkNPTnhfQlBQTU9ERV8yNEJQUF94UkdC
+OwotCQl2YWwgfD0gV0lOQ09OeF9CVVJTVExFTl8xNldPUkQ7Ci0JCWJyZWFrOwogCX0KIAogCURS
+TV9ERUJVR19LTVMoImNwcCA9ICVkXG4iLCBmYi0+Zm9ybWF0LT5jcHBbMF0pOwpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKaW5kZXggMDk4YTMyZC4uMDUyOWM1OCAxMDA2
+NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYworKysgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCkBAIC02MDMsMTggKzYwMywx
+MiBAQCBzdGF0aWMgdm9pZCBmaW1kX3dpbl9zZXRfcGl4Zm10KHN0cnVjdCBmaW1kX2NvbnRleHQg
+KmN0eCwgdW5zaWduZWQgaW50IHdpbiwKIAkJdmFsIHw9IFdJTkNPTnhfQlVSU1RMRU5fMTZXT1JE
+OwogCQlicmVhazsKIAljYXNlIERSTV9GT1JNQVRfQVJHQjg4ODg6CisJZGVmYXVsdDoKIAkJdmFs
+IHw9IFdJTkNPTjFfQlBQTU9ERV8yNUJQUF9BMTg4OAogCQkJfCBXSU5DT04xX0JMRF9QSVggfCBX
+SU5DT04xX0FMUEhBX1NFTDsKIAkJdmFsIHw9IFdJTkNPTnhfV1NXUDsKIAkJdmFsIHw9IFdJTkNP
+TnhfQlVSU1RMRU5fMTZXT1JEOwogCQlicmVhazsKLQlkZWZhdWx0OgotCQlEUk1fREVCVUdfS01T
+KCJpbnZhbGlkIHBpeGVsIHNpemUgc28gdXNpbmcgdW5wYWNrZWQgMjRicHAuXG4iKTsKLQotCQl2
+YWwgfD0gV0lOQ09OMF9CUFBNT0RFXzI0QlBQXzg4ODsKLQkJdmFsIHw9IFdJTkNPTnhfV1NXUDsK
+LQkJdmFsIHw9IFdJTkNPTnhfQlVSU1RMRU5fMTZXT1JEOwotCQlicmVhazsKIAl9CiAKIAkvKgot
+LSAKMi43LjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
