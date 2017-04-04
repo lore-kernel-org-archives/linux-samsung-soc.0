@@ -1,106 +1,70 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 7/8] drm/exynos: consistent use of cpp
-Date: Tue,  4 Apr 2017 16:03:00 +0200
-Message-ID: <1491314581-18086-8-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 3/5] drm/exynos: dsi: Fix the parse_dt function
+Date: Tue, 4 Apr 2017 17:38:44 +0200
+Message-ID: <CAJKOXPd-h4QqLXJ5AYr1KgpjvROaWpVZnd9KmeeGoVRQifssbw@mail.gmail.com>
+References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308045502epcas1p2d2f7a0f768082b7a54b2ebe260e78436@epcas1p2.samsung.com>
+ <1488948852-5380-4-git-send-email-hoegeun.kwon@samsung.com>
+ <93e79e92-a102-e931-8d63-843031848888@samsung.com> <58DA1E38.50907@samsung.com>
+ <CAJKOXPeD4HKemKTrnC2JaON3JkuNGO9g+Hg8M7F6f2WusiYkhg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:34626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754287AbdDDPiu (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 4 Apr 2017 11:38:50 -0400
+In-Reply-To: <CAJKOXPeD4HKemKTrnC2JaON3JkuNGO9g+Hg8M7F6f2WusiYkhg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Hoegeun Kwon <hoegeun.kwon@samsung.com>, jy0922.shim@samsung.com, Seung Woo Kim <sw0312.kim@samsung.com>, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, a.hajda@samsung.com, Andi Shyti <andi.shyti@samsung.com>, LW@karo-electronics.de, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-QSByZWNlbnQgY29tbWl0ICgyNzI3MjVjN2RiNGRhMWZkMzIyOWQ5NDRmYzc2ZDJlOThlM2ExNDRl
-KSBoYXMgcmVtb3ZlZAp0aGUgdXNlIG9mICdiaXRzX3Blcl9waXhlbCcgaW4gRFJNLiBIb3dldmVy
-IHRoZSBjb3JyZXNwb25kaW5nIEV4eW5vcwpkcml2ZXIgY29kZSBzdGlsbCB1c2VzIHRoZSBhbWJp
-Z3VvdXMgJ2JwcCcsIGV2ZW4gdGhvdWdoIGl0IGlzIG5vdwppbml0aWFsaXplZCBmcm9tIGZiLT5j
-cHBbMF0uCgpDb25zaXN0ZW5seSB1c2UgJ2NwcCcgaW4gRklNRCwgREVDT043IGFuZCBERUNPTjU0
-MzMgZHJpdmVycy4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51
-bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19k
-cm1fZGVjb24uYyB8IDEyICsrKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3M3X2RybV9kZWNvbi5jICAgIHwgIDYgKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZmltZC5jICAgICAgfCAgOCArKysrLS0tLQogMyBmaWxlcyBjaGFuZ2VkLCAxMyBp
-bnNlcnRpb25zKCspLCAxMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vczU0MzNfZHJtX2RlY29uLmMKaW5kZXggMDk5ZTIyZS4uNDM0MzI1MiAxMDA2NDQKLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCisrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYwpAQCAtMjQ3LDcgKzI0
-Nyw3IEBAIHN0YXRpYyB2b2lkIGRlY29uX3dpbl9zZXRfcGl4Zm10KHN0cnVjdCBkZWNvbl9jb250
-ZXh0ICpjdHgsIHVuc2lnbmVkIGludCB3aW4sCiAJCXJldHVybjsKIAl9CiAKLQlEUk1fREVCVUdf
-S01TKCJicHAgPSAldVxuIiwgZmItPmZvcm1hdC0+Y3BwWzBdICogOCk7CisJRFJNX0RFQlVHX0tN
-UygiY3BwID0gJXVcbiIsIGZiLT5mb3JtYXQtPmNwcFswXSk7CiAKIAkvKgogCSAqIEluIGNhc2Ug
-b2YgZXh5bm9zLCBzZXR0aW5nIGRtYS1idXJzdCB0byAxNldvcmQgY2F1c2VzIHBlcm1hbmVudApA
-QCAtMjk2LDcgKzI5Niw3IEBAIHN0YXRpYyB2b2lkIGRlY29uX3VwZGF0ZV9wbGFuZShzdHJ1Y3Qg
-ZXh5bm9zX2RybV9jcnRjICpjcnRjLAogCXN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRj
-LT5jdHg7CiAJc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBzdGF0ZS0+YmFzZS5mYjsKIAl1
-bnNpZ25lZCBpbnQgd2luID0gcGxhbmUtPmluZGV4OwotCXVuc2lnbmVkIGludCBicHAgPSBmYi0+
-Zm9ybWF0LT5jcHBbMF07CisJdW5zaWduZWQgaW50IGNwcCA9IGZiLT5mb3JtYXQtPmNwcFswXTsK
-IAl1bnNpZ25lZCBpbnQgcGl0Y2ggPSBmYi0+cGl0Y2hlc1swXTsKIAlkbWFfYWRkcl90IGRtYV9h
-ZGRyID0gZXh5bm9zX2RybV9mYl9kbWFfYWRkcihmYiwgMCk7CiAJdTMyIHZhbDsKQEAgLTMzNSwx
-MSArMzM1LDExIEBAIHN0YXRpYyB2b2lkIGRlY29uX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZXh5bm9z
-X2RybV9jcnRjICpjcnRjLAogCXdyaXRlbCh2YWwsIGN0eC0+YWRkciArIERFQ09OX1ZJRFcweEFE
-RDFCMCh3aW4pKTsKIAogCWlmICghKGN0eC0+b3V0X3R5cGUgJiBJRlRZUEVfSERNSSkpCi0JCXZh
-bCA9IEJJVF9WQUwocGl0Y2ggLSBzdGF0ZS0+Y3J0Yy53ICogYnBwLCAyNywgMTQpCi0JCQl8IEJJ
-VF9WQUwoc3RhdGUtPmNydGMudyAqIGJwcCwgMTMsIDApOworCQl2YWwgPSBCSVRfVkFMKHBpdGNo
-IC0gc3RhdGUtPmNydGMudyAqIGNwcCwgMjcsIDE0KQorCQkJfCBCSVRfVkFMKHN0YXRlLT5jcnRj
-LncgKiBjcHAsIDEzLCAwKTsKIAllbHNlCi0JCXZhbCA9IEJJVF9WQUwocGl0Y2ggLSBzdGF0ZS0+
-Y3J0Yy53ICogYnBwLCAyOSwgMTUpCi0JCQl8IEJJVF9WQUwoc3RhdGUtPmNydGMudyAqIGJwcCwg
-MTQsIDApOworCQl2YWwgPSBCSVRfVkFMKHBpdGNoIC0gc3RhdGUtPmNydGMudyAqIGNwcCwgMjks
-IDE1KQorCQkJfCBCSVRfVkFMKHN0YXRlLT5jcnRjLncgKiBjcHAsIDE0LCAwKTsKIAl3cml0ZWwo
-dmFsLCBjdHgtPmFkZHIgKyBERUNPTl9WSURXMHhBREQyKHdpbikpOwogCiAJZGVjb25fd2luX3Nl
-dF9waXhmbXQoY3R4LCB3aW4sIGZiKTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19k
-cm1fZGVjb24uYwppbmRleCBmOWFiMTllLi5jNmQwNmNjIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCkBAIC0zMzAsNyArMzMwLDcgQEAgc3RhdGljIHZvaWQg
-ZGVjb25fd2luX3NldF9waXhmbXQoc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCwgdW5zaWduZWQg
-aW50IHdpbiwKIAkJYnJlYWs7CiAJfQogCi0JRFJNX0RFQlVHX0tNUygiYnBwID0gJWRcbiIsIGZi
-LT5mb3JtYXQtPmNwcFswXSAqIDgpOworCURSTV9ERUJVR19LTVMoImNwcCA9ICVkXG4iLCBmYi0+
-Zm9ybWF0LT5jcHBbMF0pOwogCiAJLyoKIAkgKiBJbiBjYXNlIG9mIGV4eW5vcywgc2V0dGluZyBk
-bWEtYnVyc3QgdG8gMTZXb3JkIGNhdXNlcyBwZXJtYW5lbnQKQEAgLTQwNyw3ICs0MDcsNyBAQCBz
-dGF0aWMgdm9pZCBkZWNvbl91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0
-YywKIAl1bnNpZ25lZCBpbnQgbGFzdF94OwogCXVuc2lnbmVkIGludCBsYXN0X3k7CiAJdW5zaWdu
-ZWQgaW50IHdpbiA9IHBsYW5lLT5pbmRleDsKLQl1bnNpZ25lZCBpbnQgYnBwID0gZmItPmZvcm1h
-dC0+Y3BwWzBdOworCXVuc2lnbmVkIGludCBjcHAgPSBmYi0+Zm9ybWF0LT5jcHBbMF07CiAJdW5z
-aWduZWQgaW50IHBpdGNoID0gZmItPnBpdGNoZXNbMF07CiAKIAlpZiAoY3R4LT5zdXNwZW5kZWQp
-CkBAIC00MjcsNyArNDI3LDcgQEAgc3RhdGljIHZvaWQgZGVjb25fdXBkYXRlX3BsYW5lKHN0cnVj
-dCBleHlub3NfZHJtX2NydGMgKmNydGMsCiAJdmFsID0gKHVuc2lnbmVkIGxvbmcpZXh5bm9zX2Ry
-bV9mYl9kbWFfYWRkcihmYiwgMCk7CiAJd3JpdGVsKHZhbCwgY3R4LT5yZWdzICsgVklEV19CVUZf
-U1RBUlQod2luKSk7CiAKLQlwYWRkaW5nID0gKHBpdGNoIC8gYnBwKSAtIGZiLT53aWR0aDsKKwlw
-YWRkaW5nID0gKHBpdGNoIC8gY3BwKSAtIGZiLT53aWR0aDsKIAogCS8qIGJ1ZmZlciBzaXplICov
-CiAJd3JpdGVsKGZiLT53aWR0aCArIHBhZGRpbmcsIGN0eC0+cmVncyArIFZJRFdfV0hPTEVfWCh3
-aW4pKTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1k
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmluZGV4IGFlNzM4
-YjguLjA5OGEzMmQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwpA
-QCAtNzM2LDEzICs3MzYsMTMgQEAgc3RhdGljIHZvaWQgZmltZF91cGRhdGVfcGxhbmUoc3RydWN0
-IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKIAl1bnNpZ25lZCBsb25nIHZhbCwgc2l6ZSwgb2Zmc2V0
-OwogCXVuc2lnbmVkIGludCBsYXN0X3gsIGxhc3RfeSwgYnVmX29mZnNpemUsIGxpbmVfc2l6ZTsK
-IAl1bnNpZ25lZCBpbnQgd2luID0gcGxhbmUtPmluZGV4OwotCXVuc2lnbmVkIGludCBicHAgPSBm
-Yi0+Zm9ybWF0LT5jcHBbMF07CisJdW5zaWduZWQgaW50IGNwcCA9IGZiLT5mb3JtYXQtPmNwcFsw
-XTsKIAl1bnNpZ25lZCBpbnQgcGl0Y2ggPSBmYi0+cGl0Y2hlc1swXTsKIAogCWlmIChjdHgtPnN1
-c3BlbmRlZCkKIAkJcmV0dXJuOwogCi0Jb2Zmc2V0ID0gc3RhdGUtPnNyYy54ICogYnBwOworCW9m
-ZnNldCA9IHN0YXRlLT5zcmMueCAqIGNwcDsKIAlvZmZzZXQgKz0gc3RhdGUtPnNyYy55ICogcGl0
-Y2g7CiAKIAkvKiBidWZmZXIgc3RhcnQgYWRkcmVzcyAqLwpAQCAtNzYxLDggKzc2MSw4IEBAIHN0
-YXRpYyB2b2lkIGZpbWRfdXBkYXRlX3BsYW5lKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMs
-CiAJCQlzdGF0ZS0+Y3J0Yy53LCBzdGF0ZS0+Y3J0Yy5oKTsKIAogCS8qIGJ1ZmZlciBzaXplICov
-Ci0JYnVmX29mZnNpemUgPSBwaXRjaCAtIChzdGF0ZS0+Y3J0Yy53ICogYnBwKTsKLQlsaW5lX3Np
-emUgPSBzdGF0ZS0+Y3J0Yy53ICogYnBwOworCWJ1Zl9vZmZzaXplID0gcGl0Y2ggLSAoc3RhdGUt
-PmNydGMudyAqIGNwcCk7CisJbGluZV9zaXplID0gc3RhdGUtPmNydGMudyAqIGNwcDsKIAl2YWwg
-PSBWSURXX0JVRl9TSVpFX09GRlNFVChidWZfb2Zmc2l6ZSkgfAogCQlWSURXX0JVRl9TSVpFX1BB
-R0VXSURUSChsaW5lX3NpemUpIHwKIAkJVklEV19CVUZfU0laRV9PRkZTRVRfRShidWZfb2Zmc2l6
-ZSkgfAotLSAKMi43LjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+On Tue, Mar 28, 2017 at 11:38 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Tue, Mar 28, 2017 at 11:26 AM, Inki Dae <inki.dae@samsung.com> wrote:
+>> Merged.
+>
+> Hi,
+>
+> I do not see the tag (with DT patches) merged by you which I provided
+> to you before. These are essential for bisectability. Without them,
+> kernel bisectability is broken. Did you merged the tag somewhere?
+>
+> Best regards,
+> Krzysztof
+>
+>> Thanks,
+>> Inki Dae
+
+Inki,
+
+I still do not see the DTS tag [1] merged in your tree but you applied
+patches breaking the display. I looked at exynos-drm-next branch.
+
+We talked already about bisectability and with Hoegeun we provided
+proper solution. Hoegeun split the patchset and I sent you a stable
+tag to merge. Be aware not to apply the DTS patch because you would
+effectively duplicate it. Instead, deal like with any pull request -
+merge the tag as dependency *before* applying DRM DSI patch.
+
+I saw also a branch like this:
+https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git/log/?h=exynos-drm-next-tm2
+but this is something obviously wrong. I do not know what are your
+plans to do with it, but please drop it as it brings only confusion.
+
+Best regards,
+Krzysztof
+
+[1] https://www.spinics.net/lists/arm-kernel/msg567053.html
+
+>> 2017년 03월 22일 10:36에 Hoegeun Kwon 이(가) 쓴 글:
+>>> Hi inki,
+>>>
+>>> Could you check the this patch?
+>>> For reference, patch 1/5 and 2/5 have already been applied to Krzysztof tree.
+>>>
+>>> Best regards,
+>>> Hoegeun
+>>>
