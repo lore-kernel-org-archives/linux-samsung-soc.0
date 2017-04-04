@@ -1,94 +1,97 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 2/8] drm/exynos: mixer: enable NV12MT support for the video plane
-Date: Tue,  4 Apr 2017 16:02:55 +0200
-Message-ID: <1491314581-18086-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [RFC 3/8] drm/exynos: mixer: simplify {vp_video,mixer_graph}_buffer()
+Date: Tue,  4 Apr 2017 16:02:56 +0200
+Message-ID: <1491314581-18086-4-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40552 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754278AbdDDODu (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 4 Apr 2017 10:03:50 -0400
 In-Reply-To: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, a.hajda@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-VGhlIHZpZGVvIHByb2Nlc3NvciBzdXBwb3J0cyBhIHRpbGVkIHZhcmlhbnQgb2YgdGhlIE5WMTIg
-Zm9ybWF0LAprbm93biBhcyBOVjEyTVQgaW4gVjRMMiB0ZXJtcy4gVGhlIHN1cHBvcnQgd2FzIHJl
-bW92ZWQgaW4gY29tbWl0CjA4MzUwMGJhZWZkNWY0YzIxNWE1YTkzYWVmMjQ5MmMxYWE3NzU4Mjgg
-ZHVlIHRvIG5vdCBiZWluZyBhIHJlYWwKcGl4ZWwgZm9ybWF0LCBidXQgcmF0aGVyIE5WMTJNVCB3
-aXRoIGEgc3BlY2lhbCBtZW1vcnkgbGF5b3V0LgoKV2l0aCB0aGUgaW50cm9kdWN0aW9uIG9mIEZC
-IG1vZGlmaWVycywgd2UgY2FuIG5vdyBwcm9wZXJseSBzdXBwb3J0CnRoaXMgZm9ybWF0IGFnYWlu
-LgoKVGVzdGVkIHdpdGggYSBoYWNrZWQgdXAgbW9kZXRlc3QgZnJvbSBsaWJkcm0ncyB0ZXN0IHN1
-aXRlIG9uCmFuIE9EUk9JRC1YMiAoRXh5bm9zNDQxMikuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMg
-SmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICB8ICAxICsKIGRyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9mYi5jICAgIHwgIDIgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9wbGFuZS5jIHwgMjcgKysrKysrKysrKysrKysrKysrKysrKysrKysrCiBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICB8ICA2ICsrKysrLQogNCBmaWxlcyBj
-aGFuZ2VkLCAzNSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2Rydi5oCmluZGV4IGNmNmUwOGMuLmVlNjJiMGIgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAorKysgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKQEAgLTkxLDYgKzkxLDcgQEAgc3RydWN0IGV4
-eW5vc19kcm1fcGxhbmUgewogI2RlZmluZSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9ET1VCTEUJKDEg
-PDwgMCkKICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9DQVBfU0NBTEUJKDEgPDwgMSkKICNkZWZp
-bmUgRVhZTk9TX0RSTV9QTEFORV9DQVBfWlBPUwkoMSA8PCAyKQorI2RlZmluZSBFWFlOT1NfRFJN
-X1BMQU5FX0NBUF9USUxFCSgxIDw8IDMpCiAKIC8qCiAgKiBFeHlub3MgRFJNIHBsYW5lIGNvbmZp
-Z3VyYXRpb24gc3RydWN0dXJlLgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2ZiLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwpp
-bmRleCBjNzdhNWFjLi4zNWI3YWIyIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZmIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmIuYwpAQCAtMjM4LDQgKzIzOCw2IEBAIHZvaWQgZXh5bm9zX2RybV9tb2RlX2NvbmZpZ19pbml0
-KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCiAKIAlkZXYtPm1vZGVfY29uZmlnLmZ1bmNzID0gJmV4
-eW5vc19kcm1fbW9kZV9jb25maWdfZnVuY3M7CiAJZGV2LT5tb2RlX2NvbmZpZy5oZWxwZXJfcHJp
-dmF0ZSA9ICZleHlub3NfZHJtX21vZGVfY29uZmlnX2hlbHBlcnM7CisKKwlkZXYtPm1vZGVfY29u
-ZmlnLmFsbG93X2ZiX21vZGlmaWVycyA9IHRydWU7CiB9CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9wbGFuZS5jCmluZGV4IGMyZjE3ZjMuLmZhNjMzM2QgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCkBAIC0xODAsNiArMTgwLDI5IEBAIHN0YXRp
-YyBzdHJ1Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKIH07CiAKIHN0
-YXRpYyBpbnQKK2V4eW5vc19kcm1fcGxhbmVfY2hlY2tfZm9ybWF0KGNvbnN0IHN0cnVjdCBleHlu
-b3NfZHJtX3BsYW5lX2NvbmZpZyAqY29uZmlnLAorCQkJICAgICAgc3RydWN0IGV4eW5vc19kcm1f
-cGxhbmVfc3RhdGUgKnN0YXRlKQoreworCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiID0gc3Rh
-dGUtPmJhc2UuZmI7CisKKwlzd2l0Y2ggKGZiLT5tb2RpZmllcikgeworCWNhc2UgRFJNX0ZPUk1B
-VF9NT0RfU0FNU1VOR182NF8zMl9USUxFOgorCQlpZiAoIShjb25maWctPmNhcGFiaWxpdGllcyAm
-IEVYWU5PU19EUk1fUExBTkVfQ0FQX1RJTEUpKQorCQkJcmV0dXJuIC1FTk9UU1VQUDsKKwkJYnJl
-YWs7CisKKwljYXNlIDA6CisJCWJyZWFrOworCisJZGVmYXVsdDoKKwkJRFJNX0VSUk9SKCJ1bnN1
-cHBvcnRlZCBwaXhlbCBmb3JtYXQgbW9kaWZpZXIiKTsKKwkJcmV0dXJuIC1FTk9UU1VQUDsKKwl9
-CisKKwlyZXR1cm4gMDsKK30KKworc3RhdGljIGludAogZXh5bm9zX2RybV9wbGFuZV9jaGVja19z
-aXplKGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX2NvbmZpZyAqY29uZmlnLAogCQkJICAg
-IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSkKIHsKQEAgLTIyMyw2ICsyNDYs
-MTAgQEAgc3RhdGljIGludCBleHlub3NfcGxhbmVfYXRvbWljX2NoZWNrKHN0cnVjdCBkcm1fcGxh
-bmUgKnBsYW5lLAogCS8qIHRyYW5zbGF0ZSBzdGF0ZSBpbnRvIGV4eW5vc19zdGF0ZSAqLwogCWV4
-eW5vc19wbGFuZV9tb2RlX3NldChleHlub3Nfc3RhdGUpOwogCisJcmV0ID0gZXh5bm9zX2RybV9w
-bGFuZV9jaGVja19mb3JtYXQoZXh5bm9zX3BsYW5lLT5jb25maWcsIGV4eW5vc19zdGF0ZSk7CisJ
-aWYgKHJldCkKKwkJcmV0dXJuIHJldDsKKwogCXJldCA9IGV4eW5vc19kcm1fcGxhbmVfY2hlY2tf
-c2l6ZShleHlub3NfcGxhbmUtPmNvbmZpZywgZXh5bm9zX3N0YXRlKTsKIAlyZXR1cm4gcmV0Owog
-fQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXggNzdmMThmNi4uMzVlZGJm
-MiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCkBAIC0xNDksNyArMTQ5LDgg
-QEAgc3RhdGljIGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX2NvbmZpZyBwbGFuZV9jb25m
-aWdzW01JWEVSX1dJTl9OUl0gPSB7CiAJCS5waXhlbF9mb3JtYXRzID0gdnBfZm9ybWF0cywKIAkJ
-Lm51bV9waXhlbF9mb3JtYXRzID0gQVJSQVlfU0laRSh2cF9mb3JtYXRzKSwKIAkJLmNhcGFiaWxp
-dGllcyA9IEVYWU5PU19EUk1fUExBTkVfQ0FQX1NDQUxFIHwKLQkJCQlFWFlOT1NfRFJNX1BMQU5F
-X0NBUF9aUE9TLAorCQkJCUVYWU5PU19EUk1fUExBTkVfQ0FQX1pQT1MgfAorCQkJCUVYWU5PU19E
-Uk1fUExBTkVfQ0FQX1RJTEUsCiAJfSwKIH07CiAKQEAgLTUwMSw2ICs1MDIsOSBAQCBzdGF0aWMg
-dm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKIAkJcmV0dXJu
-OwogCX0KIAorCWlmIChmYi0+bW9kaWZpZXIgPT0gRFJNX0ZPUk1BVF9NT0RfU0FNU1VOR182NF8z
-Ml9USUxFKQorCQl0aWxlZF9tb2RlID0gdHJ1ZTsKKwogCWx1bWFfYWRkclswXSA9IGV4eW5vc19k
-cm1fZmJfZG1hX2FkZHIoZmIsIDApOwogCWNocm9tYV9hZGRyWzBdID0gZXh5bm9zX2RybV9mYl9k
-bWFfYWRkcihmYiwgMSk7CiAKLS0gCjIuNy4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+DRM core already checks the validity of the pixelformats, to we
+can simplify the checks here. The same applies to the FB modifier,
+which is now check in common Exynos plane code.
+
+Also rename the booleans to reflect what true/false actually
+encodes.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 31 +++++++------------------------
+ 1 file changed, 7 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 35edbf2..32970fb 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -485,32 +485,18 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	unsigned int priority = state->base.normalized_zpos + 1;
+ 	unsigned long flags;
+ 	dma_addr_t luma_addr[2], chroma_addr[2];
+-	bool tiled_mode = false;
+-	bool crcb_mode = false;
++	bool is_tiled, is_nv21;
+ 	u32 val;
+ 
+-	switch (fb->format->format) {
+-	case DRM_FORMAT_NV12:
+-		crcb_mode = false;
+-		break;
+-	case DRM_FORMAT_NV21:
+-		crcb_mode = true;
+-		break;
+-	default:
+-		DRM_ERROR("pixel format for vp is wrong [%d].\n",
+-				fb->format->format);
+-		return;
+-	}
+-
+-	if (fb->modifier == DRM_FORMAT_MOD_SAMSUNG_64_32_TILE)
+-		tiled_mode = true;
++	is_nv21 = (fb->format->format == DRM_FORMAT_NV21);
++	is_tiled = (fb->modifier == DRM_FORMAT_MOD_SAMSUNG_64_32_TILE);
+ 
+ 	luma_addr[0] = exynos_drm_fb_dma_addr(fb, 0);
+ 	chroma_addr[0] = exynos_drm_fb_dma_addr(fb, 1);
+ 
+ 	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
+ 		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
+-		if (tiled_mode) {
++		if (is_tiled) {
+ 			luma_addr[1] = luma_addr[0] + 0x40;
+ 			chroma_addr[1] = chroma_addr[0] + 0x40;
+ 		} else {
+@@ -530,8 +516,8 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	vp_reg_writemask(res, VP_MODE, val, VP_MODE_LINE_SKIP);
+ 
+ 	/* setup format */
+-	val = (crcb_mode ? VP_MODE_NV21 : VP_MODE_NV12);
+-	val |= (tiled_mode ? VP_MODE_MEM_TILED : VP_MODE_MEM_LINEAR);
++	val = (is_nv21 ? VP_MODE_NV21 : VP_MODE_NV12);
++	val |= (is_tiled ? VP_MODE_MEM_TILED : VP_MODE_MEM_LINEAR);
+ 	vp_reg_writemask(res, VP_MODE, val, VP_MODE_FMT_MASK);
+ 
+ 	/* setting size of input image */
+@@ -621,12 +607,9 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 
+ 	case DRM_FORMAT_XRGB8888:
+ 	case DRM_FORMAT_ARGB8888:
++	default:
+ 		fmt = MXR_FORMAT_ARGB8888;
+ 		break;
+-
+-	default:
+-		DRM_DEBUG_KMS("pixelformat unsupported by mixer\n");
+-		return;
+ 	}
+ 
+ 	/* ratio is already checked by common plane code */
+-- 
+2.7.3
