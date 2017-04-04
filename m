@@ -1,36 +1,57 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 3/3] serial: samsung: Remove useless spinlock
-Date: Tue, 4 Apr 2017 11:36:35 +0200
-Message-ID: <20170404093635.GB28551@kozik-book>
-References: <1491200468-28463-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170403062120eucas1p1369bcd47ca09d99c955baa551cdb1e06@eucas1p1.samsung.com>
- <1491200468-28463-3-git-send-email-m.szyprowski@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [GIT PULL] mfd: exynos-lpass: Pinctrl dependency
+Date: Tue, 4 Apr 2017 10:50:54 +0100
+Message-ID: <20170404095054.7m6nf6bxweskabuu@dell>
+References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
+ <20170328154217.5405-1-krzk@kernel.org>
+ <20170403101824.rpvkqzyigonyi77p@dell>
+ <CAJKOXPeVOMBZxXeh7=oXbgnxSrUtHa86eAtP2BppY=G4Uygarg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36682 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752518AbdDDJgk (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Apr 2017 05:36:40 -0400
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1491200468-28463-3-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <CAJKOXPeVOMBZxXeh7=oXbgnxSrUtHa86eAtP2BppY=G4Uygarg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-On Mon, Apr 03, 2017 at 08:21:01AM +0200, Marek Szyprowski wrote:
-> Spinlock taken only for dma_map_single() for TX buffer is completely
-> useless and doesn't protect anything, so remove it to simplify the code.
+On Tue, 04 Apr 2017, Krzysztof Kozlowski wrote:
+
+> On Mon, Apr 3, 2017 at 12:18 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> > On Tue, 28 Mar 2017, Krzysztof Kozlowski wrote:
+> >
+> >>
+> >> Hi Lee,
+> >>
+> >>
+> >> This is dependency for mfd/exynos-lpass driver changes from Marek Szyprowski.
+> >> That's a material for v4.12 and I will be pushing this later to Linus Walleij.
+> >
+> > This does not work, and *may* still break.
+> >
+> > The only way to guarantee the order of the patches is to have them
+> > *all* as part of the pull-request.  Not just some of them.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/tty/serial/samsung.c | 4 ----
->  1 file changed, 4 deletions(-)
+> What do you mean exactly? If these two patches come through my tree
+> first, then everything will work fine because they do not break any
+> other stuff.
 > 
+> If you pull it and apply the rest on top, then it should also work
+> without problems because your history will contain everything needed
+> in proper order.
+> 
+> In both cases bisectability is preserved. Did I missed something?
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Okay, so you're suggesting that I rebase MFD *on-top* of your PR.  That
+does work for me because I insist on being able to re-work my tree at
+any time.  However, be aware that some Maintainers do not work this
+way, thus *normally* you will have to send PR containing all of the
+dependant patches.
 
-Best regards,
-Krzysztof
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
