@@ -1,75 +1,50 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 5/9] drm/exynos/decon5433: kill BIT_IRQS_ENABLED flag
-Date: Wed, 05 Apr 2017 09:28:33 +0200
-Message-ID: <1491377317-8042-6-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 3/9] dt-bindings: exynos5433-decon: add TE interrupt binding
+Date: Wed, 05 Apr 2017 09:28:31 +0200
+Message-ID: <1491377317-8042-4-git-send-email-a.hajda@samsung.com>
 References: <1491377317-8042-1-git-send-email-a.hajda@samsung.com>
- <CGME20170405072843eucas1p1303d7f8b3fbb9339ff258121b503e7ed@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:28484 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753791AbdDEH2z (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Apr 2017 03:28:55 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ONX00B9WE3W9J20@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Apr 2017 08:28:45 +0100 (BST)
+ <CGME20170405072843eucas1p19b843464a7b579be7bb4df4118f693d7@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1491377317-8042-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Since DECON uses enable_irq/disable_irq to full control IRQs,
-there is no point in having flags to trace it separately.
-As a bonus condition for software trigger becomes always true,
-so it can be removed.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 5bdf1a0..dc2e69a 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -49,7 +49,6 @@ static const char * const decon_clks_name[] = {
- 
- enum decon_flag_bits {
- 	BIT_CLKS_ENABLED,
--	BIT_IRQS_ENABLED,
- 	BIT_WIN_UPDATED,
- 	BIT_SUSPENDED
- };
-@@ -112,8 +111,6 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
- 	if (!(ctx->out_type & I80_HW_TRG))
- 		enable_irq(ctx->te_irq);
- 
--	set_bit(BIT_IRQS_ENABLED, &ctx->flags);
--
- 	return 0;
- }
- 
-@@ -121,7 +118,6 @@ static void decon_disable_vblank(struct exynos_drm_crtc *crtc)
- {
- 	struct decon_context *ctx = crtc->ctx;
- 
--	clear_bit(BIT_IRQS_ENABLED, &ctx->flags);
- 	if (test_bit(BIT_SUSPENDED, &ctx->flags))
- 		return;
- 
-@@ -536,9 +532,7 @@ static irqreturn_t decon_te_irq_handler(int irq, void *dev_id)
- 	    (ctx->out_type & I80_HW_TRG))
- 		return IRQ_HANDLED;
- 
--	if (test_and_clear_bit(BIT_WIN_UPDATED, &ctx->flags) ||
--	    test_bit(BIT_IRQS_ENABLED, &ctx->flags))
--		decon_set_bits(ctx, DECON_TRIGCON, TRIGCON_SWTRIGCMD, ~0);
-+	decon_set_bits(ctx, DECON_TRIGCON, TRIGCON_SWTRIGCMD, ~0);
- 
- 	return IRQ_HANDLED;
- }
--- 
-2.7.4
+REVDT04gY29tbWFuZCBtb2RlIGNhbiB1c2UgaGFyZHdhcmUgdHJpZ2dlciB3aGVyZSB0cmFuc21p
+c3Npb24KaXMgdHJpZ2dlcmVkIGF1dG9tYXRpY2FsbHksIG9yIHNvZnR3YXJlIHRyaWdnZXIgLSB3
+aGVyZSBURSBpbnRlcnJ1cHQKaGFuZGxlciBzaG91bGQgdHJpZ2dlciB0cmFuc21pc3Npb24uCkRF
+Q09OIHdpbGwgdXNlIHNvZnR3YXJlIHRyaWdnZXIgaWYgVEUgaW50ZXJydXB0IGlzIHNwZWNpZmll
+ZC4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0t
+LQogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5v
+czU0MzMtZGVjb24udHh0IHwgMyArKy0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyks
+IDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zNTQzMy1kZWNvbi50eHQgYi9Eb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zNTQzMy1kZWNvbi50eHQK
+aW5kZXggYmE2YmU5OS4uNTQ5YzUzOCAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vczU0MzMtZGVjb24udHh0CisrKyBiL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3M1NDMz
+LWRlY29uLnR4dApAQCAtMTAsNyArMTAsOCBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOgogLSByZWc6
+IHBoeXNpY2FsIGJhc2UgYWRkcmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBERUNPTiByZWdpc3RlcnMg
+c2V0LgogLSBpbnRlcnJ1cHQtbmFtZXM6IHNob3VsZCBjb250YWluIHRoZSBpbnRlcnJ1cHQgbmFt
+ZXMgZGVwZW5kaW5nIG9uIG1vZGUgb2Ygd29yazoKIAkJdmlkZW8gbW9kZTogInZzeW5jIiwKLQkJ
+Y29tbWFuZCBtb2RlOiAibGNkX3N5cyIuCisJCWNvbW1hbmQgbW9kZTogImxjZF9zeXMiLAorCQlj
+b21tYW5kIG1vZGUgd2l0aCBzb2Z0d2FyZSB0cmlnZ2VyOiAibGNkX3N5cyIsICJ0ZSIuCiAtIGlu
+dGVycnVwdHMgb3IgaW50ZXJydXB0cy1leHRlbmRlZDogbGlzdCBvZiBpbnRlcnJ1cHQgc3BlY2lm
+aWVycyBjb3JyZXNwb25kaW5nCiAJCXRvIG5hbWVzIHByaXZpZGVkIGluIGludGVycnVwdC1uYW1l
+cywgYXMgZGVzY3JpYmVkIGluCiAJCWludGVycnVwdC1jb250cm9sbGVyL2ludGVycnVwdHMudHh0
+Ci0tIAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
