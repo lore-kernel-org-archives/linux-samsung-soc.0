@@ -1,50 +1,84 @@
-From: Eric Engestrom <eric.engestrom@imgtec.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: [PATCH] exynos: add C++ support to exynos_drmif header
-Date: Wed, 5 Apr 2017 16:48:52 +0100
-Message-ID: <20170405154852.ncs2nhquiz2wy23m@imgtec.com>
+Date: Wed, 5 Apr 2017 18:23:25 +0200
+Message-ID: <e15aabd7-bd99-aa70-118b-4fb0ae2c644e@math.uni-bielefeld.de>
 References: <1491402144-3298-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20170405154852.ncs2nhquiz2wy23m@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1491402144-3298-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: emil.l.velikov@gmail.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55113 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755860AbdDEQXc (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 5 Apr 2017 12:23:32 -0400
+In-Reply-To: <20170405154852.ncs2nhquiz2wy23m@imgtec.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eric Engestrom <eric.engestrom@imgtec.com>
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org
 
-T24gV2VkbmVzZGF5LCAyMDE3LTA0LTA1IDE2OjIyOjI0ICswMjAwLCBUb2JpYXMgSmFrb2JpIHdy
-b3RlOgo+IEFkZCB0aGUgdXN1YWwgZXh0ZXJuICJDIiB3aGVuIGNvbXBpbGluZyBpbiBDKysgbW9k
-ZS4KClRoYW5rcywgYnV0IHdoeSBzcGVjaWZpY2FsbHkgdGhpcyBoZWFkZXI/IFRoZSBvdGhlciBl
-eHlub3MvKi5oIGhlYWRlcnMKYWxzbyBsYWNrIHRoZSBjKysgbWFuZ2xpbmcgZ3VhcmQuCgpBIHF1
-aWNrIGdyZXAgc2hvd3MgdGhhdCBvbmx5IDE1LzEwMSBoZWFkZXJzIGluIGxpYmRybSBoYXZlIGl0
-LgpDYW4gSSBpbnRlcmVzdCB5b3UgaW4gZml4aW5nIGEgZmV3IG1vcmUgaGVhZGVycz8gOikKCklu
-IGFueSBjYXNlLCB0aGlzIHBhdGNoIGlzOgpSZXZpZXdlZC1ieTogRXJpYyBFbmdlc3Ryb20gPGVy
-aWMuZW5nZXN0cm9tQGltZ3RlYy5jb20+CihJIGFzc3VtZSB5b3UnbGwgcHVzaCBpdCB5b3Vyc2Vs
-Zj8pCgpCdHcsIGNhbiB5b3UgcnVuIHRoaXMgaW4geW91ciBsb2NhbCBsaWJkcm0gcmVwbz8KICAk
-IGdpdCBjb25maWcgLS1sb2NhbCBmb3JtYXQuc3ViamVjdFByZWZpeCAiUEFUQ0ggbGliZHJtIgoK
-Q2hlZXJzLAogIEVyaWMKCgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtv
-YmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+IC0tLQo+ICBleHlub3MvZXh5bm9zX2RybWlmLmgg
-fCA4ICsrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKykKPiAKPiBkaWZm
-IC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19kcm1pZi5oIGIvZXh5bm9zL2V4eW5vc19kcm1pZi5oCj4g
-aW5kZXggNjI2ZTM5OS4uMTU0NDM5YiAxMDA2NDQKPiAtLS0gYS9leHlub3MvZXh5bm9zX2RybWlm
-LmgKPiArKysgYi9leHlub3MvZXh5bm9zX2RybWlmLmgKPiBAQCAtMzEsNiArMzEsMTAgQEAKPiAg
-I2luY2x1ZGUgPHN0ZGludC5oPgo+ICAjaW5jbHVkZSAiZXh5bm9zX2RybS5oIgo+ICAKPiArI2lm
-IGRlZmluZWQoX19jcGx1c3BsdXMpCj4gK2V4dGVybiAiQyIgewo+ICsjZW5kaWYKPiArCj4gIHN0
-cnVjdCBleHlub3NfZGV2aWNlIHsKPiAgCWludCBmZDsKPiAgfTsKPiBAQCAtMTA5LDQgKzExMyw4
-IEBAIGludCBleHlub3NfaGFuZGxlX2V2ZW50KHN0cnVjdCBleHlub3NfZGV2aWNlICpkZXYsCj4g
-IAkJCQlzdHJ1Y3QgZXh5bm9zX2V2ZW50X2NvbnRleHQgKmN0eCk7Cj4gIAo+ICAKPiArI2lmIGRl
-ZmluZWQoX19jcGx1c3BsdXMpCj4gK30KPiArI2VuZGlmCj4gKwo+ICAjZW5kaWYgLyogRVhZTk9T
-X0RSTUlGX0hfICovCj4gLS0gCj4gMi43LjMKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Eric,
+
+
+Eric Engestrom wrote:
+> On Wednesday, 2017-04-05 16:22:24 +0200, Tobias Jakobi wrote:
+>> Add the usual extern "C" when compiling in C++ mode.
+> 
+> Thanks, but why specifically this header? The other exynos/*.h headers
+> also lack the c++ mangling guard.
+I'm currently writing a small C++ project using the
+exynos_bo_{create,destroy}() calls, and noticed this.
+
+> A quick grep shows that only 15/101 headers in libdrm have it.
+> Can I interest you in fixing a few more headers? :)
+Not at the moment.
+
+
+- Tobias
+
+> In any case, this patch is:
+> Reviewed-by: Eric Engestrom <eric.engestrom@imgtec.com>
+> (I assume you'll push it yourself?)
+> 
+> Btw, can you run this in your local libdrm repo?
+>   $ git config --local format.subjectPrefix "PATCH libdrm"
+> 
+> Cheers,
+>   Eric
+> 
+> 
+>>
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> ---
+>>  exynos/exynos_drmif.h | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/exynos/exynos_drmif.h b/exynos/exynos_drmif.h
+>> index 626e399..154439b 100644
+>> --- a/exynos/exynos_drmif.h
+>> +++ b/exynos/exynos_drmif.h
+>> @@ -31,6 +31,10 @@
+>>  #include <stdint.h>
+>>  #include "exynos_drm.h"
+>>  
+>> +#if defined(__cplusplus)
+>> +extern "C" {
+>> +#endif
+>> +
+>>  struct exynos_device {
+>>  	int fd;
+>>  };
+>> @@ -109,4 +113,8 @@ int exynos_handle_event(struct exynos_device *dev,
+>>  				struct exynos_event_context *ctx);
+>>  
+>>  
+>> +#if defined(__cplusplus)
+>> +}
+>> +#endif
+>> +
+>>  #endif /* EXYNOS_DRMIF_H_ */
+>> -- 
+>> 2.7.3
+>>
