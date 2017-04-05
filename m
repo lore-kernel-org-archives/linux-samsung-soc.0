@@ -1,68 +1,74 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos/hdmi: fix pipeline disable order
-Date: Wed, 05 Apr 2017 08:59:48 +0200
-Message-ID: <1491375588-7092-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170405065952eucas1p2592b14571d4e54eeb0aa58195172edb6@eucas1p2.samsung.com>
+Subject: [PATCH 1/9] drm/exynos/decon5433: always do sw-trigger when vblanks
+ enabled
+Date: Wed, 05 Apr 2017 09:28:29 +0200
+Message-ID: <1491377317-8042-2-git-send-email-a.hajda@samsung.com>
+References: <1491377317-8042-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170405072842eucas1p131cf311f5f6c368547e7fa5190193492@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:20900 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751121AbdDEG75 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:14477 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753462AbdDEH2q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Apr 2017 02:59:57 -0400
+        Wed, 5 Apr 2017 03:28:46 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout3.w1.samsung.com
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ONX00D3DCRU1N10@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Apr 2017 07:59:54 +0100 (BST)
+ with ESMTP id <0ONX00KVPE3V0T10@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Apr 2017 08:28:43 +0100 (BST)
+In-reply-to: <1491377317-8042-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-Hardware require that MIXER(crtc) should be disabled prior to
-HDMI(encoder). It was achieved by disabling crtc from encoder disable
-callback, bypassing drm core. As a result drm core tried to call vblank
-related routines on disabled crtc. The patch fixes it by simplifying
-hdmi_disable routine - now it only cancels hotplug worker. Hardware will
-be disabled in proper moment during pipe clock disable.
+When vblanks are enabled userspace and/or kernel can expect vblank
+interrupt at declared period of time. To generate vblank interrupt
+image transfer must be triggered. This patch fixes vblank timeouts
+in case of sw-trigger mode.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 5243840..b61fe87 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1481,8 +1481,6 @@ static void hdmi_enable(struct drm_encoder *encoder)
- static void hdmi_disable(struct drm_encoder *encoder)
- {
- 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
--	struct drm_crtc *crtc = encoder->crtc;
--	const struct drm_crtc_helper_funcs *funcs = NULL;
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 42e8f8c..028a657 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -49,6 +49,7 @@ static const char * const decon_clks_name[] = {
  
- 	if (!hdata->powered)
+ enum decon_flag_bits {
+ 	BIT_CLKS_ENABLED,
++	BIT_IRQS_ENABLED,
+ 	BIT_WIN_UPDATED,
+ 	BIT_SUSPENDED
+ };
+@@ -104,6 +105,7 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
+ 		val |= VIDINTCON0_INTFRMEN | VIDINTCON0_FRAMESEL_FP;
+ 
+ 	writel(val, ctx->addr + DECON_VIDINTCON0);
++	set_bit(BIT_IRQS_ENABLED, &ctx->flags);
+ 
+ 	return 0;
+ }
+@@ -112,6 +114,7 @@ static void decon_disable_vblank(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+ 
++	clear_bit(BIT_IRQS_ENABLED, &ctx->flags);
+ 	if (test_bit(BIT_SUSPENDED, &ctx->flags))
  		return;
-@@ -1493,17 +1491,10 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 	 * to disable TV Subsystem should be as following,
- 	 *	VP -> Mixer -> HDMI
- 	 *
--	 * Below codes will try to disable Mixer and VP(if used)
--	 * prior to disabling HDMI.
-+	 * To achieve such sequence HDMI is disabled together with HDMI PHY, via
-+	 * pipe clock callback.
- 	 */
--	if (crtc)
--		funcs = crtc->helper_private;
--	if (funcs && funcs->disable)
--		(*funcs->disable)(crtc);
--
- 	cancel_delayed_work(&hdata->hotplug_work);
--
--	hdmiphy_disable(hdata);
+ 
+@@ -518,7 +521,8 @@ static void decon_te_irq_handler(struct exynos_drm_crtc *crtc)
+ 	    (ctx->out_type & I80_HW_TRG))
+ 		return;
+ 
+-	if (test_and_clear_bit(BIT_WIN_UPDATED, &ctx->flags))
++	if (test_and_clear_bit(BIT_WIN_UPDATED, &ctx->flags) ||
++	    test_bit(BIT_IRQS_ENABLED, &ctx->flags))
+ 		decon_set_bits(ctx, DECON_TRIGCON, TRIGCON_SWTRIGCMD, ~0);
  }
  
- static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
 -- 
 2.7.4
