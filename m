@@ -1,70 +1,68 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 3/5] drm/exynos: dsi: Fix the parse_dt function
-Date: Tue, 4 Apr 2017 17:38:44 +0200
-Message-ID: <CAJKOXPd-h4QqLXJ5AYr1KgpjvROaWpVZnd9KmeeGoVRQifssbw@mail.gmail.com>
-References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170308045502epcas1p2d2f7a0f768082b7a54b2ebe260e78436@epcas1p2.samsung.com>
- <1488948852-5380-4-git-send-email-hoegeun.kwon@samsung.com>
- <93e79e92-a102-e931-8d63-843031848888@samsung.com> <58DA1E38.50907@samsung.com>
- <CAJKOXPeD4HKemKTrnC2JaON3JkuNGO9g+Hg8M7F6f2WusiYkhg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos/hdmi: fix pipeline disable order
+Date: Wed, 05 Apr 2017 08:59:48 +0200
+Message-ID: <1491375588-7092-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170405065952eucas1p2592b14571d4e54eeb0aa58195172edb6@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:34626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754287AbdDDPiu (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:20900 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751121AbdDEG75 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Apr 2017 11:38:50 -0400
-In-Reply-To: <CAJKOXPeD4HKemKTrnC2JaON3JkuNGO9g+Hg8M7F6f2WusiYkhg@mail.gmail.com>
+        Wed, 5 Apr 2017 02:59:57 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0ONX00D3DCRU1N10@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Apr 2017 07:59:54 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Hoegeun Kwon <hoegeun.kwon@samsung.com>, jy0922.shim@samsung.com, Seung Woo Kim <sw0312.kim@samsung.com>, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, a.hajda@samsung.com, Andi Shyti <andi.shyti@samsung.com>, LW@karo-electronics.de, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 28, 2017 at 11:38 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Tue, Mar 28, 2017 at 11:26 AM, Inki Dae <inki.dae@samsung.com> wrote:
->> Merged.
->
-> Hi,
->
-> I do not see the tag (with DT patches) merged by you which I provided
-> to you before. These are essential for bisectability. Without them,
-> kernel bisectability is broken. Did you merged the tag somewhere?
->
-> Best regards,
-> Krzysztof
->
->> Thanks,
->> Inki Dae
+Hardware require that MIXER(crtc) should be disabled prior to
+HDMI(encoder). It was achieved by disabling crtc from encoder disable
+callback, bypassing drm core. As a result drm core tried to call vblank
+related routines on disabled crtc. The patch fixes it by simplifying
+hdmi_disable routine - now it only cancels hotplug worker. Hardware will
+be disabled in proper moment during pipe clock disable.
 
-Inki,
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-I still do not see the DTS tag [1] merged in your tree but you applied
-patches breaking the display. I looked at exynos-drm-next branch.
-
-We talked already about bisectability and with Hoegeun we provided
-proper solution. Hoegeun split the patchset and I sent you a stable
-tag to merge. Be aware not to apply the DTS patch because you would
-effectively duplicate it. Instead, deal like with any pull request -
-merge the tag as dependency *before* applying DRM DSI patch.
-
-I saw also a branch like this:
-https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git/log/?h=exynos-drm-next-tm2
-but this is something obviously wrong. I do not know what are your
-plans to do with it, but please drop it as it brings only confusion.
-
-Best regards,
-Krzysztof
-
-[1] https://www.spinics.net/lists/arm-kernel/msg567053.html
-
->> 2017년 03월 22일 10:36에 Hoegeun Kwon 이(가) 쓴 글:
->>> Hi inki,
->>>
->>> Could you check the this patch?
->>> For reference, patch 1/5 and 2/5 have already been applied to Krzysztof tree.
->>>
->>> Best regards,
->>> Hoegeun
->>>
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 5243840..b61fe87 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1481,8 +1481,6 @@ static void hdmi_enable(struct drm_encoder *encoder)
+ static void hdmi_disable(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+-	struct drm_crtc *crtc = encoder->crtc;
+-	const struct drm_crtc_helper_funcs *funcs = NULL;
+ 
+ 	if (!hdata->powered)
+ 		return;
+@@ -1493,17 +1491,10 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 	 * to disable TV Subsystem should be as following,
+ 	 *	VP -> Mixer -> HDMI
+ 	 *
+-	 * Below codes will try to disable Mixer and VP(if used)
+-	 * prior to disabling HDMI.
++	 * To achieve such sequence HDMI is disabled together with HDMI PHY, via
++	 * pipe clock callback.
+ 	 */
+-	if (crtc)
+-		funcs = crtc->helper_private;
+-	if (funcs && funcs->disable)
+-		(*funcs->disable)(crtc);
+-
+ 	cancel_delayed_work(&hdata->hotplug_work);
+-
+-	hdmiphy_disable(hdata);
+ }
+ 
+ static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
+-- 
+2.7.4
