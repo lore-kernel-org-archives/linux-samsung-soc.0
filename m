@@ -1,88 +1,104 @@
-From: <bendis.michal@seznam.cz>
-Subject: (unknown)
-Date: Thu, 06 Apr 2017 08:19:05 -0000
-Message-ID: <149146674597.21467.2809831134936521553@48.219.131.37.polevskoynet.ru>
-Reply-To: <bendis.michal@seznam.cz>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v6 1/4] clk: Add support for runtime PM
+Date: Thu, 06 Apr 2017 14:46:55 +0200
+Message-ID: <5b4b2f3e-dc4b-0866-c4b8-4c7e4dba2be0@samsung.com>
+References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170322113554eucas1p27471f0de278c55d5dce7fdf120395e09@eucas1p2.samsung.com>
+ <1490182543-28550-2-git-send-email-m.szyprowski@samsung.com>
+ <149081897388.31513.7062843004022908296@resonance>
+ <75509e0f-26cd-52e7-8c71-b004ab6abc81@samsung.com>
+ <149089387341.31513.7531874072502656432@resonance>
 Mime-Version: 1.0
-Content-Type: application/zip; name="11962241.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 48.219.131.37.polevskoynet.ru ([37.131.219.48]:60766 "HELO
-        48.219.131.37.polevskoynet.ru" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with SMTP id S1752269AbdDFITK (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Apr 2017 04:19:10 -0400
-Subject: 
-Content-Disposition: attachment
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <149089387341.31513.7531874072502656432@resonance>
+Sender: linux-clk-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-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
+Hi Michael,
+
+On 2017-03-30 19:11, Michael Turquette wrote:
+> Quoting Marek Szyprowski (2017-03-30 00:24:15)
+>> On 2017-03-29 22:22, Michael Turquette wrote:
+>>> Quoting Marek Szyprowski (2017-03-22 04:35:40)
+>>>> Registers for some clocks might be located in the SOC area, which are under the
+>>>> power domain. To enable access to those registers respective domain has to be
+>>>> turned on. Additionally, registers for such clocks will usually loose its
+>>>> contents when power domain is turned off, so additional saving and restoring of
+>>>> them might be needed in the clock controller driver.
+>>>>
+>>>> This patch adds basic infrastructure in the clocks core to allow implementing
+>>>> driver for such clocks under power domains. Clock provider can supply a
+>>>> struct device pointer, which is the used by clock core for tracking and managing
+>>>> clock's controller runtime pm state. Each clk_prepare() operation
+>>>> will first call pm_runtime_get_sync() on the supplied device, while
+>>>> clk_unprepare() will do pm_runtime_put_sync() at the end.
+>>>>
+>>>> Additional calls to pm_runtime_get/put functions are required to ensure that any
+>>>> register access (like calculating/changing clock rates and unpreparing/disabling
+>>>> unused clocks on boot) will be done with clock controller in runtime resumend
+>>>> state.
+>>> The above is a bit confusing. Is clk_prepare really special? It seems to
+>>> me that every single clk_ops callback will need this?
+>> clk_prepare/unprepare are special, because they allow sleeping, so they
+>> are natural
+>> candidates for the place for calling runtime PM operations.
+>> clk_enable()/disable()
+>> is called under a spinlock, so runtime pm cannot be called efficiently
+>> there, but
+>> core guarantees that they are called after clk_prepare(), so accessing
+>> hw registers
+>> is safe. The only remaining calls are not guaranteed to be called always
+>> after
+>> clk_prepare(), so those additional calls and checks in runtime pm are
+>> needed there.
+> Right, so any call that holds prepare_lock and might touch the hardware
+> needs to first call pm_runtime_get_sync.
+>
+>>> That leads to my second question: why put this in the clk core? Can the
+>>> clk provider driver simply add pm_runtime_{get,put} calls into its
+>>> clk_ops callbacks instead? The clk core does not directly touch hardware
+>>> (e.g. reading registers) so putting the pm runtime calls into the
+>>> provider callbacks should be sufficient.
+>> In theory is should be possible to duplicate all kind of clock build blocks
+>> (gates, muxes, dividers, ...) with additional runtime pm calls. This
+>> would however
+>> end in much more code and a bit more complicated locking. Implementing
+>> it in clk
+>> core made the code simpler. It also turned out that runtime pm
+>> integration is
+>> needed for more that a single clock provider: besides Samsung SoCs
+>> (Exynos 5433
+>> and newer, Exynos 4412 ISP, Exynos Audio Subsystem, hacks in Exynos 542x
+>> can be
+>> also replaced by runtime PM calls), Ulf mentioned that exactly similar
+>> pattern
+>> is used for some UX500 SoCs (STE). More will probably come once the
+>> feature is
+>> in, because for now such drivers simply forces runtime active state as a
+>> workaround or don't instantiate related power domains at all.
+> I agree with the above, but I'm also wondering about the folks that use
+> regmap internally to their own clock provider drivers. I guess they will
+> have the option to either do their own thing or use this framework-level
+> solution.
+>
+> I've started reviewing the code itself and will respond to those mails
+> separately.
+
+Is there a chance to get your comments soon? I would really like to give
+this patchset a try in linux-next for a few days, but for now Sylwester
+waits for you.
+
+Stephen: what is your opinion on this patchset? Would you like to give it
+a try in -next?
+
+ > ...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
