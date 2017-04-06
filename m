@@ -1,72 +1,72 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
-Date: Thu, 6 Apr 2017 19:10:15 +0200
-Message-ID: <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
-References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
- <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v11 2/3] drm/panel: Add support for S6E3HA2 panel driver
+ on TM2 board
+Date: Thu, 6 Apr 2017 23:33:06 +0200
+Message-ID: <20170406213306.GC27728@ulmo.ba.sec>
+References: <1488937357-5623-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308014258epcas5p3eb623c49b888c91ef102a7fc8f35d1b7@epcas5p3.samsung.com>
+ <1488937357-5623-3-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57355 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752588AbdDFRKS (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Apr 2017 13:10:18 -0400
-In-Reply-To: <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yLVHuoLXiP9kZBkt"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1488937357-5623-3-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: airlied-cv59FeDIM0c@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Donghwa Lee <dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org
-
-Hello Inki,
 
 
-Inki Dae wrote:
-> This patch removes unnecessary descriptions on
-> exynos_drm_crtc structure and adds one description
-> which specifies what pipe_clk member does.
-> 
-> pipe_clk support had been added by below patch without any description,
-> 	 drm/exynos: add support for pipeline clock to the framework
-I would put the commit id here. That makes it easier to look up the
-commit your refer to.
+--yLVHuoLXiP9kZBkt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+On Wed, Mar 08, 2017 at 10:42:36AM +0900, Hoegeun Kwon wrote:
+> This patch add support for MIPI-DSI based S6E3HA2 AMOLED panel
+> driver. This panel has 1440x2560 resolution in 5.7-inch physical
+> panel in the TM2 device.
+>=20
+> Signed-off-by: Donghwa Lee <dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Tested-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.h | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> index 527bf1d..b0462cc 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> @@ -152,12 +152,10 @@ struct exynos_drm_clk {
->   *
->   * @base: crtc object.
->   * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
-> - * @enabled: if the crtc is enabled or not
-> - * @event: vblank event that is currently queued for flip
-> - * @wait_update: wait all pending planes updates to finish
-> - * @pending_update: number of pending plane updates in this crtc
->   * @ops: pointer to callbacks for exynos drm specific functionality
->   * @ctx: A pointer to the crtc's implementation specific context
-> + * @pipe_clk: A pipe clock structure which includes a callback function
-> +	      for enabling DP clock of FIMD and HDMI PHY clock.
-This is wrong/inconsistent with the rest of the documentation. pipe_clk
-is not a struct, but a pointer.
+>  drivers/gpu/drm/panel/Kconfig                 |   6 +
+>  drivers/gpu/drm/panel/Makefile                |   1 +
+>  drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c | 739 ++++++++++++++++++++=
+++++++
+>  3 files changed, 746 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c
 
-I would suggest to follow. Just document that we have a pointer to <add
-escription> here (compare docu for 'ops' and 'ctx').
-And then put the later bits ("...callback function for enabling DP
-clock...") directly to the definition of 'struct exynos_drm_clk' (which
-is currently lacking any kind of docu).
+Applied, thanks.
 
+Thierry
 
-- Tobias
+--yLVHuoLXiP9kZBkt
+Content-Type: application/pgp-signature; name="signature.asc"
 
->   */
->  struct exynos_drm_crtc {
->  	struct drm_crtc			base;
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljmtBIACgkQ3SOs138+
+s6ErWhAApYu9qFie0xpP5X297Y1Tm0irg0FOVHO9KdLbVYqdOd8XNpYnLsWv/qFq
+0ALvi214i/2vexbwXSOLhQLqicP/TFSfYa5C85ELmVC3HTe57tfrjcdqDPOyknm3
+gSH90jbtOLUvbIewJwHf9gPl85uz4/F2t6pA+fwnFCW5k/fIoUSu6MQa4qSpUCp/
+8QnbqlLJsYdBbd97cI8Ndm/vx+I5Vdv6AbGscG8Ar9agtr2CTsKw4TxCy+ZtDDzD
+g61PY6j5guMTe7isMUlapaDr2uyq6MZN598GlnefB+ccr06mQs60GM8QIvx4AXPK
+P7jGJ26ZoVGpdpOglLrKy+dupoCGmdWisLrAmJ7GsPr5ykhJhpPdVY3k+ZNM4IFs
+ny9DRtWHLt2PwT7uH7puOZgZJdThbc3iSsUZNXlNFs5P7jNActlEbtodpni23tBZ
+/tUy/werzTlIpIjxZdIoAVPQD1bg0TJUw/l2INQwpDDHWjwyCHR/d35ecEux9XDU
+NyGnjNcJJf70SBfuMdpjRs9YH7gEIlYnK35Sm+Lh7FUA7jgCkd45BmXS04DT37Ci
+mgB9nsv80BMXorAu02QObBaai2hEhzNbOANd7qaCKBqx9TV56/cskxavgMgNuut3
+2oUVlYuRKUjXCpZ3rfCRUTjgFnwlA48H6ZvPduE7x5MSLXpiS1w=
+=yFO5
+-----END PGP SIGNATURE-----
+
+--yLVHuoLXiP9kZBkt--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
