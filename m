@@ -1,84 +1,49 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] exynos: add C++ support to exynos_drmif header
-Date: Wed, 5 Apr 2017 18:23:25 +0200
-Message-ID: <e15aabd7-bd99-aa70-118b-4fb0ae2c644e@math.uni-bielefeld.de>
-References: <1491402144-3298-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20170405154852.ncs2nhquiz2wy23m@imgtec.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
+Date: Thu, 06 Apr 2017 10:21:09 +0900
+Message-ID: <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55113 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755860AbdDEQXc (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:48712 "EHLO
+        epoutp02.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751655AbdDFBWj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Apr 2017 12:23:32 -0400
-In-Reply-To: <20170405154852.ncs2nhquiz2wy23m@imgtec.com>
+        Wed, 5 Apr 2017 21:22:39 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eric Engestrom <eric.engestrom@imgtec.com>
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-Hello Eric,
+This patch removes unnecessary descriptions on
+exynos_drm_crtc structure and adds one description
+which specifies what pipe_clk member does.
 
+pipe_clk support had been added by below patch without any description,
+	 drm/exynos: add support for pipeline clock to the framework
 
-Eric Engestrom wrote:
-> On Wednesday, 2017-04-05 16:22:24 +0200, Tobias Jakobi wrote:
->> Add the usual extern "C" when compiling in C++ mode.
-> 
-> Thanks, but why specifically this header? The other exynos/*.h headers
-> also lack the c++ mangling guard.
-I'm currently writing a small C++ project using the
-exynos_bo_{create,destroy}() calls, and noticed this.
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> A quick grep shows that only 15/101 headers in libdrm have it.
-> Can I interest you in fixing a few more headers? :)
-Not at the moment.
-
-
-- Tobias
-
-> In any case, this patch is:
-> Reviewed-by: Eric Engestrom <eric.engestrom@imgtec.com>
-> (I assume you'll push it yourself?)
-> 
-> Btw, can you run this in your local libdrm repo?
->   $ git config --local format.subjectPrefix "PATCH libdrm"
-> 
-> Cheers,
->   Eric
-> 
-> 
->>
->> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> ---
->>  exynos/exynos_drmif.h | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/exynos/exynos_drmif.h b/exynos/exynos_drmif.h
->> index 626e399..154439b 100644
->> --- a/exynos/exynos_drmif.h
->> +++ b/exynos/exynos_drmif.h
->> @@ -31,6 +31,10 @@
->>  #include <stdint.h>
->>  #include "exynos_drm.h"
->>  
->> +#if defined(__cplusplus)
->> +extern "C" {
->> +#endif
->> +
->>  struct exynos_device {
->>  	int fd;
->>  };
->> @@ -109,4 +113,8 @@ int exynos_handle_event(struct exynos_device *dev,
->>  				struct exynos_event_context *ctx);
->>  
->>  
->> +#if defined(__cplusplus)
->> +}
->> +#endif
->> +
->>  #endif /* EXYNOS_DRMIF_H_ */
->> -- 
->> 2.7.3
->>
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 527bf1d..b0462cc 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -152,12 +152,10 @@ struct exynos_drm_clk {
+  *
+  * @base: crtc object.
+  * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
+- * @enabled: if the crtc is enabled or not
+- * @event: vblank event that is currently queued for flip
+- * @wait_update: wait all pending planes updates to finish
+- * @pending_update: number of pending plane updates in this crtc
+  * @ops: pointer to callbacks for exynos drm specific functionality
+  * @ctx: A pointer to the crtc's implementation specific context
++ * @pipe_clk: A pipe clock structure which includes a callback function
++	      for enabling DP clock of FIMD and HDMI PHY clock.
+  */
+ struct exynos_drm_crtc {
+ 	struct drm_crtc			base;
+-- 
+1.9.1
