@@ -1,88 +1,92 @@
-From: <bendis.michal@seznam.cz>
-Subject: (unknown)
-Date: Thu, 06 Apr 2017 06:03:14 -0000
-Message-ID: <149145859481.2150.18026789858572852045@hinet.net>
-Reply-To: <bendis.michal@seznam.cz>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v5 3/5] drm/exynos: dsi: Fix the parse_dt function
+Date: Thu, 06 Apr 2017 15:48:37 +0900
+Message-ID: <58E5E4C5.5090107@samsung.com>
+References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
+        <CGME20170308045502epcas1p2d2f7a0f768082b7a54b2ebe260e78436@epcas1p2.samsung.com>
+        <1488948852-5380-4-git-send-email-hoegeun.kwon@samsung.com>
+        <93e79e92-a102-e931-8d63-843031848888@samsung.com>
+        <58DA1E38.50907@samsung.com>
+        <CAJKOXPeD4HKemKTrnC2JaON3JkuNGO9g+Hg8M7F6f2WusiYkhg@mail.gmail.com>
+        <CAJKOXPd-h4QqLXJ5AYr1KgpjvROaWpVZnd9KmeeGoVRQifssbw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="45.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from [117.253.226.243] ([117.253.226.243]:49893 "HELO hinet.net"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1752699AbdDFGDV (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:24636 "EHLO
+        epoutp01.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932371AbdDFGsl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Apr 2017 02:03:21 -0400
-Subject: 
-Content-Disposition: attachment
+        Thu, 6 Apr 2017 02:48:41 -0400
+In-reply-to: <CAJKOXPd-h4QqLXJ5AYr1KgpjvROaWpVZnd9KmeeGoVRQifssbw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Hoegeun Kwon <hoegeun.kwon@samsung.com>, jy0922.shim@samsung.com, Seung Woo Kim <sw0312.kim@samsung.com>, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, a.hajda@samsung.com, Andi Shyti <andi.shyti@samsung.com>, LW@karo-electronics.de, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-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
-DgAAAAA=
+
+
+2017년 04월 05일 00:38에 Krzysztof Kozlowski 이(가) 쓴 글:
+> On Tue, Mar 28, 2017 at 11:38 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On Tue, Mar 28, 2017 at 11:26 AM, Inki Dae <inki.dae@samsung.com> wrote:
+>>> Merged.
+>>
+>> Hi,
+>>
+>> I do not see the tag (with DT patches) merged by you which I provided
+>> to you before. These are essential for bisectability. Without them,
+>> kernel bisectability is broken. Did you merged the tag somewhere?
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>> Thanks,
+>>> Inki Dae
+> 
+> Inki,
+> 
+> I still do not see the DTS tag [1] merged in your tree but you applied
+> patches breaking the display. I looked at exynos-drm-next branch.
+> 
+> We talked already about bisectability and with Hoegeun we provided
+> proper solution. Hoegeun split the patchset and I sent you a stable
+> tag to merge. Be aware not to apply the DTS patch because you would
+> effectively duplicate it. Instead, deal like with any pull request -
+> merge the tag as dependency *before* applying DRM DSI patch.
+> 
+> I saw also a branch like this:
+> https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git/log/?h=exynos-drm-next-tm2
+> but this is something obviously wrong. I do not know what are your
+> plans to do with it, but please drop it as it brings only confusion.
+
+Krzysztof,
+
+Do not make you confusing with above branch which is used just for internal test so never go -next maybe you know.
+Why are you suffering from this?
+
+
+Thanks,
+Inki Dae
+
+> 
+> Best regards,
+> Krzysztof
+> 
+> [1] https://www.spinics.net/lists/arm-kernel/msg567053.html
+> 
+>>> 2017년 03월 22일 10:36에 Hoegeun Kwon 이(가) 쓴 글:
+>>>> Hi inki,
+>>>>
+>>>> Could you check the this patch?
+>>>> For reference, patch 1/5 and 2/5 have already been applied to Krzysztof tree.
+>>>>
+>>>> Best regards,
+>>>> Hoegeun
+>>>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
