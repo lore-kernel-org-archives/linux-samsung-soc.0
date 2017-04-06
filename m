@@ -1,92 +1,88 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v5 3/5] drm/exynos: dsi: Fix the parse_dt function
-Date: Thu, 06 Apr 2017 15:48:37 +0900
-Message-ID: <58E5E4C5.5090107@samsung.com>
-References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
-        <CGME20170308045502epcas1p2d2f7a0f768082b7a54b2ebe260e78436@epcas1p2.samsung.com>
-        <1488948852-5380-4-git-send-email-hoegeun.kwon@samsung.com>
-        <93e79e92-a102-e931-8d63-843031848888@samsung.com>
-        <58DA1E38.50907@samsung.com>
-        <CAJKOXPeD4HKemKTrnC2JaON3JkuNGO9g+Hg8M7F6f2WusiYkhg@mail.gmail.com>
-        <CAJKOXPd-h4QqLXJ5AYr1KgpjvROaWpVZnd9KmeeGoVRQifssbw@mail.gmail.com>
+From: <bendis.michal@seznam.cz>
+Subject: (unknown)
+Date: Thu, 06 Apr 2017 08:19:05 -0000
+Message-ID: <149146674597.21467.2809831134936521553@48.219.131.37.polevskoynet.ru>
+Reply-To: <bendis.michal@seznam.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: application/zip; name="11962241.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:24636 "EHLO
-        epoutp01.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932371AbdDFGsl (ORCPT
+Received: from 48.219.131.37.polevskoynet.ru ([37.131.219.48]:60766 "HELO
+        48.219.131.37.polevskoynet.ru" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with SMTP id S1752269AbdDFITK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Apr 2017 02:48:41 -0400
-In-reply-to: <CAJKOXPd-h4QqLXJ5AYr1KgpjvROaWpVZnd9KmeeGoVRQifssbw@mail.gmail.com>
+        Thu, 6 Apr 2017 04:19:10 -0400
+Subject: 
+Content-Disposition: attachment
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hoegeun Kwon <hoegeun.kwon@samsung.com>, jy0922.shim@samsung.com, Seung Woo Kim <sw0312.kim@samsung.com>, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, a.hajda@samsung.com, Andi Shyti <andi.shyti@samsung.com>, LW@karo-electronics.de, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
 
-
-
-2017년 04월 05일 00:38에 Krzysztof Kozlowski 이(가) 쓴 글:
-> On Tue, Mar 28, 2017 at 11:38 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On Tue, Mar 28, 2017 at 11:26 AM, Inki Dae <inki.dae@samsung.com> wrote:
->>> Merged.
->>
->> Hi,
->>
->> I do not see the tag (with DT patches) merged by you which I provided
->> to you before. These are essential for bisectability. Without them,
->> kernel bisectability is broken. Did you merged the tag somewhere?
->>
->> Best regards,
->> Krzysztof
->>
->>> Thanks,
->>> Inki Dae
-> 
-> Inki,
-> 
-> I still do not see the DTS tag [1] merged in your tree but you applied
-> patches breaking the display. I looked at exynos-drm-next branch.
-> 
-> We talked already about bisectability and with Hoegeun we provided
-> proper solution. Hoegeun split the patchset and I sent you a stable
-> tag to merge. Be aware not to apply the DTS patch because you would
-> effectively duplicate it. Instead, deal like with any pull request -
-> merge the tag as dependency *before* applying DRM DSI patch.
-> 
-> I saw also a branch like this:
-> https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git/log/?h=exynos-drm-next-tm2
-> but this is something obviously wrong. I do not know what are your
-> plans to do with it, but please drop it as it brings only confusion.
-
-Krzysztof,
-
-Do not make you confusing with above branch which is used just for internal test so never go -next maybe you know.
-Why are you suffering from this?
-
-
-Thanks,
-Inki Dae
-
-> 
-> Best regards,
-> Krzysztof
-> 
-> [1] https://www.spinics.net/lists/arm-kernel/msg567053.html
-> 
->>> 2017년 03월 22일 10:36에 Hoegeun Kwon 이(가) 쓴 글:
->>>> Hi inki,
->>>>
->>>> Could you check the this patch?
->>>> For reference, patch 1/5 and 2/5 have already been applied to Krzysztof tree.
->>>>
->>>> Best regards,
->>>> Hoegeun
->>>>
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+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
