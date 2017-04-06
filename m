@@ -1,49 +1,69 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
-Date: Thu, 06 Apr 2017 10:21:09 +0900
-Message-ID: <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:48712 "EHLO
-        epoutp02.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751655AbdDFBWj (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Apr 2017 21:22:39 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] drm/exynos: dsi: Fix the parse_dt function
+Date: Thu, 06 Apr 2017 13:33:59 +0900
+Message-ID: <58E5C537.1020301@samsung.com>
+References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308045502epcas1p2d2f7a0f768082b7a54b2ebe260e78436@epcas1p2.samsung.com>
+ <1488948852-5380-4-git-send-email-hoegeun.kwon@samsung.com>
+ <93e79e92-a102-e931-8d63-843031848888@samsung.com>
+ <58DA1E38.50907@samsung.com>
+ <CAJKOXPeD4HKemKTrnC2JaON3JkuNGO9g+Hg8M7F6f2WusiYkhg@mail.gmail.com>
+ <CAJKOXPd-h4QqLXJ5AYr1KgpjvROaWpVZnd9KmeeGoVRQifssbw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAJKOXPd-h4QqLXJ5AYr1KgpjvROaWpVZnd9KmeeGoVRQifssbw@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, catalin.marinas@arm.com, Seung Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, robh+dt@kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, kgene@kernel.org, dri-devel@lists.freedesktop.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, will.deacon@arm.com, Marek Szyprowski <m.szyprowski@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org, LW@karo-electronics.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-This patch removes unnecessary descriptions on
-exynos_drm_crtc structure and adds one description
-which specifies what pipe_clk member does.
-
-pipe_clk support had been added by below patch without any description,
-	 drm/exynos: add support for pipeline clock to the framework
-
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.h | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 527bf1d..b0462cc 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -152,12 +152,10 @@ struct exynos_drm_clk {
-  *
-  * @base: crtc object.
-  * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
-- * @enabled: if the crtc is enabled or not
-- * @event: vblank event that is currently queued for flip
-- * @wait_update: wait all pending planes updates to finish
-- * @pending_update: number of pending plane updates in this crtc
-  * @ops: pointer to callbacks for exynos drm specific functionality
-  * @ctx: A pointer to the crtc's implementation specific context
-+ * @pipe_clk: A pipe clock structure which includes a callback function
-+	      for enabling DP clock of FIMD and HDMI PHY clock.
-  */
- struct exynos_drm_crtc {
- 	struct drm_crtc			base;
--- 
-1.9.1
+CgoyMDE364WEIDA07JuUIDA17J28IDAwOjM47JeQIEtyenlzenRvZiBLb3psb3dza2kg7J20KOqw
+gCkg7JO0IOq4gDoKPiBPbiBUdWUsIE1hciAyOCwgMjAxNyBhdCAxMTozOCBBTSwgS3J6eXN6dG9m
+IEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPiB3cm90ZToKPj4gT24gVHVlLCBNYXIgMjgsIDIw
+MTcgYXQgMTE6MjYgQU0sIElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+
+PiBNZXJnZWQuCj4+Cj4+IEhpLAo+Pgo+PiBJIGRvIG5vdCBzZWUgdGhlIHRhZyAod2l0aCBEVCBw
+YXRjaGVzKSBtZXJnZWQgYnkgeW91IHdoaWNoIEkgcHJvdmlkZWQKPj4gdG8geW91IGJlZm9yZS4g
+VGhlc2UgYXJlIGVzc2VudGlhbCBmb3IgYmlzZWN0YWJpbGl0eS4gV2l0aG91dCB0aGVtLAo+PiBr
+ZXJuZWwgYmlzZWN0YWJpbGl0eSBpcyBicm9rZW4uIERpZCB5b3UgbWVyZ2VkIHRoZSB0YWcgc29t
+ZXdoZXJlPwo+Pgo+PiBCZXN0IHJlZ2FyZHMsCj4+IEtyenlzenRvZgo+Pgo+Pj4gVGhhbmtzLAo+
+Pj4gSW5raSBEYWUKPiAKPiBJbmtpLAo+IAo+IEkgc3RpbGwgZG8gbm90IHNlZSB0aGUgRFRTIHRh
+ZyBbMV0gbWVyZ2VkIGluIHlvdXIgdHJlZSBidXQgeW91IGFwcGxpZWQKPiBwYXRjaGVzIGJyZWFr
+aW5nIHRoZSBkaXNwbGF5LiBJIGxvb2tlZCBhdCBleHlub3MtZHJtLW5leHQgYnJhbmNoLgo+IAo+
+IFdlIHRhbGtlZCBhbHJlYWR5IGFib3V0IGJpc2VjdGFiaWxpdHkgYW5kIHdpdGggSG9lZ2V1biB3
+ZSBwcm92aWRlZAo+IHByb3BlciBzb2x1dGlvbi4gSG9lZ2V1biBzcGxpdCB0aGUgcGF0Y2hzZXQg
+YW5kIEkgc2VudCB5b3UgYSBzdGFibGUKPiB0YWcgdG8gbWVyZ2UuIEJlIGF3YXJlIG5vdCB0byBh
+cHBseSB0aGUgRFRTIHBhdGNoIGJlY2F1c2UgeW91IHdvdWxkCj4gZWZmZWN0aXZlbHkgZHVwbGlj
+YXRlIGl0LiBJbnN0ZWFkLCBkZWFsIGxpa2Ugd2l0aCBhbnkgcHVsbCByZXF1ZXN0IC0KPiBtZXJn
+ZSB0aGUgdGFnIGFzIGRlcGVuZGVuY3kgKmJlZm9yZSogYXBwbHlpbmcgRFJNIERTSSBwYXRjaC4K
+CktyenlzenRvZiwKCkkgdGhpbmsgbWVyZ2luZyB0aGUgRFRTIHRhZyBpcyBub3QgbmVjZXNzYXJ5
+IGJlY2F1c2UgZHQgYW5kIGRybSBwYXRjaGVzIHdpbGwgZ28gdG8gLW5leHQgc2VwYXJhdGVseS4K
+QW55d2F5LCBjb25maXJtZWQgeW91ciBlbWFpbCBqdXN0IG5vdy4gU2VlbXMgYmV0dGVyIHNvIGRp
+ZCB3aGF0IHlvdSB3YW50LgoKClRoYW5rcywKSW5raSBEYWUKCj4gCj4gSSBzYXcgYWxzbyBhIGJy
+YW5jaCBsaWtlIHRoaXM6Cj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
+cm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9zLmdpdC9sb2cvP2g9ZXh5bm9zLWRybS1uZXh0LXRt
+Mgo+IGJ1dCB0aGlzIGlzIHNvbWV0aGluZyBvYnZpb3VzbHkgd3JvbmcuIEkgZG8gbm90IGtub3cg
+d2hhdCBhcmUgeW91cgo+IHBsYW5zIHRvIGRvIHdpdGggaXQsIGJ1dCBwbGVhc2UgZHJvcCBpdCBh
+cyBpdCBicmluZ3Mgb25seSBjb25mdXNpb24uCj4gCj4gQmVzdCByZWdhcmRzLAo+IEtyenlzenRv
+Zgo+IAo+IFsxXSBodHRwczovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9hcm0ta2VybmVsL21zZzU2
+NzA1My5odG1sCj4gCj4+PiAyMDE364WEIDAz7JuUIDIy7J28IDEwOjM27JeQIEhvZWdldW4gS3dv
+biDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4+IEhpIGlua2ksCj4+Pj4KPj4+PiBDb3VsZCB5b3UgY2hl
+Y2sgdGhlIHRoaXMgcGF0Y2g/Cj4+Pj4gRm9yIHJlZmVyZW5jZSwgcGF0Y2ggMS81IGFuZCAyLzUg
+aGF2ZSBhbHJlYWR5IGJlZW4gYXBwbGllZCB0byBLcnp5c3p0b2YgdHJlZS4KPj4+Pgo+Pj4+IEJl
+c3QgcmVnYXJkcywKPj4+PiBIb2VnZXVuCj4+Pj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20g
+dGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBkZXZpY2V0cmVlIiBpbgo+IHRo
+ZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBt
+YWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
+dG1sCj4gCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
