@@ -1,188 +1,230 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v9 04/12] soc: samsung: add exynos chipid driver support
-Date: Fri, 7 Apr 2017 11:13:15 +0200
-Message-ID: <CAJKOXPeCD+U_2U4yj7LiKkWZjvXr9joY4bRqL+-MHdka=9viWQ@mail.gmail.com>
-References: <CGME20170330131427epcas5p4c3d238022dc75694ad3baa8a1018ea04@epcas5p4.samsung.com>
- <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-5-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v9 07/12] ARM: EXYNOS: introduce soc specific pm ops
+Date: Fri, 7 Apr 2017 11:24:18 +0200
+Message-ID: <CAJKOXPckh9C-mSq5NsJJfSW-brs6=wTDuctkD2EbtQOjKOQgbg@mail.gmail.com>
+References: <CGME20170330131434epcas1p4e42fe06bae3456c39e0f93a2f8ae4bc0@epcas1p4.samsung.com>
+ <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-8-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:45172 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:46648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932598AbdDGJNV (ORCPT
+        id S932563AbdDGJYX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 05:13:21 -0400
+        Fri, 7 Apr 2017 05:24:23 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id 1465920260
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 09:13:20 +0000 (UTC)
-Received: from mail-io0-f172.google.com (mail-io0-f172.google.com [209.85.223.172])
+        by mail.kernel.org (Postfix) with ESMTP id 35EA12022D
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 09:24:22 +0000 (UTC)
+Received: from mail-it0-f50.google.com (mail-it0-f50.google.com [209.85.214.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C447A20272
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 09:13:16 +0000 (UTC)
-Received: by mail-io0-f172.google.com with SMTP id z13so45949719iof.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 02:13:16 -0700 (PDT)
-In-Reply-To: <1490879826-16754-5-git-send-email-pankaj.dubey@samsung.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 91C8720274
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 09:24:19 +0000 (UTC)
+Received: by mail-it0-f50.google.com with SMTP id a140so39868595ita.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 02:24:19 -0700 (PDT)
+In-Reply-To: <1490879826-16754-8-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Thu, Mar 30, 2017 at 3:16 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> Exynos SoCs have Chipid, for identification of product IDs and SoC
-> revisions. This patch intends to provide initialization code for all
-> these functionalities, at the same time it provides some sysfs entries
-> for accessing these information to user-space.
+On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> For s2r various Exynos SoC needs different programming sequence and data.
+
+This is not S2R so:
+"Sleep modes on various Exynos SoCs need..."
+
+> Currently this is handled by adding lots of soc_is_exynosMMM checks in the
+> code, in an attempt to remove the dependency of such helper functions
+"code." full stop.
+
+> specific to each SoC, let's separate these programming sequence by
+> introducing a new struct exynos_s2r_data. This struct will contain
+
+If you plan to extend it to all sleep modes, then:
+"exynos_sleep_data"? But if not, then just "exynos_aftr_data" or
+"exynos_cpuidle_data" as this is real use for now.
+
+> different function hooks and data for differentiating these programming
+> sequences based on SoC's soc_id and revision parameters which can be
+> matched by using generic API "soc_device_match".
 >
-> This driver uses existing binding for exynos-chipid.
->
-> CC: Grant Likely <grant.likely@linaro.org>
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: Linus Walleij <linus.walleij@linaro.org>
 > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> [m.szyprowski: for suggestion and code snippet of product_id_to_soc_id]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/soc/samsung/Kconfig         |   5 ++
->  drivers/soc/samsung/Makefile        |   1 +
->  drivers/soc/samsung/exynos-chipid.c | 109 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 115 insertions(+)
->  create mode 100644 drivers/soc/samsung/exynos-chipid.c
+>  arch/arm/mach-exynos/pm.c | 122 +++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 116 insertions(+), 6 deletions(-)
 >
-> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-> index 8b25bd5..a90a4ad 100644
-> --- a/drivers/soc/samsung/Kconfig
-> +++ b/drivers/soc/samsung/Kconfig
-> @@ -6,6 +6,11 @@ menuconfig SOC_SAMSUNG
->
->  if SOC_SAMSUNG
->
-> +config EXYNOS_CHIPID
-> +       bool "Exynos Chipid controller driver" if COMPILE_TEST
-> +       depends on ARCH_EXYNOS || COMPILE_TEST
-> +       select SOC_BUS
-> +
->  config EXYNOS_PMU
->         bool "Exynos PMU controller driver" if COMPILE_TEST
->         depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
-> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-> index 4d7694a..be3b6bb 100644
-> --- a/drivers/soc/samsung/Makefile
-> +++ b/drivers/soc/samsung/Makefile
-> @@ -1,3 +1,4 @@
-> +obj-$(CONFIG_EXYNOS_CHIPID)    += exynos-chipid.o
->  obj-$(CONFIG_EXYNOS_PMU)       += exynos-pmu.o
->
->  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)   += exynos3250-pmu.o exynos4-pmu.o \
-> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-> new file mode 100644
-> index 0000000..1e9fb6b
-> --- /dev/null
-> +++ b/drivers/soc/samsung/exynos-chipid.c
-> @@ -0,0 +1,109 @@
-> +/*
-> + * Copyright (c) 2017 Samsung Electronics Co., Ltd.
-> + *           http://www.samsung.com/
-> + *
-> + * EXYNOS - CHIP ID support
-> + * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 4a73b02..fa24098 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/of.h>
+>  #include <linux/soc/samsung/exynos-regs-pmu.h>
+>  #include <linux/soc/samsung/exynos-pmu.h>
 > +#include <linux/sys_soc.h>
-> +
-> +#define EXYNOS_SUBREV_MASK     (0xF << 4)
-> +#define EXYNOS_MAINREV_MASK    (0xF << 0)
-> +#define EXYNOS_REV_MASK                (EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
-> +
-> +static const struct exynos_soc_id {
-> +       const char *name;
-> +       unsigned int id;
-> +       unsigned int mask;
-> +} soc_ids[] = {
-> +       { "EXYNOS3250", 0xE3472000, 0xFFFFF000 },
-> +       { "EXYNOS4210", 0x43210000, 0xFFFFF000 },
-> +       { "EXYNOS4212", 0x43220000, 0xFFFFF000 },
-> +       { "EXYNOS4412", 0xE4412000, 0xFFFFF000 },
-> +       { "EXYNOS5250", 0x43520000, 0xFFFFF000 },
-> +       { "EXYNOS5260", 0xE5260000, 0xFFFFF000 },
-> +       { "EXYNOS5410", 0xE5410000, 0xFFFFF000 },
-> +       { "EXYNOS5420", 0xE5420000, 0xFFFFF000 },
-> +       { "EXYNOS5440", 0xE5440000, 0xFFFFF000 },
-> +       { "EXYNOS5800", 0xE5422000, 0xFFFFF000 },
-> +       { "EXYNOS7420", 0xE7420000, 0xFFFFF000 },
-> +       { "EXYNOS5433", 0xE5433000, 0xFFFFF000 },
+>
+>  #include <asm/firmware.h>
+>  #include <asm/smp_scu.h>
+> @@ -30,6 +31,12 @@
+>
+>  #include "common.h"
+>
+> +struct exynos_s2r_data {
+
+Rename all "s2r" occurrences to appropriate name.
+
+> +       void (*enter_aftr)(void);
 > +};
 > +
-> +static const char * __init product_id_to_soc_id(unsigned int product_id)
-> +{
-> +       int i;
+> +static const struct exynos_s2r_data *s2r_data;
 > +
-> +       for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
-> +               if ((product_id & soc_ids[i].mask) == soc_ids[i].id)
-> +                       return soc_ids[i].name;
-> +       return "UNKNOWN";
+>  static inline void __iomem *exynos_boot_vector_addr(void)
+>  {
+>         if (samsung_rev() == EXYNOS4210_REV_1_1)
+> @@ -160,13 +167,26 @@ static int exynos_aftr_finisher(unsigned long flags)
+>
+>  void exynos_enter_aftr(void)
+>  {
+> +       if (s2r_data && s2r_data->enter_aftr)
+> +               s2r_data->enter_aftr();
 > +}
 > +
-> +int __init exynos_chipid_early_init(void)
+> +static void exynos3_enter_aftr(void)
 > +{
-> +       struct soc_device_attribute *soc_dev_attr;
-> +       void __iomem *exynos_chipid_base;
-> +       struct soc_device *soc_dev;
-> +       struct device_node *root;
-> +       struct device_node *np;
-> +       struct device *dev;
-> +       u32 product_id;
-> +       u32 revision;
+>         unsigned int cpuid = smp_processor_id();
+>
+>         cpu_pm_enter();
+> +       exynos_set_boot_flag(cpuid, C2_STATE);
+> +       exynos_pm_central_suspend();
+> +       cpu_suspend(0, exynos_aftr_finisher);
+> +       exynos_pm_central_resume();
+> +       exynos_clear_boot_flag(cpuid, C2_STATE);
+> +       cpu_pm_exit();
+> +}
+>
+> -       if (of_machine_is_compatible("samsung,exynos3250"))
+> -               exynos_set_boot_flag(cpuid, C2_STATE);
+> -
+> +static void exynos4_enter_aftr(void)
+> +{
+> +       cpu_pm_enter();
+>         exynos_pm_central_suspend();
+>
+>         if (of_machine_is_compatible("samsung,exynos4212") ||
+> @@ -185,13 +205,103 @@ void exynos_enter_aftr(void)
+>         }
+>
+>         exynos_pm_central_resume();
+> +       cpu_pm_exit();
+> +}
+>
+> -       if (of_machine_is_compatible("samsung,exynos3250"))
+> -               exynos_clear_boot_flag(cpuid, C2_STATE);
+> -
+> +static void exynos5_enter_aftr(void)
+> +{
+> +       cpu_pm_enter();
+> +       exynos_pm_central_suspend();
+> +       cpu_suspend(0, exynos_aftr_finisher);
+> +       exynos_pm_central_resume();
+>         cpu_pm_exit();
+>  }
+>
+> +static const struct exynos_s2r_data exynos_common_s2r_data = {
+> +       .enter_aftr             = exynos5_enter_aftr,
+> +};
 > +
-> +       /* look up for chipid node */
-> +       np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
-> +       if (!np)
+> +static const struct exynos_s2r_data exynos3250_s2r_data = {
+> +       .enter_aftr             = exynos3_enter_aftr,
+> +};
+> +
+> +static const struct exynos_s2r_data exynos4210_rev11_s2r_data = {
+> +       .enter_aftr             = exynos4_enter_aftr,
+> +};
+> +
+> +static const struct exynos_s2r_data exynos4210_rev10_s2r_data = {
+> +       .enter_aftr             = exynos4_enter_aftr,
+> +};
+> +
+> +static const struct exynos_s2r_data exynos4x12_s2r_data = {
+> +       .enter_aftr             = exynos4_enter_aftr,
+> +};
+> +
+> +static const struct soc_device_attribute exynos_soc_revision[] __initconst = {
+> +       {
+> +               .soc_id = "EXYNOS3250",
+> +               .data = &exynos3250_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS4210",
+> +               .revision = "11",
+> +               .data = &exynos4210_rev11_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS4210",
+> +               .revision = "10",
+> +               .data = &exynos4210_rev10_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS4212",
+> +               .data = &exynos4x12_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS4412",
+> +               .data = &exynos4x12_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS5250",
+> +               .data = &exynos_common_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS5260",
+> +               .data = &exynos_common_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS5440",
+> +               .data = &exynos_common_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS5410",
+> +               .data = &exynos_common_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS5420",
+> +               .data = &exynos_common_s2r_data
+> +       },
+> +       {
+> +               .soc_id = "EXYNOS5800",
+> +               .data = &exynos_common_s2r_data
+> +       },
+> +};
+> +
+> +int __init exynos_s2r_init(void)
+> +{
+> +       const struct soc_device_attribute *match;
+> +
+> +       match = soc_device_match(exynos_soc_revision);
+> +
+> +       if (match)
+> +               s2r_data = (const struct exynos_s2r_data *) match->data;
+> +
+> +       if (!s2r_data)
 > +               return -ENODEV;
 > +
-> +       exynos_chipid_base = of_iomap(np, 0);
-> +       of_node_put(np);
+> +       return 0;
+> +}
+> +arch_initcall(exynos_s2r_init);
 > +
-> +       if (!exynos_chipid_base) {
-> +               pr_err("%s: failed to map chipid\n", np->name);
-> +               return -ENOMEM;
-> +       }
-> +
-> +       product_id = readl_relaxed(exynos_chipid_base);
-> +       revision = product_id & EXYNOS_REV_MASK;
-> +       iounmap(exynos_chipid_base);
-> +
-> +       soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-> +       if (!soc_dev_attr)
-> +               return -ENODEV;
 
-This should be -ENOMEM
-
-> +
-> +       soc_dev_attr->family = "Samsung Exynos";
-> +
-> +       root = of_find_node_by_path("/");
-> +       of_property_read_string(root, "model", &soc_dev_attr->machine);
-> +       of_node_put(root);
-> +
-> +       soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
-> +       soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
-> +
-> +       soc_dev = soc_device_register(soc_dev_attr);
-> +       if (IS_ERR(soc_dev)) {
-> +               kfree(soc_dev_attr->revision);
-> +               kfree_const(soc_dev_attr->soc_id);
-
-This was not allocated with kstrdup_const() so it should not be freed.
+I guess you already found possible probe-order issue. You should
+register all of this after having the soc chipid driver. However it is
+required by cpuidle driver which is being registered in machine_init()
+call....  You cannot use deferred probe here, so maybe the only way is
+to manually order the calls in machine_init():
+1. exynos_chipid_early_init()
+2. this one.
+3. cpuidle driver register.
 
 Best regards,
 Krzysztof
