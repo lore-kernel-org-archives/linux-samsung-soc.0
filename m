@@ -1,144 +1,125 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v9 10/12] ARM: EXYNOS: move power_{down,up} to per SoC
- struct exynos_cpu_info
-Date: Fri, 7 Apr 2017 14:04:30 +0200
-Message-ID: <CAJKOXPecpw79gAQFCKtjTGpsP+BJt38C05t+Vb6nid+PL+g-xQ@mail.gmail.com>
-References: <CGME20170330131440epcas1p4f27192272761aa593b6cf083453e8adc@epcas1p4.samsung.com>
- <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-11-git-send-email-pankaj.dubey@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCHv6 03/10] exynos_hdmi: add CEC notifier support
+Date: Fri, 07 Apr 2017 14:07:31 +0200
+Message-ID: <c8a28cd7-e11d-892e-5f76-3fb18f94118d@samsung.com>
+References: <20170331122036.55706-1-hverkuil@xs4all.nl>
+ <CGME20170331122130epcas4p29c4d79360b900367143b9338308bac08@epcas4p2.samsung.com>
+ <20170331122036.55706-4-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:41106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933506AbdDGMEh (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:15127 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932601AbdDGMHh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 08:04:37 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id 3E374202E5
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 12:04:35 +0000 (UTC)
-Received: from mail-io0-f182.google.com (mail-io0-f182.google.com [209.85.223.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0477020279
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 12:04:32 +0000 (UTC)
-Received: by mail-io0-f182.google.com with SMTP id t68so14263518iof.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 05:04:31 -0700 (PDT)
-In-Reply-To: <1490879826-16754-11-git-send-email-pankaj.dubey@samsung.com>
+        Fri, 7 Apr 2017 08:07:37 -0400
+In-reply-to: <20170331122036.55706-4-hverkuil@xs4all.nl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Patrice.chotard@st.com, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> Various Exynos SoC handles CPU power_up and power_down operation
-> differently. To handle this difference until now we were using
-> soc_is_exynosMMM helper functions, in an attempt to remove the dependency
-> of such helper functions specific to each SoC, let's move power_{down,up}
-> functionality as a SoC specific function pointer hooks in
-> struct exynos_cpu_info.
+On 31.03.2017 14:20, Hans Verkuil wrote:
+> From: Hans Verkuil <hans.verkuil@cisco.com>
 >
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Implement the CEC notifier support to allow CEC drivers to
+> be informed when there is a new physical address.
+>
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+
+ --
+Regards
+Andrzej
+
 > ---
->  arch/arm/mach-exynos/platsmp.c | 61 +++++++++++++++++++++++++++++++-----------
->  1 file changed, 46 insertions(+), 15 deletions(-)
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
 >
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index ff369b9..6f08b15 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -37,9 +37,13 @@ extern void exynos4_secondary_startup(void);
->  /*
->   * struct exynos_cpu_info - Exynos CPU related info/operations
->   * @cpu_boot_reg: computes cpu boot address for requested cpu
-> + * @cpu_power_down: handles cpu power down routine for requested cpu
-> + * @cpu_power_up: handles cpu power up routine for requested cpu
->   */
->  struct exynos_cpu_info {
->         void __iomem* (*cpu_boot_reg)(u32 cpu);
-> +       void (*cpu_power_down)(u32 cpu);
-> +       void (*cpu_power_up)(u32 cpu);
->  };
->
->  static const struct exynos_cpu_info *cpu_info;
-> @@ -92,19 +96,29 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 88ccc0469316..bc4c8d0a66f4 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -43,6 +43,8 @@
+>  
+>  #include <drm/exynos_drm.h>
+>  
+> +#include <media/cec-notifier.h>
+> +
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_crtc.h"
+>  
+> @@ -119,6 +121,7 @@ struct hdmi_context {
+>  	bool				dvi_mode;
+>  	struct delayed_work		hotplug_work;
+>  	struct drm_display_mode		current_mode;
+> +	struct cec_notifier		*notifier;
+>  	const struct hdmi_driver_data	*drv_data;
+>  
+>  	void __iomem			*regs;
+> @@ -822,6 +825,7 @@ static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
+>  	if (gpiod_get_value(hdata->hpd_gpio))
+>  		return connector_status_connected;
+>  
+> +	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
+>  	return connector_status_disconnected;
 >  }
->  #endif /* CONFIG_HOTPLUG_CPU */
->
-> -/**
-> - * exynos_core_power_down : power down the specified cpu
-> +/*
-> + * exynos_core_power_down - power down the specified cpu
->   * @cpu : the cpu to power down
-> - *
-> - * Power down the specified cpu. The sequence must be finished by a
-> - * call to cpu_do_idle()
-> - *
-> + * The sequence must be finished by a call to cpu_do_idle()
->   */
->  void exynos_cpu_power_down(int cpu)
->  {
-> +       if (cpu_info && cpu_info->cpu_power_down)
-> +               cpu_info->cpu_power_down(cpu);
-> +}
+>  
+> @@ -860,6 +864,7 @@ static int hdmi_get_modes(struct drm_connector *connector)
+>  		edid->width_cm, edid->height_cm);
+>  
+>  	drm_mode_connector_update_edid_property(connector, edid);
+> +	cec_notifier_set_phys_addr_from_edid(hdata->notifier, edid);
+>  
+>  	ret = drm_add_edid_modes(connector, edid);
+>  
+> @@ -1503,6 +1508,7 @@ static void hdmi_disable(struct drm_encoder *encoder)
+>  	if (funcs && funcs->disable)
+>  		(*funcs->disable)(crtc);
+>  
+> +	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
+>  	cancel_delayed_work(&hdata->hotplug_work);
+>  
+>  	hdmiphy_disable(hdata);
+> @@ -1878,15 +1884,22 @@ static int hdmi_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> +	hdata->notifier = cec_notifier_get(&pdev->dev);
+> +	if (hdata->notifier == NULL) {
+> +		ret = -ENOMEM;
+> +		goto err_hdmiphy;
+> +	}
 > +
-> +static void exynos_common_cpu_power_down(u32 cpu)
-> +{
->         u32 core_conf;
->
-> -       if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
-> +       core_conf = pmu_raw_readl(EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-> +       core_conf &= ~S5P_CORE_LOCAL_PWR_EN;
-> +       pmu_raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-> +}
-> +
-> +static void exynos5420_cpu_power_down(u32 cpu)
-> +{
-> +       if (cpu == 0) {
->                 /*
->                  * Bypass power down for CPU0 during suspend. Check for
->                  * the SYS_PWR_REG value to decide if we are suspending
-> @@ -116,24 +130,31 @@ void exynos_cpu_power_down(int cpu)
->                         return;
->         }
->
-> -       core_conf = pmu_raw_readl(EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-> -       core_conf &= ~S5P_CORE_LOCAL_PWR_EN;
-> -       pmu_raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-> +       exynos_common_cpu_power_down(cpu);
->  }
->
-> -/**
-> +/*
->   * exynos_cpu_power_up : power up the specified cpu
->   * @cpu : the cpu to power up
-> - *
-> - * Power up the specified cpu
->   */
->  void exynos_cpu_power_up(int cpu)
->  {
-> +       if (cpu_info && cpu_info->cpu_power_up)
-> +               cpu_info->cpu_power_up(cpu);
-> +}
-> +
-> +static void exynos_common_cpu_power_up(u32 cpu)
-> +{
->         u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
-> +       pmu_raw_writel(core_conf,
-> +                       EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-> +}
->
-> -       if (soc_is_exynos3250())
-> -               core_conf |= S5P_CORE_AUTOWAKEUP_EN;
-> +static void exynos3250_cpu_power_up(u32 cpu)
-> +{
-> +       u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
->
-> +       core_conf |= S5P_CORE_AUTOWAKEUP_EN;
-
-Maybe just:
-        core_conf = S5P_CORE_LOCAL_PWR_EN \
-                           | S5P_CORE_AUTOWAKEUP_EN;
-?
-
-Best regards,
-Krzysztof
+>  	pm_runtime_enable(dev);
+>  
+>  	ret = component_add(&pdev->dev, &hdmi_component_ops);
+>  	if (ret)
+> -		goto err_disable_pm_runtime;
+> +		goto err_notifier_put;
+>  
+>  	return ret;
+>  
+> -err_disable_pm_runtime:
+> +err_notifier_put:
+> +	cec_notifier_put(hdata->notifier);
+>  	pm_runtime_disable(dev);
+>  
+>  err_hdmiphy:
+> @@ -1905,9 +1918,11 @@ static int hdmi_remove(struct platform_device *pdev)
+>  	struct hdmi_context *hdata = platform_get_drvdata(pdev);
+>  
+>  	cancel_delayed_work_sync(&hdata->hotplug_work);
+> +	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
+>  
+>  	component_del(&pdev->dev, &hdmi_component_ops);
+>  
+> +	cec_notifier_put(hdata->notifier);
+>  	pm_runtime_disable(&pdev->dev);
+>  
+>  	if (!IS_ERR(hdata->reg_hdmi_en))
