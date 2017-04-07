@@ -1,87 +1,141 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v9 02/12] ARM: EXYNOS: remove usage of soc_is_exynosMMMM
- from pm.c
-Date: Fri, 7 Apr 2017 14:24:12 +0200
-Message-ID: <CAJKOXPf0O_3CZY5terJ7Vtu9yhf6AwD5ACOBuCrpTNa9Etd=5Q@mail.gmail.com>
-References: <CGME20170330131421epcas5p40b0ad9c1003d3ab807667ae2b05d25bc@epcas5p4.samsung.com>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v9 08/12] ARM: EXYNOS: move exynos_boot_vector_{addr,flag}
+ ops to exynos_s2r_data
+Date: Fri, 07 Apr 2017 19:22:50 +0530
+Message-ID: <ef086da4-5994-3f44-5225-69ca469882e0@samsung.com>
+References: <CGME20170330131436epcas1p4a4f8bf7b64b4a5ff9ee692adc4e7d001@epcas1p4.samsung.com>
  <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
- <1490879826-16754-3-git-send-email-pankaj.dubey@samsung.com>
- <CAJKOXPcDO_4JonsxoywQq_D_AcWQsP8NnAsFMw1VsAhOgjLW0g@mail.gmail.com> <6cf529ca-a28a-6757-39aa-5ef2e5391e16@samsung.com>
+ <1490879826-16754-9-git-send-email-pankaj.dubey@samsung.com>
+ <CAJKOXPeFhmcscCX-so5qSx9pdX8oEmC+-283HO+J3vJNvWr_Hg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933605AbdDGMYR (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:49479 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933040AbdDGNth (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 08:24:17 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id DD9E92024D
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 12:24:15 +0000 (UTC)
-Received: from mail-io0-f169.google.com (mail-io0-f169.google.com [209.85.223.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09ACE20279
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 12:24:13 +0000 (UTC)
-Received: by mail-io0-f169.google.com with SMTP id b140so48380257iof.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 05:24:13 -0700 (PDT)
-In-Reply-To: <6cf529ca-a28a-6757-39aa-5ef2e5391e16@samsung.com>
+        Fri, 7 Apr 2017 09:49:37 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OO101APJL2N6890@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Apr 2017 22:49:35 +0900 (KST)
+In-reply-to: <CAJKOXPeFhmcscCX-so5qSx9pdX8oEmC+-283HO+J3vJNvWr_Hg@mail.gmail.com>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "pankaj.dubey" <pankaj.dubey@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Fri, Apr 7, 2017 at 2:12 PM, pankaj.dubey <pankaj.dubey@samsung.com> wrote:
->
->
-> On Friday 07 April 2017 01:54 PM, Krzysztof Kozlowski wrote:
->> On Thu, Mar 30, 2017 at 3:16 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->>> soc_is_exynosMMMM is staged for removal after adopting to exynos-chipid
->>> driver, so let's remove/minimize usage of any such helper function usage
->>> from pm.c.
->>>
->>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->>> ---
->>>  arch/arm/mach-exynos/pm.c                   | 22 ++++++++++++----------
->>>  include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
->>>  2 files changed, 15 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
->>> index 1a7e5b5..4a73b02 100644
->>> --- a/arch/arm/mach-exynos/pm.c
->>> +++ b/arch/arm/mach-exynos/pm.c
->>> @@ -123,11 +123,13 @@ int exynos_pm_central_resume(void)
->>>  }
->>>
->>>  /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
->>> -static void exynos_set_wakeupmask(long mask)
->>> +static void exynos_set_wakeupmask(void)
->>>  {
->>> -       pmu_raw_writel(mask, S5P_WAKEUP_MASK);
->>> -       if (soc_is_exynos3250())
->>> +       if (of_machine_is_compatible("samsung,exynos3250")) {
->>> +               pmu_raw_writel(EXYNOS3_WAKEUP_MASK_VAL, S5P_WAKEUP_MASK);
->>>                 pmu_raw_writel(0x0, S5P_WAKEUP_MASK2);
->>> +       } else
->>> +               pmu_raw_writel(EXYNOS_WAKEUP_MASK_VAL, S5P_WAKEUP_MASK);
->>
->> You need {} around this too. Checkpatch should complain about it as
->> well so be sure to run it.
->>
->
-> I ran checkpatch before posting, but it didn't complain about this. Here
-> is the result when I ran it again today on the same patch.
->
-> ./scripts/checkpatch.pl
-> exynos-chipid-v9/0002-ARM-EXYNOS-remove-usage-of-soc_is_exynosMMMM-from-pm.patch
->
-> total: 0 errors, 0 warnings, 81 lines checked
->
-> exynos-chipid-v9/0002-ARM-EXYNOS-remove-usage-of-soc_is_exynosMMMM-from-pm.patch
-> has no obvious style problems and is ready for submission.
 
-Ahh, okay, my bad. :)
-But anyway please fix it.
 
-Best regards,
-Krzysztof
+On Friday 07 April 2017 04:02 PM, Krzysztof Kozlowski wrote:
+> On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+>> Various Exynos SoC needs different boot addresses and flags. Currently we
+>> are handling this difference by adding lots of soc_is_exynosMMM checks in
+>> the code, in an attempt to remove the dependency of such helper functions
+>> specific to each SoC, let's separate helper functions for these helper
+>> functions by moving them into SoC specific hooks in struct exynos_s2r_data.
+>>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/pm.c | 60 +++++++++++++++++++++++++++++++++++++++--------
+>>  1 file changed, 50 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+>> index fa24098..c3fa537 100644
+>> --- a/arch/arm/mach-exynos/pm.c
+>> +++ b/arch/arm/mach-exynos/pm.c
+>> @@ -32,26 +32,56 @@
+>>  #include "common.h"
+>>
+>>  struct exynos_s2r_data {
+>> +       void __iomem* (*boot_vector_addr)(void);
+>> +       void __iomem* (*boot_vector_flag)(void);
+>>         void (*enter_aftr)(void);
+>>  };
+> 
+> OK, now I see more uses of this structure so the naming could be
+> "exynos_pm_data"?
+
+OK. I will update accordingly.
+
+> 
+>>
+>>  static const struct exynos_s2r_data *s2r_data;
+>>
+>> -static inline void __iomem *exynos_boot_vector_addr(void)
+>> +static void __iomem *exynos_boot_vector_addr(void)
+>> +{
+>> +       if (s2r_data && s2r_data->boot_vector_addr)
+>> +               return s2r_data->boot_vector_addr();
+>> +
+>> +       return NULL;
+>> +}
+>> +
+>> +static inline void __iomem *exynos4210_rev11_boot_vector_addr(void)
+> 
+> Inlines here are mixed up and you are changing them without
+> explanation in commit msg. Previously the exynos_boot_vector_addr()
+> was inlined, now not. Okay, I can accept that but please mention this
+> in commit msg.
+
+OK, let me recheck these inline functions once again.
+
+> But below you are adding new inline functions which are stored as
+> pointers in ops. This looks both inconsistent with above and incorrect
+> from logical point of view. How would you like to inline them if they
+> are referenced through pointer? (okay, compilers are smart and crazy
+> so maybe they can do it but anyway I am curious how this would look
+> like).
+
+Well I am also wondering what was in my mind when I made them inline and
+why I do not get any compilation warning or error?
+
+Just looking for answer, is it OK for inline functions to be used as
+function pointers? I can see it is allowed and compilers won't complain
+as 'inline' specifier is just hint for compiler and they may or may not
+make them inline. Here also as you pointed out probably compilers will
+take care and not make them inline.
+
+I further checked with 'nm' command on pm.o file I can see even these
+inline marked functions are present in symbol listing so looks they have
+not been really inlined by compiler.
+
+I will update this in next patchset.
+
+> 
+>> +{
+>> +       return pmu_base_addr + S5P_INFORM7;
+>> +}
+>> +
+>> +static inline void __iomem *exynos4210_rev10_boot_vector_addr(void)
+>> +{
+>> +       return sysram_base_addr + 0x24;
+>> +}
+>> +
+>> +static inline void __iomem *exynos_common_boot_vector_addr(void)
+>>  {
+>> -       if (samsung_rev() == EXYNOS4210_REV_1_1)
+>> -               return pmu_base_addr + S5P_INFORM7;
+>> -       else if (samsung_rev() == EXYNOS4210_REV_1_0)
+>> -               return sysram_base_addr + 0x24;
+>>         return pmu_base_addr + S5P_INFORM0;
+>>  }
+>>
+>> -static inline void __iomem *exynos_boot_vector_flag(void)
+>> +static void __iomem *exynos_boot_vector_flag(void)
+> 
+> ditto for the flag.
+> 
+
+This also I will take care in next patchset.
+
+Thanks,
+Pankaj Dubey
+> Best regards,
+> Krzysztof
+> 
+> 
+> 
