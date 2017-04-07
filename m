@@ -1,80 +1,119 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v9 09/12] ARM: EXYNOS: introduce exynos_cpu_info struct
-Date: Fri, 7 Apr 2017 12:47:39 +0200
-Message-ID: <CAJKOXPddiZ3i9WgW3deg3pQ1CsbxuK1=HtO_DdT-VebTbREKxQ@mail.gmail.com>
-References: <CGME20170330131438epcas1p459ce93da17fcd05249eddaef18d5021e@epcas1p4.samsung.com>
- <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-10-git-send-email-pankaj.dubey@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
+Date: Fri, 7 Apr 2017 13:40:46 +0200
+Message-ID: <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
+References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
+ <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
+ <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
+ <58E7472C.3030503@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:59010 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751759AbdDGKro (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:58544 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932165AbdDGLku (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 06:47:44 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id 0B04B202A1
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 10:47:43 +0000 (UTC)
-Received: from mail-it0-f43.google.com (mail-it0-f43.google.com [209.85.214.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D715920274
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 10:47:40 +0000 (UTC)
-Received: by mail-it0-f43.google.com with SMTP id a140so40695390ita.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 03:47:40 -0700 (PDT)
-In-Reply-To: <1490879826-16754-10-git-send-email-pankaj.dubey@samsung.com>
+        Fri, 7 Apr 2017 07:40:50 -0400
+In-Reply-To: <58E7472C.3030503@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> Various Exynos SoC has different CPU related information, such as CPU
-> boot register, programming sequence making CPU up/down. Currently this
-> is handled by adding lots of soc_is_exynosMMM checks in the code, in
-> an attempt to remove the dependency of such helper functions specific to
-> each SoC, let's separate this information pertaining to CPU by introducing
-> a new "struct exynos_cpu_info". This struct will contain differences
-> associated with CPU on various Exynos SoC. This can be matched by using
-> generic API "soc_device_match".
->
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  arch/arm/mach-exynos/platsmp.c | 146 +++++++++++++++++++++++++++++++++++++----
->  1 file changed, 135 insertions(+), 11 deletions(-)
+Hello Inki,
 
-(...)
 
->  static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
->  {
->         unsigned long timeout;
-> +       const struct soc_device_attribute *match;
->         u32 mpidr = cpu_logical_map(cpu);
->         u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
->         int ret = -ENOSYS;
->
-> +       if (of_machine_is_compatible("samsung,exynos4210")) {
-> +               match = soc_device_match(exynos_soc_revision);
-> +               if (match)
-> +                       cpu_info = (const struct exynos_cpu_info *) match->data;
-> +       }
-> +
->         /*
->          * Set synchronisation state between this boot processor
->          * and the secondary one
-> @@ -387,6 +499,18 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
->
->  static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
->  {
-> +       const struct of_device_id *match;
-> +       struct device_node *np;
-> +
-> +       if (!of_machine_is_compatible("samsung,exynos4210")) {
+Inki Dae wrote:
+> Hello Tobias,
+> 
+> 
+> 2017년 04월 07일 02:10에 Tobias Jakobi 이(가) 쓴 글:
+>> Hello Inki,
+>>
+>>
+>> Inki Dae wrote:
+>>> This patch removes unnecessary descriptions on
+>>> exynos_drm_crtc structure and adds one description
+>>> which specifies what pipe_clk member does.
+>>>
+>>> pipe_clk support had been added by below patch without any description,
+>>> 	 drm/exynos: add support for pipeline clock to the framework
+>> I would put the commit id here. That makes it easier to look up the
+>> commit your refer to.
+>>
+>>
+>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>>> ---
+>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h | 6 ++----
+>>>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>> index 527bf1d..b0462cc 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>> @@ -152,12 +152,10 @@ struct exynos_drm_clk {
+>>>   *
+>>>   * @base: crtc object.
+>>>   * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
+>>> - * @enabled: if the crtc is enabled or not
+>>> - * @event: vblank event that is currently queued for flip
+>>> - * @wait_update: wait all pending planes updates to finish
+>>> - * @pending_update: number of pending plane updates in this crtc
+>>>   * @ops: pointer to callbacks for exynos drm specific functionality
+>>>   * @ctx: A pointer to the crtc's implementation specific context
+>>> + * @pipe_clk: A pipe clock structure which includes a callback function
+>>> +	      for enabling DP clock of FIMD and HDMI PHY clock.
+>> This is wrong/inconsistent with the rest of the documentation. pipe_clk
+>> is not a struct, but a pointer.
+>>
+>> I would suggest to follow. Just document that we have a pointer to <add
+>> escription> here (compare docu for 'ops' and 'ctx').
+>> And then put the later bits ("...callback function for enabling DP
+>> clock...") directly to the definition of 'struct exynos_drm_clk' (which
+>> is currently lacking any kind of docu).
+> 
+> Thanks for pointing it out. My mistake. :)
+> 
+> How about this simply?
+> "A pointer to exynos_drm_clk structure for enabling and disabling DP clock of FIMD and HDMI PHY clocks"
+Not what I meant. You're describing 'struct exynos_drm_clk', and that
+does not belong here. If you describe 'struct exynos_drm_clk', then this
+should go in front of the struct's definition.
 
-This differentiation is unnatural. It looks like the chipid
-soc_device_match driver is not simplifying things but complicating.
-Maybe the solution I mentioned in previous mails (initialize these in
-proper order from some of machine init calls) would simplify it...
+How abouting something like this in front of the struct's definition::
+> /*
+>  * Exynos DRM pipeline clock structure.
+>  *
+>  * @enable: callback to enable/disable the clock.
+>  *
+>  * Used for proper clock synchronization of components belonging
+>  * to the same pipeline. Used e.g. for enabling the DP clock of
+>  * the FIMD or the HDMI PHY clock.
+>  */
+> struct exynos_drm_clk {
+> <snip>
 
-Best regards,
-Krzysztof
+For 'pipe_clk' I would just go with this:
+> @pipe_clk: A pointet to the crtc's pipeline clock. 
+
+I hope this helps.
+
+- Tobias
+
+
+> Thanks,
+> Inki Dae
+> 
+>>
+>>
+>> - Tobias
+>>
+>>>   */
+>>>  struct exynos_drm_crtc {
+>>>  	struct drm_crtc			base;
+>>>
+>>
+>>
+>>
+>>
