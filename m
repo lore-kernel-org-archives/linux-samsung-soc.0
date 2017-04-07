@@ -1,25 +1,27 @@
 From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v9 09/12] ARM: EXYNOS: introduce exynos_cpu_info struct
-Date: Fri, 7 Apr 2017 19:30:44 +0530
-Message-ID: <125999ed-afae-cd46-aae3-3139c7e94b02@samsung.com>
-References: <CGME20170330131438epcas1p459ce93da17fcd05249eddaef18d5021e@epcas1p4.samsung.com>
-        <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
-        <1490879826-16754-10-git-send-email-pankaj.dubey@samsung.com>
-        <CAJKOXPdWo_3Og-NuPRnzC3FgF2mGZup6+BC1_=9CUW-3dTz99w@mail.gmail.com>
+Subject: Re: [PATCH v9 07/12] ARM: EXYNOS: introduce soc specific pm ops
+Date: Fri, 07 Apr 2017 19:41:19 +0530
+Message-ID: <fc69a6fa-7cb2-478b-b346-c59039c2b8da@samsung.com>
+References: <CGME20170330131434epcas1p4e42fe06bae3456c39e0f93a2f8ae4bc0@epcas1p4.samsung.com>
+ <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
+ <1490879826-16754-8-git-send-email-pankaj.dubey@samsung.com>
+ <CAJKOXPckh9C-mSq5NsJJfSW-brs6=wTDuctkD2EbtQOjKOQgbg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37111 "EHLO
-        epoutp01.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933216AbdDGN5a (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:42223 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932178AbdDGOIb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 09:57:30 -0400
+        Fri, 7 Apr 2017 10:08:31 -0400
 Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by epoutp01.samsung.com (KnoxPortal) with ESMTP id 20170407135728epoutp0123e96ed6204889e53500557bddbbd4ee~zIiYMDGcV0082400824epoutp01P
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 13:57:28 +0000 (GMT)
-In-Reply-To: <CAJKOXPdWo_3Og-NuPRnzC3FgF2mGZup6+BC1_=9CUW-3dTz99w@mail.gmail.com>
-Content-Language: en-US
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OO1019A3LY5NPA0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Apr 2017 23:08:29 +0900 (KST)
+In-reply-to: <CAJKOXPckh9C-mSq5NsJJfSW-brs6=wTDuctkD2EbtQOjKOQgbg@mail.gmail.com>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
@@ -27,270 +29,231 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arn
 
 
 
-On Friday 07 April 2017 04:11 PM, Krzysztof Kozlowski wrote:
+On Friday 07 April 2017 02:54 PM, Krzysztof Kozlowski wrote:
 > On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->> Various Exynos SoC has different CPU related information, such as CPU
->> boot register, programming sequence making CPU up/down. Currently this
->> is handled by adding lots of soc_is_exynosMMM checks in the code, in
->> an attempt to remove the dependency of such helper functions specific to
->> each SoC, let's separate this information pertaining to CPU by introducing
->> a new "struct exynos_cpu_info". This struct will contain differences
->> associated with CPU on various Exynos SoC. This can be matched by using
->> generic API "soc_device_match".
+>> For s2r various Exynos SoC needs different programming sequence and data.
+> 
+> This is not S2R so:
+> "Sleep modes on various Exynos SoCs need..."
+
+OK.
+> 
+>> Currently this is handled by adding lots of soc_is_exynosMMM checks in the
+>> code, in an attempt to remove the dependency of such helper functions
+> "code." full stop.
+> 
+>> specific to each SoC, let's separate these programming sequence by
+>> introducing a new struct exynos_s2r_data. This struct will contain
+> 
+> If you plan to extend it to all sleep modes, then:
+> "exynos_sleep_data"? But if not, then just "exynos_aftr_data" or
+> "exynos_cpuidle_data" as this is real use for now.
+
+As you suggested in patch 08/12, I will use exynos_pm_data.
+
+> 
+>> different function hooks and data for differentiating these programming
+>> sequences based on SoC's soc_id and revision parameters which can be
+>> matched by using generic API "soc_device_match".
 >>
 >> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 >> ---
->>  arch/arm/mach-exynos/platsmp.c | 146 +++++++++++++++++++++++++++++++++++++----
->>  1 file changed, 135 insertions(+), 11 deletions(-)
+>>  arch/arm/mach-exynos/pm.c | 122 +++++++++++++++++++++++++++++++++++++++++++---
+>>  1 file changed, 116 insertions(+), 6 deletions(-)
 >>
->> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
->> index cb6d199..ff369b9 100644
->> --- a/arch/arm/mach-exynos/platsmp.c
->> +++ b/arch/arm/mach-exynos/platsmp.c
->> @@ -19,6 +19,7 @@
->>  #include <linux/smp.h>
->>  #include <linux/io.h>
->>  #include <linux/of_address.h>
->> +#include <linux/sys_soc.h>
+>> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+>> index 4a73b02..fa24098 100644
+>> --- a/arch/arm/mach-exynos/pm.c
+>> +++ b/arch/arm/mach-exynos/pm.c
+>> @@ -20,6 +20,7 @@
+>>  #include <linux/of.h>
 >>  #include <linux/soc/samsung/exynos-regs-pmu.h>
+>>  #include <linux/soc/samsung/exynos-pmu.h>
+>> +#include <linux/sys_soc.h>
 >>
->>  #include <asm/cacheflush.h>
->> @@ -33,6 +34,16 @@
+>>  #include <asm/firmware.h>
+>>  #include <asm/smp_scu.h>
+>> @@ -30,6 +31,12 @@
 >>
->>  extern void exynos4_secondary_startup(void);
+>>  #include "common.h"
 >>
->> +/*
->> + * struct exynos_cpu_info - Exynos CPU related info/operations
->> + * @cpu_boot_reg: computes cpu boot address for requested cpu
->> + */
->> +struct exynos_cpu_info {
->> +       void __iomem* (*cpu_boot_reg)(u32 cpu);
+>> +struct exynos_s2r_data {
+> 
+> Rename all "s2r" occurrences to appropriate name.
+
+OK.
+
+> 
+>> +       void (*enter_aftr)(void);
 >> +};
+>> +
+>> +static const struct exynos_s2r_data *s2r_data;
+>> +
+>>  static inline void __iomem *exynos_boot_vector_addr(void)
+>>  {
+>>         if (samsung_rev() == EXYNOS4210_REV_1_1)
+>> @@ -160,13 +167,26 @@ static int exynos_aftr_finisher(unsigned long flags)
+>>
+>>  void exynos_enter_aftr(void)
+>>  {
+>> +       if (s2r_data && s2r_data->enter_aftr)
+>> +               s2r_data->enter_aftr();
+>> +}
+>> +
+>> +static void exynos3_enter_aftr(void)
+>> +{
+>>         unsigned int cpuid = smp_processor_id();
+>>
+>>         cpu_pm_enter();
+>> +       exynos_set_boot_flag(cpuid, C2_STATE);
+>> +       exynos_pm_central_suspend();
+>> +       cpu_suspend(0, exynos_aftr_finisher);
+>> +       exynos_pm_central_resume();
+>> +       exynos_clear_boot_flag(cpuid, C2_STATE);
+>> +       cpu_pm_exit();
+>> +}
+>>
+>> -       if (of_machine_is_compatible("samsung,exynos3250"))
+>> -               exynos_set_boot_flag(cpuid, C2_STATE);
+>> -
+>> +static void exynos4_enter_aftr(void)
+>> +{
+>> +       cpu_pm_enter();
+>>         exynos_pm_central_suspend();
+>>
+>>         if (of_machine_is_compatible("samsung,exynos4212") ||
+>> @@ -185,13 +205,103 @@ void exynos_enter_aftr(void)
+>>         }
+>>
+>>         exynos_pm_central_resume();
+>> +       cpu_pm_exit();
+>> +}
+>>
+>> -       if (of_machine_is_compatible("samsung,exynos3250"))
+>> -               exynos_clear_boot_flag(cpuid, C2_STATE);
+>> -
+>> +static void exynos5_enter_aftr(void)
+>> +{
+>> +       cpu_pm_enter();
+>> +       exynos_pm_central_suspend();
+>> +       cpu_suspend(0, exynos_aftr_finisher);
+>> +       exynos_pm_central_resume();
+>>         cpu_pm_exit();
+>>  }
+>>
+>> +static const struct exynos_s2r_data exynos_common_s2r_data = {
+>> +       .enter_aftr             = exynos5_enter_aftr,
+>> +};
+>> +
+>> +static const struct exynos_s2r_data exynos3250_s2r_data = {
+>> +       .enter_aftr             = exynos3_enter_aftr,
+>> +};
+>> +
+>> +static const struct exynos_s2r_data exynos4210_rev11_s2r_data = {
+>> +       .enter_aftr             = exynos4_enter_aftr,
+>> +};
+>> +
+>> +static const struct exynos_s2r_data exynos4210_rev10_s2r_data = {
+>> +       .enter_aftr             = exynos4_enter_aftr,
+>> +};
+>> +
+>> +static const struct exynos_s2r_data exynos4x12_s2r_data = {
+>> +       .enter_aftr             = exynos4_enter_aftr,
+>> +};
+>> +
+>> +static const struct soc_device_attribute exynos_soc_revision[] __initconst = {
+>> +       {
+>> +               .soc_id = "EXYNOS3250",
+>> +               .data = &exynos3250_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS4210",
+>> +               .revision = "11",
+>> +               .data = &exynos4210_rev11_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS4210",
+>> +               .revision = "10",
+>> +               .data = &exynos4210_rev10_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS4212",
+>> +               .data = &exynos4x12_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS4412",
+>> +               .data = &exynos4x12_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS5250",
+>> +               .data = &exynos_common_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS5260",
+>> +               .data = &exynos_common_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS5440",
+>> +               .data = &exynos_common_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS5410",
+>> +               .data = &exynos_common_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS5420",
+>> +               .data = &exynos_common_s2r_data
+>> +       },
+>> +       {
+>> +               .soc_id = "EXYNOS5800",
+>> +               .data = &exynos_common_s2r_data
+>> +       },
+>> +};
+>> +
+>> +int __init exynos_s2r_init(void)
+>> +{
+>> +       const struct soc_device_attribute *match;
+>> +
+>> +       match = soc_device_match(exynos_soc_revision);
+>> +
+>> +       if (match)
+>> +               s2r_data = (const struct exynos_s2r_data *) match->data;
+>> +
+>> +       if (!s2r_data)
+>> +               return -ENODEV;
+>> +
+>> +       return 0;
+>> +}
+>> +arch_initcall(exynos_s2r_init);
+>> +
 > 
-> Beside Marek comments, I think we are getting too many structures for
-> differentiating Exynos. Actually all of them describe the same -
-> difference between Exynos revisions. Having many separate structures
-> means that you have to initialize all of them in different places in
-> different (probably) order. The good benefit is however making them
-> local (static) so the scope is limited... but anyway I dislike the
-> duplication.
+> I guess you already found possible probe-order issue. You should
+> register all of this after having the soc chipid driver. However it is
+> required by cpuidle driver which is being registered in machine_init()
+> call....  You cannot use deferred probe here, so maybe the only way is
+> to manually order the calls in machine_init():
+> 1. exynos_chipid_early_init()
+> 2. this one.
+> 3. cpuidle driver register.
 > 
 
-OK, regarding duplication, only the way they are initialized is getting
-duplicated. But again, my long term goal was to remove dependency of
-pm.c and suspend.c from arm/mach-exynos/{exynos.c,platsmp.c} or common.h
-in mach-exynos. So that we could move these files as a Exynos Power
-Management driver in drivers/soc/ where we already moved pm_domain.c, as
-you see these three files pm.c, suspend.c and pm_domain.c are heavily
-dependent on PMU driver, and handles Power Management states.
+exynos_s2r_init is not required during early stage of boot, so as Arnd
+suggested I can drop arch_initcall here and probably go for
 
-So I feel keeping CPU specific data separate from PM specific data makes
-sense and will help in moving these files as a platform driver one day?
+1: late_init
+2: Call this directly from machine_init
 
-Surely I will work out and see how I can minimize duplication.
+I prefer first option, as I mentioned my long term plan to move these
+files out of arch/arm/mach-exynos/ and if I call it from mach-exynos,
+then while moving I have to make this function as export symbol or make
+it extern so that mach-exynos/exynos.c should be able to access it. Both
+of these approaches have been rejected in past. What do you say?
 
 
 Thanks,
 Pankaj Dubey
-
-> How about combining all of them into one (except the firmware which
-> has its own register function):
-> 
-> struct exynos_revision_data {
-> void __iomem* (*boot_vector_addr)(void);
-> void __iomem* (*boot_vector_flag)(void);
-> void (*enter_aftr)(void);
-> void __iomem* (*cpu_boot_reg)(u32 cpu);
-> void (*cpu_power_down)(u32 cpu);
-> void (*cpu_power_up)(u32 cpu);
-> };
-> 
 > Best regards,
 > Krzysztof
-> 
-> 
->> +
->> +static const struct exynos_cpu_info *cpu_info;
->> +
->>  #ifdef CONFIG_HOTPLUG_CPU
->>  static inline void cpu_leave_lowpower(u32 core_id)
->>  {
->> @@ -168,27 +179,57 @@ int exynos_cluster_power_state(int cluster)
->>                 S5P_CORE_LOCAL_PWR_EN);
->>  }
->>
->> -static void __iomem *cpu_boot_reg_base(void)
->> +static void __iomem *exynos4210_rev11_cpu_boot_reg(u32 cpu)
->>  {
->> -       if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
->> -               return pmu_base_addr + S5P_INFORM5;
->> -       return sysram_base_addr;
->> +       void __iomem *boot_reg = pmu_base_addr;
->> +
->> +       if (!boot_reg)
->> +               return IOMEM_ERR_PTR(-ENODEV);
->> +
->> +       boot_reg += S5P_INFORM5;
->> +
->> +       return boot_reg;
->>  }
->>
->> -static inline void __iomem *cpu_boot_reg(int cpu)
->> +static void __iomem *exynos4412_cpu_boot_reg(u32 cpu)
->>  {
->> -       void __iomem *boot_reg;
->> +       void __iomem *boot_reg = sysram_base_addr;
->>
->> -       boot_reg = cpu_boot_reg_base();
->>         if (!boot_reg)
->>                 return IOMEM_ERR_PTR(-ENODEV);
->> -       if (soc_is_exynos4412())
->> -               boot_reg += 4*cpu;
->> -       else if (soc_is_exynos5420() || soc_is_exynos5800())
->> -               boot_reg += 4;
->> +
->> +       boot_reg += 4*cpu;
->> +
->>         return boot_reg;
->>  }
->>
->> +static void __iomem *exynos5420_cpu_boot_reg(u32 cpu)
->> +{
->> +       void __iomem *boot_reg = sysram_base_addr;
->> +
->> +       if (!sysram_base_addr)
->> +               return IOMEM_ERR_PTR(-ENODEV);
->> +
->> +       boot_reg += 4;
->> +
->> +       return boot_reg;
->> +}
->> +
->> +static void __iomem *exynos_common_cpu_boot_reg(u32 cpu)
->> +{
->> +       if (!sysram_base_addr)
->> +               return IOMEM_ERR_PTR(-ENODEV);
->> +
->> +       return sysram_base_addr;
->> +}
->> +
->> +static inline void __iomem *cpu_boot_reg(int cpu)
->> +{
->> +       if (cpu_info && cpu_info->cpu_boot_reg)
->> +               return cpu_info->cpu_boot_reg(cpu);
->> +       return NULL;
->> +}
->> +
->>  /*
->>   * Set wake up by local power mode and execute software reset for given core.
->>   *
->> @@ -296,13 +337,84 @@ int exynos_get_boot_addr(u32 core_id, unsigned long *boot_addr)
->>         return ret;
->>  }
->>
->> +static const struct exynos_cpu_info exynos3250_cpu_info = {
->> +       .cpu_boot_reg = exynos_common_cpu_boot_reg,
->> +};
->> +
->> +static const struct exynos_cpu_info exynos5420_cpu_info = {
->> +       .cpu_boot_reg = exynos5420_cpu_boot_reg,
->> +};
->> +
->> +static const struct exynos_cpu_info exynos4210_rev11_cpu_info = {
->> +       .cpu_boot_reg = exynos4210_rev11_cpu_boot_reg,
->> +};
->> +
->> +static const struct exynos_cpu_info exynos4412_cpu_info = {
->> +       .cpu_boot_reg = exynos4412_cpu_boot_reg,
->> +};
->> +
->> +static const struct exynos_cpu_info exynos_common_cpu_info = {
->> +       .cpu_boot_reg = exynos_common_cpu_boot_reg,
->> +};
->> +
->> +static const struct soc_device_attribute exynos_soc_revision[] = {
->> +       {
->> +               .soc_id = "EXYNOS4210",
->> +               .revision = "11",
->> +               .data = &exynos4210_rev11_cpu_info
->> +       }, {
->> +               .soc_id = "EXYNOS4210",
->> +               .revision = "10",
->> +               .data = &exynos_common_cpu_info
->> +       }
->> +};
->> +
->> +static const struct of_device_id exynos_pmu_of_device_ids[] __initconst = {
->> +       {
->> +               .compatible = "samsung,exynos3250",
->> +               .data = &exynos3250_cpu_info
->> +       }, {
->> +               .compatible = "samsung,exynos4212",
->> +               .data = &exynos_common_cpu_info
->> +       }, {
->> +               .compatible = "samsung,exynos4412",
->> +               .data = &exynos4412_cpu_info
->> +       }, {
->> +               .compatible = "samsung,exynos5250",
->> +               .data = &exynos_common_cpu_info
->> +       }, {
->> +               .compatible = "samsung,exynos5260",
->> +               .data = &exynos_common_cpu_info
->> +       }, {
->> +               .compatible = "samsung,exynos5410",
->> +               .data = &exynos_common_cpu_info
->> +       }, {
->> +               .compatible = "samsung,exynos5420",
->> +               .data = &exynos5420_cpu_info
->> +       }, {
->> +               .compatible = "samsung,exynos5440",
->> +               .data = &exynos_common_cpu_info
->> +       }, {
->> +               .compatible = "samsung,exynos5800",
->> +               .data = &exynos5420_cpu_info
->> +       },
->> +       { /*sentinel*/ },
->> +};
->> +
->>  static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
->>  {
->>         unsigned long timeout;
->> +       const struct soc_device_attribute *match;
->>         u32 mpidr = cpu_logical_map(cpu);
->>         u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
->>         int ret = -ENOSYS;
->>
->> +       if (of_machine_is_compatible("samsung,exynos4210")) {
->> +               match = soc_device_match(exynos_soc_revision);
->> +               if (match)
->> +                       cpu_info = (const struct exynos_cpu_info *) match->data;
->> +       }
->> +
->>         /*
->>          * Set synchronisation state between this boot processor
->>          * and the secondary one
->> @@ -387,6 +499,18 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
->>
->>  static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
->>  {
->> +       const struct of_device_id *match;
->> +       struct device_node *np;
->> +
->> +       if (!of_machine_is_compatible("samsung,exynos4210")) {
->> +               np = of_find_matching_node_and_match(NULL,
->> +                               exynos_pmu_of_device_ids, &match);
->> +               if (!np)
->> +                       pr_err("failed to find supported CPU\n");
->> +               else
->> +                       cpu_info = (const struct exynos_cpu_info *) match->data;
->> +       }
->> +
->>         exynos_sysram_init();
->>
->>         exynos_set_delayed_reset_assertion(true);
->> --
->> 2.7.4
->>
 > 
 > 
 > 
