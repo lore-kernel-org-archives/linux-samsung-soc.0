@@ -1,230 +1,109 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v9 07/12] ARM: EXYNOS: introduce soc specific pm ops
-Date: Fri, 7 Apr 2017 11:24:18 +0200
-Message-ID: <CAJKOXPckh9C-mSq5NsJJfSW-brs6=wTDuctkD2EbtQOjKOQgbg@mail.gmail.com>
-References: <CGME20170330131434epcas1p4e42fe06bae3456c39e0f93a2f8ae4bc0@epcas1p4.samsung.com>
- <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-8-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v9 08/12] ARM: EXYNOS: move exynos_boot_vector_{addr,flag}
+ ops to exynos_s2r_data
+Date: Fri, 7 Apr 2017 12:32:48 +0200
+Message-ID: <CAJKOXPeFhmcscCX-so5qSx9pdX8oEmC+-283HO+J3vJNvWr_Hg@mail.gmail.com>
+References: <CGME20170330131436epcas1p4a4f8bf7b64b4a5ff9ee692adc4e7d001@epcas1p4.samsung.com>
+ <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-9-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:46648 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:56294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932563AbdDGJYX (ORCPT
+        id S1753754AbdDGKcx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 05:24:23 -0400
+        Fri, 7 Apr 2017 06:32:53 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id 35EA12022D
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 09:24:22 +0000 (UTC)
-Received: from mail-it0-f50.google.com (mail-it0-f50.google.com [209.85.214.50])
+        by mail.kernel.org (Postfix) with ESMTP id E109120260
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 10:32:51 +0000 (UTC)
+Received: from mail-it0-f44.google.com (mail-it0-f44.google.com [209.85.214.44])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91C8720274
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 09:24:19 +0000 (UTC)
-Received: by mail-it0-f50.google.com with SMTP id a140so39868595ita.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 02:24:19 -0700 (PDT)
-In-Reply-To: <1490879826-16754-8-git-send-email-pankaj.dubey@samsung.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 8658A2025B
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 10:32:49 +0000 (UTC)
+Received: by mail-it0-f44.google.com with SMTP id a140so40552972ita.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 03:32:49 -0700 (PDT)
+In-Reply-To: <1490879826-16754-9-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
 On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> For s2r various Exynos SoC needs different programming sequence and data.
-
-This is not S2R so:
-"Sleep modes on various Exynos SoCs need..."
-
-> Currently this is handled by adding lots of soc_is_exynosMMM checks in the
-> code, in an attempt to remove the dependency of such helper functions
-"code." full stop.
-
-> specific to each SoC, let's separate these programming sequence by
-> introducing a new struct exynos_s2r_data. This struct will contain
-
-If you plan to extend it to all sleep modes, then:
-"exynos_sleep_data"? But if not, then just "exynos_aftr_data" or
-"exynos_cpuidle_data" as this is real use for now.
-
-> different function hooks and data for differentiating these programming
-> sequences based on SoC's soc_id and revision parameters which can be
-> matched by using generic API "soc_device_match".
+> Various Exynos SoC needs different boot addresses and flags. Currently we
+> are handling this difference by adding lots of soc_is_exynosMMM checks in
+> the code, in an attempt to remove the dependency of such helper functions
+> specific to each SoC, let's separate helper functions for these helper
+> functions by moving them into SoC specific hooks in struct exynos_s2r_data.
 >
 > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
->  arch/arm/mach-exynos/pm.c | 122 +++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 116 insertions(+), 6 deletions(-)
+>  arch/arm/mach-exynos/pm.c | 60 +++++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 50 insertions(+), 10 deletions(-)
 >
 > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index 4a73b02..fa24098 100644
+> index fa24098..c3fa537 100644
 > --- a/arch/arm/mach-exynos/pm.c
 > +++ b/arch/arm/mach-exynos/pm.c
-> @@ -20,6 +20,7 @@
->  #include <linux/of.h>
->  #include <linux/soc/samsung/exynos-regs-pmu.h>
->  #include <linux/soc/samsung/exynos-pmu.h>
-> +#include <linux/sys_soc.h>
->
->  #include <asm/firmware.h>
->  #include <asm/smp_scu.h>
-> @@ -30,6 +31,12 @@
->
+> @@ -32,26 +32,56 @@
 >  #include "common.h"
 >
-> +struct exynos_s2r_data {
+>  struct exynos_s2r_data {
+> +       void __iomem* (*boot_vector_addr)(void);
+> +       void __iomem* (*boot_vector_flag)(void);
+>         void (*enter_aftr)(void);
+>  };
 
-Rename all "s2r" occurrences to appropriate name.
+OK, now I see more uses of this structure so the naming could be
+"exynos_pm_data"?
 
-> +       void (*enter_aftr)(void);
-> +};
+>
+>  static const struct exynos_s2r_data *s2r_data;
+>
+> -static inline void __iomem *exynos_boot_vector_addr(void)
+> +static void __iomem *exynos_boot_vector_addr(void)
+> +{
+> +       if (s2r_data && s2r_data->boot_vector_addr)
+> +               return s2r_data->boot_vector_addr();
 > +
-> +static const struct exynos_s2r_data *s2r_data;
+> +       return NULL;
+> +}
 > +
->  static inline void __iomem *exynos_boot_vector_addr(void)
+> +static inline void __iomem *exynos4210_rev11_boot_vector_addr(void)
+
+Inlines here are mixed up and you are changing them without
+explanation in commit msg. Previously the exynos_boot_vector_addr()
+was inlined, now not. Okay, I can accept that but please mention this
+in commit msg.
+But below you are adding new inline functions which are stored as
+pointers in ops. This looks both inconsistent with above and incorrect
+from logical point of view. How would you like to inline them if they
+are referenced through pointer? (okay, compilers are smart and crazy
+so maybe they can do it but anyway I am curious how this would look
+like).
+
+> +{
+> +       return pmu_base_addr + S5P_INFORM7;
+> +}
+> +
+> +static inline void __iomem *exynos4210_rev10_boot_vector_addr(void)
+> +{
+> +       return sysram_base_addr + 0x24;
+> +}
+> +
+> +static inline void __iomem *exynos_common_boot_vector_addr(void)
 >  {
->         if (samsung_rev() == EXYNOS4210_REV_1_1)
-> @@ -160,13 +167,26 @@ static int exynos_aftr_finisher(unsigned long flags)
->
->  void exynos_enter_aftr(void)
->  {
-> +       if (s2r_data && s2r_data->enter_aftr)
-> +               s2r_data->enter_aftr();
-> +}
-> +
-> +static void exynos3_enter_aftr(void)
-> +{
->         unsigned int cpuid = smp_processor_id();
->
->         cpu_pm_enter();
-> +       exynos_set_boot_flag(cpuid, C2_STATE);
-> +       exynos_pm_central_suspend();
-> +       cpu_suspend(0, exynos_aftr_finisher);
-> +       exynos_pm_central_resume();
-> +       exynos_clear_boot_flag(cpuid, C2_STATE);
-> +       cpu_pm_exit();
-> +}
->
-> -       if (of_machine_is_compatible("samsung,exynos3250"))
-> -               exynos_set_boot_flag(cpuid, C2_STATE);
-> -
-> +static void exynos4_enter_aftr(void)
-> +{
-> +       cpu_pm_enter();
->         exynos_pm_central_suspend();
->
->         if (of_machine_is_compatible("samsung,exynos4212") ||
-> @@ -185,13 +205,103 @@ void exynos_enter_aftr(void)
->         }
->
->         exynos_pm_central_resume();
-> +       cpu_pm_exit();
-> +}
->
-> -       if (of_machine_is_compatible("samsung,exynos3250"))
-> -               exynos_clear_boot_flag(cpuid, C2_STATE);
-> -
-> +static void exynos5_enter_aftr(void)
-> +{
-> +       cpu_pm_enter();
-> +       exynos_pm_central_suspend();
-> +       cpu_suspend(0, exynos_aftr_finisher);
-> +       exynos_pm_central_resume();
->         cpu_pm_exit();
+> -       if (samsung_rev() == EXYNOS4210_REV_1_1)
+> -               return pmu_base_addr + S5P_INFORM7;
+> -       else if (samsung_rev() == EXYNOS4210_REV_1_0)
+> -               return sysram_base_addr + 0x24;
+>         return pmu_base_addr + S5P_INFORM0;
 >  }
 >
-> +static const struct exynos_s2r_data exynos_common_s2r_data = {
-> +       .enter_aftr             = exynos5_enter_aftr,
-> +};
-> +
-> +static const struct exynos_s2r_data exynos3250_s2r_data = {
-> +       .enter_aftr             = exynos3_enter_aftr,
-> +};
-> +
-> +static const struct exynos_s2r_data exynos4210_rev11_s2r_data = {
-> +       .enter_aftr             = exynos4_enter_aftr,
-> +};
-> +
-> +static const struct exynos_s2r_data exynos4210_rev10_s2r_data = {
-> +       .enter_aftr             = exynos4_enter_aftr,
-> +};
-> +
-> +static const struct exynos_s2r_data exynos4x12_s2r_data = {
-> +       .enter_aftr             = exynos4_enter_aftr,
-> +};
-> +
-> +static const struct soc_device_attribute exynos_soc_revision[] __initconst = {
-> +       {
-> +               .soc_id = "EXYNOS3250",
-> +               .data = &exynos3250_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS4210",
-> +               .revision = "11",
-> +               .data = &exynos4210_rev11_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS4210",
-> +               .revision = "10",
-> +               .data = &exynos4210_rev10_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS4212",
-> +               .data = &exynos4x12_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS4412",
-> +               .data = &exynos4x12_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5250",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5260",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5440",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5410",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5420",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +       {
-> +               .soc_id = "EXYNOS5800",
-> +               .data = &exynos_common_s2r_data
-> +       },
-> +};
-> +
-> +int __init exynos_s2r_init(void)
-> +{
-> +       const struct soc_device_attribute *match;
-> +
-> +       match = soc_device_match(exynos_soc_revision);
-> +
-> +       if (match)
-> +               s2r_data = (const struct exynos_s2r_data *) match->data;
-> +
-> +       if (!s2r_data)
-> +               return -ENODEV;
-> +
-> +       return 0;
-> +}
-> +arch_initcall(exynos_s2r_init);
-> +
+> -static inline void __iomem *exynos_boot_vector_flag(void)
+> +static void __iomem *exynos_boot_vector_flag(void)
 
-I guess you already found possible probe-order issue. You should
-register all of this after having the soc chipid driver. However it is
-required by cpuidle driver which is being registered in machine_init()
-call....  You cannot use deferred probe here, so maybe the only way is
-to manually order the calls in machine_init():
-1. exynos_chipid_early_init()
-2. this one.
-3. cpuidle driver register.
+ditto for the flag.
 
 Best regards,
 Krzysztof
