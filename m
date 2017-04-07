@@ -1,72 +1,118 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v11 1/3] dt-bindings: Add support for samsung s6e3ha2
- panel binding
-Date: Thu, 6 Apr 2017 23:33:20 +0200
-Message-ID: <20170406213320.GD27728@ulmo.ba.sec>
-References: <1488937357-5623-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170308014258epcas5p3f1ae559dedf1d7561d2690d7777437db@epcas5p3.samsung.com>
- <1488937357-5623-2-git-send-email-hoegeun.kwon@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v9 01/12] ARM: EXYNOS: refactor firmware specific routines
+Date: Fri, 7 Apr 2017 09:45:23 +0200
+Message-ID: <CAJKOXPfvD+Rm+pxvOMe8TefWsYZW4gvj0ZnXNtwOovkjzKFGCQ@mail.gmail.com>
+References: <CGME20170330131419epcas5p4ac36250d3a9225643e327e60f47956c2@epcas5p4.samsung.com>
+ <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SO98HVl1bnMOfKZd"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36128 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754410AbdDFVdX (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:59202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754189AbdDGHp2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Apr 2017 17:33:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1488937357-5623-2-git-send-email-hoegeun.kwon@samsung.com>
+        Fri, 7 Apr 2017 03:45:28 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id 4EEEB2022A
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 07:45:26 +0000 (UTC)
+Received: from mail-it0-f51.google.com (mail-it0-f51.google.com [209.85.214.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 509AF20272
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 07:45:24 +0000 (UTC)
+Received: by mail-it0-f51.google.com with SMTP id 19so18902500itj.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 00:45:24 -0700 (PDT)
+In-Reply-To: <1490879826-16754-2-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, inki.dae@samsung.com, a.hajda@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Donghwa Lee <dh09.lee@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
-
---SO98HVl1bnMOfKZd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Mar 08, 2017 at 10:42:35AM +0900, Hoegeun Kwon wrote:
-> The Samsung s6e3ha2 is a 5.7" 1440x2560 AMOLED panel connected
-> using MIPI-DSI interfaces.
->=20
-> Signed-off-by: Donghwa Lee <dh09.lee@samsung.com>
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+On Thu, Mar 30, 2017 at 3:16 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> To remove dependency on soc_is_exynosMMMM macros and remove multiple
+> checks for such macros, let's refactor code in firmware.c file.
+> SoC specific firmware_ops are separated and registered during
+> exynos_firmware_init based on matching machine compatible.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
->  .../bindings/display/panel/samsung,s6e3ha2.txt     | 28 ++++++++++++++++=
-++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/samsu=
-ng,s6e3ha2.txt
+>  arch/arm/mach-exynos/firmware.c | 114 +++++++++++++++++++++++++++++++---------
+>  1 file changed, 89 insertions(+), 25 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+> index e81a78b..b04c47a 100644
+> --- a/arch/arm/mach-exynos/firmware.c
+> +++ b/arch/arm/mach-exynos/firmware.c
+> @@ -35,6 +35,25 @@ static void exynos_save_cp15(void)
+>              : : "cc");
+>  }
+>
+> +static int exynos3250_do_idle(unsigned long mode)
+> +{
+> +       switch (mode) {
+> +       case FW_DO_IDLE_AFTR:
+> +               writel_relaxed(virt_to_phys(exynos_cpu_resume_ns),
+> +                              sysram_ns_base_addr + 0x24);
+> +               writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
+> +               flush_cache_all();
+> +               exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
+> +                               SMC_POWERSTATE_IDLE, 0);
+> +               exynos_smc(SMC_CMD_SHUTDOWN, OP_TYPE_CLUSTER,
+> +                               SMC_POWERSTATE_IDLE, 0);
+> +               break;
+> +       case FW_DO_IDLE_SLEEP:
+> +               exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+> +       }
+> +       return 0;
+> +}
+> +
+>  static int exynos_do_idle(unsigned long mode)
+>  {
+>         switch (mode) {
+> @@ -44,14 +63,7 @@ static int exynos_do_idle(unsigned long mode)
+>                 writel_relaxed(__pa_symbol(exynos_cpu_resume_ns),
+>                                sysram_ns_base_addr + 0x24);
+>                 writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
+> -               if (soc_is_exynos3250()) {
+> -                       flush_cache_all();
+> -                       exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
+> -                                  SMC_POWERSTATE_IDLE, 0);
+> -                       exynos_smc(SMC_CMD_SHUTDOWN, OP_TYPE_CLUSTER,
+> -                                  SMC_POWERSTATE_IDLE, 0);
+> -               } else
+> -                       exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
+> +               exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
+>                 break;
+>         case FW_DO_IDLE_SLEEP:
+>                 exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+> @@ -59,28 +71,25 @@ static int exynos_do_idle(unsigned long mode)
+>         return 0;
+>  }
+>
+> -static int exynos_cpu_boot(int cpu)
+> +static int exynos4212_cpu_boot(int cpu)
+>  {
+>         /*
+> -        * Exynos3250 doesn't need to send smc command for secondary CPU boot
+> -        * because Exynos3250 removes WFE in secure mode.
+> -        */
+> -       if (soc_is_exynos3250())
+> -               return 0;
+> -
+> -       /*
+>          * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
+>          * But, Exynos4212 has only one secondary CPU so second parameter
+>          * isn't used for informing secure firmware about CPU id.
+>          */
+> -       if (soc_is_exynos4212())
+> -               cpu = 0;
+> +       cpu = 0;
 
-Applied, thanks.
+The comment above is clear enough so I think there is no need for this
+assignment. Just use 0 as argument in exynos_smc().
 
-Thierry
+Rest looks good so with this change:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
---SO98HVl1bnMOfKZd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljmtCAACgkQ3SOs138+
-s6HbuQ/9FBUa2pQdL96OZViBp9A7ldsH55I79P/+2B+FqV7XNdsrquyyWWNfembC
-+UNrHwctpKaWpoClX1CJFDKowslUmq20s2u7TMn0KXDKFKikF7TlFwpbP1AgOcxW
-l0e3KOCm+p2H1a7pP2ufd1mDkJ7JBYBUNYxfw7ffJOqrUxe5ad39XqV2J8AlaYp/
-a/nQ0Kpq7I6IhI2CJ/1CnT7U/VfasvMZl4tuYK461U0BNOCeE3uGQoLZ4pJMK7Ds
-EEvWRtTjqk7XrpZSd4/NGQn72K9XuB6bxJtzXmciWKtnDLENCwDaiIu+EMNVhmGR
-WJmZCNA7r6P80oANGA/g2FbFBBVWpF4aqZVZpVGQaEbqtMNOT4KN0GA0StliYRwk
-2ftrR1ImJ/vQcOAeOSDmaHieRZB3Ho4l/6lbF058KbM6jUzxes3y/EHdwgplD+lh
-/yaAQh7RniLlyfc4Aw4DJjFgzO7BQp6HJLzsIjR6OMiG4ccnFxAxOLyaeSzlFgYE
-sXsx5UUedcjP07VmPKtrwZoWwLpXl6ZjC5PqyvDwpnlQCzDsUXyrSp1Yp4XNO3LP
-O/u/RpwJksZhcrnTuPTIxiFiCmC8M5meuymG2PJE4ItWlXliGFKHBAx3pqnP59Ny
-8Lt1cl/mmxXqwVzuWsWFuSTfVLxlaSanHHMErCYs+KD3Sn4SbNg=
-=Q4u0
------END PGP SIGNATURE-----
-
---SO98HVl1bnMOfKZd--
+Best regards,
+Krzysztof
