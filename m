@@ -1,95 +1,129 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
-Date: Fri, 07 Apr 2017 17:00:44 +0900
-Message-ID: <58E7472C.3030503@samsung.com>
-References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
- <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
- <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v9 01/12] ARM: EXYNOS: refactor firmware specific
+ routines
+Date: Fri, 7 Apr 2017 13:36:28 +0530
+Message-ID: <e1a1111c-5c34-ecdd-64f1-60d5b3042069@samsung.com>
+References: <CGME20170330131419epcas5p4ac36250d3a9225643e327e60f47956c2@epcas5p4.samsung.com>
+        <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
+        <1490879826-16754-2-git-send-email-pankaj.dubey@samsung.com>
+        <CAJKOXPfvD+Rm+pxvOMe8TefWsYZW4gvj0ZnXNtwOovkjzKFGCQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35883 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753481AbdDGIAr (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:27067 "EHLO
+        epoutp02.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753288AbdDGIDO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 04:00:47 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OO102N674X9U410@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Apr 2017 17:00:45 +0900 (KST)
-In-reply-to: <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
+        Fri, 7 Apr 2017 04:03:14 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by epoutp02.samsung.com (KnoxPortal) with ESMTP id 20170407080312epoutp02170d0a85e1b05cf03a11b56960c67ba4~zDtDxA5p00136001360epoutp02F
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 08:03:12 +0000 (GMT)
+In-Reply-To: <CAJKOXPfvD+Rm+pxvOMe8TefWsYZW4gvj0ZnXNtwOovkjzKFGCQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org
-
-Hello Tobias,
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
 
-2017년 04월 07일 02:10에 Tobias Jakobi 이(가) 쓴 글:
-> Hello Inki,
-> 
-> 
-> Inki Dae wrote:
->> This patch removes unnecessary descriptions on
->> exynos_drm_crtc structure and adds one description
->> which specifies what pipe_clk member does.
+
+On Friday 07 April 2017 01:15 PM, Krzysztof Kozlowski wrote:
+> On Thu, Mar 30, 2017 at 3:16 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+>> To remove dependency on soc_is_exynosMMMM macros and remove multiple
+>> checks for such macros, let's refactor code in firmware.c file.
+>> SoC specific firmware_ops are separated and registered during
+>> exynos_firmware_init based on matching machine compatible.
 >>
->> pipe_clk support had been added by below patch without any description,
->> 	 drm/exynos: add support for pipeline clock to the framework
-> I would put the commit id here. That makes it easier to look up the
-> commit your refer to.
-> 
-> 
->> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 >> ---
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h | 6 ++----
->>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>  arch/arm/mach-exynos/firmware.c | 114 +++++++++++++++++++++++++++++++---------
+>>  1 file changed, 89 insertions(+), 25 deletions(-)
 >>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> index 527bf1d..b0462cc 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> @@ -152,12 +152,10 @@ struct exynos_drm_clk {
->>   *
->>   * @base: crtc object.
->>   * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
->> - * @enabled: if the crtc is enabled or not
->> - * @event: vblank event that is currently queued for flip
->> - * @wait_update: wait all pending planes updates to finish
->> - * @pending_update: number of pending plane updates in this crtc
->>   * @ops: pointer to callbacks for exynos drm specific functionality
->>   * @ctx: A pointer to the crtc's implementation specific context
->> + * @pipe_clk: A pipe clock structure which includes a callback function
->> +	      for enabling DP clock of FIMD and HDMI PHY clock.
-> This is wrong/inconsistent with the rest of the documentation. pipe_clk
-> is not a struct, but a pointer.
-> 
-> I would suggest to follow. Just document that we have a pointer to <add
-> escription> here (compare docu for 'ops' and 'ctx').
-> And then put the later bits ("...callback function for enabling DP
-> clock...") directly to the definition of 'struct exynos_drm_clk' (which
-> is currently lacking any kind of docu).
-
-Thanks for pointing it out. My mistake. :)
-
-How about this simply?
-"A pointer to exynos_drm_clk structure for enabling and disabling DP clock of FIMD and HDMI PHY clocks"
-
-Thanks,
-Inki Dae
-
-> 
-> 
-> - Tobias
-> 
->>   */
->>  struct exynos_drm_crtc {
->>  	struct drm_crtc			base;
+>> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+>> index e81a78b..b04c47a 100644
+>> --- a/arch/arm/mach-exynos/firmware.c
+>> +++ b/arch/arm/mach-exynos/firmware.c
+>> @@ -35,6 +35,25 @@ static void exynos_save_cp15(void)
+>>              : : "cc");
+>>  }
 >>
+>> +static int exynos3250_do_idle(unsigned long mode)
+>> +{
+>> +       switch (mode) {
+>> +       case FW_DO_IDLE_AFTR:
+>> +               writel_relaxed(virt_to_phys(exynos_cpu_resume_ns),
+>> +                              sysram_ns_base_addr + 0x24);
+>> +               writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
+>> +               flush_cache_all();
+>> +               exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
+>> +                               SMC_POWERSTATE_IDLE, 0);
+>> +               exynos_smc(SMC_CMD_SHUTDOWN, OP_TYPE_CLUSTER,
+>> +                               SMC_POWERSTATE_IDLE, 0);
+>> +               break;
+>> +       case FW_DO_IDLE_SLEEP:
+>> +               exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+>> +       }
+>> +       return 0;
+>> +}
+>> +
+>>  static int exynos_do_idle(unsigned long mode)
+>>  {
+>>         switch (mode) {
+>> @@ -44,14 +63,7 @@ static int exynos_do_idle(unsigned long mode)
+>>                 writel_relaxed(__pa_symbol(exynos_cpu_resume_ns),
+>>                                sysram_ns_base_addr + 0x24);
+>>                 writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
+>> -               if (soc_is_exynos3250()) {
+>> -                       flush_cache_all();
+>> -                       exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
+>> -                                  SMC_POWERSTATE_IDLE, 0);
+>> -                       exynos_smc(SMC_CMD_SHUTDOWN, OP_TYPE_CLUSTER,
+>> -                                  SMC_POWERSTATE_IDLE, 0);
+>> -               } else
+>> -                       exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
+>> +               exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
+>>                 break;
+>>         case FW_DO_IDLE_SLEEP:
+>>                 exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+>> @@ -59,28 +71,25 @@ static int exynos_do_idle(unsigned long mode)
+>>         return 0;
+>>  }
+>>
+>> -static int exynos_cpu_boot(int cpu)
+>> +static int exynos4212_cpu_boot(int cpu)
+>>  {
+>>         /*
+>> -        * Exynos3250 doesn't need to send smc command for secondary CPU boot
+>> -        * because Exynos3250 removes WFE in secure mode.
+>> -        */
+>> -       if (soc_is_exynos3250())
+>> -               return 0;
+>> -
+>> -       /*
+>>          * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
+>>          * But, Exynos4212 has only one secondary CPU so second parameter
+>>          * isn't used for informing secure firmware about CPU id.
+>>          */
+>> -       if (soc_is_exynos4212())
+>> -               cpu = 0;
+>> +       cpu = 0;
 > 
+> The comment above is clear enough so I think there is no need for this
+> assignment. Just use 0 as argument in exynos_smc().
+> 
+
+Ok, will modify accordingly in next patchset.
+
+> Rest looks good so with this change:
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+
+Thanks for review,
+Pankaj Dubey
+
+> Best regards,
+> Krzysztof
 > 
 > 
 > 
