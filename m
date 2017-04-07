@@ -1,198 +1,105 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v9 04/12] soc: samsung: add exynos chipid driver support
-Date: Fri, 7 Apr 2017 17:48:03 +0530
-Message-ID: <38f70dd9-a49d-0004-6f5c-6e9d8be0c766@samsung.com>
-References: <CGME20170330131427epcas5p4c3d238022dc75694ad3baa8a1018ea04@epcas5p4.samsung.com>
-        <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
-        <1490879826-16754-5-git-send-email-pankaj.dubey@samsung.com>
-        <CAJKOXPeCD+U_2U4yj7LiKkWZjvXr9joY4bRqL+-MHdka=9viWQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v9 11/12] ARM: EXYNOS: move cpu_restart as a SoC specific
+ hook to exynos_cpu_info
+Date: Fri, 7 Apr 2017 14:23:07 +0200
+Message-ID: <CAJKOXPdejfBQDtSv-r+kaUDHwYbYu=YzHxHh8AeaYO8wzAE4Hw@mail.gmail.com>
+References: <CGME20170330131442epcas5p4f2be72cb3ec506847d8e832675e682c4@epcas5p4.samsung.com>
+ <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-12-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:26897 "EHLO
-        epoutp01.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933389AbdDGMO5 (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:44694 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932601AbdDGMXM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 08:14:57 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by epoutp01.samsung.com (KnoxPortal) with ESMTP id 20170407121455epoutp01a04114169e5c46d521da8540fa0c39e7~zHI18aytL0693706937epoutp01U
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 12:14:55 +0000 (GMT)
-In-Reply-To: <CAJKOXPeCD+U_2U4yj7LiKkWZjvXr9joY4bRqL+-MHdka=9viWQ@mail.gmail.com>
-Content-Language: en-US
+        Fri, 7 Apr 2017 08:23:12 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id 3662F2025A
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 12:23:11 +0000 (UTC)
+Received: from mail-it0-f50.google.com (mail-it0-f50.google.com [209.85.214.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1200C20260
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 12:23:08 +0000 (UTC)
+Received: by mail-it0-f50.google.com with SMTP id 19so22067065itj.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 05:23:08 -0700 (PDT)
+In-Reply-To: <1490879826-16754-12-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
+On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> To handle differences in cpu_restart functionality among various Exynos SoC
+> let's move cpu_restart as a SoC specific function hook to exynos_cpu_info.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm/mach-exynos/platsmp.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index 6f08b15..af9332c 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -39,11 +39,13 @@ extern void exynos4_secondary_startup(void);
+>   * @cpu_boot_reg: computes cpu boot address for requested cpu
+>   * @cpu_power_down: handles cpu power down routine for requested cpu
+>   * @cpu_power_up: handles cpu power up routine for requested cpu
+> + * @cpu_restart: handles cpu restart routine for requested cpu
+>   */
+>  struct exynos_cpu_info {
+>         void __iomem* (*cpu_boot_reg)(u32 cpu);
+>         void (*cpu_power_down)(u32 cpu);
+>         void (*cpu_power_up)(u32 cpu);
+> +       void (*cpu_restart)(u32 cpu);
+>  };
+>
+>  static const struct exynos_cpu_info *cpu_info;
+> @@ -252,16 +254,19 @@ static inline void __iomem *cpu_boot_reg(int cpu)
+>  }
+>
+>  /*
+> - * Set wake up by local power mode and execute software reset for given core.
+> - *
+> + * exynos_core_restart : restart the specified cpu
+> + * @core_id : the cpu to be restarted
+>   * Currently this is needed only when booting secondary CPU on Exynos3250.
+>   */
+>  void exynos_core_restart(u32 core_id)
+>  {
+> -       u32 val;
+> +       if (cpu_info && cpu_info->cpu_restart)
+> +               cpu_info->cpu_restart(core_id);
+> +}
+>
+> -       if (!of_machine_is_compatible("samsung,exynos3250"))
+> -               return;
+> +static void exynos3250_core_restart(u32 core_id)
+> +{
+> +       u32 val;
+>
+>         while (!pmu_raw_readl(S5P_PMU_SPARE2))
+>                 udelay(10);
+> @@ -362,6 +367,7 @@ static const struct exynos_cpu_info exynos3250_cpu_info = {
+>         .cpu_boot_reg = exynos_common_cpu_boot_reg,
+>         .cpu_power_down = exynos_common_cpu_power_down,
+>         .cpu_power_up = exynos3250_cpu_power_up,
+> +       .cpu_restart = exynos3250_core_restart,
 
+This is actually not a CPU restart but poking a CPU after power up. It
+is called right after enabling power to given CPU but before setting
+boot addr. For Exynos3250 in fact we do a restart but before we wait
+for bootloader flag and we set local wakeup mode.
 
-On Friday 07 April 2017 02:43 PM, Krzysztof Kozlowski wrote:
-> On Thu, Mar 30, 2017 at 3:16 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->> Exynos SoCs have Chipid, for identification of product IDs and SoC
->> revisions. This patch intends to provide initialization code for all
->> these functionalities, at the same time it provides some sysfs entries
->> for accessing these information to user-space.
->>
->> This driver uses existing binding for exynos-chipid.
->>
->> CC: Grant Likely <grant.likely@linaro.org>
->> CC: Rob Herring <robh+dt@kernel.org>
->> CC: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> [m.szyprowski: for suggestion and code snippet of product_id_to_soc_id]
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>  drivers/soc/samsung/Kconfig         |   5 ++
->>  drivers/soc/samsung/Makefile        |   1 +
->>  drivers/soc/samsung/exynos-chipid.c | 109 ++++++++++++++++++++++++++++++++++++
->>  3 files changed, 115 insertions(+)
->>  create mode 100644 drivers/soc/samsung/exynos-chipid.c
->>
->> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
->> index 8b25bd5..a90a4ad 100644
->> --- a/drivers/soc/samsung/Kconfig
->> +++ b/drivers/soc/samsung/Kconfig
->> @@ -6,6 +6,11 @@ menuconfig SOC_SAMSUNG
->>
->>  if SOC_SAMSUNG
->>
->> +config EXYNOS_CHIPID
->> +       bool "Exynos Chipid controller driver" if COMPILE_TEST
->> +       depends on ARCH_EXYNOS || COMPILE_TEST
->> +       select SOC_BUS
->> +
->>  config EXYNOS_PMU
->>         bool "Exynos PMU controller driver" if COMPILE_TEST
->>         depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
->> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
->> index 4d7694a..be3b6bb 100644
->> --- a/drivers/soc/samsung/Makefile
->> +++ b/drivers/soc/samsung/Makefile
->> @@ -1,3 +1,4 @@
->> +obj-$(CONFIG_EXYNOS_CHIPID)    += exynos-chipid.o
->>  obj-$(CONFIG_EXYNOS_PMU)       += exynos-pmu.o
->>
->>  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)   += exynos3250-pmu.o exynos4-pmu.o \
->> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
->> new file mode 100644
->> index 0000000..1e9fb6b
->> --- /dev/null
->> +++ b/drivers/soc/samsung/exynos-chipid.c
->> @@ -0,0 +1,109 @@
->> +/*
->> + * Copyright (c) 2017 Samsung Electronics Co., Ltd.
->> + *           http://www.samsung.com/
->> + *
->> + * EXYNOS - CHIP ID support
->> + * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <linux/io.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/slab.h>
->> +#include <linux/sys_soc.h>
->> +
->> +#define EXYNOS_SUBREV_MASK     (0xF << 4)
->> +#define EXYNOS_MAINREV_MASK    (0xF << 0)
->> +#define EXYNOS_REV_MASK                (EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
->> +
->> +static const struct exynos_soc_id {
->> +       const char *name;
->> +       unsigned int id;
->> +       unsigned int mask;
->> +} soc_ids[] = {
->> +       { "EXYNOS3250", 0xE3472000, 0xFFFFF000 },
->> +       { "EXYNOS4210", 0x43210000, 0xFFFFF000 },
->> +       { "EXYNOS4212", 0x43220000, 0xFFFFF000 },
->> +       { "EXYNOS4412", 0xE4412000, 0xFFFFF000 },
->> +       { "EXYNOS5250", 0x43520000, 0xFFFFF000 },
->> +       { "EXYNOS5260", 0xE5260000, 0xFFFFF000 },
->> +       { "EXYNOS5410", 0xE5410000, 0xFFFFF000 },
->> +       { "EXYNOS5420", 0xE5420000, 0xFFFFF000 },
->> +       { "EXYNOS5440", 0xE5440000, 0xFFFFF000 },
->> +       { "EXYNOS5800", 0xE5422000, 0xFFFFF000 },
->> +       { "EXYNOS7420", 0xE7420000, 0xFFFFF000 },
->> +       { "EXYNOS5433", 0xE5433000, 0xFFFFF000 },
->> +};
->> +
->> +static const char * __init product_id_to_soc_id(unsigned int product_id)
->> +{
->> +       int i;
->> +
->> +       for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
->> +               if ((product_id & soc_ids[i].mask) == soc_ids[i].id)
->> +                       return soc_ids[i].name;
->> +       return "UNKNOWN";
->> +}
->> +
->> +int __init exynos_chipid_early_init(void)
->> +{
->> +       struct soc_device_attribute *soc_dev_attr;
->> +       void __iomem *exynos_chipid_base;
->> +       struct soc_device *soc_dev;
->> +       struct device_node *root;
->> +       struct device_node *np;
->> +       struct device *dev;
->> +       u32 product_id;
->> +       u32 revision;
->> +
->> +       /* look up for chipid node */
->> +       np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
->> +       if (!np)
->> +               return -ENODEV;
->> +
->> +       exynos_chipid_base = of_iomap(np, 0);
->> +       of_node_put(np);
->> +
->> +       if (!exynos_chipid_base) {
->> +               pr_err("%s: failed to map chipid\n", np->name);
->> +               return -ENOMEM;
->> +       }
->> +
->> +       product_id = readl_relaxed(exynos_chipid_base);
->> +       revision = product_id & EXYNOS_REV_MASK;
->> +       iounmap(exynos_chipid_base);
->> +
->> +       soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
->> +       if (!soc_dev_attr)
->> +               return -ENODEV;
-> 
-> This should be -ENOMEM
-> 
-OK. Will take care in next patchset.
+Putting this under cpu_restart will be misleading because:
+1. I am not sure this is a valid restart method even for Exynos3250
+(although it might work because the bootloader flag would be set
+anyway).
+2. It is called in specific moment.
 
->> +
->> +       soc_dev_attr->family = "Samsung Exynos";
->> +
->> +       root = of_find_node_by_path("/");
->> +       of_property_read_string(root, "model", &soc_dev_attr->machine);
->> +       of_node_put(root);
->> +
->> +       soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
->> +       soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
->> +
->> +       soc_dev = soc_device_register(soc_dev_attr);
->> +       if (IS_ERR(soc_dev)) {
->> +               kfree(soc_dev_attr->revision);
->> +               kfree_const(soc_dev_attr->soc_id);
-> 
-> This was not allocated with kstrdup_const() so it should not be freed.
-> 
+I think this should not be made generic... or the naming should be
+different, like: cpu_post_power_up().
 
-Sorry, I missed to take care of this, you pointed out this in V8 as well.
-
-Thanks,
-Pankaj Dubey
-> Best regards,
-> Krzysztof
-> 
-> 
-> 
+Best regards,
+Krzysztof
