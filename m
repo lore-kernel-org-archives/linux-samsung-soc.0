@@ -1,129 +1,68 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v9 01/12] ARM: EXYNOS: refactor firmware specific
- routines
-Date: Fri, 7 Apr 2017 13:36:28 +0530
-Message-ID: <e1a1111c-5c34-ecdd-64f1-60d5b3042069@samsung.com>
-References: <CGME20170330131419epcas5p4ac36250d3a9225643e327e60f47956c2@epcas5p4.samsung.com>
-        <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
-        <1490879826-16754-2-git-send-email-pankaj.dubey@samsung.com>
-        <CAJKOXPfvD+Rm+pxvOMe8TefWsYZW4gvj0ZnXNtwOovkjzKFGCQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v9 02/12] ARM: EXYNOS: remove usage of soc_is_exynosMMMM
+ from pm.c
+Date: Fri, 7 Apr 2017 10:24:41 +0200
+Message-ID: <CAJKOXPcDO_4JonsxoywQq_D_AcWQsP8NnAsFMw1VsAhOgjLW0g@mail.gmail.com>
+References: <CGME20170330131421epcas5p40b0ad9c1003d3ab807667ae2b05d25bc@epcas5p4.samsung.com>
+ <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27067 "EHLO
-        epoutp02.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753288AbdDGIDO (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:36204 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753730AbdDGIYp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 04:03:14 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by epoutp02.samsung.com (KnoxPortal) with ESMTP id 20170407080312epoutp02170d0a85e1b05cf03a11b56960c67ba4~zDtDxA5p00136001360epoutp02F
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 08:03:12 +0000 (GMT)
-In-Reply-To: <CAJKOXPfvD+Rm+pxvOMe8TefWsYZW4gvj0ZnXNtwOovkjzKFGCQ@mail.gmail.com>
-Content-Language: en-US
+        Fri, 7 Apr 2017 04:24:45 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id 8ECDD202A1
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 08:24:43 +0000 (UTC)
+Received: from mail-it0-f47.google.com (mail-it0-f47.google.com [209.85.214.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DDFA2024C
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 08:24:42 +0000 (UTC)
+Received: by mail-it0-f47.google.com with SMTP id a140so39266427ita.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 01:24:42 -0700 (PDT)
+In-Reply-To: <1490879826-16754-3-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
+On Thu, Mar 30, 2017 at 3:16 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> soc_is_exynosMMMM is staged for removal after adopting to exynos-chipid
+> driver, so let's remove/minimize usage of any such helper function usage
+> from pm.c.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c                   | 22 ++++++++++++----------
+>  include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
+>  2 files changed, 15 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 1a7e5b5..4a73b02 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -123,11 +123,13 @@ int exynos_pm_central_resume(void)
+>  }
+>
+>  /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+> -static void exynos_set_wakeupmask(long mask)
+> +static void exynos_set_wakeupmask(void)
+>  {
+> -       pmu_raw_writel(mask, S5P_WAKEUP_MASK);
+> -       if (soc_is_exynos3250())
+> +       if (of_machine_is_compatible("samsung,exynos3250")) {
+> +               pmu_raw_writel(EXYNOS3_WAKEUP_MASK_VAL, S5P_WAKEUP_MASK);
+>                 pmu_raw_writel(0x0, S5P_WAKEUP_MASK2);
+> +       } else
+> +               pmu_raw_writel(EXYNOS_WAKEUP_MASK_VAL, S5P_WAKEUP_MASK);
 
+You need {} around this too. Checkpatch should complain about it as
+well so be sure to run it.
 
-On Friday 07 April 2017 01:15 PM, Krzysztof Kozlowski wrote:
-> On Thu, Mar 30, 2017 at 3:16 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->> To remove dependency on soc_is_exynosMMMM macros and remove multiple
->> checks for such macros, let's refactor code in firmware.c file.
->> SoC specific firmware_ops are separated and registered during
->> exynos_firmware_init based on matching machine compatible.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>  arch/arm/mach-exynos/firmware.c | 114 +++++++++++++++++++++++++++++++---------
->>  1 file changed, 89 insertions(+), 25 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
->> index e81a78b..b04c47a 100644
->> --- a/arch/arm/mach-exynos/firmware.c
->> +++ b/arch/arm/mach-exynos/firmware.c
->> @@ -35,6 +35,25 @@ static void exynos_save_cp15(void)
->>              : : "cc");
->>  }
->>
->> +static int exynos3250_do_idle(unsigned long mode)
->> +{
->> +       switch (mode) {
->> +       case FW_DO_IDLE_AFTR:
->> +               writel_relaxed(virt_to_phys(exynos_cpu_resume_ns),
->> +                              sysram_ns_base_addr + 0x24);
->> +               writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
->> +               flush_cache_all();
->> +               exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
->> +                               SMC_POWERSTATE_IDLE, 0);
->> +               exynos_smc(SMC_CMD_SHUTDOWN, OP_TYPE_CLUSTER,
->> +                               SMC_POWERSTATE_IDLE, 0);
->> +               break;
->> +       case FW_DO_IDLE_SLEEP:
->> +               exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
->> +       }
->> +       return 0;
->> +}
->> +
->>  static int exynos_do_idle(unsigned long mode)
->>  {
->>         switch (mode) {
->> @@ -44,14 +63,7 @@ static int exynos_do_idle(unsigned long mode)
->>                 writel_relaxed(__pa_symbol(exynos_cpu_resume_ns),
->>                                sysram_ns_base_addr + 0x24);
->>                 writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
->> -               if (soc_is_exynos3250()) {
->> -                       flush_cache_all();
->> -                       exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
->> -                                  SMC_POWERSTATE_IDLE, 0);
->> -                       exynos_smc(SMC_CMD_SHUTDOWN, OP_TYPE_CLUSTER,
->> -                                  SMC_POWERSTATE_IDLE, 0);
->> -               } else
->> -                       exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
->> +               exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
->>                 break;
->>         case FW_DO_IDLE_SLEEP:
->>                 exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
->> @@ -59,28 +71,25 @@ static int exynos_do_idle(unsigned long mode)
->>         return 0;
->>  }
->>
->> -static int exynos_cpu_boot(int cpu)
->> +static int exynos4212_cpu_boot(int cpu)
->>  {
->>         /*
->> -        * Exynos3250 doesn't need to send smc command for secondary CPU boot
->> -        * because Exynos3250 removes WFE in secure mode.
->> -        */
->> -       if (soc_is_exynos3250())
->> -               return 0;
->> -
->> -       /*
->>          * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
->>          * But, Exynos4212 has only one secondary CPU so second parameter
->>          * isn't used for informing secure firmware about CPU id.
->>          */
->> -       if (soc_is_exynos4212())
->> -               cpu = 0;
->> +       cpu = 0;
-> 
-> The comment above is clear enough so I think there is no need for this
-> assignment. Just use 0 as argument in exynos_smc().
-> 
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Ok, will modify accordingly in next patchset.
-
-> Rest looks good so with this change:
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-
-Thanks for review,
-Pankaj Dubey
-
-> Best regards,
-> Krzysztof
-> 
-> 
-> 
+Best regards,
+Krzysztof
