@@ -1,119 +1,144 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
-Date: Fri, 7 Apr 2017 13:40:46 +0200
-Message-ID: <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
-References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
- <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
- <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
- <58E7472C.3030503@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v9 10/12] ARM: EXYNOS: move power_{down,up} to per SoC
+ struct exynos_cpu_info
+Date: Fri, 7 Apr 2017 14:04:30 +0200
+Message-ID: <CAJKOXPecpw79gAQFCKtjTGpsP+BJt38C05t+Vb6nid+PL+g-xQ@mail.gmail.com>
+References: <CGME20170330131440epcas1p4f27192272761aa593b6cf083453e8adc@epcas1p4.samsung.com>
+ <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com> <1490879826-16754-11-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:58544 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932165AbdDGLku (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:41106 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933506AbdDGMEh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 07:40:50 -0400
-In-Reply-To: <58E7472C.3030503@samsung.com>
+        Fri, 7 Apr 2017 08:04:37 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id 3E374202E5
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 12:04:35 +0000 (UTC)
+Received: from mail-io0-f182.google.com (mail-io0-f182.google.com [209.85.223.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0477020279
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 12:04:32 +0000 (UTC)
+Received: by mail-io0-f182.google.com with SMTP id t68so14263518iof.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 05:04:31 -0700 (PDT)
+In-Reply-To: <1490879826-16754-11-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hello Inki,
+On Thu, Mar 30, 2017 at 3:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> Various Exynos SoC handles CPU power_up and power_down operation
+> differently. To handle this difference until now we were using
+> soc_is_exynosMMM helper functions, in an attempt to remove the dependency
+> of such helper functions specific to each SoC, let's move power_{down,up}
+> functionality as a SoC specific function pointer hooks in
+> struct exynos_cpu_info.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm/mach-exynos/platsmp.c | 61 +++++++++++++++++++++++++++++++-----------
+>  1 file changed, 46 insertions(+), 15 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index ff369b9..6f08b15 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -37,9 +37,13 @@ extern void exynos4_secondary_startup(void);
+>  /*
+>   * struct exynos_cpu_info - Exynos CPU related info/operations
+>   * @cpu_boot_reg: computes cpu boot address for requested cpu
+> + * @cpu_power_down: handles cpu power down routine for requested cpu
+> + * @cpu_power_up: handles cpu power up routine for requested cpu
+>   */
+>  struct exynos_cpu_info {
+>         void __iomem* (*cpu_boot_reg)(u32 cpu);
+> +       void (*cpu_power_down)(u32 cpu);
+> +       void (*cpu_power_up)(u32 cpu);
+>  };
+>
+>  static const struct exynos_cpu_info *cpu_info;
+> @@ -92,19 +96,29 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+>  }
+>  #endif /* CONFIG_HOTPLUG_CPU */
+>
+> -/**
+> - * exynos_core_power_down : power down the specified cpu
+> +/*
+> + * exynos_core_power_down - power down the specified cpu
+>   * @cpu : the cpu to power down
+> - *
+> - * Power down the specified cpu. The sequence must be finished by a
+> - * call to cpu_do_idle()
+> - *
+> + * The sequence must be finished by a call to cpu_do_idle()
+>   */
+>  void exynos_cpu_power_down(int cpu)
+>  {
+> +       if (cpu_info && cpu_info->cpu_power_down)
+> +               cpu_info->cpu_power_down(cpu);
+> +}
+> +
+> +static void exynos_common_cpu_power_down(u32 cpu)
+> +{
+>         u32 core_conf;
+>
+> -       if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
+> +       core_conf = pmu_raw_readl(EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+> +       core_conf &= ~S5P_CORE_LOCAL_PWR_EN;
+> +       pmu_raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+> +}
+> +
+> +static void exynos5420_cpu_power_down(u32 cpu)
+> +{
+> +       if (cpu == 0) {
+>                 /*
+>                  * Bypass power down for CPU0 during suspend. Check for
+>                  * the SYS_PWR_REG value to decide if we are suspending
+> @@ -116,24 +130,31 @@ void exynos_cpu_power_down(int cpu)
+>                         return;
+>         }
+>
+> -       core_conf = pmu_raw_readl(EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+> -       core_conf &= ~S5P_CORE_LOCAL_PWR_EN;
+> -       pmu_raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+> +       exynos_common_cpu_power_down(cpu);
+>  }
+>
+> -/**
+> +/*
+>   * exynos_cpu_power_up : power up the specified cpu
+>   * @cpu : the cpu to power up
+> - *
+> - * Power up the specified cpu
+>   */
+>  void exynos_cpu_power_up(int cpu)
+>  {
+> +       if (cpu_info && cpu_info->cpu_power_up)
+> +               cpu_info->cpu_power_up(cpu);
+> +}
+> +
+> +static void exynos_common_cpu_power_up(u32 cpu)
+> +{
+>         u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
+> +       pmu_raw_writel(core_conf,
+> +                       EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+> +}
+>
+> -       if (soc_is_exynos3250())
+> -               core_conf |= S5P_CORE_AUTOWAKEUP_EN;
+> +static void exynos3250_cpu_power_up(u32 cpu)
+> +{
+> +       u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
+>
+> +       core_conf |= S5P_CORE_AUTOWAKEUP_EN;
 
+Maybe just:
+        core_conf = S5P_CORE_LOCAL_PWR_EN \
+                           | S5P_CORE_AUTOWAKEUP_EN;
+?
 
-Inki Dae wrote:
-> Hello Tobias,
-> 
-> 
-> 2017년 04월 07일 02:10에 Tobias Jakobi 이(가) 쓴 글:
->> Hello Inki,
->>
->>
->> Inki Dae wrote:
->>> This patch removes unnecessary descriptions on
->>> exynos_drm_crtc structure and adds one description
->>> which specifies what pipe_clk member does.
->>>
->>> pipe_clk support had been added by below patch without any description,
->>> 	 drm/exynos: add support for pipeline clock to the framework
->> I would put the commit id here. That makes it easier to look up the
->> commit your refer to.
->>
->>
->>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->>> ---
->>>  drivers/gpu/drm/exynos/exynos_drm_drv.h | 6 ++----
->>>  1 file changed, 2 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->>> index 527bf1d..b0462cc 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->>> @@ -152,12 +152,10 @@ struct exynos_drm_clk {
->>>   *
->>>   * @base: crtc object.
->>>   * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
->>> - * @enabled: if the crtc is enabled or not
->>> - * @event: vblank event that is currently queued for flip
->>> - * @wait_update: wait all pending planes updates to finish
->>> - * @pending_update: number of pending plane updates in this crtc
->>>   * @ops: pointer to callbacks for exynos drm specific functionality
->>>   * @ctx: A pointer to the crtc's implementation specific context
->>> + * @pipe_clk: A pipe clock structure which includes a callback function
->>> +	      for enabling DP clock of FIMD and HDMI PHY clock.
->> This is wrong/inconsistent with the rest of the documentation. pipe_clk
->> is not a struct, but a pointer.
->>
->> I would suggest to follow. Just document that we have a pointer to <add
->> escription> here (compare docu for 'ops' and 'ctx').
->> And then put the later bits ("...callback function for enabling DP
->> clock...") directly to the definition of 'struct exynos_drm_clk' (which
->> is currently lacking any kind of docu).
-> 
-> Thanks for pointing it out. My mistake. :)
-> 
-> How about this simply?
-> "A pointer to exynos_drm_clk structure for enabling and disabling DP clock of FIMD and HDMI PHY clocks"
-Not what I meant. You're describing 'struct exynos_drm_clk', and that
-does not belong here. If you describe 'struct exynos_drm_clk', then this
-should go in front of the struct's definition.
-
-How abouting something like this in front of the struct's definition::
-> /*
->  * Exynos DRM pipeline clock structure.
->  *
->  * @enable: callback to enable/disable the clock.
->  *
->  * Used for proper clock synchronization of components belonging
->  * to the same pipeline. Used e.g. for enabling the DP clock of
->  * the FIMD or the HDMI PHY clock.
->  */
-> struct exynos_drm_clk {
-> <snip>
-
-For 'pipe_clk' I would just go with this:
-> @pipe_clk: A pointet to the crtc's pipeline clock. 
-
-I hope this helps.
-
-- Tobias
-
-
-> Thanks,
-> Inki Dae
-> 
->>
->>
->> - Tobias
->>
->>>   */
->>>  struct exynos_drm_crtc {
->>>  	struct drm_crtc			base;
->>>
->>
->>
->>
->>
+Best regards,
+Krzysztof
