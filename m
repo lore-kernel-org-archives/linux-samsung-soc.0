@@ -1,36 +1,92 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: Fix for v4.11
-Date: Sat,  8 Apr 2017 16:20:50 +0200
-Message-ID: <20170408142050.1164-3-krzk@kernel.org>
-References: <20170408142050.1164-1-krzk@kernel.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20170408142050.1164-1-krzk@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Inki Dae <daeinki@gmail.com>
+Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
+Date: Sun, 9 Apr 2017 01:08:59 +0900
+Message-ID: <CAAQKjZMtxoMHa4XQpVrNWDwPW7usQ-2308QaxVjy9o7DSp+bEg@mail.gmail.com>
+References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
+ <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
+ <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
+ <58E7472C.3030503@samsung.com>
+ <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-fixes-4.11
-
-for you to fetch changes up to 87dc66299e51a17aacd25ad25c1f1283ca2ae305:
-
-  pinctrl: samsung: Add missing part for PINCFG_TYPE_DRV of Exynos5433 (2017-03-23 20:47:34 +0200)
-
-----------------------------------------------------------------
-Fix for Samsung pinctrl drivers for v4.11, introduced by wrong merge conflict
-resolution.
-
-----------------------------------------------------------------
-Chanwoo Choi (1):
-      pinctrl: samsung: Add missing part for PINCFG_TYPE_DRV of Exynos5433
-
- drivers/pinctrl/samsung/pinctrl-exynos.c | 80 ++++++++++++++++----------------
- drivers/pinctrl/samsung/pinctrl-exynos.h | 11 -----
- 2 files changed, 40 insertions(+), 51 deletions(-)
+MjAxNy0wNC0wNyAyMDo0MCBHTVQrMDk6MDAgVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVu
+aS1iaWVsZWZlbGQuZGU+Ogo+IEhlbGxvIElua2ksCj4KPgo+IElua2kgRGFlIHdyb3RlOgo+PiBI
+ZWxsbyBUb2JpYXMsCj4+Cj4+Cj4+IDIwMTfrhYQgMDTsm5QgMDfsnbwgMDI6MTDsl5AgVG9iaWFz
+IEpha29iaSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4gSGVsbG8gSW5raSwKPj4+Cj4+Pgo+Pj4gSW5r
+aSBEYWUgd3JvdGU6Cj4+Pj4gVGhpcyBwYXRjaCByZW1vdmVzIHVubmVjZXNzYXJ5IGRlc2NyaXB0
+aW9ucyBvbgo+Pj4+IGV4eW5vc19kcm1fY3J0YyBzdHJ1Y3R1cmUgYW5kIGFkZHMgb25lIGRlc2Ny
+aXB0aW9uCj4+Pj4gd2hpY2ggc3BlY2lmaWVzIHdoYXQgcGlwZV9jbGsgbWVtYmVyIGRvZXMuCj4+
+Pj4KPj4+PiBwaXBlX2NsayBzdXBwb3J0IGhhZCBiZWVuIGFkZGVkIGJ5IGJlbG93IHBhdGNoIHdp
+dGhvdXQgYW55IGRlc2NyaXB0aW9uLAo+Pj4+ICAgICAgZHJtL2V4eW5vczogYWRkIHN1cHBvcnQg
+Zm9yIHBpcGVsaW5lIGNsb2NrIHRvIHRoZSBmcmFtZXdvcmsKPj4+IEkgd291bGQgcHV0IHRoZSBj
+b21taXQgaWQgaGVyZS4gVGhhdCBtYWtlcyBpdCBlYXNpZXIgdG8gbG9vayB1cCB0aGUKPj4+IGNv
+bW1pdCB5b3VyIHJlZmVyIHRvLgo+Pj4KPj4+Cj4+Pj4gU2lnbmVkLW9mZi1ieTogSW5raSBEYWUg
+PGlua2kuZGFlQHNhbXN1bmcuY29tPgo+Pj4+IC0tLQo+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHJ2LmggfCA2ICsrLS0tLQo+Pj4+ICAxIGZpbGUgY2hhbmdlZCwgMiBp
+bnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kcnYuaAo+Pj4+IGluZGV4IDUyN2JmMWQuLmIwNDYyY2MgMTAwNjQ0Cj4+
+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+Pj4gKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+Pj4gQEAgLTE1Miwx
+MiArMTUyLDEwIEBAIHN0cnVjdCBleHlub3NfZHJtX2NsayB7Cj4+Pj4gICAqCj4+Pj4gICAqIEBi
+YXNlOiBjcnRjIG9iamVjdC4KPj4+PiAgICogQHR5cGU6IG9uZSBvZiBFWFlOT1NfRElTUExBWV9U
+WVBFX0xDRCBhbmQgSERNSS4KPj4+PiAtICogQGVuYWJsZWQ6IGlmIHRoZSBjcnRjIGlzIGVuYWJs
+ZWQgb3Igbm90Cj4+Pj4gLSAqIEBldmVudDogdmJsYW5rIGV2ZW50IHRoYXQgaXMgY3VycmVudGx5
+IHF1ZXVlZCBmb3IgZmxpcAo+Pj4+IC0gKiBAd2FpdF91cGRhdGU6IHdhaXQgYWxsIHBlbmRpbmcg
+cGxhbmVzIHVwZGF0ZXMgdG8gZmluaXNoCj4+Pj4gLSAqIEBwZW5kaW5nX3VwZGF0ZTogbnVtYmVy
+IG9mIHBlbmRpbmcgcGxhbmUgdXBkYXRlcyBpbiB0aGlzIGNydGMKPj4+PiAgICogQG9wczogcG9p
+bnRlciB0byBjYWxsYmFja3MgZm9yIGV4eW5vcyBkcm0gc3BlY2lmaWMgZnVuY3Rpb25hbGl0eQo+
+Pj4+ICAgKiBAY3R4OiBBIHBvaW50ZXIgdG8gdGhlIGNydGMncyBpbXBsZW1lbnRhdGlvbiBzcGVj
+aWZpYyBjb250ZXh0Cj4+Pj4gKyAqIEBwaXBlX2NsazogQSBwaXBlIGNsb2NrIHN0cnVjdHVyZSB3
+aGljaCBpbmNsdWRlcyBhIGNhbGxiYWNrIGZ1bmN0aW9uCj4+Pj4gKyAgICAgICAgIGZvciBlbmFi
+bGluZyBEUCBjbG9jayBvZiBGSU1EIGFuZCBIRE1JIFBIWSBjbG9jay4KPj4+IFRoaXMgaXMgd3Jv
+bmcvaW5jb25zaXN0ZW50IHdpdGggdGhlIHJlc3Qgb2YgdGhlIGRvY3VtZW50YXRpb24uIHBpcGVf
+Y2xrCj4+PiBpcyBub3QgYSBzdHJ1Y3QsIGJ1dCBhIHBvaW50ZXIuCj4+Pgo+Pj4gSSB3b3VsZCBz
+dWdnZXN0IHRvIGZvbGxvdy4gSnVzdCBkb2N1bWVudCB0aGF0IHdlIGhhdmUgYSBwb2ludGVyIHRv
+IDxhZGQKPj4+IGVzY3JpcHRpb24+IGhlcmUgKGNvbXBhcmUgZG9jdSBmb3IgJ29wcycgYW5kICdj
+dHgnKS4KPj4+IEFuZCB0aGVuIHB1dCB0aGUgbGF0ZXIgYml0cyAoIi4uLmNhbGxiYWNrIGZ1bmN0
+aW9uIGZvciBlbmFibGluZyBEUAo+Pj4gY2xvY2suLi4iKSBkaXJlY3RseSB0byB0aGUgZGVmaW5p
+dGlvbiBvZiAnc3RydWN0IGV4eW5vc19kcm1fY2xrJyAod2hpY2gKPj4+IGlzIGN1cnJlbnRseSBs
+YWNraW5nIGFueSBraW5kIG9mIGRvY3UpLgo+Pgo+PiBUaGFua3MgZm9yIHBvaW50aW5nIGl0IG91
+dC4gTXkgbWlzdGFrZS4gOikKPj4KPj4gSG93IGFib3V0IHRoaXMgc2ltcGx5Pwo+PiAiQSBwb2lu
+dGVyIHRvIGV4eW5vc19kcm1fY2xrIHN0cnVjdHVyZSBmb3IgZW5hYmxpbmcgYW5kIGRpc2FibGlu
+ZyBEUCBjbG9jayBvZiBGSU1EIGFuZCBIRE1JIFBIWSBjbG9ja3MiCj4gTm90IHdoYXQgSSBtZWFu
+dC4gWW91J3JlIGRlc2NyaWJpbmcgJ3N0cnVjdCBleHlub3NfZHJtX2NsaycsIGFuZCB0aGF0Cj4g
+ZG9lcyBub3QgYmVsb25nIGhlcmUuIElmIHlvdSBkZXNjcmliZSAnc3RydWN0IGV4eW5vc19kcm1f
+Y2xrJywgdGhlbiB0aGlzCj4gc2hvdWxkIGdvIGluIGZyb250IG9mIHRoZSBzdHJ1Y3QncyBkZWZp
+bml0aW9uLgo+Cj4gSG93IGFib3V0aW5nIHNvbWV0aGluZyBsaWtlIHRoaXMgaW4gZnJvbnQgb2Yg
+dGhlIHN0cnVjdCdzIGRlZmluaXRpb246Ogo+PiAvKgo+PiAgKiBFeHlub3MgRFJNIHBpcGVsaW5l
+IGNsb2NrIHN0cnVjdHVyZS4KPj4gICoKPj4gICogQGVuYWJsZTogY2FsbGJhY2sgdG8gZW5hYmxl
+L2Rpc2FibGUgdGhlIGNsb2NrLgo+PiAgKgo+PiAgKiBVc2VkIGZvciBwcm9wZXIgY2xvY2sgc3lu
+Y2hyb25pemF0aW9uIG9mIGNvbXBvbmVudHMgYmVsb25naW5nCj4+ICAqIHRvIHRoZSBzYW1lIHBp
+cGVsaW5lLiBVc2VkIGUuZy4gZm9yIGVuYWJsaW5nIHRoZSBEUCBjbG9jayBvZgo+PiAgKiB0aGUg
+RklNRCBvciB0aGUgSERNSSBQSFkgY2xvY2suCj4+ICAqLwo+PiBzdHJ1Y3QgZXh5bm9zX2RybV9j
+bGsgewo+PiA8c25pcD4KPgo+IEZvciAncGlwZV9jbGsnIEkgd291bGQganVzdCBnbyB3aXRoIHRo
+aXM6Cj4+IEBwaXBlX2NsazogQSBwb2ludGV0IHRvIHRoZSBjcnRjJ3MgcGlwZWxpbmUgY2xvY2su
+CgpNb3JlIHNpbXBsZSBhbmQgbG9va3MgYmV0dGVyLgoKVGhhbmtzLApJbmtpIERhZQoKPgo+IEkg
+aG9wZSB0aGlzIGhlbHBzLgo+Cj4gLSBUb2JpYXMKPgo+Cj4+IFRoYW5rcywKPj4gSW5raSBEYWUK
+Pj4KPj4+Cj4+Pgo+Pj4gLSBUb2JpYXMKPj4+Cj4+Pj4gICAqLwo+Pj4+ICBzdHJ1Y3QgZXh5bm9z
+X2RybV9jcnRjIHsKPj4+PiAgICAgc3RydWN0IGRybV9jcnRjICAgICAgICAgICAgICAgICBiYXNl
+Owo+Pj4+Cj4+Pgo+Pj4KPj4+Cj4+Pgo+Cj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMg
+bGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4g
+dGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3Jl
+IG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
+Lmh0bWwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
