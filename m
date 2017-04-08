@@ -1,85 +1,44 @@
-From: Inki Dae <daeinki@gmail.com>
-Subject: Re: [PATCH v2 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
-Date: Sun, 9 Apr 2017 01:22:13 +0900
-Message-ID: <CAAQKjZPLh14=OXUucyoM+QqFvtYkTg=HoGMwMYiVdX-c+r=kWA@mail.gmail.com>
-References: <1489152617-10425-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <7e2db947-882e-6b31-aa57-85ec28b49f0c@math.uni-bielefeld.de>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH] exynos: add C++ support to exynos_drmif header
+Date: Sat, 8 Apr 2017 21:45:38 +0100
+Message-ID: <CACvgo53Lhk_knDAB22Nkguv5tZucE+FcCcjMf-6dExJVVHJ=eA@mail.gmail.com>
+References: <1491402144-3298-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20170405154852.ncs2nhquiz2wy23m@imgtec.com> <e15aabd7-bd99-aa70-118b-4fb0ae2c644e@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <7e2db947-882e-6b31-aa57-85ec28b49f0c@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:35988 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbdDHUpk (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sat, 8 Apr 2017 16:45:40 -0400
+Received: by mail-wm0-f54.google.com with SMTP id o81so13814038wmb.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Apr 2017 13:45:39 -0700 (PDT)
+In-Reply-To: <e15aabd7-bd99-aa70-118b-4fb0ae2c644e@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Eric Engestrom <eric.engestrom@imgtec.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>
 
-MjAxNy0wMy0yOSAyMDo1NSBHTVQrMDk6MDAgVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVu
-aS1iaWVsZWZlbGQuZGU+Ogo+IEhlbGxvIERhbmllbCwKPgo+IEknbSBub3QgZ2V0dGluZyBhbnkg
-cmVzcG9uc2UgZnJvbSB0aGUgRXh5bm9zIERSTSBtYWludGFpbmVyIGNvbmNlcm5pbmcKPiB0aGlz
-IHBhdGNoLiBTaW5jZSB0aGlzIGlzIGp1c3QgYSBzaW1wbGUgY2xlYW51cCwgYW5kIEFuZHJ6ZWog
-aGFzIGFscmVhZHkKPiByZXZpZXcsIGNvdWxkIHlvdSBwZXJoYXBzIG1lcmdlIGl0IHRocm91Z2gg
-ZHJtLW1pc2M/Cj4KClNvcnJ5IGZvciBsYXRlLiBDb25maXJtZWQganVzdCBub3cuIFRoaXMgcGF0
-Y2ggaXMgYSB0cml2aWFsIHRoaW5nIHNvCndpbGwgYmUgbWVyZ2VkIHNvb24uCgpUaGFua3MsCklu
-a2kgRGFlCgo+IFdpdGggYmVzdCB3aXNoZXMsCj4gVG9iaWFzCj4KPgo+Cj4gVG9iaWFzIEpha29i
-aSB3cm90ZToKPj4gQ29udmVydCBpZi1zdGF0ZW1lbnRzIHRvIHN3aXRjaCBzdGF0ZW1lbnQuIFJl
-bW92ZXMKPj4gZHVwbGljYXRlZCBjb2RlLgo+Pgo+PiBSZXZpZXdlZC1ieTogQW5kcnplaiBIYWpk
-YSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPj4gU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8
-dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDMwICsrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQo+PiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMjIgZGVsZXRpb25zKC0pCj4+
-Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+PiBpbmRleCA3MjE0M2FjLi40
-MWQwYzM2IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gQEAg
-LTM4MiwyOSArMzgyLDE0IEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ19yZ2JfZm10KHN0cnVjdCBt
-aXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCBoZWlnaHQpCj4+ICAgICAgIHN0cnVjdCBt
-aXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPj4gICAgICAgdTMyIHZhbDsK
-Pj4KPj4gLSAgICAgaWYgKGhlaWdodCA9PSA0ODApIHsKPj4gKyAgICAgc3dpdGNoIChoZWlnaHQp
-IHsKPj4gKyAgICAgY2FzZSA0ODA6Cj4+ICsgICAgIGNhc2UgNTc2Ogo+PiAgICAgICAgICAgICAg
-IHZhbCA9IE1YUl9DRkdfUkdCNjAxXzBfMjU1Owo+PiAtICAgICB9IGVsc2UgaWYgKGhlaWdodCA9
-PSA1NzYpIHsKPj4gLSAgICAgICAgICAgICB2YWwgPSBNWFJfQ0ZHX1JHQjYwMV8wXzI1NTsKPj4g
-LSAgICAgfSBlbHNlIGlmIChoZWlnaHQgPT0gNzIwKSB7Cj4+IC0gICAgICAgICAgICAgdmFsID0g
-TVhSX0NGR19SR0I3MDlfMTZfMjM1Owo+PiAtICAgICAgICAgICAgIG1peGVyX3JlZ193cml0ZShy
-ZXMsIE1YUl9DTV9DT0VGRl9ZLAo+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAoMSA8
-PCAzMCkgfCAoOTQgPDwgMjApIHwgKDMxNCA8PCAxMCkgfAo+PiAtICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAoMzIgPDwgMCkpOwo+PiAtICAgICAgICAgICAgIG1peGVyX3JlZ193cml0ZShy
-ZXMsIE1YUl9DTV9DT0VGRl9DQiwKPj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKDk3
-MiA8PCAyMCkgfCAoODUxIDw8IDEwKSB8ICgyMjUgPDwgMCkpOwo+PiAtICAgICAgICAgICAgIG1p
-eGVyX3JlZ193cml0ZShyZXMsIE1YUl9DTV9DT0VGRl9DUiwKPj4gLSAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgKDIyNSA8PCAyMCkgfCAoODIwIDw8IDEwKSB8ICgxMDA0IDw8IDApKTsKPj4g
-LSAgICAgfSBlbHNlIGlmIChoZWlnaHQgPT0gMTA4MCkgewo+PiAtICAgICAgICAgICAgIHZhbCA9
-IE1YUl9DRkdfUkdCNzA5XzE2XzIzNTsKPj4gLSAgICAgICAgICAgICBtaXhlcl9yZWdfd3JpdGUo
-cmVzLCBNWFJfQ01fQ09FRkZfWSwKPj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKDEg
-PDwgMzApIHwgKDk0IDw8IDIwKSB8ICgzMTQgPDwgMTApIHwKPj4gLSAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgKDMyIDw8IDApKTsKPj4gLSAgICAgICAgICAgICBtaXhlcl9yZWdfd3JpdGUo
-cmVzLCBNWFJfQ01fQ09FRkZfQ0IsCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICg5
-NzIgPDwgMjApIHwgKDg1MSA8PCAxMCkgfCAoMjI1IDw8IDApKTsKPj4gLSAgICAgICAgICAgICBt
-aXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ1IsCj4+IC0gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICgyMjUgPDwgMjApIHwgKDgyMCA8PCAxMCkgfCAoMTAwNCA8PCAwKSk7Cj4+
-IC0gICAgIH0gZWxzZSB7Cj4+ICsgICAgICAgICAgICAgYnJlYWs7Cj4+ICsgICAgIGNhc2UgNzIw
-Ogo+PiArICAgICBjYXNlIDEwODA6Cj4+ICsgICAgIGRlZmF1bHQ6Cj4+ICAgICAgICAgICAgICAg
-dmFsID0gTVhSX0NGR19SR0I3MDlfMTZfMjM1Owo+PiAgICAgICAgICAgICAgIG1peGVyX3JlZ193
-cml0ZShyZXMsIE1YUl9DTV9DT0VGRl9ZLAo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAoMSA8PCAzMCkgfCAoOTQgPDwgMjApIHwgKDMxNCA8PCAxMCkgfAo+PiBAQCAtNDEzLDYgKzM5
-OCw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ19yZ2JfZm10KHN0cnVjdCBtaXhlcl9jb250ZXh0
-ICpjdHgsIHVuc2lnbmVkIGludCBoZWlnaHQpCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICg5NzIgPDwgMjApIHwgKDg1MSA8PCAxMCkgfCAoMjI1IDw8IDApKTsKPj4gICAgICAgICAg
-ICAgICBtaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ1IsCj4+ICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICgyMjUgPDwgMjApIHwgKDgyMCA8PCAxMCkgfCAoMTAwNCA8PCAw
-KSk7Cj4+ICsgICAgICAgICAgICAgYnJlYWs7Cj4+ICAgICAgIH0KPj4KPj4gICAgICAgbWl4ZXJf
-cmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIHZhbCwgTVhSX0NGR19SR0JfRk1UX01BU0spOwo+
-Pgo+Cj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+
-IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 5 April 2017 at 17:23, Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+> Hello Eric,
+>
+>
+> Eric Engestrom wrote:
+>> On Wednesday, 2017-04-05 16:22:24 +0200, Tobias Jakobi wrote:
+>>> Add the usual extern "C" when compiling in C++ mode.
+>>
+>> Thanks, but why specifically this header? The other exynos/*.h headers
+>> also lack the c++ mangling guard.
+> I'm currently writing a small C++ project using the
+> exynos_bo_{create,destroy}() calls, and noticed this.
+>
+>> A quick grep shows that only 15/101 headers in libdrm have it.
+>> Can I interest you in fixing a few more headers? :)
+> Not at the moment.
+>
+FTR, only the installed headers (~50) need the extern C guard.
+None of that is not a blocker for this patch, so I've just pushed it to master.
+
+Thanks!
+Emil
