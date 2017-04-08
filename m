@@ -1,21 +1,39 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 0/5] ARM: exynos: Stuff for v4.12
-Date: Sat,  8 Apr 2017 16:09:59 +0200
-Message-ID: <20170408141004.386-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:36690 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751773AbdDHOKi (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 8 Apr 2017 10:10:38 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL 5/5] ARM: defconfig: exynos for v4.12
+Date: Sat,  8 Apr 2017 16:10:00 +0200
+Message-ID: <20170408141004.386-2-krzk@kernel.org>
+References: <20170408141004.386-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170408141004.386-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-No external dependencies, no specific order of pulling, nothing special.
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
-Best regards,
-Krzysztof
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.12
+
+for you to fetch changes up to fd2694a112d6b53eba8d8e182fef0dccdab6c9e8:
+
+  ARM: exynos_defconfig: Increase CONFIG_CMA_SIZE_MBYTES to 96 (2017-03-07 21:01:52 +0200)
+
+----------------------------------------------------------------
+Samsung defconfig ARM update for v4.12:
+1. Enable DYNAMIC_DEBUG because it is useful for debugging.
+2. Increase CMA memory region to allow handling H.264 1080p videos.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      ARM: exynos_defconfig: Enable DYNAMIC_DEBUG and get rid of old ext3
+
+Shuah Khan (1):
+      ARM: exynos_defconfig: Increase CONFIG_CMA_SIZE_MBYTES to 96
+
+ arch/arm/configs/exynos_defconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
