@@ -1,85 +1,99 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v9 07/12] ARM: EXYNOS: introduce soc specific pm ops
-Date: Fri, 7 Apr 2017 16:57:12 +0200
-Message-ID: <CAJKOXPf0wyZiu-dfTKeW=DX=SboO2x5Y5Xy6a4Vzs3uEHgaqQA@mail.gmail.com>
-References: <CGME20170330131434epcas1p4e42fe06bae3456c39e0f93a2f8ae4bc0@epcas1p4.samsung.com>
- <1490879826-16754-1-git-send-email-pankaj.dubey@samsung.com>
- <1490879826-16754-8-git-send-email-pankaj.dubey@samsung.com>
- <CAJKOXPckh9C-mSq5NsJJfSW-brs6=wTDuctkD2EbtQOjKOQgbg@mail.gmail.com> <fc69a6fa-7cb2-478b-b346-c59039c2b8da@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v4 0/2] crypto: hw_random - Add new Exynos RNG driver
+Date: Sat,  8 Apr 2017 15:32:43 +0200
+Message-ID: <20170408133245.30147-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933979AbdDGPFl (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:05:41 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id 86C8B20259
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 15:05:39 +0000 (UTC)
-Received: from mail-io0-f171.google.com (mail-io0-f171.google.com [209.85.223.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A5222025B
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Apr 2017 15:05:38 +0000 (UTC)
-Received: by mail-io0-f171.google.com with SMTP id l7so51028965ioe.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Apr 2017 08:05:38 -0700 (PDT)
-In-Reply-To: <fc69a6fa-7cb2-478b-b346-c59039c2b8da@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Bernie Thompson <bernie-5otTQG2S3XlWk0Htik3J/w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, PrasannaKumar Muralidharan <prasannatsmkumar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, a.hajda@samsung.com, cwchoi00@gmail.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Fri, Apr 7, 2017 at 4:11 PM, pankaj.dubey <pankaj.dubey@samsung.com> wrote:
+Hi,
 
-(...)
+This is a follow up of my questions around exynos-rng [1].
 
->>> +int __init exynos_s2r_init(void)
->>> +{
->>> +       const struct soc_device_attribute *match;
->>> +
->>> +       match = soc_device_match(exynos_soc_revision);
->>> +
->>> +       if (match)
->>> +               s2r_data = (const struct exynos_s2r_data *) match->data;
->>> +
->>> +       if (!s2r_data)
->>> +               return -ENODEV;
->>> +
->>> +       return 0;
->>> +}
->>> +arch_initcall(exynos_s2r_init);
->>> +
->>
->> I guess you already found possible probe-order issue. You should
->> register all of this after having the soc chipid driver. However it is
->> required by cpuidle driver which is being registered in machine_init()
->> call....  You cannot use deferred probe here, so maybe the only way is
->> to manually order the calls in machine_init():
->> 1. exynos_chipid_early_init()
->> 2. this one.
->> 3. cpuidle driver register.
->>
->
-> exynos_s2r_init is not required during early stage of boot, so as Arnd
-> suggested I can drop arch_initcall here and probably go for
->
-> 1: late_init
-> 2: Call this directly from machine_init
+Changes since v3:
+=================
+1. New patch: 1/2 for ALIGN_DOWN macro. The change in metag architecture
+   was not compiled. Please test it.
+2. Dropped patches touching ARM defconfig as they are not changing and
+   they pollute this submission.
+3. Utilize all seed provided by kcapi (suggested by Stephan Müller).
+4. Drop dev->ctx (suggested by PrasannaKumar Muralidharan).
+5. Remove any printks from set_seed callback as this might be a way
+   for unprivileged user to pollute the log (suggested by Stephan).
+6. Minor cleanups: initialize 'read' variable in exynos_rng_reseed()
+   for readability (it is not strictly required).
+7. Add review tags from Stephen and PrasannaKumar.
 
-I think this will be used on first AFTR which might happen few moments
-after exynos_dt_machine_init() because it registers the cpuidle
-platform devices thus probing them. This is before late_init. You
-might call it from machine_init, but again mind the order.
 
->
-> I prefer first option, as I mentioned my long term plan to move these
-> files out of arch/arm/mach-exynos/ and if I call it from mach-exynos,
-> then while moving I have to make this function as export symbol or make
-> it extern so that mach-exynos/exynos.c should be able to access it. Both
-> of these approaches have been rejected in past. What do you say?
+Changes since v2:
+=================
+1. Do not re-use random numbers for re-seed (neither for system resume
+   nor for periodic re-seed).  Instead the driver will just generate new
+   random numbers (suggested by Stephan Müller).
 
-Because of the cpuidle I think late_initcall is too late.
+   Suspend path tested with suspend-to-freeze, not real suspend. Testing
+   on Trats2 would be welcomed.
+
+Changes since v1:
+=================
+1. Re-work the code for seeding after system resume, following suggestions
+   and review by Stephan Müller.
+
+2. Re-seed itself from time to time (every 100 ms), suggested by Stephan
+   Müller.
+
+3. Use a define for retries (Bartlomiej Zolnierkiewicz).
+4. Add some docs.
+
+
+Description:
+============
+The existing exynos-rng has many issues.  The most important one is that
+it is a pseudo RNG device but uses hw_random interface which does not allow
+proper seeding.
+
+The RNG module on Exynos4 requires seeding.  On newer SoCs (like Exynos5420)
+it can seed itself from a true RNG.  Converting the existing driver
+to use TRNG would effectively drop support for Exynos4 and break
+compatibility with existing users.
+
+Instead I decided to convert it to crypto API.  In the future I hope
+to add support for seeding from TRNG module.
+
+Tested with app [2].
+
+Patches are independent. I will take the defconfig changes (2/3 and 3/3)
+through samsung-soc tree.
 
 Best regards,
 Krzysztof
+
+[1] https://www.spinics.net/lists/arm-kernel/msg569641.html
+[2] https://www.spinics.net/lists/arm-kernel/msg571184.html
+
+
+Krzysztof Kozlowski (2):
+  linux/kernel.h: Add ALIGN_DOWN macro
+  crypto: hw_random - Add new Exynos RNG driver
+
+ MAINTAINERS                         |   8 +
+ arch/metag/kernel/stacktrace.c      |   2 -
+ drivers/char/hw_random/Kconfig      |  14 --
+ drivers/char/hw_random/Makefile     |   1 -
+ drivers/char/hw_random/exynos-rng.c | 231 ---------------------
+ drivers/crypto/Kconfig              |  15 ++
+ drivers/crypto/Makefile             |   1 +
+ drivers/crypto/exynos-rng.c         | 389 ++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/udl/udl_fb.c        |   2 +-
+ include/linux/kernel.h              |   1 +
+ include/video/udlfb.h               |   2 +-
+ 11 files changed, 416 insertions(+), 250 deletions(-)
+ delete mode 100644 drivers/char/hw_random/exynos-rng.c
+ create mode 100644 drivers/crypto/exynos-rng.c
+
+-- 
+2.9.3
