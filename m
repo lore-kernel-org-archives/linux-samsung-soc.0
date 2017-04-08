@@ -1,19 +1,14 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/5] ARM: soc: samsung: exynos for v4.12
-Date: Sat,  8 Apr 2017 16:10:01 +0200
-Message-ID: <20170408141004.386-3-krzk@kernel.org>
+Subject: [GIT PULL 1/5] arm64: soc: exynos for v4.12
+Date: Sat,  8 Apr 2017 16:10:04 +0200
+Message-ID: <20170408141004.386-6-krzk@kernel.org>
 References: <20170408141004.386-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:36804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752699AbdDHOKp (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 8 Apr 2017 10:10:45 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170408141004.386-1-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
 The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
@@ -22,22 +17,23 @@ The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.12
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.12
 
-for you to fetch changes up to a0ebf66267ebab093cd7e230e70d29249768d249:
+for you to fetch changes up to 0edf17984f251e633465e028a0115d57b1b7eb88:
 
-  soc: samsung: Do not build ARMv7 PMU drivers on ARMv8 (2017-03-21 19:03:39 +0200)
-
-----------------------------------------------------------------
-Samsung SoC drivers update for v4.12 - split building of the PMU driver between
-ARMv7 and ARMv8.
+  arm64: defconfig: Enable video, DRM and LPASS drivers for Exynos5433 and Exynos7 (2017-03-21 19:18:53 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      soc: samsung: Do not build ARMv7 PMU drivers on ARMv8
+Samsung ARM64 update for v4.12:
+1. Exynos power management drivers support now ARMv8 SoC - Exynos5433 - so
+   select them in ARCH_EXYNOS.
+2. Enable few Exynos drivers for supported ARMv8 SoCs.
 
- drivers/soc/samsung/Kconfig      |  8 +++++++-
- drivers/soc/samsung/Makefile     |  4 +++-
- drivers/soc/samsung/exynos-pmu.c | 22 ++++++++++++++++------
- drivers/soc/samsung/exynos-pmu.h |  3 +++
- 4 files changed, 29 insertions(+), 8 deletions(-)
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      arm64: exynos: Enable Exynos PMU and PM domains drivers
+      arm64: defconfig: Enable video, DRM and LPASS drivers for Exynos5433 and Exynos7
+
+ arch/arm64/Kconfig.platforms |  2 ++
+ arch/arm64/configs/defconfig | 11 +++++++++++
+ 2 files changed, 13 insertions(+)
