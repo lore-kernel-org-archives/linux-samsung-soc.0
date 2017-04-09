@@ -1,34 +1,84 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] exynos: add C++ support to exynos_drmif header
-Date: Sun, 9 Apr 2017 00:47:45 +0200
-Message-ID: <fd4c4bb4-7f79-d941-cf50-9c632aed8a31@math.uni-bielefeld.de>
-References: <1491402144-3298-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20170405154852.ncs2nhquiz2wy23m@imgtec.com>
- <e15aabd7-bd99-aa70-118b-4fb0ae2c644e@math.uni-bielefeld.de>
- <CACvgo53Lhk_knDAB22Nkguv5tZucE+FcCcjMf-6dExJVVHJ=eA@mail.gmail.com>
+From: <carmen.croonquist@alfredadler.edu>
+Subject: (unknown)
+Date: Sun, 09 Apr 2017 14:11:11 -0000
+Message-ID: <149174707195.16609.4379211446559537730@rima-tde.net>
+Reply-To: <carmen.croonquist@alfredadler.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: application/zip; name="69025526952_linux-samsung-soc.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:60698 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751769AbdDHWrs (ORCPT
+Received: from 230.red-88-27-98.staticip.rima-tde.net ([88.27.98.230]:53682
+        "HELO rima-tde.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with SMTP id S1752075AbdDIOLP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 8 Apr 2017 18:47:48 -0400
-In-Reply-To: <CACvgo53Lhk_knDAB22Nkguv5tZucE+FcCcjMf-6dExJVVHJ=eA@mail.gmail.com>
+        Sun, 9 Apr 2017 10:11:15 -0400
+Subject: 
+Content-Disposition: attachment
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Eric Engestrom <eric.engestrom@imgtec.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
 
-Emil Velikov wrote:
-> FTR, only the installed headers (~50) need the extern C guard.
-> None of that is not a blocker for this patch, so I've just pushed it to master.
-Thanks Emil. I'll see what I can do about the other ones.
-
-- Tobias
-
-
-> Thanks!
-> Emil
-> 
+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
