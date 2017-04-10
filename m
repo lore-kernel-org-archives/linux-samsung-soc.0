@@ -1,102 +1,33 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
-Date: Mon, 10 Apr 2017 12:29:14 +0200
-Message-ID: <6962262a-519b-dfbb-72f7-9b6143d4c9b8@math.uni-bielefeld.de>
-References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
- <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
- <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
- <58E7472C.3030503@samsung.com>
- <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
- <CAAQKjZMtxoMHa4XQpVrNWDwPW7usQ-2308QaxVjy9o7DSp+bEg@mail.gmail.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v4 2/2] crypto: hw_random - Add new Exynos RNG driver
+Date: Mon, 10 Apr 2017 18:55:47 +0800
+Message-ID: <20170410105547.GA8615@gondor.apana.org.au>
+References: <20170408133245.30147-1-krzk@kernel.org>
+ <20170408133245.30147-3-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAAQKjZMtxoMHa4XQpVrNWDwPW7usQ-2308QaxVjy9o7DSp+bEg@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <daeinki@gmail.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170408133245.30147-3-krzk@kernel.org>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: James Hogan <james.hogan@imgtec.com>, Matt Mackall <mpm@selenic.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "David S. Miller" <davem@davemloft.net>, Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>, Bernie Thompson <bernie@plugable.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, linux-kernel@vger.kernel.org, linux-metag@vger.kernel.org, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SW5raSBEYWUgd3JvdGU6Cj4gMjAxNy0wNC0wNyAyMDo0MCBHTVQrMDk6MDAgVG9iaWFzIEpha29i
-aSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ogo+PiBIZWxsbyBJbmtpLAo+Pgo+Pgo+
-PiBJbmtpIERhZSB3cm90ZToKPj4+IEhlbGxvIFRvYmlhcywKPj4+Cj4+Pgo+Pj4gMjAxN+uFhCAw
-NOyblCAwN+ydvCAwMjoxMOyXkCBUb2JpYXMgSmFrb2JpIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4g
-SGVsbG8gSW5raSwKPj4+Pgo+Pj4+Cj4+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4+IFRoaXMgcGF0
-Y2ggcmVtb3ZlcyB1bm5lY2Vzc2FyeSBkZXNjcmlwdGlvbnMgb24KPj4+Pj4gZXh5bm9zX2RybV9j
-cnRjIHN0cnVjdHVyZSBhbmQgYWRkcyBvbmUgZGVzY3JpcHRpb24KPj4+Pj4gd2hpY2ggc3BlY2lm
-aWVzIHdoYXQgcGlwZV9jbGsgbWVtYmVyIGRvZXMuCj4+Pj4+Cj4+Pj4+IHBpcGVfY2xrIHN1cHBv
-cnQgaGFkIGJlZW4gYWRkZWQgYnkgYmVsb3cgcGF0Y2ggd2l0aG91dCBhbnkgZGVzY3JpcHRpb24s
-Cj4+Pj4+ICAgICAgZHJtL2V4eW5vczogYWRkIHN1cHBvcnQgZm9yIHBpcGVsaW5lIGNsb2NrIHRv
-IHRoZSBmcmFtZXdvcmsKPj4+PiBJIHdvdWxkIHB1dCB0aGUgY29tbWl0IGlkIGhlcmUuIFRoYXQg
-bWFrZXMgaXQgZWFzaWVyIHRvIGxvb2sgdXAgdGhlCj4+Pj4gY29tbWl0IHlvdXIgcmVmZXIgdG8u
-Cj4+Pj4KPj4+Pgo+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3Vu
-Zy5jb20+Cj4+Pj4+IC0tLQo+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2Rydi5oIHwgNiArKy0tLS0KPj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyks
-IDQgZGVsZXRpb25zKC0pCj4+Pj4+Cj4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZHJ2LmgKPj4+Pj4gaW5kZXggNTI3YmYxZC4uYjA0NjJjYyAxMDA2NDQKPj4+Pj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+Pj4+ICsrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+Pj4+PiBAQCAtMTUyLDEyICsxNTIs
-MTAgQEAgc3RydWN0IGV4eW5vc19kcm1fY2xrIHsKPj4+Pj4gICAqCj4+Pj4+ICAgKiBAYmFzZTog
-Y3J0YyBvYmplY3QuCj4+Pj4+ICAgKiBAdHlwZTogb25lIG9mIEVYWU5PU19ESVNQTEFZX1RZUEVf
-TENEIGFuZCBIRE1JLgo+Pj4+PiAtICogQGVuYWJsZWQ6IGlmIHRoZSBjcnRjIGlzIGVuYWJsZWQg
-b3Igbm90Cj4+Pj4+IC0gKiBAZXZlbnQ6IHZibGFuayBldmVudCB0aGF0IGlzIGN1cnJlbnRseSBx
-dWV1ZWQgZm9yIGZsaXAKPj4+Pj4gLSAqIEB3YWl0X3VwZGF0ZTogd2FpdCBhbGwgcGVuZGluZyBw
-bGFuZXMgdXBkYXRlcyB0byBmaW5pc2gKPj4+Pj4gLSAqIEBwZW5kaW5nX3VwZGF0ZTogbnVtYmVy
-IG9mIHBlbmRpbmcgcGxhbmUgdXBkYXRlcyBpbiB0aGlzIGNydGMKPj4+Pj4gICAqIEBvcHM6IHBv
-aW50ZXIgdG8gY2FsbGJhY2tzIGZvciBleHlub3MgZHJtIHNwZWNpZmljIGZ1bmN0aW9uYWxpdHkK
-Pj4+Pj4gICAqIEBjdHg6IEEgcG9pbnRlciB0byB0aGUgY3J0YydzIGltcGxlbWVudGF0aW9uIHNw
-ZWNpZmljIGNvbnRleHQKPj4+Pj4gKyAqIEBwaXBlX2NsazogQSBwaXBlIGNsb2NrIHN0cnVjdHVy
-ZSB3aGljaCBpbmNsdWRlcyBhIGNhbGxiYWNrIGZ1bmN0aW9uCj4+Pj4+ICsgICAgICAgICBmb3Ig
-ZW5hYmxpbmcgRFAgY2xvY2sgb2YgRklNRCBhbmQgSERNSSBQSFkgY2xvY2suCj4+Pj4gVGhpcyBp
-cyB3cm9uZy9pbmNvbnNpc3RlbnQgd2l0aCB0aGUgcmVzdCBvZiB0aGUgZG9jdW1lbnRhdGlvbi4g
-cGlwZV9jbGsKPj4+PiBpcyBub3QgYSBzdHJ1Y3QsIGJ1dCBhIHBvaW50ZXIuCj4+Pj4KPj4+PiBJ
-IHdvdWxkIHN1Z2dlc3QgdG8gZm9sbG93LiBKdXN0IGRvY3VtZW50IHRoYXQgd2UgaGF2ZSBhIHBv
-aW50ZXIgdG8gPGFkZAo+Pj4+IGVzY3JpcHRpb24+IGhlcmUgKGNvbXBhcmUgZG9jdSBmb3IgJ29w
-cycgYW5kICdjdHgnKS4KPj4+PiBBbmQgdGhlbiBwdXQgdGhlIGxhdGVyIGJpdHMgKCIuLi5jYWxs
-YmFjayBmdW5jdGlvbiBmb3IgZW5hYmxpbmcgRFAKPj4+PiBjbG9jay4uLiIpIGRpcmVjdGx5IHRv
-IHRoZSBkZWZpbml0aW9uIG9mICdzdHJ1Y3QgZXh5bm9zX2RybV9jbGsnICh3aGljaAo+Pj4+IGlz
-IGN1cnJlbnRseSBsYWNraW5nIGFueSBraW5kIG9mIGRvY3UpLgo+Pj4KPj4+IFRoYW5rcyBmb3Ig
-cG9pbnRpbmcgaXQgb3V0LiBNeSBtaXN0YWtlLiA6KQo+Pj4KPj4+IEhvdyBhYm91dCB0aGlzIHNp
-bXBseT8KPj4+ICJBIHBvaW50ZXIgdG8gZXh5bm9zX2RybV9jbGsgc3RydWN0dXJlIGZvciBlbmFi
-bGluZyBhbmQgZGlzYWJsaW5nIERQIGNsb2NrIG9mIEZJTUQgYW5kIEhETUkgUEhZIGNsb2NrcyIK
-Pj4gTm90IHdoYXQgSSBtZWFudC4gWW91J3JlIGRlc2NyaWJpbmcgJ3N0cnVjdCBleHlub3NfZHJt
-X2NsaycsIGFuZCB0aGF0Cj4+IGRvZXMgbm90IGJlbG9uZyBoZXJlLiBJZiB5b3UgZGVzY3JpYmUg
-J3N0cnVjdCBleHlub3NfZHJtX2NsaycsIHRoZW4gdGhpcwo+PiBzaG91bGQgZ28gaW4gZnJvbnQg
-b2YgdGhlIHN0cnVjdCdzIGRlZmluaXRpb24uCj4+Cj4+IEhvdyBhYm91dGluZyBzb21ldGhpbmcg
-bGlrZSB0aGlzIGluIGZyb250IG9mIHRoZSBzdHJ1Y3QncyBkZWZpbml0aW9uOjoKPj4+IC8qCj4+
-PiAgKiBFeHlub3MgRFJNIHBpcGVsaW5lIGNsb2NrIHN0cnVjdHVyZS4KPj4+ICAqCj4+PiAgKiBA
-ZW5hYmxlOiBjYWxsYmFjayB0byBlbmFibGUvZGlzYWJsZSB0aGUgY2xvY2suCj4+PiAgKgo+Pj4g
-ICogVXNlZCBmb3IgcHJvcGVyIGNsb2NrIHN5bmNocm9uaXphdGlvbiBvZiBjb21wb25lbnRzIGJl
-bG9uZ2luZwo+Pj4gICogdG8gdGhlIHNhbWUgcGlwZWxpbmUuIFVzZWQgZS5nLiBmb3IgZW5hYmxp
-bmcgdGhlIERQIGNsb2NrIG9mCj4+PiAgKiB0aGUgRklNRCBvciB0aGUgSERNSSBQSFkgY2xvY2su
-Cj4+PiAgKi8KPj4+IHN0cnVjdCBleHlub3NfZHJtX2NsayB7Cj4+PiA8c25pcD4KPj4KPj4gRm9y
-ICdwaXBlX2NsaycgSSB3b3VsZCBqdXN0IGdvIHdpdGggdGhpczoKPj4+IEBwaXBlX2NsazogQSBw
-b2ludGV0IHRvIHRoZSBjcnRjJ3MgcGlwZWxpbmUgY2xvY2suCj4gCj4gTW9yZSBzaW1wbGUgYW5k
-IGxvb2tzIGJldHRlci4KSW4gdGhpcyBmb3JtIChjb21taXQgYTA3ZDQ2OGNiMmVmZDM0N2E5ZTI3
-OWU0ZjY4NjYxZjBmMzcwZDEwZiBpbgpleHlub3MtZHJtLW5leHQpLCB0aGUgZGVzY3JpcHRpb24g
-aXMgaW5jb21wbGV0ZS4gUGxlYXNlIHJlYWQgbXkgbWFpbHMgYWdhaW4uCgotIFRvYmlhcwoKCj4g
-Cj4gVGhhbmtzLAo+IElua2kgRGFlCj4gCj4+Cj4+IEkgaG9wZSB0aGlzIGhlbHBzLgo+Pgo+PiAt
-IFRvYmlhcwo+Pgo+Pgo+Pj4gVGhhbmtzLAo+Pj4gSW5raSBEYWUKPj4+Cj4+Pj4KPj4+Pgo+Pj4+
-IC0gVG9iaWFzCj4+Pj4KPj4+Pj4gICAqLwo+Pj4+PiAgc3RydWN0IGV4eW5vc19kcm1fY3J0YyB7
-Cj4+Pj4+ICAgICBzdHJ1Y3QgZHJtX2NydGMgICAgICAgICAgICAgICAgIGJhc2U7Cj4+Pj4+Cj4+
-Pj4KPj4+Pgo+Pj4+Cj4+Pj4KPj4KPj4gLS0KPj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxp
-c3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+PiB0
-aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+PiBNb3Jl
-IG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
-Lmh0bWwKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5l
-ICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3Nh
-Z2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
-IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Sat, Apr 08, 2017 at 03:32:45PM +0200, Krzysztof Kozlowski wrote:
+>
+> +static struct rng_alg exynos_rng_alg = {
+> +	.generate		= exynos_rng_generate,
+> +	.seed			= exynos_rng_seed,
+> +	.seedsize		= EXYNOS_RNG_SEED_SIZE,
+> +	.base			= {
+> +		.cra_name		= "exynos_rng",
+
+Please use stdrng.  Or is there a reason why this can't be used
+by the crypto layer itself?
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
