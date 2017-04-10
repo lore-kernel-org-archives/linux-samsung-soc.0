@@ -1,157 +1,164 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
-Date: Tue, 11 Apr 2017 08:07:52 +0900
-Message-ID: <58EC1048.1030303@samsung.com>
-References: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <85a64d59-63d6-54b0-756b-63c36dc85d2b@math.uni-bielefeld.de>
- <CAAQKjZMm3O+PZ9GUsksaTnApwm8n9q8VX0rCAYozT9hG7oNrzQ@mail.gmail.com>
- <CGME20170410102755epcas4p40e9072db5dde36aeecbcb0eebbacd82b@epcas4p4.samsung.com>
- <7ffdd11d-bbdf-321d-fc3c-2d40798e902f@math.uni-bielefeld.de>
+Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
+Date: Tue, 11 Apr 2017 08:23:58 +0900
+Message-ID: <58EC140E.3020301@samsung.com>
+References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
+        <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
+        <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
+        <58E7472C.3030503@samsung.com>
+        <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
+        <CAAQKjZMtxoMHa4XQpVrNWDwPW7usQ-2308QaxVjy9o7DSp+bEg@mail.gmail.com>
+        <6962262a-519b-dfbb-72f7-9b6143d4c9b8@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <7ffdd11d-bbdf-321d-fc3c-2d40798e902f@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:40331 "EHLO
+        epoutp02.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751997AbdDJXYB (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 10 Apr 2017 19:24:01 -0400
+In-reply-to: <6962262a-519b-dfbb-72f7-9b6143d4c9b8@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
+Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-CgoyMDE364WEIDA07JuUIDEw7J28IDE5OjI37JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
-IOq4gDoKPiBJbmtpIERhZSB3cm90ZToKPj4gMjAxNy0wMy0yOSAyMDo1NiBHTVQrMDk6MDAgVG9i
-aWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ogo+Pj4gSGVsbG8gRGFu
-aWVsLAo+Pj4KPj4+IHNhbWUgcXVlc3Rpb24gaGVyZS4gUGF0Y2ggZG9lc24ndCBpbnRyb2R1Y2Ug
-YW55IGZ1bmN0aW9uYWwgY2hhbmdlcyAoanVzdAo+Pj4gYWRkcyBjb2RlIGRvY3VtZW50YXRpb24p
-LCBzbyBjYW4geW91IG1lcmdlIGl0IHRocm91Z2ggZHJtLW1pc2M/Cj4+Pgo+Pgo+PiBTb3JyeSBm
-b3IgbGF0ZS4gQ29uZmlybWVkIGp1c3Qgbm93LiBJIHdpbGwgY2hlY2sgaXQgb24gbmV4dCBNb25k
-YXkuCj4gWW91IGhhdmUgYWRkZWQgdGhlIHdyb25nIHBhdGNoICh2MiBpbnN0ZWFkIG9mIHYzKS4K
-ClRvYmlhcywKCnlvdSBoYWQgcG9zdGVkIHRoaXMgcGF0Y2ggd2l0aCBvdGhlciBvbmUgbGlrZSBi
-ZWxvdywKW1BBVENIIHYyIDEvMl0gZHJtL2V4eW5vczogbWl4ZXI6IHNpbXBsaWZ5IG1peGVyX2Nm
-Z19yZ2JfZm10KCkKW1BBVENIIHYyIDIvMl0gZHJtL2V4eW5vczogbWl4ZXI6IGRvY3VtZW50IFlD
-YkNyIG1hZ2ljIG51bWJlcnMKCkFuZCB0aGFuIHlvdSBoYXZlIHBvc3RlZCBpdCB3aXRob3V0IGFu
-eSBjb21tZW50IGFnYWluLCB2MywKW1BBVENIIHYzXSBkcm0vZXh5bm9zOiBtaXhlcjogZG9jdW1l
-bnQgWUNiQ3IgbWFnaWMgbnVtYmVycwoKUGxlYXNlIHVzZSAtLWNvdmVyLWxldHRlciBvcHRpb24g
-dG8gbWFrZSBwYXRjaCBzZXJpZXMgYW5kIGtlZXAgdGhlIHBhdGNoIHNldCB0byBiZSBjb25zaXN0
-ZW50IHdpdGggcHJldmlvdXMgdmVyc2lvbi4KCkkgY2FuIG1lcmdlIHRoZSBuZXcgb25lIC0gcmVh
-bGx5IHRyaXZpYWwgLSBidXQgSSB0aGluayBpdCdkIGJlIGJldHRlciB5b3UgdG8gcmVzZW5kIHRo
-aXMgcGF0Y2ggc2VyaWVzIGZvciBvdGhlciBwZW9wbGUuCgpUaGlzIHBhdGNoIHNldCBoYXMgYmVl
-biByZW1vdmVkIGZyb20gbXkgdHJlZS4gUGxlYXNlIHJlc2VuZCAobm90IHY0KSB0aGlzIHBhdGNo
-IHNldCBsaWtlIGJlbG93LApbUEFUQ0ggdjMgMC8yXSBkcm0vZXh5bm9zOiBjbGVhbiB1cCBtaXhl
-ciBkcml2ZXI/PwpbUEFUQ0ggdjMgMS8yXSBkcm0vZXh5bm9zOiBtaXhlcjogc2ltcGxpZnkgbWl4
-ZXJfY2ZnX3JnYl9mbXQoKQpbUEFUQ0ggdjMgMi8yXSBkcm0vZXh5bm9zOiBtaXhlcjogZG9jdW1l
-bnQgWUNiQ3IgbWFnaWMgbnVtYmVycwoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiAtIFRvYmlhcwo+
-IAo+IAo+PiBUaGFua3MsCj4+IElua2kgRGFlCj4+Cj4+PiBXaXRoIGJlc3Qgd2lzaGVzLAo+Pj4g
-VG9iaWFzCj4+Pgo+Pj4KPj4+IFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+Pj4gVGhlIG91dHB1dCBz
-dGFnZSBvZiB0aGUgbWl4ZXIgdXNlcyBZQ2JDciBmb3IgdGhlIGludGVybmFsCj4+Pj4gY29tcHV0
-YXRpb25zLCB3aGljaCBpcyB0aGUgcmVhc29uIHRoYXQgc29tZSByZWdpc3RlcnMgdGFrZQo+Pj4+
-IFlDYkNyIHJlbGF0ZWQgZGF0YSBhcyBpbnB1dC4gSW4gcGFydGljdWxhciB0aGlzIGFwcGxpZXMK
-Pj4+PiB0byBNWFJfQkdfQ09MT1J7MCwxLDJ9IGFuZCBNWFJfQ01fQ09FRkZfe1ksQ0IsQ1J9Lgo+
-Pj4+Cj4+Pj4gRG9jdW1lbnQgdGhlIGZvcm1hdHRpbmcgb2YgdGhlIGRhdGEgd2hpY2ggd2Ugd3Jp
-dGUgdG8KPj4+PiB0aGVzZSByZWdpc3RlcnMuCj4+Pj4KPj4+PiBXaGlsZSBhdCBpdCwgdW5pZnkg
-d29yZGluZyBvZiBjb21tZW50cyBpbiB0aGUgcmVnaXN0ZXIgaGVhZGVyLgo+Pj4+Cj4+Pj4gUmV2
-aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4+Pj4gU2lnbmVk
-LW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4+
-Pj4gLS0tCj4+Pj4gQ2hhbmdlcyBpbiB2MjoKPj4+PiAtIHVzZSBmbG9hdGluZyBwb2ludCB2YWx1
-ZXMgYXMgaW5wdXQgZm9yIHRoZSBtYWNyb3MsIGFzCj4+Pj4gICBzdWdnZXN0ZWQgYnkgQW5kcnpl
-ago+Pj4+IC0gdGhlIGZsb2F0aW5nIHBvaW50IHZhbHVlcyBoYXZlIGJlZW4gdHVuZWQgdG8gZXhh
-Y3RseSBtYXRjaAo+Pj4+ICAgdGhlIHZhbHVlcyB0aGF0IGFyZSBjdXJyZW50bHkgdXNlZAo+Pj4+
-Cj4+Pj4gQ2hhbmdlcyBpbiB2MzoKPj4+PiAtIHVzZSBvbmx5IHRocmVlIGRpZ2l0IHZhbHVlcyAo
-cG9pbnRlZCBvdXQgYnkgQW5kcnplaikKPj4+Pgo+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19taXhlci5jIHwgMzMgKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tCj4+
-Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oICAgfCAgNyArKysrKy0tCj4+
-Pj4gIDIgZmlsZXMgY2hhbmdlZCwgMzAgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCj4+
-Pj4KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIu
-YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+PiBpbmRleCA0MWQw
-YzM2Li45NjQ4ZGQ1IDEwMDY0NAo+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX21peGVyLmMKPj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jCj4+Pj4gQEAgLTQ1LDYgKzQ1LDIyIEBACj4+Pj4gICNkZWZpbmUgTUlYRVJfV0lOX05SICAg
-ICAgICAgMwo+Pj4+ICAjZGVmaW5lIFZQX0RFRkFVTFRfV0lOICAgICAgICAgICAgICAgMgo+Pj4+
-Cj4+Pj4gKy8qCj4+Pj4gKyAqIE1peGVyIGNvbG9yIHNwYWNlIGNvbnZlcnNpb24gY29lZmZpY2ll
-bnQgdHJpcGxldC4KPj4+PiArICogVXNlZCBmb3IgQ1NDIGZyb20gUkdCIHRvIFlDYkNyLgo+Pj4+
-ICsgKiBFYWNoIGNvZWZmaWNpZW50IGlzIGEgMTAtYml0IGZpeGVkIHBvaW50IG51bWJlciB3aXRo
-Cj4+Pj4gKyAqIHNpZ24gYW5kIG5vIGludGVnZXIgcGFydCwgaS5lLgo+Pj4+ICsgKiBbMDo4XSA9
-IGZyYWN0aW9uYWwgcGFydCAocmVwcmVzZW50aW5nIGEgdmFsdWUgeSA9IHggLyAyXjkpCj4+Pj4g
-KyAqIFs5XSA9IHNpZ24KPj4+PiArICogTmVnYXRpdmUgdmFsdWVzIGFyZSBlbmNvZGVkIHdpdGgg
-dHdvJ3MgY29tcGxlbWVudC4KPj4+PiArICovCj4+Pj4gKyNkZWZpbmUgTVhSX0NTQ19DKHgpICgo
-aW50KSgoeCkgKiA1MTIuMCkgJiAweDNmZikKPj4+PiArI2RlZmluZSBNWFJfQ1NDX0NUKGEwLCBh
-MSwgYTIpIFwKPj4+PiArICAoKE1YUl9DU0NfQyhhMCkgPDwgMjApIHwgKE1YUl9DU0NfQyhhMSkg
-PDwgMTApIHwgKE1YUl9DU0NfQyhhMikgPDwgMCkpCj4+Pj4gKwo+Pj4+ICsvKiBZQ2JDciB2YWx1
-ZSwgdXNlZCBmb3IgbWl4ZXIgYmFja2dyb3VuZCBjb2xvciBjb25maWd1cmF0aW9uLiAqLwo+Pj4+
-ICsjZGVmaW5lIE1YUl9ZQ0JDUl9WQUwoeSwgY2IsIGNyKSAoKCh5KSA8PCAxNikgfCAoKGNiKSA8
-PCA4KSB8ICgoY3IpIDw8IDApKQo+Pj4+ICsKPj4+PiAgLyogVGhlIHBpeGVsZm9ybWF0cyB0aGF0
-IGFyZSBuYXRpdmVseSBzdXBwb3J0ZWQgYnkgdGhlIG1peGVyLiAqLwo+Pj4+ICAjZGVmaW5lIE1Y
-Ul9GT1JNQVRfUkdCNTY1ICAgIDQKPj4+PiAgI2RlZmluZSBNWFJfRk9STUFUX0FSR0IxNTU1ICA1
-Cj4+Pj4gQEAgLTM5MSwxMyArNDA3LDE0IEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ19yZ2JfZm10
-KHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCBoZWlnaHQpCj4+Pj4gICAg
-ICAgY2FzZSAxMDgwOgo+Pj4+ICAgICAgIGRlZmF1bHQ6Cj4+Pj4gICAgICAgICAgICAgICB2YWwg
-PSBNWFJfQ0ZHX1JHQjcwOV8xNl8yMzU7Cj4+Pj4gKyAgICAgICAgICAgICAvKiBDb25maWd1cmUg
-dGhlIEJULjcwOSBDU0MgbWF0cml4IGZvciBmdWxsIHJhbmdlIFJHQi4gKi8KPj4+PiAgICAgICAg
-ICAgICAgIG1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9DTV9DT0VGRl9ZLAo+Pj4+IC0gICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDMwKSB8ICg5NCA8PCAyMCkgfCAoMzE0IDw8IDEw
-KSB8Cj4+Pj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKDMyIDw8IDApKTsKPj4+PiAr
-ICAgICAgICAgICAgICAgICAgICAgTVhSX0NTQ19DVCggMC4xODQsICAwLjYxNCwgIDAuMDYzKSB8
-Cj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgIE1YUl9DTV9DT0VGRl9SR0JfRlVMTCk7Cj4+Pj4g
-ICAgICAgICAgICAgICBtaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ0IsCj4+Pj4g
-LSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKDk3MiA8PCAyMCkgfCAoODUxIDw8IDEwKSB8
-ICgyMjUgPDwgMCkpOwo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICBNWFJfQ1NDX0NUKC0wLjEw
-MiwgLTAuMzM4LCAgMC40NDApKTsKPj4+PiAgICAgICAgICAgICAgIG1peGVyX3JlZ193cml0ZShy
-ZXMsIE1YUl9DTV9DT0VGRl9DUiwKPj4+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAo
-MjI1IDw8IDIwKSB8ICg4MjAgPDwgMTApIHwgKDEwMDQgPDwgMCkpOwo+Pj4+ICsgICAgICAgICAg
-ICAgICAgICAgICBNWFJfQ1NDX0NUKCAwLjQ0MCwgLTAuMzk5LCAtMC4wNDApKTsKPj4+PiAgICAg
-ICAgICAgICAgIGJyZWFrOwo+Pj4+ICAgICAgIH0KPj4+Pgo+Pj4+IEBAIC03MTUsMTAgKzczMiwx
-MCBAQCBzdGF0aWMgdm9pZCBtaXhlcl93aW5fcmVzZXQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0
-eCkKPj4+PiAgICAgICAvKiByZXNldCBkZWZhdWx0IGxheWVyIHByaW9yaXR5ICovCj4+Pj4gICAg
-ICAgbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0xBWUVSX0NGRywgMCk7Cj4+Pj4KPj4+PiAtICAg
-ICAvKiBzZXR0aW5nIGJhY2tncm91bmQgY29sb3IgKi8KPj4+PiAtICAgICBtaXhlcl9yZWdfd3Jp
-dGUocmVzLCBNWFJfQkdfQ09MT1IwLCAweDAwODA4MCk7Cj4+Pj4gLSAgICAgbWl4ZXJfcmVnX3dy
-aXRlKHJlcywgTVhSX0JHX0NPTE9SMSwgMHgwMDgwODApOwo+Pj4+IC0gICAgIG1peGVyX3JlZ193
-cml0ZShyZXMsIE1YUl9CR19DT0xPUjIsIDB4MDA4MDgwKTsKPj4+PiArICAgICAvKiBzZXQgYWxs
-IGJhY2tncm91bmQgY29sb3JzIHRvIFJHQiAoMCwwLDApICovCj4+Pj4gKyAgICAgbWl4ZXJfcmVn
-X3dyaXRlKHJlcywgTVhSX0JHX0NPTE9SMCwgTVhSX1lDQkNSX1ZBTCgwLCAxMjgsIDEyOCkpOwo+
-Pj4+ICsgICAgIG1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9CR19DT0xPUjEsIE1YUl9ZQ0JDUl9W
-QUwoMCwgMTI4LCAxMjgpKTsKPj4+PiArICAgICBtaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdf
-Q09MT1IyLCBNWFJfWUNCQ1JfVkFMKDAsIDEyOCwgMTI4KSk7Cj4+Pj4KPj4+PiAgICAgICBpZiAo
-dGVzdF9iaXQoTVhSX0JJVF9WUF9FTkFCTEVELCAmY3R4LT5mbGFncykpIHsKPj4+PiAgICAgICAg
-ICAgICAgIC8qIGNvbmZpZ3VyYXRpb24gb2YgVmlkZW8gUHJvY2Vzc29yIFJlZ2lzdGVycyAqLwo+
-Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCj4+Pj4gaW5kZXggN2YyMmRmNS4uYzMx
-MWY1NyAxMDA2NDQKPj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIu
-aAo+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCj4+Pj4gQEAg
-LTE0MCwxMSArMTQwLDExIEBACj4+Pj4gICNkZWZpbmUgTVhSX0lOVF9FTl9WU1lOQyAgICAgICAg
-ICAgICAoMSA8PCAxMSkKPj4+PiAgI2RlZmluZSBNWFJfSU5UX0VOX0FMTCAgICAgICAgICAgICAg
-ICAgICAgICAgKDB4MGYgPDwgOCkKPj4+Pgo+Pj4+IC0vKiBiaXQgZm9yIE1YUl9JTlRfU1RBVFVT
-ICovCj4+Pj4gKy8qIGJpdHMgZm9yIE1YUl9JTlRfU1RBVFVTICovCj4+Pj4gICNkZWZpbmUgTVhS
-X0lOVF9DTEVBUl9WU1lOQyAgICAgICAgICAoMSA8PCAxMSkKPj4+PiAgI2RlZmluZSBNWFJfSU5U
-X1NUQVRVU19WU1lOQyAgICAgICAgICgxIDw8IDApCj4+Pj4KPj4+PiAtLyogYml0IGZvciBNWFJf
-TEFZRVJfQ0ZHICovCj4+Pj4gKy8qIGJpdHMgZm9yIE1YUl9MQVlFUl9DRkcgKi8KPj4+PiAgI2Rl
-ZmluZSBNWFJfTEFZRVJfQ0ZHX0dSUDFfVkFMKHgpICAgIE1YUl9NQVNLX1ZBTCh4LCAxMSwgOCkK
-Pj4+PiAgI2RlZmluZSBNWFJfTEFZRVJfQ0ZHX0dSUDFfTUFTSyAgICAgICAgICAgICAgTVhSX0xB
-WUVSX0NGR19HUlAxX1ZBTCh+MCkKPj4+PiAgI2RlZmluZSBNWFJfTEFZRVJfQ0ZHX0dSUDBfVkFM
-KHgpICAgIE1YUl9NQVNLX1ZBTCh4LCA3LCA0KQo+Pj4+IEBAIC0xNTIsNSArMTUyLDggQEAKPj4+
-PiAgI2RlZmluZSBNWFJfTEFZRVJfQ0ZHX1ZQX1ZBTCh4KSAgICAgICAgICAgICAgTVhSX01BU0tf
-VkFMKHgsIDMsIDApCj4+Pj4gICNkZWZpbmUgTVhSX0xBWUVSX0NGR19WUF9NQVNLICAgICAgICAg
-ICAgICAgIE1YUl9MQVlFUl9DRkdfVlBfVkFMKH4wKQo+Pj4+Cj4+Pj4gKy8qIGJpdHMgZm9yIE1Y
-Ul9DTV9DT0VGRl9ZICovCj4+Pj4gKyNkZWZpbmUgTVhSX0NNX0NPRUZGX1JHQl9GVUxMICAgICAg
-ICAgICAgICAgICgxIDw8IDMwKQo+Pj4+ICsKPj4+PiAgI2VuZGlmIC8qIFNBTVNVTkdfUkVHU19N
-SVhFUl9IICovCj4+Pj4KPj4+Pgo+Pj4KPj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCj4+PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+PiBkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+PiAtLQo+PiBUbyB1bnN1YnNjcmliZSBmcm9t
-IHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2Mi
-IGluCj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
-Cj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jk
-b21vLWluZm8uaHRtbAo+Pgo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6
-IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRoZSBi
-b2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpv
-cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
-Cj4gCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+
+2017년 04월 10일 19:29에 Tobias Jakobi 이(가) 쓴 글:
+> Inki Dae wrote:
+>> 2017-04-07 20:40 GMT+09:00 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+>>> Hello Inki,
+>>>
+>>>
+>>> Inki Dae wrote:
+>>>> Hello Tobias,
+>>>>
+>>>>
+>>>> 2017년 04월 07일 02:10에 Tobias Jakobi 이(가) 쓴 글:
+>>>>> Hello Inki,
+>>>>>
+>>>>>
+>>>>> Inki Dae wrote:
+>>>>>> This patch removes unnecessary descriptions on
+>>>>>> exynos_drm_crtc structure and adds one description
+>>>>>> which specifies what pipe_clk member does.
+>>>>>>
+>>>>>> pipe_clk support had been added by below patch without any description,
+>>>>>>      drm/exynos: add support for pipeline clock to the framework
+>>>>> I would put the commit id here. That makes it easier to look up the
+>>>>> commit your refer to.
+>>>>>
+>>>>>
+>>>>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>>>>>> ---
+>>>>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h | 6 ++----
+>>>>>>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>>>>> index 527bf1d..b0462cc 100644
+>>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>>>>> @@ -152,12 +152,10 @@ struct exynos_drm_clk {
+>>>>>>   *
+>>>>>>   * @base: crtc object.
+>>>>>>   * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
+>>>>>> - * @enabled: if the crtc is enabled or not
+>>>>>> - * @event: vblank event that is currently queued for flip
+>>>>>> - * @wait_update: wait all pending planes updates to finish
+>>>>>> - * @pending_update: number of pending plane updates in this crtc
+>>>>>>   * @ops: pointer to callbacks for exynos drm specific functionality
+>>>>>>   * @ctx: A pointer to the crtc's implementation specific context
+>>>>>> + * @pipe_clk: A pipe clock structure which includes a callback function
+>>>>>> +         for enabling DP clock of FIMD and HDMI PHY clock.
+>>>>> This is wrong/inconsistent with the rest of the documentation. pipe_clk
+>>>>> is not a struct, but a pointer.
+>>>>>
+>>>>> I would suggest to follow. Just document that we have a pointer to <add
+>>>>> escription> here (compare docu for 'ops' and 'ctx').
+>>>>> And then put the later bits ("...callback function for enabling DP
+>>>>> clock...") directly to the definition of 'struct exynos_drm_clk' (which
+>>>>> is currently lacking any kind of docu).
+>>>>
+>>>> Thanks for pointing it out. My mistake. :)
+>>>>
+>>>> How about this simply?
+>>>> "A pointer to exynos_drm_clk structure for enabling and disabling DP clock of FIMD and HDMI PHY clocks"
+>>> Not what I meant. You're describing 'struct exynos_drm_clk', and that
+>>> does not belong here. If you describe 'struct exynos_drm_clk', then this
+>>> should go in front of the struct's definition.
+>>>
+>>> How abouting something like this in front of the struct's definition::
+>>>> /*
+>>>>  * Exynos DRM pipeline clock structure.
+>>>>  *
+>>>>  * @enable: callback to enable/disable the clock.
+>>>>  *
+>>>>  * Used for proper clock synchronization of components belonging
+>>>>  * to the same pipeline. Used e.g. for enabling the DP clock of
+>>>>  * the FIMD or the HDMI PHY clock.
+>>>>  */
+>>>> struct exynos_drm_clk {
+>>>> <snip>
+>>>
+>>> For 'pipe_clk' I would just go with this:
+>>>> @pipe_clk: A pointet to the crtc's pipeline clock.
+>>
+>> More simple and looks better.
+> In this form (commit a07d468cb2efd347a9e279e4f68661f0f370d10f in
+> exynos-drm-next), the description is incomplete. Please read my mails again.
+
+Many patches in mainline used same form. Please git log | grep "commit-id" -n10.
+Sorry but no update and no comment anymore but will use the generic form later.
+
+Thanks,
+Inki Dae
+
+> 
+> - Tobias
+> 
+> 
+>>
+>> Thanks,
+>> Inki Dae
+>>
+>>>
+>>> I hope this helps.
+>>>
+>>> - Tobias
+>>>
+>>>
+>>>> Thanks,
+>>>> Inki Dae
+>>>>
+>>>>>
+>>>>>
+>>>>> - Tobias
+>>>>>
+>>>>>>   */
+>>>>>>  struct exynos_drm_crtc {
+>>>>>>     struct drm_crtc                 base;
+>>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
