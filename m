@@ -1,33 +1,52 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH v4 2/2] crypto: hw_random - Add new Exynos RNG driver
-Date: Mon, 10 Apr 2017 18:55:47 +0800
-Message-ID: <20170410105547.GA8615@gondor.apana.org.au>
-References: <20170408133245.30147-1-krzk@kernel.org>
- <20170408133245.30147-3-krzk@kernel.org>
+From: Mauro Carvalho Chehab <mchehab-JsYNTwtnfakRB7SZvlqPiA@public.gmane.org>
+Subject: [git:media_tree/master] [media] s5p-cec.txt: document the HDMI
+ controller phandle
+Date: Mon, 10 Apr 2017 16:13:07 +0000
+Message-ID: <E1cxc0o-0003Qv-NT@www.linuxtv.org>
+Reply-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170408133245.30147-3-krzk@kernel.org>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: James Hogan <james.hogan@imgtec.com>, Matt Mackall <mpm@selenic.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "David S. Miller" <davem@davemloft.net>, Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>, Bernie Thompson <bernie@plugable.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, linux-kernel@vger.kernel.org, linux-metag@vger.kernel.org, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxtv-commits-bounces+gcvl-linuxtv-commits=m.gmane.org-dJidKbW2IEtAfugRpC6u6w@public.gmane.org>
+List-Unsubscribe: <https://www.linuxtv.org/cgi-bin/mailman/options/linuxtv-commits>,
+ <mailto:linuxtv-commits-request-dJidKbW2IEtAfugRpC6u6w@public.gmane.org?subject=unsubscribe>
+List-Post: <mailto:linuxtv-commits-dJidKbW2IEtAfugRpC6u6w@public.gmane.org>
+List-Help: <mailto:linuxtv-commits-request-dJidKbW2IEtAfugRpC6u6w@public.gmane.org?subject=help>
+List-Subscribe: <https://www.linuxtv.org/cgi-bin/mailman/listinfo/linuxtv-commits>,
+ <mailto:linuxtv-commits-request-dJidKbW2IEtAfugRpC6u6w@public.gmane.org?subject=subscribe>
+Sender: "linuxtv-commits" <linuxtv-commits-bounces-dJidKbW2IEtAfugRpC6u6w@public.gmane.org>
+Errors-To: linuxtv-commits-bounces+gcvl-linuxtv-commits=m.gmane.org-dJidKbW2IEtAfugRpC6u6w@public.gmane.org
+To: linuxtv-commits-dJidKbW2IEtAfugRpC6u6w@public.gmane.org
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Apr 08, 2017 at 03:32:45PM +0200, Krzysztof Kozlowski wrote:
->
-> +static struct rng_alg exynos_rng_alg = {
-> +	.generate		= exynos_rng_generate,
-> +	.seed			= exynos_rng_seed,
-> +	.seedsize		= EXYNOS_RNG_SEED_SIZE,
-> +	.base			= {
-> +		.cra_name		= "exynos_rng",
-
-Please use stdrng.  Or is there a reason why this can't be used
-by the crypto layer itself?
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+VGhpcyBpcyBhbiBhdXRvbWF0aWMgZ2VuZXJhdGVkIGVtYWlsIHRvIGxldCB5b3Uga25vdyB0aGF0
+IHRoZSBmb2xsb3dpbmcgcGF0Y2ggd2VyZSBxdWV1ZWQ6CgpTdWJqZWN0OiBbbWVkaWFdIHM1cC1j
+ZWMudHh0OiBkb2N1bWVudCB0aGUgSERNSSBjb250cm9sbGVyIHBoYW5kbGUKQXV0aG9yOiAgSGFu
+cyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgpEYXRlOiAgICBUdWUgRGVjIDEzIDEy
+OjM3OjE2IDIwMTYgLTAyMDAKClVwZGF0ZSB0aGUgYmluZGluZ3MgZG9jdW1lbnRpbmcgdGhlIG5l
+dyBoZG1pIHBoYW5kbGUuCgpTaWduZWQtb2ZmLWJ5OiBIYW5zIFZlcmt1aWwgPGhhbnMudmVya3Vp
+bEBjaXNjby5jb20+CkFja2VkLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5v
+cmc+CkFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPgpDQzogbGludXgtc2Ft
+c3VuZy1zb2NAdmdlci5rZXJuZWwub3JnCkNDOiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZwpT
+aWduZWQtb2ZmLWJ5OiBNYXVybyBDYXJ2YWxobyBDaGVoYWIgPG1jaGVoYWJAcy1vcGVuc291cmNl
+LmNvbT4KCiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLWNlYy50
+eHQgfCAyICsrCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCgotLS0KCmRpZmYgLS1n
+aXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLWNlYy50eHQg
+Yi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLWNlYy50eHQKaW5k
+ZXggOTI1YWI0ZDcyZWFhLi40YmIwOGQ5ZDk0MGIgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9zNXAtY2VjLnR4dAorKysgYi9Eb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLWNlYy50eHQKQEAgLTE1LDYgKzE1LDcgQEAg
+UmVxdWlyZWQgcHJvcGVydGllczoKICAgLSBjbG9jay1uYW1lcyA6IGZyb20gY29tbW9uIGNsb2Nr
+IGJpbmRpbmc6IG11c3QgY29udGFpbiAiaGRtaWNlYyIsCiAJCSAgY29ycmVzcG9uZGluZyB0byBl
+bnRyeSBpbiB0aGUgY2xvY2tzIHByb3BlcnR5LgogICAtIHNhbXN1bmcsc3lzY29uLXBoYW5kbGUg
+LSBwaGFuZGxlIHRvIHRoZSBQTVUgc3lzdGVtIGNvbnRyb2xsZXIKKyAgLSBoZG1pLXBoYW5kbGUg
+LSBwaGFuZGxlIHRvIHRoZSBIRE1JIGNvbnRyb2xsZXIKIAogRXhhbXBsZToKIApAQCAtMjUsNiAr
+MjYsNyBAQCBoZG1pY2VjOiBjZWNAMTAwQjAwMDAgewogCWNsb2NrcyA9IDwmY2xvY2sgQ0xLX0hE
+TUlfQ0VDPjsKIAljbG9jay1uYW1lcyA9ICJoZG1pY2VjIjsKIAlzYW1zdW5nLHN5c2Nvbi1waGFu
+ZGxlID0gPCZwbXVfc3lzdGVtX2NvbnRyb2xsZXI+OworCWhkbWktcGhhbmRsZSA9IDwmaGRtaT47
+CiAJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKIAlwaW5jdHJsLTAgPSA8JmhkbWlfY2VjPjsK
+IAlzdGF0dXMgPSAib2theSI7CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpsaW51eHR2LWNvbW1pdHMgbWFpbGluZyBsaXN0CmxpbnV4dHYtY29tbWl0c0Bs
+aW51eHR2Lm9yZwpodHRwczovL3d3dy5saW51eHR2Lm9yZy9jZ2ktYmluL21haWxtYW4vbGlzdGlu
+Zm8vbGludXh0di1jb21taXRz
