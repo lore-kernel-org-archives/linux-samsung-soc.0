@@ -1,86 +1,84 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [git:media_tree/master] [media] ARM: dts: exynos: add HDMI
- controller phandle to exynos4.dtsi
-Date: Tue, 11 Apr 2017 11:02:09 +0200
-Message-ID: <CAJKOXPe7fKz=ivoW3BTdk0TqANwJaZWMamQsKSXFRS4b4ywG9w@mail.gmail.com>
-References: <E1cxc0o-0003RE-PP@www.linuxtv.org> <CAJKOXPfbJpFu6r9rS8oCqxTH+s7y2wYKx9+TzGrv4Cd8DYaKew@mail.gmail.com>
- <20170411055413.07957d91@vento.lan>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [RFC 0/8] drm/exynos: misc fixes and more
+Date: Tue, 11 Apr 2017 12:52:16 +0200
+Message-ID: <11ca839f-2b2d-6a76-aac1-03be93a5dffc@math.uni-bielefeld.de>
+References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44538 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754161AbdDKJCP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Apr 2017 05:02:15 -0400
-In-Reply-To: <20170411055413.07957d91@vento.lan>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: inki.dae@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: linuxtv-commits@linuxtv.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org
 
-On Tue, Apr 11, 2017 at 10:54 AM, Mauro Carvalho Chehab
-<mchehab@s-opensource.com> wrote:
-> Em Tue, 11 Apr 2017 10:36:58 +0200
-> Krzysztof Kozlowski <krzk@kernel.org> escreveu:
->
->> On Mon, Apr 10, 2017 at 6:12 PM, Mauro Carvalho Chehab
->> <mchehab@s-opensource.com> wrote:
->> > This is an automatic generated email to let you know that the following patch were queued:
->> >
->> > Subject: [media] ARM: dts: exynos: add HDMI controller phandle to exynos4.dtsi
->> > Author:  Hans Verkuil <hans.verkuil@cisco.com>
->> > Date:    Tue Dec 13 12:37:16 2016 -0200
->> >
->> > Add the new hdmi phandle to exynos4.dtsi. This phandle is needed by the
->> > s5p-cec driver to initialize the CEC notifier framework.
->> >
->> > Tested with my Odroid U3.
->> >
->> > Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
->> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> > CC: linux-samsung-soc@vger.kernel.org
->> > CC: devicetree@vger.kernel.org
->> > CC: Krzysztof Kozlowski <krzk@kernel.org>
->> > Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
->> >
->> >  arch/arm/boot/dts/exynos4.dtsi | 1 +
->> >  1 file changed, 1 insertion(+)
->> >
->>
->> Mauro, you should not apply it. It is already going through samsung-soc [1].
->> if you need this patch for bisectability or any other reasons, I
->> provided a tag with it here:
->> https://www.spinics.net/lists/devicetree/msg171182.html
->>
->> Please drop the patch because now it will get duplicated.
->
-> Having exactly the same patch applied on multiple trees usually is
-> not a problem, provided that it doesn't rise a non-trivial
-> conflict.
->
-> I avoid rebase the tree where this patch is applied, as rebasing it
-> affect the workflow of other developers.
->
-> I'm afraid that, if I revert this patch, it will cause more harm than
-> good.
-
-Of course, revert is wrong. The patch should be dropped with rebase,
-assuming that you accept the rebase itself. But if you do not
-rebase... then it has to  stay.
-
-> So, I guess the best solution to fix the issue would be to pull from
-> a stable branch on your tree with has this patch and solve conflicts,
-> if any. This way, nothing will popup when merging upstream.
-
-This is why I provided it in separate tag, in first place!
-That is a proper solution for avoiding any patch duplication and
-conflicts. Indeed you are right that duplication of commits should not
-do any harm... but it is not a proper way of development, right?
-
-Anyway, it is up to you. I provided you a tag with it so you can merge
-it if needed (which would require rebasing). If not, then of course
-please do not revert it.
-
-Best regards,
-Krzysztof
+SGVsbG8gSW5raSwKCnBsZWFzZSBkb24ndCBmb3JnZXQgdG8gcmV2aWV3IHRoaXMgc2VyaWVzLgoK
+QWxzbyBzb21lIHBvaW50ZXJzIGNvbmNlcm5pbmcgdGhlIHZpZGVvIHBsYW5lIGZsaWNrZXJpbmcg
+YW5kIHRoZQppbnRlcmxhY2luZyBpc3N1ZSB3b3VsZCBiZSB2ZXJ5IHdlbGNvbWUuCgpMb29raW5n
+IGF0IHRoZSBjdXJyZW50IHJlZ2lzdGVyIGRlZmluZXMgZm9yIE1YUl9JTlRfRU4gc3VnZ2VzdHMg
+dGhhdAp0aGVyZSBhcmUgYXQgbGVhc3QgdGhyZWUgbW9yZSB0eXBlIG9mIGludGVycnVwdCBhdmFp
+bGFibGUuIEFueSBjaGFuY2UKdGhlc2UgY291bGQgYmUgZG9jdW1lbnRlZD8gSSBob3BlIHRvIGdl
+dCBzb21lIG1vcmUgaW5zaWdodCBpbnRvIHRoaXMKaXNzdWUsIHdoaWNoIGFwcGFyYW50bHkgaXMg
+Y2F1c2VkIGJ5IGluc3VmZmljaWVudCBiYW5kd2lkdGguCgpGb3IgdGhlIGludGVybGFjaW5nIGlz
+c3VlIEkgaGF2ZSBkb25lIHBhcnRpYWwgcHJvZ3Jlc3MuIEkgbm93IGxvbmdlciBzZWUKYSBJT01N
+VSBwYWdlZmF1bHQsIGJ1dCB0aGUgdmlkZW8gcGxhbmUgaXMgaGVhdmlseSBjb3JydXB0ZWQuIEFs
+c28gdGhlCmRpbWVuc2lvbnMgbG9vayB3cm9uZy4KCldoaWxlIEkgY2FuIHNvbWVob3cgZ3Vlc3Mg
+dGhhdCBWUF9NT0RFX0xJTkVfU0tJUCBkb2VzLCB0aGUKVlBfTU9ERV9GSUVMRF9JRF9BVVRPX1RP
+R0dMSU5HIGZsYWcgc3RpbGwgcmVtYWlucyBhIG15c3RlcnkgdG8gbWUuIElmCnBvc3NpYmxlLCBJ
+IHJlcXVlc3Qgc29tZSBkb2N1bWVudGF0aW9uIGZvciB0aGlzIGFzIHdlbGwuCgoKV2l0aCBiZXN0
+IHdpc2hlcywKVG9iaWFzCgoKClRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4gSGVsbG8sCj4gCj4gc29t
+ZSByZWNlbnQgd29yayBJIGRpZCBvbiBFeHlub3MuIFBhdGNoZXMgYXJlIGJhc2VkIG9uIFsxXSBh
+bmQgWzJdLgo+IAo+IFN1bW1hcnk6Cj4gKGEpIEVuYWJsZXMgc3VwcG9ydCBmb3IgTlYxMk1UIGlu
+IHRoZSBtaXhlci4KPiAoYikgU2FuaXRpemVzIGJ1ZmZlciBwaXRjaCBmb3IgSFcgd2l0aCByZXN0
+cmljdGlvbnMuCj4gKGMpIE1pc2MgZml4ZXMKPiAKPiBXaGlsZSB0ZXN0aW5nIHRoZSBOVjEyTVQg
+cGFydCwgSSBtYWRlIHRoZXNlIGludGVyZXN0aW5nIG9ic2VydmF0aW9ucy4KPiAKPiAoMSkgSSB1
+c2VkIDE5MjB4MTA4MCBYUkdCODg4OCBvbiB0aGUgcHJpbWFyeSBwbGFuZSwgYW5kIDEyODB4NzY4
+IG9uIHRoZQo+IHZpZGVvIHBsYW5lLiBXaXRoIHRoaXMgY29uZmlndXJhdGlvbiwgaXQgZG9lcyBu
+b3QgbWF0dGVyIGlmIHlvdSdyZQo+IHVzaW5nIE5WMTIgb3IgTlYxMk1ULCB0aGUgdmlkZW8gcGxh
+bmUgb2NjYXNpb25hbGx5IGZsaWNrZXJzIG9yIHNob3dzCj4gaGVhdnkgYXJ0aWZhY3RpbmcuIFJl
+ZHVjaW5nIHRoZSBzaXplIG9mIHRoZSBwcmltYXJ5IHBsYW5lLCBlLmcuIHRvCj4gMzJ4MzIgc29s
+dmVzIHRoaXMgaXNzdWUsIHNvIG15IGd1ZXNzIGlzIHRoYXQgdGhpcyBpcyBtZW1vcnkgYmFuZHdp
+ZHRoCj4gaXNzdWUuIERvZXMgc29tZW9uZSBrbm93IGlmIG9uZSBjYW4gY2hlY2sgZm9yIGJ1ZmZl
+ciB1bmRlcmZsb3dzIG9mIHRoZQo+IG1peGVyIHdpdGggcmVzcGVjdCB0byBkYXRhIHBhc3NlZCBm
+cm9tIHRoZSBWUD8KPiAKPiAoMikgVXNpbmcgMTkyMHgxMDgwaSAoc28gYW4gaW50ZXJsYWNlZCBt
+b2RlKSBhbmQgTlYxMiwgdGhlIGJvYXJkCj4gaW1tZWRpYXRlbHkgZGllcyB3aXRoIGFuIElPTU1V
+IHBhZ2VmYXVsdCBhdCBhZGRyZXNzIHplcm8uIEknbQo+IGN1cnJlbnRseSBpbnZlc3RpZ2F0aW5n
+IHRoaXMsIGFuZCBpdCBsb29rcyBsaWtlIHRoYXQgdGhlIFZQIHNldHVwCj4gaXMgd3JvbmcgaGVy
+ZS4gSW4gcGFydGljdWxhciBpdCBzaG91bGQgYmUgdGhlIHNvdXJjZSAoISkgaGVpZ2h0Cj4gYW5k
+IHZlcnRpY2FsIHBvc2l0aW9uIHRoYXQgc2hvdWxkIGJlIGhhbGZlZCBpbiBpbnRlcmxhY2VkIG1v
+ZGUsIGFuZAo+IG5vdCB0aGUgZGVzdGluYXRpb24uIE5lZWQgdG8gbG9vayBtb3JlIGludG8gdGhp
+cy4KPiAKPiBBbnl3YXksIGJvdGggdGhlIGlzc3VlcyBhcmUgaW5kZXBlbmRhbnQgb2YgdGhlIHBh
+dGNoZXMsIHNvIHBsZWFzZQo+IHJldmlldyEgOi0pCj4gCj4gV2l0aCBiZXN0IHdpc2hlcywKPiBU
+b2JpYXMKPiAKPiAKPiBbMV0gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1zYW1z
+dW5nLXNvYy9tc2c1ODY0MC5odG1sCj4gWzJdIGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMv
+bGludXgtc2Ftc3VuZy1zb2MvbXNnNTg2NDQuaHRtbAo+IAo+IFRvYmlhcyBKYWtvYmkgKDgpOgo+
+ICAgZHJtL2V4eW5vczogbWl4ZXI6IGZpeCBjaHJvbWEgY29tbWVudCBpbiB2cF92aWRlb19idWZm
+ZXIoKQo+ICAgZHJtL2V4eW5vczogbWl4ZXI6IGVuYWJsZSBOVjEyTVQgc3VwcG9ydCBmb3IgdGhl
+IHZpZGVvIHBsYW5lCj4gICBkcm0vZXh5bm9zOiBtaXhlcjogc2ltcGxpZnkge3ZwX3ZpZGVvLG1p
+eGVyX2dyYXBofV9idWZmZXIoKQo+ICAgZHJtL2V4eW5vczogbWl4ZXI6IHJlbW92ZSBzcmMgb2Zm
+c2V0IGZyb20gbWl4ZXJfZ3JhcGhfYnVmZmVyKCkKPiAgIGRybS9leHlub3M6IGludHJvZHVjZSBC
+WVRFX1BJVENIIGNhcGFiaWxpdHkKPiAgIGRybS9leHlub3M6IGFkZCBCWVRFX1BJVENIIGNhcCBm
+b3IgYWxsIHN1cHBvcnRlZCBwbGFuZXMKPiAgIGRybS9leHlub3M6IGNvbnNpc3RlbnQgdXNlIG9m
+IGNwcAo+ICAgZHJtL2V4eW5vczogc2ltcGxpZnkgc2V0X3BpeGZtdCgpIGluIERFQ09OIGFuZCBG
+SU1EIGRyaXZlcnMKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9k
+ZWNvbi5jIHwgMTcgKysrKystLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3
+X2RybV9kZWNvbi5jICAgIHwgMTMgKysrLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2Rydi5oICAgICAgIHwgIDIgKysKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZiLmMgICAgICAgIHwgIDIgKysKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgMTcgKysrKy0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgICAgIHwgMzcgKysrKysrKysrKysrKysrKysrKysr
+Kwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCA0NCAr
+KysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgNyBmaWxlcyBjaGFuZ2VkLCA3MSBpbnNlcnRp
+b25zKCspLCA2MSBkZWxldGlvbnMoLSkKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
