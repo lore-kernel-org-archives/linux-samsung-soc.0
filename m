@@ -1,135 +1,55 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
-Date: Tue, 11 Apr 2017 10:17:52 +0200
-Message-ID: <b238e162-45fe-f99e-2615-bc84964ca7f8@math.uni-bielefeld.de>
-References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
- <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
- <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
- <58E7472C.3030503@samsung.com>
- <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
- <CAAQKjZMtxoMHa4XQpVrNWDwPW7usQ-2308QaxVjy9o7DSp+bEg@mail.gmail.com>
- <6962262a-519b-dfbb-72f7-9b6143d4c9b8@math.uni-bielefeld.de>
- <58EC140E.3020301@samsung.com>
- <467c5c99-e86e-84e9-290c-05dc4c9db5ac@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [git:media_tree/master] [media] ARM: dts: exynos: add HDMI
+ controller phandle to exynos4.dtsi
+Date: Tue, 11 Apr 2017 10:36:58 +0200
+Message-ID: <CAJKOXPfbJpFu6r9rS8oCqxTH+s7y2wYKx9+TzGrv4Cd8DYaKew@mail.gmail.com>
+References: <E1cxc0o-0003RE-PP@www.linuxtv.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <467c5c99-e86e-84e9-290c-05dc4c9db5ac@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>, Inki Dae <daeinki@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:40250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751449AbdDKIhE (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 11 Apr 2017 04:37:04 -0400
+In-Reply-To: <E1cxc0o-0003RE-PP@www.linuxtv.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: linuxtv-commits@linuxtv.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org
 
-QW5vdGhlciB0aGluZyB0aGF0IEkgbm90aWNlZC4gV2h5IHdhc24ndCB0aGUgdjIgdGhhdCBlbmRl
-ZCB1cCBpbiB5b3VyCmdpdCBldmVyIHN1Ym1pdHRlZCB0byB0aGUgbWFpbGluZyBsaXN0PyBCZWNh
-dXNlIGl0IHNob3VsZCBoYXZlLCBpbgpwYXJ0aWN1bGFyIHRvIHNwb3QgdGhlc2Ugb2J2aW91cyBl
-cnJvcnMuCgotIFRvYmlhcwoKClRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4gSW5raSBEYWUgd3JvdGU6
-Cj4+Cj4+Cj4+IDIwMTfrhYQgMDTsm5QgMTDsnbwgMTk6Mjnsl5AgVG9iaWFzIEpha29iaSDsnbQo
-6rCAKSDsk7Qg6riAOgo+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4gMjAxNy0wNC0wNyAyMDo0MCBH
-TVQrMDk6MDAgVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ogo+
-Pj4+PiBIZWxsbyBJbmtpLAo+Pj4+Pgo+Pj4+Pgo+Pj4+PiBJbmtpIERhZSB3cm90ZToKPj4+Pj4+
-IEhlbGxvIFRvYmlhcywKPj4+Pj4+Cj4+Pj4+Pgo+Pj4+Pj4gMjAxN+uFhCAwNOyblCAwN+ydvCAw
-MjoxMOyXkCBUb2JpYXMgSmFrb2JpIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4+Pj4gSGVsbG8gSW5r
-aSwKPj4+Pj4+Pgo+Pj4+Pj4+Cj4+Pj4+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+IFRoaXMg
-cGF0Y2ggcmVtb3ZlcyB1bm5lY2Vzc2FyeSBkZXNjcmlwdGlvbnMgb24KPj4+Pj4+Pj4gZXh5bm9z
-X2RybV9jcnRjIHN0cnVjdHVyZSBhbmQgYWRkcyBvbmUgZGVzY3JpcHRpb24KPj4+Pj4+Pj4gd2hp
-Y2ggc3BlY2lmaWVzIHdoYXQgcGlwZV9jbGsgbWVtYmVyIGRvZXMuCj4+Pj4+Pj4+Cj4+Pj4+Pj4+
-IHBpcGVfY2xrIHN1cHBvcnQgaGFkIGJlZW4gYWRkZWQgYnkgYmVsb3cgcGF0Y2ggd2l0aG91dCBh
-bnkgZGVzY3JpcHRpb24sCj4+Pj4+Pj4+ICAgICAgZHJtL2V4eW5vczogYWRkIHN1cHBvcnQgZm9y
-IHBpcGVsaW5lIGNsb2NrIHRvIHRoZSBmcmFtZXdvcmsKPj4+Pj4+PiBJIHdvdWxkIHB1dCB0aGUg
-Y29tbWl0IGlkIGhlcmUuIFRoYXQgbWFrZXMgaXQgZWFzaWVyIHRvIGxvb2sgdXAgdGhlCj4+Pj4+
-Pj4gY29tbWl0IHlvdXIgcmVmZXIgdG8uCj4+Pj4+Pj4KPj4+Pj4+Pgo+Pj4+Pj4+PiBTaWduZWQt
-b2ZmLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4+Pj4+Pj4+IC0tLQo+Pj4+
-Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIHwgNiArKy0tLS0K
-Pj4+Pj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0p
-Cj4+Pj4+Pj4+Cj4+Pj4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgK
-Pj4+Pj4+Pj4gaW5kZXggNTI3YmYxZC4uYjA0NjJjYyAxMDA2NDQKPj4+Pj4+Pj4gLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+Pj4+Pj4+ICsrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+Pj4+Pj4+PiBAQCAtMTUyLDEyICsx
-NTIsMTAgQEAgc3RydWN0IGV4eW5vc19kcm1fY2xrIHsKPj4+Pj4+Pj4gICAqCj4+Pj4+Pj4+ICAg
-KiBAYmFzZTogY3J0YyBvYmplY3QuCj4+Pj4+Pj4+ICAgKiBAdHlwZTogb25lIG9mIEVYWU5PU19E
-SVNQTEFZX1RZUEVfTENEIGFuZCBIRE1JLgo+Pj4+Pj4+PiAtICogQGVuYWJsZWQ6IGlmIHRoZSBj
-cnRjIGlzIGVuYWJsZWQgb3Igbm90Cj4+Pj4+Pj4+IC0gKiBAZXZlbnQ6IHZibGFuayBldmVudCB0
-aGF0IGlzIGN1cnJlbnRseSBxdWV1ZWQgZm9yIGZsaXAKPj4+Pj4+Pj4gLSAqIEB3YWl0X3VwZGF0
-ZTogd2FpdCBhbGwgcGVuZGluZyBwbGFuZXMgdXBkYXRlcyB0byBmaW5pc2gKPj4+Pj4+Pj4gLSAq
-IEBwZW5kaW5nX3VwZGF0ZTogbnVtYmVyIG9mIHBlbmRpbmcgcGxhbmUgdXBkYXRlcyBpbiB0aGlz
-IGNydGMKPj4+Pj4+Pj4gICAqIEBvcHM6IHBvaW50ZXIgdG8gY2FsbGJhY2tzIGZvciBleHlub3Mg
-ZHJtIHNwZWNpZmljIGZ1bmN0aW9uYWxpdHkKPj4+Pj4+Pj4gICAqIEBjdHg6IEEgcG9pbnRlciB0
-byB0aGUgY3J0YydzIGltcGxlbWVudGF0aW9uIHNwZWNpZmljIGNvbnRleHQKPj4+Pj4+Pj4gKyAq
-IEBwaXBlX2NsazogQSBwaXBlIGNsb2NrIHN0cnVjdHVyZSB3aGljaCBpbmNsdWRlcyBhIGNhbGxi
-YWNrIGZ1bmN0aW9uCj4+Pj4+Pj4+ICsgICAgICAgICBmb3IgZW5hYmxpbmcgRFAgY2xvY2sgb2Yg
-RklNRCBhbmQgSERNSSBQSFkgY2xvY2suCj4+Pj4+Pj4gVGhpcyBpcyB3cm9uZy9pbmNvbnNpc3Rl
-bnQgd2l0aCB0aGUgcmVzdCBvZiB0aGUgZG9jdW1lbnRhdGlvbi4gcGlwZV9jbGsKPj4+Pj4+PiBp
-cyBub3QgYSBzdHJ1Y3QsIGJ1dCBhIHBvaW50ZXIuCj4+Pj4+Pj4KPj4+Pj4+PiBJIHdvdWxkIHN1
-Z2dlc3QgdG8gZm9sbG93LiBKdXN0IGRvY3VtZW50IHRoYXQgd2UgaGF2ZSBhIHBvaW50ZXIgdG8g
-PGFkZAo+Pj4+Pj4+IGVzY3JpcHRpb24+IGhlcmUgKGNvbXBhcmUgZG9jdSBmb3IgJ29wcycgYW5k
-ICdjdHgnKS4KPj4+Pj4+PiBBbmQgdGhlbiBwdXQgdGhlIGxhdGVyIGJpdHMgKCIuLi5jYWxsYmFj
-ayBmdW5jdGlvbiBmb3IgZW5hYmxpbmcgRFAKPj4+Pj4+PiBjbG9jay4uLiIpIGRpcmVjdGx5IHRv
-IHRoZSBkZWZpbml0aW9uIG9mICdzdHJ1Y3QgZXh5bm9zX2RybV9jbGsnICh3aGljaAo+Pj4+Pj4+
-IGlzIGN1cnJlbnRseSBsYWNraW5nIGFueSBraW5kIG9mIGRvY3UpLgo+Pj4+Pj4KPj4+Pj4+IFRo
-YW5rcyBmb3IgcG9pbnRpbmcgaXQgb3V0LiBNeSBtaXN0YWtlLiA6KQo+Pj4+Pj4KPj4+Pj4+IEhv
-dyBhYm91dCB0aGlzIHNpbXBseT8KPj4+Pj4+ICJBIHBvaW50ZXIgdG8gZXh5bm9zX2RybV9jbGsg
-c3RydWN0dXJlIGZvciBlbmFibGluZyBhbmQgZGlzYWJsaW5nIERQIGNsb2NrIG9mIEZJTUQgYW5k
-IEhETUkgUEhZIGNsb2NrcyIKPj4+Pj4gTm90IHdoYXQgSSBtZWFudC4gWW91J3JlIGRlc2NyaWJp
-bmcgJ3N0cnVjdCBleHlub3NfZHJtX2NsaycsIGFuZCB0aGF0Cj4+Pj4+IGRvZXMgbm90IGJlbG9u
-ZyBoZXJlLiBJZiB5b3UgZGVzY3JpYmUgJ3N0cnVjdCBleHlub3NfZHJtX2NsaycsIHRoZW4gdGhp
-cwo+Pj4+PiBzaG91bGQgZ28gaW4gZnJvbnQgb2YgdGhlIHN0cnVjdCdzIGRlZmluaXRpb24uCj4+
-Pj4+Cj4+Pj4+IEhvdyBhYm91dGluZyBzb21ldGhpbmcgbGlrZSB0aGlzIGluIGZyb250IG9mIHRo
-ZSBzdHJ1Y3QncyBkZWZpbml0aW9uOjoKPj4+Pj4+IC8qCj4+Pj4+PiAgKiBFeHlub3MgRFJNIHBp
-cGVsaW5lIGNsb2NrIHN0cnVjdHVyZS4KPj4+Pj4+ICAqCj4+Pj4+PiAgKiBAZW5hYmxlOiBjYWxs
-YmFjayB0byBlbmFibGUvZGlzYWJsZSB0aGUgY2xvY2suCj4+Pj4+PiAgKgo+Pj4+Pj4gICogVXNl
-ZCBmb3IgcHJvcGVyIGNsb2NrIHN5bmNocm9uaXphdGlvbiBvZiBjb21wb25lbnRzIGJlbG9uZ2lu
-Zwo+Pj4+Pj4gICogdG8gdGhlIHNhbWUgcGlwZWxpbmUuIFVzZWQgZS5nLiBmb3IgZW5hYmxpbmcg
-dGhlIERQIGNsb2NrIG9mCj4+Pj4+PiAgKiB0aGUgRklNRCBvciB0aGUgSERNSSBQSFkgY2xvY2su
-Cj4+Pj4+PiAgKi8KPj4+Pj4+IHN0cnVjdCBleHlub3NfZHJtX2NsayB7Cj4+Pj4+PiA8c25pcD4K
-Pj4+Pj4KPj4+Pj4gRm9yICdwaXBlX2NsaycgSSB3b3VsZCBqdXN0IGdvIHdpdGggdGhpczoKPj4+
-Pj4+IEBwaXBlX2NsazogQSBwb2ludGV0IHRvIHRoZSBjcnRjJ3MgcGlwZWxpbmUgY2xvY2suCj4+
-Pj4KPj4+PiBNb3JlIHNpbXBsZSBhbmQgbG9va3MgYmV0dGVyLgo+Pj4gSW4gdGhpcyBmb3JtIChj
-b21taXQgYTA3ZDQ2OGNiMmVmZDM0N2E5ZTI3OWU0ZjY4NjYxZjBmMzcwZDEwZiBpbgo+Pj4gZXh5
-bm9zLWRybS1uZXh0KSwgdGhlIGRlc2NyaXB0aW9uIGlzIGluY29tcGxldGUuIFBsZWFzZSByZWFk
-IG15IG1haWxzIGFnYWluLgo+Pgo+PiBNYW55IHBhdGNoZXMgaW4gbWFpbmxpbmUgdXNlZCBzYW1l
-IGZvcm0uIFBsZWFzZSBnaXQgbG9nIHwgZ3JlcCAiY29tbWl0LWlkIiAtbjEwLgo+PiBTb3JyeSBi
-dXQgbm8gdXBkYXRlIGFuZCBubyBjb21tZW50IGFueW1vcmUgYnV0IHdpbGwgdXNlIHRoZSBnZW5l
-cmljIGZvcm0gbGF0ZXIuCj4gSSdtIG5vdCByZWZlcnJpbmcgdG8geW91ciB1c2Ugb2YgY29tbWl0
-LWlkLCBidXQgdG8geW91IHRvdGFsbHkgaWdub3JpbmcKPiB0aGUgZG9jdW1lbnRhdGlvbiBiaXRz
-IGZvciAnc3RydWN0IGV4eW5vc19kcm1fY2xrJy4gUGxlYXNlIGJlIG1vcmUKPiBjYXJlZnVsIHdo
-ZW4gcmVhZGluZyBteSBtYWlscy4KPiAKPiAtIFRvYmlhcwo+IAo+IAo+IAo+PiBUaGFua3MsCj4+
-IElua2kgRGFlCj4+Cj4+Pgo+Pj4gLSBUb2JpYXMKPj4+Cj4+Pgo+Pj4+Cj4+Pj4gVGhhbmtzLAo+
-Pj4+IElua2kgRGFlCj4+Pj4KPj4+Pj4KPj4+Pj4gSSBob3BlIHRoaXMgaGVscHMuCj4+Pj4+Cj4+
-Pj4+IC0gVG9iaWFzCj4+Pj4+Cj4+Pj4+Cj4+Pj4+PiBUaGFua3MsCj4+Pj4+PiBJbmtpIERhZQo+
-Pj4+Pj4KPj4+Pj4+Pgo+Pj4+Pj4+Cj4+Pj4+Pj4gLSBUb2JpYXMKPj4+Pj4+Pgo+Pj4+Pj4+PiAg
-ICovCj4+Pj4+Pj4+ICBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjIHsKPj4+Pj4+Pj4gICAgIHN0cnVj
-dCBkcm1fY3J0YyAgICAgICAgICAgICAgICAgYmFzZTsKPj4+Pj4+Pj4KPj4+Pj4+Pgo+Pj4+Pj4+
-Cj4+Pj4+Pj4KPj4+Pj4+Pgo+Pj4+Pgo+Pj4+PiAtLQo+Pj4+PiBUbyB1bnN1YnNjcmliZSBmcm9t
-IHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2Mi
-IGluCj4+Pj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwu
-b3JnCj4+Pj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcv
-bWFqb3Jkb21vLWluZm8uaHRtbAo+Pj4+IC0tCj4+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlz
-IGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+
-Pj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4+
-Pj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
-bW8taW5mby5odG1sCj4+Pj4KPj4+Cj4+PiAtLQo+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlz
-IGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+
-Pj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+
-IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21v
-LWluZm8uaHRtbAo+Pj4KPj4+Cj4+Pgo+PiAtLQo+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMg
-bGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4+
-IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4+IE1v
-cmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWlu
-Zm8uaHRtbAo+Pgo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQg
-dGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRoZSBib2R5IG9m
-IGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8g
-aW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Mon, Apr 10, 2017 at 6:12 PM, Mauro Carvalho Chehab
+<mchehab@s-opensource.com> wrote:
+> This is an automatic generated email to let you know that the following patch were queued:
+>
+> Subject: [media] ARM: dts: exynos: add HDMI controller phandle to exynos4.dtsi
+> Author:  Hans Verkuil <hans.verkuil@cisco.com>
+> Date:    Tue Dec 13 12:37:16 2016 -0200
+>
+> Add the new hdmi phandle to exynos4.dtsi. This phandle is needed by the
+> s5p-cec driver to initialize the CEC notifier framework.
+>
+> Tested with my Odroid U3.
+>
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> CC: linux-samsung-soc@vger.kernel.org
+> CC: devicetree@vger.kernel.org
+> CC: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+>
+>  arch/arm/boot/dts/exynos4.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>
+
+Mauro, you should not apply it. It is already going through samsung-soc [1].
+if you need this patch for bisectability or any other reasons, I
+provided a tag with it here:
+https://www.spinics.net/lists/devicetree/msg171182.html
+
+Please drop the patch because now it will get duplicated.
+
+Best regards,
+Krzysztof
+
+[1] https://www.spinics.net/lists/arm-kernel/msg575229.html
