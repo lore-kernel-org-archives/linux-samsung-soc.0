@@ -1,124 +1,225 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
-Date: Tue, 11 Apr 2017 09:48:52 +0200
-Message-ID: <467c5c99-e86e-84e9-290c-05dc4c9db5ac@math.uni-bielefeld.de>
-References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
- <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
- <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
- <58E7472C.3030503@samsung.com>
- <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
- <CAAQKjZMtxoMHa4XQpVrNWDwPW7usQ-2308QaxVjy9o7DSp+bEg@mail.gmail.com>
- <6962262a-519b-dfbb-72f7-9b6143d4c9b8@math.uni-bielefeld.de>
- <58EC140E.3020301@samsung.com>
+Subject: Re: [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
+Date: Tue, 11 Apr 2017 10:01:09 +0200
+Message-ID: <f28ce9b0-5162-e433-fcf5-a1d8e3929c68@math.uni-bielefeld.de>
+References: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <85a64d59-63d6-54b0-756b-63c36dc85d2b@math.uni-bielefeld.de>
+ <CAAQKjZMm3O+PZ9GUsksaTnApwm8n9q8VX0rCAYozT9hG7oNrzQ@mail.gmail.com>
+ <CGME20170410102755epcas4p40e9072db5dde36aeecbcb0eebbacd82b@epcas4p4.samsung.com>
+ <7ffdd11d-bbdf-321d-fc3c-2d40798e902f@math.uni-bielefeld.de>
+ <58EC1048.1030303@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <58EC140E.3020301@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:35753 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751797AbdDKIBM (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 11 Apr 2017 04:01:12 -0400
+In-Reply-To: <58EC1048.1030303@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
 
-SW5raSBEYWUgd3JvdGU6Cj4gCj4gCj4gMjAxN+uFhCAwNOyblCAxMOydvCAxOToyOeyXkCBUb2Jp
-YXMgSmFrb2JpIOydtCjqsIApIOyTtCDquIA6Cj4+IElua2kgRGFlIHdyb3RlOgo+Pj4gMjAxNy0w
-NC0wNyAyMDo0MCBHTVQrMDk6MDAgVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVs
-ZWZlbGQuZGU+Ogo+Pj4+IEhlbGxvIElua2ksCj4+Pj4KPj4+Pgo+Pj4+IElua2kgRGFlIHdyb3Rl
-Ogo+Pj4+PiBIZWxsbyBUb2JpYXMsCj4+Pj4+Cj4+Pj4+Cj4+Pj4+IDIwMTfrhYQgMDTsm5QgMDfs
-nbwgMDI6MTDsl5AgVG9iaWFzIEpha29iaSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4+Pj4gSGVsbG8g
-SW5raSwKPj4+Pj4+Cj4+Pj4+Pgo+Pj4+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4gVGhpcyBw
-YXRjaCByZW1vdmVzIHVubmVjZXNzYXJ5IGRlc2NyaXB0aW9ucyBvbgo+Pj4+Pj4+IGV4eW5vc19k
-cm1fY3J0YyBzdHJ1Y3R1cmUgYW5kIGFkZHMgb25lIGRlc2NyaXB0aW9uCj4+Pj4+Pj4gd2hpY2gg
-c3BlY2lmaWVzIHdoYXQgcGlwZV9jbGsgbWVtYmVyIGRvZXMuCj4+Pj4+Pj4KPj4+Pj4+PiBwaXBl
-X2NsayBzdXBwb3J0IGhhZCBiZWVuIGFkZGVkIGJ5IGJlbG93IHBhdGNoIHdpdGhvdXQgYW55IGRl
-c2NyaXB0aW9uLAo+Pj4+Pj4+ICAgICAgZHJtL2V4eW5vczogYWRkIHN1cHBvcnQgZm9yIHBpcGVs
-aW5lIGNsb2NrIHRvIHRoZSBmcmFtZXdvcmsKPj4+Pj4+IEkgd291bGQgcHV0IHRoZSBjb21taXQg
-aWQgaGVyZS4gVGhhdCBtYWtlcyBpdCBlYXNpZXIgdG8gbG9vayB1cCB0aGUKPj4+Pj4+IGNvbW1p
-dCB5b3VyIHJlZmVyIHRvLgo+Pj4+Pj4KPj4+Pj4+Cj4+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogSW5r
-aSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+Pj4+Pj4+IC0tLQo+Pj4+Pj4+ICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggfCA2ICsrLS0tLQo+Pj4+Pj4+ICAxIGZp
-bGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+Pj4+Pj4+Cj4+Pj4+
-Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+Pj4+Pj4+IGluZGV4IDUy
-N2JmMWQuLmIwNDYyY2MgMTAwNjQ0Cj4+Pj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2Rydi5oCj4+Pj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2Rydi5oCj4+Pj4+Pj4gQEAgLTE1MiwxMiArMTUyLDEwIEBAIHN0cnVjdCBleHlu
-b3NfZHJtX2NsayB7Cj4+Pj4+Pj4gICAqCj4+Pj4+Pj4gICAqIEBiYXNlOiBjcnRjIG9iamVjdC4K
-Pj4+Pj4+PiAgICogQHR5cGU6IG9uZSBvZiBFWFlOT1NfRElTUExBWV9UWVBFX0xDRCBhbmQgSERN
-SS4KPj4+Pj4+PiAtICogQGVuYWJsZWQ6IGlmIHRoZSBjcnRjIGlzIGVuYWJsZWQgb3Igbm90Cj4+
-Pj4+Pj4gLSAqIEBldmVudDogdmJsYW5rIGV2ZW50IHRoYXQgaXMgY3VycmVudGx5IHF1ZXVlZCBm
-b3IgZmxpcAo+Pj4+Pj4+IC0gKiBAd2FpdF91cGRhdGU6IHdhaXQgYWxsIHBlbmRpbmcgcGxhbmVz
-IHVwZGF0ZXMgdG8gZmluaXNoCj4+Pj4+Pj4gLSAqIEBwZW5kaW5nX3VwZGF0ZTogbnVtYmVyIG9m
-IHBlbmRpbmcgcGxhbmUgdXBkYXRlcyBpbiB0aGlzIGNydGMKPj4+Pj4+PiAgICogQG9wczogcG9p
-bnRlciB0byBjYWxsYmFja3MgZm9yIGV4eW5vcyBkcm0gc3BlY2lmaWMgZnVuY3Rpb25hbGl0eQo+
-Pj4+Pj4+ICAgKiBAY3R4OiBBIHBvaW50ZXIgdG8gdGhlIGNydGMncyBpbXBsZW1lbnRhdGlvbiBz
-cGVjaWZpYyBjb250ZXh0Cj4+Pj4+Pj4gKyAqIEBwaXBlX2NsazogQSBwaXBlIGNsb2NrIHN0cnVj
-dHVyZSB3aGljaCBpbmNsdWRlcyBhIGNhbGxiYWNrIGZ1bmN0aW9uCj4+Pj4+Pj4gKyAgICAgICAg
-IGZvciBlbmFibGluZyBEUCBjbG9jayBvZiBGSU1EIGFuZCBIRE1JIFBIWSBjbG9jay4KPj4+Pj4+
-IFRoaXMgaXMgd3JvbmcvaW5jb25zaXN0ZW50IHdpdGggdGhlIHJlc3Qgb2YgdGhlIGRvY3VtZW50
-YXRpb24uIHBpcGVfY2xrCj4+Pj4+PiBpcyBub3QgYSBzdHJ1Y3QsIGJ1dCBhIHBvaW50ZXIuCj4+
-Pj4+Pgo+Pj4+Pj4gSSB3b3VsZCBzdWdnZXN0IHRvIGZvbGxvdy4gSnVzdCBkb2N1bWVudCB0aGF0
-IHdlIGhhdmUgYSBwb2ludGVyIHRvIDxhZGQKPj4+Pj4+IGVzY3JpcHRpb24+IGhlcmUgKGNvbXBh
-cmUgZG9jdSBmb3IgJ29wcycgYW5kICdjdHgnKS4KPj4+Pj4+IEFuZCB0aGVuIHB1dCB0aGUgbGF0
-ZXIgYml0cyAoIi4uLmNhbGxiYWNrIGZ1bmN0aW9uIGZvciBlbmFibGluZyBEUAo+Pj4+Pj4gY2xv
-Y2suLi4iKSBkaXJlY3RseSB0byB0aGUgZGVmaW5pdGlvbiBvZiAnc3RydWN0IGV4eW5vc19kcm1f
-Y2xrJyAod2hpY2gKPj4+Pj4+IGlzIGN1cnJlbnRseSBsYWNraW5nIGFueSBraW5kIG9mIGRvY3Up
-Lgo+Pj4+Pgo+Pj4+PiBUaGFua3MgZm9yIHBvaW50aW5nIGl0IG91dC4gTXkgbWlzdGFrZS4gOikK
-Pj4+Pj4KPj4+Pj4gSG93IGFib3V0IHRoaXMgc2ltcGx5Pwo+Pj4+PiAiQSBwb2ludGVyIHRvIGV4
-eW5vc19kcm1fY2xrIHN0cnVjdHVyZSBmb3IgZW5hYmxpbmcgYW5kIGRpc2FibGluZyBEUCBjbG9j
-ayBvZiBGSU1EIGFuZCBIRE1JIFBIWSBjbG9ja3MiCj4+Pj4gTm90IHdoYXQgSSBtZWFudC4gWW91
-J3JlIGRlc2NyaWJpbmcgJ3N0cnVjdCBleHlub3NfZHJtX2NsaycsIGFuZCB0aGF0Cj4+Pj4gZG9l
-cyBub3QgYmVsb25nIGhlcmUuIElmIHlvdSBkZXNjcmliZSAnc3RydWN0IGV4eW5vc19kcm1fY2xr
-JywgdGhlbiB0aGlzCj4+Pj4gc2hvdWxkIGdvIGluIGZyb250IG9mIHRoZSBzdHJ1Y3QncyBkZWZp
-bml0aW9uLgo+Pj4+Cj4+Pj4gSG93IGFib3V0aW5nIHNvbWV0aGluZyBsaWtlIHRoaXMgaW4gZnJv
-bnQgb2YgdGhlIHN0cnVjdCdzIGRlZmluaXRpb246Ogo+Pj4+PiAvKgo+Pj4+PiAgKiBFeHlub3Mg
-RFJNIHBpcGVsaW5lIGNsb2NrIHN0cnVjdHVyZS4KPj4+Pj4gICoKPj4+Pj4gICogQGVuYWJsZTog
-Y2FsbGJhY2sgdG8gZW5hYmxlL2Rpc2FibGUgdGhlIGNsb2NrLgo+Pj4+PiAgKgo+Pj4+PiAgKiBV
-c2VkIGZvciBwcm9wZXIgY2xvY2sgc3luY2hyb25pemF0aW9uIG9mIGNvbXBvbmVudHMgYmVsb25n
-aW5nCj4+Pj4+ICAqIHRvIHRoZSBzYW1lIHBpcGVsaW5lLiBVc2VkIGUuZy4gZm9yIGVuYWJsaW5n
-IHRoZSBEUCBjbG9jayBvZgo+Pj4+PiAgKiB0aGUgRklNRCBvciB0aGUgSERNSSBQSFkgY2xvY2su
-Cj4+Pj4+ICAqLwo+Pj4+PiBzdHJ1Y3QgZXh5bm9zX2RybV9jbGsgewo+Pj4+PiA8c25pcD4KPj4+
-Pgo+Pj4+IEZvciAncGlwZV9jbGsnIEkgd291bGQganVzdCBnbyB3aXRoIHRoaXM6Cj4+Pj4+IEBw
-aXBlX2NsazogQSBwb2ludGV0IHRvIHRoZSBjcnRjJ3MgcGlwZWxpbmUgY2xvY2suCj4+Pgo+Pj4g
-TW9yZSBzaW1wbGUgYW5kIGxvb2tzIGJldHRlci4KPj4gSW4gdGhpcyBmb3JtIChjb21taXQgYTA3
-ZDQ2OGNiMmVmZDM0N2E5ZTI3OWU0ZjY4NjYxZjBmMzcwZDEwZiBpbgo+PiBleHlub3MtZHJtLW5l
-eHQpLCB0aGUgZGVzY3JpcHRpb24gaXMgaW5jb21wbGV0ZS4gUGxlYXNlIHJlYWQgbXkgbWFpbHMg
-YWdhaW4uCj4gCj4gTWFueSBwYXRjaGVzIGluIG1haW5saW5lIHVzZWQgc2FtZSBmb3JtLiBQbGVh
-c2UgZ2l0IGxvZyB8IGdyZXAgImNvbW1pdC1pZCIgLW4xMC4KPiBTb3JyeSBidXQgbm8gdXBkYXRl
-IGFuZCBubyBjb21tZW50IGFueW1vcmUgYnV0IHdpbGwgdXNlIHRoZSBnZW5lcmljIGZvcm0gbGF0
-ZXIuCkknbSBub3QgcmVmZXJyaW5nIHRvIHlvdXIgdXNlIG9mIGNvbW1pdC1pZCwgYnV0IHRvIHlv
-dSB0b3RhbGx5IGlnbm9yaW5nCnRoZSBkb2N1bWVudGF0aW9uIGJpdHMgZm9yICdzdHJ1Y3QgZXh5
-bm9zX2RybV9jbGsnLiBQbGVhc2UgYmUgbW9yZQpjYXJlZnVsIHdoZW4gcmVhZGluZyBteSBtYWls
-cy4KCi0gVG9iaWFzCgoKCj4gVGhhbmtzLAo+IElua2kgRGFlCj4gCj4+Cj4+IC0gVG9iaWFzCj4+
-Cj4+Cj4+Pgo+Pj4gVGhhbmtzLAo+Pj4gSW5raSBEYWUKPj4+Cj4+Pj4KPj4+PiBJIGhvcGUgdGhp
-cyBoZWxwcy4KPj4+Pgo+Pj4+IC0gVG9iaWFzCj4+Pj4KPj4+Pgo+Pj4+PiBUaGFua3MsCj4+Pj4+
-IElua2kgRGFlCj4+Pj4+Cj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+IC0gVG9iaWFzCj4+Pj4+Pgo+Pj4+
-Pj4+ICAgKi8KPj4+Pj4+PiAgc3RydWN0IGV4eW5vc19kcm1fY3J0YyB7Cj4+Pj4+Pj4gICAgIHN0
-cnVjdCBkcm1fY3J0YyAgICAgICAgICAgICAgICAgYmFzZTsKPj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+
-Cj4+Pj4+Pgo+Pj4+Pj4KPj4+Pgo+Pj4+IC0tCj4+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlz
-IGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+
-Pj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4+
-Pj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
-bW8taW5mby5odG1sCj4+PiAtLQo+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNl
-bmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+Pj4gdGhlIGJv
-ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+IE1vcmUgbWFq
-b3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
-bAo+Pj4KPj4KPj4gLS0KPj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhl
-IGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+PiB0aGUgYm9keSBvZiBh
-IG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+PiBNb3JlIG1ham9yZG9tbyBp
-bmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPj4KPj4K
-Pj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1
-bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2Ug
-dG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0
-dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Inki Dae wrote:
+> 
+> 
+> 2017년 04월 10일 19:27에 Tobias Jakobi 이(가) 쓴 글:
+>> Inki Dae wrote:
+>>> 2017-03-29 20:56 GMT+09:00 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+>>>> Hello Daniel,
+>>>>
+>>>> same question here. Patch doesn't introduce any functional changes (just
+>>>> adds code documentation), so can you merge it through drm-misc?
+>>>>
+>>>
+>>> Sorry for late. Confirmed just now. I will check it on next Monday.
+>> You have added the wrong patch (v2 instead of v3).
+> 
+> Tobias,
+> 
+> you had posted this patch with other one like below,
+> [PATCH v2 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
+> [PATCH v2 2/2] drm/exynos: mixer: document YCbCr magic numbers
+> 
+> And than you have posted it without any comment again, v3,
+> [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
+> 
+> Please use --cover-letter option to make patch series and keep the patch set to be consistent with previous version.
+This is not necessary. There were only changes to 'drm/exynos: mixer:
+document YCbCr magic numbers' and we're talking about _two_ patches here
+(which can be applied independently).
+
+
+> 
+> I can merge the new one - really trivial - but I think it'd be better you to resend this patch series for other people.
+> 
+> This patch set has been removed from my tree. Please resend (not v4) this patch set like below,
+> [PATCH v3 0/2] drm/exynos: clean up mixer driver??
+> [PATCH v3 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
+> [PATCH v3 2/2] drm/exynos: mixer: document YCbCr magic numbers
+Not necessary, just pick up the two patches which for which I already
+pinged you. For you convenience, here are the two on dri-devel patchwork:
+https://patchwork.kernel.org/patch/9617085/
+https://patchwork.kernel.org/patch/9617493/
+
+- Tobias
+
+
+
+> 
+> Thanks,
+> Inki Dae
+> 
+>>
+>> - Tobias
+>>
+>>
+>>> Thanks,
+>>> Inki Dae
+>>>
+>>>> With best wishes,
+>>>> Tobias
+>>>>
+>>>>
+>>>> Tobias Jakobi wrote:
+>>>>> The output stage of the mixer uses YCbCr for the internal
+>>>>> computations, which is the reason that some registers take
+>>>>> YCbCr related data as input. In particular this applies
+>>>>> to MXR_BG_COLOR{0,1,2} and MXR_CM_COEFF_{Y,CB,CR}.
+>>>>>
+>>>>> Document the formatting of the data which we write to
+>>>>> these registers.
+>>>>>
+>>>>> While at it, unify wording of comments in the register header.
+>>>>>
+>>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>>>>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>>>>> ---
+>>>>> Changes in v2:
+>>>>> - use floating point values as input for the macros, as
+>>>>>   suggested by Andrzej
+>>>>> - the floating point values have been tuned to exactly match
+>>>>>   the values that are currently used
+>>>>>
+>>>>> Changes in v3:
+>>>>> - use only three digit values (pointed out by Andrzej)
+>>>>>
+>>>>>  drivers/gpu/drm/exynos/exynos_mixer.c | 33 +++++++++++++++++++++++++--------
+>>>>>  drivers/gpu/drm/exynos/regs-mixer.h   |  7 +++++--
+>>>>>  2 files changed, 30 insertions(+), 10 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+>>>>> index 41d0c36..9648dd5 100644
+>>>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>>>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>>>>> @@ -45,6 +45,22 @@
+>>>>>  #define MIXER_WIN_NR         3
+>>>>>  #define VP_DEFAULT_WIN               2
+>>>>>
+>>>>> +/*
+>>>>> + * Mixer color space conversion coefficient triplet.
+>>>>> + * Used for CSC from RGB to YCbCr.
+>>>>> + * Each coefficient is a 10-bit fixed point number with
+>>>>> + * sign and no integer part, i.e.
+>>>>> + * [0:8] = fractional part (representing a value y = x / 2^9)
+>>>>> + * [9] = sign
+>>>>> + * Negative values are encoded with two's complement.
+>>>>> + */
+>>>>> +#define MXR_CSC_C(x) ((int)((x) * 512.0) & 0x3ff)
+>>>>> +#define MXR_CSC_CT(a0, a1, a2) \
+>>>>> +  ((MXR_CSC_C(a0) << 20) | (MXR_CSC_C(a1) << 10) | (MXR_CSC_C(a2) << 0))
+>>>>> +
+>>>>> +/* YCbCr value, used for mixer background color configuration. */
+>>>>> +#define MXR_YCBCR_VAL(y, cb, cr) (((y) << 16) | ((cb) << 8) | ((cr) << 0))
+>>>>> +
+>>>>>  /* The pixelformats that are natively supported by the mixer. */
+>>>>>  #define MXR_FORMAT_RGB565    4
+>>>>>  #define MXR_FORMAT_ARGB1555  5
+>>>>> @@ -391,13 +407,14 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
+>>>>>       case 1080:
+>>>>>       default:
+>>>>>               val = MXR_CFG_RGB709_16_235;
+>>>>> +             /* Configure the BT.709 CSC matrix for full range RGB. */
+>>>>>               mixer_reg_write(res, MXR_CM_COEFF_Y,
+>>>>> -                             (1 << 30) | (94 << 20) | (314 << 10) |
+>>>>> -                             (32 << 0));
+>>>>> +                     MXR_CSC_CT( 0.184,  0.614,  0.063) |
+>>>>> +                     MXR_CM_COEFF_RGB_FULL);
+>>>>>               mixer_reg_write(res, MXR_CM_COEFF_CB,
+>>>>> -                             (972 << 20) | (851 << 10) | (225 << 0));
+>>>>> +                     MXR_CSC_CT(-0.102, -0.338,  0.440));
+>>>>>               mixer_reg_write(res, MXR_CM_COEFF_CR,
+>>>>> -                             (225 << 20) | (820 << 10) | (1004 << 0));
+>>>>> +                     MXR_CSC_CT( 0.440, -0.399, -0.040));
+>>>>>               break;
+>>>>>       }
+>>>>>
+>>>>> @@ -715,10 +732,10 @@ static void mixer_win_reset(struct mixer_context *ctx)
+>>>>>       /* reset default layer priority */
+>>>>>       mixer_reg_write(res, MXR_LAYER_CFG, 0);
+>>>>>
+>>>>> -     /* setting background color */
+>>>>> -     mixer_reg_write(res, MXR_BG_COLOR0, 0x008080);
+>>>>> -     mixer_reg_write(res, MXR_BG_COLOR1, 0x008080);
+>>>>> -     mixer_reg_write(res, MXR_BG_COLOR2, 0x008080);
+>>>>> +     /* set all background colors to RGB (0,0,0) */
+>>>>> +     mixer_reg_write(res, MXR_BG_COLOR0, MXR_YCBCR_VAL(0, 128, 128));
+>>>>> +     mixer_reg_write(res, MXR_BG_COLOR1, MXR_YCBCR_VAL(0, 128, 128));
+>>>>> +     mixer_reg_write(res, MXR_BG_COLOR2, MXR_YCBCR_VAL(0, 128, 128));
+>>>>>
+>>>>>       if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
+>>>>>               /* configuration of Video Processor Registers */
+>>>>> diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
+>>>>> index 7f22df5..c311f57 100644
+>>>>> --- a/drivers/gpu/drm/exynos/regs-mixer.h
+>>>>> +++ b/drivers/gpu/drm/exynos/regs-mixer.h
+>>>>> @@ -140,11 +140,11 @@
+>>>>>  #define MXR_INT_EN_VSYNC             (1 << 11)
+>>>>>  #define MXR_INT_EN_ALL                       (0x0f << 8)
+>>>>>
+>>>>> -/* bit for MXR_INT_STATUS */
+>>>>> +/* bits for MXR_INT_STATUS */
+>>>>>  #define MXR_INT_CLEAR_VSYNC          (1 << 11)
+>>>>>  #define MXR_INT_STATUS_VSYNC         (1 << 0)
+>>>>>
+>>>>> -/* bit for MXR_LAYER_CFG */
+>>>>> +/* bits for MXR_LAYER_CFG */
+>>>>>  #define MXR_LAYER_CFG_GRP1_VAL(x)    MXR_MASK_VAL(x, 11, 8)
+>>>>>  #define MXR_LAYER_CFG_GRP1_MASK              MXR_LAYER_CFG_GRP1_VAL(~0)
+>>>>>  #define MXR_LAYER_CFG_GRP0_VAL(x)    MXR_MASK_VAL(x, 7, 4)
+>>>>> @@ -152,5 +152,8 @@
+>>>>>  #define MXR_LAYER_CFG_VP_VAL(x)              MXR_MASK_VAL(x, 3, 0)
+>>>>>  #define MXR_LAYER_CFG_VP_MASK                MXR_LAYER_CFG_VP_VAL(~0)
+>>>>>
+>>>>> +/* bits for MXR_CM_COEFF_Y */
+>>>>> +#define MXR_CM_COEFF_RGB_FULL                (1 << 30)
+>>>>> +
+>>>>>  #endif /* SAMSUNG_REGS_MIXER_H */
+>>>>>
+>>>>>
+>>>>
+>>>> _______________________________________________
+>>>> dri-devel mailing list
+>>>> dri-devel@lists.freedesktop.org
+>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
