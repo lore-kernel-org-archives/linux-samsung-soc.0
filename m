@@ -1,239 +1,212 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
-Date: Wed, 12 Apr 2017 11:02:46 +0900
-Message-ID: <58ED8AC6.6030600@samsung.com>
-References: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <85a64d59-63d6-54b0-756b-63c36dc85d2b@math.uni-bielefeld.de>
- <CAAQKjZMm3O+PZ9GUsksaTnApwm8n9q8VX0rCAYozT9hG7oNrzQ@mail.gmail.com>
- <CGME20170410102755epcas4p40e9072db5dde36aeecbcb0eebbacd82b@epcas4p4.samsung.com>
- <7ffdd11d-bbdf-321d-fc3c-2d40798e902f@math.uni-bielefeld.de>
- <58EC1048.1030303@samsung.com>
- <f28ce9b0-5162-e433-fcf5-a1d8e3929c68@math.uni-bielefeld.de>
+Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
+Date: Wed, 12 Apr 2017 11:12:16 +0900
+Message-ID: <58ED8D00.7060109@samsung.com>
+References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
+ <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
+ <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
+ <58E7472C.3030503@samsung.com>
+ <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
+ <CAAQKjZMtxoMHa4XQpVrNWDwPW7usQ-2308QaxVjy9o7DSp+bEg@mail.gmail.com>
+ <6962262a-519b-dfbb-72f7-9b6143d4c9b8@math.uni-bielefeld.de>
+ <58EC140E.3020301@samsung.com>
+ <467c5c99-e86e-84e9-290c-05dc4c9db5ac@math.uni-bielefeld.de>
+ <b238e162-45fe-f99e-2615-bc84964ca7f8@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38538 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:38868 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752437AbdDLCCt (ORCPT
+        with ESMTP id S1751951AbdDLCMT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Apr 2017 22:02:49 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        Tue, 11 Apr 2017 22:12:19 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OO900O3LXONR7A0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Apr 2017 11:02:47 +0900 (KST)
-In-reply-to: <f28ce9b0-5162-e433-fcf5-a1d8e3929c68@math.uni-bielefeld.de>
+ with ESMTP id <0OO900VREY4HLZ90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Apr 2017 11:12:17 +0900 (KST)
+In-reply-to: <b238e162-45fe-f99e-2615-bc84964ca7f8@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
 
 
-2017년 04월 11일 17:01에 Tobias Jakobi 이(가) 쓴 글:
-> Inki Dae wrote:
->>
->>
->> 2017년 04월 10일 19:27에 Tobias Jakobi 이(가) 쓴 글:
->>> Inki Dae wrote:
->>>> 2017-03-29 20:56 GMT+09:00 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
->>>>> Hello Daniel,
->>>>>
->>>>> same question here. Patch doesn't introduce any functional changes (just
->>>>> adds code documentation), so can you merge it through drm-misc?
->>>>>
->>>>
->>>> Sorry for late. Confirmed just now. I will check it on next Monday.
->>> You have added the wrong patch (v2 instead of v3).
->>
->> Tobias,
->>
->> you had posted this patch with other one like below,
->> [PATCH v2 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
->> [PATCH v2 2/2] drm/exynos: mixer: document YCbCr magic numbers
->>
->> And than you have posted it without any comment again, v3,
->> [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
->>
->> Please use --cover-letter option to make patch series and keep the patch set to be consistent with previous version.
-> This is not necessary. There were only changes to 'drm/exynos: mixer:
-> document YCbCr magic numbers' and we're talking about _two_ patches here
-> (which can be applied independently).
+2017년 04월 11일 17:17에 Tobias Jakobi 이(가) 쓴 글:
+> Another thing that I noticed. Why wasn't the v2 that ended up in your
+> git ever submitted to the mailing list? Because it should have, in
+> particular to spot these obvious errors.
 
-Tobias, why did you post the patch set 1/2 and 2/2 before?
-If these patches can be applied independently - you found out later - then you need to clarify why you posted them separately.
+Only comment about this.
+
+This patch cleans up description of struct exynos_drm_clk - removed unnecessary descriptions and adds one missed before.
+I think no problem to update the description without v2 because no code change and description enough.
+
+If you want to update the description more then you can post it.
+Ps. I am not a leisurely person to respond to every little thing.
 
 Thanks,
 Inki Dae
 
 > 
-> 
->>
->> I can merge the new one - really trivial - but I think it'd be better you to resend this patch series for other people.
->>
->> This patch set has been removed from my tree. Please resend (not v4) this patch set like below,
->> [PATCH v3 0/2] drm/exynos: clean up mixer driver??
->> [PATCH v3 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
->> [PATCH v3 2/2] drm/exynos: mixer: document YCbCr magic numbers
-> Not necessary, just pick up the two patches which for which I already
-> pinged you. For you convenience, here are the two on dri-devel patchwork:
-> https://patchwork.kernel.org/patch/9617085/
-> https://patchwork.kernel.org/patch/9617493/
-> 
 > - Tobias
 > 
 > 
-> 
+> Tobias Jakobi wrote:
+>> Inki Dae wrote:
+>>>
+>>>
+>>> 2017년 04월 10일 19:29에 Tobias Jakobi 이(가) 쓴 글:
+>>>> Inki Dae wrote:
+>>>>> 2017-04-07 20:40 GMT+09:00 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+>>>>>> Hello Inki,
+>>>>>>
+>>>>>>
+>>>>>> Inki Dae wrote:
+>>>>>>> Hello Tobias,
+>>>>>>>
+>>>>>>>
+>>>>>>> 2017년 04월 07일 02:10에 Tobias Jakobi 이(가) 쓴 글:
+>>>>>>>> Hello Inki,
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Inki Dae wrote:
+>>>>>>>>> This patch removes unnecessary descriptions on
+>>>>>>>>> exynos_drm_crtc structure and adds one description
+>>>>>>>>> which specifies what pipe_clk member does.
+>>>>>>>>>
+>>>>>>>>> pipe_clk support had been added by below patch without any description,
+>>>>>>>>>      drm/exynos: add support for pipeline clock to the framework
+>>>>>>>> I would put the commit id here. That makes it easier to look up the
+>>>>>>>> commit your refer to.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>>>>>>>>> ---
+>>>>>>>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h | 6 ++----
+>>>>>>>>>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>>>>>>>> index 527bf1d..b0462cc 100644
+>>>>>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>>>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>>>>>>>> @@ -152,12 +152,10 @@ struct exynos_drm_clk {
+>>>>>>>>>   *
+>>>>>>>>>   * @base: crtc object.
+>>>>>>>>>   * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
+>>>>>>>>> - * @enabled: if the crtc is enabled or not
+>>>>>>>>> - * @event: vblank event that is currently queued for flip
+>>>>>>>>> - * @wait_update: wait all pending planes updates to finish
+>>>>>>>>> - * @pending_update: number of pending plane updates in this crtc
+>>>>>>>>>   * @ops: pointer to callbacks for exynos drm specific functionality
+>>>>>>>>>   * @ctx: A pointer to the crtc's implementation specific context
+>>>>>>>>> + * @pipe_clk: A pipe clock structure which includes a callback function
+>>>>>>>>> +         for enabling DP clock of FIMD and HDMI PHY clock.
+>>>>>>>> This is wrong/inconsistent with the rest of the documentation. pipe_clk
+>>>>>>>> is not a struct, but a pointer.
+>>>>>>>>
+>>>>>>>> I would suggest to follow. Just document that we have a pointer to <add
+>>>>>>>> escription> here (compare docu for 'ops' and 'ctx').
+>>>>>>>> And then put the later bits ("...callback function for enabling DP
+>>>>>>>> clock...") directly to the definition of 'struct exynos_drm_clk' (which
+>>>>>>>> is currently lacking any kind of docu).
+>>>>>>>
+>>>>>>> Thanks for pointing it out. My mistake. :)
+>>>>>>>
+>>>>>>> How about this simply?
+>>>>>>> "A pointer to exynos_drm_clk structure for enabling and disabling DP clock of FIMD and HDMI PHY clocks"
+>>>>>> Not what I meant. You're describing 'struct exynos_drm_clk', and that
+>>>>>> does not belong here. If you describe 'struct exynos_drm_clk', then this
+>>>>>> should go in front of the struct's definition.
+>>>>>>
+>>>>>> How abouting something like this in front of the struct's definition::
+>>>>>>> /*
+>>>>>>>  * Exynos DRM pipeline clock structure.
+>>>>>>>  *
+>>>>>>>  * @enable: callback to enable/disable the clock.
+>>>>>>>  *
+>>>>>>>  * Used for proper clock synchronization of components belonging
+>>>>>>>  * to the same pipeline. Used e.g. for enabling the DP clock of
+>>>>>>>  * the FIMD or the HDMI PHY clock.
+>>>>>>>  */
+>>>>>>> struct exynos_drm_clk {
+>>>>>>> <snip>
+>>>>>>
+>>>>>> For 'pipe_clk' I would just go with this:
+>>>>>>> @pipe_clk: A pointet to the crtc's pipeline clock.
+>>>>>
+>>>>> More simple and looks better.
+>>>> In this form (commit a07d468cb2efd347a9e279e4f68661f0f370d10f in
+>>>> exynos-drm-next), the description is incomplete. Please read my mails again.
+>>>
+>>> Many patches in mainline used same form. Please git log | grep "commit-id" -n10.
+>>> Sorry but no update and no comment anymore but will use the generic form later.
+>> I'm not referring to your use of commit-id, but to you totally ignoring
+>> the documentation bits for 'struct exynos_drm_clk'. Please be more
+>> careful when reading my mails.
 >>
->> Thanks,
->> Inki Dae
+>> - Tobias
 >>
+>>
+>>
+>>> Thanks,
+>>> Inki Dae
 >>>
->>> - Tobias
->>>
->>>
->>>> Thanks,
->>>> Inki Dae
 >>>>
->>>>> With best wishes,
->>>>> Tobias
+>>>> - Tobias
+>>>>
+>>>>
 >>>>>
+>>>>> Thanks,
+>>>>> Inki Dae
 >>>>>
->>>>> Tobias Jakobi wrote:
->>>>>> The output stage of the mixer uses YCbCr for the internal
->>>>>> computations, which is the reason that some registers take
->>>>>> YCbCr related data as input. In particular this applies
->>>>>> to MXR_BG_COLOR{0,1,2} and MXR_CM_COEFF_{Y,CB,CR}.
 >>>>>>
->>>>>> Document the formatting of the data which we write to
->>>>>> these registers.
+>>>>>> I hope this helps.
 >>>>>>
->>>>>> While at it, unify wording of comments in the register header.
->>>>>>
->>>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->>>>>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>>>> ---
->>>>>> Changes in v2:
->>>>>> - use floating point values as input for the macros, as
->>>>>>   suggested by Andrzej
->>>>>> - the floating point values have been tuned to exactly match
->>>>>>   the values that are currently used
->>>>>>
->>>>>> Changes in v3:
->>>>>> - use only three digit values (pointed out by Andrzej)
->>>>>>
->>>>>>  drivers/gpu/drm/exynos/exynos_mixer.c | 33 +++++++++++++++++++++++++--------
->>>>>>  drivers/gpu/drm/exynos/regs-mixer.h   |  7 +++++--
->>>>>>  2 files changed, 30 insertions(+), 10 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>>> index 41d0c36..9648dd5 100644
->>>>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>>> @@ -45,6 +45,22 @@
->>>>>>  #define MIXER_WIN_NR         3
->>>>>>  #define VP_DEFAULT_WIN               2
->>>>>>
->>>>>> +/*
->>>>>> + * Mixer color space conversion coefficient triplet.
->>>>>> + * Used for CSC from RGB to YCbCr.
->>>>>> + * Each coefficient is a 10-bit fixed point number with
->>>>>> + * sign and no integer part, i.e.
->>>>>> + * [0:8] = fractional part (representing a value y = x / 2^9)
->>>>>> + * [9] = sign
->>>>>> + * Negative values are encoded with two's complement.
->>>>>> + */
->>>>>> +#define MXR_CSC_C(x) ((int)((x) * 512.0) & 0x3ff)
->>>>>> +#define MXR_CSC_CT(a0, a1, a2) \
->>>>>> +  ((MXR_CSC_C(a0) << 20) | (MXR_CSC_C(a1) << 10) | (MXR_CSC_C(a2) << 0))
->>>>>> +
->>>>>> +/* YCbCr value, used for mixer background color configuration. */
->>>>>> +#define MXR_YCBCR_VAL(y, cb, cr) (((y) << 16) | ((cb) << 8) | ((cr) << 0))
->>>>>> +
->>>>>>  /* The pixelformats that are natively supported by the mixer. */
->>>>>>  #define MXR_FORMAT_RGB565    4
->>>>>>  #define MXR_FORMAT_ARGB1555  5
->>>>>> @@ -391,13 +407,14 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
->>>>>>       case 1080:
->>>>>>       default:
->>>>>>               val = MXR_CFG_RGB709_16_235;
->>>>>> +             /* Configure the BT.709 CSC matrix for full range RGB. */
->>>>>>               mixer_reg_write(res, MXR_CM_COEFF_Y,
->>>>>> -                             (1 << 30) | (94 << 20) | (314 << 10) |
->>>>>> -                             (32 << 0));
->>>>>> +                     MXR_CSC_CT( 0.184,  0.614,  0.063) |
->>>>>> +                     MXR_CM_COEFF_RGB_FULL);
->>>>>>               mixer_reg_write(res, MXR_CM_COEFF_CB,
->>>>>> -                             (972 << 20) | (851 << 10) | (225 << 0));
->>>>>> +                     MXR_CSC_CT(-0.102, -0.338,  0.440));
->>>>>>               mixer_reg_write(res, MXR_CM_COEFF_CR,
->>>>>> -                             (225 << 20) | (820 << 10) | (1004 << 0));
->>>>>> +                     MXR_CSC_CT( 0.440, -0.399, -0.040));
->>>>>>               break;
->>>>>>       }
->>>>>>
->>>>>> @@ -715,10 +732,10 @@ static void mixer_win_reset(struct mixer_context *ctx)
->>>>>>       /* reset default layer priority */
->>>>>>       mixer_reg_write(res, MXR_LAYER_CFG, 0);
->>>>>>
->>>>>> -     /* setting background color */
->>>>>> -     mixer_reg_write(res, MXR_BG_COLOR0, 0x008080);
->>>>>> -     mixer_reg_write(res, MXR_BG_COLOR1, 0x008080);
->>>>>> -     mixer_reg_write(res, MXR_BG_COLOR2, 0x008080);
->>>>>> +     /* set all background colors to RGB (0,0,0) */
->>>>>> +     mixer_reg_write(res, MXR_BG_COLOR0, MXR_YCBCR_VAL(0, 128, 128));
->>>>>> +     mixer_reg_write(res, MXR_BG_COLOR1, MXR_YCBCR_VAL(0, 128, 128));
->>>>>> +     mixer_reg_write(res, MXR_BG_COLOR2, MXR_YCBCR_VAL(0, 128, 128));
->>>>>>
->>>>>>       if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->>>>>>               /* configuration of Video Processor Registers */
->>>>>> diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
->>>>>> index 7f22df5..c311f57 100644
->>>>>> --- a/drivers/gpu/drm/exynos/regs-mixer.h
->>>>>> +++ b/drivers/gpu/drm/exynos/regs-mixer.h
->>>>>> @@ -140,11 +140,11 @@
->>>>>>  #define MXR_INT_EN_VSYNC             (1 << 11)
->>>>>>  #define MXR_INT_EN_ALL                       (0x0f << 8)
->>>>>>
->>>>>> -/* bit for MXR_INT_STATUS */
->>>>>> +/* bits for MXR_INT_STATUS */
->>>>>>  #define MXR_INT_CLEAR_VSYNC          (1 << 11)
->>>>>>  #define MXR_INT_STATUS_VSYNC         (1 << 0)
->>>>>>
->>>>>> -/* bit for MXR_LAYER_CFG */
->>>>>> +/* bits for MXR_LAYER_CFG */
->>>>>>  #define MXR_LAYER_CFG_GRP1_VAL(x)    MXR_MASK_VAL(x, 11, 8)
->>>>>>  #define MXR_LAYER_CFG_GRP1_MASK              MXR_LAYER_CFG_GRP1_VAL(~0)
->>>>>>  #define MXR_LAYER_CFG_GRP0_VAL(x)    MXR_MASK_VAL(x, 7, 4)
->>>>>> @@ -152,5 +152,8 @@
->>>>>>  #define MXR_LAYER_CFG_VP_VAL(x)              MXR_MASK_VAL(x, 3, 0)
->>>>>>  #define MXR_LAYER_CFG_VP_MASK                MXR_LAYER_CFG_VP_VAL(~0)
->>>>>>
->>>>>> +/* bits for MXR_CM_COEFF_Y */
->>>>>> +#define MXR_CM_COEFF_RGB_FULL                (1 << 30)
->>>>>> +
->>>>>>  #endif /* SAMSUNG_REGS_MIXER_H */
+>>>>>> - Tobias
 >>>>>>
 >>>>>>
+>>>>>>> Thanks,
+>>>>>>> Inki Dae
+>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> - Tobias
+>>>>>>>>
+>>>>>>>>>   */
+>>>>>>>>>  struct exynos_drm_crtc {
+>>>>>>>>>     struct drm_crtc                 base;
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>
+>>>>>> --
+>>>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>>>>> the body of a message to majordomo@vger.kernel.org
+>>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>> --
+>>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>>>> the body of a message to majordomo@vger.kernel.org
+>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >>>>>
->>>>> _______________________________________________
->>>>> dri-devel mailing list
->>>>> dri-devel@lists.freedesktop.org
->>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>>
 >>>> --
 >>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 >>>> the body of a message to majordomo@vger.kernel.org
 >>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >>>>
->>>
+>>>>
+>>>>
 >>> --
 >>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 >>> the body of a message to majordomo@vger.kernel.org
 >>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >>>
->>>
->>>
+>>
 >> --
 >> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 >> the body of a message to majordomo@vger.kernel.org
