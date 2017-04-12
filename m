@@ -1,218 +1,101 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
-Date: Wed, 12 Apr 2017 11:12:16 +0900
-Message-ID: <58ED8D00.7060109@samsung.com>
-References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
- <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
- <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
- <58E7472C.3030503@samsung.com>
- <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
- <CAAQKjZMtxoMHa4XQpVrNWDwPW7usQ-2308QaxVjy9o7DSp+bEg@mail.gmail.com>
- <6962262a-519b-dfbb-72f7-9b6143d4c9b8@math.uni-bielefeld.de>
- <58EC140E.3020301@samsung.com>
- <467c5c99-e86e-84e9-290c-05dc4c9db5ac@math.uni-bielefeld.de>
- <b238e162-45fe-f99e-2615-bc84964ca7f8@math.uni-bielefeld.de>
+Subject: Re: [RFC 0/8] drm/exynos: misc fixes and more
+Date: Wed, 12 Apr 2017 11:35:37 +0900
+Message-ID: <58ED9279.5030001@samsung.com>
+References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CGME20170411105302epcas4p2c240e966d3f7381eac7213662933a178@epcas4p2.samsung.com>
+ <11ca839f-2b2d-6a76-aac1-03be93a5dffc@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38868 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751951AbdDLCMT (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Apr 2017 22:12:19 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OO900VREY4HLZ90@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Apr 2017 11:12:17 +0900 (KST)
-In-reply-to: <b238e162-45fe-f99e-2615-bc84964ca7f8@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <11ca839f-2b2d-6a76-aac1-03be93a5dffc@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
-Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-
-
-2017년 04월 11일 17:17에 Tobias Jakobi 이(가) 쓴 글:
-> Another thing that I noticed. Why wasn't the v2 that ended up in your
-> git ever submitted to the mailing list? Because it should have, in
-> particular to spot these obvious errors.
-
-Only comment about this.
-
-This patch cleans up description of struct exynos_drm_clk - removed unnecessary descriptions and adds one missed before.
-I think no problem to update the description without v2 because no code change and description enough.
-
-If you want to update the description more then you can post it.
-Ps. I am not a leisurely person to respond to every little thing.
-
-Thanks,
-Inki Dae
-
-> 
-> - Tobias
-> 
-> 
-> Tobias Jakobi wrote:
->> Inki Dae wrote:
->>>
->>>
->>> 2017년 04월 10일 19:29에 Tobias Jakobi 이(가) 쓴 글:
->>>> Inki Dae wrote:
->>>>> 2017-04-07 20:40 GMT+09:00 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
->>>>>> Hello Inki,
->>>>>>
->>>>>>
->>>>>> Inki Dae wrote:
->>>>>>> Hello Tobias,
->>>>>>>
->>>>>>>
->>>>>>> 2017년 04월 07일 02:10에 Tobias Jakobi 이(가) 쓴 글:
->>>>>>>> Hello Inki,
->>>>>>>>
->>>>>>>>
->>>>>>>> Inki Dae wrote:
->>>>>>>>> This patch removes unnecessary descriptions on
->>>>>>>>> exynos_drm_crtc structure and adds one description
->>>>>>>>> which specifies what pipe_clk member does.
->>>>>>>>>
->>>>>>>>> pipe_clk support had been added by below patch without any description,
->>>>>>>>>      drm/exynos: add support for pipeline clock to the framework
->>>>>>>> I would put the commit id here. That makes it easier to look up the
->>>>>>>> commit your refer to.
->>>>>>>>
->>>>>>>>
->>>>>>>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->>>>>>>>> ---
->>>>>>>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h | 6 ++----
->>>>>>>>>  1 file changed, 2 insertions(+), 4 deletions(-)
->>>>>>>>>
->>>>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->>>>>>>>> index 527bf1d..b0462cc 100644
->>>>>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->>>>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->>>>>>>>> @@ -152,12 +152,10 @@ struct exynos_drm_clk {
->>>>>>>>>   *
->>>>>>>>>   * @base: crtc object.
->>>>>>>>>   * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
->>>>>>>>> - * @enabled: if the crtc is enabled or not
->>>>>>>>> - * @event: vblank event that is currently queued for flip
->>>>>>>>> - * @wait_update: wait all pending planes updates to finish
->>>>>>>>> - * @pending_update: number of pending plane updates in this crtc
->>>>>>>>>   * @ops: pointer to callbacks for exynos drm specific functionality
->>>>>>>>>   * @ctx: A pointer to the crtc's implementation specific context
->>>>>>>>> + * @pipe_clk: A pipe clock structure which includes a callback function
->>>>>>>>> +         for enabling DP clock of FIMD and HDMI PHY clock.
->>>>>>>> This is wrong/inconsistent with the rest of the documentation. pipe_clk
->>>>>>>> is not a struct, but a pointer.
->>>>>>>>
->>>>>>>> I would suggest to follow. Just document that we have a pointer to <add
->>>>>>>> escription> here (compare docu for 'ops' and 'ctx').
->>>>>>>> And then put the later bits ("...callback function for enabling DP
->>>>>>>> clock...") directly to the definition of 'struct exynos_drm_clk' (which
->>>>>>>> is currently lacking any kind of docu).
->>>>>>>
->>>>>>> Thanks for pointing it out. My mistake. :)
->>>>>>>
->>>>>>> How about this simply?
->>>>>>> "A pointer to exynos_drm_clk structure for enabling and disabling DP clock of FIMD and HDMI PHY clocks"
->>>>>> Not what I meant. You're describing 'struct exynos_drm_clk', and that
->>>>>> does not belong here. If you describe 'struct exynos_drm_clk', then this
->>>>>> should go in front of the struct's definition.
->>>>>>
->>>>>> How abouting something like this in front of the struct's definition::
->>>>>>> /*
->>>>>>>  * Exynos DRM pipeline clock structure.
->>>>>>>  *
->>>>>>>  * @enable: callback to enable/disable the clock.
->>>>>>>  *
->>>>>>>  * Used for proper clock synchronization of components belonging
->>>>>>>  * to the same pipeline. Used e.g. for enabling the DP clock of
->>>>>>>  * the FIMD or the HDMI PHY clock.
->>>>>>>  */
->>>>>>> struct exynos_drm_clk {
->>>>>>> <snip>
->>>>>>
->>>>>> For 'pipe_clk' I would just go with this:
->>>>>>> @pipe_clk: A pointet to the crtc's pipeline clock.
->>>>>
->>>>> More simple and looks better.
->>>> In this form (commit a07d468cb2efd347a9e279e4f68661f0f370d10f in
->>>> exynos-drm-next), the description is incomplete. Please read my mails again.
->>>
->>> Many patches in mainline used same form. Please git log | grep "commit-id" -n10.
->>> Sorry but no update and no comment anymore but will use the generic form later.
->> I'm not referring to your use of commit-id, but to you totally ignoring
->> the documentation bits for 'struct exynos_drm_clk'. Please be more
->> careful when reading my mails.
->>
->> - Tobias
->>
->>
->>
->>> Thanks,
->>> Inki Dae
->>>
->>>>
->>>> - Tobias
->>>>
->>>>
->>>>>
->>>>> Thanks,
->>>>> Inki Dae
->>>>>
->>>>>>
->>>>>> I hope this helps.
->>>>>>
->>>>>> - Tobias
->>>>>>
->>>>>>
->>>>>>> Thanks,
->>>>>>> Inki Dae
->>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> - Tobias
->>>>>>>>
->>>>>>>>>   */
->>>>>>>>>  struct exynos_drm_crtc {
->>>>>>>>>     struct drm_crtc                 base;
->>>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>
->>>>>> --
->>>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>> --
->>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>>
->>>>
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>
->>>>
->>>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> 
-> 
-> 
+SGVsbG8gVG9iaWFzLAoKMjAxN+uFhCAwNOyblCAxMeydvCAxOTo1MuyXkCBUb2JpYXMgSmFrb2Jp
+IOydtCjqsIApIOyTtCDquIA6Cj4gSGVsbG8gSW5raSwKPiAKPiBwbGVhc2UgZG9uJ3QgZm9yZ2V0
+IHRvIHJldmlldyB0aGlzIHNlcmllcy4KClRoYW5rcyBmb3IgeW91ciBjb250cmlidXRpb24sIGFu
+ZCBkb24ndCB3b3JyeSBhYm91dCB0aGF0LiBXaWxsIHJldmlldyB0aGlzIHNlcmllcy4KCkp1c3Qg
+c2hhcmluZyBhIHBsYW4gZm9yIC1uZXh0LAoKSSBwbGFuIHRvIGhhdmUgcHVsbC1yZXF1ZXN0IGFm
+dGVyIHJldmlld2luZyBhIHBhdGNoIHNldFsxXSBwb3N0ZWQgYnkgQW5kcnplai4KQWZ0ZXIgdGhh
+dCwgSSB3aWxsIHN0YXJ0IHRvIHJldmlldyB5b3VyIHBhdGNoIHNldCAtIHdlIHdvdWxkIG5lZWQg
+dG8gZW5vdWdoIHJldmlldyB0aGlzIFJGQyBwYXRjaCBzZXQuIAoKSXQgd291bGQgYmUgdmVyeSBo
+ZWxwZnVsIHRvIG1lIGlmIG90aGVyIHBlb3BsZSBjb3VsZCByZXZpZXcgdGhpcy4KCgpUaGFua3Ms
+Cklua2kgRGFlCgpbMV0gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvYXJjaGl2ZXMvZHJp
+LWRldmVsLzIwMTctQXByaWwvMTM4MTEyLmh0bWwKCgo+IAo+IEFsc28gc29tZSBwb2ludGVycyBj
+b25jZXJuaW5nIHRoZSB2aWRlbyBwbGFuZSBmbGlja2VyaW5nIGFuZCB0aGUKPiBpbnRlcmxhY2lu
+ZyBpc3N1ZSB3b3VsZCBiZSB2ZXJ5IHdlbGNvbWUuCj4gCj4gTG9va2luZyBhdCB0aGUgY3VycmVu
+dCByZWdpc3RlciBkZWZpbmVzIGZvciBNWFJfSU5UX0VOIHN1Z2dlc3RzIHRoYXQKPiB0aGVyZSBh
+cmUgYXQgbGVhc3QgdGhyZWUgbW9yZSB0eXBlIG9mIGludGVycnVwdCBhdmFpbGFibGUuIEFueSBj
+aGFuY2UKPiB0aGVzZSBjb3VsZCBiZSBkb2N1bWVudGVkPyBJIGhvcGUgdG8gZ2V0IHNvbWUgbW9y
+ZSBpbnNpZ2h0IGludG8gdGhpcwo+IGlzc3VlLCB3aGljaCBhcHBhcmFudGx5IGlzIGNhdXNlZCBi
+eSBpbnN1ZmZpY2llbnQgYmFuZHdpZHRoLgo+IAo+IEZvciB0aGUgaW50ZXJsYWNpbmcgaXNzdWUg
+SSBoYXZlIGRvbmUgcGFydGlhbCBwcm9ncmVzcy4gSSBub3cgbG9uZ2VyIHNlZQo+IGEgSU9NTVUg
+cGFnZWZhdWx0LCBidXQgdGhlIHZpZGVvIHBsYW5lIGlzIGhlYXZpbHkgY29ycnVwdGVkLiBBbHNv
+IHRoZQo+IGRpbWVuc2lvbnMgbG9vayB3cm9uZy4KPiAKPiBXaGlsZSBJIGNhbiBzb21laG93IGd1
+ZXNzIHRoYXQgVlBfTU9ERV9MSU5FX1NLSVAgZG9lcywgdGhlCj4gVlBfTU9ERV9GSUVMRF9JRF9B
+VVRPX1RPR0dMSU5HIGZsYWcgc3RpbGwgcmVtYWlucyBhIG15c3RlcnkgdG8gbWUuIElmCj4gcG9z
+c2libGUsIEkgcmVxdWVzdCBzb21lIGRvY3VtZW50YXRpb24gZm9yIHRoaXMgYXMgd2VsbC4KPiAK
+PiAKPiBXaXRoIGJlc3Qgd2lzaGVzLAo+IFRvYmlhcwo+IAo+IAo+IAo+IFRvYmlhcyBKYWtvYmkg
+d3JvdGU6Cj4+IEhlbGxvLAo+Pgo+PiBzb21lIHJlY2VudCB3b3JrIEkgZGlkIG9uIEV4eW5vcy4g
+UGF0Y2hlcyBhcmUgYmFzZWQgb24gWzFdIGFuZCBbMl0uCj4+Cj4+IFN1bW1hcnk6Cj4+IChhKSBF
+bmFibGVzIHN1cHBvcnQgZm9yIE5WMTJNVCBpbiB0aGUgbWl4ZXIuCj4+IChiKSBTYW5pdGl6ZXMg
+YnVmZmVyIHBpdGNoIGZvciBIVyB3aXRoIHJlc3RyaWN0aW9ucy4KPj4gKGMpIE1pc2MgZml4ZXMK
+Pj4KPj4gV2hpbGUgdGVzdGluZyB0aGUgTlYxMk1UIHBhcnQsIEkgbWFkZSB0aGVzZSBpbnRlcmVz
+dGluZyBvYnNlcnZhdGlvbnMuCj4+Cj4+ICgxKSBJIHVzZWQgMTkyMHgxMDgwIFhSR0I4ODg4IG9u
+IHRoZSBwcmltYXJ5IHBsYW5lLCBhbmQgMTI4MHg3Njggb24gdGhlCj4+IHZpZGVvIHBsYW5lLiBX
+aXRoIHRoaXMgY29uZmlndXJhdGlvbiwgaXQgZG9lcyBub3QgbWF0dGVyIGlmIHlvdSdyZQo+PiB1
+c2luZyBOVjEyIG9yIE5WMTJNVCwgdGhlIHZpZGVvIHBsYW5lIG9jY2FzaW9uYWxseSBmbGlja2Vy
+cyBvciBzaG93cwo+PiBoZWF2eSBhcnRpZmFjdGluZy4gUmVkdWNpbmcgdGhlIHNpemUgb2YgdGhl
+IHByaW1hcnkgcGxhbmUsIGUuZy4gdG8KPj4gMzJ4MzIgc29sdmVzIHRoaXMgaXNzdWUsIHNvIG15
+IGd1ZXNzIGlzIHRoYXQgdGhpcyBpcyBtZW1vcnkgYmFuZHdpZHRoCj4+IGlzc3VlLiBEb2VzIHNv
+bWVvbmUga25vdyBpZiBvbmUgY2FuIGNoZWNrIGZvciBidWZmZXIgdW5kZXJmbG93cyBvZiB0aGUK
+Pj4gbWl4ZXIgd2l0aCByZXNwZWN0IHRvIGRhdGEgcGFzc2VkIGZyb20gdGhlIFZQPwo+Pgo+PiAo
+MikgVXNpbmcgMTkyMHgxMDgwaSAoc28gYW4gaW50ZXJsYWNlZCBtb2RlKSBhbmQgTlYxMiwgdGhl
+IGJvYXJkCj4+IGltbWVkaWF0ZWx5IGRpZXMgd2l0aCBhbiBJT01NVSBwYWdlZmF1bHQgYXQgYWRk
+cmVzcyB6ZXJvLiBJJ20KPj4gY3VycmVudGx5IGludmVzdGlnYXRpbmcgdGhpcywgYW5kIGl0IGxv
+b2tzIGxpa2UgdGhhdCB0aGUgVlAgc2V0dXAKPj4gaXMgd3JvbmcgaGVyZS4gSW4gcGFydGljdWxh
+ciBpdCBzaG91bGQgYmUgdGhlIHNvdXJjZSAoISkgaGVpZ2h0Cj4+IGFuZCB2ZXJ0aWNhbCBwb3Np
+dGlvbiB0aGF0IHNob3VsZCBiZSBoYWxmZWQgaW4gaW50ZXJsYWNlZCBtb2RlLCBhbmQKPj4gbm90
+IHRoZSBkZXN0aW5hdGlvbi4gTmVlZCB0byBsb29rIG1vcmUgaW50byB0aGlzLgo+Pgo+PiBBbnl3
+YXksIGJvdGggdGhlIGlzc3VlcyBhcmUgaW5kZXBlbmRhbnQgb2YgdGhlIHBhdGNoZXMsIHNvIHBs
+ZWFzZQo+PiByZXZpZXchIDotKQo+Pgo+PiBXaXRoIGJlc3Qgd2lzaGVzLAo+PiBUb2JpYXMKPj4K
+Pj4KPj4gWzFdIGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbGludXgtc2Ftc3VuZy1zb2Mv
+bXNnNTg2NDAuaHRtbAo+PiBbMl0gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1z
+YW1zdW5nLXNvYy9tc2c1ODY0NC5odG1sCj4+Cj4+IFRvYmlhcyBKYWtvYmkgKDgpOgo+PiAgIGRy
+bS9leHlub3M6IG1peGVyOiBmaXggY2hyb21hIGNvbW1lbnQgaW4gdnBfdmlkZW9fYnVmZmVyKCkK
+Pj4gICBkcm0vZXh5bm9zOiBtaXhlcjogZW5hYmxlIE5WMTJNVCBzdXBwb3J0IGZvciB0aGUgdmlk
+ZW8gcGxhbmUKPj4gICBkcm0vZXh5bm9zOiBtaXhlcjogc2ltcGxpZnkge3ZwX3ZpZGVvLG1peGVy
+X2dyYXBofV9idWZmZXIoKQo+PiAgIGRybS9leHlub3M6IG1peGVyOiByZW1vdmUgc3JjIG9mZnNl
+dCBmcm9tIG1peGVyX2dyYXBoX2J1ZmZlcigpCj4+ICAgZHJtL2V4eW5vczogaW50cm9kdWNlIEJZ
+VEVfUElUQ0ggY2FwYWJpbGl0eQo+PiAgIGRybS9leHlub3M6IGFkZCBCWVRFX1BJVENIIGNhcCBm
+b3IgYWxsIHN1cHBvcnRlZCBwbGFuZXMKPj4gICBkcm0vZXh5bm9zOiBjb25zaXN0ZW50IHVzZSBv
+ZiBjcHAKPj4gICBkcm0vZXh5bm9zOiBzaW1wbGlmeSBzZXRfcGl4Zm10KCkgaW4gREVDT04gYW5k
+IEZJTUQgZHJpdmVycwo+Pgo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2Ry
+bV9kZWNvbi5jIHwgMTcgKysrKystLS0tLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zN19kcm1fZGVjb24uYyAgICB8IDEzICsrKy0tLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgICAgfCAgMiArKwo+PiAgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZiLmMgICAgICAgIHwgIDIgKysKPj4gIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9maW1kLmMgICAgICB8IDE3ICsrKystLS0tLS0tCj4+ICBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyAgICAgfCAzNyArKysrKysrKysrKysr
+KysrKysrKysrCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAg
+ICAgfCA0NCArKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0KPj4gIDcgZmlsZXMgY2hhbmdlZCwg
+NzEgaW5zZXJ0aW9ucygrKSwgNjEgZGVsZXRpb25zKC0pCj4+Cj4gCj4gLS0KPiBUbyB1bnN1YnNj
+cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ft
+c3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtl
+cm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3Jn
+L21ham9yZG9tby1pbmZvLmh0bWwKPiAKPiAKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
