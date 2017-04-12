@@ -1,60 +1,57 @@
-From: Hoegeun Kwon <hoegeun.kwon@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 Subject: Re: [PATCH] drm/exynos/dsi: fix bridge_node DT parsing
-Date: Wed, 12 Apr 2017 22:58:56 +0900
-Message-ID: <b503ffe5-b2e5-2dce-0d1e-73c4a2207977@gmail.com>
+Date: Wed, 12 Apr 2017 16:13:09 +0200
+Message-ID: <a6d60da6-54b7-8dd0-b58e-6e45bd14c221@samsung.com>
 References: <CGME20170412072216eucas1p136149c39438639424d3b8ab4f8d548e8@eucas1p1.samsung.com>
  <1491981729-6396-1-git-send-email-a.hajda@samsung.com>
+ <b503ffe5-b2e5-2dce-0d1e-73c4a2207977@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33585 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752458AbdDLN7A (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Apr 2017 09:59:00 -0400
-Received: by mail-pf0-f193.google.com with SMTP id c198so5267842pfc.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Apr 2017 06:59:00 -0700 (PDT)
-In-Reply-To: <1491981729-6396-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <b503ffe5-b2e5-2dce-0d1e-73c4a2207977@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hoegeun Kwon <hoegeun.kwon@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, inki.dae@samsung.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: hoegeun.kwon@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, inki.dae@samsung.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, hoegeun.kwon@samsung.com
 
-On 04/12/2017 04:22 PM, Andrzej Hajda wrote:
-> DSIM uses MIC bridge which is between DECON and DSIM, so the driver
-> should expect bridge node on input side.
->
-> Fixes: 86418f9 ("drm: convert drivers to use of_graph_get_remote_node")
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index dcb50d4d..3ae459f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1659,7 +1659,7 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
->   
->   	of_node_put(ep);
->   
-> -	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_OUT, 0);
-> +	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
->   	if (!dsi->bridge_node)
->   		return -EINVAL;
-
-Hi Andrzej,
-
-The of_graph_get_remote_node() does not exist in the kernel.
-Also this patch  does not apply('git am') on drm-next tree.
-Is this what you mean?
-         dsi->bridge_node = of_graph_get_endpoint_by_regs(node, 
-DSI_PORT_IN, 0);
-         if (!dsi->bridge_node)
-                 return -EINVAL;
-
-Best regards,
-Hoegeun
-
->   
+SGkgSG9lZ2V1biwKCk9uIDIwMTctMDQtMTIgMTU6NTgsIEhvZWdldW4gS3dvbiB3cm90ZToKPiBP
+biAwNC8xMi8yMDE3IDA0OjIyIFBNLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+PiBEU0lNIHVzZXMg
+TUlDIGJyaWRnZSB3aGljaCBpcyBiZXR3ZWVuIERFQ09OIGFuZCBEU0lNLCBzbyB0aGUgZHJpdmVy
+Cj4+IHNob3VsZCBleHBlY3QgYnJpZGdlIG5vZGUgb24gaW5wdXQgc2lkZS4KPj4KPj4gRml4ZXM6
+IDg2NDE4ZjkgKCJkcm06IGNvbnZlcnQgZHJpdmVycyB0byB1c2Ugb2ZfZ3JhcGhfZ2V0X3JlbW90
+ZV9ub2RlIikKPj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5n
+LmNvbT4KPj4gLS0tCj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5j
+IHwgMiArLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigt
+KQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jIAo+PiBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+PiBpbmRl
+eCBkY2I1MGQ0ZC4uM2FlNDU5ZiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2RzaS5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kc2kuYwo+PiBAQCAtMTY1OSw3ICsxNjU5LDcgQEAgc3RhdGljIGludCBleHlub3NfZHNp
+X3BhcnNlX2R0KHN0cnVjdCAKPj4gZXh5bm9zX2RzaSAqZHNpKQo+PiAgICAgICAgIG9mX25vZGVf
+cHV0KGVwKTsKPj4gICAtICAgIGRzaS0+YnJpZGdlX25vZGUgPSBvZl9ncmFwaF9nZXRfcmVtb3Rl
+X25vZGUobm9kZSwgCj4+IERTSV9QT1JUX09VVCwgMCk7Cj4+ICsgICAgZHNpLT5icmlkZ2Vfbm9k
+ZSA9IG9mX2dyYXBoX2dldF9yZW1vdGVfbm9kZShub2RlLCBEU0lfUE9SVF9JTiwgMCk7Cj4+ICAg
+ICAgIGlmICghZHNpLT5icmlkZ2Vfbm9kZSkKPj4gICAgICAgICAgIHJldHVybiAtRUlOVkFMOwo+
+Cj4gSGkgQW5kcnplaiwKPgo+IFRoZSBvZl9ncmFwaF9nZXRfcmVtb3RlX25vZGUoKSBkb2VzIG5v
+dCBleGlzdCBpbiB0aGUga2VybmVsLgo+IEFsc28gdGhpcyBwYXRjaCAgZG9lcyBub3QgYXBwbHko
+J2dpdCBhbScpIG9uIGRybS1uZXh0IHRyZWUuCj4gSXMgdGhpcyB3aGF0IHlvdSBtZWFuPwo+ICAg
+ICAgICAgZHNpLT5icmlkZ2Vfbm9kZSA9IG9mX2dyYXBoX2dldF9lbmRwb2ludF9ieV9yZWdzKG5v
+ZGUsIAo+IERTSV9QT1JUX0lOLCAwKTsKPiAgICAgICAgIGlmICghZHNpLT5icmlkZ2Vfbm9kZSkK
+PiAgICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7CgpQbGVhc2UgY2hlY2sgbGF0ZXN0IGRy
+bS1uZXh0IGJyYW5jaCBhdCAKZ2l0Oi8vcGVvcGxlLmZyZWVkZXNrdG9wLm9yZy9+YWlybGllZC9s
+aW51eC5naXQKCkNvbW1pdCA4NjQxOGY5MGE0YyAiZHJtOiBjb252ZXJ0IGRyaXZlcnMgdG8gdXNl
+IApvZl9ncmFwaF9nZXRfcmVtb3RlX25vZGUiIGdvdCBtZXJnZWQKdmlhIGRybS1taXNjIHRyZWUg
+YW5kIEFuZHJ6ZWoncyBwYXRjaCBpcyBhIGZpeCBmb3IgaXQuCgpCZXN0IHJlZ2FyZHMKLS0gCk1h
+cmVrIFN6eXByb3dza2ksIFBoRApTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9sYW5kCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
