@@ -1,783 +1,245 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v5 2/2] crypto: hw_random - Add new Exynos RNG driver
-Date: Tue, 11 Apr 2017 20:08:35 +0200
-Message-ID: <20170411180835.8928-3-krzk@kernel.org>
-References: <20170411180835.8928-1-krzk@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
+Date: Wed, 12 Apr 2017 11:02:46 +0900
+Message-ID: <58ED8AC6.6030600@samsung.com>
+References: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <85a64d59-63d6-54b0-756b-63c36dc85d2b@math.uni-bielefeld.de>
+ <CAAQKjZMm3O+PZ9GUsksaTnApwm8n9q8VX0rCAYozT9hG7oNrzQ@mail.gmail.com>
+ <CGME20170410102755epcas4p40e9072db5dde36aeecbcb0eebbacd82b@epcas4p4.samsung.com>
+ <7ffdd11d-bbdf-321d-fc3c-2d40798e902f@math.uni-bielefeld.de>
+ <58EC1048.1030303@samsung.com>
+ <f28ce9b0-5162-e433-fcf5-a1d8e3929c68@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170411180835.8928-1-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Bernie Thompson <bernie-5otTQG2S3XlWk0Htik3J/w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, PrasannaKumar Muralidharan <prasannatsmkumar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:38538 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752437AbdDLCCt (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 11 Apr 2017 22:02:49 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OO900O3LXONR7A0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Apr 2017 11:02:47 +0900 (KST)
+In-reply-to: <f28ce9b0-5162-e433-fcf5-a1d8e3929c68@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
 
-Replace existing hw_ranndom/exynos-rng driver with a new, reworked one.
-This is a driver for pseudo random number generator block which on
-Exynos4 chipsets must be seeded with some value.  On newer Exynos5420
-chipsets it might seed itself from true random number generator block
-but this is not implemented yet.
 
-New driver is a complete rework to use the crypto ALGAPI instead of
-hw_random API.  Rationale for the change:
-1. hw_random interface is for true RNG devices.
-2. The old driver was seeding itself with jiffies which is not a
-   reliable source for randomness.
-3. Device generates five random 32-bit numbers in each pass but old
-   driver was returning only one 32-bit number thus its performance was
-   reduced.
 
-Compatibility with DeviceTree bindings is preserved.
+2017년 04월 11일 17:01에 Tobias Jakobi 이(가) 쓴 글:
+> Inki Dae wrote:
+>>
+>>
+>> 2017년 04월 10일 19:27에 Tobias Jakobi 이(가) 쓴 글:
+>>> Inki Dae wrote:
+>>>> 2017-03-29 20:56 GMT+09:00 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+>>>>> Hello Daniel,
+>>>>>
+>>>>> same question here. Patch doesn't introduce any functional changes (just
+>>>>> adds code documentation), so can you merge it through drm-misc?
+>>>>>
+>>>>
+>>>> Sorry for late. Confirmed just now. I will check it on next Monday.
+>>> You have added the wrong patch (v2 instead of v3).
+>>
+>> Tobias,
+>>
+>> you had posted this patch with other one like below,
+>> [PATCH v2 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
+>> [PATCH v2 2/2] drm/exynos: mixer: document YCbCr magic numbers
+>>
+>> And than you have posted it without any comment again, v3,
+>> [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
+>>
+>> Please use --cover-letter option to make patch series and keep the patch set to be consistent with previous version.
+> This is not necessary. There were only changes to 'drm/exynos: mixer:
+> document YCbCr magic numbers' and we're talking about _two_ patches here
+> (which can be applied independently).
 
-New driver does not use runtime power management but manually enables
-and disables the clock when needed.  This is preferred approach because
-using runtime PM just to toggle clock is huge overhead.
+Tobias, why did you post the patch set 1/2 and 2/2 before?
+If these patches can be applied independently - you found out later - then you need to clarify why you posted them separately.
 
-Another difference is reseeding itself with generated random data
-periodically and during resuming from system suspend (previously driver
-was re-seeding itself again with jiffies).
+Thanks,
+Inki Dae
 
-Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Reviewed-by: Stephan Müller <smueller-T9tCv8IpfcWELgA04lAiVw@public.gmane.org>
-Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- MAINTAINERS                         |   8 +
- drivers/char/hw_random/Kconfig      |  14 --
- drivers/char/hw_random/Makefile     |   1 -
- drivers/char/hw_random/exynos-rng.c | 231 ---------------------
- drivers/crypto/Kconfig              |  15 ++
- drivers/crypto/Makefile             |   1 +
- drivers/crypto/exynos-rng.c         | 389 ++++++++++++++++++++++++++++++++++++
- 7 files changed, 413 insertions(+), 246 deletions(-)
- delete mode 100644 drivers/char/hw_random/exynos-rng.c
- create mode 100644 drivers/crypto/exynos-rng.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index affecc6d59f4..371fda859d43 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10977,6 +10977,14 @@ L:	alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org (moderated for non-subscribers)
- S:	Supported
- F:	sound/soc/samsung/
- 
-+SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
-+M:	Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-+L:	linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-+L:	linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-+S:	Maintained
-+F:	drivers/crypto/exynos-rng.c
-+F:	Documentation/devicetree/bindings/rng/samsung,exynos-rng4.txt
-+
- SAMSUNG FRAMEBUFFER DRIVER
- M:	Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
- L:	linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 0cafe08919c9..bdae802e7154 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -294,20 +294,6 @@ config HW_RANDOM_POWERNV
- 
- 	  If unsure, say Y.
- 
--config HW_RANDOM_EXYNOS
--	tristate "EXYNOS HW random number generator support"
--	depends on ARCH_EXYNOS || COMPILE_TEST
--	depends on HAS_IOMEM
--	default HW_RANDOM
--	---help---
--	  This driver provides kernel-side support for the Random Number
--	  Generator hardware found on EXYNOS SOCs.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called exynos-rng.
--
--	  If unsure, say Y.
--
- config HW_RANDOM_TPM
- 	tristate "TPM HW Random Number Generator support"
- 	depends on TCG_TPM
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 5f52b1e4e7be..6f1eecc2045c 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -24,7 +24,6 @@ obj-$(CONFIG_HW_RANDOM_OCTEON) += octeon-rng.o
- obj-$(CONFIG_HW_RANDOM_NOMADIK) += nomadik-rng.o
- obj-$(CONFIG_HW_RANDOM_PSERIES) += pseries-rng.o
- obj-$(CONFIG_HW_RANDOM_POWERNV) += powernv-rng.o
--obj-$(CONFIG_HW_RANDOM_EXYNOS)	+= exynos-rng.o
- obj-$(CONFIG_HW_RANDOM_HISI)	+= hisi-rng.o
- obj-$(CONFIG_HW_RANDOM_TPM) += tpm-rng.o
- obj-$(CONFIG_HW_RANDOM_BCM2835) += bcm2835-rng.o
-diff --git a/drivers/char/hw_random/exynos-rng.c b/drivers/char/hw_random/exynos-rng.c
-deleted file mode 100644
-index 23d358553b21..000000000000
---- a/drivers/char/hw_random/exynos-rng.c
-+++ /dev/null
-@@ -1,231 +0,0 @@
--/*
-- * exynos-rng.c - Random Number Generator driver for the exynos
-- *
-- * Copyright (C) 2012 Samsung Electronics
-- * Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation;
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
-- */
--
--#include <linux/hw_random.h>
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/io.h>
--#include <linux/platform_device.h>
--#include <linux/clk.h>
--#include <linux/pm_runtime.h>
--#include <linux/err.h>
--
--#define EXYNOS_PRNG_STATUS_OFFSET	0x10
--#define EXYNOS_PRNG_SEED_OFFSET		0x140
--#define EXYNOS_PRNG_OUT1_OFFSET		0x160
--#define SEED_SETTING_DONE		BIT(1)
--#define PRNG_START			0x18
--#define PRNG_DONE			BIT(5)
--#define EXYNOS_AUTOSUSPEND_DELAY	100
--
--struct exynos_rng {
--	struct device *dev;
--	struct hwrng rng;
--	void __iomem *mem;
--	struct clk *clk;
--};
--
--static u32 exynos_rng_readl(struct exynos_rng *rng, u32 offset)
--{
--	return	readl_relaxed(rng->mem + offset);
--}
--
--static void exynos_rng_writel(struct exynos_rng *rng, u32 val, u32 offset)
--{
--	writel_relaxed(val, rng->mem + offset);
--}
--
--static int exynos_rng_configure(struct exynos_rng *exynos_rng)
--{
--	int i;
--	int ret = 0;
--
--	for (i = 0 ; i < 5 ; i++)
--		exynos_rng_writel(exynos_rng, jiffies,
--				EXYNOS_PRNG_SEED_OFFSET + 4*i);
--
--	if (!(exynos_rng_readl(exynos_rng, EXYNOS_PRNG_STATUS_OFFSET)
--						 & SEED_SETTING_DONE))
--		ret = -EIO;
--
--	return ret;
--}
--
--static int exynos_init(struct hwrng *rng)
--{
--	struct exynos_rng *exynos_rng = container_of(rng,
--						struct exynos_rng, rng);
--	int ret = 0;
--
--	pm_runtime_get_sync(exynos_rng->dev);
--	ret = exynos_rng_configure(exynos_rng);
--	pm_runtime_mark_last_busy(exynos_rng->dev);
--	pm_runtime_put_autosuspend(exynos_rng->dev);
--
--	return ret;
--}
--
--static int exynos_read(struct hwrng *rng, void *buf,
--					size_t max, bool wait)
--{
--	struct exynos_rng *exynos_rng = container_of(rng,
--						struct exynos_rng, rng);
--	u32 *data = buf;
--	int retry = 100;
--	int ret = 4;
--
--	pm_runtime_get_sync(exynos_rng->dev);
--
--	exynos_rng_writel(exynos_rng, PRNG_START, 0);
--
--	while (!(exynos_rng_readl(exynos_rng,
--			EXYNOS_PRNG_STATUS_OFFSET) & PRNG_DONE) && --retry)
--		cpu_relax();
--	if (!retry) {
--		ret = -ETIMEDOUT;
--		goto out;
--	}
--
--	exynos_rng_writel(exynos_rng, PRNG_DONE, EXYNOS_PRNG_STATUS_OFFSET);
--
--	*data = exynos_rng_readl(exynos_rng, EXYNOS_PRNG_OUT1_OFFSET);
--
--out:
--	pm_runtime_mark_last_busy(exynos_rng->dev);
--	pm_runtime_put_sync_autosuspend(exynos_rng->dev);
--
--	return ret;
--}
--
--static int exynos_rng_probe(struct platform_device *pdev)
--{
--	struct exynos_rng *exynos_rng;
--	struct resource *res;
--	int ret;
--
--	exynos_rng = devm_kzalloc(&pdev->dev, sizeof(struct exynos_rng),
--					GFP_KERNEL);
--	if (!exynos_rng)
--		return -ENOMEM;
--
--	exynos_rng->dev = &pdev->dev;
--	exynos_rng->rng.name = "exynos";
--	exynos_rng->rng.init =	exynos_init;
--	exynos_rng->rng.read = exynos_read;
--	exynos_rng->clk = devm_clk_get(&pdev->dev, "secss");
--	if (IS_ERR(exynos_rng->clk)) {
--		dev_err(&pdev->dev, "Couldn't get clock.\n");
--		return -ENOENT;
--	}
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	exynos_rng->mem = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(exynos_rng->mem))
--		return PTR_ERR(exynos_rng->mem);
--
--	platform_set_drvdata(pdev, exynos_rng);
--
--	pm_runtime_set_autosuspend_delay(&pdev->dev, EXYNOS_AUTOSUSPEND_DELAY);
--	pm_runtime_use_autosuspend(&pdev->dev);
--	pm_runtime_enable(&pdev->dev);
--
--	ret = devm_hwrng_register(&pdev->dev, &exynos_rng->rng);
--	if (ret) {
--		pm_runtime_dont_use_autosuspend(&pdev->dev);
--		pm_runtime_disable(&pdev->dev);
--	}
--
--	return ret;
--}
--
--static int exynos_rng_remove(struct platform_device *pdev)
--{
--	pm_runtime_dont_use_autosuspend(&pdev->dev);
--	pm_runtime_disable(&pdev->dev);
--
--	return 0;
--}
--
--static int __maybe_unused exynos_rng_runtime_suspend(struct device *dev)
--{
--	struct platform_device *pdev = to_platform_device(dev);
--	struct exynos_rng *exynos_rng = platform_get_drvdata(pdev);
--
--	clk_disable_unprepare(exynos_rng->clk);
--
--	return 0;
--}
--
--static int __maybe_unused exynos_rng_runtime_resume(struct device *dev)
--{
--	struct platform_device *pdev = to_platform_device(dev);
--	struct exynos_rng *exynos_rng = platform_get_drvdata(pdev);
--
--	return clk_prepare_enable(exynos_rng->clk);
--}
--
--static int __maybe_unused exynos_rng_suspend(struct device *dev)
--{
--	return pm_runtime_force_suspend(dev);
--}
--
--static int __maybe_unused exynos_rng_resume(struct device *dev)
--{
--	struct platform_device *pdev = to_platform_device(dev);
--	struct exynos_rng *exynos_rng = platform_get_drvdata(pdev);
--	int ret;
--
--	ret = pm_runtime_force_resume(dev);
--	if (ret)
--		return ret;
--
--	return exynos_rng_configure(exynos_rng);
--}
--
--static const struct dev_pm_ops exynos_rng_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(exynos_rng_suspend, exynos_rng_resume)
--	SET_RUNTIME_PM_OPS(exynos_rng_runtime_suspend,
--			   exynos_rng_runtime_resume, NULL)
--};
--
--static const struct of_device_id exynos_rng_dt_match[] = {
--	{
--		.compatible = "samsung,exynos4-rng",
--	},
--	{ },
--};
--MODULE_DEVICE_TABLE(of, exynos_rng_dt_match);
--
--static struct platform_driver exynos_rng_driver = {
--	.driver		= {
--		.name	= "exynos-rng",
--		.pm	= &exynos_rng_pm_ops,
--		.of_match_table = exynos_rng_dt_match,
--	},
--	.probe		= exynos_rng_probe,
--	.remove		= exynos_rng_remove,
--};
--
--module_platform_driver(exynos_rng_driver);
--
--MODULE_DESCRIPTION("EXYNOS 4 H/W Random Number Generator driver");
--MODULE_AUTHOR("Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
--MODULE_LICENSE("GPL");
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 1a60626937e4..7d1fdf6a751c 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -388,6 +388,21 @@ config CRYPTO_DEV_MXC_SCC
- 	  This option enables support for the Security Controller (SCC)
- 	  found in Freescale i.MX25 chips.
- 
-+config CRYPTO_DEV_EXYNOS_RNG
-+	tristate "EXYNOS HW pseudo random number generator support"
-+	depends on ARCH_EXYNOS || COMPILE_TEST
-+	depends on HAS_IOMEM
-+	select CRYPTO_RNG
-+	---help---
-+	  This driver provides kernel-side support through the
-+	  cryptographic API for the pseudo random number generator hardware
-+	  found on Exynos SoCs.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called exynos-rng.
-+
-+	  If unsure, say Y.
-+
- config CRYPTO_DEV_S5P
- 	tristate "Support for Samsung S5PV210/Exynos crypto accelerator"
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
-diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
-index 41ca339e89d3..9603f1862b30 100644
---- a/drivers/crypto/Makefile
-+++ b/drivers/crypto/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_CRYPTO_DEV_CAVIUM_ZIP) += cavium/
- obj-$(CONFIG_CRYPTO_DEV_CCP) += ccp/
- obj-$(CONFIG_CRYPTO_DEV_CHELSIO) += chelsio/
- obj-$(CONFIG_CRYPTO_DEV_CPT) += cavium/cpt/
-+obj-$(CONFIG_CRYPTO_DEV_EXYNOS_RNG) += exynos-rng.o
- obj-$(CONFIG_CRYPTO_DEV_FSL_CAAM) += caam/
- obj-$(CONFIG_CRYPTO_DEV_GEODE) += geode-aes.o
- obj-$(CONFIG_CRYPTO_DEV_HIFN_795X) += hifn_795x.o
-diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
-new file mode 100644
-index 000000000000..451620b475a0
---- /dev/null
-+++ b/drivers/crypto/exynos-rng.c
-@@ -0,0 +1,389 @@
-+/*
-+ * exynos-rng.c - Random Number Generator driver for the Exynos
-+ *
-+ * Copyright (c) 2017 Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-+ *
-+ * Loosely based on old driver from drivers/char/hw_random/exynos-rng.c:
-+ * Copyright (C) 2012 Samsung Electronics
-+ * Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation;
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/crypto.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include <crypto/internal/rng.h>
-+
-+#define EXYNOS_RNG_CONTROL		0x0
-+#define EXYNOS_RNG_STATUS		0x10
-+#define EXYNOS_RNG_SEED_BASE		0x140
-+#define EXYNOS_RNG_SEED(n)		(EXYNOS_RNG_SEED_BASE + (n * 0x4))
-+#define EXYNOS_RNG_OUT_BASE		0x160
-+#define EXYNOS_RNG_OUT(n)		(EXYNOS_RNG_OUT_BASE + (n * 0x4))
-+
-+/* EXYNOS_RNG_CONTROL bit fields */
-+#define EXYNOS_RNG_CONTROL_START	0x18
-+/* EXYNOS_RNG_STATUS bit fields */
-+#define EXYNOS_RNG_STATUS_SEED_SETTING_DONE	BIT(1)
-+#define EXYNOS_RNG_STATUS_RNG_DONE		BIT(5)
-+
-+/* Five seed and output registers, each 4 bytes */
-+#define EXYNOS_RNG_SEED_REGS		5
-+#define EXYNOS_RNG_SEED_SIZE		(EXYNOS_RNG_SEED_REGS * 4)
-+
-+/*
-+ * Driver re-seeds itself with generated random numbers to increase
-+ * the randomness.
-+ *
-+ * Time for next re-seed in ms.
-+ */
-+#define EXYNOS_RNG_RESEED_TIME		100
-+/*
-+ * In polling mode, do not wait infinitely for the engine to finish the work.
-+ */
-+#define EXYNOS_RNG_WAIT_RETRIES		100
-+
-+/* Context for crypto */
-+struct exynos_rng_ctx {
-+	struct exynos_rng_dev		*rng;
-+};
-+
-+/* Device associated memory */
-+struct exynos_rng_dev {
-+	struct device			*dev;
-+	void __iomem			*mem;
-+	struct clk			*clk;
-+	/* Generated numbers stored for seeding during resume */
-+	u8				seed_save[EXYNOS_RNG_SEED_SIZE];
-+	unsigned int			seed_save_len;
-+	/* Time of last seeding in jiffies */
-+	unsigned long			last_seeding;
-+};
-+
-+static struct exynos_rng_dev *exynos_rng_dev;
-+
-+static u32 exynos_rng_readl(struct exynos_rng_dev *rng, u32 offset)
-+{
-+	return readl_relaxed(rng->mem + offset);
-+}
-+
-+static void exynos_rng_writel(struct exynos_rng_dev *rng, u32 val, u32 offset)
-+{
-+	writel_relaxed(val, rng->mem + offset);
-+}
-+
-+static int exynos_rng_set_seed(struct exynos_rng_dev *rng,
-+			       const u8 *seed, unsigned int slen)
-+{
-+	u32 val;
-+	int i;
-+
-+	/* Round seed length because loop iterates over full register size */
-+	slen = ALIGN_DOWN(slen, 4);
-+
-+	if (slen < EXYNOS_RNG_SEED_SIZE)
-+		return -EINVAL;
-+
-+	for (i = 0; i < slen ; i += 4) {
-+		unsigned int seed_reg = (i / 4) % EXYNOS_RNG_SEED_REGS;
-+
-+		val = seed[i] << 24;
-+		val |= seed[i + 1] << 16;
-+		val |= seed[i + 2] << 8;
-+		val |= seed[i + 3] << 0;
-+
-+		exynos_rng_writel(rng, val, EXYNOS_RNG_SEED(seed_reg));
-+	}
-+
-+	val = exynos_rng_readl(rng, EXYNOS_RNG_STATUS);
-+	if (!(val & EXYNOS_RNG_STATUS_SEED_SETTING_DONE)) {
-+		dev_warn(rng->dev, "Seed setting not finished\n");
-+		return -EIO;
-+	}
-+
-+	rng->last_seeding = jiffies;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Read from output registers and put the data under 'dst' array,
-+ * up to dlen bytes.
-+ *
-+ * Returns number of bytes actually stored in 'dst' (dlen
-+ * or EXYNOS_RNG_SEED_SIZE).
-+ */
-+static unsigned int exynos_rng_copy_random(struct exynos_rng_dev *rng,
-+					   u8 *dst, unsigned int dlen)
-+{
-+	unsigned int cnt = 0;
-+	int i, j;
-+	u32 val;
-+
-+	for (j = 0; j < EXYNOS_RNG_SEED_REGS; j++) {
-+		val = exynos_rng_readl(rng, EXYNOS_RNG_OUT(j));
-+
-+		for (i = 0; i < 4; i++) {
-+			dst[cnt] = val & 0xff;
-+			val >>= 8;
-+			if (++cnt >= dlen)
-+				return cnt;
-+		}
-+	}
-+
-+	return cnt;
-+}
-+
-+/*
-+ * Start the engine and poll for finish.  Then read from output registers
-+ * filling the 'dst' buffer up to 'dlen' bytes or up to size of generated
-+ * random data (EXYNOS_RNG_SEED_SIZE).
-+ *
-+ * On success: return 0 and store number of read bytes under 'read' address.
-+ * On error: return -ERRNO.
-+ */
-+static int exynos_rng_get_random(struct exynos_rng_dev *rng,
-+				 u8 *dst, unsigned int dlen,
-+				 unsigned int *read)
-+{
-+	int retry = EXYNOS_RNG_WAIT_RETRIES;
-+
-+	exynos_rng_writel(rng, EXYNOS_RNG_CONTROL_START,
-+			  EXYNOS_RNG_CONTROL);
-+
-+	while (!(exynos_rng_readl(rng,
-+			EXYNOS_RNG_STATUS) & EXYNOS_RNG_STATUS_RNG_DONE) && --retry)
-+		cpu_relax();
-+
-+	if (!retry)
-+		return -ETIMEDOUT;
-+
-+	/* Clear status bit */
-+	exynos_rng_writel(rng, EXYNOS_RNG_STATUS_RNG_DONE,
-+			  EXYNOS_RNG_STATUS);
-+	*read = exynos_rng_copy_random(rng, dst, dlen);
-+
-+	return 0;
-+}
-+
-+/* Re-seed itself from time to time */
-+static void exynos_rng_reseed(struct exynos_rng_dev *rng)
-+{
-+	unsigned long next_seeding = rng->last_seeding + \
-+				     msecs_to_jiffies(EXYNOS_RNG_RESEED_TIME);
-+	unsigned long now = jiffies;
-+	unsigned int read = 0;
-+	u8 seed[EXYNOS_RNG_SEED_SIZE];
-+
-+	if (time_before(now, next_seeding))
-+		return;
-+
-+	if (exynos_rng_get_random(rng, seed, sizeof(seed), &read))
-+		return;
-+
-+	exynos_rng_set_seed(rng, seed, read);
-+}
-+
-+static int exynos_rng_generate(struct crypto_rng *tfm,
-+			       const u8 *src, unsigned int slen,
-+			       u8 *dst, unsigned int dlen)
-+{
-+	struct exynos_rng_ctx *ctx = crypto_rng_ctx(tfm);
-+	struct exynos_rng_dev *rng = ctx->rng;
-+	unsigned int read = 0;
-+	int ret;
-+
-+	ret = clk_prepare_enable(rng->clk);
-+	if (ret)
-+		return ret;
-+
-+	do {
-+		ret = exynos_rng_get_random(rng, dst, dlen, &read);
-+		if (ret)
-+			break;
-+
-+		dlen -= read;
-+		dst += read;
-+
-+		exynos_rng_reseed(rng);
-+	} while (dlen > 0);
-+
-+	clk_disable_unprepare(rng->clk);
-+
-+	return ret;
-+}
-+
-+static int exynos_rng_seed(struct crypto_rng *tfm, const u8 *seed,
-+			   unsigned int slen)
-+{
-+	struct exynos_rng_ctx *ctx = crypto_rng_ctx(tfm);
-+	struct exynos_rng_dev *rng = ctx->rng;
-+	int ret;
-+
-+	ret = clk_prepare_enable(rng->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = exynos_rng_set_seed(ctx->rng, seed, slen);
-+
-+	clk_disable_unprepare(rng->clk);
-+
-+	return ret;
-+}
-+
-+static int exynos_rng_kcapi_init(struct crypto_tfm *tfm)
-+{
-+	struct exynos_rng_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	ctx->rng = exynos_rng_dev;
-+
-+	return 0;
-+}
-+
-+static struct rng_alg exynos_rng_alg = {
-+	.generate		= exynos_rng_generate,
-+	.seed			= exynos_rng_seed,
-+	.seedsize		= EXYNOS_RNG_SEED_SIZE,
-+	.base			= {
-+		.cra_name		= "stdrng",
-+		.cra_driver_name	= "exynos_rng",
-+		.cra_priority		= 100,
-+		.cra_ctxsize		= sizeof(struct exynos_rng_ctx),
-+		.cra_module		= THIS_MODULE,
-+		.cra_init		= exynos_rng_kcapi_init,
-+	}
-+};
-+
-+static int exynos_rng_probe(struct platform_device *pdev)
-+{
-+	struct exynos_rng_dev *rng;
-+	struct resource *res;
-+	int ret;
-+
-+	if (exynos_rng_dev)
-+		return -EEXIST;
-+
-+	rng = devm_kzalloc(&pdev->dev, sizeof(*rng), GFP_KERNEL);
-+	if (!rng)
-+		return -ENOMEM;
-+
-+	rng->dev = &pdev->dev;
-+	rng->clk = devm_clk_get(&pdev->dev, "secss");
-+	if (IS_ERR(rng->clk)) {
-+		dev_err(&pdev->dev, "Couldn't get clock.\n");
-+		return PTR_ERR(rng->clk);
-+	}
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	rng->mem = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(rng->mem))
-+		return PTR_ERR(rng->mem);
-+
-+	platform_set_drvdata(pdev, rng);
-+
-+	exynos_rng_dev = rng;
-+
-+	ret = crypto_register_rng(&exynos_rng_alg);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"Couldn't register rng crypto alg: %d\n", ret);
-+		exynos_rng_dev = NULL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int exynos_rng_remove(struct platform_device *pdev)
-+{
-+	crypto_unregister_rng(&exynos_rng_alg);
-+
-+	exynos_rng_dev = NULL;
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused exynos_rng_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct exynos_rng_dev *rng = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	/* If we were never seeded then after resume it will be the same */
-+	if (!rng->last_seeding)
-+		return 0;
-+
-+	rng->seed_save_len = 0;
-+	ret = clk_prepare_enable(rng->clk);
-+	if (ret)
-+		return ret;
-+
-+	/* Get new random numbers and store them for seeding on resume. */
-+	exynos_rng_get_random(rng, rng->seed_save, sizeof(rng->seed_save),
-+			      &(rng->seed_save_len));
-+	dev_dbg(rng->dev, "Stored %u bytes for seeding on system resume\n",
-+		rng->seed_save_len);
-+
-+	clk_disable_unprepare(rng->clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused exynos_rng_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct exynos_rng_dev *rng = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	/* Never seeded so nothing to do */
-+	if (!rng->last_seeding)
-+		return 0;
-+
-+	ret = clk_prepare_enable(rng->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = exynos_rng_set_seed(rng, rng->seed_save, rng->seed_save_len);
-+
-+	clk_disable_unprepare(rng->clk);
-+
-+	return ret;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(exynos_rng_pm_ops, exynos_rng_suspend,
-+			 exynos_rng_resume);
-+
-+static const struct of_device_id exynos_rng_dt_match[] = {
-+	{
-+		.compatible = "samsung,exynos4-rng",
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, exynos_rng_dt_match);
-+
-+static struct platform_driver exynos_rng_driver = {
-+	.driver		= {
-+		.name	= "exynos-rng",
-+		.pm	= &exynos_rng_pm_ops,
-+		.of_match_table = exynos_rng_dt_match,
-+	},
-+	.probe		= exynos_rng_probe,
-+	.remove		= exynos_rng_remove,
-+};
-+
-+module_platform_driver(exynos_rng_driver);
-+
-+MODULE_DESCRIPTION("Exynos H/W Random Number Generator driver");
-+MODULE_AUTHOR("Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>");
-+MODULE_LICENSE("GPL");
--- 
-2.9.3
+> 
+> 
+>>
+>> I can merge the new one - really trivial - but I think it'd be better you to resend this patch series for other people.
+>>
+>> This patch set has been removed from my tree. Please resend (not v4) this patch set like below,
+>> [PATCH v3 0/2] drm/exynos: clean up mixer driver??
+>> [PATCH v3 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
+>> [PATCH v3 2/2] drm/exynos: mixer: document YCbCr magic numbers
+> Not necessary, just pick up the two patches which for which I already
+> pinged you. For you convenience, here are the two on dri-devel patchwork:
+> https://patchwork.kernel.org/patch/9617085/
+> https://patchwork.kernel.org/patch/9617493/
+> 
+> - Tobias
+> 
+> 
+> 
+>>
+>> Thanks,
+>> Inki Dae
+>>
+>>>
+>>> - Tobias
+>>>
+>>>
+>>>> Thanks,
+>>>> Inki Dae
+>>>>
+>>>>> With best wishes,
+>>>>> Tobias
+>>>>>
+>>>>>
+>>>>> Tobias Jakobi wrote:
+>>>>>> The output stage of the mixer uses YCbCr for the internal
+>>>>>> computations, which is the reason that some registers take
+>>>>>> YCbCr related data as input. In particular this applies
+>>>>>> to MXR_BG_COLOR{0,1,2} and MXR_CM_COEFF_{Y,CB,CR}.
+>>>>>>
+>>>>>> Document the formatting of the data which we write to
+>>>>>> these registers.
+>>>>>>
+>>>>>> While at it, unify wording of comments in the register header.
+>>>>>>
+>>>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>>>>>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>>>>>> ---
+>>>>>> Changes in v2:
+>>>>>> - use floating point values as input for the macros, as
+>>>>>>   suggested by Andrzej
+>>>>>> - the floating point values have been tuned to exactly match
+>>>>>>   the values that are currently used
+>>>>>>
+>>>>>> Changes in v3:
+>>>>>> - use only three digit values (pointed out by Andrzej)
+>>>>>>
+>>>>>>  drivers/gpu/drm/exynos/exynos_mixer.c | 33 +++++++++++++++++++++++++--------
+>>>>>>  drivers/gpu/drm/exynos/regs-mixer.h   |  7 +++++--
+>>>>>>  2 files changed, 30 insertions(+), 10 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+>>>>>> index 41d0c36..9648dd5 100644
+>>>>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>>>>>> @@ -45,6 +45,22 @@
+>>>>>>  #define MIXER_WIN_NR         3
+>>>>>>  #define VP_DEFAULT_WIN               2
+>>>>>>
+>>>>>> +/*
+>>>>>> + * Mixer color space conversion coefficient triplet.
+>>>>>> + * Used for CSC from RGB to YCbCr.
+>>>>>> + * Each coefficient is a 10-bit fixed point number with
+>>>>>> + * sign and no integer part, i.e.
+>>>>>> + * [0:8] = fractional part (representing a value y = x / 2^9)
+>>>>>> + * [9] = sign
+>>>>>> + * Negative values are encoded with two's complement.
+>>>>>> + */
+>>>>>> +#define MXR_CSC_C(x) ((int)((x) * 512.0) & 0x3ff)
+>>>>>> +#define MXR_CSC_CT(a0, a1, a2) \
+>>>>>> +  ((MXR_CSC_C(a0) << 20) | (MXR_CSC_C(a1) << 10) | (MXR_CSC_C(a2) << 0))
+>>>>>> +
+>>>>>> +/* YCbCr value, used for mixer background color configuration. */
+>>>>>> +#define MXR_YCBCR_VAL(y, cb, cr) (((y) << 16) | ((cb) << 8) | ((cr) << 0))
+>>>>>> +
+>>>>>>  /* The pixelformats that are natively supported by the mixer. */
+>>>>>>  #define MXR_FORMAT_RGB565    4
+>>>>>>  #define MXR_FORMAT_ARGB1555  5
+>>>>>> @@ -391,13 +407,14 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
+>>>>>>       case 1080:
+>>>>>>       default:
+>>>>>>               val = MXR_CFG_RGB709_16_235;
+>>>>>> +             /* Configure the BT.709 CSC matrix for full range RGB. */
+>>>>>>               mixer_reg_write(res, MXR_CM_COEFF_Y,
+>>>>>> -                             (1 << 30) | (94 << 20) | (314 << 10) |
+>>>>>> -                             (32 << 0));
+>>>>>> +                     MXR_CSC_CT( 0.184,  0.614,  0.063) |
+>>>>>> +                     MXR_CM_COEFF_RGB_FULL);
+>>>>>>               mixer_reg_write(res, MXR_CM_COEFF_CB,
+>>>>>> -                             (972 << 20) | (851 << 10) | (225 << 0));
+>>>>>> +                     MXR_CSC_CT(-0.102, -0.338,  0.440));
+>>>>>>               mixer_reg_write(res, MXR_CM_COEFF_CR,
+>>>>>> -                             (225 << 20) | (820 << 10) | (1004 << 0));
+>>>>>> +                     MXR_CSC_CT( 0.440, -0.399, -0.040));
+>>>>>>               break;
+>>>>>>       }
+>>>>>>
+>>>>>> @@ -715,10 +732,10 @@ static void mixer_win_reset(struct mixer_context *ctx)
+>>>>>>       /* reset default layer priority */
+>>>>>>       mixer_reg_write(res, MXR_LAYER_CFG, 0);
+>>>>>>
+>>>>>> -     /* setting background color */
+>>>>>> -     mixer_reg_write(res, MXR_BG_COLOR0, 0x008080);
+>>>>>> -     mixer_reg_write(res, MXR_BG_COLOR1, 0x008080);
+>>>>>> -     mixer_reg_write(res, MXR_BG_COLOR2, 0x008080);
+>>>>>> +     /* set all background colors to RGB (0,0,0) */
+>>>>>> +     mixer_reg_write(res, MXR_BG_COLOR0, MXR_YCBCR_VAL(0, 128, 128));
+>>>>>> +     mixer_reg_write(res, MXR_BG_COLOR1, MXR_YCBCR_VAL(0, 128, 128));
+>>>>>> +     mixer_reg_write(res, MXR_BG_COLOR2, MXR_YCBCR_VAL(0, 128, 128));
+>>>>>>
+>>>>>>       if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
+>>>>>>               /* configuration of Video Processor Registers */
+>>>>>> diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
+>>>>>> index 7f22df5..c311f57 100644
+>>>>>> --- a/drivers/gpu/drm/exynos/regs-mixer.h
+>>>>>> +++ b/drivers/gpu/drm/exynos/regs-mixer.h
+>>>>>> @@ -140,11 +140,11 @@
+>>>>>>  #define MXR_INT_EN_VSYNC             (1 << 11)
+>>>>>>  #define MXR_INT_EN_ALL                       (0x0f << 8)
+>>>>>>
+>>>>>> -/* bit for MXR_INT_STATUS */
+>>>>>> +/* bits for MXR_INT_STATUS */
+>>>>>>  #define MXR_INT_CLEAR_VSYNC          (1 << 11)
+>>>>>>  #define MXR_INT_STATUS_VSYNC         (1 << 0)
+>>>>>>
+>>>>>> -/* bit for MXR_LAYER_CFG */
+>>>>>> +/* bits for MXR_LAYER_CFG */
+>>>>>>  #define MXR_LAYER_CFG_GRP1_VAL(x)    MXR_MASK_VAL(x, 11, 8)
+>>>>>>  #define MXR_LAYER_CFG_GRP1_MASK              MXR_LAYER_CFG_GRP1_VAL(~0)
+>>>>>>  #define MXR_LAYER_CFG_GRP0_VAL(x)    MXR_MASK_VAL(x, 7, 4)
+>>>>>> @@ -152,5 +152,8 @@
+>>>>>>  #define MXR_LAYER_CFG_VP_VAL(x)              MXR_MASK_VAL(x, 3, 0)
+>>>>>>  #define MXR_LAYER_CFG_VP_MASK                MXR_LAYER_CFG_VP_VAL(~0)
+>>>>>>
+>>>>>> +/* bits for MXR_CM_COEFF_Y */
+>>>>>> +#define MXR_CM_COEFF_RGB_FULL                (1 << 30)
+>>>>>> +
+>>>>>>  #endif /* SAMSUNG_REGS_MIXER_H */
+>>>>>>
+>>>>>>
+>>>>>
+>>>>> _______________________________________________
+>>>>> dri-devel mailing list
+>>>>> dri-devel@lists.freedesktop.org
+>>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+>>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> 
+> 
+> 
+> 
