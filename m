@@ -1,77 +1,45 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] exynos: change the license to X11/MIT
-Date: Wed, 12 Apr 2017 13:41:57 +0900
-Message-ID: <58EDB015.8050906@samsung.com>
-References: <1462864733-31610-1-git-send-email-inki.dae@samsung.com>
- <CACvgo51MP4_2mwW=hKdVX8YXXc8jGk_rfLSJyGzKW5B69nFZ3g@mail.gmail.com>
- <CGME20170412044158epcas1p12becb6806ea80c8151f1c4f3d9c33cff@epcas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CACvgo51MP4_2mwW=hKdVX8YXXc8jGk_rfLSJyGzKW5B69nFZ3g@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "moderated list:ARM/S5P
- EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos/dsi: fix bridge_node DT parsing
+Date: Wed, 12 Apr 2017 09:22:09 +0200
+Message-ID: <1491981729-6396-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170412072216eucas1p136149c39438639424d3b8ab4f8d548e8@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43106 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751042AbdDLHWV (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 12 Apr 2017 03:22:21 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OOA00FV4CH6GI40@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Apr 2017 08:22:18 +0100 (BST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-SGkgRW1pbCwKClJlYWxseSBzb3JyeSBmb3IgbGF0ZS4gRm9yZ290IHRoaXMgZm9yIGEgbG9uZyB0
-aW1lLgoKMjAxNuuFhCAwNeyblCAxMuydvCAwNjozOeyXkCBFbWlsIFZlbGlrb3Yg7J20KOqwgCkg
-7JO0IOq4gDoKPiBIaSBJbmtpLCBhbGwsCj4gCj4gT24gMTAgTWF5IDIwMTYgYXQgMDg6MTgsIElu
-a2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+IFRoaXMgcGF0Y2ggY2hhbmdl
-cyBHUEwgbGljZW5zZSB0byBYMTEvTUlULgo+Pgo+IEFzIG1lbnRpb25lZCBieSBUb2JpYXMsIHRo
-ZSBjb21taXQgbWVzc2FnZXMgc2hvdWxkIGVsYWJvcmF0ZSBvbiB0aGUKPiBzdW1tYXJ5IC0gd2h5
-IHRoZSBjaGFuZ2UgaXMgbmVlZGVkLCBob3cgaXQncyBhY2hpZXZlZC4KCmxpYmRybSBoYXMgbm8g
-cmVwcmVzZW50YXRpdmUgbGljZW5zZSBmaWxlIGxpa2UgTGludXggYW5kIG90aGVyIG9wZW4gc291
-cmNlIHRyZWVzLgoKTGludXggbWFpbmxpbmUgY2FzZSBiZWxvdywKaHR0cHM6Ly9naXQua2VybmVs
-Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvQ09Q
-WUlORz9pZD1yZWZzL3RhZ3MvdjQuMTEtcmM2CgpTbyBJJ2QgbGlrZSB0byBrZWVwIHRoZSBsaWNl
-bnNlIGNvbnNpc3RlbmN5IG9mIE1JVCBsaWNlbnNlIG90aGVyIGNvZGUgaW4gbGliZHJtIGhhdmUg
-dG8gYmUga2VlcHBlZCB3aXRoIG9uZSBsaWNlbnNlLgpJIHRoaW5rIGtlZXBpbmcgdHdvIG1vcmUg
-bGljZW5zZXMgaGVyZSB3b3VsZCBtYWtlIGJ1c2luZXNzIHByb2plY3RzIGNvbmZ1c2luZy4KCj4g
-Cj4gSXMgdGhpcyBjaGFuZ2UgZHVlIHRvIG15IHJlY2VudChpc2gpIHJlcXVlc3Qgb24gdGhlIHRv
-cGljIG9mIGxpY2Vuc2VzLAo+IGJlY2F1c2Ugc29tZSBkaXN0cmlidXRpb25zIGRvbid0IGluY2x1
-ZGUgR1BMIGNvZGUgb3Igb3RoZXJ3aXNlID8KPiAKPiBJbiB0aGUgZmlyc3QgY2FzZSwgSSB3YXMg
-dGFsa2luZyBhYm91dCB0aGUgbGljZW5zZSBtaXNzLW1hdGNoIGJldHdlZW4KPiB0aGUga2VybmVs
-IGFuZCBsaWJkcm0gdmVyc2lvbiBvZiBleHlub3NfZHJtLmguCj4gV2hhdGV2ZXIgdGhlIHJlYXNv
-biwgb25lIHNob3VsZCBjaGVjayB3aXRoIGFsbCBjb250cmlidXRvcnMgd2hvCj4gdG91Y2hlZCB0
-aGUgZmlsZXMgaW4gcXVlc3Rpb24uCgpSaWdodC4KCj4gCj4+IFNpZ25lZC1vZmYtYnk6IElua2kg
-RGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBleHlub3MvZXh5bm9zX2ZpbWcy
-ZC5jICAgICAgICAgICAgIHwgMjEgKysrKysrKysrKysrKysrKystLS0tCj4+ICBleHlub3MvZXh5
-bm9zX2ZpbWcyZC5oICAgICAgICAgICAgIHwgMjEgKysrKysrKysrKysrKysrKystLS0tCj4+ICBl
-eHlub3MvZmltZzJkX3JlZy5oICAgICAgICAgICAgICAgIHwgMjEgKysrKysrKysrKysrKysrKyst
-LS0tCj4+ICB0ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF9ldmVudC5jIHwgMjcgKysrKysrKysr
-KysrKysrKystLS0tLS0tLS0tCj4+ICB0ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF9wZXJmLmMg
-IHwgMjcgKysrKysrKysrKysrKysrKystLS0tLS0tLS0tCj4+ICB0ZXN0cy9leHlub3MvZXh5bm9z
-X2ZpbWcyZF90ZXN0LmMgIHwgMjEgKysrKysrKysrKysrKysrKystLS0tCj4+ICA2IGZpbGVzIGNo
-YW5nZWQsIDEwMiBpbnNlcnRpb25zKCspLCAzNiBkZWxldGlvbnMoLSkKPj4KPiAKPiAkIGdpdCBs
-b2cgIC0tIGV4eW5vcy9maW1nMmRfcmVnLmggZXh5bm9zL2V4eW5vc19maW1nMmQuKgo+IHRlc3Rz
-L2V4eW5vcy9leHlub3NfZmltZzJkXyogfCBncmVwIF5BdXRob3IgfCBzb3J0IC11Cj4gQXV0aG9y
-OiBEYW5pZWwgS3VydHogPGRqa3VydHpAY2hyb21pdW0ub3JnPgo+IEF1dGhvcjogRW1pbCBWZWxp
-a292IDxlbWlsLmwudmVsaWtvdkBnbWFpbC5jb20+Cj4gQXV0aG9yOiBJbmtpIERhZSA8aW5raS5k
-YWVAc2Ftc3VuZy5jb20+Cj4gQXV0aG9yOiBKYW4gVmVzZWx5IDxqYW4udmVzZWx5QHJ1dGdlcnMu
-ZWR1Pgo+IEF1dGhvcjogTWFhcnRlbiBMYW5raG9yc3QgPG1hYXJ0ZW4ubGFua2hvcnN0QGNhbm9u
-aWNhbC5jb20+IC8vIGNoZWNrCj4gd2l0aCB0aGUgbGludXgga2VybmVsIGxvZ3MgZm9yIGFsdGVy
-bmF0aXZlIGVtYWlsCj4gQXV0aG9yOiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
-ZWxlZmVsZC5kZT4KPiAKPiBJIGRvdWJ0IGFueSBvZiB0aGVtIHdpbGwgaGF2ZSBvYmplY3Rpb25z
-LCBidXQgc3RpbGwgLSBkbyByZWFjaCBvdXQgZm9yCj4gY29uZmlybWF0aW9uLiBQZXJzb25hbGx5
-IEknbSBvayB3aXRoIGVpdGhlciBsaWNlbnNlLCBzbwo+IEFja2VkLWJ5OiBFbWlsIFZlbGlrb3Yg
-PGVtaWwubC52ZWxpa292QGdtYWlsLmNvbT4KCkkgd2lsbCByZXNlbmQgdGhpcyBwYXRjaCBpbmNs
-dWRpbmcgdXBkYXRlZCBvbmUgZm9yIG1vcmUgZGlzY3Vzc2lvbiBhbHNvIGNjaW5nIG90aGVyIGNv
-bW1pdHRlcnMuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFRoYW5rcwo+IEVtaWwKPiAtLQo+IFRv
-IHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBs
-aW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
-QHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtl
-cm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAo+IApfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+DSIM uses MIC bridge which is between DECON and DSIM, so the driver
+should expect bridge node on input side.
+
+Fixes: 86418f9 ("drm: convert drivers to use of_graph_get_remote_node")
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index dcb50d4d..3ae459f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1659,7 +1659,7 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
+ 
+ 	of_node_put(ep);
+ 
+-	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_OUT, 0);
++	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
+ 	if (!dsi->bridge_node)
+ 		return -EINVAL;
+ 
+-- 
+2.7.4
