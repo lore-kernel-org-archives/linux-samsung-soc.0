@@ -1,38 +1,29 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/3] arm64: dts: exynos: Add support for S6E3HA2 edge
- panel device on TM2e board
-Date: Fri, 14 Apr 2017 11:03:11 +0200
-Message-ID: <20170414090311.ysmewlnlk2rtsslp@kozik-lap>
-References: <1492147179-7824-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170414051959epcas1p3a246070b065129c4ffbf94736cde321a@epcas1p3.samsung.com>
- <1492147179-7824-4-git-send-email-hoegeun.kwon@samsung.com>
+From: Sarah JOHNSON <sarah.johnson197070@gmail.com>
+Subject: Greetings.
+Date: Fri, 14 Apr 2017 09:19:12 +0000 (UTC)
+Message-ID: <934227493.275261.1492161552873__44510.913725435$1492161622$gmane$org@mail.yahoo.com>
+References: <934227493.275261.1492161552873.ref@mail.yahoo.com>
+Reply-To: Sarah JOHNSON <sarah.johnson197070@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33682 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753349AbdDNJDQ (ORCPT
+Received: from sonic305-27.consmr.mail.ne1.yahoo.com ([66.163.185.153]:36418
+        "EHLO sonic305-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753416AbdDNJTN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Apr 2017 05:03:16 -0400
-Content-Disposition: inline
-In-Reply-To: <1492147179-7824-4-git-send-email-hoegeun.kwon@samsung.com>
+        Fri, 14 Apr 2017 05:19:13 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, a.hajda@samsung.com, andi.shyti@samsung.com
 
-On Fri, Apr 14, 2017 at 02:19:39PM +0900, Hoegeun Kwon wrote:
-> This patch add the panel device tree node for S6E3HA2 edge display
-> controller to TM2e dts.
-> 
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
+Good Day Dearest.
 
-Looks good to me but I see that bindings are discussed still. I'll take
-this when they settle.
+My name is Sarah JOHNSON I am 18 years old, the only daughter of late Mr. Raymond JOHNSON from Burkina Faso, I am contacting you to help me relocate to your country to continue my university education in  your country, before my father died he gave me a deposit slip document of ($7,000,000 USD) and made me understand that it was because of his position in the government that his government associates planed and poisoned him on a business trip with them to France and he advised me to look for a faithful and reliable foreigner who will help me to transfer this money to his country and help me to relocate over there to continue my studies.
 
-Best regards,
-Krzysztof
+I hope you will help me with the good faith and trust I have in you, after you have secured the money and settle my education, I will give you 30% of the money for your good and kind assistance to me. Please Contact me e-Mail:sarah.johnson197070@yahoo.com 
+
+I am waiting on your reply
+
+Regards,
+
+Sarah.
