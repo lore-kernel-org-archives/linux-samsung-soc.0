@@ -1,57 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 2/2] regulator: s2mps11: Use devm_kmalloc_array() in
- s2mps11_pmic_probe()
-Date: Fri, 14 Apr 2017 23:02:55 +0200
-Message-ID: <57e9c3a5-3751-41ee-3b70-f532fb928571@users.sourceforge.net>
-References: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH V2] PM / OPP: Use - instead of @ for DT entries
+Date: Sat, 15 Apr 2017 00:47:16 +0200
+Message-ID: <2765521.jPoRkFTblf@aspire.rjw.lan>
+References: <70e7c7ee13722ab9c73cb073f88502eaf1ada5f5.1491816050.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.14]:54136 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752573AbdDNVDF (ORCPT
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:64136 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751522AbdDNWxR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Apr 2017 17:03:05 -0400
-In-Reply-To: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
-Content-Language: en-GB
+        Fri, 14 Apr 2017 18:53:17 -0400
+In-Reply-To: <70e7c7ee13722ab9c73cb073f88502eaf1ada5f5.1491816050.git.viresh.kumar@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, =?ISO-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Mark Rutland <mark.rutland@arm.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linaro-kernel@lists.linaro.org, linux-pm@
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 22:40:19 +0200
+On Monday, April 10, 2017 02:51:35 PM Viresh Kumar wrote:
+> Compiling the DT file with W=1, DTC warns like follows:
+> 
+> Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
+> unit name, but no reg property
+> 
+> Fix this by replacing '@' with '-' as the OPP nodes will never have a
+> "reg" property.
+> 
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com> (sunxi)
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "devm_kmalloc_array".
+OK, so any ACKs from the DT side?  Rob?
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/regulator/s2mps11.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index b4e588cce03d..b397a2e0bcd1 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -1139,9 +1139,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	s2mps11->ext_control_gpio = devm_kmalloc(&pdev->dev,
--			sizeof(*s2mps11->ext_control_gpio) * rdev_num,
--			GFP_KERNEL);
-+	s2mps11->ext_control_gpio
-+		= devm_kmalloc_array(&pdev->dev,
-+				     rdev_num,
-+				     sizeof(*s2mps11->ext_control_gpio),
-+				     GFP_KERNEL);
- 	if (!s2mps11->ext_control_gpio)
- 		return -ENOMEM;
- 	/*
--- 
-2.12.2
+Thanks,
+Rafael
