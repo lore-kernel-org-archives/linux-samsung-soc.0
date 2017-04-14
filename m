@@ -1,121 +1,38 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 2/3] drm/panel: s6e3ha2: Add support for S6eHEA2 edge panel
- on TM2e board
-Date: Fri, 14 Apr 2017 10:26:46 +0200
-Message-ID: <5ea68f29-69d5-f1e3-9ffc-646449033989@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: exynos: Add support for S6E3HA2 edge
+ panel device on TM2e board
+Date: Fri, 14 Apr 2017 11:03:11 +0200
+Message-ID: <20170414090311.ysmewlnlk2rtsslp@kozik-lap>
 References: <1492147179-7824-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170414051959epcas5p338f72abbf841233f6f1f0a240df2a1e9@epcas5p3.samsung.com>
- <1492147179-7824-3-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170414051959epcas1p3a246070b065129c4ffbf94736cde321a@epcas1p3.samsung.com>
+ <1492147179-7824-4-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1492147179-7824-3-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, andi.shyti@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33682 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753349AbdDNJDQ (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 14 Apr 2017 05:03:16 -0400
+Content-Disposition: inline
+In-Reply-To: <1492147179-7824-4-git-send-email-hoegeun.kwon@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, a.hajda@samsung.com, andi.shyti@samsung.com
 
-SGkgSG9lZ2V1biwKClRoZSBwYXRjaCBsb29rcyBPSywgYmVsb3cgc21hbGwgbml0cGlja3MuCgpP
-biAxNC4wNC4yMDE3IDA3OjE5LCBIb2VnZXVuIEt3b24gd3JvdGU6Cj4gVGhpcyBwYXRjaCBjb25z
-aWRlcnMgZWRnZSB0eXBlIG9mIHBhbmVsIG9uIFRNMmUgYm9hcmQgYW5kIFRoZSBwYW5lbAo+IGhh
-cyAxNjAweDI1NjAgcmVzb2x1dGlvbiBpbiA1LjY1IiBwaHlzaWNhbCBwYW5lbCBpbiB0aGUgVE0y
-ZSBkZXZpY2UuCj4KPiBUaGlzIGlkZW50aWZ5IHBhbmVsIHR5cGUgd2l0aCBjb21wYXRpYmlsaXR5
-IHN0cmluZywgYWxzbyBpbnZva2UKPiBkaXNwbGF5IG1vZGUgdGhhdCBtYXRjaGVzIHRoZSB0eXBl
-LiBTbyBhZGQgdGhlIGNoZWNrIGNvZGUgZm9yIGRlZmF1bHQKPiBjb21wYXRpYmlsaXR5IGFuZCBl
-ZGdlIHR5cGUgYW5kIHNlbGVjdCB0aGUgZHJtX2Rpc3BsYXlfbW9kZSBvZiBkZWZhdWx0Cj4gYW5k
-IGVkZ2UgdHlwZS4KPgo+IFNpZ25lZC1vZmYtYnk6IEhvZWdldW4gS3dvbiA8aG9lZ2V1bi5rd29u
-QHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3Vu
-Zy1zNmUzaGEyLmMgfCA2MiArKysrKysrKysrKysrKysrKysrKysrKystLS0KPiAgMSBmaWxlIGNo
-YW5nZWQsIDU2IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlM2hhMi5jIGIvZHJpdmVycy9n
-cHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlM2hhMi5jCj4gaW5kZXggNGNjMDhkNy4uYjRh
-MDY0YSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1z
-NmUzaGEyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUz
-aGEyLmMKPiBAQCAtMTYsNiArMTYsNyBAQAo+ICAjaW5jbHVkZSA8ZHJtL2RybV9wYW5lbC5oPgo+
-ICAjaW5jbHVkZSA8bGludXgvYmFja2xpZ2h0Lmg+Cj4gICNpbmNsdWRlIDxsaW51eC9ncGlvL2Nv
-bnN1bWVyLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4KPiAgI2luY2x1ZGUgPGxp
-bnV4L3JlZ3VsYXRvci9jb25zdW1lci5oPgo+ICAKPiAgI2RlZmluZSBTNkUzSEEyX01JTl9CUklH
-SFRORVNTCQkwCj4gQEAgLTIxOCw2ICsyMTksMTYgQEAKPiAgCTB4MWQsIDB4MWUsIDB4MWYsIDB4
-MjAsIDB4MjEKPiAgfTsKPiAgCj4gK2VudW0gczZlM2hhMl90eXBlIHsKPiArCURFRkFVTFRfVFlQ
-RSwKPiArCUVER0VfVFlQRSwKPiArfTsKCkkgYW0gbm90IHN1cmUgaWYgZGVmYXVsdCBpcyB0aGUg
-YmVzdCBuYW1lLCBpdCBzdWdnZXN0IHNvbWUgaGllcmFyY2h5CndoaWNoIGlzIG5vdCB0cnVlLiBB
-bHNvIGVkZ2UgZG9lcyBub3QgZml0IGhlcmUgd2VsbCwgaXQgaXMganVzdCBidXp6d29yZAp1c2Vk
-IGZvciBtYXJrZXRpbmcuCgpBbHRlcm5hdGl2ZSBlbnVtczoKLSBTNkUzSEEyX1RZUEUsIFM2RTNI
-RjJfVFlQRSwgcXVpdGUgbG9uZywgaGFyZCB0byBjYXRjaCBkaWZmZXJlbmNlLCBidXQKY29uc2lz
-dGVudCB3aXRoIGNvbXBhdGlibGVzLAotIEhBMl9UWVBFLCBIRjJfVFlQRSAtIHNob3J0ZXIsIG1v
-cmUgcmVhZGFibGUgdmVyc2lvbiwKLSBRSERfVFlQRSwgV1FYR0FfVFlQRSAtIHRvIGVtcGFoc2l6
-ZSByZXNvbHV0aW9ucy4KCj4gKwo+ICtzdHJ1Y3QgczZlM2hhMl9wYW5lbF9kZXNjIHsKPiArCWNv
-bnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlOwo+ICsJZW51bSBzNmUzaGEyX3R5cGUg
-dHlwZTsKPiArfTsKPiArCj4gIHN0cnVjdCBzNmUzaGEyIHsKPiAgCXN0cnVjdCBkZXZpY2UgKmRl
-djsKPiAgCXN0cnVjdCBkcm1fcGFuZWwgcGFuZWw7Cj4gQEAgLTIyNiw2ICsyMzcsOCBAQCBzdHJ1
-Y3QgczZlM2hhMiB7Cj4gIAlzdHJ1Y3QgcmVndWxhdG9yX2J1bGtfZGF0YSBzdXBwbGllc1syXTsK
-PiAgCXN0cnVjdCBncGlvX2Rlc2MgKnJlc2V0X2dwaW87Cj4gIAlzdHJ1Y3QgZ3Bpb19kZXNjICpl
-bmFibGVfZ3BpbzsKPiArCj4gKwljb25zdCBzdHJ1Y3QgczZlM2hhMl9wYW5lbF9kZXNjICpkZXNj
-Owo+ICB9Owo+ICAKPiAgc3RhdGljIGludCBzNmUzaGEyX2Rjc193cml0ZShzdHJ1Y3QgczZlM2hh
-MiAqY3R4LCBjb25zdCB2b2lkICpkYXRhLCBzaXplX3QgbGVuKQo+IEBAIC0yODMsMTEgKzI5Niwx
-OSBAQCBzdGF0aWMgaW50IHM2ZTNoYTJfc2luZ2xlX2RzaV9zZXQoc3RydWN0IHM2ZTNoYTIgKmN0
-eCkKPiAgc3RhdGljIGludCBzNmUzaGEyX2ZyZXFfY2FsaWJyYXRpb24oc3RydWN0IHM2ZTNoYTIg
-KmN0eCkKPiAgewo+ICAJczZlM2hhMl9kY3Nfd3JpdGVfc2VxX3N0YXRpYyhjdHgsIDB4ZmQsIDB4
-MWMpOwo+ICsJaWYgKGN0eC0+ZGVzYy0+dHlwZSA9PSBFREdFX1RZUEUpCj4gKwkJczZlM2hhMl9k
-Y3Nfd3JpdGVfc2VxX3N0YXRpYyhjdHgsIDB4ZjIsIDB4NjcsIDB4NDAsIDB4YzUpOwo+ICAJczZl
-M2hhMl9kY3Nfd3JpdGVfc2VxX3N0YXRpYyhjdHgsIDB4ZmUsIDB4MjAsIDB4MzkpOwo+ICAJczZl
-M2hhMl9kY3Nfd3JpdGVfc2VxX3N0YXRpYyhjdHgsIDB4ZmUsIDB4YTApOwo+ICAJczZlM2hhMl9k
-Y3Nfd3JpdGVfc2VxX3N0YXRpYyhjdHgsIDB4ZmUsIDB4MjApOwo+IC0JczZlM2hhMl9kY3Nfd3Jp
-dGVfc2VxX3N0YXRpYyhjdHgsIDB4Y2UsIDB4MDMsIDB4M2IsIDB4MTIsIDB4NjIsIDB4NDAsCj4g
-LQkJCQkweDgwLCAweGMwLCAweDI4LCAweDI4LCAweDI4LCAweDI4LCAweDM5LCAweGM1KTsKPiAr
-Cj4gKwlpZiAoY3R4LT5kZXNjLT50eXBlID09IERFRkFVTFRfVFlQRSkKPiArCQlzNmUzaGEyX2Rj
-c193cml0ZV9zZXFfc3RhdGljKGN0eCwgMHhjZSwgMHgwMywgMHgzYiwgMHgxMiwgMHg2MiwKPiAr
-CQkJMHg0MCwgMHg4MCwgMHhjMCwgMHgyOCwgMHgyOCwgMHgyOCwgMHgyOCwgMHgzOSwgMHhjNSk7
-Cj4gKwllbHNlCj4gKwkJczZlM2hhMl9kY3Nfd3JpdGVfc2VxX3N0YXRpYyhjdHgsIDB4Y2UsIDB4
-MDMsIDB4M2IsIDB4MTQsIDB4NmQsCj4gKwkJCTB4NDAsIDB4ODAsIDB4YzAsIDB4MjgsIDB4Mjgs
-IDB4MjgsIDB4MjgsIDB4MzksIDB4YzUpOwo+ICsKPiAgCXJldHVybiAwOwo+ICB9Cj4gIAo+IEBA
-IC01OTcsMTYgKzYxOCw0MSBAQCBzdGF0aWMgaW50IHM2ZTNoYTJfZW5hYmxlKHN0cnVjdCBkcm1f
-cGFuZWwgKnBhbmVsKQo+ICAJLmZsYWdzID0gMCwKPiAgfTsKPiAgCj4gK3N0YXRpYyBjb25zdCBz
-dHJ1Y3QgczZlM2hhMl9wYW5lbF9kZXNjIHNhbXN1bmdfczZlM2hhMl90bTIgPSB7CgpQbGVhc2Ug
-ZG8gbm90IHVzZSB0bTIvdG0yZSBoZXJlIGFuZCBsYXRlciwgdGhleSBoYXZlIG5vdGhpbmcgdG8g
-ZG8gd2l0aAp0aGUgcGFuZWwuCgo+ICsJLm1vZGUgPSAmZGVmYXVsdF9tb2RlLAo+ICsJLnR5cGUg
-PSBERUZBVUxUX1RZUEUsCj4gK307Cj4gKwo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9kaXNw
-bGF5X21vZGUgZWRnZV9tb2RlID0gewo+ICsJLmNsb2NrID0gMjQ3ODU2LAo+ICsJLmhkaXNwbGF5
-ID0gMTYwMCwKPiArCS5oc3luY19zdGFydCA9IDE2MDAgKyAxLAo+ICsJLmhzeW5jX2VuZCA9IDE2
-MDAgKyAxICsgMSwKPiArCS5odG90YWwgPSAxNjAwICsgMSArIDEgKyAxLAo+ICsJLnZkaXNwbGF5
-ID0gMjU2MCwKPiArCS52c3luY19zdGFydCA9IDI1NjAgKyAxLAo+ICsJLnZzeW5jX2VuZCA9IDI1
-NjAgKyAxICsgMSwKPiArCS52dG90YWwgPSAyNTYwICsgMSArIDEgKyAxNSwKPiArCS52cmVmcmVz
-aCA9IDYwLAo+ICsJLmZsYWdzID0gMCwKPiArfTsKPiArCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qg
-czZlM2hhMl9wYW5lbF9kZXNjIHNhbXN1bmdfczZlM2hhMl90bTJlID0gewo+ICsJLm1vZGUgPSAm
-ZWRnZV9tb2RlLAo+ICsJLnR5cGUgPSBFREdFX1RZUEUsCj4gK307Cj4gKwo+ICBzdGF0aWMgaW50
-IHM2ZTNoYTJfZ2V0X21vZGVzKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+ICB7Cj4gIAlzdHJ1
-Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yID0gcGFuZWwtPmNvbm5lY3RvcjsKPiArCXN0cnVj
-dCBzNmUzaGEyICpjdHggPSBjb250YWluZXJfb2YocGFuZWwsIHN0cnVjdCBzNmUzaGEyLCBwYW5l
-bCk7Cj4gIAlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZTsKPiAgCj4gLQltb2RlID0gZHJt
-X21vZGVfZHVwbGljYXRlKHBhbmVsLT5kcm0sICZkZWZhdWx0X21vZGUpOwo+ICsJbW9kZSA9IGRy
-bV9tb2RlX2R1cGxpY2F0ZShwYW5lbC0+ZHJtLCBjdHgtPmRlc2MtPm1vZGUpOwo+ICAJaWYgKCFt
-b2RlKSB7Cj4gIAkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gYWRkIG1vZGUgJXV4JXV4QCV1XG4iLAo+
-IC0JCQkJZGVmYXVsdF9tb2RlLmhkaXNwbGF5LCBkZWZhdWx0X21vZGUudmRpc3BsYXksCj4gLQkJ
-CQlkZWZhdWx0X21vZGUudnJlZnJlc2gpOwo+ICsJCQljdHgtPmRlc2MtPm1vZGUtPmhkaXNwbGF5
-LCBjdHgtPmRlc2MtPm1vZGUtPnZkaXNwbGF5LAo+ICsJCQljdHgtPmRlc2MtPm1vZGUtPnZyZWZy
-ZXNoKTsKPiAgCQlyZXR1cm4gLUVOT01FTTsKPiAgCX0KPiAgCj4gQEAgLTY0Miw2ICs2ODgsNyBA
-QCBzdGF0aWMgaW50IHM2ZTNoYTJfcHJvYmUoc3RydWN0IG1pcGlfZHNpX2RldmljZSAqZHNpKQo+
-ICAJbWlwaV9kc2lfc2V0X2RydmRhdGEoZHNpLCBjdHgpOwo+ICAKPiAgCWN0eC0+ZGV2ID0gZGV2
-Owo+ICsJY3R4LT5kZXNjID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRldik7Cj4gIAo+ICAJ
-ZHNpLT5sYW5lcyA9IDQ7Cj4gIAlkc2ktPmZvcm1hdCA9IE1JUElfRFNJX0ZNVF9SR0I4ODg7Cj4g
-QEAgLTcxNyw3ICs3NjQsMTAgQEAgc3RhdGljIGludCBzNmUzaGEyX3JlbW92ZShzdHJ1Y3QgbWlw
-aV9kc2lfZGV2aWNlICpkc2kpCj4gIH0KPiAgCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2
-aWNlX2lkIHM2ZTNoYTJfb2ZfbWF0Y2hbXSA9IHsKPiAtCXsgLmNvbXBhdGlibGUgPSAic2Ftc3Vu
-ZyxzNmUzaGEyIiB9LAo+ICsJeyAuY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM2ZTNoYTIiLAo+ICsJ
-ICAuZGF0YSA9ICZzYW1zdW5nX3M2ZTNoYTJfdG0yIH0sCj4gKwl7IC5jb21wYXRpYmxlID0gInNh
-bXN1bmcsczZlM2hhMi1lIiwKPiArCSAgLmRhdGEgPSAmc2Ftc3VuZ19zNmUzaGEyX3RtMmUgfSwK
-CkFuZCBwbGVhc2UgdXNlIGNvbXBhdGlibGUgInNhbXN1bmcsczZlM2hmMiIuCgpSZWdhcmRzCkFu
-ZHJ6ZWoKCgo+ICAJeyB9Cj4gIH07Cj4gIE1PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIHM2ZTNoYTJf
-b2ZfbWF0Y2gpOwoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+On Fri, Apr 14, 2017 at 02:19:39PM +0900, Hoegeun Kwon wrote:
+> This patch add the panel device tree node for S6E3HA2 edge display
+> controller to TM2e dts.
+> 
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+
+Looks good to me but I see that bindings are discussed still. I'll take
+this when they settle.
+
+Best regards,
+Krzysztof
