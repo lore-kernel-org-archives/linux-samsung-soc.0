@@ -1,41 +1,61 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH V2] PM / OPP: Use - instead of @ for DT entries
-Date: Sat, 15 Apr 2017 00:47:16 +0200
-Message-ID: <2765521.jPoRkFTblf@aspire.rjw.lan>
-References: <70e7c7ee13722ab9c73cb073f88502eaf1ada5f5.1491816050.git.viresh.kumar@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] regulator: s2mps11: Use kcalloc() in
+ s2mps11_pmic_probe()
+Date: Sat, 15 Apr 2017 12:48:45 +0200
+Message-ID: <20170415104845.bofxl34wr7z7khix@kozik-lap>
+References: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
+ <542252e0-817f-ce13-fbd5-8fd8dda4c746@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:64136 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751522AbdDNWxR (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35759 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752884AbdDOKst (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Apr 2017 18:53:17 -0400
-In-Reply-To: <70e7c7ee13722ab9c73cb073f88502eaf1ada5f5.1491816050.git.viresh.kumar@linaro.org>
+        Sat, 15 Apr 2017 06:48:49 -0400
+Content-Disposition: inline
+In-Reply-To: <542252e0-817f-ce13-fbd5-8fd8dda4c746@users.sourceforge.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, =?ISO-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Mark Rutland <mark.rutland@arm.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linaro-kernel@lists.linaro.org, linux-pm@
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Monday, April 10, 2017 02:51:35 PM Viresh Kumar wrote:
-> Compiling the DT file with W=1, DTC warns like follows:
+On Fri, Apr 14, 2017 at 11:01:25PM +0200, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 14 Apr 2017 22:00:35 +0200
 > 
-> Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
-> unit name, but no reg property
+> A multiplication for the size determination of a memory allocation
+> indicated that an array data structure should be processed.
+> Thus use the corresponding function "kcalloc".
 > 
-> Fix this by replacing '@' with '-' as the OPP nodes will never have a
-> "reg" property.
-> 
-> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com> (sunxi)
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> This issue was detected by using the Coccinelle software.
 
-OK, so any ACKs from the DT side?  Rob?
+Unfortunately you write mostly cryptic commit messages. This does not
+answer for the main question - why this change is needed. Code looks
+okay, but you should explain in simple words why this is needed.
 
-Thanks,
-Rafael
+Best regards,
+Krzysztof
+
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/regulator/s2mps11.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+> index 7726b874e539..b4e588cce03d 100644
+> --- a/drivers/regulator/s2mps11.c
+> +++ b/drivers/regulator/s2mps11.c
+> @@ -1162,7 +1162,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	rdata = kzalloc(sizeof(*rdata) * rdev_num, GFP_KERNEL);
+> +	rdata = kcalloc(rdev_num, sizeof(*rdata), GFP_KERNEL);
+>  	if (!rdata)
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.12.2
+> 
