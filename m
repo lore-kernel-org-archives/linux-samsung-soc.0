@@ -1,150 +1,53 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [RFC 0/8] drm/exynos: misc fixes and more
-Date: Sun, 16 Apr 2017 13:51:22 +0200
-Message-ID: <417f7071-6a4b-d2f3-7fdb-57779858104a@math.uni-bielefeld.de>
-References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CGME20170411105302epcas4p2c240e966d3f7381eac7213662933a178@epcas4p2.samsung.com>
- <11ca839f-2b2d-6a76-aac1-03be93a5dffc@math.uni-bielefeld.de>
- <58ED9279.5030001@samsung.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH V2] PM / OPP: Use - instead of @ for DT entries
+Date: Mon, 17 Apr 2017 11:07:51 +0900
+Message-ID: <CAK7LNAQ7Uf1Jkj64-Ykdk5TSeWvkq7=BaqUMJo6KqrN7BhYvsQ@mail.gmail.com>
+References: <70e7c7ee13722ab9c73cb073f88502eaf1ada5f5.1491816050.git.viresh.kumar@linaro.org>
+ <2765521.jPoRkFTblf@aspire.rjw.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:44588 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754438AbdDPLv0 (ORCPT
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:58351 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932320AbdDQCIA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Apr 2017 07:51:26 -0400
-In-Reply-To: <58ED9279.5030001@samsung.com>
+        Sun, 16 Apr 2017 22:08:00 -0400
+In-Reply-To: <2765521.jPoRkFTblf@aspire.rjw.lan>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, a.hajda@samsung.com
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Mark Rutland <mark.rutland@arm.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linaro-kernel@list
 
-Hello Inki,
-
-
-Inki Dae wrote:
-> Hello Tobias,
-> 
-> 2017년 04월 11일 19:52에 Tobias Jakobi 이(가) 쓴 글:
->> Hello Inki,
+2017-04-15 7:47 GMT+09:00 Rafael J. Wysocki <rjw@rjwysocki.net>:
+> On Monday, April 10, 2017 02:51:35 PM Viresh Kumar wrote:
+>> Compiling the DT file with W=1, DTC warns like follows:
 >>
->> please don't forget to review this series.
-> 
-> Thanks for your contribution, and don't worry about that. Will review this series.
-
-
-Thank you for the confirmation!
-
-In the meantime, i.e. until we have figured out the IOMMU pagefault, it
-would make sense to reject the combination "interlaced mode + video
-plane". Should I prepare a patch for that?
-
-
-With best wishes,
-Tobias
-
-
-
-> Just sharing a plan for -next,
-> 
-> I plan to have pull-request after reviewing a patch set[1] posted by Andrzej.
-> After that, I will start to review your patch set - we would need to enough review this RFC patch set. 
-> 
-> It would be very helpful to me if other people could review this.
-> 
-> 
+>> Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
+>> unit name, but no reg property
+>>
+>> Fix this by replacing '@' with '-' as the OPP nodes will never have a
+>> "reg" property.
+>>
+>> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Suggested-by: Mark Rutland <mark.rutland@arm.com>
+>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com> (sunxi)
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> OK, so any ACKs from the DT side?  Rob?
+>
 > Thanks,
-> Inki Dae
-> 
-> [1] https://lists.freedesktop.org/archives/dri-devel/2017-April/138112.html
-> 
-> 
->>
->> Also some pointers concerning the video plane flickering and the
->> interlacing issue would be very welcome.
->>
->> Looking at the current register defines for MXR_INT_EN suggests that
->> there are at least three more type of interrupt available. Any chance
->> these could be documented? I hope to get some more insight into this
->> issue, which apparantly is caused by insufficient bandwidth.
->>
->> For the interlacing issue I have done partial progress. I now longer see
->> a IOMMU pagefault, but the video plane is heavily corrupted. Also the
->> dimensions look wrong.
->>
->> While I can somehow guess that VP_MODE_LINE_SKIP does, the
->> VP_MODE_FIELD_ID_AUTO_TOGGLING flag still remains a mystery to me. If
->> possible, I request some documentation for this as well.
->>
->>
->> With best wishes,
->> Tobias
->>
->>
->>
->> Tobias Jakobi wrote:
->>> Hello,
->>>
->>> some recent work I did on Exynos. Patches are based on [1] and [2].
->>>
->>> Summary:
->>> (a) Enables support for NV12MT in the mixer.
->>> (b) Sanitizes buffer pitch for HW with restrictions.
->>> (c) Misc fixes
->>>
->>> While testing the NV12MT part, I made these interesting observations.
->>>
->>> (1) I used 1920x1080 XRGB8888 on the primary plane, and 1280x768 on the
->>> video plane. With this configuration, it does not matter if you're
->>> using NV12 or NV12MT, the video plane occasionally flickers or shows
->>> heavy artifacting. Reducing the size of the primary plane, e.g. to
->>> 32x32 solves this issue, so my guess is that this is memory bandwidth
->>> issue. Does someone know if one can check for buffer underflows of the
->>> mixer with respect to data passed from the VP?
->>>
->>> (2) Using 1920x1080i (so an interlaced mode) and NV12, the board
->>> immediately dies with an IOMMU pagefault at address zero. I'm
->>> currently investigating this, and it looks like that the VP setup
->>> is wrong here. In particular it should be the source (!) height
->>> and vertical position that should be halfed in interlaced mode, and
->>> not the destination. Need to look more into this.
->>>
->>> Anyway, both the issues are independant of the patches, so please
->>> review! :-)
->>>
->>> With best wishes,
->>> Tobias
->>>
->>>
->>> [1] http://www.spinics.net/lists/linux-samsung-soc/msg58640.html
->>> [2] http://www.spinics.net/lists/linux-samsung-soc/msg58644.html
->>>
->>> Tobias Jakobi (8):
->>>   drm/exynos: mixer: fix chroma comment in vp_video_buffer()
->>>   drm/exynos: mixer: enable NV12MT support for the video plane
->>>   drm/exynos: mixer: simplify {vp_video,mixer_graph}_buffer()
->>>   drm/exynos: mixer: remove src offset from mixer_graph_buffer()
->>>   drm/exynos: introduce BYTE_PITCH capability
->>>   drm/exynos: add BYTE_PITCH cap for all supported planes
->>>   drm/exynos: consistent use of cpp
->>>   drm/exynos: simplify set_pixfmt() in DECON and FIMD drivers
->>>
->>>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 17 +++++------
->>>  drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 13 +++-----
->>>  drivers/gpu/drm/exynos/exynos_drm_drv.h       |  2 ++
->>>  drivers/gpu/drm/exynos/exynos_drm_fb.c        |  2 ++
->>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 17 ++++-------
->>>  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 37 ++++++++++++++++++++++
->>>  drivers/gpu/drm/exynos/exynos_mixer.c         | 44 ++++++++-------------------
->>>  7 files changed, 71 insertions(+), 61 deletions(-)
->>>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->>
+> Rafael
+
+
+
+I see Rob's Acked-by.
+
+https://lkml.org/lkml/2017/4/13/648
+
+
+-- 
+Best Regards
+Masahiro Yamada
