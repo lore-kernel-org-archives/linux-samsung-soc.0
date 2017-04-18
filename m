@@ -1,197 +1,121 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3] drm/exynos: mixer: document YCbCr magic numbers
-Date: Tue, 18 Apr 2017 09:18:33 +0900
-Message-ID: <58F55B59.90407@samsung.com>
-References: <1489155714-13066-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <85a64d59-63d6-54b0-756b-63c36dc85d2b@math.uni-bielefeld.de>
- <CAAQKjZMm3O+PZ9GUsksaTnApwm8n9q8VX0rCAYozT9hG7oNrzQ@mail.gmail.com>
- <CGME20170410102755epcas4p40e9072db5dde36aeecbcb0eebbacd82b@epcas4p4.samsung.com>
- <7ffdd11d-bbdf-321d-fc3c-2d40798e902f@math.uni-bielefeld.de>
- <58EC1048.1030303@samsung.com>
- <f28ce9b0-5162-e433-fcf5-a1d8e3929c68@math.uni-bielefeld.de>
- <58ED8AC6.6030600@samsung.com>
- <81f7716f-f406-d42a-933e-c1369142df13@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <81f7716f-f406-d42a-933e-c1369142df13@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Subject: [GIT PULL] exynos-drm-next
+Date: Tue, 18 Apr 2017 11:05:09 +0900
+Message-ID: <1492481109-2863-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20170418020509epcas5p2e54f307dee164846dabf0470c5f134eb@epcas5p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:56680 "EHLO
+        epoutp01.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755463AbdDRCFM (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 17 Apr 2017 22:05:12 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-CgoyMDE364WEIDA07JuUIDE27J28IDIwOjUw7JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
-IOq4gDoKPiBIZWxsbyBJbmtpLAo+IAo+IElua2kgRGFlIHdyb3RlOgo+IDxzbmlwPgo+PiBUb2Jp
-YXMsIHdoeSBkaWQgeW91IHBvc3QgdGhlIHBhdGNoIHNldCAxLzIgYW5kIDIvMiBiZWZvcmU/Cj4+
-IElmIHRoZXNlIHBhdGNoZXMgY2FuIGJlIGFwcGxpZWQgaW5kZXBlbmRlbnRseSAtIHlvdSBmb3Vu
-ZCBvdXQgbGF0ZXIgLSB0aGVuIHlvdSBuZWVkIHRvIGNsYXJpZnkgd2h5IHlvdSBwb3N0ZWQgdGhl
-bSBzZXBhcmF0ZWx5Lgo+IAo+IAo+IGFmdGVyIEkgcG9zdGVkIHYxIG9mIHRoZSBwYXRjaHNldCwg
-QW5kcnplaiByZXNwb25kZWQgd2l0aCBhIFJldmlld2VkLUJ5Cj4gZm9yIHBhdGNoIDEvMiBhbmQg
-c3VnZ2VzdGlvbnMgZm9yIHBhdGNoIDIvMi4gSSB0aGVuIGludGVncmF0ZWQgdGhlCj4gc3VnZ2Vz
-dGlvbnMgYW5kIGFkZGVkIHRoZSBSZXZpZXdlZC1CeSB0YWcsIGhlbmNlIGNoYW5naW5nIGJvdGgg
-cGF0Y2ggMS8yCj4gYW5kIDIvMi4gSSB0aGVuIHBvc3RlZCB2MiBvZiB0aGUgcGF0Y2hzZXQsIGJl
-Y2F1c2UgX2JvdGhfIHBhdGNoZXMKPiBjaGFuZ2VkLiBBbmRyemVqIHRoZW4gcG9pbnRlZCBvdXQg
-dGhhdCB0aGUgdmFsdWVzIHVzZWQgaW4gcGF0Y2ggMi8yCj4gY291bGQgYmUgZnVydGhlciBzaW1w
-bGllZC4gSSB0aGVuIHBvc3RlZCBhIHYzIG9mIHBhdGNoIDIvMiwgYmVjYXVzZSBvbmx5Cj4gdGhp
-cyBvbmUgcGF0Y2ggY2hhbmdlZC4KPiBXaGVuIEkgcGluZ2VkIHlvdSBjb25jZXJuaW5nIHRoZSBw
-YXRjaGVzLCBJIHNwZWNpZmljYWxseSBkaWQgdGhpcyB3aXRoCj4gdjMgb2YgMi8yLCBhbmQgdjIg
-b2YgMS8yLiBJdCB3YXMgcGVyZmVjdGx5IGNsZWFyIHdoaWNoIHBhdGNoZXMgSSB3YW50ZWQKPiB5
-b3UgdG8gcGljayB1cC4KClNvcnJ5IGJ1dCBsYXN0IGNvbW1lbnQgYWJvdXQgdGhpcywKCkkganVz
-dCB3YW50ZWQgdGhpcyBwYXRjaCB0byBiZSByZS1wb3N0ZWQgd2l0aCBwYXRjaCBzZXJpZXMgZm9y
-IG90aGVyIHBlb3BsZS4KT25seSBhdHRlbmRlZXMgd2hvIHJldmlld2VkIHdvdWxkIGtub3cgdjMg
-b2YgdGhpcyBwYXRjaCBpcyBvbmUgb2YgdjIgcGF0Y2hlcy4KSG93ZXZlciBvdGhlciBwZW9wbGUg
-ZG9uJ3Qga25vdyB0aGF0IHNvIGlmIHRoZXkgd2FudCB0byBjaGVjayB0aGlzIHBhdGNoIHRoZW4g
-dGhleSB3b3VsZCBuZWVkIHRvIHNlYXJjaCByZWxldmFudCBwYXRjaCBpbiB0aGVpciBlbWFpbCBi
-b3guIAoKVGhhbmtzLApJbmtpIERhZQoKPiBJIGNhbiB1bmRlcnN0YW5kIHdoZW4gbWFpbnRhaW5l
-cnMgb2YgaGlnaC12b2x1bWUgc3Vic3lzdGVtcyBzb21ldGltZXMKPiBnZXQgcGF0Y2ggdmVyc2lv
-bnMgbWl4ZWQgdXAuIEJ1dCBkcm0tZXh5bm9zIG9ubHkgZ2V0cyB2ZXJ5IGZldyBwYXRjaGVzCj4g
-ZWFjaCBjeWNsZS4gSWYgeW91IGhhdmUgcHJvYmxlbXMgZGVhbGluZyB3aXRoIHlvdXIgbWFpbnRh
-aW5lciBkdXRpZXMgaW4KPiBhIHRpbWVseSBtYW5uZXIsIEkgd291bGQgc3VnZ2VzdCB0byBjb250
-YWN0IERhbmllbCBWZXR0ZXIgc28gdGhhdCBleHlub3MKPiBpcyBhZGRlZCB0byBkcm0tbWlzYy4g
-SSBwZXJzb25hbGx5IHRoaW5rIGV4eW5vcyB3b3VsZCBiZW5lZml0IGZyb20gc3VjaAo+IGEgbW92
-ZS4KPiAKPiBXaXRoIGJlc3Qgd2lzaGVzLAo+IFRvYmlhcwo+IAo+IAo+IAo+Pgo+PiBUaGFua3Ms
-Cj4+IElua2kgRGFlCj4+Cj4+Pgo+Pj4KPj4+Pgo+Pj4+IEkgY2FuIG1lcmdlIHRoZSBuZXcgb25l
-IC0gcmVhbGx5IHRyaXZpYWwgLSBidXQgSSB0aGluayBpdCdkIGJlIGJldHRlciB5b3UgdG8gcmVz
-ZW5kIHRoaXMgcGF0Y2ggc2VyaWVzIGZvciBvdGhlciBwZW9wbGUuCj4+Pj4KPj4+PiBUaGlzIHBh
-dGNoIHNldCBoYXMgYmVlbiByZW1vdmVkIGZyb20gbXkgdHJlZS4gUGxlYXNlIHJlc2VuZCAobm90
-IHY0KSB0aGlzIHBhdGNoIHNldCBsaWtlIGJlbG93LAo+Pj4+IFtQQVRDSCB2MyAwLzJdIGRybS9l
-eHlub3M6IGNsZWFuIHVwIG1peGVyIGRyaXZlcj8/Cj4+Pj4gW1BBVENIIHYzIDEvMl0gZHJtL2V4
-eW5vczogbWl4ZXI6IHNpbXBsaWZ5IG1peGVyX2NmZ19yZ2JfZm10KCkKPj4+PiBbUEFUQ0ggdjMg
-Mi8yXSBkcm0vZXh5bm9zOiBtaXhlcjogZG9jdW1lbnQgWUNiQ3IgbWFnaWMgbnVtYmVycwo+Pj4g
-Tm90IG5lY2Vzc2FyeSwganVzdCBwaWNrIHVwIHRoZSB0d28gcGF0Y2hlcyB3aGljaCBmb3Igd2hp
-Y2ggSSBhbHJlYWR5Cj4+PiBwaW5nZWQgeW91LiBGb3IgeW91IGNvbnZlbmllbmNlLCBoZXJlIGFy
-ZSB0aGUgdHdvIG9uIGRyaS1kZXZlbCBwYXRjaHdvcms6Cj4+PiBodHRwczovL3BhdGNod29yay5r
-ZXJuZWwub3JnL3BhdGNoLzk2MTcwODUvCj4+PiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3Jn
-L3BhdGNoLzk2MTc0OTMvCj4+Pgo+Pj4gLSBUb2JpYXMKPj4+Cj4+Pgo+Pj4KPj4+Pgo+Pj4+IFRo
-YW5rcywKPj4+PiBJbmtpIERhZQo+Pj4+Cj4+Pj4+Cj4+Pj4+IC0gVG9iaWFzCj4+Pj4+Cj4+Pj4+
-Cj4+Pj4+PiBUaGFua3MsCj4+Pj4+PiBJbmtpIERhZQo+Pj4+Pj4KPj4+Pj4+PiBXaXRoIGJlc3Qg
-d2lzaGVzLAo+Pj4+Pj4+IFRvYmlhcwo+Pj4+Pj4+Cj4+Pj4+Pj4KPj4+Pj4+PiBUb2JpYXMgSmFr
-b2JpIHdyb3RlOgo+Pj4+Pj4+PiBUaGUgb3V0cHV0IHN0YWdlIG9mIHRoZSBtaXhlciB1c2VzIFlD
-YkNyIGZvciB0aGUgaW50ZXJuYWwKPj4+Pj4+Pj4gY29tcHV0YXRpb25zLCB3aGljaCBpcyB0aGUg
-cmVhc29uIHRoYXQgc29tZSByZWdpc3RlcnMgdGFrZQo+Pj4+Pj4+PiBZQ2JDciByZWxhdGVkIGRh
-dGEgYXMgaW5wdXQuIEluIHBhcnRpY3VsYXIgdGhpcyBhcHBsaWVzCj4+Pj4+Pj4+IHRvIE1YUl9C
-R19DT0xPUnswLDEsMn0gYW5kIE1YUl9DTV9DT0VGRl97WSxDQixDUn0uCj4+Pj4+Pj4+Cj4+Pj4+
-Pj4+IERvY3VtZW50IHRoZSBmb3JtYXR0aW5nIG9mIHRoZSBkYXRhIHdoaWNoIHdlIHdyaXRlIHRv
-Cj4+Pj4+Pj4+IHRoZXNlIHJlZ2lzdGVycy4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gV2hpbGUgYXQgaXQs
-IHVuaWZ5IHdvcmRpbmcgb2YgY29tbWVudHMgaW4gdGhlIHJlZ2lzdGVyIGhlYWRlci4KPj4+Pj4+
-Pj4KPj4+Pj4+Pj4gUmV2aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5j
-b20+Cj4+Pj4+Pj4+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51
-bmktYmllbGVmZWxkLmRlPgo+Pj4+Pj4+PiAtLS0KPj4+Pj4+Pj4gQ2hhbmdlcyBpbiB2MjoKPj4+
-Pj4+Pj4gLSB1c2UgZmxvYXRpbmcgcG9pbnQgdmFsdWVzIGFzIGlucHV0IGZvciB0aGUgbWFjcm9z
-LCBhcwo+Pj4+Pj4+PiAgIHN1Z2dlc3RlZCBieSBBbmRyemVqCj4+Pj4+Pj4+IC0gdGhlIGZsb2F0
-aW5nIHBvaW50IHZhbHVlcyBoYXZlIGJlZW4gdHVuZWQgdG8gZXhhY3RseSBtYXRjaAo+Pj4+Pj4+
-PiAgIHRoZSB2YWx1ZXMgdGhhdCBhcmUgY3VycmVudGx5IHVzZWQKPj4+Pj4+Pj4KPj4+Pj4+Pj4g
-Q2hhbmdlcyBpbiB2MzoKPj4+Pj4+Pj4gLSB1c2Ugb25seSB0aHJlZSBkaWdpdCB2YWx1ZXMgKHBv
-aW50ZWQgb3V0IGJ5IEFuZHJ6ZWopCj4+Pj4+Pj4+Cj4+Pj4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMzMgKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0t
-LS0tCj4+Pj4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCAgIHwgIDcg
-KysrKystLQo+Pj4+Pj4+PiAgMiBmaWxlcyBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspLCAxMCBk
-ZWxldGlvbnMoLSkKPj4+Pj4+Pj4KPj4+Pj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19t
-aXhlci5jCj4+Pj4+Pj4+IGluZGV4IDQxZDBjMzYuLjk2NDhkZDUgMTAwNjQ0Cj4+Pj4+Pj4+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+Pj4+Pj4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4+Pj4+PiBAQCAtNDUsNiAr
-NDUsMjIgQEAKPj4+Pj4+Pj4gICNkZWZpbmUgTUlYRVJfV0lOX05SICAgICAgICAgMwo+Pj4+Pj4+
-PiAgI2RlZmluZSBWUF9ERUZBVUxUX1dJTiAgICAgICAgICAgICAgIDIKPj4+Pj4+Pj4KPj4+Pj4+
-Pj4gKy8qCj4+Pj4+Pj4+ICsgKiBNaXhlciBjb2xvciBzcGFjZSBjb252ZXJzaW9uIGNvZWZmaWNp
-ZW50IHRyaXBsZXQuCj4+Pj4+Pj4+ICsgKiBVc2VkIGZvciBDU0MgZnJvbSBSR0IgdG8gWUNiQ3Iu
-Cj4+Pj4+Pj4+ICsgKiBFYWNoIGNvZWZmaWNpZW50IGlzIGEgMTAtYml0IGZpeGVkIHBvaW50IG51
-bWJlciB3aXRoCj4+Pj4+Pj4+ICsgKiBzaWduIGFuZCBubyBpbnRlZ2VyIHBhcnQsIGkuZS4KPj4+
-Pj4+Pj4gKyAqIFswOjhdID0gZnJhY3Rpb25hbCBwYXJ0IChyZXByZXNlbnRpbmcgYSB2YWx1ZSB5
-ID0geCAvIDJeOSkKPj4+Pj4+Pj4gKyAqIFs5XSA9IHNpZ24KPj4+Pj4+Pj4gKyAqIE5lZ2F0aXZl
-IHZhbHVlcyBhcmUgZW5jb2RlZCB3aXRoIHR3bydzIGNvbXBsZW1lbnQuCj4+Pj4+Pj4+ICsgKi8K
-Pj4+Pj4+Pj4gKyNkZWZpbmUgTVhSX0NTQ19DKHgpICgoaW50KSgoeCkgKiA1MTIuMCkgJiAweDNm
-ZikKPj4+Pj4+Pj4gKyNkZWZpbmUgTVhSX0NTQ19DVChhMCwgYTEsIGEyKSBcCj4+Pj4+Pj4+ICsg
-ICgoTVhSX0NTQ19DKGEwKSA8PCAyMCkgfCAoTVhSX0NTQ19DKGExKSA8PCAxMCkgfCAoTVhSX0NT
-Q19DKGEyKSA8PCAwKSkKPj4+Pj4+Pj4gKwo+Pj4+Pj4+PiArLyogWUNiQ3IgdmFsdWUsIHVzZWQg
-Zm9yIG1peGVyIGJhY2tncm91bmQgY29sb3IgY29uZmlndXJhdGlvbi4gKi8KPj4+Pj4+Pj4gKyNk
-ZWZpbmUgTVhSX1lDQkNSX1ZBTCh5LCBjYiwgY3IpICgoKHkpIDw8IDE2KSB8ICgoY2IpIDw8IDgp
-IHwgKChjcikgPDwgMCkpCj4+Pj4+Pj4+ICsKPj4+Pj4+Pj4gIC8qIFRoZSBwaXhlbGZvcm1hdHMg
-dGhhdCBhcmUgbmF0aXZlbHkgc3VwcG9ydGVkIGJ5IHRoZSBtaXhlci4gKi8KPj4+Pj4+Pj4gICNk
-ZWZpbmUgTVhSX0ZPUk1BVF9SR0I1NjUgICAgNAo+Pj4+Pj4+PiAgI2RlZmluZSBNWFJfRk9STUFU
-X0FSR0IxNTU1ICA1Cj4+Pj4+Pj4+IEBAIC0zOTEsMTMgKzQwNywxNCBAQCBzdGF0aWMgdm9pZCBt
-aXhlcl9jZmdfcmdiX2ZtdChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQg
-aGVpZ2h0KQo+Pj4+Pj4+PiAgICAgICBjYXNlIDEwODA6Cj4+Pj4+Pj4+ICAgICAgIGRlZmF1bHQ6
-Cj4+Pj4+Pj4+ICAgICAgICAgICAgICAgdmFsID0gTVhSX0NGR19SR0I3MDlfMTZfMjM1Owo+Pj4+
-Pj4+PiArICAgICAgICAgICAgIC8qIENvbmZpZ3VyZSB0aGUgQlQuNzA5IENTQyBtYXRyaXggZm9y
-IGZ1bGwgcmFuZ2UgUkdCLiAqLwo+Pj4+Pj4+PiAgICAgICAgICAgICAgIG1peGVyX3JlZ193cml0
-ZShyZXMsIE1YUl9DTV9DT0VGRl9ZLAo+Pj4+Pj4+PiAtICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAoMSA8PCAzMCkgfCAoOTQgPDwgMjApIHwgKDMxNCA8PCAxMCkgfAo+Pj4+Pj4+PiAtICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAoMzIgPDwgMCkpOwo+Pj4+Pj4+PiArICAgICAgICAg
-ICAgICAgICAgICAgTVhSX0NTQ19DVCggMC4xODQsICAwLjYxNCwgIDAuMDYzKSB8Cj4+Pj4+Pj4+
-ICsgICAgICAgICAgICAgICAgICAgICBNWFJfQ01fQ09FRkZfUkdCX0ZVTEwpOwo+Pj4+Pj4+PiAg
-ICAgICAgICAgICAgIG1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9DTV9DT0VGRl9DQiwKPj4+Pj4+
-Pj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKDk3MiA8PCAyMCkgfCAoODUxIDw8IDEw
-KSB8ICgyMjUgPDwgMCkpOwo+Pj4+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgTVhSX0NTQ19D
-VCgtMC4xMDIsIC0wLjMzOCwgIDAuNDQwKSk7Cj4+Pj4+Pj4+ICAgICAgICAgICAgICAgbWl4ZXJf
-cmVnX3dyaXRlKHJlcywgTVhSX0NNX0NPRUZGX0NSLAo+Pj4+Pj4+PiAtICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAoMjI1IDw8IDIwKSB8ICg4MjAgPDwgMTApIHwgKDEwMDQgPDwgMCkpOwo+
-Pj4+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgTVhSX0NTQ19DVCggMC40NDAsIC0wLjM5OSwg
-LTAuMDQwKSk7Cj4+Pj4+Pj4+ICAgICAgICAgICAgICAgYnJlYWs7Cj4+Pj4+Pj4+ICAgICAgIH0K
-Pj4+Pj4+Pj4KPj4+Pj4+Pj4gQEAgLTcxNSwxMCArNzMyLDEwIEBAIHN0YXRpYyB2b2lkIG1peGVy
-X3dpbl9yZXNldChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQo+Pj4+Pj4+PiAgICAgICAvKiBy
-ZXNldCBkZWZhdWx0IGxheWVyIHByaW9yaXR5ICovCj4+Pj4+Pj4+ICAgICAgIG1peGVyX3JlZ193
-cml0ZShyZXMsIE1YUl9MQVlFUl9DRkcsIDApOwo+Pj4+Pj4+Pgo+Pj4+Pj4+PiAtICAgICAvKiBz
-ZXR0aW5nIGJhY2tncm91bmQgY29sb3IgKi8KPj4+Pj4+Pj4gLSAgICAgbWl4ZXJfcmVnX3dyaXRl
-KHJlcywgTVhSX0JHX0NPTE9SMCwgMHgwMDgwODApOwo+Pj4+Pj4+PiAtICAgICBtaXhlcl9yZWdf
-d3JpdGUocmVzLCBNWFJfQkdfQ09MT1IxLCAweDAwODA4MCk7Cj4+Pj4+Pj4+IC0gICAgIG1peGVy
-X3JlZ193cml0ZShyZXMsIE1YUl9CR19DT0xPUjIsIDB4MDA4MDgwKTsKPj4+Pj4+Pj4gKyAgICAg
-Lyogc2V0IGFsbCBiYWNrZ3JvdW5kIGNvbG9ycyB0byBSR0IgKDAsMCwwKSAqLwo+Pj4+Pj4+PiAr
-ICAgICBtaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1IwLCBNWFJfWUNCQ1JfVkFMKDAs
-IDEyOCwgMTI4KSk7Cj4+Pj4+Pj4+ICsgICAgIG1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9CR19D
-T0xPUjEsIE1YUl9ZQ0JDUl9WQUwoMCwgMTI4LCAxMjgpKTsKPj4+Pj4+Pj4gKyAgICAgbWl4ZXJf
-cmVnX3dyaXRlKHJlcywgTVhSX0JHX0NPTE9SMiwgTVhSX1lDQkNSX1ZBTCgwLCAxMjgsIDEyOCkp
-Owo+Pj4+Pj4+Pgo+Pj4+Pj4+PiAgICAgICBpZiAodGVzdF9iaXQoTVhSX0JJVF9WUF9FTkFCTEVE
-LCAmY3R4LT5mbGFncykpIHsKPj4+Pj4+Pj4gICAgICAgICAgICAgICAvKiBjb25maWd1cmF0aW9u
-IG9mIFZpZGVvIFByb2Nlc3NvciBSZWdpc3RlcnMgKi8KPj4+Pj4+Pj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9yZWdzLW1peGVyLmgKPj4+Pj4+Pj4gaW5kZXggN2YyMmRmNS4uYzMxMWY1NyAxMDA2NDQKPj4+
-Pj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmgKPj4+Pj4+Pj4g
-KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmgKPj4+Pj4+Pj4gQEAgLTE0
-MCwxMSArMTQwLDExIEBACj4+Pj4+Pj4+ICAjZGVmaW5lIE1YUl9JTlRfRU5fVlNZTkMgICAgICAg
-ICAgICAgKDEgPDwgMTEpCj4+Pj4+Pj4+ICAjZGVmaW5lIE1YUl9JTlRfRU5fQUxMICAgICAgICAg
-ICAgICAgICAgICAgICAoMHgwZiA8PCA4KQo+Pj4+Pj4+Pgo+Pj4+Pj4+PiAtLyogYml0IGZvciBN
-WFJfSU5UX1NUQVRVUyAqLwo+Pj4+Pj4+PiArLyogYml0cyBmb3IgTVhSX0lOVF9TVEFUVVMgKi8K
-Pj4+Pj4+Pj4gICNkZWZpbmUgTVhSX0lOVF9DTEVBUl9WU1lOQyAgICAgICAgICAoMSA8PCAxMSkK
-Pj4+Pj4+Pj4gICNkZWZpbmUgTVhSX0lOVF9TVEFUVVNfVlNZTkMgICAgICAgICAoMSA8PCAwKQo+
-Pj4+Pj4+Pgo+Pj4+Pj4+PiAtLyogYml0IGZvciBNWFJfTEFZRVJfQ0ZHICovCj4+Pj4+Pj4+ICsv
-KiBiaXRzIGZvciBNWFJfTEFZRVJfQ0ZHICovCj4+Pj4+Pj4+ICAjZGVmaW5lIE1YUl9MQVlFUl9D
-RkdfR1JQMV9WQUwoeCkgICAgTVhSX01BU0tfVkFMKHgsIDExLCA4KQo+Pj4+Pj4+PiAgI2RlZmlu
-ZSBNWFJfTEFZRVJfQ0ZHX0dSUDFfTUFTSyAgICAgICAgICAgICAgTVhSX0xBWUVSX0NGR19HUlAx
-X1ZBTCh+MCkKPj4+Pj4+Pj4gICNkZWZpbmUgTVhSX0xBWUVSX0NGR19HUlAwX1ZBTCh4KSAgICBN
-WFJfTUFTS19WQUwoeCwgNywgNCkKPj4+Pj4+Pj4gQEAgLTE1Miw1ICsxNTIsOCBAQAo+Pj4+Pj4+
-PiAgI2RlZmluZSBNWFJfTEFZRVJfQ0ZHX1ZQX1ZBTCh4KSAgICAgICAgICAgICAgTVhSX01BU0tf
-VkFMKHgsIDMsIDApCj4+Pj4+Pj4+ICAjZGVmaW5lIE1YUl9MQVlFUl9DRkdfVlBfTUFTSyAgICAg
-ICAgICAgICAgICBNWFJfTEFZRVJfQ0ZHX1ZQX1ZBTCh+MCkKPj4+Pj4+Pj4KPj4+Pj4+Pj4gKy8q
-IGJpdHMgZm9yIE1YUl9DTV9DT0VGRl9ZICovCj4+Pj4+Pj4+ICsjZGVmaW5lIE1YUl9DTV9DT0VG
-Rl9SR0JfRlVMTCAgICAgICAgICAgICAgICAoMSA8PCAzMCkKPj4+Pj4+Pj4gKwo+Pj4+Pj4+PiAg
-I2VuZGlmIC8qIFNBTVNVTkdfUkVHU19NSVhFUl9IICovCj4+Pj4+Pj4+Cj4+Pj4+Pj4+Cj4+Pj4+
-Pj4KPj4+Pj4+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-Xwo+Pj4+Pj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4+Pj4+PiBkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCj4+Pj4+Pj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwKPj4+Pj4+IC0tCj4+Pj4+PiBUbyB1bnN1YnNjcmliZSBm
-cm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1z
-b2MiIGluCj4+Pj4+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2Vy
-bmVsLm9yZwo+Pj4+Pj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVs
-Lm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4+Pj4+Pgo+Pj4+Pgo+Pj4+PiAtLQo+Pj4+PiBUbyB1
-bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGlu
-dXgtc2Ftc3VuZy1zb2MiIGluCj4+Pj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRv
-bW9Admdlci5rZXJuZWwub3JnCj4+Pj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92
-Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Pj4+Pgo+Pj4+Pgo+Pj4+Pgo+Pj4+
-IC0tCj4+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVu
-c3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+Pj4+IHRoZSBib2R5IG9mIGEgbWVzc2Fn
-ZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4+Pj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBh
-dCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4+Pj4KPj4+Cj4+
-Pgo+Pj4KPj4+Cj4gCj4gCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+Hi Dave,
+
+   Some improvements, fixups and cleanups to Exynos DRM.
+
+   Ps. this pull-reuqest includes a merge tag from Krzysztof Kozlowski
+   who is a Exynos SoC maintainer, which includes dt patches because
+   these should be merged together with below one,
+      drm/exynos: dsi: Fix the parse_dt function
+
+   Please kindly let me know if there is any problem.
+
+Thanks,
+Inki Dae
+
+The following changes since commit ab6eb211b07a42a6346e284056422fd9a8576a99:
+
+  Merge tag 'drm/panel/for-4.12-rc1' of git://anongit.freedesktop.org/tegra/linux into drm-next (2017-04-13 06:17:40 +1000)
+
+are available in the git repository at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos exynos-drm-next
+
+for you to fetch changes up to ad1a14690ae7114e5230deba27cdbbe42c69a813:
+
+  drm/exynos/decon5433: remove useless check (2017-04-18 10:28:50 +0900)
+
+----------------------------------------------------------------
+Summary:
+- Fix dt binding of MIPI-DSI driver
+- Rework vblank handling
+  . This patch series adds frame counter callback and removes
+    unnecessary pipe relevnt fields and simplifies event handling.
+- Implement and fix sw-trigger relevant code
+  . This patch moves TE relevant code from Panel and HDMI to DECON driver
+    to fix a race between interrupt handlers and DECON disable,
+    and to fix timeout issue at wait-for-vblank.
+  . It removes unnecessary flags and check code specific to Exynos driver.
+
+----------------------------------------------------------------
+Andi Shyti (2):
+      arm64: dts: exynos: Enable ir-spi in the TM2 and TM2E boards
+      arm64: dts: exynos: Add stmfts touchscreen node for TM2 and TM2E
+
+Andrzej Hajda (21):
+      drm/exynos: simplify completion event handling
+      drm/exynos/decon5433: implement frame counter
+      drm/exynos: kill exynos_drm_crtc::pipe
+      drm/exynos: kill exynos_drm_private::pipe
+      drm/exynos: set plane possible_crtcs in exynos_plane_init
+      drm/exynos: kill pipe field from drivers contexts
+      drm/exynos: kill mode_set_nofb callback
+      drm/exynos/decon5433: kill DECON_UPDATE workaround
+      drm/exynos/decon5433: kill BIT_IRQS_ENABLED
+      drm/exynos/decon5433: simplify shadow protect code
+      drm/exynos/hdmi: fix pipeline disable order
+      drm/exynos/dsi: fix bridge_node DT parsing
+      drm/exynos/decon5433: always do sw-trigger when vblanks enabled
+      dt-bindings: exynos5433-decon: fix interrupts bindings
+      dt-bindings: exynos5433-decon: add TE interrupt binding
+      drm/exynos/decon5433: move TE handling to DECON
+      drm/exynos/decon5433: kill BIT_IRQS_ENABLED flag
+      drm/exynos/decon5433: kill BIT_CLKS_ENABLED flag
+      drm/exynos/decon5433: kill BIT_WIN_UPDATED flag
+      drm/exynos/decon5433: kill BIT_SUSPENDED flag
+      drm/exynos/decon5433: remove useless check
+
+Daniel Vetter (1):
+      drm/exynos: Merge pre/postclose hooks
+
+Hoegeun Kwon (2):
+      arm64: dts: exynos: Add the burst and esc clock frequency properties to DSI node
+      drm/exynos: dsi: Fix the parse_dt function
+
+Hyungwon Hwang (1):
+      arm64: dts: exynos: Add support for S6E3HA2 panel device on TM2 board
+
+Inki Dae (2):
+      Merge tag 'samsung-dt64-clock-dsi-property-4.12' of gitolite.kernel.org:/.../krzk/linux into exynos-drm-next
+      drm/exynos: clean up description of exynos_drm_crtc
+
+Tobias Jakobi (2):
+      drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
+      drm/exynos: mixer: document YCbCr magic numbers
+
+ .../bindings/display/exynos/exynos5433-decon.txt   |  13 +-
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     |  43 +++-
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  17 ++
+ arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |   7 +
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c      | 218 +++++++++------------
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c         |  19 +-
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c           |  50 +++--
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h           |   1 -
+ drivers/gpu/drm/exynos/exynos_drm_drv.c            |   8 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h            |  19 +-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  24 +--
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c           |  24 +--
+ drivers/gpu/drm/exynos/exynos_drm_plane.c          |   5 +-
+ drivers/gpu/drm/exynos/exynos_drm_plane.h          |   1 -
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c           |  22 +--
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  13 +-
+ drivers/gpu/drm/exynos/exynos_mixer.c              |  76 ++++---
+ drivers/gpu/drm/exynos/regs-mixer.h                |   7 +-
+ include/video/exynos5433_decon.h                   |   1 +
+ 19 files changed, 256 insertions(+), 312 deletions(-)
