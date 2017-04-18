@@ -1,225 +1,73 @@
 From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: [PATCH 5/7] regulator: arizona-ldo1: Move pdata into a separate structure
-Date: Tue, 18 Apr 2017 11:43:52 +0100
-Message-ID: <1492512234-19210-7-git-send-email-rf@opensource.wolfsonmicro.com>
+Subject: [PATCH 1/7] regulator: arizona: Split KConfig options for LDO1 and MICSUPP regulators
+Date: Tue, 18 Apr 2017 11:43:48 +0100
+Message-ID: <1492512234-19210-3-git-send-email-rf@opensource.wolfsonmicro.com>
 References: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:56067 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752802AbdDRKos (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 18 Apr 2017 06:44:48 -0400
 In-Reply-To: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org, lee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org
 Cc: linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-In preparation for sharing this driver with Madera, move the pdata
-for the LDO1 regulator out of struct arizona_pdata into a dedicated
-pdata struct for this driver. As a result the code in
-arizona_ldo1_of_get_pdata() can be made independent of struct arizona.
-
-This patch also updates the definition of struct arizona_pdata and
-the use of this pdata in mach-crag6410-module.c
+The CS47L24 Arizona codec and most Madera codecs do not have a LDO1
+regulator. Split the LDO1 and MICSUPP regulators into separate KConfig
+options so the LDO1 is only built into the kernel if needed.
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
 ---
- arch/arm/mach-s3c64xx/mach-crag6410-module.c |  8 ++++--
- drivers/regulator/arizona-ldo1.c             | 39 +++++++++++++++-------------
- include/linux/mfd/arizona/pdata.h            |  4 +--
- include/linux/regulator/arizona-ldo1.h       | 24 +++++++++++++++++
- 4 files changed, 53 insertions(+), 22 deletions(-)
- create mode 100644 include/linux/regulator/arizona-ldo1.h
+ drivers/regulator/Kconfig  | 14 +++++++++++---
+ drivers/regulator/Makefile |  3 ++-
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index ccc3ab8..ea5f216 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -209,7 +209,9 @@
- };
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 290eeb8..8647538 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -125,12 +125,20 @@ config REGULATOR_AB8500
+ 	  This driver supports the regulators found on the ST-Ericsson mixed
+ 	  signal AB8500 PMIC
  
- static struct arizona_pdata wm5102_reva_pdata = {
--	.ldoena = S3C64XX_GPN(7),
-+	.ldo1 = {
-+		.ldoena = S3C64XX_GPN(7),
-+	},
- 	.gpio_base = CODEC_GPIO_BASE,
- 	.irq_flags = IRQF_TRIGGER_HIGH,
- 	.micd_pol_gpio = CODEC_GPIO_BASE + 4,
-@@ -239,7 +241,9 @@
- };
- 
- static struct arizona_pdata wm5102_pdata = {
--	.ldoena = S3C64XX_GPN(7),
-+	.ldo1 = {
-+		.ldoena = S3C64XX_GPN(7),
-+	},
- 	.gpio_base = CODEC_GPIO_BASE,
- 	.irq_flags = IRQF_TRIGGER_HIGH,
- 	.micd_pol_gpio = CODEC_GPIO_BASE + 2,
-diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
-index b726fa1..f5bc75a 100644
---- a/drivers/regulator/arizona-ldo1.c
-+++ b/drivers/regulator/arizona-ldo1.c
-@@ -25,6 +25,8 @@
- #include <linux/gpio.h>
- #include <linux/slab.h>
- 
-+#include <linux/regulator/arizona-ldo1.h>
+-config REGULATOR_ARIZONA
+-	tristate "Wolfson Arizona class devices"
++config REGULATOR_ARIZONA_LDO1
++	tristate "Wolfson Arizona class devices LDO1"
+ 	depends on MFD_ARIZONA
+ 	depends on SND_SOC
+ 	help
+-	  Support for the regulators found on Wolfson Arizona class
++	  Support for the LDO1 regulators found on Wolfson Arizona class
++	  devices.
 +
- #include <linux/mfd/arizona/core.h>
- #include <linux/mfd/arizona/pdata.h>
- #include <linux/mfd/arizona/registers.h>
-@@ -186,20 +188,19 @@ static int arizona_ldo1_hc_get_voltage_sel(struct regulator_dev *rdev)
- 	.num_consumer_supplies = 1,
- };
++config REGULATOR_ARIZONA_MICSUPP
++	tristate "Wolfson Arizona class devices MICSUPP"
++	depends on MFD_ARIZONA
++	depends on SND_SOC
++	help
++	  Support for the MICSUPP regulators found on Wolfson Arizona class
+ 	  devices.
  
--static int arizona_ldo1_of_get_pdata(struct device *dev,
--				     struct arizona *arizona,
-+static int arizona_ldo1_of_get_pdata(struct arizona_ldo1_pdata *pdata,
- 				     struct regulator_config *config,
--				     const struct regulator_desc *desc)
-+				     const struct regulator_desc *desc,
-+				     bool *external_dcvdd)
- {
--	struct arizona_pdata *pdata = &arizona->pdata;
- 	struct arizona_ldo1 *ldo1 = config->driver_data;
--	struct device_node *np = arizona->dev->of_node;
-+	struct device_node *np = config->dev->of_node;
- 	struct device_node *init_node, *dcvdd_node;
- 	struct regulator_init_data *init_data;
- 
- 	pdata->ldoena = of_get_named_gpio(np, "wlf,ldoena", 0);
- 	if (pdata->ldoena < 0) {
--		dev_warn(arizona->dev,
-+		dev_warn(config->dev,
- 			 "LDOENA GPIO property missing/malformed: %d\n",
- 			 pdata->ldoena);
- 		pdata->ldoena = 0;
-@@ -213,19 +214,19 @@ static int arizona_ldo1_of_get_pdata(struct device *dev,
- 	if (init_node) {
- 		config->of_node = init_node;
- 
--		init_data = of_get_regulator_init_data(dev, init_node, desc);
--
-+		init_data = of_get_regulator_init_data(config->dev, init_node,
-+						       desc);
- 		if (init_data) {
- 			init_data->consumer_supplies = &ldo1->supply;
- 			init_data->num_consumer_supplies = 1;
- 
- 			if (dcvdd_node && dcvdd_node != init_node)
--				arizona->external_dcvdd = true;
-+				*external_dcvdd = true;
- 
--			pdata->ldo1 = init_data;
-+			pdata->init_data = init_data;
- 		}
- 	} else if (dcvdd_node) {
--		arizona->external_dcvdd = true;
-+		*external_dcvdd = true;
- 	}
- 
- 	of_node_put(dcvdd_node);
-@@ -239,10 +240,9 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
- 	const struct regulator_desc *desc;
- 	struct regulator_config config = { };
- 	struct arizona_ldo1 *ldo1;
-+	bool external_dcvdd = false;
- 	int ret;
- 
--	arizona->external_dcvdd = false;
--
- 	ldo1 = devm_kzalloc(&pdev->dev, sizeof(*ldo1), GFP_KERNEL);
- 	if (!ldo1)
- 		return -ENOMEM;
-@@ -283,17 +283,18 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
- 
- 	if (IS_ENABLED(CONFIG_OF)) {
- 		if (!dev_get_platdata(arizona->dev)) {
--			ret = arizona_ldo1_of_get_pdata(&pdev->dev, arizona,
--							&config, desc);
-+			ret = arizona_ldo1_of_get_pdata(&arizona->pdata.ldo1,
-+							&config, desc,
-+							&external_dcvdd);
- 			if (ret < 0)
- 				return ret;
- 		}
- 	}
- 
--	config.ena_gpio = arizona->pdata.ldoena;
-+	config.ena_gpio = arizona->pdata.ldo1.ldoena;
- 
--	if (arizona->pdata.ldo1)
--		config.init_data = arizona->pdata.ldo1;
-+	if (arizona->pdata.ldo1.init_data)
-+		config.init_data = arizona->pdata.ldo1.init_data;
- 	else
- 		config.init_data = &ldo1->init_data;
- 
-@@ -303,6 +304,8 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
- 	 */
- 	if (config.init_data->num_consumer_supplies == 0)
- 		arizona->external_dcvdd = true;
-+	else
-+		arizona->external_dcvdd = external_dcvdd;
- 
- 	ldo1->regulator = devm_regulator_register(&pdev->dev, desc, &config);
- 
-diff --git a/include/linux/mfd/arizona/pdata.h b/include/linux/mfd/arizona/pdata.h
-index 43e875f..bfeecf1 100644
---- a/include/linux/mfd/arizona/pdata.h
-+++ b/include/linux/mfd/arizona/pdata.h
-@@ -12,6 +12,7 @@
- #define _ARIZONA_PDATA_H
- 
- #include <dt-bindings/mfd/arizona.h>
-+#include <linux/regulator/arizona-ldo1.h>
- #include <linux/regulator/arizona-micsupp.h>
- 
- #define ARIZONA_GPN_DIR_MASK                     0x8000  /* GPN_DIR */
-@@ -77,13 +78,12 @@ struct arizona_micd_range {
- 
- struct arizona_pdata {
- 	int reset;      /** GPIO controlling /RESET, if any */
--	int ldoena;     /** GPIO controlling LODENA, if any */
- 
- 	/** Regulator configuration for MICVDD */
- 	struct arizona_micsupp_pdata micvdd;
- 
- 	/** Regulator configuration for LDO1 */
--	struct regulator_init_data *ldo1;
-+	struct arizona_ldo1_pdata ldo1;
- 
- 	/** If a direct 32kHz clock is provided on an MCLK specify it here */
- 	int clk32k_src;
-diff --git a/include/linux/regulator/arizona-ldo1.h b/include/linux/regulator/arizona-ldo1.h
-new file mode 100644
-index 0000000..c685f12
---- /dev/null
-+++ b/include/linux/regulator/arizona-ldo1.h
-@@ -0,0 +1,24 @@
-+/*
-+ * Platform data for Arizona LDO1 regulator
-+ *
-+ * Copyright 2017 Cirrus Logic
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef ARIZONA_LDO1_H
-+#define ARIZONA_LDO1_H
-+
-+struct regulator_init_data;
-+
-+struct arizona_ldo1_pdata {
-+	/** GPIO controlling LDOENA, if any */
-+	int ldoena;
-+
-+	/** Regulator configuration for LDO1 */
-+	const struct regulator_init_data *init_data;
-+};
-+
-+#endif
+ config REGULATOR_AS3711
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index bf5ed7a..8a439a2 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -19,7 +19,8 @@ obj-$(CONFIG_REGULATOR_ACT8865) += act8865-regulator.o
+ obj-$(CONFIG_REGULATOR_ACT8945A) += act8945a-regulator.o
+ obj-$(CONFIG_REGULATOR_AD5398) += ad5398.o
+ obj-$(CONFIG_REGULATOR_ANATOP) += anatop-regulator.o
+-obj-$(CONFIG_REGULATOR_ARIZONA) += arizona-micsupp.o arizona-ldo1.o
++obj-$(CONFIG_REGULATOR_ARIZONA_LDO1) += arizona-ldo1.o
++obj-$(CONFIG_REGULATOR_ARIZONA_MICSUPP) += arizona-micsupp.o
+ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
 -- 
 1.9.1
