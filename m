@@ -1,57 +1,120 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/7] drm/exynos/decon5433: use readl_poll_timeout helpers
-Date: Tue, 18 Apr 2017 14:39:57 +0200
-Message-ID: <1492519203-23537-2-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 5/7] drm/exynos/mic: use mode info stored in CRTC to detect i80
+ mode
+Date: Tue, 18 Apr 2017 14:40:01 +0200
+Message-ID: <1492519203-23537-6-git-send-email-a.hajda@samsung.com>
 References: <1492519203-23537-1-git-send-email-a.hajda@samsung.com>
- <CGME20170418124012eucas1p1754a7d3053c6a22203fa32a979f18b01@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+ <CGME20170418124013eucas1p1524b3f5028ca0d5b9d962ab17c557913@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:46152 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752911AbdDRMkU (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 18 Apr 2017 08:40:20 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OOL00DS0V733490@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Apr 2017 13:40:15 +0100 (BST)
 In-reply-to: <1492519203-23537-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-TGludXggY29yZSBwcm92aWRlIGhlbHBlcnMgZm9yIHBvbGxpbmcgd2l0aCB0aW1lb3V0LCBsZXRz
-IHVzZSB0aGVtLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5n
-LmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMg
-fCAyMCArKysrKysrKy0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygr
-KSwgMTIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3M1NDMzX2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMz
-X2RybV9kZWNvbi5jCmluZGV4IDU3OTJjYTg4Li4yMzdiNGM5IDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCkBAIC0xMyw2ICsxMyw3IEBACiAjaW5j
-bHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+CiAjaW5jbHVkZSA8bGludXgvY2xrLmg+CiAj
-aW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+CisjaW5jbHVkZSA8bGludXgvaW9wb2xsLmg+CiAj
-aW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5oPgogI2luY2x1ZGUgPGxpbnV4L29mX2RldmljZS5o
-PgogI2luY2x1ZGUgPGxpbnV4L29mX2dwaW8uaD4KQEAgLTQwNywyNCArNDA4LDE5IEBAIHN0YXRp
-YyB2b2lkIGRlY29uX2F0b21pY19mbHVzaChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQog
-CiBzdGF0aWMgdm9pZCBkZWNvbl9zd3Jlc2V0KHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgpCiB7
-Ci0JdW5zaWduZWQgaW50IHRyaWVzOwogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CisJdTMyIHZhbDsK
-KwlpbnQgcmV0OwogCiAJd3JpdGVsKDAsIGN0eC0+YWRkciArIERFQ09OX1ZJRENPTjApOwotCWZv
-ciAodHJpZXMgPSAyMDAwOyB0cmllczsgLS10cmllcykgewotCQlpZiAofnJlYWRsKGN0eC0+YWRk
-ciArIERFQ09OX1ZJRENPTjApICYgVklEQ09OMF9TVE9QX1NUQVRVUykKLQkJCWJyZWFrOwotCQl1
-ZGVsYXkoMTApOwotCX0KKwlyZWFkbF9wb2xsX3RpbWVvdXQoY3R4LT5hZGRyICsgREVDT05fVklE
-Q09OMCwgdmFsLAorCQkJICAgfnZhbCAmIFZJRENPTjBfU1RPUF9TVEFUVVMsIDEyLCAyMDAwMCk7
-CiAKIAl3cml0ZWwoVklEQ09OMF9TV1JFU0VULCBjdHgtPmFkZHIgKyBERUNPTl9WSURDT04wKTsK
-LQlmb3IgKHRyaWVzID0gMjAwMDsgdHJpZXM7IC0tdHJpZXMpIHsKLQkJaWYgKH5yZWFkbChjdHgt
-PmFkZHIgKyBERUNPTl9WSURDT04wKSAmIFZJRENPTjBfU1dSRVNFVCkKLQkJCWJyZWFrOwotCQl1
-ZGVsYXkoMTApOwotCX0KKwlyZXQgPSByZWFkbF9wb2xsX3RpbWVvdXQoY3R4LT5hZGRyICsgREVD
-T05fVklEQ09OMCwgdmFsLAorCQkJCSB+dmFsICYgVklEQ09OMF9TV1JFU0VULCAxMiwgMjAwMDAp
-OwogCi0JV0FSTih0cmllcyA9PSAwLCAiZmFpbGVkIHRvIHNvZnR3YXJlIHJlc2V0IERFQ09OXG4i
-KTsKKwlXQVJOKHJldCA8IDAsICJmYWlsZWQgdG8gc29mdHdhcmUgcmVzZXQgREVDT05cbiIpOwog
-CiAJc3Bpbl9sb2NrX2lycXNhdmUoJmN0eC0+dmJsYW5rX2xvY2ssIGZsYWdzKTsKIAljdHgtPmZy
-YW1lX2lkID0gMDsKLS0gCjIuNy40CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+MIC driver should use info from CRTC to check mode of work instead of
+illegally peeking into nodes of other devices.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_mic.c | 44 +++------------------------------
+ 1 file changed, 4 insertions(+), 40 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+index e457205..9f2fa8a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+@@ -21,9 +21,12 @@
+ #include <linux/component.h>
+ #include <linux/pm_runtime.h>
+ #include <drm/drmP.h>
++#include <drm/drm_encoder.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
+ 
++#include <exynos_drm_drv.h>
++
+ /* Sysreg registers for MIC */
+ #define DSD_CFG_MUX	0x1004
+ #define MIC0_RGB_MUX	(1 << 0)
+@@ -85,12 +88,6 @@
+ 
+ #define MIC_BS_SIZE_2D(x)	((x) & 0x3fff)
+ 
+-enum {
+-	ENDPOINT_DECON_NODE,
+-	ENDPOINT_DSI_NODE,
+-	NUM_ENDPOINTS
+-};
+-
+ static char *clk_names[] = { "pclk_mic0", "sclk_rgb_vclk_to_mic0" };
+ #define NUM_CLKS		ARRAY_SIZE(clk_names)
+ static DEFINE_MUTEX(mic_mutex);
+@@ -229,36 +226,6 @@ static void mic_set_reg_on(struct exynos_mic *mic, bool enable)
+ 	writel(reg, mic->reg + MIC_OP);
+ }
+ 
+-static int parse_dt(struct exynos_mic *mic)
+-{
+-	int ret = 0, i, j;
+-	struct device_node *remote_node;
+-	struct device_node *nodes[3];
+-
+-	/*
+-	 * The order of endpoints does matter.
+-	 * The first node must be for decon and the second one must be for dsi.
+-	 */
+-	for (i = 0, j = 0; i < NUM_ENDPOINTS; i++) {
+-		remote_node = of_graph_get_remote_node(mic->dev->of_node, i, 0);
+-		if (!remote_node) {
+-			ret = -EPIPE;
+-			goto exit;
+-		}
+-		nodes[j++] = remote_node;
+-
+-		if (i == ENDPOINT_DECON_NODE &&
+-			of_get_child_by_name(remote_node, "i80-if-timings"))
+-			mic->i80_mode = 1;
+-	}
+-
+-exit:
+-	while (--j > -1)
+-		of_node_put(nodes[j]);
+-
+-	return ret;
+-}
+-
+ static void mic_disable(struct drm_bridge *bridge) { }
+ 
+ static void mic_post_disable(struct drm_bridge *bridge)
+@@ -286,6 +253,7 @@ static void mic_mode_set(struct drm_bridge *bridge,
+ 
+ 	mutex_lock(&mic_mutex);
+ 	drm_display_mode_to_videomode(mode, &mic->vm);
++	mic->i80_mode = to_exynos_crtc(bridge->encoder->crtc)->i80_mode;
+ 	mutex_unlock(&mic_mutex);
+ }
+ 
+@@ -425,10 +393,6 @@ static int exynos_mic_probe(struct platform_device *pdev)
+ 
+ 	mic->dev = dev;
+ 
+-	ret = parse_dt(mic);
+-	if (ret)
+-		goto err;
+-
+ 	ret = of_address_to_resource(dev->of_node, 0, &res);
+ 	if (ret) {
+ 		DRM_ERROR("mic: Failed to get mem region for MIC\n");
+-- 
+2.7.4
