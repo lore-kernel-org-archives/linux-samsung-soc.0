@@ -1,109 +1,69 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v3 2/3] drm/panel: s6e3ha2: Add support for s6e3hf2 panel on
- TM2e board
-Date: Tue, 18 Apr 2017 17:40:35 +0900
-Message-ID: <1492504836-19225-3-git-send-email-hoegeun.kwon@samsung.com>
-References: <1492504836-19225-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170418084047epcas5p498466f18393893d7dd3b2be64f950f61@epcas5p4.samsung.com>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: [PATCH 6/7] regulator: arizona-ldo1: Make arizona_ldo1 independent of struct arizona
+Date: Tue, 18 Apr 2017 11:43:53 +0100
+Message-ID: <1492512234-19210-8-git-send-email-rf@opensource.wolfsonmicro.com>
+References: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1492504836-19225-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, andi.shyti@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:56057 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755547AbdDRKoX (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 18 Apr 2017 06:44:23 -0400
+In-Reply-To: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: broonie@kernel.org, lee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org
+Cc: linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-VGhpcyBwYXRjaCBzdXBwb3J0cyBUTTJlIHBhbmVsIGFuZCB0aGUgcGFuZWwgaGFzIDE2MDB4MjU2
-MCByZXNvbHV0aW9uCmluIDUuNjUiIHBoeXNpY2FsLgoKVGhpcyBpZGVudGlmeSBwYW5lbCB0eXBl
-IHdpdGggY29tcGF0aWJpbGl0eSBzdHJpbmcsIGFsc28gaW52b2tlCmRpc3BsYXkgbW9kZSB0aGF0
-IG1hdGNoZXMgdGhlIHR5cGUuIFNvIGFkZCB0aGUgY2hlY2sgY29kZSBmb3IgczZlM2hhMgpjb21w
-YXRpYmlsaXR5IGFuZCBzNmUzaGYyIHR5cGUgYW5kIHNlbGVjdCB0aGUgZHJtX2Rpc3BsYXlfbW9k
-ZSBvZgpkZWZhdWx0IGFuZCBlZGdlIHR5cGUuCgpTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24g
-PGhvZWdldW4ua3dvbkBzYW1zdW5nLmNvbT4KUmV2aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEu
-aGFqZGFAc2Ftc3VuZy5jb20+ClJldmlld2VkLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3Vu
-Zy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlM2hhMi5j
-IHwgNjQgKysrKysrKysrKysrKysrKysrKysrKysrLS0tCiAxIGZpbGUgY2hhbmdlZCwgNTcgaW5z
-ZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-cGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUzaGEyLmMgYi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFu
-ZWwtc2Ftc3VuZy1zNmUzaGEyLmMKaW5kZXggNGNjMDhkNy4uYzdiNDE4YiAxMDA2NDQKLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlM2hhMi5jCisrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5nLXM2ZTNoYTIuYwpAQCAtMTYsNiArMTYsNyBA
-QAogI2luY2x1ZGUgPGRybS9kcm1fcGFuZWwuaD4KICNpbmNsdWRlIDxsaW51eC9iYWNrbGlnaHQu
-aD4KICNpbmNsdWRlIDxsaW51eC9ncGlvL2NvbnN1bWVyLmg+CisjaW5jbHVkZSA8bGludXgvb2Zf
-ZGV2aWNlLmg+CiAjaW5jbHVkZSA8bGludXgvcmVndWxhdG9yL2NvbnN1bWVyLmg+CiAKICNkZWZp
-bmUgUzZFM0hBMl9NSU5fQlJJR0hUTkVTUwkJMApAQCAtMjE4LDYgKzIxOSwxNiBAQAogCTB4MWQs
-IDB4MWUsIDB4MWYsIDB4MjAsIDB4MjEKIH07CiAKK2VudW0gczZlM2hhMl90eXBlIHsKKwlIQTJf
-VFlQRSwKKwlIRjJfVFlQRSwKK307CisKK3N0cnVjdCBzNmUzaGEyX3BhbmVsX2Rlc2MgeworCWNv
-bnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlOworCWVudW0gczZlM2hhMl90eXBlIHR5
-cGU7Cit9OworCiBzdHJ1Y3QgczZlM2hhMiB7CiAJc3RydWN0IGRldmljZSAqZGV2OwogCXN0cnVj
-dCBkcm1fcGFuZWwgcGFuZWw7CkBAIC0yMjYsNiArMjM3LDggQEAgc3RydWN0IHM2ZTNoYTIgewog
-CXN0cnVjdCByZWd1bGF0b3JfYnVsa19kYXRhIHN1cHBsaWVzWzJdOwogCXN0cnVjdCBncGlvX2Rl
-c2MgKnJlc2V0X2dwaW87CiAJc3RydWN0IGdwaW9fZGVzYyAqZW5hYmxlX2dwaW87CisKKwljb25z
-dCBzdHJ1Y3QgczZlM2hhMl9wYW5lbF9kZXNjICpkZXNjOwogfTsKIAogc3RhdGljIGludCBzNmUz
-aGEyX2Rjc193cml0ZShzdHJ1Y3QgczZlM2hhMiAqY3R4LCBjb25zdCB2b2lkICpkYXRhLCBzaXpl
-X3QgbGVuKQpAQCAtMjgzLDExICsyOTYsMTkgQEAgc3RhdGljIGludCBzNmUzaGEyX3NpbmdsZV9k
-c2lfc2V0KHN0cnVjdCBzNmUzaGEyICpjdHgpCiBzdGF0aWMgaW50IHM2ZTNoYTJfZnJlcV9jYWxp
-YnJhdGlvbihzdHJ1Y3QgczZlM2hhMiAqY3R4KQogewogCXM2ZTNoYTJfZGNzX3dyaXRlX3NlcV9z
-dGF0aWMoY3R4LCAweGZkLCAweDFjKTsKKwlpZiAoY3R4LT5kZXNjLT50eXBlID09IEhGMl9UWVBF
-KQorCQlzNmUzaGEyX2Rjc193cml0ZV9zZXFfc3RhdGljKGN0eCwgMHhmMiwgMHg2NywgMHg0MCwg
-MHhjNSk7CiAJczZlM2hhMl9kY3Nfd3JpdGVfc2VxX3N0YXRpYyhjdHgsIDB4ZmUsIDB4MjAsIDB4
-MzkpOwogCXM2ZTNoYTJfZGNzX3dyaXRlX3NlcV9zdGF0aWMoY3R4LCAweGZlLCAweGEwKTsKIAlz
-NmUzaGEyX2Rjc193cml0ZV9zZXFfc3RhdGljKGN0eCwgMHhmZSwgMHgyMCk7Ci0JczZlM2hhMl9k
-Y3Nfd3JpdGVfc2VxX3N0YXRpYyhjdHgsIDB4Y2UsIDB4MDMsIDB4M2IsIDB4MTIsIDB4NjIsIDB4
-NDAsCi0JCQkJMHg4MCwgMHhjMCwgMHgyOCwgMHgyOCwgMHgyOCwgMHgyOCwgMHgzOSwgMHhjNSk7
-CisKKwlpZiAoY3R4LT5kZXNjLT50eXBlID09IEhBMl9UWVBFKQorCQlzNmUzaGEyX2Rjc193cml0
-ZV9zZXFfc3RhdGljKGN0eCwgMHhjZSwgMHgwMywgMHgzYiwgMHgxMiwgMHg2MiwKKwkJCTB4NDAs
-IDB4ODAsIDB4YzAsIDB4MjgsIDB4MjgsIDB4MjgsIDB4MjgsIDB4MzksIDB4YzUpOworCWVsc2UK
-KwkJczZlM2hhMl9kY3Nfd3JpdGVfc2VxX3N0YXRpYyhjdHgsIDB4Y2UsIDB4MDMsIDB4M2IsIDB4
-MTQsIDB4NmQsCisJCQkweDQwLCAweDgwLCAweGMwLCAweDI4LCAweDI4LCAweDI4LCAweDI4LCAw
-eDM5LCAweGM1KTsKKwogCXJldHVybiAwOwogfQogCkBAIC01ODMsNyArNjA0LDcgQEAgc3RhdGlj
-IGludCBzNmUzaGEyX2VuYWJsZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKIAlyZXR1cm4gMDsK
-IH0KIAotc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlIGRlZmF1bHRfbW9kZSA9
-IHsKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSBzNmUzaGEyX21vZGUgPSB7
-CiAJLmNsb2NrID0gMjIyMzcyLAogCS5oZGlzcGxheSA9IDE0NDAsCiAJLmhzeW5jX3N0YXJ0ID0g
-MTQ0MCArIDEsCkBAIC01OTcsMTYgKzYxOCw0MSBAQCBzdGF0aWMgaW50IHM2ZTNoYTJfZW5hYmxl
-KHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQogCS5mbGFncyA9IDAsCiB9OwogCitzdGF0aWMgY29u
-c3Qgc3RydWN0IHM2ZTNoYTJfcGFuZWxfZGVzYyBzYW1zdW5nX3M2ZTNoYTIgPSB7CisJLm1vZGUg
-PSAmczZlM2hhMl9tb2RlLAorCS50eXBlID0gSEEyX1RZUEUsCit9OworCitzdGF0aWMgY29uc3Qg
-c3RydWN0IGRybV9kaXNwbGF5X21vZGUgczZlM2hmMl9tb2RlID0geworCS5jbG9jayA9IDI0Nzg1
-NiwKKwkuaGRpc3BsYXkgPSAxNjAwLAorCS5oc3luY19zdGFydCA9IDE2MDAgKyAxLAorCS5oc3lu
-Y19lbmQgPSAxNjAwICsgMSArIDEsCisJLmh0b3RhbCA9IDE2MDAgKyAxICsgMSArIDEsCisJLnZk
-aXNwbGF5ID0gMjU2MCwKKwkudnN5bmNfc3RhcnQgPSAyNTYwICsgMSwKKwkudnN5bmNfZW5kID0g
-MjU2MCArIDEgKyAxLAorCS52dG90YWwgPSAyNTYwICsgMSArIDEgKyAxNSwKKwkudnJlZnJlc2gg
-PSA2MCwKKwkuZmxhZ3MgPSAwLAorfTsKKworc3RhdGljIGNvbnN0IHN0cnVjdCBzNmUzaGEyX3Bh
-bmVsX2Rlc2Mgc2Ftc3VuZ19zNmUzaGYyID0geworCS5tb2RlID0gJnM2ZTNoZjJfbW9kZSwKKwku
-dHlwZSA9IEhGMl9UWVBFLAorfTsKKwogc3RhdGljIGludCBzNmUzaGEyX2dldF9tb2RlcyhzdHJ1
-Y3QgZHJtX3BhbmVsICpwYW5lbCkKIHsKIAlzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9y
-ID0gcGFuZWwtPmNvbm5lY3RvcjsKKwlzdHJ1Y3QgczZlM2hhMiAqY3R4ID0gY29udGFpbmVyX29m
-KHBhbmVsLCBzdHJ1Y3QgczZlM2hhMiwgcGFuZWwpOwogCXN0cnVjdCBkcm1fZGlzcGxheV9tb2Rl
-ICptb2RlOwogCi0JbW9kZSA9IGRybV9tb2RlX2R1cGxpY2F0ZShwYW5lbC0+ZHJtLCAmZGVmYXVs
-dF9tb2RlKTsKKwltb2RlID0gZHJtX21vZGVfZHVwbGljYXRlKHBhbmVsLT5kcm0sIGN0eC0+ZGVz
-Yy0+bW9kZSk7CiAJaWYgKCFtb2RlKSB7CiAJCURSTV9FUlJPUigiZmFpbGVkIHRvIGFkZCBtb2Rl
-ICV1eCV1eEAldVxuIiwKLQkJCQlkZWZhdWx0X21vZGUuaGRpc3BsYXksIGRlZmF1bHRfbW9kZS52
-ZGlzcGxheSwKLQkJCQlkZWZhdWx0X21vZGUudnJlZnJlc2gpOworCQkJY3R4LT5kZXNjLT5tb2Rl
-LT5oZGlzcGxheSwgY3R4LT5kZXNjLT5tb2RlLT52ZGlzcGxheSwKKwkJCWN0eC0+ZGVzYy0+bW9k
-ZS0+dnJlZnJlc2gpOwogCQlyZXR1cm4gLUVOT01FTTsKIAl9CiAKQEAgLTY0Miw2ICs2ODgsNyBA
-QCBzdGF0aWMgaW50IHM2ZTNoYTJfcHJvYmUoc3RydWN0IG1pcGlfZHNpX2RldmljZSAqZHNpKQog
-CW1pcGlfZHNpX3NldF9kcnZkYXRhKGRzaSwgY3R4KTsKIAogCWN0eC0+ZGV2ID0gZGV2OworCWN0
-eC0+ZGVzYyA9IG9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YShkZXYpOwogCiAJZHNpLT5sYW5lcyA9
-IDQ7CiAJZHNpLT5mb3JtYXQgPSBNSVBJX0RTSV9GTVRfUkdCODg4OwpAQCAtNzE3LDcgKzc2NCwx
-MCBAQCBzdGF0aWMgaW50IHM2ZTNoYTJfcmVtb3ZlKHN0cnVjdCBtaXBpX2RzaV9kZXZpY2UgKmRz
-aSkKIH0KIAogc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgczZlM2hhMl9vZl9tYXRj
-aFtdID0gewotCXsgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxzNmUzaGEyIiB9LAorCXsgLmNvbXBh
-dGlibGUgPSAic2Ftc3VuZyxzNmUzaGEyIiwKKwkgIC5kYXRhID0gJnNhbXN1bmdfczZlM2hhMiB9
-LAorCXsgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxzNmUzaGYyIiwKKwkgIC5kYXRhID0gJnNhbXN1
-bmdfczZlM2hmMiB9LAogCXsgfQogfTsKIE1PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIHM2ZTNoYTJf
-b2ZfbWF0Y2gpOwotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+In preparation for supporting Madera codecs, remove the dependency on
+struct arizona in the regulator callbacks and struct arizona_ldo1.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+---
+ drivers/regulator/arizona-ldo1.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
+index f5bc75a..678f81f 100644
+--- a/drivers/regulator/arizona-ldo1.c
++++ b/drivers/regulator/arizona-ldo1.c
+@@ -33,7 +33,7 @@
+ 
+ struct arizona_ldo1 {
+ 	struct regulator_dev *regulator;
+-	struct arizona *arizona;
++	struct regmap *regmap;
+ 
+ 	struct regulator_consumer_supply supply;
+ 	struct regulator_init_data init_data;
+@@ -67,7 +67,7 @@ static int arizona_ldo1_hc_set_voltage_sel(struct regulator_dev *rdev,
+ 					   unsigned sel)
+ {
+ 	struct arizona_ldo1 *ldo = rdev_get_drvdata(rdev);
+-	struct regmap *regmap = ldo->arizona->regmap;
++	struct regmap *regmap = ldo->regmap;
+ 	unsigned int val;
+ 	int ret;
+ 
+@@ -93,7 +93,7 @@ static int arizona_ldo1_hc_set_voltage_sel(struct regulator_dev *rdev,
+ static int arizona_ldo1_hc_get_voltage_sel(struct regulator_dev *rdev)
+ {
+ 	struct arizona_ldo1 *ldo = rdev_get_drvdata(rdev);
+-	struct regmap *regmap = ldo->arizona->regmap;
++	struct regmap *regmap = ldo->regmap;
+ 	unsigned int val;
+ 	int ret;
+ 
+@@ -247,7 +247,7 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
+ 	if (!ldo1)
+ 		return -ENOMEM;
+ 
+-	ldo1->arizona = arizona;
++	ldo1->regmap = arizona->regmap;
+ 
+ 	/*
+ 	 * Since the chip usually supplies itself we provide some
+-- 
+1.9.1
