@@ -1,296 +1,251 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 3/7] drm/exynos/dsi: refactor panel detection logic
-Date: Tue, 18 Apr 2017 14:39:59 +0200
-Message-ID: <1492519203-23537-4-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 6/7] drm/exynos/decon5433: use mode info stored in CRTC to
+ detect i80 mode
+Date: Tue, 18 Apr 2017 14:40:02 +0200
+Message-ID: <1492519203-23537-7-git-send-email-a.hajda@samsung.com>
 References: <1492519203-23537-1-git-send-email-a.hajda@samsung.com>
- <CGME20170418124013eucas1p13103c8630a1acd86d607d02d95916786@eucas1p1.samsung.com>
+ <CGME20170418124014eucas1p1d2048b0f624f0536a35c3be7f20026b6@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:46152 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753212AbdDRMkR (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:24193 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753094AbdDRMkU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Apr 2017 08:40:17 -0400
+        Tue, 18 Apr 2017 08:40:20 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout3.w1.samsung.com
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OOL00EL0V72VI90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Apr 2017 13:40:14 +0100 (BST)
+ with ESMTP id <0OOL00GCQV71W890@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Apr 2017 13:40:15 +0100 (BST)
 In-reply-to: <1492519203-23537-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-Description of drm_helper_hpd_irq_event clearly states that drivers
-supporting hotplug events per connector should use different helper -
-drm_kms_helper_hotplug_event. To achieve it following changes have
-been performed:
-- moved down all DSI ops - they require exynos_dsi_disable function
-to be defined earlier,
-- simplified exynos_dsi_detect - there is no real detection, it just
-returns if panel is attached,
-- DSI attach/detach callbacks attaches/detaches DRM panel and sets
-connector status and other context fields accordingly, all this is
-performed under mutex, as these callbacks are asynchronous.
+Since panel's mode of work is propagated properly from panel to DECON,
+there is no need to use redundant private property. The only issue with
+such approach is that check for required interrupts should be postponed
+until panel communicate its requirements - ie to atomic_check.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 204 ++++++++++++++++----------------
- 1 file changed, 103 insertions(+), 101 deletions(-)
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 98 ++++++++++++++++-----------
+ 1 file changed, 57 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 3ae459f..515090f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -254,7 +254,6 @@ struct exynos_dsi {
- 	struct drm_encoder encoder;
- 	struct mipi_dsi_host dsi_host;
- 	struct drm_connector connector;
--	struct device_node *panel_node;
- 	struct drm_panel *panel;
- 	struct device *dev;
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 237b4c9..7a09e03 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -34,9 +34,8 @@
+ #define WINDOWS_NR	3
+ #define MIN_FB_WIDTH_FOR_16WORD_BURST	128
  
-@@ -1329,12 +1328,13 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
+-#define IFTYPE_I80	(1 << 0)
+-#define I80_HW_TRG	(1 << 1)
+-#define IFTYPE_HDMI	(1 << 2)
++#define I80_HW_TRG	(1 << 0)
++#define IFTYPE_HDMI	(1 << 1)
+ 
+ static const char * const decon_clks_name[] = {
+ 	"pclk",
+@@ -58,7 +57,9 @@ struct decon_context {
+ 	struct regmap			*sysreg;
+ 	struct clk			*clks[ARRAY_SIZE(decon_clks_name)];
+ 	unsigned int			irq;
+-	unsigned int			te_irq;
++	unsigned int			irq_vsync;
++	unsigned int			irq_lcd_sys;
++	unsigned int			irq_te;
+ 	unsigned long			out_type;
+ 	int				first_win;
+ 	spinlock_t			vblank_lock;
+@@ -91,7 +92,7 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
+ 	u32 val;
+ 
+ 	val = VIDINTCON0_INTEN;
+-	if (ctx->out_type & IFTYPE_I80)
++	if (crtc->i80_mode)
+ 		val |= VIDINTCON0_FRAMEDONE;
+ 	else
+ 		val |= VIDINTCON0_INTFRMEN | VIDINTCON0_FRAMESEL_FP;
+@@ -100,7 +101,7 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
+ 
+ 	enable_irq(ctx->irq);
+ 	if (!(ctx->out_type & I80_HW_TRG))
+-		enable_irq(ctx->te_irq);
++		enable_irq(ctx->irq_te);
+ 
  	return 0;
  }
+@@ -110,7 +111,7 @@ static void decon_disable_vblank(struct exynos_drm_crtc *crtc)
+ 	struct decon_context *ctx = crtc->ctx;
  
--static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi)
-+static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
-+				      struct device *panel)
+ 	if (!(ctx->out_type & I80_HW_TRG))
+-		disable_irq_nosync(ctx->te_irq);
++		disable_irq_nosync(ctx->irq_te);
+ 	disable_irq_nosync(ctx->irq);
+ 
+ 	writel(0, ctx->addr + DECON_VIDINTCON0);
+@@ -140,7 +141,7 @@ static u32 decon_get_frame_count(struct decon_context *ctx, bool end)
+ 
+ 	switch (status & (VIDCON1_VSTATUS_MASK | VIDCON1_I80_ACTIVE)) {
+ 	case VIDCON1_VSTATUS_VS:
+-		if (!(ctx->out_type & IFTYPE_I80))
++		if (!(ctx->crtc->i80_mode))
+ 			--frm;
+ 		break;
+ 	case VIDCON1_VSTATUS_BP:
+@@ -167,7 +168,7 @@ static u32 decon_get_vblank_counter(struct exynos_drm_crtc *crtc)
+ 
+ static void decon_setup_trigger(struct decon_context *ctx)
  {
- 	int ret;
- 	int te_gpio_irq;
+-	if (!(ctx->out_type & (IFTYPE_I80 | I80_HW_TRG)))
++	if (!ctx->crtc->i80_mode && !(ctx->out_type & I80_HW_TRG))
+ 		return;
  
--	dsi->te_gpio = of_get_named_gpio(dsi->panel_node, "te-gpios", 0);
-+	dsi->te_gpio = of_get_named_gpio(panel->of_node, "te-gpios", 0);
- 	if (dsi->te_gpio == -ENOENT)
- 		return 0;
+ 	if (!(ctx->out_type & I80_HW_TRG)) {
+@@ -207,7 +208,7 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+ 	val = VIDOUT_LCD_ON;
+ 	if (interlaced)
+ 		val |= VIDOUT_INTERLACE_EN_F;
+-	if (ctx->out_type & IFTYPE_I80) {
++	if (crtc->i80_mode) {
+ 		val |= VIDOUT_COMMAND_IF;
+ 	} else {
+ 		val |= VIDOUT_RGB_IF;
+@@ -223,7 +224,7 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+ 			VIDTCON2_HOZVAL(m->hdisplay - 1);
+ 	writel(val, ctx->addr + DECON_VIDTCON2);
  
-@@ -1374,85 +1374,6 @@ static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
- 	}
+-	if (!(ctx->out_type & IFTYPE_I80)) {
++	if (!crtc->i80_mode) {
+ 		int vbp = m->crtc_vtotal - m->crtc_vsync_end;
+ 		int vfp = m->crtc_vsync_start - m->crtc_vdisplay;
+ 
+@@ -456,7 +457,7 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
+ 	int i;
+ 
+ 	if (!(ctx->out_type & I80_HW_TRG))
+-		synchronize_irq(ctx->te_irq);
++		synchronize_irq(ctx->irq_te);
+ 	synchronize_irq(ctx->irq);
+ 
+ 	/*
+@@ -511,6 +512,22 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
+ 		clk_disable_unprepare(ctx->clks[i]);
  }
  
--static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
--				  struct mipi_dsi_device *device)
--{
--	struct exynos_dsi *dsi = host_to_dsi(host);
--
--	dsi->lanes = device->lanes;
--	dsi->format = device->format;
--	dsi->mode_flags = device->mode_flags;
--	dsi->panel_node = device->dev.of_node;
--
--	/*
--	 * This is a temporary solution and should be made by more generic way.
--	 *
--	 * If attached panel device is for command mode one, dsi should register
--	 * TE interrupt handler.
--	 */
--	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO)) {
--		int ret = exynos_dsi_register_te_irq(dsi);
--
--		if (ret)
--			return ret;
--	}
--
--	if (dsi->connector.dev)
--		drm_helper_hpd_irq_event(dsi->connector.dev);
--
--	return 0;
--}
--
--static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
--				  struct mipi_dsi_device *device)
--{
--	struct exynos_dsi *dsi = host_to_dsi(host);
--
--	exynos_dsi_unregister_te_irq(dsi);
--
--	dsi->panel_node = NULL;
--
--	if (dsi->connector.dev)
--		drm_helper_hpd_irq_event(dsi->connector.dev);
--
--	return 0;
--}
--
--static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
--				        const struct mipi_dsi_msg *msg)
--{
--	struct exynos_dsi *dsi = host_to_dsi(host);
--	struct exynos_dsi_transfer xfer;
--	int ret;
--
--	if (!(dsi->state & DSIM_STATE_ENABLED))
--		return -EINVAL;
--
--	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
--		ret = exynos_dsi_init(dsi);
--		if (ret)
--			return ret;
--		dsi->state |= DSIM_STATE_INITIALIZED;
--	}
--
--	ret = mipi_dsi_create_packet(&xfer.packet, msg);
--	if (ret < 0)
--		return ret;
--
--	xfer.rx_len = msg->rx_len;
--	xfer.rx_payload = msg->rx_buf;
--	xfer.flags = msg->flags;
--
--	ret = exynos_dsi_transfer(dsi, &xfer);
--	return (ret < 0) ? ret : xfer.rx_done;
--}
--
--static const struct mipi_dsi_host_ops exynos_dsi_ops = {
--	.attach = exynos_dsi_host_attach,
--	.detach = exynos_dsi_host_detach,
--	.transfer = exynos_dsi_host_transfer,
--};
--
- static void exynos_dsi_enable(struct drm_encoder *encoder)
- {
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
-@@ -1508,25 +1429,7 @@ static void exynos_dsi_disable(struct drm_encoder *encoder)
- static enum drm_connector_status
- exynos_dsi_detect(struct drm_connector *connector, bool force)
- {
--	struct exynos_dsi *dsi = connector_to_dsi(connector);
--
--	if (!dsi->panel) {
--		dsi->panel = of_drm_find_panel(dsi->panel_node);
--		if (dsi->panel)
--			drm_panel_attach(dsi->panel, &dsi->connector);
--	} else if (!dsi->panel_node) {
--		struct drm_encoder *encoder;
--
--		encoder = platform_get_drvdata(to_platform_device(dsi->dev));
--		exynos_dsi_disable(encoder);
--		drm_panel_detach(dsi->panel);
--		dsi->panel = NULL;
--	}
--
--	if (dsi->panel)
--		return connector_status_connected;
--
--	return connector_status_disconnected;
-+	return connector->status;
- }
++static int decon_atomic_check(struct exynos_drm_crtc *crtc,
++		struct drm_crtc_state *state)
++{
++	struct decon_context *ctx = crtc->ctx;
++
++	ctx->irq = crtc->i80_mode ? ctx->irq_lcd_sys : ctx->irq_vsync;
++
++	if (ctx->irq)
++		return 0;
++
++	dev_err(ctx->dev, "Panel requires %s mode, but appropriate interrupt is not provided.\n",
++			crtc->i80_mode ? "command" : "video");
++
++	return -EINVAL;
++}
++
+ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
+ 	.enable			= decon_enable,
+ 	.disable		= decon_disable,
+@@ -521,6 +538,7 @@ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
+ 	.update_plane		= decon_update_plane,
+ 	.disable_plane		= decon_disable_plane,
+ 	.atomic_flush		= decon_atomic_flush,
++	.atomic_check		= decon_atomic_check,
+ };
  
- static void exynos_dsi_connector_destroy(struct drm_connector *connector)
-@@ -1576,6 +1479,7 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
- 		return ret;
+ static int decon_bind(struct device *dev, struct device *master, void *data)
+@@ -670,19 +688,22 @@ static const struct of_device_id exynos5433_decon_driver_dt_match[] = {
+ MODULE_DEVICE_TABLE(of, exynos5433_decon_driver_dt_match);
+ 
+ static int decon_conf_irq(struct decon_context *ctx, const char *name,
+-		irq_handler_t handler, unsigned long int flags, bool required)
++		irq_handler_t handler, unsigned long int flags)
+ {
+ 	struct platform_device *pdev = to_platform_device(ctx->dev);
+ 	int ret, irq = platform_get_irq_byname(pdev, name);
+ 
+ 	if (irq < 0) {
+-		if (irq == -EPROBE_DEFER)
++		switch (irq) {
++		case -EPROBE_DEFER:
++			return irq;
++		case -ENODATA:
++		case -ENXIO:
++			return 0;
++		default:
++			dev_err(ctx->dev, "IRQ %s get failed, %d\n", name, irq);
+ 			return irq;
+-		if (required)
+-			dev_err(ctx->dev, "cannot get %s IRQ\n", name);
+-		else
+-			irq = 0;
+-		return irq;
++		}
+ 	}
+ 	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	ret = devm_request_irq(ctx->dev, irq, handler, flags, "drm_decon", ctx);
+@@ -710,11 +731,8 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ 	ctx->out_type = (unsigned long)of_device_get_match_data(dev);
+ 	spin_lock_init(&ctx->vblank_lock);
+ 
+-	if (ctx->out_type & IFTYPE_HDMI) {
++	if (ctx->out_type & IFTYPE_HDMI)
+ 		ctx->first_win = 1;
+-	} else if (of_get_child_by_name(dev->of_node, "i80-if-timings")) {
+-		ctx->out_type |= IFTYPE_I80;
+-	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(decon_clks_name); i++) {
+ 		struct clk *clk;
+@@ -738,25 +756,23 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ 		return PTR_ERR(ctx->addr);
  	}
  
-+	connector->status = connector_status_disconnected;
- 	drm_connector_helper_add(connector, &exynos_dsi_connector_helper_funcs);
- 	drm_mode_connector_attach_encoder(connector, encoder);
- 
-@@ -1612,6 +1516,104 @@ static const struct drm_encoder_funcs exynos_dsi_encoder_funcs = {
- 
- MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
- 
-+static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
-+				  struct mipi_dsi_device *device)
-+{
-+	struct exynos_dsi *dsi = host_to_dsi(host);
-+	struct drm_device *drm = dsi->connector.dev;
-+
-+	/*
-+	 * This is a temporary solution and should be made by more generic way.
-+	 *
-+	 * If attached panel device is for command mode one, dsi should register
-+	 * TE interrupt handler.
-+	 */
-+	if (!(device->mode_flags & MIPI_DSI_MODE_VIDEO)) {
-+		int ret = exynos_dsi_register_te_irq(dsi, &device->dev);
-+
-+		if (ret)
-+			return ret;
-+	}
-+
-+	mutex_lock(&drm->mode_config.mutex);
-+
-+	dsi->lanes = device->lanes;
-+	dsi->format = device->format;
-+	dsi->mode_flags = device->mode_flags;
-+	dsi->panel = of_drm_find_panel(device->dev.of_node);
-+	if (dsi->panel) {
-+		drm_panel_attach(dsi->panel, &dsi->connector);
-+		dsi->connector.status = connector_status_connected;
-+	}
-+
-+	mutex_unlock(&drm->mode_config.mutex);
-+
-+	if (drm->mode_config.poll_enabled)
-+		drm_kms_helper_hotplug_event(drm);
-+
-+	return 0;
-+}
-+
-+static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
-+				  struct mipi_dsi_device *device)
-+{
-+	struct exynos_dsi *dsi = host_to_dsi(host);
-+	struct drm_device *drm = dsi->connector.dev;
-+
-+	mutex_lock(&drm->mode_config.mutex);
-+
-+	if (dsi->panel) {
-+		exynos_dsi_disable(&dsi->encoder);
-+		drm_panel_detach(dsi->panel);
-+		dsi->panel = NULL;
-+		dsi->connector.status = connector_status_disconnected;
-+	}
-+
-+	mutex_unlock(&drm->mode_config.mutex);
-+
-+	if (drm->mode_config.poll_enabled)
-+		drm_kms_helper_hotplug_event(drm);
-+
-+	exynos_dsi_unregister_te_irq(dsi);
-+
-+	return 0;
-+}
-+
-+static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
-+					const struct mipi_dsi_msg *msg)
-+{
-+	struct exynos_dsi *dsi = host_to_dsi(host);
-+	struct exynos_dsi_transfer xfer;
-+	int ret;
-+
-+	if (!(dsi->state & DSIM_STATE_ENABLED))
-+		return -EINVAL;
-+
-+	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
-+		ret = exynos_dsi_init(dsi);
-+		if (ret)
-+			return ret;
-+		dsi->state |= DSIM_STATE_INITIALIZED;
-+	}
-+
-+	ret = mipi_dsi_create_packet(&xfer.packet, msg);
+-	if (ctx->out_type & IFTYPE_I80) {
+-		ret = decon_conf_irq(ctx, "lcd_sys", decon_irq_handler, 0, true);
+-		if (ret < 0)
+-			return ret;
+-		ctx->irq = ret;
++	ret = decon_conf_irq(ctx, "vsync", decon_irq_handler, 0);
 +	if (ret < 0)
 +		return ret;
++	ctx->irq_vsync = ret;
+ 
+-		ret = decon_conf_irq(ctx, "te", decon_te_irq_handler,
+-				     IRQF_TRIGGER_RISING, false);
+-		if (ret < 0)
+-			return ret;
+-		if (ret) {
+-			ctx->te_irq = ret;
+-			ctx->out_type &= ~I80_HW_TRG;
+-		}
+-	} else {
+-		ret = decon_conf_irq(ctx, "vsync", decon_irq_handler, 0, true);
+-		if (ret < 0)
+-			return ret;
+-		ctx->irq = ret;
++	ret = decon_conf_irq(ctx, "lcd_sys", decon_irq_handler, 0);
++	if (ret < 0)
++		return ret;
++	ctx->irq_lcd_sys = ret;
 +
-+	xfer.rx_len = msg->rx_len;
-+	xfer.rx_payload = msg->rx_buf;
-+	xfer.flags = msg->flags;
-+
-+	ret = exynos_dsi_transfer(dsi, &xfer);
-+	return (ret < 0) ? ret : xfer.rx_done;
-+}
-+
-+static const struct mipi_dsi_host_ops exynos_dsi_ops = {
-+	.attach = exynos_dsi_host_attach,
-+	.detach = exynos_dsi_host_detach,
-+	.transfer = exynos_dsi_host_transfer,
-+};
-+
- static int exynos_dsi_of_read_u32(const struct device_node *np,
- 				  const char *propname, u32 *out_value)
- {
++	ret = decon_conf_irq(ctx, "te", decon_te_irq_handler,
++			IRQF_TRIGGER_RISING);
++	if (ret < 0)
++		return ret;
++	if (ret) {
++		ctx->irq_te = ret;
++		ctx->out_type &= ~I80_HW_TRG;
+ 	}
+ 
+ 	if (ctx->out_type & I80_HW_TRG) {
 -- 
 2.7.4
