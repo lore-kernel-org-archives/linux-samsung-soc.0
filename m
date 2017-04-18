@@ -1,44 +1,44 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 0/7] regulator: arizona: Prepare for sharing with Madera
- codecs
-Date: Tue, 18 Apr 2017 20:49:34 +0100
-Message-ID: <20170418194934.kbuckzbdd6pkis25@sirena.org.uk>
-References: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
+From: Dave Airlie <airlied@gmail.com>
+Subject: Re: [GIT PULL] exynos-drm-next
+Date: Wed, 19 Apr 2017 09:35:02 +1000
+Message-ID: <CAPM=9tx2prz3mKuaRwwLohQ4gX_PbCOnVwdRZJXAt3EHzrPe1Q@mail.gmail.com>
+References: <CGME20170418020509epcas5p2e54f307dee164846dabf0470c5f134eb@epcas5p2.samsung.com>
+ <1492481109-2863-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="flxfu6c3dw2pupvn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: lee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:34082 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757893AbdDRXfD (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 18 Apr 2017 19:35:03 -0400
+Received: by mail-vk0-f68.google.com with SMTP id w6so579735vkd.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Apr 2017 16:35:03 -0700 (PDT)
+In-Reply-To: <1492481109-2863-1-git-send-email-inki.dae@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Dave Airlie <airlied@linux.ie>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
+On 18 April 2017 at 12:05, Inki Dae <inki.dae@samsung.com> wrote:
+> Hi Dave,
+>
+>    Some improvements, fixups and cleanups to Exynos DRM.
+>
+>    Ps. this pull-reuqest includes a merge tag from Krzysztof Kozlowski
+>    who is a Exynos SoC maintainer, which includes dt patches because
+>    these should be merged together with below one,
+>       drm/exynos: dsi: Fix the parse_dt function
+>
+>    Please kindly let me know if there is any problem.
 
---flxfu6c3dw2pupvn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Inki,
 
-On Tue, Apr 18, 2017 at 11:43:46AM +0100, Richard Fitzgerald wrote:
-> These patches make various changes to the Arizona regulators so that they
-> can be re-used for the Cirrus Madera codecs:
+We closed the merge window at -rc6 for this release, due to some push
+back from Linus,
 
-This all looks good to me but needs review from Lee for the MFD overlap.
+It was mentioned in a few mails on dri-devel, so I'm going to have to
+leave this pull req
+until the next merge, unless there is something in here that will break badly.
 
---flxfu6c3dw2pupvn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlj2bc0ACgkQJNaLcl1U
-h9DIHgf/eU3P/7fK0mI9OdRSIKXRGtF+mp+CN4LTDiDCKpPGOZgJgapHK4KBpBfO
-z4SLXXAE8RR/vRQ7QrIh9mFiX7JjLv+GdfCitInYgE7qrU1+Jo8KYrVqdHkuSJVn
-Andlg4MGXrd4cCIXmYRbOzLxYQq3sb5g9p5TC8T5zijZPgC146NCwqn5SP6za2Vb
-RvX9Sjkzu/pe4jK/mV8M1IbQFKTIQtujLGkm6Y69Vae1gqwGQLZFO+yoec2v1u9y
-5d2CNgDZYmIOTzzT3lr5z997qPJdvKnjfHy4cLGp3MmwYrNArZ4MBvDIzC/DLUFC
-c7VyrxnX1L28ZH19ufxv8dBcUEW73w==
-=t5qm
------END PGP SIGNATURE-----
-
---flxfu6c3dw2pupvn--
+Dave.
