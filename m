@@ -1,161 +1,57 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: [PATCH 4/7] regulator: arizona-micsupp: Factor out generic
- initialization
-Date: Tue, 18 Apr 2017 11:43:51 +0100
-Message-ID: <1492512234-19210-6-git-send-email-rf@opensource.wolfsonmicro.com>
-References: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 1/7] drm/exynos/decon5433: use readl_poll_timeout helpers
+Date: Tue, 18 Apr 2017 14:39:57 +0200
+Message-ID: <1492519203-23537-2-git-send-email-a.hajda@samsung.com>
+References: <1492519203-23537-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170418124012eucas1p1754a7d3053c6a22203fa32a979f18b01@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: broonie@kernel.org, lee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1492519203-23537-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In preparation for sharing this driver with Madera codecs, factor out
-the parts of initialization that aren't dependent on struct arizona.
-
-Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
----
- drivers/regulator/arizona-micsupp.c | 82 +++++++++++++++++++++----------------
- 1 file changed, 46 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/regulator/arizona-micsupp.c b/drivers/regulator/arizona-micsupp.c
-index db4fecf..120de94 100644
---- a/drivers/regulator/arizona-micsupp.c
-+++ b/drivers/regulator/arizona-micsupp.c
-@@ -231,52 +231,27 @@ static int arizona_micsupp_of_get_pdata(struct arizona_micsupp_pdata *pdata,
- 	return 0;
- }
- 
--static int arizona_micsupp_probe(struct platform_device *pdev)
-+static int arizona_micsupp_common_init(struct platform_device *pdev,
-+				       struct arizona_micsupp *micsupp,
-+				       const struct regulator_desc *desc,
-+				       struct arizona_micsupp_pdata *pdata)
- {
--	struct arizona *arizona = dev_get_drvdata(pdev->dev.parent);
--	const struct regulator_desc *desc;
- 	struct regulator_config config = { };
--	struct arizona_micsupp_pdata *pdata = &arizona->pdata.micvdd;
--	struct arizona_micsupp *micsupp;
- 	int ret;
- 
--	micsupp = devm_kzalloc(&pdev->dev, sizeof(*micsupp), GFP_KERNEL);
--	if (!micsupp)
--		return -ENOMEM;
--
--	micsupp->regmap = arizona->regmap;
--	micsupp->dapm = &arizona->dapm;
--	micsupp->dev = arizona->dev;
- 	INIT_WORK(&micsupp->check_cp_work, arizona_micsupp_check_cp);
- 
--	/*
--	 * Since the chip usually supplies itself we provide some
--	 * default init_data for it.  This will be overridden with
--	 * platform data if provided.
--	 */
--	switch (arizona->type) {
--	case WM5110:
--	case WM8280:
--		desc = &arizona_micsupp_ext;
--		micsupp->init_data = arizona_micsupp_ext_default;
--		break;
--	default:
--		desc = &arizona_micsupp;
--		micsupp->init_data = arizona_micsupp_default;
--		break;
--	}
--
- 	micsupp->init_data.consumer_supplies = &micsupp->supply;
- 	micsupp->supply.supply = "MICVDD";
--	micsupp->supply.dev_name = dev_name(arizona->dev);
-+	micsupp->supply.dev_name = dev_name(micsupp->dev);
- 	micsupp->enable_reg = desc->enable_reg;
- 
--	config.dev = arizona->dev;
-+	config.dev = micsupp->dev;
- 	config.driver_data = micsupp;
--	config.regmap = arizona->regmap;
-+	config.regmap = micsupp->regmap;
- 
- 	if (IS_ENABLED(CONFIG_OF)) {
--		if (!dev_get_platdata(arizona->dev)) {
-+		if (!dev_get_platdata(micsupp->dev)) {
- 			ret = arizona_micsupp_of_get_pdata(pdata, &config,
- 							   desc);
- 			if (ret < 0)
-@@ -289,8 +264,8 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
- 	else
- 		config.init_data = &micsupp->init_data;
- 
--	/* Default to regulated mode until the API supports bypass */
--	regmap_update_bits(arizona->regmap, ARIZONA_MIC_CHARGE_PUMP_1,
-+	/* Default to regulated mode */
-+	regmap_update_bits(micsupp->regmap, micsupp->enable_reg,
- 			   ARIZONA_CPMIC_BYPASS, 0);
- 
- 	micsupp->regulator = devm_regulator_register(&pdev->dev,
-@@ -301,7 +276,7 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
- 
- 	if (IS_ERR(micsupp->regulator)) {
- 		ret = PTR_ERR(micsupp->regulator);
--		dev_err(arizona->dev, "Failed to register mic supply: %d\n",
-+		dev_err(micsupp->dev, "Failed to register mic supply: %d\n",
- 			ret);
- 		return ret;
- 	}
-@@ -311,6 +286,41 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int arizona_micsupp_probe(struct platform_device *pdev)
-+{
-+	struct arizona *arizona = dev_get_drvdata(pdev->dev.parent);
-+	const struct regulator_desc *desc;
-+	struct arizona_micsupp *micsupp;
-+
-+	micsupp = devm_kzalloc(&pdev->dev, sizeof(*micsupp), GFP_KERNEL);
-+	if (!micsupp)
-+		return -ENOMEM;
-+
-+	micsupp->regmap = arizona->regmap;
-+	micsupp->dapm = &arizona->dapm;
-+	micsupp->dev = arizona->dev;
-+
-+	/*
-+	 * Since the chip usually supplies itself we provide some
-+	 * default init_data for it.  This will be overridden with
-+	 * platform data if provided.
-+	 */
-+	switch (arizona->type) {
-+	case WM5110:
-+	case WM8280:
-+		desc = &arizona_micsupp_ext;
-+		micsupp->init_data = arizona_micsupp_ext_default;
-+		break;
-+	default:
-+		desc = &arizona_micsupp;
-+		micsupp->init_data = arizona_micsupp_default;
-+		break;
-+	}
-+
-+	return arizona_micsupp_common_init(pdev, micsupp, desc,
-+					   &arizona->pdata.micvdd);
-+}
-+
- static struct platform_driver arizona_micsupp_driver = {
- 	.probe = arizona_micsupp_probe,
- 	.driver		= {
--- 
-1.9.1
+TGludXggY29yZSBwcm92aWRlIGhlbHBlcnMgZm9yIHBvbGxpbmcgd2l0aCB0aW1lb3V0LCBsZXRz
+IHVzZSB0aGVtLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5n
+LmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMg
+fCAyMCArKysrKysrKy0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygr
+KSwgMTIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3M1NDMzX2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMz
+X2RybV9kZWNvbi5jCmluZGV4IDU3OTJjYTg4Li4yMzdiNGM5IDEwMDY0NAotLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCkBAIC0xMyw2ICsxMyw3IEBACiAjaW5j
+bHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+CiAjaW5jbHVkZSA8bGludXgvY2xrLmg+CiAj
+aW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+CisjaW5jbHVkZSA8bGludXgvaW9wb2xsLmg+CiAj
+aW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5oPgogI2luY2x1ZGUgPGxpbnV4L29mX2RldmljZS5o
+PgogI2luY2x1ZGUgPGxpbnV4L29mX2dwaW8uaD4KQEAgLTQwNywyNCArNDA4LDE5IEBAIHN0YXRp
+YyB2b2lkIGRlY29uX2F0b21pY19mbHVzaChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQog
+CiBzdGF0aWMgdm9pZCBkZWNvbl9zd3Jlc2V0KHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgpCiB7
+Ci0JdW5zaWduZWQgaW50IHRyaWVzOwogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CisJdTMyIHZhbDsK
+KwlpbnQgcmV0OwogCiAJd3JpdGVsKDAsIGN0eC0+YWRkciArIERFQ09OX1ZJRENPTjApOwotCWZv
+ciAodHJpZXMgPSAyMDAwOyB0cmllczsgLS10cmllcykgewotCQlpZiAofnJlYWRsKGN0eC0+YWRk
+ciArIERFQ09OX1ZJRENPTjApICYgVklEQ09OMF9TVE9QX1NUQVRVUykKLQkJCWJyZWFrOwotCQl1
+ZGVsYXkoMTApOwotCX0KKwlyZWFkbF9wb2xsX3RpbWVvdXQoY3R4LT5hZGRyICsgREVDT05fVklE
+Q09OMCwgdmFsLAorCQkJICAgfnZhbCAmIFZJRENPTjBfU1RPUF9TVEFUVVMsIDEyLCAyMDAwMCk7
+CiAKIAl3cml0ZWwoVklEQ09OMF9TV1JFU0VULCBjdHgtPmFkZHIgKyBERUNPTl9WSURDT04wKTsK
+LQlmb3IgKHRyaWVzID0gMjAwMDsgdHJpZXM7IC0tdHJpZXMpIHsKLQkJaWYgKH5yZWFkbChjdHgt
+PmFkZHIgKyBERUNPTl9WSURDT04wKSAmIFZJRENPTjBfU1dSRVNFVCkKLQkJCWJyZWFrOwotCQl1
+ZGVsYXkoMTApOwotCX0KKwlyZXQgPSByZWFkbF9wb2xsX3RpbWVvdXQoY3R4LT5hZGRyICsgREVD
+T05fVklEQ09OMCwgdmFsLAorCQkJCSB+dmFsICYgVklEQ09OMF9TV1JFU0VULCAxMiwgMjAwMDAp
+OwogCi0JV0FSTih0cmllcyA9PSAwLCAiZmFpbGVkIHRvIHNvZnR3YXJlIHJlc2V0IERFQ09OXG4i
+KTsKKwlXQVJOKHJldCA8IDAsICJmYWlsZWQgdG8gc29mdHdhcmUgcmVzZXQgREVDT05cbiIpOwog
+CiAJc3Bpbl9sb2NrX2lycXNhdmUoJmN0eC0+dmJsYW5rX2xvY2ssIGZsYWdzKTsKIAljdHgtPmZy
+YW1lX2lkID0gMDsKLS0gCjIuNy40CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
