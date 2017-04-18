@@ -1,66 +1,69 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH V2] PM / OPP: Use - instead of @ for DT entries
-Date: Tue, 18 Apr 2017 16:04:07 +0200
-Message-ID: <2454410.F8dveLU6q9@aspire.rjw.lan>
-References: <70e7c7ee13722ab9c73cb073f88502eaf1ada5f5.1491816050.git.viresh.kumar@linaro.org> <6048149.VQXQ7HobDf@aspire.rjw.lan> <20170418051526.GN28191@vireshk-i7>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 5/7] regulator: arizona-ldo1: Move pdata into a separate structure
+Date: Tue, 18 Apr 2017 16:52:42 +0200
+Message-ID: <CAJKOXPd81C9FOtXVcpwAd=-rWNS0jQK+Qt8NqokmppP8HUKLCQ@mail.gmail.com>
+References: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com> <1492512234-19210-7-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:52144 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754658AbdDROKM (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:57570 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751363AbdDROwq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Apr 2017 10:10:12 -0400
-In-Reply-To: <20170418051526.GN28191@vireshk-i7>
+        Tue, 18 Apr 2017 10:52:46 -0400
+In-Reply-To: <1492512234-19210-7-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, =?ISO-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Mark Rutland <mark.rutland@arm.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linaro-
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: broonie@kernel.org, lee.jones@linaro.org, kgene@kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Tuesday, April 18, 2017 10:45:26 AM Viresh Kumar wrote:
-> On 17-04-17, 18:40, Rafael J. Wysocki wrote:
-> > On Monday, April 17, 2017 06:35:25 PM Rafael J. Wysocki wrote:
-> > > On Monday, April 17, 2017 11:07:51 AM Masahiro Yamada wrote:
-> > > > 2017-04-15 7:47 GMT+09:00 Rafael J. Wysocki <rjw@rjwysocki.net>:
-> > > > > On Monday, April 10, 2017 02:51:35 PM Viresh Kumar wrote:
-> > > > >> Compiling the DT file with W=1, DTC warns like follows:
-> > > > >>
-> > > > >> Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
-> > > > >> unit name, but no reg property
-> > > > >>
-> > > > >> Fix this by replacing '@' with '-' as the OPP nodes will never have a
-> > > > >> "reg" property.
-> > > > >>
-> > > > >> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > >> Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > > >> Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> > > > >> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > > >> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com> (sunxi)
-> > > > >> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > > > >> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > >
-> > > > > OK, so any ACKs from the DT side?  Rob?
-> > > > >
-> > > > > Thanks,
-> > > > > Rafael
-> > > > 
-> > > > 
-> > > > 
-> > > > I see Rob's Acked-by.
-> > > > 
-> > > > https://lkml.org/lkml/2017/4/13/648
-> > > 
-> > > Indeed.  Thanks!
-> > 
-> > But it doesn't apply on top of -rc7 for me, so I guess there is new 4.12-candidate
-> > material in the DTS tree that conflicts with this, in which case it is better to route
-> > it through the DTS tree IMO.
-> 
-> Yes a minor conflict. I have sent the rebased version now, see if you
-> want to apply it directly or want arm-soc guys to do it.
+On Tue, Apr 18, 2017 at 12:43 PM, Richard Fitzgerald
+<rf@opensource.wolfsonmicro.com> wrote:
+> In preparation for sharing this driver with Madera, move the pdata
+> for the LDO1 regulator out of struct arizona_pdata into a dedicated
+> pdata struct for this driver. As a result the code in
+> arizona_ldo1_of_get_pdata() can be made independent of struct arizona.
+>
+> This patch also updates the definition of struct arizona_pdata and
+> the use of this pdata in mach-crag6410-module.c
+>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> ---
+>  arch/arm/mach-s3c64xx/mach-crag6410-module.c |  8 ++++--
+>  drivers/regulator/arizona-ldo1.c             | 39 +++++++++++++++-------------
+>  include/linux/mfd/arizona/pdata.h            |  4 +--
+>  include/linux/regulator/arizona-ldo1.h       | 24 +++++++++++++++++
+>  4 files changed, 53 insertions(+), 22 deletions(-)
+>  create mode 100644 include/linux/regulator/arizona-ldo1.h
+>
+> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+> index ccc3ab8..ea5f216 100644
+> --- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+> +++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+> @@ -209,7 +209,9 @@
+>  };
+>
+>  static struct arizona_pdata wm5102_reva_pdata = {
+> -       .ldoena = S3C64XX_GPN(7),
+> +       .ldo1 = {
+> +               .ldoena = S3C64XX_GPN(7),
+> +       },
+>         .gpio_base = CODEC_GPIO_BASE,
+>         .irq_flags = IRQF_TRIGGER_HIGH,
+>         .micd_pol_gpio = CODEC_GPIO_BASE + 4,
+> @@ -239,7 +241,9 @@
+>  };
+>
+>  static struct arizona_pdata wm5102_pdata = {
+> -       .ldoena = S3C64XX_GPN(7),
+> +       .ldo1 = {
+> +               .ldoena = S3C64XX_GPN(7),
+> +       },
+>         .gpio_base = CODEC_GPIO_BASE,
+>         .irq_flags = IRQF_TRIGGER_HIGH,
+>         .micd_pol_gpio = CODEC_GPIO_BASE + 2,
 
-I'm going to apply the rebased one.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Thanks,
-Rafael
+Best regards,
+Krzysztof
