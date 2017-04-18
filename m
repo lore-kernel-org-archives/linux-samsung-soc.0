@@ -1,95 +1,192 @@
 From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: [PATCH 3/7] regulator: arizona-micsupp: Make arizona_micsupp independent of struct arizona
-Date: Tue, 18 Apr 2017 11:43:50 +0100
-Message-ID: <1492512234-19210-5-git-send-email-rf@opensource.wolfsonmicro.com>
+Subject: [PATCH 7/7] regulator: arizona-ldo1: Factor out generic initialization
+Date: Tue, 18 Apr 2017 11:43:54 +0100
+Message-ID: <1492512234-19210-9-git-send-email-rf@opensource.wolfsonmicro.com>
 References: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:56061 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752327AbdDRKoa (ORCPT
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:60151 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756016AbdDRKo1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Apr 2017 06:44:30 -0400
+        Tue, 18 Apr 2017 06:44:27 -0400
 In-Reply-To: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org, lee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org
 Cc: linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-In preparation for supporting Madera codecs, remove the dependency on
-struct arizona in the regulator callbacks and struct arizona_micsupp.
+In preparation for sharing this driver with Madera codecs, factor out
+the parts of initialization that aren't dependent on struct arizona.
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
 ---
- drivers/regulator/arizona-micsupp.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ drivers/regulator/arizona-ldo1.c | 114 ++++++++++++++++++++++-----------------
+ 1 file changed, 66 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/regulator/arizona-micsupp.c b/drivers/regulator/arizona-micsupp.c
-index 5f8b5a7..db4fecf 100644
---- a/drivers/regulator/arizona-micsupp.c
-+++ b/drivers/regulator/arizona-micsupp.c
-@@ -34,7 +34,10 @@
+diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
+index 678f81f..96fddff 100644
+--- a/drivers/regulator/arizona-ldo1.c
++++ b/drivers/regulator/arizona-ldo1.c
+@@ -234,67 +234,40 @@ static int arizona_ldo1_of_get_pdata(struct arizona_ldo1_pdata *pdata,
+ 	return 0;
+ }
  
- struct arizona_micsupp {
- 	struct regulator_dev *regulator;
--	struct arizona *arizona;
-+	struct regmap *regmap;
-+	struct snd_soc_dapm_context **dapm;
-+	unsigned int enable_reg;
-+	struct device *dev;
- 
- 	struct regulator_consumer_supply supply;
- 	struct regulator_init_data init_data;
-@@ -46,21 +49,22 @@ static void arizona_micsupp_check_cp(struct work_struct *work)
+-static int arizona_ldo1_probe(struct platform_device *pdev)
++static int arizona_ldo1_common_init(struct platform_device *pdev,
++				    struct arizona_ldo1 *ldo1,
++				    const struct regulator_desc *desc,
++				    struct arizona_ldo1_pdata *pdata,
++				    bool *external_dcvdd)
  {
- 	struct arizona_micsupp *micsupp =
- 		container_of(work, struct arizona_micsupp, check_cp_work);
--	struct snd_soc_dapm_context *dapm = micsupp->arizona->dapm;
--	struct snd_soc_component *component = snd_soc_dapm_to_component(dapm);
--	struct arizona *arizona = micsupp->arizona;
--	struct regmap *regmap = arizona->regmap;
--	unsigned int reg;
-+	struct snd_soc_dapm_context *dapm = *micsupp->dapm;
-+	struct snd_soc_component *component;
-+	unsigned int val;
+-	struct arizona *arizona = dev_get_drvdata(pdev->dev.parent);
+-	const struct regulator_desc *desc;
++	struct device *parent_dev = pdev->dev.parent;
+ 	struct regulator_config config = { };
+-	struct arizona_ldo1 *ldo1;
+-	bool external_dcvdd = false;
  	int ret;
  
--	ret = regmap_read(regmap, ARIZONA_MIC_CHARGE_PUMP_1, &reg);
-+	ret = regmap_read(micsupp->regmap, micsupp->enable_reg, &val);
- 	if (ret != 0) {
--		dev_err(arizona->dev, "Failed to read CP state: %d\n", ret);
-+		dev_err(micsupp->dev,
-+			"Failed to read CP state: %d\n", ret);
- 		return;
+-	ldo1 = devm_kzalloc(&pdev->dev, sizeof(*ldo1), GFP_KERNEL);
+-	if (!ldo1)
+-		return -ENOMEM;
+-
+-	ldo1->regmap = arizona->regmap;
+-
+-	/*
+-	 * Since the chip usually supplies itself we provide some
+-	 * default init_data for it.  This will be overridden with
+-	 * platform data if provided.
+-	 */
+-	switch (arizona->type) {
+-	case WM5102:
+-	case WM8997:
+-	case WM8998:
+-	case WM1814:
+-		desc = &arizona_ldo1_hc;
+-		ldo1->init_data = arizona_ldo1_dvfs;
+-		break;
+-	case WM5110:
+-	case WM8280:
+-		desc = &arizona_ldo1;
+-		ldo1->init_data = arizona_ldo1_wm5110;
+-		break;
+-	default:
+-		desc = &arizona_ldo1;
+-		ldo1->init_data = arizona_ldo1_default;
+-		break;
+-	}
++	*external_dcvdd = false;
+ 
+-	ldo1->init_data.consumer_supplies = &ldo1->supply;
+ 	ldo1->supply.supply = "DCVDD";
+-	ldo1->supply.dev_name = dev_name(arizona->dev);
++	ldo1->init_data.consumer_supplies = &ldo1->supply;
++	ldo1->supply.dev_name = dev_name(parent_dev);
+ 
+-	config.dev = arizona->dev;
++	config.dev = parent_dev;
+ 	config.driver_data = ldo1;
+-	config.regmap = arizona->regmap;
++	config.regmap = ldo1->regmap;
+ 
+ 	if (IS_ENABLED(CONFIG_OF)) {
+-		if (!dev_get_platdata(arizona->dev)) {
+-			ret = arizona_ldo1_of_get_pdata(&arizona->pdata.ldo1,
++		if (!dev_get_platdata(parent_dev)) {
++			ret = arizona_ldo1_of_get_pdata(pdata,
+ 							&config, desc,
+-							&external_dcvdd);
++							external_dcvdd);
+ 			if (ret < 0)
+ 				return ret;
+ 		}
  	}
  
- 	if (dapm) {
--		if ((reg & (ARIZONA_CPMIC_ENA | ARIZONA_CPMIC_BYPASS)) ==
-+		component = snd_soc_dapm_to_component(dapm);
+-	config.ena_gpio = arizona->pdata.ldo1.ldoena;
++	config.ena_gpio = pdata->ldoena;
+ 
+-	if (arizona->pdata.ldo1.init_data)
+-		config.init_data = arizona->pdata.ldo1.init_data;
++	if (pdata->init_data)
++		config.init_data = pdata->init_data;
+ 	else
+ 		config.init_data = &ldo1->init_data;
+ 
+@@ -303,9 +276,7 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
+ 	 * consumers then DCVDD is supplied externally.
+ 	 */
+ 	if (config.init_data->num_consumer_supplies == 0)
+-		arizona->external_dcvdd = true;
+-	else
+-		arizona->external_dcvdd = external_dcvdd;
++		*external_dcvdd = true;
+ 
+ 	ldo1->regulator = devm_regulator_register(&pdev->dev, desc, &config);
+ 
+@@ -313,7 +284,7 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
+ 
+ 	if (IS_ERR(ldo1->regulator)) {
+ 		ret = PTR_ERR(ldo1->regulator);
+-		dev_err(arizona->dev, "Failed to register LDO1 supply: %d\n",
++		dev_err(&pdev->dev, "Failed to register LDO1 supply: %d\n",
+ 			ret);
+ 		return ret;
+ 	}
+@@ -323,6 +294,53 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int arizona_ldo1_probe(struct platform_device *pdev)
++{
++	struct arizona *arizona = dev_get_drvdata(pdev->dev.parent);
++	struct arizona_ldo1 *ldo1;
++	const struct regulator_desc *desc;
++	bool external_dcvdd;
++	int ret;
 +
-+		if ((val & (ARIZONA_CPMIC_ENA | ARIZONA_CPMIC_BYPASS)) ==
- 		    ARIZONA_CPMIC_ENA)
- 			snd_soc_component_force_enable_pin(component,
- 							   "MICSUPP");
-@@ -240,7 +244,9 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
- 	if (!micsupp)
- 		return -ENOMEM;
- 
--	micsupp->arizona = arizona;
-+	micsupp->regmap = arizona->regmap;
-+	micsupp->dapm = &arizona->dapm;
-+	micsupp->dev = arizona->dev;
- 	INIT_WORK(&micsupp->check_cp_work, arizona_micsupp_check_cp);
- 
- 	/*
-@@ -263,6 +269,7 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
- 	micsupp->init_data.consumer_supplies = &micsupp->supply;
- 	micsupp->supply.supply = "MICVDD";
- 	micsupp->supply.dev_name = dev_name(arizona->dev);
-+	micsupp->enable_reg = desc->enable_reg;
- 
- 	config.dev = arizona->dev;
- 	config.driver_data = micsupp;
++	ldo1 = devm_kzalloc(&pdev->dev, sizeof(*ldo1), GFP_KERNEL);
++	if (!ldo1)
++		return -ENOMEM;
++
++	ldo1->regmap = arizona->regmap;
++
++	/*
++	 * Since the chip usually supplies itself we provide some
++	 * default init_data for it.  This will be overridden with
++	 * platform data if provided.
++	 */
++	switch (arizona->type) {
++	case WM5102:
++	case WM8997:
++	case WM8998:
++	case WM1814:
++		desc = &arizona_ldo1_hc;
++		ldo1->init_data = arizona_ldo1_dvfs;
++		break;
++	case WM5110:
++	case WM8280:
++		desc = &arizona_ldo1;
++		ldo1->init_data = arizona_ldo1_wm5110;
++		break;
++	default:
++		desc = &arizona_ldo1;
++		ldo1->init_data = arizona_ldo1_default;
++		break;
++	}
++
++	ret = arizona_ldo1_common_init(pdev, ldo1, desc,
++				       &arizona->pdata.ldo1,
++				       &external_dcvdd);
++	if (ret == 0)
++		arizona->external_dcvdd = external_dcvdd;
++
++	return ret;
++}
++
+ static struct platform_driver arizona_ldo1_driver = {
+ 	.probe = arizona_ldo1_probe,
+ 	.driver		= {
 -- 
 1.9.1
