@@ -1,45 +1,46 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 1/5] arm64: soc: exynos for v4.12
-Date: Wed, 19 Apr 2017 07:00:16 -0700
-Message-ID: <20170419140016.GJ29219@localhost>
-References: <20170408141004.386-1-krzk@kernel.org>
- <20170408141004.386-6-krzk@kernel.org>
+Subject: Re: [PATCH V3] PM / OPP: Use - instead of @ for DT entries
+Date: Wed, 19 Apr 2017 07:22:15 -0700
+Message-ID: <20170419142215.GA12105@localhost>
+References: <734c5d5a66ef8a5505f368fc68a8ab9c02d710f9.1492492253.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170408141004.386-6-krzk@kernel.org>
+In-Reply-To: <734c5d5a66ef8a5505f368fc68a8ab9c02d710f9.1492492253.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rafael Wysocki <rjw@rjwysocki.net>, arm@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Beno??t Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Masahiro
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Apr 08, 2017 at 04:10:04PM +0200, Krzysztof Kozlowski wrote:
-> 
-> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-> 
->   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.12
-> 
-> for you to fetch changes up to 0edf17984f251e633465e028a0115d57b1b7eb88:
-> 
->   arm64: defconfig: Enable video, DRM and LPASS drivers for Exynos5433 and Exynos7 (2017-03-21 19:18:53 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung ARM64 update for v4.12:
-> 1. Exynos power management drivers support now ARMv8 SoC - Exynos5433 - so
->    select them in ARCH_EXYNOS.
-> 2. Enable few Exynos drivers for supported ARMv8 SoCs.
-> 
-> ----------------------------------------------------------------
-> Krzysztof Kozlowski (2):
->       arm64: exynos: Enable Exynos PMU and PM domains drivers
->       arm64: defconfig: Enable video, DRM and LPASS drivers for Exynos5433 and Exynos7
+Hi Viresh,
 
-Merged, thanks!
+On Tue, Apr 18, 2017 at 10:44:50AM +0530, Viresh Kumar wrote:
+> Compiling the DT file with W=1, DTC warns like follows:
+> 
+> Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
+> unit name, but no reg property
+> 
+> Fix this by replacing '@' with '-' as the OPP nodes will never have a
+> "reg" property.
+> 
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com> (sunxi)
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com> (uniphier)
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Tony Lindgren <tony@atomide.com>
 
+We've already turned down other patches that does this in a sweeping manner
+like this, since they tend to be conflict prone with other DT changes.
+
+Please split per platform and merge with each maintainer.
+
+
+Thanks,
 
 -Olof
