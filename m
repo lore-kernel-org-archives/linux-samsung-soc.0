@@ -1,50 +1,46 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v4 3/6] mfd: exynos-lpass: Remove pad retention control
-Date: Wed, 19 Apr 2017 13:00:08 +0200
-Message-ID: <4646acab-261e-32ea-df63-6f8333f64e2d@samsung.com>
-References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170323080348eucas1p29d1fb4eb06e4785d20341be7a374bfb3@eucas1p2.samsung.com>
- <1490256207-10061-4-git-send-email-m.szyprowski@samsung.com>
- <20170411120231.hivtn6c7to4z2gu6@dell>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 4/5] arm64: dts: exynos: DTS for v4.12
+Date: Wed, 19 Apr 2017 06:21:28 -0700
+Message-ID: <20170419132128.GG29219@localhost>
+References: <20170408141004.386-1-krzk@kernel.org>
+ <20170408141004.386-5-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-reply-to: <20170411120231.hivtn6c7to4z2gu6@dell>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33671 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1764610AbdDSO2A (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 19 Apr 2017 10:28:00 -0400
+Received: by mail-lf0-f67.google.com with SMTP id 88so2587606lfr.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2017 07:27:59 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20170408141004.386-5-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi Lee,
+On Sat, Apr 08, 2017 at 04:10:03PM +0200, Krzysztof Kozlowski wrote:
+> 
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.12
+> 
+> for you to fetch changes up to e3c07546747cdec07ff15c984bc6cebc9c9f788c:
+> 
+>   arm64: dts: exynos: Add the burst and esc clock frequency properties to DSI node (2017-03-08 08:55:39 +0200)
+> 
+> ----------------------------------------------------------------
+> Samsung DeviceTree ARM64 update for v4.12:
+> 1. Add IR, touchscreen and panel to TM2/TM2E boards.
+> 2. Add proper clock frequency properties to DSI nodes.
 
-On 2017-04-11 14:02, Lee Jones wrote:
-> On Thu, 23 Mar 2017, Marek Szyprowski wrote:
->
->> Pad retention should be controlled from pin control driver, so remove it
->> from Exynos LPASS driver. After this change, no more access to PMU regmap
->> is needed, so remove also the code for handling PMU regmap.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
->> ---
->>   .../bindings/mfd/samsung,exynos5433-lpass.txt           |  2 --
->>   drivers/mfd/exynos-lpass.c                              | 17 -----------------
->>   include/linux/mfd/syscon/exynos5-pmu.h                  |  3 ---
->>   3 files changed, 22 deletions(-)
-> Applied, thanks.
+Merged, thanks!
 
-When can I expect this (and the remaining patches from this patchset) to 
-appear
-in your -next branch?
 
- > ...
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+-Olof
