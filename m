@@ -1,185 +1,174 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: clean up description of exynos_drm_crtc
-Date: Wed, 19 Apr 2017 10:39:48 +0900
-Message-ID: <58F6BFE4.4010102@samsung.com>
-References: <CGME20170406012110epcas1p3b013a6c11a9df4b76070540d73355534@epcas1p3.samsung.com>
- <1491441669-5446-1-git-send-email-inki.dae@samsung.com>
- <f308d21f-2b72-031f-1d33-c458a006f7e3@math.uni-bielefeld.de>
- <58E7472C.3030503@samsung.com>
- <7f5ae31b-6ef1-5822-234e-a82b61506d25@math.uni-bielefeld.de>
- <CAAQKjZMtxoMHa4XQpVrNWDwPW7usQ-2308QaxVjy9o7DSp+bEg@mail.gmail.com>
- <6962262a-519b-dfbb-72f7-9b6143d4c9b8@math.uni-bielefeld.de>
- <58EC140E.3020301@samsung.com>
- <467c5c99-e86e-84e9-290c-05dc4c9db5ac@math.uni-bielefeld.de>
- <b238e162-45fe-f99e-2615-bc84964ca7f8@math.uni-bielefeld.de>
- <58ED8D00.7060109@samsung.com>
- <002f44e5-806d-7434-4227-945007b379f9@math.uni-bielefeld.de>
+Subject: Re: [RFC 0/8] drm/exynos: misc fixes and more
+Date: Wed, 19 Apr 2017 10:46:00 +0900
+Message-ID: <58F6C158.2070403@samsung.com>
+References: <1491314581-18086-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CGME20170411105302epcas4p2c240e966d3f7381eac7213662933a178@epcas4p2.samsung.com>
+ <11ca839f-2b2d-6a76-aac1-03be93a5dffc@math.uni-bielefeld.de>
+ <58ED9279.5030001@samsung.com>
+ <417f7071-6a4b-d2f3-7fdb-57779858104a@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <002f44e5-806d-7434-4227-945007b379f9@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:36330 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933222AbdDSBqI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 18 Apr 2017 21:46:08 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OOM024GUVKPVX30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Apr 2017 10:46:01 +0900 (KST)
+In-reply-to: <417f7071-6a4b-d2f3-7fdb-57779858104a@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, a.hajda@samsung.com
 
-CgoyMDE364WEIDA07JuUIDE27J28IDIwOjUx7JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
-IOq4gDoKPiBIZWxsbyBJbmtpLAo+IAo+IAo+IAo+IElua2kgRGFlIHdyb3RlOgo+PiAyMDE364WE
-IDA07JuUIDEx7J28IDE3OjE37JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0IOq4gDoKPj4+
-IEFub3RoZXIgdGhpbmcgdGhhdCBJIG5vdGljZWQuIFdoeSB3YXNuJ3QgdGhlIHYyIHRoYXQgZW5k
-ZWQgdXAgaW4geW91cgo+Pj4gZ2l0IGV2ZXIgc3VibWl0dGVkIHRvIHRoZSBtYWlsaW5nIGxpc3Q/
-IEJlY2F1c2UgaXQgc2hvdWxkIGhhdmUsIGluCj4+PiBwYXJ0aWN1bGFyIHRvIHNwb3QgdGhlc2Ug
-b2J2aW91cyBlcnJvcnMuCj4+Cj4+IE9ubHkgY29tbWVudCBhYm91dCB0aGlzLgo+Pgo+PiBUaGlz
-IHBhdGNoIGNsZWFucyB1cCBkZXNjcmlwdGlvbiBvZiBzdHJ1Y3QgZXh5bm9zX2RybV9jbGsgLSBy
-ZW1vdmVkIHVubmVjZXNzYXJ5IGRlc2NyaXB0aW9ucyBhbmQgYWRkcyBvbmUgbWlzc2VkIGJlZm9y
-ZS4KPj4gSSB0aGluayBubyBwcm9ibGVtIHRvIHVwZGF0ZSB0aGUgZGVzY3JpcHRpb24gd2l0aG91
-dCB2MiBiZWNhdXNlIG5vIGNvZGUgY2hhbmdlIGFuZCBkZXNjcmlwdGlvbiBlbm91Z2guCj4gSSB0
-aGluayB5b3UgbWlzcyB0aGUgcG9pbnQgaGVyZS4gSSBjaGVja2VkIHRoZSBtYWlsIHRocmVhZCBh
-Z2FpbiBhbmQgeW91Cj4gcmVzcG9uZGVkIHdpdGggIk1vcmUgc2ltcGxlIGFuZCBsb29rcyBiZXR0
-ZXIuIiB3aGVuIEkgc3VnZ2VzdGVkIHRvIHB1dAo+IHRoZSBsYXJnZXN0IHBhcnQgb2YgeW91ciBk
-ZXNjcmlwdGlvbiBpbiBmcm9udCBvZiAnc3RydWN0Cj4gZXh5bm9zX2RybV9jbGsnLiBJIGV2ZW4g
-d2VudCBzbyBmYXIgYXMgdG8gcHJlcGFyZSB0aGUgY29tbWVudCBmb3IgeW91Lgo+IEFuZCB0aGVu
-IHlvdSBwcm9jZWVkIGJ5IGlnbm9yaW5nIGV2ZXJ5dGhpbmcgYW5kIG1lcmdpbmcgc29tZSBjb21w
-bGV0bHkKPiBkaWZmZXJlbnQgcGF0Y2guIEkgZmluZCB0aGlzIGRpc3Jlc3BlY3RmdWwuCj4gCj4g
-SSdtIHF1b3RpbmcgeW91ciB3b3JkcyBoZXJlIChmcm9tIFsxXSk6Cj4+IEknZCBsaWtlIHRvIHNh
-eSAqbWFpbnRhaW5lciBpcyByZWFsbHkgbm90IGEgcGxhY2UgZm9yIHBvd2VyKiwgYW5kIG1haW50
-YWluZXIgd291bGQgaW1wbGljaXRseSBoYXZlIGEgcm9sZSB0byBlbmNvdXJhZ2UgaW4gY29udHJp
-YnV0aW9uIGFjdGl2aXR5IG9mIGNvbnRyaWJ1dGVyLgo+IAoKVG9iaWFzLAoKV2hhdCB5b3Ugd2Fu
-dCB3b3VsZG4ndCBiZSBhbHdheXMgd2hhdCBzb21lb25lIHdhbnRzLiBUaGlzIHBhdGNoIGlzIHJl
-YWxseSBhIHRyaXZpYWwgdGhpbmcgYW5kIGFzIEkgYWxyZWFkeSBjb21tZW50ZWQgSSB0aG91Z2h0
-IGFzLWlzIGVub3VnaC4KRXZlbiBJIGFscmVhZHkgcGlja2VkIHlvdXIgc3VnZ2VzdGlvbiB1cCwK
-IkZvciAncGlwZV9jbGsnIEkgd291bGQganVzdCBnbyB3aXRoIHRoaXM6CkBwaXBlX2NsazogQSBw
-b2ludGV0IHRvIHRoZSBjcnRjJ3MgcGlwZWxpbmUgY2xvY2siCgo+IElmIHlvdSByZWFsbHkgbWVh
-biB0aGlzLCB5b3Ugc2hvdWxkIGFsc28gYWN0IGFjY29yZGluZ2x5LiBBbmQgdGhhdCBkb2VzCj4g
-bm90IG1lYW4gc2F5aW5nICJBIiB0byBzb21lb25lIGFuZCB0aGVuIGRvaW5nICJCIi4KCkFuZCBJ
-IG5ldmVyIGlnbm9yZSB5b3UuIEluc3RlYWQgSSBjb21tZW50ZWQgbGlrZSBiZWxvdyBmb3IgeW91
-LAoiSWYgeW91IHdhbnQgdG8gdXBkYXRlIHRoZSBkZXNjcmlwdGlvbiBtb3JlIHRoZW4geW91IGNh
-biBwb3N0IGl0IgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiAKPiAKPj4gSWYgeW91IHdhbnQgdG8g
-dXBkYXRlIHRoZSBkZXNjcmlwdGlvbiBtb3JlIHRoZW4geW91IGNhbiBwb3N0IGl0Lgo+PiBQcy4g
-SSBhbSBub3QgYSBsZWlzdXJlbHkgcGVyc29uIHRvIHJlc3BvbmQgdG8gZXZlcnkgbGl0dGxlIHRo
-aW5nLgo+IEkgZG9uJ3QgZXhwZWN0IHlvdSB0byByZXNwb25kIHRvIGV2ZXJ5IGxpdHRsZSB0aGlu
-Zy4gQnV0IEkgZXhwZWN0IHByb3Blcgo+IGFuZCBob25lc3QgY29tbXVuaWNhdGlvbi4gQWxzbyBh
-IHJlc3BvbnNlIGRlbGF5IG9mIGZvdXIgd2Vla3MgaXMgc2ltcGx5Cj4gbm90IGFjY2VwdGFibGUu
-IEFuZCBJIGRvbid0IHRoaW5rIEknbSB0aGUgb25seSBvbmUgb24gZHJpLWRldmVsIHRoYXQKPiB0
-aGlua3MgdGhhdCB3YXkuCj4gCj4gV2l0aCBiZXN0IHdpc2hlcywKPiBUb2JpYXMKPiAKPiAKPiBb
-MV0gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9kcmktZGV2ZWwvbXNnMTMxMzA0Lmh0bWwK
-PiAKPiAKPj4KPj4gVGhhbmtzLAo+PiBJbmtpIERhZQo+Pgo+Pj4KPj4+IC0gVG9iaWFzCj4+Pgo+
-Pj4KPj4+IFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Cj4+
-Pj4+Cj4+Pj4+IDIwMTfrhYQgMDTsm5QgMTDsnbwgMTk6Mjnsl5AgVG9iaWFzIEpha29iaSDsnbQo
-6rCAKSDsk7Qg6riAOgo+Pj4+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4gMjAxNy0wNC0wNyAy
-MDo0MCBHTVQrMDk6MDAgVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQu
-ZGU+Ogo+Pj4+Pj4+PiBIZWxsbyBJbmtpLAo+Pj4+Pj4+Pgo+Pj4+Pj4+Pgo+Pj4+Pj4+PiBJbmtp
-IERhZSB3cm90ZToKPj4+Pj4+Pj4+IEhlbGxvIFRvYmlhcywKPj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pgo+
-Pj4+Pj4+Pj4gMjAxN+uFhCAwNOyblCAwN+ydvCAwMjoxMOyXkCBUb2JpYXMgSmFrb2JpIOydtCjq
-sIApIOyTtCDquIA6Cj4+Pj4+Pj4+Pj4gSGVsbG8gSW5raSwKPj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+
-Cj4+Pj4+Pj4+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+Pj4+IFRoaXMgcGF0Y2ggcmVtb3Zl
-cyB1bm5lY2Vzc2FyeSBkZXNjcmlwdGlvbnMgb24KPj4+Pj4+Pj4+Pj4gZXh5bm9zX2RybV9jcnRj
-IHN0cnVjdHVyZSBhbmQgYWRkcyBvbmUgZGVzY3JpcHRpb24KPj4+Pj4+Pj4+Pj4gd2hpY2ggc3Bl
-Y2lmaWVzIHdoYXQgcGlwZV9jbGsgbWVtYmVyIGRvZXMuCj4+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4+
-IHBpcGVfY2xrIHN1cHBvcnQgaGFkIGJlZW4gYWRkZWQgYnkgYmVsb3cgcGF0Y2ggd2l0aG91dCBh
-bnkgZGVzY3JpcHRpb24sCj4+Pj4+Pj4+Pj4+ICAgICAgZHJtL2V4eW5vczogYWRkIHN1cHBvcnQg
-Zm9yIHBpcGVsaW5lIGNsb2NrIHRvIHRoZSBmcmFtZXdvcmsKPj4+Pj4+Pj4+PiBJIHdvdWxkIHB1
-dCB0aGUgY29tbWl0IGlkIGhlcmUuIFRoYXQgbWFrZXMgaXQgZWFzaWVyIHRvIGxvb2sgdXAgdGhl
-Cj4+Pj4+Pj4+Pj4gY29tbWl0IHlvdXIgcmVmZXIgdG8uCj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+Pgo+
-Pj4+Pj4+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+
-Cj4+Pj4+Pj4+Pj4+IC0tLQo+Pj4+Pj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2Rydi5oIHwgNiArKy0tLS0KPj4+Pj4+Pj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGlu
-c2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKPj4+Pj4+Pj4+Pj4gaW5kZXggNTI3YmYx
-ZC4uYjA0NjJjYyAxMDA2NDQKPj4+Pj4+Pj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2Rydi5oCj4+Pj4+Pj4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9kcnYuaAo+Pj4+Pj4+Pj4+PiBAQCAtMTUyLDEyICsxNTIsMTAgQEAgc3Ry
-dWN0IGV4eW5vc19kcm1fY2xrIHsKPj4+Pj4+Pj4+Pj4gICAqCj4+Pj4+Pj4+Pj4+ICAgKiBAYmFz
-ZTogY3J0YyBvYmplY3QuCj4+Pj4+Pj4+Pj4+ICAgKiBAdHlwZTogb25lIG9mIEVYWU5PU19ESVNQ
-TEFZX1RZUEVfTENEIGFuZCBIRE1JLgo+Pj4+Pj4+Pj4+PiAtICogQGVuYWJsZWQ6IGlmIHRoZSBj
-cnRjIGlzIGVuYWJsZWQgb3Igbm90Cj4+Pj4+Pj4+Pj4+IC0gKiBAZXZlbnQ6IHZibGFuayBldmVu
-dCB0aGF0IGlzIGN1cnJlbnRseSBxdWV1ZWQgZm9yIGZsaXAKPj4+Pj4+Pj4+Pj4gLSAqIEB3YWl0
-X3VwZGF0ZTogd2FpdCBhbGwgcGVuZGluZyBwbGFuZXMgdXBkYXRlcyB0byBmaW5pc2gKPj4+Pj4+
-Pj4+Pj4gLSAqIEBwZW5kaW5nX3VwZGF0ZTogbnVtYmVyIG9mIHBlbmRpbmcgcGxhbmUgdXBkYXRl
-cyBpbiB0aGlzIGNydGMKPj4+Pj4+Pj4+Pj4gICAqIEBvcHM6IHBvaW50ZXIgdG8gY2FsbGJhY2tz
-IGZvciBleHlub3MgZHJtIHNwZWNpZmljIGZ1bmN0aW9uYWxpdHkKPj4+Pj4+Pj4+Pj4gICAqIEBj
-dHg6IEEgcG9pbnRlciB0byB0aGUgY3J0YydzIGltcGxlbWVudGF0aW9uIHNwZWNpZmljIGNvbnRl
-eHQKPj4+Pj4+Pj4+Pj4gKyAqIEBwaXBlX2NsazogQSBwaXBlIGNsb2NrIHN0cnVjdHVyZSB3aGlj
-aCBpbmNsdWRlcyBhIGNhbGxiYWNrIGZ1bmN0aW9uCj4+Pj4+Pj4+Pj4+ICsgICAgICAgICBmb3Ig
-ZW5hYmxpbmcgRFAgY2xvY2sgb2YgRklNRCBhbmQgSERNSSBQSFkgY2xvY2suCj4+Pj4+Pj4+Pj4g
-VGhpcyBpcyB3cm9uZy9pbmNvbnNpc3RlbnQgd2l0aCB0aGUgcmVzdCBvZiB0aGUgZG9jdW1lbnRh
-dGlvbi4gcGlwZV9jbGsKPj4+Pj4+Pj4+PiBpcyBub3QgYSBzdHJ1Y3QsIGJ1dCBhIHBvaW50ZXIu
-Cj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+PiBJIHdvdWxkIHN1Z2dlc3QgdG8gZm9sbG93LiBKdXN0IGRv
-Y3VtZW50IHRoYXQgd2UgaGF2ZSBhIHBvaW50ZXIgdG8gPGFkZAo+Pj4+Pj4+Pj4+IGVzY3JpcHRp
-b24+IGhlcmUgKGNvbXBhcmUgZG9jdSBmb3IgJ29wcycgYW5kICdjdHgnKS4KPj4+Pj4+Pj4+PiBB
-bmQgdGhlbiBwdXQgdGhlIGxhdGVyIGJpdHMgKCIuLi5jYWxsYmFjayBmdW5jdGlvbiBmb3IgZW5h
-YmxpbmcgRFAKPj4+Pj4+Pj4+PiBjbG9jay4uLiIpIGRpcmVjdGx5IHRvIHRoZSBkZWZpbml0aW9u
-IG9mICdzdHJ1Y3QgZXh5bm9zX2RybV9jbGsnICh3aGljaAo+Pj4+Pj4+Pj4+IGlzIGN1cnJlbnRs
-eSBsYWNraW5nIGFueSBraW5kIG9mIGRvY3UpLgo+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+IFRoYW5rcyBm
-b3IgcG9pbnRpbmcgaXQgb3V0LiBNeSBtaXN0YWtlLiA6KQo+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+IEhv
-dyBhYm91dCB0aGlzIHNpbXBseT8KPj4+Pj4+Pj4+ICJBIHBvaW50ZXIgdG8gZXh5bm9zX2RybV9j
-bGsgc3RydWN0dXJlIGZvciBlbmFibGluZyBhbmQgZGlzYWJsaW5nIERQIGNsb2NrIG9mIEZJTUQg
-YW5kIEhETUkgUEhZIGNsb2NrcyIKPj4+Pj4+Pj4gTm90IHdoYXQgSSBtZWFudC4gWW91J3JlIGRl
-c2NyaWJpbmcgJ3N0cnVjdCBleHlub3NfZHJtX2NsaycsIGFuZCB0aGF0Cj4+Pj4+Pj4+IGRvZXMg
-bm90IGJlbG9uZyBoZXJlLiBJZiB5b3UgZGVzY3JpYmUgJ3N0cnVjdCBleHlub3NfZHJtX2Nsaycs
-IHRoZW4gdGhpcwo+Pj4+Pj4+PiBzaG91bGQgZ28gaW4gZnJvbnQgb2YgdGhlIHN0cnVjdCdzIGRl
-ZmluaXRpb24uCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IEhvdyBhYm91dGluZyBzb21ldGhpbmcgbGlrZSB0
-aGlzIGluIGZyb250IG9mIHRoZSBzdHJ1Y3QncyBkZWZpbml0aW9uOjoKPj4+Pj4+Pj4+IC8qCj4+
-Pj4+Pj4+PiAgKiBFeHlub3MgRFJNIHBpcGVsaW5lIGNsb2NrIHN0cnVjdHVyZS4KPj4+Pj4+Pj4+
-ICAqCj4+Pj4+Pj4+PiAgKiBAZW5hYmxlOiBjYWxsYmFjayB0byBlbmFibGUvZGlzYWJsZSB0aGUg
-Y2xvY2suCj4+Pj4+Pj4+PiAgKgo+Pj4+Pj4+Pj4gICogVXNlZCBmb3IgcHJvcGVyIGNsb2NrIHN5
-bmNocm9uaXphdGlvbiBvZiBjb21wb25lbnRzIGJlbG9uZ2luZwo+Pj4+Pj4+Pj4gICogdG8gdGhl
-IHNhbWUgcGlwZWxpbmUuIFVzZWQgZS5nLiBmb3IgZW5hYmxpbmcgdGhlIERQIGNsb2NrIG9mCj4+
-Pj4+Pj4+PiAgKiB0aGUgRklNRCBvciB0aGUgSERNSSBQSFkgY2xvY2suCj4+Pj4+Pj4+PiAgKi8K
-Pj4+Pj4+Pj4+IHN0cnVjdCBleHlub3NfZHJtX2NsayB7Cj4+Pj4+Pj4+PiA8c25pcD4KPj4+Pj4+
-Pj4KPj4+Pj4+Pj4gRm9yICdwaXBlX2NsaycgSSB3b3VsZCBqdXN0IGdvIHdpdGggdGhpczoKPj4+
-Pj4+Pj4+IEBwaXBlX2NsazogQSBwb2ludGV0IHRvIHRoZSBjcnRjJ3MgcGlwZWxpbmUgY2xvY2su
-Cj4+Pj4+Pj4KPj4+Pj4+PiBNb3JlIHNpbXBsZSBhbmQgbG9va3MgYmV0dGVyLgo+Pj4+Pj4gSW4g
-dGhpcyBmb3JtIChjb21taXQgYTA3ZDQ2OGNiMmVmZDM0N2E5ZTI3OWU0ZjY4NjYxZjBmMzcwZDEw
-ZiBpbgo+Pj4+Pj4gZXh5bm9zLWRybS1uZXh0KSwgdGhlIGRlc2NyaXB0aW9uIGlzIGluY29tcGxl
-dGUuIFBsZWFzZSByZWFkIG15IG1haWxzIGFnYWluLgo+Pj4+Pgo+Pj4+PiBNYW55IHBhdGNoZXMg
-aW4gbWFpbmxpbmUgdXNlZCBzYW1lIGZvcm0uIFBsZWFzZSBnaXQgbG9nIHwgZ3JlcCAiY29tbWl0
-LWlkIiAtbjEwLgo+Pj4+PiBTb3JyeSBidXQgbm8gdXBkYXRlIGFuZCBubyBjb21tZW50IGFueW1v
-cmUgYnV0IHdpbGwgdXNlIHRoZSBnZW5lcmljIGZvcm0gbGF0ZXIuCj4+Pj4gSSdtIG5vdCByZWZl
-cnJpbmcgdG8geW91ciB1c2Ugb2YgY29tbWl0LWlkLCBidXQgdG8geW91IHRvdGFsbHkgaWdub3Jp
-bmcKPj4+PiB0aGUgZG9jdW1lbnRhdGlvbiBiaXRzIGZvciAnc3RydWN0IGV4eW5vc19kcm1fY2xr
-Jy4gUGxlYXNlIGJlIG1vcmUKPj4+PiBjYXJlZnVsIHdoZW4gcmVhZGluZyBteSBtYWlscy4KPj4+
-Pgo+Pj4+IC0gVG9iaWFzCj4+Pj4KPj4+Pgo+Pj4+Cj4+Pj4+IFRoYW5rcywKPj4+Pj4gSW5raSBE
-YWUKPj4+Pj4KPj4+Pj4+Cj4+Pj4+PiAtIFRvYmlhcwo+Pj4+Pj4KPj4+Pj4+Cj4+Pj4+Pj4KPj4+
-Pj4+PiBUaGFua3MsCj4+Pj4+Pj4gSW5raSBEYWUKPj4+Pj4+Pgo+Pj4+Pj4+Pgo+Pj4+Pj4+PiBJ
-IGhvcGUgdGhpcyBoZWxwcy4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gLSBUb2JpYXMKPj4+Pj4+Pj4KPj4+
-Pj4+Pj4KPj4+Pj4+Pj4+IFRoYW5rcywKPj4+Pj4+Pj4+IElua2kgRGFlCj4+Pj4+Pj4+Pgo+Pj4+
-Pj4+Pj4+Cj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+PiAtIFRvYmlhcwo+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+
-Pj4+ICAgKi8KPj4+Pj4+Pj4+Pj4gIHN0cnVjdCBleHlub3NfZHJtX2NydGMgewo+Pj4+Pj4+Pj4+
-PiAgICAgc3RydWN0IGRybV9jcnRjICAgICAgICAgICAgICAgICBiYXNlOwo+Pj4+Pj4+Pj4+Pgo+
-Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Cj4+Pj4+
-Pj4+IC0tCj4+Pj4+Pj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBs
-aW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPj4+Pj4+Pj4gdGhlIGJvZHkg
-b2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+Pj4+Pj4gTW9yZSBt
-YWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
-dG1sCj4+Pj4+Pj4gLS0KPj4+Pj4+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2Vu
-ZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4+Pj4+Pj4gdGhl
-IGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+Pj4+PiBN
-b3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1p
-bmZvLmh0bWwKPj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+IC0tCj4+Pj4+PiBUbyB1bnN1YnNjcmliZSBm
-cm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1z
-b2MiIGluCj4+Pj4+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2Vy
-bmVsLm9yZwo+Pj4+Pj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVs
-Lm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+Cj4+Pj4+IC0tCj4+
-Pj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNj
-cmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPj4+Pj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRv
-IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+Pj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAg
-aHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4+Pj4+Cj4+Pj4KPj4+
-PiAtLQo+Pj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1
-bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPj4+PiB0aGUgYm9keSBvZiBhIG1lc3Nh
-Z2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+Pj4+IE1vcmUgbWFqb3Jkb21vIGluZm8g
-YXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Pj4+Cj4+Pgo+
-Pj4KPj4+Cj4+Pgo+IAo+IAo+IAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+Hello Tobias,
+
+
+2017년 04월 16일 20:51에 Tobias Jakobi 이(가) 쓴 글:
+> Hello Inki,
+> 
+> 
+> Inki Dae wrote:
+>> Hello Tobias,
+>>
+>> 2017년 04월 11일 19:52에 Tobias Jakobi 이(가) 쓴 글:
+>>> Hello Inki,
+>>>
+>>> please don't forget to review this series.
+>>
+>> Thanks for your contribution, and don't worry about that. Will review this series.
+> 
+> 
+> Thank you for the confirmation!
+> 
+> In the meantime, i.e. until we have figured out the IOMMU pagefault, it
+> would make sense to reject the combination "interlaced mode + video
+> plane". Should I prepare a patch for that?
+> 
+
+I think you may be only person who could look into this as of now. Other person including me would have other tasks more important than this.
+
+Thanks,
+Inki Dae
+
+> 
+> With best wishes,
+> Tobias
+> 
+> 
+> 
+>> Just sharing a plan for -next,
+>>
+>> I plan to have pull-request after reviewing a patch set[1] posted by Andrzej.
+>> After that, I will start to review your patch set - we would need to enough review this RFC patch set. 
+>>
+>> It would be very helpful to me if other people could review this.
+>>
+>>
+>> Thanks,
+>> Inki Dae
+>>
+>> [1] https://lists.freedesktop.org/archives/dri-devel/2017-April/138112.html
+>>
+>>
+>>>
+>>> Also some pointers concerning the video plane flickering and the
+>>> interlacing issue would be very welcome.
+>>>
+>>> Looking at the current register defines for MXR_INT_EN suggests that
+>>> there are at least three more type of interrupt available. Any chance
+>>> these could be documented? I hope to get some more insight into this
+>>> issue, which apparantly is caused by insufficient bandwidth.
+>>>
+>>> For the interlacing issue I have done partial progress. I now longer see
+>>> a IOMMU pagefault, but the video plane is heavily corrupted. Also the
+>>> dimensions look wrong.
+>>>
+>>> While I can somehow guess that VP_MODE_LINE_SKIP does, the
+>>> VP_MODE_FIELD_ID_AUTO_TOGGLING flag still remains a mystery to me. If
+>>> possible, I request some documentation for this as well.
+>>>
+>>>
+>>> With best wishes,
+>>> Tobias
+>>>
+>>>
+>>>
+>>> Tobias Jakobi wrote:
+>>>> Hello,
+>>>>
+>>>> some recent work I did on Exynos. Patches are based on [1] and [2].
+>>>>
+>>>> Summary:
+>>>> (a) Enables support for NV12MT in the mixer.
+>>>> (b) Sanitizes buffer pitch for HW with restrictions.
+>>>> (c) Misc fixes
+>>>>
+>>>> While testing the NV12MT part, I made these interesting observations.
+>>>>
+>>>> (1) I used 1920x1080 XRGB8888 on the primary plane, and 1280x768 on the
+>>>> video plane. With this configuration, it does not matter if you're
+>>>> using NV12 or NV12MT, the video plane occasionally flickers or shows
+>>>> heavy artifacting. Reducing the size of the primary plane, e.g. to
+>>>> 32x32 solves this issue, so my guess is that this is memory bandwidth
+>>>> issue. Does someone know if one can check for buffer underflows of the
+>>>> mixer with respect to data passed from the VP?
+>>>>
+>>>> (2) Using 1920x1080i (so an interlaced mode) and NV12, the board
+>>>> immediately dies with an IOMMU pagefault at address zero. I'm
+>>>> currently investigating this, and it looks like that the VP setup
+>>>> is wrong here. In particular it should be the source (!) height
+>>>> and vertical position that should be halfed in interlaced mode, and
+>>>> not the destination. Need to look more into this.
+>>>>
+>>>> Anyway, both the issues are independant of the patches, so please
+>>>> review! :-)
+>>>>
+>>>> With best wishes,
+>>>> Tobias
+>>>>
+>>>>
+>>>> [1] http://www.spinics.net/lists/linux-samsung-soc/msg58640.html
+>>>> [2] http://www.spinics.net/lists/linux-samsung-soc/msg58644.html
+>>>>
+>>>> Tobias Jakobi (8):
+>>>>   drm/exynos: mixer: fix chroma comment in vp_video_buffer()
+>>>>   drm/exynos: mixer: enable NV12MT support for the video plane
+>>>>   drm/exynos: mixer: simplify {vp_video,mixer_graph}_buffer()
+>>>>   drm/exynos: mixer: remove src offset from mixer_graph_buffer()
+>>>>   drm/exynos: introduce BYTE_PITCH capability
+>>>>   drm/exynos: add BYTE_PITCH cap for all supported planes
+>>>>   drm/exynos: consistent use of cpp
+>>>>   drm/exynos: simplify set_pixfmt() in DECON and FIMD drivers
+>>>>
+>>>>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 17 +++++------
+>>>>  drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 13 +++-----
+>>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h       |  2 ++
+>>>>  drivers/gpu/drm/exynos/exynos_drm_fb.c        |  2 ++
+>>>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 17 ++++-------
+>>>>  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 37 ++++++++++++++++++++++
+>>>>  drivers/gpu/drm/exynos/exynos_mixer.c         | 44 ++++++++-------------------
+>>>>  7 files changed, 71 insertions(+), 61 deletions(-)
+>>>>
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+>>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
