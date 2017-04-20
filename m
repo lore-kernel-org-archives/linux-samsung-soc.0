@@ -1,56 +1,78 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: exynos5: simplify timings calculation
-Date: Thu, 20 Apr 2017 08:42:11 +0200
-Message-ID: <20170420064211.GA1476@katana>
-References: <CGME20170223164733eucas1p11ad37a2334fe709a062ecc82b5224e1a@eucas1p1.samsung.com>
- <1487868446-5339-1-git-send-email-a.hajda@samsung.com>
- <0e74abb3-9706-b5e4-2428-553d33a61ef4@samsung.com>
- <20170419191719.bzp2nt3l7nxwdzfn@ninjato>
- <20170420004501.b2cjl5owrytfhk27@gangnam.samsung>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [RFC 1/4] drm: Export functions to create custom DRM objects
+Date: Thu, 20 Apr 2017 11:13:37 +0200
+Message-ID: <1492679620-12792-2-git-send-email-m.szyprowski@samsung.com>
+References: <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170420091406eucas1p2ba4648e8e70ecca9c472017c21d654e1@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170420004501.b2cjl5owrytfhk27@gangnam.samsung>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-> I'm sorry, I forgot to reply to this patch, I actually reviewed
-> and tested it among all your i2c patches
-
-You mean you reviewed all his i2c patches? If so, could you add the tag
-per patch. This way, patchwork will automatically collect them for me
-and display the tag count in the list of patches.
-
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJY+FhDAAoJEBQN5MwUoCm2Sx0P/RPrH5e9dMGGgGwLEpZ5kDCW
-sr2olf3b6Q5Re6XAZCWnFmtYjEVmnJ8KCz3hEO+SOrt/cwO1wB9wvzuaxFNAH2IT
-bu5xRrDRwq7EchDuN+StdaGub9u2ndzIuGRwbMb6wnNs5N6LShEWaYFeBSC5DKf6
-WiUXUR0QJpSyAqMU0mWhCoVbKJWGvwGXW+DxAx2F7W//AW9jglg+TYxWZhmLxK1u
-LGc2zP6gj5qtixcXLZ8I48dEhymaz4bgXOmJGziBsv0Qucemkc6v4Q2xnnpG49Vo
-h3DERWhkFtC9aCrW8QIxx/znIGc/XQBnCVcrWQ/VacRk/OwKkqzDKYY1VqzxhGb2
-wHtz2tfuL7Z6LNyxX5MGatP4mx0IgeTiOOHh4V3mmcTtP/7llqlYgl2PUK5ONNu4
-Oh+DhHRF/Ng3nDJIbo7vaswKlq+gHNh6c3ZAXxr4DROhRrVGBLpt+X17rS+3I/ls
-K3hpm69s393hVh6oMgkra6/0FcfvWk4I81IVutR/ffz/9vbdrrl2anpm/e5vfOdW
-7f8P9gdvPTNKGDRxymdzdSjGQZF+Ed2WtpqPGuuFqV552a1naNQOrhxyVpEzAhRF
-HSg6RwYUpSVXBrZugIU520hXWjrb0yyZR053vC7ATqeozmIvVV7YHp62m/LZDcCQ
-JWadFlb6fkFsFBhLRM2u
-=1ux1
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
+TWFrZSBkcm1fbW9kZV9vYmplY3RfYWRkKCkgYW5kIGRybV9tb2RlX29iamVjdF91bnJlZ2lzdGVy
+KCkgZnVuY3Rpb25zCnB1YmxpYywgc28gdGhlIGRyaXZlcnMgY2FuIHJlZ2lzdGVyIHRoZWlyIG93
+biBEUk0gb2JqZWN0cyB0byB0aGUgY29yZS4KVGhvc2Ugb2JqZWN0cyBjYW4gYmUgcXVlcmllZCBi
+eSBnZW5lcmljIERSTV9JT0NUTF9NT0RFX09CSl9HRVRQUk9QRVJUSUVTCmlvY3RsLgoKU2lnbmVk
+LW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0K
+IGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oIHwgNCAtLS0tCiBkcml2ZXJzL2dw
+dS9kcm0vZHJtX21vZGVfb2JqZWN0LmMgICB8IDIgKysKIGluY2x1ZGUvZHJtL2RybV9tb2RlX29i
+amVjdC5oICAgICAgIHwgNiArKysrKysKIDMgZmlsZXMgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCsp
+LCA0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19p
+bnRlcm5hbC5oIGIvZHJpdmVycy9ncHUvZHJtL2RybV9jcnRjX2ludGVybmFsLmgKaW5kZXggZDA3
+N2M1NDkwMDQxLi4xNjBkNDg5ZjcyNDAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1f
+Y3J0Y19pbnRlcm5hbC5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5o
+CkBAIC0xMDEsMTQgKzEwMSwxMCBAQCBpbnQgZHJtX21vZGVfZGVzdHJveWJsb2JfaW9jdGwoc3Ry
+dWN0IGRybV9kZXZpY2UgKmRldiwKIGludCBfX2RybV9tb2RlX29iamVjdF9hZGQoc3RydWN0IGRy
+bV9kZXZpY2UgKmRldiwgc3RydWN0IGRybV9tb2RlX29iamVjdCAqb2JqLAogCQkJICB1aW50MzJf
+dCBvYmpfdHlwZSwgYm9vbCByZWdpc3Rlcl9vYmosCiAJCQkgIHZvaWQgKCpvYmpfZnJlZV9jYiko
+c3RydWN0IGtyZWYgKmtyZWYpKTsKLWludCBkcm1fbW9kZV9vYmplY3RfYWRkKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fbW9kZV9vYmplY3QgKm9iaiwKLQkJCXVpbnQzMl90IG9i
+al90eXBlKTsKIHZvaWQgZHJtX21vZGVfb2JqZWN0X3JlZ2lzdGVyKHN0cnVjdCBkcm1fZGV2aWNl
+ICpkZXYsCiAJCQkgICAgICBzdHJ1Y3QgZHJtX21vZGVfb2JqZWN0ICpvYmopOwogc3RydWN0IGRy
+bV9tb2RlX29iamVjdCAqX19kcm1fbW9kZV9vYmplY3RfZmluZChzdHJ1Y3QgZHJtX2RldmljZSAq
+ZGV2LAogCQkJCQkgICAgICAgdWludDMyX3QgaWQsIHVpbnQzMl90IHR5cGUpOwotdm9pZCBkcm1f
+bW9kZV9vYmplY3RfdW5yZWdpc3RlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAotCQkJCXN0cnVj
+dCBkcm1fbW9kZV9vYmplY3QgKm9iamVjdCk7CiBpbnQgZHJtX21vZGVfb2JqZWN0X2dldF9wcm9w
+ZXJ0aWVzKHN0cnVjdCBkcm1fbW9kZV9vYmplY3QgKm9iaiwgYm9vbCBhdG9taWMsCiAJCQkJICAg
+dWludDMyX3QgX191c2VyICpwcm9wX3B0ciwKIAkJCQkgICB1aW50NjRfdCBfX3VzZXIgKnByb3Bf
+dmFsdWVzLApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9tb2RlX29iamVjdC5jIGIv
+ZHJpdmVycy9ncHUvZHJtL2RybV9tb2RlX29iamVjdC5jCmluZGV4IGRhOWE5YWRiY2M5OC4uMDUy
+ZGNhYmUyNmFmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX21vZGVfb2JqZWN0LmMK
+KysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9tb2RlX29iamVjdC5jCkBAIC03Myw2ICs3Myw3IEBA
+IGludCBkcm1fbW9kZV9vYmplY3RfYWRkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiB7CiAJcmV0
+dXJuIF9fZHJtX21vZGVfb2JqZWN0X2FkZChkZXYsIG9iaiwgb2JqX3R5cGUsIHRydWUsIE5VTEwp
+OwogfQorRVhQT1JUX1NZTUJPTChkcm1fbW9kZV9vYmplY3RfYWRkKTsKIAogdm9pZCBkcm1fbW9k
+ZV9vYmplY3RfcmVnaXN0ZXIoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKIAkJCSAgICAgIHN0cnVj
+dCBkcm1fbW9kZV9vYmplY3QgKm9iaikKQEAgLTEwMyw2ICsxMDQsNyBAQCB2b2lkIGRybV9tb2Rl
+X29iamVjdF91bnJlZ2lzdGVyKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAJfQogCW11dGV4X3Vu
+bG9jaygmZGV2LT5tb2RlX2NvbmZpZy5pZHJfbXV0ZXgpOwogfQorRVhQT1JUX1NZTUJPTChkcm1f
+bW9kZV9vYmplY3RfdW5yZWdpc3Rlcik7CiAKIHN0cnVjdCBkcm1fbW9kZV9vYmplY3QgKl9fZHJt
+X21vZGVfb2JqZWN0X2ZpbmQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKIAkJCQkJICAgICAgIHVp
+bnQzMl90IGlkLCB1aW50MzJfdCB0eXBlKQpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJtX21v
+ZGVfb2JqZWN0LmggYi9pbmNsdWRlL2RybS9kcm1fbW9kZV9vYmplY3QuaAppbmRleCBhNzY3YjRh
+MzBhNmQuLmY5MWFlZTBhMTcwNSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9kcm0vZHJtX21vZGVfb2Jq
+ZWN0LmgKKysrIGIvaW5jbHVkZS9kcm0vZHJtX21vZGVfb2JqZWN0LmgKQEAgLTExMiw2ICsxMTIs
+MTIgQEAgc3RydWN0IGRybV9vYmplY3RfcHJvcGVydGllcyB7CiAJCXJldHVybiAiKHVua25vd24p
+IjsJCQkJXAogCX0KIAoraW50IGRybV9tb2RlX29iamVjdF9hZGQoc3RydWN0IGRybV9kZXZpY2Ug
+KmRldiwKKwkJCXN0cnVjdCBkcm1fbW9kZV9vYmplY3QgKm9iaiwgdWludDMyX3Qgb2JqX3R5cGUp
+OworCit2b2lkIGRybV9tb2RlX29iamVjdF91bnJlZ2lzdGVyKHN0cnVjdCBkcm1fZGV2aWNlICpk
+ZXYsCisJCQkJc3RydWN0IGRybV9tb2RlX29iamVjdCAqb2JqZWN0KTsKKwogc3RydWN0IGRybV9t
+b2RlX29iamVjdCAqZHJtX21vZGVfb2JqZWN0X2ZpbmQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwK
+IAkJCQkJICAgICB1aW50MzJfdCBpZCwgdWludDMyX3QgdHlwZSk7CiB2b2lkIGRybV9tb2RlX29i
+amVjdF9nZXQoc3RydWN0IGRybV9tb2RlX29iamVjdCAqb2JqKTsKLS0gCjEuOS4xCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
