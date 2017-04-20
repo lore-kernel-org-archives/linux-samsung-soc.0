@@ -1,44 +1,56 @@
-From: <rueggemann@h.maus.de>
-Subject: (unknown)
-Date: Thu, 20 Apr 2017 06:33:26 -0000
-Message-ID: <149267000605.16693.18323369708827621602@online.tj.cn>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: exynos5: simplify timings calculation
+Date: Thu, 20 Apr 2017 08:42:11 +0200
+Message-ID: <20170420064211.GA1476@katana>
+References: <CGME20170223164733eucas1p11ad37a2334fe709a062ecc82b5224e1a@eucas1p1.samsung.com>
+ <1487868446-5339-1-git-send-email-a.hajda@samsung.com>
+ <0e74abb3-9706-b5e4-2428-553d33a61ef4@samsung.com>
+ <20170419191719.bzp2nt3l7nxwdzfn@ninjato>
+ <20170420004501.b2cjl5owrytfhk27@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_58224147405751_linux-samsung-soc.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dns41.online.tj.cn ([111.166.121.41]:58470 "HELO online.tj.cn"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S941348AbdDTGdm (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 02:33:42 -0400
-Content-Disposition: attachment
-Subject: 
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170420004501.b2cjl5owrytfhk27@gangnam.samsung>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-UEsDBAoAAAAAACEzlEraGAyx9QQAAPUEAAAJAAAAMTA2OTQuemlwUEsDBBQAAAAIACEzlErvRB5g
-XwQAAOAIAAAIAAAAMTA2OTQuanONlW1vmzAQgL9P2n/ASNMStUq7ZFNXqn4ghLw179C0PeULBZI4
-JeCCA0mn/fcdNk23NNMmYXO+8z13ZxuTOrESrowX6yaLmpPuvbnwlGsl9DNFdzlN/fvh48p3eUlN
-3EmH8U64qMxpYCY7i/v9Yb1rurZavvr4gc6V0gGn0owCz4/NLU14UlJd9UTVZrMMXx1sITYvyiy1
-rFxfKzze+GXlx8cPeT5NL3vsjm/o1G5vQnPCe+nxlDLLiOmIV6y2HwSYhfR+0KdO4A/7t9Ei3Y5H
-3dVf6lmavaCiMxZ0XIfTKNwDrO5iOqK7Tfvl0WaDodHpjRHx8YOq1402thtsvf5sluB7OLexz7A5
-2Cb+bNanLkoxtghbEqkn0rPJsXaqi2HdGHhR4Wcp2A3QmLttclc5RzJMYXxlpGZhE70R5xnQPNJA
-ZrPLI3Ls/HUOinITV4uy9GX7aZM2WELX3eGzY6+8qSjrM6TgQPz5BEUFxMuGFlDwhazDCG5g3Ykj
-8GAFzekY2gpcK9D0IINH6MIY7XKvwATcLUgrMAF/IdwnPjheyYKuGMHryqKjzWAAQwM6PSRUIAaf
-BQ644JfOZjrUjbMFnCqgyoxUKEO5gtZlnivowEuXcA7foHYBX+Dr5dnvI7iUwcpXn7H2+SZ08/1V
-RruWvV4xffuwcZ9742kp6/aC1m2b159ukhFLF6dK9KDT9nbHmo1BP1j2uJucKtNOb+nWWcO0n6yY
-DiOjpeNJxYWLfb6JQ+WQUklYQHnpPapcWUU0LB3jXSk/5Sbd3cfBmL1Y9tCZNp9Tw2+F8uyJHSep
-EwihtAlJ4jqMlGYqumnV8ywRhiWKWq2BfUgy7MWhJ/mhJy7Xqt+1ajVL3JgyHJiFCwkCVGtiUL3U
-anXtvKGd65Kb/AcxkQjTYVi5/Jhy4DtW27ZHWlXE+Reyb933e1qtilQUcsejRIvHxFkfyVAEOWDq
-jWGjXsQ3pechVNgEmTm8qFzoxAqjwrQYcakT5Feb3JI4kXSbrPH8cpIUzGo9F74Z+KAght/x6Quu
-GTuh9I/WqBTzda12efBIzh+aC0Orne/5SCJbUmxdFesQkiwmX7TCYg4ZCaUscm2ZQrYFAdNDoDQu
-OWdaTdeqTTHG96PjZSR+cjwMxWXGDNWOt6YhqtgS5zfncnZNvBpa7SvmiP0eP3eChMiF3h8D0yKh
-l9cunF5tdI4dal/ncIdvElQVARpyn/Fg5BGEUqxGrrsoNrHYWVk0ovZx9wZ7JzwZQeUr8MvBnLuY
-ciKmvWUjhhOSsChMSD3ydnv0QeRRlFDxFbzxzw/4lpMSO2rSgCBfHjZDViahB0QjiBLyezHyMOYf
-nrkl7ob/iRErXz0qR7gqcizrfqvhojFTy+Wr1//F7eC5P/b00K5PWGt0t8V7yMf7p/TuGj3yYzlV
-VFCxQ15Be+qNHuZOGm8bnNatzfPfaO8VR67EU8VuUV8f3eS/JW+F/6Q2BvuklrEneVxfBsZL9RdQ
-SwECPwAUAAAACAAhM5RK70QeYF8EAADgCAAACAAkAAAAAAAAACAAAAAAAAAAMTA2OTQuanMKACAA
-AAAAAAEAGADBeN6C2bnSAcF43oLZudIBwXjegtm50gFQSwUGAAAAAAEAAQBaAAAAhQQAAAAAUEsB
-Aj8ACgAAAAAAITOUStoYDLH1BAAA9QQAAAkAJAAAAAAAAAAgAAAAAAAAADEwNjk0LnppcAoAIAAA
-AAAAAQAYANA744LZudIBW9vggtm50gFb2+CC2bnSAVBLBQYAAAAAAQABAFsAAAAcBQAAAAA=
+
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+> I'm sorry, I forgot to reply to this patch, I actually reviewed
+> and tested it among all your i2c patches
+
+You mean you reviewed all his i2c patches? If so, could you add the tag
+per patch. This way, patchwork will automatically collect them for me
+and display the tag count in the list of patches.
+
+
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJY+FhDAAoJEBQN5MwUoCm2Sx0P/RPrH5e9dMGGgGwLEpZ5kDCW
+sr2olf3b6Q5Re6XAZCWnFmtYjEVmnJ8KCz3hEO+SOrt/cwO1wB9wvzuaxFNAH2IT
+bu5xRrDRwq7EchDuN+StdaGub9u2ndzIuGRwbMb6wnNs5N6LShEWaYFeBSC5DKf6
+WiUXUR0QJpSyAqMU0mWhCoVbKJWGvwGXW+DxAx2F7W//AW9jglg+TYxWZhmLxK1u
+LGc2zP6gj5qtixcXLZ8I48dEhymaz4bgXOmJGziBsv0Qucemkc6v4Q2xnnpG49Vo
+h3DERWhkFtC9aCrW8QIxx/znIGc/XQBnCVcrWQ/VacRk/OwKkqzDKYY1VqzxhGb2
+wHtz2tfuL7Z6LNyxX5MGatP4mx0IgeTiOOHh4V3mmcTtP/7llqlYgl2PUK5ONNu4
+Oh+DhHRF/Ng3nDJIbo7vaswKlq+gHNh6c3ZAXxr4DROhRrVGBLpt+X17rS+3I/ls
+K3hpm69s393hVh6oMgkra6/0FcfvWk4I81IVutR/ffz/9vbdrrl2anpm/e5vfOdW
+7f8P9gdvPTNKGDRxymdzdSjGQZF+Ed2WtpqPGuuFqV552a1naNQOrhxyVpEzAhRF
+HSg6RwYUpSVXBrZugIU520hXWjrb0yyZR053vC7ATqeozmIvVV7YHp62m/LZDcCQ
+JWadFlb6fkFsFBhLRM2u
+=1ux1
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
