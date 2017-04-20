@@ -1,192 +1,181 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [RFC 0/4] Exynos DRM: add Picture Processor extension
-Date: Thu, 20 Apr 2017 14:17:45 +0200
-Message-ID: <301ba465-5ace-b619-06bf-8dfcad76cedf@math.uni-bielefeld.de>
-References: <CGME20170420091406eucas1p24c50a0015545105081257d880727386c@eucas1p2.samsung.com>
- <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
- <2541347.TzHdYYQVhG@avalon>
- <711bf4a5-7e57-6720-d00b-66e97a81e5ec@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <711bf4a5-7e57-6720-d00b-66e97a81e5ec@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org
-Cc: Sakari Ailus <sakari.ailus@intel.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 2/4] clk: samsung: exynos-audss: Convert to the new clk_hw API
+Date: Thu, 20 Apr 2017 15:16:37 +0200
+Message-ID: <1492694199-9553-3-git-send-email-m.szyprowski@samsung.com>
+References: <1492694199-9553-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170420131646eucas1p1d302e43fd2823f8e8defe93a24e03e29@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:29133 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031569AbdDTNQ4 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 20 Apr 2017 09:16:56 -0400
+In-reply-to: <1492694199-9553-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-SGVsbG8gZXZlcnlvbmUsCgoKTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBIaSBMYXVyZW50LAo+
-IAo+IE9uIDIwMTctMDQtMjAgMTI6MjUsIExhdXJlbnQgUGluY2hhcnQgd3JvdGU6Cj4+IEhpIE1h
-cmVrLAo+Pgo+PiAoQ0MnaW5nIFNha2FyaSBBaWx1cykKPj4KPj4gVGhhbmsgeW91IGZvciB0aGUg
-cGF0Y2hlcy4KPj4KPj4gT24gVGh1cnNkYXkgMjAgQXByIDIwMTcgMTE6MTM6MzYgTWFyZWsgU3p5
-cHJvd3NraSB3cm90ZToKPj4+IERlYXIgYWxsLAo+Pj4KPj4+IFRoaXMgaXMgYW4gdXBkYXRlZCBw
-cm9wb3NhbCBmb3IgZXh0ZW5kaW5nIEVYWU5PUyBEUk0gQVBJIHdpdGggZ2VuZXJpYwo+Pj4gc3Vw
-cG9ydCBmb3IgaGFyZHdhcmUgbW9kdWxlcywgd2hpY2ggY2FuIGJlIHVzZWQgZm9yIHByb2Nlc3Np
-bmcgaW1hZ2UKPj4+IGRhdGEKPj4+IGZyb20gdGhlIG9uZSBtZW1vcnkgYnVmZmVyIHRvIGFub3Ro
-ZXIuIFR5cGljYWwgbWVtb3J5LXRvLW1lbW9yeQo+Pj4gb3BlcmF0aW9ucwo+Pj4gYXJlOiByb3Rh
-dGlvbiwgc2NhbGluZywgY29sb3VyIHNwYWNlIGNvbnZlcnNpb24gb3IgbWl4IG9mIHRoZW0uIFRo
-aXMKPj4+IGlzIGEKPj4+IGZvbGxvdy11cCBvZiBteSBwcmV2aW91cyBwcm9wb3NhbCAiW1JGQyAw
-LzJdIE5ldyBmZWF0dXJlOiBGcmFtZWJ1ZmZlcgo+Pj4gcHJvY2Vzc29ycyIsIHdoaWNoIGhhcyBi
-ZWVuIHJlamVjdGVkIGFzICJub3QgcmVhbGx5IG5lZWRlZCBpbiB0aGUgRFJNCj4+PiBjb3JlIjoK
-Pj4+IGh0dHA6Ly93d3cubWFpbC1hcmNoaXZlLmNvbS9kcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21zZzE0NjI4Ni5odG1sCj4+Pgo+Pj4KPj4+IEluIHRoaXMgcHJvcG9zYWwgSSBtb3Zl
-ZCBhbGwgdGhlIGNvZGUgdG8gRXh5bm9zIERSTSBkcml2ZXIsIHNvIG5vdyB0aGlzCj4+PiB3aWxs
-IGJlIHNwZWNpZmljIG9ubHkgdG8gRXh5bm9zIERSTS4gSSd2ZSBhbHNvIGNoYW5nZWQgdGhlIG5h
-bWUgZnJvbQo+Pj4gZnJhbWVidWZmZXIgcHJvY2Vzc29yIChmYnByb2MpIHRvIHBpY3R1cmUgcHJv
-Y2Vzc29yIChwcCkgdG8gYXZvaWQKPj4+IGNvbmZ1c2lvbgo+Pj4gd2l0aCBmYmRldiBBUEkuCj4+
-Pgo+Pj4gSGVyZSBpcyBhIGJpdCBtb3JlIGluZm9ybWF0aW9uIHdoYXQgcGljdHVyZSBwcm9jZXNz
-b3JzIGFyZToKPj4+Cj4+PiBFbWJlZGRlZCBTb0NzIGFyZSBrbm93biB0byBoYXZlIGEgbnVtYmVy
-IG9mIGhhcmR3YXJlIGJsb2Nrcywgd2hpY2gKPj4+IHBlcmZvcm0KPj4+IHN1Y2ggb3BlcmF0aW9u
-cy4gVGhleSBjYW4gYmUgdXNlZCBpbiBwYXJhbGVsIHRvIHRoZSBtYWluIEdQVSBtb2R1bGUgdG8K
-Pj4+IG9mZmxvYWQgQ1BVIGZyb20gcHJvY2Vzc2luZyBncmFwaWNzIG9yIHZpZGVvIGRhdGEuIE9u
-ZSBvZiBleGFtcGxlIHVzZSBvZgo+Pj4gc3VjaCBtb2R1bGVzIGlzIGltcGxlbWVudGluZyB2aWRl
-byBvdmVybGF5LCB3aGljaCB1c3VhbGx5IHJlcXVpcmVzIGNvbG9yCj4+PiBzcGFjZSBjb252ZXJz
-aW9uIGZyb20gTlYxMiAob3Igc2ltaWxhcikgdG8gUkdCMzIgY29sb3Igc3BhY2UgYW5kCj4+PiBz
-Y2FsaW5nIHRvCj4+PiB0YXJnZXQgd2luZG93IHNpemUuCj4+Pgo+Pj4gVGhlIHByb3Bvc2VkIEFQ
-SSBpcyBoZWF2aWx5IGluc3BpcmVkIGJ5IGF0b21pYyBLTVMgYXBwcm9hY2ggLSBpdCBpcyBhbHNv
-Cj4+PiBiYXNlZCBvbiBEUk0gb2JqZWN0cyBhbmQgdGhlaXIgcHJvcGVydGllcy4gQSBuZXcgRFJN
-IG9iamVjdCBpcwo+Pj4gaW50cm9kdWNlZDoKPj4+IHBpY3R1cmUgcHJvY2Vzc29yIChjYWxsZWQg
-cHAgZm9yIGNvbnZlbmllbmNlKS4gU3VjaCBvYmplY3RzIGhhdmUgYQo+Pj4gc2V0IG9mCj4+PiBz
-dGFuZGFyZCBEUk0gcHJvcGVydGllcywgd2hpY2ggZGVzY3JpYmVzIHRoZSBvcGVyYXRpb24gdG8g
-YmUKPj4+IHBlcmZvcm1lZCBieQo+Pj4gcmVzcGVjdGl2ZSBoYXJkd2FyZSBtb2R1bGUuIEluIHR5
-cGljYWwgY2FzZSB0aG9zZSBwcm9wZXJ0aWVzIGFyZSBhCj4+PiBzb3VyY2UKPj4+IGZiIGlkIGFu
-ZCByZWN0YW5nbGUgKHgsIHksIHdpZHRoLCBoZWlnaHQpIGFuZCBkZXN0aW5hdGlvbiBmYiBpZCBh
-bmQKPj4+IHJlY3RhbmdsZS4gT3B0aW9uYWxseSBhIHJvdGF0aW9uIHByb3BlcnR5IGNhbiBiZSBh
-bHNvIHNwZWNpZmllZCBpZgo+Pj4gc3VwcG9ydGVkIGJ5IHRoZSBnaXZlbiBoYXJkd2FyZS4gVG8g
-cGVyZm9ybSBhbiBvcGVyYXRpb24gb24gaW1hZ2UgZGF0YSwKPj4+IHVzZXJzcGFjZSBwcm92aWRl
-cyBhIHNldCBvZiBwcm9wZXJ0aWVzIGFuZCB0aGVpciB2YWx1ZXMgZm9yIGdpdmVuIGZicHJvYwo+
-Pj4gb2JqZWN0IGluIGEgc2ltaWxhciB3YXkgYXMgb2JqZWN0IGFuZCBwcm9wZXJ0aWVzIGFyZSBw
-cm92aWRlZCBmb3IKPj4+IHBlcmZvcm1pbmcgYXRvbWljIHBhZ2UgZmxpcCAvIG1vZGUgc2V0dGlu
-Zy4KPj4+Cj4+PiBUaGUgcHJvcG9zZWQgQVBJIGNvbnNpc3RzIG9mIHRoZSAzIG5ldyBpb2N0bHM6
-Cj4+PiAtIERSTV9JT0NUTF9FWFlOT1NfUFBfR0VUX1JFU09VUkNFUzogdG8gZW51bWVyYXRlIGFs
-bCBhdmFpbGFibGUgcGljdHVyZQo+Pj4gICAgcHJvY2Vzc29ycywKPj4+IC0gRFJNX0lPQ1RMX0VY
-WU5PU19QUF9HRVQ6IHRvIHF1ZXJ5IGNhcGFiaWxpdGllcyBvZiBnaXZlbiBwaWN0dXJlCj4+PiAg
-ICBwcm9jZXNzb3IsCj4+PiAtIERSTV9JT0NUTF9FWFlOT1NfUFBfQ09NTUlUOiB0byBwZXJmb3Jt
-IG9wZXJhdGlvbiBkZXNjcmliZWQgYnkgZ2l2ZW4KPj4+ICAgIHByb3BlcnR5IHNldC4KPj4+Cj4+
-PiBUaGUgcHJvcG9zZWQgQVBJIGlzIGV4dGVuc2libGUuIERyaXZlcnMgY2FuIGF0dGFjaCB0aGVp
-ciBvd24sIGN1c3RvbQo+Pj4gcHJvcGVydGllcyB0byBhZGQgc3VwcG9ydCBmb3IgbW9yZSBhZHZh
-bmNlZCBwaWN0dXJlIHByb2Nlc3NpbmcgKGZvcgo+Pj4gZXhhbXBsZQo+Pj4gYmxlbmRpbmcpLgo+
-Pj4KPj4+IFRoaXMgcHJvcG9zYWwgYWltcyB0byByZXBsYWNlIEV4eW5vcyBEUk0gSVBQIChJbWFn
-ZSBQb3N0IFByb2Nlc3NpbmcpCj4+PiBzdWJzeXN0ZW0uIElQUCBBUEkgaXMgb3Zlci1lbmdpbmVl
-cmVkIGluIGdlbmVyYWwsIGJ1dCBub3QgcmVhbGx5Cj4+PiBleHRlbnNpYmxlCj4+PiBvbiB0aGUg
-b3RoZXIgc2lkZS4gSXQgaXMgYWxzbyBidWdneSwgd2l0aCBzaWduaWZpY2FudCBkZXNpZ24gZmxh
-d3MgLSB0aGUKPj4+IGJpZ2dlc3QgaXNzdWUgaXMgdGhlIGZhY3QgdGhhdCB0aGUgQVBJIGNvdmVy
-cyBtZW1vcnktMi1tZW1vcnkgcGljdHVyZQo+Pj4gb3BlcmF0aW9ucyB0b2dldGhlciB3aXRoIENS
-VEMgd3JpdGViYWNrIGFuZCBkdXBsaWNhdGluZyBmZWF0dXJlcywgd2hpY2gKPj4+IGJlbG9uZ3Mg
-dG8gdmlkZW8gcGxhbmUuIENvbXBhcmluZyB3aXRoIElQUCBzdWJzeXN0ZW0sIHRoZSBQUAo+Pj4g
-ZnJhbWV3b3JrIGlzCj4+PiBzbWFsbGVyICgxODA3IHZzIDc3OCBsaW5lcykgYW5kIGFsbG93cyBk
-cml2ZXIgc2ltcGxpZmljYXRpb24gKEV4eW5vcwo+Pj4gcm90YXRvciBkcml2ZXIgc21hbGxlciBi
-eSBvdmVyIDIwMCBsaW5lcykuCj4+IFRoaXMgc2VlbXMgdG8gYmUgdGhlIGtpbmQgb2YgaGFyZHdh
-cmUgdGhhdCBpcyB0eXBpY2FsbHkgc3VwcG9ydGVkIGJ5Cj4+IFY0TDIuCj4+IFN0dXBpZCBxdWVz
-dGlvbiwgd2h5IERSTSA/Cj4gCj4gTGV0IG1lIGVsYWJvcmF0ZSBhIGJpdCBvbiB0aGUgcmVhc29u
-cyBmb3IgaW1wbGVtZW50aW5nIGl0IGluIEV4eW5vcyBEUk06Cj4gCj4gMS4gd2Ugd2FudCB0byBy
-ZXBsYWNlIGV4aXN0aW5nIEV4eW5vcyBJUFAgc3Vic3lzdGVtOgo+ICAtIGl0IGlzIHVzZWQgb25s
-eSBpbiBzb21lIGludGVybmFsL3ZlbmRvciB0cmVlcywgbm90IGluIG9wZW4tc291cmNlCj4gIC0g
-d2Ugd2FudCBpdCB0byBoYXZlIHNhbmUgYW5kIHBvdGVudGlhbGx5IGV4dGVuc2libGUgdXNlcnNw
-YWNlIEFQSQo+ICAtIGJ1dCB3ZSBkb24ndCB3YW50IHRvIGxvb3NlIGl0cyBmdW5jdGlvbmFsaXR5
-Cj4gCj4gMi4gd2Ugd2FudCB0byBoYXZlIHNpbXBsZSBBUEkgZm9yIHBlcmZvcm1pbmcgc2luZ2xl
-IGltYWdlIHByb2Nlc3NpbmcKPiBvcGVyYXRpb246Cj4gIC0gdHlwaWNhbGx5IGl0IHdpbGwgYmUg
-dXNlZCBieSBjb21wb3NpdGluZyB3aW5kb3cgbWFuYWdlciwgdGhpcyBtZWFucyB0aGF0Cj4gICAg
-c29tZSBwYXJhbWV0ZXJzIG9mIHRoZSBwcm9jZXNzaW5nIG1pZ2h0IGNoYW5nZSBvbiBlYWNoIHZi
-bGFuayAobGlrZQo+ICAgIGRlc3RpbmF0aW9uIHJlY3RhbmdsZSBmb3IgZXhhbXBsZSkuIFRoaXMg
-YXBpIGFsbG93cyBzdWNoIGNoYW5nZSBvbiBlYWNoCj4gICAgb3BlcmF0aW9uIHdpdGhvdXQgYW55
-IGFkZGl0aW9uYWwgY29zdC4gVjRMMiByZXF1aXJlcyB0byByZWluaXRpYWxpemUKPiAgICBxdWV1
-ZXMgd2l0aCBuZXcgY29uZmlndXJhdGlvbiBvbiBzdWNoIGNoYW5nZSwgd2hhdCBtZWFucyB0aGF0
-IGEgYnVuY2ggb2YKPiAgICBpb2N0bHMgaGFzIHRvIGJlIGNhbGxlZC4KPiAgLSB2YWxpZGF0aW5n
-IHByb2Nlc3NpbmcgcGFyYW1ldGVycyBpbiBWNGwyIEFQSSBpcyByZWFsbHkgY29tcGxpY2F0ZWQs
-Cj4gICAgYmVjYXVzZSB0aGUgcGFyYW1ldGVycyAoZm9ybWF0LCBzcmMmZGVzdCByZWN0YW5nbGVz
-LCByb3RhdGlvbikgYXJlIGJlaW5nCj4gICAgc2V0IGluY3JlbWVudGFsbHksIHNvIHdlIGhhdmUg
-dG8gZWl0aGVyIGFsbG93IHNvbWUgaW1wb3NzaWJsZSwKPiB0cmFuc2l0aW9uYWwKPiAgICBjb25m
-aWd1cmF0aW9ucyBvciBjb21wbGljYXRlIHRoZSBjb25maWd1cmF0aW9uIHN0ZXBzIGV2ZW4gbW9y
-ZSAobGlrZQo+ICAgIGNhbGxpbmcgc29tZSBpb2N0bHMgbXVsdGlwbGUgdGltZXMgZm9yIGJvdGgg
-aW5wdXQgYW5kIG91dHB1dCkuIEluIHRoZQo+IGVuZAo+ICAgIGFsbCBwYXJhbWV0ZXJzIGhhdmUg
-dG8gYmUgYWdhaW4gdmFsaWRhdGVkIGp1c3QgYmVmb3JlIHBlcmZvcm1pbmcgdGhlCj4gICAgb3Bl
-cmF0aW9uLgo+IAo+IDMuIGdlbmVyaWMgYXBwcm9hY2ggKHRvIGFkZCBpdCB0byBEUk0gY29yZSkg
-aGFzIGJlZW4gcmVqZWN0ZWQ6Cj4gaHR0cDovL3d3dy5tYWlsLWFyY2hpdmUuY29tL2RyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcvbXNnMTQ2Mjg2Lmh0bWwKPiAKPiA0LiB0aGlzIGFwaSBj
-YW4gYmUgY29uc2lkZXJlZCBhcyBleHRlbmRlZCAnYmxpdCcgb3BlcmF0aW9uLCBvdGhlciBEUk0K
-PiBkcml2ZXJzCj4gICAgKE1HQSwgUjEyOCwgVklBKSBhbHJlYWR5IGhhdmUgaW9jdGxzIGZvciBz
-dWNoIG9wZXJhdGlvbiwgc28gdGhlcmUgaXMKPiBhbHNvCj4gICAgcGxhY2UgaW4gRFJNIGZvciBp
-dAo+IApJIGp1c3Qgd2FudGVkIHRvIHNheSB0aGF0IEkgbGlrZSB0aGUgcHJvcG9zZWQgQVBJLiBJ
-IGNvdWxkIGRvIHNvbWUKcmV2aWV3aW5nLCBpZiB0aGUgQVBJIGlzbid0IGRpc2NhcmRlZCBxdWlj
-a2x5IGxpa2UgbGFzdCB0aW1lICh3aGVuIGl0CndhcyBzdGlsbCBwcm9wb3NlZCBhcyBwYXJ0IG9m
-IERSTSBjb3JlKS4KClRvIGNvbW1lbnQgYWJvdXQgd2h5IHRoaXMgc2hvdWxkIGJlIGluIERSTSBs
-YW5kLiBJIHBlcnNvbmFsbHkgY291bGQKbmV2ZXIgZ2V0IGNvbWZvcnRhYmxlIHdpdGggdGhlIFY0
-TDIgQVBJLiBJdCBzZWVtcyB0byBiZSBvdmVyZW5naW5lZXJlZApmb3IgdGhlIGNvbnRleHQgb2Yg
-YSBibGl0dGluZyBvcCwgaGVuY2Ugd2hhdCBNYXJlayBhbHJlYWR5IHNhaWQuIEkKcHJlZmVyIHRv
-IHdvcmsgd2l0aCBvbmUgQVBJLCBzbyBJIGRvbid0IGhhdmUgdG8gd29ycnkgYWJvdXQgcG90ZW50
-aWFsCnByb2JsZW1zIHdoZW4gdHdvIG9mIHRoZW0gaW50ZXJhY3QuIEZvciBWNEwyIHRoaXMgd291
-bGQgYmUgZXhjaGFuZ2Ugb2YKYnVmZmVycywgd2hlcmUgSSBhbHdheXMgaGF2ZSB0byB0aGluayB3
-aGVyZSBJIGhhdmUgdG8gY3JlYXRlIHNvbWUKYnVmZmVyLCBiZWNhdXNlIEkgbWlnaHQgYmUgYWJs
-ZSB0byBleHBvcnQgaXQsIGJ1dCBub3QgaW1wb3J0IGl0IG9uIHRoZQpvdGhlciBzaWRlLiBJbiB0
-aGlzIGNhc2UgRFJNIGlzIHdheSBzaW1wbGVyLCBJIGp1c3QgcGFzcyBhcm91bmQgbXkgR0VNCmhh
-bmRsZSBhbmQgdGhhdCdzIGl0LiBTdHVmZiBsaWtlIHRoYXQuCgpBbHNvLCBJIHN0aWxsIGhhdmVu
-J3QgZHJvcHBlZCB0aGlzIHNtYWxsIHByb2plY3Qgb2YgbWluZSwgdXNpbmcgc3VjaCBhbgpBUEkg
-Zm9yIGFuIEV4eW5vcyByZW5kZXJlciBiYWNrZW5kIGZvciB0aGUgbXB2IG1lZGlhIHBsYXllci4K
-CgoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoKPj4+IE9wZW4gcXVlc3Rpb25zOgo+Pj4gLSBI
-b3cgdG8gZXhwb3NlIHBwIGNhcGFiaWxpdGllcyBhbmQgc3VwcG9ydGVkIGZvcm1hdHM/IEN1cnJl
-bnRseSB0aGlzIGlzCj4+PiBkb25lIHdpdGggYSBkcm1fZXh5bm9zX3BwX2dldCBzdHJ1Y3R1cmUg
-YW5kIERSTV9JT0NUTF9FWFlOT1NfUFBfR0VUCj4+PiBpb2N0bC4KPj4+IEhvd2V2ZXIgb25lIGNh
-biB0cnkgdG8gdXNlIElNTVVUQUJMRSBwcm9wZXJ0aWVzIGZvciBjYXBhYmlsaXRpZXMgYW5kCj4+
-PiBzcmMvZHN0IGZvcm1hdCBzZXQuIFJhdGlvbmFsZTogcmVjZW50bHkgUm9iIENsYXJrIHByb3Bv
-c2VkIHRvIGNyZWF0ZQo+Pj4gYSBEUk0KPj4+IHByb3BlcnR5IHdpdGggc3VwcG9ydGVkIHBpeGVs
-Zm9ybWF0cyBhbmQgbW9kaWZpZXJzOgo+Pj4gICAgaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0
-cy9kcmktZGV2ZWwvbXNnMTM3MzgwLmh0bWwKPj4+IC0gSXMgaXQgb2theSB0byB1c2UgRFJNIG9i
-amVjdHMgYW5kIHByb3BlcnRpZXMgQVBJCj4+PiAoRFJNX0lPQ1RMX01PREVfR0VUUFJPUEVSVFkg
-YW5kIERSTV9JT0NUTF9NT0RFX09CSl9HRVRQUk9QRVJUSUVTIGlvY3RscykKPj4+IGZvciB0aGlz
-IHB1cnBvc2U/Cj4+Pgo+Pj4gVE9ETzoKPj4+IC0gY29udmVydCByZW1haW5pbmcgRXh5bm9zIERS
-TSBJUFAgZHJpdmVycyAoRklNQywgR1NjYWxsZXIpCj4+PiAtIHJlbW92ZSBFeHlub3MgRFJNIElQ
-UCBzdWJzeXN0ZW0KPj4+IC0gKG9wdGlvbmFsKSBwcm92aWRlIHZpcnR1YWwgVjRMMiBtZW0ybWVt
-IGRldmljZSBvbiB0b3Agb2YgRXh5bm9zIFBQCj4+PiBmcmFtZXdvcmsKPj4+Cj4+PiBQYXRjaGVz
-IHdlcmUgdGVzdGVkIG9uIEV4eW5vcyA0NDEyLWJhc2VkIE9kcm9pZCBVMyBib2FyZCwgb24gdG9w
-IG9mCj4+PiBMaW51eAo+Pj4gbmV4dC0yMDE3MDQyMCBrZXJuZWwuCj4+Pgo+Pj4gQmVzdCByZWdh
-cmRzCj4+PiBNYXJlayBTenlwcm93c2tpCj4+PiBTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9sYW5k
-Cj4+Pgo+Pj4KPj4+IENoYW5nZWxvZzoKPj4+IHYxOgo+Pj4gLSBtb3ZlZCB0aGlzIGZlYXR1cmUg
-ZnJvbSBEUk0gY29yZSB0byBFeHlub3MgRFJNIGRyaXZlcgo+Pj4gLSBjaGFuZ2VkIG5hbWUgZnJv
-bSBmcmFtZWJ1ZmZlciBwcm9jZXNzb3IgdG8gcGljdHVyZSBwcm9jZXNzb3IKPj4+IC0gc2ltcGxp
-ZmllZCBjb2RlIHRvIGNvdmVyIG9ubHkgdGhpbmdzIG5lZWRlZCBieSBFeHlub3MgZHJpdmVycwo+
-Pj4gLSBpbXBsZW1lbnRlZCBzaW1wbGUgZmlmbyB0YXNrIHNjaGVkdWxlcgo+Pj4gLSBjbGVhbmVk
-IHVwIHJvdGF0b3IgZHJpdmVyIGNvbnZlcnNpb24gKHJlbW92ZWQgSVBQIHJlbWFpbmluZ3MpCj4+
-Pgo+Pj4KPj4+IHYwOgo+Pj4gaHR0cDovL3d3dy5tYWlsLWFyY2hpdmUuY29tL2RyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbXNnMTQ2Mjg2Lmh0bWwKPj4+Cj4+PiAtIGluaXRpYWwgcG9z
-dCBvZiAiW1JGQyAwLzJdIE5ldyBmZWF0dXJlOiBGcmFtZWJ1ZmZlciBwcm9jZXNzb3JzIgo+Pj4g
-LSBnZW5lcmljIGFwcHJvYWNoIGltcGxlbWVudGVkIGluIERSTSBjb3JlLCByZWplY3RlZAo+Pj4K
-Pj4+Cj4+PiBQYXRjaCBzdW1tYXJ5Ogo+Pj4KPj4+IE1hcmVrIFN6eXByb3dza2kgKDQpOgo+Pj4g
-ICAgZHJtOiBFeHBvcnQgZnVuY3Rpb25zIHRvIGNyZWF0ZSBjdXN0b20gRFJNIG9iamVjdHMKPj4+
-ICAgIGRybTogQWRkIHN1cHBvcnQgZm9yIHZlbmRvciBzcGVjaWZpYyBEUk0gb2JqZWN0cyB3aXRo
-IGN1c3RvbQo+Pj4gICAgICBwcm9wZXJ0aWVzCj4+PiAgICBkcm0vZXh5bm9zOiBBZGQgUGljdHVy
-ZSBQcm9jZXNzb3IgZnJhbWV3b3JrCj4+PiAgICBkcm0vZXh5bm9zOiBDb252ZXJ0IEV4eW5vcyBS
-b3RhdG9yIGRyaXZlciB0byBQaWN0dXJlIFByb2Nlc3Nvcgo+Pj4gICAgICBpbnRlcmZhY2UKPj4+
-Cj4+PiAgIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oICAgICAgICAgfCAgIDQg
-LQo+Pj4gICBkcml2ZXJzL2dwdS9kcm0vZHJtX21vZGVfb2JqZWN0LmMgICAgICAgICAgIHwgIDEx
-ICstCj4+PiAgIGRyaXZlcnMvZ3B1L2RybS9kcm1fcHJvcGVydHkuYyAgICAgICAgICAgICAgfCAg
-IDIgKy0KPj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnICAgICAgICAgICAgICB8
-ICAgMSAtCj4+PiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvTWFrZWZpbGUgICAgICAgICAgICAg
-fCAgIDMgKy0KPj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAg
-ICB8ICAgOSArCj4+PiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAg
-ICAgfCAgMTUgKwo+Pj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcHAuYyAg
-ICAgIHwgNzc1Cj4+PiArKysrKysrKysrKysrKysrKysrKysrKysrCj4+PiAgIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9wcC5oICAgICAgfCAxNTUgKysrKysrCj4+PiAgIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMgfCA1MTMgKysrKystLS0tLS0t
-LS0tLS0tCj4+PiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmgg
-fCAgMTkgLQo+Pj4gICBpbmNsdWRlL2RybS9kcm1fbW9kZV9vYmplY3QuaCAgICAgICAgICAgICAg
-IHwgICA2ICsKPj4+ICAgaW5jbHVkZS9kcm0vZHJtX3Byb3BlcnR5LmggICAgICAgICAgICAgICAg
-ICB8ICAgNyArCj4+PiAgIGluY2x1ZGUvdWFwaS9kcm0vZHJtX21vZGUuaCAgICAgICAgICAgICAg
-ICAgfCAgIDEgKwo+Pj4gICBpbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaCAgICAgICAgICAg
-ICAgIHwgIDYyICsrKwo+Pj4gICAxNSBmaWxlcyBjaGFuZ2VkLCAxMTY2IGluc2VydGlvbnMoKyks
-IDQxNyBkZWxldGlvbnMoLSkKPj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9wcC5jCj4+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcHAuaAo+Pj4gICBkZWxldGUgbW9kZSAxMDA2NDQg
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuaAo+IAo+IEJlc3QgcmVn
-YXJkcwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Clock providers should use the new struct clk_hw based API, so convert
+Exynos Audio Subsystem clock provider to the new approach.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos-audss.c | 55 +++++++++++++++++-----------------
+ 1 file changed, 28 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index cb7df358a27d..e8f89529da07 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -22,9 +22,8 @@
+ #include <dt-bindings/clock/exynos-audss-clk.h>
+ 
+ static DEFINE_SPINLOCK(lock);
+-static struct clk **clk_table;
+ static void __iomem *reg_base;
+-static struct clk_onecell_data clk_data;
++static struct clk_hw_onecell_data *clk_data;
+ /*
+  * On Exynos5420 this will be a clock which has to be enabled before any
+  * access to audss registers. Typically a child of EPLL.
+@@ -110,18 +109,18 @@ static void exynos_audss_clk_teardown(void)
+ 	int i;
+ 
+ 	for (i = EXYNOS_MOUT_AUDSS; i < EXYNOS_DOUT_SRP; i++) {
+-		if (!IS_ERR(clk_table[i]))
+-			clk_unregister_mux(clk_table[i]);
++		if (!IS_ERR(clk_data->hws[i]))
++			clk_hw_unregister_mux(clk_data->hws[i]);
+ 	}
+ 
+ 	for (; i < EXYNOS_SRP_CLK; i++) {
+-		if (!IS_ERR(clk_table[i]))
+-			clk_unregister_divider(clk_table[i]);
++		if (!IS_ERR(clk_data->hws[i]))
++			clk_hw_unregister_divider(clk_data->hws[i]);
+ 	}
+ 
+-	for (; i < clk_data.clk_num; i++) {
+-		if (!IS_ERR(clk_table[i]))
+-			clk_unregister_gate(clk_table[i]);
++	for (; i < clk_data->num; i++) {
++		if (!IS_ERR(clk_data->hws[i]))
++			clk_hw_unregister_gate(clk_data->hws[i]);
+ 	}
+ }
+ 
+@@ -133,6 +132,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 	const char *sclk_pcm_p = "sclk_pcm0";
+ 	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
+ 	const struct exynos_audss_clk_drvdata *variant;
++	struct clk_hw **clk_table;
+ 	struct resource *res;
+ 	int i, ret = 0;
+ 
+@@ -149,14 +149,15 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 
+ 	epll = ERR_PTR(-ENODEV);
+ 
+-	clk_table = devm_kzalloc(&pdev->dev,
+-				sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
++	clk_data = devm_kzalloc(&pdev->dev,
++				sizeof(*clk_data) +
++				sizeof(*clk_data->hws) * EXYNOS_AUDSS_MAX_CLKS,
+ 				GFP_KERNEL);
+-	if (!clk_table)
++	if (!clk_data)
+ 		return -ENOMEM;
+ 
+-	clk_data.clks = clk_table;
+-	clk_data.clk_num = variant->num_clks;
++	clk_data->num = variant->num_clks;
++	clk_table = clk_data->hws;
+ 
+ 	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
+ 	pll_in = devm_clk_get(&pdev->dev, "pll_in");
+@@ -176,7 +177,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 			}
+ 		}
+ 	}
+-	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
++	clk_table[EXYNOS_MOUT_AUDSS] = clk_hw_register_mux(NULL, "mout_audss",
+ 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
+ 				CLK_SET_RATE_NO_REPARENT,
+ 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
+@@ -187,53 +188,53 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 		mout_i2s_p[1] = __clk_get_name(cdclk);
+ 	if (!IS_ERR(sclk_audio))
+ 		mout_i2s_p[2] = __clk_get_name(sclk_audio);
+-	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
++	clk_table[EXYNOS_MOUT_I2S] = clk_hw_register_mux(NULL, "mout_i2s",
+ 				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
+ 				CLK_SET_RATE_NO_REPARENT,
+ 				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
+ 
+-	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, "dout_srp",
++	clk_table[EXYNOS_DOUT_SRP] = clk_hw_register_divider(NULL, "dout_srp",
+ 				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
+ 				0, &lock);
+ 
+-	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL,
++	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_hw_register_divider(NULL,
+ 				"dout_aud_bus", "dout_srp", 0,
+ 				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
+ 
+-	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, "dout_i2s",
++	clk_table[EXYNOS_DOUT_I2S] = clk_hw_register_divider(NULL, "dout_i2s",
+ 				"mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
+ 				&lock);
+ 
+-	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, "srp_clk",
++	clk_table[EXYNOS_SRP_CLK] = clk_hw_register_gate(NULL, "srp_clk",
+ 				"dout_srp", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 0, 0, &lock);
+ 
+-	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, "i2s_bus",
++	clk_table[EXYNOS_I2S_BUS] = clk_hw_register_gate(NULL, "i2s_bus",
+ 				"dout_aud_bus", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 2, 0, &lock);
+ 
+-	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, "sclk_i2s",
++	clk_table[EXYNOS_SCLK_I2S] = clk_hw_register_gate(NULL, "sclk_i2s",
+ 				"dout_i2s", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 3, 0, &lock);
+ 
+-	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, "pcm_bus",
++	clk_table[EXYNOS_PCM_BUS] = clk_hw_register_gate(NULL, "pcm_bus",
+ 				 "sclk_pcm", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
+ 
+ 	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
+ 	if (!IS_ERR(sclk_pcm_in))
+ 		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
+-	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
++	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(NULL, "sclk_pcm",
+ 				sclk_pcm_p, CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
+ 
+ 	if (variant->has_adma_clk) {
+-		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
++		clk_table[EXYNOS_ADMA] = clk_hw_register_gate(NULL, "adma",
+ 				"dout_srp", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 9, 0, &lock);
+ 	}
+ 
+-	for (i = 0; i < clk_data.clk_num; i++) {
++	for (i = 0; i < clk_data->num; i++) {
+ 		if (IS_ERR(clk_table[i])) {
+ 			dev_err(&pdev->dev, "failed to register clock %d\n", i);
+ 			ret = PTR_ERR(clk_table[i]);
+@@ -241,7 +242,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
++	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
+ 					&clk_data);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to add clock provider\n");
+-- 
+1.9.1
