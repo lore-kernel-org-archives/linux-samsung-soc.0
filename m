@@ -1,147 +1,91 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [RFC 0/4] Exynos DRM: add Picture Processor extension
-Date: Thu, 20 Apr 2017 11:13:36 +0200
-Message-ID: <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170420091406eucas1p24c50a0015545105081257d880727386c@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:13896 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S942399AbdDTJOK (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 05:14:10 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OOP00FYMAZJ5X20@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Apr 2017 10:14:07 +0100 (BST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [RFC 2/4] drm: Add support for vendor specific DRM objects with custom
+ properties
+Date: Thu, 20 Apr 2017 11:13:38 +0200
+Message-ID: <1492679620-12792-3-git-send-email-m.szyprowski@samsung.com>
+References: <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170420091407eucas1p2da1e16aa00e6d0bf8bd305422c3a9ba9@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear all,
-
-This is an updated proposal for extending EXYNOS DRM API with generic support
-for hardware modules, which can be used for processing image data from the
-one memory buffer to another. Typical memory-to-memory operations are:
-rotation, scaling, colour space conversion or mix of them. This is
-a follow-up of my previous proposal "[RFC 0/2] New feature: Framebuffer
-processors", which has been rejected as "not really needed in the DRM core":
-http://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg146286.html
-
-In this proposal I moved all the code to Exynos DRM driver, so now this
-will be specific only to Exynos DRM. I've also changed the name from
-framebuffer processor (fbproc) to picture processor (pp) to avoid confusion
-with fbdev API.
-
-Here is a bit more information what picture processors are:
-
-Embedded SoCs are known to have a number of hardware blocks, which perform
-such operations. They can be used in paralel to the main GPU module to
-offload CPU from processing grapics or video data. One of example use of
-such modules is implementing video overlay, which usually requires color
-space conversion from NV12 (or similar) to RGB32 color space and scaling to
-target window size.
-
-The proposed API is heavily inspired by atomic KMS approach - it is also
-based on DRM objects and their properties. A new DRM object is introduced:
-picture processor (called pp for convenience). Such objects have a set of
-standard DRM properties, which describes the operation to be performed by
-respective hardware module. In typical case those properties are a source
-fb id and rectangle (x, y, width, height) and destination fb id and
-rectangle. Optionally a rotation property can be also specified if
-supported by the given hardware. To perform an operation on image data,
-userspace provides a set of properties and their values for given fbproc
-object in a similar way as object and properties are provided for
-performing atomic page flip / mode setting.
-
-The proposed API consists of the 3 new ioctls:
-- DRM_IOCTL_EXYNOS_PP_GET_RESOURCES: to enumerate all available picture
-  processors,
-- DRM_IOCTL_EXYNOS_PP_GET: to query capabilities of given picture
-  processor,
-- DRM_IOCTL_EXYNOS_PP_COMMIT: to perform operation described by given
-  property set.
-
-The proposed API is extensible. Drivers can attach their own, custom
-properties to add support for more advanced picture processing (for example
-blending).
-
-This proposal aims to replace Exynos DRM IPP (Image Post Processing)
-subsystem. IPP API is over-engineered in general, but not really extensible
-on the other side. It is also buggy, with significant design flaws - the
-biggest issue is the fact that the API covers memory-2-memory picture
-operations together with CRTC writeback and duplicating features, which
-belongs to video plane. Comparing with IPP subsystem, the PP framework is
-smaller (1807 vs 778 lines) and allows driver simplification (Exynos
-rotator driver smaller by over 200 lines).
-
-Open questions:
-- How to expose pp capabilities and supported formats? Currently this is done
-  with a drm_exynos_pp_get structure and DRM_IOCTL_EXYNOS_PP_GET ioctl.
-  However one can try to use IMMUTABLE properties for capabilities and src/dst
-  format set. Rationale: recently Rob Clark proposed to create a DRM property
-  with supported pixelformats and modifiers:
-  http://www.spinics.net/lists/dri-devel/msg137380.html
-- Is it okay to use DRM objects and properties API (DRM_IOCTL_MODE_GETPROPERTY
-  and DRM_IOCTL_MODE_OBJ_GETPROPERTIES ioctls) for this purpose?
-
-TODO:
-- convert remaining Exynos DRM IPP drivers (FIMC, GScaller)
-- remove Exynos DRM IPP subsystem
-- (optional) provide virtual V4L2 mem2mem device on top of Exynos PP framework
-
-Patches were tested on Exynos 4412-based Odroid U3 board, on top of Linux
-next-20170420 kernel.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changelog:
-v1:
-- moved this feature from DRM core to Exynos DRM driver
-- changed name from framebuffer processor to picture processor
-- simplified code to cover only things needed by Exynos drivers
-- implemented simple fifo task scheduler
-- cleaned up rotator driver conversion (removed IPP remainings)
-
-
-v0: http://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg146286.html
-- initial post of "[RFC 0/2] New feature: Framebuffer processors"
-- generic approach implemented in DRM core, rejected
-
-
-Patch summary:
-
-Marek Szyprowski (4):
-  drm: Export functions to create custom DRM objects
-  drm: Add support for vendor specific DRM objects with custom
-    properties
-  drm/exynos: Add Picture Processor framework
-  drm/exynos: Convert Exynos Rotator driver to Picture Processor
-    interface
-
- drivers/gpu/drm/drm_crtc_internal.h         |   4 -
- drivers/gpu/drm/drm_mode_object.c           |  11 +-
- drivers/gpu/drm/drm_property.c              |   2 +-
- drivers/gpu/drm/exynos/Kconfig              |   1 -
- drivers/gpu/drm/exynos/Makefile             |   3 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.c     |   9 +
- drivers/gpu/drm/exynos/exynos_drm_drv.h     |  15 +
- drivers/gpu/drm/exynos/exynos_drm_pp.c      | 775 ++++++++++++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_pp.h      | 155 ++++++
- drivers/gpu/drm/exynos/exynos_drm_rotator.c | 513 +++++-------------
- drivers/gpu/drm/exynos/exynos_drm_rotator.h |  19 -
- include/drm/drm_mode_object.h               |   6 +
- include/drm/drm_property.h                  |   7 +
- include/uapi/drm/drm_mode.h                 |   1 +
- include/uapi/drm/exynos_drm.h               |  62 +++
- 15 files changed, 1166 insertions(+), 417 deletions(-)
- create mode 100644 drivers/gpu/drm/exynos/exynos_drm_pp.c
- create mode 100644 drivers/gpu/drm/exynos/exynos_drm_pp.h
- delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_rotator.h
-
--- 
-1.9.1
+QWRkIGEgRFJNX01PREVfUFJPUF9WRU5ET1IgZmxhZywgd2hpY2ggYWxsb3dzIHRvIGNyZWF0ZSBE
+Uk0gcHJvcGVydGllcwpmb3IgdmVuZG9yLCBjdXN0b20gRFJNIG9iamVjdHMuIFRoaXMgYWxsb3dz
+IHRvIGNyZWF0ZSBPQkpFQ1QgdHlwZSBwcm9wZXJ0aWVzLAp3aGljaCB3ZXJlIHJlc2VydmVkIG9u
+bHkgZm9yIEFUT01JQyBtb2RlIHNldHMuIFRoaXMgZmxhZyBpcyBhbHNvIGNoZWNrZWQKaW4gZHJt
+X29iamVjdF9wcm9wZXJ0eV9nZXRfdmFsdWUoKSBmdW5jdGlvbiB0byBsZXQgdXNlcnNwYWNlIHRv
+IGdldApkZWZhdWx0IHZhbHVlIGZvciBzdWNoIHByb3BlcnRpZXMgaW5zdGVhZCBvZiBjYWxsaW5n
+IHRoZSBhdG9taWMgcGF0aC4KClRoaXMgY2hhbmdlLCB0b2dldGhlciB3aXRoIGFiaWxpdHkgb2Yg
+cmVnaXN0ZXJpbmcgY3VzdG9tIERSTSBvYmplY3RzIGZyb20KdGhlIGRldmljZSBkcml2ZXJzIGFs
+bG93cyBleHBvc2luZyBzb21lIGRyaXZlciBzcGVjaWZpYyBlbnRpdGllcyBhcyBEUk0Kb2JqZWN0
+cywgd2hpY2ggY2FuIGJlIHRoZW4gcXVlcmllZCB3aXRoIHN0YW5kYXJkCkRSTV9JT0NUTF9NT0RF
+X09CSl9HRVRQUk9QRVJUSUVTIGFuZCBEUk1fSU9DVExfTU9ERV9HRVRQUk9QRVJUWSBpb2N0bHMu
+CgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5j
+b20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2RybV9tb2RlX29iamVjdC5jIHwgOSArKysrKy0tLS0K
+IGRyaXZlcnMvZ3B1L2RybS9kcm1fcHJvcGVydHkuYyAgICB8IDIgKy0KIGluY2x1ZGUvZHJtL2Ry
+bV9wcm9wZXJ0eS5oICAgICAgICB8IDcgKysrKysrKwogaW5jbHVkZS91YXBpL2RybS9kcm1fbW9k
+ZS5oICAgICAgIHwgMSArCiA0IGZpbGVzIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDUgZGVs
+ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9tb2RlX29iamVjdC5j
+IGIvZHJpdmVycy9ncHUvZHJtL2RybV9tb2RlX29iamVjdC5jCmluZGV4IDA1MmRjYWJlMjZhZi4u
+M2NiZWZjMWE3ZjRjIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX21vZGVfb2JqZWN0
+LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9tb2RlX29iamVjdC5jCkBAIC0yNjgsMTIgKzI2
+OCwxMyBAQCBpbnQgZHJtX29iamVjdF9wcm9wZXJ0eV9nZXRfdmFsdWUoc3RydWN0IGRybV9tb2Rl
+X29iamVjdCAqb2JqLAogewogCWludCBpOwogCi0JLyogcmVhZC1vbmx5IHByb3BlcnRpZXMgYnlw
+YXNzIGF0b21pYyBtZWNoYW5pc20gYW5kIHN0aWxsIHN0b3JlCi0JICogdGhlaXIgdmFsdWUgaW4g
+b2JqLT5wcm9wZXJ0aWVzLT52YWx1ZXNbXS4uIG1vc3RseSB0byBhdm9pZAotCSAqIGhhdmluZyB0
+byBkZWFsIHcvIEVESUQgYW5kIHNpbWlsYXIgcHJvcHMgaW4gYXRvbWljIHBhdGhzOgorCS8qIGN1
+c3RvbSB2ZW5kb3Igb3IgcmVhZC1vbmx5IHByb3BlcnRpZXMgYnlwYXNzIGF0b21pYyBtZWNoYW5p
+c20KKwkgKiBhbmQgc3RpbGwgc3RvcmUgdGhlaXIgdmFsdWUgaW4gb2JqLT5wcm9wZXJ0aWVzLT52
+YWx1ZXNbXS4uIG1vc3RseQorCSAqIHRvIGF2b2lkIGhhdmluZyB0byBkZWFsIHcvIEVESUQgYW5k
+IHNpbWlsYXIgcHJvcHMgaW4gYXRvbWljIHBhdGhzOgogCSAqLwogCWlmIChkcm1fZHJ2X3VzZXNf
+YXRvbWljX21vZGVzZXQocHJvcGVydHktPmRldikgJiYKLQkJCSEocHJvcGVydHktPmZsYWdzICYg
+RFJNX01PREVfUFJPUF9JTU1VVEFCTEUpKQorCQkJIShwcm9wZXJ0eS0+ZmxhZ3MgJgorCQkJICAo
+RFJNX01PREVfUFJPUF9JTU1VVEFCTEUgfCBEUk1fTU9ERV9QUk9QX1ZFTkRPUikpKQogCQlyZXR1
+cm4gZHJtX2F0b21pY19nZXRfcHJvcGVydHkob2JqLCBwcm9wZXJ0eSwgdmFsKTsKIAogCWZvciAo
+aSA9IDA7IGkgPCBvYmotPnByb3BlcnRpZXMtPmNvdW50OyBpKyspIHsKZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS9kcm1fcHJvcGVydHkuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fcHJvcGVy
+dHkuYwppbmRleCAzZTg4ZmEyNGVhYjMuLmEzZmQ0OTY2NjVkZSAxMDA2NDQKLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2RybV9wcm9wZXJ0eS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fcHJvcGVy
+dHkuYwpAQCAtMzE4LDcgKzMxOCw3IEBAIHN0cnVjdCBkcm1fcHJvcGVydHkgKmRybV9wcm9wZXJ0
+eV9jcmVhdGVfb2JqZWN0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAKIAlmbGFncyB8PSBEUk1f
+TU9ERV9QUk9QX09CSkVDVDsKIAotCWlmIChXQVJOX09OKCEoZmxhZ3MgJiBEUk1fTU9ERV9QUk9Q
+X0FUT01JQykpKQorCWlmIChXQVJOX09OKCEoZmxhZ3MgJiAoRFJNX01PREVfUFJPUF9BVE9NSUMg
+fCBEUk1fTU9ERV9QUk9QX1ZFTkRPUikpKSkKIAkJcmV0dXJuIE5VTEw7CiAKIAlwcm9wZXJ0eSA9
+IGRybV9wcm9wZXJ0eV9jcmVhdGUoZGV2LCBmbGFncywgbmFtZSwgMSk7CmRpZmYgLS1naXQgYS9p
+bmNsdWRlL2RybS9kcm1fcHJvcGVydHkuaCBiL2luY2x1ZGUvZHJtL2RybV9wcm9wZXJ0eS5oCmlu
+ZGV4IDEzZThjMTdkMWM3OS4uZDlhM2Q2NDUwZmZlIDEwMDY0NAotLS0gYS9pbmNsdWRlL2RybS9k
+cm1fcHJvcGVydHkuaAorKysgYi9pbmNsdWRlL2RybS9kcm1fcHJvcGVydHkuaApAQCAtMTUyLDYg
+KzE1MiwxMyBAQCBzdHJ1Y3QgZHJtX3Byb3BlcnR5IHsKIAkgKiAgICAgcHJvcGVydGllcy4gVGhp
+cyBpcyBnZW5lcmFsbHkgdXNlZCB0byBleHBvc2UgcHJvYmUgc3RhdGUgdG8KIAkgKiAgICAgdXNl
+cnNhcGNlLCBlLmcuIHRoZSBFRElELCBvciB0aGUgY29ubmVjdG9yIHBhdGggcHJvcGVydHkgb24g
+RFAKIAkgKiAgICAgTVNUIHNpbmtzLgorCSAqCisJICogRFJNX01PREVfUFJPUF9WRU5ET1IKKwkg
+KiAgICAgU2V0IGZvciB2ZW5kb3Igc3BlY2lmaWMgcHJvcGVydGllcywgZm9yIG5vbi1tb2Rlc2V0
+IHZlbmRvcgorCSAqICAgICBzcGVjaWZpYyBvYmplY3RzLCB3aGljaCBjYW4gYmUgYWNjZXNzZWQg
+YnkKKwkgKiAgICAgRFJNX0lPQ1RMX01PREVfR0VUUFJPUEVSVFkgYW5kIERSTV9JT0NUTF9NT0RF
+X09CSl9HRVRQUk9QRVJUSUVTLAorCSAqICAgICBwcm9wZXJ0aWVzIGFyZSBub3QgZXhwb3NlZCB0
+byBsZWdhY3kgdXNlcnNwYWNlLgorCSAqCiAJICovCiAJdWludDMyX3QgZmxhZ3M7CiAKZGlmZiAt
+LWdpdCBhL2luY2x1ZGUvdWFwaS9kcm0vZHJtX21vZGUuaCBiL2luY2x1ZGUvdWFwaS9kcm0vZHJt
+X21vZGUuaAppbmRleCA4YzY3ZmMwM2Q1M2QuLjIxMDBhZmMxMzI4YSAxMDA2NDQKLS0tIGEvaW5j
+bHVkZS91YXBpL2RybS9kcm1fbW9kZS5oCisrKyBiL2luY2x1ZGUvdWFwaS9kcm0vZHJtX21vZGUu
+aApAQCAtMzIyLDYgKzMyMiw3IEBAIHN0cnVjdCBkcm1fbW9kZV9nZXRfY29ubmVjdG9yIHsKICAq
+IHdpdG91dCBiZWluZyBhd2FyZSB0aGF0IHRoaXMgY291bGQgYmUgdHJpZ2dlcmluZyBhIGxlbmd0
+aHkgbW9kZXNldC4KICAqLwogI2RlZmluZSBEUk1fTU9ERV9QUk9QX0FUT01JQyAgICAgICAgMHg4
+MDAwMDAwMAorI2RlZmluZSBEUk1fTU9ERV9QUk9QX1ZFTkRPUiAgICAgICAgMHg0MDAwMDAwMAog
+CiBzdHJ1Y3QgZHJtX21vZGVfcHJvcGVydHlfZW51bSB7CiAJX191NjQgdmFsdWU7Ci0tIAoxLjku
+MQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
