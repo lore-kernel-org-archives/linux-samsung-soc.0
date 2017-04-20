@@ -1,49 +1,38 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH V3] PM / OPP: Use - instead of @ for DT entries
-Date: Thu, 20 Apr 2017 00:06:03 +0200
-Message-ID: <3142028.bncGUUQ4qB@aspire.rjw.lan>
-References: <734c5d5a66ef8a5505f368fc68a8ab9c02d710f9.1492492253.git.viresh.kumar@linaro.org> <20170419142215.GA12105@localhost>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH] i2c: exynos5: simplify timings calculation
+Date: Thu, 20 Apr 2017 09:45:01 +0900
+Message-ID: <20170420004501.b2cjl5owrytfhk27@gangnam.samsung>
+References: <CGME20170223164733eucas1p11ad37a2334fe709a062ecc82b5224e1a@eucas1p1.samsung.com>
+        <1487868446-5339-1-git-send-email-a.hajda@samsung.com>
+        <0e74abb3-9706-b5e4-2428-553d33a61ef4@samsung.com>
+        <20170419191719.bzp2nt3l7nxwdzfn@ninjato>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20170419142215.GA12105@localhost>
-Sender: linux-pm-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, arm@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Beno??t Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Masahiro
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-disposition: inline
+In-reply-to: <20170419191719.bzp2nt3l7nxwdzfn@ninjato>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, April 19, 2017 07:22:15 AM Olof Johansson wrote:
-> Hi Viresh,
-> 
-> On Tue, Apr 18, 2017 at 10:44:50AM +0530, Viresh Kumar wrote:
-> > Compiling the DT file with W=1, DTC warns like follows:
-> > 
-> > Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
-> > unit name, but no reg property
-> > 
-> > Fix this by replacing '@' with '-' as the OPP nodes will never have a
-> > "reg" property.
-> > 
-> > Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com> (sunxi)
-> > Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com> (uniphier)
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Acked-by: Tony Lindgren <tony@atomide.com>
-> 
-> We've already turned down other patches that does this in a sweeping manner
-> like this, since they tend to be conflict prone with other DT changes.
-> 
-> Please split per platform and merge with each maintainer.
+Hi Andrzej,
 
-OK
+> > Ping, 7 weeks passed.
+> 
+> Known issue, there are not enough reviewers for I2C for a timely
+> response. I was hoping for some tags from other users of this hardware,
+> but that didn't happen. And I don't know this hardware, at all. So, I'll
+> apply your patches early in the next cycle, and we will see what happens
+> once they are in -next. Best would be if you could find other people to
+> donate tags.
 
-So I'm assuming that you guys will take care of this going forward.
+I'm sorry, I forgot to reply to this patch, I actually reviewed
+and tested it among all your i2c patches (that's why I asked you
+on IRC to add me in Cc to all your i2c patches).
 
-Thanks,
-Rafael
+So you can add also my
+
+Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+
+Andi
