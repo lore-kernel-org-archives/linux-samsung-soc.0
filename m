@@ -1,37 +1,60 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 3/3] arm64: dts: exynos: Add support for s6e3hf2 panel
- device on TM2e board
-Date: Thu, 20 Apr 2017 18:01:59 +0200
-Message-ID: <20170420160159.lkdy3oqntbvxd46w@kozik-lap>
-References: <1492504836-19225-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170418084047epcas5p42535837ac327ec48730ca766176bf86d@epcas5p4.samsung.com>
- <1492504836-19225-4-git-send-email-hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH V5 3/7] ARM: exynos: Use - instead of @ for DT OPP entries
+Date: Thu, 20 Apr 2017 18:09:30 +0200
+Message-ID: <20170420160930.halyszjunt4q2634@kozik-lap>
+References: <cover.1492685450.git.viresh.kumar@linaro.org>
+ <8fd1dcd1bfa2011411dceab82bcd1587fe913cd1.1492685450.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:32873 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S946588AbdDTQCE (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 12:02:04 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1492504836-19225-4-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <8fd1dcd1bfa2011411dceab82bcd1587fe913cd1.1492685450.git.viresh.kumar@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, arm@kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-pm@vger.kernel.org, Rafael Wysocki <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, a.hajda@samsung.com, inki.dae@samsung.com, andi.shyti@samsung.com
 
-On Tue, Apr 18, 2017 at 05:40:36PM +0900, Hoegeun Kwon wrote:
-> This patch add the panel device tree node for s6e3hf2 display
-> controller to TM2e dts.
+On Thu, Apr 20, 2017 at 04:25:07PM +0530, Viresh Kumar wrote:
+> Compiling the DT file with W=1, DTC warns like follows:
 > 
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
+> unit name, but no reg property
+> 
+> Fix this by replacing '@' with '-' as the OPP nodes will never have a
+> "reg" property.
+> 
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Rob Herring <robh@kernel.org>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 46 +++++++--------
+>  arch/arm/boot/dts/exynos3250.dtsi                  | 46 +++++++--------
+>  arch/arm/boot/dts/exynos4210.dtsi                  | 32 +++++------
+>  arch/arm/boot/dts/exynos4412-prime.dtsi            |  4 +-
+>  arch/arm/boot/dts/exynos4412.dtsi                  | 66 +++++++++++-----------
+>  arch/arm/boot/dts/exynos5420.dtsi                  | 40 ++++++-------
+>  arch/arm/boot/dts/exynos5800.dtsi                  | 56 +++++++++---------
+>  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     | 48 ++++++++--------
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 50 ++++++++--------
+>  9 files changed, 194 insertions(+), 194 deletions(-)
 
-Thanks, applied.
+
+Thanks, split ARM64 from ARM and applied (for v4.12). arm-soc keeps DTS
+separated between ARM architectures. Technically this should require a
+resend but we had way too many resends for this simple patch.
 
 Best regards,
 Krzysztof
