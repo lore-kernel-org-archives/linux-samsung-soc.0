@@ -1,1162 +1,170 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH V5 3/7] ARM: exynos: Use - instead of @ for DT OPP entries
-Date: Thu, 20 Apr 2017 16:25:07 +0530
-Message-ID: <8fd1dcd1bfa2011411dceab82bcd1587fe913cd1.1492685450.git.viresh.kumar@linaro.org>
-References: <cover.1492685450.git.viresh.kumar@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1492685450.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1492685450.git.viresh.kumar@linaro.org>
-References: <cover.1492685450.git.viresh.kumar@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: arm@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Rafael Wysocki <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [RFC 0/4] Exynos DRM: add Picture Processor extension
+Date: Thu, 20 Apr 2017 13:23:09 +0200
+Message-ID: <711bf4a5-7e57-6720-d00b-66e97a81e5ec@samsung.com>
+References: <CGME20170420091406eucas1p24c50a0015545105081257d880727386c@eucas1p2.samsung.com>
+ <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
+ <2541347.TzHdYYQVhG@avalon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <2541347.TzHdYYQVhG@avalon>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sakari Ailus <sakari.ailus@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Compiling the DT file with W=1, DTC warns like follows:
-
-Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
-unit name, but no reg property
-
-Fix this by replacing '@' with '-' as the OPP nodes will never have a
-"reg" property.
-
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/devfreq/exynos-bus.txt     | 46 +++++++--------
- arch/arm/boot/dts/exynos3250.dtsi                  | 46 +++++++--------
- arch/arm/boot/dts/exynos4210.dtsi                  | 32 +++++------
- arch/arm/boot/dts/exynos4412-prime.dtsi            |  4 +-
- arch/arm/boot/dts/exynos4412.dtsi                  | 66 +++++++++++-----------
- arch/arm/boot/dts/exynos5420.dtsi                  | 40 ++++++-------
- arch/arm/boot/dts/exynos5800.dtsi                  | 56 +++++++++---------
- arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     | 48 ++++++++--------
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 50 ++++++++--------
- 9 files changed, 194 insertions(+), 194 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-index d085ef90d27c..f8e946471a58 100644
---- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-+++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-@@ -202,23 +202,23 @@ is able to support the bus frequency for all Exynos SoCs.
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@50000000 {
-+		opp-50000000 {
- 			opp-hz = /bits/ 64 <50000000>;
- 			opp-microvolt = <800000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 			opp-microvolt = <800000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 			opp-microvolt = <800000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 			opp-microvolt = <825000>;
- 		};
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 			opp-microvolt = <875000>;
- 		};
-@@ -292,23 +292,23 @@ is able to support the bus frequency for all Exynos SoCs.
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@50000000 {
-+		opp-50000000 {
- 			opp-hz = /bits/ 64 <50000000>;
- 			opp-microvolt = <900000>;
- 		};
--		opp@80000000 {
-+		opp-80000000 {
- 			opp-hz = /bits/ 64 <80000000>;
- 			opp-microvolt = <900000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 			opp-microvolt = <1000000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 			opp-microvolt = <1000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 			opp-microvolt = <1000000>;
- 		};
-@@ -318,19 +318,19 @@ is able to support the bus frequency for all Exynos SoCs.
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@50000000 {
-+		opp-50000000 {
- 			opp-hz = /bits/ 64 <50000000>;
- 		};
--		opp@80000000 {
-+		opp-80000000 {
- 			opp-hz = /bits/ 64 <80000000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 		};
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 		};
- 	};
-@@ -339,19 +339,19 @@ is able to support the bus frequency for all Exynos SoCs.
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@50000000 {
-+		opp-50000000 {
- 			opp-hz = /bits/ 64 <50000000>;
- 		};
--		opp@80000000 {
-+		opp-80000000 {
- 			opp-hz = /bits/ 64 <80000000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 		};
--		opp@300000000 {
-+		opp-300000000 {
- 			opp-hz = /bits/ 64 <300000000>;
- 		};
- 	};
-@@ -360,13 +360,13 @@ is able to support the bus frequency for all Exynos SoCs.
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@50000000 {
-+		opp-50000000 {
- 			opp-hz = /bits/ 64 <50000000>;
- 		};
--		opp@80000000 {
-+		opp-80000000 {
- 			opp-hz = /bits/ 64 <80000000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 9c28ef4508e0..590ee442d0ae 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -745,23 +745,23 @@
- 			compatible = "operating-points-v2";
- 			opp-shared;
- 
--			opp@50000000 {
-+			opp-50000000 {
- 				opp-hz = /bits/ 64 <50000000>;
- 				opp-microvolt = <800000>;
- 			};
--			opp@100000000 {
-+			opp-100000000 {
- 				opp-hz = /bits/ 64 <100000000>;
- 				opp-microvolt = <800000>;
- 			};
--			opp@134000000 {
-+			opp-134000000 {
- 				opp-hz = /bits/ 64 <134000000>;
- 				opp-microvolt = <800000>;
- 			};
--			opp@200000000 {
-+			opp-200000000 {
- 				opp-hz = /bits/ 64 <200000000>;
- 				opp-microvolt = <825000>;
- 			};
--			opp@400000000 {
-+			opp-400000000 {
- 				opp-hz = /bits/ 64 <400000000>;
- 				opp-microvolt = <875000>;
- 			};
-@@ -835,23 +835,23 @@
- 			compatible = "operating-points-v2";
- 			opp-shared;
- 
--			opp@50000000 {
-+			opp-50000000 {
- 				opp-hz = /bits/ 64 <50000000>;
- 				opp-microvolt = <900000>;
- 			};
--			opp@80000000 {
-+			opp-80000000 {
- 				opp-hz = /bits/ 64 <80000000>;
- 				opp-microvolt = <900000>;
- 			};
--			opp@100000000 {
-+			opp-100000000 {
- 				opp-hz = /bits/ 64 <100000000>;
- 				opp-microvolt = <1000000>;
- 			};
--			opp@134000000 {
-+			opp-134000000 {
- 				opp-hz = /bits/ 64 <134000000>;
- 				opp-microvolt = <1000000>;
- 			};
--			opp@200000000 {
-+			opp-200000000 {
- 				opp-hz = /bits/ 64 <200000000>;
- 				opp-microvolt = <1000000>;
- 			};
-@@ -861,19 +861,19 @@
- 			compatible = "operating-points-v2";
- 			opp-shared;
- 
--			opp@50000000 {
-+			opp-50000000 {
- 				opp-hz = /bits/ 64 <50000000>;
- 			};
--			opp@80000000 {
-+			opp-80000000 {
- 				opp-hz = /bits/ 64 <80000000>;
- 			};
--			opp@100000000 {
-+			opp-100000000 {
- 				opp-hz = /bits/ 64 <100000000>;
- 			};
--			opp@200000000 {
-+			opp-200000000 {
- 				opp-hz = /bits/ 64 <200000000>;
- 			};
--			opp@400000000 {
-+			opp-400000000 {
- 				opp-hz = /bits/ 64 <400000000>;
- 			};
- 		};
-@@ -882,19 +882,19 @@
- 			compatible = "operating-points-v2";
- 			opp-shared;
- 
--			opp@50000000 {
-+			opp-50000000 {
- 				opp-hz = /bits/ 64 <50000000>;
- 			};
--			opp@80000000 {
-+			opp-80000000 {
- 				opp-hz = /bits/ 64 <80000000>;
- 			};
--			opp@100000000 {
-+			opp-100000000 {
- 				opp-hz = /bits/ 64 <100000000>;
- 			};
--			opp@200000000 {
-+			opp-200000000 {
- 				opp-hz = /bits/ 64 <200000000>;
- 			};
--			opp@300000000 {
-+			opp-300000000 {
- 				opp-hz = /bits/ 64 <300000000>;
- 			};
- 		};
-@@ -903,13 +903,13 @@
- 			compatible = "operating-points-v2";
- 			opp-shared;
- 
--			opp@50000000 {
-+			opp-50000000 {
- 				opp-hz = /bits/ 64 <50000000>;
- 			};
--			opp@80000000 {
-+			opp-80000000 {
- 				opp-hz = /bits/ 64 <80000000>;
- 			};
--			opp@100000000 {
-+			opp-100000000 {
- 				opp-hz = /bits/ 64 <100000000>;
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index e6e62103a71f..768fb075b1fd 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -343,15 +343,15 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 			opp-microvolt = <1025000>;
- 		};
--		opp@267000000 {
-+		opp-267000000 {
- 			opp-hz = /bits/ 64 <267000000>;
- 			opp-microvolt = <1050000>;
- 		};
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 			opp-microvolt = <1150000>;
- 		};
-@@ -361,13 +361,13 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 		};
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 		};
- 	};
-@@ -376,10 +376,10 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@5000000 {
-+		opp-5000000 {
- 			opp-hz = /bits/ 64 <5000000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
- 	};
-@@ -388,10 +388,10 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@10000000 {
-+		opp-10000000 {
- 			opp-hz = /bits/ 64 <10000000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 		};
- 	};
-@@ -400,13 +400,13 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 		};
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 		};
- 	};
-@@ -415,13 +415,13 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-prime.dtsi b/arch/arm/boot/dts/exynos4412-prime.dtsi
-index e75bc170c89c..a67bd953d754 100644
---- a/arch/arm/boot/dts/exynos4412-prime.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-prime.dtsi
-@@ -20,12 +20,12 @@
- };
- 
- &cpu0_opp_table {
--	opp@1600000000 {
-+	opp-1600000000 {
- 		opp-hz = /bits/ 64 <1600000000>;
- 		opp-microvolt = <1350000>;
- 		clock-latency-ns = <200000>;
- 	};
--	opp@1704000000 {
-+	opp-1704000000 {
- 		opp-hz = /bits/ 64 <1704000000>;
- 		opp-microvolt = <1350000>;
- 		clock-latency-ns = <200000>;
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index cc69466f17c0..7ff03a7e8fb9 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -76,73 +76,73 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 			opp-microvolt = <900000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@300000000 {
-+		opp-300000000 {
- 			opp-hz = /bits/ 64 <300000000>;
- 			opp-microvolt = <900000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 			opp-microvolt = <925000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@500000000 {
-+		opp-500000000 {
- 			opp-hz = /bits/ 64 <500000000>;
- 			opp-microvolt = <950000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@600000000 {
-+		opp-600000000 {
- 			opp-hz = /bits/ 64 <600000000>;
- 			opp-microvolt = <975000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@700000000 {
-+		opp-700000000 {
- 			opp-hz = /bits/ 64 <700000000>;
- 			opp-microvolt = <987500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@800000000 {
-+		opp-800000000 {
- 			opp-hz = /bits/ 64 <800000000>;
- 			opp-microvolt = <1000000>;
- 			clock-latency-ns = <200000>;
- 			opp-suspend;
- 		};
--		opp@900000000 {
-+		opp-900000000 {
- 			opp-hz = /bits/ 64 <900000000>;
- 			opp-microvolt = <1037500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@1000000000 {
-+		opp-1000000000 {
- 			opp-hz = /bits/ 64 <1000000000>;
- 			opp-microvolt = <1087500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@1100000000 {
-+		opp-1100000000 {
- 			opp-hz = /bits/ 64 <1100000000>;
- 			opp-microvolt = <1137500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@1200000000 {
-+		opp-1200000000 {
- 			opp-hz = /bits/ 64 <1200000000>;
- 			opp-microvolt = <1187500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@1300000000 {
-+		opp-1300000000 {
- 			opp-hz = /bits/ 64 <1300000000>;
- 			opp-microvolt = <1250000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@1400000000 {
-+		opp-1400000000 {
- 			opp-hz = /bits/ 64 <1400000000>;
- 			opp-microvolt = <1287500>;
- 			clock-latency-ns = <200000>;
- 		};
--		cpu0_opp_1500: opp@1500000000 {
-+		cpu0_opp_1500: opp-1500000000 {
- 			opp-hz = /bits/ 64 <1500000000>;
- 			opp-microvolt = <1350000>;
- 			clock-latency-ns = <200000>;
-@@ -442,23 +442,23 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 			opp-microvolt = <900000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 			opp-microvolt = <900000>;
- 		};
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 			opp-microvolt = <900000>;
- 		};
--		opp@267000000 {
-+		opp-267000000 {
- 			opp-hz = /bits/ 64 <267000000>;
- 			opp-microvolt = <950000>;
- 		};
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 			opp-microvolt = <1050000>;
- 		};
-@@ -468,16 +468,16 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 		};
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 		};
--		opp@267000000 {
-+		opp-267000000 {
- 			opp-hz = /bits/ 64 <267000000>;
- 		};
- 	};
-@@ -534,19 +534,19 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 			opp-microvolt = <900000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 			opp-microvolt = <925000>;
- 		};
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 			opp-microvolt = <950000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 			opp-microvolt = <1000000>;
- 		};
-@@ -556,10 +556,10 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 		};
- 	};
-@@ -568,10 +568,10 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 		};
- 	};
-@@ -580,10 +580,10 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@50000000 {
-+		opp-50000000 {
- 			opp-hz = /bits/ 64 <50000000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 83b3899d228d..0db0bcf8da36 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -49,62 +49,62 @@
- 		cluster_a15_opp_table: opp_table0 {
- 			compatible = "operating-points-v2";
- 			opp-shared;
--			opp@1800000000 {
-+			opp-1800000000 {
- 				opp-hz = /bits/ 64 <1800000000>;
- 				opp-microvolt = <1250000>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1700000000 {
-+			opp-1700000000 {
- 				opp-hz = /bits/ 64 <1700000000>;
- 				opp-microvolt = <1212500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1600000000 {
-+			opp-1600000000 {
- 				opp-hz = /bits/ 64 <1600000000>;
- 				opp-microvolt = <1175000>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1500000000 {
-+			opp-1500000000 {
- 				opp-hz = /bits/ 64 <1500000000>;
- 				opp-microvolt = <1137500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1400000000 {
-+			opp-1400000000 {
- 				opp-hz = /bits/ 64 <1400000000>;
- 				opp-microvolt = <1112500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1300000000 {
-+			opp-1300000000 {
- 				opp-hz = /bits/ 64 <1300000000>;
- 				opp-microvolt = <1062500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1200000000 {
-+			opp-1200000000 {
- 				opp-hz = /bits/ 64 <1200000000>;
- 				opp-microvolt = <1037500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1100000000 {
-+			opp-1100000000 {
- 				opp-hz = /bits/ 64 <1100000000>;
- 				opp-microvolt = <1012500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1000000000 {
-+			opp-1000000000 {
- 				opp-hz = /bits/ 64 <1000000000>;
- 				opp-microvolt = < 987500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@900000000 {
-+			opp-900000000 {
- 				opp-hz = /bits/ 64 <900000000>;
- 				opp-microvolt = < 962500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@800000000 {
-+			opp-800000000 {
- 				opp-hz = /bits/ 64 <800000000>;
- 				opp-microvolt = < 937500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@700000000 {
-+			opp-700000000 {
- 				opp-hz = /bits/ 64 <700000000>;
- 				opp-microvolt = < 912500>;
- 				clock-latency-ns = <140000>;
-@@ -114,42 +114,42 @@
- 		cluster_a7_opp_table: opp_table1 {
- 			compatible = "operating-points-v2";
- 			opp-shared;
--			opp@1300000000 {
-+			opp-1300000000 {
- 				opp-hz = /bits/ 64 <1300000000>;
- 				opp-microvolt = <1275000>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1200000000 {
-+			opp-1200000000 {
- 				opp-hz = /bits/ 64 <1200000000>;
- 				opp-microvolt = <1212500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1100000000 {
-+			opp-1100000000 {
- 				opp-hz = /bits/ 64 <1100000000>;
- 				opp-microvolt = <1162500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@1000000000 {
-+			opp-1000000000 {
- 				opp-hz = /bits/ 64 <1000000000>;
- 				opp-microvolt = <1112500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@900000000 {
-+			opp-900000000 {
- 				opp-hz = /bits/ 64 <900000000>;
- 				opp-microvolt = <1062500>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@800000000 {
-+			opp-800000000 {
- 				opp-hz = /bits/ 64 <800000000>;
- 				opp-microvolt = <1025000>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@700000000 {
-+			opp-700000000 {
- 				opp-hz = /bits/ 64 <700000000>;
- 				opp-microvolt = <975000>;
- 				clock-latency-ns = <140000>;
- 			};
--			opp@600000000 {
-+			opp-600000000 {
- 				opp-hz = /bits/ 64 <600000000>;
- 				opp-microvolt = <937500>;
- 				clock-latency-ns = <140000>;
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-index 8213016803e5..9ddb6bacac5a 100644
---- a/arch/arm/boot/dts/exynos5800.dtsi
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -24,60 +24,60 @@
- };
- 
- &cluster_a15_opp_table {
--	opp@1700000000 {
-+	opp-1700000000 {
- 		opp-microvolt = <1250000>;
- 	};
--	opp@1600000000 {
-+	opp-1600000000 {
- 		opp-microvolt = <1250000>;
- 	};
--	opp@1500000000 {
-+	opp-1500000000 {
- 		opp-microvolt = <1100000>;
- 	};
--	opp@1400000000 {
-+	opp-1400000000 {
- 		opp-microvolt = <1100000>;
- 	};
--	opp@1300000000 {
-+	opp-1300000000 {
- 		opp-microvolt = <1100000>;
- 	};
--	opp@1200000000 {
-+	opp-1200000000 {
- 		opp-microvolt = <1000000>;
- 	};
--	opp@1100000000 {
-+	opp-1100000000 {
- 		opp-microvolt = <1000000>;
- 	};
--	opp@1000000000 {
-+	opp-1000000000 {
- 		opp-microvolt = <1000000>;
- 	};
--	opp@900000000 {
-+	opp-900000000 {
- 		opp-microvolt = <1000000>;
- 	};
--	opp@800000000 {
-+	opp-800000000 {
- 		opp-microvolt = <900000>;
- 	};
--	opp@700000000 {
-+	opp-700000000 {
- 		opp-microvolt = <900000>;
- 	};
--	opp@600000000 {
-+	opp-600000000 {
- 		opp-hz = /bits/ 64 <600000000>;
- 		opp-microvolt = <900000>;
- 		clock-latency-ns = <140000>;
- 	};
--	opp@500000000 {
-+	opp-500000000 {
- 		opp-hz = /bits/ 64 <500000000>;
- 		opp-microvolt = <900000>;
- 		clock-latency-ns = <140000>;
- 	};
--	opp@400000000 {
-+	opp-400000000 {
- 		opp-hz = /bits/ 64 <400000000>;
- 		opp-microvolt = <900000>;
- 		clock-latency-ns = <140000>;
- 	};
--	opp@300000000 {
-+	opp-300000000 {
- 		opp-hz = /bits/ 64 <300000000>;
- 		opp-microvolt = <900000>;
- 		clock-latency-ns = <140000>;
- 	};
--	opp@200000000 {
-+	opp-200000000 {
- 		opp-hz = /bits/ 64 <200000000>;
- 		opp-microvolt = <900000>;
- 		clock-latency-ns = <140000>;
-@@ -85,46 +85,46 @@
- };
- 
- &cluster_a7_opp_table {
--	opp@1300000000 {
-+	opp-1300000000 {
- 		opp-microvolt = <1250000>;
- 	};
--	opp@1200000000 {
-+	opp-1200000000 {
- 		opp-microvolt = <1250000>;
- 	};
--	opp@1100000000 {
-+	opp-1100000000 {
- 		opp-microvolt = <1250000>;
- 	};
--	opp@1000000000 {
-+	opp-1000000000 {
- 		opp-microvolt = <1100000>;
- 	};
--	opp@900000000 {
-+	opp-900000000 {
- 		opp-microvolt = <1100000>;
- 	};
--	opp@800000000 {
-+	opp-800000000 {
- 		opp-microvolt = <1100000>;
- 	};
--	opp@700000000 {
-+	opp-700000000 {
- 		opp-microvolt = <1000000>;
- 	};
--	opp@600000000 {
-+	opp-600000000 {
- 		opp-microvolt = <1000000>;
- 	};
--	opp@500000000 {
-+	opp-500000000 {
- 		opp-hz = /bits/ 64 <500000000>;
- 		opp-microvolt = <1000000>;
- 		clock-latency-ns = <140000>;
- 	};
--	opp@400000000 {
-+	opp-400000000 {
- 		opp-hz = /bits/ 64 <400000000>;
- 		opp-microvolt = <1000000>;
- 		clock-latency-ns = <140000>;
- 	};
--	opp@300000000 {
-+	opp-300000000 {
- 		opp-hz = /bits/ 64 <300000000>;
- 		opp-microvolt = <900000>;
- 		clock-latency-ns = <140000>;
- 	};
--	opp@200000000 {
-+	opp-200000000 {
- 		opp-hz = /bits/ 64 <200000000>;
- 		opp-microvolt = <900000>;
- 		clock-latency-ns = <140000>;
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
-index c42dc39c3223..ec11343dc528 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
-@@ -94,27 +94,27 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 			opp-microvolt = <1075000>;
- 		};
--		opp@267000000 {
-+		opp-267000000 {
- 			opp-hz = /bits/ 64 <267000000>;
- 			opp-microvolt = <1000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 			opp-microvolt = <975000>;
- 		};
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 			opp-microvolt = <962500>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 			opp-microvolt = <950000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 			opp-microvolt = <937500>;
- 		};
-@@ -123,19 +123,19 @@
- 	bus_g2d_266_opp_table: opp_table3 {
- 		compatible = "operating-points-v2";
- 
--		opp@267000000 {
-+		opp-267000000 {
- 			opp-hz = /bits/ 64 <267000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 		};
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
- 	};
-@@ -143,13 +143,13 @@
- 	bus_gscl_opp_table: opp_table4 {
- 		compatible = "operating-points-v2";
- 
--		opp@333000000 {
-+		opp-333000000 {
- 			opp-hz = /bits/ 64 <333000000>;
- 		};
--		opp@222000000 {
-+		opp-222000000 {
- 			opp-hz = /bits/ 64 <222000000>;
- 		};
--		opp@166500000 {
-+		opp-166500000 {
- 			opp-hz = /bits/ 64 <166500000>;
- 		};
- 	};
-@@ -158,22 +158,22 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 		};
--		opp@267000000 {
-+		opp-267000000 {
- 			opp-hz = /bits/ 64 <267000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 		};
--		opp@160000000 {
-+		opp-160000000 {
- 			opp-hz = /bits/ 64 <160000000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
- 	};
-@@ -181,16 +181,16 @@
- 	bus_noc2_opp_table: opp_table6 {
- 		compatible = "operating-points-v2";
- 
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 		};
--		opp@134000000 {
-+		opp-134000000 {
- 			opp-hz = /bits/ 64 <134000000>;
- 		};
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 		};
- 	};
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 16072c1c3ed3..727f36abf3d4 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -119,43 +119,43 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 			opp-microvolt = <900000>;
- 		};
--		opp@500000000 {
-+		opp-500000000 {
- 			opp-hz = /bits/ 64 <500000000>;
- 			opp-microvolt = <925000>;
- 		};
--		opp@600000000 {
-+		opp-600000000 {
- 			opp-hz = /bits/ 64 <600000000>;
- 			opp-microvolt = <950000>;
- 		};
--		opp@700000000 {
-+		opp-700000000 {
- 			opp-hz = /bits/ 64 <700000000>;
- 			opp-microvolt = <975000>;
- 		};
--		opp@800000000 {
-+		opp-800000000 {
- 			opp-hz = /bits/ 64 <800000000>;
- 			opp-microvolt = <1000000>;
- 		};
--		opp@900000000 {
-+		opp-900000000 {
- 			opp-hz = /bits/ 64 <900000000>;
- 			opp-microvolt = <1050000>;
- 		};
--		opp@1000000000 {
-+		opp-1000000000 {
- 			opp-hz = /bits/ 64 <1000000000>;
- 			opp-microvolt = <1075000>;
- 		};
--		opp@1100000000 {
-+		opp-1100000000 {
- 			opp-hz = /bits/ 64 <1100000000>;
- 			opp-microvolt = <1112500>;
- 		};
--		opp@1200000000 {
-+		opp-1200000000 {
- 			opp-hz = /bits/ 64 <1200000000>;
- 			opp-microvolt = <1112500>;
- 		};
--		opp@1300000000 {
-+		opp-1300000000 {
- 			opp-hz = /bits/ 64 <1300000000>;
- 			opp-microvolt = <1150000>;
- 		};
-@@ -165,63 +165,63 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@500000000 {
-+		opp-500000000 {
- 			opp-hz = /bits/ 64 <500000000>;
- 			opp-microvolt = <900000>;
- 		};
--		opp@600000000 {
-+		opp-600000000 {
- 			opp-hz = /bits/ 64 <600000000>;
- 			opp-microvolt = <900000>;
- 		};
--		opp@700000000 {
-+		opp-700000000 {
- 			opp-hz = /bits/ 64 <700000000>;
- 			opp-microvolt = <912500>;
- 		};
--		opp@800000000 {
-+		opp-800000000 {
- 			opp-hz = /bits/ 64 <800000000>;
- 			opp-microvolt = <912500>;
- 		};
--		opp@900000000 {
-+		opp-900000000 {
- 			opp-hz = /bits/ 64 <900000000>;
- 			opp-microvolt = <937500>;
- 		};
--		opp@1000000000 {
-+		opp-1000000000 {
- 			opp-hz = /bits/ 64 <1000000000>;
- 			opp-microvolt = <975000>;
- 		};
--		opp@1100000000 {
-+		opp-1100000000 {
- 			opp-hz = /bits/ 64 <1100000000>;
- 			opp-microvolt = <1012500>;
- 		};
--		opp@1200000000 {
-+		opp-1200000000 {
- 			opp-hz = /bits/ 64 <1200000000>;
- 			opp-microvolt = <1037500>;
- 		};
--		opp@1300000000 {
-+		opp-1300000000 {
- 			opp-hz = /bits/ 64 <1300000000>;
- 			opp-microvolt = <1062500>;
- 		};
--		opp@1400000000 {
-+		opp-1400000000 {
- 			opp-hz = /bits/ 64 <1400000000>;
- 			opp-microvolt = <1087500>;
- 		};
--		opp@1500000000 {
-+		opp-1500000000 {
- 			opp-hz = /bits/ 64 <1500000000>;
- 			opp-microvolt = <1125000>;
- 		};
--		opp@1600000000 {
-+		opp-1600000000 {
- 			opp-hz = /bits/ 64 <1600000000>;
- 			opp-microvolt = <1137500>;
- 		};
--		opp@1700000000 {
-+		opp-1700000000 {
- 			opp-hz = /bits/ 64 <1700000000>;
- 			opp-microvolt = <1175000>;
- 		};
--		opp@1800000000 {
-+		opp-1800000000 {
- 			opp-hz = /bits/ 64 <1800000000>;
- 			opp-microvolt = <1212500>;
- 		};
--		opp@1900000000 {
-+		opp-1900000000 {
- 			opp-hz = /bits/ 64 <1900000000>;
- 			opp-microvolt = <1262500>;
- 		};
--- 
-2.12.0.432.g71c3a4f4ba37
+SGkgTGF1cmVudCwKCk9uIDIwMTctMDQtMjAgMTI6MjUsIExhdXJlbnQgUGluY2hhcnQgd3JvdGU6
+Cj4gSGkgTWFyZWssCj4KPiAoQ0MnaW5nIFNha2FyaSBBaWx1cykKPgo+IFRoYW5rIHlvdSBmb3Ig
+dGhlIHBhdGNoZXMuCj4KPiBPbiBUaHVyc2RheSAyMCBBcHIgMjAxNyAxMToxMzozNiBNYXJlayBT
+enlwcm93c2tpIHdyb3RlOgo+PiBEZWFyIGFsbCwKPj4KPj4gVGhpcyBpcyBhbiB1cGRhdGVkIHBy
+b3Bvc2FsIGZvciBleHRlbmRpbmcgRVhZTk9TIERSTSBBUEkgd2l0aCBnZW5lcmljCj4+IHN1cHBv
+cnQgZm9yIGhhcmR3YXJlIG1vZHVsZXMsIHdoaWNoIGNhbiBiZSB1c2VkIGZvciBwcm9jZXNzaW5n
+IGltYWdlIGRhdGEKPj4gZnJvbSB0aGUgb25lIG1lbW9yeSBidWZmZXIgdG8gYW5vdGhlci4gVHlw
+aWNhbCBtZW1vcnktdG8tbWVtb3J5IG9wZXJhdGlvbnMKPj4gYXJlOiByb3RhdGlvbiwgc2NhbGlu
+ZywgY29sb3VyIHNwYWNlIGNvbnZlcnNpb24gb3IgbWl4IG9mIHRoZW0uIFRoaXMgaXMgYQo+PiBm
+b2xsb3ctdXAgb2YgbXkgcHJldmlvdXMgcHJvcG9zYWwgIltSRkMgMC8yXSBOZXcgZmVhdHVyZTog
+RnJhbWVidWZmZXIKPj4gcHJvY2Vzc29ycyIsIHdoaWNoIGhhcyBiZWVuIHJlamVjdGVkIGFzICJu
+b3QgcmVhbGx5IG5lZWRlZCBpbiB0aGUgRFJNCj4+IGNvcmUiOgo+PiBodHRwOi8vd3d3Lm1haWwt
+YXJjaGl2ZS5jb20vZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZy9tc2cxNDYyODYuaHRt
+bAo+Pgo+PiBJbiB0aGlzIHByb3Bvc2FsIEkgbW92ZWQgYWxsIHRoZSBjb2RlIHRvIEV4eW5vcyBE
+Uk0gZHJpdmVyLCBzbyBub3cgdGhpcwo+PiB3aWxsIGJlIHNwZWNpZmljIG9ubHkgdG8gRXh5bm9z
+IERSTS4gSSd2ZSBhbHNvIGNoYW5nZWQgdGhlIG5hbWUgZnJvbQo+PiBmcmFtZWJ1ZmZlciBwcm9j
+ZXNzb3IgKGZicHJvYykgdG8gcGljdHVyZSBwcm9jZXNzb3IgKHBwKSB0byBhdm9pZCBjb25mdXNp
+b24KPj4gd2l0aCBmYmRldiBBUEkuCj4+Cj4+IEhlcmUgaXMgYSBiaXQgbW9yZSBpbmZvcm1hdGlv
+biB3aGF0IHBpY3R1cmUgcHJvY2Vzc29ycyBhcmU6Cj4+Cj4+IEVtYmVkZGVkIFNvQ3MgYXJlIGtu
+b3duIHRvIGhhdmUgYSBudW1iZXIgb2YgaGFyZHdhcmUgYmxvY2tzLCB3aGljaCBwZXJmb3JtCj4+
+IHN1Y2ggb3BlcmF0aW9ucy4gVGhleSBjYW4gYmUgdXNlZCBpbiBwYXJhbGVsIHRvIHRoZSBtYWlu
+IEdQVSBtb2R1bGUgdG8KPj4gb2ZmbG9hZCBDUFUgZnJvbSBwcm9jZXNzaW5nIGdyYXBpY3Mgb3Ig
+dmlkZW8gZGF0YS4gT25lIG9mIGV4YW1wbGUgdXNlIG9mCj4+IHN1Y2ggbW9kdWxlcyBpcyBpbXBs
+ZW1lbnRpbmcgdmlkZW8gb3ZlcmxheSwgd2hpY2ggdXN1YWxseSByZXF1aXJlcyBjb2xvcgo+PiBz
+cGFjZSBjb252ZXJzaW9uIGZyb20gTlYxMiAob3Igc2ltaWxhcikgdG8gUkdCMzIgY29sb3Igc3Bh
+Y2UgYW5kIHNjYWxpbmcgdG8KPj4gdGFyZ2V0IHdpbmRvdyBzaXplLgo+Pgo+PiBUaGUgcHJvcG9z
+ZWQgQVBJIGlzIGhlYXZpbHkgaW5zcGlyZWQgYnkgYXRvbWljIEtNUyBhcHByb2FjaCAtIGl0IGlz
+IGFsc28KPj4gYmFzZWQgb24gRFJNIG9iamVjdHMgYW5kIHRoZWlyIHByb3BlcnRpZXMuIEEgbmV3
+IERSTSBvYmplY3QgaXMgaW50cm9kdWNlZDoKPj4gcGljdHVyZSBwcm9jZXNzb3IgKGNhbGxlZCBw
+cCBmb3IgY29udmVuaWVuY2UpLiBTdWNoIG9iamVjdHMgaGF2ZSBhIHNldCBvZgo+PiBzdGFuZGFy
+ZCBEUk0gcHJvcGVydGllcywgd2hpY2ggZGVzY3JpYmVzIHRoZSBvcGVyYXRpb24gdG8gYmUgcGVy
+Zm9ybWVkIGJ5Cj4+IHJlc3BlY3RpdmUgaGFyZHdhcmUgbW9kdWxlLiBJbiB0eXBpY2FsIGNhc2Ug
+dGhvc2UgcHJvcGVydGllcyBhcmUgYSBzb3VyY2UKPj4gZmIgaWQgYW5kIHJlY3RhbmdsZSAoeCwg
+eSwgd2lkdGgsIGhlaWdodCkgYW5kIGRlc3RpbmF0aW9uIGZiIGlkIGFuZAo+PiByZWN0YW5nbGUu
+IE9wdGlvbmFsbHkgYSByb3RhdGlvbiBwcm9wZXJ0eSBjYW4gYmUgYWxzbyBzcGVjaWZpZWQgaWYK
+Pj4gc3VwcG9ydGVkIGJ5IHRoZSBnaXZlbiBoYXJkd2FyZS4gVG8gcGVyZm9ybSBhbiBvcGVyYXRp
+b24gb24gaW1hZ2UgZGF0YSwKPj4gdXNlcnNwYWNlIHByb3ZpZGVzIGEgc2V0IG9mIHByb3BlcnRp
+ZXMgYW5kIHRoZWlyIHZhbHVlcyBmb3IgZ2l2ZW4gZmJwcm9jCj4+IG9iamVjdCBpbiBhIHNpbWls
+YXIgd2F5IGFzIG9iamVjdCBhbmQgcHJvcGVydGllcyBhcmUgcHJvdmlkZWQgZm9yCj4+IHBlcmZv
+cm1pbmcgYXRvbWljIHBhZ2UgZmxpcCAvIG1vZGUgc2V0dGluZy4KPj4KPj4gVGhlIHByb3Bvc2Vk
+IEFQSSBjb25zaXN0cyBvZiB0aGUgMyBuZXcgaW9jdGxzOgo+PiAtIERSTV9JT0NUTF9FWFlOT1Nf
+UFBfR0VUX1JFU09VUkNFUzogdG8gZW51bWVyYXRlIGFsbCBhdmFpbGFibGUgcGljdHVyZQo+PiAg
+ICBwcm9jZXNzb3JzLAo+PiAtIERSTV9JT0NUTF9FWFlOT1NfUFBfR0VUOiB0byBxdWVyeSBjYXBh
+YmlsaXRpZXMgb2YgZ2l2ZW4gcGljdHVyZQo+PiAgICBwcm9jZXNzb3IsCj4+IC0gRFJNX0lPQ1RM
+X0VYWU5PU19QUF9DT01NSVQ6IHRvIHBlcmZvcm0gb3BlcmF0aW9uIGRlc2NyaWJlZCBieSBnaXZl
+bgo+PiAgICBwcm9wZXJ0eSBzZXQuCj4+Cj4+IFRoZSBwcm9wb3NlZCBBUEkgaXMgZXh0ZW5zaWJs
+ZS4gRHJpdmVycyBjYW4gYXR0YWNoIHRoZWlyIG93biwgY3VzdG9tCj4+IHByb3BlcnRpZXMgdG8g
+YWRkIHN1cHBvcnQgZm9yIG1vcmUgYWR2YW5jZWQgcGljdHVyZSBwcm9jZXNzaW5nIChmb3IgZXhh
+bXBsZQo+PiBibGVuZGluZykuCj4+Cj4+IFRoaXMgcHJvcG9zYWwgYWltcyB0byByZXBsYWNlIEV4
+eW5vcyBEUk0gSVBQIChJbWFnZSBQb3N0IFByb2Nlc3NpbmcpCj4+IHN1YnN5c3RlbS4gSVBQIEFQ
+SSBpcyBvdmVyLWVuZ2luZWVyZWQgaW4gZ2VuZXJhbCwgYnV0IG5vdCByZWFsbHkgZXh0ZW5zaWJs
+ZQo+PiBvbiB0aGUgb3RoZXIgc2lkZS4gSXQgaXMgYWxzbyBidWdneSwgd2l0aCBzaWduaWZpY2Fu
+dCBkZXNpZ24gZmxhd3MgLSB0aGUKPj4gYmlnZ2VzdCBpc3N1ZSBpcyB0aGUgZmFjdCB0aGF0IHRo
+ZSBBUEkgY292ZXJzIG1lbW9yeS0yLW1lbW9yeSBwaWN0dXJlCj4+IG9wZXJhdGlvbnMgdG9nZXRo
+ZXIgd2l0aCBDUlRDIHdyaXRlYmFjayBhbmQgZHVwbGljYXRpbmcgZmVhdHVyZXMsIHdoaWNoCj4+
+IGJlbG9uZ3MgdG8gdmlkZW8gcGxhbmUuIENvbXBhcmluZyB3aXRoIElQUCBzdWJzeXN0ZW0sIHRo
+ZSBQUCBmcmFtZXdvcmsgaXMKPj4gc21hbGxlciAoMTgwNyB2cyA3NzggbGluZXMpIGFuZCBhbGxv
+d3MgZHJpdmVyIHNpbXBsaWZpY2F0aW9uIChFeHlub3MKPj4gcm90YXRvciBkcml2ZXIgc21hbGxl
+ciBieSBvdmVyIDIwMCBsaW5lcykuCj4gVGhpcyBzZWVtcyB0byBiZSB0aGUga2luZCBvZiBoYXJk
+d2FyZSB0aGF0IGlzIHR5cGljYWxseSBzdXBwb3J0ZWQgYnkgVjRMMi4KPiBTdHVwaWQgcXVlc3Rp
+b24sIHdoeSBEUk0gPwoKTGV0IG1lIGVsYWJvcmF0ZSBhIGJpdCBvbiB0aGUgcmVhc29ucyBmb3Ig
+aW1wbGVtZW50aW5nIGl0IGluIEV4eW5vcyBEUk06CgoxLiB3ZSB3YW50IHRvIHJlcGxhY2UgZXhp
+c3RpbmcgRXh5bm9zIElQUCBzdWJzeXN0ZW06CiAgLSBpdCBpcyB1c2VkIG9ubHkgaW4gc29tZSBp
+bnRlcm5hbC92ZW5kb3IgdHJlZXMsIG5vdCBpbiBvcGVuLXNvdXJjZQogIC0gd2Ugd2FudCBpdCB0
+byBoYXZlIHNhbmUgYW5kIHBvdGVudGlhbGx5IGV4dGVuc2libGUgdXNlcnNwYWNlIEFQSQogIC0g
+YnV0IHdlIGRvbid0IHdhbnQgdG8gbG9vc2UgaXRzIGZ1bmN0aW9uYWxpdHkKCjIuIHdlIHdhbnQg
+dG8gaGF2ZSBzaW1wbGUgQVBJIGZvciBwZXJmb3JtaW5nIHNpbmdsZSBpbWFnZSBwcm9jZXNzaW5n
+Cm9wZXJhdGlvbjoKICAtIHR5cGljYWxseSBpdCB3aWxsIGJlIHVzZWQgYnkgY29tcG9zaXRpbmcg
+d2luZG93IG1hbmFnZXIsIHRoaXMgbWVhbnMgdGhhdAogICAgc29tZSBwYXJhbWV0ZXJzIG9mIHRo
+ZSBwcm9jZXNzaW5nIG1pZ2h0IGNoYW5nZSBvbiBlYWNoIHZibGFuayAobGlrZQogICAgZGVzdGlu
+YXRpb24gcmVjdGFuZ2xlIGZvciBleGFtcGxlKS4gVGhpcyBhcGkgYWxsb3dzIHN1Y2ggY2hhbmdl
+IG9uIGVhY2gKICAgIG9wZXJhdGlvbiB3aXRob3V0IGFueSBhZGRpdGlvbmFsIGNvc3QuIFY0TDIg
+cmVxdWlyZXMgdG8gcmVpbml0aWFsaXplCiAgICBxdWV1ZXMgd2l0aCBuZXcgY29uZmlndXJhdGlv
+biBvbiBzdWNoIGNoYW5nZSwgd2hhdCBtZWFucyB0aGF0IGEgYnVuY2ggb2YKICAgIGlvY3RscyBo
+YXMgdG8gYmUgY2FsbGVkLgogIC0gdmFsaWRhdGluZyBwcm9jZXNzaW5nIHBhcmFtZXRlcnMgaW4g
+VjRsMiBBUEkgaXMgcmVhbGx5IGNvbXBsaWNhdGVkLAogICAgYmVjYXVzZSB0aGUgcGFyYW1ldGVy
+cyAoZm9ybWF0LCBzcmMmZGVzdCByZWN0YW5nbGVzLCByb3RhdGlvbikgYXJlIGJlaW5nCiAgICBz
+ZXQgaW5jcmVtZW50YWxseSwgc28gd2UgaGF2ZSB0byBlaXRoZXIgYWxsb3cgc29tZSBpbXBvc3Np
+YmxlLCAKdHJhbnNpdGlvbmFsCiAgICBjb25maWd1cmF0aW9ucyBvciBjb21wbGljYXRlIHRoZSBj
+b25maWd1cmF0aW9uIHN0ZXBzIGV2ZW4gbW9yZSAobGlrZQogICAgY2FsbGluZyBzb21lIGlvY3Rs
+cyBtdWx0aXBsZSB0aW1lcyBmb3IgYm90aCBpbnB1dCBhbmQgb3V0cHV0KS4gSW4gCnRoZSBlbmQK
+ICAgIGFsbCBwYXJhbWV0ZXJzIGhhdmUgdG8gYmUgYWdhaW4gdmFsaWRhdGVkIGp1c3QgYmVmb3Jl
+IHBlcmZvcm1pbmcgdGhlCiAgICBvcGVyYXRpb24uCgozLiBnZW5lcmljIGFwcHJvYWNoICh0byBh
+ZGQgaXQgdG8gRFJNIGNvcmUpIGhhcyBiZWVuIHJlamVjdGVkOgpodHRwOi8vd3d3Lm1haWwtYXJj
+aGl2ZS5jb20vZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZy9tc2cxNDYyODYuaHRtbAoK
+NC4gdGhpcyBhcGkgY2FuIGJlIGNvbnNpZGVyZWQgYXMgZXh0ZW5kZWQgJ2JsaXQnIG9wZXJhdGlv
+biwgb3RoZXIgRFJNIApkcml2ZXJzCiAgICAoTUdBLCBSMTI4LCBWSUEpIGFscmVhZHkgaGF2ZSBp
+b2N0bHMgZm9yIHN1Y2ggb3BlcmF0aW9uLCBzbyB0aGVyZSBpcyAKYWxzbwogICAgcGxhY2UgaW4g
+RFJNIGZvciBpdAoKPj4gT3BlbiBxdWVzdGlvbnM6Cj4+IC0gSG93IHRvIGV4cG9zZSBwcCBjYXBh
+YmlsaXRpZXMgYW5kIHN1cHBvcnRlZCBmb3JtYXRzPyBDdXJyZW50bHkgdGhpcyBpcwo+PiBkb25l
+IHdpdGggYSBkcm1fZXh5bm9zX3BwX2dldCBzdHJ1Y3R1cmUgYW5kIERSTV9JT0NUTF9FWFlOT1Nf
+UFBfR0VUIGlvY3RsLgo+PiBIb3dldmVyIG9uZSBjYW4gdHJ5IHRvIHVzZSBJTU1VVEFCTEUgcHJv
+cGVydGllcyBmb3IgY2FwYWJpbGl0aWVzIGFuZAo+PiBzcmMvZHN0IGZvcm1hdCBzZXQuIFJhdGlv
+bmFsZTogcmVjZW50bHkgUm9iIENsYXJrIHByb3Bvc2VkIHRvIGNyZWF0ZSBhIERSTQo+PiBwcm9w
+ZXJ0eSB3aXRoIHN1cHBvcnRlZCBwaXhlbGZvcm1hdHMgYW5kIG1vZGlmaWVyczoKPj4gICAgaHR0
+cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9kcmktZGV2ZWwvbXNnMTM3MzgwLmh0bWwKPj4gLSBJ
+cyBpdCBva2F5IHRvIHVzZSBEUk0gb2JqZWN0cyBhbmQgcHJvcGVydGllcyBBUEkKPj4gKERSTV9J
+T0NUTF9NT0RFX0dFVFBST1BFUlRZIGFuZCBEUk1fSU9DVExfTU9ERV9PQkpfR0VUUFJPUEVSVElF
+UyBpb2N0bHMpCj4+IGZvciB0aGlzIHB1cnBvc2U/Cj4+Cj4+IFRPRE86Cj4+IC0gY29udmVydCBy
+ZW1haW5pbmcgRXh5bm9zIERSTSBJUFAgZHJpdmVycyAoRklNQywgR1NjYWxsZXIpCj4+IC0gcmVt
+b3ZlIEV4eW5vcyBEUk0gSVBQIHN1YnN5c3RlbQo+PiAtIChvcHRpb25hbCkgcHJvdmlkZSB2aXJ0
+dWFsIFY0TDIgbWVtMm1lbSBkZXZpY2Ugb24gdG9wIG9mIEV4eW5vcyBQUAo+PiBmcmFtZXdvcmsK
+Pj4KPj4gUGF0Y2hlcyB3ZXJlIHRlc3RlZCBvbiBFeHlub3MgNDQxMi1iYXNlZCBPZHJvaWQgVTMg
+Ym9hcmQsIG9uIHRvcCBvZiBMaW51eAo+PiBuZXh0LTIwMTcwNDIwIGtlcm5lbC4KPj4KPj4gQmVz
+dCByZWdhcmRzCj4+IE1hcmVrIFN6eXByb3dza2kKPj4gU2Ftc3VuZyBSJkQgSW5zdGl0dXRlIFBv
+bGFuZAo+Pgo+Pgo+PiBDaGFuZ2Vsb2c6Cj4+IHYxOgo+PiAtIG1vdmVkIHRoaXMgZmVhdHVyZSBm
+cm9tIERSTSBjb3JlIHRvIEV4eW5vcyBEUk0gZHJpdmVyCj4+IC0gY2hhbmdlZCBuYW1lIGZyb20g
+ZnJhbWVidWZmZXIgcHJvY2Vzc29yIHRvIHBpY3R1cmUgcHJvY2Vzc29yCj4+IC0gc2ltcGxpZmll
+ZCBjb2RlIHRvIGNvdmVyIG9ubHkgdGhpbmdzIG5lZWRlZCBieSBFeHlub3MgZHJpdmVycwo+PiAt
+IGltcGxlbWVudGVkIHNpbXBsZSBmaWZvIHRhc2sgc2NoZWR1bGVyCj4+IC0gY2xlYW5lZCB1cCBy
+b3RhdG9yIGRyaXZlciBjb252ZXJzaW9uIChyZW1vdmVkIElQUCByZW1haW5pbmdzKQo+Pgo+Pgo+
+PiB2MDoKPj4gaHR0cDovL3d3dy5tYWlsLWFyY2hpdmUuY29tL2RyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbXNnMTQ2Mjg2Lmh0bWwKPj4gLSBpbml0aWFsIHBvc3Qgb2YgIltSRkMgMC8y
+XSBOZXcgZmVhdHVyZTogRnJhbWVidWZmZXIgcHJvY2Vzc29ycyIKPj4gLSBnZW5lcmljIGFwcHJv
+YWNoIGltcGxlbWVudGVkIGluIERSTSBjb3JlLCByZWplY3RlZAo+Pgo+Pgo+PiBQYXRjaCBzdW1t
+YXJ5Ogo+Pgo+PiBNYXJlayBTenlwcm93c2tpICg0KToKPj4gICAgZHJtOiBFeHBvcnQgZnVuY3Rp
+b25zIHRvIGNyZWF0ZSBjdXN0b20gRFJNIG9iamVjdHMKPj4gICAgZHJtOiBBZGQgc3VwcG9ydCBm
+b3IgdmVuZG9yIHNwZWNpZmljIERSTSBvYmplY3RzIHdpdGggY3VzdG9tCj4+ICAgICAgcHJvcGVy
+dGllcwo+PiAgICBkcm0vZXh5bm9zOiBBZGQgUGljdHVyZSBQcm9jZXNzb3IgZnJhbWV3b3JrCj4+
+ICAgIGRybS9leHlub3M6IENvbnZlcnQgRXh5bm9zIFJvdGF0b3IgZHJpdmVyIHRvIFBpY3R1cmUg
+UHJvY2Vzc29yCj4+ICAgICAgaW50ZXJmYWNlCj4+Cj4+ICAgZHJpdmVycy9ncHUvZHJtL2RybV9j
+cnRjX2ludGVybmFsLmggICAgICAgICB8ICAgNCAtCj4+ICAgZHJpdmVycy9ncHUvZHJtL2RybV9t
+b2RlX29iamVjdC5jICAgICAgICAgICB8ICAxMSArLQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9kcm1f
+cHJvcGVydHkuYyAgICAgICAgICAgICAgfCAgIDIgKy0KPj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL0tjb25maWcgICAgICAgICAgICAgIHwgICAxIC0KPj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL01ha2VmaWxlICAgICAgICAgICAgIHwgICAzICstCj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2Rydi5jICAgICB8ICAgOSArCj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2Rydi5oICAgICB8ICAxNSArCj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX3BwLmMgICAgICB8IDc3NSArKysrKysrKysrKysrKysrKysrKysrKysr
+Cj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BwLmggICAgICB8IDE1NSAr
+KysrKysKPj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcm90YXRvci5jIHwg
+NTEzICsrKysrLS0tLS0tLS0tLS0tLQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9yb3RhdG9yLmggfCAgMTkgLQo+PiAgIGluY2x1ZGUvZHJtL2RybV9tb2RlX29iamVjdC5o
+ICAgICAgICAgICAgICAgfCAgIDYgKwo+PiAgIGluY2x1ZGUvZHJtL2RybV9wcm9wZXJ0eS5oICAg
+ICAgICAgICAgICAgICAgfCAgIDcgKwo+PiAgIGluY2x1ZGUvdWFwaS9kcm0vZHJtX21vZGUuaCAg
+ICAgICAgICAgICAgICAgfCAgIDEgKwo+PiAgIGluY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5o
+ICAgICAgICAgICAgICAgfCAgNjIgKysrCj4+ICAgMTUgZmlsZXMgY2hhbmdlZCwgMTE2NiBpbnNl
+cnRpb25zKCspLCA0MTcgZGVsZXRpb25zKC0pCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wcC5jCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wcC5oCj4+ICAgZGVsZXRlIG1vZGUg
+MTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmgKCkJlc3Qg
+cmVnYXJkcwotLSAKTWFyZWsgU3p5cHJvd3NraSwgUGhEClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQ
+b2xhbmQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
