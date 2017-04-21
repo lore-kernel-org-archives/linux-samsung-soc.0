@@ -1,57 +1,59 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 1/2] i2c: exynos5: simplify clock frequency handling
-Date: Fri, 21 Apr 2017 14:04:10 +0200
-Message-ID: <20170421120410.7wbeopelj7sc6msc@ninjato>
-References: <CGME20170224111634eucas1p22340b3b86a835e90ce981a9d9d4dc64a@eucas1p2.samsung.com>
- <1487934962-8703-1-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH 2/2] i2c: exynos5: de-duplicate error logs on clock setup
+Date: Fri, 21 Apr 2017 14:04:15 +0200
+Message-ID: <20170421120415.3w5agz6txiemlzm5@ninjato>
+References: <1487934962-8703-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170224111634eucas1p28938c94c566c0aadf6dc7766b4eb96d9@eucas1p2.samsung.com>
+ <1487934962-8703-2-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hhcq7tlungtap2i4"
+        protocol="application/pgp-signature"; boundary="6b53tlmnndjdbarg"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:55315 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:55322 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1038154AbdDUMEM (ORCPT
+        id S1038154AbdDUMES (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Apr 2017 08:04:12 -0400
+        Fri, 21 Apr 2017 08:04:18 -0400
 Content-Disposition: inline
-In-Reply-To: <1487934962-8703-1-git-send-email-a.hajda@samsung.com>
+In-Reply-To: <1487934962-8703-2-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Andrzej Hajda <a.hajda@samsung.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
 
---hhcq7tlungtap2i4
+--6b53tlmnndjdbarg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 24, 2017 at 12:16:01PM +0100, Andrzej Hajda wrote:
-> There is no need to keep separate settings for high and fast speed clock.
+On Fri, Feb 24, 2017 at 12:16:02PM +0100, Andrzej Hajda wrote:
+> In case of clock setup error it is enough to log it once.
+> Moreover patch simplifies clock setup routines.
 >=20
 > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 
 Applied to for-next, thanks!
 
 
---hhcq7tlungtap2i4
+--6b53tlmnndjdbarg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlj59TkACgkQFA3kzBSg
-KbZFEhAAkXaK1GZMGVqvgGjJ3UDNxGc6fC7CI76VZ07wFKAeidRtSsLLZlIMw4ra
-WEQaQDbZKZHD7ZIG+b/dsKg6BVuu/+V29Hk/fJ1haSXnrswNFMa8MRtjfCd1YkN1
-nJ/B3kc0IPgzFBuyYdd9bRBb9+qjBMh9xArsR/hnNmJfR3/TqRuuo/7R/YGLJ1Sm
-STMxQD3HxkonvowHnDVRSyXoVaABTPf7Qex67Dzi0PMd4e4AhS7TmyaIrXZj3en3
-yaw28TqDqEQHJ4sIB6RFuSwrI2myaWv43ElltZ6gDTq8zgJuiuUIFBfIa9Qg9TeH
-P0rh9bYu9Twf8yJUpSxkgHcqou6uiMH62p8LJGCADMMQeUMr0C1e5o5te9pumr+S
-4g8R255Bf2yKps+qj92q96skngzf+gql4Z3o4hCdEMmLzQBhid3MCGe+7dWX1FbC
-uMydb6ZK13nzxp7BauKoLJ54moZcgci3mu9C6INTfcfliAvJvDUoO5zQ7wMY1gCX
-8iHq/n7KeyW0sgADIotKwOhrC8ThYZpmCGHSVfbuJIRJblXRHIgXglWVubHIYB5J
-WuwL35G9PKWyOYK9kpR4BB3jl5prp/1mK6EPUyPcpPlNdJPyx8hLIGxbsVUI3YnO
-vSHv+KcNQPbZMYVDMvhGPFExzQD0UNVzHzQSGboeHVShWSJvQG8=
-=OLmo
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlj59T8ACgkQFA3kzBSg
+Kbb3aQ/+Ni6ISigMnaMevvfIFrR9oR3a+6eWsX2vDdwrS5yEgnJzNrbCtgOWzH8Q
+N0xQLCShqpKWz0cduLR9gPwgN2c6xGbxID0BAoFLggfWJyQvPRU0jQ+svf52CDeF
+Coy54t0F1JLJr5UelE+rVKDq5m6wegr8C+qEE08iF9XBvSJDqrqkLlDVosuxg5cJ
+pw9jXOhAcQVFTegT78lDPQ05S1ucLCATpgtgnjd9cp0Wh05wdinUv2rOBEHZ5WX1
+Te2goX5cjCkGBuoa7A6FfSnVkCS7a+MmRN4eHHC5+T8fO4WSp/GNOuZiHzb9LPQ0
+m54yOhOuQZ250B7BTo1FCeQ/NSZGvRiDE7HM/8TMxe1UflKMZh3jshmp7VvXdM3s
+tPGLBuWQoW3IsxPaPoXzBbJPu3QE5ZUC5L24gZmWoq6KY2Fs4VUocCUcNW+5krSd
+IRS9B4qY+g+WzNoQt8YEyKenmQbF5YyPglTZjMa2Na1G8Ge5LYGHLkEJFAFl9FH4
+tSq7zbXvts6IQG+OMobAAiPFiPgafQFwBknJzSAoHpf+4H/fFXv5SmywnNAgemq3
+cQwLJl7dVYIOCP1PchCSKxoFLajtu88iR2BT0jF0+iITsDdUhO5SIILcRy6uarKN
+34hdBr0qr1/oxvC5TMnHFBZgT7O85TJ89GhFoH6uHkvK8JVgRog=
+=dC6K
 -----END PGP SIGNATURE-----
 
---hhcq7tlungtap2i4--
+--6b53tlmnndjdbarg--
