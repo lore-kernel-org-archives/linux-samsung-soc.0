@@ -1,8 +1,8 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: Applied "ASoC: Add Odroid sound DT bindings
  documentation" to the asoc tree
-Date: Fri, 21 Apr 2017 20:01:34 +0200
-Message-ID: <20170421180134.arna3kvjh2kn6iz5@kozik-lap>
+Date: Fri, 21 Apr 2017 20:07:10 +0200
+Message-ID: <20170421180710.6gdaosnk2gn2leoo@kozik-lap>
 References: <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
  <E1d1cLy-0001qc-PC@debutante>
  <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
@@ -38,7 +38,12 @@ On Fri, Apr 21, 2017 at 06:58:00PM +0100, Mark Brown wrote:
 > review and Sylwester is one of the maintainers listed for this code so I
 > wasn't particularly expecting extra review.
 
-Okay then. Probably it was one of fastest applies. :)
+Off the list, off-topic,
+
+Mutt is complaining that your key used to sign the mails has expired:
+	gpg: Note: This key has expired!
+	Primary key fingerprint: 3F25 68AA C269 98F9 E813  A1C5 C3F4 36CA 30F5 D8EB
+	Subkey fingerprint: ADE6 68AA 6757 18B5 9FE2  9FEA 24D6 8B72 5D54 87D0
 
 Best regards,
 Krzysztof
