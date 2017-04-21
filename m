@@ -1,55 +1,53 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH V5 3/7] ARM: exynos: Use - instead of @ for DT OPP entries
-Date: Fri, 21 Apr 2017 10:57:05 +0530
-Message-ID: <20170421052705.GA26900@vireshk-i7>
-References: <cover.1492685450.git.viresh.kumar@linaro.org>
- <8fd1dcd1bfa2011411dceab82bcd1587fe913cd1.1492685450.git.viresh.kumar@linaro.org>
- <20170420160930.halyszjunt4q2634@kozik-lap>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: exynos5: simplify timings calculation
+Date: Fri, 21 Apr 2017 14:04:04 +0200
+Message-ID: <20170421120404.xuuvcqcfjm22vhk5@ninjato>
+References: <CGME20170223164733eucas1p11ad37a2334fe709a062ecc82b5224e1a@eucas1p1.samsung.com>
+ <1487868446-5339-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="khtikcvfx7tb2jbk"
+Return-path: <linux-i2c-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170420160930.halyszjunt4q2634@kozik-lap>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: arm@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Rafael Wysocki <rjw@rjwysocki.net>, Masahiro Yamada <yamada.masahiro@socionext.com>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1487868446-5339-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 20-04-17, 18:09, Krzysztof Kozlowski wrote:
-> On Thu, Apr 20, 2017 at 04:25:07PM +0530, Viresh Kumar wrote:
-> > Compiling the DT file with W=1, DTC warns like follows:
-> > 
-> > Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
-> > unit name, but no reg property
-> > 
-> > Fix this by replacing '@' with '-' as the OPP nodes will never have a
-> > "reg" property.
-> > 
-> > Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../devicetree/bindings/devfreq/exynos-bus.txt     | 46 +++++++--------
-> >  arch/arm/boot/dts/exynos3250.dtsi                  | 46 +++++++--------
-> >  arch/arm/boot/dts/exynos4210.dtsi                  | 32 +++++------
-> >  arch/arm/boot/dts/exynos4412-prime.dtsi            |  4 +-
-> >  arch/arm/boot/dts/exynos4412.dtsi                  | 66 +++++++++++-----------
-> >  arch/arm/boot/dts/exynos5420.dtsi                  | 40 ++++++-------
-> >  arch/arm/boot/dts/exynos5800.dtsi                  | 56 +++++++++---------
-> >  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     | 48 ++++++++--------
-> >  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 50 ++++++++--------
-> >  9 files changed, 194 insertions(+), 194 deletions(-)
-> 
-> 
-> Thanks, split ARM64 from ARM and applied (for v4.12). arm-soc keeps DTS
-> separated between ARM architectures. Technically this should require a
-> resend but we had way too many resends for this simple patch.
 
-Bah! Will make sure to send separate patches from now on. Thanks.
+--khtikcvfx7tb2jbk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-viresh
+On Thu, Feb 23, 2017 at 05:47:26PM +0100, Andrzej Hajda wrote:
+> Instead of using cryptic loop direct calculation of timings
+> can be used.
+>=20
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+
+Applied to for-next, thanks!
+
+
+--khtikcvfx7tb2jbk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlj59TAACgkQFA3kzBSg
+KbY1GQ//TD5KIL8hj1r7+ZrWFDwYfQiMM+jqroVTtRZ5V63sMBHlqSOAdzG5S1bT
+dMtcZa8W5C1OHIKRFDcwAH2Ih6YxClgRyk7nbUjAc0qK/PC6T17SiDSIWO2BN9ce
+iIe38x/LXg+jXkhWCz5DB0pfqP7eRk5mXOZaUdk0O2xp86EWqiw8NgqRy99ZrX2d
+ZgxhxJDsA+WxF1oNBrcFuoy5q/gACc/OgY85PvFK6E0EyVQHsszG1BIG6vwf5e6f
+bGgcLIA+wFNUBxfz3NgRkCnj1K58T+fxfqpWsuSji7Exd+t0zBA2lfxccZWVvugV
+26KS7NAfRE842QL/aBAgGxNRM5mXqlDiQ9LTOefrGnCiNP+8dZRvElfUN76EUA3s
+vN7uFFittmugvXYud1kJ484A1VRzW914fOJaO7r425OY1MWfl0N6VGmY13IP3olj
+dE3/22nVokbBue0anIZwRrsr3KrJA0LS7MBRrZ3sqb2IzNuuTKcsl9Ux7x8Txw1f
+oDiF2ecoqLBobvUkLpHbs/zlDag8wEjmm3JgofdfhVSFBkyMeolzmM/e+7jjxC3O
+4SLIxms2tAKG9Cm+mxgtnPAato0kPX/c6aDpsXJxXcTWRnMWQt2UDag/4PLJNwlm
+4WPuTbppMxslWcL1It2uZkgJRDDz8i9AFiAUKH/7+0lfHql1qsY=
+=gyk5
+-----END PGP SIGNATURE-----
+
+--khtikcvfx7tb2jbk--
