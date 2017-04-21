@@ -1,60 +1,65 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/2] ARM: dts: exynos: Last round for v4.12
-Date: Fri, 21 Apr 2017 18:40:49 +0200
-Message-ID: <20170421164050.7404-1-krzk@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH RFC 0/7] HDMI audio support for Exynos Odroid boards
+Date: Fri, 21 Apr 2017 19:19:44 +0200
+Message-ID: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+References: <CGME20170421172007epcas1p25dba753df34c309e6b00ed08ae930043@epcas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
+Cc: javier@osg.samsung.com, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, krzk@kernel.org, cw00.choi@samsung.com, broonie@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-I know it is late so just one fix for v4.12.
-On top of previous pull request.
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit a1146328ec47141007a6ec076e1cbfc80f31887f:
-
-  Merge tag 'samsung-dt-hdmi-cec-4.12' into next/dt (2017-03-31 00:27:18 +0300)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.12-2
-
-for you to fetch changes up to 6a611d149a9a1eff7c89e81bab018e4121cce17e:
-
-  ARM: dts: exynos: Use - instead of @ for DT OPP entries (2017-04-20 18:06:03 +0200)
-
-----------------------------------------------------------------
-Fix DTC warnings in Exynos ARMv7 Device Tree sources.
-
-----------------------------------------------------------------
-Viresh Kumar (1):
-      ARM: dts: exynos: Use - instead of @ for DT OPP entries
-
- .../devicetree/bindings/devfreq/exynos-bus.txt     | 46 +++++++--------
- arch/arm/boot/dts/exynos3250.dtsi                  | 46 +++++++--------
- arch/arm/boot/dts/exynos4210.dtsi                  | 32 +++++------
- arch/arm/boot/dts/exynos4412-prime.dtsi            |  4 +-
- arch/arm/boot/dts/exynos4412.dtsi                  | 66 +++++++++++-----------
- arch/arm/boot/dts/exynos5420.dtsi                  | 40 ++++++-------
- arch/arm/boot/dts/exynos5800.dtsi                  | 56 +++++++++---------
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 43 +++++++++++++-
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 17 ++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     | 18 ++++++
- 10 files changed, 221 insertions(+), 147 deletions(-)
+SW4gdGhpcyBzZXJpZXMgSSBnYXRoZXJlZCBwYXRjaGVzIHRvdWNoaW5nIHZhcmlvdXMgc3Vic3lz
+dGVtcyB0byBtYWtlIAp0aGUgb3ZlcmFsbCByZXZpZXcgZWFzaWVyLCBmaW5hbGx5IEknbSBnb2lu
+ZyB0byBwb3N0IGluZGVwZW5kZW50bHkKcGF0Y2hlcyBmb3IgZWFjaCBzdWJzeXN0ZW0gYW5kIHRo
+ZSBkdHMgcGF0Y2goZXMpIHdpbGwgYmUgcG9zdHBvbmVkCnRvIHN1YnNlcXVlbnQgbWVyZ2Ugd2lu
+ZG93LgoKVGhlIG1haW4gcHVycG9zZSBvZiB0aGlzIHNlcmllcyBpcyB0byBhZGQgYXVkaW8gY29k
+ZWMgaW50ZXJmYWNlIHRvIHRoZSBFeHlub3MKRFJNIGRyaXZlciwgc28gSERNSSBhdWRpbyBjYW4g
+YmUgcHJvcGVybHkgc3VwcG9ydGVkLCBhbHNvIG9uIGJvYXJkcyB3aGVyZQpIRE1JIGlzIHRoZSBv
+bmx5IGNvbm5lY3RvciBhdmFpbGFibGUgZm9yIGF1ZGlvLgoKQ3VycmVudGx5IGluIG1haW5saW5l
+IHRoZSBBU29DIHNpbXBsZS1jYXJkIGlzIHVzZWQgZm9yIE9kcm9pZCBYVTMsIApJIGRlY2lkZWQg
+dG8gY2hhbmdlIGl0IGFuZCB1c2UgYSBkZWRpY2F0ZWQgQVNvQyBtYWNoaW5lIGRyaXZlciwgd2hp
+Y2ggYWxsb3dlZCAKdG8gaW1wbGVtZW1lbnQgc3BlY2lmaWMgY2xvY2sgc2V0dGluZ3MgKEVQTEwg
+YW5kIHRoZSBJMlMgcm9vdCBjbG9jayBhZGp1c3RlZCAKdG8gYXVkaW8gc2FtcGxlIHJhdGVzKSBh
+bmQgdG8gZW5zdXJlIHByb3BlciBudW1iZXIgb2YgYXVkaW8gY2hhbm5lbHMgCmdldHMgbmVnb3Rp
+YXRlZCBpbiBtdWx0aWNvZGVjIHN5c3RlbSBjb25maWd1cmF0aW9uLgoKVGhpcyBzZXJpZXMgaXMg
+YmFzZWQgb24gdjQuMTEtcmM2LCBoYXMgYmVlbiB0ZXN0ZWQgb24gT2Ryb2lkIFhVMy4gCgpTeWx3
+ZXN0ZXIgTmF3cm9ja2kgKDcpOgogIGNsazogc2Ftc3VuZzogQWRkIGVuYWJsZS9kaXNhYmxlIG9w
+ZXJhdGlvbiBmb3IgUExMMzZYWCBjbG9ja3MKICBjbGs6IHNhbXN1bmc6IEFkZCBkZWZpbml0aW9u
+cyBvZiBzb21lIGF1ZGlvIHJlbGF0ZWQgY2xvY2tzCiAgY2xrOiBzYW1zdW5nOiBleHlub3M1NDJ4
+OiBBZGQgRVBMTCByYXRlIHRhYmxlCiAgZHJtOiBleHlub3M6IEFkZCBkcml2ZXIgZm9yIEhETUkg
+YXVkaW8gaW50ZXJmYWNlCiAgQVNvQzogQWRkIE9kcm9pZCBzb3VuZCBEVCBiaW5kaW5ncyBkb2N1
+bWVudGF0aW9uCiAgQVNvQzogc2Ftc3VuZzogQWRkIE9kcm9pZCBBU29DIG1hY2hpbmUgZHJpdmVy
+CiAgQVJNOiBkdHM6IHNhbXN1bmc6IFN3aXRjaCB0byBkZWRpY2F0ZWQgT2Ryb2lkIHNvdW5kIGNh
+cmQgYmluZGluZwoKIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NvdW5kL3NhbXN1bmcsb2Ryb2lk
+LnR4dCAgIHwgIDU3ICsrKysrKwogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNC5kdHNpICAgICAg
+ICAgICAgICAgICAgICAgfCAgIDEgKwogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC5kdHNp
+ICAgICAgICAgICAgICAgICAgfCAgIDEgKwogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMi1v
+ZHJvaWR4dTMtYXVkaW8uZHRzaSAgfCAgNTkgKysrKy0tCiBkcml2ZXJzL2Nsay9zYW1zdW5nL2Ns
+ay1leHlub3M1NDIwLmMgICAgICAgICAgICAgICB8ICAzMSArKy0KIGRyaXZlcnMvY2xrL3NhbXN1
+bmcvY2xrLXBsbC5jICAgICAgICAgICAgICAgICAgICAgIHwgIDg1ICsrKystLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAgICAgICAgICB8IDIyMCArKysr
+KysrKysrKysrKysrKy0tLS0KIGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svZXh5bm9zNTQyMC5o
+ICAgICAgICAgICAgIHwgICAzICsKIHNvdW5kL3NvYy9zYW1zdW5nL0tjb25maWcgICAgICAgICAg
+ICAgICAgICAgICAgICAgIHwgICA4ICsKIHNvdW5kL3NvYy9zYW1zdW5nL01ha2VmaWxlICAgICAg
+ICAgICAgICAgICAgICAgICAgIHwgICAyICsKIHNvdW5kL3NvYy9zYW1zdW5nL29kcm9pZC5jICAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgMjE5ICsrKysrKysrKysrKysrKysrKysrCiAxMiBmaWxl
+cyBjaGFuZ2VkLCA1OTkgaW5zZXJ0aW9ucygrKSwgODggZGVsZXRpb25zKC0pCiBjcmVhdGUgbW9k
+ZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NvdW5kL3NhbXN1bmcs
+b2Ryb2lkLnR4dAogY3JlYXRlIG1vZGUgMTAwNjQ0IHNvdW5kL3NvYy9zYW1zdW5nL29kcm9pZC5j
+CgotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
