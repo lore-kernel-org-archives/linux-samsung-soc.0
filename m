@@ -1,78 +1,75 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: Applied "ASoC: Add Odroid sound DT bindings
- documentation" to the asoc tree
-Date: Fri, 21 Apr 2017 19:31:42 +0200
-Message-ID: <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Applied "ASoC: Add Odroid sound DT bindings documentation" to
+ the asoc tree
+Date: Fri, 21 Apr 2017 18:58:00 +0100
+Message-ID: <20170421175800.qiwvr46phfafqi75@sirena.org.uk>
 References: <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
  <E1d1cLy-0001qc-PC@debutante>
+ <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <E1d1cLy-0001qc-PC@debutante>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0655216362=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier@osg.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Apr 21, 2017 at 7:28 PM, Mark Brown <broonie@kernel.org> wrote:
-> The patch
->
->    ASoC: Add Odroid sound DT bindings documentation
->
-> has been applied to the asoc tree at
->
->    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
->
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
->
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
->
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
->
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
->
-> Thanks,
-> Mark
->
-> From 92c9f05ebc7290e638c7b1b85288918c4fc65d4e Mon Sep 17 00:00:00 2001
-> From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Date: Fri, 21 Apr 2017 19:19:49 +0200
-> Subject: [PATCH] ASoC: Add Odroid sound DT bindings documentation
->
-> This patch adds DT binding documentation for Odroid XU3/4
-> sound subsystem.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  .../devicetree/bindings/sound/samsung,odroid.txt   | 57 ++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.txt
+
+--===============0655216362==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qh7evjb7nsszf276"
+Content-Disposition: inline
 
 
-Hi Mark,
+--qh7evjb7nsszf276
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Although Sylwester is known of writing good quality code and can be
-trusted but he posted it just 9 minutes ago. Isn't it a little bit too
-fast to apply? I just finished reading cover letter but didn't manage
-to start looking at the rest. :)
+On Fri, Apr 21, 2017 at 07:31:42PM +0200, Krzysztof Kozlowski wrote:
 
-Best regards,
-Krzysztof
+> Although Sylwester is known of writing good quality code and can be
+> trusted but he posted it just 9 minutes ago. Isn't it a little bit too
+> fast to apply? I just finished reading cover letter but didn't manage
+> to start looking at the rest. :)
+
+It's pretty standard boilerplate stuff, there's not much in there to
+review and Sylwester is one of the maintainers listed for this code so I
+wasn't particularly expecting extra review.
+
+--qh7evjb7nsszf276
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlj6SCcACgkQJNaLcl1U
+h9C+Iwf8D6IKeh5wpio4MW6/M8koYR4I2MqmgLsi+HB6Dss3vXKs7zCQl8xrUEle
+c/iem7Q4BeljFC7aI9k/L7dTvP45eIgLGZehTqKdDzDfHO3ZPwTNxb0A3rsVsm/W
+7k1fUeTNn4i3DyaOPcCgo1f04zv50LME2/Jdqe0LI4B1AxcbICyAmURcW5BAUGJl
+FuvvKWiLrMm0r1ly5+jS+/vO6s1g/f3FGUWbajd7qzKnKF+ALQm1g7iiBbUkCLis
+2LCgA9yXuLxvwWqLgoWduUnmKqpqhD0XphKifwWLBWmx4toULGbEr7yumVc0d0EY
+UpA1+ekba31afTPRITzeVMco8hKKFQ==
+=0dvd
+-----END PGP SIGNATURE-----
+
+--qh7evjb7nsszf276--
+
+--===============0655216362==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0655216362==--
