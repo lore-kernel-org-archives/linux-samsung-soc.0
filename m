@@ -1,81 +1,55 @@
-From: Dave Airlie <airlied@gmail.com>
-Subject: Re: [RFC 0/4] Exynos DRM: add Picture Processor extension
-Date: Fri, 21 Apr 2017 05:02:07 +1000
-Message-ID: <CAPM=9tz2_Fi_znFvejBH3QS_eXDZzwPH=L8Z+WsCN7718JtCrg@mail.gmail.com>
-References: <CGME20170420091406eucas1p24c50a0015545105081257d880727386c@eucas1p2.samsung.com>
- <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH V5 3/7] ARM: exynos: Use - instead of @ for DT OPP entries
+Date: Fri, 21 Apr 2017 10:57:05 +0530
+Message-ID: <20170421052705.GA26900@vireshk-i7>
+References: <cover.1492685450.git.viresh.kumar@linaro.org>
+ <8fd1dcd1bfa2011411dceab82bcd1587fe913cd1.1492685450.git.viresh.kumar@linaro.org>
+ <20170420160930.halyszjunt4q2634@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170420160930.halyszjunt4q2634@kozik-lap>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: arm@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Rafael Wysocki <rjw@rjwysocki.net>, Masahiro Yamada <yamada.masahiro@socionext.com>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAgQXByaWwgMjAxNyBhdCAxOToxMywgTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tp
-QHNhbXN1bmcuY29tPiB3cm90ZToKPiBEZWFyIGFsbCwKPgo+IFRoaXMgaXMgYW4gdXBkYXRlZCBw
-cm9wb3NhbCBmb3IgZXh0ZW5kaW5nIEVYWU5PUyBEUk0gQVBJIHdpdGggZ2VuZXJpYyBzdXBwb3J0
-Cj4gZm9yIGhhcmR3YXJlIG1vZHVsZXMsIHdoaWNoIGNhbiBiZSB1c2VkIGZvciBwcm9jZXNzaW5n
-IGltYWdlIGRhdGEgZnJvbSB0aGUKPiBvbmUgbWVtb3J5IGJ1ZmZlciB0byBhbm90aGVyLiBUeXBp
-Y2FsIG1lbW9yeS10by1tZW1vcnkgb3BlcmF0aW9ucyBhcmU6Cj4gcm90YXRpb24sIHNjYWxpbmcs
-IGNvbG91ciBzcGFjZSBjb252ZXJzaW9uIG9yIG1peCBvZiB0aGVtLiBUaGlzIGlzCj4gYSBmb2xs
-b3ctdXAgb2YgbXkgcHJldmlvdXMgcHJvcG9zYWwgIltSRkMgMC8yXSBOZXcgZmVhdHVyZTogRnJh
-bWVidWZmZXIKPiBwcm9jZXNzb3JzIiwgd2hpY2ggaGFzIGJlZW4gcmVqZWN0ZWQgYXMgIm5vdCBy
-ZWFsbHkgbmVlZGVkIGluIHRoZSBEUk0gY29yZSI6Cj4gaHR0cDovL3d3dy5tYWlsLWFyY2hpdmUu
-Y29tL2RyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcvbXNnMTQ2Mjg2Lmh0bWwKPgo+IElu
-IHRoaXMgcHJvcG9zYWwgSSBtb3ZlZCBhbGwgdGhlIGNvZGUgdG8gRXh5bm9zIERSTSBkcml2ZXIs
-IHNvIG5vdyB0aGlzCj4gd2lsbCBiZSBzcGVjaWZpYyBvbmx5IHRvIEV4eW5vcyBEUk0uIEkndmUg
-YWxzbyBjaGFuZ2VkIHRoZSBuYW1lIGZyb20KPiBmcmFtZWJ1ZmZlciBwcm9jZXNzb3IgKGZicHJv
-YykgdG8gcGljdHVyZSBwcm9jZXNzb3IgKHBwKSB0byBhdm9pZCBjb25mdXNpb24KPiB3aXRoIGZi
-ZGV2IEFQSS4KPgo+IEhlcmUgaXMgYSBiaXQgbW9yZSBpbmZvcm1hdGlvbiB3aGF0IHBpY3R1cmUg
-cHJvY2Vzc29ycyBhcmU6Cj4KPiBFbWJlZGRlZCBTb0NzIGFyZSBrbm93biB0byBoYXZlIGEgbnVt
-YmVyIG9mIGhhcmR3YXJlIGJsb2Nrcywgd2hpY2ggcGVyZm9ybQo+IHN1Y2ggb3BlcmF0aW9ucy4g
-VGhleSBjYW4gYmUgdXNlZCBpbiBwYXJhbGVsIHRvIHRoZSBtYWluIEdQVSBtb2R1bGUgdG8KPiBv
-ZmZsb2FkIENQVSBmcm9tIHByb2Nlc3NpbmcgZ3JhcGljcyBvciB2aWRlbyBkYXRhLiBPbmUgb2Yg
-ZXhhbXBsZSB1c2Ugb2YKPiBzdWNoIG1vZHVsZXMgaXMgaW1wbGVtZW50aW5nIHZpZGVvIG92ZXJs
-YXksIHdoaWNoIHVzdWFsbHkgcmVxdWlyZXMgY29sb3IKPiBzcGFjZSBjb252ZXJzaW9uIGZyb20g
-TlYxMiAob3Igc2ltaWxhcikgdG8gUkdCMzIgY29sb3Igc3BhY2UgYW5kIHNjYWxpbmcgdG8KPiB0
-YXJnZXQgd2luZG93IHNpemUuCj4KPiBUaGUgcHJvcG9zZWQgQVBJIGlzIGhlYXZpbHkgaW5zcGly
-ZWQgYnkgYXRvbWljIEtNUyBhcHByb2FjaCAtIGl0IGlzIGFsc28KPiBiYXNlZCBvbiBEUk0gb2Jq
-ZWN0cyBhbmQgdGhlaXIgcHJvcGVydGllcy4gQSBuZXcgRFJNIG9iamVjdCBpcyBpbnRyb2R1Y2Vk
-Ogo+IHBpY3R1cmUgcHJvY2Vzc29yIChjYWxsZWQgcHAgZm9yIGNvbnZlbmllbmNlKS4gU3VjaCBv
-YmplY3RzIGhhdmUgYSBzZXQgb2YKPiBzdGFuZGFyZCBEUk0gcHJvcGVydGllcywgd2hpY2ggZGVz
-Y3JpYmVzIHRoZSBvcGVyYXRpb24gdG8gYmUgcGVyZm9ybWVkIGJ5Cj4gcmVzcGVjdGl2ZSBoYXJk
-d2FyZSBtb2R1bGUuIEluIHR5cGljYWwgY2FzZSB0aG9zZSBwcm9wZXJ0aWVzIGFyZSBhIHNvdXJj
-ZQo+IGZiIGlkIGFuZCByZWN0YW5nbGUgKHgsIHksIHdpZHRoLCBoZWlnaHQpIGFuZCBkZXN0aW5h
-dGlvbiBmYiBpZCBhbmQKPiByZWN0YW5nbGUuIE9wdGlvbmFsbHkgYSByb3RhdGlvbiBwcm9wZXJ0
-eSBjYW4gYmUgYWxzbyBzcGVjaWZpZWQgaWYKPiBzdXBwb3J0ZWQgYnkgdGhlIGdpdmVuIGhhcmR3
-YXJlLiBUbyBwZXJmb3JtIGFuIG9wZXJhdGlvbiBvbiBpbWFnZSBkYXRhLAo+IHVzZXJzcGFjZSBw
-cm92aWRlcyBhIHNldCBvZiBwcm9wZXJ0aWVzIGFuZCB0aGVpciB2YWx1ZXMgZm9yIGdpdmVuIGZi
-cHJvYwo+IG9iamVjdCBpbiBhIHNpbWlsYXIgd2F5IGFzIG9iamVjdCBhbmQgcHJvcGVydGllcyBh
-cmUgcHJvdmlkZWQgZm9yCj4gcGVyZm9ybWluZyBhdG9taWMgcGFnZSBmbGlwIC8gbW9kZSBzZXR0
-aW5nLgo+Cj4gVGhlIHByb3Bvc2VkIEFQSSBjb25zaXN0cyBvZiB0aGUgMyBuZXcgaW9jdGxzOgo+
-IC0gRFJNX0lPQ1RMX0VYWU5PU19QUF9HRVRfUkVTT1VSQ0VTOiB0byBlbnVtZXJhdGUgYWxsIGF2
-YWlsYWJsZSBwaWN0dXJlCj4gICBwcm9jZXNzb3JzLAo+IC0gRFJNX0lPQ1RMX0VYWU5PU19QUF9H
-RVQ6IHRvIHF1ZXJ5IGNhcGFiaWxpdGllcyBvZiBnaXZlbiBwaWN0dXJlCj4gICBwcm9jZXNzb3Is
-Cj4gLSBEUk1fSU9DVExfRVhZTk9TX1BQX0NPTU1JVDogdG8gcGVyZm9ybSBvcGVyYXRpb24gZGVz
-Y3JpYmVkIGJ5IGdpdmVuCj4gICBwcm9wZXJ0eSBzZXQuCj4KPiBUaGUgcHJvcG9zZWQgQVBJIGlz
-IGV4dGVuc2libGUuIERyaXZlcnMgY2FuIGF0dGFjaCB0aGVpciBvd24sIGN1c3RvbQo+IHByb3Bl
-cnRpZXMgdG8gYWRkIHN1cHBvcnQgZm9yIG1vcmUgYWR2YW5jZWQgcGljdHVyZSBwcm9jZXNzaW5n
-IChmb3IgZXhhbXBsZQo+IGJsZW5kaW5nKS4KClNvIHRoaXMgbG9va3MgbW9yZSBsaWtlIGEgY29t
-bWFuZCBzdWJtaXNzaW9uIEFQSSBsaWtlIHdlIGhhdmUgZm9yIG90aGVyIGRyaXZlcnMuCgpJcyB0
-aGVyZSBhbiBvdmVyYXJjaGluZyByZWFzb24gd2h5IGl0IG5lZWRzIHRvIHJldXNlIHRoZSBjb3Jl
-IGRybQpvYmplY3QgdHJhY2tpbmcKYW5kIHByb3BlcnRpZXMsIG9yIHdhcyB0aGF0IGp1c3QgYSBu
-aWNlIHRvIGhhdmUsIHZzIHNvbWV0aGluZyBsaWtlCmFtZGdwdSBjaHVua3MuCgpNeSB3b3JyeSBh
-Ym91dCBleHBvc2luZyBvYmplY3RzIGFuZCBwcm9wZXJ0aWVzIHRvIHRoZSBkcml2ZXJzIGlzIEkn
-bQpzdXJlIHNvbWVvbmUKY291bGQgZ2V0IHF1aXRlIGludmVudGl2ZSBhbmQgZW5kIHVwIHdpdGgg
-YSBmb3JrZWQgYXRvbWljIEFQSSB0aGF0IHdlIGRvbid0IHNlZSwKb3IgdW5kb2N1bWVudGVkIHRo
-aW5ncy4KCkRhdmUuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+On 20-04-17, 18:09, Krzysztof Kozlowski wrote:
+> On Thu, Apr 20, 2017 at 04:25:07PM +0530, Viresh Kumar wrote:
+> > Compiling the DT file with W=1, DTC warns like follows:
+> > 
+> > Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
+> > unit name, but no reg property
+> > 
+> > Fix this by replacing '@' with '-' as the OPP nodes will never have a
+> > "reg" property.
+> > 
+> > Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../devicetree/bindings/devfreq/exynos-bus.txt     | 46 +++++++--------
+> >  arch/arm/boot/dts/exynos3250.dtsi                  | 46 +++++++--------
+> >  arch/arm/boot/dts/exynos4210.dtsi                  | 32 +++++------
+> >  arch/arm/boot/dts/exynos4412-prime.dtsi            |  4 +-
+> >  arch/arm/boot/dts/exynos4412.dtsi                  | 66 +++++++++++-----------
+> >  arch/arm/boot/dts/exynos5420.dtsi                  | 40 ++++++-------
+> >  arch/arm/boot/dts/exynos5800.dtsi                  | 56 +++++++++---------
+> >  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     | 48 ++++++++--------
+> >  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 50 ++++++++--------
+> >  9 files changed, 194 insertions(+), 194 deletions(-)
+> 
+> 
+> Thanks, split ARM64 from ARM and applied (for v4.12). arm-soc keeps DTS
+> separated between ARM architectures. Technically this should require a
+> resend but we had way too many resends for this simple patch.
+
+Bah! Will make sure to send separate patches from now on. Thanks.
+
+-- 
+viresh
