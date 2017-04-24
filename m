@@ -1,249 +1,154 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 5/7] regulator: arizona-ldo1: Move pdata into a separate
- structure
-Date: Mon, 24 Apr 2017 12:50:44 +0100
-Message-ID: <20170424115044.rejrwmi57uifxo7j@dell>
-References: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1492512234-19210-7-git-send-email-rf@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] hwmon: pwm-fan: switch to new atomic PWM API
+Date: Mon, 24 Apr 2017 15:13:17 +0200
+Message-ID: <1493039598-25881-1-git-send-email-b.zolnierkie@samsung.com>
+References: <CGME20170424131342epcas5p4cb2f53f6c780119557ff3da56fb8f0a8@epcas5p4.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:32849 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1169327AbdDXLus (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:15206 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934188AbdDXNNp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Apr 2017 07:50:48 -0400
-Received: by mail-wr0-f179.google.com with SMTP id w50so66753587wrc.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Apr 2017 04:50:47 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1492512234-19210-7-git-send-email-rf@opensource.wolfsonmicro.com>
+        Mon, 24 Apr 2017 09:13:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: broonie@kernel.org, kgene@kernel.org, krzk@kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Kamil Debski <kamil@wypas.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-pwm@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
 
-On Tue, 18 Apr 2017, Richard Fitzgerald wrote:
+Switch pwm-fan driver to new atomic PWM API.
 
-> In preparation for sharing this driver with Madera, move the pdata
-> for the LDO1 regulator out of struct arizona_pdata into a dedicated
-> pdata struct for this driver. As a result the code in
-> arizona_ldo1_of_get_pdata() can be made independent of struct arizona.
-> 
-> This patch also updates the definition of struct arizona_pdata and
-> the use of this pdata in mach-crag6410-module.c
-> 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> ---
->  arch/arm/mach-s3c64xx/mach-crag6410-module.c |  8 ++++--
->  drivers/regulator/arizona-ldo1.c             | 39 +++++++++++++++-------------
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+Depends on "[PATCH v2 0/3] pwm: pwm-samsung: fix suspend/resume support"
+patchset (https://www.spinics.net/lists/kernel/msg2495209.html).
 
->  include/linux/mfd/arizona/pdata.h            |  4 +--
+ drivers/hwmon/pwm-fan.c | 68 +++++++++++++++++++------------------------------
+ 1 file changed, 26 insertions(+), 42 deletions(-)
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
->  include/linux/regulator/arizona-ldo1.h       | 24 +++++++++++++++++
->  4 files changed, 53 insertions(+), 22 deletions(-)
->  create mode 100644 include/linux/regulator/arizona-ldo1.h
-> 
-> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-> index ccc3ab8..ea5f216 100644
-> --- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-> +++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-> @@ -209,7 +209,9 @@
->  };
->  
->  static struct arizona_pdata wm5102_reva_pdata = {
-> -	.ldoena = S3C64XX_GPN(7),
-> +	.ldo1 = {
-> +		.ldoena = S3C64XX_GPN(7),
-> +	},
->  	.gpio_base = CODEC_GPIO_BASE,
->  	.irq_flags = IRQF_TRIGGER_HIGH,
->  	.micd_pol_gpio = CODEC_GPIO_BASE + 4,
-> @@ -239,7 +241,9 @@
->  };
->  
->  static struct arizona_pdata wm5102_pdata = {
-> -	.ldoena = S3C64XX_GPN(7),
-> +	.ldo1 = {
-> +		.ldoena = S3C64XX_GPN(7),
-> +	},
->  	.gpio_base = CODEC_GPIO_BASE,
->  	.irq_flags = IRQF_TRIGGER_HIGH,
->  	.micd_pol_gpio = CODEC_GPIO_BASE + 2,
-> diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
-> index b726fa1..f5bc75a 100644
-> --- a/drivers/regulator/arizona-ldo1.c
-> +++ b/drivers/regulator/arizona-ldo1.c
-> @@ -25,6 +25,8 @@
->  #include <linux/gpio.h>
->  #include <linux/slab.h>
->  
-> +#include <linux/regulator/arizona-ldo1.h>
-> +
->  #include <linux/mfd/arizona/core.h>
->  #include <linux/mfd/arizona/pdata.h>
->  #include <linux/mfd/arizona/registers.h>
-> @@ -186,20 +188,19 @@ static int arizona_ldo1_hc_get_voltage_sel(struct regulator_dev *rdev)
->  	.num_consumer_supplies = 1,
->  };
->  
-> -static int arizona_ldo1_of_get_pdata(struct device *dev,
-> -				     struct arizona *arizona,
-> +static int arizona_ldo1_of_get_pdata(struct arizona_ldo1_pdata *pdata,
->  				     struct regulator_config *config,
-> -				     const struct regulator_desc *desc)
-> +				     const struct regulator_desc *desc,
-> +				     bool *external_dcvdd)
->  {
-> -	struct arizona_pdata *pdata = &arizona->pdata;
->  	struct arizona_ldo1 *ldo1 = config->driver_data;
-> -	struct device_node *np = arizona->dev->of_node;
-> +	struct device_node *np = config->dev->of_node;
->  	struct device_node *init_node, *dcvdd_node;
->  	struct regulator_init_data *init_data;
->  
->  	pdata->ldoena = of_get_named_gpio(np, "wlf,ldoena", 0);
->  	if (pdata->ldoena < 0) {
-> -		dev_warn(arizona->dev,
-> +		dev_warn(config->dev,
->  			 "LDOENA GPIO property missing/malformed: %d\n",
->  			 pdata->ldoena);
->  		pdata->ldoena = 0;
-> @@ -213,19 +214,19 @@ static int arizona_ldo1_of_get_pdata(struct device *dev,
->  	if (init_node) {
->  		config->of_node = init_node;
->  
-> -		init_data = of_get_regulator_init_data(dev, init_node, desc);
-> -
-> +		init_data = of_get_regulator_init_data(config->dev, init_node,
-> +						       desc);
->  		if (init_data) {
->  			init_data->consumer_supplies = &ldo1->supply;
->  			init_data->num_consumer_supplies = 1;
->  
->  			if (dcvdd_node && dcvdd_node != init_node)
-> -				arizona->external_dcvdd = true;
-> +				*external_dcvdd = true;
->  
-> -			pdata->ldo1 = init_data;
-> +			pdata->init_data = init_data;
->  		}
->  	} else if (dcvdd_node) {
-> -		arizona->external_dcvdd = true;
-> +		*external_dcvdd = true;
->  	}
->  
->  	of_node_put(dcvdd_node);
-> @@ -239,10 +240,9 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
->  	const struct regulator_desc *desc;
->  	struct regulator_config config = { };
->  	struct arizona_ldo1 *ldo1;
-> +	bool external_dcvdd = false;
->  	int ret;
->  
-> -	arizona->external_dcvdd = false;
-> -
->  	ldo1 = devm_kzalloc(&pdev->dev, sizeof(*ldo1), GFP_KERNEL);
->  	if (!ldo1)
->  		return -ENOMEM;
-> @@ -283,17 +283,18 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
->  
->  	if (IS_ENABLED(CONFIG_OF)) {
->  		if (!dev_get_platdata(arizona->dev)) {
-> -			ret = arizona_ldo1_of_get_pdata(&pdev->dev, arizona,
-> -							&config, desc);
-> +			ret = arizona_ldo1_of_get_pdata(&arizona->pdata.ldo1,
-> +							&config, desc,
-> +							&external_dcvdd);
->  			if (ret < 0)
->  				return ret;
->  		}
->  	}
->  
-> -	config.ena_gpio = arizona->pdata.ldoena;
-> +	config.ena_gpio = arizona->pdata.ldo1.ldoena;
->  
-> -	if (arizona->pdata.ldo1)
-> -		config.init_data = arizona->pdata.ldo1;
-> +	if (arizona->pdata.ldo1.init_data)
-> +		config.init_data = arizona->pdata.ldo1.init_data;
->  	else
->  		config.init_data = &ldo1->init_data;
->  
-> @@ -303,6 +304,8 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
->  	 */
->  	if (config.init_data->num_consumer_supplies == 0)
->  		arizona->external_dcvdd = true;
-> +	else
-> +		arizona->external_dcvdd = external_dcvdd;
->  
->  	ldo1->regulator = devm_regulator_register(&pdev->dev, desc, &config);
->  
-> diff --git a/include/linux/mfd/arizona/pdata.h b/include/linux/mfd/arizona/pdata.h
-> index 43e875f..bfeecf1 100644
-> --- a/include/linux/mfd/arizona/pdata.h
-> +++ b/include/linux/mfd/arizona/pdata.h
-> @@ -12,6 +12,7 @@
->  #define _ARIZONA_PDATA_H
->  
->  #include <dt-bindings/mfd/arizona.h>
-> +#include <linux/regulator/arizona-ldo1.h>
->  #include <linux/regulator/arizona-micsupp.h>
->  
->  #define ARIZONA_GPN_DIR_MASK                     0x8000  /* GPN_DIR */
-> @@ -77,13 +78,12 @@ struct arizona_micd_range {
->  
->  struct arizona_pdata {
->  	int reset;      /** GPIO controlling /RESET, if any */
-> -	int ldoena;     /** GPIO controlling LODENA, if any */
->  
->  	/** Regulator configuration for MICVDD */
->  	struct arizona_micsupp_pdata micvdd;
->  
->  	/** Regulator configuration for LDO1 */
-> -	struct regulator_init_data *ldo1;
-> +	struct arizona_ldo1_pdata ldo1;
->  
->  	/** If a direct 32kHz clock is provided on an MCLK specify it here */
->  	int clk32k_src;
-> diff --git a/include/linux/regulator/arizona-ldo1.h b/include/linux/regulator/arizona-ldo1.h
-> new file mode 100644
-> index 0000000..c685f12
-> --- /dev/null
-> +++ b/include/linux/regulator/arizona-ldo1.h
-> @@ -0,0 +1,24 @@
-> +/*
-> + * Platform data for Arizona LDO1 regulator
-> + *
-> + * Copyright 2017 Cirrus Logic
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef ARIZONA_LDO1_H
-> +#define ARIZONA_LDO1_H
-> +
-> +struct regulator_init_data;
-> +
-> +struct arizona_ldo1_pdata {
-> +	/** GPIO controlling LDOENA, if any */
-> +	int ldoena;
-> +
-> +	/** Regulator configuration for LDO1 */
-> +	const struct regulator_init_data *init_data;
-> +};
-> +
-> +#endif
-> -- 
-> 1.9.1
-> 
-
+diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+index 9dc40f3..4ac7700 100644
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -40,31 +40,22 @@ struct pwm_fan_ctx {
+ 
+ static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+ {
+-	struct pwm_args pargs;
+-	unsigned long duty;
++	unsigned long period;
+ 	int ret = 0;
+-
+-	pwm_get_args(ctx->pwm, &pargs);
++	struct pwm_state state = { };
+ 
+ 	mutex_lock(&ctx->lock);
+ 	if (ctx->pwm_value == pwm)
+ 		goto exit_set_pwm_err;
+ 
+-	duty = DIV_ROUND_UP(pwm * (pargs.period - 1), MAX_PWM);
+-	ret = pwm_config(ctx->pwm, duty, pargs.period);
+-	if (ret)
+-		goto exit_set_pwm_err;
+-
+-	if (pwm == 0)
+-		pwm_disable(ctx->pwm);
++	pwm_init_state(ctx->pwm, &state);
++	period = ctx->pwm->args.period;
++	state.duty_cycle = DIV_ROUND_UP(pwm * (period - 1), MAX_PWM);
++	state.enabled = pwm ? true : false;
+ 
+-	if (ctx->pwm_value == 0) {
+-		ret = pwm_enable(ctx->pwm);
+-		if (ret)
+-			goto exit_set_pwm_err;
+-	}
+-
+-	ctx->pwm_value = pwm;
++	ret = pwm_apply_state(ctx->pwm, &state);
++	if (!ret)
++		ctx->pwm_value = pwm;
+ exit_set_pwm_err:
+ 	mutex_unlock(&ctx->lock);
+ 	return ret;
+@@ -218,10 +209,9 @@ static int pwm_fan_probe(struct platform_device *pdev)
+ {
+ 	struct thermal_cooling_device *cdev;
+ 	struct pwm_fan_ctx *ctx;
+-	struct pwm_args pargs;
+ 	struct device *hwmon;
+-	int duty_cycle;
+ 	int ret;
++	struct pwm_state state = { };
+ 
+ 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
+@@ -237,28 +227,16 @@ static int pwm_fan_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, ctx);
+ 
+-	/*
+-	 * FIXME: pwm_apply_args() should be removed when switching to the
+-	 * atomic PWM API.
+-	 */
+-	pwm_apply_args(ctx->pwm);
+-
+-	/* Set duty cycle to maximum allowed */
+-	pwm_get_args(ctx->pwm, &pargs);
+-
+-	duty_cycle = pargs.period - 1;
+ 	ctx->pwm_value = MAX_PWM;
+ 
+-	ret = pwm_config(ctx->pwm, duty_cycle, pargs.period);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to configure PWM\n");
+-		return ret;
+-	}
++	/* Set duty cycle to maximum allowed and enable PWM output */
++	pwm_init_state(ctx->pwm, &state);
++	state.duty_cycle = ctx->pwm->args.period - 1;
++	state.enabled = true;
+ 
+-	/* Enbale PWM output */
+-	ret = pwm_enable(ctx->pwm);
++	ret = pwm_apply_state(ctx->pwm, &state);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Failed to enable PWM\n");
++		dev_err(&pdev->dev, "Failed to configure PWM\n");
+ 		return ret;
+ 	}
+ 
+@@ -266,8 +244,8 @@ static int pwm_fan_probe(struct platform_device *pdev)
+ 						       ctx, pwm_fan_groups);
+ 	if (IS_ERR(hwmon)) {
+ 		dev_err(&pdev->dev, "Failed to register hwmon device\n");
+-		pwm_disable(ctx->pwm);
+-		return PTR_ERR(hwmon);
++		ret = PTR_ERR(hwmon);
++		goto err_pwm_disable;
+ 	}
+ 
+ 	ret = pwm_fan_of_get_cooling_data(&pdev->dev, ctx);
+@@ -282,14 +260,20 @@ static int pwm_fan_probe(struct platform_device *pdev)
+ 		if (IS_ERR(cdev)) {
+ 			dev_err(&pdev->dev,
+ 				"Failed to register pwm-fan as cooling device");
+-			pwm_disable(ctx->pwm);
+-			return PTR_ERR(cdev);
++			ret = PTR_ERR(cdev);
++			goto err_pwm_disable;
+ 		}
+ 		ctx->cdev = cdev;
+ 		thermal_cdev_update(cdev);
+ 	}
+ 
+ 	return 0;
++
++err_pwm_disable:
++	state.enabled = false;
++	pwm_apply_state(ctx->pwm, &state);
++
++	return ret;
+ }
+ 
+ static int pwm_fan_remove(struct platform_device *pdev)
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
