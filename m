@@ -1,44 +1,60 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-Date: Mon, 24 Apr 2017 13:12:36 +0200
-Message-ID: <cf931f91-aec1-d667-bede-da01e0b94258@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable
+ operation for PLL36XX clocks
+Date: Mon, 24 Apr 2017 13:18:44 +0200
+Message-ID: <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com>
 References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
  <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
  <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
- <20170422025127.GS7065@codeaurora.org>
+ <20170422152236.tbf4iuoadqrvoc2n@kozik-lap>
+ <017b3ec8-c185-c29a-2944-12f519b461fe@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170422025127.GS7065@codeaurora.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, javier@osg.samsung.com, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, cw00.choi@samsung.com, broonie@kernel.org, krzk@kernel.org, robh+dt@kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <017b3ec8-c185-c29a-2944-12f519b461fe@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, broonie@kernel.org, robh+dt@kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDQvMjIvMjAxNyAwNDo1MSBBTSwgU3RlcGhlbiBCb3lkIHdyb3RlOgo+PiArc3RhdGljIGlu
-dCBzYW1zdW5nX3BsbDN4eHhfZW5hYmxlKHN0cnVjdCBjbGtfaHcgKmh3KQo+PiArewo+PiArCXN0
-cnVjdCBzYW1zdW5nX2Nsa19wbGwgKnBsbCA9IHRvX2Nsa19wbGwoaHcpOwo+PiArCXUzMiB0bXA7
-Cj4+ICsKPj4gKwl0bXAgPSByZWFkbF9yZWxheGVkKHBsbC0+Y29uX3JlZyk7Cj4+ICsJdG1wIHw9
-IEJJVChwbGwtPmVuYWJsZV9vZmZzKTsKPj4gKwl3cml0ZWxfcmVsYXhlZCh0bXAsIHBsbC0+Y29u
-X3JlZyk7Cj4+ICsKPj4gKwkvKiB3YWl0IGxvY2sgdGltZSAqLwo+PiArCWRvIHsKPj4gKwkJY3B1
-X3JlbGF4KCk7Cj4+ICsJCXRtcCA9IHJlYWRsX3JlbGF4ZWQocGxsLT5jb25fcmVnKTsKPj4gKwl9
-IHdoaWxlICghKHRtcCAmIEJJVChwbGwtPmxvY2tfb2ZmcykpKTsKID4KPiBOb3QgYSBwcm9ibGVt
-IHdpdGggdGhpcyBwYXRjaCBiZWNhdXNlIHdlJ3JlIG1vdmluZyBjb2RlIGFyb3VuZCwKPiBidXQg
-dGhpcyBpcyBhIHBvdGVudGlhbCBpbmZpbml0ZSBsb29wIHRoYXQgc2hvdWxkIGhhdmUgc29tZSBz
-b3J0Cj4gb2YgdGltZW91dCBzbyB3ZSBkb24ndCBzaXQgaGVyZSBmb3JldmVyIHRyeWluZyB0byBz
-ZWUgYSBiaXQKPiB0b2dnbGUuCgpZZXMsIEkgd2lsbCBhZGQgc29tZSBwcm90ZWN0aW9uIGluIG5l
-dyBwYXRjaCwgbGlrZSBpdCBpcyBkb25lCmZvciBuZXdlciBQTExzLiBUaGFua3MgZm9yIHlvdSBy
-ZXZpZXcuCgotLSAKUmVnYXJkcywKU3lsd2VzdGVyCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Mon, Apr 24, 2017 at 1:12 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 04/22/2017 05:22 PM, Krzysztof Kozlowski wrote:
+>>> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw
+>>> *hw, unsigned long drate,
+>>>         writel_relaxed(pll_con1, pll->con_reg + 4);
+>>>
+>>>         /* wait_lock_time */
+>>> -       do {
+>>> -               cpu_relax();
+>>> -               tmp = readl_relaxed(pll->con_reg);
+>>> -       } while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
+>
+>
+> I will add a comment here like:
+> /* Wait until the PLL is locked if it is enabled. */
+>
+>>> +       if (pll_con0 & BIT(pll->enable_offs)) {
+>>
+>>
+>> Why this additional if() is needed?
+>
+>
+> The PLL will never transition to a locked state if it is disabled, without
+> this test we would end up with an indefinite loop below.
+
+Hmmm... shouldn't this be split from this change? Or maybe this is
+needed only because you added enable/disable for pl36xx and previously
+this was not existing?
+
+Best regards,
+Krzysztof
