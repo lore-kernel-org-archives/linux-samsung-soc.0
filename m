@@ -1,51 +1,58 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: Applied "ASoC: Add Odroid sound DT bindings documentation" to
- the asoc tree
-Date: Mon, 24 Apr 2017 10:57:07 +0100
-Message-ID: <20170424095707.r3b63plbrl2wcx6w@sirena.org.uk>
-References: <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
- <E1d1cLy-0001qc-PC@debutante>
- <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
- <20170421175800.qiwvr46phfafqi75@sirena.org.uk>
- <20170421180710.6gdaosnk2gn2leoo@kozik-lap>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="u2itx5kjaillbeyq"
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170421180710.6gdaosnk2gn2leoo@kozik-lap>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, jy0922.shim@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 0/3] pwm: pwm-samsung: fix suspend/resume support
+Date: Mon, 24 Apr 2017 12:01:06 +0200
+Message-ID: <1493028069-32003-1-git-send-email-b.zolnierkie@samsung.com>
+References: <CGME20170424100128epcas5p20396f75d5626a320a9eb11d89ae87ac5@epcas5p2.samsung.com>
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Kamil Debski <kamil@wypas.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-pwm@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
---u2itx5kjaillbeyq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patchset fixes suspend/resume support in pwm-samsung
+driver (which has an effect of fixing suspend/resume support
+for PWM client drivers such as pwm-fan one). Then it removes
+no longer needed suspend/resume code from pwm-fan driver.
 
-On Fri, Apr 21, 2017 at 08:07:10PM +0200, Krzysztof Kozlowski wrote:
+It was tested on Odroid-XU3 board (with few extra patches
+adding SoC/board suspend/resume support which are not in
+upstream yet).
 
-> Mutt is complaining that your key used to sign the mails has expired:
-> 	gpg: Note: This key has expired!
-> 	Primary key fingerprint: 3F25 68AA C269 98F9 E813  A1C5 C3F4 36CA 30F5 D8EB
-> 	Subkey fingerprint: ADE6 68AA 6757 18B5 9FE2  9FEA 24D6 8B72 5D54 87D0
+The initial issue that has been observed on this configuration
+was that after suspend/resume operation the fan was turned on
+(while the thermal code had explicitly disabled the fan by
+calling back into pwm-fan driver before the suspend/resume).
 
-gpg --refresh-keys should fix that.
+Fixing this in the pwm-fan driver itself is not feasible since
+pwm_config()/pwm_disable() & co. API saves information about
+current state and doesn't pass the relevant values to PWM core
+if they are identical to the ones used previously (moreover PWM
+core itself does the same before calling into the PWM hardware
+driver).
 
---u2itx5kjaillbeyq
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes since v1
+(https://www.spinics.net/lists/kernel/msg2480445.html):
+- added Acked-by from Guenter to patch #3
+- fixed patch #2 to use the right variable (chip -> our_chip)
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlj9y+8ACgkQJNaLcl1U
-h9A01wf9G9HYQf8kZERLTSLeRovhzVRv5RSuzQjwDBlNBr2Wn68sqDYDcdgafHDJ
-GHayc5QRIws7IwXyJ7rcDHisv0NuHQ3MRXaEWEs4DL4hKXHHGcz6fvAhPj9Aowx1
-jKt9twSaLiftfi5yudhqZFDJwVD3WOV12X4sykkmO4HtKgvv/CwgMSW7bfgX43zx
-aPwhTb8VlxqfFwRxWLs0xDJjdkcVGIllyqphZ6lwqrw1cyRXVbnlW7WTQx+06I8W
-2oe2yE3V/5TPdo0Szo85IYl6iXXJ0JausqHj21qCsmyBXOZ4Zv935LptfMFm1jUk
-jrIQ2fahp9Nk75qcr4b+hmi9mFa3nA==
-=nHXP
------END PGP SIGNATURE-----
 
---u2itx5kjaillbeyq--
+Bartlomiej Zolnierkiewicz (3):
+  pwm: pwm-samsung: remove redundant checks from pwm_samsung_config()
+  pwm: pwm-samsung: fix suspend/resume support
+  hwmon: pwm-fan: remove no longer needed suspend/resume code
+
+ drivers/hwmon/pwm-fan.c   | 32 ----------------------
+ drivers/pwm/pwm-samsung.c | 70 +++++++++++++++++++++++------------------------
+ 2 files changed, 35 insertions(+), 67 deletions(-)
+
+-- 
+1.9.1
+
