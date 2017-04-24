@@ -1,56 +1,41 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 2/6] clk: samsung: Add local variable to match it purpose
-Date: Mon, 24 Apr 2017 08:42:19 +0200
-Message-ID: <1493016143-21569-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 1/6] clk: samsung: Remove dead code
+Date: Mon, 24 Apr 2017 08:42:18 +0200
+Message-ID: <1493016143-21569-2-git-send-email-m.szyprowski@samsung.com>
 References: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170424064229eucas1p2367a90a36b5bcb99f48a24e72b29a629@eucas1p2.samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
+ <CGME20170424064228eucas1p2543d7f206ac18476891e500991611733@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:49629 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165573AbdDXGmf (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 24 Apr 2017 02:42:35 -0400
 In-reply-to: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Add new variable to avoid using clk pointer for different purposes across
-the exynos_register_cpu_clock() function. This will help in future rewrite
-for the new clk_hw API.
+samsung_clk_register_pll2550x() function is not used anymore, so remove its
+declaration.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clk/samsung/clk-cpu.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/clk/samsung/clk-pll.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index 8bf7e805fd34..6e1c6007e721 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -410,6 +410,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- {
- 	struct exynos_cpuclk *cpuclk;
- 	struct clk_init_data init;
-+	struct clk *parent_clk;
- 	struct clk *clk;
- 	int ret = 0;
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index a1ca0233cb4b..61eb8abbfd9c 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -103,8 +103,4 @@ struct samsung_pll_rate_table {
+ 	unsigned int vsel;
+ };
  
-@@ -440,15 +441,15 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- 		goto free_cpuclk;
- 	}
- 
--	clk = __clk_lookup(parent);
--	if (!clk) {
-+	parent_clk = __clk_lookup(parent);
-+	if (!parent_clk) {
- 		pr_err("%s: could not lookup parent clock %s\n",
- 				__func__, parent);
- 		ret = -EINVAL;
- 		goto free_cpuclk;
- 	}
- 
--	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
-+	ret = clk_notifier_register(parent_clk, &cpuclk->clk_nb);
- 	if (ret) {
- 		pr_err("%s: failed to register clock notifier for %s\n",
- 				__func__, name);
+-extern struct clk * __init samsung_clk_register_pll2550x(const char *name,
+-			const char *pname, const void __iomem *reg_base,
+-			const unsigned long offset);
+-
+ #endif /* __SAMSUNG_CLK_PLL_H */
 -- 
 1.9.1
-
