@@ -1,76 +1,249 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-Date: Mon, 24 Apr 2017 13:50:10 +0200
-Message-ID: <CAJKOXPepqf0FoGb-Yv7yWBAmOdq_jBiEjScEsZLJHEU=nYd5wQ@mail.gmail.com>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
- <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
- <20170422152236.tbf4iuoadqrvoc2n@kozik-lap> <017b3ec8-c185-c29a-2944-12f519b461fe@samsung.com>
- <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com> <3232b6e5-05b6-2d91-07ef-e5473ee70889@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 5/7] regulator: arizona-ldo1: Move pdata into a separate
+ structure
+Date: Mon, 24 Apr 2017 12:50:44 +0100
+Message-ID: <20170424115044.rejrwmi57uifxo7j@dell>
+References: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1492512234-19210-7-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:57078 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1168445AbdDXLuO (ORCPT
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:32849 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1169327AbdDXLus (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Apr 2017 07:50:14 -0400
-In-Reply-To: <3232b6e5-05b6-2d91-07ef-e5473ee70889@samsung.com>
+        Mon, 24 Apr 2017 07:50:48 -0400
+Received: by mail-wr0-f179.google.com with SMTP id w50so66753587wrc.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Apr 2017 04:50:47 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1492512234-19210-7-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: broonie@kernel.org, kgene@kernel.org, krzk@kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, Apr 24, 2017 at 1:35 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> (dropping unrelated addresses from Cc list)
->
-> On 04/24/2017 01:18 PM, Krzysztof Kozlowski wrote:
->>
->> On Mon, Apr 24, 2017 at 1:12 PM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
->>>
->>> On 04/22/2017 05:22 PM, Krzysztof Kozlowski wrote:
->>>>>
->>>>> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw
->>>>> *hw, unsigned long drate,
->>>>>         writel_relaxed(pll_con1, pll->con_reg + 4);
->>>>>
->>>>>         /* wait_lock_time */
->>>>> -       do {
->>>>> -               cpu_relax();
->>>>> -               tmp = readl_relaxed(pll->con_reg);
->>>>> -       } while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
->>>
->>>
->>>
->>> I will add a comment here like:
->>> /* Wait until the PLL is locked if it is enabled. */
->>>
->>>>> +       if (pll_con0 & BIT(pll->enable_offs)) {
->>>>
->>>>
->>>>
->>>> Why this additional if() is needed?
->>>
->>>
->>>
->>> The PLL will never transition to a locked state if it is disabled,
->>> without
->>> this test we would end up with an indefinite loop below.
->>
->>
->> Hmmm... shouldn't this be split from this change? Or maybe this is
->> needed only because you added enable/disable for pl36xx and previously
->> this was not existing?
->
->
-> Yes, it looks like previously the PLLs were always on after were enabled.
-> I wouldn't be separating that part, as it's all logically dependent.
-> Just the commit message might need some improvement.
+On Tue, 18 Apr 2017, Richard Fitzgerald wrote:
 
-Thanks for explanation.
+> In preparation for sharing this driver with Madera, move the pdata
+> for the LDO1 regulator out of struct arizona_pdata into a dedicated
+> pdata struct for this driver. As a result the code in
+> arizona_ldo1_of_get_pdata() can be made independent of struct arizona.
+> 
+> This patch also updates the definition of struct arizona_pdata and
+> the use of this pdata in mach-crag6410-module.c
+> 
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> ---
+>  arch/arm/mach-s3c64xx/mach-crag6410-module.c |  8 ++++--
+>  drivers/regulator/arizona-ldo1.c             | 39 +++++++++++++++-------------
 
-Best regards,
-Krzysztof
+>  include/linux/mfd/arizona/pdata.h            |  4 +--
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+>  include/linux/regulator/arizona-ldo1.h       | 24 +++++++++++++++++
+>  4 files changed, 53 insertions(+), 22 deletions(-)
+>  create mode 100644 include/linux/regulator/arizona-ldo1.h
+> 
+> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+> index ccc3ab8..ea5f216 100644
+> --- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+> +++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+> @@ -209,7 +209,9 @@
+>  };
+>  
+>  static struct arizona_pdata wm5102_reva_pdata = {
+> -	.ldoena = S3C64XX_GPN(7),
+> +	.ldo1 = {
+> +		.ldoena = S3C64XX_GPN(7),
+> +	},
+>  	.gpio_base = CODEC_GPIO_BASE,
+>  	.irq_flags = IRQF_TRIGGER_HIGH,
+>  	.micd_pol_gpio = CODEC_GPIO_BASE + 4,
+> @@ -239,7 +241,9 @@
+>  };
+>  
+>  static struct arizona_pdata wm5102_pdata = {
+> -	.ldoena = S3C64XX_GPN(7),
+> +	.ldo1 = {
+> +		.ldoena = S3C64XX_GPN(7),
+> +	},
+>  	.gpio_base = CODEC_GPIO_BASE,
+>  	.irq_flags = IRQF_TRIGGER_HIGH,
+>  	.micd_pol_gpio = CODEC_GPIO_BASE + 2,
+> diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
+> index b726fa1..f5bc75a 100644
+> --- a/drivers/regulator/arizona-ldo1.c
+> +++ b/drivers/regulator/arizona-ldo1.c
+> @@ -25,6 +25,8 @@
+>  #include <linux/gpio.h>
+>  #include <linux/slab.h>
+>  
+> +#include <linux/regulator/arizona-ldo1.h>
+> +
+>  #include <linux/mfd/arizona/core.h>
+>  #include <linux/mfd/arizona/pdata.h>
+>  #include <linux/mfd/arizona/registers.h>
+> @@ -186,20 +188,19 @@ static int arizona_ldo1_hc_get_voltage_sel(struct regulator_dev *rdev)
+>  	.num_consumer_supplies = 1,
+>  };
+>  
+> -static int arizona_ldo1_of_get_pdata(struct device *dev,
+> -				     struct arizona *arizona,
+> +static int arizona_ldo1_of_get_pdata(struct arizona_ldo1_pdata *pdata,
+>  				     struct regulator_config *config,
+> -				     const struct regulator_desc *desc)
+> +				     const struct regulator_desc *desc,
+> +				     bool *external_dcvdd)
+>  {
+> -	struct arizona_pdata *pdata = &arizona->pdata;
+>  	struct arizona_ldo1 *ldo1 = config->driver_data;
+> -	struct device_node *np = arizona->dev->of_node;
+> +	struct device_node *np = config->dev->of_node;
+>  	struct device_node *init_node, *dcvdd_node;
+>  	struct regulator_init_data *init_data;
+>  
+>  	pdata->ldoena = of_get_named_gpio(np, "wlf,ldoena", 0);
+>  	if (pdata->ldoena < 0) {
+> -		dev_warn(arizona->dev,
+> +		dev_warn(config->dev,
+>  			 "LDOENA GPIO property missing/malformed: %d\n",
+>  			 pdata->ldoena);
+>  		pdata->ldoena = 0;
+> @@ -213,19 +214,19 @@ static int arizona_ldo1_of_get_pdata(struct device *dev,
+>  	if (init_node) {
+>  		config->of_node = init_node;
+>  
+> -		init_data = of_get_regulator_init_data(dev, init_node, desc);
+> -
+> +		init_data = of_get_regulator_init_data(config->dev, init_node,
+> +						       desc);
+>  		if (init_data) {
+>  			init_data->consumer_supplies = &ldo1->supply;
+>  			init_data->num_consumer_supplies = 1;
+>  
+>  			if (dcvdd_node && dcvdd_node != init_node)
+> -				arizona->external_dcvdd = true;
+> +				*external_dcvdd = true;
+>  
+> -			pdata->ldo1 = init_data;
+> +			pdata->init_data = init_data;
+>  		}
+>  	} else if (dcvdd_node) {
+> -		arizona->external_dcvdd = true;
+> +		*external_dcvdd = true;
+>  	}
+>  
+>  	of_node_put(dcvdd_node);
+> @@ -239,10 +240,9 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
+>  	const struct regulator_desc *desc;
+>  	struct regulator_config config = { };
+>  	struct arizona_ldo1 *ldo1;
+> +	bool external_dcvdd = false;
+>  	int ret;
+>  
+> -	arizona->external_dcvdd = false;
+> -
+>  	ldo1 = devm_kzalloc(&pdev->dev, sizeof(*ldo1), GFP_KERNEL);
+>  	if (!ldo1)
+>  		return -ENOMEM;
+> @@ -283,17 +283,18 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
+>  
+>  	if (IS_ENABLED(CONFIG_OF)) {
+>  		if (!dev_get_platdata(arizona->dev)) {
+> -			ret = arizona_ldo1_of_get_pdata(&pdev->dev, arizona,
+> -							&config, desc);
+> +			ret = arizona_ldo1_of_get_pdata(&arizona->pdata.ldo1,
+> +							&config, desc,
+> +							&external_dcvdd);
+>  			if (ret < 0)
+>  				return ret;
+>  		}
+>  	}
+>  
+> -	config.ena_gpio = arizona->pdata.ldoena;
+> +	config.ena_gpio = arizona->pdata.ldo1.ldoena;
+>  
+> -	if (arizona->pdata.ldo1)
+> -		config.init_data = arizona->pdata.ldo1;
+> +	if (arizona->pdata.ldo1.init_data)
+> +		config.init_data = arizona->pdata.ldo1.init_data;
+>  	else
+>  		config.init_data = &ldo1->init_data;
+>  
+> @@ -303,6 +304,8 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
+>  	 */
+>  	if (config.init_data->num_consumer_supplies == 0)
+>  		arizona->external_dcvdd = true;
+> +	else
+> +		arizona->external_dcvdd = external_dcvdd;
+>  
+>  	ldo1->regulator = devm_regulator_register(&pdev->dev, desc, &config);
+>  
+> diff --git a/include/linux/mfd/arizona/pdata.h b/include/linux/mfd/arizona/pdata.h
+> index 43e875f..bfeecf1 100644
+> --- a/include/linux/mfd/arizona/pdata.h
+> +++ b/include/linux/mfd/arizona/pdata.h
+> @@ -12,6 +12,7 @@
+>  #define _ARIZONA_PDATA_H
+>  
+>  #include <dt-bindings/mfd/arizona.h>
+> +#include <linux/regulator/arizona-ldo1.h>
+>  #include <linux/regulator/arizona-micsupp.h>
+>  
+>  #define ARIZONA_GPN_DIR_MASK                     0x8000  /* GPN_DIR */
+> @@ -77,13 +78,12 @@ struct arizona_micd_range {
+>  
+>  struct arizona_pdata {
+>  	int reset;      /** GPIO controlling /RESET, if any */
+> -	int ldoena;     /** GPIO controlling LODENA, if any */
+>  
+>  	/** Regulator configuration for MICVDD */
+>  	struct arizona_micsupp_pdata micvdd;
+>  
+>  	/** Regulator configuration for LDO1 */
+> -	struct regulator_init_data *ldo1;
+> +	struct arizona_ldo1_pdata ldo1;
+>  
+>  	/** If a direct 32kHz clock is provided on an MCLK specify it here */
+>  	int clk32k_src;
+> diff --git a/include/linux/regulator/arizona-ldo1.h b/include/linux/regulator/arizona-ldo1.h
+> new file mode 100644
+> index 0000000..c685f12
+> --- /dev/null
+> +++ b/include/linux/regulator/arizona-ldo1.h
+> @@ -0,0 +1,24 @@
+> +/*
+> + * Platform data for Arizona LDO1 regulator
+> + *
+> + * Copyright 2017 Cirrus Logic
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef ARIZONA_LDO1_H
+> +#define ARIZONA_LDO1_H
+> +
+> +struct regulator_init_data;
+> +
+> +struct arizona_ldo1_pdata {
+> +	/** GPIO controlling LDOENA, if any */
+> +	int ldoena;
+> +
+> +	/** Regulator configuration for LDO1 */
+> +	const struct regulator_init_data *init_data;
+> +};
+> +
+> +#endif
+> -- 
+> 1.9.1
+> 
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
