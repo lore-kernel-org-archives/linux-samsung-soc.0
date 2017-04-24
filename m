@@ -1,59 +1,51 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 2/2] arm64 dts: exynos: Last round for v4.12
-Date: Mon, 24 Apr 2017 10:33:14 +0200
-Message-ID: <CAJKOXPfnwRHG-J8X6ZqB2RY7MX+WVpJn=-7dkwnxL3NT+GVf9A@mail.gmail.com>
-References: <20170421164050.7404-1-krzk@kernel.org> <20170421164050.7404-2-krzk@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Applied "ASoC: Add Odroid sound DT bindings documentation" to
+ the asoc tree
+Date: Mon, 24 Apr 2017 10:57:07 +0100
+Message-ID: <20170424095707.r3b63plbrl2wcx6w@sirena.org.uk>
+References: <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
+ <E1d1cLy-0001qc-PC@debutante>
+ <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
+ <20170421175800.qiwvr46phfafqi75@sirena.org.uk>
+ <20170421180710.6gdaosnk2gn2leoo@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:57218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1166752AbdDXIdU (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Apr 2017 04:33:20 -0400
-In-Reply-To: <20170421164050.7404-2-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="u2itx5kjaillbeyq"
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170421180710.6gdaosnk2gn2leoo@kozik-lap>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, jy0922.shim@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Fri, Apr 21, 2017 at 6:40 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Hi,
->
-> On top of previous pull request.
->
-> Best regards,
-> Krzysztof
->
->
-> The following changes since commit e3c07546747cdec07ff15c984bc6cebc9c9f788c:
->
->   arm64: dts: exynos: Add the burst and esc clock frequency properties to DSI node (2017-03-08 08:55:39 +0200)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.12-2
->
-> for you to fetch changes up to 5dccc9873c4af60f4478b3ef54267353f25cc301:
->
->   arm64: dts: exynos: Use - instead of @ for DT OPP entries (2017-04-20 18:10:05 +0200)
->
-> ----------------------------------------------------------------
-> Second update of  Samsung DeviceTree ARM64 for v4.12:
->  - Fix DTC warnings in Exynos ARM64 Device Tree sources.
->  - Add panel node to TM2E board.
->
-> ----------------------------------------------------------------
-> Hoegeun Kwon (1):
->       arm64: dts: exynos: Add support for s6e3hf2 panel device on TM2e board
->
-> Viresh Kumar (1):
->       arm64: dts: exynos: Use - instead of @ for DT OPP entries
 
-I need to fix this commit - my SoB got doubled:
-https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/commit/?h=next/dt64&id=5dccc9873c4af60f4478b3ef54267353f25cc301
+--u2itx5kjaillbeyq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'll (unfortunately) rebase and send.
+On Fri, Apr 21, 2017 at 08:07:10PM +0200, Krzysztof Kozlowski wrote:
 
-Best regards,
-Krzysztof
+> Mutt is complaining that your key used to sign the mails has expired:
+> 	gpg: Note: This key has expired!
+> 	Primary key fingerprint: 3F25 68AA C269 98F9 E813  A1C5 C3F4 36CA 30F5 D8EB
+> 	Subkey fingerprint: ADE6 68AA 6757 18B5 9FE2  9FEA 24D6 8B72 5D54 87D0
+
+gpg --refresh-keys should fix that.
+
+--u2itx5kjaillbeyq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlj9y+8ACgkQJNaLcl1U
+h9A01wf9G9HYQf8kZERLTSLeRovhzVRv5RSuzQjwDBlNBr2Wn68sqDYDcdgafHDJ
+GHayc5QRIws7IwXyJ7rcDHisv0NuHQ3MRXaEWEs4DL4hKXHHGcz6fvAhPj9Aowx1
+jKt9twSaLiftfi5yudhqZFDJwVD3WOV12X4sykkmO4HtKgvv/CwgMSW7bfgX43zx
+aPwhTb8VlxqfFwRxWLs0xDJjdkcVGIllyqphZ6lwqrw1cyRXVbnlW7WTQx+06I8W
+2oe2yE3V/5TPdo0Szo85IYl6iXXJ0JausqHj21qCsmyBXOZ4Zv935LptfMFm1jUk
+jrIQ2fahp9Nk75qcr4b+hmi9mFa3nA==
+=nHXP
+-----END PGP SIGNATURE-----
+
+--u2itx5kjaillbeyq--
