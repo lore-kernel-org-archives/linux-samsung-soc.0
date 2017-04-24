@@ -1,187 +1,63 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 2/3] pwm: pwm-samsung: fix suspend/resume support
-Date: Mon, 24 Apr 2017 12:01:08 +0200
-Message-ID: <1493028069-32003-3-git-send-email-b.zolnierkie@samsung.com>
-References: <1493028069-32003-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20170424100135epcas5p28465e84a8517c219cb8a1b719fb1137d@epcas5p2.samsung.com>
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-reply-to: <1493028069-32003-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Kamil Debski <kamil@wypas.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-pwm@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 3/6] mfd: exynos-lpass: Remove pad retention control
+Date: Mon, 24 Apr 2017 11:35:04 +0100
+Message-ID: <20170424103504.vl4hhnh4pvl66ggu@dell>
+References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170323080348eucas1p29d1fb4eb06e4785d20341be7a374bfb3@eucas1p2.samsung.com>
+ <1490256207-10061-4-git-send-email-m.szyprowski@samsung.com>
+ <20170411120231.hivtn6c7to4z2gu6@dell>
+ <4646acab-261e-32ea-df63-6f8333f64e2d@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:36623 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1167652AbdDXKfJ (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 24 Apr 2017 06:35:09 -0400
+Received: by mail-wm0-f49.google.com with SMTP id u65so19045048wmu.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Apr 2017 03:35:08 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <4646acab-261e-32ea-df63-6f8333f64e2d@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Fix suspend/resume support:
+On Wed, 19 Apr 2017, Marek Szyprowski wrote:
 
-- add disabled_mask to struct samsung_pwm_chip to track PWM
-  disabled state information in pwm_samsung_{disable,enable}()
+> Hi Lee,
+> 
+> On 2017-04-11 14:02, Lee Jones wrote:
+> > On Thu, 23 Mar 2017, Marek Szyprowski wrote:
+> > 
+> > > Pad retention should be controlled from pin control driver, so remove it
+> > > from Exynos LPASS driver. After this change, no more access to PMU regmap
+> > > is needed, so remove also the code for handling PMU regmap.
+> > > 
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > > Acked-by: Rob Herring <robh@kernel.org>
+> > > Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> > > ---
+> > >   .../bindings/mfd/samsung,exynos5433-lpass.txt           |  2 --
+> > >   drivers/mfd/exynos-lpass.c                              | 17 -----------------
+> > >   include/linux/mfd/syscon/exynos5-pmu.h                  |  3 ---
+> > >   3 files changed, 22 deletions(-)
+> > Applied, thanks.
+> 
+> When can I expect this (and the remaining patches from this patchset) to
+> appear
+> in your -next branch?
 
-- rename pwm_samsung_config() to __pwm_samsung_config() and
-  add extra force_period parameter to be used during resume
-  (to force tin_ns and tcnt recalculation)
+Now. ;)
 
-- add pwm_samsung_config() wrapper for preserving old behavior
+[sorry for the delay, I was on Honeymoon last week]
 
-- properly restore PWM configuration in pwm_samsung_resume()
-
-- remove no longer needed pwm_samsung_suspend()
-
-- update Copyrights
-
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/pwm/pwm-samsung.c | 67 +++++++++++++++++++++++++----------------------
- 1 file changed, 35 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index 9ea7638..062f2cf 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2008 Simtec Electronics
-  *     Ben Dooks <ben@simtec.co.uk>, <ben-linux@fluff.org>
-  * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-+ * Copyright (c) 2017 Samsung Electronics Co., Ltd.
-  *
-  * PWM driver for Samsung SoCs
-  *
-@@ -74,6 +75,7 @@ struct samsung_pwm_channel {
-  * @chip:		generic PWM chip
-  * @variant:		local copy of hardware variant data
-  * @inverter_mask:	inverter status for all channels - one bit per channel
-+ * @disabled_mask:	disabled status for all channels - one bit per channel
-  * @base:		base address of mapped PWM registers
-  * @base_clk:		base clock used to drive the timers
-  * @tclk0:		external clock 0 (can be ERR_PTR if not present)
-@@ -83,6 +85,7 @@ struct samsung_pwm_chip {
- 	struct pwm_chip chip;
- 	struct samsung_pwm_variant variant;
- 	u8 inverter_mask;
-+	u8 disabled_mask;
- 
- 	void __iomem *base;
- 	struct clk *base_clk;
-@@ -257,6 +260,8 @@ static int pwm_samsung_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	tcon |= TCON_START(tcon_chan) | TCON_AUTORELOAD(tcon_chan);
- 	writel(tcon, our_chip->base + REG_TCON);
- 
-+	our_chip->disabled_mask &= ~BIT(pwm->hwpwm);
-+
- 	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
- 
- 	return 0;
-@@ -275,6 +280,8 @@ static void pwm_samsung_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	tcon &= ~TCON_AUTORELOAD(tcon_chan);
- 	writel(tcon, our_chip->base + REG_TCON);
- 
-+	our_chip->disabled_mask |= BIT(pwm->hwpwm);
-+
- 	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
- }
- 
-@@ -297,8 +304,8 @@ static void pwm_samsung_manual_update(struct samsung_pwm_chip *chip,
- 	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
- }
- 
--static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
--			      int duty_ns, int period_ns)
-+static int __pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
-+				int duty_ns, int period_ns, bool force_period)
- {
- 	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
- 	struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
-@@ -319,7 +326,7 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	++tcnt;
- 
- 	/* Check to see if we are changing the clock rate of the PWM. */
--	if (chan->period_ns != period_ns) {
-+	if (chan->period_ns != period_ns || force_period) {
- 		unsigned long tin_rate;
- 		u32 period;
- 
-@@ -378,6 +385,12 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	return 0;
- }
- 
-+static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
-+			      int duty_ns, int period_ns)
-+{
-+	return __pwm_samsung_config(chip, pwm, duty_ns, period_ns, false);
-+}
-+
- static void pwm_samsung_set_invert(struct samsung_pwm_chip *chip,
- 				   unsigned int channel, bool invert)
- {
-@@ -589,51 +602,41 @@ static int pwm_samsung_remove(struct platform_device *pdev)
- }
- 
- #ifdef CONFIG_PM_SLEEP
--static int pwm_samsung_suspend(struct device *dev)
-+static int pwm_samsung_resume(struct device *dev)
- {
--	struct samsung_pwm_chip *chip = dev_get_drvdata(dev);
-+	struct samsung_pwm_chip *our_chip = dev_get_drvdata(dev);
-+	struct pwm_chip *chip = &our_chip->chip;
- 	unsigned int i;
- 
--	/*
--	 * No one preserves these values during suspend so reset them.
--	 * Otherwise driver leaves PWM unconfigured if same values are
--	 * passed to pwm_config() next time.
--	 */
--	for (i = 0; i < SAMSUNG_PWM_NUM; ++i) {
--		struct pwm_device *pwm = &chip->chip.pwms[i];
-+	for (i = 0; i < SAMSUNG_PWM_NUM; i++) {
-+		struct pwm_device *pwm = &chip->pwms[i];
- 		struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
- 
- 		if (!chan)
- 			continue;
- 
--		chan->period_ns = 0;
--		chan->duty_ns = 0;
--	}
--
--	return 0;
--}
-+		if (our_chip->variant.output_mask & BIT(i))
-+			pwm_samsung_set_invert(our_chip, i,
-+					our_chip->inverter_mask & BIT(i));
- 
--static int pwm_samsung_resume(struct device *dev)
--{
--	struct samsung_pwm_chip *chip = dev_get_drvdata(dev);
--	unsigned int chan;
-+		if (chan->period_ns) {
-+			__pwm_samsung_config(chip, pwm, chan->duty_ns,
-+					     chan->period_ns, true);
-+			/* needed to make PWM disable work on Odroid-XU3 */
-+			pwm_samsung_manual_update(our_chip, pwm);
-+		}
- 
--	/*
--	 * Inverter setting must be preserved across suspend/resume
--	 * as nobody really seems to configure it more than once.
--	 */
--	for (chan = 0; chan < SAMSUNG_PWM_NUM; ++chan) {
--		if (chip->variant.output_mask & BIT(chan))
--			pwm_samsung_set_invert(chip, chan,
--					chip->inverter_mask & BIT(chan));
-+		if (our_chip->disabled_mask & BIT(i))
-+			pwm_samsung_disable(chip, pwm);
-+		else
-+			pwm_samsung_enable(chip, pwm);
- 	}
- 
- 	return 0;
- }
- #endif
- 
--static SIMPLE_DEV_PM_OPS(pwm_samsung_pm_ops, pwm_samsung_suspend,
--			 pwm_samsung_resume);
-+static SIMPLE_DEV_PM_OPS(pwm_samsung_pm_ops, NULL, pwm_samsung_resume);
- 
- static struct platform_driver pwm_samsung_driver = {
- 	.driver		= {
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
