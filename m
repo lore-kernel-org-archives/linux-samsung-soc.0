@@ -1,52 +1,158 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 0/6] Samsung clock providers: convert to the new clk_hw API
-Date: Mon, 24 Apr 2017 08:42:17 +0200
-Message-ID: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170424064228eucas1p26228b4b334cc22ad22e77c8dd2e7dcdd@eucas1p2.samsung.com>
+Subject: [PATCH v2 6/6] clk: samsung: s5pv210-audss: Convert to the new clk_hw
+ API
+Date: Mon, 24 Apr 2017 08:42:23 +0200
+Message-ID: <1493016143-21569-7-git-send-email-m.szyprowski@samsung.com>
+References: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170424064231eucas1p2dc993650881054dfea9aadb6abb0eb38@eucas1p2.samsung.com>
 Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear All,
-
 Clock providers should use the new struct clk_hw based API, so convert
-all Samsung clock providers and their helper functions to the new approach.
+Samsung S5PV210 Audio Subsystem clock provider to the new approach.
 
-Patches are based on top of linux-next from 20170420.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-s5pv210-audss.c | 50 +++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changle log:
-v2:
-- moved some changes to separate patches as requested by Krzysztof Kozlowski
-
-v1:
-- initial version
-
-Marek Szyprowski (6):
-  clk: samsung: Remove dead code
-  clk: samsung: Add local variable to match it purpose
-  clk: samsung: Convert common drivers to the new clk_hw API
-  clk: samsung: exynos-audss: Convert to the new clk_hw API
-  clk: samsung: exynos-clkout: Convert to the new clk_hw API
-  clk: samsung: s5pv210-audss: Convert to the new clk_hw API
-
- drivers/clk/samsung/clk-cpu.c           | 15 +++---
- drivers/clk/samsung/clk-exynos-audss.c  | 55 ++++++++++----------
- drivers/clk/samsung/clk-exynos-clkout.c | 18 +++----
- drivers/clk/samsung/clk-pll.c           | 14 ++---
- drivers/clk/samsung/clk-pll.h           |  4 --
- drivers/clk/samsung/clk-s3c2410-dclk.c  | 75 ++++++++++++++-------------
- drivers/clk/samsung/clk-s5pv210-audss.c | 50 +++++++++---------
- drivers/clk/samsung/clk.c               | 91 +++++++++++++++------------------
- drivers/clk/samsung/clk.h               |  9 ++--
- 9 files changed, 159 insertions(+), 172 deletions(-)
-
+diff --git a/drivers/clk/samsung/clk-s5pv210-audss.c b/drivers/clk/samsung/clk-s5pv210-audss.c
+index c66ed2d1450e..e12f5b81834f 100644
+--- a/drivers/clk/samsung/clk-s5pv210-audss.c
++++ b/drivers/clk/samsung/clk-s5pv210-audss.c
+@@ -24,9 +24,8 @@
+ #include <dt-bindings/clock/s5pv210-audss.h>
+ 
+ static DEFINE_SPINLOCK(lock);
+-static struct clk **clk_table;
+ static void __iomem *reg_base;
+-static struct clk_onecell_data clk_data;
++static struct clk_hw_onecell_data *clk_data;
+ 
+ #define ASS_CLK_SRC 0x0
+ #define ASS_CLK_DIV 0x4
+@@ -71,6 +70,7 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+ 	const char *mout_audss_p[2];
+ 	const char *mout_i2s_p[3];
+ 	const char *hclk_p;
++	struct clk_hw **clk_table;
+ 	struct clk *hclk, *pll_ref, *pll_in, *cdclk, *sclk_audio;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -80,14 +80,16 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(reg_base);
+ 	}
+ 
+-	clk_table = devm_kzalloc(&pdev->dev,
+-				sizeof(struct clk *) * AUDSS_MAX_CLKS,
++	clk_data = devm_kzalloc(&pdev->dev,
++				sizeof(*clk_data) +
++				sizeof(*clk_data->hws) * AUDSS_MAX_CLKS,
+ 				GFP_KERNEL);
+-	if (!clk_table)
++
++	if (!clk_data)
+ 		return -ENOMEM;
+ 
+-	clk_data.clks = clk_table;
+-	clk_data.clk_num = AUDSS_MAX_CLKS;
++	clk_data->num = AUDSS_MAX_CLKS;
++	clk_table = clk_data->hws;
+ 
+ 	hclk = devm_clk_get(&pdev->dev, "hclk");
+ 	if (IS_ERR(hclk)) {
+@@ -116,7 +118,7 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+ 	else
+ 		mout_audss_p[0] = "xxti";
+ 	mout_audss_p[1] = __clk_get_name(pll_in);
+-	clk_table[CLK_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
++	clk_table[CLK_MOUT_AUDSS] = clk_hw_register_mux(NULL, "mout_audss",
+ 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
+ 				CLK_SET_RATE_NO_REPARENT,
+ 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
+@@ -127,44 +129,44 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+ 	else
+ 		mout_i2s_p[1] = "iiscdclk0";
+ 	mout_i2s_p[2] = __clk_get_name(sclk_audio);
+-	clk_table[CLK_MOUT_I2S_A] = clk_register_mux(NULL, "mout_i2s_audss",
++	clk_table[CLK_MOUT_I2S_A] = clk_hw_register_mux(NULL, "mout_i2s_audss",
+ 				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
+ 				CLK_SET_RATE_NO_REPARENT,
+ 				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
+ 
+-	clk_table[CLK_DOUT_AUD_BUS] = clk_register_divider(NULL,
++	clk_table[CLK_DOUT_AUD_BUS] = clk_hw_register_divider(NULL,
+ 				"dout_aud_bus", "mout_audss", 0,
+ 				reg_base + ASS_CLK_DIV, 0, 4, 0, &lock);
+-	clk_table[CLK_DOUT_I2S_A] = clk_register_divider(NULL, "dout_i2s_audss",
+-				"mout_i2s_audss", 0, reg_base + ASS_CLK_DIV,
+-				4, 4, 0, &lock);
++	clk_table[CLK_DOUT_I2S_A] = clk_hw_register_divider(NULL,
++				"dout_i2s_audss", "mout_i2s_audss", 0,
++				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
+ 
+-	clk_table[CLK_I2S] = clk_register_gate(NULL, "i2s_audss",
++	clk_table[CLK_I2S] = clk_hw_register_gate(NULL, "i2s_audss",
+ 				"dout_i2s_audss", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 6, 0, &lock);
+ 
+ 	hclk_p = __clk_get_name(hclk);
+ 
+-	clk_table[CLK_HCLK_I2S] = clk_register_gate(NULL, "hclk_i2s_audss",
++	clk_table[CLK_HCLK_I2S] = clk_hw_register_gate(NULL, "hclk_i2s_audss",
+ 				hclk_p, CLK_IGNORE_UNUSED,
+ 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
+-	clk_table[CLK_HCLK_UART] = clk_register_gate(NULL, "hclk_uart_audss",
++	clk_table[CLK_HCLK_UART] = clk_hw_register_gate(NULL, "hclk_uart_audss",
+ 				hclk_p, CLK_IGNORE_UNUSED,
+ 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
+-	clk_table[CLK_HCLK_HWA] = clk_register_gate(NULL, "hclk_hwa_audss",
++	clk_table[CLK_HCLK_HWA] = clk_hw_register_gate(NULL, "hclk_hwa_audss",
+ 				hclk_p, CLK_IGNORE_UNUSED,
+ 				reg_base + ASS_CLK_GATE, 3, 0, &lock);
+-	clk_table[CLK_HCLK_DMA] = clk_register_gate(NULL, "hclk_dma_audss",
++	clk_table[CLK_HCLK_DMA] = clk_hw_register_gate(NULL, "hclk_dma_audss",
+ 				hclk_p, CLK_IGNORE_UNUSED,
+ 				reg_base + ASS_CLK_GATE, 2, 0, &lock);
+-	clk_table[CLK_HCLK_BUF] = clk_register_gate(NULL, "hclk_buf_audss",
++	clk_table[CLK_HCLK_BUF] = clk_hw_register_gate(NULL, "hclk_buf_audss",
+ 				hclk_p, CLK_IGNORE_UNUSED,
+ 				reg_base + ASS_CLK_GATE, 1, 0, &lock);
+-	clk_table[CLK_HCLK_RP] = clk_register_gate(NULL, "hclk_rp_audss",
++	clk_table[CLK_HCLK_RP] = clk_hw_register_gate(NULL, "hclk_rp_audss",
+ 				hclk_p, CLK_IGNORE_UNUSED,
+ 				reg_base + ASS_CLK_GATE, 0, 0, &lock);
+ 
+-	for (i = 0; i < clk_data.clk_num; i++) {
++	for (i = 0; i < clk_data->num; i++) {
+ 		if (IS_ERR(clk_table[i])) {
+ 			dev_err(&pdev->dev, "failed to register clock %d\n", i);
+ 			ret = PTR_ERR(clk_table[i]);
+@@ -172,7 +174,7 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
++	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
+ 					&clk_data);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to add clock provider\n");
+@@ -186,9 +188,9 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ unregister:
+-	for (i = 0; i < clk_data.clk_num; i++) {
++	for (i = 0; i < clk_data->num; i++) {
+ 		if (!IS_ERR(clk_table[i]))
+-			clk_unregister(clk_table[i]);
++			clk_hw_unregister(clk_table[i]);
+ 	}
+ 
+ 	return ret;
 -- 
 1.9.1
 
