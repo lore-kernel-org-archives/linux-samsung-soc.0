@@ -1,61 +1,188 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-Date: Mon, 24 Apr 2017 13:35:13 +0200
-Message-ID: <3232b6e5-05b6-2d91-07ef-e5473ee70889@samsung.com>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
- <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
- <20170422152236.tbf4iuoadqrvoc2n@kozik-lap>
- <017b3ec8-c185-c29a-2944-12f519b461fe@samsung.com>
- <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 2/7] regulator: arizona-micsupp: Move pdata into a
+ separate structure
+Date: Mon, 24 Apr 2017 12:50:09 +0100
+Message-ID: <20170424115009.ggzpw7odlsyg7per@dell>
+References: <1492512234-19210-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1492512234-19210-4-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:33674 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1167460AbdDXLuN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 24 Apr 2017 07:50:13 -0400
+Received: by mail-wr0-f172.google.com with SMTP id w50so66745214wrc.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Apr 2017 04:50:13 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1492512234-19210-4-git-send-email-rf@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: broonie@kernel.org, kgene@kernel.org, krzk@kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-(dropping unrelated addresses from Cc list)
+On Tue, 18 Apr 2017, Richard Fitzgerald wrote:
 
-On 04/24/2017 01:18 PM, Krzysztof Kozlowski wrote:
-> On Mon, Apr 24, 2017 at 1:12 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> On 04/22/2017 05:22 PM, Krzysztof Kozlowski wrote:
->>>> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw
->>>> *hw, unsigned long drate,
->>>>         writel_relaxed(pll_con1, pll->con_reg + 4);
->>>>
->>>>         /* wait_lock_time */
->>>> -       do {
->>>> -               cpu_relax();
->>>> -               tmp = readl_relaxed(pll->con_reg);
->>>> -       } while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
->>
->>
->> I will add a comment here like:
->> /* Wait until the PLL is locked if it is enabled. */
->>
->>>> +       if (pll_con0 & BIT(pll->enable_offs)) {
->>>
->>>
->>> Why this additional if() is needed?
->>
->>
->> The PLL will never transition to a locked state if it is disabled, without
->> this test we would end up with an indefinite loop below.
->
-> Hmmm... shouldn't this be split from this change? Or maybe this is
-> needed only because you added enable/disable for pl36xx and previously
-> this was not existing?
+> In preparation for sharing this driver with Madera, move the pdata
+> for the micsupp regulator out of struct arizona_pdata into a dedicated
+> pdata struct for this driver. As a result the code in
+> arizona_micsupp_of_get_pdata() can be made independent of struct arizona.
+> 
+> This patch also updates the definition of struct arizona_pdata and
+> the use of this pdata in mach-crag6410-module.c
+> 
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> ---
+>  MAINTAINERS                               |  1 +
+>  drivers/regulator/arizona-micsupp.c       | 21 +++++++++++----------
 
-Yes, it looks like previously the PLLs were always on after were enabled.
-I wouldn't be separating that part, as it's all logically dependent.
-Just the commit message might need some improvement.
+>  include/linux/mfd/arizona/pdata.h         |  3 ++-
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+>  include/linux/regulator/arizona-micsupp.h | 21 +++++++++++++++++++++
+>  4 files changed, 35 insertions(+), 11 deletions(-)
+>  create mode 100644 include/linux/regulator/arizona-micsupp.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c35e0ce..6ed8ef1 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13623,6 +13623,7 @@ F:	include/linux/mfd/arizona/
+>  F:	include/linux/mfd/wm831x/
+>  F:	include/linux/mfd/wm8350/
+>  F:	include/linux/mfd/wm8400*
+> +F:	include/linux/regulator/arizona*
+>  F:	include/linux/wm97xx.h
+>  F:	include/sound/wm????.h
+>  F:	sound/soc/codecs/arizona.?
+> diff --git a/drivers/regulator/arizona-micsupp.c b/drivers/regulator/arizona-micsupp.c
+> index 5e38861..5f8b5a7 100644
+> --- a/drivers/regulator/arizona-micsupp.c
+> +++ b/drivers/regulator/arizona-micsupp.c
+> @@ -30,6 +30,8 @@
+>  #include <linux/mfd/arizona/pdata.h>
+>  #include <linux/mfd/arizona/registers.h>
+>  
+> +#include <linux/regulator/arizona-micsupp.h>
+> +
+>  struct arizona_micsupp {
+>  	struct regulator_dev *regulator;
+>  	struct arizona *arizona;
+> @@ -199,28 +201,26 @@ static int arizona_micsupp_set_bypass(struct regulator_dev *rdev, bool ena)
+>  	.num_consumer_supplies = 1,
+>  };
+>  
+> -static int arizona_micsupp_of_get_pdata(struct device *dev,
+> -					struct arizona *arizona,
+> +static int arizona_micsupp_of_get_pdata(struct arizona_micsupp_pdata *pdata,
+>  					struct regulator_config *config,
+>  					const struct regulator_desc *desc)
+>  {
+> -	struct arizona_pdata *pdata = &arizona->pdata;
+>  	struct arizona_micsupp *micsupp = config->driver_data;
+>  	struct device_node *np;
+>  	struct regulator_init_data *init_data;
+>  
+> -	np = of_get_child_by_name(arizona->dev->of_node, "micvdd");
+> +	np = of_get_child_by_name(config->dev->of_node, "micvdd");
+>  
+>  	if (np) {
+>  		config->of_node = np;
+>  
+> -		init_data = of_get_regulator_init_data(dev, np, desc);
+> +		init_data = of_get_regulator_init_data(config->dev, np, desc);
+>  
+>  		if (init_data) {
+>  			init_data->consumer_supplies = &micsupp->supply;
+>  			init_data->num_consumer_supplies = 1;
+>  
+> -			pdata->micvdd = init_data;
+> +			pdata->init_data = init_data;
+>  		}
+>  	}
+>  
+> @@ -232,6 +232,7 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
+>  	struct arizona *arizona = dev_get_drvdata(pdev->dev.parent);
+>  	const struct regulator_desc *desc;
+>  	struct regulator_config config = { };
+> +	struct arizona_micsupp_pdata *pdata = &arizona->pdata.micvdd;
+>  	struct arizona_micsupp *micsupp;
+>  	int ret;
+>  
+> @@ -269,15 +270,15 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
+>  
+>  	if (IS_ENABLED(CONFIG_OF)) {
+>  		if (!dev_get_platdata(arizona->dev)) {
+> -			ret = arizona_micsupp_of_get_pdata(&pdev->dev, arizona,
+> -							   &config, desc);
+> +			ret = arizona_micsupp_of_get_pdata(pdata, &config,
+> +							   desc);
+>  			if (ret < 0)
+>  				return ret;
+>  		}
+>  	}
+>  
+> -	if (arizona->pdata.micvdd)
+> -		config.init_data = arizona->pdata.micvdd;
+> +	if (pdata->init_data)
+> +		config.init_data = pdata->init_data;
+>  	else
+>  		config.init_data = &micsupp->init_data;
+>  
+> diff --git a/include/linux/mfd/arizona/pdata.h b/include/linux/mfd/arizona/pdata.h
+> index 64faeef..43e875f 100644
+> --- a/include/linux/mfd/arizona/pdata.h
+> +++ b/include/linux/mfd/arizona/pdata.h
+> @@ -12,6 +12,7 @@
+>  #define _ARIZONA_PDATA_H
+>  
+>  #include <dt-bindings/mfd/arizona.h>
+> +#include <linux/regulator/arizona-micsupp.h>
+>  
+>  #define ARIZONA_GPN_DIR_MASK                     0x8000  /* GPN_DIR */
+>  #define ARIZONA_GPN_DIR_SHIFT                        15  /* GPN_DIR */
+> @@ -79,7 +80,7 @@ struct arizona_pdata {
+>  	int ldoena;     /** GPIO controlling LODENA, if any */
+>  
+>  	/** Regulator configuration for MICVDD */
+> -	struct regulator_init_data *micvdd;
+> +	struct arizona_micsupp_pdata micvdd;
+>  
+>  	/** Regulator configuration for LDO1 */
+>  	struct regulator_init_data *ldo1;
+> diff --git a/include/linux/regulator/arizona-micsupp.h b/include/linux/regulator/arizona-micsupp.h
+> new file mode 100644
+> index 0000000..6168426
+> --- /dev/null
+> +++ b/include/linux/regulator/arizona-micsupp.h
+> @@ -0,0 +1,21 @@
+> +/*
+> + * Platform data for Arizona micsupp regulator
+> + *
+> + * Copyright 2017 Cirrus Logic
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef ARIZONA_MICSUPP_H
+> +#define ARIZONA_MICSUPP_H
+> +
+> +struct regulator_init_data;
+> +
+> +struct arizona_micsupp_pdata {
+> +	/** Regulator configuration for micsupp */
+> +	const struct regulator_init_data *init_data;
+> +};
+> +
+> +#endif
 
 -- 
-Thanks,
-Sylwester
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
