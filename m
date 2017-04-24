@@ -1,30 +1,69 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 6/6] clk: samsung: s5pv210-audss: Convert to the new
- clk_hw API
-Date: Mon, 24 Apr 2017 08:56:50 +0200
-Message-ID: <CAJKOXPf_0DMHPVXs15e6X_JuajENQTKOZ5ekNejVaez1KOPVGw@mail.gmail.com>
-References: <CGME20170424064231eucas1p2dc993650881054dfea9aadb6abb0eb38@eucas1p2.samsung.com>
- <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com> <1493016143-21569-7-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1493016143-21569-7-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2.1 2/6] clk: samsung: Add local variable to match it purpose
+Date: Mon, 24 Apr 2017 09:54:12 +0200
+Message-ID: <1493020452-23085-1-git-send-email-m.szyprowski@samsung.com>
+References: <CAJKOXPdDBsqHp-qXFFjcK10PUb_Vo1q6DsdgerYW4j+9ESpxfw@mail.gmail.com>
+ <CGME20170424075423eucas1p239eaef08b93dade23292c175b838d9a5@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:62319 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1166314AbdDXHy1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 24 Apr 2017 03:54:27 -0400
+In-reply-to: <CAJKOXPdDBsqHp-qXFFjcK10PUb_Vo1q6DsdgerYW4j+9ESpxfw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Apr 24, 2017 at 8:42 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Clock providers should use the new struct clk_hw based API, so convert
-> Samsung S5PV210 Audio Subsystem clock provider to the new approach.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-s5pv210-audss.c | 50 +++++++++++++++++----------------
->  1 file changed, 26 insertions(+), 24 deletions(-)
+Add new variable to avoid using clk pointer for different purposes across
+the exynos_register_cpu_clock() function. This will help in future rewrite
+for the new clk_hw API.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-cpu.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 8bf7e805fd34..c6dd83dce09d 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -410,6 +410,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ {
+ 	struct exynos_cpuclk *cpuclk;
+ 	struct clk_init_data init;
++	struct clk *parent_clk;
+ 	struct clk *clk;
+ 	int ret = 0;
+ 
+@@ -440,15 +441,15 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 		goto free_cpuclk;
+ 	}
+ 
+-	clk = __clk_lookup(parent);
+-	if (!clk) {
++	parent_clk = __clk_lookup(parent);
++	if (!parent_clk) {
+ 		pr_err("%s: could not lookup parent clock %s\n",
+ 				__func__, parent);
+ 		ret = -EINVAL;
+ 		goto free_cpuclk;
+ 	}
+ 
+-	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
++	ret = clk_notifier_register(parent_clk, &cpuclk->clk_nb);
+ 	if (ret) {
+ 		pr_err("%s: failed to register clock notifier for %s\n",
+ 				__func__, name);
+@@ -476,7 +477,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ free_cpuclk_data:
+ 	kfree(cpuclk->cfg);
+ unregister_clk_nb:
+-	clk_notifier_unregister(__clk_lookup(parent), &cpuclk->clk_nb);
++	clk_notifier_unregister(parent_clk, &cpuclk->clk_nb);
+ free_cpuclk:
+ 	kfree(cpuclk);
+ 	return ret;
+-- 
+1.9.1
