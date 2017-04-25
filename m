@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: arizona-micsupp: Make arizona_micsupp independent of struct arizona" to the regulator tree
-Date: Tue, 25 Apr 2017 16:46:10 +0100
-Message-ID: <E1d32fK-0001wu-UE@debutante>
-References: <1492512234-19210-5-git-send-email-rf@opensource.wolfsonmicro.com>
+Subject: Applied "regulator: arizona: Split KConfig options for LDO1 and MICSUPP regulators" to the regulator tree
+Date: Tue, 25 Apr 2017 16:46:16 +0100
+Message-ID: <E1d32fQ-0001z8-Qj@debutante>
+References: <1492512234-19210-3-git-send-email-rf@opensource.wolfsonmicro.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1492512234-19210-5-git-send-email-rf@opensource.wolfsonmicro.com>
+In-Reply-To: <1492512234-19210-3-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
 Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, lee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.orglinux-kernel@vger.kernel.org
@@ -12,7 +12,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   regulator: arizona-micsupp: Make arizona_micsupp independent of struct arizona
+   regulator: arizona: Split KConfig options for LDO1 and MICSUPP regulators
 
 has been applied to the regulator tree at
 
@@ -37,86 +37,64 @@ to this mail.
 Thanks,
 Mark
 
->From e165983e5102c953d68bd935048e95567564e438 Mon Sep 17 00:00:00 2001
+>From 7e6425968bf742b9772aa5bae1250158c9312e31 Mon Sep 17 00:00:00 2001
 From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Date: Tue, 18 Apr 2017 11:43:50 +0100
-Subject: [PATCH] regulator: arizona-micsupp: Make arizona_micsupp independent
- of struct arizona
+Date: Tue, 18 Apr 2017 11:43:48 +0100
+Subject: [PATCH] regulator: arizona: Split KConfig options for LDO1 and
+ MICSUPP regulators
 
-In preparation for supporting Madera codecs, remove the dependency on
-struct arizona in the regulator callbacks and struct arizona_micsupp.
+The CS47L24 Arizona codec and most Madera codecs do not have a LDO1
+regulator. Split the LDO1 and MICSUPP regulators into separate KConfig
+options so the LDO1 is only built into the kernel if needed.
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/arizona-micsupp.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ drivers/regulator/Kconfig  | 14 +++++++++++---
+ drivers/regulator/Makefile |  3 ++-
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/arizona-micsupp.c b/drivers/regulator/arizona-micsupp.c
-index 5f8b5a713311..db4fecf228b7 100644
---- a/drivers/regulator/arizona-micsupp.c
-+++ b/drivers/regulator/arizona-micsupp.c
-@@ -34,7 +34,10 @@
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index be06eb29c681..c026b09c479c 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -125,12 +125,20 @@ config REGULATOR_AB8500
+ 	  This driver supports the regulators found on the ST-Ericsson mixed
+ 	  signal AB8500 PMIC
  
- struct arizona_micsupp {
- 	struct regulator_dev *regulator;
--	struct arizona *arizona;
-+	struct regmap *regmap;
-+	struct snd_soc_dapm_context **dapm;
-+	unsigned int enable_reg;
-+	struct device *dev;
- 
- 	struct regulator_consumer_supply supply;
- 	struct regulator_init_data init_data;
-@@ -46,21 +49,22 @@ static void arizona_micsupp_check_cp(struct work_struct *work)
- {
- 	struct arizona_micsupp *micsupp =
- 		container_of(work, struct arizona_micsupp, check_cp_work);
--	struct snd_soc_dapm_context *dapm = micsupp->arizona->dapm;
--	struct snd_soc_component *component = snd_soc_dapm_to_component(dapm);
--	struct arizona *arizona = micsupp->arizona;
--	struct regmap *regmap = arizona->regmap;
--	unsigned int reg;
-+	struct snd_soc_dapm_context *dapm = *micsupp->dapm;
-+	struct snd_soc_component *component;
-+	unsigned int val;
- 	int ret;
- 
--	ret = regmap_read(regmap, ARIZONA_MIC_CHARGE_PUMP_1, &reg);
-+	ret = regmap_read(micsupp->regmap, micsupp->enable_reg, &val);
- 	if (ret != 0) {
--		dev_err(arizona->dev, "Failed to read CP state: %d\n", ret);
-+		dev_err(micsupp->dev,
-+			"Failed to read CP state: %d\n", ret);
- 		return;
- 	}
- 
- 	if (dapm) {
--		if ((reg & (ARIZONA_CPMIC_ENA | ARIZONA_CPMIC_BYPASS)) ==
-+		component = snd_soc_dapm_to_component(dapm);
+-config REGULATOR_ARIZONA
+-	tristate "Wolfson Arizona class devices"
++config REGULATOR_ARIZONA_LDO1
++	tristate "Wolfson Arizona class devices LDO1"
+ 	depends on MFD_ARIZONA
+ 	depends on SND_SOC
+ 	help
+-	  Support for the regulators found on Wolfson Arizona class
++	  Support for the LDO1 regulators found on Wolfson Arizona class
++	  devices.
 +
-+		if ((val & (ARIZONA_CPMIC_ENA | ARIZONA_CPMIC_BYPASS)) ==
- 		    ARIZONA_CPMIC_ENA)
- 			snd_soc_component_force_enable_pin(component,
- 							   "MICSUPP");
-@@ -240,7 +244,9 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
- 	if (!micsupp)
- 		return -ENOMEM;
++config REGULATOR_ARIZONA_MICSUPP
++	tristate "Wolfson Arizona class devices MICSUPP"
++	depends on MFD_ARIZONA
++	depends on SND_SOC
++	help
++	  Support for the MICSUPP regulators found on Wolfson Arizona class
+ 	  devices.
  
--	micsupp->arizona = arizona;
-+	micsupp->regmap = arizona->regmap;
-+	micsupp->dapm = &arizona->dapm;
-+	micsupp->dev = arizona->dev;
- 	INIT_WORK(&micsupp->check_cp_work, arizona_micsupp_check_cp);
- 
- 	/*
-@@ -263,6 +269,7 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
- 	micsupp->init_data.consumer_supplies = &micsupp->supply;
- 	micsupp->supply.supply = "MICVDD";
- 	micsupp->supply.dev_name = dev_name(arizona->dev);
-+	micsupp->enable_reg = desc->enable_reg;
- 
- 	config.dev = arizona->dev;
- 	config.driver_data = micsupp;
+ config REGULATOR_AS3711
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index ef7725e2592a..313a7ca97b4d 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -19,7 +19,8 @@ obj-$(CONFIG_REGULATOR_ACT8865) += act8865-regulator.o
+ obj-$(CONFIG_REGULATOR_ACT8945A) += act8945a-regulator.o
+ obj-$(CONFIG_REGULATOR_AD5398) += ad5398.o
+ obj-$(CONFIG_REGULATOR_ANATOP) += anatop-regulator.o
+-obj-$(CONFIG_REGULATOR_ARIZONA) += arizona-micsupp.o arizona-ldo1.o
++obj-$(CONFIG_REGULATOR_ARIZONA_LDO1) += arizona-ldo1.o
++obj-$(CONFIG_REGULATOR_ARIZONA_MICSUPP) += arizona-micsupp.o
+ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
 -- 
 2.11.0
