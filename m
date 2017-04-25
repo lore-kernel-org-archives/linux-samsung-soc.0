@@ -1,27 +1,35 @@
-From: "Ashraf Basit" <donotreply@sendinc.com>
-Subject: Get back to me
-Date: Tue, 25 Apr 2017 20:19:29 +0000
-Message-ID: <3260350477632759128212@vm1FF8510>
-Reply-To: ashrafbas@secsuremailer.com
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 0/2] pinctrl: trivial: remove unneeded (void *) casts in
+ of_match_table
+Date: Wed, 26 Apr 2017 06:34:21 +0900
+Message-ID: <1493156063-8446-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from host90-25-237-212.serverdedicati.aruba.it ([212.237.25.90]:56446
-        "EHLO mail.zenith.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1954205AbdDYU1G (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 16:27:06 -0400
-Received: from 104.192.5.228 (unknown [104.192.5.228])
-        by mail.zenith.com (Postfix) with ESMTPA id 9D5FF6087D
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Apr 2017 22:19:32 +0200 (CEST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-Good day. Did you receive the business proposal I sent to you yesterday? I was waiting for your reply but I am not sure if you receive the message.  If for some reason you did not receive my previous email, I can resend the message to you. Please confirm as this is very urgent and important.
 
-Regards,
 
-Ashraf.
-ashrafbas@secsuremailer.com
+
+Masahiro Yamada (2):
+  pinctrl: rockchip: remove unneeded (void *) casts in of_match_table
+  pinctrl: samsung: remove unneeded (void *) casts in of_match_table
+
+ drivers/pinctrl/pinctrl-rockchip.c        | 20 ++++++++++----------
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 20 ++++++++++----------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
+
+-- 
+2.7.4
