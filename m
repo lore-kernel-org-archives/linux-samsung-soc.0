@@ -1,23 +1,23 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: arizona-ldo1: Make arizona_ldo1 independent of struct arizona" to the regulator tree
-Date: Tue, 25 Apr 2017 16:46:02 +0100
-Message-ID: <E1d32fC-0001qC-0e@debutante>
-References: <1492512234-19210-8-git-send-email-rf@opensource.wolfsonmicro.com>
+Subject: Applied "regulator: arizona-micsupp: Move pdata into a separate structure" to the regulator tree
+Date: Tue, 25 Apr 2017 16:46:13 +0100
+Message-ID: <E1d32fN-0001y7-SI@debutante>
+References: <1492512234-19210-4-git-send-email-rf@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33686 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33694 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1948947AbdDYPqi (ORCPT
+        with ESMTP id S1950880AbdDYPqh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 11:46:38 -0400
-In-Reply-To: <1492512234-19210-8-git-send-email-rf@opensource.wolfsonmicro.com>
+        Tue, 25 Apr 2017 11:46:37 -0400
+In-Reply-To: <1492512234-19210-4-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, lee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.orglinux-kernel@vger.kernel.org
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>broonie@kernel.orglee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.orglinux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: arizona-ldo1: Make arizona_ldo1 independent of struct arizona
+   regulator: arizona-micsupp: Move pdata into a separate structure
 
 has been applied to the regulator tree at
 
@@ -42,60 +42,164 @@ to this mail.
 Thanks,
 Mark
 
->From 80a55f41aef4ee808f53f1a356491d7eaeefdd3c Mon Sep 17 00:00:00 2001
+>From 22161f3eb65dc29434325736c4d780908fe3bf6a Mon Sep 17 00:00:00 2001
 From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Date: Tue, 18 Apr 2017 11:43:53 +0100
-Subject: [PATCH] regulator: arizona-ldo1: Make arizona_ldo1 independent of
- struct arizona
+Date: Tue, 18 Apr 2017 11:43:49 +0100
+Subject: [PATCH] regulator: arizona-micsupp: Move pdata into a separate
+ structure
 
-In preparation for supporting Madera codecs, remove the dependency on
-struct arizona in the regulator callbacks and struct arizona_ldo1.
+In preparation for sharing this driver with Madera, move the pdata
+for the micsupp regulator out of struct arizona_pdata into a dedicated
+pdata struct for this driver. As a result the code in
+arizona_micsupp_of_get_pdata() can be made independent of struct arizona.
+
+This patch also updates the definition of struct arizona_pdata and
+the use of this pdata in mach-crag6410-module.c
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/arizona-ldo1.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ MAINTAINERS                               |  1 +
+ drivers/regulator/arizona-micsupp.c       | 21 +++++++++++----------
+ include/linux/mfd/arizona/pdata.h         |  3 ++-
+ include/linux/regulator/arizona-micsupp.h | 21 +++++++++++++++++++++
+ 4 files changed, 35 insertions(+), 11 deletions(-)
+ create mode 100644 include/linux/regulator/arizona-micsupp.h
 
-diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
-index f5bc75ab85fa..678f81fda22a 100644
---- a/drivers/regulator/arizona-ldo1.c
-+++ b/drivers/regulator/arizona-ldo1.c
-@@ -33,7 +33,7 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c35e0cea7831..6ed8ef18e7b6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13623,6 +13623,7 @@ F:	include/linux/mfd/arizona/
+ F:	include/linux/mfd/wm831x/
+ F:	include/linux/mfd/wm8350/
+ F:	include/linux/mfd/wm8400*
++F:	include/linux/regulator/arizona*
+ F:	include/linux/wm97xx.h
+ F:	include/sound/wm????.h
+ F:	sound/soc/codecs/arizona.?
+diff --git a/drivers/regulator/arizona-micsupp.c b/drivers/regulator/arizona-micsupp.c
+index 5e38861e71d8..5f8b5a713311 100644
+--- a/drivers/regulator/arizona-micsupp.c
++++ b/drivers/regulator/arizona-micsupp.c
+@@ -30,6 +30,8 @@
+ #include <linux/mfd/arizona/pdata.h>
+ #include <linux/mfd/arizona/registers.h>
  
- struct arizona_ldo1 {
++#include <linux/regulator/arizona-micsupp.h>
++
+ struct arizona_micsupp {
  	struct regulator_dev *regulator;
--	struct arizona *arizona;
-+	struct regmap *regmap;
+ 	struct arizona *arizona;
+@@ -199,28 +201,26 @@ static const struct regulator_init_data arizona_micsupp_ext_default = {
+ 	.num_consumer_supplies = 1,
+ };
  
- 	struct regulator_consumer_supply supply;
- 	struct regulator_init_data init_data;
-@@ -67,7 +67,7 @@ static int arizona_ldo1_hc_set_voltage_sel(struct regulator_dev *rdev,
- 					   unsigned sel)
+-static int arizona_micsupp_of_get_pdata(struct device *dev,
+-					struct arizona *arizona,
++static int arizona_micsupp_of_get_pdata(struct arizona_micsupp_pdata *pdata,
+ 					struct regulator_config *config,
+ 					const struct regulator_desc *desc)
  {
- 	struct arizona_ldo1 *ldo = rdev_get_drvdata(rdev);
--	struct regmap *regmap = ldo->arizona->regmap;
-+	struct regmap *regmap = ldo->regmap;
- 	unsigned int val;
+-	struct arizona_pdata *pdata = &arizona->pdata;
+ 	struct arizona_micsupp *micsupp = config->driver_data;
+ 	struct device_node *np;
+ 	struct regulator_init_data *init_data;
+ 
+-	np = of_get_child_by_name(arizona->dev->of_node, "micvdd");
++	np = of_get_child_by_name(config->dev->of_node, "micvdd");
+ 
+ 	if (np) {
+ 		config->of_node = np;
+ 
+-		init_data = of_get_regulator_init_data(dev, np, desc);
++		init_data = of_get_regulator_init_data(config->dev, np, desc);
+ 
+ 		if (init_data) {
+ 			init_data->consumer_supplies = &micsupp->supply;
+ 			init_data->num_consumer_supplies = 1;
+ 
+-			pdata->micvdd = init_data;
++			pdata->init_data = init_data;
+ 		}
+ 	}
+ 
+@@ -232,6 +232,7 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
+ 	struct arizona *arizona = dev_get_drvdata(pdev->dev.parent);
+ 	const struct regulator_desc *desc;
+ 	struct regulator_config config = { };
++	struct arizona_micsupp_pdata *pdata = &arizona->pdata.micvdd;
+ 	struct arizona_micsupp *micsupp;
  	int ret;
  
-@@ -93,7 +93,7 @@ static int arizona_ldo1_hc_set_voltage_sel(struct regulator_dev *rdev,
- static int arizona_ldo1_hc_get_voltage_sel(struct regulator_dev *rdev)
- {
- 	struct arizona_ldo1 *ldo = rdev_get_drvdata(rdev);
--	struct regmap *regmap = ldo->arizona->regmap;
-+	struct regmap *regmap = ldo->regmap;
- 	unsigned int val;
- 	int ret;
+@@ -269,15 +270,15 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
  
-@@ -247,7 +247,7 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
- 	if (!ldo1)
- 		return -ENOMEM;
+ 	if (IS_ENABLED(CONFIG_OF)) {
+ 		if (!dev_get_platdata(arizona->dev)) {
+-			ret = arizona_micsupp_of_get_pdata(&pdev->dev, arizona,
+-							   &config, desc);
++			ret = arizona_micsupp_of_get_pdata(pdata, &config,
++							   desc);
+ 			if (ret < 0)
+ 				return ret;
+ 		}
+ 	}
  
--	ldo1->arizona = arizona;
-+	ldo1->regmap = arizona->regmap;
+-	if (arizona->pdata.micvdd)
+-		config.init_data = arizona->pdata.micvdd;
++	if (pdata->init_data)
++		config.init_data = pdata->init_data;
+ 	else
+ 		config.init_data = &micsupp->init_data;
  
- 	/*
- 	 * Since the chip usually supplies itself we provide some
+diff --git a/include/linux/mfd/arizona/pdata.h b/include/linux/mfd/arizona/pdata.h
+index 64faeeff698c..43e875f9850c 100644
+--- a/include/linux/mfd/arizona/pdata.h
++++ b/include/linux/mfd/arizona/pdata.h
+@@ -12,6 +12,7 @@
+ #define _ARIZONA_PDATA_H
+ 
+ #include <dt-bindings/mfd/arizona.h>
++#include <linux/regulator/arizona-micsupp.h>
+ 
+ #define ARIZONA_GPN_DIR_MASK                     0x8000  /* GPN_DIR */
+ #define ARIZONA_GPN_DIR_SHIFT                        15  /* GPN_DIR */
+@@ -79,7 +80,7 @@ struct arizona_pdata {
+ 	int ldoena;     /** GPIO controlling LODENA, if any */
+ 
+ 	/** Regulator configuration for MICVDD */
+-	struct regulator_init_data *micvdd;
++	struct arizona_micsupp_pdata micvdd;
+ 
+ 	/** Regulator configuration for LDO1 */
+ 	struct regulator_init_data *ldo1;
+diff --git a/include/linux/regulator/arizona-micsupp.h b/include/linux/regulator/arizona-micsupp.h
+new file mode 100644
+index 000000000000..616842619c00
+--- /dev/null
++++ b/include/linux/regulator/arizona-micsupp.h
+@@ -0,0 +1,21 @@
++/*
++ * Platform data for Arizona micsupp regulator
++ *
++ * Copyright 2017 Cirrus Logic
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef ARIZONA_MICSUPP_H
++#define ARIZONA_MICSUPP_H
++
++struct regulator_init_data;
++
++struct arizona_micsupp_pdata {
++	/** Regulator configuration for micsupp */
++	const struct regulator_init_data *init_data;
++};
++
++#endif
 -- 
 2.11.0
