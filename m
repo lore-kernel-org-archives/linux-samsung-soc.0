@@ -1,61 +1,197 @@
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 Subject: Re: [RFC 0/4] Exynos DRM: add Picture Processor extension
-Date: Wed, 26 Apr 2017 15:36:04 -0400
-Message-ID: <1493235364.29587.17.camel@ndufresne.ca>
+Date: Thu, 27 Apr 2017 15:52:15 +0200
+Message-ID: <b36b73c7-788e-3ea5-4296-bf7e2d562033@samsung.com>
 References: <CGME20170420091406eucas1p24c50a0015545105081257d880727386c@eucas1p2.samsung.com>
-         <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
-         <2541347.TzHdYYQVhG@avalon>
-         <711bf4a5-7e57-6720-d00b-66e97a81e5ec@samsung.com>
-         <20170425222124.GA7456@valkosipuli.retiisi.org.uk>
-         <1493218407.29587.9.camel@ndufresne.ca>
-         <d597e386-4a6d-61d9-8e4b-61926d7a42c2@math.uni-bielefeld.de>
-         <1493234339.29587.15.camel@ndufresne.ca>
-         <d9087a2a-ec14-ef93-9961-30d166d24994@math.uni-bielefeld.de>
+ <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
+ <2541347.TzHdYYQVhG@avalon> <711bf4a5-7e57-6720-d00b-66e97a81e5ec@samsung.com>
+ <20170425222124.GA7456@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-J60uOx/mFRponmisUaBT"
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <d9087a2a-ec14-ef93-9961-30d166d24994@math.uni-bielefeld.de>
-Sender: linux-media-owner@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sakari Ailus <sakari.ailus@iki.fi>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sakari Ailus <sakari.ailus@intel.com>, linux-media@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---=-J60uOx/mFRponmisUaBT
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Le mercredi 26 avril 2017 =C3=A0 21:31 +0200, Tobias Jakobi a =C3=A9crit=C2=
-=A0:
-> I'm pretty sure you have misread Marek's description of the patchset.
-> The picture processor API should replaced/deprecate the IPP API that is
-> currently implemented in the Exynos DRM.
->=20
-> In particular this affects the following files:
-> - drivers/gpu/drm/exynos/exynos_drm_ipp.{c,h}
-> - drivers/gpu/drm/exynos/exynos_drm_fimc.{c,h}
-> - drivers/gpu/drm/exynos/exynos_drm_gsc.{c,h}
-> - drivers/gpu/drm/exynos/exynos_drm_rotator.{c,h}
->=20
-> I know only two places where the IPP API is actually used. Tizen and my
-> experimental mpv backend.
-
-Sorry for the noise then.
-
-regards,
-Nicolas
---=-J60uOx/mFRponmisUaBT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:32003 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935786AbdD0NwV (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 27 Apr 2017 09:52:21 -0400
+In-reply-to: <20170425222124.GA7456@valkosipuli.retiisi.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sakari Ailus <sakari.ailus@intel.com>, linux-media@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Hi Sakari,
 
-iEYEABECAAYFAlkA9qQACgkQcVMCLawGqBwlrwCbB3l7aeO9a13GJuUiGSBYIUPX
-4lsAnRTX2dKlZkDoPfCw1X3DgALaMrKD
-=ZfUX
------END PGP SIGNATURE-----
+On 2017-04-26 00:21, Sakari Ailus wrote:
+> Hi Marek,
+>
+> On Thu, Apr 20, 2017 at 01:23:09PM +0200, Marek Szyprowski wrote:
+>> Hi Laurent,
+>>
+>> On 2017-04-20 12:25, Laurent Pinchart wrote:
+>>> Hi Marek,
+>>>
+>>> (CC'ing Sakari Ailus)
+>>>
+>>> Thank you for the patches.
+>>>
+>>> On Thursday 20 Apr 2017 11:13:36 Marek Szyprowski wrote:
+>>>> Dear all,
+>>>>
+>>>> This is an updated proposal for extending EXYNOS DRM API with generic
+>>>> support for hardware modules, which can be used for processing image data
+>>> >from the one memory buffer to another. Typical memory-to-memory operations
+>>>> are: rotation, scaling, colour space conversion or mix of them. This is a
+>>>> follow-up of my previous proposal "[RFC 0/2] New feature: Framebuffer
+>>>> processors", which has been rejected as "not really needed in the DRM
+>>>> core":
+>>>> http://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg146286.html
+>>>>
+>>>> In this proposal I moved all the code to Exynos DRM driver, so now this
+>>>> will be specific only to Exynos DRM. I've also changed the name from
+>>>> framebuffer processor (fbproc) to picture processor (pp) to avoid confusion
+>>>> with fbdev API.
+>>>>
+>>>> Here is a bit more information what picture processors are:
+>>>>
+>>>> Embedded SoCs are known to have a number of hardware blocks, which perform
+>>>> such operations. They can be used in paralel to the main GPU module to
+>>>> offload CPU from processing grapics or video data. One of example use of
+>>>> such modules is implementing video overlay, which usually requires color
+>>>> space conversion from NV12 (or similar) to RGB32 color space and scaling to
+>>>> target window size.
+>>>>
+>>>> The proposed API is heavily inspired by atomic KMS approach - it is also
+>>>> based on DRM objects and their properties. A new DRM object is introduced:
+>>>> picture processor (called pp for convenience). Such objects have a set of
+>>>> standard DRM properties, which describes the operation to be performed by
+>>>> respective hardware module. In typical case those properties are a source
+>>>> fb id and rectangle (x, y, width, height) and destination fb id and
+>>>> rectangle. Optionally a rotation property can be also specified if
+>>>> supported by the given hardware. To perform an operation on image data,
+>>>> userspace provides a set of properties and their values for given fbproc
+>>>> object in a similar way as object and properties are provided for
+>>>> performing atomic page flip / mode setting.
+>>>>
+>>>> The proposed API consists of the 3 new ioctls:
+>>>> - DRM_IOCTL_EXYNOS_PP_GET_RESOURCES: to enumerate all available picture
+>>>>    processors,
+>>>> - DRM_IOCTL_EXYNOS_PP_GET: to query capabilities of given picture
+>>>>    processor,
+>>>> - DRM_IOCTL_EXYNOS_PP_COMMIT: to perform operation described by given
+>>>>    property set.
+>>>>
+>>>> The proposed API is extensible. Drivers can attach their own, custom
+>>>> properties to add support for more advanced picture processing (for example
+>>>> blending).
+>>>>
+>>>> This proposal aims to replace Exynos DRM IPP (Image Post Processing)
+>>>> subsystem. IPP API is over-engineered in general, but not really extensible
+>>>> on the other side. It is also buggy, with significant design flaws - the
+>>>> biggest issue is the fact that the API covers memory-2-memory picture
+>>>> operations together with CRTC writeback and duplicating features, which
+>>>> belongs to video plane. Comparing with IPP subsystem, the PP framework is
+>>>> smaller (1807 vs 778 lines) and allows driver simplification (Exynos
+>>>> rotator driver smaller by over 200 lines).
+>>> This seems to be the kind of hardware that is typically supported by V4L2.
+>>> Stupid question, why DRM ?
+>> Let me elaborate a bit on the reasons for implementing it in Exynos DRM:
+>>
+>> 1. we want to replace existing Exynos IPP subsystem:
+>>   - it is used only in some internal/vendor trees, not in open-source
+>>   - we want it to have sane and potentially extensible userspace API
+>>   - but we don't want to loose its functionality
+>>
+>> 2. we want to have simple API for performing single image processing
+>> operation:
+>>   - typically it will be used by compositing window manager, this means that
+>>     some parameters of the processing might change on each vblank (like
+>>     destination rectangle for example). This api allows such change on each
+>>     operation without any additional cost. V4L2 requires to reinitialize
+>>     queues with new configuration on such change, what means that a bunch of
+>>     ioctls has to be called.
+> What do you mean by re-initialising the queue? Format, buffers or something
+> else?
 
---=-J60uOx/mFRponmisUaBT--
+In case of compositor use case, the parameter that is being changed most
+frequently is source and/or destination rectangle position and/or size.
+
+> If you need a larger buffer than what you have already allocated, you'll
+> need to re-allocate, V4L2 or not.
+>
+> We also do lack a way to destroy individual buffers in V4L2. It'd be up to
+> implementing that and some work in videobuf2.
+
+Well if we would use V4l2, buffers will always come as dmabuf objects. There
+is a hard limit of the number of buffers that can be imported to v4l2/vb2
+queue to get buffer ids. This also limits easy processing of the buffers
+in the compositor, because you would need to reinitialize the v4l2 queues
+to get new set of v4l2/vb2 buffer ids.
+
+> Another thing is that V4L2 is very stream oriented. For most devices that's
+> fine as a lot of the parameters are not changeable during streaming,
+> especially if the pipeline is handled by multiple drivers. That said, for
+> devices that process data from memory to memory performing changes in the
+> media bus formats and pipeline configuration is not very efficient
+> currently, largely for the same reason.
+>
+> The request API that people have been working for a bit different use cases
+> isn't in mainline yet. It would allow more efficient per-request
+> configuration than what is currently possible, but it has turned out to be
+> far from trivial to implement.
+>
+>>   - validating processing parameters in V4l2 API is really complicated,
+>>     because the parameters (format, src&dest rectangles, rotation) are being
+>>     set incrementally, so we have to either allow some impossible,
+>> transitional
+>>     configurations or complicate the configuration steps even more (like
+>>     calling some ioctls multiple times for both input and output). In the end
+>>     all parameters have to be again validated just before performing the
+>>     operation.
+> You have to validate the parameters in any case. In a MC pipeline this takes
+> place when the stream is started.
+
+Well, in case of v4l2 one would need to stop and restart 'steaming' on 
+both queues
+of mem2mem device just to change some transformation parameters...
+
+>> 3. generic approach (to add it to DRM core) has been rejected:
+>> http://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg146286.html
+> For GPUs I generally understand the reasoning: there's a very limited number
+> of users of this API --- primarily because it's not an application
+> interface.
+>
+> If you have a device that however falls under the scope of V4L2 (at least
+> API-wise), does this continue to be the case? Will there be only one or two
+> (or so) users for this API? Is it the case here?
+>
+> Using a device specific interface definitely has some benefits: there's no
+> need to think how would you generalise the interface for other similar
+> devices. There's no need to consider backwards compatibility as it's not a
+> requirement. The drawback is that the applications that need to support
+> similar devices will bear the burden of having to support different APIs.
+>
+> I don't mean to say that you should ram whatever under V4L2 / MC
+> independently of how unworkable that might be, but there are also clear
+> advantages in using a standardised interface such as V4L2.
+>
+> V4L2 has a long history behind it and if it was designed today, I bet it
+> would look quite different from what it is now.
+
+IMHO V4l2 becomes both a bit over-engineered because of the 'backwards
+compatibility' and too limited on the other hand to support really complex
+hardware (iirc none of the top mobile Android HW vendors use V4l2 for their
+cameras subsystems). This is however a completely separate topic.
+
+>> 4. this api can be considered as extended 'blit' operation, other DRM
+>> drivers
+>>     (MGA, R128, VIA) already have ioctls for such operation, so there is also
+>>     place in DRM for it
+> Added LMML to cc.
+>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
