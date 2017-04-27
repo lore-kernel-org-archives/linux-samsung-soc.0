@@ -1,134 +1,52 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFC 0/4] Exynos DRM: add Picture Processor extension
-Date: Thu, 27 Apr 2017 15:52:52 +0200
-Message-ID: <99ca2bfd-32f5-c794-5773-15ad72a2419e@samsung.com>
-References: <CGME20170420091406eucas1p24c50a0015545105081257d880727386c@eucas1p2.samsung.com>
- <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
- <2541347.TzHdYYQVhG@avalon> <711bf4a5-7e57-6720-d00b-66e97a81e5ec@samsung.com>
- <20170425222124.GA7456@valkosipuli.retiisi.org.uk>
- <1493218407.29587.9.camel@ndufresne.ca>
- <598f2a2e-ef59-1174-08ad-54eea72ff1cf@math.uni-bielefeld.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 2/2] arm64 dts: exynos: Last round for v4.12
+Date: Thu, 27 Apr 2017 21:46:03 +0200
+Message-ID: <CAK8P3a1HA6cio=hboc7=BYwJn-i6RzCP1uzcCVvcQwt4wtB3Tw@mail.gmail.com>
+References: <20170421164050.7404-1-krzk@kernel.org> <20170421164050.7404-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <598f2a2e-ef59-1174-08ad-54eea72ff1cf@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Nicolas Dufresne <nicolas@ndufresne.ca>, Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sakari Ailus <sakari.ailus@intel.com>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:34460 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S939019AbdD0TqE (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 27 Apr 2017 15:46:04 -0400
+In-Reply-To: <20170421164050.7404-2-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-SGkgVG9iaWFzIGFuZCBOaWNvbGFzLAoKT24gMjAxNy0wNC0yNiAxNzoxNiwgVG9iaWFzIEpha29i
-aSB3cm90ZToKPiBOaWNvbGFzIER1ZnJlc25lIHdyb3RlOgo+PiBMZSBtZXJjcmVkaSAyNiBhdnJp
-bCAyMDE3IMOgIDAxOjIxICswMzAwLCBTYWthcmkgQWlsdXMgYSDDqWNyaXQgOgo+Pj4gSGkgTWFy
-ZWssCj4+Pgo+Pj4gT24gVGh1LCBBcHIgMjAsIDIwMTcgYXQgMDE6MjM6MDlQTSArMDIwMCwgTWFy
-ZWsgU3p5cHJvd3NraSB3cm90ZToKPj4+PiBIaSBMYXVyZW50LAo+Pj4+Cj4+Pj4gT24gMjAxNy0w
-NC0yMCAxMjoyNSwgTGF1cmVudCBQaW5jaGFydCB3cm90ZToKPj4+Pj4gSGkgTWFyZWssCj4+Pj4+
-Cj4+Pj4+IChDQydpbmcgU2FrYXJpIEFpbHVzKQo+Pj4+Pgo+Pj4+PiBUaGFuayB5b3UgZm9yIHRo
-ZSBwYXRjaGVzLgo+Pj4+Pgo+Pj4+PiBPbiBUaHVyc2RheSAyMCBBcHIgMjAxNyAxMToxMzozNiBN
-YXJlayBTenlwcm93c2tpIHdyb3RlOgo+Pj4+Pj4gRGVhciBhbGwsCj4+Pj4+Pgo+Pj4+Pj4gVGhp
-cyBpcyBhbiB1cGRhdGVkIHByb3Bvc2FsIGZvciBleHRlbmRpbmcgRVhZTk9TIERSTSBBUEkgd2l0
-aCBnZW5lcmljCj4+Pj4+PiBzdXBwb3J0IGZvciBoYXJkd2FyZSBtb2R1bGVzLCB3aGljaCBjYW4g
-YmUgdXNlZCBmb3IgcHJvY2Vzc2luZyBpbWFnZSBkYXRhCj4+Pj4+PiBmcm9tIHRoZSBvbmUgbWVt
-b3J5IGJ1ZmZlciB0byBhbm90aGVyLiBUeXBpY2FsIG1lbW9yeS10by1tZW1vcnkgb3BlcmF0aW9u
-cwo+Pj4+Pj4gYXJlOiByb3RhdGlvbiwgc2NhbGluZywgY29sb3VyIHNwYWNlIGNvbnZlcnNpb24g
-b3IgbWl4IG9mIHRoZW0uIFRoaXMgaXMgYQo+Pj4+Pj4gZm9sbG93LXVwIG9mIG15IHByZXZpb3Vz
-IHByb3Bvc2FsICJbUkZDIDAvMl0gTmV3IGZlYXR1cmU6IEZyYW1lYnVmZmVyCj4+Pj4+PiBwcm9j
-ZXNzb3JzIiwgd2hpY2ggaGFzIGJlZW4gcmVqZWN0ZWQgYXMgIm5vdCByZWFsbHkgbmVlZGVkIGlu
-IHRoZSBEUk0KPj4+Pj4+IGNvcmUiOgo+Pj4+Pj4gaHR0cDovL3d3dy5tYWlsLWFyY2hpdmUuY29t
-L2RyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcvbXNnMTQ2Mjg2Lmh0bWwKPj4+Pj4+Cj4+
-Pj4+PiBJbiB0aGlzIHByb3Bvc2FsIEkgbW92ZWQgYWxsIHRoZSBjb2RlIHRvIEV4eW5vcyBEUk0g
-ZHJpdmVyLCBzbyBub3cgdGhpcwo+Pj4+Pj4gd2lsbCBiZSBzcGVjaWZpYyBvbmx5IHRvIEV4eW5v
-cyBEUk0uIEkndmUgYWxzbyBjaGFuZ2VkIHRoZSBuYW1lIGZyb20KPj4+Pj4+IGZyYW1lYnVmZmVy
-IHByb2Nlc3NvciAoZmJwcm9jKSB0byBwaWN0dXJlIHByb2Nlc3NvciAocHApIHRvIGF2b2lkIGNv
-bmZ1c2lvbgo+Pj4+Pj4gd2l0aCBmYmRldiBBUEkuCj4+Pj4+Pgo+Pj4+Pj4gSGVyZSBpcyBhIGJp
-dCBtb3JlIGluZm9ybWF0aW9uIHdoYXQgcGljdHVyZSBwcm9jZXNzb3JzIGFyZToKPj4+Pj4+Cj4+
-Pj4+PiBFbWJlZGRlZCBTb0NzIGFyZSBrbm93biB0byBoYXZlIGEgbnVtYmVyIG9mIGhhcmR3YXJl
-IGJsb2Nrcywgd2hpY2ggcGVyZm9ybQo+Pj4+Pj4gc3VjaCBvcGVyYXRpb25zLiBUaGV5IGNhbiBi
-ZSB1c2VkIGluIHBhcmFsZWwgdG8gdGhlIG1haW4gR1BVIG1vZHVsZSB0bwo+Pj4+Pj4gb2ZmbG9h
-ZCBDUFUgZnJvbSBwcm9jZXNzaW5nIGdyYXBpY3Mgb3IgdmlkZW8gZGF0YS4gT25lIG9mIGV4YW1w
-bGUgdXNlIG9mCj4+Pj4+PiBzdWNoIG1vZHVsZXMgaXMgaW1wbGVtZW50aW5nIHZpZGVvIG92ZXJs
-YXksIHdoaWNoIHVzdWFsbHkgcmVxdWlyZXMgY29sb3IKPj4+Pj4+IHNwYWNlIGNvbnZlcnNpb24g
-ZnJvbSBOVjEyIChvciBzaW1pbGFyKSB0byBSR0IzMiBjb2xvciBzcGFjZSBhbmQgc2NhbGluZyB0
-bwo+Pj4+Pj4gdGFyZ2V0IHdpbmRvdyBzaXplLgo+Pj4+Pj4KPj4+Pj4+IFRoZSBwcm9wb3NlZCBB
-UEkgaXMgaGVhdmlseSBpbnNwaXJlZCBieSBhdG9taWMgS01TIGFwcHJvYWNoIC0gaXQgaXMgYWxz
-bwo+Pj4+Pj4gYmFzZWQgb24gRFJNIG9iamVjdHMgYW5kIHRoZWlyIHByb3BlcnRpZXMuIEEgbmV3
-IERSTSBvYmplY3QgaXMgaW50cm9kdWNlZDoKPj4+Pj4+IHBpY3R1cmUgcHJvY2Vzc29yIChjYWxs
-ZWQgcHAgZm9yIGNvbnZlbmllbmNlKS4gU3VjaCBvYmplY3RzIGhhdmUgYSBzZXQgb2YKPj4+Pj4+
-IHN0YW5kYXJkIERSTSBwcm9wZXJ0aWVzLCB3aGljaCBkZXNjcmliZXMgdGhlIG9wZXJhdGlvbiB0
-byBiZSBwZXJmb3JtZWQgYnkKPj4+Pj4+IHJlc3BlY3RpdmUgaGFyZHdhcmUgbW9kdWxlLiBJbiB0
-eXBpY2FsIGNhc2UgdGhvc2UgcHJvcGVydGllcyBhcmUgYSBzb3VyY2UKPj4+Pj4+IGZiIGlkIGFu
-ZCByZWN0YW5nbGUgKHgsIHksIHdpZHRoLCBoZWlnaHQpIGFuZCBkZXN0aW5hdGlvbiBmYiBpZCBh
-bmQKPj4+Pj4+IHJlY3RhbmdsZS4gT3B0aW9uYWxseSBhIHJvdGF0aW9uIHByb3BlcnR5IGNhbiBi
-ZSBhbHNvIHNwZWNpZmllZCBpZgo+Pj4+Pj4gc3VwcG9ydGVkIGJ5IHRoZSBnaXZlbiBoYXJkd2Fy
-ZS4gVG8gcGVyZm9ybSBhbiBvcGVyYXRpb24gb24gaW1hZ2UgZGF0YSwKPj4+Pj4+IHVzZXJzcGFj
-ZSBwcm92aWRlcyBhIHNldCBvZiBwcm9wZXJ0aWVzIGFuZCB0aGVpciB2YWx1ZXMgZm9yIGdpdmVu
-IGZicHJvYwo+Pj4+Pj4gb2JqZWN0IGluIGEgc2ltaWxhciB3YXkgYXMgb2JqZWN0IGFuZCBwcm9w
-ZXJ0aWVzIGFyZSBwcm92aWRlZCBmb3IKPj4+Pj4+IHBlcmZvcm1pbmcgYXRvbWljIHBhZ2UgZmxp
-cCAvIG1vZGUgc2V0dGluZy4KPj4+Pj4+Cj4+Pj4+PiBUaGUgcHJvcG9zZWQgQVBJIGNvbnNpc3Rz
-IG9mIHRoZSAzIG5ldyBpb2N0bHM6Cj4+Pj4+PiAtIERSTV9JT0NUTF9FWFlOT1NfUFBfR0VUX1JF
-U09VUkNFUzogdG8gZW51bWVyYXRlIGFsbCBhdmFpbGFibGUgcGljdHVyZQo+Pj4+Pj4gICAgcHJv
-Y2Vzc29ycywKPj4+Pj4+IC0gRFJNX0lPQ1RMX0VYWU5PU19QUF9HRVQ6IHRvIHF1ZXJ5IGNhcGFi
-aWxpdGllcyBvZiBnaXZlbiBwaWN0dXJlCj4+Pj4+PiAgICBwcm9jZXNzb3IsCj4+Pj4+PiAtIERS
-TV9JT0NUTF9FWFlOT1NfUFBfQ09NTUlUOiB0byBwZXJmb3JtIG9wZXJhdGlvbiBkZXNjcmliZWQg
-YnkgZ2l2ZW4KPj4+Pj4+ICAgIHByb3BlcnR5IHNldC4KPj4+Pj4+Cj4+Pj4+PiBUaGUgcHJvcG9z
-ZWQgQVBJIGlzIGV4dGVuc2libGUuIERyaXZlcnMgY2FuIGF0dGFjaCB0aGVpciBvd24sIGN1c3Rv
-bQo+Pj4+Pj4gcHJvcGVydGllcyB0byBhZGQgc3VwcG9ydCBmb3IgbW9yZSBhZHZhbmNlZCBwaWN0
-dXJlIHByb2Nlc3NpbmcgKGZvciBleGFtcGxlCj4+Pj4+PiBibGVuZGluZykuCj4+Pj4+Pgo+Pj4+
-Pj4gVGhpcyBwcm9wb3NhbCBhaW1zIHRvIHJlcGxhY2UgRXh5bm9zIERSTSBJUFAgKEltYWdlIFBv
-c3QgUHJvY2Vzc2luZykKPj4+Pj4+IHN1YnN5c3RlbS4gSVBQIEFQSSBpcyBvdmVyLWVuZ2luZWVy
-ZWQgaW4gZ2VuZXJhbCwgYnV0IG5vdCByZWFsbHkgZXh0ZW5zaWJsZQo+Pj4+Pj4gb24gdGhlIG90
-aGVyIHNpZGUuIEl0IGlzIGFsc28gYnVnZ3ksIHdpdGggc2lnbmlmaWNhbnQgZGVzaWduIGZsYXdz
-IC0gdGhlCj4+Pj4+PiBiaWdnZXN0IGlzc3VlIGlzIHRoZSBmYWN0IHRoYXQgdGhlIEFQSSBjb3Zl
-cnMgbWVtb3J5LTItbWVtb3J5IHBpY3R1cmUKPj4+Pj4+IG9wZXJhdGlvbnMgdG9nZXRoZXIgd2l0
-aCBDUlRDIHdyaXRlYmFjayBhbmQgZHVwbGljYXRpbmcgZmVhdHVyZXMsIHdoaWNoCj4+Pj4+PiBi
-ZWxvbmdzIHRvIHZpZGVvIHBsYW5lLiBDb21wYXJpbmcgd2l0aCBJUFAgc3Vic3lzdGVtLCB0aGUg
-UFAgZnJhbWV3b3JrIGlzCj4+Pj4+PiBzbWFsbGVyICgxODA3IHZzIDc3OCBsaW5lcykgYW5kIGFs
-bG93cyBkcml2ZXIgc2ltcGxpZmljYXRpb24gKEV4eW5vcwo+Pj4+Pj4gcm90YXRvciBkcml2ZXIg
-c21hbGxlciBieSBvdmVyIDIwMCBsaW5lcykuCj4+IEp1c3QgYSBzaWRlIG5vdGUsIHdlIGhhdmUg
-d3JpdHRlbiBjb2RlIGluIEdTdHJlYW1lciB1c2luZyB0aGUgRXhueW5vcyA0Cj4+IEZJTUMgSVBQ
-IGRyaXZlci4gSSBkb24ndCBrbm93IGhvdyBtYW55LCBpZiBhbnksIGRlcGxveW1lbnQgc3RpbGwg
-ZXhpc3QKPj4gKEV4eW5vcyA0IGlzIHJlbGF0aXZlbHkgb2xkIG5vdyksIGJ1dCB0aGVyZSBleGlz
-dCB1c2Vyc3BhY2UgZm9yIHRoZQo+PiBGSU1DIGRyaXZlci4gV2UgdXNlIHRoaXMgZm9yIGNvbG9y
-IHRyYW5zZm9ybWF0aW9uIChmcm9tIHRpbGVkIHRvCj4+IGxpbmVhcikgYW5kIHNjYWxpbmcuIFRo
-ZSBGSU1DIGRyaXZlciBpcyBpbiBmYWN0IHF1aXRlIHN0YWJsZSBpbgo+PiB1cHN0cmVhbSBrZXJu
-ZWwgdG9kYXkuIFRoZSBHU2NhbGVyIFY0TDIgTTJNIGRyaXZlciBvbiBFeHlub3MgNSBpcwo+PiBs
-YXJnZWx5IGJhc2VkIG9uIGl0IGFuZCBoYXMgcmVjZWl2ZWQgc29tZSBtYWludGVuYW5jZSB0byBw
-cm9wZXJseSB3b3JrCj4+IGluIEdTdHJlYW1lci4gdW5saWtlIHRoaXMgRFJNIEFQSSwgeW91IGNh
-biByZXVzZSB0aGUgc2FtZSB1c2Vyc3BhY2UKPj4gY29kZSBhY3Jvc3MgbXVsdGlwbGUgcGxhdGZv
-cm1zICh3aGljaCB3ZSBkbyBhbHJlYWR5KS4gV2UgaGF2ZSBhbHNvCj4+IGludGVncmF0ZWQgdGhp
-cyBkcml2ZXIgaW4gQ2hyb21pdW0gaW4gdGhlIHBhc3QgKG5vdCB1cHN0cmVhbSB0aG91Z2gpLgo+
-Pgo+PiBJIGFtIHdlbGwgYXdhcmUgdGhhdCB0aGUgYmxpdHRlciBkcml2ZXIgaGFzIG5vdCBnb3Qg
-bXVjaCBhdHRlbnRpb24KPj4gdGhvdWdoLiBCdXQgYWdhaW4sIFY0TDIgb2ZmZXJzIGEgZ2VuZXJp
-YyBpbnRlcmZhY2UgdG8gdXNlcnNwYWNlCj4+IGFwcGxpY2F0aW9uLiBGaXhpbmcgdGhpcyBkcml2
-ZXIgY291bGQgZW5hYmxlIHNvbWUgd29yayBsaWtlIHRoaXMgb25lOgo+Pgo+PiBodHRwczovL2J1
-Z3ppbGxhLmdub21lLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9NzcyNzY2Cj4+Cj4+IFRoaXMgd29yayBp
-biBwcm9ncmVzcyBmZWF0dXJlIGlzIGEgZ2VuZXJpYyBoYXJkd2FyZSBhY2NlbGVyYXRlZCB2aWRl
-bwo+PiBtaXhlci4gSXQgaGFzIGJlZW4gdGVzdGVkIHdpdGggSU1YLjYgdjRsMiBtMm0gYmxpdHRl
-ciBkcml2ZXIgKHdoaWNoIEkKPj4gYmVsaWV2ZSBpcyBpbiBzdGFnaW5nIHJpZ2h0IG5vdykuIEFn
-YWluLCB1bmxpa2UgdGhlIGV4eW5vcy9kcm0sIHRoaXMKPj4gY29kZSBjb3VsZCBiZSByZXVzZWQg
-YmV0d2VlbiBwbGF0Zm9ybXMuCj4+Cj4+IEluIGdlbmVyYWwsIHRoZSBwcm9ibGVtIHdpdGggdGhl
-IERSTSBhcHByb2FjaCBpcyB0aGF0IGl0IG9ubHkgdGFyZ2V0cwo+PiBkaXNwbGF5cy4gV2Ugb2Z0
-ZW4gbmVlZCB0byB1c2UgdGhlc2UgSVAgYmxvY2sgZm9yIHN0cmVhbSBwcmUvcG9zdAo+PiBwcm9j
-ZXNzaW5nIG91dHNpZGUgYSAicGxheWJhY2siIHVzZSBjYXNlLgo+IGp1c3QgYSBzaG9ydCBub3Rl
-IHRoYXQgdGhpcyBpcyBub3QgdHJ1ZS4gWW91IGNhbiB1c2UgYWxsIHRoaXMKPiBmdW5jdGlvbmFs
-aXR5IGUuZy4gdGhyb3VnaCByZW5kZXIgbm9kZXMsIHdpdGhvdXQgbmVlZGluZyB0byBoYXZlIGEK
-PiBkaXNwbGF5IGF0dGFjaGVkIHRvIHlvdXIgc3lzdGVtLgoKWWVzLiBBcyBhbiBhbHRlcm5hdGl2
-ZSBJIGFsc28gcGxhbiB0byBwcm92aWRlIGdlbmVyaWMgVjRMMi1zdHlsZSBtZW0ybWVtCmRldmlj
-ZSBvbiB0b3Agb2YgdGhpcyBFeHlub3MgRFJNIGludGVyZmFjZS4gVGhpcyB3aWxsIGFsc28gaGVs
-cCBvbiB0aGUgbmV3ZXIKRXh5bm9zIFNvQ3MsIHdoaWNoIGV2ZW4gZG9uJ3QgaGF2ZSBHU2NhbGxl
-ci4gVGhpcyB3YXkgd2UgY2FuIGFsc28gZWFzaWx5IGdldApyaWQgb2YgdHdvIGRyaXZlcnMgZm9y
-IEdTY2FsbGVyIGh3LiBGSU1DIHdpbGwgcHJvYmFibHkgc3RheSBpbiBWNEwyIGJlY2F1c2UKb2Yg
-aXRzIGNhbWVyYSByZWxhdGVkIGZ1bmN0aW9ucy4KCkJlc3QgcmVnYXJkcwotLSAKTWFyZWsgU3p5
-cHJvd3NraSwgUGhEClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Fri, Apr 21, 2017 at 6:40 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> The following changes since commit e3c07546747cdec07ff15c984bc6cebc9c9f788c:
+>
+>   arm64: dts: exynos: Add the burst and esc clock frequency properties to DSI node (2017-03-08 08:55:39 +0200)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.12-2
+>
+> for you to fetch changes up to 5dccc9873c4af60f4478b3ef54267353f25cc301:
+>
+>   arm64: dts: exynos: Use - instead of @ for DT OPP entries (2017-04-20 18:10:05 +0200)
+>
+> ----------------------------------------------------------------
+> Second update of  Samsung DeviceTree ARM64 for v4.12:
+>  - Fix DTC warnings in Exynos ARM64 Device Tree sources.
+>  - Add panel node to TM2E board.
+>
+> ----------------------------------------------------------------
+> Hoegeun Kwon (1):
+>       arm64: dts: exynos: Add support for s6e3hf2 panel device on TM2e board
+>
+> Viresh Kumar (1):
+>       arm64: dts: exynos: Use - instead of @ for DT OPP entries
+>
+>  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi | 48 ++++++++++++-------------
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts | 11 ++++++
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi     | 50 +++++++++++++-------------
+>  3 files changed, 60 insertions(+), 49 deletions(-)
+
+I pulled the updated version into next/dt64, thanks,
+
+       Arnd
