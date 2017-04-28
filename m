@@ -1,31 +1,42 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/2] ARM: dts: exynos: Last round for v4.12
-Date: Thu, 27 Apr 2017 21:54:53 +0200
-Message-ID: <CAK8P3a09h3STUTzYw8rx8WVRoMW3w4mfmSCwW3ZPDO1VNURtAA@mail.gmail.com>
-References: <20170421164050.7404-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: [PATCH] MAINTAINERS: Remove myself as reviewer for Exynos
+Date: Fri, 28 Apr 2017 00:22:15 -0400
+Message-ID: <20170428042215.14006-1-javier@dowhile0.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36665 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968366AbdD0Tyy (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:35778 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932243AbdD1EWY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 15:54:54 -0400
-In-Reply-To: <20170421164050.7404-1-krzk@kernel.org>
+        Fri, 28 Apr 2017 00:22:24 -0400
+Received: by mail-qk0-f196.google.com with SMTP id a19so7575600qkg.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Apr 2017 21:22:24 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
 
-On Fri, Apr 21, 2017 at 6:40 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Hi,
->
-> I know it is late so just one fix for v4.12.
-> On top of previous pull request.
+I left Samsung and lost access to most Exynos hardware and documentation.
+Also, I likely won't be able to keep an eye on the platform anymore in the
+short term so remove myself as a reviewer for Exynos.
 
-Pulled into next/dt, thanks
+Signed-off-by: Javier Martinez Canillas <javier@dowhile0.org>
 
-      Arnd
+---
 
-[I had actually pulled it already, but forgot to send out the mail reply and now
-saw your reminder, thanks for paying attention!]
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 45be5ef6056c..e35370a0c04c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1722,7 +1722,6 @@ N:	rockchip
+ ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
+ M:	Kukjin Kim <kgene@kernel.org>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+-R:	Javier Martinez Canillas <javier@osg.samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
+-- 
+2.9.3
