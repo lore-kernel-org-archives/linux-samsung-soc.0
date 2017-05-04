@@ -1,46 +1,65 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: Add myself as reviewer for Exynos
-Date: Tue, 2 May 2017 16:57:32 -0600
-Message-ID: <ece79b93-8f3b-6187-9c9a-0be399ccb906@osg.samsung.com>
-References: <20170428140107.14491-1-shuahkh@osg.samsung.com>
- <20170502174448.hk4mn4udfmmkdwv7@kozik-lap>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [media-s3c-camif] question about arguments position
+Date: Thu, 04 May 2017 14:05:02 -0500
+Message-ID: <20170504140502.Horde.e_TqvS0_CEqTDsNh1soDOGo@gator4166.hostgator.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:48011
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750815AbdEBW5e (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 May 2017 18:57:34 -0400
-In-Reply-To: <20170502174448.hk4mn4udfmmkdwv7@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, javier@dowhile0.org, Shuah Khan <shuahkh@osg.samsung.com>
 
-On 05/02/2017 11:44 AM, Krzysztof Kozlowski wrote:
-> On Fri, Apr 28, 2017 at 08:01:07AM -0600, Shuah Khan wrote:
->> Adding myself as a reviewer for Exynos in the interest of keeping an
->> eye on the Exynos platform and help keep it stable.
->>
->> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
->> ---
->>  MAINTAINERS | 1 +
->>  1 file changed, 1 insertion(+)
-> 
-> Dear Shuah,
-> 
-> Thank you for the idea. Review and testing is always welcomed and much
-> appreciated. The entry in maintainers file is a little bit different
-> than just reviewing as that could be done also on mailing lists. Such
-> reviewer should be partially responsible for the Exynos ARM architecture
-> and even backup or replace maintainers. Quite frankly I must admit that
-> I am surprised because so far I did not see any contributions or reviews
-> from you before around Exynos SoC code, except recently media (which is
-> separate and not covered by me).
-> 
 
-Thanks for your feedback.
+Hello everybody,
 
--- Shuah
+While looking into Coverity ID 1248800 I ran into the following piece  
+of code at drivers/media/platform/s3c-camif/camif-capture.c:67:
+
+/* Locking: called with camif->slock spinlock held */
+static int s3c_camif_hw_init(struct camif_dev *camif, struct camif_vp *vp)
+{
+         const struct s3c_camif_variant *variant = camif->variant;
+
+         if (camif->sensor.sd == NULL || vp->out_fmt == NULL)
+                 return -EINVAL;
+
+         if (variant->ip_revision == S3C244X_CAMIF_IP_REV)
+                 camif_hw_clear_fifo_overflow(vp);
+         camif_hw_set_camera_bus(camif);
+         camif_hw_set_source_format(camif);
+         camif_hw_set_camera_crop(camif);
+         camif_hw_set_test_pattern(camif, camif->test_pattern);
+         if (variant->has_img_effect)
+                 camif_hw_set_effect(camif, camif->colorfx,
+                                 camif->colorfx_cb, camif->colorfx_cr);
+         if (variant->ip_revision == S3C6410_CAMIF_IP_REV)
+                 camif_hw_set_input_path(vp);
+         camif_cfg_video_path(vp);
+         vp->state &= ~ST_VP_CONFIG;
+
+         return 0;
+}
+
+
+The issue here is that the position of arguments in the call to  
+camif_hw_set_effect() function do not match the order of the parameters:
+
+camif->colorfx_cb is passed to cr
+camif->colorfx_cr is passed to cb
+
+This is the function prototype:
+
+void camif_hw_set_effect(struct camif_dev *camif, unsigned int effect,
+			unsigned int cr, unsigned int cb)
+
+My question here is if this is intentional?
+
+In case it is not, I will send a patch to fix it. But first it would  
+be great to hear any comment about it.
+
+By the way... the same is happening at  
+drivers/media/platform/s3c-camif/camif-capture.c:366
+
+Thank you
