@@ -1,65 +1,48 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [media-s3c-camif] question about arguments position
-Date: Thu, 04 May 2017 14:05:02 -0500
-Message-ID: <20170504140502.Horde.e_TqvS0_CEqTDsNh1soDOGo@gator4166.hostgator.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [media-s3c-camif] question about arguments position
+Date: Thu, 4 May 2017 21:34:47 +0200
+Message-ID: <e2137221-f094-530b-e61c-70e28f22a83f@gmail.com>
+References: <20170504140502.Horde.e_TqvS0_CEqTDsNh1soDOGo@gator4166.hostgator.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35815 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751628AbdEDTew (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 4 May 2017 15:34:52 -0400
+In-Reply-To: <20170504140502.Horde.e_TqvS0_CEqTDsNh1soDOGo@gator4166.hostgator.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hi Gustavo,
 
-Hello everybody,
+On 05/04/2017 09:05 PM, Gustavo A. R. Silva wrote:
+> The issue here is that the position of arguments in the call to
+> camif_hw_set_effect() function do not match the order of the parameters:
+> 
+> camif->colorfx_cb is passed to cr
+> camif->colorfx_cr is passed to cb
+> 
+> This is the function prototype:
+> 
+> void camif_hw_set_effect(struct camif_dev *camif, unsigned int effect,
+>             unsigned int cr, unsigned int cb)
+> 
+> My question here is if this is intentional?
+> 
+> In case it is not, I will send a patch to fix it. But first it would be
+> great to hear any comment about it.
 
-While looking into Coverity ID 1248800 I ran into the following piece  
-of code at drivers/media/platform/s3c-camif/camif-capture.c:67:
-
-/* Locking: called with camif->slock spinlock held */
-static int s3c_camif_hw_init(struct camif_dev *camif, struct camif_vp *vp)
-{
-         const struct s3c_camif_variant *variant = camif->variant;
-
-         if (camif->sensor.sd == NULL || vp->out_fmt == NULL)
-                 return -EINVAL;
-
-         if (variant->ip_revision == S3C244X_CAMIF_IP_REV)
-                 camif_hw_clear_fifo_overflow(vp);
-         camif_hw_set_camera_bus(camif);
-         camif_hw_set_source_format(camif);
-         camif_hw_set_camera_crop(camif);
-         camif_hw_set_test_pattern(camif, camif->test_pattern);
-         if (variant->has_img_effect)
-                 camif_hw_set_effect(camif, camif->colorfx,
-                                 camif->colorfx_cb, camif->colorfx_cr);
-         if (variant->ip_revision == S3C6410_CAMIF_IP_REV)
-                 camif_hw_set_input_path(vp);
-         camif_cfg_video_path(vp);
-         vp->state &= ~ST_VP_CONFIG;
-
-         return 0;
-}
-
-
-The issue here is that the position of arguments in the call to  
-camif_hw_set_effect() function do not match the order of the parameters:
-
-camif->colorfx_cb is passed to cr
-camif->colorfx_cr is passed to cb
-
-This is the function prototype:
+You are right, it seems you have found a real bug. Feel free to send a patch.
+The best thing to do now might be to change the function prototype to:
 
 void camif_hw_set_effect(struct camif_dev *camif, unsigned int effect,
-			unsigned int cr, unsigned int cb)
+             unsigned int cb, unsigned int cr)
 
-My question here is if this is intentional?
-
-In case it is not, I will send a patch to fix it. But first it would  
-be great to hear any comment about it.
-
-By the way... the same is happening at  
-drivers/media/platform/s3c-camif/camif-capture.c:366
-
-Thank you
+--
+Regards,
+Sylwester
