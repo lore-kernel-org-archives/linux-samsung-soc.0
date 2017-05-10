@@ -1,7 +1,7 @@
 From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [RFC 0/4] Exynos DRM: add Picture Processor extension
-Date: Wed, 10 May 2017 19:29:05 +0900
-Message-ID: <5912EB71.9090104@samsung.com>
+Date: Wed, 10 May 2017 19:31:25 +0900
+Message-ID: <5912EBFD.1020104@samsung.com>
 References: <CGME20170420091406eucas1p24c50a0015545105081257d880727386c@eucas1p2.samsung.com>
  <1492679620-12792-1-git-send-email-m.szyprowski@samsung.com>
  <2541347.TzHdYYQVhG@avalon> <711bf4a5-7e57-6720-d00b-66e97a81e5ec@samsung.com>
@@ -9,266 +9,223 @@ References: <CGME20170420091406eucas1p24c50a0015545105081257d880727386c@eucas1p2
  <59126BB4.6050309@samsung.com>
  <CAAFQd5CPNQ5hDDXPwo2v54VcoOMeDszuvoHZPYQYNJsMJk41Ww@mail.gmail.com>
  <5912B2B6.4050605@samsung.com>
- <CAAFQd5D1-ZsXNcArXBf5=a=ukjnLHehHmvQg_zJc+b_WLka6rQ@mail.gmail.com>
+ <20170510075508.kqg6t35qccwpzxwn@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <CAAFQd5D1-ZsXNcArXBf5=a=ukjnLHehHmvQg_zJc+b_WLka6rQ@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: linux-media@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sakari Ailus <sakari.ailus@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170510075508.kqg6t35qccwpzxwn@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sakari Ailus <sakari.ailus@iki.fi>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sakari Ailus <sakari.ailus@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-2017년 05월 10일 15:38에 Tomasz Figa 이(가) 쓴 글:
-> On Wed, May 10, 2017 at 2:27 PM, Inki Dae <inki.dae@samsung.com> wrote:
->> Hi Tomasz,
->>
->> 2017년 05월 10일 14:38에 Tomasz Figa 이(가) 쓴 글:
->>> Hi Everyone,
->>>
->>> On Wed, May 10, 2017 at 9:24 AM, Inki Dae <inki.dae@samsung.com> wrote:
->>>>
->>>>
->>>> 2017년 04월 26일 07:21에 Sakari Ailus 이(가) 쓴 글:
->>>>> Hi Marek,
->>>>>
->>>>> On Thu, Apr 20, 2017 at 01:23:09PM +0200, Marek Szyprowski wrote:
->>>>>> Hi Laurent,
->>>>>>
->>>>>> On 2017-04-20 12:25, Laurent Pinchart wrote:
->>>>>>> Hi Marek,
->>>>>>>
->>>>>>> (CC'ing Sakari Ailus)
->>>>>>>
->>>>>>> Thank you for the patches.
->>>>>>>
->>>>>>> On Thursday 20 Apr 2017 11:13:36 Marek Szyprowski wrote:
->>>>>>>> Dear all,
->>>>>>>>
->>>>>>>> This is an updated proposal for extending EXYNOS DRM API with generic
->>>>>>>> support for hardware modules, which can be used for processing image data
->>>>>>> >from the one memory buffer to another. Typical memory-to-memory operations
->>>>>>>> are: rotation, scaling, colour space conversion or mix of them. This is a
->>>>>>>> follow-up of my previous proposal "[RFC 0/2] New feature: Framebuffer
->>>>>>>> processors", which has been rejected as "not really needed in the DRM
->>>>>>>> core":
->>>>>>>> http://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg146286.html
->>>>>>>>
->>>>>>>> In this proposal I moved all the code to Exynos DRM driver, so now this
->>>>>>>> will be specific only to Exynos DRM. I've also changed the name from
->>>>>>>> framebuffer processor (fbproc) to picture processor (pp) to avoid confusion
->>>>>>>> with fbdev API.
->>>>>>>>
->>>>>>>> Here is a bit more information what picture processors are:
->>>>>>>>
->>>>>>>> Embedded SoCs are known to have a number of hardware blocks, which perform
->>>>>>>> such operations. They can be used in paralel to the main GPU module to
->>>>>>>> offload CPU from processing grapics or video data. One of example use of
->>>>>>>> such modules is implementing video overlay, which usually requires color
->>>>>>>> space conversion from NV12 (or similar) to RGB32 color space and scaling to
->>>>>>>> target window size.
->>>>>>>>
->>>>>>>> The proposed API is heavily inspired by atomic KMS approach - it is also
->>>>>>>> based on DRM objects and their properties. A new DRM object is introduced:
->>>>>>>> picture processor (called pp for convenience). Such objects have a set of
->>>>>>>> standard DRM properties, which describes the operation to be performed by
->>>>>>>> respective hardware module. In typical case those properties are a source
->>>>>>>> fb id and rectangle (x, y, width, height) and destination fb id and
->>>>>>>> rectangle. Optionally a rotation property can be also specified if
->>>>>>>> supported by the given hardware. To perform an operation on image data,
->>>>>>>> userspace provides a set of properties and their values for given fbproc
->>>>>>>> object in a similar way as object and properties are provided for
->>>>>>>> performing atomic page flip / mode setting.
->>>>>>>>
->>>>>>>> The proposed API consists of the 3 new ioctls:
->>>>>>>> - DRM_IOCTL_EXYNOS_PP_GET_RESOURCES: to enumerate all available picture
->>>>>>>>   processors,
->>>>>>>> - DRM_IOCTL_EXYNOS_PP_GET: to query capabilities of given picture
->>>>>>>>   processor,
->>>>>>>> - DRM_IOCTL_EXYNOS_PP_COMMIT: to perform operation described by given
->>>>>>>>   property set.
->>>>>>>>
->>>>>>>> The proposed API is extensible. Drivers can attach their own, custom
->>>>>>>> properties to add support for more advanced picture processing (for example
->>>>>>>> blending).
->>>>>>>>
->>>>>>>> This proposal aims to replace Exynos DRM IPP (Image Post Processing)
->>>>>>>> subsystem. IPP API is over-engineered in general, but not really extensible
->>>>>>>> on the other side. It is also buggy, with significant design flaws - the
->>>>>>>> biggest issue is the fact that the API covers memory-2-memory picture
->>>>>>>> operations together with CRTC writeback and duplicating features, which
->>>>>>>> belongs to video plane. Comparing with IPP subsystem, the PP framework is
->>>>>>>> smaller (1807 vs 778 lines) and allows driver simplification (Exynos
->>>>>>>> rotator driver smaller by over 200 lines).
->>>>>>> This seems to be the kind of hardware that is typically supported by V4L2.
->>>>>>> Stupid question, why DRM ?
->>>>>>
->>>>>> Let me elaborate a bit on the reasons for implementing it in Exynos DRM:
->>>>>>
->>>>>> 1. we want to replace existing Exynos IPP subsystem:
->>>>>>  - it is used only in some internal/vendor trees, not in open-source
->>>>>>  - we want it to have sane and potentially extensible userspace API
->>>>>>  - but we don't want to loose its functionality
->>>>>>
->>>>>> 2. we want to have simple API for performing single image processing
->>>>>> operation:
->>>>>>  - typically it will be used by compositing window manager, this means that
->>>>>>    some parameters of the processing might change on each vblank (like
->>>>>>    destination rectangle for example). This api allows such change on each
->>>>>>    operation without any additional cost. V4L2 requires to reinitialize
->>>>>>    queues with new configuration on such change, what means that a bunch of
->>>>>>    ioctls has to be called.
->>>>>
->>>>> What do you mean by re-initialising the queue? Format, buffers or something
->>>>> else?
->>>>>
->>>>> If you need a larger buffer than what you have already allocated, you'll
->>>>> need to re-allocate, V4L2 or not.
->>>>>
->>>>> We also do lack a way to destroy individual buffers in V4L2. It'd be up to
->>>>> implementing that and some work in videobuf2.
->>>>>
->>>>> Another thing is that V4L2 is very stream oriented. For most devices that's
->>>>> fine as a lot of the parameters are not changeable during streaming,
->>>>> especially if the pipeline is handled by multiple drivers. That said, for
->>>>> devices that process data from memory to memory performing changes in the
->>>>> media bus formats and pipeline configuration is not very efficient
->>>>> currently, largely for the same reason.
->>>>>
->>>>> The request API that people have been working for a bit different use cases
->>>>> isn't in mainline yet. It would allow more efficient per-request
->>>>> configuration than what is currently possible, but it has turned out to be
->>>>> far from trivial to implement.
->>>>>
->>>>>>  - validating processing parameters in V4l2 API is really complicated,
->>>>>>    because the parameters (format, src&dest rectangles, rotation) are being
->>>>>>    set incrementally, so we have to either allow some impossible,
->>>>>> transitional
->>>>>>    configurations or complicate the configuration steps even more (like
->>>>>>    calling some ioctls multiple times for both input and output). In the end
->>>>>>    all parameters have to be again validated just before performing the
->>>>>>    operation.
->>>>>
->>>>> You have to validate the parameters in any case. In a MC pipeline this takes
->>>>> place when the stream is started.
->>>>>
->>>>>>
->>>>>> 3. generic approach (to add it to DRM core) has been rejected:
->>>>>> http://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg146286.html
->>>>>
->>>>> For GPUs I generally understand the reasoning: there's a very limited number
->>>>> of users of this API --- primarily because it's not an application
->>>>> interface.
->>>>>
->>>>> If you have a device that however falls under the scope of V4L2 (at least
->>>>> API-wise), does this continue to be the case? Will there be only one or two
->>>>> (or so) users for this API? Is it the case here?
->>>>>
->>>>> Using a device specific interface definitely has some benefits: there's no
->>>>> need to think how would you generalise the interface for other similar
->>>>> devices. There's no need to consider backwards compatibility as it's not a
->>>>> requirement. The drawback is that the applications that need to support
->>>>> similar devices will bear the burden of having to support different APIs.
->>>>>
->>>>> I don't mean to say that you should ram whatever under V4L2 / MC
->>>>> independently of how unworkable that might be, but there are also clear
->>>>> advantages in using a standardised interface such as V4L2.
->>>>>
->>>>> V4L2 has a long history behind it and if it was designed today, I bet it
->>>>> would look quite different from what it is now.
->>>>
->>>> It's true. There is definitely a benefit with V4L2 because V4L2 provides Linux standard ABI - for DRM as of now not.
->>>>
->>>> However, I think that is a only benefit we could get through V4L2. Using V4L2 makes software stack of Platform to be complicated - We have to open video device node and card device node to display a image on the screen scaling or converting color space of the image and also we need to export DMA buffer from one side and import it to other side using DMABUF.
->>>>
->>>> It may not related to this but even V4L2 has performance problem - every QBUF/DQBUF requests performs mapping/unmapping DMA buffer you already know this. :)
->>>>
->>>> In addition, recently Display subsystems on ARM SoC tend to include pre/post processing hardware in Display controller - OMAP, Exynos8895 and MSM as long as I know.
->>>>
->>>
->>> I agree with many of the arguments given by Inki above and earlier by
->>> Marek. However, they apply to already existing V4L2 implementation,
->>> not V4L2 as the idea in general, and I believe a comparison against a
->>> complete new API that doesn't even exist in the kernel tree and
->>> userspace yet (only in terms of patches on the list) is not fair.
->>
->> Below is a user space who uses Exynos DRM post processor driver, IPP driver.
->> https://review.tizen.org/git/?p=platform/adaptation/samsung_exynos/libtdm-exynos.git;a=blob;f=src/tdm_exynos_pp.c;h=db20e6f226d313672d1d468e06d80526ea30121c;hb=refs/heads/tizen
->>
-> 
-> Right, but the API is really Exynos-specific, while V4L2 is designed
-> from the start as a generic one and maintained as such.
-
-As I mentioned before, I think this is only benefit we could get through V4L2.
-
-> 
->> Marek patch series is just a new version of this driver which is specific to Exynos DRM. Marek is trying to enhance this driver.
->> Ps. other DRM drivers in mainline already have such or similar API.
-> 
-> This kind of contradicts with response Marek received from DRM
-> community about his proposal. Which drivers in particular you have in
-> mind?
-
-You can check vmw_overlay_ioctl of vmwgfx driver and intel_overlay_put_image_ioctl of i915 driver. These was all I could find in mainline.
-Seems the boundaries of whether we have to implement pre/post post processing mem2mem driver in V4L2 or DRM are really vague.
-
-
-Thanks,
-Inki Dae
-
-> 
->>
->> We will also open the user space who uses new API later.
-> 
-> There is also already user space which uses V4L2 for this and V4L2
-> drivers for hardware similar to the one targeted by Marek's proposal,
-> including GStreamer support and iMX6 devices that Nicolas mentioned
-> before.
-> 
-> Best regards,
-> Tomasz
-> 
->>
->>
->> Thanks,
->> Inki Dae
->>
->>>
->>> I strongly (if that's of any value) stand on Sakari's side and also
->>> agree with DRM maintainers. V4L2 is already there, provides a general
->>> interface for the userspace and already support the kind of devices
->>> Marek mention. Sure, it might have several issues, but please give me
->>> an example of a subsystem/interface/code that doesn't have any.
->>> Instead of taking the easy (for short term) path, with a bit more
->>> effort we can get something than in long run should end up much
->>> better.
->>>
->>> Best regards,
->>> Tomasz
->>>
->>>>
->>>> Thanks,
->>>> Inki Dae
->>>>
->>>>>
->>>>>>
->>>>>> 4. this api can be considered as extended 'blit' operation, other DRM
->>>>>> drivers
->>>>>>    (MGA, R128, VIA) already have ioctls for such operation, so there is also
->>>>>>    place in DRM for it
->>>>>
->>>>> Added LMML to cc.
->>>>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>>
->>>
-> 
-> 
-> 
+CgoyMDE364WEIDA17JuUIDEw7J28IDE2OjU17JeQIERhbmllbCBWZXR0ZXIg7J20KOqwgCkg7JO0
+IOq4gDoKPiBPbiBXZWQsIE1heSAxMCwgMjAxNyBhdCAwMzoyNzowMlBNICswOTAwLCBJbmtpIERh
+ZSB3cm90ZToKPj4gSGkgVG9tYXN6LAo+Pgo+PiAyMDE364WEIDA17JuUIDEw7J28IDE0OjM47JeQ
+IFRvbWFzeiBGaWdhIOydtCjqsIApIOyTtCDquIA6Cj4+PiBIaSBFdmVyeW9uZSwKPj4+Cj4+PiBP
+biBXZWQsIE1heSAxMCwgMjAxNyBhdCA5OjI0IEFNLCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3Vu
+Zy5jb20+IHdyb3RlOgo+Pj4+Cj4+Pj4KPj4+PiAyMDE364WEIDA07JuUIDI27J28IDA3OjIx7JeQ
+IFNha2FyaSBBaWx1cyDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4+PiBIaSBNYXJlaywKPj4+Pj4KPj4+
+Pj4gT24gVGh1LCBBcHIgMjAsIDIwMTcgYXQgMDE6MjM6MDlQTSArMDIwMCwgTWFyZWsgU3p5cHJv
+d3NraSB3cm90ZToKPj4+Pj4+IEhpIExhdXJlbnQsCj4+Pj4+Pgo+Pj4+Pj4gT24gMjAxNy0wNC0y
+MCAxMjoyNSwgTGF1cmVudCBQaW5jaGFydCB3cm90ZToKPj4+Pj4+PiBIaSBNYXJlaywKPj4+Pj4+
+Pgo+Pj4+Pj4+IChDQydpbmcgU2FrYXJpIEFpbHVzKQo+Pj4+Pj4+Cj4+Pj4+Pj4gVGhhbmsgeW91
+IGZvciB0aGUgcGF0Y2hlcy4KPj4+Pj4+Pgo+Pj4+Pj4+IE9uIFRodXJzZGF5IDIwIEFwciAyMDE3
+IDExOjEzOjM2IE1hcmVrIFN6eXByb3dza2kgd3JvdGU6Cj4+Pj4+Pj4+IERlYXIgYWxsLAo+Pj4+
+Pj4+Pgo+Pj4+Pj4+PiBUaGlzIGlzIGFuIHVwZGF0ZWQgcHJvcG9zYWwgZm9yIGV4dGVuZGluZyBF
+WFlOT1MgRFJNIEFQSSB3aXRoIGdlbmVyaWMKPj4+Pj4+Pj4gc3VwcG9ydCBmb3IgaGFyZHdhcmUg
+bW9kdWxlcywgd2hpY2ggY2FuIGJlIHVzZWQgZm9yIHByb2Nlc3NpbmcgaW1hZ2UgZGF0YQo+Pj4+
+Pj4+ID5mcm9tIHRoZSBvbmUgbWVtb3J5IGJ1ZmZlciB0byBhbm90aGVyLiBUeXBpY2FsIG1lbW9y
+eS10by1tZW1vcnkgb3BlcmF0aW9ucwo+Pj4+Pj4+PiBhcmU6IHJvdGF0aW9uLCBzY2FsaW5nLCBj
+b2xvdXIgc3BhY2UgY29udmVyc2lvbiBvciBtaXggb2YgdGhlbS4gVGhpcyBpcyBhCj4+Pj4+Pj4+
+IGZvbGxvdy11cCBvZiBteSBwcmV2aW91cyBwcm9wb3NhbCAiW1JGQyAwLzJdIE5ldyBmZWF0dXJl
+OiBGcmFtZWJ1ZmZlcgo+Pj4+Pj4+PiBwcm9jZXNzb3JzIiwgd2hpY2ggaGFzIGJlZW4gcmVqZWN0
+ZWQgYXMgIm5vdCByZWFsbHkgbmVlZGVkIGluIHRoZSBEUk0KPj4+Pj4+Pj4gY29yZSI6Cj4+Pj4+
+Pj4+IGh0dHA6Ly93d3cubWFpbC1hcmNoaXZlLmNvbS9kcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21zZzE0NjI4Ni5odG1sCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IEluIHRoaXMgcHJvcG9zYWwg
+SSBtb3ZlZCBhbGwgdGhlIGNvZGUgdG8gRXh5bm9zIERSTSBkcml2ZXIsIHNvIG5vdyB0aGlzCj4+
+Pj4+Pj4+IHdpbGwgYmUgc3BlY2lmaWMgb25seSB0byBFeHlub3MgRFJNLiBJJ3ZlIGFsc28gY2hh
+bmdlZCB0aGUgbmFtZSBmcm9tCj4+Pj4+Pj4+IGZyYW1lYnVmZmVyIHByb2Nlc3NvciAoZmJwcm9j
+KSB0byBwaWN0dXJlIHByb2Nlc3NvciAocHApIHRvIGF2b2lkIGNvbmZ1c2lvbgo+Pj4+Pj4+PiB3
+aXRoIGZiZGV2IEFQSS4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gSGVyZSBpcyBhIGJpdCBtb3JlIGluZm9y
+bWF0aW9uIHdoYXQgcGljdHVyZSBwcm9jZXNzb3JzIGFyZToKPj4+Pj4+Pj4KPj4+Pj4+Pj4gRW1i
+ZWRkZWQgU29DcyBhcmUga25vd24gdG8gaGF2ZSBhIG51bWJlciBvZiBoYXJkd2FyZSBibG9ja3Ms
+IHdoaWNoIHBlcmZvcm0KPj4+Pj4+Pj4gc3VjaCBvcGVyYXRpb25zLiBUaGV5IGNhbiBiZSB1c2Vk
+IGluIHBhcmFsZWwgdG8gdGhlIG1haW4gR1BVIG1vZHVsZSB0bwo+Pj4+Pj4+PiBvZmZsb2FkIENQ
+VSBmcm9tIHByb2Nlc3NpbmcgZ3JhcGljcyBvciB2aWRlbyBkYXRhLiBPbmUgb2YgZXhhbXBsZSB1
+c2Ugb2YKPj4+Pj4+Pj4gc3VjaCBtb2R1bGVzIGlzIGltcGxlbWVudGluZyB2aWRlbyBvdmVybGF5
+LCB3aGljaCB1c3VhbGx5IHJlcXVpcmVzIGNvbG9yCj4+Pj4+Pj4+IHNwYWNlIGNvbnZlcnNpb24g
+ZnJvbSBOVjEyIChvciBzaW1pbGFyKSB0byBSR0IzMiBjb2xvciBzcGFjZSBhbmQgc2NhbGluZyB0
+bwo+Pj4+Pj4+PiB0YXJnZXQgd2luZG93IHNpemUuCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IFRoZSBwcm9w
+b3NlZCBBUEkgaXMgaGVhdmlseSBpbnNwaXJlZCBieSBhdG9taWMgS01TIGFwcHJvYWNoIC0gaXQg
+aXMgYWxzbwo+Pj4+Pj4+PiBiYXNlZCBvbiBEUk0gb2JqZWN0cyBhbmQgdGhlaXIgcHJvcGVydGll
+cy4gQSBuZXcgRFJNIG9iamVjdCBpcyBpbnRyb2R1Y2VkOgo+Pj4+Pj4+PiBwaWN0dXJlIHByb2Nl
+c3NvciAoY2FsbGVkIHBwIGZvciBjb252ZW5pZW5jZSkuIFN1Y2ggb2JqZWN0cyBoYXZlIGEgc2V0
+IG9mCj4+Pj4+Pj4+IHN0YW5kYXJkIERSTSBwcm9wZXJ0aWVzLCB3aGljaCBkZXNjcmliZXMgdGhl
+IG9wZXJhdGlvbiB0byBiZSBwZXJmb3JtZWQgYnkKPj4+Pj4+Pj4gcmVzcGVjdGl2ZSBoYXJkd2Fy
+ZSBtb2R1bGUuIEluIHR5cGljYWwgY2FzZSB0aG9zZSBwcm9wZXJ0aWVzIGFyZSBhIHNvdXJjZQo+
+Pj4+Pj4+PiBmYiBpZCBhbmQgcmVjdGFuZ2xlICh4LCB5LCB3aWR0aCwgaGVpZ2h0KSBhbmQgZGVz
+dGluYXRpb24gZmIgaWQgYW5kCj4+Pj4+Pj4+IHJlY3RhbmdsZS4gT3B0aW9uYWxseSBhIHJvdGF0
+aW9uIHByb3BlcnR5IGNhbiBiZSBhbHNvIHNwZWNpZmllZCBpZgo+Pj4+Pj4+PiBzdXBwb3J0ZWQg
+YnkgdGhlIGdpdmVuIGhhcmR3YXJlLiBUbyBwZXJmb3JtIGFuIG9wZXJhdGlvbiBvbiBpbWFnZSBk
+YXRhLAo+Pj4+Pj4+PiB1c2Vyc3BhY2UgcHJvdmlkZXMgYSBzZXQgb2YgcHJvcGVydGllcyBhbmQg
+dGhlaXIgdmFsdWVzIGZvciBnaXZlbiBmYnByb2MKPj4+Pj4+Pj4gb2JqZWN0IGluIGEgc2ltaWxh
+ciB3YXkgYXMgb2JqZWN0IGFuZCBwcm9wZXJ0aWVzIGFyZSBwcm92aWRlZCBmb3IKPj4+Pj4+Pj4g
+cGVyZm9ybWluZyBhdG9taWMgcGFnZSBmbGlwIC8gbW9kZSBzZXR0aW5nLgo+Pj4+Pj4+Pgo+Pj4+
+Pj4+PiBUaGUgcHJvcG9zZWQgQVBJIGNvbnNpc3RzIG9mIHRoZSAzIG5ldyBpb2N0bHM6Cj4+Pj4+
+Pj4+IC0gRFJNX0lPQ1RMX0VYWU5PU19QUF9HRVRfUkVTT1VSQ0VTOiB0byBlbnVtZXJhdGUgYWxs
+IGF2YWlsYWJsZSBwaWN0dXJlCj4+Pj4+Pj4+ICAgcHJvY2Vzc29ycywKPj4+Pj4+Pj4gLSBEUk1f
+SU9DVExfRVhZTk9TX1BQX0dFVDogdG8gcXVlcnkgY2FwYWJpbGl0aWVzIG9mIGdpdmVuIHBpY3R1
+cmUKPj4+Pj4+Pj4gICBwcm9jZXNzb3IsCj4+Pj4+Pj4+IC0gRFJNX0lPQ1RMX0VYWU5PU19QUF9D
+T01NSVQ6IHRvIHBlcmZvcm0gb3BlcmF0aW9uIGRlc2NyaWJlZCBieSBnaXZlbgo+Pj4+Pj4+PiAg
+IHByb3BlcnR5IHNldC4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gVGhlIHByb3Bvc2VkIEFQSSBpcyBleHRl
+bnNpYmxlLiBEcml2ZXJzIGNhbiBhdHRhY2ggdGhlaXIgb3duLCBjdXN0b20KPj4+Pj4+Pj4gcHJv
+cGVydGllcyB0byBhZGQgc3VwcG9ydCBmb3IgbW9yZSBhZHZhbmNlZCBwaWN0dXJlIHByb2Nlc3Np
+bmcgKGZvciBleGFtcGxlCj4+Pj4+Pj4+IGJsZW5kaW5nKS4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gVGhp
+cyBwcm9wb3NhbCBhaW1zIHRvIHJlcGxhY2UgRXh5bm9zIERSTSBJUFAgKEltYWdlIFBvc3QgUHJv
+Y2Vzc2luZykKPj4+Pj4+Pj4gc3Vic3lzdGVtLiBJUFAgQVBJIGlzIG92ZXItZW5naW5lZXJlZCBp
+biBnZW5lcmFsLCBidXQgbm90IHJlYWxseSBleHRlbnNpYmxlCj4+Pj4+Pj4+IG9uIHRoZSBvdGhl
+ciBzaWRlLiBJdCBpcyBhbHNvIGJ1Z2d5LCB3aXRoIHNpZ25pZmljYW50IGRlc2lnbiBmbGF3cyAt
+IHRoZQo+Pj4+Pj4+PiBiaWdnZXN0IGlzc3VlIGlzIHRoZSBmYWN0IHRoYXQgdGhlIEFQSSBjb3Zl
+cnMgbWVtb3J5LTItbWVtb3J5IHBpY3R1cmUKPj4+Pj4+Pj4gb3BlcmF0aW9ucyB0b2dldGhlciB3
+aXRoIENSVEMgd3JpdGViYWNrIGFuZCBkdXBsaWNhdGluZyBmZWF0dXJlcywgd2hpY2gKPj4+Pj4+
+Pj4gYmVsb25ncyB0byB2aWRlbyBwbGFuZS4gQ29tcGFyaW5nIHdpdGggSVBQIHN1YnN5c3RlbSwg
+dGhlIFBQIGZyYW1ld29yayBpcwo+Pj4+Pj4+PiBzbWFsbGVyICgxODA3IHZzIDc3OCBsaW5lcykg
+YW5kIGFsbG93cyBkcml2ZXIgc2ltcGxpZmljYXRpb24gKEV4eW5vcwo+Pj4+Pj4+PiByb3RhdG9y
+IGRyaXZlciBzbWFsbGVyIGJ5IG92ZXIgMjAwIGxpbmVzKS4KPj4+Pj4+PiBUaGlzIHNlZW1zIHRv
+IGJlIHRoZSBraW5kIG9mIGhhcmR3YXJlIHRoYXQgaXMgdHlwaWNhbGx5IHN1cHBvcnRlZCBieSBW
+NEwyLgo+Pj4+Pj4+IFN0dXBpZCBxdWVzdGlvbiwgd2h5IERSTSA/Cj4+Pj4+Pgo+Pj4+Pj4gTGV0
+IG1lIGVsYWJvcmF0ZSBhIGJpdCBvbiB0aGUgcmVhc29ucyBmb3IgaW1wbGVtZW50aW5nIGl0IGlu
+IEV4eW5vcyBEUk06Cj4+Pj4+Pgo+Pj4+Pj4gMS4gd2Ugd2FudCB0byByZXBsYWNlIGV4aXN0aW5n
+IEV4eW5vcyBJUFAgc3Vic3lzdGVtOgo+Pj4+Pj4gIC0gaXQgaXMgdXNlZCBvbmx5IGluIHNvbWUg
+aW50ZXJuYWwvdmVuZG9yIHRyZWVzLCBub3QgaW4gb3Blbi1zb3VyY2UKPj4+Pj4+ICAtIHdlIHdh
+bnQgaXQgdG8gaGF2ZSBzYW5lIGFuZCBwb3RlbnRpYWxseSBleHRlbnNpYmxlIHVzZXJzcGFjZSBB
+UEkKPj4+Pj4+ICAtIGJ1dCB3ZSBkb24ndCB3YW50IHRvIGxvb3NlIGl0cyBmdW5jdGlvbmFsaXR5
+Cj4+Pj4+Pgo+Pj4+Pj4gMi4gd2Ugd2FudCB0byBoYXZlIHNpbXBsZSBBUEkgZm9yIHBlcmZvcm1p
+bmcgc2luZ2xlIGltYWdlIHByb2Nlc3NpbmcKPj4+Pj4+IG9wZXJhdGlvbjoKPj4+Pj4+ICAtIHR5
+cGljYWxseSBpdCB3aWxsIGJlIHVzZWQgYnkgY29tcG9zaXRpbmcgd2luZG93IG1hbmFnZXIsIHRo
+aXMgbWVhbnMgdGhhdAo+Pj4+Pj4gICAgc29tZSBwYXJhbWV0ZXJzIG9mIHRoZSBwcm9jZXNzaW5n
+IG1pZ2h0IGNoYW5nZSBvbiBlYWNoIHZibGFuayAobGlrZQo+Pj4+Pj4gICAgZGVzdGluYXRpb24g
+cmVjdGFuZ2xlIGZvciBleGFtcGxlKS4gVGhpcyBhcGkgYWxsb3dzIHN1Y2ggY2hhbmdlIG9uIGVh
+Y2gKPj4+Pj4+ICAgIG9wZXJhdGlvbiB3aXRob3V0IGFueSBhZGRpdGlvbmFsIGNvc3QuIFY0TDIg
+cmVxdWlyZXMgdG8gcmVpbml0aWFsaXplCj4+Pj4+PiAgICBxdWV1ZXMgd2l0aCBuZXcgY29uZmln
+dXJhdGlvbiBvbiBzdWNoIGNoYW5nZSwgd2hhdCBtZWFucyB0aGF0IGEgYnVuY2ggb2YKPj4+Pj4+
+ICAgIGlvY3RscyBoYXMgdG8gYmUgY2FsbGVkLgo+Pj4+Pgo+Pj4+PiBXaGF0IGRvIHlvdSBtZWFu
+IGJ5IHJlLWluaXRpYWxpc2luZyB0aGUgcXVldWU/IEZvcm1hdCwgYnVmZmVycyBvciBzb21ldGhp
+bmcKPj4+Pj4gZWxzZT8KPj4+Pj4KPj4+Pj4gSWYgeW91IG5lZWQgYSBsYXJnZXIgYnVmZmVyIHRo
+YW4gd2hhdCB5b3UgaGF2ZSBhbHJlYWR5IGFsbG9jYXRlZCwgeW91J2xsCj4+Pj4+IG5lZWQgdG8g
+cmUtYWxsb2NhdGUsIFY0TDIgb3Igbm90Lgo+Pj4+Pgo+Pj4+PiBXZSBhbHNvIGRvIGxhY2sgYSB3
+YXkgdG8gZGVzdHJveSBpbmRpdmlkdWFsIGJ1ZmZlcnMgaW4gVjRMMi4gSXQnZCBiZSB1cCB0bwo+
+Pj4+PiBpbXBsZW1lbnRpbmcgdGhhdCBhbmQgc29tZSB3b3JrIGluIHZpZGVvYnVmMi4KPj4+Pj4K
+Pj4+Pj4gQW5vdGhlciB0aGluZyBpcyB0aGF0IFY0TDIgaXMgdmVyeSBzdHJlYW0gb3JpZW50ZWQu
+IEZvciBtb3N0IGRldmljZXMgdGhhdCdzCj4+Pj4+IGZpbmUgYXMgYSBsb3Qgb2YgdGhlIHBhcmFt
+ZXRlcnMgYXJlIG5vdCBjaGFuZ2VhYmxlIGR1cmluZyBzdHJlYW1pbmcsCj4+Pj4+IGVzcGVjaWFs
+bHkgaWYgdGhlIHBpcGVsaW5lIGlzIGhhbmRsZWQgYnkgbXVsdGlwbGUgZHJpdmVycy4gVGhhdCBz
+YWlkLCBmb3IKPj4+Pj4gZGV2aWNlcyB0aGF0IHByb2Nlc3MgZGF0YSBmcm9tIG1lbW9yeSB0byBt
+ZW1vcnkgcGVyZm9ybWluZyBjaGFuZ2VzIGluIHRoZQo+Pj4+PiBtZWRpYSBidXMgZm9ybWF0cyBh
+bmQgcGlwZWxpbmUgY29uZmlndXJhdGlvbiBpcyBub3QgdmVyeSBlZmZpY2llbnQKPj4+Pj4gY3Vy
+cmVudGx5LCBsYXJnZWx5IGZvciB0aGUgc2FtZSByZWFzb24uCj4+Pj4+Cj4+Pj4+IFRoZSByZXF1
+ZXN0IEFQSSB0aGF0IHBlb3BsZSBoYXZlIGJlZW4gd29ya2luZyBmb3IgYSBiaXQgZGlmZmVyZW50
+IHVzZSBjYXNlcwo+Pj4+PiBpc24ndCBpbiBtYWlubGluZSB5ZXQuIEl0IHdvdWxkIGFsbG93IG1v
+cmUgZWZmaWNpZW50IHBlci1yZXF1ZXN0Cj4+Pj4+IGNvbmZpZ3VyYXRpb24gdGhhbiB3aGF0IGlz
+IGN1cnJlbnRseSBwb3NzaWJsZSwgYnV0IGl0IGhhcyB0dXJuZWQgb3V0IHRvIGJlCj4+Pj4+IGZh
+ciBmcm9tIHRyaXZpYWwgdG8gaW1wbGVtZW50Lgo+Pj4+Pgo+Pj4+Pj4gIC0gdmFsaWRhdGluZyBw
+cm9jZXNzaW5nIHBhcmFtZXRlcnMgaW4gVjRsMiBBUEkgaXMgcmVhbGx5IGNvbXBsaWNhdGVkLAo+
+Pj4+Pj4gICAgYmVjYXVzZSB0aGUgcGFyYW1ldGVycyAoZm9ybWF0LCBzcmMmZGVzdCByZWN0YW5n
+bGVzLCByb3RhdGlvbikgYXJlIGJlaW5nCj4+Pj4+PiAgICBzZXQgaW5jcmVtZW50YWxseSwgc28g
+d2UgaGF2ZSB0byBlaXRoZXIgYWxsb3cgc29tZSBpbXBvc3NpYmxlLAo+Pj4+Pj4gdHJhbnNpdGlv
+bmFsCj4+Pj4+PiAgICBjb25maWd1cmF0aW9ucyBvciBjb21wbGljYXRlIHRoZSBjb25maWd1cmF0
+aW9uIHN0ZXBzIGV2ZW4gbW9yZSAobGlrZQo+Pj4+Pj4gICAgY2FsbGluZyBzb21lIGlvY3RscyBt
+dWx0aXBsZSB0aW1lcyBmb3IgYm90aCBpbnB1dCBhbmQgb3V0cHV0KS4gSW4gdGhlIGVuZAo+Pj4+
+Pj4gICAgYWxsIHBhcmFtZXRlcnMgaGF2ZSB0byBiZSBhZ2FpbiB2YWxpZGF0ZWQganVzdCBiZWZv
+cmUgcGVyZm9ybWluZyB0aGUKPj4+Pj4+ICAgIG9wZXJhdGlvbi4KPj4+Pj4KPj4+Pj4gWW91IGhh
+dmUgdG8gdmFsaWRhdGUgdGhlIHBhcmFtZXRlcnMgaW4gYW55IGNhc2UuIEluIGEgTUMgcGlwZWxp
+bmUgdGhpcyB0YWtlcwo+Pj4+PiBwbGFjZSB3aGVuIHRoZSBzdHJlYW0gaXMgc3RhcnRlZC4KPj4+
+Pj4KPj4+Pj4+Cj4+Pj4+PiAzLiBnZW5lcmljIGFwcHJvYWNoICh0byBhZGQgaXQgdG8gRFJNIGNv
+cmUpIGhhcyBiZWVuIHJlamVjdGVkOgo+Pj4+Pj4gaHR0cDovL3d3dy5tYWlsLWFyY2hpdmUuY29t
+L2RyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcvbXNnMTQ2Mjg2Lmh0bWwKPj4+Pj4KPj4+
+Pj4gRm9yIEdQVXMgSSBnZW5lcmFsbHkgdW5kZXJzdGFuZCB0aGUgcmVhc29uaW5nOiB0aGVyZSdz
+IGEgdmVyeSBsaW1pdGVkIG51bWJlcgo+Pj4+PiBvZiB1c2VycyBvZiB0aGlzIEFQSSAtLS0gcHJp
+bWFyaWx5IGJlY2F1c2UgaXQncyBub3QgYW4gYXBwbGljYXRpb24KPj4+Pj4gaW50ZXJmYWNlLgo+
+Pj4+Pgo+Pj4+PiBJZiB5b3UgaGF2ZSBhIGRldmljZSB0aGF0IGhvd2V2ZXIgZmFsbHMgdW5kZXIg
+dGhlIHNjb3BlIG9mIFY0TDIgKGF0IGxlYXN0Cj4+Pj4+IEFQSS13aXNlKSwgZG9lcyB0aGlzIGNv
+bnRpbnVlIHRvIGJlIHRoZSBjYXNlPyBXaWxsIHRoZXJlIGJlIG9ubHkgb25lIG9yIHR3bwo+Pj4+
+PiAob3Igc28pIHVzZXJzIGZvciB0aGlzIEFQST8gSXMgaXQgdGhlIGNhc2UgaGVyZT8KPj4+Pj4K
+Pj4+Pj4gVXNpbmcgYSBkZXZpY2Ugc3BlY2lmaWMgaW50ZXJmYWNlIGRlZmluaXRlbHkgaGFzIHNv
+bWUgYmVuZWZpdHM6IHRoZXJlJ3Mgbm8KPj4+Pj4gbmVlZCB0byB0aGluayBob3cgd291bGQgeW91
+IGdlbmVyYWxpc2UgdGhlIGludGVyZmFjZSBmb3Igb3RoZXIgc2ltaWxhcgo+Pj4+PiBkZXZpY2Vz
+LiBUaGVyZSdzIG5vIG5lZWQgdG8gY29uc2lkZXIgYmFja3dhcmRzIGNvbXBhdGliaWxpdHkgYXMg
+aXQncyBub3QgYQo+Pj4+PiByZXF1aXJlbWVudC4gVGhlIGRyYXdiYWNrIGlzIHRoYXQgdGhlIGFw
+cGxpY2F0aW9ucyB0aGF0IG5lZWQgdG8gc3VwcG9ydAo+Pj4+PiBzaW1pbGFyIGRldmljZXMgd2ls
+bCBiZWFyIHRoZSBidXJkZW4gb2YgaGF2aW5nIHRvIHN1cHBvcnQgZGlmZmVyZW50IEFQSXMuCj4+
+Pj4+Cj4+Pj4+IEkgZG9uJ3QgbWVhbiB0byBzYXkgdGhhdCB5b3Ugc2hvdWxkIHJhbSB3aGF0ZXZl
+ciB1bmRlciBWNEwyIC8gTUMKPj4+Pj4gaW5kZXBlbmRlbnRseSBvZiBob3cgdW53b3JrYWJsZSB0
+aGF0IG1pZ2h0IGJlLCBidXQgdGhlcmUgYXJlIGFsc28gY2xlYXIKPj4+Pj4gYWR2YW50YWdlcyBp
+biB1c2luZyBhIHN0YW5kYXJkaXNlZCBpbnRlcmZhY2Ugc3VjaCBhcyBWNEwyLgo+Pj4+Pgo+Pj4+
+PiBWNEwyIGhhcyBhIGxvbmcgaGlzdG9yeSBiZWhpbmQgaXQgYW5kIGlmIGl0IHdhcyBkZXNpZ25l
+ZCB0b2RheSwgSSBiZXQgaXQKPj4+Pj4gd291bGQgbG9vayBxdWl0ZSBkaWZmZXJlbnQgZnJvbSB3
+aGF0IGl0IGlzIG5vdy4KPj4+Pgo+Pj4+IEl0J3MgdHJ1ZS4gVGhlcmUgaXMgZGVmaW5pdGVseSBh
+IGJlbmVmaXQgd2l0aCBWNEwyIGJlY2F1c2UgVjRMMiBwcm92aWRlcyBMaW51eCBzdGFuZGFyZCBB
+QkkgLSBmb3IgRFJNIGFzIG9mIG5vdyBub3QuCj4+Pj4KPj4+PiBIb3dldmVyLCBJIHRoaW5rIHRo
+YXQgaXMgYSBvbmx5IGJlbmVmaXQgd2UgY291bGQgZ2V0IHRocm91Z2ggVjRMMi4gVXNpbmcgVjRM
+MiBtYWtlcyBzb2Z0d2FyZSBzdGFjayBvZiBQbGF0Zm9ybSB0byBiZSBjb21wbGljYXRlZCAtIFdl
+IGhhdmUgdG8gb3BlbiB2aWRlbyBkZXZpY2Ugbm9kZSBhbmQgY2FyZCBkZXZpY2Ugbm9kZSB0byBk
+aXNwbGF5IGEgaW1hZ2Ugb24gdGhlIHNjcmVlbiBzY2FsaW5nIG9yIGNvbnZlcnRpbmcgY29sb3Ig
+c3BhY2Ugb2YgdGhlIGltYWdlIGFuZCBhbHNvIHdlIG5lZWQgdG8gZXhwb3J0IERNQSBidWZmZXIg
+ZnJvbSBvbmUgc2lkZSBhbmQgaW1wb3J0IGl0IHRvIG90aGVyIHNpZGUgdXNpbmcgRE1BQlVGLgo+
+Pj4+Cj4+Pj4gSXQgbWF5IG5vdCByZWxhdGVkIHRvIHRoaXMgYnV0IGV2ZW4gVjRMMiBoYXMgcGVy
+Zm9ybWFuY2UgcHJvYmxlbSAtIGV2ZXJ5IFFCVUYvRFFCVUYgcmVxdWVzdHMgcGVyZm9ybXMgbWFw
+cGluZy91bm1hcHBpbmcgRE1BIGJ1ZmZlciB5b3UgYWxyZWFkeSBrbm93IHRoaXMuIDopCj4+Pj4K
+Pj4+PiBJbiBhZGRpdGlvbiwgcmVjZW50bHkgRGlzcGxheSBzdWJzeXN0ZW1zIG9uIEFSTSBTb0Mg
+dGVuZCB0byBpbmNsdWRlIHByZS9wb3N0IHByb2Nlc3NpbmcgaGFyZHdhcmUgaW4gRGlzcGxheSBj
+b250cm9sbGVyIC0gT01BUCwgRXh5bm9zODg5NSBhbmQgTVNNIGFzIGxvbmcgYXMgSSBrbm93Lgo+
+Pj4+Cj4+Pgo+Pj4gSSBhZ3JlZSB3aXRoIG1hbnkgb2YgdGhlIGFyZ3VtZW50cyBnaXZlbiBieSBJ
+bmtpIGFib3ZlIGFuZCBlYXJsaWVyIGJ5Cj4+PiBNYXJlay4gSG93ZXZlciwgdGhleSBhcHBseSB0
+byBhbHJlYWR5IGV4aXN0aW5nIFY0TDIgaW1wbGVtZW50YXRpb24sCj4+PiBub3QgVjRMMiBhcyB0
+aGUgaWRlYSBpbiBnZW5lcmFsLCBhbmQgSSBiZWxpZXZlIGEgY29tcGFyaXNvbiBhZ2FpbnN0IGEK
+Pj4+IGNvbXBsZXRlIG5ldyBBUEkgdGhhdCBkb2Vzbid0IGV2ZW4gZXhpc3QgaW4gdGhlIGtlcm5l
+bCB0cmVlIGFuZAo+Pj4gdXNlcnNwYWNlIHlldCAob25seSBpbiB0ZXJtcyBvZiBwYXRjaGVzIG9u
+IHRoZSBsaXN0KSBpcyBub3QgZmFpci4KPj4KPj4gQmVsb3cgaXMgYSB1c2VyIHNwYWNlIHdobyB1
+c2VzIEV4eW5vcyBEUk0gcG9zdCBwcm9jZXNzb3IgZHJpdmVyLCBJUFAgZHJpdmVyLgo+PiBodHRw
+czovL3Jldmlldy50aXplbi5vcmcvZ2l0Lz9wPXBsYXRmb3JtL2FkYXB0YXRpb24vc2Ftc3VuZ19l
+eHlub3MvbGlidGRtLWV4eW5vcy5naXQ7YT1ibG9iO2Y9c3JjL3RkbV9leHlub3NfcHAuYztoPWRi
+MjBlNmYyMjZkMzEzNjcyZDFkNDY4ZTA2ZDgwNTI2ZWEzMDEyMWM7aGI9cmVmcy9oZWFkcy90aXpl
+bgo+Pgo+PiBNYXJlayBwYXRjaCBzZXJpZXMgaXMganVzdCBhIG5ldyB2ZXJzaW9uIG9mIHRoaXMg
+ZHJpdmVyIHdoaWNoIGlzIHNwZWNpZmljIHRvIEV4eW5vcyBEUk0uIE1hcmVrIGlzIHRyeWluZyB0
+byBlbmhhbmNlIHRoaXMgZHJpdmVyLgo+PiBQcy4gb3RoZXIgRFJNIGRyaXZlcnMgaW4gbWFpbmxp
+bmUgYWxyZWFkeSBoYXZlIHN1Y2ggb3Igc2ltaWxhciBBUEkuCj4+Cj4+IFdlIHdpbGwgYWxzbyBv
+cGVuIHRoZSB1c2VyIHNwYWNlIHdobyB1c2VzIG5ldyBBUEkgbGF0ZXIuCj4gCj4gVGhvc2UgZHJp
+dmVycyBhcmUgZGlmZmVyZW50LCBiZWNhdXNlIHRoZXkganVzdCBleHBvc2UgYSBody1zcGVjaWZp
+YyBhYmkuCj4gTGlrZSB0aGUgY3VycmVudCBJUFAgaW50ZXJmYWNlcyBleHBvc2VkIGJ5IGRybS9l
+eHlub3MuCj4gCj4gSSB0aGluayB5b3UgaGF2ZSAyIG9wdGlvbnM6Cj4gLSBFeHRlbmQgdGhlIGN1
+cnJlbnQgSVBQIGludGVyZmFjZSBpbiBkcm0vZXh5bm9zIHdpdGggd2hhdGV2ZXIgbmV3IHBpeGVs
+Cj4gICBwcm9jZXNzb3IgbW9kZXMgeW91IHdhbnQuIE9mIGNvdXJzZSB0aGlzIHN0aWxsIG1lYW5z
+IHlvdSBuZWVkIHRvIGhhdmUKClllcywgdGhpcyBpcyBvbmx5IHRoaW5nIHdlIGNvdWxkIHNlbGVj
+dCBhcyBvZiBub3cuCgoKVGhhbmtzLApJbmtpIERhZQoKCj4gICB0aGUgdXNlcnNwYWNlIHNpZGUg
+b3Blbi1zb3VyY2UsIGJ1dCBvdGhlcndpc2UgaXQncyBhbGwgcHJpdmF0ZSB0byBleHlub3MKPiAg
+IGhhcmR3YXJlIGFuZCBzb2Z0d2FyZS4KPiAKPiAtIElmIHlvdSB3YW50IHNvbWV0aGluZyBzdGFu
+ZGFyZGl6ZWQgb3RvaCwgZ28gd2l0aCB2NGwyLiBBbmQgdGhlIGlzc3Vlcwo+ICAgeW91IHBvaW50
+IG91dCBpbiB2NGwyIGFyZW4ndCB1YXBpIGlzc3VlcywgYnV0IGltcGxlbWVudGF0aW9uIGRldGFp
+bHMgb2YKPiAgIHRoZSBjdXJyZW50IHZidWYgaGVscGVycywgd2hpY2ggY2FuIGJlIGZpeGVkLiBB
+dCBsZWFzdCB0aGF0J3MgbXkKPiAgIHVuZGVyc3RhbmRpbmcuIEFuZCBpdCBzaG91bGQgYmUgZmFp
+cmx5IGVhc3kgdG8gZml4IHRoYXQsIHNpbXBseSBzd2l0Y2gKPiAgIGZyb20gZG9pbmcgYSBtYXAv
+dW5tYXAgZm9yIGV2ZXJ5IHEvZGVxYnVmIHRvIGNhY2hpbmcgdGhlIG1hcHBpbmdzIGFuZAo+ICAg
+dXNlIHRoZSBzdHJlYW0gZG1hLWFwaSBpbnRlcmZhY2VzIHRvIG9ubHkgZG8gdGhlIGZsdXNoIChp
+ZiBuZWVkZWQgYXQKPiAgIGFsbCwgc2hvdWxkIHR1cm4gaW50byBhIG5vLW9wKSBvbiBxL2RlcWJ1
+Zi4KPiAKPiBUcnlpbmcgdG8gY29tZSB1cCB3aXRoIGEgZ2VuZXJpYyBkcm0gYXBpIGhhcyBpbW8g
+bm90IG11Y2ggY2hhbmNlIG9mCj4gZ2V0dGluZyBhY2NlcHRlZCBhbnl0aW1lIHNvb24gKHNpbmNl
+IGZvciB0aGUgc2ltcGxlIHBpeGVsIHByb2Nlc3Nvcgo+IHBpcGVsaW5lIGl0J3MganVzdCBkdXBs
+aWNhdGluZyB2NGwsIGFuZCBmb3Igc29tZXRoaW5nIG1vcmUgZ2VuZXJpYy9mYXN0ZXIKPiBhIGdl
+bmVyaWMgaW50ZXJmYWNlcyBpcyBhbHdhcyB0b28gc2xvdykuCj4gLURhbmllbAo+IApfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
