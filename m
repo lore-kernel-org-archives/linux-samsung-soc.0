@@ -1,94 +1,33 @@
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH v5 3/3] phy: Group vendor specific phy drivers
-Date: Fri, 12 May 2017 15:07:01 +0530
-Message-ID: <8143c6b8-aaac-557b-98c1-00c957f3fcb6@codeaurora.org>
-References: <1494485262-18995-1-git-send-email-vivek.gautam@codeaurora.org>
- <1494485262-18995-3-git-send-email-vivek.gautam@codeaurora.org>
- <5fe76bcc-5ff7-0bf1-7fdd-c141211d86dc@ti.com>
+From: "Thomas Credit Firm" <miorellana@salud.gob.sv>
+Subject: APPLY FOR YOUR URGENT LOAN AT 2%
+Date: Fri, 12 May 2017 11:53:56 +0100
+Message-ID: <20170512105410.0245F4807243__23775.0704320662$1494587165$gmane$org@mail.salud.gob.sv>
+Reply-To: thomascreditfirm@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5fe76bcc-5ff7-0bf1-7fdd-c141211d86dc@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Geert Uytterhoeven <geert+renesas@glider.be>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Viresh Kumar <viresh.kumar@linaro.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Stephen Boyd <stephen.boyd@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-msm@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-omap@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.salud.gob.sv ([190.5.143.2]:34356 "EHLO mail.salud.gob.sv"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932184AbdELLFv (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 12 May 2017 07:05:51 -0400
+Content-Description: Mail message body
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: receipt <miorellana@salud.gob.sv>
 
+* Do you need an urgent loan? We offer all kinds of loan
+* Very fast and urgent transfer to your bank account. 
+* Payment begins (6) months after you get the money in your bank account 
+* Low interest rates 2% 
+* Payment of long-term (1-30 years) duration 
+For more information and loan application form through the Contact now 
 
+E-mail:  Thomascreditfirm@gmail.com 
+Thomas B. Dawson 
+THOMAS CREDIT FIRM
 
-On 05/12/2017 02:15 PM, Kishon Vijay Abraham I wrote:
-> Hi Vivek,
->
-> On Thursday 11 May 2017 12:17 PM, Vivek Gautam wrote:
->> Adding vendor specific directories in phy to group
->> phy drivers under their respective vendor umbrella.
->>
->> Also updated the MAINTAINERS file to reflect the correct
->> directory structure for phy drivers.
->>
->> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->> Acked-by: Heiko Stuebner <heiko@sntech.de>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->> Reviewed-by: Jaehoon Chung <jh80.chung@samsung.com>
->> Cc: Kishon Vijay Abraham I <kishon@ti.com>
->> Cc: David S. Miller <davem@davemloft.net>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->> Cc: Guenter Roeck <linux@roeck-us.net>
->> Cc: Heiko Stuebner <heiko@sntech.de>
->> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
->> Cc: Chen-Yu Tsai <wens@csie.org>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Krzysztof Kozlowski <krzk@kernel.org>
->> Cc: Jaehoon Chung <jh80.chung@samsung.com>
->> Cc: Stephen Boyd <stephen.boyd@linaro.org>
->> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-arm-msm@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-omap@vger.kernel.org
->> Cc: linux-renesas-soc@vger.kernel.org
->> Cc: linux-rockchip@lists.infradead.org
->> Cc: linux-samsung-soc@vger.kernel.org
->> Cc: linux-usb@vger.kernel.org
->> ---
->>
->> Changes since v4:
->>   - Reprepared the patch based on latest torvalds/master.
->>   - Added new directory for amlogic, since there's a new patch [1]
->>     coming in for amlogic platforms.
-> I don't prefer placeholder directories but this is not a placeholder directory
-> since phy-meson8b-usb2.c is already added in amlogic.
-
-Right, since phy-meson8b-usb2.c was already there and phy-meson-gxl-usb2.c
-is also coming, i decided to add this directory.
-> Btw, thank you for sending this patch. Will queue this once -rc1 is tagged.
-
-Cool. Thanks Kishon.
-
-Regards
-Vivek
-
->
-> Cheers
-> Kishon
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
