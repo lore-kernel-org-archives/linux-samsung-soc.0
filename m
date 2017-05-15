@@ -1,33 +1,28 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] arm64: dts: exynos: Remove the te-gpios property in the
- TM2 boards
-Date: Mon, 15 May 2017 18:55:53 +0200
-Message-ID: <20170515165553.dytsj4w6hlevkluu@kozik-lap>
-References: <CGME20170425015437epcas5p43549d47e69519f43d89ba2de496ba451@epcas5p4.samsung.com>
- <1493085261-3488-1-git-send-email-hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH 2/2] pinctrl: samsung: remove unneeded (void *) casts in
+ of_match_table
+Date: Mon, 15 May 2017 19:04:53 +0200
+Message-ID: <20170515170453.s6ie5bu7o6o4dz6g@kozik-lap>
+References: <1493156063-8446-1-git-send-email-yamada.masahiro@socionext.com>
+ <1493156063-8446-3-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:36618 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932514AbdEOQz4 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 May 2017 12:55:56 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1493085261-3488-1-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1493156063-8446-3-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, a.hajda@samsung.com
 
-On Tue, Apr 25, 2017 at 10:54:21AM +0900, Hoegeun Kwon wrote:
-> The decon uses HW-TRIGGER, so TE interrupt is not necessary.
-> Therefore, remove the te-gpios property in the TM2 dts.
+On Wed, Apr 26, 2017 at 06:34:23AM +0900, Masahiro Yamada wrote:
+> of_device_id::data is an opaque pointer.  No explicit cast is needed.
 > 
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 1 -
->  1 file changed, 1 deletion(-)
+> 
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
 
 Thanks, applied.
