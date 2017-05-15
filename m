@@ -1,52 +1,42 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 16/16] ARM: dts: exynos: Remove MFC reserved buffers
-Date: Mon, 15 May 2017 18:43:16 +0200
-Message-ID: <20170515164316.snmpzllu5tcutkka@kozik-lap>
-References: <1490007402-30265-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170320105655eucas1p21706c33b5c1b413126fbfd1e23a34058@eucas1p2.samsung.com>
- <1490007402-30265-17-git-send-email-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 4/5] arm64: dts: exynos: Remove the OF graph from DSI
+ node
+Date: Mon, 15 May 2017 18:48:29 +0200
+Message-ID: <20170515164829.rfcqj5quw2jooh6u@kozik-lap>
+References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308045502epcas1p21a483d429e2169b322e40fd833c47f27@epcas1p2.samsung.com>
+ <1488948852-5380-5-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:33179 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbdEOQnT (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 May 2017 12:43:19 -0400
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1490007402-30265-17-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1488948852-5380-5-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-On Mon, Mar 20, 2017 at 11:56:42AM +0100, Marek Szyprowski wrote:
-> During my research I found that some of the requirements for the memory
-> buffers for MFC v6+ devices were blindly copied from the previous (v5)
-> version and simply turned out to be excessive. The relaxed requirements
-> are applied by the recent patches to the MFC driver and the driver is
-> now fully functional even without the reserved memory blocks for all
-> v6+ variants. This patch removes those reserved memory nodes from all
-> boards having MFC v6+ hardware block.
+On Wed, Mar 08, 2017 at 01:54:11PM +0900, Hoegeun Kwon wrote:
+> The OF graph is not needed because the panel is a child of dsi. Remove
+> the ports node in DSI node.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Acked-by: Andrzej Hajda <a.hajda@samsung.com>
-> Tested-by: Smitha T Murthy <smitha.t@samsung.com>
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  arch/arm/boot/dts/exynos5250-arndale.dts           | 1 -
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          | 1 -
->  arch/arm/boot/dts/exynos5250-spring.dts            | 1 -
->  arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 1 -
->  arch/arm/boot/dts/exynos5420-peach-pit.dts         | 1 -
->  arch/arm/boot/dts/exynos5420-smdk5420.dts          | 1 -
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 -
->  arch/arm/boot/dts/exynos5800-peach-pi.dts          | 1 -
->  8 files changed, 8 deletions(-)
-> 
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 14 --------------
+>  1 file changed, 14 deletions(-)
+>
 
-Thanks, applied.
+Hi,
+
+I wanted to apply this (and 5/5) but it seems that DRM change is not
+merged. Was it included in v4.12-rc1?
 
 Best regards,
 Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
