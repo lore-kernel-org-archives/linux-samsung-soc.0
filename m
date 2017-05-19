@@ -1,17 +1,14 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH v5 4/5] arm64: dts: exynos: Remove the OF graph from DSI
- node
-Date: Fri, 19 May 2017 15:17:29 +0900
-Message-ID: <9508dfc9-7cd3-3ed3-f642-2f69a5dcb5ce@samsung.com>
-References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170308045502epcas1p21a483d429e2169b322e40fd833c47f27@epcas1p2.samsung.com>
- <1488948852-5380-5-git-send-email-hoegeun.kwon@samsung.com>
- <20170515164829.rfcqj5quw2jooh6u@kozik-lap>
+Subject: Re: [PATCH v3 0/3] Add support for the S6E3HF2 panel on TM2e board
+Date: Fri, 19 May 2017 15:56:25 +0900
+Message-ID: <4b974579-eb2f-1258-86e3-21ffeb22589a@samsung.com>
+References: <CGME20170418084047epcas5p493261a4cb9204e682f60cde8d659565c@epcas5p4.samsung.com>
+ <1492504836-19225-1-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170515164829.rfcqj5quw2jooh6u@kozik-lap>
+In-reply-to: <1492504836-19225-1-git-send-email-hoegeun.kwon@samsung.com>
 Content-language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
@@ -22,26 +19,36 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, inki.dae@samsung.com
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, andi.shyti@samsung.com, catalin.marinas@arm.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, javier@osg.samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
+To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, andi.shyti@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDUvMTYvMjAxNyAwMTo0OCBBTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBPbiBX
-ZWQsIE1hciAwOCwgMjAxNyBhdCAwMTo1NDoxMVBNICswOTAwLCBIb2VnZXVuIEt3b24gd3JvdGU6
-Cj4+IFRoZSBPRiBncmFwaCBpcyBub3QgbmVlZGVkIGJlY2F1c2UgdGhlIHBhbmVsIGlzIGEgY2hp
-bGQgb2YgZHNpLiBSZW1vdmUKPj4gdGhlIHBvcnRzIG5vZGUgaW4gRFNJIG5vZGUuCj4+Cj4+IFNp
-Z25lZC1vZmYtYnk6IEhvZWdldW4gS3dvbiA8aG9lZ2V1bi5rd29uQHNhbXN1bmcuY29tPgo+PiBS
-ZXZpZXdlZC1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPj4gUmV2aWV3
-ZWQtYnk6IEFuZGkgU2h5dGkgPGFuZGkuc2h5dGlAc2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiAgIGFy
-Y2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLWNvbW1vbi5kdHNpIHwgMTQg
-LS0tLS0tLS0tLS0tLS0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMTQgZGVsZXRpb25zKC0pCj4+Cj4g
-SGksCj4KPiBJIHdhbnRlZCB0byBhcHBseSB0aGlzIChhbmQgNS81KSBidXQgaXQgc2VlbXMgdGhh
-dCBEUk0gY2hhbmdlIGlzIG5vdAo+IG1lcmdlZC4gV2FzIGl0IGluY2x1ZGVkIGluIHY0LjEyLXJj
-MT8KPgo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKCkhpLAoKU29ycnkgZm9yIG15IGJlbGF0
-ZWQgcmVwbHkuCgpUaGUgRFJNIHBhdGNoKDMvNSkgaXMgbm90IG1lcmdlZCBpbiB2NC4xMi1yYzEg
-KG1haW5saW5lKS4uLgpJIGhhdmUgY2hlY2tlZCB0aGUgRGF2aWQncyBicmFuY2gsIGJ1dCBub3Qg
-bWVyZ2VkLgpIb3dldmVyIGl0IHdhcyBtZXJnZWQgaW50byBJbmtpJ3MgZXh5bm9zIGRybSBicmFu
-Y2guCgpJbmtpLCBDb3VsZCB5b3UgY2hlY2sgdGhlIHBhdGNoKDMvNSkuCgpCZXN0IHJlZ2FyZHMs
-CkhvZWdldW4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+RGVhciBUaGllcnJ5LAoKQ291bGQgeW91IGNoZWNrIHRoZXNlIHBhdGNoZXM/CkkgdGhpbmsgdGhp
+cyBwYXRjaGVzIGhhdmUgYWNjdW11bGF0ZWQgZW5vdWdoIGR1c3QuCklmIHlvdSBoYXZlIGEgYW5v
+dGhlciBvcGluaW9uLCBwbGVhc2UgdGVsbCBtZS4KCkJlc3QgcmVnYXJkcywKSG9lZ2V1bgoKT24g
+MDQvMTgvMjAxNyAwNTo0MCBQTSwgSG9lZ2V1biBLd29uIHdyb3RlOgo+IEhpIGFsbCwKPgo+IFRo
+ZSBwdXJwb3NlIG9mIHRoaXMgcGF0Y2ggaXMgYWRkIHN1cHBvcnQgZm9yIHM2ZTNoZjIgQU1PTEVE
+IHBhbmVsIG9uCj4gdGhlIFRNMmUgYm9hcmQuIFRoZSBwYW5lbCBoYXMgMTYwMHgyNTYwIHJlc29s
+dXRpb24gaW4gNS42NSIgcGh5c2ljYWwKPiBwYW5lbCBpbiB0aGUgVE0yZSBkZXZpY2UuCj4KPiBU
+aGUgczZlM2hmMiBwYW5lbCg1LjY1IikgaXMgc2ltbGlhciB0byB0aGUgcHJldmlvdXMgczZlM2hh
+MiBwYW5lbCg1LjciKSwKPiBidXQgcmVzb2x1dGlvbiBhbmQgc29tZSBjb21tYW5kIG1lc3NhZ2Ug
+YXJlIGRpZmZlcmVudC4gU28gaXQgY2FuIGJlCj4gZGlzdGluZ3Vpc2hlZCBhcyBhIGNvbXBhdGli
+bGl0aXkgc3RyaW5nLgo+Cj4gQmVzdCByZWdhcmRzLAo+IEhvZWdldW4KPgo+IENoYW5nZXMgZm9y
+IFYzOgo+IC0gUmVtb3ZlIHRlLWdwaW9zIHByb3BlcnR5IGluIGR0cy4KPiAtIEFkZGVkIFJldmll
+d2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPiBvbiBhbGwgcGF0Y2hl
+cy4KPiAtIEFkZGVkIFJldmlld2VkLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+
+IG9uIHBhdGNoICgyLzMpLgo+Cj4gQ2hhbmdlcyBmb3IgVjI6Cj4gLSBBZGQgbmV3IGNvbXBhdGli
+bGUgc3RyaW5nIHRvICJzYW1zdW5nLHM2ZTNoYTIudHh0IGJpbmRpbmcgd2l0aCBjb21tZW50cy4K
+PiAtIEZpeCB0aGUgcGFuZWwgbmFtZSBmcm9tIHM2ZTNoYTItZSB0byBzNmUzaGYyCj4KPiBIb2Vn
+ZXVuIEt3b24gKDMpOgo+ICAgIGR0LWJpbmRpbmdzOiBBZGQgc3VwcG9ydCBmb3Igc2Ftc3VuZyBz
+NmUzaGYyIHBhbmVsCj4gICAgZHJtL3BhbmVsOiBzNmUzaGEyOiBBZGQgc3VwcG9ydCBmb3IgczZl
+M2hmMiBwYW5lbCBvbiBUTTJlIGJvYXJkCj4gICAgYXJtNjQ6IGR0czogZXh5bm9zOiBBZGQgc3Vw
+cG9ydCBmb3IgczZlM2hmMiBwYW5lbCBkZXZpY2Ugb24gVE0yZSBib2FyZAo+Cj4gICAuLi4vYmlu
+ZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIudHh0ICAgICB8ICA1ICstCj4gICBh
+cmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMmUuZHRzICAgICB8IDExICsr
+KysKPiAgIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5nLXM2ZTNoYTIuYyAgICAg
+IHwgNjQgKysrKysrKysrKysrKysrKysrKy0tLQo+ICAgMyBmaWxlcyBjaGFuZ2VkLCA3MiBpbnNl
+cnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQo+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwK
