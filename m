@@ -1,11 +1,12 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] drm/pl111: add ARM_AMBA dependency
-Date: Mon, 22 May 2017 17:20:08 +0200
-Message-ID: <20170522152058.3346428-1-arnd@arndb.de>
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH] drm/pl111: add ARM_AMBA dependency
+Date: Mon, 22 May 2017 09:23:36 -0700
+Message-ID: <878tlolv1z.fsf@eliezer.anholt.net>
+References: <20170522152058.3346428-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0972504370=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170522152058.3346428-1-arnd@arndb.de>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -15,53 +16,70 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>
+To: David Airlie <airlied@linux.ie>
 Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Colin Ian King <colin.king@canonical.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIGRyaXZlciBpcyB3cml0dGVuIGluIGEgd2F5IHRvIGVuYWJsZSBjb21waWxlLXRlc3Rpbmcg
-d2l0aG91dCBDT05GSUdfQVJNX0FNQkEsCmJ1dCBpdCBqdXN0IGNhdXNlcyBuZWVkbGVzcyB3YXJu
-aW5nczoKCmRyaXZlcnMvZ3B1L2RybS9wbDExMS9wbDExMV9kcnYuYzoxNDk6MjY6IGVycm9yOiAn
-cGwxMTFfZHJtX2RyaXZlcicgZGVmaW5lZCBidXQgbm90IHVzZWQgWy1XZXJyb3I9dW51c2VkLXZh
-cmlhYmxlXQpkcml2ZXJzL2dwdS9kcm0vcGwxMTEvcGwxMTFfZHJ2LmM6ODE6MTI6IGVycm9yOiAn
-cGwxMTFfbW9kZXNldF9pbml0JyBkZWZpbmVkIGJ1dCBub3QgdXNlZCBbLVdlcnJvcj11bnVzZWQt
-ZnVuY3Rpb25dCgpUaGlzIHJlbW92ZXMgdGhlICNpZmRlZiBpbnN0ZWFkLCBhbmQgYWRkcyBhIGRl
-cGVuZGVuY3kgb24gQVJNX0FNQkEgdG8Kb25seSBsZXQgdXMgYnVpbGQgdGhlIGRyaXZlciB3aGVu
-IHRoZSBiYXNlIHN1cHBvcnQgaXMgZW5hYmxlZC4KClVuZm9ydHVuYXRlbHksIHRoaXMgcmVxdWly
-ZXMgcmVtb3Zpbmcgb25lIHJlZHVuZGFudCAnc2VsZWN0IEFSTV9BTUJBJwpsaW5lIGZyb20gbWFj
-aC1zM2M2NHh4IHRvIGF2b2lkIGEgY2lyY3VsYXIgZGVwZW5kZW5jeS4KCkl0IG1pZ2h0IGJlIGdv
-b2QgdG8gYWxsb3cgbWFudWFsbHkgZW5hYmxpbmcgQVJNX0FNQkEgd2hlbiBDT01QSUxFX1RFU1QK
-aXMgdHVybmVkIG9uLCBidXQgdGhhdCBzaG91bGQgYmUgYSBzZXBhcmF0ZSBwYXRjaCBhbmQgbWF5
-IGNhdXNlIG90aGVyCmJ1aWxkIHJlZ3Jlc3Npb25zLgoKRml4ZXM6IGJlZDQxMDA1ZTYxNyAoImRy
-bS9wbDExMTogSW5pdGlhbCBkcm0va21zIGRyaXZlciBmb3IgcGwxMTEiKQpTaWduZWQtb2ZmLWJ5
-OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgotLS0KIGFyY2gvYXJtL21hY2gtczNjNjR4
-eC9LY29uZmlnICAgICB8IDEgLQogZHJpdmVycy9ncHUvZHJtL3BsMTExL0tjb25maWcgICAgIHwg
-MSArCiBkcml2ZXJzL2dwdS9kcm0vcGwxMTEvcGwxMTFfZHJ2LmMgfCAyIC0tCiAzIGZpbGVzIGNo
-YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2FyY2gv
-YXJtL21hY2gtczNjNjR4eC9LY29uZmlnIGIvYXJjaC9hcm0vbWFjaC1zM2M2NHh4L0tjb25maWcK
-aW5kZXggNDU5MjE0ZmEyMGI0Li41ZWU1YWQ3NGEzZDYgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL21h
-Y2gtczNjNjR4eC9LY29uZmlnCisrKyBiL2FyY2gvYXJtL21hY2gtczNjNjR4eC9LY29uZmlnCkBA
-IC00MCw3ICs0MCw2IEBAIGNvbmZpZyBDUFVfUzNDNjQxMAogCiBjb25maWcgUzNDNjRYWF9QTDA4
-MAogCWRlZl9ib29sIERNQURFVklDRVMKLQlzZWxlY3QgQVJNX0FNQkEKIAlzZWxlY3QgQU1CQV9Q
-TDA4WAogCiBjb25maWcgUzNDNjRYWF9TRVRVUF9TREhDSQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL3BsMTExL0tjb25maWcgYi9kcml2ZXJzL2dwdS9kcm0vcGwxMTEvS2NvbmZpZwppbmRl
-eCAzMDlmNGZkNTJkZTcuLmUyZjM5M2ZjYzRiZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L3BsMTExL0tjb25maWcKKysrIGIvZHJpdmVycy9ncHUvZHJtL3BsMTExL0tjb25maWcKQEAgLTIs
-NiArMiw3IEBAIGNvbmZpZyBEUk1fUEwxMTEKIAl0cmlzdGF0ZSAiRFJNIFN1cHBvcnQgZm9yIFBM
-MTExIENMQ0QgQ29udHJvbGxlciIKIAlkZXBlbmRzIG9uIERSTQogCWRlcGVuZHMgb24gQVJNIHx8
-IEFSTTY0IHx8IENPTVBJTEVfVEVTVAorCWRlcGVuZHMgb24gQVJNX0FNQkEKIAlkZXBlbmRzIG9u
-IENPTU1PTl9DTEsKIAlzZWxlY3QgRFJNX0tNU19IRUxQRVIKIAlzZWxlY3QgRFJNX0tNU19DTUFf
-SEVMUEVSCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcGwxMTEvcGwxMTFfZHJ2LmMgYi9k
-cml2ZXJzL2dwdS9kcm0vcGwxMTEvcGwxMTFfZHJ2LmMKaW5kZXggOTcwOTViMWFhOTYxLi5kY2Uz
-ODJmOTdmOGMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9wbDExMS9wbDExMV9kcnYuYwor
-KysgYi9kcml2ZXJzL2dwdS9kcm0vcGwxMTEvcGwxMTFfZHJ2LmMKQEAgLTE3OSw3ICsxNzksNiBA
-QCBzdGF0aWMgc3RydWN0IGRybV9kcml2ZXIgcGwxMTFfZHJtX2RyaXZlciA9IHsKICNlbmRpZgog
-fTsKIAotI2lmZGVmIENPTkZJR19BUk1fQU1CQQogc3RhdGljIGludCBwbDExMV9hbWJhX3Byb2Jl
-KHN0cnVjdCBhbWJhX2RldmljZSAqYW1iYV9kZXYsCiAJCQkgICAgY29uc3Qgc3RydWN0IGFtYmFf
-aWQgKmlkKQogewpAQCAtMjYyLDcgKzI2MSw2IEBAIHN0YXRpYyBzdHJ1Y3QgYW1iYV9kcml2ZXIg
-cGwxMTFfYW1iYV9kcml2ZXIgPSB7CiB9OwogCiBtb2R1bGVfYW1iYV9kcml2ZXIocGwxMTFfYW1i
-YV9kcml2ZXIpOwotI2VuZGlmIC8qIENPTkZJR19BUk1fQU1CQSAqLwogCiBNT0RVTEVfREVTQ1JJ
-UFRJT04oRFJJVkVSX0RFU0MpOwogTU9EVUxFX0FVVEhPUigiQVJNIEx0ZC4iKTsKLS0gCjIuOS4w
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+--===============0972504370==
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+
+--=-=-=
+Content-Type: text/plain
+
+Arnd Bergmann <arnd@arndb.de> writes:
+
+> The driver is written in a way to enable compile-testing without CONFIG_ARM_AMBA,
+> but it just causes needless warnings:
+>
+> drivers/gpu/drm/pl111/pl111_drv.c:149:26: error: 'pl111_drm_driver' defined but not used [-Werror=unused-variable]
+> drivers/gpu/drm/pl111/pl111_drv.c:81:12: error: 'pl111_modeset_init' defined but not used [-Werror=unused-function]
+>
+> This removes the #ifdef instead, and adds a dependency on ARM_AMBA to
+> only let us build the driver when the base support is enabled.
+>
+> Unfortunately, this requires removing one redundant 'select ARM_AMBA'
+> line from mach-s3c64xx to avoid a circular dependency.
+>
+> It might be good to allow manually enabling ARM_AMBA when COMPILE_TEST
+> is turned on, but that should be a separate patch and may cause other
+> build regressions.
+
+If I understand the Kconfig, you're effectively disabling the build on
+COMPILE_TEST && !ARM.  I'd rather that we just fix up the warnings, so
+that people can keep build-testing DRM drivers:
+
+https://patchwork.kernel.org/patch/9737857/
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkjEIgACgkQtdYpNtH8
+nujnVhAAh+4VgXq9RCRFMbTU6W1A/lQt1/jR4qx9jv4p+kbDA0pk1Y3h1lhsb6oK
+NIdNNz555kLEN8OxDqlD0CqyS8zMKjnsvv0iw2E9yoQ1XnvyOEDwsDASZiw2V4AX
+zPn8pPLYHF+aOcmrAJLPTsJb3nu+Dqq0qQYMEWPrgHa45k5yRXL2X7RbS90Bw3B1
+KzV/GBqKdT9PflNHYCt+ZugQQFC+gUbkGaVZGn5+oYS8zrwozRZ8QEAmk3lDZruj
+2K+jbwuXjuN4oGUsc5LsXB2NJBVBqgdH810Fo7Eh+lod6jKklhciugXs1qyUD69+
+UYgg3+G+GZubRdxPQqUJj+u+FncwtSWJ8S/e9qmkogbro+FMgFo7JWQ3uw15Ff14
+ocWnv4VUqKaqIDlklHYltpg1elOycaxbdSl9ULvo5dTuDIbxnL7/vKQtlY207k31
+5xySr7+AM6KStuOlpfNqNTt7I5OAqFqL0R8piFWCo4K6EGpmY7Bhtgpm8b83NC+C
+gITe+KZvjJBLnhczsQVYv8nPTDr3+F3DzN/2/0x7Dm1jrqnR87L4dLjIU4BJU8NG
+EE4GCzDxIE9aghlvCAmoWd158lZZtfSLH4aa62B1SS7VTfOmd+xyYfkMqt8rKr4n
+OJb/4Ew+W4Z2225JDdp3SgtnQbsqXZT2v918Wx6ZOqljBqU95Ag=
+=tQO2
+-----END PGP SIGNATURE-----
+--=-=-=--
+
+--===============0972504370==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0972504370==--
