@@ -1,41 +1,78 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/3] mfd: tps65010: move header file out of I2C realm
-Date: Mon, 22 May 2017 09:34:35 +0200
-Message-ID: <CAJKOXPdsvHfz4m=UMzjakJ86iGotHFmGaPiKvhQzCaTswNAM3w@mail.gmail.com>
-References: <20170521220212.1404-1-wsa@the-dreams.de> <20170521220212.1404-3-wsa@the-dreams.de>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH] media: platform: s3c-camif: fix function prototype
+Date: Mon, 22 May 2017 11:02:50 +0200
+Message-ID: <ea039557-023c-736d-5bfb-928cd87cc3e3@xs4all.nl>
+References: <20170504214200.GA22855@embeddedgus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20170521220212.1404-3-wsa@the-dreams.de>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lee Jones <lee.jones@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:42048 "EHLO
+        lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1757403AbdEVJC4 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 22 May 2017 05:02:56 -0400
+In-Reply-To: <20170504214200.GA22855@embeddedgus>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Mon, May 22, 2017 at 12:02 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> include/linux/i2c is not for client devices. Move the header file to a
-> more appropriate location.
->
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+On 05/04/2017 11:42 PM, Gustavo A. R. Silva wrote:
+> Fix function prototype so the position of arguments camif->colorfx_cb and
+> camif->colorfx_cr match the order of the parameters when calling
+> camif_hw_set_effect() function.
+> 
+> Addresses-Coverity-ID: 1248800
+> Addresses-Coverity-ID: 1269141
+> Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 > ---
->  arch/arm/mach-omap1/board-h2-mmc.c      | 2 +-
->  arch/arm/mach-omap1/board-h2.c          | 2 +-
->  arch/arm/mach-omap1/board-h3-mmc.c      | 2 +-
->  arch/arm/mach-omap1/board-h3.c          | 2 +-
->  arch/arm/mach-omap1/board-osk.c         | 2 +-
->  arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 2 +-
->  arch/arm/mach-s3c24xx/mach-osiris.c     | 2 +-
+>  drivers/media/platform/s3c-camif/camif-regs.c | 2 +-
+>  drivers/media/platform/s3c-camif/camif-regs.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/s3c-camif/camif-regs.c b/drivers/media/platform/s3c-camif/camif-regs.c
+> index 812fb3a..d70ffef 100644
+> --- a/drivers/media/platform/s3c-camif/camif-regs.c
+> +++ b/drivers/media/platform/s3c-camif/camif-regs.c
+> @@ -58,7 +58,7 @@ void camif_hw_set_test_pattern(struct camif_dev *camif, unsigned int pattern)
+>  }
+>  
+>  void camif_hw_set_effect(struct camif_dev *camif, unsigned int effect,
+> -			unsigned int cr, unsigned int cb)
+> +			unsigned int cb, unsigned int cr)
+>  {
+>  	static const struct v4l2_control colorfx[] = {
+>  		{ V4L2_COLORFX_NONE,		CIIMGEFF_FIN_BYPASS },
 
-For s3c24xx:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+This will also affect this line:
 
-Best regards,
-Krzysztof
+cfg |= cr | (cb << 13);
 
->  drivers/mfd/tps65010.c                  | 2 +-
->  drivers/usb/host/ohci-omap.c            | 2 +-
->  drivers/usb/phy/phy-isp1301-omap.c      | 2 +-
->  drivers/video/fbdev/omap/lcd_h3.c       | 2 +-
->  include/linux/{i2c => mfd}/tps65010.h   | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
->  rename include/linux/{i2c => mfd}/tps65010.h (99%)
+cr and cb are now swapped so this will result in a different color.
+
+Sylwester, who is wrong here: the prototype or how this function is called?
+
+I suspect that Gustavo is right and that the prototype is wrong. But in that
+case this patch should also change the cfg assignment.
+
+Regards,
+
+	Hans
+
+> diff --git a/drivers/media/platform/s3c-camif/camif-regs.h b/drivers/media/platform/s3c-camif/camif-regs.h
+> index 5ad36c1..dfb49a5 100644
+> --- a/drivers/media/platform/s3c-camif/camif-regs.h
+> +++ b/drivers/media/platform/s3c-camif/camif-regs.h
+> @@ -255,7 +255,7 @@ void camif_hw_set_output_dma(struct camif_vp *vp);
+>  void camif_hw_set_target_format(struct camif_vp *vp);
+>  void camif_hw_set_test_pattern(struct camif_dev *camif, unsigned int pattern);
+>  void camif_hw_set_effect(struct camif_dev *camif, unsigned int effect,
+> -			unsigned int cr, unsigned int cb);
+> +			unsigned int cb, unsigned int cr);
+>  void camif_hw_set_output_addr(struct camif_vp *vp, struct camif_addr *paddr,
+>  			      int index);
+>  void camif_hw_dump_regs(struct camif_dev *camif, const char *label);
+> 
