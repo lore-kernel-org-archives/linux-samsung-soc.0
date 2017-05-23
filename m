@@ -1,75 +1,40 @@
-From: <patientcentral@pancan.org>
-Subject: (unknown)
-Date: Mon, 22 May 2017 22:32:50 -0000
-Message-ID: <149549237059.26770.5917806142257633290@hinet.net>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] spi: add null check before pointer dereference
+Date: Mon, 22 May 2017 19:25:07 -0500
+Message-ID: <20170523002507.GA16670@embeddedgus>
 Mime-Version: 1.0
-Content-Type: application/zip; name="8395290876929.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from [115.84.90.165] ([115.84.90.165]:37930 "HELO hinet.net"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1752671AbdEVWdO (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 May 2017 18:33:14 -0400
-Subject: 
-Content-Disposition: attachment
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-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
+Add null check before dereferencing pointer desc
+
+Addresses-Coverity-ID: 1397997
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+---
+ drivers/spi/spi-s3c64xx.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index b392cca..9f1013e 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -306,6 +306,12 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
+ 	desc = dmaengine_prep_slave_sg(dma->ch, sgt->sgl, sgt->nents,
+ 				       dma->direction, DMA_PREP_INTERRUPT);
+ 
++	if (!desc) {
++		dev_err(&sdd->master->dev,
++			"%s:dmaengine_prep_slave_sg Failed\n", __func__);
++		return;
++	}
++
+ 	desc->callback = s3c64xx_spi_dmacb;
+ 	desc->callback_param = dma;
+ 
+-- 
+2.5.0
