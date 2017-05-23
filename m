@@ -1,75 +1,59 @@
-From: <bendis.michal@seznam.cz>
-Subject: (unknown)
-Date: Tue, 23 May 2017 09:36:35 -0000
-Message-ID: <149553219526.6152.10869196090089928588@kis.ru>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v1] PM / devfreq: exynos-ppmu : Handle return value of
+ clk_prepare_enable
+Date: Tue, 23 May 2017 18:41:59 +0900
+Message-ID: <592403E7.8060906@samsung.com>
+References: <CGME20170519105745epcas5p29a5cbb259cd15138d7220f34e130e00a@epcas5p2.samsung.com>
+        <1495191364-16015-1-git-send-email-arvind.yadav.cs@gmail.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="1443947.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dyn-131-87.dynadsl.kis.ru ([212.92.131.87]:37388 "HELO kis.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S964894AbdEWJgj (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 May 2017 05:36:39 -0400
-Subject: 
-Content-Disposition: attachment
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1495191364-16015-1-git-send-email-arvind.yadav.cs@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-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
+On 2017년 05월 19일 19:56, Arvind Yadav wrote:
+> clk_prepare_enable() can fail here and we must check its return value.
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index 9b73509..8f6537a 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -648,7 +648,11 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
+>  			dev_name(&pdev->dev), desc[i].name);
+>  	}
+>  
+> -	clk_prepare_enable(info->ppmu.clk);
+> +	ret = clk_prepare_enable(info->ppmu.clk);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to prepare ppmu clock\n");
+> +		return ret;
+> +	}
+
+You're right. But, actually, some ppmu device-tree node doesn't include
+the clock information because exynos clk driver don't support the
+clock for some ppmu devices. Until now, the clock of ppmu devices
+are default on state.
+
+Before applying this patch, exynos clock driver have to support
+the ppmu's clock and then add the clock information to the device tree
+of ppmu devices.
+
+>  
+>  	return 0;
+>  }
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
