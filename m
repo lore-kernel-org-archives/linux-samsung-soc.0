@@ -1,63 +1,38 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v1] PM / devfreq: exynos-nocp : Handle return value of
- clk_prepare_enable
-Date: Wed, 24 May 2017 10:56:53 +0900
-Message-ID: <5924E865.6030105@samsung.com>
-References: <CGME20170519105215epcas5p26e75138ae5815f288ac6ca57a64c1087@epcas5p2.samsung.com>
-        <1495191035-15882-1-git-send-email-arvind.yadav.cs@gmail.com>
-        <59240441.9090208@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] drm/pl111: add ARM_AMBA dependency
+Date: Wed, 24 May 2017 17:52:55 +0200
+Message-ID: <CAK8P3a0b5yHFWpO1K2TxQNP2s4=HjZC+KvoP_Qw9+HPO_hThAA@mail.gmail.com>
+References: <20170522152058.3346428-1-arnd@arndb.de>
+ <878tlolv1z.fsf@eliezer.anholt.net>
+ <CAK8P3a3UjWM0OGVO1nNyEtrRUyFKDuBOboYVSnVLcg4MTKfFMQ@mail.gmail.com>
+ <87pof07de3.fsf@eliezer.anholt.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <59240441.9090208@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <87pof07de3.fsf@eliezer.anholt.net>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Colin Ian King <colin.king@canonical.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2017년 05월 23일 18:43, Chanwoo Choi wrote:
-> Hi Arvind,
-> 
-> On 2017년 05월 19일 19:50, Arvind Yadav wrote:
->> clk_prepare_enable() can fail here and we must check its return value.
->>
->> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
->> ---
->>  drivers/devfreq/event/exynos-nocp.c | 6 +++++-
->>  1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
->> index 5c3e7b1..f6e7956 100644
->> --- a/drivers/devfreq/event/exynos-nocp.c
->> +++ b/drivers/devfreq/event/exynos-nocp.c
->> @@ -267,7 +267,11 @@ static int exynos_nocp_probe(struct platform_device *pdev)
->>  	}
->>  	platform_set_drvdata(pdev, nocp);
->>  
->> -	clk_prepare_enable(nocp->clk);
->> +	ret = clk_prepare_enable(nocp->clk);
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "failed to prepare ppmu clock\n");
->> +		return ret;
->> +	}
-> 
-> I already replied from the similar patch. Thanks.
-> 
->>  
->>  	pr_info("exynos-nocp: new NoC Probe device registered: %s\n",
->>  			dev_name(dev));
->>
-> 
-> 
-
-I'm missing some point that if there is no clock
-this driver initializes 'nocp->clk = NULL;' on 217 line.
-
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+T24gVHVlLCBNYXkgMjMsIDIwMTcgYXQgMTI6MDggQU0sIEVyaWMgQW5ob2x0IDxlcmljQGFuaG9s
+dC5uZXQ+IHdyb3RlOgoKPgo+IE9oLCB5ZWFoLCB3ZSd2ZSBlbGltaW5hdGVkIHRoZSBhbWJhX3Jl
+cXVlc3RfcmVnaW9ucygpIHRoYXQgdXNlZCB0byBiZQo+IHdoeSB0aGUgcHJvYmUgaGFkIHRvIGJl
+IHVuZGVyIHRoZSAjaWZkZWYsIHNvIHlvdXIgc29sdXRpb24gd291bGQgZ2V0IHVzCj4gYmV0dGVy
+IGNvdmVyYWdlIGFuZCBzaW1wbGVyIGNvZGUuICBJZiB5b3UgY291bGQgc2VuZCB0aGF0IHBhdGNo
+IHRvCj4gZHJpLWRldmVsIHRvZGF5LCBJJ2xsIGdldCBpdCBhcHBsaWVkLgoKU2VudCBub3cuIEkn
+bGwgYWxzbyBzZW5kIHRoZSBvbmVsaW5lIHBhdGNoIGZvciBzM2M2NHh4IHNlcGFyYXRlbHksIGlu
+IGNhc2UKd2UgaGl0IHRoZSBzYW1lIGNpcmN1bGFyIGRlcGVuZGVuY3kgYW5vdGhlciB0aW1lLgoK
+ICAgICAgICBBcm5kCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
