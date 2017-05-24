@@ -1,75 +1,108 @@
-From: <noord-holland@netwerkmassagebijkanker.nl>
-Subject: (unknown)
-Date: Tue, 23 May 2017 22:44:14 -0000
-Message-ID: <149557945474.31455.8201825507558611143@kis.ru>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: RE: Re: [PATCH v1] PM / devfreq: exynos-ppmu : Handle return value
+ of clk_prepare_enable
+Date: Wed, 24 May 2017 01:30:36 +0000
+Message-ID: <20170524013036epcms1p3f5ced11e6ebe5664ce70718dedcf8de1@epcms1p3>
+References: <592403E7.8060906@samsung.com>
+        <1495191364-16015-1-git-send-email-arvind.yadav.cs@gmail.com>
+        <CGME20170519105745epcas5p29a5cbb259cd15138d7220f34e130e00a@epcms1p3>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: application/zip; name="6211920350.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dyn-131-87.dynadsl.kis.ru ([212.92.131.87]:45626 "HELO kis.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1760172AbdEWWoU (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:51205 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760414AbdEXBaj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 May 2017 18:44:20 -0400
-Content-Disposition: attachment
-Subject: 
+        Tue, 23 May 2017 21:30:39 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20170524013037epoutp03c50fdd317600d4e629a74459d1589640~BZqtX2ZOG2342023420epoutp030
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 May 2017 01:30:37 +0000 (GMT)
+In-Reply-To: <592403E7.8060906@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, "krzk@kernel.org" <krzk@kernel.org>, "kgene@kernel.org" <kgene@kernel.org>, "javier@osg.samsung.com" <javier@osg.samsung.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-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
+> On 2017년 05월 19일 19:56, Arvind Yadav wrote:
+
+> > clk_prepare_enable() can fail here and we must check its return value.
+
+> > 
+
+> > Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+
+> > ---
+
+> >  drivers/devfreq/event/exynos-ppmu.c | 6 +++++-
+
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+
+> > 
+
+> > diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+
+> > index 9b73509..8f6537a 100644
+
+> > --- a/drivers/devfreq/event/exynos-ppmu.c
+
+> > +++ b/drivers/devfreq/event/exynos-ppmu.c
+
+> > @@ -648,7 +648,11 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
+
+> >  			dev_name(&pdev->dev), desc[i].name);
+
+> >  	}
+
+> >  
+
+> > -	clk_prepare_enable(info->ppmu.clk);
+
+> > +	ret = clk_prepare_enable(info->ppmu.clk);
+
+> > +	if (ret) {
+
+> > +		dev_err(&pdev->dev, "failed to prepare ppmu clock\n");
+
+> > +		return ret;
+
+> > +	}
+
+> 
+
+> You're right. But, actually, some ppmu device-tree node doesn't include
+
+> the clock information because exynos clk driver don't support the
+
+> clock for some ppmu devices. Until now, the clock of ppmu devices
+
+> are default on state.
+
+
+
+If it does not include the clock information, info->ppmu.clk is NULL,
+
+which makes ret == NULL, so this should be ok.
+
+(Line 593 of this file does that.)
+
+
+
+
+
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+
+(Applied to next-rc in devfreq tree)
+
+
+
+(same applies to exynos-nocp commit as well)
+
+
+
+
+
+Cheers,
+
+MyungJoo
