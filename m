@@ -1,46 +1,93 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/3] mfd: tps65010: move header file out of I2C realm
-Date: Mon, 29 May 2017 11:19:56 +0200
-Message-ID: <1676405.bi3L9s8TD3@amdc3058>
-References: <20170521220212.1404-1-wsa@the-dreams.de>
-        <CGME20170521220747epcas3p3faa8204fb645815ee071f0c803becd8e@epcas3p3.samsung.com>
-        <20170521220212.1404-3-wsa@the-dreams.de>
+From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/7] clocksource: Rename CLOCKSOURCE_OF_DECLARE
+Date: Mon, 29 May 2017 12:55:09 +0200
+Message-ID: <20170529105509.GC2192@mai>
+References: <1495879129-28109-1-git-send-email-daniel.lezcano@linaro.org>
+ <1495879129-28109-2-git-send-email-daniel.lezcano@linaro.org>
+ <CAK8P3a3QACHYqtCO1z_FpW0nXEtx356wCDha_=SNXU872=q1UQ@mail.gmail.com>
+ <20170529084809.GA2192@mai>
+ <CAK8P3a1Kv_RhKL43ie6co_N5pDXvRHd7Uq8g70qt80WkxuhzLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-reply-to: <20170521220212.1404-3-wsa@the-dreams.de>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lee Jones <lee.jones@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1Kv_RhKL43ie6co_N5pDXvRHd7Uq8g70qt80WkxuhzLw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:RALINK MIPS ARCHITECTURE" <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Santosh Shilimkar <ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, "moderated list:ARM/OXNAS platform support" <linux-oxnas-Xt5XgHjqiBU06sgRBLv0+0B+6BGkLq7r@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:ARM/STI ARCHITECTURE" <kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:H8/300 ARCHITECTURE" <uclinux-h8-devel-5NWGOfrQmneRv+LV9MX5uooqe+aC9MnS@public.gmane.org>, Alexander Shiyan <shc>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, May 22, 2017 12:02:09 AM Wolfram Sang wrote:
-> include/linux/i2c is not for client devices. Move the header file to a
-> more appropriate location.
-> 
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-> ---
->  arch/arm/mach-omap1/board-h2-mmc.c      | 2 +-
->  arch/arm/mach-omap1/board-h2.c          | 2 +-
->  arch/arm/mach-omap1/board-h3-mmc.c      | 2 +-
->  arch/arm/mach-omap1/board-h3.c          | 2 +-
->  arch/arm/mach-omap1/board-osk.c         | 2 +-
->  arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 2 +-
->  arch/arm/mach-s3c24xx/mach-osiris.c     | 2 +-
->  drivers/mfd/tps65010.c                  | 2 +-
->  drivers/usb/host/ohci-omap.c            | 2 +-
->  drivers/usb/phy/phy-isp1301-omap.c      | 2 +-
->  drivers/video/fbdev/omap/lcd_h3.c       | 2 +-
->  include/linux/{i2c => mfd}/tps65010.h   | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
->  rename include/linux/{i2c => mfd}/tps65010.h (99%)
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+T24gTW9uLCBNYXkgMjksIDIwMTcgYXQgMTE6NTc6MjVBTSArMDIwMCwgQXJuZCBCZXJnbWFubiB3
+cm90ZToKPiBPbiBNb24sIE1heSAyOSwgMjAxNyBhdCAxMDo0OCBBTSwgRGFuaWVsIExlemNhbm8K
+PiA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz4gd3JvdGU6Cj4gPiBPbiBNb24sIE1heSAyOSwg
+MjAxNyBhdCAxMDo0MTo1MkFNICswMjAwLCBBcm5kIEJlcmdtYW5uIHdyb3RlOgo+ID4+IE9uIFNh
+dCwgTWF5IDI3LCAyMDE3IGF0IDExOjU4IEFNLCBEYW5pZWwgTGV6Y2Fubwo+ID4+IDxkYW5pZWwu
+bGV6Y2Fub0BsaW5hcm8ub3JnPiB3cm90ZToKPiA+PiA+IFRoZSBDTE9DS1NPVUNFX09GX0RFQ0xB
+UkUgbWFjcm8gaXMgdXNlZCB3aWRlbHkgZm9yIHRoZSB0aW1lcnMgdG8gZGVjbGFyZSB0aGUKPiA+
+PiA+IGNsb2Nrc291cmNlIGF0IGVhcmx5IHN0YWdlLiBIb3dldmVyLCB0aGlzIG1hY3JvIGlzIGFs
+c28gdXNlZCB0byBpbml0aWFsaXplCj4gPj4gPiB0aGUgY2xvY2tldmVudCBpZiBhbnksIG9yIHRo
+ZSBjbG9ja2V2ZW50IG9ubHkuCj4gPj4gPgo+ID4+ID4gSXQgd2FzIG9yaWdpbmFsbHkgc3VnZ2Vz
+dGVkIHRvIGRlY2xhcmUgYW5vdGhlciBtYWNybyB0byBpbml0aWFsaXplIGEKPiA+PiA+IGNsb2Nr
+ZXZlbnQsIHNvIGluIG9yZGVyIHRvIHNlcGFyYXRlIHRoZSB0d28gZW50aXRpZXMgZXZlbiB0aGV5
+IGJlbG9uZyB0byB0aGUKPiA+PiA+IHNhbWUgSVAuIFRoaXMgd2FzIG5vdCBhY2NlcHRlZCBiZWNh
+dXNlIG9mIHRoZSBpbXBhY3Qgb24gdGhlIERUIHdoZXJlIHNwbGl0dGluZwo+ID4+ID4gYSBjbG9j
+a3NvdXJjZS9jbG9ja2V2ZW50IGRlZmluaXRpb24gZG9lcyBub3QgbWFrZSBzZW5zZSBhcyBpdCBp
+cyBhIExpbnV4Cj4gPj4gPiBjb25jZXB0IG5vdCBhIGhhcmR3YXJlIGRlc2NyaXB0aW9uLgo+ID4+
+ID4KPiA+PiA+IE9uIHRoZSBvdGhlciBzaWRlLCB0aGUgY2xvY2tzb3VyY2UgaGFzIG5vdCBpbnRl
+cnJ1cHQgZGVjbGFyZWQgd2hpbGUgdGhlCj4gPj4gPiBjbG9ja2V2ZW50IGhhcywgc28gaXQgaXMg
+ZWFzeSBmcm9tIHRoZSBkcml2ZXIgdG8ga25vdyBpZiB0aGUgZGVzY3JpcHRpb24gaXMKPiA+PiA+
+IGZvciBhIGNsb2NrZXZlbnQgb3IgYSBjbG9ja3NvdXJjZSwgSU9XIGl0IGNvdWxkIGJlIGltcGxl
+bWVudGVkIGF0IHRoZSBkcml2ZXIKPiA+PiA+IGxldmVsLgo+ID4+ID4KPiA+PiA+IFNvIGluc3Rl
+YWQgb2YgZGVhbGluZyB3aXRoIGEgbmFtZWQgY2xvY2tzb3VyY2UgbWFjcm8sIGxldCdzIHVzZSBh
+IG1vcmUgZ2VuZXJpYwo+ID4+ID4gb25lOiBUSU1FUl9PRl9ERUNMQVJFLgo+ID4+ID4KPiA+PiA+
+IFRoZSBwYXRjaCBoYXMgbm90IGZ1bmN0aW9uYWwgY2hhbmdlcy4KPiA+PiA+Cj4gPj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz4KPiA+
+Pgo+ID4+IENvdWxkIHlvdSBlaXRoZXIgbGVhdmUgdGhlIG9sZCBuYW1lIGFzIGFuIGFsaWFzIGZv
+ciBvbmUgcmVsZWFzZSwgb3IgaW50cm9kdWNlCj4gPj4gdGhlIG5ldyBuYW1lIGFzIGFuIGFsaWFz
+IG5vdyBmb3IgNC4xMz8KPiA+Pgo+ID4+IEkgdGhpbmsgdGhhdCB0aGF0IHdvdWxkIG1ha2UgaXQg
+ZWFzaWVyIHRvIG1lcmdlIG5ldyBkcml2ZXJzLiBPdGhlcndpc2UgdGhpcwo+ID4+IGxvb2tzIGdv
+b2QgdG8gbWUsCj4gPgo+ID4KPiA+IE5ldyBkcml2ZXJzIHNob3VsZCBnbyB0aHJvdWdoIG15IHRy
+ZWUsIHNvIEkgY2FuIGNhdGNoIHRoZW0gd2l0aCB0aGUgb2xkIG1hY3JvCj4gPiBuYW1lIGFuZCBk
+byB0aGUgY2hhbmdlLgo+IAo+IFN1cmUsIHRoZXkgc2hvdWxkLCBhbmQgaXQncyBxdWl0ZSBsaWtl
+bHkgdGhhdCB5b3Ugd29uJ3QgZXZlbiBuZWVkIHRoZSBmYWxsYmFjaywKPiBJJ3ZlIGp1c3Qgc2Vl
+biB0b28gbWFueSBjYXNlcyB3aGVyZSBhIHNpbWlsYXIgYXNzdW1wdGlvbiB0dXJuZWQgb3V0IHdy
+b25nLAo+IHRoYXQgSSdkIGp1c3QgcGljayB0aGUgc2FmZXIgb3B0aW9uIGp1c3QgaW4gY2FzZSB3
+aGVuZXZlciBJIGRvIGFuIEFQSSBjaGFuZ2UuCj4gCj4gVGhpbmdzIHRoYXQgY291bGQgZ28gd3Jv
+bmcgaW5jbHVkZToKPiAKPiAtIEEgcGxhdGZvcm0gbWFpbnRhaW5lciB3YW50cyB0byBhZGQgYSBu
+ZXcgcGxhdGZvcm0gYW5kIGhhcyBhIGZvci1uZXh0Cj4gICBicmFuY2ggdGhhdCBnZXRzIG1lcmdl
+ZCBpbnRvIGxpbnV4LW5leHQsIHdpdGggcGFydHMgb2YgaXQgZ29pbmcgdGhyb3VnaAo+ICAgZGlm
+ZmVyZW50IG1haW50YWluZXJzLCBhbmQgbm93IHRoZXkgaGF2ZSB0byBjaG9vc2UgYmV0d2VlbiBh
+IGJyYW5jaAo+ICAgdGhhdCBkb2Vzbid0IGJ1aWxkIHdpdGhvdXQgdGhlIHRpbWVyIGJyYW5jaCwg
+b3Igb25lIHRoYXQgYnJlYWsgZm9yLW5leHQKPiAgIHVubGVzcyBTdGVwaGVuIGFwcGxpZXMgYSBm
+aXh1cAo+IAo+IC0gU29tZSBhcmNoaXRlY3R1cmUgbWFpbnRhaW5lciBkaWRuJ3QgZ2V0IHRoZSBt
+ZW1vIGFuZCBhZGRzIGFuIGluc3RhbmNlIG9mCj4gICBDTE9DS1NPVUNFX09GX0RFQ0xBUkUgaW4g
+YXJjaGl0ZWN0dXJlIHNwZWNpZmljIGNvZGUgd2l0aG91dCBhc2tpbmcKPiAgIGhhdmluZyB0aGUg
+cGF0Y2ggcmV2aWV3ZWQgZmlyc3QKPiAKPiAtIEEgcGxhdGZvcm0gaGFzIGEgYnJhbmNoIHdpdGgg
+Y29tcGxleCBjcm9zcy10cmVlIGRlcGVuZGVuY2llcyBhbmQKPiAgIGl0IG5lZWQgdG8gZ2V0IG1l
+cmdlZCBpbiBhbiB1bmNvbnZlbnRpb25hbCB3YXkuCj4gCj4gLSBZb3UgbWFrZSBhIG1pc3Rha2Ug
+YW5kIGFjY2lkZW50YWxseSBtZXJnZSBvbmUgZHJpdmVyIGZvciBhbiB1bnVzdWFsCj4gICBhcmNo
+aXRlY3R1cmUgdGhhdCBlc2NhcGVzIHlvdXIgdGVzdCBtYXRyaXguCj4gCj4gV2hpbGUgdGhvc2Ug
+YWxsIGFyZSB1bmxpa2VseSB0byBoYXBwZW4gaW4gYSBwYXJ0aWN1bGFyIG1lcmdlIHdpbmRvdywg
+dGhleSBkbwo+IGhhcHBlbiBvY2Nhc2lvbmFsbHkgYW5kIHRlbmQgdG8gY2F1c2UgYSBsb3Qgb2Yg
+cGFpbi4KCkhtbSwgdGhhdCBzb3VuZHMgc2NhcnkgOikKClRoZXJlIGlzIG5vIGd1YXJhbnRlZSwg
+d2hlbiByZW1vdmluZyB0aGUgYWxpYXMsIG5vbmUgb2YgdGhlIGFib3ZlIGhhcHBlbnMsCnJpZ2h0
+PwoKSWYgdGhlIHRpbWVyIGJyYW5jaCBpcyBpbiBsaW51eC1uZXh0LCB0aGF0IGNvdWxkIGJlIGNh
+dWd0aCBiZWZvcmUgYW55IG9mIHRoZQphYm92ZSBoYXBwZW5zLCBubz8KCkknbSBub3QgYWdhaW5z
+dCBhZGRpbmcgYW4gYWxpYXMsIGp1c3QgY2hlY2tpbmcgb3V0IGlmIGl0IGlzIHdvcnRoIHRvLgoK
+LS0gCgogPGh0dHA6Ly93d3cubGluYXJvLm9yZy8+IExpbmFyby5vcmcg4pSCIE9wZW4gc291cmNl
+IHNvZnR3YXJlIGZvciBBUk0gU29DcwoKRm9sbG93IExpbmFybzogIDxodHRwOi8vd3d3LmZhY2Vi
+b29rLmNvbS9wYWdlcy9MaW5hcm8+IEZhY2Vib29rIHwKPGh0dHA6Ly90d2l0dGVyLmNvbS8jIS9s
+aW5hcm9vcmc+IFR3aXR0ZXIgfAo8aHR0cDovL3d3dy5saW5hcm8ub3JnL2xpbmFyby1ibG9nLz4g
+QmxvZwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGlu
+dXgtbWVkaWF0ZWsgbWFpbGluZyBsaXN0CkxpbnV4LW1lZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5v
+cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1tZWRp
+YXRlawo=
