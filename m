@@ -1,67 +1,81 @@
-From: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/7] clocksource: Rename CLOCKSOURCE_OF_DECLARE
-Date: Mon, 29 May 2017 15:25:12 +0200
-Message-ID: <5d5d1f1b-0948-f28d-0c52-adcdbdf89244@gmail.com>
-References: <1495879129-28109-1-git-send-email-daniel.lezcano@linaro.org>
- <1495879129-28109-2-git-send-email-daniel.lezcano@linaro.org>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH 00/15] make more driver use devm_of_platform_populate()
+Date: Mon, 29 May 2017 17:45:48 +0200
+Message-ID: <1496072763-31209-1-git-send-email-benjamin.gaignard@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1495879129-28109-2-git-send-email-daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:RALINK MIPS ARCHITECTURE" <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Santosh Shilimkar <ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, "moderated list:ARM/OXNAS platform support" <linux-oxnas-Xt5XgHjqiBU06sgRBLv0+0B+6BGkLq7r@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:ARM/STI ARCHITECTURE" <kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:H8/300 ARCHITECTURE" <uclinux-h8-devel-5NWGOfrQmneRv+LV9MX5uooqe+aC9MnS@public.gmane.org>, Alexander Shiyan <shc>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Fabrice Gasnier <fabrice.gasnier@st.com>, dri-devel@lists.freedesktop.org, Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, linux-media@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, linux-arm-msm@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org, freedreno@lists.freedesktop.org, Takashi Iwai <tiwai@suse.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-On 27/05/17 11:58, Daniel Lezcano wrote:
-> The CLOCKSOUCE_OF_DECLARE macro is used widely for the timers to declare the
-> clocksource at early stage. However, this macro is also used to initialize
-> the clockevent if any, or the clockevent only.
-> 
-> It was originally suggested to declare another macro to initialize a
-> clockevent, so in order to separate the two entities even they belong to the
-> same IP. This was not accepted because of the impact on the DT where splitting
-> a clocksource/clockevent definition does not make sense as it is a Linux
-> concept not a hardware description.
-> 
-> On the other side, the clocksource has not interrupt declared while the
-> clockevent has, so it is easy from the driver to know if the description is
-> for a clockevent or a clocksource, IOW it could be implemented at the driver
-> level.
-> 
-> So instead of dealing with a named clocksource macro, let's use a more generic
-> one: TIMER_OF_DECLARE.
-> 
-> The patch has not functional changes.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
-
-[...]
-
-> diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
-> index 9065949..f9b724f 100644
-> --- a/drivers/clocksource/mtk_timer.c
-> +++ b/drivers/clocksource/mtk_timer.c
-> @@ -265,4 +265,4 @@ static int __init mtk_timer_init(struct device_node *node)
->   
->   	return -EINVAL;
->   }
-> -CLOCKSOURCE_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_timer_init);
-> +TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_timer_init);
-
-For the mediatek driver:
-
-Acked-by: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+TnVtYmVyIG9mIGNhbGxzIHRvIG9mX3BsYXRmb3JtX3BvcHVsYXRlKCkgYXJlbid0IHVuYmFsYW5j
+ZWQgYnkgYSBjYWxsIHRvCm9mX3BsYXRmb3JtX2RlcG9wdWxhdGUoKSB0aGF0IGNvdWxkIGdlbmVy
+YXRlIGlzc3VlIHdpbGwgbG9hZGluZy91bmxvYWRpbmcKdGhlIGRyaXZlcnMuIE1ha2UgdGhvc2Ug
+ZHJpdmVycyB1c2UgZGV2bV9vZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpIGZpeCB0aGUgcHJvYmxlbQp3
+aXRob3V0IG5lZWQgdG8gYWRkIHJlbW92ZSBmdW5jdGlvbi4KCkluIHNvbWUgY2FzZSByZXBsYWNp
+bmcgb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKSBieSBkZXZtX29mX3BsYXRmb3JtX3BvcHVsYXRlKCkK
+YWxsb3cgdG8gZGVsZXRlIGRyaXZlciByZW1vdmUgZnVuY3Rpb24gYW5kIHNhdmUgc29tZSBsaW5l
+cyBvZiBjb2RlLgoKVGhpcyBzZXJpZXMgb2YgcGF0Y2hlcyBiYXNlZCBvbiB2NC4xMi1yYzMgdGFn
+LgoKQ0M6IEFsZXhhbmRyZSBUb3JndWUgPGFsZXhhbmRyZS50b3JndWVAc3QuY29tPgpDQzogRGF2
+aWQgQWlybGllIDxhaXJsaWVkQGxpbnV4LmllPgpDQzogRmFicmljZSBHYXNuaWVyIDxmYWJyaWNl
+Lmdhc25pZXJAc3QuY29tPgpDQzogSGFydG11dCBLbmFhY2sgPGtuYWFjay5oQGdteC5kZT4KQ0M6
+IEphcm9zbGF2IEt5c2VsYSA8cGVyZXhAcGVyZXguY3o+CkNDOiBKYXZpZXIgTWFydGluZXogQ2Fu
+aWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+CkNDOiBKb25hdGhhbiBDYW1lcm9uIDxqaWMy
+M0BrZXJuZWwub3JnPgpDQzogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgpD
+QzogS3VramluIEtpbSA8a2dlbmVAa2VybmVsLm9yZz4KQ0M6IEt5dW5nbWluIFBhcmsgPGt5dW5n
+bWluLnBhcmtAc2Ftc3VuZy5jb20+CkNDOiBMYXJzLVBldGVyIENsYXVzZW4gPGxhcnNAbWV0YWZv
+by5kZT4KQ0M6IExlZSBKb25lcyA8bGVlLmpvbmVzQGxpbmFyby5vcmc+CkNDOiBMaWFtIEdpcmR3
+b29kIDxsZ2lyZHdvb2RAZ21haWwuY29tPgpDQzogTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwu
+b3JnPgpDQzogTWF1cm8gQ2FydmFsaG8gQ2hlaGFiIDxtY2hlaGFiQGtlcm5lbC5vcmc+CkNDOiBP
+bGl2aWVyIE1veXNhbiA8b2xpdmllci5tb3lzYW5Ac3QuY29tPgpDQzogUm9iIENsYXJrIDxyb2Jk
+Y2xhcmtAZ21haWwuY29tPgpDQzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPgpDQzog
+U3lsd2VzdGVyIE5hd3JvY2tpIDxzLm5hd3JvY2tpQHNhbXN1bmcuY29tPgpDQzogVGFrYXNoaSBJ
+d2FpIDx0aXdhaUBzdXNlLmNvbT4KQ0M6IFRvbnkgTGluZGdyZW4gPHRvbnlAYXRvbWlkZS5jb20+
+CgpDQzogbGludXgtaWlvQHZnZXIua2VybmVsLm9yZwpDQzogbGludXgtYXJtLWtlcm5lbEBsaXN0
+cy5pbmZyYWRlYWQub3JnCkNDOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCkNDOiBkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCkNDOiBsaW51eC1hcm0tbXNtQHZnZXIua2VybmVs
+Lm9yZwpDQzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpDQzogbGludXgtc2Ftc3Vu
+Zy1zb2NAdmdlci5rZXJuZWwub3JnCkNDOiBhbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKQ0M6
+IGxpbnV4LW1lZGlhQHZnZXIua2VybmVsLm9yZwoKQmVuamFtaW4gR2FpZ25hcmQgKDE1KToKICBp
+aW86IGFkYzogc3RtMzI6IHVzZSBkZXZtX29mX3BsYXRmb3JtX3BvcHVsYXRlKCkKICBpaW86IGRh
+Yzogc3RtMzI6IHVzZSBkZXZtX29mX3BsYXRmb3JtX3BvcHVsYXRlKCkKICBkcm06IHp0ZTogdXNl
+IGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKQogIGRybTogbXNtOiB1c2UgZGV2bV9vZl9wbGF0
+Zm9ybV9wb3B1bGF0ZSgpCiAgbWZkOiBzdG0zMi10aW1lcnM6IHVzZSBkZXZtX29mX3BsYXRmb3Jt
+X3BvcHVsYXRlCiAgbWZkOiBhdG1lbDogdXNlIGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKQog
+IG1mZDogY3Jvc19lYzogdXNlIGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKQogIG1mZDogZXh5
+bm9zOiB1c2UgZGV2bV9vZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpCiAgbWZkOiBmc2wtaW14MjU6IHVz
+ZSBkZXZtX29mX3BsYXRmb3JtX3BvcHVsYXRlKCkKICBtZmQ6IG1vdG9yb2xhLWNwY2FwOiB1c2Ug
+ZGV2bV9vZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpCiAgbWZkOiBwYWxtYXM6IHVzZSBkZXZtX29mX3Bs
+YXRmb3JtX3BvcHVsYXRlKCkKICBtZmQ6IHFjb20tc3BtaS1wbWljOiB1c2UgZGV2bV9vZl9wbGF0
+Zm9ybV9wb3B1bGF0ZSgpCiAgbWZkOiBzbXNjLWVjZTogdXNlIGRldm1fb2ZfcGxhdGZvcm1fcG9w
+dWxhdGUoKQogIHNvdW5kOiBzdG0zMjogdXNlIGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKQog
+IG1lZGlhOiBleHlub3M0LWlzOiB1c2UgZGV2bV9vZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpCgogZHJp
+dmVycy9ncHUvZHJtL21zbS9tc21fZHJ2LmMgICAgICAgICAgICAgICB8IDEwICsrLS0tLS0tLS0K
+IGRyaXZlcnMvZ3B1L2RybS96dGUvenhfZHJtX2Rydi5jICAgICAgICAgICAgfCAgMiArLQogZHJp
+dmVycy9paW8vYWRjL3N0bTMyLWFkYy1jb3JlLmMgICAgICAgICAgICB8ICA0ICstLS0KIGRyaXZl
+cnMvaWlvL2RhYy9zdG0zMi1kYWMtY29yZS5jICAgICAgICAgICAgfCAgMyArLS0KIGRyaXZlcnMv
+bWVkaWEvcGxhdGZvcm0vZXh5bm9zNC1pcy9maW1jLWlzLmMgfCAgNyArKy0tLS0tCiBkcml2ZXJz
+L21mZC9hdG1lbC1mbGV4Y29tLmMgICAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvbWZk
+L2Nyb3NfZWMuYyAgICAgICAgICAgICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9tZmQvZXh5
+bm9zLWxwYXNzLmMgICAgICAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL21mZC9mc2wtaW14
+MjUtdHNhZGMuYyAgICAgICAgICAgICAgIHwgIDUgKy0tLS0KIGRyaXZlcnMvbWZkL21vdG9yb2xh
+LWNwY2FwLmMgICAgICAgICAgICAgICAgfCAxMyArLS0tLS0tLS0tLS0tCiBkcml2ZXJzL21mZC9w
+YWxtYXMuYyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvbWZkL3Fjb20t
+c3BtaS1wbWljLmMgICAgICAgICAgICAgICAgfCAgOSArLS0tLS0tLS0KIGRyaXZlcnMvbWZkL3Nt
+c2MtZWNlMTA5OS5jICAgICAgICAgICAgICAgICAgfCAgMyArLS0KIGRyaXZlcnMvbWZkL3N0bTMy
+LXRpbWVycy5jICAgICAgICAgICAgICAgICAgfCAxMCArLS0tLS0tLS0tCiBzb3VuZC9zb2Mvc3Rt
+L3N0bTMyX3NhaS5jICAgICAgICAgICAgICAgICAgIHwgMTEgKy0tLS0tLS0tLS0KIDE1IGZpbGVz
+IGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyksIDY4IGRlbGV0aW9ucygtKQoKLS0gCjEuOS4xCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
