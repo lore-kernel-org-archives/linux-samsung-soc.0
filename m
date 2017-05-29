@@ -1,53 +1,30 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH 08/15] mfd: exynos: use devm_of_platform_populate()
-Date: Mon, 29 May 2017 17:45:56 +0200
-Message-ID: <1496072763-31209-9-git-send-email-benjamin.gaignard@linaro.org>
-References: <1496072763-31209-1-git-send-email-benjamin.gaignard@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] pinctrl: samsung: Constify wakeup driver specific data
+Date: Mon, 29 May 2017 11:34:49 +0200
+Message-ID: <CACRpkdYN20Q3qcBtORPArCMfdTCGWNoHsyRyB9EYOXiwqN0Miw@mail.gmail.com>
+References: <20170523184141.24284-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1496072763-31209-1-git-send-email-benjamin.gaignard@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20170523184141.24284-1-krzk@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use devm_of_platform_populate() to be sure that of_platform_depopulate
-is called when removing the driver.
+On Tue, May 23, 2017 at 8:41 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+> Static exynos_irq_chip structures, containing driver specific data, are
+> referenced only through opaque data pointer in const of_device_id table.
+> The contents of pointed memory (exynos_irq_chip structure itself) is
+> then copied with kmemdup() during wakeup initialization so
+> exynos_irq_chip can be made const for code safenes.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-CC: Lee Jones <lee.jones@linaro.org>
-CC: Kukjin Kim <kgene@kernel.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Javier Martinez Canillas <javier@osg.samsung.com>
-CC: linux-arm-kernel@lists.infradead.org
-CC: linux-samsung-soc@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/mfd/exynos-lpass.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+All looks good to me, Acked-by.
 
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index 0bf3aeb..ca829f8 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -138,7 +138,7 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	pm_runtime_enable(dev);
- 	exynos_lpass_enable(lpass);
- 
--	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-+	return devm_of_platform_populate(dev);
- }
- 
- static int exynos_lpass_remove(struct platform_device *pdev)
--- 
-1.9.1
+Expecting to get this in a pull request.
+
+Yours,
+Linus Walleij
