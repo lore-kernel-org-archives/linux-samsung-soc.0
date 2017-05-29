@@ -1,81 +1,71 @@
 From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH 00/15] make more driver use devm_of_platform_populate()
-Date: Mon, 29 May 2017 17:45:48 +0200
-Message-ID: <1496072763-31209-1-git-send-email-benjamin.gaignard@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Fabrice Gasnier <fabrice.gasnier@st.com>, dri-devel@lists.freedesktop.org, Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, linux-media@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, linux-arm-msm@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org, freedreno@lists.freedesktop.org, Takashi Iwai <tiwai@suse.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 15/15] media: exynos4-is: use devm_of_platform_populate()
+Date: Mon, 29 May 2017 17:46:03 +0200
+Message-ID: <1496072763-31209-16-git-send-email-benjamin.gaignard@linaro.org>
+References: <1496072763-31209-1-git-send-email-benjamin.gaignard@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1496072763-31209-1-git-send-email-benjamin.gaignard@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-TnVtYmVyIG9mIGNhbGxzIHRvIG9mX3BsYXRmb3JtX3BvcHVsYXRlKCkgYXJlbid0IHVuYmFsYW5j
-ZWQgYnkgYSBjYWxsIHRvCm9mX3BsYXRmb3JtX2RlcG9wdWxhdGUoKSB0aGF0IGNvdWxkIGdlbmVy
-YXRlIGlzc3VlIHdpbGwgbG9hZGluZy91bmxvYWRpbmcKdGhlIGRyaXZlcnMuIE1ha2UgdGhvc2Ug
-ZHJpdmVycyB1c2UgZGV2bV9vZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpIGZpeCB0aGUgcHJvYmxlbQp3
-aXRob3V0IG5lZWQgdG8gYWRkIHJlbW92ZSBmdW5jdGlvbi4KCkluIHNvbWUgY2FzZSByZXBsYWNp
-bmcgb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKSBieSBkZXZtX29mX3BsYXRmb3JtX3BvcHVsYXRlKCkK
-YWxsb3cgdG8gZGVsZXRlIGRyaXZlciByZW1vdmUgZnVuY3Rpb24gYW5kIHNhdmUgc29tZSBsaW5l
-cyBvZiBjb2RlLgoKVGhpcyBzZXJpZXMgb2YgcGF0Y2hlcyBiYXNlZCBvbiB2NC4xMi1yYzMgdGFn
-LgoKQ0M6IEFsZXhhbmRyZSBUb3JndWUgPGFsZXhhbmRyZS50b3JndWVAc3QuY29tPgpDQzogRGF2
-aWQgQWlybGllIDxhaXJsaWVkQGxpbnV4LmllPgpDQzogRmFicmljZSBHYXNuaWVyIDxmYWJyaWNl
-Lmdhc25pZXJAc3QuY29tPgpDQzogSGFydG11dCBLbmFhY2sgPGtuYWFjay5oQGdteC5kZT4KQ0M6
-IEphcm9zbGF2IEt5c2VsYSA8cGVyZXhAcGVyZXguY3o+CkNDOiBKYXZpZXIgTWFydGluZXogQ2Fu
-aWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+CkNDOiBKb25hdGhhbiBDYW1lcm9uIDxqaWMy
-M0BrZXJuZWwub3JnPgpDQzogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgpD
-QzogS3VramluIEtpbSA8a2dlbmVAa2VybmVsLm9yZz4KQ0M6IEt5dW5nbWluIFBhcmsgPGt5dW5n
-bWluLnBhcmtAc2Ftc3VuZy5jb20+CkNDOiBMYXJzLVBldGVyIENsYXVzZW4gPGxhcnNAbWV0YWZv
-by5kZT4KQ0M6IExlZSBKb25lcyA8bGVlLmpvbmVzQGxpbmFyby5vcmc+CkNDOiBMaWFtIEdpcmR3
-b29kIDxsZ2lyZHdvb2RAZ21haWwuY29tPgpDQzogTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwu
-b3JnPgpDQzogTWF1cm8gQ2FydmFsaG8gQ2hlaGFiIDxtY2hlaGFiQGtlcm5lbC5vcmc+CkNDOiBP
-bGl2aWVyIE1veXNhbiA8b2xpdmllci5tb3lzYW5Ac3QuY29tPgpDQzogUm9iIENsYXJrIDxyb2Jk
-Y2xhcmtAZ21haWwuY29tPgpDQzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPgpDQzog
-U3lsd2VzdGVyIE5hd3JvY2tpIDxzLm5hd3JvY2tpQHNhbXN1bmcuY29tPgpDQzogVGFrYXNoaSBJ
-d2FpIDx0aXdhaUBzdXNlLmNvbT4KQ0M6IFRvbnkgTGluZGdyZW4gPHRvbnlAYXRvbWlkZS5jb20+
-CgpDQzogbGludXgtaWlvQHZnZXIua2VybmVsLm9yZwpDQzogbGludXgtYXJtLWtlcm5lbEBsaXN0
-cy5pbmZyYWRlYWQub3JnCkNDOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCkNDOiBkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCkNDOiBsaW51eC1hcm0tbXNtQHZnZXIua2VybmVs
-Lm9yZwpDQzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpDQzogbGludXgtc2Ftc3Vu
-Zy1zb2NAdmdlci5rZXJuZWwub3JnCkNDOiBhbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKQ0M6
-IGxpbnV4LW1lZGlhQHZnZXIua2VybmVsLm9yZwoKQmVuamFtaW4gR2FpZ25hcmQgKDE1KToKICBp
-aW86IGFkYzogc3RtMzI6IHVzZSBkZXZtX29mX3BsYXRmb3JtX3BvcHVsYXRlKCkKICBpaW86IGRh
-Yzogc3RtMzI6IHVzZSBkZXZtX29mX3BsYXRmb3JtX3BvcHVsYXRlKCkKICBkcm06IHp0ZTogdXNl
-IGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKQogIGRybTogbXNtOiB1c2UgZGV2bV9vZl9wbGF0
-Zm9ybV9wb3B1bGF0ZSgpCiAgbWZkOiBzdG0zMi10aW1lcnM6IHVzZSBkZXZtX29mX3BsYXRmb3Jt
-X3BvcHVsYXRlCiAgbWZkOiBhdG1lbDogdXNlIGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKQog
-IG1mZDogY3Jvc19lYzogdXNlIGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKQogIG1mZDogZXh5
-bm9zOiB1c2UgZGV2bV9vZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpCiAgbWZkOiBmc2wtaW14MjU6IHVz
-ZSBkZXZtX29mX3BsYXRmb3JtX3BvcHVsYXRlKCkKICBtZmQ6IG1vdG9yb2xhLWNwY2FwOiB1c2Ug
-ZGV2bV9vZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpCiAgbWZkOiBwYWxtYXM6IHVzZSBkZXZtX29mX3Bs
-YXRmb3JtX3BvcHVsYXRlKCkKICBtZmQ6IHFjb20tc3BtaS1wbWljOiB1c2UgZGV2bV9vZl9wbGF0
-Zm9ybV9wb3B1bGF0ZSgpCiAgbWZkOiBzbXNjLWVjZTogdXNlIGRldm1fb2ZfcGxhdGZvcm1fcG9w
-dWxhdGUoKQogIHNvdW5kOiBzdG0zMjogdXNlIGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoKQog
-IG1lZGlhOiBleHlub3M0LWlzOiB1c2UgZGV2bV9vZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpCgogZHJp
-dmVycy9ncHUvZHJtL21zbS9tc21fZHJ2LmMgICAgICAgICAgICAgICB8IDEwICsrLS0tLS0tLS0K
-IGRyaXZlcnMvZ3B1L2RybS96dGUvenhfZHJtX2Rydi5jICAgICAgICAgICAgfCAgMiArLQogZHJp
-dmVycy9paW8vYWRjL3N0bTMyLWFkYy1jb3JlLmMgICAgICAgICAgICB8ICA0ICstLS0KIGRyaXZl
-cnMvaWlvL2RhYy9zdG0zMi1kYWMtY29yZS5jICAgICAgICAgICAgfCAgMyArLS0KIGRyaXZlcnMv
-bWVkaWEvcGxhdGZvcm0vZXh5bm9zNC1pcy9maW1jLWlzLmMgfCAgNyArKy0tLS0tCiBkcml2ZXJz
-L21mZC9hdG1lbC1mbGV4Y29tLmMgICAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvbWZk
-L2Nyb3NfZWMuYyAgICAgICAgICAgICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9tZmQvZXh5
-bm9zLWxwYXNzLmMgICAgICAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL21mZC9mc2wtaW14
-MjUtdHNhZGMuYyAgICAgICAgICAgICAgIHwgIDUgKy0tLS0KIGRyaXZlcnMvbWZkL21vdG9yb2xh
-LWNwY2FwLmMgICAgICAgICAgICAgICAgfCAxMyArLS0tLS0tLS0tLS0tCiBkcml2ZXJzL21mZC9w
-YWxtYXMuYyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvbWZkL3Fjb20t
-c3BtaS1wbWljLmMgICAgICAgICAgICAgICAgfCAgOSArLS0tLS0tLS0KIGRyaXZlcnMvbWZkL3Nt
-c2MtZWNlMTA5OS5jICAgICAgICAgICAgICAgICAgfCAgMyArLS0KIGRyaXZlcnMvbWZkL3N0bTMy
-LXRpbWVycy5jICAgICAgICAgICAgICAgICAgfCAxMCArLS0tLS0tLS0tCiBzb3VuZC9zb2Mvc3Rt
-L3N0bTMyX3NhaS5jICAgICAgICAgICAgICAgICAgIHwgMTEgKy0tLS0tLS0tLS0KIDE1IGZpbGVz
-IGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyksIDY4IGRlbGV0aW9ucygtKQoKLS0gCjEuOS4xCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Usage of devm_of_platform_populate() simplify driver code
+and save somes lines
+
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+
+CC: Kyungmin Park <kyungmin.park@samsung.com>
+CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
+CC: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Kukjin Kim <kgene@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Javier Martinez Canillas <javier@osg.samsung.com>
+CC: linux-media@vger.kernel.org
+CC: linux-arm-kernel@lists.infradead.org
+CC: linux-samsung-soc@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 7f92144..340d906 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -854,7 +854,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 
+ 	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
+ 
+-	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
++	ret = devm_of_platform_populate(dev);
+ 	if (ret < 0)
+ 		goto err_pm;
+ 
+@@ -864,7 +864,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 	 */
+ 	ret = fimc_is_register_subdevs(is);
+ 	if (ret < 0)
+-		goto err_of_dep;
++		goto err_pm;
+ 
+ 	ret = fimc_is_debugfs_create(is);
+ 	if (ret < 0)
+@@ -883,8 +883,6 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 	fimc_is_debugfs_remove(is);
+ err_sd:
+ 	fimc_is_unregister_subdevs(is);
+-err_of_dep:
+-	of_platform_depopulate(dev);
+ err_pm:
+ 	if (!pm_runtime_enabled(dev))
+ 		fimc_is_runtime_suspend(dev);
+@@ -946,7 +944,6 @@ static int fimc_is_remove(struct platform_device *pdev)
+ 	if (!pm_runtime_status_suspended(dev))
+ 		fimc_is_runtime_suspend(dev);
+ 	free_irq(is->irq, is);
+-	of_platform_depopulate(dev);
+ 	fimc_is_unregister_subdevs(is);
+ 	vb2_dma_contig_clear_max_seg_size(dev);
+ 	fimc_is_put_clocks(is);
+-- 
+1.9.1
