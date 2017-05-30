@@ -1,63 +1,47 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 08/15] mfd: exynos: use devm_of_platform_populate()
-Date: Tue, 30 May 2017 10:31:24 +0100
-Message-ID: <20170530093124.7rpqudcqw4tfclsp@dell>
-References: <1496072763-31209-1-git-send-email-benjamin.gaignard@linaro.org>
- <1496072763-31209-9-git-send-email-benjamin.gaignard@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36210 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751672AbdE3Jb2 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 May 2017 05:31:28 -0400
-Received: by mail-wm0-f42.google.com with SMTP id 7so84038647wmo.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 May 2017 02:31:27 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1496072763-31209-9-git-send-email-benjamin.gaignard@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] Input: s3c2410_ts - Handle return value of clk_prepare_enable
+Date: Tue, 30 May 2017 16:22:57 +0530
+Message-ID: <477d9b0992f4b16454ad1780eb4477433c075226.1496141406.git.arvind.yadav.cs@gmail.com>
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: kgene@kernel.org, krzk@kernel.org, dmitry.torokhov@gmail.com, javier@osg.samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 29 May 2017, Benjamin Gaignard wrote:
+clk_prepare_enable() can fail here and we must check its return value.
 
-> Use devm_of_platform_populate() to be sure that of_platform_depopulate
-> is called when removing the driver.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-> 
-> CC: Lee Jones <lee.jones@linaro.org>
-> CC: Kukjin Kim <kgene@kernel.org>
-> CC: Krzysztof Kozlowski <krzk@kernel.org>
-> CC: Javier Martinez Canillas <javier@osg.samsung.com>
-> CC: linux-arm-kernel@lists.infradead.org
-> CC: linux-samsung-soc@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->  drivers/mfd/exynos-lpass.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/input/touchscreen/s3c2410_ts.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Applied, thanks.
-
-> diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-> index 0bf3aeb..ca829f8 100644
-> --- a/drivers/mfd/exynos-lpass.c
-> +++ b/drivers/mfd/exynos-lpass.c
-> @@ -138,7 +138,7 @@ static int exynos_lpass_probe(struct platform_device *pdev)
->  	pm_runtime_enable(dev);
->  	exynos_lpass_enable(lpass);
->  
-> -	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-> +	return devm_of_platform_populate(dev);
->  }
->  
->  static int exynos_lpass_remove(struct platform_device *pdev)
-
+diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
+index 41d58e8..3b3db8c 100644
+--- a/drivers/input/touchscreen/s3c2410_ts.c
++++ b/drivers/input/touchscreen/s3c2410_ts.c
+@@ -264,7 +264,11 @@ static int s3c2410ts_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
+ 
+-	clk_prepare_enable(ts.clock);
++	ret = clk_prepare_enable(ts.clock);
++	if (ret) {
++		dev_err(dev, "Failed! to enabled clocks\n");
++		goto err_clk_get;
++	}
+ 	dev_dbg(dev, "got and enabled clocks\n");
+ 
+ 	ts.irq_tc = ret = platform_get_irq(pdev, 0);
+@@ -353,7 +357,9 @@ static int s3c2410ts_probe(struct platform_device *pdev)
+  err_iomap:
+ 	iounmap(ts.io);
+  err_clk:
++	clk_disable_unprepare(ts.clock);
+ 	del_timer_sync(&touch_timer);
++ err_clk_get:
+ 	clk_put(ts.clock);
+ 	return ret;
+ }
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
+
