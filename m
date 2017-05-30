@@ -1,30 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] pinctrl: samsung: Constify wakeup driver specific data
-Date: Mon, 29 May 2017 11:34:49 +0200
-Message-ID: <CACRpkdYN20Q3qcBtORPArCMfdTCGWNoHsyRyB9EYOXiwqN0Miw@mail.gmail.com>
-References: <20170523184141.24284-1-krzk@kernel.org>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] spi: add null check before pointer dereference
+Date: Mon, 29 May 2017 21:33:16 -0500
+Message-ID: <20170529213316.Horde.E_8getHmJAKt7ZcMf5DCefq@gator4166.hostgator.com>
+References: <CGME20170523002511epcas4p3b7737552432363b089e4a9018e43f6f5@epcas4p3.samsung.com>
+ <20170523002507.GA16670@embeddedgus>
+ <20170529035925.oibpv254lyrdzoba@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20170523184141.24284-1-krzk@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"; DelSp="Yes"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170529035925.oibpv254lyrdzoba@gangnam.samsung>
+Content-Disposition: inline
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, May 23, 2017 at 8:41 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Hi Andi,
 
-> Static exynos_irq_chip structures, containing driver specific data, are
-> referenced only through opaque data pointer in const of_device_id table.
-> The contents of pointed memory (exynos_irq_chip structure itself) is
-> then copied with kmemdup() during wakeup initialization so
-> exynos_irq_chip can be made const for code safenes.
+Quoting Andi Shyti <andi.shyti@samsung.com>:
+
+> Hi Gustavo,
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>  	desc = dmaengine_prep_slave_sg(dma->ch, sgt->sgl, sgt->nents,
+>>  				       dma->direction, DMA_PREP_INTERRUPT);
+>>
+>> +	if (!desc) {
+>> +		dev_err(&sdd->master->dev,
+>> +			"%s:dmaengine_prep_slave_sg Failed\n", __func__);
+>> +		return;
+>> +	}
+>> +
+>
+> I'm sorry, I would nack this patch for now. There was a smilar I
+> sent before, but, as Krzysztof said, this needs more testing and
+> a proper solution.
+>
 
-All looks good to me, Acked-by.
+Yeah, I get it.
 
-Expecting to get this in a pull request.
+> That's anyway in my todo list.
+>
 
-Yours,
-Linus Walleij
+That's great.
+
+> Thanks,
+> Andi
+
+Thanks!
+--
+Gustavo A. R. Silva
