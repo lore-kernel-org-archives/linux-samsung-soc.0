@@ -1,89 +1,63 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH 2/7] clocksource: Rename CLOCKSOURCE_OF_DECLARE
-Date: Mon, 29 May 2017 11:57:25 +0200
-Message-ID: <CAK8P3a1Kv_RhKL43ie6co_N5pDXvRHd7Uq8g70qt80WkxuhzLw@mail.gmail.com>
-References: <1495879129-28109-1-git-send-email-daniel.lezcano@linaro.org>
- <1495879129-28109-2-git-send-email-daniel.lezcano@linaro.org>
- <CAK8P3a3QACHYqtCO1z_FpW0nXEtx356wCDha_=SNXU872=q1UQ@mail.gmail.com>
- <20170529084809.GA2192@mai>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 08/15] mfd: exynos: use devm_of_platform_populate()
+Date: Tue, 30 May 2017 10:31:24 +0100
+Message-ID: <20170530093124.7rpqudcqw4tfclsp@dell>
+References: <1496072763-31209-1-git-send-email-benjamin.gaignard@linaro.org>
+ <1496072763-31209-9-git-send-email-benjamin.gaignard@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20170529084809.GA2192@mai>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:RALINK MIPS ARCHITECTURE" <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Santosh Shilimkar <ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, "moderated list:ARM/OXNAS platform support" <linux-oxnas-Xt5XgHjqiBU06sgRBLv0+0B+6BGkLq7r@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:ARM/STI ARCHITECTURE" <kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:H8/300 ARCHITECTURE" <uclinux-h8-devel-5NWGOfrQmneRv+LV9MX5uooqe+aC9MnS@public.gmane.org>, Alexander Shiyan <shc>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:36210 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751672AbdE3Jb2 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 30 May 2017 05:31:28 -0400
+Received: by mail-wm0-f42.google.com with SMTP id 7so84038647wmo.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 May 2017 02:31:27 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1496072763-31209-9-git-send-email-benjamin.gaignard@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, May 29, 2017 at 10:48 AM, Daniel Lezcano
-<daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Mon, May 29, 2017 at 10:41:52AM +0200, Arnd Bergmann wrote:
->> On Sat, May 27, 2017 at 11:58 AM, Daniel Lezcano
->> <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> > The CLOCKSOUCE_OF_DECLARE macro is used widely for the timers to declare the
->> > clocksource at early stage. However, this macro is also used to initialize
->> > the clockevent if any, or the clockevent only.
->> >
->> > It was originally suggested to declare another macro to initialize a
->> > clockevent, so in order to separate the two entities even they belong to the
->> > same IP. This was not accepted because of the impact on the DT where splitting
->> > a clocksource/clockevent definition does not make sense as it is a Linux
->> > concept not a hardware description.
->> >
->> > On the other side, the clocksource has not interrupt declared while the
->> > clockevent has, so it is easy from the driver to know if the description is
->> > for a clockevent or a clocksource, IOW it could be implemented at the driver
->> > level.
->> >
->> > So instead of dealing with a named clocksource macro, let's use a more generic
->> > one: TIMER_OF_DECLARE.
->> >
->> > The patch has not functional changes.
->> >
->> > Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>
->> Could you either leave the old name as an alias for one release, or introduce
->> the new name as an alias now for 4.13?
->>
->> I think that that would make it easier to merge new drivers. Otherwise this
->> looks good to me,
->
->
-> New drivers should go through my tree, so I can catch them with the old macro
-> name and do the change.
+On Mon, 29 May 2017, Benjamin Gaignard wrote:
 
-Sure, they should, and it's quite likely that you won't even need the fallback,
-I've just seen too many cases where a similar assumption turned out wrong,
-that I'd just pick the safer option just in case whenever I do an API change.
+> Use devm_of_platform_populate() to be sure that of_platform_depopulate
+> is called when removing the driver.
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+> 
+> CC: Lee Jones <lee.jones@linaro.org>
+> CC: Kukjin Kim <kgene@kernel.org>
+> CC: Krzysztof Kozlowski <krzk@kernel.org>
+> CC: Javier Martinez Canillas <javier@osg.samsung.com>
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: linux-samsung-soc@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  drivers/mfd/exynos-lpass.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Things that could go wrong include:
+Applied, thanks.
 
-- A platform maintainer wants to add a new platform and has a for-next
-  branch that gets merged into linux-next, with parts of it going through
-  different maintainers, and now they have to choose between a branch
-  that doesn't build without the timer branch, or one that break for-next
-  unless Stephen applies a fixup
+> diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
+> index 0bf3aeb..ca829f8 100644
+> --- a/drivers/mfd/exynos-lpass.c
+> +++ b/drivers/mfd/exynos-lpass.c
+> @@ -138,7 +138,7 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+>  	pm_runtime_enable(dev);
+>  	exynos_lpass_enable(lpass);
+>  
+> -	return of_platform_populate(dev->of_node, NULL, NULL, dev);
+> +	return devm_of_platform_populate(dev);
+>  }
+>  
+>  static int exynos_lpass_remove(struct platform_device *pdev)
 
-- Some architecture maintainer didn't get the memo and adds an instance of
-  CLOCKSOUCE_OF_DECLARE in architecture specific code without asking
-  having the patch reviewed first
-
-- A platform has a branch with complex cross-tree dependencies and
-  it need to get merged in an unconventional way.
-
-- You make a mistake and accidentally merge one driver for an unusual
-  architecture that escapes your test matrix.
-
-While those all are unlikely to happen in a particular merge window, they do
-happen occasionally and tend to cause a lot of pain.
-
-       Arnd
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
