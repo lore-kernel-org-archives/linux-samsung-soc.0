@@ -1,85 +1,52 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH] ARM: dts: exynos: Add HDMI CEC device to Exynos5 SoC
- family
-Date: Wed, 31 May 2017 14:58:32 +0200
-Message-ID: <0e11b430-b444-b1c0-5900-809193e32902@xs4all.nl>
-References: <CGME20170531110029eucas1p14bb9468f72155d88364c0aa5093ac05d@eucas1p1.samsung.com>
- <1496228417-31126-1-git-send-email-m.szyprowski@samsung.com>
- <44c9e8c6-669c-848c-30df-eabad6dc1a39@xs4all.nl>
- <2497f348-5d66-f10a-5591-c490b7ee8b4e@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] pinctrl: samsung: Fix missing object for S5Pv210
+Date: Wed, 31 May 2017 19:42:44 +0200
+Message-ID: <20170531174244.31861-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:46250 "EHLO
-        lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751015AbdEaM6j (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 31 May 2017 08:58:39 -0400
-In-Reply-To: <2497f348-5d66-f10a-5591-c490b7ee8b4e@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-On 05/31/17 14:04, Marek Szyprowski wrote:
-> Hi Hans,
-> 
-> On 2017-05-31 13:17, Hans Verkuil wrote:
->> On 05/31/17 13:00, Marek Szyprowski wrote:
->>> Exynos5250 and Exynos542x SoCs have the same CEC hardware module as
->>> Exynos4 SoC series, so enable support for it using the same compatible
->>> string.
->>>
->>> Tested on Odroid XU3 (Exynos5422) and Google Snow (Exynos5250) boards.
->> Thanks!
->>
->> Do you know if the CEC block is always on for these devices or only if there
->> is a hotplug signal? That was a problem with the exynos4 odroid.
-> 
-> Odroid XU3 has exactly same wiring between SoC & HDMI connector (via 
-> IP4791CZ12
-> chip) as Odroid U3, so I expect the same issues.
-> 
-> I don't have schematic for Google Snow board, so I have no idea how it works
-> there.
-> 
->> I have made a patch (not posted yet) to signal this in the device tree and
->> added a CEC capability to signal this to the user.
->>
->> This capability will be added to 4.13 (see my patch 'cec: add CEC_CAP_NEEDS_HPD'
->> from May 25th) since the DisplayPort CEC tunneling feature needs it as well.
->>
->> It's easy to test: don't connect an HDMI cable and run:
->>
->> cec-ctl --playback
->> cec-ctl -t0 --image-view-on
->>
->> If this returns with a NACK error, then it is OK. If you get a kernel message
->> that the transmit timed out, then you need this capability since CEC is disabled
->> without HPD.
-> 
-> I've checked those commands, but on all tested boards (Odroid U3+, 
-> Odroid XU3 and
-> Google Snow) I get the following message:
-> 
-> Transmit from Unregistered to TV (255 to 0):
-> CEC_MSG_IMAGE_VIEW_ON (0x04)
->          Sequence: 19 Tx Timestamp: 175.935s
->          Tx, Error (1), Max Retries
-> 
-> I have never got a timeout message from the kernel. Do I need to enable 
-> some kind
-> of CEC debugs?
+While splitting Samsung pinctrl drivers per ARMv7 and ARMv8
+architectures, the necessary CONFIG_PINCTRL_EXYNOS_ARM is not selected
+when building for S5Pv210 family of SoCs thus pinctrl was missing there
+entirely.
 
-Ah, that's right. CEC works, but the level shifter drops the CEC signal
-when there is no HPD. So this is actually quite hard to test.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-The easiest is to get a Pulse-Eight USB CEC adapter since then you can
-connect the odroid to the Pulse-Eight without connecting that to a TV
-in turn. Sending a CEC command would show up with the Pulse-Eight if CEC
-works without HPD.
+---
 
-Regards,
+Fixes: 16340fd6dbc1 ("pinctrl: samsung: Split Exynos drivers per ARMv7 and ARMv8")
 
-	Hans
+Fixed commit is in my tree but already applied and sitting in next for
+some time. This should be squashed though.
+---
+ drivers/pinctrl/samsung/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
+index c33ee6293c30..0357f9701eb9 100644
+--- a/drivers/pinctrl/samsung/Kconfig
++++ b/drivers/pinctrl/samsung/Kconfig
+@@ -10,7 +10,7 @@ config PINCTRL_EXYNOS
+ 	bool "Pinctrl driver data for Samsung EXYNOS SoCs other than 5440"
+ 	depends on OF && GPIOLIB && (ARCH_EXYNOS || ARCH_S5PV210)
+ 	select PINCTRL_SAMSUNG
+-	select PINCTRL_EXYNOS_ARM if ARM && ARCH_EXYNOS
++	select PINCTRL_EXYNOS_ARM if ARM && (ARCH_EXYNOS || ARCH_S5PV210)
+ 	select PINCTRL_EXYNOS_ARM64 if ARM64 && ARCH_EXYNOS
+ 
+ config PINCTRL_EXYNOS_ARM
+-- 
+2.9.3
