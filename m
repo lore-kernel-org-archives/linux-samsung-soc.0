@@ -1,52 +1,56 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] pinctrl: samsung: Fix missing object for S5Pv210
-Date: Wed, 31 May 2017 19:42:44 +0200
-Message-ID: <20170531174244.31861-1-krzk@kernel.org>
+Subject: Re: [PATCH] ARM: s3c64xx: don't select ARM_AMBA from S3C64XX_PL080
+Date: Wed, 31 May 2017 21:37:48 +0200
+Message-ID: <20170531193748.7cyyxy3oflksdp2m@kozik-lap>
+References: <20170524155845.1778223-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34533 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbdEaThw (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 31 May 2017 15:37:52 -0400
+Content-Disposition: inline
+In-Reply-To: <20170524155845.1778223-1-arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene@kernel.org>, Eric Anholt <eric@anholt.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-While splitting Samsung pinctrl drivers per ARMv7 and ARMv8
-architectures, the necessary CONFIG_PINCTRL_EXYNOS_ARM is not selected
-when building for S5Pv210 family of SoCs thus pinctrl was missing there
-entirely.
+On Wed, May 24, 2017 at 05:58:34PM +0200, Arnd Bergmann wrote:
+> While trying a fix a build warning unrelated to s3c64xx, I ran into
+> a circular dependency:
+> 
+> drivers/i2c/Kconfig:7: symbol I2C is selected by FB_DDC
+> drivers/video/fbdev/Kconfig:63: symbol FB_DDC is selected by FB_CYBER2000_DDC
+> drivers/video/fbdev/Kconfig:381: symbol FB_CYBER2000_DDC depends on FB_CYBER2000
+> drivers/video/fbdev/Kconfig:369: symbol FB_CYBER2000 depends on FB
+> drivers/video/fbdev/Kconfig:5: symbol FB is selected by DRM_KMS_FB_HELPER
+> drivers/gpu/drm/Kconfig:72: symbol DRM_KMS_FB_HELPER is selected by DRM_KMS_CMA_HELPER
+> drivers/gpu/drm/Kconfig:137: symbol DRM_KMS_CMA_HELPER is selected by DRM_PL111
+> drivers/gpu/drm/pl111/Kconfig:1: symbol DRM_PL111 depends on ARM_AMBA
+> drivers/amba/Kconfig:1: symbol ARM_AMBA is selected by S3C64XX_PL080
+> arch/arm/mach-s3c64xx/Kconfig:42: symbol S3C64XX_PL080 default value contains DMADEVICES
+> drivers/dma/Kconfig:5: symbol DMADEVICES is selected by SND_SOC_SH4_SIU
+> sound/soc/sh/Kconfig:29: symbol SND_SOC_SH4_SIU is selected by SND_SIU_MIGOR
+> sound/soc/sh/Kconfig:59: symbol SND_SIU_MIGOR depends on I2C
+> 
+> The I2C and FB dependencies are hard to untangle, but I notice that
+> S3C64XX_PL080 selecting ARM_AMBA is one piece of the puzzle that
+> can easily be avoided, as ARCH_S3C64XX already select ARM_AMBA.
+> Removing the redundant 'select' now can help us in the future if we
+> run into a variation of the same dependency.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> Please apply this to the samsung tree
+> ---
+>  arch/arm/mach-s3c64xx/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks, applied.
 
----
-
-Fixes: 16340fd6dbc1 ("pinctrl: samsung: Split Exynos drivers per ARMv7 and ARMv8")
-
-Fixed commit is in my tree but already applied and sitting in next for
-some time. This should be squashed though.
----
- drivers/pinctrl/samsung/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
-index c33ee6293c30..0357f9701eb9 100644
---- a/drivers/pinctrl/samsung/Kconfig
-+++ b/drivers/pinctrl/samsung/Kconfig
-@@ -10,7 +10,7 @@ config PINCTRL_EXYNOS
- 	bool "Pinctrl driver data for Samsung EXYNOS SoCs other than 5440"
- 	depends on OF && GPIOLIB && (ARCH_EXYNOS || ARCH_S5PV210)
- 	select PINCTRL_SAMSUNG
--	select PINCTRL_EXYNOS_ARM if ARM && ARCH_EXYNOS
-+	select PINCTRL_EXYNOS_ARM if ARM && (ARCH_EXYNOS || ARCH_S5PV210)
- 	select PINCTRL_EXYNOS_ARM64 if ARM64 && ARCH_EXYNOS
- 
- config PINCTRL_EXYNOS_ARM
--- 
-2.9.3
+Best regards,
+Krzysztof
