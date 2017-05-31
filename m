@@ -1,65 +1,74 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] Input: s3c2410_ts - Handle return value of
- clk_prepare_enable
-Date: Tue, 30 May 2017 09:48:45 -0700
-Message-ID: <20170530164845.GC12922@dtor-ws>
-References: <477d9b0992f4b16454ad1780eb4477433c075226.1496141406.git.arvind.yadav.cs@gmail.com>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+Subject: Re: [PATCH 2/7] clocksource: Rename CLOCKSOURCE_OF_DECLARE
+Date: Wed, 31 May 2017 07:11:41 +0000
+Message-ID: <e6ebd144-414a-51da-d2b4-8d7877eb5d99@st.com>
+References: <1495879129-28109-1-git-send-email-daniel.lezcano@linaro.org>
+ <1495879129-28109-2-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33458 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbdE3Qss (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 May 2017 12:48:48 -0400
-Content-Disposition: inline
-In-Reply-To: <477d9b0992f4b16454ad1780eb4477433c075226.1496141406.git.arvind.yadav.cs@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1495879129-28109-2-git-send-email-daniel.lezcano@linaro.org>
+Content-Language: en-US
+Content-ID: <267EBEA7178F2C4F80A2CFADCAB2FBA3@st.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
+List-Post: <mailto:linux-snps-arc@lists.infradead.org>
+List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
+Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:RALINK MIPS
+ ARCHITECTURE" <linux-mips@linux-mips.org>, Baruch Siach <baruch@tkos.co.il>, Heiko Stuebner <heiko@sntech.de>, Neil Armstrong <narmstrong@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, "moderated
+ list:ARM/OXNAS platform support" <linux-oxnas@lists.tuxfamily.org>, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Ingo Molnar <mingo@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "moderated
+ list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, "moderated list:H8/300 ARCHITECTURE" <uclinux-h8-devel@lists.sourceforge.jp>, Alexander Shiyan <shc_work@mail.ru>, "open list:ARM/Rockchip
+ SoC support" <linux-rockchip@lists.infradead.org>, Kevin
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 30, 2017 at 04:22:57PM +0530, Arvind Yadav wrote:
-> clk_prepare_enable() can fail here and we must check its return value.
+Hi Daniel
+
+On 05/27/2017 11:58 AM, Daniel Lezcano wrote:
+> The CLOCKSOUCE_OF_DECLARE macro is used widely for the timers to declare the
+> clocksource at early stage. However, this macro is also used to initialize
+> the clockevent if any, or the clockevent only.
 > 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-
-Applied, thank you.
-
+> It was originally suggested to declare another macro to initialize a
+> clockevent, so in order to separate the two entities even they belong to the
+> same IP. This was not accepted because of the impact on the DT where splitting
+> a clocksource/clockevent definition does not make sense as it is a Linux
+> concept not a hardware description.
+> 
+> On the other side, the clocksource has not interrupt declared while the
+> clockevent has, so it is easy from the driver to know if the description is
+> for a clockevent or a clocksource, IOW it could be implemented at the driver
+> level.
+> 
+> So instead of dealing with a named clocksource macro, let's use a more generic
+> one: TIMER_OF_DECLARE.
+> 
+> The patch has not functional changes.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 > ---
->  drivers/input/touchscreen/s3c2410_ts.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
-> index 41d58e8..3b3db8c 100644
-> --- a/drivers/input/touchscreen/s3c2410_ts.c
-> +++ b/drivers/input/touchscreen/s3c2410_ts.c
-> @@ -264,7 +264,11 @@ static int s3c2410ts_probe(struct platform_device *pdev)
->  		return -ENOENT;
->  	}
->  
-> -	clk_prepare_enable(ts.clock);
-> +	ret = clk_prepare_enable(ts.clock);
-> +	if (ret) {
-> +		dev_err(dev, "Failed! to enabled clocks\n");
-> +		goto err_clk_get;
-> +	}
->  	dev_dbg(dev, "got and enabled clocks\n");
->  
->  	ts.irq_tc = ret = platform_get_irq(pdev, 0);
-> @@ -353,7 +357,9 @@ static int s3c2410ts_probe(struct platform_device *pdev)
->   err_iomap:
->  	iounmap(ts.io);
->   err_clk:
-> +	clk_disable_unprepare(ts.clock);
->  	del_timer_sync(&touch_timer);
-> + err_clk_get:
->  	clk_put(ts.clock);
->  	return ret;
->  }
-> -- 
-> 1.9.1
-> 
 
--- 
-Dmitry
+[...]
+
+> diff --git a/drivers/clocksource/clksrc_st_lpc.c b/drivers/clocksource/clksrc_st_lpc.c
+> index 03cc492..a1d01eb 100644
+> --- a/drivers/clocksource/clksrc_st_lpc.c
+> +++ b/drivers/clocksource/clksrc_st_lpc.c
+> @@ -132,4 +132,4 @@ static int __init st_clksrc_of_register(struct device_node *np)
+>   
+>   	return ret;
+>   }
+> -CLOCKSOURCE_OF_DECLARE(ddata, "st,stih407-lpc", st_clksrc_of_register);
+> +TIMER_OF_DECLARE(ddata, "st,stih407-lpc", st_clksrc_of_register);
+
+For the STi driver:
+
+Acked-by: Patrice Chotard <patrice.chotard@st.com>
+
+Thanks
