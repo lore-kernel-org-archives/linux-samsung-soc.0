@@ -1,46 +1,112 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: s3c64xx: don't select ARM_AMBA from S3C64XX_PL080
-Date: Wed, 31 May 2017 22:25:02 +0200
-Message-ID: <CAK8P3a3gxrkn1TOLWXzW4-s8H8uJWvC1vC3_fjxm-tXXkooxUA@mail.gmail.com>
-References: <20170524155845.1778223-1-arnd@arndb.de> <20170531195849.GD27796@n2100.armlinux.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Add HDMI CEC device to Exynos5 SoC family
+Date: Thu, 01 Jun 2017 08:19:23 +0200
+Message-ID: <ae6be193-3bf2-868d-cd26-01d2749d33fa@samsung.com>
+References: <CGME20170531110029eucas1p14bb9468f72155d88364c0aa5093ac05d@eucas1p1.samsung.com>
+ <1496228417-31126-1-git-send-email-m.szyprowski@samsung.com>
+ <20170531195517.2vjbc3voefdgq6sg@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33917 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbdEaUZD (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54637 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750848AbdFAGTc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 31 May 2017 16:25:03 -0400
-In-Reply-To: <20170531195849.GD27796@n2100.armlinux.org.uk>
+        Thu, 1 Jun 2017 02:19:32 -0400
+In-reply-to: <20170531195517.2vjbc3voefdgq6sg@kozik-lap>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Eric Anholt <eric@anholt.net>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>
 
-On Wed, May 31, 2017 at 9:58 PM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
-> On Wed, May 24, 2017 at 05:58:34PM +0200, Arnd Bergmann wrote:
-> Yes, selecting ARM_AMBA from drivers is definitely not right; this
-> symbol should be selected only by platforms that want AMBA primecell
-> bus support, not by drivers, precisely because of these dependency
-> issues.
->
-> There's another case where ARM_AMBA is selected that probably needs
-> fixing - the coresight hwtracing code.
+Hi Krzysztof,
 
-[Adding Mathieu to cc]
+On 2017-05-31 21:55, Krzysztof Kozlowski wrote:
+> On Wed, May 31, 2017 at 01:00:17PM +0200, Marek Szyprowski wrote:
+>> Exynos5250 and Exynos542x SoCs have the same CEC hardware module as
+>> Exynos4 SoC series, so enable support for it using the same compatible
+>> string.
+>>
+>> Tested on Odroid XU3 (Exynos5422) and Google Snow (Exynos5250) boards.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos5250-pinctrl.dtsi          |  7 +++++++
+>>   arch/arm/boot/dts/exynos5250-snow-common.dtsi      |  4 ++++
+>>   arch/arm/boot/dts/exynos5250.dtsi                  | 13 +++++++++++++
+>>   arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  7 +++++++
+>>   arch/arm/boot/dts/exynos5420.dtsi                  | 13 +++++++++++++
+>>   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  4 ++++
+>>   6 files changed, 48 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>> index 2f6ab32b5954..1fd122db18e6 100644
+>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>> @@ -589,6 +589,13 @@
+>>   		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+>>   		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+>>   	};
+>> +
+>> +	hdmi_cec: hdmi-cec {
+>> +		samsung,pins = "gpx3-6";
+>> +		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
+>> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+>> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+>> +	};
+>>   };
+>>   
+>>   &pinctrl_1 {
+>> diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+>> index 8f3a80430748..e1d293dbbe5d 100644
+>> --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+>> @@ -272,6 +272,10 @@
+>>   	vdd_pll-supply = <&ldo8_reg>;
+>>   };
+>>   
+>> +&hdmicec {
+>> +	status = "okay";
+>> +};
+>> +
+>>   &i2c_0 {
+>>   	status = "okay";
+>>   	samsung,i2c-sda-delay = <100>;
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 79c9c885613a..fbdc1d53a2ce 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -689,6 +689,19 @@
+>>   			samsung,syscon-phandle = <&pmu_system_controller>;
+>>   		};
+>>   
+>> +		hdmicec: cec@101B0000 {
+>> +			compatible = "samsung,s5p-cec";
+>> +			reg = <0x101B0000 0x200>;
+>> +			interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&clock CLK_HDMI_CEC>;
+>> +			clock-names = "hdmicec";
+>> +			samsung,syscon-phandle = <&pmu_system_controller>;
+>> +			hdmi-phandle = <&hdmi>;
+>> +			pinctrl-names = "default";
+>> +			pinctrl-0 = <&hdmi_cec>;
+>> +			status = "disabled";
+>> +		};
+> What about Exynos5410? Is it applicable there as well? If yes, then this
+> could be added to exynos5.dtsi... although then clocks and pinctrl
+> should remain in SoC-specific DTSI. We're following such pattern in many
+> places but I am not sure if this more readable.
 
-Mathieu,
+Exynos5410 has the same HW module, but as for now, it doesn't have 
+support for
+HDMI due to missing a few pieces (mainly clocks definitions). I'm not sure
+if it makes sense to add only HDMICEC without HDMI itself. Maybe later, when
+multimedia support is added to Exynos5410, this can be integrated to
+exynos5.dtsi.
 
-do you remember how we ended up with this?
-
-menuconfig CORESIGHT
-       bool "CoreSight Tracing Support"
-       select ARM_AMBA
-
-As Russell says, probably shouldn't select that symbol, most likely
-we want either the individual drivers that register an amba_driver to have
-a 'depends on ARM_AMBA' or alternatively replace the 'select' with 'depends
-on' for the entire subsystem.
-
-        Arnd
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
