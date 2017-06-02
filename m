@@ -1,69 +1,160 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] media: platform: s3c-camif: fix arguments position in
- function call
-Date: Thu, 1 Jun 2017 22:43:41 -0500
-Message-ID: <20170602034341.GA5349@embeddedgus>
-References: <da5c5727-628d-1887-368c-970d5308ee72@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: hwmon: pwm-fan: switch to new atomic PWM API
+Date: Fri, 2 Jun 2017 06:23:53 -0700
+Message-ID: <20170602132353.GA12690@roeck-us.net>
+References: <1493039598-25881-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gateway33.websitewelcome.com ([192.185.145.216]:31555 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751135AbdFBDnq (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Jun 2017 23:43:46 -0400
-Received: from cm6.websitewelcome.com (cm6.websitewelcome.com [108.167.139.19])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id E0D8E83777
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Jun 2017 22:43:43 -0500 (CDT)
+Return-path: <linux-hwmon-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <da5c5727-628d-1887-368c-970d5308ee72@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1493039598-25881-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jean Delvare <jdelvare@suse.com>, Kamil Debski <kamil@wypas.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-pwm@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
-Hi Sylwester,
+On Mon, Apr 24, 2017 at 03:13:17PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Switch pwm-fan driver to new atomic PWM API.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+> Depends on "[PATCH v2 0/3] pwm: pwm-samsung: fix suspend/resume support"
+> patchset (https://www.spinics.net/lists/kernel/msg2495209.html).
 
-Here is another patch in case you decide that it is
-better to apply this one.
+I lost track where we are with this patch. The above series set did not make
+it, as far as I can see. Is this patch truly dependent on that series, or
+can it be applied separately ? It does apply cleanly.
 
-Thanks
---
-Gustavo A. R. Silva
+Thanks,
+Guenter
 
-
-==========
-
-Fix the position of the arguments in function call.
-
-Addresses-Coverity-ID: 1248800
-Addresses-Coverity-ID: 1269141
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
- drivers/media/platform/s3c-camif/camif-capture.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
-index 1b30be72..25c7a7d 100644
---- a/drivers/media/platform/s3c-camif/camif-capture.c
-+++ b/drivers/media/platform/s3c-camif/camif-capture.c
-@@ -80,7 +80,7 @@ static int s3c_camif_hw_init(struct camif_dev *camif, struct camif_vp *vp)
- 	camif_hw_set_test_pattern(camif, camif->test_pattern);
- 	if (variant->has_img_effect)
- 		camif_hw_set_effect(camif, camif->colorfx,
--				camif->colorfx_cb, camif->colorfx_cr);
-+				camif->colorfx_cr, camif->colorfx_cb);
- 	if (variant->ip_revision == S3C6410_CAMIF_IP_REV)
- 		camif_hw_set_input_path(vp);
- 	camif_cfg_video_path(vp);
-@@ -364,7 +364,7 @@ irqreturn_t s3c_camif_irq_handler(int irq, void *priv)
- 		camif_hw_set_test_pattern(camif, camif->test_pattern);
- 		if (camif->variant->has_img_effect)
- 			camif_hw_set_effect(camif, camif->colorfx,
--				    camif->colorfx_cb, camif->colorfx_cr);
-+				    camif->colorfx_cr, camif->colorfx_cb);
- 		vp->state &= ~ST_VP_CONFIG;
- 	}
- unlock:
--- 
-2.5.0
+> 
+>  drivers/hwmon/pwm-fan.c | 68 +++++++++++++++++++------------------------------
+>  1 file changed, 26 insertions(+), 42 deletions(-)
+> 
+> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> index 9dc40f3..4ac7700 100644
+> --- a/drivers/hwmon/pwm-fan.c
+> +++ b/drivers/hwmon/pwm-fan.c
+> @@ -40,31 +40,22 @@ struct pwm_fan_ctx {
+>  
+>  static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+>  {
+> -	struct pwm_args pargs;
+> -	unsigned long duty;
+> +	unsigned long period;
+>  	int ret = 0;
+> -
+> -	pwm_get_args(ctx->pwm, &pargs);
+> +	struct pwm_state state = { };
+>  
+>  	mutex_lock(&ctx->lock);
+>  	if (ctx->pwm_value == pwm)
+>  		goto exit_set_pwm_err;
+>  
+> -	duty = DIV_ROUND_UP(pwm * (pargs.period - 1), MAX_PWM);
+> -	ret = pwm_config(ctx->pwm, duty, pargs.period);
+> -	if (ret)
+> -		goto exit_set_pwm_err;
+> -
+> -	if (pwm == 0)
+> -		pwm_disable(ctx->pwm);
+> +	pwm_init_state(ctx->pwm, &state);
+> +	period = ctx->pwm->args.period;
+> +	state.duty_cycle = DIV_ROUND_UP(pwm * (period - 1), MAX_PWM);
+> +	state.enabled = pwm ? true : false;
+>  
+> -	if (ctx->pwm_value == 0) {
+> -		ret = pwm_enable(ctx->pwm);
+> -		if (ret)
+> -			goto exit_set_pwm_err;
+> -	}
+> -
+> -	ctx->pwm_value = pwm;
+> +	ret = pwm_apply_state(ctx->pwm, &state);
+> +	if (!ret)
+> +		ctx->pwm_value = pwm;
+>  exit_set_pwm_err:
+>  	mutex_unlock(&ctx->lock);
+>  	return ret;
+> @@ -218,10 +209,9 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>  {
+>  	struct thermal_cooling_device *cdev;
+>  	struct pwm_fan_ctx *ctx;
+> -	struct pwm_args pargs;
+>  	struct device *hwmon;
+> -	int duty_cycle;
+>  	int ret;
+> +	struct pwm_state state = { };
+>  
+>  	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+>  	if (!ctx)
+> @@ -237,28 +227,16 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, ctx);
+>  
+> -	/*
+> -	 * FIXME: pwm_apply_args() should be removed when switching to the
+> -	 * atomic PWM API.
+> -	 */
+> -	pwm_apply_args(ctx->pwm);
+> -
+> -	/* Set duty cycle to maximum allowed */
+> -	pwm_get_args(ctx->pwm, &pargs);
+> -
+> -	duty_cycle = pargs.period - 1;
+>  	ctx->pwm_value = MAX_PWM;
+>  
+> -	ret = pwm_config(ctx->pwm, duty_cycle, pargs.period);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "Failed to configure PWM\n");
+> -		return ret;
+> -	}
+> +	/* Set duty cycle to maximum allowed and enable PWM output */
+> +	pwm_init_state(ctx->pwm, &state);
+> +	state.duty_cycle = ctx->pwm->args.period - 1;
+> +	state.enabled = true;
+>  
+> -	/* Enbale PWM output */
+> -	ret = pwm_enable(ctx->pwm);
+> +	ret = pwm_apply_state(ctx->pwm, &state);
+>  	if (ret) {
+> -		dev_err(&pdev->dev, "Failed to enable PWM\n");
+> +		dev_err(&pdev->dev, "Failed to configure PWM\n");
+>  		return ret;
+>  	}
+>  
+> @@ -266,8 +244,8 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>  						       ctx, pwm_fan_groups);
+>  	if (IS_ERR(hwmon)) {
+>  		dev_err(&pdev->dev, "Failed to register hwmon device\n");
+> -		pwm_disable(ctx->pwm);
+> -		return PTR_ERR(hwmon);
+> +		ret = PTR_ERR(hwmon);
+> +		goto err_pwm_disable;
+>  	}
+>  
+>  	ret = pwm_fan_of_get_cooling_data(&pdev->dev, ctx);
+> @@ -282,14 +260,20 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>  		if (IS_ERR(cdev)) {
+>  			dev_err(&pdev->dev,
+>  				"Failed to register pwm-fan as cooling device");
+> -			pwm_disable(ctx->pwm);
+> -			return PTR_ERR(cdev);
+> +			ret = PTR_ERR(cdev);
+> +			goto err_pwm_disable;
+>  		}
+>  		ctx->cdev = cdev;
+>  		thermal_cdev_update(cdev);
+>  	}
+>  
+>  	return 0;
+> +
+> +err_pwm_disable:
+> +	state.enabled = false;
+> +	pwm_apply_state(ctx->pwm, &state);
+> +
+> +	return ret;
+>  }
+>  
+>  static int pwm_fan_remove(struct platform_device *pdev)
