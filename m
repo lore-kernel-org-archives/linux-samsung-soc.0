@@ -1,86 +1,111 @@
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Subject: exynos drm build failure due to cec_* symbols
-Date: Fri, 2 Jun 2017 15:58:06 +0200
-Message-ID: <2d6226cf-4023-2a97-0791-42d3e8dcbdd3@suse.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Add HDMI CEC device to Exynos5 SoC
+ family
+Date: Fri, 2 Jun 2017 17:19:36 +0200
+Message-ID: <20170602151936.uhhdrqnlbtb3vhsb@kozik-lap>
+References: <CGME20170531110029eucas1p14bb9468f72155d88364c0aa5093ac05d@eucas1p1.samsung.com>
+ <1496228417-31126-1-git-send-email-m.szyprowski@samsung.com>
+ <20170531195517.2vjbc3voefdgq6sg@kozik-lap>
+ <ae6be193-3bf2-868d-cd26-01d2749d33fa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:49209 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750813AbdFBN6N (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36155 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750971AbdFBPTk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 09:58:13 -0400
-Content-Language: en-US
+        Fri, 2 Jun 2017 11:19:40 -0400
+Content-Disposition: inline
+In-Reply-To: <ae6be193-3bf2-868d-cd26-01d2749d33fa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>
 
-Hello,
+On Thu, Jun 01, 2017 at 08:19:23AM +0200, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> On 2017-05-31 21:55, Krzysztof Kozlowski wrote:
+> > On Wed, May 31, 2017 at 01:00:17PM +0200, Marek Szyprowski wrote:
+> > > Exynos5250 and Exynos542x SoCs have the same CEC hardware module as
+> > > Exynos4 SoC series, so enable support for it using the same compatible
+> > > string.
+> > > 
+> > > Tested on Odroid XU3 (Exynos5422) and Google Snow (Exynos5250) boards.
+> > > 
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > ---
+> > >   arch/arm/boot/dts/exynos5250-pinctrl.dtsi          |  7 +++++++
+> > >   arch/arm/boot/dts/exynos5250-snow-common.dtsi      |  4 ++++
+> > >   arch/arm/boot/dts/exynos5250.dtsi                  | 13 +++++++++++++
+> > >   arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  7 +++++++
+> > >   arch/arm/boot/dts/exynos5420.dtsi                  | 13 +++++++++++++
+> > >   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  4 ++++
+> > >   6 files changed, 48 insertions(+)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> > > index 2f6ab32b5954..1fd122db18e6 100644
+> > > --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> > > +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> > > @@ -589,6 +589,13 @@
+> > >   		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> > >   		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+> > >   	};
+> > > +
+> > > +	hdmi_cec: hdmi-cec {
+> > > +		samsung,pins = "gpx3-6";
+> > > +		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
+> > > +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> > > +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+> > > +	};
+> > >   };
+> > >   &pinctrl_1 {
+> > > diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+> > > index 8f3a80430748..e1d293dbbe5d 100644
+> > > --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+> > > +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+> > > @@ -272,6 +272,10 @@
+> > >   	vdd_pll-supply = <&ldo8_reg>;
+> > >   };
+> > > +&hdmicec {
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > >   &i2c_0 {
+> > >   	status = "okay";
+> > >   	samsung,i2c-sda-delay = <100>;
+> > > diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> > > index 79c9c885613a..fbdc1d53a2ce 100644
+> > > --- a/arch/arm/boot/dts/exynos5250.dtsi
+> > > +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> > > @@ -689,6 +689,19 @@
+> > >   			samsung,syscon-phandle = <&pmu_system_controller>;
+> > >   		};
+> > > +		hdmicec: cec@101B0000 {
+> > > +			compatible = "samsung,s5p-cec";
+> > > +			reg = <0x101B0000 0x200>;
+> > > +			interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			clocks = <&clock CLK_HDMI_CEC>;
+> > > +			clock-names = "hdmicec";
+> > > +			samsung,syscon-phandle = <&pmu_system_controller>;
+> > > +			hdmi-phandle = <&hdmi>;
+> > > +			pinctrl-names = "default";
+> > > +			pinctrl-0 = <&hdmi_cec>;
+> > > +			status = "disabled";
+> > > +		};
+> > What about Exynos5410? Is it applicable there as well? If yes, then this
+> > could be added to exynos5.dtsi... although then clocks and pinctrl
+> > should remain in SoC-specific DTSI. We're following such pattern in many
+> > places but I am not sure if this more readable.
+> 
+> Exynos5410 has the same HW module, but as for now, it doesn't have support
+> for
+> HDMI due to missing a few pieces (mainly clocks definitions). I'm not sure
+> if it makes sense to add only HDMICEC without HDMI itself. Maybe later, when
+> multimedia support is added to Exynos5410, this can be integrated to
+> exynos5.dtsi.
 
-We're observing the following build failure with v4.12-rc3, latest
-linux.git and linux-next.git:
+Sounds fair, applied. Thanks!
 
-[ 9825s]   LD      vmlinux.o
-[ 9904s]   MODPOST vmlinux.o
-[ 9915s] drivers/built-in.o: In function `hdmi_get_modes':
-[ 9915s]
-/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:866:
-undefined reference to `cec_notifier_set_phys_addr_from_edid'
-[ 9915s] drivers/built-in.o: In function `hdmi_remove':
-[ 9915s]
-/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1923:
-undefined reference to `cec_notifier_set_phys_addr'
-[ 9915s]
-/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1927:
-undefined reference to `cec_notifier_put'
-[ 9915s] drivers/built-in.o: In function `hdmi_probe':
-[ 9915s]
-/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1889:
-undefined reference to `cec_notifier_get'
-[ 9915s]
-/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1904:
-undefined reference to `cec_notifier_put'
-[ 9915s] drivers/built-in.o: In function `hdmi_disable':
-[ 9915s]
-/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1509:
-undefined reference to `cec_notifier_set_phys_addr'
-[ 9915s] drivers/built-in.o: In function `hdmi_detect':
-[ 9915s]
-/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:827:
-undefined reference to `cec_notifier_set_phys_addr'
-[ 9931s] make[2]: ***
-[/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/Makefile:997:
-vmlinux] Error 1
-[ 9931s] make[1]: *** [Makefile:152: sub-make] Error 2
-[ 9931s] make: *** [Makefile:24: __sub-make] Error 2
-
-My guess is the symbols used by the exynos drm module are not exported:
-
-cec_notifier_set_phys_addr_from_edid
-cec_notifier_set_phys_addr
-cec_notifier_put
-cec_notifier_get
-
-Can you please look into fixing this?
-
-Configs for reproducing are available here:
-
-v4.12-rc3:
-http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/default
-http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/lpae
-
-linux.git:
-http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/vanilla?h=vanilla
-
-linux-next.git:
-http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/vanilla?h=linux-next
-
-Thanks,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Best regards,
+Krzysztof
