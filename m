@@ -1,75 +1,95 @@
-From: <rueggemann@h.maus.de>
-Subject: (unknown)
-Date: Mon, 05 Jun 2017 01:08:18 -0000
-Message-ID: <149662489809.4332.8959088073008511718@170-72-72-246.az.vivintwireless.net>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: exynos drm build failure due to cec_* symbols
+Date: Mon, 05 Jun 2017 10:33:50 +0900
+Message-ID: <5934B4FE.6060606@samsung.com>
+References: <CGME20170602135819epcas1p2302294dec8c40b69a19e0b220806eacb@epcas1p2.samsung.com>
+        <2d6226cf-4023-2a97-0791-42d3e8dcbdd3@suse.de>
 Mime-Version: 1.0
-Content-Type: application/zip; name="03423870618227.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 170-72-72-246.az.vivintwireless.net ([170.72.72.246]:64588 "HELO
-        170-72-72-246.az.vivintwireless.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1751167AbdFEBIX (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:15764 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751213AbdFEBdx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Jun 2017 21:08:23 -0400
-Subject: 
-Content-Disposition: attachment
+        Sun, 4 Jun 2017 21:33:53 -0400
+In-reply-to: <2d6226cf-4023-2a97-0791-42d3e8dcbdd3@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-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
+
+
+2017년 06월 02일 22:58에 Andreas Färber 이(가) 쓴 글:
+> Hello,
+> 
+> We're observing the following build failure with v4.12-rc3, latest
+> linux.git and linux-next.git:
+> 
+> [ 9825s]   LD      vmlinux.o
+> [ 9904s]   MODPOST vmlinux.o
+> [ 9915s] drivers/built-in.o: In function `hdmi_get_modes':
+> [ 9915s]
+> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:866:
+> undefined reference to `cec_notifier_set_phys_addr_from_edid'
+> [ 9915s] drivers/built-in.o: In function `hdmi_remove':
+> [ 9915s]
+> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1923:
+> undefined reference to `cec_notifier_set_phys_addr'
+> [ 9915s]
+> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1927:
+> undefined reference to `cec_notifier_put'
+> [ 9915s] drivers/built-in.o: In function `hdmi_probe':
+> [ 9915s]
+> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1889:
+> undefined reference to `cec_notifier_get'
+> [ 9915s]
+> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1904:
+> undefined reference to `cec_notifier_put'
+> [ 9915s] drivers/built-in.o: In function `hdmi_disable':
+> [ 9915s]
+> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1509:
+> undefined reference to `cec_notifier_set_phys_addr'
+> [ 9915s] drivers/built-in.o: In function `hdmi_detect':
+> [ 9915s]
+> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:827:
+> undefined reference to `cec_notifier_set_phys_addr'
+> [ 9931s] make[2]: ***
+> [/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/Makefile:997:
+> vmlinux] Error 1
+> [ 9931s] make[1]: *** [Makefile:152: sub-make] Error 2
+> [ 9931s] make: *** [Makefile:24: __sub-make] Error 2
+> 
+> My guess is the symbols used by the exynos drm module are not exported:
+> 
+> cec_notifier_set_phys_addr_from_edid
+> cec_notifier_set_phys_addr
+> cec_notifier_put
+> cec_notifier_get
+> 
+> Can you please look into fixing this?
+
+Thanks for reporting.
+
+Will check and fix it.
+
+Thanks,
+Inki Dae
+
+> 
+> Configs for reproducing are available here:
+> 
+> v4.12-rc3:
+> http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/default
+> http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/lpae
+> 
+> linux.git:
+> http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/vanilla?h=vanilla
+> 
+> linux-next.git:
+> http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/vanilla?h=linux-next
+> 
+> Thanks,
+> Andreas
+> 
