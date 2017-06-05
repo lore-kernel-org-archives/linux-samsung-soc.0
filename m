@@ -1,86 +1,70 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: exynos drm build failure due to cec_* symbols
-Date: Mon, 5 Jun 2017 09:59:07 +0100
-Message-ID: <20170605085907.GD4902@n2100.armlinux.org.uk>
-References: <CGME20170602135819epcas1p2302294dec8c40b69a19e0b220806eacb@epcas1p2.samsung.com>
- <2d6226cf-4023-2a97-0791-42d3e8dcbdd3@suse.de>
- <5934B4FE.6060606@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] media: platform: s3c-camif: fix arguments position in
+ function call
+Date: Mon, 05 Jun 2017 12:07:23 +0200
+Message-ID: <593b0303-7273-758c-cb6e-c6f97f66a4b9@samsung.com>
+References: <CGME20170602034354epcas1p1bfea44bea994a5cbd8095a8f4da09cd0@epcas1p1.samsung.com>
+        <20170602034341.GA5349@embeddedgus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:59438 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751258AbdFEI7Y (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:12015 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751499AbdFEKHa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Jun 2017 04:59:24 -0400
-Content-Disposition: inline
-In-Reply-To: <5934B4FE.6060606@samsung.com>
+        Mon, 5 Jun 2017 06:07:30 -0400
+In-reply-to: <20170602034341.GA5349@embeddedgus>
+Content-language: en-GB
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jun 05, 2017 at 10:33:50AM +0900, Inki Dae wrote:
-> 2017년 06월 02일 22:58에 Andreas Färber 이(가) 쓴 글:
-> > Hello,
-> > 
-> > We're observing the following build failure with v4.12-rc3, latest
-> > linux.git and linux-next.git:
-> > 
-> > [ 9825s]   LD      vmlinux.o
-> > [ 9904s]   MODPOST vmlinux.o
-> > [ 9915s] drivers/built-in.o: In function `hdmi_get_modes':
-> > [ 9915s]
-> > /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:866:
-> > undefined reference to `cec_notifier_set_phys_addr_from_edid'
-> > [ 9915s] drivers/built-in.o: In function `hdmi_remove':
-> > [ 9915s]
-> > /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1923:
-> > undefined reference to `cec_notifier_set_phys_addr'
-> > [ 9915s]
-> > /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1927:
-> > undefined reference to `cec_notifier_put'
-> > [ 9915s] drivers/built-in.o: In function `hdmi_probe':
-> > [ 9915s]
-> > /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1889:
-> > undefined reference to `cec_notifier_get'
-> > [ 9915s]
-> > /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1904:
-> > undefined reference to `cec_notifier_put'
-> > [ 9915s] drivers/built-in.o: In function `hdmi_disable':
-> > [ 9915s]
-> > /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1509:
-> > undefined reference to `cec_notifier_set_phys_addr'
-> > [ 9915s] drivers/built-in.o: In function `hdmi_detect':
-> > [ 9915s]
-> > /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:827:
-> > undefined reference to `cec_notifier_set_phys_addr'
-> > [ 9931s] make[2]: ***
-> > [/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/Makefile:997:
-> > vmlinux] Error 1
-> > [ 9931s] make[1]: *** [Makefile:152: sub-make] Error 2
-> > [ 9931s] make: *** [Makefile:24: __sub-make] Error 2
-> > 
-> > My guess is the symbols used by the exynos drm module are not exported:
-> > 
-> > cec_notifier_set_phys_addr_from_edid
-> > cec_notifier_set_phys_addr
-> > cec_notifier_put
-> > cec_notifier_get
-> > 
-> > Can you please look into fixing this?
+On 06/02/2017 05:43 AM, Gustavo A. R. Silva wrote:
+> Hi Sylwester,
 > 
-> Thanks for reporting.
+> Here is another patch in case you decide that it is
+> better to apply this one.
+
+Thanks, I applied this patch.  In future please put any comments only after
+the scissors ("---") line, the comments can be then discarded automatically
+and there will be no need for manually editing the patch before applying.
+
+--
+Regards,
+Sylwester
+
+> Fix the position of the arguments in function call.
 > 
-> Will check and fix it.
+> Addresses-Coverity-ID: 1248800
+> Addresses-Coverity-ID: 1269141
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> ---
+^^^^^
 
-Please look at Hans' update to the way CEC's dependencies are handled.
-https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=drm-cec
-
-These are apparently scheduled for -rc, but Mauro is busy.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+>   drivers/media/platform/s3c-camif/camif-capture.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+> index 1b30be72..25c7a7d 100644
+> --- a/drivers/media/platform/s3c-camif/camif-capture.c
+> +++ b/drivers/media/platform/s3c-camif/camif-capture.c
+> @@ -80,7 +80,7 @@ static int s3c_camif_hw_init(struct camif_dev *camif, struct camif_vp *vp)
+>   	camif_hw_set_test_pattern(camif, camif->test_pattern);
+>   	if (variant->has_img_effect)
+>   		camif_hw_set_effect(camif, camif->colorfx,
+> -				camif->colorfx_cb, camif->colorfx_cr);
+> +				camif->colorfx_cr, camif->colorfx_cb);
+>   	if (variant->ip_revision == S3C6410_CAMIF_IP_REV)
+>   		camif_hw_set_input_path(vp);
+>   	camif_cfg_video_path(vp);
+> @@ -364,7 +364,7 @@ irqreturn_t s3c_camif_irq_handler(int irq, void *priv)
+>   		camif_hw_set_test_pattern(camif, camif->test_pattern);
+>   		if (camif->variant->has_img_effect)
+>   			camif_hw_set_effect(camif, camif->colorfx,
+> -				    camif->colorfx_cb, camif->colorfx_cr);
+> +				    camif->colorfx_cr, camif->colorfx_cb);
+>   		vp->state &= ~ST_VP_CONFIG;
+>   	}
+>   unlock:
