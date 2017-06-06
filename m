@@ -1,218 +1,87 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH] PCI: dwc: Constify dw_pcie_host_ops structures
-Date: Mon, 5 Jun 2017 18:30:54 -0400
-Message-ID: <000001d2de4b$65f2f360$31d8da20$@gmail.com>
-References: <20170605085346.3732-1-jszhang@marvell.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: exynos drm build failure due to cec_* symbols
+Date: Tue, 6 Jun 2017 09:17:42 +0200
+Message-ID: <50def393-6391-fd83-c782-a5e57a52af62@xs4all.nl>
+References: <CGME20170602135819epcas1p2302294dec8c40b69a19e0b220806eacb@epcas1p2.samsung.com>
+ <2d6226cf-4023-2a97-0791-42d3e8dcbdd3@suse.de> <5934B4FE.6060606@samsung.com>
+ <20170605085907.GD4902@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20170605085346.3732-1-jszhang@marvell.com>
-Content-Language: en-us
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Jisheng Zhang' <jszhang@marvell.com>, bhelgaas@google.com
-Cc: kishon@ti.com, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, hongxing.zhu@nxp.com, l.stach@pengutronix.de, m-karicheri2@ti.com, minghuan.Lian@freescale.com, mingkai.hu@freescale.com, tie-fei.zang@freescale.com, thomas.petazzoni@free-electrons.com, niklas.cassel@axis.com, jesper.nilsson@axis.com, Joao.Pinto@synopsys.com, svarbanov@mm-sol.com, pratyush.anand@gmail.com, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:49130 "EHLO
+        lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751117AbdFFHRs (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 6 Jun 2017 03:17:48 -0400
+In-Reply-To: <20170605085907.GD4902@n2100.armlinux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@armlinux.org.uk>, Inki Dae <inki.dae@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-On Monday, June 5, 2017 4:54 AM, Jisheng Zhang wrote:
+On 05/06/17 10:59, Russell King - ARM Linux wrote:
+> On Mon, Jun 05, 2017 at 10:33:50AM +0900, Inki Dae wrote:
+>> 2017년 06월 02일 22:58에 Andreas Färber 이(가) 쓴 글:
+>>> Hello,
+>>>
+>>> We're observing the following build failure with v4.12-rc3, latest
+>>> linux.git and linux-next.git:
+>>>
+>>> [ 9825s]   LD      vmlinux.o
+>>> [ 9904s]   MODPOST vmlinux.o
+>>> [ 9915s] drivers/built-in.o: In function `hdmi_get_modes':
+>>> [ 9915s]
+>>> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:866:
+>>> undefined reference to `cec_notifier_set_phys_addr_from_edid'
+>>> [ 9915s] drivers/built-in.o: In function `hdmi_remove':
+>>> [ 9915s]
+>>> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1923:
+>>> undefined reference to `cec_notifier_set_phys_addr'
+>>> [ 9915s]
+>>> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1927:
+>>> undefined reference to `cec_notifier_put'
+>>> [ 9915s] drivers/built-in.o: In function `hdmi_probe':
+>>> [ 9915s]
+>>> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1889:
+>>> undefined reference to `cec_notifier_get'
+>>> [ 9915s]
+>>> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1904:
+>>> undefined reference to `cec_notifier_put'
+>>> [ 9915s] drivers/built-in.o: In function `hdmi_disable':
+>>> [ 9915s]
+>>> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:1509:
+>>> undefined reference to `cec_notifier_set_phys_addr'
+>>> [ 9915s] drivers/built-in.o: In function `hdmi_detect':
+>>> [ 9915s]
+>>> /home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/linux-obj/../drivers/gpu/drm/exynos/exynos_hdmi.c:827:
+>>> undefined reference to `cec_notifier_set_phys_addr'
+>>> [ 9931s] make[2]: ***
+>>> [/home/abuild/rpmbuild/BUILD/kernel-vanilla-4.12.rc3.51.ga374846/linux-4.12-rc3-51-ga374846/Makefile:997:
+>>> vmlinux] Error 1
+>>> [ 9931s] make[1]: *** [Makefile:152: sub-make] Error 2
+>>> [ 9931s] make: *** [Makefile:24: __sub-make] Error 2
+>>>
+>>> My guess is the symbols used by the exynos drm module are not exported:
+>>>
+>>> cec_notifier_set_phys_addr_from_edid
+>>> cec_notifier_set_phys_addr
+>>> cec_notifier_put
+>>> cec_notifier_get
+>>>
+>>> Can you please look into fixing this?
+>>
+>> Thanks for reporting.
+>>
+>> Will check and fix it.
 > 
-> The dw_pcie_host_ops structures are never modified. Constify these
-> structures such that these can be write-protected.
+> Please look at Hans' update to the way CEC's dependencies are handled.
+> https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=drm-cec
 > 
-> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> These are apparently scheduled for -rc, but Mauro is busy.
 
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
+They got merged in the media fixes tree, so with luck will appear in 4.12 soon.
 
-Best regards,
-Jingoo Han
+Regards,
 
-> ---
->  drivers/pci/dwc/pci-dra7xx.c           | 2 +-
->  drivers/pci/dwc/pci-exynos.c           | 2 +-
->  drivers/pci/dwc/pci-imx6.c             | 2 +-
->  drivers/pci/dwc/pci-keystone.c         | 2 +-
->  drivers/pci/dwc/pci-layerscape.c       | 6 +++---
->  drivers/pci/dwc/pcie-armada8k.c        | 2 +-
->  drivers/pci/dwc/pcie-artpec6.c         | 2 +-
->  drivers/pci/dwc/pcie-designware-plat.c | 2 +-
->  drivers/pci/dwc/pcie-designware.h      | 2 +-
->  drivers/pci/dwc/pcie-qcom.c            | 2 +-
->  drivers/pci/dwc/pcie-spear13xx.c       | 2 +-
->  11 files changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
-> index 8decf46cf525..e4166032b3c6 100644
-> --- a/drivers/pci/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/dwc/pci-dra7xx.c
-> @@ -208,7 +208,7 @@ static void dra7xx_pcie_host_init(struct pcie_port
-*pp)
->  	dra7xx_pcie_enable_interrupts(dra7xx);
->  }
-> 
-> -static struct dw_pcie_host_ops dra7xx_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops dra7xx_pcie_host_ops = {
->  	.host_init = dra7xx_pcie_host_init,
->  };
-> 
-> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
-> index 546082ad5a3f..c78c06552590 100644
-> --- a/drivers/pci/dwc/pci-exynos.c
-> +++ b/drivers/pci/dwc/pci-exynos.c
-> @@ -590,7 +590,7 @@ static void exynos_pcie_host_init(struct pcie_port
-*pp)
->  	exynos_pcie_enable_interrupts(ep);
->  }
-> 
-> -static struct dw_pcie_host_ops exynos_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops exynos_pcie_host_ops = {
->  	.rd_own_conf = exynos_pcie_rd_own_conf,
->  	.wr_own_conf = exynos_pcie_wr_own_conf,
->  	.host_init = exynos_pcie_host_init,
-> diff --git a/drivers/pci/dwc/pci-imx6.c b/drivers/pci/dwc/pci-imx6.c
-> index a98cba55c7f0..fb4816088a7a 100644
-> --- a/drivers/pci/dwc/pci-imx6.c
-> +++ b/drivers/pci/dwc/pci-imx6.c
-> @@ -602,7 +602,7 @@ static int imx6_pcie_link_up(struct dw_pcie *pci)
->  			PCIE_PHY_DEBUG_R1_XMLH_LINK_UP;
->  }
-> 
-> -static struct dw_pcie_host_ops imx6_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops imx6_pcie_host_ops = {
->  	.host_init = imx6_pcie_host_init,
->  };
-> 
-> diff --git a/drivers/pci/dwc/pci-keystone.c b/drivers/pci/dwc/pci-
-> keystone.c
-> index fcc9723bad6e..4783cec1f78d 100644
-> --- a/drivers/pci/dwc/pci-keystone.c
-> +++ b/drivers/pci/dwc/pci-keystone.c
-> @@ -291,7 +291,7 @@ static void __init ks_pcie_host_init(struct pcie_port
-> *pp)
->  			"Asynchronous external abort");
->  }
-> 
-> -static struct dw_pcie_host_ops keystone_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops keystone_pcie_host_ops = {
->  	.rd_other_conf = ks_dw_pcie_rd_other_conf,
->  	.wr_other_conf = ks_dw_pcie_wr_other_conf,
->  	.host_init = ks_pcie_host_init,
-> diff --git a/drivers/pci/dwc/pci-layerscape.c b/drivers/pci/dwc/pci-
-> layerscape.c
-> index 27d638c4e134..fd861289ad8b 100644
-> --- a/drivers/pci/dwc/pci-layerscape.c
-> +++ b/drivers/pci/dwc/pci-layerscape.c
-> @@ -39,7 +39,7 @@ struct ls_pcie_drvdata {
->  	u32 lut_offset;
->  	u32 ltssm_shift;
->  	u32 lut_dbg;
-> -	struct dw_pcie_host_ops *ops;
-> +	const struct dw_pcie_host_ops *ops;
->  	const struct dw_pcie_ops *dw_pcie_ops;
->  };
-> 
-> @@ -185,12 +185,12 @@ static int ls_pcie_msi_host_init(struct pcie_port
-> *pp,
->  	return 0;
->  }
-> 
-> -static struct dw_pcie_host_ops ls1021_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops ls1021_pcie_host_ops = {
->  	.host_init = ls1021_pcie_host_init,
->  	.msi_host_init = ls_pcie_msi_host_init,
->  };
-> 
-> -static struct dw_pcie_host_ops ls_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops ls_pcie_host_ops = {
->  	.host_init = ls_pcie_host_init,
->  	.msi_host_init = ls_pcie_msi_host_init,
->  };
-> diff --git a/drivers/pci/dwc/pcie-armada8k.c b/drivers/pci/dwc/pcie-
-> armada8k.c
-> index 495b023042b3..ea8f34af6a85 100644
-> --- a/drivers/pci/dwc/pcie-armada8k.c
-> +++ b/drivers/pci/dwc/pcie-armada8k.c
-> @@ -160,7 +160,7 @@ static irqreturn_t armada8k_pcie_irq_handler(int irq,
-> void *arg)
->  	return IRQ_HANDLED;
->  }
-> 
-> -static struct dw_pcie_host_ops armada8k_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops armada8k_pcie_host_ops = {
->  	.host_init = armada8k_pcie_host_init,
->  };
-> 
-> diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-
-> artpec6.c
-> index 82a04acc42fd..01c6f7823672 100644
-> --- a/drivers/pci/dwc/pcie-artpec6.c
-> +++ b/drivers/pci/dwc/pcie-artpec6.c
-> @@ -184,7 +184,7 @@ static void artpec6_pcie_host_init(struct pcie_port
-> *pp)
->  	artpec6_pcie_enable_interrupts(artpec6_pcie);
->  }
-> 
-> -static struct dw_pcie_host_ops artpec6_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops artpec6_pcie_host_ops = {
->  	.host_init = artpec6_pcie_host_init,
->  };
-> 
-> diff --git a/drivers/pci/dwc/pcie-designware-plat.c
-> b/drivers/pci/dwc/pcie-designware-plat.c
-> index a9865d91b43c..091b4e7ad059 100644
-> --- a/drivers/pci/dwc/pcie-designware-plat.c
-> +++ b/drivers/pci/dwc/pcie-designware-plat.c
-> @@ -46,7 +46,7 @@ static void dw_plat_pcie_host_init(struct pcie_port *pp)
->  		dw_pcie_msi_init(pp);
->  }
-> 
-> -static struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
->  	.host_init = dw_plat_pcie_host_init,
->  };
-> 
-> diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-
-> designware.h
-> index c6a840575796..b4d2a89f8e58 100644
-> --- a/drivers/pci/dwc/pcie-designware.h
-> +++ b/drivers/pci/dwc/pcie-designware.h
-> @@ -162,7 +162,7 @@ struct pcie_port {
->  	struct resource		*mem;
->  	struct resource		*busn;
->  	int			irq;
-> -	struct dw_pcie_host_ops	*ops;
-> +	const struct dw_pcie_host_ops *ops;
->  	int			msi_irq;
->  	struct irq_domain	*irq_domain;
->  	unsigned long		msi_data;
-> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
-> index 96ee527c1ed2..39e8c0095715 100644
-> --- a/drivers/pci/dwc/pcie-qcom.c
-> +++ b/drivers/pci/dwc/pcie-qcom.c
-> @@ -634,7 +634,7 @@ static int qcom_pcie_rd_own_conf(struct pcie_port *pp,
-> int where, int size,
->  	return dw_pcie_read(pci->dbi_base + where, size, val);
->  }
-> 
-> -static struct dw_pcie_host_ops qcom_pcie_dw_ops = {
-> +static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
->  	.host_init = qcom_pcie_host_init,
->  	.rd_own_conf = qcom_pcie_rd_own_conf,
->  };
-> diff --git a/drivers/pci/dwc/pcie-spear13xx.c b/drivers/pci/dwc/pcie-
-> spear13xx.c
-> index 8ff36b3dbbdf..80897291e0fb 100644
-> --- a/drivers/pci/dwc/pcie-spear13xx.c
-> +++ b/drivers/pci/dwc/pcie-spear13xx.c
-> @@ -186,7 +186,7 @@ static void spear13xx_pcie_host_init(struct pcie_port
-> *pp)
->  	spear13xx_pcie_enable_interrupts(spear13xx_pcie);
->  }
-> 
-> -static struct dw_pcie_host_ops spear13xx_pcie_host_ops = {
-> +static const struct dw_pcie_host_ops spear13xx_pcie_host_ops = {
->  	.host_init = spear13xx_pcie_host_init,
->  };
-> 
-> --
-> 2.11.0
+	Hans
