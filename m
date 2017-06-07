@@ -1,62 +1,205 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH v5 4/5] arm64: dts: exynos: Remove the OF graph from DSI
- node
-Date: Wed, 07 Jun 2017 15:14:20 +0900
-Message-ID: <ac8dc366-4273-9e24-a60e-ece22a6ad5bc@samsung.com>
-References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
-        <CGME20170308045502epcas1p21a483d429e2169b322e40fd833c47f27@epcas1p2.samsung.com>
-        <1488948852-5380-5-git-send-email-hoegeun.kwon@samsung.com>
-        <20170515164829.rfcqj5quw2jooh6u@kozik-lap>
-        <9508dfc9-7cd3-3ed3-f642-2f69a5dcb5ce@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] PCI: dwc: Constify dw_pcie_host_ops structures
+Date: Wed, 7 Jun 2017 14:21:16 +0530
+Message-ID: <16308efb-9df8-0244-618c-18caefd2982c@ti.com>
+References: <20170605085346.3732-1-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <9508dfc9-7cd3-3ed3-f642-2f69a5dcb5ce@samsung.com>
-Content-language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, javier@osg.samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, a.hajda@samsung.com, andi.shyti@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170605085346.3732-1-jszhang@marvell.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jisheng Zhang <jszhang@marvell.com>, bhelgaas@google.com, jingoohan1@gmail.com, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, hongxing.zhu@nxp.com, l.stach@pengutronix.de, m-karicheri2@ti.com, minghuan.Lian@freescale.com, mingkai.hu@freescale.com, tie-fei.zang@freescale.com, thomas.petazzoni@free-electrons.com, niklas.cassel@axis.com, jesper.nilsson@axis.com, Joao.Pinto@synopsys.com, svarbanov@mm-sol.com, pratyush.anand@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/19/2017 03:17 PM, Hoegeun Kwon wrote:
-> On 05/16/2017 01:48 AM, Krzysztof Kozlowski wrote:
->> On Wed, Mar 08, 2017 at 01:54:11PM +0900, Hoegeun Kwon wrote:
->>> The OF graph is not needed because the panel is a child of dsi. Remove
->>> the ports node in DSI node.
->>>
->>> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
->>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->>> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
->>> ---
->>>   arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 14 
->>> --------------
->>>   1 file changed, 14 deletions(-)
->>>
->> Hi,
->>
->> I wanted to apply this (and 5/5) but it seems that DRM change is not
->> merged. Was it included in v4.12-rc1?
->>
->> Best regards,
->> Krzysztof
->
-> Hi,
->
-> Sorry for my belated reply.
->
-> The DRM patch(3/5) is not merged in v4.12-rc1 (mainline)...
-> I have checked the David's branch, but not merged.
-> However it was merged into Inki's exynos drm branch.
->
-> Inki, Could you check the patch(3/5).
->
-> Best regards,
-> Hoegeun
 
-Hi Krzysztof,
 
-The drm patch(3/5) has been merged into v4.12-rc4.
+On Monday 05 June 2017 02:23 PM, Jisheng Zhang wrote:
+> The dw_pcie_host_ops structures are never modified. Constify these
+> structures such that these can be write-protected.
+> 
+> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
 
-Best regards,
-Hoegeun
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/dwc/pci-dra7xx.c           | 2 +-
+>  drivers/pci/dwc/pci-exynos.c           | 2 +-
+>  drivers/pci/dwc/pci-imx6.c             | 2 +-
+>  drivers/pci/dwc/pci-keystone.c         | 2 +-
+>  drivers/pci/dwc/pci-layerscape.c       | 6 +++---
+>  drivers/pci/dwc/pcie-armada8k.c        | 2 +-
+>  drivers/pci/dwc/pcie-artpec6.c         | 2 +-
+>  drivers/pci/dwc/pcie-designware-plat.c | 2 +-
+>  drivers/pci/dwc/pcie-designware.h      | 2 +-
+>  drivers/pci/dwc/pcie-qcom.c            | 2 +-
+>  drivers/pci/dwc/pcie-spear13xx.c       | 2 +-
+>  11 files changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+> index 8decf46cf525..e4166032b3c6 100644
+> --- a/drivers/pci/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/dwc/pci-dra7xx.c
+> @@ -208,7 +208,7 @@ static void dra7xx_pcie_host_init(struct pcie_port *pp)
+>  	dra7xx_pcie_enable_interrupts(dra7xx);
+>  }
+>  
+> -static struct dw_pcie_host_ops dra7xx_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops dra7xx_pcie_host_ops = {
+>  	.host_init = dra7xx_pcie_host_init,
+>  };
+>  
+> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
+> index 546082ad5a3f..c78c06552590 100644
+> --- a/drivers/pci/dwc/pci-exynos.c
+> +++ b/drivers/pci/dwc/pci-exynos.c
+> @@ -590,7 +590,7 @@ static void exynos_pcie_host_init(struct pcie_port *pp)
+>  	exynos_pcie_enable_interrupts(ep);
+>  }
+>  
+> -static struct dw_pcie_host_ops exynos_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops exynos_pcie_host_ops = {
+>  	.rd_own_conf = exynos_pcie_rd_own_conf,
+>  	.wr_own_conf = exynos_pcie_wr_own_conf,
+>  	.host_init = exynos_pcie_host_init,
+> diff --git a/drivers/pci/dwc/pci-imx6.c b/drivers/pci/dwc/pci-imx6.c
+> index a98cba55c7f0..fb4816088a7a 100644
+> --- a/drivers/pci/dwc/pci-imx6.c
+> +++ b/drivers/pci/dwc/pci-imx6.c
+> @@ -602,7 +602,7 @@ static int imx6_pcie_link_up(struct dw_pcie *pci)
+>  			PCIE_PHY_DEBUG_R1_XMLH_LINK_UP;
+>  }
+>  
+> -static struct dw_pcie_host_ops imx6_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops imx6_pcie_host_ops = {
+>  	.host_init = imx6_pcie_host_init,
+>  };
+>  
+> diff --git a/drivers/pci/dwc/pci-keystone.c b/drivers/pci/dwc/pci-keystone.c
+> index fcc9723bad6e..4783cec1f78d 100644
+> --- a/drivers/pci/dwc/pci-keystone.c
+> +++ b/drivers/pci/dwc/pci-keystone.c
+> @@ -291,7 +291,7 @@ static void __init ks_pcie_host_init(struct pcie_port *pp)
+>  			"Asynchronous external abort");
+>  }
+>  
+> -static struct dw_pcie_host_ops keystone_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops keystone_pcie_host_ops = {
+>  	.rd_other_conf = ks_dw_pcie_rd_other_conf,
+>  	.wr_other_conf = ks_dw_pcie_wr_other_conf,
+>  	.host_init = ks_pcie_host_init,
+> diff --git a/drivers/pci/dwc/pci-layerscape.c b/drivers/pci/dwc/pci-layerscape.c
+> index 27d638c4e134..fd861289ad8b 100644
+> --- a/drivers/pci/dwc/pci-layerscape.c
+> +++ b/drivers/pci/dwc/pci-layerscape.c
+> @@ -39,7 +39,7 @@ struct ls_pcie_drvdata {
+>  	u32 lut_offset;
+>  	u32 ltssm_shift;
+>  	u32 lut_dbg;
+> -	struct dw_pcie_host_ops *ops;
+> +	const struct dw_pcie_host_ops *ops;
+>  	const struct dw_pcie_ops *dw_pcie_ops;
+>  };
+>  
+> @@ -185,12 +185,12 @@ static int ls_pcie_msi_host_init(struct pcie_port *pp,
+>  	return 0;
+>  }
+>  
+> -static struct dw_pcie_host_ops ls1021_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops ls1021_pcie_host_ops = {
+>  	.host_init = ls1021_pcie_host_init,
+>  	.msi_host_init = ls_pcie_msi_host_init,
+>  };
+>  
+> -static struct dw_pcie_host_ops ls_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops ls_pcie_host_ops = {
+>  	.host_init = ls_pcie_host_init,
+>  	.msi_host_init = ls_pcie_msi_host_init,
+>  };
+> diff --git a/drivers/pci/dwc/pcie-armada8k.c b/drivers/pci/dwc/pcie-armada8k.c
+> index 495b023042b3..ea8f34af6a85 100644
+> --- a/drivers/pci/dwc/pcie-armada8k.c
+> +++ b/drivers/pci/dwc/pcie-armada8k.c
+> @@ -160,7 +160,7 @@ static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -static struct dw_pcie_host_ops armada8k_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops armada8k_pcie_host_ops = {
+>  	.host_init = armada8k_pcie_host_init,
+>  };
+>  
+> diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
+> index 82a04acc42fd..01c6f7823672 100644
+> --- a/drivers/pci/dwc/pcie-artpec6.c
+> +++ b/drivers/pci/dwc/pcie-artpec6.c
+> @@ -184,7 +184,7 @@ static void artpec6_pcie_host_init(struct pcie_port *pp)
+>  	artpec6_pcie_enable_interrupts(artpec6_pcie);
+>  }
+>  
+> -static struct dw_pcie_host_ops artpec6_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops artpec6_pcie_host_ops = {
+>  	.host_init = artpec6_pcie_host_init,
+>  };
+>  
+> diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
+> index a9865d91b43c..091b4e7ad059 100644
+> --- a/drivers/pci/dwc/pcie-designware-plat.c
+> +++ b/drivers/pci/dwc/pcie-designware-plat.c
+> @@ -46,7 +46,7 @@ static void dw_plat_pcie_host_init(struct pcie_port *pp)
+>  		dw_pcie_msi_init(pp);
+>  }
+>  
+> -static struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
+>  	.host_init = dw_plat_pcie_host_init,
+>  };
+>  
+> diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
+> index c6a840575796..b4d2a89f8e58 100644
+> --- a/drivers/pci/dwc/pcie-designware.h
+> +++ b/drivers/pci/dwc/pcie-designware.h
+> @@ -162,7 +162,7 @@ struct pcie_port {
+>  	struct resource		*mem;
+>  	struct resource		*busn;
+>  	int			irq;
+> -	struct dw_pcie_host_ops	*ops;
+> +	const struct dw_pcie_host_ops *ops;
+>  	int			msi_irq;
+>  	struct irq_domain	*irq_domain;
+>  	unsigned long		msi_data;
+> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+> index 96ee527c1ed2..39e8c0095715 100644
+> --- a/drivers/pci/dwc/pcie-qcom.c
+> +++ b/drivers/pci/dwc/pcie-qcom.c
+> @@ -634,7 +634,7 @@ static int qcom_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
+>  	return dw_pcie_read(pci->dbi_base + where, size, val);
+>  }
+>  
+> -static struct dw_pcie_host_ops qcom_pcie_dw_ops = {
+> +static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
+>  	.host_init = qcom_pcie_host_init,
+>  	.rd_own_conf = qcom_pcie_rd_own_conf,
+>  };
+> diff --git a/drivers/pci/dwc/pcie-spear13xx.c b/drivers/pci/dwc/pcie-spear13xx.c
+> index 8ff36b3dbbdf..80897291e0fb 100644
+> --- a/drivers/pci/dwc/pcie-spear13xx.c
+> +++ b/drivers/pci/dwc/pcie-spear13xx.c
+> @@ -186,7 +186,7 @@ static void spear13xx_pcie_host_init(struct pcie_port *pp)
+>  	spear13xx_pcie_enable_interrupts(spear13xx_pcie);
+>  }
+>  
+> -static struct dw_pcie_host_ops spear13xx_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops spear13xx_pcie_host_ops = {
+>  	.host_init = spear13xx_pcie_host_init,
+>  };
+>  
+> 
