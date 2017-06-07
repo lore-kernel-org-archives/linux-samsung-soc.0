@@ -1,37 +1,31 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: Fix missing object for S5Pv210
-Date: Wed, 7 Jun 2017 20:43:10 +0200
-Message-ID: <20170607184310.g4a7da5ems375klu@kozik-lap>
-References: <20170531174244.31861-1-krzk@kernel.org>
+Subject: Re: [PATCH 0/2] ARM: dts: exynos: Use human-friendly symbols for
+ interrupt flags
+Date: Wed, 7 Jun 2017 21:05:33 +0200
+Message-ID: <20170607190533.vwuokqovzynbnqwt@kozik-lap>
+References: <20170602181346.32166-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33248 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751690AbdFGTFi (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 7 Jun 2017 15:05:38 -0400
 Content-Disposition: inline
-In-Reply-To: <20170531174244.31861-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20170602181346.32166-1-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wed, May 31, 2017 at 07:42:44PM +0200, Krzysztof Kozlowski wrote:
-> While splitting Samsung pinctrl drivers per ARMv7 and ARMv8
-> architectures, the necessary CONFIG_PINCTRL_EXYNOS_ARM is not selected
-> when building for S5Pv210 family of SoCs thus pinctrl was missing there
-> entirely.
+On Fri, Jun 02, 2017 at 08:13:44PM +0200, Krzysztof Kozlowski wrote:
+> Hi,
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested with comparing decompiled DTBs (dtx_diff). No differences.
 > 
-> ---
-> 
-> Fixes: 16340fd6dbc1 ("pinctrl: samsung: Split Exynos drivers per ARMv7 and ARMv8")
-> 
-> Fixed commit is in my tree but already applied and sitting in next for
-> some time. This should be squashed though.
-> ---
->  drivers/pinctrl/samsung/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
 
-Applied and squashed with 16340fd6dbc1.
+For the record: applied.
 
 Best regards,
 Krzysztof
