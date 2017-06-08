@@ -1,71 +1,41 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/3] clk: samsung: exynos542x: Add EPLL rate table
-Date: Thu, 08 Jun 2017 16:17:13 +0200
-Message-ID: <1496931433-5712-3-git-send-email-s.nawrocki@samsung.com>
-References: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170608141730epcas1p19ca02cb0fd55506f88fcd68414fde70d@epcas1p1.samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Subject: Re: clean up and modularize arch dma_mapping interface
+Date: Thu, 08 Jun 2017 10:21:36 -0400 (EDT)
+Message-ID: <20170608.102136.2294569179855411095.davem@davemloft.net>
+References: <20170608132609.32662-1-hch@lst.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20170608132609.32662-1-hch-jcswGhMUV9g@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: hch-jcswGhMUV9g@public.gmane.org
+Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-c6x-dev-jPsnJVOj+W6hPH1hqNUYSQ@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hexagon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xtensa-PjhNF2WwrV/0Sa2dR60CXw@public.gmane.org, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, openrisc-cunTk1MwBs9a3B2Vnqf2dGD2FQJk+8+b@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-A specific clock rate table is added for EPLL so it is possible
-to set frequency of the EPLL output clock as a multiple of various
-audio sampling rates.
+From: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+Date: Thu,  8 Jun 2017 15:25:25 +0200
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+> for a while we have a generic implementation of the dma mapping routines
+> that call into per-arch or per-device operations.  But right now there
+> still are various bits in the interfaces where don't clearly operate
+> on these ops.  This series tries to clean up a lot of those (but not all
+> yet, but the series is big enough).  It gets rid of the DMA_ERROR_CODE
+> way of signaling failures of the mapping routines from the
+> implementations to the generic code (and cleans up various drivers that
+> were incorrectly using it), and gets rid of the ->set_dma_mask routine
+> in favor of relying on the ->dma_capable method that can be used in
+> the same way, but which requires less code duplication.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 6f1d6c0..0ba71bf 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1280,2 +1280,2 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	PLL_35XX_RATE(200000000,  200, 3, 3),
- };
+There is unlikely to be conflicts for the sparc and net changes, so I
+will simply ACK them.
 
-+static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
-+	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
-+	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
-+	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
-+	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
-+	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
-+	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
-+	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
-+	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
-+	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
-+	PLL_36XX_RATE(65536000U, 131, 3, 4, 4719),
-+	PLL_36XX_RATE(49152000U, 197, 3, 5, 25690),
-+	PLL_36XX_RATE(45158400U, 301, 5, 3, 3671),
-+	PLL_36XX_RATE(32768000U, 131, 3, 5, 4719),
-+};
-+
- static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
- 	[apll] = PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, NULL),
-@@ -1287,7 +1303,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 		CPLL_CON0, NULL),
- 	[dpll] = PLL(pll_2550, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
- 		DPLL_CON0, NULL),
--	[epll] = PLL(pll_2650, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
-+	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
- 		EPLL_CON0, NULL),
- 	[rpll] = PLL(pll_2650, CLK_FOUT_RPLL, "fout_rpll", "fin_pll", RPLL_LOCK,
- 		RPLL_CON0, NULL),
-@@ -1402,7 +1418,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
-
- 	if (_get_rate("fin_pll") == 24 * MHZ) {
- 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
--		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-+		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
- 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 	}
---
-1.9.1
-
+Thanks Christoph.
