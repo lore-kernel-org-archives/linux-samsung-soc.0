@@ -1,45 +1,46 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 2/7] clk: samsung: Add definitions of some audio
- related clocks
-Date: Thu, 08 Jun 2017 12:00:58 +0200
-Message-ID: <8c6685fb-e9a2-5c69-722e-8ef1a2e800ff@samsung.com>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170421172023epcas1p3dd7397c8c61daa548ffac88a76e53113@epcas1p3.samsung.com>
-        <1492795191-31298-3-git-send-email-s.nawrocki@samsung.com>
-        <20170422152705.mvnycub4unjlseeq@kozik-lap>
+From: Christoph Hellwig <hch@lst.de>
+Subject: clean up and modularize arch dma_mapping interface
+Date: Thu,  8 Jun 2017 15:25:25 +0200
+Message-ID: <20170608132609.32662-1-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:57121 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751549AbdFHKBL (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 06:01:11 -0400
-In-reply-to: <20170422152705.mvnycub4unjlseeq@kozik-lap>
-Content-language: en-GB
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: x86@kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jy0922.shim@samsung.com, b.zolnierkie@samsung.com
 
-On 04/22/2017 05:27 PM, Krzysztof Kozlowski wrote:
->>   	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
->>   			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
->> -	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p, SRC_TOP7,
->> -			20, 2),
->> +	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
->> +							SRC_TOP7, 20, 2),
- >
-> How about not changing the indention level of new line? On the other
-> hand, if you want to change it so maybe align it with opening
-> parenthesis?
+Hi all,
 
-Thanks for your review.  I wrote it this way to keep it consistent with 
-remaining entries of the exynos5800_mux_clks[] array.  I think it's less
-mess this way, otherwise we would need to make more dubious whitespace
-changes to keep the indentation consistent.
+for a while we have a generic implementation of the dma mapping routines
+that call into per-arch or per-device operations.  But right now there
+still are various bits in the interfaces where don't clearly operate
+on these ops.  This series tries to clean up a lot of those (but not all
+yet, but the series is big enough).  It gets rid of the DMA_ERROR_CODE
+way of signaling failures of the mapping routines from the
+implementations to the generic code (and cleans up various drivers that
+were incorrectly using it), and gets rid of the ->set_dma_mask routine
+in favor of relying on the ->dma_capable method that can be used in
+the same way, but which requires less code duplication.
 
--- 
-Thanks,
-Sylwester
+Btw, we don't seem to have a tree every-growing amount of common dma
+mapping code, and given that I have a fair amount of all over the tree
+work in that area in my plate I'd like to start one.  Any good reason
+to that?  Anyone willing to volunteer as co maintainer?
+
+The whole series is also available in git:
+
+    git://git.infradead.org/users/hch/misc.git dma-map
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-map
