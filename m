@@ -1,42 +1,42 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: samsung: Save defconfig for Exynos, S3C and S5P
- configs
-Date: Thu, 8 Jun 2017 08:45:20 +0200
-Message-ID: <20170608064520.GA2770@kozik-book>
-References: <20170607181846.13539-1-krzk@kernel.org>
- <CAK8P3a2_rLigHqnOkHPM+x2GDrwdGnwJOqEbY7YTsQRUXT_eJg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: samsung: Save defconfig for Exynos, S3C and S5P configs
+Date: Thu, 8 Jun 2017 09:25:15 +0200
+Message-ID: <CAK8P3a3GT3L0KaA2jLWWRuSpsTOCo0d=0hqX3Xh=yV3AZ72Drg@mail.gmail.com>
+References: <20170607181846.13539-1-krzk@kernel.org> <CAK8P3a2_rLigHqnOkHPM+x2GDrwdGnwJOqEbY7YTsQRUXT_eJg@mail.gmail.com>
+ <20170608064520.GA2770@kozik-book>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2_rLigHqnOkHPM+x2GDrwdGnwJOqEbY7YTsQRUXT_eJg@mail.gmail.com>
+In-Reply-To: <20170608064520.GA2770@kozik-book>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 07, 2017 at 09:49:58PM +0200, Arnd Bergmann wrote:
-> On Wed, Jun 7, 2017 at 8:18 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > Some configs for Samsung ARM SoCs were not updated for some time and
-> > they still contain obsolete Kconfig entries.  Generate new defconfig for
-> > all Samsung ARM architectures (Exynos, S3C24xx, S3C64xx, S5Pv210).
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Hi Krzysztof,
-> 
-> Updating the defconfig files is good, but I'm always a little unsure
-> about loss of
-> information when we do that. Would it be possible for you to split this patch
-> into two halves, with one of them just reordering the entries that moved,
-> and the second one removing the entries that have disappeared, with an
-> explanation for why they are no longer there? That would let us see whether
-> the change was intentional and avoid problems from renamed Kconfig
-> symbols that are no longer enabled afterwards.
+On Thu, Jun 8, 2017 at 8:45 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Wed, Jun 07, 2017 at 09:49:58PM +0200, Arnd Bergmann wrote:
+>> On Wed, Jun 7, 2017 at 8:18 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> > Some configs for Samsung ARM SoCs were not updated for some time and
+>> > they still contain obsolete Kconfig entries.  Generate new defconfig for
+>> > all Samsung ARM architectures (Exynos, S3C24xx, S3C64xx, S5Pv210).
+>> >
+>> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>
+>> Hi Krzysztof,
+>>
+>> Updating the defconfig files is good, but I'm always a little unsure
+>> about loss of
+>> information when we do that. Would it be possible for you to split this patch
+>> into two halves, with one of them just reordering the entries that moved,
+>> and the second one removing the entries that have disappeared, with an
+>> explanation for why they are no longer there? That would let us see whether
+>> the change was intentional and avoid problems from renamed Kconfig
+>> symbols that are no longer enabled afterwards.
+>
+> Splitting the change into two commits (reorder and removal) makes sense.
+> However getting the information why some things were removed, will
+> require more effort. I'll see what I can do.
 
-Splitting the change into two commits (reorder and removal) makes sense.
-However getting the information why some things were removed, will
-require more effort. I'll see what I can do.
+Ok, thanks!
 
-Best regards,
-Krzysztof
+       Arnd
