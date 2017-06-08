@@ -1,75 +1,42 @@
-From: <noord-holland@netwerkmassagebijkanker.nl>
-Subject: (unknown)
-Date: Thu, 08 Jun 2017 05:00:48 -0000
-Message-ID: <149689804848.12492.1903222235915973434@zaural.ru>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: samsung: Save defconfig for Exynos, S3C and S5P
+ configs
+Date: Thu, 8 Jun 2017 08:45:20 +0200
+Message-ID: <20170608064520.GA2770@kozik-book>
+References: <20170607181846.13539-1-krzk@kernel.org>
+ <CAK8P3a2_rLigHqnOkHPM+x2GDrwdGnwJOqEbY7YTsQRUXT_eJg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="0286300581085.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ws178.zone31-163-131.zaural.ru ([31.163.131.178]:34395 "HELO
-        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1751035AbdFHFAw (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 01:00:52 -0400
-Content-Disposition: attachment
-Subject: 
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2_rLigHqnOkHPM+x2GDrwdGnwJOqEbY7YTsQRUXT_eJg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-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
-BgAAAAABAAEATgAAAO4LAAAAAA==
+On Wed, Jun 07, 2017 at 09:49:58PM +0200, Arnd Bergmann wrote:
+> On Wed, Jun 7, 2017 at 8:18 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > Some configs for Samsung ARM SoCs were not updated for some time and
+> > they still contain obsolete Kconfig entries.  Generate new defconfig for
+> > all Samsung ARM architectures (Exynos, S3C24xx, S3C64xx, S5Pv210).
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> Hi Krzysztof,
+> 
+> Updating the defconfig files is good, but I'm always a little unsure
+> about loss of
+> information when we do that. Would it be possible for you to split this patch
+> into two halves, with one of them just reordering the entries that moved,
+> and the second one removing the entries that have disappeared, with an
+> explanation for why they are no longer there? That would let us see whether
+> the change was intentional and avoid problems from renamed Kconfig
+> symbols that are no longer enabled afterwards.
+
+Splitting the change into two commits (reorder and removal) makes sense.
+However getting the information why some things were removed, will
+require more effort. I'll see what I can do.
+
+Best regards,
+Krzysztof
