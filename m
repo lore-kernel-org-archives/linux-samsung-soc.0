@@ -1,41 +1,53 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: hwmon: pwm-fan: switch to new atomic PWM API
-Date: Wed, 7 Jun 2017 14:07:02 -0700
-Message-ID: <20170607210057.GA29962@roeck-us.net>
-References: <1493039598-25881-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20170602132359epcas4p113157cdf641dae2e186c4ccd75432e00@epcas4p1.samsung.com>
- <20170602132353.GA12690@roeck-us.net>
- <2730680.la1ZiRyv91@amdc3058>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] devfreq: exynos-ppmu: Staticize event list
+Date: Thu, 08 Jun 2017 10:22:20 +0900
+Message-ID: <5938A6CC.8030206@samsung.com>
+References: <CGME20170607181258epcas2p4191204d7b3853ef0482d84df7a06589d@epcas2p4.samsung.com>
+        <20170607181228.32102-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2730680.la1ZiRyv91@amdc3058>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jean Delvare <jdelvare@suse.com>, Kamil Debski <kamil@wypas.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-pwm@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:13643 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751203AbdFHBWZ (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 7 Jun 2017 21:22:25 -0400
+In-reply-to: <20170607181228.32102-1-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 07, 2017 at 03:38:44PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> On Friday, June 02, 2017 06:23:53 AM Guenter Roeck wrote:
-> > On Mon, Apr 24, 2017 at 03:13:17PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > > Switch pwm-fan driver to new atomic PWM API.
-> > > 
-> > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > ---
-> > > Depends on "[PATCH v2 0/3] pwm: pwm-samsung: fix suspend/resume support"
-> > > patchset (https://www.spinics.net/lists/kernel/msg2495209.html).
-> > 
-> > I lost track where we are with this patch. The above series set did not make
-> > it, as far as I can see. Is this patch truly dependent on that series, or
-> > can it be applied separately ? It does apply cleanly.
+Hi Krzysztof,
+
+On 2017년 06월 08일 03:12, Krzysztof Kozlowski wrote:
+> The ppmu_events array is accessed only in this compilation unit so it
+> can be made static.
 > 
-> I think that it can be applied separately (the broken suspend/resume code
-> will continue to use the old API until the previous patchset is finally
-> merged and the code in question is removed altogether).
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index 9b7350935b73..c68f3b5a10b5 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -44,7 +44,7 @@ struct exynos_ppmu {
+>  	{ "ppmu-event2-"#name, PPMU_PMNCNT2 },	\
+>  	{ "ppmu-event3-"#name, PPMU_PMNCNT3 }
+>  
+> -struct __exynos_ppmu_events {
+> +static struct __exynos_ppmu_events {
+>  	char *name;
+>  	int id;
+>  } ppmu_events[] = {
 > 
 
-Ok. Applied to hwmon-next.
+Looks good to me.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thanks,
-Guenter
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
