@@ -1,329 +1,43 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 24/35] ARM: defconfig: samsung: Re-order entries to match
- savedefconfig
-Date: Thu,  8 Jun 2017 18:10:35 +0200
-Message-ID: <20170608161049.12421-24-krzk@kernel.org>
+Subject: [PATCH 30/35] ARM: exynos_defconfig: Save defconfig
+Date: Thu,  8 Jun 2017 18:10:41 +0200
+Message-ID: <20170608161049.12421-30-krzk@kernel.org>
 References: <20170608160836.12196-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170608160836.12196-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Re-order entries just like savedefconfig would do so it will be easier
-to review the changes before actual savedefconfig.
+Generate new defconfig to get rid of obsolete Kconfig entries:
+ - RFKILL_REGULATOR is gone;
+ - COMMON_CLK_MAX77802 was merged into COMMON_CLK_MAX77686;
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/configs/exynos_defconfig   |  4 ++--
- arch/arm/configs/mini2440_defconfig | 47 ++++++++++++++++++-------------------
- arch/arm/configs/s3c2410_defconfig  |  6 ++---
- arch/arm/configs/s3c6400_defconfig  |  2 +-
- arch/arm/configs/s5pv210_defconfig  | 12 +++++-----
- 5 files changed, 35 insertions(+), 36 deletions(-)
+ arch/arm/configs/exynos_defconfig | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 960d55445e05..b50aea337e00 100644
+index b50aea337e00..25325ed9319e 100644
 --- a/arch/arm/configs/exynos_defconfig
 +++ b/arch/arm/configs/exynos_defconfig
-@@ -74,6 +74,7 @@ CONFIG_MWIFIEX=m
- CONFIG_MWIFIEX_SDIO=m
- CONFIG_INPUT_EVDEV=y
- CONFIG_KEYBOARD_GPIO=y
-+CONFIG_KEYBOARD_SAMSUNG=y
- CONFIG_KEYBOARD_CROS_EC=y
- # CONFIG_MOUSE_PS2 is not set
- CONFIG_MOUSE_CYAPA=y
-@@ -83,7 +84,6 @@ CONFIG_TOUCHSCREEN_MMS114=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MAX77693_HAPTIC=y
- CONFIG_INPUT_MAX8997_HAPTIC=y
--CONFIG_KEYBOARD_SAMSUNG=y
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_SAMSUNG=y
-@@ -158,6 +158,7 @@ CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
- CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
- CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
- CONFIG_V4L_TEST_DRIVERS=y
-+CONFIG_VIDEO_VIVID=m
- CONFIG_DRM=y
- CONFIG_DRM_EXYNOS=y
- CONFIG_DRM_EXYNOS_FIMD=y
-@@ -280,4 +281,3 @@ CONFIG_CRYPTO_AES_ARM_BS=m
- CONFIG_CRC_CCITT=y
- CONFIG_FONTS=y
- CONFIG_FONT_7x14=y
--CONFIG_VIDEO_VIVID=m
-diff --git a/arch/arm/configs/mini2440_defconfig b/arch/arm/configs/mini2440_defconfig
-index f48bc89de871..e621032ab1f0 100644
---- a/arch/arm/configs/mini2440_defconfig
-+++ b/arch/arm/configs/mini2440_defconfig
-@@ -12,12 +12,18 @@ CONFIG_MODULE_UNLOAD=y
- CONFIG_MODULE_FORCE_UNLOAD=y
- # CONFIG_BLK_DEV_BSG is not set
- CONFIG_BLK_DEV_INTEGRITY=y
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_BSD_DISKLABEL=y
-+CONFIG_MINIX_SUBPARTITION=y
-+CONFIG_SOLARIS_X86_PARTITION=y
-+CONFIG_UNIXWARE_DISKLABEL=y
-+CONFIG_LDM_PARTITION=y
- CONFIG_ARCH_S3C24XX=y
- # CONFIG_CPU_S3C2410 is not set
- CONFIG_CPU_S3C2440=y
-+CONFIG_MACH_MINI2440=y
- CONFIG_S3C_ADC=y
- CONFIG_S3C24XX_PWM=y
--CONFIG_MACH_MINI2440=y
- CONFIG_AEABI=y
- # CONFIG_OABI_COMPAT is not set
- CONFIG_KEXEC=y
-@@ -103,6 +109,7 @@ CONFIG_BLK_DEV_RAM=y
- CONFIG_BLK_DEV_RAM_SIZE=65536
- CONFIG_CDROM_PKTCDVD=m
- CONFIG_SENSORS_TSL2550=m
-+CONFIG_EEPROM_AT24=y
- CONFIG_SCSI=m
- # CONFIG_SCSI_PROC_FS is not set
- CONFIG_BLK_DEV_SD=m
-@@ -112,6 +119,14 @@ CONFIG_NETDEVICES=y
- CONFIG_TUN=m
- CONFIG_NET_ETHERNET=y
- CONFIG_DM9000=y
-+CONFIG_PPP=m
-+CONFIG_PPP_BSDCOMP=m
-+CONFIG_PPP_DEFLATE=m
-+CONFIG_PPP_FILTER=y
-+CONFIG_PPP_MPPE=m
-+CONFIG_PPP_MULTILINK=y
-+CONFIG_PPP_ASYNC=m
-+CONFIG_PPP_SYNC_TTY=m
- CONFIG_HOSTAP=m
- CONFIG_HOSTAP_FIRMWARE=y
- CONFIG_HOSTAP_FIRMWARE_NVRAM=y
-@@ -119,14 +134,6 @@ CONFIG_LIBERTAS=m
- CONFIG_LIBERTAS_SDIO=m
- CONFIG_ZD1211RW=m
- CONFIG_ZD1211RW_DEBUG=y
--CONFIG_PPP=m
--CONFIG_PPP_MULTILINK=y
--CONFIG_PPP_FILTER=y
--CONFIG_PPP_ASYNC=m
--CONFIG_PPP_SYNC_TTY=m
--CONFIG_PPP_DEFLATE=m
--CONFIG_PPP_BSDCOMP=m
--CONFIG_PPP_MPPE=m
- CONFIG_INPUT_FF_MEMLESS=y
- CONFIG_INPUT_EVDEV=y
- CONFIG_INPUT_EVBUG=m
-@@ -135,9 +142,9 @@ CONFIG_KEYBOARD_GPIO=y
- CONFIG_INPUT_TOUCHSCREEN=y
- CONFIG_SERIO_RAW=y
- CONFIG_VT_HW_CONSOLE_BINDING=y
-+CONFIG_LEGACY_PTY_COUNT=128
- CONFIG_SERIAL_SAMSUNG=y
- CONFIG_SERIAL_SAMSUNG_CONSOLE=y
--CONFIG_LEGACY_PTY_COUNT=128
- CONFIG_IPMI_HANDLER=m
- CONFIG_IPMI_DEVICE_INTERFACE=m
- CONFIG_IPMI_SI=m
-@@ -148,7 +155,6 @@ CONFIG_I2C=y
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_S3C2410=y
- CONFIG_I2C_SIMTEC=y
--CONFIG_EEPROM_AT24=y
- CONFIG_SPI=y
- CONFIG_SPI_S3C24XX=y
- CONFIG_SPI_SPIDEV=y
-@@ -172,9 +178,6 @@ CONFIG_BACKLIGHT_PWM=y
- CONFIG_FRAMEBUFFER_CONSOLE=y
- CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
- CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
--CONFIG_FONTS=y
--CONFIG_FONT_8x8=y
--CONFIG_FONT_MINI_4x6=y
- CONFIG_LOGO=y
- # CONFIG_LOGO_LINUX_MONO is not set
- # CONFIG_LOGO_LINUX_VGA16 is not set
-@@ -195,8 +198,6 @@ CONFIG_SND_USB_CAIAQ_INPUT=y
- CONFIG_SND_SOC=y
- CONFIG_SND_S3C24XX_SOC=y
- CONFIG_HIDRAW=y
--CONFIG_HID_PID=y
--CONFIG_USB_HIDDEV=y
- CONFIG_HID_GYRATION=y
- CONFIG_HID_NTRIG=y
- CONFIG_HID_PANTHERLORD=y
-@@ -205,6 +206,8 @@ CONFIG_HID_SAMSUNG=y
- CONFIG_HID_SONY=y
- CONFIG_HID_SUNPLUS=y
- CONFIG_HID_TOPSEED=y
-+CONFIG_HID_PID=y
-+CONFIG_USB_HIDDEV=y
- CONFIG_USB=y
- CONFIG_USB_OHCI_HCD=y
- CONFIG_USB_ACM=m
-@@ -267,13 +270,6 @@ CONFIG_NFS_V3=y
- CONFIG_NFS_V3_ACL=y
- CONFIG_NFS_V4=y
- CONFIG_ROOT_NFS=y
--CONFIG_PARTITION_ADVANCED=y
--CONFIG_BSD_DISKLABEL=y
--CONFIG_MINIX_SUBPARTITION=y
--CONFIG_SOLARIS_X86_PARTITION=y
--CONFIG_UNIXWARE_DISKLABEL=y
--CONFIG_LDM_PARTITION=y
--CONFIG_EFI_PARTITION=y
- CONFIG_NLS_DEFAULT="cp437"
- CONFIG_NLS_CODEPAGE_437=m
- CONFIG_NLS_CODEPAGE_737=m
-@@ -313,13 +309,13 @@ CONFIG_NLS_ISO8859_15=m
- CONFIG_NLS_KOI8_R=m
- CONFIG_NLS_KOI8_U=m
- CONFIG_NLS_UTF8=m
-+CONFIG_DEBUG_INFO=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
- # CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_STRIP_ASM_SYMS=y
- CONFIG_DEBUG_FS=y
- CONFIG_DEBUG_KERNEL=y
- # CONFIG_SCHED_DEBUG is not set
--CONFIG_DEBUG_INFO=y
- CONFIG_DEBUG_USER=y
- CONFIG_KEYS=y
- CONFIG_CRYPTO_FIPS=y
-@@ -364,3 +360,6 @@ CONFIG_CRYPTO_DEFLATE=m
- CONFIG_CRYPTO_LZO=m
- CONFIG_CRC_T10DIF=y
- CONFIG_LIBCRC32C=m
-+CONFIG_FONTS=y
-+CONFIG_FONT_8x8=y
-+CONFIG_FONT_MINI_4x6=y
-diff --git a/arch/arm/configs/s3c2410_defconfig b/arch/arm/configs/s3c2410_defconfig
-index 6349fc988a0f..dc3469d9da26 100644
---- a/arch/arm/configs/s3c2410_defconfig
-+++ b/arch/arm/configs/s3c2410_defconfig
-@@ -12,7 +12,6 @@ CONFIG_BSD_DISKLABEL=y
- CONFIG_SOLARIS_X86_PARTITION=y
- CONFIG_ARCH_S3C24XX=y
- CONFIG_S3C_BOOT_ERROR_RESET=y
--CONFIG_S3C_ADC=y
- CONFIG_S3C24XX_PWM=y
- CONFIG_CPU_S3C2412=y
- CONFIG_CPU_S3C2416=y
-@@ -45,6 +44,7 @@ CONFIG_MACH_RX1950=y
- CONFIG_SMDK2440_CPU2442=y
- CONFIG_MACH_SMDK2443=y
- # CONFIG_ARM_THUMB is not set
-+CONFIG_S3C_ADC=y
- CONFIG_ZBOOT_ROM_TEXT=0x0
- CONFIG_ZBOOT_ROM_BSS=0x0
- CONFIG_CMDLINE="root=/dev/hda1 ro init=/bin/bash console=ttySAC0"
-@@ -211,6 +211,7 @@ CONFIG_BLK_DEV_LOOP=y
- CONFIG_BLK_DEV_NBD=m
- CONFIG_BLK_DEV_RAM=y
- CONFIG_ATA_OVER_ETH=m
-+CONFIG_EEPROM_AT24=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_CHR_DEV_ST=m
- CONFIG_BLK_DEV_SR=y
-@@ -277,7 +278,6 @@ CONFIG_HW_RANDOM=y
- CONFIG_I2C_CHARDEV=m
- CONFIG_I2C_S3C2410=y
- CONFIG_I2C_SIMTEC=y
--CONFIG_EEPROM_AT24=y
- CONFIG_SPI=y
- CONFIG_SPI_GPIO=m
- CONFIG_SPI_S3C24XX=m
-@@ -442,10 +442,10 @@ CONFIG_NLS_ISO8859_15=m
- CONFIG_NLS_KOI8_R=m
- CONFIG_NLS_KOI8_U=m
- CONFIG_NLS_UTF8=m
-+CONFIG_DEBUG_INFO=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DEBUG_KERNEL=y
- CONFIG_DEBUG_MUTEXES=y
--CONFIG_DEBUG_INFO=y
- CONFIG_DEBUG_USER=y
- CONFIG_DEBUG_LL=y
- # CONFIG_CRYPTO_ANSI_CPRNG is not set
-diff --git a/arch/arm/configs/s3c6400_defconfig b/arch/arm/configs/s3c6400_defconfig
-index ccc908f3aa3a..97e377a4c118 100644
---- a/arch/arm/configs/s3c6400_defconfig
-+++ b/arch/arm/configs/s3c6400_defconfig
-@@ -80,12 +80,12 @@ CONFIG_TMPFS=y
- CONFIG_TMPFS_POSIX_ACL=y
- CONFIG_CRAMFS=y
- CONFIG_ROMFS_FS=y
-+CONFIG_DEBUG_INFO=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DEBUG_KERNEL=y
- CONFIG_DEBUG_RT_MUTEXES=y
- CONFIG_DEBUG_SPINLOCK=y
- CONFIG_DEBUG_MUTEXES=y
- CONFIG_DEBUG_SPINLOCK_SLEEP=y
--CONFIG_DEBUG_INFO=y
- CONFIG_DEBUG_USER=y
- CONFIG_DEBUG_LL=y
-diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
-index 38bee3209c0b..4e0138993626 100644
---- a/arch/arm/configs/s5pv210_defconfig
-+++ b/arch/arm/configs/s5pv210_defconfig
-@@ -1,15 +1,18 @@
-+CONFIG_NO_HZ=y
-+CONFIG_HIGH_RES_TIMERS=y
- CONFIG_SYSFS_DEPRECATED_V2=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_KALLSYMS_ALL=y
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
- # CONFIG_BLK_DEV_BSG is not set
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_BSD_DISKLABEL=y
-+CONFIG_SOLARIS_X86_PARTITION=y
- CONFIG_ARCH_S5PV210=y
- CONFIG_S3C_LOWLEVEL_UART_PORT=1
- CONFIG_S3C_DEV_FB=y
- CONFIG_S5PV210_SETUP_FB_24BPP=y
--CONFIG_NO_HZ=y
--CONFIG_HIGH_RES_TIMERS=y
- CONFIG_VMSPLIT_2G=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
-@@ -41,12 +44,10 @@ CONFIG_TMPFS=y
- CONFIG_TMPFS_POSIX_ACL=y
- CONFIG_CRAMFS=y
- CONFIG_ROMFS_FS=y
--CONFIG_PARTITION_ADVANCED=y
--CONFIG_BSD_DISKLABEL=y
--CONFIG_SOLARIS_X86_PARTITION=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ASCII=y
- CONFIG_NLS_ISO8859_1=y
-+CONFIG_DEBUG_INFO=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DEBUG_KERNEL=y
- # CONFIG_DEBUG_PREEMPT is not set
-@@ -54,7 +55,6 @@ CONFIG_DEBUG_RT_MUTEXES=y
- CONFIG_DEBUG_SPINLOCK=y
- CONFIG_DEBUG_MUTEXES=y
- CONFIG_DEBUG_SPINLOCK_SLEEP=y
--CONFIG_DEBUG_INFO=y
- CONFIG_DEBUG_USER=y
- CONFIG_DEBUG_LL=y
- CONFIG_EARLY_PRINTK=y
+@@ -49,7 +49,6 @@ CONFIG_IP_PNP_DHCP=y
+ CONFIG_IP_PNP_BOOTP=y
+ CONFIG_IP_PNP_RARP=y
+ CONFIG_CFG80211=y
+-CONFIG_RFKILL_REGULATOR=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_DMA_CMA=y
+@@ -221,7 +220,6 @@ CONFIG_DMADEVICES=y
+ CONFIG_PL330_DMA=y
+ CONFIG_CROS_EC_CHARDEV=y
+ CONFIG_COMMON_CLK_MAX77686=y
+-CONFIG_COMMON_CLK_MAX77802=y
+ CONFIG_COMMON_CLK_S2MPS11=y
+ CONFIG_PM_DEVFREQ=y
+ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
 -- 
 2.9.3
