@@ -1,53 +1,55 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] devfreq: exynos-ppmu: Staticize event list
-Date: Thu, 08 Jun 2017 10:22:20 +0900
-Message-ID: <5938A6CC.8030206@samsung.com>
-References: <CGME20170607181258epcas2p4191204d7b3853ef0482d84df7a06589d@epcas2p4.samsung.com>
-        <20170607181228.32102-1-krzk@kernel.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: exynos5440: Fix inconsistent indenting
+Date: Thu, 8 Jun 2017 09:17:09 +0530
+Message-ID: <20170608034709.GA4634@vireshk-i7>
+References: <20170607181324.32199-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:13643 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751203AbdFHBWZ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Jun 2017 21:22:25 -0400
-In-reply-to: <20170607181228.32102-1-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170607181324.32199-1-krzk@kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
-
-On 2017년 06월 08일 03:12, Krzysztof Kozlowski wrote:
-> The ppmu_events array is accessed only in this compilation unit so it
-> can be made static.
+On 07-06-17, 20:13, Krzysztof Kozlowski wrote:
+> Fix inconsistent indenting and unneeded white space in assignment.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/devfreq/event/exynos-ppmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/cpufreq/exynos5440-cpufreq.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> index 9b7350935b73..c68f3b5a10b5 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.c
-> +++ b/drivers/devfreq/event/exynos-ppmu.c
-> @@ -44,7 +44,7 @@ struct exynos_ppmu {
->  	{ "ppmu-event2-"#name, PPMU_PMNCNT2 },	\
->  	{ "ppmu-event3-"#name, PPMU_PMNCNT3 }
+> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
+> index 9180d34cc9fc..b6b369c22272 100644
+> --- a/drivers/cpufreq/exynos5440-cpufreq.c
+> +++ b/drivers/cpufreq/exynos5440-cpufreq.c
+> @@ -173,12 +173,12 @@ static void exynos_enable_dvfs(unsigned int cur_frequency)
+>  	/* Enable PSTATE Change Event */
+>  	tmp = __raw_readl(dvfs_info->base + XMU_PMUEVTEN);
+>  	tmp |= (1 << PSTATE_CHANGED_EVTEN_SHIFT);
+> -	 __raw_writel(tmp, dvfs_info->base + XMU_PMUEVTEN);
+> +	__raw_writel(tmp, dvfs_info->base + XMU_PMUEVTEN);
 >  
-> -struct __exynos_ppmu_events {
-> +static struct __exynos_ppmu_events {
->  	char *name;
->  	int id;
->  } ppmu_events[] = {
-> 
+>  	/* Enable PSTATE Change IRQ */
+>  	tmp = __raw_readl(dvfs_info->base + XMU_PMUIRQEN);
+>  	tmp |= (1 << PSTATE_CHANGED_IRQEN_SHIFT);
+> -	 __raw_writel(tmp, dvfs_info->base + XMU_PMUIRQEN);
+> +	__raw_writel(tmp, dvfs_info->base + XMU_PMUIRQEN);
+>  
+>  	/* Set initial performance index */
+>  	cpufreq_for_each_entry(pos, freq_table)
+> @@ -330,7 +330,7 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
+>  	struct resource res;
+>  	unsigned int cur_frequency;
+>  
+> -	np =  pdev->dev.of_node;
+> +	np = pdev->dev.of_node;
+>  	if (!np)
+>  		return -ENODEV;
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+viresh
