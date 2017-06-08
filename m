@@ -1,43 +1,27 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 30/35] ARM: exynos_defconfig: Save defconfig
-Date: Thu,  8 Jun 2017 18:10:41 +0200
-Message-ID: <20170608161049.12421-30-krzk@kernel.org>
-References: <20170608160836.12196-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170608160836.12196-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Subject: Re: [PATCH 19/44] s390: implement ->mapping_error
+Date: Thu, 8 Jun 2017 18:23:11 +0200
+Message-ID: <20170608182311.05cced9e@thinkpad>
+References: <20170608132609.32662-1-hch@lst.de>
+        <20170608132609.32662-20-hch@lst.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <20170608132609.32662-20-hch@lst.de>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>
+Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Generate new defconfig to get rid of obsolete Kconfig entries:
- - RFKILL_REGULATOR is gone;
- - COMMON_CLK_MAX77802 was merged into COMMON_CLK_MAX77686;
+On Thu,  8 Jun 2017 15:25:44 +0200
+Christoph Hellwig <hch@lst.de> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/configs/exynos_defconfig | 2 --
- 1 file changed, 2 deletions(-)
+> s390 can also use noop_dma_ops, and while that currently does not return
+> errors it will so in the future.  Implementing the mapping_error method
+> is the proper way to have per-ops error conditions.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index b50aea337e00..25325ed9319e 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -49,7 +49,6 @@ CONFIG_IP_PNP_DHCP=y
- CONFIG_IP_PNP_BOOTP=y
- CONFIG_IP_PNP_RARP=y
- CONFIG_CFG80211=y
--CONFIG_RFKILL_REGULATOR=y
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
- CONFIG_DMA_CMA=y
-@@ -221,7 +220,6 @@ CONFIG_DMADEVICES=y
- CONFIG_PL330_DMA=y
- CONFIG_CROS_EC_CHARDEV=y
- CONFIG_COMMON_CLK_MAX77686=y
--CONFIG_COMMON_CLK_MAX77802=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_PM_DEVFREQ=y
- CONFIG_DEVFREQ_GOV_PERFORMANCE=y
--- 
-2.9.3
+Acked-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+
