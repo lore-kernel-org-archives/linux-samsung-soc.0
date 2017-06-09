@@ -1,38 +1,66 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 33/44] openrisc: remove arch-specific dma_supported implementation
-Date: Fri, 9 Jun 2017 14:20:42 +0200
-Message-ID: <CAMuHMdUPeFJJtz8eJkQEAR-2w9oHt-fXeGHvvKFLfU2A4YyviQ@mail.gmail.com>
-References: <20170608132609.32662-1-hch@lst.de> <20170608132609.32662-34-hch@lst.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] Samsung SoC updates for v4.13
+Date: Fri, 09 Jun 2017 17:33:42 +0200
+Message-ID: <f7a1b678-9df4-ff65-dd98-a1d52216dd87@samsung.com>
+References: <CGME20170609153346epcas1p45c0c91fe7cd98d9b2a93aaf8a3089cda@epcas1p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-hexagon-owner@vger.kernel.org>
-In-Reply-To: <20170608132609.32662-34-hch@lst.de>
-Sender: linux-hexagon-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: the arch/x86 maintainers <x86@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, openrisc@lists.librecores.org, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, linux-s390 <linux-s390@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, sparclinux <sparclinux@vger.kernel.org>, "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, DRI Development <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vg
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:37837 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751650AbdFIPdu (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 9 Jun 2017 11:33:50 -0400
+Content-language: en-GB
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: LMML <linux-media@vger.kernel.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Christoph,
+Hi Mauro,
 
-On Thu, Jun 8, 2017 at 3:25 PM, Christoph Hellwig <hch@lst.de> wrote:
-> This implementation is simply bogus - hexagon only has a simple
+The following changes since commit 36bcba973ad478042d1ffc6e89afd92e8bd17030:
 
-openrisc?
+  [media] mtk_vcodec_dec: return error at mtk_vdec_pic_info_update() (2017-05-19 07:12:05 -0300)
 
-> direct mapped DMA implementation and thus doesn't care about the
-> address.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/openrisc/include/asm/dma-mapping.h | 7 -------
+are available in the git repository at:
 
-Gr{oetje,eeting}s,
+  git://linuxtv.org/snawrocki/samsung.git for-v4.13/media/next
 
-                        Geert
+for you to fetch changes up to b84da96956f6cfea1b48e60be9e6a0d3ba66a6b0:
+
+  s3c-camif: fix arguments position in a function call (2017-06-05 12:09:03 +0200)
+
+----------------------------------------------------------------
+Alexandre Courbot (1):
+      s5p-jpeg: fix recursive spinlock acquisition
+
+Benjamin Gaignard (1):
+      exynos4-is: use devm_of_platform_populate()
+
+Colin Ian King (1):
+      s5p-mfc: fix spelling mistake: "destionation" -> "destination"
+
+Gustavo A. R. Silva (1):
+      s3c-camif: fix arguments position in a function call
+
+Nicholas Mc Guire (1):
+      s5k6aa: set usleep_range() range greater than 0
+
+Thibault Saunier (1):
+      exynos-gsc: Use user configured colorspace if provided
+
+ drivers/media/i2c/s5k6aa.c                     |  2 +-
+ drivers/media/platform/exynos-gsc/gsc-core.c   |  9 ++++-----
+ drivers/media/platform/exynos-gsc/gsc-core.h   |  1 +
+ drivers/media/platform/exynos4-is/fimc-is.c    |  7 ++-----
+ .../media/platform/s3c-camif/camif-capture.c   |  4 ++--
+ drivers/media/platform/s5p-jpeg/jpeg-core.c    | 12 +++++++++---
+ .../media/platform/s5p-mfc/s5p_mfc_opr_v5.c    |  2 +-
+ .../media/platform/s5p-mfc/s5p_mfc_opr_v6.c    |  2 +-
+ 8 files changed, 21 insertions(+), 18 deletions(-)
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, 
+Sylwester
