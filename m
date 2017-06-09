@@ -1,22 +1,36 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 0/4] ARM: exynos: Stuff for v4.13
-Date: Fri,  9 Jun 2017 18:42:45 +0200
-Message-ID: <20170609164249.1656-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751571AbdFIQm6 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 12:42:58 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL 4/4] ARM: defconfig: exynos: Defconfig for v4.13
+Date: Fri,  9 Jun 2017 18:42:46 +0200
+Message-ID: <20170609164249.1656-2-krzk@kernel.org>
+References: <20170609164249.1656-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170609164249.1656-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
 
-Nothing special, not much of work happened, no specific order of pulls,
-no dependencies. Boring. Boring. So much boring...
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
 
-Best regards,
-Krzysztof
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.13
+
+for you to fetch changes up to f33160d14f959991e88074fc419546c8d62312a5:
+
+  ARM: multi_v7_defconfig: Enable Exynos RNG and user-space crypto API (2017-05-15 19:04:10 +0200)
+
+----------------------------------------------------------------
+Samsung defconfig ARM update for v4.13:
+1. Enable Exynos PRNG along with user-space crypto API.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      ARM: exynos_defconfig: Enable Exynos RNG and user-space crypto API
+      ARM: multi_v7_defconfig: Enable Exynos RNG and user-space crypto API
+
+ arch/arm/configs/exynos_defconfig   | 6 ++++++
+ arch/arm/configs/multi_v7_defconfig | 6 ++++++
+ 2 files changed, 12 insertions(+)
