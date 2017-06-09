@@ -1,232 +1,210 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 4/6] clk: samsung: exynos-audss: Convert to the new
- clk_hw API
-Date: Fri, 09 Jun 2017 10:33:52 +0900
-Message-ID: <5939FB00.3070709@samsung.com>
-References: <1493016143-21569-5-git-send-email-m.szyprowski@samsung.com>
-        <CGME20170515065111eucas1p2127c41dc0fa0d069d5f09bc222f5bd55@eucas1p2.samsung.com>
-        <1494831047-10235-1-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/3] clk: samsung: Add enable/disable operation for
+ PLL36XX clocks
+Date: Fri, 09 Jun 2017 10:59:45 +0900
+Message-ID: <593A0111.5040301@samsung.com>
+References: <CGME20170608141722epcas5p2310095ad549f30841430f5cc3e364908@epcas5p2.samsung.com>
+        <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1494831047-10235-1-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: krzk@kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Marek,
+Hi Sylwester,
 
-I tested this patch[1] which was applied on Sylwester's git repo. 
-[1] https://git.linuxtv.org/snawrocki/samsung.git/commit/?h=for-v4.13/clk/next&id=6622c52f47372186c17548ca7398c229c45e6215
+Looks good to me. I tested it on Exynos325-based Rinato board
+which uses the PLL36xx/PLL35xx.
 
-When I tested it on XU3, I can't get the kernel booting.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-[Following log]
-U-Boot 2016.03-gc2deb3a51-TIZEN.org (Oct 28 2016 - 18:00:23 +0000) for ODROID-XU3
-
-CPU:   Exynos5422 @ 800 MHz
-Model: Odroid XU3 based on EXYNOS5422
-Board: Odroid XU3 based on EXYNOS5422
-Type:  xu3
-DRAM:  2 GiB
-MMC:   EXYNOS DWMMC: 0, EXYNOS DWMMC: 1
-In:    serial
-Out:   serial
-Err:   serial
-Net:   No ethernet found.
-Hit any key to stop autoboot:  0 
-reading exynos5422-odroidxu3.dtb
-56532 bytes read in 16 ms (3.4 MiB/s)
-reading uInitrd
-** Unable to read file uInitrd **
-reading zImage
-7676176 bytes read in 208 ms (35.2 MiB/s)
-Kernel image @ 0x40007fc0 [ 0x000000 - 0x752110 ]
-## Flattened Device Tree blob at 40800000
-   Booting using the fdt blob at 0x40800000
-   Loading Device Tree to 4ffef000, end 4ffffcd3 ... OK
-
-Starting kernel ...
-
-
-
-
-On 2017년 05월 15일 15:50, Marek Szyprowski wrote:
-> Clock providers should use the new struct clk_hw based API, so convert
-> Exynos Audio Subsystem clock provider to the new approach.
+On 2017년 06월 08일 23:17, Sylwester Nawrocki wrote:
+> The existing enable/disable ops for PLL35XX are made more generic
+> and used also for PLL36XX. This fixes issues in the kernel with
+> PLL36XX PLLs when the PLL has not been already enabled by bootloader.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
-> Sylwester, if possible, please replace v2 with this fixed version in your tree,
-> as it has not been merged yet to clk-next nor to linux-next.
-> 
-> Changelog
-> v3:
-> - fixed clock data parameter passed to of_clk_add_hw_provider() - after conversion
->   clk_data is a pointer, so passing it as &clk_data is wrong and causes serious issues
-> 
+> Changes since RFC version:
+>  - fixed wrong bit handling in samsung_pll3xxx_disable()
+>  - pll->lock_offs used and comment improved in samsung_pll35xx_set_rate()
 > ---
->  drivers/clk/samsung/clk-exynos-audss.c | 57 +++++++++++++++++-----------------
->  1 file changed, 29 insertions(+), 28 deletions(-)
+>  drivers/clk/samsung/clk-pll.c | 87 +++++++++++++++++++++++++------------------
+>  1 file changed, 50 insertions(+), 37 deletions(-)
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-> index cb7df358a27d..85edeb738853 100644
-> --- a/drivers/clk/samsung/clk-exynos-audss.c
-> +++ b/drivers/clk/samsung/clk-exynos-audss.c
-> @@ -22,9 +22,8 @@
->  #include <dt-bindings/clock/exynos-audss-clk.h>
->  
->  static DEFINE_SPINLOCK(lock);
-> -static struct clk **clk_table;
->  static void __iomem *reg_base;
-> -static struct clk_onecell_data clk_data;
-> +static struct clk_hw_onecell_data *clk_data;
->  /*
->   * On Exynos5420 this will be a clock which has to be enabled before any
->   * access to audss registers. Typically a child of EPLL.
-> @@ -110,18 +109,18 @@ static void exynos_audss_clk_teardown(void)
->  	int i;
->  
->  	for (i = EXYNOS_MOUT_AUDSS; i < EXYNOS_DOUT_SRP; i++) {
-> -		if (!IS_ERR(clk_table[i]))
-> -			clk_unregister_mux(clk_table[i]);
-> +		if (!IS_ERR(clk_data->hws[i]))
-> +			clk_hw_unregister_mux(clk_data->hws[i]);
->  	}
->  
->  	for (; i < EXYNOS_SRP_CLK; i++) {
-> -		if (!IS_ERR(clk_table[i]))
-> -			clk_unregister_divider(clk_table[i]);
-> +		if (!IS_ERR(clk_data->hws[i]))
-> +			clk_hw_unregister_divider(clk_data->hws[i]);
->  	}
->  
-> -	for (; i < clk_data.clk_num; i++) {
-> -		if (!IS_ERR(clk_table[i]))
-> -			clk_unregister_gate(clk_table[i]);
-> +	for (; i < clk_data->num; i++) {
-> +		if (!IS_ERR(clk_data->hws[i]))
-> +			clk_hw_unregister_gate(clk_data->hws[i]);
->  	}
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index 5229089..5c4899c 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -23,6 +23,10 @@ struct samsung_clk_pll {
+>  	struct clk_hw		hw;
+>  	void __iomem		*lock_reg;
+>  	void __iomem		*con_reg;
+> +	/* PLL enable control bit offset in @con_reg register */
+> +	unsigned short		enable_offs;
+> +	/* PLL lock status bit offset in @con_reg register */
+> +	unsigned short		lock_offs;
+>  	enum samsung_pll_type	type;
+>  	unsigned int		rate_count;
+>  	const struct samsung_pll_rate_table *rate_table;
+> @@ -61,6 +65,34 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
+>  	return rate_table[i - 1].rate;
 >  }
->  
-> @@ -133,6 +132,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  	const char *sclk_pcm_p = "sclk_pcm0";
->  	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
->  	const struct exynos_audss_clk_drvdata *variant;
-> +	struct clk_hw **clk_table;
->  	struct resource *res;
->  	int i, ret = 0;
->  
-> @@ -149,14 +149,15 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  
->  	epll = ERR_PTR(-ENODEV);
->  
-> -	clk_table = devm_kzalloc(&pdev->dev,
-> -				sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
-> +	clk_data = devm_kzalloc(&pdev->dev,
-> +				sizeof(*clk_data) +
-> +				sizeof(*clk_data->hws) * EXYNOS_AUDSS_MAX_CLKS,
->  				GFP_KERNEL);
-> -	if (!clk_table)
-> +	if (!clk_data)
->  		return -ENOMEM;
->  
-> -	clk_data.clks = clk_table;
-> -	clk_data.clk_num = variant->num_clks;
-> +	clk_data->num = variant->num_clks;
-> +	clk_table = clk_data->hws;
->  
->  	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
->  	pll_in = devm_clk_get(&pdev->dev, "pll_in");
-> @@ -176,7 +177,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  			}
->  		}
+> 
+> +static int samsung_pll3xxx_enable(struct clk_hw *hw)
+> +{
+> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +	u32 tmp;
+> +
+> +	tmp = readl_relaxed(pll->con_reg);
+> +	tmp |= BIT(pll->enable_offs);
+> +	writel_relaxed(tmp, pll->con_reg);
+> +
+> +	/* wait lock time */
+> +	do {
+> +		cpu_relax();
+> +		tmp = readl_relaxed(pll->con_reg);
+> +	} while (!(tmp & BIT(pll->lock_offs)));
+> +
+> +	return 0;
+> +}
+> +
+> +static void samsung_pll3xxx_disable(struct clk_hw *hw)
+> +{
+> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +	u32 tmp;
+> +
+> +	tmp = readl_relaxed(pll->con_reg);
+> +	tmp &= ~BIT(pll->enable_offs);
+> +	writel_relaxed(tmp, pll->con_reg);
+> +}
+> +
+>  /*
+>   * PLL2126 Clock Type
+>   */
+> @@ -142,34 +174,6 @@ static unsigned long samsung_pll3000_recalc_rate(struct clk_hw *hw,
+>  #define PLL35XX_LOCK_STAT_SHIFT	(29)
+>  #define PLL35XX_ENABLE_SHIFT	(31)
+> 
+> -static int samsung_pll35xx_enable(struct clk_hw *hw)
+> -{
+> -	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> -	u32 tmp;
+> -
+> -	tmp = readl_relaxed(pll->con_reg);
+> -	tmp |= BIT(PLL35XX_ENABLE_SHIFT);
+> -	writel_relaxed(tmp, pll->con_reg);
+> -
+> -	/* wait_lock_time */
+> -	do {
+> -		cpu_relax();
+> -		tmp = readl_relaxed(pll->con_reg);
+> -	} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
+> -
+> -	return 0;
+> -}
+> -
+> -static void samsung_pll35xx_disable(struct clk_hw *hw)
+> -{
+> -	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> -	u32 tmp;
+> -
+> -	tmp = readl_relaxed(pll->con_reg);
+> -	tmp &= ~BIT(PLL35XX_ENABLE_SHIFT);
+> -	writel_relaxed(tmp, pll->con_reg);
+> -}
+> -
+>  static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+>  				unsigned long parent_rate)
+>  {
+> @@ -238,12 +242,12 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+>  			(rate->sdiv << PLL35XX_SDIV_SHIFT);
+>  	writel_relaxed(tmp, pll->con_reg);
+> 
+> -	/* wait_lock_time if enabled */
+> -	if (tmp & BIT(PLL35XX_ENABLE_SHIFT)) {
+> +	/* Wait until the PLL is locked if it is enabled. */
+> +	if (tmp & BIT(pll->enable_offs)) {
+>  		do {
+>  			cpu_relax();
+>  			tmp = readl_relaxed(pll->con_reg);
+> -		} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
+> +		} while (!(tmp & BIT(pll->lock_offs)));
 >  	}
-> -	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
-> +	clk_table[EXYNOS_MOUT_AUDSS] = clk_hw_register_mux(NULL, "mout_audss",
->  				mout_audss_p, ARRAY_SIZE(mout_audss_p),
->  				CLK_SET_RATE_NO_REPARENT,
->  				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
-> @@ -187,53 +188,53 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  		mout_i2s_p[1] = __clk_get_name(cdclk);
->  	if (!IS_ERR(sclk_audio))
->  		mout_i2s_p[2] = __clk_get_name(sclk_audio);
-> -	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
-> +	clk_table[EXYNOS_MOUT_I2S] = clk_hw_register_mux(NULL, "mout_i2s",
->  				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
->  				CLK_SET_RATE_NO_REPARENT,
->  				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
->  
-> -	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, "dout_srp",
-> +	clk_table[EXYNOS_DOUT_SRP] = clk_hw_register_divider(NULL, "dout_srp",
->  				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
->  				0, &lock);
->  
-> -	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL,
-> +	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_hw_register_divider(NULL,
->  				"dout_aud_bus", "dout_srp", 0,
->  				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
->  
-> -	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, "dout_i2s",
-> +	clk_table[EXYNOS_DOUT_I2S] = clk_hw_register_divider(NULL, "dout_i2s",
->  				"mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
->  				&lock);
->  
-> -	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, "srp_clk",
-> +	clk_table[EXYNOS_SRP_CLK] = clk_hw_register_gate(NULL, "srp_clk",
->  				"dout_srp", CLK_SET_RATE_PARENT,
->  				reg_base + ASS_CLK_GATE, 0, 0, &lock);
->  
-> -	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, "i2s_bus",
-> +	clk_table[EXYNOS_I2S_BUS] = clk_hw_register_gate(NULL, "i2s_bus",
->  				"dout_aud_bus", CLK_SET_RATE_PARENT,
->  				reg_base + ASS_CLK_GATE, 2, 0, &lock);
->  
-> -	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, "sclk_i2s",
-> +	clk_table[EXYNOS_SCLK_I2S] = clk_hw_register_gate(NULL, "sclk_i2s",
->  				"dout_i2s", CLK_SET_RATE_PARENT,
->  				reg_base + ASS_CLK_GATE, 3, 0, &lock);
->  
-> -	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, "pcm_bus",
-> +	clk_table[EXYNOS_PCM_BUS] = clk_hw_register_gate(NULL, "pcm_bus",
->  				 "sclk_pcm", CLK_SET_RATE_PARENT,
->  				reg_base + ASS_CLK_GATE, 4, 0, &lock);
->  
->  	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
->  	if (!IS_ERR(sclk_pcm_in))
->  		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
-> -	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
-> +	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(NULL, "sclk_pcm",
->  				sclk_pcm_p, CLK_SET_RATE_PARENT,
->  				reg_base + ASS_CLK_GATE, 5, 0, &lock);
->  
->  	if (variant->has_adma_clk) {
-> -		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
-> +		clk_table[EXYNOS_ADMA] = clk_hw_register_gate(NULL, "adma",
->  				"dout_srp", CLK_SET_RATE_PARENT,
->  				reg_base + ASS_CLK_GATE, 9, 0, &lock);
->  	}
->  
-> -	for (i = 0; i < clk_data.clk_num; i++) {
-> +	for (i = 0; i < clk_data->num; i++) {
->  		if (IS_ERR(clk_table[i])) {
->  			dev_err(&pdev->dev, "failed to register clock %d\n", i);
->  			ret = PTR_ERR(clk_table[i]);
-> @@ -241,8 +242,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
-> -					&clk_data);
-> +	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
-> +				     clk_data);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to add clock provider\n");
->  		goto unregister;
+>  	return 0;
+>  }
+> @@ -252,8 +256,8 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+>  	.recalc_rate = samsung_pll35xx_recalc_rate,
+>  	.round_rate = samsung_pll_round_rate,
+>  	.set_rate = samsung_pll35xx_set_rate,
+> -	.enable = samsung_pll35xx_enable,
+> -	.disable = samsung_pll35xx_disable,
+> +	.enable = samsung_pll3xxx_enable,
+> +	.disable = samsung_pll3xxx_disable,
+>  };
+> 
+>  static const struct clk_ops samsung_pll35xx_clk_min_ops = {
+> @@ -275,6 +279,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+>  #define PLL36XX_SDIV_SHIFT	(0)
+>  #define PLL36XX_KDIV_SHIFT	(0)
+>  #define PLL36XX_LOCK_STAT_SHIFT	(29)
+> +#define PLL36XX_ENABLE_SHIFT	(31)
+> 
+>  static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
+>  				unsigned long parent_rate)
+> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+>  	writel_relaxed(pll_con1, pll->con_reg + 4);
+> 
+>  	/* wait_lock_time */
+> -	do {
+> -		cpu_relax();
+> -		tmp = readl_relaxed(pll->con_reg);
+> -	} while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
+> +	if (pll_con0 & BIT(pll->enable_offs)) {
+> +		do {
+> +			cpu_relax();
+> +			tmp = readl_relaxed(pll->con_reg);
+> +		} while (!(tmp & BIT(pll->lock_offs)));
+> +	}
+> 
+>  	return 0;
+>  }
+> @@ -366,6 +373,8 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+>  	.recalc_rate = samsung_pll36xx_recalc_rate,
+>  	.set_rate = samsung_pll36xx_set_rate,
+>  	.round_rate = samsung_pll_round_rate,
+> +	.enable = samsung_pll3xxx_enable,
+> +	.disable = samsung_pll3xxx_disable,
+>  };
+> 
+>  static const struct clk_ops samsung_pll36xx_clk_min_ops = {
+> @@ -1288,6 +1297,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+>  	case pll_1450x:
+>  	case pll_1451x:
+>  	case pll_1452x:
+> +		pll->enable_offs = PLL35XX_ENABLE_SHIFT;
+> +		pll->lock_offs = PLL35XX_LOCK_STAT_SHIFT;
+>  		if (!pll->rate_table)
+>  			init.ops = &samsung_pll35xx_clk_min_ops;
+>  		else
+> @@ -1306,6 +1317,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+>  	/* clk_ops for 36xx and 2650 are similar */
+>  	case pll_36xx:
+>  	case pll_2650:
+> +		pll->enable_offs = PLL36XX_ENABLE_SHIFT;
+> +		pll->lock_offs = PLL36XX_LOCK_STAT_SHIFT;
+>  		if (!pll->rate_table)
+>  			init.ops = &samsung_pll36xx_clk_min_ops;
+>  		else
+> --
+> 1.9.1
+> 
+> 
 > 
 
 
