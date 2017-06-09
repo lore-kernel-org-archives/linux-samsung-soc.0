@@ -1,18 +1,13 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: Remove the display-timing and
- delay from rinato dts
-Date: Fri, 09 Jun 2017 17:35:21 +0900
-Message-ID: <ffe37769-d2f4-d224-f9b2-6fa0a3af6cff@samsung.com>
-References: <1496984354-5271-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170609045939epcas1p2e4b50c78978b8f14630ca29550c1cb34@epcas1p2.samsung.com>
- <1496984354-5271-4-git-send-email-hoegeun.kwon@samsung.com>
- <20170609074509.GD4018@kozik-book>
+Subject: [PATCH] drm/exynos/dsi: Remove error handling for bridge_node DT
+ parsing
+Date: Fri, 09 Jun 2017 18:23:00 +0900
+Message-ID: <1497000180-30669-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170609092307epcas5p3a7851f80bd799626782941a640824521@epcas5p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170609074509.GD4018@kozik-book>
-Content-language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -22,23 +17,23 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, javier@osg.samsung.com, thierry.reding@gmail.com, kgene@kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDYvMDkvMjAxNyAwNDo0NSBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBPbiBG
-cmksIEp1biAwOSwgMjAxNyBhdCAwMTo1OToxNFBNICswOTAwLCBIb2VnZXVuIEt3b24gd3JvdGU6
-Cj4+IFRoZSBkaXNwbGF5LXRpbWluZyBhbmQgZGVsYXkgYXJlIGluY2x1ZGVkIGluIHRoZSBwYW5l
-bCBkcml2ZXIuIFNvIGl0Cj4+IHNob3VsZCBiZSByZW1vdmVkIGluIGR0cy4KPj4KPj4gU2lnbmVk
-LW9mZi1ieTogSG9lZ2V1biBLd29uIDxob2VnZXVuLmt3b25Ac2Ftc3VuZy5jb20+Cj4+IC0tLQo+
-PiAgIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cyB8IDIyIC0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMjIgZGVsZXRpb25zKC0pCj4gSSB1
-bmRlcnN0YW5kIHRoaXMgZGVwZW5kcyBvbiBtZXJnaW5nIGluIHRoZSBwYW5lbCBkcml2ZXIgc28g
-dGhpcyB3aWxsCj4gaGF2ZSB0byB3YWl0IHRpbGwgdGhlbi4gSSdsbCB0YWtlIGl0IHdoZW4gcGFu
-ZWwgaGl0cyBtYWlubGluZSAoYXJtLXNvYwo+IGZvbGtzIGRpc2NvdXJhZ2UgcmVjZW50bHkgY3Jv
-c3MtdHJlZSBtZXJnZXMgZm9yIERUKS4KPgo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKClRo
-YW5rcyBmb3IgeW91ciByZXBseS4KSSBhZ3JlZSB3aXRoIHlvdXIgb3BpbmlvbiwKSSB3aWxsIHdh
-aXQgZm9yIHRoZSBwYW5lbCBkcml2ZXIgdG8gbWVyZ2UuCgpCZXN0IHJlZ2FyZHMsCkhvZWdldW4K
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+VGhlIGJyaWRnZV9ub2RlIGlzIHVubmVjZXNzYXJ5IGJldHdlZW4gRklNRCBhbmQgRFNJTS4gSWYg
+ZG9uJ3QgcmVtb3ZlCmVycm9yIGhhbmRsaW5nLCBpdCB3aWxsIG5vdCB3b3JrIGJldHdlZW4gRklN
+RCBhbmQgRFNJTS4gU28gcmVtb3ZlCmVycm9yIGhhbmRsaW5nLgoKU2lnbmVkLW9mZi1ieTogSG9l
+Z2V1biBLd29uIDxob2VnZXVuLmt3b25Ac2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIHwgMiAtLQogMSBmaWxlIGNoYW5nZWQsIDIgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCmluZGV4IGExMWI3
+OTUuLjZlZTBkYWMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kc2kuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKQEAg
+LTE2NTEsOCArMTY1MSw2IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9wYXJzZV9kdChzdHJ1Y3Qg
+ZXh5bm9zX2RzaSAqZHNpKQogCQlyZXR1cm4gcmV0OwogCiAJZHNpLT5icmlkZ2Vfbm9kZSA9IG9m
+X2dyYXBoX2dldF9yZW1vdGVfbm9kZShub2RlLCBEU0lfUE9SVF9JTiwgMCk7Ci0JaWYgKCFkc2kt
+PmJyaWRnZV9ub2RlKQotCQlyZXR1cm4gLUVJTlZBTDsKIAogCXJldHVybiAwOwogfQotLSAKMS45
+LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
