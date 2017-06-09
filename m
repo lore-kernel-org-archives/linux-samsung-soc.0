@@ -1,86 +1,193 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 3/3] clk: samsung: exynos542x: Add EPLL rate table
-Date: Fri, 09 Jun 2017 12:32:44 +0200
-Message-ID: <20b8c07c-f191-19ee-38bd-8c8810576f1c@samsung.com>
-References: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170608141730epcas1p19ca02cb0fd55506f88fcd68414fde70d@epcas1p1.samsung.com>
-        <1496931433-5712-3-git-send-email-s.nawrocki@samsung.com>
-        <593A1D1B.6000808@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:11011 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751519AbdFIKcw (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 06:32:52 -0400
-In-reply-to: <593A1D1B.6000808@samsung.com>
-Content-language: en-GB
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v2 1/3] clk: samsung: Add enable/disable operation for
+ PLL36XX clocks
+Date: Fri, 09 Jun 2017 12:38:29 +0200
+Message-ID: <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
+References: <CGME20170609103849epcas5p397e85db2388d4d91f5a775996cb9541d@epcas5p3.samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com
 
-On 06/09/2017 05:59 AM, Chanwoo Choi wrote:
->> --- a/drivers/clk/samsung/clk-exynos5420.c
->> +++ b/drivers/clk/samsung/clk-exynos5420.c
->> @@ -1280,2 +1280,2 @@ static void __init exynos5420_clk_sleep_init(void) {}
->>   	PLL_35XX_RATE(200000000,  200, 3, 3),
->>   };
->>
-> I got a following frequency(Recalc rate) value.
-> I think there are two much different value for 400000000U and 45158400U.
-> 
-> fin_pll	        Recalc rate	mdiv	pdiv	sdiv	kdiv
-> 24000000	600000000	100	2	1	0
-> 24000000	400000000	200	3	2	0
-> 24000000	394784008.5	197	3	2	25690
-> 24000000	361267219	301	5	2	3671
-> 24000000	200000000	200	3	3	0
-> 24000000	196607995.7	197	3	3	-25690
-> 24000000	180633609.5	301	5	3	3671
-> 24000000	131072007.3	131	3	3	4719
-> 24000000	100000000	200	3	4	0
-> 24000000	65536003.66	131	3	4	4719
-> 24000000	49348001.07	197	3	5	25690
-> 24000000	180633609.5	301	5	3	3671
-> 24000000	32768001.83	131	3	5	4719
-> 
-> 
->> +static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
->> +	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
->> +	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
+The existing enable/disable ops for PLL35XX are made more generic
+and used also for PLL36XX. This fixes issues in the kernel with
+PLL36XX PLLs when the PLL has not been already enabled by bootloader.
 
-> For 400MHz, pdiv is 3 instead of 2 as following:
-> 	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes since v1:
+ - none
 
-Thanks a lot for testing this, I originally just verified 131072000U, 
-180633600U, 196608000U values. I'll amend this entry and will post
-v2 of the patch series shortly.
+ drivers/clk/samsung/clk-pll.c | 87 +++++++++++++++++++++++++------------------
+ 1 file changed, 50 insertions(+), 37 deletions(-)
 
->> +	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
->> +	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
->> +	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
->> +	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
->> +	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
->> +	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
->> +	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
->> +	PLL_36XX_RATE(65536000U, 131, 3, 4, 4719),
->> +	PLL_36XX_RATE(49152000U, 197, 3, 5, 25690),
->> +	PLL_36XX_RATE(45158400U, 301, 5, 3, 3671),
- >
-> I got the fout value (180633609) instead of 45158400U
-> when I used the M(301) P(5) S(3) K(3671).
- >
-> fin_pll	        Recalc rate	mdiv	pdiv	sdiv	kdiv
-> 24000000	180633609	301	5	3	3671
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index db68057..037c614 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -23,6 +23,10 @@ struct samsung_clk_pll {
+ 	struct clk_hw		hw;
+ 	void __iomem		*lock_reg;
+ 	void __iomem		*con_reg;
++	/* PLL enable control bit offset in @con_reg register */
++	unsigned short		enable_offs;
++	/* PLL lock status bit offset in @con_reg register */
++	unsigned short		lock_offs;
+ 	enum samsung_pll_type	type;
+ 	unsigned int		rate_count;
+ 	const struct samsung_pll_rate_table *rate_table;
+@@ -61,6 +65,34 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
+ 	return rate_table[i - 1].rate;
+ }
 
-I'm going to drop this entry as it is not really needed now.
++static int samsung_pll3xxx_enable(struct clk_hw *hw)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	u32 tmp;
++
++	tmp = readl_relaxed(pll->con_reg);
++	tmp |= BIT(pll->enable_offs);
++	writel_relaxed(tmp, pll->con_reg);
++
++	/* wait lock time */
++	do {
++		cpu_relax();
++		tmp = readl_relaxed(pll->con_reg);
++	} while (!(tmp & BIT(pll->lock_offs)));
++
++	return 0;
++}
++
++static void samsung_pll3xxx_disable(struct clk_hw *hw)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	u32 tmp;
++
++	tmp = readl_relaxed(pll->con_reg);
++	tmp &= ~BIT(pll->enable_offs);
++	writel_relaxed(tmp, pll->con_reg);
++}
++
+ /*
+  * PLL2126 Clock Type
+  */
+@@ -142,34 +174,6 @@ static unsigned long samsung_pll3000_recalc_rate(struct clk_hw *hw,
+ #define PLL35XX_LOCK_STAT_SHIFT	(29)
+ #define PLL35XX_ENABLE_SHIFT	(31)
 
->> +	PLL_36XX_RATE(32768000U, 131, 3, 5, 4719),
->> +};
+-static int samsung_pll35xx_enable(struct clk_hw *hw)
+-{
+-	struct samsung_clk_pll *pll = to_clk_pll(hw);
+-	u32 tmp;
+-
+-	tmp = readl_relaxed(pll->con_reg);
+-	tmp |= BIT(PLL35XX_ENABLE_SHIFT);
+-	writel_relaxed(tmp, pll->con_reg);
+-
+-	/* wait_lock_time */
+-	do {
+-		cpu_relax();
+-		tmp = readl_relaxed(pll->con_reg);
+-	} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
+-
+-	return 0;
+-}
+-
+-static void samsung_pll35xx_disable(struct clk_hw *hw)
+-{
+-	struct samsung_clk_pll *pll = to_clk_pll(hw);
+-	u32 tmp;
+-
+-	tmp = readl_relaxed(pll->con_reg);
+-	tmp &= ~BIT(PLL35XX_ENABLE_SHIFT);
+-	writel_relaxed(tmp, pll->con_reg);
+-}
+-
+ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+ {
+@@ -238,12 +242,12 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 			(rate->sdiv << PLL35XX_SDIV_SHIFT);
+ 	writel_relaxed(tmp, pll->con_reg);
 
--- 
-Regards,
-Sylwester
+-	/* wait_lock_time if enabled */
+-	if (tmp & BIT(PLL35XX_ENABLE_SHIFT)) {
++	/* Wait until the PLL is locked if it is enabled. */
++	if (tmp & BIT(pll->enable_offs)) {
+ 		do {
+ 			cpu_relax();
+ 			tmp = readl_relaxed(pll->con_reg);
+-		} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
++		} while (!(tmp & BIT(pll->lock_offs)));
+ 	}
+ 	return 0;
+ }
+@@ -252,8 +256,8 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	.recalc_rate = samsung_pll35xx_recalc_rate,
+ 	.round_rate = samsung_pll_round_rate,
+ 	.set_rate = samsung_pll35xx_set_rate,
+-	.enable = samsung_pll35xx_enable,
+-	.disable = samsung_pll35xx_disable,
++	.enable = samsung_pll3xxx_enable,
++	.disable = samsung_pll3xxx_disable,
+ };
+
+ static const struct clk_ops samsung_pll35xx_clk_min_ops = {
+@@ -275,6 +279,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ #define PLL36XX_SDIV_SHIFT	(0)
+ #define PLL36XX_KDIV_SHIFT	(0)
+ #define PLL36XX_LOCK_STAT_SHIFT	(29)
++#define PLL36XX_ENABLE_SHIFT	(31)
+
+ static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+@@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	writel_relaxed(pll_con1, pll->con_reg + 4);
+
+ 	/* wait_lock_time */
+-	do {
+-		cpu_relax();
+-		tmp = readl_relaxed(pll->con_reg);
+-	} while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
++	if (pll_con0 & BIT(pll->enable_offs)) {
++		do {
++			cpu_relax();
++			tmp = readl_relaxed(pll->con_reg);
++		} while (!(tmp & BIT(pll->lock_offs)));
++	}
+
+ 	return 0;
+ }
+@@ -366,6 +373,8 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	.recalc_rate = samsung_pll36xx_recalc_rate,
+ 	.set_rate = samsung_pll36xx_set_rate,
+ 	.round_rate = samsung_pll_round_rate,
++	.enable = samsung_pll3xxx_enable,
++	.disable = samsung_pll3xxx_disable,
+ };
+
+ static const struct clk_ops samsung_pll36xx_clk_min_ops = {
+@@ -1287,6 +1296,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	case pll_1450x:
+ 	case pll_1451x:
+ 	case pll_1452x:
++		pll->enable_offs = PLL35XX_ENABLE_SHIFT;
++		pll->lock_offs = PLL35XX_LOCK_STAT_SHIFT;
+ 		if (!pll->rate_table)
+ 			init.ops = &samsung_pll35xx_clk_min_ops;
+ 		else
+@@ -1305,6 +1316,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	/* clk_ops for 36xx and 2650 are similar */
+ 	case pll_36xx:
+ 	case pll_2650:
++		pll->enable_offs = PLL36XX_ENABLE_SHIFT;
++		pll->lock_offs = PLL36XX_LOCK_STAT_SHIFT;
+ 		if (!pll->rate_table)
+ 			init.ops = &samsung_pll36xx_clk_min_ops;
+ 		else
+--
+1.9.1
+
