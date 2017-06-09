@@ -1,90 +1,236 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: RE: Re: [PATCH] devfreq: exynos-ppmu: Staticize event list
-Date: Fri, 09 Jun 2017 00:28:27 +0000
-Message-ID: <20170609002827epcms1p74adfa60f131853c9c7ab9826a921fb53@epcms1p7>
-References: <5938A6CC.8030206@samsung.com>
-        <20170607181228.32102-1-krzk@kernel.org>
-        <CGME20170607181258epcas2p4191204d7b3853ef0482d84df7a06589d@epcms1p7>
-Reply-To: myungjoo.ham@samsung.com
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 4/6] clk: samsung: exynos-audss: Convert to the new
+ clk_hw API
+Date: Fri, 09 Jun 2017 10:33:52 +0900
+Message-ID: <5939FB00.3070709@samsung.com>
+References: <1493016143-21569-5-git-send-email-m.szyprowski@samsung.com>
+        <CGME20170515065111eucas1p2127c41dc0fa0d069d5f09bc222f5bd55@eucas1p2.samsung.com>
+        <1494831047-10235-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:61841 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751428AbdFIA2b (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 20:28:31 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20170609002828epoutp029ecafdb106a6be86f09c5858a17a0066~GTJA4X-L-0582505825epoutp02R
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jun 2017 00:28:28 +0000 (GMT)
-In-Reply-To: <5938A6CC.8030206@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1494831047-10235-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-> Hi Krzysztof,
+Dear Marek,
+
+I tested this patch[1] which was applied on Sylwester's git repo. 
+[1] https://git.linuxtv.org/snawrocki/samsung.git/commit/?h=for-v4.13/clk/next&id=6622c52f47372186c17548ca7398c229c45e6215
+
+When I tested it on XU3, I can't get the kernel booting.
+
+[Following log]
+U-Boot 2016.03-gc2deb3a51-TIZEN.org (Oct 28 2016 - 18:00:23 +0000) for ODROID-XU3
+
+CPU:   Exynos5422 @ 800 MHz
+Model: Odroid XU3 based on EXYNOS5422
+Board: Odroid XU3 based on EXYNOS5422
+Type:  xu3
+DRAM:  2 GiB
+MMC:   EXYNOS DWMMC: 0, EXYNOS DWMMC: 1
+In:    serial
+Out:   serial
+Err:   serial
+Net:   No ethernet found.
+Hit any key to stop autoboot:  0 
+reading exynos5422-odroidxu3.dtb
+56532 bytes read in 16 ms (3.4 MiB/s)
+reading uInitrd
+** Unable to read file uInitrd **
+reading zImage
+7676176 bytes read in 208 ms (35.2 MiB/s)
+Kernel image @ 0x40007fc0 [ 0x000000 - 0x752110 ]
+## Flattened Device Tree blob at 40800000
+   Booting using the fdt blob at 0x40800000
+   Loading Device Tree to 4ffef000, end 4ffffcd3 ... OK
+
+Starting kernel ...
+
+
+
+
+On 2017년 05월 15일 15:50, Marek Szyprowski wrote:
+> Clock providers should use the new struct clk_hw based API, so convert
+> Exynos Audio Subsystem clock provider to the new approach.
 > 
-> On 2017년 06월 08일 03:12, Krzysztof Kozlowski wrote:
-
-> > The ppmu_events array is accessed only in this compilation unit so it
-
-> > can be made static.
-
-> > 
-
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-> > ---
-
-> >  drivers/devfreq/event/exynos-ppmu.c | 2 +-
-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-
-> > 
-
-> > diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-
-> > index 9b7350935b73..c68f3b5a10b5 100644
-
-> > --- a/drivers/devfreq/event/exynos-ppmu.c
-
-> > +++ b/drivers/devfreq/event/exynos-ppmu.c
-
-> > @@ -44,7 +44,7 @@ struct exynos_ppmu {
-
-> >  	{ "ppmu-event2-"#name, PPMU_PMNCNT2 },	\
-
-> >  	{ "ppmu-event3-"#name, PPMU_PMNCNT3 }
-
-> >  
-
-> > -struct __exynos_ppmu_events {
-
-> > +static struct __exynos_ppmu_events {
-
-> >  	char *name;
-
-> >  	int id;
-
-> >  } ppmu_events[] = {
-
-> > 
-
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+> Sylwester, if possible, please replace v2 with this fixed version in your tree,
+> as it has not been merged yet to clk-next nor to linux-next.
+> 
+> Changelog
+> v3:
+> - fixed clock data parameter passed to of_clk_add_hw_provider() - after conversion
+>   clk_data is a pointer, so passing it as &clk_data is wrong and causes serious issues
+> 
+> ---
+>  drivers/clk/samsung/clk-exynos-audss.c | 57 +++++++++++++++++-----------------
+>  1 file changed, 29 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+> index cb7df358a27d..85edeb738853 100644
+> --- a/drivers/clk/samsung/clk-exynos-audss.c
+> +++ b/drivers/clk/samsung/clk-exynos-audss.c
+> @@ -22,9 +22,8 @@
+>  #include <dt-bindings/clock/exynos-audss-clk.h>
+>  
+>  static DEFINE_SPINLOCK(lock);
+> -static struct clk **clk_table;
+>  static void __iomem *reg_base;
+> -static struct clk_onecell_data clk_data;
+> +static struct clk_hw_onecell_data *clk_data;
+>  /*
+>   * On Exynos5420 this will be a clock which has to be enabled before any
+>   * access to audss registers. Typically a child of EPLL.
+> @@ -110,18 +109,18 @@ static void exynos_audss_clk_teardown(void)
+>  	int i;
+>  
+>  	for (i = EXYNOS_MOUT_AUDSS; i < EXYNOS_DOUT_SRP; i++) {
+> -		if (!IS_ERR(clk_table[i]))
+> -			clk_unregister_mux(clk_table[i]);
+> +		if (!IS_ERR(clk_data->hws[i]))
+> +			clk_hw_unregister_mux(clk_data->hws[i]);
+>  	}
+>  
+>  	for (; i < EXYNOS_SRP_CLK; i++) {
+> -		if (!IS_ERR(clk_table[i]))
+> -			clk_unregister_divider(clk_table[i]);
+> +		if (!IS_ERR(clk_data->hws[i]))
+> +			clk_hw_unregister_divider(clk_data->hws[i]);
+>  	}
+>  
+> -	for (; i < clk_data.clk_num; i++) {
+> -		if (!IS_ERR(clk_table[i]))
+> -			clk_unregister_gate(clk_table[i]);
+> +	for (; i < clk_data->num; i++) {
+> +		if (!IS_ERR(clk_data->hws[i]))
+> +			clk_hw_unregister_gate(clk_data->hws[i]);
+>  	}
+>  }
+>  
+> @@ -133,6 +132,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  	const char *sclk_pcm_p = "sclk_pcm0";
+>  	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
+>  	const struct exynos_audss_clk_drvdata *variant;
+> +	struct clk_hw **clk_table;
+>  	struct resource *res;
+>  	int i, ret = 0;
+>  
+> @@ -149,14 +149,15 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  
+>  	epll = ERR_PTR(-ENODEV);
+>  
+> -	clk_table = devm_kzalloc(&pdev->dev,
+> -				sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
+> +	clk_data = devm_kzalloc(&pdev->dev,
+> +				sizeof(*clk_data) +
+> +				sizeof(*clk_data->hws) * EXYNOS_AUDSS_MAX_CLKS,
+>  				GFP_KERNEL);
+> -	if (!clk_table)
+> +	if (!clk_data)
+>  		return -ENOMEM;
+>  
+> -	clk_data.clks = clk_table;
+> -	clk_data.clk_num = variant->num_clks;
+> +	clk_data->num = variant->num_clks;
+> +	clk_table = clk_data->hws;
+>  
+>  	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
+>  	pll_in = devm_clk_get(&pdev->dev, "pll_in");
+> @@ -176,7 +177,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  			}
+>  		}
+>  	}
+> -	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
+> +	clk_table[EXYNOS_MOUT_AUDSS] = clk_hw_register_mux(NULL, "mout_audss",
+>  				mout_audss_p, ARRAY_SIZE(mout_audss_p),
+>  				CLK_SET_RATE_NO_REPARENT,
+>  				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
+> @@ -187,53 +188,53 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  		mout_i2s_p[1] = __clk_get_name(cdclk);
+>  	if (!IS_ERR(sclk_audio))
+>  		mout_i2s_p[2] = __clk_get_name(sclk_audio);
+> -	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
+> +	clk_table[EXYNOS_MOUT_I2S] = clk_hw_register_mux(NULL, "mout_i2s",
+>  				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
+>  				CLK_SET_RATE_NO_REPARENT,
+>  				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
+>  
+> -	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, "dout_srp",
+> +	clk_table[EXYNOS_DOUT_SRP] = clk_hw_register_divider(NULL, "dout_srp",
+>  				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
+>  				0, &lock);
+>  
+> -	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL,
+> +	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_hw_register_divider(NULL,
+>  				"dout_aud_bus", "dout_srp", 0,
+>  				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
+>  
+> -	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, "dout_i2s",
+> +	clk_table[EXYNOS_DOUT_I2S] = clk_hw_register_divider(NULL, "dout_i2s",
+>  				"mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
+>  				&lock);
+>  
+> -	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, "srp_clk",
+> +	clk_table[EXYNOS_SRP_CLK] = clk_hw_register_gate(NULL, "srp_clk",
+>  				"dout_srp", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 0, 0, &lock);
+>  
+> -	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, "i2s_bus",
+> +	clk_table[EXYNOS_I2S_BUS] = clk_hw_register_gate(NULL, "i2s_bus",
+>  				"dout_aud_bus", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 2, 0, &lock);
+>  
+> -	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, "sclk_i2s",
+> +	clk_table[EXYNOS_SCLK_I2S] = clk_hw_register_gate(NULL, "sclk_i2s",
+>  				"dout_i2s", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 3, 0, &lock);
+>  
+> -	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, "pcm_bus",
+> +	clk_table[EXYNOS_PCM_BUS] = clk_hw_register_gate(NULL, "pcm_bus",
+>  				 "sclk_pcm", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 4, 0, &lock);
+>  
+>  	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
+>  	if (!IS_ERR(sclk_pcm_in))
+>  		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
+> -	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
+> +	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(NULL, "sclk_pcm",
+>  				sclk_pcm_p, CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 5, 0, &lock);
+>  
+>  	if (variant->has_adma_clk) {
+> -		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
+> +		clk_table[EXYNOS_ADMA] = clk_hw_register_gate(NULL, "adma",
+>  				"dout_srp", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 9, 0, &lock);
+>  	}
+>  
+> -	for (i = 0; i < clk_data.clk_num; i++) {
+> +	for (i = 0; i < clk_data->num; i++) {
+>  		if (IS_ERR(clk_table[i])) {
+>  			dev_err(&pdev->dev, "failed to register clock %d\n", i);
+>  			ret = PTR_ERR(clk_table[i]);
+> @@ -241,8 +242,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
+> -					&clk_data);
+> +	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
+> +				     clk_data);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "failed to add clock provider\n");
+>  		goto unregister;
 > 
 
-> Looks good to me.
 
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-
-
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-
-
-
-
-
-Cheers,
-
-MyungJoo
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
