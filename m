@@ -1,67 +1,81 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: Pinctrl update for v4.13
-Date: Fri,  9 Jun 2017 18:48:27 +0200
-Message-ID: <20170609164827.2231-1-krzk@kernel.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC 5/7] ASoC: Add Odroid sound DT bindings
+ documentation
+Date: Fri, 09 Jun 2017 18:53:52 +0200
+Message-ID: <82c62742-679a-0d36-a6de-f94eb5e7eac0@samsung.com>
+References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+        <CGME20170421172040epcas5p2ee7191a899c52ea3f077837dc2e865ca@epcas5p2.samsung.com>
+        <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
+        <20170428170335.7zoovrcs6v22x3lz@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20170428170335.7zoovrcs6v22x3lz@rob-hp-laptop>
+Content-language: en-GB
+Sender: linux-clk-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, krzk@kernel.org, jy0922.shim@samsung.com, broonie@kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 04/28/2017 07:03 PM, Rob Herring wrote:
+> On Fri, Apr 21, 2017 at 07:19:49PM +0200, Sylwester Nawrocki wrote:
 
-Few cleanups, code improvements and minor fixes. Description along
-with a tag.
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
+>> @@ -0,0 +1,57 @@
+>> +Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+>> +
+>> +Required properties:
+>> +
+>> + - compatible - "samsung,odroidxu3-audio" - for Odroid XU3 board,
+>> +		"samsung,odroidxu4-audio" - for Odroid XU4 board
+>> + - model - the user-visible name of this sound complex
+>
+> ASoC will support "label" soon (see graph support). Use that instead.
 
-Best regards,
-Krzysztof
+I could change that but it now might be too late since the patch has been
+merged in v4.12-rc1. Sorry, I couldn't get back to this earlier.
 
+>> + - clocks - should contain entries matching clock names in the clock-names
+>> +    property
+>> + - clock-names - should contain following entries:
+>> +    - "epll" - indicating the EPLL output clock
+>> +    - "i2s_rclk" - indicating the RCLK (root) clock of the I2S0 controller
+>
+> At least the 2nd one should be in the i2s node. This node isn't really a
+> h/w block, so it shouldn't have clocks IMO.
 
-The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+"i2s_rclk" is a clock exposed by the I2S controller.
 
-  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+The RCLK clock has already assigned clock parent in DT:
 
-are available in the git repository at:
+&i2s0 {
+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
+};
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.13
+In fact the sound card is not a consumer of this clock, the clock is used
+only internally in the I2S device.  I could try to drop it and use ASoC
+internal API for CPU DAI clock setting.
 
-for you to fetch changes up to a453f3693f2aa9ebba623f8cff1e3d7c5df96ddd:
+But I have no idea what else could be done with the PLL, it belongs to
+the audio card and the card driver must somehow get hold of that clock
+to configure its frequency depending on audio sampling rate.
 
-  pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem (2017-06-07 20:40:48 +0200)
+>> +Example:
+>> +
+>> +sound {
+>> +	compatible = "samsung,odroidxu3-audio";
+>
+>> +	samsung,cpu-dai = <&i2s0>;
+>> +	samsung,codec-dai = <&max98090>;
+>
+> Not documented. Nor needed?
 
-----------------------------------------------------------------
-Samsung pinctrl drivers update for v4.13:
-1. Split drivers per ARMv7 and ARMv8 architectures because there
-   is no need to compile everything on each of them.
-2. Fix for possible NULL-pointer dereference after memory allocation
-   failure.
-3. Cleanups (silencing cast warnings, constify, removal of unneeded
-   casts, removal of modular boiler-plate).
+Yes, I will remove these, that's a leftover from initial versions
+of the binding.
 
-----------------------------------------------------------------
-Krzysztof Kozlowski (5):
-      pinctrl: samsung: Add include guard to local header
-      pinctrl: samsung: Split Exynos drivers per ARMv7 and ARMv8
-      pinctrl: samsung: Constify wakeup driver specific data
-      pinctrl: samsung: Handle memory allocation failure during wakeup banks init
-      pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem
-
-Masahiro Yamada (1):
-      pinctrl: samsung: Remove unneeded (void *) casts in of_match_table
-
-Paul Gortmaker (1):
-      pinctrl: samsung: Clean up modular vs. non-modular distinctions
-
- drivers/pinctrl/samsung/Kconfig                |   10 +
- drivers/pinctrl/samsung/Makefile               |    2 +
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |  815 +++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |  399 ++++++++
- drivers/pinctrl/samsung/pinctrl-exynos.c       | 1169 +-----------------------
- drivers/pinctrl/samsung/pinctrl-exynos.h       |   13 +
- drivers/pinctrl/samsung/pinctrl-exynos5440.c   |   15 +-
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c      |    2 +-
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c      |    2 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c      |   39 +-
- 10 files changed, 1269 insertions(+), 1197 deletions(-)
- create mode 100644 drivers/pinctrl/samsung/pinctrl-exynos-arm.c
- create mode 100644 drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+--
+Thanks,
+Sylwester
