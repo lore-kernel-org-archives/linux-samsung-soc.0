@@ -1,37 +1,90 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/3] clk: samsung: Add missing exynos5420 audio related
- clocks
-Date: Thu, 8 Jun 2017 19:05:40 +0200
-Message-ID: <20170608170540.dniqcjqyzal52zt5@kozik-lap>
-References: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170608141726epcas1p1ab3faf22e9f398ae4cf23f84f487d123@epcas1p1.samsung.com>
- <1496931433-5712-2-git-send-email-s.nawrocki@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: RE: Re: [PATCH] devfreq: exynos-ppmu: Staticize event list
+Date: Fri, 09 Jun 2017 00:28:27 +0000
+Message-ID: <20170609002827epcms1p74adfa60f131853c9c7ab9826a921fb53@epcms1p7>
+References: <5938A6CC.8030206@samsung.com>
+        <20170607181228.32102-1-krzk@kernel.org>
+        <CGME20170607181258epcas2p4191204d7b3853ef0482d84df7a06589d@epcms1p7>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1496931433-5712-2-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, cw00.choi@samsung.com, b.zolnierkie@samsung.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:61841 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751428AbdFIA2b (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 8 Jun 2017 20:28:31 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20170609002828epoutp029ecafdb106a6be86f09c5858a17a0066~GTJA4X-L-0582505825epoutp02R
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jun 2017 00:28:28 +0000 (GMT)
+In-Reply-To: <5938A6CC.8030206@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Jun 08, 2017 at 04:17:12PM +0200, Sylwester Nawrocki wrote:
-> This patch adds missing definitions of mux clocks required for using
-> EPLL as the audio subsystem root clock on exynos5420/exynos5422 SoCs.
+> Hi Krzysztof,
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since RFC version:
->   - dropped one clean up chunk
-> ---
->  drivers/clk/samsung/clk-exynos5420.c   | 10 +++++++---
->  include/dt-bindings/clock/exynos5420.h |  3 +++
->  2 files changed, 10 insertions(+), 3 deletions(-)
+> On 2017년 06월 08일 03:12, Krzysztof Kozlowski wrote:
+
+> > The ppmu_events array is accessed only in this compilation unit so it
+
+> > can be made static.
+
+> > 
+
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+> > ---
+
+> >  drivers/devfreq/event/exynos-ppmu.c | 2 +-
+
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+
+> > 
+
+> > diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+
+> > index 9b7350935b73..c68f3b5a10b5 100644
+
+> > --- a/drivers/devfreq/event/exynos-ppmu.c
+
+> > +++ b/drivers/devfreq/event/exynos-ppmu.c
+
+> > @@ -44,7 +44,7 @@ struct exynos_ppmu {
+
+> >  	{ "ppmu-event2-"#name, PPMU_PMNCNT2 },	\
+
+> >  	{ "ppmu-event3-"#name, PPMU_PMNCNT3 }
+
+> >  
+
+> > -struct __exynos_ppmu_events {
+
+> > +static struct __exynos_ppmu_events {
+
+> >  	char *name;
+
+> >  	int id;
+
+> >  } ppmu_events[] = {
+
+> > 
+
 > 
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Looks good to me.
 
-Best regards,
-Krzysztof
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
+
+
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+
+
+
+
+
+Cheers,
+
+MyungJoo
