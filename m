@@ -1,42 +1,38 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 1/3] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-Date: Fri, 9 Jun 2017 12:58:35 +0200
-Message-ID: <20170609105835.GA9789@kozik-book>
-References: <CGME20170609103849epcas5p397e85db2388d4d91f5a775996cb9541d@epcas5p3.samsung.com>
- <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 33/44] openrisc: remove arch-specific dma_supported implementation
+Date: Fri, 9 Jun 2017 14:20:42 +0200
+Message-ID: <CAMuHMdUPeFJJtz8eJkQEAR-2w9oHt-fXeGHvvKFLfU2A4YyviQ@mail.gmail.com>
+References: <20170608132609.32662-1-hch@lst.de> <20170608132609.32662-34-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:37452 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751610AbdFIK6j (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 06:58:39 -0400
-Content-Disposition: inline
-In-Reply-To: <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-hexagon-owner@vger.kernel.org>
+In-Reply-To: <20170608132609.32662-34-hch@lst.de>
+Sender: linux-hexagon-owner@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>
+Cc: the arch/x86 maintainers <x86@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, openrisc@lists.librecores.org, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, linux-s390 <linux-s390@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, sparclinux <sparclinux@vger.kernel.org>, "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, DRI Development <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vg
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, cw00.choi@samsung.com, b.zolnierkie@samsung.com
 
-On Fri, Jun 09, 2017 at 12:38:29PM +0200, Sylwester Nawrocki wrote:
-> The existing enable/disable ops for PLL35XX are made more generic
-> and used also for PLL36XX. This fixes issues in the kernel with
-> PLL36XX PLLs when the PLL has not been already enabled by bootloader.
-> 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Hi Christoph,
+
+On Thu, Jun 8, 2017 at 3:25 PM, Christoph Hellwig <hch@lst.de> wrote:
+> This implementation is simply bogus - hexagon only has a simple
+
+openrisc?
+
+> direct mapped DMA implementation and thus doesn't care about the
+> address.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
-> Changes since v1:
->  - none
-> 
->  drivers/clk/samsung/clk-pll.c | 87 +++++++++++++++++++++++++------------------
->  1 file changed, 50 insertions(+), 37 deletions(-)
-> 
+>  arch/openrisc/include/asm/dma-mapping.h | 7 -------
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
