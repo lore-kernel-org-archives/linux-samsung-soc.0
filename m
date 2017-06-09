@@ -1,117 +1,52 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 3/3] clk: samsung: exynos542x: Add EPLL rate table
-Date: Fri, 09 Jun 2017 12:59:23 +0900
-Message-ID: <593A1D1B.6000808@samsung.com>
-References: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170608141730epcas1p19ca02cb0fd55506f88fcd68414fde70d@epcas1p1.samsung.com>
-        <1496931433-5712-3-git-send-email-s.nawrocki@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH 1/3] dt-bindings: Add support for samsung s6e63j0x03 panel
+ binding
+Date: Fri, 09 Jun 2017 13:59:12 +0900
+Message-ID: <1496984354-5271-2-git-send-email-hoegeun.kwon@samsung.com>
+References: <1496984354-5271-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170609045938epcas5p2025914487ca22a0a2d419824402e89e9@epcas5p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1496931433-5712-3-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: krzk@kernel.org, b.zolnierkie@samsung.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1496984354-5271-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
-
-On 2017년 06월 08일 23:17, Sylwester Nawrocki wrote:
-> A specific clock rate table is added for EPLL so it is possible
-> to set frequency of the EPLL output clock as a multiple of various
-> audio sampling rates.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 6f1d6c0..0ba71bf 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -1280,2 +1280,2 @@ static void __init exynos5420_clk_sleep_init(void) {}
->  	PLL_35XX_RATE(200000000,  200, 3, 3),
->  };
-> 
-
-I got a following frequency(Recalc rate) value.
-I think there are two much different value for 400000000U and 45158400U.
-
-fin_pll	        Recalc rate	mdiv	pdiv	sdiv	kdiv
-24000000	600000000	100	2	1	0
-24000000	400000000	200	3	2	0
-24000000	394784008.5	197	3	2	25690
-24000000	361267219	301	5	2	3671
-24000000	200000000	200	3	3	0
-24000000	196607995.7	197	3	3	-25690
-24000000	180633609.5	301	5	3	3671
-24000000	131072007.3	131	3	3	4719
-24000000	100000000	200	3	4	0
-24000000	65536003.66	131	3	4	4719
-24000000	49348001.07	197	3	5	25690
-24000000	180633609.5	301	5	3	3671
-24000000	32768001.83	131	3	5	4719
-
-
-> +static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
-> +	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
-> +	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
-
-For 400MHz, pdiv is 3 instead of 2 as following:
-	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
-
-> +	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
-> +	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
-> +	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
-> +	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
-> +	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
-> +	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
-> +	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
-> +	PLL_36XX_RATE(65536000U, 131, 3, 4, 4719),
-> +	PLL_36XX_RATE(49152000U, 197, 3, 5, 25690),
-> +	PLL_36XX_RATE(45158400U, 301, 5, 3, 3671),
-
-I got the fout value (180633609) instead of 45158400U
-when I used the M(301) P(5) S(3) K(3671).
-fin_pll	        Recalc rate	mdiv	pdiv	sdiv	kdiv
-24000000	180633609	301	5	3	3671
-
-> +	PLL_36XX_RATE(32768000U, 131, 3, 5, 4719),
-> +};
-
-> +
->  static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
->  	[apll] = PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
->  		APLL_CON0, NULL),
-> @@ -1287,7 +1303,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
->  		CPLL_CON0, NULL),
->  	[dpll] = PLL(pll_2550, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
->  		DPLL_CON0, NULL),
-> -	[epll] = PLL(pll_2650, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
-> +	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
->  		EPLL_CON0, NULL),
->  	[rpll] = PLL(pll_2650, CLK_FOUT_RPLL, "fout_rpll", "fin_pll", RPLL_LOCK,
->  		RPLL_CON0, NULL),
-> @@ -1402,7 +1418,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
-> 
->  	if (_get_rate("fin_pll") == 24 * MHZ) {
->  		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-> -		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-> +		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
->  		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->  		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->  	}
-> --
-> 1.9.1
-> 
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+VGhlIFNhbXN1bmcgczZlNjNqMHgwMyBpcyBhIDEuNjMiIDMyMHgzMjAgQU1PTEVEIHBhbmVsIGNv
+bm5lY3RlZCB1c2luZwpNSVBJLURTSSBpbnRlcmZhY2VzLgoKU2lnbmVkLW9mZi1ieTogSG9lZ2V1
+biBLd29uIDxob2VnZXVuLmt3b25Ac2Ftc3VuZy5jb20+Ci0tLQogLi4uL2JpbmRpbmdzL2Rpc3Bs
+YXkvcGFuZWwvc2Ftc3VuZyxzNmU2M2oweDAzLnR4dCAgfCAyNCArKysrKysrKysrKysrKysrKysr
+KysrCiAxIGZpbGUgY2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygrKQogY3JlYXRlIG1vZGUgMTAwNjQ0
+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3NhbXN1bmcs
+czZlNjNqMHgwMy50eHQKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTYzajB4MDMudHh0IGIvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmU2M2oweDAzLnR4
+dApuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRleCAwMDAwMDAwLi4zNGI2ZTJhCi0tLSAvZGV2L251
+bGwKKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwv
+c2Ftc3VuZyxzNmU2M2oweDAzLnR4dApAQCAtMCwwICsxLDI0IEBACitTYW1zdW5nIFM2RTYzSjBY
+MDMgMS42MyIgMzIweDMyMCBBTU9MRUQgcGFuZWwKKworUmVxdWlyZWQgcHJvcGVydGllczoKKyAg
+LSBjb21wYXRpYmxlOiAic2Ftc3VuZyxzNmU2M2oweDAzIgorICAtIHJlZzogdGhlIHZpcnR1YWwg
+Y2hhbm5lbCBudW1iZXIgb2YgYSBEU0kgcGVyaXBoZXJhbAorICAtIHZkZDMtc3VwcGx5OiBJL08g
+dm9sdGFnZSBzdXBwbHkKKyAgLSB2Y2ktc3VwcGx5OiB2b2x0YWdlIHN1cHBseSBmb3IgYW5hbG9n
+IGNpcmN1aXRzCisgIC0gcmVzZXQtZ3Bpb3M6IGEgR1BJTyBzcGVjIGZvciB0aGUgcmVzZXQgcGlu
+IChhY3RpdmUgaGlnaCkKKyAgLSB0ZS1ncGlvczogYSBHUElPIHNwZWMgZm9yIHRoZSB0ZWFyaW5n
+IGVmZmVjdCBzeW5jaHJvbml6YXRpb24gc2lnbmFsCisgICAgZ3BpbyBwaW4gKGFjdGl2ZSBoaWdo
+KQorCitFeGFtcGxlOgorJmRzaSB7CisJLi4uCisKKwlwYW5lbEAwIHsKKwkJY29tcGF0aWJsZSA9
+ICJzYW1zdW5nLHM2ZTYzajB4MDMiOworCQlyZWcgPSA8MD47CisJCXZkZDMtc3VwcGx5ID0gPCZs
+ZG8xNl9yZWc+OworCQl2Y2ktc3VwcGx5ID0gPCZsZG8yMF9yZWc+OworCQlyZXNldC1ncGlvcyA9
+IDwmZ3BlMCAxIEdQSU9fQUNUSVZFX0hJR0g+OworCQl0ZS1ncGlvcyA9IDwmZ3B4MCA2IEdQSU9f
+QUNUSVZFX0hJR0g+OworCX07Cit9OwotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
