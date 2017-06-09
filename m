@@ -1,214 +1,75 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 1/3] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-Date: Fri, 09 Jun 2017 10:59:45 +0900
-Message-ID: <593A0111.5040301@samsung.com>
-References: <CGME20170608141722epcas5p2310095ad549f30841430f5cc3e364908@epcas5p2.samsung.com>
-        <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
+From: <rueggemann@h.maus.de>
+Subject: (unknown)
+Date: Fri, 09 Jun 2017 02:06:47 -0000
+Message-ID: <149697400791.12492.6305403542963113779@mv.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: krzk@kernel.org, b.zolnierkie@samsung.com
+Content-Type: application/zip; name="6473227.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 5f44de96.dynamic.mv.ru ([95.68.222.150]:40418 "HELO mv.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1751445AbdFICGx (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 8 Jun 2017 22:06:53 -0400
+Subject: 
+Content-Disposition: attachment
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
-
-Looks good to me. I tested it on Exynos325-based Rinato board
-which uses the PLL36xx/PLL35xx.
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-On 2017년 06월 08일 23:17, Sylwester Nawrocki wrote:
-> The existing enable/disable ops for PLL35XX are made more generic
-> and used also for PLL36XX. This fixes issues in the kernel with
-> PLL36XX PLLs when the PLL has not been already enabled by bootloader.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since RFC version:
->  - fixed wrong bit handling in samsung_pll3xxx_disable()
->  - pll->lock_offs used and comment improved in samsung_pll35xx_set_rate()
-> ---
->  drivers/clk/samsung/clk-pll.c | 87 +++++++++++++++++++++++++------------------
->  1 file changed, 50 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 5229089..5c4899c 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -23,6 +23,10 @@ struct samsung_clk_pll {
->  	struct clk_hw		hw;
->  	void __iomem		*lock_reg;
->  	void __iomem		*con_reg;
-> +	/* PLL enable control bit offset in @con_reg register */
-> +	unsigned short		enable_offs;
-> +	/* PLL lock status bit offset in @con_reg register */
-> +	unsigned short		lock_offs;
->  	enum samsung_pll_type	type;
->  	unsigned int		rate_count;
->  	const struct samsung_pll_rate_table *rate_table;
-> @@ -61,6 +65,34 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
->  	return rate_table[i - 1].rate;
->  }
-> 
-> +static int samsung_pll3xxx_enable(struct clk_hw *hw)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	u32 tmp;
-> +
-> +	tmp = readl_relaxed(pll->con_reg);
-> +	tmp |= BIT(pll->enable_offs);
-> +	writel_relaxed(tmp, pll->con_reg);
-> +
-> +	/* wait lock time */
-> +	do {
-> +		cpu_relax();
-> +		tmp = readl_relaxed(pll->con_reg);
-> +	} while (!(tmp & BIT(pll->lock_offs)));
-> +
-> +	return 0;
-> +}
-> +
-> +static void samsung_pll3xxx_disable(struct clk_hw *hw)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	u32 tmp;
-> +
-> +	tmp = readl_relaxed(pll->con_reg);
-> +	tmp &= ~BIT(pll->enable_offs);
-> +	writel_relaxed(tmp, pll->con_reg);
-> +}
-> +
->  /*
->   * PLL2126 Clock Type
->   */
-> @@ -142,34 +174,6 @@ static unsigned long samsung_pll3000_recalc_rate(struct clk_hw *hw,
->  #define PLL35XX_LOCK_STAT_SHIFT	(29)
->  #define PLL35XX_ENABLE_SHIFT	(31)
-> 
-> -static int samsung_pll35xx_enable(struct clk_hw *hw)
-> -{
-> -	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> -	u32 tmp;
-> -
-> -	tmp = readl_relaxed(pll->con_reg);
-> -	tmp |= BIT(PLL35XX_ENABLE_SHIFT);
-> -	writel_relaxed(tmp, pll->con_reg);
-> -
-> -	/* wait_lock_time */
-> -	do {
-> -		cpu_relax();
-> -		tmp = readl_relaxed(pll->con_reg);
-> -	} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
-> -
-> -	return 0;
-> -}
-> -
-> -static void samsung_pll35xx_disable(struct clk_hw *hw)
-> -{
-> -	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> -	u32 tmp;
-> -
-> -	tmp = readl_relaxed(pll->con_reg);
-> -	tmp &= ~BIT(PLL35XX_ENABLE_SHIFT);
-> -	writel_relaxed(tmp, pll->con_reg);
-> -}
-> -
->  static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
->  				unsigned long parent_rate)
->  {
-> @@ -238,12 +242,12 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  			(rate->sdiv << PLL35XX_SDIV_SHIFT);
->  	writel_relaxed(tmp, pll->con_reg);
-> 
-> -	/* wait_lock_time if enabled */
-> -	if (tmp & BIT(PLL35XX_ENABLE_SHIFT)) {
-> +	/* Wait until the PLL is locked if it is enabled. */
-> +	if (tmp & BIT(pll->enable_offs)) {
->  		do {
->  			cpu_relax();
->  			tmp = readl_relaxed(pll->con_reg);
-> -		} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
-> +		} while (!(tmp & BIT(pll->lock_offs)));
->  	}
->  	return 0;
->  }
-> @@ -252,8 +256,8 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  	.recalc_rate = samsung_pll35xx_recalc_rate,
->  	.round_rate = samsung_pll_round_rate,
->  	.set_rate = samsung_pll35xx_set_rate,
-> -	.enable = samsung_pll35xx_enable,
-> -	.disable = samsung_pll35xx_disable,
-> +	.enable = samsung_pll3xxx_enable,
-> +	.disable = samsung_pll3xxx_disable,
->  };
-> 
->  static const struct clk_ops samsung_pll35xx_clk_min_ops = {
-> @@ -275,6 +279,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  #define PLL36XX_SDIV_SHIFT	(0)
->  #define PLL36XX_KDIV_SHIFT	(0)
->  #define PLL36XX_LOCK_STAT_SHIFT	(29)
-> +#define PLL36XX_ENABLE_SHIFT	(31)
-> 
->  static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
->  				unsigned long parent_rate)
-> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  	writel_relaxed(pll_con1, pll->con_reg + 4);
-> 
->  	/* wait_lock_time */
-> -	do {
-> -		cpu_relax();
-> -		tmp = readl_relaxed(pll->con_reg);
-> -	} while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
-> +	if (pll_con0 & BIT(pll->enable_offs)) {
-> +		do {
-> +			cpu_relax();
-> +			tmp = readl_relaxed(pll->con_reg);
-> +		} while (!(tmp & BIT(pll->lock_offs)));
-> +	}
-> 
->  	return 0;
->  }
-> @@ -366,6 +373,8 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  	.recalc_rate = samsung_pll36xx_recalc_rate,
->  	.set_rate = samsung_pll36xx_set_rate,
->  	.round_rate = samsung_pll_round_rate,
-> +	.enable = samsung_pll3xxx_enable,
-> +	.disable = samsung_pll3xxx_disable,
->  };
-> 
->  static const struct clk_ops samsung_pll36xx_clk_min_ops = {
-> @@ -1288,6 +1297,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->  	case pll_1450x:
->  	case pll_1451x:
->  	case pll_1452x:
-> +		pll->enable_offs = PLL35XX_ENABLE_SHIFT;
-> +		pll->lock_offs = PLL35XX_LOCK_STAT_SHIFT;
->  		if (!pll->rate_table)
->  			init.ops = &samsung_pll35xx_clk_min_ops;
->  		else
-> @@ -1306,6 +1317,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->  	/* clk_ops for 36xx and 2650 are similar */
->  	case pll_36xx:
->  	case pll_2650:
-> +		pll->enable_offs = PLL36XX_ENABLE_SHIFT;
-> +		pll->lock_offs = PLL36XX_LOCK_STAT_SHIFT;
->  		if (!pll->rate_table)
->  			init.ops = &samsung_pll36xx_clk_min_ops;
->  		else
-> --
-> 1.9.1
-> 
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+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
