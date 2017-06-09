@@ -1,52 +1,47 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH 1/3] dt-bindings: Add support for samsung s6e63j0x03 panel
- binding
-Date: Fri, 09 Jun 2017 13:59:12 +0900
-Message-ID: <1496984354-5271-2-git-send-email-hoegeun.kwon@samsung.com>
-References: <1496984354-5271-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170609045938epcas5p2025914487ca22a0a2d419824402e89e9@epcas5p2.samsung.com>
+Subject: [PATCH 0/3] Add support for the s6e63j0x03 panel on Rinato board
+Date: Fri, 09 Jun 2017 13:59:11 +0900
+Message-ID: <1496984354-5271-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170609045937epcas5p2120f6388b74fa73ea6ed835f7741f61e@epcas5p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1496984354-5271-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:49908 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751087AbdFIE7m (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 9 Jun 2017 00:59:42 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, a.hajda@samsung.com, inki.dae@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-VGhlIFNhbXN1bmcgczZlNjNqMHgwMyBpcyBhIDEuNjMiIDMyMHgzMjAgQU1PTEVEIHBhbmVsIGNv
-bm5lY3RlZCB1c2luZwpNSVBJLURTSSBpbnRlcmZhY2VzLgoKU2lnbmVkLW9mZi1ieTogSG9lZ2V1
-biBLd29uIDxob2VnZXVuLmt3b25Ac2Ftc3VuZy5jb20+Ci0tLQogLi4uL2JpbmRpbmdzL2Rpc3Bs
-YXkvcGFuZWwvc2Ftc3VuZyxzNmU2M2oweDAzLnR4dCAgfCAyNCArKysrKysrKysrKysrKysrKysr
-KysrCiAxIGZpbGUgY2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygrKQogY3JlYXRlIG1vZGUgMTAwNjQ0
-IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3NhbXN1bmcs
-czZlNjNqMHgwMy50eHQKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTYzajB4MDMudHh0IGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmU2M2oweDAzLnR4
-dApuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRleCAwMDAwMDAwLi4zNGI2ZTJhCi0tLSAvZGV2L251
-bGwKKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwv
-c2Ftc3VuZyxzNmU2M2oweDAzLnR4dApAQCAtMCwwICsxLDI0IEBACitTYW1zdW5nIFM2RTYzSjBY
-MDMgMS42MyIgMzIweDMyMCBBTU9MRUQgcGFuZWwKKworUmVxdWlyZWQgcHJvcGVydGllczoKKyAg
-LSBjb21wYXRpYmxlOiAic2Ftc3VuZyxzNmU2M2oweDAzIgorICAtIHJlZzogdGhlIHZpcnR1YWwg
-Y2hhbm5lbCBudW1iZXIgb2YgYSBEU0kgcGVyaXBoZXJhbAorICAtIHZkZDMtc3VwcGx5OiBJL08g
-dm9sdGFnZSBzdXBwbHkKKyAgLSB2Y2ktc3VwcGx5OiB2b2x0YWdlIHN1cHBseSBmb3IgYW5hbG9n
-IGNpcmN1aXRzCisgIC0gcmVzZXQtZ3Bpb3M6IGEgR1BJTyBzcGVjIGZvciB0aGUgcmVzZXQgcGlu
-IChhY3RpdmUgaGlnaCkKKyAgLSB0ZS1ncGlvczogYSBHUElPIHNwZWMgZm9yIHRoZSB0ZWFyaW5n
-IGVmZmVjdCBzeW5jaHJvbml6YXRpb24gc2lnbmFsCisgICAgZ3BpbyBwaW4gKGFjdGl2ZSBoaWdo
-KQorCitFeGFtcGxlOgorJmRzaSB7CisJLi4uCisKKwlwYW5lbEAwIHsKKwkJY29tcGF0aWJsZSA9
-ICJzYW1zdW5nLHM2ZTYzajB4MDMiOworCQlyZWcgPSA8MD47CisJCXZkZDMtc3VwcGx5ID0gPCZs
-ZG8xNl9yZWc+OworCQl2Y2ktc3VwcGx5ID0gPCZsZG8yMF9yZWc+OworCQlyZXNldC1ncGlvcyA9
-IDwmZ3BlMCAxIEdQSU9fQUNUSVZFX0hJR0g+OworCQl0ZS1ncGlvcyA9IDwmZ3B4MCA2IEdQSU9f
-QUNUSVZFX0hJR0g+OworCX07Cit9OwotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi all,
+
+The purpose of this patch is add support for s6e63j0x03 AMOLED panel
+on the rinato board(Samsung Galaxy Gear 2).
+
+The first and second patches are Add the binding document and panel
+driver. The third patch is remove the unnecessary properties in the
+rinato dts.
+
+Best regards,
+Hoegeun
+
+Hoegeun Kwon (3):
+  dt-bindings: Add support for samsung s6e63j0x03 panel binding
+  drm/panel: Add support for s6e63j0x03 panel driver
+  ARM: dts: exynos: Remove the display-timing and delay from rinato dts
+
+ .../bindings/display/panel/samsung,s6e63j0x03.txt  |  24 +
+ arch/arm/boot/dts/exynos3250-rinato.dts            |  22 -
+ drivers/gpu/drm/panel/Kconfig                      |   7 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c   | 491 +++++++++++++++++++++
+ 5 files changed, 523 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e63j0x03.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c
+
+-- 
+1.9.1
