@@ -1,81 +1,65 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 5/7] ASoC: Add Odroid sound DT bindings
- documentation
-Date: Fri, 09 Jun 2017 18:53:52 +0200
-Message-ID: <82c62742-679a-0d36-a6de-f94eb5e7eac0@samsung.com>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170421172040epcas5p2ee7191a899c52ea3f077837dc2e865ca@epcas5p2.samsung.com>
-        <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
-        <20170428170335.7zoovrcs6v22x3lz@rob-hp-laptop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <20170428170335.7zoovrcs6v22x3lz@rob-hp-laptop>
-Content-language: en-GB
-Sender: linux-clk-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, krzk@kernel.org, jy0922.shim@samsung.com, broonie@kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH] ASoC: samsung: Odroid DT binding documentation corrections
+Date: Fri, 09 Jun 2017 19:09:44 +0200
+Message-ID: <1497028184-5244-1-git-send-email-s.nawrocki@samsung.com>
+References: <CGME20170609171002epcas1p3664647f96ffc9553eabac446075fed4c@epcas1p3.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:46927 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751527AbdFIRKG (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 9 Jun 2017 13:10:06 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: broonie@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, robh+dt@kernel.org, b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 04/28/2017 07:03 PM, Rob Herring wrote:
-> On Fri, Apr 21, 2017 at 07:19:49PM +0200, Sylwester Nawrocki wrote:
+This patch removes unused and undocumented samsung,cpu-dai,
+samsung,codec-dai properties from the dts example and moves
+sub-nodes' description to a separate section.
 
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
->> @@ -0,0 +1,57 @@
->> +Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
->> +
->> +Required properties:
->> +
->> + - compatible - "samsung,odroidxu3-audio" - for Odroid XU3 board,
->> +		"samsung,odroidxu4-audio" - for Odroid XU4 board
->> + - model - the user-visible name of this sound complex
->
-> ASoC will support "label" soon (see graph support). Use that instead.
+Suggested-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ .../devicetree/bindings/sound/samsung,odroid.txt          | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-I could change that but it now might be too late since the patch has been
-merged in v4.12-rc1. Sorry, I couldn't get back to this earlier.
-
->> + - clocks - should contain entries matching clock names in the clock-names
->> +    property
->> + - clock-names - should contain following entries:
->> +    - "epll" - indicating the EPLL output clock
->> +    - "i2s_rclk" - indicating the RCLK (root) clock of the I2S0 controller
->
-> At least the 2nd one should be in the i2s node. This node isn't really a
-> h/w block, so it shouldn't have clocks IMO.
-
-"i2s_rclk" is a clock exposed by the I2S controller.
-
-The RCLK clock has already assigned clock parent in DT:
-
-&i2s0 {
-	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
-};
-
-In fact the sound card is not a consumer of this clock, the clock is used
-only internally in the I2S device.  I could try to drop it and use ASoC
-internal API for CPU DAI clock setting.
-
-But I have no idea what else could be done with the PLL, it belongs to
-the audio card and the card driver must somehow get hold of that clock
-to configure its frequency depending on audio sampling rate.
-
->> +Example:
->> +
->> +sound {
->> +	compatible = "samsung,odroidxu3-audio";
->
->> +	samsung,cpu-dai = <&i2s0>;
->> +	samsung,codec-dai = <&max98090>;
->
-> Not documented. Nor needed?
-
-Yes, I will remove these, that's a leftover from initial versions
-of the binding.
-
---
-Thanks,
-Sylwester
+diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
+index c1ac70c..c30934d 100644
+--- a/Documentation/devicetree/bindings/sound/samsung,odroid.txt
++++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
+@@ -5,11 +5,6 @@ Required properties:
+  - compatible - "samsung,odroidxu3-audio" - for Odroid XU3 board,
+ 		"samsung,odroidxu4-audio" - for Odroid XU4 board
+  - model - the user-visible name of this sound complex
+- - 'cpu' subnode with a 'sound-dai' property containing the phandle of the I2S
+-    controller
+- - 'codec' subnode with a 'sound-dai' property containing list of phandles
+-    to the CODEC nodes, first entry must be corresponding to the MAX98090
+-    CODEC and the second entry must be the phandle of the HDMI IP block node
+  - clocks - should contain entries matching clock names in the clock-names
+     property
+  - clock-names - should contain following entries:
+@@ -32,12 +27,18 @@ Required properties:
+    For Odroid XU4:
+      no entries
+ 
++Required sub-nodes:
++
++ - 'cpu' subnode with a 'sound-dai' property containing the phandle of the I2S
++    controller
++ - 'codec' subnode with a 'sound-dai' property containing list of phandles
++    to the CODEC nodes, first entry must be corresponding to the MAX98090
++    CODEC and the second entry must be the phandle of the HDMI IP block node
++
+ Example:
+ 
+ sound {
+ 	compatible = "samsung,odroidxu3-audio";
+-	samsung,cpu-dai = <&i2s0>;
+-	samsung,codec-dai = <&max98090>;
+ 	model = "Odroid-XU3";
+ 	samsung,audio-routing =
+ 		"Headphone Jack", "HPL",
+-- 
+1.9.1
