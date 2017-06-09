@@ -1,75 +1,38 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 4/5] arm64: dts: exynos: Remove the OF graph from DSI
- node
-Date: Fri, 9 Jun 2017 09:37:37 +0200
-Message-ID: <20170609073737.GC4018@kozik-book>
-References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170308045502epcas1p21a483d429e2169b322e40fd833c47f27@epcas1p2.samsung.com>
- <1488948852-5380-5-git-send-email-hoegeun.kwon@samsung.com>
- <20170515164829.rfcqj5quw2jooh6u@kozik-lap>
- <9508dfc9-7cd3-3ed3-f642-2f69a5dcb5ce@samsung.com>
- <ac8dc366-4273-9e24-a60e-ece22a6ad5bc@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos: Remove the display-timing and
+ delay from rinato dts
+Date: Fri, 9 Jun 2017 09:45:09 +0200
+Message-ID: <20170609074509.GD4018@kozik-book>
+References: <1496984354-5271-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170609045939epcas1p2e4b50c78978b8f14630ca29550c1cb34@epcas1p2.samsung.com>
+ <1496984354-5271-4-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34858 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751638AbdFIHpN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 9 Jun 2017 03:45:13 -0400
 Content-Disposition: inline
-In-Reply-To: <ac8dc366-4273-9e24-a60e-ece22a6ad5bc-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+In-Reply-To: <1496984354-5271-4-git-send-email-hoegeun.kwon@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, a.hajda@samsung.com, inki.dae@samsung.com
 
-On Wed, Jun 07, 2017 at 03:14:20PM +0900, Hoegeun Kwon wrote:
-> On 05/19/2017 03:17 PM, Hoegeun Kwon wrote:
-> >On 05/16/2017 01:48 AM, Krzysztof Kozlowski wrote:
-> >>On Wed, Mar 08, 2017 at 01:54:11PM +0900, Hoegeun Kwon wrote:
-> >>>The OF graph is not needed because the panel is a child of dsi. Remove
-> >>>the ports node in DSI node.
-> >>>
-> >>>Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>>Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>>Reviewed-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>>---
-> >>>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 14
-> >>>--------------
-> >>>  1 file changed, 14 deletions(-)
-> >>>
-> >>Hi,
-> >>
-> >>I wanted to apply this (and 5/5) but it seems that DRM change is not
-> >>merged. Was it included in v4.12-rc1?
-> >>
-> >>Best regards,
-> >>Krzysztof
-> >
-> >Hi,
-> >
-> >Sorry for my belated reply.
-> >
-> >The DRM patch(3/5) is not merged in v4.12-rc1 (mainline)...
-> >I have checked the David's branch, but not merged.
-> >However it was merged into Inki's exynos drm branch.
-> >
-> >Inki, Could you check the patch(3/5).
-> >
-> >Best regards,
-> >Hoegeun
+On Fri, Jun 09, 2017 at 01:59:14PM +0900, Hoegeun Kwon wrote:
+> The display-timing and delay are included in the panel driver. So it
+> should be removed in dts.
 > 
-> Hi Krzysztof,
-> 
-> The drm patch(3/5) has been merged into v4.12-rc4.
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250-rinato.dts | 22 ----------------------
+>  1 file changed, 22 deletions(-)
 
-Thanks for letting me know. My branch is rebased on v4.12-rc1 so to
-maintain bisectabiltiy I would have to merge v4.12-rc4... thus making a
-messy history.
-
-It is just a cleanup so I will take it after releasing v4.12, so this
-will end up in v4.14. No need to resend, I'll keep it in Patchwork.
+I understand this depends on merging in the panel driver so this will
+have to wait till then. I'll take it when panel hits mainline (arm-soc
+folks discourage recently cross-tree merges for DT).
 
 Best regards,
 Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
