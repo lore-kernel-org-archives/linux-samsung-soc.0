@@ -1,134 +1,75 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Add the OF graph between fimd and dsi
-Date: Fri, 9 Jun 2017 09:27:54 +0200
-Message-ID: <20170609072754.GB4018@kozik-book>
-References: <CGME20170609025951epcas1p19f5ca8c241b8b79068a84eb239ed46ed@epcas1p1.samsung.com>
- <1496977173-20550-1-git-send-email-hoegeun.kwon@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 4/5] arm64: dts: exynos: Remove the OF graph from DSI
+ node
+Date: Fri, 9 Jun 2017 09:37:37 +0200
+Message-ID: <20170609073737.GC4018@kozik-book>
+References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308045502epcas1p21a483d429e2169b322e40fd833c47f27@epcas1p2.samsung.com>
+ <1488948852-5380-5-git-send-email-hoegeun.kwon@samsung.com>
+ <20170515164829.rfcqj5quw2jooh6u@kozik-lap>
+ <9508dfc9-7cd3-3ed3-f642-2f69a5dcb5ce@samsung.com>
+ <ac8dc366-4273-9e24-a60e-ece22a6ad5bc@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34236 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751506AbdFIH16 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 03:27:58 -0400
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1496977173-20550-1-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <ac8dc366-4273-9e24-a60e-ece22a6ad5bc-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, javier@osg.samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, a.hajda@samsung.com
 
-On Fri, Jun 09, 2017 at 11:59:33AM +0900, Hoegeun Kwon wrote:
-> It should be connected to OF graph between fimd and dsi.
-> Add the OF graph between fimd and dsi.
+On Wed, Jun 07, 2017 at 03:14:20PM +0900, Hoegeun Kwon wrote:
+> On 05/19/2017 03:17 PM, Hoegeun Kwon wrote:
+> >On 05/16/2017 01:48 AM, Krzysztof Kozlowski wrote:
+> >>On Wed, Mar 08, 2017 at 01:54:11PM +0900, Hoegeun Kwon wrote:
+> >>>The OF graph is not needed because the panel is a child of dsi. Remove
+> >>>the ports node in DSI node.
+> >>>
+> >>>Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>>Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>>Reviewed-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>>---
+> >>>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 14
+> >>>--------------
+> >>>  1 file changed, 14 deletions(-)
+> >>>
+> >>Hi,
+> >>
+> >>I wanted to apply this (and 5/5) but it seems that DRM change is not
+> >>merged. Was it included in v4.12-rc1?
+> >>
+> >>Best regards,
+> >>Krzysztof
+> >
+> >Hi,
+> >
+> >Sorry for my belated reply.
+> >
+> >The DRM patch(3/5) is not merged in v4.12-rc1 (mainline)...
+> >I have checked the David's branch, but not merged.
+> >However it was merged into Inki's exynos drm branch.
+> >
+> >Inki, Could you check the patch(3/5).
+> >
+> >Best regards,
+> >Hoegeun
+> 
+> Hi Krzysztof,
+> 
+> The drm patch(3/5) has been merged into v4.12-rc4.
 
-I need more explanation why this is needed. What happens without this?
-What issue is fixed here?
+Thanks for letting me know. My branch is rebased on v4.12-rc1 so to
+maintain bisectabiltiy I would have to merge v4.12-rc4... thus making a
+messy history.
 
-What about Exynos5250 and Exynos5420? I think we do not have a board in
-mainline using FIMD but maybe this should be added just for correct
-hardware description?
-
+It is just a cleanup so I will take it after releasing v4.12, so this
+will end up in v4.14. No need to resend, I'll keep it in Patchwork.
 
 Best regards,
 Krzysztof
 
-> 
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos3250.dtsi | 26 ++++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos4.dtsi    | 26 ++++++++++++++++++++++++++
->  2 files changed, 52 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 590ee44..22d523f 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -311,6 +311,19 @@
->  			iommus = <&sysmmu_fimd0>;
->  			samsung,sysreg = <&sys_reg>;
->  			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					fimd_to_dsi: endpoint {
-> +						remote-endpoint =
-> +							<&dsi_to_fimd>;
-> +					};
-> +				};
-> +			};
->  		};
->  
->  		dsi_0: dsi@11C80000 {
-> @@ -326,6 +339,19 @@
->  			#address-cells = <1>;
->  			#size-cells = <0>;
->  			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					dsi_to_fimd: endpoint {
-> +						remote-endpoint =
-> +							<&fimd_to_dsi>;
-> +					};
-> +				};
-> +			};
->  		};
->  
->  		sysmmu_fimd0: sysmmu@11E20000 {
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 497a947..773d392 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -193,6 +193,19 @@
->  		status = "disabled";
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				dsi_to_fimd: endpoint {
-> +					remote-endpoint =
-> +						<&fimd_to_dsi>;
-> +				};
-> +			};
-> +		};
->  	};
->  
->  	camera {
-> @@ -715,6 +728,19 @@
->  		iommus = <&sysmmu_fimd0>;
->  		samsung,sysreg = <&sys_reg>;
->  		status = "disabled";
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				fimd_to_dsi: endpoint {
-> +					remote-endpoint =
-> +						<&dsi_to_fimd>;
-> +				};
-> +			};
-> +		};
->  	};
->  
->  	tmu: tmu@100C0000 {
-> -- 
-> 1.9.1
-> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
