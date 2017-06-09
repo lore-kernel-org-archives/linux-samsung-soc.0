@@ -1,75 +1,117 @@
-From: <rueggemann@h.maus.de>
-Subject: (unknown)
-Date: Fri, 09 Jun 2017 02:06:47 -0000
-Message-ID: <149697400791.12492.6305403542963113779@mv.ru>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 2/3] clk: samsung: Add missing exynos5420 audio related
+ clocks
+Date: Fri, 09 Jun 2017 11:26:09 +0900
+Message-ID: <593A0741.5030400@samsung.com>
+References: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
+        <CGME20170608141726epcas1p1ab3faf22e9f398ae4cf23f84f487d123@epcas1p1.samsung.com>
+        <1496931433-5712-2-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="6473227.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 5f44de96.dynamic.mv.ru ([95.68.222.150]:40418 "HELO mv.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1751445AbdFICGx (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:11358 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751452AbdFIC0N (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 22:06:53 -0400
-Subject: 
-Content-Disposition: attachment
+        Thu, 8 Jun 2017 22:26:13 -0400
+In-reply-to: <1496931433-5712-2-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: krzk@kernel.org, b.zolnierkie@samsung.com
 
-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
+Hi Sylwester,
+
+Looks good to me. I tested it on Odroid-Xu3 board.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+On 2017년 06월 08일 23:17, Sylwester Nawrocki wrote:
+> This patch adds missing definitions of mux clocks required for using
+> EPLL as the audio subsystem root clock on exynos5420/exynos5422 SoCs.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> Changes since RFC version:
+>   - dropped one clean up chunk
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c   | 10 +++++++---
+>  include/dt-bindings/clock/exynos5420.h |  3 +++
+>  2 files changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index cdc092a..6f1d6c0 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -487,6 +487,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>  PNAME(mout_group13_5800_p)	= { "dout_osc_div", "mout_sw_aclkfl1_550_cam" };
+>  PNAME(mout_group14_5800_p)	= { "dout_aclk550_cam", "dout_sclk_sw" };
+>  PNAME(mout_group15_5800_p)	= { "dout_osc_div", "mout_sw_aclk550_cam" };
+> +PNAME(mout_group16_5800_p)	= { "dout_osc_div", "mout_mau_epll_clk" };
+> 
+>  /* fixed rate clocks generated outside the soc */
+>  static struct samsung_fixed_rate_clock
+> @@ -536,8 +537,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+> 
+>  	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+>  			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
+> -	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p, SRC_TOP7,
+> -			20, 2),
+> +	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
+> +							SRC_TOP7, 20, 2),
+>  	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
+>  	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
+> 
+> @@ -546,6 +547,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>  	MUX(0, "mout_aclk432_cam", mout_group6_5800_p, SRC_TOP8, 24, 2),
+>  	MUX(0, "mout_aclk432_scaler", mout_group6_5800_p, SRC_TOP8, 28, 2),
+> 
+> +	MUX(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
+> +							SRC_TOP9, 8, 1),
+>  	MUX(0, "mout_user_aclk550_cam", mout_group15_5800_p,
+>  							SRC_TOP9, 16, 1),
+>  	MUX(0, "mout_user_aclkfl1_550_cam", mout_group13_5800_p,
+> @@ -703,7 +706,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>  	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
+>  	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
+>  	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
+> -	MUX(0, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
+> +	MUX(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
+>  	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
+>  	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
+> 
+> @@ -1399,6 +1402,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+> 
+>  	if (_get_rate("fin_pll") == 24 * MHZ) {
+>  		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> +		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  	}
+> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+> index 6fd21c2..2740ae0 100644
+> --- a/include/dt-bindings/clock/exynos5420.h
+> +++ b/include/dt-bindings/clock/exynos5420.h
+> @@ -217,6 +217,9 @@
+>  #define CLK_MOUT_MCLK_CDREX	654
+>  #define CLK_MOUT_BPLL		655
+>  #define CLK_MOUT_MX_MSPLL_CCORE	656
+> +#define CLK_MOUT_EPLL		657
+> +#define CLK_MOUT_MAU_EPLL	658
+> +#define CLK_MOUT_USER_MAU_EPLL	659
+> 
+>  /* divider clocks */
+>  #define CLK_DOUT_PIXEL		768
+> --
+> 1.9.1
+> 
+> 
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
