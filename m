@@ -1,39 +1,51 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 7/7] staging/atomisp: use MEDIA_VERSION instead of KERNEL_VERSION
-Date: Sat, 10 Jun 2017 11:05:36 +0200
-Message-ID: <20170610090536.12472-8-jthumshirn@suse.de>
-References: <20170610090536.12472-1-jthumshirn@suse.de>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20170610090536.12472-1-jthumshirn@suse.de>
-Sender: linux-media-owner@vger.kernel.org
-To: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 00/35] defconfig: Cleanup from old entries
+Date: Sat, 10 Jun 2017 18:43:51 +0200
+Message-ID: <20170610164351.7sxzvj4ojj3fbc7h@kozik-lap>
+References: <20170608160836.12196-1-krzk@kernel.org>
+ <CAK8P3a3bUeC3H2oNfdBedVY4UTCe8OgKbWmv46d5xfu8tC7tAg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3bUeC3H2oNfdBedVY4UTCe8OgKbWmv46d5xfu8tC7tAg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
+List-Post: <mailto:linux-snps-arc@lists.infradead.org>
+List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
+Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>, Rich Felker <dalias@libc.org>, Aurelien Jacquiot <a-jacquiot@ti.com>, Tony Lindgren <tony@atomide.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Liviu Dudau <liviu.dudau@arm.com>, "James E.J. Bottomley" <jejb@parisc-linux.org>, David Howells <dhowells@redhat.com>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, sparclinux <sparclinux@vger.kernel.org>, linux-hexagon@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>, Lennox Wu <lennox.wu@gmail.com>, Jonas Bonn <jonas@southpole.se>, Chen Liqin <liqin.linux@gmail.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-c6x-dev@linux-c6x.org, Yoshinori Sato <ysato@users.sourceforge.jp>, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-sh@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use MEDIA_VERSION instead of KERNEL_VERSION to encode the driver
-version of the Atom ISP driver.
+On Fri, Jun 09, 2017 at 09:59:48PM +0200, Arnd Bergmann wrote:
+> On Thu, Jun 8, 2017 at 6:08 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > Hi,
+> >
+> > While cleaning Samsung ARM defconfigs with savedefconfig, I encountered
+> > similar obsolete entries in other files.
+> >
+> > Except the ARM, no dependencies.
+> > For ARM, the rest of patches depend on the first change (otherwise
+> > it might not apply cleanly).
+> 
+> Great work!
+> 
+> I looked at all the ARM patches, and everything looks good to me (the
+> changlog linewrapping may be suboptimal for readability in some cases,
+> if I had to say anything negative ;-) ).
+> 
+> Please add my Acked-by to the ARM patches and send a pull request.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
----
- drivers/staging/media/atomisp/include/linux/atomisp.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks, I'll send you ARM part in pull request.
 
-diff --git a/drivers/staging/media/atomisp/include/linux/atomisp.h b/drivers/staging/media/atomisp/include/linux/atomisp.h
-index 35865462ccf9..0b664ee6f825 100644
---- a/drivers/staging/media/atomisp/include/linux/atomisp.h
-+++ b/drivers/staging/media/atomisp/include/linux/atomisp.h
-@@ -30,9 +30,9 @@
- 
- /* struct media_device_info.driver_version */
- #define ATOMISP_CSS_VERSION_MASK	0x00ffffff
--#define ATOMISP_CSS_VERSION_15		KERNEL_VERSION(1, 5, 0)
--#define ATOMISP_CSS_VERSION_20		KERNEL_VERSION(2, 0, 0)
--#define ATOMISP_CSS_VERSION_21		KERNEL_VERSION(2, 1, 0)
-+#define ATOMISP_CSS_VERSION_15		MEDIA_REVISION(1, 5, 0)
-+#define ATOMISP_CSS_VERSION_20		MEDIA_REVISION(2, 0, 0)
-+#define ATOMISP_CSS_VERSION_21		MEDIA_REVISION(2, 1, 0)
- 
- /* struct media_device_info.hw_revision */
- #define ATOMISP_HW_REVISION_MASK	0x0000ff00
--- 
-2.12.3
+As for the rest, I think respective arch/platform maintainers should
+take it.
+
+Best regards,
+Krzysztof
