@@ -1,47 +1,39 @@
 From: Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 6/7] [media] media: bcm2048: use MEDIA_REVISION isntead of
- KERNEL_VERSION
-Date: Sat, 10 Jun 2017 11:05:35 +0200
-Message-ID: <20170610090536.12472-7-jthumshirn@suse.de>
+Subject: [PATCH 7/7] staging/atomisp: use MEDIA_VERSION instead of KERNEL_VERSION
+Date: Sat, 10 Jun 2017 11:05:36 +0200
+Message-ID: <20170610090536.12472-8-jthumshirn@suse.de>
 References: <20170610090536.12472-1-jthumshirn@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <20170610090536.12472-1-jthumshirn@suse.de>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Sender: linux-media-owner@vger.kernel.org
 To: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Johannes Thumshirn <jthumshirn@suse.de>, linux-media@vger.kernel.org
+Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use MEDIA_REVISION isntead of KERNEL_VERSION to encode the bcm2048
-driver version.
+Use MEDIA_VERSION instead of KERNEL_VERSION to encode the driver
+version of the Atom ISP driver.
 
 Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
 ---
- drivers/staging/media/bcm2048/radio-bcm2048.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/atomisp/include/linux/atomisp.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/media/bcm2048/radio-bcm2048.c b/drivers/staging/media/bcm2048/radio-bcm2048.c
-index 38f72d069e27..ffe9b63cbf59 100644
---- a/drivers/staging/media/bcm2048/radio-bcm2048.c
-+++ b/drivers/staging/media/bcm2048/radio-bcm2048.c
-@@ -48,7 +48,7 @@
- /* driver definitions */
- #define BCM2048_DRIVER_AUTHOR	"Eero Nurkkala <ext-eero.nurkkala@nokia.com>"
- #define BCM2048_DRIVER_NAME	BCM2048_NAME
--#define BCM2048_DRIVER_VERSION	KERNEL_VERSION(0, 0, 1)
-+#define BCM2048_DRIVER_VERSION	MEDIA_REVISION(0, 0, 1)
- #define BCM2048_DRIVER_CARD	"Broadcom bcm2048 FM Radio Receiver"
- #define BCM2048_DRIVER_DESC	"I2C driver for BCM2048 FM Radio Receiver"
+diff --git a/drivers/staging/media/atomisp/include/linux/atomisp.h b/drivers/staging/media/atomisp/include/linux/atomisp.h
+index 35865462ccf9..0b664ee6f825 100644
+--- a/drivers/staging/media/atomisp/include/linux/atomisp.h
++++ b/drivers/staging/media/atomisp/include/linux/atomisp.h
+@@ -30,9 +30,9 @@
  
+ /* struct media_device_info.driver_version */
+ #define ATOMISP_CSS_VERSION_MASK	0x00ffffff
+-#define ATOMISP_CSS_VERSION_15		KERNEL_VERSION(1, 5, 0)
+-#define ATOMISP_CSS_VERSION_20		KERNEL_VERSION(2, 0, 0)
+-#define ATOMISP_CSS_VERSION_21		KERNEL_VERSION(2, 1, 0)
++#define ATOMISP_CSS_VERSION_15		MEDIA_REVISION(1, 5, 0)
++#define ATOMISP_CSS_VERSION_20		MEDIA_REVISION(2, 0, 0)
++#define ATOMISP_CSS_VERSION_21		MEDIA_REVISION(2, 1, 0)
+ 
+ /* struct media_device_info.hw_revision */
+ #define ATOMISP_HW_REVISION_MASK	0x0000ff00
 -- 
 2.12.3
