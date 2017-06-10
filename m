@@ -1,7 +1,8 @@
 From: Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 1/7] [media] media: introduce MEDIA_REVISION macro
-Date: Sat, 10 Jun 2017 11:05:30 +0200
-Message-ID: <20170610090536.12472-2-jthumshirn@suse.de>
+Subject: [PATCH 2/7] video: fbdev: don't use KERNEL_VERSION macro for
+ MEDIA_REVISION
+Date: Sat, 10 Jun 2017 11:05:31 +0200
+Message-ID: <20170610090536.12472-3-jthumshirn@suse.de>
 References: <20170610090536.12472-1-jthumshirn@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,31 +22,34 @@ To: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel
 Cc: devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Johannes Thumshirn <jthumshirn@suse.de>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Currently the media code abuses the KERNEL_VERSION macro to encode a
-version triplet.
-
-Introduce a MEDIA_REVISION macro to get rid of the confusing and
-creative KERNEL_VERSION usage in the media subsystem.
+Don't use the KERNEL_VERSION() macro for the v4l2 capabilities, use
+MEDIA_REVISION instead.
 
 Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
 ---
- include/uapi/linux/media.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/matrox/matroxfb_base.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
-index 4890787731b8..25e2ae4432bd 100644
---- a/include/uapi/linux/media.h
-+++ b/include/uapi/linux/media.h
-@@ -30,7 +30,9 @@
- #include <linux/types.h>
- #include <linux/version.h>
+diff --git a/drivers/video/fbdev/matrox/matroxfb_base.c b/drivers/video/fbdev/matrox/matroxfb_base.c
+index 11eb094396ae..eb92a325033c 100644
+--- a/drivers/video/fbdev/matrox/matroxfb_base.c
++++ b/drivers/video/fbdev/matrox/matroxfb_base.c
+@@ -113,6 +113,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
++#include <linux/media.h>
  
--#define MEDIA_API_VERSION	KERNEL_VERSION(0, 1, 0)
-+#define MEDIA_REVISION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
-+
-+#define MEDIA_API_VERSION	MEDIA_REVISION(0, 1, 0)
- 
- struct media_device_info {
- 	char driver[16];
+ #ifdef CONFIG_PPC_PMAC
+ #include <asm/machdep.h>
+@@ -1091,7 +1092,7 @@ static int matroxfb_ioctl(struct fb_info *info,
+ 				strcpy(r.driver, "matroxfb");
+ 				strcpy(r.card, "Matrox");
+ 				sprintf(r.bus_info, "PCI:%s", pci_name(minfo->pcidev));
+-				r.version = KERNEL_VERSION(1,0,0);
++				r.version = MEDIA_REVISION(1, 0, 0);
+ 				r.capabilities = V4L2_CAP_VIDEO_OUTPUT;
+ 				if (copy_to_user(argp, &r, sizeof(r)))
+ 					return -EFAULT;
 -- 
 2.12.3
