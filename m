@@ -1,42 +1,44 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 00/35] defconfig: Cleanup from old entries
-Date: Fri, 9 Jun 2017 21:59:48 +0200
-Message-ID: <CAK8P3a3bUeC3H2oNfdBedVY4UTCe8OgKbWmv46d5xfu8tC7tAg@mail.gmail.com>
-References: <20170608160836.12196-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170608160836.12196-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
-List-Post: <mailto:linux-snps-arc@lists.infradead.org>
-List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
-Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>, Rich Felker <dalias@libc.org>, Aurelien Jacquiot <a-jacquiot@ti.com>, Tony Lindgren <tony@atomide.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Liviu Dudau <liviu.dudau@arm.com>, "James E.J. Bottomley" <jejb@parisc-linux.org>, David Howells <dhowells@redhat.com>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, sparclinux <sparclinux@vger.kernel.org>, linux-hexagon@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>, Lennox Wu <lennox.wu@gmail.com>, Jonas Bonn <jonas@southpole.se>, Chen Liqin <liqin.linux@gmail.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-c6x-dev@linux-c6x.org, Yoshinori Sato <ysato@users.sourceforge.jp>, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-sh@vger.kernel.org
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Subject: [PATCH 0/7] Introduce MEDIA_VERSION to end KENREL_VERSION abuse in media
+Date: Sat, 10 Jun 2017 11:05:29 +0200
+Message-ID: <20170610090536.12472-1-jthumshirn@suse.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 8, 2017 at 6:08 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Hi,
->
-> While cleaning Samsung ARM defconfigs with savedefconfig, I encountered
-> similar obsolete entries in other files.
->
-> Except the ARM, no dependencies.
-> For ARM, the rest of patches depend on the first change (otherwise
-> it might not apply cleanly).
+Currently the media subsystem has a very creative abuse of the
+KERNEL_VERSION macro to encode an arbitrary version triplet for media
+drivers and device hardware revisions.
 
-Great work!
+This series introduces a new macro called MEDIA_REVISION which encodes
+a version triplet like KERNEL_VERSION does, but clearly has media
+centric semantics and doesn't fool someone into thinking specific
+parts are defined for a specific kernel version only like in out of
+tree drivers.
 
-I looked at all the ARM patches, and everything looks good to me (the
-changlog linewrapping may be suboptimal for readability in some cases,
-if I had to say anything negative ;-) ).
+Johannes Thumshirn (7):
+  [media] media: introduce MEDIA_REVISION macro
+  video: fbdev: don't use KERNEL_VERSION macro for MEDIA_REVISION
+  [media] media: document the use of MEDIA_REVISION instead of
+    KERNEL_VERSION
+  [media] cx25821: use MEDIA_REVISION instead of KERNEL_VERSION
+  [media] media: s3c-camif: Use MEDIA_REVISON instead of KERNEL_VERSION
+  [media] media: bcm2048: use MEDIA_REVISION isntead of KERNEL_VERSION
+  staging/atomisp: use MEDIA_VERSION instead of KERNEL_VERSION
 
-Please add my Acked-by to the ARM patches and send a pull request.
+ Documentation/media/uapi/cec/cec-ioc-adap-g-caps.rst        | 2 +-
+ Documentation/media/uapi/mediactl/media-ioc-device-info.rst | 4 ++--
+ Documentation/media/uapi/v4l/vidioc-querycap.rst            | 6 +++---
+ drivers/media/pci/cx25821/cx25821.h                         | 2 +-
+ drivers/media/platform/s3c-camif/camif-core.c               | 2 +-
+ drivers/staging/media/atomisp/include/linux/atomisp.h       | 6 +++---
+ drivers/staging/media/bcm2048/radio-bcm2048.c               | 2 +-
+ drivers/video/fbdev/matrox/matroxfb_base.c                  | 3 ++-
+ include/media/media-device.h                                | 5 ++---
+ include/uapi/linux/media.h                                  | 4 +++-
+ 10 files changed, 19 insertions(+), 17 deletions(-)
 
-        Arnd
+-- 
+2.12.3
