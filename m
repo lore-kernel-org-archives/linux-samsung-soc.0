@@ -1,44 +1,51 @@
 From: Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 0/7] Introduce MEDIA_VERSION to end KENREL_VERSION abuse in media
-Date: Sat, 10 Jun 2017 11:05:29 +0200
-Message-ID: <20170610090536.12472-1-jthumshirn@suse.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 1/7] [media] media: introduce MEDIA_REVISION macro
+Date: Sat, 10 Jun 2017 11:05:30 +0200
+Message-ID: <20170610090536.12472-2-jthumshirn@suse.de>
+References: <20170610090536.12472-1-jthumshirn@suse.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20170610090536.12472-1-jthumshirn@suse.de>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 To: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>
+Cc: devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Johannes Thumshirn <jthumshirn@suse.de>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Currently the media subsystem has a very creative abuse of the
-KERNEL_VERSION macro to encode an arbitrary version triplet for media
-drivers and device hardware revisions.
+Currently the media code abuses the KERNEL_VERSION macro to encode a
+version triplet.
 
-This series introduces a new macro called MEDIA_REVISION which encodes
-a version triplet like KERNEL_VERSION does, but clearly has media
-centric semantics and doesn't fool someone into thinking specific
-parts are defined for a specific kernel version only like in out of
-tree drivers.
+Introduce a MEDIA_REVISION macro to get rid of the confusing and
+creative KERNEL_VERSION usage in the media subsystem.
 
-Johannes Thumshirn (7):
-  [media] media: introduce MEDIA_REVISION macro
-  video: fbdev: don't use KERNEL_VERSION macro for MEDIA_REVISION
-  [media] media: document the use of MEDIA_REVISION instead of
-    KERNEL_VERSION
-  [media] cx25821: use MEDIA_REVISION instead of KERNEL_VERSION
-  [media] media: s3c-camif: Use MEDIA_REVISON instead of KERNEL_VERSION
-  [media] media: bcm2048: use MEDIA_REVISION isntead of KERNEL_VERSION
-  staging/atomisp: use MEDIA_VERSION instead of KERNEL_VERSION
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+---
+ include/uapi/linux/media.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- Documentation/media/uapi/cec/cec-ioc-adap-g-caps.rst        | 2 +-
- Documentation/media/uapi/mediactl/media-ioc-device-info.rst | 4 ++--
- Documentation/media/uapi/v4l/vidioc-querycap.rst            | 6 +++---
- drivers/media/pci/cx25821/cx25821.h                         | 2 +-
- drivers/media/platform/s3c-camif/camif-core.c               | 2 +-
- drivers/staging/media/atomisp/include/linux/atomisp.h       | 6 +++---
- drivers/staging/media/bcm2048/radio-bcm2048.c               | 2 +-
- drivers/video/fbdev/matrox/matroxfb_base.c                  | 3 ++-
- include/media/media-device.h                                | 5 ++---
- include/uapi/linux/media.h                                  | 4 +++-
- 10 files changed, 19 insertions(+), 17 deletions(-)
-
+diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
+index 4890787731b8..25e2ae4432bd 100644
+--- a/include/uapi/linux/media.h
++++ b/include/uapi/linux/media.h
+@@ -30,7 +30,9 @@
+ #include <linux/types.h>
+ #include <linux/version.h>
+ 
+-#define MEDIA_API_VERSION	KERNEL_VERSION(0, 1, 0)
++#define MEDIA_REVISION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
++
++#define MEDIA_API_VERSION	MEDIA_REVISION(0, 1, 0)
+ 
+ struct media_device_info {
+ 	char driver[16];
 -- 
 2.12.3
