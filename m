@@ -1,51 +1,43 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 00/35] defconfig: Cleanup from old entries
-Date: Sat, 10 Jun 2017 18:43:51 +0200
-Message-ID: <20170610164351.7sxzvj4ojj3fbc7h@kozik-lap>
-References: <20170608160836.12196-1-krzk@kernel.org>
- <CAK8P3a3bUeC3H2oNfdBedVY4UTCe8OgKbWmv46d5xfu8tC7tAg@mail.gmail.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH 07/44] xen-swiotlb: consolidate xen_swiotlb_dma_ops
+Date: Sat, 10 Jun 2017 22:36:44 -0400
+Message-ID: <20170611023644.GE30966@char.us.oracle.com>
+References: <20170608132609.32662-1-hch@lst.de>
+ <20170608132609.32662-8-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a3bUeC3H2oNfdBedVY4UTCe8OgKbWmv46d5xfu8tC7tAg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
-List-Post: <mailto:linux-snps-arc@lists.infradead.org>
-List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
-Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>, Rich Felker <dalias@libc.org>, Aurelien Jacquiot <a-jacquiot@ti.com>, Tony Lindgren <tony@atomide.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Liviu Dudau <liviu.dudau@arm.com>, "James E.J. Bottomley" <jejb@parisc-linux.org>, David Howells <dhowells@redhat.com>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, sparclinux <sparclinux@vger.kernel.org>, linux-hexagon@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>, Lennox Wu <lennox.wu@gmail.com>, Jonas Bonn <jonas@southpole.se>, Chen Liqin <liqin.linux@gmail.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-c6x-dev@linux-c6x.org, Yoshinori Sato <ysato@users.sourceforge.jp>, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-sh@vger.kernel.org
+In-Reply-To: <20170608132609.32662-8-hch@lst.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-mips@linux-mips.org, linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org, linux-c6x-dev@linux-c6x.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org, linux-xtensa@linux-xtensa.org, x86@kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org, openrisc@lists.librecores.org, netdev@vger.kernel.org, sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 09, 2017 at 09:59:48PM +0200, Arnd Bergmann wrote:
-> On Thu, Jun 8, 2017 at 6:08 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > Hi,
-> >
-> > While cleaning Samsung ARM defconfigs with savedefconfig, I encountered
-> > similar obsolete entries in other files.
-> >
-> > Except the ARM, no dependencies.
-> > For ARM, the rest of patches depend on the first change (otherwise
-> > it might not apply cleanly).
-> 
-> Great work!
-> 
-> I looked at all the ARM patches, and everything looks good to me (the
-> changlog linewrapping may be suboptimal for readability in some cases,
-> if I had to say anything negative ;-) ).
-> 
-> Please add my Acked-by to the ARM patches and send a pull request.
-
-Thanks, I'll send you ARM part in pull request.
-
-As for the rest, I think respective arch/platform maintainers should
-take it.
-
-Best regards,
-Krzysztof
+T24gVGh1LCBKdW4gMDgsIDIwMTcgYXQgMDM6MjU6MzJQTSArMDIwMCwgQ2hyaXN0b3BoIEhlbGx3
+aWcgd3JvdGU6Cj4gQVJNIGFuZCB4ODYgaGFkIGR1cGxpY2F0ZWQgdmVyc2lvbnMgb2YgdGhlIGRt
+YV9vcHMgc3RydWN0dXJlLCB0aGUKPiBvbmx5IGRpZmZlcmVuY2UgaXMgdGhhdCB4ODYgaGFzbid0
+IHdpcmVkIHVwIHRoZSBzZXRfZG1hX21hc2ssCj4gbW1hcCwgYW5kIGdldF9zZ3RhYmxlIG9wcyB5
+ZXQuICBPbiB4ODYgYWxsIG9mIHRoZW0gYXJlIGlkZW50aWNhbAo+IHRvIHRoZSBnZW5lcmljIHZl
+cnNpb24sIHNvIHRoZXkgYXJlbid0IG5lZWRlZCBidXQgaGFybWxlc3MuCj4gCj4gQWxsIHRoZSBz
+eW1ib2xzIHVzZWQgb25seSBmb3IgeGVuX3N3aW90bGJfZG1hX29wcyBjYW4gbm93IGJlIG1hcmtl
+ZAo+IHN0YXRpYyBhcyB3ZWxsLgo+IAo+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waCBIZWxsd2ln
+IDxoY2hAbHN0LmRlPgo+IC0tLQo+ICBhcmNoL2FybS94ZW4vbW0uYyAgICAgICAgICAgICAgfCAx
+NyAtLS0tLS0tLQo+ICBhcmNoL3g4Ni94ZW4vcGNpLXN3aW90bGIteGVuLmMgfCAxNCAtLS0tLS0t
+Cj4gIGRyaXZlcnMveGVuL3N3aW90bGIteGVuLmMgICAgICB8IDkzICsrKysrKysrKysrKysrKysr
+KysrKystLS0tLS0tLS0tLS0tLS0tLS0tLQo+ICBpbmNsdWRlL3hlbi9zd2lvdGxiLXhlbi5oICAg
+ICAgfCA2MiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gIDQgZmlsZXMgY2hhbmdlZCwg
+NDkgaW5zZXJ0aW9ucygrKSwgMTM3IGRlbGV0aW9ucygtKQoKWWVlZXkhCgpSZXZpZXdlZC1ieTog
+S29ucmFkIFJ6ZXN6dXRlayBXaWxrIDxrb25yYWQud2lsa0BvcmFjbGUuY29tPgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
