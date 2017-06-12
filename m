@@ -1,31 +1,39 @@
-From: <"Azim Hash"@correo.hlbm.gob.ec>
-Subject: Congratulation
-Date: Sat, 10 Jun 2017 23:34:55 -0700
-Message-ID: <20170610203507.9AF20EF5ED2__14013.5053232827$1497223049$gmane$org@correo.hlbm.gob.ec>
-Reply-To: azimpremjicharityfoundation@gmail.com
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: samsung arm64 soc support?
+Date: Mon, 12 Jun 2017 09:06:31 +0200
+Message-ID: <CAJKOXPfbtr662Fpqh4jVP+vuDHhpc=B0Vfte4XOfv3dhpjfUDg@mail.gmail.com>
+References: <CAEQo2v76wd_8==V_XjEuxZj33XBkmFat71vPd0u6CuiW2VgY6A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from correo.hlbm.gob.ec ([190.214.24.250]:32938 "EHLO
-        correo.hlbm.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751912AbdFKXRN (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:48990 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752270AbdFLHGi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 11 Jun 2017 19:17:13 -0400
-Content-Description: Mail message body
+        Mon, 12 Jun 2017 03:06:38 -0400
+Received: from mail-io0-f171.google.com (mail-io0-f171.google.com [209.85.223.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6E8B23A02
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jun 2017 07:06:32 +0000 (UTC)
+Received: by mail-io0-f171.google.com with SMTP id k93so51559424ioi.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jun 2017 00:06:32 -0700 (PDT)
+In-Reply-To: <CAEQo2v76wd_8==V_XjEuxZj33XBkmFat71vPd0u6CuiW2VgY6A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Recipients <AzimHash@correo.hlbm.gob.ec>
+To: =?UTF-8?B?546L5bmz?= <gavin.wang.cd@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, patchwork@m.disordat.com, kgene.kim@samsung.com
 
-Hello,
+On Mon, Jun 12, 2017 at 4:30 AM, 王平 <gavin.wang.cd@gmail.com> wrote:
+> Dears,
+> do we have the plan of  the samsung arm64 soc support to the source tree,
+> for example exynos7420  soc? as you known ,the arm64 soc is used more and
+> more. thanks.
 
-I'm Azim Hashim Premji, an Indian business tycoon, investor, and philanthropist. I'm the chairman of Wipro Limited. I gave away 25 per cent of my personal wealth to charity. And I also pledged to give away the rest of 25% this year 2017.. I have decided to donate 750,000.00USD to you. If you are interested in my donation, do contact me for more info. I will also want you to be part of my Charity Foundation once you receive this Cash Donation if you don't mind..
+Hi,
 
-You can also read more about me via the link below
+Few ARM64 SoCs are already supported: Exynos7 and Exynos5433.
 
-http://en.wikipedia.org/wiki/Azim_Premji
-
-whatsapp:+91-886-718-2831
-
-CEO Wipro Limited
-Azim Hashim Premji
+Best regards,
+Krzysztof
