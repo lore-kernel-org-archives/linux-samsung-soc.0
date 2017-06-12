@@ -1,39 +1,39 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: samsung arm64 soc support?
-Date: Mon, 12 Jun 2017 09:06:31 +0200
-Message-ID: <CAJKOXPfbtr662Fpqh4jVP+vuDHhpc=B0Vfte4XOfv3dhpjfUDg@mail.gmail.com>
-References: <CAEQo2v76wd_8==V_XjEuxZj33XBkmFat71vPd0u6CuiW2VgY6A@mail.gmail.com>
+From: Andreas Larsson <andreas@gaisler.com>
+Subject: Re: [PATCH 27/44] sparc: remove leon_dma_ops
+Date: Mon, 12 Jun 2017 10:06:26 +0200
+Message-ID: <593E4B82.70306@gaisler.com>
+References: <20170608132609.32662-1-hch@lst.de> <20170608132609.32662-28-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:48990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752270AbdFLHGi (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 03:06:38 -0400
-Received: from mail-io0-f171.google.com (mail-io0-f171.google.com [209.85.223.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6E8B23A02
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jun 2017 07:06:32 +0000 (UTC)
-Received: by mail-io0-f171.google.com with SMTP id k93so51559424ioi.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jun 2017 00:06:32 -0700 (PDT)
-In-Reply-To: <CAEQo2v76wd_8==V_XjEuxZj33XBkmFat71vPd0u6CuiW2VgY6A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20170608132609.32662-28-hch@lst.de>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Christoph Hellwig <hch@lst.de>, x86@kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?546L5bmz?= <gavin.wang.cd@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, patchwork@m.disordat.com, kgene.kim@samsung.com
 
-On Mon, Jun 12, 2017 at 4:30 AM, 王平 <gavin.wang.cd@gmail.com> wrote:
-> Dears,
-> do we have the plan of  the samsung arm64 soc support to the source tree,
-> for example exynos7420  soc? as you known ,the arm64 soc is used more and
-> more. thanks.
+On 2017-06-08 15:25, Christoph Hellwig wrote:
+> We can just use pci32_dma_ops.
+>
+> Btw, given that leon is 32-bit and appears to be PCI based, do even need
+> the special case for it in get_arch_dma_ops at all?
 
-Hi,
+Hi!
 
-Few ARM64 SoCs are already supported: Exynos7 and Exynos5433.
+Yes, it is needed. LEON systems are AMBA bus based. The common case here 
+is DMA over AMBA buses. Some LEON systems have PCI bridges, but in 
+general CONFIG_PCI is not a given.
 
-Best regards,
-Krzysztof
+-- 
+Andreas Larsson
+Software Engineer
+Cobham Gaisler
