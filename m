@@ -1,310 +1,46 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V10 1/3] irq: Allow to pass the IRQF_TIMER flag with percpu irq request
-Date: Mon, 12 Jun 2017 15:52:02 +0200
-Message-ID: <1497275529-23565-1-git-send-email-daniel.lezcano@linaro.org>
-References: <20170612135108.GD2261@mai>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH] usb: host: ehci-exynos: Handle return value of
+ clk_prepare_enable
+Date: Mon, 12 Jun 2017 10:09:39 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1706121008340.2092-100000@iolanthe.rowland.org>
+References: <3aa745c2cea5b8a91d10f898bc201121001a9a0b.1497265923.git.arvind.yadav.cs@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170612135108.GD2261@mai>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, vincent.guittot@linaro.org, peterz@infradead.org, rafael@kernel.org, nicolas.pitre@linaro.org, Mark Rutland <mark.rutland@arm.com>, Vineet Gupta <vgupta@synopsys.com>, Marc Zyngier <marc.zyngier@arm.com>, Patrice Chotard <patrice.chotard@st.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Christoffer Dall <christoffer.dall@linaro.org>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Richard Cochran <rcochran@linutronix.de>, Ray Jui <ray.jui@broadcom.com>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>, linux-arm-kern
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:35750 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1752004AbdFLOJk (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 12 Jun 2017 10:09:40 -0400
+In-Reply-To: <3aa745c2cea5b8a91d10f898bc201121001a9a0b.1497265923.git.arvind.yadav.cs@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In the next changes, we track when the interrupts occur in order to
-statistically compute when is supposed to happen the next interrupt.
+On Mon, 12 Jun 2017, Arvind Yadav wrote:
 
-In all the interruptions, it does not make sense to store the timer interrupt
-occurences and try to predict the next interrupt as when know the expiration
-time.
+> clk_prepare_enable() can fail here and we must check its return value.
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
+>  drivers/usb/host/ehci-exynos.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index 7a603f6..26b6411 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -279,7 +279,9 @@ static int exynos_ehci_resume(struct device *dev)
+>  	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+>  	int ret;
+>  
+> -	clk_prepare_enable(exynos_ehci->clk);
+> +	ret = clk_prepare_enable(exynos_ehci->clk);
+> +	if (ret)
+> +		return ret;
+>  
+>  	ret = exynos_ehci_phy_enable(dev);
+>  	if (ret) {
 
-The request_irq() has a irq flags parameter and the timer drivers use it to
-pass the IRQF_TIMER flag, letting us know the interrupt is coming from a timer.
-Based on this flag, we can discard these interrupts when tracking them.
-
-But, the API request_percpu_irq does not allow to pass a flag, hence specifying
-if the interrupt type is a timer.
-
-Add a function request_percpu_irq_flags() where we can specify the flags. The
-request_percpu_irq() function is changed to be a wrapper to
-request_percpu_irq_flags() passing a zero flag parameter.
-
-Change the timers using request_percpu_irq() to use request_percpu_irq_flags()
-instead with the IRQF_TIMER flag set.
-
-For now, in order to prevent a misusage of this parameter, only the IRQF_TIMER
-flag (or zero) is a valid parameter to be passed to the
-request_percpu_irq_flags() function.
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Christoffer Dall <christoffer.dall@linaro.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
----
-Changelog:
-
-   V10:
-	- Drop the change for arch arm virtual timer
-	  https://lkml.org/lkml/2017/4/25/184
-   V9:
-	- Clarified the patch description
-	- Fixed EXPORT_SYMBOL_GPL(request_percpu_irq_flags)
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- arch/arm/kernel/smp_twd.c                |  3 ++-
- drivers/clocksource/arc_timer.c          |  4 ++--
- drivers/clocksource/arm_arch_timer.c     | 20 ++++++++++++--------
- drivers/clocksource/arm_global_timer.c   |  4 ++--
- drivers/clocksource/exynos_mct.c         |  7 ++++---
- drivers/clocksource/qcom-timer.c         |  4 ++--
- drivers/clocksource/time-armada-370-xp.c |  9 +++++----
- drivers/clocksource/timer-nps.c          |  6 +++---
- include/linux/interrupt.h                | 11 ++++++++++-
- kernel/irq/manage.c                      | 15 ++++++++++-----
- 10 files changed, 52 insertions(+), 31 deletions(-)
-
-diff --git a/arch/arm/kernel/smp_twd.c b/arch/arm/kernel/smp_twd.c
-index 895ae51..ce9fdcf 100644
---- a/arch/arm/kernel/smp_twd.c
-+++ b/arch/arm/kernel/smp_twd.c
-@@ -332,7 +332,8 @@ static int __init twd_local_timer_common_register(struct device_node *np)
- 		goto out_free;
- 	}
- 
--	err = request_percpu_irq(twd_ppi, twd_handler, "twd", twd_evt);
-+	err = request_percpu_irq_flags(twd_ppi, twd_handler, IRQF_TIMER, "twd",
-+				       twd_evt);
- 	if (err) {
- 		pr_err("twd: can't register interrupt %d (%d)\n", twd_ppi, err);
- 		goto out_free;
-diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
-index 2164973..66f2632 100644
---- a/drivers/clocksource/arc_timer.c
-+++ b/drivers/clocksource/arc_timer.c
-@@ -301,8 +301,8 @@ static int __init arc_clockevent_setup(struct device_node *node)
- 	}
- 
- 	/* Needs apriori irq_set_percpu_devid() done in intc map function */
--	ret = request_percpu_irq(arc_timer_irq, timer_irq_handler,
--				 "Timer0 (per-cpu-tick)", evt);
-+	ret = request_percpu_irq_flags(arc_timer_irq, timer_irq_handler, IRQF_TIMER,
-+				       "Timer0 (per-cpu-tick)", evt);
- 	if (ret) {
- 		pr_err("clockevent: unable to request irq\n");
- 		return ret;
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index 4bed671..22646b5 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -980,25 +980,29 @@ static int __init arch_timer_register(void)
- 	ppi = arch_timer_ppi[arch_timer_uses_ppi];
- 	switch (arch_timer_uses_ppi) {
- 	case ARCH_TIMER_VIRT_PPI:
--		err = request_percpu_irq(ppi, arch_timer_handler_virt,
--					 "arch_timer", arch_timer_evt);
-+		err = request_percpu_irq_flags(ppi, arch_timer_handler_virt,
-+					       IRQF_TIMER, "arch_timer",
-+					       arch_timer_evt);
- 		break;
- 	case ARCH_TIMER_PHYS_SECURE_PPI:
- 	case ARCH_TIMER_PHYS_NONSECURE_PPI:
--		err = request_percpu_irq(ppi, arch_timer_handler_phys,
--					 "arch_timer", arch_timer_evt);
-+		err = request_percpu_irq_flags(ppi, arch_timer_handler_phys,
-+					       IRQF_TIMER, "arch_timer",
-+					       arch_timer_evt);
- 		if (!err && arch_timer_has_nonsecure_ppi()) {
- 			ppi = arch_timer_ppi[ARCH_TIMER_PHYS_NONSECURE_PPI];
--			err = request_percpu_irq(ppi, arch_timer_handler_phys,
--						 "arch_timer", arch_timer_evt);
-+			err = request_percpu_irq_flags(ppi, arch_timer_handler_phys,
-+						       IRQF_TIMER, "arch_timer",
-+						       arch_timer_evt);
- 			if (err)
- 				free_percpu_irq(arch_timer_ppi[ARCH_TIMER_PHYS_SECURE_PPI],
- 						arch_timer_evt);
- 		}
- 		break;
- 	case ARCH_TIMER_HYP_PPI:
--		err = request_percpu_irq(ppi, arch_timer_handler_phys,
--					 "arch_timer", arch_timer_evt);
-+		err = request_percpu_irq_flags(ppi, arch_timer_handler_phys,
-+					       IRQF_TIMER, "arch_timer",
-+					       arch_timer_evt);
- 		break;
- 	default:
- 		BUG();
-diff --git a/drivers/clocksource/arm_global_timer.c b/drivers/clocksource/arm_global_timer.c
-index 123ed20..5a72ec1 100644
---- a/drivers/clocksource/arm_global_timer.c
-+++ b/drivers/clocksource/arm_global_timer.c
-@@ -302,8 +302,8 @@ static int __init global_timer_of_register(struct device_node *np)
- 		goto out_clk;
- 	}
- 
--	err = request_percpu_irq(gt_ppi, gt_clockevent_interrupt,
--				 "gt", gt_evt);
-+	err = request_percpu_irq_flags(gt_ppi, gt_clockevent_interrupt,
-+				       IRQF_TIMER, "gt", gt_evt);
- 	if (err) {
- 		pr_warn("global-timer: can't register interrupt %d (%d)\n",
- 			gt_ppi, err);
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 670ff0f..a48ca0f 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -524,9 +524,10 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
- 
- 	if (mct_int_type == MCT_INT_PPI) {
- 
--		err = request_percpu_irq(mct_irqs[MCT_L0_IRQ],
--					 exynos4_mct_tick_isr, "MCT",
--					 &percpu_mct_tick);
-+		err = request_percpu_irq_flags(mct_irqs[MCT_L0_IRQ],
-+					       exynos4_mct_tick_isr,
-+					       IRQF_TIMER, "MCT",
-+					       &percpu_mct_tick);
- 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
- 		     mct_irqs[MCT_L0_IRQ], err);
- 	} else {
-diff --git a/drivers/clocksource/qcom-timer.c b/drivers/clocksource/qcom-timer.c
-index ee358cd..8e876fc 100644
---- a/drivers/clocksource/qcom-timer.c
-+++ b/drivers/clocksource/qcom-timer.c
-@@ -174,8 +174,8 @@ static int __init msm_timer_init(u32 dgt_hz, int sched_bits, int irq,
- 	}
- 
- 	if (percpu)
--		res = request_percpu_irq(irq, msm_timer_interrupt,
--					 "gp_timer", msm_evt);
-+		res = request_percpu_irq_flags(irq, msm_timer_interrupt,
-+					       IRQF_TIMER, "gp_timer", msm_evt);
- 
- 	if (res) {
- 		pr_err("request_percpu_irq failed\n");
-diff --git a/drivers/clocksource/time-armada-370-xp.c b/drivers/clocksource/time-armada-370-xp.c
-index aea4380..fea81ad 100644
---- a/drivers/clocksource/time-armada-370-xp.c
-+++ b/drivers/clocksource/time-armada-370-xp.c
-@@ -309,10 +309,11 @@ static int __init armada_370_xp_timer_common_init(struct device_node *np)
- 	/*
- 	 * Setup clockevent timer (interrupt-driven).
- 	 */
--	res = request_percpu_irq(armada_370_xp_clkevt_irq,
--				armada_370_xp_timer_interrupt,
--				"armada_370_xp_per_cpu_tick",
--				armada_370_xp_evt);
-+	res = request_percpu_irq_flags(armada_370_xp_clkevt_irq,
-+				       armada_370_xp_timer_interrupt,
-+				       IRQF_TIMER,
-+				       "armada_370_xp_per_cpu_tick",
-+				       armada_370_xp_evt);
- 	/* Immediately configure the timer on the boot CPU */
- 	if (res) {
- 		pr_err("Failed to request percpu irq\n");
-diff --git a/drivers/clocksource/timer-nps.c b/drivers/clocksource/timer-nps.c
-index e74ea17..a83b6a4 100644
---- a/drivers/clocksource/timer-nps.c
-+++ b/drivers/clocksource/timer-nps.c
-@@ -256,9 +256,9 @@ static int __init nps_setup_clockevent(struct device_node *node)
- 		return ret;
- 
- 	/* Needs apriori irq_set_percpu_devid() done in intc map function */
--	ret = request_percpu_irq(nps_timer0_irq, timer_irq_handler,
--				 "Timer0 (per-cpu-tick)",
--				 &nps_clockevent_device);
-+	ret = request_percpu_irq_flags(nps_timer0_irq, timer_irq_handler,
-+				       IRQF_TIMER, "Timer0 (per-cpu-tick)",
-+				       &nps_clockevent_device);
- 	if (ret) {
- 		pr_err("Couldn't request irq\n");
- 		clk_disable_unprepare(clk);
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index a6fba48..89defd5 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -152,8 +152,17 @@ request_any_context_irq(unsigned int irq, irq_handler_t handler,
- 			unsigned long flags, const char *name, void *dev_id);
- 
- extern int __must_check
-+request_percpu_irq_flags(unsigned int irq, irq_handler_t handler,
-+			 unsigned long flags, const char *devname,
-+			 void __percpu *percpu_dev_id);
-+
-+static inline int __must_check
- request_percpu_irq(unsigned int irq, irq_handler_t handler,
--		   const char *devname, void __percpu *percpu_dev_id);
-+		   const char *devname, void __percpu *percpu_dev_id)
-+{
-+	return request_percpu_irq_flags(irq, handler, 0,
-+					devname, percpu_dev_id);
-+}
- 
- extern const void *free_irq(unsigned int, void *);
- extern void free_percpu_irq(unsigned int, void __percpu *);
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 070be98..057fde8 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1958,9 +1958,10 @@ int setup_percpu_irq(unsigned int irq, struct irqaction *act)
- }
- 
- /**
-- *	request_percpu_irq - allocate a percpu interrupt line
-+ *	request_percpu_irq_flags - allocate a percpu interrupt line
-  *	@irq: Interrupt line to allocate
-  *	@handler: Function to be called when the IRQ occurs.
-+ *	@flags: Interrupt type flags (IRQF_TIMER only)
-  *	@devname: An ascii name for the claiming device
-  *	@dev_id: A percpu cookie passed back to the handler function
-  *
-@@ -1973,8 +1974,9 @@ int setup_percpu_irq(unsigned int irq, struct irqaction *act)
-  *	the handler gets called with the interrupted CPU's instance of
-  *	that variable.
-  */
--int request_percpu_irq(unsigned int irq, irq_handler_t handler,
--		       const char *devname, void __percpu *dev_id)
-+int request_percpu_irq_flags(unsigned int irq, irq_handler_t handler,
-+			     unsigned long flags, const char *devname,
-+			     void __percpu *dev_id)
- {
- 	struct irqaction *action;
- 	struct irq_desc *desc;
-@@ -1988,12 +1990,15 @@ int request_percpu_irq(unsigned int irq, irq_handler_t handler,
- 	    !irq_settings_is_per_cpu_devid(desc))
- 		return -EINVAL;
- 
-+	if (flags && flags != IRQF_TIMER)
-+		return -EINVAL;
-+
- 	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
- 	if (!action)
- 		return -ENOMEM;
- 
- 	action->handler = handler;
--	action->flags = IRQF_PERCPU | IRQF_NO_SUSPEND;
-+	action->flags = flags | IRQF_PERCPU | IRQF_NO_SUSPEND;
- 	action->name = devname;
- 	action->percpu_dev_id = dev_id;
- 
-@@ -2014,7 +2019,7 @@ int request_percpu_irq(unsigned int irq, irq_handler_t handler,
- 
- 	return retval;
- }
--EXPORT_SYMBOL_GPL(request_percpu_irq);
-+EXPORT_SYMBOL_GPL(request_percpu_irq_flags);
- 
- /**
-  *	irq_get_irqchip_state - returns the irqchip state of a interrupt.
--- 
-2.7.4
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
