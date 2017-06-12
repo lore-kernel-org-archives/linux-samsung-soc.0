@@ -1,58 +1,61 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 00/35] defconfig: Cleanup from old entries
-Date: Mon, 12 Jun 2017 11:54:51 +0200
-Message-ID: <CAK8P3a3YN+5aJdqxwnpZaVpuucsmQUE3BuEpAf+q7uPXa1dgZw@mail.gmail.com>
-References: <20170608160836.12196-1-krzk@kernel.org>
- <CAK8P3a3bUeC3H2oNfdBedVY4UTCe8OgKbWmv46d5xfu8tC7tAg@mail.gmail.com>
- <20170610164351.7sxzvj4ojj3fbc7h@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170610164351.7sxzvj4ojj3fbc7h@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
-List-Post: <mailto:linux-snps-arc@lists.infradead.org>
-List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
-Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>, Rich Felker <dalias@libc.org>, Aurelien Jacquiot <a-jacquiot@ti.com>, Tony Lindgren <tony@atomide.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Liviu Dudau <liviu.dudau@arm.com>, "James E.J. Bottomley" <jejb@parisc-linux.org>, David Howells <dhowells@redhat.com>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, sparclinux <sparclinux@vger.kernel.org>, linux-hexagon@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>, Lennox Wu <lennox.wu@gmail.com>, Jonas Bonn <jonas@southpole.se>, Chen Liqin <liqin.linux@gmail.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-c6x-dev@linux-c6x.org, Yoshinori Sato <ysato@users.sourceforge.jp>, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-sh@vger.kernel.org
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] usb: dwc3: exynos: Handle return value of clk_prepare_enable
+Date: Mon, 12 Jun 2017 16:23:31 +0530
+Message-ID: <3e8b3037c345341c2bda612b6de204f6c83dde38.1497264433.git.arvind.yadav.cs@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: balbi@kernel.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Jun 10, 2017 at 6:43 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Fri, Jun 09, 2017 at 09:59:48PM +0200, Arnd Bergmann wrote:
->> On Thu, Jun 8, 2017 at 6:08 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> > Hi,
->> >
->> > While cleaning Samsung ARM defconfigs with savedefconfig, I encountered
->> > similar obsolete entries in other files.
->> >
->> > Except the ARM, no dependencies.
->> > For ARM, the rest of patches depend on the first change (otherwise
->> > it might not apply cleanly).
->>
->> Great work!
->>
->> I looked at all the ARM patches, and everything looks good to me (the
->> changlog linewrapping may be suboptimal for readability in some cases,
->> if I had to say anything negative ;-) ).
->>
->> Please add my Acked-by to the ARM patches and send a pull request.
->
-> Thanks, I'll send you ARM part in pull request.
+clk_prepare_enable() can fail here and we must check its return value.
 
-Ok
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/usb/dwc3/dwc3-exynos.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-> As for the rest, I think respective arch/platform maintainers should
-> take it.
-
-I suspect most will apply the patches, but some architectures maintainers
-are not very active. If you are motivated, you could resend the ones
-that missed out to Andrew Morton, or you just leave the architectures
-to bitrot more. ;-)
-
-     Arnd
+diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+index 98f74ff..e089df7 100644
+--- a/drivers/usb/dwc3/dwc3-exynos.c
++++ b/drivers/usb/dwc3/dwc3-exynos.c
+@@ -125,12 +125,16 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 		dev_err(dev, "couldn't get clock\n");
+ 		return -EINVAL;
+ 	}
+-	clk_prepare_enable(exynos->clk);
++	ret = clk_prepare_enable(exynos->clk);
++	if (ret)
++		return ret;
+ 
+ 	exynos->susp_clk = devm_clk_get(dev, "usbdrd30_susp_clk");
+ 	if (IS_ERR(exynos->susp_clk))
+ 		exynos->susp_clk = NULL;
+-	clk_prepare_enable(exynos->susp_clk);
++	ret = clk_prepare_enable(exynos->susp_clk);
++	if (ret)
++		goto susp_clk_err;
+ 
+ 	if (of_device_is_compatible(node, "samsung,exynos7-dwusb3")) {
+ 		exynos->axius_clk = devm_clk_get(dev, "usbdrd30_axius_clk");
+@@ -139,7 +143,9 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 			ret = -ENODEV;
+ 			goto axius_clk_err;
+ 		}
+-		clk_prepare_enable(exynos->axius_clk);
++		ret = clk_prepare_enable(exynos->axius_clk);
++		if (ret)
++			goto axius_clk_err;
+ 	} else {
+ 		exynos->axius_clk = NULL;
+ 	}
+@@ -197,6 +203,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 	clk_disable_unprepare(exynos->axius_clk);
+ axius_clk_err:
+ 	clk_disable_unprepare(exynos->susp_clk);
++susp_clk_err:
+ 	clk_disable_unprepare(exynos->clk);
+ 	return ret;
+ }
+-- 
+1.9.1
