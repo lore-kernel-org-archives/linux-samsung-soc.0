@@ -1,46 +1,21 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH] usb: host: ehci-exynos: Handle return value of
- clk_prepare_enable
-Date: Mon, 12 Jun 2017 10:09:39 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1706121008340.2092-100000@iolanthe.rowland.org>
-References: <3aa745c2cea5b8a91d10f898bc201121001a9a0b.1497265923.git.arvind.yadav.cs@gmail.com>
+From: "Dave Dawes" <dmoore32@student.savannahstate.edu>
+Subject: I Would love to discuse something with you.
+Date: Mon, 12 Jun 2017 07:52:10 -0700
+Message-ID: <CY1PR0101MB12282529CBCCF81AE3A5F88083CD0__49373.4783064157$1497279169$gmane$org@CY1PR0101MB1228.prod.exchangelabs.com>
+Reply-To: ddawes231@qq.com
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:35750 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1752004AbdFLOJk (ORCPT
+Received: from mail-cys01nam02hn0224.outbound.protection.outlook.com ([104.47.37.224]:7154
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752121AbdFLOwe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 10:09:40 -0400
-In-Reply-To: <3aa745c2cea5b8a91d10f898bc201121001a9a0b.1497265923.git.arvind.yadav.cs@gmail.com>
+        Mon, 12 Jun 2017 10:52:34 -0400
+Content-Description: Mail message body
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Recipients <dmoore32@student.savannahstate.edu>
 
-On Mon, 12 Jun 2017, Arvind Yadav wrote:
-
-> clk_prepare_enable() can fail here and we must check its return value.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  drivers/usb/host/ehci-exynos.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-> index 7a603f6..26b6411 100644
-> --- a/drivers/usb/host/ehci-exynos.c
-> +++ b/drivers/usb/host/ehci-exynos.c
-> @@ -279,7 +279,9 @@ static int exynos_ehci_resume(struct device *dev)
->  	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
->  	int ret;
->  
-> -	clk_prepare_enable(exynos_ehci->clk);
-> +	ret = clk_prepare_enable(exynos_ehci->clk);
-> +	if (ret)
-> +		return ret;
->  
->  	ret = exynos_ehci_phy_enable(dev);
->  	if (ret) {
-
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+=20
