@@ -1,10 +1,10 @@
 From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] usb: dwc3: exynos: Handle return value of clk_prepare_enable
-Date: Mon, 12 Jun 2017 16:23:31 +0530
-Message-ID: <3e8b3037c345341c2bda612b6de204f6c83dde38.1497264433.git.arvind.yadav.cs@gmail.com>
+Subject: [PATCH] usb: host: ehci-exynos: Handle return value of clk_prepare_enable
+Date: Mon, 12 Jun 2017 16:45:14 +0530
+Message-ID: <3aa745c2cea5b8a91d10f898bc201121001a9a0b.1497265923.git.arvind.yadav.cs@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@kernel.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+To: stern@rowland.harvard.edu, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, gregkh@linuxfoundation.org
 Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
@@ -12,50 +12,23 @@ clk_prepare_enable() can fail here and we must check its return value.
 
 Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- drivers/usb/dwc3/dwc3-exynos.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/usb/host/ehci-exynos.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index 98f74ff..e089df7 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -125,12 +125,16 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
- 		dev_err(dev, "couldn't get clock\n");
- 		return -EINVAL;
- 	}
--	clk_prepare_enable(exynos->clk);
-+	ret = clk_prepare_enable(exynos->clk);
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index 7a603f6..26b6411 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -279,7 +279,9 @@ static int exynos_ehci_resume(struct device *dev)
+ 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+ 	int ret;
+ 
+-	clk_prepare_enable(exynos_ehci->clk);
++	ret = clk_prepare_enable(exynos_ehci->clk);
 +	if (ret)
 +		return ret;
  
- 	exynos->susp_clk = devm_clk_get(dev, "usbdrd30_susp_clk");
- 	if (IS_ERR(exynos->susp_clk))
- 		exynos->susp_clk = NULL;
--	clk_prepare_enable(exynos->susp_clk);
-+	ret = clk_prepare_enable(exynos->susp_clk);
-+	if (ret)
-+		goto susp_clk_err;
- 
- 	if (of_device_is_compatible(node, "samsung,exynos7-dwusb3")) {
- 		exynos->axius_clk = devm_clk_get(dev, "usbdrd30_axius_clk");
-@@ -139,7 +143,9 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
- 			ret = -ENODEV;
- 			goto axius_clk_err;
- 		}
--		clk_prepare_enable(exynos->axius_clk);
-+		ret = clk_prepare_enable(exynos->axius_clk);
-+		if (ret)
-+			goto axius_clk_err;
- 	} else {
- 		exynos->axius_clk = NULL;
- 	}
-@@ -197,6 +203,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
- 	clk_disable_unprepare(exynos->axius_clk);
- axius_clk_err:
- 	clk_disable_unprepare(exynos->susp_clk);
-+susp_clk_err:
- 	clk_disable_unprepare(exynos->clk);
- 	return ret;
- }
+ 	ret = exynos_ehci_phy_enable(dev);
+ 	if (ret) {
 -- 
 1.9.1
