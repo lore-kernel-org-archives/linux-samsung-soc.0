@@ -1,56 +1,81 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos/dsi: Remove error handling for bridge_node
- DT parsing
-Date: Tue, 13 Jun 2017 18:25:50 +0900
-Message-ID: <593FAF9E.1040406@samsung.com>
-References: <CGME20170609092307epcas5p3a7851f80bd799626782941a640824521@epcas5p3.samsung.com>
-        <1497000180-30669-1-git-send-email-hoegeun.kwon@samsung.com>
+From: <nenep@hkg.odn.ne.jp>
+Subject: (unknown)
+Date: Tue, 13 Jun 2017 10:15:25 -0000
+Message-ID: <149734892538.29695.12779691975523890757@zaural.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: application/zip; name="2624499375.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:27367 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752397AbdFMJZx (ORCPT
+Received: from ws150.zone31-163-175.zaural.ru ([31.163.175.150]:41338 "HELO
+        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1752140AbdFMKPs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 13 Jun 2017 05:25:53 -0400
-In-reply-to: <1497000180-30669-1-git-send-email-hoegeun.kwon@samsung.com>
+        Tue, 13 Jun 2017 06:15:48 -0400
+Subject: 
+Content-Disposition: attachment
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
-Cc: javier@osg.samsung.com, a.hajda@samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-
-
-2017년 06월 09일 18:23에 Hoegeun Kwon 이(가) 쓴 글:
-> The bridge_node is unnecessary between FIMD and DSIM. If don't remove
-> error handling, it will not work between FIMD and DSIM. So remove
-> error handling.
-
-Please make sure to describe why bridge_node is unnecessary.
-For example,
-In case of Exynos SoC, a bridge device such as mDNIe and MIC could be placed between Display Controller and MIPI DSI device but the bridge device is required optionally.
-
-Thanks,
-Inki Dae
-
-> 
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index a11b795..6ee0dac 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1651,8 +1651,6 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
->  		return ret;
->  
->  	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
-> -	if (!dsi->bridge_node)
-> -		return -EINVAL;
->  
->  	return 0;
->  }
-> 
+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
