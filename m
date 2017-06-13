@@ -1,42 +1,47 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv2] ARM: dts: exynos: add needs-hpd to &hdmicec for Odroid-U3
-Date: Tue, 13 Jun 2017 15:47:06 +0200
-Message-ID: <a357d30b-9f83-ec65-c8a1-a9e81236f9ee@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Linux Media Mailing List <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] dt-bindings: usb: exynos-usb: Add missing required VDD properties
+Date: Tue, 13 Jun 2017 18:29:25 +0200
+Message-ID: <20170613162925.21847-1-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:59374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753781AbdFMQ3o (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 13 Jun 2017 12:29:44 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@kernel.org>
 
-The Odroid-U3 board has an IP4791CZ12 level shifter that is
-disabled if the HPD is low, which means that the CEC pin is
-disabled as well.
+Since commit bd8ce544ec35 ("usb: dwc3: exynos: Make provision for vdd
+regulators") vdd33-supply and vdd10-supply are required so document them
+in bindings.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
-Changes since v1: moved &hdmicec to after &buck to keep it somewhat
-alphabetical.
----
- arch/arm/boot/dts/exynos4412-odroidu3.dts | 4 ++++
+ Documentation/devicetree/bindings/usb/exynos-usb.txt | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index 7504a5aa538e..44a4de08466b 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -78,6 +78,10 @@
- 	regulator-max-microvolt = <3300000>;
- };
-
-+&hdmicec {
-+	needs-hpd;
-+};
-+
- /* VDDQ for MSHC (eMMC card) */
- &ldo22_reg {
- 	regulator-name = "LDO22_VDDQ_MMC4_2.8V";
+diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+index 9b4dbe3b2acc..78ebebb66dad 100644
+--- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
++++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+@@ -92,6 +92,8 @@ Required properties:
+ 	   parent's address space
+  - clocks: Clock IDs array as required by the controller.
+  - clock-names: names of clocks correseponding to IDs in the clock property
++ - vdd10-supply: 1.0V powr supply
++ - vdd33-supply: 3.0V/3.3V power supply
+ 
+ Sub-nodes:
+ The dwc3 core should be added as subnode to Exynos dwc3 glue.
+@@ -107,6 +109,8 @@ Example:
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
++		vdd10-supply = <&ldo11_reg>;
++		vdd33-supply = <&ldo9_reg>;
+ 
+ 		dwc3 {
+ 			compatible = "synopsys,dwc3";
 -- 
-2.11.0
+2.9.3
