@@ -1,66 +1,52 @@
-From: Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>
-Subject: Re: [PATCH 21/44] powerpc: implement ->mapping_error
-Date: Wed, 14 Jun 2017 19:17:27 +1000
-Message-ID: <87vanz2ajc.fsf@concordia.ellerman.id.au>
-References: <20170608132609.32662-1-hch@lst.de>
-	<20170608132609.32662-22-hch@lst.de>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2] drm/exynos/dsi: Remove error handling for bridge_node
+ DT parsing
+Date: Wed, 14 Jun 2017 14:30:02 +0200
+Message-ID: <e8ea4c40-4065-54de-7277-26c236bab36a@math.uni-bielefeld.de>
+References: <CGME20170614063359epcas5p46658bba447468cd367d0684bd9485bf8@epcas5p4.samsung.com>
+ <1497422020-8810-1-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20170608132609.32662-22-hch-jcswGhMUV9g@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, linux-c6x-dev-jPsnJVOj+W6hPH1hqNUYSQ@public.gmane.org, linux-hexagon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, openrisc-cunTk1MwBs9a3B2Vnqf2dGD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xtensa-PjhNF2WwrV/0Sa2dR60CXw@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alistair Popple <apopple-8fk3Idey6ehBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1497422020-8810-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org> writes:
-
-> DMA_ERROR_CODE is going to go away, so don't rely on it.  Instead
-> define a ->mapping_error method for all IOMMU based dma operation
-> instances.  The direct ops don't ever return an error and don't
-> need a ->mapping_error method.
->
-> Signed-off-by: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
-> ---
->  arch/powerpc/include/asm/dma-mapping.h |  4 ----
->  arch/powerpc/include/asm/iommu.h       |  4 ++++
->  arch/powerpc/kernel/dma-iommu.c        |  6 ++++++
->  arch/powerpc/kernel/iommu.c            | 28 ++++++++++++++--------------
->  arch/powerpc/platforms/cell/iommu.c    |  1 +
->  arch/powerpc/platforms/pseries/vio.c   |  3 ++-
->  6 files changed, 27 insertions(+), 19 deletions(-)
-
-I also see:
-
-  arch/powerpc/kernel/dma.c:const struct dma_map_ops dma_direct_ops = {
-
-Which you mentioned can't fail.
-
-  arch/powerpc/platforms/pseries/ibmebus.c:static const struct dma_map_ops ibmebus_dma_ops = {
-
-Which can't fail.
-
-And:
-
-  arch/powerpc/platforms/powernv/npu-dma.c:static const struct dma_map_ops dma_npu_ops = {
-  arch/powerpc/platforms/ps3/system-bus.c:static const struct dma_map_ops ps3_sb_dma_ops = {
-  arch/powerpc/platforms/ps3/system-bus.c:static const struct dma_map_ops ps3_ioc0_dma_ops = {
-
-All of which look like they definitely can fail, but return 0 on error
-and don't implement ->mapping_error.
-
-So I guess I'm acking this and adding a TODO to fix up the NPU code at
-least, the ps3 code is probably better left alone these days.
-
-Acked-by: Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>
-
-cheers
+SGVsbG8gSG9lZ2V1biwKCm15IGxhc3QgcXVlc3Rpb24gKGRvZXMgdGhpcyByZWdyZXNzIHRoZSBj
+YXNlICJub2RlIHJlcXVpcmVkLCBidXQKYWJzZW50Iikgc3RpbGwgc3RhbmRzLgoKCkhvZWdldW4g
+S3dvbiB3cm90ZToKPiBSZW1vdmUgdGhlIGVycm9yIGhhbmRsaW5nIG9mIGJyaWRnZV9ub2RlIGJl
+Y2F1c2UgdGhlIGJyaWRnZV9ub2RlIGlzCj4gcmVxdWlyZWQgb3B0aW9uYWxseS4KSSBkb24ndCB0
+aGluayBhIGNvbnN0cnVjdGlvbiBsaWtlIHRoYXQgZXhpc3RzLiBFaXRoZXIgaXQncyByZXF1aXJl
+ZCwgb3IKaXQncyBvcHRpb25hbC4gInJlcXVpcmVkIG9wdGlvbmFsbHkiIG1ha2VzIG5vIHNlbnNl
+IHRvIG1lIChidXQgSSdtIG5vdCBhCm5hdGl2ZSBzcGVha2VyKS4KCi0gVG9iaWFzCgoKPiBGb3Ig
+ZXhhbXBsZSwgSW4gY2FzZSBvZiBFeHlub3MgU29DLCBhIGJyaWRnZSBkZXZpY2Ugc3VjaCBhcyBt
+RE5JZSBhbmQKPiBNSUMgY291bGQgYmUgcGxhY2VkIGJldHdlZW4gRGlzcGxheSBDb250cm9sbGVy
+IGFuZCBNSVBJIERTSSBkZXZpY2UgYnV0Cj4gdGhlIGJyaWRnZSBkZXZpY2UgaXMgcmVxdWlyZWQg
+b3B0aW9uYWxseS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4ua3dv
+bkBzYW1zdW5nLmNvbT4KPiAtLS0KPiAKPiBIaSBJbmtpIGFuZCBUb2JpYXMsCj4gCj4gVGhhbmtz
+IGZvciB5b3VyIHJldmlldy4KPiAKPiBDaGFuZ2VzIGZvciBWMjoKPiAtIE1vZGlmaWVkIHRoZSBj
+b21taXQgbWVzc2FnZSBpbiBtb3JlIGRldGFpbCB0aGFuIGJlZm9yZS4KPiAKPiBCZXN0IFJlZ2Fy
+ZHMsCj4gSG9lZ2V1bgo+IAo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNp
+LmMgfCAyIC0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiBpbmRleCBhMTFiNzk1Li42ZWUwZGFjIDEw
+MDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+ICsr
+KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+IEBAIC0xNjUxLDgg
+KzE2NTEsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfcGFyc2VfZHQoc3RydWN0IGV4eW5vc19k
+c2kgKmRzaSkKPiAgCQlyZXR1cm4gcmV0Owo+ICAKPiAgCWRzaS0+YnJpZGdlX25vZGUgPSBvZl9n
+cmFwaF9nZXRfcmVtb3RlX25vZGUobm9kZSwgRFNJX1BPUlRfSU4sIDApOwo+IC0JaWYgKCFkc2kt
+PmJyaWRnZV9ub2RlKQo+IC0JCXJldHVybiAtRUlOVkFMOwo+ICAKPiAgCXJldHVybiAwOwo+ICB9
+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
