@@ -1,69 +1,33 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 2/2] pinctrl: samsung: Fix invalid register offset used for Exynos5433 external interrupts
-Date: Wed, 14 Jun 2017 15:18:28 +0200
-Message-ID: <20170614131828.28683-2-krzk@kernel.org>
-References: <20170614131828.28683-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170614131828.28683-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Donglin Peng <dolinux.peng@gmail.com>, stable@vger.kernel.org
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/3] dt-bindings: Add support for samsung s6e63j0x03
+ panel binding
+Date: Wed, 14 Jun 2017 10:28:43 -0500
+Message-ID: <20170614152843.ppwqvk6qkkibt5vu@rob-hp-laptop>
+References: <1496984354-5271-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170609045938epcas5p2025914487ca22a0a2d419824402e89e9@epcas5p2.samsung.com>
+ <1496984354-5271-2-git-send-email-hoegeun.kwon@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1496984354-5271-2-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When setting the pin function for external interrupts, the driver used
-wrong IO memory address base.  The pin function register is always under
-pctl_base, not the eint_base.
+On Fri, Jun 09, 2017 at 01:59:12PM +0900, Hoegeun Kwon wrote:
+> The Samsung s6e63j0x03 is a 1.63" 320x320 AMOLED panel connected using
+> MIPI-DSI interfaces.
+> 
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  .../bindings/display/panel/samsung,s6e63j0x03.txt  | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e63j0x03.txt
 
-By updating wrong register, the external interrupts for chosen GPIO
-would not work at all and some other GPIO might be configured to wrong
-value.
-
-Platforms other than Exynos5433 should not be affected as eint_base
-equals pctl_base in such case.
-
-Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
-Cc: <stable@vger.kernel.org>
-Reported-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
----
-
-Tested on Odroid XU3 (so actually this particular case was not
-reproduced).
-Please kindly test on Exynos5433.
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 96068b40d32a..d95a746f45d7 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -174,10 +174,10 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
- 
- 	spin_lock_irqsave(&bank->slock, flags);
- 
--	con = readl(bank->eint_base + reg_con);
-+	con = readl(bank->pctl_base + reg_con);
- 	con &= ~(mask << shift);
- 	con |= EXYNOS_EINT_FUNC << shift;
--	writel(con, bank->eint_base + reg_con);
-+	writel(con, bank->pctl_base + reg_con);
- 
- 	spin_unlock_irqrestore(&bank->slock, flags);
- 
-@@ -206,10 +206,10 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- 
- 	spin_lock_irqsave(&bank->slock, flags);
- 
--	con = readl(bank->eint_base + reg_con);
-+	con = readl(bank->pctl_base + reg_con);
- 	con &= ~(mask << shift);
- 	con |= FUNC_INPUT << shift;
--	writel(con, bank->eint_base + reg_con);
-+	writel(con, bank->pctl_base + reg_con);
- 
- 	spin_unlock_irqrestore(&bank->slock, flags);
- 
--- 
-2.9.3
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
