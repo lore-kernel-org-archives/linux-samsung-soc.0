@@ -1,47 +1,55 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] dt-bindings: usb: exynos-usb: Add missing required VDD properties
-Date: Tue, 13 Jun 2017 18:29:25 +0200
-Message-ID: <20170613162925.21847-1-krzk@kernel.org>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v2] drm/exynos/dsi: Remove error handling for bridge_node DT
+ parsing
+Date: Wed, 14 Jun 2017 15:33:40 +0900
+Message-ID: <1497422020-8810-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170614063359epcas5p46658bba447468cd367d0684bd9485bf8@epcas5p4.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753781AbdFMQ3o (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:51691 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750764AbdFNGeC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 13 Jun 2017 12:29:44 -0400
+        Wed, 14 Jun 2017 02:34:02 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@kernel.org>
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
+Cc: javier@osg.samsung.com, a.hajda@samsung.com, tjakobi@math.uni-bielefeld.de, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-Since commit bd8ce544ec35 ("usb: dwc3: exynos: Make provision for vdd
-regulators") vdd33-supply and vdd10-supply are required so document them
-in bindings.
+Remove the error handling of bridge_node because the bridge_node is
+required optionally.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+For example, In case of Exynos SoC, a bridge device such as mDNIe and
+MIC could be placed between Display Controller and MIPI DSI device but
+the bridge device is required optionally.
+
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
 ---
- Documentation/devicetree/bindings/usb/exynos-usb.txt | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-index 9b4dbe3b2acc..78ebebb66dad 100644
---- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-@@ -92,6 +92,8 @@ Required properties:
- 	   parent's address space
-  - clocks: Clock IDs array as required by the controller.
-  - clock-names: names of clocks correseponding to IDs in the clock property
-+ - vdd10-supply: 1.0V powr supply
-+ - vdd33-supply: 3.0V/3.3V power supply
+Hi Inki and Tobias,
+
+Thanks for your review.
+
+Changes for V2:
+- Modified the commit message in more detail than before.
+
+Best Regards,
+Hoegeun
+
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index a11b795..6ee0dac 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1651,8 +1651,6 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
+ 		return ret;
  
- Sub-nodes:
- The dwc3 core should be added as subnode to Exynos dwc3 glue.
-@@ -107,6 +109,8 @@ Example:
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-+		vdd10-supply = <&ldo11_reg>;
-+		vdd33-supply = <&ldo9_reg>;
+ 	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
+-	if (!dsi->bridge_node)
+-		return -EINVAL;
  
- 		dwc3 {
- 			compatible = "synopsys,dwc3";
+ 	return 0;
+ }
 -- 
-2.9.3
+1.9.1
