@@ -1,43 +1,106 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [GIT PULL] clk/samsung updates for 4.13
-Date: Wed, 14 Jun 2017 10:49:30 -0700
-Message-ID: <20170614174930.GE20170@codeaurora.org>
-References: <CGME20170609153423epcas1p1ed185ee02db60f56deccdc271ecbc927@epcas1p1.samsung.com>
- <9a88fc9f-dcf0-806d-dfa8-25767c11a5d7@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 0/3] Add support for the S6E3HF2 panel on TM2e board
+Date: Wed, 14 Jun 2017 20:19:34 +0200
+Message-ID: <20170614181934.GF14971@ulmo>
+References: <CGME20170418084047epcas5p493261a4cb9204e682f60cde8d659565c@epcas5p4.samsung.com>
+ <1492504836-19225-1-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9a88fc9f-dcf0-806d-dfa8-25767c11a5d7@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============0616236222=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1492504836-19225-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, andi.shyti@samsung.com, catalin.marinas@arm.com, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-kernel@vger.kernel.org, krzk@kernel.org, javier@osg.samsung.com, robh+dt@kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/09, Sylwester Nawrocki wrote:
-> Hi Mike, Stephen,
-> 
-> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
-> 
->   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.13-samsung
-> 
-> for you to fetch changes up to 9842452acd3dae661f4430c4460edd1fc188377f:
-> 
->   clk: samsung: exynos542x: Add EPLL rate table (2017-06-09 13:12:55 +0200)
-> 
-> ----------------------------------------------------------------
-> clk/samsung updates for 4.13
-> 
->  - conversion to the clk_hw API
->  - definitions and fixes of exynos5420 SoC audio subsystem
->    related clocks
 
-Thanks. Pulled into clk-next.
+--===============0616236222==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CXFpZVxO6m2Ol4tQ"
+Content-Disposition: inline
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+--CXFpZVxO6m2Ol4tQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Apr 18, 2017 at 05:40:33PM +0900, Hoegeun Kwon wrote:
+> Hi all,
+>=20
+> The purpose of this patch is add support for s6e3hf2 AMOLED panel on
+> the TM2e board. The panel has 1600x2560 resolution in 5.65" physical
+> panel in the TM2e device.
+>=20
+> The s6e3hf2 panel(5.65") is simliar to the previous s6e3ha2 panel(5.7"),
+> but resolution and some command message are different. So it can be
+> distinguished as a compatiblitiy string.
+>=20
+> Best regards,
+> Hoegeun
+>=20
+> Changes for V3:
+> - Remove te-gpios property in dts.
+> - Added Reviewed-by: Andrzej Hajda <a.hajda@samsung.com> on all patches.
+> - Added Reviewed-by: Inki Dae <inki.dae@samsung.com> on patch (2/3).
+>=20
+> Changes for V2:
+> - Add new compatible string to "samsung,s6e3ha2.txt binding with comments.
+> - Fix the panel name from s6e3ha2-e to s6e3hf2
+>=20
+> Hoegeun Kwon (3):
+>   dt-bindings: Add support for samsung s6e3hf2 panel
+>   drm/panel: s6e3ha2: Add support for s6e3hf2 panel on TM2e board
+>   arm64: dts: exynos: Add support for s6e3hf2 panel device on TM2e board
+>=20
+>  .../bindings/display/panel/samsung,s6e3ha2.txt     |  5 +-
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     | 11 ++++
+>  drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 64 ++++++++++++++++=
++++---
+>  3 files changed, 72 insertions(+), 8 deletions(-)
+
+Applied patches 1/3 and 2/3 to drm-misc-next, thanks.
+
+Thierry
+
+--CXFpZVxO6m2Ol4tQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAllBfjYACgkQ3SOs138+
+s6GbhA/+JCGP5yoo1KtohnPnK3M5JYxtwmCM8EJ0I+3EGhRqi6NegRKPzo72Zrfv
+I3JK8MRLYWdOULVjutSdjkkBSHf23Zdd4/5ry2X4kJcyYo6bR1H7zNitlWcwPaW7
+CZSFX6cm+Yh/Smr46r4vjnd0xqusjdpyX5H1zJc/rkVQ5PLGL4Vl2gPI3+pJpgAo
+RP1F7K/g2fQzrfA62N9KIyFRKRBT5CpHgGk1+rwrCKtTmJ6LE+iqXIEV8O4vtrN9
+gr7z7u846sdFDH7be7QG4PBx3GHRj+oOB7wTSw94LJ8CIDSxfeUGZCCPBK8RtwW0
+xnWPsupg9P7uMFNm8XBkGX945aaGPHokPs2owtYhxJE6sVndvlFK8C2Nx6952MOz
+1TLETPbnE8wwvD8g6VFgBejhhk7CmYvnHBSUHl0Wqs1pwA7szmYbmE7RdVETcbtd
+bNT0Gqpg18hkRe6gGiNcIUIXm2I0nIFUJRZVUfolivns8tZe2eLQTAm5Df/6/hRK
+VUIMcwCNvqL9LoJjVQaX1o7MNSDbZqo+J1yWOHFcR80mIl5TTCUhOL4b7oPoxodE
+d/rGGj91SCgmk5KeZStb0bt5QoeOUHnKUAvQqEoRbMdvOLsBbKDn3tOpXaMv/ZCr
+q3oJUfy49FJG0/aNuBWvYbdeeZ/sW16fAvVae5nB9uDWtedvdAQ=
+=fyeu
+-----END PGP SIGNATURE-----
+
+--CXFpZVxO6m2Ol4tQ--
+
+--===============0616236222==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0616236222==--
