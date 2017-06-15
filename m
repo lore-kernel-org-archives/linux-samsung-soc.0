@@ -1,105 +1,56 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] pinctrl: samsung: Use define from dt-bindings for pin mux function
-Date: Thu, 15 Jun 2017 17:06:28 +0200
-Message-ID: <20170615150628.26723-2-krzk@kernel.org>
-References: <20170615150628.26723-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170615150628.26723-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFT 1/2] pinctrl: samsung: Fix NULL pointer exception on
+ external interrupts on S3C24xx
+Date: Thu, 15 Jun 2017 17:28:36 +0200
+Message-ID: <20170615152836.j6y4k4ydkterifii@kozik-lap>
+References: <20170614131828.28683-1-krzk@kernel.org>
+ <44ca46f9-0607-d750-4f26-eab717518fd9@163.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <44ca46f9-0607-d750-4f26-eab717518fd9@163.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Yao Lihua <ylhuajnu@163.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sergio Prado <sergio.prado@e-labworks.com>, stable@vger.kernel.org, Donglin Peng <dolinux.peng@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-We already have macros for values used by driver and Device Tree
-sources for Pin mux configuration.  Use them instead of duplicating
-defines.
+On Thu, Jun 15, 2017 at 10:42:30PM +0800, Yao Lihua wrote:
+> Hi Krzysztof,
+> 
+> Another Oops on S3C6410.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c  | 6 ++++--
- drivers/pinctrl/samsung/pinctrl-exynos.h  | 1 -
- drivers/pinctrl/samsung/pinctrl-samsung.c | 4 +++-
- drivers/pinctrl/samsung/pinctrl-samsung.h | 4 ----
- 4 files changed, 7 insertions(+), 8 deletions(-)
+(...)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index d95a746f45d7..bdc4e0310060 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -31,6 +31,8 @@
- #include <linux/err.h>
- #include <linux/soc/samsung/exynos-pmu.h>
- 
-+#include <dt-bindings/pinctrl/samsung.h>
-+
- #include "pinctrl-samsung.h"
- #include "pinctrl-exynos.h"
- 
-@@ -176,7 +178,7 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
- 
- 	con = readl(bank->pctl_base + reg_con);
- 	con &= ~(mask << shift);
--	con |= EXYNOS_EINT_FUNC << shift;
-+	con |= EXYNOS_PIN_FUNC_EINT << shift;
- 	writel(con, bank->pctl_base + reg_con);
- 
- 	spin_unlock_irqrestore(&bank->slock, flags);
-@@ -208,7 +210,7 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- 
- 	con = readl(bank->pctl_base + reg_con);
- 	con &= ~(mask << shift);
--	con |= FUNC_INPUT << shift;
-+	con |= EXYNOS_PIN_FUNC_INPUT << shift;
- 	writel(con, bank->pctl_base + reg_con);
- 
- 	spin_unlock_irqrestore(&bank->slock, flags);
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
-index b90139715c8f..7639b926c5c1 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-@@ -32,7 +32,6 @@
- #define EXYNOS7_WKUP_EMASK_OFFSET	0x900
- #define EXYNOS7_WKUP_EPEND_OFFSET	0xA00
- #define EXYNOS_SVC_OFFSET		0xB08
--#define EXYNOS_EINT_FUNC		0xF
- 
- /* helpers to access interrupt service register */
- #define EXYNOS_SVC_GROUP_SHIFT		3
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index a25c3ffae25c..86c98c1dec3a 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -30,6 +30,8 @@
- #include <linux/of_device.h>
- #include <linux/spinlock.h>
- 
-+#include <dt-bindings/pinctrl/samsung.h>
-+
- #include "../core.h"
- #include "pinctrl-samsung.h"
- 
-@@ -586,7 +588,7 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
- 	data = readl(reg);
- 	data &= ~(mask << shift);
- 	if (!input)
--		data |= FUNC_OUTPUT << shift;
-+		data |= EXYNOS_PIN_FUNC_OUTPUT << shift;
- 	writel(data, reg);
- 
- 	return 0;
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 61c4cab0ad24..15b26c786b1e 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -25,10 +25,6 @@
- 
- #include <linux/gpio.h>
- 
--/* pinmux function number for pin as gpio output line */
--#define FUNC_INPUT	0x0
--#define FUNC_OUTPUT	0x1
--
- /**
-  * enum pincfg_type - possible pin configuration types supported.
-  * @PINCFG_TYPE_FUNC: Function configuration.
--- 
-2.9.3
+ > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> > index f542642eed8d..a25c3ffae25c 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> > @@ -1013,6 +1013,11 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+> >   		bank->eint_base = virt_base[0];
+> >   		bank->pctl_base = virt_base[bdata->pctl_res_idx];
+> >   	}
+> > +	/*
+> > +	 * For legacy platforms which need to access IO memory through
+> > +	 * samsung_pinctrl_drv_data:
+> > +	 */
+> > +	d->virt_base = virt_base[bdata->pctl_res_idx];
+> > 
+>     for (i = 0; i < ctrl->nr_banks; ++i, ++bdata, ++bank) {
+>         ......
+>     }
+>     /*
+>      * For legacy platforms which need to access IO memory through
+>      * samsung_pinctrl_drv_data:
+>      */
+>     d->virt_base = virt_base[bdata->pctl_res_idx];
+>                                                     ^
+>                                                      **bdata** is invalid here.
+
+Ah, of course, apparently it worked in my case by coincidence. Thanks
+for spotting this.
+
+
+Best regards,
+Krzysztof
+
