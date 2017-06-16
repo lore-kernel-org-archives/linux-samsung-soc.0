@@ -1,43 +1,71 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFT 2/2] pinctrl: samsung: Fix invalid register offset used
- for Exynos5433 external interrupts
-Date: Fri, 16 Jun 2017 16:08:13 +0200
-Message-ID: <0cfe358a-c050-aae0-5755-819c7b25ef28@samsung.com>
-References: <20170614131828.28683-1-krzk@kernel.org>
-        <CGME20170614131847epcas3p4755a0ad1e25550134ddfcf0db9aff06b@epcas3p4.samsung.com>
-        <20170614131828.28683-2-krzk@kernel.org>
+From: Shuah Khan <shuahkhan@gmail.com>
+Subject: Re: [PATCH] drm/exynos: dsi: do not try to find bridge
+Date: Fri, 16 Jun 2017 08:16:14 -0600
+Message-ID: <CAKocOOM9RZkYvHOtrBXQeT7S=zCx4PY5QRJ-NXkp-GSvioMuZg@mail.gmail.com>
+References: <CGME20170616075016epcas5p34938dd82d07390a03e7690f1634e9229@epcas5p3.samsung.com>
+ <1497599415-4327-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170614131828.28683-2-krzk@kernel.org>
-Content-language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Donglin Peng <dolinux.peng@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:34738 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752647AbdFPOQQ (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 16 Jun 2017 10:16:16 -0400
+Received: by mail-ot0-f193.google.com with SMTP id p48so4611354otc.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Jun 2017 07:16:16 -0700 (PDT)
+In-Reply-To: <1497599415-4327-1-git-send-email-inki.dae@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, shuahkh@osg.samsung.com
 
-On 06/14/2017 03:18 PM, Krzysztof Kozlowski wrote:
-> When setting the pin function for external interrupts, the driver used
-> wrong IO memory address base.  The pin function register is always under
-> pctl_base, not the eint_base.
-> 
-> By updating wrong register, the external interrupts for chosen GPIO
-> would not work at all and some other GPIO might be configured to wrong
-> value.
-> 
-> Platforms other than Exynos5433 should not be affected as eint_base
-> equals pctl_base in such case.
-> 
-> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
-> Cc:<stable@vger.kernel.org>
-> Reported-by: Tomasz Figa<tomasz.figa@gmail.com>
-> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+Hi Inki,
 
-The patch looks good to me, I'll try to test it later today.
+On Fri, Jun 16, 2017 at 1:50 AM, Inki Dae <inki.dae@samsung.com> wrote:
+> It doesn't need to try to find a bridge if bridge node doesn't exist.
+>
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index d404de8..e337cd2 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -1687,9 +1687,11 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+>                 return ret;
+>         }
+>
+> -       bridge = of_drm_find_bridge(dsi->bridge_node);
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+This is more of question than comment. I am seeing in some places,
+such as mtk_dpi_probe(), of_node_put() is called right after
+of_drm_find_bridge() whether or not bridge_node is found.
 
--- 
-Thanks,
-Sylwester
+In this case, of_node_put() is done from exynos_dsi_remove() which looks
+correct to me.
+
+However, there is the discrepancy. One of these is incorrect perhaps?
+When is the right time to call of_node_put()?
+
+> -       if (bridge)
+> -               drm_bridge_attach(encoder, bridge, NULL);
+> +       if (dsi->bridge_node) {
+> +               bridge = of_drm_find_bridge(dsi->bridge_node);
+> +               if (bridge)
+> +                       drm_bridge_attach(encoder, bridge, NULL);
+> +       }
+>
+>         return mipi_dsi_host_register(&dsi->dsi_host);
+>  }
+> --
+> 1.9.1
+
+Looks good to me.
+
+Reviewed-by: Shuah Khan <shuahkh@osg.samsung.com>
+
+thanks,
+-- Shuah
