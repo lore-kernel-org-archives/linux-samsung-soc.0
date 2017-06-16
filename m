@@ -1,55 +1,78 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 43/44] dma-mapping: remove the set_dma_mask
-	method
-Date: Fri, 16 Jun 2017 20:10:58 +0200
-Message-ID: <20170616181059.19206-44-hch@lst.de>
-References: <20170616181059.19206-1-hch@lst.de>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH] drm/exynos: dsi: do not try to find bridge
+Date: Fri, 16 Jun 2017 14:16:42 -0600
+Message-ID: <7c884e71-9da3-2106-07e4-b0a717cbad66@osg.samsung.com>
+References: <CGME20170616075016epcas5p34938dd82d07390a03e7690f1634e9229@epcas5p3.samsung.com>
+ <1497599415-4327-1-git-send-email-inki.dae@samsung.com>
+ <CAKocOOM9RZkYvHOtrBXQeT7S=zCx4PY5QRJ-NXkp-GSvioMuZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <xen-devel-bounces@lists.xen.org>
-In-Reply-To: <20170616181059.19206-1-hch@lst.de>
-List-Unsubscribe: <https://lists.xen.org/cgi-bin/mailman/options/xen-devel>,
- <mailto:xen-devel-request@lists.xen.org?subject=unsubscribe>
-List-Post: <mailto:xen-devel@lists.xen.org>
-List-Help: <mailto:xen-devel-request@lists.xen.org?subject=help>
-List-Subscribe: <https://lists.xen.org/cgi-bin/mailman/listinfo/xen-devel>,
- <mailto:xen-devel-request@lists.xen.org?subject=subscribe>
-Errors-To: xen-devel-bounces@lists.xen.org
-Sender: "Xen-devel" <xen-devel-bounces@lists.xen.org>
-To: x86@kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:36812
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750797AbdFPUQw (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 16 Jun 2017 16:16:52 -0400
+In-Reply-To: <CAKocOOM9RZkYvHOtrBXQeT7S=zCx4PY5QRJ-NXkp-GSvioMuZg@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Shuah Khan <shuahkhan@gmail.com>, dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 
-U2lnbmVkLW9mZi1ieTogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+Ci0tLQogYXJjaC9w
-b3dlcnBjL2tlcm5lbC9kbWEuYyAgIHwgNCAtLS0tCiBpbmNsdWRlL2xpbnV4L2RtYS1tYXBwaW5n
-LmggfCA2IC0tLS0tLQogMiBmaWxlcyBjaGFuZ2VkLCAxMCBkZWxldGlvbnMoLSkKCmRpZmYgLS1n
-aXQgYS9hcmNoL3Bvd2VycGMva2VybmVsL2RtYS5jIGIvYXJjaC9wb3dlcnBjL2tlcm5lbC9kbWEu
-YwppbmRleCA0MWM3NDk1ODZiZDIuLjQ2NmM5ZjA3YjI4OCAxMDA2NDQKLS0tIGEvYXJjaC9wb3dl
-cnBjL2tlcm5lbC9kbWEuYworKysgYi9hcmNoL3Bvd2VycGMva2VybmVsL2RtYS5jCkBAIC0zMTYs
-MTAgKzMxNiw2IEBAIEVYUE9SVF9TWU1CT0woZG1hX3NldF9jb2hlcmVudF9tYXNrKTsKIAogaW50
-IF9fZG1hX3NldF9tYXNrKHN0cnVjdCBkZXZpY2UgKmRldiwgdTY0IGRtYV9tYXNrKQogewotCWNv
-bnN0IHN0cnVjdCBkbWFfbWFwX29wcyAqZG1hX29wcyA9IGdldF9kbWFfb3BzKGRldik7Ci0KLQlp
-ZiAoKGRtYV9vcHMgIT0gTlVMTCkgJiYgKGRtYV9vcHMtPnNldF9kbWFfbWFzayAhPSBOVUxMKSkK
-LQkJcmV0dXJuIGRtYV9vcHMtPnNldF9kbWFfbWFzayhkZXYsIGRtYV9tYXNrKTsKIAlpZiAoIWRl
-di0+ZG1hX21hc2sgfHwgIWRtYV9zdXBwb3J0ZWQoZGV2LCBkbWFfbWFzaykpCiAJCXJldHVybiAt
-RUlPOwogCSpkZXYtPmRtYV9tYXNrID0gZG1hX21hc2s7CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xp
-bnV4L2RtYS1tYXBwaW5nLmggYi9pbmNsdWRlL2xpbnV4L2RtYS1tYXBwaW5nLmgKaW5kZXggM2U1
-OTA4NjU2MjI2Li41MjdmMmVkOGM2NDUgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvZG1hLW1h
-cHBpbmcuaAorKysgYi9pbmNsdWRlL2xpbnV4L2RtYS1tYXBwaW5nLmgKQEAgLTEyNyw3ICsxMjcs
-NiBAQCBzdHJ1Y3QgZG1hX21hcF9vcHMgewogCQkJCSAgIGVudW0gZG1hX2RhdGFfZGlyZWN0aW9u
-IGRpcik7CiAJaW50ICgqbWFwcGluZ19lcnJvcikoc3RydWN0IGRldmljZSAqZGV2LCBkbWFfYWRk
-cl90IGRtYV9hZGRyKTsKIAlpbnQgKCpkbWFfc3VwcG9ydGVkKShzdHJ1Y3QgZGV2aWNlICpkZXYs
-IHU2NCBtYXNrKTsKLQlpbnQgKCpzZXRfZG1hX21hc2spKHN0cnVjdCBkZXZpY2UgKmRldiwgdTY0
-IG1hc2spOwogI2lmZGVmIEFSQ0hfSEFTX0RNQV9HRVRfUkVRVUlSRURfTUFTSwogCXU2NCAoKmdl
-dF9yZXF1aXJlZF9tYXNrKShzdHJ1Y3QgZGV2aWNlICpkZXYpOwogI2VuZGlmCkBAIC01NjMsMTEg
-KzU2Miw2IEBAIHN0YXRpYyBpbmxpbmUgaW50IGRtYV9zdXBwb3J0ZWQoc3RydWN0IGRldmljZSAq
-ZGV2LCB1NjQgbWFzaykKICNpZm5kZWYgSEFWRV9BUkNIX0RNQV9TRVRfTUFTSwogc3RhdGljIGlu
-bGluZSBpbnQgZG1hX3NldF9tYXNrKHN0cnVjdCBkZXZpY2UgKmRldiwgdTY0IG1hc2spCiB7Ci0J
-Y29uc3Qgc3RydWN0IGRtYV9tYXBfb3BzICpvcHMgPSBnZXRfZG1hX29wcyhkZXYpOwotCi0JaWYg
-KG9wcy0+c2V0X2RtYV9tYXNrKQotCQlyZXR1cm4gb3BzLT5zZXRfZG1hX21hc2soZGV2LCBtYXNr
-KTsKLQogCWlmICghZGV2LT5kbWFfbWFzayB8fCAhZG1hX3N1cHBvcnRlZChkZXYsIG1hc2spKQog
-CQlyZXR1cm4gLUVJTzsKIAkqZGV2LT5kbWFfbWFzayA9IG1hc2s7Ci0tIAoyLjExLjAKCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpYZW4tZGV2ZWwgbWFp
-bGluZyBsaXN0Clhlbi1kZXZlbEBsaXN0cy54ZW4ub3JnCmh0dHBzOi8vbGlzdHMueGVuLm9yZy94
-ZW4tZGV2ZWwK
+On 06/16/2017 08:16 AM, Shuah Khan wrote:
+> Hi Inki,
+> 
+> On Fri, Jun 16, 2017 at 1:50 AM, Inki Dae <inki.dae@samsung.com> wrote:
+>> It doesn't need to try to find a bridge if bridge node doesn't exist.
+>>
+>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 +++++---
+>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> index d404de8..e337cd2 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> @@ -1687,9 +1687,11 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+>>                 return ret;
+>>         }
+>>
+>> -       bridge = of_drm_find_bridge(dsi->bridge_node);
+> 
+> This is more of question than comment. I am seeing in some places,
+> such as mtk_dpi_probe(), of_node_put() is called right after
+> of_drm_find_bridge() whether or not bridge_node is found.
+> 
+> In this case, of_node_put() is done from exynos_dsi_remove() which looks
+> correct to me.
+> 
+> However, there is the discrepancy. One of these is incorrect perhaps?
+> When is the right time to call of_node_put()?
+> 
+>> -       if (bridge)
+>> -               drm_bridge_attach(encoder, bridge, NULL);
+>> +       if (dsi->bridge_node) {
+>> +               bridge = of_drm_find_bridge(dsi->bridge_node);
+>> +               if (bridge)
+>> +                       drm_bridge_attach(encoder, bridge, NULL);
+>> +       }
+>>
+>>         return mipi_dsi_host_register(&dsi->dsi_host);
+>>  }
+>> --
+>> 1.9.1
+> 
+> Looks good to me.
+> 
+> Reviewed-by: Shuah Khan <shuahkh@osg.samsung.com>
+> 
+
+I tested this on odroid-xu4
+
+Tested-by: Shuah Khan <shuahkh@osg.samsung.com>
+
+thanks,
+-- Shuah
