@@ -1,71 +1,37 @@
-From: Shuah Khan <shuahkhan@gmail.com>
-Subject: Re: [PATCH] drm/exynos: dsi: do not try to find bridge
-Date: Fri, 16 Jun 2017 08:16:14 -0600
-Message-ID: <CAKocOOM9RZkYvHOtrBXQeT7S=zCx4PY5QRJ-NXkp-GSvioMuZg@mail.gmail.com>
-References: <CGME20170616075016epcas5p34938dd82d07390a03e7690f1634e9229@epcas5p3.samsung.com>
- <1497599415-4327-1-git-send-email-inki.dae@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: Fix the active of reset gpios
+ from rinato dts
+Date: Fri, 16 Jun 2017 18:20:47 +0200
+Message-ID: <20170616162047.mrm73b2cd4ffovox@kozik-lap>
+References: <1497521010-8429-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170615100342epcas1p4feeb3d12bb9e120bf40dc5945c4b2460@epcas1p4.samsung.com>
+ <1497521010-8429-4-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:34738 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752647AbdFPOQQ (ORCPT
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:34367 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbdFPQUv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 10:16:16 -0400
-Received: by mail-ot0-f193.google.com with SMTP id p48so4611354otc.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Jun 2017 07:16:16 -0700 (PDT)
-In-Reply-To: <1497599415-4327-1-git-send-email-inki.dae@samsung.com>
+        Fri, 16 Jun 2017 12:20:51 -0400
+Content-Disposition: inline
+In-Reply-To: <1497521010-8429-4-git-send-email-hoegeun.kwon@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, shuahkh@osg.samsung.com
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, a.hajda@samsung.com
 
-Hi Inki,
-
-On Fri, Jun 16, 2017 at 1:50 AM, Inki Dae <inki.dae@samsung.com> wrote:
-> It doesn't need to try to find a bridge if bridge node doesn't exist.
->
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+On Thu, Jun 15, 2017 at 07:03:29PM +0900, Hoegeun Kwon wrote:
+> This reset gpios is active low, therefore fix from active high to low.
+> 
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index d404de8..e337cd2 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1687,9 +1687,11 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
->                 return ret;
->         }
->
-> -       bridge = of_drm_find_bridge(dsi->bridge_node);
+>  arch/arm/boot/dts/exynos3250-rinato.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-This is more of question than comment. I am seeing in some places,
-such as mtk_dpi_probe(), of_node_put() is called right after
-of_drm_find_bridge() whether or not bridge_node is found.
+Thanks, applied this one only. As mentioned before, 4/4 will wait for
+driver.
 
-In this case, of_node_put() is done from exynos_dsi_remove() which looks
-correct to me.
-
-However, there is the discrepancy. One of these is incorrect perhaps?
-When is the right time to call of_node_put()?
-
-> -       if (bridge)
-> -               drm_bridge_attach(encoder, bridge, NULL);
-> +       if (dsi->bridge_node) {
-> +               bridge = of_drm_find_bridge(dsi->bridge_node);
-> +               if (bridge)
-> +                       drm_bridge_attach(encoder, bridge, NULL);
-> +       }
->
->         return mipi_dsi_host_register(&dsi->dsi_host);
->  }
-> --
-> 1.9.1
-
-Looks good to me.
-
-Reviewed-by: Shuah Khan <shuahkh@osg.samsung.com>
-
-thanks,
--- Shuah
+Best regards,
+Krzysztof
