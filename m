@@ -1,95 +1,39 @@
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Subject: Re: [PATCH 03/44] dmaengine: ioat: don't use DMA_ERROR_CODE
-Date: Fri, 16 Jun 2017 13:40:24 -0700
-Message-ID: <CAKgT0UdxrimWrxNVsLMQ9G6ABBJZwfWHTcP18qqd4rT0Fa-KWg@mail.gmail.com>
-References: <20170616181059.19206-1-hch@lst.de> <20170616181059.19206-4-hch@lst.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-hexagon-owner@vger.kernel.org>
-In-Reply-To: <20170616181059.19206-4-hch@lst.de>
-Sender: linux-hexagon-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: the arch/x86 maintainers <x86@kernel.org>, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux-foundation.org>, Netdev <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH] drm: exynos: dsi: fix to return -ENODEV when DSI_PORT_OUT is not found
+Date: Fri, 16 Jun 2017 16:56:59 -0600
+Message-ID: <20170616225659.23569-1-shuahkh@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:37199
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750873AbdFPW5F (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 16 Jun 2017 18:57:05 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 16, 2017 at 11:10 AM, Christoph Hellwig <hch@lst.de> wrote:
-> DMA_ERROR_CODE is not a public API and will go away.  Instead properly
-> unwind based on the loop counter.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Dave Jiang <dave.jiang@intel.com>
-> Acked-By: Vinod Koul <vinod.koul@intel.com>
-> ---
->  drivers/dma/ioat/init.c | 24 +++++++-----------------
->  1 file changed, 7 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-> index 6ad4384b3fa8..ed8ed1192775 100644
-> --- a/drivers/dma/ioat/init.c
-> +++ b/drivers/dma/ioat/init.c
-> @@ -839,8 +839,6 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
->                 goto free_resources;
->         }
->
-> -       for (i = 0; i < IOAT_NUM_SRC_TEST; i++)
-> -               dma_srcs[i] = DMA_ERROR_CODE;
->         for (i = 0; i < IOAT_NUM_SRC_TEST; i++) {
->                 dma_srcs[i] = dma_map_page(dev, xor_srcs[i], 0, PAGE_SIZE,
->                                            DMA_TO_DEVICE);
-> @@ -910,8 +908,6 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
->
->         xor_val_result = 1;
->
-> -       for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++)
-> -               dma_srcs[i] = DMA_ERROR_CODE;
->         for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++) {
->                 dma_srcs[i] = dma_map_page(dev, xor_val_srcs[i], 0, PAGE_SIZE,
->                                            DMA_TO_DEVICE);
-> @@ -965,8 +961,6 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
->         op = IOAT_OP_XOR_VAL;
->
->         xor_val_result = 0;
-> -       for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++)
-> -               dma_srcs[i] = DMA_ERROR_CODE;
->         for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++) {
->                 dma_srcs[i] = dma_map_page(dev, xor_val_srcs[i], 0, PAGE_SIZE,
->                                            DMA_TO_DEVICE);
-> @@ -1017,18 +1011,14 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
->         goto free_resources;
->  dma_unmap:
->         if (op == IOAT_OP_XOR) {
-> -               if (dest_dma != DMA_ERROR_CODE)
-> -                       dma_unmap_page(dev, dest_dma, PAGE_SIZE,
-> -                                      DMA_FROM_DEVICE);
-> -               for (i = 0; i < IOAT_NUM_SRC_TEST; i++)
-> -                       if (dma_srcs[i] != DMA_ERROR_CODE)
-> -                               dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
-> -                                              DMA_TO_DEVICE);
-> +               while (--i >= 0)
-> +                       dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
-> +                                      DMA_TO_DEVICE);
-> +               dma_unmap_page(dev, dest_dma, PAGE_SIZE, DMA_FROM_DEVICE);
->         } else if (op == IOAT_OP_XOR_VAL) {
-> -               for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++)
-> -                       if (dma_srcs[i] != DMA_ERROR_CODE)
-> -                               dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
-> -                                              DMA_TO_DEVICE);
-> +               while (--i >= 0)
-> +                       dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
-> +                                      DMA_TO_DEVICE);
+Fix exynos_dsi_parse_dt() to return -ENODEV when of_graph_get_remote_node()
+doesn't find DSI_PORT_OUT. -ENODEV is the correct error code to return and
+this change makes exynos behavior consistent with rest of the drm drivers.
 
-Wouldn't it make more sense to pull out the while loop and just call
-dma_unmap_page on dest_dma if "op == IOAT_OP_XOR"? Odds are it is what
-the compiler is already generating and will save a few lines of code
-so what you end up with is something like:
-    while (--i >= 0)
-        dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE, DMA_TO_DEVICE);
-    if (op == IOAT_OP_XOR)
-        dma_unmap_page(dev, dest_dma, PAGE_SIZE, DMA_FROM_DEVICE);
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->         }
->  free_resources:
->         dma->device_free_chan_resources(dma_chan);
-> --
-> 2.11.0
->
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index e337cd2..cb99e82 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1652,7 +1652,7 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
+ 
+ 	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_OUT, 0);
+ 	if (!dsi->bridge_node)
+-		return -EINVAL;
++		return -ENODEV;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
