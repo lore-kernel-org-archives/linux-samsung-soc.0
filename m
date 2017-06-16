@@ -1,78 +1,95 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH] drm/exynos: dsi: do not try to find bridge
-Date: Fri, 16 Jun 2017 14:16:42 -0600
-Message-ID: <7c884e71-9da3-2106-07e4-b0a717cbad66@osg.samsung.com>
-References: <CGME20170616075016epcas5p34938dd82d07390a03e7690f1634e9229@epcas5p3.samsung.com>
- <1497599415-4327-1-git-send-email-inki.dae@samsung.com>
- <CAKocOOM9RZkYvHOtrBXQeT7S=zCx4PY5QRJ-NXkp-GSvioMuZg@mail.gmail.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Subject: Re: [PATCH 03/44] dmaengine: ioat: don't use DMA_ERROR_CODE
+Date: Fri, 16 Jun 2017 13:40:24 -0700
+Message-ID: <CAKgT0UdxrimWrxNVsLMQ9G6ABBJZwfWHTcP18qqd4rT0Fa-KWg@mail.gmail.com>
+References: <20170616181059.19206-1-hch@lst.de> <20170616181059.19206-4-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:36812
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750797AbdFPUQw (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 16:16:52 -0400
-In-Reply-To: <CAKocOOM9RZkYvHOtrBXQeT7S=zCx4PY5QRJ-NXkp-GSvioMuZg@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-hexagon-owner@vger.kernel.org>
+In-Reply-To: <20170616181059.19206-4-hch@lst.de>
+Sender: linux-hexagon-owner@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>
+Cc: the arch/x86 maintainers <x86@kernel.org>, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux-foundation.org>, Netdev <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Shuah Khan <shuahkhan@gmail.com>, dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 
-On 06/16/2017 08:16 AM, Shuah Khan wrote:
-> Hi Inki,
-> 
-> On Fri, Jun 16, 2017 at 1:50 AM, Inki Dae <inki.dae@samsung.com> wrote:
->> It doesn't need to try to find a bridge if bridge node doesn't exist.
->>
->> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 +++++---
->>  1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> index d404de8..e337cd2 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -1687,9 +1687,11 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
->>                 return ret;
->>         }
->>
->> -       bridge = of_drm_find_bridge(dsi->bridge_node);
-> 
-> This is more of question than comment. I am seeing in some places,
-> such as mtk_dpi_probe(), of_node_put() is called right after
-> of_drm_find_bridge() whether or not bridge_node is found.
-> 
-> In this case, of_node_put() is done from exynos_dsi_remove() which looks
-> correct to me.
-> 
-> However, there is the discrepancy. One of these is incorrect perhaps?
-> When is the right time to call of_node_put()?
-> 
->> -       if (bridge)
->> -               drm_bridge_attach(encoder, bridge, NULL);
->> +       if (dsi->bridge_node) {
->> +               bridge = of_drm_find_bridge(dsi->bridge_node);
->> +               if (bridge)
->> +                       drm_bridge_attach(encoder, bridge, NULL);
->> +       }
->>
->>         return mipi_dsi_host_register(&dsi->dsi_host);
->>  }
->> --
->> 1.9.1
-> 
-> Looks good to me.
-> 
-> Reviewed-by: Shuah Khan <shuahkh@osg.samsung.com>
-> 
+On Fri, Jun 16, 2017 at 11:10 AM, Christoph Hellwig <hch@lst.de> wrote:
+> DMA_ERROR_CODE is not a public API and will go away.  Instead properly
+> unwind based on the loop counter.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Dave Jiang <dave.jiang@intel.com>
+> Acked-By: Vinod Koul <vinod.koul@intel.com>
+> ---
+>  drivers/dma/ioat/init.c | 24 +++++++-----------------
+>  1 file changed, 7 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
+> index 6ad4384b3fa8..ed8ed1192775 100644
+> --- a/drivers/dma/ioat/init.c
+> +++ b/drivers/dma/ioat/init.c
+> @@ -839,8 +839,6 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
+>                 goto free_resources;
+>         }
+>
+> -       for (i = 0; i < IOAT_NUM_SRC_TEST; i++)
+> -               dma_srcs[i] = DMA_ERROR_CODE;
+>         for (i = 0; i < IOAT_NUM_SRC_TEST; i++) {
+>                 dma_srcs[i] = dma_map_page(dev, xor_srcs[i], 0, PAGE_SIZE,
+>                                            DMA_TO_DEVICE);
+> @@ -910,8 +908,6 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
+>
+>         xor_val_result = 1;
+>
+> -       for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++)
+> -               dma_srcs[i] = DMA_ERROR_CODE;
+>         for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++) {
+>                 dma_srcs[i] = dma_map_page(dev, xor_val_srcs[i], 0, PAGE_SIZE,
+>                                            DMA_TO_DEVICE);
+> @@ -965,8 +961,6 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
+>         op = IOAT_OP_XOR_VAL;
+>
+>         xor_val_result = 0;
+> -       for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++)
+> -               dma_srcs[i] = DMA_ERROR_CODE;
+>         for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++) {
+>                 dma_srcs[i] = dma_map_page(dev, xor_val_srcs[i], 0, PAGE_SIZE,
+>                                            DMA_TO_DEVICE);
+> @@ -1017,18 +1011,14 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
+>         goto free_resources;
+>  dma_unmap:
+>         if (op == IOAT_OP_XOR) {
+> -               if (dest_dma != DMA_ERROR_CODE)
+> -                       dma_unmap_page(dev, dest_dma, PAGE_SIZE,
+> -                                      DMA_FROM_DEVICE);
+> -               for (i = 0; i < IOAT_NUM_SRC_TEST; i++)
+> -                       if (dma_srcs[i] != DMA_ERROR_CODE)
+> -                               dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
+> -                                              DMA_TO_DEVICE);
+> +               while (--i >= 0)
+> +                       dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
+> +                                      DMA_TO_DEVICE);
+> +               dma_unmap_page(dev, dest_dma, PAGE_SIZE, DMA_FROM_DEVICE);
+>         } else if (op == IOAT_OP_XOR_VAL) {
+> -               for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++)
+> -                       if (dma_srcs[i] != DMA_ERROR_CODE)
+> -                               dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
+> -                                              DMA_TO_DEVICE);
+> +               while (--i >= 0)
+> +                       dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
+> +                                      DMA_TO_DEVICE);
 
-I tested this on odroid-xu4
+Wouldn't it make more sense to pull out the while loop and just call
+dma_unmap_page on dest_dma if "op == IOAT_OP_XOR"? Odds are it is what
+the compiler is already generating and will save a few lines of code
+so what you end up with is something like:
+    while (--i >= 0)
+        dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE, DMA_TO_DEVICE);
+    if (op == IOAT_OP_XOR)
+        dma_unmap_page(dev, dest_dma, PAGE_SIZE, DMA_FROM_DEVICE);
 
-Tested-by: Shuah Khan <shuahkh@osg.samsung.com>
-
-thanks,
--- Shuah
+>         }
+>  free_resources:
+>         dma->device_free_chan_resources(dma_chan);
+> --
+> 2.11.0
+>
