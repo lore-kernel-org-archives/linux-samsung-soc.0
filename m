@@ -1,81 +1,49 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm: exynos: constify mixer_match_types and *_mxr_drv_data.
-Date: Mon, 19 Jun 2017 12:37:35 +0200
-Message-ID: <109c96fc-5d91-f88e-55d3-927dfe5cfba1@samsung.com>
-References: <CGME20170619101327epcas2p27bb709ee46519fade54663884ef74c88@epcas2p2.samsung.com>
- <28c361b34389bfc40fbca6250f6ff24f5f7afe97.1497866987.git.arvind.yadav.cs@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] s5p-cec: update MAINTAINERS entry
+Date: Mon, 19 Jun 2017 14:03:02 +0200
+Message-ID: <1497873782-25543-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170619120320eucas1p2a84a4472e7d2f1c148e7035ae994c5e1@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:40160 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751897AbdFSKhl (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:50071 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750926AbdFSMDZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 06:37:41 -0400
-In-reply-to: <28c361b34389bfc40fbca6250f6ff24f5f7afe97.1497866987.git.arvind.yadav.cs@gmail.com>
-Content-language: en-US
+        Mon, 19 Jun 2017 08:03:25 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, 'Mauro Carvalho Chehab' <mchehab@s-opensource.com>, Hans Verkuil <hverkuil@xs4all.nl>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 19.06.2017 12:12, Arvind Yadav wrote:
-> File size before:
->    text	   data	    bss	    dec	    hex	filename
->    9983	   1424	      0	  11407	   2c8f	drivers/gpu/drm/exynos/exynos_mixer.o
->
-> File size after constify:
->    text	   data	    bss	    dec	    hex	filename
->   11231	    176	      0	  11407	   2c8f	drivers/gpu/drm/exynos/exynos_mixer.o
->
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+I would like to replace Kyungmin Park, who is no longer interested in
+maintaining S5P-CEC driver. I have access to various Exynos boards. I also
+already did some tests of this driver and helped enabling it on various
+Exynos boards. The driver itself is no longer in staging, so lets fix the
+path too. Also change the mailing list from ARM generic to Samsung SoC
+specific to get more attention and easier review in the future.
 
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ MAINTAINERS | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- --
-Regards
-Andrzej
-
-> ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 25edb63..778cae2 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -1097,28 +1097,28 @@ static int mixer_atomic_check(struct exynos_drm_crtc *crtc,
->  	.atomic_check		= mixer_atomic_check,
->  };
->  
-> -static struct mixer_drv_data exynos5420_mxr_drv_data = {
-> +static const struct mixer_drv_data exynos5420_mxr_drv_data = {
->  	.version = MXR_VER_128_0_0_184,
->  	.is_vp_enabled = 0,
->  };
->  
-> -static struct mixer_drv_data exynos5250_mxr_drv_data = {
-> +static const struct mixer_drv_data exynos5250_mxr_drv_data = {
->  	.version = MXR_VER_16_0_33_0,
->  	.is_vp_enabled = 0,
->  };
->  
-> -static struct mixer_drv_data exynos4212_mxr_drv_data = {
-> +static const struct mixer_drv_data exynos4212_mxr_drv_data = {
->  	.version = MXR_VER_0_0_0_16,
->  	.is_vp_enabled = 1,
->  };
->  
-> -static struct mixer_drv_data exynos4210_mxr_drv_data = {
-> +static const struct mixer_drv_data exynos4210_mxr_drv_data = {
->  	.version = MXR_VER_0_0_0_16,
->  	.is_vp_enabled = 1,
->  	.has_sclk = 1,
->  };
->  
-> -static struct of_device_id mixer_match_types[] = {
-> +static const struct of_device_id mixer_match_types[] = {
->  	{
->  		.compatible = "samsung,exynos4210-mixer",
->  		.data	= &exynos4210_mxr_drv_data,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 053c3bdd1fe5..fbfbc9866fa2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1775,11 +1775,11 @@ F:	arch/arm/plat-samsung/s5p-dev-mfc.c
+ F:	drivers/media/platform/s5p-mfc/
+ 
+ ARM/SAMSUNG S5P SERIES HDMI CEC SUBSYSTEM SUPPORT
+-M:	Kyungmin Park <kyungmin.park@samsung.com>
+-L:	linux-arm-kernel@lists.infradead.org
++M:	Marek Szyprowski <m.szyprowski@samsung.com>
++L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+-F:	drivers/staging/media/platform/s5p-cec/
++F:	drivers/media/platform/s5p-cec/
+ 
+ ARM/SAMSUNG S5P SERIES JPEG CODEC SUPPORT
+ M:	Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+-- 
+1.9.1
