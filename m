@@ -1,42 +1,52 @@
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] drm: exynos: hdmi: make of_device_ids const.
-Date: Mon, 19 Jun 2017 14:54:03 +0530
-Message-ID: <6012220ff3c7dad339686f411ff372e7897e60c4.1497863911.git.arvind.yadav.cs@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, krzk@kernel.org, javier@osg.samsung.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm: exynos: hdmi: make of_device_ids const.
+Date: Mon, 19 Jun 2017 12:11:23 +0200
+Message-ID: <84a58fd2-989d-a982-66e9-c97e9d61c2f4@samsung.com>
+References: <CGME20170619092447epcas2p39a32ae59d05f1bd14cd43b8bcd6f2463@epcas2p3.samsung.com>
+ <6012220ff3c7dad339686f411ff372e7897e60c4.1497863911.git.arvind.yadav.cs@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <6012220ff3c7dad339686f411ff372e7897e60c4.1497863911.git.arvind.yadav.cs@gmail.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, krzk@kernel.org, javier@osg.samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-of_device_ids are not supposed to change at runtime. All functions
-working with of_device_ids provided by <linux/of.h> work with const
-of_device_ids. So mark the non-const structs as const.
-
-File size before:
-   text	   data	    bss	    dec	    hex	filename
-  12294	   1192	      0	  13486	   34ae	drivers/gpu/drm/exynos/exynos_hdmi.o
-
-File size after constify hdmi_match_types.
-   text	   data	    bss	    dec	    hex	filename
-  13318	    176	      0	  13494	   34b6	drivers/gpu/drm/exynos/exynos_hdmi.o
-
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 1ff6ab6..624c48d 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1683,7 +1683,7 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
- 	return hdmi_bridge_init(hdata);
- }
- 
--static struct of_device_id hdmi_match_types[] = {
-+static const struct of_device_id hdmi_match_types[] = {
- 	{
- 		.compatible = "samsung,exynos4210-hdmi",
- 		.data = &exynos4210_hdmi_driver_data,
--- 
-1.9.1
+T24gMTkuMDYuMjAxNyAxMToyNCwgQXJ2aW5kIFlhZGF2IHdyb3RlOgo+IG9mX2RldmljZV9pZHMg
+YXJlIG5vdCBzdXBwb3NlZCB0byBjaGFuZ2UgYXQgcnVudGltZS4gQWxsIGZ1bmN0aW9ucwo+IHdv
+cmtpbmcgd2l0aCBvZl9kZXZpY2VfaWRzIHByb3ZpZGVkIGJ5IDxsaW51eC9vZi5oPiB3b3JrIHdp
+dGggY29uc3QKPiBvZl9kZXZpY2VfaWRzLiBTbyBtYXJrIHRoZSBub24tY29uc3Qgc3RydWN0cyBh
+cyBjb25zdC4KPgo+IEZpbGUgc2l6ZSBiZWZvcmU6Cj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJ
+ICAgIGRlYwkgICAgaGV4CWZpbGVuYW1lCj4gICAxMjI5NAkgICAxMTkyCSAgICAgIDAJICAxMzQ4
+NgkgICAzNGFlCWRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkubwo+Cj4gRmlsZSBz
+aXplIGFmdGVyIGNvbnN0aWZ5IGhkbWlfbWF0Y2hfdHlwZXMuCj4gICAgdGV4dAkgICBkYXRhCSAg
+ICBic3MJICAgIGRlYwkgICAgaGV4CWZpbGVuYW1lCj4gICAxMzMxOAkgICAgMTc2CSAgICAgIDAJ
+ICAxMzQ5NAkgICAzNGI2CWRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkubwo+Cj4g
+U2lnbmVkLW9mZi1ieTogQXJ2aW5kIFlhZGF2IDxhcnZpbmQueWFkYXYuY3NAZ21haWwuY29tPgoK
+UmV2aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+CgogLS0KUmVn
+YXJkcwpBbmRyemVqCgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1p
+LmMgfCAyICstCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigt
+KQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+IGluZGV4IDFmZjZhYjYuLjYy
+NGM0OGQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
+Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gQEAgLTE2ODMs
+NyArMTY4Myw3IEBAIHN0YXRpYyBpbnQgaGRtaV9yZXNvdXJjZXNfaW5pdChzdHJ1Y3QgaGRtaV9j
+b250ZXh0ICpoZGF0YSkKPiAgCXJldHVybiBoZG1pX2JyaWRnZV9pbml0KGhkYXRhKTsKPiAgfQo+
+ICAKPiAtc3RhdGljIHN0cnVjdCBvZl9kZXZpY2VfaWQgaGRtaV9tYXRjaF90eXBlc1tdID0gewo+
+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBoZG1pX21hdGNoX3R5cGVzW10gPSB7
+Cj4gIAl7Cj4gIAkJLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M0MjEwLWhkbWkiLAo+ICAJ
+CS5kYXRhID0gJmV4eW5vczQyMTBfaGRtaV9kcml2ZXJfZGF0YSwKCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
