@@ -1,68 +1,85 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/2] drm/exynos/decon: Add include guard to the Exynos7 header
-Date: Mon, 19 Jun 2017 18:31:09 +0200
-Message-ID: <20170619163110.28173-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:35250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750811AbdFSQbR (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 12:31:17 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 2/2] drm/exynos/decon: Move headers from global to local place
+Date: Mon, 19 Jun 2017 18:31:10 +0200
+Message-ID: <20170619163110.28173-2-krzk@kernel.org>
+References: <20170619163110.28173-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170619163110.28173-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Although header is included only once but still having an include guard
-is a good practice.  To avoid confusion, add SoC prefix to existing
-Exynos5433 header include guard.
+The DECON headers contain only defines for registers.  There are no
+other drivers using them so this should be put locally to the Exynos DRM
+driver.  Keeping headers local helps managing the code.
 
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- include/video/exynos5433_decon.h | 6 +++---
- include/video/exynos7_decon.h    | 5 +++++
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c                          | 3 +--
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c                             | 2 +-
+ .../exynos5433_decon.h => drivers/gpu/drm/exynos/regs-decon5433.h      | 0
+ include/video/exynos7_decon.h => drivers/gpu/drm/exynos/regs-decon7.h  | 3 +--
+ 4 files changed, 3 insertions(+), 5 deletions(-)
+ rename include/video/exynos5433_decon.h => drivers/gpu/drm/exynos/regs-decon5433.h (100%)
+ rename include/video/exynos7_decon.h => drivers/gpu/drm/exynos/regs-decon7.h (99%)
 
-diff --git a/include/video/exynos5433_decon.h b/include/video/exynos5433_decon.h
-index 78957c9626f5..b30362da5692 100644
---- a/include/video/exynos5433_decon.h
-+++ b/include/video/exynos5433_decon.h
-@@ -6,8 +6,8 @@
-  * published by the Free Software Foundationr
-  */
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 5792ca88ab7a..5aca8c16f2bc 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -19,13 +19,12 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
  
--#ifndef EXYNOS_REGS_DECON_H
--#define EXYNOS_REGS_DECON_H
-+#ifndef EXYNOS5433_REGS_DECON_H
-+#define EXYNOS5433_REGS_DECON_H
+-#include <video/exynos5433_decon.h>
+-
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_fb.h"
+ #include "exynos_drm_plane.h"
+ #include "exynos_drm_iommu.h"
++#include "regs-decon5433.h"
  
- /* Exynos543X DECON */
- #define DECON_VIDCON0			0x0000
-@@ -206,4 +206,4 @@
- #define CRCCTRL_CRCEN			(0x1 << 0)
- #define CRCCTRL_MASK			(0x7)
+ #define DSD_CFG_MUX 0x1004
+ #define DSD_CFG_MUX_TE_UNMASK_GLOBAL BIT(13)
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 3e88269fdc2e..387e436c97d2 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -25,13 +25,13 @@
  
--#endif /* EXYNOS_REGS_DECON_H */
-+#endif /* EXYNOS5433_REGS_DECON_H */
-diff --git a/include/video/exynos7_decon.h b/include/video/exynos7_decon.h
-index a62b11b613f6..d28829659a17 100644
+ #include <video/of_display_timing.h>
+ #include <video/of_videomode.h>
+-#include <video/exynos7_decon.h>
+ 
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_plane.h"
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fb.h"
+ #include "exynos_drm_iommu.h"
++#include "regs-decon7.h"
+ 
+ /*
+  * DECON stands for Display and Enhancement controller.
+diff --git a/include/video/exynos5433_decon.h b/drivers/gpu/drm/exynos/regs-decon5433.h
+similarity index 100%
+rename from include/video/exynos5433_decon.h
+rename to drivers/gpu/drm/exynos/regs-decon5433.h
+diff --git a/include/video/exynos7_decon.h b/drivers/gpu/drm/exynos/regs-decon7.h
+similarity index 99%
+rename from include/video/exynos7_decon.h
+rename to drivers/gpu/drm/exynos/regs-decon7.h
+index d28829659a17..8fe4c44f12f3 100644
 --- a/include/video/exynos7_decon.h
-+++ b/include/video/exynos7_decon.h
-@@ -9,6 +9,9 @@
-  * option) any later version.
-  */
- 
-+#ifndef EXYNOS7_REGS_DECON_H
-+#define EXYNOS7_REGS_DECON_H
-+
- /* VIDCON0 */
- #define VIDCON0					0x00
- 
-@@ -347,3 +350,5 @@
- 
- #define DECON_UPDATE_SLAVE_SYNC			(1 << 4)
- #define DECON_UPDATE_STANDALONE_F		(1 << 0)
-+
-+#endif /* EXYNOS7_REGS_DECON_H */
++++ b/drivers/gpu/drm/exynos/regs-decon7.h
+@@ -1,5 +1,4 @@
+-/* include/video/exynos7_decon.h
+- *
++/*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+  * Author: Ajay Kumar <ajaykumar.rs@samsung.com>
+  *
 -- 
 2.9.3
