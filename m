@@ -1,70 +1,37 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: dsi: do not try to find bridge
-Date: Mon, 19 Jun 2017 11:12:37 +0900
-Message-ID: <59473315.5040802@samsung.com>
-References: <CGME20170616075016epcas5p34938dd82d07390a03e7690f1634e9229@epcas5p3.samsung.com>
- <1497599415-4327-1-git-send-email-inki.dae@samsung.com>
- <CAKocOOM9RZkYvHOtrBXQeT7S=zCx4PY5QRJ-NXkp-GSvioMuZg@mail.gmail.com>
- <7c884e71-9da3-2106-07e4-b0a717cbad66@osg.samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 4/4] ARM: defconfig: exynos: Defconfig for v4.13
+Date: Sun, 18 Jun 2017 19:10:17 -0700
+Message-ID: <20170619021017.GO30022@localhost>
+References: <20170609164249.1656-1-krzk@kernel.org>
+ <20170609164249.1656-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <7c884e71-9da3-2106-07e4-b0a717cbad66@osg.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Shuah Khan <shuahkhan@gmail.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170609164249.1656-2-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgU2h1YWgsCgoyMDE364WEIDA27JuUIDE37J28IDA1OjE27JeQIFNodWFoIEtoYW4g7J20KOqw
-gCkg7JO0IOq4gDoKPiBPbiAwNi8xNi8yMDE3IDA4OjE2IEFNLCBTaHVhaCBLaGFuIHdyb3RlOgo+
-PiBIaSBJbmtpLAo+Pgo+PiBPbiBGcmksIEp1biAxNiwgMjAxNyBhdCAxOjUwIEFNLCBJbmtpIERh
-ZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+Pj4gSXQgZG9lc24ndCBuZWVkIHRvIHRy
-eSB0byBmaW5kIGEgYnJpZGdlIGlmIGJyaWRnZSBub2RlIGRvZXNuJ3QgZXhpc3QuCj4+Pgo+Pj4g
-U2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+Pj4gLS0tCj4+
-PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIHwgOCArKysrKy0tLQo+
-Pj4gIDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4+Pgo+
-Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4gaW5kZXggZDQwNGRl
-OC4uZTMzN2NkMiAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kc2kuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
-aS5jCj4+PiBAQCAtMTY4Nyw5ICsxNjg3LDExIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9iaW5k
-KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAo+Pj4gICAgICAgICAg
-ICAgICAgIHJldHVybiByZXQ7Cj4+PiAgICAgICAgIH0KPj4+Cj4+PiAtICAgICAgIGJyaWRnZSA9
-IG9mX2RybV9maW5kX2JyaWRnZShkc2ktPmJyaWRnZV9ub2RlKTsKPj4KPj4gVGhpcyBpcyBtb3Jl
-IG9mIHF1ZXN0aW9uIHRoYW4gY29tbWVudC4gSSBhbSBzZWVpbmcgaW4gc29tZSBwbGFjZXMsCj4+
-IHN1Y2ggYXMgbXRrX2RwaV9wcm9iZSgpLCBvZl9ub2RlX3B1dCgpIGlzIGNhbGxlZCByaWdodCBh
-ZnRlcgo+PiBvZl9kcm1fZmluZF9icmlkZ2UoKSB3aGV0aGVyIG9yIG5vdCBicmlkZ2Vfbm9kZSBp
-cyBmb3VuZC4KPj4KPj4gSW4gdGhpcyBjYXNlLCBvZl9ub2RlX3B1dCgpIGlzIGRvbmUgZnJvbSBl
-eHlub3NfZHNpX3JlbW92ZSgpIHdoaWNoIGxvb2tzCj4+IGNvcnJlY3QgdG8gbWUuCj4+Cj4+IEhv
-d2V2ZXIsIHRoZXJlIGlzIHRoZSBkaXNjcmVwYW5jeS4gT25lIG9mIHRoZXNlIGlzIGluY29ycmVj
-dCBwZXJoYXBzPwo+PiBXaGVuIGlzIHRoZSByaWdodCB0aW1lIHRvIGNhbGwgb2Zfbm9kZV9wdXQo
-KT8KCk5vIHByb2JsZW0gYnV0IHNlZW1zIG1vcmUgcmVhc29uYWJsZSB0byBjYWxsIG9mX25vZGVf
-cHV0KCkgcmlnaHQgYWZ0ZXIgb2ZfZHJtX2ZpbmRfYnJpZGdlKCkgYmVjYXVzZSB0aGVyZSBpcyBu
-byByZWFzb24gdG8ga2VlcCBicmlkZ2Vfbm9kZSBhZnRlciBiaW5kaW5nIGl0LgpDb3VsZCB5b3Ug
-Y2xlYW4gdXAgdGhpcz8KClRoYW5rcywKSW5raSBEYWUKCj4+Cj4+PiAtICAgICAgIGlmIChicmlk
-Z2UpCj4+PiAtICAgICAgICAgICAgICAgZHJtX2JyaWRnZV9hdHRhY2goZW5jb2RlciwgYnJpZGdl
-LCBOVUxMKTsKPj4+ICsgICAgICAgaWYgKGRzaS0+YnJpZGdlX25vZGUpIHsKPj4+ICsgICAgICAg
-ICAgICAgICBicmlkZ2UgPSBvZl9kcm1fZmluZF9icmlkZ2UoZHNpLT5icmlkZ2Vfbm9kZSk7Cj4+
-PiArICAgICAgICAgICAgICAgaWYgKGJyaWRnZSkKPj4+ICsgICAgICAgICAgICAgICAgICAgICAg
-IGRybV9icmlkZ2VfYXR0YWNoKGVuY29kZXIsIGJyaWRnZSwgTlVMTCk7Cj4+PiArICAgICAgIH0K
-Pj4+Cj4+PiAgICAgICAgIHJldHVybiBtaXBpX2RzaV9ob3N0X3JlZ2lzdGVyKCZkc2ktPmRzaV9o
-b3N0KTsKPj4+ICB9Cj4+PiAtLQo+Pj4gMS45LjEKPj4KPj4gTG9va3MgZ29vZCB0byBtZS4KPj4K
-Pj4gUmV2aWV3ZWQtYnk6IFNodWFoIEtoYW4gPHNodWFoa2hAb3NnLnNhbXN1bmcuY29tPgo+Pgo+
-IAo+IEkgdGVzdGVkIHRoaXMgb24gb2Ryb2lkLXh1NAo+IAo+IFRlc3RlZC1ieTogU2h1YWggS2hh
-biA8c2h1YWhraEBvc2cuc2Ftc3VuZy5jb20+Cj4gCj4gdGhhbmtzLAo+IC0tIFNodWFoCj4gCj4g
-LS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJz
-Y3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1h
-am9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8v
-dmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKPiAKPiAKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Fri, Jun 09, 2017 at 06:42:46PM +0200, Krzysztof Kozlowski wrote:
+> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+> 
+>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.13
+> 
+> for you to fetch changes up to f33160d14f959991e88074fc419546c8d62312a5:
+> 
+>   ARM: multi_v7_defconfig: Enable Exynos RNG and user-space crypto API (2017-05-15 19:04:10 +0200)
+> 
+> ----------------------------------------------------------------
+> Samsung defconfig ARM update for v4.13:
+> 1. Enable Exynos PRNG along with user-space crypto API.
+
+Merged, thanks.
+
+
+-Olof
