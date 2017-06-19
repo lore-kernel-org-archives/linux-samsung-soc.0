@@ -1,52 +1,68 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm: exynos: hdmi: make of_device_ids const.
-Date: Mon, 19 Jun 2017 12:11:23 +0200
-Message-ID: <84a58fd2-989d-a982-66e9-c97e9d61c2f4@samsung.com>
-References: <CGME20170619092447epcas2p39a32ae59d05f1bd14cd43b8bcd6f2463@epcas2p3.samsung.com>
- <6012220ff3c7dad339686f411ff372e7897e60c4.1497863911.git.arvind.yadav.cs@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <6012220ff3c7dad339686f411ff372e7897e60c4.1497863911.git.arvind.yadav.cs@gmail.com>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, krzk@kernel.org, javier@osg.samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] drm: exynos: constify mixer_match_types and *_mxr_drv_data.
+Date: Mon, 19 Jun 2017 15:42:42 +0530
+Message-ID: <28c361b34389bfc40fbca6250f6ff24f5f7afe97.1497866987.git.arvind.yadav.cs@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33067 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751090AbdFSKNU (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 19 Jun 2017 06:13:20 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gMTkuMDYuMjAxNyAxMToyNCwgQXJ2aW5kIFlhZGF2IHdyb3RlOgo+IG9mX2RldmljZV9pZHMg
-YXJlIG5vdCBzdXBwb3NlZCB0byBjaGFuZ2UgYXQgcnVudGltZS4gQWxsIGZ1bmN0aW9ucwo+IHdv
-cmtpbmcgd2l0aCBvZl9kZXZpY2VfaWRzIHByb3ZpZGVkIGJ5IDxsaW51eC9vZi5oPiB3b3JrIHdp
-dGggY29uc3QKPiBvZl9kZXZpY2VfaWRzLiBTbyBtYXJrIHRoZSBub24tY29uc3Qgc3RydWN0cyBh
-cyBjb25zdC4KPgo+IEZpbGUgc2l6ZSBiZWZvcmU6Cj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJ
-ICAgIGRlYwkgICAgaGV4CWZpbGVuYW1lCj4gICAxMjI5NAkgICAxMTkyCSAgICAgIDAJICAxMzQ4
-NgkgICAzNGFlCWRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkubwo+Cj4gRmlsZSBz
-aXplIGFmdGVyIGNvbnN0aWZ5IGhkbWlfbWF0Y2hfdHlwZXMuCj4gICAgdGV4dAkgICBkYXRhCSAg
-ICBic3MJICAgIGRlYwkgICAgaGV4CWZpbGVuYW1lCj4gICAxMzMxOAkgICAgMTc2CSAgICAgIDAJ
-ICAxMzQ5NAkgICAzNGI2CWRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkubwo+Cj4g
-U2lnbmVkLW9mZi1ieTogQXJ2aW5kIFlhZGF2IDxhcnZpbmQueWFkYXYuY3NAZ21haWwuY29tPgoK
-UmV2aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+CgogLS0KUmVn
-YXJkcwpBbmRyemVqCgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1p
-LmMgfCAyICstCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigt
-KQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+IGluZGV4IDFmZjZhYjYuLjYy
-NGM0OGQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
-Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gQEAgLTE2ODMs
-NyArMTY4Myw3IEBAIHN0YXRpYyBpbnQgaGRtaV9yZXNvdXJjZXNfaW5pdChzdHJ1Y3QgaGRtaV9j
-b250ZXh0ICpoZGF0YSkKPiAgCXJldHVybiBoZG1pX2JyaWRnZV9pbml0KGhkYXRhKTsKPiAgfQo+
-ICAKPiAtc3RhdGljIHN0cnVjdCBvZl9kZXZpY2VfaWQgaGRtaV9tYXRjaF90eXBlc1tdID0gewo+
-ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBoZG1pX21hdGNoX3R5cGVzW10gPSB7
-Cj4gIAl7Cj4gIAkJLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M0MjEwLWhkbWkiLAo+ICAJ
-CS5kYXRhID0gJmV4eW5vczQyMTBfaGRtaV9kcml2ZXJfZGF0YSwKCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+File size before:
+   text	   data	    bss	    dec	    hex	filename
+   9983	   1424	      0	  11407	   2c8f	drivers/gpu/drm/exynos/exynos_mixer.o
+
+File size after constify:
+   text	   data	    bss	    dec	    hex	filename
+  11231	    176	      0	  11407	   2c8f	drivers/gpu/drm/exynos/exynos_mixer.o
+
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 25edb63..778cae2 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -1097,28 +1097,28 @@ static int mixer_atomic_check(struct exynos_drm_crtc *crtc,
+ 	.atomic_check		= mixer_atomic_check,
+ };
+ 
+-static struct mixer_drv_data exynos5420_mxr_drv_data = {
++static const struct mixer_drv_data exynos5420_mxr_drv_data = {
+ 	.version = MXR_VER_128_0_0_184,
+ 	.is_vp_enabled = 0,
+ };
+ 
+-static struct mixer_drv_data exynos5250_mxr_drv_data = {
++static const struct mixer_drv_data exynos5250_mxr_drv_data = {
+ 	.version = MXR_VER_16_0_33_0,
+ 	.is_vp_enabled = 0,
+ };
+ 
+-static struct mixer_drv_data exynos4212_mxr_drv_data = {
++static const struct mixer_drv_data exynos4212_mxr_drv_data = {
+ 	.version = MXR_VER_0_0_0_16,
+ 	.is_vp_enabled = 1,
+ };
+ 
+-static struct mixer_drv_data exynos4210_mxr_drv_data = {
++static const struct mixer_drv_data exynos4210_mxr_drv_data = {
+ 	.version = MXR_VER_0_0_0_16,
+ 	.is_vp_enabled = 1,
+ 	.has_sclk = 1,
+ };
+ 
+-static struct of_device_id mixer_match_types[] = {
++static const struct of_device_id mixer_match_types[] = {
+ 	{
+ 		.compatible = "samsung,exynos4210-mixer",
+ 		.data	= &exynos4210_mxr_drv_data,
+-- 
+1.9.1
