@@ -1,46 +1,48 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH 1/2] drm/exynos/decon: Add include guard to the Exynos7
- header
-Date: Tue, 20 Jun 2017 10:53:51 +0100
-Message-ID: <CACvgo51db4Gk+GHAO-F=rz8vLTG6A66f1ZeHPNuAQV1Qthaavw@mail.gmail.com>
-References: <20170619163110.28173-1-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] drm/exynos/decon: Add include guard to the Exynos7 header
+Date: Tue, 20 Jun 2017 12:02:21 +0200
+Message-ID: <CAJKOXPfjEozEM=q4hbWRBJngNDxnkJXF37gN2Es1Ju8Qze4J1g@mail.gmail.com>
+References: <20170619163110.28173-1-krzk@kernel.org> <CACvgo51db4Gk+GHAO-F=rz8vLTG6A66f1ZeHPNuAQV1Qthaavw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170619163110.28173-1-krzk@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-fbdev <linux-fbdev@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, LAKML <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACvgo51db4Gk+GHAO-F=rz8vLTG6A66f1ZeHPNuAQV1Qthaavw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, LAKML <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, linux-fbdev <linux-fbdev@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMTkgSnVuZSAyMDE3IGF0IDE3OjMxLCBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtlcm5l
-bC5vcmc+IHdyb3RlOgo+IEFsdGhvdWdoIGhlYWRlciBpcyBpbmNsdWRlZCBvbmx5IG9uY2UgYnV0
-IHN0aWxsIGhhdmluZyBhbiBpbmNsdWRlIGd1YXJkCj4gaXMgYSBnb29kIHByYWN0aWNlLiAgVG8g
-YXZvaWQgY29uZnVzaW9uLCBhZGQgU29DIHByZWZpeCB0byBleGlzdGluZwo+IEV4eW5vczU0MzMg
-aGVhZGVyIGluY2x1ZGUgZ3VhcmQuCj4KPiBTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgS296bG93
-c2tpIDxrcnprQGtlcm5lbC5vcmc+Cj4gLS0tCj4gIGluY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19k
-ZWNvbi5oIHwgNiArKystLS0KPiAgaW5jbHVkZS92aWRlby9leHlub3M3X2RlY29uLmggICAgfCA1
-ICsrKysrCj4gIDIgZmlsZXMgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygt
-KQo+Cj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oIGIvaW5j
-bHVkZS92aWRlby9leHlub3M1NDMzX2RlY29uLmgKPiBpbmRleCA3ODk1N2M5NjI2ZjUuLmIzMDM2
-MmRhNTY5MiAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL3ZpZGVvL2V4eW5vczU0MzNfZGVjb24uaAo+
-ICsrKyBiL2luY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oCj4gQEAgLTYsOCArNiw4IEBA
-Cj4gICAqIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9ucgo+ICAgKi8K
-Pgo+IC0jaWZuZGVmIEVYWU5PU19SRUdTX0RFQ09OX0gKPiAtI2RlZmluZSBFWFlOT1NfUkVHU19E
-RUNPTl9ICj4gKyNpZm5kZWYgRVhZTk9TNTQzM19SRUdTX0RFQ09OX0gKPiArI2RlZmluZSBFWFlO
-T1M1NDMzX1JFR1NfREVDT05fSAo+CkRyb3AgdGhlIF9SRUdTXyBwYXJ0IGZyb20gdGhlIGd1YXJk
-IG9uIGVhY2ggaGVhZGVyPyBUaGUgZmlsZSBuYW1lL3BhdGgKZG9lcyBub3QgaGF2ZSBpdCwgcGx1
-cyBpdCdsbCBzYXZlIHNvbWUgV1RGIG1vbWVudHMgd2hlbgpleHlub3N7NTQzMyw3fV9yZWdzX2Rl
-Y29uLmggY29tZXMgYWJvdXQuCgpSZWdhcmRzLApFbWlsCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Tue, Jun 20, 2017 at 11:53 AM, Emil Velikov <emil.l.velikov@gmail.com> wrote:
+> On 19 June 2017 at 17:31, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> Although header is included only once but still having an include guard
+>> is a good practice.  To avoid confusion, add SoC prefix to existing
+>> Exynos5433 header include guard.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> ---
+>>  include/video/exynos5433_decon.h | 6 +++---
+>>  include/video/exynos7_decon.h    | 5 +++++
+>>  2 files changed, 8 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/video/exynos5433_decon.h b/include/video/exynos5433_decon.h
+>> index 78957c9626f5..b30362da5692 100644
+>> --- a/include/video/exynos5433_decon.h
+>> +++ b/include/video/exynos5433_decon.h
+>> @@ -6,8 +6,8 @@
+>>   * published by the Free Software Foundationr
+>>   */
+>>
+>> -#ifndef EXYNOS_REGS_DECON_H
+>> -#define EXYNOS_REGS_DECON_H
+>> +#ifndef EXYNOS5433_REGS_DECON_H
+>> +#define EXYNOS5433_REGS_DECON_H
+>>
+> Drop the _REGS_ part from the guard on each header? The file name/path
+> does not have it, plus it'll save some WTF moments when
+> exynos{5433,7}_regs_decon.h comes about.
+
+So maybe it makes sense to reorder these patches and use the guard
+name matching final file name?
+
+Best regards,
+Krzysztof
