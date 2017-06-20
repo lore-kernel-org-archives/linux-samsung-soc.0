@@ -1,48 +1,36 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] drm/exynos/decon: Add include guard to the Exynos7 header
-Date: Tue, 20 Jun 2017 12:02:21 +0200
-Message-ID: <CAJKOXPfjEozEM=q4hbWRBJngNDxnkJXF37gN2Es1Ju8Qze4J1g@mail.gmail.com>
-References: <20170619163110.28173-1-krzk@kernel.org> <CACvgo51db4Gk+GHAO-F=rz8vLTG6A66f1ZeHPNuAQV1Qthaavw@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/2] pinctrl: samsung: Consistently use unsigned instead
+ of u32 for nr_banks
+Date: Tue, 20 Jun 2017 12:19:20 +0200
+Message-ID: <67234130-5861-5c62-8753-69107d0a3990@samsung.com>
+References: <20170615163316.6444-1-krzk@kernel.org>
+        <CGME20170615163343epcas2p35150e861d333a98fa22384bcffcf1523@epcas2p3.samsung.com>
+        <20170615163316.6444-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACvgo51db4Gk+GHAO-F=rz8vLTG6A66f1ZeHPNuAQV1Qthaavw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, LAKML <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, linux-fbdev <linux-fbdev@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:43116 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751120AbdFTKTm (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 20 Jun 2017 06:19:42 -0400
+In-reply-to: <20170615163316.6444-2-krzk@kernel.org>
+Content-language: en-GB
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jun 20, 2017 at 11:53 AM, Emil Velikov <emil.l.velikov@gmail.com> wrote:
-> On 19 June 2017 at 17:31, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> Although header is included only once but still having an include guard
->> is a good practice.  To avoid confusion, add SoC prefix to existing
->> Exynos5433 header include guard.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
->>  include/video/exynos5433_decon.h | 6 +++---
->>  include/video/exynos7_decon.h    | 5 +++++
->>  2 files changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/video/exynos5433_decon.h b/include/video/exynos5433_decon.h
->> index 78957c9626f5..b30362da5692 100644
->> --- a/include/video/exynos5433_decon.h
->> +++ b/include/video/exynos5433_decon.h
->> @@ -6,8 +6,8 @@
->>   * published by the Free Software Foundationr
->>   */
->>
->> -#ifndef EXYNOS_REGS_DECON_H
->> -#define EXYNOS_REGS_DECON_H
->> +#ifndef EXYNOS5433_REGS_DECON_H
->> +#define EXYNOS5433_REGS_DECON_H
->>
-> Drop the _REGS_ part from the guard on each header? The file name/path
-> does not have it, plus it'll save some WTF moments when
-> exynos{5433,7}_regs_decon.h comes about.
+On 06/15/2017 06:33 PM, Krzysztof Kozlowski wrote:
+> Unlike for other countable members, the driver used u32 for number of
+> banks (nr_banks).  There is no specific need for using fixed-width
+> integer in this particular place.  Make it consistent.
+> 
+> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
 
-So maybe it makes sense to reorder these patches and use the guard
-name matching final file name?
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Best regards,
-Krzysztof
+-- 
+Regards,
+Sylwester
