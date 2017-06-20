@@ -1,30 +1,46 @@
-From: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
-Subject: Re: clean up and modularize arch dma_mapping interface
-Date: Tue, 20 Jun 2017 15:17:11 +0200
-Message-ID: <20170620131711.GC30769@lst.de>
-References: <20170608132609.32662-1-hch@lst.de>
-	<20170620091902.2dldmf43vhazq6yh@phenom.ffwll.local>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH V10 1/3] irq: Allow to pass the IRQF_TIMER flag with
+ percpu irq request
+Date: Tue, 20 Jun 2017 16:05:07 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1706201520290.1869@nanos>
+References: <20170612135108.GD2261@mai> <1497275529-23565-1-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170620091902.2dldmf43vhazq6yh-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, linux-c6x-dev-jPsnJVOj+W6hPH1hqNUYSQ@public.gmane.org, linux-hexagon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, openrisc-cunTk1MwBs9a3B2Vnqf2dGD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xtensa-PjhNF2WwrV/0Sa2dR60CXw@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from Galois.linutronix.de ([146.0.238.70]:44108 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751025AbdFTOGj (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 20 Jun 2017 10:06:39 -0400
+In-Reply-To: <1497275529-23565-1-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, vincent.guittot@linaro.org, peterz@infradead.org, rafael@kernel.org, nicolas.pitre@linaro.org, Mark Rutland <mark.rutland@arm.com>, Vineet Gupta <vgupta@synopsys.com>, Marc Zyngier <marc.zyngier@arm.com>, Patrice Chotard <patrice.chotard@st.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Christoffer Dall <christoffer.dall@linaro.org>, Paolo Bonzini <pbonzini@redhat.com>, =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Richard Cochran <rcochran@linutronix.de>, Ray Jui <ray.jui@broadcom.com>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>, moderated list:ARM
 
-On Tue, Jun 20, 2017 at 11:19:02AM +0200, Daniel Vetter wrote:
-> Ack for the 2 drm patches, but I can also pick them up through drm-misc if
-> you prefer that (but then it'll be 4.14).
+On Mon, 12 Jun 2017, Daniel Lezcano wrote:
+> But, the API request_percpu_irq does not allow to pass a flag, hence specifying
+> if the interrupt type is a timer.
+> 
+> Add a function request_percpu_irq_flags() where we can specify the flags. The
+> request_percpu_irq() function is changed to be a wrapper to
+> request_percpu_irq_flags() passing a zero flag parameter.
 
-Nah, I'll plan to set up a dma-mapping tree so that we'll have common
-place for dma-mapping work.
+And exactly this change wants to be a separate patch. We do not make whole
+sale changes this way. You should know that already and someone pointed
+that out to you in some of the earlier versions.
+
+> -int request_percpu_irq(unsigned int irq, irq_handler_t handler,
+> -		       const char *devname, void __percpu *dev_id)
+> +int request_percpu_irq_flags(unsigned int irq, irq_handler_t handler,
+
+The function name sucks. The first time I read it, it meant request the per
+cpu irq flags, which is not what you aim at, right?
+
+Please make that __request_percpu_irq() for now and on -rc1 time provide a
+patch set to convert all current request_percpu_irq() users to have the
+extra argument and then remove the __request_percpu_irq() intermediate.
+
+Thanks,
+
+	tglx
