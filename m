@@ -1,36 +1,54 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/2] pinctrl: samsung: Consistently use unsigned instead
- of u32 for nr_banks
-Date: Tue, 20 Jun 2017 12:19:20 +0200
-Message-ID: <67234130-5861-5c62-8753-69107d0a3990@samsung.com>
-References: <20170615163316.6444-1-krzk@kernel.org>
-        <CGME20170615163343epcas2p35150e861d333a98fa22384bcffcf1523@epcas2p3.samsung.com>
-        <20170615163316.6444-2-krzk@kernel.org>
+Subject: Re: [RFT 2/2] pinctrl: samsung: Fix invalid register offset used
+ for Exynos5433 external interrupts
+Date: Tue, 20 Jun 2017 12:31:18 +0200
+Message-ID: <766729e5-b29d-4bf1-0186-3eacbd11f07e@samsung.com>
+References: <20170614131828.28683-1-krzk@kernel.org>
+        <CGME20170614131847epcas3p4755a0ad1e25550134ddfcf0db9aff06b@epcas3p4.samsung.com>
+        <20170614131828.28683-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:43116 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:45545 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751120AbdFTKTm (ORCPT
+        with ESMTP id S1751083AbdFTKb2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Jun 2017 06:19:42 -0400
-In-reply-to: <20170615163316.6444-2-krzk@kernel.org>
+        Tue, 20 Jun 2017 06:31:28 -0400
+In-reply-to: <20170614131828.28683-2-krzk@kernel.org>
 Content-language: en-GB
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Donglin Peng <dolinux.peng@gmail.com>, stable@vger.kernel.org
 
-On 06/15/2017 06:33 PM, Krzysztof Kozlowski wrote:
-> Unlike for other countable members, the driver used u32 for number of
-> banks (nr_banks).  There is no specific need for using fixed-width
-> integer in this particular place.  Make it consistent.
+On 06/14/2017 03:18 PM, Krzysztof Kozlowski wrote:
+> When setting the pin function for external interrupts, the driver used
+> wrong IO memory address base.  The pin function register is always under
+> pctl_base, not the eint_base.
 > 
+> By updating wrong register, the external interrupts for chosen GPIO
+> would not work at all and some other GPIO might be configured to wrong
+> value.
+> 
+> Platforms other than Exynos5433 should not be affected as eint_base
+> equals pctl_base in such case.
+> 
+> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple 
+> IORESOURCE_MEM for one pin-bank")
+> Cc:<stable@vger.kernel.org>
+> Reported-by: Tomasz Figa<tomasz.figa@gmail.com>
 > Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+I've tested this patch by comparing GPFx_CON register values, as 
+nothing seems to be currently using pins from the GPF1...GPF5 banks 
+as external interrupts on TM2, the only board based on Exynos5433.
+I changed sii8620 interrupt-parent temporarily to &gpf1 and GPF1_CON
+got configured properly with the patch and improperly without 
+the patch. I guess this can be considered as
+
+Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
 -- 
-Regards,
+Thanks,
 Sylwester
