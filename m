@@ -1,76 +1,57 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 2/2] drm/exynos/decon: Add include guard to the Exynos7 header
-Date: Tue, 20 Jun 2017 17:09:07 +0200
-Message-ID: <20170620150907.17486-2-krzk@kernel.org>
-References: <20170620150907.17486-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:33122 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbdFTPJ0 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Jun 2017 11:09:26 -0400
-In-Reply-To: <20170620150907.17486-1-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH V10 1/3] irq: Allow to pass the IRQF_TIMER flag with
+ percpu irq request
+Date: Tue, 20 Jun 2017 22:25:52 +0200
+Message-ID: <20170620202552.GA1812@mai>
+References: <20170612135108.GD2261@mai>
+ <1497275529-23565-1-git-send-email-daniel.lezcano@linaro.org>
+ <alpine.DEB.2.20.1706201520290.1869@nanos>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1706201520290.1869@nanos>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, vincent.guittot@linaro.org, peterz@infradead.org, rafael@kernel.org, nicolas.pitre@linaro.org, Mark Rutland <mark.rutland@arm.com>, Vineet Gupta <vgupta@synopsys.com>, Marc Zyngier <marc.zyngier@arm.com>, Patrice Chotard <patrice.chotard@st.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Christoffer Dall <christoffer.dall@linaro.org>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Richard Cochran <rcochran@linutronix.de>, Ray Jui <ray.jui@broadcom.com>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>, moderated list:ARM PORT
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: Emil Velikov <emil.l.velikov@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Although header is included only once but still having an include guard
-is a good practice.  To avoid confusion, add SoC prefix to existing
-Exynos5433 header include guard.
+On Tue, Jun 20, 2017 at 04:05:07PM +0200, Thomas Gleixner wrote:
+> On Mon, 12 Jun 2017, Daniel Lezcano wrote:
+> > But, the API request_percpu_irq does not allow to pass a flag, hence specifying
+> > if the interrupt type is a timer.
+> > 
+> > Add a function request_percpu_irq_flags() where we can specify the flags. The
+> > request_percpu_irq() function is changed to be a wrapper to
+> > request_percpu_irq_flags() passing a zero flag parameter.
+> 
+> And exactly this change wants to be a separate patch. We do not make whole
+> sale changes this way. You should know that already and someone pointed
+> that out to you in some of the earlier versions.
+> 
+> > -int request_percpu_irq(unsigned int irq, irq_handler_t handler,
+> > -		       const char *devname, void __percpu *dev_id)
+> > +int request_percpu_irq_flags(unsigned int irq, irq_handler_t handler,
+> 
+> The function name sucks. The first time I read it, it meant request the per
+> cpu irq flags, which is not what you aim at, right?
+> 
+> Please make that __request_percpu_irq() for now and on -rc1 time provide a
+> patch set to convert all current request_percpu_irq() users to have the
+> extra argument and then remove the __request_percpu_irq() intermediate.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Ok, I will the change this way.
 
----
+What about 2/3 and 3/3? Is it possible to take them with the
+__request_percpu_irq change?
 
-Changes since v1:
-1. Just re-order patches in patchset and slightly adjust include guard
-   name.
----
- drivers/gpu/drm/exynos/regs-decon5433.h | 6 +++---
- drivers/gpu/drm/exynos/regs-decon7.h    | 5 +++++
- 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/regs-decon5433.h b/drivers/gpu/drm/exynos/regs-decon5433.h
-index 78957c9626f5..19ad9e47945e 100644
---- a/drivers/gpu/drm/exynos/regs-decon5433.h
-+++ b/drivers/gpu/drm/exynos/regs-decon5433.h
-@@ -6,8 +6,8 @@
-  * published by the Free Software Foundationr
-  */
- 
--#ifndef EXYNOS_REGS_DECON_H
--#define EXYNOS_REGS_DECON_H
-+#ifndef EXYNOS_REGS_DECON5433_H
-+#define EXYNOS_REGS_DECON5433_H
- 
- /* Exynos543X DECON */
- #define DECON_VIDCON0			0x0000
-@@ -206,4 +206,4 @@
- #define CRCCTRL_CRCEN			(0x1 << 0)
- #define CRCCTRL_MASK			(0x7)
- 
--#endif /* EXYNOS_REGS_DECON_H */
-+#endif /* EXYNOS_REGS_DECON5433_H */
-diff --git a/drivers/gpu/drm/exynos/regs-decon7.h b/drivers/gpu/drm/exynos/regs-decon7.h
-index 339ea1007ff5..5df7765d2397 100644
---- a/drivers/gpu/drm/exynos/regs-decon7.h
-+++ b/drivers/gpu/drm/exynos/regs-decon7.h
-@@ -8,6 +8,9 @@
-  * option) any later version.
-  */
- 
-+#ifndef EXYNOS_REGS_DECON7_H
-+#define EXYNOS_REGS_DECON7_H
-+
- /* VIDCON0 */
- #define VIDCON0					0x00
- 
-@@ -346,3 +349,5 @@
- 
- #define DECON_UPDATE_SLAVE_SYNC			(1 << 4)
- #define DECON_UPDATE_STANDALONE_F		(1 << 0)
-+
-+#endif /* EXYNOS_REGS_DECON7_H */
+
 -- 
-2.9.3
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
