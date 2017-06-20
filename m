@@ -1,46 +1,93 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH V10 1/3] irq: Allow to pass the IRQF_TIMER flag with
- percpu irq request
-Date: Tue, 20 Jun 2017 16:05:07 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1706201520290.1869@nanos>
-References: <20170612135108.GD2261@mai> <1497275529-23565-1-git-send-email-daniel.lezcano@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 1/2] drm/exynos/decon: Move headers from global to local place
+Date: Tue, 20 Jun 2017 17:09:06 +0200
+Message-ID: <20170620150907.17486-1-krzk@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:44108 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751025AbdFTOGj (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750993AbdFTPJX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Jun 2017 10:06:39 -0400
-In-Reply-To: <1497275529-23565-1-git-send-email-daniel.lezcano@linaro.org>
+        Tue, 20 Jun 2017 11:09:23 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-kernel@vger.kernel.org, vincent.guittot@linaro.org, peterz@infradead.org, rafael@kernel.org, nicolas.pitre@linaro.org, Mark Rutland <mark.rutland@arm.com>, Vineet Gupta <vgupta@synopsys.com>, Marc Zyngier <marc.zyngier@arm.com>, Patrice Chotard <patrice.chotard@st.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Christoffer Dall <christoffer.dall@linaro.org>, Paolo Bonzini <pbonzini@redhat.com>, =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Richard Cochran <rcochran@linutronix.de>, Ray Jui <ray.jui@broadcom.com>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>, moderated list:ARM
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: Emil Velikov <emil.l.velikov@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Mon, 12 Jun 2017, Daniel Lezcano wrote:
-> But, the API request_percpu_irq does not allow to pass a flag, hence specifying
-> if the interrupt type is a timer.
-> 
-> Add a function request_percpu_irq_flags() where we can specify the flags. The
-> request_percpu_irq() function is changed to be a wrapper to
-> request_percpu_irq_flags() passing a zero flag parameter.
+The DECON headers contain only defines for registers.  There are no
+other drivers using them so this should be put locally to the Exynos DRM
+driver.  Keeping headers local helps managing the code.
 
-And exactly this change wants to be a separate patch. We do not make whole
-sale changes this way. You should know that already and someone pointed
-that out to you in some of the earlier versions.
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> -int request_percpu_irq(unsigned int irq, irq_handler_t handler,
-> -		       const char *devname, void __percpu *dev_id)
-> +int request_percpu_irq_flags(unsigned int irq, irq_handler_t handler,
+---
 
-The function name sucks. The first time I read it, it meant request the per
-cpu irq flags, which is not what you aim at, right?
+Changes since v1:
+1. Just re-order patches in patchset.
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c                          | 3 +--
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c                             | 2 +-
+ .../exynos5433_decon.h => drivers/gpu/drm/exynos/regs-decon5433.h      | 0
+ include/video/exynos7_decon.h => drivers/gpu/drm/exynos/regs-decon7.h  | 3 +--
+ 4 files changed, 3 insertions(+), 5 deletions(-)
+ rename include/video/exynos5433_decon.h => drivers/gpu/drm/exynos/regs-decon5433.h (100%)
+ rename include/video/exynos7_decon.h => drivers/gpu/drm/exynos/regs-decon7.h (99%)
 
-Please make that __request_percpu_irq() for now and on -rc1 time provide a
-patch set to convert all current request_percpu_irq() users to have the
-extra argument and then remove the __request_percpu_irq() intermediate.
-
-Thanks,
-
-	tglx
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 5792ca88ab7a..5aca8c16f2bc 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -19,13 +19,12 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ 
+-#include <video/exynos5433_decon.h>
+-
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_fb.h"
+ #include "exynos_drm_plane.h"
+ #include "exynos_drm_iommu.h"
++#include "regs-decon5433.h"
+ 
+ #define DSD_CFG_MUX 0x1004
+ #define DSD_CFG_MUX_TE_UNMASK_GLOBAL BIT(13)
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 3e88269fdc2e..387e436c97d2 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -25,13 +25,13 @@
+ 
+ #include <video/of_display_timing.h>
+ #include <video/of_videomode.h>
+-#include <video/exynos7_decon.h>
+ 
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_plane.h"
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fb.h"
+ #include "exynos_drm_iommu.h"
++#include "regs-decon7.h"
+ 
+ /*
+  * DECON stands for Display and Enhancement controller.
+diff --git a/include/video/exynos5433_decon.h b/drivers/gpu/drm/exynos/regs-decon5433.h
+similarity index 100%
+rename from include/video/exynos5433_decon.h
+rename to drivers/gpu/drm/exynos/regs-decon5433.h
+diff --git a/include/video/exynos7_decon.h b/drivers/gpu/drm/exynos/regs-decon7.h
+similarity index 99%
+rename from include/video/exynos7_decon.h
+rename to drivers/gpu/drm/exynos/regs-decon7.h
+index a62b11b613f6..339ea1007ff5 100644
+--- a/include/video/exynos7_decon.h
++++ b/drivers/gpu/drm/exynos/regs-decon7.h
+@@ -1,5 +1,4 @@
+-/* include/video/exynos7_decon.h
+- *
++/*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+  * Author: Ajay Kumar <ajaykumar.rs@samsung.com>
+  *
+-- 
+2.9.3
