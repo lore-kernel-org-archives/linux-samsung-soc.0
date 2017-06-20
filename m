@@ -1,54 +1,56 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFT 2/2] pinctrl: samsung: Fix invalid register offset used
- for Exynos5433 external interrupts
-Date: Tue, 20 Jun 2017 12:31:18 +0200
-Message-ID: <766729e5-b29d-4bf1-0186-3eacbd11f07e@samsung.com>
-References: <20170614131828.28683-1-krzk@kernel.org>
-        <CGME20170614131847epcas3p4755a0ad1e25550134ddfcf0db9aff06b@epcas3p4.samsung.com>
-        <20170614131828.28683-2-krzk@kernel.org>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 1/2] drm/exynos/decon: Add include guard to the Exynos7 header
+Date: Tue, 20 Jun 2017 11:57:11 +0100
+Message-ID: <CACvgo52KMMt+S-KVYnmMy9qGUL6jMD2Uj8EJWNkKUQLr0_wfAw@mail.gmail.com>
+References: <20170619163110.28173-1-krzk@kernel.org> <CACvgo51db4Gk+GHAO-F=rz8vLTG6A66f1ZeHPNuAQV1Qthaavw@mail.gmail.com>
+ <CAJKOXPfjEozEM=q4hbWRBJngNDxnkJXF37gN2Es1Ju8Qze4J1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:45545 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751083AbdFTKb2 (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35785 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbdFTK5N (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Jun 2017 06:31:28 -0400
-In-reply-to: <20170614131828.28683-2-krzk@kernel.org>
-Content-language: en-GB
+        Tue, 20 Jun 2017 06:57:13 -0400
+In-Reply-To: <CAJKOXPfjEozEM=q4hbWRBJngNDxnkJXF37gN2Es1Ju8Qze4J1g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Donglin Peng <dolinux.peng@gmail.com>, stable@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, LAKML <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, linux-fbdev <linux-fbdev@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 06/14/2017 03:18 PM, Krzysztof Kozlowski wrote:
-> When setting the pin function for external interrupts, the driver used
-> wrong IO memory address base.  The pin function register is always under
-> pctl_base, not the eint_base.
-> 
-> By updating wrong register, the external interrupts for chosen GPIO
-> would not work at all and some other GPIO might be configured to wrong
-> value.
-> 
-> Platforms other than Exynos5433 should not be affected as eint_base
-> equals pctl_base in such case.
-> 
-> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple 
-> IORESOURCE_MEM for one pin-bank")
-> Cc:<stable@vger.kernel.org>
-> Reported-by: Tomasz Figa<tomasz.figa@gmail.com>
-> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+On 20 June 2017 at 11:02, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Tue, Jun 20, 2017 at 11:53 AM, Emil Velikov <emil.l.velikov@gmail.com> wrote:
+>> On 19 June 2017 at 17:31, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>> Although header is included only once but still having an include guard
+>>> is a good practice.  To avoid confusion, add SoC prefix to existing
+>>> Exynos5433 header include guard.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> ---
+>>>  include/video/exynos5433_decon.h | 6 +++---
+>>>  include/video/exynos7_decon.h    | 5 +++++
+>>>  2 files changed, 8 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/include/video/exynos5433_decon.h b/include/video/exynos5433_decon.h
+>>> index 78957c9626f5..b30362da5692 100644
+>>> --- a/include/video/exynos5433_decon.h
+>>> +++ b/include/video/exynos5433_decon.h
+>>> @@ -6,8 +6,8 @@
+>>>   * published by the Free Software Foundationr
+>>>   */
+>>>
+>>> -#ifndef EXYNOS_REGS_DECON_H
+>>> -#define EXYNOS_REGS_DECON_H
+>>> +#ifndef EXYNOS5433_REGS_DECON_H
+>>> +#define EXYNOS5433_REGS_DECON_H
+>>>
+>> Drop the _REGS_ part from the guard on each header? The file name/path
+>> does not have it, plus it'll save some WTF moments when
+>> exynos{5433,7}_regs_decon.h comes about.
+>
+> So maybe it makes sense to reorder these patches and use the guard
+> name matching final file name?
+>
+That sounds better, IMHO.
 
-I've tested this patch by comparing GPFx_CON register values, as 
-nothing seems to be currently using pins from the GPF1...GPF5 banks 
-as external interrupts on TM2, the only board based on Exynos5433.
-I changed sii8620 interrupt-parent temporarily to &gpf1 and GPF1_CON
-got configured properly with the patch and improperly without 
-the patch. I guess this can be considered as
-
-Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
--- 
-Thanks,
-Sylwester
+-Emil
