@@ -1,89 +1,70 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH v2] drm/exynos/dsi: Remove error handling for
- bridge_node DT parsing
-Date: Tue, 20 Jun 2017 13:51:50 +0900
-Message-ID: <435f9640-379d-acfd-a445-50a2894a1259@samsung.com>
-References: <CGME20170614063359epcas5p46658bba447468cd367d0684bd9485bf8@epcas5p4.samsung.com>
-        <1497422020-8810-1-git-send-email-hoegeun.kwon@samsung.com>
-        <e8ea4c40-4065-54de-7277-26c236bab36a@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:14474 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750808AbdFTEvv (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Jun 2017 00:51:51 -0400
-In-reply-to: <e8ea4c40-4065-54de-7277-26c236bab36a@math.uni-bielefeld.de>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Dongwoo Lee <dwoo08.lee@samsung.com>
+Subject: [PATCH 1/2] arm64: dts: exynos: Fix wrong label for USB 3.0
+ controller node
+Date: Tue, 20 Jun 2017 16:12:23 +0900
+Message-ID: <1497942745-8607-2-git-send-email-dwoo08.lee@samsung.com>
+References: <1497942745-8607-1-git-send-email-dwoo08.lee@samsung.com>
+        <CGME20170620071230epcas5p497144c7ccd8485da9109b8905a5ea36e@epcas5p4.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1497942745-8607-1-git-send-email-dwoo08.lee@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM64 PORT
+        AARCH64 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS
+        ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: cw00.choi@samsung.com, andi.shyti@samsung.com, Dongwoo Lee <dwoo08.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
-Cc: javier@osg.samsung.com, a.hajda@samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-Hello Tobias,
+Exynos5433 has two usb 3.0 controllers: usbhost and usbdrd. usbhost
+is host-only controller whereas usbdrd supports both peripheral and
+host mode. "drd" means dual-role device, so usbhost cannot be labeled
+with the name contains "drd". Howerver, the label usbdrd_dwc3_0 was
+used for usbhost's dwc3 node. It seems it obviously fault because TM2
+and TM2E doesn't use usbhost but dr_mode property is assigned to it.
 
-Sorry for late reply.
+This patch assigns the proper label for two dwc3 nodes, and apply
+changes to the related reference.
 
-On 06/14/2017 09:30 PM, Tobias Jakobi wrote:
-> Hello Hoegeun,
->
-> my last question (does this regress the case "node required, but
-> absent") still stands.
->
->
-> Hoegeun Kwon wrote:
->> Remove the error handling of bridge_node because the bridge_node is
->> required optionally.
-> I don't think a construction like that exists. Either it's required, or
-> it's optional. "required optionally" makes no sense to me (but I'm not a
-> native speaker).
->
-> - Tobias
+Signed-off-by: Dongwoo Lee <dwoo08.lee@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi            | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-The bridge_node is optional.
-I will change commit message and send ver3 patch.
-
-Best regards,
-Hoegeun
-
->
->
->> For example, In case of Exynos SoC, a bridge device such as mDNIe and
->> MIC could be placed between Display Controller and MIPI DSI device but
->> the bridge device is required optionally.
->>
->> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
->> ---
->>
->> Hi Inki and Tobias,
->>
->> Thanks for your review.
->>
->> Changes for V2:
->> - Modified the commit message in more detail than before.
->>
->> Best Regards,
->> Hoegeun
->>
->>   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> index a11b795..6ee0dac 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -1651,8 +1651,6 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
->>   		return ret;
->>   
->>   	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
->> -	if (!dsi->bridge_node)
->> -		return -EINVAL;
->>   
->>   	return 0;
->>   }
->>
->
->
->
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 804a270..477c3bc 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -1202,7 +1202,7 @@
+ 	status = "okay";
+ };
+ 
+-&usbdrd_dwc3_0 {
++&usbdrd_dwc3 {
+ 	dr_mode = "otg";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 727f36a..7fe994b 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1367,7 +1367,7 @@
+ 			ranges;
+ 			status = "disabled";
+ 
+-			dwc3@15400000 {
++			usbdrd_dwc3: dwc3@15400000 {
+ 				compatible = "snps,dwc3";
+ 				reg = <0x15400000 0x10000>;
+ 				interrupts = <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1414,7 +1414,7 @@
+ 			ranges;
+ 			status = "disabled";
+ 
+-			usbdrd_dwc3_0: dwc3@15a00000 {
++			usbhost_dwc3: dwc3@15a00000 {
+ 				compatible = "snps,dwc3";
+ 				reg = <0x15a00000 0x10000>;
+ 				interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+1.9.1
