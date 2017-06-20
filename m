@@ -1,45 +1,37 @@
-From: Dongwoo Lee <dwoo08.lee@samsung.com>
-Subject: [PATCH 0/2] Enable USB dual-role operation for TM2 and TM2E
-Date: Tue, 20 Jun 2017 16:12:22 +0900
-Message-ID: <1497942745-8607-1-git-send-email-dwoo08.lee__21525.4557937898$1497944654$gmane$org@samsung.com>
-References: <CGME20170620071229epcas1p4076c72c941527ef3073e4036a7421cfb@epcas1p4.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15543 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750957AbdFTHoN (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Jun 2017 03:44:13 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20170620074411epoutp02e1ecfc56fc3705aa3595235ca9f4b3ae~JxLlKB5vD0752807528epoutp02H
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Jun 2017 07:44:11 +0000 (GMT)
-Received: from epsmgms2p2.samsung.com (unknown [182.195.42.80]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20170620074410epcas5p43a7172b8f292f077ae94cc720c7b07ba~JxLksRMWi0916609166epcas5p4_
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Jun 2017 07:44:10 +0000
-        (GMT)
-Received: from gangnam.samsung ([10.113.62.47]) by mmp2.samsung.com (Oracle
-        Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with
-        ESMTPA id <0ORU006I85HMWN60@mmp2.samsung.com> for
-        linux-samsung-soc@vger.kernel.org; Tue, 20 Jun 2017 16:44:10 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [GIT PULL] pinctrl: samsung: Pinctrl update for v4.13
+Date: Tue, 20 Jun 2017 10:08:56 +0200
+Message-ID: <CACRpkdZjZbHD4ZCQVHUyu8y0f45FnRqTRL4P6J7Wrz9dZNXGdw@mail.gmail.com>
+References: <20170609164827.2231-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20170609164827.2231-1-krzk@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: cw00.choi@samsung.com, andi.shyti@samsung.com, Dongwoo Lee <dwoo08.lee@samsung.com>
 
-Since commit 9840354ff429 ("usb: dwc3: Add dual-role support") USB
-dual-role operation on TM2 and TM2E can be enabled by simply adding
-extcon property. However, exynos5433 dt has the mislabeled dwc3 node,
-and thus we should resolve it first to apply the property.
+On Fri, Jun 9, 2017 at 6:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-This patchset fixes up the device tree fault and adds extcon property
-to activate dual-role operation.
+> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+>
+>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.13
+>
+> for you to fetch changes up to a453f3693f2aa9ebba623f8cff1e3d7c5df96ddd:
+>
+>   pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem (2017-06-07 20:40:48 +0200)
 
-Dongwoo Lee (2):
-  arm64: dts: exynos: Fix wrong label for USB 3.0 controller node
-  arm64: dts: exynos: Add extcon property for TM2 and TM2E
+Pulled into my "devel" branch on the pin control tree.
 
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 3 ++-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi            | 4 ++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+Pushing it to the build servers hoping all works.
 
--- 
-1.9.1
+Thanks for your efforts to maintain Samsung pin control, it is
+much appreciated!
+
+Yours,
+Linus Walleij
