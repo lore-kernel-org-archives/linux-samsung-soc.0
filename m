@@ -1,22 +1,35 @@
-From: "CELINE" <vendce@bolaget.fr>
-Subject: let me know
-Date: Wed, 21 Jun 2017 14:58:16 +0100
-Message-ID: <201706211358.v5LDf0X6028516__9011.31237992576$1498062733$gmane$org@www.brfliseberg.se>
-Reply-To: celineroullier200@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from www.brfliseberg.se ([213.242.162.1]:45640 "EHLO
-        www.brfliseberg.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751919AbdFUQcK (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 12:32:10 -0400
-Content-Description: Mail message body
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 0/2] clk: ARM: dts: exynos: Fix hang on Odroid U3
+Date: Wed, 21 Jun 2017 21:08:05 +0200
+Message-ID: <20170621190807.14850-1-krzk@kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Recipients <vendce@bolaget.fr>
 
-Hello, important charity foundation proposal to discuss with you, if you are interested please reply urgently for details. 
-with love,
-CELINE
+Recent linux-next fails to boot on Odroid U3 (Exynos4412) because
+of commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation
+for PLL36XX clocks").
+
+Patchset fixes it. Patches are independent although both are required
+to fix the issue.
+
+I will be taking DTS change.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (2):
+  clk: samsung: audss: Fix silent hang on Exynos4412 due to disabled
+    EPLL
+  ARM: dts: exynos: Add clocks to audss block to fix silent hang on
+    Exynos4412
+
+ arch/arm/boot/dts/exynos4.dtsi         | 3 +++
+ drivers/clk/samsung/clk-exynos-audss.c | 1 +
+ 2 files changed, 4 insertions(+)
+
+-- 
+2.9.3
+
