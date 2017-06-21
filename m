@@ -1,8 +1,8 @@
 From: Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH RESEND 5/7] [media] media: s3c-camif: Use MEDIA_REVISON
- instead of KERNEL_VERSION
-Date: Wed, 21 Jun 2017 10:08:10 +0200
-Message-ID: <20170621080812.6817-6-jthumshirn@suse.de>
+Subject: [PATCH RESEND 7/7] staging/atomisp: use MEDIA_VERSION instead of
+ KERNEL_VERSION
+Date: Wed, 21 Jun 2017 10:08:12 +0200
+Message-ID: <20170621080812.6817-8-jthumshirn@suse.de>
 References: <20170621080812.6817-1-jthumshirn@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,26 +22,30 @@ To: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel
 Cc: devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Johannes Thumshirn <jthumshirn@suse.de>, Andrew Morton <akpm@linux-foundation.org>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use MEDIA_REVISON instead of KERNEL_VERSION to encode the driver
-version.
+Use MEDIA_VERSION instead of KERNEL_VERSION to encode the driver
+version of the Atom ISP driver.
 
 Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
 ---
- drivers/media/platform/s3c-camif/camif-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/atomisp/include/linux/atomisp.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index ec4001970313..98bd5719fdf5 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -317,7 +317,7 @@ static int camif_media_dev_init(struct camif_dev *camif)
- 		 ip_rev == S3C6410_CAMIF_IP_REV ? "6410" : "244X");
- 	strlcpy(md->bus_info, "platform", sizeof(md->bus_info));
- 	md->hw_revision = ip_rev;
--	md->driver_version = KERNEL_VERSION(1, 0, 0);
-+	md->driver_version = MEDIA_REVISION(1, 0, 0);
+diff --git a/drivers/staging/media/atomisp/include/linux/atomisp.h b/drivers/staging/media/atomisp/include/linux/atomisp.h
+index 35865462ccf9..0b664ee6f825 100644
+--- a/drivers/staging/media/atomisp/include/linux/atomisp.h
++++ b/drivers/staging/media/atomisp/include/linux/atomisp.h
+@@ -30,9 +30,9 @@
  
- 	md->dev = camif->dev;
+ /* struct media_device_info.driver_version */
+ #define ATOMISP_CSS_VERSION_MASK	0x00ffffff
+-#define ATOMISP_CSS_VERSION_15		KERNEL_VERSION(1, 5, 0)
+-#define ATOMISP_CSS_VERSION_20		KERNEL_VERSION(2, 0, 0)
+-#define ATOMISP_CSS_VERSION_21		KERNEL_VERSION(2, 1, 0)
++#define ATOMISP_CSS_VERSION_15		MEDIA_REVISION(1, 5, 0)
++#define ATOMISP_CSS_VERSION_20		MEDIA_REVISION(2, 0, 0)
++#define ATOMISP_CSS_VERSION_21		MEDIA_REVISION(2, 1, 0)
  
+ /* struct media_device_info.hw_revision */
+ #define ATOMISP_HW_REVISION_MASK	0x0000ff00
 -- 
 2.12.3
