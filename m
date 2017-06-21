@@ -1,48 +1,122 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/2] clk: samsung: audss: Fix silent hang on Exynos4412 due to disabled EPLL
-Date: Wed, 21 Jun 2017 21:08:06 +0200
-Message-ID: <20170621190807.14850-2-krzk@kernel.org>
-References: <20170621190807.14850-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170621190807.14850-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 1/4] ARM: exynos_defconfig: Enable Bluetooth, mac80211, NFC and more USB drivers
+Date: Wed, 21 Jun 2017 21:16:56 +0200
+Message-ID: <20170621191659.10929-1-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:56338 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751156AbdFUTRG (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 21 Jun 2017 15:17:06 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>
 
-Similarly to commit f1e9203e2366 ("clk: samsung: Fix Exynos 5420 pinctrl
-setup and clock disable failure due to domain being gated") for
-Exynos5420, the Exynos4412 also requires that EPLL is not disabled.
-Otherwise any access to MAUDIO block will silently halt.
-
-This was not visible before because EPLL on Exynos4 could not be
-disabled before commit 6edfa11cb396 ("clk: samsung:
-Add enable/disable operation for PLL36XX clocks").  After this commit,
-on Odroid U3 board one can see silent hang, usually with last (but
-unrelated) messages:
-
-	[    2.382741] input: gpio_keys as /devices/platform/gpio_keys/input/input0
-	[    2.405686] usb 1-3: new high-speed USB device number 3 using exynos-ehci
-	[    2.419843] max77686-rtc max77686-rtc: setting system clock to 2017-06-21 17:04:13 UTC (1498064653)
-
-Mark Exynos4 variant as also needed EPLL to be enabled all the time.
+Enable useful, but not essential, stacks and drivers as modules:
+ - Bluetooth,
+ - mac80211,
+ - NFC,
+ - some USB network adapters,
+ - USB storage,
+ - additional USB devices (printers etc).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos-audss.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/configs/exynos_defconfig | 57 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 56 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 85edeb738853..1fab56f396d4 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -73,6 +73,7 @@ struct exynos_audss_clk_drvdata {
- 
- static const struct exynos_audss_clk_drvdata exynos4210_drvdata = {
- 	.num_clks	= EXYNOS_AUDSS_MAX_CLKS - 1,
-+	.enable_epll	= 1,
- };
- 
- static const struct exynos_audss_clk_drvdata exynos5410_drvdata = {
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 25325ed9319e..e6a976f5305c 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -48,7 +48,43 @@ CONFIG_IP_PNP=y
+ CONFIG_IP_PNP_DHCP=y
+ CONFIG_IP_PNP_BOOTP=y
+ CONFIG_IP_PNP_RARP=y
++CONFIG_BT=m
++CONFIG_BT_RFCOMM=m
++CONFIG_BT_RFCOMM_TTY=y
++CONFIG_BT_BNEP=m
++CONFIG_BT_BNEP_MC_FILTER=y
++CONFIG_BT_BNEP_PROTO_FILTER=y
++CONFIG_BT_HIDP=m
++CONFIG_BT_LEDS=y
++CONFIG_BT_HCIBTUSB=m
++CONFIG_BT_HCIBTSDIO=m
++CONFIG_BT_HCIUART=m
++CONFIG_BT_HCIUART_BCSP=y
++CONFIG_BT_HCIUART_ATH3K=y
++CONFIG_BT_HCIUART_3WIRE=y
++CONFIG_BT_HCIUART_INTEL=y
++CONFIG_BT_HCIUART_BCM=y
++CONFIG_BT_HCIUART_QCA=y
++CONFIG_BT_HCIUART_AG6XX=y
++CONFIG_BT_HCIUART_MRVL=y
++CONFIG_BT_HCIBCM203X=m
++CONFIG_BT_HCIBPA10X=m
++CONFIG_BT_HCIBFUSB=m
++CONFIG_BT_HCIVHCI=m
++CONFIG_BT_MRVL=m
++CONFIG_BT_MRVL_SDIO=m
++CONFIG_BT_ATH3K=m
+ CONFIG_CFG80211=y
++CONFIG_MAC80211=y
++CONFIG_MAC80211_LEDS=y
++CONFIG_NFC=y
++CONFIG_NFC_DIGITAL=m
++CONFIG_NFC_NCI=y
++CONFIG_NFC_NCI_SPI=m
++CONFIG_NFC_NCI_UART=m
++CONFIG_NFC_HCI=m
++CONFIG_NFC_SHDLC=y
++CONFIG_NFC_S3FWRN5_I2C=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_DMA_CMA=y
+@@ -65,7 +101,9 @@ CONFIG_BLK_DEV_DM=y
+ CONFIG_DM_CRYPT=m
+ CONFIG_NETDEVICES=y
+ CONFIG_SMSC911X=y
++CONFIG_USB_RTL8150=m
+ CONFIG_USB_RTL8152=y
++CONFIG_USB_LAN78XX=m
+ CONFIG_USB_USBNET=y
+ CONFIG_USB_NET_SMSC75XX=y
+ CONFIG_USB_NET_SMSC95XX=y
+@@ -189,7 +227,25 @@ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_EHCI_EXYNOS=y
+ CONFIG_USB_OHCI_HCD=y
+ CONFIG_USB_OHCI_EXYNOS=y
++CONFIG_USB_ACM=m
++CONFIG_USB_PRINTER=m
++CONFIG_USB_WDM=m
++CONFIG_USB_TMC=m
+ CONFIG_USB_STORAGE=y
++CONFIG_USB_STORAGE_REALTEK=m
++CONFIG_USB_STORAGE_DATAFAB=m
++CONFIG_USB_STORAGE_FREECOM=m
++CONFIG_USB_STORAGE_ISD200=m
++CONFIG_USB_STORAGE_USBAT=m
++CONFIG_USB_STORAGE_SDDR09=m
++CONFIG_USB_STORAGE_SDDR55=m
++CONFIG_USB_STORAGE_JUMPSHOT=m
++CONFIG_USB_STORAGE_ALAUDA=m
++CONFIG_USB_STORAGE_ONETOUCH=m
++CONFIG_USB_STORAGE_KARMA=m
++CONFIG_USB_STORAGE_CYPRESS_ATACB=m
++CONFIG_USB_STORAGE_ENE_UB6250=m
++CONFIG_USB_UAS=m
+ CONFIG_USB_DWC3=y
+ CONFIG_USB_DWC2=y
+ CONFIG_USB_HSIC_USB3503=y
+@@ -209,7 +265,6 @@ CONFIG_LEDS_GPIO=y
+ CONFIG_LEDS_PWM=y
+ CONFIG_LEDS_MAX77693=y
+ CONFIG_LEDS_MAX8997=y
+-CONFIG_LEDS_TRIGGERS=y
+ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_MAX8997=y
 -- 
 2.9.3
