@@ -1,8 +1,8 @@
 From: Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH RESEND 6/7] [media] media: bcm2048: use MEDIA_REVISION isntead
- of KERNEL_VERSION
-Date: Wed, 21 Jun 2017 10:08:11 +0200
-Message-ID: <20170621080812.6817-7-jthumshirn@suse.de>
+Subject: [PATCH RESEND 2/7] video: fbdev: don't use KERNEL_VERSION macro for
+ MEDIA_REVISION
+Date: Wed, 21 Jun 2017 10:08:07 +0200
+Message-ID: <20170621080812.6817-3-jthumshirn@suse.de>
 References: <20170621080812.6817-1-jthumshirn@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,26 +22,34 @@ To: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel
 Cc: devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Johannes Thumshirn <jthumshirn@suse.de>, Andrew Morton <akpm@linux-foundation.org>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use MEDIA_REVISION isntead of KERNEL_VERSION to encode the bcm2048
-driver version.
+Don't use the KERNEL_VERSION() macro for the v4l2 capabilities, use
+MEDIA_REVISION instead.
 
 Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
 ---
- drivers/staging/media/bcm2048/radio-bcm2048.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/matrox/matroxfb_base.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/bcm2048/radio-bcm2048.c b/drivers/staging/media/bcm2048/radio-bcm2048.c
-index 38f72d069e27..ffe9b63cbf59 100644
---- a/drivers/staging/media/bcm2048/radio-bcm2048.c
-+++ b/drivers/staging/media/bcm2048/radio-bcm2048.c
-@@ -48,7 +48,7 @@
- /* driver definitions */
- #define BCM2048_DRIVER_AUTHOR	"Eero Nurkkala <ext-eero.nurkkala@nokia.com>"
- #define BCM2048_DRIVER_NAME	BCM2048_NAME
--#define BCM2048_DRIVER_VERSION	KERNEL_VERSION(0, 0, 1)
-+#define BCM2048_DRIVER_VERSION	MEDIA_REVISION(0, 0, 1)
- #define BCM2048_DRIVER_CARD	"Broadcom bcm2048 FM Radio Receiver"
- #define BCM2048_DRIVER_DESC	"I2C driver for BCM2048 FM Radio Receiver"
+diff --git a/drivers/video/fbdev/matrox/matroxfb_base.c b/drivers/video/fbdev/matrox/matroxfb_base.c
+index 11eb094396ae..eb92a325033c 100644
+--- a/drivers/video/fbdev/matrox/matroxfb_base.c
++++ b/drivers/video/fbdev/matrox/matroxfb_base.c
+@@ -113,6 +113,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
++#include <linux/media.h>
  
+ #ifdef CONFIG_PPC_PMAC
+ #include <asm/machdep.h>
+@@ -1091,7 +1092,7 @@ static int matroxfb_ioctl(struct fb_info *info,
+ 				strcpy(r.driver, "matroxfb");
+ 				strcpy(r.card, "Matrox");
+ 				sprintf(r.bus_info, "PCI:%s", pci_name(minfo->pcidev));
+-				r.version = KERNEL_VERSION(1,0,0);
++				r.version = MEDIA_REVISION(1, 0, 0);
+ 				r.capabilities = V4L2_CAP_VIDEO_OUTPUT;
+ 				if (copy_to_user(argp, &r, sizeof(r)))
+ 					return -EFAULT;
 -- 
 2.12.3
