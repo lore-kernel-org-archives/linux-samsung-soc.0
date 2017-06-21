@@ -1,36 +1,56 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] drm/exynos/dsi: Remove error handling for bridge_node
- DT parsing
-Date: Wed, 21 Jun 2017 08:35:25 +0200
-Message-ID: <CAJKOXPecr9RvAKb6EvfZRmf8UPenRLAqF6_B6DzamNEVbmCmpw@mail.gmail.com>
-References: <CGME20170621063347epcas1p46d2ccf5edbedc5386222c0fce3b2523a@epcas1p4.samsung.com>
- <1498026812-18539-1-git-send-email-hoegeun.kwon@samsung.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Subject: [PATCH RESEND 0/7] Introduce MEDIA_VERSION to end KENREL_VERSION
+ abuse in media
+Date: Wed, 21 Jun 2017 10:08:05 +0200
+Message-ID: <20170621080812.6817-1-jthumshirn@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59912 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751069AbdFUGf1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 02:35:27 -0400
-In-Reply-To: <1498026812-18539-1-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Johannes Thumshirn <jthumshirn@suse.de>, Andrew Morton <akpm@linux-foundation.org>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, Seung Woo Kim <sw0312.kim@samsung.com>, airlied@linux.ie, kgene@kernel.org, javier@osg.samsung.com, a.hajda@samsung.com, tjakobi@math.uni-bielefeld.de, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 21, 2017 at 8:33 AM, Hoegeun Kwon <hoegeun.kwon@samsung.com> wrote:
-> Remove the error handling of bridge_node because the bridge_node is
-> optionally.
+Currently the media subsystem has a very creative abuse of the
+KERNEL_VERSION macro to encode an arbitrary version triplet for media
+drivers and device hardware revisions.
 
-"is optional"
+This series introduces a new macro called MEDIA_REVISION which encodes
+a version triplet like KERNEL_VERSION does, but clearly has media
+centric semantics and doesn't fool someone into thinking specific
+parts are defined for a specific kernel version only like in out of
+tree drivers.
 
->
-> For example, In case of Exynos SoC, a bridge device such as mDNIe and
-> MIC could be placed between Display Controller and MIPI DSI device but
-> the bridge device is optionally.
+Johannes Thumshirn (7):
+  [media] media: introduce MEDIA_REVISION macro
+  video: fbdev: don't use KERNEL_VERSION macro for MEDIA_REVISION
+  [media] media: document the use of MEDIA_REVISION instead of
+    KERNEL_VERSION
+  [media] cx25821: use MEDIA_REVISION instead of KERNEL_VERSION
+  [media] media: s3c-camif: Use MEDIA_REVISON instead of KERNEL_VERSION
+  [media] media: bcm2048: use MEDIA_REVISION isntead of KERNEL_VERSION
+  staging/atomisp: use MEDIA_VERSION instead of KERNEL_VERSION
 
-Ditto.
+ Documentation/media/uapi/cec/cec-ioc-adap-g-caps.rst        | 2 +-
+ Documentation/media/uapi/mediactl/media-ioc-device-info.rst | 4 ++--
+ Documentation/media/uapi/v4l/vidioc-querycap.rst            | 6 +++---
+ drivers/media/pci/cx25821/cx25821.h                         | 2 +-
+ drivers/media/platform/s3c-camif/camif-core.c               | 2 +-
+ drivers/staging/media/atomisp/include/linux/atomisp.h       | 6 +++---
+ drivers/staging/media/bcm2048/radio-bcm2048.c               | 2 +-
+ drivers/video/fbdev/matrox/matroxfb_base.c                  | 3 ++-
+ include/media/media-device.h                                | 5 ++---
+ include/uapi/linux/media.h                                  | 4 +++-
+ 10 files changed, 19 insertions(+), 17 deletions(-)
 
-BR,
-Krzysztof
+-- 
+2.12.3
