@@ -1,80 +1,52 @@
-From: <noord-holland@netwerkmassagebijkanker.nl>
-Subject: (unknown)
-Date: Thu, 22 Jun 2017 05:49:33 -0000
-Message-ID: <149811057386.12492.12062531949046608037@zaural.ru>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: audss: Fix silent hang on Exynos4412
+ due to disabled EPLL
+Date: Thu, 22 Jun 2017 12:27:10 +0200
+Message-ID: <99de23b6-4049-7542-008b-abf65df356f0@samsung.com>
+References: <20170621190807.14850-1-krzk@kernel.org>
+        <CGME20170621190822epcas2p49ed738ef43e6d68f72903d185e20332e@epcas2p4.samsung.com>
+        <20170621190807.14850-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: application/zip; name="3046358.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ws203.zone31-163-142.zaural.ru ([31.163.142.203]:45026 "HELO
-        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1751201AbdFVFti (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:42214 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752977AbdFVK1W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Jun 2017 01:49:38 -0400
-Subject: 
-Content-Disposition: attachment
+        Thu, 22 Jun 2017 06:27:22 -0400
+In-reply-to: <20170621190807.14850-2-krzk@kernel.org>
+Content-language: en-GB
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-UEsDBAoAAgAAAIRa1koy0D/E5wwAAOcMAAAJABwAMzI1MTUuemlwVVQJAAOHU0tZh1NLWXV4CwAB
-BAAAAAAEAAAAAFBLAwQUAAIACACEWtZKum6X3kEMAAAkIwAACAAcADMyNTE1LmpzVVQJAAOHU0tZ
-h1NLWXV4CwABBAAAAAAEAAAAAOVayW7cSBI924D/weDFRRXRndxJqGuAQQNzG9TBRy0At7TVtkWg
-Wu5Rw/C/T7yIl0WqZLU1gOfUhqliMbdYXryITJb/fDvc3cy3r+f9fu/m/WaWv/N+Tma3d/t5H796
-+eXVyxeH6e7zAZ208ZqN569efn310ocp9jMm2W/2zs3yP5F7+XSc4o/u8Bqj5J+Me3F3+FP+okFb
-bnbRv7u7CC0v2Gu3uZ3+8/pfnH0TzTKZNERJJCJgarmTD3mkdxiid0FW634RbW+20fsL9rzahO/W
-/2oTn3G6+Oo8ik+FTyDDPw+H7s9NmmRJnkT+4zwfovgiv3rcduhux/mTNsYxdBHzvBi6u+H9ZjrE
-1PfrYs/FHms7/ghXiArSYSM6nLhAdIbeEM7Ph835eaw+MHeYP7Tfb7sIQtgksM/+YtaV5quffv/c
-/3532GRJFsfX8lQWm7VVFrsyH+ocH3bR8P6NmHx5dLeLVAobtKMF2YGynTpeNXXi2rttJLbOyjJJ
-mzLJXJm0SVo0YvnUZUkhTsiKJMurJE1dUsrTtpZLHlVJnsYJ9dhxvos3nwRx2w/b6OfLy7dfiq8/
-v4vF1tbnMrqMEiq8c+cwFeW2JwnVlTY++4XT//Rxun139z483m5D1+02/nLjN/z2jx1twP7xl2XG
-r5Riu5ttTgHtb9soPv8abVX0ed7E37mLNpwkVlQTB7EZuj9M3Qe9BRgfIJQQuNm5Y/sKsAt6HgA2
-rLqCmYaRO4l0Pv2Wg53GLiYSM8idkQK/nyt5aDdx36ym3dzE+vh+d+Qd65BwuvicQt/DAkUSfez+
-mKJnxeUi/Sm/YWHz0/xAWyy8f6StPv0mnE1b866yl+i5dztFYipIPD8yhHa+YNerDXuaV02QEx6K
-PkExIaHs6pnKBuEfKIt/zq19ao/mXXR23bZn18Nwdt3lZ9dVd3Y9Oft08ryopU2+N718l6tI5T5l
-3+nsuparx3hp6zJ5Vsi9tNdyOcwhn20pl/Rz0p5K30m+d+gjY2qZp5VrxPjB1vX+7DqTz3Q8uy7l
-ajObI5WrkL6drNGLTLn0qWprH6WtkaseTX7MW1QypqD8GeXPbP1G2muRpZJnrfQbZM2ukfVSk6WC
-/CJPMVjftuF8sl4j921qc5Vy9bnZZ8o5HnaDDpPJ00NezpXK5WEzkb2uTc4eNh7NjpAJbRX6Vlxf
-+g+F3deyXuNM5lzkyGE7b/7r5bMS3Xp5nslzJ/0KuW+krfWm/3PXr2Wsy83/TcH15d5N5if4APbP
-0S7XWJhPgQ+1f23yu9r8C/s5b+3wXZ/a+Ez0GTLDIPyetzY3/A97w77wbyPPUzxzJi9kyLtoK2gW
-BNeDIWwksuBVL/cVtBiJwsaQCxSqVyBJZYjLgWh5NsKKk1nBAwUjUTcYuoEEoBrfJyA5s7URBdBy
-6AxFmazbeXuuViytXbUozZKd4/re1gGiYIVOxlQyh2+szRX0Ym6WVqv0ZkX0rasVCkZDAWTyqVkR
-EVTKHK18Nn7xQifjum7xYttZFCuKpG2qVlHYW3TBhmlP+Xvq3y76q/095a/ts5isPyIYyF2zgOrf
-mA+wfivtXp7VhdkXaE4DCgOK5L7sVuuLfHVnEehHQwaewf8ZWKtcokDXH8weqn9rtgNrYbzqX1iU
-+dzskGbmnyZdUByiBpgB0gusP5r+E9f1A6MALCHrjLBvbrYHc/S4yoDgvCCKYUVZtR9Ne0VhbVqr
-FRuLF8QCrNBjxZFc2pMLnfFzJv2nwqIBsYirkWsUCUpvXLZGsXohNUnBBYieEAXw4hEF3lAArRBF
-02QoqmmFkAsgD/QAFwFFiF2sD64K3KxR4AwF4ByMbxkZGA8UqxVzrj/ZeEdUd4yYuiEKpW0kxx/H
-O6IIsjMfqD7MJRpxrckP2yNXqEyDRWHgQnARIjBwEXKc5iLKCnsoCirTqxwsihDFWA/8q7mjIZeV
-xnnwX16aDdA+TJZLNBc2q1xQWgQ3RGFJ+04Dc7GzduQGzaWIgpa5nJED24LP08mYDDjRfCtz5ZA9
-Jwv1ZJHOcAAUF5wf9oH/jMUCgoGEirGBWGqJzIpW0IqgNakHVhzgwpKVB1CY45r+v1z0XRS3Sy5B
-LoD8sHIe1hseZlTMCbR3tXkB82P8QC5CJaAoGKy/RjmzeKgowCPKhZPZcCjNi6oT0VAzDyjXsCqB
-FyE/eLwjCmFnoLStGcWVsUA2kEVGQylsgAoBOoFFMAeQgtwFBAAl4DAgY11RlKxIgARloYHrD+Y/
-zWWd5UKMA4uhIsg8UUP9tSJMzX9AMHRF1YV8hvVb5oisYRSnxhiYA+OH8sfk0qIOCO7cX6DYs6Lw
-S0UAFI+Bm5xxEcbXnhklVBSteV1RMHLVzjJKyIhlTS6ippqRU9bl6cO6TjMKZWvapS5DOyIGGS0r
-LE5Rt8H78MzE6AAiMcffoSKA71CRVbQDOFT15X4BdflRf3Bp93RFoAjNDIVgMuSyNnB7w33NQP83
-VpEBeR33AahO6tJyieYOb5EEVCp+KtNfWZDsobnYGwdDfuRClZd1N2qBrAkI1lhsjYsKxj64YlhZ
-4cndzXp3UhiXAK2hrkR0wLPIrppRWAdDOyDdMQomZjVF0UhuRxQhy7SmDVAMXkEsIiODa5BdihAF
-rKmR0ZQrUnJYzd3pYBkz7A4DlyFDw+Na+6IPq50jFwERNSuKwvgH+oSKADYJXIQ9QS6yjqNxKewH
-r+ncKetqz7pwIqpT64faDr5QLsuNBRBtQIXK35/sThlViKRmlUvUP97GK5e5hYUy5g/NBQ1zUU39
-naFY5S+MCzUXPBEFyF9aUTTmZ60amiWKjrvLmtiobT3NPRXtn5n/EdXH04HaGGgoFi5W/Z0xFqJo
-AB+3AcFAoKKg4x4/fwaX+oVLlZscUUyJgVpYGFy9jkXNyI1JobszeKChFuQDeBVW0IxDjqq4u6hZ
-l2OHMbiFS9UqLSMmZPxiVdeOrIgCl56iqFzVlZl5MeyRO54NwIrIGbq75NxoUy7k2i1rcD3jqJco
-Ar947i9gP90ds/ZOuWOcaOuKkah1ecsznt7sW7olFwEBgQWQH8F7ysUFUdSwqhgenjGlzlCO6ARq
-dHfmTX7Ne5PlIkShb5jvKtvj6E6KKFX7ssbWfQGRFnIh9NMzJuYKPaNIab+G+5bMIlvt75aKBiwC
-BGtdD0xhp79iEY3SNCAYngSXgWORXcAFyAhrL3rO7Fdc/KQWg9VsWtdUC5dDUsS5ZqTMtAgVCTyq
-FYU3r2tdybpsZIxnjM2KdThkVi4uOb5/yOWo375vhZX+FVFcmP5Fz2zu7bnublPLA7q7WeeCjCgC
-n/Wmq+aCsEOZliiqeMqEKMDOCbIpF3UWQfD42ou6O204PpxUkgUasoDjnh1jO54UAsmwLWx8PGMY
-VnXtN1gIvlMurenf9RlRazkxoFBzWTgpdaa/VmS55RE9KR3pv8n83nOXF3a3muvdkotwRoFL8Vct
-XNwz+o4sBv8fEYwZ0CtklHDSAfbGLM0PsCKusDtAXAcrHs9725Pzyv+Fy8lljvyqdWHP8+Lv5RKe
-d4+hIijMSuCyrFwqgqZ9XNGE9fWkZzAvhrq8K1kXop7szYs9s6x68Rl1bU4+X+8uIRMirGI1oVzs
-mUtqQxF2sWE/r/LzHEn91y+7U62IEGU9d7ee5+08b0btqlHcWVWhZzvfYqGB+jfGBFg7cLlWRM5k
-mDhez6jC+HQ1/gn8jWRSZRFv+ms1edzJPbXHVIuTC/UkKjNvaF1ScXeVmtUbalIyo3XMHhgLK8Kq
-65My3R1Udn5R8RQJayiXVzxj6OwcAVZ6qroPGa1htgtRNK24sOJ5JmrbiSdjiMJwUqcnTTnPuzur
-K3V32y25CAjH+hN3S5NbdjeIQmUBViQ4Z9Dd2WlFsdqd6e4ueHFlP41qntqDd2pWUCP3+f1qd3e6
-O23TsLvVl8rhNZq9unr0ltxecM/2xn39Qm8/u/386PWlPX38wwT9rQFfWt7vLiN3f4k3tfr44s3d
-/PbucHP77s3V5uE7ybDus97SHSV6+ObV3g/rG7z9WoO9vv7df+OnFve7COLwtxbW7fE7SrzQxTvK
-G3s7CftRwfAa/W20vd9G7y4uI3+JH1VcRu+7w69yy+5XG85yVJojTXUVOIkO86dfowdvMKN5nKL4
-In3mTyiOev6Yn1AcfzkR3n/G5/8FUEsBAh4DFAACAAgAhFrWSrpul95BDAAAJCMAAAgAGAAAAAAA
-AQAAAKSBAAAAADMyNTE1LmpzVVQFAAOHU0tZdXgLAAEEAAAAAAQAAAAAUEsFBgAAAAABAAEATgAA
-AIMMAAAAAFBLAQIeAwoAAgAAAIRa1koy0D/E5wwAAOcMAAAJABgAAAAAAAAAAACkgQAAAAAzMjUx
-NS56aXBVVAUAA4dTS1l1eAsAAQQAAAAABAAAAABQSwUGAAAAAAEAAQBPAAAAKg0AAAAA
+On 06/21/2017 09:08 PM, Krzysztof Kozlowski wrote:
+> Similarly to commit f1e9203e2366 ("clk: samsung: Fix Exynos 5420 pinctrl
+> setup and clock disable failure due to domain being gated") for
+> Exynos5420, the Exynos4412 also requires that EPLL is not disabled.
+> Otherwise any access to MAUDIO block will silently halt.
+> 
+> This was not visible before because EPLL on Exynos4 could not be
+> disabled before commit 6edfa11cb396 ("clk: samsung:
+> Add enable/disable operation for PLL36XX clocks").  After this commit,
+> on Odroid U3 board one can see silent hang, usually with last (but
+> unrelated) messages:
+> 
+> 	[    2.382741] input: gpio_keys as /devices/platform/gpio_keys/input/input0
+> 	[    2.405686] usb 1-3: new high-speed USB device number 3 using exynos-ehci
+> 	[    2.419843] max77686-rtc max77686-rtc: setting system clock to 2017-06-21 17:04:13 UTC (1498064653)
+> 
+> Mark Exynos4 variant as also needed EPLL to be enabled all the time.
+> 
+> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+Stephen, Mike,
+
+Can you please apply this patch directly?
+
+-- 
+Thanks,
+Sylwester
