@@ -1,47 +1,80 @@
-From: jeffy <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: Re: [RFC PATCH v3 3/6] ARM/arm64: dts: enable wakeup for cros-ec-spi
- devices
-Date: Thu, 22 Jun 2017 10:33:47 +0800
-Message-ID: <594B2C8B.3000401@rock-chips.com>
-References: <1498039313-24220-1-git-send-email-jeffy.chen@rock-chips.com> <1498039313-24220-4-git-send-email-jeffy.chen@rock-chips.com> <CAJKOXPdL2CB9VWNo=it0dos-4hJYrgHUSZwcG1DS=9c+YxXzhQ@mail.gmail.com> <594A91C9.1090906@rock-chips.com> <20170621153632.7cajs5xwdmhdm2fg@kozik-lap>
+From: <noord-holland@netwerkmassagebijkanker.nl>
+Subject: (unknown)
+Date: Thu, 22 Jun 2017 05:49:33 -0000
+Message-ID: <149811057386.12492.12062531949046608037@zaural.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170621153632.7cajs5xwdmhdm2fg@kozik-lap>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Content-Type: application/zip; name="3046358.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ws203.zone31-163-142.zaural.ru ([31.163.142.203]:45026 "HELO
+        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1751201AbdFVFti (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 22 Jun 2017 01:49:38 -0400
+Subject: 
+Content-Disposition: attachment
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-thanx for noting that, will add it to next version :)
-
-
-On 06/21/2017 11:36 PM, Krzysztof Kozlowski wrote:
-> On Wed, Jun 21, 2017 at 11:33:29PM +0800, jeffy wrote:
->> Hi Krzysztof,
->>
->> thanx for your comment.
->>
->> On 06/21/2017 06:45 PM, Krzysztof Kozlowski wrote:
->>> On Wed, Jun 21, 2017 at 12:01 PM, Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
->>>> We used to enable wakeup for cros-ec-spi devices unconditionally.
->>>> Now we are using the more generic wakeup-source property to enable it.
->>>
->>> Using wakeup-source property is still enabling this unconditionally.
->>> What  do you exactly mean here?
->> i mean the wakeup-source is an optional property, we can disable wakeup by
->> not adding it.
->
-> Maybe mention this in commit msg? This removes any confusion. "Till now
-> the driver always enabled wakeup but now it supports wakeup property so
-> add it to keep same functionality."
->
-> Best regards,
-> Krzysztof
->
->
->
->
+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
