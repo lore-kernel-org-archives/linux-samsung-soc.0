@@ -1,56 +1,39 @@
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: Re: [PATCH RESEND 0/7] Introduce MEDIA_VERSION to end
- KENREL_VERSION abuse in media
-Date: Sat, 24 Jun 2017 17:15:07 -0300
-Message-ID: <20170624171507.38353b10@vento.lan>
-References: <20170621080812.6817-1-jthumshirn@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:36360
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751586AbdFXUPP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 24 Jun 2017 16:15:15 -0400
-In-Reply-To: <20170621080812.6817-1-jthumshirn@suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH 2/4] media: s3c-camif: use LINUX_VERSION_CODE for driver's version
+Date: Sat, 24 Jun 2017 17:40:25 -0300
+Message-ID: <3046b1093267f62c2f05b33941889cad7219eca4.1498336792.git.mchehab@s-opensource.com>
+References: <73980406b3bb4a6829a1d1bca69a555477234beb.1498336792.git.mchehab@s-opensource.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <73980406b3bb4a6829a1d1bca69a555477234beb.1498336792.git.mchehab@s-opensource.com>
+In-Reply-To: <73980406b3bb4a6829a1d1bca69a555477234beb.1498336792.git.mchehab@s-opensource.com>
+References: <73980406b3bb4a6829a1d1bca69a555477234beb.1498336792.git.mchehab@s-opensource.com>
+Sender: linux-media-owner@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Johannes Thumshirn <jthumshirn@suse.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Em Wed, 21 Jun 2017 10:08:05 +0200
-Johannes Thumshirn <jthumshirn@suse.de> escreveu:
+We seldomly increment version numbers on drivers, because... we
+usually forget ;-)
 
-> Currently the media subsystem has a very creative abuse of the
-> KERNEL_VERSION macro to encode an arbitrary version triplet for media
-> drivers and device hardware revisions.
-> 
-> This series introduces a new macro called MEDIA_REVISION which encodes
-> a version triplet like KERNEL_VERSION does, but clearly has media
-> centric semantics and doesn't fool someone into thinking specific
-> parts are defined for a specific kernel version only like in out of
-> tree drivers.
+So, instead, just make it identical to the Kernel version, as what
+we do on all other drivers.
 
-Sorry, but I can't see any advantage on it. On the downside, it
-includes the media controller header file (media.h) where it
-is not needed.
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+---
+ drivers/media/platform/s3c-camif/camif-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Johannes Thumshirn (7):
->   [media] media: introduce MEDIA_REVISION macro
->   video: fbdev: don't use KERNEL_VERSION macro for MEDIA_REVISION
->   [media] media: document the use of MEDIA_REVISION instead of
->     KERNEL_VERSION
->   [media] cx25821: use MEDIA_REVISION instead of KERNEL_VERSION
->   [media] media: s3c-camif: Use MEDIA_REVISON instead of KERNEL_VERSION
->   [media] media: bcm2048: use MEDIA_REVISION isntead of KERNEL_VERSION
->   staging/atomisp: use MEDIA_VERSION instead of KERNEL_VERSION
-
-That's said, some of the above shouldn't be using KERNEL_VERSION
-at all. The V4L2 core sets the version already. So, drivers like
-cx25821, s3c-camif, bcm2048 and atomisp are likely doing the wrong
-thing.
-
-Thanks,
-Mauro
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index ec4001970313..8f0414041e81 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -317,7 +317,7 @@ static int camif_media_dev_init(struct camif_dev *camif)
+ 		 ip_rev == S3C6410_CAMIF_IP_REV ? "6410" : "244X");
+ 	strlcpy(md->bus_info, "platform", sizeof(md->bus_info));
+ 	md->hw_revision = ip_rev;
+-	md->driver_version = KERNEL_VERSION(1, 0, 0);
++	md->driver_version = LINUX_VERSION_CODE;
+ 
+ 	md->dev = camif->dev;
+ 
+-- 
+2.9.4
