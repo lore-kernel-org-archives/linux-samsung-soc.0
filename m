@@ -1,49 +1,38 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH] drm: exynos: dsi: release DSI_PORT_OUT node right after of_drm_find_bridge()
-Date: Fri, 23 Jun 2017 18:56:28 -0600
-Message-ID: <20170624005628.5896-1-shuahkh@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:35016
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754075AbdFXA4e (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Jun 2017 20:56:34 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+Subject: Re: clean up and modularize arch dma_mapping interface V2
+Date: Sat, 24 Jun 2017 09:18:55 +0200
+Message-ID: <20170624071855.GD14580@lst.de>
+References: <20170616181059.19206-1-hch@lst.de>
+	<162d7932-5766-4c29-5471-07d1b699190a@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <162d7932-5766-4c29-5471-07d1b699190a-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: tndave <tushar.n.dave-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-c6x-dev-jPsnJVOj+W6hPH1hqNUYSQ@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hexagon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xtensa-PjhNF2WwrV/0Sa2dR60CXw@public.gmane.org, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, openrisc-cunTk1MwBs9a3B2Vnqf2dGD2FQJk+8+b@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix to call of_node_put() right after of_drm_find_bridge() instead of
-holding on to it until exynos_dsi_remove().
+On Wed, Jun 21, 2017 at 12:24:28PM -0700, tndave wrote:
+> Thanks for doing this.
+> So archs can still have their own definition for dma_set_mask() if 
+> HAVE_ARCH_DMA_SET_MASK is y?
+> (and similarly for dma_set_coherent_mask() when 
+> CONFIG_ARCH_HAS_DMA_SET_COHERENT_MASK is y)
+> Any plan to change these?
 
-Suggested-by: Inki Dae <inki.dae@samsung.com>
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index e337cd2..7513b88 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1689,6 +1689,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- 
- 	if (dsi->bridge_node) {
- 		bridge = of_drm_find_bridge(dsi->bridge_node);
-+		of_node_put(dsi->bridge_node);
- 		if (bridge)
- 			drm_bridge_attach(encoder, bridge, NULL);
- 	}
-@@ -1807,10 +1808,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 
- static int exynos_dsi_remove(struct platform_device *pdev)
- {
--	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
--
--	of_node_put(dsi->bridge_node);
--
- 	pm_runtime_disable(&pdev->dev);
- 
- 	component_del(&pdev->dev, &exynos_dsi_component_ops);
--- 
-2.7.4
+Yes, those should go away, but I'm not entirely sure how yet.  We'll
+need some hook for switching between an IOMMU and a direct mapping
+(I guess that's what you want to do for sparc as well?), and I need
+to find the best way to do that.  Reimplementing all of dma_set_mask
+and dma_set_coherent_mask is something that I want to move away from.
