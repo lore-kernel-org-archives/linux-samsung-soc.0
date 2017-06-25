@@ -1,81 +1,93 @@
-From: <rueggemann@h.maus.de>
-Subject: (unknown)
-Date: Sun, 25 Jun 2017 13:23:42 -0000
-Message-ID: <149839702256.12492.2666368413655125243@permonline.ru>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Exynos5422 Odroid-XU* incomplete
+ thermal-zones definition
+Date: Sun, 25 Jun 2017 15:31:34 +0200
+Message-ID: <20170625133134.g4iinztozsp4p2aa@kozik-lap>
+References: <20170623210913.ugutgop7ratwolfy@inc028000032.lancs.ac.uk>
+ <CANAwSgSN5zi72m1td-NAaCPGLUZybSdefrKAo2t9v-gOXn3tGA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_03820_linux-samsung-soc.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dsl-5-141-22-167.permonline.ru ([5.141.22.167]:39447 "HELO
-        permonline.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with SMTP id S1751050AbdFYNXs (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35042 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751186AbdFYNbi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 25 Jun 2017 09:23:48 -0400
-Subject: 
-Content-Disposition: attachment
+        Sun, 25 Jun 2017 09:31:38 -0400
+Content-Disposition: inline
+In-Reply-To: <CANAwSgSN5zi72m1td-NAaCPGLUZybSdefrKAo2t9v-gOXn3tGA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Willy Wolff <willy.mh.wolff@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-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
+On Sun, Jun 25, 2017 at 06:53:24PM +0530, Anand Moon wrote:
+> Hi Willy,
+> 
+> On 24 June 2017 at 02:39, Willy Wolff <willy.mh.wolff@gmail.com> wrote:
+> > Odroid XU*-familly boards has thermal sensors per A15 cores, but the actual
+> >  thermal-zones define only cooling-maps action for cpu0.
+> >
+> > If the application is running on all cores but core4 (first core of the A15
+> >  cluster), the CPU can reach high temperature without any proper cooling
+> >  action.
+> >
+> > As already discus in prior mail, and on IRC, it's a quit big code
+> > duplication, but I don't found the write way to express that in a better
+> >  way.
+> >
+> > The situation for this board is that we have multiple sensors, but
+> >  matching cooling devices for these sensors act for the same physical
+> >  device (FAN and A15 cluster, as each core of the cluster share the same
+> >  frequency).
+> > In fact, of-thermal.c:473:thermal_zone_of_sensor_register() can't use
+> > multiple sensors for one single thermal zone.
+> > This patch follow the path taken in arch/arm/boot/dts/qcom-apq8084.dtsi:97
+> >
+> > I'm interested to extending the thermal driver, but it will takes time.
+> >  So this is a workaround before refactoring the driver.
+> > If somebody knows how to write it better, any advice and suggestions
+> > are more than welcome.
+> >
+> > Also, the comment for cpu_alert4 in cooling-maps definition is not
+> > accurate, 11 steps for A15 correspond to 700MHz, not 600MHz.
+> >
+> 
+> [snip]
+> 
+> Few point to from my side.
+> 
+> 1: We should also increase the trip points temperature so that it can
+> throttle at high temperature.
+
+It is not related to this problem. If you wish to address different
+problem related to non-optimal choice of temperature, then please send a
+separate patch explaining chosen values.
+
+> 2: We should also increase the tips from 4 to 8 to support different
+> cluster of cpu's.
+
+There are 4 CPU thermal zones on Exynos5422. What do you want to expand?
+
+> 3: To avoid duplication of cooling-maps we can make tmu sensor work
+> differently for cluster of cpu's
+>       tmu_cpu0: handle pwm-fan control.
+>       tmu_cpu1: handle cpu[0-3] cpufreq mapping.
+>       tmu_cpu2: handle cpu[4-7] cpufreq mapping.
+
+I miss the point behind this. Why fan should work only when CPU4
+(tmu_cpu0) is heated and not CPU5-7 (rest of cpu tmu's)?
+
+Best regards,
+Krzysztof
+
+
+>       tmu_gpu: handle gpu (mali) cpu throttle.
+> 
+> Please share your thought on this new approach.
+> 
+> I generally test using linaro's pm-qa and most of the time the test case fails
+>       # git clone git://git.linaro.org/tools/pm-qa.git
+>       # make -C thermal check
+> 
+> -Best Regards
+> -Anand Moon
