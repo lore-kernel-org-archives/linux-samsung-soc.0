@@ -1,140 +1,58 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Exynos5422 Odroid-XU* incomplete
- thermal-zones definition
-Date: Sun, 25 Jun 2017 23:29:54 +0530
-Message-ID: <CANAwSgQoSQCoDBGd3dS=m0MtXWsbFvpa6Jp+wNEYGqJAogFQ8w@mail.gmail.com>
-References: <20170623210913.ugutgop7ratwolfy@inc028000032.lancs.ac.uk>
- <CANAwSgSN5zi72m1td-NAaCPGLUZybSdefrKAo2t9v-gOXn3tGA@mail.gmail.com>
- <20170625133134.g4iinztozsp4p2aa@kozik-lap> <CANAwSgQV6rtbx=LqWxRS+_sRctWiU1L=np7cZU8hTYg_V8Fbnw@mail.gmail.com>
- <20170625152911.kfq7vnxyhcqvfxpu@kozik-lap> <CANAwSgSZyhf-7BjwqoSAxBg=UDzCwEG=thpASEmZ=p=N5gpFQw@mail.gmail.com>
- <20170625171921.sijfwgnuk5cwdi74@kozik-lap>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm: exynos: dsi: release DSI_PORT_OUT node right after
+ of_drm_find_bridge()
+Date: Mon, 26 Jun 2017 09:02:35 +0200
+Message-ID: <5d308e03-e92a-7bac-f65e-23c2ccbe161a@samsung.com>
+References: <CGME20170626004946epcas4p40785020666ae6d43476822d067604baa@epcas4p4.samsung.com>
+ <20170624005628.5896-1-shuahkh@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33456 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751244AbdFYSAP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 25 Jun 2017 14:00:15 -0400
-In-Reply-To: <20170625171921.sijfwgnuk5cwdi74@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170624005628.5896-1-shuahkh@osg.samsung.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Shuah Khan <shuahkh@osg.samsung.com>, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Willy Wolff <willy.mh.wolff@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hi Krzysztof,
-
-On 25 June 2017 at 22:49, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Sun, Jun 25, 2017 at 10:25:32PM +0530, Anand Moon wrote:
->> Hi Krzysztof
->>
->> On 25 June 2017 at 20:59, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> > On Sun, Jun 25, 2017 at 08:48:13PM +0530, Anand Moon wrote:
->> >> Hi Krzystof,
->> >> >> 2: We should also increase the tips from 4 to 8 to support different
->> >> >> cluster of cpu's.
->> >> >
->> >> > There are 4 CPU thermal zones on Exynos5422. What do you want to expand?
->> >>
->> >> What I meant was to support more trip point to address below.
->> >> [    2.776320] exynos-tmu 100a0000.tmu: More trip points than
->> >> supported by this TMU.
->> >> [    2.782370] exynos-tmu 100a0000.tmu: 2 trip points should be
->> >> configured in polling mode.
->> >>
->> >
->> > I do not understand what you want to achieve. I added 2 trip points in
->> > polling mode for the CPU cooling mode. Just describe the problem and
->> > send the patch - it is the best way to explain one's thought...
->> >
->> >> >> 3: To avoid duplication of cooling-maps we can make tmu sensor work
->> >> >> differently for cluster of cpu's
->> >> >>       tmu_cpu0: handle pwm-fan control.
->> >> >>       tmu_cpu1: handle cpu[0-3] cpufreq mapping.
->> >> >>       tmu_cpu2: handle cpu[4-7] cpufreq mapping.
->> >> >
->> >> > I miss the point behind this. Why fan should work only when CPU4
->> >> > (tmu_cpu0) is heated and not CPU5-7 (rest of cpu tmu's)?
->> >>
->> >> Ok fan should work on all the thermal zone. To avoid thermal shutdown.
->> >>
->> >> But I want to avoid scaling down of all the cores of cpu to low freq
->> >> as cooling-maps cross the alert temperature. For below example.
->> >> ----
->> >>  map3 {
->> >>               trip = <&cpu1_alert3>;
->> >>               cooling-device = <&cpu0 0 2>;
->> >>  };
->> >>  map4 {
->> >>               trip = <&cpu1_alert3>;
->> >>               cooling-device = <&cpu4 0 2>;
->> >>  };
->> >>
->> >>  map5 {
->> >>               trip = <&cpu1_alert4>;
->> >>               cooling-device = <&cpu0 3 7>;
->> >>  };
->> >>  map6 {
->> >>              trip = <&cpu1_alert4>;
->> >>              cooling-device = <&cpu4 3 12>;
->> >>  };
->> >>
->> >> What I want to configure thermal zone as.
->> >>
->> >> cpu0_thermal: cpu0-thermal {
->> >>      configure cluster of cpu[0-3]
->> >>      {
->> >>         tips
->> >>      }
->> >>      cooling map
->> >>      {
->> >>          device handle cpu[0-3] with frequency scaling at particular
->> >> alert temperature.
->> >>      }
->> >> }
->> >
->> > cpu0_thermal is attached to tmu_cpu0 which is the temperature of CPU4
->> > (first big core). I do not see reason behind connecting thermal zone
->> > (thus temperature) of CPU4 with frequency of LITTLE cluster (CPU0-3). In
->> > case of busy CPU4, you will scale down CPU0-3. Does not make sense.
->> >
->>
->> Both the cpu cluster are independent and have different cpu-freqency scaling.
->> that is the reason to for my changes.
->
-> Still does not make sense. Big is busy, LITTLE is doing nothing and you
-> want to scale down LITTLE. No reason.
->
->>
->> >> cpu1_thermal: cpu1-thermal {
->> >>      configure cluster of cpu[4-7]
->> >>      {
->> >>         tips
->> >>      }
->> >>      cooling map
->> >>      {
->> >>          device handle cpu[4-7] with frequency scaling at particular
->> >> alert temperature.
->> >>      }
->> >> }
->> >>
->> >> We can chose to configure rest of the thermal-zone on this approach.
->> >> Please share your thoughts.
->> >
->> > I am sorry, I do not understand the idea, the problem nor the solution.
->> >
->> > Best regards,
->> > Krzysztof
->> >
->>
->> Sorry for not able to express my self in technical terms.
->> my changes are based on exynos5433-tmu at this moment.
->> Just attaching small patch to share my point.
->
-> On Odroid XU3-family, all TMU interrupt-driven configureable trip points
-> are configured. Why are you referring to Exynos5433?
-
-Because both these ARCH are big.Little.
-
-Best Regards
--Anand
+SGkgU2h1YWgsCgoKT24gMjQuMDYuMjAxNyAwMjo1NiwgU2h1YWggS2hhbiB3cm90ZToKPiBGaXgg
+dG8gY2FsbCBvZl9ub2RlX3B1dCgpIHJpZ2h0IGFmdGVyIG9mX2RybV9maW5kX2JyaWRnZSgpIGlu
+c3RlYWQgb2YKPiBob2xkaW5nIG9uIHRvIGl0IHVudGlsIGV4eW5vc19kc2lfcmVtb3ZlKCkuCgpJ
+IHRoaW5rIHRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uIGlzIE9LLCBub2RlIGlzIGdldCBpbiBw
+cm9iZSBhbmQgcHV0CmluIHJlbW92ZS4KVGhlcmUgY291bGQgYmUgbWFueSBiaW5kL3VuYmluZCBk
+dXJpbmcgbGlmZXRpbWUgb2YgdGhlIGJvdW5kIGRyaXZlci4KRm9yIGV4YW1wbGUsIHRoZXJlIGlz
+IHBvc3NpYmxlIHNlcXVlbmNlOgoxLiBwcm9iZSAtCjIuIGJpbmQKMy4gdW5iaW5kCjQuIGJpbmQK
+CldpdGggdGhpcyBwYXRjaCBvbiAybmQgYmluZCAocG9pbnQgNCkgZHJpdmVyIHdpbGwgY2FsbApv
+Zl9kcm1fZmluZF9icmlkZ2Ugb24gZHNpLT5icmlkZ2Vfbm9kZSB3aGljaCB3YXMgcHV0IGVhcmxp
+ZXIgKHBvaW50IDIuKS4KClJlZ2FyZHMKQW5kcnplagoKCj4KPiBTdWdnZXN0ZWQtYnk6IElua2kg
+RGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBTaHVhaCBLaGFuIDxz
+aHVhaGtoQG9zZy5zYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2RzaS5jIHwgNSArLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
+KyksIDQgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jCj4gaW5kZXggZTMzN2NkMi4uNzUxM2I4OCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZHNpLmMKPiBAQCAtMTY4OSw2ICsxNjg5LDcgQEAgc3RhdGljIGludCBleHlu
+b3NfZHNpX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4g
+IAo+ICAJaWYgKGRzaS0+YnJpZGdlX25vZGUpIHsKPiAgCQlicmlkZ2UgPSBvZl9kcm1fZmluZF9i
+cmlkZ2UoZHNpLT5icmlkZ2Vfbm9kZSk7Cj4gKwkJb2Zfbm9kZV9wdXQoZHNpLT5icmlkZ2Vfbm9k
+ZSk7Cj4gIAkJaWYgKGJyaWRnZSkKPiAgCQkJZHJtX2JyaWRnZV9hdHRhY2goZW5jb2RlciwgYnJp
+ZGdlLCBOVUxMKTsKPiAgCX0KPiBAQCAtMTgwNywxMCArMTgwOCw2IEBAIHN0YXRpYyBpbnQgZXh5
+bm9zX2RzaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAKPiAgc3RhdGlj
+IGludCBleHlub3NfZHNpX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICB7
+Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpID0gcGxhdGZvcm1fZ2V0X2RydmRhdGEocGRldik7
+Cj4gLQo+IC0Jb2Zfbm9kZV9wdXQoZHNpLT5icmlkZ2Vfbm9kZSk7Cj4gLQo+ICAJcG1fcnVudGlt
+ZV9kaXNhYmxlKCZwZGV2LT5kZXYpOwo+ICAKPiAgCWNvbXBvbmVudF9kZWwoJnBkZXYtPmRldiwg
+JmV4eW5vc19kc2lfY29tcG9uZW50X29wcyk7CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
