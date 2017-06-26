@@ -1,33 +1,79 @@
-From: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
-Subject: Re: clean up and modularize arch dma_mapping interface V2
-Date: Mon, 26 Jun 2017 11:47:39 +0200
-Message-ID: <20170626094739.GB13981@lst.de>
-References: <20170616181059.19206-1-hch@lst.de>
-	<162d7932-5766-4c29-5471-07d1b699190a@oracle.com>
-	<20170624071855.GD14580@lst.de>
-	<1498318616.31581.87.camel@kernel.crashing.org>
+From: <rueggemann@h.maus.de>
+Subject: (unknown)
+Date: Mon, 26 Jun 2017 17:51:40 -0000
+Message-ID: <149849950022.4332.3694754408807393014@rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1498318616.31581.87.camel-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
-Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-c6x-dev-jPsnJVOj+W6hPH1hqNUYSQ@public.gmane.org, linux-hexagon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tndave <tushar.n.dave-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, linux-xtensa-PjhNF2WwrV/0Sa2dR60CXw@public.gmane.org, openrisc-cunTk1MwBs9a3B2Vnqf2dGD2FQJk+8+b@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: application/zip; name="EMAIL_480694553566739_linux-samsung-soc.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cpe-23-240-198-163.socal.res.rr.com ([23.240.198.163]:36401
+        "HELO rr.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1751308AbdFZRvp (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 26 Jun 2017 13:51:45 -0400
+Subject: 
+Content-Disposition: attachment
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On Sat, Jun 24, 2017 at 10:36:56AM -0500, Benjamin Herrenschmidt wrote:
-> I think we still need to do it. For example we have a bunch new "funky"
-> cases.
-
-I have no plan to do away with the selection - I just want a better
-interface than the current one.
+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
