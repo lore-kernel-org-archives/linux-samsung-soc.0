@@ -1,16 +1,19 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm: exynos: dsi: release DSI_PORT_OUT node right after
- of_drm_find_bridge()
-Date: Mon, 26 Jun 2017 09:02:35 +0200
-Message-ID: <5d308e03-e92a-7bac-f65e-23c2ccbe161a@samsung.com>
-References: <CGME20170626004946epcas4p40785020666ae6d43476822d067604baa@epcas4p4.samsung.com>
- <20170624005628.5896-1-shuahkh@osg.samsung.com>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: new dma-mapping tree, was Re: clean up and modularize arch
+ dma_mapping interface V2
+Date: Mon, 26 Jun 2017 09:03:50 +0200
+Message-ID: <20170626070350.GB10544@lst.de>
+References: <20170616181059.19206-1-hch@lst.de>
+ <20170620124140.GA27163@lst.de> <20170620230400.1a5ae889@canb.auug.org.au>
+ <CGME20170620131628epcas1p4f21d821bd414cba7e2d49abcbe414365@epcas1p4.samsung.com>
+ <20170620131623.GB30769@lst.de>
+ <5425587c-73e8-e24a-86a3-8a65a7791dcb@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170624005628.5896-1-shuahkh@osg.samsung.com>
-Content-language: en-US
+Content-Disposition: inline
+In-Reply-To: <5425587c-73e8-e24a-86a3-8a65a7791dcb@samsung.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -20,39 +23,19 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-mips@linux-mips.org, linux-ia64@vger.kernel.org, linux-sh@vger.kernel.org, dri-devel@lists.freedesktop.org, sparclinux@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-samsung-soc@vger.kernel.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, x86@kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Linus Torvalds <torvalds@linux-foundation.org>, xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org, linux-s390@vger.kernel.org, openrisc@lists.librecores.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgU2h1YWgsCgoKT24gMjQuMDYuMjAxNyAwMjo1NiwgU2h1YWggS2hhbiB3cm90ZToKPiBGaXgg
-dG8gY2FsbCBvZl9ub2RlX3B1dCgpIHJpZ2h0IGFmdGVyIG9mX2RybV9maW5kX2JyaWRnZSgpIGlu
-c3RlYWQgb2YKPiBob2xkaW5nIG9uIHRvIGl0IHVudGlsIGV4eW5vc19kc2lfcmVtb3ZlKCkuCgpJ
-IHRoaW5rIHRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uIGlzIE9LLCBub2RlIGlzIGdldCBpbiBw
-cm9iZSBhbmQgcHV0CmluIHJlbW92ZS4KVGhlcmUgY291bGQgYmUgbWFueSBiaW5kL3VuYmluZCBk
-dXJpbmcgbGlmZXRpbWUgb2YgdGhlIGJvdW5kIGRyaXZlci4KRm9yIGV4YW1wbGUsIHRoZXJlIGlz
-IHBvc3NpYmxlIHNlcXVlbmNlOgoxLiBwcm9iZSAtCjIuIGJpbmQKMy4gdW5iaW5kCjQuIGJpbmQK
-CldpdGggdGhpcyBwYXRjaCBvbiAybmQgYmluZCAocG9pbnQgNCkgZHJpdmVyIHdpbGwgY2FsbApv
-Zl9kcm1fZmluZF9icmlkZ2Ugb24gZHNpLT5icmlkZ2Vfbm9kZSB3aGljaCB3YXMgcHV0IGVhcmxp
-ZXIgKHBvaW50IDIuKS4KClJlZ2FyZHMKQW5kcnplagoKCj4KPiBTdWdnZXN0ZWQtYnk6IElua2kg
-RGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBTaHVhaCBLaGFuIDxz
-aHVhaGtoQG9zZy5zYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2RzaS5jIHwgNSArLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
-KyksIDQgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
-aS5jCj4gaW5kZXggZTMzN2NkMi4uNzUxM2I4OCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZHNpLmMKPiBAQCAtMTY4OSw2ICsxNjg5LDcgQEAgc3RhdGljIGludCBleHlu
-b3NfZHNpX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4g
-IAo+ICAJaWYgKGRzaS0+YnJpZGdlX25vZGUpIHsKPiAgCQlicmlkZ2UgPSBvZl9kcm1fZmluZF9i
-cmlkZ2UoZHNpLT5icmlkZ2Vfbm9kZSk7Cj4gKwkJb2Zfbm9kZV9wdXQoZHNpLT5icmlkZ2Vfbm9k
-ZSk7Cj4gIAkJaWYgKGJyaWRnZSkKPiAgCQkJZHJtX2JyaWRnZV9hdHRhY2goZW5jb2RlciwgYnJp
-ZGdlLCBOVUxMKTsKPiAgCX0KPiBAQCAtMTgwNywxMCArMTgwOCw2IEBAIHN0YXRpYyBpbnQgZXh5
-bm9zX2RzaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAKPiAgc3RhdGlj
-IGludCBleHlub3NfZHNpX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICB7
-Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpID0gcGxhdGZvcm1fZ2V0X2RydmRhdGEocGRldik7
-Cj4gLQo+IC0Jb2Zfbm9kZV9wdXQoZHNpLT5icmlkZ2Vfbm9kZSk7Cj4gLQo+ICAJcG1fcnVudGlt
-ZV9kaXNhYmxlKCZwZGV2LT5kZXYpOwo+ICAKPiAgCWNvbXBvbmVudF9kZWwoJnBkZXYtPmRldiwg
-JmV4eW5vc19kc2lfY29tcG9uZW50X29wcyk7CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+T24gV2VkLCBKdW4gMjEsIDIwMTcgYXQgMDM6MzI6MzlQTSArMDIwMCwgTWFyZWsgU3p5cHJvd3Nr
+aSB3cm90ZToKPiBsaW51eC1uZXh0Cj4gd2FzIGEgc2lkZSBlZmZlY3Qgb2YgdGhhdC4gSSB0aGlu
+ayB0aGF0IGZvciBub3cgaXQgY2FuIGJlIGRyb3BwZWQgaW4gZmF2b3IgCj4gb2YKPiBDaHJpc3Rv
+cGgncyB0cmVlLiBJIGNhbiBhbHNvIGRvIHNvbWUgcmV2aWV3IGFuZCBoZWxwIGluIG1haW50YWlu
+ZXJzIHdvcmsgaWYKPiBuZWVkZWQsIGFsdGhvdWdoIEkgd2FzIHJlY2VudGx5IGJ1c3kgd2l0aCBv
+dGhlciBzdHVmZi4KPgo+IENocmlzdG9waDogQ291bGQgeW91IGFkZCBtZSB0byB5b3VyIE1BSU5U
+QUlORVJTIHBhdGNoLCBzbyBmdXJ0aGVyIAo+IGRtYS1tYXBwaW5nCj4gcmVsYXRlZCBwYXRjaGVz
+IGhvcGVmdWxseSB3aWxsIGJlIGFsc28gQ0M6IHRvIG1lPwoKSSd2ZSBhZGRlZCB5b3UgYXMgYSBj
+by1tYWludGFpbmVyLCB0aGFua3MhCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
