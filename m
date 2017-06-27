@@ -1,97 +1,93 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH] drm: exynos: dsi: release DSI_PORT_OUT node right after
  of_drm_find_bridge()
-Date: Tue, 27 Jun 2017 18:13:03 +0900
-Message-ID: <5952219F.1030902@samsung.com>
+Date: Tue, 27 Jun 2017 12:07:48 +0200
+Message-ID: <cd0eb692-5f8c-0137-8cc7-fa0ae9d7cf9b@samsung.com>
 References: <CGME20170626004946epcas4p40785020666ae6d43476822d067604baa@epcas4p4.samsung.com>
-        <20170624005628.5896-1-shuahkh@osg.samsung.com>
-        <5d308e03-e92a-7bac-f65e-23c2ccbe161a@samsung.com>
+ <20170624005628.5896-1-shuahkh@osg.samsung.com>
+ <5d308e03-e92a-7bac-f65e-23c2ccbe161a@samsung.com>
+ <5952219F.1030902@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:61039 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751504AbdF0JNH (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Jun 2017 05:13:07 -0400
-In-reply-to: <5d308e03-e92a-7bac-f65e-23c2ccbe161a@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <5952219F.1030902@samsung.com>
+Content-language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Inki Dae <inki.dae@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-Hi Andrzej,
-
-2017년 06월 26일 16:02에 Andrzej Hajda 이(가) 쓴 글:
-> Hi Shuah,
-> 
-> 
-> On 24.06.2017 02:56, Shuah Khan wrote:
->> Fix to call of_node_put() right after of_drm_find_bridge() instead of
->> holding on to it until exynos_dsi_remove().
-> 
-> I think the current implementation is OK, node is get in probe and put
-> in remove.
-> There could be many bind/unbind during lifetime of the bound driver.
-> For example, there is possible sequence:
-> 1. probe -
-> 2. bind
-> 3. unbind
-> 4. bind
-> 
-> With this patch on 2nd bind (point 4) driver will call
-> of_drm_find_bridge on dsi->bridge_node which was put earlier (point 2.).
-> 
-
-Right. This is a problem.
-
-How about moving of_drm_find_bridge function call to probe and keeping drm_bridge_attach call in bind for cleanup?
-Seems it doesn't need to call of_drm_find_bridge function every time bind callback is called.
-
-Thanks,
-Inki Dae
-
-> Regards
-> Andrzej
-> 
-> 
->>
->> Suggested-by: Inki Dae <inki.dae@samsung.com>
->> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 5 +----
->>  1 file changed, 1 insertion(+), 4 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> index e337cd2..7513b88 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -1689,6 +1689,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
->>  
->>  	if (dsi->bridge_node) {
->>  		bridge = of_drm_find_bridge(dsi->bridge_node);
->> +		of_node_put(dsi->bridge_node);
->>  		if (bridge)
->>  			drm_bridge_attach(encoder, bridge, NULL);
->>  	}
->> @@ -1807,10 +1808,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
->>  
->>  static int exynos_dsi_remove(struct platform_device *pdev)
->>  {
->> -	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
->> -
->> -	of_node_put(dsi->bridge_node);
->> -
->>  	pm_runtime_disable(&pdev->dev);
->>  
->>  	component_del(&pdev->dev, &exynos_dsi_component_ops);
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+T24gMjcuMDYuMjAxNyAxMToxMywgSW5raSBEYWUgd3JvdGU6Cj4gSGkgQW5kcnplaiwKPgo+IDIw
+MTfrhYQgMDbsm5QgMjbsnbwgMTY6MDLsl5AgQW5kcnplaiBIYWpkYSDsnbQo6rCAKSDsk7Qg6riA
+Ogo+PiBIaSBTaHVhaCwKPj4KPj4KPj4gT24gMjQuMDYuMjAxNyAwMjo1NiwgU2h1YWggS2hhbiB3
+cm90ZToKPj4+IEZpeCB0byBjYWxsIG9mX25vZGVfcHV0KCkgcmlnaHQgYWZ0ZXIgb2ZfZHJtX2Zp
+bmRfYnJpZGdlKCkgaW5zdGVhZCBvZgo+Pj4gaG9sZGluZyBvbiB0byBpdCB1bnRpbCBleHlub3Nf
+ZHNpX3JlbW92ZSgpLgo+PiBJIHRoaW5rIHRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uIGlzIE9L
+LCBub2RlIGlzIGdldCBpbiBwcm9iZSBhbmQgcHV0Cj4+IGluIHJlbW92ZS4KPj4gVGhlcmUgY291
+bGQgYmUgbWFueSBiaW5kL3VuYmluZCBkdXJpbmcgbGlmZXRpbWUgb2YgdGhlIGJvdW5kIGRyaXZl
+ci4KPj4gRm9yIGV4YW1wbGUsIHRoZXJlIGlzIHBvc3NpYmxlIHNlcXVlbmNlOgo+PiAxLiBwcm9i
+ZSAtCj4+IDIuIGJpbmQKPj4gMy4gdW5iaW5kCj4+IDQuIGJpbmQKPj4KPj4gV2l0aCB0aGlzIHBh
+dGNoIG9uIDJuZCBiaW5kIChwb2ludCA0KSBkcml2ZXIgd2lsbCBjYWxsCj4+IG9mX2RybV9maW5k
+X2JyaWRnZSBvbiBkc2ktPmJyaWRnZV9ub2RlIHdoaWNoIHdhcyBwdXQgZWFybGllciAocG9pbnQg
+Mi4pLgo+Pgo+IFJpZ2h0LiBUaGlzIGlzIGEgcHJvYmxlbS4KPgo+IEhvdyBhYm91dCBtb3Zpbmcg
+b2ZfZHJtX2ZpbmRfYnJpZGdlIGZ1bmN0aW9uIGNhbGwgdG8gcHJvYmUgYW5kIGtlZXBpbmcgZHJt
+X2JyaWRnZV9hdHRhY2ggY2FsbCBpbiBiaW5kIGZvciBjbGVhbnVwPwo+IFNlZW1zIGl0IGRvZXNu
+J3QgbmVlZCB0byBjYWxsIG9mX2RybV9maW5kX2JyaWRnZSBmdW5jdGlvbiBldmVyeSB0aW1lIGJp
+bmQgY2FsbGJhY2sgaXMgY2FsbGVkLgoKSSB0aGluayB0aGUgcmVhc29uIHRvIGNhbGwgb2ZfZHJt
+X2ZpbmRfYnJpZGdlIGluIGJpbmQgaXMgdG8gYXZvaWQgcHJvYmUKZGVmZXJyaW5nLCBhbmQgd2l0
+aCBjdXJyZW50IGNvZGUgaXQgd2lsbCBwcm9iYWJseSBkZWZlciBmb3JldmVyLApleHBsYW5hdGlv
+biBiZWxvdzoKClRoZSBvbmx5IGJyaWRnZSBjb25uZWN0ZWQgdG8gRFNJIGlzIGJyaWRnZSBwcm92
+aWRlZCBieSBNSUMgZHJpdmVyLCBhbmQKTUlDIGRyaXZlciBpcyBjb21wb25lbnRpemVkLCBidXQg
+aXQgcmVnaXN0ZXJzIGhpcyBicmlkZ2UgaW4gYmluZCBjYWxsYmFjay4KU28gd2l0aCBkcm1fYnJp
+ZGdlX2F0dGFjaCBtb3ZlZCB0byBwcm9iZSBvZiBEU0kgaW5pdGlhbGl6YXRpb24gd291bGQKbmV2
+ZXIgc3VjY2VlZCBiZWNhdXNlOgoxLiBNSUMtPmJpbmQgd2lsbCBiZSBjYWxsZWQgb25seSBpZiBh
+bGwgRFJNIGNvbXBvbmVudHMgYXJlIHByZXNlbnQuCjIuIERTSSBkcml2ZXIgd2lsbCBkZWZlciBw
+cm9iaW5nIGJlY2F1c2UgdGhlIGJyaWRnZSBpcyBub3QgcHJlc2VudCwgdGh1cwpEU0kgY29tcG9u
+ZW50IHdpbGwgbmV2ZXIgYmUgcHJlc2VudC4KClNvIHRoZSBjdXJyZW50IGNvZGUgbG9va3MgYmV0
+dGVyIHRvIG1lLCBidXQgdGhlcmUgYXJlIHR3byB0aGluZyB3aGljaApjb3VsZCBiZSBpbXByb3Zl
+ZDoKQS4gTWF5YmUgaXQgd291bGQgYmUgZ29vZCB0aGluZyB0byBtb3ZlIE1JQyBicmlkZ2UgcmVn
+aXN0cmF0aW9uIHRvCnByb2JlLCBJIHNlZSBubyByZWFzb24gdG8gcG9zdHBvbmUgaXQgdG8gYmlu
+ZCBwaGFzZSwgdGhpcyB3YXkgaXQgc2hvdWxkCmJlIHNhZmVyIGlmIGZvciBzb21lIHJlYXNvbiBE
+U0ktPmJpbmQgY2FsbGJhY2sgd291bGQgYmUgY2FsbGVkIGJlZm9yZQpNSUMtPmJpbmQuCkIuIEFk
+ZCBlcnJvciBjaGVja2luZyB0byBvZl9kcm1fZmluZF9icmlkZ2UgaW4gRFNJIGRyaXZlciwgSSBr
+bm93IE1JQyBpcwpnZW5lcmFsbHkgb3B0aW9uYWwsIGJ1dCBpZiB0aGUgZ3JhcGggbGluayBpcyBw
+cmVzZW50IChpZS4gCmRzaS0+YnJpZGdlX25vZGUgaXMgdmFsaWQpIE1JQyBicmlkZ2Ugc2hvdWxk
+IGJlIHByZXNlbnQsIGlmIGl0IGlzIG5vdCwKaXQgaW5kaWNhdGVzIHNvbWUgcHJvYmxlbS4KClJl
+Z2FyZHMKQW5kcnplagoKPgo+IFRoYW5rcywKPiBJbmtpIERhZQo+Cj4+IFJlZ2FyZHMKPj4gQW5k
+cnplago+Pgo+Pgo+Pj4gU3VnZ2VzdGVkLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5j
+b20+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBTaHVhaCBLaGFuIDxzaHVhaGtoQG9zZy5zYW1zdW5nLmNv
+bT4KPj4+IC0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyB8
+IDUgKy0tLS0KPj4+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDQgZGVsZXRpb25z
+KC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4gaW5k
+ZXggZTMzN2NkMi4uNzUxM2I4OCAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2RzaS5jCj4+PiBAQCAtMTY4OSw2ICsxNjg5LDcgQEAgc3RhdGljIGludCBleHlub3Nf
+ZHNpX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4+PiAg
+Cj4+PiAgCWlmIChkc2ktPmJyaWRnZV9ub2RlKSB7Cj4+PiAgCQlicmlkZ2UgPSBvZl9kcm1fZmlu
+ZF9icmlkZ2UoZHNpLT5icmlkZ2Vfbm9kZSk7Cj4+PiArCQlvZl9ub2RlX3B1dChkc2ktPmJyaWRn
+ZV9ub2RlKTsKPj4+ICAJCWlmIChicmlkZ2UpCj4+PiAgCQkJZHJtX2JyaWRnZV9hdHRhY2goZW5j
+b2RlciwgYnJpZGdlLCBOVUxMKTsKPj4+ICAJfQo+Pj4gQEAgLTE4MDcsMTAgKzE4MDgsNiBAQCBz
+dGF0aWMgaW50IGV4eW5vc19kc2lfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikK
+Pj4+ICAKPj4+ICBzdGF0aWMgaW50IGV4eW5vc19kc2lfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9k
+ZXZpY2UgKnBkZXYpCj4+PiAgewo+Pj4gLQlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpID0gcGxhdGZv
+cm1fZ2V0X2RydmRhdGEocGRldik7Cj4+PiAtCj4+PiAtCW9mX25vZGVfcHV0KGRzaS0+YnJpZGdl
+X25vZGUpOwo+Pj4gLQo+Pj4gIAlwbV9ydW50aW1lX2Rpc2FibGUoJnBkZXYtPmRldik7Cj4+PiAg
+Cj4+PiAgCWNvbXBvbmVudF9kZWwoJnBkZXYtPmRldiwgJmV4eW5vc19kc2lfY29tcG9uZW50X29w
+cyk7Cj4+Cj4+IC0tCj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBs
+aW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPj4gdGhlIGJvZHkgb2YgYSBt
+ZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4gTW9yZSBtYWpvcmRvbW8gaW5m
+byBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4+Cj4+Cj4+
+Cj4KCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
+eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
+ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1h
+cm0ta2VybmVsCg==
