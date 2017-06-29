@@ -1,47 +1,41 @@
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] media: exynos4-is: fimc-is-i2c: constify dev_pm_ops structures.
-Date: Thu, 29 Jun 2017 13:51:35 +0530
-Message-ID: <82b48f71d328c24e7b526e6bbdff15d03229217a.1498724254.git.arvind.yadav.cs@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33959 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752466AbdF2IW2 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 04:22:28 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: [PATCH RESEND 0/7] Introduce MEDIA_VERSION to end KENREL_VERSION
+ abuse in media
+Date: Thu, 29 Jun 2017 11:42:59 +0200
+Message-ID: <20170629094259.GG3808@linux-x5ow.site>
+References: <20170621080812.6817-1-jthumshirn@suse.de>
+ <20170624171507.38353b10@vento.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170624171507.38353b10@vento.lan>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org
-Cc: javier@osg.samsung.com, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-dev_pm_ops are not supposed to change at runtime. All functions
-working with dev_pm_ops provided by <linux/device.h> work with const
-dev_pm_ops. So mark the non-const structs as const.
+On Sat, Jun 24, 2017 at 05:15:07PM -0300, Mauro Carvalho Chehab wrote:
+> Sorry, but I can't see any advantage on it. On the downside, it
+> includes the media controller header file (media.h) where it
+> is not needed.
 
-File size before:
-   text	   data	    bss	    dec	    hex	filename
-   1195	    376	      0	   1571	    623	drivers/media/platform/exynos4-is/fimc-is-i2c.o
+My reasoning was the differences in semantics. KERNEL_VERSION() is for
+encoding the kernel's version triplet not a API or Hardware or whatever
+version. Other subsystems do this as well, for instance in NVMe we have the
+NVME_VS() macro which is used to encode the NVMe Spec compliance from a human
+readable form to the hardware's u32. Also KERNEL_VERISON() shouldn't have
+in-tree users IMHO. Yes there is _one_ other user of it in-tree which is EXT4
+and I already talked to Jan Kara about it and we decided to leave it in until
+4.20.
 
-File size After adding 'const':
-   text	   data	    bss	    dec	    hex	filename
-   1403	    176	      0	   1579	    62b	drivers/media/platform/exynos4-is/fimc-is-i2c.o
-
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/media/platform/exynos4-is/fimc-is-i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/exynos4-is/fimc-is-i2c.c b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-index 2f55966..70dd485 100644
---- a/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-@@ -130,7 +130,7 @@ static int fimc_is_i2c_resume(struct device *dev)
- }
- #endif
- 
--static struct dev_pm_ops fimc_is_i2c_pm_ops = {
-+static const struct dev_pm_ops fimc_is_i2c_pm_ops = {
- 	SET_RUNTIME_PM_OPS(fimc_is_i2c_runtime_suspend,
- 					fimc_is_i2c_runtime_resume, NULL)
- 	SET_SYSTEM_SLEEP_PM_OPS(fimc_is_i2c_suspend, fimc_is_i2c_resume)
+Byte,
+	Johannes
 -- 
-1.9.1
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
