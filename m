@@ -1,51 +1,61 @@
-From: Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH RESEND 0/7] Introduce MEDIA_VERSION to end
- KENREL_VERSION abuse in media
-Date: Thu, 29 Jun 2017 10:01:05 -0700
-Message-ID: <20170629100105.6af3b77a@xeon-e3>
-References: <20170621080812.6817-1-jthumshirn@suse.de>
-        <20170624171507.38353b10@vento.lan>
-        <20170629094259.GG3808@linux-x5ow.site>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: [patch 1/5] pinctrl: samsung: Remove bogus irq_[un]mask from resource
+ management
+Date: Thu, 29 Jun 2017 23:33:35 +0200
+Message-ID: <20170629214343.882576048@linutronix.de>
+References: <20170629213334.375848050@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f46.google.com ([74.125.83.46]:34791 "EHLO
-        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751936AbdF2RBK (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 13:01:10 -0400
-Received: by mail-pg0-f46.google.com with SMTP id t186so51024599pgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jun 2017 10:01:09 -0700 (PDT)
-In-Reply-To: <20170629094259.GG3808@linux-x5ow.site>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline;
+ filename=pinctrl--samsung--Remove-bogus-irqmask-unmask.patch
+Sender: linux-kernel-owner@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Andrew Morton <akpm@linux-foundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 
-On Thu, 29 Jun 2017 11:42:59 +0200
-Johannes Thumshirn <jthumshirn@suse.de> wrote:
+The irq chip callbacks irq_request/release_resources() have absolutely no
+business with masking and unmasking the irq.
 
-> On Sat, Jun 24, 2017 at 05:15:07PM -0300, Mauro Carvalho Chehab wrote:
-> > Sorry, but I can't see any advantage on it. On the downside, it
-> > includes the media controller header file (media.h) where it
-> > is not needed.  
-> 
-> My reasoning was the differences in semantics. KERNEL_VERSION() is for
-> encoding the kernel's version triplet not a API or Hardware or whatever
-> version. Other subsystems do this as well, for instance in NVMe we have the
-> NVME_VS() macro which is used to encode the NVMe Spec compliance from a human
-> readable form to the hardware's u32. Also KERNEL_VERISON() shouldn't have
-> in-tree users IMHO. Yes there is _one_ other user of it in-tree which is EXT4
-> and I already talked to Jan Kara about it and we decided to leave it in until
-> 4.20.
-> 
-> Byte,
-> 	Johannes
+The core code unmasks the interrupt after complete setup and masks it
+before invoking irq_release_resources().
 
-If you read Linus's comments on version.
-Driver version is meaningless and there is a desire to rip it out of all
-drivers. The reason is that drivers must always behave the same, i.e you
-can't use version to change API/ABI behavior. 
+The unmask is actually harmful as it happens before the interrupt is
+completely initialized in __setup_irq().
 
-Any upstream driver should never use KERNEL_VERSION().
+Remove it.
+
+Fixes: f6a8249f9e55 ("pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c |    4 ----
+ 1 file changed, 4 deletions(-)
+
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -205,8 +205,6 @@ static int exynos_irq_request_resources(
+ 
+ 	spin_unlock_irqrestore(&bank->slock, flags);
+ 
+-	exynos_irq_unmask(irqd);
+-
+ 	return 0;
+ }
+ 
+@@ -226,8 +224,6 @@ static void exynos_irq_release_resources
+ 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
+ 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+ 
+-	exynos_irq_mask(irqd);
+-
+ 	spin_lock_irqsave(&bank->slock, flags);
+ 
+ 	con = readl(bank->eint_base + reg_con);
