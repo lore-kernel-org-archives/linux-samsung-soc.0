@@ -1,79 +1,47 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [patch 1/5] pinctrl: samsung: Remove bogus irq_[un]mask from
  resource management
-Date: Fri, 30 Jun 2017 11:47:35 +0900
-Message-ID: <CA+Ln22GyEDZidAWkMonjLYF0etxNjZ0btwYkQ5raAPsnk1bJFg@mail.gmail.com>
+Date: Fri, 30 Jun 2017 08:02:20 +0200
+Message-ID: <CAJKOXPd+ir1+036jmN+Pd6WWvTcTES2xV9LLsh-W=DYvc2LoEQ@mail.gmail.com>
 References: <20170629213334.375848050@linutronix.de> <20170629214343.882576048@linutronix.de>
+ <CA+Ln22GyEDZidAWkMonjLYF0etxNjZ0btwYkQ5raAPsnk1bJFg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20170629214343.882576048@linutronix.de>
+In-Reply-To: <CA+Ln22GyEDZidAWkMonjLYF0etxNjZ0btwYkQ5raAPsnk1bJFg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
-
-2017-06-30 6:33 GMT+09:00 Thomas Gleixner <tglx@linutronix.de>:
-> The irq chip callbacks irq_request/release_resources() have absolutely no
-> business with masking and unmasking the irq.
+On Fri, Jun 30, 2017 at 4:47 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Thomas,
 >
-> The core code unmasks the interrupt after complete setup and masks it
-> before invoking irq_release_resources().
+> 2017-06-30 6:33 GMT+09:00 Thomas Gleixner <tglx@linutronix.de>:
+>> The irq chip callbacks irq_request/release_resources() have absolutely no
+>> business with masking and unmasking the irq.
+>>
+>> The core code unmasks the interrupt after complete setup and masks it
+>> before invoking irq_release_resources().
+>>
+>> The unmask is actually harmful as it happens before the interrupt is
+>> completely initialized in __setup_irq().
+>>
+>> Remove it.
 >
-> The unmask is actually harmful as it happens before the interrupt is
-> completely initialized in __setup_irq().
+> Good catch, thanks! (Note that the original patch of mine [1] did that
+> in .irq_startup()/.irq_shutdown(), which was for some reason changed
+> later, but I don't remember the exact story.)
 >
-> Remove it.
+> [1] https://patchwork.kernel.org/patch/4466431/
+>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+>
+> Sylwester, Krzysztof, would you be able to do some basic test?
 
-Good catch, thanks! (Note that the original patch of mine [1] did that
-in .irq_startup()/.irq_shutdown(), which was for some reason changed
-later, but I don't remember the exact story.)
-
-[1] https://patchwork.kernel.org/patch/4466431/
-
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Sylwester, Krzysztof, would you be able to do some basic test?
+I suppose this was not tested so yes - I have platforms do this. I
+understand that checking any non-shared GPIO interrupt should be
+sufficient to test, right?
 
 Best regards,
-Tomasz
-
->
-> Fixes: f6a8249f9e55 ("pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c |    4 ----
->  1 file changed, 4 deletions(-)
->
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -205,8 +205,6 @@ static int exynos_irq_request_resources(
->
->         spin_unlock_irqrestore(&bank->slock, flags);
->
-> -       exynos_irq_unmask(irqd);
-> -
->         return 0;
->  }
->
-> @@ -226,8 +224,6 @@ static void exynos_irq_release_resources
->         shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
->         mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
->
-> -       exynos_irq_mask(irqd);
-> -
->         spin_lock_irqsave(&bank->slock, flags);
->
->         con = readl(bank->eint_base + reg_con);
->
->
+Krzysztof
