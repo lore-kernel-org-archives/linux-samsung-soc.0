@@ -1,56 +1,43 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [patch 1/5] pinctrl: samsung: Remove bogus irq_[un]mask from
- resource management
-Date: Fri, 30 Jun 2017 15:20:41 +0900
-Message-ID: <CA+Ln22Esc-1P6bcMeXuTVztiyFMXsOV1O0V=tZOj4YEwLZJSuQ@mail.gmail.com>
-References: <20170629213334.375848050@linutronix.de> <20170629214343.882576048@linutronix.de>
- <CA+Ln22GyEDZidAWkMonjLYF0etxNjZ0btwYkQ5raAPsnk1bJFg@mail.gmail.com> <CAJKOXPd+ir1+036jmN+Pd6WWvTcTES2xV9LLsh-W=DYvc2LoEQ@mail.gmail.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: [PATCH RESEND 0/7] Introduce MEDIA_VERSION to end KENREL_VERSION
+ abuse in media
+Date: Fri, 30 Jun 2017 09:27:29 +0200
+Message-ID: <20170630072729.GC5236@linux-x5ow.site>
+References: <20170621080812.6817-1-jthumshirn@suse.de>
+ <20170624171507.38353b10@vento.lan>
+ <20170629094259.GG3808@linux-x5ow.site>
+ <20170629100105.6af3b77a@xeon-e3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPd+ir1+036jmN+Pd6WWvTcTES2xV9LLsh-W=DYvc2LoEQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170629100105.6af3b77a@xeon-e3>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Andrew Morton <akpm@linux-foundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2017-06-30 15:02 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Fri, Jun 30, 2017 at 4:47 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Thomas,
->>
->> 2017-06-30 6:33 GMT+09:00 Thomas Gleixner <tglx@linutronix.de>:
->>> The irq chip callbacks irq_request/release_resources() have absolutely no
->>> business with masking and unmasking the irq.
->>>
->>> The core code unmasks the interrupt after complete setup and masks it
->>> before invoking irq_release_resources().
->>>
->>> The unmask is actually harmful as it happens before the interrupt is
->>> completely initialized in __setup_irq().
->>>
->>> Remove it.
->>
->> Good catch, thanks! (Note that the original patch of mine [1] did that
->> in .irq_startup()/.irq_shutdown(), which was for some reason changed
->> later, but I don't remember the exact story.)
->>
->> [1] https://patchwork.kernel.org/patch/4466431/
->>
->> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
->>
->> Sylwester, Krzysztof, would you be able to do some basic test?
->
-> I suppose this was not tested so yes - I have platforms do this. I
-> understand that checking any non-shared GPIO interrupt should be
-> sufficient to test, right?
+On Thu, Jun 29, 2017 at 10:01:05AM -0700, Stephen Hemminger wrote:
+> If you read Linus's comments on version.
+> Driver version is meaningless and there is a desire to rip it out of all
+> drivers. The reason is that drivers must always behave the same, i.e you
+> can't use version to change API/ABI behavior. 
 
-I think any interrupt from the Exynos pin controller should work, even
-shared one. I'd expect irq_request_resources() to be invoked for
-shared interrupts as well, otherwise we have a problem... (I quickly
-looked through kernel/irq/manage.c and it seems to be invoked for the
-first __setup_irq() call even for shared interrupts.)
+Indeed this causes more harm than good. We had support calls regarding the
+mlx4 driver because of not incremented MODLE_VERSION()s. If we follow your
+and Linus' path we shouldn't just get rid of the KERNEL_VERSION() usage
+in media and replace it with a new version, but kill all the versioning
+stuff out of media (and others) except for maybe the HW version.
 
-Thanks.
+> Any upstream driver should never use KERNEL_VERSION().
 
-Best regards,
-Tomasz
+Exactly my reasoning.
+
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
