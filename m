@@ -1,33 +1,54 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 0/2] drm/exynos: clean up bridge binding
-Date: Mon, 03 Jul 2017 16:27:57 +0900
-Message-ID: <1499066879-13241-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20170703072800epcas1p3247364bee692c338920c73bb856e8fad@epcas1p3.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37101 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbdGCH2D (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Jul 2017 03:28:03 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 2/2] drm/exynos: mic: add a bridge at probe
+Date: Mon, 03 Jul 2017 16:27:59 +0900
+Message-ID: <1499066879-13241-3-git-send-email-inki.dae@samsung.com>
+References: <1499066879-13241-1-git-send-email-inki.dae@samsung.com>
+ <CGME20170703072802epcas5p2137cf0009888a6b7b6bc31c416e5c4a2@epcas5p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1499066879-13241-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series cleans up bridge binding of DSI and MIC driver.
-
-It doesn't have to call of_drm_find_bridge function every time
-bind callback of DSI driver is called so moves this function call
-into probe function and for this support it adds a bridge
-at probe function of MIC driver instead of adding it at bind callback.
-
-Inki Dae (2):
-  drm/exynos: dsi: move of_drm_find_bridge call into probe
-  drm/exynos: mic: add a bridge at probe
-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 23 ++++++++++++-----------
- drivers/gpu/drm/exynos/exynos_drm_mic.c | 17 ++++++++++-------
- 2 files changed, 22 insertions(+), 18 deletions(-)
-
--- 
-1.9.1
+VGhpcyBwYXRjaCBtb3ZlcyBkcm1fYnJpZGdlX2FkZCBjYWxsIGludG8gcHJvYmUuCgpUaGlzIGNo
+YW5nZSBpcyByZXF1aXJlZCBieSBEU0kgZHJpdmVyIHNvIHRoYXQKdGhlIGJyaWdlIGNhbiBiZSBi
+b3VuZCBhdCBEU0kgZHJpdmVyJ3MgcHJvYmUuCgpTdWdnZXN0ZWQtYnk6IEFuZHJ6ZWogSGFqZGEg
+PGEuaGFqZGFAc2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBz
+YW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMg
+fCAxNyArKysrKysrKysrLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyks
+IDcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX21pYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jCmlu
+ZGV4IGU0NTcyMDUuLjVlYTZlM2QgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9taWMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+bWljLmMKQEAgLTM0MCwxNiArMzQwLDEwIEBAIHN0YXRpYyBpbnQgZXh5bm9zX21pY19iaW5kKHN0
+cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAogCQkJICAgdm9pZCAqZGF0
+YSkKIHsKIAlzdHJ1Y3QgZXh5bm9zX21pYyAqbWljID0gZGV2X2dldF9kcnZkYXRhKGRldik7Ci0J
+aW50IHJldDsKIAotCW1pYy0+YnJpZGdlLmZ1bmNzID0gJm1pY19icmlkZ2VfZnVuY3M7Ci0JbWlj
+LT5icmlkZ2Uub2Zfbm9kZSA9IGRldi0+b2Zfbm9kZTsKIAltaWMtPmJyaWRnZS5kcml2ZXJfcHJp
+dmF0ZSA9IG1pYzsKLQlyZXQgPSBkcm1fYnJpZGdlX2FkZCgmbWljLT5icmlkZ2UpOwotCWlmIChy
+ZXQpCi0JCURSTV9FUlJPUigibWljOiBGYWlsZWQgdG8gYWRkIE1JQyB0byB0aGUgZ2xvYmFsIGJy
+aWRnZSBsaXN0XG4iKTsKIAotCXJldHVybiByZXQ7CisJcmV0dXJuIDA7CiB9CiAKIHN0YXRpYyB2
+b2lkIGV4eW5vc19taWNfdW5iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAq
+bWFzdGVyLApAQCAtNDYxLDYgKzQ1NSwxNSBAQCBzdGF0aWMgaW50IGV4eW5vc19taWNfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAogCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBk
+ZXYsIG1pYyk7CiAKKwltaWMtPmJyaWRnZS5mdW5jcyA9ICZtaWNfYnJpZGdlX2Z1bmNzOworCW1p
+Yy0+YnJpZGdlLm9mX25vZGUgPSBkZXYtPm9mX25vZGU7CisKKwlyZXQgPSBkcm1fYnJpZGdlX2Fk
+ZCgmbWljLT5icmlkZ2UpOworCWlmIChyZXQpIHsKKwkJRFJNX0VSUk9SKCJtaWM6IEZhaWxlZCB0
+byBhZGQgTUlDIHRvIHRoZSBnbG9iYWwgYnJpZGdlIGxpc3RcbiIpOworCQlyZXR1cm4gcmV0Owor
+CX0KKwogCXBtX3J1bnRpbWVfZW5hYmxlKGRldik7CiAKIAlyZXQgPSBjb21wb25lbnRfYWRkKGRl
+diwgJmV4eW5vc19taWNfY29tcG9uZW50X29wcyk7Ci0tIAoxLjkuMQoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
