@@ -1,75 +1,68 @@
-From: <rueggemann@h.maus.de>
-Subject: (unknown)
-Date: Tue, 04 Jul 2017 04:17:07 -0000
-Message-ID: <149914182737.12492.2567620804362694532@zaural.ru>
-Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_172111191_linux-samsung-soc.zip"
-Content-Transfer-Encoding: base64
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH] arm64: dts: exynos: remove num-slots from exynos platforms
+Date: Tue,  4 Jul 2017 17:17:39 +0800
+Message-ID: <1499159859-67028-1-git-send-email-shawn.lin@rock-chips.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ws99.zone31-163-133.zaural.ru ([31.163.133.99]:48201 "HELO
-        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1750787AbdGDERR (ORCPT
+Received: from lucky1.263xmail.com ([211.157.147.133]:39045 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750921AbdGDJSH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 00:17:17 -0400
-Subject: 
-Content-Disposition: attachment
+        Tue, 4 Jul 2017 05:18:07 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Shawn Lin <shawn.lin@rock-chips.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-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
-TwAAAOQLAAAAAA==
+dwmmc driver deprecated num-slots and plan to get rid
+of it finally. Just move a step to cleanup it from DT.
+
+Cc: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
+
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 --
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts       | 2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index e2b0da2..7f693ae 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -846,7 +846,6 @@
+ 
+ &mshc_0 {
+ 	status = "okay";
+-	num-slots = <1>;
+ 	mmc-hs200-1_8v;
+ 	mmc-hs400-1_8v;
+ 	cap-mmc-highspeed;
+@@ -868,7 +867,6 @@
+ 
+ &mshc_2 {
+ 	status = "okay";
+-	num-slots = <1>;
+ 	cap-sd-highspeed;
+ 	disable-wp;
+ 	cd-gpios = <&gpa2 4 GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+index e5892bb..4a8b1fb 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
++++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+@@ -359,7 +359,6 @@
+ 
+ &mmc_0 {
+ 	status = "okay";
+-	num-slots = <1>;
+ 	cap-mmc-highspeed;
+ 	mmc-hs200-1_8v;
+ 	non-removable;
+@@ -375,7 +374,6 @@
+ 
+ &mmc_2 {
+ 	status = "okay";
+-	num-slots = <1>;
+ 	cap-sd-highspeed;
+ 	card-detect-delay = <200>;
+ 	clock-frequency = <400000000>;
+-- 
+1.9.1
