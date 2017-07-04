@@ -1,322 +1,60 @@
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH] ARM: dts: exynos: remove num-slots from exynos platforms
-Date: Tue,  4 Jul 2017 17:25:22 +0800
-Message-ID: <1499160322-73008-1-git-send-email-shawn.lin@rock-chips.com>
+From: <noord-holland@netwerkmassagebijkanker.nl>
+Subject: (unknown)
+Date: Tue, 04 Jul 2017 18:35:10 -0000
+Message-ID: <149919331034.12492.6044444213425195637@udm.net>
+Mime-Version: 1.0
+Content-Type: application/zip; name="BILL-5456344828928.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:40101 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752141AbdGDJ0H (ORCPT
+Received: from a53.sub151.net78.udm.net ([78.85.151.53]:41288 "HELO udm.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1752260AbdGDSfO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 05:26:07 -0400
+        Tue, 4 Jul 2017 14:35:14 -0400
+Content-Disposition: attachment
+Subject: 
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Shawn Lin <shawn.lin@rock-chips.com>, Jaehoon Chung <jh80.chung@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
 
-dwmmc driver deprecated num-slots and plan to get rid
-of it finally. Just move a step to cleanup it from DT.
-
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
-
- arch/arm/boot/dts/exynos3250-artik5-eval.dts    | 1 -
- arch/arm/boot/dts/exynos3250-artik5.dtsi        | 1 -
- arch/arm/boot/dts/exynos3250-monk.dts           | 1 -
- arch/arm/boot/dts/exynos3250-rinato.dts         | 1 -
- arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 1 -
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 -
- arch/arm/boot/dts/exynos4412-origen.dts         | 1 -
- arch/arm/boot/dts/exynos4412-trats2.dts         | 1 -
- arch/arm/boot/dts/exynos5250-arndale.dts        | 2 --
- arch/arm/boot/dts/exynos5250-smdk5250.dts       | 2 --
- arch/arm/boot/dts/exynos5250-snow-common.dtsi   | 3 ---
- arch/arm/boot/dts/exynos5250-spring.dts         | 2 --
- arch/arm/boot/dts/exynos5260-xyref5260.dts      | 2 --
- arch/arm/boot/dts/exynos5410-smdk5410.dts       | 2 --
- arch/arm/boot/dts/exynos5420-peach-pit.dts      | 3 ---
- arch/arm/boot/dts/exynos5800-peach-pi.dts       | 3 ---
- 16 files changed, 27 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-index 4bd2ee8..4cbfa09 100644
---- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-+++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-@@ -22,7 +22,6 @@
- };
- 
- &mshc_2 {
--	num-slots = <1>;
- 	cap-sd-highspeed;
- 	disable-wp;
- 	vqmmc-supply = <&ldo3_reg>;
-diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index 59c89d7..639c2e6 100644
---- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -304,7 +304,6 @@
- };
- 
- &mshc_0 {
--	num-slots = <1>;
- 	non-removable;
- 	cap-mmc-highspeed;
- 	card-detect-delay = <200>;
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index accee81..bbdfcbc 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -426,7 +426,6 @@
- &mshc_0 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
--	num-slots = <1>;
- 	broken-cd;
- 	non-removable;
- 	cap-mmc-highspeed;
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 443e0c9..b43e99d 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -642,7 +642,6 @@
- &mshc_0 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
--	num-slots = <1>;
- 	broken-cd;
- 	non-removable;
- 	cap-mmc-highspeed;
-diff --git a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-index 4cd6248..14ce2c6 100644
---- a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-@@ -466,7 +466,6 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- 	vmmc-supply = <&buck9_reg>;
--	num-slots = <1>;
- 	broken-cd;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 219d587..102acd7 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -516,7 +516,6 @@
- 	mmc-pwrseq = <&emmc_pwrseq>;
- 	status = "okay";
- 
--	num-slots = <1>;
- 	broken-cd;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 7a83e2d..8a89eb8 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -488,7 +488,6 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- 
--	num-slots = <1>;
- 	broken-cd;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 35e9b94..fc81da4 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -901,7 +901,6 @@
- };
- 
- &mshc_0 {
--	num-slots = <1>;
- 	broken-cd;
- 	non-removable;
- 	card-detect-delay = <200>;
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 6a43246..18a7f39 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -518,7 +518,6 @@
- 
- &mmc_0 {
- 	status = "okay";
--	num-slots = <1>;
- 	broken-cd;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
-@@ -533,7 +532,6 @@
- 
- &mmc_2 {
- 	status = "okay";
--	num-slots = <1>;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <2 3>;
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 6632f65..062cba4 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -346,7 +346,6 @@
- 
- &mmc_0 {
- 	status = "okay";
--	num-slots = <1>;
- 	broken-cd;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
-@@ -360,7 +359,6 @@
- 
- &mmc_2 {
- 	status = "okay";
--	num-slots = <1>;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <2 3>;
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index e1d293db..8788880 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -530,7 +530,6 @@
- /* eMMC flash */
- &mmc_0 {
- 	status = "okay";
--	num-slots = <1>;
- 	non-removable;
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <2 3>;
-@@ -544,7 +543,6 @@
- /* uSD card */
- &mmc_2 {
- 	status = "okay";
--	num-slots = <1>;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <2 3>;
-@@ -564,7 +562,6 @@
-  */
- &mmc_3 {
- 	status = "okay";
--	num-slots = <1>;
- 	non-removable;
- 	cap-sdio-irq;
- 	keep-power-in-suspend;
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-index 95c3bca..d53bfcb 100644
---- a/arch/arm/boot/dts/exynos5250-spring.dts
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -427,7 +427,6 @@
- 
- &mmc_0 {
- 	status = "okay";
--	num-slots = <1>;
- 	broken-cd;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
-@@ -445,7 +444,6 @@
-  */
- &mmc_1 {
- 	status = "okay";
--	num-slots = <1>;
- 	broken-cd;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
-diff --git a/arch/arm/boot/dts/exynos5260-xyref5260.dts b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-index d0cc300..73b7cdd 100644
---- a/arch/arm/boot/dts/exynos5260-xyref5260.dts
-+++ b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-@@ -67,7 +67,6 @@
- 
- &mmc_0 {
- 	status = "okay";
--	num-slots = <1>;
- 	broken-cd;
- 	bypass-smu;
- 	cap-mmc-highspeed;
-@@ -83,7 +82,6 @@
- 
- &mmc_2 {
- 	status = "okay";
--	num-slots = <1>;
- 	cap-sd-highspeed;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index 6cc74d9..9cb7726 100644
---- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -41,7 +41,6 @@
- 
- &mmc_0 {
- 	status = "okay";
--	num-slots = <1>;
- 	cap-mmc-highspeed;
- 	broken-cd;
- 	card-detect-delay = <200>;
-@@ -53,7 +52,6 @@
- 
- &mmc_2 {
- 	status = "okay";
--	num-slots = <1>;
- 	cap-sd-highspeed;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index f9a75bf..683a4cf 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -699,7 +699,6 @@
- /* eMMC flash */
- &mmc_0 {
- 	status = "okay";
--	num-slots = <1>;
- 	mmc-hs200-1_8v;
- 	cap-mmc-highspeed;
- 	non-removable;
-@@ -717,7 +716,6 @@
- /* WiFi SDIO module */
- &mmc_1 {
- 	status = "okay";
--	num-slots = <1>;
- 	non-removable;
- 	cap-sdio-irq;
- 	keep-power-in-suspend;
-@@ -737,7 +735,6 @@
- /* uSD card */
- &mmc_2 {
- 	status = "okay";
--	num-slots = <1>;
- 	cap-sd-highspeed;
- 	card-detect-delay = <200>;
- 	clock-frequency = <400000000>;
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 953dc86..b2b95ff 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -667,7 +667,6 @@
- /* eMMC flash */
- &mmc_0 {
- 	status = "okay";
--	num-slots = <1>;
- 	mmc-hs200-1_8v;
- 	mmc-hs400-1_8v;
- 	cap-mmc-highspeed;
-@@ -686,7 +685,6 @@
- /* WiFi SDIO module */
- &mmc_1 {
- 	status = "okay";
--	num-slots = <1>;
- 	non-removable;
- 	cap-sdio-irq;
- 	keep-power-in-suspend;
-@@ -706,7 +704,6 @@
- /* uSD card */
- &mmc_2 {
- 	status = "okay";
--	num-slots = <1>;
- 	cap-sd-highspeed;
- 	card-detect-delay = <200>;
- 	clock-frequency = <400000000>;
--- 
-1.9.1
+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
