@@ -1,60 +1,78 @@
-From: <noord-holland@netwerkmassagebijkanker.nl>
-Subject: (unknown)
-Date: Tue, 04 Jul 2017 18:35:10 -0000
-Message-ID: <149919331034.12492.6044444213425195637@udm.net>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynos: remove num-slots from exynos
+ platforms
+Date: Wed, 05 Jul 2017 11:25:47 +0900
+Message-ID: <07f63741-3a00-003a-6176-8752bf93ec2a@samsung.com>
+References: <CGME20170704091754epcas2p4d4f5717b2cd00570521f68b5f2e10237@epcas2p4.samsung.com>
+        <1499159859-67028-1-git-send-email-shawn.lin@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="BILL-5456344828928.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from a53.sub151.net78.udm.net ([78.85.151.53]:41288 "HELO udm.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1752260AbdGDSfO (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:22520 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752248AbdGECZu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 14:35:14 -0400
-Content-Disposition: attachment
-Subject: 
+        Tue, 4 Jul 2017 22:25:50 -0400
+In-reply-to: <1499159859-67028-1-git-send-email-shawn.lin@rock-chips.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Shawn Lin <shawn.lin@rock-chips.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-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
+On 07/04/2017 06:17 PM, Shawn Lin wrote:
+> dwmmc driver deprecated num-slots and plan to get rid
+> of it finally. Just move a step to cleanup it from DT.
+> 
+> Cc: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+
+Reviewed-by: Jaehoon Chung <jh80.chung@samsung.com>
+
+> ---
+> 
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 --
+>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts       | 2 --
+>  2 files changed, 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> index e2b0da2..7f693ae 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> @@ -846,7 +846,6 @@
+>  
+>  &mshc_0 {
+>  	status = "okay";
+> -	num-slots = <1>;
+>  	mmc-hs200-1_8v;
+>  	mmc-hs400-1_8v;
+>  	cap-mmc-highspeed;
+> @@ -868,7 +867,6 @@
+>  
+>  &mshc_2 {
+>  	status = "okay";
+> -	num-slots = <1>;
+>  	cap-sd-highspeed;
+>  	disable-wp;
+>  	cd-gpios = <&gpa2 4 GPIO_ACTIVE_HIGH>;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> index e5892bb..4a8b1fb 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> @@ -359,7 +359,6 @@
+>  
+>  &mmc_0 {
+>  	status = "okay";
+> -	num-slots = <1>;
+>  	cap-mmc-highspeed;
+>  	mmc-hs200-1_8v;
+>  	non-removable;
+> @@ -375,7 +374,6 @@
+>  
+>  &mmc_2 {
+>  	status = "okay";
+> -	num-slots = <1>;
+>  	cap-sd-highspeed;
+>  	card-detect-delay = <200>;
+>  	clock-frequency = <400000000>;
+> 
