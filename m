@@ -1,12 +1,14 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v2] drm/exynos: mic: add a bridge at probe
-Date: Wed, 05 Jul 2017 17:18:23 +0900
-Message-ID: <1499242703-19153-1-git-send-email-inki.dae@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH v2] drm/exynos: mic: add a bridge at probe
+Date: Wed, 05 Jul 2017 18:40:37 +0900
+Message-ID: <e44fcd2d-e8e3-5ad2-598b-785cb62a798d@samsung.com>
 References: <CGME20170705081842epcas1p46d9f6868ad2f25712c8d41ae6ecd0358@epcas1p4.samsung.com>
+ <1499242703-19153-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0647753367=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1499242703-19153-1-git-send-email-inki.dae@samsung.com>
+Content-language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -16,50 +18,88 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
 Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhpcyBwYXRjaCBtb3ZlcyBkcm1fYnJpZGdlX2FkZCBjYWxsIGludG8gcHJvYmUuCgpJdCBkb2Vz
-bid0IG5lZWQgdG8gY2FsbCBkcm1fYnJpZGdlX2FkZCBjYWxsIGV2ZXJ5IHRpbWUKYmluZCBjYWxs
-YmFjayBpcyBjYWxsZWQuCgpDaGFuZ2Vsb2cgdjIKLSBtb3ZlZCBkcm1fYnJpZGdlX3JlbW92ZSBj
-YWxsIGludG8gcmVtb3ZlIGNhbGxiYWNrLgotIGNvcnJlY3RlZCBkZXNjcmlwdGlvbi4KClN1Z2dl
-c3RlZC1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KUmV2aWV3ZWQtYnk6
-IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IElua2kg
-RGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fbWljLmMgfCAyNCArKysrKysrKysrKysrKystLS0tLS0tLS0KIDEgZmlsZSBjaGFu
-Z2VkLCAxNSBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9taWMuYwppbmRleCBlNDU3MjA1Li4xNmJiZWU4IDEwMDY0NAotLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jCkBAIC0zNDAsMTYgKzM0MCwxMCBAQCBzdGF0aWMg
-aW50IGV4eW5vc19taWNfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1h
-c3RlciwKIAkJCSAgIHZvaWQgKmRhdGEpCiB7CiAJc3RydWN0IGV4eW5vc19taWMgKm1pYyA9IGRl
-dl9nZXRfZHJ2ZGF0YShkZXYpOwotCWludCByZXQ7CiAKLQltaWMtPmJyaWRnZS5mdW5jcyA9ICZt
-aWNfYnJpZGdlX2Z1bmNzOwotCW1pYy0+YnJpZGdlLm9mX25vZGUgPSBkZXYtPm9mX25vZGU7CiAJ
-bWljLT5icmlkZ2UuZHJpdmVyX3ByaXZhdGUgPSBtaWM7Ci0JcmV0ID0gZHJtX2JyaWRnZV9hZGQo
-Jm1pYy0+YnJpZGdlKTsKLQlpZiAocmV0KQotCQlEUk1fRVJST1IoIm1pYzogRmFpbGVkIHRvIGFk
-ZCBNSUMgdG8gdGhlIGdsb2JhbCBicmlkZ2UgbGlzdFxuIik7CiAKLQlyZXR1cm4gcmV0OworCXJl
-dHVybiAwOwogfQogCiBzdGF0aWMgdm9pZCBleHlub3NfbWljX3VuYmluZChzdHJ1Y3QgZGV2aWNl
-ICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKQEAgLTM2NSw4ICszNTksNiBAQCBzdGF0aWMg
-dm9pZCBleHlub3NfbWljX3VuYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2Ug
-Km1hc3RlciwKIAogYWxyZWFkeV9kaXNhYmxlZDoKIAltdXRleF91bmxvY2soJm1pY19tdXRleCk7
-Ci0KLQlkcm1fYnJpZGdlX3JlbW92ZSgmbWljLT5icmlkZ2UpOwogfQogCiBzdGF0aWMgY29uc3Qg
-c3RydWN0IGNvbXBvbmVudF9vcHMgZXh5bm9zX21pY19jb21wb25lbnRfb3BzID0gewpAQCAtNDYx
-LDYgKzQ1MywxNSBAQCBzdGF0aWMgaW50IGV4eW5vc19taWNfcHJvYmUoc3RydWN0IHBsYXRmb3Jt
-X2RldmljZSAqcGRldikKIAogCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIG1pYyk7CiAKKwlt
-aWMtPmJyaWRnZS5mdW5jcyA9ICZtaWNfYnJpZGdlX2Z1bmNzOworCW1pYy0+YnJpZGdlLm9mX25v
-ZGUgPSBkZXYtPm9mX25vZGU7CisKKwlyZXQgPSBkcm1fYnJpZGdlX2FkZCgmbWljLT5icmlkZ2Up
-OworCWlmIChyZXQpIHsKKwkJRFJNX0VSUk9SKCJtaWM6IEZhaWxlZCB0byBhZGQgTUlDIHRvIHRo
-ZSBnbG9iYWwgYnJpZGdlIGxpc3RcbiIpOworCQlyZXR1cm4gcmV0OworCX0KKwogCXBtX3J1bnRp
-bWVfZW5hYmxlKGRldik7CiAKIAlyZXQgPSBjb21wb25lbnRfYWRkKGRldiwgJmV4eW5vc19taWNf
-Y29tcG9uZW50X29wcyk7CkBAIC00NzksOCArNDgwLDEzIEBAIHN0YXRpYyBpbnQgZXh5bm9zX21p
-Y19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCiBzdGF0aWMgaW50IGV4eW5v
-c19taWNfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiB7CisJc3RydWN0IGV4
-eW5vc19taWMgKm1pYyA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBkZXYpOworCiAJY29tcG9uZW50
-X2RlbCgmcGRldi0+ZGV2LCAmZXh5bm9zX21pY19jb21wb25lbnRfb3BzKTsKIAlwbV9ydW50aW1l
-X2Rpc2FibGUoJnBkZXYtPmRldik7CisKKwlkcm1fYnJpZGdlX3JlbW92ZSgmbWljLT5icmlkZ2Up
-OworCiAJcmV0dXJuIDA7CiB9CiAKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+This is a multi-part message in MIME format.
+--===============0647753367==
+Content-type: multipart/alternative;
+	boundary="------------10B67BE3CE3E96A52428D31F"
+Content-language: en-US
+
+This is a multi-part message in MIME format.
+--------------10B67BE3CE3E96A52428D31F
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+
+On 07/05/2017 05:18 PM, Inki Dae wrote:
+> This patch moves drm_bridge_add call into probe.
+>
+> It doesn't need to call drm_bridge_add call every time
+> bind callback is called.
+>
+> Changelog v2
+> - moved drm_bridge_remove call into remove callback.
+> - corrected description.
+>
+> Suggested-by: Andrzej Hajda <a.hajda@samsung.com>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+
+Reviewed-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+
+Best regards,
+Hoegeun
+
+
+--------------10B67BE3CE3E96A52428D31F
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+  <body text="#000000" bgcolor="#FFFFFF">
+    On 07/05/2017 05:18 PM, Inki Dae wrote:<br>
+    <blockquote type="cite"
+      cite="mid:1499242703-19153-1-git-send-email-inki.dae@samsung.com">
+      <pre wrap="">This patch moves drm_bridge_add call into probe.
+
+It doesn't need to call drm_bridge_add call every time
+bind callback is called.
+
+Changelog v2
+- moved drm_bridge_remove call into remove callback.
+- corrected description.
+
+Suggested-by: Andrzej Hajda <a class="moz-txt-link-rfc2396E" href="mailto:a.hajda@samsung.com">&lt;a.hajda@samsung.com&gt;</a>
+Reviewed-by: Andrzej Hajda <a class="moz-txt-link-rfc2396E" href="mailto:a.hajda@samsung.com">&lt;a.hajda@samsung.com&gt;</a>
+Signed-off-by: Inki Dae <a class="moz-txt-link-rfc2396E" href="mailto:inki.dae@samsung.com">&lt;inki.dae@samsung.com&gt;</a></pre>
+    </blockquote>
+    <br>
+    Reviewed-by: Hoegeun Kwon <a class="moz-txt-link-rfc2396E"
+      href="mailto:hoegeun.kwon@samsung.com">&lt;hoegeun.kwon@samsung.com&gt;</a>
+    <br>
+    <br>
+    Best regards,
+    <br>
+    Hoegeun<br>
+    <br>
+  </body>
+</html>
+
+--------------10B67BE3CE3E96A52428D31F--
+
+--===============0647753367==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0647753367==--
