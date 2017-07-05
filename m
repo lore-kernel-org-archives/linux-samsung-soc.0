@@ -1,105 +1,71 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH v2] drm/exynos: mic: add a bridge at probe
-Date: Wed, 05 Jul 2017 18:40:37 +0900
-Message-ID: <e44fcd2d-e8e3-5ad2-598b-785cb62a798d@samsung.com>
-References: <CGME20170705081842epcas1p46d9f6868ad2f25712c8d41ae6ecd0358@epcas1p4.samsung.com>
- <1499242703-19153-1-git-send-email-inki.dae@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: i2s: Supported high
+	resolution rates
+Date: Wed, 5 Jul 2017 11:11:46 +0100
+Message-ID: <20170705101146.5pk4hxuyco4va32r@sirena.org.uk>
+References: <CGME20170705055835epcas5p32d60ee0f1acaf4e04c8a80d49bc2a730@epcas5p3.samsung.com>
+ <20170705055832.4893-1-jcsing.lee@samsung.com>
+ <20170705061323.a45ylipylcerz3te@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0647753367=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1499242703-19153-1-git-send-email-inki.dae@samsung.com>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============5970853484838447306=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20170705061323.a45ylipylcerz3te@gangnam.samsung>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: alsa-devel <alsa-devel@alsa-project.org>, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Jaechul Lee <jcsing.lee@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Takashi Iwai <tiwai@suse.com>, Jaechul Lee <galaxyra@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is a multi-part message in MIME format.
---===============0647753367==
-Content-type: multipart/alternative;
-	boundary="------------10B67BE3CE3E96A52428D31F"
-Content-language: en-US
 
-This is a multi-part message in MIME format.
---------------10B67BE3CE3E96A52428D31F
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-
-On 07/05/2017 05:18 PM, Inki Dae wrote:
-> This patch moves drm_bridge_add call into probe.
->
-> It doesn't need to call drm_bridge_add call every time
-> bind callback is called.
->
-> Changelog v2
-> - moved drm_bridge_remove call into remove callback.
-> - corrected description.
->
-> Suggested-by: Andrzej Hajda <a.hajda@samsung.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-
-Reviewed-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-
-Best regards,
-Hoegeun
-
-
---------------10B67BE3CE3E96A52428D31F
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  </head>
-  <body text="#000000" bgcolor="#FFFFFF">
-    On 07/05/2017 05:18 PM, Inki Dae wrote:<br>
-    <blockquote type="cite"
-      cite="mid:1499242703-19153-1-git-send-email-inki.dae@samsung.com">
-      <pre wrap="">This patch moves drm_bridge_add call into probe.
-
-It doesn't need to call drm_bridge_add call every time
-bind callback is called.
-
-Changelog v2
-- moved drm_bridge_remove call into remove callback.
-- corrected description.
-
-Suggested-by: Andrzej Hajda <a class="moz-txt-link-rfc2396E" href="mailto:a.hajda@samsung.com">&lt;a.hajda@samsung.com&gt;</a>
-Reviewed-by: Andrzej Hajda <a class="moz-txt-link-rfc2396E" href="mailto:a.hajda@samsung.com">&lt;a.hajda@samsung.com&gt;</a>
-Signed-off-by: Inki Dae <a class="moz-txt-link-rfc2396E" href="mailto:inki.dae@samsung.com">&lt;inki.dae@samsung.com&gt;</a></pre>
-    </blockquote>
-    <br>
-    Reviewed-by: Hoegeun Kwon <a class="moz-txt-link-rfc2396E"
-      href="mailto:hoegeun.kwon@samsung.com">&lt;hoegeun.kwon@samsung.com&gt;</a>
-    <br>
-    <br>
-    Best regards,
-    <br>
-    Hoegeun<br>
-    <br>
-  </body>
-</html>
-
---------------10B67BE3CE3E96A52428D31F--
-
---===============0647753367==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+--===============5970853484838447306==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="agcgp7bgjh2dfoeo"
 Content-Disposition: inline
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============0647753367==--
+--agcgp7bgjh2dfoeo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Jul 05, 2017 at 03:13:23PM +0900, Andi Shyti wrote:
+
+> > +	if (IS_ENABLED(CONFIG_OF) && pdev->dev.of_node)
+
+> I do not like drivers to check the Kernel's configuration, I
+> think just checking "pdev->dev.of_node" is enough.
+
+This idiom gets used because it allows the compiler to optimize out the
+DT section if the kernel is built without DT support, it's fine.
+
+--agcgp7bgjh2dfoeo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllcu14ACgkQJNaLcl1U
+h9CoiQf/Y/gHLo/ZgFYoFcydvKn1EQxjIpuvXRkjm7hu2Edd2cOOqVImX9zgwYwl
+yLcRMav3Ggc/QhMBp/s+ExZYPk1ypQBDqN9K6OClUDsJACgAaSbtWvCb/530K3Ra
+Y2FY00amGPkGxRaFWXb8YUn3Kc6byspU8CDoKLg7k5TIaiVxSnR5H5fJvNL2SAHy
+QG+Dn7rQ8E5SXAOeK9ASgJburQlgiRpaymN4zXgfqGgNjD5qq405FWHZsTLYjYVF
+a6DPYFbbgvLrlx/t2xUHyfx9zhyaUqnUfBoajX1DnYzsPqyXKgUmEUyil1PpIoCD
+YxfbsJf49lwpPPxQ4YaOyvDvg0LKSQ==
+=IqYE
+-----END PGP SIGNATURE-----
+
+--agcgp7bgjh2dfoeo--
+
+--===============5970853484838447306==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============5970853484838447306==--
