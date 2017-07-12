@@ -1,47 +1,61 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos/hdmi: fix disable sequence
-Date: Wed, 12 Jul 2017 12:01:23 +0200
-Message-ID: <1499853683-10261-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170712100130eucas1p28e5dd505bee3f5e7f09d81bab8e5ba06@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:50619 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750959AbdGLKBf (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 06:01:35 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OSZ0001M2IJ6430@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Jul 2017 11:01:32 +0100 (BST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: forbid creating framebuffers from too small GEM
+ buffers
+Date: Wed, 12 Jul 2017 12:09:22 +0200
+Message-ID: <1499854165-10902-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170712100931eucas1p1bcc4da93969ed34797c984284d595b21@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-The "Fixes" patch was incorrectly merged, as a result PHY is prematurely
-powered off and for example Odroid-U3 cannot disable TV power domain
-when HDMI cable is unplugged.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: 625e63e2 ("drm/exynos/hdmi: fix pipeline disable order")
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index e65cdbf..b1718d8 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1501,8 +1501,6 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 	 */
- 	cancel_delayed_work(&hdata->hotplug_work);
- 	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
--
--	hdmiphy_disable(hdata);
- }
- 
- static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
--- 
-2.7.4
+QWRkIGEgY2hlY2sgaWYgdGhlIGZyYW1lYnVmZmVyIGRlc2NyaWJlZCBieSB0aGUgcHJvdmlkZWQg
+ZHJtX21vZGVfZmJfY21kMgpzdHJ1Y3R1cmUgZml0cyBpbnRvIHByb3ZpZGVkIEdFTSBidWZmZXJz
+LiBXaXRob3V0IHRoaXMgY2hlY2sgaXQgaXMKcG9zc2libGUgdG8gY3JlYXRlIGEgZnJhbWVidWZm
+ZXIgb2JqZWN0IGZyb20gYSBzbWFsbCBidWZmZXIgYW5kIHNldCBpdCB0bwp0aGUgaGFyZHdhcmUs
+IHdoYXQgcmVzdWx0cyBpbiBkaXNwbGF5aW5nIHN5c3RlbSBtZW1vcnkgb3V0c2lkZSB0aGUKYWxs
+b2NhdGVkIEdFTSBidWZmZXIuCgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6
+eXByb3dza2lAc2Ftc3VuZy5jb20+CkNDOiBzdGFibGVAdmdlci5rZXJuZWwub3JnICMgdjQuNysK
+LS0tClRoaXMgaXNzdWUgd2FzIHRoZXJlIGZyb20gdGhlIGJlZ2dpbmluZywgYnV0IHRoZSBwcm92
+aWRlZCBwYXRjaCBhcHBsaWVzIG9ubHkKdG8gdjQuNysga2VybmVscyBkdWUgdG8gb3RoZXIgY2hh
+bmdlcyBpbiB0aGUgZml4ZWQgY29kZS4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZmIuYyB8IDE0ICsrKysrKysrKysrKystCiAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0
+aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9mYi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zi
+LmMKaW5kZXggZDQ4ZmQ3YzkxOGY4Li43MzIxN2MyODFjOWEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9mYi5jCkBAIC0xNDUsMTMgKzE0NSwxOSBAQCBzdHJ1Y3QgZHJtX2ZyYW1l
+YnVmZmVyICoKIGV4eW5vc191c2VyX2ZiX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBz
+dHJ1Y3QgZHJtX2ZpbGUgKmZpbGVfcHJpdiwKIAkJICAgICAgY29uc3Qgc3RydWN0IGRybV9tb2Rl
+X2ZiX2NtZDIgKm1vZGVfY21kKQogeworCWNvbnN0IHN0cnVjdCBkcm1fZm9ybWF0X2luZm8gKmlu
+Zm8gPSBkcm1fZ2V0X2Zvcm1hdF9pbmZvKGRldiwgbW9kZV9jbWQpOwogCXN0cnVjdCBleHlub3Nf
+ZHJtX2dlbSAqZXh5bm9zX2dlbVtNQVhfRkJfQlVGRkVSXTsKIAlzdHJ1Y3QgZHJtX2dlbV9vYmpl
+Y3QgKm9iajsKIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYjsKIAlpbnQgaTsKIAlpbnQgcmV0
+OwogCi0JZm9yIChpID0gMDsgaSA8IGRybV9mb3JtYXRfbnVtX3BsYW5lcyhtb2RlX2NtZC0+cGl4
+ZWxfZm9ybWF0KTsgaSsrKSB7CisJZm9yIChpID0gMDsgaSA8IGluZm8tPm51bV9wbGFuZXM7IGkr
+KykgeworCQl1bnNpZ25lZCBpbnQgaGVpZ2h0ID0gKGkgPT0gMCkgPyBtb2RlX2NtZC0+aGVpZ2h0
+IDoKKwkJCQkgICAgIERJVl9ST1VORF9VUChtb2RlX2NtZC0+aGVpZ2h0LCBpbmZvLT52c3ViKTsK
+KwkJdW5zaWduZWQgbG9uZyBzaXplID0gaGVpZ2h0ICogbW9kZV9jbWQtPnBpdGNoZXNbaV0gKwor
+CQkJCSAgICAgbW9kZV9jbWQtPm9mZnNldHNbaV07CisKIAkJb2JqID0gZHJtX2dlbV9vYmplY3Rf
+bG9va3VwKGZpbGVfcHJpdiwgbW9kZV9jbWQtPmhhbmRsZXNbaV0pOwogCQlpZiAoIW9iaikgewog
+CQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gbG9va3VwIGdlbSBvYmplY3RcbiIpOwpAQCAtMTYwLDYg
+KzE2NiwxMiBAQCBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICoKIAkJfQogCiAJCWV4eW5vc19nZW1b
+aV0gPSB0b19leHlub3NfZ2VtKG9iaik7CisKKwkJaWYgKHNpemUgPiBleHlub3NfZ2VtW2ldLT5z
+aXplKSB7CisJCQlpKys7CisJCQlyZXQgPSAtRUlOVkFMOworCQkJZ290byBlcnI7CisJCX0KIAl9
+CiAKIAlmYiA9IGV4eW5vc19kcm1fZnJhbWVidWZmZXJfaW5pdChkZXYsIG1vZGVfY21kLCBleHlu
+b3NfZ2VtLCBpKTsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
