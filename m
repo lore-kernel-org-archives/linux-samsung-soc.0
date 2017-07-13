@@ -1,64 +1,218 @@
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 3/4] drm/sun4i: engine: Add commit_poll function
-Date: Thu, 13 Jul 2017 16:41:15 +0200
-Message-ID: <b483c2c05704615957dc6d96bbd06f2e3b117bf5.1499956639.git-series.maxime.ripard@free-electrons.com>
+Subject: [PATCH 1/4] drm/atomic: implement drm_atomic_helper_commit_tail for runtime_pm users
+Date: Thu, 13 Jul 2017 16:41:13 +0200
+Message-ID: <aeeb8f778dae8f170294b6da92819973b742feb2.1499956639.git-series.maxime.ripard@free-electrons.com>
 References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
 In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
 References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gdGhlIGVhcmxpZXIgQWxsd2lubmVyIGNoaXBzLCB3aXRoIHRoZSBmaXJzdCBpdGVyYXRpb24g
-b2YgdGhlIGRpc3BsYXkKZW5naW5lLCB0aGUgYmFja2VuZCBjb21taXQgYml0IG5lZWRzIHRvIGJl
-IHBvbGxlZCBiZWZvcmUgbWFraW5nIGFueQpyZWdpc3RlciBhY2Nlc3MgdG8gdGhlIGJhY2tlbmQu
-CgpBZGQgYW4gb3BlcmF0aW9uIGZvciB0aGF0LCB0aGF0IHdpbGwgYmUgY2FsbGVkIGluIGF0b21p
-Y19iZWdpbiBpbiBvcmRlciB0bwpiZSBzdXJlIHRvIGhhdmUgdGhhdCBiaXQgY2xlYXJlZCBiZWZv
-cmUgd2UgZG8gYW55IG1vZGlmaWNhdGlvbnMuCgpTaWduZWQtb2ZmLWJ5OiBNYXhpbWUgUmlwYXJk
-IDxtYXhpbWUucmlwYXJkQGZyZWUtZWxlY3Ryb25zLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0v
-c3VuNGkvc3VuNGlfY3J0Yy5jICAgfCAgMiArKwogZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bnhp
-X2VuZ2luZS5oIHwgMTQgKysrKysrKysrKysrKysKIDIgZmlsZXMgY2hhbmdlZCwgMTYgaW5zZXJ0
-aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9jcnRjLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfY3J0Yy5jCmluZGV4IGY4YzcwNDM5ZDFlMi4u
-MmViYTFkODYzOWQ4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfY3J0
-Yy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9jcnRjLmMKQEAgLTQ1LDYgKzQ1
-LDggQEAgc3RhdGljIHZvaWQgc3VuNGlfY3J0Y19hdG9taWNfYmVnaW4oc3RydWN0IGRybV9jcnRj
-ICpjcnRjLAogCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZkZXYtPmV2ZW50X2xvY2ssIGZsYWdz
-KTsKIAkJY3J0Yy0+c3RhdGUtPmV2ZW50ID0gTlVMTDsKIAkgfQorCisJV0FSTl9PTihzdW54aV9l
-bmdpbmVfY29tbWl0X3BvbGwoZW5naW5lKSk7CiB9CiAKIHN0YXRpYyB2b2lkIHN1bjRpX2NydGNf
-YXRvbWljX2ZsdXNoKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9zdW40aS9zdW54aV9lbmdpbmUuaCBiL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW54
-aV9lbmdpbmUuaAppbmRleCA0Y2I3MGFlNjVjNzkuLjY2MThlMTgyNjEzYyAxMDA2NDQKLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bnhpX2VuZ2luZS5oCisrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9zdW40aS9zdW54aV9lbmdpbmUuaApAQCAtMTcsNiArMTcsNyBAQCBzdHJ1Y3Qgc3VueGlfZW5n
-aW5lOwogCiBzdHJ1Y3Qgc3VueGlfZW5naW5lX29wcyB7CiAJdm9pZCAoKmNvbW1pdCkoc3RydWN0
-IHN1bnhpX2VuZ2luZSAqZW5naW5lKTsKKwlpbnQgKCpjb21taXRfcG9sbCkoc3RydWN0IHN1bnhp
-X2VuZ2luZSAqZW5naW5lKTsKIAlzdHJ1Y3QgZHJtX3BsYW5lICoqKCpsYXllcnNfaW5pdCkoc3Ry
-dWN0IGRybV9kZXZpY2UgKmRybSwKIAkJCQkJICBzdHJ1Y3Qgc3VueGlfZW5naW5lICplbmdpbmUp
-OwogCkBAIC01NSw2ICs1NiwxOSBAQCBzdW54aV9lbmdpbmVfY29tbWl0KHN0cnVjdCBzdW54aV9l
-bmdpbmUgKmVuZ2luZSkKIH0KIAogLyoqCisgKiBzdW54aV9lbmdpbmVfY29tbWl0X3BvbGwoKSAt
-IHdhaXQgZm9yIGFsbCBjaGFuZ2VzIHRvIGJlIGNvbW1pdHRlZAorICogQGVuZ2luZToJcG9pbnRl
-ciB0byB0aGUgZW5naW5lCisgKi8KK3N0YXRpYyBpbmxpbmUgaW50CitzdW54aV9lbmdpbmVfY29t
-bWl0X3BvbGwoc3RydWN0IHN1bnhpX2VuZ2luZSAqZW5naW5lKQoreworCWlmIChlbmdpbmUtPm9w
-cyAmJiBlbmdpbmUtPm9wcy0+Y29tbWl0X3BvbGwpCisJCXJldHVybiBlbmdpbmUtPm9wcy0+Y29t
-bWl0X3BvbGwoZW5naW5lKTsKKworCXJldHVybiAwOworfQorCisvKioKICAqIHN1bnhpX2VuZ2lu
-ZV9sYXllcnNfaW5pdCgpIC0gQ3JlYXRlIHBsYW5lcyAobGF5ZXJzKSBmb3IgdGhlIGVuZ2luZQog
-ICogQGRybToJcG9pbnRlciB0byB0aGUgZHJtX2RldmljZSBmb3Igd2hpY2ggcGxhbmVzIHdpbGwg
-YmUgY3JlYXRlZAogICogQGVuZ2luZToJcG9pbnRlciB0byB0aGUgZW5naW5lCi0tIApnaXQtc2Vy
-aWVzIDAuOS4xCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The current drm_atomic_helper_commit_tail helper works only if the CRTC is
+accessible, and documents an alternative implementation that is supposed to
+be used if that happens.
+
+That implementation is then duplicated by some drivers. Instead of
+documenting it, let's implement an helper that all the relevant users can
+use directly.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/drm_atomic_helper.c        | 47 +++++++++++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_fb.c     | 27 +-------------
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c      | 18 +---------
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 21 +----------
+ include/drm/drm_atomic_helper.h            |  1 +-
+ 5 files changed, 36 insertions(+), 78 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 86d3093c6c9b..a288805078f9 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1245,23 +1245,11 @@ EXPORT_SYMBOL(drm_atomic_helper_wait_for_vblanks);
+  * @old_state: atomic state object with old state structures
+  *
+  * This is the default implementation for the
+- * &drm_mode_config_helper_funcs.atomic_commit_tail hook.
++ * &drm_mode_config_helper_funcs.atomic_commit_tail hook, for drivers
++ * that do not support runtime_pm.
+  *
+  * Note that the default ordering of how the various stages are called is to
+- * match the legacy modeset helper library closest. One peculiarity of that is
+- * that it doesn't mesh well with runtime PM at all.
+- *
+- * For drivers supporting runtime PM the recommended sequence is instead ::
+- *
+- *     drm_atomic_helper_commit_modeset_disables(dev, old_state);
+- *
+- *     drm_atomic_helper_commit_modeset_enables(dev, old_state);
+- *
+- *     drm_atomic_helper_commit_planes(dev, old_state,
+- *                                     DRM_PLANE_COMMIT_ACTIVE_ONLY);
+- *
+- * for committing the atomic update to hardware.  See the kerneldoc entries for
+- * these three functions for more details.
++ * match the legacy modeset helper library closest.
+  */
+ void drm_atomic_helper_commit_tail(struct drm_atomic_state *old_state)
+ {
+@@ -1281,6 +1269,35 @@ void drm_atomic_helper_commit_tail(struct drm_atomic_state *old_state)
+ }
+ EXPORT_SYMBOL(drm_atomic_helper_commit_tail);
+ 
++/**
++ * drm_atomic_helper_commit_tail_runtime_pm - commit atomic update to hardware
++ * @old_state: new modeset state to be committed
++ *
++ * This is a variant of drm_atomic_helper_commit_tail suited for
++ * drivers that implement runtime_pm.
++ *
++ * Note that the default ordering of how the various stages are called is to
++ * match the legacy modeset helper library closest.
++ */
++void drm_atomic_helper_commit_tail_runtime_pm(struct drm_atomic_state *old_state)
++{
++	struct drm_device *dev = old_state->dev;
++
++	drm_atomic_helper_commit_modeset_disables(dev, old_state);
++
++	drm_atomic_helper_commit_modeset_enables(dev, old_state);
++
++	drm_atomic_helper_commit_planes(dev, old_state,
++					DRM_PLANE_COMMIT_ACTIVE_ONLY);
++
++	drm_atomic_helper_commit_hw_done(old_state);
++
++	drm_atomic_helper_wait_for_vblanks(dev, old_state);
++
++	drm_atomic_helper_cleanup_planes(dev, old_state);
++}
++EXPORT_SYMBOL(drm_atomic_helper_commit_tail_runtime_pm);
++
+ static void commit_tail(struct drm_atomic_state *old_state)
+ {
+ 	struct drm_device *dev = old_state->dev;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index d48fd7c918f8..71f6873255f1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -187,33 +187,8 @@ dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index)
+ 	return exynos_fb->dma_addr[index];
+ }
+ 
+-static void exynos_drm_atomic_commit_tail(struct drm_atomic_state *state)
+-{
+-	struct drm_device *dev = state->dev;
+-
+-	drm_atomic_helper_commit_modeset_disables(dev, state);
+-
+-	drm_atomic_helper_commit_modeset_enables(dev, state);
+-
+-	/*
+-	 * Exynos can't update planes with CRTCs and encoders disabled,
+-	 * its updates routines, specially for FIMD, requires the clocks
+-	 * to be enabled. So it is necessary to handle the modeset operations
+-	 * *before* the commit_planes() step, this way it will always
+-	 * have the relevant clocks enabled to perform the update.
+-	 */
+-	drm_atomic_helper_commit_planes(dev, state,
+-					DRM_PLANE_COMMIT_ACTIVE_ONLY);
+-
+-	drm_atomic_helper_commit_hw_done(state);
+-
+-	drm_atomic_helper_wait_for_vblanks(dev, state);
+-
+-	drm_atomic_helper_cleanup_planes(dev, state);
+-}
+-
+ static struct drm_mode_config_helper_funcs exynos_drm_mode_config_helpers = {
+-	.atomic_commit_tail = exynos_drm_atomic_commit_tail,
++	.atomic_commit_tail = drm_atomic_helper_commit_tail_runtime_pm,
+ };
+ 
+ static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index f4125c8ca902..cb0f6266fbae 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -249,28 +249,12 @@ static int rcar_du_atomic_check(struct drm_device *dev,
+ 	return rcar_du_atomic_check_planes(dev, state);
+ }
+ 
+-static void rcar_du_atomic_commit_tail(struct drm_atomic_state *old_state)
+-{
+-	struct drm_device *dev = old_state->dev;
+-
+-	/* Apply the atomic update. */
+-	drm_atomic_helper_commit_modeset_disables(dev, old_state);
+-	drm_atomic_helper_commit_modeset_enables(dev, old_state);
+-	drm_atomic_helper_commit_planes(dev, old_state,
+-					DRM_PLANE_COMMIT_ACTIVE_ONLY);
+-
+-	drm_atomic_helper_commit_hw_done(old_state);
+-	drm_atomic_helper_wait_for_vblanks(dev, old_state);
+-
+-	drm_atomic_helper_cleanup_planes(dev, old_state);
+-}
+-
+ /* -----------------------------------------------------------------------------
+  * Initialization
+  */
+ 
+ static const struct drm_mode_config_helper_funcs rcar_du_mode_config_helper = {
+-	.atomic_commit_tail = rcar_du_atomic_commit_tail,
++	.atomic_commit_tail = drm_atomic_helper_commit_tail_runtime_pm,
+ };
+ 
+ static const struct drm_mode_config_funcs rcar_du_mode_config_funcs = {
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+index 81f9548672b0..647745479c39 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+@@ -174,27 +174,8 @@ static void rockchip_drm_output_poll_changed(struct drm_device *dev)
+ 		drm_fb_helper_hotplug_event(fb_helper);
+ }
+ 
+-static void
+-rockchip_atomic_commit_tail(struct drm_atomic_state *state)
+-{
+-	struct drm_device *dev = state->dev;
+-
+-	drm_atomic_helper_commit_modeset_disables(dev, state);
+-
+-	drm_atomic_helper_commit_modeset_enables(dev, state);
+-
+-	drm_atomic_helper_commit_planes(dev, state,
+-					DRM_PLANE_COMMIT_ACTIVE_ONLY);
+-
+-	drm_atomic_helper_commit_hw_done(state);
+-
+-	drm_atomic_helper_wait_for_vblanks(dev, state);
+-
+-	drm_atomic_helper_cleanup_planes(dev, state);
+-}
+-
+ static const struct drm_mode_config_helper_funcs rockchip_mode_config_helpers = {
+-	.atomic_commit_tail = rockchip_atomic_commit_tail,
++	.atomic_commit_tail = drm_atomic_helper_commit_tail_runtime_pm,
+ };
+ 
+ static const struct drm_mode_config_funcs rockchip_drm_mode_config_funcs = {
+diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
+index f0a8678ae98e..9ff64c6d3043 100644
+--- a/include/drm/drm_atomic_helper.h
++++ b/include/drm/drm_atomic_helper.h
+@@ -41,6 +41,7 @@ int drm_atomic_helper_check_planes(struct drm_device *dev,
+ int drm_atomic_helper_check(struct drm_device *dev,
+ 			    struct drm_atomic_state *state);
+ void drm_atomic_helper_commit_tail(struct drm_atomic_state *state);
++void drm_atomic_helper_commit_tail_runtime_pm(struct drm_atomic_state *state);
+ int drm_atomic_helper_commit(struct drm_device *dev,
+ 			     struct drm_atomic_state *state,
+ 			     bool nonblock);
+-- 
+git-series 0.9.1
