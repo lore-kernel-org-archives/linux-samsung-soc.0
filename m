@@ -1,55 +1,62 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v4 0/3] Add support for the s6e63j0x03 panel on Rinato board
-Date: Thu, 13 Jul 2017 11:20:40 +0900
-Message-ID: <1499912443-3671-1-git-send-email-hoegeun.kwon@samsung.com>
-References: <CGME20170713022056epcas5p21ece2860cb2cce0b4381cf98988496f9@epcas5p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 3/3] ARM: dts: exynos: Remove the display-timing and
+ delay from rinato dts
+Date: Thu, 13 Jul 2017 11:20:43 +0900
+Message-ID: <1499912443-3671-4-git-send-email-hoegeun.kwon@samsung.com>
+References: <1499912443-3671-1-git-send-email-hoegeun.kwon@samsung.com>
+        <CGME20170713022057epcas1p464b817a426638cc1566e665aa7903ed7@epcas1p4.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1499912443-3671-1-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQW5kcnplaiwKClRoYW5rIHlvdSBmb3IgeW91ciByZXZpZXcuCgpUaGUgcHVycG9zZSBvZiB0
-aGlzIHBhdGNoIGlzIGFkZCBzdXBwb3J0IGZvciBzNmU2M2oweDAzIEFNT0xFRCBwYW5lbApvbiB0
-aGUgcmluYXRvIGJvYXJkKFNhbXN1bmcgR2FsYXh5IEdlYXIgMikuCgpDaGFuZ2VzIGZvciBWNDoK
-LSBBZGRlZCBSZXZpZXdlZC1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4g
-KDIvMyBwYXRjaCkuCi0gRml4ZWQgdGhlIHN0eWxlIG9mIG1hY3JvIGZ1bmN0aW9uLgoKQ2hhbmdl
-cyBmb3IgVjM6Ci0gQXBwbGllZCBwYXRjaCAnQVJNOiBkdHM6IGV4eW5vczogRml4IHRoZSBhY3Rp
-dmUgb2YgcmVzZXQgZ3Bpb3MgZnJvbSByaW5hdG8gZHRzJyAodjIgMy80KQotIFJlbW92ZSB0aGUg
-dW5uZWNlc3NhcnkgZGVmaW5lICgnTUlOX0JSSUdIVE5FU1MnKQotIFJlbW92ZWQgZXhwbGljaXQg
-Y2FzdGluZy4KLSBSZW1vdmVkIHZpb2xhdGlvbiBvZiBrZXJuZWwgY29kaW5nIHN0eWxlLgoKQ2hh
-bmdlcyBmb3IgVjI6Ci0gQWRkZWQgdGhlIGludGVyZmFjZSBpbmZvIGluIGJpbmRpbmcgZG9jdW1l
-bnQuCi0gQWRkZWQgUmV2aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5j
-b20+ICgxLzMgcGF0Y2gpLgotIEFkZGVkIEFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJu
-ZWwub3JnPiAoMS8zIHBhdGNoKS4KLSBGaXhlZCB0aGUgdHJpc3RhdGUgb2YgY29uZmlnIGZyb20g
-dmlkZW8gbW9kZSB0byBjb21tYW5kIG1vZGUuCi0gRml4ZWQgdGhlIHJlc2V0IGdwaW9zIGZyb20g
-YWN0aXZlIGhpZ2ggdG8gbG93IGZyb20gcmluYXRvIGR0cy4KLSBGaXhlZCBhIGxvdCBvZiB0aGlu
-Z3MgaW4gcGFuZWwgZHJpdmVyLCByZWZsZWN0IEFuZHJ6ZWoncyByZXZpZXcuCgpCZXN0IHJlZ2Fy
-ZHMsCkhvZWdldW4KCkhvZWdldW4gS3dvbiAoMyk6CiAgZHQtYmluZGluZ3M6IEFkZCBzdXBwb3J0
-IGZvciBzYW1zdW5nIHM2ZTYzajB4MDMgcGFuZWwgYmluZGluZwogIGRybS9wYW5lbDogQWRkIHN1
-cHBvcnQgZm9yIHM2ZTYzajB4MDMgcGFuZWwgZHJpdmVyCiAgQVJNOiBkdHM6IGV4eW5vczogUmVt
-b3ZlIHRoZSBkaXNwbGF5LXRpbWluZyBhbmQgZGVsYXkgZnJvbSByaW5hdG8gZHRzCgogLi4uL2Jp
-bmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmU2M2oweDAzLnR4dCAgfCAgMjQgKwogYXJj
-aC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzICAgICAgICAgICAgfCAgMjIgLQog
-ZHJpdmVycy9ncHUvZHJtL3BhbmVsL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgfCAgIDcg
-KwogZHJpdmVycy9ncHUvZHJtL3BhbmVsL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgfCAg
-IDEgKwogZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlNjNqMHgwMy5jICAg
-fCA1MzIgKysrKysrKysrKysrKysrKysrKysrCiA1IGZpbGVzIGNoYW5nZWQsIDU2NCBpbnNlcnRp
-b25zKCspLCAyMiBkZWxldGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTYzajB4MDMudHh0
-CiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmct
-czZlNjNqMHgwMy5jCgotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+The display-timing and delay are included in the panel driver. So it
+should be removed in dts.
+
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos3250-rinato.dts | 22 ----------------------
+ 1 file changed, 22 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index 443e0c9..6b70c8d 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -242,28 +242,6 @@
+ 		vci-supply = <&ldo20_reg>;
+ 		reset-gpios = <&gpe0 1 GPIO_ACTIVE_LOW>;
+ 		te-gpios = <&gpx0 6 GPIO_ACTIVE_HIGH>;
+-		power-on-delay= <30>;
+-		power-off-delay= <120>;
+-		reset-delay = <5>;
+-		init-delay = <100>;
+-		flip-horizontal;
+-		flip-vertical;
+-		panel-width-mm = <29>;
+-		panel-height-mm = <29>;
+-
+-		display-timings {
+-			timing-0 {
+-				clock-frequency = <4600000>;
+-				hactive = <320>;
+-				vactive = <320>;
+-				hfront-porch = <1>;
+-				hback-porch = <1>;
+-				hsync-len = <1>;
+-				vfront-porch = <150>;
+-				vback-porch = <1>;
+-				vsync-len = <2>;
+-			};
+-		};
+ 
+ 		port {
+ 			dsi_in: endpoint {
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
