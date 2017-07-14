@@ -1,69 +1,87 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 1/4] drm/atomic: implement drm_atomic_helper_commit_tail
- for runtime_pm users
-Date: Fri, 14 Jul 2017 07:37:54 +0200
-Message-ID: <CAKMK7uE4j3Dy4qOd+WbTxg1BrYfPXGZVsxMWgPSx_1a1OhKu7A@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 4/4] drm/sun4i: make sure we don't have a commit pending
+Date: Fri, 14 Jul 2017 16:56:01 +0800
+Message-ID: <CAGb2v64KnB_zU0yk7MsGr9WRK1wpWq1xOj_cNuQ4mSQJeAGarw@mail.gmail.com>
 References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
- <aeeb8f778dae8f170294b6da92819973b742feb2.1499956639.git-series.maxime.ripard@free-electrons.com>
- <1823154.LT2zYSFJ4j@avalon>
+ <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1823154.LT2zYSFJ4j@avalon>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:DRM DRIVERS FOR RENESAS" <linux-renesas-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBKdWwgMTQsIDIwMTcgYXQgMTo0MyBBTSwgTGF1cmVudCBQaW5jaGFydAo8bGF1cmVu
-dC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPiB3cm90ZToKPj4gQ29tbWl0IDUyMDU1YmFmYTFm
-ZiAoImRybTogcmNhci1kdTogTW92ZSBwbGFuZSBjb21taXQgY29kZSBmcm9tIENSVEMKPj4gc3Rh
-cnQgdG8gQ1JUQyByZXN1bWUiKSBjaGFuZ2VkIHRoZSBvcmRlciBvZiB0aGUgcGxhbmUgY29tbWl0
-IGFuZCBDUlRDCj4+IGVuYWJsZSBvcGVyYXRpb25zIHRvIGFjY29tbW9kYXRlIHRoZSBydW50aW1l
-IFBNIHJlcXVpcmVtZW50cy4gSG93ZXZlciwKPj4gdGhpcyBpbnRyb2R1Y2VkIGNvcnJ1cHRpb24g
-aW4gdGhlIGZpcnN0IGRpc3BsYXllZCBmcmFtZSwgYXMgdGhlIENSVEMgaXMKPj4gbm93IGVuYWJs
-ZWQgd2l0aG91dCBhbnkgcGxhbmUgY29uZmlndXJlZC4gT24gR2VuMiBoYXJkd2FyZSB0aGUgZmly
-c3QKPj4gZnJhbWUgd2lsbCBiZSBibGFjayBhbmQgbGlrZWx5IHVubm90aWNlZCwgYnV0IG9uIEdl
-bjMgaGFyZHdhcmUgd2UgZW5kIHVwCj4+IHN0YXJ0aW5nIHRoZSBkaXNwbGF5IGJlZm9yZSB0aGUg
-VlNQIGNvbXBvc2l0b3IsIHdoaWNoIGlzIG1vcmUKPj4gbm90aWNlYWJsZS4KPj4KPj4gVG8gZml4
-IHRoaXMsIHJldmVydCB0aGUgb3JkZXIgb2YgdGhlIGNvbW1pdCBvcGVyYXRpb25zIGJhY2ssIGFu
-ZCBoYW5kbGUKPj4gcnVudGltZSBQTSByZXF1aXJlbWVudHMgaW4gdGhlIENSVEMgLmF0b21pY19i
-ZWdpbigpIGFuZCAuYXRvbWljX2VuYWJsZSgpCj4+IGhlbHBlciBvcGVyYXRpb24gaGFuZGxlcnMu
-Cj4KPiBJIGJlbGlldmUgdGhhdCB0aGUgInJ1bnRpbWUgUE0iIG9yZGVyIGlzIHByb2JsZW1hdGlj
-IGluIG1vc3QgZHJpdmVycy4gVGhlCj4gcHJvYmxlbSB1c3VhbGx5IGdvZXMgdW5ub3RpY2VkIGFz
-IG1vc3QgbW9uaXRvcnMgd2lsbCBub3QgZXZlbiBkaXNwbGF5IHRoZQo+IGZpcnN0IGZyYW1lLCBh
-bmQgSSBhc3N1bWUgbWFueSBkZXZpY2VzIHdpbGwganVzdCBvdXRwdXQgaXQgYmxhY2ssIGJ1dCBp
-dCdzIGFuCj4gaXNzdWUgbm9uZXRoZWxlc3MuCj4KPiBOb3RlIHRoYXQgbXkgZHJpdmVyIGhhc24n
-dCBsb3N0IHRoZSAicnVudGltZSBQTSIgcmVxdWlyZW1lbnRzLCBzbyBJIGhhZCB0bwo+IHN1cHBv
-cnQgdGhlbSB3aXRoIHRoZSAic3RhbmRhcmQiIG9yZGVyLiBUaGUgYmVzdCB3YXkgSSd2ZSBmb3Vu
-ZCB3YXMgdG8gcnVudGltZQo+IHJlc3VtZSBpbiB0aGUgb25lIG9mIC5hdG9taWNfYmVnaW4oKSBh
-bmQgLmVuYWJsZSgpIHRoYXQgaXMgcnVuIGZpcnN0LiBOb3QgdmVyeQo+IG5lYXQsIGFzIHNpbWls
-YXIgY29kZSB3b3VsZCBiZSBuZWVkZWQgaW4gbW9zdCBkcml2ZXJzLiBJIHdvbmRlciB3aGV0aGVy
-IGl0Cj4gd291bGRuJ3QgYmUgdXNlZnVsIHRvIGFkZCByZXN1bWUvc3VzcGVuZCBoZWxwZXIgY2Fs
-bGJhY2tzIGZvciB0aGUgQ1JUQy4KCkkgZGlzY3Vzc2VkIHRoaXMgd2l0aCBMYXVyZW50IGFuZCBl
-eHBsYWluZWQgdGhhdCAiZmlyc3QgYmxhY2sgZnJhbWUiCmlzIGV4YWN0bHkgd2hhdCBpOTE1IGRv
-ZXMuIEknZCBzYXkgZ2l2ZW4gc3BlY2lhbCBjdXN0b21lciByZXF1ZXN0cyB3ZQpkb24ndCB5ZXQg
-aGF2ZSB0byBib3RoZXIgd2l0aCB0aGlzIGluIGdlbmVyYWwgLi4uCgpXcnQgYWRkaW5nIG1vcmUg
-aG9va3MgZm9yIHJwbTogSSBob25lc3RseSBkb24ndCBsaWtlIHRoYXQsIGJlY2F1c2UKdGhlbiBz
-b21lb25lIGVsc2Ugd2FudHMgdG8gYWRkIGEgaG9vayBmb3IgY2xvY2tzLCBvciBmb3IgdGhlIHNp
-ZGViYW5kCmFuZCB0aGVuIHdlIGhhdmUgYSBob3Jyb3Igc2hvdyBvZiBob29rcyB3aGVyZSBldmVy
-eSBkcml2ZXIgdXNlcyBqdXN0IGEKdmVyeSBzbWFsbCBzdWJzZXQuIFRoZSBwb2ludCBvZiBhdG9t
-aWMgaGVscGVycyBpcyB0byBtYWtlIHRoZW0KbW9kdWxhciwgaWYgb25lIHBhcnQgZG9lc24ndCBm
-aXQsIGp1c3QgcmVkbyBpbiB5b3VyIGRyaXZlci4gR29hbApzaG91bGQgYmUgdGhhdCBzaGFyZWQg
-cGFydHMgYXJlIGdvb2QgZm9yIGFib3V0IDkwJSBvZgpkcml2ZXJzL3VzZS1jYXNlcyAobWF5YmUg
-ZXZlbiBsZXNzLCB0aGVyZSdzIHNvb29vbyBtYW55IHNwZWNpYWwKY2FzZXMpLgoKdGxkcjsgSSBz
-dGlsbCB0aGluayB0aGUgX3J1bnRpbWVfcG0gdmFyaWFudCBpcyB0aGUgcmVjb21tZW5kZWQgd2F5
-IHRvIGRvIHRoaXMuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIs
-IEludGVsIENvcnBvcmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0gaHR0cDovL2Jsb2cuZmZ3
-bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi,
+
+On Thu, Jul 13, 2017 at 10:41 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> In the earlier display engine designs, any register access while a commit
+> is pending is forbidden.
+>
+> One of the symptoms is that reading a register will return another, random,
+> register value which can lead to register corruptions if we ever do a
+> read/modify/write cycle.
+
+Alternatively, if changes to the backend (layers) are guaranteed to happen
+while the CRTC is disabled (which seems to be the case after looking at
+drm_atomic_helper_commit_planes and drm_atomic_helper_commit_tail), we
+could just turn on register auto-commit all the time and not deal with
+this.
+
+ChenYu
+
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_backend.c | 14 ++++++++++++++
+>  drivers/gpu/drm/sun4i/sun4i_crtc.c    |  1 +
+>  2 files changed, 15 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> index cf480218daa5..ce1f40f7511e 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> @@ -67,6 +67,19 @@ static void sun4i_backend_commit(struct sunxi_engine *engine)
+>                      SUN4I_BACKEND_REGBUFFCTL_LOADCTL);
+>  }
+>
+> +static int sun4i_backend_commit_poll(struct sunxi_engine *engine)
+> +{
+> +       u32 val;
+> +
+> +       DRM_DEBUG_DRIVER("Polling for the commit to end\n");
+> +
+> +       return regmap_read_poll_timeout(engine->regs,
+> +                                       SUN4I_BACKEND_REGBUFFCTL_REG,
+> +                                       val,
+> +                                       !(val & SUN4I_BACKEND_REGBUFFCTL_LOADCTL),
+> +                                       100, 50000);
+> +}
+> +
+>  void sun4i_backend_layer_enable(struct sun4i_backend *backend,
+>                                 int layer, bool enable)
+>  {
+> @@ -330,6 +343,7 @@ static int sun4i_backend_of_get_id(struct device_node *node)
+>
+>  static const struct sunxi_engine_ops sun4i_backend_engine_ops = {
+>         .commit                         = sun4i_backend_commit,
+> +       .commit_poll                    = sun4i_backend_commit_poll,
+>         .layers_init                    = sun4i_layers_init,
+>         .apply_color_correction         = sun4i_backend_apply_color_correction,
+>         .disable_color_correction       = sun4i_backend_disable_color_correction,
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+> index 2eba1d8639d8..31550493fa1d 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+> @@ -34,6 +34,7 @@ static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
+>                                     struct drm_crtc_state *old_state)
+>  {
+>         struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
+> +       struct sunxi_engine *engine = scrtc->engine;
+>         struct drm_device *dev = crtc->dev;
+>         unsigned long flags;
+>
+> --
+> git-series 0.9.1
