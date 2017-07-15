@@ -1,87 +1,68 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 4/4] drm/sun4i: make sure we don't have a commit pending
-Date: Fri, 14 Jul 2017 16:56:01 +0800
-Message-ID: <CAGb2v64KnB_zU0yk7MsGr9WRK1wpWq1xOj_cNuQ4mSQJeAGarw@mail.gmail.com>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
- <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH] cpufreq: s5pv210: add missing of_node_put
+Date: Sat, 15 Jul 2017 21:40:53 +0200
+Message-ID: <1500147653-31229-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+for_each_compatible_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
-On Thu, Jul 13, 2017 at 10:41 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> In the earlier display engine designs, any register access while a commit
-> is pending is forbidden.
->
-> One of the symptoms is that reading a register will return another, random,
-> register value which can lead to register corruptions if we ever do a
-> read/modify/write cycle.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Alternatively, if changes to the backend (layers) are guaranteed to happen
-while the CRTC is disabled (which seems to be the case after looking at
-drm_atomic_helper_commit_planes and drm_atomic_helper_commit_tail), we
-could just turn on register auto-commit all the time and not deal with
-this.
+// <smpl>
+@@
+local idexpression n;
+expression e,e1,e2;
+statement S;
+iterator i1;
+iterator name for_each_compatible_node;
+@@
 
-ChenYu
+ for_each_compatible_node(n,e1,e2) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
+   i1(...,n,...) S
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_backend.c | 14 ++++++++++++++
->  drivers/gpu/drm/sun4i/sun4i_crtc.c    |  1 +
->  2 files changed, 15 insertions(+)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> index cf480218daa5..ce1f40f7511e 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> @@ -67,6 +67,19 @@ static void sun4i_backend_commit(struct sunxi_engine *engine)
->                      SUN4I_BACKEND_REGBUFFCTL_LOADCTL);
->  }
->
-> +static int sun4i_backend_commit_poll(struct sunxi_engine *engine)
-> +{
-> +       u32 val;
-> +
-> +       DRM_DEBUG_DRIVER("Polling for the commit to end\n");
-> +
-> +       return regmap_read_poll_timeout(engine->regs,
-> +                                       SUN4I_BACKEND_REGBUFFCTL_REG,
-> +                                       val,
-> +                                       !(val & SUN4I_BACKEND_REGBUFFCTL_LOADCTL),
-> +                                       100, 50000);
-> +}
-> +
->  void sun4i_backend_layer_enable(struct sun4i_backend *backend,
->                                 int layer, bool enable)
->  {
-> @@ -330,6 +343,7 @@ static int sun4i_backend_of_get_id(struct device_node *node)
->
->  static const struct sunxi_engine_ops sun4i_backend_engine_ops = {
->         .commit                         = sun4i_backend_commit,
-> +       .commit_poll                    = sun4i_backend_commit_poll,
->         .layers_init                    = sun4i_layers_init,
->         .apply_color_correction         = sun4i_backend_apply_color_correction,
->         .disable_color_correction       = sun4i_backend_disable_color_correction,
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-> index 2eba1d8639d8..31550493fa1d 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-> @@ -34,6 +34,7 @@ static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
->                                     struct drm_crtc_state *old_state)
->  {
->         struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
-> +       struct sunxi_engine *engine = scrtc->engine;
->         struct drm_device *dev = crtc->dev;
->         unsigned long flags;
->
-> --
-> git-series 0.9.1
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/cpufreq/s5pv210-cpufreq.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff -u -p a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -612,6 +612,7 @@ static int s5pv210_cpufreq_probe(struct
+ 		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
+ 			pr_err("%s: failed to get alias of dmc node '%s'\n",
+ 				__func__, np->name);
++			of_node_put(np);
+ 			return id;
+ 		}
+ 
+@@ -619,6 +620,7 @@ static int s5pv210_cpufreq_probe(struct
+ 		if (!dmc_base[id]) {
+ 			pr_err("%s: failed to map dmc%d registers\n",
+ 				__func__, id);
++			of_node_put(np);
+ 			return -EFAULT;
+ 		}
+ 	}
