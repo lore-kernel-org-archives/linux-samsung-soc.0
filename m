@@ -1,54 +1,82 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 4/4] drm/sun4i: make sure we don't have a commit pending
-Date: Mon, 17 Jul 2017 14:57:19 +0800
-Message-ID: <CAGb2v676F2ye7fDUSFwzWMxd8rF7_5YAxn+u+MNG-U2PuaDDoQ@mail.gmail.com>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
- <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v64KnB_zU0yk7MsGr9WRK1wpWq1xOj_cNuQ4mSQJeAGarw@mail.gmail.com> <20170717065504.xnahsboer3fh4k3i@flea>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: s5pv210: add missing of_node_put
+Date: Mon, 17 Jul 2017 14:13:45 +0530
+Message-ID: <20170717084345.GN352@vireshk-i7>
+References: <1500147653-31229-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:35584 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751259AbdGQG5s (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 02:57:48 -0400
-In-Reply-To: <20170717065504.xnahsboer3fh4k3i@flea>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1500147653-31229-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-pm-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Kukjin Kim <kgene@kernel.org>, kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, dri-devel <dri-devel@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.o>
 
-On Mon, Jul 17, 2017 at 2:55 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Fri, Jul 14, 2017 at 04:56:01PM +0800, Chen-Yu Tsai wrote:
->> Hi,
->>
->> On Thu, Jul 13, 2017 at 10:41 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > In the earlier display engine designs, any register access while a commit
->> > is pending is forbidden.
->> >
->> > One of the symptoms is that reading a register will return another, random,
->> > register value which can lead to register corruptions if we ever do a
->> > read/modify/write cycle.
->>
->> Alternatively, if changes to the backend (layers) are guaranteed to happen
->> while the CRTC is disabled (which seems to be the case after looking at
->> drm_atomic_helper_commit_planes and drm_atomic_helper_commit_tail), we
->> could just turn on register auto-commit all the time and not deal with
->> this.
->
-> As far as I understand, it will only be the case if we need a new
-> modeset or we changed the active CRTC or connectors. But if you change
-> only the format, buffers or properties it won't be the case, and we'll
-> need to commit.
+On 15-07-17, 21:40, Julia Lawall wrote:
+> for_each_compatible_node performs an of_node_get on each iteration, so a
+> return from the loop requires an of_node_put.
+> 
+> The semantic patch that fixes this problem is as follows
+> (http://coccinelle.lip6.fr):
+> 
+> // <smpl>
+> @@
+> local idexpression n;
+> expression e,e1,e2;
+> statement S;
+> iterator i1;
+> iterator name for_each_compatible_node;
+> @@
+> 
+>  for_each_compatible_node(n,e1,e2) {
+>    ...
+> (
+>    of_node_put(n);
+> |
+>    e = n
+> |
+>    return n;
+> |
+>    i1(...,n,...) S
+> |
+> +  of_node_put(n);
+> ?  return ...;
+> )
+>    ...
+>  }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff -u -p a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -612,6 +612,7 @@ static int s5pv210_cpufreq_probe(struct
 
-So in other words, if someone were to use it for actual compositing and
-moved the upper composited layer around, we would need commit support to be
-safe.
+Just before this location we also called of_find_compatible_node()
+directly and never did a of_node_put() for that. Can you please fix
+that as well ?
 
-Sounds more or less like something a video player would do.
+>  		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
+>  			pr_err("%s: failed to get alias of dmc node '%s'\n",
+>  				__func__, np->name);
+> +			of_node_put(np);
+>  			return id;
+>  		}
+>  
+> @@ -619,6 +620,7 @@ static int s5pv210_cpufreq_probe(struct
+>  		if (!dmc_base[id]) {
+>  			pr_err("%s: failed to map dmc%d registers\n",
+>  				__func__, id);
+> +			of_node_put(np);
+>  			return -EFAULT;
+>  		}
+>  	}
 
-Thanks
-ChenYu
+-- 
+viresh
