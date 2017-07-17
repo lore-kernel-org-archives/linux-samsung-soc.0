@@ -1,48 +1,64 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] iommu/exynos: Replace non-existing big-endian Kconfig option
-Date: Mon, 17 Jul 2017 17:42:26 +0200
-Message-ID: <CAJKOXPcQuCE4N=MuJPu_4AEcx7pgd-8VyRxese7D_nBQE9o7Cg@mail.gmail.com>
-References: <1500270422-4805-1-git-send-email-krzk@kernel.org> <201707172340.xpsuGzYj%fengguang.wu@intel.com>
+From: "Jingoo Han" <jingoohan1@gmail.com>
+Subject: Re: [PATCH 1/3] PCI: dwc: Handle host_init failures
+Date: Mon, 17 Jul 2017 15:28:13 -0400
+Message-ID: <000a01d2ff32$d5d59e00$8180da00$@gmail.com>
+References: <20170716063947.3272-1-bjorn.andersson@linaro.org> <73b9c442-38f6-cc5b-c6e0-4ce7187dc0a8@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:56732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751284AbdGQPma (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 11:42:30 -0400
-In-Reply-To: <201707172340.xpsuGzYj%fengguang.wu@intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <73b9c442-38f6-cc5b-c6e0-4ce7187dc0a8@synopsys.com>
+Content-Language: en-us
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Joao Pinto' <Joao.Pinto@synopsys.com>, 'Bjorn Andersson' <bjorn.andersson@linaro.org>
+Cc: 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Richard Zhu' <hongxing.zhu@nxp.com>, 'Lucas Stach' <l.stach@pengutronix.de>, 'Murali Karicheri' <m-karicheri2@ti.com>, 'Minghuan Lian' <minghuan.Lian@freescale.com>, 'Mingkai Hu' <mingkai.hu@freescale.com>, 'Roy Zang' <tie-fei.zang@freescale.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Niklas Cassel' <niklas.cassel@axis.com>, 'Jesper Nilsson' <jesper.nilsson@axis.com>, 'Xiaowei Song' <songxiaowei@hisilicon.com>, 'Binghui Wang' <wangbinghui@hisilicon.com>, 'Stanimir Varbanov' <svarbanov@mm-sol.com>, 'Pratyush Anand' <pratyush.anand@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>
-Cc: kbuild-all@01.org, kbuild test robot <lkp@intel.com>, Kukjin Kim <kgene@kernel.org>, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 17, 2017 at 5:25 PM, kbuild test robot <lkp@intel.com> wrote:
-> Hi Krzysztof,
->
-> [auto build test WARNING on iommu/next]
-> [also build test WARNING on v4.13-rc1 next-20170717]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Krzysztof-Kozlowski/iommu-exynos-Replace-non-existing-big-endian-Kconfig-option/20170717-141202
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
-> config: arm-allmodconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
-> reproduce:
->         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm
->
-> All warnings (new ones prefixed by >>):
->
->>> drivers//iommu/exynos-iommu.c:58:2: warning: #warning "revisit driver if we can enable big-endian ptes" [-Wcpp]
->     #warning "revisit driver if we can enable big-endian ptes"
->      ^~~~~~~
+On Monday, July 17, 2017 7:18 AM, Joao Pinto wrote:
+>=20
+> Hi Bjorn Andersson,
+>=20
+> =C3=80s 7:39 AM de 7/16/2017, Bjorn Andersson escreveu:
+> > In several dwc based drivers host_init can fail, so make sure to
+> > propagate and handle this to avoid continuing operation of a driver =
+or
+> > hardware in an invalid state.
+> >
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >  drivers/pci/dwc/pci-dra7xx.c           |  4 +++-
+> >  drivers/pci/dwc/pci-exynos.c           |  4 +++-
+> >  drivers/pci/dwc/pci-imx6.c             |  4 +++-
+> >  drivers/pci/dwc/pci-keystone.c         |  4 +++-
+> >  drivers/pci/dwc/pci-layerscape.c       | 14 ++++++++++----
+> >  drivers/pci/dwc/pcie-armada8k.c        |  4 +++-
+> >  drivers/pci/dwc/pcie-artpec6.c         |  4 +++-
+> >  drivers/pci/dwc/pcie-designware-host.c |  7 +++++--
+> >  drivers/pci/dwc/pcie-designware-plat.c |  4 +++-
+> >  drivers/pci/dwc/pcie-designware.h      |  2 +-
+> >  drivers/pci/dwc/pcie-kirin.c           |  4 +++-
+> >  drivers/pci/dwc/pcie-qcom.c            |  6 ++++--
+> >  drivers/pci/dwc/pcie-spear13xx.c       |  4 +++-
+> >  13 files changed, 47 insertions(+), 18 deletions(-)
+> >
 
-FYI,
-Everything is fine, this is an expected warning which I am bringing
-back to life.
+[.....]
+
+>=20
+> A step in the right direction :). In the future we should add host =
+init
+> validation in the specific SoC drivers, like Layerscape and Qcom have, =
+to
+> assure
+> that any problem is treated properly in the core driver.
+
+I agree with your opinion.
+
+>=20
+> Acked-by: Joao Pinto <jpinto@synopsys.com>
+
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
 Best regards,
-Krzysztof
+Jingoo Han
