@@ -1,97 +1,108 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/4] drm/atomic: implement drm_atomic_helper_commit_tail for runtime_pm users
-Date: Tue, 18 Jul 2017 13:14:12 +0300
-Message-ID: <10955632.YI7NJnTkKU@avalon>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com> <1823154.LT2zYSFJ4j@avalon> <20170718070522.6uu7s6o3ivpemslf@flea>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 1/4] drm/atomic: implement drm_atomic_helper_commit_tail
+ for runtime_pm users
+Date: Tue, 18 Jul 2017 14:08:39 +0200
+Message-ID: <20170718120839.k7zsey67qgrtnfwe@phenom.ffwll.local>
+References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+ <1823154.LT2zYSFJ4j@avalon> <20170718070522.6uu7s6o3ivpemslf@flea>
+ <10955632.YI7NJnTkKU@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170718070522.6uu7s6o3ivpemslf@flea>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <10955632.YI7NJnTkKU@avalon>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Maxime,
-
-On Tuesday 18 Jul 2017 09:05:22 Maxime Ripard wrote:
-> On Fri, Jul 14, 2017 at 02:43:12AM +0300, Laurent Pinchart wrote:
-> > On Thursday 13 Jul 2017 16:41:13 Maxime Ripard wrote:
-> >> The current drm_atomic_helper_commit_tail helper works only if the CRTC
-> >> is accessible, and documents an alternative implementation that is
-> >> supposed to be used if that happens.
-> >> 
-> >> That implementation is then duplicated by some drivers. Instead of
-> >> documenting it, let's implement an helper that all the relevant users
-> >> can use directly.
-> >> 
-> >> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/drm_atomic_helper.c        | 47 +++++++++++++++--------
-> >>  drivers/gpu/drm/exynos/exynos_drm_fb.c     | 27 +-------------
-> >>  drivers/gpu/drm/rcar-du/rcar_du_kms.c      | 18 +---------
-> > 
-> > I've submitted "[PATCH] drm: rcar-du: Setup planes before enabling CRTC to
-> > avoid flicker" that changes the rcar-du implementation to the standard
-> > disable/update planes/enable order, so I'd appreciate if you could drop
-> > the rcar-du part of this patch to avoid conflicts.
-> 
-> I will.
-> 
-> > This being said, the reason why I switched back from the "runtime PM" to
-> > the "standard" order is probably of interest to you. Quoting the commit
-> > message,
-> >
-> >> Commit 52055bafa1ff ("drm: rcar-du: Move plane commit code from CRTC
-> >> start to CRTC resume") changed the order of the plane commit and CRTC
-> >> enable operations to accommodate the runtime PM requirements. However,
-> >> this introduced corruption in the first displayed frame, as the CRTC is
-> >> now enabled without any plane configured. On Gen2 hardware the first
-> >> frame will be black and likely unnoticed, but on Gen3 hardware we end up
-> >> starting the display before the VSP compositor, which is more
-> >> noticeable.
-> >> 
-> >> To fix this, revert the order of the commit operations back, and handle
-> >> runtime PM requirements in the CRTC .atomic_begin() and .atomic_enable()
-> >> helper operation handlers.
-> > 
-> > I believe that the "runtime PM" order is problematic in most drivers. The
-> > problem usually goes unnoticed as most monitors will not even display the
-> > first frame, and I assume many devices will just output it black, but it's
-> > an issue nonetheless.
-> > 
-> > Note that my driver hasn't lost the "runtime PM" requirements, so I had to
-> > support them with the "standard" order. The best way I've found was to
-> > runtime resume in the one of .atomic_begin() and .enable() that is run
-> > first. Not very neat, as similar code would be needed in most drivers. I
-> > wonder whether it wouldn't be useful to add resume/suspend helper
-> > callbacks for the CRTC.
-> 
-> I'm not sure it would apply. Our driver doesn't use runtime_pm at all,
-> but in order for the commits to happen, we need to have the CRTC
-> active, but it will remain powered up the whole time. I'm not sure if
-> we'll ever see such a frame.
-> 
-> But since this seems to be a pretty generic, maybe we should address
-> it in the helper itself?
-
-I think that would make sense.
-
-There are a few options that result in too many combinations for separate 
-commit tail helpers to be provided in my opinion:
-
-- disable/enable/planes vs. disable/planes/enable
-- DRM_PLANE_COMMIT_ACTIVE_ONLY vs. all CRTCs
-- drm_atomic_helper_wait_for_vblanks vs drm_atomic_helper_wait_for_flip_done
-
-Maybe we could add a few CRTC commit helper flags along the line of 
-DRM_PLANE_COMMIT_ACTIVE_ONLY, add a field to the drm_crtc structure to store 
-them, and have drm_atomic_helper_commit_tail() use those flags to control the 
-sequence of operations.
-
--- 
-Regards,
-
-Laurent Pinchart
+T24gVHVlLCBKdWwgMTgsIDIwMTcgYXQgMDE6MTQ6MTJQTSArMDMwMCwgTGF1cmVudCBQaW5jaGFy
+dCB3cm90ZToKPiBIaSBNYXhpbWUsCj4gCj4gT24gVHVlc2RheSAxOCBKdWwgMjAxNyAwOTowNToy
+MiBNYXhpbWUgUmlwYXJkIHdyb3RlOgo+ID4gT24gRnJpLCBKdWwgMTQsIDIwMTcgYXQgMDI6NDM6
+MTJBTSArMDMwMCwgTGF1cmVudCBQaW5jaGFydCB3cm90ZToKPiA+ID4gT24gVGh1cnNkYXkgMTMg
+SnVsIDIwMTcgMTY6NDE6MTMgTWF4aW1lIFJpcGFyZCB3cm90ZToKPiA+ID4+IFRoZSBjdXJyZW50
+IGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF90YWlsIGhlbHBlciB3b3JrcyBvbmx5IGlmIHRoZSBD
+UlRDCj4gPiA+PiBpcyBhY2Nlc3NpYmxlLCBhbmQgZG9jdW1lbnRzIGFuIGFsdGVybmF0aXZlIGlt
+cGxlbWVudGF0aW9uIHRoYXQgaXMKPiA+ID4+IHN1cHBvc2VkIHRvIGJlIHVzZWQgaWYgdGhhdCBo
+YXBwZW5zLgo+ID4gPj4gCj4gPiA+PiBUaGF0IGltcGxlbWVudGF0aW9uIGlzIHRoZW4gZHVwbGlj
+YXRlZCBieSBzb21lIGRyaXZlcnMuIEluc3RlYWQgb2YKPiA+ID4+IGRvY3VtZW50aW5nIGl0LCBs
+ZXQncyBpbXBsZW1lbnQgYW4gaGVscGVyIHRoYXQgYWxsIHRoZSByZWxldmFudCB1c2Vycwo+ID4g
+Pj4gY2FuIHVzZSBkaXJlY3RseS4KPiA+ID4+IAo+ID4gPj4gU2lnbmVkLW9mZi1ieTogTWF4aW1l
+IFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+Cj4gPiA+PiAtLS0KPiA+
+ID4+IAo+ID4gPj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jICAgICAgICB8
+IDQ3ICsrKysrKysrKysrKysrKy0tLS0tLS0tCj4gPiA+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2ZiLmMgICAgIHwgMjcgKy0tLS0tLS0tLS0tLS0KPiA+ID4+ICBkcml2ZXJz
+L2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jICAgICAgfCAxOCArLS0tLS0tLS0tCj4gPiA+
+IAo+ID4gPiBJJ3ZlIHN1Ym1pdHRlZCAiW1BBVENIXSBkcm06IHJjYXItZHU6IFNldHVwIHBsYW5l
+cyBiZWZvcmUgZW5hYmxpbmcgQ1JUQyB0bwo+ID4gPiBhdm9pZCBmbGlja2VyIiB0aGF0IGNoYW5n
+ZXMgdGhlIHJjYXItZHUgaW1wbGVtZW50YXRpb24gdG8gdGhlIHN0YW5kYXJkCj4gPiA+IGRpc2Fi
+bGUvdXBkYXRlIHBsYW5lcy9lbmFibGUgb3JkZXIsIHNvIEknZCBhcHByZWNpYXRlIGlmIHlvdSBj
+b3VsZCBkcm9wCj4gPiA+IHRoZSByY2FyLWR1IHBhcnQgb2YgdGhpcyBwYXRjaCB0byBhdm9pZCBj
+b25mbGljdHMuCj4gPiAKPiA+IEkgd2lsbC4KPiA+IAo+ID4gPiBUaGlzIGJlaW5nIHNhaWQsIHRo
+ZSByZWFzb24gd2h5IEkgc3dpdGNoZWQgYmFjayBmcm9tIHRoZSAicnVudGltZSBQTSIgdG8KPiA+
+ID4gdGhlICJzdGFuZGFyZCIgb3JkZXIgaXMgcHJvYmFibHkgb2YgaW50ZXJlc3QgdG8geW91LiBR
+dW90aW5nIHRoZSBjb21taXQKPiA+ID4gbWVzc2FnZSwKPiA+ID4KPiA+ID4+IENvbW1pdCA1MjA1
+NWJhZmExZmYgKCJkcm06IHJjYXItZHU6IE1vdmUgcGxhbmUgY29tbWl0IGNvZGUgZnJvbSBDUlRD
+Cj4gPiA+PiBzdGFydCB0byBDUlRDIHJlc3VtZSIpIGNoYW5nZWQgdGhlIG9yZGVyIG9mIHRoZSBw
+bGFuZSBjb21taXQgYW5kIENSVEMKPiA+ID4+IGVuYWJsZSBvcGVyYXRpb25zIHRvIGFjY29tbW9k
+YXRlIHRoZSBydW50aW1lIFBNIHJlcXVpcmVtZW50cy4gSG93ZXZlciwKPiA+ID4+IHRoaXMgaW50
+cm9kdWNlZCBjb3JydXB0aW9uIGluIHRoZSBmaXJzdCBkaXNwbGF5ZWQgZnJhbWUsIGFzIHRoZSBD
+UlRDIGlzCj4gPiA+PiBub3cgZW5hYmxlZCB3aXRob3V0IGFueSBwbGFuZSBjb25maWd1cmVkLiBP
+biBHZW4yIGhhcmR3YXJlIHRoZSBmaXJzdAo+ID4gPj4gZnJhbWUgd2lsbCBiZSBibGFjayBhbmQg
+bGlrZWx5IHVubm90aWNlZCwgYnV0IG9uIEdlbjMgaGFyZHdhcmUgd2UgZW5kIHVwCj4gPiA+PiBz
+dGFydGluZyB0aGUgZGlzcGxheSBiZWZvcmUgdGhlIFZTUCBjb21wb3NpdG9yLCB3aGljaCBpcyBt
+b3JlCj4gPiA+PiBub3RpY2VhYmxlLgo+ID4gPj4gCj4gPiA+PiBUbyBmaXggdGhpcywgcmV2ZXJ0
+IHRoZSBvcmRlciBvZiB0aGUgY29tbWl0IG9wZXJhdGlvbnMgYmFjaywgYW5kIGhhbmRsZQo+ID4g
+Pj4gcnVudGltZSBQTSByZXF1aXJlbWVudHMgaW4gdGhlIENSVEMgLmF0b21pY19iZWdpbigpIGFu
+ZCAuYXRvbWljX2VuYWJsZSgpCj4gPiA+PiBoZWxwZXIgb3BlcmF0aW9uIGhhbmRsZXJzLgo+ID4g
+PiAKPiA+ID4gSSBiZWxpZXZlIHRoYXQgdGhlICJydW50aW1lIFBNIiBvcmRlciBpcyBwcm9ibGVt
+YXRpYyBpbiBtb3N0IGRyaXZlcnMuIFRoZQo+ID4gPiBwcm9ibGVtIHVzdWFsbHkgZ29lcyB1bm5v
+dGljZWQgYXMgbW9zdCBtb25pdG9ycyB3aWxsIG5vdCBldmVuIGRpc3BsYXkgdGhlCj4gPiA+IGZp
+cnN0IGZyYW1lLCBhbmQgSSBhc3N1bWUgbWFueSBkZXZpY2VzIHdpbGwganVzdCBvdXRwdXQgaXQg
+YmxhY2ssIGJ1dCBpdCdzCj4gPiA+IGFuIGlzc3VlIG5vbmV0aGVsZXNzLgo+ID4gPiAKPiA+ID4g
+Tm90ZSB0aGF0IG15IGRyaXZlciBoYXNuJ3QgbG9zdCB0aGUgInJ1bnRpbWUgUE0iIHJlcXVpcmVt
+ZW50cywgc28gSSBoYWQgdG8KPiA+ID4gc3VwcG9ydCB0aGVtIHdpdGggdGhlICJzdGFuZGFyZCIg
+b3JkZXIuIFRoZSBiZXN0IHdheSBJJ3ZlIGZvdW5kIHdhcyB0bwo+ID4gPiBydW50aW1lIHJlc3Vt
+ZSBpbiB0aGUgb25lIG9mIC5hdG9taWNfYmVnaW4oKSBhbmQgLmVuYWJsZSgpIHRoYXQgaXMgcnVu
+Cj4gPiA+IGZpcnN0LiBOb3QgdmVyeSBuZWF0LCBhcyBzaW1pbGFyIGNvZGUgd291bGQgYmUgbmVl
+ZGVkIGluIG1vc3QgZHJpdmVycy4gSQo+ID4gPiB3b25kZXIgd2hldGhlciBpdCB3b3VsZG4ndCBi
+ZSB1c2VmdWwgdG8gYWRkIHJlc3VtZS9zdXNwZW5kIGhlbHBlcgo+ID4gPiBjYWxsYmFja3MgZm9y
+IHRoZSBDUlRDLgo+ID4gCj4gPiBJJ20gbm90IHN1cmUgaXQgd291bGQgYXBwbHkuIE91ciBkcml2
+ZXIgZG9lc24ndCB1c2UgcnVudGltZV9wbSBhdCBhbGwsCj4gPiBidXQgaW4gb3JkZXIgZm9yIHRo
+ZSBjb21taXRzIHRvIGhhcHBlbiwgd2UgbmVlZCB0byBoYXZlIHRoZSBDUlRDCj4gPiBhY3RpdmUs
+IGJ1dCBpdCB3aWxsIHJlbWFpbiBwb3dlcmVkIHVwIHRoZSB3aG9sZSB0aW1lLiBJJ20gbm90IHN1
+cmUgaWYKPiA+IHdlJ2xsIGV2ZXIgc2VlIHN1Y2ggYSBmcmFtZS4KPiA+IAo+ID4gQnV0IHNpbmNl
+IHRoaXMgc2VlbXMgdG8gYmUgYSBwcmV0dHkgZ2VuZXJpYywgbWF5YmUgd2Ugc2hvdWxkIGFkZHJl
+c3MKPiA+IGl0IGluIHRoZSBoZWxwZXIgaXRzZWxmPwo+IAo+IEkgdGhpbmsgdGhhdCB3b3VsZCBt
+YWtlIHNlbnNlLgo+IAo+IFRoZXJlIGFyZSBhIGZldyBvcHRpb25zIHRoYXQgcmVzdWx0IGluIHRv
+byBtYW55IGNvbWJpbmF0aW9ucyBmb3Igc2VwYXJhdGUgCj4gY29tbWl0IHRhaWwgaGVscGVycyB0
+byBiZSBwcm92aWRlZCBpbiBteSBvcGluaW9uOgo+IAo+IC0gZGlzYWJsZS9lbmFibGUvcGxhbmVz
+IHZzLiBkaXNhYmxlL3BsYW5lcy9lbmFibGUKPiAtIERSTV9QTEFORV9DT01NSVRfQUNUSVZFX09O
+TFkgdnMuIGFsbCBDUlRDcwo+IC0gZHJtX2F0b21pY19oZWxwZXJfd2FpdF9mb3JfdmJsYW5rcyB2
+cyBkcm1fYXRvbWljX2hlbHBlcl93YWl0X2Zvcl9mbGlwX2RvbmUKPiAKPiBNYXliZSB3ZSBjb3Vs
+ZCBhZGQgYSBmZXcgQ1JUQyBjb21taXQgaGVscGVyIGZsYWdzIGFsb25nIHRoZSBsaW5lIG9mIAo+
+IERSTV9QTEFORV9DT01NSVRfQUNUSVZFX09OTFksIGFkZCBhIGZpZWxkIHRvIHRoZSBkcm1fY3J0
+YyBzdHJ1Y3R1cmUgdG8gc3RvcmUgCj4gdGhlbSwgYW5kIGhhdmUgZHJtX2F0b21pY19oZWxwZXJf
+Y29tbWl0X3RhaWwoKSB1c2UgdGhvc2UgZmxhZ3MgdG8gY29udHJvbCB0aGUgCj4gc2VxdWVuY2Ug
+b2Ygb3BlcmF0aW9ucy4KCldoeSBub3Qgd3JpdGUgeW91ciBvd24/IFllcyBpdCdzIGEgYml0IG9m
+IGNvcHlwYXN0ZSwgYnV0IGltbyB0aGF0J3MgcmVhbGx5Cm5vdCBob3JyaWJsZS4gSSdtIGFscmVh
+ZHkgbm90IGhhcHB5IHdpdGggdGhlIGZsYWdzIGZvciBjb21taXRfcGxhbmVzCmJlY2F1c2UgdGhl
+IGRvY3MgZm9yIHRoZW0gYXJlIG5vdCBncmVhdCBhbmQgaXQncyBoYXJkIHRvIGtub3cgd2hlbiB0
+byB1c2UKdGhlbSBhbmQgd2hlbiBub3QgdG8uCgotPmNvbW1pdF90YWlsIHdhcyBzcGVjaWZpY2Fs
+bHkgZG9uZSB0byBhbGxvdyBkcml2ZXJzIHRvIG92ZXJ3cml0ZSB0aGUgaHcKY29tbWl0IHN0YWdl
+IHdpdGhvdXQgaGF2aW5nIHRvIHJlaW52ZW50IGFsbCB0aGUgb3RoZXIgY29tbWl0IHRyYWNraW5n
+LiBJCmV4cGVjdCBtb3N0IG5vbi1zaW1wbGUgZHJpdmVycyB0byBoYXZlIHRoZWlyIG93biBjb21t
+aXRfdGFpbCBmdW5jdGlvbi4KLURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdp
+bmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
