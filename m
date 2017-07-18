@@ -1,60 +1,39 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [v4.13-rc1 fixes] ARM: dts: exynos: Add clocks to audss block to fix silent hang on Exynos4412
-Date: Mon, 17 Jul 2017 21:45:27 +0200
-Message-ID: <20170717194527.16559-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:46866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751316AbdGQTqB (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 15:46:01 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 4/5] arm64: dts: exynos: Remove the OF graph from DSI
+ node
+Date: Tue, 18 Jul 2017 07:03:02 +0200
+Message-ID: <20170718050302.GA13779@kozik-book>
+References: <1488948852-5380-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170308045502epcas1p21a483d429e2169b322e40fd833c47f27@epcas1p2.samsung.com>
+ <1488948852-5380-5-git-send-email-hoegeun.kwon@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1488948852-5380-5-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, arm@kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
 
-Add necessary parent clocks for audss (Audio SubSystem, MAUDIO) clock
-controller block.
+On Wed, Mar 08, 2017 at 01:54:11PM +0900, Hoegeun Kwon wrote:
+> The OF graph is not needed because the panel is a child of dsi. Remove
+> the ports node in DSI node.
+> 
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 14 --------------
+>  1 file changed, 14 deletions(-)
+> 
 
-This allows driver to keep EPLL enabled before accessing any MAUDIO
-registers thus fixing silent hang.  This silent hang appeared with
-commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
-PLL36XX clocks"), e.g. on Odroid U3 usually with last (but unrelated)
-messages:
-
-	[    2.382741] input: gpio_keys as /devices/platform/gpio_keys/input/input0
-	[    2.405686] usb 1-3: new high-speed USB device number 3 using exynos-ehci
-	[    2.419843] max77686-rtc max77686-rtc: setting system clock to 2017-06-21 17:04:13 UTC (1498064653)
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
-
-Hi Arnd, Olof,
-
-I have only one patch in fixes queue for v4.13, so how about applying this
-directly without a pull request?
-
+Thanks, applied this and 5/5.
 
 Best regards,
 Krzysztof
 
----
- arch/arm/boot/dts/exynos4.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 497a9470c888..5739389f5bb8 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -59,6 +59,9 @@
- 		compatible = "samsung,exynos4210-audss-clock";
- 		reg = <0x03810000 0x0C>;
- 		#clock-cells = <1>;
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_FOUT_EPLL>,
-+			 <&clock CLK_SCLK_AUDIO0>, <&clock CLK_SCLK_AUDIO0>;
-+		clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
- 	};
- 
- 	i2s0: i2s@03830000 {
--- 
-2.11.0
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
