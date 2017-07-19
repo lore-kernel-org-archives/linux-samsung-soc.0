@@ -1,47 +1,116 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] ARM: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 10:35:20 -0500
-Message-ID: <CAL_JsqK1Y3xhZwNxme934UF_t=6ZdSyqBtrMmceUC798ftL+mQ@mail.gmail.com>
-References: <20170718214339.7774-1-robh@kernel.org> <20170719062220.wefnkqhd7javbcee@pengutronix.de>
+Subject: Re: [PATCH] media: Convert to using %pOF instead of full_name
+Date: Wed, 19 Jul 2017 11:02:01 -0500
+Message-ID: <CAL_JsqLDCgO60ECGB70pMNcaLg0zUcJ6_+50vH-evfGe-D266Q@mail.gmail.com>
+References: <CGME20170718215328epcas2p2e5e1d7df96fcd894e70a961df864abdd@epcas2p2.samsung.com>
+ <20170718214339.7774-33-robh@kernel.org> <564a6768-3b23-6dc7-ecb5-cb4f4359b633@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170719062220.wefnkqhd7javbcee@pengutronix.de>
+In-Reply-To: <564a6768-3b23-6dc7-ecb5-cb4f4359b633@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "arm@kernel.org" <arm@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Heiko Stuebner <heiko@sntech.de>, Tony Lindgren <tony@atomide.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Simon Horman <horms@verge.net.au>, Gregory Clement <gregory.clement@free-electrons.com>, linux-omap <linux-omap@vger.kernel.org>, Sasc
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Frank Rowand <frowand.list@gmail.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Songjun Wu <songjun.wu@microchip.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, =?UTF-8?Q?Niklas_S=C3=B6der
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 19, 2017 at 1:22 AM, Uwe Kleine-König
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Tue, Jul 18, 2017 at 04:42:41PM -0500, Rob Herring wrote:
+On Wed, Jul 19, 2017 at 4:41 AM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 07/18/2017 11:43 PM, Rob Herring wrote:
 >> Now that we have a custom printf format specifier, convert users of
 >> full_name to use %pOF instead. This is preparation to remove storing
->
-> Oh nice. If the commit adding %pOF is already set in stone, i'd suggest
-> to mention the commit id here in the commit log.
-
-It is in 4.13, but I'm not really eager to update all 60 patches and
-I'd prefer consistency in the commit msg as quite a few have already
-been applied.
-
 >> of the full path string for each node.
-
-[...]
-
->> @@ -103,8 +103,8 @@ void __init arm_dt_init_cpu_maps(void)
->>                */
->>               cell = of_get_property(cpu, "reg", &prop_bytes);
->>               if (!cell || prop_bytes < sizeof(*cell)) {
->> -                     pr_debug(" * %s missing reg property\n",
->> -                                  cpu->full_name);
->> +                     pr_debug(" * %pOF missing reg property\n",
->> +                                  cpu);
+>>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
 >
-> You could join lines here and in the next hunk. And there are two more
-> further down.
+>> ---
+>>   drivers/media/i2c/s5c73m3/s5c73m3-core.c       |  3 +-
+>>   drivers/media/i2c/s5k5baf.c                    |  7 ++--
+>>   drivers/media/platform/am437x/am437x-vpfe.c    |  4 +-
+>>   drivers/media/platform/atmel/atmel-isc.c       |  4 +-
+>>   drivers/media/platform/davinci/vpif_capture.c  | 16 ++++----
+>>   drivers/media/platform/exynos4-is/fimc-is.c    |  8 ++--
+>>   drivers/media/platform/exynos4-is/fimc-lite.c  |  3 +-
+>>   drivers/media/platform/exynos4-is/media-dev.c  |  8 ++--
+>>   drivers/media/platform/exynos4-is/mipi-csis.c  |  4 +-
+>>   drivers/media/platform/mtk-mdp/mtk_mdp_comp.c  |  6 +--
+>>   drivers/media/platform/mtk-mdp/mtk_mdp_core.c  |  8 ++--
+>>   drivers/media/platform/omap3isp/isp.c          |  8 ++--
+>>   drivers/media/platform/pxa_camera.c            |  2 +-
+>>   drivers/media/platform/rcar-vin/rcar-core.c    |  4 +-
+>>   drivers/media/platform/soc_camera/soc_camera.c |  6 +--
+>>   drivers/media/platform/xilinx/xilinx-vipp.c    | 52 +++++++++++++-------------
+>>   drivers/media/v4l2-core/v4l2-async.c           |  4 +-
+>>   drivers/media/v4l2-core/v4l2-clk.c             |  3 +-
+>>   include/media/v4l2-clk.h                       |  4 +-
+>>   19 files changed, 71 insertions(+), 83 deletions(-)
+>
+>> diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
+>> index ac4704388920..9233ad0b1b6b 100644
+>> --- a/drivers/media/platform/xilinx/xilinx-vipp.c
+>> +++ b/drivers/media/platform/xilinx/xilinx-vipp.c
+>
+>> @@ -144,9 +144,8 @@ static int xvip_graph_build_one(struct xvip_composite_device *xdev,
+>>               remote = ent->entity;
+>>
+>>               if (link.remote_port >= remote->num_pads) {
+>> -                     dev_err(xdev->dev, "invalid port number %u on %s\n",
+>> -                             link.remote_port,
+>> -                             to_of_node(link.remote_node)->full_name);
+>> +                     dev_err(xdev->dev, "invalid port number %u on %pOF\n",
+>> +                             link.remote_port, link.remote_node);
+>
+> Shouldn't there be to_of_node(link.remote_node) instead of link.remote_node ?
 
-Okay. I did that generally, but missed a few.
+Humm, yes. I thought I fixed that.
+
+>
+>>                       v4l2_fwnode_put_link(&link);
+>>                       ret = -EINVAL;
+>>                       break;
+>
+>> @@ -242,17 +241,17 @@ static int xvip_graph_build_dma(struct xvip_composite_device *xdev)
+>>               ent = xvip_graph_find_entity(xdev,
+>>                                            to_of_node(link.remote_node));
+>>               if (ent == NULL) {
+>> -                     dev_err(xdev->dev, "no entity found for %s\n",
+>> -                             to_of_node(link.remote_node)->full_name);
+>> +                     dev_err(xdev->dev, "no entity found for %pOF\n",
+>> +                             to_of_node(link.remote_node));
+>>                       v4l2_fwnode_put_link(&link);
+>>                       ret = -ENODEV;
+>>                       break;
+>>               }
+>
+>> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+>> index 851f128eba22..0a385d1ff28c 100644
+>> --- a/drivers/media/v4l2-core/v4l2-async.c
+>> +++ b/drivers/media/v4l2-core/v4l2-async.c
+>> @@ -47,9 +47,7 @@ static bool match_fwnode(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
+>>       if (!is_of_node(sd->fwnode) || !is_of_node(asd->match.fwnode.fwnode))
+>>               return sd->fwnode == asd->match.fwnode.fwnode;
+>>
+>> -     return !of_node_cmp(of_node_full_name(to_of_node(sd->fwnode)),
+>> -                         of_node_full_name(
+>> -                                 to_of_node(asd->match.fwnode.fwnode)));
+>> +     return to_of_node(sd->fwnode) == to_of_node(asd->match.fwnode.fwnode);
+>
+> I'm afraid this will not work, please see commit d2180e0cf77dc7a7049671d5d57d
+> "[media] v4l: async: make v4l2 coexist with devicetree nodes in a dt overlay"
+
+Maybe I'm missing something, but how does that work exactly? Before
+the overlay is applied, the remote endpoint node (and its parent)
+can't be resolved. In the commit example, the endpoint in the
+media_bridge would also have to be part of the overlay. If you apply
+and un-apply the overlay, then the of_node (and fw_node) in the
+overlay is once again invalid. IOW, you should be in the same state as
+before the overlay was applied. The node is still around because of
+paranoia that actually freeing nodes would break things. It seems this
+paranoia is real, so i think we need to do something to prevent this
+from spreading.
+
+Furthermore, it does not appear that any media driver supports
+overlays and we have no general way to apply them in mainline yet
+(other than an in kernel API). So really this scenario is not one we
+have to support yet.
 
 Rob
