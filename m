@@ -1,16 +1,16 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
 Subject: Re: [PATCH] pinctrl: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 07:54:23 +0200
-Message-ID: <20170719055423.GB6246@kozik-book>
+Date: Wed, 19 Jul 2017 07:57:43 +0200
+Message-ID: <20170719055743.biy7ulaxdwmr3zud@rfolt0960.corp.atmel.com>
 References: <20170718214339.7774-43-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Ludovic Desroches <ludovic.desroches@microchip.com>, Patrice Chotard <patrice.chotard@st.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Barry Song <baohua@kernel.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, kernel@s
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Ludovic Desroches <ludovic.desroches@microchip.com>, Patrice Chotard <patrice.chotard@st.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Barry Song <baohua@kernel.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On Tue, Jul 18, 2017 at 04:43:23PM -0500, Rob Herring wrote:
@@ -47,6 +47,9 @@ On Tue, Jul 18, 2017 at 04:43:23PM -0500, Rob Herring wrote:
 >  drivers/pinctrl/freescale/pinctrl-imx.c   |  8 +++-----
 >  drivers/pinctrl/pinconf-generic.c         |  7 +++----
 >  drivers/pinctrl/pinctrl-at91-pio4.c       | 11 +++++------
+
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+
 >  drivers/pinctrl/pinctrl-st.c              |  2 +-
 >  drivers/pinctrl/pinctrl-tb10x.c           |  4 ++--
 >  drivers/pinctrl/samsung/pinctrl-samsung.c |  6 +++---
@@ -289,9 +292,43 @@ On Tue, Jul 18, 2017 at 04:43:23PM -0500, Rob Herring wrote:
 >  			return ret;
 >  		}
 > 
-
-For Samsung pinctrl:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+> index a70157f0acf4..e7a92eec06c2 100644
+> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
+> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+> @@ -290,7 +290,7 @@ static int sh_pfc_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  	if (*num_maps)
+>  		return 0;
+> 
+> -	dev_err(dev, "no mapping found in node %s\n", np->full_name);
+> +	dev_err(dev, "no mapping found in node %pOF\n", np);
+>  	ret = -EINVAL;
+> 
+>  done:
+> diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+> index 0df72be60704..80bfd4719199 100644
+> --- a/drivers/pinctrl/sirf/pinctrl-sirf.c
+> +++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+> @@ -810,7 +810,7 @@ static int sirfsoc_gpio_probe(struct device_node *np)
+>  	sgpio->chip.gc.set = sirfsoc_gpio_set_value;
+>  	sgpio->chip.gc.base = 0;
+>  	sgpio->chip.gc.ngpio = SIRFSOC_GPIO_BANK_SIZE * SIRFSOC_GPIO_NO_OF_BANKS;
+> -	sgpio->chip.gc.label = kstrdup(np->full_name, GFP_KERNEL);
+> +	sgpio->chip.gc.label = kasprintf(GFP_KERNEL, "%pOF", np);
+>  	sgpio->chip.gc.of_node = np;
+>  	sgpio->chip.gc.of_xlate = sirfsoc_gpio_of_xlate;
+>  	sgpio->chip.gc.of_gpio_n_cells = 2;
+> @@ -819,8 +819,8 @@ static int sirfsoc_gpio_probe(struct device_node *np)
+> 
+>  	err = gpiochip_add_data(&sgpio->chip.gc, sgpio);
+>  	if (err) {
+> -		dev_err(&pdev->dev, "%s: error in probe function with status %d\n",
+> -			np->full_name, err);
+> +		dev_err(&pdev->dev, "%pOF: error in probe function with status %d\n",
+> +			np, err);
+>  		goto out;
+>  	}
+> 
+> --
+> 2.11.0
+> 
