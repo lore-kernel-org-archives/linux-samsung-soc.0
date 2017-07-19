@@ -1,17 +1,17 @@
 From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH] media: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 12:26:23 +0200
-Message-ID: <81c5f1c1-1c23-2a19-691e-811075be6010@gmail.com>
-References: <20170718214339.7774-33-robh@kernel.org>
+Subject: Re: [PATCH] soc: Convert to using %pOF instead of full_name
+Date: Wed, 19 Jul 2017 12:37:39 +0200
+Message-ID: <6e936e3c-0e46-4f06-5571-5942d6fb1778@gmail.com>
+References: <20170718214339.7774-49-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20170718214339.7774-33-robh@kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170718214339.7774-49-robh@kernel.org>
 Content-Language: en-US
-Sender: linux-media-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Songjun Wu <songjun.wu@microchip.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, arm@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Scott Wood <oss@buserror.net>, Qiang Zhao <qiang.zhao@nxp.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
@@ -22,43 +22,27 @@ On 07/18/2017 11:43 PM, Rob Herring wrote:
 > of the full path string for each node.
 > 
 > Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Andrzej Hajda <a.hajda@samsung.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-> Cc: Songjun Wu <songjun.wu@microchip.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Scott Wood <oss@buserror.net>
+> Cc: Qiang Zhao <qiang.zhao@nxp.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
 > Cc: Kukjin Kim <kgene@kernel.org>
 > Cc: Krzysztof Kozlowski <krzk@kernel.org>
 > Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Minghsiu Tsai <minghsiu.tsai@mediatek.com>
-> Cc: Houlong Wei <houlong.wei@mediatek.com>
-> Cc: Andrew-CT Chen <andrew-ct.chen@mediatek.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
-> Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-> Cc: Hyun Kwon <hyun.kwon@xilinx.com>
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: "Sören Brinkmann" <soren.brinkmann@xilinx.com>
-> Cc: linux-media@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
 > Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
 > Cc: linux-mediatek@lists.infradead.org
 > Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
 > ---
->   drivers/media/i2c/s5c73m3/s5c73m3-core.c       |  3 +-
->   drivers/media/i2c/s5k5baf.c                    |  7 ++--
->   drivers/media/platform/am437x/am437x-vpfe.c    |  4 +-
->   drivers/media/platform/atmel/atmel-isc.c       |  4 +-
->   drivers/media/platform/davinci/vpif_capture.c  | 16 ++++----
->   drivers/media/platform/exynos4-is/fimc-is.c    |  8 ++--
->   drivers/media/platform/exynos4-is/fimc-lite.c  |  3 +-
->   drivers/media/platform/exynos4-is/media-dev.c  |  8 ++--
->   drivers/media/platform/exynos4-is/mipi-csis.c  |  4 +-
->   drivers/media/platform/mtk-mdp/mtk_mdp_comp.c  |  6 +--
->   drivers/media/platform/mtk-mdp/mtk_mdp_core.c  |  8 ++--
+>   drivers/soc/fsl/qbman/bman_ccsr.c    | 10 +++++-----
+>   drivers/soc/fsl/qbman/bman_portal.c  |  8 +++-----
+>   drivers/soc/fsl/qbman/qman_ccsr.c    | 12 ++++++------
+>   drivers/soc/fsl/qbman/qman_portal.c  | 11 ++++-------
+>   drivers/soc/fsl/qe/gpio.c            |  4 ++--
+>   drivers/soc/mediatek/mtk-pmic-wrap.c |  4 ++--
 
-For mediatek parts:
+For Mediatek:
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
