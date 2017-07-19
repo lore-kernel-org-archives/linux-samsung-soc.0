@@ -1,60 +1,99 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: USB 3.0 is broken on Odroid Xu4 on latest kernel
-Date: Wed, 19 Jul 2017 22:20:09 +0200
-Message-ID: <20170719202009.teh2nvsq47i5zpq4@kozik-lap>
-References: <CANAwSgSoo7g=RN4wQ96+NJRYZYy2WeHwPA-xJ2JY7yt25irDfA@mail.gmail.com>
- <87zic0b8hi.fsf@linux.intel.com>
+From: Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] media: Convert to using %pOF instead of full_name
+Date: Wed, 19 Jul 2017 14:05:42 -0700
+Message-ID: <596FC9A6.7090509@gmail.com>
+References: <CGME20170718215328epcas2p2e5e1d7df96fcd894e70a961df864abdd@epcas2p2.samsung.com>
+ <20170718214339.7774-33-robh@kernel.org>
+ <564a6768-3b23-6dc7-ecb5-cb4f4359b633@samsung.com>
+ <CAL_JsqLDCgO60ECGB70pMNcaLg0zUcJ6_+50vH-evfGe-D266Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <87zic0b8hi.fsf-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL_JsqLDCgO60ECGB70pMNcaLg0zUcJ6_+50vH-evfGe-D266Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Songjun Wu <songjun.wu-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Minghsiu Tsai <minghsiu.tsai-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Houlong Wei <houlong.wei-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Andrew-CT Chen <andrew-ct.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, =?UTF-8?Q?Niklas_S=c3=b6der
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 19, 2017 at 09:13:29PM +0300, Felipe Balbi wrote:
+On 07/19/17 09:02, Rob Herring wrote:
+> On Wed, Jul 19, 2017 at 4:41 AM, Sylwester Nawrocki
+> <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> On 07/18/2017 11:43 PM, Rob Herring wrote:
+>>> Now that we have a custom printf format specifier, convert users of
+>>> full_name to use %pOF instead. This is preparation to remove storing
+>>> of the full path string for each node.
+>>>
+>>> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>>
+>>> ---
+
+< snip >
+
+>>> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+>>> index 851f128eba22..0a385d1ff28c 100644
+>>> --- a/drivers/media/v4l2-core/v4l2-async.c
+>>> +++ b/drivers/media/v4l2-core/v4l2-async.c
+>>> @@ -47,9 +47,7 @@ static bool match_fwnode(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
+>>>       if (!is_of_node(sd->fwnode) || !is_of_node(asd->match.fwnode.fwnode))
+>>>               return sd->fwnode == asd->match.fwnode.fwnode;
+>>>
+>>> -     return !of_node_cmp(of_node_full_name(to_of_node(sd->fwnode)),
+>>> -                         of_node_full_name(
+>>> -                                 to_of_node(asd->match.fwnode.fwnode)));
+>>> +     return to_of_node(sd->fwnode) == to_of_node(asd->match.fwnode.fwnode);
+>>
+>> I'm afraid this will not work, please see commit d2180e0cf77dc7a7049671d5d57d
+>> "[media] v4l: async: make v4l2 coexist with devicetree nodes in a dt overlay"
+
+Commit d2180e0cf77dc7a7049671d5d57d seems to have a fundamental
+misunderstanding of overlays, if I understand the implications of that
+commit.
+
+When an overlay (1) is removed, all uses and references to the nodes and
+properties in that overlay are no longer valid.  Any driver that uses any
+information from the overlay _must_ stop using any data from the overlay.
+Any driver that is bound to a new node in the overlay _must_ unbind.  Any
+driver that became bound to a pre-existing node that was modified by the
+overlay (became bound after the overlay was applied) _must_ adjust itself
+to account for any changes to that node when the overlay is removed.  One
+way to do this is to unbind when notified that the overlay is about to
+be removed, then to re-bind after the overlay is completely removed.
+
+If an overlay (2) is subsequently applied, a node with the same
+full_name as from overlay (1) may exist.  There is no guarantee
+that overlay (1) and overlay (2) are the same overlay, even if
+that node has the same full_name in both cases.
+
+
+> Maybe I'm missing something, but how does that work exactly? Before
+> the overlay is applied, the remote endpoint node (and its parent)
+> can't be resolved. In the commit example, the endpoint in the
+> media_bridge would also have to be part of the overlay. If you apply
+> and un-apply the overlay, then the of_node (and fw_node) in the
+> overlay is once again invalid. IOW, you should be in the same state as
+> before the overlay was applied. The node is still around because of
+> paranoia that actually freeing nodes would break things. It seems this
+> paranoia is real, so i think we need to do something to prevent this
+> from spreading.
+
+My understanding is that nodes from an un-applied overlay will be
+freed if the expanded device tree that was used to create it has
+its reference counts drop to zero.  But I wouldn't count on me
+remembering this correctly without actually walking through all
+the code.  And as far as I know, there is no example of this
+in the mainline tree.
+
+
+> Furthermore, it does not appear that any media driver supports
+> overlays and we have no general way to apply them in mainline yet
+> (other than an in kernel API). So really this scenario is not one we
+> have to support yet.
 > 
-> Hi,
+> Rob
 > 
-> Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
-> > Hi Krzysztof,
-> >
-> > Today I tried to compile the latest kernel for Odroid xu4.
-> > using exynos_defconfig I build and loaded the kernel.
-> > but to my surprise usb 3.0 device and missing.
-> >
-> > odroid login: root
-> > Password:
-> > Last login: Wed Jul 19 14:01:44 UTC 2017 on ttySAC2
-> > Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.13.0-rc1-xu4ml-27846-g74cbd96 armv7l)
-> 
-> Dude, you have 27 thousand patches on top of v4.13-rc1??? Try vanilla
-> v4.13-rc1 and try a git bisect.
-
-Hi Anand,
-
-Beside Felipe's comment, I do not have XU4. I cannot reproduce it on
-XU3-Lite (but there is difference in USB2 and USB3, AFAIR).
-
-$ uname -a
-Linux odroidxu3 4.13.0-rc1-00071-ge06fdaf40a5c #1051 SMP PREEMPT Wed Jul 19 22:07:41 CEST 2017 armv7l GNU/Linux
-$ lsusb
-Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-Bus 002 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
-Bus 001 Device 003: ID 0424:ec00 Standard Microsystems Corp. SMSC9512/9514 Fast Ethernet Adapter
-Bus 001 Device 002: ID 0424:9514 Standard Microsystems Corp. SMC9514 Hub
-Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-
-Try to follow Felipe's advice of using vanilla kernel from Linus and
-bisecting it.
-
-Best regards,
-Krzysztof
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
