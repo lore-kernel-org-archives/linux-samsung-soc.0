@@ -1,48 +1,69 @@
-From: Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH] pinctrl: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 12:50:29 -0700
-Message-ID: <87r2xcdx4q.fsf@eliezer.anholt.net>
-References: <20170718214339.7774-43-robh@kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] gpu: Convert to using %pOF instead of full_name
+Date: Wed, 19 Jul 2017 23:03:17 +0300
+Message-ID: <1822320.HPtxg24hjI@avalon>
+References: <20170718214339.7774-24-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Ludovic Desroches <ludovic.desroches@microchip.com>, Patrice Chotard <patrice.chotard@st.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Barry Song <baohua@kernel.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com, linux-samsung-
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170718214339.7774-24-robh@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Xinwei Kong <kong.kongxinwei@hisilicon.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Chen Feng <puck.chen@hisilicon.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Carlo Caione <carlo@caione.org>, Jyri Sarha <jsarha@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-amlogic@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vge
 List-Id: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-
-Rob Herring <robh@kernel.org> writes:
-
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
-
-For bcm283x:
-
-Acked-by: Eric Anholt <eric@anholt.net>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAllvuAUACgkQtdYpNtH8
-nujR1Q//TnAQqX0i19SDkIcn6xngbGWP2ftvGhAA5mQiDWLZwwwZL/XZ3d1rOR/T
-46Auz9+uHZJDN4y44JgM/8+l8Fq6WUKC6rmfdRH+tJjMlY/SJeervfAjNiuff3Wq
-BYGEMp6hrlqqI5Wxct7qN3lASzXaU5JOT5JDj3XsrB5rM8Kankaedar6/J8Ps6nw
-Ukr1usdibBHpLxp6t6+89NanQVwjhLI1VmVamYQ6V6zqW2Mi9mhbvlq+u0kJzDap
-ec0W8hLwL7Ky+MgSOL5r7c1BfGDSi6HNY3/dIBqzd8aZNycmNaMxOvrXLzC5KcAh
-APCiXB1H3lgUy2hqyfN/C6amnYxyZD5mcGrWmrp28L19CF+ur9VNGtVfmDgrqiBQ
-MUNXtv4cEAShmgI9ecAVEXusjpO4JSWTkCdudALRpGxXspaGujeQ110WZL0FQZ+z
-DKHx7CrfrA+ljHW83Mlz9powzQv7/mPbvHwWQPhXTwowRn1n4CuUtJtOrLV1V9yH
-86HeJSr4yffRHaCSjb7AeDzzG1yMCCvaCDff5PePhO1tiWYTSD5mz6VF1Izaa2/J
-dIoLFJbazfHUz9X4hwlVBkEzs551C92eDEFw5TFK1bv39gcTsdCGsWx4KCt8Qhp8
-AdQJ9Qw25XnUR7iGs26hzwuW7vTl4b1KpKd/rvlubwpasFxREhw=
-=etz9
------END PGP SIGNATURE-----
---=-=-=--
+SGkgUm9iLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBUdWVzZGF5IDE4IEp1bCAyMDE3
+IDE2OjQzOjA0IFJvYiBIZXJyaW5nIHdyb3RlOgo+IE5vdyB0aGF0IHdlIGhhdmUgYSBjdXN0b20g
+cHJpbnRmIGZvcm1hdCBzcGVjaWZpZXIsIGNvbnZlcnQgdXNlcnMgb2YKPiBmdWxsX25hbWUgdG8g
+dXNlICVwT0YgaW5zdGVhZC4gVGhpcyBpcyBwcmVwYXJhdGlvbiB0byByZW1vdmUgc3RvcmluZwo+
+IG9mIHRoZSBmdWxsIHBhdGggc3RyaW5nIGZvciBlYWNoIG5vZGUuCj4gCj4gU2lnbmVkLW9mZi1i
+eTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KPiBDYzogUnVzc2VsbCBLaW5nIDxsaW51
+eEBhcm1saW51eC5vcmcudWs+Cj4gQ2M6IERhdmlkIEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT4K
+PiBDYzogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBpbnRlbC5jb20+Cj4gQ2M6IEphbmkg
+TmlrdWxhIDxqYW5pLm5pa3VsYUBsaW51eC5pbnRlbC5jb20+Cj4gQ2M6IFNlYW4gUGF1bCA8c2Vh
+bnBhdWxAY2hyb21pdW0ub3JnPgo+IENjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+
+Cj4gQ2M6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiBDYzogU2V1
+bmctV29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPiBDYzogS3l1bmdtaW4gUGFyayA8
+a3l1bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4KPiBDYzogS3VramluIEtpbSA8a2dlbmVAa2VybmVs
+Lm9yZz4KPiBDYzogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgo+IENjOiBK
+YXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+Cj4gQ2M6IFhp
+bmxpYW5nIExpdSA8ei5saXV4aW5saWFuZ0BoaXNpbGljb24uY29tPgo+IENjOiBSb25ncm9uZyBa
+b3UgPHpvdXJvbmdyb25nQGdtYWlsLmNvbT4KPiBDYzogWGlud2VpIEtvbmcgPGtvbmcua29uZ3hp
+bndlaUBoaXNpbGljb24uY29tPgo+IENjOiBDaGVuIEZlbmcgPHB1Y2suY2hlbkBoaXNpbGljb24u
+Y29tPgo+IENjOiBDSyBIdSA8Y2suaHVAbWVkaWF0ZWsuY29tPgo+IENjOiBQaGlsaXBwIFphYmVs
+IDxwLnphYmVsQHBlbmd1dHJvbml4LmRlPgo+IENjOiBNYXR0aGlhcyBCcnVnZ2VyIDxtYXR0aGlh
+cy5iZ2dAZ21haWwuY29tPgo+IENjOiBOZWlsIEFybXN0cm9uZyA8bmFybXN0cm9uZ0BiYXlsaWJy
+ZS5jb20+Cj4gQ2M6IENhcmxvIENhaW9uZSA8Y2FybG9AY2Fpb25lLm9yZz4KPiBDYzogS2V2aW4g
+SGlsbWFuIDxraGlsbWFuQGJheWxpYnJlLmNvbT4KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVy
+cnkucmVkaW5nQGdtYWlsLmNvbT4KPiBDYzogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5waW5j
+aGFydEBpZGVhc29uYm9hcmQuY29tPgo+IENjOiBNYXJrIFlhbyA8bWFyay55YW9Acm9jay1jaGlw
+cy5jb20+Cj4gQ2M6IEhlaWtvIFN0dWVibmVyIDxoZWlrb0BzbnRlY2guZGU+Cj4gQ2M6IE1heGlt
+ZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+IENjOiBDaGVuLVl1
+IFRzYWkgPHdlbnNAY3NpZS5vcmc+Cj4gQ2M6IEp5cmkgU2FyaGEgPGpzYXJoYUB0aS5jb20+Cj4g
+Q2M6IFRvbWkgVmFsa2VpbmVuIDx0b21pLnZhbGtlaW5lbkB0aS5jb20+Cj4gQ2M6IGRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBDYzogbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
+YWRlYWQub3JnCj4gQ2M6IGxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZwo+IENjOiBs
+aW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnCj4gQ2M6IGxpbnV4LWFtbG9naWNAbGlz
+dHMuaW5mcmFkZWFkLm9yZwo+IENjOiBsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmcK
+PiBDYzogbGludXgtcm9ja2NoaXBAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IC0tLQpbc25pcF0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2RybV9taXBpX2RzaS5jICAgICAgICAgICAgICAgICAgfCAgNiArKyst
+LS0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9tb2Rlcy5jICAgICAgICAgICAgICAgICAgICAgfCAg
+NCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fb2YuYyAgICAgICAgICAgICAgICAgICAgICAg
+IHwgIDQgKystLQpbc25pcF0KPiAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLWx2ZHMuYyAg
+ICAgICAgICAgICAgfCAxNiArKysrKysrKy0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9yY2Fy
+LWR1L3JjYXJfZHVfZW5jb2Rlci5jICAgICAgIHwgIDQgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0v
+cmNhci1kdS9yY2FyX2R1X2ttcy5jICAgICAgICAgICB8IDE2ICsrKysrKysrLS0tLS0tLS0KCkZv
+ciBhbGwgdGhlIGFib3ZlLAoKUmV2aWV3ZWQtYnk6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQu
+cGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KCi0tIApSZWdhcmRzLAoKTGF1cmVudCBQaW5jaGFy
+dAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
