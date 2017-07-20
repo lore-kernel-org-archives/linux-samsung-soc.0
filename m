@@ -1,92 +1,89 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] media: Convert to using %pOF instead of full_name
-Date: Thu, 20 Jul 2017 09:06:01 -0500
-Message-ID: <CAL_JsqJcS_Ewfow0+iuUtLRab62m=AHO+bvbHXX-eSR0Hw_JaQ@mail.gmail.com>
-References: <CGME20170718215328epcas2p2e5e1d7df96fcd894e70a961df864abdd@epcas2p2.samsung.com>
- <20170718214339.7774-33-robh@kernel.org> <564a6768-3b23-6dc7-ecb5-cb4f4359b633@samsung.com>
- <CAL_JsqLDCgO60ECGB70pMNcaLg0zUcJ6_+50vH-evfGe-D266Q@mail.gmail.com> <20170720081508.33563afe@vento.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 00/12] ARM: randconfig patches for platforms
+Date: Thu, 20 Jul 2017 17:45:54 +0200
+Message-ID: <20170720154616.3250481-1-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:50076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965399AbdGTOGY (ORCPT
+Received: from mout.kundenserver.de ([217.72.192.73]:64344 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934696AbdGTPrF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 10:06:24 -0400
-In-Reply-To: <20170720081508.33563afe@vento.lan>
+        Thu, 20 Jul 2017 11:47:05 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Frank Rowand <frowand.list@gmail.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Songjun Wu <songjun.wu@microchip.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.>
+Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Hartley Sweeten <hsweeten@visionengravers.com>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>, Barry Song <baohua@kernel.org>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Wan ZongShun <mcuos.com@gmail.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, linux-arm-kernel@lists.infradead.
 
-On Thu, Jul 20, 2017 at 6:15 AM, Mauro Carvalho Chehab
-<mchehab@s-opensource.com> wrote:
-> Em Wed, 19 Jul 2017 11:02:01 -0500
-> Rob Herring <robh@kernel.org> escreveu:
->
->> On Wed, Jul 19, 2017 at 4:41 AM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
->> > On 07/18/2017 11:43 PM, Rob Herring wrote:
->> >> Now that we have a custom printf format specifier, convert users of
->> >> full_name to use %pOF instead. This is preparation to remove storing
->> >> of the full path string for each node.
->> >>
->> >> Signed-off-by: Rob Herring <robh@kernel.org>
->> >
->> >> ---
->> >>   drivers/media/i2c/s5c73m3/s5c73m3-core.c       |  3 +-
->> >>   drivers/media/i2c/s5k5baf.c                    |  7 ++--
->> >>   drivers/media/platform/am437x/am437x-vpfe.c    |  4 +-
->> >>   drivers/media/platform/atmel/atmel-isc.c       |  4 +-
->> >>   drivers/media/platform/davinci/vpif_capture.c  | 16 ++++----
->> >>   drivers/media/platform/exynos4-is/fimc-is.c    |  8 ++--
->> >>   drivers/media/platform/exynos4-is/fimc-lite.c  |  3 +-
->> >>   drivers/media/platform/exynos4-is/media-dev.c  |  8 ++--
->> >>   drivers/media/platform/exynos4-is/mipi-csis.c  |  4 +-
->> >>   drivers/media/platform/mtk-mdp/mtk_mdp_comp.c  |  6 +--
->> >>   drivers/media/platform/mtk-mdp/mtk_mdp_core.c  |  8 ++--
->> >>   drivers/media/platform/omap3isp/isp.c          |  8 ++--
->> >>   drivers/media/platform/pxa_camera.c            |  2 +-
->> >>   drivers/media/platform/rcar-vin/rcar-core.c    |  4 +-
->> >>   drivers/media/platform/soc_camera/soc_camera.c |  6 +--
->> >>   drivers/media/platform/xilinx/xilinx-vipp.c    | 52 +++++++++++++-------------
->> >>   drivers/media/v4l2-core/v4l2-async.c           |  4 +-
->> >>   drivers/media/v4l2-core/v4l2-clk.c             |  3 +-
->> >>   include/media/v4l2-clk.h                       |  4 +-
->> >>   19 files changed, 71 insertions(+), 83 deletions(-)
->> >
->> >> diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
->> >> index ac4704388920..9233ad0b1b6b 100644
->> >> --- a/drivers/media/platform/xilinx/xilinx-vipp.c
->> >> +++ b/drivers/media/platform/xilinx/xilinx-vipp.c
->> >
->> >> @@ -144,9 +144,8 @@ static int xvip_graph_build_one(struct xvip_composite_device *xdev,
->> >>               remote = ent->entity;
->> >>
->> >>               if (link.remote_port >= remote->num_pads) {
->> >> -                     dev_err(xdev->dev, "invalid port number %u on %s\n",
->> >> -                             link.remote_port,
->> >> -                             to_of_node(link.remote_node)->full_name);
->> >> +                     dev_err(xdev->dev, "invalid port number %u on %pOF\n",
->> >> +                             link.remote_port, link.remote_node);
->> >
->> > Shouldn't there be to_of_node(link.remote_node) instead of link.remote_node ?
->>
->> Humm, yes. I thought I fixed that.
->
-> After such fix, I'm OK with this patch.
+I've gone through a lot of older patches in my randconfig test
+tree, to see which ones are still needed to fix warnings we
+get in mainline.
 
-I'll send a new version.
+It seems that I posted one series in early 2016 and applied
+the patches to my test tree, but never followed up on them.
+Some other patches in this series are newer than that and
+didn't make it in for some other reason.
 
-I think I'll send a revert of the referenced commit. It won't apply
-cleanly, but at least it will capture the change in behavior and why
-it was wrong.
+Please have another look. If there are no objections, I'd
+add them to the fixes-non-critical branch for the next merge
+window. None of these seem to be of any importance other than
+to shut up the warnings.
 
-> Are you planning to apply it on your tree, or via the media one?
->
-> I guess it is probably better to apply via media, in order to avoid
-> conflicts with other changes.
+       Arnd
 
-Yes, you can take it.
+Arnd Bergmann (12):
+  ARM: ixp4xx: fix ioport_unmap definition
+  ARM: ep93xx: use ARM_PATCH_PHYS_VIRT
+  ARM: normalize clk API for older platforms
+  ARM: sa1100/pxa: fix MTD_XIP build
+  ARM: mmp: mark usb_dma_mask as __maybe_unused
+  ARM: omap2: mark unused functions as __maybe_unused
+  ARM: omap1: avoid unused variable warning
+  ARM: sirf: mark sirfsoc_init_late as __maybe_unused
+  ARM: ixp4xx: use normal prototype for {read,write}s{b,w,l}
+  [v2] ARM: s3c24xx: make H1940BT depend on RFKILL
+  ARM: omap1/ams-delta: warn about failed regulator enable
+  ARM: rpc: rename RAM_SIZE macro
 
-Rob
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Sekhar Nori <nsekhar@ti.com>
+Cc: Kevin Hilman <khilman@kernel.org>
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: Imre Kaloz <kaloz@openwrt.org>
+Cc: Krzysztof Halasa <khalasa@piap.pl>
+Cc: Eric Miao <eric.y.miao@gmail.com>
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Barry Song <baohua@kernel.org>
+Cc: Daniel Mack <daniel@zonque.org>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Wan ZongShun <mcuos.com@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-omap@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+
+
+ arch/arm/Kconfig                            |  2 +-
+ arch/arm/mach-davinci/clock.c               |  6 +++++
+ arch/arm/mach-ep93xx/clock.c                | 21 ++++++++++++++++++
+ arch/arm/mach-ixp4xx/include/mach/io.h      | 34 ++++++++++++++++++++++-------
+ arch/arm/mach-mmp/clock.c                   | 22 +++++++++++++++++++
+ arch/arm/mach-mmp/devices.c                 |  2 +-
+ arch/arm/mach-omap1/board-ams-delta.c       | 12 ++++++++--
+ arch/arm/mach-omap1/board-osk.c             |  4 ----
+ arch/arm/mach-omap2/board-generic.c         |  2 +-
+ arch/arm/mach-omap2/io.c                    |  2 +-
+ arch/arm/mach-prima2/common.c               |  2 +-
+ arch/arm/mach-pxa/include/mach/mtd-xip.h    | 10 ++++++---
+ arch/arm/mach-rpc/include/mach/hardware.h   |  4 ++--
+ arch/arm/mach-s3c24xx/Kconfig               |  2 +-
+ arch/arm/mach-sa1100/clock.c                | 29 ++++++++++++++++++++++++
+ arch/arm/mach-sa1100/include/mach/mtd-xip.h |  4 ++--
+ arch/arm/mach-w90x900/clock.c               | 29 ++++++++++++++++++++++++
+ 17 files changed, 160 insertions(+), 27 deletions(-)
+
+-- 
+2.9.0
