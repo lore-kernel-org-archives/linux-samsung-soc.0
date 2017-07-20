@@ -1,97 +1,85 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 4/4] drm/sun4i: make sure we don't have a commit pending
-Date: Thu, 20 Jul 2017 12:39:54 +0200
-Message-ID: <20170720103954.lxrkz3jt23p7sqrv@phenom.ffwll.local>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
- <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v64KnB_zU0yk7MsGr9WRK1wpWq1xOj_cNuQ4mSQJeAGarw@mail.gmail.com>
- <20170717065504.xnahsboer3fh4k3i@flea>
- <CAGb2v676F2ye7fDUSFwzWMxd8rF7_5YAxn+u+MNG-U2PuaDDoQ@mail.gmail.com>
- <20170718070732.ogoyc2fjcxoqbgj5@flea>
- <CAKMK7uGk7ncuBqCDbgeg9ai3RkuDRmQ75Jr1kAP5QCBj006cxg@mail.gmail.com>
- <20170720095339.lkyufn6qq5rnra4n@flea>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: Re: [PATCH] media: Convert to using %pOF instead of full_name
+Date: Thu, 20 Jul 2017 08:15:38 -0300
+Message-ID: <20170720081508.33563afe@vento.lan>
+References: <CGME20170718215328epcas2p2e5e1d7df96fcd894e70a961df864abdd@epcas2p2.samsung.com>
+        <20170718214339.7774-33-robh@kernel.org>
+        <564a6768-3b23-6dc7-ecb5-cb4f4359b633@samsung.com>
+        <CAL_JsqLDCgO60ECGB70pMNcaLg0zUcJ6_+50vH-evfGe-D266Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35105 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934402AbdGTKkA (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:37157
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934281AbdGTLPx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 06:40:00 -0400
-Received: by mail-wm0-f67.google.com with SMTP id t3so2048114wme.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jul 2017 03:39:59 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20170720095339.lkyufn6qq5rnra4n@flea>
+        Thu, 20 Jul 2017 07:15:53 -0400
+In-Reply-To: <CAL_JsqLDCgO60ECGB70pMNcaLg0zUcJ6_+50vH-evfGe-D266Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Frank Rowand <frowand.list@gmail.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Songjun Wu <songjun.wu@microchip.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.>
 
-On Thu, Jul 20, 2017 at 11:53:39AM +0200, Maxime Ripard wrote:
-> Hi Daniel,
-> 
-> On Tue, Jul 18, 2017 at 09:35:03AM +0200, Daniel Vetter wrote:
-> > On Tue, Jul 18, 2017 at 9:07 AM, Maxime Ripard
-> > <maxime.ripard@free-electrons.com> wrote:
-> > > On Mon, Jul 17, 2017 at 02:57:19PM +0800, Chen-Yu Tsai wrote:
-> > >> On Mon, Jul 17, 2017 at 2:55 PM, Maxime Ripard
-> > >> <maxime.ripard@free-electrons.com> wrote:
-> > >> > On Fri, Jul 14, 2017 at 04:56:01PM +0800, Chen-Yu Tsai wrote:
-> > >> >> Hi,
-> > >> >>
-> > >> >> On Thu, Jul 13, 2017 at 10:41 PM, Maxime Ripard
-> > >> >> <maxime.ripard@free-electrons.com> wrote:
-> > >> >> > In the earlier display engine designs, any register access while a commit
-> > >> >> > is pending is forbidden.
-> > >> >> >
-> > >> >> > One of the symptoms is that reading a register will return another, random,
-> > >> >> > register value which can lead to register corruptions if we ever do a
-> > >> >> > read/modify/write cycle.
-> > >> >>
-> > >> >> Alternatively, if changes to the backend (layers) are guaranteed to happen
-> > >> >> while the CRTC is disabled (which seems to be the case after looking at
-> > >> >> drm_atomic_helper_commit_planes and drm_atomic_helper_commit_tail), we
-> > >> >> could just turn on register auto-commit all the time and not deal with
-> > >> >> this.
-> > >> >
-> > >> > As far as I understand, it will only be the case if we need a new
-> > >> > modeset or we changed the active CRTC or connectors. But if you change
-> > >> > only the format, buffers or properties it won't be the case, and we'll
-> > >> > need to commit.
-> > >>
-> > >> So in other words, if someone were to use it for actual compositing and
-> > >> moved the upper composited layer around, we would need commit support to be
-> > >> safe.
-> > >>
-> > >> Sounds more or less like something a video player would do.
-> > >
-> > > Not only that. A change of buffer will happen every frame or so, and
-> > > we can change the format whenever we want too (even if it's usually
-> > > going to be in sync with a new buffer). Changing a property can happen
-> > > any time too (like zpos for example).
-> > 
-> > You can upgrade any property change to an atomic modeset by e.g.
-> > setting connector->mode_changed (and then making sure to call
-> > check_modeset() helper again perhaps). This is for cases where your hw
-> > can't handle a property change within 1 vblank. The default is just
-> > the solution for most common hw.
-> > 
-> > The other way round works too, you can clear these flags in your
-> > atomic_check callbacks. But that requires a bit more care (to make
-> > sure you never clear it when there's something else also changing that
-> > still needs a full modeset sequence to commit to hw).
-> 
-> Hmm, that's good to know, but that would imply disabling the CRTC each
-> time we change even a small property, with all the visual artifacts it
-> might imply, right?
+Em Wed, 19 Jul 2017 11:02:01 -0500
+Rob Herring <robh@kernel.org> escreveu:
 
-This isn't black&white, you only need to set this when needed. Of course
-that means you need to have code (and hopefully testcases) to make sure
-you only set it when needed. And userspace can ask the driver whether a
-given change requires a full modeset or not and then decided whether it
-wants to do that switch or not.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> On Wed, Jul 19, 2017 at 4:41 AM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+> > On 07/18/2017 11:43 PM, Rob Herring wrote:  
+> >> Now that we have a custom printf format specifier, convert users of
+> >> full_name to use %pOF instead. This is preparation to remove storing
+> >> of the full path string for each node.
+> >>
+> >> Signed-off-by: Rob Herring <robh@kernel.org>  
+> >  
+> >> ---
+> >>   drivers/media/i2c/s5c73m3/s5c73m3-core.c       |  3 +-
+> >>   drivers/media/i2c/s5k5baf.c                    |  7 ++--
+> >>   drivers/media/platform/am437x/am437x-vpfe.c    |  4 +-
+> >>   drivers/media/platform/atmel/atmel-isc.c       |  4 +-
+> >>   drivers/media/platform/davinci/vpif_capture.c  | 16 ++++----
+> >>   drivers/media/platform/exynos4-is/fimc-is.c    |  8 ++--
+> >>   drivers/media/platform/exynos4-is/fimc-lite.c  |  3 +-
+> >>   drivers/media/platform/exynos4-is/media-dev.c  |  8 ++--
+> >>   drivers/media/platform/exynos4-is/mipi-csis.c  |  4 +-
+> >>   drivers/media/platform/mtk-mdp/mtk_mdp_comp.c  |  6 +--
+> >>   drivers/media/platform/mtk-mdp/mtk_mdp_core.c  |  8 ++--
+> >>   drivers/media/platform/omap3isp/isp.c          |  8 ++--
+> >>   drivers/media/platform/pxa_camera.c            |  2 +-
+> >>   drivers/media/platform/rcar-vin/rcar-core.c    |  4 +-
+> >>   drivers/media/platform/soc_camera/soc_camera.c |  6 +--
+> >>   drivers/media/platform/xilinx/xilinx-vipp.c    | 52 +++++++++++++-------------
+> >>   drivers/media/v4l2-core/v4l2-async.c           |  4 +-
+> >>   drivers/media/v4l2-core/v4l2-clk.c             |  3 +-
+> >>   include/media/v4l2-clk.h                       |  4 +-
+> >>   19 files changed, 71 insertions(+), 83 deletions(-)  
+> >  
+> >> diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
+> >> index ac4704388920..9233ad0b1b6b 100644
+> >> --- a/drivers/media/platform/xilinx/xilinx-vipp.c
+> >> +++ b/drivers/media/platform/xilinx/xilinx-vipp.c  
+> >  
+> >> @@ -144,9 +144,8 @@ static int xvip_graph_build_one(struct xvip_composite_device *xdev,
+> >>               remote = ent->entity;
+> >>
+> >>               if (link.remote_port >= remote->num_pads) {
+> >> -                     dev_err(xdev->dev, "invalid port number %u on %s\n",
+> >> -                             link.remote_port,
+> >> -                             to_of_node(link.remote_node)->full_name);
+> >> +                     dev_err(xdev->dev, "invalid port number %u on %pOF\n",
+> >> +                             link.remote_port, link.remote_node);  
+> >
+> > Shouldn't there be to_of_node(link.remote_node) instead of link.remote_node ?  
+> 
+> Humm, yes. I thought I fixed that.
+
+After such fix, I'm OK with this patch.
+
+Are you planning to apply it on your tree, or via the media one?
+
+I guess it is probably better to apply via media, in order to avoid
+conflicts with other changes.
+
+Thanks,
+Mauro
