@@ -1,85 +1,59 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] media: Convert to using %pOF instead of full_name
-Date: Thu, 20 Jul 2017 08:15:38 -0300
-Message-ID: <20170720081508.33563afe@vento.lan>
-References: <CGME20170718215328epcas2p2e5e1d7df96fcd894e70a961df864abdd@epcas2p2.samsung.com>
-        <20170718214339.7774-33-robh@kernel.org>
-        <564a6768-3b23-6dc7-ecb5-cb4f4359b633@samsung.com>
-        <CAL_JsqLDCgO60ECGB70pMNcaLg0zUcJ6_+50vH-evfGe-D266Q@mail.gmail.com>
+Date: Thu, 20 Jul 2017 12:21:00 +0100
+Message-ID: <CA+V-a8voyLXdoded8_5A+z1XVYh30TZKwjT72mPjopAQk1-d3A@mail.gmail.com>
+References: <20170718214339.7774-33-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:37157
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934281AbdGTLPx (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 07:15:53 -0400
-In-Reply-To: <CAL_JsqLDCgO60ECGB70pMNcaLg0zUcJ6_+50vH-evfGe-D266Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170718214339.7774-33-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Songjun Wu <songjun.wu-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Minghsiu Tsai <minghsiu.tsai-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Houlong Wei <houlong.wei-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Andrew-CT Chen <andrew-ct.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund-1zkq55x86MTxsAP9Fp7wbw@public.gmane.org>, Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Frank Rowand <frowand.list@gmail.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Songjun Wu <songjun.wu@microchip.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.>
 
-Em Wed, 19 Jul 2017 11:02:01 -0500
-Rob Herring <robh@kernel.org> escreveu:
+On Tue, Jul 18, 2017 at 10:43 PM, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
+>
+> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Songjun Wu <songjun.wu-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> Cc: Minghsiu Tsai <minghsiu.tsai-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> Cc: Houlong Wei <houlong.wei-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> Cc: Andrew-CT Chen <andrew-ct.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> Cc: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+> Cc: "Niklas S=C3=B6derlund" <niklas.soderlund-1zkq55x86MTxsAP9Fp7wbw@public.gmane.org>
+> Cc: Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
+> Cc: Hyun Kwon <hyun.kwon-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Cc: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Cc: "S=C3=B6ren Brinkmann" <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> ---
+>  drivers/media/platform/am437x/am437x-vpfe.c    |  4 +-
+>  drivers/media/platform/davinci/vpif_capture.c  | 16 ++++----
 
-> On Wed, Jul 19, 2017 at 4:41 AM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
-> > On 07/18/2017 11:43 PM, Rob Herring wrote:  
-> >> Now that we have a custom printf format specifier, convert users of
-> >> full_name to use %pOF instead. This is preparation to remove storing
-> >> of the full path string for each node.
-> >>
-> >> Signed-off-by: Rob Herring <robh@kernel.org>  
-> >  
-> >> ---
-> >>   drivers/media/i2c/s5c73m3/s5c73m3-core.c       |  3 +-
-> >>   drivers/media/i2c/s5k5baf.c                    |  7 ++--
-> >>   drivers/media/platform/am437x/am437x-vpfe.c    |  4 +-
-> >>   drivers/media/platform/atmel/atmel-isc.c       |  4 +-
-> >>   drivers/media/platform/davinci/vpif_capture.c  | 16 ++++----
-> >>   drivers/media/platform/exynos4-is/fimc-is.c    |  8 ++--
-> >>   drivers/media/platform/exynos4-is/fimc-lite.c  |  3 +-
-> >>   drivers/media/platform/exynos4-is/media-dev.c  |  8 ++--
-> >>   drivers/media/platform/exynos4-is/mipi-csis.c  |  4 +-
-> >>   drivers/media/platform/mtk-mdp/mtk_mdp_comp.c  |  6 +--
-> >>   drivers/media/platform/mtk-mdp/mtk_mdp_core.c  |  8 ++--
-> >>   drivers/media/platform/omap3isp/isp.c          |  8 ++--
-> >>   drivers/media/platform/pxa_camera.c            |  2 +-
-> >>   drivers/media/platform/rcar-vin/rcar-core.c    |  4 +-
-> >>   drivers/media/platform/soc_camera/soc_camera.c |  6 +--
-> >>   drivers/media/platform/xilinx/xilinx-vipp.c    | 52 +++++++++++++-------------
-> >>   drivers/media/v4l2-core/v4l2-async.c           |  4 +-
-> >>   drivers/media/v4l2-core/v4l2-clk.c             |  3 +-
-> >>   include/media/v4l2-clk.h                       |  4 +-
-> >>   19 files changed, 71 insertions(+), 83 deletions(-)  
-> >  
-> >> diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
-> >> index ac4704388920..9233ad0b1b6b 100644
-> >> --- a/drivers/media/platform/xilinx/xilinx-vipp.c
-> >> +++ b/drivers/media/platform/xilinx/xilinx-vipp.c  
-> >  
-> >> @@ -144,9 +144,8 @@ static int xvip_graph_build_one(struct xvip_composite_device *xdev,
-> >>               remote = ent->entity;
-> >>
-> >>               if (link.remote_port >= remote->num_pads) {
-> >> -                     dev_err(xdev->dev, "invalid port number %u on %s\n",
-> >> -                             link.remote_port,
-> >> -                             to_of_node(link.remote_node)->full_name);
-> >> +                     dev_err(xdev->dev, "invalid port number %u on %pOF\n",
-> >> +                             link.remote_port, link.remote_node);  
-> >
-> > Shouldn't there be to_of_node(link.remote_node) instead of link.remote_node ?  
-> 
-> Humm, yes. I thought I fixed that.
+For above:
 
-After such fix, I'm OK with this patch.
+Acked-by: Lad, Prabhakar <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Are you planning to apply it on your tree, or via the media one?
-
-I guess it is probably better to apply via media, in order to avoid
-conflicts with other changes.
-
-Thanks,
-Mauro
+Cheers,
+--Prabhakar Lad
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
