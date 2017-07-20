@@ -1,59 +1,63 @@
-From: "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] media: Convert to using %pOF instead of full_name
-Date: Thu, 20 Jul 2017 12:21:00 +0100
-Message-ID: <CA+V-a8voyLXdoded8_5A+z1XVYh30TZKwjT72mPjopAQk1-d3A@mail.gmail.com>
-References: <20170718214339.7774-33-robh@kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 0/4] drm/sun4i: Fix a register access bug
+Date: Thu, 20 Jul 2017 15:01:15 +0200
+Message-ID: <cover.204b8c1b76558ee33ecf147e51c2b6a04d302d55.1500555652.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170718214339.7774-33-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Songjun Wu <songjun.wu-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Minghsiu Tsai <minghsiu.tsai-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Houlong Wei <houlong.wei-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Andrew-CT Chen <andrew-ct.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund-1zkq55x86MTxsAP9Fp7wbw@public.gmane.org>, Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 18, 2017 at 10:43 PM, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
->
-> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Songjun Wu <songjun.wu-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-> Cc: Minghsiu Tsai <minghsiu.tsai-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> Cc: Houlong Wei <houlong.wei-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> Cc: Andrew-CT Chen <andrew-ct.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> Cc: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> Cc: "Niklas S=C3=B6derlund" <niklas.soderlund-1zkq55x86MTxsAP9Fp7wbw@public.gmane.org>
-> Cc: Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
-> Cc: Hyun Kwon <hyun.kwon-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Cc: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Cc: "S=C3=B6ren Brinkmann" <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> ---
->  drivers/media/platform/am437x/am437x-vpfe.c    |  4 +-
->  drivers/media/platform/davinci/vpif_capture.c  | 16 ++++----
-
-For above:
-
-Acked-by: Lad, Prabhakar <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Cheers,
---Prabhakar Lad
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+VGhlIEFsbHdpbm5lciBiYWNrZW5kIGhhcyBhIGNvbW1pdCBiaXQgaW4gb3JkZXIgdG8gcHVzaCB0
+aGUgbmV3CmNvbmZpZ3VyYXRpb24gdG8gdGhlIGFjdHVhbCBoYXJkd2FyZS4gV2UndmUgYWx3YXlz
+IGJlZW4gdXNpbmcgdGhhdCBiaXQuCgpIb3dldmVyLCB3ZSBhbHNvIHNob3VsZCBwb2xsIGZvciB0
+aGF0IGJpdCB0byBjbGVhciwgd2hpY2ggd2UgZG9uJ3QuCkFjY2Vzc2luZyBhbnkgcmVnaXN0ZXIg
+d2hpbGUgYSBjb21taXQgaXMgcGVuZGluZyBpcyBmb3JiaWRkZW4sIGFuZCB3aWxsIGZvcgpleGFt
+cGxlIHNob3cgYSBzeW1wdG9tIG9mIHJlYWRpbmcgYW5vdGhlciwgcmFuZG9tLCByZWdpc3Rlci4K
+CklmIHlvdSBnZXQgdGhpcyBkdXJpbmcgYSByZWFkL21vZGlmeS93cml0ZSBjeWNsZSwgdGhpcyB3
+aWxsIHJlc3VsdCBpbgpyYW5kb20gcmVnaXN0ZXIgY29ycnVwdGlvbiwgd2hpY2ggYXJlIHByZXR0
+eSBiYWQuCgpUaGlzIGNhbiBiZSBzaG93biB1c2luZyB0aGUgZm9sbG93aW5nIHByb2dyYW0gKHdo
+aWxlIHRoZSBiYWNrZW5kIGlzCmFjdGl2ZSk6Cmh0dHA6Ly9jb2RlLmJ1bGl4Lm9yZy9nZGw0NHAt
+MTYxNDM3P3JhdwoKRm9ydHVuYXRlbHkgZm9yIHVzLCB0aGlzIGlzIG5vdCByZWFsbHkgbGlrZWx5
+IHRvIGhhcHBlbi4gVGhlIHdpbmRvdyB3aGVyZQppdCBjYW4gaGFwcGVuIGlzIHF1aXRlIHRoaW4s
+IGFuZCBpdCBvbmx5IGhhcHBlbnMgZHVyaW5nIGEgbW9kZXNldCwgc2luY2UKaXQncyB0aGUgb25s
+eSB0aW1lIHdlIGNvbW1pdCBzb21lIG5ldyBjb25maWd1cmF0aW9uLgoKVW5mb3J0dW5hdGVseSBm
+b3IgdXMsIFFUIGRvZXMgYSByaWRpY3Vsb3VzIGFtb3VudCBvZiBtb2Rlc2V0LCBhbmQgd2lsbCBq
+dXN0CmhpdCB0aGF0IHdpbmRvdyBhZnRlciBhIHdoaWxlLCBjcmVhdGluZyBhIGRpc3RvcmRlZCAo
+c2luY2UgdGhlIHJlZ2lzdGVyIHdlCnJlYWQvbW9kaWZ5L3dyaXRlIGFsc28gaGFzIHNjYWxpbmcg
+YXR0cmlidXRlcykgb3Igd2l0aCB3ZWlyZCBjb2xvcnMgKHNpbmNlCml0IGFsc28gaGFzIGEgaW52
+ZXJ0aW9uIG9mIHJlZCBhbmQgYmx1ZSBjb21wb25lbnRzKS4gQW5kIG1pZ2h0IGZpeCBpdHNlbGYK
+bGF0ZXIgb24gYnkgcmVhZGluZyBhbm90aGVyIHJhbmRvbSByZWdpc3RlciB3aXRoIHByb3BlciB2
+YWx1ZXMgZm9yIHRoZXNlCmZpZWxkcy4KCkxldCBtZSBrbm93IHdoYXQgeW91IHRoaW5rLApNYXhp
+bWUKCkNoYW5nZXMgZnJvbSB2MToKICAtIFJlbmFtZWQgdGhlIGZ1bmN0aW9uIGRybV9hdG9taWNf
+aGVscGVyX2NvbW1pdF90YWlsX3JwbQogIC0gRHJvcHBlZCB0aGUgY2hhbmdlcyBpbiB0aGUgcmNh
+ci1kdSBkcml2ZXIKICAtIEVuaGFuY2VkIHRoZSBkb2N1bWVudGF0aW9uIGJhc2VkIG9uIERhbmll
+bCdzIGNvbW1lbnRzCgpNYXhpbWUgUmlwYXJkICg0KToKICBkcm0vYXRvbWljOiBpbXBsZW1lbnQg
+ZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X3RhaWwgZm9yIHJ1bnRpbWVfcG0gdXNlcnMKICBkcm0v
+c3VuNGk6IFVzZSB0aGUgcnVudGltZV9wbSBjb21taXRfdGFpbCB2YXJpYW50CiAgZHJtL3N1bjRp
+OiBlbmdpbmU6IEFkZCBjb21taXRfcG9sbCBmdW5jdGlvbgogIGRybS9zdW40aTogbWFrZSBzdXJl
+IHdlIGRvbid0IGhhdmUgYSBjb21taXQgcGVuZGluZwoKIGRyaXZlcnMvZ3B1L2RybS9kcm1fYXRv
+bWljX2hlbHBlci5jICAgICAgICB8IDQ5ICsrKysrKysrKysrKysrKy0tLS0tLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgICAgfCAyNyArLS0tLS0tLS0tLS0tLQog
+ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9mYi5jIHwgMjEgKy0tLS0tLS0t
+LS0KIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9iYWNrZW5kLmMgICAgICB8IDE0ICsrKysr
+KystCiBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfY3J0Yy5jICAgICAgICAgfCAgMyArLQog
+ZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2ZyYW1lYnVmZmVyLmMgIHwgIDYgKysrLQogZHJp
+dmVycy9ncHUvZHJtL3N1bjRpL3N1bnhpX2VuZ2luZS5oICAgICAgIHwgMTQgKysrKysrKy0KIGlu
+Y2x1ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmggICAgICAgICAgICB8ICAxICstCiA4IGZpbGVz
+IGNoYW5nZWQsIDc0IGluc2VydGlvbnMoKyksIDYxIGRlbGV0aW9ucygtKQoKYmFzZS1jb21taXQ6
+IDU3NzFhOGMwODg4MGNkY2EzYmZiNGEzZmM2ZDMwOWQ2YmJhMjA4NzcKLS0gCmdpdC1zZXJpZXMg
+MC45LjEKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
