@@ -1,75 +1,64 @@
-From: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: USB 3.0 is broken on Odroid Xu4 on latest kernel
-Date: Fri, 21 Jul 2017 14:21:42 +0300
-Message-ID: <87mv7y3uih.fsf@linux.intel.com>
-References: <CANAwSgSoo7g=RN4wQ96+NJRYZYy2WeHwPA-xJ2JY7yt25irDfA@mail.gmail.com> <87zic0b8hi.fsf@linux.intel.com> <20170721075616.ma57ixucid7233bm@vis.informatik.uni-osnabrueck.de> <CGME20170721081040epcas5p463abb05b4b663fc20cbf9ebb06cdacb1@epcas5p4.samsung.com> <87vamm43dc.fsf@linux.intel.com> <c43153ef-bdcd-df59-4fa7-4fe4f0af3ae1@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL FOR 4.14] Samsung SoC related updates
+Date: Fri, 21 Jul 2017 13:35:51 +0200
+Message-ID: <bffa2f9f-0c6b-d4c4-f360-7e020870f049@samsung.com>
+References: <CGME20170721113554epcas5p33038698354481532ac30e86ab1f83111@epcas5p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <c43153ef-bdcd-df59-4fa7-4fe4f0af3ae1-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jochen Sprickerhof <jochen-bAcQkQxx4gKrcAepLLbpDQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:20706 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750737AbdGULf5 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 21 Jul 2017 07:35:57 -0400
+Content-language: en-GB
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: LMML <linux-media@vger.kernel.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Mauro,
 
+The following changes since commit 6538b02d210f52ef2a2e67d59fcb58be98451fbd:
 
-Hi,
+  media: Make parameter of media_entity_remote_pad() const (2017-07-20 16:54:04 -0400)
 
-Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> writes:
-> Hi,
->
-> On 07/21/2017 10:10 AM, Felipe Balbi wrote:
->> Jochen Sprickerhof<jochen-bAcQkQxx4gKrcAepLLbpDQ@public.gmane.org>  writes:
->
->>> I've send a patch for this some time ago here:
->>> http://marc.info/?l=3Dlinux-usb&m=3D149945465112440&w=3D2
->>>
->>> This goes along with the patch in this thread:
->>> http://marc.info/?l=3Dlinux-usb&m=3D149983203023058&w=3D2
->>>
->>> Would be great if you could give it a try and report back.
->>>
->>> @Felipe can I do anything more to get it accepted upstream?
->> you got rid of*all*  context. I have no idea what you're replying
->> to. Looking at the patch, though, I think this may be caused by the
->> regression on the order of when to get the PHY. That was fixed by TI,
->> patch is already on next and greg's queue for next -rc. Please check if
->> commit 541768b08a400d9d292cfd9c898401b8178856ac helps you guys.
->
-> I tested with that commit on top of v4.13-rc1 and USB seems to
-> be working properly on Odroid XU4, the mouse is working.
+are available in the git repository at:
 
-Thanks a lot ;-)
+  git://linuxtv.org/snawrocki/samsung.git for-v4.14/media/next
 
-=2D-=20
-balbi
+for you to fetch changes up to c7782331ca78c9b84485051365c1aaceac6c634c:
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+  exynos4-is: fimc-is-i2c: constify dev_pm_ops structures. (2017-07-21 13:22:40 +0200)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+Arvind Yadav (1):
+      exynos4-is: fimc-is-i2c: constify dev_pm_ops structures.
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAllx48YACgkQzL64meEa
-mQZYwRAAxmA4t6ChvJ38zlGmtCX5UTfWb0SAGrz2fEzjY4rUIdYScIXucJOFU0RL
-sqG1cw9XOdZ6FdJY/l4BmIyaW44EAfAh7Bsi3WSWXKGM1JF5lAObw56hfsa5f0jk
-RNI1zcCeTCnCHmQis1lXbh6wLSURr0gTT8YuG/FN6sWV1W8U8PtKrcLv3H9bLAyx
-ijExm0dy1Vz6Vs1/MCAoU0Qr4EWS+a1aTIusm+JS+fJPTtLOTgE/s43KCCQSaP55
-4GG1cXRoXV3hyazX2Pzi/Mr9w7vXkjA5OgTm8pQof0fIR26Ybpmnmk/WYAgPZSu/
-5WRtf3+EYd+z4fElbm6H8p1EQ+rhfVVEfU9OiKmJN8VnlTDhypCTztYUG0ynKJoQ
-5o5+dU20h8/fcVeqL6ajcJqXn2V0QSdvNv6C8mwx3/VNVlYgYo4Vx5e1r0Vo3O42
-zgI/WHtfnPUw8JHNM4Vftm6sIFmdw6bL/kILjsG/2p2QnDHDUnl5dxE31EPmLZGT
-srIsDNnFm98aqB/ahoE0naWuTVuV6LmAk5oSQbdPz0zQcWOB8hiohh6tiSjCw2Sx
-WK3b/LbDT3HF3sJXi5DhFSzCrhIkg+olN4LpcexwrSqia+hcgFR3lm4rvMIhKK2O
-YonQB7Kgo2Cvgr66i+V9yc5bd32KEPCVeC1ht1r2JLLKfOaNdmI=
-=GTOx
------END PGP SIGNATURE-----
---=-=-=--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Gustavo A. R. Silva (1):
+      s5k5baf: remove unnecessary static in s5k5baf_get_selection()
+
+Thierry Escande (3):
+      s5p-jpeg: Handle parsing error in s5p_jpeg_parse_hdr()
+      s5p-jpeg: Don't use temporary structure in s5p_jpeg_buf_queue
+      s5p-jpeg: Split s5p_jpeg_parse_hdr()
+
+Tony K Nadackal (3):
+      s5p-jpeg: Call jpeg_bound_align_image after qbuf
+      s5p-jpeg: Correct WARN_ON statement for checking subsampling
+      s5p-jpeg: Decode 4:1:1 chroma subsampling format
+
+henryhsu (2):
+      s5p-jpeg: Add support for resolution change event
+      s5p-jpeg: Add stream error handling for Exynos5420
+
+ drivers/media/i2c/s5k5baf.c                  |   2 +-
+ .../media/platform/exynos4-is/fimc-is-i2c.c  |   2 +-
+ drivers/media/platform/s5p-jpeg/jpeg-core.c  | 186 ++++++++++++----
+ drivers/media/platform/s5p-jpeg/jpeg-core.h  |   7 +
+ 4 files changed, 150 insertions(+), 47 deletions(-)
+
+-- 
+Thanks,
+Sylwester
