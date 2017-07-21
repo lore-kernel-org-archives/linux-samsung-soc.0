@@ -1,51 +1,64 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: USB 3.0 is broken on Odroid Xu4 on latest kernel
-Date: Fri, 21 Jul 2017 13:14:23 +0200
-Message-ID: <c43153ef-bdcd-df59-4fa7-4fe4f0af3ae1@samsung.com>
-References: <CANAwSgSoo7g=RN4wQ96+NJRYZYy2WeHwPA-xJ2JY7yt25irDfA@mail.gmail.com>
-        <87zic0b8hi.fsf@linux.intel.com>
-        <20170721075616.ma57ixucid7233bm@vis.informatik.uni-osnabrueck.de>
-        <CGME20170721081040epcas5p463abb05b4b663fc20cbf9ebb06cdacb1@epcas5p4.samsung.com>
-        <87vamm43dc.fsf@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:26080 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750802AbdGULOb (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Jul 2017 07:14:31 -0400
-In-reply-to: <87vamm43dc.fsf@linux.intel.com>
-Content-language: en-GB
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] clk: samsung: exynos5420: The EPLL rate table corrections
+Date: Fri, 21 Jul 2017 13:19:50 +0200
+Message-ID: <1500635990-19474-1-git-send-email-s.nawrocki@samsung.com>
+References: <CGME20170721112008epcas5p1eb75e4eb00d1dbad130460d2cbc0ce0c@epcas5p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: cw00.choi@samsung.com, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>, Anand Moon <linux.amoon@gmail.com>
-Cc: Jochen Sprickerhof <jochen@sprickerhof.de>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>
 
-Hi,
+This patch fixes values of the EPLL K coefficient and changes
+the EPLL output frequency values to match exactly what is
+possible to achieve with given M, P, S, K coefficients.
+This allows to avoid rounding errors and unexpected frequency
+being set with clk_set_rate(), due to recalc_rate returning
+different values than the PLL rate specified in the
+exynos5420_epll_24mhz_tbl table. E.g. this prevents a case
+where two consecutive clk_set_rate() calls with same argument
+result in different PLL output frequency.
 
-On 07/21/2017 10:10 AM, Felipe Balbi wrote:
-> Jochen Sprickerhof<jochen@sprickerhof.de>  writes:
+The PLL output frequencies have been calculated with formula:
 
->> I've send a patch for this some time ago here:
->> http://marc.info/?l=linux-usb&m=149945465112440&w=2
->>
->> This goes along with the patch in this thread:
->> http://marc.info/?l=linux-usb&m=149983203023058&w=2
->>
->> Would be great if you could give it a try and report back.
->>
->> @Felipe can I do anything more to get it accepted upstream?
-> you got rid of*all*  context. I have no idea what you're replying
-> to. Looking at the patch, though, I think this may be caused by the
-> regression on the order of when to get the PHY. That was fixed by TI,
-> patch is already on next and greg's queue for next -rc. Please check if
-> commit 541768b08a400d9d292cfd9c898401b8178856ac helps you guys.
+f = fxtal * (M * 2^16 + K) / (P * 2^S) / 2^16
 
-I tested with that commit on top of v4.13-rc1 and USB seems to
-be working properly on Odroid XU4, the mouse is working.
+where fxtal = 24000000.
 
+Fixes: 9842452acd ("clk: samsung: exynos542x: Add EPLL rate table")
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 0748a0b..9a6476a 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1283,16 +1283,16 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+ 	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
+ 	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
+-	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
+-	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
++	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
++	PLL_36XX_RATE(361267218U, 301, 5, 2, 3671),
+ 	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
+-	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
+-	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
+-	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
++	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
++	PLL_36XX_RATE(180633609U, 301, 5, 3, 3671),
++	PLL_36XX_RATE(131072006U, 131, 3, 3, 4719),
+ 	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
+-	PLL_36XX_RATE(65536000U, 131, 3, 4, 4719),
+-	PLL_36XX_RATE(49152000U, 197, 3, 5, 25690),
+-	PLL_36XX_RATE(32768000U, 131, 3, 5, 4719),
++	PLL_36XX_RATE( 65536003U, 131, 3, 4, 4719),
++	PLL_36XX_RATE( 49152000U, 197, 3, 5, -25690),
++	PLL_36XX_RATE( 32768001U, 131, 3, 5, 4719),
+ };
+ 
+ static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
 -- 
-Regards,
-Sylwester
+1.9.1
