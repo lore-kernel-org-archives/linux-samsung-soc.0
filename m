@@ -1,83 +1,89 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/3] clk: samsung: exynos542x: Enable clock rate propagation
- up to the EPLL
-Date: Fri, 21 Jul 2017 18:36:44 +0200
-Message-ID: <1500655004-29816-3-git-send-email-s.nawrocki@samsung.com>
-References: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170721163755epcas1p2bfa1025557002ae5f89309aecd64c411@epcas1p2.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: samsung: odroid: Fix EPLL frequency values" to the asoc tree
+Date: Fri, 21 Jul 2017 17:45:59 +0100
+Message-ID: <E1dYb3v-0005ms-IX@debutante>
+References: <1500654560-29516-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52692 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750849AbdGUQqI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 21 Jul 2017 12:46:08 -0400
+In-Reply-To: <1500654560-29516-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, b.zolnierkie@samsung.comalsa-devel@alsa-project.org
 
-CLK_SET_RATE_PARENT flag is added to the clocks between the EPLL
-and the audio subsystem clock controller so that the EPLL's output
-frequency can be set indirectly with clk_set_rate() on a leaf clock.
-That should be safe as EPLL is normally only used to generate clock
-for the audio subsystem.
-With this change we can avoid passing the EPPL clock to the ASoC
-machine driver.
+The patch
+
+   ASoC: samsung: odroid: Fix EPLL frequency values
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 9d154e42a338a4142e7a656d662ebf98c4ceb26b Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Fri, 21 Jul 2017 18:29:20 +0200
+Subject: [PATCH] ASoC: samsung: odroid: Fix EPLL frequency values
+
+To prevent incorrect setting of the EPLL the clock frequency
+values are changed to exact values as possible to obtain on
+the EPLL output with given PLL coefficients.
+This patch is required after recent change of the EPLL rate
+table by patch
+"clk: samsung: exynos5420: The EPLL rate table corrections".
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ sound/soc/samsung/odroid.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 5ae9364..2560196 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -537,8 +537,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 
- 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
- 			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
--	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
--							SRC_TOP7, 20, 2),
-+	MUX_F(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
-+			SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
- 	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
- 	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
- 
-@@ -547,8 +547,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	MUX(0, "mout_aclk432_cam", mout_group6_5800_p, SRC_TOP8, 24, 2),
- 	MUX(0, "mout_aclk432_scaler", mout_group6_5800_p, SRC_TOP8, 28, 2),
- 
--	MUX(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
--							SRC_TOP9, 8, 1),
-+	MUX_F(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
-+			SRC_TOP9, 8, 1, CLK_SET_RATE_PARENT, 0),
- 	MUX(0, "mout_user_aclk550_cam", mout_group15_5800_p,
- 							SRC_TOP9, 16, 1),
- 	MUX(0, "mout_user_aclkfl1_550_cam", mout_group13_5800_p,
-@@ -591,7 +591,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
- 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
--			SRC_MASK_TOP7, 20, 0, 0),
-+			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
- };
- 
- static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
-@@ -633,7 +633,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 
- static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
- 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
--			SRC_MASK_TOP7, 20, 0, 0),
-+			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
- };
- 
- static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
-@@ -713,7 +713,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
- 	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
- 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
--	MUX(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
-+	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
-+			CLK_SET_RATE_PARENT, 0),
- 	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
- 	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
- 
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index 0c0b00e40646..0834319ead42 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -42,17 +42,17 @@ static int odroid_card_hw_params(struct snd_pcm_substream *substream,
+ 	switch (params_rate(params)) {
+ 	case 32000:
+ 	case 64000:
+-		pll_freq = 131072000U;
++		pll_freq = 131072006U;
+ 		break;
+ 	case 44100:
+ 	case 88200:
+ 	case 176400:
+-		pll_freq = 180633600U;
++		pll_freq = 180633609U;
+ 		break;
+ 	case 48000:
+ 	case 96000:
+ 	case 192000:
+-		pll_freq = 196608000U;
++		pll_freq = 196608001U;
+ 		break;
+ 	default:
+ 		return -EINVAL;
 -- 
-1.9.1
+2.13.2
