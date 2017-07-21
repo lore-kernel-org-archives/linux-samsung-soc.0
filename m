@@ -1,39 +1,65 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 10/12] [v2] ARM: s3c24xx: make H1940BT depend on RFKILL
-Date: Thu, 20 Jul 2017 21:30:38 +0200
-Message-ID: <20170720193038.GA16488@kozik-book>
-References: <20170720154616.3250481-1-arnd@arndb.de>
- <20170720155410.3251043-1-arnd@arndb.de>
+From: Jochen Sprickerhof <jochen@sprickerhof.de>
+Subject: Re: USB 3.0 is broken on Odroid Xu4 on latest kernel
+Date: Fri, 21 Jul 2017 09:56:16 +0200
+Message-ID: <20170721075616.ma57ixucid7233bm@vis.informatik.uni-osnabrueck.de>
+References: <CANAwSgSoo7g=RN4wQ96+NJRYZYy2WeHwPA-xJ2JY7yt25irDfA@mail.gmail.com>
+ <87zic0b8hi.fsf@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yigp6nbnyihqrdc2"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtprelay02.ispgateway.de ([80.67.31.36]:27390 "EHLO
+        smtprelay02.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752704AbdGUIGp (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 21 Jul 2017 04:06:45 -0400
 Content-Disposition: inline
-In-Reply-To: <20170720155410.3251043-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Felipe Balbi <balbi@kernel.org>, Anand Moon <linux.amoon@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>
 
-On Thu, Jul 20, 2017 at 05:53:43PM +0200, Arnd Bergmann wrote:
-> Bluetooth is only supported when network support is part of the kernel,
-> so it is a bit pointless to build the hi1940-bt support without networking.
-> If we try anyway, we get a Kconfig warning:
-> 
-> warning: (TOSA_BT && H1940BT) selects RFKILL which has unmet direct dependencies (NET)
-> 
-> This turns the 'select' into 'depends on' as Krzysztof suggested when
-> I first sent a fix.
-> 
-> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Link: https://patchwork.kernel.org/patch/8164161/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v1 was sent in Jan 2016, and instead added a dependency on CONFIG_NET
-> ---
->  arch/arm/mach-s3c24xx/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, applied.
+--yigp6nbnyihqrdc2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+Hi,
+
+I've send a patch for this some time ago here:
+
+http://marc.info/?l=linux-usb&m=149945465112440&w=2
+
+This goes along with the patch in this thread:
+
+http://marc.info/?l=linux-usb&m=149983203023058&w=2
+
+Would be great if you could give it a try and report back.
+
+@Felipe can I do anything more to get it accepted upstream?
+
+Cheers
+
+Jochen
+
+--yigp6nbnyihqrdc2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEc7KZy9TurdzAF+h6W//cwljmlDMFAllxs50ACgkQW//cwljm
+lDPBeQ//YLuzuC/W+I1lYV/9whNuVoOCoTWqobEnemb/uK2UPRHiV5flLHSuH3G8
+9LVeZRLEvJ6Ehr+NAXjGVjXlQdOR54Wq6ql9madbF2v5xH02KH7gu825MucFw1cl
+ZfuJ6daGA8Lkd3qpBDchzRtCSyNQViSbLj/pLgoRttkSJQMMpSCPi6a7669rwCWw
+kVfa7Q0TgNVHFxbh24EMT/75zCsIvrtXMmWbniOB19WmGu8UdQUcQDdIg1pNZ1jK
+OKIVGaWMZZP3DavZhU3kXWUzsnVpcYDdO7Kndv5jn4jmv1ojDQN50QlnOHfBZzXW
+4EocFTNO/Pfl7FIcFeRbUl2fMGcYUXOP95zk+qdbYDRqzjJwCWZrRh0yPt4QwNU2
+baUNjk76VZwNovkZ5Apmh5YcgDndnOcWIxImcTn8oW3Mjhwf7NXEWbPp5SmfIQFb
+YkSLZ4MiOb9XHqvFJBd/0betkOhcFmkRVQZPf4VLdYjrKPKiB4IDrwVkZNIuYX6C
+J7FAan/JRVjFXjHFwRw7rqezyrHgxVdhq7Ri/3ha217pDDbLF6/nfqX/uje9oSeD
+kvkHab1yRIrv/4gl7WLDhCq3kUJHTPPcH8Lg/aS2RG9srCHr+BB3NjIMaZU0dEci
+yY/DxZUgB4AdcmemyFZfpGKVCYVSEmtyXFHjUWgMG/JZqjBUpoU=
+=8j19
+-----END PGP SIGNATURE-----
+
+--yigp6nbnyihqrdc2--
