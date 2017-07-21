@@ -1,89 +1,62 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH v2] cpufreq: s5pv210: add missing of_node_put
-Date: Fri, 21 Jul 2017 21:53:30 +0200
-Message-ID: <1500666810-21841-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:53201 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753602AbdGUUSj (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Jul 2017 16:18:39 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] drm: exynos: mark pm functions as __maybe_unused
+Date: Fri, 21 Jul 2017 22:47:18 +0200
+Message-ID: <20170721204751.3370881-1-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Milo Kim <woogyom.kim@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-for_each_compatible_node performs an of_node_get on each iteration, so a
-return from the loop requires an of_node_put.
-
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-local idexpression n;
-expression e,e1,e2;
-statement S;
-iterator i1;
-iterator name for_each_compatible_node;
-@@
-
- for_each_compatible_node(n,e1,e2) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-   return n;
-|
-   i1(...,n,...) S
-|
-+  of_node_put(n);
-?  return ...;
-)
-   ...
- }
-// </smpl>
-
-Additionally, call of_node_put on the previous value of np, obtained from
-of_find_compatible_node, that is no longer accessible at the point of the
-for_each_compatible_node.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-
-v2: add the of_node_put for the call to of_find_compatible_node as well.
-
- drivers/cpufreq/s5pv210-cpufreq.c |    3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index f82074e..5d31c2d 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -602,6 +602,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 	}
- 
- 	clk_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!clk_base) {
- 		pr_err("%s: failed to map clock registers\n", __func__);
- 		return -EFAULT;
-@@ -612,6 +613,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
- 			pr_err("%s: failed to get alias of dmc node '%s'\n",
- 				__func__, np->name);
-+			of_node_put(np);
- 			return id;
- 		}
- 
-@@ -619,6 +621,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 		if (!dmc_base[id]) {
- 			pr_err("%s: failed to map dmc%d registers\n",
- 				__func__, id);
-+			of_node_put(np);
- 			return -EFAULT;
- 		}
- 	}
+VGhlIHJld29yayBvZiB0aGUgZXh5bm9zIERSTSBjbG9jayBoYW5kbGluZyBpbnRyb2R1Y2VkCndh
+cm5pbmdzIGZvciBjb25maWd1cmF0aW9ucyB0aGF0IGhhdmUgQ09ORklHX1BNIGRpc2FibGVkOgoK
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jOjczNjoxMzogZXJyb3I6ICdoZG1p
+X2Nsa19kaXNhYmxlX2dhdGVzJyBkZWZpbmVkIGJ1dCBub3QgdXNlZCBbLVdlcnJvcj11bnVzZWQt
+ZnVuY3Rpb25dCiBzdGF0aWMgdm9pZCBoZG1pX2Nsa19kaXNhYmxlX2dhdGVzKHN0cnVjdCBoZG1p
+X2NvbnRleHQgKmhkYXRhKQogICAgICAgICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+fn5+fgpkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmM6NzE3OjEyOiBlcnJvcjogJ2hkbWlfY2xr
+X2VuYWJsZV9nYXRlcycgZGVmaW5lZCBidXQgbm90IHVzZWQgWy1XZXJyb3I9dW51c2VkLWZ1bmN0
+aW9uXQogc3RhdGljIGludCBoZG1pX2Nsa19lbmFibGVfZ2F0ZXMoc3RydWN0IGhkbWlfY29udGV4
+dCAqaGRhdGEpCgpUaGUgcHJvYmxlbSBpcyB0aGF0IHRoZSBQTSBmdW5jdGlvbnMgdGhlbXNlbHZl
+cyBhcmUgaW5zaWRlIG9mCmFuICNpZmRlZiwgYnV0IHNvbWUgZnVuY3Rpb25zIHRoZXkgY2FsbCBh
+cmUgbm90LgoKVGhpcyBwYXRjaCByZW1vdmVzIHRoZSAjaWZkZWYgYW5kIGluc3RlYWQgbWFya3Mg
+dGhlIFBNIGZ1bmN0aW9ucwphcyBfX21heWJlX3VudXNlZCwgd2hpY2ggaXMgYSBtb3JlIHJlbGlh
+YmxlIHdheSB0byBnZXQgaXQgcmlnaHQuCgpMaW5rOiBodHRwczovL3BhdGNod29yay5rZXJuZWwu
+b3JnL3BhdGNoLzg0MzYyODEvCkZpeGVzOiA5YmU3ZTk4OTg0NDQgKCJkcm0vZXh5bm9zL2hkbWk6
+IGNsb2NrIGNvZGUgcmUtZmFjdG9yaW5nIikKU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJnbWFubiA8
+YXJuZEBhcm5kYi5kZT4KLS0tClNlbnQgb3JpZ2luYWxseSBpbiBGZWIgMjAxNiB3aXRob3V0IHJl
+cGx5LiBGb3VuZCB0aGUgcGF0Y2gKYWdhaW4gaW4gbXkgYmFja2xvZyBub3csIGl0J3Mgc3RpbGwg
+bmVlZGVkLgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyB8IDYgKyst
+LS0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwppbmRleCAwNmJmYmU0MDBjZjEuLjAyYTAwZjFj
+NmQ1YiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCisr
+KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwpAQCAtMTkzNCw4ICsxOTM0
+LDcgQEAgc3RhdGljIGludCBoZG1pX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
+KQogCXJldHVybiAwOwogfQogCi0jaWZkZWYgQ09ORklHX1BNCi1zdGF0aWMgaW50IGV4eW5vc19o
+ZG1pX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQorc3RhdGljIGludCBfX21heWJlX3VudXNl
+ZCBleHlub3NfaGRtaV9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKIHsKIAlzdHJ1Y3QgaGRt
+aV9jb250ZXh0ICpoZGF0YSA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwogCkBAIC0xOTQ0LDcgKzE5
+NDMsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19oZG1pX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2
+KQogCXJldHVybiAwOwogfQogCi1zdGF0aWMgaW50IGV4eW5vc19oZG1pX3Jlc3VtZShzdHJ1Y3Qg
+ZGV2aWNlICpkZXYpCitzdGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGV4eW5vc19oZG1pX3Jlc3Vt
+ZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBk
+ZXZfZ2V0X2RydmRhdGEoZGV2KTsKIAlpbnQgcmV0OwpAQCAtMTk1NSw3ICsxOTU0LDYgQEAgc3Rh
+dGljIGludCBleHlub3NfaGRtaV9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQogCiAJcmV0dXJu
+IDA7CiB9Ci0jZW5kaWYKIAogc3RhdGljIGNvbnN0IHN0cnVjdCBkZXZfcG1fb3BzIGV4eW5vc19o
+ZG1pX3BtX29wcyA9IHsKIAlTRVRfUlVOVElNRV9QTV9PUFMoZXh5bm9zX2hkbWlfc3VzcGVuZCwg
+ZXh5bm9zX2hkbWlfcmVzdW1lLCBOVUxMKQotLSAKMi45LjAKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
