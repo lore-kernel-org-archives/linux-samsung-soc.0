@@ -1,88 +1,69 @@
-From: Jochen Sprickerhof <jochen@sprickerhof.de>
+From: Markus Reichl <m.reichl@fivetechno.de>
 Subject: Re: USB 3.0 is broken on Odroid Xu4 on latest kernel
-Date: Fri, 21 Jul 2017 11:09:09 +0200
-Message-ID: <20170721090909.z5eol2v3bxlz7opr@vis.informatik.uni-osnabrueck.de>
+Date: Fri, 21 Jul 2017 11:26:02 +0200
+Message-ID: <29c0eb80-f880-ce45-8dfd-0e148b278a1b@fivetechno.de>
 References: <CANAwSgSoo7g=RN4wQ96+NJRYZYy2WeHwPA-xJ2JY7yt25irDfA@mail.gmail.com>
- <87zic0b8hi.fsf@linux.intel.com>
- <20170721075616.ma57ixucid7233bm@vis.informatik.uni-osnabrueck.de>
- <87vamm43dc.fsf@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6gwqnfhhcjjr6il4"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay07.ispgateway.de ([134.119.228.104]:5603 "EHLO
-        smtprelay07.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753537AbdGUJZj (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Jul 2017 05:25:39 -0400
-Content-Disposition: inline
-In-Reply-To: <87vamm43dc.fsf@linux.intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CANAwSgSoo7g=RN4wQ96+NJRYZYy2WeHwPA-xJ2JY7yt25irDfA@mail.gmail.com>
+Content-Language: de-DE
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Felipe Balbi <balbi@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Anand Moon <linux.amoon@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>
 
-
---6gwqnfhhcjjr6il4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-* Felipe Balbi <balbi@kernel.org> [2017-07-21 11:10]:
-> Hi,
->=20
-> Jochen Sprickerhof <jochen@sprickerhof.de> writes:
-> > Hi,
-> >
-> > I've send a patch for this some time ago here:
-> >
-> > http://marc.info/?l=3Dlinux-usb&m=3D149945465112440&w=3D2
-> >
-> > This goes along with the patch in this thread:
-> >
-> > http://marc.info/?l=3Dlinux-usb&m=3D149983203023058&w=3D2
-> >
-> > Would be great if you could give it a try and report back.
-> >
-> > @Felipe can I do anything more to get it accepted upstream?
->=20
-> you got rid of *all* context. I have no idea what you're replying
-> to. Looking at the patch, though, I think this may be caused by the
-> regression on the order of when to get the PHY. That was fixed by TI,
-> patch is already on next and greg's queue for next -rc. Please check if
-> commit 541768b08a400d9d292cfd9c898401b8178856ac helps you guys.
-
-No, as I wrote In my patch, it's on top of 541768b08a400d9d292cfd9c898401b8=
-178856ac:
-
-| This needs and is supposed to be applied on top of
-| https://patchwork.kernel.org/patch/9815981/
-
-So we still need it.
-
-> ps: leave context on your replies next time, man. We get a TON of emails
-> every day; it's difficult to keep track of everything without context.
-
-Sorry for that.
-
---6gwqnfhhcjjr6il4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEc7KZy9TurdzAF+h6W//cwljmlDMFAllxxLIACgkQW//cwljm
-lDMtqBAAoxzouY0qQVNWKOttzL+oud+4BTxqZn7CXg3n5TSkKa/QY3k/4Lr4W0p6
-yfN5H4+80dsSB3Eoh9T38cdt9El4Prp0MLpxex4bYFtOJB8ndJ6mxXgTxBk+SClO
-qOkUkN7ncZ2rFMZQSn8HO/G8dZyESwvgbDjG1076g415L6SAJYqHHr8SBTT/GZzP
-9j7fc1YxWwditVHILjIKF1ZyaSd6jlQoPLDNatlgKn7Q4QRFeG00NxbMWa8Qff6J
-BYKCVZURXfq0b7mN1OH+jpxcYKeE5NSvQcY0UpAyoBuKwVnJ0qZju0RSE/fV1C4J
-21fARlZ3CmTr+xKaZx/1p/O2yQP/NXOrJHKH4nNpga9okyA7zg2mxNb8VrxXvqDW
-4eKD3i5oLvmuM0kQ0SSQnYhz0SsvgA1B6tj5OfCrjZdUWGzQcdBz8d3Bd4wVgRqz
-OybYeRtELdCbOs5T0DnLCHoR2yfDDwq21cmjFqUX/uKqF0pXdVjc/Lj1RvgvzmRm
-+feb8+dUOkNnspwH9gaDj/R7CBnAeX50oywpEhDvk1QOkBYFIiEP5fz3I02Wt9bZ
-J3rj0LjzvwQLgy9PXjFotvMyBhSCO9ZY6LyV7Pi7n+OhqeVpIJ9aJKJ5LmMbHDKc
-m7R3YvxO24TXJMPDDaEHexIYD/O1QnRGEI+HiZeSPi0CBSzSIEQ=
-=dbkK
------END PGP SIGNATURE-----
-
---6gwqnfhhcjjr6il4--
+SGkgQW5hbmQsCgp0aGUgaXNzdWUgYmVsb3cgaXMgZml4ZWQgd2l0aCAKNC4xMy4wLXJjMS1uZXh0
+LTIwMTcwNzIxLgoKR3J1w58sCi0tIApNYXJrdXMgUmVpY2hsCgpBbSAxOS4wNy4yMDE3IHVtIDE2
+OjU4IHNjaHJpZWIgQW5hbmQgTW9vbjoKPiBIaSBLcnp5c3p0b2YsCj4gCj4gVG9kYXkgSSB0cmll
+ZCB0byBjb21waWxlIHRoZSBsYXRlc3Qga2VybmVsIGZvciBPZHJvaWQgeHU0Lgo+IHVzaW5nIGV4
+eW5vc19kZWZjb25maWcgSSBidWlsZCBhbmQgbG9hZGVkIHRoZSBrZXJuZWwuCj4gYnV0IHRvIG15
+IHN1cnByaXNlIHVzYiAzLjAgZGV2aWNlIGFuZCBtaXNzaW5nLgo+IAo+IG9kcm9pZCBsb2dpbjog
+cm9vdAo+IFBhc3N3b3JkOgo+IExhc3QgbG9naW46IFdlZCBKdWwgMTkgMTQ6MDE6NDQgVVRDIDIw
+MTcgb24gdHR5U0FDMgo+IFdlbGNvbWUgdG8gVWJ1bnR1IDE2LjA0LjIgTFRTIChHTlUvTGludXgg
+NC4xMy4wLXJjMS14dTRtbC0yNzg0Ni1nNzRjYmQ5NiBhcm12N2wpCj4gCj4gICogRG9jdW1lbnRh
+dGlvbjogIGh0dHBzOi8vaGVscC51YnVudHUuY29tCj4gICogTWFuYWdlbWVudDogICAgIGh0dHBz
+Oi8vbGFuZHNjYXBlLmNhbm9uaWNhbC5jb20KPiAgKiBTdXBwb3J0OiAgICAgICAgaHR0cHM6Ly91
+YnVudHUuY29tL2FkdmFudGFnZQo+IHJvb3RAb2Ryb2lkOn4jIGxzdXNiCj4gQnVzIDAwNiBEZXZp
+Y2UgMDAxOiBJRCAxZDZiOjAwMDMgTGludXggRm91bmRhdGlvbiAzLjAgcm9vdCBodWIKPiBCdXMg
+MDA1IERldmljZSAwMDE6IElEIDFkNmI6MDAwMiBMaW51eCBGb3VuZGF0aW9uIDIuMCByb290IGh1
+Ygo+IEJ1cyAwMDQgRGV2aWNlIDAwMTogSUQgMWQ2YjowMDAzIExpbnV4IEZvdW5kYXRpb24gMy4w
+IHJvb3QgaHViCj4gQnVzIDAwMyBEZXZpY2UgMDAxOiBJRCAxZDZiOjAwMDIgTGludXggRm91bmRh
+dGlvbiAyLjAgcm9vdCBodWIKPiBCdXMgMDAyIERldmljZSAwMDI6IElEIDA2MDM6MDAwMiBOb3Zh
+dGVrIE1pY3JvZWxlY3Ryb25pY3MgQ29ycC4KPiBCdXMgMDAyIERldmljZSAwMDE6IElEIDFkNmI6
+MDAwMSBMaW51eCBGb3VuZGF0aW9uIDEuMSByb290IGh1Ygo+IEJ1cyAwMDEgRGV2aWNlIDAwMTog
+SUQgMWQ2YjowMDAyIExpbnV4IEZvdW5kYXRpb24gMi4wIHJvb3QgaHViCj4gcm9vdEBvZHJvaWQ6
+fiMgbHN1c2IgLXQKPiAvOiAgQnVzIDA2LlBvcnQgMTogRGV2IDEsIENsYXNzPXJvb3RfaHViLCBE
+cml2ZXI9eGhjaS1oY2QvMXAsIDUwMDBNCj4gLzogIEJ1cyAwNS5Qb3J0IDE6IERldiAxLCBDbGFz
+cz1yb290X2h1YiwgRHJpdmVyPXhoY2ktaGNkLzFwLCA0ODBNCj4gLzogIEJ1cyAwNC5Qb3J0IDE6
+IERldiAxLCBDbGFzcz1yb290X2h1YiwgRHJpdmVyPXhoY2ktaGNkLzFwLCA1MDAwTQo+IC86ICBC
+dXMgMDMuUG9ydCAxOiBEZXYgMSwgQ2xhc3M9cm9vdF9odWIsIERyaXZlcj14aGNpLWhjZC8xcCwg
+NDgwTQo+IC86ICBCdXMgMDIuUG9ydCAxOiBEZXYgMSwgQ2xhc3M9cm9vdF9odWIsIERyaXZlcj1l
+eHlub3Mtb2hjaS8zcCwgMTJNCj4gICAgIHxfXyBQb3J0IDE6IERldiAyLCBJZiAwLCBDbGFzcz1I
+dW1hbiBJbnRlcmZhY2UgRGV2aWNlLCBEcml2ZXI9dXNiaGlkLCAxLjVNCj4gICAgIHxfXyBQb3J0
+IDE6IERldiAyLCBJZiAxLCBDbGFzcz1IdW1hbiBJbnRlcmZhY2UgRGV2aWNlLCBEcml2ZXI9dXNi
+aGlkLCAxLjVNCj4gLzogIEJ1cyAwMS5Qb3J0IDE6IERldiAxLCBDbGFzcz1yb290X2h1YiwgRHJp
+dmVyPWV4eW5vcy1laGNpLzNwLCA0ODBNCj4gCj4gRnVsbCBkbWVzZyBjYW4gYmUgZm91bmQgb24g
+YmxvdyBsaW5rLgo+IGh0dHBzOi8vcGFzdGViaW4uY29tL0szeGZQQ1BlCj4gCj4gVGhlIHJlYXNv
+biBmb3IgZmFpbGVkIGlzIGJlbG93Lgo+IAo+IFsgICAgNy4xODcwOTZdIHVzYiB1c2I0LXBvcnQx
+OiBjb25uZWN0LWRlYm91bmNlIGZhaWxlZAo+IAo+IEkgdHJpZWQgdG8gZGVidWcgdGhpcyBidXQg
+ZmFpbGVkIHRvIGZpbmQgdGhlIHJvb3QgY2F1c2UuCj4gTm90aGluZyBpcyBjb25uZWN0ZWQgdG8g
+dGhlIFVCUyAzLjAgcG9ydCBmb3IgdGhlIGZhaWx1cmUgdG8gY2F1c2UuCj4gCj4gSWYgSSBsb2Fk
+IG9sZCBrZXJuZWwgaXQgc2VlbiB0byB3b3JrIGNvcnJlY3RseS4KPiBJZiB5b3UgcHJvdm9pZCBz
+b21lIGlucHV0IEkgd2lsbCBnaXZlIHRoaXMgYSB0cnkuCj4gCj4gQmVzdCBSZWdhcmRzCj4gLUFu
+YW5kCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAi
+dW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdl
+IHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBo
+dHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFp
+bGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlz
+dHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
