@@ -1,61 +1,83 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/3] clk: samsung: Add CLK_SET_RATE_PARENT to some AUDSS CLK
- CON clocks
-Date: Fri, 21 Jul 2017 18:36:43 +0200
-Message-ID: <1500655004-29816-2-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 3/3] clk: samsung: exynos542x: Enable clock rate propagation
+ up to the EPLL
+Date: Fri, 21 Jul 2017 18:36:44 +0200
+Message-ID: <1500655004-29816-3-git-send-email-s.nawrocki@samsung.com>
 References: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170721163751epcas1p2fd6ba68507923b767c043b38249535e8@epcas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11897 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752048AbdGUQhy (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Jul 2017 12:37:54 -0400
+        <CGME20170721163755epcas1p2bfa1025557002ae5f89309aecd64c411@epcas1p2.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-clk@vger.kernel.org
 Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This allows clk rate propagation up to the clock tree so EPLL
-can be reprogrammed indirectly when setting rate of the Audio
-Subsystem clocks.
-The advantage is that sound machine driver can operate only
-on the leaf clocks rather than explicitly re-configuring
-the root clock (EPLL).
+CLK_SET_RATE_PARENT flag is added to the clocks between the EPLL
+and the audio subsystem clock controller so that the EPLL's output
+frequency can be set indirectly with clk_set_rate() on a leaf clock.
+That should be safe as EPLL is normally only used to generate clock
+for the audio subsystem.
+With this change we can avoid passing the EPPL clock to the ASoC
+machine driver.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos-audss.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 1fab56f..b117783 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -180,7 +180,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	}
- 	clk_table[EXYNOS_MOUT_AUDSS] = clk_hw_register_mux(NULL, "mout_audss",
- 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
--				CLK_SET_RATE_NO_REPARENT,
-+				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 5ae9364..2560196 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -537,8 +537,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
  
- 	cdclk = devm_clk_get(&pdev->dev, "cdclk");
-@@ -195,11 +195,11 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
+ 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+ 			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
+-	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
+-							SRC_TOP7, 20, 2),
++	MUX_F(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
++			SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
+ 	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
+ 	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
  
- 	clk_table[EXYNOS_DOUT_SRP] = clk_hw_register_divider(NULL, "dout_srp",
--				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
--				0, &lock);
-+				"mout_audss", CLK_SET_RATE_PARENT,
-+				reg_base + ASS_CLK_DIV, 0, 4, 0, &lock);
+@@ -547,8 +547,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	MUX(0, "mout_aclk432_cam", mout_group6_5800_p, SRC_TOP8, 24, 2),
+ 	MUX(0, "mout_aclk432_scaler", mout_group6_5800_p, SRC_TOP8, 28, 2),
  
- 	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_hw_register_divider(NULL,
--				"dout_aud_bus", "dout_srp", 0,
-+				"dout_aud_bus", "dout_srp", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
+-	MUX(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
+-							SRC_TOP9, 8, 1),
++	MUX_F(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
++			SRC_TOP9, 8, 1, CLK_SET_RATE_PARENT, 0),
+ 	MUX(0, "mout_user_aclk550_cam", mout_group15_5800_p,
+ 							SRC_TOP9, 16, 1),
+ 	MUX(0, "mout_user_aclkfl1_550_cam", mout_group13_5800_p,
+@@ -591,7 +591,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+ 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
+-			SRC_MASK_TOP7, 20, 0, 0),
++			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+ };
  
- 	clk_table[EXYNOS_DOUT_I2S] = clk_hw_register_divider(NULL, "dout_i2s",
+ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+@@ -633,7 +633,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 
+ static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+-			SRC_MASK_TOP7, 20, 0, 0),
++			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+@@ -713,7 +713,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
+ 	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
+ 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
+-	MUX(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
++	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
++			CLK_SET_RATE_PARENT, 0),
+ 	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
+ 	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
+ 
 -- 
 1.9.1
