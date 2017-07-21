@@ -1,62 +1,86 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] drm: exynos: mark pm functions as __maybe_unused
-Date: Fri, 21 Jul 2017 22:47:18 +0200
-Message-ID: <20170721204751.3370881-1-arnd@arndb.de>
+From: Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: [PATCH v4 0/5] DAX common 4k zero page
+Date: Fri, 21 Jul 2017 16:39:50 -0600
+Message-ID: <20170721223956.29485-1-ross.zwisler@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Milo Kim <woogyom.kim@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+List-Unsubscribe: <https://lists.01.org/mailman/options/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.01.org/pipermail/linux-nvdimm/>
+List-Post: <mailto:linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+List-Help: <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.01.org/mailman/listinfo/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=subscribe>
+Errors-To: linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
+Sender: "Linux-nvdimm" <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Dave Chinner <david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, Andreas Dilger <adilger.kernel-m1MBpc4rdrD3fQ9qLvQP4Q@public.gmane.org>, Patrik Jakobsson <patrik.r.jakobsson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Darrick J. Wong" <darrick.wong-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Steven Rostedt <rostedt-nx8X9YLhiw1AfugRpC6u6w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIHJld29yayBvZiB0aGUgZXh5bm9zIERSTSBjbG9jayBoYW5kbGluZyBpbnRyb2R1Y2VkCndh
-cm5pbmdzIGZvciBjb25maWd1cmF0aW9ucyB0aGF0IGhhdmUgQ09ORklHX1BNIGRpc2FibGVkOgoK
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jOjczNjoxMzogZXJyb3I6ICdoZG1p
-X2Nsa19kaXNhYmxlX2dhdGVzJyBkZWZpbmVkIGJ1dCBub3QgdXNlZCBbLVdlcnJvcj11bnVzZWQt
-ZnVuY3Rpb25dCiBzdGF0aWMgdm9pZCBoZG1pX2Nsa19kaXNhYmxlX2dhdGVzKHN0cnVjdCBoZG1p
-X2NvbnRleHQgKmhkYXRhKQogICAgICAgICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+fn5+fgpkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmM6NzE3OjEyOiBlcnJvcjogJ2hkbWlfY2xr
-X2VuYWJsZV9nYXRlcycgZGVmaW5lZCBidXQgbm90IHVzZWQgWy1XZXJyb3I9dW51c2VkLWZ1bmN0
-aW9uXQogc3RhdGljIGludCBoZG1pX2Nsa19lbmFibGVfZ2F0ZXMoc3RydWN0IGhkbWlfY29udGV4
-dCAqaGRhdGEpCgpUaGUgcHJvYmxlbSBpcyB0aGF0IHRoZSBQTSBmdW5jdGlvbnMgdGhlbXNlbHZl
-cyBhcmUgaW5zaWRlIG9mCmFuICNpZmRlZiwgYnV0IHNvbWUgZnVuY3Rpb25zIHRoZXkgY2FsbCBh
-cmUgbm90LgoKVGhpcyBwYXRjaCByZW1vdmVzIHRoZSAjaWZkZWYgYW5kIGluc3RlYWQgbWFya3Mg
-dGhlIFBNIGZ1bmN0aW9ucwphcyBfX21heWJlX3VudXNlZCwgd2hpY2ggaXMgYSBtb3JlIHJlbGlh
-YmxlIHdheSB0byBnZXQgaXQgcmlnaHQuCgpMaW5rOiBodHRwczovL3BhdGNod29yay5rZXJuZWwu
-b3JnL3BhdGNoLzg0MzYyODEvCkZpeGVzOiA5YmU3ZTk4OTg0NDQgKCJkcm0vZXh5bm9zL2hkbWk6
-IGNsb2NrIGNvZGUgcmUtZmFjdG9yaW5nIikKU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJnbWFubiA8
-YXJuZEBhcm5kYi5kZT4KLS0tClNlbnQgb3JpZ2luYWxseSBpbiBGZWIgMjAxNiB3aXRob3V0IHJl
-cGx5LiBGb3VuZCB0aGUgcGF0Y2gKYWdhaW4gaW4gbXkgYmFja2xvZyBub3csIGl0J3Mgc3RpbGwg
-bmVlZGVkLgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyB8IDYgKyst
-LS0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwppbmRleCAwNmJmYmU0MDBjZjEuLjAyYTAwZjFj
-NmQ1YiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCisr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwpAQCAtMTkzNCw4ICsxOTM0
-LDcgQEAgc3RhdGljIGludCBoZG1pX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQogCXJldHVybiAwOwogfQogCi0jaWZkZWYgQ09ORklHX1BNCi1zdGF0aWMgaW50IGV4eW5vc19o
-ZG1pX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQorc3RhdGljIGludCBfX21heWJlX3VudXNl
-ZCBleHlub3NfaGRtaV9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKIHsKIAlzdHJ1Y3QgaGRt
-aV9jb250ZXh0ICpoZGF0YSA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwogCkBAIC0xOTQ0LDcgKzE5
-NDMsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19oZG1pX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2
-KQogCXJldHVybiAwOwogfQogCi1zdGF0aWMgaW50IGV4eW5vc19oZG1pX3Jlc3VtZShzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpCitzdGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGV4eW5vc19oZG1pX3Jlc3Vt
-ZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBk
-ZXZfZ2V0X2RydmRhdGEoZGV2KTsKIAlpbnQgcmV0OwpAQCAtMTk1NSw3ICsxOTU0LDYgQEAgc3Rh
-dGljIGludCBleHlub3NfaGRtaV9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQogCiAJcmV0dXJu
-IDA7CiB9Ci0jZW5kaWYKIAogc3RhdGljIGNvbnN0IHN0cnVjdCBkZXZfcG1fb3BzIGV4eW5vc19o
-ZG1pX3BtX29wcyA9IHsKIAlTRVRfUlVOVElNRV9QTV9PUFMoZXh5bm9zX2hkbWlfc3VzcGVuZCwg
-ZXh5bm9zX2hkbWlfcmVzdW1lLCBOVUxMKQotLSAKMi45LjAKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Changes since v3:
+ - Rebased onto the current linux/master which is based on v4.13-rc1.
+
+ - Instead of adding vm_insert_mkwrite_mixed() and duplicating code from
+   vm_insert_mixed(), instead just add a 'mkwrite' parameter to
+   vm_insert_mixed() and update all call sites.  (Vivek)
+
+ - Added a sanity check to the mkwrite case of insert_pfn() to be sure the
+   pfn for the pte we are about to make writable matches the pfn for our
+   fault. (Jan)
+
+ - Fixed up some changelog wording for clarity. (Jan)
+
+---
+
+When servicing mmap() reads from file holes the current DAX code allocates
+a page cache page of all zeroes and places the struct page pointer in the
+mapping->page_tree radix tree.  This has three major drawbacks:
+
+1) It consumes memory unnecessarily.  For every 4k page that is read via a
+DAX mmap() over a hole, we allocate a new page cache page.  This means that
+if you read 1GiB worth of pages, you end up using 1GiB of zeroed memory.
+
+2) It is slower than using a common zero page because each page fault has
+more work to do.  Instead of just inserting a common zero page we have to
+allocate a page cache page, zero it, and then insert it.
+
+3) The fact that we had to check for both DAX exceptional entries and for
+page cache pages in the radix tree made the DAX code more complex.
+
+This series solves these issues by following the lead of the DAX PMD code
+and using a common 4k zero page instead.  This reduces memory usage and
+decreases latencies for some workloads, and it simplifies the DAX code,
+removing over 100 lines in total.
+
+This series has passed my targeted testing and a full xfstests run on both
+XFS and ext4.
+
+Ross Zwisler (5):
+  mm: add mkwrite param to vm_insert_mixed()
+  dax: relocate some dax functions
+  dax: use common 4k zero page for dax mmap reads
+  dax: remove DAX code from page_cache_tree_insert()
+  dax: move all DAX radix tree defs to fs/dax.c
+
+ Documentation/filesystems/dax.txt       |   5 +-
+ drivers/dax/device.c                    |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_gem.c |   3 +-
+ drivers/gpu/drm/gma500/framebuffer.c    |   2 +-
+ drivers/gpu/drm/msm/msm_gem.c           |   3 +-
+ drivers/gpu/drm/omapdrm/omap_gem.c      |   6 +-
+ drivers/gpu/drm/ttm/ttm_bo_vm.c         |   2 +-
+ fs/dax.c                                | 342 +++++++++++++-------------------
+ fs/ext2/file.c                          |  25 +--
+ fs/ext4/file.c                          |  32 +--
+ fs/xfs/xfs_file.c                       |   2 +-
+ include/linux/dax.h                     |  45 -----
+ include/linux/mm.h                      |   2 +-
+ include/trace/events/fs_dax.h           |   2 -
+ mm/filemap.c                            |  13 +-
+ mm/memory.c                             |  27 ++-
+ 16 files changed, 181 insertions(+), 332 deletions(-)
+
+-- 
+2.9.4
