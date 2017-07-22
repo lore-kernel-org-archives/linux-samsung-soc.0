@@ -1,37 +1,80 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] media: Convert to using %pOF instead of full_name
-Date: Sat, 22 Jul 2017 08:42:11 +0200
-Message-ID: <97f42d10-d2ed-c5bb-9562-5515d5f13f7d@samsung.com>
-References: <20170721192835.25555-1-robh@kernel.org>
-        <CGME20170721192855epcas5p40919807b161c8dee900b5661ea5128aa@epcas5p4.samsung.com>
-        <20170721192835.25555-2-robh@kernel.org>
+From: Dan Williams <dan.j.williams@gmail.com>
+Subject: Re: [PATCH v4 1/5] mm: add mkwrite param to vm_insert_mixed()
+Date: Sat, 22 Jul 2017 09:21:31 -0700
+Message-ID: <CAA9_cmdoEVx88FCuCSOB1Qmom_X8uJPB4-uUx7MA3X5H4fZ=GQ@mail.gmail.com>
+References: <20170721223956.29485-1-ross.zwisler@linux.intel.com> <20170721223956.29485-2-ross.zwisler@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <20170721192835.25555-2-robh@kernel.org>
-Content-language: en-GB
-Sender: linux-media-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Songjun Wu <songjun.wu@microchip.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20170721223956.29485-2-ross.zwisler@linux.intel.com>
+Sender: owner-linux-mm@kvack.org
+To: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>, linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Dave Chinner <david@fromorbit.com>, dri-devel@lists.freedesktop.org, linux-mm <linux-mm@kvack.org>, Andreas Dilger <adilger.kernel@dilger.ca>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Christoph Hellwig <hch@lst.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, "Darrick J. Wong" <darrick.wong@oracle.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ingo Molnar <mingo@redhat.com>, ext4 hackers <linux-ext4@vger.kernel.org>, Matthew Wilcox <mawilcox@microsoft.com>, linux-arm-msm@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Inki Dae <inki.>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/21/2017 09:28 PM, Rob Herring wrote:
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
-> 
-> Signed-off-by: Rob Herring<robh@kernel.org>
-> Acked-by: Niklas Söderlund<niklas.soderlund+renesas@ragnatech.se>
-> Acked-by: Laurent Pinchart<laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Matthias Brugger<matthias.bgg@gmail.com>
-> Acked-by: Nicolas Ferre<nicolas.ferre@microchip.com>
-> Acked-by: Lad, Prabhakar<prabhakar.csengg@gmail.com>
-
+On Fri, Jul 21, 2017 at 3:39 PM, Ross Zwisler
+<ross.zwisler@linux.intel.com> wrote:
+> To be able to use the common 4k zero page in DAX we need to have our PTE
+> fault path look more like our PMD fault path where a PTE entry can be
+> marked as dirty and writeable as it is first inserted, rather than waiting
+> for a follow-up dax_pfn_mkwrite() => finish_mkwrite_fault() call.
+>
+> Right now we can rely on having a dax_pfn_mkwrite() call because we can
+> distinguish between these two cases in do_wp_page():
+>
+>         case 1: 4k zero page => writable DAX storage
+>         case 2: read-only DAX storage => writeable DAX storage
+>
+> This distinction is made by via vm_normal_page().  vm_normal_page() returns
+> false for the common 4k zero page, though, just as it does for DAX ptes.
+> Instead of special casing the DAX + 4k zero page case, we will simplify our
+> DAX PTE page fault sequence so that it matches our DAX PMD sequence, and
+> get rid of the dax_pfn_mkwrite() helper.  We will instead use
+> dax_iomap_fault() to handle write-protection faults.
+>
+> This means that insert_pfn() needs to follow the lead of insert_pfn_pmd()
+> and allow us to pass in a 'mkwrite' flag.  If 'mkwrite' is set insert_pfn()
+> will do the work that was previously done by wp_page_reuse() as part of the
+> dax_pfn_mkwrite() call path.
+>
+> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
 > ---
-> v2:
-> - Fix missing to_of_node() in xilinx-vipp.c
-> - Drop v4l2-async.c changes. Doing as revert instead.
-> - Add acks
+>  drivers/dax/device.c                    |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c |  3 ++-
+>  drivers/gpu/drm/gma500/framebuffer.c    |  2 +-
+>  drivers/gpu/drm/msm/msm_gem.c           |  3 ++-
+>  drivers/gpu/drm/omapdrm/omap_gem.c      |  6 ++++--
+>  drivers/gpu/drm/ttm/ttm_bo_vm.c         |  2 +-
+>  fs/dax.c                                |  2 +-
+>  include/linux/mm.h                      |  2 +-
+>  mm/memory.c                             | 27 +++++++++++++++++++++------
+>  9 files changed, 34 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> index e9f3b3e..3973521 100644
+> --- a/drivers/dax/device.c
+> +++ b/drivers/dax/device.c
+> @@ -273,7 +273,7 @@ static int __dev_dax_pte_fault(struct dev_dax *dev_dax, struct vm_fault *vmf)
+>
+>         pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
+>
+> -       rc = vm_insert_mixed(vmf->vma, vmf->address, pfn);
+> +       rc = vm_insert_mixed(vmf->vma, vmf->address, pfn, false);
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Ugh, I generally find bool flags unreadable. They place a tax on
+jumping to function definition to recall what true and false mean. If
+we want to go this 'add an argument' route can we at least add an enum
+like:
+
+enum {
+    PTE_MKDIRTY,
+    PTE_MKCLEAN,
+};
+
+...to differentiate the two cases?
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
