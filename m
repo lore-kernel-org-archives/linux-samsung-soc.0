@@ -1,102 +1,96 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2] cpufreq: s5pv210: add missing of_node_put
-Date: Mon, 24 Jul 2017 14:22:16 +0530
-Message-ID: <20170724085216.GS352@vireshk-i7>
-References: <1500666810-21841-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4 1/5] mm: add mkwrite param to vm_insert_mixed()
+Date: Mon, 24 Jul 2017 13:15:31 +0200
+Message-ID: <20170724111531.GG652@quack2.suse.cz>
+References: <20170721223956.29485-1-ross.zwisler@linux.intel.com>
+ <20170721223956.29485-2-ross.zwisler@linux.intel.com>
+ <CAA9_cmdoEVx88FCuCSOB1Qmom_X8uJPB4-uUx7MA3X5H4fZ=GQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:35413 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752537AbdGXIwT (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Jul 2017 04:52:19 -0400
-Received: by mail-pg0-f54.google.com with SMTP id v190so54488366pgv.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jul 2017 01:52:18 -0700 (PDT)
+Return-path: <owner-linux-mm@kvack.org>
 Content-Disposition: inline
-In-Reply-To: <1500666810-21841-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <CAA9_cmdoEVx88FCuCSOB1Qmom_X8uJPB4-uUx7MA3X5H4fZ=GQ@mail.gmail.com>
+Sender: owner-linux-mm@kvack.org
+To: Dan Williams <dan.j.williams@gmail.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>, linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Dave Chinner <david@fromorbit.com>, dri-devel@lists.freedesktop.org, linux-mm <linux-mm@kvack.org>, Andreas Dilger <adilger.kernel@dilger.ca>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Christoph Hellwig <hch@lst.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, "Darrick J. Wong" <darrick.wong@oracle.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ingo Molnar <mingo@redhat.com>, ext4 hackers <linux-ext4@vger.kernel.org>, Matthew Wilcox <mawilcox@microsoft.com>, linux-arm-msm@vger.kernel.org, Steven
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Kukjin Kim <kgene@kernel.org>, kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 21-07-17, 21:53, Julia Lawall wrote:
-> for_each_compatible_node performs an of_node_get on each iteration, so a
-> return from the loop requires an of_node_put.
+On Sat 22-07-17 09:21:31, Dan Williams wrote:
+> On Fri, Jul 21, 2017 at 3:39 PM, Ross Zwisler
+> <ross.zwisler@linux.intel.com> wrote:
+> > To be able to use the common 4k zero page in DAX we need to have our PTE
+> > fault path look more like our PMD fault path where a PTE entry can be
+> > marked as dirty and writeable as it is first inserted, rather than waiting
+> > for a follow-up dax_pfn_mkwrite() => finish_mkwrite_fault() call.
+> >
+> > Right now we can rely on having a dax_pfn_mkwrite() call because we can
+> > distinguish between these two cases in do_wp_page():
+> >
+> >         case 1: 4k zero page => writable DAX storage
+> >         case 2: read-only DAX storage => writeable DAX storage
+> >
+> > This distinction is made by via vm_normal_page().  vm_normal_page() returns
+> > false for the common 4k zero page, though, just as it does for DAX ptes.
+> > Instead of special casing the DAX + 4k zero page case, we will simplify our
+> > DAX PTE page fault sequence so that it matches our DAX PMD sequence, and
+> > get rid of the dax_pfn_mkwrite() helper.  We will instead use
+> > dax_iomap_fault() to handle write-protection faults.
+> >
+> > This means that insert_pfn() needs to follow the lead of insert_pfn_pmd()
+> > and allow us to pass in a 'mkwrite' flag.  If 'mkwrite' is set insert_pfn()
+> > will do the work that was previously done by wp_page_reuse() as part of the
+> > dax_pfn_mkwrite() call path.
+> >
+> > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+> > ---
+> >  drivers/dax/device.c                    |  2 +-
+> >  drivers/gpu/drm/exynos/exynos_drm_gem.c |  3 ++-
+> >  drivers/gpu/drm/gma500/framebuffer.c    |  2 +-
+> >  drivers/gpu/drm/msm/msm_gem.c           |  3 ++-
+> >  drivers/gpu/drm/omapdrm/omap_gem.c      |  6 ++++--
+> >  drivers/gpu/drm/ttm/ttm_bo_vm.c         |  2 +-
+> >  fs/dax.c                                |  2 +-
+> >  include/linux/mm.h                      |  2 +-
+> >  mm/memory.c                             | 27 +++++++++++++++++++++------
+> >  9 files changed, 34 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> > index e9f3b3e..3973521 100644
+> > --- a/drivers/dax/device.c
+> > +++ b/drivers/dax/device.c
+> > @@ -273,7 +273,7 @@ static int __dev_dax_pte_fault(struct dev_dax *dev_dax, struct vm_fault *vmf)
+> >
+> >         pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
+> >
+> > -       rc = vm_insert_mixed(vmf->vma, vmf->address, pfn);
+> > +       rc = vm_insert_mixed(vmf->vma, vmf->address, pfn, false);
 > 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
+> Ugh, I generally find bool flags unreadable. They place a tax on
+> jumping to function definition to recall what true and false mean. If
+> we want to go this 'add an argument' route can we at least add an enum
+> like:
 > 
-> // <smpl>
-> @@
-> local idexpression n;
-> expression e,e1,e2;
-> statement S;
-> iterator i1;
-> iterator name for_each_compatible_node;
-> @@
+> enum {
+>     PTE_MKDIRTY,
+>     PTE_MKCLEAN,
+> };
 > 
->  for_each_compatible_node(n,e1,e2) {
->    ...
-> (
->    of_node_put(n);
-> |
->    e = n
-> |
->    return n;
-> |
->    i1(...,n,...) S
-> |
-> +  of_node_put(n);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Additionally, call of_node_put on the previous value of np, obtained from
-> of_find_compatible_node, that is no longer accessible at the point of the
-> for_each_compatible_node.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> 
-> v2: add the of_node_put for the call to of_find_compatible_node as well.
-> 
->  drivers/cpufreq/s5pv210-cpufreq.c |    3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-> index f82074e..5d31c2d 100644
-> --- a/drivers/cpufreq/s5pv210-cpufreq.c
-> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-> @@ -602,6 +602,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
->  	}
->  
->  	clk_base = of_iomap(np, 0);
-> +	of_node_put(np);
->  	if (!clk_base) {
->  		pr_err("%s: failed to map clock registers\n", __func__);
->  		return -EFAULT;
-> @@ -612,6 +613,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
->  		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
->  			pr_err("%s: failed to get alias of dmc node '%s'\n",
->  				__func__, np->name);
-> +			of_node_put(np);
->  			return id;
->  		}
->  
-> @@ -619,6 +621,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
->  		if (!dmc_base[id]) {
->  			pr_err("%s: failed to map dmc%d registers\n",
->  				__func__, id);
-> +			of_node_put(np);
->  			return -EFAULT;
->  		}
->  	}
+> ...to differentiate the two cases?
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+So how I usually deal with this is that I create e.g.:
 
+__vm_insert_mixed() that takes the bool argument, make vm_insert_mixed()
+pass false, and vm_insert_mixed_mkwrite() pass true. That way there's no
+code duplication, old call sites can stay unchanged, the naming clearly
+says what's going on...
+
+								Honza
 -- 
-viresh
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
