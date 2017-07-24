@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/5] arm64: dts: exynos: Updates for v4.14
-Date: Mon, 24 Jul 2017 21:08:54 +0200
-Message-ID: <20170724190856.19055-3-krzk@kernel.org>
+Subject: [GIT PULL 4/5] ARM: defconfig: Exynos updates for v4.14
+Date: Mon, 24 Jul 2017 21:08:55 +0200
+Message-ID: <20170724190856.19055-4-krzk@kernel.org>
 References: <20170724190856.19055-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -28,31 +28,26 @@ The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.14
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.14
 
-for you to fetch changes up to 10acba1293db5c28d1b81d673e75c2415cb96f62:
+for you to fetch changes up to 57ee24144e57b762dc46f171e1f138ccfc464867:
 
-  arm64: dts: exynos: Remove num-slots from exynos platforms (2017-07-18 07:16:14 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v4.14
-
-1. Remove deprecated and unneeded properties from Exynos boards.
-2. Implement proper (working) support for USB On-The-Go on Exynos5433
-   TM2/TM2E boards.
+  ARM: exynos_defconfig: Enable locking test options (2017-07-18 17:58:46 +0200)
 
 ----------------------------------------------------------------
-Dongwoo Lee (2):
-      arm64: dts: exynos: Fix wrong label for USB 3.0 controller node
-      arm64: dts: exynos: Add extcon property for TM2 and TM2E
+Samsung defconfig changes for v4.14
 
-Hoegeun Kwon (1):
-      arm64: dts: exynos: Remove the OF graph from DSI node
+1. Enable some drivers useful on our boards (communication: Bluetooth,
+   WiFi, NFC, USB; codepages and crypto algorithms).
+2. Enable debugging and lock testing options. These might have impact on
+   performance but we use the exynos_defconfig a lot during development
+   so they should bring benefits of detecting early locking issues.
 
-Shawn Lin (1):
-      arm64: dts: exynos: Remove num-slots from exynos platforms
+----------------------------------------------------------------
+Krzysztof Kozlowski (3):
+      ARM: exynos_defconfig: Enable Bluetooth, mac80211, NFC and more USB drivers
+      ARM: exynos_defconfig: Enable NLS_UTF8 and some crypto algorithms
+      ARM: exynos_defconfig: Enable locking test options
 
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 19 ++-----------------
- arch/arm64/boot/dts/exynos/exynos5433.dtsi            |  4 ++--
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts       |  2 --
- 3 files changed, 4 insertions(+), 21 deletions(-)
+ arch/arm/configs/exynos_defconfig | 79 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 73 insertions(+), 6 deletions(-)
