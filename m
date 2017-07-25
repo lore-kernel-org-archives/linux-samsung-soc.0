@@ -1,40 +1,88 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 7/8] drm: Nuke drm_atomic_helper_connector_dpms
-Date: Tue, 25 Jul 2017 22:42:38 +0800
-Message-ID: <20170725144237.GF29754@dragon>
-References: <20170725080122.20548-1-daniel.vetter@ffwll.ch>
- <20170725080122.20548-8-daniel.vetter@ffwll.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20170725080122.20548-8-daniel.vetter@ffwll.ch>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Martyn Welch <martyn.welch@collabora.co.uk>, Neil Armstrong <narmstrong@baylibre.com>, nouveau@lists.freedesktop.org, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-mediatek@lists.infradead.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Romain Perier <romain.perier@collabora.com>, Daniel Vetter <daniel.vetter@intel.com>, Jyri Sarha <jsarha@ti.com>, Marek Vasut <marex@denx.de>, linux-renesas-soc@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, Alexey Brodkin <abrodkin@synopsys.com>, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Xinliang Liu <z.liuxinliang@hisilicon.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Peter Senna Tschudin <peter>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [RESEND PATCH v2 1/2] drm/exynos/decon: Move headers from global to local place
+Date: Tue, 25 Jul 2017 19:38:51 +0200
+Message-ID: <1501004332-8093-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCBKdWwgMjUsIDIwMTcgYXQgMTA6MDE6MjFBTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBJdCdzIGRlYWQgY29kZSwgdGhlIGNvcmUgaGFuZGxlcyBhbGwgdGhpcyBkaXJlY3Rs
-eSBub3cuCj4gCj4gVGhlIG9ubHkgc3BlY2lhbCBjYXNlIGlzIG5vdXZlYXUgYW5kIHRkYTk4OHgg
-d2hpY2ggdXNlZCBvbmUgZnVuY3Rpb24KPiBmb3IgYm90aCBsZWdhY3kgbW9kZXNldCBjb2RlIGFu
-ZCAtbnY1MCBhdG9taWMgd29ybGQgaW5zdGVhZCBvZiAyCj4gdnRhYmxlcy4gQnV0IGFtb3VudHMg
-dG8gZXhhY3RseSB0aGUgc2FtZS4KPiAKPiB2MjogUmViYXNlIG92ZXIgdGhlIHBhbmVsL2JyaWRl
-ZyByZWZhY3RvcmluZ3MgaW4gc3RtL2x0ZGMuCj4gCj4gU2lnbmVkLW9mZi1ieTogRGFuaWVsIFZl
-dHRlciA8ZGFuaWVsLnZldHRlckBpbnRlbC5jb20+Ci4uLgo+ICBkcml2ZXJzL2dwdS9kcm0venRl
-L3p4X2hkbWkuYyAgICAgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJt
-L3p0ZS96eF90dmVuYy5jICAgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1
-L2RybS96dGUvenhfdmdhLmMgICAgICAgICAgICAgICAgICAgICAgIHwgIDEgLQoKQWNrZWQtYnk6
-IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz4KX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+The DECON headers contain only defines for registers.  There are no
+other drivers using them so this should be put locally to the Exynos DRM
+driver.  Keeping headers local helps managing the code.
+
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Changes since v1:
+1. Just re-order patches in patchset.
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c                          | 3 +--
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c                             | 2 +-
+ .../exynos5433_decon.h => drivers/gpu/drm/exynos/regs-decon5433.h      | 0
+ include/video/exynos7_decon.h => drivers/gpu/drm/exynos/regs-decon7.h  | 3 +--
+ 4 files changed, 3 insertions(+), 5 deletions(-)
+ rename include/video/exynos5433_decon.h => drivers/gpu/drm/exynos/regs-decon5433.h (100%)
+ rename include/video/exynos7_decon.h => drivers/gpu/drm/exynos/regs-decon7.h (99%)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 5792ca88ab7a..5aca8c16f2bc 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -19,13 +19,12 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ 
+-#include <video/exynos5433_decon.h>
+-
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_fb.h"
+ #include "exynos_drm_plane.h"
+ #include "exynos_drm_iommu.h"
++#include "regs-decon5433.h"
+ 
+ #define DSD_CFG_MUX 0x1004
+ #define DSD_CFG_MUX_TE_UNMASK_GLOBAL BIT(13)
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 3e88269fdc2e..387e436c97d2 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -25,13 +25,13 @@
+ 
+ #include <video/of_display_timing.h>
+ #include <video/of_videomode.h>
+-#include <video/exynos7_decon.h>
+ 
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_plane.h"
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fb.h"
+ #include "exynos_drm_iommu.h"
++#include "regs-decon7.h"
+ 
+ /*
+  * DECON stands for Display and Enhancement controller.
+diff --git a/include/video/exynos5433_decon.h b/drivers/gpu/drm/exynos/regs-decon5433.h
+similarity index 100%
+rename from include/video/exynos5433_decon.h
+rename to drivers/gpu/drm/exynos/regs-decon5433.h
+diff --git a/include/video/exynos7_decon.h b/drivers/gpu/drm/exynos/regs-decon7.h
+similarity index 99%
+rename from include/video/exynos7_decon.h
+rename to drivers/gpu/drm/exynos/regs-decon7.h
+index a62b11b613f6..339ea1007ff5 100644
+--- a/include/video/exynos7_decon.h
++++ b/drivers/gpu/drm/exynos/regs-decon7.h
+@@ -1,5 +1,4 @@
+-/* include/video/exynos7_decon.h
+- *
++/*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+  * Author: Ajay Kumar <ajaykumar.rs@samsung.com>
+  *
+-- 
+2.7.4
