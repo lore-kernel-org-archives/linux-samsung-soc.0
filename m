@@ -1,18 +1,14 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 1/4] drm/atomic: implement
- drm_atomic_helper_commit_tail for runtime_pm users
-Date: Tue, 25 Jul 2017 10:09:24 +0200
-Message-ID: <20170725080924.edh4h6njfxlwma7o@phenom.ffwll.local>
-References: <cover.204b8c1b76558ee33ecf147e51c2b6a04d302d55.1500555652.git-series.maxime.ripard@free-electrons.com>
- <a8f92dc70048bab746e94dadd1c23200626aff60.1500555652.git-series.maxime.ripard@free-electrons.com>
- <20170720184628.5vizn7hjdaaz7rqy@phenom.ffwll.local>
- <20170725065734.kbtb2mrfsjwm2szz@flea>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 7/8] drm: Nuke drm_atomic_helper_connector_dpms
+Date: Tue, 25 Jul 2017 10:59:17 +0200
+Message-ID: <1500973157.4101.13.camel@pengutronix.de>
+References: <20170725080122.20548-1-daniel.vetter@ffwll.ch>
+ <20170725080122.20548-8-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20170725065734.kbtb2mrfsjwm2szz@flea>
+In-Reply-To: <20170725080122.20548-8-daniel.vetter@ffwll.ch>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -22,28 +18,24 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, linux-arm-kernel@lists.infradead.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Martyn Welch <martyn.welch@collabora.co.uk>, Neil Armstrong <narmstrong@baylibre.com>, nouveau@lists.freedesktop.org, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-mediatek@lists.infradead.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Romain Perier <romain.perier@collabora.com>, Daniel Vetter <daniel.vetter@intel.com>, Jyri Sarha <jsarha@ti.com>, Marek Vasut <marex@denx.de>, linux-renesas-soc@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, Alexey Brodkin <abrodkin@synopsys.com>, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Xinliang Liu <z.liuxinliang@hisilicon.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Peter Senna Tschudin <peter>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCBKdWwgMjUsIDIwMTcgYXQgMDg6NTc6MzRBTSArMDIwMCwgTWF4aW1lIFJpcGFyZCB3
-cm90ZToKPiBIaSBEYW5pZWwsCj4gCj4gT24gVGh1LCBKdWwgMjAsIDIwMTcgYXQgMDg6NDY6MjhQ
-TSArMDIwMCwgRGFuaWVsIFZldHRlciB3cm90ZToKPiA+IE9uIFRodSwgSnVsIDIwLCAyMDE3IGF0
-IDAzOjAxOjE2UE0gKzAyMDAsIE1heGltZSBSaXBhcmQgd3JvdGU6Cj4gPiA+IFRoZSBjdXJyZW50
-IGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF90YWlsIGhlbHBlciB3b3JrcyBvbmx5IGlmIHRoZSBD
-UlRDIGlzCj4gPiA+IGFjY2Vzc2libGUsIGFuZCBkb2N1bWVudHMgYW4gYWx0ZXJuYXRpdmUgaW1w
-bGVtZW50YXRpb24gdGhhdCBpcyBzdXBwb3NlZCB0bwo+ID4gPiBiZSB1c2VkIGlmIHRoYXQgaGFw
-cGVucy4KPiA+ID4gCj4gPiA+IFRoYXQgaW1wbGVtZW50YXRpb24gaXMgdGhlbiBkdXBsaWNhdGVk
-IGJ5IHNvbWUgZHJpdmVycy4gSW5zdGVhZCBvZgo+ID4gPiBkb2N1bWVudGluZyBpdCwgbGV0J3Mg
-aW1wbGVtZW50IGFuIGhlbHBlciB0aGF0IGFsbCB0aGUgcmVsZXZhbnQgdXNlcnMgY2FuCj4gPiA+
-IHVzZSBkaXJlY3RseS4KPiA+ID4gCj4gPiA+IFNpZ25lZC1vZmYtYnk6IE1heGltZSBSaXBhcmQg
-PG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+ID4gCj4gPiBSZXZpZXdlZC1ieTog
-RGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBmZndsbC5jaD4KPiA+IAo+ID4gU2hvdWxkIEkg
-dGhyb3cgdGhpcyBpbnRvIGRybS1taXNjLCBvciBkbyB5b3Ugd2FudCB0byBtZXJnZSB0aGlzIHRo
-cm91Z2gKPiA+IHNvbWUgZHJpdmVyIHRyZWU/Cj4gCj4gWWVzLCB5b3UgY2FuIHB1dCB0aGVtIGlu
-IGRybS1taXNjLCBpdCB3aWxsIHRoZSBiZSB0aGUgZWFzaWVzdCBvcHRpb24uCgpNZXJnZWQsIHRo
-YW5rcy4KLURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwg
-Q29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+T24gVHVlLCAyMDE3LTA3LTI1IGF0IDEwOjAxICswMjAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+
+IEl0J3MgZGVhZCBjb2RlLCB0aGUgY29yZSBoYW5kbGVzIGFsbCB0aGlzIGRpcmVjdGx5IG5vdy4K
+PiAKPiBUaGUgb25seSBzcGVjaWFsIGNhc2UgaXMgbm91dmVhdSBhbmQgdGRhOTg4eCB3aGljaCB1
+c2VkIG9uZSBmdW5jdGlvbgo+IGZvciBib3RoIGxlZ2FjeSBtb2Rlc2V0IGNvZGUgYW5kIC1udjUw
+IGF0b21pYyB3b3JsZCBpbnN0ZWFkIG9mIDIKPiB2dGFibGVzLiBCdXQgYW1vdW50cyB0byBleGFj
+dGx5IHRoZSBzYW1lLgo+IAo+IHYyOiBSZWJhc2Ugb3ZlciB0aGUgcGFuZWwvYnJpZGVnIHJlZmFj
+dG9yaW5ncyBpbiBzdG0vbHRkYy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgVmV0dGVyIDxk
+YW5pZWwudmV0dGVyQGludGVsLmNvbT4KWy4uLl0KPiAgZHJpdmVycy9ncHUvZHJtL2lteC9pbXgt
+bGRiLmMgICAgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9pbXgv
+aW14LXR2ZS5jICAgICAgICAgICAgICAgICAgICAgIHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0v
+aW14L3BhcmFsbGVsLWRpc3BsYXkuYyAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUv
+ZHJtL21lZGlhdGVrL210a19kc2kuYyAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMv
+Z3B1L2RybS9tZWRpYXRlay9tdGtfaGRtaS5jICAgICAgICAgICAgICAgIHwgIDEgLQoKQWNrZWQt
+Ynk6IFBoaWxpcHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+CgpyZWdhcmRzClBoaWxp
+cHAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
