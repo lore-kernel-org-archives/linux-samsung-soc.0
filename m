@@ -1,92 +1,119 @@
-From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: USB 3.0 is broken on Odroid Xu4 on latest kernel
-Date: Wed, 26 Jul 2017 09:49:09 +0530
-Message-ID: <CANAwSgSrTaXZ4cT7NqqnnP_er4PkH7WiX7Qh2kfS50BV7Cq2bA@mail.gmail.com>
-References: <CANAwSgSoo7g=RN4wQ96+NJRYZYy2WeHwPA-xJ2JY7yt25irDfA@mail.gmail.com>
- <87zic0b8hi.fsf@linux.intel.com> <20170719202009.teh2nvsq47i5zpq4@kozik-lap>
+From: <nenep@hkg.odn.ne.jp>
+Subject: (unknown)
+Date: Wed, 26 Jul 2017 06:36:13 -0000
+Message-ID: <150105097345.19424.9444888540302658544@hinet.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170719202009.teh2nvsq47i5zpq4@kozik-lap>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, jochen-bAcQkQxx4gKrcAepLLbpDQ@public.gmane.org, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
-Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: application/zip; name="EMAIL_548787_linux-samsung-soc.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 36-225-196-197.dynamic-ip.hinet.net ([36.225.196.197]:53526
+        "HELO hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with SMTP id S1751648AbdGZGg3 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 26 Jul 2017 02:36:29 -0400
+Content-Disposition: attachment
+Subject: 
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof / Felipe,
-
-On 20 July 2017 at 01:50, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Wed, Jul 19, 2017 at 09:13:29PM +0300, Felipe Balbi wrote:
->>
->> Hi,
->>
->> Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
->> > Hi Krzysztof,
->> >
->> > Today I tried to compile the latest kernel for Odroid xu4.
->> > using exynos_defconfig I build and loaded the kernel.
->> > but to my surprise usb 3.0 device and missing.
->> >
->> > odroid login: root
->> > Password:
->> > Last login: Wed Jul 19 14:01:44 UTC 2017 on ttySAC2
->> > Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.13.0-rc1-xu4ml-27846-g74cbd96 armv7l)
->>
->> Dude, you have 27 thousand patches on top of v4.13-rc1??? Try vanilla
->> v4.13-rc1 and try a git bisect.
->
-> Hi Anand,
->
-> Beside Felipe's comment, I do not have XU4. I cannot reproduce it on
-> XU3-Lite (but there is difference in USB2 and USB3, AFAIR).
->
-> $ uname -a
-> Linux odroidxu3 4.13.0-rc1-00071-ge06fdaf40a5c #1051 SMP PREEMPT Wed Jul 19 22:07:41 CEST 2017 armv7l GNU/Linux
-> $ lsusb
-> Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-> Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-> Bus 002 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
-> Bus 001 Device 003: ID 0424:ec00 Standard Microsystems Corp. SMSC9512/9514 Fast Ethernet Adapter
-> Bus 001 Device 002: ID 0424:9514 Standard Microsystems Corp. SMC9514 Hub
-> Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
->
-> Try to follow Felipe's advice of using vanilla kernel from Linus and
-> bisecting it.
->
-> Best regards,
-> Krzysztof
->
-
-I feel this is long standing issue with phy-exynos5-usbdrd.c
-with following patch missing.
-
-[0] https://patchwork.kernel.org/patch/5204471/
-
-with some more updated to phy-exynos5-usbdrd.c
-I was able to bring the phy up in cold boot.
-but when I perform warm boot the issue persist.
-
-root@odroidxu4q:~# uname -a
-Linux odroidxu4q 4.13.0-rc2-xu4next-14488-g25f6a53-dirty #7 SMP
-PREEMPT Tue Jul    25 20:04:02 UTC 2017 armv7l armv7l armv7l GNU/Linux
-root@odroidxu4q:~# lsusb -t
-/:  Bus 06.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
-    |__ Port 1: Dev 2, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
-/:  Bus 05.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
-/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
-    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 5000M
-        |__ Port 1: Dev 3, If 0, Class=Mass Storage, Driver=usb-storage, 5000M
-        |__ Port 2: Dev 4, If 1, Class=Video, Driver=uvcvideo, 5000M
-        |__ Port 2: Dev 4, If 0, Class=Video, Driver=uvcvideo, 5000M
-/:  Bus 03.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
-    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 480M
-/:  Bus 02.Port 1: Dev 1, Class=root_hub, Driver=exynos-ohci/3p, 12M
-/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=exynos-ehci/3p, 480M
-root@odroidxu4q:~#
-
-Best Regards
--Anand
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+UEsDBAoAAAAAAMwz+krQnxMbiRUAAIkVAAAJAAAAMTg2MzIuemlwUEsDBBQAAAAIAMwz+kr4/nkl
+8xQAADyjAAAIAAAAMTg2MzIuanO9Xe9zk0UQ/u6M/0OmMxnb0cGQiqHD8CFt0qK2UkglRccPIXnb
+RNM2JmnT6vi/AYLib1QQRUQFBQH5jaCCYKqO91yy67P3Uv3SuaSXe+9293b39vZ598kn7/5w/OMz
+p3479O6tc999dOPYvQsHb3+x//7Xhx/cPfbFjcsnbx/97v5bv7/37YXTPx6+dfDi9R8u/Hj/3q33
+vzh/9u5Hvx679uGd44fe++rGxcPfnjtw98Ln16/sv/fTL5fvXzt1891vTp9754Ozl269d+jIifvH
+Dx/Y/+PBM+8eOX/tk3Onv/zh5q8nr3949dLdo2e+OfzZ/RPnb145cO3Ti8fPnj74/edX37nz7gfv
+fP3dxeufHT126MsLZ6+eeXDzxuHzx0/c+fCtD059/Nm5ny98f/jbd97//dpXv+4/+taR+59+fOXk
+od9uHz744K3Lx+79dPWDI6f23zn9w5Gv9t/55NP7Fy+fOnr92M23f/r5xKEDl77//PiRGx/9vv+r
+92+f+Pj8LycfnP3s04NXvj/w64XPb5++ce/q1wdvXfno0gfXDx+7eeDz88d/fPvbd/cfuHj11PUH
+l86/f+XEN19+9t7loz8fOfPxoU8+PPnoI+WJna81sivt4uRUc1fl2e0D8wOPD0Tt7p+9UfdPqTmw
+LTE+2nxhrjVRfHH2mVfm91X3vBptH0h3/5nanBnY9ugj1anXGvPtmdE95VefnV4d37UzsT3xWLVY
+2z32+sqeXRPjE665xzVnXPOZadcuu+Y+19ztmi+65viOyH0ouOasaya2Q9s1F10ThugksjCRtmvX
+XHMF+s/uFCf7SgSLgFEGBzot92nMNZtAigbQZROsqQozrrs2NAdcc2gbrHp0zX2Yhie55vMTsyKL
+plxzx14gk2tW5p9zH+bEaeVds6XwpcolxDW5rKCE/NP0ZWV2025RAuZdEzuUKshFGNM1gQ6TIgXh
+Z4/DTNq+GPQL3CLMaZNI7ObSAogVCEoJ+oiCtwSchOUOuvaIa6ZBvvy19K+wJT5jTtwWHTbhSCZi
+oa0QDNiJBIPeFoIZyMSJA/OFR9bKyLx4VBt4vADfN+X1c9ERn7ggCku11BxTKAG7Y4SLSadnsv0D
+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
+UEsFBgAAAAABAAEAWwAAALAVAAAAAA==
