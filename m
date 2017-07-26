@@ -1,76 +1,92 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RESEND PATCH v2 2/2] drm/exynos/decon: Add include guard to the Exynos7 header
-Date: Tue, 25 Jul 2017 19:38:52 +0200
-Message-ID: <1501004332-8093-2-git-send-email-krzk@kernel.org>
-References: <1501004332-8093-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751086AbdGYRjH (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Jul 2017 13:39:07 -0400
-In-Reply-To: <1501004332-8093-1-git-send-email-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: USB 3.0 is broken on Odroid Xu4 on latest kernel
+Date: Wed, 26 Jul 2017 09:49:09 +0530
+Message-ID: <CANAwSgSrTaXZ4cT7NqqnnP_er4PkH7WiX7Qh2kfS50BV7Cq2bA@mail.gmail.com>
+References: <CANAwSgSoo7g=RN4wQ96+NJRYZYy2WeHwPA-xJ2JY7yt25irDfA@mail.gmail.com>
+ <87zic0b8hi.fsf@linux.intel.com> <20170719202009.teh2nvsq47i5zpq4@kozik-lap>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170719202009.teh2nvsq47i5zpq4@kozik-lap>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, jochen-bAcQkQxx4gKrcAepLLbpDQ@public.gmane.org, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
+Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Although header is included only once but still having an include guard
-is a good practice.  To avoid confusion, add SoC prefix to existing
-Exynos5433 header include guard.
+Hi Krzysztof / Felipe,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On 20 July 2017 at 01:50, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Wed, Jul 19, 2017 at 09:13:29PM +0300, Felipe Balbi wrote:
+>>
+>> Hi,
+>>
+>> Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
+>> > Hi Krzysztof,
+>> >
+>> > Today I tried to compile the latest kernel for Odroid xu4.
+>> > using exynos_defconfig I build and loaded the kernel.
+>> > but to my surprise usb 3.0 device and missing.
+>> >
+>> > odroid login: root
+>> > Password:
+>> > Last login: Wed Jul 19 14:01:44 UTC 2017 on ttySAC2
+>> > Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.13.0-rc1-xu4ml-27846-g74cbd96 armv7l)
+>>
+>> Dude, you have 27 thousand patches on top of v4.13-rc1??? Try vanilla
+>> v4.13-rc1 and try a git bisect.
+>
+> Hi Anand,
+>
+> Beside Felipe's comment, I do not have XU4. I cannot reproduce it on
+> XU3-Lite (but there is difference in USB2 and USB3, AFAIR).
+>
+> $ uname -a
+> Linux odroidxu3 4.13.0-rc1-00071-ge06fdaf40a5c #1051 SMP PREEMPT Wed Jul 19 22:07:41 CEST 2017 armv7l GNU/Linux
+> $ lsusb
+> Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+> Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+> Bus 002 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+> Bus 001 Device 003: ID 0424:ec00 Standard Microsystems Corp. SMSC9512/9514 Fast Ethernet Adapter
+> Bus 001 Device 002: ID 0424:9514 Standard Microsystems Corp. SMC9514 Hub
+> Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+>
+> Try to follow Felipe's advice of using vanilla kernel from Linus and
+> bisecting it.
+>
+> Best regards,
+> Krzysztof
+>
 
----
+I feel this is long standing issue with phy-exynos5-usbdrd.c
+with following patch missing.
 
-Changes since v1:
-1. Just re-order patches in patchset and slightly adjust include guard
-   name.
----
- drivers/gpu/drm/exynos/regs-decon5433.h | 6 +++---
- drivers/gpu/drm/exynos/regs-decon7.h    | 5 +++++
- 2 files changed, 8 insertions(+), 3 deletions(-)
+[0] https://patchwork.kernel.org/patch/5204471/
 
-diff --git a/drivers/gpu/drm/exynos/regs-decon5433.h b/drivers/gpu/drm/exynos/regs-decon5433.h
-index 78957c9626f5..19ad9e47945e 100644
---- a/drivers/gpu/drm/exynos/regs-decon5433.h
-+++ b/drivers/gpu/drm/exynos/regs-decon5433.h
-@@ -6,8 +6,8 @@
-  * published by the Free Software Foundationr
-  */
- 
--#ifndef EXYNOS_REGS_DECON_H
--#define EXYNOS_REGS_DECON_H
-+#ifndef EXYNOS_REGS_DECON5433_H
-+#define EXYNOS_REGS_DECON5433_H
- 
- /* Exynos543X DECON */
- #define DECON_VIDCON0			0x0000
-@@ -206,4 +206,4 @@
- #define CRCCTRL_CRCEN			(0x1 << 0)
- #define CRCCTRL_MASK			(0x7)
- 
--#endif /* EXYNOS_REGS_DECON_H */
-+#endif /* EXYNOS_REGS_DECON5433_H */
-diff --git a/drivers/gpu/drm/exynos/regs-decon7.h b/drivers/gpu/drm/exynos/regs-decon7.h
-index 339ea1007ff5..5df7765d2397 100644
---- a/drivers/gpu/drm/exynos/regs-decon7.h
-+++ b/drivers/gpu/drm/exynos/regs-decon7.h
-@@ -8,6 +8,9 @@
-  * option) any later version.
-  */
- 
-+#ifndef EXYNOS_REGS_DECON7_H
-+#define EXYNOS_REGS_DECON7_H
-+
- /* VIDCON0 */
- #define VIDCON0					0x00
- 
-@@ -346,3 +349,5 @@
- 
- #define DECON_UPDATE_SLAVE_SYNC			(1 << 4)
- #define DECON_UPDATE_STANDALONE_F		(1 << 0)
-+
-+#endif /* EXYNOS_REGS_DECON7_H */
--- 
-2.7.4
+with some more updated to phy-exynos5-usbdrd.c
+I was able to bring the phy up in cold boot.
+but when I perform warm boot the issue persist.
+
+root@odroidxu4q:~# uname -a
+Linux odroidxu4q 4.13.0-rc2-xu4next-14488-g25f6a53-dirty #7 SMP
+PREEMPT Tue Jul    25 20:04:02 UTC 2017 armv7l armv7l armv7l GNU/Linux
+root@odroidxu4q:~# lsusb -t
+/:  Bus 06.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
+    |__ Port 1: Dev 2, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
+/:  Bus 05.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
+/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 5000M
+        |__ Port 1: Dev 3, If 0, Class=Mass Storage, Driver=usb-storage, 5000M
+        |__ Port 2: Dev 4, If 1, Class=Video, Driver=uvcvideo, 5000M
+        |__ Port 2: Dev 4, If 0, Class=Video, Driver=uvcvideo, 5000M
+/:  Bus 03.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 480M
+/:  Bus 02.Port 1: Dev 1, Class=root_hub, Driver=exynos-ohci/3p, 12M
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=exynos-ehci/3p, 480M
+root@odroidxu4q:~#
+
+Best Regards
+-Anand
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
