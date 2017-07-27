@@ -1,59 +1,45 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Thu, 27 Jul 2017 12:05:53 +0900
-Message-ID: <1501124753-2583-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20170727030554epcas1p2a6a263885bfc1f82dfcdb194f6a7037f@epcas1p2.samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [v4.13-rc1 fixes] ARM: dts: exynos: Add clocks to audss block to
+ fix silent hang on Exynos4412
+Date: Thu, 27 Jul 2017 12:54:00 +0200
+Message-ID: <CAK8P3a35EbCtHbe_fnFxs2206jbDewyL_Awzm1fgZHz9qFTNGg@mail.gmail.com>
+References: <20170717194527.16559-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:38679 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750997AbdG0KyB (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 27 Jul 2017 06:54:01 -0400
+In-Reply-To: <20170717194527.16559-1-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-SGkgRGF2ZSwKCiAgIEp1c3Qgc2V2ZXJhbCByZWdyZXNzaW9uIGZpeHVwcyBhbmQgdHJpdmlhbCBj
-bGVhbnVwcy4KCiAgIFBsZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IHBy
-b2JsZW0uCgpUaGFua3MsCklua2kgRGFlCgpUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29t
-bWl0IDUxNzA2OWZmNmVjMDk3MWUwNzk0YWI5N2Q0ZmNmYThiMTQzNzQ2ZTQ6CgogIE1lcmdlIGJy
-YW5jaCAnZHJtLWZpeGVzLTQuMTMnIG9mIGdpdDovL3Blb3BsZS5mcmVlZGVza3RvcC5vcmcvfmFn
-ZDVmL2xpbnV4IGludG8gZHJtLWZpeGVzICgyMDE3LTA3LTI3IDA4OjQ5OjQ4ICsxMDAwKQoKYXJl
-IGF2YWlsYWJsZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgoKICBnaXQ6Ly9naXQua2VybmVs
-Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9zIHRhZ3MvZXh5
-bm9zLWRybS1maXhlcy1mb3ItdjQuMTMtcmMzCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAg
-dG8gN2UxNzUxMDAxODE4MjA5YjIxNGI4YzNkZjBiM2M5MWZhZTI1MGVhMjoKCiAgZHJtOiBleHlu
-b3M6IG1hcmsgcG0gZnVuY3Rpb25zIGFzIF9fbWF5YmVfdW51c2VkICgyMDE3LTA3LTI3IDA5OjI0
-OjAzICswOTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQpTdW1tYXJ5OgotIGZpeCBwcm9iaW5nIGZhaWwgaXNzdWUgb2Yg
-ZHNpIGRyaXZlciB3aXRob3V0IGJyaWRnZSBkZXZpY2UuCi0gZml4IGRpc2FibGUgc2VxdWVuY2Ug
-b2YgaGRtaSBkcml2ZXIuCi0gdHJpdmlhbCBjbGVhbnVwcy4KCi0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQW5kcnplaiBIYWpk
-YSAoMSk6CiAgICAgIGRybS9leHlub3MvaGRtaTogZml4IGRpc2FibGUgc2VxdWVuY2UKCkFybmQg
-QmVyZ21hbm4gKDEpOgogICAgICBkcm06IGV4eW5vczogbWFyayBwbSBmdW5jdGlvbnMgYXMgX19t
-YXliZV91bnVzZWQKCkFydmluZCBZYWRhdiAoMik6CiAgICAgIGRybTogZXh5bm9zOiBjb25zdGlm
-eSBtaXhlcl9tYXRjaF90eXBlcyBhbmQgKl9teHJfZHJ2X2RhdGEuCiAgICAgIGRybTogZXh5bm9z
-OiBoZG1pOiBtYWtlIG9mX2RldmljZV9pZHMgY29uc3QuCgpHYWJyaWVsIEtyaXNtYW4gQmVydGF6
-aSAoMSk6CiAgICAgIGV4eW5vc19kcm06IENsZWFuIHVwIGR1cGxpY2F0ZWQgYXNzaWdubWVudCBp
-biBleHlub3NfZHJtX2RyaXZlcgoKSGFucyBWZXJrdWlsICgxKToKICAgICAgZHJtL2V4eW5vczog
-c2VsZWN0IENFQ19DT1JFIGlmIENFQ19OT1RJRklFUgoKSG9lZ2V1biBLd29uICgxKToKICAgICAg
-ZHJtL2V4eW5vcy9kc2k6IFJlbW92ZSBlcnJvciBoYW5kbGluZyBmb3IgYnJpZGdlX25vZGUgRFQg
-cGFyc2luZwoKSW5raSBEYWUgKDIpOgogICAgICBkcm0vZXh5bm9zOiBkc2k6IGRvIG5vdCB0cnkg
-dG8gZmluZCBicmlkZ2UKICAgICAgZHJtL2V4eW5vczogbWljOiBhZGQgYSBicmlkZ2UgYXQgcHJv
-YmUKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgfCAgMSArCiBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgMSAtCiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgfCAxMCArKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMgfCAyNCArKysrKysrKysrKysrKystLS0tLS0tLS0K
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICB8IDEwICsrKy0tLS0tLS0K
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgICB8IDEwICsrKysrLS0tLS0K
-IDYgZmlsZXMgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKSwgMjcgZGVsZXRpb25zKC0pCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Mon, Jul 17, 2017 at 9:45 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Add necessary parent clocks for audss (Audio SubSystem, MAUDIO) clock
+> controller block.
+>
+> This allows driver to keep EPLL enabled before accessing any MAUDIO
+> registers thus fixing silent hang.  This silent hang appeared with
+> commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
+> PLL36XX clocks"), e.g. on Odroid U3 usually with last (but unrelated)
+> messages:
+>
+>         [    2.382741] input: gpio_keys as /devices/platform/gpio_keys/input/input0
+>         [    2.405686] usb 1-3: new high-speed USB device number 3 using exynos-ehci
+>         [    2.419843] max77686-rtc max77686-rtc: setting system clock to 2017-06-21 17:04:13 UTC (1498064653)
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>
+> Hi Arnd, Olof,
+>
+> I have only one patch in fixes queue for v4.13, so how about applying this
+> directly without a pull request?
+
+No problem, I was just a little slow here. Applied to fixes now, thanks.
+
+      Arnd
