@@ -1,53 +1,59 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v2] ARM: dts: exynos: fix PCI bus dtc warnings
-Date: Wed, 26 Jul 2017 16:09:38 -0500
-Message-ID: <20170726210943.6875-2-robh@kernel.org>
-References: <20170726210943.6875-1-robh@kernel.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170726210943.6875-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-fixes
+Date: Thu, 27 Jul 2017 12:05:53 +0900
+Message-ID: <1501124753-2583-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20170727030554epcas1p2a6a263885bfc1f82dfcdb194f6a7037f@epcas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-dtc recently added PCI bus checks. Fix these warnings.
-
-Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
----
-v2:
-- rebase on v4.13-rc2
-
- arch/arm/boot/dts/exynos5440.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index bc4954e69f7b..7a00be7ea6d7 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -317,6 +317,7 @@
- 		phys = <&pcie_phy0>;
- 		ranges = <0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
- 			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
-+		bus-range = <0x00 0xff>;
- 		#interrupt-cells = <1>;
- 		interrupt-map-mask = <0 0 0 0>;
- 		interrupt-map = <0x0 0 &gic 53>;
-@@ -339,6 +340,7 @@
- 		phys = <&pcie_phy1>;
- 		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
- 			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
-+		bus-range = <0x00 0xff>;
- 		#interrupt-cells = <1>;
- 		interrupt-map-mask = <0 0 0 0>;
- 		interrupt-map = <0x0 0 &gic 56>;
--- 
-2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgRGF2ZSwKCiAgIEp1c3Qgc2V2ZXJhbCByZWdyZXNzaW9uIGZpeHVwcyBhbmQgdHJpdmlhbCBj
+bGVhbnVwcy4KCiAgIFBsZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IHBy
+b2JsZW0uCgpUaGFua3MsCklua2kgRGFlCgpUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29t
+bWl0IDUxNzA2OWZmNmVjMDk3MWUwNzk0YWI5N2Q0ZmNmYThiMTQzNzQ2ZTQ6CgogIE1lcmdlIGJy
+YW5jaCAnZHJtLWZpeGVzLTQuMTMnIG9mIGdpdDovL3Blb3BsZS5mcmVlZGVza3RvcC5vcmcvfmFn
+ZDVmL2xpbnV4IGludG8gZHJtLWZpeGVzICgyMDE3LTA3LTI3IDA4OjQ5OjQ4ICsxMDAwKQoKYXJl
+IGF2YWlsYWJsZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgoKICBnaXQ6Ly9naXQua2VybmVs
+Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9zIHRhZ3MvZXh5
+bm9zLWRybS1maXhlcy1mb3ItdjQuMTMtcmMzCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAg
+dG8gN2UxNzUxMDAxODE4MjA5YjIxNGI4YzNkZjBiM2M5MWZhZTI1MGVhMjoKCiAgZHJtOiBleHlu
+b3M6IG1hcmsgcG0gZnVuY3Rpb25zIGFzIF9fbWF5YmVfdW51c2VkICgyMDE3LTA3LTI3IDA5OjI0
+OjAzICswOTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLQpTdW1tYXJ5OgotIGZpeCBwcm9iaW5nIGZhaWwgaXNzdWUgb2Yg
+ZHNpIGRyaXZlciB3aXRob3V0IGJyaWRnZSBkZXZpY2UuCi0gZml4IGRpc2FibGUgc2VxdWVuY2Ug
+b2YgaGRtaSBkcml2ZXIuCi0gdHJpdmlhbCBjbGVhbnVwcy4KCi0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQW5kcnplaiBIYWpk
+YSAoMSk6CiAgICAgIGRybS9leHlub3MvaGRtaTogZml4IGRpc2FibGUgc2VxdWVuY2UKCkFybmQg
+QmVyZ21hbm4gKDEpOgogICAgICBkcm06IGV4eW5vczogbWFyayBwbSBmdW5jdGlvbnMgYXMgX19t
+YXliZV91bnVzZWQKCkFydmluZCBZYWRhdiAoMik6CiAgICAgIGRybTogZXh5bm9zOiBjb25zdGlm
+eSBtaXhlcl9tYXRjaF90eXBlcyBhbmQgKl9teHJfZHJ2X2RhdGEuCiAgICAgIGRybTogZXh5bm9z
+OiBoZG1pOiBtYWtlIG9mX2RldmljZV9pZHMgY29uc3QuCgpHYWJyaWVsIEtyaXNtYW4gQmVydGF6
+aSAoMSk6CiAgICAgIGV4eW5vc19kcm06IENsZWFuIHVwIGR1cGxpY2F0ZWQgYXNzaWdubWVudCBp
+biBleHlub3NfZHJtX2RyaXZlcgoKSGFucyBWZXJrdWlsICgxKToKICAgICAgZHJtL2V4eW5vczog
+c2VsZWN0IENFQ19DT1JFIGlmIENFQ19OT1RJRklFUgoKSG9lZ2V1biBLd29uICgxKToKICAgICAg
+ZHJtL2V4eW5vcy9kc2k6IFJlbW92ZSBlcnJvciBoYW5kbGluZyBmb3IgYnJpZGdlX25vZGUgRFQg
+cGFyc2luZwoKSW5raSBEYWUgKDIpOgogICAgICBkcm0vZXh5bm9zOiBkc2k6IGRvIG5vdCB0cnkg
+dG8gZmluZCBicmlkZ2UKICAgICAgZHJtL2V4eW5vczogbWljOiBhZGQgYSBicmlkZ2UgYXQgcHJv
+YmUKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgfCAgMSArCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgMSAtCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgfCAxMCArKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMgfCAyNCArKysrKysrKysrKysrKystLS0tLS0tLS0K
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICB8IDEwICsrKy0tLS0tLS0K
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgICB8IDEwICsrKysrLS0tLS0K
+IDYgZmlsZXMgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKSwgMjcgZGVsZXRpb25zKC0pCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
