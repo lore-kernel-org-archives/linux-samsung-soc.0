@@ -1,97 +1,41 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2] cpufreq: s5pv210: add missing of_node_put
-Date: Fri, 28 Jul 2017 01:54:06 +0200
-Message-ID: <3083277.s4JKRQruaM@aspire.rjw.lan>
-References: <1500666810-21841-1-git-send-email-Julia.Lawall@lip6.fr> <20170724085216.GS352@vireshk-i7>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: exynos: fix PCI bus dtc warnings
+Date: Fri, 28 Jul 2017 07:53:37 +0200
+Message-ID: <20170728055337.GA2805@kozik-book>
+References: <20170726210943.6875-1-robh@kernel.org>
+ <20170726210943.6875-2-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170724085216.GS352@vireshk-i7>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Kukjin Kim <kgene@kernel.org>, kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:38080 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbdG1Fxu (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 28 Jul 2017 01:53:50 -0400
+Content-Disposition: inline
+In-Reply-To: <20170726210943.6875-2-robh@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Monday, July 24, 2017 02:22:16 PM Viresh Kumar wrote:
-> On 21-07-17, 21:53, Julia Lawall wrote:
-> > for_each_compatible_node performs an of_node_get on each iteration, so a
-> > return from the loop requires an of_node_put.
-> > 
-> > The semantic patch that fixes this problem is as follows
-> > (http://coccinelle.lip6.fr):
-> > 
-> > // <smpl>
-> > @@
-> > local idexpression n;
-> > expression e,e1,e2;
-> > statement S;
-> > iterator i1;
-> > iterator name for_each_compatible_node;
-> > @@
-> > 
-> >  for_each_compatible_node(n,e1,e2) {
-> >    ...
-> > (
-> >    of_node_put(n);
-> > |
-> >    e = n
-> > |
-> >    return n;
-> > |
-> >    i1(...,n,...) S
-> > |
-> > +  of_node_put(n);
-> > ?  return ...;
-> > )
-> >    ...
-> >  }
-> > // </smpl>
-> > 
-> > Additionally, call of_node_put on the previous value of np, obtained from
-> > of_find_compatible_node, that is no longer accessible at the point of the
-> > for_each_compatible_node.
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > ---
-> > 
-> > v2: add the of_node_put for the call to of_find_compatible_node as well.
-> > 
-> >  drivers/cpufreq/s5pv210-cpufreq.c |    3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-> > index f82074e..5d31c2d 100644
-> > --- a/drivers/cpufreq/s5pv210-cpufreq.c
-> > +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-> > @@ -602,6 +602,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
-> >  	}
-> >  
-> >  	clk_base = of_iomap(np, 0);
-> > +	of_node_put(np);
-> >  	if (!clk_base) {
-> >  		pr_err("%s: failed to map clock registers\n", __func__);
-> >  		return -EFAULT;
-> > @@ -612,6 +613,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
-> >  		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
-> >  			pr_err("%s: failed to get alias of dmc node '%s'\n",
-> >  				__func__, np->name);
-> > +			of_node_put(np);
-> >  			return id;
-> >  		}
-> >  
-> > @@ -619,6 +621,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
-> >  		if (!dmc_base[id]) {
-> >  			pr_err("%s: failed to map dmc%d registers\n",
-> >  				__func__, id);
-> > +			of_node_put(np);
-> >  			return -EFAULT;
-> >  		}
-> >  	}
+On Wed, Jul 26, 2017 at 04:09:38PM -0500, Rob Herring wrote:
+> dtc recently added PCI bus checks. Fix these warnings.
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> ---
+> v2:
+> - rebase on v4.13-rc2
 > 
+>  arch/arm/boot/dts/exynos5440.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
-Applied, thanks!
+Thanks, applied.
+
+Best regards,
+Krzysztof
