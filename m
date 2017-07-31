@@ -1,42 +1,46 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCH for v4.13] ARM: dts: exynos: add needs-hpd for Odroid-XU3/4
-Date: Mon, 31 Jul 2017 13:56:42 +0200
-Message-ID: <89e9a925-66a9-8c26-559c-1b1f0e8070e3@xs4all.nl>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5420: The EPLL rate table
+ corrections
+Date: Mon, 31 Jul 2017 14:26:24 +0200
+Message-ID: <33f53903-9043-29c0-2cb8-e5d6950cc92f@samsung.com>
+References: <CGME20170721112008epcas5p1eb75e4eb00d1dbad130460d2cbc0ce0c@epcas5p1.samsung.com>
+        <1500635990-19474-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:55935 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751054AbdGaL4s (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 07:56:48 -0400
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1500635990-19474-1-git-send-email-s.nawrocki@samsung.com>
+Content-language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: cw00.choi@samsung.com, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-CEC support was added for Exynos5 in 4.13, but for the Odroids we need to set
-'needs-hpd' as well since CEC is disabled when there is no HDMI hotplug signal,
-just as for the exynos4 Odroid-U3.
+On 07/21/2017 01:19 PM, Sylwester Nawrocki wrote:
+> This patch fixes values of the EPLL K coefficient and changes
+> the EPLL output frequency values to match exactly what is
+> possible to achieve with given M, P, S, K coefficients.
+> This allows to avoid rounding errors and unexpected frequency
+> being set with clk_set_rate(), due to recalc_rate returning
+> different values than the PLL rate specified in the
+> exynos5420_epll_24mhz_tbl table. E.g. this prevents a case
+> where two consecutive clk_set_rate() calls with same argument
+> result in different PLL output frequency.
+> 
+> The PLL output frequencies have been calculated with formula:
+> 
+> f = fxtal * (M * 2^16  + K) / (P * 2^S) / 2^16
+> 
+> where fxtal = 24000000.
+> 
+> Fixes: 9842452acd ("clk: samsung: exynos542x: Add EPLL rate table")
+> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
 
-This is due to the level-shifter that is disabled when there is no HPD, thus
-blocking the CEC signal as well. Same close-but-no-cigar board design as the
-Odroid-U3.
+Stephen, Mike,
 
-Tested with my Odroid XU4.
+Could you apply this patch directly for v4.12-rcX?
+It fixes code added in v4.12.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
----
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index f92f95741207..a183b56283f8 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -266,6 +266,7 @@
-
- &hdmicec {
- 	status = "okay";
-+	needs-hpd;
- };
-
- &hsi2c_4 {
+-- 
+Thanks,
+Sylwester
