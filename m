@@ -1,46 +1,42 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] iommu/exynos: prevent building on big-endian kernels
-Date: Fri, 28 Jul 2017 21:17:26 +0200
-Message-ID: <20170728191726.rjx5pczkfwe6q2eo@kozik-lap>
-References: <20170728131954.213595-1-arnd@arndb.de>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH for v4.13] ARM: dts: exynos: add needs-hpd for Odroid-XU3/4
+Date: Mon, 31 Jul 2017 13:56:42 +0200
+Message-ID: <89e9a925-66a9-8c26-559c-1b1f0e8070e3@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35548 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752385AbdG1TRa (ORCPT
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:55935 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751054AbdGaL4s (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Jul 2017 15:17:30 -0400
-Content-Disposition: inline
-In-Reply-To: <20170728131954.213595-1-arnd@arndb.de>
+        Mon, 31 Jul 2017 07:56:48 -0400
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Joerg Roedel <joro@8bytes.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Fri, Jul 28, 2017 at 03:19:19PM +0200, Arnd Bergmann wrote:
-> Since we print the correct warning, an allmodconfig build is no longer
-> clean but always prints it, which defeats compile-testing:
-> 
-> drivers/iommu/exynos-iommu.c:58:2: error: #warning "revisit driver if we can enable big-endian ptes" [-Werror=cpp]
-> 
-> This replaces the #warning with a dependency, moving warning text into
-> a comment.
-> 
-> Fixes: 1f59adb1766d ("iommu/exynos: Replace non-existing big-endian Kconfig option")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/iommu/Kconfig        | 1 +
->  drivers/iommu/exynos-iommu.c | 4 ----
->  2 files changed, 1 insertion(+), 4 deletions(-)
->
+CEC support was added for Exynos5 in 4.13, but for the Odroids we need to set
+'needs-hpd' as well since CEC is disabled when there is no HDMI hotplug signal,
+just as for the exynos4 Odroid-U3.
 
-Makes sense, although there is no error to fix (for fixes tag). If there
-was an error, then probably the one bringing warning and wrong kconfig
-option (6ae5343c26f9cba5e9ef8 "iommu/exynos: update to use iommu
-big-endian")?
+This is due to the level-shifter that is disabled when there is no HPD, thus
+blocking the CEC signal as well. Same close-but-no-cigar board design as the
+Odroid-U3.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested with my Odroid XU4.
 
-Best regards,
-Krzysztof
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index f92f95741207..a183b56283f8 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -266,6 +266,7 @@
+
+ &hdmicec {
+ 	status = "okay";
++	needs-hpd;
+ };
+
+ &hsi2c_4 {
