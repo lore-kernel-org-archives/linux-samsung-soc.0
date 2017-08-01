@@ -1,74 +1,62 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 0/7] drm/exynos: panel mode info propagation
-Date: Tue, 01 Aug 2017 09:01:46 +0900
-Message-ID: <597FC4EA.5080401@samsung.com>
-References: <CGME20170418124012eucas1p268347111adc9cf1550f7bf228aaeddbf@eucas1p2.samsung.com>
-        <1492519203-23537-1-git-send-email-a.hajda@samsung.com>
-        <fc043fca-564c-64dc-0c6f-c3e1d89882b5@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH v4 0/3] Add support for the s6e63j0x03 panel on Rinato
+ board
+Date: Tue, 01 Aug 2017 09:26:05 +0900
+Message-ID: <90041545-2bce-52cc-d926-606f76d81f0f@samsung.com>
+References: <CGME20170713022056epcas5p21ece2860cb2cce0b4381cf98988496f9@epcas5p2.samsung.com>
+ <1499912443-3671-1-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14440 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751114AbdHAABt (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 20:01:49 -0400
-In-reply-to: <fc043fca-564c-64dc-0c6f-c3e1d89882b5@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1499912443-3671-1-git-send-email-hoegeun.kwon@samsung.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-
-
-2017년 07월 26일 16:09에 Andrzej Hajda 이(가) 쓴 글:
-> On 18.04.2017 14:39, Andrzej Hajda wrote:
->> Hi Inki,
->>
->> This patchset beside cleanup/refactoring patches (01-03) adds code to propagate
->> info provided by MIPI-DSI panels about its mode of work (video/command mode).
->> The propagation is performed for whole pipeline as every its elements uses it.
-> 
-> Gently ping.
-
-Sorry for late. Will review them soon.
-
-Thanks,
-Inki Dae
-
-> 
-> Regards
-> Andrzej
-> 
->>
->> Regards
->> Andrzej
->>
->>
->> Andrzej Hajda (7):
->>   drm/exynos/decon5433: use readl_poll_timeout helpers
->>   drm/exynos: use helper to set possible crtcs
->>   drm/exynos/dsi: refactor panel detection logic
->>   drm/exynos: propagate info about command mode from panel
->>   drm/exynos/mic: use mode info stored in CRTC to detect i80 mode
->>   drm/exynos/decon5433: use mode info stored in CRTC to detect i80 mode
->>   dt-bindings: exynos5433-decon: remove i80-if-timings property
->>
->>  .../bindings/display/exynos/exynos5433-decon.txt   |   6 -
->>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c      | 118 ++++++-----
->>  drivers/gpu/drm/exynos/exynos_dp.c                 |  15 +-
->>  drivers/gpu/drm/exynos/exynos_drm_core.c           |   1 +
->>  drivers/gpu/drm/exynos/exynos_drm_crtc.c           |  21 +-
->>  drivers/gpu/drm/exynos/exynos_drm_crtc.h           |  10 +-
->>  drivers/gpu/drm/exynos/exynos_drm_dpi.c            |  12 +-
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h            |   1 +
->>  drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 219 ++++++++++-----------
->>  drivers/gpu/drm/exynos/exynos_drm_mic.c            |  44 +----
->>  drivers/gpu/drm/exynos/exynos_drm_vidi.c           |  15 +-
->>  drivers/gpu/drm/exynos/exynos_hdmi.c               |  25 +--
->>  12 files changed, 228 insertions(+), 259 deletions(-)
->>
-> 
-> 
-> 
+RGVhciBUaGllcnJ5LAoKQ291bGQgeW91IHBsZWFzZSBjaGVjayB0aGVzZSBwYXRjaGVzLgoKQmVz
+dCByZWdhcmRzLApIb2VnZXVuCgoKT24gMDcvMTMvMjAxNyAxMToyMCBBTSwgSG9lZ2V1biBLd29u
+IHdyb3RlOgo+IEhpIEFuZHJ6ZWosCj4KPiBUaGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3Lgo+Cj4g
+VGhlIHB1cnBvc2Ugb2YgdGhpcyBwYXRjaCBpcyBhZGQgc3VwcG9ydCBmb3IgczZlNjNqMHgwMyBB
+TU9MRUQgcGFuZWwKPiBvbiB0aGUgcmluYXRvIGJvYXJkKFNhbXN1bmcgR2FsYXh5IEdlYXIgMiku
+Cj4KPiBDaGFuZ2VzIGZvciBWNDoKPiAtIEFkZGVkIFJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRh
+IDxhLmhhamRhQHNhbXN1bmcuY29tPiAoMi8zIHBhdGNoKS4KPiAtIEZpeGVkIHRoZSBzdHlsZSBv
+ZiBtYWNybyBmdW5jdGlvbi4KPgo+IENoYW5nZXMgZm9yIFYzOgo+IC0gQXBwbGllZCBwYXRjaCAn
+QVJNOiBkdHM6IGV4eW5vczogRml4IHRoZSBhY3RpdmUgb2YgcmVzZXQgZ3Bpb3MgZnJvbSByaW5h
+dG8gZHRzJyAodjIgMy80KQo+IC0gUmVtb3ZlIHRoZSB1bm5lY2Vzc2FyeSBkZWZpbmUgKCdNSU5f
+QlJJR0hUTkVTUycpCj4gLSBSZW1vdmVkIGV4cGxpY2l0IGNhc3RpbmcuCj4gLSBSZW1vdmVkIHZp
+b2xhdGlvbiBvZiBrZXJuZWwgY29kaW5nIHN0eWxlLgo+Cj4gQ2hhbmdlcyBmb3IgVjI6Cj4gLSBB
+ZGRlZCB0aGUgaW50ZXJmYWNlIGluZm8gaW4gYmluZGluZyBkb2N1bWVudC4KPiAtIEFkZGVkIFJl
+dmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPiAoMS8zIHBhdGNo
+KS4KPiAtIEFkZGVkIEFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPiAoMS8z
+IHBhdGNoKS4KPiAtIEZpeGVkIHRoZSB0cmlzdGF0ZSBvZiBjb25maWcgZnJvbSB2aWRlbyBtb2Rl
+IHRvIGNvbW1hbmQgbW9kZS4KPiAtIEZpeGVkIHRoZSByZXNldCBncGlvcyBmcm9tIGFjdGl2ZSBo
+aWdoIHRvIGxvdyBmcm9tIHJpbmF0byBkdHMuCj4gLSBGaXhlZCBhIGxvdCBvZiB0aGluZ3MgaW4g
+cGFuZWwgZHJpdmVyLCByZWZsZWN0IEFuZHJ6ZWoncyByZXZpZXcuCj4KPiBCZXN0IHJlZ2FyZHMs
+Cj4gSG9lZ2V1bgo+Cj4gSG9lZ2V1biBLd29uICgzKToKPiAgICBkdC1iaW5kaW5nczogQWRkIHN1
+cHBvcnQgZm9yIHNhbXN1bmcgczZlNjNqMHgwMyBwYW5lbCBiaW5kaW5nCj4gICAgZHJtL3BhbmVs
+OiBBZGQgc3VwcG9ydCBmb3IgczZlNjNqMHgwMyBwYW5lbCBkcml2ZXIKPiAgICBBUk06IGR0czog
+ZXh5bm9zOiBSZW1vdmUgdGhlIGRpc3BsYXktdGltaW5nIGFuZCBkZWxheSBmcm9tIHJpbmF0byBk
+dHMKPgo+ICAgLi4uL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmU2M2oweDAzLnR4
+dCAgfCAgMjQgKwo+ICAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzICAg
+ICAgICAgICAgfCAgMjIgLQo+ICAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL0tjb25maWcgICAgICAg
+ICAgICAgICAgICAgICAgfCAgIDcgKwo+ICAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL01ha2VmaWxl
+ICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwo+ICAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3Bh
+bmVsLXNhbXN1bmctczZlNjNqMHgwMy5jICAgfCA1MzIgKysrKysrKysrKysrKysrKysrKysrCj4g
+ICA1IGZpbGVzIGNoYW5nZWQsIDU2NCBpbnNlcnRpb25zKCspLCAyMiBkZWxldGlvbnMoLSkKPiAg
+IGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
+cGxheS9wYW5lbC9zYW1zdW5nLHM2ZTYzajB4MDMudHh0Cj4gICBjcmVhdGUgbW9kZSAxMDA2NDQg
+ZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlNjNqMHgwMy5jCj4KCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
