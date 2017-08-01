@@ -1,15 +1,14 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Joe Kniss <djmk@google.com>
 Subject: Re: [PATCH] Add drm ioctl DRM_IOCTL_MODE_GETFB2 &
 	associated helpers.
-Date: Tue, 01 Aug 2017 15:09:20 +0300
-Message-ID: <1585370.MpXFX8O0mo@avalon>
+Date: Tue, 1 Aug 2017 10:24:25 -0700
+Message-ID: <CAOvnNvZoHv8prg2R57cgGx5w7h69=X3hQGrpP5iXaLujhOfzYA@mail.gmail.com>
 References: <CAOvnNvYKXsy9dvOB0ge1WxQbwubPpzKofd=OGagKyft-yQJ1xw@mail.gmail.com>
- <20170731182913.136758-1-djmk@google.com>
+ <20170731182913.136758-1-djmk@google.com> <1585370.MpXFX8O0mo@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1887489858=="
 Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20170731182913.136758-1-djmk@google.com>
+In-Reply-To: <1585370.MpXFX8O0mo@avalon>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
  <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
@@ -19,121 +18,671 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
  <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: intel-gfx-bounces@lists.freedesktop.org
 Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Joe Kniss <djmk@chromium.org>
-Cc: amd-gfx@lists.freedesktop.org, heiko@sntech.de, seanpaul@google.com, michel.daenzer@amd.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, krzk@kernel.org, djmk@google.com, gnurou@gmail.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, linux-rockchip@lists.infradead.org, kyungmin.park@samsung.com, javier@osg.samsung.com, tomi.valkeinen@ti.com, bskeggs@redhat.com, nouveau@lists.freedesktop.org, ck.hu@mediatek.com, Andrey.Grodzovsky@amd.com, swarren@wwwdotorg.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, marcheu@google.com, nils.wallmenius@gmail.com, freedreno@lists.freedesktop.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kgene@kernel.org, p.zabel@pengutronix.
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: amd-gfx@lists.freedesktop.org, heiko@sntech.de, Sean Paul <seanpaul@google.com>, michel.daenzer@amd.com, dri-devel@lists.freedesktop.org, thierry.reding@gmail.com, krzk@kernel.org, gnurou@gmail.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, linux-rockchip@lists.infradead.org, kyungmin.park@samsung.com, javier@osg.samsung.com, tomi.valkeinen@ti.com, bskeggs@redhat.com, nouveau@lists.freedesktop.org, ck.hu@mediatek.com, Andrey.Grodzovsky@amd.com, Joe Kniss <djmk@chromium.org>, swarren@wwwdotorg.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, lin <ux-tegra@vger.kernel.org>, linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>, nils.wallmenius@gmail.com, freedreno@lists.freedesktop.org, sw0312.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSm9lLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBNb25kYXkgMzEgSnVsIDIwMTcg
-MTE6Mjk6MTMgSm9lIEtuaXNzIHdyb3RlOgo+IE5ldyBnZXRmYjIgZnVuY3Rpb25hbGl0eSB1c2Vz
-IGRybV9tb2RlX2ZiX2NtZDIgc3RydWN0IHRvIGJlIHN5bW1ldHJpYwo+IHdpdGggYWRkZmIyLgoK
-V2hhdCdzIHRoZSB1c2UgY2FzZSBmb3IgdGhpcyA/IFdlIGhhdmVuJ3QgbmVlZGVkIHN1Y2ggYW4g
-aW9jdGwgZm9yIHNvIGxvbmcgCnRoYXQgaXQgc2VlbWVkIHRvIG1lIHRoYXQgdXNlcnNwYWNlIGRv
-ZXNuJ3QgcmVhbGx5IG5lZWQgaXQsIGJ1dCBJIGNvdWxkIGJlIAp3cm9uZy4KCj4gQWxzbyBtb2Rp
-ZmllcyAqX2ZiX2NyZWF0ZV9oYW5kbGUoKSBjYWxscyB0byBhY2NlcHQgYQo+IGZvcm1hdF9wbGFu
-ZV9pbmRleCBzbyB0aGF0IGhhbmRsZXMgZm9yIGVhY2ggcGxhbmUgY2FuIGJlIGdlbmVyYXRlZC4K
-PiBQcmV2aW91c2x5LCBtYW55ICpfZmJfY3JlYXRlX2hhbmRsZSgpIGNhbGxzIHNpbXBseSBkZWZh
-dWx0ZWQgdG8gcGxhbmUgMAo+IG9ubHkuCgpBbmQgd2l0aCB0aGlzIHBhdGNoIHRoZSBhbWQvYW1k
-Z3B1LCBhcm1hZGEsIGdtYTUwMCwgaTkxNSwgbWVkaWF0ZWssIG1zbSwgCm5vdXZlYXUgYW5kIHJh
-ZGVvbiBkcml2ZXJzIHN0aWxsIGRvLiBEbyBub25lIG9mIHRoZW0gc3VwcG9ydCBtdWx0aS1wbGFu
-YXIgCmZvcm1hdHMgPwoKPiBTaWduZWQtb2ZmLWJ5OiBKb2UgS25pc3MgPGRqbWtAZ29vZ2xlLmNv
-bT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Rpc3BsYXkuYyB8
-ICA1ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX2ZiLmMgICAgICAgICAgfCAg
-MSArCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oICAgICAgICAgfCAgMiAr
-Cj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fZmJfY21hX2hlbHBlci5jICAgICAgICAgfCAxMSArKy0t
-Cj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fZnJhbWVidWZmZXIuYyAgICAgICAgICAgfCA3OSArKysr
-KysrKysrKysrKysrKysrKysrKysrLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2lvY3RsLmMgICAg
-ICAgICAgICAgICAgIHwgIDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmIuYyAgICAgIHwgIDcgKystCj4gIGRyaXZlcnMvZ3B1L2RybS9nbWE1MDAvZnJhbWVidWZmZXIu
-YyAgICAgICAgfCAgMiArCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2Rpc3BsYXkuYyAg
-ICAgICAgfCAgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2ZiLmMgICAg
-ICAgfCAgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS9tc20vbXNtX2ZiLmMgICAgICAgICAgICAgICAg
-fCAgNSArLQo+ICBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1X2Rpc3BsYXkuYyAgIHwg
-IDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2ZiLmMgICAgICAgICAgIHwgIDUg
-Ky0KPiAgZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fZGlzcGxheS5jICAgICB8ICA1ICst
-Cj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZmIuYyAgfCAgNiArKy0K
-PiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMgICAgICAgICAgICAgICAgICB8ICA5ICsrKy0K
-PiAgaW5jbHVkZS9kcm0vZHJtX2ZyYW1lYnVmZmVyLmggICAgICAgICAgICAgICB8ICAxICsKPiAg
-aW5jbHVkZS91YXBpL2RybS9kcm0uaCAgICAgICAgICAgICAgICAgICAgICB8ICAyICsKPiAgMTgg
-ZmlsZXMgY2hhbmdlZCwgMTI3IGluc2VydGlvbnMoKyksIDE3IGRlbGV0aW9ucygtKQoKW3NuaXBd
-Cgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZyYW1lYnVmZmVyLmMKPiBiL2Ry
-aXZlcnMvZ3B1L2RybS9kcm1fZnJhbWVidWZmZXIuYyBpbmRleCAyOGEwMTA4YTFhYjguLjY3YjNi
-ZTFiZWRiYyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZyYW1lYnVmZmVyLmMK
-PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZyYW1lYnVmZmVyLmMKPiBAQCAtMjQsNiArMjQs
-NyBAQAo+ICAjaW5jbHVkZSA8ZHJtL2RybVAuaD4KPiAgI2luY2x1ZGUgPGRybS9kcm1fYXV0aC5o
-Pgo+ICAjaW5jbHVkZSA8ZHJtL2RybV9mcmFtZWJ1ZmZlci5oPgo+ICsjaW5jbHVkZSA8ZHJtL2Ry
-bV9nZW0uaD4KPiAKPiAgI2luY2x1ZGUgImRybV9jcnRjX2ludGVybmFsLmgiCgpbc25pcF0KCj4g
-Ky8qKgo+ICsgKiBkcm1fbW9kZV9nZXRmYjIgLSBnZXQgRkIgaW5mbwo+ICsgKiBAZGV2OiBkcm0g
-ZGV2aWNlIGZvciB0aGUgaW9jdGwKPiArICogQGRhdGE6IGRhdGEgcG9pbnRlciBmb3IgdGhlIGlv
-Y3RsCj4gKyAqIEBmaWxlX3ByaXY6IGRybSBmaWxlIGZvciB0aGUgaW9jdGwgY2FsbAo+ICsgKgo+
-ICsgKiBMb29rdXAgdGhlIEZCIGdpdmVuIGl0cyBJRCBhbmQgcmV0dXJuIGluZm8gYWJvdXQgaXQu
-Cj4gKyAqCj4gKyAqIENhbGxlZCBieSB0aGUgdXNlciB2aWEgaW9jdGwuCj4gKyAqCj4gKyAqIFJl
-dHVybnM6Cj4gKyAqIFplcm8gb24gc3VjY2VzcywgbmVnYXRpdmUgZXJybm8gb24gZmFpbHVyZS4K
-PiArICovCj4gK2ludCBkcm1fbW9kZV9nZXRmYjIoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKPiAr
-CQkgICB2b2lkICpkYXRhLCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGVfcHJpdikKPiArewo+ICsJc3Ry
-dWN0IGRybV9tb2RlX2ZiX2NtZDIgKnIgPSBkYXRhOwo+ICsJc3RydWN0IGRybV9mcmFtZWJ1ZmZl
-ciAqZmI7Cj4gKwlpbnQgcmV0LCBpOwo+ICsKPiArCWlmICghZHJtX2NvcmVfY2hlY2tfZmVhdHVy
-ZShkZXYsIERSSVZFUl9NT0RFU0VUKSkKPiArCQlyZXR1cm4gLUVJTlZBTDsKPiArCj4gKwlmYiA9
-IGRybV9mcmFtZWJ1ZmZlcl9sb29rdXAoZGV2LCByLT5mYl9pZCk7Cj4gKwlpZiAoIWZiKQo+ICsJ
-CXJldHVybiAtRU5PRU5UOwo+ICsKPiArCXItPmhlaWdodCA9IGZiLT5oZWlnaHQ7Cj4gKwlyLT53
-aWR0aCA9IGZiLT53aWR0aDsKPiArCXItPnBpeGVsX2Zvcm1hdCA9IGZiLT5mb3JtYXQtPmZvcm1h
-dDsKPiArCWZvciAoaSA9IDA7IGkgPCA0OyArK2kpIHsKPiArCQlyLT5waXRjaGVzW2ldID0gZmIt
-PnBpdGNoZXNbaV07Cj4gKwkJci0+b2Zmc2V0c1tpXSA9IGZiLT5vZmZzZXRzW2ldOwo+ICsJCXIt
-Pm1vZGlmaWVyW2ldID0gZmItPm1vZGlmaWVyOwo+ICsJCXItPmhhbmRsZXNbaV0gPSAwOwo+ICsJ
-fQo+ICsKPiArCWZvciAoaSA9IDA7IGkgPCBmYi0+Zm9ybWF0LT5udW1fcGxhbmVzOyArK2kpIHsK
-PiArCQlpZiAoZmItPmZ1bmNzLT5jcmVhdGVfaGFuZGxlKSB7Cj4gKwkJCWlmIChkcm1faXNfY3Vy
-cmVudF9tYXN0ZXIoZmlsZV9wcml2KSB8fAo+ICsJCQkgICAgY2FwYWJsZShDQVBfU1lTX0FETUlO
-KSB8fAo+ICsJCQkgICAgZHJtX2lzX2NvbnRyb2xfY2xpZW50KGZpbGVfcHJpdikpIHsKPiArCQkJ
-CXJldCA9IGZiLT5mdW5jcy0+Y3JlYXRlX2hhbmRsZShmYiwgaSwKPiBmaWxlX3ByaXYsCj4gKwkJ
-CQkJCQkgICAgICAgCj4gJnItPmhhbmRsZXNbaV0pOwo+ICsJCQkJaWYgKHJldCkKPiArCQkJCQli
-cmVhazsKPiArCQkJfSBlbHNlIHsKPiArCQkJCS8qIEdFVF9GQigpIGlzIGFuIHVucHJpdmlsZWdl
-ZCBpb2N0bCBzbyB3ZQo+IG11c3QKPiArCQkJCSAqIG5vdCByZXR1cm4gYSBidWZmZXItaGFuZGxl
-IHRvIG5vbi1tYXN0ZXIKPiArCQkJCSAqIHByb2Nlc3NlcyEgRm9yIGJhY2t3YXJkcy1jb21wYXRp
-YmlsaXR5Cj4gKwkJCQkgKiByZWFzb25zLCB3ZSBjYW5ub3QgbWFrZSBHRVRfRkIoKQo+IHByaXZp
-bGVnZWQsCj4gKwkJCQkgKiBzbyBqdXN0IHJldHVybiBhbiBpbnZhbGlkIGhhbmRsZSBmb3IKPiAr
-CQkJCSAqIG5vbi1tYXN0ZXJzLiAqLwoKVGhlcmUncyBubyBiYWNrd2FyZCBjb21wYXRpYmlsaXR5
-IHRvIGhhbmRsZSBoZXJlLCBqdXN0IG1ha2UgaXQgcHJpdmlsZWdlZCBpZiAKaXQgaGFzIHRvIGJl
-LgoKPiArCQkJCXItPmhhbmRsZXNbaV0gPSAwOwo+ICsJCQkJcmV0ID0gMDsKPiArCQkJfQo+ICsJ
-CX0gZWxzZSB7Cj4gKwkJCXJldCA9IC1FTk9ERVY7Cj4gKwkJCWJyZWFrOwo+ICsJCX0KPiArCX0K
-PiArCj4gKwkvKiBJZiBoYW5kbGUgY3JlYXRpb24gZmFpbGVkLCBkZWxldGUvZGVyZWZlcmVuY2Ug
-YW55IHRoYXQgd2VyZSBtYWRlLiAKKi8KPiArCWlmIChyZXQpIHsKPiArCQlmb3IgKGkgPSAwOyBp
-IDwgNDsgKytpKSB7Cj4gKwkJCWlmIChyLT5oYW5kbGVzW2ldKQo+ICsJCQkJZHJtX2dlbV9oYW5k
-bGVfZGVsZXRlKGZpbGVfcHJpdiwgci0KPmhhbmRsZXNbaV0pOwoKTXkgaW5pdGlhbCByZWFjdGlv
-biB0byB0aGlzIHdhcyB0byByZXBseSB0aGF0IG5vdCBhbGwgZHJpdmVycyB1c2UgR0VNLCBidXQg
-CmFmdGVyIHNvbWUgaW52ZXN0aWdhdGlvbiBpdCBzZWVtcyB0aGV5IGFjdHVhbGx5IGRvLiBJZiB0
-aGF0J3MgcmVhbGx5IHRoZSBjYXNlLCAKd2UgY291bGQgZ2V0IHJpZCBvZiB0aGUgLmNyZWF0ZV9o
-YW5kbGUoKSBvcGVyYXRpb24gY29tcGxldGVseSwgd2hpY2ggc2hvdWxkIApzaW1wbGlmeSB0aGUg
-aW1wbGVtZW50YXRpb24gb2YgYm90aCBEUk1fSU9DVExfTU9ERV9HRVRGQiBhbmQgCkRSTV9JT0NU
-TF9NT0RFX0dFVEZCMi4KCj4gKwkJCXItPmhhbmRsZXNbaV0gPSAwOwo+ICsJCX0KPiArCX0KPiAr
-Cj4gKwlkcm1fZnJhbWVidWZmZXJfdW5yZWZlcmVuY2UoZmIpOwo+ICsKPiArCXJldHVybiByZXQ7
-Cj4gK30KCltzbmlwXQoKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21h
-cF9mYi5jCj4gYi9kcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2ZiLmMgaW5kZXggMjlkYzY3
-N2RkNGQzLi5hOTgyYzcyYTc3M2UgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL29tYXBk
-cm0vb21hcF9mYi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9mYi5jCj4g
-QEAgLTkwLDEyICs5MCwxNSBAQCBzdHJ1Y3Qgb21hcF9mcmFtZWJ1ZmZlciB7Cj4gIH07Cj4gCj4g
-IHN0YXRpYyBpbnQgb21hcF9mcmFtZWJ1ZmZlcl9jcmVhdGVfaGFuZGxlKHN0cnVjdCBkcm1fZnJh
-bWVidWZmZXIgKmZiLAo+ICsJCXVuc2lnbmVkIGludCBmb3JtYXRfcGxhbmVfaW5kZXgsCj4gIAkJ
-c3RydWN0IGRybV9maWxlICpmaWxlX3ByaXYsCj4gIAkJdW5zaWduZWQgaW50ICpoYW5kbGUpCj4g
-IHsKPiAgCXN0cnVjdCBvbWFwX2ZyYW1lYnVmZmVyICpvbWFwX2ZiID0gdG9fb21hcF9mcmFtZWJ1
-ZmZlcihmYik7Cj4gKwlpZiAoZm9ybWF0X3BsYW5lX2luZGV4ID49IDQgfHwgIW9tYXBfZmItPnBs
-YW5lc1tmb3JtYXRfcGxhbmVfaW5kZXhdKQoKVGhlIGZpcnN0IGNoZWNrIHNob3VsZG4ndCBiZSBu
-ZWVkZWQsIHRoZSBjb3JlIHNob3VsZCBuZXZlciBjYWxsIHRoaXMgb3BlcmF0aW9uIAp3aXRoIGFu
-IGluZGV4ID49IDQuCgo+ICsJCXJldHVybiAtRU5PRU5UOwo+ICAJcmV0dXJuIGRybV9nZW1faGFu
-ZGxlX2NyZWF0ZShmaWxlX3ByaXYsCj4gLQkJCW9tYXBfZmItPnBsYW5lc1swXS5ibywgaGFuZGxl
-KTsKPiArCQkJb21hcF9mYi0+cGxhbmVzW2Zvcm1hdF9wbGFuZV9pbmRleF0uYm8sIGhhbmRsZSk7
-Cj4gIH0KCltzbmlwXQoKPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS91YXBpL2RybS9kcm0uaCBiL2lu
-Y2x1ZGUvdWFwaS9kcm0vZHJtLmgKPiBpbmRleCBiMmM1Mjg0M2JjNzAuLmM4MWM3NTMzNWNjYSAx
-MDA2NDQKPiAtLS0gYS9pbmNsdWRlL3VhcGkvZHJtL2RybS5oCj4gKysrIGIvaW5jbHVkZS91YXBp
-L2RybS9kcm0uaAo+IEBAIC04MTQsNiArODE0LDggQEAgZXh0ZXJuICJDIiB7Cj4gICNkZWZpbmUg
-RFJNX0lPQ1RMX01PREVfQ1JFQVRFUFJPUEJMT0IJRFJNX0lPV1IoMHhCRCwgc3RydWN0Cj4gZHJt
-X21vZGVfY3JlYXRlX2Jsb2IpCj4gI2RlZmluZSBEUk1fSU9DVExfTU9ERV9ERVNUUk9ZUFJPUEJM
-T0IJRFJNX0lPV1IoMHhCRSwgc3RydWN0Cj4gZHJtX21vZGVfZGVzdHJveV9ibG9iKQo+IAo+ICsj
-ZGVmaW5lIERSTV9JT0NUTF9NT0RFX0dFVEZCMiAgRFJNX0lPV1IoMHhDNCwgc3RydWN0IGRybV9t
-b2RlX2ZiX2NtZDIpCj4gKwoKV2hpY2ggdHJlZSBpcyB0aGlzIGJhc2VkIG9uID8gVGhlIGxhc3Qg
-ZGVmaW5lZCBpb2N0bCAKKERSTV9JT0NUTF9TWU5DT0JKX0ZEX1RPX0hBTkRMRSkgaXMgMHhDMiBp
-biBkcm0tbmV4dCBhbmQgZHJtLW1pc2MtbmV4dC4KCj4gIC8qKgo+ICAgKiBEZXZpY2Ugc3BlY2lm
-aWMgaW9jdGxzIHNob3VsZCBvbmx5IGJlIGluIHRoZWlyIHJlc3BlY3RpdmUgaGVhZGVycwo+ICAg
-KiBUaGUgZGV2aWNlIHNwZWNpZmljIGlvY3RsIHJhbmdlIGlzIGZyb20gMHg0MCB0byAweDlmLgoK
-LS0gClJlZ2FyZHMsCgpMYXVyZW50IFBpbmNoYXJ0CgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9pbnRlbC1nZngK
+--===============1887489858==
+Content-Type: multipart/alternative; boundary="94eb2c1ba8cc4527630555b46b08"
+
+--94eb2c1ba8cc4527630555b46b08
+Content-Type: text/plain; charset="UTF-8"
+
+Thanks for the quick review!
+
+On Tue, Aug 1, 2017 at 5:09 AM, Laurent Pinchart <laurent.pinchart@
+ideasonboard.com> wrote:
+
+> Hi Joe,
+>
+> Thank you for the patch.
+>
+> On Monday 31 Jul 2017 11:29:13 Joe Kniss wrote:
+> > New getfb2 functionality uses drm_mode_fb_cmd2 struct to be symmetric
+> > with addfb2.
+>
+> What's the use case for this ? We haven't needed such an ioctl for so long
+> that it seemed to me that userspace doesn't really need it, but I could be
+> wrong.
+>
+> Sorry, I failed to reference the original email.  Here it is:
+<snip>
+ I am a recent addition to Google's ChromeOS gfx team.   I am currently
+working on display testing and reporting.   An important part of this is
+our screen capture tool, which works by querying drm for crtcs, planes, and
+fbs.  Unfortunately, there is only limited information available via
+drmModeGetFB(), which often wrong information when drmModeAddFB2() was used
+to create the fbs.   For example, if the pixel format is NV12 or YUV420,
+the fb returned knows nothing about the additional buffer planes required
+by these formats.   Ideally, we would like a function (e.g. drmModeGetFB2)
+to return information symmetric with drmModeAddFB2 including the pixel
+format id, buffer plane information etc.
+</snip>
+ChromeOS has needed this functionality from the start, for both testing and
+error reporting.  We got away with guessing the buffer's format (32bit
+xrgb) until now.  We are now enabling overlays and more formats including
+multi-planar (e.g. NV12).  Current getfb() reports neither the pixel format
+nor  planar information.  Without this information, going forward, our gfx
+testing is going to break.  It would be great if we had access to higher
+level buffer structs (like gbm), but we generally don't since they would be
+created by other apps (chrome browser, android apps, etc...).
+
+
+> > Also modifies *_fb_create_handle() calls to accept a
+> > format_plane_index so that handles for each plane can be generated.
+> > Previously, many *_fb_create_handle() calls simply defaulted to plane 0
+> > only.
+>
+> And with this patch the amd/amdgpu, armada, gma500, i915, mediatek, msm,
+> nouveau and radeon drivers still do. Do none of them support multi-planar
+> formats ?
+>
+> I would imagine that some of these do support multi-planar formats, but
+they don't appear to have them implemented yet (except perhaps as offsets
+into a single buffer).  I will certainly be looking into this soon, but any
+changes will come in future patches.
+
+
+> > Signed-off-by: Joe Kniss <djmk@google.com>
+> > ---
+> >  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c |  5 +-
+> >  drivers/gpu/drm/armada/armada_fb.c          |  1 +
+> >  drivers/gpu/drm/drm_crtc_internal.h         |  2 +
+> >  drivers/gpu/drm/drm_fb_cma_helper.c         | 11 ++--
+> >  drivers/gpu/drm/drm_framebuffer.c           | 79
+> +++++++++++++++++++++++++-
+> >  drivers/gpu/drm/drm_ioctl.c                 |  1 +
+> >  drivers/gpu/drm/exynos/exynos_drm_fb.c      |  7 ++-
+> >  drivers/gpu/drm/gma500/framebuffer.c        |  2 +
+> >  drivers/gpu/drm/i915/intel_display.c        |  1 +
+> >  drivers/gpu/drm/mediatek/mtk_drm_fb.c       |  1 +
+> >  drivers/gpu/drm/msm/msm_fb.c                |  5 +-
+> >  drivers/gpu/drm/nouveau/nouveau_display.c   |  1 +
+> >  drivers/gpu/drm/omapdrm/omap_fb.c           |  5 +-
+> >  drivers/gpu/drm/radeon/radeon_display.c     |  5 +-
+> >  drivers/gpu/drm/rockchip/rockchip_drm_fb.c  |  6 ++-
+> >  drivers/gpu/drm/tegra/fb.c                  |  9 +++-
+> >  include/drm/drm_framebuffer.h               |  1 +
+> >  include/uapi/drm/drm.h                      |  2 +
+> >  18 files changed, 127 insertions(+), 17 deletions(-)
+>
+> [snip]
+>
+> > diff --git a/drivers/gpu/drm/drm_framebuffer.c
+> > b/drivers/gpu/drm/drm_framebuffer.c index 28a0108a1ab8..67b3be1bedbc
+> 100644
+> > --- a/drivers/gpu/drm/drm_framebuffer.c
+> > +++ b/drivers/gpu/drm/drm_framebuffer.c
+> > @@ -24,6 +24,7 @@
+> >  #include <drm/drmP.h>
+> >  #include <drm/drm_auth.h>
+> >  #include <drm/drm_framebuffer.h>
+> > +#include <drm/drm_gem.h>
+> >
+> >  #include "drm_crtc_internal.h"
+>
+> [snip]
+>
+> > +/**
+> > + * drm_mode_getfb2 - get FB info
+> > + * @dev: drm device for the ioctl
+> > + * @data: data pointer for the ioctl
+> > + * @file_priv: drm file for the ioctl call
+> > + *
+> > + * Lookup the FB given its ID and return info about it.
+> > + *
+> > + * Called by the user via ioctl.
+> > + *
+> > + * Returns:
+> > + * Zero on success, negative errno on failure.
+> > + */
+> > +int drm_mode_getfb2(struct drm_device *dev,
+> > +                void *data, struct drm_file *file_priv)
+> > +{
+> > +     struct drm_mode_fb_cmd2 *r = data;
+> > +     struct drm_framebuffer *fb;
+> > +     int ret, i;
+> > +
+> > +     if (!drm_core_check_feature(dev, DRIVER_MODESET))
+> > +             return -EINVAL;
+> > +
+> > +     fb = drm_framebuffer_lookup(dev, r->fb_id);
+> > +     if (!fb)
+> > +             return -ENOENT;
+> > +
+> > +     r->height = fb->height;
+> > +     r->width = fb->width;
+> > +     r->pixel_format = fb->format->format;
+> > +     for (i = 0; i < 4; ++i) {
+> > +             r->pitches[i] = fb->pitches[i];
+> > +             r->offsets[i] = fb->offsets[i];
+> > +             r->modifier[i] = fb->modifier;
+> > +             r->handles[i] = 0;
+> > +     }
+> > +
+> > +     for (i = 0; i < fb->format->num_planes; ++i) {
+> > +             if (fb->funcs->create_handle) {
+> > +                     if (drm_is_current_master(file_priv) ||
+> > +                         capable(CAP_SYS_ADMIN) ||
+> > +                         drm_is_control_client(file_priv)) {
+> > +                             ret = fb->funcs->create_handle(fb, i,
+> > file_priv,
+> > +
+> > &r->handles[i]);
+> > +                             if (ret)
+> > +                                     break;
+> > +                     } else {
+> > +                             /* GET_FB() is an unprivileged ioctl so we
+> > must
+> > +                              * not return a buffer-handle to non-master
+> > +                              * processes! For backwards-compatibility
+> > +                              * reasons, we cannot make GET_FB()
+> > privileged,
+> > +                              * so just return an invalid handle for
+> > +                              * non-masters. */
+>
+> There's no backward compatibility to handle here, just make it privileged
+> if
+> it has to be.
+>
+> Sure thing, sounds good.
+
+
+
+> > +                             r->handles[i] = 0;
+> > +                             ret = 0;
+> > +                     }
+> > +             } else {
+> > +                     ret = -ENODEV;
+> > +                     break;
+> > +             }
+> > +     }
+> > +
+> > +     /* If handle creation failed, delete/dereference any that were
+> made.
+> */
+> > +     if (ret) {
+> > +             for (i = 0; i < 4; ++i) {
+> > +                     if (r->handles[i])
+> > +                             drm_gem_handle_delete(file_priv, r-
+> >handles[i]);
+>
+> My initial reaction to this was to reply that not all drivers use GEM, but
+> after some investigation it seems they actually do. If that's really the
+> case,
+> we could get rid of the .create_handle() operation completely, which should
+> simplify the implementation of both DRM_IOCTL_MODE_GETFB and
+> DRM_IOCTL_MODE_GETFB2.
+>
+> Deleting the handle is the same in all cases, but creating the handle
+isn't consistent across the drivers.  I didn't see a clean way to simplify
+this.
+
+
+> > +                     r->handles[i] = 0;
+> > +             }
+> > +     }
+> > +
+> > +     drm_framebuffer_unreference(fb);
+> > +
+> > +     return ret;
+> > +}
+>
+> [snip]
+>
+> > diff --git a/drivers/gpu/drm/omapdrm/omap_fb.c
+> > b/drivers/gpu/drm/omapdrm/omap_fb.c index 29dc677dd4d3..a982c72a773e
+> 100644
+> > --- a/drivers/gpu/drm/omapdrm/omap_fb.c
+> > +++ b/drivers/gpu/drm/omapdrm/omap_fb.c
+> > @@ -90,12 +90,15 @@ struct omap_framebuffer {
+> >  };
+> >
+> >  static int omap_framebuffer_create_handle(struct drm_framebuffer *fb,
+> > +             unsigned int format_plane_index,
+> >               struct drm_file *file_priv,
+> >               unsigned int *handle)
+> >  {
+> >       struct omap_framebuffer *omap_fb = to_omap_framebuffer(fb);
+> > +     if (format_plane_index >= 4 || !omap_fb->planes[format_plane_
+> index])
+>
+> The first check shouldn't be needed, the core should never call this
+> operation
+> with an index >= 4.
+>
+> I'll remove the check then.
+
+
+> > +             return -ENOENT;
+> >       return drm_gem_handle_create(file_priv,
+> > -                     omap_fb->planes[0].bo, handle);
+> > +                     omap_fb->planes[format_plane_index].bo, handle);
+> >  }
+>
+> [snip]
+>
+> > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+> > index b2c52843bc70..c81c75335cca 100644
+> > --- a/include/uapi/drm/drm.h
+> > +++ b/include/uapi/drm/drm.h
+> > @@ -814,6 +814,8 @@ extern "C" {
+> >  #define DRM_IOCTL_MODE_CREATEPROPBLOB        DRM_IOWR(0xBD, struct
+> > drm_mode_create_blob)
+> > #define DRM_IOCTL_MODE_DESTROYPROPBLOB        DRM_IOWR(0xBE, struct
+> > drm_mode_destroy_blob)
+> >
+> > +#define DRM_IOCTL_MODE_GETFB2  DRM_IOWR(0xC4, struct drm_mode_fb_cmd2)
+> > +
+>
+> Which tree is this based on ? The last defined ioctl
+> (DRM_IOCTL_SYNCOBJ_FD_TO_HANDLE) is 0xC2 in drm-next and drm-misc-next.
+>
+> I just did a quick search for "DRM_IOWR 0xC*" and picked the first unused
+one, there was a patch in-flight from last month that used 0xC3 (
+https://lists.freedesktop.org/archives/amd-gfx/2017-June/010153.html).
+Naturally, I'll set this to whatever is appropriate.
+
+
+> >  /**
+> >   * Device specific ioctls should only be in their respective headers
+> >   * The device specific ioctl range is from 0x40 to 0x9f.
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+>
+Thanks!
+-j
+
+
+-- 
+Dr. Joe Michael Kniss |  Google ChromeOS |  djmk@google.com   |
+1-801-898-7977 <(801)%20898-7977>
+
+--94eb2c1ba8cc4527630555b46b08
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Thanks for the quick review!=C2=A0<br><div class=3D"gmail_=
+extra"><br><div class=3D"gmail_quote">On Tue, Aug 1, 2017 at 5:09 AM, Laure=
+nt Pinchart <span dir=3D"ltr">&lt;<a href=3D"mailto:laurent.pinchart@ideaso=
+nboard.com" target=3D"_blank">laurent.pinchart@<wbr>ideasonboard.com</a>&gt=
+;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0px 0p=
+x 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">Hi Joe=
+,<br>
+<br>
+Thank you for the patch.<br>
+<span><br>
+On Monday 31 Jul 2017 11:29:13 Joe Kniss wrote:<br>
+&gt; New getfb2 functionality uses drm_mode_fb_cmd2 struct to be symmetric<=
+br>
+&gt; with addfb2.<br>
+<br>
+</span>What&#39;s the use case for this ? We haven&#39;t needed such an ioc=
+tl for so long<br>
+that it seemed to me that userspace doesn&#39;t really need it, but I could=
+ be<br>
+wrong.<br>
+<span><br></span></blockquote><div>Sorry, I failed to reference the origina=
+l email.=C2=A0 Here it is:=C2=A0</div><div>&lt;snip&gt;</div><div><span sty=
+le=3D"font-size:12.8px">=C2=A0I am a recent addition to Google&#39;s Chrome=
+OS gfx team. =C2=A0 I am currently working on display testing and reporting=
+. =C2=A0 An important part of this is our screen capture tool, which works =
+by querying drm for crtcs, planes, and fbs.=C2=A0 Unfortunately, there is o=
+nly limited information available via drmModeGetFB(), which often wrong inf=
+ormation when drmModeAddFB2() was used to create the fbs. =C2=A0 For exampl=
+e, if the pixel format is NV12 or YUV420, the fb returned knows nothing abo=
+ut the additional buffer planes required by these formats. =C2=A0 Ideally, =
+we would like a function (e.g. drmModeGetFB2) to return information symmetr=
+ic with drmModeAddFB2 including the pixel format id, buffer plane informati=
+on etc. =C2=A0=C2=A0</span></div><div><span style=3D"font-size:12.8px">&lt;=
+/snip&gt;</span></div><div>ChromeOS has needed this functionality from the =
+start, for both testing and error reporting.=C2=A0 We got away with guessin=
+g the buffer&#39;s format (32bit xrgb) until now.=C2=A0 We are now enabling=
+ overlays and more formats including multi-planar (e.g. NV12).=C2=A0 Curren=
+t getfb() reports neither the pixel format nor =C2=A0planar information.=C2=
+=A0 Without this information, going forward, our gfx testing is going to br=
+eak.=C2=A0 It would be great if we had access to higher level buffer struct=
+s (like gbm), but we generally don&#39;t since they would be created by oth=
+er apps (chrome browser, android apps, etc...).</div><div>=C2=A0</div><bloc=
+kquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:=
+1px solid rgb(204,204,204);padding-left:1ex"><span>
+&gt; Also modifies *_fb_create_handle() calls to accept a<br>
+&gt; format_plane_index so that handles for each plane can be generated.<br=
+>
+&gt; Previously, many *_fb_create_handle() calls simply defaulted to plane =
+0<br>
+&gt; only.<br>
+<br>
+</span>And with this patch the amd/amdgpu, armada, gma500, i915, mediatek, =
+msm,<br>
+nouveau and radeon drivers still do. Do none of them support multi-planar<b=
+r>
+formats ?<br>
+<span><br></span></blockquote><div>I would imagine that some of these do su=
+pport multi-planar formats, but they don&#39;t appear to have them implemen=
+ted yet (except perhaps as offsets into a single buffer).=C2=A0 I will cert=
+ainly be looking into this soon, but any changes will come in future patche=
+s. =C2=A0</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"=
+margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-lef=
+t:1ex"><span>
+&gt; Signed-off-by: Joe Kniss &lt;<a href=3D"mailto:djmk@google.com" target=
+=3D"_blank">djmk@google.com</a>&gt;<br>
+&gt; ---<br>
+&gt;=C2=A0 drivers/gpu/drm/amd/amdgpu/amd<wbr>gpu_display.c |=C2=A0 5 +-<br=
+>
+&gt;=C2=A0 drivers/gpu/drm/armada/armada_<wbr>fb.c=C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 |=C2=A0 1 +<br>
+&gt;=C2=A0 drivers/gpu/drm/drm_crtc_inter<wbr>nal.h=C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0|=C2=A0 2 +<br>
+&gt;=C2=A0 drivers/gpu/drm/drm_fb_cma_hel<wbr>per.c=C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0| 11 ++--<br>
+</span>&gt;=C2=A0 drivers/gpu/drm/drm_framebuffe<wbr>r.c=C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0| 79 +++++++++++++++++++++++++-<br>
+<span>&gt;=C2=A0 drivers/gpu/drm/drm_ioctl.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 1 +<br>
+&gt;=C2=A0 drivers/gpu/drm/exynos/exynos_<wbr>drm_fb.c=C2=A0 =C2=A0 =C2=A0 =
+|=C2=A0 7 ++-<br>
+&gt;=C2=A0 drivers/gpu/drm/gma500/framebu<wbr>ffer.c=C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 |=C2=A0 2 +<br>
+&gt;=C2=A0 drivers/gpu/drm/i915/intel_dis<wbr>play.c=C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 |=C2=A0 1 +<br>
+&gt;=C2=A0 drivers/gpu/drm/mediatek/mtk_d<wbr>rm_fb.c=C2=A0 =C2=A0 =C2=A0 =
+=C2=A0|=C2=A0 1 +<br>
+&gt;=C2=A0 drivers/gpu/drm/msm/msm_fb.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 |=C2=A0 5 +-<br>
+&gt;=C2=A0 drivers/gpu/drm/nouveau/nouvea<wbr>u_display.c=C2=A0 =C2=A0|=C2=
+=A0 1 +<br>
+&gt;=C2=A0 drivers/gpu/drm/omapdrm/omap_f<wbr>b.c=C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0|=C2=A0 5 +-<br>
+&gt;=C2=A0 drivers/gpu/drm/radeon/radeon_<wbr>display.c=C2=A0 =C2=A0 =C2=A0=
+|=C2=A0 5 +-<br>
+&gt;=C2=A0 drivers/gpu/drm/rockchip/rockc<wbr>hip_drm_fb.c=C2=A0 |=C2=A0 6 =
+++-<br>
+&gt;=C2=A0 drivers/gpu/drm/tegra/fb.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 9 +++-<br>
+&gt;=C2=A0 include/drm/drm_framebuffer.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0|=C2=A0 1 +<br>
+&gt;=C2=A0 include/uapi/drm/drm.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 2 +<br>
+&gt;=C2=A0 18 files changed, 127 insertions(+), 17 deletions(-)<br>
+<br>
+</span>[snip]<br>
+<span><br>
+&gt; diff --git a/drivers/gpu/drm/drm_framebuf<wbr>fer.c<br>
+&gt; b/drivers/gpu/drm/drm_framebuf<wbr>fer.c index 28a0108a1ab8..67b3be1be=
+dbc 100644<br>
+&gt; --- a/drivers/gpu/drm/drm_framebuf<wbr>fer.c<br>
+&gt; +++ b/drivers/gpu/drm/drm_framebuf<wbr>fer.c<br>
+&gt; @@ -24,6 +24,7 @@<br>
+&gt;=C2=A0 #include &lt;drm/drmP.h&gt;<br>
+&gt;=C2=A0 #include &lt;drm/drm_auth.h&gt;<br>
+&gt;=C2=A0 #include &lt;drm/drm_framebuffer.h&gt;<br>
+&gt; +#include &lt;drm/drm_gem.h&gt;<br>
+&gt;<br>
+&gt;=C2=A0 #include &quot;drm_crtc_internal.h&quot;<br>
+<br>
+</span>[snip]<br>
+<div><div class=3D"gmail-m_-3711990965528987190h5"><br>
+&gt; +/**<br>
+&gt; + * drm_mode_getfb2 - get FB info<br>
+&gt; + * @dev: drm device for the ioctl<br>
+&gt; + * @data: data pointer for the ioctl<br>
+&gt; + * @file_priv: drm file for the ioctl call<br>
+&gt; + *<br>
+&gt; + * Lookup the FB given its ID and return info about it.<br>
+&gt; + *<br>
+&gt; + * Called by the user via ioctl.<br>
+&gt; + *<br>
+&gt; + * Returns:<br>
+&gt; + * Zero on success, negative errno on failure.<br>
+&gt; + */<br>
+&gt; +int drm_mode_getfb2(struct drm_device *dev,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 void *data, s=
+truct drm_file *file_priv)<br>
+&gt; +{<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct drm_mode_fb_cmd2 *r =3D data;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct drm_framebuffer *fb;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0int ret, i;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (!drm_core_check_feature(dev, DRIVER_MODESET))=
+<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -EINVAL;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0fb =3D drm_framebuffer_lookup(dev, r-&gt;fb_id);<=
+br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (!fb)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOENT;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0r-&gt;height =3D fb-&gt;height;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0r-&gt;width =3D fb-&gt;width;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0r-&gt;pixel_format =3D fb-&gt;format-&gt;format;<=
+br>
+&gt; +=C2=A0 =C2=A0 =C2=A0for (i =3D 0; i &lt; 4; ++i) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0r-&gt;pitches[i] =3D =
+fb-&gt;pitches[i];<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0r-&gt;offsets[i] =3D =
+fb-&gt;offsets[i];<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0r-&gt;modifier[i] =3D=
+ fb-&gt;modifier;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0r-&gt;handles[i] =3D =
+0;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0for (i =3D 0; i &lt; fb-&gt;format-&gt;num_planes=
+; ++i) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (fb-&gt;funcs-&gt;=
+create_handle) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0if (drm_is_current_master(file_pr<wbr>iv) ||<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0capable(CAP_SYS_ADMIN) ||<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0drm_is_control_client(file_pr<wbr>iv)) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D fb-&gt;funcs-&gt;create_handle(f=
+b, i,<br>
+&gt; file_priv,<br>
+&gt; +<br>
+&gt; &amp;r-&gt;handles[i]);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0break;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0} else {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* GET_FB() is an unprivileged ioctl so =
+we<br>
+&gt; must<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * not return a buffer-handle to non-mas=
+ter<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * processes! For backwards-compatibilit=
+y<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * reasons, we cannot make GET_FB()<br>
+&gt; privileged,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * so just return an invalid handle for<=
+br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * non-masters. */<br>
+<br>
+</div></div>There&#39;s no backward compatibility to handle here, just make=
+ it privileged if<br>
+it has to be.<br>
+<span><br></span></blockquote><div>Sure thing, sounds good.</div><div><br><=
+/div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px=
+ 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><sp=
+an>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0r-&gt;handles[i] =3D 0;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D 0;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0}<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0} else {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0ret =3D -ENODEV;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0break;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0/* If handle creation failed, delete/dereference =
+any that were made.<br>
+*/<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (ret) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0for (i =3D 0; i &lt; =
+4; ++i) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0if (r-&gt;handles[i])<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0drm_gem_handle_delete(file_pr<wbr>iv, r-=
+<br>
+&gt;handles[i]);<br>
+<br>
+</span>My initial reaction to this was to reply that not all drivers use GE=
+M, but<br>
+after some investigation it seems they actually do. If that&#39;s really th=
+e case,<br>
+we could get rid of the .create_handle() operation completely, which should=
+<br>
+simplify the implementation of both DRM_IOCTL_MODE_GETFB and<br>
+DRM_IOCTL_MODE_GETFB2.<br>
+<span><br></span></blockquote><div>Deleting the handle is the same in all c=
+ases, but creating the handle isn&#39;t consistent across the drivers.=C2=
+=A0 I didn&#39;t see a clean way to simplify this.</div><div>=C2=A0</div><b=
+lockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-le=
+ft:1px solid rgb(204,204,204);padding-left:1ex"><span>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0r-&gt;handles[i] =3D 0;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0drm_framebuffer_unreference(f<wbr>b);<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0return ret;<br>
+&gt; +}<br>
+<br>
+</span>[snip]<br>
+<span><br>
+&gt; diff --git a/drivers/gpu/drm/omapdrm/omap<wbr>_fb.c<br>
+&gt; b/drivers/gpu/drm/omapdrm/omap<wbr>_fb.c index 29dc677dd4d3..a982c72a7=
+73e 100644<br>
+&gt; --- a/drivers/gpu/drm/omapdrm/omap<wbr>_fb.c<br>
+&gt; +++ b/drivers/gpu/drm/omapdrm/omap<wbr>_fb.c<br>
+&gt; @@ -90,12 +90,15 @@ struct omap_framebuffer {<br>
+&gt;=C2=A0 };<br>
+&gt;<br>
+&gt;=C2=A0 static int omap_framebuffer_create_handle<wbr>(struct drm_frameb=
+uffer *fb,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0unsigned int format_p=
+lane_index,<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_file =
+*file_priv,<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0unsigned int *ha=
+ndle)<br>
+&gt;=C2=A0 {<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct omap_framebuffer *omap_fb =3D to_omap=
+_framebuffer(fb);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (format_plane_index &gt;=3D 4 || !omap_fb-&gt;=
+planes[format_plane_<wbr>index])<br>
+<br>
+</span>The first check shouldn&#39;t be needed, the core should never call =
+this operation<br>
+with an index &gt;=3D 4.<br>
+<span><br></span></blockquote><div>I&#39;ll remove the check then.</div><di=
+v>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px=
+ 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><span>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOENT;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return drm_gem_handle_create(file_pri<wbr>v,=
+<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0omap_fb-&gt;planes[0].bo, handle);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0omap_fb-&gt;planes[format_plane_<wbr>index].bo, handle);<br>
+&gt;=C2=A0 }<br>
+<br>
+</span>[snip]<br>
+<span><br>
+&gt; diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h<br>
+&gt; index b2c52843bc70..c81c75335cca 100644<br>
+&gt; --- a/include/uapi/drm/drm.h<br>
+&gt; +++ b/include/uapi/drm/drm.h<br>
+&gt; @@ -814,6 +814,8 @@ extern &quot;C&quot; {<br>
+&gt;=C2=A0 #define DRM_IOCTL_MODE_CREATEPROPBLOB=C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ DRM_IOWR(0xBD, struct<br>
+&gt; drm_mode_create_blob)<br>
+&gt; #define DRM_IOCTL_MODE_<wbr>DESTROYPROPBLOB=C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ DRM_IOWR(0xBE, struct<br>
+&gt; drm_mode_destroy_blob)<br>
+&gt;<br>
+&gt; +#define DRM_IOCTL_MODE_GETFB2=C2=A0 DRM_IOWR(0xC4, struct drm_mode_fb=
+_cmd2)<br>
+&gt; +<br>
+<br>
+</span>Which tree is this based on ? The last defined ioctl<br>
+(DRM_IOCTL_SYNCOBJ_FD_TO_HANDL<wbr>E) is 0xC2 in drm-next and drm-misc-next=
+.<br>
+<span><br></span></blockquote><div>I just did a quick search for &quot;DRM_=
+IOWR 0xC*&quot; and picked the first unused one, there was a patch in-fligh=
+t from last month that used 0xC3 (<a href=3D"https://lists.freedesktop.org/=
+archives/amd-gfx/2017-June/010153.html">https://lists.freedesktop.org/archi=
+ves/amd-gfx/2017-June/010153.html</a>). =C2=A0 Naturally, I&#39;ll set this=
+ to whatever is appropriate.</div><div>=C2=A0</div><blockquote class=3D"gma=
+il_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,2=
+04,204);padding-left:1ex"><span>
+&gt;=C2=A0 /**<br>
+&gt;=C2=A0 =C2=A0* Device specific ioctls should only be in their respectiv=
+e headers<br>
+&gt;=C2=A0 =C2=A0* The device specific ioctl range is from 0x40 to 0x9f.<br=
+>
+<br>
+--<br>
+</span>Regards,<br>
+<br>
+Laurent Pinchart<br>
+<br>
+</blockquote></div><div class=3D"gmail_extra"><br></div>Thanks! =C2=A0</div=
+><div class=3D"gmail_extra">-j<br><br clear=3D"all"><div><br></div>-- <br><=
+div class=3D"gmail-m_-3711990965528987190gmail_signature"><div dir=3D"ltr">=
+<div><div dir=3D"ltr"><table cellspacing=3D"0" cellpadding=3D"0" style=3D"t=
+ext-align:center;color:rgb(80,0,80);font-family:&quot;Times New Roman&quot;=
+"><tbody><tr style=3D"color:rgb(85,85,85);font-family:sans-serif;font-size:=
+small"><td nowrap style=3D"border-top:2px solid rgb(213,15,37)"><font size=
+=3D"1"><font face=3D"garamond, serif">Dr. Joe Michael Kniss </font>|</font>=
+</td><td nowrap style=3D"border-top:2px solid rgb(51,105,232)"><font size=
+=3D"1">=C2=A0<font face=3D"garamond, serif"><font color=3D"#0b5394">G</font=
+><font color=3D"#cc0000">o</font><font color=3D"#bf9000">o</font><font colo=
+r=3D"#0b5394">g</font><font color=3D"#38761d">l</font><font color=3D"#cc000=
+0">e</font><font color=3D"#000000">=C2=A0</font><font color=3D"#444444">Chr=
+omeOS</font></font><font color=3D"#000000">=C2=A0</font>|</font></td><td no=
+wrap style=3D"border-top:2px solid rgb(0,153,57)"><font size=3D"1"><font fa=
+ce=3D"garamond, serif">=C2=A0<a href=3D"mailto:djmk@google.com" target=3D"_=
+blank">djmk<font color=3D"#1155cc">@google.com</font></a>=C2=A0</font>=C2=
+=A0</font></td><td nowrap style=3D"border-top:2px solid rgb(238,178,17)"><f=
+ont size=3D"1"><a value=3D"+16504298119" style=3D"color:rgb(17,85,204)">| <=
+/a><font face=3D"garamond, serif"><font color=3D"#1155cc"><a href=3D"tel:(8=
+01)%20898-7977" value=3D"+18018987977" target=3D"_blank">1-801-898-7977</a>=
+</font><br></font></font></td></tr></tbody></table></div></div></div></div>
+</div></div>
+
+--94eb2c1ba8cc4527630555b46b08--
+
+--===============1887489858==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
+IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+
+--===============1887489858==--
