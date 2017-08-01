@@ -1,62 +1,235 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH v4 0/3] Add support for the s6e63j0x03 panel on Rinato
- board
-Date: Tue, 01 Aug 2017 09:26:05 +0900
-Message-ID: <90041545-2bce-52cc-d926-606f76d81f0f@samsung.com>
-References: <CGME20170713022056epcas5p21ece2860cb2cce0b4381cf98988496f9@epcas5p2.samsung.com>
- <1499912443-3671-1-git-send-email-hoegeun.kwon@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 3/7] drm/exynos/dsi: refactor panel detection logic
+Date: Tue, 01 Aug 2017 18:29:19 +0900
+Message-ID: <598049EF.5020106@samsung.com>
+References: <1492519203-23537-1-git-send-email-a.hajda@samsung.com>
+        <CGME20170418124013eucas1p13103c8630a1acd86d607d02d95916786@eucas1p1.samsung.com>
+        <1492519203-23537-4-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1499912443-3671-1-git-send-email-hoegeun.kwon@samsung.com>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:20388 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751804AbdHAJ3W (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 1 Aug 2017 05:29:22 -0400
+In-reply-to: <1492519203-23537-4-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-RGVhciBUaGllcnJ5LAoKQ291bGQgeW91IHBsZWFzZSBjaGVjayB0aGVzZSBwYXRjaGVzLgoKQmVz
-dCByZWdhcmRzLApIb2VnZXVuCgoKT24gMDcvMTMvMjAxNyAxMToyMCBBTSwgSG9lZ2V1biBLd29u
-IHdyb3RlOgo+IEhpIEFuZHJ6ZWosCj4KPiBUaGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3Lgo+Cj4g
-VGhlIHB1cnBvc2Ugb2YgdGhpcyBwYXRjaCBpcyBhZGQgc3VwcG9ydCBmb3IgczZlNjNqMHgwMyBB
-TU9MRUQgcGFuZWwKPiBvbiB0aGUgcmluYXRvIGJvYXJkKFNhbXN1bmcgR2FsYXh5IEdlYXIgMiku
-Cj4KPiBDaGFuZ2VzIGZvciBWNDoKPiAtIEFkZGVkIFJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRh
-IDxhLmhhamRhQHNhbXN1bmcuY29tPiAoMi8zIHBhdGNoKS4KPiAtIEZpeGVkIHRoZSBzdHlsZSBv
-ZiBtYWNybyBmdW5jdGlvbi4KPgo+IENoYW5nZXMgZm9yIFYzOgo+IC0gQXBwbGllZCBwYXRjaCAn
-QVJNOiBkdHM6IGV4eW5vczogRml4IHRoZSBhY3RpdmUgb2YgcmVzZXQgZ3Bpb3MgZnJvbSByaW5h
-dG8gZHRzJyAodjIgMy80KQo+IC0gUmVtb3ZlIHRoZSB1bm5lY2Vzc2FyeSBkZWZpbmUgKCdNSU5f
-QlJJR0hUTkVTUycpCj4gLSBSZW1vdmVkIGV4cGxpY2l0IGNhc3RpbmcuCj4gLSBSZW1vdmVkIHZp
-b2xhdGlvbiBvZiBrZXJuZWwgY29kaW5nIHN0eWxlLgo+Cj4gQ2hhbmdlcyBmb3IgVjI6Cj4gLSBB
-ZGRlZCB0aGUgaW50ZXJmYWNlIGluZm8gaW4gYmluZGluZyBkb2N1bWVudC4KPiAtIEFkZGVkIFJl
-dmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPiAoMS8zIHBhdGNo
-KS4KPiAtIEFkZGVkIEFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPiAoMS8z
-IHBhdGNoKS4KPiAtIEZpeGVkIHRoZSB0cmlzdGF0ZSBvZiBjb25maWcgZnJvbSB2aWRlbyBtb2Rl
-IHRvIGNvbW1hbmQgbW9kZS4KPiAtIEZpeGVkIHRoZSByZXNldCBncGlvcyBmcm9tIGFjdGl2ZSBo
-aWdoIHRvIGxvdyBmcm9tIHJpbmF0byBkdHMuCj4gLSBGaXhlZCBhIGxvdCBvZiB0aGluZ3MgaW4g
-cGFuZWwgZHJpdmVyLCByZWZsZWN0IEFuZHJ6ZWoncyByZXZpZXcuCj4KPiBCZXN0IHJlZ2FyZHMs
-Cj4gSG9lZ2V1bgo+Cj4gSG9lZ2V1biBLd29uICgzKToKPiAgICBkdC1iaW5kaW5nczogQWRkIHN1
-cHBvcnQgZm9yIHNhbXN1bmcgczZlNjNqMHgwMyBwYW5lbCBiaW5kaW5nCj4gICAgZHJtL3BhbmVs
-OiBBZGQgc3VwcG9ydCBmb3IgczZlNjNqMHgwMyBwYW5lbCBkcml2ZXIKPiAgICBBUk06IGR0czog
-ZXh5bm9zOiBSZW1vdmUgdGhlIGRpc3BsYXktdGltaW5nIGFuZCBkZWxheSBmcm9tIHJpbmF0byBk
-dHMKPgo+ICAgLi4uL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmU2M2oweDAzLnR4
-dCAgfCAgMjQgKwo+ICAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzICAg
-ICAgICAgICAgfCAgMjIgLQo+ICAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL0tjb25maWcgICAgICAg
-ICAgICAgICAgICAgICAgfCAgIDcgKwo+ICAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL01ha2VmaWxl
-ICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwo+ICAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3Bh
-bmVsLXNhbXN1bmctczZlNjNqMHgwMy5jICAgfCA1MzIgKysrKysrKysrKysrKysrKysrKysrCj4g
-ICA1IGZpbGVzIGNoYW5nZWQsIDU2NCBpbnNlcnRpb25zKCspLCAyMiBkZWxldGlvbnMoLSkKPiAg
-IGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
-cGxheS9wYW5lbC9zYW1zdW5nLHM2ZTYzajB4MDMudHh0Cj4gICBjcmVhdGUgbW9kZSAxMDA2NDQg
-ZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlNjNqMHgwMy5jCj4KCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Andrzej,
+
+
+2017년 04월 18일 21:39에 Andrzej Hajda 이(가) 쓴 글:
+> Description of drm_helper_hpd_irq_event clearly states that drivers
+> supporting hotplug events per connector should use different helper -
+> drm_kms_helper_hotplug_event. To achieve it following changes have
+> been performed:
+> - moved down all DSI ops - they require exynos_dsi_disable function
+> to be defined earlier,
+> - simplified exynos_dsi_detect - there is no real detection, it just
+> returns if panel is attached,
+> - DSI attach/detach callbacks attaches/detaches DRM panel and sets
+> connector status and other context fields accordingly, all this is
+> performed under mutex, as these callbacks are asynchronous.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 204 ++++++++++++++++----------------
+>  1 file changed, 103 insertions(+), 101 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index 3ae459f..515090f 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -254,7 +254,6 @@ struct exynos_dsi {
+>  	struct drm_encoder encoder;
+>  	struct mipi_dsi_host dsi_host;
+>  	struct drm_connector connector;
+> -	struct device_node *panel_node;
+>  	struct drm_panel *panel;
+>  	struct device *dev;
+>  
+> @@ -1329,12 +1328,13 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
+>  	return 0;
+>  }
+>  
+> -static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi)
+> +static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
+> +				      struct device *panel)
+>  {
+>  	int ret;
+>  	int te_gpio_irq;
+>  
+> -	dsi->te_gpio = of_get_named_gpio(dsi->panel_node, "te-gpios", 0);
+> +	dsi->te_gpio = of_get_named_gpio(panel->of_node, "te-gpios", 0);
+>  	if (dsi->te_gpio == -ENOENT)
+>  		return 0;
+>  
+> @@ -1374,85 +1374,6 @@ static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
+>  	}
+>  }
+>  
+> -static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+> -				  struct mipi_dsi_device *device)
+> -{
+> -	struct exynos_dsi *dsi = host_to_dsi(host);
+> -
+> -	dsi->lanes = device->lanes;
+> -	dsi->format = device->format;
+> -	dsi->mode_flags = device->mode_flags;
+> -	dsi->panel_node = device->dev.of_node;
+> -
+> -	/*
+> -	 * This is a temporary solution and should be made by more generic way.
+> -	 *
+> -	 * If attached panel device is for command mode one, dsi should register
+> -	 * TE interrupt handler.
+> -	 */
+> -	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO)) {
+> -		int ret = exynos_dsi_register_te_irq(dsi);
+> -
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+> -	if (dsi->connector.dev)
+> -		drm_helper_hpd_irq_event(dsi->connector.dev);
+> -
+> -	return 0;
+> -}
+> -
+> -static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
+> -				  struct mipi_dsi_device *device)
+> -{
+> -	struct exynos_dsi *dsi = host_to_dsi(host);
+> -
+> -	exynos_dsi_unregister_te_irq(dsi);
+> -
+> -	dsi->panel_node = NULL;
+> -
+> -	if (dsi->connector.dev)
+> -		drm_helper_hpd_irq_event(dsi->connector.dev);
+> -
+> -	return 0;
+> -}
+> -
+> -static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
+> -				        const struct mipi_dsi_msg *msg)
+> -{
+> -	struct exynos_dsi *dsi = host_to_dsi(host);
+> -	struct exynos_dsi_transfer xfer;
+> -	int ret;
+> -
+> -	if (!(dsi->state & DSIM_STATE_ENABLED))
+> -		return -EINVAL;
+> -
+> -	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+> -		ret = exynos_dsi_init(dsi);
+> -		if (ret)
+> -			return ret;
+> -		dsi->state |= DSIM_STATE_INITIALIZED;
+> -	}
+> -
+> -	ret = mipi_dsi_create_packet(&xfer.packet, msg);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	xfer.rx_len = msg->rx_len;
+> -	xfer.rx_payload = msg->rx_buf;
+> -	xfer.flags = msg->flags;
+> -
+> -	ret = exynos_dsi_transfer(dsi, &xfer);
+> -	return (ret < 0) ? ret : xfer.rx_done;
+> -}
+> -
+> -static const struct mipi_dsi_host_ops exynos_dsi_ops = {
+> -	.attach = exynos_dsi_host_attach,
+> -	.detach = exynos_dsi_host_detach,
+> -	.transfer = exynos_dsi_host_transfer,
+> -};
+> -
+>  static void exynos_dsi_enable(struct drm_encoder *encoder)
+>  {
+>  	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+> @@ -1508,25 +1429,7 @@ static void exynos_dsi_disable(struct drm_encoder *encoder)
+>  static enum drm_connector_status
+>  exynos_dsi_detect(struct drm_connector *connector, bool force)
+>  {
+> -	struct exynos_dsi *dsi = connector_to_dsi(connector);
+> -
+> -	if (!dsi->panel) {
+> -		dsi->panel = of_drm_find_panel(dsi->panel_node);
+> -		if (dsi->panel)
+> -			drm_panel_attach(dsi->panel, &dsi->connector);
+> -	} else if (!dsi->panel_node) {
+> -		struct drm_encoder *encoder;
+> -
+> -		encoder = platform_get_drvdata(to_platform_device(dsi->dev));
+> -		exynos_dsi_disable(encoder);
+> -		drm_panel_detach(dsi->panel);
+> -		dsi->panel = NULL;
+> -	}
+> -
+> -	if (dsi->panel)
+> -		return connector_status_connected;
+> -
+> -	return connector_status_disconnected;
+> +	return connector->status;
+>  }
+>  
+>  static void exynos_dsi_connector_destroy(struct drm_connector *connector)
+> @@ -1576,6 +1479,7 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
+>  		return ret;
+>  	}
+>  
+> +	connector->status = connector_status_disconnected;
+>  	drm_connector_helper_add(connector, &exynos_dsi_connector_helper_funcs);
+>  	drm_mode_connector_attach_encoder(connector, encoder);
+>  
+> @@ -1612,6 +1516,104 @@ static const struct drm_encoder_funcs exynos_dsi_encoder_funcs = {
+>  
+>  MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
+>  
+> +static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+> +				  struct mipi_dsi_device *device)
+> +{
+> +	struct exynos_dsi *dsi = host_to_dsi(host);
+> +	struct drm_device *drm = dsi->connector.dev;
+> +
+> +	/*
+> +	 * This is a temporary solution and should be made by more generic way.
+> +	 *
+> +	 * If attached panel device is for command mode one, dsi should register
+> +	 * TE interrupt handler.
+> +	 */
+> +	if (!(device->mode_flags & MIPI_DSI_MODE_VIDEO)) {
+> +		int ret = exynos_dsi_register_te_irq(dsi, &device->dev);
+> +
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	mutex_lock(&drm->mode_config.mutex);
+> +
+> +	dsi->lanes = device->lanes;
+> +	dsi->format = device->format;
+> +	dsi->mode_flags = device->mode_flags;
+> +	dsi->panel = of_drm_find_panel(device->dev.of_node);
+> +	if (dsi->panel) {
+> +		drm_panel_attach(dsi->panel, &dsi->connector);
+> +		dsi->connector.status = connector_status_connected;
+> +	}
+> +
+> +	mutex_unlock(&drm->mode_config.mutex);
+> +
+> +	if (drm->mode_config.poll_enabled)
+> +		drm_kms_helper_hotplug_event(drm);
+
+Shouldn't drm_kms_helper_hotplug_event function be called only when connector status is changed?
+
+Thanks,
+Inki Dae 
