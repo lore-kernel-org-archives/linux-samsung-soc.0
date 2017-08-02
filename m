@@ -1,226 +1,155 @@
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-Subject: Re: [PATCH v2 1/4] drm/atomic: implement
- drm_atomic_helper_commit_tail for runtime_pm users
-Date: Wed, 2 Aug 2017 12:20:02 +0100
-Message-ID: <20170802112001.GO970@e110455-lin.cambridge.arm.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 1/4] drm/atomic: implement drm_atomic_helper_commit_tail
+ for runtime_pm users
+Date: Wed, 2 Aug 2017 13:27:23 +0200
+Message-ID: <CAKMK7uH_JviQ-n6tR17qqJxitXX91dLhnwYBEW2NxvKS7-3HAA@mail.gmail.com>
 References: <cover.204b8c1b76558ee33ecf147e51c2b6a04d302d55.1500555652.git-series.maxime.ripard@free-electrons.com>
  <a8f92dc70048bab746e94dadd1c23200626aff60.1500555652.git-series.maxime.ripard@free-electrons.com>
+ <20170802112001.GO970@e110455-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:52100 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753093AbdHBLUE (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 07:20:04 -0400
-Content-Disposition: inline
-In-Reply-To: <a8f92dc70048bab746e94dadd1c23200626aff60.1500555652.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170802112001.GO970@e110455-lin.cambridge.arm.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hi Maxime,
-
-On Thu, Jul 20, 2017 at 03:01:16PM +0200, Maxime Ripard wrote:
-> The current drm_atomic_helper_commit_tail helper works only if the CRTC is
-> accessible, and documents an alternative implementation that is supposed to
-> be used if that happens.
-> 
-> That implementation is then duplicated by some drivers. Instead of
-> documenting it, let's implement an helper that all the relevant users can
-> use directly.
-
-Sorry for not noticing the series earlier, I was fooled by the series
-top commit summary into thinking it was a driver specific change and
-only paid proper attention when it ended up in drm-next. I have a comment
-to make though.
-
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c        | 49 +++++++++++++++--------
->  drivers/gpu/drm/exynos/exynos_drm_fb.c     | 27 +-------------
->  drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 21 +----------
->  include/drm/drm_atomic_helper.h            |  1 +-
->  4 files changed, 37 insertions(+), 61 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 86d3093c6c9b..d06a65ed3a57 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -1245,23 +1245,13 @@ EXPORT_SYMBOL(drm_atomic_helper_wait_for_vblanks);
->   * @old_state: atomic state object with old state structures
->   *
->   * This is the default implementation for the
-> - * &drm_mode_config_helper_funcs.atomic_commit_tail hook.
-> + * &drm_mode_config_helper_funcs.atomic_commit_tail hook, for drivers
-> + * that do not support runtime_pm or do not need the CRTC to be
-> + * enabled to perform a commit. Otherwise, see
-> + * drm_atomic_helper_commit_tail_rpm().
->   *
->   * Note that the default ordering of how the various stages are called is to
-> - * match the legacy modeset helper library closest. One peculiarity of that is
-> - * that it doesn't mesh well with runtime PM at all.
-> - *
-> - * For drivers supporting runtime PM the recommended sequence is instead ::
-> - *
-> - *     drm_atomic_helper_commit_modeset_disables(dev, old_state);
-> - *
-> - *     drm_atomic_helper_commit_modeset_enables(dev, old_state);
-> - *
-> - *     drm_atomic_helper_commit_planes(dev, old_state,
-> - *                                     DRM_PLANE_COMMIT_ACTIVE_ONLY);
-> - *
-> - * for committing the atomic update to hardware.  See the kerneldoc entries for
-> - * these three functions for more details.
-> + * match the legacy modeset helper library closest.
->   */
->  void drm_atomic_helper_commit_tail(struct drm_atomic_state *old_state)
->  {
-> @@ -1281,6 +1271,35 @@ void drm_atomic_helper_commit_tail(struct drm_atomic_state *old_state)
->  }
->  EXPORT_SYMBOL(drm_atomic_helper_commit_tail);
->  
-> +/**
-> + * drm_atomic_helper_commit_tail_rpm - commit atomic update to hardware
-> + * @old_state: new modeset state to be committed
-> + *
-> + * This is an alternative implementation for the
-> + * &drm_mode_config_helper_funcs.atomic_commit_tail hook, for drivers
-> + * that support runtime_pm or need the CRTC to be enabled to perform a
-> + * commit. Otherwise, one should use the default implementation
-> + * drm_atomic_helper_commit_tail().
-> + */
-> +void drm_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
-> +{
-> +	struct drm_device *dev = old_state->dev;
-> +
-> +	drm_atomic_helper_commit_modeset_disables(dev, old_state);
-> +
-> +	drm_atomic_helper_commit_modeset_enables(dev, old_state);
-> +
-> +	drm_atomic_helper_commit_planes(dev, old_state,
-> +					DRM_PLANE_COMMIT_ACTIVE_ONLY);
-> +
-> +	drm_atomic_helper_commit_hw_done(old_state);
-> +
-> +	drm_atomic_helper_wait_for_vblanks(dev, old_state);
-> +
-> +	drm_atomic_helper_cleanup_planes(dev, old_state);
-> +}
-> +EXPORT_SYMBOL(drm_atomic_helper_commit_tail_rpm);
-> +
-
-Given that this function is supposed to be used by runtime PM aware
-drivers and that the hook is called from the DRM core, should there not
-be some pm_runtime_{get,put} calls wrapping the body of this function?
-
-Best regards,
-Liviu
-
-
->  static void commit_tail(struct drm_atomic_state *old_state)
->  {
->  	struct drm_device *dev = old_state->dev;
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> index d48fd7c918f8..ed1a648d518c 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> @@ -187,33 +187,8 @@ dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index)
->  	return exynos_fb->dma_addr[index];
->  }
->  
-> -static void exynos_drm_atomic_commit_tail(struct drm_atomic_state *state)
-> -{
-> -	struct drm_device *dev = state->dev;
-> -
-> -	drm_atomic_helper_commit_modeset_disables(dev, state);
-> -
-> -	drm_atomic_helper_commit_modeset_enables(dev, state);
-> -
-> -	/*
-> -	 * Exynos can't update planes with CRTCs and encoders disabled,
-> -	 * its updates routines, specially for FIMD, requires the clocks
-> -	 * to be enabled. So it is necessary to handle the modeset operations
-> -	 * *before* the commit_planes() step, this way it will always
-> -	 * have the relevant clocks enabled to perform the update.
-> -	 */
-> -	drm_atomic_helper_commit_planes(dev, state,
-> -					DRM_PLANE_COMMIT_ACTIVE_ONLY);
-> -
-> -	drm_atomic_helper_commit_hw_done(state);
-> -
-> -	drm_atomic_helper_wait_for_vblanks(dev, state);
-> -
-> -	drm_atomic_helper_cleanup_planes(dev, state);
-> -}
-> -
->  static struct drm_mode_config_helper_funcs exynos_drm_mode_config_helpers = {
-> -	.atomic_commit_tail = exynos_drm_atomic_commit_tail,
-> +	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
->  };
->  
->  static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> index 81f9548672b0..35ad386c401e 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> @@ -174,27 +174,8 @@ static void rockchip_drm_output_poll_changed(struct drm_device *dev)
->  		drm_fb_helper_hotplug_event(fb_helper);
->  }
->  
-> -static void
-> -rockchip_atomic_commit_tail(struct drm_atomic_state *state)
-> -{
-> -	struct drm_device *dev = state->dev;
-> -
-> -	drm_atomic_helper_commit_modeset_disables(dev, state);
-> -
-> -	drm_atomic_helper_commit_modeset_enables(dev, state);
-> -
-> -	drm_atomic_helper_commit_planes(dev, state,
-> -					DRM_PLANE_COMMIT_ACTIVE_ONLY);
-> -
-> -	drm_atomic_helper_commit_hw_done(state);
-> -
-> -	drm_atomic_helper_wait_for_vblanks(dev, state);
-> -
-> -	drm_atomic_helper_cleanup_planes(dev, state);
-> -}
-> -
->  static const struct drm_mode_config_helper_funcs rockchip_mode_config_helpers = {
-> -	.atomic_commit_tail = rockchip_atomic_commit_tail,
-> +	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
->  };
->  
->  static const struct drm_mode_config_funcs rockchip_drm_mode_config_funcs = {
-> diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
-> index f0a8678ae98e..af4aaff9ec0b 100644
-> --- a/include/drm/drm_atomic_helper.h
-> +++ b/include/drm/drm_atomic_helper.h
-> @@ -41,6 +41,7 @@ int drm_atomic_helper_check_planes(struct drm_device *dev,
->  int drm_atomic_helper_check(struct drm_device *dev,
->  			    struct drm_atomic_state *state);
->  void drm_atomic_helper_commit_tail(struct drm_atomic_state *state);
-> +void drm_atomic_helper_commit_tail_rpm(struct drm_atomic_state *state);
->  int drm_atomic_helper_commit(struct drm_device *dev,
->  			     struct drm_atomic_state *state,
->  			     bool nonblock);
-> -- 
-> git-series 0.9.1
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+T24gV2VkLCBBdWcgMiwgMjAxNyBhdCAxOjIwIFBNLCBMaXZpdSBEdWRhdSA8TGl2aXUuRHVkYXVA
+YXJtLmNvbT4gd3JvdGU6Cj4gT24gVGh1LCBKdWwgMjAsIDIwMTcgYXQgMDM6MDE6MTZQTSArMDIw
+MCwgTWF4aW1lIFJpcGFyZCB3cm90ZToKPj4gKy8qKgo+PiArICogZHJtX2F0b21pY19oZWxwZXJf
+Y29tbWl0X3RhaWxfcnBtIC0gY29tbWl0IGF0b21pYyB1cGRhdGUgdG8gaGFyZHdhcmUKPj4gKyAq
+IEBvbGRfc3RhdGU6IG5ldyBtb2Rlc2V0IHN0YXRlIHRvIGJlIGNvbW1pdHRlZAo+PiArICoKPj4g
+KyAqIFRoaXMgaXMgYW4gYWx0ZXJuYXRpdmUgaW1wbGVtZW50YXRpb24gZm9yIHRoZQo+PiArICog
+JmRybV9tb2RlX2NvbmZpZ19oZWxwZXJfZnVuY3MuYXRvbWljX2NvbW1pdF90YWlsIGhvb2ssIGZv
+ciBkcml2ZXJzCj4+ICsgKiB0aGF0IHN1cHBvcnQgcnVudGltZV9wbSBvciBuZWVkIHRoZSBDUlRD
+IHRvIGJlIGVuYWJsZWQgdG8gcGVyZm9ybSBhCj4+ICsgKiBjb21taXQuIE90aGVyd2lzZSwgb25l
+IHNob3VsZCB1c2UgdGhlIGRlZmF1bHQgaW1wbGVtZW50YXRpb24KPj4gKyAqIGRybV9hdG9taWNf
+aGVscGVyX2NvbW1pdF90YWlsKCkuCj4+ICsgKi8KPj4gK3ZvaWQgZHJtX2F0b21pY19oZWxwZXJf
+Y29tbWl0X3RhaWxfcnBtKHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpvbGRfc3RhdGUpCj4+ICt7
+Cj4+ICsgICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBvbGRfc3RhdGUtPmRldjsKPj4gKwo+
+PiArICAgICBkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9kaXNhYmxlcyhkZXYsIG9s
+ZF9zdGF0ZSk7Cj4+ICsKPj4gKyAgICAgZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X21vZGVzZXRf
+ZW5hYmxlcyhkZXYsIG9sZF9zdGF0ZSk7Cj4+ICsKPj4gKyAgICAgZHJtX2F0b21pY19oZWxwZXJf
+Y29tbWl0X3BsYW5lcyhkZXYsIG9sZF9zdGF0ZSwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBEUk1fUExBTkVfQ09NTUlUX0FDVElWRV9PTkxZKTsKPj4gKwo+PiArICAg
+ICBkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfaHdfZG9uZShvbGRfc3RhdGUpOwo+PiArCj4+ICsg
+ICAgIGRybV9hdG9taWNfaGVscGVyX3dhaXRfZm9yX3ZibGFua3MoZGV2LCBvbGRfc3RhdGUpOwo+
+PiArCj4+ICsgICAgIGRybV9hdG9taWNfaGVscGVyX2NsZWFudXBfcGxhbmVzKGRldiwgb2xkX3N0
+YXRlKTsKPj4gK30KPj4gK0VYUE9SVF9TWU1CT0woZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X3Rh
+aWxfcnBtKTsKPj4gKwo+Cj4gR2l2ZW4gdGhhdCB0aGlzIGZ1bmN0aW9uIGlzIHN1cHBvc2VkIHRv
+IGJlIHVzZWQgYnkgcnVudGltZSBQTSBhd2FyZQo+IGRyaXZlcnMgYW5kIHRoYXQgdGhlIGhvb2sg
+aXMgY2FsbGVkIGZyb20gdGhlIERSTSBjb3JlLCBzaG91bGQgdGhlcmUgbm90Cj4gYmUgc29tZSBw
+bV9ydW50aW1lX3tnZXQscHV0fSBjYWxscyB3cmFwcGluZyB0aGUgYm9keSBvZiB0aGlzIGZ1bmN0
+aW9uPwoKTm8sIGJlY2F1c2UgdGhlIGRybSBhdG9taWMgaGVscGVycyBoYXZlIG5vIGlkZWEgd2hp
+Y2ggZGV2aWNlIGlzCmJhY2tpbmcgd2hpY2ggcGFydCBvZiB0aGUgZHJtIGRldmljZS4gU29tZSBk
+cml2ZXJzIG1pZ2h0IG9uIGhhdmUgb25lCmRldmljZSBmb3IgdGhlIGVudGlyZSBkcml2ZXIsIHNv
+bWUgb25lIGRldmljZSBmb3IganVzdCB0aGUgZGlzcGxheQpwYXJ0ICh3aGljaCBtaWdodCBvciBt
+aWdodCBub3QgbWF0Y2ggZHJtX2RldmljZS0+ZGV2KS4gQW5kIG1hbnkgYXJtCmRyaXZlcnMgaGF2
+ZSBhIGRldmljZSBmb3IgZWFjaCBibG9jayBzZXBhcmF0ZWx5IChhbmQgeW91IG5lZWQgdG8gY2Fs
+bApycG1fZ2V0L3B1dCBvbiBlYWNoKS4gQW5kIHNvbWUgc29tZXRoaW5nIGluLWJldHdlZW4gKGUu
+Zy4gY29yZSBkZXZpY2UKKyBleHRlcm5hbCBlbmNvZGVycykuCgpJIGRvbid0IHRoaW5rIHRoZXJl
+J3MgYW55dGhpbmcgdGhlIGhlbHBlcnMgY2FuIHRvIHRvIGhlbHAgc3VwcG9ydCB0aGlzLgoKQWxz
+bywganVzdCB3cmFwcGluZyBmdW5jdGlvbnMgd2l0aCBycG1fZ2V0L3B1dCBvbmx5IHBhcGVycyBv
+dmVyIGJ1Z3MKaW4geW91ciBkcml2ZXIgLSBlaXRoZXIgeW91IGVuYWJsZSBzb21ldGhpbmcsIHRo
+ZW4gdGhlIHJwbV9nZXQgbmVlZHMKdG8gYmUgZG9uZSBhbnl3YXkgKHNpbmNlIHRoZSBodyB3aWxs
+IGJlIHNodXQgZG93biBvdGhlcndpc2UpLCBvciB5b3UKZGlzYWJsZSBzb21ldGhpbmcsIHNhbWUg
+cmVhc29ucy4gVGhlIG9ubHkgdGhpbmcgYSBycG1fZ2V0L3B1dCBkb2VzIGlzCnBhcGVyIG92ZXIg
+dGhlIGJ1Z3Mgd2hlcmUgeW91IHRyeSB0byBhY2Nlc3MgdGhlIGh3IHdoZW4gaXQncyBvZmYuIEFz
+CnNvb24gYXMgdGhpcyBmdW5jdGlvbiBmaW5pc2hlcywgdGhlIGh3IGlzIHNodXQgZG93biBhZ2Fp
+biwgZHJvcHMgYWxsCnJlZ2lzdGVyIHZhbHVlcyBvbiB0aGUgZmxvb3IsIHNvIGVpdGhlciB0aGF0
+IGFjY2VzcyB3YXNuJ3QgbmVlZGVkLCBvcgp5b3VyIGRyaXZlciBoYXMgYSBidWcgKGJlY2F1c2Ug
+aXQgYXNzdW1lcyB0aGUgcmVnaXN0ZXIgdmFsdWVzIHN1cnZpdmUKd2hlbiB0aGV5IGRvbid0KS4K
+ClNvIGltbyBhbGwgYXJvdW5kIGEgYmFkIGlkZWEsIGF0IGxlYXN0IGZyb20gbXkgZXhwZXJpZW5j
+ZSBvZiBkb2luZyBycG0KZW5hYmxpbmcgb24gaTkxNSBody4KLURhbmllbAoKPgo+IEJlc3QgcmVn
+YXJkcywKPiBMaXZpdQo+Cj4KPj4gIHN0YXRpYyB2b2lkIGNvbW1pdF90YWlsKHN0cnVjdCBkcm1f
+YXRvbWljX3N0YXRlICpvbGRfc3RhdGUpCj4+ICB7Cj4+ICAgICAgIHN0cnVjdCBkcm1fZGV2aWNl
+ICpkZXYgPSBvbGRfc3RhdGUtPmRldjsKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9mYi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZiLmMKPj4gaW5kZXggZDQ4ZmQ3YzkxOGY4Li5lZDFhNjQ4ZDUxOGMgMTAwNjQ0Cj4+IC0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCj4+ICsrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCj4+IEBAIC0xODcsMzMgKzE4Nyw4IEBAIGRt
+YV9hZGRyX3QgZXh5bm9zX2RybV9mYl9kbWFfYWRkcihzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpm
+YiwgaW50IGluZGV4KQo+PiAgICAgICByZXR1cm4gZXh5bm9zX2ZiLT5kbWFfYWRkcltpbmRleF07
+Cj4+ICB9Cj4+Cj4+IC1zdGF0aWMgdm9pZCBleHlub3NfZHJtX2F0b21pY19jb21taXRfdGFpbChz
+dHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpCj4+IC17Cj4+IC0gICAgIHN0cnVjdCBkcm1f
+ZGV2aWNlICpkZXYgPSBzdGF0ZS0+ZGV2Owo+PiAtCj4+IC0gICAgIGRybV9hdG9taWNfaGVscGVy
+X2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVzKGRldiwgc3RhdGUpOwo+PiAtCj4+IC0gICAgIGRybV9h
+dG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2VuYWJsZXMoZGV2LCBzdGF0ZSk7Cj4+IC0KPj4g
+LSAgICAgLyoKPj4gLSAgICAgICogRXh5bm9zIGNhbid0IHVwZGF0ZSBwbGFuZXMgd2l0aCBDUlRD
+cyBhbmQgZW5jb2RlcnMgZGlzYWJsZWQsCj4+IC0gICAgICAqIGl0cyB1cGRhdGVzIHJvdXRpbmVz
+LCBzcGVjaWFsbHkgZm9yIEZJTUQsIHJlcXVpcmVzIHRoZSBjbG9ja3MKPj4gLSAgICAgICogdG8g
+YmUgZW5hYmxlZC4gU28gaXQgaXMgbmVjZXNzYXJ5IHRvIGhhbmRsZSB0aGUgbW9kZXNldCBvcGVy
+YXRpb25zCj4+IC0gICAgICAqICpiZWZvcmUqIHRoZSBjb21taXRfcGxhbmVzKCkgc3RlcCwgdGhp
+cyB3YXkgaXQgd2lsbCBhbHdheXMKPj4gLSAgICAgICogaGF2ZSB0aGUgcmVsZXZhbnQgY2xvY2tz
+IGVuYWJsZWQgdG8gcGVyZm9ybSB0aGUgdXBkYXRlLgo+PiAtICAgICAgKi8KPj4gLSAgICAgZHJt
+X2F0b21pY19oZWxwZXJfY29tbWl0X3BsYW5lcyhkZXYsIHN0YXRlLAo+PiAtICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIERSTV9QTEFORV9DT01NSVRfQUNUSVZFX09OTFkpOwo+
+PiAtCj4+IC0gICAgIGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9od19kb25lKHN0YXRlKTsKPj4g
+LQo+PiAtICAgICBkcm1fYXRvbWljX2hlbHBlcl93YWl0X2Zvcl92YmxhbmtzKGRldiwgc3RhdGUp
+Owo+PiAtCj4+IC0gICAgIGRybV9hdG9taWNfaGVscGVyX2NsZWFudXBfcGxhbmVzKGRldiwgc3Rh
+dGUpOwo+PiAtfQo+PiAtCj4+ICBzdGF0aWMgc3RydWN0IGRybV9tb2RlX2NvbmZpZ19oZWxwZXJf
+ZnVuY3MgZXh5bm9zX2RybV9tb2RlX2NvbmZpZ19oZWxwZXJzID0gewo+PiAtICAgICAuYXRvbWlj
+X2NvbW1pdF90YWlsID0gZXh5bm9zX2RybV9hdG9taWNfY29tbWl0X3RhaWwsCj4+ICsgICAgIC5h
+dG9taWNfY29tbWl0X3RhaWwgPSBkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfdGFpbF9ycG0sCj4+
+ICB9Owo+Pgo+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fbW9kZV9jb25maWdfZnVuY3MgZXh5
+bm9zX2RybV9tb2RlX2NvbmZpZ19mdW5jcyA9IHsKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
+cC9yb2NrY2hpcF9kcm1fZmIuYwo+PiBpbmRleCA4MWY5NTQ4NjcyYjAuLjM1YWQzODZjNDAxZSAx
+MDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9mYi5j
+Cj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZmIuYwo+PiBA
+QCAtMTc0LDI3ICsxNzQsOCBAQCBzdGF0aWMgdm9pZCByb2NrY2hpcF9kcm1fb3V0cHV0X3BvbGxf
+Y2hhbmdlZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQo+PiAgICAgICAgICAgICAgIGRybV9mYl9o
+ZWxwZXJfaG90cGx1Z19ldmVudChmYl9oZWxwZXIpOwo+PiAgfQo+Pgo+PiAtc3RhdGljIHZvaWQK
+Pj4gLXJvY2tjaGlwX2F0b21pY19jb21taXRfdGFpbChzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAq
+c3RhdGUpCj4+IC17Cj4+IC0gICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBzdGF0ZS0+ZGV2
+Owo+PiAtCj4+IC0gICAgIGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVz
+KGRldiwgc3RhdGUpOwo+PiAtCj4+IC0gICAgIGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rl
+c2V0X2VuYWJsZXMoZGV2LCBzdGF0ZSk7Cj4+IC0KPj4gLSAgICAgZHJtX2F0b21pY19oZWxwZXJf
+Y29tbWl0X3BsYW5lcyhkZXYsIHN0YXRlLAo+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIERSTV9QTEFORV9DT01NSVRfQUNUSVZFX09OTFkpOwo+PiAtCj4+IC0gICAgIGRy
+bV9hdG9taWNfaGVscGVyX2NvbW1pdF9od19kb25lKHN0YXRlKTsKPj4gLQo+PiAtICAgICBkcm1f
+YXRvbWljX2hlbHBlcl93YWl0X2Zvcl92YmxhbmtzKGRldiwgc3RhdGUpOwo+PiAtCj4+IC0gICAg
+IGRybV9hdG9taWNfaGVscGVyX2NsZWFudXBfcGxhbmVzKGRldiwgc3RhdGUpOwo+PiAtfQo+PiAt
+Cj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9tb2RlX2NvbmZpZ19oZWxwZXJfZnVuY3Mgcm9j
+a2NoaXBfbW9kZV9jb25maWdfaGVscGVycyA9IHsKPj4gLSAgICAgLmF0b21pY19jb21taXRfdGFp
+bCA9IHJvY2tjaGlwX2F0b21pY19jb21taXRfdGFpbCwKPj4gKyAgICAgLmF0b21pY19jb21taXRf
+dGFpbCA9IGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF90YWlsX3JwbSwKPj4gIH07Cj4+Cj4+ICBz
+dGF0aWMgY29uc3Qgc3RydWN0IGRybV9tb2RlX2NvbmZpZ19mdW5jcyByb2NrY2hpcF9kcm1fbW9k
+ZV9jb25maWdfZnVuY3MgPSB7Cj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2RybS9kcm1fYXRvbWlj
+X2hlbHBlci5oIGIvaW5jbHVkZS9kcm0vZHJtX2F0b21pY19oZWxwZXIuaAo+PiBpbmRleCBmMGE4
+Njc4YWU5OGUuLmFmNGFhZmY5ZWMwYiAxMDA2NDQKPj4gLS0tIGEvaW5jbHVkZS9kcm0vZHJtX2F0
+b21pY19oZWxwZXIuaAo+PiArKysgYi9pbmNsdWRlL2RybS9kcm1fYXRvbWljX2hlbHBlci5oCj4+
+IEBAIC00MSw2ICs0MSw3IEBAIGludCBkcm1fYXRvbWljX2hlbHBlcl9jaGVja19wbGFuZXMoc3Ry
+dWN0IGRybV9kZXZpY2UgKmRldiwKPj4gIGludCBkcm1fYXRvbWljX2hlbHBlcl9jaGVjayhzdHJ1
+Y3QgZHJtX2RldmljZSAqZGV2LAo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBk
+cm1fYXRvbWljX3N0YXRlICpzdGF0ZSk7Cj4+ICB2b2lkIGRybV9hdG9taWNfaGVscGVyX2NvbW1p
+dF90YWlsKHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSk7Cj4+ICt2b2lkIGRybV9hdG9t
+aWNfaGVscGVyX2NvbW1pdF90YWlsX3JwbShzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUp
+Owo+PiAgaW50IGRybV9hdG9taWNfaGVscGVyX2NvbW1pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
+LAo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAq
+c3RhdGUsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGJvb2wgbm9uYmxvY2spOwo+PiAt
+LQo+PiBnaXQtc2VyaWVzIDAuOS4xCj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+Cj4gLS0KPiA9PT09PT09PT09PT09PT09PT09PQo+IHwg
+SSB3b3VsZCBsaWtlIHRvIHwKPiB8IGZpeCB0aGUgd29ybGQsICB8Cj4gfCBidXQgdGhleSdyZSBu
+b3QgfAo+IHwgZ2l2aW5nIG1lIHRoZSAgIHwKPiAgXCBzb3VyY2UgY29kZSEgIC8KPiAgIC0tLS0t
+LS0tLS0tLS0tLQo+ICAgICDCr1xfKOODhClfL8KvCj4gX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCgoKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJl
+IEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgorNDEgKDApIDc5IDM2NSA1NyA0OCAtIGh0dHA6
+Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
