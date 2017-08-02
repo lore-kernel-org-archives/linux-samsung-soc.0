@@ -1,70 +1,27 @@
-From: <nenep@hkg.odn.ne.jp>
-Subject: (unknown)
-Date: Wed, 02 Aug 2017 01:19:49 -0000
-Message-ID: <150163678966.2727.9721695945841980754@zaural.ru>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: samsung: Remove unneeded local variable initialization
+Date: Wed, 2 Aug 2017 10:45:07 +0200
+Message-ID: <CACRpkdbMBgOad3Vidccu46GhF9ccYwGqPjE19N_AvnRn0S_qMg@mail.gmail.com>
+References: <1500399808-6580-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_436034165_linux-samsung-soc.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ws236.zone31-163-165.zaural.ru ([31.163.165.236]:59474 "HELO
-        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1751368AbdHBBTx (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Aug 2017 21:19:53 -0400
-Content-Disposition: attachment
-Subject: 
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1500399808-6580-1-git-send-email-krzk@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-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
-ALUKAAAAAA==
+On Tue, Jul 18, 2017 at 7:43 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+
+> Two local variables (shift and reg_con) were initialized to unused
+> values - they were overwritten just few lines after.  Getting rid of
+> this unused initialization allows dropping other variables and
+> compacting slightly the code.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Looks good to me, I expect to get this from you in a pull request.
+
+Yours,
+Linus Walleij
