@@ -1,116 +1,203 @@
-From: Cihangir Akturk <cakturk@gmail.com>
-Subject: [PATCH 09/29] drm/exynos: switch to drm_*{get,put} helpers
-Date: Thu,  3 Aug 2017 14:58:24 +0300
-Message-ID: <1501761585-11757-10-git-send-email-cakturk@gmail.com>
-References: <1501761585-11757-1-git-send-email-cakturk@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1501761585-11757-1-git-send-email-cakturk@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Cihangir Akturk <cakturk@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Add HDMI and Sil9234 to Trats2
+ board
+Date: Thu, 3 Aug 2017 21:20:00 +0200
+Message-ID: <20170803192000.trgfndzj4b3bnisc@kozik-lap>
+References: <1501746323-5254-1-git-send-email-m.purski@samsung.com>
+ <CGME20170803074541eucas1p2b054d4853a98819fc42f19f7cae7f419@eucas1p2.samsung.com>
+ <1501746323-5254-3-git-send-email-m.purski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38181 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751696AbdHCTUF (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 3 Aug 2017 15:20:05 -0400
+Content-Disposition: inline
+In-Reply-To: <1501746323-5254-3-git-send-email-m.purski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Maciej Purski <m.purski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, b.zolnierkie@samsung.com
 
-drm_*_reference() and drm_*_unreference() functions are just
-compatibility alias for drm_*_get() and drm_*_put() adn should not be
-used by new code. So convert all users of compatibility functions to use
-the new APIs.
+On Thu, Aug 03, 2017 at 09:45:23AM +0200, Maciej Purski wrote:
+> This patch adds HDMI and Sil9234 MHL converter to Trats2 board.
 
-Signed-off-by: Cihangir Akturk <cakturk@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fb.c    |  4 ++--
- drivers/gpu/drm/exynos/exynos_drm_gem.c   | 12 ++++++------
- drivers/gpu/drm/exynos/exynos_drm_plane.c |  2 +-
- 3 files changed, 9 insertions(+), 9 deletions(-)
+Just "Add HDMI...", without this patch.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index d48fd7c..3dccdee 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -80,7 +80,7 @@ static void exynos_drm_fb_destroy(struct drm_framebuffer *fb)
- 			continue;
- 
- 		obj = &exynos_fb->exynos_gem[i]->base;
--		drm_gem_object_unreference_unlocked(obj);
-+		drm_gem_object_put_unlocked(obj);
- 	}
- 
- 	kfree(exynos_fb);
-@@ -172,7 +172,7 @@ exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 
- err:
- 	while (i--)
--		drm_gem_object_unreference_unlocked(&exynos_gem[i]->base);
-+		drm_gem_object_put_unlocked(&exynos_gem[i]->base);
- 
- 	return ERR_PTR(ret);
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index c23479b..1c8d2f9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -143,7 +143,7 @@ static int exynos_drm_gem_handle_create(struct drm_gem_object *obj,
- 	DRM_DEBUG_KMS("gem handle = 0x%x\n", *handle);
- 
- 	/* drop reference from allocate - handle holds it now. */
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 
- 	return 0;
- }
-@@ -186,7 +186,7 @@ unsigned long exynos_drm_gem_get_size(struct drm_device *dev,
- 
- 	exynos_gem = to_exynos_gem(obj);
- 
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 
- 	return exynos_gem->size;
- }
-@@ -320,13 +320,13 @@ void exynos_drm_gem_put_dma_addr(struct drm_device *dev,
- 		return;
- 	}
- 
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 
- 	/*
- 	 * decrease obj->refcount one more time because we has already
- 	 * increased it at exynos_drm_gem_get_dma_addr().
- 	 */
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- }
- 
- static int exynos_drm_gem_mmap_buffer(struct exynos_drm_gem *exynos_gem,
-@@ -374,7 +374,7 @@ int exynos_drm_gem_get_ioctl(struct drm_device *dev, void *data,
- 	args->flags = exynos_gem->flags;
- 	args->size = exynos_gem->size;
- 
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 
- 	return 0;
- }
-@@ -444,7 +444,7 @@ int exynos_drm_gem_dumb_map_offset(struct drm_file *file_priv,
- 	*offset = drm_vma_node_offset_addr(&obj->vma_node);
- 	DRM_DEBUG_KMS("offset = 0x%lx\n", (unsigned long)*offset);
- 
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 611b6fd..c19de47 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -132,7 +132,7 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
- 	if (plane->state) {
- 		exynos_state = to_exynos_plane_state(plane->state);
- 		if (exynos_state->base.fb)
--			drm_framebuffer_unreference(exynos_state->base.fb);
-+			drm_framebuffer_put(exynos_state->base.fb);
- 		kfree(exynos_state);
- 		plane->state = NULL;
- 	}
--- 
-2.7.4
+Except few minor nitpicks below, looks good. After fixing I will take it
+once bindings got accepted.
+
+> 
+> Based on previous work by:
+> Tomasz Stanislawski <t.stanislaws@samsung.com>
+> 
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-trats2.dts | 93 +++++++++++++++++++++++++++++++++
+>  1 file changed, 93 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+> index 35e9b94..39940f6 100644
+> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
+> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+> @@ -97,6 +97,16 @@
+>  			gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
+>  			enable-active-high;
+>  		};
+> +
+> +		vsil: voltage-regulator-vsil {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "HDMI_5V";
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <5000000>;
+> +			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
+> +			enable-active-high;
+> +			vin-supply = <&buck7_reg>;
+
+I think the supply is V_BAT, not buck7.
+
+> +		};
+>  	};
+>  
+>  	gpio-keys {
+> @@ -229,6 +239,34 @@
+>  		};
+>  	};
+>  
+> +	i2c-mhl {
+> +		compatible = "i2c-gpio";
+> +		gpios = <&gpf0 4 GPIO_ACTIVE_HIGH &gpf0 6 GPIO_ACTIVE_HIGH>;
+> +		i2c-gpio,delay-us = <100>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		pinctrl-0 = <&i2c_mhl_bus>;
+> +		pinctrl-names = "default";
+> +		status = "okay";
+> +
+> +		sii9234: sii9234@39 {
+
+The name of node should be rather generic (ePAPR: "The name of a node
+should be somewhat generic, reflecting the function of the device and
+not its precise programming model").
+
+So maybe "sii9234: hdmi-bridge@39"?
+
+> +			compatible = "sil,sii9234";
+> +			vcc-supply = <&vsil>;
+> +			reset-gpios = <&gpf3 4 GPIO_ACTIVE_HIGH>;
+> +			interrupt-parent = <&gpf3>;
+> +			interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg = <0x39>;
+> +
+> +
+
+One empty line instead of two.
+
+> +			port {
+> +				mhl_to_hdmi: endpoint {
+> +					remote-endpoint = <&hdmi_to_mhl>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+>  	camera: camera {
+>  		pinctrl-0 = <&cam_port_a_clk_active &cam_port_b_clk_active>;
+>  		pinctrl-names = "default";
+> @@ -522,6 +560,31 @@
+>  	status = "okay";
+>  };
+>  
+> +&hdmi {
+> +	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_HIGH>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_hpd>;
+> +	hdmi-en-supply = <&vsil>;
+> +	vdd-supply = <&ldo3_reg>;
+> +	vdd_osc-supply = <&ldo4_reg>;
+> +	vdd_pll-supply = <&ldo3_reg>;
+> +	ddc = <&i2c_5>;
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			hdmi_to_mhl: endpoint {
+> +				remote-endpoint = <&mhl_to_hdmi>;
+> +			};
+> +		};
+> +	};
+> +
+
+Unnecessary empty line.
+
+> +};
+> +
+>  &hsotg {
+>  	vusb_d-supply = <&ldo15_reg>;
+>  	vusb_a-supply = <&ldo12_reg>;
+> @@ -600,6 +663,11 @@
+>  	};
+>  };
+>  
+> +
+> +&i2c_5 {
+> +	status = "okay";
+> +};
+
+Could you describe more what is on i2c_5 and i2c_8? Is it relevant to
+this patch?
+
+> +
+>  &i2c_7 {
+>  	samsung,i2c-sda-delay = <100>;
+>  	samsung,i2c-slave-addr = <0x10>;
+> @@ -894,12 +962,20 @@
+>  	};
+>  };
+>  
+> +&i2c_8 {
+> +	status = "okay";
+> +};
+> +
+>  &i2s0 {
+>  	pinctrl-0 = <&i2s0_bus>;
+>  	pinctrl-names = "default";
+>  	status = "okay";
+>  };
+>  
+> +&mixer {
+> +	status = "okay";
+> +};
+> +
+>  &mshc_0 {
+>  	num-slots = <1>;
+>  	broken-cd;
+> @@ -926,6 +1002,18 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&sleep0>;
+>  
+> +	mhl_int: mhl-int {
+> +		samsung,pins = "gpf3-5";
+> +		samsung,pin-pud = <0>;
+
+Please use defines from dt-bindings/pinctrl/samsung.h
+
+> +	};
+> +
+> +	i2c_mhl_bus: i2c-mhl-bus {
+> +		samsung,pins = "gpf0-4", "gpf0-6";
+> +		samsung,pin-function = <2>;
+> +		samsung,pin-pud = <1>;
+> +		samsung,pin-drv = <0>;
+
+The same.
+
+Best regards,
+Krzysztof
