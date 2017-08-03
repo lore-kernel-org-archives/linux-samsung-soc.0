@@ -1,442 +1,1232 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] drm: exynos: Add driver for HDMI audio interface
-Date: Thu, 03 Aug 2017 11:22:33 +0200
-Message-ID: <1501752153-26669-1-git-send-email-s.nawrocki@samsung.com>
-References: <CGME20170803092244epcas2p22ba6f676780e3efb2cf7ae87edaa550c@epcas2p2.samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 1/2] drm/bridge: add Silicon Image SiI9234 driver
+Date: Thu, 03 Aug 2017 13:24:29 +0300
+Message-ID: <3612749.1Xj3PQ173Q@avalon>
+References: <1501746323-5254-1-git-send-email-m.purski@samsung.com> <CGME20170803074538eucas1p1fec88e4f2c3ebc00054fd362a504c03e@eucas1p1.samsung.com> <1501746323-5254-2-git-send-email-m.purski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41042 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbdHCJWq (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54546 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751238AbdHCKYQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Aug 2017 05:22:46 -0400
+        Thu, 3 Aug 2017 06:24:16 -0400
+In-Reply-To: <1501746323-5254-2-git-send-email-m.purski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: inki.dae@samsung.com
-Cc: krzk@kernel.org, dri-devel@lists.freedesktop.org, sw0312.kim@samsung.com, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, alsa-devel@alsa-project.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Maciej Purski <m.purski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com
 
-The hdmi-codec interface added in this patch is required to properly
-support HDMI audio. Currently the audio part of the SoC internal
-HDMI transmitter is configured with fixed values, which makes HDMI
-audio working by chance, only on boards equipped with external audio
-codec connected in parallel with the HDMI audio transmitter I2S input
-interface.
+Hi Maciej,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since RFC version:
- - fixed hdmi-codec locking issue
- - added a comment documenting struct hdmi_contex::mutex
----
- drivers/gpu/drm/exynos/Kconfig       |   1 +
- drivers/gpu/drm/exynos/exynos_hdmi.c | 226 +++++++++++++++++++++++++++++------
- 2 files changed, 193 insertions(+), 34 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 1d18534..a6edbb6 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -3,6 +3,7 @@ config DRM_EXYNOS
- 	depends on OF && DRM && (ARCH_S3C64XX || ARCH_EXYNOS || ARCH_MULTIPLATFORM)
- 	select DRM_KMS_HELPER
- 	select VIDEOMODE_HELPERS
-+	select SND_SOC_HDMI_CODEC if SND_SOC
- 	help
- 	  Choose this option if you have a Samsung SoC EXYNOS chipset.
- 	  If M is selected the module will be called exynosdrm.
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 06bfbe4..64eadf58 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -40,7 +40,7 @@
- #include <linux/component.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
--
-+#include <sound/hdmi-codec.h>
- #include <drm/exynos_drm.h>
- 
- #include <media/cec-notifier.h>
-@@ -111,12 +111,19 @@ struct hdmi_driver_data {
- 	struct string_array_spec clk_muxes;
- };
- 
-+struct hdmi_audio {
-+	struct platform_device *pdev;
-+	struct hdmi_audio_infoframe infoframe;
-+	unsigned int sample_rate;
-+	unsigned int sample_width;
-+	u8 enable;
-+};
-+
- struct hdmi_context {
- 	struct drm_encoder		encoder;
- 	struct device			*dev;
- 	struct drm_device		*drm_dev;
- 	struct drm_connector		connector;
--	bool				powered;
- 	bool				dvi_mode;
- 	struct delayed_work		hotplug_work;
- 	struct drm_display_mode		current_mode;
-@@ -137,6 +144,11 @@ struct hdmi_context {
- 	struct regulator		*reg_hdmi_en;
- 	struct exynos_drm_clk		phy_clk;
- 	struct drm_bridge		*bridge;
-+
-+	/* mutex protecting subsequent fields below */
-+	struct mutex			mutex;
-+	struct hdmi_audio		audio;
-+	bool				powered;
- };
- 
- static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
-@@ -768,6 +780,22 @@ static int hdmi_clk_set_parents(struct hdmi_context *hdata, bool to_phy)
- 	return ret;
- }
- 
-+static int hdmi_audio_infoframe_apply(struct hdmi_context *hdata)
-+{
-+	struct hdmi_audio_infoframe *infoframe = &hdata->audio.infoframe;
-+	u8 buf[HDMI_INFOFRAME_SIZE(AUDIO)];
-+	int len;
-+
-+	len = hdmi_audio_infoframe_pack(infoframe, buf, sizeof(buf));
-+	if (len < 0)
-+		return len;
-+
-+	hdmi_reg_writeb(hdata, HDMI_AUI_CON, HDMI_AUI_CON_EVERY_VSYNC);
-+	hdmi_reg_write_buf(hdata, HDMI_AUI_HEADER0, buf, len);
-+
-+	return 0;
-+}
-+
- static void hdmi_reg_infoframes(struct hdmi_context *hdata)
- {
- 	union hdmi_infoframe frm;
-@@ -805,15 +833,7 @@ static void hdmi_reg_infoframes(struct hdmi_context *hdata)
- 		hdmi_reg_write_buf(hdata, HDMI_VSI_DATA(0), buf + 3, ret - 3);
- 	}
- 
--	ret = hdmi_audio_infoframe_init(&frm.audio);
--	if (!ret) {
--		frm.audio.channels = 2;
--		ret = hdmi_audio_infoframe_pack(&frm.audio, buf, sizeof(buf));
--	}
--	if (ret > 0) {
--		hdmi_reg_writeb(hdata, HDMI_AUI_CON, HDMI_AUI_CON_EVERY_VSYNC);
--		hdmi_reg_write_buf(hdata, HDMI_AUI_HEADER0, buf, ret);
--	}
-+	hdmi_audio_infoframe_apply(hdata);
- }
- 
- static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
-@@ -996,23 +1016,18 @@ static void hdmi_reg_acr(struct hdmi_context *hdata, u32 freq)
- 	hdmi_reg_writeb(hdata, HDMI_ACR_CON, 4);
- }
- 
--static void hdmi_audio_init(struct hdmi_context *hdata)
-+static void hdmi_audio_config(struct hdmi_context *hdata)
- {
--	u32 sample_rate, bits_per_sample;
--	u32 data_num, bit_ch, sample_frq;
--	u32 val;
-+	u32 data_num, sample_freq, val;
-+	u32 bit_ch = 1;
- 
--	sample_rate = 44100;
--	bits_per_sample = 16;
- 
--	switch (bits_per_sample) {
-+	switch (hdata->audio.sample_width) {
- 	case 20:
- 		data_num = 2;
--		bit_ch = 1;
- 		break;
- 	case 24:
- 		data_num = 3;
--		bit_ch = 1;
- 		break;
- 	default:
- 		data_num = 1;
-@@ -1020,7 +1035,7 @@ static void hdmi_audio_init(struct hdmi_context *hdata)
- 		break;
- 	}
- 
--	hdmi_reg_acr(hdata, sample_rate);
-+	hdmi_reg_acr(hdata, hdata->audio.sample_rate);
- 
- 	hdmi_reg_writeb(hdata, HDMI_I2S_MUX_CON, HDMI_I2S_IN_DISABLE
- 				| HDMI_I2S_AUD_I2S | HDMI_I2S_CUV_I2S_ENABLE
-@@ -1031,10 +1046,21 @@ static void hdmi_audio_init(struct hdmi_context *hdata)
- 
- 	hdmi_reg_writeb(hdata, HDMI_I2S_MUX_CUV, HDMI_I2S_CUV_RL_EN);
- 
--	sample_frq = (sample_rate == 44100) ? 0 :
--			(sample_rate == 48000) ? 2 :
--			(sample_rate == 32000) ? 3 :
--			(sample_rate == 96000) ? 0xa : 0x0;
-+	switch(hdata->audio.sample_rate) {
-+	case 32000:
-+		sample_freq = 0x3;
-+		break;
-+	case 48000:
-+		sample_freq = 0x2;
-+		break;
-+	case 96000:
-+		sample_freq = 0xa;
-+		break;
-+	case 44100:
-+	default:
-+		sample_freq = 0;
-+		break;
-+	}
- 
- 	hdmi_reg_writeb(hdata, HDMI_I2S_CLK_CON, HDMI_I2S_CLK_DIS);
- 	hdmi_reg_writeb(hdata, HDMI_I2S_CLK_CON, HDMI_I2S_CLK_EN);
-@@ -1068,7 +1094,7 @@ static void hdmi_audio_init(struct hdmi_context *hdata)
- 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_1, HDMI_I2S_CD_PLAYER);
- 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_2, HDMI_I2S_SET_SOURCE_NUM(0));
- 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_3, HDMI_I2S_CLK_ACCUR_LEVEL_2
--			| HDMI_I2S_SET_SMP_FREQ(sample_frq));
-+			| HDMI_I2S_SET_SMP_FREQ(sample_freq));
- 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_4,
- 			HDMI_I2S_ORG_SMP_FREQ_44_1
- 			| HDMI_I2S_WORD_LEN_MAX24_24BITS
-@@ -1077,13 +1103,15 @@ static void hdmi_audio_init(struct hdmi_context *hdata)
- 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_CON, HDMI_I2S_CH_STATUS_RELOAD);
- }
- 
--static void hdmi_audio_control(struct hdmi_context *hdata, bool onoff)
-+static void hdmi_audio_control(struct hdmi_context *hdata)
- {
-+	bool enable = hdata->audio.enable;
-+
- 	if (hdata->dvi_mode)
- 		return;
- 
--	hdmi_reg_writeb(hdata, HDMI_AUI_CON, onoff ? 2 : 0);
--	hdmi_reg_writemask(hdata, HDMI_CON_0, onoff ?
-+	hdmi_reg_writeb(hdata, HDMI_AUI_CON, enable ? 2 : 0);
-+	hdmi_reg_writemask(hdata, HDMI_CON_0, enable ?
- 			HDMI_ASP_EN : HDMI_ASP_DIS, HDMI_ASP_MASK);
- }
- 
-@@ -1403,9 +1431,9 @@ static void hdmi_conf_apply(struct hdmi_context *hdata)
- {
- 	hdmi_start(hdata, false);
- 	hdmi_conf_init(hdata);
--	hdmi_audio_init(hdata);
-+	hdmi_audio_config(hdata);
- 	hdmi_mode_apply(hdata);
--	hdmi_audio_control(hdata, true);
-+	hdmi_audio_control(hdata);
- }
- 
- static void hdmi_mode_set(struct drm_encoder *encoder,
-@@ -1479,17 +1507,24 @@ static void hdmi_enable(struct drm_encoder *encoder)
- {
- 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
- 
-+	mutex_lock(&hdata->mutex);
-+
- 	hdmiphy_enable(hdata);
- 	hdmi_conf_apply(hdata);
-+
-+	mutex_unlock(&hdata->mutex);
- }
- 
- static void hdmi_disable(struct drm_encoder *encoder)
- {
- 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
- 
--	if (!hdata->powered)
--		return;
-+	mutex_lock(&hdata->mutex);
- 
-+	if (!hdata->powered) {
-+		mutex_unlock(&hdata->mutex);
-+		return;
-+	}
- 	/*
- 	 * The SFRs of VP and Mixer are updated by Vertical Sync of
- 	 * Timing generator which is a part of HDMI so the sequence
-@@ -1503,6 +1538,8 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
- 
- 	hdmiphy_disable(hdata);
-+
-+	mutex_unlock(&hdata->mutex);
- }
- 
- static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
-@@ -1516,6 +1553,109 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 	.destroy = drm_encoder_cleanup,
- };
- 
-+static void hdmi_audio_shutdown(struct device *dev, void *data)
-+{
-+	struct hdmi_context *hdata = dev_get_drvdata(dev);
-+
-+	mutex_lock(&hdata->mutex);
-+
-+	hdata->audio.enable = false;
-+
-+	if (hdata->powered)
-+		hdmi_audio_control(hdata);
-+
-+	mutex_unlock(&hdata->mutex);
-+}
-+
-+static int hdmi_audio_hw_params(struct device *dev, void *data,
-+				struct hdmi_codec_daifmt *daifmt,
-+				struct hdmi_codec_params *params)
-+{
-+	struct hdmi_context *hdata = dev_get_drvdata(dev);
-+
-+	if (daifmt->fmt != HDMI_I2S || daifmt->bit_clk_inv ||
-+	    daifmt->frame_clk_inv || daifmt->bit_clk_master ||
-+	    daifmt->frame_clk_master) {
-+		dev_err(dev, "%s: Bad flags %d %d %d %d\n", __func__,
-+			daifmt->bit_clk_inv, daifmt->frame_clk_inv,
-+			daifmt->bit_clk_master,
-+			daifmt->frame_clk_master);
-+		return -EINVAL;
-+	}
-+
-+	mutex_lock(&hdata->mutex);
-+
-+	hdata->audio.sample_rate = params->sample_rate;
-+	hdata->audio.sample_width = params->sample_width;
-+	hdata->audio.infoframe = params->cea;
-+
-+	if (hdata->powered) {
-+		hdmi_audio_config(hdata);
-+		hdmi_audio_infoframe_apply(hdata);
-+	}
-+
-+	mutex_unlock(&hdata->mutex);
-+
-+	return 0;
-+}
-+
-+static int hdmi_audio_digital_mute(struct device *dev, void *data, bool mute)
-+{
-+	struct hdmi_context *hdata = dev_get_drvdata(dev);
-+
-+	mutex_lock(&hdata->mutex);
-+
-+	hdata->audio.enable = !mute;
-+
-+	if (hdata->powered)
-+		hdmi_audio_control(hdata);
-+
-+	mutex_unlock(&hdata->mutex);
-+
-+	return 0;
-+}
-+
-+static int hdmi_audio_get_eld(struct device *dev, void *data, uint8_t *buf,
-+			      size_t len)
-+{
-+	struct hdmi_context *hdata = dev_get_drvdata(dev);
-+	struct drm_connector *connector = &hdata->connector;
-+
-+	memcpy(buf, connector->eld, min(sizeof(connector->eld), len));
-+
-+	return 0;
-+}
-+
-+static const struct hdmi_codec_ops audio_codec_ops = {
-+	.hw_params = hdmi_audio_hw_params,
-+	.audio_shutdown = hdmi_audio_shutdown,
-+	.digital_mute = hdmi_audio_digital_mute,
-+	.get_eld = hdmi_audio_get_eld,
-+};
-+
-+static int hdmi_register_audio_device(struct hdmi_context *hdata)
-+{
-+	struct hdmi_codec_pdata codec_data = {
-+		.ops = &audio_codec_ops,
-+		.max_i2s_channels = 6,
-+		.i2s = 1,
-+	};
-+
-+	hdata->audio.pdev = platform_device_register_data(
-+		hdata->dev, HDMI_CODEC_DRV_NAME, PLATFORM_DEVID_AUTO,
-+		&codec_data, sizeof(codec_data));
-+
-+	if (IS_ERR(hdata->audio.pdev))
-+		return PTR_ERR(hdata->audio.pdev);
-+
-+	return 0;
-+}
-+
-+static void hdmi_unregister_audio_device(struct hdmi_context *hdata)
-+{
-+	platform_device_unregister(hdata->audio.pdev);
-+}
-+
- static void hdmi_hotplug_work_func(struct work_struct *work)
- {
- 	struct hdmi_context *hdata;
-@@ -1700,6 +1840,7 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
- 	struct drm_device *drm_dev = data;
- 	struct hdmi_context *hdata = dev_get_drvdata(dev);
- 	struct drm_encoder *encoder = &hdata->encoder;
-+	struct hdmi_audio_infoframe *audio_infoframe = &hdata->audio.infoframe;
- 	struct exynos_drm_crtc *exynos_crtc;
- 	struct drm_crtc *crtc;
- 	int ret, pipe;
-@@ -1721,6 +1862,12 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
- 
- 	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
- 
-+	hdmi_audio_infoframe_init(audio_infoframe);
-+	audio_infoframe->coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
-+	audio_infoframe->sample_size = HDMI_AUDIO_SAMPLE_SIZE_STREAM;
-+	audio_infoframe->sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
-+	audio_infoframe->channels = 2;
-+
- 	drm_encoder_init(drm_dev, encoder, &exynos_hdmi_encoder_funcs,
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 
-@@ -1828,6 +1975,8 @@ static int hdmi_probe(struct platform_device *pdev)
- 
- 	hdata->dev = dev;
- 
-+	mutex_init(&hdata->mutex);
-+
- 	ret = hdmi_resources_init(hdata);
- 	if (ret) {
- 		if (ret != -EPROBE_DEFER)
-@@ -1887,12 +2036,19 @@ static int hdmi_probe(struct platform_device *pdev)
- 
- 	pm_runtime_enable(dev);
- 
--	ret = component_add(&pdev->dev, &hdmi_component_ops);
-+	ret = hdmi_register_audio_device(hdata);
- 	if (ret)
- 		goto err_notifier_put;
- 
-+	ret = component_add(&pdev->dev, &hdmi_component_ops);
-+	if (ret)
-+		goto err_unregister_audio;
-+
- 	return ret;
- 
-+err_unregister_audio:
-+	hdmi_unregister_audio_device(hdata);
-+
- err_notifier_put:
- 	cec_notifier_put(hdata->notifier);
- 	pm_runtime_disable(dev);
-@@ -1931,6 +2087,8 @@ static int hdmi_remove(struct platform_device *pdev)
- 
- 	put_device(&hdata->ddc_adpt->dev);
- 
-+	mutex_destroy(&hdata->mutex);
-+
- 	return 0;
- }
- 
+On Thursday 03 Aug 2017 09:45:22 Maciej Purski wrote:
+> SiI9234 transmitter converts eTMDS/HDMI signal to MHL 1.0.
+> It is controlled via I2C bus. Its interaction with other
+> devices in video pipeline is performed mainly on HW level.
+> The only interaction it does on device driver level is
+> filtering-out unsupported video modes, it exposes drm_bridge
+> interface to perform this operation.
+> 
+> This patch is based on the code refactored by Tomasz Stanislawski
+> <t.stanislaws@samsung.com>, which was initially developed by:
+> Adam Hampson <ahampson@sta.samsung.com>
+> Erik Gilling <konkers@android.com>
+> Shankar Bandal <shankar.b@samsung.com>
+> Dharam Kumar <dharam.kr@samsung.com>
+> 
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> ---
+>  .../devicetree/bindings/display/bridge/sii9234.txt |   20 +
+>  drivers/gpu/drm/bridge/Kconfig                     |    8 +
+>  drivers/gpu/drm/bridge/Makefile                    |    1 +
+>  drivers/gpu/drm/bridge/sii9234.c                   | 1019 +++++++++++++++++
+>  4 files changed, 1048 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/display/bridge/sii9234.txt create mode
+> 100644 drivers/gpu/drm/bridge/sii9234.c
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/sii9234.txt
+> b/Documentation/devicetree/bindings/display/bridge/sii9234.txt new file
+> mode 100644
+> index 0000000..2cdf286
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/sii9234.txt
+
+DT reviewers might ask you to submit DT bindings as a separate patch.
+
+> @@ -0,0 +1,20 @@
+> +SiI9234 Mobile HD Link Transmitter
+> +
+> +Required properties:
+> +- compatible : "sil,sii9234".
+> +- reg : I2C address for TPI interface, use 0x39
+> +- vcc-supply : regulator that supplies the chip
+
+Is there a single power supply only ? Transceivers usually have at least one 
+digital and one analog power supply.
+
+> +- interrupts, interrupt-parent: interrupt specifier of INT pin
+> +- reset-gpios: gpio specifier of RESET pin
+
+Is this mandatory to connect the reset pin to the SoC ?
+
+You should use the OF graph DT bindings (a.k.a. ports) to describe the data 
+connections with the rest of the system. I'm not familiar with this chip, but 
+I assume it should have one input port connected to the SoC and one output 
+port connected to an HDMI connector DT node.
+
+> +Additional compatible properties are also allowed.
+
+How so ? :-)
+
+> +
+> +Example:
+> +	sii9234@39 {
+> +		compatible = "sil,sii9234";
+> +		reg = <0x39>;
+> +		vcc-supply = <&vsil>;
+> +		reset-gpios = <&gpf3 4 GPIO_ACTIVE_HIGH>;
+> +		interrupt-parent = <&gpf3>;
+> +		interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index adf9ae0..f5784e5 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -100,6 +100,14 @@ config DRM_TI_TFP410
+>  	---help---
+>  	  Texas Instruments TFP410 DVI/HDMI Transmitter driver
+> 
+> +config DRM_SII9234
+> +	tristate "Silicon Image SII9234 Driver"
+> +	depends on I2C
+
+You can depend on OF too as the driver doesn't currently support any other 
+method.
+
+> +	help
+> +	  Say Y here if you want support for the MHL interface.
+> +	  It is an I2C driver, that detects connection of MHL bridge
+> +	  and starts encapsulation of HDMI signal.
+> +
+>  source "drivers/gpu/drm/bridge/analogix/Kconfig"
+> 
+>  source "drivers/gpu/drm/bridge/adv7511/Kconfig"
+> diff --git a/drivers/gpu/drm/bridge/Makefile
+> b/drivers/gpu/drm/bridge/Makefile index defcf1e..e3d5eb0 100644
+> --- a/drivers/gpu/drm/bridge/Makefile
+> +++ b/drivers/gpu/drm/bridge/Makefile
+> @@ -6,6 +6,7 @@ obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
+>  obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
+>  obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
+>  obj-$(CONFIG_DRM_SII902X) += sii902x.o
+> +obj-$(CONFIG_DRM_SII9234) += sii9234.o
+>  obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
+>  obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
+>  obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
+> diff --git a/drivers/gpu/drm/bridge/sii9234.c
+> b/drivers/gpu/drm/bridge/sii9234.c new file mode 100644
+> index 0000000..9c436e7
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/sii9234.c
+> @@ -0,0 +1,1019 @@
+> +/*
+> + * Copyright (C) 2014 Samsung Electronics
+> + *
+> + * Author: Tomasz Stanislawski <t.stanislaws@samsung.com>
+> + *
+> + * Based on sii9234 driver created by:
+> + *    Adam Hampson <ahampson@sta.samsung.com>
+> + *    Erik Gilling <konkers@android.com>
+> + *    Shankar Bandal <shankar.b@samsung.com>
+> + *    Dharam Kumar <dharam.kr@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program
+> + *
+> + */
+> +#include <drm/bridge/mhl.h>
+> +#include <drm/drm_crtc.h>
+> +#include <drm/drm_edid.h>
+> +
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio.h>
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/wait.h>
+> +#include <linux/file.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/proc_fs.h>
+> +#include <linux/extcon.h>
+> +#include <linux/of.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/extcon.h>
+> +#include <linux/regulator/machine.h>
+
+Could you please order these alphabetically ?
+
+> +
+> +/* MHL Tx registers and bits */
+> +#define MHL_TX_SRST                     0x05
+> +#define MHL_TX_SYSSTAT_REG              0x09
+> +#define MHL_TX_INTR1_REG                0x71
+> +#define MHL_TX_INTR4_REG                0x74
+> +#define MHL_TX_INTR1_ENABLE_REG         0x75
+> +#define MHL_TX_INTR4_ENABLE_REG         0x78
+> +#define MHL_TX_INT_CTRL_REG             0x79
+> +#define MHL_TX_TMDS_CCTRL               0x80
+> +#define MHL_TX_DISC_CTRL1_REG           0x90
+> +#define MHL_TX_DISC_CTRL2_REG           0x91
+> +#define MHL_TX_DISC_CTRL3_REG           0x92
+> +#define MHL_TX_DISC_CTRL4_REG		0x93
+> +#define MHL_TX_DISC_CTRL5_REG           0x94
+> +#define MHL_TX_DISC_CTRL6_REG           0x95
+> +#define MHL_TX_DISC_CTRL7_REG           0x96
+> +#define MHL_TX_DISC_CTRL8_REG		0x97
+> +#define MHL_TX_STAT2_REG                0x99
+> +#define MHL_TX_MHLTX_CTL1_REG           0xA0
+> +#define MHL_TX_MHLTX_CTL2_REG           0xA1
+> +#define MHL_TX_MHLTX_CTL4_REG           0xA3
+> +#define MHL_TX_MHLTX_CTL6_REG           0xA5
+> +#define MHL_TX_MHLTX_CTL7_REG           0xA6
+> +
+> +
+> +#define RSEN_STATUS			BIT(2)
+> +#define HPD_CHANGE_INT			BIT(6)
+> +#define RSEN_CHANGE_INT			BIT(5)
+> +#define RGND_READY_INT			BIT(6)
+> +#define VBUS_LOW_INT			BIT(5)
+> +#define CBUS_LKOUT_INT			BIT(4)
+> +#define MHL_DISC_FAIL_INT		BIT(3)
+> +#define MHL_EST_INT			BIT(2)
+> +#define HPD_CHANGE_INT_MASK		BIT(6)
+> +#define RSEN_CHANGE_INT_MASK		BIT(5)
+> +
+> +#define RGND_READY_MASK			BIT(6)
+> +#define CBUS_LKOUT_MASK			BIT(4)
+> +#define MHL_DISC_FAIL_MASK		BIT(3)
+> +#define MHL_EST_MASK			BIT(2)
+> +
+> +#define SKIP_GND			BIT(6)
+> +
+> +#define ATT_THRESH_SHIFT		0x04
+> +#define ATT_THRESH_MASK			(0x03 << ATT_THRESH_SHIFT)
+> +#define USB_D_OEN			BIT(3)
+> +#define DEGLITCH_TIME_MASK		0x07
+> +#define DEGLITCH_TIME_2MS		0
+> +#define DEGLITCH_TIME_4MS		1
+> +#define DEGLITCH_TIME_8MS		2
+> +#define DEGLITCH_TIME_16MS		3
+> +#define DEGLITCH_TIME_40MS		4
+> +#define DEGLITCH_TIME_50MS		5
+> +#define DEGLITCH_TIME_60MS		6
+> +#define DEGLITCH_TIME_128MS		7
+> +
+> +#define USB_D_OVR			BIT(7)
+> +#define USB_ID_OVR			BIT(6)
+> +#define DVRFLT_SEL			BIT(5)
+> +#define BLOCK_RGND_INT			BIT(4)
+> +#define SKIP_DEG			BIT(3)
+> +#define CI2CA_POL			BIT(2)
+> +#define CI2CA_WKUP			BIT(1)
+> +#define SINGLE_ATT			BIT(0)
+> +
+> +#define USB_D_ODN			BIT(5)
+> +#define VBUS_CHECK			BIT(2)
+> +#define RGND_INTP_MASK			0x03
+> +#define RGND_INTP_OPEN			0
+> +#define RGND_INTP_2K			1
+> +#define RGND_INTP_1K			2
+> +#define RGND_INTP_SHORT			3
+> +
+> +
+> +/* HDMI registers */
+> +#define HDMI_RX_TMDS0_CCTRL1_REG	0x10
+> +#define HDMI_RX_TMDS_CLK_EN_REG		0x11
+> +#define HDMI_RX_TMDS_CH_EN_REG		0x12
+> +#define HDMI_RX_PLL_CALREFSEL_REG	0x17
+> +#define HDMI_RX_PLL_VCOCAL_REG		0x1A
+> +#define HDMI_RX_EQ_DATA0_REG		0x22
+> +#define HDMI_RX_EQ_DATA1_REG		0x23
+> +#define HDMI_RX_EQ_DATA2_REG		0x24
+> +#define HDMI_RX_EQ_DATA3_REG		0x25
+> +#define HDMI_RX_EQ_DATA4_REG		0x26
+> +#define HDMI_RX_TMDS_ZONE_CTRL_REG	0x4C
+> +#define HDMI_RX_TMDS_MODE_CTRL_REG	0x4D
+> +
+> +/* CBUS registers */
+> +#define CBUS_INT_STATUS_1_REG		0x08
+> +#define CBUS_INTR1_ENABLE_REG		0x09
+> +#define CBUS_MSC_REQ_ABORT_REASON_REG	0x0D
+> +#define SET_HPD_DOWNSTREAM		(1<<6)
+> +#define CBUS_INT_STATUS_2_REG		0x1E
+> +#define CBUS_INTR2_ENABLE_REG		0x1F
+> +#define CBUS_LINK_CONTROL_2_REG		0x31
+> +#define CBUS_DEVCAP_DEV_STATE		0x80
+> +#define CBUS_DEVCAP_MHL_VERSION		0x81
+> +#define CBUS_DEVCAP_DEV_CAT		0x82
+> +#define CBUS_DEVCAP_ADOPTER_ID_H	0x83
+> +#define CBUS_DEVCAP_ADOPTER_ID_L	0x84
+> +#define CBUS_DEVCAP_VID_LINK_MODE	0x85
+> +#define CBUS_DEVCAP_AUD_LINK_MODE	0x86
+> +#define CBUS_DEVCAP_VIDEO_TYPE		0x87
+> +#define CBUS_DEVCAP_LOG_DEV_MAP		0x88
+> +#define CBUS_DEVCAP_BANDWIDTH		0x89
+> +#define CBUS_DEVCAP_DEV_FEATURE_FLAG	0x8A
+> +#define CBUS_DEVCAP_DEVICE_ID_H		0x8B
+> +#define CBUS_DEVCAP_DEVICE_ID_L		0x8C
+> +#define CBUS_DEVCAP_SCRATCHPAD_SIZE	0x8D
+> +#define CBUS_DEVCAP_INT_STAT_SIZE	0x8E
+> +#define CBUS_DEVCAP_RESERVED		0x8F
+> +#define CBUS_MHL_STATUS_REG_0		0xB0
+> +#define CBUS_MHL_STATUS_REG_1		0xB1
+> +
+> +/* TPI registers */
+> +#define TPI_DPD_REG			0x3D
+> +
+> +/* timeouts */
+> +#define T_SRC_VBUS_CBUS_TO_STABLE	200
+> +#define T_SRC_CBUS_FLOAT		100
+> +#define T_SRC_CBUS_DEGLITCH		2
+> +#define T_SRC_RXSENSE_DEGLITCH		110
+> +#define MHL1_MAX_CLK			75000
+> +
+> +enum sii9234_state {
+> +	ST_OFF,
+> +	ST_D3,
+> +	ST_RGND_INIT,
+> +	ST_RGND_1K,
+> +	ST_RSEN_HIGH,
+> +	ST_MHL_ESTABLISHED,
+> +	ST_FAILURE_DISCOVERY,
+> +	ST_FAILURE,
+> +};
+> +
+> +struct sii9234 {
+> +	struct i2c_client *client[4];
+> +	struct drm_bridge bridge;
+> +	struct device *dev;
+> +	struct gpio_desc *gpio_reset;
+> +	int i2c_error;
+> +	struct regulator *vcc_supply;
+> +
+> +	enum sii9234_state state;
+> +	struct mutex lock;
+> +};
+> +
+> +enum sii9234_client_id {
+> +	I2C_MHL,
+> +	I2C_TPI,
+> +	I2C_HDMI,
+> +	I2C_CBUS,
+> +};
+> +
+> +static char *sii9234_client_name[] = {
+> +	[I2C_MHL] = "MHL",
+> +	[I2C_TPI] = "TPI",
+> +	[I2C_HDMI] = "HDMI",
+> +	[I2C_CBUS] = "CBUS",
+> +};
+> +
+> +static int sii9234_writeb(struct sii9234 *ctx, int id, int offset,
+> +			    int value)
+> +{
+> +	int ret;
+> +	struct i2c_client *client = ctx->client[id];
+> +
+> +	if (ctx->i2c_error)
+> +		return ctx->i2c_error;
+> +
+> +	ret = i2c_smbus_write_byte_data(client, offset, value);
+> +	if (ret < 0)
+> +		dev_err(ctx->dev, "writeb: %4s[0x%02x] <- 0x%02x\n",
+> +			sii9234_client_name[id], offset, value);
+> +	ctx->i2c_error = ret;
+> +	return ret;
+> +}
+> +
+> +static int sii9234_writebm(struct sii9234 *ctx, int id, int offset,
+> +			    int value, int mask)
+> +{
+> +	int ret;
+> +	struct i2c_client *client = ctx->client[id];
+> +
+> +	if (ctx->i2c_error)
+> +		return ctx->i2c_error;
+> +
+> +	ret = i2c_smbus_write_byte(client, offset);
+> +	if (ret < 0) {
+> +		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
+> +			sii9234_client_name[id], offset, value);
+> +		ctx->i2c_error = ret;
+> +		return ret;
+> +	}
+> +
+> +	ret = i2c_smbus_read_byte(client);
+> +	if (ret < 0) {
+> +		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
+> +			sii9234_client_name[id], offset, value);
+> +		ctx->i2c_error = ret;
+> +		return ret;
+> +	}
+> +
+> +	value = (value & mask) | (ret & ~mask);
+> +
+> +	ret = i2c_smbus_write_byte_data(client, offset, value);
+> +	if (ret < 0) {
+> +		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
+> +			sii9234_client_name[id], offset, value);
+> +		ctx->i2c_error = ret;
+> +	}
+> +	return ret;
+> +}
+> +
+> +static int sii9234_readb(struct sii9234 *ctx, int id, int offset)
+> +{
+> +	int ret;
+> +	struct i2c_client *client = ctx->client[id];
+> +
+> +	if (ctx->i2c_error)
+> +		return ctx->i2c_error;
+> +
+> +	ret = i2c_smbus_write_byte(client, offset);
+> +	if (ret < 0) {
+> +		dev_err(ctx->dev, "readb: %4s[0x%02x]\n",
+> +			sii9234_client_name[id], offset);
+> +		ctx->i2c_error = ret;
+> +		return ret;
+> +	}
+> +
+> +	ret = i2c_smbus_read_byte(client);
+> +	if (ret < 0) {
+> +		dev_err(ctx->dev, "readb: %4s[0x%02x]\n",
+> +			sii9234_client_name[id], offset);
+> +		ctx->i2c_error = ret;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int sii9234_clear_error(struct sii9234 *ctx)
+> +{
+> +	int ret = ctx->i2c_error;
+> +
+> +	ctx->i2c_error = 0;
+> +	return ret;
+> +}
+> +
+> +#define mhl_tx_writeb(sii9234, offset, value) \
+> +	sii9234_writeb(sii9234, I2C_MHL, offset, value)
+> +#define mhl_tx_writebm(sii9234, offset, value, mask) \
+> +	sii9234_writebm(sii9234, I2C_MHL, offset, value, mask)
+> +#define mhl_tx_readb(sii9234, offset) \
+> +	sii9234_readb(sii9234, I2C_MHL, offset)
+> +#define cbus_writeb(sii9234, offset, value) \
+> +	sii9234_writeb(sii9234, I2C_CBUS, offset, value)
+> +#define cbus_writebm(sii9234, offset, value, mask) \
+> +	sii9234_writebm(sii9234, I2C_CBUS, offset, value, mask)
+> +#define cbus_readb(sii9234, offset) \
+> +	sii9234_readb(sii9234, I2C_CBUS, offset)
+> +#define hdmi_writeb(sii9234, offset, value) \
+> +	sii9234_writeb(sii9234, I2C_HDMI, offset, value)
+> +#define hdmi_writebm(sii9234, offset, value, mask) \
+> +	sii9234_writebm(sii9234, I2C_HDMI, offset, value, mask)
+> +#define hdmi_readb(sii9234, offset) \
+> +	sii9234_readb(sii9234, I2C_HDMI, offset)
+> +#define tpi_writeb(sii9234, offset, value) \
+> +	sii9234_writeb(sii9234, I2C_TPI, offset, value)
+> +#define tpi_writebm(sii9234, offset, value, mask) \
+> +	sii9234_writebm(sii9234, I2C_TPI, offset, value, mask)
+> +#define tpi_readb(sii9234, offset) \
+> +	sii9234_readb(sii9234, I2C_TPI, offset)
+> +
+> +static u8 sii9234_tmds_control(struct sii9234 *ctx, bool enable)
+> +{
+> +	mhl_tx_writebm(ctx, MHL_TX_TMDS_CCTRL, enable ? ~0 : 0, 0x10);
+> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, enable ? ~0 : 0, 0x30);
+> +	return sii9234_clear_error(ctx);
+> +}
+> +
+> +static int sii9234_cbus_reset(struct sii9234 *ctx)
+> +{
+> +	int i;
+
+i is never negative, you can make it an unsigned int.
+
+> +
+> +	/* Reset CBUS */
+> +	mhl_tx_writebm(ctx, MHL_TX_SRST, ~0, 1 << 3);
+> +	/* CBUS deglitch - 2ms */
+> +	msleep(T_SRC_CBUS_DEGLITCH);
+> +	mhl_tx_writebm(ctx, MHL_TX_SRST, 0, 1 << 3);
+> +
+> +	for (i = 0; i < 4; i++) {
+> +		/* Enable WRITE_STAT interrupt for writes to all
+> +		 * 4 MSC Status registers.
+> +		 */
+> +		cbus_writeb(ctx, 0xE0 + i, 0xF2);
+> +		/* Enable SET_INT interrupt for writes to all
+> +		 * 4 MSC Interrupt registers.
+> +		 */
+> +		cbus_writeb(ctx, 0xF0 + i, 0xF2);
+> +	}
+> +
+> +	return sii9234_clear_error(ctx);
+> +}
+> +
+> +/* require to chek mhl imformation of samsung in cbus_init_register*/
+
+You need a space before */, here and everywhere else in the driver.
+
+> +static int sii9234_cbus_init(struct sii9234 *ctx)
+> +{
+> +	cbus_writeb(ctx, 0x07, 0xF2);
+> +	cbus_writeb(ctx, 0x40, 0x03);
+> +	cbus_writeb(ctx, 0x42, 0x06);
+> +	cbus_writeb(ctx, 0x36, 0x0C);
+> +	cbus_writeb(ctx, 0x3D, 0xFD);
+> +	cbus_writeb(ctx, 0x1C, 0x01);
+> +	cbus_writeb(ctx, 0x1D, 0x0F);
+> +	cbus_writeb(ctx, 0x44, 0x02);
+> +	/* Setup our devcap */
+> +	/* To meet cts 6.3.10.1 spec */
+> +	cbus_writeb(ctx, CBUS_DEVCAP_DEV_STATE, 0x00);
+> +	/* mhl version 1.1 */
+> +	cbus_writeb(ctx, CBUS_DEVCAP_MHL_VERSION, 0x11);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_DEV_CAT, 0x02);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_ADOPTER_ID_H, 0x01);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_ADOPTER_ID_L, 0x41);
+> +	/* YCbCr444, RGB444 */
+> +	cbus_writeb(ctx, CBUS_DEVCAP_VID_LINK_MODE, 0x03);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_VIDEO_TYPE, 0);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_LOG_DEV_MAP, 0x80);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_BANDWIDTH, 0x0F);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_DEV_FEATURE_FLAG, 0x07);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_DEVICE_ID_H, 0x0);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_DEVICE_ID_L, 0x0);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_SCRATCHPAD_SIZE, 0x10);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_INT_STAT_SIZE, 0x33);
+> +	cbus_writeb(ctx, CBUS_DEVCAP_RESERVED, 0);
+> +	cbus_writebm(ctx, 0x31, 0x0C, 0x0C);
+> +	cbus_writeb(ctx, 0x30, 0x01);
+> +	cbus_writebm(ctx, 0x3C, 0x30, 0x38);
+> +	cbus_writebm(ctx, 0x22, 0x0D, 0x0F);
+> +	cbus_writebm(ctx, 0x2E, 0x15, 0x15);
+> +	cbus_writeb(ctx, CBUS_INTR1_ENABLE_REG, 0);
+> +	cbus_writeb(ctx, CBUS_INTR2_ENABLE_REG, 0);
+> +
+> +	return sii9234_clear_error(ctx);
+> +}
+> +
+> +static void force_usb_id_switch_open(struct sii9234 *ctx)
+> +{
+> +	/*Disable CBUS discovery */
+
+You need a space after /*, here and everywhere else in the driver.
+
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL1_REG, 0, 0x01);
+> +	/*Force USB ID switch to open */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, ~0, USB_ID_OVR);
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL3_REG, ~0, 0x86);
+> +	/*Force upstream HPD to 0 when not in MHL mode. */
+> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, 0, 0x30);
+> +}
+> +
+> +static void release_usb_id_switch_open(struct sii9234 *ctx)
+> +{
+> +	msleep(T_SRC_CBUS_FLOAT);
+> +	/* clear USB ID switch to open */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, 0, USB_ID_OVR);
+> +	/* Enable CBUS discovery */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL1_REG, ~0, 0x01);
+> +}
+> +
+> +static int sii9234_power_init(struct sii9234 *ctx)
+> +{
+> +	/* Force the SiI9234 into the D0 state. */
+> +	tpi_writeb(ctx, TPI_DPD_REG, 0x3F);
+> +	/* Enable TxPLL Clock */
+> +	hdmi_writeb(ctx, HDMI_RX_TMDS_CLK_EN_REG, 0x01);
+> +	/* Enable Tx Clock Path & Equalizer */
+> +	hdmi_writeb(ctx, HDMI_RX_TMDS_CH_EN_REG, 0x15);
+> +	/* Power Up TMDS */
+> +	mhl_tx_writeb(ctx, 0x08, 0x35);
+> +	return sii9234_clear_error(ctx);
+> +}
+> +
+> +static int sii9234_hdmi_init(struct sii9234 *ctx)
+> +{
+> +	/* Analog PLL Control bits 5:4 = 2b00 as per char. team. */
+> +	hdmi_writeb(ctx, HDMI_RX_TMDS0_CCTRL1_REG, 0xC1);
+
+No magic value, please define macros for register bits.
+
+> +	/* PLL Calrefsel */
+
+All those comments won't be needed once you replace numerical values with 
+explicitly named macros.
+
+> +	hdmi_writeb(ctx, HDMI_RX_PLL_CALREFSEL_REG, 0x03);
+> +	/* VCO Cal */
+> +	hdmi_writeb(ctx, HDMI_RX_PLL_VCOCAL_REG, 0x20);
+> +	/* Auto EQ */
+> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA0_REG, 0x8A);
+> +	/* Auto EQ */
+> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA1_REG, 0x6A);
+> +	/* Auto EQ */
+> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA2_REG, 0xAA);
+> +	/* Auto EQ */
+> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA3_REG, 0xCA);
+> +	/* Auto EQ */
+> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA4_REG, 0xEA);
+> +	/* Manual zone */
+> +	hdmi_writeb(ctx, HDMI_RX_TMDS_ZONE_CTRL_REG, 0xA0);
+> +	/* PLL Mode Value */
+> +	hdmi_writeb(ctx, HDMI_RX_TMDS_MODE_CTRL_REG, 0x00);
+> +	mhl_tx_writeb(ctx, MHL_TX_TMDS_CCTRL, 0x34);
+> +	hdmi_writeb(ctx, 0x45, 0x44);
+> +	/* Rx PLL BW ~ 4MHz */
+> +	hdmi_writeb(ctx, 0x31, 0x0A);
+> +	/* Analog PLL Control * bits 5:4 = 2b00 as per char. team. */
+> +	hdmi_writeb(ctx, HDMI_RX_TMDS0_CCTRL1_REG, 0xC1);
+> +
+> +	return sii9234_clear_error(ctx);
+> +}
+> +
+> +static int sii9234_mhl_tx_ctl_int(struct sii9234 *ctx)
+> +{
+> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL1_REG, 0xD0);
+> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL2_REG, 0xFC);
+> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL4_REG, 0xEB);
+> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL7_REG, 0x0C);
+> +	return sii9234_clear_error(ctx);
+> +}
+> +
+> +static int sii9234_reset(struct sii9234 *ctx)
+> +{
+> +	int ret;
+> +
+> +	sii9234_clear_error(ctx);
+> +
+> +	ret = sii9234_power_init(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +	ret = sii9234_cbus_reset(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +	ret = sii9234_hdmi_init(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +	ret = sii9234_mhl_tx_ctl_int(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Enable HDCP Compliance safety */
+> +	mhl_tx_writeb(ctx, 0x2B, 0x01);
+> +	/* CBUS discovery cycle time for each drive and float = 150us */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL1_REG, 0x04, 0x06);
+> +	/* Clear bit 6 (reg_skip_rgnd) */
+> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL2_REG, (1 << 7) /* Reserved */
+> +		| 2 << ATT_THRESH_SHIFT | DEGLITCH_TIME_50MS);
+> +	/* Changed from 66 to 65 for 94[1:0] = 01 = 5k reg_cbusmhl_pup_sel */
+> +	/* 1.8V CBUS VTH & GND threshold */
+> +	/*To meet CTS 3.3.7.2 spec */
+> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL5_REG, 0x77);
+> +	/* set bit 2 and 3, which is Initiator Timeout */
+> +	cbus_writebm(ctx, CBUS_LINK_CONTROL_2_REG, ~0, 0x0C);
+> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL6_REG, 0xA0);
+> +	/* RGND & single discovery attempt (RGND blocking) */
+> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL6_REG, BLOCK_RGND_INT |
+> +			       DVRFLT_SEL | SINGLE_ATT);
+> +	/* Use VBUS path of discovery state machine */
+> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL8_REG, 0);
+> +	/* 0x92[3] sets the CBUS / ID switch */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, ~0, USB_ID_OVR);
+> +	/* To allow RGND engine to operate correctly.
+> +	 * When moving the chip from D2 to D0 (power up, init regs)
+> +	 * the values should be
+> +	 * 94[1:0] = 01  reg_cbusmhl_pup_sel[1:0] should be set for 5k
+> +	 * 93[7:6] = 10  reg_cbusdisc_pup_sel[1:0] should be
+> +	 * set for 10k (default)
+> +	 * 93[5:4] = 00  reg_cbusidle_pup_sel[1:0] = open (default)
+> +	 */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL3_REG, ~0, 0x86);
+> +	/* change from CC to 8C to match 5K */
+> +	/*To meet CTS 3.3.72 spec */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL4_REG, ~0, 0x8C);
+> +	/* Configure the interrupt as active high */
+> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, 0, 0x06);
+> +
+> +	msleep(25);
+> +
+> +	/* release usb_id switch */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, 0,  USB_ID_OVR);
+> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL1_REG, 0x27);
+> +
+> +	ret = sii9234_clear_error(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +	ret = sii9234_cbus_init(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Enable Auto soft reset on SCDT = 0 */
+> +	mhl_tx_writeb(ctx, 0x05, 0x04);
+> +	/* HDMI Transcode mode enable */
+> +	mhl_tx_writeb(ctx, 0x0D, 0x1C);
+> +	mhl_tx_writeb(ctx, MHL_TX_INTR4_ENABLE_REG,
+> +			       RGND_READY_MASK | CBUS_LKOUT_MASK |
+> +			       MHL_DISC_FAIL_MASK | MHL_EST_MASK);
+> +	mhl_tx_writeb(ctx, MHL_TX_INTR1_ENABLE_REG, 0x60);
+> +
+> +	/* this point is very importand before megsure RGND impedance */
+
+s/megsure/measuring/
+
+> +	force_usb_id_switch_open(ctx);
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL4_REG, 0, 0xF0);
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL5_REG, 0, 0x03);
+> +	release_usb_id_switch_open(ctx);
+> +	/*end of this */
+
+End of what ?
+
+> +
+> +	/* Force upstream HPD to 0 when not in MHL mode */
+> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, 0, 1 << 5);
+> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, ~0, 1 << 4);
+> +
+> +	return sii9234_clear_error(ctx);
+> +}
+> +
+> +static int sii9234_goto_d3(struct sii9234 *ctx)
+> +{
+> +	int ret;
+> +
+> +	dev_dbg(ctx->dev, "sii9234: detection started d3\n");
+> +
+> +	ret = sii9234_reset(ctx);
+> +	if (ret < 0)
+> +		goto exit;
+> +
+> +	hdmi_writeb(ctx, 0x01, 0x03);
+> +	tpi_writebm(ctx, TPI_DPD_REG, 0, 1);
+> +	/* I2C above is expected to fail because power goes down */
+> +	sii9234_clear_error(ctx);
+> +
+> +	ctx->state = ST_D3;
+> +
+> +	return 0;
+> + exit:
+> +	dev_err(ctx->dev, "%s failed\n", __func__);
+> +	return -1;
+> +}
+> +
+> +#define sii9234_hw_on(sii9234) \
+> +	regulator_enable((sii9234)->vcc_supply)
+> +
+> +static void sii9234_hw_off(struct sii9234 *ctx)
+> +{
+> +	gpiod_set_value(ctx->gpio_reset, 0);
+> +	usleep_range(10000, 20000);
+> +	gpiod_set_value(ctx->gpio_reset, 1);
+> +	regulator_disable(ctx->vcc_supply);
+> +	gpiod_set_value(ctx->gpio_reset, 0);
+> +}
+> +
+> +static void sii9234_hw_reset(struct sii9234 *ctx)
+> +{
+> +	gpiod_set_value(ctx->gpio_reset, 0);
+> +	usleep_range(10000, 20000);
+> +	gpiod_set_value(ctx->gpio_reset, 1);
+> +}
+> +
+> +static void sii9234_cable_in(struct sii9234 *ctx)
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&ctx->lock);
+> +	if (ctx->state != ST_OFF)
+> +		goto unlock;
+> +	ret = sii9234_hw_on(ctx);
+> +	if (ret < 0)
+> +		goto unlock;
+> +
+> +	sii9234_hw_reset(ctx);
+> +	sii9234_goto_d3(ctx);
+> +	enable_irq(to_i2c_client(ctx->dev)->irq);
+
+That looks like a hack. You should enable/disable IRQs in the SII9234, there 
+should be no need to enable/disable them in the SoC IRQ controller. If there's 
+really a need to do so, you should document why.
+
+> +
+> +unlock:
+> +	mutex_unlock(&ctx->lock);
+> +}
+> +
+> +static void sii9234_cable_out(struct sii9234 *ctx)
+> +{
+> +	mutex_lock(&ctx->lock);
+> +
+> +	if (ctx->state == ST_OFF)
+> +		goto unlock;
+> +
+> +	disable_irq(to_i2c_client(ctx->dev)->irq);
+> +	tpi_writeb(ctx, TPI_DPD_REG, 0);
+> +	/*turn on&off hpd festure for only QCT HDMI */
+
+Some of your comments start with a capitalized word, others don't. I'd 
+capitalize them all for consistency.
+
+> +	sii9234_hw_off(ctx);
+> +
+> +	ctx->state = ST_OFF;
+> +
+> +unlock:
+> +	mutex_unlock(&ctx->lock);
+> +}
+> +
+> +static enum sii9234_state sii9234_rgnd_ready_irq(struct sii9234 *ctx)
+> +{
+> +	int value;
+> +
+> +	if (ctx->state == ST_D3) {
+> +		int ret;
+> +
+> +		dev_dbg(ctx->dev, "RGND_READY_INT\n");
+> +		sii9234_hw_reset(ctx);
+> +
+> +		ret = sii9234_reset(ctx);
+> +		if (ret < 0) {
+> +			dev_err(ctx->dev, "sii9234_reset() failed\n");
+> +			return ST_FAILURE;
+> +		}
+> +
+> +		return ST_RGND_INIT;
+> +	}
+> +
+> +	/* got interrupt in inappropriate state */
+> +	if (ctx->state != ST_RGND_INIT)
+> +		return ST_FAILURE;
+> +
+> +	value = mhl_tx_readb(ctx, MHL_TX_STAT2_REG);
+> +	if (sii9234_clear_error(ctx))
+> +		return ST_FAILURE;
+> +
+> +	if ((value & RGND_INTP_MASK) != RGND_INTP_1K) {
+> +		dev_warn(ctx->dev, "RGND is not 1k\n");
+> +		return ST_RGND_INIT;
+> +	}
+> +	dev_dbg(ctx->dev, "RGND 1K!!\n");
+> +	/* After applying RGND patch, there is some issue
+> +	 * about discovry failure
+> +	 * This point is add to fix that problem
+> +	 */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL4_REG, ~0, 0x8C);
+> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL5_REG, 0x77);
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, ~0, 0x05);
+> +	if (sii9234_clear_error(ctx))
+> +		return ST_FAILURE;
+> +
+> +	usleep_range(T_SRC_VBUS_CBUS_TO_STABLE * USEC_PER_MSEC,
+> +		     T_SRC_VBUS_CBUS_TO_STABLE * USEC_PER_MSEC);
+> +
+> +	return ST_RGND_1K;
+> +}
+> +
+> +static enum sii9234_state sii9234_mhl_established(struct sii9234 *ctx)
+> +{
+> +	dev_dbg(ctx->dev, "mhl est interrupt\n");
+> +
+> +	/* discovery override */
+> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL1_REG, 0x10);
+> +	/* increase DDC translation layer timer (byte mode) */
+> +	cbus_writeb(ctx, 0x07, 0x32);
+> +	cbus_writebm(ctx, 0x44, ~0, 1 << 1);
+> +	/* Keep the discovery enabled. Need RGND interrupt */
+> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL1_REG, ~0, 1);
+> +	mhl_tx_writeb(ctx, MHL_TX_INTR1_ENABLE_REG,
+> +	       RSEN_CHANGE_INT_MASK | HPD_CHANGE_INT_MASK);
+> +
+> +	if (sii9234_clear_error(ctx))
+> +		return ST_FAILURE;
+> +
+> +	return ST_MHL_ESTABLISHED;
+> +}
+> +
+> +static enum sii9234_state sii9234_hpd_change(struct sii9234 *ctx)
+> +{
+> +	int value;
+> +
+> +	value = cbus_readb(ctx, CBUS_MSC_REQ_ABORT_REASON_REG);
+> +	if (sii9234_clear_error(ctx))
+> +		return ST_FAILURE;
+> +
+> +	if (value & SET_HPD_DOWNSTREAM) {
+> +		dev_info(ctx->dev, "HPD High\n");
+
+You don't want to spam the kernel log every time a cable is plugged or 
+unplugged. Use dev_dbg() if you want to keep those messages for debugging, or 
+remove them altogether.
+
+> +		/* Downstream HPD High, Enable TMDS */
+> +		sii9234_tmds_control(ctx, true);
+> +		/*turn on&off hpd festure for only QCT HDMI */
+
+I'm not sure what the comment relates to as there's no line of code after it.
+
+> +	} else {
+> +		dev_info(ctx->dev, "HPD Low\n");
+> +		/* Downstream HPD Low, Disable TMDS */
+> +		sii9234_tmds_control(ctx, false);
+> +	}
+> +
+> +	return ctx->state;
+> +}
+> +
+> +static enum sii9234_state sii9234_rsen_change(struct sii9234 *ctx)
+> +{
+> +	int value;
+> +
+> +	/* work_around code to handle worng interrupt */
+
+s/worng/wrong/
+
+> +	if (ctx->state != ST_RGND_1K) {
+> +		dev_err(ctx->dev, "RSEN_HIGH without RGND_1K\n");
+> +		return ST_FAILURE;
+> +	}
+> +	value = mhl_tx_readb(ctx, MHL_TX_SYSSTAT_REG);
+> +	if (value < 0)
+> +		return ST_FAILURE;
+> +
+> +	if (value & RSEN_STATUS) {
+> +		dev_info(ctx->dev, "MHL cable connected.. RSEN High\n");
+> +		return ST_RSEN_HIGH;
+> +	}
+> +	dev_info(ctx->dev, "RSEN lost\n");
+
+Ditto, dev_dbg()
+
+> +	/* Once RSEN loss is confirmed,we need to check
+> +	 * based on cable status and chip power status,whether
+> +	 * it is SINK Loss(HDMI cable not connected, TV Off)
+> +	 * or MHL cable disconnection
+> +	 * TODO: Define the below mhl_disconnection()
+> +	 */
+> +	msleep(T_SRC_RXSENSE_DEGLITCH);
+> +	value = mhl_tx_readb(ctx, MHL_TX_SYSSTAT_REG);
+> +	if (value < 0)
+> +		return ST_FAILURE;
+> +	dev_dbg(ctx->dev, "sys_stat: %x\n", value);
+> +
+> +	if (value & RSEN_STATUS) {
+> +		dev_info(ctx->dev, "RSEN recovery\n");
+> +		return ST_RSEN_HIGH;
+> +	}
+> +	dev_info(ctx->dev, "RSEN Really LOW\n");
+
+Same here, and everywhere else in the driver.
+
+> +	/*To meet CTS 3.3.22.2 spec */
+> +	sii9234_tmds_control(ctx, false);
+> +	force_usb_id_switch_open(ctx);
+> +	release_usb_id_switch_open(ctx);
+> +
+> +	return ST_FAILURE;
+> +}
+> +
+> +static irqreturn_t sii9234_irq_thread(int irq, void *data)
+> +{
+> +	struct sii9234 *ctx = data;
+> +	int intr1, intr4;
+> +	int intr1_en, intr4_en;
+> +	int cbus_intr1, cbus_intr2;
+> +
+> +	dev_dbg(ctx->dev, "%s\n", __func__);
+> +
+> +	msleep(30);
+
+If this is really needed you should add a comment to explain why.
+
+> +	mutex_lock(&ctx->lock);
+> +
+> +	intr1 = mhl_tx_readb(ctx, MHL_TX_INTR1_REG);
+> +	intr4 = mhl_tx_readb(ctx, MHL_TX_INTR4_REG);
+> +	intr1_en = mhl_tx_readb(ctx, MHL_TX_INTR1_ENABLE_REG);
+> +	intr4_en = mhl_tx_readb(ctx, MHL_TX_INTR4_ENABLE_REG);
+> +	cbus_intr1 = cbus_readb(ctx, CBUS_INT_STATUS_1_REG);
+> +	cbus_intr2 = cbus_readb(ctx, CBUS_INT_STATUS_2_REG);
+> +
+> +	if (sii9234_clear_error(ctx))
+> +		goto done;
+> +
+> +	dev_dbg(ctx->dev, "irq %02x/%02x %02x/%02x %02x/%02x\n",
+> +		 intr1, intr1_en, intr4, intr4_en, cbus_intr1, cbus_intr2);
+> +
+> +	if (intr4 & RGND_READY_INT)
+> +		ctx->state = sii9234_rgnd_ready_irq(ctx);
+> +	if (intr1 & RSEN_CHANGE_INT)
+> +		ctx->state = sii9234_rsen_change(ctx);
+> +	if (intr4 & MHL_EST_INT)
+> +		ctx->state = sii9234_mhl_established(ctx);
+> +	if (intr1 & HPD_CHANGE_INT)
+> +		ctx->state = sii9234_hpd_change(ctx);
+> +	if (intr4 & CBUS_LKOUT_INT)
+> +		ctx->state = ST_FAILURE;
+> +	if (intr4 & MHL_DISC_FAIL_INT)
+> +		ctx->state = ST_FAILURE_DISCOVERY;
+> +
+> + done:
+> +	/* clean interrupt status and pending flags */
+> +	mhl_tx_writeb(ctx, MHL_TX_INTR1_REG, intr1);
+> +	mhl_tx_writeb(ctx, MHL_TX_INTR4_REG, intr4);
+> +	cbus_writeb(ctx, CBUS_MHL_STATUS_REG_0, 0xFF);
+> +	cbus_writeb(ctx, CBUS_MHL_STATUS_REG_1, 0xFF);
+> +	cbus_writeb(ctx, CBUS_INT_STATUS_1_REG, cbus_intr1);
+> +	cbus_writeb(ctx, CBUS_INT_STATUS_2_REG, cbus_intr2);
+> +
+> +	sii9234_clear_error(ctx);
+> +
+> +	if (ctx->state == ST_FAILURE) {
+> +		dev_info(ctx->dev, "try to reset after failure\n");
+> +		sii9234_hw_reset(ctx);
+> +		sii9234_goto_d3(ctx);
+> +	}
+> +
+> +	if (ctx->state == ST_FAILURE_DISCOVERY) {
+> +		dev_err(ctx->dev, "discovery failed, no power for MHL?\n");
+> +		tpi_writebm(ctx, TPI_DPD_REG, 0, 1);
+> +		ctx->state = ST_D3;
+> +	}
+> +
+> +	mutex_unlock(&ctx->lock);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +
+> +static int sii9234_init_resources(struct sii9234 *ctx,
+> +	struct i2c_client *client)
+> +{
+> +	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
+> +
+> +	if (!ctx->dev->of_node) {
+> +		dev_err(ctx->dev, "not DT device\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	ctx->gpio_reset = devm_gpiod_get(ctx->dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(ctx->gpio_reset)) {
+> +		dev_err(ctx->dev, "failed to get reset gpio from DT\n");
+> +		return PTR_ERR(ctx->gpio_reset);
+> +	}
+> +
+> +	ctx->vcc_supply = devm_regulator_get(ctx->dev, "vcc");
+> +	if (IS_ERR(ctx->vcc_supply)) {
+> +		dev_err(ctx->dev, "failed to acquire regulator vcc\n");
+> +		return PTR_ERR(ctx->vcc_supply);
+> +	}
+> +
+> +	ctx->client[I2C_MHL] = client;
+> +
+> +	ctx->client[I2C_TPI] = i2c_new_dummy(adapter, 0x7A >> 1);
+
+Please define macros for the secondary I2C addresses instead of using 
+numerical values directly.
+
+> +	if (!ctx->client[I2C_TPI]) {
+> +		dev_err(ctx->dev, "failed to create TPI client\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	ctx->client[I2C_HDMI] = i2c_new_dummy(adapter, 0x92 >> 1);
+> +	if (!ctx->client[I2C_HDMI]) {
+> +		dev_err(ctx->dev, "failed to create HDMI RX client\n");
+> +		goto fail_tpi;
+> +	}
+> +
+> +	ctx->client[I2C_CBUS] = i2c_new_dummy(adapter, 0xC8 >> 1);
+> +	if (!ctx->client[I2C_CBUS]) {
+> +		dev_err(ctx->dev, "failed to create CBUS client\n");
+> +		goto fail_hdmi;
+> +	}
+> +
+> +	return 0;
+> +
+> +fail_hdmi:
+> +	i2c_unregister_device(ctx->client[I2C_HDMI]);
+> +fail_tpi:
+> +	i2c_unregister_device(ctx->client[I2C_TPI]);
+> +
+> +	return -ENODEV;
+> +}
+> +
+> +static void sii9234_deinit_resources(struct sii9234 *ctx)
+> +{
+> +	i2c_unregister_device(ctx->client[I2C_CBUS]);
+> +	i2c_unregister_device(ctx->client[I2C_HDMI]);
+> +	i2c_unregister_device(ctx->client[I2C_TPI]);
+> +}
+> +
+> +static inline struct sii9234 *bridge_to_sii9234(struct drm_bridge *bridge)
+> +{
+> +	return container_of(bridge, struct sii9234, bridge);
+> +}
+> +
+> +static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
+> +					const struct drm_display_mode *mode)
+> +{
+> +	struct sii9234 *ctx = bridge_to_sii9234(bridge);
+> +
+> +	if (mode->clock > MHL1_MAX_CLK)
+> +		return MODE_CLOCK_HIGH;
+> +
+> +	return MODE_OK;
+> +}
+> +
+> +static const struct drm_bridge_funcs sii9234_bridge_funcs = {
+> +	.mode_valid = sii9234_mode_valid,
+> +};
+> +
+> +static int sii9234_mhl_tx_i2c_probe(struct i2c_client *client,
+> +					      const struct i2c_device_id *id)
+> +{
+> +	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
+> +	struct sii9234 *ctx;
+> +	struct device *dev = &client->dev;
+> +	int ret;
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ctx->dev = dev;
+> +
+> +	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
+> +		dev_err(dev, "I2C adapter lacks SMBUS feature\n");
+> +		return -EIO;
+> +	}
+> +
+> +	mutex_init(&ctx->lock);
+> +
+> +	ret = sii9234_init_resources(ctx, client);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "failed to initialize sii9234 
+resources\n");
+
+No need for an error message here as all error paths in 
+sii9234_init_resources() print a message already.
+
+> +		return ret;
+> +	}
+> +	ret = sii9234_hw_on(ctx);
+> +	if (ret) {
+> +		dev_err(&client->dev, "failed to enable power\n");
+> +		goto err_resource;
+> +	}
+> +	sii9234_hw_reset(ctx);
+> +
+> +	if (!client->irq) {
+> +		dev_err(dev, "no irq provided\n");
+> +		return -EINVAL;
+
+No need for clean up in the error path ? You can just move this check with the 
+I2C functionality check to avoid the need to clean up.
+
+> +	}
+> +	irq_set_status_flags(client->irq, IRQ_NOAUTOEN);
+> +	ret = devm_request_threaded_irq(dev, client->irq, NULL,
+> +					sii9234_irq_thread,
+> +					IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
+> +					"sii9234", ctx);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to install IRQ handler\n");
+> +		return ret;
+> +	}
+> +
+> +	i2c_set_clientdata(client, ctx);
+> +
+> +	ctx->bridge.funcs = &sii9234_bridge_funcs;
+> +	ctx->bridge.of_node = dev->of_node;
+> +	drm_bridge_add(&ctx->bridge);
+> +
+> +	sii9234_cable_in(ctx);
+> +
+> +	return 0;
+> +
+> +err_resource:
+> +	sii9234_deinit_resources(ctx);
+> +
+> +	return ret;
+> +}
+> +
+> +static int sii9234_mhl_tx_i2c_remove(struct i2c_client *client)
+> +{
+> +	struct sii9234 *ctx = i2c_get_clientdata(client);
+> +
+> +	sii9234_cable_out(ctx);
+> +	drm_bridge_remove(&ctx->bridge);
+> +	sii9234_deinit_resources(ctx);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id sii9234_dt_match[] = {
+> +	{ .compatible = "sil,sii9234" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, sii9234_dt_match);
+> +
+> +static const struct i2c_device_id sii9234_id[] = {
+> +	{ "SII9234", 0 },
+> +	{ },
+> +};
+> +
+
+Nitpicking, I'd move this blank line after MODULE_DEVICE_TABLE(i2c, 
+sii9234_id);
+
+> +MODULE_DEVICE_TABLE(i2c, sii9234_id);
+> +static struct i2c_driver sii9234_driver = {
+> +	.driver = {
+> +		.name	= "sii9234",
+> +		.owner	= THIS_MODULE,
+> +		.of_match_table = of_match_ptr(sii9234_dt_match),
+
+As the driver requires OF support the of_match_ptr() macro isn't needed.
+
+> +	},
+> +	.probe		= sii9234_mhl_tx_i2c_probe,
+> +	.remove		= sii9234_mhl_tx_i2c_remove,
+> +	.id_table = sii9234_id,
+> +};
+> +
+> +module_i2c_driver(sii9234_driver);
+> +MODULE_LICENSE("GPL");
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
