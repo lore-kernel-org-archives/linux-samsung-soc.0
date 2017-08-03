@@ -1,38 +1,47 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH for v4.13] ARM: dts: exynos: add needs-hpd for
- Odroid-XU3/4
-Date: Wed, 2 Aug 2017 21:18:17 +0200
-Message-ID: <20170802191817.qwue5uisiszlcc6m@kozik-lap>
-References: <89e9a925-66a9-8c26-559c-1b1f0e8070e3@xs4all.nl>
+From: Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 0/2] add Silicon Image SiI9234 driver
+Date: Thu, 03 Aug 2017 09:45:21 +0200
+Message-ID: <1501746323-5254-1-git-send-email-m.purski@samsung.com>
+References: <CGME20170803074535eucas1p107414859fa54647d1f623c73d0fc17f2@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36873 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751956AbdHBTSW (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 15:18:22 -0400
-Content-Disposition: inline
-In-Reply-To: <89e9a925-66a9-8c26-559c-1b1f0e8070e3@xs4all.nl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: mark.rutland@arm.com, b.zolnierkie@samsung.com, krzk@kernel.org, Maciej Purski <m.purski@samsung.com>, robh+dt@kernel.org, Laurent.pinchart@ideasonboard.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Mon, Jul 31, 2017 at 01:56:42PM +0200, Hans Verkuil wrote:
-> CEC support was added for Exynos5 in 4.13, but for the Odroids we need to set
-> 'needs-hpd' as well since CEC is disabled when there is no HDMI hotplug signal,
-> just as for the exynos4 Odroid-U3.
-> 
-> This is due to the level-shifter that is disabled when there is no HPD, thus
-> blocking the CEC signal as well. Same close-but-no-cigar board design as the
-> Odroid-U3.
-> 
-> Tested with my Odroid XU4.
-> 
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-Thanks, applied for v4.13.
-
-Best regards,
-Krzysztof
+SGkgZXZlcnlvbmUsCgpUaGVzZSBwYXRjaGVzIGFyZSBhIGNvbnRpbnVhdGlvbiBvZiB3b3JrIGJ5
+IFRvbWFzeiBTdGFuaXNsYXdza2kgb24gc2lpOTMyNCBkcml2ZXIsIHdoaWNoIHdhcyBkZXNjcmli
+ZWQKaW4gdGggZm9sbG93aW5nIGxldHRlcjoKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+YXJjaGl2ZXMvZHJpLWRldmVsLzIwMTQtQXByaWwvMDU3NDgxLmh0bWwKClRoZSBtYWluIGRpZmZl
+cmVuY2VzIGZyb20gdGhlIHByZXZpb3VzIGNvZGUgYXJlOgoqIGRyaXZlciBtb3ZlZCB0byAvZ3B1
+L2RybS9icmlkZ2UvIGFuZCBpbnRlZ3JhdGVkIHdpdGggZHJtL2JyaWRnZSBzdWJzeXN0ZW0KKiBh
+ZGRlZCBmaWx0ZXJpbmctb3V0IHVuc3VwcG9ydGVkIGRpc3BsYXkgbW9kZXMKKiBjaGFuZ2VkIGdw
+aW8gaW50ZXJmYWNlIHRvIHVwLXRvLWRhdGUKKiBjaGFuZ2VkIGludGVycnVwdCBoYW5kbGluZwoq
+IGltcHJvdmUgY29kZSBzdHlsZQoqIGFkZCBoZG1pIGFuZCBzaWk5MzI0IHRvIGV4eW5vczQ0MTIt
+dHJhdHMyIGRldmljZSB0cmVlCgpBbGwgY29tbWVudHMgYXJlIHdlbGNvbWUuCgpSZWdhcmRzLApN
+YWNpZWogUHVyc2tpCgoKUGF0Y2ggc3VtbWFyeToKCk1hY2llaiBQdXJza2kgKDIpOgogIGRybS9i
+cmlkZ2U6IGFkZCBTaWxpY29uIEltYWdlIFNpSTkyMzQgZHJpdmVyCiAgQVJNOiBkdHM6IGV4eW5v
+czogQWRkIEhETUkgYW5kIFNpbDkyMzQgdG8gVHJhdHMyIGJvYXJkCgogLi4uL2RldmljZXRyZWUv
+YmluZGluZ3MvZGlzcGxheS9icmlkZ2Uvc2lpOTIzNC50eHQgfCAgIDIwICsKIGFyY2gvYXJtL2Jv
+b3QvZHRzL2V4eW5vczQ0MTItdHJhdHMyLmR0cyAgICAgICAgICAgIHwgICA5MyArKwogZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgfCAgICA4ICsKIGRy
+aXZlcnMvZ3B1L2RybS9icmlkZ2UvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgIHwgICAgMSAr
+CiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpaTkyMzQuYyAgICAgICAgICAgICAgICAgICB8IDEw
+MTkgKysrKysrKysrKysrKysrKysrKysKIDUgZmlsZXMgY2hhbmdlZCwgMTE0MSBpbnNlcnRpb25z
+KCspCiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2Rpc3BsYXkvYnJpZGdlL3NpaTkyMzQudHh0CiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9zaWk5MjM0LmMKCi0tIAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
