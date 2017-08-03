@@ -1,182 +1,442 @@
-From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: exynos: Add HDMI and Sil9234 to Trats2 board
-Date: Thu, 03 Aug 2017 09:45:23 +0200
-Message-ID: <1501746323-5254-3-git-send-email-m.purski@samsung.com>
-References: <1501746323-5254-1-git-send-email-m.purski@samsung.com>
- <CGME20170803074541eucas1p2b054d4853a98819fc42f19f7cae7f419@eucas1p2.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] drm: exynos: Add driver for HDMI audio interface
+Date: Thu, 03 Aug 2017 11:22:33 +0200
+Message-ID: <1501752153-26669-1-git-send-email-s.nawrocki@samsung.com>
+References: <CGME20170803092244epcas2p22ba6f676780e3efb2cf7ae87edaa550c@epcas2p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:23553 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751681AbdHCHpo (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:41042 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbdHCJWq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Aug 2017 03:45:44 -0400
-In-reply-to: <1501746323-5254-1-git-send-email-m.purski@samsung.com>
+        Thu, 3 Aug 2017 05:22:46 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, krzk@kernel.org, b.zolnierkie@samsung.com, Maciej Purski <m.purski@samsung.com>
+To: inki.dae@samsung.com
+Cc: krzk@kernel.org, dri-devel@lists.freedesktop.org, sw0312.kim@samsung.com, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, alsa-devel@alsa-project.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch adds HDMI and Sil9234 MHL converter to Trats2 board.
+The hdmi-codec interface added in this patch is required to properly
+support HDMI audio. Currently the audio part of the SoC internal
+HDMI transmitter is configured with fixed values, which makes HDMI
+audio working by chance, only on boards equipped with external audio
+codec connected in parallel with the HDMI audio transmitter I2S input
+interface.
 
-Based on previous work by:
-Tomasz Stanislawski <t.stanislaws@samsung.com>
-
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts | 93 +++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
+Changes since RFC version:
+ - fixed hdmi-codec locking issue
+ - added a comment documenting struct hdmi_contex::mutex
+---
+ drivers/gpu/drm/exynos/Kconfig       |   1 +
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 226 +++++++++++++++++++++++++++++------
+ 2 files changed, 193 insertions(+), 34 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 35e9b94..39940f6 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -97,6 +97,16 @@
- 			gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
-+
-+		vsil: voltage-regulator-vsil {
-+			compatible = "regulator-fixed";
-+			regulator-name = "HDMI_5V";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&buck7_reg>;
-+		};
- 	};
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 1d18534..a6edbb6 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -3,6 +3,7 @@ config DRM_EXYNOS
+ 	depends on OF && DRM && (ARCH_S3C64XX || ARCH_EXYNOS || ARCH_MULTIPLATFORM)
+ 	select DRM_KMS_HELPER
+ 	select VIDEOMODE_HELPERS
++	select SND_SOC_HDMI_CODEC if SND_SOC
+ 	help
+ 	  Choose this option if you have a Samsung SoC EXYNOS chipset.
+ 	  If M is selected the module will be called exynosdrm.
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 06bfbe4..64eadf58 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -40,7 +40,7 @@
+ #include <linux/component.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
+-
++#include <sound/hdmi-codec.h>
+ #include <drm/exynos_drm.h>
  
- 	gpio-keys {
-@@ -229,6 +239,34 @@
- 		};
- 	};
- 
-+	i2c-mhl {
-+		compatible = "i2c-gpio";
-+		gpios = <&gpf0 4 GPIO_ACTIVE_HIGH &gpf0 6 GPIO_ACTIVE_HIGH>;
-+		i2c-gpio,delay-us = <100>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pinctrl-0 = <&i2c_mhl_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+
-+		sii9234: sii9234@39 {
-+			compatible = "sil,sii9234";
-+			vcc-supply = <&vsil>;
-+			reset-gpios = <&gpf3 4 GPIO_ACTIVE_HIGH>;
-+			interrupt-parent = <&gpf3>;
-+			interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x39>;
-+
-+
-+			port {
-+				mhl_to_hdmi: endpoint {
-+					remote-endpoint = <&hdmi_to_mhl>;
-+				};
-+			};
-+		};
-+	};
-+
- 	camera: camera {
- 		pinctrl-0 = <&cam_port_a_clk_active &cam_port_b_clk_active>;
- 		pinctrl-names = "default";
-@@ -522,6 +560,31 @@
- 	status = "okay";
+ #include <media/cec-notifier.h>
+@@ -111,12 +111,19 @@ struct hdmi_driver_data {
+ 	struct string_array_spec clk_muxes;
  };
  
-+&hdmi {
-+	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_hpd>;
-+	hdmi-en-supply = <&vsil>;
-+	vdd-supply = <&ldo3_reg>;
-+	vdd_osc-supply = <&ldo4_reg>;
-+	vdd_pll-supply = <&ldo3_reg>;
-+	ddc = <&i2c_5>;
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			reg = <1>;
-+			hdmi_to_mhl: endpoint {
-+				remote-endpoint = <&mhl_to_hdmi>;
-+			};
-+		};
-+	};
-+
++struct hdmi_audio {
++	struct platform_device *pdev;
++	struct hdmi_audio_infoframe infoframe;
++	unsigned int sample_rate;
++	unsigned int sample_width;
++	u8 enable;
 +};
 +
- &hsotg {
- 	vusb_d-supply = <&ldo15_reg>;
- 	vusb_a-supply = <&ldo12_reg>;
-@@ -600,6 +663,11 @@
- 	};
+ struct hdmi_context {
+ 	struct drm_encoder		encoder;
+ 	struct device			*dev;
+ 	struct drm_device		*drm_dev;
+ 	struct drm_connector		connector;
+-	bool				powered;
+ 	bool				dvi_mode;
+ 	struct delayed_work		hotplug_work;
+ 	struct drm_display_mode		current_mode;
+@@ -137,6 +144,11 @@ struct hdmi_context {
+ 	struct regulator		*reg_hdmi_en;
+ 	struct exynos_drm_clk		phy_clk;
+ 	struct drm_bridge		*bridge;
++
++	/* mutex protecting subsequent fields below */
++	struct mutex			mutex;
++	struct hdmi_audio		audio;
++	bool				powered;
  };
  
+ static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
+@@ -768,6 +780,22 @@ static int hdmi_clk_set_parents(struct hdmi_context *hdata, bool to_phy)
+ 	return ret;
+ }
+ 
++static int hdmi_audio_infoframe_apply(struct hdmi_context *hdata)
++{
++	struct hdmi_audio_infoframe *infoframe = &hdata->audio.infoframe;
++	u8 buf[HDMI_INFOFRAME_SIZE(AUDIO)];
++	int len;
 +
-+&i2c_5 {
-+	status = "okay";
-+};
++	len = hdmi_audio_infoframe_pack(infoframe, buf, sizeof(buf));
++	if (len < 0)
++		return len;
 +
- &i2c_7 {
- 	samsung,i2c-sda-delay = <100>;
- 	samsung,i2c-slave-addr = <0x10>;
-@@ -894,12 +962,20 @@
- 	};
++	hdmi_reg_writeb(hdata, HDMI_AUI_CON, HDMI_AUI_CON_EVERY_VSYNC);
++	hdmi_reg_write_buf(hdata, HDMI_AUI_HEADER0, buf, len);
++
++	return 0;
++}
++
+ static void hdmi_reg_infoframes(struct hdmi_context *hdata)
+ {
+ 	union hdmi_infoframe frm;
+@@ -805,15 +833,7 @@ static void hdmi_reg_infoframes(struct hdmi_context *hdata)
+ 		hdmi_reg_write_buf(hdata, HDMI_VSI_DATA(0), buf + 3, ret - 3);
+ 	}
+ 
+-	ret = hdmi_audio_infoframe_init(&frm.audio);
+-	if (!ret) {
+-		frm.audio.channels = 2;
+-		ret = hdmi_audio_infoframe_pack(&frm.audio, buf, sizeof(buf));
+-	}
+-	if (ret > 0) {
+-		hdmi_reg_writeb(hdata, HDMI_AUI_CON, HDMI_AUI_CON_EVERY_VSYNC);
+-		hdmi_reg_write_buf(hdata, HDMI_AUI_HEADER0, buf, ret);
+-	}
++	hdmi_audio_infoframe_apply(hdata);
+ }
+ 
+ static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
+@@ -996,23 +1016,18 @@ static void hdmi_reg_acr(struct hdmi_context *hdata, u32 freq)
+ 	hdmi_reg_writeb(hdata, HDMI_ACR_CON, 4);
+ }
+ 
+-static void hdmi_audio_init(struct hdmi_context *hdata)
++static void hdmi_audio_config(struct hdmi_context *hdata)
+ {
+-	u32 sample_rate, bits_per_sample;
+-	u32 data_num, bit_ch, sample_frq;
+-	u32 val;
++	u32 data_num, sample_freq, val;
++	u32 bit_ch = 1;
+ 
+-	sample_rate = 44100;
+-	bits_per_sample = 16;
+ 
+-	switch (bits_per_sample) {
++	switch (hdata->audio.sample_width) {
+ 	case 20:
+ 		data_num = 2;
+-		bit_ch = 1;
+ 		break;
+ 	case 24:
+ 		data_num = 3;
+-		bit_ch = 1;
+ 		break;
+ 	default:
+ 		data_num = 1;
+@@ -1020,7 +1035,7 @@ static void hdmi_audio_init(struct hdmi_context *hdata)
+ 		break;
+ 	}
+ 
+-	hdmi_reg_acr(hdata, sample_rate);
++	hdmi_reg_acr(hdata, hdata->audio.sample_rate);
+ 
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_MUX_CON, HDMI_I2S_IN_DISABLE
+ 				| HDMI_I2S_AUD_I2S | HDMI_I2S_CUV_I2S_ENABLE
+@@ -1031,10 +1046,21 @@ static void hdmi_audio_init(struct hdmi_context *hdata)
+ 
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_MUX_CUV, HDMI_I2S_CUV_RL_EN);
+ 
+-	sample_frq = (sample_rate == 44100) ? 0 :
+-			(sample_rate == 48000) ? 2 :
+-			(sample_rate == 32000) ? 3 :
+-			(sample_rate == 96000) ? 0xa : 0x0;
++	switch(hdata->audio.sample_rate) {
++	case 32000:
++		sample_freq = 0x3;
++		break;
++	case 48000:
++		sample_freq = 0x2;
++		break;
++	case 96000:
++		sample_freq = 0xa;
++		break;
++	case 44100:
++	default:
++		sample_freq = 0;
++		break;
++	}
+ 
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_CLK_CON, HDMI_I2S_CLK_DIS);
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_CLK_CON, HDMI_I2S_CLK_EN);
+@@ -1068,7 +1094,7 @@ static void hdmi_audio_init(struct hdmi_context *hdata)
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_1, HDMI_I2S_CD_PLAYER);
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_2, HDMI_I2S_SET_SOURCE_NUM(0));
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_3, HDMI_I2S_CLK_ACCUR_LEVEL_2
+-			| HDMI_I2S_SET_SMP_FREQ(sample_frq));
++			| HDMI_I2S_SET_SMP_FREQ(sample_freq));
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_4,
+ 			HDMI_I2S_ORG_SMP_FREQ_44_1
+ 			| HDMI_I2S_WORD_LEN_MAX24_24BITS
+@@ -1077,13 +1103,15 @@ static void hdmi_audio_init(struct hdmi_context *hdata)
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_CH_ST_CON, HDMI_I2S_CH_STATUS_RELOAD);
+ }
+ 
+-static void hdmi_audio_control(struct hdmi_context *hdata, bool onoff)
++static void hdmi_audio_control(struct hdmi_context *hdata)
+ {
++	bool enable = hdata->audio.enable;
++
+ 	if (hdata->dvi_mode)
+ 		return;
+ 
+-	hdmi_reg_writeb(hdata, HDMI_AUI_CON, onoff ? 2 : 0);
+-	hdmi_reg_writemask(hdata, HDMI_CON_0, onoff ?
++	hdmi_reg_writeb(hdata, HDMI_AUI_CON, enable ? 2 : 0);
++	hdmi_reg_writemask(hdata, HDMI_CON_0, enable ?
+ 			HDMI_ASP_EN : HDMI_ASP_DIS, HDMI_ASP_MASK);
+ }
+ 
+@@ -1403,9 +1431,9 @@ static void hdmi_conf_apply(struct hdmi_context *hdata)
+ {
+ 	hdmi_start(hdata, false);
+ 	hdmi_conf_init(hdata);
+-	hdmi_audio_init(hdata);
++	hdmi_audio_config(hdata);
+ 	hdmi_mode_apply(hdata);
+-	hdmi_audio_control(hdata, true);
++	hdmi_audio_control(hdata);
+ }
+ 
+ static void hdmi_mode_set(struct drm_encoder *encoder,
+@@ -1479,17 +1507,24 @@ static void hdmi_enable(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+ 
++	mutex_lock(&hdata->mutex);
++
+ 	hdmiphy_enable(hdata);
+ 	hdmi_conf_apply(hdata);
++
++	mutex_unlock(&hdata->mutex);
+ }
+ 
+ static void hdmi_disable(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+ 
+-	if (!hdata->powered)
+-		return;
++	mutex_lock(&hdata->mutex);
+ 
++	if (!hdata->powered) {
++		mutex_unlock(&hdata->mutex);
++		return;
++	}
+ 	/*
+ 	 * The SFRs of VP and Mixer are updated by Vertical Sync of
+ 	 * Timing generator which is a part of HDMI so the sequence
+@@ -1503,6 +1538,8 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
+ 
+ 	hdmiphy_disable(hdata);
++
++	mutex_unlock(&hdata->mutex);
+ }
+ 
+ static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
+@@ -1516,6 +1553,109 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 	.destroy = drm_encoder_cleanup,
  };
  
-+&i2c_8 {
-+	status = "okay";
++static void hdmi_audio_shutdown(struct device *dev, void *data)
++{
++	struct hdmi_context *hdata = dev_get_drvdata(dev);
++
++	mutex_lock(&hdata->mutex);
++
++	hdata->audio.enable = false;
++
++	if (hdata->powered)
++		hdmi_audio_control(hdata);
++
++	mutex_unlock(&hdata->mutex);
++}
++
++static int hdmi_audio_hw_params(struct device *dev, void *data,
++				struct hdmi_codec_daifmt *daifmt,
++				struct hdmi_codec_params *params)
++{
++	struct hdmi_context *hdata = dev_get_drvdata(dev);
++
++	if (daifmt->fmt != HDMI_I2S || daifmt->bit_clk_inv ||
++	    daifmt->frame_clk_inv || daifmt->bit_clk_master ||
++	    daifmt->frame_clk_master) {
++		dev_err(dev, "%s: Bad flags %d %d %d %d\n", __func__,
++			daifmt->bit_clk_inv, daifmt->frame_clk_inv,
++			daifmt->bit_clk_master,
++			daifmt->frame_clk_master);
++		return -EINVAL;
++	}
++
++	mutex_lock(&hdata->mutex);
++
++	hdata->audio.sample_rate = params->sample_rate;
++	hdata->audio.sample_width = params->sample_width;
++	hdata->audio.infoframe = params->cea;
++
++	if (hdata->powered) {
++		hdmi_audio_config(hdata);
++		hdmi_audio_infoframe_apply(hdata);
++	}
++
++	mutex_unlock(&hdata->mutex);
++
++	return 0;
++}
++
++static int hdmi_audio_digital_mute(struct device *dev, void *data, bool mute)
++{
++	struct hdmi_context *hdata = dev_get_drvdata(dev);
++
++	mutex_lock(&hdata->mutex);
++
++	hdata->audio.enable = !mute;
++
++	if (hdata->powered)
++		hdmi_audio_control(hdata);
++
++	mutex_unlock(&hdata->mutex);
++
++	return 0;
++}
++
++static int hdmi_audio_get_eld(struct device *dev, void *data, uint8_t *buf,
++			      size_t len)
++{
++	struct hdmi_context *hdata = dev_get_drvdata(dev);
++	struct drm_connector *connector = &hdata->connector;
++
++	memcpy(buf, connector->eld, min(sizeof(connector->eld), len));
++
++	return 0;
++}
++
++static const struct hdmi_codec_ops audio_codec_ops = {
++	.hw_params = hdmi_audio_hw_params,
++	.audio_shutdown = hdmi_audio_shutdown,
++	.digital_mute = hdmi_audio_digital_mute,
++	.get_eld = hdmi_audio_get_eld,
 +};
 +
- &i2s0 {
- 	pinctrl-0 = <&i2s0_bus>;
- 	pinctrl-names = "default";
- 	status = "okay";
- };
- 
-+&mixer {
-+	status = "okay";
-+};
-+
- &mshc_0 {
- 	num-slots = <1>;
- 	broken-cd;
-@@ -926,6 +1002,18 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sleep0>;
- 
-+	mhl_int: mhl-int {
-+		samsung,pins = "gpf3-5";
-+		samsung,pin-pud = <0>;
++static int hdmi_register_audio_device(struct hdmi_context *hdata)
++{
++	struct hdmi_codec_pdata codec_data = {
++		.ops = &audio_codec_ops,
++		.max_i2s_channels = 6,
++		.i2s = 1,
 +	};
 +
-+	i2c_mhl_bus: i2c-mhl-bus {
-+		samsung,pins = "gpf0-4", "gpf0-6";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <1>;
-+		samsung,pin-drv = <0>;
-+	};
++	hdata->audio.pdev = platform_device_register_data(
++		hdata->dev, HDMI_CODEC_DRV_NAME, PLATFORM_DEVID_AUTO,
++		&codec_data, sizeof(codec_data));
 +
- 	sleep0: sleep-states {
- 		PIN_SLP(gpa0-0, INPUT, NONE);
- 		PIN_SLP(gpa0-1, OUT0, NONE);
-@@ -1029,6 +1117,11 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sleep1>;
++	if (IS_ERR(hdata->audio.pdev))
++		return PTR_ERR(hdata->audio.pdev);
++
++	return 0;
++}
++
++static void hdmi_unregister_audio_device(struct hdmi_context *hdata)
++{
++	platform_device_unregister(hdata->audio.pdev);
++}
++
+ static void hdmi_hotplug_work_func(struct work_struct *work)
+ {
+ 	struct hdmi_context *hdata;
+@@ -1700,6 +1840,7 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
+ 	struct drm_device *drm_dev = data;
+ 	struct hdmi_context *hdata = dev_get_drvdata(dev);
+ 	struct drm_encoder *encoder = &hdata->encoder;
++	struct hdmi_audio_infoframe *audio_infoframe = &hdata->audio.infoframe;
+ 	struct exynos_drm_crtc *exynos_crtc;
+ 	struct drm_crtc *crtc;
+ 	int ret, pipe;
+@@ -1721,6 +1862,12 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
  
-+	hdmi_hpd: hdmi-hpd {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-+	};
+ 	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+ 
++	hdmi_audio_infoframe_init(audio_infoframe);
++	audio_infoframe->coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
++	audio_infoframe->sample_size = HDMI_AUDIO_SAMPLE_SIZE_STREAM;
++	audio_infoframe->sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
++	audio_infoframe->channels = 2;
 +
- 	sleep1: sleep-states {
- 		PIN_SLP(gpk0-0, PREV, NONE);
- 		PIN_SLP(gpk0-1, PREV, NONE);
+ 	drm_encoder_init(drm_dev, encoder, &exynos_hdmi_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+@@ -1828,6 +1975,8 @@ static int hdmi_probe(struct platform_device *pdev)
+ 
+ 	hdata->dev = dev;
+ 
++	mutex_init(&hdata->mutex);
++
+ 	ret = hdmi_resources_init(hdata);
+ 	if (ret) {
+ 		if (ret != -EPROBE_DEFER)
+@@ -1887,12 +2036,19 @@ static int hdmi_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_enable(dev);
+ 
+-	ret = component_add(&pdev->dev, &hdmi_component_ops);
++	ret = hdmi_register_audio_device(hdata);
+ 	if (ret)
+ 		goto err_notifier_put;
+ 
++	ret = component_add(&pdev->dev, &hdmi_component_ops);
++	if (ret)
++		goto err_unregister_audio;
++
+ 	return ret;
+ 
++err_unregister_audio:
++	hdmi_unregister_audio_device(hdata);
++
+ err_notifier_put:
+ 	cec_notifier_put(hdata->notifier);
+ 	pm_runtime_disable(dev);
+@@ -1931,6 +2087,8 @@ static int hdmi_remove(struct platform_device *pdev)
+ 
+ 	put_device(&hdata->ddc_adpt->dev);
+ 
++	mutex_destroy(&hdata->mutex);
++
+ 	return 0;
+ }
+ 
 -- 
-2.7.4
+1.9.1
