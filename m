@@ -1,33 +1,101 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH] iommu/exynos: prevent building on big-endian kernels
-Date: Fri, 4 Aug 2017 11:56:03 +0200
-Message-ID: <20170804095603.GA17443@8bytes.org>
-References: <20170728131954.213595-1-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] iommu/exynos: Remove custom platform device registration code
+Date: Fri, 04 Aug 2017 12:28:33 +0200
+Message-ID: <1501842513-23180-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170804102843eucas1p1fb17da4f86044a8ad78cc1684aa6e321@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:48766 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751290AbdHDJ4G (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:20351 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbdHDK2q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 05:56:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20170728131954.213595-1-arnd@arndb.de>
+        Fri, 4 Aug 2017 06:28:46 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OU500FGWP3WSA70@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Aug 2017 11:28:44 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Fri, Jul 28, 2017 at 03:19:19PM +0200, Arnd Bergmann wrote:
-> Since we print the correct warning, an allmodconfig build is no longer
-> clean but always prints it, which defeats compile-testing:
-> 
-> drivers/iommu/exynos-iommu.c:58:2: error: #warning "revisit driver if we can enable big-endian ptes" [-Werror=cpp]
-> 
-> This replaces the #warning with a dependency, moving warning text into
-> a comment.
-> 
-> Fixes: 1f59adb1766d ("iommu/exynos: Replace non-existing big-endian Kconfig option")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Commit 09515ef5ddad ("of/acpi: Configure dma operations at probe time for
+platform/amba/pci bus devices") postponed the moment of attaching IOMMU
+controller to its device, so there is no need to register IOMMU controllers
+very early, before all other devices in the system. This change gives us an
+opportunity to use standard platform device registration method also for
+Exynos SYSMMU controllers.
 
-Applied, thanks.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/iommu/exynos-iommu.c | 36 +++++++++---------------------------
+ 1 file changed, 9 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 2395478dde75..76436d4ff4d1 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -659,6 +659,13 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	/*
++	 * use the first registered sysmmu device for performing
++	 * dma mapping operations on iommu page tables (cpu cache flush)
++	 */
++	if (!dma_dev)
++		dma_dev = &pdev->dev;
++
+ 	pm_runtime_enable(dev);
+ 
+ 	return 0;
+@@ -1339,8 +1346,6 @@ static int exynos_iommu_of_xlate(struct device *dev,
+ 	.of_xlate = exynos_iommu_of_xlate,
+ };
+ 
+-static bool init_done;
+-
+ static int __init exynos_iommu_init(void)
+ {
+ 	int ret;
+@@ -1373,8 +1378,6 @@ static int __init exynos_iommu_init(void)
+ 		goto err_set_iommu;
+ 	}
+ 
+-	init_done = true;
+-
+ 	return 0;
+ err_set_iommu:
+ 	kmem_cache_free(lv2table_kmem_cache, zero_lv2_table);
+@@ -1384,27 +1387,6 @@ static int __init exynos_iommu_init(void)
+ 	kmem_cache_destroy(lv2table_kmem_cache);
+ 	return ret;
+ }
++core_initcall(exynos_iommu_init);
+ 
+-static int __init exynos_iommu_of_setup(struct device_node *np)
+-{
+-	struct platform_device *pdev;
+-
+-	if (!init_done)
+-		exynos_iommu_init();
+-
+-	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
+-	if (!pdev)
+-		return -ENODEV;
+-
+-	/*
+-	 * use the first registered sysmmu device for performing
+-	 * dma mapping operations on iommu page tables (cpu cache flush)
+-	 */
+-	if (!dma_dev)
+-		dma_dev = &pdev->dev;
+-
+-	return 0;
+-}
+-
+-IOMMU_OF_DECLARE(exynos_iommu_of, "samsung,exynos-sysmmu",
+-		 exynos_iommu_of_setup);
++IOMMU_OF_DECLARE(exynos_iommu_of, "samsung,exynos-sysmmu", NULL);
+-- 
+1.9.1
