@@ -1,146 +1,86 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: Add HDMI and Sil9234 to Trats2 board
-Date: Fri, 4 Aug 2017 08:44:08 +0200
-Message-ID: <CAJKOXPdooPEOFHzvuiwkKjy6pqOZKZY-nPhXLpg8za9M_4N9ag@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/2] drm/bridge: add Silicon Image SiI9234 driver
+Date: Fri, 04 Aug 2017 08:55:55 +0200
+Message-ID: <eea9742d-0180-205b-652e-f9bfbdd21c33@samsung.com>
 References: <1501746323-5254-1-git-send-email-m.purski@samsung.com>
- <CGME20170803074541eucas1p2b054d4853a98819fc42f19f7cae7f419@eucas1p2.samsung.com>
- <1501746323-5254-3-git-send-email-m.purski@samsung.com> <20170803192000.trgfndzj4b3bnisc@kozik-lap>
- <aa50cb82-29be-acfc-32b4-7f2a64266d8a@samsung.com>
+ <CGME20170803074538eucas1p1fec88e4f2c3ebc00054fd362a504c03e@eucas1p1.samsung.com>
+ <1501746323-5254-2-git-send-email-m.purski@samsung.com>
+ <3612749.1Xj3PQ173Q@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:51416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751269AbdHDGoJ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 02:44:09 -0400
-In-Reply-To: <aa50cb82-29be-acfc-32b4-7f2a64266d8a@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <3612749.1Xj3PQ173Q@avalon>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maciej Purski <m.purski@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, krzk@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Maciej Purski <m.purski@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
 
-On Fri, Aug 4, 2017 at 8:32 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Krzysztof,
->
->
-> On 2017-08-03 21:20, Krzysztof Kozlowski wrote:
->>
->> On Thu, Aug 03, 2017 at 09:45:23AM +0200, Maciej Purski wrote:
->>>
->>> This patch adds HDMI and Sil9234 MHL converter to Trats2 board.
->>
->> Just "Add HDMI...", without this patch.
->>
->> Except few minor nitpicks below, looks good. After fixing I will take it
->> once bindings got accepted.
->>
->>> Based on previous work by:
->>> Tomasz Stanislawski <t.stanislaws@samsung.com>
->>>
->>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
->>> ---
->>>   arch/arm/boot/dts/exynos4412-trats2.dts | 93 +++++++++++++++++++++++++++++++++
->>>   1 file changed, 93 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
->>> index 35e9b94..39940f6 100644
->>> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
->>> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
->>> @@ -97,6 +97,16 @@
->>>                         gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
->>>                         enable-active-high;
->>>                 };
->>> +
->>> +               vsil: voltage-regulator-vsil {
->>> +                       compatible = "regulator-fixed";
->>> +                       regulator-name = "HDMI_5V";
->>> +                       regulator-min-microvolt = <5000000>;
->>> +                       regulator-max-microvolt = <5000000>;
->>> +                       gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
->>> +                       enable-active-high;
->>> +                       vin-supply = <&buck7_reg>;
->>
->> I think the supply is V_BAT, not buck7.
->
->
-> Well, according to the the schematic, VSIL is derived from VCC_SUB_2.0V
-> (buck7) by the RP114K121D-TR chip, which is controlled by gpl0-4 (HDMI_EN)
-> pin.
-> The only thing that has to be fixed is the voltage value for that regulator.
-> VSIL is 1.2V and regulator-name should be adjusted too. The HDMI_V5 name
-> and voltage value seems to be copy/paste error done long time ago...
->
-
-OK, thanks for explanation.
-
-(...)
-
->>
->> Could you describe more what is on i2c_5 and i2c_8? Is it relevant to
->> this patch?
->
->
-> Yes. i2c_5 is used for HDMI DDC and i2c_8 is used for HDMI_PHY. None of
-> the other exynos*.dts, which enable HDMI has any comment on them...
-
-Actually now I see that this information can be get from the source
-(see i2c_8 in exyos4.dtsi and here i2c_5 is used in hdmi node as ddc).
-Still it would be nice to see this information for example in commit
-message.
-
-Best regards,
-Krzysztof
-
->
->
->>> +
->>>   &i2c_7 {
->>>         samsung,i2c-sda-delay = <100>;
->>>         samsung,i2c-slave-addr = <0x10>;
->>> @@ -894,12 +962,20 @@
->>>         };
->>>   };
->>>   +&i2c_8 {
->>> +       status = "okay";
->>> +};
->>> +
->>>   &i2s0 {
->>>         pinctrl-0 = <&i2s0_bus>;
->>>         pinctrl-names = "default";
->>>         status = "okay";
->>>   };
->>>   +&mixer {
->>> +       status = "okay";
->>> +};
->>> +
->>>   &mshc_0 {
->>>         num-slots = <1>;
->>>         broken-cd;
->>> @@ -926,6 +1002,18 @@
->>>         pinctrl-names = "default";
->>>         pinctrl-0 = <&sleep0>;
->>>   +     mhl_int: mhl-int {
->>> +               samsung,pins = "gpf3-5";
->>> +               samsung,pin-pud = <0>;
->>
->> Please use defines from dt-bindings/pinctrl/samsung.h
->>
->>> +       };
->>> +
->>> +       i2c_mhl_bus: i2c-mhl-bus {
->>> +               samsung,pins = "gpf0-4", "gpf0-6";
->>> +               samsung,pin-function = <2>;
->>> +               samsung,pin-pud = <1>;
->>> +               samsung,pin-drv = <0>;
->>
->> The same.
->>
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+SGkgTGF1cmVudCwKClRoYW5rcyBmb3IgeW91ciBkZXRhaWxlZCBjb21tZW50cy4gTWFjaWVqIHJl
+c3VycmVjdGVkIHNvbWUgb3JwaGFuZWQgY29kZSwKd2hpY2ggaXMgc3RpbGwgdXNlZnVsIHRvZGF5
+IChUb21hc3ogaGFzIGxlZnQgU2Ftc3VuZyBhIGZldyB5ZWFycyBhZ28pLgpJJ20gbm90IHN1cmUg
+d2Ugd2lsbCBiZSBhYmxlIHRvIGFuc3dlciBhbGwgeW91ciBxdWVzdGlvbnMgd2l0aG91dCBkZWVw
+CmludmVzdGlnYXRpb24sIGVzcGVjaWFsbHkgYWJvdXQgdGhlIGRyaXZlciBvcGVyYXRpb24gZGV0
+YWlscywgYnV0IHdlCndpbGwgdHJ5LgoKT24gMjAxNy0wOC0wMyAxMjoyNCwgTGF1cmVudCBQaW5j
+aGFydCB3cm90ZToKPiBIaSBNYWNpZWosCj4KPiBUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KPgo+
+IE9uIFRodXJzZGF5IDAzIEF1ZyAyMDE3IDA5OjQ1OjIyIE1hY2llaiBQdXJza2kgd3JvdGU6Cj4+
+IFNpSTkyMzQgdHJhbnNtaXR0ZXIgY29udmVydHMgZVRNRFMvSERNSSBzaWduYWwgdG8gTUhMIDEu
+MC4KPj4gSXQgaXMgY29udHJvbGxlZCB2aWEgSTJDIGJ1cy4gSXRzIGludGVyYWN0aW9uIHdpdGgg
+b3RoZXIKPj4gZGV2aWNlcyBpbiB2aWRlbyBwaXBlbGluZSBpcyBwZXJmb3JtZWQgbWFpbmx5IG9u
+IEhXIGxldmVsLgo+PiBUaGUgb25seSBpbnRlcmFjdGlvbiBpdCBkb2VzIG9uIGRldmljZSBkcml2
+ZXIgbGV2ZWwgaXMKPj4gZmlsdGVyaW5nLW91dCB1bnN1cHBvcnRlZCB2aWRlbyBtb2RlcywgaXQg
+ZXhwb3NlcyBkcm1fYnJpZGdlCj4+IGludGVyZmFjZSB0byBwZXJmb3JtIHRoaXMgb3BlcmF0aW9u
+Lgo+Pgo+PiBUaGlzIHBhdGNoIGlzIGJhc2VkIG9uIHRoZSBjb2RlIHJlZmFjdG9yZWQgYnkgVG9t
+YXN6IFN0YW5pc2xhd3NraQo+PiA8dC5zdGFuaXNsYXdzQHNhbXN1bmcuY29tPiwgd2hpY2ggd2Fz
+IGluaXRpYWxseSBkZXZlbG9wZWQgYnk6Cj4+IEFkYW0gSGFtcHNvbiA8YWhhbXBzb25Ac3RhLnNh
+bXN1bmcuY29tPgo+PiBFcmlrIEdpbGxpbmcgPGtvbmtlcnNAYW5kcm9pZC5jb20+Cj4+IFNoYW5r
+YXIgQmFuZGFsIDxzaGFua2FyLmJAc2Ftc3VuZy5jb20+Cj4+IERoYXJhbSBLdW1hciA8ZGhhcmFt
+LmtyQHNhbXN1bmcuY29tPgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBNYWNpZWogUHVyc2tpIDxtLnB1
+cnNraUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
+cGxheS9icmlkZ2Uvc2lpOTIzNC50eHQgfCAgIDIwICsKPj4gICBkcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL0tjb25maWcgICAgICAgICAgICAgICAgICAgICB8ICAgIDggKwo+PiAgIGRyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgIHwgICAgMSArCj4+ICAgZHJp
+dmVycy9ncHUvZHJtL2JyaWRnZS9zaWk5MjM0LmMgICAgICAgICAgICAgICAgICAgfCAxMDE5ICsr
+KysrKysrKysrKysrKysrCj4+ICAgNCBmaWxlcyBjaGFuZ2VkLCAxMDQ4IGluc2VydGlvbnMoKykK
+Pj4gICBjcmVhdGUgbW9kZSAxMDA2NDQKPj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkyMzQudHh0IGNyZWF0ZSBtb2RlCj4+IDEwMDY0NCBkcml2
+ZXJzL2dwdS9kcm0vYnJpZGdlL3NpaTkyMzQuYwo+Pgo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkyMzQudHh0Cj4+IGIv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkyMzQu
+dHh0IG5ldyBmaWxlCj4+IG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAuLjJjZGYyODYKPj4g
+LS0tIC9kZXYvbnVsbAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+ZGlzcGxheS9icmlkZ2Uvc2lpOTIzNC50eHQKPiBEVCByZXZpZXdlcnMgbWlnaHQgYXNrIHlvdSB0
+byBzdWJtaXQgRFQgYmluZGluZ3MgYXMgYSBzZXBhcmF0ZSBwYXRjaC4KPgo+PiBAQCAtMCwwICsx
+LDIwIEBACj4+ICtTaUk5MjM0IE1vYmlsZSBIRCBMaW5rIFRyYW5zbWl0dGVyCj4+ICsKPj4gK1Jl
+cXVpcmVkIHByb3BlcnRpZXM6Cj4+ICstIGNvbXBhdGlibGUgOiAic2lsLHNpaTkyMzQiLgo+PiAr
+LSByZWcgOiBJMkMgYWRkcmVzcyBmb3IgVFBJIGludGVyZmFjZSwgdXNlIDB4MzkKPj4gKy0gdmNj
+LXN1cHBseSA6IHJlZ3VsYXRvciB0aGF0IHN1cHBsaWVzIHRoZSBjaGlwCj4gSXMgdGhlcmUgYSBz
+aW5nbGUgcG93ZXIgc3VwcGx5IG9ubHkgPyBUcmFuc2NlaXZlcnMgdXN1YWxseSBoYXZlIGF0IGxl
+YXN0IG9uZQo+IGRpZ2l0YWwgYW5kIG9uZSBhbmFsb2cgcG93ZXIgc3VwcGx5LgoKQWNvcmRpbmcg
+dG8gdGhlIHNjaGVtYXRpYyB0aGVyZSBhcmUgZm91ciBwb3dlciBzdXBwbGllcyB1c2VkIGZvciBT
+SUk5MjM0IApNSEwgY2hpcCBpbgpUcmF0czIgYm9hcmQ6IFZTSUxfMS4yQSwgVlNJTF8xLjJDLCBW
+Q0NfMy4zVl9NSEwgYW5kIFZDQ18xLjhWX01ITC4gRmlyc3QgCnR3byBhcmUKZGVyaXZlZCBkaXJl
+Y3RseSBmcm9tIFZTSUxfMS4yIHNpZ25hbCwgd2hpY2ggaXMgbW9kZWxlZCBhcyBhIGZpeGVkIApy
+ZWd1bGF0b3IuIFRoZQpsYXR0ZXIgdHdvIGFyZSBkZXJpdmVkIGRpcmVjdGx5IGZyb20gVkJBVCB1
+c2luZyBzb21lIGxldmVsIGNvbnZlcnRlciwgCndoaWNoIGlzCmNvbnRyb2xsZWQgYnkgdGhlIHNh
+bWUgR1BJTyBwaW4gYXMgVlNJTCBmaXhlZCByZWd1bGF0b3IuIEFueSBpZGVhIGhvdyAKdGhpcyBz
+aG91bGQKYmUgcmVwcmVzZW50ZWQgYmV0dGVyIGluIGRldmljZSB0cmVlIGluc3RlYWQgb2YgaGF2
+aW5nIHNpbmdsZSB2Y2Mtc3VwcGx5PwoKPgo+PiArLSBpbnRlcnJ1cHRzLCBpbnRlcnJ1cHQtcGFy
+ZW50OiBpbnRlcnJ1cHQgc3BlY2lmaWVyIG9mIElOVCBwaW4KPj4gKy0gcmVzZXQtZ3Bpb3M6IGdw
+aW8gc3BlY2lmaWVyIG9mIFJFU0VUIHBpbgo+IElzIHRoaXMgbWFuZGF0b3J5IHRvIGNvbm5lY3Qg
+dGhlIHJlc2V0IHBpbiB0byB0aGUgU29DID8KCklNSE8geWVzLCB0aGUgY2hpcCBoYXMgdG8gYmUg
+cmVzZXQgZHVyaW5nIHRoZSBpbml0aWFsaXphdGlvbiBwcm9jZWR1cmUgCmFuZCBkb2Vzbid0Cndv
+cmsgcHJvcGVybHkgd2l0aG91dCByZXNldC4KCj4gPiBbLi4uXSAKCkJlc3QgcmVnYXJkcwotLSAK
+TWFyZWsgU3p5cHJvd3NraSwgUGhEClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
