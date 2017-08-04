@@ -1,86 +1,139 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/2] drm/bridge: add Silicon Image SiI9234 driver
-Date: Fri, 04 Aug 2017 08:55:55 +0200
-Message-ID: <eea9742d-0180-205b-652e-f9bfbdd21c33@samsung.com>
-References: <1501746323-5254-1-git-send-email-m.purski@samsung.com>
- <CGME20170803074538eucas1p1fec88e4f2c3ebc00054fd362a504c03e@eucas1p1.samsung.com>
- <1501746323-5254-2-git-send-email-m.purski@samsung.com>
- <3612749.1Xj3PQ173Q@avalon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <3612749.1Xj3PQ173Q@avalon>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maciej Purski <m.purski@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, krzk@kernel.org
+Subject: [PATCH v7 0/4] Add runtime PM support for clocks (on Exynos SoC
+ example)
+Date: Fri, 04 Aug 2017 11:34:50 +0200
+Message-ID: <1501839294-478-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170804093514eucas1p2b15dbf1879d150c8c40f1696c2109975@eucas1p2.samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgTGF1cmVudCwKClRoYW5rcyBmb3IgeW91ciBkZXRhaWxlZCBjb21tZW50cy4gTWFjaWVqIHJl
-c3VycmVjdGVkIHNvbWUgb3JwaGFuZWQgY29kZSwKd2hpY2ggaXMgc3RpbGwgdXNlZnVsIHRvZGF5
-IChUb21hc3ogaGFzIGxlZnQgU2Ftc3VuZyBhIGZldyB5ZWFycyBhZ28pLgpJJ20gbm90IHN1cmUg
-d2Ugd2lsbCBiZSBhYmxlIHRvIGFuc3dlciBhbGwgeW91ciBxdWVzdGlvbnMgd2l0aG91dCBkZWVw
-CmludmVzdGlnYXRpb24sIGVzcGVjaWFsbHkgYWJvdXQgdGhlIGRyaXZlciBvcGVyYXRpb24gZGV0
-YWlscywgYnV0IHdlCndpbGwgdHJ5LgoKT24gMjAxNy0wOC0wMyAxMjoyNCwgTGF1cmVudCBQaW5j
-aGFydCB3cm90ZToKPiBIaSBNYWNpZWosCj4KPiBUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KPgo+
-IE9uIFRodXJzZGF5IDAzIEF1ZyAyMDE3IDA5OjQ1OjIyIE1hY2llaiBQdXJza2kgd3JvdGU6Cj4+
-IFNpSTkyMzQgdHJhbnNtaXR0ZXIgY29udmVydHMgZVRNRFMvSERNSSBzaWduYWwgdG8gTUhMIDEu
-MC4KPj4gSXQgaXMgY29udHJvbGxlZCB2aWEgSTJDIGJ1cy4gSXRzIGludGVyYWN0aW9uIHdpdGgg
-b3RoZXIKPj4gZGV2aWNlcyBpbiB2aWRlbyBwaXBlbGluZSBpcyBwZXJmb3JtZWQgbWFpbmx5IG9u
-IEhXIGxldmVsLgo+PiBUaGUgb25seSBpbnRlcmFjdGlvbiBpdCBkb2VzIG9uIGRldmljZSBkcml2
-ZXIgbGV2ZWwgaXMKPj4gZmlsdGVyaW5nLW91dCB1bnN1cHBvcnRlZCB2aWRlbyBtb2RlcywgaXQg
-ZXhwb3NlcyBkcm1fYnJpZGdlCj4+IGludGVyZmFjZSB0byBwZXJmb3JtIHRoaXMgb3BlcmF0aW9u
-Lgo+Pgo+PiBUaGlzIHBhdGNoIGlzIGJhc2VkIG9uIHRoZSBjb2RlIHJlZmFjdG9yZWQgYnkgVG9t
-YXN6IFN0YW5pc2xhd3NraQo+PiA8dC5zdGFuaXNsYXdzQHNhbXN1bmcuY29tPiwgd2hpY2ggd2Fz
-IGluaXRpYWxseSBkZXZlbG9wZWQgYnk6Cj4+IEFkYW0gSGFtcHNvbiA8YWhhbXBzb25Ac3RhLnNh
-bXN1bmcuY29tPgo+PiBFcmlrIEdpbGxpbmcgPGtvbmtlcnNAYW5kcm9pZC5jb20+Cj4+IFNoYW5r
-YXIgQmFuZGFsIDxzaGFua2FyLmJAc2Ftc3VuZy5jb20+Cj4+IERoYXJhbSBLdW1hciA8ZGhhcmFt
-LmtyQHNhbXN1bmcuY29tPgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBNYWNpZWogUHVyc2tpIDxtLnB1
-cnNraUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
-cGxheS9icmlkZ2Uvc2lpOTIzNC50eHQgfCAgIDIwICsKPj4gICBkcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL0tjb25maWcgICAgICAgICAgICAgICAgICAgICB8ICAgIDggKwo+PiAgIGRyaXZlcnMvZ3B1
-L2RybS9icmlkZ2UvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgIHwgICAgMSArCj4+ICAgZHJp
-dmVycy9ncHUvZHJtL2JyaWRnZS9zaWk5MjM0LmMgICAgICAgICAgICAgICAgICAgfCAxMDE5ICsr
-KysrKysrKysrKysrKysrCj4+ICAgNCBmaWxlcyBjaGFuZ2VkLCAxMDQ4IGluc2VydGlvbnMoKykK
-Pj4gICBjcmVhdGUgbW9kZSAxMDA2NDQKPj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkyMzQudHh0IGNyZWF0ZSBtb2RlCj4+IDEwMDY0NCBkcml2
-ZXJzL2dwdS9kcm0vYnJpZGdlL3NpaTkyMzQuYwo+Pgo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkyMzQudHh0Cj4+IGIv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkyMzQu
-dHh0IG5ldyBmaWxlCj4+IG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAuLjJjZGYyODYKPj4g
-LS0tIC9kZXYvbnVsbAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-ZGlzcGxheS9icmlkZ2Uvc2lpOTIzNC50eHQKPiBEVCByZXZpZXdlcnMgbWlnaHQgYXNrIHlvdSB0
-byBzdWJtaXQgRFQgYmluZGluZ3MgYXMgYSBzZXBhcmF0ZSBwYXRjaC4KPgo+PiBAQCAtMCwwICsx
-LDIwIEBACj4+ICtTaUk5MjM0IE1vYmlsZSBIRCBMaW5rIFRyYW5zbWl0dGVyCj4+ICsKPj4gK1Jl
-cXVpcmVkIHByb3BlcnRpZXM6Cj4+ICstIGNvbXBhdGlibGUgOiAic2lsLHNpaTkyMzQiLgo+PiAr
-LSByZWcgOiBJMkMgYWRkcmVzcyBmb3IgVFBJIGludGVyZmFjZSwgdXNlIDB4MzkKPj4gKy0gdmNj
-LXN1cHBseSA6IHJlZ3VsYXRvciB0aGF0IHN1cHBsaWVzIHRoZSBjaGlwCj4gSXMgdGhlcmUgYSBz
-aW5nbGUgcG93ZXIgc3VwcGx5IG9ubHkgPyBUcmFuc2NlaXZlcnMgdXN1YWxseSBoYXZlIGF0IGxl
-YXN0IG9uZQo+IGRpZ2l0YWwgYW5kIG9uZSBhbmFsb2cgcG93ZXIgc3VwcGx5LgoKQWNvcmRpbmcg
-dG8gdGhlIHNjaGVtYXRpYyB0aGVyZSBhcmUgZm91ciBwb3dlciBzdXBwbGllcyB1c2VkIGZvciBT
-SUk5MjM0IApNSEwgY2hpcCBpbgpUcmF0czIgYm9hcmQ6IFZTSUxfMS4yQSwgVlNJTF8xLjJDLCBW
-Q0NfMy4zVl9NSEwgYW5kIFZDQ18xLjhWX01ITC4gRmlyc3QgCnR3byBhcmUKZGVyaXZlZCBkaXJl
-Y3RseSBmcm9tIFZTSUxfMS4yIHNpZ25hbCwgd2hpY2ggaXMgbW9kZWxlZCBhcyBhIGZpeGVkIApy
-ZWd1bGF0b3IuIFRoZQpsYXR0ZXIgdHdvIGFyZSBkZXJpdmVkIGRpcmVjdGx5IGZyb20gVkJBVCB1
-c2luZyBzb21lIGxldmVsIGNvbnZlcnRlciwgCndoaWNoIGlzCmNvbnRyb2xsZWQgYnkgdGhlIHNh
-bWUgR1BJTyBwaW4gYXMgVlNJTCBmaXhlZCByZWd1bGF0b3IuIEFueSBpZGVhIGhvdyAKdGhpcyBz
-aG91bGQKYmUgcmVwcmVzZW50ZWQgYmV0dGVyIGluIGRldmljZSB0cmVlIGluc3RlYWQgb2YgaGF2
-aW5nIHNpbmdsZSB2Y2Mtc3VwcGx5PwoKPgo+PiArLSBpbnRlcnJ1cHRzLCBpbnRlcnJ1cHQtcGFy
-ZW50OiBpbnRlcnJ1cHQgc3BlY2lmaWVyIG9mIElOVCBwaW4KPj4gKy0gcmVzZXQtZ3Bpb3M6IGdw
-aW8gc3BlY2lmaWVyIG9mIFJFU0VUIHBpbgo+IElzIHRoaXMgbWFuZGF0b3J5IHRvIGNvbm5lY3Qg
-dGhlIHJlc2V0IHBpbiB0byB0aGUgU29DID8KCklNSE8geWVzLCB0aGUgY2hpcCBoYXMgdG8gYmUg
-cmVzZXQgZHVyaW5nIHRoZSBpbml0aWFsaXphdGlvbiBwcm9jZWR1cmUgCmFuZCBkb2Vzbid0Cndv
-cmsgcHJvcGVybHkgd2l0aG91dCByZXNldC4KCj4gPiBbLi4uXSAKCkJlc3QgcmVnYXJkcwotLSAK
-TWFyZWsgU3p5cHJvd3NraSwgUGhEClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Dear All,
+
+This patchset adds runtime PM support to common clock framework. This is an
+attempt to implement support for clock controllers, which belongs to a power
+domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
+us to solve various freeze/crash issues related to power management.
+
+The main idea behind this patchset is to keep clock's controller power domain
+enabled every time when at least one of its clock is enabled or access to its
+registers is being made. Clock controller driver (clock provider) can
+supply a struct device pointer, which is the used by clock core for tracking and
+managing clock's controller runtime pm state. Each clk_prepare() operation will
+first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
+will do pm_runtime_put() at the end.
+
+This runtime PM feature has been tested with Exynos4412 (not included in this
+patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
+respective power domains and need special handling during power on/off
+procedures. Till now it wasn't handled at all, what caused various problems.
+
+Patches for clocks drivers change the way the clock provider is initialized.
+Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
+infrastructure is being used. This is needed to let driver to use runtime PM
+feature and integrate with generic power domains. The side-effect of this change
+is a delay in clock provider registeration during system boot, so early
+initialized drivers might get EPROBEDEFER error when requesting their clocks.
+This is an issue for IOMMU drivers, so this patchset will be fully functional
+once the deferred probe for IOMMU will be merged. v9 of the IOMMU deferred probe
+support has been posted a few days ago:
+https://www.spinics.net/lists/arm-kernel/msg567558.html
+
+Patches are based on v4.13-rc3.
+
+Stephen: this patchset finally got a review from Ulf (from PM point of
+view). Is also touches only the Exynos5433 and Exynos Audio Subsystem
+drivers, which both have separate DT nodes for each clock controllers and
+each clock controller is entirely only in the one power domain, so everything is
+clean from the current DT bindings perspective. Would it be okay to merge it?
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Changelog:
+
+v7:
+- rebased onto v4.13-rc3
+- still waiting for any comments from clk maintainers
+
+v6:
+- addressed comments from Ulf Hanson and added his 'Reviewed-by' tags
+- simplified exynos 5433 clock driver code a bit
+- fixes issues pointed by kbuild test robot
+
+v5:
+- rebased onto next-20170125 kernel release
+- added two more calls to runtime PM in clock's core:
+	1. clk_recalc() should ensure active runtime pm state, because it might
+	   read registers (in case of dividers) to calculate the rate
+	2. clk_register() also needs to ensure active runtime pm state to read
+	   initial rate and status of the clocks
+- more fixes in Exynos5433 clocks drivers:
+	1. PLL in DISP CMU must be enabled for suspend
+	2. guard clocks registration with pm_runtime_get_sync/pm_runtime_put to
+	   avoid turning the power domain on and off many times for no good
+	   reason (registering each clock will call pm_runtime_get_sync(), then
+	   pm_runtime_put, what in turn might disable power domain)
+- still waiting for a review...
+
+v4: http://www.spinics.net/lists/arm-kernel/msg550747.html
+- Removed patch for Exynos4412 clocks from the patchset. DT bindings for power
+  domain for ISP sub-controller needs more discussion. It will be handled
+  separately when the runtime PM for clocks feature gets merged.
+- Added patch with runtime PM support for Exynos AudioSS clock controller driver
+  (needed to enable audio power domain on Exynos5 series).
+- Fixes in Exynos5433 driver:
+	1. added missing clock for Audio CMU
+	2. added support for FSYS CMU
+	3. improved support for DISP CMU (thanks to Andrzej Hajda for
+	   investigating that).
+- Rebased onto v4.10-rc1
+- Waiting for a review...
+
+v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
+- Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is enabled
+  for the provided device during clock registration as suggested by Ulf
+- Simplified code for exynos4412 isp clock driver registration
+- Resolved some other minor issues pointed by Ulf clk core code
+- Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
+
+v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
+- Simplified clk_pm_runtime_get/put functions, removed workaround for devices
+  with disabled runtime pm. Such workaround is no longer needed since commit
+  4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime PM
+  during system PM phases").
+- Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core should
+  call runtime pm functions. This solves problem with clocks, for which struct
+  device is already registered, but no runtime pm is enabled.
+- Extended commit messages according to Ulf suggestions.
+- Fixed some style issues pointed by Barlomiej.
+
+v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
+- initial version
+
+
+Patch summary:
+
+Marek Szyprowski (4):
+  clk: Add support for runtime PM
+  clk: samsung: Add support for runtime PM
+  clk: samsung: exynos5433: Add runtime PM support
+  clk: samsung: exynos-audss: Use runtime PM
+
+ .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
+ .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
+ drivers/clk/clk.c                                  | 129 ++++++-
+ drivers/clk/samsung/clk-exynos-audss.c             |  68 ++--
+ drivers/clk/samsung/clk-exynos5433.c               | 409 ++++++++++++++++-----
+ drivers/clk/samsung/clk-pll.c                      |   2 +-
+ drivers/clk/samsung/clk.c                          |  12 +-
+ drivers/clk/samsung/clk.h                          |   7 +
+ 8 files changed, 513 insertions(+), 136 deletions(-)
+
+-- 
+1.9.1
+
