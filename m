@@ -1,358 +1,211 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 1/3] PCI: dwc: Handle host_init failures
-Date: Thu, 3 Aug 2017 16:19:25 -0500
-Message-ID: <20170803211925.GZ20308@bhelgaas-glaptop.roam.corp.google.com>
-References: <20170716063947.3272-1-bjorn.andersson@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Add HDMI and Sil9234 to Trats2 board
+Date: Fri, 04 Aug 2017 08:32:25 +0200
+Message-ID: <aa50cb82-29be-acfc-32b4-7f2a64266d8a@samsung.com>
+References: <1501746323-5254-1-git-send-email-m.purski@samsung.com>
+ <CGME20170803074541eucas1p2b054d4853a98819fc42f19f7cae7f419@eucas1p2.samsung.com>
+ <1501746323-5254-3-git-send-email-m.purski@samsung.com>
+ <20170803192000.trgfndzj4b3bnisc@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170716063947.3272-1-bjorn.andersson@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, Murali Karicheri <m-karicheri2@ti.com>, Minghuan Lian <minghuan.Lian@freescale.com>, Mingkai Hu <mingkai.hu@freescale.com>, Roy Zang <tie-fei.zang@freescale.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Niklas Cassel <niklas.cassel@axis.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Xiaowei Song <songxiaowei@hisilicon.com>, Binghui Wang <wangbinghui@hisilicon.com>, Stanimir Varbanov <svarbanov@mm-sol.com>, Pratyush Anand <pratyush.anand@>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:20735 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751259AbdHDGcb (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 4 Aug 2017 02:32:31 -0400
+In-reply-to: <20170803192000.trgfndzj4b3bnisc@kozik-lap>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Maciej Purski <m.purski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, b.zolnierkie@samsung.com
 
-On Sat, Jul 15, 2017 at 11:39:45PM -0700, Bjorn Andersson wrote:
-> In several dwc based drivers host_init can fail, so make sure to
-> propagate and handle this to avoid continuing operation of a driver or
-> hardware in an invalid state.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hi Krzysztof,
 
-Applied patches 1-3 to pci/host-designware for v4.14, thanks!
+On 2017-08-03 21:20, Krzysztof Kozlowski wrote:
+> On Thu, Aug 03, 2017 at 09:45:23AM +0200, Maciej Purski wrote:
+>> This patch adds HDMI and Sil9234 MHL converter to Trats2 board.
+> Just "Add HDMI...", without this patch.
+>
+> Except few minor nitpicks below, looks good. After fixing I will take it
+> once bindings got accepted.
+>
+>> Based on previous work by:
+>> Tomasz Stanislawski <t.stanislaws@samsung.com>
+>>
+>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos4412-trats2.dts | 93 +++++++++++++++++++++++++++++++++
+>>   1 file changed, 93 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+>> index 35e9b94..39940f6 100644
+>> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
+>> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+>> @@ -97,6 +97,16 @@
+>>   			gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
+>>   			enable-active-high;
+>>   		};
+>> +
+>> +		vsil: voltage-regulator-vsil {
+>> +			compatible = "regulator-fixed";
+>> +			regulator-name = "HDMI_5V";
+>> +			regulator-min-microvolt = <5000000>;
+>> +			regulator-max-microvolt = <5000000>;
+>> +			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
+>> +			enable-active-high;
+>> +			vin-supply = <&buck7_reg>;
+> I think the supply is V_BAT, not buck7.
 
-> ---
->  drivers/pci/dwc/pci-dra7xx.c           |  4 +++-
->  drivers/pci/dwc/pci-exynos.c           |  4 +++-
->  drivers/pci/dwc/pci-imx6.c             |  4 +++-
->  drivers/pci/dwc/pci-keystone.c         |  4 +++-
->  drivers/pci/dwc/pci-layerscape.c       | 14 ++++++++++----
->  drivers/pci/dwc/pcie-armada8k.c        |  4 +++-
->  drivers/pci/dwc/pcie-artpec6.c         |  4 +++-
->  drivers/pci/dwc/pcie-designware-host.c |  7 +++++--
->  drivers/pci/dwc/pcie-designware-plat.c |  4 +++-
->  drivers/pci/dwc/pcie-designware.h      |  2 +-
->  drivers/pci/dwc/pcie-kirin.c           |  4 +++-
->  drivers/pci/dwc/pcie-qcom.c            |  6 ++++--
->  drivers/pci/dwc/pcie-spear13xx.c       |  4 +++-
->  13 files changed, 47 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
-> index f2fc5f47064e..e8c13bb76169 100644
-> --- a/drivers/pci/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/dwc/pci-dra7xx.c
-> @@ -195,7 +195,7 @@ static void dra7xx_pcie_enable_interrupts(struct dra7xx_pcie *dra7xx)
->  	dra7xx_pcie_enable_msi_interrupts(dra7xx);
->  }
->  
-> -static void dra7xx_pcie_host_init(struct pcie_port *pp)
-> +static int dra7xx_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
-> @@ -206,6 +206,8 @@ static void dra7xx_pcie_host_init(struct pcie_port *pp)
->  	dw_pcie_wait_for_link(pci);
->  	dw_pcie_msi_init(pp);
->  	dra7xx_pcie_enable_interrupts(dra7xx);
-> +
-> +	return 0;
->  }
->  
->  static const struct dw_pcie_host_ops dra7xx_pcie_host_ops = {
-> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
-> index c78c06552590..f77f872e8b78 100644
-> --- a/drivers/pci/dwc/pci-exynos.c
-> +++ b/drivers/pci/dwc/pci-exynos.c
-> @@ -581,13 +581,15 @@ static int exynos_pcie_link_up(struct dw_pcie *pci)
->  	return 0;
->  }
->  
-> -static void exynos_pcie_host_init(struct pcie_port *pp)
-> +static int exynos_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct exynos_pcie *ep = to_exynos_pcie(pci);
->  
->  	exynos_pcie_establish_link(ep);
->  	exynos_pcie_enable_interrupts(ep);
-> +
-> +	return 0;
->  }
->  
->  static const struct dw_pcie_host_ops exynos_pcie_host_ops = {
-> diff --git a/drivers/pci/dwc/pci-imx6.c b/drivers/pci/dwc/pci-imx6.c
-> index bf5c3616e344..20aae4469ee4 100644
-> --- a/drivers/pci/dwc/pci-imx6.c
-> +++ b/drivers/pci/dwc/pci-imx6.c
-> @@ -636,7 +636,7 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
->  	return ret;
->  }
->  
-> -static void imx6_pcie_host_init(struct pcie_port *pp)
-> +static int imx6_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct imx6_pcie *imx6_pcie = to_imx6_pcie(pci);
-> @@ -649,6 +649,8 @@ static void imx6_pcie_host_init(struct pcie_port *pp)
->  
->  	if (IS_ENABLED(CONFIG_PCI_MSI))
->  		dw_pcie_msi_init(pp);
-> +
-> +	return 0;
->  }
->  
->  static int imx6_pcie_link_up(struct dw_pcie *pci)
-> diff --git a/drivers/pci/dwc/pci-keystone.c b/drivers/pci/dwc/pci-keystone.c
-> index 4783cec1f78d..3ad3f8aa27b0 100644
-> --- a/drivers/pci/dwc/pci-keystone.c
-> +++ b/drivers/pci/dwc/pci-keystone.c
-> @@ -261,7 +261,7 @@ static int keystone_pcie_fault(unsigned long addr, unsigned int fsr,
->  	return 0;
->  }
->  
-> -static void __init ks_pcie_host_init(struct pcie_port *pp)
-> +static int __init ks_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
-> @@ -289,6 +289,8 @@ static void __init ks_pcie_host_init(struct pcie_port *pp)
->  	 */
->  	hook_fault_code(17, keystone_pcie_fault, SIGBUS, 0,
->  			"Asynchronous external abort");
-> +
-> +	return 0;
->  }
->  
->  static const struct dw_pcie_host_ops keystone_pcie_host_ops = {
-> diff --git a/drivers/pci/dwc/pci-layerscape.c b/drivers/pci/dwc/pci-layerscape.c
-> index fd861289ad8b..7581490f007c 100644
-> --- a/drivers/pci/dwc/pci-layerscape.c
-> +++ b/drivers/pci/dwc/pci-layerscape.c
-> @@ -108,31 +108,35 @@ static int ls1021_pcie_link_up(struct dw_pcie *pci)
->  	return 1;
->  }
->  
-> -static void ls1021_pcie_host_init(struct pcie_port *pp)
-> +static int ls1021_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct ls_pcie *pcie = to_ls_pcie(pci);
->  	struct device *dev = pci->dev;
->  	u32 index[2];
-> +	int ret;
->  
->  	pcie->scfg = syscon_regmap_lookup_by_phandle(dev->of_node,
->  						     "fsl,pcie-scfg");
->  	if (IS_ERR(pcie->scfg)) {
-> +		ret = PTR_ERR(pcie->scfg);
->  		dev_err(dev, "No syscfg phandle specified\n");
->  		pcie->scfg = NULL;
-> -		return;
-> +		return ret;
->  	}
->  
->  	if (of_property_read_u32_array(dev->of_node,
->  				       "fsl,pcie-scfg", index, 2)) {
->  		pcie->scfg = NULL;
-> -		return;
-> +		return -EINVAL;
->  	}
->  	pcie->index = index[1];
->  
->  	dw_pcie_setup_rc(pp);
->  
->  	ls_pcie_drop_msg_tlp(pcie);
-> +
-> +	return 0;
->  }
->  
->  static int ls_pcie_link_up(struct dw_pcie *pci)
-> @@ -150,7 +154,7 @@ static int ls_pcie_link_up(struct dw_pcie *pci)
->  	return 1;
->  }
->  
-> -static void ls_pcie_host_init(struct pcie_port *pp)
-> +static int ls_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct ls_pcie *pcie = to_ls_pcie(pci);
-> @@ -160,6 +164,8 @@ static void ls_pcie_host_init(struct pcie_port *pp)
->  	ls_pcie_clear_multifunction(pcie);
->  	ls_pcie_drop_msg_tlp(pcie);
->  	iowrite32(0, pci->dbi_base + PCIE_DBI_RO_WR_EN);
-> +
-> +	return 0;
->  }
->  
->  static int ls_pcie_msi_host_init(struct pcie_port *pp,
-> diff --git a/drivers/pci/dwc/pcie-armada8k.c b/drivers/pci/dwc/pcie-armada8k.c
-> index ea8f34af6a85..017a727a68db 100644
-> --- a/drivers/pci/dwc/pcie-armada8k.c
-> +++ b/drivers/pci/dwc/pcie-armada8k.c
-> @@ -134,13 +134,15 @@ static void armada8k_pcie_establish_link(struct armada8k_pcie *pcie)
->  		dev_err(pci->dev, "Link not up after reconfiguration\n");
->  }
->  
-> -static void armada8k_pcie_host_init(struct pcie_port *pp)
-> +static int armada8k_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct armada8k_pcie *pcie = to_armada8k_pcie(pci);
->  
->  	dw_pcie_setup_rc(pp);
->  	armada8k_pcie_establish_link(pcie);
-> +
-> +	return 0;
->  }
->  
->  static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
-> diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
-> index 01c6f7823672..5d81f1d884e3 100644
-> --- a/drivers/pci/dwc/pcie-artpec6.c
-> +++ b/drivers/pci/dwc/pcie-artpec6.c
-> @@ -175,13 +175,15 @@ static void artpec6_pcie_enable_interrupts(struct artpec6_pcie *artpec6_pcie)
->  		dw_pcie_msi_init(pp);
->  }
->  
-> -static void artpec6_pcie_host_init(struct pcie_port *pp)
-> +static int artpec6_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct artpec6_pcie *artpec6_pcie = to_artpec6_pcie(pci);
->  
->  	artpec6_pcie_establish_link(artpec6_pcie);
->  	artpec6_pcie_enable_interrupts(artpec6_pcie);
-> +
-> +	return 0;
->  }
->  
->  static const struct dw_pcie_host_ops artpec6_pcie_host_ops = {
-> diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
-> index d29c020da082..157621175147 100644
-> --- a/drivers/pci/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/dwc/pcie-designware-host.c
-> @@ -401,8 +401,11 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  		}
->  	}
->  
-> -	if (pp->ops->host_init)
-> -		pp->ops->host_init(pp);
-> +	if (pp->ops->host_init) {
-> +		ret = pp->ops->host_init(pp);
-> +		if (ret)
-> +			goto error;
-> +	}
->  
->  	pp->root_bus_nr = pp->busn->start;
->  
-> diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
-> index 091b4e7ad059..168e2380f493 100644
-> --- a/drivers/pci/dwc/pcie-designware-plat.c
-> +++ b/drivers/pci/dwc/pcie-designware-plat.c
-> @@ -35,7 +35,7 @@ static irqreturn_t dw_plat_pcie_msi_irq_handler(int irq, void *arg)
->  	return dw_handle_msi_irq(pp);
->  }
->  
-> -static void dw_plat_pcie_host_init(struct pcie_port *pp)
-> +static int dw_plat_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  
-> @@ -44,6 +44,8 @@ static void dw_plat_pcie_host_init(struct pcie_port *pp)
->  
->  	if (IS_ENABLED(CONFIG_PCI_MSI))
->  		dw_pcie_msi_init(pp);
-> +
-> +	return 0;
->  }
->  
->  static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
-> diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
-> index b4d2a89f8e58..7366c8167404 100644
-> --- a/drivers/pci/dwc/pcie-designware.h
-> +++ b/drivers/pci/dwc/pcie-designware.h
-> @@ -134,7 +134,7 @@ struct dw_pcie_host_ops {
->  			     unsigned int devfn, int where, int size, u32 *val);
->  	int (*wr_other_conf)(struct pcie_port *pp, struct pci_bus *bus,
->  			     unsigned int devfn, int where, int size, u32 val);
-> -	void (*host_init)(struct pcie_port *pp);
-> +	int (*host_init)(struct pcie_port *pp);
->  	void (*msi_set_irq)(struct pcie_port *pp, int irq);
->  	void (*msi_clear_irq)(struct pcie_port *pp, int irq);
->  	phys_addr_t (*get_msi_addr)(struct pcie_port *pp);
-> diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
-> index 33fddb9f6739..0b0eb67f2658 100644
-> --- a/drivers/pci/dwc/pcie-kirin.c
-> +++ b/drivers/pci/dwc/pcie-kirin.c
-> @@ -430,9 +430,11 @@ static int kirin_pcie_establish_link(struct pcie_port *pp)
->  	return 0;
->  }
->  
-> -static void kirin_pcie_host_init(struct pcie_port *pp)
-> +static int kirin_pcie_host_init(struct pcie_port *pp)
->  {
->  	kirin_pcie_establish_link(pp);
-> +
-> +	return 0;
->  }
->  
->  static struct dw_pcie_ops kirin_dw_pcie_ops = {
-> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
-> index 68c5f2ab5bc8..d15657dc3990 100644
-> --- a/drivers/pci/dwc/pcie-qcom.c
-> +++ b/drivers/pci/dwc/pcie-qcom.c
-> @@ -891,7 +891,7 @@ static int qcom_pcie_link_up(struct dw_pcie *pci)
->  	return !!(val & PCI_EXP_LNKSTA_DLLLA);
->  }
->  
-> -static void qcom_pcie_host_init(struct pcie_port *pp)
-> +static int qcom_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> @@ -921,12 +921,14 @@ static void qcom_pcie_host_init(struct pcie_port *pp)
->  	if (ret)
->  		goto err;
->  
-> -	return;
-> +	return 0;
->  err:
->  	qcom_ep_reset_assert(pcie);
->  	phy_power_off(pcie->phy);
->  err_deinit:
->  	pcie->ops->deinit(pcie);
-> +
-> +	return ret;
->  }
->  
->  static int qcom_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
-> diff --git a/drivers/pci/dwc/pcie-spear13xx.c b/drivers/pci/dwc/pcie-spear13xx.c
-> index 80897291e0fb..52000bc34600 100644
-> --- a/drivers/pci/dwc/pcie-spear13xx.c
-> +++ b/drivers/pci/dwc/pcie-spear13xx.c
-> @@ -177,13 +177,15 @@ static int spear13xx_pcie_link_up(struct dw_pcie *pci)
->  	return 0;
->  }
->  
-> -static void spear13xx_pcie_host_init(struct pcie_port *pp)
-> +static int spear13xx_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct spear13xx_pcie *spear13xx_pcie = to_spear13xx_pcie(pci);
->  
->  	spear13xx_pcie_establish_link(spear13xx_pcie);
->  	spear13xx_pcie_enable_interrupts(spear13xx_pcie);
-> +
-> +	return 0;
->  }
->  
->  static const struct dw_pcie_host_ops spear13xx_pcie_host_ops = {
-> -- 
-> 2.12.0
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Well, according to the the schematic, VSIL is derived from VCC_SUB_2.0V
+(buck7) by the RP114K121D-TR chip, which is controlled by gpl0-4 (HDMI_EN)
+pin.
+The only thing that has to be fixed is the voltage value for that regulator.
+VSIL is 1.2V and regulator-name should be adjusted too. The HDMI_V5 name
+and voltage value seems to be copy/paste error done long time ago...
+
+>> +		};
+>>   	};
+>>   
+>>   	gpio-keys {
+>> @@ -229,6 +239,34 @@
+>>   		};
+>>   	};
+>>   
+>> +	i2c-mhl {
+>> +		compatible = "i2c-gpio";
+>> +		gpios = <&gpf0 4 GPIO_ACTIVE_HIGH &gpf0 6 GPIO_ACTIVE_HIGH>;
+>> +		i2c-gpio,delay-us = <100>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		pinctrl-0 = <&i2c_mhl_bus>;
+>> +		pinctrl-names = "default";
+>> +		status = "okay";
+>> +
+>> +		sii9234: sii9234@39 {
+> The name of node should be rather generic (ePAPR: "The name of a node
+> should be somewhat generic, reflecting the function of the device and
+> not its precise programming model").
+>
+> So maybe "sii9234: hdmi-bridge@39"?
+>
+>> +			compatible = "sil,sii9234";
+>> +			vcc-supply = <&vsil>;
+>> +			reset-gpios = <&gpf3 4 GPIO_ACTIVE_HIGH>;
+>> +			interrupt-parent = <&gpf3>;
+>> +			interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
+>> +			reg = <0x39>;
+>> +
+>> +
+> One empty line instead of two.
+>
+>> +			port {
+>> +				mhl_to_hdmi: endpoint {
+>> +					remote-endpoint = <&hdmi_to_mhl>;
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +
+>>   	camera: camera {
+>>   		pinctrl-0 = <&cam_port_a_clk_active &cam_port_b_clk_active>;
+>>   		pinctrl-names = "default";
+>> @@ -522,6 +560,31 @@
+>>   	status = "okay";
+>>   };
+>>   
+>> +&hdmi {
+>> +	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_HIGH>;
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&hdmi_hpd>;
+>> +	hdmi-en-supply = <&vsil>;
+>> +	vdd-supply = <&ldo3_reg>;
+>> +	vdd_osc-supply = <&ldo4_reg>;
+>> +	vdd_pll-supply = <&ldo3_reg>;
+>> +	ddc = <&i2c_5>;
+>> +	status = "okay";
+>> +
+>> +	ports {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		port@1 {
+>> +			reg = <1>;
+>> +			hdmi_to_mhl: endpoint {
+>> +				remote-endpoint = <&mhl_to_hdmi>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+> Unnecessary empty line.
+>
+>> +};
+>> +
+>>   &hsotg {
+>>   	vusb_d-supply = <&ldo15_reg>;
+>>   	vusb_a-supply = <&ldo12_reg>;
+>> @@ -600,6 +663,11 @@
+>>   	};
+>>   };
+>>   
+>> +
+>> +&i2c_5 {
+>> +	status = "okay";
+>> +};
+> Could you describe more what is on i2c_5 and i2c_8? Is it relevant to
+> this patch?
+
+Yes. i2c_5 is used for HDMI DDC and i2c_8 is used for HDMI_PHY. None of
+the other exynos*.dts, which enable HDMI has any comment on them...
+
+>> +
+>>   &i2c_7 {
+>>   	samsung,i2c-sda-delay = <100>;
+>>   	samsung,i2c-slave-addr = <0x10>;
+>> @@ -894,12 +962,20 @@
+>>   	};
+>>   };
+>>   
+>> +&i2c_8 {
+>> +	status = "okay";
+>> +};
+>> +
+>>   &i2s0 {
+>>   	pinctrl-0 = <&i2s0_bus>;
+>>   	pinctrl-names = "default";
+>>   	status = "okay";
+>>   };
+>>   
+>> +&mixer {
+>> +	status = "okay";
+>> +};
+>> +
+>>   &mshc_0 {
+>>   	num-slots = <1>;
+>>   	broken-cd;
+>> @@ -926,6 +1002,18 @@
+>>   	pinctrl-names = "default";
+>>   	pinctrl-0 = <&sleep0>;
+>>   
+>> +	mhl_int: mhl-int {
+>> +		samsung,pins = "gpf3-5";
+>> +		samsung,pin-pud = <0>;
+> Please use defines from dt-bindings/pinctrl/samsung.h
+>
+>> +	};
+>> +
+>> +	i2c_mhl_bus: i2c-mhl-bus {
+>> +		samsung,pins = "gpf0-4", "gpf0-6";
+>> +		samsung,pin-function = <2>;
+>> +		samsung,pin-pud = <1>;
+>> +		samsung,pin-drv = <0>;
+> The same.
+>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
