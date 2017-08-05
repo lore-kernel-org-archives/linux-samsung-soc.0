@@ -1,125 +1,23 @@
-From: Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] mtd: nand: Rename nand.h into rawnand.h
-Date: Fri, 4 Aug 2017 21:22:17 +0300
-Message-ID: <5e849e7d-37ff-d1f6-5451-9954f89667ae@mleia.com>
-References: <1501860550-16506-1-git-send-email-boris.brezillon@free-electrons.com>
- <1501860550-16506-2-git-send-email-boris.brezillon@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1501860550-16506-2-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Rich Felker <dalias-8zAoT0mYgF4@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marc Gonzalez <marc_gonzalez-y1yR0Z3OICC7zZZRDBGcUA@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Alexander Clouter <alex-L4GPcECwBoDe9xe1eoZjHA@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Jesper Nilsson <jesper.nilsson-VrBV9hrLPhE@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxim Levitsky <maximlevitsky-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yoshinori Sato <ysato-Rn4VEauK+AKRv+LV9MX5uooqe+aC9MnS@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Vasut <marek.vasut@>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 0/4] constify thermal_zone_of_device_ops structures
+Date: Sat,  5 Aug 2017 22:37:13 +0200
+Message-ID: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, linux-rpi-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Boris,
+The thermal_zone_of_device_ops structures are only passed as the fourth
+argument to thermal_zone_of_sensor_register, which is declared as const.
+Thus the thermal_zone_of_device_ops structures themselves can be const.
 
-On 04.08.2017 18:29, Boris Brezillon wrote:
-> We are planning to share more code between different NAND based
-> devices (SPI NAND, OneNAND and raw NANDs), but before doing that
-> we need to move the existing include/linux/mtd/nand.h file into
-> include/linux/mtd/rawnand.h so we can later create a nand.h header
-> containing all common structure and function prototypes.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> Signed-off-by: Peter Pan <peterpandong-AL4WhLSQfzjQT0dZR+AlfA@public.gmane.org>
-> Cc: Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>
-> Cc: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-> Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
-> Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> Cc: Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>
-> Cc: Alexander Sverdlin <alexander.sverdlin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> Cc: Fabio Estevam <fabio.estevam-3arQi8VN3Tc@public.gmane.org>
-> Cc: Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
-> Cc: Krzysztof Halasa <khalasa-NlWvg49iv0c@public.gmane.org>
-> Cc: Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Aaro Koskinen <aaro.koskinen-X3B1VOXEql0@public.gmane.org>
-> Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-> Cc: Alexander Clouter <alex-L4GPcECwBoDe9xe1eoZjHA@public.gmane.org>
-> Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>
-> Cc: Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>
-> Cc: Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Simtec Linux Team <linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>
-> Cc: Steven Miao <realmz6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Mikael Starvik <starvik-VrBV9hrLPhE@public.gmane.org>
-> Cc: Jesper Nilsson <jesper.nilsson-VrBV9hrLPhE@public.gmane.org>
-> Cc: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>
-> Cc: Yoshinori Sato <ysato-Rn4VEauK+AKRv+LV9MX5uooqe+aC9MnS@public.gmane.org>
-> Cc: Rich Felker <dalias-8zAoT0mYgF4@public.gmane.org>
-> Cc: Wenyou Yang <wenyou.yang-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
-> Cc: Josh Wu <rainyfeeling-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>
-> Cc: Kamal Dasu <kdasu.kdev-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-> Cc: Han Xu <han.xu-3arQi8VN3Tc@public.gmane.org>
-> Cc: Harvey Hunt <harveyhuntnexus-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
-> Cc: Sylvain Lemieux <slemieux.tyco-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Wan ZongShun <mcuos.com-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-> Cc: Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> Cc: Maxim Levitsky <maximlevitsky-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Marc Gonzalez <marc_gonzalez-y1yR0Z3OICC7zZZRDBGcUA@public.gmane.org>
-> Cc: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-> Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-> Cc: Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-> Cc: linux-cris-kernel-VrBV9hrLPhE@public.gmane.org
-> Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org
-> Cc: linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org
-> Cc: linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-oxnas-Xt5XgHjqiBU06sgRBLv0+0B+6BGkLq7r@public.gmane.org
-> Cc: linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
-> ---
-> Hi All,
-> 
-> Sorry for the huge Cc list, but I'd like to collect as much acks as
-> possible for this patch which is actually part of a bigger series [1].
-> 
-> Note that there's nothing complicated here, it's just a mechanical
-> s/nand\.h/rawnand\.h/ replacement, but it impacts several architectures,
-> the doc and staging directories.
-> 
-> Regards,
-> 
-> Boris
-> 
-> [1]https://lwn.net/Articles/723694/
-> ---
+Done with the help of Coccinelle.
 
-[snip]
+---
 
->  drivers/mtd/nand/lpc32xx_mlc.c                  | 2 +-
->  drivers/mtd/nand/lpc32xx_slc.c                  | 2 +-
-
-For LPC32xx drivers
-
-Acked-by: Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
-
---
-With best wishes,
-Vladimir
+ drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
+ drivers/thermal/qoriq_thermal.c            |    2 +-
+ drivers/thermal/samsung/exynos_tmu.c       |    2 +-
+ drivers/thermal/zx2967_thermal.c           |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
