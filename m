@@ -1,168 +1,157 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: odroid: Drop requirement of clocks in the
- sound node
-Date: Mon, 7 Aug 2017 20:56:23 +0200
-Message-ID: <20170807185623.jwitnpcaay4wrv6a@kozik-lap>
-References: <CGME20170804105854epcas2p30ed120bc4bcb51979a880f44ffe3aca6@epcas2p3.samsung.com>
- <1501844297-22842-1-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH] mtd: nand: Rename nand.h into rawnand.h
+Date: Mon, 7 Aug 2017 21:06:09 +0200
+Message-ID: <20170807190609.uz6fpatkzijfgifr@kozik-lap>
+References: <1501860550-16506-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1501860550-16506-2-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38719 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751505AbdHGS41 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Aug 2017 14:56:27 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 Content-Disposition: inline
-In-Reply-To: <1501844297-22842-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1501860550-16506-2-git-send-email-boris.brezillon@free-electrons.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rich Felker <dalias@libc.org>, Neil Armstrong <narmstrong@baylibre.com>, Tony Lindgren <tony@atomide.com>, linux-mips@linux-mips.org, Sekhar Nori <nsekhar@ti.com>, Stefan Agner <stefan@agner.ch>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-mtd@lists.infradead.org, Marc Gonzalez <marc_gonzalez@sigmadesigns.com>, bcm-kernel-feedback-list@broadcom.com, Robert Jarzmik <robert.jarzmik@free.fr>, Alexander Clouter <alex@digriz.org.uk>, devel@driverdev.osuosl.org, Jesper Nilsson <jesper.nilsson@axis.com>, linux-omap@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, Jonathan Corbet <corbet@lwn.net>, linux-sh@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-doc@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-oxnas@lists.tuxfamily.org, Marek Vasut <marek.vasut@gmail.>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, devicetree@vger.kernel.org, robh+dt@kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, alsa-devel@alsa-project.org
 
-On Fri, Aug 04, 2017 at 12:58:17PM +0200, Sylwester Nawrocki wrote:
-> As suggested in reviews the requirement of clocks in the 'sound' node
-> is dropped and instead a leaf clock is used to configure frequency
-> of the audio root clock PLL. This can work now after the clock tree
-> definitions have been updated to allow clock rate setting propagation
-> on the path from the I2S controller up to the EPLL.
+On Fri, Aug 04, 2017 at 05:29:10PM +0200, Boris Brezillon wrote:
+> We are planning to share more code between different NAND based
+> devices (SPI NAND, OneNAND and raw NANDs), but before doing that
+> we need to move the existing include/linux/mtd/nand.h file into
+> include/linux/mtd/rawnand.h so we can later create a nand.h header
+> containing all common structure and function prototypes.
 > 
-> This patch also lowers the CODEC master clock frequency so as
-> to not exceed the maximum allowed 60 MHz at maximum audio sampling
-> rates.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Peter Pan <peterpandong@micron.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Gregory Clement <gregory.clement@free-electrons.com>
+> Cc: Hartley Sweeten <hsweeten@visionengravers.com>
+> Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Imre Kaloz <kaloz@openwrt.org>
+> Cc: Krzysztof Halasa <khalasa@piap.pl>
+> Cc: Eric Miao <eric.y.miao@gmail.com>
+> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Alexander Clouter <alex@digriz.org.uk>
+> Cc: Daniel Mack <daniel@zonque.org>
+> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Simtec Linux Team <linux@simtec.co.uk>
+> Cc: Steven Miao <realmz6@gmail.com>
+> Cc: Mikael Starvik <starvik@axis.com>
+> Cc: Jesper Nilsson <jesper.nilsson@axis.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Cc: Rich Felker <dalias@libc.org>
+> Cc: Wenyou Yang <wenyou.yang@atmel.com>
+> Cc: Josh Wu <rainyfeeling@outlook.com>
+> Cc: Kamal Dasu <kdasu.kdev@gmail.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Han Xu <han.xu@nxp.com>
+> Cc: Harvey Hunt <harveyhuntnexus@gmail.com>
+> Cc: Vladimir Zapolskiy <vz@mleia.com>
+> Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Wan ZongShun <mcuos.com@gmail.com>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+> Cc: Maxim Levitsky <maximlevitsky@gmail.com>
+> Cc: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: adi-buildroot-devel@lists.sourceforge.net
+> Cc: linux-cris-kernel@axis.com
+> Cc: linux-mips@linux-mips.org
+> Cc: linux-sh@vger.kernel.org
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-oxnas@lists.tuxfamily.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: devel@driverdev.osuosl.org
 > ---
->  .../devicetree/bindings/sound/samsung,odroid.txt   |  6 ---
->  sound/soc/samsung/odroid.c                         | 44 +++++++++++++++-------
->  2 files changed, 30 insertions(+), 20 deletions(-)
+> Hi All,
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-> index c30934d..625b1b1 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-> +++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-> @@ -7,9 +7,6 @@ Required properties:
->   - model - the user-visible name of this sound complex
->   - clocks - should contain entries matching clock names in the clock-names
->      property
-> - - clock-names - should contain following entries:
-> -    - "epll" - indicating the EPLL output clock
-> -    - "i2s_rclk" - indicating the RCLK (root) clock of the I2S0 controller
->   - samsung,audio-widgets - this property specifies off-codec audio elements
->     like headphones or speakers, for details see widgets.txt
->   - samsung,audio-routing - a list of the connections between audio
-> @@ -46,9 +43,6 @@ sound {
->  		"IN1", "Mic Jack",
->  		"Mic Jack", "MICBIAS";
->  
-> -	clocks = <&clock CLK_FOUT_EPLL>, <&i2s0 CLK_I2S_RCLK_SRC>;
-> -	clock-names = "epll", "sclk_i2s";
-> -
->  	cpu {
->  		sound-dai = <&i2s0 0>;
->  	};
-> diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
-> index 0834319..44b6de5 100644
-> --- a/sound/soc/samsung/odroid.c
-> +++ b/sound/soc/samsung/odroid.c
-> @@ -19,8 +19,8 @@ struct odroid_priv {
->  	struct snd_soc_card card;
->  	struct snd_soc_dai_link dai_link;
->  
-> -	struct clk *pll;
-> -	struct clk *rclk;
-> +	struct clk *clk_i2s_bus;
-> +	struct clk *sclk_i2s;
->  };
->  
->  static int odroid_card_startup(struct snd_pcm_substream *substream)
-> @@ -58,13 +58,18 @@ static int odroid_card_hw_params(struct snd_pcm_substream *substream,
->  		return -EINVAL;
->  	}
->  
-> -	ret = clk_set_rate(priv->pll, pll_freq + 1);
-> +	ret = clk_set_rate(priv->clk_i2s_bus, pll_freq / 2 + 1);
->  	if (ret < 0)
->  		return ret;
->  
-> -	rclk_freq = params_rate(params) * 256 * 4;
-> +	/*
-> +	 *  We add 1 to the rclk_freq value in order to avoid too low clock
-> +	 *  frequency values due to the EPLL output frequency not being exact
-> +	 *  multiple of the audio sampling rate.
-> +	 */
-> +	rclk_freq = params_rate(params) * 256 + 1;
->  
-> -	ret = clk_set_rate(priv->rclk, rclk_freq);
-> +	ret = clk_set_rate(priv->sclk_i2s, rclk_freq);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -118,14 +123,6 @@ static int odroid_audio_probe(struct platform_device *pdev)
->  
->  	snd_soc_card_set_drvdata(card, priv);
->  
-> -	priv->pll = devm_clk_get(dev, "epll");
-> -	if (IS_ERR(priv->pll))
-> -		return PTR_ERR(priv->pll);
-> -
-> -	priv->rclk = devm_clk_get(dev, "i2s_rclk");
-> -	if (IS_ERR(priv->rclk))
-> -		return PTR_ERR(priv->rclk);
-> -
->  	ret = snd_soc_of_parse_card_name(card, "model");
->  	if (ret < 0)
->  		return ret;
-> @@ -171,14 +168,31 @@ static int odroid_audio_probe(struct platform_device *pdev)
->  	link->name = "Primary";
->  	link->stream_name = link->name;
->  
-> +
+> Sorry for the huge Cc list, but I'd like to collect as much acks as
+> possible for this patch which is actually part of a bigger series [1].
+> 
+> Note that there's nothing complicated here, it's just a mechanical
+> s/nand\.h/rawnand\.h/ replacement, but it impacts several architectures,
+> the doc and staging directories.
+> 
+> Regards,
+> 
+> Boris
+> 
+> [1]https://lwn.net/Articles/723694/
+> ---
+>  Documentation/driver-api/mtdnand.rst            | 8 ++++----
+>  MAINTAINERS                                     | 2 +-
+>  arch/arm/mach-davinci/board-da850-evm.c         | 2 +-
+>  arch/arm/mach-davinci/board-dm355-evm.c         | 2 +-
+>  arch/arm/mach-davinci/board-dm355-leopard.c     | 2 +-
+>  arch/arm/mach-davinci/board-dm365-evm.c         | 2 +-
+>  arch/arm/mach-davinci/board-dm644x-evm.c        | 2 +-
+>  arch/arm/mach-davinci/board-dm646x-evm.c        | 2 +-
+>  arch/arm/mach-davinci/board-sffsdr.c            | 2 +-
+>  arch/arm/mach-dove/dove-db-setup.c              | 2 +-
+>  arch/arm/mach-ep93xx/snappercl15.c              | 2 +-
+>  arch/arm/mach-ep93xx/ts72xx.c                   | 2 +-
+>  arch/arm/mach-imx/mach-qong.c                   | 2 +-
+>  arch/arm/mach-ixp4xx/ixdp425-setup.c            | 2 +-
+>  arch/arm/mach-mmp/aspenite.c                    | 2 +-
+>  arch/arm/mach-omap1/board-fsample.c             | 2 +-
+>  arch/arm/mach-omap1/board-h2.c                  | 2 +-
+>  arch/arm/mach-omap1/board-h3.c                  | 2 +-
+>  arch/arm/mach-omap1/board-nand.c                | 2 +-
+>  arch/arm/mach-omap1/board-perseus2.c            | 2 +-
+>  arch/arm/mach-orion5x/db88f5281-setup.c         | 2 +-
+>  arch/arm/mach-orion5x/kurobox_pro-setup.c       | 2 +-
+>  arch/arm/mach-orion5x/ts209-setup.c             | 2 +-
+>  arch/arm/mach-orion5x/ts78xx-setup.c            | 2 +-
+>  arch/arm/mach-pxa/balloon3.c                    | 2 +-
+>  arch/arm/mach-pxa/em-x270.c                     | 2 +-
+>  arch/arm/mach-pxa/eseries.c                     | 2 +-
+>  arch/arm/mach-pxa/palmtx.c                      | 2 +-
+>  arch/arm/mach-pxa/tosa.c                        | 2 +-
+>  arch/arm/mach-s3c24xx/common-smdk.c             | 2 +-
+>  arch/arm/mach-s3c24xx/mach-anubis.c             | 2 +-
+>  arch/arm/mach-s3c24xx/mach-at2440evb.c          | 2 +-
+>  arch/arm/mach-s3c24xx/mach-bast.c               | 2 +-
+>  arch/arm/mach-s3c24xx/mach-gta02.c              | 2 +-
+>  arch/arm/mach-s3c24xx/mach-jive.c               | 2 +-
+>  arch/arm/mach-s3c24xx/mach-mini2440.c           | 2 +-
+>  arch/arm/mach-s3c24xx/mach-osiris.c             | 2 +-
+>  arch/arm/mach-s3c24xx/mach-qt2410.c             | 2 +-
+>  arch/arm/mach-s3c24xx/mach-rx3715.c             | 2 +-
+>  arch/arm/mach-s3c24xx/mach-vstms.c              | 2 +-
 
-One blank line too much but beside that:
-
+For s3c24xx:
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
-
-> +	priv->sclk_i2s = of_clk_get_by_name(link->cpu_of_node, "i2s_opclk1");
-> +	if (IS_ERR(priv->sclk_i2s)) {
-> +		ret = PTR_ERR(priv->sclk_i2s);
-> +		goto err_put_i2s_n;
-> +	}
-> +
-> +	priv->clk_i2s_bus = of_clk_get_by_name(link->cpu_of_node, "iis");
-> +	if (IS_ERR(priv->clk_i2s_bus)) {
-> +		ret = PTR_ERR(priv->clk_i2s_bus);
-> +		goto err_put_sclk;
-> +	}
-> +
->  	ret = devm_snd_soc_register_card(dev, card);
->  	if (ret < 0) {
->  		dev_err(dev, "snd_soc_register_card() failed: %d\n", ret);
-> -		goto err_put_i2s_n;
-> +		goto err_put_clk_i2s;
->  	}
->  
->  	return 0;
->  
-> +err_put_clk_i2s:
-> +	clk_put(priv->clk_i2s_bus);
-> +err_put_sclk:
-> +	clk_put(priv->sclk_i2s);
->  err_put_i2s_n:
->  	of_node_put(link->cpu_of_node);
->  err_put_codec_n:
-> @@ -192,6 +206,8 @@ static int odroid_audio_remove(struct platform_device *pdev)
->  
->  	of_node_put(priv->dai_link.cpu_of_node);
->  	odroid_put_codec_of_nodes(&priv->dai_link);
-> +	clk_put(priv->sclk_i2s);
-> +	clk_put(priv->clk_i2s_bus);
->  
->  	return 0;
->  }
-> -- 
-> 1.9.1
-> 
