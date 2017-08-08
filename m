@@ -1,51 +1,48 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 5/6] [media] exynos4-is: constify video_subdev structures
-Date: Tue,  8 Aug 2017 12:58:31 +0200
-Message-ID: <1502189912-28794-6-git-send-email-Julia.Lawall@lip6.fr>
-References: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: [PATCH 5/5] media: platform: s5p-jpeg: directly use parsed subsampling
+ on 5433
+Date: Tue, 08 Aug 2017 13:27:08 +0200
+Message-ID: <1502191628-11958-5-git-send-email-andrzej.p@samsung.com>
+References: <1502191352-11595-1-git-send-email-andrzej.p@samsung.com>
+ <1502191628-11958-1-git-send-email-andrzej.p@samsung.com>
+ <CGME20170808112717eucas1p21f42a5991fc862df2d010a7ccfae634b@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:59904 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751993AbdHHL1V (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 8 Aug 2017 07:27:21 -0400
+In-reply-to: <1502191628-11958-1-git-send-email-andrzej.p@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Thierry Escande <thierry.escande@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-The v4l2_subdev_ops structures are only passed as the second
-argument of v4l2_subdev_init, which is const, so the
-v4l2_subdev_ops structures can be const as well.
+On 5433 variant JPEG data is parsed by hardware only from SOS marker,
+so subsampling is parsed by software. As such, its value need not be
+translated from hardware-specific encoding to V4L2 encoding.
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 ---
- drivers/media/platform/exynos4-is/fimc-isp.c  |    2 +-
- drivers/media/platform/exynos4-is/fimc-lite.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/s5p-jpeg/jpeg-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
-index 8efe916..fd793d3 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp.c
-@@ -433,7 +433,7 @@ static void fimc_isp_subdev_unregistered(struct v4l2_subdev *sd)
- 	.s_power = fimc_isp_subdev_s_power,
- };
- 
--static struct v4l2_subdev_ops fimc_is_subdev_ops = {
-+static const struct v4l2_subdev_ops fimc_is_subdev_ops = {
- 	.core = &fimc_is_core_ops,
- 	.video = &fimc_is_subdev_video_ops,
- 	.pad = &fimc_is_subdev_pad_ops,
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index 7d3ec5c..30282c5 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -1361,7 +1361,7 @@ static void fimc_lite_subdev_unregistered(struct v4l2_subdev *sd)
- 	.log_status = fimc_lite_log_status,
- };
- 
--static struct v4l2_subdev_ops fimc_lite_subdev_ops = {
-+static const struct v4l2_subdev_ops fimc_lite_subdev_ops = {
- 	.core = &fimc_lite_core_ops,
- 	.video = &fimc_lite_subdev_video_ops,
- 	.pad = &fimc_lite_subdev_pad_ops,
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+index 492fab1..0225c82 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -627,10 +627,11 @@ static int s5p_jpeg_to_user_subsampling(struct s5p_jpeg_ctx *ctx)
+ 			return V4L2_JPEG_CHROMA_SUBSAMPLING_411;
+ 		return exynos3250_decoded_subsampling[ctx->subsampling];
+ 	case SJPEG_EXYNOS4:
+-	case SJPEG_EXYNOS5433:
+ 		if (ctx->subsampling > 2)
+ 			return V4L2_JPEG_CHROMA_SUBSAMPLING_420;
+ 		return exynos4x12_decoded_subsampling[ctx->subsampling];
++	case SJPEG_EXYNOS5433:
++		return ctx->subsampling; /* parsed from header */
+ 	default:
+ 		return V4L2_JPEG_CHROMA_SUBSAMPLING_GRAY;
+ 	}
+-- 
+1.9.1
