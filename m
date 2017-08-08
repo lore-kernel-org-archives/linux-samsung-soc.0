@@ -1,84 +1,87 @@
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] mfd: exynos-lpass: Handle return value of clk_prepare_enable
-Date: Tue,  8 Aug 2017 17:20:55 +0530
-Message-ID: <0e52a230fce95714a12b72aeb1ee9be0490de2a6.1502192959.git.arvind.yadav.cs@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 5/8] drm: Nuke
+	drm_atomic_helper_plane_set_property
+Date: Tue, 08 Aug 2017 15:31:58 +0300
+Message-ID: <1608345.m8OWaXcJQY@avalon>
+References: <20170725080122.20548-1-daniel.vetter@ffwll.ch>
+ <20170725080122.20548-6-daniel.vetter@ffwll.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20170725080122.20548-6-daniel.vetter@ffwll.ch>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>, Alexey Brodkin <abrodkin@synopsys.com>, DRI Development <dri-devel@lists.freedesktop.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel.vetter@intel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Archit Taneja <architt@codeaurora.org>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, el.com@freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Mali DP Maintainers <malidp@foss.arm.com>, Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, Thomas Hellstrom <thellstrom@vmware.com>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Eric Engestrom <eric@engestrom.ch>, linux-renesas-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Jyri Sarha <jsarha@ti.com>, Vincent Abriou <vincent.abriou@st.com>linu
 List-Id: linux-samsung-soc@vger.kernel.org
 
-clk_prepare_enable() can fail here and we must check its return value.
-we must call pm_runtime_disable() and pm_runtime_set_suspended(),
-If exynos_lpass_probe is not successful.
-
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/mfd/exynos-lpass.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index ca829f8..c74ff62 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -73,9 +73,13 @@ static void exynos_lpass_core_sw_reset(struct exynos_lpass *lpass, int mask)
- 	regmap_write(lpass->top, SFR_LPASS_CORE_SW_RESET, val);
- }
- 
--static void exynos_lpass_enable(struct exynos_lpass *lpass)
-+static int exynos_lpass_enable(struct exynos_lpass *lpass)
- {
--	clk_prepare_enable(lpass->sfr0_clk);
-+	int ret;
-+
-+	ret = clk_prepare_enable(lpass->sfr0_clk);
-+	if (ret)
-+		return ret;
- 
- 	/* Unmask SFR, DMA and I2S interrupt */
- 	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK,
-@@ -87,6 +91,8 @@ static void exynos_lpass_enable(struct exynos_lpass *lpass)
- 	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
- 	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
- 	exynos_lpass_core_sw_reset(lpass, LPASS_MEM_SW_RESET);
-+
-+	return 0;
- }
- 
- static void exynos_lpass_disable(struct exynos_lpass *lpass)
-@@ -112,6 +118,7 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	struct exynos_lpass *lpass;
- 	void __iomem *base_top;
- 	struct resource *res;
-+	int ret;
- 
- 	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
- 	if (!lpass)
-@@ -136,8 +143,12 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, lpass);
- 	pm_runtime_set_active(dev);
- 	pm_runtime_enable(dev);
--	exynos_lpass_enable(lpass);
--
-+	ret = exynos_lpass_enable(lpass);
-+	if (ret) {
-+		pm_runtime_disable(dev);
-+		pm_runtime_set_suspended(dev);
-+		return ret;
-+	}
- 	return devm_of_platform_populate(dev);
- }
- 
-@@ -167,9 +178,7 @@ static int __maybe_unused exynos_lpass_resume(struct device *dev)
- {
- 	struct exynos_lpass *lpass = dev_get_drvdata(dev);
- 
--	exynos_lpass_enable(lpass);
--
--	return 0;
-+	return exynos_lpass_enable(lpass);
- }
- 
- static const struct dev_pm_ops lpass_pm_ops = {
--- 
-1.9.1
+SGkgRGFuaWVsLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBUdWVzZGF5IDI1IEp1bCAy
+MDE3IDEwOjAxOjE5IERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4gSXQncyBkZWFkIGNvZGUsIHRoZSBj
+b3JlIGhhbmRsZXMgYWxsIHRoaXMgZGlyZWN0bHkgbm93LiBUaGlzIGFsc28KPiBhbGxvd3MgdXMg
+dG8gdW5leHBvcnQgZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfc2V0X3Byb3BlcnR5LgoKSSBhc3N1
+bWUgeW91IG1lYW50IGRybV9hdG9taWNfcGxhbmVfc2V0X3Byb3BlcnR5LiBXaXRoIHRoYXQgZml4
+ZWQsCgpSZXZpZXdlZC1ieTogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVh
+c29uYm9hcmQuY29tPgoKPiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0
+dGVyQGludGVsLmNvbT4KPiBDYzogTGl2aXUgRHVkYXUgPGxpdml1LmR1ZGF1QGFybS5jb20+Cj4g
+Q2M6IEJyaWFuIFN0YXJrZXkgPGJyaWFuLnN0YXJrZXlAYXJtLmNvbT4KPiBDYzogTWFsaSBEUCBN
+YWludGFpbmVycyA8bWFsaWRwQGZvc3MuYXJtLmNvbT4KPiBDYzogQm9yaXMgQnJlemlsbG9uIDxi
+b3Jpcy5icmV6aWxsb25AZnJlZS1lbGVjdHJvbnMuY29tPgo+IENjOiBEYW5pZWwgVmV0dGVyIDxk
+YW5pZWwudmV0dGVyQGludGVsLmNvbT4KPiBDYzogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGxp
+bnV4LmludGVsLmNvbT4KPiBDYzogU2VhbiBQYXVsIDxzZWFucGF1bEBjaHJvbWl1bS5vcmc+Cj4g
+Q2M6IERhdmlkIEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT4KPiBDYzogSW5raSBEYWUgPGlua2ku
+ZGFlQHNhbXN1bmcuY29tPgo+IENjOiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3Vu
+Zy5jb20+Cj4gQ2M6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+Cj4gQ2M6
+IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+Cj4gQ2M6IEt1a2ppbiBL
+aW0gPGtnZW5lQGtlcm5lbC5vcmc+Cj4gQ2M6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2Vy
+bmVsLm9yZz4KPiBDYzogQmVuIFNrZWdncyA8YnNrZWdnc0ByZWRoYXQuY29tPgo+IENjOiBUb21p
+IFZhbGtlaW5lbiA8dG9taS52YWxrZWluZW5AdGkuY29tPgo+IENjOiBMYXVyZW50IFBpbmNoYXJ0
+IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Cj4gQ2M6IEJlbmphbWluIEdhaWdu
+YXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnPgo+IENjOiBWaW5jZW50IEFicmlvdSA8
+dmluY2VudC5hYnJpb3VAc3QuY29tPgo+IENjOiBZYW5uaWNrIEZlcnRyZSA8eWFubmljay5mZXJ0
+cmVAc3QuY29tPgo+IENjOiBQaGlsaXBwZSBDb3JudSA8cGhpbGlwcGUuY29ybnVAc3QuY29tPgo+
+IENjOiBKeXJpIFNhcmhhIDxqc2FyaGFAdGkuY29tPgo+IENjOiAiVmlsbGUgU3lyasOkbMOkIiA8
+dmlsbGUuc3lyamFsYUBsaW51eC5pbnRlbC5jb20+Cj4gQ2M6IFJvbmdyb25nIFpvdSA8em91cm9u
+Z3JvbmdAZ21haWwuY29tPgo+IENjOiBTaGF3biBHdW8gPHNoYXduLmd1b0BsaW5hcm8ub3JnPgo+
+IENjOiBBbGV4ZXkgQnJvZGtpbiA8YWJyb2RraW5Ac3lub3BzeXMuY29tPgo+IENjOiBFcmljIEVu
+Z2VzdHJvbSA8ZXJpY0Blbmdlc3Ryb20uY2g+Cj4gQ2M6IENocmlzIFdpbHNvbiA8Y2hyaXNAY2hy
+aXMtd2lsc29uLmNvLnVrPgo+IENjOiBSb2IgQ2xhcmsgPHJvYmRjbGFya0BnbWFpbC5jb20+Cj4g
+Q2M6IEFyY2hpdCBUYW5lamEgPGFyY2hpdHRAY29kZWF1cm9yYS5vcmc+Cj4gQ2M6IGxpbnV4LWFy
+bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IENjOiBsaW51eC1zYW1zdW5nLXNvY0B2Z2Vy
+Lmtlcm5lbC5vcmcKPiBDYzogaW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBu
+b3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBsaW51eC1yZW5lc2FzLXNvY0B2Z2Vy
+Lmtlcm5lbC5vcmcKPiBDYzogVGhvbWFzIEhlbGxzdHJvbSA8dGhlbGxzdHJvbUB2bXdhcmUuY29t
+Pgo+IENjOiBNYXhpbWUgUmlwYXJkIDxtYXhpbWUucmlwYXJkQGZyZWUtZWxlY3Ryb25zLmNvbT4K
+PiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2FybS9tYWxpZHBfcGxhbmVzLmMgICAgICAgICAgICAg
+fCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19wbGFuZS5j
+IHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jICAgICAgICAgICAgICAgICAg
+ICB8ICAzICstCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jICAgICAgICAg
+ICAgIHwgNTUgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fcGxhbmUuYyAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL2hpc2ls
+aWNvbi9oaWJtYy9oaWJtY19kcm1fZGUuYyAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9oaXNp
+bGljb24va2lyaW4va2lyaW5fZHJtX2FkZS5jIHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkx
+NS9pbnRlbF9kaXNwbGF5LmMgICAgICAgICAgICB8ICAyIC0KPiAgZHJpdmVycy9ncHUvZHJtL21z
+bS9tZHAvbWRwNS9tZHA1X3BsYW5lLmMgICAgICAgfCAgMiAtCj4gIGRyaXZlcnMvZ3B1L2RybS9u
+b3V2ZWF1L252NTBfZGlzcGxheS5jICAgICAgICAgIHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0v
+b21hcGRybS9vbWFwX3BsYW5lLmMgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJt
+L3JjYXItZHUvcmNhcl9kdV9wbGFuZS5jICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9yY2FyLWR1L3JjYXJfZHVfdnNwLmMgICAgICAgICAgIHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vc3RpL3N0aV9jdXJzb3IuYyAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUv
+ZHJtL3N0aS9zdGlfZ2RwLmMgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1
+L2RybS9zdGkvc3RpX2hxdmRwLmMgICAgICAgICAgICAgICAgIHwgIDEgLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vc3RtL2x0ZGMuYyAgICAgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9n
+cHUvZHJtL3RpbGNkYy90aWxjZGNfcGxhbmUuYyAgICAgICAgICAgfCAgMSAtCj4gIGluY2x1ZGUv
+ZHJtL2RybV9hdG9taWMuaCAgICAgICAgICAgICAgICAgICAgICAgIHwgIDMgLS0KPiAgaW5jbHVk
+ZS9kcm0vZHJtX2F0b21pY19oZWxwZXIuaCAgICAgICAgICAgICAgICAgfCAgMyAtLQo+ICAyMCBm
+aWxlcyBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgODEgZGVsZXRpb25zKC0pCgotLSAKUmVnYXJk
+cywKCkxhdXJlbnQgUGluY2hhcnQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2ludGVsLWdmeAo=
