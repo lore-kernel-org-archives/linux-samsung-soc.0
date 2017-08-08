@@ -1,53 +1,84 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: [PATCH 3/5] media: platform: s5p-jpeg: Clear JPEG_CODEC_ON bits in sw
- reset function
-Date: Tue, 08 Aug 2017 13:27:06 +0200
-Message-ID: <1502191628-11958-3-git-send-email-andrzej.p@samsung.com>
-References: <1502191352-11595-1-git-send-email-andrzej.p@samsung.com>
- <1502191628-11958-1-git-send-email-andrzej.p@samsung.com>
- <CGME20170808112716eucas1p27388118c826671edd88e79e68ceb7821@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:38116 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752264AbdHHL1V (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 07:27:21 -0400
-In-reply-to: <1502191628-11958-1-git-send-email-andrzej.p@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] mfd: exynos-lpass: Handle return value of clk_prepare_enable
+Date: Tue,  8 Aug 2017 17:20:55 +0530
+Message-ID: <0e52a230fce95714a12b72aeb1ee9be0490de2a6.1502192959.git.arvind.yadav.cs@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lee.jones@linaro.org, kgene@kernel.org, krzk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Thierry Escande <thierry.escande@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-From: Tony K Nadackal <tony.kn@samsung.com>
+clk_prepare_enable() can fail here and we must check its return value.
+we must call pm_runtime_disable() and pm_runtime_set_suspended(),
+If exynos_lpass_probe is not successful.
 
-Bits EXYNOS4_DEC_MODE and EXYNOS4_ENC_MODE do not get cleared
-on software reset. These bits need to be cleared explicitly.
-
-Even though the bits in question are already cleared in interrupt
-service routine, the reset should also clear them in case e.g.
-bootloader uses the codec and leaves it in a bad state.
-
-Signed-off-by: Tony K Nadackal <tony.kn@samsung.com>
-[Updated commit message]
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/mfd/exynos-lpass.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-index c784033..c72789b 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-@@ -21,6 +21,10 @@ void exynos4_jpeg_sw_reset(void __iomem *base)
- 	unsigned int reg;
+diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
+index ca829f8..c74ff62 100644
+--- a/drivers/mfd/exynos-lpass.c
++++ b/drivers/mfd/exynos-lpass.c
+@@ -73,9 +73,13 @@ static void exynos_lpass_core_sw_reset(struct exynos_lpass *lpass, int mask)
+ 	regmap_write(lpass->top, SFR_LPASS_CORE_SW_RESET, val);
+ }
  
- 	reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
-+	writel(reg & ~(EXYNOS4_DEC_MODE | EXYNOS4_ENC_MODE),
-+				base + EXYNOS4_JPEG_CNTL_REG);
+-static void exynos_lpass_enable(struct exynos_lpass *lpass)
++static int exynos_lpass_enable(struct exynos_lpass *lpass)
+ {
+-	clk_prepare_enable(lpass->sfr0_clk);
++	int ret;
 +
-+	reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
- 	writel(reg & ~EXYNOS4_SOFT_RESET_HI, base + EXYNOS4_JPEG_CNTL_REG);
++	ret = clk_prepare_enable(lpass->sfr0_clk);
++	if (ret)
++		return ret;
  
- 	udelay(100);
+ 	/* Unmask SFR, DMA and I2S interrupt */
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK,
+@@ -87,6 +91,8 @@ static void exynos_lpass_enable(struct exynos_lpass *lpass)
+ 	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
+ 	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
+ 	exynos_lpass_core_sw_reset(lpass, LPASS_MEM_SW_RESET);
++
++	return 0;
+ }
+ 
+ static void exynos_lpass_disable(struct exynos_lpass *lpass)
+@@ -112,6 +118,7 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+ 	struct exynos_lpass *lpass;
+ 	void __iomem *base_top;
+ 	struct resource *res;
++	int ret;
+ 
+ 	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
+ 	if (!lpass)
+@@ -136,8 +143,12 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, lpass);
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+-	exynos_lpass_enable(lpass);
+-
++	ret = exynos_lpass_enable(lpass);
++	if (ret) {
++		pm_runtime_disable(dev);
++		pm_runtime_set_suspended(dev);
++		return ret;
++	}
+ 	return devm_of_platform_populate(dev);
+ }
+ 
+@@ -167,9 +178,7 @@ static int __maybe_unused exynos_lpass_resume(struct device *dev)
+ {
+ 	struct exynos_lpass *lpass = dev_get_drvdata(dev);
+ 
+-	exynos_lpass_enable(lpass);
+-
+-	return 0;
++	return exynos_lpass_enable(lpass);
+ }
+ 
+ static const struct dev_pm_ops lpass_pm_ops = {
 -- 
 1.9.1
