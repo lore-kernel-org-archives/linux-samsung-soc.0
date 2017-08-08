@@ -1,88 +1,72 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] mfd: exynos-lpass: Handle return value of
- clk_prepare_enable
-Date: Tue, 8 Aug 2017 20:25:59 +0200
-Message-ID: <20170808182559.b5muiyk5vmurtznc@kozik-lap>
-References: <0e52a230fce95714a12b72aeb1ee9be0490de2a6.1502192959.git.arvind.yadav.cs@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: forbid creating framebuffers from too small
+ GEM buffers
+Date: Wed, 09 Aug 2017 07:57:41 +0900
+Message-ID: <598A41E5.5070805@samsung.com>
+References: <CGME20170712100931eucas1p1bcc4da93969ed34797c984284d595b21@eucas1p1.samsung.com>
+ <1499854165-10902-1-git-send-email-m.szyprowski@samsung.com>
+ <fe8998f4-45ff-7ee8-a35b-98d07e3f0645@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0e52a230fce95714a12b72aeb1ee9be0490de2a6.1502192959.git.arvind.yadav.cs@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: lee.jones@linaro.org, kgene@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <fe8998f4-45ff-7ee8-a35b-98d07e3f0645@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 08, 2017 at 05:20:55PM +0530, Arvind Yadav wrote:
-> clk_prepare_enable() can fail here and we must check its return value.
-> we must call pm_runtime_disable() and pm_runtime_set_suspended(),
-> If exynos_lpass_probe is not successful.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-
-This is not a trivial change so please mark all such patches as RFT.
-Submit checklist mentions testing in multiple steps and last time your
-ASoC changes were not tested.
-
-> ---
->  drivers/mfd/exynos-lpass.c | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-> index ca829f8..c74ff62 100644
-> --- a/drivers/mfd/exynos-lpass.c
-> +++ b/drivers/mfd/exynos-lpass.c
-> @@ -73,9 +73,13 @@ static void exynos_lpass_core_sw_reset(struct exynos_lpass *lpass, int mask)
->  	regmap_write(lpass->top, SFR_LPASS_CORE_SW_RESET, val);
->  }
->  
-> -static void exynos_lpass_enable(struct exynos_lpass *lpass)
-> +static int exynos_lpass_enable(struct exynos_lpass *lpass)
->  {
-> -	clk_prepare_enable(lpass->sfr0_clk);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(lpass->sfr0_clk);
-> +	if (ret)
-> +		return ret;
->  
->  	/* Unmask SFR, DMA and I2S interrupt */
->  	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK,
-> @@ -87,6 +91,8 @@ static void exynos_lpass_enable(struct exynos_lpass *lpass)
->  	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
->  	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
->  	exynos_lpass_core_sw_reset(lpass, LPASS_MEM_SW_RESET);
-> +
-> +	return 0;
->  }
->  
->  static void exynos_lpass_disable(struct exynos_lpass *lpass)
-> @@ -112,6 +118,7 @@ static int exynos_lpass_probe(struct platform_device *pdev)
->  	struct exynos_lpass *lpass;
->  	void __iomem *base_top;
->  	struct resource *res;
-> +	int ret;
->  
->  	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
->  	if (!lpass)
-> @@ -136,8 +143,12 @@ static int exynos_lpass_probe(struct platform_device *pdev)
->  	platform_set_drvdata(pdev, lpass);
->  	pm_runtime_set_active(dev);
->  	pm_runtime_enable(dev);
-> -	exynos_lpass_enable(lpass);
-> -
-> +	ret = exynos_lpass_enable(lpass);
-> +	if (ret) {
-> +		pm_runtime_disable(dev);
-> +		pm_runtime_set_suspended(dev);
-
-You need also regmap_exit().
-
-> +		return ret;
-> +	}
-
-Leave one blank line before return.
-
-Best regards,
-Krzysztof
+CgoyMDE364WEIDA47JuUIDA47J28IDIyOjMz7JeQIE1hcmVrIFN6eXByb3dza2kg7J20KOqwgCkg
+7JO0IOq4gDoKPiBIaSBhbGwsCj4gCj4gT24gMjAxNy0wNy0xMiAxMjowOSwgTWFyZWsgU3p5cHJv
+d3NraSB3cm90ZToKPj4gQWRkIGEgY2hlY2sgaWYgdGhlIGZyYW1lYnVmZmVyIGRlc2NyaWJlZCBi
+eSB0aGUgcHJvdmlkZWQgZHJtX21vZGVfZmJfY21kMgo+PiBzdHJ1Y3R1cmUgZml0cyBpbnRvIHBy
+b3ZpZGVkIEdFTSBidWZmZXJzLiBXaXRob3V0IHRoaXMgY2hlY2sgaXQgaXMKPj4gcG9zc2libGUg
+dG8gY3JlYXRlIGEgZnJhbWVidWZmZXIgb2JqZWN0IGZyb20gYSBzbWFsbCBidWZmZXIgYW5kIHNl
+dCBpdCB0bwo+PiB0aGUgaGFyZHdhcmUsIHdoYXQgcmVzdWx0cyBpbiBkaXNwbGF5aW5nIHN5c3Rl
+bSBtZW1vcnkgb3V0c2lkZSB0aGUKPj4gYWxsb2NhdGVkIEdFTSBidWZmZXIuCj4+Cj4+IFNpZ25l
+ZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPj4g
+Q0M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcgIyB2NC43Kwo+IAo+IEdlbnRsZSBwaW5nLgoKQXBw
+bGllZC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4+IC0tLQo+PiBUaGlzIGlzc3VlIHdhcyB0aGVy
+ZSBmcm9tIHRoZSBiZWdnaW5pbmcsIGJ1dCB0aGUgcHJvdmlkZWQgcGF0Y2ggYXBwbGllcyBvbmx5
+Cj4+IHRvIHY0LjcrIGtlcm5lbHMgZHVlIHRvIG90aGVyIGNoYW5nZXMgaW4gdGhlIGZpeGVkIGNv
+ZGUuCj4+IC0tLQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jIHwg
+MTQgKysrKysrKysrKysrKy0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwg
+MSBkZWxldGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZiLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwo+
+PiBpbmRleCBkNDhmZDdjOTE4ZjguLjczMjE3YzI4MWM5YSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2ZiLmMKPj4gQEAgLTE0NSwxMyArMTQ1LDE5IEBAIHN0cnVjdCBk
+cm1fZnJhbWVidWZmZXIgKgo+PiAgIGV4eW5vc191c2VyX2ZiX2NyZWF0ZShzdHJ1Y3QgZHJtX2Rl
+dmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGVfcHJpdiwKPj4gICAgICAgICAgICAgICAg
+IGNvbnN0IHN0cnVjdCBkcm1fbW9kZV9mYl9jbWQyICptb2RlX2NtZCkKPj4gICB7Cj4+ICsgICAg
+Y29uc3Qgc3RydWN0IGRybV9mb3JtYXRfaW5mbyAqaW5mbyA9IGRybV9nZXRfZm9ybWF0X2luZm8o
+ZGV2LCBtb2RlX2NtZCk7Cj4+ICAgICAgIHN0cnVjdCBleHlub3NfZHJtX2dlbSAqZXh5bm9zX2dl
+bVtNQVhfRkJfQlVGRkVSXTsKPj4gICAgICAgc3RydWN0IGRybV9nZW1fb2JqZWN0ICpvYmo7Cj4+
+ICAgICAgIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiOwo+PiAgICAgICBpbnQgaTsKPj4gICAg
+ICAgaW50IHJldDsKPj4gICAtICAgIGZvciAoaSA9IDA7IGkgPCBkcm1fZm9ybWF0X251bV9wbGFu
+ZXMobW9kZV9jbWQtPnBpeGVsX2Zvcm1hdCk7IGkrKykgewo+PiArICAgIGZvciAoaSA9IDA7IGkg
+PCBpbmZvLT5udW1fcGxhbmVzOyBpKyspIHsKPj4gKyAgICAgICAgdW5zaWduZWQgaW50IGhlaWdo
+dCA9IChpID09IDApID8gbW9kZV9jbWQtPmhlaWdodCA6Cj4+ICsgICAgICAgICAgICAgICAgICAg
+ICBESVZfUk9VTkRfVVAobW9kZV9jbWQtPmhlaWdodCwgaW5mby0+dnN1Yik7Cj4+ICsgICAgICAg
+IHVuc2lnbmVkIGxvbmcgc2l6ZSA9IGhlaWdodCAqIG1vZGVfY21kLT5waXRjaGVzW2ldICsKPj4g
+KyAgICAgICAgICAgICAgICAgICAgIG1vZGVfY21kLT5vZmZzZXRzW2ldOwo+PiArCj4+ICAgICAg
+ICAgICBvYmogPSBkcm1fZ2VtX29iamVjdF9sb29rdXAoZmlsZV9wcml2LCBtb2RlX2NtZC0+aGFu
+ZGxlc1tpXSk7Cj4+ICAgICAgICAgICBpZiAoIW9iaikgewo+PiAgICAgICAgICAgICAgIERSTV9F
+UlJPUigiZmFpbGVkIHRvIGxvb2t1cCBnZW0gb2JqZWN0XG4iKTsKPj4gQEAgLTE2MCw2ICsxNjYs
+MTIgQEAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqCj4+ICAgICAgICAgICB9Cj4+ICAgICAgICAg
+ICAgIGV4eW5vc19nZW1baV0gPSB0b19leHlub3NfZ2VtKG9iaik7Cj4+ICsKPj4gKyAgICAgICAg
+aWYgKHNpemUgPiBleHlub3NfZ2VtW2ldLT5zaXplKSB7Cj4+ICsgICAgICAgICAgICBpKys7Cj4+
+ICsgICAgICAgICAgICByZXQgPSAtRUlOVkFMOwo+PiArICAgICAgICAgICAgZ290byBlcnI7Cj4+
+ICsgICAgICAgIH0KPj4gICAgICAgfQo+PiAgICAgICAgIGZiID0gZXh5bm9zX2RybV9mcmFtZWJ1
+ZmZlcl9pbml0KGRldiwgbW9kZV9jbWQsIGV4eW5vc19nZW0sIGkpOwo+IAo+IEJlc3QgcmVnYXJk
+cwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
