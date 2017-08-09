@@ -1,52 +1,45 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 0/8] drm/exynos: misc fixes and more
-Date: Wed,  9 Aug 2017 13:48:49 +0200
-Message-ID: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55062 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752260AbdHILtc (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 07:49:32 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/8] drm/exynos: mixer: fix chroma comment in vp_video_buffer()
+Date: Wed,  9 Aug 2017 13:48:50 +0200
+Message-ID: <20170809114857.4945-2-tjakobi@math.uni-bielefeld.de>
+References: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-this is basically a resend of [1] with some minor changes to the commit
-messages, the RFC tag removed, and a rebase on vanilla 4.13-rc4.
-
-Summary:
-(a) Enables support for NV12MT in the mixer.
-(b) Sanitizes buffer pitch for HW with restrictions.
-(c) Misc fixes
-
-With best wishes,
-Tobias
-
-
-[1] https://lists.freedesktop.org/archives/dri-devel/2017-April/138040.html
-
-Tobias Jakobi (8):
-  drm/exynos: mixer: fix chroma comment in vp_video_buffer()
-  drm/exynos: mixer: enable NV12MT support for the video plane
-  drm/exynos: mixer: simplify {vp_video,mixer_graph}_buffer()
-  drm/exynos: mixer: remove src offset from mixer_graph_buffer()
-  drm/exynos: introduce BYTE_PITCH capability
-  drm/exynos: add BYTE_PITCH cap for all supported planes
-  drm/exynos: consistent use of cpp
-  drm/exynos: simplify set_pixfmt() in DECON and FIMD drivers
-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 17 +++++------
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 13 +++-----
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |  2 ++
- drivers/gpu/drm/exynos/exynos_drm_fb.c        |  2 ++
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 17 ++++-------
- drivers/gpu/drm/exynos/exynos_drm_plane.c     | 37 ++++++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_mixer.c         | 44 ++++++++-------------------
- 7 files changed, 71 insertions(+), 61 deletions(-)
-
--- 
-2.13.0
+VGhlIGN1cnJlbnQgY29tbWVudCBzb3VuZHMgbGlrZSB0aGUgZGl2aXNpb24gb3AgaXMgZG9uZSB0
+bwpjb21wZW5zYXRlIGZvciBzb21lIGhhcmR3YXJlIGVycmF0dW0uIEJ1dCB0aGUgY2hyb21hIHBs
+YW5lCmhhdmluZyBoYWxmIHRoZSBoZWlnaHQgb2YgdGhlIGx1bWEgcGxhbmUgaXMganVzdCB0aGUg
+d2F5Ck5WMTIvTlYyMSBpcyBkZWZpbmVkLCBzbyBjbGFyaWZ5IHRoaXMgYmVoYXZpb3VyLgoKU2ln
+bmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+
+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDIgKy0KIDEgZmls
+ZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19taXhlci5jCmluZGV4IGE5OThhOGRkNzgzYy4uYzZkNmY2ZDQyOTAwIDEwMDY0
+NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCisrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAgLTUzMiw3ICs1MzIsNyBAQCBzdGF0
+aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKIAkvKiBz
+ZXR0aW5nIHNpemUgb2YgaW5wdXQgaW1hZ2UgKi8KIAl2cF9yZWdfd3JpdGUocmVzLCBWUF9JTUdf
+U0laRV9ZLCBWUF9JTUdfSFNJWkUoZmItPnBpdGNoZXNbMF0pIHwKIAkJVlBfSU1HX1ZTSVpFKGZi
+LT5oZWlnaHQpKTsKLQkvKiBjaHJvbWEgaGVpZ2h0IGhhcyB0byByZWR1Y2VkIGJ5IDIgdG8gYXZv
+aWQgY2hyb21hIGRpc3RvcmlvbnMgKi8KKwkvKiB0aGUgY2hyb21hIHBsYW5lIGZvciBOVjEyL05W
+MjEgaXMgaGFsZiB0aGUgaGVpZ2h0IG9mIHRoZSBsdW1hIHBsYW5lICovCiAJdnBfcmVnX3dyaXRl
+KHJlcywgVlBfSU1HX1NJWkVfQywgVlBfSU1HX0hTSVpFKGZiLT5waXRjaGVzWzBdKSB8CiAJCVZQ
+X0lNR19WU0laRShmYi0+aGVpZ2h0IC8gMikpOwogCi0tIAoyLjEzLjAKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
