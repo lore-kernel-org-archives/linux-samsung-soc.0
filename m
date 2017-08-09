@@ -1,130 +1,72 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 2/8] drm/exynos: mixer: enable NV12MT support for the video plane
-Date: Wed,  9 Aug 2017 13:48:51 +0200
-Message-ID: <20170809114857.4945-3-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 3/8] drm/exynos: mixer: simplify {vp_video,
+ mixer_graph}_buffer()
+Date: Wed,  9 Aug 2017 13:48:52 +0200
+Message-ID: <20170809114857.4945-4-tjakobi@math.uni-bielefeld.de>
 References: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55071 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752409AbdHILty (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 07:49:54 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The video processor supports a tiled version of the NV12 format,
-known as NV12MT in V4L2 terms. The support was removed in commit
-083500baefd5f4c215a5a93aef2492c1aa775828 due to not being a real
-pixel format, but rather NV12 with a special memory layout.
-
-With the introduction of FB modifiers, we can now properly support
-this format again.
-
-Tested with a hacked up modetest from libdrm's test suite on
-an ODROID-X2 (Exynos4412).
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 +
- drivers/gpu/drm/exynos/exynos_drm_fb.c    |  2 ++
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 27 +++++++++++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_mixer.c     |  6 +++++-
- 4 files changed, 35 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index a93de321706b..43afab4bebc3 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -91,6 +91,7 @@ struct exynos_drm_plane {
- #define EXYNOS_DRM_PLANE_CAP_DOUBLE	(1 << 0)
- #define EXYNOS_DRM_PLANE_CAP_SCALE	(1 << 1)
- #define EXYNOS_DRM_PLANE_CAP_ZPOS	(1 << 2)
-+#define EXYNOS_DRM_PLANE_CAP_TILE	(1 << 3)
- 
- /*
-  * Exynos DRM plane configuration structure.
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index d48fd7c918f8..87e32dbd8eda 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -238,4 +238,6 @@ void exynos_drm_mode_config_init(struct drm_device *dev)
- 
- 	dev->mode_config.funcs = &exynos_drm_mode_config_funcs;
- 	dev->mode_config.helper_private = &exynos_drm_mode_config_helpers;
-+
-+	dev->mode_config.allow_fb_modifiers = true;
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 611b6fd65433..bd3825617b06 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -180,6 +180,29 @@ static struct drm_plane_funcs exynos_plane_funcs = {
- };
- 
- static int
-+exynos_drm_plane_check_format(const struct exynos_drm_plane_config *config,
-+			      struct exynos_drm_plane_state *state)
-+{
-+	struct drm_framebuffer *fb = state->base.fb;
-+
-+	switch (fb->modifier) {
-+	case DRM_FORMAT_MOD_SAMSUNG_64_32_TILE:
-+		if (!(config->capabilities & EXYNOS_DRM_PLANE_CAP_TILE))
-+			return -ENOTSUPP;
-+		break;
-+
-+	case 0:
-+		break;
-+
-+	default:
-+		DRM_ERROR("unsupported pixel format modifier");
-+		return -ENOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
- exynos_drm_plane_check_size(const struct exynos_drm_plane_config *config,
- 			    struct exynos_drm_plane_state *state)
- {
-@@ -223,6 +246,10 @@ static int exynos_plane_atomic_check(struct drm_plane *plane,
- 	/* translate state into exynos_state */
- 	exynos_plane_mode_set(exynos_state);
- 
-+	ret = exynos_drm_plane_check_format(exynos_plane->config, exynos_state);
-+	if (ret)
-+		return ret;
-+
- 	ret = exynos_drm_plane_check_size(exynos_plane->config, exynos_state);
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index c6d6f6d42900..4c894d97aba3 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -148,7 +148,8 @@ static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
- 		.pixel_formats = vp_formats,
- 		.num_pixel_formats = ARRAY_SIZE(vp_formats),
- 		.capabilities = EXYNOS_DRM_PLANE_CAP_SCALE |
--				EXYNOS_DRM_PLANE_CAP_ZPOS,
-+				EXYNOS_DRM_PLANE_CAP_ZPOS |
-+				EXYNOS_DRM_PLANE_CAP_TILE,
- 	},
- };
- 
-@@ -500,6 +501,9 @@ static void vp_video_buffer(struct mixer_context *ctx,
- 		return;
- 	}
- 
-+	if (fb->modifier == DRM_FORMAT_MOD_SAMSUNG_64_32_TILE)
-+		tiled_mode = true;
-+
- 	luma_addr[0] = exynos_drm_fb_dma_addr(fb, 0);
- 	chroma_addr[0] = exynos_drm_fb_dma_addr(fb, 1);
- 
--- 
-2.13.0
+RFJNIGNvcmUgYWxyZWFkeSBjaGVja3MgdGhlIHZhbGlkaXR5IG9mIHRoZSBwaXhlbGZvcm1hdHMs
+IHNvIHdlCmNhbiBzaW1wbGlmeSB0aGUgY2hlY2tzIGhlcmUuIFRoZSBzYW1lIGFwcGxpZXMgdG8g
+dGhlIEZCIG1vZGlmaWVyLAp3aGljaCBpcyBub3cgY2hlY2tlZCBpbiBjb21tb24gRXh5bm9zIHBs
+YW5lIGNvZGUuCgpBbHNvIHJlbmFtZSB0aGUgYm9vbGVhbnMgdG8gcmVmbGVjdCB3aGF0IHRydWUv
+ZmFsc2UgYWN0dWFsbHkKbWVhbnMuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFr
+b2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19taXhlci5jIHwgMzEgKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxl
+IGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMjQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXggNGM4OTRkOTdhYmEzLi44ZDY4ZGU4NWJhZGEgMTAw
+NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKKysrIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtNDg0LDMyICs0ODQsMTggQEAg
+c3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJ
+dW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96cG9zICsgMTsK
+IAl1bnNpZ25lZCBsb25nIGZsYWdzOwogCWRtYV9hZGRyX3QgbHVtYV9hZGRyWzJdLCBjaHJvbWFf
+YWRkclsyXTsKLQlib29sIHRpbGVkX21vZGUgPSBmYWxzZTsKLQlib29sIGNyY2JfbW9kZSA9IGZh
+bHNlOworCWJvb2wgaXNfdGlsZWQsIGlzX252MjE7CiAJdTMyIHZhbDsKIAotCXN3aXRjaCAoZmIt
+PmZvcm1hdC0+Zm9ybWF0KSB7Ci0JY2FzZSBEUk1fRk9STUFUX05WMTI6Ci0JCWNyY2JfbW9kZSA9
+IGZhbHNlOwotCQlicmVhazsKLQljYXNlIERSTV9GT1JNQVRfTlYyMToKLQkJY3JjYl9tb2RlID0g
+dHJ1ZTsKLQkJYnJlYWs7Ci0JZGVmYXVsdDoKLQkJRFJNX0VSUk9SKCJwaXhlbCBmb3JtYXQgZm9y
+IHZwIGlzIHdyb25nIFslZF0uXG4iLAotCQkJCWZiLT5mb3JtYXQtPmZvcm1hdCk7Ci0JCXJldHVy
+bjsKLQl9Ci0KLQlpZiAoZmItPm1vZGlmaWVyID09IERSTV9GT1JNQVRfTU9EX1NBTVNVTkdfNjRf
+MzJfVElMRSkKLQkJdGlsZWRfbW9kZSA9IHRydWU7CisJaXNfbnYyMSA9IChmYi0+Zm9ybWF0LT5m
+b3JtYXQgPT0gRFJNX0ZPUk1BVF9OVjIxKTsKKwlpc190aWxlZCA9IChmYi0+bW9kaWZpZXIgPT0g
+RFJNX0ZPUk1BVF9NT0RfU0FNU1VOR182NF8zMl9USUxFKTsKIAogCWx1bWFfYWRkclswXSA9IGV4
+eW5vc19kcm1fZmJfZG1hX2FkZHIoZmIsIDApOwogCWNocm9tYV9hZGRyWzBdID0gZXh5bm9zX2Ry
+bV9mYl9kbWFfYWRkcihmYiwgMSk7CiAKIAlpZiAobW9kZS0+ZmxhZ3MgJiBEUk1fTU9ERV9GTEFH
+X0lOVEVSTEFDRSkgewogCQlfX3NldF9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdz
+KTsKLQkJaWYgKHRpbGVkX21vZGUpIHsKKwkJaWYgKGlzX3RpbGVkKSB7CiAJCQlsdW1hX2FkZHJb
+MV0gPSBsdW1hX2FkZHJbMF0gKyAweDQwOwogCQkJY2hyb21hX2FkZHJbMV0gPSBjaHJvbWFfYWRk
+clswXSArIDB4NDA7CiAJCX0gZWxzZSB7CkBAIC01MjksOCArNTE1LDggQEAgc3RhdGljIHZvaWQg
+dnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJdnBfcmVnX3dyaXRl
+bWFzayhyZXMsIFZQX01PREUsIHZhbCwgVlBfTU9ERV9MSU5FX1NLSVApOwogCiAJLyogc2V0dXAg
+Zm9ybWF0ICovCi0JdmFsID0gKGNyY2JfbW9kZSA/IFZQX01PREVfTlYyMSA6IFZQX01PREVfTlYx
+Mik7Ci0JdmFsIHw9ICh0aWxlZF9tb2RlID8gVlBfTU9ERV9NRU1fVElMRUQgOiBWUF9NT0RFX01F
+TV9MSU5FQVIpOworCXZhbCA9IChpc19udjIxID8gVlBfTU9ERV9OVjIxIDogVlBfTU9ERV9OVjEy
+KTsKKwl2YWwgfD0gKGlzX3RpbGVkID8gVlBfTU9ERV9NRU1fVElMRUQgOiBWUF9NT0RFX01FTV9M
+SU5FQVIpOwogCXZwX3JlZ193cml0ZW1hc2socmVzLCBWUF9NT0RFLCB2YWwsIFZQX01PREVfRk1U
+X01BU0spOwogCiAJLyogc2V0dGluZyBzaXplIG9mIGlucHV0IGltYWdlICovCkBAIC02MjAsMTIg
+KzYwNiw5IEBAIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29u
+dGV4dCAqY3R4LAogCiAJY2FzZSBEUk1fRk9STUFUX1hSR0I4ODg4OgogCWNhc2UgRFJNX0ZPUk1B
+VF9BUkdCODg4ODoKKwlkZWZhdWx0OgogCQlmbXQgPSBNWFJfRk9STUFUX0FSR0I4ODg4OwogCQli
+cmVhazsKLQotCWRlZmF1bHQ6Ci0JCURSTV9ERUJVR19LTVMoInBpeGVsZm9ybWF0IHVuc3VwcG9y
+dGVkIGJ5IG1peGVyXG4iKTsKLQkJcmV0dXJuOwogCX0KIAogCS8qIHJhdGlvIGlzIGFscmVhZHkg
+Y2hlY2tlZCBieSBjb21tb24gcGxhbmUgY29kZSAqLwotLSAKMi4xMy4wCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
