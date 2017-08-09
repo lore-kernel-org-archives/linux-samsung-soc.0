@@ -1,72 +1,70 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 3/8] drm/exynos: mixer: simplify {vp_video,
- mixer_graph}_buffer()
-Date: Wed,  9 Aug 2017 13:48:52 +0200
-Message-ID: <20170809114857.4945-4-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 4/8] drm/exynos: mixer: remove src offset from mixer_graph_buffer()
+Date: Wed,  9 Aug 2017 13:48:53 +0200
+Message-ID: <20170809114857.4945-5-tjakobi@math.uni-bielefeld.de>
 References: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55080 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752260AbdHILuP (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 9 Aug 2017 07:50:15 -0400
 In-Reply-To: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-RFJNIGNvcmUgYWxyZWFkeSBjaGVja3MgdGhlIHZhbGlkaXR5IG9mIHRoZSBwaXhlbGZvcm1hdHMs
-IHNvIHdlCmNhbiBzaW1wbGlmeSB0aGUgY2hlY2tzIGhlcmUuIFRoZSBzYW1lIGFwcGxpZXMgdG8g
-dGhlIEZCIG1vZGlmaWVyLAp3aGljaCBpcyBub3cgY2hlY2tlZCBpbiBjb21tb24gRXh5bm9zIHBs
-YW5lIGNvZGUuCgpBbHNvIHJlbmFtZSB0aGUgYm9vbGVhbnMgdG8gcmVmbGVjdCB3aGF0IHRydWUv
-ZmFsc2UgYWN0dWFsbHkKbWVhbnMuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFr
-b2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19taXhlci5jIHwgMzEgKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxl
-IGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMjQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXggNGM4OTRkOTdhYmEzLi44ZDY4ZGU4NWJhZGEgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKKysrIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtNDg0LDMyICs0ODQsMTggQEAg
-c3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJ
-dW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96cG9zICsgMTsK
-IAl1bnNpZ25lZCBsb25nIGZsYWdzOwogCWRtYV9hZGRyX3QgbHVtYV9hZGRyWzJdLCBjaHJvbWFf
-YWRkclsyXTsKLQlib29sIHRpbGVkX21vZGUgPSBmYWxzZTsKLQlib29sIGNyY2JfbW9kZSA9IGZh
-bHNlOworCWJvb2wgaXNfdGlsZWQsIGlzX252MjE7CiAJdTMyIHZhbDsKIAotCXN3aXRjaCAoZmIt
-PmZvcm1hdC0+Zm9ybWF0KSB7Ci0JY2FzZSBEUk1fRk9STUFUX05WMTI6Ci0JCWNyY2JfbW9kZSA9
-IGZhbHNlOwotCQlicmVhazsKLQljYXNlIERSTV9GT1JNQVRfTlYyMToKLQkJY3JjYl9tb2RlID0g
-dHJ1ZTsKLQkJYnJlYWs7Ci0JZGVmYXVsdDoKLQkJRFJNX0VSUk9SKCJwaXhlbCBmb3JtYXQgZm9y
-IHZwIGlzIHdyb25nIFslZF0uXG4iLAotCQkJCWZiLT5mb3JtYXQtPmZvcm1hdCk7Ci0JCXJldHVy
-bjsKLQl9Ci0KLQlpZiAoZmItPm1vZGlmaWVyID09IERSTV9GT1JNQVRfTU9EX1NBTVNVTkdfNjRf
-MzJfVElMRSkKLQkJdGlsZWRfbW9kZSA9IHRydWU7CisJaXNfbnYyMSA9IChmYi0+Zm9ybWF0LT5m
-b3JtYXQgPT0gRFJNX0ZPUk1BVF9OVjIxKTsKKwlpc190aWxlZCA9IChmYi0+bW9kaWZpZXIgPT0g
-RFJNX0ZPUk1BVF9NT0RfU0FNU1VOR182NF8zMl9USUxFKTsKIAogCWx1bWFfYWRkclswXSA9IGV4
-eW5vc19kcm1fZmJfZG1hX2FkZHIoZmIsIDApOwogCWNocm9tYV9hZGRyWzBdID0gZXh5bm9zX2Ry
-bV9mYl9kbWFfYWRkcihmYiwgMSk7CiAKIAlpZiAobW9kZS0+ZmxhZ3MgJiBEUk1fTU9ERV9GTEFH
-X0lOVEVSTEFDRSkgewogCQlfX3NldF9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdz
-KTsKLQkJaWYgKHRpbGVkX21vZGUpIHsKKwkJaWYgKGlzX3RpbGVkKSB7CiAJCQlsdW1hX2FkZHJb
-MV0gPSBsdW1hX2FkZHJbMF0gKyAweDQwOwogCQkJY2hyb21hX2FkZHJbMV0gPSBjaHJvbWFfYWRk
-clswXSArIDB4NDA7CiAJCX0gZWxzZSB7CkBAIC01MjksOCArNTE1LDggQEAgc3RhdGljIHZvaWQg
-dnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJdnBfcmVnX3dyaXRl
-bWFzayhyZXMsIFZQX01PREUsIHZhbCwgVlBfTU9ERV9MSU5FX1NLSVApOwogCiAJLyogc2V0dXAg
-Zm9ybWF0ICovCi0JdmFsID0gKGNyY2JfbW9kZSA/IFZQX01PREVfTlYyMSA6IFZQX01PREVfTlYx
-Mik7Ci0JdmFsIHw9ICh0aWxlZF9tb2RlID8gVlBfTU9ERV9NRU1fVElMRUQgOiBWUF9NT0RFX01F
-TV9MSU5FQVIpOworCXZhbCA9IChpc19udjIxID8gVlBfTU9ERV9OVjIxIDogVlBfTU9ERV9OVjEy
-KTsKKwl2YWwgfD0gKGlzX3RpbGVkID8gVlBfTU9ERV9NRU1fVElMRUQgOiBWUF9NT0RFX01FTV9M
-SU5FQVIpOwogCXZwX3JlZ193cml0ZW1hc2socmVzLCBWUF9NT0RFLCB2YWwsIFZQX01PREVfRk1U
-X01BU0spOwogCiAJLyogc2V0dGluZyBzaXplIG9mIGlucHV0IGltYWdlICovCkBAIC02MjAsMTIg
-KzYwNiw5IEBAIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29u
-dGV4dCAqY3R4LAogCiAJY2FzZSBEUk1fRk9STUFUX1hSR0I4ODg4OgogCWNhc2UgRFJNX0ZPUk1B
-VF9BUkdCODg4ODoKKwlkZWZhdWx0OgogCQlmbXQgPSBNWFJfRk9STUFUX0FSR0I4ODg4OwogCQli
-cmVhazsKLQotCWRlZmF1bHQ6Ci0JCURSTV9ERUJVR19LTVMoInBpeGVsZm9ybWF0IHVuc3VwcG9y
-dGVkIGJ5IG1peGVyXG4iKTsKLQkJcmV0dXJuOwogCX0KIAogCS8qIHJhdGlvIGlzIGFscmVhZHkg
-Y2hlY2tlZCBieSBjb21tb24gcGxhbmUgY29kZSAqLwotLSAKMi4xMy4wCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+We always translate the dma address such that the offsets of
+the source image are zero. Hence we can remove manipulation of
+the MXR_GRAPHIC_SXY(win) register.
+
+We leave the register defines (in regs_mixer.h) in place, since
+they document the hardware.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 8d68de85bada..28fbe79befff 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -584,7 +584,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	unsigned long flags;
+ 	unsigned int win = plane->index;
+ 	unsigned int x_ratio = 0, y_ratio = 0;
+-	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
++	unsigned int dst_x_offset, dst_y_offset;
+ 	dma_addr_t dma_addr;
+ 	unsigned int fmt;
+ 	u32 val;
+@@ -618,12 +618,10 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	dst_x_offset = state->crtc.x;
+ 	dst_y_offset = state->crtc.y;
+ 
+-	/* converting dma address base and source offset */
++	/* translate dma address base s.t. the source image offset is zero */
+ 	dma_addr = exynos_drm_fb_dma_addr(fb, 0)
+ 		+ (state->src.x * fb->format->cpp[0])
+ 		+ (state->src.y * fb->pitches[0]);
+-	src_x_offset = 0;
+-	src_y_offset = 0;
+ 
+ 	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+ 		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
+@@ -654,11 +652,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	val |= MXR_GRP_WH_V_SCALE(y_ratio);
+ 	mixer_reg_write(res, MXR_GRAPHIC_WH(win), val);
+ 
+-	/* setup offsets in source image */
+-	val  = MXR_GRP_SXY_SX(src_x_offset);
+-	val |= MXR_GRP_SXY_SY(src_y_offset);
+-	mixer_reg_write(res, MXR_GRAPHIC_SXY(win), val);
+-
+ 	/* setup offsets in display image */
+ 	val  = MXR_GRP_DXY_DX(dst_x_offset);
+ 	val |= MXR_GRP_DXY_DY(dst_y_offset);
+-- 
+2.13.0
