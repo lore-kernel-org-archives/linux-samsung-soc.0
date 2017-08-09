@@ -1,69 +1,54 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 5/8] drm/exynos: introduce BYTE_PITCH capability
-Date: Wed,  9 Aug 2017 13:48:54 +0200
-Message-ID: <20170809114857.4945-6-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 6/8] drm/exynos: add BYTE_PITCH cap for all supported planes
+Date: Wed,  9 Aug 2017 13:48:55 +0200
+Message-ID: <20170809114857.4945-7-tjakobi@math.uni-bielefeld.de>
 References: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55081 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752486AbdHILux (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 07:50:53 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-In some of drivers we compute something like 'pitch / cpp' at some
-point, silently assuming that the pitch (which is in bytes) is
-divisible by the buffer's cpp. This is not always true, in particular
-DRM core does not check for pitch alignment in the common case.
-
-Introduce a new cap which indicates that the hardware supports a
-pitch with 'byte-granularity'. If the cap is not set, assume that
-we need pitch aligned to cpp.
-
-We set this cap later for the drivers/planes that support it.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 +
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 10 ++++++++++
- 2 files changed, 11 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 43afab4bebc3..ec32632485d2 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -92,6 +92,7 @@ struct exynos_drm_plane {
- #define EXYNOS_DRM_PLANE_CAP_SCALE	(1 << 1)
- #define EXYNOS_DRM_PLANE_CAP_ZPOS	(1 << 2)
- #define EXYNOS_DRM_PLANE_CAP_TILE	(1 << 3)
-+#define EXYNOS_DRM_PLANE_CAP_BYTE_PITCH	(1 << 4)
- 
- /*
-  * Exynos DRM plane configuration structure.
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index bd3825617b06..734d5ba4eb99 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -185,6 +185,16 @@ exynos_drm_plane_check_format(const struct exynos_drm_plane_config *config,
- {
- 	struct drm_framebuffer *fb = state->base.fb;
- 
-+	/*
-+	 * Some blocks only allow to specify a buffer pitch in terms
-+	 * of pixels. In these cases, we need to ensure that the pitch
-+	 * provided by userspace is divisible by the cpp.
-+	 */
-+	if (!(config->capabilities & EXYNOS_DRM_PLANE_CAP_BYTE_PITCH)) {
-+		if (fb->pitches[0] % fb->format->cpp[0])
-+			return -ENOTSUPP;
-+	}
-+
- 	switch (fb->modifier) {
- 	case DRM_FORMAT_MOD_SAMSUNG_64_32_TILE:
- 		if (!(config->capabilities & EXYNOS_DRM_PLANE_CAP_TILE))
--- 
-2.13.0
+Qm90aCBGSU1EIGFuZCBERUNPTjU0MzMgc3VwcG9ydCBhIHBpdGNoIGluIGJ5dGVzLgoKU2lnbmVk
+LW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ci0t
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgMSArCiBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCAxICsKIDIgZmls
+ZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3M1NDMzX2RybV9kZWNvbi5jCmluZGV4IDU3OTJjYTg4YWI3YS4uNjJiNTBlMDY4NWIwIDEw
+MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMK
+KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCkBAIC01
+NDYsNiArNTQ2LDcgQEAgc3RhdGljIGludCBkZWNvbl9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwg
+c3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQogCQljdHgtPmNvbmZpZ3Nbd2luXS5u
+dW1fcGl4ZWxfZm9ybWF0cyA9IEFSUkFZX1NJWkUoZGVjb25fZm9ybWF0cyk7CiAJCWN0eC0+Y29u
+Zmlnc1t3aW5dLnpwb3MgPSB3aW47CiAJCWN0eC0+Y29uZmlnc1t3aW5dLnR5cGUgPSBkZWNvbl93
+aW5fdHlwZXNbdG1wXTsKKwkJY3R4LT5jb25maWdzW3dpbl0uY2FwYWJpbGl0aWVzID0gRVhZTk9T
+X0RSTV9QTEFORV9DQVBfQllURV9QSVRDSDsKIAogCQlyZXQgPSBleHlub3NfcGxhbmVfaW5pdChk
+cm1fZGV2LCAmY3R4LT5wbGFuZXNbd2luXSwgd2luLAogCQkJCQkmY3R4LT5jb25maWdzW3dpbl0p
+OwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKaW5kZXggNjBmOTNjYWQ2
+NjQzLi5lODg1OTdmNmQzNTYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zp
+bWQuYwpAQCAtOTg2LDYgKzk4Niw3IEBAIHN0YXRpYyBpbnQgZmltZF9iaW5kKHN0cnVjdCBkZXZp
+Y2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQogCQljdHgtPmNvbmZp
+Z3NbaV0ubnVtX3BpeGVsX2Zvcm1hdHMgPSBBUlJBWV9TSVpFKGZpbWRfZm9ybWF0cyk7CiAJCWN0
+eC0+Y29uZmlnc1tpXS56cG9zID0gaTsKIAkJY3R4LT5jb25maWdzW2ldLnR5cGUgPSBmaW1kX3dp
+bl90eXBlc1tpXTsKKwkJY3R4LT5jb25maWdzW2ldLmNhcGFiaWxpdGllcyA9IEVYWU5PU19EUk1f
+UExBTkVfQ0FQX0JZVEVfUElUQ0g7CiAJCXJldCA9IGV4eW5vc19wbGFuZV9pbml0KGRybV9kZXYs
+ICZjdHgtPnBsYW5lc1tpXSwgaSwKIAkJCQkJJmN0eC0+Y29uZmlnc1tpXSk7CiAJCWlmIChyZXQp
+Ci0tIAoyLjEzLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
