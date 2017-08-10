@@ -1,166 +1,69 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v8 3/5] clk: samsung: exynos5433: Add support for runtime PM
-Date: Thu, 10 Aug 2017 11:46:15 -0700
-Message-ID: <150239077548.5192.17536583927926528432@resonance>
-References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170809103514eucas1p1d09fbd4d6b9954b24fb6280c7d9eaa02@eucas1p1.samsung.com>
- <1502274907-11931-4-git-send-email-m.szyprowski@samsung.com>
+From: Joe Kniss <djmk@google.com>
+Subject: Re: [PATCH libdrm] drm: Remove create_handle() drm_framebuffer
+ "virtual".
+Date: Thu, 10 Aug 2017 12:29:30 -0700
+Message-ID: <CAOvnNvbNNtuLFy+7-beF=kGB0qYJckT_MEef3_=t-eWi-NFGXA@mail.gmail.com>
+References: <20170808234237.62051-1-djmk@google.com>
+ <8a7bf59a-0f58-21ba-8b82-78e6ba873065@tronnes.org>
+ <CAOvnNvbEt=Uyve3cu_+6BB0EepvO=OKC6gpV3isRef+UdVoX-g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1502274907-11931-4-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOvnNvbEt=Uyve3cu_+6BB0EepvO=OKC6gpV3isRef+UdVoX-g@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
+Cc: Michel Daenzer <michel.daenzer@amd.com>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:VIRTIO CORE,
+ NET..." <virtualization@lists.linux-foundation.org>, "Zhang,
+ Jerry" <Jerry.Zhang@amd.com>, Thierry Reding <thierry.reding@gmail.com>, "Vetter, Daniel" <daniel.vetter@intel.com>, baoyou.xie@linaro.org, Alex Xie <AlexBin.Xie@amd.com>, "StDenis, Tom" <tom.stdenis@amd.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, joe@perches.com, linux-mediatek@lists.infradead.org, Russell King <linux@armlinux.org.uk>, krzk@kernel.org, jonathanh@nvidia.com, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ben Skeggs <bskeggs@redhat.com>, nouveau <nouveau@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Xiaojie.Yuan@amd.com, Alexandre Demers <alexandre.f.demers@gmail.com>, Joe Kniss <djmk@chr>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Marek Szyprowski (2017-08-09 03:35:05)
-> Add runtime pm support for all clock controller units (CMU), which belong
-> to power domains and require special handling during on/off operations.
-> Typically special values has to be written to MUX registers to change
-> internal clocks parents to OSC clock before turning power off. During such
-> operation all clocks, which enter CMU has to be enabled to let MUX to
-> stabilize. Also for each CMU there is one special parent clock, which has
-> to be enabled all the time when any access to CMU registers is being done.
-> =
-
-> This patch solves most of the mysterious external abort and freeze issues
-> caused by a lack of proper parent CMU clock enabled or incorrect turn off
-> procedure.
-
-I would have preferred two patches here. First to platform_driver-ify
-the samsung clk driver and the second to add the pm_runtime bits.
-
-> +static int exynos5433_cmu_suspend(struct device *dev)
-> +{
-> +       struct exynos5433_cmu_data *data =3D dev_get_drvdata(dev);
-> +       int i;
-> +
-> +       samsung_clk_save(data->ctx.reg_base, data->clk_save,
-> +                        data->nr_clk_save);
-> +
-> +       for (i =3D 0; i < data->nr_pclks; i++)
-> +               clk_prepare_enable(data->pclks[i]);
-> +
-> +       /* for suspend some registers have to be set to certain values */
-> +       samsung_clk_restore(data->ctx.reg_base, data->clk_suspend,
-> +                           data->nr_clk_suspend);
-> +
-> +       for (i =3D 0; i < data->nr_pclks; i++)
-> +               clk_disable_unprepare(data->pclks[i]);
-> +
-> +       clk_disable_unprepare(data->clk);
-> +
-> +       return 0;
-> +}
-> +
-> +static int exynos5433_cmu_resume(struct device *dev)
-> +{
-> +       struct exynos5433_cmu_data *data =3D dev_get_drvdata(dev);
-> +       int i;
-> +
-> +       clk_prepare_enable(data->clk);
-> +
-> +       for (i =3D 0; i < data->nr_pclks; i++)
-> +               clk_prepare_enable(data->pclks[i]);
-> +
-> +       samsung_clk_restore(data->ctx.reg_base, data->clk_save,
-> +                           data->nr_clk_save);
-
-Will the restored clk hardware always match the software bookkeeping in
-the clk framework?
-
-Is it necessary to do a tree walk and recalc rates after restoring these
-registers?
-
-> +
-> +       for (i =3D 0; i < data->nr_pclks; i++)
-> +               clk_disable_unprepare(data->pclks[i]);
-> +
-> +       return 0;
-> +}
-> +
-> +static int __init exynos5433_cmu_probe(struct platform_device *pdev)
-> +{
-> +       const struct samsung_cmu_info *info;
-> +       struct exynos5433_cmu_data *data;
-> +       struct samsung_clk_provider *ctx;
-> +       struct device *dev =3D &pdev->dev;
-> +       struct resource *res;
-> +       void __iomem *reg_base;
-> +       int i;
-> +
-> +       info =3D of_device_get_match_data(dev);
-> +
-> +       data =3D devm_kzalloc(dev, sizeof(*data) +
-> +                           sizeof(*data->ctx.clk_data.hws) * info->nr_cl=
-k_ids,
-> +                           GFP_KERNEL);
-> +       if (!data)
-> +               return -ENOMEM;
-> +       ctx =3D &data->ctx;
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       reg_base =3D devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(reg_base)) {
-> +               dev_err(dev, "failed to map registers\n");
-> +               return PTR_ERR(reg_base);
-> +       }
-> +
-> +       for (i =3D 0; i < info->nr_clk_ids; ++i)
-> +               ctx->clk_data.hws[i] =3D ERR_PTR(-ENOENT);
-> +
-> +       ctx->clk_data.num =3D info->nr_clk_ids;
-> +       ctx->reg_base =3D reg_base;
-> +       ctx->dev =3D dev;
-> +       spin_lock_init(&ctx->lock);
-> +
-> +       data->clk_save =3D samsung_clk_alloc_reg_dump(info->clk_regs,
-> +                                                   info->nr_clk_regs);
-> +       data->nr_clk_save =3D info->nr_clk_regs;
-> +       data->clk_suspend =3D info->suspend_regs;
-> +       data->nr_clk_suspend =3D info->nr_suspend_regs;
-> +       data->nr_pclks =3D of_count_phandle_with_args(dev->of_node, "cloc=
-ks",
-> +                                                   "#clock-cells");
-> +       if (data->nr_pclks > 0) {
-> +               data->pclks =3D devm_kcalloc(dev, sizeof(struct clk *),
-> +                                          data->nr_pclks, GFP_KERNEL);
-> +
-> +               for (i =3D 0; i < data->nr_pclks; i++) {
-> +                       struct clk *clk =3D of_clk_get(dev->of_node, i);
-> +
-> +                       if (IS_ERR(clk))
-> +                               return PTR_ERR(clk);
-> +                       data->pclks[i] =3D clk;
-> +               }
-> +       }
-> +
-> +       if (info->clk_name)
-> +               data->clk =3D clk_get(dev, info->clk_name);
-> +       clk_prepare_enable(data->clk);
-
-What's going on here with this weird clk_prepare_enable? It looks like
-it is never balanced with a disable_unprepare?
-
-> +
-> +       platform_set_drvdata(pdev, data);
-> +
-> +       /*
-> +        * Enable runtime PM here to allow the clock core using runtime PM
-> +        * for the registered clocks. Additionally, we increase the runti=
-me
-> +        * PM usage count before registering the clocks, to prevent the
-> +        * clock core from runtime suspending the device.
-> +        */
-> +       pm_runtime_get_noresume(dev);
-> +       pm_runtime_set_active(dev);
-> +       pm_runtime_enable(dev);
-
-Hmm, I do wonder if this sort of initialization can be made generic for
-all other clk drivers that will use this. Thanksfully it is very few
-functions to call.
-
-Regards,
-Mike
+T24gV2VkLCBBdWcgOSwgMjAxNyBhdCA0OjEzIFBNLCBKb2UgS25pc3MgPGRqbWtAZ29vZ2xlLmNv
+bT4gd3JvdGU6Cj4gT24gV2VkLCBBdWcgOSwgMjAxNyBhdCAxMjoxNCBQTSwgTm9yYWxmIFRyw7hu
+bmVzIDxub3JhbGZAdHJvbm5lcy5vcmc+IHdyb3RlOgo+Pgo+PiBEZW4gMDkuMDguMjAxNyAwMS40
+Miwgc2tyZXYgSm9lIEtuaXNzOgo+Pj4KPj4+IEJlY2F1c2UgYWxsIGRyaXZlcnMgY3VycmVudGx5
+IHVzZSBnZW0gb2JqZWN0cyBmb3IgZnJhbWVidWZmZXIgcGxhbmVzLAo+Pj4gdGhlIHZpcnR1YWwg
+Y3JlYXRlX2hhbmRsZSgpIGlzIG5vdCByZXF1aXJlZC4gIFRoaXMgY2hhbmdlIGFkZHMgYQo+Pj4g
+c3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW1zWzRdIGZpZWxkIHRvIGRybV9mcmFtZWJ1ZmZlciBh
+bmQgcmVtb3Zlcwo+Pj4gY3JlYXRlX2hhbmRsZSgpIGZ1bmN0aW9uIHBvaW50ZXIgZnJvbSBkcm1f
+ZnJhbWVidWZmZXJfZnVuY3MuICBUaGUKPj4+IGNvcnJlc3BvbmRpbmcgKl9jcmVhdGVfaGFuZGxl
+KCkgZnVuY3Rpb24gaXMgcmVtb3ZlZCBmcm9tIGVhY2ggZHJpdmVyLgo+Pj4KPj4+IEluIG1hbnkg
+Y2FzZXMgdGhpcyBjaGFuZ2UgZWxpbWluYXRlcyBhIHN0cnVjdCAqX2ZyYW1lYnVmZmVyIG9iamVj
+dCwKPj4+IGFzIHRoZSBvbmx5IG5lZWQgZm9yIHRoZSBkZXJpdmVkIHN0cnVjdCBpcyB0aGUgYWRk
+aXRpb24gb2YgdGhlIGdlbQo+Pj4gb2JqZWN0IHBvaW50ZXIuCj4+Pgo+Pj4gVEVTVEVEOiBjb21w
+aWxlZDogYWxseWVzY29uZmlnIEFSQ0g9eDg2LGFybSBwbGF0Zm9ybXM6aTkxNSwgcm9ja2NoaXAK
+Pj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBKb2UgS25pc3MgPGRqbWtAZ29vZ2xlLmNvbT4KPj4+IC0t
+LQo+Pgo+Pgo+PiBIaSBKb2UsCj4+Cj4+IEknbSBhbHNvIGxvb2tpbmcgaW50byBhZGRpbmcgZ2Vt
+IG9ianMgdG8gZHJtX2ZyYW1lYnVmZmVyIGluIHRoaXMgcGF0Y2g6Cj4+IFtQQVRDSCB2MiAwMS8y
+Ml0gZHJtOiBBZGQgR0VNIGJhY2tlZCBmcmFtZWJ1ZmZlciBsaWJyYXJ5Cj4+IGh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE3LUF1Z3VzdC8xNDk3ODIu
+aHRtbAo+Pgo+Cj4gR3JlYXQuICBUaGVyZSdzIG9ubHkgbWluaW1hbCBvdmVybGFwIGhlcmUuICBJ
+J2xsIHJlYmFzZSB0aGlzIGNoYW5nZSBvbiB5b3Vycwo+IG9uY2UgaXQncyBpbi4KPgo+PiBbLi4u
+XQo+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJfY21hX2hlbHBlci5j
+Cj4+PiBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJfY21hX2hlbHBlci5jCj4+PiBpbmRleCBhZGUz
+MTlkMTBlNzAuLmY1ZjAxMWI5MTBiMSAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9k
+cm1fZmJfY21hX2hlbHBlci5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2NtYV9o
+ZWxwZXIuYwo+Pj4gQEAgLTMxLDE0ICszMSw5IEBACj4+PiAgICAgI2RlZmluZSBERUZBVUxUX0ZC
+REVGSU9fREVMQVlfTVMgNTAKPj4+ICAgLXN0cnVjdCBkcm1fZmJfY21hIHsKPj4+IC0gICAgICAg
+c3RydWN0IGRybV9mcmFtZWJ1ZmZlciAgICAgICAgICBmYjsKPj4+IC0gICAgICAgc3RydWN0IGRy
+bV9nZW1fY21hX29iamVjdCAgICAgICAqb2JqWzRdOwo+Pj4gLX07Cj4+PiAtCj4+PiAgIHN0cnVj
+dCBkcm1fZmJkZXZfY21hIHsKPj4+ICAgICAgICAgc3RydWN0IGRybV9mYl9oZWxwZXIgICAgZmJf
+aGVscGVyOwo+Pj4gLSAgICAgICBzdHJ1Y3QgZHJtX2ZiX2NtYSAgICAgICAqZmI7Cj4+PiArICAg
+ICAgIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgICpmYjsKPj4KPj4KPj4gVGhpcyBmYiBwb2ludGVy
+IGlzbid0IG5lY2Vzc2FyeSwgc2luY2UgZmJfaGVscGVyIGFscmVhZHkgaGFzIG9uZS4KPj4KClNv
+LCBsb29raW5nIGRlZXBlciBpbnRvIHRoaXMsIGl0IHNlZW1zIHRoYXQgdGhlIHN0cnVjdApkcm1f
+ZnJhbWVidWZmZXJfZnVuY3MgKmZiX2Z1bmNzIGlzIGFsc28gcmVkdW5kYW50IGhlcmU/ICBJbiB3
+aGljaCBjYXNlCnRoaXMgd2hvbGUgc3RydWN0IGNhbiBnby4uLgoKPgo+IEknbGwgcmVtb3ZlIGl0
+Li4uIGJ1dCBJIGFtIHN1cmUgd2hlbiBJIGxvb2sgZGVlcGVyIHRoZXJlIHdpbGwgYmUgbW9yZQo+
+IG9mIHRoZXNlIGluIHRoZSB2YXJpb3VzIGRyaXZlcnMgdG9vLgo+Cj4+IE5vcmFsZi4KPj4KPj4K
+Pgo+IC1qb2UKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
