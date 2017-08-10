@@ -1,38 +1,40 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH] mtd: nand: Rename nand.h into rawnand.h
-Date: Thu, 10 Aug 2017 08:58:05 +0800
-Message-ID: <20170810005804.GB31819@dragon>
-References: <1501860550-16506-1-git-send-email-boris.brezillon@free-electrons.com>
- <1501860550-16506-2-git-send-email-boris.brezillon@free-electrons.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v8 5/5] clk: samsung: exynos-audss: Add support for
+ runtime PM
+Date: Thu, 10 Aug 2017 07:51:45 +0200
+Message-ID: <20170810055145.GA3268@kozik-book>
+References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170809103515eucas1p19fcbdd113e191cc02f9e5aaa469376d3@eucas1p1.samsung.com>
+ <1502274907-11931-6-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1501860550-16506-2-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rich Felker <dalias@libc.org>, Neil Armstrong <narmstrong@baylibre.com>, Tony Lindgren <tony@atomide.com>, linux-mips@linux-mips.org, Sekhar Nori <nsekhar@ti.com>, Stefan Agner <stefan@agner.ch>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-mtd@lists.infradead.org, Marc Gonzalez <marc_gonzalez@sigmadesigns.com>, bcm-kernel-feedback-list@broadcom.com, Robert Jarzmik <robert.jarzmik@free.fr>, Alexander Clouter <alex@digriz.org.uk>, devel@driverdev.osuosl.org, Jesper Nilsson <jesper.nilsson@axis.com>, linux-omap@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, Jonathan Corbet <corbet@lwn.net>, linux-sh@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-doc@vger.kernel.org, linux-mediatek@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Vasut <marek.vasut@>
+In-Reply-To: <1502274907-11931-6-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Aug 04, 2017 at 05:29:10PM +0200, Boris Brezillon wrote:
-> We are planning to share more code between different NAND based
-> devices (SPI NAND, OneNAND and raw NANDs), but before doing that
-> we need to move the existing include/linux/mtd/nand.h file into
-> include/linux/mtd/rawnand.h so we can later create a nand.h header
-> containing all common structure and function prototypes.
+On Wed, Aug 09, 2017 at 12:35:07PM +0200, Marek Szyprowski wrote:
+> This patch adds support for runtime PM to Exynos Audio SubSystem driver to
+> enable full support for audio power domain on Exynos5 SoCs. The main change
+> is moving register saving and restoring code from system sleep PM ops to
+> runtime PM ops and implementing system sleep PM ops with generic
+> pm_runtime_force_suspend/resume helpers. Runtime PM of the Exynos AudSS
+> device is managed from clock core depending on the preparation status
+> of the provided clocks.
 > 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Signed-off-by: Peter Pan <peterpandong@micron.com>
-...
->  arch/arm/mach-imx/mach-qong.c                   | 2 +-
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/clk-exynos-audss.txt |  6 +++
+>  drivers/clk/samsung/clk-exynos-audss.c             | 51 ++++++++++++++--------
+>  2 files changed, 40 insertions(+), 17 deletions(-)
+> 
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
+
