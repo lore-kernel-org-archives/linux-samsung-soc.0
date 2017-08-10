@@ -1,197 +1,47 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] drm/bridge/sii8620: add external connector handle
-Date: Thu, 10 Aug 2017 16:39:18 +0300
-Message-ID: <6478480.TjcUCueU5y@avalon>
-References: <1502371530-32260-1-git-send-email-m.purski@samsung.com> <CGME20170810132556eucas1p2413e372ac3494e73dd07cb941a1baa3f@eucas1p2.samsung.com> <1502371530-32260-2-git-send-email-m.purski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 4/5] media: platform: s5p-jpeg: fix number of components
+ macro
+Date: Thu, 10 Aug 2017 16:09:43 +0200
+Message-ID: <0069b10a-d42e-47ed-cea3-96ddfe2b9c19@samsung.com>
+References: <1502191352-11595-1-git-send-email-andrzej.p@samsung.com>
+        <1502191628-11958-1-git-send-email-andrzej.p@samsung.com>
+        <CGME20170808112716eucas1p10a5069ad7ddad2eae5b8dca4f466feee@eucas1p1.samsung.com>
+        <1502191628-11958-4-git-send-email-andrzej.p@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57652 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752527AbdHJNjD (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Aug 2017 09:39:03 -0400
-In-Reply-To: <1502371530-32260-2-git-send-email-m.purski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1502191628-11958-4-git-send-email-andrzej.p@samsung.com>
+Content-language: en-GB
+Sender: linux-media-owner@vger.kernel.org
+To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Thierry Escande <thierry.escande@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maciej Purski <m.purski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, m.szyprowski@samsung.com, architt@codeaurora.org, will.deacon@arm.com, catalin.marinas@arm.com, a.hajda@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
 
-Hi Maciej,
-
-Thank you for the patch.
-
-On Thursday 10 Aug 2017 15:25:29 Maciej Purski wrote:
-> The driver should be switched on if an external connector is plugged and
-> switched off if it is unplugged. Extcon is optional. If it is not found,
-> the driver stays in "always-on" mode.
+On 08/08/2017 01:27 PM, Andrzej Pietrasiewicz wrote:
+> The value to be processed must be first masked and then shifted,
+> not the other way round.
 > 
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 > ---
->  .../bindings/display/bridge/sil-sii8620.txt        |  4 ++
->  drivers/gpu/drm/bridge/sil-sii8620.c               | 83 ++++++++++++++++++-
->  2 files changed, 85 insertions(+), 2 deletions(-)
+>   drivers/media/platform/s5p-jpeg/jpeg-regs.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git
-> a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
-> b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt index
-> 9409d9c..1f230bf 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
-> +++ b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
-> @@ -10,6 +10,9 @@ Required properties:
->  	- clocks, clock-names: specification and name of "xtal" clock
->  	- video interfaces: Device node can contain video interface port
->  			    node for HDMI encoder according to [1].
-> +Optional properties:
-> +	- extcon: phandle to external connector for MHL cable changes
-> +		  detection
+> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-regs.h b/drivers/media/platform/s5p-jpeg/jpeg-regs.h
+> index 1870400..df790b1 100644
+> --- a/drivers/media/platform/s5p-jpeg/jpeg-regs.h
+> +++ b/drivers/media/platform/s5p-jpeg/jpeg-regs.h
+> @@ -371,7 +371,7 @@
+>   #define EXYNOS4_NF_SHIFT			16
+>   #define EXYNOS4_NF_MASK				0xff
+>   #define EXYNOS4_NF(x)				\
+> -	(((x) << EXYNOS4_NF_SHIFT) & EXYNOS4_NF_MASK)
+> +	(((x) & EXYNOS4_NF_MASK) << EXYNOS4_NF_SHIFT)
 
-The sii8620 DT node should model its connection to the MHL connector using OF 
-graph, connecting a port to the MHL connector DT node through endpoints. I 
-believe the extcon property should then be added to the MHL connector DT node, 
-not the bridge.
+I'm going to add below tag when applying this patch.
 
->  [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
-> 
-> @@ -24,6 +27,7 @@ Example:
->  		reset-gpio = <&gpv7 0 0>;
->  		clocks = <&pmu_system_controller 0>;
->  		clock-names = "xtal";
-> +		extcon = <&muic>;
-> 
->  		port {
->  			mhl_to_hdmi: endpoint {
-> diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c
-> b/drivers/gpu/drm/bridge/sil-sii8620.c index 2d51a22..5002654 100644
-> --- a/drivers/gpu/drm/bridge/sil-sii8620.c
-> +++ b/drivers/gpu/drm/bridge/sil-sii8620.c
-> @@ -17,6 +17,7 @@
-> 
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> +#include <linux/extcon.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/i2c.h>
->  #include <linux/interrupt.h>
-> @@ -78,6 +79,10 @@ struct sii8620 {
->  	struct edid *edid;
->  	unsigned int gen2_write_burst:1;
->  	enum sii8620_mt_state mt_state;
-> +	struct extcon_dev *extcon;
-> +	struct notifier_block extcon_nb;
-> +	struct work_struct extcon_wq;
-> +	bool extcon_attached;
->  	struct list_head mt_queue;
->  	struct {
->  		int r_size;
-> @@ -2102,6 +2107,72 @@ static void sii8620_cable_in(struct sii8620 *ctx)
->  	enable_irq(to_i2c_client(ctx->dev)->irq);
->  }
-> 
-> +static void sii8620_cable_out(struct sii8620 *ctx)
-> +{
-> +	disable_irq(to_i2c_client(ctx->dev)->irq);
-> +	sii8620_hw_off(ctx);
-> +}
-> +
-> +static void sii8620_extcon_work(struct work_struct *work)
-> +{
-> +	struct sii8620 *ctx =
-> +		container_of(work, struct sii8620, extcon_wq);
-> +
-> +	if (ctx->extcon_attached)
-> +		sii8620_cable_in(ctx);
-> +	else
-> +		sii8620_cable_out(ctx);
-> +}
-> +
-> +static int sii8620_extcon_notifier(struct notifier_block *self,
-> +			unsigned long event, void *ptr)
-> +{
-> +	struct sii8620 *ctx =
-> +		container_of(self, struct sii8620, extcon_nb);
-> +
-> +	ctx->extcon_attached = event;
-> +	schedule_work(&ctx->extcon_wq);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static int sii8620_extcon_init(struct sii8620 *ctx)
-> +{
-> +	struct extcon_dev *edev;
-> +	int ret;
-> +
-> +	INIT_WORK(&ctx->extcon_wq, sii8620_extcon_work);
-> +
-> +	if (!of_property_read_bool(ctx->dev->of_node, "extcon")) {
-> +		dev_info(ctx->dev, "no extcon found, switching to 'always on' 
-mode\n");
-> +		ctx->extcon_attached = true;
-> +		return 0;
-> +	}
-> +
-> +	edev = extcon_get_edev_by_phandle(ctx->dev, 0);
-> +	if (IS_ERR(edev)) {
-> +		if (PTR_ERR(edev) == -EPROBE_DEFER)
-> +			return -EPROBE_DEFER;
-> +		dev_err(ctx->dev, "Invalid or missing extcon\n");
-> +		return PTR_ERR(edev);
-> +	}
-> +
-> +	ctx->extcon_attached = extcon_get_cable_state_(edev, EXTCON_DISP_MHL);
-> +	dev_info(ctx->dev, "extcon(MHL) = %d\n", ctx->extcon_attached);
-> +
-> +	ctx->extcon = edev;
-> +	ctx->extcon_nb.notifier_call = sii8620_extcon_notifier;
-> +	ret = devm_extcon_register_notifier(ctx->dev, edev,
-> +					EXTCON_DISP_MHL, &ctx->extcon_nb);
-> +
-> +	if (ret) {
-> +		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static inline struct sii8620 *bridge_to_sii8620(struct drm_bridge *bridge)
->  {
->  	return container_of(bridge, struct sii8620, bridge);
-> @@ -2201,13 +2272,20 @@ static int sii8620_probe(struct i2c_client *client,
->  	if (ret)
->  		return ret;
-> 
-> +	ret = sii8620_extcon_init(ctx);
-> +	if (ret < 0) {
-> +		dev_err(ctx->dev, "failed to initialize EXTCON\n");
-> +		return ret;
-> +	}
-> +
->  	i2c_set_clientdata(client, ctx);
-> 
->  	ctx->bridge.funcs = &sii8620_bridge_funcs;
->  	ctx->bridge.of_node = dev->of_node;
->  	drm_bridge_add(&ctx->bridge);
-> 
-> -	sii8620_cable_in(ctx);
-> +	if (ctx->extcon_attached)
-> +		sii8620_cable_in(ctx);
-> 
->  	return 0;
->  }
-> @@ -2216,7 +2294,8 @@ static int sii8620_remove(struct i2c_client *client)
->  {
->  	struct sii8620 *ctx = i2c_get_clientdata(client);
-> 
-> -	disable_irq(to_i2c_client(ctx->dev)->irq);
-> +	if (!ctx->extcon_attached)
-> +		sii8620_cable_out(ctx);
->  	drm_bridge_remove(&ctx->bridge);
->  	sii8620_hw_off(ctx);
+Fixes: 6c96dbbc2aa9f5b4a ("[media] s5p-jpeg: add support for 5433")
 
 -- 
 Regards,
-
-Laurent Pinchart
+Sylwester
