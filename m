@@ -1,53 +1,41 @@
-From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 0/2] add Silicon Image SiI9234 driver
-Date: Thu, 10 Aug 2017 15:20:42 +0200
-Message-ID: <1502371244-31908-1-git-send-email-m.purski@samsung.com>
-References: <CGME20170810132056eucas1p16365b59eb9c4dad15f07b161ff2fb907@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:37083 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752168AbdHJNU7 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Aug 2017 09:20:59 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/2] drm/bridge/sii8620: add external connector handle
+Date: Thu, 10 Aug 2017 15:25:28 +0200
+Message-ID: <1502371530-32260-1-git-send-email-m.purski@samsung.com>
+References: <CGME20170810132549eucas1p29ada94088da5d7d395e95aded77b906f@eucas1p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: airlied-cv59FeDIM0c@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, krzk@kernel.org, b.zolnierkie@samsung.com, Maciej Purski <m.purski@samsung.com>
 
-Hi everyone,
+Hi everyone, 
 
-These patches are a continuation of work by Tomasz Stanislawski on sii9324 driver, which was described
-in th following letter:
-https://lists.freedesktop.org/archives/dri-devel/2014-April/057481.html
+These patches add external connector handling to sii8620 driver.
 
-The main differences from the previous code are:
-* driver moved to /gpu/drm/bridge/ and integrated with drm/bridge subsystem
-* added filtering-out unsupported display modes
-* changed gpio interface to up-to-date
-* changed interrupt handling
-* improve code style
-* add hdmi and sii9324 to exynos4412-trats2 device tree
+The first patch documents the extcon binding and add extcon handling 
+to the driver. The second adds support for this in exynos5433-tm2-common.dtsi.
 
 All comments are welcome.
 
 Regards,
 Maciej Purski
 
-
 Patch summary:
 
 Maciej Purski (2):
-  drm/bridge: add Silicon Image SiI9234 driver
-  ARM: dts: exynos: Add HDMI and Sil9234 to Trats2 board
+  drm/bridge/sii8620: add external connector handle
+  arm64: dts: exynos: add extcon phandle
 
- .../devicetree/bindings/display/bridge/sii9234.txt |   20 +
- arch/arm/boot/dts/exynos4412-trats2.dts            |   93 ++
- drivers/gpu/drm/bridge/Kconfig                     |    8 +
- drivers/gpu/drm/bridge/Makefile                    |    1 +
- drivers/gpu/drm/bridge/sii9234.c                   | 1019 ++++++++++++++++++++
- 5 files changed, 1141 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/sii9234.txt
- create mode 100644 drivers/gpu/drm/bridge/sii9234.c
+ .../bindings/display/bridge/sil-sii8620.txt        |  4 ++
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     |  1 +
+ drivers/gpu/drm/bridge/sil-sii8620.c               | 83 +++++++++++++++++++++-
+ 3 files changed, 86 insertions(+), 2 deletions(-)
 
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
