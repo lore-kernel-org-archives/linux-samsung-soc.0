@@ -1,113 +1,126 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] drm/bridge: add Silicon Image SiI9234 driver
-Date: Thu, 10 Aug 2017 17:51:57 +0300
-Message-ID: <5485864.0NeJDQRaQs@avalon>
-References: <1501746323-5254-1-git-send-email-m.purski@samsung.com> <3612749.1Xj3PQ173Q@avalon> <eea9742d-0180-205b-652e-f9bfbdd21c33@samsung.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v8 1/5] clk: Add support for runtime PM
+Date: Thu, 10 Aug 2017 11:28:10 -0700
+Message-ID: <150238969053.5192.13225746723120483789@resonance>
+References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170809103512eucas1p2eb66401b357d82bed91182a5a1b1fea9@eucas1p2.samsung.com>
+ <1502274907-11931-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59279 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752389AbdHJOvm (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Aug 2017 10:51:42 -0400
-In-Reply-To: <eea9742d-0180-205b-652e-f9bfbdd21c33@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1502274907-11931-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Maciej Purski <m.purski@samsung.com>, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, krzk@kernel.org
 
 Hi Marek,
 
-On Friday 04 Aug 2017 08:55:55 Marek Szyprowski wrote:
-> Hi Laurent,
-> 
-> Thanks for your detailed comments. Maciej resurrected some orphaned code,
-> which is still useful today (Tomasz has left Samsung a few years ago).
-> I'm not sure we will be able to answer all your questions without deep
-> investigation, especially about the driver operation details, but we
-> will try.
+Quoting Marek Szyprowski (2017-08-09 03:35:03)
+> Registers for some clocks might be located in the SOC area, which are und=
+er the
+> power domain. To enable access to those registers respective domain has t=
+o be
+> turned on. Additionally, registers for such clocks will usually loose its
+> contents when power domain is turned off, so additional saving and restor=
+ing of
+> them might be needed in the clock controller driver.
+> =
 
-Thank you.
+> This patch adds basic infrastructure in the clocks core to allow implemen=
+ting
+> driver for such clocks under power domains. Clock provider can supply a
+> struct device pointer, which is the used by clock core for tracking and m=
+anaging
+> clock's controller runtime pm state. Each clk_prepare() operation
+> will first call pm_runtime_get_sync() on the supplied device, while
+> clk_unprepare() will do pm_runtime_put_sync() at the end.
+> =
 
-> On 2017-08-03 12:24, Laurent Pinchart wrote:
-> > On Thursday 03 Aug 2017 09:45:22 Maciej Purski wrote:
-> >> SiI9234 transmitter converts eTMDS/HDMI signal to MHL 1.0.
-> >> It is controlled via I2C bus. Its interaction with other
-> >> devices in video pipeline is performed mainly on HW level.
-> >> The only interaction it does on device driver level is
-> >> filtering-out unsupported video modes, it exposes drm_bridge
-> >> interface to perform this operation.
-> >> 
-> >> This patch is based on the code refactored by Tomasz Stanislawski
-> >> <t.stanislaws@samsung.com>, which was initially developed by:
-> >> Adam Hampson <ahampson@sta.samsung.com>
-> >> Erik Gilling <konkers@android.com>
-> >> Shankar Bandal <shankar.b@samsung.com>
-> >> Dharam Kumar <dharam.kr@samsung.com>
-> >> 
-> >> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> >> ---
-> >> 
-> >>   .../devicetree/bindings/display/bridge/sii9234.txt |   20 +
-> >>   drivers/gpu/drm/bridge/Kconfig                     |    8 +
-> >>   drivers/gpu/drm/bridge/Makefile                    |    1 +
-> >>   drivers/gpu/drm/bridge/sii9234.c                   | 1019 +++++++++++++
-> >>   4 files changed, 1048 insertions(+)
-> >>   create mode 100644
-> >> 
-> >> Documentation/devicetree/bindings/display/bridge/sii9234.txt create mode
-> >> 100644 drivers/gpu/drm/bridge/sii9234.c
-> >> 
-> >> diff --git a/Documentation/devicetree/bindings/display/bridge/sii9234.txt
-> >> b/Documentation/devicetree/bindings/display/bridge/sii9234.txt new file
-> >> mode 100644
-> >> index 0000000..2cdf286
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/display/bridge/sii9234.txt
-> > 
-> > DT reviewers might ask you to submit DT bindings as a separate patch.
-> > 
-> >> @@ -0,0 +1,20 @@
-> >> +SiI9234 Mobile HD Link Transmitter
-> >> +
-> >> +Required properties:
-> >> +- compatible : "sil,sii9234".
-> >> +- reg : I2C address for TPI interface, use 0x39
-> >> +- vcc-supply : regulator that supplies the chip
-> > 
-> > Is there a single power supply only ? Transceivers usually have at least
-> > one digital and one analog power supply.
-> 
-> Acording to the schematic there are four power supplies used for SII9234
-> MHL chip in Trats2 board: VSIL_1.2A, VSIL_1.2C, VCC_3.3V_MHL and
-> VCC_1.8V_MHL. First two are derived directly from VSIL_1.2 signal, which is
-> modeled as a fixed regulator. The latter two are derived directly from VBAT
-> using some level converter, which is controlled by the same GPIO pin as VSIL
-> fixed regulator. Any idea how this should be represented better in device
-> tree instead of having single vcc-supply?
+> Additional calls to pm_runtime_get/put functions are required to ensure t=
+hat any
+> register access (like calculating/changing clock rates and unpreparing/di=
+sabling
+> unused clocks on boot) will be done with clock controller in runtime resu=
+mend
+> state.
+> =
 
-Without access to the documentation I can only guess, but it looks like 
-VSIL_1.2A and VSIL_1.2C are supposed to be powered from the same power supply 
-rail, possibly with different filters. I think they can be grouped together 
-from a DT binding point of view. The last two supplies seem independent. We 
-should thus probably model this as three separate supplies.
+> When one wants to register clock controller, which make use of this featu=
+re, he
+> has to:
+> 1. Provide a struct device to the core when registering the provider.
+> 2. Ensure to enable runtime PM for that device before registering clocks.
+> 3. Make sure that the runtime PM status of the controller device reflects
+>    the HW state.
+> =
 
-It would be useful to check in the SII9234 datasheet what power sequence the 
-chip expects. Is there any chance you could find that document ?
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> >> +- interrupts, interrupt-parent: interrupt specifier of INT pin
-> >> +- reset-gpios: gpio specifier of RESET pin
-> > 
-> > Is this mandatory to connect the reset pin to the SoC ?
-> 
-> IMHO yes, the chip has to be reset during the initialization procedure
-> and doesn't work properly without reset.
+Overall the idea and the patch look good to me.
 
-OK, I have no issue making the property mandatory then.
+Calling pm_runtime_get for prepare and pm_runtime_put for unprepared
+makes perfect sense to me. It means that the power domain that powers
+that clock hardware must be on for that clock to function properly.
 
--- 
+It=E2=80=99s worth pointing out that this patch leaves that power domain en=
+abled
+for for as long as prepare_count is greater than zero.
+
+However the rate-change operations only use the pm_runtime functions to
+program the hardware and modify the registers. At the end of each
+rate-change call there is a pm_runtime_put. This makes sense to me, but
+I=E2=80=99m trying to wrap my head around the fact that this patch introduc=
+es
+two behaviors:
+
+1) protect access to the clk hardware by wrapping writes across the bus
+with pm_runtime calls
+2) power the clock logic when the clock is in use (e.g. clk_prepare())
+
+Everything about this patch *seems* correct to me, but I=E2=80=99m trying to
+figure out what it means to for a clock consumer driver to do something
+like this:
+
+clk_prepare_enable()
+clk_disable_unprepare()
+clk_set_rate()
+
+Maybe patches #2-5 will help me understand, but I wanted to jot this
+down in my review before I forget.
+
+> @@ -2583,6 +2673,12 @@ struct clk *clk_register(struct device *dev, struc=
+t clk_hw *hw)
+>                 goto fail_name;
+>         }
+>         core->ops =3D hw->init->ops;
+> +       if (dev && pm_runtime_enabled(dev)) {
+> +               core->dev =3D dev;
+> +               ret =3D clk_pm_runtime_get(core);
+> +               if (ret)
+> +                       goto fail_pm;
+> +       }
+>         if (dev && dev->driver)
+>                 core->owner =3D dev->driver->owner;
+>         core->hw =3D hw;
+> @@ -2629,12 +2725,13 @@ struct clk *clk_register(struct device *dev, stru=
+ct clk_hw *hw)
+>         }
+>  =
+
+>         ret =3D __clk_core_init(core);
+> -       if (!ret)
+> +       if (!ret) {
+> +               clk_pm_runtime_put(core);
+>                 return hw->clk;
+> +       }
+
+I wonder if the above can be moved inside of __clk_core_init?
+clk_register shouldn't manage any clk_ops directly, only __clk_core_init
+does this.
+
 Regards,
-
-Laurent Pinchart
+Mike
