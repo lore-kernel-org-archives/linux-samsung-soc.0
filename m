@@ -1,80 +1,81 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 3/8] drm/exynos: mixer: simplify
- {vp_video,mixer_graph}_buffer()
-Date: Fri, 11 Aug 2017 17:04:13 +0900
-Message-ID: <598D64FD.5000403@samsung.com>
+Subject: Re: [PATCH 4/8] drm/exynos: mixer: remove src offset from
+ mixer_graph_buffer()
+Date: Fri, 11 Aug 2017 17:12:14 +0900
+Message-ID: <598D66DE.2090006@samsung.com>
 References: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
- <CGME20170809115006epcas4p4b42ff60de1722b61b79e8ed2eaec14ce@epcas4p4.samsung.com>
- <20170809114857.4945-4-tjakobi@math.uni-bielefeld.de>
+        <CGME20170809115026epcas2p4ea35e8ab1206b0f5ebbddf48d9855132@epcas2p4.samsung.com>
+        <20170809114857.4945-5-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170809114857.4945-4-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:52155 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751416AbdHKIMQ (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 11 Aug 2017 04:12:16 -0400
+In-reply-to: <20170809114857.4945-5-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE364WEIDA47JuUIDA57J28IDIwOjQ47JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
-IOq4gDoKPiBEUk0gY29yZSBhbHJlYWR5IGNoZWNrcyB0aGUgdmFsaWRpdHkgb2YgdGhlIHBpeGVs
-Zm9ybWF0cywgc28gd2UKPiBjYW4gc2ltcGxpZnkgdGhlIGNoZWNrcyBoZXJlLiBUaGUgc2FtZSBh
-cHBsaWVzIHRvIHRoZSBGQiBtb2RpZmllciwKPiB3aGljaCBpcyBub3cgY2hlY2tlZCBpbiBjb21t
-b24gRXh5bm9zIHBsYW5lIGNvZGUuCj4gCj4gQWxzbyByZW5hbWUgdGhlIGJvb2xlYW5zIHRvIHJl
-ZmxlY3Qgd2hhdCB0cnVlL2ZhbHNlIGFjdHVhbGx5Cj4gbWVhbnMuCj4gCj4gU2lnbmVkLW9mZi1i
-eTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4gLS0tCj4g
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAzMSArKysrKysrLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyksIDI0
-IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IGlu
-ZGV4IDRjODk0ZDk3YWJhMy4uOGQ2OGRlODViYWRhIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19taXhlci5jCj4gQEAgLTQ4NCwzMiArNDg0LDE4IEBAIHN0YXRpYyB2b2lkIHZwX3Zp
-ZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAo+ICAJdW5zaWduZWQgaW50IHBy
-aW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96cG9zICsgMTsKPiAgCXVuc2lnbmVkIGxv
-bmcgZmxhZ3M7Cj4gIAlkbWFfYWRkcl90IGx1bWFfYWRkclsyXSwgY2hyb21hX2FkZHJbMl07Cj4g
-LQlib29sIHRpbGVkX21vZGUgPSBmYWxzZTsKPiAtCWJvb2wgY3JjYl9tb2RlID0gZmFsc2U7Cj4g
-Kwlib29sIGlzX3RpbGVkLCBpc19udjIxOwo+ICAJdTMyIHZhbDsKPiAgCj4gLQlzd2l0Y2ggKGZi
-LT5mb3JtYXQtPmZvcm1hdCkgewo+IC0JY2FzZSBEUk1fRk9STUFUX05WMTI6Cj4gLQkJY3JjYl9t
-b2RlID0gZmFsc2U7Cj4gLQkJYnJlYWs7Cj4gLQljYXNlIERSTV9GT1JNQVRfTlYyMToKPiAtCQlj
-cmNiX21vZGUgPSB0cnVlOwo+IC0JCWJyZWFrOwo+IC0JZGVmYXVsdDoKPiAtCQlEUk1fRVJST1Io
-InBpeGVsIGZvcm1hdCBmb3IgdnAgaXMgd3JvbmcgWyVkXS5cbiIsCj4gLQkJCQlmYi0+Zm9ybWF0
-LT5mb3JtYXQpOwo+IC0JCXJldHVybjsKPiAtCX0KPiAtCj4gLQlpZiAoZmItPm1vZGlmaWVyID09
-IERSTV9GT1JNQVRfTU9EX1NBTVNVTkdfNjRfMzJfVElMRSkKPiAtCQl0aWxlZF9tb2RlID0gdHJ1
-ZTsKPiArCWlzX252MjEgPSAoZmItPmZvcm1hdC0+Zm9ybWF0ID09IERSTV9GT1JNQVRfTlYyMSk7
-Cj4gKwlpc190aWxlZCA9IChmYi0+bW9kaWZpZXIgPT0gRFJNX0ZPUk1BVF9NT0RfU0FNU1VOR182
-NF8zMl9USUxFKTsKPiAgCj4gIAlsdW1hX2FkZHJbMF0gPSBleHlub3NfZHJtX2ZiX2RtYV9hZGRy
-KGZiLCAwKTsKPiAgCWNocm9tYV9hZGRyWzBdID0gZXh5bm9zX2RybV9mYl9kbWFfYWRkcihmYiwg
-MSk7Cj4gIAo+ICAJaWYgKG1vZGUtPmZsYWdzICYgRFJNX01PREVfRkxBR19JTlRFUkxBQ0UpIHsK
-PiAgCQlfX3NldF9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdzKTsKPiAtCQlpZiAo
-dGlsZWRfbW9kZSkgewo+ICsJCWlmIChpc190aWxlZCkgewo+ICAJCQlsdW1hX2FkZHJbMV0gPSBs
-dW1hX2FkZHJbMF0gKyAweDQwOwo+ICAJCQljaHJvbWFfYWRkclsxXSA9IGNocm9tYV9hZGRyWzBd
-ICsgMHg0MDsKPiAgCQl9IGVsc2Ugewo+IEBAIC01MjksOCArNTE1LDggQEAgc3RhdGljIHZvaWQg
-dnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCj4gIAl2cF9yZWdfd3Jp
-dGVtYXNrKHJlcywgVlBfTU9ERSwgdmFsLCBWUF9NT0RFX0xJTkVfU0tJUCk7Cj4gIAo+ICAJLyog
-c2V0dXAgZm9ybWF0ICovCj4gLQl2YWwgPSAoY3JjYl9tb2RlID8gVlBfTU9ERV9OVjIxIDogVlBf
-TU9ERV9OVjEyKTsKPiAtCXZhbCB8PSAodGlsZWRfbW9kZSA/IFZQX01PREVfTUVNX1RJTEVEIDog
-VlBfTU9ERV9NRU1fTElORUFSKTsKPiArCXZhbCA9IChpc19udjIxID8gVlBfTU9ERV9OVjIxIDog
-VlBfTU9ERV9OVjEyKTsKPiArCXZhbCB8PSAoaXNfdGlsZWQgPyBWUF9NT0RFX01FTV9USUxFRCA6
-IFZQX01PREVfTUVNX0xJTkVBUik7Cj4gIAl2cF9yZWdfd3JpdGVtYXNrKHJlcywgVlBfTU9ERSwg
-dmFsLCBWUF9NT0RFX0ZNVF9NQVNLKTsKPiAgCj4gIAkvKiBzZXR0aW5nIHNpemUgb2YgaW5wdXQg
-aW1hZ2UgKi8KPiBAQCAtNjIwLDEyICs2MDYsOSBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9i
-dWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPiAgCj4gIAljYXNlIERSTV9GT1JNQVRf
-WFJHQjg4ODg6Cj4gIAljYXNlIERSTV9GT1JNQVRfQVJHQjg4ODg6Cj4gKwlkZWZhdWx0Ogo+ICAJ
-CWZtdCA9IE1YUl9GT1JNQVRfQVJHQjg4ODg7Cj4gIAkJYnJlYWs7Cj4gLQo+IC0JZGVmYXVsdDoK
-PiAtCQlEUk1fREVCVUdfS01TKCJwaXhlbGZvcm1hdCB1bnN1cHBvcnRlZCBieSBtaXhlclxuIik7
-Cj4gLQkJcmV0dXJuOwoKVGhpcyBjaGFuZ2Ugc2hvdWxkIGJlIG1hZGUgYXMgYW5vdGhlciBwYXRj
-aCBiZWNhdXNlIHRoaXMgcGF0Y2ggY2hhbmdlcyB0aGUgYmVoYXZpb3Igd2hldGhlciBpdCBhbGxv
-d3Mgd3JvbmcgcGl4ZWwgZm9ybWF0IG9yIG5vdC4KClRoYW5rcywKSW5raSBEYWUKCj4gIAl9Cj4g
-IAo+ICAJLyogcmF0aW8gaXMgYWxyZWFkeSBjaGVja2VkIGJ5IGNvbW1vbiBwbGFuZSBjb2RlICov
-Cj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+
+2017년 08월 09일 20:48에 Tobias Jakobi 이(가) 쓴 글:
+> We always translate the dma address such that the offsets of
+> the source image are zero. Hence we can remove manipulation of
+> the MXR_GRAPHIC_SXY(win) register.
+> 
+> We leave the register defines (in regs_mixer.h) in place, since
+> they document the hardware.
+> 
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 8d68de85bada..28fbe79befff 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -584,7 +584,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+>  	unsigned long flags;
+>  	unsigned int win = plane->index;
+>  	unsigned int x_ratio = 0, y_ratio = 0;
+> -	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
+> +	unsigned int dst_x_offset, dst_y_offset;
+>  	dma_addr_t dma_addr;
+>  	unsigned int fmt;
+>  	u32 val;
+> @@ -618,12 +618,10 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+>  	dst_x_offset = state->crtc.x;
+>  	dst_y_offset = state->crtc.y;
+>  
+> -	/* converting dma address base and source offset */
+> +	/* translate dma address base s.t. the source image offset is zero */
+>  	dma_addr = exynos_drm_fb_dma_addr(fb, 0)
+>  		+ (state->src.x * fb->format->cpp[0])
+>  		+ (state->src.y * fb->pitches[0]);
+> -	src_x_offset = 0;
+> -	src_y_offset = 0;
+>  
+>  	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+>  		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
+> @@ -654,11 +652,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+>  	val |= MXR_GRP_WH_V_SCALE(y_ratio);
+>  	mixer_reg_write(res, MXR_GRAPHIC_WH(win), val);
+>  
+> -	/* setup offsets in source image */
+> -	val  = MXR_GRP_SXY_SX(src_x_offset);
+> -	val |= MXR_GRP_SXY_SY(src_y_offset);
+> -	mixer_reg_write(res, MXR_GRAPHIC_SXY(win), val);
+
+The offset of source buffer can be set at bootloader so previous value can be keeped. I think MXR_GRAPHIC_SXY register should be cleared at mixer_win_reset function if you want to remove above lines.
+
+> -
+>  	/* setup offsets in display image */
+>  	val  = MXR_GRP_DXY_DX(dst_x_offset);
+>  	val |= MXR_GRP_DXY_DY(dst_y_offset);
+> 
