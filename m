@@ -1,194 +1,206 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v8 3/5] clk: samsung: exynos5433: Add support for
- runtime PM
-Date: Fri, 11 Aug 2017 08:34:35 +0200
-Message-ID: <42f58f9d-9408-c648-6333-09e8cc7709f9@samsung.com>
-References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
-        <CGME20170809103514eucas1p1d09fbd4d6b9954b24fb6280c7d9eaa02@eucas1p1.samsung.com>
-        <1502274907-11931-4-git-send-email-m.szyprowski@samsung.com>
-        <150239077548.5192.17536583927926528432@resonance>
+Subject: Re: [PATCH 1/2] drm/bridge/sii8620: add external connector handle
+Date: Fri, 11 Aug 2017 08:39:31 +0200
+Message-ID: <5ce6bd99-c50e-84c2-f21f-eb611cac94c2@samsung.com>
+References: <1502371530-32260-1-git-send-email-m.purski@samsung.com>
+        <CGME20170810132556eucas1p2413e372ac3494e73dd07cb941a1baa3f@eucas1p2.samsung.com>
+        <1502371530-32260-2-git-send-email-m.purski@samsung.com>
+        <6478480.TjcUCueU5y@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <150239077548.5192.17536583927926528432@resonance>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34682 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751871AbdHKGjg (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 11 Aug 2017 02:39:36 -0400
+In-reply-to: <6478480.TjcUCueU5y@avalon>
 Content-language: en-US
-Sender: linux-pm-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maciej Purski <m.purski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, will.deacon@arm.com, catalin.marinas@arm.com, a.hajda@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
 
-Hi Michael,
+Hi Laurent,
 
-On 2017-08-10 20:46, Michael Turquette wrote:
-> Quoting Marek Szyprowski (2017-08-09 03:35:05)
->> Add runtime pm support for all clock controller units (CMU), which belong
->> to power domains and require special handling during on/off operations.
->> Typically special values has to be written to MUX registers to change
->> internal clocks parents to OSC clock before turning power off. During such
->> operation all clocks, which enter CMU has to be enabled to let MUX to
->> stabilize. Also for each CMU there is one special parent clock, which has
->> to be enabled all the time when any access to CMU registers is being done.
->>
->> This patch solves most of the mysterious external abort and freeze issues
->> caused by a lack of proper parent CMU clock enabled or incorrect turn off
->> procedure.
-> I would have preferred two patches here. First to platform_driver-ify
-> the samsung clk driver and the second to add the pm_runtime bits.
+On 2017-08-10 15:39, Laurent Pinchart wrote:
+> Hi Maciej,
 >
->> +static int exynos5433_cmu_suspend(struct device *dev)
+> Thank you for the patch.
+>
+> On Thursday 10 Aug 2017 15:25:29 Maciej Purski wrote:
+>> The driver should be switched on if an external connector is plugged and
+>> switched off if it is unplugged. Extcon is optional. If it is not found,
+>> the driver stays in "always-on" mode.
+>>
+>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+>> ---
+>>   .../bindings/display/bridge/sil-sii8620.txt        |  4 ++
+>>   drivers/gpu/drm/bridge/sil-sii8620.c               | 83 ++++++++++++++++++-
+>>   2 files changed, 85 insertions(+), 2 deletions(-)
+>>
+>> diff --git
+>> a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+>> b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt index
+>> 9409d9c..1f230bf 100644
+>> --- a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+>> +++ b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+>> @@ -10,6 +10,9 @@ Required properties:
+>>   	- clocks, clock-names: specification and name of "xtal" clock
+>>   	- video interfaces: Device node can contain video interface port
+>>   			    node for HDMI encoder according to [1].
+>> +Optional properties:
+>> +	- extcon: phandle to external connector for MHL cable changes
+>> +		  detection
+> The sii8620 DT node should model its connection to the MHL connector using OF
+> graph, connecting a port to the MHL connector DT node through endpoints. I
+> believe the extcon property should then be added to the MHL connector DT node,
+> not the bridge.
+
+I don't get this. Generic extcon bindings doesn't define connector DT 
+node, so
+I don't see how could we use endpoint DT approach here. Could you give the
+example?
+
+>>   [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+>>
+>> @@ -24,6 +27,7 @@ Example:
+>>   		reset-gpio = <&gpv7 0 0>;
+>>   		clocks = <&pmu_system_controller 0>;
+>>   		clock-names = "xtal";
+>> +		extcon = <&muic>;
+>>
+>>   		port {
+>>   			mhl_to_hdmi: endpoint {
+>> diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c
+>> b/drivers/gpu/drm/bridge/sil-sii8620.c index 2d51a22..5002654 100644
+>> --- a/drivers/gpu/drm/bridge/sil-sii8620.c
+>> +++ b/drivers/gpu/drm/bridge/sil-sii8620.c
+>> @@ -17,6 +17,7 @@
+>>
+>>   #include <linux/clk.h>
+>>   #include <linux/delay.h>
+>> +#include <linux/extcon.h>
+>>   #include <linux/gpio/consumer.h>
+>>   #include <linux/i2c.h>
+>>   #include <linux/interrupt.h>
+>> @@ -78,6 +79,10 @@ struct sii8620 {
+>>   	struct edid *edid;
+>>   	unsigned int gen2_write_burst:1;
+>>   	enum sii8620_mt_state mt_state;
+>> +	struct extcon_dev *extcon;
+>> +	struct notifier_block extcon_nb;
+>> +	struct work_struct extcon_wq;
+>> +	bool extcon_attached;
+>>   	struct list_head mt_queue;
+>>   	struct {
+>>   		int r_size;
+>> @@ -2102,6 +2107,72 @@ static void sii8620_cable_in(struct sii8620 *ctx)
+>>   	enable_irq(to_i2c_client(ctx->dev)->irq);
+>>   }
+>>
+>> +static void sii8620_cable_out(struct sii8620 *ctx)
 >> +{
->> +       struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
->> +       int i;
->> +
->> +       samsung_clk_save(data->ctx.reg_base, data->clk_save,
->> +                        data->nr_clk_save);
->> +
->> +       for (i = 0; i < data->nr_pclks; i++)
->> +               clk_prepare_enable(data->pclks[i]);
->> +
->> +       /* for suspend some registers have to be set to certain values */
->> +       samsung_clk_restore(data->ctx.reg_base, data->clk_suspend,
->> +                           data->nr_clk_suspend);
->> +
->> +       for (i = 0; i < data->nr_pclks; i++)
->> +               clk_disable_unprepare(data->pclks[i]);
->> +
->> +       clk_disable_unprepare(data->clk);
->> +
->> +       return 0;
+>> +	disable_irq(to_i2c_client(ctx->dev)->irq);
+>> +	sii8620_hw_off(ctx);
 >> +}
 >> +
->> +static int exynos5433_cmu_resume(struct device *dev)
+>> +static void sii8620_extcon_work(struct work_struct *work)
 >> +{
->> +       struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
->> +       int i;
+>> +	struct sii8620 *ctx =
+>> +		container_of(work, struct sii8620, extcon_wq);
 >> +
->> +       clk_prepare_enable(data->clk);
->> +
->> +       for (i = 0; i < data->nr_pclks; i++)
->> +               clk_prepare_enable(data->pclks[i]);
->> +
->> +       samsung_clk_restore(data->ctx.reg_base, data->clk_save,
->> +                           data->nr_clk_save);
-> Will the restored clk hardware always match the software bookkeeping in
-> the clk framework?
-
-Yes, that's why we store all registers in suspend.
-
-> Is it necessary to do a tree walk and recalc rates after restoring these
-> registers?
-
-Nope, no recalc is needed. During suspend, the software logical state in clk
-framework might not match the hardware in a few places: some provider's
-internal muxes are reconfigured to lowest possible source (external
-oscillator), because otherwise the hardware will lock the turning power
-domain off. It is also a bit hard to say about provider's state when the
-power domain is off, because the registers cannot be accessed at all (any
-access will result external abort exception). However after resume, all
-the mentioned muxes are restored to the values they had before the suspend,
-so the hw state matches again the state in clock framework.
-
->> +
->> +       for (i = 0; i < data->nr_pclks; i++)
->> +               clk_disable_unprepare(data->pclks[i]);
->> +
->> +       return 0;
+>> +	if (ctx->extcon_attached)
+>> +		sii8620_cable_in(ctx);
+>> +	else
+>> +		sii8620_cable_out(ctx);
 >> +}
 >> +
->> +static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+>> +static int sii8620_extcon_notifier(struct notifier_block *self,
+>> +			unsigned long event, void *ptr)
 >> +{
->> +       const struct samsung_cmu_info *info;
->> +       struct exynos5433_cmu_data *data;
->> +       struct samsung_clk_provider *ctx;
->> +       struct device *dev = &pdev->dev;
->> +       struct resource *res;
->> +       void __iomem *reg_base;
->> +       int i;
+>> +	struct sii8620 *ctx =
+>> +		container_of(self, struct sii8620, extcon_nb);
 >> +
->> +       info = of_device_get_match_data(dev);
+>> +	ctx->extcon_attached = event;
+>> +	schedule_work(&ctx->extcon_wq);
 >> +
->> +       data = devm_kzalloc(dev, sizeof(*data) +
->> +                           sizeof(*data->ctx.clk_data.hws) * info->nr_clk_ids,
->> +                           GFP_KERNEL);
->> +       if (!data)
->> +               return -ENOMEM;
->> +       ctx = &data->ctx;
+>> +	return NOTIFY_DONE;
+>> +}
 >> +
->> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +       reg_base = devm_ioremap_resource(dev, res);
->> +       if (IS_ERR(reg_base)) {
->> +               dev_err(dev, "failed to map registers\n");
->> +               return PTR_ERR(reg_base);
->> +       }
+>> +static int sii8620_extcon_init(struct sii8620 *ctx)
+>> +{
+>> +	struct extcon_dev *edev;
+>> +	int ret;
 >> +
->> +       for (i = 0; i < info->nr_clk_ids; ++i)
->> +               ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
+>> +	INIT_WORK(&ctx->extcon_wq, sii8620_extcon_work);
 >> +
->> +       ctx->clk_data.num = info->nr_clk_ids;
->> +       ctx->reg_base = reg_base;
->> +       ctx->dev = dev;
->> +       spin_lock_init(&ctx->lock);
+>> +	if (!of_property_read_bool(ctx->dev->of_node, "extcon")) {
+>> +		dev_info(ctx->dev, "no extcon found, switching to 'always on'
+> mode\n");
+>> +		ctx->extcon_attached = true;
+>> +		return 0;
+>> +	}
 >> +
->> +       data->clk_save = samsung_clk_alloc_reg_dump(info->clk_regs,
->> +                                                   info->nr_clk_regs);
->> +       data->nr_clk_save = info->nr_clk_regs;
->> +       data->clk_suspend = info->suspend_regs;
->> +       data->nr_clk_suspend = info->nr_suspend_regs;
->> +       data->nr_pclks = of_count_phandle_with_args(dev->of_node, "clocks",
->> +                                                   "#clock-cells");
->> +       if (data->nr_pclks > 0) {
->> +               data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
->> +                                          data->nr_pclks, GFP_KERNEL);
+>> +	edev = extcon_get_edev_by_phandle(ctx->dev, 0);
+>> +	if (IS_ERR(edev)) {
+>> +		if (PTR_ERR(edev) == -EPROBE_DEFER)
+>> +			return -EPROBE_DEFER;
+>> +		dev_err(ctx->dev, "Invalid or missing extcon\n");
+>> +		return PTR_ERR(edev);
+>> +	}
 >> +
->> +               for (i = 0; i < data->nr_pclks; i++) {
->> +                       struct clk *clk = of_clk_get(dev->of_node, i);
+>> +	ctx->extcon_attached = extcon_get_cable_state_(edev, EXTCON_DISP_MHL);
+>> +	dev_info(ctx->dev, "extcon(MHL) = %d\n", ctx->extcon_attached);
 >> +
->> +                       if (IS_ERR(clk))
->> +                               return PTR_ERR(clk);
->> +                       data->pclks[i] = clk;
->> +               }
->> +       }
+>> +	ctx->extcon = edev;
+>> +	ctx->extcon_nb.notifier_call = sii8620_extcon_notifier;
+>> +	ret = devm_extcon_register_notifier(ctx->dev, edev,
+>> +					EXTCON_DISP_MHL, &ctx->extcon_nb);
 >> +
->> +       if (info->clk_name)
->> +               data->clk = clk_get(dev, info->clk_name);
->> +       clk_prepare_enable(data->clk);
-> What's going on here with this weird clk_prepare_enable? It looks like
-> it is never balanced with a disable_unprepare?
-
-Well, in theory that disable_unprepare() has to be done in provider's remove
-callback. But there is no exynos5433_cmu_remove function, because this 
-driver
-is so critical in the system, that it is marked with 
-.suppress_bind_attrs and
-hotplug/unplug is forbidden.
-
-CLK_OF_DECLARE() initialized clocks also doesn't have any remove method.
-
-Keeping this special parent clock enabled all the time is needed to make any
-access to the given clock provider as well as even putting it into suspend.
-Currently those clocks are marked with IS_CRITICAL flag in the parent
-provider, but those flags might be removed once this patch is applied.
-
+>> +	if (ret) {
+>> +		dev_err(ctx->dev, "failed to register notifier for MHL\n");
+>> +		return ret;
+>> +	}
 >> +
->> +       platform_set_drvdata(pdev, data);
+>> +	return 0;
+>> +}
 >> +
->> +       /*
->> +        * Enable runtime PM here to allow the clock core using runtime PM
->> +        * for the registered clocks. Additionally, we increase the runtime
->> +        * PM usage count before registering the clocks, to prevent the
->> +        * clock core from runtime suspending the device.
->> +        */
->> +       pm_runtime_get_noresume(dev);
->> +       pm_runtime_set_active(dev);
->> +       pm_runtime_enable(dev);
-> Hmm, I do wonder if this sort of initialization can be made generic for
-> all other clk drivers that will use this. Thanksfully it is very few
-> functions to call.
-
-IMHO this can be only judged after some time, when more drivers will use 
-this
-feature.
+>>   static inline struct sii8620 *bridge_to_sii8620(struct drm_bridge *bridge)
+>>   {
+>>   	return container_of(bridge, struct sii8620, bridge);
+>> @@ -2201,13 +2272,20 @@ static int sii8620_probe(struct i2c_client *client,
+>>   	if (ret)
+>>   		return ret;
+>>
+>> +	ret = sii8620_extcon_init(ctx);
+>> +	if (ret < 0) {
+>> +		dev_err(ctx->dev, "failed to initialize EXTCON\n");
+>> +		return ret;
+>> +	}
+>> +
+>>   	i2c_set_clientdata(client, ctx);
+>>
+>>   	ctx->bridge.funcs = &sii8620_bridge_funcs;
+>>   	ctx->bridge.of_node = dev->of_node;
+>>   	drm_bridge_add(&ctx->bridge);
+>>
+>> -	sii8620_cable_in(ctx);
+>> +	if (ctx->extcon_attached)
+>> +		sii8620_cable_in(ctx);
+>>
+>>   	return 0;
+>>   }
+>> @@ -2216,7 +2294,8 @@ static int sii8620_remove(struct i2c_client *client)
+>>   {
+>>   	struct sii8620 *ctx = i2c_get_clientdata(client);
+>>
+>> -	disable_irq(to_i2c_client(ctx->dev)->irq);
+>> +	if (!ctx->extcon_attached)
+>> +		sii8620_cable_out(ctx);
+>>   	drm_bridge_remove(&ctx->bridge);
+>>   	sii8620_hw_off(ctx);
 
 Best regards
 -- 
