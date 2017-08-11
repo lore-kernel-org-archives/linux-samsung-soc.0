@@ -1,133 +1,133 @@
-From: Cihangir Akturk <cakturk@gmail.com>
-Subject: [PATCH v3 08/28] drm/exynos: switch to drm_*_get(),
- drm_*_put() helpers
-Date: Fri, 11 Aug 2017 15:32:54 +0300
-Message-ID: <1502454794-28558-9-git-send-email-cakturk@gmail.com>
-References: <1502454794-28558-1-git-send-email-cakturk@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/2] drm/bridge/sii8620: add external connector handle
+Date: Fri, 11 Aug 2017 14:49:35 +0200
+Message-ID: <9232b812-7aef-c614-b122-612e19743df4@samsung.com>
+References: <1502371530-32260-1-git-send-email-m.purski@samsung.com>
+ <6478480.TjcUCueU5y@avalon> <5ce6bd99-c50e-84c2-f21f-eb611cac94c2@samsung.com>
+ <CGME20170811094031epcas5p4ca089af7dba2f3fafed757c1fb40c798@epcas5p4.samsung.com>
+ <2097016.rlxulirhWA@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1502454794-28558-1-git-send-email-cakturk@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Cihangir Akturk <cakturk@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, daniel@ffwll.ch, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:16388 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752823AbdHKMtl (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 11 Aug 2017 08:49:41 -0400
+In-reply-to: <2097016.rlxulirhWA@avalon>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Maciej Purski <m.purski@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, will.deacon@arm.com, catalin.marinas@arm.com, a.hajda@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
 
-Use drm_*_get() and drm_*_put() helpers instead of drm_*_reference()
-and drm_*_unreference() helpers.
+Hi Laurent,
 
-drm_*_reference() and drm_*_unreference() functions are just
-compatibility alias for drm_*_get() and drm_*_put() and should not be
-used by new code. So convert all users of compatibility functions to
-use the new APIs.
+On 2017-08-11 11:40, Laurent Pinchart wrote:
+> Hi Marek,
+>
+> On Friday 11 Aug 2017 08:39:31 Marek Szyprowski wrote:
+>> On 2017-08-10 15:39, Laurent Pinchart wrote:
+>>> On Thursday 10 Aug 2017 15:25:29 Maciej Purski wrote:
+>>>> The driver should be switched on if an external connector is plugged and
+>>>> switched off if it is unplugged. Extcon is optional. If it is not found,
+>>>> the driver stays in "always-on" mode.
+>>>>
+>>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+>>>> ---
+>>>>
+>>>>    .../bindings/display/bridge/sil-sii8620.txt        |  4 ++
+>>>>    drivers/gpu/drm/bridge/sil-sii8620.c               | 83 ++++++++++++++-
+>>>>    2 files changed, 85 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+>>>> b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt index
+>>>> 9409d9c..1f230bf 100644
+>>>> --- a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+>>>> +++ b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+>>>> @@ -10,6 +10,9 @@ Required properties:
+>>>>    	- clocks, clock-names: specification and name of "xtal" clock
+>>>>    	- video interfaces: Device node can contain video interface port
+>>>>    			    node for HDMI encoder according to [1].
+>>>>
+>>>> +Optional properties:
+>>>> +	- extcon: phandle to external connector for MHL cable changes
+>>>> +		  detection
+>>> The sii8620 DT node should model its connection to the MHL connector using
+>>> OF graph, connecting a port to the MHL connector DT node through
+>>> endpoints. I believe the extcon property should then be added to the MHL
+>>> connector DT node, not the bridge.
+>> I don't get this. Generic extcon bindings doesn't define connector DT
+>> node, so I don't see how could we use endpoint DT approach here. Could you
+>> give the example?
+> Sure, here you are.
+>
+> &hsi2c_7 {
+> 	...
+>
+>          sii8620@39 {
+>                  reg = <0x39>;
+>                  compatible = "sil,sii8620";
+>                  cvcc10-supply = <&ldo36_reg>;
+>                  iovcc18-supply = <&ldo34_reg>;
+>                  interrupt-parent = <&gpf0>;
+>                  interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
+>                  reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
+>                  clocks = <&pmu_system_controller 0>;
+>                  clock-names = "xtal";
+>
+> 		ports {
+> 			#address-cells = <1>;
+> 			#size-cells = <0>;
+>
+> 	                port@0 {
+> 				reg = <0>;
+>          	                mhl_to_hdmi: endpoint {
+>                  	                remote-endpoint = <&hdmi_to_mhl>;
+> 	                        };
+>          	        };
+> 	                port@1 {
+> 				reg = <1>;
+>          	                mhl_bridge_out: endpoint {
+>                  	                remote-endpoint = <&mhl_connector_in>;
+> 	                        };
+>          	        };
+> 		};
+>          };
+> };
+>
+> / {
+> 	mhl-connector {
+> 		compatible = "mhl-connector";
+> 		extcon = <&muic>;
+>
+> 	        port {
+>          	        mhl_connector_in: endpoint {
+>                  	        remote-endpoint = <&mhl_bridge_out>;
+> 	                };
+>          	};
+> 	};
+> };
+>
+> Note that there's currently no DT binding for MHL connectors. One needs to be
+> developed, the HDMI connector DT binding can be used as a source of
+> inspiration.
 
-Generated by: scripts/coccinelle/api/drm-get-put.cocci
+Ah, I see. I wasn't aware that display subsystem has bindings even for 
+the connectors.
+Other types of connectors already used together with extcon in device 
+tree (like usb
+and chargers) don't have dedicated bindings.
 
-Signed-off-by: Cihangir Akturk <cakturk@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fb.c    |  4 ++--
- drivers/gpu/drm/exynos/exynos_drm_gem.c   | 12 ++++++------
- drivers/gpu/drm/exynos/exynos_drm_plane.c |  2 +-
- 3 files changed, 9 insertions(+), 9 deletions(-)
+Do we need to add hdmi-connectors to all existing boards that have HDMI 
+module?
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index ed1a648..f16ea6c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -80,7 +80,7 @@ static void exynos_drm_fb_destroy(struct drm_framebuffer *fb)
- 			continue;
- 
- 		obj = &exynos_fb->exynos_gem[i]->base;
--		drm_gem_object_unreference_unlocked(obj);
-+		drm_gem_object_put_unlocked(obj);
- 	}
- 
- 	kfree(exynos_fb);
-@@ -172,7 +172,7 @@ exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 
- err:
- 	while (i--)
--		drm_gem_object_unreference_unlocked(&exynos_gem[i]->base);
-+		drm_gem_object_put_unlocked(&exynos_gem[i]->base);
- 
- 	return ERR_PTR(ret);
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index c23479b..1c8d2f9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -143,7 +143,7 @@ static int exynos_drm_gem_handle_create(struct drm_gem_object *obj,
- 	DRM_DEBUG_KMS("gem handle = 0x%x\n", *handle);
- 
- 	/* drop reference from allocate - handle holds it now. */
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 
- 	return 0;
- }
-@@ -186,7 +186,7 @@ unsigned long exynos_drm_gem_get_size(struct drm_device *dev,
- 
- 	exynos_gem = to_exynos_gem(obj);
- 
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 
- 	return exynos_gem->size;
- }
-@@ -320,13 +320,13 @@ void exynos_drm_gem_put_dma_addr(struct drm_device *dev,
- 		return;
- 	}
- 
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 
- 	/*
- 	 * decrease obj->refcount one more time because we has already
- 	 * increased it at exynos_drm_gem_get_dma_addr().
- 	 */
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- }
- 
- static int exynos_drm_gem_mmap_buffer(struct exynos_drm_gem *exynos_gem,
-@@ -374,7 +374,7 @@ int exynos_drm_gem_get_ioctl(struct drm_device *dev, void *data,
- 	args->flags = exynos_gem->flags;
- 	args->size = exynos_gem->size;
- 
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 
- 	return 0;
- }
-@@ -444,7 +444,7 @@ int exynos_drm_gem_dumb_map_offset(struct drm_file *file_priv,
- 	*offset = drm_vma_node_offset_addr(&obj->vma_node);
- 	DRM_DEBUG_KMS("offset = 0x%lx\n", (unsigned long)*offset);
- 
--	drm_gem_object_unreference_unlocked(obj);
-+	drm_gem_object_put_unlocked(obj);
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 8de7400..930f45b 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -132,7 +132,7 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
- 	if (plane->state) {
- 		exynos_state = to_exynos_plane_state(plane->state);
- 		if (exynos_state->base.fb)
--			drm_framebuffer_unreference(exynos_state->base.fb);
-+			drm_framebuffer_put(exynos_state->base.fb);
- 		kfree(exynos_state);
- 		plane->state = NULL;
- 	}
+>>>>    [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+>>>>
+
+Best regards
 -- 
-2.7.4
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
