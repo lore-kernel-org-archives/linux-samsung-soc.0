@@ -1,66 +1,59 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH 0/9 v2] constify thermal_zone_of_device_ops structures
-Date: Fri, 11 Aug 2017 07:17:06 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1708110716270.2204@hadrien>
-References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr> <1502422611.2598.19.camel@intel.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-634072267-1502428627=:2204"
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <1502422611.2598.19.camel@intel.com>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, linux-rpi-kernel@lists.infradead.org, bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-input@vger.kernel.org, linux-hwmon@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] pinctrl: samsung: Changes for v4.14
+Date: Fri, 11 Aug 2017 07:50:48 +0200
+Message-ID: <1502430648-3676-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---8323329-634072267-1502428627=:2204
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Hi,
+
+Two fixes in this pull request were not regressions from current merge
+window and one was known for some time, so I did not push them
+to this cycle.
+
+Best regards,
+Krzysztof
 
 
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 
-On Fri, 11 Aug 2017, Zhang Rui wrote:
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
 
-> On Tue, 2017-08-08 at 17:08 +0200, Julia Lawall wrote:
-> > The thermal_zone_of_device_ops structures are only passed as the
-> > fourth
-> > argument to thermal_zone_of_sensor_register or
-> > devm_thermal_zone_of_sensor_register, both of which are declared as
-> > const.
-> > Thus the thermal_zone_of_device_ops structures themselves can be
-> > const.
-> >
-> > v2: add structures passed to devm_thermal_zone_of_sensor_register
-> > also.
-> >
-> > Done with the help of Coccinelle.
-> >
-> I don't see the patches changes out of drivers/thermal.
->
-> As there is no dependencies between these patches, I guess I will only
-> take patches that changes drivers/thermal.
+are available in the git repository at:
 
-No dependencies.  Each individual patch was only sent to its maintainers.
+  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.14
 
-julia
+for you to fetch changes up to bbed85f45b2b727bb776b914b84c67e8fd825433:
 
->
-> thanks,
-> rui
-> > ---
-> >
-> >  drivers/hwmon/hwmon.c                      |    2 +-
-> >  drivers/hwmon/scpi-hwmon.c                 |    2 +-
-> >  drivers/input/touchscreen/sun4i-ts.c       |    2 +-
-> >  drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
-> >  drivers/thermal/hisi_thermal.c             |    2 +-
-> >  drivers/thermal/qoriq_thermal.c            |    2 +-
-> >  drivers/thermal/rcar_gen3_thermal.c        |    2 +-
-> >  drivers/thermal/samsung/exynos_tmu.c       |    2 +-
-> >  drivers/thermal/zx2967_thermal.c           |    2 +-
-> >  9 files changed, 9 insertions(+), 9 deletions(-)
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---8323329-634072267-1502428627=:2204--
+  pinctrl: samsung: Remove unneeded local variable initialization (2017-07-24 06:56:02 +0200)
+
+----------------------------------------------------------------
+Samsung pinctrl driver changes for v4.14:
+1. Fix NULL pointer dereference on S3C24XX.  This was reported some time ago and
+   unfortunately it took few releases to fix.
+2. Fix invalid register offset used for external interrupts on Exynos5433.
+   This was caused by the same commit as above, although on different path.
+3. Consolidate between drivers and bindings the defines for pin mux functions.
+4. Minor code improvements.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (7):
+      pinctrl: samsung: Fix NULL pointer exception on external interrupts on S3C24xx
+      pinctrl: samsung: Fix invalid register offset used for Exynos5433 external interrupts
+      pinctrl: samsung: dt-bindings: Use better name for external interrupt function
+      pinctrl: samsung: Use define from dt-bindings for pin mux function
+      pinctrl: samsung: Use unsigned int for number of controller IO mem resources
+      pinctrl: samsung: Consistently use unsigned instead of u32 for nr_banks
+      pinctrl: samsung: Remove unneeded local variable initialization
+
+ drivers/pinctrl/samsung/pinctrl-exynos.c  | 32 ++++++++++---------------
+ drivers/pinctrl/samsung/pinctrl-exynos.h  |  1 -
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 37 +++++++++++++++-------------
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 40 ++++++++++++++-----------------
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 12 ++++++++--
+ drivers/pinctrl/samsung/pinctrl-samsung.h | 15 ++++++------
+ include/dt-bindings/pinctrl/samsung.h     |  3 ++-
+ 7 files changed, 71 insertions(+), 69 deletions(-)
