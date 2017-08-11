@@ -1,133 +1,80 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/2] drm/bridge: add Silicon Image SiI9234 driver
-Date: Fri, 11 Aug 2017 09:00:00 +0200
-Message-ID: <4d5ac06c-d396-b489-65d0-a975edf6db61@samsung.com>
-References: <1501746323-5254-1-git-send-email-m.purski@samsung.com>
- <3612749.1Xj3PQ173Q@avalon> <eea9742d-0180-205b-652e-f9bfbdd21c33@samsung.com>
- <CGME20170810145149epcas3p304a0b8f288028568080d59c0bf8434d8@epcas3p3.samsung.com>
- <5485864.0NeJDQRaQs@avalon>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 3/8] drm/exynos: mixer: simplify
+ {vp_video,mixer_graph}_buffer()
+Date: Fri, 11 Aug 2017 17:04:13 +0900
+Message-ID: <598D64FD.5000403@samsung.com>
+References: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
+ <CGME20170809115006epcas4p4b42ff60de1722b61b79e8ed2eaec14ce@epcas4p4.samsung.com>
+ <20170809114857.4945-4-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:55891 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751299AbdHKHAF (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 11 Aug 2017 03:00:05 -0400
-In-reply-to: <5485864.0NeJDQRaQs@avalon>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170809114857.4945-4-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Maciej Purski <m.purski@samsung.com>, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, krzk@kernel.org
 
-Hi Laurent,
-
-On 2017-08-10 16:51, Laurent Pinchart wrote:
-> Hi Marek,
->
-> On Friday 04 Aug 2017 08:55:55 Marek Szyprowski wrote:
->> Hi Laurent,
->>
->> Thanks for your detailed comments. Maciej resurrected some orphaned code,
->> which is still useful today (Tomasz has left Samsung a few years ago).
->> I'm not sure we will be able to answer all your questions without deep
->> investigation, especially about the driver operation details, but we
->> will try.
-> Thank you.
->
->> On 2017-08-03 12:24, Laurent Pinchart wrote:
->>> On Thursday 03 Aug 2017 09:45:22 Maciej Purski wrote:
->>>> SiI9234 transmitter converts eTMDS/HDMI signal to MHL 1.0.
->>>> It is controlled via I2C bus. Its interaction with other
->>>> devices in video pipeline is performed mainly on HW level.
->>>> The only interaction it does on device driver level is
->>>> filtering-out unsupported video modes, it exposes drm_bridge
->>>> interface to perform this operation.
->>>>
->>>> This patch is based on the code refactored by Tomasz Stanislawski
->>>> <t.stanislaws@samsung.com>, which was initially developed by:
->>>> Adam Hampson <ahampson@sta.samsung.com>
->>>> Erik Gilling <konkers@android.com>
->>>> Shankar Bandal <shankar.b@samsung.com>
->>>> Dharam Kumar <dharam.kr@samsung.com>
->>>>
->>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
->>>> ---
->>>>
->>>>    .../devicetree/bindings/display/bridge/sii9234.txt |   20 +
->>>>    drivers/gpu/drm/bridge/Kconfig                     |    8 +
->>>>    drivers/gpu/drm/bridge/Makefile                    |    1 +
->>>>    drivers/gpu/drm/bridge/sii9234.c                   | 1019 +++++++++++++
->>>>    4 files changed, 1048 insertions(+)
->>>>    create mode 100644
->>>>
->>>> Documentation/devicetree/bindings/display/bridge/sii9234.txt create mode
->>>> 100644 drivers/gpu/drm/bridge/sii9234.c
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/display/bridge/sii9234.txt
->>>> b/Documentation/devicetree/bindings/display/bridge/sii9234.txt new file
->>>> mode 100644
->>>> index 0000000..2cdf286
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/display/bridge/sii9234.txt
->>> DT reviewers might ask you to submit DT bindings as a separate patch.
->>>
->>>> @@ -0,0 +1,20 @@
->>>> +SiI9234 Mobile HD Link Transmitter
->>>> +
->>>> +Required properties:
->>>> +- compatible : "sil,sii9234".
->>>> +- reg : I2C address for TPI interface, use 0x39
->>>> +- vcc-supply : regulator that supplies the chip
->>> Is there a single power supply only ? Transceivers usually have at least
->>> one digital and one analog power supply.
->> Acording to the schematic there are four power supplies used for SII9234
->> MHL chip in Trats2 board: VSIL_1.2A, VSIL_1.2C, VCC_3.3V_MHL and
->> VCC_1.8V_MHL. First two are derived directly from VSIL_1.2 signal, which is
->> modeled as a fixed regulator. The latter two are derived directly from VBAT
->> using some level converter, which is controlled by the same GPIO pin as VSIL
->> fixed regulator. Any idea how this should be represented better in device
->> tree instead of having single vcc-supply?
-> Without access to the documentation I can only guess, but it looks like
-> VSIL_1.2A and VSIL_1.2C are supposed to be powered from the same power supply
-> rail, possibly with different filters. I think they can be grouped together
-> from a DT binding point of view. The last two supplies seem independent. We
-> should thus probably model this as three separate supplies.
-
-Okay, I see no problem adding support for all those three supplies, but 
-I was
-wondering how to model them in the device tree, because from the software
-perspective ALL power supplies needed by this chip are enabled by a single
-GPIO line switch.
-
-I see 3 possible solutions:
-1. Keep only single vcc supply for now and use fixed gpio regulator for it
-as a provider. Add a comment that it fact it provides 3 different power 
-signals.
-2. Extend fixed gpio regulator driver and bindings so it will be possible to
-have more than one fixed regulator controlled by the same gpio pin.
-3. Model VCC_3.3V_MHL and VCC_1.8V_MHL providers as "vctrl-regulator" and
-use this VSIL_1.2 as control voltage for them.
-
-Which one do you prefer?
-
-> It would be useful to check in the SII9234 datasheet what power sequence the
-> chip expects. Is there any chance you could find that document ?
-
-We have access only to the parts of the SII9234 documentation now and 
-there is no
-such information there.
-
->>>> +- interrupts, interrupt-parent: interrupt specifier of INT pin
->>>> +- reset-gpios: gpio specifier of RESET pin
->>> Is this mandatory to connect the reset pin to the SoC ?
->> IMHO yes, the chip has to be reset during the initialization procedure
->> and doesn't work properly without reset.
-> OK, I have no issue making the property mandatory then.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+CgoyMDE364WEIDA47JuUIDA57J28IDIwOjQ47JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
+IOq4gDoKPiBEUk0gY29yZSBhbHJlYWR5IGNoZWNrcyB0aGUgdmFsaWRpdHkgb2YgdGhlIHBpeGVs
+Zm9ybWF0cywgc28gd2UKPiBjYW4gc2ltcGxpZnkgdGhlIGNoZWNrcyBoZXJlLiBUaGUgc2FtZSBh
+cHBsaWVzIHRvIHRoZSBGQiBtb2RpZmllciwKPiB3aGljaCBpcyBub3cgY2hlY2tlZCBpbiBjb21t
+b24gRXh5bm9zIHBsYW5lIGNvZGUuCj4gCj4gQWxzbyByZW5hbWUgdGhlIGJvb2xlYW5zIHRvIHJl
+ZmxlY3Qgd2hhdCB0cnVlL2ZhbHNlIGFjdHVhbGx5Cj4gbWVhbnMuCj4gCj4gU2lnbmVkLW9mZi1i
+eTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4gLS0tCj4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAzMSArKysrKysrLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyksIDI0
+IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IGlu
+ZGV4IDRjODk0ZDk3YWJhMy4uOGQ2OGRlODViYWRhIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19taXhlci5jCj4gQEAgLTQ4NCwzMiArNDg0LDE4IEBAIHN0YXRpYyB2b2lkIHZwX3Zp
+ZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAo+ICAJdW5zaWduZWQgaW50IHBy
+aW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96cG9zICsgMTsKPiAgCXVuc2lnbmVkIGxv
+bmcgZmxhZ3M7Cj4gIAlkbWFfYWRkcl90IGx1bWFfYWRkclsyXSwgY2hyb21hX2FkZHJbMl07Cj4g
+LQlib29sIHRpbGVkX21vZGUgPSBmYWxzZTsKPiAtCWJvb2wgY3JjYl9tb2RlID0gZmFsc2U7Cj4g
+Kwlib29sIGlzX3RpbGVkLCBpc19udjIxOwo+ICAJdTMyIHZhbDsKPiAgCj4gLQlzd2l0Y2ggKGZi
+LT5mb3JtYXQtPmZvcm1hdCkgewo+IC0JY2FzZSBEUk1fRk9STUFUX05WMTI6Cj4gLQkJY3JjYl9t
+b2RlID0gZmFsc2U7Cj4gLQkJYnJlYWs7Cj4gLQljYXNlIERSTV9GT1JNQVRfTlYyMToKPiAtCQlj
+cmNiX21vZGUgPSB0cnVlOwo+IC0JCWJyZWFrOwo+IC0JZGVmYXVsdDoKPiAtCQlEUk1fRVJST1Io
+InBpeGVsIGZvcm1hdCBmb3IgdnAgaXMgd3JvbmcgWyVkXS5cbiIsCj4gLQkJCQlmYi0+Zm9ybWF0
+LT5mb3JtYXQpOwo+IC0JCXJldHVybjsKPiAtCX0KPiAtCj4gLQlpZiAoZmItPm1vZGlmaWVyID09
+IERSTV9GT1JNQVRfTU9EX1NBTVNVTkdfNjRfMzJfVElMRSkKPiAtCQl0aWxlZF9tb2RlID0gdHJ1
+ZTsKPiArCWlzX252MjEgPSAoZmItPmZvcm1hdC0+Zm9ybWF0ID09IERSTV9GT1JNQVRfTlYyMSk7
+Cj4gKwlpc190aWxlZCA9IChmYi0+bW9kaWZpZXIgPT0gRFJNX0ZPUk1BVF9NT0RfU0FNU1VOR182
+NF8zMl9USUxFKTsKPiAgCj4gIAlsdW1hX2FkZHJbMF0gPSBleHlub3NfZHJtX2ZiX2RtYV9hZGRy
+KGZiLCAwKTsKPiAgCWNocm9tYV9hZGRyWzBdID0gZXh5bm9zX2RybV9mYl9kbWFfYWRkcihmYiwg
+MSk7Cj4gIAo+ICAJaWYgKG1vZGUtPmZsYWdzICYgRFJNX01PREVfRkxBR19JTlRFUkxBQ0UpIHsK
+PiAgCQlfX3NldF9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdzKTsKPiAtCQlpZiAo
+dGlsZWRfbW9kZSkgewo+ICsJCWlmIChpc190aWxlZCkgewo+ICAJCQlsdW1hX2FkZHJbMV0gPSBs
+dW1hX2FkZHJbMF0gKyAweDQwOwo+ICAJCQljaHJvbWFfYWRkclsxXSA9IGNocm9tYV9hZGRyWzBd
+ICsgMHg0MDsKPiAgCQl9IGVsc2Ugewo+IEBAIC01MjksOCArNTE1LDggQEAgc3RhdGljIHZvaWQg
+dnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCj4gIAl2cF9yZWdfd3Jp
+dGVtYXNrKHJlcywgVlBfTU9ERSwgdmFsLCBWUF9NT0RFX0xJTkVfU0tJUCk7Cj4gIAo+ICAJLyog
+c2V0dXAgZm9ybWF0ICovCj4gLQl2YWwgPSAoY3JjYl9tb2RlID8gVlBfTU9ERV9OVjIxIDogVlBf
+TU9ERV9OVjEyKTsKPiAtCXZhbCB8PSAodGlsZWRfbW9kZSA/IFZQX01PREVfTUVNX1RJTEVEIDog
+VlBfTU9ERV9NRU1fTElORUFSKTsKPiArCXZhbCA9IChpc19udjIxID8gVlBfTU9ERV9OVjIxIDog
+VlBfTU9ERV9OVjEyKTsKPiArCXZhbCB8PSAoaXNfdGlsZWQgPyBWUF9NT0RFX01FTV9USUxFRCA6
+IFZQX01PREVfTUVNX0xJTkVBUik7Cj4gIAl2cF9yZWdfd3JpdGVtYXNrKHJlcywgVlBfTU9ERSwg
+dmFsLCBWUF9NT0RFX0ZNVF9NQVNLKTsKPiAgCj4gIAkvKiBzZXR0aW5nIHNpemUgb2YgaW5wdXQg
+aW1hZ2UgKi8KPiBAQCAtNjIwLDEyICs2MDYsOSBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9i
+dWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPiAgCj4gIAljYXNlIERSTV9GT1JNQVRf
+WFJHQjg4ODg6Cj4gIAljYXNlIERSTV9GT1JNQVRfQVJHQjg4ODg6Cj4gKwlkZWZhdWx0Ogo+ICAJ
+CWZtdCA9IE1YUl9GT1JNQVRfQVJHQjg4ODg7Cj4gIAkJYnJlYWs7Cj4gLQo+IC0JZGVmYXVsdDoK
+PiAtCQlEUk1fREVCVUdfS01TKCJwaXhlbGZvcm1hdCB1bnN1cHBvcnRlZCBieSBtaXhlclxuIik7
+Cj4gLQkJcmV0dXJuOwoKVGhpcyBjaGFuZ2Ugc2hvdWxkIGJlIG1hZGUgYXMgYW5vdGhlciBwYXRj
+aCBiZWNhdXNlIHRoaXMgcGF0Y2ggY2hhbmdlcyB0aGUgYmVoYXZpb3Igd2hldGhlciBpdCBhbGxv
+d3Mgd3JvbmcgcGl4ZWwgZm9ybWF0IG9yIG5vdC4KClRoYW5rcywKSW5raSBEYWUKCj4gIAl9Cj4g
+IAo+ICAJLyogcmF0aW8gaXMgYWxyZWFkeSBjaGVja2VkIGJ5IGNvbW1vbiBwbGFuZSBjb2RlICov
+Cj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
