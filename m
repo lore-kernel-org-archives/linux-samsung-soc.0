@@ -1,48 +1,68 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/9 v2] constify thermal_zone_of_device_ops structures
-Date: Fri, 11 Aug 2017 11:36:51 +0800
-Message-ID: <1502422611.2598.19.camel@intel.com>
-References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+From: <nenep@hkg.odn.ne.jp>
+Subject: (unknown)
+Date: Fri, 11 Aug 2017 04:57:51 -0000
+Message-ID: <150242747136.22644.15198718334880331061@vnpt.vn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>, linux-rpi-kernel@lists.infradead.org
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-input@vger.kernel.org, linux-hwmon@vger.kernel.org
+Content-Type: application/zip; name="674345.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from static.vnpt.vn ([14.187.60.243]:39886 "HELO vnpt.vn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1750815AbdHKE54 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 11 Aug 2017 00:57:56 -0400
+Content-Disposition: attachment
+Subject: 
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On Tue, 2017-08-08 at 17:08 +0200, Julia Lawall wrote:
-> The thermal_zone_of_device_ops structures are only passed as the
-> fourth
-> argument to thermal_zone_of_sensor_register or
-> devm_thermal_zone_of_sensor_register, both of which are declared as
-> const.
-> Thus the thermal_zone_of_device_ops structures themselves can be
-> const.
-> 
-> v2: add structures passed to devm_thermal_zone_of_sensor_register
-> also.
-> 
-> Done with the help of Coccinelle.
-> 
-I don't see the patches changes out of drivers/thermal.
-
-As there is no dependencies between these patches, I guess I will only
-take patches that changes drivers/thermal.
-
-thanks,
-rui
-> ---
-> 
->  drivers/hwmon/hwmon.c                      |    2 +-
->  drivers/hwmon/scpi-hwmon.c                 |    2 +-
->  drivers/input/touchscreen/sun4i-ts.c       |    2 +-
->  drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
->  drivers/thermal/hisi_thermal.c             |    2 +-
->  drivers/thermal/qoriq_thermal.c            |    2 +-
->  drivers/thermal/rcar_gen3_thermal.c        |    2 +-
->  drivers/thermal/samsung/exynos_tmu.c       |    2 +-
->  drivers/thermal/zx2967_thermal.c           |    2 +-
->  9 files changed, 9 insertions(+), 9 deletions(-)
+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
