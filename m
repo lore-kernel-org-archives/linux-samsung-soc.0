@@ -1,120 +1,119 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] drm/bridge: add Silicon Image SiI9234 driver
-Date: Fri, 11 Aug 2017 12:00:43 +0300
-Message-ID: <35788498.IS2VIdUVsa@avalon>
-References: <1501746323-5254-1-git-send-email-m.purski@samsung.com>
- <5485864.0NeJDQRaQs@avalon>
- <4d5ac06c-d396-b489-65d0-a975edf6db61@samsung.com>
+Subject: Re: [PATCH 1/2] drm/bridge/sii8620: add external connector handle
+Date: Fri, 11 Aug 2017 12:40:39 +0300
+Message-ID: <2097016.rlxulirhWA@avalon>
+References: <1502371530-32260-1-git-send-email-m.purski@samsung.com> <6478480.TjcUCueU5y@avalon> <5ce6bd99-c50e-84c2-f21f-eb611cac94c2@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <4d5ac06c-d396-b489-65d0-a975edf6db61@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org, Maciej Purski <m.purski@samsung.com>, robh+dt@kernel.org, krzk@kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:34169 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751416AbdHKJkW (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 11 Aug 2017 05:40:22 -0400
+In-Reply-To: <5ce6bd99-c50e-84c2-f21f-eb611cac94c2@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Maciej Purski <m.purski@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, will.deacon@arm.com, catalin.marinas@arm.com, a.hajda@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
 
-SGkgTWFyZWssCgoobm93IENDJ2luZyBNYXJrIEJyb3duIHdpdGggaGlzIGNvcnJlY3QgZS1tYWls
-IGFkZHJlc3MpCgpPbiBGcmlkYXkgMTEgQXVnIDIwMTcgMDk6MDA6MDAgTWFyZWsgU3p5cHJvd3Nr
-aSB3cm90ZToKPiBPbiAyMDE3LTA4LTEwIDE2OjUxLCBMYXVyZW50IFBpbmNoYXJ0IHdyb3RlOgo+
-ID4gT24gRnJpZGF5IDA0IEF1ZyAyMDE3IDA4OjU1OjU1IE1hcmVrIFN6eXByb3dza2kgd3JvdGU6
-Cj4gPj4gSGkgTGF1cmVudCwKPiA+PiAKPiA+PiBUaGFua3MgZm9yIHlvdXIgZGV0YWlsZWQgY29t
-bWVudHMuIE1hY2llaiByZXN1cnJlY3RlZCBzb21lIG9ycGhhbmVkIGNvZGUsCj4gPj4gd2hpY2gg
-aXMgc3RpbGwgdXNlZnVsIHRvZGF5IChUb21hc3ogaGFzIGxlZnQgU2Ftc3VuZyBhIGZldyB5ZWFy
-cyBhZ28pLgo+ID4+IEknbSBub3Qgc3VyZSB3ZSB3aWxsIGJlIGFibGUgdG8gYW5zd2VyIGFsbCB5
-b3VyIHF1ZXN0aW9ucyB3aXRob3V0IGRlZXAKPiA+PiBpbnZlc3RpZ2F0aW9uLCBlc3BlY2lhbGx5
-IGFib3V0IHRoZSBkcml2ZXIgb3BlcmF0aW9uIGRldGFpbHMsIGJ1dCB3ZQo+ID4+IHdpbGwgdHJ5
-Lgo+ID4gCj4gPiBUaGFuayB5b3UuCj4gPiAKPiA+PiBPbiAyMDE3LTA4LTAzIDEyOjI0LCBMYXVy
-ZW50IFBpbmNoYXJ0IHdyb3RlOgo+ID4+PiBPbiBUaHVyc2RheSAwMyBBdWcgMjAxNyAwOTo0NToy
-MiBNYWNpZWogUHVyc2tpIHdyb3RlOgo+ID4+Pj4gU2lJOTIzNCB0cmFuc21pdHRlciBjb252ZXJ0
-cyBlVE1EUy9IRE1JIHNpZ25hbCB0byBNSEwgMS4wLgo+ID4+Pj4gSXQgaXMgY29udHJvbGxlZCB2
-aWEgSTJDIGJ1cy4gSXRzIGludGVyYWN0aW9uIHdpdGggb3RoZXIKPiA+Pj4+IGRldmljZXMgaW4g
-dmlkZW8gcGlwZWxpbmUgaXMgcGVyZm9ybWVkIG1haW5seSBvbiBIVyBsZXZlbC4KPiA+Pj4+IFRo
-ZSBvbmx5IGludGVyYWN0aW9uIGl0IGRvZXMgb24gZGV2aWNlIGRyaXZlciBsZXZlbCBpcwo+ID4+
-Pj4gZmlsdGVyaW5nLW91dCB1bnN1cHBvcnRlZCB2aWRlbyBtb2RlcywgaXQgZXhwb3NlcyBkcm1f
-YnJpZGdlCj4gPj4+PiBpbnRlcmZhY2UgdG8gcGVyZm9ybSB0aGlzIG9wZXJhdGlvbi4KPiA+Pj4+
-IAo+ID4+Pj4gVGhpcyBwYXRjaCBpcyBiYXNlZCBvbiB0aGUgY29kZSByZWZhY3RvcmVkIGJ5IFRv
-bWFzeiBTdGFuaXNsYXdza2kKPiA+Pj4+IDx0LnN0YW5pc2xhd3NAc2Ftc3VuZy5jb20+LCB3aGlj
-aCB3YXMgaW5pdGlhbGx5IGRldmVsb3BlZCBieToKPiA+Pj4+IEFkYW0gSGFtcHNvbiA8YWhhbXBz
-b25Ac3RhLnNhbXN1bmcuY29tPgo+ID4+Pj4gRXJpayBHaWxsaW5nIDxrb25rZXJzQGFuZHJvaWQu
-Y29tPgo+ID4+Pj4gU2hhbmthciBCYW5kYWwgPHNoYW5rYXIuYkBzYW1zdW5nLmNvbT4KPiA+Pj4+
-IERoYXJhbSBLdW1hciA8ZGhhcmFtLmtyQHNhbXN1bmcuY29tPgo+ID4+Pj4gCj4gPj4+PiBTaWdu
-ZWQtb2ZmLWJ5OiBNYWNpZWogUHVyc2tpIDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KPiA+Pj4+IC0t
-LQo+ID4+Pj4gCj4gPj4+PiAgICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2JyaWRn
-ZS9zaWk5MjM0LnR4dCB8ICAgMjAgKwo+ID4+Pj4gICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9L
-Y29uZmlnICAgICAgICAgICAgICAgICAgICAgfCAgICA4ICsKPiA+Pj4+ICAgIGRyaXZlcnMvZ3B1
-L2RybS9icmlkZ2UvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgIHwgICAgMSArCj4gPj4+PiAg
-ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpaTkyMzQuYyAgICAgICAgICAgICAgICAgICB8IDEw
-MTkgKysrKysrKysrKwo+ID4+Pj4gICAgNCBmaWxlcyBjaGFuZ2VkLCAxMDQ4IGluc2VydGlvbnMo
-KykKPiA+Pj4+ICAgIGNyZWF0ZSBtb2RlIDEwMDY0NAo+ID4+Pj4gCj4gPj4+PiBEb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2Uvc2lpOTIzNC50eHQgY3JlYXRl
-Cj4gPj4+PiBtb2RlCj4gPj4+PiAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWk5MjM0
-LmMKPiA+Pj4+IAo+ID4+Pj4gZGlmZiAtLWdpdAo+ID4+Pj4gYS9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2Uvc2lpOTIzNC50eHQKPiA+Pj4+IGIvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkyMzQudHh0IG5l
-dyBmaWxlCj4gPj4+PiBtb2RlIDEwMDY0NAo+ID4+Pj4gaW5kZXggMDAwMDAwMC4uMmNkZjI4Ngo+
-ID4+Pj4gLS0tIC9kZXYvbnVsbAo+ID4+Pj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpaTkyMzQudHh0Cj4gPj4+IAo+ID4+PiBEVCByZXZp
-ZXdlcnMgbWlnaHQgYXNrIHlvdSB0byBzdWJtaXQgRFQgYmluZGluZ3MgYXMgYSBzZXBhcmF0ZSBw
-YXRjaC4KPiA+Pj4gCj4gPj4+PiBAQCAtMCwwICsxLDIwIEBACj4gPj4+PiArU2lJOTIzNCBNb2Jp
-bGUgSEQgTGluayBUcmFuc21pdHRlcgo+ID4+Pj4gKwo+ID4+Pj4gK1JlcXVpcmVkIHByb3BlcnRp
-ZXM6Cj4gPj4+PiArLSBjb21wYXRpYmxlIDogInNpbCxzaWk5MjM0Ii4KPiA+Pj4+ICstIHJlZyA6
-IEkyQyBhZGRyZXNzIGZvciBUUEkgaW50ZXJmYWNlLCB1c2UgMHgzOQo+ID4+Pj4gKy0gdmNjLXN1
-cHBseSA6IHJlZ3VsYXRvciB0aGF0IHN1cHBsaWVzIHRoZSBjaGlwCj4gPj4+IAo+ID4+PiBJcyB0
-aGVyZSBhIHNpbmdsZSBwb3dlciBzdXBwbHkgb25seSA/IFRyYW5zY2VpdmVycyB1c3VhbGx5IGhh
-dmUgYXQgbGVhc3QKPiA+Pj4gb25lIGRpZ2l0YWwgYW5kIG9uZSBhbmFsb2cgcG93ZXIgc3VwcGx5
-Lgo+ID4+IAo+ID4+IEFjb3JkaW5nIHRvIHRoZSBzY2hlbWF0aWMgdGhlcmUgYXJlIGZvdXIgcG93
-ZXIgc3VwcGxpZXMgdXNlZCBmb3IgU0lJOTIzNAo+ID4+IE1ITCBjaGlwIGluIFRyYXRzMiBib2Fy
-ZDogVlNJTF8xLjJBLCBWU0lMXzEuMkMsIFZDQ18zLjNWX01ITCBhbmQKPiA+PiBWQ0NfMS44Vl9N
-SEwuIEZpcnN0IHR3byBhcmUgZGVyaXZlZCBkaXJlY3RseSBmcm9tIFZTSUxfMS4yIHNpZ25hbCwg
-d2hpY2gKPiA+PiBpcyBtb2RlbGVkIGFzIGEgZml4ZWQgcmVndWxhdG9yLiBUaGUgbGF0dGVyIHR3
-byBhcmUgZGVyaXZlZCBkaXJlY3RseSBmcm9tCj4gPj4gVkJBVCB1c2luZyBzb21lIGxldmVsIGNv
-bnZlcnRlciwgd2hpY2ggaXMgY29udHJvbGxlZCBieSB0aGUgc2FtZSBHUElPIHBpbgo+ID4+IGFz
-IFZTSUwgZml4ZWQgcmVndWxhdG9yLiBBbnkgaWRlYSBob3cgdGhpcyBzaG91bGQgYmUgcmVwcmVz
-ZW50ZWQgYmV0dGVyCj4gPj4gaW4gZGV2aWNlIHRyZWUgaW5zdGVhZCBvZiBoYXZpbmcgc2luZ2xl
-IHZjYy1zdXBwbHk/Cj4gPiAKPiA+IFdpdGhvdXQgYWNjZXNzIHRvIHRoZSBkb2N1bWVudGF0aW9u
-IEkgY2FuIG9ubHkgZ3Vlc3MsIGJ1dCBpdCBsb29rcyBsaWtlCj4gPiBWU0lMXzEuMkEgYW5kIFZT
-SUxfMS4yQyBhcmUgc3VwcG9zZWQgdG8gYmUgcG93ZXJlZCBmcm9tIHRoZSBzYW1lIHBvd2VyCj4g
-PiBzdXBwbHkgcmFpbCwgcG9zc2libHkgd2l0aCBkaWZmZXJlbnQgZmlsdGVycy4gSSB0aGluayB0
-aGV5IGNhbiBiZSBncm91cGVkCj4gPiB0b2dldGhlciBmcm9tIGEgRFQgYmluZGluZyBwb2ludCBv
-ZiB2aWV3LiBUaGUgbGFzdCB0d28gc3VwcGxpZXMgc2VlbQo+ID4gaW5kZXBlbmRlbnQuIFdlIHNo
-b3VsZCB0aHVzIHByb2JhYmx5IG1vZGVsIHRoaXMgYXMgdGhyZWUgc2VwYXJhdGUKPiA+IHN1cHBs
-aWVzLgo+IAo+IE9rYXksIEkgc2VlIG5vIHByb2JsZW0gYWRkaW5nIHN1cHBvcnQgZm9yIGFsbCB0
-aG9zZSB0aHJlZSBzdXBwbGllcywgYnV0Cj4gSSB3YXMgd29uZGVyaW5nIGhvdyB0byBtb2RlbCB0
-aGVtIGluIHRoZSBkZXZpY2UgdHJlZSwgYmVjYXVzZSBmcm9tIHRoZQo+IHNvZnR3YXJlIHBlcnNw
-ZWN0aXZlIEFMTCBwb3dlciBzdXBwbGllcyBuZWVkZWQgYnkgdGhpcyBjaGlwIGFyZSBlbmFibGVk
-IGJ5IGEKPiBzaW5nbGUgR1BJTyBsaW5lIHN3aXRjaC4KPiAKPiBJIHNlZSAzIHBvc3NpYmxlIHNv
-bHV0aW9uczoKPiAxLiBLZWVwIG9ubHkgc2luZ2xlIHZjYyBzdXBwbHkgZm9yIG5vdyBhbmQgdXNl
-IGZpeGVkIGdwaW8gcmVndWxhdG9yIGZvciBpdAo+IGFzIGEgcHJvdmlkZXIuIEFkZCBhIGNvbW1l
-bnQgdGhhdCBpdCBmYWN0IGl0IHByb3ZpZGVzIDMgZGlmZmVyZW50IHBvd2VyCj4gc2lnbmFscy4K
-PiAyLiBFeHRlbmQgZml4ZWQgZ3BpbyByZWd1bGF0b3IgZHJpdmVyIGFuZCBiaW5kaW5ncyBzbyBp
-dCB3aWxsIGJlIHBvc3NpYmxlIHRvCj4gaGF2ZSBtb3JlIHRoYW4gb25lIGZpeGVkIHJlZ3VsYXRv
-ciBjb250cm9sbGVkIGJ5IHRoZSBzYW1lIGdwaW8gcGluLgo+IDMuIE1vZGVsIFZDQ18zLjNWX01I
-TCBhbmQgVkNDXzEuOFZfTUhMIHByb3ZpZGVycyBhcyAidmN0cmwtcmVndWxhdG9yIiBhbmQKPiB1
-c2UgdGhpcyBWU0lMXzEuMiBhcyBjb250cm9sIHZvbHRhZ2UgZm9yIHRoZW0uCj4gCj4gV2hpY2gg
-b25lIGRvIHlvdSBwcmVmZXI/CgoyIHdvdWxkIGJlIGJlc3QgSSB0aGluaywgYnV0IHRoYXQncyBt
-b3JlIHdvcmsuIE1hcmssIHdoYXQgZG8geW91IHRoaW5rID8KCj4gPiBJdCB3b3VsZCBiZSB1c2Vm
-dWwgdG8gY2hlY2sgaW4gdGhlIFNJSTkyMzQgZGF0YXNoZWV0IHdoYXQgcG93ZXIgc2VxdWVuY2UK
-PiA+IHRoZSBjaGlwIGV4cGVjdHMuIElzIHRoZXJlIGFueSBjaGFuY2UgeW91IGNvdWxkIGZpbmQg
-dGhhdCBkb2N1bWVudCA/Cj4gCj4gV2UgaGF2ZSBhY2Nlc3Mgb25seSB0byB0aGUgcGFydHMgb2Yg
-dGhlIFNJSTkyMzQgZG9jdW1lbnRhdGlvbiBub3cgYW5kCj4gdGhlcmUgaXMgbm8KPiBzdWNoIGlu
-Zm9ybWF0aW9uIHRoZXJlLgo+IAo+ID4+Pj4gKy0gaW50ZXJydXB0cywgaW50ZXJydXB0LXBhcmVu
-dDogaW50ZXJydXB0IHNwZWNpZmllciBvZiBJTlQgcGluCj4gPj4+PiArLSByZXNldC1ncGlvczog
-Z3BpbyBzcGVjaWZpZXIgb2YgUkVTRVQgcGluCj4gPj4+IAo+ID4+PiBJcyB0aGlzIG1hbmRhdG9y
-eSB0byBjb25uZWN0IHRoZSByZXNldCBwaW4gdG8gdGhlIFNvQyA/Cj4gPj4gCj4gPj4gSU1ITyB5
-ZXMsIHRoZSBjaGlwIGhhcyB0byBiZSByZXNldCBkdXJpbmcgdGhlIGluaXRpYWxpemF0aW9uIHBy
-b2NlZHVyZQo+ID4+IGFuZCBkb2Vzbid0IHdvcmsgcHJvcGVybHkgd2l0aG91dCByZXNldC4KPiA+
-IAo+ID4gT0ssIEkgaGF2ZSBubyBpc3N1ZSBtYWtpbmcgdGhlIHByb3BlcnR5IG1hbmRhdG9yeSB0
-aGVuLgo+IAo+IEJlc3QgcmVnYXJkcwoKLS0gClJlZ2FyZHMsCgpMYXVyZW50IFBpbmNoYXJ0Cl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Marek,
+
+On Friday 11 Aug 2017 08:39:31 Marek Szyprowski wrote:
+> On 2017-08-10 15:39, Laurent Pinchart wrote:
+> > On Thursday 10 Aug 2017 15:25:29 Maciej Purski wrote:
+> >> The driver should be switched on if an external connector is plugged and
+> >> switched off if it is unplugged. Extcon is optional. If it is not found,
+> >> the driver stays in "always-on" mode.
+> >> 
+> >> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> >> ---
+> >> 
+> >>   .../bindings/display/bridge/sil-sii8620.txt        |  4 ++
+> >>   drivers/gpu/drm/bridge/sil-sii8620.c               | 83 ++++++++++++++-
+> >>   2 files changed, 85 insertions(+), 2 deletions(-)
+> >> 
+> >> diff --git
+> >> a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+> >> b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt index
+> >> 9409d9c..1f230bf 100644
+> >> --- a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+> >> +++ b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+> >> @@ -10,6 +10,9 @@ Required properties:
+> >>   	- clocks, clock-names: specification and name of "xtal" clock
+> >>   	- video interfaces: Device node can contain video interface port
+> >>   			    node for HDMI encoder according to [1].
+> >> 
+> >> +Optional properties:
+> >> +	- extcon: phandle to external connector for MHL cable changes
+> >> +		  detection
+> > 
+> > The sii8620 DT node should model its connection to the MHL connector using
+> > OF graph, connecting a port to the MHL connector DT node through
+> > endpoints. I believe the extcon property should then be added to the MHL
+> > connector DT node, not the bridge.
+> 
+> I don't get this. Generic extcon bindings doesn't define connector DT
+> node, so I don't see how could we use endpoint DT approach here. Could you
+> give the example?
+
+Sure, here you are.
+
+&hsi2c_7 {
+	...
+
+        sii8620@39 {
+                reg = <0x39>;
+                compatible = "sil,sii8620";
+                cvcc10-supply = <&ldo36_reg>;
+                iovcc18-supply = <&ldo34_reg>;
+                interrupt-parent = <&gpf0>;
+                interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
+                reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
+                clocks = <&pmu_system_controller 0>;
+                clock-names = "xtal";
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+	                port@0 {
+				reg = <0>;
+        	                mhl_to_hdmi: endpoint {
+                	                remote-endpoint = <&hdmi_to_mhl>;
+	                        };
+        	        };
+	                port@1 {
+				reg = <1>;
+        	                mhl_bridge_out: endpoint {
+                	                remote-endpoint = <&mhl_connector_in>;
+	                        };
+        	        };
+		};
+        };
+};
+
+/ {
+	mhl-connector {
+		compatible = "mhl-connector";
+		extcon = <&muic>;
+
+	        port {
+        	        mhl_connector_in: endpoint {
+                	        remote-endpoint = <&mhl_bridge_out>;
+	                };
+        	};
+	};
+};
+
+Note that there's currently no DT binding for MHL connectors. One needs to be 
+developed, the HDMI connector DT binding can be used as a source of 
+inspiration.
+
+> >>   [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+
+-- 
+Regards,
+
+Laurent Pinchart
