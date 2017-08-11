@@ -1,48 +1,51 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates for 4.14-rc1
-Date: Fri, 11 Aug 2017 19:00:40 +0200
-Message-ID: <3188b220-d1da-eabc-33cf-333b2315af47@samsung.com>
-References: <CGME20170811170044epcas1p156cc48d8ca2d2533fa91daf41213487f@epcas1p1.samsung.com>
+Subject: [GIT PULL] s5p-jpeg fixes for v4.14-rc1
+Date: Fri, 11 Aug 2017 19:24:14 +0200
+Message-ID: <2fc2475a-248f-0ea2-a180-30419e91275e@samsung.com>
+References: <CGME20170811172417epcas1p4a5ab8343231f1434e7abbca962b3b08d@epcas1p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: LMML <linux-media@vger.kernel.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+Hi Mauro,
 
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+The following changes since commit ec0c3ec497cabbf3bfa03a9eb5edcc252190a4e0:
+
+  media: ddbridge: split code into multiple files (2017-08-09 12:17:01 -0400)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.14-samsung
+  git://linuxtv.org/snawrocki/samsung.git for-v4.14/media/next-2
 
-for you to fetch changes up to 599cebea93e69c25e4cf027fc21d2bdf9a4a1ec7:
+for you to fetch changes up to a1c60f2c60228a6c0d31e95ae4e65e6afd4655df:
 
-  clk: samsung: exynos542x: Enable clock rate propagation up to the EPLL (2017-08-10 10:56:23 +0200)
-
-----------------------------------------------------------------
-clk/samsung updates for 4.14
-
-Changes in definitions of audio related clocks for Exynos5420/5422/5800
-SoCs: a fix of mau_epll clock definition and changes enabling clock rate
-setting propagation on a path from the I2S IP block up the EPLL.
+  s5p-jpeg: directly use parsed subsampling on exynos5433 (2017-08-11 19:13:06 +0200)
 
 ----------------------------------------------------------------
-Sylwester Nawrocki (3):
-      clk: samsung: Fix mau_epll clock definition for exynos5422
-      clk: samsung: Add CLK_SET_RATE_PARENT to some AUDSS CLK CON clocks
-      clk: samsung: exynos542x: Enable clock rate propagation up to the EPLL
+Andrzej Pietrasiewicz (5):
+      s5p-jpeg: don't overwrite result's "size" member
+      s5p-jpeg: set w/h when encoding
+      s5p-jpeg: disable encoder/decoder in exynos4-like hardware after use
+      s5p-jpeg: fix number of components macro
+      s5p-jpeg: directly use parsed subsampling on exynos5433
 
- drivers/clk/samsung/clk-exynos-audss.c |  8 ++++----
- drivers/clk/samsung/clk-exynos5420.c   | 23 +++++++++++++++--------
- 2 files changed, 19 insertions(+), 12 deletions(-)
+Tony K Nadackal (2):
+      s5p-jpeg: Fix crash in jpeg isr due to multiple interrupts.
+      s5p-jpeg: Clear JPEG_CODEC_ON bits in sw reset function
+
+ drivers/media/platform/s5p-jpeg/jpeg-core.c       | 18 ++++++++++++++----
+ drivers/media/platform/s5p-jpeg/jpeg-core.h       |  1 +
+ drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c |  9 ++++++++-
+ drivers/media/platform/s5p-jpeg/jpeg-regs.h       |  2 +-
+ 4 files changed, 24 insertions(+), 6 deletions(-)
 
 -- 
-Thanks,
+Regards,
 Sylwester
