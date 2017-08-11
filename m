@@ -1,81 +1,71 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 4/8] drm/exynos: mixer: remove src offset from
- mixer_graph_buffer()
-Date: Fri, 11 Aug 2017 17:12:14 +0900
-Message-ID: <598D66DE.2090006@samsung.com>
+Subject: Re: [PATCH 5/8] drm/exynos: introduce BYTE_PITCH capability
+Date: Fri, 11 Aug 2017 17:23:09 +0900
+Message-ID: <598D696D.80406@samsung.com>
 References: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
-        <CGME20170809115026epcas2p4ea35e8ab1206b0f5ebbddf48d9855132@epcas2p4.samsung.com>
-        <20170809114857.4945-5-tjakobi@math.uni-bielefeld.de>
+ <CGME20170809115059epcas2p25c4ebecf972fbaf4949db9f760a801e2@epcas2p2.samsung.com>
+ <20170809114857.4945-6-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:52155 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbdHKIMQ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 11 Aug 2017 04:12:16 -0400
-In-reply-to: <20170809114857.4945-5-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170809114857.4945-6-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-2017년 08월 09일 20:48에 Tobias Jakobi 이(가) 쓴 글:
-> We always translate the dma address such that the offsets of
-> the source image are zero. Hence we can remove manipulation of
-> the MXR_GRAPHIC_SXY(win) register.
-> 
-> We leave the register defines (in regs_mixer.h) in place, since
-> they document the hardware.
-> 
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 8d68de85bada..28fbe79befff 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -584,7 +584,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
->  	unsigned long flags;
->  	unsigned int win = plane->index;
->  	unsigned int x_ratio = 0, y_ratio = 0;
-> -	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
-> +	unsigned int dst_x_offset, dst_y_offset;
->  	dma_addr_t dma_addr;
->  	unsigned int fmt;
->  	u32 val;
-> @@ -618,12 +618,10 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
->  	dst_x_offset = state->crtc.x;
->  	dst_y_offset = state->crtc.y;
->  
-> -	/* converting dma address base and source offset */
-> +	/* translate dma address base s.t. the source image offset is zero */
->  	dma_addr = exynos_drm_fb_dma_addr(fb, 0)
->  		+ (state->src.x * fb->format->cpp[0])
->  		+ (state->src.y * fb->pitches[0]);
-> -	src_x_offset = 0;
-> -	src_y_offset = 0;
->  
->  	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
->  		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
-> @@ -654,11 +652,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
->  	val |= MXR_GRP_WH_V_SCALE(y_ratio);
->  	mixer_reg_write(res, MXR_GRAPHIC_WH(win), val);
->  
-> -	/* setup offsets in source image */
-> -	val  = MXR_GRP_SXY_SX(src_x_offset);
-> -	val |= MXR_GRP_SXY_SY(src_y_offset);
-> -	mixer_reg_write(res, MXR_GRAPHIC_SXY(win), val);
-
-The offset of source buffer can be set at bootloader so previous value can be keeped. I think MXR_GRAPHIC_SXY register should be cleared at mixer_win_reset function if you want to remove above lines.
-
-> -
->  	/* setup offsets in display image */
->  	val  = MXR_GRP_DXY_DX(dst_x_offset);
->  	val |= MXR_GRP_DXY_DY(dst_y_offset);
-> 
+CgoyMDE364WEIDA47JuUIDA57J28IDIwOjQ47JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
+IOq4gDoKPiBJbiBzb21lIG9mIGRyaXZlcnMgd2UgY29tcHV0ZSBzb21ldGhpbmcgbGlrZSAncGl0
+Y2ggLyBjcHAnIGF0IHNvbWUKPiBwb2ludCwgc2lsZW50bHkgYXNzdW1pbmcgdGhhdCB0aGUgcGl0
+Y2ggKHdoaWNoIGlzIGluIGJ5dGVzKSBpcwo+IGRpdmlzaWJsZSBieSB0aGUgYnVmZmVyJ3MgY3Bw
+LiBUaGlzIGlzIG5vdCBhbHdheXMgdHJ1ZSwgaW4gcGFydGljdWxhcgo+IERSTSBjb3JlIGRvZXMg
+bm90IGNoZWNrIGZvciBwaXRjaCBhbGlnbm1lbnQgaW4gdGhlIGNvbW1vbiBjYXNlLgo+IAo+IElu
+dHJvZHVjZSBhIG5ldyBjYXAgd2hpY2ggaW5kaWNhdGVzIHRoYXQgdGhlIGhhcmR3YXJlIHN1cHBv
+cnRzIGEKPiBwaXRjaCB3aXRoICdieXRlLWdyYW51bGFyaXR5Jy4gSWYgdGhlIGNhcCBpcyBub3Qg
+c2V0LCBhc3N1bWUgdGhhdAo+IHdlIG5lZWQgcGl0Y2ggYWxpZ25lZCB0byBjcHAuCj4gCj4gV2Ug
+c2V0IHRoaXMgY2FwIGxhdGVyIGZvciB0aGUgZHJpdmVycy9wbGFuZXMgdGhhdCBzdXBwb3J0IGl0
+Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmll
+bGVmZWxkLmRlPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
+LmggICB8ICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMg
+fCAxMCArKysrKysrKysrCj4gIDIgZmlsZXMgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKQo+IAo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKPiBpbmRleCA0M2FmYWI0YmVi
+YzMuLmVjMzI2MzI0ODVkMiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHJ2LmgKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHJ2LmgKPiBAQCAtOTIsNiArOTIsNyBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSB7Cj4gICNk
+ZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9DQVBfU0NBTEUJKDEgPDwgMSkKPiAgI2RlZmluZSBFWFlO
+T1NfRFJNX1BMQU5FX0NBUF9aUE9TCSgxIDw8IDIpCj4gICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFO
+RV9DQVBfVElMRQkoMSA8PCAzKQo+ICsjZGVmaW5lIEVYWU5PU19EUk1fUExBTkVfQ0FQX0JZVEVf
+UElUQ0gJKDEgPDwgNCkKCkkgZG9uJ3Qgc2VlIHdoeSB0aGlzIGZsYWcgaXMgcmVxdWlyZWQgYmVj
+YXVzZSBjcHAgdmFsdWUgaXMgZ2l2ZW4gYWx3YXlzLiBTbyBJIHRoaW5rIHdlIGNhbiBjaGVjayB0
+aGUgcGl0Y2ggYWxpZ25tZW50IHJlZ2FyZGxlc3Mgb2YgYSBnaXZlbiBmbGFnLgpCVFcsIGl0J2Qg
+YmV0dGVyIGZvciBwaXRjaCBhbGlnbm1lbnQgdG8gYmUgY2hlY2tlZCBieSBkcm0gY29yZT8KCj4g
+IAo+ICAvKgo+ICAgKiBFeHlub3MgRFJNIHBsYW5lIGNvbmZpZ3VyYXRpb24gc3RydWN0dXJlLgo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gaW5kZXggYmQzODI1
+NjE3YjA2Li43MzRkNWJhNGViOTkgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX3BsYW5lLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fcGxhbmUuYwo+IEBAIC0xODUsNiArMTg1LDE2IEBAIGV4eW5vc19kcm1fcGxhbmVfY2hl
+Y2tfZm9ybWF0KGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX2NvbmZpZyAqY29uZmlnLAo+
+ICB7Cj4gIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IHN0YXRlLT5iYXNlLmZiOwo+ICAK
+PiArCS8qCj4gKwkgKiBTb21lIGJsb2NrcyBvbmx5IGFsbG93IHRvIHNwZWNpZnkgYSBidWZmZXIg
+cGl0Y2ggaW4gdGVybXMKPiArCSAqIG9mIHBpeGVscy4gSW4gdGhlc2UgY2FzZXMsIHdlIG5lZWQg
+dG8gZW5zdXJlIHRoYXQgdGhlIHBpdGNoCj4gKwkgKiBwcm92aWRlZCBieSB1c2Vyc3BhY2UgaXMg
+ZGl2aXNpYmxlIGJ5IHRoZSBjcHAuCj4gKwkgKi8KPiArCWlmICghKGNvbmZpZy0+Y2FwYWJpbGl0
+aWVzICYgRVhZTk9TX0RSTV9QTEFORV9DQVBfQllURV9QSVRDSCkpIHsKPiArCQlpZiAoZmItPnBp
+dGNoZXNbMF0gJSBmYi0+Zm9ybWF0LT5jcHBbMF0pCj4gKwkJCXJldHVybiAtRU5PVFNVUFA7Cj4g
+Kwl9Cj4gKwo+ICAJc3dpdGNoIChmYi0+bW9kaWZpZXIpIHsKPiAgCWNhc2UgRFJNX0ZPUk1BVF9N
+T0RfU0FNU1VOR182NF8zMl9USUxFOgo+ICAJCWlmICghKGNvbmZpZy0+Y2FwYWJpbGl0aWVzICYg
+RVhZTk9TX0RSTV9QTEFORV9DQVBfVElMRSkpCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
