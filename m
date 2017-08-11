@@ -1,119 +1,88 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] drm/bridge/sii8620: add external connector handle
-Date: Fri, 11 Aug 2017 12:40:39 +0300
-Message-ID: <2097016.rlxulirhWA@avalon>
-References: <1502371530-32260-1-git-send-email-m.purski@samsung.com> <6478480.TjcUCueU5y@avalon> <5ce6bd99-c50e-84c2-f21f-eb611cac94c2@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 3/8] drm/exynos: mixer: simplify
+ {vp_video,mixer_graph}_buffer()
+Date: Fri, 11 Aug 2017 13:43:40 +0200
+Message-ID: <c202950d-2749-05a2-d7d0-d5b5577bf301@math.uni-bielefeld.de>
+References: <20170809114857.4945-1-tjakobi@math.uni-bielefeld.de>
+ <CGME20170809115006epcas4p4b42ff60de1722b61b79e8ed2eaec14ce@epcas4p4.samsung.com>
+ <20170809114857.4945-4-tjakobi@math.uni-bielefeld.de>
+ <598D64FD.5000403@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34169 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbdHKJkW (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 11 Aug 2017 05:40:22 -0400
-In-Reply-To: <5ce6bd99-c50e-84c2-f21f-eb611cac94c2@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <598D64FD.5000403@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Maciej Purski <m.purski@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, will.deacon@arm.com, catalin.marinas@arm.com, a.hajda@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
 
-Hi Marek,
-
-On Friday 11 Aug 2017 08:39:31 Marek Szyprowski wrote:
-> On 2017-08-10 15:39, Laurent Pinchart wrote:
-> > On Thursday 10 Aug 2017 15:25:29 Maciej Purski wrote:
-> >> The driver should be switched on if an external connector is plugged and
-> >> switched off if it is unplugged. Extcon is optional. If it is not found,
-> >> the driver stays in "always-on" mode.
-> >> 
-> >> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> >> ---
-> >> 
-> >>   .../bindings/display/bridge/sil-sii8620.txt        |  4 ++
-> >>   drivers/gpu/drm/bridge/sil-sii8620.c               | 83 ++++++++++++++-
-> >>   2 files changed, 85 insertions(+), 2 deletions(-)
-> >> 
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
-> >> b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt index
-> >> 9409d9c..1f230bf 100644
-> >> --- a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
-> >> +++ b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
-> >> @@ -10,6 +10,9 @@ Required properties:
-> >>   	- clocks, clock-names: specification and name of "xtal" clock
-> >>   	- video interfaces: Device node can contain video interface port
-> >>   			    node for HDMI encoder according to [1].
-> >> 
-> >> +Optional properties:
-> >> +	- extcon: phandle to external connector for MHL cable changes
-> >> +		  detection
-> > 
-> > The sii8620 DT node should model its connection to the MHL connector using
-> > OF graph, connecting a port to the MHL connector DT node through
-> > endpoints. I believe the extcon property should then be added to the MHL
-> > connector DT node, not the bridge.
-> 
-> I don't get this. Generic extcon bindings doesn't define connector DT
-> node, so I don't see how could we use endpoint DT approach here. Could you
-> give the example?
-
-Sure, here you are.
-
-&hsi2c_7 {
-	...
-
-        sii8620@39 {
-                reg = <0x39>;
-                compatible = "sil,sii8620";
-                cvcc10-supply = <&ldo36_reg>;
-                iovcc18-supply = <&ldo34_reg>;
-                interrupt-parent = <&gpf0>;
-                interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-                reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
-                clocks = <&pmu_system_controller 0>;
-                clock-names = "xtal";
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-	                port@0 {
-				reg = <0>;
-        	                mhl_to_hdmi: endpoint {
-                	                remote-endpoint = <&hdmi_to_mhl>;
-	                        };
-        	        };
-	                port@1 {
-				reg = <1>;
-        	                mhl_bridge_out: endpoint {
-                	                remote-endpoint = <&mhl_connector_in>;
-	                        };
-        	        };
-		};
-        };
-};
-
-/ {
-	mhl-connector {
-		compatible = "mhl-connector";
-		extcon = <&muic>;
-
-	        port {
-        	        mhl_connector_in: endpoint {
-                	        remote-endpoint = <&mhl_bridge_out>;
-	                };
-        	};
-	};
-};
-
-Note that there's currently no DT binding for MHL connectors. One needs to be 
-developed, the HDMI connector DT binding can be used as a source of 
-inspiration.
-
-> >>   [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
-
--- 
-Regards,
-
-Laurent Pinchart
+SW5raSBEYWUgd3JvdGU6Cj4gCj4gCj4gMjAxN+uFhCAwOOyblCAwOeydvCAyMDo0OOyXkCBUb2Jp
+YXMgSmFrb2JpIOydtCjqsIApIOyTtCDquIA6Cj4+IERSTSBjb3JlIGFscmVhZHkgY2hlY2tzIHRo
+ZSB2YWxpZGl0eSBvZiB0aGUgcGl4ZWxmb3JtYXRzLCBzbyB3ZQo+PiBjYW4gc2ltcGxpZnkgdGhl
+IGNoZWNrcyBoZXJlLiBUaGUgc2FtZSBhcHBsaWVzIHRvIHRoZSBGQiBtb2RpZmllciwKPj4gd2hp
+Y2ggaXMgbm93IGNoZWNrZWQgaW4gY29tbW9uIEV4eW5vcyBwbGFuZSBjb2RlLgo+Pgo+PiBBbHNv
+IHJlbmFtZSB0aGUgYm9vbGVhbnMgdG8gcmVmbGVjdCB3aGF0IHRydWUvZmFsc2UgYWN0dWFsbHkK
+Pj4gbWVhbnMuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0
+aC51bmktYmllbGVmZWxkLmRlPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX21peGVyLmMgfCAzMSArKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+ICAxIGZp
+bGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAyNCBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+IGluZGV4IDRjODk0ZDk3YWJhMy4uOGQ2OGRl
+ODViYWRhIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
+ci5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gQEAg
+LTQ4NCwzMiArNDg0LDE4IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4
+ZXJfY29udGV4dCAqY3R4LAo+PiAgCXVuc2lnbmVkIGludCBwcmlvcml0eSA9dGF0ZS0+YmFzZS5u
+b3JtYWxpemVkX3pwb3MgKyAxOwo+PiAgCXVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4+ICAJZG1hX2Fk
+ZHJfdCBsdW1hX2FkZHJbMl0sIGNocm9tYV9hZGRyWzJdOwo+PiAtCWJvb2wgdGlsZWRfbW9kZSA9
+YWxzZTsKPj4gLQlib29sIGNyY2JfbW9kZSA9YWxzZTsKPj4gKwlib29sIGlzX3RpbGVkLCBpc19u
+djIxOwo+PiAgCXUzMiB2YWw7Cj4+ICAKPj4gLQlzd2l0Y2ggKGZiLT5mb3JtYXQtPmZvcm1hdCkg
+ewo+PiAtCWNhc2UgRFJNX0ZPUk1BVF9OVjEyOgo+PiAtCQljcmNiX21vZGUgPWFsc2U7Cj4+IC0J
+CWJyZWFrOwo+PiAtCWNhc2UgRFJNX0ZPUk1BVF9OVjIxOgo+PiAtCQljcmNiX21vZGUgPXJ1ZTsK
+Pj4gLQkJYnJlYWs7Cj4+IC0JZGVmYXVsdDoKPj4gLQkJRFJNX0VSUk9SKCJwaXhlbCBmb3JtYXQg
+Zm9yIHZwIGlzIHdyb25nIFslZF0uXG4iLAo+PiAtCQkJCWZiLT5mb3JtYXQtPmZvcm1hdCk7Cj4+
+IC0JCXJldHVybjsKPj4gLQl9Cj4+IC0KPj4gLQlpZiAoZmItPm1vZGlmaWVyID1EUk1fRk9STUFU
+X01PRF9TQU1TVU5HXzY0XzMyX1RJTEUpCj4+IC0JCXRpbGVkX21vZGUgPXJ1ZTsKPj4gKwlpc19u
+djIxID1mYi0+Zm9ybWF0LT5mb3JtYXQgPT0gRFJNX0ZPUk1BVF9OVjIxKTsKPj4gKwlpc190aWxl
+ZCA9ZmItPm1vZGlmaWVyID09IERSTV9GT1JNQVRfTU9EX1NBTVNVTkdfNjRfMzJfVElMRSk7Cj4+
+ICAKPj4gIAlsdW1hX2FkZHJbMF0gPXh5bm9zX2RybV9mYl9kbWFfYWRkcihmYiwgMCk7Cj4+ICAJ
+Y2hyb21hX2FkZHJbMF0gPXh5bm9zX2RybV9mYl9kbWFfYWRkcihmYiwgMSk7Cj4+ICAKPj4gIAlp
+ZiAobW9kZS0+ZmxhZ3MgJiBEUk1fTU9ERV9GTEFHX0lOVEVSTEFDRSkgewo+PiAgCQlfX3NldF9i
+aXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdzKTsKPj4gLQkJaWYgKHRpbGVkX21vZGUp
+IHsKPj4gKwkJaWYgKGlzX3RpbGVkKSB7Cj4+ICAJCQlsdW1hX2FkZHJbMV0gPXVtYV9hZGRyWzBd
+ICsgMHg0MDsKPj4gIAkJCWNocm9tYV9hZGRyWzFdID1ocm9tYV9hZGRyWzBdICsgMHg0MDsKPj4g
+IAkJfSBlbHNlIHsKPj4gQEAgLTUyOSw4ICs1MTUsOCBAQCBzdGF0aWMgdm9pZCB2cF92aWRlb19i
+dWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPj4gIAl2cF9yZWdfd3JpdGVtYXNrKHJl
+cywgVlBfTU9ERSwgdmFsLCBWUF9NT0RFX0xJTkVfU0tJUCk7Cj4+ICAKPj4gIAkvKiBzZXR1cCBm
+b3JtYXQgKi8KPj4gLQl2YWwgPWNyY2JfbW9kZSA/IFZQX01PREVfTlYyMSA6IFZQX01PREVfTlYx
+Mik7Cj4+IC0JdmFsIHw9dGlsZWRfbW9kZSA/IFZQX01PREVfTUVNX1RJTEVEIDogVlBfTU9ERV9N
+RU1fTElORUFSKTsKPj4gKwl2YWwgPWlzX252MjEgPyBWUF9NT0RFX05WMjEgOiBWUF9NT0RFX05W
+MTIpOwo+PiArCXZhbCB8PWlzX3RpbGVkID8gVlBfTU9ERV9NRU1fVElMRUQgOiBWUF9NT0RFX01F
+TV9MSU5FQVIpOwo+PiAgCXZwX3JlZ193cml0ZW1hc2socmVzLCBWUF9NT0RFLCB2YWwsIFZQX01P
+REVfRk1UX01BU0spOwo+PiAgCj4+ICAJLyogc2V0dGluZyBzaXplIG9mIGlucHV0IGltYWdlICov
+Cj4+IEBAIC02MjAsMTIgKzYwNiw5IEBAIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihz
+dHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAo+PiAgCj4+ICAJY2FzZSBEUk1fRk9STUFUX1hSR0I4
+ODg4Ogo+PiAgCWNhc2UgRFJNX0ZPUk1BVF9BUkdCODg4ODoKPj4gKwlkZWZhdWx0Ogo+PiAgCQlm
+bXQgPVhSX0ZPUk1BVF9BUkdCODg4ODsKPj4gIAkJYnJlYWs7Cj4+IC0KPj4gLQlkZWZhdWx0Ogo+
+PiAtCQlEUk1fREVCVUdfS01TKCJwaXhlbGZvcm1hdCB1bnN1cHBvcnRlZCBieSBtaXhlclxuIik7
+Cj4+IC0JCXJldHVybjsKPiAKPiBUaGlzIGNoYW5nZSBzaG91bGQgYmUgbWFkZSBhcyBhbm90aGVy
+IHBhdGNoIGJlY2F1c2UgdGhpcyBwYXRjaCBjaGFuZ2VzIHRoZSBiZWhhdmlvciB3aGV0aGVyIGl0
+IGFsbG93cyB3cm9uZyBwaXhlbCBmb3JtYXQgb3Igbm90Lgo+IApPSywgSSB3aWxsIHNwbGl0IHRo
+ZSBjaGFuZ2UgdG8gbWl4ZXJfZ3JhcGhfYnVmZmVyKCkgaW50byBhbm90aGVyIHBhdGNoIGhlcmUu
+CgotIFRvYmlhcwoKCj4gVGhhbmtzLAo+IElua2kgRGFlCj4gCj4+ICAJfQo+PiAgCj4+ICAJLyog
+cmF0aW8gaXMgYWxyZWFkeSBjaGVja2VkIGJ5IGNvbW1vbiBwbGFuZSBjb2RlICovCj4+Cj4gLS0K
+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3Jp
+YmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9y
+ZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdl
+ci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
