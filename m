@@ -1,14 +1,14 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.9 39/41] pinctrl: samsung: Remove bogus irq_[un]mask from
+Subject: [PATCH 4.12 59/65] pinctrl: samsung: Remove bogus irq_[un]mask from
  resource management
-Date: Mon, 14 Aug 2017 18:18:49 -0700
-Message-ID: <20170815011810.577571102@linuxfoundation.org>
-References: <20170815011808.667221255@linuxfoundation.org>
+Date: Mon, 14 Aug 2017 18:19:50 -0700
+Message-ID: <20170815011944.741233665@linuxfoundation.org>
+References: <20170815011942.395714306@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170815011808.667221255@linuxfoundation.org>
+In-Reply-To: <20170815011942.395714306@linuxfoundation.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,7 +22,7 @@ To: linux-kernel@vger.kernel.org
 Cc: linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, stable@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.12-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -60,7 +60,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
 +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -195,8 +195,6 @@ static int exynos_irq_request_resources(
+@@ -205,8 +205,6 @@ static int exynos_irq_request_resources(
  
  	spin_unlock_irqrestore(&bank->slock, flags);
  
@@ -69,7 +69,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	return 0;
  }
  
-@@ -217,8 +215,6 @@ static void exynos_irq_release_resources
+@@ -226,8 +224,6 @@ static void exynos_irq_release_resources
  	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
  	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
  
@@ -77,4 +77,4 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 -
  	spin_lock_irqsave(&bank->slock, flags);
  
- 	con = readl(d->virt_base + reg_con);
+ 	con = readl(bank->eint_base + reg_con);
