@@ -1,41 +1,80 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 0/2] More s5p-jpeg fixes
-Date: Mon, 14 Aug 2017 22:31:56 +0200
-Message-ID: <df06d840-d0d2-4aa4-4490-152d020f6ef5@gmail.com>
-References: <1502191352-11595-1-git-send-email-andrzej.p@samsung.com>
- <CGME20170811115011eucas1p2d31daaa9e6f8d142291d9352ad5b732c@eucas1p2.samsung.com>
- <1502452201-17171-1-git-send-email-andrzej.p@samsung.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 3.18 16/16] pinctrl: samsung: Remove bogus irq_[un]mask from
+ resource management
+Date: Mon, 14 Aug 2017 18:18:25 -0700
+Message-ID: <20170815011734.047026450@linuxfoundation.org>
+References: <20170815011733.115636913@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1502452201-17171-1-git-send-email-andrzej.p@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Thierry Escande <thierry.escande@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170815011733.115636913@linuxfoundation.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, stable@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej,
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Thanks for the patches.
+------------------
 
-On 08/11/2017 01:49 PM, Andrzej Pietrasiewicz wrote:
-> Hi All,
-> 
-> The first patch in the series fixes decoding path,
-> the second patch fixes encoding path. Please see
-> appropriate commit messages.
-> 
-> Andrzej Pietrasiewicz (2):
->   media: s5p-jpeg: don't overwrite result's "size" member
->   media: s5p-jpeg: set w/h when encoding
-> 
->  drivers/media/platform/s5p-jpeg/jpeg-core.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
+From: Thomas Gleixner <tglx@linutronix.de>
 
-Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+commit 3fa53ec2ed885b0aec3f0472e3b4a8a6f1cd748c upstream.
 
--- 
-Best regards,
-Jacek Anaszewski
+The irq chip callbacks irq_request/release_resources() have absolutely no
+business with masking and unmasking the irq.
+
+The core code unmasks the interrupt after complete setup and masks it
+before invoking irq_release_resources().
+
+The unmask is actually harmful as it happens before the interrupt is
+completely initialized in __setup_irq().
+
+Remove it.
+
+Fixes: f6a8249f9e55 ("pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c |    4 ----
+ 1 file changed, 4 deletions(-)
+
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -200,8 +200,6 @@ static int exynos_irq_request_resources(
+ 
+ 	spin_unlock_irqrestore(&bank->slock, flags);
+ 
+-	exynos_irq_unmask(irqd);
+-
+ 	return 0;
+ }
+ 
+@@ -222,8 +220,6 @@ static void exynos_irq_release_resources
+ 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
+ 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+ 
+-	exynos_irq_mask(irqd);
+-
+ 	spin_lock_irqsave(&bank->slock, flags);
+ 
+ 	con = readl(d->virt_base + reg_con);
