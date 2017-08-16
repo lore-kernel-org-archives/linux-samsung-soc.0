@@ -1,52 +1,46 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] ARM: Convert to using %pOF instead of full_name
-Date: Wed, 16 Aug 2017 22:27:44 +0200
-Message-ID: <CAK8P3a0UfQ6fThn61Dch1TKPvKkF+7RtDwbv+xhSoWPHNC60hg@mail.gmail.com>
-References: <20170721192835.25555-1-robh@kernel.org> <CAL_JsqJQ7yUhtJca1hupd5zSqo5RTj5k5zc_Ueex1nzbOnjXdw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: snawrocki@kernel.org
+Subject: [PATCH] ARM: S3C24XX: Fix NAND ECC mode for mini2440 board
+Date: Wed, 16 Aug 2017 22:31:01 +0200
+Message-ID: <1502915461-8625-1-git-send-email-snawrocki@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:34658 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752336AbdHPU1q (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:47178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752376AbdHPUbS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 16:27:46 -0400
-In-Reply-To: <CAL_JsqJQ7yUhtJca1hupd5zSqo5RTj5k5zc_Ueex1nzbOnjXdw@mail.gmail.com>
+        Wed, 16 Aug 2017 16:31:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: "arm@kernel.org" <arm@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, Paul Walmsley <paul@pwsan.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>"linux-arm-kernel@lists.infradead.org" <linux>
+To: krzk@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <snawrocki@kernel.org>, Sergio Prado <sergio.prado@e-labworks.com>
 
-On Thu, Aug 10, 2017 at 12:06 AM, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Jul 21, 2017 at 2:28 PM, Rob Herring <robh@kernel.org> wrote:
->> Now that we have a custom printf format specifier, convert users of
->> full_name to use %pOF instead. This is preparation to remove storing
->> of the full path string for each node.
->>
->> Signed-off-by: Rob Herring <robh@kernel.org>
->> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Acked-by: Heiko Stuebner <heiko@sntech.de>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
->>
->>  arch/arm/kernel/cpuidle.c            | 4 ++--
->>  arch/arm/kernel/devtree.c            | 5 ++---
->>  arch/arm/kernel/topology.c           | 3 +--
->>  arch/arm/mach-exynos/suspend.c       | 7 +++----
->>  arch/arm/mach-imx/gpc.c              | 4 ++--
->>  arch/arm/mach-mvebu/kirkwood.c       | 3 +--
->>  arch/arm/mach-omap2/omap-wakeupgen.c | 4 ++--
->>  arch/arm/mach-omap2/omap_hwmod.c     | 4 ++--
->>  arch/arm/mach-rockchip/platsmp.c     | 4 ++--
->>  arch/arm/mach-shmobile/pm-rmobile.c  | 7 +++----
->>  10 files changed, 20 insertions(+), 25 deletions(-)
->
-> Arnd, Olof,
->
-> Can you please apply this one.
+From: Sylwester Nawrocki <snawrocki@kernel.org>
 
-Applied to next/cleanup now, with the Acks. I think that should be the last
-patch of this series that you wanted me to apply. Can you double-check
-and maybe re-submit any patches I may have missed?
+After commit e9f66ae23c "mtd: s3c2410: make ecc mode configurable
+via platform data" booting of the mini2440 board is broken, since
+for this board we have CONFIG_MTD_NAND_S3C2410_HWECC set. The console
+gets flooded with errors reported by the mtd subsystem.
+This patch changes ecc_mode to NAND_ECC_HW which restores proper
+operation of the NAND flash memory.
 
-        Arnd
+Cc: Sergio Prado <sergio.prado@e-labworks.com>
+Fixes: e9f66ae23c "mtd: s3c2410: make ecc mode configurable via platform data"
+Signed-off-by: Sylwester Nawrocki <snawrocki@kernel.org>
+---
+ arch/arm/mach-s3c24xx/mach-mini2440.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index 98bff4b..3e75efd 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -289,7 +289,7 @@
+ 	.nr_sets	= ARRAY_SIZE(mini2440_nand_sets),
+ 	.sets		= mini2440_nand_sets,
+ 	.ignore_unset_ecc = 1,
+-	.ecc_mode       = NAND_ECC_SOFT,
++	.ecc_mode       = NAND_ECC_HW,
+ };
+ 
+ /* DM9000AEP 10/100 ethernet controller */
+-- 
+1.9.1
