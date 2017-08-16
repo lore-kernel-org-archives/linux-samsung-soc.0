@@ -1,43 +1,52 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/5] ARM: s3c24xx: Early stuff for v4.14
-Date: Wed, 16 Aug 2017 21:51:20 +0200
-Message-ID: <CAK8P3a1JEfJ95bmAnR6bLUtw9Eyt++4+SxPoNi_Pj5wVk2crCQ@mail.gmail.com>
-References: <20170724190856.19055-1-krzk@kernel.org>
+Subject: Re: [PATCH v2] ARM: Convert to using %pOF instead of full_name
+Date: Wed, 16 Aug 2017 22:27:44 +0200
+Message-ID: <CAK8P3a0UfQ6fThn61Dch1TKPvKkF+7RtDwbv+xhSoWPHNC60hg@mail.gmail.com>
+References: <20170721192835.25555-1-robh@kernel.org> <CAL_JsqJQ7yUhtJca1hupd5zSqo5RTj5k5zc_Ueex1nzbOnjXdw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:33633 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752382AbdHPTvV (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34658 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752336AbdHPU1q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 15:51:21 -0400
-In-Reply-To: <20170724190856.19055-1-krzk@kernel.org>
+        Wed, 16 Aug 2017 16:27:46 -0400
+In-Reply-To: <CAL_JsqJQ7yUhtJca1hupd5zSqo5RTj5k5zc_Ueex1nzbOnjXdw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: "arm@kernel.org" <arm@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, Paul Walmsley <paul@pwsan.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>"linux-arm-kernel@lists.infradead.org" <linux>
 
-On Mon, Jul 24, 2017 at 9:08 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Thu, Aug 10, 2017 at 12:06 AM, Rob Herring <robh@kernel.org> wrote:
+> On Fri, Jul 21, 2017 at 2:28 PM, Rob Herring <robh@kernel.org> wrote:
+>> Now that we have a custom printf format specifier, convert users of
+>> full_name to use %pOF instead. This is preparation to remove storing
+>> of the full path string for each node.
+>>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
+>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>>
+>>  arch/arm/kernel/cpuidle.c            | 4 ++--
+>>  arch/arm/kernel/devtree.c            | 5 ++---
+>>  arch/arm/kernel/topology.c           | 3 +--
+>>  arch/arm/mach-exynos/suspend.c       | 7 +++----
+>>  arch/arm/mach-imx/gpc.c              | 4 ++--
+>>  arch/arm/mach-mvebu/kirkwood.c       | 3 +--
+>>  arch/arm/mach-omap2/omap-wakeupgen.c | 4 ++--
+>>  arch/arm/mach-omap2/omap_hwmod.c     | 4 ++--
+>>  arch/arm/mach-rockchip/platsmp.c     | 4 ++--
+>>  arch/arm/mach-shmobile/pm-rmobile.c  | 7 +++----
+>>  10 files changed, 20 insertions(+), 25 deletions(-)
 >
-> The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+> Arnd, Olof,
 >
->   Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.14
->
-> for you to fetch changes up to f991ce429a420dbb42b3e4b5a47490c84390d7e1:
->
->   ARM: s3c24xx: make H1940BT depend on RFKILL (2017-07-20 20:26:24 +0200)
->
-> ----------------------------------------------------------------
-> Samsung mach/soc changes for v4.14
->
-> Only for S3C24xx platform:
-> 1. Cleanup from non-existent CONFIG entries.
-> 2. Fix unmet NET dependency when H1940 bluetooth chip is selected..
+> Can you please apply this one.
 
-Pulled into next/soc, thanks!
+Applied to next/cleanup now, with the Acks. I think that should be the last
+patch of this series that you wanted me to apply. Can you double-check
+and maybe re-submit any patches I may have missed?
 
         Arnd
