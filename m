@@ -1,108 +1,138 @@
-From: Rob Herring <robh@kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Subject: Re: [PATCH 1/2] drm/bridge/sii8620: add external connector handle
-Date: Thu, 17 Aug 2017 10:11:02 -0500
-Message-ID: <20170817151102.wmjelokfkzd2lk4i@rob-hp-laptop>
-References: <1502371530-32260-1-git-send-email-m.purski@samsung.com>
- <6478480.TjcUCueU5y@avalon>
- <5ce6bd99-c50e-84c2-f21f-eb611cac94c2@samsung.com>
- <CGME20170811094031epcas5p4ca089af7dba2f3fafed757c1fb40c798@epcas5p4.samsung.com>
- <2097016.rlxulirhWA@avalon>
- <9232b812-7aef-c614-b122-612e19743df4@samsung.com>
+Date: Fri, 18 Aug 2017 02:37:13 +0300
+Message-ID: <3769720.Fa99sOQPuX@avalon>
+References: <1502371530-32260-1-git-send-email-m.purski@samsung.com> <9232b812-7aef-c614-b122-612e19743df4@samsung.com> <20170817151102.wmjelokfkzd2lk4i@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <9232b812-7aef-c614-b122-612e19743df4@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, catalin.marinas@arm.com, will.deacon@arm.com, dri-devel@lists.freedesktop.org, Maciej Purski <m.purski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, krzk@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58949 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752872AbdHQXgs (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 17 Aug 2017 19:36:48 -0400
+In-Reply-To: <20170817151102.wmjelokfkzd2lk4i@rob-hp-laptop>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Maciej Purski <m.purski@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, airlied@linux.ie, mark.rutland@arm.com, architt@codeaurora.org, will.deacon@arm.com, catalin.marinas@arm.com, a.hajda@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
 
-T24gRnJpLCBBdWcgMTEsIDIwMTcgYXQgMDI6NDk6MzVQTSArMDIwMCwgTWFyZWsgU3p5cHJvd3Nr
-aSB3cm90ZToKPiBIaSBMYXVyZW50LAo+IAo+IE9uIDIwMTctMDgtMTEgMTE6NDAsIExhdXJlbnQg
-UGluY2hhcnQgd3JvdGU6Cj4gPiBIaSBNYXJlaywKPiA+IAo+ID4gT24gRnJpZGF5IDExIEF1ZyAy
-MDE3IDA4OjM5OjMxIE1hcmVrIFN6eXByb3dza2kgd3JvdGU6Cj4gPiA+IE9uIDIwMTctMDgtMTAg
-MTU6MzksIExhdXJlbnQgUGluY2hhcnQgd3JvdGU6Cj4gPiA+ID4gT24gVGh1cnNkYXkgMTAgQXVn
-IDIwMTcgMTU6MjU6MjkgTWFjaWVqIFB1cnNraSB3cm90ZToKPiA+ID4gPiA+IFRoZSBkcml2ZXIg
-c2hvdWxkIGJlIHN3aXRjaGVkIG9uIGlmIGFuIGV4dGVybmFsIGNvbm5lY3RvciBpcyBwbHVnZ2Vk
-IGFuZAo+ID4gPiA+ID4gc3dpdGNoZWQgb2ZmIGlmIGl0IGlzIHVucGx1Z2dlZC4gRXh0Y29uIGlz
-IG9wdGlvbmFsLiBJZiBpdCBpcyBub3QgZm91bmQsCj4gPiA+ID4gPiB0aGUgZHJpdmVyIHN0YXlz
-IGluICJhbHdheXMtb24iIG1vZGUuCj4gPiA+ID4gPiAKPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6
-IE1hY2llaiBQdXJza2kgPG0ucHVyc2tpQHNhbXN1bmcuY29tPgo+ID4gPiA+ID4gLS0tCj4gPiA+
-ID4gPiAKPiA+ID4gPiA+ICAgIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2JyaWRnZS9zaWwtc2lpODYy
-MC50eHQgICAgICAgIHwgIDQgKysKPiA+ID4gPiA+ICAgIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uv
-c2lsLXNpaTg2MjAuYyAgICAgICAgICAgICAgIHwgODMgKysrKysrKysrKysrKystCj4gPiA+ID4g
-PiAgICAyIGZpbGVzIGNoYW5nZWQsIDg1IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4g
-PiA+ID4gPiAKPiA+ID4gPiA+IGRpZmYgLS1naXQKPiA+ID4gPiA+IGEvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpbC1zaWk4NjIwLnR4dAo+ID4gPiA+
-ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2Uvc2ls
-LXNpaTg2MjAudHh0IGluZGV4Cj4gPiA+ID4gPiA5NDA5ZDljLi4xZjIzMGJmIDEwMDY0NAo+ID4g
-PiA+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJp
-ZGdlL3NpbC1zaWk4NjIwLnR4dAo+ID4gPiA+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3NpbC1zaWk4NjIwLnR4dAo+ID4gPiA+ID4gQEAg
-LTEwLDYgKzEwLDkgQEAgUmVxdWlyZWQgcHJvcGVydGllczoKPiA+ID4gPiA+ICAgIAktIGNsb2Nr
-cywgY2xvY2stbmFtZXM6IHNwZWNpZmljYXRpb24gYW5kIG5hbWUgb2YgInh0YWwiIGNsb2NrCj4g
-PiA+ID4gPiAgICAJLSB2aWRlbyBpbnRlcmZhY2VzOiBEZXZpY2Ugbm9kZSBjYW4gY29udGFpbiB2
-aWRlbyBpbnRlcmZhY2UgcG9ydAo+ID4gPiA+ID4gICAgCQkJICAgIG5vZGUgZm9yIEhETUkgZW5j
-b2RlciBhY2NvcmRpbmcgdG8gWzFdLgo+ID4gPiA+ID4gCj4gPiA+ID4gPiArT3B0aW9uYWwgcHJv
-cGVydGllczoKPiA+ID4gPiA+ICsJLSBleHRjb246IHBoYW5kbGUgdG8gZXh0ZXJuYWwgY29ubmVj
-dG9yIGZvciBNSEwgY2FibGUgY2hhbmdlcwo+ID4gPiA+ID4gKwkJICBkZXRlY3Rpb24KPiA+ID4g
-PiBUaGUgc2lpODYyMCBEVCBub2RlIHNob3VsZCBtb2RlbCBpdHMgY29ubmVjdGlvbiB0byB0aGUg
-TUhMIGNvbm5lY3RvciB1c2luZwo+ID4gPiA+IE9GIGdyYXBoLCBjb25uZWN0aW5nIGEgcG9ydCB0
-byB0aGUgTUhMIGNvbm5lY3RvciBEVCBub2RlIHRocm91Z2gKPiA+ID4gPiBlbmRwb2ludHMuIEkg
-YmVsaWV2ZSB0aGUgZXh0Y29uIHByb3BlcnR5IHNob3VsZCB0aGVuIGJlIGFkZGVkIHRvIHRoZSBN
-SEwKPiA+ID4gPiBjb25uZWN0b3IgRFQgbm9kZSwgbm90IHRoZSBicmlkZ2UuCj4gPiA+IEkgZG9u
-J3QgZ2V0IHRoaXMuIEdlbmVyaWMgZXh0Y29uIGJpbmRpbmdzIGRvZXNuJ3QgZGVmaW5lIGNvbm5l
-Y3RvciBEVAo+ID4gPiBub2RlLCBzbyBJIGRvbid0IHNlZSBob3cgY291bGQgd2UgdXNlIGVuZHBv
-aW50IERUIGFwcHJvYWNoIGhlcmUuIENvdWxkIHlvdQo+ID4gPiBnaXZlIHRoZSBleGFtcGxlPwo+
-ID4gU3VyZSwgaGVyZSB5b3UgYXJlLgo+ID4gCj4gPiAmaHNpMmNfNyB7Cj4gPiAJLi4uCj4gPiAK
-PiA+ICAgICAgICAgIHNpaTg2MjBAMzkgewo+ID4gICAgICAgICAgICAgICAgICByZWcgPSA8MHgz
-OT47Cj4gPiAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAic2lsLHNpaTg2MjAiOwo+ID4g
-ICAgICAgICAgICAgICAgICBjdmNjMTAtc3VwcGx5ID0gPCZsZG8zNl9yZWc+Owo+ID4gICAgICAg
-ICAgICAgICAgICBpb3ZjYzE4LXN1cHBseSA9IDwmbGRvMzRfcmVnPjsKPiA+ICAgICAgICAgICAg
-ICAgICAgaW50ZXJydXB0LXBhcmVudCA9IDwmZ3BmMD47Cj4gPiAgICAgICAgICAgICAgICAgIGlu
-dGVycnVwdHMgPSA8MiBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPiA+ICAgICAgICAgICAgICAgICAg
-cmVzZXQtZ3Bpb3MgPSA8JmdwdjcgMCBHUElPX0FDVElWRV9MT1c+Owo+ID4gICAgICAgICAgICAg
-ICAgICBjbG9ja3MgPSA8JnBtdV9zeXN0ZW1fY29udHJvbGxlciAwPjsKPiA+ICAgICAgICAgICAg
-ICAgICAgY2xvY2stbmFtZXMgPSAieHRhbCI7Cj4gPiAKPiA+IAkJcG9ydHMgewo+ID4gCQkJI2Fk
-ZHJlc3MtY2VsbHMgPSA8MT47Cj4gPiAJCQkjc2l6ZS1jZWxscyA9IDwwPjsKPiA+IAo+ID4gCSAg
-ICAgICAgICAgICAgICBwb3J0QDAgewo+ID4gCQkJCXJlZyA9IDwwPjsKPiA+ICAgICAgICAgIAkg
-ICAgICAgICAgICAgICAgbWhsX3RvX2hkbWk6IGVuZHBvaW50IHsKPiA+ICAgICAgICAgICAgICAg
-ICAgCSAgICAgICAgICAgICAgICByZW1vdGUtZW5kcG9pbnQgPSA8JmhkbWlfdG9fbWhsPjsKPiA+
-IAkgICAgICAgICAgICAgICAgICAgICAgICB9Owo+ID4gICAgICAgICAgCSAgICAgICAgfTsKPiA+
-IAkgICAgICAgICAgICAgICAgcG9ydEAxIHsKPiA+IAkJCQlyZWcgPSA8MT47Cj4gPiAgICAgICAg
-ICAJICAgICAgICAgICAgICAgIG1obF9icmlkZ2Vfb3V0OiBlbmRwb2ludCB7Cj4gPiAgICAgICAg
-ICAgICAgICAgIAkgICAgICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZtaGxfY29ubmVj
-dG9yX2luPjsKPiA+IAkgICAgICAgICAgICAgICAgICAgICAgICB9Owo+ID4gICAgICAgICAgCSAg
-ICAgICAgfTsKPiA+IAkJfTsKPiA+ICAgICAgICAgIH07Cj4gPiB9Owo+ID4gCj4gPiAvIHsKPiA+
-IAltaGwtY29ubmVjdG9yIHsKPiA+IAkJY29tcGF0aWJsZSA9ICJtaGwtY29ubmVjdG9yIjsKPiA+
-IAkJZXh0Y29uID0gPCZtdWljPjsKPiA+IAo+ID4gCSAgICAgICAgcG9ydCB7Cj4gPiAgICAgICAg
-ICAJICAgICAgICBtaGxfY29ubmVjdG9yX2luOiBlbmRwb2ludCB7Cj4gPiAgICAgICAgICAgICAg
-ICAgIAkgICAgICAgIHJlbW90ZS1lbmRwb2ludCA9IDwmbWhsX2JyaWRnZV9vdXQ+Owo+ID4gCSAg
-ICAgICAgICAgICAgICB9Owo+ID4gICAgICAgICAgCX07Cj4gPiAJfTsKPiA+IH07Cj4gPiAKPiA+
-IE5vdGUgdGhhdCB0aGVyZSdzIGN1cnJlbnRseSBubyBEVCBiaW5kaW5nIGZvciBNSEwgY29ubmVj
-dG9ycy4gT25lIG5lZWRzIHRvIGJlCj4gPiBkZXZlbG9wZWQsIHRoZSBIRE1JIGNvbm5lY3RvciBE
-VCBiaW5kaW5nIGNhbiBiZSB1c2VkIGFzIGEgc291cmNlIG9mCj4gPiBpbnNwaXJhdGlvbi4KPiAK
-PiBBaCwgSSBzZWUuIEkgd2Fzbid0IGF3YXJlIHRoYXQgZGlzcGxheSBzdWJzeXN0ZW0gaGFzIGJp
-bmRpbmdzIGV2ZW4gZm9yIHRoZQo+IGNvbm5lY3RvcnMuCj4gT3RoZXIgdHlwZXMgb2YgY29ubmVj
-dG9ycyBhbHJlYWR5IHVzZWQgdG9nZXRoZXIgd2l0aCBleHRjb24gaW4gZGV2aWNlIHRyZWUKPiAo
-bGlrZSB1c2IKPiBhbmQgY2hhcmdlcnMpIGRvbid0IGhhdmUgZGVkaWNhdGVkIGJpbmRpbmdzLgoK
-SSBOQUsgYW55IGV4dGNvbiBiaW5kaW5nIGFkZGl0aW9ucyBiZWNhdXNlIGl0IGlzIHBvb3JseSBk
-ZXNpZ25lZCwgc28gCmRvbid0IHVzZSBleHRjb24uIEl0IGlzIGZ1bGwgb2YgTGludXhpc21zIGFu
-ZCBuZWVkcyB3b3JrLiBVU0IgCmNvbm5lY3RvcnMgbmVlZCB0byBiZSBkZXNjcmliZWQgbGlrZSB3
-aGF0IHdlIGhhdmUgZm9yIGRpc3BsYXkgcmVsYXRlZCAKY29ubmVjdG9ycyBlc3BlY2lhbGx5IHNp
-bmNlIHRoZXkgYXJlIG1lcmdpbmcuCgo+IAo+IERvIHdlIG5lZWQgdG8gYWRkIGhkbWktY29ubmVj
-dG9ycyB0byBhbGwgZXhpc3RpbmcgYm9hcmRzIHRoYXQgaGF2ZSBIRE1JCj4gbW9kdWxlPwoKSWRl
-YWxseSwgeWVzLgoKUm9iCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+Hi Marek,
+
+On Thursday 17 Aug 2017 10:11:02 Rob Herring wrote:
+> On Fri, Aug 11, 2017 at 02:49:35PM +0200, Marek Szyprowski wrote:
+> > On 2017-08-11 11:40, Laurent Pinchart wrote:
+> >> On Friday 11 Aug 2017 08:39:31 Marek Szyprowski wrote:
+> >>> On 2017-08-10 15:39, Laurent Pinchart wrote:
+> >>>> On Thursday 10 Aug 2017 15:25:29 Maciej Purski wrote:
+> >>>>> The driver should be switched on if an external connector is
+> >>>>> plugged and switched off if it is unplugged. Extcon is optional.
+> >>>>> If it is not found, the driver stays in "always-on" mode.
+> >>>>> 
+> >>>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> >>>>> ---
+> >>>>> 
+> >>>>> .../bindings/display/bridge/sil-sii8620.txt        |  4 ++
+> >>>>> drivers/gpu/drm/bridge/sil-sii8620.c               | 83 ++++++++++++-
+> >>>>> 2 files changed, 85 insertions(+), 2 deletions(-)
+> >>>>> 
+> >>>>> diff --git
+> >>>>> a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+> >>>>> b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+> >>>>> index
+> >>>>> 9409d9c..1f230bf 100644
+> >>>>> --- a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
+> >>>>> +++ b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt 
+> >>>>> @@ -10,6 +10,9 @@ Required properties:
+> >>>>>    	- clocks, clock-names: specification and name of "xtal" clock
+> >>>>>    	- video interfaces: Device node can contain video interface
+> >>>>>    	  port node for HDMI encoder according to [1].
+> >>>>> 
+> >>>>> +Optional properties:
+> >>>>> +	- extcon: phandle to external connector for MHL cable changes
+> >>>>> +		  detection
+> >>>> 
+> >>>> The sii8620 DT node should model its connection to the MHL connector
+> >>>> using OF graph, connecting a port to the MHL connector DT node through
+> >>>> endpoints. I believe the extcon property should then be added to the
+> >>>> MHL connector DT node, not the bridge.
+> >>> 
+> >>> I don't get this. Generic extcon bindings doesn't define connector DT
+> >>> node, so I don't see how could we use endpoint DT approach here. Could
+> >>> you give the example?
+> >> 
+> >> Sure, here you are.
+> >> 
+> >> &hsi2c_7 {
+> >> 	...
+> >>          sii8620@39 {
+> >>                  reg = <0x39>;
+> >>                  compatible = "sil,sii8620";
+> >>                  cvcc10-supply = <&ldo36_reg>;
+> >>                  iovcc18-supply = <&ldo34_reg>;
+> >>                  interrupt-parent = <&gpf0>;
+> >>                  interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
+> >>                  reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
+> >>                  clocks = <&pmu_system_controller 0>;
+> >>                  clock-names = "xtal";
+> >> 		
+> >> 		ports {
+> >> 			#address-cells = <1>;
+> >> 			#size-cells = <0>;
+> >> 			
+> >> 	                port@0 {
+> >> 				reg = <0>;
+> >>          	                mhl_to_hdmi: endpoint {
+> >>                  	                remote-endpoint = <&hdmi_to_mhl>;
+> >> 	                        };
+> >>          	        };
+> >> 	                port@1 {
+> >> 				reg = <1>;
+> >>          	                mhl_bridge_out: endpoint {
+> >>                  	                remote-endpoint = <&mhl_connector_in>;
+> >> 	                        };
+> >>          	        };
+> >> 		};
+> >>          };
+> >> };
+> >> 
+> >> / {
+> >> 	mhl-connector {
+> >> 		compatible = "mhl-connector";
+> >> 		extcon = <&muic>;
+> >> 		
+> >> 	        port {
+> >>          	        mhl_connector_in: endpoint {
+> >>                  	        remote-endpoint = <&mhl_bridge_out>;
+> >> 	                };
+> >>          	};
+> >> 	};
+> >> };
+> >> 
+> >> Note that there's currently no DT binding for MHL connectors. One needs
+> >> to be developed, the HDMI connector DT binding can be used as a source
+> >> of inspiration.
+> > 
+> > Ah, I see. I wasn't aware that display subsystem has bindings even for the
+> > connectors. Other types of connectors already used together with extcon in
+> > device tree (like usb and chargers) don't have dedicated bindings.
+> 
+> I NAK any extcon binding additions because it is poorly designed, so
+> don't use extcon. It is full of Linuxisms and needs work. USB
+> connectors need to be described like what we have for display related
+> connectors especially since they are merging.
+> 
+> > Do we need to add hdmi-connectors to all existing boards that have HDMI
+> > module?
+> 
+> Ideally, yes.
+
+I agree. In practice "details" such as backward compatibility need to be taken 
+into account, but it's a good practice to update the mainline device tree 
+sources to the recommended bindings.
+
+-- 
+Regards,
+
+Laurent Pinchart
