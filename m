@@ -1,138 +1,86 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] drm/bridge/sii8620: add external connector handle
-Date: Fri, 18 Aug 2017 02:37:13 +0300
-Message-ID: <3769720.Fa99sOQPuX@avalon>
-References: <1502371530-32260-1-git-send-email-m.purski@samsung.com> <9232b812-7aef-c614-b122-612e19743df4@samsung.com> <20170817151102.wmjelokfkzd2lk4i@rob-hp-laptop>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 4/4] phy: tegra: use of_device_get_match_data()
+Date: Fri, 18 Aug 2017 14:42:03 +0200
+Message-ID: <20170818124203.GA4556@ulmo>
+References: <1502270280-13792-1-git-send-email-chunfeng.yun@mediatek.com>
+ <1502270280-13792-4-git-send-email-chunfeng.yun@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58949 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752872AbdHQXgs (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 19:36:48 -0400
-In-Reply-To: <20170817151102.wmjelokfkzd2lk4i@rob-hp-laptop>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1502270280-13792-4-git-send-email-chunfeng.yun@mediatek.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Heiko Stuebner <heiko@sntech.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kamil Debski <kamil@wypas.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Vivek Gautam <vivek.gautam@codeaurora.org>, Axel Lin <axel.lin@ingics.com>, Baoyou Xie <baoyou.xie@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Sekhar Nori <nsekhar@ti.com>, Viresh Kumar <viresh.kumar@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.orglin
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Rob Herring <robh@kernel.org>, Maciej Purski <m.purski@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, airlied@linux.ie, mark.rutland@arm.com, architt@codeaurora.org, will.deacon@arm.com, catalin.marinas@arm.com, a.hajda@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
 
-Hi Marek,
 
-On Thursday 17 Aug 2017 10:11:02 Rob Herring wrote:
-> On Fri, Aug 11, 2017 at 02:49:35PM +0200, Marek Szyprowski wrote:
-> > On 2017-08-11 11:40, Laurent Pinchart wrote:
-> >> On Friday 11 Aug 2017 08:39:31 Marek Szyprowski wrote:
-> >>> On 2017-08-10 15:39, Laurent Pinchart wrote:
-> >>>> On Thursday 10 Aug 2017 15:25:29 Maciej Purski wrote:
-> >>>>> The driver should be switched on if an external connector is
-> >>>>> plugged and switched off if it is unplugged. Extcon is optional.
-> >>>>> If it is not found, the driver stays in "always-on" mode.
-> >>>>> 
-> >>>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> >>>>> ---
-> >>>>> 
-> >>>>> .../bindings/display/bridge/sil-sii8620.txt        |  4 ++
-> >>>>> drivers/gpu/drm/bridge/sil-sii8620.c               | 83 ++++++++++++-
-> >>>>> 2 files changed, 85 insertions(+), 2 deletions(-)
-> >>>>> 
-> >>>>> diff --git
-> >>>>> a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
-> >>>>> b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
-> >>>>> index
-> >>>>> 9409d9c..1f230bf 100644
-> >>>>> --- a/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt
-> >>>>> +++ b/Documentation/devicetree/bindings/display/bridge/sil-sii8620.txt 
-> >>>>> @@ -10,6 +10,9 @@ Required properties:
-> >>>>>    	- clocks, clock-names: specification and name of "xtal" clock
-> >>>>>    	- video interfaces: Device node can contain video interface
-> >>>>>    	  port node for HDMI encoder according to [1].
-> >>>>> 
-> >>>>> +Optional properties:
-> >>>>> +	- extcon: phandle to external connector for MHL cable changes
-> >>>>> +		  detection
-> >>>> 
-> >>>> The sii8620 DT node should model its connection to the MHL connector
-> >>>> using OF graph, connecting a port to the MHL connector DT node through
-> >>>> endpoints. I believe the extcon property should then be added to the
-> >>>> MHL connector DT node, not the bridge.
-> >>> 
-> >>> I don't get this. Generic extcon bindings doesn't define connector DT
-> >>> node, so I don't see how could we use endpoint DT approach here. Could
-> >>> you give the example?
-> >> 
-> >> Sure, here you are.
-> >> 
-> >> &hsi2c_7 {
-> >> 	...
-> >>          sii8620@39 {
-> >>                  reg = <0x39>;
-> >>                  compatible = "sil,sii8620";
-> >>                  cvcc10-supply = <&ldo36_reg>;
-> >>                  iovcc18-supply = <&ldo34_reg>;
-> >>                  interrupt-parent = <&gpf0>;
-> >>                  interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-> >>                  reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
-> >>                  clocks = <&pmu_system_controller 0>;
-> >>                  clock-names = "xtal";
-> >> 		
-> >> 		ports {
-> >> 			#address-cells = <1>;
-> >> 			#size-cells = <0>;
-> >> 			
-> >> 	                port@0 {
-> >> 				reg = <0>;
-> >>          	                mhl_to_hdmi: endpoint {
-> >>                  	                remote-endpoint = <&hdmi_to_mhl>;
-> >> 	                        };
-> >>          	        };
-> >> 	                port@1 {
-> >> 				reg = <1>;
-> >>          	                mhl_bridge_out: endpoint {
-> >>                  	                remote-endpoint = <&mhl_connector_in>;
-> >> 	                        };
-> >>          	        };
-> >> 		};
-> >>          };
-> >> };
-> >> 
-> >> / {
-> >> 	mhl-connector {
-> >> 		compatible = "mhl-connector";
-> >> 		extcon = <&muic>;
-> >> 		
-> >> 	        port {
-> >>          	        mhl_connector_in: endpoint {
-> >>                  	        remote-endpoint = <&mhl_bridge_out>;
-> >> 	                };
-> >>          	};
-> >> 	};
-> >> };
-> >> 
-> >> Note that there's currently no DT binding for MHL connectors. One needs
-> >> to be developed, the HDMI connector DT binding can be used as a source
-> >> of inspiration.
-> > 
-> > Ah, I see. I wasn't aware that display subsystem has bindings even for the
-> > connectors. Other types of connectors already used together with extcon in
-> > device tree (like usb and chargers) don't have dedicated bindings.
-> 
-> I NAK any extcon binding additions because it is poorly designed, so
-> don't use extcon. It is full of Linuxisms and needs work. USB
-> connectors need to be described like what we have for display related
-> connectors especially since they are merging.
-> 
-> > Do we need to add hdmi-connectors to all existing boards that have HDMI
-> > module?
-> 
-> Ideally, yes.
+--T4sUOijqQbZv57TR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I agree. In practice "details" such as backward compatibility need to be taken 
-into account, but it's a good practice to update the mainline device tree 
-sources to the recommended bindings.
+On Wed, Aug 09, 2017 at 05:18:00PM +0800, Chunfeng Yun wrote:
+> reduce the boilerplate code to get the specific data
+>=20
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> ---
+>  drivers/phy/tegra/xusb.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
--- 
-Regards,
+You're not reducing by much here. =3D)
 
-Laurent Pinchart
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index 3cbcb25..25cdfb1 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -848,7 +848,6 @@ static int tegra_xusb_padctl_probe(struct platform_de=
+vice *pdev)
+>  	struct device_node *np =3D of_node_get(pdev->dev.of_node);
+>  	const struct tegra_xusb_padctl_soc *soc;
+>  	struct tegra_xusb_padctl *padctl;
+> -	const struct of_device_id *match;
+>  	struct resource *res;
+>  	int err;
+> =20
+> @@ -861,8 +860,9 @@ static int tegra_xusb_padctl_probe(struct platform_de=
+vice *pdev)
+> =20
+>  	of_node_put(np);
+> =20
+> -	match =3D of_match_node(tegra_xusb_padctl_of_match, pdev->dev.of_node);
+> -	soc =3D match->data;
+> +	soc =3D of_device_get_match_data(&pdev->dev);
+> +	if (!soc)
+> +		return -EINVAL;
+
+This is never going to happen. There will always be a match, otherwise
+this function would never be called.
+
+Also, if you omit these last two lines, then you actually do reduce the
+boilerplate.
+
+Thierry
+
+--T4sUOijqQbZv57TR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmW4JgACgkQ3SOs138+
+s6HZeA/+JZndCg9U/ujFpVP64Fa46vJ+TIk6H8Y1Bba9fMQCVVvGTMRBB83bRFw3
+/9Ftr3ih5HSYVb7SJAH8v0Uwp3AUAMENOkkllBoXmZj8+paBDk5CACy+uyM1k2Vr
+Uj6+UK05jNoQv7RhtdOoVz5YBwypMyMVaYSYrOUMHnI4VkppPEwgqMXY/4BY+vUf
+QRSTZC03rPG4vamuyQ4eVDnmxUaoDUezodpCrdil7UZ2X12BLJfuY1G/xTcH8imJ
+/LCglKY0ET0SZYgCvOBhYwD48Km21tPIdzJ/VSsyTishn5ZZHi9reYHVwJWKuTBm
+0Xu1A/mAM6G2k2nkqSTAATLzV+Fj19Ivz/KI5ddmJ+1edf/D64mEhT3Y4uVvFQBF
+9NQJ/fgRI0V2O4O21owl2y3N+oPvWJFdyktopmUi4n4dk/nmyPxYZ26OzJuwDGoE
+og7JOdUF5L2czOJkNmc0YmFOfWloatp6FJYSMH8AC5lt4koiceGSNhNrf2nTHT7a
+qsDcZRnzsQh8AlPBhFmTnC96ZGlfOKl8YSh4cJf/FnRFo6FbvRgkjybNqpTE0bSz
+qYrk3eGV2wEfqn2Iphq2pqqRTmQNLOINdM09etnecL7SyA0hZGDZaPFHnLWOut+y
+Ov2oJfNvQa9Pryr6kMTx2wkMr1S0hkN79TdDBBxceH+k1bj/ZJA=
+=zQR5
+-----END PGP SIGNATURE-----
+
+--T4sUOijqQbZv57TR--
