@@ -2,7 +2,7 @@ From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Subject: [git:media_tree/master] media: Convert to using %pOF instead of
  full_name
 Date: Sun, 20 Aug 2017 12:20:20 +0000
-Message-ID: <E1djPSG-0000q2-7x@www.linuxtv.org>
+Message-ID: <E1djQ0w-0003fG-2X@www.linuxtv.org>
 Reply-To: linux-media@vger.kernel.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -18,7 +18,7 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linuxtv-commits@linuxtv.org
-Cc: Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Lad@linuxtv.org, Songjun Wu <songjun.wu@microchip.com>, Andrzej Hajda <a.hajda@samsung.com>, Prabhakar <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, Houlong Wei <houlong.wei@mediatek.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Lad@linuxtv.org, Songjun Wu <songjun.wu@microchip.com>, Andrzej Hajda <a.hajda@samsung.com>, Prabhakar <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Houlong Wei <houlong.wei@mediatek.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 VGhpcyBpcyBhbiBhdXRvbWF0aWMgZ2VuZXJhdGVkIGVtYWlsIHRvIGxldCB5b3Uga25vdyB0aGF0
