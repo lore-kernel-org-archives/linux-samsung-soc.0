@@ -1,97 +1,361 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Odroid XU4 usb 3.0 clk summary.
-Date: Mon, 21 Aug 2017 01:49:39 +0530
-Message-ID: <CANAwSgTq75gH2k2Mxxs5BfEckpNkOhfBk3j+KwZS3JrqgBiK3g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36709 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753299AbdHTUUA (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 20 Aug 2017 16:20:00 -0400
-Received: by mail-oi0-f51.google.com with SMTP id g131so137465301oic.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Aug 2017 13:20:00 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v9 1/5] clk: Add support for runtime PM
+Date: Mon, 21 Aug 2017 10:04:59 +0200
+Message-ID: <1503302703-13801-2-git-send-email-m.szyprowski@samsung.com>
+References: <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
+        <CGME20170821080538eucas1p2fc5723914c314e6fe5da19bed55dd5bd@eucas1p2.samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Brian Kim <brian.kim@hardkernel.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Hi All,
+Registers for some clocks might be located in the SOC area, which are under the
+power domain. To enable access to those registers respective domain has to be
+turned on. Additionally, registers for such clocks will usually loose its
+contents when power domain is turned off, so additional saving and restoring of
+them might be needed in the clock controller driver.
 
-I have some issue on performance on USB 3.0 on Odroid XU4.
-some inconsistency on heavy read/write issue on hdd / ssd.
-with intermediated failure in hub reset, with no kernel panic.
+This patch adds basic infrastructure in the clocks core to allow implementing
+driver for such clocks under power domains. Clock provider can supply a
+struct device pointer, which is the used by clock core for tracking and managing
+clock's controller runtime pm state. Each clk_prepare() operation
+will first call pm_runtime_get_sync() on the supplied device, while
+clk_unprepare() will do pm_runtime_put_sync() at the end.
 
-Jul 31 00:04:52 odroid kernel: usb 4-1.1: reset SuperSpeed USB device
-number 3 using xhci-hcd
-Jul 31 00:04:53 odroid kernel: usb 4-1.1: reset SuperSpeed USB device
-number 3 using xhci-hcd
-Jul 31 00:04:55 odroid kernel: usb 4-1.1: reset SuperSpeed USB device
-number 3 using xhci-hcd
+Additional calls to pm_runtime_get/put functions are required to ensure that any
+register access (like calculating/changing clock rates and unpreparing/disabling
+unused clocks on boot) will be done with clock controller in runtime resumend
+state.
 
-So I just wonder if this could be related to usb 3.0 clk.
-So the cross check check the ck_summary of HK 3.10.x and mainline 4.13.x
+When one wants to register clock controller, which make use of this feature, he
+has to:
+1. Provide a struct device to the core when registering the provider.
+2. Ensure to enable runtime PM for that device before registering clocks.
+3. Make sure that the runtime PM status of the controller device reflects
+   the HW state.
 
-ck_summary HK 3.10.x         https://pastebin.com/qGGHj1t6
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/clk.c | 126 ++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 112 insertions(+), 14 deletions(-)
 
-    mout_usbdrd300              3           3            24000000
-       dout_usbdrd300           2           2            24000000
-          sclk_usbdrd300        1           1            24000000
-       dout_usbphy300           2           2            24000000
-          sclk_usbphy300        1           1            24000000
-    mout_usbdrd301              3           3            24000000
-       dout_usbdrd301           2           2            24000000
-          sclk_usbdrd301        1           1            24000000
-       dout_usbphy301           2           2            24000000
-          sclk_usbphy301        1           1            24000000
-
-clk_summary mainline 4.13.x          https://pastebin.com/i7ij29Sm
-
-    mout_usbd300                          1            1    24000000
-       0 0
-       dout_usbd300                       0            0    24000000
-       0 0
-          sclk_usbd300                    0            0    24000000
-       0 0
-       dout_usbphy300                     1            1    24000000
-       0 0
-          sclk_usbphy300                  4            4    24000000
-       0 0
-    mout_usbd301                          1            1    24000000
-       0 0
-       dout_usbd301                       0            0    24000000
-       0 0
-          sclk_usbd301                    0            0    24000000
-       0 0
-       dout_usbphy301                     1            1    24000000
-       0 0
-          sclk_usbphy301                  3            3    24000000
-       0 0
-
-So their seem to be some difference in the clk count on usb 3.0.
-could this be related to the above behavior.
-
-Form the schematic of Odroid XU4 it seem to have USB_CLK to control usb.
-usb clk to but could not find any link in the exynos5420 clk code.
-
-Odroid XU4 has USB HUB GL852G-OHG  controller.
-possible datasheet of hub controller
-http://minipcsale.ru/images/Minix-Neo-X8-h/GL852G.pdf
-
-How can we control the vbus power of the usb 3.0 ports ?
-
-XUSB30OVERCUR_U2/ETC5_0
-XUSB30OVERCUR_U3/ETC5_1
-XUSB30VBUSCTRL_U2/ETC5_2
-XUSB30VBUSCTRL_U3/ETC5_3
-
-I have also tried to setup vbu/vbus-boost via dts but no success.
-
-I have also tried to enable power-domain fsys for usb device
-but it's say unsupported setting.
-
-If you could share some inputs it would be useful in debug and enhance the code.
-
-Best Regards
--Anand
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fc58c52a26b4..c5a4fb2687ab 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -21,6 +21,7 @@
+ #include <linux/of.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
++#include <linux/pm_runtime.h>
+ #include <linux/sched.h>
+ #include <linux/clkdev.h>
+ 
+@@ -46,6 +47,7 @@ struct clk_core {
+ 	const struct clk_ops	*ops;
+ 	struct clk_hw		*hw;
+ 	struct module		*owner;
++	struct device		*dev;
+ 	struct clk_core		*parent;
+ 	const char		**parent_names;
+ 	struct clk_core		**parents;
+@@ -87,6 +89,26 @@ struct clk {
+ 	struct hlist_node clks_node;
+ };
+ 
++/***           runtime pm          ***/
++static int clk_pm_runtime_get(struct clk_core *core)
++{
++	int ret = 0;
++
++	if (!core->dev)
++		return 0;
++
++	ret = pm_runtime_get_sync(core->dev);
++	return ret < 0 ? ret : 0;
++}
++
++static void clk_pm_runtime_put(struct clk_core *core)
++{
++	if (!core->dev)
++		return;
++
++	pm_runtime_put_sync(core->dev);
++}
++
+ /***           locking             ***/
+ static void clk_prepare_lock(void)
+ {
+@@ -150,6 +172,8 @@ static void clk_enable_unlock(unsigned long flags)
+ 
+ static bool clk_core_is_prepared(struct clk_core *core)
+ {
++	bool ret = false;
++
+ 	/*
+ 	 * .is_prepared is optional for clocks that can prepare
+ 	 * fall back to software usage counter if it is missing
+@@ -157,11 +181,18 @@ static bool clk_core_is_prepared(struct clk_core *core)
+ 	if (!core->ops->is_prepared)
+ 		return core->prepare_count;
+ 
+-	return core->ops->is_prepared(core->hw);
++	if (!clk_pm_runtime_get(core)) {
++		ret = core->ops->is_prepared(core->hw);
++		clk_pm_runtime_put(core);
++	}
++
++	return ret;
+ }
+ 
+ static bool clk_core_is_enabled(struct clk_core *core)
+ {
++	bool ret = false;
++
+ 	/*
+ 	 * .is_enabled is only mandatory for clocks that gate
+ 	 * fall back to software usage counter if .is_enabled is missing
+@@ -169,7 +200,29 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 	if (!core->ops->is_enabled)
+ 		return core->enable_count;
+ 
+-	return core->ops->is_enabled(core->hw);
++	/*
++	 * Check if clock controller's device is runtime active before
++	 * calling .is_enabled callback. If not, assume that clock is
++	 * disabled, because we might be called from atomic context, from
++	 * which pm_runtime_get() is not allowed.
++	 * This function is called mainly from clk_disable_unused_subtree,
++	 * which ensures proper runtime pm activation of controller before
++	 * taking enable spinlock, but the below check is needed if one tries
++	 * to call it from other places.
++	 */
++	if (core->dev) {
++		pm_runtime_get_noresume(core->dev);
++		if (!pm_runtime_active(core->dev)) {
++			ret = false;
++			goto done;
++		}
++	}
++
++	ret = core->ops->is_enabled(core->hw);
++done:
++	clk_pm_runtime_put(core);
++
++	return ret;
+ }
+ 
+ /***    helper functions   ***/
+@@ -489,6 +542,8 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	if (core->ops->unprepare)
+ 		core->ops->unprepare(core->hw);
+ 
++	clk_pm_runtime_put(core);
++
+ 	trace_clk_unprepare_complete(core);
+ 	clk_core_unprepare(core->parent);
+ }
+@@ -530,10 +585,14 @@ static int clk_core_prepare(struct clk_core *core)
+ 		return 0;
+ 
+ 	if (core->prepare_count == 0) {
+-		ret = clk_core_prepare(core->parent);
++		ret = clk_pm_runtime_get(core);
+ 		if (ret)
+ 			return ret;
+ 
++		ret = clk_core_prepare(core->parent);
++		if (ret)
++			goto runtime_put;
++
+ 		trace_clk_prepare(core);
+ 
+ 		if (core->ops->prepare)
+@@ -541,15 +600,18 @@ static int clk_core_prepare(struct clk_core *core)
+ 
+ 		trace_clk_prepare_complete(core);
+ 
+-		if (ret) {
+-			clk_core_unprepare(core->parent);
+-			return ret;
+-		}
++		if (ret)
++			goto unprepare;
+ 	}
+ 
+ 	core->prepare_count++;
+ 
+ 	return 0;
++unprepare:
++	clk_core_unprepare(core->parent);
++runtime_put:
++	clk_pm_runtime_put(core);
++	return ret;
+ }
+ 
+ static int clk_core_prepare_lock(struct clk_core *core)
+@@ -745,6 +807,9 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
+ 	if (core->flags & CLK_IGNORE_UNUSED)
+ 		return;
+ 
++	if (clk_pm_runtime_get(core))
++		return;
++
+ 	if (clk_core_is_prepared(core)) {
+ 		trace_clk_unprepare(core);
+ 		if (core->ops->unprepare_unused)
+@@ -753,6 +818,8 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
+ 			core->ops->unprepare(core->hw);
+ 		trace_clk_unprepare_complete(core);
+ 	}
++
++	clk_pm_runtime_put(core);
+ }
+ 
+ static void clk_disable_unused_subtree(struct clk_core *core)
+@@ -768,6 +835,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+ 	if (core->flags & CLK_OPS_PARENT_ENABLE)
+ 		clk_core_prepare_enable(core->parent);
+ 
++	if (clk_pm_runtime_get(core))
++		goto unprepare_out;
++
+ 	flags = clk_enable_lock();
+ 
+ 	if (core->enable_count)
+@@ -792,6 +862,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+ 
+ unlock_out:
+ 	clk_enable_unlock(flags);
++	clk_pm_runtime_put(core);
++unprepare_out:
+ 	if (core->flags & CLK_OPS_PARENT_ENABLE)
+ 		clk_core_disable_unprepare(core->parent);
+ }
+@@ -1038,9 +1110,13 @@ long clk_get_accuracy(struct clk *clk)
+ static unsigned long clk_recalc(struct clk_core *core,
+ 				unsigned long parent_rate)
+ {
+-	if (core->ops->recalc_rate)
+-		return core->ops->recalc_rate(core->hw, parent_rate);
+-	return parent_rate;
++	unsigned long rate = parent_rate;
++
++	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
++		rate = core->ops->recalc_rate(core->hw, parent_rate);
++		clk_pm_runtime_put(core);
++	}
++	return rate;
+ }
+ 
+ /**
+@@ -1565,6 +1641,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ {
+ 	struct clk_core *top, *fail_clk;
+ 	unsigned long rate = req_rate;
++	int ret = 0;
+ 
+ 	if (!core)
+ 		return 0;
+@@ -1581,21 +1658,28 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (!top)
+ 		return -EINVAL;
+ 
++	ret = clk_pm_runtime_get(core);
++	if (ret)
++		return ret;
++
+ 	/* notify that we are about to change rates */
+ 	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
+ 	if (fail_clk) {
+ 		pr_debug("%s: failed to set %s rate\n", __func__,
+ 				fail_clk->name);
+ 		clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto err;
+ 	}
+ 
+ 	/* change the rates */
+ 	clk_change_rate(top);
+ 
+ 	core->req_rate = req_rate;
++err:
++	clk_pm_runtime_put(core);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ /**
+@@ -1826,12 +1910,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 		p_rate = parent->rate;
+ 	}
+ 
++	ret = clk_pm_runtime_get(core);
++	if (ret)
++		goto out;
++
+ 	/* propagate PRE_RATE_CHANGE notifications */
+ 	ret = __clk_speculate_rates(core, p_rate);
+ 
+ 	/* abort if a driver objects */
+ 	if (ret & NOTIFY_STOP_MASK)
+-		goto out;
++		goto runtime_put;
+ 
+ 	/* do the re-parent */
+ 	ret = __clk_set_parent(core, parent, p_index);
+@@ -1844,6 +1932,8 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 		__clk_recalc_accuracies(core);
+ 	}
+ 
++runtime_put:
++	clk_pm_runtime_put(core);
+ out:
+ 	clk_prepare_unlock();
+ 
+@@ -2350,7 +2440,7 @@ static inline void clk_debug_unregister(struct clk_core *core)
+  */
+ static int __clk_core_init(struct clk_core *core)
+ {
+-	int i, ret = 0;
++	int i, ret;
+ 	struct clk_core *orphan;
+ 	struct hlist_node *tmp2;
+ 	unsigned long rate;
+@@ -2360,6 +2450,10 @@ static int __clk_core_init(struct clk_core *core)
+ 
+ 	clk_prepare_lock();
+ 
++	ret = clk_pm_runtime_get(core);
++	if (ret)
++		goto unlock;
++
+ 	/* check to see if a clock with this name is already registered */
+ 	if (clk_core_lookup(core->name)) {
+ 		pr_debug("%s: clk %s already initialized\n",
+@@ -2512,6 +2606,8 @@ static int __clk_core_init(struct clk_core *core)
+ 
+ 	kref_init(&core->ref);
+ out:
++	clk_pm_runtime_put(core);
++unlock:
+ 	clk_prepare_unlock();
+ 
+ 	if (!ret)
+@@ -2583,6 +2679,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		goto fail_name;
+ 	}
+ 	core->ops = hw->init->ops;
++	if (dev && pm_runtime_enabled(dev))
++		core->dev = dev;
+ 	if (dev && dev->driver)
+ 		core->owner = dev->driver->owner;
+ 	core->hw = hw;
+-- 
+1.9.1
