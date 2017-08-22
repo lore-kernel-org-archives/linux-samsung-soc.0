@@ -1,68 +1,72 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 5/9] drm/exynos: mixer: remove src offset from
- mixer_graph_buffer()
-Date: Tue, 22 Aug 2017 16:19:40 +0200
-Message-ID: <20170822141944.8138-6-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 6/9] drm/exynos: introduce BYTE_PITCH capability
+Date: Tue, 22 Aug 2017 16:19:41 +0200
+Message-ID: <20170822141944.8138-7-tjakobi@math.uni-bielefeld.de>
 References: <20170822141944.8138-1-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55876 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932510AbdHVOW5 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 22 Aug 2017 10:22:57 -0400
 In-Reply-To: <20170822141944.8138-1-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-V2UgYWx3YXlzIHRyYW5zbGF0ZSB0aGUgZG1hIGFkZHJlc3Mgc3VjaCB0aGF0IHRoZSBvZmZzZXRz
-IG9mCnRoZSBzb3VyY2UgaW1hZ2UgYXJlIHplcm8uIEhlbmNlIHdlIGNhbiByZW1vdmUgbWFuaXB1
-bGF0aW9uIG9mCnRoZSBNWFJfR1JBUEhJQ19TWFkod2luKSByZWdpc3RlciBhbmQganVzdCB6ZXJv
-IHRoZW0gb25jZQppbiBtaXhlcl93aW5fcmVzZXQoKS4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBK
-YWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAxNSArKysrKystLS0tLS0tLS0KIDEgZmlsZSBjaGFu
-Z2VkLCA2IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX21peGVyLmMKaW5kZXggOGQ2OGRlODViYWRhLi5hNTQwZTUwY2VhZGMgMTAwNjQ0Ci0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtNTg0LDcgKzU4NCw3IEBAIHN0YXRpYyB2
-b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAogCXVuc2ln
-bmVkIGxvbmcgZmxhZ3M7CiAJdW5zaWduZWQgaW50IHdpbiA9IHBsYW5lLT5pbmRleDsKIAl1bnNp
-Z25lZCBpbnQgeF9yYXRpbyA9IDAsIHlfcmF0aW8gPSAwOwotCXVuc2lnbmVkIGludCBzcmNfeF9v
-ZmZzZXQsIHNyY195X29mZnNldCwgZHN0X3hfb2Zmc2V0LCBkc3RfeV9vZmZzZXQ7CisJdW5zaWdu
-ZWQgaW50IGRzdF94X29mZnNldCwgZHN0X3lfb2Zmc2V0OwogCWRtYV9hZGRyX3QgZG1hX2FkZHI7
-CiAJdW5zaWduZWQgaW50IGZtdDsKIAl1MzIgdmFsOwpAQCAtNjE4LDEyICs2MTgsMTAgQEAgc3Rh
-dGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJ
-ZHN0X3hfb2Zmc2V0ID0gc3RhdGUtPmNydGMueDsKIAlkc3RfeV9vZmZzZXQgPSBzdGF0ZS0+Y3J0
-Yy55OwogCi0JLyogY29udmVydGluZyBkbWEgYWRkcmVzcyBiYXNlIGFuZCBzb3VyY2Ugb2Zmc2V0
-ICovCisJLyogdHJhbnNsYXRlIGRtYSBhZGRyZXNzIGJhc2Ugcy50LiB0aGUgc291cmNlIGltYWdl
-IG9mZnNldCBpcyB6ZXJvICovCiAJZG1hX2FkZHIgPSBleHlub3NfZHJtX2ZiX2RtYV9hZGRyKGZi
-LCAwKQogCQkrIChzdGF0ZS0+c3JjLnggKiBmYi0+Zm9ybWF0LT5jcHBbMF0pCiAJCSsgKHN0YXRl
-LT5zcmMueSAqIGZiLT5waXRjaGVzWzBdKTsKLQlzcmNfeF9vZmZzZXQgPSAwOwotCXNyY195X29m
-ZnNldCA9IDA7CiAKIAlpZiAobW9kZS0+ZmxhZ3MgJiBEUk1fTU9ERV9GTEFHX0lOVEVSTEFDRSkK
-IAkJX19zZXRfYml0KE1YUl9CSVRfSU5URVJMQUNFLCAmY3R4LT5mbGFncyk7CkBAIC02NTQsMTEg
-KzY1Miw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29u
-dGV4dCAqY3R4LAogCXZhbCB8PSBNWFJfR1JQX1dIX1ZfU0NBTEUoeV9yYXRpbyk7CiAJbWl4ZXJf
-cmVnX3dyaXRlKHJlcywgTVhSX0dSQVBISUNfV0god2luKSwgdmFsKTsKIAotCS8qIHNldHVwIG9m
-ZnNldHMgaW4gc291cmNlIGltYWdlICovCi0JdmFsICA9IE1YUl9HUlBfU1hZX1NYKHNyY194X29m
-ZnNldCk7Ci0JdmFsIHw9IE1YUl9HUlBfU1hZX1NZKHNyY195X29mZnNldCk7Ci0JbWl4ZXJfcmVn
-X3dyaXRlKHJlcywgTVhSX0dSQVBISUNfU1hZKHdpbiksIHZhbCk7Ci0KIAkvKiBzZXR1cCBvZmZz
-ZXRzIGluIGRpc3BsYXkgaW1hZ2UgKi8KIAl2YWwgID0gTVhSX0dSUF9EWFlfRFgoZHN0X3hfb2Zm
-c2V0KTsKIAl2YWwgfD0gTVhSX0dSUF9EWFlfRFkoZHN0X3lfb2Zmc2V0KTsKQEAgLTczNSw2ICs3
-MjgsMTAgQEAgc3RhdGljIHZvaWQgbWl4ZXJfd2luX3Jlc2V0KHN0cnVjdCBtaXhlcl9jb250ZXh0
-ICpjdHgpCiAJaWYgKHRlc3RfYml0KE1YUl9CSVRfVlBfRU5BQkxFRCwgJmN0eC0+ZmxhZ3MpKQog
-CQltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgMCwgTVhSX0NGR19WUF9FTkFCTEUp
-OwogCisJLyogc2V0IGFsbCBzb3VyY2UgaW1hZ2Ugb2Zmc2V0cyB0byB6ZXJvICovCisJbWl4ZXJf
-cmVnX3dyaXRlKHJlcywgTVhSX0dSQVBISUNfU1hZKDApLCAwKTsKKwltaXhlcl9yZWdfd3JpdGUo
-cmVzLCBNWFJfR1JBUEhJQ19TWFkoMSksIDApOworCiAJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgm
-cmVzLT5yZWdfc2xvY2ssIGZsYWdzKTsKIH0KIAotLSAKMi4xMy4wCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+In some of subdrivers we compute something like 'pitch / cpp' at some
+point, silently assuming that the pitch (which is in bytes) is
+divisible by the buffer's cpp. This must not be true, in particular
+it depends on the underlying hardware.
+
+If userspace should request such a setup, we should communicate this.
+
+Introduce a new cap which indicates that the hardware supports a
+pitch with 'byte-granularity'. If the cap is not set, assume that
+we need a pitch aligned to cpp.
+
+We set this cap in a later patch for the drivers/planes which
+support it.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 10 ++++++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 43afab4bebc3..ec32632485d2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -92,6 +92,7 @@ struct exynos_drm_plane {
+ #define EXYNOS_DRM_PLANE_CAP_SCALE	(1 << 1)
+ #define EXYNOS_DRM_PLANE_CAP_ZPOS	(1 << 2)
+ #define EXYNOS_DRM_PLANE_CAP_TILE	(1 << 3)
++#define EXYNOS_DRM_PLANE_CAP_BYTE_PITCH	(1 << 4)
+ 
+ /*
+  * Exynos DRM plane configuration structure.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 133af72f5c90..17e47b8f0d6a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -185,6 +185,16 @@ exynos_drm_plane_check_format(const struct exynos_drm_plane_config *config,
+ {
+ 	struct drm_framebuffer *fb = state->base.fb;
+ 
++	/*
++	 * Some blocks only allow to specify a buffer pitch in terms
++	 * of pixels. In these cases, we need to ensure that the pitch
++	 * provided by userspace is divisible by the cpp.
++	 */
++	if (!(config->capabilities & EXYNOS_DRM_PLANE_CAP_BYTE_PITCH)) {
++		if (fb->pitches[0] % fb->format->cpp[0])
++			return -ENOTSUPP;
++	}
++
+ 	switch (fb->modifier) {
+ 	case DRM_FORMAT_MOD_SAMSUNG_64_32_TILE:
+ 		if (!(config->capabilities & EXYNOS_DRM_PLANE_CAP_TILE))
+-- 
+2.13.0
