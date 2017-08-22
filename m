@@ -1,46 +1,130 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 1/9] drm/exynos: mixer: fix chroma comment in
- vp_video_buffer()
-Date: Tue, 22 Aug 2017 16:19:36 +0200
-Message-ID: <20170822141944.8138-2-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 2/9] drm/exynos: mixer: enable NV12MT support for the video plane
+Date: Tue, 22 Aug 2017 16:19:37 +0200
+Message-ID: <20170822141944.8138-3-tjakobi@math.uni-bielefeld.de>
 References: <20170822141944.8138-1-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55857 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932510AbdHVOU2 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 22 Aug 2017 10:20:28 -0400
 In-Reply-To: <20170822141944.8138-1-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-VGhlIGN1cnJlbnQgY29tbWVudCBzb3VuZHMgbGlrZSB0aGUgZGl2aXNpb24gb3AgaXMgZG9uZSB0
-bwpjb21wZW5zYXRlIGZvciBzb21lIGhhcmR3YXJlIGVycmF0dW0uIEJ1dCB0aGUgY2hyb21hIHBs
-YW5lCmhhdmluZyBoYWxmIHRoZSBoZWlnaHQgb2YgdGhlIGx1bWEgcGxhbmUgaXMganVzdCB0aGUg
-d2F5Ck5WMTIvTlYyMSBpcyBkZWZpbmVkLCBzbyBjbGFyaWZ5IHRoaXMgYmVoYXZpb3VyLgoKU2ln
-bmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+
-Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDIgKy0KIDEgZmls
-ZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19taXhlci5jCmluZGV4IGE5OThhOGRkNzgzYy4uYzZkNmY2ZDQyOTAwIDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCisrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAgLTUzMiw3ICs1MzIsNyBAQCBzdGF0
-aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKIAkvKiBz
-ZXR0aW5nIHNpemUgb2YgaW5wdXQgaW1hZ2UgKi8KIAl2cF9yZWdfd3JpdGUocmVzLCBWUF9JTUdf
-U0laRV9ZLCBWUF9JTUdfSFNJWkUoZmItPnBpdGNoZXNbMF0pIHwKIAkJVlBfSU1HX1ZTSVpFKGZi
-LT5oZWlnaHQpKTsKLQkvKiBjaHJvbWEgaGVpZ2h0IGhhcyB0byByZWR1Y2VkIGJ5IDIgdG8gYXZv
-aWQgY2hyb21hIGRpc3RvcmlvbnMgKi8KKwkvKiB0aGUgY2hyb21hIHBsYW5lIGZvciBOVjEyL05W
-MjEgaXMgaGFsZiB0aGUgaGVpZ2h0IG9mIHRoZSBsdW1hIHBsYW5lICovCiAJdnBfcmVnX3dyaXRl
-KHJlcywgVlBfSU1HX1NJWkVfQywgVlBfSU1HX0hTSVpFKGZiLT5waXRjaGVzWzBdKSB8CiAJCVZQ
-X0lNR19WU0laRShmYi0+aGVpZ2h0IC8gMikpOwogCi0tIAoyLjEzLjAKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The video processor supports a tiled version of the NV12 format,
+known as NV12MT in V4L2 terms. The support was removed in commit
+083500baefd5f4c215a5a93aef2492c1aa775828 due to not being a real
+pixel format, but rather NV12 with a special memory layout.
+
+With the introduction of FB modifiers, we can now properly support
+this format again.
+
+Tested with a hacked up modetest from libdrm's test suite on
+an ODROID-X2 (Exynos4412).
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    |  2 ++
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 27 +++++++++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_mixer.c     |  6 +++++-
+ 4 files changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index a93de321706b..43afab4bebc3 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -91,6 +91,7 @@ struct exynos_drm_plane {
+ #define EXYNOS_DRM_PLANE_CAP_DOUBLE	(1 << 0)
+ #define EXYNOS_DRM_PLANE_CAP_SCALE	(1 << 1)
+ #define EXYNOS_DRM_PLANE_CAP_ZPOS	(1 << 2)
++#define EXYNOS_DRM_PLANE_CAP_TILE	(1 << 3)
+ 
+ /*
+  * Exynos DRM plane configuration structure.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index 73217c281c9a..a958818d552b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -250,4 +250,6 @@ void exynos_drm_mode_config_init(struct drm_device *dev)
+ 
+ 	dev->mode_config.funcs = &exynos_drm_mode_config_funcs;
+ 	dev->mode_config.helper_private = &exynos_drm_mode_config_helpers;
++
++	dev->mode_config.allow_fb_modifiers = true;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 611b6fd65433..133af72f5c90 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -180,6 +180,29 @@ static struct drm_plane_funcs exynos_plane_funcs = {
+ };
+ 
+ static int
++exynos_drm_plane_check_format(const struct exynos_drm_plane_config *config,
++			      struct exynos_drm_plane_state *state)
++{
++	struct drm_framebuffer *fb = state->base.fb;
++
++	switch (fb->modifier) {
++	case DRM_FORMAT_MOD_SAMSUNG_64_32_TILE:
++		if (!(config->capabilities & EXYNOS_DRM_PLANE_CAP_TILE))
++			return -ENOTSUPP;
++		break;
++
++	case DRM_FORMAT_MOD_LINEAR:
++		break;
++
++	default:
++		DRM_ERROR("unsupported pixel format modifier");
++		return -ENOTSUPP;
++	}
++
++	return 0;
++}
++
++static int
+ exynos_drm_plane_check_size(const struct exynos_drm_plane_config *config,
+ 			    struct exynos_drm_plane_state *state)
+ {
+@@ -223,6 +246,10 @@ static int exynos_plane_atomic_check(struct drm_plane *plane,
+ 	/* translate state into exynos_state */
+ 	exynos_plane_mode_set(exynos_state);
+ 
++	ret = exynos_drm_plane_check_format(exynos_plane->config, exynos_state);
++	if (ret)
++		return ret;
++
+ 	ret = exynos_drm_plane_check_size(exynos_plane->config, exynos_state);
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index c6d6f6d42900..4c894d97aba3 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -148,7 +148,8 @@ static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
+ 		.pixel_formats = vp_formats,
+ 		.num_pixel_formats = ARRAY_SIZE(vp_formats),
+ 		.capabilities = EXYNOS_DRM_PLANE_CAP_SCALE |
+-				EXYNOS_DRM_PLANE_CAP_ZPOS,
++				EXYNOS_DRM_PLANE_CAP_ZPOS |
++				EXYNOS_DRM_PLANE_CAP_TILE,
+ 	},
+ };
+ 
+@@ -500,6 +501,9 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 		return;
+ 	}
+ 
++	if (fb->modifier == DRM_FORMAT_MOD_SAMSUNG_64_32_TILE)
++		tiled_mode = true;
++
+ 	luma_addr[0] = exynos_drm_fb_dma_addr(fb, 0);
+ 	chroma_addr[0] = exynos_drm_fb_dma_addr(fb, 1);
+ 
+-- 
+2.13.0
