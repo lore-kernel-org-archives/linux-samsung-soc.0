@@ -1,44 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC
- example)
-Date: Tue, 22 Aug 2017 11:27:06 +0200
-Message-ID: <e53af278-061d-bc9b-6f05-65c5e5491d00@samsung.com>
-References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
-        <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
-        <CAMuHMdUy5hi3fLVW6J1o=D194ASjr7Vz-pjWtddHyybK4RZxxA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CAMuHMdUy5hi3fLVW6J1o=D194ASjr7Vz-pjWtddHyybK4RZxxA@mail.gmail.com>
-Content-language: en-US
-Sender: linux-pm-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 0/9] drm/exynos: misc fixes and more
+Date: Tue, 22 Aug 2017 16:19:35 +0200
+Message-ID: <20170822141944.8138-1-tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55844 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932510AbdHVOT5 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 22 Aug 2017 10:19:57 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hi Geert,
+Hello,
 
-On 2017-08-22 11:21, Geert Uytterhoeven wrote:
-> On Mon, Aug 21, 2017 at 10:04 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> Patches for clocks drivers change the way the clock provider is initialized.
->> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
->> infrastructure is being used. This is needed to let driver to use runtime PM
->> feature and integrate with generic power domains. The side-effect of this change
->> is a delay in clock provider registeration during system boot, so early
->> initialized drivers might get EPROBEDEFER error when requesting their clocks.
->> This was an issue for IOMMU drivers, but IOMMU deferred probe support has been
->> finally merged to v4.13-rc1 and now it is handled correctly.
-> Any chances you have PHY devices falling back to polling due to this,
-> cfr. https://patchwork.kernel.org/patch/9734175/?
+this is the second iteration of [1], with the following changes:
+- split patch 3/8 (suggested by Inki)
+- zero init registers in patch 4/8 (suggested by Inki)
+- rephrased commit description of patch 5/8 to make it more
+  clear that this behaviour depends on the hw
+- replace zero with linear modifier in patch 2/8
 
-At least in case of Exynos5433 all related PHY drivers correctly handle 
-deferred
-probe and don't fallback to half-functional mode.
 
-Best regards
+Summary:
+(a) Enables support for NV12MT in the mixer.
+(b) Sanitizes buffer pitch for HW with restrictions.
+(c) Misc fixes
+
+With best wishes,
+Tobias
+
+[1] https://www.spinics.net/lists/linux-samsung-soc/msg60235.html
+
+
+Tobias Jakobi (9):
+  drm/exynos: mixer: fix chroma comment in vp_video_buffer()
+  drm/exynos: mixer: enable NV12MT support for the video plane
+  drm/exynos: mixer: simplify vp_video_buffer()
+  drm/exynos: mixer: simplify mixer_graph_buffer()
+  drm/exynos: mixer: remove src offset from mixer_graph_buffer()
+  drm/exynos: introduce BYTE_PITCH capability
+  drm/exynos: add BYTE_PITCH cap for all supported planes
+  drm/exynos: consistent use of cpp
+  drm/exynos: simplify set_pixfmt() in DECON and FIMD drivers
+
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 17 +++++-----
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 13 +++-----
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |  2 ++
+ drivers/gpu/drm/exynos/exynos_drm_fb.c        |  2 ++
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 17 ++++------
+ drivers/gpu/drm/exynos/exynos_drm_plane.c     | 37 +++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_mixer.c         | 48 +++++++++------------------
+ 7 files changed, 75 insertions(+), 61 deletions(-)
 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.13.0
