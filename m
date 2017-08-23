@@ -1,10 +1,8 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/3] ARM: exynos: Changes for v4.14
-Date: Wed, 23 Aug 2017 18:36:34 +0200
-Message-ID: <20170823163635.6064-2-krzk@kernel.org>
-References: <20170823163635.6064-1-krzk@kernel.org>
+Subject: [GIT PULL 1/3] soc: samsung: exynos for v4.14
+Date: Wed, 23 Aug 2017 18:36:33 +0200
+Message-ID: <20170823163635.6064-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170823163635.6064-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -13,32 +11,31 @@ List-Id: linux-samsung-soc@vger.kernel.org
 Hi,
 
 Just one commit. If needed you can also cherry-pick it directly.
-Based on top of previous pull request.
 
 Best regards,
 Krzysztof
 
 
-The following changes since commit f991ce429a420dbb42b3e4b5a47490c84390d7e1:
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 
-  ARM: s3c24xx: make H1940BT depend on RFKILL (2017-07-20 20:26:24 +0200)
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.14-2
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.14-2
 
-for you to fetch changes up to 225bd1de16fb2e330be5bad261d427d00293c55e:
+for you to fetch changes up to e83a71981181a36d36e18e2f2dae3ec84fc37429:
 
-  ARM: s3c24xx: Fix NAND ECC mode for mini2440 board (2017-08-21 19:50:51 +0200)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v4.14, part 2
-
-Fix NAND ECC mode for mini2440 board.
+  soc: samsung: Use kbasename instead of open coding (2017-07-24 06:47:50 +0200)
 
 ----------------------------------------------------------------
-Sylwester Nawrocki (1):
-      ARM: s3c24xx: Fix NAND ECC mode for mini2440 board
+Samsung soc drivers changes for v4.14
 
- arch/arm/mach-s3c24xx/mach-mini2440.c | 2 +-
+Conversion to kbasename from Rob Herring.
+
+----------------------------------------------------------------
+Rob Herring (1):
+      soc: samsung: Use kbasename instead of open coding
+
+ drivers/soc/samsung/pm_domains.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
