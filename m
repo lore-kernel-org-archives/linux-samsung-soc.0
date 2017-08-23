@@ -1,69 +1,45 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] dt/bindings: exynos-rng: Move dt binding
- documentation to bindings/crypto
-Date: Wed, 23 Aug 2017 18:54:58 +0200
-Message-ID: <20170823165458.qcoes376ydeavqt6@kozik-lap>
-References: <20170823150443.8399-1-prasannatsmkumar@gmail.com>
- <20170823161204.5cleer2rpgjd5vmz@kozik-lap>
- <CANc+2y4BfdAZhgfrP6NorqTPWBYsLsHKAvoeMMa=QUgB_d4Xdg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL/PATCH for v4.13] ARM: dts: exynos: add needs-hpd for Odroid-XU3/4
+Date: Wed, 23 Aug 2017 21:43:46 +0200
+Message-ID: <CAK8P3a1ka5jAdmobiwSsR5vR_gLVyd_92s+A5wAYTeYTesvi1w@mail.gmail.com>
+References: <20170823162450.4981-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33141 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932251AbdHWQzC (ORCPT
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:32969 "EHLO
+        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932407AbdHWTns (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Aug 2017 12:55:02 -0400
-Content-Disposition: inline
-In-Reply-To: <CANc+2y4BfdAZhgfrP6NorqTPWBYsLsHKAvoeMMa=QUgB_d4Xdg@mail.gmail.com>
+        Wed, 23 Aug 2017 15:43:48 -0400
+Received: by mail-oi0-f52.google.com with SMTP id f11so11430021oic.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Aug 2017 12:43:48 -0700 (PDT)
+In-Reply-To: <20170823162450.4981-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: mchehab@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Hans Verkuil <hans.verkuil@cisco.com>
 
-On Wed, Aug 23, 2017 at 10:14:29PM +0530, PrasannaKumar Muralidharan wrote:
-> Hi Krzysztof,
-> 
-> On 23 August 2017 at 21:42, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > On Wed, Aug 23, 2017 at 08:34:43PM +0530, PrasannaKumar Muralidharan wrote:
-> >> Samsung exynos PRNG driver is using crypto framework instead of
-> >> hw_random framework. So move the devicetree binding to crypto folder.
-> >>
-> >> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-> >> ---
-> >> Changes in v2:
-> >> * Modify MAINTAINERS file to reflect file rename
-> >>
-> >>  .../devicetree/bindings/{rng => crypto}/samsung,exynos-rng4.txt         | 0
-> >>  MAINTAINERS                                                             | 2 +-
-> >>  2 files changed, 1 insertion(+), 1 deletion(-)
-> >>  rename Documentation/devicetree/bindings/{rng => crypto}/samsung,exynos-rng4.txt (100%)
-> >>
-> >
-> > Patch is okay but CC list is still incomplete. I do not know how you
-> > could get Mauro for this patch... just use get_maintainers.pl.
-> 
-> I used get_maintainer.pl. Rechecked again, it says Mauro and couple of
-> others who may not be interested in this. It did not give your or
-> crypto mailing list. Its strange.
+On Wed, Aug 23, 2017 at 6:24 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> From: Hans Verkuil <hverkuil@xs4all.nl>
+>
+> CEC support was added for Exynos5 in 4.13, but for the Odroids we need to set
+> 'needs-hpd' as well since CEC is disabled when there is no HDMI hotplug signal,
+> just as for the exynos4 Odroid-U3.
+>
+> This is due to the level-shifter that is disabled when there is no HPD, thus
+> blocking the CEC signal as well. Same close-but-no-cigar board design as the
+> Odroid-U3.
+>
+> Tested with my Odroid XU4.
+>
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+> Hi Arnd, Olof,
+>
+> One fix for this cycle (v4.13) for feature (HDMI CEC) added in v4.13. Patch
+> is necessary for this feature to work on Odroid XU3/XU4 family.
 
-Hm, you're right. Aparently get_maintainer.pl does handle moved files
-thus he printed only entries for MAINTAINERS.
+Applied, thanks!
 
-You will get full entry with:
-scripts/get_maintainer.pl -f Documentation/devicetree/bindings/crypto/samsung,exynos-rng4.txt
-
-Krzysztof Kozlowski <krzk@kernel.org> (maintainer:SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (...)
-Herbert Xu <herbert@gondor.apana.org.au> (maintainer:CRYPTO API)
-"David S. Miller" <davem@davemloft.net> (maintainer:CRYPTO API)
-Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
-Mark Rutland <mark.rutland@arm.com> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
-Kukjin Kim <kgene@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
-linux-crypto@vger.kernel.org (open list:SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (...)
-linux-samsung-soc@vger.kernel.org (open list:SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (...)
-devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
-linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
-linux-kernel@vger.kernel.org (open list)
-
-Best regards,
-Krzysztof
+      Arnd
