@@ -1,63 +1,72 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH v2 01/10] drm/exynos/decon5433: use readl_poll_timeout
  helpers
-Date: Thu, 24 Aug 2017 15:54:52 +0200
-Message-ID: <2ae55d7a-3730-72f7-ae7e-8556b9e4e4a5@math.uni-bielefeld.de>
+Date: Thu, 24 Aug 2017 18:18:22 +0200
+Message-ID: <5ed41b91-a62e-c03d-6b45-473622fe112f@samsung.com>
 References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
- <CGME20170824133408eucas1p1e7b9988ac74fdd3e8dd8d25ead949ec5@eucas1p1.samsung.com>
- <1503581639-580-2-git-send-email-a.hajda@samsung.com>
+        <CGME20170824133408eucas1p1e7b9988ac74fdd3e8dd8d25ead949ec5@eucas1p1.samsung.com>
+        <1503581639-580-2-git-send-email-a.hajda@samsung.com>
+        <2ae55d7a-3730-72f7-ae7e-8556b9e4e4a5@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1503581639-580-2-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:48444 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753231AbdHXQS3 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 24 Aug 2017 12:18:29 -0400
+In-reply-to: <2ae55d7a-3730-72f7-ae7e-8556b9e4e4a5@math.uni-bielefeld.de>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
 
-SGVsbG8gQW5kcnplaiwKCgpBbmRyemVqIEhhamRhIHdyb3RlOgo+IExpbnV4IGNvcmUgcHJvdmlk
-ZSBoZWxwZXJzIGZvciBwb2xsaW5nIHdpdGggdGltZW91dCwgbGV0cyB1c2UgdGhlbS4KPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IC0tLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAyMCArKysr
-KysrKy0tLS0tLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAxMiBk
-ZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3M1NDMzX2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2Ry
-bV9kZWNvbi5jCj4gaW5kZXggNTc5MmNhODguLjIzN2I0YzkgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCj4gQEAgLTEzLDYgKzEzLDcgQEAK
-PiAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgo+ICAjaW5jbHVkZSA8bGludXgv
-Y2xrLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9jb21wb25lbnQuaD4KPiArI2luY2x1ZGUgPGxpbnV4
-L2lvcG9sbC5oPgo+ICAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5oPgo+ICAjaW5jbHVkZSA8
-bGludXgvb2ZfZGV2aWNlLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9vZl9ncGlvLmg+Cj4gQEAgLTQw
-NywyNCArNDA4LDE5IEBAIHN0YXRpYyB2b2lkIGRlY29uX2F0b21pY19mbHVzaChzdHJ1Y3QgZXh5
-bm9zX2RybV9jcnRjICpjcnRjKQo+ICAKPiAgc3RhdGljIHZvaWQgZGVjb25fc3dyZXNldChzdHJ1
-Y3QgZGVjb25fY29udGV4dCAqY3R4KQo+ICB7Cj4gLQl1bnNpZ25lZCBpbnQgdHJpZXM7Cj4gIAl1
-bnNpZ25lZCBsb25nIGZsYWdzOwo+ICsJdTMyIHZhbDsKPiArCWludCByZXQ7Cj4gIAo+ICAJd3Jp
-dGVsKDAsIGN0eC0+YWRkciArIERFQ09OX1ZJRENPTjApOwo+IC0JZm9yICh0cmllcyA9IDIwMDA7
-IHRyaWVzOyAtLXRyaWVzKSB7Cj4gLQkJaWYgKH5yZWFkbChjdHgtPmFkZHIgKyBERUNPTl9WSURD
-T04wKSAmIFZJRENPTjBfU1RPUF9TVEFUVVMpCj4gLQkJCWJyZWFrOwo+IC0JCXVkZWxheSgxMCk7
-Cj4gLQl9Cj4gKwlyZWFkbF9wb2xsX3RpbWVvdXQoY3R4LT5hZGRyICsgREVDT05fVklEQ09OMCwg
-dmFsLAo+ICsJCQkgICB+dmFsICYgVklEQ09OMF9TVE9QX1NUQVRVUywgMTIsIDIwMDAwKTsKV291
-bGRuJ3QgaXQgYmUgbW9yZSBjb25zaXN0ZW50IHRvIGFsc28gY2hlY2sgZm9yIGEgdGltZW91dCBo
-ZXJlPwoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoKCj4gIAl3cml0ZWwoVklEQ09OMF9TV1JF
-U0VULCBjdHgtPmFkZHIgKyBERUNPTl9WSURDT04wKTsKPiAtCWZvciAodHJpZXMgPSAyMDAwOyB0
-cmllczsgLS10cmllcykgewo+IC0JCWlmICh+cmVhZGwoY3R4LT5hZGRyICsgREVDT05fVklEQ09O
-MCkgJiBWSURDT04wX1NXUkVTRVQpCj4gLQkJCWJyZWFrOwo+IC0JCXVkZWxheSgxMCk7Cj4gLQl9
-Cj4gKwlyZXQgPSByZWFkbF9wb2xsX3RpbWVvdXQoY3R4LT5hZGRyICsgREVDT05fVklEQ09OMCwg
-dmFsLAo+ICsJCQkJIH52YWwgJiBWSURDT04wX1NXUkVTRVQsIDEyLCAyMDAwMCk7Cj4gIAo+IC0J
-V0FSTih0cmllcyA9PSAwLCAiZmFpbGVkIHRvIHNvZnR3YXJlIHJlc2V0IERFQ09OXG4iKTsKPiAr
-CVdBUk4ocmV0IDwgMCwgImZhaWxlZCB0byBzb2Z0d2FyZSByZXNldCBERUNPTlxuIik7Cj4gIAo+
-ICAJc3Bpbl9sb2NrX2lycXNhdmUoJmN0eC0+dmJsYW5rX2xvY2ssIGZsYWdzKTsKPiAgCWN0eC0+
-ZnJhbWVfaWQgPSAwOwo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+On 24.08.2017 15:54, Tobias Jakobi wrote:
+> Hello Andrzej,
+>
+>
+> Andrzej Hajda wrote:
+>> Linux core provide helpers for polling with timeout, lets use them.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 20 ++++++++------------
+>>  1 file changed, 8 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+>> index 5792ca88..237b4c9 100644
+>> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+>> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+>> @@ -13,6 +13,7 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/clk.h>
+>>  #include <linux/component.h>
+>> +#include <linux/iopoll.h>
+>>  #include <linux/mfd/syscon.h>
+>>  #include <linux/of_device.h>
+>>  #include <linux/of_gpio.h>
+>> @@ -407,24 +408,19 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
+>>  
+>>  static void decon_swreset(struct decon_context *ctx)
+>>  {
+>> -	unsigned int tries;
+>>  	unsigned long flags;
+>> +	u32 val;
+>> +	int ret;
+>>  
+>>  	writel(0, ctx->addr + DECON_VIDCON0);
+>> -	for (tries = 2000; tries; --tries) {
+>> -		if (~readl(ctx->addr + DECON_VIDCON0) & VIDCON0_STOP_STATUS)
+>> -			break;
+>> -		udelay(10);
+>> -	}
+>> +	readl_poll_timeout(ctx->addr + DECON_VIDCON0, val,
+>> +			   ~val & VIDCON0_STOP_STATUS, 12, 20000);
+> Wouldn't it be more consistent to also check for a timeout here?
+
+Timeout here is not an error, ie it happens for example in interlace mode.
+
+Regards
+Andrzej
