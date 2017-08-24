@@ -1,48 +1,70 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [GIT PULL] clk/samsung updates for 4.14-rc1
-Date: Wed, 23 Aug 2017 15:38:43 -0700
-Message-ID: <20170823223843.GE21656@codeaurora.org>
-References: <CGME20170811170044epcas1p156cc48d8ca2d2533fa91daf41213487f@epcas1p1.samsung.com>
- <3188b220-d1da-eabc-33cf-333b2315af47@samsung.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Subject: Re: [PATCH v2] dt/bindings: exynos-rng: Move dt binding documentation
+ to bindings/crypto
+Date: Thu, 24 Aug 2017 10:24:17 +0530
+Message-ID: <CANc+2y6hmviPP5ZduvqCGzf4DcsD5NZ1jVk=zS9H_k+qWkCZgA@mail.gmail.com>
+References: <20170823150443.8399-1-prasannatsmkumar@gmail.com>
+ <20170823161204.5cleer2rpgjd5vmz@kozik-lap> <CANc+2y4BfdAZhgfrP6NorqTPWBYsLsHKAvoeMMa=QUgB_d4Xdg@mail.gmail.com>
+ <20170823165458.qcoes376ydeavqt6@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:44954 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750812AbdHWWip (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Aug 2017 18:38:45 -0400
-Content-Disposition: inline
-In-Reply-To: <3188b220-d1da-eabc-33cf-333b2315af47@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <20170823165458.qcoes376ydeavqt6@kozik-lap>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mchehab@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 08/11, Sylwester Nawrocki wrote:
-> 
-> The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
-> 
->   Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.14-samsung
-> 
-> for you to fetch changes up to 599cebea93e69c25e4cf027fc21d2bdf9a4a1ec7:
-> 
->   clk: samsung: exynos542x: Enable clock rate propagation up to the EPLL (2017-08-10 10:56:23 +0200)
-> 
-> ----------------------------------------------------------------
-> clk/samsung updates for 4.14
-> 
-> Changes in definitions of audio related clocks for Exynos5420/5422/5800
-> SoCs: a fix of mau_epll clock definition and changes enabling clock rate
-> setting propagation on a path from the I2S IP block up the EPLL.
-> 
+On 23 August 2017 at 22:24, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Wed, Aug 23, 2017 at 10:14:29PM +0530, PrasannaKumar Muralidharan wrote:
+>> Hi Krzysztof,
+>>
+>> On 23 August 2017 at 21:42, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> > On Wed, Aug 23, 2017 at 08:34:43PM +0530, PrasannaKumar Muralidharan wrote:
+>> >> Samsung exynos PRNG driver is using crypto framework instead of
+>> >> hw_random framework. So move the devicetree binding to crypto folder.
+>> >>
+>> >> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>> >> ---
+>> >> Changes in v2:
+>> >> * Modify MAINTAINERS file to reflect file rename
+>> >>
+>> >>  .../devicetree/bindings/{rng => crypto}/samsung,exynos-rng4.txt         | 0
+>> >>  MAINTAINERS                                                             | 2 +-
+>> >>  2 files changed, 1 insertion(+), 1 deletion(-)
+>> >>  rename Documentation/devicetree/bindings/{rng => crypto}/samsung,exynos-rng4.txt (100%)
+>> >>
+>> >
+>> > Patch is okay but CC list is still incomplete. I do not know how you
+>> > could get Mauro for this patch... just use get_maintainers.pl.
+>>
+>> I used get_maintainer.pl. Rechecked again, it says Mauro and couple of
+>> others who may not be interested in this. It did not give your or
+>> crypto mailing list. Its strange.
+>
+> Hm, you're right. Aparently get_maintainer.pl does handle moved files
+> thus he printed only entries for MAINTAINERS.
+>
+> You will get full entry with:
+> scripts/get_maintainer.pl -f Documentation/devicetree/bindings/crypto/samsung,exynos-rng4.txt
 
-Thanks. Pulled into clk-next.
+Will keep this in mind.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Krzysztof Kozlowski <krzk@kernel.org> (maintainer:SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (...)
+> Herbert Xu <herbert@gondor.apana.org.au> (maintainer:CRYPTO API)
+> "David S. Miller" <davem@davemloft.net> (maintainer:CRYPTO API)
+> Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> Mark Rutland <mark.rutland@arm.com> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> Kukjin Kim <kgene@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
+> linux-crypto@vger.kernel.org (open list:SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (...)
+> linux-samsung-soc@vger.kernel.org (open list:SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (...)
+> devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
+> linux-kernel@vger.kernel.org (open list)
+>
+> Best regards,
+> Krzysztof
+>
+
+Thanks,
+PrasannaKumar
