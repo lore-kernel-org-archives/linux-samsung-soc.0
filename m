@@ -1,52 +1,290 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 10/10] arm64: dts: exynos: remove i80-if-timings nodes
-Date: Thu, 24 Aug 2017 15:33:59 +0200
-Message-ID: <1503581639-580-11-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 03/10] drm/exynos/dsi: refactor panel detection logic
+Date: Thu, 24 Aug 2017 15:33:52 +0200
+Message-ID: <1503581639-580-4-git-send-email-a.hajda@samsung.com>
 References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170824133412eucas1p23233d7bed8b83d86b26de01bc1ecf2a1@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43193 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752940AbdHXNeP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 09:34:15 -0400
-In-reply-to: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+        <CGME20170824133409eucas1p170d11c2037d1f20629751f04c6f77c49@eucas1p1.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1503581639-580-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
 
-Since i80/command mode is determined in runtime by propagating info
-from panel this property can be removed.
+Description of drm_helper_hpd_irq_event clearly states that drivers
+supporting hotplug events per connector should use different helper -
+drm_kms_helper_hotplug_event. To achieve it following changes have
+been performed:
+- moved down all DSI ops - they require exynos_dsi_disable function
+to be defined earlier,
+- simplified exynos_dsi_detect - there is no real detection, it just
+returns if panel is attached,
+- DSI attach/detach callbacks attaches/detaches DRM panel and sets
+connector status and other context fields accordingly, all this is
+performed under mutex, as these callbacks are asynchronous.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 203 ++++++++++++++++----------------
+ 1 file changed, 102 insertions(+), 101 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index e2b0da2..105b293 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -280,9 +280,6 @@
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 6b46df6..063bac3 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -254,7 +254,6 @@ struct exynos_dsi {
+ 	struct drm_encoder encoder;
+ 	struct mipi_dsi_host dsi_host;
+ 	struct drm_connector connector;
+-	struct device_node *panel_node;
+ 	struct drm_panel *panel;
+ 	struct device *dev;
  
- &decon {
- 	status = "okay";
+@@ -1329,12 +1328,13 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
+ 	return 0;
+ }
+ 
+-static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi)
++static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
++				      struct device *panel)
+ {
+ 	int ret;
+ 	int te_gpio_irq;
+ 
+-	dsi->te_gpio = of_get_named_gpio(dsi->panel_node, "te-gpios", 0);
++	dsi->te_gpio = of_get_named_gpio(panel->of_node, "te-gpios", 0);
+ 	if (dsi->te_gpio == -ENOENT)
+ 		return 0;
+ 
+@@ -1374,85 +1374,6 @@ static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
+ 	}
+ }
+ 
+-static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+-				  struct mipi_dsi_device *device)
+-{
+-	struct exynos_dsi *dsi = host_to_dsi(host);
 -
--	i80-if-timings {
--	};
- };
- 
- &decon_tv {
-@@ -1116,9 +1113,6 @@
- 
- &mic {
- 	status = "okay";
+-	dsi->lanes = device->lanes;
+-	dsi->format = device->format;
+-	dsi->mode_flags = device->mode_flags;
+-	dsi->panel_node = device->dev.of_node;
 -
--	i80-if-timings {
--	};
- };
+-	/*
+-	 * This is a temporary solution and should be made by more generic way.
+-	 *
+-	 * If attached panel device is for command mode one, dsi should register
+-	 * TE interrupt handler.
+-	 */
+-	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO)) {
+-		int ret = exynos_dsi_register_te_irq(dsi);
+-
+-		if (ret)
+-			return ret;
+-	}
+-
+-	if (dsi->connector.dev)
+-		drm_helper_hpd_irq_event(dsi->connector.dev);
+-
+-	return 0;
+-}
+-
+-static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
+-				  struct mipi_dsi_device *device)
+-{
+-	struct exynos_dsi *dsi = host_to_dsi(host);
+-
+-	exynos_dsi_unregister_te_irq(dsi);
+-
+-	dsi->panel_node = NULL;
+-
+-	if (dsi->connector.dev)
+-		drm_helper_hpd_irq_event(dsi->connector.dev);
+-
+-	return 0;
+-}
+-
+-static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
+-				        const struct mipi_dsi_msg *msg)
+-{
+-	struct exynos_dsi *dsi = host_to_dsi(host);
+-	struct exynos_dsi_transfer xfer;
+-	int ret;
+-
+-	if (!(dsi->state & DSIM_STATE_ENABLED))
+-		return -EINVAL;
+-
+-	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+-		ret = exynos_dsi_init(dsi);
+-		if (ret)
+-			return ret;
+-		dsi->state |= DSIM_STATE_INITIALIZED;
+-	}
+-
+-	ret = mipi_dsi_create_packet(&xfer.packet, msg);
+-	if (ret < 0)
+-		return ret;
+-
+-	xfer.rx_len = msg->rx_len;
+-	xfer.rx_payload = msg->rx_buf;
+-	xfer.flags = msg->flags;
+-
+-	ret = exynos_dsi_transfer(dsi, &xfer);
+-	return (ret < 0) ? ret : xfer.rx_done;
+-}
+-
+-static const struct mipi_dsi_host_ops exynos_dsi_ops = {
+-	.attach = exynos_dsi_host_attach,
+-	.detach = exynos_dsi_host_detach,
+-	.transfer = exynos_dsi_host_transfer,
+-};
+-
+ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ {
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+@@ -1508,25 +1429,7 @@ static void exynos_dsi_disable(struct drm_encoder *encoder)
+ static enum drm_connector_status
+ exynos_dsi_detect(struct drm_connector *connector, bool force)
+ {
+-	struct exynos_dsi *dsi = connector_to_dsi(connector);
+-
+-	if (!dsi->panel) {
+-		dsi->panel = of_drm_find_panel(dsi->panel_node);
+-		if (dsi->panel)
+-			drm_panel_attach(dsi->panel, &dsi->connector);
+-	} else if (!dsi->panel_node) {
+-		struct drm_encoder *encoder;
+-
+-		encoder = platform_get_drvdata(to_platform_device(dsi->dev));
+-		exynos_dsi_disable(encoder);
+-		drm_panel_detach(dsi->panel);
+-		dsi->panel = NULL;
+-	}
+-
+-	if (dsi->panel)
+-		return connector_status_connected;
+-
+-	return connector_status_disconnected;
++	return connector->status;
+ }
  
- &pmu_system_controller {
+ static void exynos_dsi_connector_destroy(struct drm_connector *connector)
+@@ -1575,6 +1478,7 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
+ 		return ret;
+ 	}
+ 
++	connector->status = connector_status_disconnected;
+ 	drm_connector_helper_add(connector, &exynos_dsi_connector_helper_funcs);
+ 	drm_mode_connector_attach_encoder(connector, encoder);
+ 
+@@ -1611,6 +1515,103 @@ static const struct drm_encoder_funcs exynos_dsi_encoder_funcs = {
+ 
+ MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
+ 
++static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
++				  struct mipi_dsi_device *device)
++{
++	struct exynos_dsi *dsi = host_to_dsi(host);
++	struct drm_device *drm = dsi->connector.dev;
++
++	/*
++	 * This is a temporary solution and should be made by more generic way.
++	 *
++	 * If attached panel device is for command mode one, dsi should register
++	 * TE interrupt handler.
++	 */
++	if (!(device->mode_flags & MIPI_DSI_MODE_VIDEO)) {
++		int ret = exynos_dsi_register_te_irq(dsi, &device->dev);
++		if (ret)
++			return ret;
++	}
++
++	mutex_lock(&drm->mode_config.mutex);
++
++	dsi->lanes = device->lanes;
++	dsi->format = device->format;
++	dsi->mode_flags = device->mode_flags;
++	dsi->panel = of_drm_find_panel(device->dev.of_node);
++	if (dsi->panel) {
++		drm_panel_attach(dsi->panel, &dsi->connector);
++		dsi->connector.status = connector_status_connected;
++	}
++
++	mutex_unlock(&drm->mode_config.mutex);
++
++	if (drm->mode_config.poll_enabled)
++		drm_kms_helper_hotplug_event(drm);
++
++	return 0;
++}
++
++static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
++				  struct mipi_dsi_device *device)
++{
++	struct exynos_dsi *dsi = host_to_dsi(host);
++	struct drm_device *drm = dsi->connector.dev;
++
++	mutex_lock(&drm->mode_config.mutex);
++
++	if (dsi->panel) {
++		exynos_dsi_disable(&dsi->encoder);
++		drm_panel_detach(dsi->panel);
++		dsi->panel = NULL;
++		dsi->connector.status = connector_status_disconnected;
++	}
++
++	mutex_unlock(&drm->mode_config.mutex);
++
++	if (drm->mode_config.poll_enabled)
++		drm_kms_helper_hotplug_event(drm);
++
++	exynos_dsi_unregister_te_irq(dsi);
++
++	return 0;
++}
++
++static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
++				        const struct mipi_dsi_msg *msg)
++{
++	struct exynos_dsi *dsi = host_to_dsi(host);
++	struct exynos_dsi_transfer xfer;
++	int ret;
++
++	if (!(dsi->state & DSIM_STATE_ENABLED))
++		return -EINVAL;
++
++	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
++		ret = exynos_dsi_init(dsi);
++		if (ret)
++			return ret;
++		dsi->state |= DSIM_STATE_INITIALIZED;
++	}
++
++	ret = mipi_dsi_create_packet(&xfer.packet, msg);
++	if (ret < 0)
++		return ret;
++
++	xfer.rx_len = msg->rx_len;
++	xfer.rx_payload = msg->rx_buf;
++	xfer.flags = msg->flags;
++
++	ret = exynos_dsi_transfer(dsi, &xfer);
++	return (ret < 0) ? ret : xfer.rx_done;
++}
++
++static const struct mipi_dsi_host_ops exynos_dsi_ops = {
++	.attach = exynos_dsi_host_attach,
++	.detach = exynos_dsi_host_detach,
++	.transfer = exynos_dsi_host_transfer,
++};
++
+ static int exynos_dsi_of_read_u32(const struct device_node *np,
+ 				  const char *propname, u32 *out_value)
+ {
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
