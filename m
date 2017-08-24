@@ -1,72 +1,305 @@
-From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 01/10] drm/exynos/decon5433: use readl_poll_timeout
- helpers
-Date: Thu, 24 Aug 2017 15:33:50 +0200
-Message-ID: <1503581639-580-2-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 02/10] drm/exynos: use helper to set possible crtcs
+Date: Thu, 24 Aug 2017 15:33:51 +0200
+Message-ID: <1503581639-580-3-git-send-email-a.hajda@samsung.com>
 References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170824133408eucas1p1e7b9988ac74fdd3e8dd8d25ead949ec5@eucas1p1.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1503581639-580-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+        <CGME20170824133409eucas1p11409c10ac302f9cb56106888ab7d5a25@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43181 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752640AbdHXNeM (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 24 Aug 2017 09:34:12 -0400
+In-reply-to: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
 
-Linux core provide helpers for polling with timeout, lets use them.
+All encoders share the same code to set encoders possible_crtcs field.
+The patch creates helper to abstract out this code.
 
-Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/exynos/exynos_dp.c       | 15 +++++----------
+ drivers/gpu/drm/exynos/exynos_drm_core.c |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 21 ++++++++++++++++++---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h | 10 +++++++---
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 12 ++++--------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 13 ++++---------
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 15 +++++----------
+ drivers/gpu/drm/exynos/exynos_hdmi.c     | 25 +++++++++----------------
+ 8 files changed, 53 insertions(+), 59 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 5792ca88..237b4c9 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -13,6 +13,7 @@
- #include <linux/platform_device.h>
- #include <linux/clk.h>
- #include <linux/component.h>
-+#include <linux/iopoll.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_device.h>
- #include <linux/of_gpio.h>
-@@ -407,24 +408,19 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
- 
- static void decon_swreset(struct decon_context *ctx)
- {
--	unsigned int tries;
- 	unsigned long flags;
-+	u32 val;
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index 385537b..39629e7 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -155,7 +155,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+ 	struct drm_encoder *encoder = &dp->encoder;
+ 	struct drm_device *drm_dev = data;
+-	int pipe, ret;
 +	int ret;
  
- 	writel(0, ctx->addr + DECON_VIDCON0);
--	for (tries = 2000; tries; --tries) {
--		if (~readl(ctx->addr + DECON_VIDCON0) & VIDCON0_STOP_STATUS)
--			break;
--		udelay(10);
--	}
-+	readl_poll_timeout(ctx->addr + DECON_VIDCON0, val,
-+			   ~val & VIDCON0_STOP_STATUS, 12, 20000);
+ 	/*
+ 	 * Just like the probe function said, we don't need the
+@@ -179,20 +179,15 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 			return ret;
+ 	}
  
- 	writel(VIDCON0_SWRESET, ctx->addr + DECON_VIDCON0);
--	for (tries = 2000; tries; --tries) {
--		if (~readl(ctx->addr + DECON_VIDCON0) & VIDCON0_SWRESET)
--			break;
--		udelay(10);
--	}
-+	ret = readl_poll_timeout(ctx->addr + DECON_VIDCON0, val,
-+				 ~val & VIDCON0_SWRESET, 12, 20000);
+-	pipe = exynos_drm_crtc_get_pipe_from_type(drm_dev,
+-						  EXYNOS_DISPLAY_TYPE_LCD);
+-	if (pipe < 0)
+-		return pipe;
+-
+-	encoder->possible_crtcs = 1 << pipe;
+-
+-	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+-
+ 	drm_encoder_init(drm_dev, encoder, &exynos_dp_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
  
--	WARN(tries == 0, "failed to software reset DECON\n");
-+	WARN(ret < 0, "failed to software reset DECON\n");
+ 	drm_encoder_helper_add(encoder, &exynos_dp_encoder_helper_funcs);
  
- 	spin_lock_irqsave(&ctx->vblank_lock, flags);
- 	ctx->frame_id = 0;
++	ret = exynos_drm_set_possible_crtcs(encoder, EXYNOS_DISPLAY_TYPE_LCD);
++	if (ret < 0)
++		return ret;
++
+ 	dp->plat_data.encoder = encoder;
+ 
+ 	return analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_core.c b/drivers/gpu/drm/exynos/exynos_drm_core.c
+index edbd98f..b0c0621 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_core.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_core.c
+@@ -13,6 +13,7 @@
+  */
+ 
+ #include <drm/drmP.h>
++
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index c37078f..ac544de 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -16,6 +16,7 @@
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
++#include <drm/drm_encoder.h>
+ 
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_drv.h"
+@@ -191,16 +192,30 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
+ 	return ERR_PTR(ret);
+ }
+ 
+-int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
++struct exynos_drm_crtc *exynos_drm_crtc_get_by_type(struct drm_device *drm_dev,
+ 				       enum exynos_drm_output_type out_type)
+ {
+ 	struct drm_crtc *crtc;
+ 
+ 	drm_for_each_crtc(crtc, drm_dev)
+ 		if (to_exynos_crtc(crtc)->type == out_type)
+-			return drm_crtc_index(crtc);
++			return to_exynos_crtc(crtc);
+ 
+-	return -EPERM;
++	return ERR_PTR(-EPERM);
++}
++
++int exynos_drm_set_possible_crtcs(struct drm_encoder *encoder,
++		enum exynos_drm_output_type out_type)
++{
++	struct exynos_drm_crtc *crtc = exynos_drm_crtc_get_by_type(encoder->dev,
++						out_type);
++
++	if (IS_ERR(crtc))
++		return PTR_ERR(crtc);
++
++	encoder->possible_crtcs = drm_crtc_mask(&crtc->base);
++
++	return 0;
+ }
+ 
+ void exynos_drm_crtc_te_handler(struct drm_crtc *crtc)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+index ef58b64..dec4461 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+@@ -15,21 +15,25 @@
+ #ifndef _EXYNOS_DRM_CRTC_H_
+ #define _EXYNOS_DRM_CRTC_H_
+ 
++
+ #include "exynos_drm_drv.h"
+ 
+ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
+ 					struct drm_plane *plane,
+-					enum exynos_drm_output_type type,
++					enum exynos_drm_output_type out_type,
+ 					const struct exynos_drm_crtc_ops *ops,
+ 					void *context);
+ void exynos_drm_crtc_wait_pending_update(struct exynos_drm_crtc *exynos_crtc);
+ void exynos_drm_crtc_finish_update(struct exynos_drm_crtc *exynos_crtc,
+ 				   struct exynos_drm_plane *exynos_plane);
+ 
+-/* This function gets pipe value to crtc device matched with out_type. */
+-int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
++/* This function gets crtc device matched with out_type. */
++struct exynos_drm_crtc *exynos_drm_crtc_get_by_type(struct drm_device *drm_dev,
+ 				       enum exynos_drm_output_type out_type);
+ 
++int exynos_drm_set_possible_crtcs(struct drm_encoder *encoder,
++		enum exynos_drm_output_type out_type);
++
+ /*
+  * This function calls the crtc device(manager)'s te_handler() callback
+  * to trigger to transfer video image at the tearing effect synchronization
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 76d80e5..66945e0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -202,19 +202,15 @@ int exynos_dpi_bind(struct drm_device *dev, struct drm_encoder *encoder)
+ {
+ 	int ret;
+ 
+-	ret = exynos_drm_crtc_get_pipe_from_type(dev, EXYNOS_DISPLAY_TYPE_LCD);
+-	if (ret < 0)
+-		return ret;
+-
+-	encoder->possible_crtcs = 1 << ret;
+-
+-	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+-
+ 	drm_encoder_init(dev, encoder, &exynos_dpi_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+ 	drm_encoder_helper_add(encoder, &exynos_dpi_encoder_helper_funcs);
+ 
++	ret = exynos_drm_set_possible_crtcs(encoder, EXYNOS_DISPLAY_TYPE_LCD);
++	if (ret < 0)
++		return ret;
++
+ 	ret = exynos_dpi_create_connector(encoder);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create connector ret = %d\n", ret);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index c399dc9..6b46df6 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1662,20 +1662,15 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+ 	struct drm_bridge *bridge;
+ 	int ret;
+ 
+-	ret = exynos_drm_crtc_get_pipe_from_type(drm_dev,
+-						  EXYNOS_DISPLAY_TYPE_LCD);
+-	if (ret < 0)
+-		return ret;
+-
+-	encoder->possible_crtcs = 1 << ret;
+-
+-	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+-
+ 	drm_encoder_init(drm_dev, encoder, &exynos_dsi_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+ 	drm_encoder_helper_add(encoder, &exynos_dsi_encoder_helper_funcs);
+ 
++	ret = exynos_drm_set_possible_crtcs(encoder, EXYNOS_DISPLAY_TYPE_LCD);
++	if (ret < 0)
++		return ret;
++
+ 	ret = exynos_dsi_create_connector(encoder);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create connector ret = %d\n", ret);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 9186a65..53e03f8 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -381,7 +381,7 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
+ 	struct exynos_drm_plane *exynos_plane;
+ 	struct exynos_drm_plane_config plane_config = { 0 };
+ 	unsigned int i;
+-	int pipe, ret;
++	int ret;
+ 
+ 	ctx->drm_dev = drm_dev;
+ 
+@@ -406,20 +406,15 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
+ 		return PTR_ERR(ctx->crtc);
+ 	}
+ 
+-	pipe = exynos_drm_crtc_get_pipe_from_type(drm_dev,
+-						  EXYNOS_DISPLAY_TYPE_VIDI);
+-	if (pipe < 0)
+-		return pipe;
+-
+-	encoder->possible_crtcs = 1 << pipe;
+-
+-	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+-
+ 	drm_encoder_init(drm_dev, encoder, &exynos_vidi_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+ 	drm_encoder_helper_add(encoder, &exynos_vidi_encoder_helper_funcs);
+ 
++	ret = exynos_drm_set_possible_crtcs(encoder, EXYNOS_DISPLAY_TYPE_VIDI);
++	if (ret < 0)
++		return ret;
++
+ 	ret = vidi_create_connector(encoder);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create connector ret = %d\n", ret);
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index d70eeb8..214fa5e 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1697,32 +1697,25 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
+ 	struct drm_device *drm_dev = data;
+ 	struct hdmi_context *hdata = dev_get_drvdata(dev);
+ 	struct drm_encoder *encoder = &hdata->encoder;
+-	struct exynos_drm_crtc *exynos_crtc;
+-	struct drm_crtc *crtc;
+-	int ret, pipe;
++	struct exynos_drm_crtc *crtc;
++	int ret;
+ 
+ 	hdata->drm_dev = drm_dev;
+ 
+-	pipe = exynos_drm_crtc_get_pipe_from_type(drm_dev,
+-						  EXYNOS_DISPLAY_TYPE_HDMI);
+-	if (pipe < 0)
+-		return pipe;
+-
+ 	hdata->phy_clk.enable = hdmiphy_clk_enable;
+ 
+-	crtc = drm_crtc_from_index(drm_dev, pipe);
+-	exynos_crtc = to_exynos_crtc(crtc);
+-	exynos_crtc->pipe_clk = &hdata->phy_clk;
+-
+-	encoder->possible_crtcs = 1 << pipe;
+-
+-	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+-
+ 	drm_encoder_init(drm_dev, encoder, &exynos_hdmi_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+ 	drm_encoder_helper_add(encoder, &exynos_hdmi_encoder_helper_funcs);
+ 
++	ret = exynos_drm_set_possible_crtcs(encoder, EXYNOS_DISPLAY_TYPE_HDMI);
++	if (ret < 0)
++		return ret;
++
++	crtc = exynos_drm_crtc_get_by_type(drm_dev, EXYNOS_DISPLAY_TYPE_HDMI);
++	crtc->pipe_clk = &hdata->phy_clk;
++
+ 	ret = hdmi_create_connector(encoder);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create connector ret = %d\n", ret);
 -- 
 2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
