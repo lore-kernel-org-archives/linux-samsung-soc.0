@@ -1,54 +1,75 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 04/10] drm/exynos/dsi: propagate info about command mode
- from panel
-Date: Thu, 24 Aug 2017 15:33:53 +0200
-Message-ID: <1503581639-580-5-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 07/10] drm/exynos: add mode_valid callback to exynos_drm
+Date: Thu, 24 Aug 2017 15:33:56 +0200
+Message-ID: <1503581639-580-8-git-send-email-a.hajda@samsung.com>
 References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
- <CGME20170824133409eucas1p2f3d79b5a88ef186562abf071f06bfc44@eucas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+        <CGME20170824133411eucas1p2cedf32dfa953896267b2db58f1af30b7@eucas1p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1503581639-580-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-bWlwaV9kc2kgZnJhbWV3b3JrIHByb3ZpZGVzIGluZm9ybWF0aW9uIGFib3V0IHBhbmVsJ3MgbW9k
-ZSBvZiB3b3JrLgpUaGlzIGluZm8gc2hvdWxkIGJlIHByb3BhZ2F0ZWQgdXBzdHJlYW0gdG8gY29u
-ZmlndXJlIGFsbCBlbGVtZW50cyBvZgp0aGUgcGlwZWxpbmUuIEFzIENSVEMgaXMgdGhlIGNvbW1v
-biBkZW5vbWluYXRvciBvZiB0aGUgcGlwZWxpbmUgd2UgY2FuCnB1dCBzdWNoIGluZm8gaW50byBp
-dHMgc3RydWN0dXJlcy4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ft
-c3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIHwg
-MSArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgfCAyICsrCiAyIGZp
-bGVzIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kcnYuaAppbmRleCBhOTNkZTMyLi45ZTc3ODA5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2Rydi5oCkBAIC0xNjIsNiArMTYyLDcgQEAgc3RydWN0IGV4eW5vc19kcm1f
-Y3J0YyB7CiAJY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fY3J0Y19vcHMJKm9wczsKIAl2b2lkCQkJ
-CSpjdHg7CiAJc3RydWN0IGV4eW5vc19kcm1fY2xrCQkqcGlwZV9jbGs7CisJYm9vbAkJCQlpODBf
-bW9kZSA6IDE7CiB9OwogCiBzdGF0aWMgaW5saW5lIHZvaWQgZXh5bm9zX2RybV9waXBlX2Nsa19l
-bmFibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9kc2kuYwppbmRleCAwNjNiYWMzLi44YzA2YTYyIDEwMDY0NAotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKKysrIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCkBAIC0xNTQzLDYgKzE1NDMsOCBAQCBzdGF0aWMgaW50
-IGV4eW5vc19kc2lfaG9zdF9hdHRhY2goc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCiAJCWRy
-bV9wYW5lbF9hdHRhY2goZHNpLT5wYW5lbCwgJmRzaS0+Y29ubmVjdG9yKTsKIAkJZHNpLT5jb25u
-ZWN0b3Iuc3RhdHVzID0gY29ubmVjdG9yX3N0YXR1c19jb25uZWN0ZWQ7CiAJfQorCWV4eW5vc19k
-cm1fY3J0Y19nZXRfYnlfdHlwZShkcm0sIEVYWU5PU19ESVNQTEFZX1RZUEVfTENEKS0+aTgwX21v
-ZGUgPQorCQkJIShkc2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPKTsKIAogCW11
-dGV4X3VubG9jaygmZHJtLT5tb2RlX2NvbmZpZy5tdXRleCk7CiAKLS0gCjIuNy40CgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+crtc::mode_valid callback is required to implement proper pipeline
+validation for command/video modes. Since Exynos uses private
+framework such callback should be added to it.
+
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 12 ++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  3 +++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index ac544de..6ce0821 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -84,7 +84,19 @@ static void exynos_crtc_atomic_flush(struct drm_crtc *crtc,
+ 		exynos_crtc->ops->atomic_flush(exynos_crtc);
+ }
+ 
++static enum drm_mode_status exynos_crtc_mode_valid(struct drm_crtc *crtc,
++	const struct drm_display_mode *mode)
++{
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
++
++	if (exynos_crtc->ops->mode_valid)
++		return exynos_crtc->ops->mode_valid(exynos_crtc, mode);
++
++	return MODE_OK;
++}
++
+ static const struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
++	.mode_valid	= exynos_crtc_mode_valid,
+ 	.atomic_check	= exynos_crtc_atomic_check,
+ 	.atomic_begin	= exynos_crtc_atomic_begin,
+ 	.atomic_flush	= exynos_crtc_atomic_flush,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 9e77809..d53435b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -117,6 +117,7 @@ struct exynos_drm_plane_config {
+  * @disable: disable the device
+  * @enable_vblank: specific driver callback for enabling vblank interrupt.
+  * @disable_vblank: specific driver callback for disabling vblank interrupt.
++ * @mode_valid: specific driver callback for mode validation
+  * @atomic_check: validate state
+  * @atomic_begin: prepare device to receive an update
+  * @atomic_flush: mark the end of device update
+@@ -132,6 +133,8 @@ struct exynos_drm_crtc_ops {
+ 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
+ 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
+ 	u32 (*get_vblank_counter)(struct exynos_drm_crtc *crtc);
++	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
++		const struct drm_display_mode *mode);
+ 	int (*atomic_check)(struct exynos_drm_crtc *crtc,
+ 			    struct drm_crtc_state *state);
+ 	void (*atomic_begin)(struct exynos_drm_crtc *crtc);
+-- 
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
