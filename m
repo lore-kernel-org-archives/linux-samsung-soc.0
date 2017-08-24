@@ -1,118 +1,52 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 06/10] drm/exynos/decon5433: refactor irq requesting code
-Date: Thu, 24 Aug 2017 15:33:55 +0200
-Message-ID: <1503581639-580-7-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH v2 10/10] arm64: dts: exynos: remove i80-if-timings nodes
+Date: Thu, 24 Aug 2017 15:33:59 +0200
+Message-ID: <1503581639-580-11-git-send-email-a.hajda@samsung.com>
 References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170824133410eucas1p1959faf82a55f5aed609a23027777389a@eucas1p1.samsung.com>
+        <CGME20170824133412eucas1p23233d7bed8b83d86b26de01bc1ecf2a1@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43186 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43193 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752879AbdHXNeO (ORCPT
+        with ESMTP id S1752940AbdHXNeP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 09:34:14 -0400
+        Thu, 24 Aug 2017 09:34:15 -0400
 In-reply-to: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
 
-To allow runtime validation of mode of work irq request
-code should be split into two separate phases:
-- irq reqesting,
-- irq checking.
-Following patches will move 2nd phase to mode validation phase.
+Since i80/command mode is determined in runtime by propagating info
+from panel this property can be removed.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 54 +++++++++++++++------------
- 1 file changed, 30 insertions(+), 24 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 237b4c9..0f5acce 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -58,6 +58,8 @@ struct decon_context {
- 	struct regmap			*sysreg;
- 	struct clk			*clks[ARRAY_SIZE(decon_clks_name)];
- 	unsigned int			irq;
-+	unsigned int			irq_vsync;
-+	unsigned int			irq_lcd_sys;
- 	unsigned int			te_irq;
- 	unsigned long			out_type;
- 	int				first_win;
-@@ -670,19 +672,22 @@ static const struct of_device_id exynos5433_decon_driver_dt_match[] = {
- MODULE_DEVICE_TABLE(of, exynos5433_decon_driver_dt_match);
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index e2b0da2..105b293 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -280,9 +280,6 @@
  
- static int decon_conf_irq(struct decon_context *ctx, const char *name,
--		irq_handler_t handler, unsigned long int flags, bool required)
-+		irq_handler_t handler, unsigned long int flags)
- {
- 	struct platform_device *pdev = to_platform_device(ctx->dev);
- 	int ret, irq = platform_get_irq_byname(pdev, name);
+ &decon {
+ 	status = "okay";
+-
+-	i80-if-timings {
+-	};
+ };
  
- 	if (irq < 0) {
--		if (irq == -EPROBE_DEFER)
-+		switch (irq) {
-+		case -EPROBE_DEFER:
- 			return irq;
--		if (required)
--			dev_err(ctx->dev, "cannot get %s IRQ\n", name);
--		else
--			irq = 0;
--		return irq;
-+		case -ENODATA:
-+		case -ENXIO:
-+			return 0;
-+		default:
-+			dev_err(ctx->dev, "IRQ %s get failed, %d\n", name, irq);
-+			return irq;
-+		}
- 	}
- 	irq_set_status_flags(irq, IRQ_NOAUTOEN);
- 	ret = devm_request_irq(ctx->dev, irq, handler, flags, "drm_decon", ctx);
-@@ -738,25 +743,26 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
- 		return PTR_ERR(ctx->addr);
- 	}
+ &decon_tv {
+@@ -1116,9 +1113,6 @@
  
--	if (ctx->out_type & IFTYPE_I80) {
--		ret = decon_conf_irq(ctx, "lcd_sys", decon_irq_handler, 0, true);
--		if (ret < 0)
--			return ret;
--		ctx->irq = ret;
-+	ret = decon_conf_irq(ctx, "vsync", decon_irq_handler, 0);
-+	if (ret < 0)
-+		return ret;
-+	ctx->irq_vsync = ret;
+ &mic {
+ 	status = "okay";
+-
+-	i80-if-timings {
+-	};
+ };
  
--		ret = decon_conf_irq(ctx, "te", decon_te_irq_handler,
--				     IRQF_TRIGGER_RISING, false);
--		if (ret < 0)
--			return ret;
--		if (ret) {
--			ctx->te_irq = ret;
--			ctx->out_type &= ~I80_HW_TRG;
--		}
--	} else {
--		ret = decon_conf_irq(ctx, "vsync", decon_irq_handler, 0, true);
--		if (ret < 0)
-+	ret = decon_conf_irq(ctx, "lcd_sys", decon_irq_handler, 0);
-+	if (ret < 0)
-+		return ret;
-+	ctx->irq_lcd_sys = ret;
-+
-+	ctx->irq = (ctx->out_type & IFTYPE_I80) ? ctx->irq_lcd_sys
-+						: ctx->irq_vsync;
-+
-+	ret = decon_conf_irq(ctx, "te", decon_te_irq_handler,
-+			IRQF_TRIGGER_RISING);
-+	if (ret < 0)
- 			return ret;
--		ctx->irq = ret;
-+	if (ret) {
-+		ctx->te_irq = ret;
-+		ctx->out_type &= ~I80_HW_TRG;
- 	}
- 
- 	if (ctx->out_type & I80_HW_TRG) {
+ &pmu_system_controller {
 -- 
 2.7.4
