@@ -1,61 +1,118 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 00/10] drm/exynos: panel mode info propagation
-Date: Thu, 24 Aug 2017 15:33:49 +0200
-Message-ID: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170824133408eucas1p2466a3b4aac528667cd06df9c00aca1df@eucas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 06/10] drm/exynos/decon5433: refactor irq requesting code
+Date: Thu, 24 Aug 2017 15:33:55 +0200
+Message-ID: <1503581639-580-7-git-send-email-a.hajda@samsung.com>
+References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
+        <CGME20170824133410eucas1p1959faf82a55f5aed609a23027777389a@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43186 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752879AbdHXNeO (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 24 Aug 2017 09:34:14 -0400
+In-reply-to: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
 
-SGkgSW5raSwKClRoaXMgcGF0Y2hzZXQgYmVzaWRlIGNsZWFudXAvcmVmYWN0b3JpbmcgcGF0Y2hl
-cyAoMDEtMDMpIGFkZHMgY29kZSB0byBwcm9wYWdhdGUKaW5mbyBwcm92aWRlZCBieSBNSVBJLURT
-SSBwYW5lbHMgYWJvdXQgaXRzIG1vZGUgb2Ygd29yayAodmlkZW8vY29tbWFuZCBtb2RlKS4KVGhl
-IHByb3BhZ2F0aW9uIGlzIHBlcmZvcm1lZCBmb3Igd2hvbGUgcGlwZWxpbmUgYXMgZXZlcnkgaXRz
-IGVsZW1lbnRzIHVzZXMgaXQuCgpDaGFuZ2VzIGluIHYyOgotIGFkZGVkIG1vZGVfdmFsaWQgY2Fs
-bGJhY2sgdG8gZXh5bm9zX2RybSwKLSByZXBsYWNlIGF0b21pY19jaGVjayB3aXRoIG1vZGVfdmFs
-aWQgZm9yIG1vZGUgdmFsaWRhdGlvbiwKLSBzcGxpdCBtb2RlIHByb3BhZ2F0aW9uIHBhdGNoIGlu
-IGRlY29uNTQzMyBpbnRvIHNtYWxsZXIgcGFydHMsCi0gcmVtb3ZlZCB0ZV9pcnEgdmFyaWFibGUg
-cmVuYW1lLAotIGFkZGVkIHBhdGNoIHJlbW92aW5nIGk4MCB0aW1pbmcgbm9kZSBmcm9tIGR0cywK
-LSBhZGp1c3RlZCBjb21taXQgbWVzc2FnZXMuCgpSZWdhcmRzCkFuZHJ6ZWoKCgpBbmRyemVqIEhh
-amRhICgxMCk6CiAgZHJtL2V4eW5vcy9kZWNvbjU0MzM6IHVzZSByZWFkbF9wb2xsX3RpbWVvdXQg
-aGVscGVycwogIGRybS9leHlub3M6IHVzZSBoZWxwZXIgdG8gc2V0IHBvc3NpYmxlIGNydGNzCiAg
-ZHJtL2V4eW5vcy9kc2k6IHJlZmFjdG9yIHBhbmVsIGRldGVjdGlvbiBsb2dpYwogIGRybS9leHlu
-b3MvZHNpOiBwcm9wYWdhdGUgaW5mbyBhYm91dCBjb21tYW5kIG1vZGUgZnJvbSBwYW5lbAogIGRy
-bS9leHlub3MvbWljOiB1c2UgbW9kZSBpbmZvIHN0b3JlZCBpbiBDUlRDIHRvIGRldGVjdCBpODAg
-bW9kZQogIGRybS9leHlub3MvZGVjb241NDMzOiByZWZhY3RvciBpcnEgcmVxdWVzdGluZyBjb2Rl
-CiAgZHJtL2V4eW5vczogYWRkIG1vZGVfdmFsaWQgY2FsbGJhY2sgdG8gZXh5bm9zX2RybQogIGRy
-bS9leHlub3MvZGVjb241NDMzOiB1c2UgbW9kZSBpbmZvIHN0b3JlZCBpbiBDUlRDIHRvIGRldGVj
-dCBpODAgbW9kZQogIGR0LWJpbmRpbmdzOiBleHlub3M1NDMzLWRlY29uOiByZW1vdmUgaTgwLWlm
-LXRpbWluZ3MgcHJvcGVydHkKICBhcm02NDogZHRzOiBleHlub3M6IHJlbW92ZSBpODAtaWYtdGlt
-aW5ncyBub2RlcwoKIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3M1NDMzLWRlY29u
-LnR4dCAgIHwgIDEyIC0tCiAuLi4vYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLWNvbW1v
-bi5kdHNpICAgICB8ICAgNiAtCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJt
-X2RlY29uLmMgICAgICB8IDEwOCArKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcC5jICAgICAgICAgICAgICAgICB8ICAxNSArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2NvcmUuYyAgICAgICAgICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuYyAgICAgICAgICAgfCAgMzMgKysrLQogZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuaCAgICAgICAgICAgfCAgMTAgKy0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgICAgICAgICAgIHwgIDEyICstCiBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgICAgICAgICB8ICAgNCArCiBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAgICAgICB8IDIxOCAr
-KysrKysrKysrLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9t
-aWMuYyAgICAgICAgICAgIHwgIDQ0ICstLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fdmlkaS5jICAgICAgICAgICB8ICAxNSArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfaGRtaS5jICAgICAgICAgICAgICAgfCAgMjUgKy0tCiAxMyBmaWxlcyBjaGFuZ2VkLCAy
-MzcgaW5zZXJ0aW9ucygrKSwgMjY2IGRlbGV0aW9ucygtKQoKLS0gCjIuNy40CgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+To allow runtime validation of mode of work irq request
+code should be split into two separate phases:
+- irq reqesting,
+- irq checking.
+Following patches will move 2nd phase to mode validation phase.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 54 +++++++++++++++------------
+ 1 file changed, 30 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 237b4c9..0f5acce 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -58,6 +58,8 @@ struct decon_context {
+ 	struct regmap			*sysreg;
+ 	struct clk			*clks[ARRAY_SIZE(decon_clks_name)];
+ 	unsigned int			irq;
++	unsigned int			irq_vsync;
++	unsigned int			irq_lcd_sys;
+ 	unsigned int			te_irq;
+ 	unsigned long			out_type;
+ 	int				first_win;
+@@ -670,19 +672,22 @@ static const struct of_device_id exynos5433_decon_driver_dt_match[] = {
+ MODULE_DEVICE_TABLE(of, exynos5433_decon_driver_dt_match);
+ 
+ static int decon_conf_irq(struct decon_context *ctx, const char *name,
+-		irq_handler_t handler, unsigned long int flags, bool required)
++		irq_handler_t handler, unsigned long int flags)
+ {
+ 	struct platform_device *pdev = to_platform_device(ctx->dev);
+ 	int ret, irq = platform_get_irq_byname(pdev, name);
+ 
+ 	if (irq < 0) {
+-		if (irq == -EPROBE_DEFER)
++		switch (irq) {
++		case -EPROBE_DEFER:
+ 			return irq;
+-		if (required)
+-			dev_err(ctx->dev, "cannot get %s IRQ\n", name);
+-		else
+-			irq = 0;
+-		return irq;
++		case -ENODATA:
++		case -ENXIO:
++			return 0;
++		default:
++			dev_err(ctx->dev, "IRQ %s get failed, %d\n", name, irq);
++			return irq;
++		}
+ 	}
+ 	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	ret = devm_request_irq(ctx->dev, irq, handler, flags, "drm_decon", ctx);
+@@ -738,25 +743,26 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ 		return PTR_ERR(ctx->addr);
+ 	}
+ 
+-	if (ctx->out_type & IFTYPE_I80) {
+-		ret = decon_conf_irq(ctx, "lcd_sys", decon_irq_handler, 0, true);
+-		if (ret < 0)
+-			return ret;
+-		ctx->irq = ret;
++	ret = decon_conf_irq(ctx, "vsync", decon_irq_handler, 0);
++	if (ret < 0)
++		return ret;
++	ctx->irq_vsync = ret;
+ 
+-		ret = decon_conf_irq(ctx, "te", decon_te_irq_handler,
+-				     IRQF_TRIGGER_RISING, false);
+-		if (ret < 0)
+-			return ret;
+-		if (ret) {
+-			ctx->te_irq = ret;
+-			ctx->out_type &= ~I80_HW_TRG;
+-		}
+-	} else {
+-		ret = decon_conf_irq(ctx, "vsync", decon_irq_handler, 0, true);
+-		if (ret < 0)
++	ret = decon_conf_irq(ctx, "lcd_sys", decon_irq_handler, 0);
++	if (ret < 0)
++		return ret;
++	ctx->irq_lcd_sys = ret;
++
++	ctx->irq = (ctx->out_type & IFTYPE_I80) ? ctx->irq_lcd_sys
++						: ctx->irq_vsync;
++
++	ret = decon_conf_irq(ctx, "te", decon_te_irq_handler,
++			IRQF_TRIGGER_RISING);
++	if (ret < 0)
+ 			return ret;
+-		ctx->irq = ret;
++	if (ret) {
++		ctx->te_irq = ret;
++		ctx->out_type &= ~I80_HW_TRG;
+ 	}
+ 
+ 	if (ctx->out_type & I80_HW_TRG) {
+-- 
+2.7.4
