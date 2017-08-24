@@ -1,73 +1,56 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 05/10] drm/exynos/mic: use mode info stored in CRTC to
- detect i80 mode
-Date: Thu, 24 Aug 2017 15:33:54 +0200
-Message-ID: <1503581639-580-6-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 09/10] dt-bindings: exynos5433-decon: remove
+ i80-if-timings property
+Date: Thu, 24 Aug 2017 15:33:58 +0200
+Message-ID: <1503581639-580-10-git-send-email-a.hajda@samsung.com>
 References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
- <CGME20170824133410eucas1p1bc901ed868b664922cda5fecc920dd0e@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+        <CGME20170824133411eucas1p2ea8efac5afa8d33d3497829f9bc0b314@eucas1p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1503581639-580-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-TUlDIGRyaXZlciBzaG91bGQgdXNlIGluZm8gZnJvbSBDUlRDIHRvIGNoZWNrIG1vZGUgb2Ygd29y
-ayBpbnN0ZWFkIG9mCmlsbGVnYWxseSBwZWVraW5nIGludG8gbm9kZXMgb2Ygb3RoZXIgZGV2aWNl
-cy4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0t
-LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jIHwgNDQgKysrLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCsp
-LCA0MCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fbWljLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMK
-aW5kZXggMTZiYmVlOC4uMTI4Y2UxNzYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9taWMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fbWljLmMKQEAgLTIxLDkgKzIxLDEyIEBACiAjaW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+
-CiAjaW5jbHVkZSA8bGludXgvcG1fcnVudGltZS5oPgogI2luY2x1ZGUgPGRybS9kcm1QLmg+Cisj
-aW5jbHVkZSA8ZHJtL2RybV9lbmNvZGVyLmg+CiAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5o
-PgogI2luY2x1ZGUgPGxpbnV4L3JlZ21hcC5oPgogCisjaW5jbHVkZSA8ZXh5bm9zX2RybV9kcnYu
-aD4KKwogLyogU3lzcmVnIHJlZ2lzdGVycyBmb3IgTUlDICovCiAjZGVmaW5lIERTRF9DRkdfTVVY
-CTB4MTAwNAogI2RlZmluZSBNSUMwX1JHQl9NVVgJKDEgPDwgMCkKQEAgLTg1LDEyICs4OCw2IEBA
-CiAKICNkZWZpbmUgTUlDX0JTX1NJWkVfMkQoeCkJKCh4KSAmIDB4M2ZmZikKIAotZW51bSB7Ci0J
-RU5EUE9JTlRfREVDT05fTk9ERSwKLQlFTkRQT0lOVF9EU0lfTk9ERSwKLQlOVU1fRU5EUE9JTlRT
-Ci19OwotCiBzdGF0aWMgY2hhciAqY2xrX25hbWVzW10gPSB7ICJwY2xrX21pYzAiLCAic2Nsa19y
-Z2JfdmNsa190b19taWMwIiB9OwogI2RlZmluZSBOVU1fQ0xLUwkJQVJSQVlfU0laRShjbGtfbmFt
-ZXMpCiBzdGF0aWMgREVGSU5FX01VVEVYKG1pY19tdXRleCk7CkBAIC0yMjksMzYgKzIyNiw2IEBA
-IHN0YXRpYyB2b2lkIG1pY19zZXRfcmVnX29uKHN0cnVjdCBleHlub3NfbWljICptaWMsIGJvb2wg
-ZW5hYmxlKQogCXdyaXRlbChyZWcsIG1pYy0+cmVnICsgTUlDX09QKTsKIH0KIAotc3RhdGljIGlu
-dCBwYXJzZV9kdChzdHJ1Y3QgZXh5bm9zX21pYyAqbWljKQotewotCWludCByZXQgPSAwLCBpLCBq
-OwotCXN0cnVjdCBkZXZpY2Vfbm9kZSAqcmVtb3RlX25vZGU7Ci0Jc3RydWN0IGRldmljZV9ub2Rl
-ICpub2Rlc1szXTsKLQotCS8qCi0JICogVGhlIG9yZGVyIG9mIGVuZHBvaW50cyBkb2VzIG1hdHRl
-ci4KLQkgKiBUaGUgZmlyc3Qgbm9kZSBtdXN0IGJlIGZvciBkZWNvbiBhbmQgdGhlIHNlY29uZCBv
-bmUgbXVzdCBiZSBmb3IgZHNpLgotCSAqLwotCWZvciAoaSA9IDAsIGogPSAwOyBpIDwgTlVNX0VO
-RFBPSU5UUzsgaSsrKSB7Ci0JCXJlbW90ZV9ub2RlID0gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9ub2Rl
-KG1pYy0+ZGV2LT5vZl9ub2RlLCBpLCAwKTsKLQkJaWYgKCFyZW1vdGVfbm9kZSkgewotCQkJcmV0
-ID0gLUVQSVBFOwotCQkJZ290byBleGl0OwotCQl9Ci0JCW5vZGVzW2orK10gPSByZW1vdGVfbm9k
-ZTsKLQotCQlpZiAoaSA9PSBFTkRQT0lOVF9ERUNPTl9OT0RFICYmCi0JCQlvZl9nZXRfY2hpbGRf
-YnlfbmFtZShyZW1vdGVfbm9kZSwgImk4MC1pZi10aW1pbmdzIikpCi0JCQltaWMtPmk4MF9tb2Rl
-ID0gMTsKLQl9Ci0KLWV4aXQ6Ci0Jd2hpbGUgKC0taiA+IC0xKQotCQlvZl9ub2RlX3B1dChub2Rl
-c1tqXSk7Ci0KLQlyZXR1cm4gcmV0OwotfQotCiBzdGF0aWMgdm9pZCBtaWNfZGlzYWJsZShzdHJ1
-Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKSB7IH0KIAogc3RhdGljIHZvaWQgbWljX3Bvc3RfZGlzYWJs
-ZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQpAQCAtMjg2LDYgKzI1Myw3IEBAIHN0YXRpYyB2
-b2lkIG1pY19tb2RlX3NldChzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlLAogCiAJbXV0ZXhfbG9j
-aygmbWljX211dGV4KTsKIAlkcm1fZGlzcGxheV9tb2RlX3RvX3ZpZGVvbW9kZShtb2RlLCAmbWlj
-LT52bSk7CisJbWljLT5pODBfbW9kZSA9IHRvX2V4eW5vc19jcnRjKGJyaWRnZS0+ZW5jb2Rlci0+
-Y3J0YyktPmk4MF9tb2RlOwogCW11dGV4X3VubG9jaygmbWljX211dGV4KTsKIH0KIApAQCAtNDE3
-LDEwICszODUsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19taWNfcHJvYmUoc3RydWN0IHBsYXRmb3Jt
-X2RldmljZSAqcGRldikKIAogCW1pYy0+ZGV2ID0gZGV2OwogCi0JcmV0ID0gcGFyc2VfZHQobWlj
-KTsKLQlpZiAocmV0KQotCQlnb3RvIGVycjsKLQogCXJldCA9IG9mX2FkZHJlc3NfdG9fcmVzb3Vy
-Y2UoZGV2LT5vZl9ub2RlLCAwLCAmcmVzKTsKIAlpZiAocmV0KSB7CiAJCURSTV9FUlJPUigibWlj
-OiBGYWlsZWQgdG8gZ2V0IG1lbSByZWdpb24gZm9yIE1JQ1xuIik7Ci0tIAoyLjcuNAoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Since i80/command mode is determined in runtime by propagating info
+from panel this property can be removed.
+
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ .../devicetree/bindings/display/exynos/exynos5433-decon.txt  | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos5433-decon.txt b/Documentation/devicetree/bindings/display/exynos/exynos5433-decon.txt
+index 549c538..fc25882 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos5433-decon.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos5433-decon.txt
+@@ -25,12 +25,6 @@ Required properties:
+ 	 size-cells must 1 and 0, respectively.
+ - port: contains an endpoint node which is connected to the endpoint in the mic
+ 	node. The reg value muset be 0.
+-- i80-if-timings: specify whether the panel which is connected to decon uses
+-		  i80 lcd interface or mipi video interface. This node contains
+-		  no timing information as that of fimd does. Because there is
+-		  no register in decon to specify i80 interface timing value,
+-		  it is not needed, but make it remain to use same kind of node
+-		  in fimd and exynos7 decon.
+ 
+ Example:
+ SoC specific DT entry:
+@@ -59,9 +53,3 @@ decon: decon@13800000 {
+ 		};
+ 	};
+ };
+-
+-Board specific DT entry:
+-&decon {
+-	i80-if-timings {
+-	};
+-};
+-- 
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
