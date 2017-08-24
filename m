@@ -1,70 +1,54 @@
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Subject: Re: [PATCH v2] dt/bindings: exynos-rng: Move dt binding documentation
- to bindings/crypto
-Date: Thu, 24 Aug 2017 10:24:17 +0530
-Message-ID: <CANc+2y6hmviPP5ZduvqCGzf4DcsD5NZ1jVk=zS9H_k+qWkCZgA@mail.gmail.com>
-References: <20170823150443.8399-1-prasannatsmkumar@gmail.com>
- <20170823161204.5cleer2rpgjd5vmz@kozik-lap> <CANc+2y4BfdAZhgfrP6NorqTPWBYsLsHKAvoeMMa=QUgB_d4Xdg@mail.gmail.com>
- <20170823165458.qcoes376ydeavqt6@kozik-lap>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 04/10] drm/exynos/dsi: propagate info about command mode
+ from panel
+Date: Thu, 24 Aug 2017 15:33:53 +0200
+Message-ID: <1503581639-580-5-git-send-email-a.hajda@samsung.com>
+References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170824133409eucas1p2f3d79b5a88ef186562abf071f06bfc44@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20170823165458.qcoes376ydeavqt6@kozik-lap>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mchehab@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 23 August 2017 at 22:24, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Wed, Aug 23, 2017 at 10:14:29PM +0530, PrasannaKumar Muralidharan wrote:
->> Hi Krzysztof,
->>
->> On 23 August 2017 at 21:42, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> > On Wed, Aug 23, 2017 at 08:34:43PM +0530, PrasannaKumar Muralidharan wrote:
->> >> Samsung exynos PRNG driver is using crypto framework instead of
->> >> hw_random framework. So move the devicetree binding to crypto folder.
->> >>
->> >> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
->> >> ---
->> >> Changes in v2:
->> >> * Modify MAINTAINERS file to reflect file rename
->> >>
->> >>  .../devicetree/bindings/{rng => crypto}/samsung,exynos-rng4.txt         | 0
->> >>  MAINTAINERS                                                             | 2 +-
->> >>  2 files changed, 1 insertion(+), 1 deletion(-)
->> >>  rename Documentation/devicetree/bindings/{rng => crypto}/samsung,exynos-rng4.txt (100%)
->> >>
->> >
->> > Patch is okay but CC list is still incomplete. I do not know how you
->> > could get Mauro for this patch... just use get_maintainers.pl.
->>
->> I used get_maintainer.pl. Rechecked again, it says Mauro and couple of
->> others who may not be interested in this. It did not give your or
->> crypto mailing list. Its strange.
->
-> Hm, you're right. Aparently get_maintainer.pl does handle moved files
-> thus he printed only entries for MAINTAINERS.
->
-> You will get full entry with:
-> scripts/get_maintainer.pl -f Documentation/devicetree/bindings/crypto/samsung,exynos-rng4.txt
-
-Will keep this in mind.
-
-> Krzysztof Kozlowski <krzk@kernel.org> (maintainer:SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (...)
-> Herbert Xu <herbert@gondor.apana.org.au> (maintainer:CRYPTO API)
-> "David S. Miller" <davem@davemloft.net> (maintainer:CRYPTO API)
-> Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
-> Mark Rutland <mark.rutland@arm.com> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
-> Kukjin Kim <kgene@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
-> linux-crypto@vger.kernel.org (open list:SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (...)
-> linux-samsung-soc@vger.kernel.org (open list:SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (...)
-> devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
-> linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
-> linux-kernel@vger.kernel.org (open list)
->
-> Best regards,
-> Krzysztof
->
-
-Thanks,
-PrasannaKumar
+bWlwaV9kc2kgZnJhbWV3b3JrIHByb3ZpZGVzIGluZm9ybWF0aW9uIGFib3V0IHBhbmVsJ3MgbW9k
+ZSBvZiB3b3JrLgpUaGlzIGluZm8gc2hvdWxkIGJlIHByb3BhZ2F0ZWQgdXBzdHJlYW0gdG8gY29u
+ZmlndXJlIGFsbCBlbGVtZW50cyBvZgp0aGUgcGlwZWxpbmUuIEFzIENSVEMgaXMgdGhlIGNvbW1v
+biBkZW5vbWluYXRvciBvZiB0aGUgcGlwZWxpbmUgd2UgY2FuCnB1dCBzdWNoIGluZm8gaW50byBp
+dHMgc3RydWN0dXJlcy4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ft
+c3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIHwg
+MSArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgfCAyICsrCiAyIGZp
+bGVzIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kcnYuaAppbmRleCBhOTNkZTMyLi45ZTc3ODA5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2Rydi5oCkBAIC0xNjIsNiArMTYyLDcgQEAgc3RydWN0IGV4eW5vc19kcm1f
+Y3J0YyB7CiAJY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fY3J0Y19vcHMJKm9wczsKIAl2b2lkCQkJ
+CSpjdHg7CiAJc3RydWN0IGV4eW5vc19kcm1fY2xrCQkqcGlwZV9jbGs7CisJYm9vbAkJCQlpODBf
+bW9kZSA6IDE7CiB9OwogCiBzdGF0aWMgaW5saW5lIHZvaWQgZXh5bm9zX2RybV9waXBlX2Nsa19l
+bmFibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9kc2kuYwppbmRleCAwNjNiYWMzLi44YzA2YTYyIDEwMDY0NAotLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCkBAIC0xNTQzLDYgKzE1NDMsOCBAQCBzdGF0aWMgaW50
+IGV4eW5vc19kc2lfaG9zdF9hdHRhY2goc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCiAJCWRy
+bV9wYW5lbF9hdHRhY2goZHNpLT5wYW5lbCwgJmRzaS0+Y29ubmVjdG9yKTsKIAkJZHNpLT5jb25u
+ZWN0b3Iuc3RhdHVzID0gY29ubmVjdG9yX3N0YXR1c19jb25uZWN0ZWQ7CiAJfQorCWV4eW5vc19k
+cm1fY3J0Y19nZXRfYnlfdHlwZShkcm0sIEVYWU5PU19ESVNQTEFZX1RZUEVfTENEKS0+aTgwX21v
+ZGUgPQorCQkJIShkc2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPKTsKIAogCW11
+dGV4X3VubG9jaygmZHJtLT5tb2RlX2NvbmZpZy5tdXRleCk7CiAKLS0gCjIuNy40CgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
