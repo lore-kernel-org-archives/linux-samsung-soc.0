@@ -1,75 +1,61 @@
-From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 07/10] drm/exynos: add mode_valid callback to exynos_drm
-Date: Thu, 24 Aug 2017 15:33:56 +0200
-Message-ID: <1503581639-580-8-git-send-email-a.hajda@samsung.com>
-References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170824133411eucas1p2cedf32dfa953896267b2db58f1af30b7@eucas1p2.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1503581639-580-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 00/10] drm/exynos: panel mode info propagation
+Date: Thu, 24 Aug 2017 15:33:49 +0200
+Message-ID: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170824133408eucas1p2466a3b4aac528667cd06df9c00aca1df@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-crtc::mode_valid callback is required to implement proper pipeline
-validation for command/video modes. Since Exynos uses private
-framework such callback should be added to it.
-
-Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 12 ++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |  3 +++
- 2 files changed, 15 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index ac544de..6ce0821 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -84,7 +84,19 @@ static void exynos_crtc_atomic_flush(struct drm_crtc *crtc,
- 		exynos_crtc->ops->atomic_flush(exynos_crtc);
- }
- 
-+static enum drm_mode_status exynos_crtc_mode_valid(struct drm_crtc *crtc,
-+	const struct drm_display_mode *mode)
-+{
-+	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-+
-+	if (exynos_crtc->ops->mode_valid)
-+		return exynos_crtc->ops->mode_valid(exynos_crtc, mode);
-+
-+	return MODE_OK;
-+}
-+
- static const struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
-+	.mode_valid	= exynos_crtc_mode_valid,
- 	.atomic_check	= exynos_crtc_atomic_check,
- 	.atomic_begin	= exynos_crtc_atomic_begin,
- 	.atomic_flush	= exynos_crtc_atomic_flush,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 9e77809..d53435b 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -117,6 +117,7 @@ struct exynos_drm_plane_config {
-  * @disable: disable the device
-  * @enable_vblank: specific driver callback for enabling vblank interrupt.
-  * @disable_vblank: specific driver callback for disabling vblank interrupt.
-+ * @mode_valid: specific driver callback for mode validation
-  * @atomic_check: validate state
-  * @atomic_begin: prepare device to receive an update
-  * @atomic_flush: mark the end of device update
-@@ -132,6 +133,8 @@ struct exynos_drm_crtc_ops {
- 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
- 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
- 	u32 (*get_vblank_counter)(struct exynos_drm_crtc *crtc);
-+	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
-+		const struct drm_display_mode *mode);
- 	int (*atomic_check)(struct exynos_drm_crtc *crtc,
- 			    struct drm_crtc_state *state);
- 	void (*atomic_begin)(struct exynos_drm_crtc *crtc);
--- 
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgSW5raSwKClRoaXMgcGF0Y2hzZXQgYmVzaWRlIGNsZWFudXAvcmVmYWN0b3JpbmcgcGF0Y2hl
+cyAoMDEtMDMpIGFkZHMgY29kZSB0byBwcm9wYWdhdGUKaW5mbyBwcm92aWRlZCBieSBNSVBJLURT
+SSBwYW5lbHMgYWJvdXQgaXRzIG1vZGUgb2Ygd29yayAodmlkZW8vY29tbWFuZCBtb2RlKS4KVGhl
+IHByb3BhZ2F0aW9uIGlzIHBlcmZvcm1lZCBmb3Igd2hvbGUgcGlwZWxpbmUgYXMgZXZlcnkgaXRz
+IGVsZW1lbnRzIHVzZXMgaXQuCgpDaGFuZ2VzIGluIHYyOgotIGFkZGVkIG1vZGVfdmFsaWQgY2Fs
+bGJhY2sgdG8gZXh5bm9zX2RybSwKLSByZXBsYWNlIGF0b21pY19jaGVjayB3aXRoIG1vZGVfdmFs
+aWQgZm9yIG1vZGUgdmFsaWRhdGlvbiwKLSBzcGxpdCBtb2RlIHByb3BhZ2F0aW9uIHBhdGNoIGlu
+IGRlY29uNTQzMyBpbnRvIHNtYWxsZXIgcGFydHMsCi0gcmVtb3ZlZCB0ZV9pcnEgdmFyaWFibGUg
+cmVuYW1lLAotIGFkZGVkIHBhdGNoIHJlbW92aW5nIGk4MCB0aW1pbmcgbm9kZSBmcm9tIGR0cywK
+LSBhZGp1c3RlZCBjb21taXQgbWVzc2FnZXMuCgpSZWdhcmRzCkFuZHJ6ZWoKCgpBbmRyemVqIEhh
+amRhICgxMCk6CiAgZHJtL2V4eW5vcy9kZWNvbjU0MzM6IHVzZSByZWFkbF9wb2xsX3RpbWVvdXQg
+aGVscGVycwogIGRybS9leHlub3M6IHVzZSBoZWxwZXIgdG8gc2V0IHBvc3NpYmxlIGNydGNzCiAg
+ZHJtL2V4eW5vcy9kc2k6IHJlZmFjdG9yIHBhbmVsIGRldGVjdGlvbiBsb2dpYwogIGRybS9leHlu
+b3MvZHNpOiBwcm9wYWdhdGUgaW5mbyBhYm91dCBjb21tYW5kIG1vZGUgZnJvbSBwYW5lbAogIGRy
+bS9leHlub3MvbWljOiB1c2UgbW9kZSBpbmZvIHN0b3JlZCBpbiBDUlRDIHRvIGRldGVjdCBpODAg
+bW9kZQogIGRybS9leHlub3MvZGVjb241NDMzOiByZWZhY3RvciBpcnEgcmVxdWVzdGluZyBjb2Rl
+CiAgZHJtL2V4eW5vczogYWRkIG1vZGVfdmFsaWQgY2FsbGJhY2sgdG8gZXh5bm9zX2RybQogIGRy
+bS9leHlub3MvZGVjb241NDMzOiB1c2UgbW9kZSBpbmZvIHN0b3JlZCBpbiBDUlRDIHRvIGRldGVj
+dCBpODAgbW9kZQogIGR0LWJpbmRpbmdzOiBleHlub3M1NDMzLWRlY29uOiByZW1vdmUgaTgwLWlm
+LXRpbWluZ3MgcHJvcGVydHkKICBhcm02NDogZHRzOiBleHlub3M6IHJlbW92ZSBpODAtaWYtdGlt
+aW5ncyBub2RlcwoKIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3M1NDMzLWRlY29u
+LnR4dCAgIHwgIDEyIC0tCiAuLi4vYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLWNvbW1v
+bi5kdHNpICAgICB8ICAgNiAtCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJt
+X2RlY29uLmMgICAgICB8IDEwOCArKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcC5jICAgICAgICAgICAgICAgICB8ICAxNSArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2NvcmUuYyAgICAgICAgICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2NydGMuYyAgICAgICAgICAgfCAgMzMgKysrLQogZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuaCAgICAgICAgICAgfCAgMTAgKy0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgICAgICAgICAgIHwgIDEyICstCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgICAgICAgICB8ICAgNCArCiBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAgICAgICB8IDIxOCAr
+KysrKysrKysrLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9t
+aWMuYyAgICAgICAgICAgIHwgIDQ0ICstLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fdmlkaS5jICAgICAgICAgICB8ICAxNSArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfaGRtaS5jICAgICAgICAgICAgICAgfCAgMjUgKy0tCiAxMyBmaWxlcyBjaGFuZ2VkLCAy
+MzcgaW5zZXJ0aW9ucygrKSwgMjY2IGRlbGV0aW9ucygtKQoKLS0gCjIuNy40CgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
