@@ -1,290 +1,73 @@
-From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 03/10] drm/exynos/dsi: refactor panel detection logic
-Date: Thu, 24 Aug 2017 15:33:52 +0200
-Message-ID: <1503581639-580-4-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 05/10] drm/exynos/mic: use mode info stored in CRTC to
+ detect i80 mode
+Date: Thu, 24 Aug 2017 15:33:54 +0200
+Message-ID: <1503581639-580-6-git-send-email-a.hajda@samsung.com>
 References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170824133409eucas1p170d11c2037d1f20629751f04c6f77c49@eucas1p1.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1503581639-580-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+ <CGME20170824133410eucas1p1bc901ed868b664922cda5fecc920dd0e@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Description of drm_helper_hpd_irq_event clearly states that drivers
-supporting hotplug events per connector should use different helper -
-drm_kms_helper_hotplug_event. To achieve it following changes have
-been performed:
-- moved down all DSI ops - they require exynos_dsi_disable function
-to be defined earlier,
-- simplified exynos_dsi_detect - there is no real detection, it just
-returns if panel is attached,
-- DSI attach/detach callbacks attaches/detaches DRM panel and sets
-connector status and other context fields accordingly, all this is
-performed under mutex, as these callbacks are asynchronous.
-
-Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 203 ++++++++++++++++----------------
- 1 file changed, 102 insertions(+), 101 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 6b46df6..063bac3 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -254,7 +254,6 @@ struct exynos_dsi {
- 	struct drm_encoder encoder;
- 	struct mipi_dsi_host dsi_host;
- 	struct drm_connector connector;
--	struct device_node *panel_node;
- 	struct drm_panel *panel;
- 	struct device *dev;
- 
-@@ -1329,12 +1328,13 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
- 	return 0;
- }
- 
--static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi)
-+static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
-+				      struct device *panel)
- {
- 	int ret;
- 	int te_gpio_irq;
- 
--	dsi->te_gpio = of_get_named_gpio(dsi->panel_node, "te-gpios", 0);
-+	dsi->te_gpio = of_get_named_gpio(panel->of_node, "te-gpios", 0);
- 	if (dsi->te_gpio == -ENOENT)
- 		return 0;
- 
-@@ -1374,85 +1374,6 @@ static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
- 	}
- }
- 
--static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
--				  struct mipi_dsi_device *device)
--{
--	struct exynos_dsi *dsi = host_to_dsi(host);
--
--	dsi->lanes = device->lanes;
--	dsi->format = device->format;
--	dsi->mode_flags = device->mode_flags;
--	dsi->panel_node = device->dev.of_node;
--
--	/*
--	 * This is a temporary solution and should be made by more generic way.
--	 *
--	 * If attached panel device is for command mode one, dsi should register
--	 * TE interrupt handler.
--	 */
--	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO)) {
--		int ret = exynos_dsi_register_te_irq(dsi);
--
--		if (ret)
--			return ret;
--	}
--
--	if (dsi->connector.dev)
--		drm_helper_hpd_irq_event(dsi->connector.dev);
--
--	return 0;
--}
--
--static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
--				  struct mipi_dsi_device *device)
--{
--	struct exynos_dsi *dsi = host_to_dsi(host);
--
--	exynos_dsi_unregister_te_irq(dsi);
--
--	dsi->panel_node = NULL;
--
--	if (dsi->connector.dev)
--		drm_helper_hpd_irq_event(dsi->connector.dev);
--
--	return 0;
--}
--
--static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
--				        const struct mipi_dsi_msg *msg)
--{
--	struct exynos_dsi *dsi = host_to_dsi(host);
--	struct exynos_dsi_transfer xfer;
--	int ret;
--
--	if (!(dsi->state & DSIM_STATE_ENABLED))
--		return -EINVAL;
--
--	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
--		ret = exynos_dsi_init(dsi);
--		if (ret)
--			return ret;
--		dsi->state |= DSIM_STATE_INITIALIZED;
--	}
--
--	ret = mipi_dsi_create_packet(&xfer.packet, msg);
--	if (ret < 0)
--		return ret;
--
--	xfer.rx_len = msg->rx_len;
--	xfer.rx_payload = msg->rx_buf;
--	xfer.flags = msg->flags;
--
--	ret = exynos_dsi_transfer(dsi, &xfer);
--	return (ret < 0) ? ret : xfer.rx_done;
--}
--
--static const struct mipi_dsi_host_ops exynos_dsi_ops = {
--	.attach = exynos_dsi_host_attach,
--	.detach = exynos_dsi_host_detach,
--	.transfer = exynos_dsi_host_transfer,
--};
--
- static void exynos_dsi_enable(struct drm_encoder *encoder)
- {
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
-@@ -1508,25 +1429,7 @@ static void exynos_dsi_disable(struct drm_encoder *encoder)
- static enum drm_connector_status
- exynos_dsi_detect(struct drm_connector *connector, bool force)
- {
--	struct exynos_dsi *dsi = connector_to_dsi(connector);
--
--	if (!dsi->panel) {
--		dsi->panel = of_drm_find_panel(dsi->panel_node);
--		if (dsi->panel)
--			drm_panel_attach(dsi->panel, &dsi->connector);
--	} else if (!dsi->panel_node) {
--		struct drm_encoder *encoder;
--
--		encoder = platform_get_drvdata(to_platform_device(dsi->dev));
--		exynos_dsi_disable(encoder);
--		drm_panel_detach(dsi->panel);
--		dsi->panel = NULL;
--	}
--
--	if (dsi->panel)
--		return connector_status_connected;
--
--	return connector_status_disconnected;
-+	return connector->status;
- }
- 
- static void exynos_dsi_connector_destroy(struct drm_connector *connector)
-@@ -1575,6 +1478,7 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
- 		return ret;
- 	}
- 
-+	connector->status = connector_status_disconnected;
- 	drm_connector_helper_add(connector, &exynos_dsi_connector_helper_funcs);
- 	drm_mode_connector_attach_encoder(connector, encoder);
- 
-@@ -1611,6 +1515,103 @@ static const struct drm_encoder_funcs exynos_dsi_encoder_funcs = {
- 
- MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
- 
-+static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
-+				  struct mipi_dsi_device *device)
-+{
-+	struct exynos_dsi *dsi = host_to_dsi(host);
-+	struct drm_device *drm = dsi->connector.dev;
-+
-+	/*
-+	 * This is a temporary solution and should be made by more generic way.
-+	 *
-+	 * If attached panel device is for command mode one, dsi should register
-+	 * TE interrupt handler.
-+	 */
-+	if (!(device->mode_flags & MIPI_DSI_MODE_VIDEO)) {
-+		int ret = exynos_dsi_register_te_irq(dsi, &device->dev);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	mutex_lock(&drm->mode_config.mutex);
-+
-+	dsi->lanes = device->lanes;
-+	dsi->format = device->format;
-+	dsi->mode_flags = device->mode_flags;
-+	dsi->panel = of_drm_find_panel(device->dev.of_node);
-+	if (dsi->panel) {
-+		drm_panel_attach(dsi->panel, &dsi->connector);
-+		dsi->connector.status = connector_status_connected;
-+	}
-+
-+	mutex_unlock(&drm->mode_config.mutex);
-+
-+	if (drm->mode_config.poll_enabled)
-+		drm_kms_helper_hotplug_event(drm);
-+
-+	return 0;
-+}
-+
-+static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
-+				  struct mipi_dsi_device *device)
-+{
-+	struct exynos_dsi *dsi = host_to_dsi(host);
-+	struct drm_device *drm = dsi->connector.dev;
-+
-+	mutex_lock(&drm->mode_config.mutex);
-+
-+	if (dsi->panel) {
-+		exynos_dsi_disable(&dsi->encoder);
-+		drm_panel_detach(dsi->panel);
-+		dsi->panel = NULL;
-+		dsi->connector.status = connector_status_disconnected;
-+	}
-+
-+	mutex_unlock(&drm->mode_config.mutex);
-+
-+	if (drm->mode_config.poll_enabled)
-+		drm_kms_helper_hotplug_event(drm);
-+
-+	exynos_dsi_unregister_te_irq(dsi);
-+
-+	return 0;
-+}
-+
-+static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
-+				        const struct mipi_dsi_msg *msg)
-+{
-+	struct exynos_dsi *dsi = host_to_dsi(host);
-+	struct exynos_dsi_transfer xfer;
-+	int ret;
-+
-+	if (!(dsi->state & DSIM_STATE_ENABLED))
-+		return -EINVAL;
-+
-+	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
-+		ret = exynos_dsi_init(dsi);
-+		if (ret)
-+			return ret;
-+		dsi->state |= DSIM_STATE_INITIALIZED;
-+	}
-+
-+	ret = mipi_dsi_create_packet(&xfer.packet, msg);
-+	if (ret < 0)
-+		return ret;
-+
-+	xfer.rx_len = msg->rx_len;
-+	xfer.rx_payload = msg->rx_buf;
-+	xfer.flags = msg->flags;
-+
-+	ret = exynos_dsi_transfer(dsi, &xfer);
-+	return (ret < 0) ? ret : xfer.rx_done;
-+}
-+
-+static const struct mipi_dsi_host_ops exynos_dsi_ops = {
-+	.attach = exynos_dsi_host_attach,
-+	.detach = exynos_dsi_host_detach,
-+	.transfer = exynos_dsi_host_transfer,
-+};
-+
- static int exynos_dsi_of_read_u32(const struct device_node *np,
- 				  const char *propname, u32 *out_value)
- {
--- 
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+TUlDIGRyaXZlciBzaG91bGQgdXNlIGluZm8gZnJvbSBDUlRDIHRvIGNoZWNrIG1vZGUgb2Ygd29y
+ayBpbnN0ZWFkIG9mCmlsbGVnYWxseSBwZWVraW5nIGludG8gbm9kZXMgb2Ygb3RoZXIgZGV2aWNl
+cy4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0t
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jIHwgNDQgKysrLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCsp
+LCA0MCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fbWljLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMK
+aW5kZXggMTZiYmVlOC4uMTI4Y2UxNzYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9taWMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fbWljLmMKQEAgLTIxLDkgKzIxLDEyIEBACiAjaW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+
+CiAjaW5jbHVkZSA8bGludXgvcG1fcnVudGltZS5oPgogI2luY2x1ZGUgPGRybS9kcm1QLmg+Cisj
+aW5jbHVkZSA8ZHJtL2RybV9lbmNvZGVyLmg+CiAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5o
+PgogI2luY2x1ZGUgPGxpbnV4L3JlZ21hcC5oPgogCisjaW5jbHVkZSA8ZXh5bm9zX2RybV9kcnYu
+aD4KKwogLyogU3lzcmVnIHJlZ2lzdGVycyBmb3IgTUlDICovCiAjZGVmaW5lIERTRF9DRkdfTVVY
+CTB4MTAwNAogI2RlZmluZSBNSUMwX1JHQl9NVVgJKDEgPDwgMCkKQEAgLTg1LDEyICs4OCw2IEBA
+CiAKICNkZWZpbmUgTUlDX0JTX1NJWkVfMkQoeCkJKCh4KSAmIDB4M2ZmZikKIAotZW51bSB7Ci0J
+RU5EUE9JTlRfREVDT05fTk9ERSwKLQlFTkRQT0lOVF9EU0lfTk9ERSwKLQlOVU1fRU5EUE9JTlRT
+Ci19OwotCiBzdGF0aWMgY2hhciAqY2xrX25hbWVzW10gPSB7ICJwY2xrX21pYzAiLCAic2Nsa19y
+Z2JfdmNsa190b19taWMwIiB9OwogI2RlZmluZSBOVU1fQ0xLUwkJQVJSQVlfU0laRShjbGtfbmFt
+ZXMpCiBzdGF0aWMgREVGSU5FX01VVEVYKG1pY19tdXRleCk7CkBAIC0yMjksMzYgKzIyNiw2IEBA
+IHN0YXRpYyB2b2lkIG1pY19zZXRfcmVnX29uKHN0cnVjdCBleHlub3NfbWljICptaWMsIGJvb2wg
+ZW5hYmxlKQogCXdyaXRlbChyZWcsIG1pYy0+cmVnICsgTUlDX09QKTsKIH0KIAotc3RhdGljIGlu
+dCBwYXJzZV9kdChzdHJ1Y3QgZXh5bm9zX21pYyAqbWljKQotewotCWludCByZXQgPSAwLCBpLCBq
+OwotCXN0cnVjdCBkZXZpY2Vfbm9kZSAqcmVtb3RlX25vZGU7Ci0Jc3RydWN0IGRldmljZV9ub2Rl
+ICpub2Rlc1szXTsKLQotCS8qCi0JICogVGhlIG9yZGVyIG9mIGVuZHBvaW50cyBkb2VzIG1hdHRl
+ci4KLQkgKiBUaGUgZmlyc3Qgbm9kZSBtdXN0IGJlIGZvciBkZWNvbiBhbmQgdGhlIHNlY29uZCBv
+bmUgbXVzdCBiZSBmb3IgZHNpLgotCSAqLwotCWZvciAoaSA9IDAsIGogPSAwOyBpIDwgTlVNX0VO
+RFBPSU5UUzsgaSsrKSB7Ci0JCXJlbW90ZV9ub2RlID0gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9ub2Rl
+KG1pYy0+ZGV2LT5vZl9ub2RlLCBpLCAwKTsKLQkJaWYgKCFyZW1vdGVfbm9kZSkgewotCQkJcmV0
+ID0gLUVQSVBFOwotCQkJZ290byBleGl0OwotCQl9Ci0JCW5vZGVzW2orK10gPSByZW1vdGVfbm9k
+ZTsKLQotCQlpZiAoaSA9PSBFTkRQT0lOVF9ERUNPTl9OT0RFICYmCi0JCQlvZl9nZXRfY2hpbGRf
+YnlfbmFtZShyZW1vdGVfbm9kZSwgImk4MC1pZi10aW1pbmdzIikpCi0JCQltaWMtPmk4MF9tb2Rl
+ID0gMTsKLQl9Ci0KLWV4aXQ6Ci0Jd2hpbGUgKC0taiA+IC0xKQotCQlvZl9ub2RlX3B1dChub2Rl
+c1tqXSk7Ci0KLQlyZXR1cm4gcmV0OwotfQotCiBzdGF0aWMgdm9pZCBtaWNfZGlzYWJsZShzdHJ1
+Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKSB7IH0KIAogc3RhdGljIHZvaWQgbWljX3Bvc3RfZGlzYWJs
+ZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQpAQCAtMjg2LDYgKzI1Myw3IEBAIHN0YXRpYyB2
+b2lkIG1pY19tb2RlX3NldChzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlLAogCiAJbXV0ZXhfbG9j
+aygmbWljX211dGV4KTsKIAlkcm1fZGlzcGxheV9tb2RlX3RvX3ZpZGVvbW9kZShtb2RlLCAmbWlj
+LT52bSk7CisJbWljLT5pODBfbW9kZSA9IHRvX2V4eW5vc19jcnRjKGJyaWRnZS0+ZW5jb2Rlci0+
+Y3J0YyktPmk4MF9tb2RlOwogCW11dGV4X3VubG9jaygmbWljX211dGV4KTsKIH0KIApAQCAtNDE3
+LDEwICszODUsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19taWNfcHJvYmUoc3RydWN0IHBsYXRmb3Jt
+X2RldmljZSAqcGRldikKIAogCW1pYy0+ZGV2ID0gZGV2OwogCi0JcmV0ID0gcGFyc2VfZHQobWlj
+KTsKLQlpZiAocmV0KQotCQlnb3RvIGVycjsKLQogCXJldCA9IG9mX2FkZHJlc3NfdG9fcmVzb3Vy
+Y2UoZGV2LT5vZl9ub2RlLCAwLCAmcmVzKTsKIAlpZiAocmV0KSB7CiAJCURSTV9FUlJPUigibWlj
+OiBGYWlsZWQgdG8gZ2V0IG1lbSByZWdpb24gZm9yIE1JQ1xuIik7Ci0tIAoyLjcuNAoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
