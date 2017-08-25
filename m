@@ -1,72 +1,66 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 0/9] drm/exynos: misc fixes and more
-Date: Fri, 25 Aug 2017 15:21:21 +0900
-Message-ID: <599FC1E1.10406@samsung.com>
-References: <CGME20170822142004epcas4p4778b4a0fcf04c7ba4a0d70e995cbad73@epcas4p4.samsung.com>
-        <20170822141944.8138-1-tjakobi@math.uni-bielefeld.de>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2 01/10] drm/exynos/decon5433: use readl_poll_timeout
+ helpers
+Date: Fri, 25 Aug 2017 13:25:26 +0200
+Message-ID: <40d914b4-3584-8a14-1c2a-db1966bb6a2d@math.uni-bielefeld.de>
+References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170824133408eucas1p1e7b9988ac74fdd3e8dd8d25ead949ec5@eucas1p1.samsung.com>
+ <1503581639-580-2-git-send-email-a.hajda@samsung.com>
+ <2ae55d7a-3730-72f7-ae7e-8556b9e4e4a5@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:15237 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751857AbdHYGVY (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 25 Aug 2017 02:21:24 -0400
-In-reply-to: <20170822141944.8138-1-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <2ae55d7a-3730-72f7-ae7e-8556b9e4e4a5@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
 
-Hi Tobias,
-
-Regarding below two patches, I'd like to have more review so I will consider to merge them in next turn. Sorry for this.
-  drm/exynos: introduce BYTE_PITCH capability
-  drm/exynos: add BYTE_PITCH cap for all supported planes
-
-Thanks,
-Inki Dae
-
-2017년 08월 22일 23:19에 Tobias Jakobi 이(가) 쓴 글:
-> Hello,
-> 
-> this is the second iteration of [1], with the following changes:
-> - split patch 3/8 (suggested by Inki)
-> - zero init registers in patch 4/8 (suggested by Inki)
-> - rephrased commit description of patch 5/8 to make it more
->   clear that this behaviour depends on the hw
-> - replace zero with linear modifier in patch 2/8
-> 
-> 
-> Summary:
-> (a) Enables support for NV12MT in the mixer.
-> (b) Sanitizes buffer pitch for HW with restrictions.
-> (c) Misc fixes
-> 
-> With best wishes,
-> Tobias
-> 
-> [1] https://www.spinics.net/lists/linux-samsung-soc/msg60235.html
-> 
-> 
-> Tobias Jakobi (9):
->   drm/exynos: mixer: fix chroma comment in vp_video_buffer()
->   drm/exynos: mixer: enable NV12MT support for the video plane
->   drm/exynos: mixer: simplify vp_video_buffer()
->   drm/exynos: mixer: simplify mixer_graph_buffer()
->   drm/exynos: mixer: remove src offset from mixer_graph_buffer()
->   drm/exynos: introduce BYTE_PITCH capability
->   drm/exynos: add BYTE_PITCH cap for all supported planes
->   drm/exynos: consistent use of cpp
->   drm/exynos: simplify set_pixfmt() in DECON and FIMD drivers
-> 
->  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 17 +++++-----
->  drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 13 +++-----
->  drivers/gpu/drm/exynos/exynos_drm_drv.h       |  2 ++
->  drivers/gpu/drm/exynos/exynos_drm_fb.c        |  2 ++
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 17 ++++------
->  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 37 +++++++++++++++++++++
->  drivers/gpu/drm/exynos/exynos_mixer.c         | 48 +++++++++------------------
->  7 files changed, 75 insertions(+), 61 deletions(-)
-> 
+VG9iaWFzIEpha29iaSB3cm90ZToKPiBIZWxsbyBBbmRyemVqLAo+IAo+IAo+IEFuZHJ6ZWogSGFq
+ZGEgd3JvdGU6Cj4+IExpbnV4IGNvcmUgcHJvdmlkZSBoZWxwZXJzIGZvciBwb2xsaW5nIHdpdGgg
+dGltZW91dCwgbGV0cyB1c2UgdGhlbS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpk
+YSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAyMCArKysrKysrKy0tLS0tLS0tLS0tLQo+PiAgMSBm
+aWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKPj4gaW5kZXggNTc5
+MmNhODguLjIzN2I0YzkgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zNTQzM19kcm1fZGVjb24uYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+czU0MzNfZHJtX2RlY29uLmMKPj4gQEAgLTEzLDYgKzEzLDcgQEAKPj4gICNpbmNsdWRlIDxsaW51
+eC9wbGF0Zm9ybV9kZXZpY2UuaD4KPj4gICNpbmNsdWRlIDxsaW51eC9jbGsuaD4KPj4gICNpbmNs
+dWRlIDxsaW51eC9jb21wb25lbnQuaD4KPj4gKyNpbmNsdWRlIDxsaW51eC9pb3BvbGwuaD4KPj4g
+ICNpbmNsdWRlIDxsaW51eC9tZmQvc3lzY29uLmg+Cj4+ICAjaW5jbHVkZSA8bGludXgvb2ZfZGV2
+aWNlLmg+Cj4+ICAjaW5jbHVkZSA8bGludXgvb2ZfZ3Bpby5oPgo+PiBAQCAtNDA3LDI0ICs0MDgs
+MTkgQEAgc3RhdGljIHZvaWQgZGVjb25fYXRvbWljX2ZsdXNoKHN0cnVjdCBleHlub3NfZHJtX2Ny
+dGMgKmNydGMpCj4+ICAKPj4gIHN0YXRpYyB2b2lkIGRlY29uX3N3cmVzZXQoc3RydWN0IGRlY29u
+X2NvbnRleHQgKmN0eCkKPj4gIHsKPj4gLQl1bnNpZ25lZCBpbnQgdHJpZXM7Cj4+ICAJdW5zaWdu
+ZWQgbG9uZyBmbGFnczsKPj4gKwl1MzIgdmFsOwo+PiArCWludCByZXQ7Cj4+ICAKPj4gIAl3cml0
+ZWwoMCwgY3R4LT5hZGRyICsgREVDT05fVklEQ09OMCk7Cj4+IC0JZm9yICh0cmllcyA9IDIwMDA7
+IHRyaWVzOyAtLXRyaWVzKSB7Cj4+IC0JCWlmICh+cmVhZGwoY3R4LT5hZGRyICsgREVDT05fVklE
+Q09OMCkgJiBWSURDT04wX1NUT1BfU1RBVFVTKQo+PiAtCQkJYnJlYWs7Cj4+IC0JCXVkZWxheSgx
+MCk7Cj4+IC0JfQo+PiArCXJlYWRsX3BvbGxfdGltZW91dChjdHgtPmFkZHIgKyBERUNPTl9WSURD
+T04wLCB2YWwsCj4+ICsJCQkgICB+dmFsICYgVklEQ09OMF9TVE9QX1NUQVRVUywgMTIsIDIwMDAw
+KTsKPiBXb3VsZG4ndCBpdCBiZSBtb3JlIGNvbnNpc3RlbnQgdG8gYWxzbyBjaGVjayBmb3IgYSB0
+aW1lb3V0IGhlcmU/Ckkgc2VlISBUaGFua3MgZm9yIHRoZSBjbGFyaWZpY2F0aW9uLgoKLSBUb2Jp
+YXMKCgo+IFdpdGggYmVzdCB3aXNoZXMsCj4gVG9iaWFzCj4gCj4gCj4gCj4+ICAJd3JpdGVsKFZJ
+RENPTjBfU1dSRVNFVCwgY3R4LT5hZGRyICsgREVDT05fVklEQ09OMCk7Cj4+IC0JZm9yICh0cmll
+cyA9IDIwMDA7IHRyaWVzOyAtLXRyaWVzKSB7Cj4+IC0JCWlmICh+cmVhZGwoY3R4LT5hZGRyICsg
+REVDT05fVklEQ09OMCkgJiBWSURDT04wX1NXUkVTRVQpCj4+IC0JCQlicmVhazsKPj4gLQkJdWRl
+bGF5KDEwKTsKPj4gLQl9Cj4+ICsJcmV0ID0gcmVhZGxfcG9sbF90aW1lb3V0KGN0eC0+YWRkciAr
+IERFQ09OX1ZJRENPTjAsIHZhbCwKPj4gKwkJCQkgfnZhbCAmIFZJRENPTjBfU1dSRVNFVCwgMTIs
+IDIwMDAwKTsKPj4gIAo+PiAtCVdBUk4odHJpZXMgPT0gMCwgImZhaWxlZCB0byBzb2Z0d2FyZSBy
+ZXNldCBERUNPTlxuIik7Cj4+ICsJV0FSTihyZXQgPCAwLCAiZmFpbGVkIHRvIHNvZnR3YXJlIHJl
+c2V0IERFQ09OXG4iKTsKPj4gIAo+PiAgCXNwaW5fbG9ja19pcnFzYXZlKCZjdHgtPnZibGFua19s
+b2NrLCBmbGFncyk7Cj4+ICAJY3R4LT5mcmFtZV9pZCA9IDA7Cj4+Cj4gCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
