@@ -1,89 +1,53 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 02/10] drm/exynos: use helper to set possible crtcs
-Date: Fri, 25 Aug 2017 11:42:21 +0900
-Message-ID: <599F8E8D.6040000@samsung.com>
+Subject: Re: [PATCH v2 05/10] drm/exynos/mic: use mode info stored in CRTC
+ to detect i80 mode
+Date: Fri, 25 Aug 2017 11:55:30 +0900
+Message-ID: <599F91A2.70107@samsung.com>
 References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
- <CGME20170824133409eucas1p11409c10ac302f9cb56106888ab7d5a25@eucas1p1.samsung.com>
- <1503581639-580-3-git-send-email-a.hajda@samsung.com>
+        <CGME20170824133410eucas1p1bc901ed868b664922cda5fecc920dd0e@eucas1p1.samsung.com>
+        <1503581639-580-6-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1503581639-580-3-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:26268 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754490AbdHYCzd (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 24 Aug 2017 22:55:33 -0400
+In-reply-to: <1503581639-580-6-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
 
-CgoyMDE364WEIDA47JuUIDI07J28IDIyOjMz7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBBbGwgZW5jb2RlcnMgc2hhcmUgdGhlIHNhbWUgY29kZSB0byBzZXQgZW5jb2RlcnMg
-cG9zc2libGVfY3J0Y3MgZmllbGQuCj4gVGhlIHBhdGNoIGNyZWF0ZXMgaGVscGVyIHRvIGFic3Ry
-YWN0IG91dCB0aGlzIGNvZGUuCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5o
-YWpkYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHAuYyAgICAgICB8IDE1ICsrKysrLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fY29yZS5jIHwgIDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY3J0Yy5jIHwgMjEgKysrKysrKysrKysrKysrKysrLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmggfCAxMCArKysrKysrLS0tCj4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgfCAxMiArKysrLS0tLS0tLS0KPiAgZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jICB8IDEzICsrKystLS0tLS0tLS0KPiAg
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyB8IDE1ICsrKysrLS0tLS0t
-LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgIHwgMjUgKysr
-KysrKysrLS0tLS0tLS0tLS0tLS0tLQo+ICA4IGZpbGVzIGNoYW5nZWQsIDUzIGluc2VydGlvbnMo
-KyksIDU5IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHAuYwo+IGlu
-ZGV4IDM4NTUzN2IuLjM5NjI5ZTcgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHAuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwLmMK
-PiBAQCAtMTU1LDcgKzE1NSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RwX2JpbmQoc3RydWN0IGRl
-dmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4gIAlzdHJ1Y3Qg
-ZXh5bm9zX2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiAgCXN0cnVjdCBk
-cm1fZW5jb2RlciAqZW5jb2RlciA9ICZkcC0+ZW5jb2RlcjsKPiAgCXN0cnVjdCBkcm1fZGV2aWNl
-ICpkcm1fZGV2ID0gZGF0YTsKPiAtCWludCBwaXBlLCByZXQ7Cj4gKwlpbnQgcmV0Owo+ICAKPiAg
-CS8qCj4gIAkgKiBKdXN0IGxpa2UgdGhlIHByb2JlIGZ1bmN0aW9uIHNhaWQsIHdlIGRvbid0IG5l
-ZWQgdGhlCj4gQEAgLTE3OSwyMCArMTc5LDE1IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RwX2JpbmQo
-c3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4g
-IAkJCXJldHVybiByZXQ7Cj4gIAl9Cj4gIAo+IC0JcGlwZSA9IGV4eW5vc19kcm1fY3J0Y19nZXRf
-cGlwZV9mcm9tX3R5cGUoZHJtX2RldiwKPiAtCQkJCQkJICBFWFlOT1NfRElTUExBWV9UWVBFX0xD
-RCk7Cj4gLQlpZiAocGlwZSA8IDApCj4gLQkJcmV0dXJuIHBpcGU7Cj4gLQo+IC0JZW5jb2Rlci0+
-cG9zc2libGVfY3J0Y3MgPSAxIDw8IHBpcGU7Cj4gLQo+IC0JRFJNX0RFQlVHX0tNUygicG9zc2li
-bGVfY3J0Y3MgPSAweCV4XG4iLCBlbmNvZGVyLT5wb3NzaWJsZV9jcnRjcyk7Cj4gLQo+ICAJZHJt
-X2VuY29kZXJfaW5pdChkcm1fZGV2LCBlbmNvZGVyLCAmZXh5bm9zX2RwX2VuY29kZXJfZnVuY3Ms
-Cj4gIAkJCSBEUk1fTU9ERV9FTkNPREVSX1RNRFMsIE5VTEwpOwo+ICAKPiAgCWRybV9lbmNvZGVy
-X2hlbHBlcl9hZGQoZW5jb2RlciwgJmV4eW5vc19kcF9lbmNvZGVyX2hlbHBlcl9mdW5jcyk7Cj4g
-IAo+ICsJcmV0ID0gZXh5bm9zX2RybV9zZXRfcG9zc2libGVfY3J0Y3MoZW5jb2RlciwgRVhZTk9T
-X0RJU1BMQVlfVFlQRV9MQ0QpOwo+ICsJaWYgKHJldCA8IDApCj4gKwkJcmV0dXJuIHJldDsKPiAr
-Cj4gIAlkcC0+cGxhdF9kYXRhLmVuY29kZXIgPSBlbmNvZGVyOwo+ICAKPiAgCXJldHVybiBhbmFs
-b2dpeF9kcF9iaW5kKGRldiwgZHAtPmRybV9kZXYsICZkcC0+cGxhdF9kYXRhKTsKPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMKPiBpbmRleCBlZGJkOThmLi5iMGMwNjIx
-IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMK
-PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY29yZS5jCj4gQEAgLTEz
-LDYgKzEzLDcgQEAKPiAgICovCj4gIAo+ICAjaW5jbHVkZSA8ZHJtL2RybVAuaD4KPiArCj4gICNp
-bmNsdWRlICJleHlub3NfZHJtX2Rydi5oIgo+ICAjaW5jbHVkZSAiZXh5bm9zX2RybV9jcnRjLmgi
-Cj4gIAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
-Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IGluZGV4IGMz
-NzA3OGYuLmFjNTQ0ZGUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2NydGMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9j
-cnRjLmMKPiBAQCAtMTYsNiArMTYsNyBAQAo+ICAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBl
-ci5oPgo+ICAjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWMuaD4KPiAgI2luY2x1ZGUgPGRybS9kcm1f
-YXRvbWljX2hlbHBlci5oPgo+ICsjaW5jbHVkZSA8ZHJtL2RybV9lbmNvZGVyLmg+Cj4gIAo+ICAj
-aW5jbHVkZSAiZXh5bm9zX2RybV9jcnRjLmgiCj4gICNpbmNsdWRlICJleHlub3NfZHJtX2Rydi5o
-Igo+IEBAIC0xOTEsMTYgKzE5MiwzMCBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3Nf
-ZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAo+ICAJcmV0dXJuIEVS
-Ul9QVFIocmV0KTsKPiAgfQo+ICAKPiAtaW50IGV4eW5vc19kcm1fY3J0Y19nZXRfcGlwZV9mcm9t
-X3R5cGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gK3N0cnVjdCBleHlub3NfZHJtX2Ny
-dGMgKmV4eW5vc19kcm1fY3J0Y19nZXRfYnlfdHlwZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2Rl
-diwKCllvdSBkb24ndCBoYXZlIHRvIG1vZGlmeSB0aGlzIGZ1bmN0aW9uIGJlY2F1c2Ugbm8gdXNl
-ciB0byB1c2UgdGhpcyBmdW5jdGlvbiBoZXJlLgpNb3ZpbmcgdGhpcyBjaGFuZ2UgdG8gYWN0dWFs
-IHVzZXIsIHBhdGNoIDQsIHdvdWxkIGJlIGJldHRlci4gQW55d2F5IHRyaXZpYWwgdGhpbmcgc28g
-SSB3aWxsIG1lcmdlIGl0IGFzLWlzLgoKClRoYW5rcywKSW5raSBEYWUKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+
+2017년 08월 24일 22:33에 Andrzej Hajda 이(가) 쓴 글:
+> MIC driver should use info from CRTC to check mode of work instead of
+> illegally peeking into nodes of other devices.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_mic.c | 44 +++------------------------------
+>  1 file changed, 4 insertions(+), 40 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+> index 16bbee8..128ce176 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+> @@ -21,9 +21,12 @@
+>  #include <linux/component.h>
+>  #include <linux/pm_runtime.h>
+>  #include <drm/drmP.h>
+> +#include <drm/drm_encoder.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  
+> +#include <exynos_drm_drv.h>
+
+Build error happened at here. It should be modified to '#include "exynos_drm_drv.h"'.
+I can fix it.
+
+Thanks,
+Inki Dae
