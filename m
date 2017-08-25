@@ -1,160 +1,89 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 08/10] drm/exynos/decon5433: use mode info stored in
- CRTC to detect i80 mode
-Date: Fri, 25 Aug 2017 11:15:08 +0900
-Message-ID: <599F882C.20507@samsung.com>
+Subject: Re: [PATCH v2 02/10] drm/exynos: use helper to set possible crtcs
+Date: Fri, 25 Aug 2017 11:42:21 +0900
+Message-ID: <599F8E8D.6040000@samsung.com>
 References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170824133411eucas1p1601aabfcb12d8ae39f5b6400d16da99e@eucas1p1.samsung.com>
-        <1503581639-580-9-git-send-email-a.hajda@samsung.com>
+ <CGME20170824133409eucas1p11409c10ac302f9cb56106888ab7d5a25@eucas1p1.samsung.com>
+ <1503581639-580-3-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14725 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754191AbdHYCPM (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 22:15:12 -0400
-In-reply-to: <1503581639-580-9-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1503581639-580-3-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-2017년 08월 24일 22:33에 Andrzej Hajda 이(가) 쓴 글:
-> Since panel's mode of work is propagated properly from panel to DECON,
-> there is no need to use redundant private device tree property.
-> The only issue with such approach is that check for required interrupts
-> should be postponed until panel communicate its requirements, ie to
-> mode validation phase - mode_valid callback.
-
-Same patch will be required for other Exynos SoCs for consistency later.
-
-
-Thanks,
-Inki Dae
-
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 40 +++++++++++++++++----------
->  1 file changed, 25 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> index 0f5acce..da183e0 100644
-> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> @@ -34,9 +34,8 @@
->  #define WINDOWS_NR	3
->  #define MIN_FB_WIDTH_FOR_16WORD_BURST	128
->  
-> -#define IFTYPE_I80	(1 << 0)
-> -#define I80_HW_TRG	(1 << 1)
-> -#define IFTYPE_HDMI	(1 << 2)
-> +#define I80_HW_TRG	(1 << 0)
-> +#define IFTYPE_HDMI	(1 << 1)
->  
->  static const char * const decon_clks_name[] = {
->  	"pclk",
-> @@ -93,7 +92,7 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
->  	u32 val;
->  
->  	val = VIDINTCON0_INTEN;
-> -	if (ctx->out_type & IFTYPE_I80)
-> +	if (crtc->i80_mode)
->  		val |= VIDINTCON0_FRAMEDONE;
->  	else
->  		val |= VIDINTCON0_INTFRMEN | VIDINTCON0_FRAMESEL_FP;
-> @@ -142,7 +141,7 @@ static u32 decon_get_frame_count(struct decon_context *ctx, bool end)
->  
->  	switch (status & (VIDCON1_VSTATUS_MASK | VIDCON1_I80_ACTIVE)) {
->  	case VIDCON1_VSTATUS_VS:
-> -		if (!(ctx->out_type & IFTYPE_I80))
-> +		if (!(ctx->crtc->i80_mode))
->  			--frm;
->  		break;
->  	case VIDCON1_VSTATUS_BP:
-> @@ -169,7 +168,7 @@ static u32 decon_get_vblank_counter(struct exynos_drm_crtc *crtc)
->  
->  static void decon_setup_trigger(struct decon_context *ctx)
->  {
-> -	if (!(ctx->out_type & (IFTYPE_I80 | I80_HW_TRG)))
-> +	if (!ctx->crtc->i80_mode && !(ctx->out_type & I80_HW_TRG))
->  		return;
->  
->  	if (!(ctx->out_type & I80_HW_TRG)) {
-> @@ -209,7 +208,7 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
->  	val = VIDOUT_LCD_ON;
->  	if (interlaced)
->  		val |= VIDOUT_INTERLACE_EN_F;
-> -	if (ctx->out_type & IFTYPE_I80) {
-> +	if (crtc->i80_mode) {
->  		val |= VIDOUT_COMMAND_IF;
->  	} else {
->  		val |= VIDOUT_RGB_IF;
-> @@ -225,7 +224,7 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
->  			VIDTCON2_HOZVAL(m->hdisplay - 1);
->  	writel(val, ctx->addr + DECON_VIDTCON2);
->  
-> -	if (!(ctx->out_type & IFTYPE_I80)) {
-> +	if (!crtc->i80_mode) {
->  		int vbp = m->crtc_vtotal - m->crtc_vsync_end;
->  		int vfp = m->crtc_vsync_start - m->crtc_vdisplay;
->  
-> @@ -513,6 +512,22 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
->  		clk_disable_unprepare(ctx->clks[i]);
->  }
->  
-> +static enum drm_mode_status decon_mode_valid(struct exynos_drm_crtc *crtc,
-> +		const struct drm_display_mode *mode)
-> +{
-> +	struct decon_context *ctx = crtc->ctx;
-> +
-> +	ctx->irq = crtc->i80_mode ? ctx->irq_lcd_sys : ctx->irq_vsync;
-> +
-> +	if (ctx->irq)
-> +		return MODE_OK;
-> +
-> +	dev_info(ctx->dev, "Sink requires %s mode, but appropriate interrupt is not provided.\n",
-> +			crtc->i80_mode ? "command" : "video");
-> +
-> +	return MODE_BAD;
-> +}
-> +
->  static const struct exynos_drm_crtc_ops decon_crtc_ops = {
->  	.enable			= decon_enable,
->  	.disable		= decon_disable,
-> @@ -522,6 +537,7 @@ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
->  	.atomic_begin		= decon_atomic_begin,
->  	.update_plane		= decon_update_plane,
->  	.disable_plane		= decon_disable_plane,
-> +	.mode_valid		= decon_mode_valid,
->  	.atomic_flush		= decon_atomic_flush,
->  };
->  
-> @@ -715,11 +731,8 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
->  	ctx->out_type = (unsigned long)of_device_get_match_data(dev);
->  	spin_lock_init(&ctx->vblank_lock);
->  
-> -	if (ctx->out_type & IFTYPE_HDMI) {
-> +	if (ctx->out_type & IFTYPE_HDMI)
->  		ctx->first_win = 1;
-> -	} else if (of_get_child_by_name(dev->of_node, "i80-if-timings")) {
-> -		ctx->out_type |= IFTYPE_I80;
-> -	}
->  
->  	for (i = 0; i < ARRAY_SIZE(decon_clks_name); i++) {
->  		struct clk *clk;
-> @@ -753,9 +766,6 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
->  		return ret;
->  	ctx->irq_lcd_sys = ret;
->  
-> -	ctx->irq = (ctx->out_type & IFTYPE_I80) ? ctx->irq_lcd_sys
-> -						: ctx->irq_vsync;
-> -
->  	ret = decon_conf_irq(ctx, "te", decon_te_irq_handler,
->  			IRQF_TRIGGER_RISING);
->  	if (ret < 0)
-> 
+CgoyMDE364WEIDA47JuUIDI07J28IDIyOjMz7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
+IOq4gDoKPiBBbGwgZW5jb2RlcnMgc2hhcmUgdGhlIHNhbWUgY29kZSB0byBzZXQgZW5jb2RlcnMg
+cG9zc2libGVfY3J0Y3MgZmllbGQuCj4gVGhlIHBhdGNoIGNyZWF0ZXMgaGVscGVyIHRvIGFic3Ry
+YWN0IG91dCB0aGlzIGNvZGUuCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5o
+YWpkYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHAuYyAgICAgICB8IDE1ICsrKysrLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fY29yZS5jIHwgIDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fY3J0Yy5jIHwgMjEgKysrKysrKysrKysrKysrKysrLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmggfCAxMCArKysrKysrLS0tCj4gIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgfCAxMiArKysrLS0tLS0tLS0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jICB8IDEzICsrKystLS0tLS0tLS0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyB8IDE1ICsrKysrLS0tLS0t
+LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgIHwgMjUgKysr
+KysrKysrLS0tLS0tLS0tLS0tLS0tLQo+ICA4IGZpbGVzIGNoYW5nZWQsIDUzIGluc2VydGlvbnMo
+KyksIDU5IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHAuYwo+IGlu
+ZGV4IDM4NTUzN2IuLjM5NjI5ZTcgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHAuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwLmMK
+PiBAQCAtMTU1LDcgKzE1NSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RwX2JpbmQoc3RydWN0IGRl
+dmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4gIAlzdHJ1Y3Qg
+ZXh5bm9zX2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiAgCXN0cnVjdCBk
+cm1fZW5jb2RlciAqZW5jb2RlciA9ICZkcC0+ZW5jb2RlcjsKPiAgCXN0cnVjdCBkcm1fZGV2aWNl
+ICpkcm1fZGV2ID0gZGF0YTsKPiAtCWludCBwaXBlLCByZXQ7Cj4gKwlpbnQgcmV0Owo+ICAKPiAg
+CS8qCj4gIAkgKiBKdXN0IGxpa2UgdGhlIHByb2JlIGZ1bmN0aW9uIHNhaWQsIHdlIGRvbid0IG5l
+ZWQgdGhlCj4gQEAgLTE3OSwyMCArMTc5LDE1IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RwX2JpbmQo
+c3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4g
+IAkJCXJldHVybiByZXQ7Cj4gIAl9Cj4gIAo+IC0JcGlwZSA9IGV4eW5vc19kcm1fY3J0Y19nZXRf
+cGlwZV9mcm9tX3R5cGUoZHJtX2RldiwKPiAtCQkJCQkJICBFWFlOT1NfRElTUExBWV9UWVBFX0xD
+RCk7Cj4gLQlpZiAocGlwZSA8IDApCj4gLQkJcmV0dXJuIHBpcGU7Cj4gLQo+IC0JZW5jb2Rlci0+
+cG9zc2libGVfY3J0Y3MgPSAxIDw8IHBpcGU7Cj4gLQo+IC0JRFJNX0RFQlVHX0tNUygicG9zc2li
+bGVfY3J0Y3MgPSAweCV4XG4iLCBlbmNvZGVyLT5wb3NzaWJsZV9jcnRjcyk7Cj4gLQo+ICAJZHJt
+X2VuY29kZXJfaW5pdChkcm1fZGV2LCBlbmNvZGVyLCAmZXh5bm9zX2RwX2VuY29kZXJfZnVuY3Ms
+Cj4gIAkJCSBEUk1fTU9ERV9FTkNPREVSX1RNRFMsIE5VTEwpOwo+ICAKPiAgCWRybV9lbmNvZGVy
+X2hlbHBlcl9hZGQoZW5jb2RlciwgJmV4eW5vc19kcF9lbmNvZGVyX2hlbHBlcl9mdW5jcyk7Cj4g
+IAo+ICsJcmV0ID0gZXh5bm9zX2RybV9zZXRfcG9zc2libGVfY3J0Y3MoZW5jb2RlciwgRVhZTk9T
+X0RJU1BMQVlfVFlQRV9MQ0QpOwo+ICsJaWYgKHJldCA8IDApCj4gKwkJcmV0dXJuIHJldDsKPiAr
+Cj4gIAlkcC0+cGxhdF9kYXRhLmVuY29kZXIgPSBlbmNvZGVyOwo+ICAKPiAgCXJldHVybiBhbmFs
+b2dpeF9kcF9iaW5kKGRldiwgZHAtPmRybV9kZXYsICZkcC0+cGxhdF9kYXRhKTsKPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMKPiBpbmRleCBlZGJkOThmLi5iMGMwNjIx
+IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMK
+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY29yZS5jCj4gQEAgLTEz
+LDYgKzEzLDcgQEAKPiAgICovCj4gIAo+ICAjaW5jbHVkZSA8ZHJtL2RybVAuaD4KPiArCj4gICNp
+bmNsdWRlICJleHlub3NfZHJtX2Rydi5oIgo+ICAjaW5jbHVkZSAiZXh5bm9zX2RybV9jcnRjLmgi
+Cj4gIAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
+Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IGluZGV4IGMz
+NzA3OGYuLmFjNTQ0ZGUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2NydGMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9j
+cnRjLmMKPiBAQCAtMTYsNiArMTYsNyBAQAo+ICAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBl
+ci5oPgo+ICAjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWMuaD4KPiAgI2luY2x1ZGUgPGRybS9kcm1f
+YXRvbWljX2hlbHBlci5oPgo+ICsjaW5jbHVkZSA8ZHJtL2RybV9lbmNvZGVyLmg+Cj4gIAo+ICAj
+aW5jbHVkZSAiZXh5bm9zX2RybV9jcnRjLmgiCj4gICNpbmNsdWRlICJleHlub3NfZHJtX2Rydi5o
+Igo+IEBAIC0xOTEsMTYgKzE5MiwzMCBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3Nf
+ZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAo+ICAJcmV0dXJuIEVS
+Ul9QVFIocmV0KTsKPiAgfQo+ICAKPiAtaW50IGV4eW5vc19kcm1fY3J0Y19nZXRfcGlwZV9mcm9t
+X3R5cGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gK3N0cnVjdCBleHlub3NfZHJtX2Ny
+dGMgKmV4eW5vc19kcm1fY3J0Y19nZXRfYnlfdHlwZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2Rl
+diwKCllvdSBkb24ndCBoYXZlIHRvIG1vZGlmeSB0aGlzIGZ1bmN0aW9uIGJlY2F1c2Ugbm8gdXNl
+ciB0byB1c2UgdGhpcyBmdW5jdGlvbiBoZXJlLgpNb3ZpbmcgdGhpcyBjaGFuZ2UgdG8gYWN0dWFs
+IHVzZXIsIHBhdGNoIDQsIHdvdWxkIGJlIGJldHRlci4gQW55d2F5IHRyaXZpYWwgdGhpbmcgc28g
+SSB3aWxsIG1lcmdlIGl0IGFzLWlzLgoKClRoYW5rcywKSW5raSBEYWUKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
