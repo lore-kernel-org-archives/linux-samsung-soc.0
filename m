@@ -1,55 +1,55 @@
-From: Jaechul Lee <jcsing.lee@samsung.com>
-Subject: [PATCH 3/3] ASoC: samsung: Fix invalid argument when
- devm_gpiod_get is called
-Date: Mon, 28 Aug 2017 19:01:02 +0900
-Message-ID: <20170828100102.17591-4-jcsing.lee@samsung.com>
-References: <20170828100102.17591-1-jcsing.lee@samsung.com>
- <CGME20170828100105epcas2p3b528f17ba89532835e9b1735a0016215@epcas2p3.samsung.com>
+From: Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/3] iommu: exynos: constify iommu_ops
+Date: Mon, 28 Aug 2017 17:42:05 +0530
+Message-ID: <1503922325-25905-1-git-send-email-arvind.yadav.cs@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-reply-to: <20170828100102.17591-1-jcsing.lee@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, galaxyra@gmail.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Jaechul Lee <jcsing.lee@samsung.com>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-devm_gpiod_get is called with GPIOF_OUT_INIT_LOW but the function doesn't
-allow the parameters. Unluckily, GPIOF_OUT_INIT_LOW is same value as
-GPIOD_IN so it works like input gpio.
+iommu_ops are not supposed to change at runtime.
+Functions 'iommu_device_set_ops' and 'bus_set_iommu' working with
+const iommu_ops provided by <linux/iommu.h>. So mark the non-const
+structs as const.
 
-Muted stream comes up when I try recording some sounds on TM2. mic-bias
-gpiod state can't be changed because the gpiod is created with the invalid
-parameter. The gpio should be set GPIOD_OUT_HIGH.
-
-Fixes: 1bfbc260a5b4 ("ASoC: samsung: Add machine driver for Exynos5433 based TM2 board")
-Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- sound/soc/samsung/tm2_wm5110.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/iommu/exynos-iommu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
-index f467ad06e827..76abe45ed537 100644
---- a/sound/soc/samsung/tm2_wm5110.c
-+++ b/sound/soc/samsung/tm2_wm5110.c
-@@ -439,8 +439,7 @@ static int tm2_probe(struct platform_device *pdev)
- 	snd_soc_card_set_drvdata(card, priv);
- 	card->dev = dev;
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 2395478..a540016 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -569,7 +569,7 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+ 	spin_unlock_irqrestore(&data->lock, flags);
+ }
  
--	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias",
--						GPIOF_OUT_INIT_LOW);
-+	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias", GPIOD_OUT_HIGH);
- 	if (IS_ERR(priv->gpio_mic_bias)) {
- 		dev_err(dev, "Failed to get mic bias gpio\n");
- 		return PTR_ERR(priv->gpio_mic_bias);
+-static struct iommu_ops exynos_iommu_ops;
++static const struct iommu_ops exynos_iommu_ops;
+ 
+ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
+ {
+@@ -1323,7 +1323,7 @@ static int exynos_iommu_of_xlate(struct device *dev,
+ 	return 0;
+ }
+ 
+-static struct iommu_ops exynos_iommu_ops = {
++static const struct iommu_ops exynos_iommu_ops = {
+ 	.domain_alloc = exynos_iommu_domain_alloc,
+ 	.domain_free = exynos_iommu_domain_free,
+ 	.attach_dev = exynos_iommu_attach_device,
 -- 
-2.14.1
+1.9.1
