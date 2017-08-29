@@ -1,59 +1,74 @@
-From: Eugene Syromiatnikov <esyr@redhat.com>
-Subject: Re: [3/7,media] dvb: don't use 'time_t' in event ioctl
-Date: Mon, 28 Aug 2017 17:32:43 +0200
-Message-ID: <20170828153243.GA27121@asgard.redhat.com>
-References: <1442332148-488079-4-git-send-email-arnd@arndb.de>
+From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 3/3] ARM: dts: exynos: Remove the display-timing and
+ delay from rinato dts
+Date: Tue, 29 Aug 2017 11:52:16 +0900
+Message-ID: <2be78f06-8c3a-0076-a19b-07d501c3d460@samsung.com>
+References: <1499912443-3671-1-git-send-email-hoegeun.kwon@samsung.com>
+        <CGME20170713022057epcas1p464b817a426638cc1566e665aa7903ed7@epcas1p4.samsung.com>
+        <1499912443-3671-4-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1442332148-488079-4-git-send-email-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, y2038@lists.linaro.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-api@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ldv@altlinux.org, glebfm@altlinux.org
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1499912443-3671-4-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 15, 2015 at 05:49:04PM +0200, Arnd Bergmann wrote:
-> 'struct video_event' is used for the VIDEO_GET_EVENT ioctl, implemented
-> by drivers/media/pci/ivtv/ivtv-ioctl.c and
-> drivers/media/pci/ttpci/av7110_av.c. The structure contains a 'time_t',
-> which will be redefined in the future to be 64-bit wide, causing an
-> incompatible ABI change for this ioctl.
-> 
-> As it turns out, neither of the drivers currently sets the timestamp
-> field, and it is presumably useless anyway because of the limited
-> resolutions (no sub-second times). This means we can simply change
-> the structure definition to use a 'long' instead of 'time_t' and
-> remain compatible with all existing user space binaries when time_t
-> gets changed.
-> 
-> If anybody ever starts using this field, they have to make sure not
-> to use 1970 based seconds in there, as those overflow in 2038.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hi Krzysztof,
+
+The driver has been merged into exynos-drm-misc.
+Could you please check this patch(3/3).
+
+Best regards,
+Hoegeun
+
+On 07/13/2017 11:20 AM, Hoegeun Kwon wrote:
+> The display-timing and delay are included in the panel driver. So it
+> should be removed in dts.
+>
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  include/uapi/linux/dvb/video.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/linux/dvb/video.h b/include/uapi/linux/dvb/video.h
-> index d3d14a59d2d5..6c7f9298d7c2 100644
-> --- a/include/uapi/linux/dvb/video.h
-> +++ b/include/uapi/linux/dvb/video.h
-> @@ -135,7 +135,8 @@ struct video_event {
->  #define VIDEO_EVENT_FRAME_RATE_CHANGED	2
->  #define VIDEO_EVENT_DECODER_STOPPED 	3
->  #define VIDEO_EVENT_VSYNC 		4
-> -	__kernel_time_t timestamp;
-> +	/* unused, make sure to use atomic time for y2038 if it ever gets used */
-> +	long timestamp;
+>   arch/arm/boot/dts/exynos3250-rinato.dts | 22 ----------------------
+>   1 file changed, 22 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+> index 443e0c9..6b70c8d 100644
+> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
+> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+> @@ -242,28 +242,6 @@
+>   		vci-supply = <&ldo20_reg>;
+>   		reset-gpios = <&gpe0 1 GPIO_ACTIVE_LOW>;
+>   		te-gpios = <&gpx0 6 GPIO_ACTIVE_HIGH>;
+> -		power-on-delay= <30>;
+> -		power-off-delay= <120>;
+> -		reset-delay = <5>;
+> -		init-delay = <100>;
+> -		flip-horizontal;
+> -		flip-vertical;
+> -		panel-width-mm = <29>;
+> -		panel-height-mm = <29>;
+> -
+> -		display-timings {
+> -			timing-0 {
+> -				clock-frequency = <4600000>;
+> -				hactive = <320>;
+> -				vactive = <320>;
+> -				hfront-porch = <1>;
+> -				hback-porch = <1>;
+> -				hsync-len = <1>;
+> -				vfront-porch = <150>;
+> -				vback-porch = <1>;
+> -				vsync-len = <2>;
+> -			};
+> -		};
+>   
+>   		port {
+>   			dsi_in: endpoint {
 
-This change breaks x32 ABI (and possibly MIPS n32 ABI), as __kernel_time_t
-there is 64 bit already:
-https://sourceforge.net/p/strace/mailman/message/36015326/
-
-Note the change in structure size from 0x20 to 0x14 for VIDEO_GET_EVENT
-command in linux/x32/ioctls_inc0.h.
-
->  	union {
->  		video_size_t size;
->  		unsigned int frame_rate;	/* in frames per 1000sec */
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
