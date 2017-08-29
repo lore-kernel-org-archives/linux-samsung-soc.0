@@ -1,84 +1,86 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 3/3] ARM: dts: exynos: Remove the display-timing and
- delay from rinato dts
-Date: Tue, 29 Aug 2017 07:58:52 +0200
-Message-ID: <CAJKOXPc0oOmx7jVbmDrSWnb-GWvO6Re1qgwiOF6CzL4Mbmx-1A@mail.gmail.com>
-References: <1499912443-3671-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170713022057epcas1p464b817a426638cc1566e665aa7903ed7@epcas1p4.samsung.com>
- <1499912443-3671-4-git-send-email-hoegeun.kwon@samsung.com> <2be78f06-8c3a-0076-a19b-07d501c3d460@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Himanshu Jha <himanshujha199640@gmail.com>
+Subject: [PATCH] PCI: dwc: Use PTR_ERR_OR_ZERO
+Date: Tue, 29 Aug 2017 19:05:32 +0530
+Message-ID: <1504013732-16112-1-git-send-email-himanshujha199640@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42916 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750758AbdH2F6y (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36009 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751387AbdH2NgF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Aug 2017 01:58:54 -0400
-In-Reply-To: <2be78f06-8c3a-0076-a19b-07d501c3d460@samsung.com>
+        Tue, 29 Aug 2017 09:36:05 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, a.hajda@samsung.com
+To: jingoohan1@gmail.com
+Cc: bhelgaas@google.com, krzk@kernel.org, wangbinghui@hisilicon.com, svarbanov@mm-sol.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Himanshu Jha <himanshujha199640@gmail.com>
 
-On Tue, Aug 29, 2017 at 4:52 AM, Hoegeun Kwon <hoegeun.kwon@samsung.com> wrote:
-> Hi Krzysztof,
->
-> The driver has been merged into exynos-drm-misc.
-> Could you please check this patch(3/3).
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-Hi, OK, no problems for me but it is too late for current cycle so it
-will go in for v4.15.
+Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+---
+ drivers/pci/dwc/pci-exynos.c |  5 +----
+ drivers/pci/dwc/pcie-kirin.c | 10 ++--------
+ drivers/pci/dwc/pcie-qcom.c  |  5 +----
+ 3 files changed, 4 insertions(+), 16 deletions(-)
 
-Best regards,
-Krzysztof
-
->
-> Best regards,
-> Hoegeun
->
->
-> On 07/13/2017 11:20 AM, Hoegeun Kwon wrote:
->>
->> The display-timing and delay are included in the panel driver. So it
->> should be removed in dts.
->>
->> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos3250-rinato.dts | 22 ----------------------
->>   1 file changed, 22 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts
->> b/arch/arm/boot/dts/exynos3250-rinato.dts
->> index 443e0c9..6b70c8d 100644
->> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
->> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
->> @@ -242,28 +242,6 @@
->>                 vci-supply = <&ldo20_reg>;
->>                 reset-gpios = <&gpe0 1 GPIO_ACTIVE_LOW>;
->>                 te-gpios = <&gpx0 6 GPIO_ACTIVE_HIGH>;
->> -               power-on-delay= <30>;
->> -               power-off-delay= <120>;
->> -               reset-delay = <5>;
->> -               init-delay = <100>;
->> -               flip-horizontal;
->> -               flip-vertical;
->> -               panel-width-mm = <29>;
->> -               panel-height-mm = <29>;
->> -
->> -               display-timings {
->> -                       timing-0 {
->> -                               clock-frequency = <4600000>;
->> -                               hactive = <320>;
->> -                               vactive = <320>;
->> -                               hfront-porch = <1>;
->> -                               hback-porch = <1>;
->> -                               hsync-len = <1>;
->> -                               vfront-porch = <150>;
->> -                               vback-porch = <1>;
->> -                               vsync-len = <2>;
->> -                       };
->> -               };
->>                 port {
->>                         dsi_in: endpoint {
->
->
+diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
+index f77f872..1880518 100644
+--- a/drivers/pci/dwc/pci-exynos.c
++++ b/drivers/pci/dwc/pci-exynos.c
+@@ -152,10 +152,7 @@ static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+ 	ep->mem_res->block_base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(ep->mem_res->block_base))
+-		return PTR_ERR(ep->mem_res->block_base);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(ep->mem_res->block_base);
+ }
+ 
+ static int exynos5440_pcie_get_clk_resources(struct exynos_pcie *ep)
+diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
+index dc3033c..bf327eb 100644
+--- a/drivers/pci/dwc/pcie-kirin.c
++++ b/drivers/pci/dwc/pcie-kirin.c
+@@ -142,10 +142,7 @@ static long kirin_pcie_get_clk(struct kirin_pcie *kirin_pcie,
+ 		return PTR_ERR(kirin_pcie->apb_sys_clk);
+ 
+ 	kirin_pcie->pcie_aclk = devm_clk_get(dev, "pcie_aclk");
+-	if (IS_ERR(kirin_pcie->pcie_aclk))
+-		return PTR_ERR(kirin_pcie->pcie_aclk);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(kirin_pcie->pcie_aclk);
+ }
+ 
+ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
+@@ -178,10 +175,7 @@ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
+ 
+ 	kirin_pcie->sysctrl =
+ 		syscon_regmap_lookup_by_compatible("hisilicon,hi3660-sctrl");
+-	if (IS_ERR(kirin_pcie->sysctrl))
+-		return PTR_ERR(kirin_pcie->sysctrl);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(kirin_pcie->sysctrl);
+ }
+ 
+ static int kirin_pcie_phy_init(struct kirin_pcie *kirin_pcie)
+diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+index 871e7d9..7ec92ef 100644
+--- a/drivers/pci/dwc/pcie-qcom.c
++++ b/drivers/pci/dwc/pcie-qcom.c
+@@ -679,10 +679,7 @@ static int qcom_pcie_get_resources_v3(struct qcom_pcie *pcie)
+ 		return PTR_ERR(res->ahb_reset);
+ 
+ 	res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
+-	if (IS_ERR(res->phy_ahb_reset))
+-		return PTR_ERR(res->phy_ahb_reset);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(res->phy_ahb_reset);
+ }
+ 
+ static void qcom_pcie_deinit_v3(struct qcom_pcie *pcie)
+-- 
+2.7.4
