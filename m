@@ -1,121 +1,112 @@
-From: Dietmar Eggemann <dietmar.eggemann-5wv7dgnIgG8@public.gmane.org>
-Subject: [PATCH 3/4] arm: dts: exynos: add exynos5422 cpu capacity-dmips-mhz information
-Date: Wed, 30 Aug 2017 15:41:19 +0100
-Message-ID: <20170830144120.9312-4-dietmar.eggemann@arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: [PATCH 2/4] arm: dts: exynos: add exynos5420 cpu capacity-dmips-mhz
+ information
+Date: Wed, 30 Aug 2017 15:41:18 +0100
+Message-ID: <20170830144120.9312-3-dietmar.eggemann@arm.com>
 References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170830144120.9312-1-dietmar.eggemann-5wv7dgnIgG8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vincent Guittot <vincent.guittot-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Juri Lelli <juri.lelli-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170830144120.9312-1-dietmar.eggemann@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The following 'capacity-dmips-mhz' dt property values are used:
-
-Cortex-A15: 1024, Cortex-A7: 539
-
-They have been derived form the cpu_efficiency values:
-
-Cortex-A15: 3891, Cortex-A7: 2048
-
-by scaling them so that the Cortex-A15s (big cores) use 1024.
-
-The cpu_efficiency values were originally derived from the "Big.LITTLE
-Processing with ARM Cortex™-A15 & Cortex-A7" white paper
-(http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
-(3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
-Dhrystone benchmark.
-
-The following platforms are affected once cpu-invariant accounting
-support is re-connected to the task scheduler:
-
-odroidxu3, odroidxu3-lite, odroidxu4
-
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann-5wv7dgnIgG8@public.gmane.org>
----
- arch/arm/boot/dts/exynos5422-cpus.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-index bf3c6f1ec4ee..ec01d8020c2d 100644
---- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-@@ -35,6 +35,7 @@
- 			cooling-min-level = <0>;
- 			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <539>;
- 		};
- 
- 		cpu1: cpu@101 {
-@@ -47,6 +48,7 @@
- 			cooling-min-level = <0>;
- 			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <539>;
- 		};
- 
- 		cpu2: cpu@102 {
-@@ -59,6 +61,7 @@
- 			cooling-min-level = <0>;
- 			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <539>;
- 		};
- 
- 		cpu3: cpu@103 {
-@@ -71,6 +74,7 @@
- 			cooling-min-level = <0>;
- 			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <539>;
- 		};
- 
- 		cpu4: cpu@0 {
-@@ -84,6 +88,7 @@
- 			cooling-min-level = <0>;
- 			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <1024>;
- 		};
- 
- 		cpu5: cpu@1 {
-@@ -96,6 +101,7 @@
- 			cooling-min-level = <0>;
- 			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <1024>;
- 		};
- 
- 		cpu6: cpu@2 {
-@@ -108,6 +114,7 @@
- 			cooling-min-level = <0>;
- 			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <1024>;
- 		};
- 
- 		cpu7: cpu@3 {
-@@ -120,6 +127,7 @@
- 			cooling-min-level = <0>;
- 			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <1024>;
- 		};
- 	};
- };
--- 
-2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+VGhlIGZvbGxvd2luZyAnY2FwYWNpdHktZG1pcHMtbWh6JyBkdCBwcm9wZXJ0eSB2YWx1ZXMgYXJl
+IHVzZWQ6CgpDb3J0ZXgtQTE1OiAxMDI0LCBDb3J0ZXgtQTc6IDUzOQoKVGhleSBoYXZlIGJlZW4g
+ZGVyaXZlZCBmcm9tIHRoZSBjcHVfZWZmaWNpZW5jeSB2YWx1ZXM6CgpDb3J0ZXgtQTE1OiAzODkx
+LCBDb3J0ZXgtQTc6IDIwNDgKCmJ5IHNjYWxpbmcgdGhlbSBzbyB0aGF0IHRoZSBDb3J0ZXgtQTE1
+cyAoYmlnIGNvcmVzKSB1c2UgMTAyNC4KClRoZSBjcHVfZWZmaWNpZW5jeSB2YWx1ZXMgd2VyZSBv
+cmlnaW5hbGx5IGRlcml2ZWQgZnJvbSB0aGUgIkJpZy5MSVRUTEUKUHJvY2Vzc2luZyB3aXRoIEFS
+TSBDb3J0ZXjihKItQTE1ICYgQ29ydGV4LUE3IiB3aGl0ZSBwYXBlcgooaHR0cDovL3d3dy5jbC5j
+YW0uYWMudWsvfnJkbTM0L2JpZy5MSVRUTEUucGRmKS4gVGFibGUgMSBsaXN0cyAxLjl4CigzODkx
+LzIwNDgpIGFzIHRoZSBDb3J0ZXgtQTE1IHZzIENvcnRleC1BNyBwZXJmb3JtYW5jZSByYXRpbyBm
+b3IgdGhlCkRocnlzdG9uZSBiZW5jaG1hcmsuCgpUaGUgZm9sbG93aW5nIHBsYXRmb3JtcyBhcmUg
+YWZmZWN0ZWQgb25jZSBjcHUtaW52YXJpYW50IGFjY291bnRpbmcKc3VwcG9ydCBpcyByZS1jb25u
+ZWN0ZWQgdG8gdGhlIHRhc2sgc2NoZWR1bGVyOgoKYXJuZGFsZS1vY3RhLCBwZWFjaC1waSwgcGVh
+Y2gtcGl0LCBzbWRrNTQyMAoKVGhlIHBhdGNoIGhhcyBiZWVuIHRlc3RlZCBvbiBTYW1zdW5nIENo
+cm9tZWJvb2sgMiAxMyIgKHBlYWNoLXBpLCBFeHlub3MKNTgwMCkuCgokIGNhdCAvc3lzL2Rldmlj
+ZXMvc3lzdGVtL2NwdS9jcHUqL2NwdV9jYXBhY2l0eQoxMDI0CjEwMjQKMTAyNAoxMDI0CjM4OQoz
+ODkKMzg5CjM4OQoKVGhlIENvcnRleC1BMTUgdnMgQ29ydGV4LUE3IHBlcmZvcm1hbmNlIHJhdGlv
+IGlzIDEwMjQvMzg5ID0gMi42My4KClRoZSB2YWx1ZXMgZGVyaXZlZCB3aXRoIHRoZSAnY3B1X2Vm
+ZmljaWVuY3kvY2xvY2stZnJlcXVlbmN5IGR0IHByb3BlcnR5Jwpzb2x1dGlvbiBhcmU6CgokIGNh
+dCAvc3lzL2RldmljZXMvc3lzdGVtL2NwdS9jcHUqL2NwdV9jYXBhY2l0eQoxNTM1CjE1MzUKMTUz
+NQoxNTM1CjQ0OAo0NDgKNDQ4CjQ0OAoKVGhlIENvcnRleC1BMTUgdnMgQ29ydGV4LUE3IHBlcmZv
+cm1hbmNlIHJhdGlvIGlzIDE1MzUvNDQ4ID0gMy40My4KClRoZSBkaXNjcmVwYW5jeSBiZXR3ZWVu
+IDIuNjMgYW5kIDMuNDMgaXMgZHVlIHRvIHRoZSBmYWxzZSBhc3N1bXB0aW9uCndoZW4gdXNpbmcg
+dGhlICdjcHVfZWZmaWNpZW5jeS9jbG9jay1mcmVxdWVuY3kgZHQgcHJvcGVydHknIHNvbHV0aW9u
+CnRoYXQgdGhlIG1heCBjcHUgZnJlcXVlbmN5IG9mIHRoZSBsaXR0bGUgY3B1cyBpcyAxIEdIWiBh
+bmQgbm90IDEuMyBHSHouClRoZSBDb3J0ZXgtQTcgY2x1c3RlciBydW5zIHdpdGggYSBtYXggY3B1
+IGZyZXF1ZW5jeSBvZiAxLjMgR0haIHdoZXJlYXMKdGhlICdjbG9jay1mcmVxdWVuY3knIHByb3Bl
+cnR5IHZhbHVlIGlzIHNldCB0byAxIEdIei4KCjMuNDMvMS4zID0gMi42NAoKJCBjYXQgL3N5cy9k
+ZXZpY2VzL3N5c3RlbS9jcHUvY3B1Ki9jcHVmcmVxL3NjYWxpbmdfbWF4X2ZyZXEKMTgwMDAwMAox
+ODAwMDAwCjE4MDAwMDAKMTgwMDAwMAoxMzAwMDAwIDwtLSBtYXggY3B1IGZyZXF1ZW5jeSBvZiB0
+aGUgQ29ydGV4LUE3cyAobGl0dGxlIGNvcmVzKQoxMzAwMDAwCjEzMDAwMDAKMTMwMDAwMAoKUnVu
+bmluZyBhbm90aGVyIGJlbmNobWFyayAoc2luZ2xlLXRocmVhZGVkIHN5c2JlbmNoIGFmZmluZSB0
+byB0aGUKaW5kaXZpZHVhbCBjcHVzKSB3aXRoIHBlcmZvcm1hbmNlIGNwdWZyZXEgZ292ZXJub3Ig
+b24gdGhlIFNhbXN1bmcKQ2hyb21lYm9vayAyIDEzIiBzaG93ZWQgdGhlIGZvbGxvd2luZyBudW1i
+ZXJzOgoKJCBmb3IgaSBpbiBgc2VxIDAgN2A7IGRvIHRhc2tzZXQgLWMgJGkgc3lzYmVuY2ggLS10
+ZXN0PWNwdQogIC0tbnVtLXRocmVhZHM9MSAtLW1heC10aW1lPTEwIHJ1biB8IGdyZXAgInRvdGFs
+IG51bWJlciBvZiBldmVudHM6IjsKICBkb25lCgp0b3RhbCBudW1iZXIgb2YgZXZlbnRzOiAxMDgz
+CnRvdGFsIG51bWJlciBvZiBldmVudHM6IDEwODUKdG90YWwgbnVtYmVyIG9mIGV2ZW50czogMTA4
+NQp0b3RhbCBudW1iZXIgb2YgZXZlbnRzOiAxMDg1CnRvdGFsIG51bWJlciBvZiBldmVudHM6IDQ1
+NAp0b3RhbCBudW1iZXIgb2YgZXZlbnRzOiA0NTQKdG90YWwgbnVtYmVyIG9mIGV2ZW50czogNDU0
+CnRvdGFsIG51bWJlciBvZiBldmVudHM6IDQ1NAoKVGhlIENvcnRleC1BMTUgdnMgQ29ydGV4LUE3
+IHBlcmZvcm1hbmNlIHJhdGlvIGlzIDIuMzksIGkuZS4gdmVyeSBjbG9zZQp0byB0aGUgb25lIGRl
+cml2ZWQgZnJvbSB0aGUgRGhyeXN0b25lIGJhc2VkIG9uZSBvZiB0aGUgIkJpZy5MSVRUTEUKUHJv
+Y2Vzc2luZyB3aXRoIEFSTSBDb3J0ZXjihKItQTE1ICYgQ29ydGV4LUE3IiB3aGl0ZSBwYXBlciAo
+Mi42MykuCgpXZSBkb24ndCBhaW0gZm9yIGV4YWN0IHZhbHVlcyBmb3IgdGhlIGNwdSBjYXBhY2l0
+eSB2YWx1ZXMuIEJlc2lkZXMgdGhlCkNQSSAoQ3ljbGVzIFBlciBJbnN0cnVjdGlvbiksIHRoZSBp
+bnN0cnVjdGlvbiBtaXggYW5kIHdoZXRoZXIgdGhlIHN5c3RlbQpydW5zIGNwdS1ib3VuZCBvciBt
+ZW1vcnktYm91bmQgaGFzIGFuIGltcGFjdCBvbiB0aGUgY3B1IGNhcGFjaXR5IHZhbHVlcwpkZXJp
+dmVkIGZyb20gdGhlc2UgYmVuY2htYXJrIHJlc3VsdHMuCgpDYzogUm9iIEhlcnJpbmcgPHJvYmgr
+ZHRAa2VybmVsLm9yZz4KQ2M6IE1hcmsgUnV0bGFuZCA8bWFyay5ydXRsYW5kQGFybS5jb20+CkNj
+OiBSdXNzZWxsIEtpbmcgPGxpbnV4QGFybWxpbnV4Lm9yZy51az4KQ2M6IEt1a2ppbiBLaW0gPGtn
+ZW5lQGtlcm5lbC5vcmc+CkNjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+
+ClNpZ25lZC1vZmYtYnk6IERpZXRtYXIgRWdnZW1hbm4gPGRpZXRtYXIuZWdnZW1hbm5AYXJtLmNv
+bT4KLS0tCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLWNwdXMuZHRzaSB8IDggKysrKysr
+KysKIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9hcmNoL2Fy
+bS9ib290L2R0cy9leHlub3M1NDIwLWNwdXMuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
+czU0MjAtY3B1cy5kdHNpCmluZGV4IDVjMDUyZDdmZjU1NC4uZDdkNzAzYWExNjk5IDEwMDY0NAot
+LS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLWNwdXMuZHRzaQorKysgYi9hcmNoL2Fy
+bS9ib290L2R0cy9leHlub3M1NDIwLWNwdXMuZHRzaQpAQCAtMzYsNiArMzYsNyBAQAogCQkJY29v
+bGluZy1taW4tbGV2ZWwgPSA8MD47CiAJCQljb29saW5nLW1heC1sZXZlbCA9IDwxMT47CiAJCQkj
+Y29vbGluZy1jZWxscyA9IDwyPjsgLyogbWluIGZvbGxvd2VkIGJ5IG1heCAqLworCQkJY2FwYWNp
+dHktZG1pcHMtbWh6ID0gPDEwMjQ+OwogCQl9OwogCiAJCWNwdTE6IGNwdUAxIHsKQEAgLTQ4LDYg
+KzQ5LDcgQEAKIAkJCWNvb2xpbmctbWluLWxldmVsID0gPDA+OwogCQkJY29vbGluZy1tYXgtbGV2
+ZWwgPSA8MTE+OwogCQkJI2Nvb2xpbmctY2VsbHMgPSA8Mj47IC8qIG1pbiBmb2xsb3dlZCBieSBt
+YXggKi8KKwkJCWNhcGFjaXR5LWRtaXBzLW1oeiA9IDwxMDI0PjsKIAkJfTsKIAogCQljcHUyOiBj
+cHVAMiB7CkBAIC02MCw2ICs2Miw3IEBACiAJCQljb29saW5nLW1pbi1sZXZlbCA9IDwwPjsKIAkJ
+CWNvb2xpbmctbWF4LWxldmVsID0gPDExPjsKIAkJCSNjb29saW5nLWNlbGxzID0gPDI+OyAvKiBt
+aW4gZm9sbG93ZWQgYnkgbWF4ICovCisJCQljYXBhY2l0eS1kbWlwcy1taHogPSA8MTAyND47CiAJ
+CX07CiAKIAkJY3B1MzogY3B1QDMgewpAQCAtNzIsNiArNzUsNyBAQAogCQkJY29vbGluZy1taW4t
+bGV2ZWwgPSA8MD47CiAJCQljb29saW5nLW1heC1sZXZlbCA9IDwxMT47CiAJCQkjY29vbGluZy1j
+ZWxscyA9IDwyPjsgLyogbWluIGZvbGxvd2VkIGJ5IG1heCAqLworCQkJY2FwYWNpdHktZG1pcHMt
+bWh6ID0gPDEwMjQ+OwogCQl9OwogCiAJCWNwdTQ6IGNwdUAxMDAgewpAQCAtODUsNiArODksNyBA
+QAogCQkJY29vbGluZy1taW4tbGV2ZWwgPSA8MD47CiAJCQljb29saW5nLW1heC1sZXZlbCA9IDw3
+PjsKIAkJCSNjb29saW5nLWNlbGxzID0gPDI+OyAvKiBtaW4gZm9sbG93ZWQgYnkgbWF4ICovCisJ
+CQljYXBhY2l0eS1kbWlwcy1taHogPSA8NTM5PjsKIAkJfTsKIAogCQljcHU1OiBjcHVAMTAxIHsK
+QEAgLTk3LDYgKzEwMiw3IEBACiAJCQljb29saW5nLW1pbi1sZXZlbCA9IDwwPjsKIAkJCWNvb2xp
+bmctbWF4LWxldmVsID0gPDc+OwogCQkJI2Nvb2xpbmctY2VsbHMgPSA8Mj47IC8qIG1pbiBmb2xs
+b3dlZCBieSBtYXggKi8KKwkJCWNhcGFjaXR5LWRtaXBzLW1oeiA9IDw1Mzk+OwogCQl9OwogCiAJ
+CWNwdTY6IGNwdUAxMDIgewpAQCAtMTA5LDYgKzExNSw3IEBACiAJCQljb29saW5nLW1pbi1sZXZl
+bCA9IDwwPjsKIAkJCWNvb2xpbmctbWF4LWxldmVsID0gPDc+OwogCQkJI2Nvb2xpbmctY2VsbHMg
+PSA8Mj47IC8qIG1pbiBmb2xsb3dlZCBieSBtYXggKi8KKwkJCWNhcGFjaXR5LWRtaXBzLW1oeiA9
+IDw1Mzk+OwogCQl9OwogCiAJCWNwdTc6IGNwdUAxMDMgewpAQCAtMTIxLDYgKzEyOCw3IEBACiAJ
+CQljb29saW5nLW1pbi1sZXZlbCA9IDwwPjsKIAkJCWNvb2xpbmctbWF4LWxldmVsID0gPDc+Owog
+CQkJI2Nvb2xpbmctY2VsbHMgPSA8Mj47IC8qIG1pbiBmb2xsb3dlZCBieSBtYXggKi8KKwkJCWNh
+cGFjaXR5LWRtaXBzLW1oeiA9IDw1Mzk+OwogCQl9OwogCX07CiB9OwotLSAKMi4xMS4wCgoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtl
+cm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0
+dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5l
+bAo=
