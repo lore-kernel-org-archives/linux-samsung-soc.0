@@ -1,36 +1,104 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/3] iommu: exynos: constify iommu_ops
-Date: Wed, 30 Aug 2017 15:14:24 +0200
-Message-ID: <20170830131424.2psz2gtgzlghzp5i@8bytes.org>
-References: <1503922325-25905-1-git-send-email-arvind.yadav.cs@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1503922325-25905-1-git-send-email-arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: [PATCH 0/4] arm: remove cpu_efficiency
+Date: Wed, 30 Aug 2017 15:41:16 +0100
+Message-ID: <20170830144120.9312-1-dietmar.eggemann@arm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 28, 2017 at 05:42:05PM +0530, Arvind Yadav wrote:
-> iommu_ops are not supposed to change at runtime.
-> Functions 'iommu_device_set_ops' and 'bus_set_iommu' working with
-> const iommu_ops provided by <linux/iommu.h>. So mark the non-const
-> structs as const.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/iommu/exynos-iommu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+For Cortex-A15/A7 arm big.LITTLE systems there are currently two ways to
+set the cpu capacity.
 
-Applied, thanks.
+The first one (commit 06073ee26775 "ARM: 8621/3: parse cpu
+capacity-dmips-mhz from DT") is based on dt 'cpu capacity-dmips-mhz'
+bindings and the appropriate dt parsing code in
+drivers/base/arch_topology.c. It further takes differences in maximum
+cpu frequency values into consideration, normalizes the maximum cpu
+capacity to SCHED_CAPACITY_SCALE (1024) and scales all the cpus
+accordingly.
+
+  cpu capacity = (capacity-dmips-mhz * max cpu frequency) / 
+                 (max capacity-dmips-mhz * max (max cpu frequency)
+
+This solution is shared between arm and arm64 and works for other
+combinations of big and little cpus (besides Cortex-A15/A7) as well.
+
+The second one (commit 339ca09d7ada "ARM: 7463/1: topology: Update
+cpu_power according to DT information" is based on the 'struct
+cpu_efficiency table_efficiency[]' and the dt parsing code in
+arch/arm/kernel/topology.c. It further requires a clock-frequency
+property per cpu node, calculates a so called middle frequency for an
+average cpu in the system which is as close as possible to
+SCHED_CAPACITY_SCALE (1024) and uses this to compute the cpu capacity
+values.
+
+  cpu capacity = (cpu efficiency * clock frequency) / middle capacity
+
+This solution only works for Cortex-A15/A7 arm big.LITTLE systems.
+
+The aim of this patch-set is to have only one solution for all arm and
+arm64 big.LITTLE platforms.
+
+(1) Therefore, it removes the code for the 'cpu_efficiency/
+    clock-frequency dt property' (second) solution [patch 01/04] and
+    migrates the arm big.LITTLE platforms currently using this approach
+    [patch 02-04/04] to use the 'cpu capacity-dmips-mhz' (first)
+    solution.
+
+(2) Moreover, it will also assure that the highest original cpu capacity
+    (rq->cpu_capacity_orig) in a non-smt system is SCHED_CAPACITY_SCALE
+    (1024).
+
+(3) And finally, another advantage is the dynamic detection of the max
+    cpu frequency which comes with the first solution instead of the
+    static clock-frequency dt property value.
+
+Currently, the arm dt parsing code in parse_dt_topology() checks if the
+dt uses the capacity-dmips-mhz property. If this is the case it uses
+the first, otherwise the second solution. This patch-set removes the
+code for the second solution from arch/arm/kernel/topology.c.
+
+The following arm big.LITTLE platforms which use cpu node descriptions
+with the 'compatible' properties "arm,cortex-a15" and "arm,cortex-a7"
+as well as the "clock-frequency" are (theoretically*) affected:
+
+(1) arndale-octa, peach-pi, peach-pit, smdk5420 (exynos5420-cpus.dtsi)
+
+(2) odroidxu3, odroidxu3-lite, odroidxu4 (exynos5422-cpus.dtsi)
+
+(3) r8a7790-lager (r8a7790.dtsi)
+
+TC2 (vexpress-v2p-ca15_a7.dts) already has the capacity-dmips-mhz
+properties (it never had "clock-frequency" properties per cpu node
+though).
+
+*Currently, these platforms are only theoretically affected. The reason
+is because heterogeneous cpu capacity support on arm stopped with commit
+8cd5601c5060 ("sched/fair: Convert arch_scale_cpu_capacity() from weak
+function to #define") because the arch never defined
+arch_scale_cpu_capacity so the task scheduler uses the default
+implementation in kernel/sched/sched.h. This will change as soon the
+patch "arm: wire cpu-invariant accounting support up to the task
+scheduler" [1] is in mainline.
+
+This patch-set has been tested on TC2 and Samsung Chromebook 2 13"
+(peach-pi, Exynos 5800).
+
+[1] https://marc.info/?l=linux-kernel&m=150367158111303&w=2
+
+Dietmar Eggemann (4):
+  arm: topology: remove cpu_efficiency
+  arm: dts: exynos: add exynos5420 cpu capacity-dmips-mhz information
+  arm: dts: exynos: add exynos5422 cpu capacity-dmips-mhz information
+  arm: dts: r8a7790: add cpu capacity-dmips-mhz information
+
+ arch/arm/boot/dts/exynos5420-cpus.dtsi |   8 +++
+ arch/arm/boot/dts/exynos5422-cpus.dtsi |   8 +++
+ arch/arm/boot/dts/r8a7790.dtsi         |   8 +++
+ arch/arm/kernel/topology.c             | 113 +--------------------------------
+ 4 files changed, 27 insertions(+), 110 deletions(-)
+
+-- 
+2.11.0
