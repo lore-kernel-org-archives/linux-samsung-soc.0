@@ -1,86 +1,36 @@
-From: Himanshu Jha <himanshujha199640@gmail.com>
-Subject: [PATCH] PCI: dwc: Use PTR_ERR_OR_ZERO
-Date: Tue, 29 Aug 2017 19:05:32 +0530
-Message-ID: <1504013732-16112-1-git-send-email-himanshujha199640@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36009 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751387AbdH2NgF (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Aug 2017 09:36:05 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/3] iommu: exynos: constify iommu_ops
+Date: Wed, 30 Aug 2017 15:14:24 +0200
+Message-ID: <20170830131424.2psz2gtgzlghzp5i@8bytes.org>
+References: <1503922325-25905-1-git-send-email-arvind.yadav.cs@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1503922325-25905-1-git-send-email-arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jingoohan1@gmail.com
-Cc: bhelgaas@google.com, krzk@kernel.org, wangbinghui@hisilicon.com, svarbanov@mm-sol.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Himanshu Jha <himanshujha199640@gmail.com>
 
-Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+On Mon, Aug 28, 2017 at 05:42:05PM +0530, Arvind Yadav wrote:
+> iommu_ops are not supposed to change at runtime.
+> Functions 'iommu_device_set_ops' and 'bus_set_iommu' working with
+> const iommu_ops provided by <linux/iommu.h>. So mark the non-const
+> structs as const.
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/iommu/exynos-iommu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
----
- drivers/pci/dwc/pci-exynos.c |  5 +----
- drivers/pci/dwc/pcie-kirin.c | 10 ++--------
- drivers/pci/dwc/pcie-qcom.c  |  5 +----
- 3 files changed, 4 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
-index f77f872..1880518 100644
---- a/drivers/pci/dwc/pci-exynos.c
-+++ b/drivers/pci/dwc/pci-exynos.c
-@@ -152,10 +152,7 @@ static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
- 	ep->mem_res->block_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(ep->mem_res->block_base))
--		return PTR_ERR(ep->mem_res->block_base);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(ep->mem_res->block_base);
- }
- 
- static int exynos5440_pcie_get_clk_resources(struct exynos_pcie *ep)
-diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
-index dc3033c..bf327eb 100644
---- a/drivers/pci/dwc/pcie-kirin.c
-+++ b/drivers/pci/dwc/pcie-kirin.c
-@@ -142,10 +142,7 @@ static long kirin_pcie_get_clk(struct kirin_pcie *kirin_pcie,
- 		return PTR_ERR(kirin_pcie->apb_sys_clk);
- 
- 	kirin_pcie->pcie_aclk = devm_clk_get(dev, "pcie_aclk");
--	if (IS_ERR(kirin_pcie->pcie_aclk))
--		return PTR_ERR(kirin_pcie->pcie_aclk);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(kirin_pcie->pcie_aclk);
- }
- 
- static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
-@@ -178,10 +175,7 @@ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
- 
- 	kirin_pcie->sysctrl =
- 		syscon_regmap_lookup_by_compatible("hisilicon,hi3660-sctrl");
--	if (IS_ERR(kirin_pcie->sysctrl))
--		return PTR_ERR(kirin_pcie->sysctrl);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(kirin_pcie->sysctrl);
- }
- 
- static int kirin_pcie_phy_init(struct kirin_pcie *kirin_pcie)
-diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
-index 871e7d9..7ec92ef 100644
---- a/drivers/pci/dwc/pcie-qcom.c
-+++ b/drivers/pci/dwc/pcie-qcom.c
-@@ -679,10 +679,7 @@ static int qcom_pcie_get_resources_v3(struct qcom_pcie *pcie)
- 		return PTR_ERR(res->ahb_reset);
- 
- 	res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
--	if (IS_ERR(res->phy_ahb_reset))
--		return PTR_ERR(res->phy_ahb_reset);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(res->phy_ahb_reset);
- }
- 
- static void qcom_pcie_deinit_v3(struct qcom_pcie *pcie)
--- 
-2.7.4
+Applied, thanks.
