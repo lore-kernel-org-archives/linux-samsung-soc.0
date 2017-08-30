@@ -1,112 +1,38 @@
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Subject: [PATCH 2/4] arm: dts: exynos: add exynos5420 cpu capacity-dmips-mhz
- information
-Date: Wed, 30 Aug 2017 15:41:18 +0100
-Message-ID: <20170830144120.9312-3-dietmar.eggemann@arm.com>
-References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [3/7,media] dvb: don't use 'time_t' in event ioctl
+Date: Wed, 30 Aug 2017 22:25:01 +0200
+Message-ID: <CAK8P3a3+ng+kNNH4C2yG1hJf6DUu_sYb5dC388XGPigePw1uAg@mail.gmail.com>
+References: <1442332148-488079-4-git-send-email-arnd@arndb.de> <20170828153243.GA27121@asgard.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170830144120.9312-1-dietmar.eggemann@arm.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170828153243.GA27121@asgard.redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, y2038 Mailman List <y2038@lists.linaro.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux API <linux-api@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, "Dmitry V. Levin" <ldv@altlinux.org>, Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIGZvbGxvd2luZyAnY2FwYWNpdHktZG1pcHMtbWh6JyBkdCBwcm9wZXJ0eSB2YWx1ZXMgYXJl
-IHVzZWQ6CgpDb3J0ZXgtQTE1OiAxMDI0LCBDb3J0ZXgtQTc6IDUzOQoKVGhleSBoYXZlIGJlZW4g
-ZGVyaXZlZCBmcm9tIHRoZSBjcHVfZWZmaWNpZW5jeSB2YWx1ZXM6CgpDb3J0ZXgtQTE1OiAzODkx
-LCBDb3J0ZXgtQTc6IDIwNDgKCmJ5IHNjYWxpbmcgdGhlbSBzbyB0aGF0IHRoZSBDb3J0ZXgtQTE1
-cyAoYmlnIGNvcmVzKSB1c2UgMTAyNC4KClRoZSBjcHVfZWZmaWNpZW5jeSB2YWx1ZXMgd2VyZSBv
-cmlnaW5hbGx5IGRlcml2ZWQgZnJvbSB0aGUgIkJpZy5MSVRUTEUKUHJvY2Vzc2luZyB3aXRoIEFS
-TSBDb3J0ZXjihKItQTE1ICYgQ29ydGV4LUE3IiB3aGl0ZSBwYXBlcgooaHR0cDovL3d3dy5jbC5j
-YW0uYWMudWsvfnJkbTM0L2JpZy5MSVRUTEUucGRmKS4gVGFibGUgMSBsaXN0cyAxLjl4CigzODkx
-LzIwNDgpIGFzIHRoZSBDb3J0ZXgtQTE1IHZzIENvcnRleC1BNyBwZXJmb3JtYW5jZSByYXRpbyBm
-b3IgdGhlCkRocnlzdG9uZSBiZW5jaG1hcmsuCgpUaGUgZm9sbG93aW5nIHBsYXRmb3JtcyBhcmUg
-YWZmZWN0ZWQgb25jZSBjcHUtaW52YXJpYW50IGFjY291bnRpbmcKc3VwcG9ydCBpcyByZS1jb25u
-ZWN0ZWQgdG8gdGhlIHRhc2sgc2NoZWR1bGVyOgoKYXJuZGFsZS1vY3RhLCBwZWFjaC1waSwgcGVh
-Y2gtcGl0LCBzbWRrNTQyMAoKVGhlIHBhdGNoIGhhcyBiZWVuIHRlc3RlZCBvbiBTYW1zdW5nIENo
-cm9tZWJvb2sgMiAxMyIgKHBlYWNoLXBpLCBFeHlub3MKNTgwMCkuCgokIGNhdCAvc3lzL2Rldmlj
-ZXMvc3lzdGVtL2NwdS9jcHUqL2NwdV9jYXBhY2l0eQoxMDI0CjEwMjQKMTAyNAoxMDI0CjM4OQoz
-ODkKMzg5CjM4OQoKVGhlIENvcnRleC1BMTUgdnMgQ29ydGV4LUE3IHBlcmZvcm1hbmNlIHJhdGlv
-IGlzIDEwMjQvMzg5ID0gMi42My4KClRoZSB2YWx1ZXMgZGVyaXZlZCB3aXRoIHRoZSAnY3B1X2Vm
-ZmljaWVuY3kvY2xvY2stZnJlcXVlbmN5IGR0IHByb3BlcnR5Jwpzb2x1dGlvbiBhcmU6CgokIGNh
-dCAvc3lzL2RldmljZXMvc3lzdGVtL2NwdS9jcHUqL2NwdV9jYXBhY2l0eQoxNTM1CjE1MzUKMTUz
-NQoxNTM1CjQ0OAo0NDgKNDQ4CjQ0OAoKVGhlIENvcnRleC1BMTUgdnMgQ29ydGV4LUE3IHBlcmZv
-cm1hbmNlIHJhdGlvIGlzIDE1MzUvNDQ4ID0gMy40My4KClRoZSBkaXNjcmVwYW5jeSBiZXR3ZWVu
-IDIuNjMgYW5kIDMuNDMgaXMgZHVlIHRvIHRoZSBmYWxzZSBhc3N1bXB0aW9uCndoZW4gdXNpbmcg
-dGhlICdjcHVfZWZmaWNpZW5jeS9jbG9jay1mcmVxdWVuY3kgZHQgcHJvcGVydHknIHNvbHV0aW9u
-CnRoYXQgdGhlIG1heCBjcHUgZnJlcXVlbmN5IG9mIHRoZSBsaXR0bGUgY3B1cyBpcyAxIEdIWiBh
-bmQgbm90IDEuMyBHSHouClRoZSBDb3J0ZXgtQTcgY2x1c3RlciBydW5zIHdpdGggYSBtYXggY3B1
-IGZyZXF1ZW5jeSBvZiAxLjMgR0haIHdoZXJlYXMKdGhlICdjbG9jay1mcmVxdWVuY3knIHByb3Bl
-cnR5IHZhbHVlIGlzIHNldCB0byAxIEdIei4KCjMuNDMvMS4zID0gMi42NAoKJCBjYXQgL3N5cy9k
-ZXZpY2VzL3N5c3RlbS9jcHUvY3B1Ki9jcHVmcmVxL3NjYWxpbmdfbWF4X2ZyZXEKMTgwMDAwMAox
-ODAwMDAwCjE4MDAwMDAKMTgwMDAwMAoxMzAwMDAwIDwtLSBtYXggY3B1IGZyZXF1ZW5jeSBvZiB0
-aGUgQ29ydGV4LUE3cyAobGl0dGxlIGNvcmVzKQoxMzAwMDAwCjEzMDAwMDAKMTMwMDAwMAoKUnVu
-bmluZyBhbm90aGVyIGJlbmNobWFyayAoc2luZ2xlLXRocmVhZGVkIHN5c2JlbmNoIGFmZmluZSB0
-byB0aGUKaW5kaXZpZHVhbCBjcHVzKSB3aXRoIHBlcmZvcm1hbmNlIGNwdWZyZXEgZ292ZXJub3Ig
-b24gdGhlIFNhbXN1bmcKQ2hyb21lYm9vayAyIDEzIiBzaG93ZWQgdGhlIGZvbGxvd2luZyBudW1i
-ZXJzOgoKJCBmb3IgaSBpbiBgc2VxIDAgN2A7IGRvIHRhc2tzZXQgLWMgJGkgc3lzYmVuY2ggLS10
-ZXN0PWNwdQogIC0tbnVtLXRocmVhZHM9MSAtLW1heC10aW1lPTEwIHJ1biB8IGdyZXAgInRvdGFs
-IG51bWJlciBvZiBldmVudHM6IjsKICBkb25lCgp0b3RhbCBudW1iZXIgb2YgZXZlbnRzOiAxMDgz
-CnRvdGFsIG51bWJlciBvZiBldmVudHM6IDEwODUKdG90YWwgbnVtYmVyIG9mIGV2ZW50czogMTA4
-NQp0b3RhbCBudW1iZXIgb2YgZXZlbnRzOiAxMDg1CnRvdGFsIG51bWJlciBvZiBldmVudHM6IDQ1
-NAp0b3RhbCBudW1iZXIgb2YgZXZlbnRzOiA0NTQKdG90YWwgbnVtYmVyIG9mIGV2ZW50czogNDU0
-CnRvdGFsIG51bWJlciBvZiBldmVudHM6IDQ1NAoKVGhlIENvcnRleC1BMTUgdnMgQ29ydGV4LUE3
-IHBlcmZvcm1hbmNlIHJhdGlvIGlzIDIuMzksIGkuZS4gdmVyeSBjbG9zZQp0byB0aGUgb25lIGRl
-cml2ZWQgZnJvbSB0aGUgRGhyeXN0b25lIGJhc2VkIG9uZSBvZiB0aGUgIkJpZy5MSVRUTEUKUHJv
-Y2Vzc2luZyB3aXRoIEFSTSBDb3J0ZXjihKItQTE1ICYgQ29ydGV4LUE3IiB3aGl0ZSBwYXBlciAo
-Mi42MykuCgpXZSBkb24ndCBhaW0gZm9yIGV4YWN0IHZhbHVlcyBmb3IgdGhlIGNwdSBjYXBhY2l0
-eSB2YWx1ZXMuIEJlc2lkZXMgdGhlCkNQSSAoQ3ljbGVzIFBlciBJbnN0cnVjdGlvbiksIHRoZSBp
-bnN0cnVjdGlvbiBtaXggYW5kIHdoZXRoZXIgdGhlIHN5c3RlbQpydW5zIGNwdS1ib3VuZCBvciBt
-ZW1vcnktYm91bmQgaGFzIGFuIGltcGFjdCBvbiB0aGUgY3B1IGNhcGFjaXR5IHZhbHVlcwpkZXJp
-dmVkIGZyb20gdGhlc2UgYmVuY2htYXJrIHJlc3VsdHMuCgpDYzogUm9iIEhlcnJpbmcgPHJvYmgr
-ZHRAa2VybmVsLm9yZz4KQ2M6IE1hcmsgUnV0bGFuZCA8bWFyay5ydXRsYW5kQGFybS5jb20+CkNj
-OiBSdXNzZWxsIEtpbmcgPGxpbnV4QGFybWxpbnV4Lm9yZy51az4KQ2M6IEt1a2ppbiBLaW0gPGtn
-ZW5lQGtlcm5lbC5vcmc+CkNjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+
-ClNpZ25lZC1vZmYtYnk6IERpZXRtYXIgRWdnZW1hbm4gPGRpZXRtYXIuZWdnZW1hbm5AYXJtLmNv
-bT4KLS0tCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLWNwdXMuZHRzaSB8IDggKysrKysr
-KysKIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9hcmNoL2Fy
-bS9ib290L2R0cy9leHlub3M1NDIwLWNwdXMuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
-czU0MjAtY3B1cy5kdHNpCmluZGV4IDVjMDUyZDdmZjU1NC4uZDdkNzAzYWExNjk5IDEwMDY0NAot
-LS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLWNwdXMuZHRzaQorKysgYi9hcmNoL2Fy
-bS9ib290L2R0cy9leHlub3M1NDIwLWNwdXMuZHRzaQpAQCAtMzYsNiArMzYsNyBAQAogCQkJY29v
-bGluZy1taW4tbGV2ZWwgPSA8MD47CiAJCQljb29saW5nLW1heC1sZXZlbCA9IDwxMT47CiAJCQkj
-Y29vbGluZy1jZWxscyA9IDwyPjsgLyogbWluIGZvbGxvd2VkIGJ5IG1heCAqLworCQkJY2FwYWNp
-dHktZG1pcHMtbWh6ID0gPDEwMjQ+OwogCQl9OwogCiAJCWNwdTE6IGNwdUAxIHsKQEAgLTQ4LDYg
-KzQ5LDcgQEAKIAkJCWNvb2xpbmctbWluLWxldmVsID0gPDA+OwogCQkJY29vbGluZy1tYXgtbGV2
-ZWwgPSA8MTE+OwogCQkJI2Nvb2xpbmctY2VsbHMgPSA8Mj47IC8qIG1pbiBmb2xsb3dlZCBieSBt
-YXggKi8KKwkJCWNhcGFjaXR5LWRtaXBzLW1oeiA9IDwxMDI0PjsKIAkJfTsKIAogCQljcHUyOiBj
-cHVAMiB7CkBAIC02MCw2ICs2Miw3IEBACiAJCQljb29saW5nLW1pbi1sZXZlbCA9IDwwPjsKIAkJ
-CWNvb2xpbmctbWF4LWxldmVsID0gPDExPjsKIAkJCSNjb29saW5nLWNlbGxzID0gPDI+OyAvKiBt
-aW4gZm9sbG93ZWQgYnkgbWF4ICovCisJCQljYXBhY2l0eS1kbWlwcy1taHogPSA8MTAyND47CiAJ
-CX07CiAKIAkJY3B1MzogY3B1QDMgewpAQCAtNzIsNiArNzUsNyBAQAogCQkJY29vbGluZy1taW4t
-bGV2ZWwgPSA8MD47CiAJCQljb29saW5nLW1heC1sZXZlbCA9IDwxMT47CiAJCQkjY29vbGluZy1j
-ZWxscyA9IDwyPjsgLyogbWluIGZvbGxvd2VkIGJ5IG1heCAqLworCQkJY2FwYWNpdHktZG1pcHMt
-bWh6ID0gPDEwMjQ+OwogCQl9OwogCiAJCWNwdTQ6IGNwdUAxMDAgewpAQCAtODUsNiArODksNyBA
-QAogCQkJY29vbGluZy1taW4tbGV2ZWwgPSA8MD47CiAJCQljb29saW5nLW1heC1sZXZlbCA9IDw3
-PjsKIAkJCSNjb29saW5nLWNlbGxzID0gPDI+OyAvKiBtaW4gZm9sbG93ZWQgYnkgbWF4ICovCisJ
-CQljYXBhY2l0eS1kbWlwcy1taHogPSA8NTM5PjsKIAkJfTsKIAogCQljcHU1OiBjcHVAMTAxIHsK
-QEAgLTk3LDYgKzEwMiw3IEBACiAJCQljb29saW5nLW1pbi1sZXZlbCA9IDwwPjsKIAkJCWNvb2xp
-bmctbWF4LWxldmVsID0gPDc+OwogCQkJI2Nvb2xpbmctY2VsbHMgPSA8Mj47IC8qIG1pbiBmb2xs
-b3dlZCBieSBtYXggKi8KKwkJCWNhcGFjaXR5LWRtaXBzLW1oeiA9IDw1Mzk+OwogCQl9OwogCiAJ
-CWNwdTY6IGNwdUAxMDIgewpAQCAtMTA5LDYgKzExNSw3IEBACiAJCQljb29saW5nLW1pbi1sZXZl
-bCA9IDwwPjsKIAkJCWNvb2xpbmctbWF4LWxldmVsID0gPDc+OwogCQkJI2Nvb2xpbmctY2VsbHMg
-PSA8Mj47IC8qIG1pbiBmb2xsb3dlZCBieSBtYXggKi8KKwkJCWNhcGFjaXR5LWRtaXBzLW1oeiA9
-IDw1Mzk+OwogCQl9OwogCiAJCWNwdTc6IGNwdUAxMDMgewpAQCAtMTIxLDYgKzEyOCw3IEBACiAJ
-CQljb29saW5nLW1pbi1sZXZlbCA9IDwwPjsKIAkJCWNvb2xpbmctbWF4LWxldmVsID0gPDc+Owog
-CQkJI2Nvb2xpbmctY2VsbHMgPSA8Mj47IC8qIG1pbiBmb2xsb3dlZCBieSBtYXggKi8KKwkJCWNh
-cGFjaXR5LWRtaXBzLW1oeiA9IDw1Mzk+OwogCQl9OwogCX07CiB9OwotLSAKMi4xMS4wCgoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtl
-cm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0
-dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5l
-bAo=
+>> diff --git a/include/uapi/linux/dvb/video.h b/include/uapi/linux/dvb/video.h
+>> index d3d14a59d2d5..6c7f9298d7c2 100644
+>> --- a/include/uapi/linux/dvb/video.h
+>> +++ b/include/uapi/linux/dvb/video.h
+>> @@ -135,7 +135,8 @@ struct video_event {
+>>  #define VIDEO_EVENT_FRAME_RATE_CHANGED       2
+>>  #define VIDEO_EVENT_DECODER_STOPPED  3
+>>  #define VIDEO_EVENT_VSYNC            4
+>> -     __kernel_time_t timestamp;
+>> +     /* unused, make sure to use atomic time for y2038 if it ever gets used */
+>> +     long timestamp;
+>
+> This change breaks x32 ABI (and possibly MIPS n32 ABI), as __kernel_time_t
+> there is 64 bit already:
+> https://sourceforge.net/p/strace/mailman/message/36015326/
+>
+> Note the change in structure size from 0x20 to 0x14 for VIDEO_GET_EVENT
+> command in linux/x32/ioctls_inc0.h.
+
+Are you sure it worked before the change? I don't see any handler in the kernel
+for the x32 compat ioctl call here, only the compat_video_event handling, so
+my guess is that the change unintentionally fixes x32.
+
+         Arnd
