@@ -1,37 +1,47 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 09/10] dt-bindings: exynos5433-decon: remove
- i80-if-timings property
-Date: Thu, 31 Aug 2017 13:40:46 -0500
-Message-ID: <20170831184046.k2lv3cgbasiyku66@rob-hp-laptop>
-References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
- <CGME20170824133411eucas1p2ea8efac5afa8d33d3497829f9bc0b314@eucas1p2.samsung.com>
- <1503581639-580-10-git-send-email-a.hajda@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 2/2] ARM: dts: exynos: Add HDMI and Sil9234 to Trats2
+ board
+Date: Thu, 31 Aug 2017 21:36:35 +0200
+Message-ID: <20170831193635.wuw7vdanhj3vu46y@kozik-lap>
+References: <1504182434-8201-1-git-send-email-m.purski@samsung.com>
+ <CGME20170831122749eucas1p2c6712236398e8c19a5eb24641bb0020b@eucas1p2.samsung.com>
+ <1504182434-8201-3-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f175.google.com ([209.85.161.175]:35486 "EHLO
+        mail-yw0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbdHaTgk (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 31 Aug 2017 15:36:40 -0400
 Content-Disposition: inline
-In-Reply-To: <1503581639-580-10-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <1504182434-8201-3-git-send-email-m.purski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Maciej Purski <m.purski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, b.zolnierkie@samsung.com
 
-T24gVGh1LCBBdWcgMjQsIDIwMTcgYXQgMDM6MzM6NThQTSArMDIwMCwgQW5kcnplaiBIYWpkYSB3
-cm90ZToKPiBTaW5jZSBpODAvY29tbWFuZCBtb2RlIGlzIGRldGVybWluZWQgaW4gcnVudGltZSBi
-eSBwcm9wYWdhdGluZyBpbmZvCj4gZnJvbSBwYW5lbCB0aGlzIHByb3BlcnR5IGNhbiBiZSByZW1v
-dmVkLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5j
-b20+Cj4gLS0tCj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5v
-czU0MzMtZGVjb24udHh0ICB8IDEyIC0tLS0tLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMTIg
-ZGVsZXRpb25zKC0pCgpBY2tlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Thu, Aug 31, 2017 at 02:27:14PM +0200, Maciej Purski wrote:
+> Add HDMI and Sil9234 MHL converter to Trats2 board.
+> Following in SoC devices have been enabled:
+> - HDMI (HDMI signal encoder),
+> - Mixer (video buffer scanout device),
+> - I2C_5 bus (used for HDMI DDC)
+> - I2C_8 bus (used for HDMI_PHY control).
+> 
+> Based on previous work by:
+> Tomasz Stanislawski <t.stanislaws@samsung.com>
+> 
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> ---
+> Changes in v2:
+> - fix commit message
+> - add regulators nodes to model actual physical connections
+> ---
+>  arch/arm/boot/dts/exynos4412-trats2.dts | 111 ++++++++++++++++++++++++++++++++
+>  1 file changed, 111 insertions(+)
+
+I think all of my previous comments were missed...
+
+Best regards,
+Krzysztof
