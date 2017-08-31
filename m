@@ -1,79 +1,113 @@
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Subject: Re: [PATCH 2/4] arm: dts: exynos: add exynos5420 cpu
- capacity-dmips-mhz information
-Date: Thu, 31 Aug 2017 11:36:07 +0100
-Message-ID: <94c1d6c6-655a-2a63-1f01-06ac45990388@arm.com>
-References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
- <20170830144120.9312-3-dietmar.eggemann@arm.com>
- <20170830202650.mdlxy2c3uwuq5vde@kozik-lap>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2 6/9] drm/exynos: introduce BYTE_PITCH capability
+Date: Thu, 31 Aug 2017 13:31:12 +0200
+Message-ID: <40731f02-2854-1048-cd64-c259330c2d98@math.uni-bielefeld.de>
+References: <20170822141944.8138-1-tjakobi@math.uni-bielefeld.de>
+ <CGME20170822142304epcas2p160257b12e8a9f3aed71bd55f5dcd524b@epcas2p1.samsung.com>
+ <20170822141944.8138-7-tjakobi@math.uni-bielefeld.de>
+ <3ee9b3a1-b8ee-2f0b-5ef5-186bfd736806@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54034 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750790AbdHaKgL (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:52562 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750790AbdHaLbP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 31 Aug 2017 06:36:11 -0400
-In-Reply-To: <20170830202650.mdlxy2c3uwuq5vde@kozik-lap>
-Content-Language: en-GB
+        Thu, 31 Aug 2017 07:31:15 -0400
+In-Reply-To: <3ee9b3a1-b8ee-2f0b-5ef5-186bfd736806@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@arm.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: inki.dae@samsung.com, Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
 
-On 30/08/17 21:26, Krzysztof Kozlowski wrote:
-> On Wed, Aug 30, 2017 at 03:41:18PM +0100, Dietmar Eggemann wrote:
->> The following 'capacity-dmips-mhz' dt property values are used:
->>
->> Cortex-A15: 1024, Cortex-A7: 539
->>
->> They have been derived from the cpu_efficiency values:
->>
->> Cortex-A15: 3891, Cortex-A7: 2048
->>
->> by scaling them so that the Cortex-A15s (big cores) use 1024.
->>
->> The cpu_efficiency values were originally derived from the "Big.LITTLE
->> Processing with ARM Cortex™-A15 & Cortex-A7" white paper
->> (http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
->> (3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
->> Dhrystone benchmark.
->>
->> The following platforms are affected once cpu-invariant accounting
->> support is re-connected to the task scheduler:
->>
->> arndale-octa, peach-pi, peach-pit, smdk5420
->>
->> The patch has been tested on Samsung Chromebook 2 13" (peach-pi, Exynos
->> 5800).
->>
->> $ cat /sys/devices/system/cpu/cpu*/cpu_capacity
->> 1024
->> 1024
->> 1024
->> 1024
->> 389
->> 389
->> 389
->> 389
+Hello Marek,
+
+first of all thanks for checking this!
+
+
+Marek Szyprowski wrote:
+> Hi Tobias,
 > 
-> I am missing something... shouldn't this be 539? Or is it scaled with
-> the clock-frequency (1 GHz) value?
+> On 2017-08-22 16:19, Tobias Jakobi wrote:
+>> In some of subdrivers we compute something like 'pitch / cpp' at some
+>> point, silently assuming that the pitch (which is in bytes) is
+>> divisible by the buffer's cpp. This must not be true, in particular
+>> it depends on the underlying hardware.
+>>
+>> If userspace should request such a setup, we should communicate this.
+>>
+>> Introduce a new cap which indicates that the hardware supports a
+>> pitch with 'byte-granularity'. If the cap is not set, assume that
+>> we need a pitch aligned to cpp.
+>>
+>> We set this cap in a later patch for the drivers/planes which
+>> support it.
+>>
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> 
+> I briefly checked the patch and it looks fine, but I really wonder whether
+> drivers should support such strange formats, when pitches are not multiple
+> of pixel size in bytes. I cannot find any sane use case for such formats.
+Apparantly the hw can do it, so why not support it? A potential use case I see
+would be an application that uses a single buffer with multiple pixelformats.
 
-Yeah, the capacity-dmips-mhz dt value of 539 for the little cpus is
-scaled by 1.3/1.8 (max cpu capacity/ system wide max cpu capacity):
+Let buffer-size = width * height * sizeof(uint16_t), with width odd. Then the
+buffer pitch is not divisible by 4. In case the hw supports it, we can still use
+e.g. XRGB8888 with this setup.
 
-539 * 1.3/1.8 = 389
 
-This max cpu capacity scaling is part of both solutions, the 'cpu
-capacity-dmips-mhz' and the 'cpu_efficiency/clock-frequency dt property'
-one.
+> Maybe it would make sense to add a check for it in DRM core? I also didn't
+> notice a check for that in any other drivers, but some of them also
+> compute 'pitch / cpp' values.
+I thought about some check in DRM core, but I didn't see a clean way to add it,
+since the behaviour very much depends on the hw.  Well, except if you just want
+to enforce 'pitch % cpp == 0' everywhere. Not sure how the rest of the DRM folks
+thinks about it.
 
-The (original*) cpu capacity on a heterogeneous platform expresses uArch
-and max cpu frequency differences between the (logical) cpus of the
-system.
+With best wishes,
+Tobias
 
-* not further reduced by rt and/or irq pressure.
 
-[...]
+
+>> ---
+>>   drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 +
+>>   drivers/gpu/drm/exynos/exynos_drm_plane.c | 10 ++++++++++
+>>   2 files changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>> b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>> index 43afab4bebc3..ec32632485d2 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>> @@ -92,6 +92,7 @@ struct exynos_drm_plane {
+>>   #define EXYNOS_DRM_PLANE_CAP_SCALE    (1 << 1)
+>>   #define EXYNOS_DRM_PLANE_CAP_ZPOS    (1 << 2)
+>>   #define EXYNOS_DRM_PLANE_CAP_TILE    (1 << 3)
+>> +#define EXYNOS_DRM_PLANE_CAP_BYTE_PITCH    (1 << 4)
+>>     /*
+>>    * Exynos DRM plane configuration structure.
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+>> b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+>> index 133af72f5c90..17e47b8f0d6a 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+>> @@ -185,6 +185,16 @@ exynos_drm_plane_check_format(const struct
+>> exynos_drm_plane_config *config,
+>>   {
+>>       struct drm_framebuffer *fb = state->base.fb;
+>>   +    /*
+>> +     * Some blocks only allow to specify a buffer pitch in terms
+>> +     * of pixels. In these cases, we need to ensure that the pitch
+>> +     * provided by userspace is divisible by the cpp.
+>> +     */
+>> +    if (!(config->capabilities & EXYNOS_DRM_PLANE_CAP_BYTE_PITCH)) {
+>> +        if (fb->pitches[0] % fb->format->cpp[0])
+>> +            return -ENOTSUPP;
+>> +    }
+>> +
+>>       switch (fb->modifier) {
+>>       case DRM_FORMAT_MOD_SAMSUNG_64_32_TILE:
+>>           if (!(config->capabilities & EXYNOS_DRM_PLANE_CAP_TILE))
+> 
+> Best regards
