@@ -1,53 +1,109 @@
-From: Eugene Syromiatnikov <esyr@redhat.com>
-Subject: Re: [3/7,media] dvb: don't use 'time_t' in event ioctl
-Date: Thu, 31 Aug 2017 15:10:39 +0200
-Message-ID: <20170831131039.GO4037@asgard.redhat.com>
-References: <1442332148-488079-4-git-send-email-arnd@arndb.de>
- <20170828153243.GA27121@asgard.redhat.com>
- <CAK8P3a3+ng+kNNH4C2yG1hJf6DUu_sYb5dC388XGPigePw1uAg@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 1/2] drm/bridge: add Silicon Image SiI9234 driver
+Date: Thu, 31 Aug 2017 16:30:22 +0300
+Message-ID: <2326944.Wi9TMObRze@avalon>
+References: <1504182434-8201-1-git-send-email-m.purski@samsung.com> <CGME20170831122745eucas1p27a178da2e30023292c57653a8dc45813@eucas1p2.samsung.com> <1504182434-8201-2-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:59682 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751127AbdHaNKI (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38411 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751009AbdHaN3r (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 31 Aug 2017 09:10:08 -0400
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3+ng+kNNH4C2yG1hJf6DUu_sYb5dC388XGPigePw1uAg@mail.gmail.com>
+        Thu, 31 Aug 2017 09:29:47 -0400
+In-Reply-To: <1504182434-8201-2-git-send-email-m.purski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, y2038 Mailman List <y2038@lists.linaro.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux API <linux-api@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, "Dmitry V. Levin" <ldv@altlinux.org>, Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
+To: dri-devel@lists.freedesktop.org
+Cc: Maciej Purski <m.purski@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mark.rutland@arm.com, b.zolnierkie@samsung.com, krzk@kernel.org, robh+dt@kernel.org
 
-On Wed, Aug 30, 2017 at 10:25:01PM +0200, Arnd Bergmann wrote:
-> >> diff --git a/include/uapi/linux/dvb/video.h b/include/uapi/linux/dvb/video.h
-> >> index d3d14a59d2d5..6c7f9298d7c2 100644
-> >> --- a/include/uapi/linux/dvb/video.h
-> >> +++ b/include/uapi/linux/dvb/video.h
-> >> @@ -135,7 +135,8 @@ struct video_event {
-> >>  #define VIDEO_EVENT_FRAME_RATE_CHANGED       2
-> >>  #define VIDEO_EVENT_DECODER_STOPPED  3
-> >>  #define VIDEO_EVENT_VSYNC            4
-> >> -     __kernel_time_t timestamp;
-> >> +     /* unused, make sure to use atomic time for y2038 if it ever gets used */
-> >> +     long timestamp;
-> >
-> > This change breaks x32 ABI (and possibly MIPS n32 ABI), as __kernel_time_t
-> > there is 64 bit already:
-> > https://sourceforge.net/p/strace/mailman/message/36015326/
-> >
-> > Note the change in structure size from 0x20 to 0x14 for VIDEO_GET_EVENT
-> > command in linux/x32/ioctls_inc0.h.
+Hi Maciej,
+
+Thank you for the patch.
+
+On Thursday, 31 August 2017 15:27:13 EEST Maciej Purski wrote:
+> SiI9234 transmitter converts eTMDS/HDMI signal to MHL 1.0.
+> It is controlled via I2C bus. Its interaction with other
+> devices in video pipeline is performed mainly on HW level.
+> The only interaction it does on device driver level is
+> filtering-out unsupported video modes, it exposes drm_bridge
+> interface to perform this operation.
 > 
-> Are you sure it worked before the change? I don't see any handler in the kernel
-> for the x32 compat ioctl call here, only the compat_video_event handling, so
-> my guess is that the change unintentionally fixes x32.
-
-Yes, you're right; unfortunately, I decided to check which ioctl handler
-x32 code is using only after sending the e-mail, and now in the process
-of preparing some RFC patch for the ioctl commands which have discrepancies
-between x32 and compat sizes.
-
+> This patch is based on the code refactored by Tomasz Stanislawski
+> <t.stanislaws@samsung.com>, which was initially developed by:
+> Adam Hampson <ahampson@sta.samsung.com>
+> Erik Gilling <konkers@android.com>
+> Shankar Bandal <shankar.b@samsung.com>
+> Dharam Kumar <dharam.kr@samsung.com>
 > 
->          Arnd
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> ---
+> Changes in v2:
+> - use bulk_requlators instead of single one
+> - substitute some of the magic values with macros
+> - improve coding style
+> - improved error handling in sii9234_probe()
+> ---
+>  .../devicetree/bindings/display/bridge/sii9234.txt |  34 +
+>  drivers/gpu/drm/bridge/Kconfig                     |   8 +
+>  drivers/gpu/drm/bridge/Makefile                    |   1 +
+>  drivers/gpu/drm/bridge/sii9234.c                   | 993 ++++++++++++++++++
+>  4 files changed, 1036 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/display/bridge/sii9234.txt create mode
+> 100644 drivers/gpu/drm/bridge/sii9234.c
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/sii9234.txt
+> b/Documentation/devicetree/bindings/display/bridge/sii9234.txt new file
+> mode 100644
+> index 0000000..3ce7413
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/sii9234.txt
+> @@ -0,0 +1,34 @@
+> +Silicon Image SiI9234 HDMI/MHL bridge bindings
+> +
+> +Required properties:
+> +	- compatible : "sil,sii9234".
+> +	- reg : I2C address for TPI interface, use 0x39
+> +	- avcc33-supply : MHL/USB Switch Supply Voltage (3.3V)
+> +	- iovcc18-supply : I/O Supply Voltage (1.8V)
+> +	- avcc12-supply : TMDS Analog Supply Voltage (1.2V)
+> +	- cvcc12-supply : Digital Core Supply Voltage (1.2V)
+> +	- interrupts, interrupt-parent: interrupt specifier of INT pin
+> +	- reset-gpios: gpio specifier of RESET pin (active low)
+> +	- video interfaces: Device node can contain video interface port
+> +			    node for HDMI encoder according to [1].
+> +
+> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+
+Doesn't this chip have two ports, one input connected to the SoC and one 
+output connected to an HDMI connector ? If so there should be two ports in DT 
+too.
+
+> +Example:
+> +	sii9234@39 {
+> +		compatible = "sil,sii9234";
+> +		reg = <0x39>;
+> +		avcc33-supply = <&vcc33mhl>;
+> +		iovcc18-supply = <&vcc18mhl>;
+> +		avcc12-supply = <&vsil12>;
+> +		cvcc12-supply = <&vsil12>;
+> +		reset-gpios = <&gpf3 4 GPIO_ACTIVE_LOW>;
+> +		interrupt-parent = <&gpf3>;
+> +		interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +		port {
+> +			mhl_to_hdmi: endpoint {
+> +				remote-endpoint = <&hdmi_to_mhl>;
+
+It would be useful to include the remote DT nodes in the example too.
+
+> +			};
+> +		};
+> +	};
+
+-- 
+Regards,
+
+Laurent Pinchart
