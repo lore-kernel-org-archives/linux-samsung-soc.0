@@ -1,154 +1,132 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/3] drm/exynos/gsc: Add rotation hardware limits of gscaler
-Date: Fri, 1 Sep 2017 09:11:51 +0200
-Message-ID: <CAJKOXPf=PBQaSd=m7NDbznHqPCSWR=6EYpJnn4AYTZe-3gtTkg@mail.gmail.com>
-References: <CGME20170901014758epcas2p13ae73e7dcac72a1a28c9324164efbd6d@epcas2p1.samsung.com>
- <1504230476-1878-1-git-send-email-hoegeun.kwon@samsung.com> <1504230476-1878-4-git-send-email-hoegeun.kwon@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 3/3] drm/exynos/gsc: Add rotation hardware limits of
+ gscaler
+Date: Fri, 01 Sep 2017 09:31:46 +0200
+Message-ID: <10747c31-55fc-6464-eb00-99da6d66fca6@samsung.com>
+References: <1504230476-1878-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170901014758epcas2p13ae73e7dcac72a1a28c9324164efbd6d@epcas2p1.samsung.com>
+ <1504230476-1878-4-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1504230476-1878-4-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, Seung Woo Kim <sw0312.kim@samsung.com>, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1504230476-1878-4-git-send-email-hoegeun.kwon@samsung.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 1, 2017 at 3:47 AM, Hoegeun Kwon <hoegeun.kwon@samsung.com> wrote:
-> The gscaler has hardware rotation limits that need to be imported from
-> dts. Parse them and add them to the property list.
->
-> The rotation hardware limits are related to the cropped source size.
-> When swap occurs, use rot_max size instead of crop_max size.
->
-> Also the scaling limits are related to post size, use pos size to
-> check the limits.
->
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c | 63 +++++++++++++++++++++------------
->  include/uapi/drm/exynos_drm.h           |  2 ++
->  2 files changed, 42 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> index 0506b2b..dd9b057 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> @@ -1401,6 +1401,23 @@ static int gsc_ippdrv_check_property(struct device *dev,
->         bool swap;
->         int i;
->
-> +       config = &property->config[EXYNOS_DRM_OPS_DST];
-> +
-> +       /* check for degree */
-> +       switch (config->degree) {
-> +       case EXYNOS_DRM_DEGREE_90:
-> +       case EXYNOS_DRM_DEGREE_270:
-> +               swap = true;
-> +               break;
-> +       case EXYNOS_DRM_DEGREE_0:
-> +       case EXYNOS_DRM_DEGREE_180:
-> +               swap = false;
-> +               break;
-> +       default:
-> +               DRM_ERROR("invalid degree.\n");
-> +               goto err_property;
-> +       }
-> +
->         for_each_ipp_ops(i) {
->                 if ((i == EXYNOS_DRM_OPS_SRC) &&
->                         (property->cmd == IPP_CMD_WB))
-> @@ -1416,21 +1433,6 @@ static int gsc_ippdrv_check_property(struct device *dev,
->                         goto err_property;
->                 }
->
-> -               /* check for degree */
-> -               switch (config->degree) {
-> -               case EXYNOS_DRM_DEGREE_90:
-> -               case EXYNOS_DRM_DEGREE_270:
-> -                       swap = true;
-> -                       break;
-> -               case EXYNOS_DRM_DEGREE_0:
-> -               case EXYNOS_DRM_DEGREE_180:
-> -                       swap = false;
-> -                       break;
-> -               default:
-> -                       DRM_ERROR("invalid degree.\n");
-> -                       goto err_property;
-> -               }
-> -
->                 /* check for buffer bound */
->                 if ((pos->x + pos->w > sz->hsize) ||
->                         (pos->y + pos->h > sz->vsize)) {
-> @@ -1438,21 +1440,27 @@ static int gsc_ippdrv_check_property(struct device *dev,
->                         goto err_property;
->                 }
->
-> +               /*
-> +                * The rotation hardware limits are related to the cropped
-> +                * source size. So use rot_max size to check the limits when
-> +                * swap happens. And also the scaling limits are related to pos
-> +                * size, use pos size to check the limits.
-> +                */
->                 /* check for crop */
->                 if ((i == EXYNOS_DRM_OPS_SRC) && (pp->crop)) {
->                         if (swap) {
->                                 if ((pos->h < pp->crop_min.hsize) ||
-> -                                       (sz->vsize > pp->crop_max.hsize) ||
-> +                                       (pos->h > pp->rot_max.hsize) ||
->                                         (pos->w < pp->crop_min.vsize) ||
-> -                                       (sz->hsize > pp->crop_max.vsize)) {
-> +                                       (pos->w > pp->rot_max.vsize)) {
->                                         DRM_ERROR("out of crop size.\n");
->                                         goto err_property;
->                                 }
->                         } else {
->                                 if ((pos->w < pp->crop_min.hsize) ||
-> -                                       (sz->hsize > pp->crop_max.hsize) ||
-> +                                       (pos->w > pp->crop_max.hsize) ||
->                                         (pos->h < pp->crop_min.vsize) ||
-> -                                       (sz->vsize > pp->crop_max.vsize)) {
-> +                                       (pos->h > pp->crop_max.vsize)) {
->                                         DRM_ERROR("out of crop size.\n");
->                                         goto err_property;
->                                 }
-> @@ -1463,17 +1471,17 @@ static int gsc_ippdrv_check_property(struct device *dev,
->                 if ((i == EXYNOS_DRM_OPS_DST) && (pp->scale)) {
->                         if (swap) {
->                                 if ((pos->h < pp->scale_min.hsize) ||
-> -                                       (sz->vsize > pp->scale_max.hsize) ||
-> +                                       (pos->h > pp->scale_max.hsize) ||
->                                         (pos->w < pp->scale_min.vsize) ||
-> -                                       (sz->hsize > pp->scale_max.vsize)) {
-> +                                       (pos->w > pp->scale_max.vsize)) {
->                                         DRM_ERROR("out of scale size.\n");
->                                         goto err_property;
->                                 }
->                         } else {
->                                 if ((pos->w < pp->scale_min.hsize) ||
-> -                                       (sz->hsize > pp->scale_max.hsize) ||
-> +                                       (pos->w > pp->scale_max.hsize) ||
->                                         (pos->h < pp->scale_min.vsize) ||
-> -                                       (sz->vsize > pp->scale_max.vsize)) {
-> +                                       (pos->h > pp->scale_max.vsize)) {
->                                         DRM_ERROR("out of scale size.\n");
->                                         goto err_property;
->                                 }
-> @@ -1676,6 +1684,15 @@ static int gsc_probe(struct platform_device *pdev)
->                         dev_warn(dev, "failed to get system register.\n");
->                         ctx->sysreg = NULL;
->                 }
-> +
-> +               ret = of_property_read_u32(dev->of_node, "rot-max-hsize",
-> +                               &ctx->ippdrv.prop_list.rot_max.hsize);
-> +               ret |= of_property_read_u32(dev->of_node, "rot-max-vsize",
-> +                               &ctx->ippdrv.prop_list.rot_max.vsize);
-> +               if (ret) {
-> +                       dev_err(dev, "rot-max property should be provided by device tree.\n");
-> +                       return -EINVAL;
-> +               }
-
-You're adding a required property thus breaking the ABI without
-explicit reason. Also the bindings have to be updated.
-
-Best regards,
-Krzysztof
+SGkgSG9lZ2V1biwKCk9uIDIwMTctMDktMDEgMDM6NDcsIEhvZWdldW4gS3dvbiB3cm90ZToKPiBU
+aGUgZ3NjYWxlciBoYXMgaGFyZHdhcmUgcm90YXRpb24gbGltaXRzIHRoYXQgbmVlZCB0byBiZSBp
+bXBvcnRlZCBmcm9tCj4gZHRzLiBQYXJzZSB0aGVtIGFuZCBhZGQgdGhlbSB0byB0aGUgcHJvcGVy
+dHkgbGlzdC4KPgo+IFRoZSByb3RhdGlvbiBoYXJkd2FyZSBsaW1pdHMgYXJlIHJlbGF0ZWQgdG8g
+dGhlIGNyb3BwZWQgc291cmNlIHNpemUuCj4gV2hlbiBzd2FwIG9jY3VycywgdXNlIHJvdF9tYXgg
+c2l6ZSBpbnN0ZWFkIG9mIGNyb3BfbWF4IHNpemUuCj4KPiBBbHNvIHRoZSBzY2FsaW5nIGxpbWl0
+cyBhcmUgcmVsYXRlZCB0byBwb3N0IHNpemUsIHVzZSBwb3Mgc2l6ZSB0bwo+IGNoZWNrIHRoZSBs
+aW1pdHMuCj4KPiBTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1z
+dW5nLmNvbT4KPiAtLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2Mu
+YyB8IDYzICsrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLQo+ICAgaW5jbHVkZS91YXBp
+L2RybS9leHlub3NfZHJtLmggICAgICAgICAgIHwgIDIgKysKPiAgIDIgZmlsZXMgY2hhbmdlZCwg
+NDIgaW5zZXJ0aW9ucygrKSwgMjMgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2dzYy5jCj4gaW5kZXggMDUwNmIyYi4uZGQ5YjA1NyAxMDA2NDQKPiAtLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMKPiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMKPiBAQCAtMTQwMSw2ICsxNDAxLDIzIEBA
+IHN0YXRpYyBpbnQgZ3NjX2lwcGRydl9jaGVja19wcm9wZXJ0eShzdHJ1Y3QgZGV2aWNlICpkZXYs
+Cj4gICAJYm9vbCBzd2FwOwo+ICAgCWludCBpOwo+ICAgCj4gKwljb25maWcgPSAmcHJvcGVydHkt
+PmNvbmZpZ1tFWFlOT1NfRFJNX09QU19EU1RdOwo+ICsKPiArCS8qIGNoZWNrIGZvciBkZWdyZWUg
+Ki8KPiArCXN3aXRjaCAoY29uZmlnLT5kZWdyZWUpIHsKPiArCWNhc2UgRVhZTk9TX0RSTV9ERUdS
+RUVfOTA6Cj4gKwljYXNlIEVYWU5PU19EUk1fREVHUkVFXzI3MDoKPiArCQlzd2FwID0gdHJ1ZTsK
+PiArCQlicmVhazsKPiArCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMDoKPiArCWNhc2UgRVhZTk9T
+X0RSTV9ERUdSRUVfMTgwOgo+ICsJCXN3YXAgPSBmYWxzZTsKPiArCQlicmVhazsKPiArCWRlZmF1
+bHQ6Cj4gKwkJRFJNX0VSUk9SKCJpbnZhbGlkIGRlZ3JlZS5cbiIpOwo+ICsJCWdvdG8gZXJyX3By
+b3BlcnR5Owo+ICsJfQo+ICsKPiAgIAlmb3JfZWFjaF9pcHBfb3BzKGkpIHsKPiAgIAkJaWYgKChp
+ID09IEVYWU5PU19EUk1fT1BTX1NSQykgJiYKPiAgIAkJCShwcm9wZXJ0eS0+Y21kID09IElQUF9D
+TURfV0IpKQo+IEBAIC0xNDE2LDIxICsxNDMzLDYgQEAgc3RhdGljIGludCBnc2NfaXBwZHJ2X2No
+ZWNrX3Byb3BlcnR5KHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgIAkJCWdvdG8gZXJyX3Byb3BlcnR5
+Owo+ICAgCQl9Cj4gICAKPiAtCQkvKiBjaGVjayBmb3IgZGVncmVlICovCj4gLQkJc3dpdGNoIChj
+b25maWctPmRlZ3JlZSkgewo+IC0JCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfOTA6Cj4gLQkJY2Fz
+ZSBFWFlOT1NfRFJNX0RFR1JFRV8yNzA6Cj4gLQkJCXN3YXAgPSB0cnVlOwo+IC0JCQlicmVhazsK
+PiAtCQljYXNlIEVYWU5PU19EUk1fREVHUkVFXzA6Cj4gLQkJY2FzZSBFWFlOT1NfRFJNX0RFR1JF
+RV8xODA6Cj4gLQkJCXN3YXAgPSBmYWxzZTsKPiAtCQkJYnJlYWs7Cj4gLQkJZGVmYXVsdDoKPiAt
+CQkJRFJNX0VSUk9SKCJpbnZhbGlkIGRlZ3JlZS5cbiIpOwo+IC0JCQlnb3RvIGVycl9wcm9wZXJ0
+eTsKPiAtCQl9Cj4gLQo+ICAgCQkvKiBjaGVjayBmb3IgYnVmZmVyIGJvdW5kICovCj4gICAJCWlm
+ICgocG9zLT54ICsgcG9zLT53ID4gc3otPmhzaXplKSB8fAo+ICAgCQkJKHBvcy0+eSArIHBvcy0+
+aCA+IHN6LT52c2l6ZSkpIHsKPiBAQCAtMTQzOCwyMSArMTQ0MCwyNyBAQCBzdGF0aWMgaW50IGdz
+Y19pcHBkcnZfY2hlY2tfcHJvcGVydHkoc3RydWN0IGRldmljZSAqZGV2LAo+ICAgCQkJZ290byBl
+cnJfcHJvcGVydHk7Cj4gICAJCX0KPiAgIAo+ICsJCS8qCj4gKwkJICogVGhlIHJvdGF0aW9uIGhh
+cmR3YXJlIGxpbWl0cyBhcmUgcmVsYXRlZCB0byB0aGUgY3JvcHBlZAo+ICsJCSAqIHNvdXJjZSBz
+aXplLiBTbyB1c2Ugcm90X21heCBzaXplIHRvIGNoZWNrIHRoZSBsaW1pdHMgd2hlbgo+ICsJCSAq
+IHN3YXAgaGFwcGVucy4gQW5kIGFsc28gdGhlIHNjYWxpbmcgbGltaXRzIGFyZSByZWxhdGVkIHRv
+IHBvcwo+ICsJCSAqIHNpemUsIHVzZSBwb3Mgc2l6ZSB0byBjaGVjayB0aGUgbGltaXRzLgo+ICsJ
+CSAqLwo+ICAgCQkvKiBjaGVjayBmb3IgY3JvcCAqLwo+ICAgCQlpZiAoKGkgPT0gRVhZTk9TX0RS
+TV9PUFNfU1JDKSAmJiAocHAtPmNyb3ApKSB7Cj4gICAJCQlpZiAoc3dhcCkgewo+ICAgCQkJCWlm
+ICgocG9zLT5oIDwgcHAtPmNyb3BfbWluLmhzaXplKSB8fAo+IC0JCQkJCShzei0+dnNpemUgPiBw
+cC0+Y3JvcF9tYXguaHNpemUpIHx8Cj4gKwkJCQkJKHBvcy0+aCA+IHBwLT5yb3RfbWF4LmhzaXpl
+KSB8fAo+ICAgCQkJCQkocG9zLT53IDwgcHAtPmNyb3BfbWluLnZzaXplKSB8fAo+IC0JCQkJCShz
+ei0+aHNpemUgPiBwcC0+Y3JvcF9tYXgudnNpemUpKSB7Cj4gKwkJCQkJKHBvcy0+dyA+IHBwLT5y
+b3RfbWF4LnZzaXplKSkgewo+ICAgCQkJCQlEUk1fRVJST1IoIm91dCBvZiBjcm9wIHNpemUuXG4i
+KTsKPiAgIAkJCQkJZ290byBlcnJfcHJvcGVydHk7Cj4gICAJCQkJfQo+ICAgCQkJfSBlbHNlIHsK
+PiAgIAkJCQlpZiAoKHBvcy0+dyA8IHBwLT5jcm9wX21pbi5oc2l6ZSkgfHwKPiAtCQkJCQkoc3ot
+PmhzaXplID4gcHAtPmNyb3BfbWF4LmhzaXplKSB8fAo+ICsJCQkJCShwb3MtPncgPiBwcC0+Y3Jv
+cF9tYXguaHNpemUpIHx8Cj4gICAJCQkJCShwb3MtPmggPCBwcC0+Y3JvcF9taW4udnNpemUpIHx8
+Cj4gLQkJCQkJKHN6LT52c2l6ZSA+IHBwLT5jcm9wX21heC52c2l6ZSkpIHsKPiArCQkJCQkocG9z
+LT5oID4gcHAtPmNyb3BfbWF4LnZzaXplKSkgewo+ICAgCQkJCQlEUk1fRVJST1IoIm91dCBvZiBj
+cm9wIHNpemUuXG4iKTsKPiAgIAkJCQkJZ290byBlcnJfcHJvcGVydHk7Cj4gICAJCQkJfQo+IEBA
+IC0xNDYzLDE3ICsxNDcxLDE3IEBAIHN0YXRpYyBpbnQgZ3NjX2lwcGRydl9jaGVja19wcm9wZXJ0
+eShzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gICAJCWlmICgoaSA9PSBFWFlOT1NfRFJNX09QU19EU1Qp
+ICYmIChwcC0+c2NhbGUpKSB7Cj4gICAJCQlpZiAoc3dhcCkgewo+ICAgCQkJCWlmICgocG9zLT5o
+IDwgcHAtPnNjYWxlX21pbi5oc2l6ZSkgfHwKPiAtCQkJCQkoc3otPnZzaXplID4gcHAtPnNjYWxl
+X21heC5oc2l6ZSkgfHwKPiArCQkJCQkocG9zLT5oID4gcHAtPnNjYWxlX21heC5oc2l6ZSkgfHwK
+PiAgIAkJCQkJKHBvcy0+dyA8IHBwLT5zY2FsZV9taW4udnNpemUpIHx8Cj4gLQkJCQkJKHN6LT5o
+c2l6ZSA+IHBwLT5zY2FsZV9tYXgudnNpemUpKSB7Cj4gKwkJCQkJKHBvcy0+dyA+IHBwLT5zY2Fs
+ZV9tYXgudnNpemUpKSB7Cj4gICAJCQkJCURSTV9FUlJPUigib3V0IG9mIHNjYWxlIHNpemUuXG4i
+KTsKPiAgIAkJCQkJZ290byBlcnJfcHJvcGVydHk7Cj4gICAJCQkJfQo+ICAgCQkJfSBlbHNlIHsK
+PiAgIAkJCQlpZiAoKHBvcy0+dyA8IHBwLT5zY2FsZV9taW4uaHNpemUpIHx8Cj4gLQkJCQkJKHN6
+LT5oc2l6ZSA+IHBwLT5zY2FsZV9tYXguaHNpemUpIHx8Cj4gKwkJCQkJKHBvcy0+dyA+IHBwLT5z
+Y2FsZV9tYXguaHNpemUpIHx8Cj4gICAJCQkJCShwb3MtPmggPCBwcC0+c2NhbGVfbWluLnZzaXpl
+KSB8fAo+IC0JCQkJCShzei0+dnNpemUgPiBwcC0+c2NhbGVfbWF4LnZzaXplKSkgewo+ICsJCQkJ
+CShwb3MtPmggPiBwcC0+c2NhbGVfbWF4LnZzaXplKSkgewo+ICAgCQkJCQlEUk1fRVJST1IoIm91
+dCBvZiBzY2FsZSBzaXplLlxuIik7Cj4gICAJCQkJCWdvdG8gZXJyX3Byb3BlcnR5Owo+ICAgCQkJ
+CX0KPiBAQCAtMTY3Niw2ICsxNjg0LDE1IEBAIHN0YXRpYyBpbnQgZ3NjX3Byb2JlKHN0cnVjdCBw
+bGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gICAJCQlkZXZfd2FybihkZXYsICJmYWlsZWQgdG8gZ2V0
+IHN5c3RlbSByZWdpc3Rlci5cbiIpOwo+ICAgCQkJY3R4LT5zeXNyZWcgPSBOVUxMOwo+ICAgCQl9
+Cj4gKwo+ICsJCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKGRldi0+b2Zfbm9kZSwgInJvdC1t
+YXgtaHNpemUiLAo+ICsJCQkJJmN0eC0+aXBwZHJ2LnByb3BfbGlzdC5yb3RfbWF4LmhzaXplKTsK
+PiArCQlyZXQgfD0gb2ZfcHJvcGVydHlfcmVhZF91MzIoZGV2LT5vZl9ub2RlLCAicm90LW1heC12
+c2l6ZSIsCj4gKwkJCQkmY3R4LT5pcHBkcnYucHJvcF9saXN0LnJvdF9tYXgudnNpemUpOwo+ICsJ
+CWlmIChyZXQpIHsKPiArCQkJZGV2X2VycihkZXYsICJyb3QtbWF4IHByb3BlcnR5IHNob3VsZCBi
+ZSBwcm92aWRlZCBieSBkZXZpY2UgdHJlZS5cbiIpOwo+ICsJCQlyZXR1cm4gLUVJTlZBTDsKPiAr
+CQl9Cj4gICAJfQo+ICAgCj4gICAJLyogY2xvY2sgY29udHJvbCAqLwo+IGRpZmYgLS1naXQgYS9p
+bmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaCBiL2luY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2Ry
+bS5oCj4gaW5kZXggY2IzZTlmOS4uZDVkNTUxOCAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL3VhcGkv
+ZHJtL2V4eW5vc19kcm0uaAo+ICsrKyBiL2luY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oCj4g
+QEAgLTE5Miw2ICsxOTIsNyBAQCBlbnVtIGRybV9leHlub3NfcGxhbmVyIHsKPiAgICAqIEBjcm9w
+X21heDogY3JvcCBtYXggcmVzb2x1dGlvbi4KPiAgICAqIEBzY2FsZV9taW46IHNjYWxlIG1pbiBy
+ZXNvbHV0aW9uLgo+ICAgICogQHNjYWxlX21heDogc2NhbGUgbWF4IHJlc29sdXRpb24uCj4gKyAq
+IEByb3RfbWF4OiByb3RhdGlvbiBtYXggcmVzb2x1dGlvbi4KPiAgICAqLwo+ICAgc3RydWN0IGRy
+bV9leHlub3NfaXBwX3Byb3BfbGlzdCB7Cj4gICAJX191MzIJdmVyc2lvbjsKPiBAQCAtMjEwLDYg
+KzIxMSw3IEBAIHN0cnVjdCBkcm1fZXh5bm9zX2lwcF9wcm9wX2xpc3Qgewo+ICAgCXN0cnVjdCBk
+cm1fZXh5bm9zX3N6CWNyb3BfbWF4Owo+ICAgCXN0cnVjdCBkcm1fZXh5bm9zX3N6CXNjYWxlX21p
+bjsKPiAgIAlzdHJ1Y3QgZHJtX2V4eW5vc19zeglzY2FsZV9tYXg7Cj4gKwlzdHJ1Y3QgZHJtX2V4
+eW5vc19zeglyb3RfbWF4Owo+ICAgfTsKPiAgIAo+ICAgLyoqCgpJTU8gbWF4aW11bSBzdXBwb3J0
+ZWQgcGljdHVyZSBzaXplIHNob3VsZCBiZSBoYXJkY29kZWQgaW50byBkcml2ZXIsIHRoZXJlCmlz
+IG5vIG5lZWQgdG8gYWRkIGRldmljZSB0cmVlIHByb3BlcnRpZXMgZm9yIHRoYXQuIFBsZWFzZSBh
+bHNvIGNoZWNrIHY0bDIKZHJpdmVyIGZvciBFeHlub3MgR1NDLgoKQ3VycmVudGx5IGl0IHVzZXMg
+b25seSBvbmUgY29tcGF0aWJsZSAtICJleHlub3M1LWdzYyIsIGJ1dCBpbWhvIFlvdSBzaG91bGQK
+c2ltcGx5IHJlcGxhY2UgaXQgd2l0aCAiZXh5bm9zNTI1MC1nc2MiIGFuZCAiZXh5bm9zNTQyMC1n
+c2MiLCBhbmQgYWRkIHRob3NlCnZhcmlhbnRzIHdpdGggcHJvcGVyIG1heGltdW0gc3VwcG9ydGVk
+IHNpemUgKDIwNDcgYW5kIDIwMTYgcmVzcGVjdGl2ZWx5KS4KCkJlc3QgcmVnYXJkcwotLSAKTWFy
+ZWsgU3p5cHJvd3NraSwgUGhEClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
