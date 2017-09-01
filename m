@@ -1,175 +1,62 @@
-From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 3/3] drm/exynos/gsc: Add rotation hardware limits of gscaler
-Date: Fri, 01 Sep 2017 10:47:56 +0900
-Message-ID: <1504230476-1878-4-git-send-email-hoegeun.kwon@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH 1/3] ARM: dts: exynos: Add the hardware rotation limits for gsc
+Date: Fri, 01 Sep 2017 10:47:54 +0900
+Message-ID: <1504230476-1878-2-git-send-email-hoegeun.kwon@samsung.com>
 References: <1504230476-1878-1-git-send-email-hoegeun.kwon@samsung.com>
-        <CGME20170901014758epcas2p13ae73e7dcac72a1a28c9324164efbd6d@epcas2p1.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1504230476-1878-1-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+ <CGME20170901014757epcas2p2093964b6b7e5dff4c197bf7ec2c306a8@epcas2p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1504230476-1878-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The gscaler has hardware rotation limits that need to be imported from
-dts. Parse them and add them to the property list.
-
-The rotation hardware limits are related to the cropped source size.
-When swap occurs, use rot_max size instead of crop_max size.
-
-Also the scaling limits are related to post size, use pos size to
-check the limits.
-
-Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/gpu/drm/exynos/exynos_drm_gsc.c | 63 +++++++++++++++++++++------------
- include/uapi/drm/exynos_drm.h           |  2 ++
- 2 files changed, 42 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 0506b2b..dd9b057 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -1401,6 +1401,23 @@ static int gsc_ippdrv_check_property(struct device *dev,
- 	bool swap;
- 	int i;
- 
-+	config = &property->config[EXYNOS_DRM_OPS_DST];
-+
-+	/* check for degree */
-+	switch (config->degree) {
-+	case EXYNOS_DRM_DEGREE_90:
-+	case EXYNOS_DRM_DEGREE_270:
-+		swap = true;
-+		break;
-+	case EXYNOS_DRM_DEGREE_0:
-+	case EXYNOS_DRM_DEGREE_180:
-+		swap = false;
-+		break;
-+	default:
-+		DRM_ERROR("invalid degree.\n");
-+		goto err_property;
-+	}
-+
- 	for_each_ipp_ops(i) {
- 		if ((i == EXYNOS_DRM_OPS_SRC) &&
- 			(property->cmd == IPP_CMD_WB))
-@@ -1416,21 +1433,6 @@ static int gsc_ippdrv_check_property(struct device *dev,
- 			goto err_property;
- 		}
- 
--		/* check for degree */
--		switch (config->degree) {
--		case EXYNOS_DRM_DEGREE_90:
--		case EXYNOS_DRM_DEGREE_270:
--			swap = true;
--			break;
--		case EXYNOS_DRM_DEGREE_0:
--		case EXYNOS_DRM_DEGREE_180:
--			swap = false;
--			break;
--		default:
--			DRM_ERROR("invalid degree.\n");
--			goto err_property;
--		}
--
- 		/* check for buffer bound */
- 		if ((pos->x + pos->w > sz->hsize) ||
- 			(pos->y + pos->h > sz->vsize)) {
-@@ -1438,21 +1440,27 @@ static int gsc_ippdrv_check_property(struct device *dev,
- 			goto err_property;
- 		}
- 
-+		/*
-+		 * The rotation hardware limits are related to the cropped
-+		 * source size. So use rot_max size to check the limits when
-+		 * swap happens. And also the scaling limits are related to pos
-+		 * size, use pos size to check the limits.
-+		 */
- 		/* check for crop */
- 		if ((i == EXYNOS_DRM_OPS_SRC) && (pp->crop)) {
- 			if (swap) {
- 				if ((pos->h < pp->crop_min.hsize) ||
--					(sz->vsize > pp->crop_max.hsize) ||
-+					(pos->h > pp->rot_max.hsize) ||
- 					(pos->w < pp->crop_min.vsize) ||
--					(sz->hsize > pp->crop_max.vsize)) {
-+					(pos->w > pp->rot_max.vsize)) {
- 					DRM_ERROR("out of crop size.\n");
- 					goto err_property;
- 				}
- 			} else {
- 				if ((pos->w < pp->crop_min.hsize) ||
--					(sz->hsize > pp->crop_max.hsize) ||
-+					(pos->w > pp->crop_max.hsize) ||
- 					(pos->h < pp->crop_min.vsize) ||
--					(sz->vsize > pp->crop_max.vsize)) {
-+					(pos->h > pp->crop_max.vsize)) {
- 					DRM_ERROR("out of crop size.\n");
- 					goto err_property;
- 				}
-@@ -1463,17 +1471,17 @@ static int gsc_ippdrv_check_property(struct device *dev,
- 		if ((i == EXYNOS_DRM_OPS_DST) && (pp->scale)) {
- 			if (swap) {
- 				if ((pos->h < pp->scale_min.hsize) ||
--					(sz->vsize > pp->scale_max.hsize) ||
-+					(pos->h > pp->scale_max.hsize) ||
- 					(pos->w < pp->scale_min.vsize) ||
--					(sz->hsize > pp->scale_max.vsize)) {
-+					(pos->w > pp->scale_max.vsize)) {
- 					DRM_ERROR("out of scale size.\n");
- 					goto err_property;
- 				}
- 			} else {
- 				if ((pos->w < pp->scale_min.hsize) ||
--					(sz->hsize > pp->scale_max.hsize) ||
-+					(pos->w > pp->scale_max.hsize) ||
- 					(pos->h < pp->scale_min.vsize) ||
--					(sz->vsize > pp->scale_max.vsize)) {
-+					(pos->h > pp->scale_max.vsize)) {
- 					DRM_ERROR("out of scale size.\n");
- 					goto err_property;
- 				}
-@@ -1676,6 +1684,15 @@ static int gsc_probe(struct platform_device *pdev)
- 			dev_warn(dev, "failed to get system register.\n");
- 			ctx->sysreg = NULL;
- 		}
-+
-+		ret = of_property_read_u32(dev->of_node, "rot-max-hsize",
-+				&ctx->ippdrv.prop_list.rot_max.hsize);
-+		ret |= of_property_read_u32(dev->of_node, "rot-max-vsize",
-+				&ctx->ippdrv.prop_list.rot_max.vsize);
-+		if (ret) {
-+			dev_err(dev, "rot-max property should be provided by device tree.\n");
-+			return -EINVAL;
-+		}
- 	}
- 
- 	/* clock control */
-diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-index cb3e9f9..d5d5518 100644
---- a/include/uapi/drm/exynos_drm.h
-+++ b/include/uapi/drm/exynos_drm.h
-@@ -192,6 +192,7 @@ enum drm_exynos_planer {
-  * @crop_max: crop max resolution.
-  * @scale_min: scale min resolution.
-  * @scale_max: scale max resolution.
-+ * @rot_max: rotation max resolution.
-  */
- struct drm_exynos_ipp_prop_list {
- 	__u32	version;
-@@ -210,6 +211,7 @@ struct drm_exynos_ipp_prop_list {
- 	struct drm_exynos_sz	crop_max;
- 	struct drm_exynos_sz	scale_min;
- 	struct drm_exynos_sz	scale_max;
-+	struct drm_exynos_sz	rot_max;
- };
- 
- /**
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+VGhlIGdzY2FsZXIgaGFzIG1heGltdW0gc2l6ZSBvZiBpbnB1dCBvciBvdXRwdXQgcm90YXRpb24u
+IEFkZCB0aGUKaGFyZHdhcmUgbGltaXRzIHByb3BlcnR5IGZvciB0aGUgZ3NjYWxlciByb3RhdGlv
+biBpbiB0aGUgZXh5bm9zNTI1MAphbmQgZXh5bm9zNTQyMCBkdHMuCgpTaWduZWQtb2ZmLWJ5OiBI
+b2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1zdW5nLmNvbT4KLS0tCiBhcmNoL2FybS9ib290
+L2R0cy9leHlub3M1MjUwLmR0c2kgfCA4ICsrKysrKysrCiBhcmNoL2FybS9ib290L2R0cy9leHlu
+b3M1NDIwLmR0c2kgfCA0ICsrKysKIDIgZmlsZXMgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKQoK
+ZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSBiL2FyY2gvYXJt
+L2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaQppbmRleCA4ZGJlYjg3Li5kOTQzNGUwIDEwMDY0NAot
+LS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kKKysrIGIvYXJjaC9hcm0vYm9v
+dC9kdHMvZXh5bm9zNTI1MC5kdHNpCkBAIC02NDMsNiArNjQzLDggQEAKIAkJCXBvd2VyLWRvbWFp
+bnMgPSA8JnBkX2dzYz47CiAJCQljbG9ja3MgPSA8JmNsb2NrIENMS19HU0NMMD47CiAJCQljbG9j
+ay1uYW1lcyA9ICJnc2NsIjsKKwkJCXJvdC1tYXgtaHNpemUgPSA8MjA0OD47CisJCQlyb3QtbWF4
+LXZzaXplID0gPDIwNDg+OwogCQkJaW9tbXUgPSA8JnN5c21tdV9nc2MwPjsKIAkJfTsKIApAQCAt
+NjUzLDYgKzY1NSw4IEBACiAJCQlwb3dlci1kb21haW5zID0gPCZwZF9nc2M+OwogCQkJY2xvY2tz
+ID0gPCZjbG9jayBDTEtfR1NDTDE+OwogCQkJY2xvY2stbmFtZXMgPSAiZ3NjbCI7CisJCQlyb3Qt
+bWF4LWhzaXplID0gPDIwNDg+OworCQkJcm90LW1heC12c2l6ZSA9IDwyMDQ4PjsKIAkJCWlvbW11
+ID0gPCZzeXNtbXVfZ3NjMT47CiAJCX07CiAKQEAgLTY2Myw2ICs2NjcsOCBAQAogCQkJcG93ZXIt
+ZG9tYWlucyA9IDwmcGRfZ3NjPjsKIAkJCWNsb2NrcyA9IDwmY2xvY2sgQ0xLX0dTQ0wyPjsKIAkJ
+CWNsb2NrLW5hbWVzID0gImdzY2wiOworCQkJcm90LW1heC1oc2l6ZSA9IDwyMDQ4PjsKKwkJCXJv
+dC1tYXgtdnNpemUgPSA8MjA0OD47CiAJCQlpb21tdSA9IDwmc3lzbW11X2dzYzI+OwogCQl9Owog
+CkBAIC02NzMsNiArNjc5LDggQEAKIAkJCXBvd2VyLWRvbWFpbnMgPSA8JnBkX2dzYz47CiAJCQlj
+bG9ja3MgPSA8JmNsb2NrIENMS19HU0NMMz47CiAJCQljbG9jay1uYW1lcyA9ICJnc2NsIjsKKwkJ
+CXJvdC1tYXgtaHNpemUgPSA8MjA0OD47CisJCQlyb3QtbWF4LXZzaXplID0gPDIwNDg+OwogCQkJ
+aW9tbXUgPSA8JnN5c21tdV9nc2MzPjsKIAkJfTsKIApkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9v
+dC9kdHMvZXh5bm9zNTQyMC5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC5kdHNp
+CmluZGV4IDAyZDJmODkuLjBmZDZiZTkgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4
+eW5vczU0MjAuZHRzaQorKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kKQEAg
+LTY2NCw2ICs2NjQsOCBAQAogCQkJY2xvY2tzID0gPCZjbG9jayBDTEtfR1NDTDA+OwogCQkJY2xv
+Y2stbmFtZXMgPSAiZ3NjbCI7CiAJCQlwb3dlci1kb21haW5zID0gPCZnc2NfcGQ+OworCQkJcm90
+LW1heC1oc2l6ZSA9IDwyMDE2PjsKKwkJCXJvdC1tYXgtdnNpemUgPSA8MjAxNj47CiAJCQlpb21t
+dXMgPSA8JnN5c21tdV9nc2NsMD47CiAJCX07CiAKQEAgLTY3NCw2ICs2NzYsOCBAQAogCQkJY2xv
+Y2tzID0gPCZjbG9jayBDTEtfR1NDTDE+OwogCQkJY2xvY2stbmFtZXMgPSAiZ3NjbCI7CiAJCQlw
+b3dlci1kb21haW5zID0gPCZnc2NfcGQ+OworCQkJcm90LW1heC1oc2l6ZSA9IDwyMDE2PjsKKwkJ
+CXJvdC1tYXgtdnNpemUgPSA8MjAxNj47CiAJCQlpb21tdXMgPSA8JnN5c21tdV9nc2NsMT47CiAJ
+CX07CiAKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
