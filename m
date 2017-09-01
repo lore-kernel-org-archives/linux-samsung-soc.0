@@ -1,52 +1,34 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3] ASoC: samsung: i2s: Use specific name for i2s dais
-Date: Fri, 1 Sep 2017 11:17:04 +0100
-Message-ID: <20170901101704.bkitbx5udvmoiutk@sirena.org.uk>
-References: <20170828100102.17591-1-jcsing.lee@samsung.com>
- <CGME20170828100105epcas2p18b821aec5caf1d690c33c2b1426d1a17@epcas2p1.samsung.com>
- <20170828100102.17591-2-jcsing.lee@samsung.com>
+From: "W.D" <Julie.minichelli@students.post.edu>
+Subject: Re
+Date: Fri, 01 Sep 2017 22:32:49 +0530
+Message-ID: <MWHPR0101MB289682C0C2C118C9B2621471D9920@MWHPR0101MB2896.prod.exchangelabs.com>
+Reply-To: drwisdomdavies@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lioiphepqqcz5xms"
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43948 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751791AbdIAKRn (ORCPT
+Received: from mail-sn1nam02hn0217.outbound.protection.outlook.com ([104.47.36.217]:40255
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752165AbdIARDH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Sep 2017 06:17:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20170828100102.17591-2-jcsing.lee@samsung.com>
+        Fri, 1 Sep 2017 13:03:07 -0400
+Content-Description: Mail message body
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaechul Lee <jcsing.lee@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, galaxyra@gmail.com, Chanwoo Choi <cw00.choi@samsung.com>
+To: Recipients <Julie.minichelli@students.post.edu>
 
+Compliment,
+ =
 
---lioiphepqqcz5xms
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I am seeking the immediate assistance of a reliable and trustworthy partner=
+ in Asia, India precisely for our mutual profitable benefit in a supply dea=
+l.
+ =
 
-On Mon, Aug 28, 2017 at 07:01:00PM +0900, Jaechul Lee wrote:
-> Add specific dais name when components are registered. Component and dai
-> name will follow their parent dev name, if the name isn't described.  In
-> case of this driver, each dais will have same name like '11440000.i2s0' by
-> fmt_single_name function.
+Revert back for the Terms and Condition.
+ =
 
-This doesn't apply against current code, please check and resend.
-
---lioiphepqqcz5xms
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlmpM50ACgkQJNaLcl1U
-h9C6dwf+NQ8ruKXo6gK37d84X19TV1GKAmt5F8SSAelf4HCvXRlC/hkJKaWndA/d
-umIB2tr0BtCEnDEATztxZn18E1P+SkpDuqeKzCsrluRyC+6TZGjCCF8VLCabWhd2
-GgwHzb8d07tAA0pr5hQptcSkoOl5jRY9zTuE5SoyAltVmkR57qSGEkj2MrqAr6tT
-3az50uQ//Nz3hDd5ITDlX7LRlgWrLZHkOjkCBOL3F/7QThK+HS6IrMq1ZrAMNS1N
-gWi6gJw3d0308LLvVR9s5P9B+cyU9neZPjmUHoFJ5/XgC2ReGf/fhIzfbXcJdtrH
-3olWdTR/kAfgTBF7YsYi/ZPakmVvqw==
-=W/BC
------END PGP SIGNATURE-----
-
---lioiphepqqcz5xms--
+Thanks & Regards,
+Dr.  Davies Wisdom.
+E-mail: drwisdomdavies@gmail.com
