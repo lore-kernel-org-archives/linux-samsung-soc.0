@@ -1,47 +1,37 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/2] ARM: dts: exynos: Add HDMI and Sil9234 to Trats2
- board
-Date: Thu, 31 Aug 2017 21:36:35 +0200
-Message-ID: <20170831193635.wuw7vdanhj3vu46y@kozik-lap>
-References: <1504182434-8201-1-git-send-email-m.purski@samsung.com>
- <CGME20170831122749eucas1p2c6712236398e8c19a5eb24641bb0020b@eucas1p2.samsung.com>
- <1504182434-8201-3-git-send-email-m.purski@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH 0/3] drm/exynos/gsc: Support the rotate hardware limits of gsc
+Date: Fri, 01 Sep 2017 10:47:53 +0900
+Message-ID: <1504230476-1878-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170901014757epcas1p19de712f2cea2e48b3d42b878743dd9f8@epcas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f175.google.com ([209.85.161.175]:35486 "EHLO
-        mail-yw0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750880AbdHaTgk (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 31 Aug 2017 15:36:40 -0400
-Content-Disposition: inline
-In-Reply-To: <1504182434-8201-3-git-send-email-m.purski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maciej Purski <m.purski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, b.zolnierkie@samsung.com
 
-On Thu, Aug 31, 2017 at 02:27:14PM +0200, Maciej Purski wrote:
-> Add HDMI and Sil9234 MHL converter to Trats2 board.
-> Following in SoC devices have been enabled:
-> - HDMI (HDMI signal encoder),
-> - Mixer (video buffer scanout device),
-> - I2C_5 bus (used for HDMI DDC)
-> - I2C_8 bus (used for HDMI_PHY control).
-> 
-> Based on previous work by:
-> Tomasz Stanislawski <t.stanislaws@samsung.com>
-> 
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> ---
-> Changes in v2:
-> - fix commit message
-> - add regulators nodes to model actual physical connections
-> ---
->  arch/arm/boot/dts/exynos4412-trats2.dts | 111 ++++++++++++++++++++++++++++++++
->  1 file changed, 111 insertions(+)
-
-I think all of my previous comments were missed...
-
-Best regards,
-Krzysztof
+SGVsbG8gYWxsLAoKVGhlIGdzY2FsZXIgaGFzIGhhcmR3YXJlIHJvdGF0aW9uIGxpbWl0cy4gU28g
+dGhpcyBwYXRjaCBzZXQgc3VwcG9ydAp0aGUgcm90YXRlIGhhcmR3YXJlIGxpbWl0cyBvZiBnc2Mu
+CgpCZXN0IHJlZ2FyZHMsCkhvZWdldW4KCkhvZWdldW4gS3dvbiAoMyk6CiAgQVJNOiBkdHM6IGV4
+eW5vczogQWRkIHRoZSBoYXJkd2FyZSByb3RhdGlvbiBsaW1pdHMgZm9yIGdzYwogIGFybTY0OiBk
+dHM6IGV4eW5vczogQWRkIHRoZSBoYXJkd2FyZSByb3RhdGlvbiBsaW1pdHMgZm9yIGdzYwogIGRy
+bS9leHlub3MvZ3NjOiBBZGQgcm90YXRpb24gaGFyZHdhcmUgbGltaXRzIG9mIGdzY2FsZXIKCiBh
+cmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kgICAgICAgICAgfCAgOCArKysrCiBhcmNo
+L2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kgICAgICAgICAgfCAgNCArKwogYXJjaC9hcm02
+NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy5kdHNpIHwgIDYgKysrCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMgICAgfCA2MyArKysrKysrKysrKysrKysrKysrLS0t
+LS0tLS0tLS0KIGluY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oICAgICAgICAgICAgICB8ICAy
+ICsKIDUgZmlsZXMgY2hhbmdlZCwgNjAgaW5zZXJ0aW9ucygrKSwgMjMgZGVsZXRpb25zKC0pCgot
+LSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
