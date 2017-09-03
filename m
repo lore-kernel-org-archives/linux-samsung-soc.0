@@ -1,88 +1,66 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/3] ASoC: samsung: i2s: Use specific name for i2s dais
-Date: Sun, 3 Sep 2017 22:01:56 +0200
-Message-ID: <20170903200156.jn7iopphgtfcutr5@kozik-lap>
+Subject: Re: [PATCH 3/3] ASoC: samsung: Fix invalid argument when
+ devm_gpiod_get is called
+Date: Sun, 3 Sep 2017 22:07:08 +0200
+Message-ID: <20170903200708.u6w7rdef54qdxhci@kozik-lap>
 References: <20170828100102.17591-1-jcsing.lee@samsung.com>
- <CGME20170828100105epcas2p18b821aec5caf1d690c33c2b1426d1a17@epcas2p1.samsung.com>
- <20170828100102.17591-2-jcsing.lee@samsung.com>
+ <CGME20170828100105epcas2p3b528f17ba89532835e9b1735a0016215@epcas2p3.samsung.com>
+ <20170828100102.17591-4-jcsing.lee@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38297 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751615AbdICUCE (ORCPT
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:35304 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751678AbdICUHO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 3 Sep 2017 16:02:04 -0400
+        Sun, 3 Sep 2017 16:07:14 -0400
 Content-Disposition: inline
-In-Reply-To: <20170828100102.17591-2-jcsing.lee@samsung.com>
+In-Reply-To: <20170828100102.17591-4-jcsing.lee@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Jaechul Lee <jcsing.lee@samsung.com>
 Cc: Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, galaxyra@gmail.com, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Mon, Aug 28, 2017 at 07:01:00PM +0900, Jaechul Lee wrote:
-> Add specific dais name when components are registered. Component and dai
-> name will follow their parent dev name, if the name isn't described.  In
-> case of this driver, each dais will have same name like '11440000.i2s0' by
-> fmt_single_name function.
-> 
-> The problem having same name is that TM2 machine driver can't detect
-> capture devices correctly. Machine driver doesn't know which one is proper
-> to use for cpu dai. The driver just selects to use 'samsung-i2c-sec' that
-> doesn't have capture functionality because the component of
-> samsung-i2s-sec is located in the first of the component_list.
-> 
-> I add dai name like 'samsung-i2s', 'samsung-i2s-sec' for each dais. The
-> reason why adding dai id to 1 is that it doesn't allow to use particular
-> dai name in case of when I use 0 for dai id.
-> 
-> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-> ---
->  sound/soc/samsung/i2s.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index af3ba4d4ccc5..9cdd36b9711c 100644
-> --- a/sound/soc/samsung/i2s.c
-> +++ b/sound/soc/samsung/i2s.c
-> @@ -1076,6 +1076,8 @@ static const struct snd_soc_component_driver samsung_i2s_component = {
->  	.name		= "samsung-i2s",
->  };
->  
-> +#define SAMSUNG_I2S_DAI        "samsung-i2s"
-> +#define SAMSUNG_I2S_DAI_SEC    "samsung-i2s-sec"
+On Mon, Aug 28, 2017 at 07:01:02PM +0900, Jaechul Lee wrote:
+> devm_gpiod_get is called with GPIOF_OUT_INIT_LOW but the function doesn't
+> allow the parameters. Unluckily, GPIOF_OUT_INIT_LOW is same value as
+> GPIOD_IN so it works like input gpio.
 
-This should be in i2s.h so next patch would re-use the name, instead of
-duplicating it.
+In overall, makes sense however one thing troubles me:
+GPIOF_OUT_INIT_LOW = 0x0
+GPIOD_IN = BIT(0) = 0x1
+
+Are you sure they have the same value? Maybe you meant GPIOD_ASIS?
 
 Best regards,
 Krzysztof
 
->  #define SAMSUNG_I2S_RATES	SNDRV_PCM_RATE_8000_96000
+
+> 
+> Muted stream comes up when I try recording some sounds on TM2. mic-bias
+> gpiod state can't be changed because the gpiod is created with the invalid
+> parameter. The gpio should be set GPIOD_OUT_HIGH.
+> 
+> Fixes: 1bfbc260a5b4 ("ASoC: samsung: Add machine driver for Exynos5433 based TM2 board")
+> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+> ---
+>  sound/soc/samsung/tm2_wm5110.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
+> index f467ad06e827..76abe45ed537 100644
+> --- a/sound/soc/samsung/tm2_wm5110.c
+> +++ b/sound/soc/samsung/tm2_wm5110.c
+> @@ -439,8 +439,7 @@ static int tm2_probe(struct platform_device *pdev)
+>  	snd_soc_card_set_drvdata(card, priv);
+>  	card->dev = dev;
 >  
->  #define SAMSUNG_I2S_FMTS	(SNDRV_PCM_FMTBIT_S8 | \
-> @@ -1093,6 +1095,7 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
->  	i2s->pdev = pdev;
->  	i2s->pri_dai = NULL;
->  	i2s->sec_dai = NULL;
-> +	i2s->i2s_dai_drv.id = 1;
->  	i2s->i2s_dai_drv.symmetric_rates = 1;
->  	i2s->i2s_dai_drv.probe = samsung_i2s_dai_probe;
->  	i2s->i2s_dai_drv.remove = samsung_i2s_dai_remove;
-> @@ -1105,10 +1108,13 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
->  	i2s->i2s_dai_drv.playback.formats = SAMSUNG_I2S_FMTS;
->  
->  	if (!sec) {
-> +		i2s->i2s_dai_drv.name = SAMSUNG_I2S_DAI;
->  		i2s->i2s_dai_drv.capture.channels_min = 1;
->  		i2s->i2s_dai_drv.capture.channels_max = 2;
->  		i2s->i2s_dai_drv.capture.rates = SAMSUNG_I2S_RATES;
->  		i2s->i2s_dai_drv.capture.formats = SAMSUNG_I2S_FMTS;
-> +	} else {
-> +		i2s->i2s_dai_drv.name = SAMSUNG_I2S_DAI_SEC;
->  	}
->  	return i2s;
->  }
+> -	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias",
+> -						GPIOF_OUT_INIT_LOW);
+> +	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias", GPIOD_OUT_HIGH);
+>  	if (IS_ERR(priv->gpio_mic_bias)) {
+>  		dev_err(dev, "Failed to get mic bias gpio\n");
+>  		return PTR_ERR(priv->gpio_mic_bias);
 > -- 
 > 2.14.1
 > 
