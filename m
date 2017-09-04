@@ -1,206 +1,210 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH 3/3] drm/exynos/gsc: Add rotation hardware limits of
- gscaler
-Date: Mon, 04 Sep 2017 15:19:55 +0900
-Message-ID: <7e628ff8-82be-a295-90fa-8f547a541cb3@samsung.com>
-References: <1504230476-1878-1-git-send-email-hoegeun.kwon@samsung.com>
-        <CGME20170901014758epcas2p13ae73e7dcac72a1a28c9324164efbd6d@epcas2p1.samsung.com>
-        <1504230476-1878-4-git-send-email-hoegeun.kwon@samsung.com>
-        <10747c31-55fc-6464-eb00-99da6d66fca6@samsung.com>
+From: Vincent Guittot <vincent.guittot-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/4] arm: topology: remove cpu_efficiency
+Date: Mon, 4 Sep 2017 09:49:11 +0200
+Message-ID: <CAKfTPtBXkAyAc1aqqqEn6Yt14_Y7LFp3oySY-=G3ZTuG-DR_nA@mail.gmail.com>
+References: <20170830144120.9312-1-dietmar.eggemann@arm.com> <20170830144120.9312-2-dietmar.eggemann@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <10747c31-55fc-6464-eb00-99da6d66fca6@samsung.com>
-Content-language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.orgkrzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170830144120.9312-2-dietmar.eggemann-5wv7dgnIgG8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dietmar Eggemann <dietmar.eggemann-5wv7dgnIgG8@public.gmane.org>
+Cc: linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Juri Lelli <juri.lelli-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/01/2017 04:31 PM, Marek Szyprowski wrote:
-> Hi Hoegeun,
->
-> On 2017-09-01 03:47, Hoegeun Kwon wrote:
->> The gscaler has hardware rotation limits that need to be imported from
->> dts. Parse them and add them to the property list.
->>
->> The rotation hardware limits are related to the cropped source size.
->> When swap occurs, use rot_max size instead of crop_max size.
->>
->> Also the scaling limits are related to post size, use pos size to
->> check the limits.
->>
->> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
->> ---
->>   drivers/gpu/drm/exynos/exynos_drm_gsc.c | 63 
->> +++++++++++++++++++++------------
->>   include/uapi/drm/exynos_drm.h           |  2 ++
->>   2 files changed, 42 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c 
->> b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
->> index 0506b2b..dd9b057 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
->> @@ -1401,6 +1401,23 @@ static int gsc_ippdrv_check_property(struct 
->> device *dev,
->>       bool swap;
->>       int i;
->>   +    config = &property->config[EXYNOS_DRM_OPS_DST];
->> +
->> +    /* check for degree */
->> +    switch (config->degree) {
->> +    case EXYNOS_DRM_DEGREE_90:
->> +    case EXYNOS_DRM_DEGREE_270:
->> +        swap = true;
->> +        break;
->> +    case EXYNOS_DRM_DEGREE_0:
->> +    case EXYNOS_DRM_DEGREE_180:
->> +        swap = false;
->> +        break;
->> +    default:
->> +        DRM_ERROR("invalid degree.\n");
->> +        goto err_property;
->> +    }
->> +
->>       for_each_ipp_ops(i) {
->>           if ((i == EXYNOS_DRM_OPS_SRC) &&
->>               (property->cmd == IPP_CMD_WB))
->> @@ -1416,21 +1433,6 @@ static int gsc_ippdrv_check_property(struct 
->> device *dev,
->>               goto err_property;
->>           }
->>   -        /* check for degree */
->> -        switch (config->degree) {
->> -        case EXYNOS_DRM_DEGREE_90:
->> -        case EXYNOS_DRM_DEGREE_270:
->> -            swap = true;
->> -            break;
->> -        case EXYNOS_DRM_DEGREE_0:
->> -        case EXYNOS_DRM_DEGREE_180:
->> -            swap = false;
->> -            break;
->> -        default:
->> -            DRM_ERROR("invalid degree.\n");
->> -            goto err_property;
->> -        }
->> -
->>           /* check for buffer bound */
->>           if ((pos->x + pos->w > sz->hsize) ||
->>               (pos->y + pos->h > sz->vsize)) {
->> @@ -1438,21 +1440,27 @@ static int gsc_ippdrv_check_property(struct 
->> device *dev,
->>               goto err_property;
->>           }
->>   +        /*
->> +         * The rotation hardware limits are related to the cropped
->> +         * source size. So use rot_max size to check the limits when
->> +         * swap happens. And also the scaling limits are related to pos
->> +         * size, use pos size to check the limits.
->> +         */
->>           /* check for crop */
->>           if ((i == EXYNOS_DRM_OPS_SRC) && (pp->crop)) {
->>               if (swap) {
->>                   if ((pos->h < pp->crop_min.hsize) ||
->> -                    (sz->vsize > pp->crop_max.hsize) ||
->> +                    (pos->h > pp->rot_max.hsize) ||
->>                       (pos->w < pp->crop_min.vsize) ||
->> -                    (sz->hsize > pp->crop_max.vsize)) {
->> +                    (pos->w > pp->rot_max.vsize)) {
->>                       DRM_ERROR("out of crop size.\n");
->>                       goto err_property;
->>                   }
->>               } else {
->>                   if ((pos->w < pp->crop_min.hsize) ||
->> -                    (sz->hsize > pp->crop_max.hsize) ||
->> +                    (pos->w > pp->crop_max.hsize) ||
->>                       (pos->h < pp->crop_min.vsize) ||
->> -                    (sz->vsize > pp->crop_max.vsize)) {
->> +                    (pos->h > pp->crop_max.vsize)) {
->>                       DRM_ERROR("out of crop size.\n");
->>                       goto err_property;
->>                   }
->> @@ -1463,17 +1471,17 @@ static int gsc_ippdrv_check_property(struct 
->> device *dev,
->>           if ((i == EXYNOS_DRM_OPS_DST) && (pp->scale)) {
->>               if (swap) {
->>                   if ((pos->h < pp->scale_min.hsize) ||
->> -                    (sz->vsize > pp->scale_max.hsize) ||
->> +                    (pos->h > pp->scale_max.hsize) ||
->>                       (pos->w < pp->scale_min.vsize) ||
->> -                    (sz->hsize > pp->scale_max.vsize)) {
->> +                    (pos->w > pp->scale_max.vsize)) {
->>                       DRM_ERROR("out of scale size.\n");
->>                       goto err_property;
->>                   }
->>               } else {
->>                   if ((pos->w < pp->scale_min.hsize) ||
->> -                    (sz->hsize > pp->scale_max.hsize) ||
->> +                    (pos->w > pp->scale_max.hsize) ||
->>                       (pos->h < pp->scale_min.vsize) ||
->> -                    (sz->vsize > pp->scale_max.vsize)) {
->> +                    (pos->h > pp->scale_max.vsize)) {
->>                       DRM_ERROR("out of scale size.\n");
->>                       goto err_property;
->>                   }
->> @@ -1676,6 +1684,15 @@ static int gsc_probe(struct platform_device 
->> *pdev)
->>               dev_warn(dev, "failed to get system register.\n");
->>               ctx->sysreg = NULL;
->>           }
->> +
->> +        ret = of_property_read_u32(dev->of_node, "rot-max-hsize",
->> +                &ctx->ippdrv.prop_list.rot_max.hsize);
->> +        ret |= of_property_read_u32(dev->of_node, "rot-max-vsize",
->> +                &ctx->ippdrv.prop_list.rot_max.vsize);
->> +        if (ret) {
->> +            dev_err(dev, "rot-max property should be provided by 
->> device tree.\n");
->> +            return -EINVAL;
->> +        }
->>       }
->>         /* clock control */
->> diff --git a/include/uapi/drm/exynos_drm.h 
->> b/include/uapi/drm/exynos_drm.h
->> index cb3e9f9..d5d5518 100644
->> --- a/include/uapi/drm/exynos_drm.h
->> +++ b/include/uapi/drm/exynos_drm.h
->> @@ -192,6 +192,7 @@ enum drm_exynos_planer {
->>    * @crop_max: crop max resolution.
->>    * @scale_min: scale min resolution.
->>    * @scale_max: scale max resolution.
->> + * @rot_max: rotation max resolution.
->>    */
->>   struct drm_exynos_ipp_prop_list {
->>       __u32    version;
->> @@ -210,6 +211,7 @@ struct drm_exynos_ipp_prop_list {
->>       struct drm_exynos_sz    crop_max;
->>       struct drm_exynos_sz    scale_min;
->>       struct drm_exynos_sz    scale_max;
->> +    struct drm_exynos_sz    rot_max;
->>   };
->>     /**
->
-> IMO maximum supported picture size should be hardcoded into driver, there
-> is no need to add device tree properties for that. Please also check v4l2
-> driver for Exynos GSC.
->
-> Currently it uses only one compatible - "exynos5-gsc", but imho You 
-> should
-> simply replace it with "exynos5250-gsc" and "exynos5420-gsc", and add 
-> those
-> variants with proper maximum supported size (2047 and 2016 respectively).
->
-> Best regards
+Hi Dietmar,
 
-Hi Krzysztof and Marek,
+Removing cpu effificiency table looks good to me. Nevertheless, i have
+some comments below for this patch.
 
-Thanks Krzysztof and Marek reviews.
+On 30 August 2017 at 16:41, Dietmar Eggemann <dietmar.eggemann-5wv7dgnIgG8@public.gmane.org> wrote:
+> Remove the 'cpu_efficiency/clock-frequency dt property' based solution
+> to set cpu capacity which was only working for Cortex-A15/A7 arm
+> big.LITTLE systems.
+>
+> I.e. the 'capacity-dmips-mhz' based solution is now the only one. It is
+> shared between arm and arm64 and works for every big.LITTLE system no
+> matter which core types it consists of.
+>
+> Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+> Cc: Vincent Guittot <vincent.guittot-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Juri Lelli <juri.lelli-5wv7dgnIgG8@public.gmane.org>
+> Signed-off-by: Dietmar Eggemann <dietmar.eggemann-5wv7dgnIgG8@public.gmane.org>
+> ---
+>  arch/arm/kernel/topology.c | 113 ++-------------------------------------------
+>  1 file changed, 3 insertions(+), 110 deletions(-)
+>
+> diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
+> index bf949a763dbe..04ccfdd94213 100644
+> --- a/arch/arm/kernel/topology.c
+> +++ b/arch/arm/kernel/topology.c
+> @@ -47,52 +47,10 @@
+>   */
+>
+>  #ifdef CONFIG_OF
+> -struct cpu_efficiency {
+> -       const char *compatible;
+> -       unsigned long efficiency;
+> -};
+> -
+> -/*
+> - * Table of relative efficiency of each processors
+> - * The efficiency value must fit in 20bit and the final
+> - * cpu_scale value must be in the range
+> - *   0 < cpu_scale < 3*SCHED_CAPACITY_SCALE/2
+> - * in order to return at most 1 when DIV_ROUND_CLOSEST
+> - * is used to compute the capacity of a CPU.
+> - * Processors that are not defined in the table,
+> - * use the default SCHED_CAPACITY_SCALE value for cpu_scale.
+> - */
+> -static const struct cpu_efficiency table_efficiency[] = {
+> -       {"arm,cortex-a15", 3891},
+> -       {"arm,cortex-a7",  2048},
+> -       {NULL, },
+> -};
+> -
+> -static unsigned long *__cpu_capacity;
+> -#define cpu_capacity(cpu)      __cpu_capacity[cpu]
+> -
+> -static unsigned long middle_capacity = 1;
+> -static bool cap_from_dt = true;
+> -
+> -/*
+> - * Iterate all CPUs' descriptor in DT and compute the efficiency
+> - * (as per table_efficiency). Also calculate a middle efficiency
+> - * as close as possible to  (max{eff_i} - min{eff_i}) / 2
+> - * This is later used to scale the cpu_capacity field such that an
+> - * 'average' CPU is of middle capacity. Also see the comments near
+> - * table_efficiency[] and update_cpu_capacity().
+> - */
+>  static void __init parse_dt_topology(void)
+>  {
+> -       const struct cpu_efficiency *cpu_eff;
+> -       struct device_node *cn = NULL;
+> -       unsigned long min_capacity = ULONG_MAX;
+> -       unsigned long max_capacity = 0;
+> -       unsigned long capacity = 0;
+> -       int cpu = 0;
+> -
+> -       __cpu_capacity = kcalloc(nr_cpu_ids, sizeof(*__cpu_capacity),
+> -                                GFP_NOWAIT);
+> +       struct device_node *cn;
+> +       int cpu;
+>
+>         cn = of_find_node_by_path("/cpus");
+>         if (!cn) {
+> @@ -101,9 +59,6 @@ static void __init parse_dt_topology(void)
+>         }
+>
+>         for_each_possible_cpu(cpu) {
+> -               const u32 *rate;
+> -               int len;
+> -
+>                 /* too early to use cpu->of_node */
+>                 cn = of_get_cpu_node(cpu, NULL);
+>                 if (!cn) {
+> @@ -115,73 +70,13 @@ static void __init parse_dt_topology(void)
+>                         of_node_put(cn);
+>                         continue;
 
-As Marek says, rot_max size will be hardcoded into driver,
-then it will not break the ABI. And also,
-I will check the v4l2 driver for Exynos GSC.
+AFAICT, this continue is now useless as it was there to skipe the cpu
+table efficiency method
 
-Best regards,
-Hoegeun
+>                 }
+> -
+> -               cap_from_dt = false;
+> -
+> -               for (cpu_eff = table_efficiency; cpu_eff->compatible; cpu_eff++)
+> -                       if (of_device_is_compatible(cn, cpu_eff->compatible))
+> -                               break;
+> -
+> -               if (cpu_eff->compatible == NULL)
+> -                       continue;
+> -
+> -               rate = of_get_property(cn, "clock-frequency", &len);
+> -               if (!rate || len != 4) {
+> -                       pr_err("%s missing clock-frequency property\n",
+> -                               cn->full_name);
+> -                       continue;
+> -               }
+> -
+> -               capacity = ((be32_to_cpup(rate)) >> 20) * cpu_eff->efficiency;
+> -
+> -               /* Save min capacity of the system */
+> -               if (capacity < min_capacity)
+> -                       min_capacity = capacity;
+> -
+> -               /* Save max capacity of the system */
+> -               if (capacity > max_capacity)
+> -                       max_capacity = capacity;
+> -
+> -               cpu_capacity(cpu) = capacity;
+>         }
+>
+> -       /* If min and max capacities are equals, we bypass the update of the
+> -        * cpu_scale because all CPUs have the same capacity. Otherwise, we
+> -        * compute a middle_capacity factor that will ensure that the capacity
+> -        * of an 'average' CPU of the system will be as close as possible to
+> -        * SCHED_CAPACITY_SCALE, which is the default value, but with the
+> -        * constraint explained near table_efficiency[].
+> -        */
+> -       if (4*max_capacity < (3*(max_capacity + min_capacity)))
+> -               middle_capacity = (min_capacity + max_capacity)
+> -                               >> (SCHED_CAPACITY_SHIFT+1);
+> -       else
+> -               middle_capacity = ((max_capacity / 3)
+> -                               >> (SCHED_CAPACITY_SHIFT-1)) + 1;
+> -
+> -       if (cap_from_dt)
+> -               topology_normalize_cpu_scale();
+
+Why have you moved the call to topology_normalize_cpu_scale() from
+parse_dt_topology() to update_cpu_capacity() ?
+
+You should keep it in parse_dt_topology() as itis part of the dt
+parsing sequence
+
+> -}
+> -
+> -/*
+> - * Look for a customed capacity of a CPU in the cpu_capacity table during the
+> - * boot. The update of all CPUs is in O(n^2) for heteregeneous system but the
+> - * function returns directly for SMP system.
+> - */
+> -static void update_cpu_capacity(unsigned int cpu)
+> -{
+> -       if (!cpu_capacity(cpu) || cap_from_dt)
+> -               return;
+> -
+> -       topology_set_cpu_scale(cpu, cpu_capacity(cpu) / middle_capacity);
+> -
+> -       pr_info("CPU%u: update cpu_capacity %lu\n",
+> -               cpu, topology_get_cpu_scale(NULL, cpu));
+> +       topology_normalize_cpu_scale();
+>  }
+
+You can probably just removed update_cpu_capacity()
+
+>
+>  #else
+>  static inline void parse_dt_topology(void) {}
+> -static inline void update_cpu_capacity(unsigned int cpuid) {}
+>  #endif
+>
+>   /*
+> @@ -277,8 +172,6 @@ void store_cpu_topology(unsigned int cpuid)
+>
+>         update_siblings_masks(cpuid);
+>
+> -       update_cpu_capacity(cpuid);
+> -
+>         pr_info("CPU%u: thread %d, cpu %d, socket %d, mpidr %x\n",
+>                 cpuid, cpu_topology[cpuid].thread_id,
+>                 cpu_topology[cpuid].core_id,
+> --
+> 2.11.0
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
