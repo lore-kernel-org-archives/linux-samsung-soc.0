@@ -1,66 +1,206 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/3] ASoC: samsung: Fix invalid argument when
- devm_gpiod_get is called
-Date: Sun, 3 Sep 2017 22:07:08 +0200
-Message-ID: <20170903200708.u6w7rdef54qdxhci@kozik-lap>
-References: <20170828100102.17591-1-jcsing.lee@samsung.com>
- <CGME20170828100105epcas2p3b528f17ba89532835e9b1735a0016215@epcas2p3.samsung.com>
- <20170828100102.17591-4-jcsing.lee@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH 3/3] drm/exynos/gsc: Add rotation hardware limits of
+ gscaler
+Date: Mon, 04 Sep 2017 15:19:55 +0900
+Message-ID: <7e628ff8-82be-a295-90fa-8f547a541cb3@samsung.com>
+References: <1504230476-1878-1-git-send-email-hoegeun.kwon@samsung.com>
+        <CGME20170901014758epcas2p13ae73e7dcac72a1a28c9324164efbd6d@epcas2p1.samsung.com>
+        <1504230476-1878-4-git-send-email-hoegeun.kwon@samsung.com>
+        <10747c31-55fc-6464-eb00-99da6d66fca6@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:35304 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751678AbdICUHO (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 3 Sep 2017 16:07:14 -0400
-Content-Disposition: inline
-In-Reply-To: <20170828100102.17591-4-jcsing.lee@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <10747c31-55fc-6464-eb00-99da6d66fca6@samsung.com>
+Content-language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.orgkrzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaechul Lee <jcsing.lee@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, galaxyra@gmail.com, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Mon, Aug 28, 2017 at 07:01:02PM +0900, Jaechul Lee wrote:
-> devm_gpiod_get is called with GPIOF_OUT_INIT_LOW but the function doesn't
-> allow the parameters. Unluckily, GPIOF_OUT_INIT_LOW is same value as
-> GPIOD_IN so it works like input gpio.
+On 09/01/2017 04:31 PM, Marek Szyprowski wrote:
+> Hi Hoegeun,
+>
+> On 2017-09-01 03:47, Hoegeun Kwon wrote:
+>> The gscaler has hardware rotation limits that need to be imported from
+>> dts. Parse them and add them to the property list.
+>>
+>> The rotation hardware limits are related to the cropped source size.
+>> When swap occurs, use rot_max size instead of crop_max size.
+>>
+>> Also the scaling limits are related to post size, use pos size to
+>> check the limits.
+>>
+>> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+>> ---
+>>   drivers/gpu/drm/exynos/exynos_drm_gsc.c | 63 
+>> +++++++++++++++++++++------------
+>>   include/uapi/drm/exynos_drm.h           |  2 ++
+>>   2 files changed, 42 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c 
+>> b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+>> index 0506b2b..dd9b057 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+>> @@ -1401,6 +1401,23 @@ static int gsc_ippdrv_check_property(struct 
+>> device *dev,
+>>       bool swap;
+>>       int i;
+>>   +    config = &property->config[EXYNOS_DRM_OPS_DST];
+>> +
+>> +    /* check for degree */
+>> +    switch (config->degree) {
+>> +    case EXYNOS_DRM_DEGREE_90:
+>> +    case EXYNOS_DRM_DEGREE_270:
+>> +        swap = true;
+>> +        break;
+>> +    case EXYNOS_DRM_DEGREE_0:
+>> +    case EXYNOS_DRM_DEGREE_180:
+>> +        swap = false;
+>> +        break;
+>> +    default:
+>> +        DRM_ERROR("invalid degree.\n");
+>> +        goto err_property;
+>> +    }
+>> +
+>>       for_each_ipp_ops(i) {
+>>           if ((i == EXYNOS_DRM_OPS_SRC) &&
+>>               (property->cmd == IPP_CMD_WB))
+>> @@ -1416,21 +1433,6 @@ static int gsc_ippdrv_check_property(struct 
+>> device *dev,
+>>               goto err_property;
+>>           }
+>>   -        /* check for degree */
+>> -        switch (config->degree) {
+>> -        case EXYNOS_DRM_DEGREE_90:
+>> -        case EXYNOS_DRM_DEGREE_270:
+>> -            swap = true;
+>> -            break;
+>> -        case EXYNOS_DRM_DEGREE_0:
+>> -        case EXYNOS_DRM_DEGREE_180:
+>> -            swap = false;
+>> -            break;
+>> -        default:
+>> -            DRM_ERROR("invalid degree.\n");
+>> -            goto err_property;
+>> -        }
+>> -
+>>           /* check for buffer bound */
+>>           if ((pos->x + pos->w > sz->hsize) ||
+>>               (pos->y + pos->h > sz->vsize)) {
+>> @@ -1438,21 +1440,27 @@ static int gsc_ippdrv_check_property(struct 
+>> device *dev,
+>>               goto err_property;
+>>           }
+>>   +        /*
+>> +         * The rotation hardware limits are related to the cropped
+>> +         * source size. So use rot_max size to check the limits when
+>> +         * swap happens. And also the scaling limits are related to pos
+>> +         * size, use pos size to check the limits.
+>> +         */
+>>           /* check for crop */
+>>           if ((i == EXYNOS_DRM_OPS_SRC) && (pp->crop)) {
+>>               if (swap) {
+>>                   if ((pos->h < pp->crop_min.hsize) ||
+>> -                    (sz->vsize > pp->crop_max.hsize) ||
+>> +                    (pos->h > pp->rot_max.hsize) ||
+>>                       (pos->w < pp->crop_min.vsize) ||
+>> -                    (sz->hsize > pp->crop_max.vsize)) {
+>> +                    (pos->w > pp->rot_max.vsize)) {
+>>                       DRM_ERROR("out of crop size.\n");
+>>                       goto err_property;
+>>                   }
+>>               } else {
+>>                   if ((pos->w < pp->crop_min.hsize) ||
+>> -                    (sz->hsize > pp->crop_max.hsize) ||
+>> +                    (pos->w > pp->crop_max.hsize) ||
+>>                       (pos->h < pp->crop_min.vsize) ||
+>> -                    (sz->vsize > pp->crop_max.vsize)) {
+>> +                    (pos->h > pp->crop_max.vsize)) {
+>>                       DRM_ERROR("out of crop size.\n");
+>>                       goto err_property;
+>>                   }
+>> @@ -1463,17 +1471,17 @@ static int gsc_ippdrv_check_property(struct 
+>> device *dev,
+>>           if ((i == EXYNOS_DRM_OPS_DST) && (pp->scale)) {
+>>               if (swap) {
+>>                   if ((pos->h < pp->scale_min.hsize) ||
+>> -                    (sz->vsize > pp->scale_max.hsize) ||
+>> +                    (pos->h > pp->scale_max.hsize) ||
+>>                       (pos->w < pp->scale_min.vsize) ||
+>> -                    (sz->hsize > pp->scale_max.vsize)) {
+>> +                    (pos->w > pp->scale_max.vsize)) {
+>>                       DRM_ERROR("out of scale size.\n");
+>>                       goto err_property;
+>>                   }
+>>               } else {
+>>                   if ((pos->w < pp->scale_min.hsize) ||
+>> -                    (sz->hsize > pp->scale_max.hsize) ||
+>> +                    (pos->w > pp->scale_max.hsize) ||
+>>                       (pos->h < pp->scale_min.vsize) ||
+>> -                    (sz->vsize > pp->scale_max.vsize)) {
+>> +                    (pos->h > pp->scale_max.vsize)) {
+>>                       DRM_ERROR("out of scale size.\n");
+>>                       goto err_property;
+>>                   }
+>> @@ -1676,6 +1684,15 @@ static int gsc_probe(struct platform_device 
+>> *pdev)
+>>               dev_warn(dev, "failed to get system register.\n");
+>>               ctx->sysreg = NULL;
+>>           }
+>> +
+>> +        ret = of_property_read_u32(dev->of_node, "rot-max-hsize",
+>> +                &ctx->ippdrv.prop_list.rot_max.hsize);
+>> +        ret |= of_property_read_u32(dev->of_node, "rot-max-vsize",
+>> +                &ctx->ippdrv.prop_list.rot_max.vsize);
+>> +        if (ret) {
+>> +            dev_err(dev, "rot-max property should be provided by 
+>> device tree.\n");
+>> +            return -EINVAL;
+>> +        }
+>>       }
+>>         /* clock control */
+>> diff --git a/include/uapi/drm/exynos_drm.h 
+>> b/include/uapi/drm/exynos_drm.h
+>> index cb3e9f9..d5d5518 100644
+>> --- a/include/uapi/drm/exynos_drm.h
+>> +++ b/include/uapi/drm/exynos_drm.h
+>> @@ -192,6 +192,7 @@ enum drm_exynos_planer {
+>>    * @crop_max: crop max resolution.
+>>    * @scale_min: scale min resolution.
+>>    * @scale_max: scale max resolution.
+>> + * @rot_max: rotation max resolution.
+>>    */
+>>   struct drm_exynos_ipp_prop_list {
+>>       __u32    version;
+>> @@ -210,6 +211,7 @@ struct drm_exynos_ipp_prop_list {
+>>       struct drm_exynos_sz    crop_max;
+>>       struct drm_exynos_sz    scale_min;
+>>       struct drm_exynos_sz    scale_max;
+>> +    struct drm_exynos_sz    rot_max;
+>>   };
+>>     /**
+>
+> IMO maximum supported picture size should be hardcoded into driver, there
+> is no need to add device tree properties for that. Please also check v4l2
+> driver for Exynos GSC.
+>
+> Currently it uses only one compatible - "exynos5-gsc", but imho You 
+> should
+> simply replace it with "exynos5250-gsc" and "exynos5420-gsc", and add 
+> those
+> variants with proper maximum supported size (2047 and 2016 respectively).
+>
+> Best regards
 
-In overall, makes sense however one thing troubles me:
-GPIOF_OUT_INIT_LOW = 0x0
-GPIOD_IN = BIT(0) = 0x1
+Hi Krzysztof and Marek,
 
-Are you sure they have the same value? Maybe you meant GPIOD_ASIS?
+Thanks Krzysztof and Marek reviews.
+
+As Marek says, rot_max size will be hardcoded into driver,
+then it will not break the ABI. And also,
+I will check the v4l2 driver for Exynos GSC.
 
 Best regards,
-Krzysztof
-
-
-> 
-> Muted stream comes up when I try recording some sounds on TM2. mic-bias
-> gpiod state can't be changed because the gpiod is created with the invalid
-> parameter. The gpio should be set GPIOD_OUT_HIGH.
-> 
-> Fixes: 1bfbc260a5b4 ("ASoC: samsung: Add machine driver for Exynos5433 based TM2 board")
-> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-> ---
->  sound/soc/samsung/tm2_wm5110.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
-> index f467ad06e827..76abe45ed537 100644
-> --- a/sound/soc/samsung/tm2_wm5110.c
-> +++ b/sound/soc/samsung/tm2_wm5110.c
-> @@ -439,8 +439,7 @@ static int tm2_probe(struct platform_device *pdev)
->  	snd_soc_card_set_drvdata(card, priv);
->  	card->dev = dev;
->  
-> -	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias",
-> -						GPIOF_OUT_INIT_LOW);
-> +	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias", GPIOD_OUT_HIGH);
->  	if (IS_ERR(priv->gpio_mic_bias)) {
->  		dev_err(dev, "Failed to get mic bias gpio\n");
->  		return PTR_ERR(priv->gpio_mic_bias);
-> -- 
-> 2.14.1
-> 
+Hoegeun
