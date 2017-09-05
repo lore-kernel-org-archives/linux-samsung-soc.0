@@ -1,104 +1,62 @@
 From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v3 2/2] ARM: dts: exynos: Add HDMI and Sil9234 to Trats2 board
-Date: Tue, 05 Sep 2017 16:01:39 +0200
-Message-ID: <1504620099-20024-3-git-send-email-m.purski@samsung.com>
-References: <1504620099-20024-1-git-send-email-m.purski@samsung.com>
- <CGME20170905140214eucas1p114bf42e262c8b54123d460c9f6aff924@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1504620099-20024-1-git-send-email-m.purski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: mark.rutland@arm.com, b.zolnierkie@samsung.com, krzk@kernel.org, Maciej Purski <m.purski@samsung.com>, robh+dt@kernel.org, Laurent.pinchart@ideasonboard.com, m.szyprowski@samsung.com
+Subject: [PATCH v3 0/2] add Silicon Image SiI9234 driver
+Date: Tue, 05 Sep 2017 16:01:37 +0200
+Message-ID: <1504620099-20024-1-git-send-email-m.purski@samsung.com>
+References: <CGME20170905140205eucas1p270ecd1251d41b9d6b4eed33d1d3d0255@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:43568 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751988AbdIEOCI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 5 Sep 2017 10:02:08 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, krzk@kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Maciej Purski <m.purski@samsung.com>
 
-QWRkIEhETUkgYW5kIFNpbDkyMzQgTUhMIGNvbnZlcnRlciB0byBUcmF0czIgYm9hcmQuCkZvbGxv
-d2luZyBpbiBTb0MgZGV2aWNlcyBoYXZlIGJlZW4gZW5hYmxlZDoKLSBIRE1JIChIRE1JIHNpZ25h
-bCBlbmNvZGVyKSwKLSBNaXhlciAodmlkZW8gYnVmZmVyIHNjYW5vdXQgZGV2aWNlKSwKLSBJMkNf
-NSBidXMgKHVzZWQgZm9yIEhETUkgRERDKQotIEkyQ184IGJ1cyAodXNlZCBmb3IgSERNSV9QSFkg
-Y29udHJvbCkuCgpCYXNlZCBvbiBwcmV2aW91cyB3b3JrIGJ5OgpUb21hc3ogU3RhbmlzbGF3c2tp
-IDx0LnN0YW5pc2xhd3NAc2Ftc3VuZy5jb20+CgpTaWduZWQtb2ZmLWJ5OiBNYWNpZWogUHVyc2tp
-IDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KLS0tCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M0NDEy
-LXRyYXRzMi5kdHMgfCAxMTIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIDEgZmls
-ZSBjaGFuZ2VkLCAxMTIgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczQ0MTItdHJhdHMyLmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTIt
-dHJhdHMyLmR0cwppbmRleCAzNWU5Yjk0Li43NDJlMDJhIDEwMDY0NAotLS0gYS9hcmNoL2FybS9i
-b290L2R0cy9leHlub3M0NDEyLXRyYXRzMi5kdHMKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNDQxMi10cmF0czIuZHRzCkBAIC0xOCw2ICsxOCw3IEBACiAjaW5jbHVkZSA8ZHQtYmluZGlu
-Z3MvZ3Bpby9ncGlvLmg+CiAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvaW50ZXJydXB0LWNvbnRyb2xs
-ZXIvaXJxLmg+CiAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvY2xvY2svbWF4aW0sbWF4Nzc2ODYuaD4K
-KyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9waW5jdHJsL3NhbXN1bmcuaD4KIAogLyB7CiAJbW9kZWwg
-PSAiU2Ftc3VuZyBUcmF0cyAyIGJhc2VkIG9uIEV4eW5vczQ0MTIiOwpAQCAtOTcsNiArOTgsMzQg
-QEAKIAkJCWdwaW8gPSA8JmdwajAgNSBHUElPX0FDVElWRV9ISUdIPjsKIAkJCWVuYWJsZS1hY3Rp
-dmUtaGlnaDsKIAkJfTsKKworCQl2c2lsMTI6IHZvbHRhZ2UtcmVndWxhdG9yLTYgeworCQkJY29t
-cGF0aWJsZSA9ICJyZWd1bGF0b3ItZml4ZWQiOworCQkJcmVndWxhdG9yLW5hbWUgPSAiVlNJTF8x
-LjJWIjsKKwkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDEyMDAwMDA+OworCQkJcmVndWxh
-dG9yLW1heC1taWNyb3ZvbHQgPSA8MTIwMDAwMD47CisJCQlncGlvID0gPCZncGwwIDQgR1BJT19B
-Q1RJVkVfSElHSD47CisJCQllbmFibGUtYWN0aXZlLWhpZ2g7CisJCQl2aW4tc3VwcGx5ID0gPCZi
-dWNrN19yZWc+OworCQl9OworCisJCXZjYzMzbWhsOiB2b2x0YWdlLXJlZ3VsYXRvci03IHsKKwkJ
-CWNvbXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIjsKKwkJCXJlZ3VsYXRvci1uYW1lID0gIlZD
-Q18zLjNfTUhMIjsKKwkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDMzMDAwMDA+OworCQkJ
-cmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MzMwMDAwMD47CisJCQlncGlvID0gPCZncGwwIDQg
-R1BJT19BQ1RJVkVfSElHSD47CisJCQllbmFibGUtYWN0aXZlLWhpZ2g7CisJCX07CisKKwkJdmNj
-MThtaGw6IHZvbHRhZ2UtcmVndWxhdG9yLTggeworCQkJY29tcGF0aWJsZSA9ICJyZWd1bGF0b3It
-Zml4ZWQiOworCQkJcmVndWxhdG9yLW5hbWUgPSAiVkNDXzEuOF9NSEwiOworCQkJcmVndWxhdG9y
-LW1pbi1taWNyb3ZvbHQgPSA8MTgwMDAwMD47CisJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9
-IDwxODAwMDAwPjsKKwkJCWdwaW8gPSA8JmdwbDAgNCBHUElPX0FDVElWRV9ISUdIPjsKKwkJCWVu
-YWJsZS1hY3RpdmUtaGlnaDsKKwkJfTsKIAl9OwogCiAJZ3Bpby1rZXlzIHsKQEAgLTIyOSw2ICsy
-NTgsMzYgQEAKIAkJfTsKIAl9OwogCisJaTJjLW1obCB7CisJCWNvbXBhdGlibGUgPSAiaTJjLWdw
-aW8iOworCQlncGlvcyA9IDwmZ3BmMCA0IEdQSU9fQUNUSVZFX0hJR0ggJmdwZjAgNiBHUElPX0FD
-VElWRV9ISUdIPjsKKwkJaTJjLWdwaW8sZGVsYXktdXMgPSA8MTAwPjsKKwkJI2FkZHJlc3MtY2Vs
-bHMgPSA8MT47CisJCSNzaXplLWNlbGxzID0gPDA+OworCisJCXBpbmN0cmwtMCA9IDwmaTJjX21o
-bF9idXM+OworCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOworCQlzdGF0dXMgPSAib2theSI7
-CisKKwkJc2lpOTIzNDogaGRtaS1icmlkZ2VAMzkgeworCQkJY29tcGF0aWJsZSA9ICJzaWwsc2lp
-OTIzNCI7CisJCQlhdmNjMzMtc3VwcGx5ID0gPCZ2Y2MzM21obD47CisJCQlpb3ZjYzE4LXN1cHBs
-eSA9IDwmdmNjMThtaGw+OworCQkJYXZjYzEyLXN1cHBseSA9IDwmdnNpbDEyPjsKKwkJCWN2Y2Mx
-Mi1zdXBwbHkgPSA8JnZzaWwxMj47CisJCQlyZXNldC1ncGlvcyA9IDwmZ3BmMyA0IEdQSU9fQUNU
-SVZFX0xPVz47CisJCQlpbnRlcnJ1cHQtcGFyZW50ID0gPCZncGYzPjsKKwkJCWludGVycnVwdHMg
-PSA8NSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKKwkJCXJlZyA9IDwweDM5PjsKKworCQkJcG9ydCB7
-CisJCQkJbWhsX3RvX2hkbWk6IGVuZHBvaW50IHsKKwkJCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZo
-ZG1pX3RvX21obD47CisJCQkJfTsKKwkJCX07CisJCX07CisJfTsKKwogCWNhbWVyYTogY2FtZXJh
-IHsKIAkJcGluY3RybC0wID0gPCZjYW1fcG9ydF9hX2Nsa19hY3RpdmUgJmNhbV9wb3J0X2JfY2xr
-X2FjdGl2ZT47CiAJCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CkBAIC01MjIsNiArNTgxLDI5
-IEBACiAJc3RhdHVzID0gIm9rYXkiOwogfTsKIAorJmhkbWkgeworCWhwZC1ncGlvcyA9IDwmZ3B4
-MyA3IEdQSU9fQUNUSVZFX0hJR0g+OworCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CisJcGlu
-Y3RybC0wID0gPCZoZG1pX2hwZD47CisJdmRkLXN1cHBseSA9IDwmbGRvM19yZWc+OworCXZkZF9v
-c2Mtc3VwcGx5ID0gPCZsZG80X3JlZz47CisJdmRkX3BsbC1zdXBwbHkgPSA8JmxkbzNfcmVnPjsK
-KwlkZGMgPSA8JmkyY181PjsKKwlzdGF0dXMgPSAib2theSI7CisKKwlwb3J0cyB7CisJCSNhZGRy
-ZXNzLWNlbGxzID0gPDE+OworCQkjc2l6ZS1jZWxscyA9IDwwPjsKKworCQlwb3J0QDEgeworCQkJ
-cmVnID0gPDE+OworCQkJaGRtaV90b19taGw6IGVuZHBvaW50IHsKKwkJCQlyZW1vdGUtZW5kcG9p
-bnQgPSA8Jm1obF90b19oZG1pPjsKKwkJCX07CisJCX07CisJfTsKK307CisKICZoc290ZyB7CiAJ
-dnVzYl9kLXN1cHBseSA9IDwmbGRvMTVfcmVnPjsKIAl2dXNiX2Etc3VwcGx5ID0gPCZsZG8xMl9y
-ZWc+OwpAQCAtNjAwLDYgKzY4MiwxMSBAQAogCX07CiB9OwogCisKKyZpMmNfNSB7CisJc3RhdHVz
-ID0gIm9rYXkiOworfTsKKwogJmkyY183IHsKIAlzYW1zdW5nLGkyYy1zZGEtZGVsYXkgPSA8MTAw
-PjsKIAlzYW1zdW5nLGkyYy1zbGF2ZS1hZGRyID0gPDB4MTA+OwpAQCAtODk0LDEyICs5ODEsMjAg
-QEAKIAl9OwogfTsKIAorJmkyY184IHsKKwlzdGF0dXMgPSAib2theSI7Cit9OworCiAmaTJzMCB7
-CiAJcGluY3RybC0wID0gPCZpMnMwX2J1cz47CiAJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsK
-IAlzdGF0dXMgPSAib2theSI7CiB9OwogCismbWl4ZXIgeworCXN0YXR1cyA9ICJva2F5IjsKK307
-CisKICZtc2hjXzAgewogCW51bS1zbG90cyA9IDwxPjsKIAlicm9rZW4tY2Q7CkBAIC05MjYsNiAr
-MTAyMSwxOCBAQAogCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CiAJcGluY3RybC0wID0gPCZz
-bGVlcDA+OwogCisJbWhsX2ludDogbWhsLWludCB7CisJCXNhbXN1bmcscGlucyA9ICJncGYzLTUi
-OworCQlzYW1zdW5nLHBpbi1wdWQgPSA8RVhZTk9TX1BJTl9QVUxMX05PTkU+OworCX07CisKKwlp
-MmNfbWhsX2J1czogaTJjLW1obC1idXMgeworCQlzYW1zdW5nLHBpbnMgPSAiZ3BmMC00IiwgImdw
-ZjAtNiI7CisJCXNhbXN1bmcscGluLWZ1bmN0aW9uID0gPEVYWU5PU19QSU5fRlVOQ18yPjsKKwkJ
-c2Ftc3VuZyxwaW4tcHVkID0gPEVYWU5PU19QSU5fUFVMTF9ET1dOPjsKKwkJc2Ftc3VuZyxwaW4t
-ZHJ2ID0gPEVYWU5PUzRfUElOX0RSVl9MVjE+OworCX07CisKIAlzbGVlcDA6IHNsZWVwLXN0YXRl
-cyB7CiAJCVBJTl9TTFAoZ3BhMC0wLCBJTlBVVCwgTk9ORSk7CiAJCVBJTl9TTFAoZ3BhMC0xLCBP
-VVQwLCBOT05FKTsKQEAgLTEwMjksNiArMTEzNiwxMSBAQAogCXBpbmN0cmwtbmFtZXMgPSAiZGVm
-YXVsdCI7CiAJcGluY3RybC0wID0gPCZzbGVlcDE+OwogCisJaGRtaV9ocGQ6IGhkbWktaHBkIHsK
-KwkJc2Ftc3VuZyxwaW5zID0gImdweDMtNyI7CisJCXNhbXN1bmcscGluLXB1ZCA9IDxFWFlOT1Nf
-UElOX1BVTExfRE9XTj47CisJfTsKKwogCXNsZWVwMTogc2xlZXAtc3RhdGVzIHsKIAkJUElOX1NM
-UChncGswLTAsIFBSRVYsIE5PTkUpOwogCQlQSU5fU0xQKGdwazAtMSwgUFJFViwgTk9ORSk7Ci0t
-IAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi everyone,
+
+These patches are a continuation of work by Tomasz Stanislawski on sii9324 driver, which was described
+in th following letter:
+https://lists.freedesktop.org/archives/dri-devel/2014-April/057481.html
+
+The main differences from the previous code are:
+* driver moved to /gpu/drm/bridge/ and integrated with drm/bridge subsystem
+* added filtering-out unsupported display modes
+* changed gpio interface to up-to-date
+* changed interrupt handling
+* improve code style
+* add hdmi and sii9324 to exynos4412-trats2 device tree
+
+All comments are welcome.
+
+Regards,
+Maciej Purski
+
+Changes in v3:
+- change sii9234 device tree node name
+- use defines from dt-bindings/pinctrl/samsung.h
+
+Changes in v2:
+- regulators used in driver now model all physical regulators
+  used by the device
+- substitute some of the magic values with macros
+- improve coding style
+- improve error handling in sii9234_probe()
+- fix commit message
+
+Maciej Purski (2):
+  drm/bridge: add Silicon Image SiI9234 driver
+  ARM: dts: exynos: Add HDMI and Sil9234 to Trats2 board
+
+ .../devicetree/bindings/display/bridge/sii9234.txt |  34 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            | 111 +++
+ drivers/gpu/drm/bridge/Kconfig                     |   8 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/sii9234.c                   | 993 +++++++++++++++++++++
+ 5 files changed, 1147 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/sii9234.txt
+ create mode 100644 drivers/gpu/drm/bridge/sii9234.c
+
+-- 
+2.7.4
