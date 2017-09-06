@@ -1,146 +1,62 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 08/10] drm/exynos/mixer: pass actual mode on MIXER to
- encoder
-Date: Wed, 06 Sep 2017 12:36:58 +0200
-Message-ID: <1504694220-15818-9-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 03/10] drm/exynos/mixer: move resolution configuration to
+ single function
+Date: Wed, 06 Sep 2017 12:36:53 +0200
+Message-ID: <1504694220-15818-4-git-send-email-a.hajda@samsung.com>
 References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170906103731eucas1p2a9e4a72215d719fcb0b98096de7bd86f@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51609 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753084AbdIFKhe (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 06:37:34 -0400
+ <CGME20170906103729eucas1p1ea88d3ce8fc8d7c07f71fcdc12a5d4d0@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-MIXER in SoCs prior to Exynos5420 supports only 4 video modes:
-720x480, 720x576, 1280x720, 1920x1080. Support for other modes can be
-enabled by manipulating timings of HDMI. To allow it MIXER must pass
-actual video mode to HDMI, the proper way to do it is to modify
-adjusted_mode property in crtc::mode_fixup callback. Adding such callback
-allows also to simplify mixer_cfg_scan code - choosing mode is performed
-already in crtc::mode_fixup. mode_fixup is also better place to check
-interlace flag.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 70 +++++++++++++++++++++++++----------
- 1 file changed, 50 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index f6ea9d9..5aae82b 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -115,6 +115,7 @@ struct mixer_context {
- 	struct clk		*sclk_hdmi;
- 	struct clk		*mout_mixer;
- 	enum mixer_version_id	mxr_ver;
-+	int			scan_value;
- };
- 
- struct mixer_drv_data {
-@@ -367,23 +368,11 @@ static void mixer_cfg_scan(struct mixer_context *ctx, int width, int height)
- 	val = test_bit(MXR_BIT_INTERLACE, &ctx->flags) ?
- 		MXR_CFG_SCAN_INTERLACE : MXR_CFG_SCAN_PROGRESSIVE;
- 
--	/* setup display size */
--	if (ctx->mxr_ver == MXR_VER_128_0_0_184) {
-+	if (ctx->mxr_ver == MXR_VER_128_0_0_184)
- 		mixer_reg_write(ctx, MXR_RESOLUTION,
- 			MXR_MXR_RES_HEIGHT(height) | MXR_MXR_RES_WIDTH(width));
--	} else {
--		/* choosing between proper HD and SD mode */
--		if (height <= 480)
--			val |= MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD;
--		else if (height <= 576)
--			val |= MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD;
--		else if (height <= 720)
--			val |= MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
--		else if (height <= 1080)
--			val |= MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD;
--		else
--			val |= MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
--	}
-+	else
-+		val |= ctx->scan_value;
- 
- 	mixer_reg_writemask(ctx, MXR_CFG, val, MXR_CFG_SCAN_MASK);
- }
-@@ -467,11 +456,6 @@ static void mixer_commit(struct mixer_context *ctx)
- {
- 	struct drm_display_mode *mode = &ctx->crtc->base.state->adjusted_mode;
- 
--	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
--		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
--	else
--		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
--
- 	mixer_cfg_scan(ctx, mode->hdisplay, mode->vdisplay);
- 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
- 	mixer_run(ctx);
-@@ -1033,6 +1017,51 @@ static int mixer_mode_valid(struct exynos_drm_crtc *crtc,
- 	return MODE_BAD;
- }
- 
-+static bool mixer_mode_fixup(struct exynos_drm_crtc *crtc,
-+		   const struct drm_display_mode *mode,
-+		   struct drm_display_mode *adjusted_mode)
-+{
-+	struct mixer_context *ctx = crtc->ctx;
-+	int width = mode->hdisplay, height = mode->vdisplay, i;
-+
-+	struct {
-+		int hdisplay, vdisplay, htotal, vtotal, scan_val;
-+	} static const modes[] = {
-+		{ 720, 480, 858, 525, MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD },
-+		{ 720, 576, 864, 625, MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD },
-+		{ 1280, 720, 1650, 750, MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD },
-+		{ 1920, 1080, 2200, 1125, MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD }
-+	};
-+
-+	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
-+		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
-+	else
-+		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
-+
-+	if (ctx->mxr_ver == MXR_VER_128_0_0_184)
-+		return true;
-+
-+	for (i = 0; i < ARRAY_SIZE(modes); ++i)
-+		if (width <= modes[i].hdisplay && height <= modes[i].vdisplay) {
-+			ctx->scan_value = modes[i].scan_val;
-+			if (width < modes[i].hdisplay ||
-+			    height < modes[i].vdisplay) {
-+				adjusted_mode->hdisplay = modes[i].hdisplay;
-+				adjusted_mode->hsync_start = modes[i].hdisplay;
-+				adjusted_mode->hsync_end = modes[i].htotal;
-+				adjusted_mode->htotal = modes[i].htotal;
-+				adjusted_mode->vdisplay = modes[i].vdisplay;
-+				adjusted_mode->vsync_start = modes[i].vdisplay;
-+				adjusted_mode->vsync_end = modes[i].vtotal;
-+				adjusted_mode->vtotal = modes[i].vtotal;
-+			}
-+
-+			return true;
-+		}
-+
-+	return false;
-+}
-+
- static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
- 	.enable			= mixer_enable,
- 	.disable		= mixer_disable,
-@@ -1043,6 +1072,7 @@ static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
- 	.disable_plane		= mixer_disable_plane,
- 	.atomic_flush		= mixer_atomic_flush,
- 	.mode_valid		= mixer_mode_valid,
-+	.mode_fixup		= mixer_mode_fixup,
- };
- 
- static const struct mixer_drv_data exynos5420_mxr_drv_data = {
--- 
-2.7.4
+U2NyZWVuIHJlc29sdXRpb24gY29uZmlndXJhdGlvbiBkZXBlbmRzIG9uIEhXIHZlcnNpb24sIGxl
+dCBwdXQgaXQgaW50bwpzaW5nbGUgZnVuY3Rpb24gdG8gbWFrZSBpdCBjb25zaXN0ZW50IGFuZCBz
+aW1wbGlmeSB0aGUgY29kZS4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFA
+c2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8
+IDE3ICsrKysrKystLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAx
+MCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwppbmRleCBh
+ZTg5ZTUzLi5hODdmNjBiIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAg
+LTM2Nyw3ICszNjcsNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl92c3luY19zZXRfdXBkYXRlKHN0cnVj
+dCBtaXhlcl9jb250ZXh0ICpjdHgsIGJvb2wgZW5hYmxlKQogCQkJVlBfU0hBRE9XX1VQREFURV9F
+TkFCTEUgOiAwKTsKIH0KIAotc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3NjYW4oc3RydWN0IG1peGVy
+X2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGhlaWdodCkKK3N0YXRpYyB2b2lkIG1peGVyX2Nm
+Z19zY2FuKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGludCB3aWR0aCwgaW50IGhlaWdodCkK
+IHsKIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7CiAJdTMy
+IHZhbDsKQEAgLTM3Niw3ICszNzYsMTEgQEAgc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3NjYW4oc3Ry
+dWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGhlaWdodCkKIAl2YWwgPSB0ZXN0
+X2JpdChNWFJfQklUX0lOVEVSTEFDRSwgJmN0eC0+ZmxhZ3MpID8KIAkJTVhSX0NGR19TQ0FOX0lO
+VEVSTEFDRSA6IE1YUl9DRkdfU0NBTl9QUk9HUkVTU0lWRTsKIAotCWlmIChjdHgtPm14cl92ZXIg
+IT0gTVhSX1ZFUl8xMjhfMF8wXzE4NCkgeworCS8qIHNldHVwIGRpc3BsYXkgc2l6ZSAqLworCWlm
+IChjdHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8xMjhfMF8wXzE4NCkgeworCQltaXhlcl9yZWdfd3Jp
+dGUoJmN0eC0+bWl4ZXJfcmVzLCBNWFJfUkVTT0xVVElPTiwKKwkJCU1YUl9NWFJfUkVTX0hFSUdI
+VChoZWlnaHQpIHwgTVhSX01YUl9SRVNfV0lEVEgod2lkdGgpKTsKKwl9IGVsc2UgewogCQkvKiBj
+aG9vc2luZyBiZXR3ZWVuIHByb3BlciBIRCBhbmQgU0QgbW9kZSAqLwogCQlpZiAoaGVpZ2h0IDw9
+IDQ4MCkKIAkJCXZhbCB8PSBNWFJfQ0ZHX1NDQU5fTlRTQyB8IE1YUl9DRkdfU0NBTl9TRDsKQEAg
+LTQ4MiwxNCArNDg2LDcgQEAgc3RhdGljIHZvaWQgbWl4ZXJfY29tbWl0KHN0cnVjdCBtaXhlcl9j
+b250ZXh0ICpjdHgpCiAJZWxzZQogCQlfX2NsZWFyX2JpdChNWFJfQklUX0lOVEVSTEFDRSwgJmN0
+eC0+ZmxhZ3MpOwogCi0JLyogc2V0dXAgZGlzcGxheSBzaXplICovCi0JaWYgKGN0eC0+bXhyX3Zl
+ciA9PSBNWFJfVkVSXzEyOF8wXzBfMTg0KSB7Ci0JCXUzMiB2YWwgID0gTVhSX01YUl9SRVNfSEVJ
+R0hUKG1vZGUtPnZkaXNwbGF5KQotCQkJIHwgTVhSX01YUl9SRVNfV0lEVEgobW9kZS0+aGRpc3Bs
+YXkpOwotCQltaXhlcl9yZWdfd3JpdGUoJmN0eC0+bWl4ZXJfcmVzLCBNWFJfUkVTT0xVVElPTiwg
+dmFsKTsKLQl9Ci0KLQltaXhlcl9jZmdfc2NhbihjdHgsIG1vZGUtPnZkaXNwbGF5KTsKKwltaXhl
+cl9jZmdfc2NhbihjdHgsIG1vZGUtPmhkaXNwbGF5LCBtb2RlLT52ZGlzcGxheSk7CiAJbWl4ZXJf
+Y2ZnX3JnYl9mbXQoY3R4LCBtb2RlLT52ZGlzcGxheSk7CiAJbWl4ZXJfcnVuKGN0eCk7CiB9Ci0t
+IAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
