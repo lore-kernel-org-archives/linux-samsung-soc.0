@@ -1,117 +1,144 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 02/10] drm/exynos/mixer: move mode commit to enable callback
-Date: Wed, 06 Sep 2017 12:36:52 +0200
-Message-ID: <1504694220-15818-3-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 06/10] drm/exynos/hdmi: remove redundant mode field
+Date: Wed, 06 Sep 2017 12:36:56 +0200
+Message-ID: <1504694220-15818-7-git-send-email-a.hajda@samsung.com>
 References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170906103728eucas1p24e0495f4f1a7534df3d649b0a9c8aff0@eucas1p2.samsung.com>
+        <CGME20170906103730eucas1p2678e273a036b1fb02b5d1d51fa5fc20d@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35931 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35944 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753076AbdIFKhb (ORCPT
+        with ESMTP id S1753080AbdIFKhd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 06:37:31 -0400
+        Wed, 6 Sep 2017 06:37:33 -0400
 In-reply-to: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-Mode commit should not be called for every plane separately. It is enough
-to call it once in enable callback. The change requires also that
-interlace check should be moved to mixer_commit. It should be done in
-the same patch to avoid regression.
+Display mode is preserved in CRTC state, there is no need to keep local
+copy of it. Moreover since HDMI should configure registers according to
+requested mode, use it instead of adjusted_mode, which should contain
+mode produced by CRTC - functionally it does not change anything, but
+subsequent patches will make the difference.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 34 +++++++++-------------------------
+ 1 file changed, 9 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 499ebdc..ae89e53 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -477,6 +477,11 @@ static void mixer_commit(struct mixer_context *ctx)
- {
- 	struct drm_display_mode *mode = &ctx->crtc->base.state->adjusted_mode;
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 214fa5e..7225b65 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -119,7 +119,6 @@ struct hdmi_context {
+ 	bool				powered;
+ 	bool				dvi_mode;
+ 	struct delayed_work		hotplug_work;
+-	struct drm_display_mode		current_mode;
+ 	struct cec_notifier		*notifier;
+ 	const struct hdmi_driver_data	*drv_data;
  
-+	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
-+		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
-+	else
-+		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
-+
- 	/* setup display size */
- 	if (ctx->mxr_ver == MXR_VER_128_0_0_184) {
- 		u32 val  = MXR_MXR_RES_HEIGHT(mode->vdisplay)
-@@ -494,7 +499,6 @@ static void vp_video_buffer(struct mixer_context *ctx,
- {
- 	struct exynos_drm_plane_state *state =
- 				to_exynos_plane_state(plane->base.state);
--	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
- 	struct mixer_resources *res = &ctx->mixer_res;
- 	struct drm_framebuffer *fb = state->base.fb;
- 	unsigned int priority = state->base.normalized_zpos + 1;
-@@ -509,8 +513,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
- 	luma_addr[0] = exynos_drm_fb_dma_addr(fb, 0);
- 	chroma_addr[0] = exynos_drm_fb_dma_addr(fb, 1);
+@@ -770,6 +769,7 @@ static int hdmi_clk_set_parents(struct hdmi_context *hdata, bool to_phy)
  
--	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
--		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
-+	if (test_bit(MXR_BIT_INTERLACE, &ctx->flags)) {
- 		if (is_tiled) {
- 			luma_addr[1] = luma_addr[0] + 0x40;
- 			chroma_addr[1] = chroma_addr[0] + 0x40;
-@@ -519,7 +522,6 @@ static void vp_video_buffer(struct mixer_context *ctx,
- 			chroma_addr[1] = chroma_addr[0] + fb->pitches[0];
- 		}
- 	} else {
--		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
- 		luma_addr[1] = 0;
- 		chroma_addr[1] = 0;
+ static void hdmi_reg_infoframes(struct hdmi_context *hdata)
+ {
++	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
+ 	union hdmi_infoframe frm;
+ 	u8 buf[25];
+ 	int ret;
+@@ -783,8 +783,7 @@ static void hdmi_reg_infoframes(struct hdmi_context *hdata)
+ 		return;
  	}
-@@ -571,7 +573,6 @@ static void vp_video_buffer(struct mixer_context *ctx,
  
- 	mixer_cfg_layer(ctx, plane->index, priority, true);
- 	mixer_cfg_vp_blend(ctx);
--	mixer_commit(ctx);
+-	ret = drm_hdmi_avi_infoframe_from_display_mode(&frm.avi,
+-			&hdata->current_mode, false);
++	ret = drm_hdmi_avi_infoframe_from_display_mode(&frm.avi, m, false);
+ 	if (!ret)
+ 		ret = hdmi_avi_infoframe_pack(&frm.avi, buf, sizeof(buf));
+ 	if (ret > 0) {
+@@ -794,8 +793,7 @@ static void hdmi_reg_infoframes(struct hdmi_context *hdata)
+ 		DRM_INFO("%s: invalid AVI infoframe (%d)\n", __func__, ret);
+ 	}
  
- 	spin_unlock_irqrestore(&res->reg_slock, flags);
+-	ret = drm_hdmi_vendor_infoframe_from_display_mode(&frm.vendor.hdmi,
+-			&hdata->current_mode);
++	ret = drm_hdmi_vendor_infoframe_from_display_mode(&frm.vendor.hdmi, m);
+ 	if (!ret)
+ 		ret = hdmi_vendor_infoframe_pack(&frm.vendor.hdmi, buf,
+ 				sizeof(buf));
+@@ -1088,9 +1086,10 @@ static void hdmi_audio_control(struct hdmi_context *hdata, bool onoff)
  
-@@ -591,7 +592,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ static void hdmi_start(struct hdmi_context *hdata, bool start)
  {
- 	struct exynos_drm_plane_state *state =
- 				to_exynos_plane_state(plane->base.state);
--	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
- 	struct mixer_resources *res = &ctx->mixer_res;
- 	struct drm_framebuffer *fb = state->base.fb;
- 	unsigned int priority = state->base.normalized_zpos + 1;
-@@ -637,11 +637,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 		+ (state->src.x * fb->format->cpp[0])
- 		+ (state->src.y * fb->pitches[0]);
++	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
+ 	u32 val = start ? HDMI_TG_EN : 0;
  
--	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
--		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
--	else
--		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
+-	if (hdata->current_mode.flags & DRM_MODE_FLAG_INTERLACE)
++	if (m->flags & DRM_MODE_FLAG_INTERLACE)
+ 		val |= HDMI_FIELD_EN;
+ 
+ 	hdmi_reg_writemask(hdata, HDMI_CON_0, val, HDMI_EN);
+@@ -1160,7 +1159,7 @@ static void hdmiphy_wait_for_pll(struct hdmi_context *hdata)
+ 
+ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+ {
+-	struct drm_display_mode *m = &hdata->current_mode;
++	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
+ 	unsigned int val;
+ 
+ 	hdmi_reg_writev(hdata, HDMI_H_BLANK_0, 2, m->htotal - m->hdisplay);
+@@ -1239,7 +1238,7 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+ 
+ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+ {
+-	struct drm_display_mode *m = &hdata->current_mode;
++	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
+ 
+ 	hdmi_reg_writev(hdata, HDMI_H_BLANK_0, 2, m->htotal - m->hdisplay);
+ 	hdmi_reg_writev(hdata, HDMI_V_LINE_0, 2, m->vtotal);
+@@ -1372,10 +1371,11 @@ static void hdmiphy_enable_mode_set(struct hdmi_context *hdata, bool enable)
+ 
+ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+ {
++	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
+ 	int ret;
+ 	const u8 *phy_conf;
+ 
+-	ret = hdmi_find_phy_conf(hdata, hdata->current_mode.clock * 1000);
++	ret = hdmi_find_phy_conf(hdata, m->clock * 1000);
+ 	if (ret < 0) {
+ 		DRM_ERROR("failed to find hdmiphy conf\n");
+ 		return;
+@@ -1407,21 +1407,6 @@ static void hdmi_conf_apply(struct hdmi_context *hdata)
+ 	hdmi_audio_control(hdata, true);
+ }
+ 
+-static void hdmi_mode_set(struct drm_encoder *encoder,
+-			  struct drm_display_mode *mode,
+-			  struct drm_display_mode *adjusted_mode)
+-{
+-	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+-	struct drm_display_mode *m = adjusted_mode;
 -
- 	spin_lock_irqsave(&res->reg_slock, flags);
+-	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%s\n",
+-		m->hdisplay, m->vdisplay,
+-		m->vrefresh, (m->flags & DRM_MODE_FLAG_INTERLACE) ?
+-		"INTERLACED" : "PROGRESSIVE");
+-
+-	drm_mode_copy(&hdata->current_mode, m);
+-}
+-
+ static void hdmi_set_refclk(struct hdmi_context *hdata, bool on)
+ {
+ 	if (!hdata->sysreg)
+@@ -1504,7 +1489,6 @@ static void hdmi_disable(struct drm_encoder *encoder)
  
- 	/* setup format */
-@@ -668,7 +663,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 
- 	mixer_cfg_layer(ctx, win, priority, true);
- 	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->format->format));
--	mixer_commit(ctx);
- 
- 	/* layer update mandatory for mixer 16.0.33.0 */
- 	if (ctx->mxr_ver == MXR_VER_16_0_33_0 ||
-@@ -1021,6 +1015,8 @@ static void mixer_enable(struct exynos_drm_crtc *crtc)
- 	}
- 	mixer_win_reset(ctx);
- 
-+	mixer_commit(ctx);
-+
- 	mixer_vsync_set_update(ctx, true);
- 
- 	set_bit(MXR_BIT_POWERED, &ctx->flags);
+ static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
+ 	.mode_fixup	= hdmi_mode_fixup,
+-	.mode_set	= hdmi_mode_set,
+ 	.enable		= hdmi_enable,
+ 	.disable	= hdmi_disable,
+ };
 -- 
 2.7.4
