@@ -1,80 +1,77 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 04/10] drm/exynos/mixer: fix mode validation code
-Date: Wed, 06 Sep 2017 12:36:54 +0200
-Message-ID: <1504694220-15818-5-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 01/10] drm/exynos/mixer: abstract out output mode setup code
+Date: Wed, 06 Sep 2017 12:36:51 +0200
+Message-ID: <1504694220-15818-2-git-send-email-a.hajda@samsung.com>
 References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170906103729eucas1p1844077cd598fb44535719925f3279c6e@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35939 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753069AbdIFKhc (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 06:37:32 -0400
+ <CGME20170906103728eucas1p2f32e4a98f0e034c68fa425efb5ac8269@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Mode limitation checked in mixer driver affects only older HW.
-Mixer in Exynos542x has no such limitations. While at it patch changes
-validation callback to recently introduced mode_valid which is more
-suitable for the check. Additionally little cleanup is performed.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index a87f60b..d530c18 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1040,26 +1040,24 @@ static void mixer_disable(struct exynos_drm_crtc *crtc)
- 	clear_bit(MXR_BIT_POWERED, &ctx->flags);
- }
- 
--/* Only valid for Mixer version 16.0.33.0 */
--static int mixer_atomic_check(struct exynos_drm_crtc *crtc,
--		       struct drm_crtc_state *state)
-+static int mixer_mode_valid(struct exynos_drm_crtc *crtc,
-+		const struct drm_display_mode *mode)
- {
--	struct drm_display_mode *mode = &state->adjusted_mode;
--	u32 w, h;
-+	struct mixer_context *ctx = crtc->ctx;
-+	u32 w = mode->hdisplay, h = mode->vdisplay;
- 
--	w = mode->hdisplay;
--	h = mode->vdisplay;
-+	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d\n", w, h,
-+		mode->vrefresh, !!(mode->flags & DRM_MODE_FLAG_INTERLACE));
- 
--	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d\n",
--		mode->hdisplay, mode->vdisplay, mode->vrefresh,
--		(mode->flags & DRM_MODE_FLAG_INTERLACE) ? 1 : 0);
-+	if (ctx->mxr_ver == MXR_VER_128_0_0_184)
-+		return MODE_OK;
- 
- 	if ((w >= 464 && w <= 720 && h >= 261 && h <= 576) ||
- 		(w >= 1024 && w <= 1280 && h >= 576 && h <= 720) ||
- 		(w >= 1664 && w <= 1920 && h >= 936 && h <= 1080))
--		return 0;
-+		return MODE_OK;
- 
--	return -EINVAL;
-+	return MODE_BAD;
- }
- 
- static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
-@@ -1071,7 +1069,7 @@ static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
- 	.update_plane		= mixer_update_plane,
- 	.disable_plane		= mixer_disable_plane,
- 	.atomic_flush		= mixer_atomic_flush,
--	.atomic_check		= mixer_atomic_check,
-+	.mode_valid		= mixer_mode_valid,
- };
- 
- static const struct mixer_drv_data exynos5420_mxr_drv_data = {
--- 
-2.7.4
+TW9kZSBzZXR1cCBjb2RlIGlzIGNhbGxlZCBmcm9tIHZpZGVvIHBsYW5lIHVwZGF0ZSBhbmQgbWl4
+ZXIgcGxhbmUgdXBkYXRlLgpMZXRzIGdyb3VwIGl0IHRvZ2V0aGVyIGluIG1peGVyX2NvbW1pdCBm
+dW5jdGlvbiBsaWtlIGluIGNhc2Ugb2Ygb3RoZXIKRXh5bm9zIENSVENzLgoKU2lnbmVkLW9mZi1i
+eTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMzMgKysrKysrKysrKysrKysrKysrLS0tLS0tLS0t
+LS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygrKSwgMTUgZGVsZXRpb25zKC0p
+CgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXggMDAyNzU1NC4uNDk5ZWJk
+YyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCkBAIC00NzMsNiArNDczLDIy
+IEBAIHN0YXRpYyB2b2lkIG1peGVyX3N0b3Aoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKIAkJ
+dXNsZWVwX3JhbmdlKDEwMDAwLCAxMjAwMCk7CiB9CiAKK3N0YXRpYyB2b2lkIG1peGVyX2NvbW1p
+dChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQoreworCXN0cnVjdCBkcm1fZGlzcGxheV9tb2Rl
+ICptb2RlID0gJmN0eC0+Y3J0Yy0+YmFzZS5zdGF0ZS0+YWRqdXN0ZWRfbW9kZTsKKworCS8qIHNl
+dHVwIGRpc3BsYXkgc2l6ZSAqLworCWlmIChjdHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8xMjhfMF8w
+XzE4NCkgeworCQl1MzIgdmFsICA9IE1YUl9NWFJfUkVTX0hFSUdIVChtb2RlLT52ZGlzcGxheSkK
+KwkJCSB8IE1YUl9NWFJfUkVTX1dJRFRIKG1vZGUtPmhkaXNwbGF5KTsKKwkJbWl4ZXJfcmVnX3dy
+aXRlKCZjdHgtPm1peGVyX3JlcywgTVhSX1JFU09MVVRJT04sIHZhbCk7CisJfQorCisJbWl4ZXJf
+Y2ZnX3NjYW4oY3R4LCBtb2RlLT52ZGlzcGxheSk7CisJbWl4ZXJfY2ZnX3JnYl9mbXQoY3R4LCBt
+b2RlLT52ZGlzcGxheSk7CisJbWl4ZXJfcnVuKGN0eCk7Cit9CisKIHN0YXRpYyB2b2lkIHZwX3Zp
+ZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAogCQkJICAgIHN0cnVjdCBleHlu
+b3NfZHJtX3BsYW5lICpwbGFuZSkKIHsKQEAgLTU1MywxMSArNTY5LDkgQEAgc3RhdGljIHZvaWQg
+dnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJdnBfcmVnX3dyaXRl
+KHJlcywgVlBfVE9QX0NfUFRSLCBjaHJvbWFfYWRkclswXSk7CiAJdnBfcmVnX3dyaXRlKHJlcywg
+VlBfQk9UX0NfUFRSLCBjaHJvbWFfYWRkclsxXSk7CiAKLQltaXhlcl9jZmdfc2NhbihjdHgsIG1v
+ZGUtPnZkaXNwbGF5KTsKLQltaXhlcl9jZmdfcmdiX2ZtdChjdHgsIG1vZGUtPnZkaXNwbGF5KTsK
+IAltaXhlcl9jZmdfbGF5ZXIoY3R4LCBwbGFuZS0+aW5kZXgsIHByaW9yaXR5LCB0cnVlKTsKIAlt
+aXhlcl9jZmdfdnBfYmxlbmQoY3R4KTsKLQltaXhlcl9ydW4oY3R4KTsKKwltaXhlcl9jb21taXQo
+Y3R4KTsKIAogCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJnJlcy0+cmVnX3Nsb2NrLCBmbGFncyk7
+CiAKQEAgLTYzOCwxNCArNjUyLDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0
+cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0dSQVBI
+SUNfU1BBTih3aW4pLAogCQkJZmItPnBpdGNoZXNbMF0gLyBmYi0+Zm9ybWF0LT5jcHBbMF0pOwog
+Ci0JLyogc2V0dXAgZGlzcGxheSBzaXplICovCi0JaWYgKGN0eC0+bXhyX3ZlciA9PSBNWFJfVkVS
+XzEyOF8wXzBfMTg0ICYmCi0JCXdpbiA9PSBERUZBVUxUX1dJTikgewotCQl2YWwgID0gTVhSX01Y
+Ul9SRVNfSEVJR0hUKG1vZGUtPnZkaXNwbGF5KTsKLQkJdmFsIHw9IE1YUl9NWFJfUkVTX1dJRFRI
+KG1vZGUtPmhkaXNwbGF5KTsKLQkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX1JFU09MVVRJT04s
+IHZhbCk7Ci0JfQotCiAJdmFsICA9IE1YUl9HUlBfV0hfV0lEVEgoc3RhdGUtPnNyYy53KTsKIAl2
+YWwgfD0gTVhSX0dSUF9XSF9IRUlHSFQoc3RhdGUtPnNyYy5oKTsKIAl2YWwgfD0gTVhSX0dSUF9X
+SF9IX1NDQUxFKHhfcmF0aW8pOwpAQCAtNjYwLDE4ICs2NjYsMTUgQEAgc3RhdGljIHZvaWQgbWl4
+ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJLyogc2V0IGJ1ZmZl
+ciBhZGRyZXNzIHRvIG1peGVyICovCiAJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0dSQVBISUNf
+QkFTRSh3aW4pLCBkbWFfYWRkcik7CiAKLQltaXhlcl9jZmdfc2NhbihjdHgsIG1vZGUtPnZkaXNw
+bGF5KTsKLQltaXhlcl9jZmdfcmdiX2ZtdChjdHgsIG1vZGUtPnZkaXNwbGF5KTsKIAltaXhlcl9j
+ZmdfbGF5ZXIoY3R4LCB3aW4sIHByaW9yaXR5LCB0cnVlKTsKIAltaXhlcl9jZmdfZ2Z4X2JsZW5k
+KGN0eCwgd2luLCBpc19hbHBoYV9mb3JtYXQoZmItPmZvcm1hdC0+Zm9ybWF0KSk7CisJbWl4ZXJf
+Y29tbWl0KGN0eCk7CiAKIAkvKiBsYXllciB1cGRhdGUgbWFuZGF0b3J5IGZvciBtaXhlciAxNi4w
+LjMzLjAgKi8KIAlpZiAoY3R4LT5teHJfdmVyID09IE1YUl9WRVJfMTZfMF8zM18wIHx8CiAJCWN0
+eC0+bXhyX3ZlciA9PSBNWFJfVkVSXzEyOF8wXzBfMTg0KQogCQltaXhlcl9sYXllcl91cGRhdGUo
+Y3R4KTsKIAotCW1peGVyX3J1bihjdHgpOwotCiAJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcmVz
+LT5yZWdfc2xvY2ssIGZsYWdzKTsKIAogCW1peGVyX3JlZ3NfZHVtcChjdHgpOwotLSAKMi43LjQK
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
