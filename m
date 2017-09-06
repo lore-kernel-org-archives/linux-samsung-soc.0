@@ -1,52 +1,80 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 00/10] drm/exynos: TV path improvements
-Date: Wed, 06 Sep 2017 12:36:50 +0200
-Message-ID: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170906103727eucas1p23614a8da470a625d760b50095a4a4ad1@eucas1p2.samsung.com>
+Subject: [PATCH 04/10] drm/exynos/mixer: fix mode validation code
+Date: Wed, 06 Sep 2017 12:36:54 +0200
+Message-ID: <1504694220-15818-5-git-send-email-a.hajda@samsung.com>
+References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
+        <CGME20170906103729eucas1p1844077cd598fb44535719925f3279c6e@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35926 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35939 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753078AbdIFKhb (ORCPT
+        with ESMTP id S1753069AbdIFKhc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 06:37:31 -0400
+        Wed, 6 Sep 2017 06:37:32 -0400
+In-reply-to: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-Hi all,
+Mode limitation checked in mixer driver affects only older HW.
+Mixer in Exynos542x has no such limitations. While at it patch changes
+validation callback to recently introduced mode_valid which is more
+suitable for the check. Additionally little cleanup is performed.
 
-This patchset does two main things:
-- removes mode limitation for Exynos542x chips, multiple modes were filtered
-  out due to lack of HW version checking code,
-- enables two modes on older chips, thanks to quirk found by Daniel Drake,
-  and published by Tobias Jakobi [1][2].
-Beside this it consolidates the code and performs multiple cleanups.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-[1]: http://www.spinics.net/lists/linux-samsung-soc/msg24617.html
-[2]: https://www.spinics.net/lists/dri-devel/msg150906.html
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (10):
-  drm/exynos/mixer: abstract out output mode setup code
-  drm/exynos/mixer: move mode commit to enable callback
-  drm/exynos/mixer: move resolution configuration to single function
-  drm/exynos/mixer: fix mode validation code
-  drm/exynos/mixer: remove mixer_resources sub-structure
-  drm/exynos/hdmi: remove redundant mode field
-  drm/exynos: add mode_fixup callback to exynos_drm_crtc_ops
-  drm/exynos/mixer: pass actual mode on MIXER to encoder
-  drm/exynos/hdmi: quirk for support mode timings conversion
-  drm/exynos/mixer: enable support for 1024x768 and 1280x1024 modes
-
- drivers/gpu/drm/exynos/exynos_drm_crtc.c |  15 +
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |   3 +
- drivers/gpu/drm/exynos/exynos_hdmi.c     |  49 ++--
- drivers/gpu/drm/exynos/exynos_mixer.c    | 452 +++++++++++++++----------------
- 4 files changed, 265 insertions(+), 254 deletions(-)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index a87f60b..d530c18 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -1040,26 +1040,24 @@ static void mixer_disable(struct exynos_drm_crtc *crtc)
+ 	clear_bit(MXR_BIT_POWERED, &ctx->flags);
+ }
+ 
+-/* Only valid for Mixer version 16.0.33.0 */
+-static int mixer_atomic_check(struct exynos_drm_crtc *crtc,
+-		       struct drm_crtc_state *state)
++static int mixer_mode_valid(struct exynos_drm_crtc *crtc,
++		const struct drm_display_mode *mode)
+ {
+-	struct drm_display_mode *mode = &state->adjusted_mode;
+-	u32 w, h;
++	struct mixer_context *ctx = crtc->ctx;
++	u32 w = mode->hdisplay, h = mode->vdisplay;
+ 
+-	w = mode->hdisplay;
+-	h = mode->vdisplay;
++	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d\n", w, h,
++		mode->vrefresh, !!(mode->flags & DRM_MODE_FLAG_INTERLACE));
+ 
+-	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d\n",
+-		mode->hdisplay, mode->vdisplay, mode->vrefresh,
+-		(mode->flags & DRM_MODE_FLAG_INTERLACE) ? 1 : 0);
++	if (ctx->mxr_ver == MXR_VER_128_0_0_184)
++		return MODE_OK;
+ 
+ 	if ((w >= 464 && w <= 720 && h >= 261 && h <= 576) ||
+ 		(w >= 1024 && w <= 1280 && h >= 576 && h <= 720) ||
+ 		(w >= 1664 && w <= 1920 && h >= 936 && h <= 1080))
+-		return 0;
++		return MODE_OK;
+ 
+-	return -EINVAL;
++	return MODE_BAD;
+ }
+ 
+ static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
+@@ -1071,7 +1069,7 @@ static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
+ 	.update_plane		= mixer_update_plane,
+ 	.disable_plane		= mixer_disable_plane,
+ 	.atomic_flush		= mixer_atomic_flush,
+-	.atomic_check		= mixer_atomic_check,
++	.mode_valid		= mixer_mode_valid,
+ };
+ 
+ static const struct mixer_drv_data exynos5420_mxr_drv_data = {
 -- 
 2.7.4
