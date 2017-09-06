@@ -1,144 +1,72 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 06/10] drm/exynos/hdmi: remove redundant mode field
-Date: Wed, 06 Sep 2017 12:36:56 +0200
-Message-ID: <1504694220-15818-7-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 07/10] drm/exynos: add mode_fixup callback to
+ exynos_drm_crtc_ops
+Date: Wed, 06 Sep 2017 12:36:57 +0200
+Message-ID: <1504694220-15818-8-git-send-email-a.hajda@samsung.com>
 References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170906103730eucas1p2678e273a036b1fb02b5d1d51fa5fc20d@eucas1p2.samsung.com>
+        <CGME20170906103730eucas1p182c799cf23b889626dde869bbad3250c@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35944 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35951 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753080AbdIFKhd (ORCPT
+        with ESMTP id S1753085AbdIFKhe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 06:37:33 -0400
+        Wed, 6 Sep 2017 06:37:34 -0400
 In-reply-to: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-Display mode is preserved in CRTC state, there is no need to keep local
-copy of it. Moreover since HDMI should configure registers according to
-requested mode, use it instead of adjusted_mode, which should contain
-mode produced by CRTC - functionally it does not change anything, but
-subsequent patches will make the difference.
+crtc::mode_fixup callback is required by crtcs which use internally
+different mode than requested by user - case of Exynos Mixer.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c | 34 +++++++++-------------------------
- 1 file changed, 9 insertions(+), 25 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 15 +++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  3 +++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 214fa5e..7225b65 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -119,7 +119,6 @@ struct hdmi_context {
- 	bool				powered;
- 	bool				dvi_mode;
- 	struct delayed_work		hotplug_work;
--	struct drm_display_mode		current_mode;
- 	struct cec_notifier		*notifier;
- 	const struct hdmi_driver_data	*drv_data;
- 
-@@ -770,6 +769,7 @@ static int hdmi_clk_set_parents(struct hdmi_context *hdata, bool to_phy)
- 
- static void hdmi_reg_infoframes(struct hdmi_context *hdata)
- {
-+	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
- 	union hdmi_infoframe frm;
- 	u8 buf[25];
- 	int ret;
-@@ -783,8 +783,7 @@ static void hdmi_reg_infoframes(struct hdmi_context *hdata)
- 		return;
- 	}
- 
--	ret = drm_hdmi_avi_infoframe_from_display_mode(&frm.avi,
--			&hdata->current_mode, false);
-+	ret = drm_hdmi_avi_infoframe_from_display_mode(&frm.avi, m, false);
- 	if (!ret)
- 		ret = hdmi_avi_infoframe_pack(&frm.avi, buf, sizeof(buf));
- 	if (ret > 0) {
-@@ -794,8 +793,7 @@ static void hdmi_reg_infoframes(struct hdmi_context *hdata)
- 		DRM_INFO("%s: invalid AVI infoframe (%d)\n", __func__, ret);
- 	}
- 
--	ret = drm_hdmi_vendor_infoframe_from_display_mode(&frm.vendor.hdmi,
--			&hdata->current_mode);
-+	ret = drm_hdmi_vendor_infoframe_from_display_mode(&frm.vendor.hdmi, m);
- 	if (!ret)
- 		ret = hdmi_vendor_infoframe_pack(&frm.vendor.hdmi, buf,
- 				sizeof(buf));
-@@ -1088,9 +1086,10 @@ static void hdmi_audio_control(struct hdmi_context *hdata, bool onoff)
- 
- static void hdmi_start(struct hdmi_context *hdata, bool start)
- {
-+	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
- 	u32 val = start ? HDMI_TG_EN : 0;
- 
--	if (hdata->current_mode.flags & DRM_MODE_FLAG_INTERLACE)
-+	if (m->flags & DRM_MODE_FLAG_INTERLACE)
- 		val |= HDMI_FIELD_EN;
- 
- 	hdmi_reg_writemask(hdata, HDMI_CON_0, val, HDMI_EN);
-@@ -1160,7 +1159,7 @@ static void hdmiphy_wait_for_pll(struct hdmi_context *hdata)
- 
- static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- {
--	struct drm_display_mode *m = &hdata->current_mode;
-+	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
- 	unsigned int val;
- 
- 	hdmi_reg_writev(hdata, HDMI_H_BLANK_0, 2, m->htotal - m->hdisplay);
-@@ -1239,7 +1238,7 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- 
- static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- {
--	struct drm_display_mode *m = &hdata->current_mode;
-+	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
- 
- 	hdmi_reg_writev(hdata, HDMI_H_BLANK_0, 2, m->htotal - m->hdisplay);
- 	hdmi_reg_writev(hdata, HDMI_V_LINE_0, 2, m->vtotal);
-@@ -1372,10 +1371,11 @@ static void hdmiphy_enable_mode_set(struct hdmi_context *hdata, bool enable)
- 
- static void hdmiphy_conf_apply(struct hdmi_context *hdata)
- {
-+	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
- 	int ret;
- 	const u8 *phy_conf;
- 
--	ret = hdmi_find_phy_conf(hdata, hdata->current_mode.clock * 1000);
-+	ret = hdmi_find_phy_conf(hdata, m->clock * 1000);
- 	if (ret < 0) {
- 		DRM_ERROR("failed to find hdmiphy conf\n");
- 		return;
-@@ -1407,21 +1407,6 @@ static void hdmi_conf_apply(struct hdmi_context *hdata)
- 	hdmi_audio_control(hdata, true);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 6ce0821..dc01342 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -95,8 +95,23 @@ static enum drm_mode_status exynos_crtc_mode_valid(struct drm_crtc *crtc,
+ 	return MODE_OK;
  }
  
--static void hdmi_mode_set(struct drm_encoder *encoder,
--			  struct drm_display_mode *mode,
--			  struct drm_display_mode *adjusted_mode)
--{
--	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
--	struct drm_display_mode *m = adjusted_mode;
--
--	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%s\n",
--		m->hdisplay, m->vdisplay,
--		m->vrefresh, (m->flags & DRM_MODE_FLAG_INTERLACE) ?
--		"INTERLACED" : "PROGRESSIVE");
--
--	drm_mode_copy(&hdata->current_mode, m);
--}
--
- static void hdmi_set_refclk(struct hdmi_context *hdata, bool on)
- {
- 	if (!hdata->sysreg)
-@@ -1504,7 +1489,6 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 
- static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
- 	.mode_fixup	= hdmi_mode_fixup,
--	.mode_set	= hdmi_mode_set,
- 	.enable		= hdmi_enable,
- 	.disable	= hdmi_disable,
- };
++static bool exynos_crtc_mode_fixup(struct drm_crtc *crtc,
++		const struct drm_display_mode *mode,
++		struct drm_display_mode *adjusted_mode)
++{
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
++
++	if (exynos_crtc->ops->mode_fixup)
++		return exynos_crtc->ops->mode_fixup(exynos_crtc, mode,
++				adjusted_mode);
++
++	return true;
++}
++
++
+ static const struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+ 	.mode_valid	= exynos_crtc_mode_valid,
++	.mode_fixup	= exynos_crtc_mode_fixup,
+ 	.atomic_check	= exynos_crtc_atomic_check,
+ 	.atomic_begin	= exynos_crtc_atomic_begin,
+ 	.atomic_flush	= exynos_crtc_atomic_flush,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index cf131c2..e8bcc72 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -136,6 +136,9 @@ struct exynos_drm_crtc_ops {
+ 	u32 (*get_vblank_counter)(struct exynos_drm_crtc *crtc);
+ 	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
+ 		const struct drm_display_mode *mode);
++	bool (*mode_fixup)(struct exynos_drm_crtc *crtc,
++			   const struct drm_display_mode *mode,
++			   struct drm_display_mode *adjusted_mode);
+ 	int (*atomic_check)(struct exynos_drm_crtc *crtc,
+ 			    struct drm_crtc_state *state);
+ 	void (*atomic_begin)(struct exynos_drm_crtc *crtc);
 -- 
 2.7.4
