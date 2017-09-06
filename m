@@ -1,62 +1,67 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 03/10] drm/exynos/mixer: move resolution configuration to
- single function
-Date: Wed, 06 Sep 2017 12:36:53 +0200
-Message-ID: <1504694220-15818-4-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 09/10] drm/exynos/hdmi: quirk for support mode timings
+ conversion
+Date: Wed, 06 Sep 2017 12:36:59 +0200
+Message-ID: <1504694220-15818-10-git-send-email-a.hajda@samsung.com>
 References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
- <CGME20170906103729eucas1p1ea88d3ce8fc8d7c07f71fcdc12a5d4d0@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+        <CGME20170906103731eucas1p24ec3d9de21453732de868960553b5e8d@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51615 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753076AbdIFKhf (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 6 Sep 2017 06:37:35 -0400
 In-reply-to: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-U2NyZWVuIHJlc29sdXRpb24gY29uZmlndXJhdGlvbiBkZXBlbmRzIG9uIEhXIHZlcnNpb24sIGxl
-dCBwdXQgaXQgaW50bwpzaW5nbGUgZnVuY3Rpb24gdG8gbWFrZSBpdCBjb25zaXN0ZW50IGFuZCBz
-aW1wbGlmeSB0aGUgY29kZS4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFA
-c2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8
-IDE3ICsrKysrKystLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAx
-MCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwppbmRleCBh
-ZTg5ZTUzLi5hODdmNjBiIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAg
-LTM2Nyw3ICszNjcsNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl92c3luY19zZXRfdXBkYXRlKHN0cnVj
-dCBtaXhlcl9jb250ZXh0ICpjdHgsIGJvb2wgZW5hYmxlKQogCQkJVlBfU0hBRE9XX1VQREFURV9F
-TkFCTEUgOiAwKTsKIH0KIAotc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3NjYW4oc3RydWN0IG1peGVy
-X2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGhlaWdodCkKK3N0YXRpYyB2b2lkIG1peGVyX2Nm
-Z19zY2FuKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGludCB3aWR0aCwgaW50IGhlaWdodCkK
-IHsKIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7CiAJdTMy
-IHZhbDsKQEAgLTM3Niw3ICszNzYsMTEgQEAgc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3NjYW4oc3Ry
-dWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGhlaWdodCkKIAl2YWwgPSB0ZXN0
-X2JpdChNWFJfQklUX0lOVEVSTEFDRSwgJmN0eC0+ZmxhZ3MpID8KIAkJTVhSX0NGR19TQ0FOX0lO
-VEVSTEFDRSA6IE1YUl9DRkdfU0NBTl9QUk9HUkVTU0lWRTsKIAotCWlmIChjdHgtPm14cl92ZXIg
-IT0gTVhSX1ZFUl8xMjhfMF8wXzE4NCkgeworCS8qIHNldHVwIGRpc3BsYXkgc2l6ZSAqLworCWlm
-IChjdHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8xMjhfMF8wXzE4NCkgeworCQltaXhlcl9yZWdfd3Jp
-dGUoJmN0eC0+bWl4ZXJfcmVzLCBNWFJfUkVTT0xVVElPTiwKKwkJCU1YUl9NWFJfUkVTX0hFSUdI
-VChoZWlnaHQpIHwgTVhSX01YUl9SRVNfV0lEVEgod2lkdGgpKTsKKwl9IGVsc2UgewogCQkvKiBj
-aG9vc2luZyBiZXR3ZWVuIHByb3BlciBIRCBhbmQgU0QgbW9kZSAqLwogCQlpZiAoaGVpZ2h0IDw9
-IDQ4MCkKIAkJCXZhbCB8PSBNWFJfQ0ZHX1NDQU5fTlRTQyB8IE1YUl9DRkdfU0NBTl9TRDsKQEAg
-LTQ4MiwxNCArNDg2LDcgQEAgc3RhdGljIHZvaWQgbWl4ZXJfY29tbWl0KHN0cnVjdCBtaXhlcl9j
-b250ZXh0ICpjdHgpCiAJZWxzZQogCQlfX2NsZWFyX2JpdChNWFJfQklUX0lOVEVSTEFDRSwgJmN0
-eC0+ZmxhZ3MpOwogCi0JLyogc2V0dXAgZGlzcGxheSBzaXplICovCi0JaWYgKGN0eC0+bXhyX3Zl
-ciA9PSBNWFJfVkVSXzEyOF8wXzBfMTg0KSB7Ci0JCXUzMiB2YWwgID0gTVhSX01YUl9SRVNfSEVJ
-R0hUKG1vZGUtPnZkaXNwbGF5KQotCQkJIHwgTVhSX01YUl9SRVNfV0lEVEgobW9kZS0+aGRpc3Bs
-YXkpOwotCQltaXhlcl9yZWdfd3JpdGUoJmN0eC0+bWl4ZXJfcmVzLCBNWFJfUkVTT0xVVElPTiwg
-dmFsKTsKLQl9Ci0KLQltaXhlcl9jZmdfc2NhbihjdHgsIG1vZGUtPnZkaXNwbGF5KTsKKwltaXhl
-cl9jZmdfc2NhbihjdHgsIG1vZGUtPmhkaXNwbGF5LCBtb2RlLT52ZGlzcGxheSk7CiAJbWl4ZXJf
-Y2ZnX3JnYl9mbXQoY3R4LCBtb2RlLT52ZGlzcGxheSk7CiAJbWl4ZXJfcnVuKGN0eCk7CiB9Ci0t
-IAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+MIXER in SoCs prior to Exynos5420 supports only 4 video modes:
+720x480, 720x576, 1280x720, 1920x1080. Support for other modes
+can be enabled by manipulating timings of HDMI. To do it
+adjusted_mode should contain actual mode set on crtc.
+With this patch it is possible to enable 1024x768 and 1280x1024
+modes in MIXER.
+
+Suggested-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 7225b65..4b081f6 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1239,6 +1239,17 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+ {
+ 	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
++	struct drm_display_mode *am = &hdata->encoder.crtc->state->adjusted_mode;
++	int hquirk = 0;
++
++	/*
++	 * In case video mode coming from CRTC differs from requested one HDMI
++	 * sometimes is able to almost properly perform conversion - only
++	 * first line is distorted.
++	 */
++	if ((m->vdisplay != am->vdisplay) &&
++	    (m->hdisplay == 1280 || m->hdisplay == 1024))
++		hquirk = 258;
+ 
+ 	hdmi_reg_writev(hdata, HDMI_H_BLANK_0, 2, m->htotal - m->hdisplay);
+ 	hdmi_reg_writev(hdata, HDMI_V_LINE_0, 2, m->vtotal);
+@@ -1332,8 +1343,8 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+ 	hdmi_reg_writev(hdata, HDMI_V_SYNC_LINE_AFT_PXL_6_0, 2, 0xffff);
+ 
+ 	hdmi_reg_writev(hdata, HDMI_TG_H_FSZ_L, 2, m->htotal);
+-	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay);
+-	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay);
++	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay - hquirk);
++	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay + hquirk);
+ 	hdmi_reg_writev(hdata, HDMI_TG_V_FSZ_L, 2, m->vtotal);
+ 	if (hdata->drv_data == &exynos5433_hdmi_driver_data)
+ 		hdmi_reg_writeb(hdata, HDMI_TG_DECON_EN, 1);
+-- 
+2.7.4
