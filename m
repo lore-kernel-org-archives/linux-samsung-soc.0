@@ -1,99 +1,81 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 1/2] drm/bridge: add Silicon Image SiI9234 driver
-Date: Tue, 05 Sep 2017 18:05:53 +0300
-Message-ID: <1569224.pDUtqo7azG@avalon>
-References: <1504182434-8201-1-git-send-email-m.purski@samsung.com>
- <2326944.Wi9TMObRze@avalon>
- <b8df49d4-4636-f52e-c974-699a8a81872a@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <b8df49d4-4636-f52e-c974-699a8a81872a@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Maciej Purski <m.purski@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, robh+dt@kernel.org, dri-devel@lists.freedesktop.org
+From: Jaechul Lee <jcsing.lee@samsung.com>
+Subject: [PATCH v2 1/3] ASoC: samsung: i2s: Use specific name for i2s dais
+Date: Wed, 06 Sep 2017 10:04:13 +0900
+Message-ID: <20170906010415.26952-2-jcsing.lee@samsung.com>
+References: <20170906010415.26952-1-jcsing.lee@samsung.com>
+        <CGME20170906010417epcas2p208db637d89a670d01fa3dbeb78ff0da0@epcas2p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:17618 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753658AbdIFBEU (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 5 Sep 2017 21:04:20 -0400
+In-reply-to: <20170906010415.26952-1-jcsing.lee@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, galaxyra@gmail.com, Jaechul Lee <jcsing.lee@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-SGkgTWFjaWVqLAoKT24gVHVlc2RheSwgNSBTZXB0ZW1iZXIgMjAxNyAxNjowMTo1NCBFRVNUIE1h
-Y2llaiBQdXJza2kgd3JvdGU6Cj4gSGkgTGF1cmVudCwKPiAKPiBUaGFuayB5b3UgZm9yIHlvdXIg
-cmVwbHkuIFRoZSBwcm9ibGVtIHdhcyBhbHJlYWR5IGRpc2N1c3NlZCB3aGVuIGFkZGluZwo+IHNp
-bDg2MjAgZHJpdmVyLiBJdCBjYW4gYmUgc29sdmVkIGxhdGVyLiBJJ20gQ0MtaW5nIEFuZHJ6ZWog
-SGFqZGEsIGFzIGhlCj4gdXNlZCB0byBkaXNjdXNzIGl0IHdpdGggeW91LgoKSSdtIGFmcmFpZCBp
-dCBjYW4ndCBiZSBzb2x2ZWQgbGF0ZXIuIERUIGJpbmRpbmdzIGFyZSBzdXBwb3NlZCB0byBiZSBh
-IHN0YWJsZSAKQUJJLCB3ZSBjYW4ndCBtZXJnZSBhIGJpbmRpbmcgdGhhdCB3ZSBhbHJlYWR5IGtu
-b3cgaXNuJ3QgY29ycmVjdC4KCj4gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Bh
-dGNoLzExNDIyNC8KPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZlcy9kcmkt
-ZGV2ZWwvMjAxNS1EZWNlbWJlci8wOTY3NTYuaHRtbAo+IAo+IFJlZ2FyZHMsCj4gCj4gCU1hY2ll
-ago+IAo+IE9uIDMxLzA4LzE3IDE1OjMwLCBMYXVyZW50IFBpbmNoYXJ0IHdyb3RlOgo+ID4gSGkg
-TWFjaWVqLAo+ID4gCj4gPiBUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KPiA+IAo+ID4gT24gVGh1
-cnNkYXksIDMxIEF1Z3VzdCAyMDE3IDE1OjI3OjEzIEVFU1QgTWFjaWVqIFB1cnNraSB3cm90ZToK
-PiA+PiBTaUk5MjM0IHRyYW5zbWl0dGVyIGNvbnZlcnRzIGVUTURTL0hETUkgc2lnbmFsIHRvIE1I
-TCAxLjAuCj4gPj4gSXQgaXMgY29udHJvbGxlZCB2aWEgSTJDIGJ1cy4gSXRzIGludGVyYWN0aW9u
-IHdpdGggb3RoZXIKPiA+PiBkZXZpY2VzIGluIHZpZGVvIHBpcGVsaW5lIGlzIHBlcmZvcm1lZCBt
-YWlubHkgb24gSFcgbGV2ZWwuCj4gPj4gVGhlIG9ubHkgaW50ZXJhY3Rpb24gaXQgZG9lcyBvbiBk
-ZXZpY2UgZHJpdmVyIGxldmVsIGlzCj4gPj4gZmlsdGVyaW5nLW91dCB1bnN1cHBvcnRlZCB2aWRl
-byBtb2RlcywgaXQgZXhwb3NlcyBkcm1fYnJpZGdlCj4gPj4gaW50ZXJmYWNlIHRvIHBlcmZvcm0g
-dGhpcyBvcGVyYXRpb24uCj4gPj4gCj4gPj4gVGhpcyBwYXRjaCBpcyBiYXNlZCBvbiB0aGUgY29k
-ZSByZWZhY3RvcmVkIGJ5IFRvbWFzeiBTdGFuaXNsYXdza2kKPiA+PiA8dC5zdGFuaXNsYXdzQHNh
-bXN1bmcuY29tPiwgd2hpY2ggd2FzIGluaXRpYWxseSBkZXZlbG9wZWQgYnk6Cj4gPj4gQWRhbSBI
-YW1wc29uIDxhaGFtcHNvbkBzdGEuc2Ftc3VuZy5jb20+Cj4gPj4gRXJpayBHaWxsaW5nIDxrb25r
-ZXJzQGFuZHJvaWQuY29tPgo+ID4+IFNoYW5rYXIgQmFuZGFsIDxzaGFua2FyLmJAc2Ftc3VuZy5j
-b20+Cj4gPj4gRGhhcmFtIEt1bWFyIDxkaGFyYW0ua3JAc2Ftc3VuZy5jb20+Cj4gPj4gCj4gPj4g
-U2lnbmVkLW9mZi1ieTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+Cj4gPj4g
-LS0tCj4gPj4gQ2hhbmdlcyBpbiB2MjoKPiA+PiAtIHVzZSBidWxrX3JlcXVsYXRvcnMgaW5zdGVh
-ZCBvZiBzaW5nbGUgb25lCj4gPj4gLSBzdWJzdGl0dXRlIHNvbWUgb2YgdGhlIG1hZ2ljIHZhbHVl
-cyB3aXRoIG1hY3Jvcwo+ID4+IC0gaW1wcm92ZSBjb2Rpbmcgc3R5bGUKPiA+PiAtIGltcHJvdmVk
-IGVycm9yIGhhbmRsaW5nIGluIHNpaTkyMzRfcHJvYmUoKQo+ID4+IC0tLQo+ID4+IAo+ID4+ICAg
-Li4uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2Uvc2lpOTIzNC50eHQgfCAgMzQg
-Kwo+ID4+ICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9LY29uZmlnICAgICAgICAgICAgICAgICAg
-ICAgfCAgIDggKwo+ID4+ICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9NYWtlZmlsZSAgICAgICAg
-ICAgICAgICAgICAgfCAgIDEgKwo+ID4+ICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWk5MjM0
-LmMgICAgICAgICAgICAgICAgICAgfCA5OTMKPiA+PiAgICsrKysrKysrKysrKysrKysrKwo+ID4+
-ICAgNCBmaWxlcyBjaGFuZ2VkLCAxMDM2IGluc2VydGlvbnMoKykKPiA+PiAgIGNyZWF0ZSBtb2Rl
-IDEwMDY0NAo+ID4+IAo+ID4+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNw
-bGF5L2JyaWRnZS9zaWk5MjM0LnR4dCBjcmVhdGUgbW9kZQo+ID4+IDEwMDY0NCBkcml2ZXJzL2dw
-dS9kcm0vYnJpZGdlL3NpaTkyMzQuYwo+ID4+IAo+ID4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2Uvc2lpOTIzNC50eHQKPiA+PiBi
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2JyaWRnZS9zaWk5MjM0
-LnR4dCBuZXcgZmlsZQo+ID4+IG1vZGUgMTAwNjQ0Cj4gPj4gaW5kZXggMDAwMDAwMC4uM2NlNzQx
-Mwo+ID4+IC0tLSAvZGV2L251bGwKPiA+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvZGlzcGxheS9icmlkZ2Uvc2lpOTIzNC50eHQKPiA+PiBAQCAtMCwwICsxLDM0IEBA
-Cj4gPj4gK1NpbGljb24gSW1hZ2UgU2lJOTIzNCBIRE1JL01ITCBicmlkZ2UgYmluZGluZ3MKPiA+
-PiArCj4gPj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6Cj4gPj4gKwktIGNvbXBhdGlibGUgOiAic2ls
-LHNpaTkyMzQiLgo+ID4+ICsJLSByZWcgOiBJMkMgYWRkcmVzcyBmb3IgVFBJIGludGVyZmFjZSwg
-dXNlIDB4MzkKPiA+PiArCS0gYXZjYzMzLXN1cHBseSA6IE1ITC9VU0IgU3dpdGNoIFN1cHBseSBW
-b2x0YWdlICgzLjNWKQo+ID4+ICsJLSBpb3ZjYzE4LXN1cHBseSA6IEkvTyBTdXBwbHkgVm9sdGFn
-ZSAoMS44VikKPiA+PiArCS0gYXZjYzEyLXN1cHBseSA6IFRNRFMgQW5hbG9nIFN1cHBseSBWb2x0
-YWdlICgxLjJWKQo+ID4+ICsJLSBjdmNjMTItc3VwcGx5IDogRGlnaXRhbCBDb3JlIFN1cHBseSBW
-b2x0YWdlICgxLjJWKQo+ID4+ICsJLSBpbnRlcnJ1cHRzLCBpbnRlcnJ1cHQtcGFyZW50OiBpbnRl
-cnJ1cHQgc3BlY2lmaWVyIG9mIElOVCBwaW4KPiA+PiArCS0gcmVzZXQtZ3Bpb3M6IGdwaW8gc3Bl
-Y2lmaWVyIG9mIFJFU0VUIHBpbiAoYWN0aXZlIGxvdykKPiA+PiArCS0gdmlkZW8gaW50ZXJmYWNl
-czogRGV2aWNlIG5vZGUgY2FuIGNvbnRhaW4gdmlkZW8gaW50ZXJmYWNlIHBvcnQKPiA+PiArCQkJ
-ICAgIG5vZGUgZm9yIEhETUkgZW5jb2RlciBhY2NvcmRpbmcgdG8gWzFdLgo+ID4+ICsKPiA+PiAr
-WzFdOiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdmlkZW8taW50ZXJm
-YWNlcy50eHQKPiA+IAo+ID4gRG9lc24ndCB0aGlzIGNoaXAgaGF2ZSB0d28gcG9ydHMsIG9uZSBp
-bnB1dCBjb25uZWN0ZWQgdG8gdGhlIFNvQyBhbmQgb25lCj4gPiBvdXRwdXQgY29ubmVjdGVkIHRv
-IGFuIEhETUkgY29ubmVjdG9yID8gSWYgc28gdGhlcmUgc2hvdWxkIGJlIHR3byBwb3J0cyBpbgo+
-ID4gRFQgdG9vLgo+ID4gCj4gPj4gK0V4YW1wbGU6Cj4gPj4gKwlzaWk5MjM0QDM5IHsKPiA+PiAr
-CQljb21wYXRpYmxlID0gInNpbCxzaWk5MjM0IjsKPiA+PiArCQlyZWcgPSA8MHgzOT47Cj4gPj4g
-KwkJYXZjYzMzLXN1cHBseSA9IDwmdmNjMzNtaGw+Owo+ID4+ICsJCWlvdmNjMTgtc3VwcGx5ID0g
-PCZ2Y2MxOG1obD47Cj4gPj4gKwkJYXZjYzEyLXN1cHBseSA9IDwmdnNpbDEyPjsKPiA+PiArCQlj
-dmNjMTItc3VwcGx5ID0gPCZ2c2lsMTI+Owo+ID4+ICsJCXJlc2V0LWdwaW9zID0gPCZncGYzIDQg
-R1BJT19BQ1RJVkVfTE9XPjsKPiA+PiArCQlpbnRlcnJ1cHQtcGFyZW50ID0gPCZncGYzPjsKPiA+
-PiArCQlpbnRlcnJ1cHRzID0gPDUgSVJRX1RZUEVfTEVWRUxfSElHSD47Cj4gPj4gKwo+ID4+ICsJ
-CXBvcnQgewo+ID4+ICsJCQltaGxfdG9faGRtaTogZW5kcG9pbnQgewo+ID4+ICsJCQkJcmVtb3Rl
-LWVuZHBvaW50ID0gPCZoZG1pX3RvX21obD47Cj4gPiAKPiA+IEl0IHdvdWxkIGJlIHVzZWZ1bCB0
-byBpbmNsdWRlIHRoZSByZW1vdGUgRFQgbm9kZXMgaW4gdGhlIGV4YW1wbGUgdG9vLgo+ID4gCj4g
-Pj4gKwkJCX07Cj4gPj4gKwkJfTsKPiA+PiArCX07CgoKLS0gClJlZ2FyZHMsCgpMYXVyZW50IFBp
-bmNoYXJ0CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Add specific dais name when components are registered. Component and dai
+name will follow their parent dev name, if the name isn't described.  In
+case of this driver, each dais will have same name like '11440000.i2s0' by
+fmt_single_name function.
+
+The problem having same name is that TM2 machine driver can't detect
+capture devices correctly. Machine driver doesn't know which one is proper
+to use for cpu dai. The driver just selects to use 'samsung-i2c-sec' that
+doesn't have capture functionality because the component of
+samsung-i2s-sec is located in the first of the component_list.
+
+I add dai name like 'samsung-i2s', 'samsung-i2s-sec' for each dais. The
+reason why adding dai id to 1 is that it doesn't allow to use particular
+dai name in case of when I use 0 for dai id.
+
+Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+---
+ sound/soc/samsung/i2s.c | 4 ++++
+ sound/soc/samsung/i2s.h | 3 +++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 10a4da06c0a1..3aa2e7d54ea9 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1096,6 +1096,7 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev,
+ 	i2s->pdev = pdev;
+ 	i2s->pri_dai = NULL;
+ 	i2s->sec_dai = NULL;
++	i2s->i2s_dai_drv.id = 1;
+ 	i2s->i2s_dai_drv.symmetric_rates = 1;
+ 	i2s->i2s_dai_drv.probe = samsung_i2s_dai_probe;
+ 	i2s->i2s_dai_drv.remove = samsung_i2s_dai_remove;
+@@ -1108,10 +1109,13 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev,
+ 	i2s->i2s_dai_drv.playback.formats = SAMSUNG_I2S_FMTS;
+ 
+ 	if (!sec) {
++		i2s->i2s_dai_drv.name = SAMSUNG_I2S_DAI;
+ 		i2s->i2s_dai_drv.capture.channels_min = 1;
+ 		i2s->i2s_dai_drv.capture.channels_max = 2;
+ 		i2s->i2s_dai_drv.capture.rates = i2s_dai_data->pcm_rates;
+ 		i2s->i2s_dai_drv.capture.formats = SAMSUNG_I2S_FMTS;
++	} else {
++		i2s->i2s_dai_drv.name = SAMSUNG_I2S_DAI_SEC;
+ 	}
+ 	return i2s;
+ }
+diff --git a/sound/soc/samsung/i2s.h b/sound/soc/samsung/i2s.h
+index 21ff24e930db..79781de2f247 100644
+--- a/sound/soc/samsung/i2s.h
++++ b/sound/soc/samsung/i2s.h
+@@ -13,6 +13,9 @@
+ #ifndef __SND_SOC_SAMSUNG_I2S_H
+ #define __SND_SOC_SAMSUNG_I2S_H
+ 
++#define SAMSUNG_I2S_DAI        "samsung-i2s"
++#define SAMSUNG_I2S_DAI_SEC    "samsung-i2s-sec"
++
+ #define SAMSUNG_I2S_DIV_BCLK	1
+ 
+ #define SAMSUNG_I2S_RCLKSRC_0	0
+-- 
+2.14.1
