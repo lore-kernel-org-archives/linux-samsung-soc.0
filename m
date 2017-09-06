@@ -1,44 +1,43 @@
-From: Jaechul Lee <jcsing.lee@samsung.com>
-Subject: [PATCH v2 3/3] ASoC: samsung: Fix invalid argument when
- devm_gpiod_get is called
-Date: Wed, 06 Sep 2017 10:04:15 +0900
-Message-ID: <20170906010415.26952-4-jcsing.lee@samsung.com>
-References: <20170906010415.26952-1-jcsing.lee@samsung.com>
-        <CGME20170906010417epcas2p1fa15cc68a8fb034f087b8103f6767f29@epcas2p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170906010415.26952-1-jcsing.lee@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, galaxyra@gmail.com, Jaechul Lee <jcsing.lee@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 10/10] drm/exynos/mixer: enable support for 1024x768 and
+ 1280x1024 modes
+Date: Wed, 06 Sep 2017 12:37:00 +0200
+Message-ID: <1504694220-15818-11-git-send-email-a.hajda@samsung.com>
+References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
+        <CGME20170906103732eucas1p16966a1fd86daf50dc2b5217dfb90785d@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51620 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753103AbdIFKhf (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 6 Sep 2017 06:37:35 -0400
+In-reply-to: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-devm_gpiod_get is called with GPIOF_OUT_INIT_LOW but the function doesn't
-allow the parameters. Unluckily, GPIOF_OUT_INIT_LOW is same value as
-GPIOD_ASIS and gpio direction isn't set properly.
+Since HDMI can handle these modes despite of MIXER limitations lets
+enable them.
 
-Muted stream comes up when I try recording some sounds on TM2. mic-bias
-gpiod state can't be changed because the gpiod is created with the invalid
-parameter. The gpio should be set GPIOD_OUT_HIGH.
-
-Fixes: 1bfbc260a5b4 ("ASoC: samsung: Add machine driver for Exynos5433 based TM2 board")
-Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- sound/soc/samsung/tm2_wm5110.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_mixer.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
-index 710e2151141f..a55d18703fe7 100644
---- a/sound/soc/samsung/tm2_wm5110.c
-+++ b/sound/soc/samsung/tm2_wm5110.c
-@@ -439,8 +439,7 @@ static int tm2_probe(struct platform_device *pdev)
- 	snd_soc_card_set_drvdata(card, priv);
- 	card->dev = dev;
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 5aae82b..108dccb 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -1014,6 +1014,9 @@ static int mixer_mode_valid(struct exynos_drm_crtc *crtc,
+ 		(w >= 1664 && w <= 1920 && h >= 936 && h <= 1080))
+ 		return MODE_OK;
  
--	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias",
--						GPIOF_OUT_INIT_LOW);
-+	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias", GPIOD_OUT_HIGH);
- 	if (IS_ERR(priv->gpio_mic_bias)) {
- 		dev_err(dev, "Failed to get mic bias gpio\n");
- 		return PTR_ERR(priv->gpio_mic_bias);
++	if ((w == 1024 && h == 768) || (w == 1280 && h == 1024))
++		return MODE_OK;
++
+ 	return MODE_BAD;
+ }
+ 
 -- 
-2.14.1
+2.7.4
