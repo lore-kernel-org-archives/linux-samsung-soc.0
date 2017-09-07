@@ -1,143 +1,242 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v2 3/3] drm/exynos/gsc: Add hardware rotation limits
-Date: Thu, 07 Sep 2017 18:39:03 +0900
-Message-ID: <1504777143-29834-4-git-send-email-hoegeun.kwon@samsung.com>
-References: <1504777143-29834-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170907093912epcas2p198ae12fc11fb2b8a7a9e8d6be817e796@epcas2p1.samsung.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: Re: [PATCH 1/4] arm: topology: remove cpu_efficiency
+Date: Thu, 7 Sep 2017 11:41:09 +0100
+Message-ID: <d7c01524-cbd0-70fb-6995-93ac1e2fdaf7@arm.com>
+References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
+ <20170830144120.9312-2-dietmar.eggemann@arm.com>
+ <CAKfTPtBXkAyAc1aqqqEn6Yt14_Y7LFp3oySY-=G3ZTuG-DR_nA@mail.gmail.com>
+ <303d3f7b-5d64-e13a-c4f9-dd575958cafa@arm.com>
+ <CAKfTPtAvhujS1wpP1JE8OqCfsKXcrFxLQ0207WFg3ZhZjoHnBA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1504777143-29834-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, m.szyprowski@samsung.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:58354 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753927AbdIGKlM (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 7 Sep 2017 06:41:12 -0400
+In-Reply-To: <CAKfTPtAvhujS1wpP1JE8OqCfsKXcrFxLQ0207WFg3ZhZjoHnBA@mail.gmail.com>
+Content-Language: en-GB
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Juri Lelli <juri.lelli@arm.com>
 
-VGhlIGdzY2FsZXIgaGFzIGhhcmR3YXJlIHJvdGF0aW9uIGxpbWl0cyB0aGF0IG5lZWQgdG8gYmUg
-aGFyZGNvZGVkCmludG8gZHJpdmVyLiBEaXN0aW5ndWlzaCB0aGVtIGFuZCBhZGQgdGhlbSB0byB0
-aGUgcHJvcGVydHkgbGlzdC4KClRoZSBoYXJkd2FyZSByb3RhdGlvbiBsaW1pdHMgYXJlIHJlbGF0
-ZWQgdG8gdGhlIGNyb3BwZWQgc291cmNlIHNpemUuCldoZW4gc3dhcCBvY2N1cnMsIHVzZSByb3Rf
-bWF4IHNpemUgaW5zdGVhZCBvZiBjcm9wX21heCBzaXplLgoKQWxzbyB0aGUgc2NhbGluZyBsaW1p
-dHMgYXJlIHJlbGF0ZWQgdG8gcG9zIHNpemUsIHVzZSBwb3Mgc2l6ZSB0byBjaGVjawp0aGUgbGlt
-aXRzLgoKU2lnbmVkLW9mZi1ieTogSG9lZ2V1biBLd29uIDxob2VnZXVuLmt3b25Ac2Ftc3VuZy5j
-b20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jIHwgMTAwICsr
-KysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tCiBpbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19k
-cm0uaCAgICAgICAgICAgfCAgIDIgKwogMiBmaWxlcyBjaGFuZ2VkLCA3MyBpbnNlcnRpb25zKCsp
-LCAyOSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZ3NjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMK
-aW5kZXggMDUwNmIyYi4uNTkwYTY0NSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2dzYy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9nc2MuYwpAQCAtMTUwLDYgKzE1MCwxNSBAQCBzdHJ1Y3QgZ3NjX2NvbnRleHQgewogCWJvb2wJ
-c3VzcGVuZGVkOwogfTsKIAorLyoKKyAqIHN0cnVjdCBnc2NfZHJpdmVyZGF0YSAtIHBlciBkZXZp
-Y2UgdHlwZSBkcml2ZXIgZGF0YSBmb3IgaW5pdCB0aW1lLgorICoKKyAqIEByb3RfbWF4OiByb3Rh
-dGlvbiBtYXggcmVzb2x1dGlvbi4KKyAqLworc3RydWN0IGdzY19kcml2ZXJkYXRhIHsKKwlzdHJ1
-Y3QgZHJtX2V4eW5vc19zeiByb3RfbWF4OworfTsKKwogLyogOC10YXAgRmlsdGVyIENvZWZmaWNp
-ZW50ICovCiBzdGF0aWMgY29uc3QgaW50IGhfY29lZl84dFtHU0NfQ09FRl9SQVRJT11bR1NDX0NP
-RUZfQVRUUl1bR1NDX0NPRUZfSF84VF0gPSB7CiAJewkvKiBSYXRpbyA8PSA2NTUzNiAofjg6OCkg
-Ki8KQEAgLTE0MDEsNiArMTQxMCwyMyBAQCBzdGF0aWMgaW50IGdzY19pcHBkcnZfY2hlY2tfcHJv
-cGVydHkoc3RydWN0IGRldmljZSAqZGV2LAogCWJvb2wgc3dhcDsKIAlpbnQgaTsKIAorCWNvbmZp
-ZyA9ICZwcm9wZXJ0eS0+Y29uZmlnW0VYWU5PU19EUk1fT1BTX0RTVF07CisKKwkvKiBjaGVjayBm
-b3IgZGVncmVlICovCisJc3dpdGNoIChjb25maWctPmRlZ3JlZSkgeworCWNhc2UgRVhZTk9TX0RS
-TV9ERUdSRUVfOTA6CisJY2FzZSBFWFlOT1NfRFJNX0RFR1JFRV8yNzA6CisJCXN3YXAgPSB0cnVl
-OworCQlicmVhazsKKwljYXNlIEVYWU5PU19EUk1fREVHUkVFXzA6CisJY2FzZSBFWFlOT1NfRFJN
-X0RFR1JFRV8xODA6CisJCXN3YXAgPSBmYWxzZTsKKwkJYnJlYWs7CisJZGVmYXVsdDoKKwkJRFJN
-X0VSUk9SKCJpbnZhbGlkIGRlZ3JlZS5cbiIpOworCQlnb3RvIGVycl9wcm9wZXJ0eTsKKwl9CisK
-IAlmb3JfZWFjaF9pcHBfb3BzKGkpIHsKIAkJaWYgKChpID09IEVYWU5PU19EUk1fT1BTX1NSQykg
-JiYKIAkJCShwcm9wZXJ0eS0+Y21kID09IElQUF9DTURfV0IpKQpAQCAtMTQxNiwyMSArMTQ0Miw2
-IEBAIHN0YXRpYyBpbnQgZ3NjX2lwcGRydl9jaGVja19wcm9wZXJ0eShzdHJ1Y3QgZGV2aWNlICpk
-ZXYsCiAJCQlnb3RvIGVycl9wcm9wZXJ0eTsKIAkJfQogCi0JCS8qIGNoZWNrIGZvciBkZWdyZWUg
-Ki8KLQkJc3dpdGNoIChjb25maWctPmRlZ3JlZSkgewotCQljYXNlIEVYWU5PU19EUk1fREVHUkVF
-XzkwOgotCQljYXNlIEVYWU5PU19EUk1fREVHUkVFXzI3MDoKLQkJCXN3YXAgPSB0cnVlOwotCQkJ
-YnJlYWs7Ci0JCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMDoKLQkJY2FzZSBFWFlOT1NfRFJNX0RF
-R1JFRV8xODA6Ci0JCQlzd2FwID0gZmFsc2U7Ci0JCQlicmVhazsKLQkJZGVmYXVsdDoKLQkJCURS
-TV9FUlJPUigiaW52YWxpZCBkZWdyZWUuXG4iKTsKLQkJCWdvdG8gZXJyX3Byb3BlcnR5OwotCQl9
-Ci0KIAkJLyogY2hlY2sgZm9yIGJ1ZmZlciBib3VuZCAqLwogCQlpZiAoKHBvcy0+eCArIHBvcy0+
-dyA+IHN6LT5oc2l6ZSkgfHwKIAkJCShwb3MtPnkgKyBwb3MtPmggPiBzei0+dnNpemUpKSB7CkBA
-IC0xNDM4LDIxICsxNDQ5LDI3IEBAIHN0YXRpYyBpbnQgZ3NjX2lwcGRydl9jaGVja19wcm9wZXJ0
-eShzdHJ1Y3QgZGV2aWNlICpkZXYsCiAJCQlnb3RvIGVycl9wcm9wZXJ0eTsKIAkJfQogCisJCS8q
-CisJCSAqIFRoZSByb3RhdGlvbiBoYXJkd2FyZSBsaW1pdHMgYXJlIHJlbGF0ZWQgdG8gdGhlIGNy
-b3BwZWQKKwkJICogc291cmNlIHNpemUuIFNvIHVzZSByb3RfbWF4IHNpemUgdG8gY2hlY2sgdGhl
-IGxpbWl0cyB3aGVuCisJCSAqIHN3YXAgaGFwcGVucy4gQW5kIGFsc28gdGhlIHNjYWxpbmcgbGlt
-aXRzIGFyZSByZWxhdGVkIHRvIHBvcworCQkgKiBzaXplLCB1c2UgcG9zIHNpemUgdG8gY2hlY2sg
-dGhlIGxpbWl0cy4KKwkJICovCiAJCS8qIGNoZWNrIGZvciBjcm9wICovCiAJCWlmICgoaSA9PSBF
-WFlOT1NfRFJNX09QU19TUkMpICYmIChwcC0+Y3JvcCkpIHsKIAkJCWlmIChzd2FwKSB7CiAJCQkJ
-aWYgKChwb3MtPmggPCBwcC0+Y3JvcF9taW4uaHNpemUpIHx8Ci0JCQkJCShzei0+dnNpemUgPiBw
-cC0+Y3JvcF9tYXguaHNpemUpIHx8CisJCQkJCShwb3MtPmggPiBwcC0+cm90X21heC5oc2l6ZSkg
-fHwKIAkJCQkJKHBvcy0+dyA8IHBwLT5jcm9wX21pbi52c2l6ZSkgfHwKLQkJCQkJKHN6LT5oc2l6
-ZSA+IHBwLT5jcm9wX21heC52c2l6ZSkpIHsKKwkJCQkJKHBvcy0+dyA+IHBwLT5yb3RfbWF4LnZz
-aXplKSkgewogCQkJCQlEUk1fRVJST1IoIm91dCBvZiBjcm9wIHNpemUuXG4iKTsKIAkJCQkJZ290
-byBlcnJfcHJvcGVydHk7CiAJCQkJfQogCQkJfSBlbHNlIHsKIAkJCQlpZiAoKHBvcy0+dyA8IHBw
-LT5jcm9wX21pbi5oc2l6ZSkgfHwKLQkJCQkJKHN6LT5oc2l6ZSA+IHBwLT5jcm9wX21heC5oc2l6
-ZSkgfHwKKwkJCQkJKHBvcy0+dyA+IHBwLT5jcm9wX21heC5oc2l6ZSkgfHwKIAkJCQkJKHBvcy0+
-aCA8IHBwLT5jcm9wX21pbi52c2l6ZSkgfHwKLQkJCQkJKHN6LT52c2l6ZSA+IHBwLT5jcm9wX21h
-eC52c2l6ZSkpIHsKKwkJCQkJKHBvcy0+aCA+IHBwLT5jcm9wX21heC52c2l6ZSkpIHsKIAkJCQkJ
-RFJNX0VSUk9SKCJvdXQgb2YgY3JvcCBzaXplLlxuIik7CiAJCQkJCWdvdG8gZXJyX3Byb3BlcnR5
-OwogCQkJCX0KQEAgLTE0NjMsMTcgKzE0ODAsMTcgQEAgc3RhdGljIGludCBnc2NfaXBwZHJ2X2No
-ZWNrX3Byb3BlcnR5KHN0cnVjdCBkZXZpY2UgKmRldiwKIAkJaWYgKChpID09IEVYWU5PU19EUk1f
-T1BTX0RTVCkgJiYgKHBwLT5zY2FsZSkpIHsKIAkJCWlmIChzd2FwKSB7CiAJCQkJaWYgKChwb3Mt
-PmggPCBwcC0+c2NhbGVfbWluLmhzaXplKSB8fAotCQkJCQkoc3otPnZzaXplID4gcHAtPnNjYWxl
-X21heC5oc2l6ZSkgfHwKKwkJCQkJKHBvcy0+aCA+IHBwLT5zY2FsZV9tYXguaHNpemUpIHx8CiAJ
-CQkJCShwb3MtPncgPCBwcC0+c2NhbGVfbWluLnZzaXplKSB8fAotCQkJCQkoc3otPmhzaXplID4g
-cHAtPnNjYWxlX21heC52c2l6ZSkpIHsKKwkJCQkJKHBvcy0+dyA+IHBwLT5zY2FsZV9tYXgudnNp
-emUpKSB7CiAJCQkJCURSTV9FUlJPUigib3V0IG9mIHNjYWxlIHNpemUuXG4iKTsKIAkJCQkJZ290
-byBlcnJfcHJvcGVydHk7CiAJCQkJfQogCQkJfSBlbHNlIHsKIAkJCQlpZiAoKHBvcy0+dyA8IHBw
-LT5zY2FsZV9taW4uaHNpemUpIHx8Ci0JCQkJCShzei0+aHNpemUgPiBwcC0+c2NhbGVfbWF4Lmhz
-aXplKSB8fAorCQkJCQkocG9zLT53ID4gcHAtPnNjYWxlX21heC5oc2l6ZSkgfHwKIAkJCQkJKHBv
-cy0+aCA8IHBwLT5zY2FsZV9taW4udnNpemUpIHx8Ci0JCQkJCShzei0+dnNpemUgPiBwcC0+c2Nh
-bGVfbWF4LnZzaXplKSkgeworCQkJCQkocG9zLT5oID4gcHAtPnNjYWxlX21heC52c2l6ZSkpIHsK
-IAkJCQkJRFJNX0VSUk9SKCJvdXQgb2Ygc2NhbGUgc2l6ZS5cbiIpOwogCQkJCQlnb3RvIGVycl9w
-cm9wZXJ0eTsKIAkJCQl9CkBAIC0xNjU3LDYgKzE2NzQsMjcgQEAgc3RhdGljIHZvaWQgZ3NjX2lw
-cGRydl9zdG9wKHN0cnVjdCBkZXZpY2UgKmRldiwgZW51bSBkcm1fZXh5bm9zX2lwcF9jbWQgY21k
-KQogCWdzY193cml0ZShjZmcsIEdTQ19FTkFCTEUpOwogfQogCitzdGF0aWMgc3RydWN0IGdzY19k
-cml2ZXJkYXRhIGdzY19leHlub3M1MjUwX2RydmRhdGEgPSB7CisJLnJvdF9tYXggPSB7IDIwNDgs
-IDIwNDggfSwKK307CisKK3N0YXRpYyBzdHJ1Y3QgZ3NjX2RyaXZlcmRhdGEgZ3NjX2V4eW5vczU0
-MjBfZHJ2ZGF0YSA9IHsKKwkucm90X21heCA9IHsgMjAxNiwgMjAxNiB9LAorfTsKKworc3RhdGlj
-IGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgZXh5bm9zX2RybV9nc2Nfb2ZfbWF0Y2hbXSA9IHsK
-Kwl7CisJCS5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNTI1MC1nc2MiLAorCQkuZGF0YSA9
-ICZnc2NfZXh5bm9zNTI1MF9kcnZkYXRhLAorCX0sCisJeworCQkuY29tcGF0aWJsZSA9ICJzYW1z
-dW5nLGV4eW5vczU0MjAtZ3NjIiwKKwkJLmRhdGEgPSAmZ3NjX2V4eW5vczU0MjBfZHJ2ZGF0YSwK
-Kwl9LAorCXsgfSwKK307CitNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBleHlub3NfZHJtX2dzY19v
-Zl9tYXRjaCk7CisKIHN0YXRpYyBpbnQgZ3NjX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
-KnBkZXYpCiB7CiAJc3RydWN0IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsKQEAgLTE2NzAsMTIg
-KzE3MDgsMjIgQEAgc3RhdGljIGludCBnc2NfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikKIAkJcmV0dXJuIC1FTk9NRU07CiAKIAlpZiAoZGV2LT5vZl9ub2RlKSB7CisJCWNvbnN0
-IHN0cnVjdCBvZl9kZXZpY2VfaWQgKm1hdGNoOworCQlzdHJ1Y3QgZ3NjX2RyaXZlcmRhdGEgKmRy
-aXZlcl9kYXRhOworCiAJCWN0eC0+c3lzcmVnID0gc3lzY29uX3JlZ21hcF9sb29rdXBfYnlfcGhh
-bmRsZShkZXYtPm9mX25vZGUsCiAJCQkJCQkJInNhbXN1bmcsc3lzcmVnIik7CiAJCWlmIChJU19F
-UlIoY3R4LT5zeXNyZWcpKSB7CiAJCQlkZXZfd2FybihkZXYsICJmYWlsZWQgdG8gZ2V0IHN5c3Rl
-bSByZWdpc3Rlci5cbiIpOwogCQkJY3R4LT5zeXNyZWcgPSBOVUxMOwogCQl9CisKKwkJbWF0Y2gg
-PSBvZl9tYXRjaF9ub2RlKGV4eW5vc19kcm1fZ3NjX29mX21hdGNoLCBkZXYtPm9mX25vZGUpOwor
-CQlpZiAoIW1hdGNoKQorCQkJcmV0dXJuIC1FTk9ERVY7CisKKwkJZHJpdmVyX2RhdGEgPSAoc3Ry
-dWN0IGdzY19kcml2ZXJkYXRhICopbWF0Y2gtPmRhdGE7CisJCWN0eC0+aXBwZHJ2LnByb3BfbGlz
-dC5yb3RfbWF4ID0gZHJpdmVyX2RhdGEtPnJvdF9tYXg7CiAJfQogCiAJLyogY2xvY2sgY29udHJv
-bCAqLwpAQCAtMTc4NCwxMiArMTgzMiw2IEBAIHN0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgZ3Nj
-X3J1bnRpbWVfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKIAlTRVRfUlVOVElNRV9QTV9PUFMo
-Z3NjX3J1bnRpbWVfc3VzcGVuZCwgZ3NjX3J1bnRpbWVfcmVzdW1lLCBOVUxMKQogfTsKIAotc3Rh
-dGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgZXh5bm9zX2RybV9nc2Nfb2ZfbWF0Y2hbXSA9
-IHsKLQl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNS1nc2MiIH0sCi0JeyB9LAotfTsK
-LU1PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIGV4eW5vc19kcm1fZ3NjX29mX21hdGNoKTsKLQogc3Ry
-dWN0IHBsYXRmb3JtX2RyaXZlciBnc2NfZHJpdmVyID0gewogCS5wcm9iZQkJPSBnc2NfcHJvYmUs
-CiAJLnJlbW92ZQkJPSBnc2NfcmVtb3ZlLApkaWZmIC0tZ2l0IGEvaW5jbHVkZS91YXBpL2RybS9l
-eHlub3NfZHJtLmggYi9pbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaAppbmRleCBjYjNlOWY5
-Li5kNWQ1NTE4IDEwMDY0NAotLS0gYS9pbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaAorKysg
-Yi9pbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaApAQCAtMTkyLDYgKzE5Miw3IEBAIGVudW0g
-ZHJtX2V4eW5vc19wbGFuZXIgewogICogQGNyb3BfbWF4OiBjcm9wIG1heCByZXNvbHV0aW9uLgog
-ICogQHNjYWxlX21pbjogc2NhbGUgbWluIHJlc29sdXRpb24uCiAgKiBAc2NhbGVfbWF4OiBzY2Fs
-ZSBtYXggcmVzb2x1dGlvbi4KKyAqIEByb3RfbWF4OiByb3RhdGlvbiBtYXggcmVzb2x1dGlvbi4K
-ICAqLwogc3RydWN0IGRybV9leHlub3NfaXBwX3Byb3BfbGlzdCB7CiAJX191MzIJdmVyc2lvbjsK
-QEAgLTIxMCw2ICsyMTEsNyBAQCBzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfcHJvcF9saXN0IHsKIAlz
-dHJ1Y3QgZHJtX2V4eW5vc19zegljcm9wX21heDsKIAlzdHJ1Y3QgZHJtX2V4eW5vc19zeglzY2Fs
-ZV9taW47CiAJc3RydWN0IGRybV9leHlub3Nfc3oJc2NhbGVfbWF4OworCXN0cnVjdCBkcm1fZXh5
-bm9zX3N6CXJvdF9tYXg7CiB9OwogCiAvKioKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 06/09/17 13:40, Vincent Guittot wrote:
+> On 6 September 2017 at 13:43, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>> Hi Vincent,
+>>
+>> On 04/09/17 08:49, Vincent Guittot wrote:
+>>> Hi Dietmar,
+>>>
+>>> Removing cpu effificiency table looks good to me. Nevertheless, i have
+>>> some comments below for this patch.
+>>
+>> Thanks for the review!
+>>
+>>> On 30 August 2017 at 16:41, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+
+[...]
+
+I fixed the issue with the continue statement. Moreover, I think we should also
+remove the comment block about 'cpu capacity scale management' and 'cpu capacity
+table' on top of  parse_dt_topology() because this is now all handled in
+drivers/base/arch_topology.c.
+
+-- >8 --
+
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Sun, 9 Jul 2017 23:43:43 +0100
+Subject: [PATCH] arm: topology: remove cpu_efficiency
+
+Remove the 'cpu_efficiency/clock-frequency dt property' based solution
+to set cpu capacity which was only working for Cortex-A15/A7 arm
+big.LITTLE systems.
+
+I.e. the 'capacity-dmips-mhz' based solution is now the only one. It is
+shared between arm and arm64 and works for every big.LITTLE system no
+matter which core types it consists of.
+
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Juri Lelli <juri.lelli@arm.com>
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+---
+ arch/arm/kernel/topology.c | 130 ++-------------------------------------------
+ 1 file changed, 3 insertions(+), 127 deletions(-)
+
+diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
+index bf949a763dbe..5f46d290e34b 100644
+--- a/arch/arm/kernel/topology.c
++++ b/arch/arm/kernel/topology.c
+@@ -30,69 +30,11 @@
+ #include <asm/cputype.h>
+ #include <asm/topology.h>
+ 
+-/*
+- * cpu capacity scale management
+- */
+-
+-/*
+- * cpu capacity table
+- * This per cpu data structure describes the relative capacity of each core.
+- * On a heteregenous system, cores don't have the same computation capacity
+- * and we reflect that difference in the cpu_capacity field so the scheduler
+- * can take this difference into account during load balance. A per cpu
+- * structure is preferred because each CPU updates its own cpu_capacity field
+- * during the load balance except for idle cores. One idle core is selected
+- * to run the rebalance_domains for all idle cores and the cpu_capacity can be
+- * updated during this sequence.
+- */
+-
+ #ifdef CONFIG_OF
+-struct cpu_efficiency {
+-       const char *compatible;
+-       unsigned long efficiency;
+-};
+-
+-/*
+- * Table of relative efficiency of each processors
+- * The efficiency value must fit in 20bit and the final
+- * cpu_scale value must be in the range
+- *   0 < cpu_scale < 3*SCHED_CAPACITY_SCALE/2
+- * in order to return at most 1 when DIV_ROUND_CLOSEST
+- * is used to compute the capacity of a CPU.
+- * Processors that are not defined in the table,
+- * use the default SCHED_CAPACITY_SCALE value for cpu_scale.
+- */
+-static const struct cpu_efficiency table_efficiency[] = {
+-       {"arm,cortex-a15", 3891},
+-       {"arm,cortex-a7",  2048},
+-       {NULL, },
+-};
+-
+-static unsigned long *__cpu_capacity;
+-#define cpu_capacity(cpu)      __cpu_capacity[cpu]
+-
+-static unsigned long middle_capacity = 1;
+-static bool cap_from_dt = true;
+-
+-/*
+- * Iterate all CPUs' descriptor in DT and compute the efficiency
+- * (as per table_efficiency). Also calculate a middle efficiency
+- * as close as possible to  (max{eff_i} - min{eff_i}) / 2
+- * This is later used to scale the cpu_capacity field such that an
+- * 'average' CPU is of middle capacity. Also see the comments near
+- * table_efficiency[] and update_cpu_capacity().
+- */
+ static void __init parse_dt_topology(void)
+ {
+-       const struct cpu_efficiency *cpu_eff;
+-       struct device_node *cn = NULL;
+-       unsigned long min_capacity = ULONG_MAX;
+-       unsigned long max_capacity = 0;
+-       unsigned long capacity = 0;
+-       int cpu = 0;
+-
+-       __cpu_capacity = kcalloc(nr_cpu_ids, sizeof(*__cpu_capacity),
+-                                GFP_NOWAIT);
++       struct device_node *cn;
++       int cpu;
+ 
+        cn = of_find_node_by_path("/cpus");
+        if (!cn) {
+@@ -101,9 +43,6 @@ static void __init parse_dt_topology(void)
+        }
+ 
+        for_each_possible_cpu(cpu) {
+-               const u32 *rate;
+-               int len;
+-
+                /* too early to use cpu->of_node */
+                cn = of_get_cpu_node(cpu, NULL);
+                if (!cn) {
+@@ -113,75 +52,14 @@ static void __init parse_dt_topology(void)
+ 
+                if (topology_parse_cpu_capacity(cn, cpu)) {
+                        of_node_put(cn);
+-                       continue;
+                }
+-
+-               cap_from_dt = false;
+-
+-               for (cpu_eff = table_efficiency; cpu_eff->compatible; cpu_eff++)
+-                       if (of_device_is_compatible(cn, cpu_eff->compatible))
+-                               break;
+-
+-               if (cpu_eff->compatible == NULL)
+-                       continue;
+-
+-               rate = of_get_property(cn, "clock-frequency", &len);
+-               if (!rate || len != 4) {
+-                       pr_err("%s missing clock-frequency property\n",
+-                               cn->full_name);
+-                       continue;
+-               }
+-
+-               capacity = ((be32_to_cpup(rate)) >> 20) * cpu_eff->efficiency;
+-
+-               /* Save min capacity of the system */
+-               if (capacity < min_capacity)
+-                       min_capacity = capacity;
+-
+-               /* Save max capacity of the system */
+-               if (capacity > max_capacity)
+-                       max_capacity = capacity;
+-
+-               cpu_capacity(cpu) = capacity;
+        }
+ 
+-       /* If min and max capacities are equals, we bypass the update of the
+-        * cpu_scale because all CPUs have the same capacity. Otherwise, we
+-        * compute a middle_capacity factor that will ensure that the capacity
+-        * of an 'average' CPU of the system will be as close as possible to
+-        * SCHED_CAPACITY_SCALE, which is the default value, but with the
+-        * constraint explained near table_efficiency[].
+-        */
+-       if (4*max_capacity < (3*(max_capacity + min_capacity)))
+-               middle_capacity = (min_capacity + max_capacity)
+-                               >> (SCHED_CAPACITY_SHIFT+1);
+-       else
+-               middle_capacity = ((max_capacity / 3)
+-                               >> (SCHED_CAPACITY_SHIFT-1)) + 1;
+-
+-       if (cap_from_dt)
+-               topology_normalize_cpu_scale();
+-}
+-
+-/*
+- * Look for a customed capacity of a CPU in the cpu_capacity table during the
+- * boot. The update of all CPUs is in O(n^2) for heteregeneous system but the
+- * function returns directly for SMP system.
+- */
+-static void update_cpu_capacity(unsigned int cpu)
+-{
+-       if (!cpu_capacity(cpu) || cap_from_dt)
+-               return;
+-
+-       topology_set_cpu_scale(cpu, cpu_capacity(cpu) / middle_capacity);
+-
+-       pr_info("CPU%u: update cpu_capacity %lu\n",
+-               cpu, topology_get_cpu_scale(NULL, cpu));
++       topology_normalize_cpu_scale();
+ }
+ 
+ #else
+ static inline void parse_dt_topology(void) {}
+-static inline void update_cpu_capacity(unsigned int cpuid) {}
+ #endif
+ 
+  /*
+@@ -277,8 +155,6 @@ void store_cpu_topology(unsigned int cpuid)
+ 
+        update_siblings_masks(cpuid);
+ 
+-       update_cpu_capacity(cpuid);
+-
+        pr_info("CPU%u: thread %d, cpu %d, socket %d, mpidr %x\n",
+                cpuid, cpu_topology[cpuid].thread_id,
+                cpu_topology[cpuid].core_id,
+-- 
+2.11.0
