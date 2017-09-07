@@ -1,19 +1,19 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] ARM: dts: exynos: fix incomplete Odroid-XU3/4 thermal-zones
- definition
-Date: Thu, 07 Sep 2017 17:58:54 +0200
-Message-ID: <12756817.Sq0VSgt4c1@amdc3058>
-References: <CGME20170907155857epcas2p1819af1f0290828b48aaf953a05aa32b0@epcas2p1.samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2] ARM: dts: exynos: fix incomplete Odroid-XU3/4
+ thermal-zones definition
+Date: Thu, 07 Sep 2017 18:10 +0200
+Message-ID: <1848394.K3C0KxojUN@amdc3058>
+References: <CGME20170907161007epcas1p316fba6e329eaabedde8a98628ebb9751@epcas1p3.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Willy Wolff <willy.mh.wolff-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Willy Wolff <willy.mh.wolff@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Willy Wolff <willy.mh.wolff-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Willy Wolff <willy.mh.wolff@gmail.com>
 
 Odroid XU3/4 boards have thermal sensors per 4 pairs of A7+A15
 cores but currently there is only one thermal-zone (including
@@ -29,26 +29,33 @@ Also while at it fix the number of steps in cpufreq cooling for
 cpu4 (11 steps for A15 corresponds to 700MHz, for 600MHz 12 steps
 should be used).
 
-Signed-off-by: Willy Wolff <willy.mh.wolff-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Kukjin Kim <kgene@kernel.org>
 [b.zolnierkie: rewrote patch subject & description + minor fixups]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
+v2:
+
+Newlines removed (1 original + 3 new ones), sorry for not catching it
+earlier in v1.
+
+v1:
+
 I updated the patch to address Krzysztof's review comments,
 the original version from June can be found here:
 
 	https://patchwork.kernel.org/patch/9807333/
 
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  241 +++++++++++++++++++--
- 1 file changed, 222 insertions(+), 19 deletions(-)
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  239 +++++++++++++++++++--
+ 1 file changed, 219 insertions(+), 20 deletions(-)
 
 Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
 ===================================================================
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2017-09-07 17:41:18.264391541 +0200
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2017-09-07 17:47:07.788400343 +0200
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2017-09-07 17:56:29.256414483 +0200
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2017-09-07 18:04:40.596426857 +0200
 @@ -63,22 +63,22 @@
  			polling-delay-passive = <250>;
  			polling-delay = <0>;
@@ -76,7 +83,7 @@ Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
  					temperature = <120000>; /* millicelsius */
  					hysteresis = <0>; /* millicelsius */
  					type = "critical";
-@@ -87,14 +87,14 @@
+@@ -87,59 +87,258 @@
  				 * Exynos542x supports only 4 trip-points
  				 * so for these polling mode is required.
  				 * Start polling at temperature level of last
@@ -94,7 +101,8 @@ Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
  					temperature = <85000>; /* millicelsius */
  					hysteresis = <10000>; /* millicelsius */
  					type = "passive";
-@@ -103,43 +103,246 @@
+ 				};
+-
  			};
  			cooling-maps {
  				map0 {
@@ -139,9 +147,11 @@ Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
  				map5 {
 -					trip = <&cpu_alert4>;
 +					trip = <&cpu0_alert4>;
-+					cooling-device = <&cpu0 3 7>;
-+				};
-+				map6 {
+ 					cooling-device = <&cpu0 3 7>;
+ 				};
+ 				map6 {
+-					trip = <&cpu_alert4>;
+-					cooling-device = <&cpu4 3 11>;
 +					trip = <&cpu0_alert4>;
 +					cooling-device = <&cpu4 3 12>;
 +				};
@@ -182,7 +192,6 @@ Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
 +					hysteresis = <10000>;
 +					type = "passive";
 +				};
-+
 +			};
 +			cooling-maps {
 +				map0 {
@@ -250,7 +259,6 @@ Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
 +					hysteresis = <10000>;
 +					type = "passive";
 +				};
-+
 +			};
 +			cooling-maps {
 +				map0 {
@@ -318,7 +326,6 @@ Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
 +					hysteresis = <10000>;
 +					type = "passive";
 +				};
-+
 +			};
 +			cooling-maps {
 +				map0 {
@@ -343,18 +350,11 @@ Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
 +				};
 +				map5 {
 +					trip = <&cpu3_alert4>;
- 					cooling-device = <&cpu0 3 7>;
- 				};
- 				map6 {
--					trip = <&cpu_alert4>;
--					cooling-device = <&cpu4 3 11>;
++					cooling-device = <&cpu0 3 7>;
++				};
++				map6 {
 +					trip = <&cpu3_alert4>;
 +					cooling-device = <&cpu4 3 12>;
  				};
  			};
  		};
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
