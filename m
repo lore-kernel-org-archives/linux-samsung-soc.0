@@ -1,101 +1,170 @@
-From: Vincent Guittot <vincent.guittot-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/4] arm: topology: remove cpu_efficiency
-Date: Wed, 6 Sep 2017 14:40:12 +0200
-Message-ID: <CAKfTPtAvhujS1wpP1JE8OqCfsKXcrFxLQ0207WFg3ZhZjoHnBA@mail.gmail.com>
-References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
- <20170830144120.9312-2-dietmar.eggemann@arm.com> <CAKfTPtBXkAyAc1aqqqEn6Yt14_Y7LFp3oySY-=G3ZTuG-DR_nA@mail.gmail.com>
- <303d3f7b-5d64-e13a-c4f9-dd575958cafa@arm.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH 3/3] drm/exynos/gsc: Add rotation hardware limits of
+ gscaler
+Date: Thu, 07 Sep 2017 14:16:13 +0900
+Message-ID: <1e8a7563-046b-82b1-6da9-2e883426edf7@samsung.com>
+References: <1504230476-1878-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170901014758epcas2p13ae73e7dcac72a1a28c9324164efbd6d@epcas2p1.samsung.com>
+ <1504230476-1878-4-git-send-email-hoegeun.kwon@samsung.com>
+ <10747c31-55fc-6464-eb00-99da6d66fca6@samsung.com>
+ <7e628ff8-82be-a295-90fa-8f547a541cb3@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <303d3f7b-5d64-e13a-c4f9-dd575958cafa-5wv7dgnIgG8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dietmar Eggemann <dietmar.eggemann-5wv7dgnIgG8@public.gmane.org>
-Cc: linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Juri Lelli <juri.lelli-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <7e628ff8-82be-a295-90fa-8f547a541cb3@samsung.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 6 September 2017 at 13:43, Dietmar Eggemann <dietmar.eggemann-5wv7dgnIgG8@public.gmane.org> wrote:
-> Hi Vincent,
->
-> On 04/09/17 08:49, Vincent Guittot wrote:
->> Hi Dietmar,
->>
->> Removing cpu effificiency table looks good to me. Nevertheless, i have
->> some comments below for this patch.
->
-> Thanks for the review!
->
->> On 30 August 2017 at 16:41, Dietmar Eggemann <dietmar.eggemann-5wv7dgnIgG8@public.gmane.org> wrote:
->>> Remove the 'cpu_efficiency/clock-frequency dt property' based solution
->>> to set cpu capacity which was only working for Cortex-A15/A7 arm
->>> big.LITTLE systems.
->>>
->>> I.e. the 'capacity-dmips-mhz' based solution is now the only one. It is
->>> shared between arm and arm64 and works for every big.LITTLE system no
->>> matter which core types it consists of.
->>>
->>> Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
->>> Cc: Vincent Guittot <vincent.guittot-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>> Cc: Juri Lelli <juri.lelli-5wv7dgnIgG8@public.gmane.org>
->>> Signed-off-by: Dietmar Eggemann <dietmar.eggemann-5wv7dgnIgG8@public.gmane.org>
->>> ---
->>>  arch/arm/kernel/topology.c | 113 ++-------------------------------------------
->>>  1 file changed, 3 insertions(+), 110 deletions(-)
->
-> [...]
->
->>> @@ -115,73 +70,13 @@ static void __init parse_dt_topology(void)
->>>                         of_node_put(cn);
->>>                         continue;
->>
->> AFAICT, this continue is now useless as it was there to skipe the cpu
->> table efficiency method
->
-> You're right ... will remove it.
->
-> [...]
->
->>> -       if (cap_from_dt)
->>> -               topology_normalize_cpu_scale();
->>
->> Why have you moved the call to topology_normalize_cpu_scale() from
->> parse_dt_topology() to update_cpu_capacity() ?
->
-> Didn't move it ? It's still called from parse_dt_topology().
->
->> You should keep it in parse_dt_topology() as itis part of the dt
->> parsing sequence
->
-> Yes, this should be the case.
->
-> [...]
->
->>> -/*
->>> - * Look for a customed capacity of a CPU in the cpu_capacity table during the
->>> - * boot. The update of all CPUs is in O(n^2) for heteregeneous system but the
->>> - * function returns directly for SMP system.
->>> - */
->>> -static void update_cpu_capacity(unsigned int cpu)
->>> -{
->>> -       if (!cpu_capacity(cpu) || cap_from_dt)
->>> -               return;
->>> -
->>> -       topology_set_cpu_scale(cpu, cpu_capacity(cpu) / middle_capacity);
->>> -
->>> -       pr_info("CPU%u: update cpu_capacity %lu\n",
->>> -               cpu, topology_get_cpu_scale(NULL, cpu));
->>> +       topology_normalize_cpu_scale();
->>>  }
->>
->> You can probably just removed update_cpu_capacity()
->
-> I did remove update_cpu_capacity(). Maybe the patch layout is confusing?
-
-yes you're right I have been confused by the layout
-
->
-> [...]
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gMDkvMDQvMjAxNyAwMzoxOSBQTSwgSG9lZ2V1biBLd29uIHdyb3RlOgo+IE9uIDA5LzAxLzIw
+MTcgMDQ6MzEgUE0sIE1hcmVrIFN6eXByb3dza2kgd3JvdGU6Cj4+IEhpIEhvZWdldW4sCj4+Cj4+
+IE9uIDIwMTctMDktMDEgMDM6NDcsIEhvZWdldW4gS3dvbiB3cm90ZToKPj4+IFRoZSBnc2NhbGVy
+IGhhcyBoYXJkd2FyZSByb3RhdGlvbiBsaW1pdHMgdGhhdCBuZWVkIHRvIGJlIGltcG9ydGVkIGZy
+b20KPj4+IGR0cy4gUGFyc2UgdGhlbSBhbmQgYWRkIHRoZW0gdG8gdGhlIHByb3BlcnR5IGxpc3Qu
+Cj4+Pgo+Pj4gVGhlIHJvdGF0aW9uIGhhcmR3YXJlIGxpbWl0cyBhcmUgcmVsYXRlZCB0byB0aGUg
+Y3JvcHBlZCBzb3VyY2Ugc2l6ZS4KPj4+IFdoZW4gc3dhcCBvY2N1cnMsIHVzZSByb3RfbWF4IHNp
+emUgaW5zdGVhZCBvZiBjcm9wX21heCBzaXplLgo+Pj4KPj4+IEFsc28gdGhlIHNjYWxpbmcgbGlt
+aXRzIGFyZSByZWxhdGVkIHRvIHBvc3Qgc2l6ZSwgdXNlIHBvcyBzaXplIHRvCj4+PiBjaGVjayB0
+aGUgbGltaXRzLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEhvZWdldW4gS3dvbiA8aG9lZ2V1bi5r
+d29uQHNhbXN1bmcuY29tPgo+Pj4gLS0tCj4+PiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9nc2MuYyB8IDYzIAo+Pj4gKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0t
+Cj4+PiAgIGluY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oICAgICAgICAgICB8ICAyICsrCj4+
+PiAgIDIgZmlsZXMgY2hhbmdlZCwgNDIgaW5zZXJ0aW9ucygrKSwgMjMgZGVsZXRpb25zKC0pCj4+
+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2Mu
+YyAKPj4+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jCj4+PiBpbmRl
+eCAwNTA2YjJiLi5kZDliMDU3IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2dzYy5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZ3NjLmMKPj4+IEBAIC0xNDAxLDYgKzE0MDEsMjMgQEAgc3RhdGljIGludCBnc2NfaXBw
+ZHJ2X2NoZWNrX3Byb3BlcnR5KHN0cnVjdCAKPj4+IGRldmljZSAqZGV2LAo+Pj4gICAgICAgYm9v
+bCBzd2FwOwo+Pj4gICAgICAgaW50IGk7Cj4+PiAgICsgICAgY29uZmlnID0gJnByb3BlcnR5LT5j
+b25maWdbRVhZTk9TX0RSTV9PUFNfRFNUXTsKPj4+ICsKPj4+ICsgICAgLyogY2hlY2sgZm9yIGRl
+Z3JlZSAqLwo+Pj4gKyAgICBzd2l0Y2ggKGNvbmZpZy0+ZGVncmVlKSB7Cj4+PiArICAgIGNhc2Ug
+RVhZTk9TX0RSTV9ERUdSRUVfOTA6Cj4+PiArICAgIGNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMjcw
+Ogo+Pj4gKyAgICAgICAgc3dhcCA9IHRydWU7Cj4+PiArICAgICAgICBicmVhazsKPj4+ICsgICAg
+Y2FzZSBFWFlOT1NfRFJNX0RFR1JFRV8wOgo+Pj4gKyAgICBjYXNlIEVYWU5PU19EUk1fREVHUkVF
+XzE4MDoKPj4+ICsgICAgICAgIHN3YXAgPSBmYWxzZTsKPj4+ICsgICAgICAgIGJyZWFrOwo+Pj4g
+KyAgICBkZWZhdWx0Ogo+Pj4gKyAgICAgICAgRFJNX0VSUk9SKCJpbnZhbGlkIGRlZ3JlZS5cbiIp
+Owo+Pj4gKyAgICAgICAgZ290byBlcnJfcHJvcGVydHk7Cj4+PiArICAgIH0KPj4+ICsKPj4+ICAg
+ICAgIGZvcl9lYWNoX2lwcF9vcHMoaSkgewo+Pj4gICAgICAgICAgIGlmICgoaSA9PSBFWFlOT1Nf
+RFJNX09QU19TUkMpICYmCj4+PiAgICAgICAgICAgICAgIChwcm9wZXJ0eS0+Y21kID09IElQUF9D
+TURfV0IpKQo+Pj4gQEAgLTE0MTYsMjEgKzE0MzMsNiBAQCBzdGF0aWMgaW50IGdzY19pcHBkcnZf
+Y2hlY2tfcHJvcGVydHkoc3RydWN0IAo+Pj4gZGV2aWNlICpkZXYsCj4+PiAgICAgICAgICAgICAg
+IGdvdG8gZXJyX3Byb3BlcnR5Owo+Pj4gICAgICAgICAgIH0KPj4+ICAgLSAgICAgICAgLyogY2hl
+Y2sgZm9yIGRlZ3JlZSAqLwo+Pj4gLSAgICAgICAgc3dpdGNoIChjb25maWctPmRlZ3JlZSkgewo+
+Pj4gLSAgICAgICAgY2FzZSBFWFlOT1NfRFJNX0RFR1JFRV85MDoKPj4+IC0gICAgICAgIGNhc2Ug
+RVhZTk9TX0RSTV9ERUdSRUVfMjcwOgo+Pj4gLSAgICAgICAgICAgIHN3YXAgPSB0cnVlOwo+Pj4g
+LSAgICAgICAgICAgIGJyZWFrOwo+Pj4gLSAgICAgICAgY2FzZSBFWFlOT1NfRFJNX0RFR1JFRV8w
+Ogo+Pj4gLSAgICAgICAgY2FzZSBFWFlOT1NfRFJNX0RFR1JFRV8xODA6Cj4+PiAtICAgICAgICAg
+ICAgc3dhcCA9IGZhbHNlOwo+Pj4gLSAgICAgICAgICAgIGJyZWFrOwo+Pj4gLSAgICAgICAgZGVm
+YXVsdDoKPj4+IC0gICAgICAgICAgICBEUk1fRVJST1IoImludmFsaWQgZGVncmVlLlxuIik7Cj4+
+PiAtICAgICAgICAgICAgZ290byBlcnJfcHJvcGVydHk7Cj4+PiAtICAgICAgICB9Cj4+PiAtCj4+
+PiAgICAgICAgICAgLyogY2hlY2sgZm9yIGJ1ZmZlciBib3VuZCAqLwo+Pj4gICAgICAgICAgIGlm
+ICgocG9zLT54ICsgcG9zLT53ID4gc3otPmhzaXplKSB8fAo+Pj4gICAgICAgICAgICAgICAocG9z
+LT55ICsgcG9zLT5oID4gc3otPnZzaXplKSkgewo+Pj4gQEAgLTE0MzgsMjEgKzE0NDAsMjcgQEAg
+c3RhdGljIGludCBnc2NfaXBwZHJ2X2NoZWNrX3Byb3BlcnR5KHN0cnVjdCAKPj4+IGRldmljZSAq
+ZGV2LAo+Pj4gICAgICAgICAgICAgICBnb3RvIGVycl9wcm9wZXJ0eTsKPj4+ICAgICAgICAgICB9
+Cj4+PiAgICsgICAgICAgIC8qCj4+PiArICAgICAgICAgKiBUaGUgcm90YXRpb24gaGFyZHdhcmUg
+bGltaXRzIGFyZSByZWxhdGVkIHRvIHRoZSBjcm9wcGVkCj4+PiArICAgICAgICAgKiBzb3VyY2Ug
+c2l6ZS4gU28gdXNlIHJvdF9tYXggc2l6ZSB0byBjaGVjayB0aGUgbGltaXRzIHdoZW4KPj4+ICsg
+ICAgICAgICAqIHN3YXAgaGFwcGVucy4gQW5kIGFsc28gdGhlIHNjYWxpbmcgbGltaXRzIGFyZSBy
+ZWxhdGVkIHRvIAo+Pj4gcG9zCj4+PiArICAgICAgICAgKiBzaXplLCB1c2UgcG9zIHNpemUgdG8g
+Y2hlY2sgdGhlIGxpbWl0cy4KPj4+ICsgICAgICAgICAqLwo+Pj4gICAgICAgICAgIC8qIGNoZWNr
+IGZvciBjcm9wICovCj4+PiAgICAgICAgICAgaWYgKChpID09IEVYWU5PU19EUk1fT1BTX1NSQykg
+JiYgKHBwLT5jcm9wKSkgewo+Pj4gICAgICAgICAgICAgICBpZiAoc3dhcCkgewo+Pj4gICAgICAg
+ICAgICAgICAgICAgaWYgKChwb3MtPmggPCBwcC0+Y3JvcF9taW4uaHNpemUpIHx8Cj4+PiAtICAg
+ICAgICAgICAgICAgICAgICAoc3otPnZzaXplID4gcHAtPmNyb3BfbWF4LmhzaXplKSB8fAo+Pj4g
+KyAgICAgICAgICAgICAgICAgICAgKHBvcy0+aCA+IHBwLT5yb3RfbWF4LmhzaXplKSB8fAo+Pj4g
+ICAgICAgICAgICAgICAgICAgICAgIChwb3MtPncgPCBwcC0+Y3JvcF9taW4udnNpemUpIHx8Cj4+
+PiAtICAgICAgICAgICAgICAgICAgICAoc3otPmhzaXplID4gcHAtPmNyb3BfbWF4LnZzaXplKSkg
+ewo+Pj4gKyAgICAgICAgICAgICAgICAgICAgKHBvcy0+dyA+IHBwLT5yb3RfbWF4LnZzaXplKSkg
+ewo+Pj4gICAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJPUigib3V0IG9mIGNyb3Agc2l6ZS5c
+biIpOwo+Pj4gICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZXJyX3Byb3BlcnR5Owo+Pj4gICAg
+ICAgICAgICAgICAgICAgfQo+Pj4gICAgICAgICAgICAgICB9IGVsc2Ugewo+Pj4gICAgICAgICAg
+ICAgICAgICAgaWYgKChwb3MtPncgPCBwcC0+Y3JvcF9taW4uaHNpemUpIHx8Cj4+PiAtICAgICAg
+ICAgICAgICAgICAgICAoc3otPmhzaXplID4gcHAtPmNyb3BfbWF4LmhzaXplKSB8fAo+Pj4gKyAg
+ICAgICAgICAgICAgICAgICAgKHBvcy0+dyA+IHBwLT5jcm9wX21heC5oc2l6ZSkgfHwKPj4+ICAg
+ICAgICAgICAgICAgICAgICAgICAocG9zLT5oIDwgcHAtPmNyb3BfbWluLnZzaXplKSB8fAo+Pj4g
+LSAgICAgICAgICAgICAgICAgICAgKHN6LT52c2l6ZSA+IHBwLT5jcm9wX21heC52c2l6ZSkpIHsK
+Pj4+ICsgICAgICAgICAgICAgICAgICAgIChwb3MtPmggPiBwcC0+Y3JvcF9tYXgudnNpemUpKSB7
+Cj4+PiAgICAgICAgICAgICAgICAgICAgICAgRFJNX0VSUk9SKCJvdXQgb2YgY3JvcCBzaXplLlxu
+Iik7Cj4+PiAgICAgICAgICAgICAgICAgICAgICAgZ290byBlcnJfcHJvcGVydHk7Cj4+PiAgICAg
+ICAgICAgICAgICAgICB9Cj4+PiBAQCAtMTQ2MywxNyArMTQ3MSwxNyBAQCBzdGF0aWMgaW50IGdz
+Y19pcHBkcnZfY2hlY2tfcHJvcGVydHkoc3RydWN0IAo+Pj4gZGV2aWNlICpkZXYsCj4+PiAgICAg
+ICAgICAgaWYgKChpID09IEVYWU5PU19EUk1fT1BTX0RTVCkgJiYgKHBwLT5zY2FsZSkpIHsKPj4+
+ICAgICAgICAgICAgICAgaWYgKHN3YXApIHsKPj4+ICAgICAgICAgICAgICAgICAgIGlmICgocG9z
+LT5oIDwgcHAtPnNjYWxlX21pbi5oc2l6ZSkgfHwKPj4+IC0gICAgICAgICAgICAgICAgICAgIChz
+ei0+dnNpemUgPiBwcC0+c2NhbGVfbWF4LmhzaXplKSB8fAo+Pj4gKyAgICAgICAgICAgICAgICAg
+ICAgKHBvcy0+aCA+IHBwLT5zY2FsZV9tYXguaHNpemUpIHx8Cj4+PiAgICAgICAgICAgICAgICAg
+ICAgICAgKHBvcy0+dyA8IHBwLT5zY2FsZV9taW4udnNpemUpIHx8Cj4+PiAtICAgICAgICAgICAg
+ICAgICAgICAoc3otPmhzaXplID4gcHAtPnNjYWxlX21heC52c2l6ZSkpIHsKPj4+ICsgICAgICAg
+ICAgICAgICAgICAgIChwb3MtPncgPiBwcC0+c2NhbGVfbWF4LnZzaXplKSkgewo+Pj4gICAgICAg
+ICAgICAgICAgICAgICAgIERSTV9FUlJPUigib3V0IG9mIHNjYWxlIHNpemUuXG4iKTsKPj4+ICAg
+ICAgICAgICAgICAgICAgICAgICBnb3RvIGVycl9wcm9wZXJ0eTsKPj4+ICAgICAgICAgICAgICAg
+ICAgIH0KPj4+ICAgICAgICAgICAgICAgfSBlbHNlIHsKPj4+ICAgICAgICAgICAgICAgICAgIGlm
+ICgocG9zLT53IDwgcHAtPnNjYWxlX21pbi5oc2l6ZSkgfHwKPj4+IC0gICAgICAgICAgICAgICAg
+ICAgIChzei0+aHNpemUgPiBwcC0+c2NhbGVfbWF4LmhzaXplKSB8fAo+Pj4gKyAgICAgICAgICAg
+ICAgICAgICAgKHBvcy0+dyA+IHBwLT5zY2FsZV9tYXguaHNpemUpIHx8Cj4+PiAgICAgICAgICAg
+ICAgICAgICAgICAgKHBvcy0+aCA8IHBwLT5zY2FsZV9taW4udnNpemUpIHx8Cj4+PiAtICAgICAg
+ICAgICAgICAgICAgICAoc3otPnZzaXplID4gcHAtPnNjYWxlX21heC52c2l6ZSkpIHsKPj4+ICsg
+ICAgICAgICAgICAgICAgICAgIChwb3MtPmggPiBwcC0+c2NhbGVfbWF4LnZzaXplKSkgewo+Pj4g
+ICAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJPUigib3V0IG9mIHNjYWxlIHNpemUuXG4iKTsK
+Pj4+ICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGVycl9wcm9wZXJ0eTsKPj4+ICAgICAgICAg
+ICAgICAgICAgIH0KPj4+IEBAIC0xNjc2LDYgKzE2ODQsMTUgQEAgc3RhdGljIGludCBnc2NfcHJv
+YmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAKPj4+ICpwZGV2KQo+Pj4gICAgICAgICAgICAgICBk
+ZXZfd2FybihkZXYsICJmYWlsZWQgdG8gZ2V0IHN5c3RlbSByZWdpc3Rlci5cbiIpOwo+Pj4gICAg
+ICAgICAgICAgICBjdHgtPnN5c3JlZyA9IE5VTEw7Cj4+PiAgICAgICAgICAgfQo+Pj4gKwo+Pj4g
+KyAgICAgICAgcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIoZGV2LT5vZl9ub2RlLCAicm90LW1h
+eC1oc2l6ZSIsCj4+PiArICAgICAgICAgICAgICAgICZjdHgtPmlwcGRydi5wcm9wX2xpc3Qucm90
+X21heC5oc2l6ZSk7Cj4+PiArICAgICAgICByZXQgfD0gb2ZfcHJvcGVydHlfcmVhZF91MzIoZGV2
+LT5vZl9ub2RlLCAicm90LW1heC12c2l6ZSIsCj4+PiArICAgICAgICAgICAgICAgICZjdHgtPmlw
+cGRydi5wcm9wX2xpc3Qucm90X21heC52c2l6ZSk7Cj4+PiArICAgICAgICBpZiAocmV0KSB7Cj4+
+PiArICAgICAgICAgICAgZGV2X2VycihkZXYsICJyb3QtbWF4IHByb3BlcnR5IHNob3VsZCBiZSBw
+cm92aWRlZCBieSAKPj4+IGRldmljZSB0cmVlLlxuIik7Cj4+PiArICAgICAgICAgICAgcmV0dXJu
+IC1FSU5WQUw7Cj4+PiArICAgICAgICB9Cj4+PiAgICAgICB9Cj4+PiAgICAgICAgIC8qIGNsb2Nr
+IGNvbnRyb2wgKi8KPj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0u
+aCAKPj4+IGIvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJtLmgKPj4+IGluZGV4IGNiM2U5Zjku
+LmQ1ZDU1MTggMTAwNjQ0Cj4+PiAtLS0gYS9pbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaAo+
+Pj4gKysrIGIvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJtLmgKPj4+IEBAIC0xOTIsNiArMTky
+LDcgQEAgZW51bSBkcm1fZXh5bm9zX3BsYW5lciB7Cj4+PiAgICAqIEBjcm9wX21heDogY3JvcCBt
+YXggcmVzb2x1dGlvbi4KPj4+ICAgICogQHNjYWxlX21pbjogc2NhbGUgbWluIHJlc29sdXRpb24u
+Cj4+PiAgICAqIEBzY2FsZV9tYXg6IHNjYWxlIG1heCByZXNvbHV0aW9uLgo+Pj4gKyAqIEByb3Rf
+bWF4OiByb3RhdGlvbiBtYXggcmVzb2x1dGlvbi4KPj4+ICAgICovCj4+PiAgIHN0cnVjdCBkcm1f
+ZXh5bm9zX2lwcF9wcm9wX2xpc3Qgewo+Pj4gICAgICAgX191MzIgICAgdmVyc2lvbjsKPj4+IEBA
+IC0yMTAsNiArMjExLDcgQEAgc3RydWN0IGRybV9leHlub3NfaXBwX3Byb3BfbGlzdCB7Cj4+PiAg
+ICAgICBzdHJ1Y3QgZHJtX2V4eW5vc19zeiAgICBjcm9wX21heDsKPj4+ICAgICAgIHN0cnVjdCBk
+cm1fZXh5bm9zX3N6ICAgIHNjYWxlX21pbjsKPj4+ICAgICAgIHN0cnVjdCBkcm1fZXh5bm9zX3N6
+ICAgIHNjYWxlX21heDsKPj4+ICsgICAgc3RydWN0IGRybV9leHlub3Nfc3ogICAgcm90X21heDsK
+Pj4+ICAgfTsKPj4+ICAgICAvKioKPj4KPj4gSU1PIG1heGltdW0gc3VwcG9ydGVkIHBpY3R1cmUg
+c2l6ZSBzaG91bGQgYmUgaGFyZGNvZGVkIGludG8gZHJpdmVyLCAKPj4gdGhlcmUKPj4gaXMgbm8g
+bmVlZCB0byBhZGQgZGV2aWNlIHRyZWUgcHJvcGVydGllcyBmb3IgdGhhdC4gUGxlYXNlIGFsc28g
+Y2hlY2sgCj4+IHY0bDIKPj4gZHJpdmVyIGZvciBFeHlub3MgR1NDLgo+Pgo+PiBDdXJyZW50bHkg
+aXQgdXNlcyBvbmx5IG9uZSBjb21wYXRpYmxlIC0gImV4eW5vczUtZ3NjIiwgYnV0IGltaG8gWW91
+IAo+PiBzaG91bGQKPj4gc2ltcGx5IHJlcGxhY2UgaXQgd2l0aCAiZXh5bm9zNTI1MC1nc2MiIGFu
+ZCAiZXh5bm9zNTQyMC1nc2MiLCBhbmQgYWRkIAo+PiB0aG9zZQo+PiB2YXJpYW50cyB3aXRoIHBy
+b3BlciBtYXhpbXVtIHN1cHBvcnRlZCBzaXplICgyMDQ3IGFuZCAyMDE2IAo+PiByZXNwZWN0aXZl
+bHkpLgo+Pgo+PiBCZXN0IHJlZ2FyZHMKPgo+IEhpIEtyenlzenRvZiBhbmQgTWFyZWssCj4KPiBU
+aGFua3MgS3J6eXN6dG9mIGFuZCBNYXJlayByZXZpZXdzLgo+Cj4gQXMgTWFyZWsgc2F5cywgcm90
+X21heCBzaXplIHdpbGwgYmUgaGFyZGNvZGVkIGludG8gZHJpdmVyLAo+IHRoZW4gaXQgd2lsbCBu
+b3QgYnJlYWsgdGhlIEFCSS4gQW5kIGFsc28sCj4gSSB3aWxsIGNoZWNrIHRoZSB2NGwyIGRyaXZl
+ciBmb3IgRXh5bm9zIEdTQy4KPgo+IEJlc3QgcmVnYXJkcywKPiBIb2VnZXVuCj4KCkhpIE1hcmVr
+LAoKSSBoYXZlIGNoZWNrZWQgdjRsMiBkcml2ZXIgZm9yIEV4eW5vcyBHU0MuIFRoZSB2NGwyIGRy
+aXZlciBzdXBwb3J0cwpFeHlub3MgNTI1MCBhbmQgNTQzMyBHU0MuIEN1cnJlbnRseSwgdGhlIGhh
+cmR3YXJlIGxpbWl0cyByb3RhdGlvbiBpcwpzZXQgdG8gMjA0NyBpbiB0aGUgdjRsMiBkcml2ZXIu
+CgpJbiBteSBvcGluaW9uIGRvbid0IG5lZWQgdG8gZml4IGl0LCBiZWNhdXNlIHRoZSBFeHlub3Mg
+NTI1MCBoYXMgYQpoYXJkd2FyZSByb3RhdGlvbiBsaW1pdHMgb2YgMjA0OCBhbmQgdGhlIEV4eW5v
+cyA1MjUwIGhhcyBhIGhhcmR3YXJlCnJvdGF0aW9uIGxpbWl0cyBvZiAyMDQ3LgoKUGxlYXNlIHRl
+bGwgbWUgaWYgeW91IGhhdmUgYW55IG90aGVyIG9waW5pb24uCgpCZXN0IHJlZ2FyZHMsCkhvZWdl
+dW4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
