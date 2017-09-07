@@ -1,159 +1,360 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 3/3] drm/exynos/gsc: Add hardware rotation limits
-Date: Thu, 07 Sep 2017 13:30:24 +0200
-Message-ID: <0094d3eb-bf84-d5a0-65e9-8cb6df7f4b13@samsung.com>
-References: <1504777143-29834-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170907093912epcas2p198ae12fc11fb2b8a7a9e8d6be817e796@epcas2p1.samsung.com>
- <1504777143-29834-4-git-send-email-hoegeun.kwon@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] ARM: dts: exynos: fix incomplete Odroid-XU3/4 thermal-zones
+ definition
+Date: Thu, 07 Sep 2017 17:58:54 +0200
+Message-ID: <12756817.Sq0VSgt4c1@amdc3058>
+References: <CGME20170907155857epcas2p1819af1f0290828b48aaf953a05aa32b0@epcas2p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1504777143-29834-4-git-send-email-hoegeun.kwon@samsung.com>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, inki.dae@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Willy Wolff <willy.mh.wolff-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSG9lZ2V1biwKCk9uIDIwMTctMDktMDcgMTE6MzksIEhvZWdldW4gS3dvbiB3cm90ZToKPiBU
-aGUgZ3NjYWxlciBoYXMgaGFyZHdhcmUgcm90YXRpb24gbGltaXRzIHRoYXQgbmVlZCB0byBiZSBo
-YXJkY29kZWQKPiBpbnRvIGRyaXZlci4gRGlzdGluZ3Vpc2ggdGhlbSBhbmQgYWRkIHRoZW0gdG8g
-dGhlIHByb3BlcnR5IGxpc3QuCj4KPiBUaGUgaGFyZHdhcmUgcm90YXRpb24gbGltaXRzIGFyZSBy
-ZWxhdGVkIHRvIHRoZSBjcm9wcGVkIHNvdXJjZSBzaXplLgo+IFdoZW4gc3dhcCBvY2N1cnMsIHVz
-ZSByb3RfbWF4IHNpemUgaW5zdGVhZCBvZiBjcm9wX21heCBzaXplLgo+Cj4gQWxzbyB0aGUgc2Nh
-bGluZyBsaW1pdHMgYXJlIHJlbGF0ZWQgdG8gcG9zIHNpemUsIHVzZSBwb3Mgc2l6ZSB0byBjaGVj
-awo+IHRoZSBsaW1pdHMuCj4KPiBTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4u
-a3dvbkBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9nc2MuYyB8IDEwMCArKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLQo+ICAgaW5j
-bHVkZS91YXBpL2RybS9leHlub3NfZHJtLmggICAgICAgICAgIHwgICAyICsKPiAgIDIgZmlsZXMg
-Y2hhbmdlZCwgNzMgaW5zZXJ0aW9ucygrKSwgMjkgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jCj4gaW5kZXggMDUwNmIyYi4uNTkwYTY0NSAxMDA2
-NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMKPiArKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMKPiBAQCAtMTUwLDYgKzE1
-MCwxNSBAQCBzdHJ1Y3QgZ3NjX2NvbnRleHQgewo+ICAgCWJvb2wJc3VzcGVuZGVkOwo+ICAgfTsK
-PiAgIAo+ICsvKgo+ICsgKiBzdHJ1Y3QgZ3NjX2RyaXZlcmRhdGEgLSBwZXIgZGV2aWNlIHR5cGUg
-ZHJpdmVyIGRhdGEgZm9yIGluaXQgdGltZS4KPiArICoKPiArICogQHJvdF9tYXg6IHJvdGF0aW9u
-IG1heCByZXNvbHV0aW9uLgo+ICsgKi8KPiArc3RydWN0IGdzY19kcml2ZXJkYXRhIHsKPiArCXN0
-cnVjdCBkcm1fZXh5bm9zX3N6IHJvdF9tYXg7Cj4gK307Cj4gKwo+ICAgLyogOC10YXAgRmlsdGVy
-IENvZWZmaWNpZW50ICovCj4gICBzdGF0aWMgY29uc3QgaW50IGhfY29lZl84dFtHU0NfQ09FRl9S
-QVRJT11bR1NDX0NPRUZfQVRUUl1bR1NDX0NPRUZfSF84VF0gPSB7Cj4gICAJewkvKiBSYXRpbyA8
-PSA2NTUzNiAofjg6OCkgKi8KPiBAQCAtMTQwMSw2ICsxNDEwLDIzIEBAIHN0YXRpYyBpbnQgZ3Nj
-X2lwcGRydl9jaGVja19wcm9wZXJ0eShzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gICAJYm9vbCBzd2Fw
-Owo+ICAgCWludCBpOwo+ICAgCj4gKwljb25maWcgPSAmcHJvcGVydHktPmNvbmZpZ1tFWFlOT1Nf
-RFJNX09QU19EU1RdOwo+ICsKPiArCS8qIGNoZWNrIGZvciBkZWdyZWUgKi8KPiArCXN3aXRjaCAo
-Y29uZmlnLT5kZWdyZWUpIHsKPiArCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfOTA6Cj4gKwljYXNl
-IEVYWU5PU19EUk1fREVHUkVFXzI3MDoKPiArCQlzd2FwID0gdHJ1ZTsKPiArCQlicmVhazsKPiAr
-CWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMDoKPiArCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMTgw
-Ogo+ICsJCXN3YXAgPSBmYWxzZTsKPiArCQlicmVhazsKPiArCWRlZmF1bHQ6Cj4gKwkJRFJNX0VS
-Uk9SKCJpbnZhbGlkIGRlZ3JlZS5cbiIpOwo+ICsJCWdvdG8gZXJyX3Byb3BlcnR5Owo+ICsJfQo+
-ICsKPiAgIAlmb3JfZWFjaF9pcHBfb3BzKGkpIHsKPiAgIAkJaWYgKChpID09IEVYWU5PU19EUk1f
-T1BTX1NSQykgJiYKPiAgIAkJCShwcm9wZXJ0eS0+Y21kID09IElQUF9DTURfV0IpKQo+IEBAIC0x
-NDE2LDIxICsxNDQyLDYgQEAgc3RhdGljIGludCBnc2NfaXBwZHJ2X2NoZWNrX3Byb3BlcnR5KHN0
-cnVjdCBkZXZpY2UgKmRldiwKPiAgIAkJCWdvdG8gZXJyX3Byb3BlcnR5Owo+ICAgCQl9Cj4gICAK
-PiAtCQkvKiBjaGVjayBmb3IgZGVncmVlICovCj4gLQkJc3dpdGNoIChjb25maWctPmRlZ3JlZSkg
-ewo+IC0JCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfOTA6Cj4gLQkJY2FzZSBFWFlOT1NfRFJNX0RF
-R1JFRV8yNzA6Cj4gLQkJCXN3YXAgPSB0cnVlOwo+IC0JCQlicmVhazsKPiAtCQljYXNlIEVYWU5P
-U19EUk1fREVHUkVFXzA6Cj4gLQkJY2FzZSBFWFlOT1NfRFJNX0RFR1JFRV8xODA6Cj4gLQkJCXN3
-YXAgPSBmYWxzZTsKPiAtCQkJYnJlYWs7Cj4gLQkJZGVmYXVsdDoKPiAtCQkJRFJNX0VSUk9SKCJp
-bnZhbGlkIGRlZ3JlZS5cbiIpOwo+IC0JCQlnb3RvIGVycl9wcm9wZXJ0eTsKPiAtCQl9Cj4gLQo+
-ICAgCQkvKiBjaGVjayBmb3IgYnVmZmVyIGJvdW5kICovCj4gICAJCWlmICgocG9zLT54ICsgcG9z
-LT53ID4gc3otPmhzaXplKSB8fAo+ICAgCQkJKHBvcy0+eSArIHBvcy0+aCA+IHN6LT52c2l6ZSkp
-IHsKPiBAQCAtMTQzOCwyMSArMTQ0OSwyNyBAQCBzdGF0aWMgaW50IGdzY19pcHBkcnZfY2hlY2tf
-cHJvcGVydHkoc3RydWN0IGRldmljZSAqZGV2LAo+ICAgCQkJZ290byBlcnJfcHJvcGVydHk7Cj4g
-ICAJCX0KPiAgIAo+ICsJCS8qCj4gKwkJICogVGhlIHJvdGF0aW9uIGhhcmR3YXJlIGxpbWl0cyBh
-cmUgcmVsYXRlZCB0byB0aGUgY3JvcHBlZAo+ICsJCSAqIHNvdXJjZSBzaXplLiBTbyB1c2Ugcm90
-X21heCBzaXplIHRvIGNoZWNrIHRoZSBsaW1pdHMgd2hlbgo+ICsJCSAqIHN3YXAgaGFwcGVucy4g
-QW5kIGFsc28gdGhlIHNjYWxpbmcgbGltaXRzIGFyZSByZWxhdGVkIHRvIHBvcwo+ICsJCSAqIHNp
-emUsIHVzZSBwb3Mgc2l6ZSB0byBjaGVjayB0aGUgbGltaXRzLgo+ICsJCSAqLwo+ICAgCQkvKiBj
-aGVjayBmb3IgY3JvcCAqLwo+ICAgCQlpZiAoKGkgPT0gRVhZTk9TX0RSTV9PUFNfU1JDKSAmJiAo
-cHAtPmNyb3ApKSB7Cj4gICAJCQlpZiAoc3dhcCkgewo+ICAgCQkJCWlmICgocG9zLT5oIDwgcHAt
-PmNyb3BfbWluLmhzaXplKSB8fAo+IC0JCQkJCShzei0+dnNpemUgPiBwcC0+Y3JvcF9tYXguaHNp
-emUpIHx8Cj4gKwkJCQkJKHBvcy0+aCA+IHBwLT5yb3RfbWF4LmhzaXplKSB8fAo+ICAgCQkJCQko
-cG9zLT53IDwgcHAtPmNyb3BfbWluLnZzaXplKSB8fAo+IC0JCQkJCShzei0+aHNpemUgPiBwcC0+
-Y3JvcF9tYXgudnNpemUpKSB7Cj4gKwkJCQkJKHBvcy0+dyA+IHBwLT5yb3RfbWF4LnZzaXplKSkg
-ewo+ICAgCQkJCQlEUk1fRVJST1IoIm91dCBvZiBjcm9wIHNpemUuXG4iKTsKPiAgIAkJCQkJZ290
-byBlcnJfcHJvcGVydHk7Cj4gICAJCQkJfQo+ICAgCQkJfSBlbHNlIHsKPiAgIAkJCQlpZiAoKHBv
-cy0+dyA8IHBwLT5jcm9wX21pbi5oc2l6ZSkgfHwKPiAtCQkJCQkoc3otPmhzaXplID4gcHAtPmNy
-b3BfbWF4LmhzaXplKSB8fAo+ICsJCQkJCShwb3MtPncgPiBwcC0+Y3JvcF9tYXguaHNpemUpIHx8
-Cj4gICAJCQkJCShwb3MtPmggPCBwcC0+Y3JvcF9taW4udnNpemUpIHx8Cj4gLQkJCQkJKHN6LT52
-c2l6ZSA+IHBwLT5jcm9wX21heC52c2l6ZSkpIHsKPiArCQkJCQkocG9zLT5oID4gcHAtPmNyb3Bf
-bWF4LnZzaXplKSkgewo+ICAgCQkJCQlEUk1fRVJST1IoIm91dCBvZiBjcm9wIHNpemUuXG4iKTsK
-PiAgIAkJCQkJZ290byBlcnJfcHJvcGVydHk7Cj4gICAJCQkJfQo+IEBAIC0xNDYzLDE3ICsxNDgw
-LDE3IEBAIHN0YXRpYyBpbnQgZ3NjX2lwcGRydl9jaGVja19wcm9wZXJ0eShzdHJ1Y3QgZGV2aWNl
-ICpkZXYsCj4gICAJCWlmICgoaSA9PSBFWFlOT1NfRFJNX09QU19EU1QpICYmIChwcC0+c2NhbGUp
-KSB7Cj4gICAJCQlpZiAoc3dhcCkgewo+ICAgCQkJCWlmICgocG9zLT5oIDwgcHAtPnNjYWxlX21p
-bi5oc2l6ZSkgfHwKPiAtCQkJCQkoc3otPnZzaXplID4gcHAtPnNjYWxlX21heC5oc2l6ZSkgfHwK
-PiArCQkJCQkocG9zLT5oID4gcHAtPnNjYWxlX21heC5oc2l6ZSkgfHwKPiAgIAkJCQkJKHBvcy0+
-dyA8IHBwLT5zY2FsZV9taW4udnNpemUpIHx8Cj4gLQkJCQkJKHN6LT5oc2l6ZSA+IHBwLT5zY2Fs
-ZV9tYXgudnNpemUpKSB7Cj4gKwkJCQkJKHBvcy0+dyA+IHBwLT5zY2FsZV9tYXgudnNpemUpKSB7
-Cj4gICAJCQkJCURSTV9FUlJPUigib3V0IG9mIHNjYWxlIHNpemUuXG4iKTsKPiAgIAkJCQkJZ290
-byBlcnJfcHJvcGVydHk7Cj4gICAJCQkJfQo+ICAgCQkJfSBlbHNlIHsKPiAgIAkJCQlpZiAoKHBv
-cy0+dyA8IHBwLT5zY2FsZV9taW4uaHNpemUpIHx8Cj4gLQkJCQkJKHN6LT5oc2l6ZSA+IHBwLT5z
-Y2FsZV9tYXguaHNpemUpIHx8Cj4gKwkJCQkJKHBvcy0+dyA+IHBwLT5zY2FsZV9tYXguaHNpemUp
-IHx8Cj4gICAJCQkJCShwb3MtPmggPCBwcC0+c2NhbGVfbWluLnZzaXplKSB8fAo+IC0JCQkJCShz
-ei0+dnNpemUgPiBwcC0+c2NhbGVfbWF4LnZzaXplKSkgewo+ICsJCQkJCShwb3MtPmggPiBwcC0+
-c2NhbGVfbWF4LnZzaXplKSkgewo+ICAgCQkJCQlEUk1fRVJST1IoIm91dCBvZiBzY2FsZSBzaXpl
-LlxuIik7Cj4gICAJCQkJCWdvdG8gZXJyX3Byb3BlcnR5Owo+ICAgCQkJCX0KPiBAQCAtMTY1Nyw2
-ICsxNjc0LDI3IEBAIHN0YXRpYyB2b2lkIGdzY19pcHBkcnZfc3RvcChzdHJ1Y3QgZGV2aWNlICpk
-ZXYsIGVudW0gZHJtX2V4eW5vc19pcHBfY21kIGNtZCkKPiAgIAlnc2Nfd3JpdGUoY2ZnLCBHU0Nf
-RU5BQkxFKTsKPiAgIH0KPiAgIAo+ICtzdGF0aWMgc3RydWN0IGdzY19kcml2ZXJkYXRhIGdzY19l
-eHlub3M1MjUwX2RydmRhdGEgPSB7Cj4gKwkucm90X21heCA9IHsgMjA0OCwgMjA0OCB9LAo+ICt9
-Owo+ICsKPiArc3RhdGljIHN0cnVjdCBnc2NfZHJpdmVyZGF0YSBnc2NfZXh5bm9zNTQyMF9kcnZk
-YXRhID0gewo+ICsJLnJvdF9tYXggPSB7IDIwMTYsIDIwMTYgfSwKPiArfTsKPiArCj4gK3N0YXRp
-YyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGV4eW5vc19kcm1fZ3NjX29mX21hdGNoW10gPSB7
-Cj4gKwl7Cj4gKwkJLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1MjUwLWdzYyIsCj4gKwkJ
-LmRhdGEgPSAmZ3NjX2V4eW5vczUyNTBfZHJ2ZGF0YSwKPiArCX0sCj4gKwl7Cj4gKwkJLmNvbXBh
-dGlibGUgPSAic2Ftc3VuZyxleHlub3M1NDIwLWdzYyIsCj4gKwkJLmRhdGEgPSAmZ3NjX2V4eW5v
-czU0MjBfZHJ2ZGF0YSwKPiArCX0sCj4gKwl7IH0sCj4gK307Cj4gK01PRFVMRV9ERVZJQ0VfVEFC
-TEUob2YsIGV4eW5vc19kcm1fZ3NjX29mX21hdGNoKTsKPiArCj4gICBzdGF0aWMgaW50IGdzY19w
-cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAgewo+ICAgCXN0cnVjdCBkZXZp
-Y2UgKmRldiA9ICZwZGV2LT5kZXY7Cj4gQEAgLTE2NzAsMTIgKzE3MDgsMjIgQEAgc3RhdGljIGlu
-dCBnc2NfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgIAkJcmV0dXJuIC1F
-Tk9NRU07Cj4gICAKPiAgIAlpZiAoZGV2LT5vZl9ub2RlKSB7Cj4gKwkJY29uc3Qgc3RydWN0IG9m
-X2RldmljZV9pZCAqbWF0Y2g7Cj4gKwkJc3RydWN0IGdzY19kcml2ZXJkYXRhICpkcml2ZXJfZGF0
-YTsKPiArCj4gICAJCWN0eC0+c3lzcmVnID0gc3lzY29uX3JlZ21hcF9sb29rdXBfYnlfcGhhbmRs
-ZShkZXYtPm9mX25vZGUsCj4gICAJCQkJCQkJInNhbXN1bmcsc3lzcmVnIik7Cj4gICAJCWlmIChJ
-U19FUlIoY3R4LT5zeXNyZWcpKSB7Cj4gICAJCQlkZXZfd2FybihkZXYsICJmYWlsZWQgdG8gZ2V0
-IHN5c3RlbSByZWdpc3Rlci5cbiIpOwo+ICAgCQkJY3R4LT5zeXNyZWcgPSBOVUxMOwo+ICAgCQl9
-Cj4gKwo+ICsJCW1hdGNoID0gb2ZfbWF0Y2hfbm9kZShleHlub3NfZHJtX2dzY19vZl9tYXRjaCwg
-ZGV2LT5vZl9ub2RlKTsKPiArCQlpZiAoIW1hdGNoKQo+ICsJCQlyZXR1cm4gLUVOT0RFVjsKPiAr
-Cj4gKwkJZHJpdmVyX2RhdGEgPSAoc3RydWN0IGdzY19kcml2ZXJkYXRhICopbWF0Y2gtPmRhdGE7
-CgpQbGVhc2UgY2hlY2sgb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKCkga2VybmVsIGZ1bmN0aW9u
-LiBUaGVyZSBpcyBubyAKbmVlZCB0byBvcGVuIGNvZGUKZHJpdmVyIHZhcmlhbnQgbWF0Y2hpbmcg
-aGVyZSB3aXRoIG9mX21hdGNoX25vZGUoKS4KCj4gKwkJY3R4LT5pcHBkcnYucHJvcF9saXN0LnJv
-dF9tYXggPSBkcml2ZXJfZGF0YS0+cm90X21heDsKPiAgIAl9Cj4gICAKPiAgIAkvKiBjbG9jayBj
-b250cm9sICovCj4gQEAgLTE3ODQsMTIgKzE4MzIsNiBAQCBzdGF0aWMgaW50IF9fbWF5YmVfdW51
-c2VkIGdzY19ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCj4gICAJU0VUX1JVTlRJ
-TUVfUE1fT1BTKGdzY19ydW50aW1lX3N1c3BlbmQsIGdzY19ydW50aW1lX3Jlc3VtZSwgTlVMTCkK
-PiAgIH07Cj4gICAKPiAtc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgZXh5bm9zX2Ry
-bV9nc2Nfb2ZfbWF0Y2hbXSA9IHsKPiAtCXsgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1
-LWdzYyIgfSwKPiAtCXsgfSwKPiAtfTsKPiAtTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgZXh5bm9z
-X2RybV9nc2Nfb2ZfbWF0Y2gpOwo+IC0KPiAgIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgZ3NjX2Ry
-aXZlciA9IHsKPiAgIAkucHJvYmUJCT0gZ3NjX3Byb2JlLAo+ICAgCS5yZW1vdmUJCT0gZ3NjX3Jl
-bW92ZSwKPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJtLmggYi9pbmNs
-dWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaAo+IGluZGV4IGNiM2U5ZjkuLmQ1ZDU1MTggMTAwNjQ0
-Cj4gLS0tIGEvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJtLmgKPiArKysgYi9pbmNsdWRlL3Vh
-cGkvZHJtL2V4eW5vc19kcm0uaAo+IEBAIC0xOTIsNiArMTkyLDcgQEAgZW51bSBkcm1fZXh5bm9z
-X3BsYW5lciB7Cj4gICAgKiBAY3JvcF9tYXg6IGNyb3AgbWF4IHJlc29sdXRpb24uCj4gICAgKiBA
-c2NhbGVfbWluOiBzY2FsZSBtaW4gcmVzb2x1dGlvbi4KPiAgICAqIEBzY2FsZV9tYXg6IHNjYWxl
-IG1heCByZXNvbHV0aW9uLgo+ICsgKiBAcm90X21heDogcm90YXRpb24gbWF4IHJlc29sdXRpb24u
-Cj4gICAgKi8KPiAgIHN0cnVjdCBkcm1fZXh5bm9zX2lwcF9wcm9wX2xpc3Qgewo+ICAgCV9fdTMy
-CXZlcnNpb247Cj4gQEAgLTIxMCw2ICsyMTEsNyBAQCBzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfcHJv
-cF9saXN0IHsKPiAgIAlzdHJ1Y3QgZHJtX2V4eW5vc19zegljcm9wX21heDsKPiAgIAlzdHJ1Y3Qg
-ZHJtX2V4eW5vc19zeglzY2FsZV9taW47Cj4gICAJc3RydWN0IGRybV9leHlub3Nfc3oJc2NhbGVf
-bWF4Owo+ICsJc3RydWN0IGRybV9leHlub3Nfc3oJcm90X21heDsKPiAgIH07Cj4gICAKPiAgIC8q
-KgoKQmVzdCByZWdhcmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBSJkQgSW5z
-dGl0dXRlIFBvbGFuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+From: Willy Wolff <willy.mh.wolff-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+
+Odroid XU3/4 boards have thermal sensors per 4 pairs of A7+A15
+cores but currently there is only one thermal-zone (including
+cooling maps) defined (for the first pair of cores - the first
+core of the A7 cluster and the first core of A15 cluster) so
+i.e. if the task is running on any of A15 cores but the first
+one, such core can reach high temperature without any proper
+cooling action.
+
+Fix it by adding missing thermal-zones definitions.
+
+Also while at it fix the number of steps in cpufreq cooling for
+cpu4 (11 steps for A15 corresponds to 700MHz, for 600MHz 12 steps
+should be used).
+
+Signed-off-by: Willy Wolff <willy.mh.wolff-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+[b.zolnierkie: rewrote patch subject & description + minor fixups]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+I updated the patch to address Krzysztof's review comments,
+the original version from June can be found here:
+
+	https://patchwork.kernel.org/patch/9807333/
+
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  241 +++++++++++++++++++--
+ 1 file changed, 222 insertions(+), 19 deletions(-)
+
+Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2017-09-07 17:41:18.264391541 +0200
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2017-09-07 17:47:07.788400343 +0200
+@@ -63,22 +63,22 @@
+ 			polling-delay-passive = <250>;
+ 			polling-delay = <0>;
+ 			trips {
+-				cpu_alert0: cpu-alert-0 {
++				cpu0_alert0: cpu-alert-0 {
+ 					temperature = <50000>; /* millicelsius */
+ 					hysteresis = <5000>; /* millicelsius */
+ 					type = "active";
+ 				};
+-				cpu_alert1: cpu-alert-1 {
++				cpu0_alert1: cpu-alert-1 {
+ 					temperature = <60000>; /* millicelsius */
+ 					hysteresis = <5000>; /* millicelsius */
+ 					type = "active";
+ 				};
+-				cpu_alert2: cpu-alert-2 {
++				cpu0_alert2: cpu-alert-2 {
+ 					temperature = <70000>; /* millicelsius */
+ 					hysteresis = <5000>; /* millicelsius */
+ 					type = "active";
+ 				};
+-				cpu_crit0: cpu-crit-0 {
++				cpu0_crit0: cpu-crit-0 {
+ 					temperature = <120000>; /* millicelsius */
+ 					hysteresis = <0>; /* millicelsius */
+ 					type = "critical";
+@@ -87,14 +87,14 @@
+ 				 * Exynos542x supports only 4 trip-points
+ 				 * so for these polling mode is required.
+ 				 * Start polling at temperature level of last
+-				 * interrupt-driven trip: cpu_alert2
++				 * interrupt-driven trip: cpu0_alert2
+ 				 */
+-				cpu_alert3: cpu-alert-3 {
++				cpu0_alert3: cpu-alert-3 {
+ 					temperature = <70000>; /* millicelsius */
+ 					hysteresis = <10000>; /* millicelsius */
+ 					type = "passive";
+ 				};
+-				cpu_alert4: cpu-alert-4 {
++				cpu0_alert4: cpu-alert-4 {
+ 					temperature = <85000>; /* millicelsius */
+ 					hysteresis = <10000>; /* millicelsius */
+ 					type = "passive";
+@@ -103,43 +103,246 @@
+ 			};
+ 			cooling-maps {
+ 				map0 {
+-					trip = <&cpu_alert0>;
++					trip = <&cpu0_alert0>;
+ 					cooling-device = <&fan0 0 1>;
+ 				};
+ 				map1 {
+-					trip = <&cpu_alert1>;
++					trip = <&cpu0_alert1>;
+ 					cooling-device = <&fan0 1 2>;
+ 				};
+ 				map2 {
+-					trip = <&cpu_alert2>;
++					trip = <&cpu0_alert2>;
+ 					cooling-device = <&fan0 2 3>;
+ 				};
+ 				/*
+-				 * When reaching cpu_alert3, reduce CPU
++				 * When reaching cpu0_alert3, reduce CPU
+ 				 * by 2 steps. On Exynos5422/5800 that would
+ 				 * be: 1600 MHz and 1100 MHz.
+ 				 */
+ 				map3 {
+-					trip = <&cpu_alert3>;
++					trip = <&cpu0_alert3>;
+ 					cooling-device = <&cpu0 0 2>;
+ 				};
+ 				map4 {
+-					trip = <&cpu_alert3>;
++					trip = <&cpu0_alert3>;
+ 					cooling-device = <&cpu4 0 2>;
+ 				};
+-
+ 				/*
+-				 * When reaching cpu_alert4, reduce CPU
+-				 * further, down to 600 MHz (11 steps for big,
++				 * When reaching cpu0_alert4, reduce CPU
++				 * further, down to 600 MHz (12 steps for big,
+ 				 * 7 steps for LITTLE).
+ 				 */
+ 				map5 {
+-					trip = <&cpu_alert4>;
++					trip = <&cpu0_alert4>;
++					cooling-device = <&cpu0 3 7>;
++				};
++				map6 {
++					trip = <&cpu0_alert4>;
++					cooling-device = <&cpu4 3 12>;
++				};
++			};
++		};
++		cpu1_thermal: cpu1-thermal {
++			thermal-sensors = <&tmu_cpu1 0>;
++			polling-delay-passive = <250>;
++			polling-delay = <0>;
++			trips {
++				cpu1_alert0: cpu-alert-0 {
++					temperature = <50000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				cpu1_alert1: cpu-alert-1 {
++					temperature = <60000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				cpu1_alert2: cpu-alert-2 {
++					temperature = <70000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				cpu1_crit0: cpu-crit-0 {
++					temperature = <120000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++				cpu1_alert3: cpu-alert-3 {
++					temperature = <70000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++				cpu1_alert4: cpu-alert-4 {
++					temperature = <85000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++
++			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu1_alert0>;
++					cooling-device = <&fan0 0 1>;
++				};
++				map1 {
++					trip = <&cpu1_alert1>;
++					cooling-device = <&fan0 1 2>;
++				};
++				map2 {
++					trip = <&cpu1_alert2>;
++					cooling-device = <&fan0 2 3>;
++				};
++				map3 {
++					trip = <&cpu1_alert3>;
++					cooling-device = <&cpu0 0 2>;
++				};
++				map4 {
++					trip = <&cpu1_alert3>;
++					cooling-device = <&cpu4 0 2>;
++				};
++				map5 {
++					trip = <&cpu1_alert4>;
++					cooling-device = <&cpu0 3 7>;
++				};
++				map6 {
++					trip = <&cpu1_alert4>;
++					cooling-device = <&cpu4 3 12>;
++				};
++			};
++		};
++		cpu2_thermal: cpu2-thermal {
++			thermal-sensors = <&tmu_cpu2 0>;
++			polling-delay-passive = <250>;
++			polling-delay = <0>;
++			trips {
++				cpu2_alert0: cpu-alert-0 {
++					temperature = <50000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				cpu2_alert1: cpu-alert-1 {
++					temperature = <60000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				cpu2_alert2: cpu-alert-2 {
++					temperature = <70000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				cpu2_crit0: cpu-crit-0 {
++					temperature = <120000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++				cpu2_alert3: cpu-alert-3 {
++					temperature = <70000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++				cpu2_alert4: cpu-alert-4 {
++					temperature = <85000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++
++			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu2_alert0>;
++					cooling-device = <&fan0 0 1>;
++				};
++				map1 {
++					trip = <&cpu2_alert1>;
++					cooling-device = <&fan0 1 2>;
++				};
++				map2 {
++					trip = <&cpu2_alert2>;
++					cooling-device = <&fan0 2 3>;
++				};
++				map3 {
++					trip = <&cpu2_alert3>;
++					cooling-device = <&cpu0 0 2>;
++				};
++				map4 {
++					trip = <&cpu2_alert3>;
++					cooling-device = <&cpu4 0 2>;
++				};
++				map5 {
++					trip = <&cpu2_alert4>;
++					cooling-device = <&cpu0 3 7>;
++				};
++				map6 {
++					trip = <&cpu2_alert4>;
++					cooling-device = <&cpu4 3 12>;
++				};
++			};
++		};
++		cpu3_thermal: cpu3-thermal {
++			thermal-sensors = <&tmu_cpu3 0>;
++			polling-delay-passive = <250>;
++			polling-delay = <0>;
++			trips {
++				cpu3_alert0: cpu-alert-0 {
++					temperature = <50000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				cpu3_alert1: cpu-alert-1 {
++					temperature = <60000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				cpu3_alert2: cpu-alert-2 {
++					temperature = <70000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				cpu3_crit0: cpu-crit-0 {
++					temperature = <120000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++				cpu3_alert3: cpu-alert-3 {
++					temperature = <70000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++				cpu3_alert4: cpu-alert-4 {
++					temperature = <85000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++
++			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu3_alert0>;
++					cooling-device = <&fan0 0 1>;
++				};
++				map1 {
++					trip = <&cpu3_alert1>;
++					cooling-device = <&fan0 1 2>;
++				};
++				map2 {
++					trip = <&cpu3_alert2>;
++					cooling-device = <&fan0 2 3>;
++				};
++				map3 {
++					trip = <&cpu3_alert3>;
++					cooling-device = <&cpu0 0 2>;
++				};
++				map4 {
++					trip = <&cpu3_alert3>;
++					cooling-device = <&cpu4 0 2>;
++				};
++				map5 {
++					trip = <&cpu3_alert4>;
+ 					cooling-device = <&cpu0 3 7>;
+ 				};
+ 				map6 {
+-					trip = <&cpu_alert4>;
+-					cooling-device = <&cpu4 3 11>;
++					trip = <&cpu3_alert4>;
++					cooling-device = <&cpu4 3 12>;
+ 				};
+ 			};
+ 		};
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
