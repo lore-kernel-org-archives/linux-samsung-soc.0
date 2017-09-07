@@ -1,70 +1,39 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v2 2/3] ARM: dts: exynos: Add clean name of compatible.
-Date: Thu, 07 Sep 2017 18:39:02 +0900
-Message-ID: <1504777143-29834-3-git-send-email-hoegeun.kwon@samsung.com>
-References: <1504777143-29834-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170907093912epcas2p2c012de3af3915a58d889c2d48e283705@epcas2p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1504777143-29834-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Subject: [PATCH v2 0/3] drm/exynos/gsc: Support the hardware rotation limits
+Date: Thu, 07 Sep 2017 18:39:00 +0900
+Message-ID: <1504777143-29834-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170907093912epcas2p4575c6910bfa240105083e407e1b62d10@epcas2p4.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: inki.dae@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, m.szyprowski@samsung.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RXh5bm9zIDUyNTAgYW5kIDU0MjAgaGF2ZSBkaWZmZXJlbnQgaGFyZHdhcmUgcm90YXRpb24gbGlt
-aXRzLiBIb3dldmVyLApjdXJyZW50bHkgaXQgdXNlcyBvbmx5IG9uZSBjb21wYXRpYmxlIC0gImV4
-eW5vczUtZ3NjIi4gU2luY2Ugd2UgaGF2ZQp0byBkaXN0aW5ndWlzaCBiZXR3ZWVuIHRoZXNlIHR3
-bywgd2UgYWRkIGRpZmZlcmVudCBjb21wYXRpYmxlLgoKU2lnbmVkLW9mZi1ieTogSG9lZ2V1biBL
-d29uIDxob2VnZXVuLmt3b25Ac2Ftc3VuZy5jb20+Ci0tLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNTI1MC5kdHNpIHwgOCArKysrLS0tLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC5k
-dHNpIHwgNCArKy0tCiAyIGZpbGVzIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlv
-bnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kgYi9h
-cmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kKaW5kZXggOGRiZWI4Ny4uZjc5NWM3NiAx
-MDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpCisrKyBiL2FyY2gv
-YXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaQpAQCAtNjM3LDcgKzYzNyw3IEBACiAJCX07CiAK
-IAkJZ3NjXzA6ICBnc2NAMTNlMDAwMDAgewotCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5v
-czUtZ3NjIjsKKwkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1LWdzYyIsIHNhbXN1bmcs
-ZXh5bm9zNTI1MC1nc2MiOwogCQkJcmVnID0gPDB4MTNlMDAwMDAgMHgxMDAwPjsKIAkJCWludGVy
-cnVwdHMgPSA8R0lDX1NQSSA4NSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKIAkJCXBvd2VyLWRvbWFp
-bnMgPSA8JnBkX2dzYz47CkBAIC02NDcsNyArNjQ3LDcgQEAKIAkJfTsKIAogCQlnc2NfMTogIGdz
-Y0AxM2UxMDAwMCB7Ci0JCQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNS1nc2MiOworCQkJ
-Y29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczUtZ3NjIiwgc2Ftc3VuZyxleHlub3M1MjUwLWdz
-YyI7CiAJCQlyZWcgPSA8MHgxM2UxMDAwMCAweDEwMDA+OwogCQkJaW50ZXJydXB0cyA9IDxHSUNf
-U1BJIDg2IElSUV9UWVBFX0xFVkVMX0hJR0g+OwogCQkJcG93ZXItZG9tYWlucyA9IDwmcGRfZ3Nj
-PjsKQEAgLTY1Nyw3ICs2NTcsNyBAQAogCQl9OwogCiAJCWdzY18yOiAgZ3NjQDEzZTIwMDAwIHsK
-LQkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1LWdzYyI7CisJCQljb21wYXRpYmxlID0g
-InNhbXN1bmcsZXh5bm9zNS1nc2MiLCBzYW1zdW5nLGV4eW5vczUyNTAtZ3NjIjsKIAkJCXJlZyA9
-IDwweDEzZTIwMDAwIDB4MTAwMD47CiAJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgODcgSVJRX1RZ
-UEVfTEVWRUxfSElHSD47CiAJCQlwb3dlci1kb21haW5zID0gPCZwZF9nc2M+OwpAQCAtNjY3LDcg
-KzY2Nyw3IEBACiAJCX07CiAKIAkJZ3NjXzM6ICBnc2NAMTNlMzAwMDAgewotCQkJY29tcGF0aWJs
-ZSA9ICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsKKwkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlu
-b3M1LWdzYyIsIHNhbXN1bmcsZXh5bm9zNTI1MC1nc2MiOwogCQkJcmVnID0gPDB4MTNlMzAwMDAg
-MHgxMDAwPjsKIAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSA4OCBJUlFfVFlQRV9MRVZFTF9ISUdI
-PjsKIAkJCXBvd2VyLWRvbWFpbnMgPSA8JnBkX2dzYz47CmRpZmYgLS1naXQgYS9hcmNoL2FybS9i
-b290L2R0cy9leHlub3M1NDIwLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0
-c2kKaW5kZXggMDJkMmY4OS4uODZhZmU3NyAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMv
-ZXh5bm9zNTQyMC5kdHNpCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAuZHRzaQpA
-QCAtNjU4LDcgKzY1OCw3IEBACiAJCX07CiAKIAkJZ3NjXzA6IHZpZGVvLXNjYWxlckAxM2UwMDAw
-MCB7Ci0JCQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNS1nc2MiOworCQkJY29tcGF0aWJs
-ZSA9ICJzYW1zdW5nLGV4eW5vczUtZ3NjIiwgInNhbXN1bmcsZXh5bm9zNTQyMC1nc2MiOwogCQkJ
-cmVnID0gPDB4MTNlMDAwMDAgMHgxMDAwPjsKIAkJCWludGVycnVwdHMgPSA8R0lDX1NQSSA4NSBJ
-UlFfVFlQRV9MRVZFTF9ISUdIPjsKIAkJCWNsb2NrcyA9IDwmY2xvY2sgQ0xLX0dTQ0wwPjsKQEAg
-LTY2OCw3ICs2NjgsNyBAQAogCQl9OwogCiAJCWdzY18xOiB2aWRlby1zY2FsZXJAMTNlMTAwMDAg
-ewotCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsKKwkJCWNvbXBhdGlibGUg
-PSAic2Ftc3VuZyxleHlub3M1LWdzYyIsICJzYW1zdW5nLGV4eW5vczU0MjAtZ3NjIjsKIAkJCXJl
-ZyA9IDwweDEzZTEwMDAwIDB4MTAwMD47CiAJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgODYgSVJR
-X1RZUEVfTEVWRUxfSElHSD47CiAJCQljbG9ja3MgPSA8JmNsb2NrIENMS19HU0NMMT47Ci0tIAox
-LjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello all,
+
+The gscaler has hardware rotation limits. So this patch set support
+the rotate hardware limits of gsc.
+
+Changes for V2:
+- Added the interface info in binding document.
+- Added clean name of compatible in Exynos dts.
+- Added maximum supported picture size hardcoded into driver.
+
+Best regards,
+Hoegeun
+
+Hoegeun Kwon (3):
+  [media] exynos-gsc: Add compatible for Exynos 5250 and 5420 specific
+    version
+  ARM: dts: exynos: Add clean name of compatible.
+  drm/exynos/gsc: Add hardware rotation limits
+
+ .../devicetree/bindings/media/exynos5-gsc.txt      |   1 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   8 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |   4 +-
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c            | 100 +++++++++++++++------
+ include/uapi/drm/exynos_drm.h                      |   2 +
+ 5 files changed, 80 insertions(+), 35 deletions(-)
+
+-- 
+1.9.1
