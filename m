@@ -1,92 +1,69 @@
-From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v3 2/6] ARM: dts: exynos: Add clean name of compatible.
-Date: Fri, 08 Sep 2017 15:02:36 +0900
-Message-ID: <1504850560-27950-3-git-send-email-hoegeun.kwon@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v3 6/6] ARM: dts: exynos: Remove unnecessary compatible
+Date: Fri, 08 Sep 2017 15:02:40 +0900
+Message-ID: <1504850560-27950-7-git-send-email-hoegeun.kwon@samsung.com>
 References: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
-        <CGME20170908060308epcas1p2b275c76f63f5742092a7bc4ef14c05a5@epcas1p2.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1504850560-27950-1-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+ <CGME20170908060309epcas1p3f995a5092a5b8c7d9a9e4b6d982bc3d9@epcas1p3.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: inki.dae@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, mchehab@kernel.org, s.nawrocki@samsung.com, m.szyprowski@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos 5250 and 5420 have different hardware rotation limits. However,
-currently it uses only one compatible - "exynos5-gsc". Since we have
-to distinguish between these two, we add different compatible.
-
-Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/exynos5250.dtsi | 8 ++++----
- arch/arm/boot/dts/exynos5420.dtsi | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 8dbeb87..bf08101 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -637,7 +637,7 @@
- 		};
- 
- 		gsc_0:  gsc@13e00000 {
--			compatible = "samsung,exynos5-gsc";
-+			compatible = "samsung,exynos5-gsc", "samsung,exynos5250-gsc";
- 			reg = <0x13e00000 0x1000>;
- 			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
- 			power-domains = <&pd_gsc>;
-@@ -647,7 +647,7 @@
- 		};
- 
- 		gsc_1:  gsc@13e10000 {
--			compatible = "samsung,exynos5-gsc";
-+			compatible = "samsung,exynos5-gsc", "samsung,exynos5250-gsc";
- 			reg = <0x13e10000 0x1000>;
- 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- 			power-domains = <&pd_gsc>;
-@@ -657,7 +657,7 @@
- 		};
- 
- 		gsc_2:  gsc@13e20000 {
--			compatible = "samsung,exynos5-gsc";
-+			compatible = "samsung,exynos5-gsc", "samsung,exynos5250-gsc";
- 			reg = <0x13e20000 0x1000>;
- 			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
- 			power-domains = <&pd_gsc>;
-@@ -667,7 +667,7 @@
- 		};
- 
- 		gsc_3:  gsc@13e30000 {
--			compatible = "samsung,exynos5-gsc";
-+			compatible = "samsung,exynos5-gsc", "samsung,exynos5250-gsc";
- 			reg = <0x13e30000 0x1000>;
- 			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
- 			power-domains = <&pd_gsc>;
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 02d2f89..86afe77 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -658,7 +658,7 @@
- 		};
- 
- 		gsc_0: video-scaler@13e00000 {
--			compatible = "samsung,exynos5-gsc";
-+			compatible = "samsung,exynos5-gsc", "samsung,exynos5420-gsc";
- 			reg = <0x13e00000 0x1000>;
- 			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_GSCL0>;
-@@ -668,7 +668,7 @@
- 		};
- 
- 		gsc_1: video-scaler@13e10000 {
--			compatible = "samsung,exynos5-gsc";
-+			compatible = "samsung,exynos5-gsc", "samsung,exynos5420-gsc";
- 			reg = <0x13e10000 0x1000>;
- 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_GSCL1>;
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Q3VycmVudGx5LCB0aGUgY29tcGF0aWJsZSgnc2Ftc3VuZyxleHlub3M1LWdzYycpIGlzIG5vdCB1
+c2VkLgpSZW1vdmUgdW5uZWNlc3NhcnkgY29tcGF0aWJsZS4KClNpZ25lZC1vZmYtYnk6IEhvZWdl
+dW4gS3dvbiA8aG9lZ2V1bi5rd29uQHNhbXN1bmcuY29tPgotLS0KIGFyY2gvYXJtL2Jvb3QvZHRz
+L2V4eW5vczUyNTAuZHRzaSB8IDggKysrKy0tLS0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0
+MjAuZHRzaSB8IDQgKystLQogMiBmaWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDYgZGVs
+ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNp
+IGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpCmluZGV4IGJmMDgxMDEuLmU2MzJm
+YWYgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaQorKysgYi9h
+cmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kKQEAgLTYzNyw3ICs2MzcsNyBAQAogCQl9
+OwogCiAJCWdzY18wOiAgZ3NjQDEzZTAwMDAwIHsKLQkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxl
+eHlub3M1LWdzYyIsICJzYW1zdW5nLGV4eW5vczUyNTAtZ3NjIjsKKwkJCWNvbXBhdGlibGUgPSAi
+c2Ftc3VuZyxleHlub3M1MjUwLWdzYyI7CiAJCQlyZWcgPSA8MHgxM2UwMDAwMCAweDEwMDA+Owog
+CQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDg1IElSUV9UWVBFX0xFVkVMX0hJR0g+OwogCQkJcG93
+ZXItZG9tYWlucyA9IDwmcGRfZ3NjPjsKQEAgLTY0Nyw3ICs2NDcsNyBAQAogCQl9OwogCiAJCWdz
+Y18xOiAgZ3NjQDEzZTEwMDAwIHsKLQkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1LWdz
+YyIsICJzYW1zdW5nLGV4eW5vczUyNTAtZ3NjIjsKKwkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxl
+eHlub3M1MjUwLWdzYyI7CiAJCQlyZWcgPSA8MHgxM2UxMDAwMCAweDEwMDA+OwogCQkJaW50ZXJy
+dXB0cyA9IDxHSUNfU1BJIDg2IElSUV9UWVBFX0xFVkVMX0hJR0g+OwogCQkJcG93ZXItZG9tYWlu
+cyA9IDwmcGRfZ3NjPjsKQEAgLTY1Nyw3ICs2NTcsNyBAQAogCQl9OwogCiAJCWdzY18yOiAgZ3Nj
+QDEzZTIwMDAwIHsKLQkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1LWdzYyIsICJzYW1z
+dW5nLGV4eW5vczUyNTAtZ3NjIjsKKwkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1MjUw
+LWdzYyI7CiAJCQlyZWcgPSA8MHgxM2UyMDAwMCAweDEwMDA+OwogCQkJaW50ZXJydXB0cyA9IDxH
+SUNfU1BJIDg3IElSUV9UWVBFX0xFVkVMX0hJR0g+OwogCQkJcG93ZXItZG9tYWlucyA9IDwmcGRf
+Z3NjPjsKQEAgLTY2Nyw3ICs2NjcsNyBAQAogCQl9OwogCiAJCWdzY18zOiAgZ3NjQDEzZTMwMDAw
+IHsKLQkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1LWdzYyIsICJzYW1zdW5nLGV4eW5v
+czUyNTAtZ3NjIjsKKwkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1MjUwLWdzYyI7CiAJ
+CQlyZWcgPSA8MHgxM2UzMDAwMCAweDEwMDA+OwogCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDg4
+IElSUV9UWVBFX0xFVkVMX0hJR0g+OwogCQkJcG93ZXItZG9tYWlucyA9IDwmcGRfZ3NjPjsKZGlm
+ZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAuZHRzaSBiL2FyY2gvYXJtL2Jv
+b3QvZHRzL2V4eW5vczU0MjAuZHRzaQppbmRleCA4NmFmZTc3Li41ODM5MmIzIDEwMDY0NAotLS0g
+YS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kKKysrIGIvYXJjaC9hcm0vYm9vdC9k
+dHMvZXh5bm9zNTQyMC5kdHNpCkBAIC02NTgsNyArNjU4LDcgQEAKIAkJfTsKIAogCQlnc2NfMDog
+dmlkZW8tc2NhbGVyQDEzZTAwMDAwIHsKLQkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1
+LWdzYyIsICJzYW1zdW5nLGV4eW5vczU0MjAtZ3NjIjsKKwkJCWNvbXBhdGlibGUgPSAic2Ftc3Vu
+ZyxleHlub3M1NDIwLWdzYyI7CiAJCQlyZWcgPSA8MHgxM2UwMDAwMCAweDEwMDA+OwogCQkJaW50
+ZXJydXB0cyA9IDxHSUNfU1BJIDg1IElSUV9UWVBFX0xFVkVMX0hJR0g+OwogCQkJY2xvY2tzID0g
+PCZjbG9jayBDTEtfR1NDTDA+OwpAQCAtNjY4LDcgKzY2OCw3IEBACiAJCX07CiAKIAkJZ3NjXzE6
+IHZpZGVvLXNjYWxlckAxM2UxMDAwMCB7Ci0JCQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9z
+NS1nc2MiLCAic2Ftc3VuZyxleHlub3M1NDIwLWdzYyI7CisJCQljb21wYXRpYmxlID0gInNhbXN1
+bmcsZXh5bm9zNTQyMC1nc2MiOwogCQkJcmVnID0gPDB4MTNlMTAwMDAgMHgxMDAwPjsKIAkJCWlu
+dGVycnVwdHMgPSA8R0lDX1NQSSA4NiBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKIAkJCWNsb2NrcyA9
+IDwmY2xvY2sgQ0xLX0dTQ0wxPjsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
