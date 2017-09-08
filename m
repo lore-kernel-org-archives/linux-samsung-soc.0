@@ -1,123 +1,47 @@
-From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] ARM: dts: exynos: Add clean name of compatible.
-Date: Fri, 08 Sep 2017 11:48:30 +0900
-Message-ID: <56587be3-a08e-f9a0-6d55-287ed3e1aad9@samsung.com>
-References: <1504777143-29834-1-git-send-email-hoegeun.kwon@samsung.com>
-        <CGME20170907093912epcas2p2c012de3af3915a58d889c2d48e283705@epcas2p2.samsung.com>
-        <1504777143-29834-3-git-send-email-hoegeun.kwon@samsung.com>
-        <adb813cf-e4f3-a9c6-1f7a-8c6d1638c28c@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v3 1/6] [media] exynos-gsc: Add compatible for Exynos 5250
+ and 5420 specific version
+Date: Fri, 08 Sep 2017 15:02:35 +0900
+Message-ID: <1504850560-27950-2-git-send-email-hoegeun.kwon@samsung.com>
+References: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170908060308epcas1p4cd62b065429a7ab1591593e94853c7b8@epcas1p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <adb813cf-e4f3-a9c6-1f7a-8c6d1638c28c-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: inki.dae@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, mchehab@kernel.org, s.nawrocki@samsung.com, m.szyprowski@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/07/2017 08:27 PM, Marek Szyprowski wrote:
-> Hi Hoegeun,
->
-> On 2017-09-07 11:39, Hoegeun Kwon wrote:
->> Exynos 5250 and 5420 have different hardware rotation limits. However,
->> currently it uses only one compatible - "exynos5-gsc". Since we have
->> to distinguish between these two, we add different compatible.
->>
->> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
-> The new values (5250/5420 specific) should replace old exynos5-gsc, 
-> there is no
-> point providing both in dts.
->
-
-Hi Marek,
-
-Thanks for your review.
-
-I used both compatibles to not modify v4l2.
-But v4l2 will also be fixed, so 'exynos5-gsc' will be removed.
-
-And also, Thanks for your comment for of_device_get_match_data() of 
-patch(3/3).
-
-Best regards,
-Hoegeun
-
->> ---
->>   arch/arm/boot/dts/exynos5250.dtsi | 8 ++++----
->>   arch/arm/boot/dts/exynos5420.dtsi | 4 ++--
->>   2 files changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi 
->> b/arch/arm/boot/dts/exynos5250.dtsi
->> index 8dbeb87..f795c76 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -637,7 +637,7 @@
->>           };
->>             gsc_0:  gsc@13e00000 {
->> -            compatible = "samsung,exynos5-gsc";
->> +            compatible = "samsung,exynos5-gsc", 
->> samsung,exynos5250-gsc";
->>               reg = <0x13e00000 0x1000>;
->>               interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
->>               power-domains = <&pd_gsc>;
->> @@ -647,7 +647,7 @@
->>           };
->>             gsc_1:  gsc@13e10000 {
->> -            compatible = "samsung,exynos5-gsc";
->> +            compatible = "samsung,exynos5-gsc", 
->> samsung,exynos5250-gsc";
->>               reg = <0x13e10000 0x1000>;
->>               interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
->>               power-domains = <&pd_gsc>;
->> @@ -657,7 +657,7 @@
->>           };
->>             gsc_2:  gsc@13e20000 {
->> -            compatible = "samsung,exynos5-gsc";
->> +            compatible = "samsung,exynos5-gsc", 
->> samsung,exynos5250-gsc";
->>               reg = <0x13e20000 0x1000>;
->>               interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
->>               power-domains = <&pd_gsc>;
->> @@ -667,7 +667,7 @@
->>           };
->>             gsc_3:  gsc@13e30000 {
->> -            compatible = "samsung,exynos5-gsc";
->> +            compatible = "samsung,exynos5-gsc", 
->> samsung,exynos5250-gsc";
->>               reg = <0x13e30000 0x1000>;
->>               interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
->>               power-domains = <&pd_gsc>;
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi 
->> b/arch/arm/boot/dts/exynos5420.dtsi
->> index 02d2f89..86afe77 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -658,7 +658,7 @@
->>           };
->>             gsc_0: video-scaler@13e00000 {
->> -            compatible = "samsung,exynos5-gsc";
->> +            compatible = "samsung,exynos5-gsc", 
->> "samsung,exynos5420-gsc";
->>               reg = <0x13e00000 0x1000>;
->>               interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
->>               clocks = <&clock CLK_GSCL0>;
->> @@ -668,7 +668,7 @@
->>           };
->>             gsc_1: video-scaler@13e10000 {
->> -            compatible = "samsung,exynos5-gsc";
->> +            compatible = "samsung,exynos5-gsc", 
->> "samsung,exynos5420-gsc";
->>               reg = <0x13e10000 0x1000>;
->>               interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
->>               clocks = <&clock CLK_GSCL1>;
->
-> Best regards
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+RXh5bm9zIDUyNTAgYW5kIDU0MjAgaGF2ZSBkaWZmZXJlbnQgaGFyZHdhcmUgcm90YXRpb24gbGlt
+aXRzLgpTaW5jZSB3ZSBoYXZlIHRvIGRpc3Rpbmd1aXNoIGJldHdlZW4gdGhlc2UgdHdvLCB3ZSBh
+ZGQgZGlmZmVyZW50CmNvbXBhdGlibGUoc2Ftc3VuZyxleHlub3M1MjUwLWdzYyBhbmQgc2Ftc3Vu
+ZyxleHlub3M1NDIwLWdzYykuCgpTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4u
+a3dvbkBzYW1zdW5nLmNvbT4KLS0tCiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+bWVkaWEvZXh5bm9zNS1nc2MudHh0IHwgMSArCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
+KykKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEv
+ZXh5bm9zNS1nc2MudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlh
+L2V4eW5vczUtZ3NjLnR4dAppbmRleCAyNmNhMjViLi5kYWE1NmQ1IDEwMDY0NAotLS0gYS9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvZXh5bm9zNS1nc2MudHh0CisrKyBi
+L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9leHlub3M1LWdzYy50eHQK
+QEAgLTUsNiArNSw3IEBAIEctU2NhbGVyIGlzIHVzZWQgZm9yIHNjYWxpbmcgYW5kIGNvbG9yIHNw
+YWNlIGNvbnZlcnNpb24gb24gRVhZTk9TNSBTb0NzLgogUmVxdWlyZWQgcHJvcGVydGllczoKIC0g
+Y29tcGF0aWJsZTogc2hvdWxkIGJlICJzYW1zdW5nLGV4eW5vczUtZ3NjIiAoZm9yIEV4eW5vcyA1
+MjUwLCA1NDIwIGFuZAogCSAgICAgIDU0MjIgU29Dcykgb3IgInNhbXN1bmcsZXh5bm9zNTQzMy1n
+c2MiIChFeHlub3MgNTQzMykKKwkgICAgICBvciAic2Ftc3VuZyxleHlub3M1MjUwLWdzYyIgb3Ig
+InNhbXN1bmcsZXh5bm9zNTQyMC1nc2MiCiAtIHJlZzogc2hvdWxkIGNvbnRhaW4gRy1TY2FsZXIg
+cGh5c2ljYWwgYWRkcmVzcyBsb2NhdGlvbiBhbmQgbGVuZ3RoLgogLSBpbnRlcnJ1cHRzOiBzaG91
+bGQgY29udGFpbiBHLVNjYWxlciBpbnRlcnJ1cHQgbnVtYmVyCiAKLS0gCjEuOS4xCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
