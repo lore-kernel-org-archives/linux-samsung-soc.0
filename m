@@ -1,216 +1,255 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC example)
-Date: Thu, 07 Sep 2017 17:59:31 -0700
-Message-ID: <150483237153.48525.1363518996437790191@resonance>
-References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
- <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 3/3] drm/exynos/gsc: Add rotation hardware limits of
+ gscaler
+Date: Fri, 08 Sep 2017 11:21:10 +0900
+Message-ID: <f9ed590f-2e2d-8c9b-8c5f-e27eb8e3f39e@samsung.com>
+References: <1504230476-1878-1-git-send-email-hoegeun.kwon@samsung.com>
+        <CGME20170901014758epcas2p13ae73e7dcac72a1a28c9324164efbd6d@epcas2p1.samsung.com>
+        <1504230476-1878-4-git-send-email-hoegeun.kwon@samsung.com>
+        <10747c31-55fc-6464-eb00-99da6d66fca6@samsung.com>
+        <7e628ff8-82be-a295-90fa-8f547a541cb3@samsung.com>
+        <1e8a7563-046b-82b1-6da9-2e883426edf7@samsung.com>
+        <024ea0a3-abe7-4a87-7723-2e7341237df2@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <024ea0a3-abe7-4a87-7723-2e7341237df2-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+On 09/07/2017 08:25 PM, Marek Szyprowski wrote:
+> Hi Hoegeun,
+>
+> On 2017-09-07 07:16, Hoegeun Kwon wrote:
+>> On 09/04/2017 03:19 PM, Hoegeun Kwon wrote:
+>>> On 09/01/2017 04:31 PM, Marek Szyprowski wrote:
+>>>> Hi Hoegeun,
+>>>>
+>>>> On 2017-09-01 03:47, Hoegeun Kwon wrote:
+>>>>> The gscaler has hardware rotation limits that need to be imported 
+>>>>> from
+>>>>> dts. Parse them and add them to the property list.
+>>>>>
+>>>>> The rotation hardware limits are related to the cropped source size.
+>>>>> When swap occurs, use rot_max size instead of crop_max size.
+>>>>>
+>>>>> Also the scaling limits are related to post size, use pos size to
+>>>>> check the limits.
+>>>>>
+>>>>> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>> ---
+>>>>>   drivers/gpu/drm/exynos/exynos_drm_gsc.c | 63 
+>>>>> +++++++++++++++++++++------------
+>>>>>   include/uapi/drm/exynos_drm.h           |  2 ++
+>>>>>   2 files changed, 42 insertions(+), 23 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c 
+>>>>> b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+>>>>> index 0506b2b..dd9b057 100644
+>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+>>>>> @@ -1401,6 +1401,23 @@ static int gsc_ippdrv_check_property(struct 
+>>>>> device *dev,
+>>>>>       bool swap;
+>>>>>       int i;
+>>>>>   +    config = &property->config[EXYNOS_DRM_OPS_DST];
+>>>>> +
+>>>>> +    /* check for degree */
+>>>>> +    switch (config->degree) {
+>>>>> +    case EXYNOS_DRM_DEGREE_90:
+>>>>> +    case EXYNOS_DRM_DEGREE_270:
+>>>>> +        swap = true;
+>>>>> +        break;
+>>>>> +    case EXYNOS_DRM_DEGREE_0:
+>>>>> +    case EXYNOS_DRM_DEGREE_180:
+>>>>> +        swap = false;
+>>>>> +        break;
+>>>>> +    default:
+>>>>> +        DRM_ERROR("invalid degree.\n");
+>>>>> +        goto err_property;
+>>>>> +    }
+>>>>> +
+>>>>>       for_each_ipp_ops(i) {
+>>>>>           if ((i == EXYNOS_DRM_OPS_SRC) &&
+>>>>>               (property->cmd == IPP_CMD_WB))
+>>>>> @@ -1416,21 +1433,6 @@ static int gsc_ippdrv_check_property(struct 
+>>>>> device *dev,
+>>>>>               goto err_property;
+>>>>>           }
+>>>>>   -        /* check for degree */
+>>>>> -        switch (config->degree) {
+>>>>> -        case EXYNOS_DRM_DEGREE_90:
+>>>>> -        case EXYNOS_DRM_DEGREE_270:
+>>>>> -            swap = true;
+>>>>> -            break;
+>>>>> -        case EXYNOS_DRM_DEGREE_0:
+>>>>> -        case EXYNOS_DRM_DEGREE_180:
+>>>>> -            swap = false;
+>>>>> -            break;
+>>>>> -        default:
+>>>>> -            DRM_ERROR("invalid degree.\n");
+>>>>> -            goto err_property;
+>>>>> -        }
+>>>>> -
+>>>>>           /* check for buffer bound */
+>>>>>           if ((pos->x + pos->w > sz->hsize) ||
+>>>>>               (pos->y + pos->h > sz->vsize)) {
+>>>>> @@ -1438,21 +1440,27 @@ static int 
+>>>>> gsc_ippdrv_check_property(struct device *dev,
+>>>>>               goto err_property;
+>>>>>           }
+>>>>>   +        /*
+>>>>> +         * The rotation hardware limits are related to the cropped
+>>>>> +         * source size. So use rot_max size to check the limits when
+>>>>> +         * swap happens. And also the scaling limits are related 
+>>>>> to pos
+>>>>> +         * size, use pos size to check the limits.
+>>>>> +         */
+>>>>>           /* check for crop */
+>>>>>           if ((i == EXYNOS_DRM_OPS_SRC) && (pp->crop)) {
+>>>>>               if (swap) {
+>>>>>                   if ((pos->h < pp->crop_min.hsize) ||
+>>>>> -                    (sz->vsize > pp->crop_max.hsize) ||
+>>>>> +                    (pos->h > pp->rot_max.hsize) ||
+>>>>>                       (pos->w < pp->crop_min.vsize) ||
+>>>>> -                    (sz->hsize > pp->crop_max.vsize)) {
+>>>>> +                    (pos->w > pp->rot_max.vsize)) {
+>>>>>                       DRM_ERROR("out of crop size.\n");
+>>>>>                       goto err_property;
+>>>>>                   }
+>>>>>               } else {
+>>>>>                   if ((pos->w < pp->crop_min.hsize) ||
+>>>>> -                    (sz->hsize > pp->crop_max.hsize) ||
+>>>>> +                    (pos->w > pp->crop_max.hsize) ||
+>>>>>                       (pos->h < pp->crop_min.vsize) ||
+>>>>> -                    (sz->vsize > pp->crop_max.vsize)) {
+>>>>> +                    (pos->h > pp->crop_max.vsize)) {
+>>>>>                       DRM_ERROR("out of crop size.\n");
+>>>>>                       goto err_property;
+>>>>>                   }
+>>>>> @@ -1463,17 +1471,17 @@ static int 
+>>>>> gsc_ippdrv_check_property(struct device *dev,
+>>>>>           if ((i == EXYNOS_DRM_OPS_DST) && (pp->scale)) {
+>>>>>               if (swap) {
+>>>>>                   if ((pos->h < pp->scale_min.hsize) ||
+>>>>> -                    (sz->vsize > pp->scale_max.hsize) ||
+>>>>> +                    (pos->h > pp->scale_max.hsize) ||
+>>>>>                       (pos->w < pp->scale_min.vsize) ||
+>>>>> -                    (sz->hsize > pp->scale_max.vsize)) {
+>>>>> +                    (pos->w > pp->scale_max.vsize)) {
+>>>>>                       DRM_ERROR("out of scale size.\n");
+>>>>>                       goto err_property;
+>>>>>                   }
+>>>>>               } else {
+>>>>>                   if ((pos->w < pp->scale_min.hsize) ||
+>>>>> -                    (sz->hsize > pp->scale_max.hsize) ||
+>>>>> +                    (pos->w > pp->scale_max.hsize) ||
+>>>>>                       (pos->h < pp->scale_min.vsize) ||
+>>>>> -                    (sz->vsize > pp->scale_max.vsize)) {
+>>>>> +                    (pos->h > pp->scale_max.vsize)) {
+>>>>>                       DRM_ERROR("out of scale size.\n");
+>>>>>                       goto err_property;
+>>>>>                   }
+>>>>> @@ -1676,6 +1684,15 @@ static int gsc_probe(struct platform_device 
+>>>>> *pdev)
+>>>>>               dev_warn(dev, "failed to get system register.\n");
+>>>>>               ctx->sysreg = NULL;
+>>>>>           }
+>>>>> +
+>>>>> +        ret = of_property_read_u32(dev->of_node, "rot-max-hsize",
+>>>>> + &ctx->ippdrv.prop_list.rot_max.hsize);
+>>>>> +        ret |= of_property_read_u32(dev->of_node, "rot-max-vsize",
+>>>>> + &ctx->ippdrv.prop_list.rot_max.vsize);
+>>>>> +        if (ret) {
+>>>>> +            dev_err(dev, "rot-max property should be provided by 
+>>>>> device tree.\n");
+>>>>> +            return -EINVAL;
+>>>>> +        }
+>>>>>       }
+>>>>>         /* clock control */
+>>>>> diff --git a/include/uapi/drm/exynos_drm.h 
+>>>>> b/include/uapi/drm/exynos_drm.h
+>>>>> index cb3e9f9..d5d5518 100644
+>>>>> --- a/include/uapi/drm/exynos_drm.h
+>>>>> +++ b/include/uapi/drm/exynos_drm.h
+>>>>> @@ -192,6 +192,7 @@ enum drm_exynos_planer {
+>>>>>    * @crop_max: crop max resolution.
+>>>>>    * @scale_min: scale min resolution.
+>>>>>    * @scale_max: scale max resolution.
+>>>>> + * @rot_max: rotation max resolution.
+>>>>>    */
+>>>>>   struct drm_exynos_ipp_prop_list {
+>>>>>       __u32    version;
+>>>>> @@ -210,6 +211,7 @@ struct drm_exynos_ipp_prop_list {
+>>>>>       struct drm_exynos_sz    crop_max;
+>>>>>       struct drm_exynos_sz    scale_min;
+>>>>>       struct drm_exynos_sz    scale_max;
+>>>>> +    struct drm_exynos_sz    rot_max;
+>>>>>   };
+>>>>>     /**
+>>>>
+>>>> IMO maximum supported picture size should be hardcoded into driver, 
+>>>> there
+>>>> is no need to add device tree properties for that. Please also 
+>>>> check v4l2
+>>>> driver for Exynos GSC.
+>>>>
+>>>> Currently it uses only one compatible - "exynos5-gsc", but imho You 
+>>>> should
+>>>> simply replace it with "exynos5250-gsc" and "exynos5420-gsc", and 
+>>>> add those
+>>>> variants with proper maximum supported size (2047 and 2016 
+>>>> respectively).
+>>>>
+>>>> Best regards
+>>>
+>>> Hi Krzysztof and Marek,
+>>>
+>>> Thanks Krzysztof and Marek reviews.
+>>>
+>>> As Marek says, rot_max size will be hardcoded into driver,
+>>> then it will not break the ABI. And also,
+>>> I will check the v4l2 driver for Exynos GSC.
+>>>
+>>> Best regards,
+>>> Hoegeun
+>>>
+>>
+>> Hi Marek,
+>>
+>> I have checked v4l2 driver for Exynos GSC. The v4l2 driver supports
+>> Exynos 5250 and 5433 GSC. Currently, the hardware limits rotation is
+>> set to 2047 in the v4l2 driver.
+>>
+>
+> V4l2 GSC driver also supports Exynos5420/5422 SoCs, see
+> # git grep "samsung,exynos5-gsc" arch/arm/boot/dts/
+>
+>> In my opinion don't need to fix it, because the Exynos 5250 has a
+>> hardware rotation limits of 2048 and the Exynos 5250 has a hardware
+>> rotation limits of 2047.
+>
+> Like you pointed earlier, Exynos 5420/5422/5800 supports rotation only
+> up to 2016x2016, so additional patch for v4l2 is also needed.
 
-Quoting Marek Szyprowski (2017-08-21 01:04:58)
-> Dear All,
-> =
-
-> This patchset adds runtime PM support to common clock framework. This is =
-an
-> attempt to implement support for clock controllers, which belongs to a po=
-wer
-> domain. This approach works surprisingly well on Exynos 5433 SoC, what al=
-lowed
-> us to solve various freeze/crash issues related to power management.
-> =
-
-> The main idea behind this patchset is to keep clock's controller power do=
-main
-> enabled every time when at least one of its clock is enabled or access to=
- its
-> registers is being made. Clock controller driver (clock provider) can
-> supply a struct device pointer, which is the used by clock core for track=
-ing and
-> managing clock's controller runtime pm state. Each clk_prepare() operatio=
-n will
-> first call pm_runtime_get_sync() on the supplied device, while clk_unprep=
-are()
-> will do pm_runtime_put() at the end.
-> =
-
-> This runtime PM feature has been tested with Exynos4412 (not included in =
-this
-> patchset) and Exynos5433 clocks drivers. Both have some clocks, which bel=
-ongs to
-> respective power domains and need special handling during power on/off
-> procedures. Till now it wasn't handled at all, what caused various proble=
-ms.
-> =
-
-> Patches for clocks drivers change the way the clock provider is initializ=
-ed.
-> Instead of CLK_OF_DECLARE based initialization, a complete platform devic=
-e driver
-> infrastructure is being used. This is needed to let driver to use runtime=
- PM
-> feature and integrate with generic power domains. The side-effect of this=
- change
-> is a delay in clock provider registeration during system boot, so early
-> initialized drivers might get EPROBEDEFER error when requesting their clo=
-cks.
-> This was an issue for IOMMU drivers, but IOMMU deferred probe support has=
- been
-> finally merged to v4.13-rc1 and now it is handled correctly.
-> =
-
-> Patches are based and tested on v4.13-rc5, but applies fine also on v4.13=
--rc1.
-
-Patches look good to me. It's too late for the v4.14 PR, but I'll merge
-this to clk-next after -rc1 drops.
+Ok, I mistook it as not supporting the Exynos5420.
+So, I will also upload patches related to v4l2 from patch ver3.
 
 Best regards,
-Mike
+Hoegeun
 
-> =
-
+>
+>>
+>> Please tell me if you have any other opinion.
+>>
+>
 > Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
-> =
 
-> =
-
-> Changelog:
-> =
-
-> v9:
-> - moved pm_runtime_get() call from clk_register() to __clk_core_init() as
->   requested by Michael Turquette
-> - added remaining 'Reviewed-by' tags
-> =
-
-> v8: https://www.spinics.net/lists/arm-kernel/msg599494.html
-> - fixed minor issues pointed by Krzysztof Kozlowski and added his 'Review=
-ed-by'
->   tags
-> - added 'Reviewed-by' and 'Tested-by' tags from Chanwoo Choi
-> - moved trivial changes in Exynos AudioSS driver to separate patch
-> - added pm_runtime_get_noresume/pm_runtime_put_sync calls also to exynos-=
-audss
->   driver (like it is already done for exynos5433 clocks driver)
-> - still waiting for any comments from clk maintainers
-> =
-
-> v7: https://www.spinics.net/lists/arm-kernel/msg598408.html
-> - rebased onto v4.13-rc3
-> - still waiting for any comments from clk maintainers
-> =
-
-> v6: https://patches.linaro.org/cover/95713/
-> - addressed comments from Ulf Hanson and added his 'Reviewed-by' tags
-> - simplified exynos 5433 clock driver code a bit
-> - fixes issues pointed by kbuild test robot
-> =
-
-> v5: https://www.spinics.net/lists/linux-samsung-soc/msg57718.html
-> - rebased onto next-20170125 kernel release
-> - added two more calls to runtime PM in clock's core:
->         1. clk_recalc() should ensure active runtime pm state, because it=
- might
->            read registers (in case of dividers) to calculate the rate
->         2. clk_register() also needs to ensure active runtime pm state to=
- read
->            initial rate and status of the clocks
-> - more fixes in Exynos5433 clocks drivers:
->         1. PLL in DISP CMU must be enabled for suspend
->         2. guard clocks registration with pm_runtime_get_sync/pm_runtime_=
-put to
->            avoid turning the power domain on and off many times for no go=
-od
->            reason (registering each clock will call pm_runtime_get_sync()=
-, then
->            pm_runtime_put, what in turn might disable power domain)
-> - still waiting for a review...
-> =
-
-> v4: http://www.spinics.net/lists/arm-kernel/msg550747.html
-> - Removed patch for Exynos4412 clocks from the patchset. DT bindings for =
-power
->   domain for ISP sub-controller needs more discussion. It will be handled
->   separately when the runtime PM for clocks feature gets merged.
-> - Added patch with runtime PM support for Exynos AudioSS clock controller=
- driver
->   (needed to enable audio power domain on Exynos5 series).
-> - Fixes in Exynos5433 driver:
->         1. added missing clock for Audio CMU
->         2. added support for FSYS CMU
->         3. improved support for DISP CMU (thanks to Andrzej Hajda for
->            investigating that).
-> - Rebased onto v4.10-rc1
-> - Waiting for a review...
-> =
-
-> v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
-> - Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is en=
-abled
->   for the provided device during clock registration as suggested by Ulf
-> - Simplified code for exynos4412 isp clock driver registration
-> - Resolved some other minor issues pointed by Ulf clk core code
-> - Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
-> =
-
-> v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
-> - Simplified clk_pm_runtime_get/put functions, removed workaround for dev=
-ices
->   with disabled runtime pm. Such workaround is no longer needed since com=
-mit
->   4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime =
-PM
->   during system PM phases").
-> - Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core shou=
-ld
->   call runtime pm functions. This solves problem with clocks, for which s=
-truct
->   device is already registered, but no runtime pm is enabled.
-> - Extended commit messages according to Ulf suggestions.
-> - Fixed some style issues pointed by Barlomiej.
-> =
-
-> v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
-> - initial version
-> =
-
-> =
-
-> Patch summary:
-> =
-
-> Marek Szyprowski (5):
->   clk: Add support for runtime PM
->   clk: samsung: Add support for runtime PM
->   clk: samsung: exynos5433: Add support for runtime PM
->   clk: samsung: exynos-audss: Use local variable for controller's device
->   clk: samsung: exynos-audss: Add support for runtime PM
-> =
-
->  .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
->  .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
->  drivers/clk/clk.c                                  | 126 ++++++-
->  drivers/clk/samsung/clk-exynos-audss.c             |  76 ++--
->  drivers/clk/samsung/clk-exynos5433.c               | 409 +++++++++++++++=
-+-----
->  drivers/clk/samsung/clk-pll.c                      |   2 +-
->  drivers/clk/samsung/clk.c                          |  12 +-
->  drivers/clk/samsung/clk.h                          |   7 +
->  8 files changed, 519 insertions(+), 135 deletions(-)
-> =
-
-> -- =
-
-> 1.9.1
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
