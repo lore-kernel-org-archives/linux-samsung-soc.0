@@ -1,51 +1,92 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v3 0/6] Exynos-gsc: Support the hardware rotation limits
-Date: Fri, 08 Sep 2017 15:02:34 +0900
-Message-ID: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
-References: <CGME20170908060308epcas1p343cfab485cca84b9ff1d543637ef9a42@epcas1p3.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, mchehab@kernel.org, s.nawrocki@samsung.com, m.szyprowski@samsung.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 2/6] ARM: dts: exynos: Add clean name of compatible.
+Date: Fri, 08 Sep 2017 15:02:36 +0900
+Message-ID: <1504850560-27950-3-git-send-email-hoegeun.kwon@samsung.com>
+References: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
+        <CGME20170908060308epcas1p2b275c76f63f5742092a7bc4ef14c05a5@epcas1p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1504850560-27950-1-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gYWxsLAoKVGhlIGdzY2FsZXIgaGFzIGhhcmR3YXJlIHJvdGF0aW9uIGxpbWl0cy4gU28g
-dGhpcyBwYXRjaCBzZXQgc3VwcG9ydAp0aGUgcm90YXRlIGhhcmR3YXJlIGxpbWl0cyBvZiBnc2Mu
-CgpUbyBhdm9pZCBwcm9ibGVtcyB3aXRoIGJpc2VjdGFiaWxpdHksIHBhdGNoZXMgMX40IG11c3Qg
-YmUgbWVyZ2VkIGFuZAp0aGVuIG1lcmdlZCA1IGFuZCA2LgoKQ2hhbmdlcyBmb3IgVjM6Ci0gRml4
-ZWQgb2ZfbWF0Y2hfbm9kZSgpIHRvIG9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YSgpIGluIGRybSBn
-c2MgZHJpdmVyLgotIEFkZGVkIGhhcmR3YXJlIHJvdGF0aW9uIGxpbWl0cyBmb3IgZ3NjIGRyaXZl
-ciBvZiB2NGwyLgotIEFkZGVkIHRoZSByZW1vdmUgdW5uZWNlc3NhcnkgY29tcGF0aWJsZSBmb3Ig
-RFQgZG9jdW1lbnQgYW5kIEV4eW5vcyBkdHMuCgpDaGFuZ2VzIGZvciBWMjoKLSBBZGRlZCB0aGUg
-aW50ZXJmYWNlIGluZm8gaW4gYmluZGluZyBkb2N1bWVudC4KLSBBZGRlZCBjbGVhbiBuYW1lIG9m
-IGNvbXBhdGlibGUgaW4gRXh5bm9zIGR0cy4KLSBBZGRlZCBtYXhpbXVtIHN1cHBvcnRlZCBwaWN0
-dXJlIHNpemUgaGFyZGNvZGVkIGludG8gZHJpdmVyLgoKQmVzdCByZWdhcmRzLApIb2VnZXVuCgpI
-b2VnZXVuIEt3b24gKDYpOgogIFttZWRpYV0gZXh5bm9zLWdzYzogQWRkIGNvbXBhdGlibGUgZm9y
-IEV4eW5vcyA1MjUwIGFuZCA1NDIwIHNwZWNpZmljCiAgICB2ZXJzaW9uCiAgQVJNOiBkdHM6IGV4
-eW5vczogQWRkIGNsZWFuIG5hbWUgb2YgY29tcGF0aWJsZS4KICBkcm0vZXh5bm9zL2dzYzogQWRk
-IGhhcmR3YXJlIHJvdGF0aW9uIGxpbWl0cwogIFttZWRpYV0gZXh5bm9zLWdzYzogQWRkIGhhcmR3
-YXJlIHJvdGF0aW9uIGxpbWl0cwogIFttZWRpYV0gZXh5bm9zLWdzYzogUmVtb3ZlIHVubmVjZXNz
-YXJ5IGNvbXBhdGlibGUKICBBUk06IGR0czogZXh5bm9zOiBSZW1vdmUgdW5uZWNlc3NhcnkgY29t
-cGF0aWJsZQoKIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL2V4eW5vczUtZ3NjLnR4dCAg
-ICAgIHwgIDcgKy0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSAgICAgICAgICAg
-ICAgICAgIHwgIDggKy0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAuZHRzaSAgICAgICAg
-ICAgICAgICAgIHwgIDQgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2Mu
-YyAgICAgICAgICAgIHwgOTMgKysrKysrKysrKysrKystLS0tLS0tCiBkcml2ZXJzL21lZGlhL3Bs
-YXRmb3JtL2V4eW5vcy1nc2MvZ3NjLWNvcmUuYyAgICAgICB8IDk2ICsrKysrKysrKysrKysrKysr
-KystLS0KIGluY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oICAgICAgICAgICAgICAgICAgICAg
-IHwgIDIgKwogNiBmaWxlcyBjaGFuZ2VkLCAxNTkgaW5zZXJ0aW9ucygrKSwgNTEgZGVsZXRpb25z
-KC0pCgotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+Exynos 5250 and 5420 have different hardware rotation limits. However,
+currently it uses only one compatible - "exynos5-gsc". Since we have
+to distinguish between these two, we add different compatible.
+
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos5250.dtsi | 8 ++++----
+ arch/arm/boot/dts/exynos5420.dtsi | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 8dbeb87..bf08101 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -637,7 +637,7 @@
+ 		};
+ 
+ 		gsc_0:  gsc@13e00000 {
+-			compatible = "samsung,exynos5-gsc";
++			compatible = "samsung,exynos5-gsc", "samsung,exynos5250-gsc";
+ 			reg = <0x13e00000 0x1000>;
+ 			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+ 			power-domains = <&pd_gsc>;
+@@ -647,7 +647,7 @@
+ 		};
+ 
+ 		gsc_1:  gsc@13e10000 {
+-			compatible = "samsung,exynos5-gsc";
++			compatible = "samsung,exynos5-gsc", "samsung,exynos5250-gsc";
+ 			reg = <0x13e10000 0x1000>;
+ 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ 			power-domains = <&pd_gsc>;
+@@ -657,7 +657,7 @@
+ 		};
+ 
+ 		gsc_2:  gsc@13e20000 {
+-			compatible = "samsung,exynos5-gsc";
++			compatible = "samsung,exynos5-gsc", "samsung,exynos5250-gsc";
+ 			reg = <0x13e20000 0x1000>;
+ 			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+ 			power-domains = <&pd_gsc>;
+@@ -667,7 +667,7 @@
+ 		};
+ 
+ 		gsc_3:  gsc@13e30000 {
+-			compatible = "samsung,exynos5-gsc";
++			compatible = "samsung,exynos5-gsc", "samsung,exynos5250-gsc";
+ 			reg = <0x13e30000 0x1000>;
+ 			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+ 			power-domains = <&pd_gsc>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 02d2f89..86afe77 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -658,7 +658,7 @@
+ 		};
+ 
+ 		gsc_0: video-scaler@13e00000 {
+-			compatible = "samsung,exynos5-gsc";
++			compatible = "samsung,exynos5-gsc", "samsung,exynos5420-gsc";
+ 			reg = <0x13e00000 0x1000>;
+ 			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_GSCL0>;
+@@ -668,7 +668,7 @@
+ 		};
+ 
+ 		gsc_1: video-scaler@13e10000 {
+-			compatible = "samsung,exynos5-gsc";
++			compatible = "samsung,exynos5-gsc", "samsung,exynos5420-gsc";
+ 			reg = <0x13e10000 0x1000>;
+ 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_GSCL1>;
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
