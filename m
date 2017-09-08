@@ -1,360 +1,216 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2] ARM: dts: exynos: fix incomplete Odroid-XU3/4
- thermal-zones definition
-Date: Thu, 07 Sep 2017 18:10 +0200
-Message-ID: <1848394.K3C0KxojUN@amdc3058>
-References: <CGME20170907161007epcas1p316fba6e329eaabedde8a98628ebb9751@epcas1p3.samsung.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC example)
+Date: Thu, 07 Sep 2017 17:59:31 -0700
+Message-ID: <150483237153.48525.1363518996437790191@resonance>
+References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
+ <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Willy Wolff <willy.mh.wolff@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Willy Wolff <willy.mh.wolff@gmail.com>
+Hi Marek,
 
-Odroid XU3/4 boards have thermal sensors per 4 pairs of A7+A15
-cores but currently there is only one thermal-zone (including
-cooling maps) defined (for the first pair of cores - the first
-core of the A7 cluster and the first core of A15 cluster) so
-i.e. if the task is running on any of A15 cores but the first
-one, such core can reach high temperature without any proper
-cooling action.
+Quoting Marek Szyprowski (2017-08-21 01:04:58)
+> Dear All,
+> =
 
-Fix it by adding missing thermal-zones definitions.
+> This patchset adds runtime PM support to common clock framework. This is =
+an
+> attempt to implement support for clock controllers, which belongs to a po=
+wer
+> domain. This approach works surprisingly well on Exynos 5433 SoC, what al=
+lowed
+> us to solve various freeze/crash issues related to power management.
+> =
 
-Also while at it fix the number of steps in cpufreq cooling for
-cpu4 (11 steps for A15 corresponds to 700MHz, for 600MHz 12 steps
-should be used).
+> The main idea behind this patchset is to keep clock's controller power do=
+main
+> enabled every time when at least one of its clock is enabled or access to=
+ its
+> registers is being made. Clock controller driver (clock provider) can
+> supply a struct device pointer, which is the used by clock core for track=
+ing and
+> managing clock's controller runtime pm state. Each clk_prepare() operatio=
+n will
+> first call pm_runtime_get_sync() on the supplied device, while clk_unprep=
+are()
+> will do pm_runtime_put() at the end.
+> =
 
-Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Kukjin Kim <kgene@kernel.org>
-[b.zolnierkie: rewrote patch subject & description + minor fixups]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-v2:
+> This runtime PM feature has been tested with Exynos4412 (not included in =
+this
+> patchset) and Exynos5433 clocks drivers. Both have some clocks, which bel=
+ongs to
+> respective power domains and need special handling during power on/off
+> procedures. Till now it wasn't handled at all, what caused various proble=
+ms.
+> =
 
-Newlines removed (1 original + 3 new ones), sorry for not catching it
-earlier in v1.
+> Patches for clocks drivers change the way the clock provider is initializ=
+ed.
+> Instead of CLK_OF_DECLARE based initialization, a complete platform devic=
+e driver
+> infrastructure is being used. This is needed to let driver to use runtime=
+ PM
+> feature and integrate with generic power domains. The side-effect of this=
+ change
+> is a delay in clock provider registeration during system boot, so early
+> initialized drivers might get EPROBEDEFER error when requesting their clo=
+cks.
+> This was an issue for IOMMU drivers, but IOMMU deferred probe support has=
+ been
+> finally merged to v4.13-rc1 and now it is handled correctly.
+> =
 
-v1:
+> Patches are based and tested on v4.13-rc5, but applies fine also on v4.13=
+-rc1.
 
-I updated the patch to address Krzysztof's review comments,
-the original version from June can be found here:
+Patches look good to me. It's too late for the v4.14 PR, but I'll merge
+this to clk-next after -rc1 drops.
 
-	https://patchwork.kernel.org/patch/9807333/
+Best regards,
+Mike
 
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  239 +++++++++++++++++++--
- 1 file changed, 219 insertions(+), 20 deletions(-)
+> =
 
-Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-===================================================================
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2017-09-07 17:56:29.256414483 +0200
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2017-09-07 18:04:40.596426857 +0200
-@@ -63,22 +63,22 @@
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
--				cpu_alert0: cpu-alert-0 {
-+				cpu0_alert0: cpu-alert-0 {
- 					temperature = <50000>; /* millicelsius */
- 					hysteresis = <5000>; /* millicelsius */
- 					type = "active";
- 				};
--				cpu_alert1: cpu-alert-1 {
-+				cpu0_alert1: cpu-alert-1 {
- 					temperature = <60000>; /* millicelsius */
- 					hysteresis = <5000>; /* millicelsius */
- 					type = "active";
- 				};
--				cpu_alert2: cpu-alert-2 {
-+				cpu0_alert2: cpu-alert-2 {
- 					temperature = <70000>; /* millicelsius */
- 					hysteresis = <5000>; /* millicelsius */
- 					type = "active";
- 				};
--				cpu_crit0: cpu-crit-0 {
-+				cpu0_crit0: cpu-crit-0 {
- 					temperature = <120000>; /* millicelsius */
- 					hysteresis = <0>; /* millicelsius */
- 					type = "critical";
-@@ -87,59 +87,258 @@
- 				 * Exynos542x supports only 4 trip-points
- 				 * so for these polling mode is required.
- 				 * Start polling at temperature level of last
--				 * interrupt-driven trip: cpu_alert2
-+				 * interrupt-driven trip: cpu0_alert2
- 				 */
--				cpu_alert3: cpu-alert-3 {
-+				cpu0_alert3: cpu-alert-3 {
- 					temperature = <70000>; /* millicelsius */
- 					hysteresis = <10000>; /* millicelsius */
- 					type = "passive";
- 				};
--				cpu_alert4: cpu-alert-4 {
-+				cpu0_alert4: cpu-alert-4 {
- 					temperature = <85000>; /* millicelsius */
- 					hysteresis = <10000>; /* millicelsius */
- 					type = "passive";
- 				};
--
- 			};
- 			cooling-maps {
- 				map0 {
--					trip = <&cpu_alert0>;
-+					trip = <&cpu0_alert0>;
- 					cooling-device = <&fan0 0 1>;
- 				};
- 				map1 {
--					trip = <&cpu_alert1>;
-+					trip = <&cpu0_alert1>;
- 					cooling-device = <&fan0 1 2>;
- 				};
- 				map2 {
--					trip = <&cpu_alert2>;
-+					trip = <&cpu0_alert2>;
- 					cooling-device = <&fan0 2 3>;
- 				};
- 				/*
--				 * When reaching cpu_alert3, reduce CPU
-+				 * When reaching cpu0_alert3, reduce CPU
- 				 * by 2 steps. On Exynos5422/5800 that would
- 				 * be: 1600 MHz and 1100 MHz.
- 				 */
- 				map3 {
--					trip = <&cpu_alert3>;
-+					trip = <&cpu0_alert3>;
- 					cooling-device = <&cpu0 0 2>;
- 				};
- 				map4 {
--					trip = <&cpu_alert3>;
-+					trip = <&cpu0_alert3>;
- 					cooling-device = <&cpu4 0 2>;
- 				};
--
- 				/*
--				 * When reaching cpu_alert4, reduce CPU
--				 * further, down to 600 MHz (11 steps for big,
-+				 * When reaching cpu0_alert4, reduce CPU
-+				 * further, down to 600 MHz (12 steps for big,
- 				 * 7 steps for LITTLE).
- 				 */
- 				map5 {
--					trip = <&cpu_alert4>;
-+					trip = <&cpu0_alert4>;
- 					cooling-device = <&cpu0 3 7>;
- 				};
- 				map6 {
--					trip = <&cpu_alert4>;
--					cooling-device = <&cpu4 3 11>;
-+					trip = <&cpu0_alert4>;
-+					cooling-device = <&cpu4 3 12>;
-+				};
-+			};
-+		};
-+		cpu1_thermal: cpu1-thermal {
-+			thermal-sensors = <&tmu_cpu1 0>;
-+			polling-delay-passive = <250>;
-+			polling-delay = <0>;
-+			trips {
-+				cpu1_alert0: cpu-alert-0 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				cpu1_alert1: cpu-alert-1 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				cpu1_alert2: cpu-alert-2 {
-+					temperature = <70000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				cpu1_crit0: cpu-crit-0 {
-+					temperature = <120000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+				cpu1_alert3: cpu-alert-3 {
-+					temperature = <70000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+				cpu1_alert4: cpu-alert-4 {
-+					temperature = <85000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu1_alert0>;
-+					cooling-device = <&fan0 0 1>;
-+				};
-+				map1 {
-+					trip = <&cpu1_alert1>;
-+					cooling-device = <&fan0 1 2>;
-+				};
-+				map2 {
-+					trip = <&cpu1_alert2>;
-+					cooling-device = <&fan0 2 3>;
-+				};
-+				map3 {
-+					trip = <&cpu1_alert3>;
-+					cooling-device = <&cpu0 0 2>;
-+				};
-+				map4 {
-+					trip = <&cpu1_alert3>;
-+					cooling-device = <&cpu4 0 2>;
-+				};
-+				map5 {
-+					trip = <&cpu1_alert4>;
-+					cooling-device = <&cpu0 3 7>;
-+				};
-+				map6 {
-+					trip = <&cpu1_alert4>;
-+					cooling-device = <&cpu4 3 12>;
-+				};
-+			};
-+		};
-+		cpu2_thermal: cpu2-thermal {
-+			thermal-sensors = <&tmu_cpu2 0>;
-+			polling-delay-passive = <250>;
-+			polling-delay = <0>;
-+			trips {
-+				cpu2_alert0: cpu-alert-0 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				cpu2_alert1: cpu-alert-1 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				cpu2_alert2: cpu-alert-2 {
-+					temperature = <70000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				cpu2_crit0: cpu-crit-0 {
-+					temperature = <120000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+				cpu2_alert3: cpu-alert-3 {
-+					temperature = <70000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+				cpu2_alert4: cpu-alert-4 {
-+					temperature = <85000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu2_alert0>;
-+					cooling-device = <&fan0 0 1>;
-+				};
-+				map1 {
-+					trip = <&cpu2_alert1>;
-+					cooling-device = <&fan0 1 2>;
-+				};
-+				map2 {
-+					trip = <&cpu2_alert2>;
-+					cooling-device = <&fan0 2 3>;
-+				};
-+				map3 {
-+					trip = <&cpu2_alert3>;
-+					cooling-device = <&cpu0 0 2>;
-+				};
-+				map4 {
-+					trip = <&cpu2_alert3>;
-+					cooling-device = <&cpu4 0 2>;
-+				};
-+				map5 {
-+					trip = <&cpu2_alert4>;
-+					cooling-device = <&cpu0 3 7>;
-+				};
-+				map6 {
-+					trip = <&cpu2_alert4>;
-+					cooling-device = <&cpu4 3 12>;
-+				};
-+			};
-+		};
-+		cpu3_thermal: cpu3-thermal {
-+			thermal-sensors = <&tmu_cpu3 0>;
-+			polling-delay-passive = <250>;
-+			polling-delay = <0>;
-+			trips {
-+				cpu3_alert0: cpu-alert-0 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				cpu3_alert1: cpu-alert-1 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				cpu3_alert2: cpu-alert-2 {
-+					temperature = <70000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				cpu3_crit0: cpu-crit-0 {
-+					temperature = <120000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+				cpu3_alert3: cpu-alert-3 {
-+					temperature = <70000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+				cpu3_alert4: cpu-alert-4 {
-+					temperature = <85000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu3_alert0>;
-+					cooling-device = <&fan0 0 1>;
-+				};
-+				map1 {
-+					trip = <&cpu3_alert1>;
-+					cooling-device = <&fan0 1 2>;
-+				};
-+				map2 {
-+					trip = <&cpu3_alert2>;
-+					cooling-device = <&fan0 2 3>;
-+				};
-+				map3 {
-+					trip = <&cpu3_alert3>;
-+					cooling-device = <&cpu0 0 2>;
-+				};
-+				map4 {
-+					trip = <&cpu3_alert3>;
-+					cooling-device = <&cpu4 0 2>;
-+				};
-+				map5 {
-+					trip = <&cpu3_alert4>;
-+					cooling-device = <&cpu0 3 7>;
-+				};
-+				map6 {
-+					trip = <&cpu3_alert4>;
-+					cooling-device = <&cpu4 3 12>;
- 				};
- 			};
- 		};
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> =
+
+> =
+
+> Changelog:
+> =
+
+> v9:
+> - moved pm_runtime_get() call from clk_register() to __clk_core_init() as
+>   requested by Michael Turquette
+> - added remaining 'Reviewed-by' tags
+> =
+
+> v8: https://www.spinics.net/lists/arm-kernel/msg599494.html
+> - fixed minor issues pointed by Krzysztof Kozlowski and added his 'Review=
+ed-by'
+>   tags
+> - added 'Reviewed-by' and 'Tested-by' tags from Chanwoo Choi
+> - moved trivial changes in Exynos AudioSS driver to separate patch
+> - added pm_runtime_get_noresume/pm_runtime_put_sync calls also to exynos-=
+audss
+>   driver (like it is already done for exynos5433 clocks driver)
+> - still waiting for any comments from clk maintainers
+> =
+
+> v7: https://www.spinics.net/lists/arm-kernel/msg598408.html
+> - rebased onto v4.13-rc3
+> - still waiting for any comments from clk maintainers
+> =
+
+> v6: https://patches.linaro.org/cover/95713/
+> - addressed comments from Ulf Hanson and added his 'Reviewed-by' tags
+> - simplified exynos 5433 clock driver code a bit
+> - fixes issues pointed by kbuild test robot
+> =
+
+> v5: https://www.spinics.net/lists/linux-samsung-soc/msg57718.html
+> - rebased onto next-20170125 kernel release
+> - added two more calls to runtime PM in clock's core:
+>         1. clk_recalc() should ensure active runtime pm state, because it=
+ might
+>            read registers (in case of dividers) to calculate the rate
+>         2. clk_register() also needs to ensure active runtime pm state to=
+ read
+>            initial rate and status of the clocks
+> - more fixes in Exynos5433 clocks drivers:
+>         1. PLL in DISP CMU must be enabled for suspend
+>         2. guard clocks registration with pm_runtime_get_sync/pm_runtime_=
+put to
+>            avoid turning the power domain on and off many times for no go=
+od
+>            reason (registering each clock will call pm_runtime_get_sync()=
+, then
+>            pm_runtime_put, what in turn might disable power domain)
+> - still waiting for a review...
+> =
+
+> v4: http://www.spinics.net/lists/arm-kernel/msg550747.html
+> - Removed patch for Exynos4412 clocks from the patchset. DT bindings for =
+power
+>   domain for ISP sub-controller needs more discussion. It will be handled
+>   separately when the runtime PM for clocks feature gets merged.
+> - Added patch with runtime PM support for Exynos AudioSS clock controller=
+ driver
+>   (needed to enable audio power domain on Exynos5 series).
+> - Fixes in Exynos5433 driver:
+>         1. added missing clock for Audio CMU
+>         2. added support for FSYS CMU
+>         3. improved support for DISP CMU (thanks to Andrzej Hajda for
+>            investigating that).
+> - Rebased onto v4.10-rc1
+> - Waiting for a review...
+> =
+
+> v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
+> - Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is en=
+abled
+>   for the provided device during clock registration as suggested by Ulf
+> - Simplified code for exynos4412 isp clock driver registration
+> - Resolved some other minor issues pointed by Ulf clk core code
+> - Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
+> =
+
+> v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
+> - Simplified clk_pm_runtime_get/put functions, removed workaround for dev=
+ices
+>   with disabled runtime pm. Such workaround is no longer needed since com=
+mit
+>   4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime =
+PM
+>   during system PM phases").
+> - Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core shou=
+ld
+>   call runtime pm functions. This solves problem with clocks, for which s=
+truct
+>   device is already registered, but no runtime pm is enabled.
+> - Extended commit messages according to Ulf suggestions.
+> - Fixed some style issues pointed by Barlomiej.
+> =
+
+> v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
+> - initial version
+> =
+
+> =
+
+> Patch summary:
+> =
+
+> Marek Szyprowski (5):
+>   clk: Add support for runtime PM
+>   clk: samsung: Add support for runtime PM
+>   clk: samsung: exynos5433: Add support for runtime PM
+>   clk: samsung: exynos-audss: Use local variable for controller's device
+>   clk: samsung: exynos-audss: Add support for runtime PM
+> =
+
+>  .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
+>  .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
+>  drivers/clk/clk.c                                  | 126 ++++++-
+>  drivers/clk/samsung/clk-exynos-audss.c             |  76 ++--
+>  drivers/clk/samsung/clk-exynos5433.c               | 409 +++++++++++++++=
++-----
+>  drivers/clk/samsung/clk-pll.c                      |   2 +-
+>  drivers/clk/samsung/clk.c                          |  12 +-
+>  drivers/clk/samsung/clk.h                          |   7 +
+>  8 files changed, 519 insertions(+), 135 deletions(-)
+> =
+
+> -- =
+
+> 1.9.1
