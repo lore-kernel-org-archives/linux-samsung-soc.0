@@ -1,46 +1,36 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 1/3] ASoC: samsung: i2s: Use specific name for i2s dais
-Date: Fri, 8 Sep 2017 18:43:30 +0200
-Message-ID: <20170908164330.pw3fxcxvrnajlaox@kozik-lap>
+Subject: Re: [PATCH v2 2/3] ASoC: samsung: Use 'samsung-i2s' cpu_dai for
+ dai_links
+Date: Fri, 8 Sep 2017 18:45:12 +0200
+Message-ID: <20170908164512.5wwrn2gknfzzb6uy@kozik-lap>
 References: <20170906010415.26952-1-jcsing.lee@samsung.com>
- <CGME20170906010417epcas2p208db637d89a670d01fa3dbeb78ff0da0@epcas2p2.samsung.com>
- <20170906010415.26952-2-jcsing.lee@samsung.com>
+ <CGME20170906010417epcas1p2b3460cf27e35e64f5e35fad98f554108@epcas1p2.samsung.com>
+ <20170906010415.26952-3-jcsing.lee@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:38860 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753132AbdIHQno (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Sep 2017 12:43:44 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170906010415.26952-2-jcsing.lee@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20170906010415.26952-3-jcsing.lee@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaechul Lee <jcsing.lee@samsung.com>
 Cc: Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, galaxyra@gmail.com, Chanwoo Choi <cw00.choi@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 06, 2017 at 10:04:13AM +0900, Jaechul Lee wrote:
-> Add specific dais name when components are registered. Component and dai
-> name will follow their parent dev name, if the name isn't described.  In
-> case of this driver, each dais will have same name like '11440000.i2s0' by
-> fmt_single_name function.
+On Wed, Sep 06, 2017 at 10:04:14AM +0900, Jaechul Lee wrote:
+> Add specific cpu_dai_name to dai_link because samsung i2s driver registers
+> two dais and components. Selecting one of them clearly is needed more
+> information like cpu_dai_name, of_node. The reason why the dai_links have
+> to use 'samsung-i2s' for cpu_dai is that 'samsung-i2s-sec' doesn't have a
+> capture functionality.
 > 
-> The problem having same name is that TM2 machine driver can't detect
-> capture devices correctly. Machine driver doesn't know which one is proper
-> to use for cpu dai. The driver just selects to use 'samsung-i2c-sec' that
-> doesn't have capture functionality because the component of
-> samsung-i2s-sec is located in the first of the component_list.
-> 
-> I add dai name like 'samsung-i2s', 'samsung-i2s-sec' for each dais. The
-> reason why adding dai id to 1 is that it doesn't allow to use particular
-> dai name in case of when I use 0 for dai id.
+> Without this code, cpu_dai will be selected the first one of the
+> component_list. For example, if I describe nothing to cpu_dai_name,
+> 'samsung-i2s-sec' might be selected to HiFi Primay.
 > 
 > Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
 > ---
->  sound/soc/samsung/i2s.c | 4 ++++
->  sound/soc/samsung/i2s.h | 3 +++
->  2 files changed, 7 insertions(+)
+>  sound/soc/samsung/tm2_wm5110.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
