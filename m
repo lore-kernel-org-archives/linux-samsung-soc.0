@@ -1,1170 +1,483 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] drm/bridge: add Silicon Image SiI9234 driver
-Date: Fri, 8 Sep 2017 19:05:29 +0200
-Message-ID: <20170908170529.po5v6wuus4llwdan@kozik-lap>
-References: <1504620099-20024-1-git-send-email-m.purski@samsung.com>
- <CGME20170905140209eucas1p1ee010819751b86ad8a41e5847c115e01@eucas1p1.samsung.com>
- <1504620099-20024-2-git-send-email-m.purski@samsung.com>
+From: kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] ARM: dts: exynos: Add clean name of compatible.
+Date: Sun, 10 Sep 2017 03:57:43 +0800
+Message-ID: <201709100314.wmGSSdNC%fengguang.wu@intel.com>
+References: <1504777143-29834-3-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/mixed; boundary="jI8keyz6grp/JLjh"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1504620099-20024-2-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1504777143-29834-3-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: kbuild-all-JC7UmRfGjtg@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 05, 2017 at 04:01:38PM +0200, Maciej Purski wrote:
-> SiI9234 transmitter converts eTMDS/HDMI signal to MHL 1.0.
-> It is controlled via I2C bus. Its interaction with other
-> devices in video pipeline is performed mainly on HW level.
-> The only interaction it does on device driver level is
-> filtering-out unsupported video modes, it exposes drm_bridge
-> interface to perform this operation.
-> 
-> This patch is based on the code refactored by Tomasz Stanislawski
-> <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, which was initially developed by:
-> Adam Hampson <ahampson-e5f4jlO2fWGUEJcrhfAQsw@public.gmane.org>
-> Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> Shankar Bandal <shankar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Dharam Kumar <dharam.kr-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  .../devicetree/bindings/display/bridge/sii9234.txt |  34 +
->  drivers/gpu/drm/bridge/Kconfig                     |   8 +
->  drivers/gpu/drm/bridge/Makefile                    |   1 +
->  drivers/gpu/drm/bridge/sii9234.c                   | 993 +++++++++++++++++++++
->  4 files changed, 1036 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/sii9234.txt
->  create mode 100644 drivers/gpu/drm/bridge/sii9234.c
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/sii9234.txt b/Documentation/devicetree/bindings/display/bridge/sii9234.txt
-> new file mode 100644
-> index 0000000..3ce7413
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/sii9234.txt
-> @@ -0,0 +1,34 @@
-> +Silicon Image SiI9234 HDMI/MHL bridge bindings
-> +
-> +Required properties:
-> +	- compatible : "sil,sii9234".
-> +	- reg : I2C address for TPI interface, use 0x39
-> +	- avcc33-supply : MHL/USB Switch Supply Voltage (3.3V)
-> +	- iovcc18-supply : I/O Supply Voltage (1.8V)
-> +	- avcc12-supply : TMDS Analog Supply Voltage (1.2V)
-> +	- cvcc12-supply : Digital Core Supply Voltage (1.2V)
-> +	- interrupts, interrupt-parent: interrupt specifier of INT pin
-> +	- reset-gpios: gpio specifier of RESET pin (active low)
-> +	- video interfaces: Device node can contain video interface port
-> +			    node for HDMI encoder according to [1].
-> +
-> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
-> +
-> +Example:
-> +	sii9234@39 {
-> +		compatible = "sil,sii9234";
-> +		reg = <0x39>;
-> +		avcc33-supply = <&vcc33mhl>;
-> +		iovcc18-supply = <&vcc18mhl>;
-> +		avcc12-supply = <&vsil12>;
-> +		cvcc12-supply = <&vsil12>;
-> +		reset-gpios = <&gpf3 4 GPIO_ACTIVE_LOW>;
-> +		interrupt-parent = <&gpf3>;
-> +		interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +		port {
-> +			mhl_to_hdmi: endpoint {
-> +				remote-endpoint = <&hdmi_to_mhl>;
-> +			};
-> +		};
-> +	};
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index adf9ae0..9dba16fd 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -84,6 +84,14 @@ config DRM_SII902X
->  	---help---
->  	  Silicon Image sii902x bridge chip driver.
->  
-> +config DRM_SII9234
-> +	tristate "Silicon Image SII9234 HDMI/MHL bridge"
-> +	depends on OF
-> +	---help---
-> +	  Say Y here if you want support for the MHL interface.
-> +	  It is an I2C driver, that detects connection of MHL bridge
-> +	  and starts encapsulation of HDMI signal.
-> +
->  config DRM_TOSHIBA_TC358767
->  	tristate "Toshiba TC358767 eDP bridge"
->  	depends on OF
-> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-> index defcf1e..e3d5eb0 100644
-> --- a/drivers/gpu/drm/bridge/Makefile
-> +++ b/drivers/gpu/drm/bridge/Makefile
-> @@ -6,6 +6,7 @@ obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
->  obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
->  obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
->  obj-$(CONFIG_DRM_SII902X) += sii902x.o
-> +obj-$(CONFIG_DRM_SII9234) += sii9234.o
->  obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
->  obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
->  obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
-> diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-> new file mode 100644
-> index 0000000..b70d69a
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/sii9234.c
-> @@ -0,0 +1,993 @@
-> +/*
-> + * Copyright (C) 2017 Samsung Electronics
-> + *
-> + * Authors:
-> + *    Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> + *    Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> + *
-> + * Based on sii9234 driver created by:
-> + *    Adam Hampson <ahampson-e5f4jlO2fWGUEJcrhfAQsw@public.gmane.org>
-> + *    Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> + *    Shankar Bandal <shankar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> + *    Dharam Kumar <dharam.kr-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program
-> + *
-> + */
-> +#include <drm/bridge/mhl.h>
-> +#include <drm/drm_crtc.h>
-> +#include <drm/drm_edid.h>
-> +
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/slab.h>
-> +
-> +#define CBUS_DEVCAP_OFFSET		0x80
-> +
-> +#define SII9234_MHL_VERSION		0x11
-> +#define SII9234_SCRATCHPAD_SIZE		0x10
-> +#define SII9234_INT_STAT_SIZE		0x33
-> +
-> +#define BIT_TMDS_CCTRL_TMDS_OE		BIT(4)
-> +#define MHL_HPD_OUT_OVR_EN		BIT(4)
-> +#define MHL_HPD_OUT_OVR_VAL		BIT(5)
-> +#define MHL_INIT_TIMEOUT		0x0C
-> +
-> +/* MHL Tx registers and bits */
-> +#define MHL_TX_SRST                     0x05
-> +#define MHL_TX_SYSSTAT_REG              0x09
-> +#define MHL_TX_INTR1_REG                0x71
-> +#define MHL_TX_INTR4_REG                0x74
-> +#define MHL_TX_INTR1_ENABLE_REG         0x75
-> +#define MHL_TX_INTR4_ENABLE_REG         0x78
-> +#define MHL_TX_INT_CTRL_REG             0x79
-> +#define MHL_TX_TMDS_CCTRL               0x80
-> +#define MHL_TX_DISC_CTRL1_REG           0x90
-> +#define MHL_TX_DISC_CTRL2_REG           0x91
-> +#define MHL_TX_DISC_CTRL3_REG           0x92
-> +#define MHL_TX_DISC_CTRL4_REG		0x93
-> +#define MHL_TX_DISC_CTRL5_REG           0x94
-> +#define MHL_TX_DISC_CTRL6_REG           0x95
-> +#define MHL_TX_DISC_CTRL7_REG           0x96
-> +#define MHL_TX_DISC_CTRL8_REG		0x97
-> +#define MHL_TX_STAT2_REG                0x99
 
-                                 ^^^^^^^^
-Sometimes tabs, sometimes spaces. Please make it consistent: tabs.
+--jI8keyz6grp/JLjh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi Hoegeun,
 
-> +#define MHL_TX_MHLTX_CTL1_REG           0xA0
-> +#define MHL_TX_MHLTX_CTL2_REG           0xA1
-> +#define MHL_TX_MHLTX_CTL4_REG           0xA3
-> +#define MHL_TX_MHLTX_CTL6_REG           0xA5
-> +#define MHL_TX_MHLTX_CTL7_REG           0xA6
-> +
-> +
-> +#define RSEN_STATUS			BIT(2)
-> +#define HPD_CHANGE_INT			BIT(6)
-> +#define RSEN_CHANGE_INT			BIT(5)
-> +#define RGND_READY_INT			BIT(6)
-> +#define VBUS_LOW_INT			BIT(5)
-> +#define CBUS_LKOUT_INT			BIT(4)
-> +#define MHL_DISC_FAIL_INT		BIT(3)
-> +#define MHL_EST_INT			BIT(2)
-> +#define HPD_CHANGE_INT_MASK		BIT(6)
-> +#define RSEN_CHANGE_INT_MASK		BIT(5)
-> +
-> +#define RGND_READY_MASK			BIT(6)
-> +#define CBUS_LKOUT_MASK			BIT(4)
-> +#define MHL_DISC_FAIL_MASK		BIT(3)
-> +#define MHL_EST_MASK			BIT(2)
-> +
-> +#define SKIP_GND			BIT(6)
-> +
-> +#define ATT_THRESH_SHIFT		0x04
-> +#define ATT_THRESH_MASK			(0x03 << ATT_THRESH_SHIFT)
-> +#define USB_D_OEN			BIT(3)
-> +#define DEGLITCH_TIME_MASK		0x07
-> +#define DEGLITCH_TIME_2MS		0
-> +#define DEGLITCH_TIME_4MS		1
-> +#define DEGLITCH_TIME_8MS		2
-> +#define DEGLITCH_TIME_16MS		3
-> +#define DEGLITCH_TIME_40MS		4
-> +#define DEGLITCH_TIME_50MS		5
-> +#define DEGLITCH_TIME_60MS		6
-> +#define DEGLITCH_TIME_128MS		7
-> +
-> +#define USB_D_OVR			BIT(7)
-> +#define USB_ID_OVR			BIT(6)
-> +#define DVRFLT_SEL			BIT(5)
-> +#define BLOCK_RGND_INT			BIT(4)
-> +#define SKIP_DEG			BIT(3)
-> +#define CI2CA_POL			BIT(2)
-> +#define CI2CA_WKUP			BIT(1)
-> +#define SINGLE_ATT			BIT(0)
-> +
-> +#define USB_D_ODN			BIT(5)
-> +#define VBUS_CHECK			BIT(2)
-> +#define RGND_INTP_MASK			0x03
-> +#define RGND_INTP_OPEN			0
-> +#define RGND_INTP_2K			1
-> +#define RGND_INTP_1K			2
-> +#define RGND_INTP_SHORT			3
-> +
-> +/* HDMI registers */
-> +#define HDMI_RX_TMDS0_CCTRL1_REG	0x10
-> +#define HDMI_RX_TMDS_CLK_EN_REG		0x11
-> +#define HDMI_RX_TMDS_CH_EN_REG		0x12
-> +#define HDMI_RX_PLL_CALREFSEL_REG	0x17
-> +#define HDMI_RX_PLL_VCOCAL_REG		0x1A
-> +#define HDMI_RX_EQ_DATA0_REG		0x22
-> +#define HDMI_RX_EQ_DATA1_REG		0x23
-> +#define HDMI_RX_EQ_DATA2_REG		0x24
-> +#define HDMI_RX_EQ_DATA3_REG		0x25
-> +#define HDMI_RX_EQ_DATA4_REG		0x26
-> +#define HDMI_RX_TMDS_ZONE_CTRL_REG	0x4C
-> +#define HDMI_RX_TMDS_MODE_CTRL_REG	0x4D
-> +
-> +/* CBUS registers */
-> +#define CBUS_INT_STATUS_1_REG		0x08
-> +#define CBUS_INTR1_ENABLE_REG		0x09
-> +#define CBUS_MSC_REQ_ABORT_REASON_REG	0x0D
-> +#define CBUS_INT_STATUS_2_REG		0x1E
-> +#define CBUS_INTR2_ENABLE_REG		0x1F
-> +#define CBUS_LINK_CONTROL_2_REG		0x31
-> +#define CBUS_MHL_STATUS_REG_0		0xB0
-> +#define CBUS_MHL_STATUS_REG_1		0xB1
-> +
-> +#define BIT_CBUS_RESET			BIT(3)
-> +#define SET_HPD_DOWNSTREAM		BIT(6)
-> +
-> +/* TPI registers */
-> +#define TPI_DPD_REG			0x3D
-> +
-> +/* timeouts */
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on v4.13 next-20170908]
+[cannot apply to drm-exynos/exynos-drm/for-next]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Timeout in what kind of units?
+url:    https://github.com/0day-ci/linux/commits/Hoegeun-Kwon/drm-exynos-gsc-Support-the-hardware-rotation-limits/20170910-015155
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: arm-at91_dt_defconfig (attached as .config)
+compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=arm 
 
-> +#define T_SRC_VBUS_CBUS_TO_STABLE	200
-> +#define T_SRC_CBUS_FLOAT		100
-> +#define T_SRC_CBUS_DEGLITCH		2
-> +#define T_SRC_RXSENSE_DEGLITCH		110
-> +#define MHL1_MAX_CLK			75000
-> +
-> +/* I2C addresses */
+All errors (new ones prefixed by >>):
 
-Rather useless comment.
+>> Error: arch/arm/boot/dts/exynos5250.dtsi:640.40-41 syntax error
+   FATAL ERROR: Unable to parse input tree
 
-> +#define I2C_TPI_ADDR			0x3D
-> +#define I2C_HDMI_ADDR			0x49
-> +#define I2C_CBUS_ADDR			0x64
-> +
-> +enum sii9234_state {
-> +	ST_OFF,
-> +	ST_D3,
-> +	ST_RGND_INIT,
-> +	ST_RGND_1K,
-> +	ST_RSEN_HIGH,
-> +	ST_MHL_ESTABLISHED,
-> +	ST_FAILURE_DISCOVERY,
-> +	ST_FAILURE,
-> +};
-> +
-> +struct sii9234 {
-> +	struct i2c_client *client[4];
-> +	struct drm_bridge bridge;
-> +	struct device *dev;
-> +	struct gpio_desc *gpio_reset;
-> +	int i2c_error;
-> +	struct regulator_bulk_data supplies[4];
-> +
-> +	enum sii9234_state state;
-> +	struct mutex lock;
-> +};
-> +
-> +enum sii9234_client_id {
-> +	I2C_MHL,
-> +	I2C_TPI,
-> +	I2C_HDMI,
-> +	I2C_CBUS,
-> +};
-> +
-> +static char *sii9234_client_name[] = {
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-static const char *
+--jI8keyz6grp/JLjh
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
-> +	[I2C_MHL] = "MHL",
-> +	[I2C_TPI] = "TPI",
-> +	[I2C_HDMI] = "HDMI",
-> +	[I2C_CBUS] = "CBUS",
-> +};
-> +
-> +static int sii9234_writeb(struct sii9234 *ctx, int id, int offset,
-> +			    int value)
-> +{
-> +	int ret;
-> +	struct i2c_client *client = ctx->client[id];
-> +
-> +	if (ctx->i2c_error)
-> +		return ctx->i2c_error;
-> +
-> +	ret = i2c_smbus_write_byte_data(client, offset, value);
-> +	if (ret < 0)
-> +		dev_err(ctx->dev, "writeb: %4s[0x%02x] <- 0x%02x\n",
-> +			sii9234_client_name[id], offset, value);
-> +	ctx->i2c_error = ret;
-> +
-> +	return ret;
-> +}
-> +
-> +static int sii9234_writebm(struct sii9234 *ctx, int id, int offset,
-> +			    int value, int mask)
-> +{
-> +	int ret;
-> +	struct i2c_client *client = ctx->client[id];
-> +
-> +	if (ctx->i2c_error)
-> +		return ctx->i2c_error;
-> +
-> +	ret = i2c_smbus_write_byte(client, offset);
-> +	if (ret < 0) {
-> +		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
-> +			sii9234_client_name[id], offset, value);
-> +		ctx->i2c_error = ret;
-> +		return ret;
-> +	}
-> +
-> +	ret = i2c_smbus_read_byte(client);
-> +	if (ret < 0) {
-> +		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
-> +			sii9234_client_name[id], offset, value);
-> +		ctx->i2c_error = ret;
-> +		return ret;
-> +	}
-> +
-> +	value = (value & mask) | (ret & ~mask);
-> +
-> +	ret = i2c_smbus_write_byte_data(client, offset, value);
-> +	if (ret < 0) {
-> +		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
-> +			sii9234_client_name[id], offset, value);
-> +		ctx->i2c_error = ret;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int sii9234_readb(struct sii9234 *ctx, int id, int offset)
-> +{
-> +	int ret;
-> +	struct i2c_client *client = ctx->client[id];
-> +
-> +	if (ctx->i2c_error)
-> +		return ctx->i2c_error;
-> +
-> +	ret = i2c_smbus_write_byte(client, offset);
-> +	if (ret < 0) {
-> +		dev_err(ctx->dev, "readb: %4s[0x%02x]\n",
-> +			sii9234_client_name[id], offset);
-> +		ctx->i2c_error = ret;
-> +		return ret;
-> +	}
-> +
-> +	ret = i2c_smbus_read_byte(client);
-> +	if (ret < 0) {
-> +		dev_err(ctx->dev, "readb: %4s[0x%02x]\n",
-> +			sii9234_client_name[id], offset);
-> +		ctx->i2c_error = ret;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int sii9234_clear_error(struct sii9234 *ctx)
-> +{
-> +	int ret = ctx->i2c_error;
-> +
-> +	ctx->i2c_error = 0;
-> +
-> +	return ret;
-> +}
-> +
-> +#define mhl_tx_writeb(sii9234, offset, value) \
-> +	sii9234_writeb(sii9234, I2C_MHL, offset, value)
-> +#define mhl_tx_writebm(sii9234, offset, value, mask) \
-> +	sii9234_writebm(sii9234, I2C_MHL, offset, value, mask)
-> +#define mhl_tx_readb(sii9234, offset) \
-> +	sii9234_readb(sii9234, I2C_MHL, offset)
-> +#define cbus_writeb(sii9234, offset, value) \
-> +	sii9234_writeb(sii9234, I2C_CBUS, offset, value)
-> +#define cbus_writebm(sii9234, offset, value, mask) \
-> +	sii9234_writebm(sii9234, I2C_CBUS, offset, value, mask)
-> +#define cbus_readb(sii9234, offset) \
-> +	sii9234_readb(sii9234, I2C_CBUS, offset)
-> +#define hdmi_writeb(sii9234, offset, value) \
-> +	sii9234_writeb(sii9234, I2C_HDMI, offset, value)
-> +#define hdmi_writebm(sii9234, offset, value, mask) \
-> +	sii9234_writebm(sii9234, I2C_HDMI, offset, value, mask)
-> +#define hdmi_readb(sii9234, offset) \
-> +	sii9234_readb(sii9234, I2C_HDMI, offset)
-> +#define tpi_writeb(sii9234, offset, value) \
-> +	sii9234_writeb(sii9234, I2C_TPI, offset, value)
-> +#define tpi_writebm(sii9234, offset, value, mask) \
-> +	sii9234_writebm(sii9234, I2C_TPI, offset, value, mask)
-> +#define tpi_readb(sii9234, offset) \
-> +	sii9234_readb(sii9234, I2C_TPI, offset)
-> +
-> +static u8 sii9234_tmds_control(struct sii9234 *ctx, bool enable)
-> +{
-> +	mhl_tx_writebm(ctx, MHL_TX_TMDS_CCTRL, enable ? ~0 : 0,
-> +						BIT_TMDS_CCTRL_TMDS_OE);
-> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, enable ? ~0 : 0,
-> +				MHL_HPD_OUT_OVR_EN | MHL_HPD_OUT_OVR_VAL);
-> +	return sii9234_clear_error(ctx);
-> +}
-> +
-> +static int sii9234_cbus_reset(struct sii9234 *ctx)
-> +{
-> +	int i;
-> +
-> +	mhl_tx_writebm(ctx, MHL_TX_SRST, ~0, BIT_CBUS_RESET);
-> +	msleep(T_SRC_CBUS_DEGLITCH);
-> +	mhl_tx_writebm(ctx, MHL_TX_SRST, 0, BIT_CBUS_RESET);
-> +
-> +	for (i = 0; i < 4; i++) {
-> +		/* Enable WRITE_STAT interrupt for writes to all
-> +		 * 4 MSC Status registers.
-> +		 */
-> +		cbus_writeb(ctx, 0xE0 + i, 0xF2);
-> +		/* Enable SET_INT interrupt for writes to all
-> +		 * 4 MSC Interrupt registers.
-> +		 */
+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
 
-Comments with leading /*:
-/*
- * foo bar
- * bar foo
- */
-
-Please run checkpatch and fix the warnings everywhere.
-
-> +		cbus_writeb(ctx, 0xF0 + i, 0xF2);
-> +	}
-> +
-> +	return sii9234_clear_error(ctx);
-> +}
-> +
-> +/* Require to chek mhl imformation of samsung in cbus_init_register */
-> +static int sii9234_cbus_init(struct sii9234 *ctx)
-> +{
-> +	cbus_writeb(ctx, 0x07, 0xF2);
-> +	cbus_writeb(ctx, 0x40, 0x03);
-> +	cbus_writeb(ctx, 0x42, 0x06);
-> +	cbus_writeb(ctx, 0x36, 0x0C);
-> +	cbus_writeb(ctx, 0x3D, 0xFD);
-> +	cbus_writeb(ctx, 0x1C, 0x01);
-> +	cbus_writeb(ctx, 0x1D, 0x0F);
-> +	cbus_writeb(ctx, 0x44, 0x02);
-> +	/* Setup our devcap */
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_DEV_STATE, 0x00);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_MHL_VERSION,
-> +							SII9234_MHL_VERSION);
-
-Please align indentation with parenthesis.
-
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_CAT,
-> +							MHL_DCAP_CAT_SOURCE);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_ADOPTER_ID_H, 0x01);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_ADOPTER_ID_L, 0x41);
-> +
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_VID_LINK_MODE,
-> +			MHL_DCAP_VID_LINK_RGB444 | MHL_DCAP_VID_LINK_YCBCR444);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_VIDEO_TYPE,
-> +							MHL_DCAP_VT_GRAPHICS);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_LOG_DEV_MAP,
-> +							MHL_DCAP_LD_GUI);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_BANDWIDTH, 0x0F);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_FEATURE_FLAG,
-> +		    MHL_DCAP_FEATURE_RCP_SUPPORT | MHL_DCAP_FEATURE_RAP_SUPPORT
-> +		   | MHL_DCAP_FEATURE_SP_SUPPORT);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_DEVICE_ID_H, 0x0);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_DEVICE_ID_L, 0x0);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_SCRATCHPAD_SIZE,
-> +						SII9234_SCRATCHPAD_SIZE);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_INT_STAT_SIZE,
-> +						SII9234_INT_STAT_SIZE);
-> +	cbus_writeb(ctx, CBUS_DEVCAP_OFFSET + MHL_DCAP_RESERVED, 0);
-> +	cbus_writebm(ctx, 0x31, 0x0C, 0x0C);
-> +	cbus_writeb(ctx, 0x30, 0x01);
-> +	cbus_writebm(ctx, 0x3C, 0x30, 0x38);
-> +	cbus_writebm(ctx, 0x22, 0x0D, 0x0F);
-> +	cbus_writebm(ctx, 0x2E, 0x15, 0x15);
-> +	cbus_writeb(ctx, CBUS_INTR1_ENABLE_REG, 0);
-> +	cbus_writeb(ctx, CBUS_INTR2_ENABLE_REG, 0);
-> +
-> +	return sii9234_clear_error(ctx);
-> +}
-> +
-> +static void force_usb_id_switch_open(struct sii9234 *ctx)
-> +{
-> +	/* Disable CBUS discovery */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL1_REG, 0, 0x01);
-> +	/* Force USB ID switch to open */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, ~0, USB_ID_OVR);
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL3_REG, ~0, 0x86);
-> +	/* Force upstream HPD to 0 when not in MHL mode. */
-> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, 0, 0x30);
-> +}
-> +
-> +static void release_usb_id_switch_open(struct sii9234 *ctx)
-> +{
-> +	msleep(T_SRC_CBUS_FLOAT);
-> +	/* Clear USB ID switch to open */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, 0, USB_ID_OVR);
-> +	/* Enable CBUS discovery */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL1_REG, ~0, 0x01);
-> +}
-> +
-> +static int sii9234_power_init(struct sii9234 *ctx)
-> +{
-> +	/* Force the SiI9234 into the D0 state. */
-> +	tpi_writeb(ctx, TPI_DPD_REG, 0x3F);
-> +	/* Enable TxPLL Clock */
-> +	hdmi_writeb(ctx, HDMI_RX_TMDS_CLK_EN_REG, 0x01);
-> +	/* Enable Tx Clock Path & Equalizer */
-> +	hdmi_writeb(ctx, HDMI_RX_TMDS_CH_EN_REG, 0x15);
-> +	/* Power Up TMDS */
-> +	mhl_tx_writeb(ctx, 0x08, 0x35);
-> +	return sii9234_clear_error(ctx);
-> +}
-> +
-> +static int sii9234_hdmi_init(struct sii9234 *ctx)
-> +{
-> +	hdmi_writeb(ctx, HDMI_RX_TMDS0_CCTRL1_REG, 0xC1);
-> +	hdmi_writeb(ctx, HDMI_RX_PLL_CALREFSEL_REG, 0x03);
-> +	hdmi_writeb(ctx, HDMI_RX_PLL_VCOCAL_REG, 0x20);
-> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA0_REG, 0x8A);
-> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA1_REG, 0x6A);
-> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA2_REG, 0xAA);
-> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA3_REG, 0xCA);
-> +	hdmi_writeb(ctx, HDMI_RX_EQ_DATA4_REG, 0xEA);
-> +	hdmi_writeb(ctx, HDMI_RX_TMDS_ZONE_CTRL_REG, 0xA0);
-> +	hdmi_writeb(ctx, HDMI_RX_TMDS_MODE_CTRL_REG, 0x00);
-> +	mhl_tx_writeb(ctx, MHL_TX_TMDS_CCTRL, 0x34);
-> +	hdmi_writeb(ctx, 0x45, 0x44);
-> +	hdmi_writeb(ctx, 0x31, 0x0A);
-> +	hdmi_writeb(ctx, HDMI_RX_TMDS0_CCTRL1_REG, 0xC1);
-> +
-> +	return sii9234_clear_error(ctx);
-> +}
-> +
-> +static int sii9234_mhl_tx_ctl_int(struct sii9234 *ctx)
-> +{
-> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL1_REG, 0xD0);
-> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL2_REG, 0xFC);
-> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL4_REG, 0xEB);
-> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL7_REG, 0x0C);
-> +
-> +	return sii9234_clear_error(ctx);
-> +}
-> +
-> +static int sii9234_reset(struct sii9234 *ctx)
-> +{
-> +	int ret;
-> +
-> +	sii9234_clear_error(ctx);
-> +
-> +	ret = sii9234_power_init(ctx);
-> +	if (ret < 0)
-> +		return ret;
-> +	ret = sii9234_cbus_reset(ctx);
-> +	if (ret < 0)
-> +		return ret;
-> +	ret = sii9234_hdmi_init(ctx);
-> +	if (ret < 0)
-> +		return ret;
-> +	ret = sii9234_mhl_tx_ctl_int(ctx);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Enable HDCP Compliance safety */
-> +	mhl_tx_writeb(ctx, 0x2B, 0x01);
-> +	/* CBUS discovery cycle time for each drive and float = 150us */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL1_REG, 0x04, 0x06);
-> +	/* Clear bit 6 (reg_skip_rgnd) */
-> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL2_REG, (1 << 7) /* Reserved */
-> +		| 2 << ATT_THRESH_SHIFT | DEGLITCH_TIME_50MS);
-> +	/* Changed from 66 to 65 for 94[1:0] = 01 = 5k reg_cbusmhl_pup_sel
-> +	 * 1.8V CBUS VTH & GND threshold
-> +	 * to meet CTS 3.3.7.2 spec
-> +	 */
-> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL5_REG, 0x77);
-> +	cbus_writebm(ctx, CBUS_LINK_CONTROL_2_REG, ~0, MHL_INIT_TIMEOUT);
-> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL6_REG, 0xA0);
-> +	/* RGND & single discovery attempt (RGND blocking) */
-> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL6_REG, BLOCK_RGND_INT |
-> +			       DVRFLT_SEL | SINGLE_ATT);
-> +	/* Use VBUS path of discovery state machine */
-> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL8_REG, 0);
-> +	/* 0x92[3] sets the CBUS / ID switch */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, ~0, USB_ID_OVR);
-> +	/* To allow RGND engine to operate correctly.
-> +	 * When moving the chip from D2 to D0 (power up, init regs)
-> +	 * the values should be
-> +	 * 94[1:0] = 01  reg_cbusmhl_pup_sel[1:0] should be set for 5k
-> +	 * 93[7:6] = 10  reg_cbusdisc_pup_sel[1:0] should be
-> +	 * set for 10k (default)
-> +	 * 93[5:4] = 00  reg_cbusidle_pup_sel[1:0] = open (default)
-> +	 */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL3_REG, ~0, 0x86);
-> +	/* Change from CC to 8C to match 5K
-> +	 * to meet CTS 3.3.72 spec
-> +	 */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL4_REG, ~0, 0x8C);
-> +	/* Configure the interrupt as active high */
-> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, 0, 0x06);
-> +
-> +	msleep(25);
-> +
-> +	/* Release usb_id switch */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, 0,  USB_ID_OVR);
-> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL1_REG, 0x27);
-> +
-> +	ret = sii9234_clear_error(ctx);
-> +	if (ret < 0)
-> +		return ret;
-> +	ret = sii9234_cbus_init(ctx);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Enable Auto soft reset on SCDT = 0 */
-> +	mhl_tx_writeb(ctx, 0x05, 0x04);
-> +	/* HDMI Transcode mode enable */
-> +	mhl_tx_writeb(ctx, 0x0D, 0x1C);
-> +	mhl_tx_writeb(ctx, MHL_TX_INTR4_ENABLE_REG,
-> +			       RGND_READY_MASK | CBUS_LKOUT_MASK |
-> +			       MHL_DISC_FAIL_MASK | MHL_EST_MASK);
-> +	mhl_tx_writeb(ctx, MHL_TX_INTR1_ENABLE_REG, 0x60);
-> +
-> +	/* This point is very important before measure RGND impedance */
-> +	force_usb_id_switch_open(ctx);
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL4_REG, 0, 0xF0);
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL5_REG, 0, 0x03);
-> +	release_usb_id_switch_open(ctx);
-> +
-> +	/* Force upstream HPD to 0 when not in MHL mode */
-> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, 0, 1 << 5);
-> +	mhl_tx_writebm(ctx, MHL_TX_INT_CTRL_REG, ~0, 1 << 4);
-> +
-> +	return sii9234_clear_error(ctx);
-> +}
-> +
-> +static int sii9234_goto_d3(struct sii9234 *ctx)
-> +{
-> +	int ret;
-> +
-> +	dev_dbg(ctx->dev, "sii9234: detection started d3\n");
-> +
-> +	ret = sii9234_reset(ctx);
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	hdmi_writeb(ctx, 0x01, 0x03);
-> +	tpi_writebm(ctx, TPI_DPD_REG, 0, 1);
-> +	/* I2C above is expected to fail because power goes down */
-> +	sii9234_clear_error(ctx);
-> +
-> +	ctx->state = ST_D3;
-> +
-> +	return 0;
-> + exit:
-> +	dev_err(ctx->dev, "%s failed\n", __func__);
-> +	return -1;
-> +}
-> +
-> +static int sii9234_hw_on(struct sii9234 *ctx)
-> +{
-> +	return regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-> +}
-> +
-> +static void sii9234_hw_off(struct sii9234 *ctx)
-> +{
-> +	gpiod_set_value(ctx->gpio_reset, 1);
-> +	usleep_range(10000, 20000);
-
-These are big enough for msleep, unless precise wakeup within 10-20 ms
-is required?
-
-> +	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-> +}
-> +
-> +static void sii9234_hw_reset(struct sii9234 *ctx)
-> +{
-> +	gpiod_set_value(ctx->gpio_reset, 1);
-> +	usleep_range(10000, 20000);
-
-Same.
-
-> +	gpiod_set_value(ctx->gpio_reset, 0);
-> +}
-> +
-> +static void sii9234_cable_in(struct sii9234 *ctx)
-> +{
-> +	int ret;
-> +
-> +	mutex_lock(&ctx->lock);
-> +	if (ctx->state != ST_OFF)
-> +		goto unlock;
-> +	ret = sii9234_hw_on(ctx);
-> +	if (ret < 0)
-> +		goto unlock;
-> +
-> +	sii9234_hw_reset(ctx);
-> +	sii9234_goto_d3(ctx);
-> +	/* To avoid irq storm, when hw is in meta state */
-> +	enable_irq(to_i2c_client(ctx->dev)->irq);
-> +
-> +unlock:
-> +	mutex_unlock(&ctx->lock);
-> +}
-> +
-> +static void sii9234_cable_out(struct sii9234 *ctx)
-> +{
-> +	mutex_lock(&ctx->lock);
-> +
-> +	if (ctx->state == ST_OFF)
-> +		goto unlock;
-> +
-> +	disable_irq(to_i2c_client(ctx->dev)->irq);
-> +	tpi_writeb(ctx, TPI_DPD_REG, 0);
-> +	/* Turn on&off hpd festure for only QCT HDMI */
-> +	sii9234_hw_off(ctx);
-> +
-> +	ctx->state = ST_OFF;
-> +
-> +unlock:
-> +	mutex_unlock(&ctx->lock);
-> +}
-> +
-> +static enum sii9234_state sii9234_rgnd_ready_irq(struct sii9234 *ctx)
-> +{
-> +	int value;
-> +
-> +	if (ctx->state == ST_D3) {
-> +		int ret;
-> +
-> +		dev_dbg(ctx->dev, "RGND_READY_INT\n");
-> +		sii9234_hw_reset(ctx);
-> +
-> +		ret = sii9234_reset(ctx);
-> +		if (ret < 0) {
-> +			dev_err(ctx->dev, "sii9234_reset() failed\n");
-> +			return ST_FAILURE;
-> +		}
-> +
-> +		return ST_RGND_INIT;
-> +	}
-> +
-> +	/* Got interrupt in inappropriate state */
-> +	if (ctx->state != ST_RGND_INIT)
-> +		return ST_FAILURE;
-> +
-> +	value = mhl_tx_readb(ctx, MHL_TX_STAT2_REG);
-> +	if (sii9234_clear_error(ctx))
-> +		return ST_FAILURE;
-> +
-> +	if ((value & RGND_INTP_MASK) != RGND_INTP_1K) {
-> +		dev_warn(ctx->dev, "RGND is not 1k\n");
-> +		return ST_RGND_INIT;
-> +	}
-> +	dev_dbg(ctx->dev, "RGND 1K!!\n");
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL4_REG, ~0, 0x8C);
-> +	mhl_tx_writeb(ctx, MHL_TX_DISC_CTRL5_REG, 0x77);
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL6_REG, ~0, 0x05);
-> +	if (sii9234_clear_error(ctx))
-> +		return ST_FAILURE;
-> +
-> +	usleep_range(T_SRC_VBUS_CBUS_TO_STABLE * USEC_PER_MSEC,
-> +		     T_SRC_VBUS_CBUS_TO_STABLE * USEC_PER_MSEC);
-
-usleep for 200ms?
-
-Pretty long... maybe msleep()?
-
-> +
-> +	return ST_RGND_1K;
-> +}
-> +
-> +static enum sii9234_state sii9234_mhl_established(struct sii9234 *ctx)
-> +{
-> +	dev_dbg(ctx->dev, "mhl est interrupt\n");
-> +
-> +	/* Discovery override */
-> +	mhl_tx_writeb(ctx, MHL_TX_MHLTX_CTL1_REG, 0x10);
-> +	/* Increase DDC translation layer timer (byte mode) */
-> +	cbus_writeb(ctx, 0x07, 0x32);
-> +	cbus_writebm(ctx, 0x44, ~0, 1 << 1);
-> +	/* Keep the discovery enabled. Need RGND interrupt */
-> +	mhl_tx_writebm(ctx, MHL_TX_DISC_CTRL1_REG, ~0, 1);
-> +	mhl_tx_writeb(ctx, MHL_TX_INTR1_ENABLE_REG,
-> +	       RSEN_CHANGE_INT_MASK | HPD_CHANGE_INT_MASK);
-> +
-> +	if (sii9234_clear_error(ctx))
-> +		return ST_FAILURE;
-> +
-> +	return ST_MHL_ESTABLISHED;
-> +}
-> +
-> +static enum sii9234_state sii9234_hpd_change(struct sii9234 *ctx)
-> +{
-> +	int value;
-> +
-> +	value = cbus_readb(ctx, CBUS_MSC_REQ_ABORT_REASON_REG);
-> +	if (sii9234_clear_error(ctx))
-> +		return ST_FAILURE;
-> +
-> +	if (value & SET_HPD_DOWNSTREAM) {
-> +		/* Downstream HPD High, Enable TMDS */
-> +		sii9234_tmds_control(ctx, true);
-> +	} else {
-> +		/* Downstream HPD Low, Disable TMDS */
-> +		sii9234_tmds_control(ctx, false);
-> +	}
-> +
-> +	return ctx->state;
-> +}
-> +
-> +static enum sii9234_state sii9234_rsen_change(struct sii9234 *ctx)
-> +{
-> +	int value;
-> +
-> +	/* Work_around code to handle wrong interrupt */
-> +	if (ctx->state != ST_RGND_1K) {
-> +		dev_err(ctx->dev, "RSEN_HIGH without RGND_1K\n");
-> +		return ST_FAILURE;
-> +	}
-> +	value = mhl_tx_readb(ctx, MHL_TX_SYSSTAT_REG);
-> +	if (value < 0)
-> +		return ST_FAILURE;
-> +
-> +	if (value & RSEN_STATUS) {
-> +		dev_dbg(ctx->dev, "MHL cable connected.. RSEN High\n");
-> +		return ST_RSEN_HIGH;
-> +	}
-> +	dev_dbg(ctx->dev, "RSEN lost\n");
-> +	/* Once RSEN loss is confirmed,we need to check
-> +	 * based on cable status and chip power status,whether
-> +	 * it is SINK Loss(HDMI cable not connected, TV Off)
-> +	 * or MHL cable disconnection
-> +	 * TODO: Define the below mhl_disconnection()
-> +	 */
-> +	msleep(T_SRC_RXSENSE_DEGLITCH);
-> +	value = mhl_tx_readb(ctx, MHL_TX_SYSSTAT_REG);
-> +	if (value < 0)
-> +		return ST_FAILURE;
-> +	dev_dbg(ctx->dev, "sys_stat: %x\n", value);
-> +
-> +	if (value & RSEN_STATUS) {
-> +		dev_dbg(ctx->dev, "RSEN recovery\n");
-> +		return ST_RSEN_HIGH;
-> +	}
-> +	dev_dbg(ctx->dev, "RSEN Really LOW\n");
-> +	/* To meet CTS 3.3.22.2 spec */
-> +	sii9234_tmds_control(ctx, false);
-> +	force_usb_id_switch_open(ctx);
-> +	release_usb_id_switch_open(ctx);
-> +
-> +	return ST_FAILURE;
-> +}
-> +
-> +static irqreturn_t sii9234_irq_thread(int irq, void *data)
-> +{
-> +	struct sii9234 *ctx = data;
-> +	int intr1, intr4;
-> +	int intr1_en, intr4_en;
-> +	int cbus_intr1, cbus_intr2;
-> +
-> +	dev_dbg(ctx->dev, "%s\n", __func__);
-> +
-> +	mutex_lock(&ctx->lock);
-> +
-> +	intr1 = mhl_tx_readb(ctx, MHL_TX_INTR1_REG);
-> +	intr4 = mhl_tx_readb(ctx, MHL_TX_INTR4_REG);
-> +	intr1_en = mhl_tx_readb(ctx, MHL_TX_INTR1_ENABLE_REG);
-> +	intr4_en = mhl_tx_readb(ctx, MHL_TX_INTR4_ENABLE_REG);
-> +	cbus_intr1 = cbus_readb(ctx, CBUS_INT_STATUS_1_REG);
-> +	cbus_intr2 = cbus_readb(ctx, CBUS_INT_STATUS_2_REG);
-> +
-> +	if (sii9234_clear_error(ctx))
-> +		goto done;
-> +
-> +	dev_dbg(ctx->dev, "irq %02x/%02x %02x/%02x %02x/%02x\n",
-> +		 intr1, intr1_en, intr4, intr4_en, cbus_intr1, cbus_intr2);
-> +
-> +	if (intr4 & RGND_READY_INT)
-> +		ctx->state = sii9234_rgnd_ready_irq(ctx);
-> +	if (intr1 & RSEN_CHANGE_INT)
-> +		ctx->state = sii9234_rsen_change(ctx);
-> +	if (intr4 & MHL_EST_INT)
-> +		ctx->state = sii9234_mhl_established(ctx);
-> +	if (intr1 & HPD_CHANGE_INT)
-> +		ctx->state = sii9234_hpd_change(ctx);
-> +	if (intr4 & CBUS_LKOUT_INT)
-> +		ctx->state = ST_FAILURE;
-> +	if (intr4 & MHL_DISC_FAIL_INT)
-> +		ctx->state = ST_FAILURE_DISCOVERY;
-> +
-> + done:
-> +	/* Clean interrupt status and pending flags */
-> +	mhl_tx_writeb(ctx, MHL_TX_INTR1_REG, intr1);
-> +	mhl_tx_writeb(ctx, MHL_TX_INTR4_REG, intr4);
-> +	cbus_writeb(ctx, CBUS_MHL_STATUS_REG_0, 0xFF);
-> +	cbus_writeb(ctx, CBUS_MHL_STATUS_REG_1, 0xFF);
-> +	cbus_writeb(ctx, CBUS_INT_STATUS_1_REG, cbus_intr1);
-> +	cbus_writeb(ctx, CBUS_INT_STATUS_2_REG, cbus_intr2);
-> +
-> +	sii9234_clear_error(ctx);
-> +
-> +	if (ctx->state == ST_FAILURE) {
-> +		dev_dbg(ctx->dev, "try to reset after failure\n");
-> +		sii9234_hw_reset(ctx);
-> +		sii9234_goto_d3(ctx);
-> +	}
-> +
-> +	if (ctx->state == ST_FAILURE_DISCOVERY) {
-> +		dev_err(ctx->dev, "discovery failed, no power for MHL?\n");
-> +		tpi_writebm(ctx, TPI_DPD_REG, 0, 1);
-> +		ctx->state = ST_D3;
-> +	}
-> +
-> +	mutex_unlock(&ctx->lock);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +
-> +static int sii9234_init_resources(struct sii9234 *ctx,
-> +	struct i2c_client *client)
-> +{
-> +	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
-> +	int ret;
-> +
-> +	if (!ctx->dev->of_node) {
-> +		dev_err(ctx->dev, "not DT device\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ctx->gpio_reset = devm_gpiod_get(ctx->dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(ctx->gpio_reset)) {
-> +		dev_err(ctx->dev, "failed to get reset gpio from DT\n");
-> +		return PTR_ERR(ctx->gpio_reset);
-> +	}
-> +
-> +	ctx->supplies[0].supply = "cvcc12";
-> +	ctx->supplies[1].supply = "avcc33";
-> +	ctx->supplies[2].supply = "iovcc18";
-> +	ctx->supplies[3].supply = "avcc12";
-> +	ret = devm_regulator_bulk_get(ctx->dev, 4, ctx->supplies);
-> +	if (ret) {
-> +		dev_err(ctx->dev, "regulator_bulk failed\n");
-> +		return ret;
-> +	}
-> +
-> +	ctx->client[I2C_MHL] = client;
-> +
-> +	ctx->client[I2C_TPI] = i2c_new_dummy(adapter, I2C_TPI_ADDR);
-> +	if (!ctx->client[I2C_TPI]) {
-> +		dev_err(ctx->dev, "failed to create TPI client\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ctx->client[I2C_HDMI] = i2c_new_dummy(adapter, I2C_HDMI_ADDR);
-> +	if (!ctx->client[I2C_HDMI]) {
-> +		dev_err(ctx->dev, "failed to create HDMI RX client\n");
-> +		goto fail_tpi;
-> +	}
-> +
-> +	ctx->client[I2C_CBUS] = i2c_new_dummy(adapter, I2C_CBUS_ADDR);
-> +	if (!ctx->client[I2C_CBUS]) {
-> +		dev_err(ctx->dev, "failed to create CBUS client\n");
-> +		goto fail_hdmi;
-> +	}
-
-You are using i2c_smbus_* calls. Why not converting to regmap_i2c? It is
-preferred interface.
-
-> +
-> +	return 0;
-> +
-> +fail_hdmi:
-> +	i2c_unregister_device(ctx->client[I2C_HDMI]);
-> +fail_tpi:
-> +	i2c_unregister_device(ctx->client[I2C_TPI]);
-> +
-> +	return -ENODEV;
-> +}
-> +
-> +static void sii9234_deinit_resources(struct sii9234 *ctx)
-> +{
-> +	i2c_unregister_device(ctx->client[I2C_CBUS]);
-> +	i2c_unregister_device(ctx->client[I2C_HDMI]);
-> +	i2c_unregister_device(ctx->client[I2C_TPI]);
-> +}
-> +
-> +static inline struct sii9234 *bridge_to_sii9234(struct drm_bridge *bridge)
-> +{
-> +	return container_of(bridge, struct sii9234, bridge);
-> +}
-> +
-> +static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
-> +					const struct drm_display_mode *mode)
-> +{
-> +	if (mode->clock > MHL1_MAX_CLK)
-> +		return MODE_CLOCK_HIGH;
-> +
-> +	return MODE_OK;
-> +}
-> +
-> +static const struct drm_bridge_funcs sii9234_bridge_funcs = {
-> +	.mode_valid = sii9234_mode_valid,
-> +};
-> +
-> +static int sii9234_probe(struct i2c_client *client,
-> +					      const struct i2c_device_id *id)
-> +{
-> +	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
-> +	struct sii9234 *ctx;
-> +	struct device *dev = &client->dev;
-> +	int ret;
-> +
-> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	ctx->dev = dev;
-> +	mutex_init(&ctx->lock);
-> +
-> +	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
-> +		dev_err(dev, "I2C adapter lacks SMBUS feature\n");
-> +		return -EIO;
-> +	}
-> +
-> +	if (!client->irq) {
-> +		dev_err(dev, "no irq provided\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	irq_set_status_flags(client->irq, IRQ_NOAUTOEN);
-> +	ret = devm_request_threaded_irq(dev, client->irq, NULL,
-> +					sii9234_irq_thread,
-> +					IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
-> +					"sii9234", ctx);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to install IRQ handler\n");
-> +		return ret;
-> +	}
-
-You are setting up interrupts before initialization of I2C. Can the
-interrupt happen in this short window?
-
-> +
-> +	ret = sii9234_init_resources(ctx, client);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	i2c_set_clientdata(client, ctx);
-> +
-> +	ctx->bridge.funcs = &sii9234_bridge_funcs;
-> +	ctx->bridge.of_node = dev->of_node;
-> +	drm_bridge_add(&ctx->bridge);
-> +
-> +	sii9234_cable_in(ctx);
-> +
-> +	return 0;
-> +}
-> +
-> +static int sii9234_remove(struct i2c_client *client)
-> +{
-> +	struct sii9234 *ctx = i2c_get_clientdata(client);
-> +
-> +	sii9234_cable_out(ctx);
-> +	drm_bridge_remove(&ctx->bridge);
-> +	sii9234_deinit_resources(ctx);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id sii9234_dt_match[] = {
-> +	{ .compatible = "sil,sii9234" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, sii9234_dt_match);
-> +
-> +static const struct i2c_device_id sii9234_id[] = {
-> +	{ "SII9234", 0 },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(i2c, sii9234_id);
-> +
-> +static struct i2c_driver sii9234_driver = {
-> +	.driver = {
-> +		.name	= "sii9234",
-> +		.of_match_table = sii9234_dt_match,
-> +	},
-> +	.probe		= sii9234_probe,
-> +	.remove		= sii9234_remove,
-> +	.id_table = sii9234_id,
-
-Some assignments above are indented, some not...
-
-Best regards,
-Krzysztof
-
-> +};
-> +
-> +module_i2c_driver(sii9234_driver);
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.7.4
-> 
+--jI8keyz6grp/JLjh--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
