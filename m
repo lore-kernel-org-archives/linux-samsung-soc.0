@@ -1,75 +1,74 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 1/2] drm/bridge: add Silicon Image SiI9234 driver
-Date: Mon, 11 Sep 2017 15:39:54 +0200
-Message-ID: <626dfd33-a824-c480-16eb-bf677dcb3d26@samsung.com>
-References: <1504620099-20024-1-git-send-email-m.purski@samsung.com>
- <CGME20170905140209eucas1p1ee010819751b86ad8a41e5847c115e01@eucas1p1.samsung.com>
- <1504620099-20024-2-git-send-email-m.purski@samsung.com>
- <20170908170529.po5v6wuus4llwdan@kozik-lap>
- <a7c84f2c-855f-0e65-d794-d9a3331a6516@samsung.com>
- <CAJKOXPcfOUGDYL0BEa2-XZkpnoOGb4QRvEyWFwbgRxjAXD0Rng@mail.gmail.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 00/10] drm/exynos: TV path improvements
+Date: Mon, 11 Sep 2017 15:54:40 +0200
+Message-ID: <29e9a521-ba8e-4753-38df-665e50bbc4cb@math.uni-bielefeld.de>
+References: <CGME20170906103727eucas1p23614a8da470a625d760b50095a4a4ad1@eucas1p2.samsung.com>
+ <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAJKOXPcfOUGDYL0BEa2-XZkpnoOGb4QRvEyWFwbgRxjAXD0Rng@mail.gmail.com>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Maciej Purski <m.purski@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, Laurent.pinchart@ideasonboard.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:41845 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751216AbdIKNym (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 11 Sep 2017 09:54:42 -0400
+In-Reply-To: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-SGkgS3J6eXN6dG9mLAoKT24gMjAxNy0wOS0xMSAxNToxOCwgS3J6eXN6dG9mIEtvemxvd3NraSB3
-cm90ZToKPiBPbiBNb24sIFNlcCAxMSwgMjAxNyBhdCAxOjQyIFBNLCBNYWNpZWogUHVyc2tpIDxt
-LnB1cnNraUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+Pj4gKyAgICAgICBjdHgtPmNsaWVudFtJMkNf
-TUhMXSA9IGNsaWVudDsKPj4+PiArCj4+Pj4gKyAgICAgICBjdHgtPmNsaWVudFtJMkNfVFBJXSA9
-IGkyY19uZXdfZHVtbXkoYWRhcHRlciwgSTJDX1RQSV9BRERSKTsKPj4+PiArICAgICAgIGlmICgh
-Y3R4LT5jbGllbnRbSTJDX1RQSV0pIHsKPj4+PiArICAgICAgICAgICAgICAgZGV2X2VycihjdHgt
-PmRldiwgImZhaWxlZCB0byBjcmVhdGUgVFBJIGNsaWVudFxuIik7Cj4+Pj4gKyAgICAgICAgICAg
-ICAgIHJldHVybiAtRU5PREVWOwo+Pj4+ICsgICAgICAgfQo+Pj4+ICsKPj4+PiArICAgICAgIGN0
-eC0+Y2xpZW50W0kyQ19IRE1JXSA9IGkyY19uZXdfZHVtbXkoYWRhcHRlciwgSTJDX0hETUlfQURE
-Uik7Cj4+Pj4gKyAgICAgICBpZiAoIWN0eC0+Y2xpZW50W0kyQ19IRE1JXSkgewo+Pj4+ICsgICAg
-ICAgICAgICAgICBkZXZfZXJyKGN0eC0+ZGV2LCAiZmFpbGVkIHRvIGNyZWF0ZSBIRE1JIFJYIGNs
-aWVudFxuIik7Cj4+Pj4gKyAgICAgICAgICAgICAgIGdvdG8gZmFpbF90cGk7Cj4+Pj4gKyAgICAg
-ICB9Cj4+Pj4gKwo+Pj4+ICsgICAgICAgY3R4LT5jbGllbnRbSTJDX0NCVVNdID0gaTJjX25ld19k
-dW1teShhZGFwdGVyLCBJMkNfQ0JVU19BRERSKTsKPj4+PiArICAgICAgIGlmICghY3R4LT5jbGll
-bnRbSTJDX0NCVVNdKSB7Cj4+Pj4gKyAgICAgICAgICAgICAgIGRldl9lcnIoY3R4LT5kZXYsICJm
-YWlsZWQgdG8gY3JlYXRlIENCVVMgY2xpZW50XG4iKTsKPj4+PiArICAgICAgICAgICAgICAgZ290
-byBmYWlsX2hkbWk7Cj4+Pj4gKyAgICAgICB9Cj4+PiBZb3UgYXJlIHVzaW5nIGkyY19zbWJ1c18q
-IGNhbGxzLiBXaHkgbm90IGNvbnZlcnRpbmcgdG8gcmVnbWFwX2kyYz8gSXQgaXMKPj4+IHByZWZl
-cnJlZCBpbnRlcmZhY2UuCj4+Cj4+IEFjY29yZGluZyB0byBteSBzZWFyY2gsIHRoZXJlIGFyZSBv
-bmx5IDUgZHJpdmVycywgd2hpY2ggdXNlIHJlZ21hcF9pMmMgYW5kCj4+IG5vbmUgb2YgdGhlbSBp
-biBkcm0uIElmIHlvdSB0aGluayB0aGF0IGl0IGlzIHJlYWxseSBuZWVkZWQsIGNvdWxkIHlvdSBw
-bGVhc2UKPj4gZXhwbGFpbgo+PiB3aHk/Cj4gVGhlcmUgYXJlIHNsaWdodGx5IG1vcmUgdGhhbiBm
-aXZlIGRyaXZlcnM6Cj4KPiAkIGdpdCBncmVwIHJlZ21hcF9pbml0X2kyYyB8IHdjIC1sCj4gMzUy
-Cj4KPiAuLi4gYW5kIGV2ZW4gbW9yZSB1c2luZyByZWdtYXAgaW50ZXJmYWNlIGluIGdlbmVyaWMg
-KG5vdCBpMmMpLgo+Cj4gSSB0aGluayB0aGlzIGlzIHJlYWxseSB3YW50ZWQgYmVjYXVzZSBmb3Ig
-ZnJlZSB5b3UgZ2V0Ogo+IDEuIGxvY2tpbmcsCj4gMi4gcHJvcGVyIGxvY2tpbmcgLSB3aXRoIGxv
-Y2tkZXAgYW5kIG5lc3RlZCBtdXRleGVzIDopLAo+IDMuIGNhY2hpbmcgb2YgYWNjZXNzZXMsCj4g
-NC4gaGFuZGxpbmcgb2YgZW5kaWFubmVzcywKPiA1LiBvcHRpb25hbGx5IGEgdHJpdmlhbCB3YXkg
-b2YgaGFuZGxpbmcgaW50ZXJydXB0cyAocmVnbWFwX2lycV9jaGlwKSwKPgo+IEFsc28gdGhpcyBi
-cmluZ3MgdW5pZmllZCBpbnRlcmZhY2UgZm9yIG1vc3Qgb2YgdGhlIGRyaXZlcnMgcmVnYXJkbGVz
-cwo+IG9mIHByb3RvY29sIHVzZWQgYmVuZWF0aCAoSTJDLCBTUEkgYW5kIGV2ZW4gTU1JTyBidXQg
-Zm9yIHNpbXBsZSBjYXNlcwo+IE1NSU8gbWlnaHQgbm90IGhhdmUgbXVjaCBzZW5zZSkuIFRoaXMg
-bGFzdCBhcmd1bWVudCBhY3R1YWxseSBicmluZ3MKPiB0aGUgbW9zdCBiZW5lZml0IGZvciBtZSBi
-ZWNhdXNlIGl0IGFic3RyYWN0cyBkcml2ZXIgZnJvbSB0cml2aWFsIEkyQwo+IGltcGxlbWVudGF0
-aW9uIGFuZCBpdCBjb3VsZCBhbGxvdyBldmVuIGVhc3kgY29kZS1yZXVzZSBmb3IgZS5nLiBTUEkK
-PiB2ZXJzaW9uLgoKUmVnbWFwIG1ha2Ugc2Vuc2UgZm9yIG11bHRpLWZ1bmN0aW9uIGNoaXBzLCB3
-aGljaCByZXF1aXJlIG1vcmUgdGhhbiBvbmUKY2xpZW50IGRyaXZlciAoc28gcHJvcGVyIGxvY2tp
-bmcgaXMgaW1wb3J0YW50KS4gSXQgYWxzbyBtYWtlcyBzZW5zZSBpZgp0aGUgY2hpcCBpcyBwcm9k
-dWNlZCBpbiBtb3JlIHRoYW4gb25lIGZsYXZvciAobGlrZSBpMmMsIHNwaSwgTU1JTywgZXRjKS4K
-Ck5vbmUgb2YgdGhlIGFib3ZlIHRha2VzIHBsYWNlIGluIHRoaXMgY2FzZS4uLiBTbyBpbiBjYXNl
-IG9mIHRoaXMgZHJpdmVyCnVzaW5nIHJlZ21hcCBpcyBJTUhPIGFuIG92ZXItZW5naW5lZXJpbmcu
-CgogPiAuLi4KCkJlc3QgcmVnYXJkcwotLSAKTWFyZWsgU3p5cHJvd3NraSwgUGhEClNhbXN1bmcg
-UiZEIEluc3RpdHV0ZSBQb2xhbmQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+Hello Andrzej,
+
+just did a quick test and looks good so far. One thing I noticed is that
+compared to Daniel's approach you just manipulate HDMI_TG_HACT_{ST,SZ}_L,
+instead of HDMI_TG_VACT_SZ_L + HDMI_TG_HACT_{ST,SZ}_L. I just wanted to make
+sure that on the HDMI level, this does the same thing?
+
+I'll try to do a proper review tomorrow.
+
+I also noticed that I have another patch by Daniel in my tree, which, together
+with the quirk, enables 1366x768@60Hz. Going to send it shortly, since it could
+probably go along with this series.
+
+With best wishes,
+Tobias
+
+
+
+Andrzej Hajda wrote:
+> Hi all,
+> 
+> This patchset does two main things:
+> - removes mode limitation for Exynos542x chips, multiple modes were filtered
+>   out due to lack of HW version checking code,
+> - enables two modes on older chips, thanks to quirk found by Daniel Drake,
+>   and published by Tobias Jakobi [1][2].
+> Beside this it consolidates the code and performs multiple cleanups.
+> 
+> [1]: http://www.spinics.net/lists/linux-samsung-soc/msg24617.html
+> [2]: https://www.spinics.net/lists/dri-devel/msg150906.html
+> 
+> Regards
+> Andrzej
+> 
+> 
+> Andrzej Hajda (10):
+>   drm/exynos/mixer: abstract out output mode setup code
+>   drm/exynos/mixer: move mode commit to enable callback
+>   drm/exynos/mixer: move resolution configuration to single function
+>   drm/exynos/mixer: fix mode validation code
+>   drm/exynos/mixer: remove mixer_resources sub-structure
+>   drm/exynos/hdmi: remove redundant mode field
+>   drm/exynos: add mode_fixup callback to exynos_drm_crtc_ops
+>   drm/exynos/mixer: pass actual mode on MIXER to encoder
+>   drm/exynos/hdmi: quirk for support mode timings conversion
+>   drm/exynos/mixer: enable support for 1024x768 and 1280x1024 modes
+> 
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |  15 +
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h  |   3 +
+>  drivers/gpu/drm/exynos/exynos_hdmi.c     |  49 ++--
+>  drivers/gpu/drm/exynos/exynos_mixer.c    | 452 +++++++++++++++----------------
+>  4 files changed, 265 insertions(+), 254 deletions(-)
+> 
