@@ -1,99 +1,83 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 02/10] drm/exynos/mixer: move mode commit to enable
- callback
-Date: Tue, 12 Sep 2017 14:29:25 +0200
-Message-ID: <ca93a6b5-bf13-54ae-45c0-3f20b75c99bb@math.uni-bielefeld.de>
+Subject: Re: [PATCH 09/10] drm/exynos/hdmi: quirk for support mode timings
+ conversion
+Date: Tue, 12 Sep 2017 14:50:29 +0200
+Message-ID: <09f2c924-a8cd-a6dc-4a11-e11a099ac305@math.uni-bielefeld.de>
 References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
- <CGME20170906103728eucas1p24e0495f4f1a7534df3d649b0a9c8aff0@eucas1p2.samsung.com>
- <1504694220-15818-3-git-send-email-a.hajda@samsung.com>
+ <CGME20170906103731eucas1p24ec3d9de21453732de868960553b5e8d@eucas1p2.samsung.com>
+ <1504694220-15818-10-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1504694220-15818-3-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:43593 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751454AbdILMum (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 12 Sep 2017 08:50:42 -0400
+In-Reply-To: <1504694220-15818-10-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-SGVsbG8gQW5kcnplaiwKCgpBbmRyemVqIEhhamRhIHdyb3RlOgo+IE1vZGUgY29tbWl0IHNob3Vs
-ZCBub3QgYmUgY2FsbGVkIGZvciBldmVyeSBwbGFuZSBzZXBhcmF0ZWx5LiBJdCBpcyBlbm91Z2gK
-PiB0byBjYWxsIGl0IG9uY2UgaW4gZW5hYmxlIGNhbGxiYWNrLiBUaGUgY2hhbmdlIHJlcXVpcmVz
-IGFsc28gdGhhdAo+IGludGVybGFjZSBjaGVjayBzaG91bGQgYmUgbW92ZWQgdG8gbWl4ZXJfY29t
-bWl0LiBJdCBzaG91bGQgYmUgZG9uZSBpbgo+IHRoZSBzYW1lIHBhdGNoIHRvIGF2b2lkIHJlZ3Jl
-c3Npb24uCiIuLi5hbHNvIHJlcXVpcmVzIHRoYXQgdGhlIGludGVybGFjZSBjaGVjayBpcyBtb3Zl
-ZCB0by4uLiIKCgpSZXZpZXdlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1i
-aWVsZWZlbGQuZGU+CgoKPiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNh
-bXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5j
-IHwgMjAgKysrKysrKystLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9u
-cygrKSwgMTIgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jCj4gaW5kZXggNDk5ZWJkYy4uYWU4OWU1MyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfbWl4ZXIuYwo+IEBAIC00NzcsNiArNDc3LDExIEBAIHN0YXRpYyB2b2lkIG1peGVyX2Nv
-bW1pdChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQo+ICB7Cj4gIAlzdHJ1Y3QgZHJtX2Rpc3Bs
-YXlfbW9kZSAqbW9kZSA9ICZjdHgtPmNydGMtPmJhc2Uuc3RhdGUtPmFkanVzdGVkX21vZGU7Cj4g
-IAo+ICsJaWYgKG1vZGUtPmZsYWdzICYgRFJNX01PREVfRkxBR19JTlRFUkxBQ0UpCj4gKwkJX19z
-ZXRfYml0KE1YUl9CSVRfSU5URVJMQUNFLCAmY3R4LT5mbGFncyk7Cj4gKwllbHNlCj4gKwkJX19j
-bGVhcl9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdzKTsKPiArCj4gIAkvKiBzZXR1
-cCBkaXNwbGF5IHNpemUgKi8KPiAgCWlmIChjdHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8xMjhfMF8w
-XzE4NCkgewo+ICAJCXUzMiB2YWwgID0gTVhSX01YUl9SRVNfSEVJR0hUKG1vZGUtPnZkaXNwbGF5
-KQo+IEBAIC00OTQsNyArNDk5LDYgQEAgc3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVj
-dCBtaXhlcl9jb250ZXh0ICpjdHgsCj4gIHsKPiAgCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0
-YXRlICpzdGF0ZSA9Cj4gIAkJCQl0b19leHlub3NfcGxhbmVfc3RhdGUocGxhbmUtPmJhc2Uuc3Rh
-dGUpOwo+IC0Jc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUgPSAmc3RhdGUtPmJhc2UuY3J0
-Yy0+c3RhdGUtPmFkanVzdGVkX21vZGU7Cj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMg
-PSAmY3R4LT5taXhlcl9yZXM7Cj4gIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IHN0YXRl
-LT5iYXNlLmZiOwo+ICAJdW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFs
-aXplZF96cG9zICsgMTsKPiBAQCAtNTA5LDggKzUxMyw3IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVv
-X2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAo+ICAJbHVtYV9hZGRyWzBdID0gZXh5
-bm9zX2RybV9mYl9kbWFfYWRkcihmYiwgMCk7Cj4gIAljaHJvbWFfYWRkclswXSA9IGV4eW5vc19k
-cm1fZmJfZG1hX2FkZHIoZmIsIDEpOwo+ICAKPiAtCWlmIChtb2RlLT5mbGFncyAmIERSTV9NT0RF
-X0ZMQUdfSU5URVJMQUNFKSB7Cj4gLQkJX19zZXRfYml0KE1YUl9CSVRfSU5URVJMQUNFLCAmY3R4
-LT5mbGFncyk7Cj4gKwlpZiAodGVzdF9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdz
-KSkgewo+ICAJCWlmIChpc190aWxlZCkgewo+ICAJCQlsdW1hX2FkZHJbMV0gPSBsdW1hX2FkZHJb
-MF0gKyAweDQwOwo+ICAJCQljaHJvbWFfYWRkclsxXSA9IGNocm9tYV9hZGRyWzBdICsgMHg0MDsK
-PiBAQCAtNTE5LDcgKzUyMiw2IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3Qg
-bWl4ZXJfY29udGV4dCAqY3R4LAo+ICAJCQljaHJvbWFfYWRkclsxXSA9IGNocm9tYV9hZGRyWzBd
-ICsgZmItPnBpdGNoZXNbMF07Cj4gIAkJfQo+ICAJfSBlbHNlIHsKPiAtCQlfX2NsZWFyX2JpdChN
-WFJfQklUX0lOVEVSTEFDRSwgJmN0eC0+ZmxhZ3MpOwo+ICAJCWx1bWFfYWRkclsxXSA9IDA7Cj4g
-IAkJY2hyb21hX2FkZHJbMV0gPSAwOwo+ICAJfQo+IEBAIC01NzEsNyArNTczLDYgQEAgc3RhdGlj
-IHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCj4gIAo+ICAJ
-bWl4ZXJfY2ZnX2xheWVyKGN0eCwgcGxhbmUtPmluZGV4LCBwcmlvcml0eSwgdHJ1ZSk7Cj4gIAlt
-aXhlcl9jZmdfdnBfYmxlbmQoY3R4KTsKPiAtCW1peGVyX2NvbW1pdChjdHgpOwo+ICAKPiAgCXNw
-aW5fdW5sb2NrX2lycXJlc3RvcmUoJnJlcy0+cmVnX3Nsb2NrLCBmbGFncyk7Cj4gIAo+IEBAIC01
-OTEsNyArNTkyLDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhl
-cl9jb250ZXh0ICpjdHgsCj4gIHsKPiAgCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpz
-dGF0ZSA9Cj4gIAkJCQl0b19leHlub3NfcGxhbmVfc3RhdGUocGxhbmUtPmJhc2Uuc3RhdGUpOwo+
-IC0Jc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUgPSAmc3RhdGUtPmJhc2UuY3J0Yy0+c3Rh
-dGUtPmFkanVzdGVkX21vZGU7Cj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4
-LT5taXhlcl9yZXM7Cj4gIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IHN0YXRlLT5iYXNl
-LmZiOwo+ICAJdW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96
-cG9zICsgMTsKPiBAQCAtNjM3LDExICs2MzcsNiBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9i
-dWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPiAgCQkrIChzdGF0ZS0+c3JjLnggKiBm
-Yi0+Zm9ybWF0LT5jcHBbMF0pCj4gIAkJKyAoc3RhdGUtPnNyYy55ICogZmItPnBpdGNoZXNbMF0p
-Owo+ICAKPiAtCWlmIChtb2RlLT5mbGFncyAmIERSTV9NT0RFX0ZMQUdfSU5URVJMQUNFKQo+IC0J
-CV9fc2V0X2JpdChNWFJfQklUX0lOVEVSTEFDRSwgJmN0eC0+ZmxhZ3MpOwo+IC0JZWxzZQo+IC0J
-CV9fY2xlYXJfYml0KE1YUl9CSVRfSU5URVJMQUNFLCAmY3R4LT5mbGFncyk7Cj4gLQo+ICAJc3Bp
-bl9sb2NrX2lycXNhdmUoJnJlcy0+cmVnX3Nsb2NrLCBmbGFncyk7Cj4gIAo+ICAJLyogc2V0dXAg
-Zm9ybWF0ICovCj4gQEAgLTY2OCw3ICs2NjMsNiBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9i
-dWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPiAgCj4gIAltaXhlcl9jZmdfbGF5ZXIo
-Y3R4LCB3aW4sIHByaW9yaXR5LCB0cnVlKTsKPiAgCW1peGVyX2NmZ19nZnhfYmxlbmQoY3R4LCB3
-aW4sIGlzX2FscGhhX2Zvcm1hdChmYi0+Zm9ybWF0LT5mb3JtYXQpKTsKPiAtCW1peGVyX2NvbW1p
-dChjdHgpOwo+ICAKPiAgCS8qIGxheWVyIHVwZGF0ZSBtYW5kYXRvcnkgZm9yIG1peGVyIDE2LjAu
-MzMuMCAqLwo+ICAJaWYgKGN0eC0+bXhyX3ZlciA9PSBNWFJfVkVSXzE2XzBfMzNfMCB8fAo+IEBA
-IC0xMDIxLDYgKzEwMTUsOCBAQCBzdGF0aWMgdm9pZCBtaXhlcl9lbmFibGUoc3RydWN0IGV4eW5v
-c19kcm1fY3J0YyAqY3J0YykKPiAgCX0KPiAgCW1peGVyX3dpbl9yZXNldChjdHgpOwo+ICAKPiAr
-CW1peGVyX2NvbW1pdChjdHgpOwo+ICsKPiAgCW1peGVyX3ZzeW5jX3NldF91cGRhdGUoY3R4LCB0
-cnVlKTsKPiAgCj4gIAlzZXRfYml0KE1YUl9CSVRfUE9XRVJFRCwgJmN0eC0+ZmxhZ3MpOwo+IAoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Andrzej,
+
+
+Andrzej Hajda wrote:
+> MIXER in SoCs prior to Exynos5420 supports only 4 video modes:
+> 720x480, 720x576, 1280x720, 1920x1080. Support for other modes
+> can be enabled by manipulating timings of HDMI. To do it
+> adjusted_mode should contain actual mode set on crtc.
+> With this patch it is possible to enable 1024x768 and 1280x1024
+> modes in MIXER.
+
+Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+
+And some question below.
+
+
+> Suggested-by: Daniel Drake <drake@endlessm.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 7225b65..4b081f6 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -1239,6 +1239,17 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+>  static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+>  {
+>  	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
+> +	struct drm_display_mode *am = &hdata->encoder.crtc->state->adjusted_mode;
+> +	int hquirk = 0;
+> +
+> +	/*
+> +	 * In case video mode coming from CRTC differs from requested one HDMI
+> +	 * sometimes is able to almost properly perform conversion - only
+> +	 * first line is distorted.
+> +	 */
+> +	if ((m->vdisplay != am->vdisplay) &&
+> +	    (m->hdisplay == 1280 || m->hdisplay == 1024))
+> +		hquirk = 258;
+Can it even happen, that m->hdisplay is neither 1280 nor 1024 but "m->vdisplay
+!= am->vdisplay" still holds?
+
+
+
+>  	hdmi_reg_writev(hdata, HDMI_H_BLANK_0, 2, m->htotal - m->hdisplay);
+>  	hdmi_reg_writev(hdata, HDMI_V_LINE_0, 2, m->vtotal);
+> @@ -1332,8 +1343,8 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+>  	hdmi_reg_writev(hdata, HDMI_V_SYNC_LINE_AFT_PXL_6_0, 2, 0xffff);
+>  
+>  	hdmi_reg_writev(hdata, HDMI_TG_H_FSZ_L, 2, m->htotal);
+> -	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay);
+> -	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay);
+> +	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay - hquirk);
+> +	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay + hquirk);
+>  	hdmi_reg_writev(hdata, HDMI_TG_V_FSZ_L, 2, m->vtotal);
+>  	if (hdata->drv_data == &exynos5433_hdmi_driver_data)
+>  		hdmi_reg_writeb(hdata, HDMI_TG_DECON_EN, 1);
+> 
