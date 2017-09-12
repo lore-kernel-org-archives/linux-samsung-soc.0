@@ -1,107 +1,77 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 04/10] drm/exynos/mixer: fix mode validation code
-Date: Tue, 12 Sep 2017 15:26:46 +0200
-Message-ID: <a22e0033-74ab-46c5-d3dd-7eea38134754@samsung.com>
+Subject: Re: [PATCH 09/10] drm/exynos/hdmi: quirk for support mode timings
+ conversion
+Date: Tue, 12 Sep 2017 15:32:37 +0200
+Message-ID: <aef3ec23-6096-bf47-4692-111bc2116e59@samsung.com>
 References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
-        <CGME20170906103729eucas1p1844077cd598fb44535719925f3279c6e@eucas1p1.samsung.com>
-        <1504694220-15818-5-git-send-email-a.hajda@samsung.com>
-        <779fe975-84fa-f44f-bc6c-41fbdca1679e@math.uni-bielefeld.de>
+ <CGME20170906103731eucas1p24ec3d9de21453732de868960553b5e8d@eucas1p2.samsung.com>
+ <1504694220-15818-10-git-send-email-a.hajda@samsung.com>
+ <09f2c924-a8cd-a6dc-4a11-e11a099ac305@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49997 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751289AbdILN0v (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 09:26:51 -0400
-In-reply-to: <779fe975-84fa-f44f-bc6c-41fbdca1679e@math.uni-bielefeld.de>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <09f2c924-a8cd-a6dc-4a11-e11a099ac305@math.uni-bielefeld.de>
 Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Daniel Drake <drake@endlessm.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12.09.2017 14:31, Tobias Jakobi wrote:
-> Hello Andrzej,
->
->
-> Andrzej Hajda wrote:
->> Mode limitation checked in mixer driver affects only older HW.
->> Mixer in Exynos542x has no such limitations. While at it patch changes
->> validation callback to recently introduced mode_valid which is more
->> suitable for the check. Additionally little cleanup is performed.
-> Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->
-> And some small suggestion below.
->
->
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_mixer.c | 24 +++++++++++-------------
->>  1 file changed, 11 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->> index a87f60b..d530c18 100644
->> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->> @@ -1040,26 +1040,24 @@ static void mixer_disable(struct exynos_drm_crtc *crtc)
->>  	clear_bit(MXR_BIT_POWERED, &ctx->flags);
->>  }
->>  
->> -/* Only valid for Mixer version 16.0.33.0 */
->> -static int mixer_atomic_check(struct exynos_drm_crtc *crtc,
->> -		       struct drm_crtc_state *state)
->> +static int mixer_mode_valid(struct exynos_drm_crtc *crtc,
->> +		const struct drm_display_mode *mode)
->>  {
->> -	struct drm_display_mode *mode = &state->adjusted_mode;
->> -	u32 w, h;
->> +	struct mixer_context *ctx = crtc->ctx;
->> +	u32 w = mode->hdisplay, h = mode->vdisplay;
->>  
->> -	w = mode->hdisplay;
->> -	h = mode->vdisplay;
->> +	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d\n", w, h,
->> +		mode->vrefresh, !!(mode->flags & DRM_MODE_FLAG_INTERLACE));
->>  
->> -	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d\n",
->> -		mode->hdisplay, mode->vdisplay, mode->vrefresh,
->> -		(mode->flags & DRM_MODE_FLAG_INTERLACE) ? 1 : 0);
->> +	if (ctx->mxr_ver == MXR_VER_128_0_0_184)
->> +		return MODE_OK;
->>  
->>  	if ((w >= 464 && w <= 720 && h >= 261 && h <= 576) ||
->>  		(w >= 1024 && w <= 1280 && h >= 576 && h <= 720) ||
->>  		(w >= 1664 && w <= 1920 && h >= 936 && h <= 1080))
-> I think it would be nice to have these aligned.
-
-Yes, it should look better.
-
-Regards
-Andrzej
-
-
->
->
->> -		return 0;
->> +		return MODE_OK;
->>  
->> -	return -EINVAL;
->> +	return MODE_BAD;
->>  }
->>  
->>  static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
->> @@ -1071,7 +1069,7 @@ static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
->>  	.update_plane		= mixer_update_plane,
->>  	.disable_plane		= mixer_disable_plane,
->>  	.atomic_flush		= mixer_atomic_flush,
->> -	.atomic_check		= mixer_atomic_check,
->> +	.mode_valid		= mixer_mode_valid,
->>  };
->>  
->>  static const struct mixer_drv_data exynos5420_mxr_drv_data = {
->>
->
->
->
+T24gMTIuMDkuMjAxNyAxNDo1MCwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZWxsbyBBbmRyemVq
+LAo+Cj4KPiBBbmRyemVqIEhhamRhIHdyb3RlOgo+PiBNSVhFUiBpbiBTb0NzIHByaW9yIHRvIEV4
+eW5vczU0MjAgc3VwcG9ydHMgb25seSA0IHZpZGVvIG1vZGVzOgo+PiA3MjB4NDgwLCA3MjB4NTc2
+LCAxMjgweDcyMCwgMTkyMHgxMDgwLiBTdXBwb3J0IGZvciBvdGhlciBtb2Rlcwo+PiBjYW4gYmUg
+ZW5hYmxlZCBieSBtYW5pcHVsYXRpbmcgdGltaW5ncyBvZiBIRE1JLiBUbyBkbyBpdAo+PiBhZGp1
+c3RlZF9tb2RlIHNob3VsZCBjb250YWluIGFjdHVhbCBtb2RlIHNldCBvbiBjcnRjLgo+PiBXaXRo
+IHRoaXMgcGF0Y2ggaXQgaXMgcG9zc2libGUgdG8gZW5hYmxlIDEwMjR4NzY4IGFuZCAxMjgweDEw
+MjQKPj4gbW9kZXMgaW4gTUlYRVIuCj4gUmV2aWV3ZWQtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtv
+YmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+Cj4gQW5kIHNvbWUgcXVlc3Rpb24gYmVsb3cuCj4K
+Pgo+PiBTdWdnZXN0ZWQtYnk6IERhbmllbCBEcmFrZSA8ZHJha2VAZW5kbGVzc20uY29tPgo+PiBT
+aWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+PiAtLS0K
+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyB8IDE1ICsrKysrKysrKysr
+KystLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0p
+Cj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMg
+Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPj4gaW5kZXggNzIyNWI2NS4u
+NGIwODFmNiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRt
+aS5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+PiBAQCAt
+MTIzOSw2ICsxMjM5LDE3IEBAIHN0YXRpYyB2b2lkIGhkbWlfdjEzX21vZGVfYXBwbHkoc3RydWN0
+IGhkbWlfY29udGV4dCAqaGRhdGEpCj4+ICBzdGF0aWMgdm9pZCBoZG1pX3YxNF9tb2RlX2FwcGx5
+KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+PiAgewo+PiAgCXN0cnVjdCBkcm1fZGlzcGxh
+eV9tb2RlICptID0gJmhkYXRhLT5lbmNvZGVyLmNydGMtPnN0YXRlLT5tb2RlOwo+PiArCXN0cnVj
+dCBkcm1fZGlzcGxheV9tb2RlICphbSA9ICZoZGF0YS0+ZW5jb2Rlci5jcnRjLT5zdGF0ZS0+YWRq
+dXN0ZWRfbW9kZTsKPj4gKwlpbnQgaHF1aXJrID0gMDsKPj4gKwo+PiArCS8qCj4+ICsJICogSW4g
+Y2FzZSB2aWRlbyBtb2RlIGNvbWluZyBmcm9tIENSVEMgZGlmZmVycyBmcm9tIHJlcXVlc3RlZCBv
+bmUgSERNSQo+PiArCSAqIHNvbWV0aW1lcyBpcyBhYmxlIHRvIGFsbW9zdCBwcm9wZXJseSBwZXJm
+b3JtIGNvbnZlcnNpb24gLSBvbmx5Cj4+ICsJICogZmlyc3QgbGluZSBpcyBkaXN0b3J0ZWQuCj4+
+ICsJICovCj4+ICsJaWYgKChtLT52ZGlzcGxheSAhPSBhbS0+dmRpc3BsYXkpICYmCj4+ICsJICAg
+IChtLT5oZGlzcGxheSA9PSAxMjgwIHx8IG0tPmhkaXNwbGF5ID09IDEwMjQpKQo+PiArCQlocXVp
+cmsgPSAyNTg7Cj4gQ2FuIGl0IGV2ZW4gaGFwcGVuLCB0aGF0IG0tPmhkaXNwbGF5IGlzIG5laXRo
+ZXIgMTI4MCBub3IgMTAyNCBidXQgIm0tPnZkaXNwbGF5Cj4gIT0gYW0tPnZkaXNwbGF5IiBzdGls
+bCBob2xkcz8KCjE2ODB4MTA1MC02MCBmb3IgZXhhbXBsZSwgaXQgd29ya3Mgd2l0aG91dCBxdWly
+a3MuCgpSZWdhcmRzCkFuZHJ6ZWoKCj4KPgo+Cj4+ICAJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBI
+RE1JX0hfQkxBTktfMCwgMiwgbS0+aHRvdGFsIC0gbS0+aGRpc3BsYXkpOwo+PiAgCWhkbWlfcmVn
+X3dyaXRldihoZGF0YSwgSERNSV9WX0xJTkVfMCwgMiwgbS0+dnRvdGFsKTsKPj4gQEAgLTEzMzIs
+OCArMTM0Myw4IEBAIHN0YXRpYyB2b2lkIGhkbWlfdjE0X21vZGVfYXBwbHkoc3RydWN0IGhkbWlf
+Y29udGV4dCAqaGRhdGEpCj4+ICAJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZfU1lOQ19M
+SU5FX0FGVF9QWExfNl8wLCAyLCAweGZmZmYpOwo+PiAgCj4+ICAJaGRtaV9yZWdfd3JpdGV2KGhk
+YXRhLCBIRE1JX1RHX0hfRlNaX0wsIDIsIG0tPmh0b3RhbCk7Cj4+IC0JaGRtaV9yZWdfd3JpdGV2
+KGhkYXRhLCBIRE1JX1RHX0hBQ1RfU1RfTCwgMiwgbS0+aHRvdGFsIC0gbS0+aGRpc3BsYXkpOwo+
+PiAtCWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERNSV9UR19IQUNUX1NaX0wsIDIsIG0tPmhkaXNw
+bGF5KTsKPj4gKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfSEFDVF9TVF9MLCAyLCBt
+LT5odG90YWwgLSBtLT5oZGlzcGxheSAtIGhxdWlyayk7Cj4+ICsJaGRtaV9yZWdfd3JpdGV2KGhk
+YXRhLCBIRE1JX1RHX0hBQ1RfU1pfTCwgMiwgbS0+aGRpc3BsYXkgKyBocXVpcmspOwo+PiAgCWhk
+bWlfcmVnX3dyaXRldihoZGF0YSwgSERNSV9UR19WX0ZTWl9MLCAyLCBtLT52dG90YWwpOwo+PiAg
+CWlmIChoZGF0YS0+ZHJ2X2RhdGEgPT0gJmV4eW5vczU0MzNfaGRtaV9kcml2ZXJfZGF0YSkKPj4g
+IAkJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1RHX0RFQ09OX0VOLCAxKTsKPj4KPgo+Cj4K
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
