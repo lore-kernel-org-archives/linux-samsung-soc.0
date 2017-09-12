@@ -1,109 +1,99 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] ARM: dts: exynos: Add power button for Odroid XU3/4
-Date: Tue, 12 Sep 2017 13:57:54 +0200
-Message-ID: <1505217474-14725-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170912115804eucas1p1959db12366143b87d14725e227520854@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38082 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751289AbdILL6I (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 07:58:08 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 02/10] drm/exynos/mixer: move mode commit to enable
+ callback
+Date: Tue, 12 Sep 2017 14:29:25 +0200
+Message-ID: <ca93a6b5-bf13-54ae-45c0-3f20b75c99bb@math.uni-bielefeld.de>
+References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170906103728eucas1p24e0495f4f1a7534df3d649b0a9c8aff0@eucas1p2.samsung.com>
+ <1504694220-15818-3-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1504694220-15818-3-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Brian Kim <brian.kim@hardkernel.com>
 
-From: Brian Kim <brian.kim@hardkernel.com>
-
-The power button (SW2) on Odroid XU3/4 is connected to the PWRON pin
-of the S2MPS11 PMIC.
-
-The S2MPS11 datasheet says that ONOB pin operates as 'PWRON key active
-low signal'. In fact, S2MPS11 PMIC acts as a 16ms debouce filter and
-signal inverter, thus effectively repeating PWRON (active high) to ONOB
-pin (active low).
-
-ONOB PMIC pin is then connected to XEINT3 SoC pin, so we get the state
-of the power button on the gpx0-3 GPIO.
-
-This patch adds device-tree bindings for the power button of Odroid
-XU3/4 boards.
-
-Signed-off-by: Brian Kim <brian.kim@hardkernel.com>
-[mszyprow: extended commit message, added comments and fixed minor
- issues in the dts]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-Changelog:
-
-v2: fixed minor issues pointed by Krzysztof Kozlowski:
-- added comments to dts
-- extended commit message
-- removed useless interrupts property
-- used proper macros for gpios
-- removed gpio prefix
-
-v1: initial submission
-https://patchwork.kernel.org/patch/9605023/
-
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index a183b56283f8..29a718ae621a 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -13,6 +13,7 @@
- */
- 
- #include <dt-bindings/clock/samsung,s2mps11.h>
-+#include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/sound/samsung-i2s.h>
-@@ -41,6 +42,27 @@
- 		};
- 	};
- 
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&power_key>;
-+
-+		power_key {
-+			/*
-+			 * The power button (SW2) is connected to the PWRON
-+			 * pin (active high) of the S2MPS11 PMIC, which acts
-+			 * as a 16ms debouce filter and signal inverter with
-+			 * output on ONOB pin (active low). ONOB PMIC pin is
-+			 * then connected to XEINT3 SoC pin.
-+			 */
-+			gpios = <&gpx0 3 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			label = "power key";
-+			debounce-interval = <0>;
-+			wakeup-source;
-+		};
-+	};
-+
- 	emmc_pwrseq: pwrseq {
- 		pinctrl-0 = <&emmc_nrst_pin>;
- 		pinctrl-names = "default";
-@@ -561,6 +583,13 @@
- };
- 
- &pinctrl_0 {
-+	power_key: power-key {
-+		samsung,pins = "gpx0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
- 	hdmi_hpd_irq: hdmi-hpd-irq {
- 		samsung,pins = "gpx3-7";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
--- 
-1.9.1
+SGVsbG8gQW5kcnplaiwKCgpBbmRyemVqIEhhamRhIHdyb3RlOgo+IE1vZGUgY29tbWl0IHNob3Vs
+ZCBub3QgYmUgY2FsbGVkIGZvciBldmVyeSBwbGFuZSBzZXBhcmF0ZWx5LiBJdCBpcyBlbm91Z2gK
+PiB0byBjYWxsIGl0IG9uY2UgaW4gZW5hYmxlIGNhbGxiYWNrLiBUaGUgY2hhbmdlIHJlcXVpcmVz
+IGFsc28gdGhhdAo+IGludGVybGFjZSBjaGVjayBzaG91bGQgYmUgbW92ZWQgdG8gbWl4ZXJfY29t
+bWl0LiBJdCBzaG91bGQgYmUgZG9uZSBpbgo+IHRoZSBzYW1lIHBhdGNoIHRvIGF2b2lkIHJlZ3Jl
+c3Npb24uCiIuLi5hbHNvIHJlcXVpcmVzIHRoYXQgdGhlIGludGVybGFjZSBjaGVjayBpcyBtb3Zl
+ZCB0by4uLiIKCgpSZXZpZXdlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1i
+aWVsZWZlbGQuZGU+CgoKPiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNh
+bXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5j
+IHwgMjAgKysrKysrKystLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9u
+cygrKSwgMTIgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
+ci5jCj4gaW5kZXggNDk5ZWJkYy4uYWU4OWU1MyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfbWl4ZXIuYwo+IEBAIC00NzcsNiArNDc3LDExIEBAIHN0YXRpYyB2b2lkIG1peGVyX2Nv
+bW1pdChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQo+ICB7Cj4gIAlzdHJ1Y3QgZHJtX2Rpc3Bs
+YXlfbW9kZSAqbW9kZSA9ICZjdHgtPmNydGMtPmJhc2Uuc3RhdGUtPmFkanVzdGVkX21vZGU7Cj4g
+IAo+ICsJaWYgKG1vZGUtPmZsYWdzICYgRFJNX01PREVfRkxBR19JTlRFUkxBQ0UpCj4gKwkJX19z
+ZXRfYml0KE1YUl9CSVRfSU5URVJMQUNFLCAmY3R4LT5mbGFncyk7Cj4gKwllbHNlCj4gKwkJX19j
+bGVhcl9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdzKTsKPiArCj4gIAkvKiBzZXR1
+cCBkaXNwbGF5IHNpemUgKi8KPiAgCWlmIChjdHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8xMjhfMF8w
+XzE4NCkgewo+ICAJCXUzMiB2YWwgID0gTVhSX01YUl9SRVNfSEVJR0hUKG1vZGUtPnZkaXNwbGF5
+KQo+IEBAIC00OTQsNyArNDk5LDYgQEAgc3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVj
+dCBtaXhlcl9jb250ZXh0ICpjdHgsCj4gIHsKPiAgCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0
+YXRlICpzdGF0ZSA9Cj4gIAkJCQl0b19leHlub3NfcGxhbmVfc3RhdGUocGxhbmUtPmJhc2Uuc3Rh
+dGUpOwo+IC0Jc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUgPSAmc3RhdGUtPmJhc2UuY3J0
+Yy0+c3RhdGUtPmFkanVzdGVkX21vZGU7Cj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMg
+PSAmY3R4LT5taXhlcl9yZXM7Cj4gIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IHN0YXRl
+LT5iYXNlLmZiOwo+ICAJdW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFs
+aXplZF96cG9zICsgMTsKPiBAQCAtNTA5LDggKzUxMyw3IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVv
+X2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAo+ICAJbHVtYV9hZGRyWzBdID0gZXh5
+bm9zX2RybV9mYl9kbWFfYWRkcihmYiwgMCk7Cj4gIAljaHJvbWFfYWRkclswXSA9IGV4eW5vc19k
+cm1fZmJfZG1hX2FkZHIoZmIsIDEpOwo+ICAKPiAtCWlmIChtb2RlLT5mbGFncyAmIERSTV9NT0RF
+X0ZMQUdfSU5URVJMQUNFKSB7Cj4gLQkJX19zZXRfYml0KE1YUl9CSVRfSU5URVJMQUNFLCAmY3R4
+LT5mbGFncyk7Cj4gKwlpZiAodGVzdF9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdz
+KSkgewo+ICAJCWlmIChpc190aWxlZCkgewo+ICAJCQlsdW1hX2FkZHJbMV0gPSBsdW1hX2FkZHJb
+MF0gKyAweDQwOwo+ICAJCQljaHJvbWFfYWRkclsxXSA9IGNocm9tYV9hZGRyWzBdICsgMHg0MDsK
+PiBAQCAtNTE5LDcgKzUyMiw2IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3Qg
+bWl4ZXJfY29udGV4dCAqY3R4LAo+ICAJCQljaHJvbWFfYWRkclsxXSA9IGNocm9tYV9hZGRyWzBd
+ICsgZmItPnBpdGNoZXNbMF07Cj4gIAkJfQo+ICAJfSBlbHNlIHsKPiAtCQlfX2NsZWFyX2JpdChN
+WFJfQklUX0lOVEVSTEFDRSwgJmN0eC0+ZmxhZ3MpOwo+ICAJCWx1bWFfYWRkclsxXSA9IDA7Cj4g
+IAkJY2hyb21hX2FkZHJbMV0gPSAwOwo+ICAJfQo+IEBAIC01NzEsNyArNTczLDYgQEAgc3RhdGlj
+IHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCj4gIAo+ICAJ
+bWl4ZXJfY2ZnX2xheWVyKGN0eCwgcGxhbmUtPmluZGV4LCBwcmlvcml0eSwgdHJ1ZSk7Cj4gIAlt
+aXhlcl9jZmdfdnBfYmxlbmQoY3R4KTsKPiAtCW1peGVyX2NvbW1pdChjdHgpOwo+ICAKPiAgCXNw
+aW5fdW5sb2NrX2lycXJlc3RvcmUoJnJlcy0+cmVnX3Nsb2NrLCBmbGFncyk7Cj4gIAo+IEBAIC01
+OTEsNyArNTkyLDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhl
+cl9jb250ZXh0ICpjdHgsCj4gIHsKPiAgCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpz
+dGF0ZSA9Cj4gIAkJCQl0b19leHlub3NfcGxhbmVfc3RhdGUocGxhbmUtPmJhc2Uuc3RhdGUpOwo+
+IC0Jc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUgPSAmc3RhdGUtPmJhc2UuY3J0Yy0+c3Rh
+dGUtPmFkanVzdGVkX21vZGU7Cj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4
+LT5taXhlcl9yZXM7Cj4gIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IHN0YXRlLT5iYXNl
+LmZiOwo+ICAJdW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96
+cG9zICsgMTsKPiBAQCAtNjM3LDExICs2MzcsNiBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9i
+dWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPiAgCQkrIChzdGF0ZS0+c3JjLnggKiBm
+Yi0+Zm9ybWF0LT5jcHBbMF0pCj4gIAkJKyAoc3RhdGUtPnNyYy55ICogZmItPnBpdGNoZXNbMF0p
+Owo+ICAKPiAtCWlmIChtb2RlLT5mbGFncyAmIERSTV9NT0RFX0ZMQUdfSU5URVJMQUNFKQo+IC0J
+CV9fc2V0X2JpdChNWFJfQklUX0lOVEVSTEFDRSwgJmN0eC0+ZmxhZ3MpOwo+IC0JZWxzZQo+IC0J
+CV9fY2xlYXJfYml0KE1YUl9CSVRfSU5URVJMQUNFLCAmY3R4LT5mbGFncyk7Cj4gLQo+ICAJc3Bp
+bl9sb2NrX2lycXNhdmUoJnJlcy0+cmVnX3Nsb2NrLCBmbGFncyk7Cj4gIAo+ICAJLyogc2V0dXAg
+Zm9ybWF0ICovCj4gQEAgLTY2OCw3ICs2NjMsNiBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9i
+dWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPiAgCj4gIAltaXhlcl9jZmdfbGF5ZXIo
+Y3R4LCB3aW4sIHByaW9yaXR5LCB0cnVlKTsKPiAgCW1peGVyX2NmZ19nZnhfYmxlbmQoY3R4LCB3
+aW4sIGlzX2FscGhhX2Zvcm1hdChmYi0+Zm9ybWF0LT5mb3JtYXQpKTsKPiAtCW1peGVyX2NvbW1p
+dChjdHgpOwo+ICAKPiAgCS8qIGxheWVyIHVwZGF0ZSBtYW5kYXRvcnkgZm9yIG1peGVyIDE2LjAu
+MzMuMCAqLwo+ICAJaWYgKGN0eC0+bXhyX3ZlciA9PSBNWFJfVkVSXzE2XzBfMzNfMCB8fAo+IEBA
+IC0xMDIxLDYgKzEwMTUsOCBAQCBzdGF0aWMgdm9pZCBtaXhlcl9lbmFibGUoc3RydWN0IGV4eW5v
+c19kcm1fY3J0YyAqY3J0YykKPiAgCX0KPiAgCW1peGVyX3dpbl9yZXNldChjdHgpOwo+ICAKPiAr
+CW1peGVyX2NvbW1pdChjdHgpOwo+ICsKPiAgCW1peGVyX3ZzeW5jX3NldF91cGRhdGUoY3R4LCB0
+cnVlKTsKPiAgCj4gIAlzZXRfYml0KE1YUl9CSVRfUE9XRVJFRCwgJmN0eC0+ZmxhZ3MpOwo+IAoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
