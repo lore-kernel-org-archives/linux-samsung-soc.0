@@ -1,63 +1,80 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] [media] s3c-camif: fix out-of-bounds array access
-Date: Wed, 13 Sep 2017 17:54:45 +0200
-Message-ID: <ce741db2-dc57-7d23-90bc-319411006861@samsung.com>
-References: <CGME20170913092551epcas1p4f84e118f364f605cb5cc6b8b669ac095@epcas1p4.samsung.com>
-        <20170912200932.3634089-1-arnd@arndb.de>
-        <4355b20a-504c-4e83-92c8-049e6c6d6a5f@samsung.com>
-        <CAK8P3a2CDqgaqZiopJJOB6WsTgQEB49sz7=7izmFfaBOgG5_xA@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 07/10] drm/exynos: add mode_fixup callback to
+ exynos_drm_crtc_ops
+Date: Tue, 12 Sep 2017 15:28:44 +0200
+Message-ID: <6a931092-e925-0444-e992-297f68ac59fa@samsung.com>
+References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170906103730eucas1p182c799cf23b889626dde869bbad3250c@eucas1p1.samsung.com>
+ <1504694220-15818-8-git-send-email-a.hajda@samsung.com>
+ <26a1db74-de6e-35bd-39a4-44695c19da24@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <CAK8P3a2CDqgaqZiopJJOB6WsTgQEB49sz7=7izmFfaBOgG5_xA@mail.gmail.com>
-Content-language: en-GB
-Sender: linux-media-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <26a1db74-de6e-35bd-39a4-44695c19da24@math.uni-bielefeld.de>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Daniel Drake <drake@endlessm.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/13/2017 04:03 PM, Arnd Bergmann wrote:
-> On Wed, Sep 13, 2017 at 11:25 AM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com>  wrote:
->> On 09/12/2017 10:09 PM, Arnd Bergmann wrote:
->>>    {
->>>        const struct s3c_camif_variant *variant = camif->variant;
->>>        const struct vp_pix_limits *pix_lim;
->>> -     int i = ARRAY_SIZE(camif_mbus_formats);
->>>
->>>        /* FIXME: constraints against codec or preview path ? */
->>>        pix_lim = &variant->vp_pix_limits[VP_CODEC];
->>>
->>> -     while (i-- >= 0)
->>> -             if (camif_mbus_formats[i] == mf->code)
->>> -                     break;
->>> -
->>> -     mf->code = camif_mbus_formats[i];
->>
->> Interesting finding... the function needs to ensure mf->code is set
->> to one of supported values by the driver, so instead of removing
->> how about changing the above line to:
->>
->>          if (i < 0)
->>                  mf->code = camif_mbus_formats[0];
->>
->> ?
-> That would still have one of the two out-of-bounds accesses;-)
-
-Ah, indeed :/
-
-> maybe this
-> 
-> for (i = 0; i < ARRAY_SIZE(camif_mbus_formats); i++)
->          if (camif_mbus_formats[i] == mf->code)
->                 break;
-> 
-> if (i == ARRAY_SIZE(camif_mbus_formats))
->         mf->code = camif_mbus_formats[0];
-
-Yes, it should work that way.
-
--- 
-Thanks,
-Sylwester
+T24gMTIuMDkuMjAxNyAxNDo0MSwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZWxsbyBBbmRyemVq
+LAo+Cj4KPiBBbmRyemVqIEhhamRhIHdyb3RlOgo+PiBjcnRjOjptb2RlX2ZpeHVwIGNhbGxiYWNr
+IGlzIHJlcXVpcmVkIGJ5IGNydGNzIHdoaWNoIHVzZSBpbnRlcm5hbGx5Cj4+IGRpZmZlcmVudCBt
+b2RlIHRoYW4gcmVxdWVzdGVkIGJ5IHVzZXIgLSBjYXNlIG9mIEV4eW5vcyBNaXhlci4KPiAiLi4u
+d2hpY2ggaW50ZXJuYWxseSB1c2UgYSBkaWZmZXJlbnQuLi4iCj4KPgo+IFJldmlld2VkLWJ5OiBU
+b2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPgo+IFdpdGggb25l
+IHN1Z2dlc3Rpb24gYmVsb3cuCj4KPgo+PiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxh
+LmhhamRhQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmMgfCAxNSArKysrKysrKysrKysrKysKPj4gIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9kcnYuaCAgfCAgMyArKysKPj4gIDIgZmlsZXMgY2hhbmdlZCwgMTgg
+aW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRj
+LmMKPj4gaW5kZXggNmNlMDgyMS4uZGMwMTM0MiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+IEBAIC05NSw4ICs5NSwyMyBAQCBzdGF0aWMgZW51bSBk
+cm1fbW9kZV9zdGF0dXMgZXh5bm9zX2NydGNfbW9kZV92YWxpZChzdHJ1Y3QgZHJtX2NydGMgKmNy
+dGMsCj4+ICAJcmV0dXJuIE1PREVfT0s7Cj4+ICB9Cj4+ICAKPj4gK3N0YXRpYyBib29sIGV4eW5v
+c19jcnRjX21vZGVfZml4dXAoc3RydWN0IGRybV9jcnRjICpjcnRjLAo+PiArCQljb25zdCBzdHJ1
+Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSwKPj4gKwkJc3RydWN0IGRybV9kaXNwbGF5X21vZGUg
+KmFkanVzdGVkX21vZGUpCj4+ICt7Cj4+ICsJc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9z
+X2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsKPj4gKwo+PiArCWlmIChleHlub3NfY3J0Yy0+
+b3BzLT5tb2RlX2ZpeHVwKQo+PiArCQlyZXR1cm4gZXh5bm9zX2NydGMtPm9wcy0+bW9kZV9maXh1
+cChleHlub3NfY3J0YywgbW9kZSwKPj4gKwkJCQlhZGp1c3RlZF9tb2RlKTsKPj4gKwo+PiArCXJl
+dHVybiB0cnVlOwo+PiArfQo+PiArCj4+ICsKPj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2Ny
+dGNfaGVscGVyX2Z1bmNzIGV4eW5vc19jcnRjX2hlbHBlcl9mdW5jcyA9IHsKPj4gIAkubW9kZV92
+YWxpZAk9IGV4eW5vc19jcnRjX21vZGVfdmFsaWQsCj4+ICsJLm1vZGVfZml4dXAJPSBleHlub3Nf
+Y3J0Y19tb2RlX2ZpeHVwLAo+PiAgCS5hdG9taWNfY2hlY2sJPSBleHlub3NfY3J0Y19hdG9taWNf
+Y2hlY2ssCj4+ICAJLmF0b21pY19iZWdpbgk9IGV4eW5vc19jcnRjX2F0b21pY19iZWdpbiwKPj4g
+IAkuYXRvbWljX2ZsdXNoCT0gZXh5bm9zX2NydGNfYXRvbWljX2ZsdXNoLAo+PiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+IGluZGV4IGNmMTMxYzIuLmU4YmNjNzIgMTAw
+NjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+PiAr
+KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKPj4gQEAgLTEzNiw2
+ICsxMzYsOSBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyB7Cj4+ICAJdTMyICgqZ2V0X3Zi
+bGFua19jb3VudGVyKShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKTsKPj4gIAllbnVtIGRy
+bV9tb2RlX3N0YXR1cyAoKm1vZGVfdmFsaWQpKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMs
+Cj4+ICAJCWNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlKTsKPj4gKwlib29sICgq
+bW9kZV9maXh1cCkoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKPj4gKwkJCSAgIGNvbnN0
+IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAo+PiArCQkJICAgc3RydWN0IGRybV9kaXNw
+bGF5X21vZGUgKmFkanVzdGVkX21vZGUpOwo+IEknbSBhbHdheXMgd2FyeSB3aGVuIEkgZW5jb3Vu
+dGVyIGEgYm9vbCBhcyByZXR1cm4gdmFsdWUsIHNpbmNlIHRvIGNoZWNrIHdoYXQKPiB0cnVlL2Zh
+bHNlIGFjdHVhbGx5IGVuY29kZXMsIEkgbmVlZCB0byBoYXZlIHNvbWUgcmVmZXJlbmNlIHdoaWNo
+IEkgY2FuIGNoZWNrLgo+IEp1c3QgZ28gZm9yIGFuIGludGVnZXIgaGVyZSBhbmQgdXNlIHN0YW5k
+YXJkIGNvbnZlbnRpb24gdGhhdCBuZWdhdGl2ZSB2YWx1ZXMgYXJlCj4gZXJyb3JzPwoKSXQgaXMg
+Zm9yd2FyZGVyIGZvciBkcm0gY29yZSBvcCBzbyBJIHByZWZlciB0byBrZWVwIHJldHVybiB2YWx1
+ZXMKY29uc2lzdGVudC4KClJlZ2FyZHMKQW5kcnplagoKPgo+Cj4KPj4gIAlpbnQgKCphdG9taWNf
+Y2hlY2spKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCj4+ICAJCQkgICAgc3RydWN0IGRy
+bV9jcnRjX3N0YXRlICpzdGF0ZSk7Cj4+ICAJdm9pZCAoKmF0b21pY19iZWdpbikoc3RydWN0IGV4
+eW5vc19kcm1fY3J0YyAqY3J0Yyk7Cj4+Cj4KPgo+CgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
