@@ -1,116 +1,141 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 06/10] drm/exynos/hdmi: remove redundant mode field
-Date: Tue, 12 Sep 2017 14:33:45 +0200
-Message-ID: <8c4cd106-585c-033c-f0f6-8b9d11befe5b@math.uni-bielefeld.de>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 01/10] drm/exynos/mixer: abstract out output mode setup
+ code
+Date: Tue, 12 Sep 2017 15:16:40 +0200
+Message-ID: <661b6a90-5286-d0ea-8089-75e70fa50b98@samsung.com>
 References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
- <CGME20170906103730eucas1p2678e273a036b1fb02b5d1d51fa5fc20d@eucas1p2.samsung.com>
- <1504694220-15818-7-git-send-email-a.hajda@samsung.com>
+        <CGME20170906103728eucas1p2f32e4a98f0e034c68fa425efb5ac8269@eucas1p2.samsung.com>
+        <1504694220-15818-2-git-send-email-a.hajda@samsung.com>
+        <f6fb3ec8-a974-8c54-0076-8ff4dda68ffb@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1504694220-15818-7-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:48677 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751289AbdILNQp (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 12 Sep 2017 09:16:45 -0400
+In-reply-to: <f6fb3ec8-a974-8c54-0076-8ff4dda68ffb@math.uni-bielefeld.de>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Daniel Drake <drake@endlessm.com>
 
-SGVsbG8gQW5kcnplaiwKCgpBbmRyemVqIEhhamRhIHdyb3RlOgo+IERpc3BsYXkgbW9kZSBpcyBw
-cmVzZXJ2ZWQgaW4gQ1JUQyBzdGF0ZSwgdGhlcmUgaXMgbm8gbmVlZCB0byBrZWVwIGxvY2FsCj4g
-Y29weSBvZiBpdC4gTW9yZW92ZXIgc2luY2UgSERNSSBzaG91bGQgY29uZmlndXJlIHJlZ2lzdGVy
-cyBhY2NvcmRpbmcgdG8KPiByZXF1ZXN0ZWQgbW9kZSwgdXNlIGl0IGluc3RlYWQgb2YgYWRqdXN0
-ZWRfbW9kZSwgd2hpY2ggc2hvdWxkIGNvbnRhaW4KPiBtb2RlIHByb2R1Y2VkIGJ5IENSVEMgLSBm
-dW5jdGlvbmFsbHkgaXQgZG9lcyBub3QgY2hhbmdlIGFueXRoaW5nLCBidXQKPiBzdWJzZXF1ZW50
-IHBhdGNoZXMgd2lsbCBtYWtlIHRoZSBkaWZmZXJlbmNlLgoKUmV2aWV3ZWQtYnk6IFRvYmlhcyBK
-YWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgoKCj4gU2lnbmVkLW9mZi1ieTog
-QW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIHwgMzQgKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCAyNSBkZWxldGlvbnMo
-LSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gaW5kZXggMjE0ZmE1ZS4u
-NzIyNWI2NSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1p
-LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPiBAQCAtMTE5
-LDcgKzExOSw2IEBAIHN0cnVjdCBoZG1pX2NvbnRleHQgewo+ICAJYm9vbAkJCQlwb3dlcmVkOwo+
-ICAJYm9vbAkJCQlkdmlfbW9kZTsKPiAgCXN0cnVjdCBkZWxheWVkX3dvcmsJCWhvdHBsdWdfd29y
-azsKPiAtCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlCQljdXJyZW50X21vZGU7Cj4gIAlzdHJ1Y3Qg
-Y2VjX25vdGlmaWVyCQkqbm90aWZpZXI7Cj4gIAljb25zdCBzdHJ1Y3QgaGRtaV9kcml2ZXJfZGF0
-YQkqZHJ2X2RhdGE7Cj4gIAo+IEBAIC03NzAsNiArNzY5LDcgQEAgc3RhdGljIGludCBoZG1pX2Ns
-a19zZXRfcGFyZW50cyhzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSwgYm9vbCB0b19waHkpCj4g
-IAo+ICBzdGF0aWMgdm9pZCBoZG1pX3JlZ19pbmZvZnJhbWVzKHN0cnVjdCBoZG1pX2NvbnRleHQg
-KmhkYXRhKQo+ICB7Cj4gKwlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbSA9ICZoZGF0YS0+ZW5j
-b2Rlci5jcnRjLT5zdGF0ZS0+bW9kZTsKPiAgCXVuaW9uIGhkbWlfaW5mb2ZyYW1lIGZybTsKPiAg
-CXU4IGJ1ZlsyNV07Cj4gIAlpbnQgcmV0Owo+IEBAIC03ODMsOCArNzgzLDcgQEAgc3RhdGljIHZv
-aWQgaGRtaV9yZWdfaW5mb2ZyYW1lcyhzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPiAgCQly
-ZXR1cm47Cj4gIAl9Cj4gIAo+IC0JcmV0ID0gZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9tX2Rp
-c3BsYXlfbW9kZSgmZnJtLmF2aSwKPiAtCQkJJmhkYXRhLT5jdXJyZW50X21vZGUsIGZhbHNlKTsK
-PiArCXJldCA9IGRybV9oZG1pX2F2aV9pbmZvZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoJmZybS5h
-dmksIG0sIGZhbHNlKTsKPiAgCWlmICghcmV0KQo+ICAJCXJldCA9IGhkbWlfYXZpX2luZm9mcmFt
-ZV9wYWNrKCZmcm0uYXZpLCBidWYsIHNpemVvZihidWYpKTsKPiAgCWlmIChyZXQgPiAwKSB7Cj4g
-QEAgLTc5NCw4ICs3OTMsNyBAQCBzdGF0aWMgdm9pZCBoZG1pX3JlZ19pbmZvZnJhbWVzKHN0cnVj
-dCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+ICAJCURSTV9JTkZPKCIlczogaW52YWxpZCBBVkkgaW5m
-b2ZyYW1lICglZClcbiIsIF9fZnVuY19fLCByZXQpOwo+ICAJfQo+ICAKPiAtCXJldCA9IGRybV9o
-ZG1pX3ZlbmRvcl9pbmZvZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoJmZybS52ZW5kb3IuaGRtaSwK
-PiAtCQkJJmhkYXRhLT5jdXJyZW50X21vZGUpOwo+ICsJcmV0ID0gZHJtX2hkbWlfdmVuZG9yX2lu
-Zm9mcmFtZV9mcm9tX2Rpc3BsYXlfbW9kZSgmZnJtLnZlbmRvci5oZG1pLCBtKTsKPiAgCWlmICgh
-cmV0KQo+ICAJCXJldCA9IGhkbWlfdmVuZG9yX2luZm9mcmFtZV9wYWNrKCZmcm0udmVuZG9yLmhk
-bWksIGJ1ZiwKPiAgCQkJCXNpemVvZihidWYpKTsKPiBAQCAtMTA4OCw5ICsxMDg2LDEwIEBAIHN0
-YXRpYyB2b2lkIGhkbWlfYXVkaW9fY29udHJvbChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSwg
-Ym9vbCBvbm9mZikKPiAgCj4gIHN0YXRpYyB2b2lkIGhkbWlfc3RhcnQoc3RydWN0IGhkbWlfY29u
-dGV4dCAqaGRhdGEsIGJvb2wgc3RhcnQpCj4gIHsKPiArCXN0cnVjdCBkcm1fZGlzcGxheV9tb2Rl
-ICptID0gJmhkYXRhLT5lbmNvZGVyLmNydGMtPnN0YXRlLT5tb2RlOwo+ICAJdTMyIHZhbCA9IHN0
-YXJ0ID8gSERNSV9UR19FTiA6IDA7Cj4gIAo+IC0JaWYgKGhkYXRhLT5jdXJyZW50X21vZGUuZmxh
-Z3MgJiBEUk1fTU9ERV9GTEFHX0lOVEVSTEFDRSkKPiArCWlmIChtLT5mbGFncyAmIERSTV9NT0RF
-X0ZMQUdfSU5URVJMQUNFKQo+ICAJCXZhbCB8PSBIRE1JX0ZJRUxEX0VOOwo+ICAKPiAgCWhkbWlf
-cmVnX3dyaXRlbWFzayhoZGF0YSwgSERNSV9DT05fMCwgdmFsLCBIRE1JX0VOKTsKPiBAQCAtMTE2
-MCw3ICsxMTU5LDcgQEAgc3RhdGljIHZvaWQgaGRtaXBoeV93YWl0X2Zvcl9wbGwoc3RydWN0IGhk
-bWlfY29udGV4dCAqaGRhdGEpCj4gIAo+ICBzdGF0aWMgdm9pZCBoZG1pX3YxM19tb2RlX2FwcGx5
-KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+ICB7Cj4gLQlzdHJ1Y3QgZHJtX2Rpc3BsYXlf
-bW9kZSAqbSA9ICZoZGF0YS0+Y3VycmVudF9tb2RlOwo+ICsJc3RydWN0IGRybV9kaXNwbGF5X21v
-ZGUgKm0gPSAmaGRhdGEtPmVuY29kZXIuY3J0Yy0+c3RhdGUtPm1vZGU7Cj4gIAl1bnNpZ25lZCBp
-bnQgdmFsOwo+ICAKPiAgCWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERNSV9IX0JMQU5LXzAsIDIs
-IG0tPmh0b3RhbCAtIG0tPmhkaXNwbGF5KTsKPiBAQCAtMTIzOSw3ICsxMjM4LDcgQEAgc3RhdGlj
-IHZvaWQgaGRtaV92MTNfbW9kZV9hcHBseShzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPiAg
-Cj4gIHN0YXRpYyB2b2lkIGhkbWlfdjE0X21vZGVfYXBwbHkoc3RydWN0IGhkbWlfY29udGV4dCAq
-aGRhdGEpCj4gIHsKPiAtCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptID0gJmhkYXRhLT5jdXJy
-ZW50X21vZGU7Cj4gKwlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbSA9ICZoZGF0YS0+ZW5jb2Rl
-ci5jcnRjLT5zdGF0ZS0+bW9kZTsKPiAgCj4gIAloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlf
-SF9CTEFOS18wLCAyLCBtLT5odG90YWwgLSBtLT5oZGlzcGxheSk7Cj4gIAloZG1pX3JlZ193cml0
-ZXYoaGRhdGEsIEhETUlfVl9MSU5FXzAsIDIsIG0tPnZ0b3RhbCk7Cj4gQEAgLTEzNzIsMTAgKzEz
-NzEsMTEgQEAgc3RhdGljIHZvaWQgaGRtaXBoeV9lbmFibGVfbW9kZV9zZXQoc3RydWN0IGhkbWlf
-Y29udGV4dCAqaGRhdGEsIGJvb2wgZW5hYmxlKQo+ICAKPiAgc3RhdGljIHZvaWQgaGRtaXBoeV9j
-b25mX2FwcGx5KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+ICB7Cj4gKwlzdHJ1Y3QgZHJt
-X2Rpc3BsYXlfbW9kZSAqbSA9ICZoZGF0YS0+ZW5jb2Rlci5jcnRjLT5zdGF0ZS0+bW9kZTsKPiAg
-CWludCByZXQ7Cj4gIAljb25zdCB1OCAqcGh5X2NvbmY7Cj4gIAo+IC0JcmV0ID0gaGRtaV9maW5k
-X3BoeV9jb25mKGhkYXRhLCBoZGF0YS0+Y3VycmVudF9tb2RlLmNsb2NrICogMTAwMCk7Cj4gKwly
-ZXQgPSBoZG1pX2ZpbmRfcGh5X2NvbmYoaGRhdGEsIG0tPmNsb2NrICogMTAwMCk7Cj4gIAlpZiAo
-cmV0IDwgMCkgewo+ICAJCURSTV9FUlJPUigiZmFpbGVkIHRvIGZpbmQgaGRtaXBoeSBjb25mXG4i
-KTsKPiAgCQlyZXR1cm47Cj4gQEAgLTE0MDcsMjEgKzE0MDcsNiBAQCBzdGF0aWMgdm9pZCBoZG1p
-X2NvbmZfYXBwbHkoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4gIAloZG1pX2F1ZGlvX2Nv
-bnRyb2woaGRhdGEsIHRydWUpOwo+ICB9Cj4gIAo+IC1zdGF0aWMgdm9pZCBoZG1pX21vZGVfc2V0
-KHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciwKPiAtCQkJICBzdHJ1Y3QgZHJtX2Rpc3BsYXlf
-bW9kZSAqbW9kZSwKPiAtCQkJICBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqYWRqdXN0ZWRfbW9k
-ZSkKPiAtewo+IC0Jc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBlbmNvZGVyX3RvX2hkbWko
-ZW5jb2Rlcik7Cj4gLQlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbSA9IGFkanVzdGVkX21vZGU7
-Cj4gLQo+IC0JRFJNX0RFQlVHX0tNUygieHJlcz0lZCwgeXJlcz0lZCwgcmVmcmVzaD0lZCwgaW50
-bD0lc1xuIiwKPiAtCQltLT5oZGlzcGxheSwgbS0+dmRpc3BsYXksCj4gLQkJbS0+dnJlZnJlc2gs
-IChtLT5mbGFncyAmIERSTV9NT0RFX0ZMQUdfSU5URVJMQUNFKSA/Cj4gLQkJIklOVEVSTEFDRUQi
-IDogIlBST0dSRVNTSVZFIik7Cj4gLQo+IC0JZHJtX21vZGVfY29weSgmaGRhdGEtPmN1cnJlbnRf
-bW9kZSwgbSk7Cj4gLX0KPiAtCj4gIHN0YXRpYyB2b2lkIGhkbWlfc2V0X3JlZmNsayhzdHJ1Y3Qg
-aGRtaV9jb250ZXh0ICpoZGF0YSwgYm9vbCBvbikKPiAgewo+ICAJaWYgKCFoZGF0YS0+c3lzcmVn
-KQo+IEBAIC0xNTA0LDcgKzE0ODksNiBAQCBzdGF0aWMgdm9pZCBoZG1pX2Rpc2FibGUoc3RydWN0
-IGRybV9lbmNvZGVyICplbmNvZGVyKQo+ICAKPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZW5j
-b2Rlcl9oZWxwZXJfZnVuY3MgZXh5bm9zX2hkbWlfZW5jb2Rlcl9oZWxwZXJfZnVuY3MgPSB7Cj4g
-IAkubW9kZV9maXh1cAk9IGhkbWlfbW9kZV9maXh1cCwKPiAtCS5tb2RlX3NldAk9IGhkbWlfbW9k
-ZV9zZXQsCj4gIAkuZW5hYmxlCQk9IGhkbWlfZW5hYmxlLAo+ICAJLmRpc2FibGUJPSBoZG1pX2Rp
-c2FibGUsCj4gIH07Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+Hi Tobias,
+
+Thanks for review.
+
+
+On 12.09.2017 14:29, Tobias Jakobi wrote:
+> Hello Andrzej,
+>
+>
+> Andrzej Hajda wrote:
+>> Mode setup code is called from video plane update and mixer plane update.
+>> Lets group it together in mixer_commit function like in case of other
+>> Exynos CRTCs.
+> Minor typo: Lets --> Let's
+>
+> Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>
+> With some small question below.
+>
+>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_mixer.c | 33 ++++++++++++++++++---------------
+>>  1 file changed, 18 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> index 0027554..499ebdc 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> @@ -473,6 +473,22 @@ static void mixer_stop(struct mixer_context *ctx)
+>>  		usleep_range(10000, 12000);
+>>  }
+>>  
+>> +static void mixer_commit(struct mixer_context *ctx)
+>> +{
+>> +	struct drm_display_mode *mode = &ctx->crtc->base.state->adjusted_mode;
+>> +
+>> +	/* setup display size */
+>> +	if (ctx->mxr_ver == MXR_VER_128_0_0_184) {
+>> +		u32 val  = MXR_MXR_RES_HEIGHT(mode->vdisplay)
+>> +			 | MXR_MXR_RES_WIDTH(mode->hdisplay);
+>> +		mixer_reg_write(&ctx->mixer_res, MXR_RESOLUTION, val);
+>> +	}
+>> +
+>> +	mixer_cfg_scan(ctx, mode->vdisplay);
+>> +	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+>> +	mixer_run(ctx);
+>> +}
+>> +
+>>  static void vp_video_buffer(struct mixer_context *ctx,
+>>  			    struct exynos_drm_plane *plane)
+>>  {
+>> @@ -553,11 +569,9 @@ static void vp_video_buffer(struct mixer_context *ctx,
+>>  	vp_reg_write(res, VP_TOP_C_PTR, chroma_addr[0]);
+>>  	vp_reg_write(res, VP_BOT_C_PTR, chroma_addr[1]);
+>>  
+>> -	mixer_cfg_scan(ctx, mode->vdisplay);
+>> -	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+>>  	mixer_cfg_layer(ctx, plane->index, priority, true);
+>>  	mixer_cfg_vp_blend(ctx);
+>> -	mixer_run(ctx);
+>> +	mixer_commit(ctx);
+>>  
+>>  	spin_unlock_irqrestore(&res->reg_slock, flags);
+>>  
+>> @@ -638,14 +652,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+>>  	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win),
+>>  			fb->pitches[0] / fb->format->cpp[0]);
+>>  
+>> -	/* setup display size */
+>> -	if (ctx->mxr_ver == MXR_VER_128_0_0_184 &&
+>> -		win == DEFAULT_WIN) {
+>> -		val  = MXR_MXR_RES_HEIGHT(mode->vdisplay);
+>> -		val |= MXR_MXR_RES_WIDTH(mode->hdisplay);
+>> -		mixer_reg_write(res, MXR_RESOLUTION, val);
+>> -	}
+>> -
+>>  	val  = MXR_GRP_WH_WIDTH(state->src.w);
+>>  	val |= MXR_GRP_WH_HEIGHT(state->src.h);
+>>  	val |= MXR_GRP_WH_H_SCALE(x_ratio);
+>> @@ -660,18 +666,15 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+>>  	/* set buffer address to mixer */
+>>  	mixer_reg_write(res, MXR_GRAPHIC_BASE(win), dma_addr);
+>>  
+>> -	mixer_cfg_scan(ctx, mode->vdisplay);
+>> -	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+>>  	mixer_cfg_layer(ctx, win, priority, true);
+>>  	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->format->format));
+>> +	mixer_commit(ctx);
+> With this change, mixer_run() is now done before mixer_layer_update(). I just
+> wanted to make sure that the order of operations isn't critical here.
+
+It shoudn't matter, as it is between atomic_begin, which disables shadow
+updates,
+and atomic_flush, which re-enables them.
+
+Regards
+Andrzej
+
+>
+>
+>
+>>  	/* layer update mandatory for mixer 16.0.33.0 */
+>>  	if (ctx->mxr_ver == MXR_VER_16_0_33_0 ||
+>>  		ctx->mxr_ver == MXR_VER_128_0_0_184)
+>>  		mixer_layer_update(ctx);
+>>  
+>> -	mixer_run(ctx);
+>> -
+>>  	spin_unlock_irqrestore(&res->reg_slock, flags);
+>>  
+>>  	mixer_regs_dump(ctx);
+>>
+>
+>
+>
