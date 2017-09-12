@@ -1,54 +1,87 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 10/10] drm/exynos/mixer: enable support for 1024x768 and
- 1280x1024 modes
-Date: Tue, 12 Sep 2017 14:50:32 +0200
-Message-ID: <d0798187-795d-7b06-ef08-bfad3a9cebc9@math.uni-bielefeld.de>
+Subject: Re: [PATCH 01/10] drm/exynos/mixer: abstract out output mode setup
+ code
+Date: Tue, 12 Sep 2017 14:29:15 +0200
+Message-ID: <f6fb3ec8-a974-8c54-0076-8ff4dda68ffb@math.uni-bielefeld.de>
 References: <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
- <CGME20170906103732eucas1p16966a1fd86daf50dc2b5217dfb90785d@eucas1p1.samsung.com>
- <1504694220-15818-11-git-send-email-a.hajda@samsung.com>
+ <CGME20170906103728eucas1p2f32e4a98f0e034c68fa425efb5ac8269@eucas1p2.samsung.com>
+ <1504694220-15818-2-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:43599 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751439AbdILMum (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 08:50:42 -0400
-In-Reply-To: <1504694220-15818-11-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1504694220-15818-2-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Andrzej,
-
-
-Andrzej Hajda wrote:
-> Since HDMI can handle these modes despite of MIXER limitations lets
-> enable them.
-lets --> let's
-
-Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-
-
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 5aae82b..108dccb 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -1014,6 +1014,9 @@ static int mixer_mode_valid(struct exynos_drm_crtc *crtc,
->  		(w >= 1664 && w <= 1920 && h >= 936 && h <= 1080))
->  		return MODE_OK;
->  
-> +	if ((w == 1024 && h == 768) || (w == 1280 && h == 1024))
-> +		return MODE_OK;
-> +
->  	return MODE_BAD;
->  }
->  
-> 
+SGVsbG8gQW5kcnplaiwKCgpBbmRyemVqIEhhamRhIHdyb3RlOgo+IE1vZGUgc2V0dXAgY29kZSBp
+cyBjYWxsZWQgZnJvbSB2aWRlbyBwbGFuZSB1cGRhdGUgYW5kIG1peGVyIHBsYW5lIHVwZGF0ZS4K
+PiBMZXRzIGdyb3VwIGl0IHRvZ2V0aGVyIGluIG1peGVyX2NvbW1pdCBmdW5jdGlvbiBsaWtlIGlu
+IGNhc2Ugb2Ygb3RoZXIKPiBFeHlub3MgQ1JUQ3MuCk1pbm9yIHR5cG86IExldHMgLS0+IExldCdz
+CgpSZXZpZXdlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQu
+ZGU+CgpXaXRoIHNvbWUgc21hbGwgcXVlc3Rpb24gYmVsb3cuCgoKPiBTaWduZWQtb2ZmLWJ5OiBB
+bmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMzMgKysrKysrKysrKysrKysrKysrLS0tLS0tLS0t
+LS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCAxNSBkZWxldGlvbnMo
+LSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBpbmRleCAwMDI3NTU0
+Li40OTllYmRjIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gQEAg
+LTQ3Myw2ICs0NzMsMjIgQEAgc3RhdGljIHZvaWQgbWl4ZXJfc3RvcChzdHJ1Y3QgbWl4ZXJfY29u
+dGV4dCAqY3R4KQo+ICAJCXVzbGVlcF9yYW5nZSgxMDAwMCwgMTIwMDApOwo+ICB9Cj4gIAo+ICtz
+dGF0aWMgdm9pZCBtaXhlcl9jb21taXQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKPiArewo+
+ICsJc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUgPSAmY3R4LT5jcnRjLT5iYXNlLnN0YXRl
+LT5hZGp1c3RlZF9tb2RlOwo+ICsKPiArCS8qIHNldHVwIGRpc3BsYXkgc2l6ZSAqLwo+ICsJaWYg
+KGN0eC0+bXhyX3ZlciA9PSBNWFJfVkVSXzEyOF8wXzBfMTg0KSB7Cj4gKwkJdTMyIHZhbCAgPSBN
+WFJfTVhSX1JFU19IRUlHSFQobW9kZS0+dmRpc3BsYXkpCj4gKwkJCSB8IE1YUl9NWFJfUkVTX1dJ
+RFRIKG1vZGUtPmhkaXNwbGF5KTsKPiArCQltaXhlcl9yZWdfd3JpdGUoJmN0eC0+bWl4ZXJfcmVz
+LCBNWFJfUkVTT0xVVElPTiwgdmFsKTsKPiArCX0KPiArCj4gKwltaXhlcl9jZmdfc2NhbihjdHgs
+IG1vZGUtPnZkaXNwbGF5KTsKPiArCW1peGVyX2NmZ19yZ2JfZm10KGN0eCwgbW9kZS0+dmRpc3Bs
+YXkpOwo+ICsJbWl4ZXJfcnVuKGN0eCk7Cj4gK30KPiArCj4gIHN0YXRpYyB2b2lkIHZwX3ZpZGVv
+X2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAo+ICAJCQkgICAgc3RydWN0IGV4eW5v
+c19kcm1fcGxhbmUgKnBsYW5lKQo+ICB7Cj4gQEAgLTU1MywxMSArNTY5LDkgQEAgc3RhdGljIHZv
+aWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCj4gIAl2cF9yZWdf
+d3JpdGUocmVzLCBWUF9UT1BfQ19QVFIsIGNocm9tYV9hZGRyWzBdKTsKPiAgCXZwX3JlZ193cml0
+ZShyZXMsIFZQX0JPVF9DX1BUUiwgY2hyb21hX2FkZHJbMV0pOwo+ICAKPiAtCW1peGVyX2NmZ19z
+Y2FuKGN0eCwgbW9kZS0+dmRpc3BsYXkpOwo+IC0JbWl4ZXJfY2ZnX3JnYl9mbXQoY3R4LCBtb2Rl
+LT52ZGlzcGxheSk7Cj4gIAltaXhlcl9jZmdfbGF5ZXIoY3R4LCBwbGFuZS0+aW5kZXgsIHByaW9y
+aXR5LCB0cnVlKTsKPiAgCW1peGVyX2NmZ192cF9ibGVuZChjdHgpOwo+IC0JbWl4ZXJfcnVuKGN0
+eCk7Cj4gKwltaXhlcl9jb21taXQoY3R4KTsKPiAgCj4gIAlzcGluX3VubG9ja19pcnFyZXN0b3Jl
+KCZyZXMtPnJlZ19zbG9jaywgZmxhZ3MpOwo+ICAKPiBAQCAtNjM4LDE0ICs2NTIsNiBAQCBzdGF0
+aWMgdm9pZCBtaXhlcl9ncmFwaF9idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPiAg
+CW1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9HUkFQSElDX1NQQU4od2luKSwKPiAgCQkJZmItPnBp
+dGNoZXNbMF0gLyBmYi0+Zm9ybWF0LT5jcHBbMF0pOwo+ICAKPiAtCS8qIHNldHVwIGRpc3BsYXkg
+c2l6ZSAqLwo+IC0JaWYgKGN0eC0+bXhyX3ZlciA9PSBNWFJfVkVSXzEyOF8wXzBfMTg0ICYmCj4g
+LQkJd2luID09IERFRkFVTFRfV0lOKSB7Cj4gLQkJdmFsICA9IE1YUl9NWFJfUkVTX0hFSUdIVCht
+b2RlLT52ZGlzcGxheSk7Cj4gLQkJdmFsIHw9IE1YUl9NWFJfUkVTX1dJRFRIKG1vZGUtPmhkaXNw
+bGF5KTsKPiAtCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfUkVTT0xVVElPTiwgdmFsKTsKPiAt
+CX0KPiAtCj4gIAl2YWwgID0gTVhSX0dSUF9XSF9XSURUSChzdGF0ZS0+c3JjLncpOwo+ICAJdmFs
+IHw9IE1YUl9HUlBfV0hfSEVJR0hUKHN0YXRlLT5zcmMuaCk7Cj4gIAl2YWwgfD0gTVhSX0dSUF9X
+SF9IX1NDQUxFKHhfcmF0aW8pOwo+IEBAIC02NjAsMTggKzY2NiwxNSBAQCBzdGF0aWMgdm9pZCBt
+aXhlcl9ncmFwaF9idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPiAgCS8qIHNldCBi
+dWZmZXIgYWRkcmVzcyB0byBtaXhlciAqLwo+ICAJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0dS
+QVBISUNfQkFTRSh3aW4pLCBkbWFfYWRkcik7Cj4gIAo+IC0JbWl4ZXJfY2ZnX3NjYW4oY3R4LCBt
+b2RlLT52ZGlzcGxheSk7Cj4gLQltaXhlcl9jZmdfcmdiX2ZtdChjdHgsIG1vZGUtPnZkaXNwbGF5
+KTsKPiAgCW1peGVyX2NmZ19sYXllcihjdHgsIHdpbiwgcHJpb3JpdHksIHRydWUpOwo+ICAJbWl4
+ZXJfY2ZnX2dmeF9ibGVuZChjdHgsIHdpbiwgaXNfYWxwaGFfZm9ybWF0KGZiLT5mb3JtYXQtPmZv
+cm1hdCkpOwo+ICsJbWl4ZXJfY29tbWl0KGN0eCk7CldpdGggdGhpcyBjaGFuZ2UsIG1peGVyX3J1
+bigpIGlzIG5vdyBkb25lIGJlZm9yZSBtaXhlcl9sYXllcl91cGRhdGUoKS4gSSBqdXN0CndhbnRl
+ZCB0byBtYWtlIHN1cmUgdGhhdCB0aGUgb3JkZXIgb2Ygb3BlcmF0aW9ucyBpc24ndCBjcml0aWNh
+bCBoZXJlLgoKCgo+ICAJLyogbGF5ZXIgdXBkYXRlIG1hbmRhdG9yeSBmb3IgbWl4ZXIgMTYuMC4z
+My4wICovCj4gIAlpZiAoY3R4LT5teHJfdmVyID09IE1YUl9WRVJfMTZfMF8zM18wIHx8Cj4gIAkJ
+Y3R4LT5teHJfdmVyID09IE1YUl9WRVJfMTI4XzBfMF8xODQpCj4gIAkJbWl4ZXJfbGF5ZXJfdXBk
+YXRlKGN0eCk7Cj4gIAo+IC0JbWl4ZXJfcnVuKGN0eCk7Cj4gLQo+ICAJc3Bpbl91bmxvY2tfaXJx
+cmVzdG9yZSgmcmVzLT5yZWdfc2xvY2ssIGZsYWdzKTsKPiAgCj4gIAltaXhlcl9yZWdzX2R1bXAo
+Y3R4KTsKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
