@@ -1,148 +1,103 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH / code example] userspace: Simple tool for testing IPP v2 API
-Date: Tue, 12 Sep 2017 10:08:59 +0200
-Message-ID: <1505203739-29747-8-git-send-email-m.szyprowski@samsung.com>
-References: <1505203739-29747-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170912080913eucas1p19d4abd204d3a7ab7a98848fe9e9df262@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1505203739-29747-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/6] Exynos DRM: rewrite IPP subsystem and userspace API
+Date: Tue, 12 Sep 2017 10:08:52 +0200
+Message-ID: <1505203739-29747-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170912080909eucas1p1942c418e6e4e2621bb977ecb5ae588be@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45133 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751332AbdILIJN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 12 Sep 2017 04:09:13 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-VGhpcyBpcyBzaW1wbGUgZXhhbXBsZSBob3cgRXh5bm9zIERSTSBJUFAgdjIgQVBJIGNhbiBiZSB1
-c2VkIGZyb20gdXNlcnNwYWNlLgpUaGUgY29kZSBhbGxvY2F0ZXMgdHdvIEdFTSBidWZmZXJzLCBm
-aWxscyBmaXJzdCB3aXRoIHRlc3QgcGF0dGVybiBhbmQgdGhlbgpwZXJmb3JtcyAxODAgZGVncmVl
-IHJvdGF0aW9uIG9mIHRoZSBpbWFnZSBkYXRhLgoKU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJv
-d3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIHJvdGF0ZS5jIHwgMjM1ICsrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KwogMSBmaWxlIGNoYW5nZWQsIDIzNSBpbnNlcnRpb25zKCspCiBjcmVhdGUgbW9kZSAxMDA2NDQg
-cm90YXRlLmMKCmRpZmYgLS1naXQgYS9yb3RhdGUuYyBiL3JvdGF0ZS5jCm5ldyBmaWxlIG1vZGUg
-MTAwNjQ0CmluZGV4IDAwMDAwMDAuLmFiMGM1ZDAKLS0tIC9kZXYvbnVsbAorKysgYi9yb3RhdGUu
-YwpAQCAtMCwwICsxLDIzNCBAQAorLyoKKyAqIENvcHlyaWdodCAoQykgMjAxNyBTYW1zdW5nIEVs
-ZWN0cm9uaWNzIENvLkx0ZAorICogQXV0aG9yOiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dz
-a2lAc2Ftc3VuZy5jb20+CisgKgorICogUGVybWlzc2lvbiBpcyBoZXJlYnkgZ3JhbnRlZCwgZnJl
-ZSBvZiBjaGFyZ2UsIHRvIGFueSBwZXJzb24gb2J0YWluaW5nIGEKKyAqIGNvcHkgb2YgdGhpcyBz
-b2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUgIlNvZnR3YXJl
-IiksCisgKiB0byBkZWFsIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0IHJlc3RyaWN0aW9uLCBpbmNs
-dWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uCisgKiB0aGUgcmlnaHRzIHRvIHVzZSwgY29weSwgbW9k
-aWZ5LCBtZXJnZSwgcHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwKKyAqIGFuZC9vciBz
-ZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVyc29ucyB0byB3aG9t
-IHRoZQorICogU29mdHdhcmUgaXMgZnVybmlzaGVkIHRvIGRvIHNvLCBzdWJqZWN0IHRvIHRoZSBm
-b2xsb3dpbmcgY29uZGl0aW9uczoKKyAqCisgKiBUaGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSBh
-bmQgdGhpcyBwZXJtaXNzaW9uIG5vdGljZSBzaGFsbCBiZSBpbmNsdWRlZCBpbgorICogYWxsIGNv
-cGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29mdHdhcmUuCisgKgorICogVEhF
-IFNPRlRXQVJFIElTIFBST1ZJREVEICJBUyBJUyIsIFdJVEhPVVQgV0FSUkFOVFkgT0YgQU5ZIEtJ
-TkQsIEVYUFJFU1MgT1IKKyAqIElNUExJRUQsIElOQ0xVRElORyBCVVQgTk9UIExJTUlURUQgVE8g
-VEhFIFdBUlJBTlRJRVMgT0YgTUVSQ0hBTlRBQklMSVRZLAorICogRklUTkVTUyBGT1IgQSBQQVJU
-SUNVTEFSIFBVUlBPU0UgQU5EIE5PTklORlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhF
-CisgKiBBVVRIT1JTIE9SIENPUFlSSUdIVCBIT0xERVJTIEJFIExJQUJMRSBGT1IgQU5ZIENMQUlN
-LCBEQU1BR0VTIE9SIE9USEVSCisgKiBMSUFCSUxJVFksIFdIRVRIRVIgSU4gQU4gQUNUSU9OIE9G
-IENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORworICogRlJPTSwgT1VUIE9GIE9S
-IElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUiBERUFM
-SU5HUworICogSU4gVEhFIFNPRlRXQVJFLgorICoKKyAqLworCisjZGVmaW5lIF9GSUxFX09GRlNF
-VF9CSVRTIDY0CisKKyNpbmNsdWRlIDxzdGRpby5oPgorI2luY2x1ZGUgPHN0ZGxpYi5oPgorI2lu
-Y2x1ZGUgPHN5cy90eXBlcy5oPgorI2luY2x1ZGUgPHN5cy9tbWFuLmg+CisjaW5jbHVkZSA8ZmNu
-dGwuaD4KKyNpbmNsdWRlIDx1bmlzdGQuaD4KKyNpbmNsdWRlIDxzdHJpbmcuaD4KKyNpbmNsdWRl
-IDxlcnJuby5oPgorCisjaW5jbHVkZSA8ZHJtL2RybS5oPgorI2luY2x1ZGUgPGRybS9kcm1fZm91
-cmNjLmg+CisjaW5jbHVkZSA8ZHJtL2V4eW5vc19kcm0uaD4KKworI2luY2x1ZGUgPHhmODZkcm0u
-aD4KKworc3RydWN0IGJvIHsKKwl2b2lkICpwdHI7CisJc2l6ZV90IHNpemU7CisJc2l6ZV90IG9m
-ZnNldDsKKwlzaXplX3QgcGl0Y2g7CisJaW50IHdpZHRoOworCWludCBoZWlnaHQ7CisJdW5zaWdu
-ZWQgaW50IGhhbmRsZTsKKwl1bnNpZ25lZCBpbnQgZm91cmNjOworfTsKKworc3RydWN0IGJvICpi
-b19jcmVhdGUoaW50IGZkLCB1bnNpZ25lZCBpbnQgd2lkdGgsIHVuc2lnbmVkIGludCBoZWlnaHQs
-CisJCQkgIHVuc2lnbmVkIGludCBicHAsIHVuc2lnbmVkIGludCBmb3VyY2MpCit7CisJc3RydWN0
-IGRybV9leHlub3NfZ2VtX2NyZWF0ZSBjcmVhdGVfYXJnID0geyB9OworCXN0cnVjdCBkcm1fZXh5
-bm9zX2dlbV9tYXAgbWFwX2FyZyA9IHsgfTsKKwlzdHJ1Y3QgYm8gKmJvOworCWludCByZXQ7CisK
-KwlibyA9IGNhbGxvYygxLCBzaXplb2YoKmJvKSk7CisJaWYgKGJvID09IE5VTEwpIHsKKwkJZnBy
-aW50ZihzdGRlcnIsICJmYWlsZWQgdG8gYWxsb2NhdGUgYnVmZmVyIG9iamVjdFxuIik7CisJCXJl
-dHVybiBOVUxMOworCX0KKworCWJvLT5zaXplID0gd2lkdGggKiBoZWlnaHQgKiBicHAgLyA4Owor
-CWJvLT5waXRjaCA9IHdpZHRoICogYnBwIC8gODsKKwliby0+d2lkdGggPSB3aWR0aDsKKwliby0+
-aGVpZ2h0ID0gaGVpZ2h0OworCisJY3JlYXRlX2FyZy5zaXplID0gYm8tPnNpemU7CisJY3JlYXRl
-X2FyZy5mbGFncyA9IEVYWU5PU19CT19OT05DT05USUc7CisKKwlpZiAoZHJtQ29tbWFuZFdyaXRl
-UmVhZChmZCwgRFJNX0VYWU5PU19HRU1fQ1JFQVRFLCAmY3JlYXRlX2FyZywKKwkJCQlzaXplb2Yo
-Y3JlYXRlX2FyZykpKSB7CisJCWZwcmludGYoc3RkZXJyLCAiY2Fubm90IGNyZWF0ZSBFeHlub3Mg
-R0VNIG9iamVjdCAoJWQpOiAlbVxuIiwKKwkJCWVycm5vKTsKKwkJcmV0dXJuIE5VTEw7CisJfQor
-CisJYm8tPmhhbmRsZSA9IGNyZWF0ZV9hcmcuaGFuZGxlOworCWJvLT5mb3VyY2MgPSBmb3VyY2M7
-CisKKwltYXBfYXJnLmhhbmRsZSA9IGJvLT5oYW5kbGU7CisKKwlpZiAoZHJtQ29tbWFuZFdyaXRl
-UmVhZChmZCwgRFJNX0VYWU5PU19HRU1fTUFQLCAmbWFwX2FyZywKKwkJCQlzaXplb2YobWFwX2Fy
-ZykpKSB7CisJCWZwcmludGYoc3RkZXJyLCAiY2Fubm90IG1hcCBFeHlub3MgR0VNIG9iamVjdCAo
-JWQpOiAlbVxuIiwKKwkJCWVycm5vKTsKKwkJcmV0dXJuIE5VTEw7CisJfQorCisJYm8tPnB0ciA9
-IG1tYXAoMCwgYm8tPnNpemUsIFBST1RfUkVBRCB8IFBST1RfV1JJVEUsIE1BUF9TSEFSRUQsIGZk
-LAorCQkgICAgICAgbWFwX2FyZy5vZmZzZXQpOworCWlmIChiby0+cHRyID09IE1BUF9GQUlMRUQp
-CisJCXJldHVybiBOVUxMOworCisJcmV0dXJuIGJvOworfQorCit2b2lkIGJvX2Rlc3Ryb3koaW50
-IGZkLCBzdHJ1Y3QgYm8gKmJvKQoreworCXN0cnVjdCBkcm1fZ2VtX2Nsb3NlIGFyZyA9IHsgfTsK
-KwlpbnQgcmV0OworCisJaWYgKGJvLT5wdHIpCisJCW11bm1hcChiby0+cHRyLCBiby0+c2l6ZSk7
-CisKKwlhcmcuaGFuZGxlID0gYm8tPmhhbmRsZTsKKwlyZXQgPSBkcm1Jb2N0bChmZCwgRFJNX0lP
-Q1RMX0dFTV9DTE9TRSwgJmFyZyk7CisJaWYgKHJldCkKKwkJZnByaW50ZihzdGRlcnIsICJmYWls
-ZWQgdG8gZGVzdHJveSBkdW1iIGJ1ZmZlciAoJWQpOiAlbVxuIiwKKwkJCWVycm5vKTsKKworCWZy
-ZWUoYm8pOworfQorCitzdHJ1Y3QgYm8gKmJvX2NyZWF0ZV94cmdiKGludCBmZCwgdW5zaWduZWQg
-aW50IHdpZHRoLCB1bnNpZ25lZCBpbnQgaGVpZ2h0KQoreworCXJldHVybiBib19jcmVhdGUoZmQs
-IHdpZHRoLCBoZWlnaHQsIDMyLCBEUk1fRk9STUFUX1hSR0I4ODg4KTsKK30KKworc3RydWN0IGV4
-eW5vc19kcm1faXBwX3N0ZF90YXNrIHsKKwlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfdGFza19idWZm
-ZXIgYnVmWzJdOworCXN0cnVjdCBkcm1fZXh5bm9zX2lwcF90YXNrX3JlY3QgcmVjdFsyXTsKKwlz
-dHJ1Y3QgZHJtX2V4eW5vc19pcHBfdGFza190cmFuc2Zvcm0gdHJhbnNmb3JtOworfSBfX3BhY2tl
-ZDsKKworaW50IHByb2Nlc3NfZmIoaW50IGZkLCBzdHJ1Y3QgYm8gKnNyY19ibywgaW50IHN4LCBp
-bnQgc3ksIGludCBzdywgaW50IHNoLAorCSAgICAgICBzdHJ1Y3QgYm8gKmRzdF9ibywgaW50IGR4
-LCBpbnQgZHksIGludCBkdywgaW50IGRoLCBpbnQgcm90YXRpb24pCit7CisJc3RydWN0IGV4eW5v
-c19kcm1faXBwX3N0ZF90YXNrIHRhc2sgPSB7CX07CisJc3RydWN0IGRybV9leHlub3NfaW9jdGxf
-aXBwX2NvbW1pdCBhcmcgPSB7IH07CisJdWludDMyX3QgaWQgPSAwOyAvKiBoYXJkY29kZWQgZmly
-c3QgYXZhaWxhYmxlIElQUCBtb2R1bGUgKi8KKworCXRhc2suYnVmWzBdLmlkID0gRFJNX0VYWU5P
-U19JUFBfVEFTS19CVUZGRVIgfAorCQkJIERSTV9FWFlOT1NfSVBQX1RBU0tfVFlQRV9TT1VSQ0U7
-CisJdGFzay5idWZbMF0uZm91cmNjID0gc3JjX2JvLT5mb3VyY2M7CisJdGFzay5idWZbMF0ud2lk
-dGggPSBzcmNfYm8tPndpZHRoOworCXRhc2suYnVmWzBdLmhlaWdodCA9IHNyY19iby0+aGVpZ2h0
-OworCXRhc2suYnVmWzBdLnBpdGNoWzBdID0gc3JjX2JvLT5waXRjaDsKKwl0YXNrLmJ1ZlswXS5n
-ZW1faWRbMF0gPSBzcmNfYm8tPmhhbmRsZTsKKworCXRhc2suYnVmWzFdLmlkID0gRFJNX0VYWU5P
-U19JUFBfVEFTS19CVUZGRVIgfAorCQkJIERSTV9FWFlOT1NfSVBQX1RBU0tfVFlQRV9ERVNUSU5B
-VElPTjsKKwl0YXNrLmJ1ZlsxXS5mb3VyY2MgPSBkc3RfYm8tPmZvdXJjYzsKKwl0YXNrLmJ1Zlsx
-XS53aWR0aCA9IGRzdF9iby0+d2lkdGg7CisJdGFzay5idWZbMV0uaGVpZ2h0ID0gZHN0X2JvLT5o
-ZWlnaHQ7CisJdGFzay5idWZbMV0ucGl0Y2hbMF0gPSBkc3RfYm8tPnBpdGNoOworCXRhc2suYnVm
-WzFdLmdlbV9pZFswXSA9IGRzdF9iby0+aGFuZGxlOworCisJdGFzay5yZWN0WzBdLmlkID0gRFJN
-X0VYWU5PU19JUFBfVEFTS19SRUNUQU5HTEUgfAorCQkJICBEUk1fRVhZTk9TX0lQUF9UQVNLX1RZ
-UEVfU09VUkNFOworCXRhc2sucmVjdFswXS54ID0gc3g7CisJdGFzay5yZWN0WzBdLnkgPSBzeTsK
-Kwl0YXNrLnJlY3RbMF0udyA9IHN3OworCXRhc2sucmVjdFswXS5oID0gc2g7CisKKwl0YXNrLnJl
-Y3RbMV0uaWQgPSBEUk1fRVhZTk9TX0lQUF9UQVNLX1JFQ1RBTkdMRSB8CisJCQkgIERSTV9FWFlO
-T1NfSVBQX1RBU0tfVFlQRV9ERVNUSU5BVElPTjsKKwl0YXNrLnJlY3RbMV0ueCA9IGR4OworCXRh
-c2sucmVjdFsxXS55ID0gZHk7CisJdGFzay5yZWN0WzFdLncgPSBkdzsKKwl0YXNrLnJlY3RbMV0u
-aCA9IGRoOworCisJdGFzay50cmFuc2Zvcm0uaWQgPSBEUk1fRVhZTk9TX0lQUF9UQVNLX1RSQU5T
-Rk9STTsKKwl0YXNrLnRyYW5zZm9ybS5yb3RhdGlvbiA9IHJvdGF0aW9uOworCisJYXJnLmZsYWdz
-ID0gMDsKKwlhcmcuaXBwX2lkID0gaWQ7CisJYXJnLnBhcmFtc19zaXplID0gc2l6ZW9mKHRhc2sp
-OworCWFyZy5wYXJhbXNfcHRyID0gKHVuc2lnbmVkIGxvbmcpKCZ0YXNrKTsKKwlhcmcudXNlcl9k
-YXRhID0gMDsKKworCWlmIChkcm1Db21tYW5kV3JpdGVSZWFkKGZkLCBEUk1fRVhZTk9TX0lQUF9D
-T01NSVQsICZhcmcsIHNpemVvZihhcmcpKSkgeworCQlmcHJpbnRmKHN0ZGVyciwgImZhaWxlZCB0
-byBjb21taXQgRXh5bm9zIElQUCB0YXNrICglZCk6ICVtXG4iLAorCQkJZXJybm8pOworCQlyZXR1
-cm4gZXJybm87CisJfQorCisJcmV0dXJuIDA7Cit9CisKK2ludCBtYWluKGludCBhcmdjLCBjaGFy
-ICphcmd2W10pCit7CisJc3RydWN0IGJvICpidWYxLCAqYnVmMjsKKwlpbnQgZmQ7CisJaW50IGVy
-cjsKKwlpbnQgd2lkdGggPSA2NDA7CisJaW50IGhlaWdodCA9IDQ4MDsKKwlpbnQgdmFsID0gMSwg
-eCwgeTsKKworCWZkID0gb3BlbigiL2Rldi9kcmkvY2FyZDAiLCBPX1JEV1IpOworCisJYnVmMSA9
-IGJvX2NyZWF0ZV94cmdiKGZkLCB3aWR0aCwgaGVpZ2h0KTsKKwlidWYyID0gYm9fY3JlYXRlX3hy
-Z2IoZmQsIHdpZHRoLCBoZWlnaHQpOworCisJLyogZHJhdyB0ZXN0IHBhdHRlcm4gdG8gYnVmZmVy
-MSAqLworCWZvciAoeSA9IDA7IHkgPCBoZWlnaHQ7IHkrKykgeworCQl1aW50MzJfdCAqcCA9IGJ1
-ZjEtPnB0ciArIGJ1ZjEtPnBpdGNoICogeTsKKworCQlmb3IgKHggPSAwOyB4IDwgd2lkdGg7IHgr
-KykgeworCQkJaWYgKHggPiB5KQorCQkJCSpwKysgPSAodmFsKysgJiAweGZmZmZmZikgKyAweGZm
-MDAwMDAwOworCQl9CisJfQorCisJZXJyID0gcHJvY2Vzc19mYihmZCwgYnVmMSwgMCwgMCwgd2lk
-dGgsIGhlaWdodCwgYnVmMiwgMCwgMCwgd2lkdGgsCisJCQkgaGVpZ2h0LCBEUk1fTU9ERV9ST1RB
-VEVfMTgwKTsKKwlpZiAoIWVycikgeworCQlwcmludGYoIkJ1ZmZlciBwcm9jZXNzZWQsIGNoZWNr
-aW5nIHByb2Nlc3NlZCBidWZmZXIuLi4gIik7CisKKwkJZm9yICh5ID0gMDsgeSA8IGhlaWdodDsg
-eSsrKSB7CisJCQl1aW50MzJfdCAqcDEgPSBidWYxLT5wdHIgKyBidWYxLT5waXRjaCAqIHk7CisJ
-CQl1aW50MzJfdCAqcDIgPSBidWYyLT5wdHIgKyBidWYxLT5waXRjaCAqIChoZWlnaHQgLSB5IC0g
-MSk7CisKKwkJCWZvciAoeCA9IDA7IHggPCB3aWR0aDsgeCsrKQorCQkJCWlmICgqKHAxICsgeCkg
-IT0gKihwMiArIHdpZHRoIC0geCAtIDEpKSB7CisJCQkJCXByaW50ZigiZmFpbGVkIGF0ICglZCwl
-ZCkgJTA2eCAhPSAlMDZ4LlxuIiwKKwkJCQkJCXgsIHksICoocDEgKyB4KSwKKwkJCQkJCSoocDIg
-KyB3aWR0aCAtIHggLSAxKSk7CisJCQkJCWdvdG8gZnJlZTsKKwkJCQl9CisJCX0KKwkJcHJpbnRm
-KCJva2F5LlxuIik7CisJfQorCitmcmVlOgorCWJvX2Rlc3Ryb3koZmQsIGJ1ZjEpOworCWJvX2Rl
-c3Ryb3koZmQsIGJ1ZjIpOworCisJcmV0dXJuIDA7Cit9Ci0tIAoxLjkuMQoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Dear all,
+
+This patchset performs complete rewrite of Exynos DRM IPP subsystem and
+its userspace API.
+
+Why such rewrite is needed? Exynos DRM IPP API is over-engineered in
+general, but not really extensible on the other side. It is also buggy,
+with significant design flaws:
+- Userspace API covers memory-2-memory picture operations together with
+  CRTC writeback and duplicating features, which belongs to video plane.
+- Lack of support of the all required image formats (for example NV12
+  Samsung-tiled cannot be used due to lack of pixel format modifier
+  support).
+- Userspace API designed only to mimic hardware behaviour, not easy to
+  understand.
+- Lack of proper input validation in the core, drivers also didn't do that
+  correctly, so it was possible to set incorrect parameters and easil
+  trigger IOMMU fault or memory trash.
+- Drivers were partially disfunctional or supported only a subset of modes.
+
+Due to the above limitations and issues the Exynos DRM IPP API was not
+used by any of the open-source projects. I assume that it is safe to remove
+this broken API without any damage to open-source community. All remaining
+users (mainly Tizen project related) will be updated to the new version.
+
+This patchset changes Exynos DRM IPP subsystem to something useful. The
+userspace API is much simpler, state-less and easy to understand. Also
+the code of the core and driver is significantly smaller and easier to
+understand.
+
+Patches were tested on Exynos4412 based Odroid U3 and Exynos5422
+Odroid XU3 boards, on top of Linux next-20170911 kernel.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+My previous works in this area:
+
+"[RFC v2 0/2] Exynos DRM: add Picture Processor extension"
+https://www.spinics.net/lists/dri-devel/msg140669.html
+- removed usage of DRM objects and properties - replaced them with simple
+  list of parameters with predefined IDs
+
+"[RFC 0/4] Exynos DRM: add Picture Processor extension"
+https://www.spinics.net/lists/linux-samsung-soc/msg59323.html
+- moved this feature from DRM core to Exynos DRM driver
+- changed name from framebuffer processor to picture processor
+- simplified code to cover only things needed by Exynos drivers
+- implemented simple fifo task scheduler
+- cleaned up rotator driver conversion (removed IPP remainings)
+
+"[RFC 0/2] New feature: Framebuffer processors"
+https://www.spinics.net/lists/linux-samsung-soc/msg54810.html
+- generic approach implemented in DRM core, rejected
+
+
+Patch summary:
+
+Marek Szyprowski (6):
+  drm/exynos: ipp: Remove Exynos DRM IPP subsystem
+  drm/exynos: ipp: Add IPP v2 framework
+  drm/exynos: rotator: Convert driver to IPP v2 core API
+  drm/exynos: gsc: Convert driver to IPP v2 core API
+  drm/exynos: Add generic support for devices shared with V4L2 subsystem
+  drm/exynos: fimc: Convert driver to IPP v2 core API
+
+ drivers/gpu/drm/exynos/Kconfig              |   12 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c     |   33 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     |    4 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  893 +++--------
+ drivers/gpu/drm/exynos/exynos_drm_fimc.h    |   23 -
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  853 +++-------
+ drivers/gpu/drm/exynos/exynos_drm_gsc.h     |   24 -
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c     | 2239 ++++++++-------------------
+ drivers/gpu/drm/exynos/exynos_drm_ipp.h     |  352 ++---
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c |  735 ++-------
+ drivers/gpu/drm/exynos/exynos_drm_rotator.h |   19 -
+ include/uapi/drm/exynos_drm.h               |  315 ++--
+ 12 files changed, 1627 insertions(+), 3875 deletions(-)
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_fimc.h
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_gsc.h
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_rotator.h
+
+-- 
+1.9.1
