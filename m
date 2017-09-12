@@ -1,102 +1,96 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] drm/bridge: add Silicon Image SiI9234 driver
-Date: Mon, 11 Sep 2017 17:19:05 +0200
-Message-ID: <CAJKOXPe1ufJngR037jH_c1=jvAQtHtDW1WBDrertxkRJShrA9A@mail.gmail.com>
-References: <1504620099-20024-1-git-send-email-m.purski@samsung.com>
- <CGME20170905140209eucas1p1ee010819751b86ad8a41e5847c115e01@eucas1p1.samsung.com>
- <1504620099-20024-2-git-send-email-m.purski@samsung.com> <20170908170529.po5v6wuus4llwdan@kozik-lap>
- <a7c84f2c-855f-0e65-d794-d9a3331a6516@samsung.com> <CAJKOXPcfOUGDYL0BEa2-XZkpnoOGb4QRvEyWFwbgRxjAXD0Rng@mail.gmail.com>
- <626dfd33-a824-c480-16eb-bf677dcb3d26@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 00/10] drm/exynos: TV path improvements
+Date: Tue, 12 Sep 2017 07:54:21 +0200
+Message-ID: <151be7c8-fc22-020d-7dc9-73a063144121@samsung.com>
+References: <CGME20170906103727eucas1p23614a8da470a625d760b50095a4a4ad1@eucas1p2.samsung.com>
+        <1504694220-15818-1-git-send-email-a.hajda@samsung.com>
+        <29e9a521-ba8e-4753-38df-665e50bbc4cb@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <626dfd33-a824-c480-16eb-bf677dcb3d26-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46707 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750751AbdILFy1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 12 Sep 2017 01:54:27 -0400
+In-reply-to: <29e9a521-ba8e-4753-38df-665e50bbc4cb@math.uni-bielefeld.de>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Daniel Drake <drake@endlessm.com>
 
-On Mon, Sep 11, 2017 at 3:39 PM, Marek Szyprowski
-<m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Hi Krzysztof,
+On 11.09.2017 15:54, Tobias Jakobi wrote:
+> Hello Andrzej,
 >
->
-> On 2017-09-11 15:18, Krzysztof Kozlowski wrote:
->>
->> On Mon, Sep 11, 2017 at 1:42 PM, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> wrote:
->>>>>
->>>>> +       ctx->client[I2C_MHL] = client;
->>>>> +
->>>>> +       ctx->client[I2C_TPI] = i2c_new_dummy(adapter, I2C_TPI_ADDR);
->>>>> +       if (!ctx->client[I2C_TPI]) {
->>>>> +               dev_err(ctx->dev, "failed to create TPI client\n");
->>>>> +               return -ENODEV;
->>>>> +       }
->>>>> +
->>>>> +       ctx->client[I2C_HDMI] = i2c_new_dummy(adapter, I2C_HDMI_ADDR);
->>>>> +       if (!ctx->client[I2C_HDMI]) {
->>>>> +               dev_err(ctx->dev, "failed to create HDMI RX client\n");
->>>>> +               goto fail_tpi;
->>>>> +       }
->>>>> +
->>>>> +       ctx->client[I2C_CBUS] = i2c_new_dummy(adapter, I2C_CBUS_ADDR);
->>>>> +       if (!ctx->client[I2C_CBUS]) {
->>>>> +               dev_err(ctx->dev, "failed to create CBUS client\n");
->>>>> +               goto fail_hdmi;
->>>>> +       }
->>>>
->>>> You are using i2c_smbus_* calls. Why not converting to regmap_i2c? It is
->>>> preferred interface.
->>>
->>>
->>> According to my search, there are only 5 drivers, which use regmap_i2c
->>> and
->>> none of them in drm. If you think that it is really needed, could you
->>> please
->>> explain
->>> why?
->>
->> There are slightly more than five drivers:
->>
->> $ git grep regmap_init_i2c | wc -l
->> 352
->>
->> ... and even more using regmap interface in generic (not i2c).
->>
->> I think this is really wanted because for free you get:
->> 1. locking,
->> 2. proper locking - with lockdep and nested mutexes :),
->> 3. caching of accesses,
->> 4. handling of endianness,
->> 5. optionally a trivial way of handling interrupts (regmap_irq_chip),
->>
->> Also this brings unified interface for most of the drivers regardless
->> of protocol used beneath (I2C, SPI and even MMIO but for simple cases
->> MMIO might not have much sense). This last argument actually brings
->> the most benefit for me because it abstracts driver from trivial I2C
->> implementation and it could allow even easy code-reuse for e.g. SPI
->> version.
->
->
-> Regmap make sense for multi-function chips, which require more than one
-> client driver (so proper locking is important). It also makes sense if
-> the chip is produced in more than one flavor (like i2c, spi, MMIO, etc).
->
-> None of the above takes place in this case... So in case of this driver
-> using regmap is IMHO an over-engineering.
+> just did a quick test and looks good so far. One thing I noticed is that
+> compared to Daniel's approach you just manipulate HDMI_TG_HACT_{ST,SZ}_L,
+> instead of HDMI_TG_VACT_SZ_L + HDMI_TG_HACT_{ST,SZ}_L. I just wanted to make
+> sure that on the HDMI level, this does the same thing?
 
-Good points and true that setting up regmap requires some more code
-around probe. However it will remove half or even more of your
-interrupt handler. Less driver specific code, more generic code used.
-Also current code around I2C (sii9234_writeb() etc) is not thread
-safe... which for now is not a problem as the only entrance point is
-the interrupt. Maybe it's fine then to use existing implementation
-especially if you do not see any future enhancements to the driver.
+With Daniel's patch 1st line and the last column are missing.
+With this patch 1st line is distorted, last column is OK, IMO better result.
+Another alternative I see is to hide 1st line and make all columns OK,
+but I am not really convinced to it, but it is just my feelings :)
 
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Btw, I have also played with 800x600, but I was not able to find good
+timings - HBLANK is too small.
+There are also other resolutions which one can try to fix. Especially
+after adding more clocks to HDMI-PHY.
+
+Regards
+Andrzej
+
+
+
+>
+> I'll try to do a proper review tomorrow.
+>
+> I also noticed that I have another patch by Daniel in my tree, which, together
+> with the quirk, enables 1366x768@60Hz. Going to send it shortly, since it could
+> probably go along with this series.
+>
+> With best wishes,
+> Tobias
+>
+>
+>
+> Andrzej Hajda wrote:
+>> Hi all,
+>>
+>> This patchset does two main things:
+>> - removes mode limitation for Exynos542x chips, multiple modes were filtered
+>>   out due to lack of HW version checking code,
+>> - enables two modes on older chips, thanks to quirk found by Daniel Drake,
+>>   and published by Tobias Jakobi [1][2].
+>> Beside this it consolidates the code and performs multiple cleanups.
+>>
+>> [1]: http://www.spinics.net/lists/linux-samsung-soc/msg24617.html
+>> [2]: https://www.spinics.net/lists/dri-devel/msg150906.html
+>>
+>> Regards
+>> Andrzej
+>>
+>>
+>> Andrzej Hajda (10):
+>>   drm/exynos/mixer: abstract out output mode setup code
+>>   drm/exynos/mixer: move mode commit to enable callback
+>>   drm/exynos/mixer: move resolution configuration to single function
+>>   drm/exynos/mixer: fix mode validation code
+>>   drm/exynos/mixer: remove mixer_resources sub-structure
+>>   drm/exynos/hdmi: remove redundant mode field
+>>   drm/exynos: add mode_fixup callback to exynos_drm_crtc_ops
+>>   drm/exynos/mixer: pass actual mode on MIXER to encoder
+>>   drm/exynos/hdmi: quirk for support mode timings conversion
+>>   drm/exynos/mixer: enable support for 1024x768 and 1280x1024 modes
+>>
+>>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |  15 +
+>>  drivers/gpu/drm/exynos/exynos_drm_drv.h  |   3 +
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c     |  49 ++--
+>>  drivers/gpu/drm/exynos/exynos_mixer.c    | 452 +++++++++++++++----------------
+>>  4 files changed, 265 insertions(+), 254 deletions(-)
+>>
+>
+>
+>
