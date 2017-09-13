@@ -1,70 +1,57 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v4 2/4] ARM: dts: exynos: Add clean name of compatible.
-Date: Wed, 13 Sep 2017 20:41:53 +0900
-Message-ID: <1505302915-15699-3-git-send-email-hoegeun.kwon@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 1/4] [media] exynos-gsc: Add compatible for Exynos 5250
+ and 5420 specific version
+Date: Wed, 13 Sep 2017 20:41:52 +0900
+Message-ID: <1505302915-15699-2-git-send-email-hoegeun.kwon@samsung.com>
 References: <1505302915-15699-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170913114215epcas2p30e9a4593bdb6cc3142c6e4dc108ff2f0@epcas2p3.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1505302915-15699-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, mchehab@kernel.org, s.nawrocki@samsung.com, m.szyprowski@samsung.com, robin.murphy@arm.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+        <CGME20170913114214epcas2p3158b964f9eec03fa24b4e8f6b919c2cb@epcas2p3.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1505302915-15699-1-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RXh5bm9zIDUyNTAgYW5kIDU0MjAgaGF2ZSBkaWZmZXJlbnQgaGFyZHdhcmUgcm90YXRpb24gbGlt
-aXRzLiBIb3dldmVyLApjdXJyZW50bHkgaXQgdXNlcyBvbmx5IG9uZSBjb21wYXRpYmxlIC0gImV4
-eW5vczUtZ3NjIi4gU2luY2Ugd2UgaGF2ZQp0byBkaXN0aW5ndWlzaCBiZXR3ZWVuIHRoZXNlIHR3
-bywgd2UgYWRkIGRpZmZlcmVudCBjb21wYXRpYmxlLgoKU2lnbmVkLW9mZi1ieTogSG9lZ2V1biBL
-d29uIDxob2VnZXVuLmt3b25Ac2Ftc3VuZy5jb20+Ci0tLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNTI1MC5kdHNpIHwgOCArKysrLS0tLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC5k
-dHNpIHwgNCArKy0tCiAyIGZpbGVzIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlv
-bnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kgYi9h
-cmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kKaW5kZXggOGRiZWI4Ny4uZDBkMDQ2MCAx
-MDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpCisrKyBiL2FyY2gv
-YXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaQpAQCAtNjM3LDcgKzYzNyw3IEBACiAJCX07CiAK
-IAkJZ3NjXzA6ICBnc2NAMTNlMDAwMDAgewotCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5v
-czUtZ3NjIjsKKwkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1MjUwLWdzYyIsICJzYW1z
-dW5nLGV4eW5vczUtZ3NjIjsKIAkJCXJlZyA9IDwweDEzZTAwMDAwIDB4MTAwMD47CiAJCQlpbnRl
-cnJ1cHRzID0gPEdJQ19TUEkgODUgSVJRX1RZUEVfTEVWRUxfSElHSD47CiAJCQlwb3dlci1kb21h
-aW5zID0gPCZwZF9nc2M+OwpAQCAtNjQ3LDcgKzY0Nyw3IEBACiAJCX07CiAKIAkJZ3NjXzE6ICBn
-c2NAMTNlMTAwMDAgewotCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsKKwkJ
-CWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1MjUwLWdzYyIsICJzYW1zdW5nLGV4eW5vczUt
-Z3NjIjsKIAkJCXJlZyA9IDwweDEzZTEwMDAwIDB4MTAwMD47CiAJCQlpbnRlcnJ1cHRzID0gPEdJ
-Q19TUEkgODYgSVJRX1RZUEVfTEVWRUxfSElHSD47CiAJCQlwb3dlci1kb21haW5zID0gPCZwZF9n
-c2M+OwpAQCAtNjU3LDcgKzY1Nyw3IEBACiAJCX07CiAKIAkJZ3NjXzI6ICBnc2NAMTNlMjAwMDAg
-ewotCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsKKwkJCWNvbXBhdGlibGUg
-PSAic2Ftc3VuZyxleHlub3M1MjUwLWdzYyIsICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsKIAkJCXJl
-ZyA9IDwweDEzZTIwMDAwIDB4MTAwMD47CiAJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgODcgSVJR
-X1RZUEVfTEVWRUxfSElHSD47CiAJCQlwb3dlci1kb21haW5zID0gPCZwZF9nc2M+OwpAQCAtNjY3
-LDcgKzY2Nyw3IEBACiAJCX07CiAKIAkJZ3NjXzM6ICBnc2NAMTNlMzAwMDAgewotCQkJY29tcGF0
-aWJsZSA9ICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsKKwkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxl
-eHlub3M1MjUwLWdzYyIsICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsKIAkJCXJlZyA9IDwweDEzZTMw
-MDAwIDB4MTAwMD47CiAJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgODggSVJRX1RZUEVfTEVWRUxf
-SElHSD47CiAJCQlwb3dlci1kb21haW5zID0gPCZwZF9nc2M+OwpkaWZmIC0tZ2l0IGEvYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNTQyMC5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQy
-MC5kdHNpCmluZGV4IDAyZDJmODkuLjYxNjY3MzAgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczU0MjAuZHRzaQorKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0
-c2kKQEAgLTY1OCw3ICs2NTgsNyBAQAogCQl9OwogCiAJCWdzY18wOiB2aWRlby1zY2FsZXJAMTNl
-MDAwMDAgewotCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsKKwkJCWNvbXBh
-dGlibGUgPSAic2Ftc3VuZyxleHlub3M1NDIwLWdzYyIsICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsK
-IAkJCXJlZyA9IDwweDEzZTAwMDAwIDB4MTAwMD47CiAJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkg
-ODUgSVJRX1RZUEVfTEVWRUxfSElHSD47CiAJCQljbG9ja3MgPSA8JmNsb2NrIENMS19HU0NMMD47
-CkBAIC02NjgsNyArNjY4LDcgQEAKIAkJfTsKIAogCQlnc2NfMTogdmlkZW8tc2NhbGVyQDEzZTEw
-MDAwIHsKLQkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1LWdzYyI7CisJCQljb21wYXRp
-YmxlID0gInNhbXN1bmcsZXh5bm9zNTQyMC1nc2MiLCAic2Ftc3VuZyxleHlub3M1LWdzYyI7CiAJ
-CQlyZWcgPSA8MHgxM2UxMDAwMCAweDEwMDA+OwogCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDg2
-IElSUV9UWVBFX0xFVkVMX0hJR0g+OwogCQkJY2xvY2tzID0gPCZjbG9jayBDTEtfR1NDTDE+Owot
-LSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Exynos 5250 and 5420 have different hardware rotation limits.
+Since we have to distinguish between these two, we add different
+compatible(samsung,exynos5250-gsc and samsung,exynos5420-gsc).
+
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ Documentation/devicetree/bindings/media/exynos5-gsc.txt | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/media/exynos5-gsc.txt b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
+index 26ca25b..0d4fdae 100644
+--- a/Documentation/devicetree/bindings/media/exynos5-gsc.txt
++++ b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
+@@ -3,8 +3,11 @@
+ G-Scaler is used for scaling and color space conversion on EXYNOS5 SoCs.
+ 
+ Required properties:
+-- compatible: should be "samsung,exynos5-gsc" (for Exynos 5250, 5420 and
+-	      5422 SoCs) or "samsung,exynos5433-gsc" (Exynos 5433)
++- compatible: should be one of
++	      "samsung,exynos5250-gsc"
++	      "samsung,exynos5420-gsc"
++	      "samsung,exynos5433-gsc"
++	      "samsung,exynos5-gsc" (deprecated)
+ - reg: should contain G-Scaler physical address location and length.
+ - interrupts: should contain G-Scaler interrupt number
+ 
+@@ -15,7 +18,7 @@ Optional properties:
+ Example:
+ 
+ gsc_0:  gsc@0x13e00000 {
+-	compatible = "samsung,exynos5-gsc";
++	compatible = "samsung,exynos5250-gsc";
+ 	reg = <0x13e00000 0x1000>;
+ 	interrupts = <0 85 0>;
+ };
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
