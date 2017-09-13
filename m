@@ -1,78 +1,56 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] [media] s3c-camif: fix out-of-bounds array access
-Date: Wed, 13 Sep 2017 11:25:47 +0200
-Message-ID: <4355b20a-504c-4e83-92c8-049e6c6d6a5f@samsung.com>
-References: <20170912200932.3634089-1-arnd@arndb.de>
-        <CGME20170913092551epcas1p4f84e118f364f605cb5cc6b8b669ac095@epcas1p4.samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH v3 4/6] [media] exynos-gsc: Add hardware rotation limits
+Date: Wed, 13 Sep 2017 18:28:02 +0900
+Message-ID: <21b6ae5d-a77b-3ab1-bc84-5f30e76fab50@samsung.com>
+References: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170908060309epcas1p3d48dd0871d3fde02ba3c9921bbe5a7a6@epcas1p3.samsung.com>
+ <1504850560-27950-5-git-send-email-hoegeun.kwon@samsung.com>
+ <27b46679-e6c7-2471-f10e-3f0634178ebf@samsung.com>
+ <bb025fcb-e316-dfe9-a8eb-8a9535f35b93@samsung.com>
+ <a915a1f7-2c01-472b-b9ee-5367c488a89f@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:15017 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751610AbdIMJZy (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 05:25:54 -0400
-In-reply-to: <20170912200932.3634089-1-arnd@arndb.de>
-Content-language: en-GB
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <a915a1f7-2c01-472b-b9ee-5367c488a89f@samsung.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, krzk@kernel.org, robh+dt@kernel.org, kgene@kernel.org, dri-devel@lists.freedesktop.org, mchehab@kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/12/2017 10:09 PM, Arnd Bergmann wrote:
-> While experimenting with older compiler versions, I ran
-> into a warning that no longer shows up on gcc-4.8 or newer:
-> 
-> drivers/media/platform/s3c-camif/camif-capture.c: In function '__camif_subdev_try_format':
-> drivers/media/platform/s3c-camif/camif-capture.c:1265:25: error: array subscript is below array bounds
-> 
-> This is an off-by-one bug, leading to an access before the start of the
-> array, while newer compilers silently assume this undefined behavior
-> cannot happen and leave the loop at index 0 if no other entry matches.
-> 
-> Since the code is not only wrong, but also has no effect besides the
-> out-of-bounds access, this patch just removes it.
-> 
-> I found an existing gcc bug for it and added a reduced version
-> of the function there.
-> 
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69249#c3
-> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/media/platform/s3c-camif/camif-capture.c | 7 -------
->   1 file changed, 7 deletions(-)
-> 
-> diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
-> index 25c7a7d42292..c6921f6a5a6a 100644
-> --- a/drivers/media/platform/s3c-camif/camif-capture.c
-> +++ b/drivers/media/platform/s3c-camif/camif-capture.c
-> @@ -1256,17 +1256,10 @@ static void __camif_subdev_try_format(struct camif_dev *camif,
->   {
->   	const struct s3c_camif_variant *variant = camif->variant;
->   	const struct vp_pix_limits *pix_lim;
-> -	int i = ARRAY_SIZE(camif_mbus_formats);
->   
->   	/* FIXME: constraints against codec or preview path ? */
->   	pix_lim = &variant->vp_pix_limits[VP_CODEC];
->   
-> -	while (i-- >= 0)
-> -		if (camif_mbus_formats[i] == mf->code)
-> -			break;
-> -
-> -	mf->code = camif_mbus_formats[i];
-
-
-Interesting finding... the function needs to ensure mf->code is set 
-to one of supported values by the driver, so instead of removing 
-how about changing the above line to:
-
-	if (i < 0)
-		mf->code = camif_mbus_formats[0];
-
-?
-
--- 
-Thanks,
-Sylwester
+T24gMDkvMTMvMjAxNyAwNjoxMSBQTSwgU3lsd2VzdGVyIE5hd3JvY2tpIHdyb3RlOgo+IEhpIEhv
+ZWdldW4sCj4KPiBPbiAwOS8xMy8yMDE3IDA0OjMzIEFNLCBIb2VnZXVuIEt3b24gd3JvdGU6Cj4+
+Pj4gQEAgLTEwMTcsOCArMTA4MywxMiBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgZ3NjX2lycV9oYW5k
+bGVyKGludCBpcnEsCj4+Pj4gdm9pZCAqcHJpdikKPj4+PiAgICAgICBzdGF0aWMgY29uc3Qgc3Ry
+dWN0IG9mX2RldmljZV9pZCBleHlub3NfZ3NjX21hdGNoW10gPSB7Cj4+Pj4gICAgICAgICB7Cj4+
+Pj4gLSAgICAgICAgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1LWdzYyIsCj4+Pj4gLSAg
+ICAgICAgLmRhdGEgPSAmZ3NjX3ZfMTAwX2RydmRhdGEsCj4+PiBDYW4geW91IGtlZXAgdGhlICJz
+YW1zdW5nLGV4eW5vczUtZ3NjIiBlbnRyeSB3aXRoIHRoZSBnc2Nfdl81MjUwX3ZhcmlhbnQKPj4+
+IGRhdGEsIHNvIHRoYXQgaXQgY2FuIHdvcmsgd2l0aCAic2Ftc3VuZyxleHlub3M1LWdzYyIgY29t
+cGF0aWJsZSBpbiBEVAo+Pj4gb24gYm90aCBleHlub3M1MjUwIGFuZCBleHlub3M1NDIwIFNvQ3M/
+Cj4+Pgo+PiBUaGFuayB5b3UgZm9yIHlvdXIgcXVlc3Rpb24uCj4+Cj4+IEV4eW5vcyA1MjUwIGFu
+ZCA1NDIwIGhhdmUgZGlmZmVyZW50IGhhcmR3YXJlIHJvdGF0aW9uIGxpbWl0cy4KPj4gRXh5bm9z
+IDUyNTAgaXMgJy5yZWFsX3JvdF9lbl93L2ggPSAyMDE2JyBhbmQgNTQyMCBpcyAnLnJlYWxfcm90
+X2VuX3cvaCA9Cj4+IDIwNDgnLgo+Pgo+PiBTbyBteSBvcGluaW9uIHRoZXkgbXVzdCBoYXZlIGRp
+ZmZlcmVudCBjb21wYXRpYmxlLgo+IEkgdGhpbmsgdGhlcmUgaXMgc29tZSBtaXN1bmRlcnN0YW5k
+aW5nLCBtdSBzdWdnZXN0aW9uIHdhcyB0byBrZWVwIHRoZQo+ICJzYW1zdW5nLGV4eW5vczUtZ3Nj
+IiBjb21wYXRpYmxlIGVudHJ5IGluIGFkZGl0aW9uIHRvIHRoZSBuZXcgaW50cm9kdWNlZAo+IG9u
+ZXM6ICJzYW1zdW5nLGV4eW5vczUyNTAtZ3NjIiBhbmQgInNhbXN1bmcsZXh5bm9zNTQyMC1nc2Mi
+LiBUaGF0J3MgaW4KPiBvcmRlciB0byBtYWtlIHlvdXIgY2hhbmdlcyBwb3NzaWJseSBiYWNrd2Fy
+ZCBjb21wYXRpYmxlLCBpbiB0aGVvcnkKPiB0aGUgdXBkYXRlZCBkcml2ZXIgc2hvdWxkIHN0aWxs
+IHdvcmsgd2l0aG91dCBjaGFuZ2VzIGluIGR0cy4KCgpUaGFuayB5b3UgYWdhaW4gZm9yIHlvdXIg
+ZXhwbGFuYXRpb24uCgpZZXMsIEkgdW5kZXJzdG9vZC4KSSB3aWxsIGtlZXAgInNhbXN1bmcsZXh5
+bm9zNS1nc2MiIGNvbXBhdGlibGUsCmFuZCBhZGQgRXh5bm9zIDUyNTAvNTQyMC81NDMzIGNvbXBh
+dGlibGUuCgpCZXN0IHJlZ2FyZHMsCkhvZWdldW4KCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
