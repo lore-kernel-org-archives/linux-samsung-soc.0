@@ -1,54 +1,78 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 4/6] [media] exynos-gsc: Add hardware rotation limits
-Date: Wed, 13 Sep 2017 11:11:23 +0200
-Message-ID: <a915a1f7-2c01-472b-b9ee-5367c488a89f@samsung.com>
-References: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
-        <CGME20170908060309epcas1p3d48dd0871d3fde02ba3c9921bbe5a7a6@epcas1p3.samsung.com>
-        <1504850560-27950-5-git-send-email-hoegeun.kwon@samsung.com>
-        <27b46679-e6c7-2471-f10e-3f0634178ebf@samsung.com>
-        <bb025fcb-e316-dfe9-a8eb-8a9535f35b93@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] [media] s3c-camif: fix out-of-bounds array access
+Date: Wed, 13 Sep 2017 11:25:47 +0200
+Message-ID: <4355b20a-504c-4e83-92c8-049e6c6d6a5f@samsung.com>
+References: <20170912200932.3634089-1-arnd@arndb.de>
+        <CGME20170913092551epcas1p4f84e118f364f605cb5cc6b8b669ac095@epcas1p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <bb025fcb-e316-dfe9-a8eb-8a9535f35b93-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:15017 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751610AbdIMJZy (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 13 Sep 2017 05:25:54 -0400
+In-reply-to: <20170912200932.3634089-1-arnd@arndb.de>
 Content-language: en-GB
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Hoegeun,
-
-On 09/13/2017 04:33 AM, Hoegeun Kwon wrote:
->>> @@ -1017,8 +1083,12 @@ static irqreturn_t gsc_irq_handler(int irq,
->>> void *priv)
->>>      static const struct of_device_id exynos_gsc_match[] = {
->>>        {
->>> -        .compatible = "samsung,exynos5-gsc",
->>> -        .data = &gsc_v_100_drvdata,
->> Can you keep the "samsung,exynos5-gsc" entry with the gsc_v_5250_variant
->> data, so that it can work with "samsung,exynos5-gsc" compatible in DT
->> on both exynos5250 and exynos5420 SoCs?
->>
-> Thank you for your question.
+On 09/12/2017 10:09 PM, Arnd Bergmann wrote:
+> While experimenting with older compiler versions, I ran
+> into a warning that no longer shows up on gcc-4.8 or newer:
 > 
-> Exynos 5250 and 5420 have different hardware rotation limits.
-> Exynos 5250 is '.real_rot_en_w/h = 2016' and 5420 is '.real_rot_en_w/h =
-> 2048'.
+> drivers/media/platform/s3c-camif/camif-capture.c: In function '__camif_subdev_try_format':
+> drivers/media/platform/s3c-camif/camif-capture.c:1265:25: error: array subscript is below array bounds
 > 
-> So my opinion they must have different compatible.
+> This is an off-by-one bug, leading to an access before the start of the
+> array, while newer compilers silently assume this undefined behavior
+> cannot happen and leave the loop at index 0 if no other entry matches.
+> 
+> Since the code is not only wrong, but also has no effect besides the
+> out-of-bounds access, this patch just removes it.
+> 
+> I found an existing gcc bug for it and added a reduced version
+> of the function there.
+> 
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69249#c3
+> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/media/platform/s3c-camif/camif-capture.c | 7 -------
+>   1 file changed, 7 deletions(-)
+> 
+> diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+> index 25c7a7d42292..c6921f6a5a6a 100644
+> --- a/drivers/media/platform/s3c-camif/camif-capture.c
+> +++ b/drivers/media/platform/s3c-camif/camif-capture.c
+> @@ -1256,17 +1256,10 @@ static void __camif_subdev_try_format(struct camif_dev *camif,
+>   {
+>   	const struct s3c_camif_variant *variant = camif->variant;
+>   	const struct vp_pix_limits *pix_lim;
+> -	int i = ARRAY_SIZE(camif_mbus_formats);
+>   
+>   	/* FIXME: constraints against codec or preview path ? */
+>   	pix_lim = &variant->vp_pix_limits[VP_CODEC];
+>   
+> -	while (i-- >= 0)
+> -		if (camif_mbus_formats[i] == mf->code)
+> -			break;
+> -
+> -	mf->code = camif_mbus_formats[i];
 
-I think there is some misunderstanding, mu suggestion was to keep the 
-"samsung,exynos5-gsc" compatible entry in addition to the new introduced 
-ones: "samsung,exynos5250-gsc" and "samsung,exynos5420-gsc". That's in
-order to make your changes possibly backward compatible, in theory 
-the updated driver should still work without changes in dts.
+
+Interesting finding... the function needs to ensure mf->code is set 
+to one of supported values by the driver, so instead of removing 
+how about changing the above line to:
+
+	if (i < 0)
+		mf->code = camif_mbus_formats[0];
+
+?
 
 -- 
-Regards,
+Thanks,
 Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
