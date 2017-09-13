@@ -1,52 +1,185 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH v2 2/3] ARM: dts: exynos: Add clean name of compatible.
-Date: Wed, 13 Sep 2017 11:31:13 +0900
-Message-ID: <77404c7b-b54d-22e8-63b2-70401520b6e4@samsung.com>
-References: <CGME20170909195841epcas1p37badd9da52c773e6167523ebfb2ac7ae@epcas1p3.samsung.com>
- <201709100314.wmGSSdNC%fengguang.wu@intel.com>
+Subject: Re: [PATCH v3 4/6] [media] exynos-gsc: Add hardware rotation limits
+Date: Wed, 13 Sep 2017 11:33:45 +0900
+Message-ID: <bb025fcb-e316-dfe9-a8eb-8a9535f35b93@samsung.com>
+References: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
+        <CGME20170908060309epcas1p3d48dd0871d3fde02ba3c9921bbe5a7a6@epcas1p3.samsung.com>
+        <1504850560-27950-5-git-send-email-hoegeun.kwon@samsung.com>
+        <27b46679-e6c7-2471-f10e-3f0634178ebf@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <201709100314.wmGSSdNC%fengguang.wu@intel.com>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <27b46679-e6c7-2471-f10e-3f0634178ebf@samsung.com>
 Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-kernel@vger.kernel.org, krzk@kernel.org, robh+dt@kernel.org, kgene@kernel.org, kbuild-all@01.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, mchehab@kernel.org
+Cc: inki.dae@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, m.szyprowski@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDkvMTAvMjAxNyAwNDo1NyBBTSwga2J1aWxkIHRlc3Qgcm9ib3Qgd3JvdGU6Cj4gSGkgSG9l
-Z2V1biwKPgo+IFthdXRvIGJ1aWxkIHRlc3QgRVJST1Igb24gcm9iaC9mb3ItbmV4dF0KPiBbYWxz
-byBidWlsZCB0ZXN0IEVSUk9SIG9uIHY0LjEzIG5leHQtMjAxNzA5MDhdCj4gW2Nhbm5vdCBhcHBs
-eSB0byBkcm0tZXh5bm9zL2V4eW5vcy1kcm0vZm9yLW5leHRdCj4gW2lmIHlvdXIgcGF0Y2ggaXMg
-YXBwbGllZCB0byB0aGUgd3JvbmcgZ2l0IHRyZWUsIHBsZWFzZSBkcm9wIHVzIGEgbm90ZSB0byBo
-ZWxwIGltcHJvdmUgdGhlIHN5c3RlbV0KPgo+IHVybDogICAgaHR0cHM6Ly9naXRodWIuY29tLzBk
-YXktY2kvbGludXgvY29tbWl0cy9Ib2VnZXVuLUt3b24vZHJtLWV4eW5vcy1nc2MtU3VwcG9ydC10
-aGUtaGFyZHdhcmUtcm90YXRpb24tbGltaXRzLzIwMTcwOTEwLTAxNTE1NQo+IGJhc2U6ICAgaHR0
-cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvcm9iaC9saW51eC5n
-aXQgZm9yLW5leHQKPiBjb25maWc6IGFybS1hdDkxX2R0X2RlZmNvbmZpZyAoYXR0YWNoZWQgYXMg
-LmNvbmZpZykKPiBjb21waWxlcjogYXJtLWxpbnV4LWdudWVhYmktZ2NjIChEZWJpYW4gNi4xLjEt
-OSkgNi4xLjEgMjAxNjA3MDUKPiByZXByb2R1Y2U6Cj4gICAgICAgICAgd2dldCBodHRwczovL3Jh
-dy5naXRodWJ1c2VyY29udGVudC5jb20vaW50ZWwvbGtwLXRlc3RzL21hc3Rlci9zYmluL21ha2Uu
-Y3Jvc3MgLU8gfi9iaW4vbWFrZS5jcm9zcwo+ICAgICAgICAgIGNobW9kICt4IH4vYmluL21ha2Uu
-Y3Jvc3MKPiAgICAgICAgICAjIHNhdmUgdGhlIGF0dGFjaGVkIC5jb25maWcgdG8gbGludXggYnVp
-bGQgdHJlZQo+ICAgICAgICAgIG1ha2UuY3Jvc3MgQVJDSD1hcm0KPgo+IEFsbCBlcnJvcnMgKG5l
-dyBvbmVzIHByZWZpeGVkIGJ5ID4+KToKPgo+Pj4gRXJyb3I6IGFyY2gvYXJtL2Jvb3QvZHRzL2V4
-eW5vczUyNTAuZHRzaTo2NDAuNDAtNDEgc3ludGF4IGVycm9yCj4gICAgIEZBVEFMIEVSUk9SOiBV
-bmFibGUgdG8gcGFyc2UgaW5wdXQgdHJlZQoKVGhhbmsgeW91IGZvciB5b3VyIGNoZWNrLgoKVGhp
-cyBwcm9ibGVtIHdhcyBjYXVzZWQgYnkgdHlwb3MuCnZlcjMgaGFzIGJlZW4gbW9kaWZpZWQuCgpC
-ZXN0IHJlZ2FyZHMsCkhvZWdldW4KCj4KPiAtLS0KPiAwLURBWSBrZXJuZWwgdGVzdCBpbmZyYXN0
-cnVjdHVyZSAgICAgICAgICAgICAgICBPcGVuIFNvdXJjZSBUZWNobm9sb2d5IENlbnRlcgo+IGh0
-dHBzOi8vbGlzdHMuMDEub3JnL3BpcGVybWFpbC9rYnVpbGQtYWxsICAgICAgICAgICAgICAgICAg
-IEludGVsIENvcnBvcmF0aW9uCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+Hi Sylwester,
+
+On 09/11/2017 06:35 PM, Sylwester Nawrocki wrote:
+> On 09/08/2017 08:02 AM, Hoegeun Kwon wrote:
+>> The hardware rotation limits of gsc depends on SOC (Exynos
+>> 5250/5420/5433). Distinguish them and add them to the driver data.
+>>
+>> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+>> ---
+>>   drivers/media/platform/exynos-gsc/gsc-core.c | 96 
+>> ++++++++++++++++++++++++----
+>>   1 file changed, 83 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c 
+>> b/drivers/media/platform/exynos-gsc/gsc-core.c
+>> index 4380150..8f8636e 100644
+>> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
+>> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+>> @@ -943,7 +943,37 @@ static irqreturn_t gsc_irq_handler(int irq, void 
+>> *priv)
+>>       return IRQ_HANDLED;
+>>   }
+>>   -static struct gsc_pix_max gsc_v_100_max = {
+>> +static struct gsc_pix_max gsc_v_5250_max = {
+>> +    .org_scaler_bypass_w    = 8192,
+>> +    .org_scaler_bypass_h    = 8192,
+>> +    .org_scaler_input_w    = 4800,
+>> +    .org_scaler_input_h    = 3344,
+>> +    .real_rot_dis_w        = 4800,
+>> +    .real_rot_dis_h        = 3344,
+>> +    .real_rot_en_w        = 2016,
+>> +    .real_rot_en_h        = 2016,
+>> +    .target_rot_dis_w    = 4800,
+>> +    .target_rot_dis_h    = 3344,
+>> +    .target_rot_en_w    = 2016,
+>> +    .target_rot_en_h    = 2016,
+>> +};
+>> +
+>> +static struct gsc_pix_max gsc_v_5420_max = {
+>> +    .org_scaler_bypass_w    = 8192,
+>> +    .org_scaler_bypass_h    = 8192,
+>> +    .org_scaler_input_w    = 4800,
+>> +    .org_scaler_input_h    = 3344,
+>> +    .real_rot_dis_w        = 4800,
+>> +    .real_rot_dis_h        = 3344,
+>> +    .real_rot_en_w        = 2048,
+>> +    .real_rot_en_h        = 2048,
+>> +    .target_rot_dis_w    = 4800,
+>> +    .target_rot_dis_h    = 3344,
+>> +    .target_rot_en_w    = 2016,
+>> +    .target_rot_en_h    = 2016,
+>> +};
+>> +
+>> +static struct gsc_pix_max gsc_v_5433_max = {
+>>       .org_scaler_bypass_w    = 8192,
+>>       .org_scaler_bypass_h    = 8192,
+>>       .org_scaler_input_w    = 4800,
+>> @@ -979,8 +1009,8 @@ static irqreturn_t gsc_irq_handler(int irq, void 
+>> *priv)
+>>       .target_h        = 2,  /* yuv420 : 2, others : 1 */
+>>   };
+>>   -static struct gsc_variant gsc_v_100_variant = {
+>> -    .pix_max        = &gsc_v_100_max,
+>> +static struct gsc_variant gsc_v_5250_variant = {
+>> +    .pix_max        = &gsc_v_5250_max,
+>>       .pix_min        = &gsc_v_100_min,
+>>       .pix_align        = &gsc_v_100_align,
+>>       .in_buf_cnt        = 32,
+>> @@ -992,12 +1022,48 @@ static irqreturn_t gsc_irq_handler(int irq, 
+>> void *priv)
+>>       .local_sc_down        = 2,
+>>   };
+>>   -static struct gsc_driverdata gsc_v_100_drvdata = {
+>> +static struct gsc_variant gsc_v_5420_variant = {
+>> +    .pix_max        = &gsc_v_5420_max,
+>> +    .pix_min        = &gsc_v_100_min,
+>> +    .pix_align        = &gsc_v_100_align,
+>> +    .in_buf_cnt        = 32,
+>> +    .out_buf_cnt        = 32,
+>> +    .sc_up_max        = 8,
+>> +    .sc_down_max        = 16,
+>> +    .poly_sc_down_max    = 4,
+>> +    .pre_sc_down_max    = 4,
+>> +    .local_sc_down        = 2,
+>> +};
+>> +
+>> +static struct gsc_variant gsc_v_5433_variant = {
+>> +    .pix_max        = &gsc_v_5433_max,
+>> +    .pix_min        = &gsc_v_100_min,
+>> +    .pix_align        = &gsc_v_100_align,
+>> +    .in_buf_cnt        = 32,
+>> +    .out_buf_cnt        = 32,
+>> +    .sc_up_max        = 8,
+>> +    .sc_down_max        = 16,
+>> +    .poly_sc_down_max    = 4,
+>> +    .pre_sc_down_max    = 4,
+>> +    .local_sc_down        = 2,
+>> +};
+>> +
+>> +static struct gsc_driverdata gsc_v_5250_drvdata = {
+>>       .variant = {
+>> -        [0] = &gsc_v_100_variant,
+>> -        [1] = &gsc_v_100_variant,
+>> -        [2] = &gsc_v_100_variant,
+>> -        [3] = &gsc_v_100_variant,
+>> +        [0] = &gsc_v_5250_variant,
+>> +        [1] = &gsc_v_5250_variant,
+>> +        [2] = &gsc_v_5250_variant,
+>> +        [3] = &gsc_v_5250_variant,
+>> +    },
+>> +    .num_entities = 4,
+>> +    .clk_names = { "gscl" },
+>> +    .num_clocks = 1,
+>> +};
+>> +
+>> +static struct gsc_driverdata gsc_v_5420_drvdata = {
+>> +    .variant = {
+>> +        [0] = &gsc_v_5420_variant,
+>> +        [1] = &gsc_v_5420_variant,
+>>       },
+>>       .num_entities = 4,
+>>       .clk_names = { "gscl" },
+>> @@ -1006,9 +1072,9 @@ static irqreturn_t gsc_irq_handler(int irq, 
+>> void *priv)
+>>     static struct gsc_driverdata gsc_5433_drvdata = {
+>>       .variant = {
+>> -        [0] = &gsc_v_100_variant,
+>> -        [1] = &gsc_v_100_variant,
+>> -        [2] = &gsc_v_100_variant,
+>> +        [0] = &gsc_v_5433_variant,
+>> +        [1] = &gsc_v_5433_variant,
+>> +        [2] = &gsc_v_5433_variant,
+>>       },
+>>       .num_entities = 3,
+>>       .clk_names = { "pclk", "aclk", "aclk_xiu", "aclk_gsclbend" },
+>> @@ -1017,8 +1083,12 @@ static irqreturn_t gsc_irq_handler(int irq, 
+>> void *priv)
+>>     static const struct of_device_id exynos_gsc_match[] = {
+>>       {
+>> -        .compatible = "samsung,exynos5-gsc",
+>> -        .data = &gsc_v_100_drvdata,
+>
+> Can you keep the "samsung,exynos5-gsc" entry with the gsc_v_5250_variant
+> data, so that it can work with "samsung,exynos5-gsc" compatible in DT
+> on both exynos5250 and exynos5420 SoCs?
+>
+
+Thank you for your question.
+
+Exynos 5250 and 5420 have different hardware rotation limits.
+Exynos 5250 is '.real_rot_en_w/h = 2016' and 5420 is '.real_rot_en_w/h = 
+2048'.
+
+So my opinion they must have different compatible.
+
+Best regards,
+Hoegeun
+
+>> +        .compatible = "samsung,exynos5250-gsc",
+>> +        .data = &gsc_v_5250_drvdata,
+>> +    },
+>> +    {
+>> +        .compatible = "samsung,exynos5420-gsc",
+>> +        .data = &gsc_v_5420_drvdata,
+>>       },
+>
