@@ -1,55 +1,105 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] [media] s3c-camif: fix out-of-bounds array access
-Date: Wed, 13 Sep 2017 16:03:31 +0200
-Message-ID: <CAK8P3a2CDqgaqZiopJJOB6WsTgQEB49sz7=7izmFfaBOgG5_xA@mail.gmail.com>
-References: <CGME20170913092551epcas1p4f84e118f364f605cb5cc6b8b669ac095@epcas1p4.samsung.com>
- <20170912200932.3634089-1-arnd@arndb.de> <4355b20a-504c-4e83-92c8-049e6c6d6a5f@samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: Re: [PATCH] crypto: s5p-sss: Add HASH support for Exynos
+Date: Wed, 13 Sep 2017 16:24:05 +0200
+Message-ID: <77dbef9a-a648-8380-ca08-e6874b4d27fb@partner.samsung.com>
+References: <CGME20170913124433eucas1p11ac46af1676151477000f8952b0ca654@eucas1p1.samsung.com>
+        <51b3b386-22c0-7663-6f54-d166ebebd332@partner.samsung.com>
+        <CAJKOXPcQhn9gq2cm_1nc8N6MEbJ0ntZqfwmY9XDYwc5VEERvdA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <4355b20a-504c-4e83-92c8-049e6c6d6a5f@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAJKOXPcQhn9gq2cm_1nc8N6MEbJ0ntZqfwmY9XDYwc5VEERvdA@mail.gmail.com>
+Content-language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 13, 2017 at 11:25 AM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 09/12/2017 10:09 PM, Arnd Bergmann wrote:
+Hi Krzysztof,
 
->>   {
->>       const struct s3c_camif_variant *variant = camif->variant;
->>       const struct vp_pix_limits *pix_lim;
->> -     int i = ARRAY_SIZE(camif_mbus_formats);
+On 13.09.2017 15:18, Krzysztof Kozlowski wrote:
+> On Wed, Sep 13, 2017 at 2:44 PM, Kamil Konieczny
+> <k.konieczny@partner.samsung.com> wrote:
+>> Add support for MD5, SHA1, SHA256 hash algorithms for Exynos HW.
+>> It uses the crypto framework asynchronous hash api.
+>> It is based on omap-sham.c driver.
+>> S5P has some HW differencies and is not implemented.
 >>
->>       /* FIXME: constraints against codec or preview path ? */
->>       pix_lim = &variant->vp_pix_limits[VP_CODEC];
+>> Modifications in s5p-sss:
 >>
->> -     while (i-- >= 0)
->> -             if (camif_mbus_formats[i] == mf->code)
->> -                     break;
->> -
->> -     mf->code = camif_mbus_formats[i];
->
->
-> Interesting finding... the function needs to ensure mf->code is set
-> to one of supported values by the driver, so instead of removing
-> how about changing the above line to:
->
->         if (i < 0)
->                 mf->code = camif_mbus_formats[0];
->
-> ?
+>> - Add hash supporting structures and functions.
+>>
+>> - Modify irq handler to handle both aes and hash signals.
+>>
+>> - Disable HASH in probe if Exynos PRNG is enabled.
+>>
+>> - Add new copyright line and new author.
+>>
+>> - Tested on Odroid-U3 with Exynos 4412 CPU, kernel 4.13-rc6
+>>   with crypto run-time self test testmgr
+>>   and with tcrypt module with: modprobe tcrypt sec=1 mode=N
+>>   where N=402, 403, 404 (MD5, SHA1, SHA256).
+>>
+>> Modifications in drivers/crypto/Kconfig:
+>>
+>> - Select sw algorithms MD5, SHA1 and SHA256 in S5P
+>>   as they are nedded for fallback.
+>>
+>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+>> ---
+>>  drivers/crypto/Kconfig   |    6 +
+>>  drivers/crypto/s5p-sss.c | 2062 +++++++++++++++++++++++++++++++++++++++++++---
+>>  2 files changed, 1939 insertions(+), 129 deletions(-)
+>>
+> 
+> Nice work, thanks!
+> 
+> You need to split the patch, it is just too huge making it very
+> difficult to review. Please split it per logically sensible
+> improvements. 
 
-That would still have one of the two out-of-bounds accesses ;-)
+Can you suggest how to break it up ?
 
-maybe this
+It is now big update, added working functionallity in one piece,
+but I agree it can be hard to read
+as git did some strange things,
+like delete few aes functions (and mixing this delete with '+' lines)
+and then adding the same aes without any change.
 
-for (i = 0; i < ARRAY_SIZE(camif_mbus_formats); i++)
-        if (camif_mbus_formats[i] == mf->code)
-               break;
+> I see some cleanups mixed with new features - this
+> definitely must be split out.
 
-if (i == ARRAY_SIZE(camif_mbus_formats))
-       mf->code = camif_mbus_formats[0];
+What cleanups do you see ? 
+You mean this one "#if 0" ?
+ 
+> This looks more or less like an early work or RFC... because I see
+> things like "#if 0",
 
-      Arnd
+You are right, I will remove it.
+
+> "HACK" or "CONFIG_....". If so, ask the question
+> about your problems directly. Do not force readers to find them out...
+
+The problem is in dts there are described
+only AES registers (the range is too small),
+and HASH and PRNG uses the same HASH_CONTROL_1 register 
+(setting SecSS engine).
+Both AES and HASH must use FC control registers for irq
+and flow setting.
+
+So this 'hack' prevents using both exynos-prng and s5p-sss HASH,
+and in presence of exynos-prng it will load only s5p-sss aes part.
+
+This will disable exynos-prng in scenario:
+
+remove exynos-prng
+remove s5p-sss
+load s5p-sss
+
+now exynos-prng module will not load.
+
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
