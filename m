@@ -1,56 +1,119 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH v3 4/6] [media] exynos-gsc: Add hardware rotation limits
-Date: Wed, 13 Sep 2017 18:28:02 +0900
-Message-ID: <21b6ae5d-a77b-3ab1-bc84-5f30e76fab50@samsung.com>
-References: <1504850560-27950-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170908060309epcas1p3d48dd0871d3fde02ba3c9921bbe5a7a6@epcas1p3.samsung.com>
- <1504850560-27950-5-git-send-email-hoegeun.kwon@samsung.com>
- <27b46679-e6c7-2471-f10e-3f0634178ebf@samsung.com>
- <bb025fcb-e316-dfe9-a8eb-8a9535f35b93@samsung.com>
- <a915a1f7-2c01-472b-b9ee-5367c488a89f@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 0/6] Exynos DRM: rewrite IPP subsystem and userspace API
+Date: Wed, 13 Sep 2017 13:16:57 +0200
+Message-ID: <00bcaddf-629c-03e8-c611-7c0a7aa3cb11@math.uni-bielefeld.de>
+References: <CGME20170912080909eucas1p1942c418e6e4e2621bb977ecb5ae588be@eucas1p1.samsung.com>
+ <1505203739-29747-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <a915a1f7-2c01-472b-b9ee-5367c488a89f@samsung.com>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, krzk@kernel.org, robh+dt@kernel.org, kgene@kernel.org, dri-devel@lists.freedesktop.org, mchehab@kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45558 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751803AbdIMLRA (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 13 Sep 2017 07:17:00 -0400
+In-Reply-To: <1505203739-29747-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-T24gMDkvMTMvMjAxNyAwNjoxMSBQTSwgU3lsd2VzdGVyIE5hd3JvY2tpIHdyb3RlOgo+IEhpIEhv
-ZWdldW4sCj4KPiBPbiAwOS8xMy8yMDE3IDA0OjMzIEFNLCBIb2VnZXVuIEt3b24gd3JvdGU6Cj4+
-Pj4gQEAgLTEwMTcsOCArMTA4MywxMiBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgZ3NjX2lycV9oYW5k
-bGVyKGludCBpcnEsCj4+Pj4gdm9pZCAqcHJpdikKPj4+PiAgICAgICBzdGF0aWMgY29uc3Qgc3Ry
-dWN0IG9mX2RldmljZV9pZCBleHlub3NfZ3NjX21hdGNoW10gPSB7Cj4+Pj4gICAgICAgICB7Cj4+
-Pj4gLSAgICAgICAgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1LWdzYyIsCj4+Pj4gLSAg
-ICAgICAgLmRhdGEgPSAmZ3NjX3ZfMTAwX2RydmRhdGEsCj4+PiBDYW4geW91IGtlZXAgdGhlICJz
-YW1zdW5nLGV4eW5vczUtZ3NjIiBlbnRyeSB3aXRoIHRoZSBnc2Nfdl81MjUwX3ZhcmlhbnQKPj4+
-IGRhdGEsIHNvIHRoYXQgaXQgY2FuIHdvcmsgd2l0aCAic2Ftc3VuZyxleHlub3M1LWdzYyIgY29t
-cGF0aWJsZSBpbiBEVAo+Pj4gb24gYm90aCBleHlub3M1MjUwIGFuZCBleHlub3M1NDIwIFNvQ3M/
-Cj4+Pgo+PiBUaGFuayB5b3UgZm9yIHlvdXIgcXVlc3Rpb24uCj4+Cj4+IEV4eW5vcyA1MjUwIGFu
-ZCA1NDIwIGhhdmUgZGlmZmVyZW50IGhhcmR3YXJlIHJvdGF0aW9uIGxpbWl0cy4KPj4gRXh5bm9z
-IDUyNTAgaXMgJy5yZWFsX3JvdF9lbl93L2ggPSAyMDE2JyBhbmQgNTQyMCBpcyAnLnJlYWxfcm90
-X2VuX3cvaCA9Cj4+IDIwNDgnLgo+Pgo+PiBTbyBteSBvcGluaW9uIHRoZXkgbXVzdCBoYXZlIGRp
-ZmZlcmVudCBjb21wYXRpYmxlLgo+IEkgdGhpbmsgdGhlcmUgaXMgc29tZSBtaXN1bmRlcnN0YW5k
-aW5nLCBtdSBzdWdnZXN0aW9uIHdhcyB0byBrZWVwIHRoZQo+ICJzYW1zdW5nLGV4eW5vczUtZ3Nj
-IiBjb21wYXRpYmxlIGVudHJ5IGluIGFkZGl0aW9uIHRvIHRoZSBuZXcgaW50cm9kdWNlZAo+IG9u
-ZXM6ICJzYW1zdW5nLGV4eW5vczUyNTAtZ3NjIiBhbmQgInNhbXN1bmcsZXh5bm9zNTQyMC1nc2Mi
-LiBUaGF0J3MgaW4KPiBvcmRlciB0byBtYWtlIHlvdXIgY2hhbmdlcyBwb3NzaWJseSBiYWNrd2Fy
-ZCBjb21wYXRpYmxlLCBpbiB0aGVvcnkKPiB0aGUgdXBkYXRlZCBkcml2ZXIgc2hvdWxkIHN0aWxs
-IHdvcmsgd2l0aG91dCBjaGFuZ2VzIGluIGR0cy4KCgpUaGFuayB5b3UgYWdhaW4gZm9yIHlvdXIg
-ZXhwbGFuYXRpb24uCgpZZXMsIEkgdW5kZXJzdG9vZC4KSSB3aWxsIGtlZXAgInNhbXN1bmcsZXh5
-bm9zNS1nc2MiIGNvbXBhdGlibGUsCmFuZCBhZGQgRXh5bm9zIDUyNTAvNTQyMC81NDMzIGNvbXBh
-dGlibGUuCgpCZXN0IHJlZ2FyZHMsCkhvZWdldW4KCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hey Marek,
+
+first of all thanks for keeping this series alive. Looks pretty good so far.
+
+I have started to rewrite my IPP userspace API in libdrm and when this is done,
+I'm going to adapt my mpv video backend to it.
+
+With best wishes,
+Tobias
+
+
+
+Marek Szyprowski wrote:
+> Dear all,
+> 
+> This patchset performs complete rewrite of Exynos DRM IPP subsystem and
+> its userspace API.
+> 
+> Why such rewrite is needed? Exynos DRM IPP API is over-engineered in
+> general, but not really extensible on the other side. It is also buggy,
+> with significant design flaws:
+> - Userspace API covers memory-2-memory picture operations together with
+>   CRTC writeback and duplicating features, which belongs to video plane.
+> - Lack of support of the all required image formats (for example NV12
+>   Samsung-tiled cannot be used due to lack of pixel format modifier
+>   support).
+> - Userspace API designed only to mimic hardware behaviour, not easy to
+>   understand.
+> - Lack of proper input validation in the core, drivers also didn't do that
+>   correctly, so it was possible to set incorrect parameters and easil
+>   trigger IOMMU fault or memory trash.
+> - Drivers were partially disfunctional or supported only a subset of modes.
+> 
+> Due to the above limitations and issues the Exynos DRM IPP API was not
+> used by any of the open-source projects. I assume that it is safe to remove
+> this broken API without any damage to open-source community. All remaining
+> users (mainly Tizen project related) will be updated to the new version.
+> 
+> This patchset changes Exynos DRM IPP subsystem to something useful. The
+> userspace API is much simpler, state-less and easy to understand. Also
+> the code of the core and driver is significantly smaller and easier to
+> understand.
+> 
+> Patches were tested on Exynos4412 based Odroid U3 and Exynos5422
+> Odroid XU3 boards, on top of Linux next-20170911 kernel.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> 
+> My previous works in this area:
+> 
+> "[RFC v2 0/2] Exynos DRM: add Picture Processor extension"
+> https://www.spinics.net/lists/dri-devel/msg140669.html
+> - removed usage of DRM objects and properties - replaced them with simple
+>   list of parameters with predefined IDs
+> 
+> "[RFC 0/4] Exynos DRM: add Picture Processor extension"
+> https://www.spinics.net/lists/linux-samsung-soc/msg59323.html
+> - moved this feature from DRM core to Exynos DRM driver
+> - changed name from framebuffer processor to picture processor
+> - simplified code to cover only things needed by Exynos drivers
+> - implemented simple fifo task scheduler
+> - cleaned up rotator driver conversion (removed IPP remainings)
+> 
+> "[RFC 0/2] New feature: Framebuffer processors"
+> https://www.spinics.net/lists/linux-samsung-soc/msg54810.html
+> - generic approach implemented in DRM core, rejected
+> 
+> 
+> Patch summary:
+> 
+> Marek Szyprowski (6):
+>   drm/exynos: ipp: Remove Exynos DRM IPP subsystem
+>   drm/exynos: ipp: Add IPP v2 framework
+>   drm/exynos: rotator: Convert driver to IPP v2 core API
+>   drm/exynos: gsc: Convert driver to IPP v2 core API
+>   drm/exynos: Add generic support for devices shared with V4L2 subsystem
+>   drm/exynos: fimc: Convert driver to IPP v2 core API
+> 
+>  drivers/gpu/drm/exynos/Kconfig              |   12 +-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c     |   33 +-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h     |    4 +-
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  893 +++--------
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.h    |   23 -
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  853 +++-------
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.h     |   24 -
+>  drivers/gpu/drm/exynos/exynos_drm_ipp.c     | 2239 ++++++++-------------------
+>  drivers/gpu/drm/exynos/exynos_drm_ipp.h     |  352 ++---
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.c |  735 ++-------
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.h |   19 -
+>  include/uapi/drm/exynos_drm.h               |  315 ++--
+>  12 files changed, 1627 insertions(+), 3875 deletions(-)
+>  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_fimc.h
+>  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_gsc.h
+>  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_rotator.h
+> 
