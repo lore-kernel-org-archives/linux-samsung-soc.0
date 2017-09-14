@@ -1,62 +1,65 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/2] drm/exynos: Fix locking in the suspend/resume paths
-Date: Thu, 14 Sep 2017 14:01:00 +0200
-Message-ID: <1505390461-14211-2-git-send-email-m.szyprowski@samsung.com>
-References: <1505390461-14211-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170914120128eucas1p1ef0aa82654554401950b1889a9809de7@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1505390461-14211-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] clk: samsung: exynos4: Enable VPLL and EPLL clocks for
+ suspend/resume cycle
+Date: Thu, 14 Sep 2017 16:37:21 +0200
+Message-ID: <1505399852-4787-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170914143749eucas1p1f3206ff81fabc945ffc79cbddb45afc9@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:56923 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751133AbdINOhx (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 14 Sep 2017 10:37:53 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 
-Q29tbWl0IDQ4YTkyOTE2NzI5YiAoImRybS9leHlub3M6IHVzZSBkcm1fZm9yX2VhY2hfY29ubmVj
-dG9yX2l0ZXIoKSIpCnJlcGxhY2VkIHVuc2FmZSBkcm1fZm9yX2VhY2hfY29ubmVjdG9yKCkgd2l0
-aCBkcm1fZm9yX2VhY2hfY29ubmVjdG9yX2l0ZXIoKQphbmQgcmVtb3ZlZCBzdXJyb3VuZGluZyBk
-cm1fbW9kZXNldF9sb2NrIGNhbGxzLiBIb3dldmVyLCB0aGF0IGxvY2sgd2FzCnRoZXJlIG5vdCBv
-bmx5IHRvIHByb3RlY3QgdW5zYWZlIGRybV9mb3JfZWFjaF9jb25uZWN0b3IoKSwgYnV0IGl0IHdh
-cyBhbHNvCnJlcXVpcmVkIHRvIGJlIGhlbGQgYnkgdGhlIGRwbXMgY29kZSB3aGljaCB3YXMgY2Fs
-bGVkIGZyb20gdGhlIGxvb3AgYm9keS4KVGhpcyBwYXRjaCByZXN0b3JlcyB0aG9zZSBkcm1fbW9k
-ZXNldF9sb2NrIGNhbGxzIHRvIGZpeCBicm9rZW4gc3VzcGVuZAphbmQgcmVzdW1lIG9mIEV4eW5v
-cyBEUk0gc3Vic3lzdGVtIGluIHY0LjEzIGtlcm5lbC4KCkZpeGVzOiA0OGE5MjkxNjcyOWIgKCJk
-cm0vZXh5bm9zOiB1c2UgZHJtX2Zvcl9lYWNoX2Nvbm5lY3Rvcl9pdGVyKCkiKQpDQzogc3RhYmxl
-QHZnZXIua2VybmVsLm9yZyAjIHY0LjEzClNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kg
-PG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHJ2LmMgfCA0ICsrKysKIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykK
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKaW5kZXggYjFmNzI5OTYwMGYw
-Li43ZjNjZmM1ZGQzMjAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kcnYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMK
-QEAgLTE3NCw2ICsxNzQsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fc3VzcGVuZChzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpCiAJaWYgKHBtX3J1bnRpbWVfc3VzcGVuZGVkKGRldikgfHwgIWRybV9kZXYp
-CiAJCXJldHVybiAwOwogCisJZHJtX21vZGVzZXRfbG9ja19hbGwoZHJtX2Rldik7CiAJZHJtX2Nv
-bm5lY3Rvcl9saXN0X2l0ZXJfYmVnaW4oZHJtX2RldiwgJmNvbm5faXRlcik7CiAJZHJtX2Zvcl9l
-YWNoX2Nvbm5lY3Rvcl9pdGVyKGNvbm5lY3RvciwgJmNvbm5faXRlcikgewogCQlpbnQgb2xkX2Rw
-bXMgPSBjb25uZWN0b3ItPmRwbXM7CkBAIC0xODUsNiArMTg2LDcgQEAgc3RhdGljIGludCBleHlu
-b3NfZHJtX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQogCQljb25uZWN0b3ItPmRwbXMgPSBv
-bGRfZHBtczsKIAl9CiAJZHJtX2Nvbm5lY3Rvcl9saXN0X2l0ZXJfZW5kKCZjb25uX2l0ZXIpOwor
-CWRybV9tb2Rlc2V0X3VubG9ja19hbGwoZHJtX2Rldik7CiAKIAlyZXR1cm4gMDsKIH0KQEAgLTE5
-OCw2ICsyMDAsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fcmVzdW1lKHN0cnVjdCBkZXZpY2Ug
-KmRldikKIAlpZiAocG1fcnVudGltZV9zdXNwZW5kZWQoZGV2KSB8fCAhZHJtX2RldikKIAkJcmV0
-dXJuIDA7CiAKKwlkcm1fbW9kZXNldF9sb2NrX2FsbChkcm1fZGV2KTsKIAlkcm1fY29ubmVjdG9y
-X2xpc3RfaXRlcl9iZWdpbihkcm1fZGV2LCAmY29ubl9pdGVyKTsKIAlkcm1fZm9yX2VhY2hfY29u
-bmVjdG9yX2l0ZXIoY29ubmVjdG9yLCAmY29ubl9pdGVyKSB7CiAJCWlmIChjb25uZWN0b3ItPmZ1
-bmNzLT5kcG1zKSB7CkBAIC0yMDgsNiArMjExLDcgQEAgc3RhdGljIGludCBleHlub3NfZHJtX3Jl
-c3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJCX0KIAl9CiAJZHJtX2Nvbm5lY3Rvcl9saXN0X2l0
-ZXJfZW5kKCZjb25uX2l0ZXIpOworCWRybV9tb2Rlc2V0X3VubG9ja19hbGwoZHJtX2Rldik7CiAK
-IAlyZXR1cm4gMDsKIH0KLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
+PLL36XX clocks") added enable/disable operations to PLL clocks. Prior that
+VPLL and EPPL clocks were always enabled because the enable bit was never
+touched. Those clocks have to be enabled during suspend/resume cycle,
+because otherwise board fails to enter sleep mode. This patch enables them
+unconditionally before entering system suspend state. System restore
+function will set them to the previous state saved in the register cache
+done before that unconditional enable.
+
+Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for PLL36XX clocks")
+CC: stable@vger.kernel.org # v4.13
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index e40b77583c47..d2fa36bef7d1 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -294,6 +294,15 @@ enum exynos4_plls {
+ #define PLL_ENABLED	(1 << 31)
+ #define PLL_LOCKED	(1 << 29)
+ 
++static void exynos4_clk_enable_pll(u32 reg)
++{
++	u32 pll_con;
++
++	pll_con = readl(reg_base + reg);
++	pll_con |= PLL_ENABLED;
++	writel(pll_con, reg_base + reg);
++}
++
+ static void exynos4_clk_wait_for_pll(u32 reg)
+ {
+ 	u32 pll_con;
+@@ -315,6 +324,9 @@ static int exynos4_clk_suspend(void)
+ 	samsung_clk_save(reg_base, exynos4_save_pll,
+ 				ARRAY_SIZE(exynos4_clk_pll_regs));
+ 
++	exynos4_clk_enable_pll(EPLL_CON0);
++	exynos4_clk_enable_pll(VPLL_CON0);
++
+ 	if (exynos4_soc == EXYNOS4210) {
+ 		samsung_clk_save(reg_base, exynos4_save_soc,
+ 					ARRAY_SIZE(exynos4210_clk_save));
+-- 
+1.9.1
