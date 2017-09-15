@@ -1,275 +1,73 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 0/6] Exynos DRM: rewrite IPP subsystem and userspace API
-Date: Fri, 15 Sep 2017 20:33:19 +0200
-Message-ID: <93b1cfef-dcde-294b-a4bd-81ff1f57dc6e@math.uni-bielefeld.de>
-References: <CGME20170912080909eucas1p1942c418e6e4e2621bb977ecb5ae588be@eucas1p1.samsung.com>
- <1505203739-29747-1-git-send-email-m.szyprowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] [media] exynos4-is: properly initialize frame format
+Date: Fri, 15 Sep 2017 21:54:34 +0200
+Message-ID: <20170915195441.1505586-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50014 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751201AbdIOSdV (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 14:33:21 -0400
-In-Reply-To: <1505203739-29747-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hello everyone,
+We copy the subdev frame format from a partially initialized
+structure, which is not entirely well-defined. Older compilers
+like gcc-4.4 can copy uninitialized stack data here and warn
+about it:
 
-just finished a first draft of the libdrm API and some test application:
-https://github.com/tobiasjakobi/libdrm/blob/ippv2/exynos/exynos_ipp.h
-https://github.com/tobiasjakobi/libdrm/blob/ippv2/tests/exynos/exynos_ipp_test.c
+drivers/media/platform/exynos4-is/fimc-isp.c: In function 'fimc_isp_subdev_open':
+drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.reserved[10u]' may be used uninitialized in this function
+drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.reserved[9u]' may be used uninitialized in this function
+...
+drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.reserved[0u]' may be used uninitialized in this function
+drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.xfer_func' may be used uninitialized in this function
 
-Needs a small patch to the kernel to prevent an Oops when a format has no limits.
+On newer compilers, only the initialized fields get copied, but
+we should not rely on that, so this changes the code to zero-out
+the remaining fields first.
 
-Does not a lot atm. Just pretty-printing the information from the kernel driver
-and testing a simple CSC queue.
+Fixes: 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/media/platform/exynos4-is/fimc-isp.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Now looking to using this for the mpv vo backend.
-
-With best wishes,
-Tobias
-
-
-P.S.: Output from my system below.
-
-> exynos/ipp: 3 IPP modules found.
-> IPP module number 0:
-> 	id = 0
-> 	supports crop
-> 	supports rotate
-> 	supports scale
-> 	supports convert
-> a total of 15 formats are supported:
-> 	fourcc: XR24, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: RG24, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: RG16, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: NV12, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: NV16, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: NV21, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: NV61, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: UYVY, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: VYUY, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YUYV, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YVYU, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YU12, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YV12, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YU16, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YU24, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> IPP module number 1:
-> 	id = 1
-> 	supports crop
-> 	supports rotate
-> 	supports scale
-> 	supports convert
-> a total of 15 formats are supported:
-> 	fourcc: XR24, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: RG24, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: RG16, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: NV12, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: NV16, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: NV21, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: NV61, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: UYVY, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: VYUY, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YUYV, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YVYU, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YU12, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YV12, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YU16, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> 	fourcc: YU24, type: source+destination, modifier: 0x0
-> 		format has no source limits
-> 		format has no destination limits
-> IPP module number 2:
-> 	id = 2
-> 	supports crop
-> 	supports rotate
-> a total of 2 formats are supported:
-> 	fourcc: XR24, type: source+destination, modifier: 0x0
-> 		source limit: type = size (horizontal/vertical) in pixels, size = image buffer area
-> 		h_min = 8, h_max = 8192, h_align = 0
-> 		v_min = 8, v_max = 8192, v_align = 0
-> 		source limit: type = size (horizontal/vertical) in pixels, size = rectangle area
-> 		h_min = 0, h_max = 0, h_align = 4
-> 		v_min = 0, v_max = 0, v_align = 4
-> 		destination limit: type = size (horizontal/vertical) in pixels, size = image buffer area
-> 		h_min = 8, h_max = 8192, h_align = 0
-> 		v_min = 8, v_max = 8192, v_align = 0
-> 		destination limit: type = size (horizontal/vertical) in pixels, size = rectangle area
-> 		h_min = 0, h_max = 0, h_align = 4
-> 		v_min = 0, v_max = 0, v_align = 4
-> 	fourcc: NV12, type: source+destination, modifier: 0x0
-> 		source limit: type = size (horizontal/vertical) in pixels, size = image buffer area
-> 		h_min = 32, h_max = 32768, h_align = 0
-> 		v_min = 32, v_max = 32768, v_align = 0
-> 		source limit: type = size (horizontal/vertical) in pixels, size = rectangle area
-> 		h_min = 0, h_max = 0, h_align = 8
-> 		v_min = 0, v_max = 0, v_align = 8
-> 		destination limit: type = size (horizontal/vertical) in pixels, size = image buffer area
-> 		h_min = 32, h_max = 32768, h_align = 0
-> 		v_min = 32, v_max = 32768, v_align = 0
-> 		destination limit: type = size (horizontal/vertical) in pixels, size = rectangle area
-> 		h_min = 0, h_max = 0, h_align = 8
-> 		v_min = 0, v_max = 0, v_align = 8
-> IPP handler:
-> 	fd = 3, ipp_id = 0, seq = 29, tv_sec = 2659, tv_usec = 709341
-> 	user_data = 0x0xc47a30
-> IPP handler:
-> 	fd = 3, ipp_id = 0, seq = 30, tv_sec = 2659, tv_usec = 711837
-> 	user_data = 0x0xc47a40
-> IPP handler:
-> 	fd = 3, ipp_id = 0, seq = 31, tv_sec = 2659, tv_usec = 714027
-> 	user_data = 0x0xc47a50
-
-
-
-
-Marek Szyprowski wrote:
-> Dear all,
-> 
-> This patchset performs complete rewrite of Exynos DRM IPP subsystem and
-> its userspace API.
-> 
-> Why such rewrite is needed? Exynos DRM IPP API is over-engineered in
-> general, but not really extensible on the other side. It is also buggy,
-> with significant design flaws:
-> - Userspace API covers memory-2-memory picture operations together with
->   CRTC writeback and duplicating features, which belongs to video plane.
-> - Lack of support of the all required image formats (for example NV12
->   Samsung-tiled cannot be used due to lack of pixel format modifier
->   support).
-> - Userspace API designed only to mimic hardware behaviour, not easy to
->   understand.
-> - Lack of proper input validation in the core, drivers also didn't do that
->   correctly, so it was possible to set incorrect parameters and easil
->   trigger IOMMU fault or memory trash.
-> - Drivers were partially disfunctional or supported only a subset of modes.
-> 
-> Due to the above limitations and issues the Exynos DRM IPP API was not
-> used by any of the open-source projects. I assume that it is safe to remove
-> this broken API without any damage to open-source community. All remaining
-> users (mainly Tizen project related) will be updated to the new version.
-> 
-> This patchset changes Exynos DRM IPP subsystem to something useful. The
-> userspace API is much simpler, state-less and easy to understand. Also
-> the code of the core and driver is significantly smaller and easier to
-> understand.
-> 
-> Patches were tested on Exynos4412 based Odroid U3 and Exynos5422
-> Odroid XU3 boards, on top of Linux next-20170911 kernel.
-> 
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
-> 
-> 
-> My previous works in this area:
-> 
-> "[RFC v2 0/2] Exynos DRM: add Picture Processor extension"
-> https://www.spinics.net/lists/dri-devel/msg140669.html
-> - removed usage of DRM objects and properties - replaced them with simple
->   list of parameters with predefined IDs
-> 
-> "[RFC 0/4] Exynos DRM: add Picture Processor extension"
-> https://www.spinics.net/lists/linux-samsung-soc/msg59323.html
-> - moved this feature from DRM core to Exynos DRM driver
-> - changed name from framebuffer processor to picture processor
-> - simplified code to cover only things needed by Exynos drivers
-> - implemented simple fifo task scheduler
-> - cleaned up rotator driver conversion (removed IPP remainings)
-> 
-> "[RFC 0/2] New feature: Framebuffer processors"
-> https://www.spinics.net/lists/linux-samsung-soc/msg54810.html
-> - generic approach implemented in DRM core, rejected
-> 
-> 
-> Patch summary:
-> 
-> Marek Szyprowski (6):
->   drm/exynos: ipp: Remove Exynos DRM IPP subsystem
->   drm/exynos: ipp: Add IPP v2 framework
->   drm/exynos: rotator: Convert driver to IPP v2 core API
->   drm/exynos: gsc: Convert driver to IPP v2 core API
->   drm/exynos: Add generic support for devices shared with V4L2 subsystem
->   drm/exynos: fimc: Convert driver to IPP v2 core API
-> 
->  drivers/gpu/drm/exynos/Kconfig              |   12 +-
->  drivers/gpu/drm/exynos/exynos_drm_drv.c     |   33 +-
->  drivers/gpu/drm/exynos/exynos_drm_drv.h     |    4 +-
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  893 +++--------
->  drivers/gpu/drm/exynos/exynos_drm_fimc.h    |   23 -
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  853 +++-------
->  drivers/gpu/drm/exynos/exynos_drm_gsc.h     |   24 -
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c     | 2239 ++++++++-------------------
->  drivers/gpu/drm/exynos/exynos_drm_ipp.h     |  352 ++---
->  drivers/gpu/drm/exynos/exynos_drm_rotator.c |  735 ++-------
->  drivers/gpu/drm/exynos/exynos_drm_rotator.h |   19 -
->  include/uapi/drm/exynos_drm.h               |  315 ++--
->  12 files changed, 1627 insertions(+), 3875 deletions(-)
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_fimc.h
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_gsc.h
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_rotator.h
-> 
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
+index fd793d3ac072..9a48c0f69320 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp.c
+@@ -366,16 +366,16 @@ static int fimc_isp_subdev_s_power(struct v4l2_subdev *sd, int on)
+ static int fimc_isp_subdev_open(struct v4l2_subdev *sd,
+ 				struct v4l2_subdev_fh *fh)
+ {
+-	struct v4l2_mbus_framefmt fmt;
+ 	struct v4l2_mbus_framefmt *format;
++	struct v4l2_mbus_framefmt fmt = {
++		.colorspace = V4L2_COLORSPACE_SRGB,
++		.code = fimc_isp_formats[0].mbus_code,
++		.width = DEFAULT_PREVIEW_STILL_WIDTH + FIMC_ISP_CAC_MARGIN_WIDTH,
++		.height = DEFAULT_PREVIEW_STILL_HEIGHT + FIMC_ISP_CAC_MARGIN_HEIGHT,
++		.field = V4L2_FIELD_NONE,
++	};
+ 
+ 	format = v4l2_subdev_get_try_format(sd, fh->pad, FIMC_ISP_SD_PAD_SINK);
+-
+-	fmt.colorspace = V4L2_COLORSPACE_SRGB;
+-	fmt.code = fimc_isp_formats[0].mbus_code;
+-	fmt.width = DEFAULT_PREVIEW_STILL_WIDTH + FIMC_ISP_CAC_MARGIN_WIDTH;
+-	fmt.height = DEFAULT_PREVIEW_STILL_HEIGHT + FIMC_ISP_CAC_MARGIN_HEIGHT;
+-	fmt.field = V4L2_FIELD_NONE;
+ 	*format = fmt;
+ 
+ 	format = v4l2_subdev_get_try_format(sd, fh->pad, FIMC_ISP_SD_PAD_SRC_FIFO);
+-- 
+2.9.0
