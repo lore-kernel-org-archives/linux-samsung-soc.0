@@ -1,1501 +1,2006 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 2/6] drm/exynos: ipp: Add IPP v2 framework
-Date: Fri, 15 Sep 2017 19:18:15 +0200
-Message-ID: <3f102506-da99-aba9-90cf-f3b026995f49@math.uni-bielefeld.de>
-References: <1505203739-29747-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170912080911eucas1p1a9ca05ec684dc4b71f8fb984b5baa161@eucas1p1.samsung.com>
- <1505203739-29747-3-git-send-email-m.szyprowski@samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v2] crypto: s5p-sss: Add HASH support for Exynos
+Date: Fri, 15 Sep 2017 19:50:06 +0200
+Message-ID: <ee7efd48-434b-e07f-b391-9ceeee980e3e@partner.samsung.com>
+References: <CGME20170915175007eucas1p2912e7a9e1b44e976f96a53d8c8e442ec@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:49934 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750838AbdIORSS (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 13:18:18 -0400
-In-Reply-To: <1505203739-29747-3-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-language: en-US
+Sender: linux-crypto-owner@vger.kernel.org
+To: linux-crypto@vger.kernel.org
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hello Marek,
+Add support for MD5, SHA1, SHA256 hash algorithms for Exynos HW.
+It uses the crypto framework asynchronous hash api.
+It is based on omap-sham.c driver.
+S5P has some HW differencies and is not implemented.
 
+Modifications in s5p-sss:
 
-Marek Szyprowski wrote:
-> This patch adds Exynos IPP v2 subsystem and userspace API.
-> 
-> New userspace API is focused ONLY on memory-to-memory image processing.
-> The two remainging IPP operation modes (framebuffer writeback and
-> local-path output with image processing) can be implemented using
-> standard DRM features: writeback connectors and additional DRM planes with
-> scaling features.
-> 
-> V2 IPP userspace API is not compatible with old IPP ioctls. This is a
-> significant change, but the old IPP subsystem in mainline Linux kernel was
-> partially disfunctional anyway and not used in any open-source project.
-> 
-> V2 IPP userspace API is based on stateless approach, which much better fits
-> to memory-to-memory image processing model. It also provides support for
-> all image formats, which are both already defined in DRM API and supported
-> by the existing IPP hardware modules.
-> 
-> The API consists of the following ioctls:
-> - DRM_IOCTL_EXYNOS_IPP_GET_RESOURCES: to enumerate all available image
->   processing modules,
-> - DRM_IOCTL_EXYNOS_IPP_GET_CAPS: to query capabilities and supported image
->   formats of given IPP module,
-> - DRM_IOCTL_EXYNOS_IPP_GET_LIMITS: to query hardware limitiations for
->   selected image format of given IPP module,
-> - DRM_IOCTL_EXYNOS_IPP_COMMIT: to perform operation described by the
->   provided structures (source and destination buffers, operation rectangle,
->   transformation, etc).
-> 
-> The proposed userspace API is extensible. In the future more advanced image
-> processing operations can be defined to support for example blending.
-> 
-> Userspace API is fully functional also on DRM render nodes, so it is not
-> limited to the root/privileged client.
-> 
-> Internal driver API also has been completely rewritten. New IPP core
-> performs all possible input validation, checks and object life-time
-> control. The drivers can focus only on writing configuration to hardware
-> registers. Stateless nature of DRM_IOCTL_EXYNOS_IPP_COMMIT ioctl simplifies
-> the driver API. Minimal driver needs to provide a single callback for
-> starting processing and an array with supported image formats.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/Kconfig          |   3 +
->  drivers/gpu/drm/exynos/Makefile         |   1 +
->  drivers/gpu/drm/exynos/exynos_drm_drv.c |   9 +
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 893 ++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/exynos/exynos_drm_ipp.h | 188 +++++++
->  include/uapi/drm/exynos_drm.h           | 227 ++++++++
->  6 files changed, 1321 insertions(+)
->  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_ipp.c
->  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_ipp.h
-> 
-> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-> index 88cff0e039b6..2e097a81df12 100644
-> --- a/drivers/gpu/drm/exynos/Kconfig
-> +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -94,6 +94,9 @@ config DRM_EXYNOS_G2D
->  	help
->  	  Choose this option if you want to use Exynos G2D for DRM.
->  
-> +config DRM_EXYNOS_IPP
-> +	bool
-> +
->  config DRM_EXYNOS_FIMC
->  	bool "FIMC"
->  	depends on BROKEN && MFD_SYSCON
-> diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
-> index 09bb002c9555..f663490e949d 100644
-> --- a/drivers/gpu/drm/exynos/Makefile
-> +++ b/drivers/gpu/drm/exynos/Makefile
-> @@ -17,6 +17,7 @@ exynosdrm-$(CONFIG_DRM_EXYNOS_MIXER)	+= exynos_mixer.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI)	+= exynos_hdmi.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_VIDI)	+= exynos_drm_vidi.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_G2D)	+= exynos_drm_g2d.o
-> +exynosdrm-$(CONFIG_DRM_EXYNOS_IPP)	+= exynos_drm_ipp.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_FIMC)	+= exynos_drm_fimc.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_ROTATOR)	+= exynos_drm_rotator.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_GSC)	+= exynos_drm_gsc.o
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 7f19054ebce3..645046c5943a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -26,6 +26,7 @@
->  #include "exynos_drm_fb.h"
->  #include "exynos_drm_gem.h"
->  #include "exynos_drm_plane.h"
-> +#include "exynos_drm_ipp.h"
->  #include "exynos_drm_vidi.h"
->  #include "exynos_drm_g2d.h"
->  #include "exynos_drm_iommu.h"
-> @@ -114,6 +115,14 @@ static void exynos_drm_lastclose(struct drm_device *dev)
->  			DRM_AUTH | DRM_RENDER_ALLOW),
->  	DRM_IOCTL_DEF_DRV(EXYNOS_G2D_EXEC, exynos_g2d_exec_ioctl,
->  			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_RESOURCES, exynos_drm_ipp_get_res_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_CAPS, exynos_drm_ipp_get_caps_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_LIMITS, exynos_drm_ipp_get_limits_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_COMMIT, exynos_drm_ipp_commit_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
->  };
->  
->  static const struct file_operations exynos_drm_driver_fops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> new file mode 100644
-> index 000000000000..11be6a1bf839
-> --- /dev/null
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> @@ -0,0 +1,892 @@
-> +/*
-> + * Copyright (C) 2017 Samsung Electronics Co.Ltd
-> + * Authors:
-> + *	Marek Szyprowski <m.szyprowski@samsung.com>
-> + *
-> + * Exynos DRM Image Post Processing (IPP) related functions
-> + *
-> + * Permission is hereby granted, free of charge, to any person obtaining a
-> + * copy of this software and associated documentation files (the "Software"),
-> + * to deal in the Software without restriction, including without limitation
-> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> + * and/or sell copies of the Software, and to permit persons to whom the
-> + * Software is furnished to do so, subject to the following conditions:
-> + *
-> + * The above copyright notice and this permission notice shall be included in
-> + * all copies or substantial portions of the Software.
-> + */
-> +
-> +
-> +#include <drm/drmP.h>
-> +#include <drm/drm_mode.h>
-> +#include <uapi/drm/exynos_drm.h>
-> +
-> +#include "exynos_drm_drv.h"
-> +#include "exynos_drm_gem.h"
-> +#include "exynos_drm_ipp.h"
-> +
-> +static int num_ipp;
-> +static LIST_HEAD(ipp_list);
-> +
-> +struct drm_pending_exynos_ipp_event {
-> +	struct drm_pending_event base;
-> +	struct drm_exynos_ipp_event event;
-> +};
-> +
-> +/**
-> + * exynos_drm_ipp_register - Register a new picture processor hardware module
-> + * @dev: DRM device
-> + * @ipp: ipp module to init
-> + * @funcs: callbacks for the new ipp object
-> + * @caps: bitmask of ipp capabilities (%DRM_EXYNOS_IPP_CAP_*)
-> + * @formats: array of supported formats (%DRM_FORMAT_*)
-> + * @name: name (for debugging purposes)
-> + *
-> + * Initializes a ipp module.
-> + *
-> + * Returns:
-> + * Zero on success, error code on failure.
-> + */
-> +int exynos_drm_ipp_register(struct drm_device *dev, struct exynos_drm_ipp *ipp,
-> +		const struct exynos_drm_ipp_funcs *funcs, unsigned int caps,
-> +		const struct exynos_drm_ipp_formats *formats, const char *name)
-> +{
-> +	WARN_ON(!ipp);
-> +	WARN_ON(!funcs);
-> +	WARN_ON(!formats);
-> +
-> +	spin_lock_init(&ipp->lock);
-> +	INIT_LIST_HEAD(&ipp->todo_list);
-> +	init_waitqueue_head(&ipp->done_wq);
-> +	ipp->dev = dev;
-> +	ipp->funcs = funcs;
-> +	ipp->capabilities = caps;
-> +	ipp->name = name;
-> +	ipp->formats = formats;
-> +	while (formats++->fourcc)
-> +		ipp->num_formats++;
-> +
-> +	list_add_tail(&ipp->head, &ipp_list);
-> +	ipp->id = num_ipp++;
-> +
-> +	DRM_DEBUG_DRIVER("Registered ipp %d\n", ipp->id);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_unregister - Unregister the picture processor module
-> + * @dev: DRM device
-> + * @ipp: ipp module
-> + */
-> +void exynos_drm_ipp_unregister(struct drm_device *dev,
-> +			       struct exynos_drm_ipp *ipp)
-> +{
-> +	BUG_ON(ipp->task);
-> +	BUG_ON(!list_empty(&ipp->todo_list));
-> +	list_del(&ipp->head);
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_ioctl_get_res_ioctl - enumerate all ipp modules
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a list of ipp ids.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_get_res_ioctl(struct drm_device *dev, void *data,
-> +				 struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_get_res *resp = data;
-> +	struct exynos_drm_ipp *ipp;
-> +	uint32_t __user *ipp_ptr = (uint32_t __user *)
-> +						(unsigned long)resp->ipp_id_ptr;
-> +	unsigned int count = num_ipp, copied = 0;
-> +
-> +	/*
-> +	 * This ioctl is called twice, once to determine how much space is
-> +	 * needed, and the 2nd time to fill it.
-> +	 */
-> +	if (count && resp->count_ipps >= count) {
-> +		list_for_each_entry(ipp, &ipp_list, head) {
-> +			if (put_user(ipp->id, ipp_ptr + copied))
-> +				return -EFAULT;
-> +			copied++;
-> +		}
-> +	}
-> +	resp->count_ipps = count;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline struct exynos_drm_ipp *__ipp_get(uint32_t id)
-> +{
-> +	struct exynos_drm_ipp *ipp;
-> +
-> +	list_for_each_entry(ipp, &ipp_list, head)
-> +		if (ipp->id == id)
-> +			return ipp;
-> +	return NULL;
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_ioctl_get_caps - get ipp module capabilities and formats
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a structure describing ipp module capabilities.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_get_caps_ioctl(struct drm_device *dev, void *data,
-> +				  struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_get_caps *resp = data;
-> +	void __user *ptr = (void __user *)(unsigned long)resp->formats_ptr;
-> +	struct exynos_drm_ipp *ipp;
-> +	int i;
-> +
-> +	ipp = __ipp_get(resp->ipp_id);
-> +	if (!ipp)
-> +		return -ENOENT;
-> +
-> +	resp->ipp_id = ipp->id;
-> +	resp->capabilities = ipp->capabilities;
-> +
-> +	/*
-> +	 * This ioctl is called twice, once to determine how much space is
-> +	 * needed, and the 2nd time to fill it.
-> +	 */
-> +	if (resp->formats_count >= ipp->num_formats) {
-> +		for (i = 0; i < ipp->num_formats; i++) {
-> +			struct exynos_drm_ipp_format tmp = {
-> +				.fourcc = ipp->formats[i].fourcc,
-> +				.type = ipp->formats[i].type,
-> +				.modifier = ipp->formats[i].modifier,
-> +			};
-> +
-> +			if (copy_to_user(ptr, &tmp, sizeof(tmp)))
-> +				return -EFAULT;
-> +			ptr += sizeof(tmp);
-> +		}
-> +	}
-> +	resp->formats_count = ipp->num_formats;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline const struct exynos_drm_ipp_formats *__ipp_format_get(
-> +			uint32_t fourcc, uint64_t mod, unsigned long type,
-> +			const struct exynos_drm_ipp_formats *f)
-> +{
-> +	for (; f->fourcc; f++)
-> +		if ((f->type & type) && f->fourcc == fourcc &&
-> +		    f->modifier == mod)
-> +			return f;
-> +	return NULL;
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_get_limits_ioctl - get ipp module limits
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a structure describing ipp module limitations for provided
-> + * picture format.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_get_limits_ioctl(struct drm_device *dev, void *data,
-> +				    struct drm_file *file_priv)
-I'm getting a null-pointer Opps in this ioctl(). I haven't fully debugged this,
-but I guess it's because format->limits might be NULL. E.g. the formats for the
-FIMC (exynos_drm_ipp_formats fimc_formats[]) don't carry any limits for the
-color formats.
+- Add hash supporting structures and functions.
 
+- Modify irq handler to handle both aes and hash signals.
 
+- Resize resource end in probe if EXYNOS_HASH is enabled in
+  Kconfig.
 
+- Add new copyright line and new author.
 
-> +{
-> +	struct drm_exynos_ioctl_ipp_get_limits *resp = data;
-> +	void __user *ptr = (void __user *)(unsigned long)resp->limits_ptr;
-> +	const struct exynos_drm_ipp_formats *format;
-> +	const struct drm_exynos_ipp_limit *limits, *l;
-> +	struct exynos_drm_ipp *ipp;
-> +	int count = 0;
-> +
-> +	if (resp->type != DRM_EXYNOS_IPP_FORMAT_SOURCE &&
-> +	    resp->type != DRM_EXYNOS_IPP_FORMAT_DESTINATION)
-> +		return -EINVAL;
-> +
-> +	ipp = __ipp_get(resp->ipp_id);
-> +	if (!ipp)
-> +		return -ENOENT;
-> +
-> +	format = __ipp_format_get(resp->fourcc, resp->modifier, resp->type,
-> +			      ipp->formats);
-> +	if (!format)
-> +		return -EINVAL;
-> +
-> +	limits = format->limits;
-> +	for (l = limits; l->type; l++)
-> +		count++;
-> +
-> +	/*
-> +	 * This ioctl is called twice, once to determine how much space is
-> +	 * needed, and the 2nd time to fill it.
-> +	 */
-> +	if (count && resp->limits_size >= count * sizeof(*l)) {
-> +		for (l = limits; l->type; l++, ptr += sizeof(*l))
-> +			if (copy_to_user((void __user *)ptr, l, sizeof(*l)))
-> +				return -EFAULT;
-> +	}
-> +	resp->limits_size = count * sizeof(*l);
-I wonder why you return the size if bytes here? How about keeping this
-consistant with the other ioctls (like exynos_drm_ipp_get_caps_ioctl) and just
-return the count (together with renaming limits_size to limits>count).
+- Tested on Odroid-U3 with Exynos 4412 CPU, kernel 4.13-rc6
+  with crypto run-time self test testmgr
+  and with tcrypt module with: modprobe tcrypt sec=1 mode=N
+  where N=402, 403, 404 (MD5, SHA1, SHA256).
 
-- Tobias
+Modifications in drivers/crypto/Kconfig:
 
+- Add new CRYPTO_DEV_EXYNOS_HASH, depend on !EXYNOS_RNG
+  and CRYPTO_DEV_S5P
 
-> +
-> +	return 0;
-> +}
-> +
-> +static inline struct exynos_drm_ipp_task *
-> +	exynos_drm_ipp_task_alloc(struct exynos_drm_ipp *ipp)
-> +{
-> +	struct exynos_drm_ipp_task *task;
-> +
-> +	task = kzalloc(sizeof(*task), GFP_KERNEL);
-> +	if (!task)
-> +		return NULL;
-> +
-> +	task->dev = ipp->dev;
-> +	task->ipp = ipp;
-> +
-> +	/* some defaults */
-> +	task->src.rect.w = task->dst.rect.w = UINT_MAX;
-> +	task->src.rect.h = task->dst.rect.h = UINT_MAX;
-> +	task->transform.rotation = DRM_MODE_ROTATE_0;
-> +
-> +	DRM_DEBUG_DRIVER("Allocated task %pK\n", task);
-> +
-> +	return task;
-> +}
-> +
-> +struct exynos_drm_param_map {
-> +	unsigned int id;
-> +	unsigned int size;
-> +	unsigned int offset;
-> +} exynos_drm_ipp_params_maps[] = {
-> +	{
-> +		DRM_EXYNOS_IPP_TASK_BUFFER | DRM_EXYNOS_IPP_TASK_TYPE_SOURCE,
-> +		sizeof(struct drm_exynos_ipp_task_buffer),
-> +		offsetof(struct exynos_drm_ipp_task, src.buf),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_BUFFER | DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION,
-> +		sizeof(struct drm_exynos_ipp_task_buffer),
-> +		offsetof(struct exynos_drm_ipp_task, dst.buf),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_RECTANGLE | DRM_EXYNOS_IPP_TASK_TYPE_SOURCE,
-> +		sizeof(struct drm_exynos_ipp_task_rect),
-> +		offsetof(struct exynos_drm_ipp_task, src.rect),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_RECTANGLE | DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION,
-> +		sizeof(struct drm_exynos_ipp_task_rect),
-> +		offsetof(struct exynos_drm_ipp_task, dst.rect),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_TRANSFORM,
-> +		sizeof(struct drm_exynos_ipp_task_transform),
-> +		offsetof(struct exynos_drm_ipp_task, transform),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_ALPHA,
-> +		sizeof(struct drm_exynos_ipp_task_alpha),
-> +		offsetof(struct exynos_drm_ipp_task, alpha),
-> +	},
-> +};
-> +
-> +static int exynos_drm_ipp_task_set(struct exynos_drm_ipp_task *task,
-> +				  struct drm_exynos_ioctl_ipp_commit *arg)
-> +{
-> +	unsigned int size = arg->params_size;
-> +	void *p, *params;
-> +	int ret = 0;
-> +
-> +	if (size > PAGE_SIZE)
-> +		return -ERANGE;
-> +
-> +	p = kmalloc(size, GFP_KERNEL);
-> +	if (!p)
-> +		return -ENOMEM;
-> +
-> +	if (copy_from_user(p, (void __user *)(unsigned long)arg->params_ptr,
-> +			   size)) {
-> +		ret = -EFAULT;
-> +		DRM_DEBUG_DRIVER("Failed to copy configuration from userspace\n");
-> +		goto free;
-> +	}
-> +
-> +	params = p;
-> +	while (size) {
-> +		struct exynos_drm_param_map *map = exynos_drm_ipp_params_maps;
-> +		u32 *id = params;
-> +		int i;
-> +
-> +		for (i = 0; i < ARRAY_SIZE(exynos_drm_ipp_params_maps); i++)
-> +			if (map[i].id == *id)
-> +				break;
-> +
-> +		if (i < ARRAY_SIZE(exynos_drm_ipp_params_maps) &&
-> +		    map[i].size <= size) {
-> +			memcpy((void *)task + map[i].offset, params,
-> +			       map[i].size);
-> +			params += map[i].size;
-> +			size -= map[i].size;
-> +		} else {
-> +			ret = -EINVAL;
-> +			goto free;
-> +		}
-> +	}
-> +
-> +	DRM_DEBUG_DRIVER("Got task %pK configuration from userspace\n", task);
-> +free:
-> +	kfree(p);
-> +	return ret;
-> +}
-> +
-> +static int exynos_drm_ipp_task_setup_buffer(struct exynos_drm_ipp_buffer *buf,
-> +					    struct drm_file *filp)
-> +{
-> +	int ret = 0;
-> +	int i;
-> +
-> +	/* basic checks */
-> +	if (buf->buf.width == 0 || buf->buf.height == 0)
-> +		return -EINVAL;
-> +	buf->format = drm_format_info(buf->buf.fourcc);
-> +	for (i = 0; i < buf->format->num_planes; i++) {
-> +		unsigned int width = (i == 0) ? buf->buf.width :
-> +			     DIV_ROUND_UP(buf->buf.width, buf->format->hsub);
-> +
-> +		if (buf->buf.pitch[i] == 0)
-> +			buf->buf.pitch[i] = width * buf->format->cpp[i];
-> +		if (buf->buf.pitch[i] < width * buf->format->cpp[i])
-> +			return -EINVAL;
-> +		if (!buf->buf.gem_id[i])
-> +			return -ENOENT;
-> +	}
-> +
-> +	/* get GEM buffers and check their size */
-> +	for (i = 0; i < buf->format->num_planes; i++) {
-> +		unsigned int height = (i == 0) ? buf->buf.height :
-> +			     DIV_ROUND_UP(buf->buf.height, buf->format->vsub);
-> +		unsigned long size = height * buf->buf.pitch[i] +
-> +				     buf->buf.offset[i];
-> +		struct drm_gem_object *obj = drm_gem_object_lookup(filp,
-> +							    buf->buf.gem_id[i]);
-> +		if (!obj) {
-> +			ret = -ENOENT;
-> +			goto gem_free;
-> +		}
-> +		buf->exynos_gem[i] = to_exynos_gem(obj);
-> +
-> +		if (size > buf->exynos_gem[i]->size) {
-> +			i++;
-> +			ret = -EINVAL;
-> +			goto gem_free;
-> +		}
-> +		buf->dma_addr[i] = buf->exynos_gem[i]->dma_addr +
-> +				   buf->buf.offset[i];
-> +	}
-> +
-> +	return 0;
-> +gem_free:
-> +	while (i--) {
-> +		drm_gem_object_put_unlocked(&buf->exynos_gem[i]->base);
-> +		buf->exynos_gem[i] = NULL;
-> +	}
-> +	return ret;
-> +}
-> +
-> +static void exynos_drm_ipp_task_release_buffer(struct exynos_drm_ipp_buffer *buf)
-> +{
-> +	int i;
-> +
-> +	if (!buf->exynos_gem[0])
-> +		return;
-> +	for (i = 0; i < buf->format->num_planes; i++)
-> +		drm_gem_object_put_unlocked(&buf->exynos_gem[i]->base);
-> +}
-> +
-> +static void exynos_drm_ipp_task_free(struct exynos_drm_ipp *ipp,
-> +				 struct exynos_drm_ipp_task *task)
-> +{
-> +	DRM_DEBUG_DRIVER("Freeing task %pK\n", task);
-> +
-> +	exynos_drm_ipp_task_release_buffer(&task->src);
-> +	exynos_drm_ipp_task_release_buffer(&task->dst);
-> +	if (task->event)
-> +		drm_event_cancel_free(ipp->dev, &task->event->base);
-> +	kfree(task);
-> +}
-> +
-> +struct drm_ipp_limit {
-> +	struct drm_exynos_ipp_limit_val h;
-> +	struct drm_exynos_ipp_limit_val v;
-> +};
-> +
-> +enum drm_ipp_size_id {
-> +	IPP_LIMIT_BUFFER, IPP_LIMIT_AREA, IPP_LIMIT_ROTATED, IPP_LIMIT_MAX
-> +};
-> +
-> +static const enum drm_ipp_size_id limit_id_fallback[IPP_LIMIT_MAX][4] = {
-> +	[IPP_LIMIT_BUFFER]  = { DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER },
-> +	[IPP_LIMIT_AREA]    = { DRM_EXYNOS_IPP_LIMIT_SIZE_AREA,
-> +				DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER },
-> +	[IPP_LIMIT_ROTATED] = { DRM_EXYNOS_IPP_LIMIT_SIZE_ROTATED,
-> +				DRM_EXYNOS_IPP_LIMIT_SIZE_AREA,
-> +				DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER },
-> +};
-> +
-> +static inline void __limit_set_val(unsigned int *ptr, unsigned int val)
-> +{
-> +	if (!*ptr)
-> +		*ptr = val;
-> +}
-> +
-> +static void __get_size_limit(const struct drm_exynos_ipp_limit *limits,
-> +			     enum drm_ipp_size_id id, struct drm_ipp_limit *res)
-> +{
-> +	const struct drm_exynos_ipp_limit *l = limits;
-> +	int i = 0;
-> +
-> +	memset(res, 0, sizeof(*res));
-> +	for (i = 0; limit_id_fallback[id][i]; i++)
-> +		for (l = limits; l->type; l++) {
-> +			if (((l->type & DRM_EXYNOS_IPP_LIMIT_TYPE_MASK) !=
-> +			      DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE) ||
-> +			    ((l->type & DRM_EXYNOS_IPP_LIMIT_SIZE_MASK) !=
-> +						     limit_id_fallback[id][i]))
-> +				continue;
-> +			__limit_set_val(&res->h.min, l->h.min);
-> +			__limit_set_val(&res->h.max, l->h.max);
-> +			__limit_set_val(&res->h.align, l->h.align);
-> +			__limit_set_val(&res->v.min, l->v.min);
-> +			__limit_set_val(&res->v.max, l->v.max);
-> +			__limit_set_val(&res->v.align, l->v.align);
-> +		}
-> +}
-> +
-> +static inline bool __align_check(unsigned int val, unsigned int align)
-> +{
-> +	if (align && (val & (align - 1)))
-> +		return false;
-> +	return true;
-> +}
-> +
-> +static inline bool __size_limit_check(unsigned int val,
-> +				 struct drm_exynos_ipp_limit_val *l)
-> +{
-> +	if ((l->min && val < l->min) || (l->max && val > l->max) ||
-> +	    !__align_check(val, l->align))
-> +		return false;
-> +	return true;
-> +}
-> +
-> +static int exynos_drm_ipp_check_size_limits(struct exynos_drm_ipp_buffer *buf,
-> +	const struct drm_exynos_ipp_limit *limits, bool rotate, bool swap)
-> +{
-> +	enum drm_ipp_size_id id = rotate ? IPP_LIMIT_ROTATED : IPP_LIMIT_AREA;
-> +	struct drm_ipp_limit l;
-> +	struct drm_exynos_ipp_limit_val *lh = &l.h, *lv = &l.v;
-> +
-> +	if (!limits)
-> +		return 0;
-> +
-> +	__get_size_limit(limits, IPP_LIMIT_BUFFER, &l);
-> +	if (!__size_limit_check(buf->buf.width, &l.h) ||
-> +	    !__size_limit_check(buf->buf.height, &l.v))
-> +		return -EINVAL;
-> +
-> +	if (swap) {
-> +		lv = &l.h;
-> +		lh = &l.v;
-> +	}
-> +	__get_size_limit(limits, id, &l);
-> +	if (!__size_limit_check(buf->rect.w, lh) ||
-> +	    !__align_check(buf->rect.x, lh->align) ||
-> +	    !__size_limit_check(buf->rect.h, lv) ||
-> +	    !__align_check(buf->rect.y, lv->align))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int exynos_drm_ipp_check_scale_limits(struct drm_exynos_ipp_task_rect *src,
-> +	struct drm_exynos_ipp_task_rect *dst,
-> +	const struct drm_exynos_ipp_limit *limits, bool swap)
-> +{
-> +	const struct drm_exynos_ipp_limit_val *lh, *lv;
-> +
-> +	if (!limits)
-> +		return 0;
-> +
-> +	for (; limits->type; limits++)
-> +		if ((limits->type & DRM_EXYNOS_IPP_LIMIT_TYPE_MASK) ==
-> +		    DRM_EXYNOS_IPP_LIMIT_TYPE_SCALE)
-> +			break;
-> +	if (!limits->type)
-> +		return 0;
-> +
-> +	lh = (!swap) ? &limits->h : &limits->v;
-> +	lv = (!swap) ? &limits->v : &limits->h;
-> +
-> +	if ((lh->max && dst->w > src->w * lh->max) ||
-> +	    (lh->min && (dst->w << 16) < src->w * lh->min) ||
-> +	    (lv->max && dst->h > src->h * lv->max) ||
-> +	    (lv->min && (dst->h << 16) < src->h * lv->min))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int exynos_drm_ipp_task_check(struct exynos_drm_ipp_task *task,
-> +				    struct drm_file *filp)
-> +{
-> +	struct exynos_drm_ipp *ipp = task->ipp;
-> +	const struct exynos_drm_ipp_formats *src_format, *dst_format;
-> +	struct exynos_drm_ipp_buffer *src = &task->src, *dst = &task->dst;
-> +	unsigned int rotation = task->transform.rotation;
-> +	int ret = 0;
-> +	bool scale = false, swap = false;
-> +
-> +	DRM_DEBUG_DRIVER("Checking %pK\n", task);
-> +
-> +	if (src->rect.w == UINT_MAX)
-> +		src->rect.w = src->buf.width;
-> +	if (src->rect.h == UINT_MAX)
-> +		src->rect.h = src->buf.height;
-> +	if (dst->rect.w == UINT_MAX)
-> +		dst->rect.w = dst->buf.width;
-> +	if (dst->rect.h == UINT_MAX)
-> +		dst->rect.h = dst->buf.height;
-> +
-> +	if (src->rect.x + src->rect.w > (src->buf.width) ||
-> +	    src->rect.y + src->rect.h > (src->buf.height) ||
-> +	    dst->rect.x + dst->rect.w > (dst->buf.width) ||
-> +	    dst->rect.y + dst->rect.h > (dst->buf.height))
-> +		return -EINVAL;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: basic checks done\n", task);
-> +
-> +	if (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_CROP) &&
-> +	    (src->rect.x || src->rect.y || dst->rect.x || dst->rect.y))
-> +		return -EINVAL;
-> +
-> +	if (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_ROTATE) &&
-> +	    rotation != DRM_MODE_ROTATE_0)
-> +		return -EINVAL;
-> +
-> +	if (drm_rotation_90_or_270(rotation))
-> +		swap = true;
-> +
-> +	if ((!swap && (src->rect.w != dst->rect.w || src->rect.h != dst->rect.h)) ||
-> +	    (swap && (src->rect.w != dst->rect.h || src->rect.h != dst->rect.w)))
-> +		scale = true;
-> +
-> +	if (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_SCALE) && scale)
-> +		return -EINVAL;
-> +
-> +	if (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_CONVERT) &&
-> +	    src->buf.fourcc != dst->buf.fourcc)
-> +		return -EINVAL;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: capability checks done\n", task);
-> +
-> +	src_format = __ipp_format_get(src->buf.fourcc, src->buf.modifier,
-> +				  DRM_EXYNOS_IPP_FORMAT_SOURCE, ipp->formats);
-> +	if (!src_format)
-> +		return -EINVAL;
-> +	ret = exynos_drm_ipp_check_size_limits(src, src_format->limits,
-> +					  rotation != DRM_MODE_ROTATE_0, false);
-> +	if (ret)
-> +		return ret;
-> +	ret = exynos_drm_ipp_check_scale_limits(&src->rect, &dst->rect,
-> +						src_format->limits, swap);
-> +	if (ret)
-> +		return ret;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: source image checks done\n", task);
-> +
-> +	dst_format = __ipp_format_get(dst->buf.fourcc, dst->buf.modifier,
-> +			       DRM_EXYNOS_IPP_FORMAT_DESTINATION, ipp->formats);
-> +	if (!dst_format)
-> +		return -EINVAL;
-> +	ret = exynos_drm_ipp_check_size_limits(dst, dst_format->limits,
-> +					   rotation != DRM_MODE_ROTATE_0, swap);
-> +	if (ret)
-> +		return ret;
-> +	ret = exynos_drm_ipp_check_scale_limits(&src->rect, &dst->rect,
-> +						dst_format->limits, swap);
-> +	if (ret)
-> +		return ret;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: destination image checks done\n", task);
-> +
-> +	ret = exynos_drm_ipp_task_setup_buffer(src, filp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: source buffer checks done\n", task);
-> +
-> +	ret = exynos_drm_ipp_task_setup_buffer(dst, filp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: destination buffer checks done\n", task);
-> +
-> +	if (ipp->funcs->check)
-> +		ret = ipp->funcs->check(ipp, task);
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: all checks done.\n", task);
-> +
-> +	return ret;
-> +}
-> +
-> +static int exynos_drm_ipp_event_create(struct exynos_drm_ipp_task *task,
-> +			struct drm_file *file_priv, uint64_t user_data)
-> +{
-> +	struct drm_pending_exynos_ipp_event *e = NULL;
-> +	int ret;
-> +
-> +	e = kzalloc(sizeof(*e), GFP_KERNEL);
-> +	if (!e)
-> +		return -ENOMEM;
-> +
-> +	e->event.base.type = DRM_EXYNOS_IPP_EVENT;
-> +	e->event.base.length = sizeof(e->event);
-> +	e->event.user_data = user_data;
-> +
-> +	ret = drm_event_reserve_init(task->dev, file_priv, &e->base,
-> +				     &e->event.base);
-> +	if (ret)
-> +		goto free;
-> +
-> +	task->event = e;
-> +	return 0;
-> +free:
-> +	kfree(e);
-> +	return ret;
-> +}
-> +
-> +static void exynos_drm_ipp_event_send(struct exynos_drm_ipp_task *task)
-> +{
-> +	struct timeval now = ktime_to_timeval(ktime_get());
-> +
-> +	task->event->event.tv_sec = now.tv_sec;
-> +	task->event->event.tv_usec = now.tv_usec;
-> +	task->event->event.sequence = atomic_inc_return(&task->ipp->sequence);
-> +
-> +	drm_send_event(task->dev, &task->event->base);
-> +}
-> +
-> +static int exynos_drm_ipp_task_cleanup(struct exynos_drm_ipp_task *task)
-> +{
-> +	int ret = task->ret;
-> +
-> +	if (ret == 0 && task->event) {
-> +		exynos_drm_ipp_event_send(task);
-> +		/* ensure event won't be canceled on task free */
-> +		task->event = NULL;
-> +	}
-> +
-> +	exynos_drm_ipp_task_free(task->ipp, task);
-> +	return ret;
-> +}
-> +
-> +static void exynos_drm_ipp_cleanup_work(struct work_struct *work)
-> +{
-> +	struct exynos_drm_ipp_task *task = container_of(work,
-> +				struct exynos_drm_ipp_task, cleanup_work);
-> +
-> +	exynos_drm_ipp_task_cleanup(task);
-> +}
-> +
-> +static void exynos_drm_ipp_next_task(struct exynos_drm_ipp *ipp);
-> +
-> +/**
-> + * exynos_drm_ipp_task_done - finish given task and set return code
-> + * @task: ipp task to finish
-> + * @ret: error code or 0 if operation has been performed successfully
-> + */
-> +void exynos_drm_ipp_task_done(struct exynos_drm_ipp_task *task, int ret)
-> +{
-> +	struct exynos_drm_ipp *ipp = task->ipp;
-> +	unsigned long flags;
-> +
-> +	DRM_DEBUG_DRIVER("ipp: %d, task %pK done\n", ipp->id, task);
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +	if (ipp->task == task)
-> +		ipp->task = NULL;
-> +	task->flags |= DRM_EXYNOS_IPP_TASK_DONE;
-> +	task->ret = ret;
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +
-> +	exynos_drm_ipp_next_task(ipp);
-> +	wake_up(&ipp->done_wq);
-> +
-> +	if (task->flags & DRM_EXYNOS_IPP_TASK_ASYNC) {
-> +		INIT_WORK(&task->cleanup_work, exynos_drm_ipp_cleanup_work);
-> +		schedule_work(&task->cleanup_work);
-> +	}
-> +}
-> +
-> +static void exynos_drm_ipp_next_task(struct exynos_drm_ipp *ipp)
-> +{
-> +	struct exynos_drm_ipp_task *task;
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	DRM_DEBUG_DRIVER("ipp: %d, try to run new task\n", ipp->id);
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +
-> +	if (ipp->task || list_empty(&ipp->todo_list)) {
-> +		spin_unlock_irqrestore(&ipp->lock, flags);
-> +		return;
-> +	}
-> +
-> +	task = list_first_entry(&ipp->todo_list, struct exynos_drm_ipp_task,
-> +				head);
-> +	list_del_init(&task->head);
-> +	ipp->task = task;
-> +
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +
-> +	DRM_DEBUG_DRIVER("ipp: %d, selected task %pK to run\n", ipp->id, task);
-> +
-> +	ret = ipp->funcs->commit(ipp, task);
-> +	if (ret)
-> +		exynos_drm_ipp_task_done(task, ret);
-> +}
-> +
-> +static void exynos_drm_ipp_schedule_task(struct exynos_drm_ipp *ipp,
-> +				     struct exynos_drm_ipp_task *task)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +	list_add(&task->head, &ipp->todo_list);
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +
-> +	exynos_drm_ipp_next_task(ipp);
-> +}
-> +
-> +static void exynos_drm_ipp_task_abort(struct exynos_drm_ipp *ipp,
-> +				  struct exynos_drm_ipp_task *task)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +	if (task->flags & DRM_EXYNOS_IPP_TASK_DONE) {
-> +		/* already completed task */
-> +		exynos_drm_ipp_task_cleanup(task);
-> +	} else if (ipp->task != task) {
-> +		/* task has not been scheduled for execution yet */
-> +		list_del_init(&task->head);
-> +		exynos_drm_ipp_task_cleanup(task);
-> +	} else {
-> +		/*
-> +		 * currently processed task, call abort() and perform
-> +		 * cleanup with async worker
-> +		 */
-> +		task->flags |= DRM_EXYNOS_IPP_TASK_ASYNC;
-> +		spin_unlock_irqrestore(&ipp->lock, flags);
-> +		if (ipp->funcs->abort)
-> +			ipp->funcs->abort(ipp, task);
-> +		return;
-> +	}
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_commit_ioctl - perform image processing operation
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a ipp task from the set of properties provided from the user
-> + * and try to schedule it to framebuffer processor hardware.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_commit_ioctl(struct drm_device *dev, void *data,
-> +			  struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_commit *arg = data;
-> +	struct exynos_drm_ipp *ipp;
-> +	struct exynos_drm_ipp_task *task;
-> +	int ret = 0;
-> +
-> +	if ((arg->flags & ~DRM_EXYNOS_IPP_FLAGS) || arg->reserved)
-> +		return -EINVAL;
-> +
-> +	/* can't test and expect an event at the same time */
-> +	if ((arg->flags & DRM_EXYNOS_IPP_FLAG_TEST_ONLY) &&
-> +			(arg->flags & DRM_EXYNOS_IPP_FLAG_EVENT))
-> +		return -EINVAL;
-> +
-> +	ipp = __ipp_get(arg->ipp_id);
-> +	if (!ipp)
-> +		return -ENOENT;
-> +
-> +	task = exynos_drm_ipp_task_alloc(ipp);
-> +	if (!task)
-> +		return -ENOMEM;
-> +
-> +	ret = exynos_drm_ipp_task_set(task, arg);
-> +	if (ret)
-> +		goto free;
-> +
-> +	ret = exynos_drm_ipp_task_check(task, file_priv);
-> +	if (ret || arg->flags & DRM_EXYNOS_IPP_FLAG_TEST_ONLY)
-> +		goto free;
-> +
-> +	if (arg->flags & DRM_EXYNOS_IPP_FLAG_EVENT) {
-> +		ret = exynos_drm_ipp_event_create(task, file_priv,
-> +						 arg->user_data);
-> +		if (ret)
-> +			goto free;
-> +	}
-> +
-> +	/*
-> +	 * Queue task for processing on the hardware. task object will be
-> +	 * then freed after exynos_drm_ipp_task_done()
-> +	 */
-> +	if (arg->flags & DRM_EXYNOS_IPP_FLAG_NONBLOCK) {
-> +		DRM_DEBUG_DRIVER("ipp: %d, nonblocking processing task %pK\n",
-> +				 ipp->id, task);
-> +
-> +		task->flags |= DRM_EXYNOS_IPP_TASK_ASYNC;
-> +		exynos_drm_ipp_schedule_task(task->ipp, task);
-> +		ret = 0;
-> +	} else {
-> +		DRM_DEBUG_DRIVER("ipp: %d, processing task %pK\n", ipp->id, task);
-> +		exynos_drm_ipp_schedule_task(ipp, task);
-> +		ret = wait_event_interruptible(ipp->done_wq,
-> +					task->flags & DRM_EXYNOS_IPP_TASK_DONE);
-> +		if (ret)
-> +			exynos_drm_ipp_task_abort(ipp, task);
-> +		else
-> +			ret = exynos_drm_ipp_task_cleanup(task);
-> +	}
-> +	return ret;
-> +free:
-> +	exynos_drm_ipp_task_free(ipp, task);
-> +
-> +	return ret;
-> +}
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-> new file mode 100644
-> index 000000000000..532a60698a6a
-> --- /dev/null
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-> @@ -0,0 +1,188 @@
-> +/*
-> + * Copyright (c) 2017 Samsung Electronics Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute  it and/or modify it
-> + * under  the terms of  the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +#ifndef _EXYNOS_DRM_IPP_H_
-> +#define _EXYNOS_DRM_IPP_H_
-> +
-> +#include <drm/drmP.h>
-> +
-> +struct exynos_drm_ipp;
-> +struct exynos_drm_ipp_task;
-> +
-> +/**
-> + * struct exynos_drm_ipp_funcs - exynos_drm_ipp control functions
-> + */
-> +struct exynos_drm_ipp_funcs {
-> +	/**
-> +	 * @check:
-> +	 *
-> +	 * This is the optional hook to validate an ipp task. This function
-> +	 * must reject any task which the hardware or driver doesn't support.
-> +	 * This includes but is of course not limited to:
-> +	 *
-> +	 *  - Checking that the buffers, scaling and placement requirements
-> +	 *    and so on are within the limits of the hardware not specified by
-> +	 *    limits array.
-> +	 *
-> +	 *  - The driver does not need to repeat basic input validation like
-> +	 *    done in the exynos_drm_ipp_task_check() function. The core does
-> +	 *    that before calling this hook.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * 0 on success or one of the below negative error codes:
-> +	 *
-> +	 *  - -EINVAL, if any of the above constraints are violated.
-> +	 */
-> +	int (*check)(struct exynos_drm_ipp *ipp,
-> +		     struct exynos_drm_ipp_task *task);
-> +
-> +	/**
-> +	 * @commit:
-> +	 *
-> +	 * This is the main entry point to start framebuffer processing
-> +	 * in the hardware. The exynos_drm_ipp_task has been already validated.
-> +	 * This function must not wait until the device finishes processing.
-> +	 * When the driver finishes processing, it has to call
-> +	 * exynos_exynos_drm_ipp_task_done() function.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * 0 on success or negative error codes in case of failure.
-> +	 */
-> +	int (*commit)(struct exynos_drm_ipp *ipp,
-> +		      struct exynos_drm_ipp_task *task);
-> +
-> +	/**
-> +	 * @abort:
-> +	 *
-> +	 * Informs the driver that it has to abort the currently running
-> +	 * task as soon as possible (i.e. as soon as it can stop the device
-> +	 * safely), even if the task would not have been finished by then.
-> +	 * After the driver performs the necessary steps, it has to call
-> +	 * exynos_drm_ipp_task_done() (as if the task ended normally).
-> +	 * This function does not have to (and will usually not) wait
-> +	 * until the device enters a state when it can be stopped.
-> +	 */
-> +	void (*abort)(struct exynos_drm_ipp *ipp,
-> +		      struct exynos_drm_ipp_task *task);
-> +};
-> +
-> +/**
-> + * struct exynos_drm_ipp - central picture processor module structure
-> + */
-> +struct exynos_drm_ipp {
-> +	struct drm_device *dev;
-> +	struct list_head head;
-> +	unsigned int id;
-> +
-> +	const char *name;
-> +	const struct exynos_drm_ipp_funcs *funcs;
-> +	unsigned int capabilities;
-> +	const struct exynos_drm_ipp_formats *formats;
-> +	unsigned int num_formats;
-> +	atomic_t sequence;
-> +
-> +	spinlock_t lock;
-> +	struct exynos_drm_ipp_task *task;
-> +	struct list_head todo_list;
-> +	wait_queue_head_t done_wq;
-> +};
-> +
-> +struct exynos_drm_ipp_buffer {
-> +	struct drm_exynos_ipp_task_buffer buf;
-> +	struct drm_exynos_ipp_task_rect rect;
-> +
-> +	struct exynos_drm_gem *exynos_gem[MAX_FB_BUFFER];
-> +	const struct drm_format_info *format;
-> +	dma_addr_t dma_addr[MAX_FB_BUFFER];
-> +};
-> +
-> +/**
-> + * struct exynos_drm_ipp_task - a structure describing transformation that
-> + * has to be performed by the picture processor hardware module
-> + */
-> +struct exynos_drm_ipp_task {
-> +	struct drm_device *dev;
-> +	struct exynos_drm_ipp *ipp;
-> +	struct list_head head;
-> +
-> +	struct exynos_drm_ipp_buffer src;
-> +	struct exynos_drm_ipp_buffer dst;
-> +
-> +	struct drm_exynos_ipp_task_transform transform;
-> +	struct drm_exynos_ipp_task_alpha alpha;
-> +
-> +	struct work_struct cleanup_work;
-> +	unsigned int flags;
-> +	int ret;
-> +
-> +	struct drm_pending_exynos_ipp_event *event;
-> +};
-> +
-> +#define DRM_EXYNOS_IPP_TASK_DONE	(1 << 0)
-> +#define DRM_EXYNOS_IPP_TASK_ASYNC	(1 << 1)
-> +
-> +struct exynos_drm_ipp_formats {
-> +	u32 fourcc;
-> +	u32 type;
-> +	u64 modifier;
-> +	const struct drm_exynos_ipp_limit *limits;
-> +};
-> +
-> +/* helper macros to set exynos_drm_ipp_formats structure and limits*/
-> +#define IPP_SRCDST_MFORMAT(f, m, l) \
-> +     .fourcc = DRM_FORMAT_##f, .modifier = m, .limits = l, \
-> +     .type = (DRM_EXYNOS_IPP_FORMAT_SOURCE | DRM_EXYNOS_IPP_FORMAT_DESTINATION)
-> +
-> +#define IPP_SRCDST_FORMAT(f, l) IPP_SRCDST_MFORMAT(f, 0, l)
-> +
-> +#define IPP_SIZE_LIMIT(l, val...)	\
-> +     .type = (DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE | DRM_EXYNOS_IPP_LIMIT_SIZE_##l), \
-> +     val
-> +
-> +int exynos_drm_ipp_register(struct drm_device *dev, struct exynos_drm_ipp *ipp,
-> +		const struct exynos_drm_ipp_funcs *funcs, unsigned int caps,
-> +		const struct exynos_drm_ipp_formats *formats, const char *name);
-> +void exynos_drm_ipp_unregister(struct drm_device *dev, struct exynos_drm_ipp *ipp);
-> +
-> +void exynos_drm_ipp_task_done(struct exynos_drm_ipp_task *task, int ret);
-> +
-> +#ifdef CONFIG_DRM_EXYNOS_IPP
-> +int exynos_drm_ipp_get_res_ioctl(struct drm_device *dev, void *data,
-> +				 struct drm_file *file_priv);
-> +int exynos_drm_ipp_get_caps_ioctl(struct drm_device *dev, void *data,
-> +				  struct drm_file *file_priv);
-> +int exynos_drm_ipp_get_limits_ioctl(struct drm_device *dev, void *data,
-> +				    struct drm_file *file_priv);
-> +int exynos_drm_ipp_commit_ioctl(struct drm_device *dev,
-> +				void *data, struct drm_file *file_priv);
-> +#else
-> +static inline int exynos_drm_ipp_get_res_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline int exynos_drm_ipp_get_caps_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline int exynos_drm_ipp_get_limits_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline int exynos_drm_ipp_commit_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
-> +{
-> +	return -ENODEV;
-> +}
-> +#endif
-> +#endif
-> diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-> index 544db2cecb36..239e09022d75 100644
-> --- a/include/uapi/drm/exynos_drm.h
-> +++ b/include/uapi/drm/exynos_drm.h
-> @@ -134,6 +134,208 @@ struct drm_exynos_g2d_exec {
->  	__u64					async;
->  };
->  
-> +/* Exynos DRM IPP v2 API */
-> +
-> +/**
-> + * Enumerate available IPP hardware modules.
-> + *
-> + * @count_ipps: size of ipp_id array / number of ipp modules (set by driver)
-> + * @reserved: padding
-> + * @ipp_id_ptr: pointer to ipp_id array or NULL
-> + */
-> +struct drm_exynos_ioctl_ipp_get_res {
-> +	__u32 count_ipps;
-> +	__u32 reserved;
-> +	__u64 ipp_id_ptr;
-> +};
-> +
-> +enum drm_exynos_ipp_format_type {
-> +	DRM_EXYNOS_IPP_FORMAT_SOURCE		= 0x01,
-> +	DRM_EXYNOS_IPP_FORMAT_DESTINATION	= 0x02,
-> +};
-> +
-> +struct exynos_drm_ipp_format {
-> +	__u32 fourcc;
-> +	__u32 type;
-> +	__u64 modifier;
-> +};
-> +
-> +enum drm_exynos_ipp_capability {
-> +	DRM_EXYNOS_IPP_CAP_CROP		= 0x01,
-> +	DRM_EXYNOS_IPP_CAP_ROTATE	= 0x02,
-> +	DRM_EXYNOS_IPP_CAP_SCALE	= 0x04,
-> +	DRM_EXYNOS_IPP_CAP_CONVERT	= 0x08,
-> +};
-> +
-> +/**
-> + * Get IPP hardware capabilities and supported image formats.
-> + *
-> + * @ipp_id: id of IPP module to query
-> + * @capabilities: bitmask of drm_exynos_ipp_capability (set by driver)
-> + * @reserved: padding
-> + * @formats_count: size of formats array (in entries) / number of filled
-> + *		   formats (set by driver)
-> + * @formats_ptr: pointer to formats array or NULL
-> + */
-> +struct drm_exynos_ioctl_ipp_get_caps {
-> +	__u32 ipp_id;
-> +	__u32 capabilities;
-> +	__u32 reserved;
-> +	__u32 formats_count;
-> +	__u64 formats_ptr;
-> +};
-> +
-> +enum drm_exynos_ipp_limit_type {
-> +	/* size (horizontal/vertial) limits, in pixels (min, max, alignment) */
-> +	DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE		= 0x0001,
-> +	/* scale ratio (horizonta/vertial), 16.16 fixed point (min, max) */
-> +	DRM_EXYNOS_IPP_LIMIT_TYPE_SCALE		= 0x0002,
-> +
-> +	/* image buffer area */
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER	= 0x0001 << 16,
-> +	/* src/dst rectangle area */
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_AREA		= 0x0002 << 16,
-> +	/* src/dst rectangle area when rotation enabled */
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_ROTATED	= 0x0003 << 16,
-> +
-> +	DRM_EXYNOS_IPP_LIMIT_TYPE_MASK		= 0x000f,
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_MASK		= 0x000f << 16,
-> +};
-> +
-> +struct drm_exynos_ipp_limit_val {
-> +	__u32 min, max, align;
-> +};
-> +
-> +/**
-> + * IPP module limitation.
-> + *
-> + * @type: limit type (see drm_exynos_ipp_limit_type enum)
-> + * @h, @v: horizontal and vertical limits
-> + */
-> +struct drm_exynos_ipp_limit {
-> +	__u32 type;
-> +	struct drm_exynos_ipp_limit_val h;
-> +	struct drm_exynos_ipp_limit_val v;
-> +};
-> +
-> +/**
-> + * Get IPP limits for given image format.
-> + *
-> + * @ipp_id: id of IPP module to query
-> + * @fourcc: image format code (see DRM_FORMAT_* in drm_fourcc.h)
-> + * @modifier: image format modifier (see DRM_FORMAT_MOD_* in drm_fourcc.h)
-> + * @type: source/destination identifier (drm_exynos_ipp_format_flag enum)
-> + * @limits_size: size of limits array (in bytes) / size of filled entries
-> + *		 (set by driver)
-> + * @limits_ptr: pointer to limits array or NULL
-> + */
-> +struct drm_exynos_ioctl_ipp_get_limits {
-> +	__u32 ipp_id;
-> +	__u32 fourcc;
-> +	__u64 modifier;
-> +	__u32 type;
-> +	__u32 limits_size;
-> +	__u64 limits_ptr;
-> +};
-> +
-> +enum drm_exynos_ipp_task_id {
-> +	/* buffer described by struct drm_exynos_ipp_task_buffer */
-> +	DRM_EXYNOS_IPP_TASK_BUFFER		= 0x0001,
-> +	/* rectangle described by struct drm_exynos_ipp_task_rect */
-> +	DRM_EXYNOS_IPP_TASK_RECTANGLE		= 0x0002,
-> +	/* transformation described by struct drm_exynos_ipp_task_transform */
-> +	DRM_EXYNOS_IPP_TASK_TRANSFORM		= 0x0003,
-> +	/* alpha configuration described by struct drm_exynos_ipp_task_alpha */
-> +	DRM_EXYNOS_IPP_TASK_ALPHA		= 0x0004,
-> +
-> +	/* source image data (for buffer and rectangle chunks) */
-> +	DRM_EXYNOS_IPP_TASK_TYPE_SOURCE		= 0x0001 << 16,
-> +	/* destination image data (for buffer and rectangle chunks) */
-> +	DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION	= 0x0002 << 16,
-> +};
-> +
-> +/**
-> + * Memory buffer with image data.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_BUFFER
-> + * other parameters are same as for AddFB2 generic DRM ioctl
-> + */
-> +struct drm_exynos_ipp_task_buffer {
-> +	__u32	id;
-> +	__u32	fourcc;
-> +	__u32	width, height;
-> +	__u32	gem_id[4];
-> +	__u32	offset[4];
-> +	__u32	pitch[4];
-> +	__u64	modifier;
-> +};
-> +
-> +/**
-> + * Rectangle for processing.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_RECTANGLE
-> + * @x,@y: left corner in pixels
-> + * @w,@h: width/height in pixels
-> + */
-> +struct drm_exynos_ipp_task_rect {
-> +	__u32	id;
-> +	__u32	x, y, w, h;
-> +};
-> +
-> +/**
-> + * Image tranformation description.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_TRANSFORM
-> + * @rotation: DRM_MODE_ROTATE_* and DRM_MODE_REFLECT_* values
-> + */
-> +struct drm_exynos_ipp_task_transform {
-> +	__u32	id;
-> +	__u32	rotation;
-> +};
-> +
-> +/**
-> + * Image global alpha configuration for formats without alpha values.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_ALPHA
-> + * @value: global alpha value (0-255)
-> + */
-> +struct drm_exynos_ipp_task_alpha {
-> +	__u32	id;
-> +	__u32	value;
-> +};
-> +
-> +enum drm_exynos_ipp_flag {
-> +	/* generate DRM event after processing */
-> +	DRM_EXYNOS_IPP_FLAG_EVENT	= 0x01,
-> +	/* dry run, only check task parameters */
-> +	DRM_EXYNOS_IPP_FLAG_TEST_ONLY	= 0x02,
-> +	/* non-blocking processing */
-> +	DRM_EXYNOS_IPP_FLAG_NONBLOCK	= 0x04,
-> +};
-> +
-> +#define DRM_EXYNOS_IPP_FLAGS (DRM_EXYNOS_IPP_FLAG_EVENT |\
-> +		DRM_EXYNOS_IPP_FLAG_TEST_ONLY | DRM_EXYNOS_IPP_FLAG_NONBLOCK)
-> +
-> +/**
-> + * Perform image processing described by array of drm_exynos_ipp_task_*
-> + * structures (parameters array).
-> + *
-> + * @ipp_id: id of IPP module to run the task
-> + * @flags: bitmask of drm_exynos_ipp_flag values
-> + * @reserved: padding
-> + * @params_size: size of parameters array (in bytes)
-> + * @params_ptr: pointer to parameters array or NULL
-> + * @user_data: (optional) data for drm event
-> + */
-> +struct drm_exynos_ioctl_ipp_commit {
-> +	__u32 ipp_id;
-> +	__u32 flags;
-> +	__u32 reserved;
-> +	__u32 params_size;
-> +	__u64 params_ptr;
-> +	__u64 user_data;
-> +};
-> +
->  #define DRM_EXYNOS_GEM_CREATE		0x00
->  #define DRM_EXYNOS_GEM_MAP		0x01
->  /* Reserved 0x03 ~ 0x05 for exynos specific gem ioctl */
-> @@ -146,6 +348,11 @@ struct drm_exynos_g2d_exec {
->  #define DRM_EXYNOS_G2D_EXEC		0x22
->  
->  /* Reserved 0x30 ~ 0x33 for obsolete Exynos IPP ioctls */
-> +/* IPP - Image Post Processing */
-> +#define DRM_EXYNOS_IPP_GET_RESOURCES	0x40
-> +#define DRM_EXYNOS_IPP_GET_CAPS		0x41
-> +#define DRM_EXYNOS_IPP_GET_LIMITS	0x42
-> +#define DRM_EXYNOS_IPP_COMMIT		0x43
->  
->  #define DRM_IOCTL_EXYNOS_GEM_CREATE		DRM_IOWR(DRM_COMMAND_BASE + \
->  		DRM_EXYNOS_GEM_CREATE, struct drm_exynos_gem_create)
-> @@ -164,8 +371,18 @@ struct drm_exynos_g2d_exec {
->  #define DRM_IOCTL_EXYNOS_G2D_EXEC		DRM_IOWR(DRM_COMMAND_BASE + \
->  		DRM_EXYNOS_G2D_EXEC, struct drm_exynos_g2d_exec)
->  
-> +#define DRM_IOCTL_EXYNOS_IPP_GET_RESOURCES	DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_GET_RESOURCES, struct drm_exynos_ioctl_ipp_get_res)
-> +#define DRM_IOCTL_EXYNOS_IPP_GET_CAPS		DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_GET_CAPS, struct drm_exynos_ioctl_ipp_get_caps)
-> +#define DRM_IOCTL_EXYNOS_IPP_GET_LIMITS		DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_GET_LIMITS, struct drm_exynos_ioctl_ipp_get_limits)
-> +#define DRM_IOCTL_EXYNOS_IPP_COMMIT		DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_COMMIT, struct drm_exynos_ioctl_ipp_commit)
-> +
->  /* EXYNOS specific events */
->  #define DRM_EXYNOS_G2D_EVENT		0x80000000
-> +#define DRM_EXYNOS_IPP_EVENT		0x80000002
->  
->  struct drm_exynos_g2d_event {
->  	struct drm_event	base;
-> @@ -176,6 +393,16 @@ struct drm_exynos_g2d_event {
->  	__u32			reserved;
->  };
->  
-> +struct drm_exynos_ipp_event {
-> +	struct drm_event	base;
-> +	__u64			user_data;
-> +	__u32			tv_sec;
-> +	__u32			tv_usec;
-> +	__u32			ipp_id;
-> +	__u32			sequence;
-> +	__u64			reserved;
-> +};
-> +
->  #if defined(__cplusplus)
->  }
->  #endif
-> 
+- Select sw algorithms MD5, SHA1 and SHA256 in EXYNOS_HASH
+  as they are nedded for fallback.
+
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+version 2:
+- change patch format so number of lines drops
+- change in Kconfig as suggested by Krzysztof Kozlowski, add
+	EXYNOS_HASH subsection
+- change #ifndef EXYNOS_RNG into #ifdef CRYPTO_DEV_EXYNOS_HASH
+- remove style fixups in aes, as they should go in separate patch
+- remove FLOW_LOG, FLOW_DUMP macros and its uses
+- remove #if 0 ... endif
+- remove unused function hash_wait and its defines
+- fix compiler warning in dev_dbg
+- remove some comments
+- other minor fixes in comments
+
+ drivers/crypto/Kconfig   |   12 +
+ drivers/crypto/s5p-sss.c | 1683 +++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 1674 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index fe33c199fc1a..2f094c433346 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -439,6 +439,18 @@ config CRYPTO_DEV_S5P
+ 	  Select this to offload Samsung S5PV210 or S5PC110, Exynos from AES
+ 	  algorithms execution.
+ 
++config CRYPTO_DEV_EXYNOS_HASH
++	bool "Support for Samsung Exynos HASH accelerator"
++	depends on CRYPTO_DEV_S5P
++	depends on !CRYPTO_DEV_EXYNOS_RNG && CRYPTO_DEV_EXYNOS_RNG!=m
++	select CRYPTO_SHA1
++	select CRYPTO_MD5
++	select CRYPTO_SHA256
++	help
++	  Select this to offload Exynos from HASH MD5/SHA1/SHA256.
++	  HASH algorithms will be disabled if EXYNOS_RNG
++	  is enabled due to hw conflict.
++
+ config CRYPTO_DEV_NX
+ 	bool "Support for IBM PowerPC Nest (NX) cryptographic acceleration"
+ 	depends on PPC64
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 7ac657f46d15..e951f0ffe49b 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -1,18 +1,21 @@
+ /*
+  * Cryptographic API.
+  *
+- * Support for Samsung S5PV210 HW acceleration.
++ * Support for Samsung S5PV210 and Exynos HW acceleration.
+  *
+  * Copyright (C) 2011 NetUP Inc. All rights reserved.
++ * Copyright (c) 2017 Samsung Electronics Co., Ltd. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as published
+  * by the Free Software Foundation.
+  *
++ * Hash part based on omap-sham.c driver.
+  */
+ 
+ #include <linux/clk.h>
+ #include <linux/crypto.h>
++#include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+ #include <linux/errno.h>
+@@ -30,28 +33,41 @@
+ #include <crypto/algapi.h>
+ #include <crypto/scatterwalk.h>
+ 
++#include <crypto/hash.h>
++#include <crypto/md5.h>
++#include <crypto/sha.h>
++#include <crypto/internal/hash.h>
++
+ #define _SBF(s, v)                      ((v) << (s))
+ 
+ /* Feed control registers */
+ #define SSS_REG_FCINTSTAT               0x0000
++#define SSS_FCINTSTAT_HPARTINT		BIT(7)
++#define SSS_FCINTSTAT_HDONEINT		BIT(5)
+ #define SSS_FCINTSTAT_BRDMAINT          BIT(3)
+ #define SSS_FCINTSTAT_BTDMAINT          BIT(2)
+ #define SSS_FCINTSTAT_HRDMAINT          BIT(1)
+ #define SSS_FCINTSTAT_PKDMAINT          BIT(0)
+ 
+ #define SSS_REG_FCINTENSET              0x0004
++#define SSS_FCINTENSET_HPARTINTENSET	BIT(7)
++#define SSS_FCINTENSET_HDONEINTENSET	BIT(5)
+ #define SSS_FCINTENSET_BRDMAINTENSET    BIT(3)
+ #define SSS_FCINTENSET_BTDMAINTENSET    BIT(2)
+ #define SSS_FCINTENSET_HRDMAINTENSET    BIT(1)
+ #define SSS_FCINTENSET_PKDMAINTENSET    BIT(0)
+ 
+ #define SSS_REG_FCINTENCLR              0x0008
++#define SSS_FCINTENCLR_HPARTINTENCLR	BIT(7)
++#define SSS_FCINTENCLR_HDONEINTENCLR	BIT(5)
+ #define SSS_FCINTENCLR_BRDMAINTENCLR    BIT(3)
+ #define SSS_FCINTENCLR_BTDMAINTENCLR    BIT(2)
+ #define SSS_FCINTENCLR_HRDMAINTENCLR    BIT(1)
+ #define SSS_FCINTENCLR_PKDMAINTENCLR    BIT(0)
+ 
+ #define SSS_REG_FCINTPEND               0x000C
++#define SSS_FCINTPEND_HPARTINTP		BIT(7)
++#define SSS_FCINTPEND_HDONEINTP		BIT(5)
+ #define SSS_FCINTPEND_BRDMAINTP         BIT(3)
+ #define SSS_FCINTPEND_BTDMAINTP         BIT(2)
+ #define SSS_FCINTPEND_HRDMAINTP         BIT(1)
+@@ -72,6 +88,7 @@
+ #define SSS_HASHIN_INDEPENDENT          _SBF(0, 0x00)
+ #define SSS_HASHIN_CIPHER_INPUT         _SBF(0, 0x01)
+ #define SSS_HASHIN_CIPHER_OUTPUT        _SBF(0, 0x02)
++#define SSS_HASHIN_MASK			_SBF(0, 0x03)
+ 
+ #define SSS_REG_FCBRDMAS                0x0020
+ #define SSS_REG_FCBRDMAL                0x0024
+@@ -146,9 +163,115 @@
+ #define AES_KEY_LEN         16
+ #define CRYPTO_QUEUE_LEN    1
+ 
++/* HASH registers */
++#define SSS_REG_HASH_CTRL		0x00
++
++#define SSS_HASH_USER_IV_EN		BIT(5)
++#define SSS_HASH_INIT_BIT		BIT(4)
++#define SSS_HASH_ENGINE_SHA1		_SBF(1, 0x00)
++#define SSS_HASH_ENGINE_MD5		_SBF(1, 0x01)
++#define SSS_HASH_ENGINE_SHA256		_SBF(1, 0x02)
++
++#define SSS_HASH_ENGINE_MASK		_SBF(1, 0x03)
++
++#define SSS_REG_HASH_CTRL_PAUSE		0x04
++
++#define SSS_HASH_PAUSE			BIT(0)
++
++#define SSS_REG_HASH_CTRL_FIFO		0x08
++
++#define SSS_HASH_FIFO_MODE_DMA		BIT(0)
++#define SSS_HASH_FIFO_MODE_CPU          0
++
++#define SSS_REG_HASH_CTRL_SWAP		0x0c
++
++#define SSS_HASH_BYTESWAP_DI		BIT(3)
++#define SSS_HASH_BYTESWAP_DO		BIT(2)
++#define SSS_HASH_BYTESWAP_IV		BIT(1)
++#define SSS_HASH_BYTESWAP_KEY		BIT(0)
++
++#define SSS_REG_HASH_STATUS		0x10
++
++#define SSS_HASH_STATUS_MSG_DONE	BIT(6)
++#define SSS_HASH_STATUS_PARTIAL_DONE	BIT(4)
++#define SSS_HASH_STATUS_BUFFER_READY	BIT(0)
++
++#define SSS_REG_HASH_MSG_SIZE_LOW	0x20
++#define SSS_REG_HASH_MSG_SIZE_HIGH	0x24
++
++#define SSS_REG_HASH_PRE_MSG_SIZE_LOW	0x28
++#define SSS_REG_HASH_PRE_MSG_SIZE_HIGH	0x2c
++
++#define SSS_REG_TYPE			u32
++#define HASH_MAX_REG			16
++#define HASH_REG_SIZEOF			sizeof(SSS_REG_TYPE)
++
++#define HASH_BLOCK_SIZE			(HASH_MAX_REG*HASH_REG_SIZEOF)
++
++#define HASH_MD5_MAX_REG		(MD5_DIGEST_SIZE / HASH_REG_SIZEOF)
++#define HASH_SHA1_MAX_REG		(SHA1_DIGEST_SIZE / HASH_REG_SIZEOF)
++#define HASH_SHA256_MAX_REG		(SHA256_DIGEST_SIZE / HASH_REG_SIZEOF)
++
++#define SSS_REG_HASH_IV(s)		(0xB0 + ((s) << 2))
++#define SSS_REG_HASH_OUT(s)		(0x100 + ((s) << 2))
++
++/* HASH flags */
++#define HASH_FLAGS_BUSY		0
++#define HASH_FLAGS_FINAL	1
++#define HASH_FLAGS_DMA_ACTIVE	2
++#define HASH_FLAGS_OUTPUT_READY	3
++#define HASH_FLAGS_INIT		4
++#define HASH_FLAGS_DMA_READY	6
++
++#define HASH_FLAGS_SGS_COPIED	9
++#define HASH_FLAGS_SGS_ALLOCED	10
++/* HASH context flags */
++#define HASH_FLAGS_FINUP	16
++#define HASH_FLAGS_ERROR	17
++
++#define HASH_FLAGS_MODE_MD5	18
++#define HASH_FLAGS_MODE_SHA1	19
++#define HASH_FLAGS_MODE_SHA256	20
++
++#define HASH_FLAGS_MODE_MASK	(BIT(18) | BIT(19) | BIT(20))
++/* HASH op codes */
++#define HASH_OP_UPDATE		1
++#define HASH_OP_FINAL		2
++
++/* HASH HW constants */
++#define HASH_ALIGN_MASK		(HASH_BLOCK_SIZE-1)
++
++#define BUFLEN			HASH_BLOCK_SIZE
++
++#define SSS_DMA_ALIGN		16
++#define SSS_ALIGNED		__attribute__((aligned(SSS_DMA_ALIGN)))
++#define SSS_DMA_ALIGN_MASK	(SSS_DMA_ALIGN-1)
++
++/* HASH queue constant */
++#define SSS_HASH_QUEUE_LENGTH	10
++
++/**
++ * struct sss_hash_algs_info - platform specific SSS HASH algorithms
++ * @algs_list:	array of transformations (algorithms)
++ * @size:	size
++ * @registered:	counter used at probe/remove
++ *
++ * Specifies platform specific information about hash algorithms
++ * of SSS module.
++ */
++struct sss_hash_algs_info {
++	struct ahash_alg	*algs_list;
++	unsigned int		size;
++	unsigned int		registered;
++};
++
+ /**
+  * struct samsung_aes_variant - platform specific SSS driver data
+  * @aes_offset: AES register offset from SSS module's base.
++ * @hash_offset: HASH register offset from SSS module's base.
++ *
++ * @hash_algs_info: HASH transformations provided by SS module
++ * @hash_algs_size: size of hash_algs_info
+  *
+  * Specifies platform specific configuration of SSS module.
+  * Note: A structure for driver specific platform data is used for future
+@@ -156,6 +279,10 @@
+  */
+ struct samsung_aes_variant {
+ 	unsigned int			aes_offset;
++	unsigned int			hash_offset;
++
++	struct sss_hash_algs_info	*hash_algs_info;
++	unsigned int			hash_algs_size;
+ };
+ 
+ struct s5p_aes_reqctx {
+@@ -194,7 +321,21 @@ struct s5p_aes_ctx {
+  *		req, ctx, sg_src/dst (and copies).  This essentially
+  *		protects against concurrent access to these fields.
+  * @lock:	Lock for protecting both access to device hardware registers
+- *		and fields related to current request (including the busy field).
++ *		and fields related to current request (including the busy
++ *		field).
++ * @res:	Resources for hash.
++ * @io_hash_base: Per-variant offset for HASH block IO memory.
++ * @hash_lock:	Lock for protecting hash_req and other HASH variables.
++ * @hash_err:	Error flags for current HASH op.
++ * @hash_tasklet: New HASH request scheduling job.
++ * @xmit_buf:	Buffer for current HASH request transfer into SSS block.
++ * @hash_flags:	Flags for current HASH op.
++ * @hash_queue:	Async hash queue.
++ * @hash_req:	Current request sending to SSS HASH block.
++ * @hash_sg_iter: Scatterlist transferred through DMA into SSS HASH block.
++ * @hash_sg_cnt: Counter for hash_sg_iter.
++ *
++ * @pdata:	Per-variant algorithms for HASH ops.
+  */
+ struct s5p_aes_dev {
+ 	struct device			*dev;
+@@ -215,16 +356,85 @@ struct s5p_aes_dev {
+ 	struct crypto_queue		queue;
+ 	bool				busy;
+ 	spinlock_t			lock;
++
++	struct resource			*res;
++	void __iomem			*io_hash_base;
++
++	spinlock_t			hash_lock;
++	int				hash_err;
++	struct tasklet_struct		hash_tasklet;
++	u8				xmit_buf[BUFLEN] SSS_ALIGNED;
++
++	unsigned long			hash_flags;
++	struct crypto_queue		hash_queue;
++	struct ahash_request		*hash_req;
++	struct scatterlist		*hash_sg_iter;
++	int				hash_sg_cnt;
++
++	struct samsung_aes_variant	*pdata;
+ };
+ 
+-static struct s5p_aes_dev *s5p_dev;
++/**
++ * struct s5p_hash_reqctx - HASH request context
++ * @dev:	Associated device
++ * @flags:	Bits for current HASH request
++ * @op:		Current request operation (OP_UPDATE or UP_FINAL)
++ * @digcnt:	Number of bytes processed by HW (without buffer[] ones)
++ * @digest:	Digest message or IV for partial result
++ * @bufcnt:	Number of bytes holded in buffer[]
++ * @buflen:	Max length of the input data buffer
++ * @nregs:	Number of HW registers for digest or IV read/write.
++ * @engine:	Flags for setting HASH SSS block.
++ * @sg:		sg for DMA transfer.
++ * @sg_len:	Length of sg for DMA transfer.
++ * @sgl[]:	sg for joining buffer and req->src scatterlist.
++ * @skip:	Skip offset in req->src for current op.
++ * @total:	Total number of bytes for current request.
++ * @buffer[]:	For byte(s) from end of req->src in UPDATE op.
++ */
++struct s5p_hash_reqctx {
++	struct s5p_aes_dev	*dd;
++	unsigned long		flags;
++	int			op;
++
++	u64			digcnt;
++	u8			digest[SHA256_DIGEST_SIZE] SSS_ALIGNED;
++	u32			bufcnt;
++	u32			buflen;
++
++	int			nregs; /* digest_size / sizeof(reg) */
++	u32			engine;
++
++	struct scatterlist	*sg;
++	int			sg_len;
++	struct scatterlist	sgl[2];
++	int			skip;	/* skip offset in req->src sg */
++	unsigned int		total;	/* total request */
++
++	u8			buffer[0] SSS_ALIGNED;
++};
++
++/**
++ * struct s5p_hash_ctx - HASH transformation context
++ * @dd:		Associated device
++ * @flags:	Bits for algorithm HASH.
++ * @fallback:	Software transformation for zero message or size < BUFLEN.
++ */
++struct s5p_hash_ctx {
++	struct s5p_aes_dev	*dd;
++	unsigned long		flags;
++	struct crypto_shash	*fallback;
++};
+ 
+-static const struct samsung_aes_variant s5p_aes_data = {
++static struct samsung_aes_variant s5p_aes_data = {
+ 	.aes_offset	= 0x4000,
++	.hash_offset	= 0x6000,
++	.hash_algs_size	= 0,
+ };
+ 
+-static const struct samsung_aes_variant exynos_aes_data = {
+-	.aes_offset	= 0x200,
++static struct samsung_aes_variant exynos_aes_data = {
++	.aes_offset		= 0x200,
++	.hash_offset		= 0x400,
+ };
+ 
+ static const struct of_device_id s5p_sss_dt_match[] = {
+@@ -254,6 +464,8 @@ static inline struct samsung_aes_variant *find_s5p_sss_version
+ 			platform_get_device_id(pdev)->driver_data;
+ }
+ 
++static struct s5p_aes_dev *s5p_dev;
++
+ static void s5p_set_dma_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+ {
+ 	SSS_WRITE(dev, FCBRDMAS, sg_dma_address(sg));
+@@ -436,19 +648,85 @@ static int s5p_aes_rx(struct s5p_aes_dev *dev/*, bool *set_dma*/)
+ 	return ret;
+ }
+ 
++static inline u32 s5p_hash_read(struct s5p_aes_dev *dd, u32 offset)
++{
++	return __raw_readl(dd->io_hash_base + offset);
++}
++
++static inline void s5p_hash_write(struct s5p_aes_dev *dd,
++				  u32 offset, u32 value)
++{
++	__raw_writel(value, dd->io_hash_base + offset);
++}
++
++static inline void s5p_hash_write_mask(struct s5p_aes_dev *dd, u32 address,
++				       u32 value, u32 mask)
++{
++	u32 val;
++
++	val = s5p_hash_read(dd, address);
++	val &= ~mask;
++	val |= value;
++	s5p_hash_write(dd, address, val);
++}
++
++/**
++ * s5p_set_dma_hashdata - start DMA with sg
++ * @dev:	device
++ * @sg:		scatterlist ready to DMA transmit
++ *
++ * decrement sg counter
++ * write addr and len into HASH regs
++ *
++ * DMA starts after writing length
++ */
++static void s5p_set_dma_hashdata(struct s5p_aes_dev *dev,
++				 struct scatterlist *sg)
++{
++	dev->hash_sg_cnt--;
++	WARN_ON(dev->hash_sg_cnt < 0);
++	WARN_ON(sg_dma_len(sg) <= 0);
++	SSS_WRITE(dev, FCHRDMAS, sg_dma_address(sg));
++	SSS_WRITE(dev, FCHRDMAL, sg_dma_len(sg)); /* DMA starts */
++}
++
++/**
++ * s5p_hash_rx - get next hash_sg_iter
++ * @dev:	device
++ *
++ * Return:
++ * 2	if there is no more data,
++ * 1	if new receiving (input) data is ready and can be written to
++ *	device
++ */
++static int s5p_hash_rx(struct s5p_aes_dev *dev)
++{
++	int ret = 2;
++
++	if (dev->hash_sg_cnt > 0) {
++		dev->hash_sg_iter = sg_next(dev->hash_sg_iter);
++		ret = 1;
++	} else {
++		set_bit(HASH_FLAGS_DMA_READY, &dev->hash_flags);
++	}
++
++	return ret;
++}
++
+ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
+ {
+ 	struct platform_device *pdev = dev_id;
+ 	struct s5p_aes_dev *dev = platform_get_drvdata(pdev);
+ 	int err_dma_tx = 0;
+ 	int err_dma_rx = 0;
++	int err_dma_hx = 0;
+ 	bool tx_end = false;
++	bool hx_end = false;
+ 	unsigned long flags;
+-	uint32_t status;
++	u32 status, st_bits;
+ 	int err;
+ 
+ 	spin_lock_irqsave(&dev->lock, flags);
+-
+ 	/*
+ 	 * Handle rx or tx interrupt. If there is still data (scatterlist did not
+ 	 * reach end), then map next scatterlist entry.
+@@ -456,6 +734,8 @@ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
+ 	 *
+ 	 * If there is no more data in tx scatter list, call s5p_aes_complete()
+ 	 * and schedule new tasklet.
++	 *
++	 * Handle hx interrupt. If there is still data map next entry.
+ 	 */
+ 	status = SSS_READ(dev, FCINTSTAT);
+ 	if (status & SSS_FCINTSTAT_BRDMAINT)
+@@ -467,7 +747,29 @@ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
+ 		err_dma_tx = s5p_aes_tx(dev);
+ 	}
+ 
+-	SSS_WRITE(dev, FCINTPEND, status);
++	if (status & SSS_FCINTSTAT_HRDMAINT)
++		err_dma_hx = s5p_hash_rx(dev);
++
++	st_bits = status & (SSS_FCINTSTAT_BRDMAINT | SSS_FCINTSTAT_BTDMAINT |
++				SSS_FCINTSTAT_HRDMAINT);
++	/* clear DMA bits */
++	SSS_WRITE(dev, FCINTPEND, st_bits);
++
++	/* clear HASH irq bits */
++	if (status & (SSS_FCINTSTAT_HDONEINT | SSS_FCINTSTAT_HPARTINT)) {
++		/* cannot have both HPART and HDONE */
++		if (status & SSS_FCINTSTAT_HPARTINT)
++			st_bits = SSS_HASH_STATUS_PARTIAL_DONE;
++
++		if (status & SSS_FCINTSTAT_HDONEINT)
++			st_bits = SSS_HASH_STATUS_MSG_DONE;
++
++		set_bit(HASH_FLAGS_OUTPUT_READY, &dev->hash_flags);
++		s5p_hash_write(dev, SSS_REG_HASH_STATUS, st_bits);
++		hx_end = true;
++		/* when DONE or PART, do not handle HASH DMA */
++		err_dma_hx = 0;
++	}
+ 
+ 	if (err_dma_rx < 0) {
+ 		err = err_dma_rx;
+@@ -480,6 +782,8 @@ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
+ 
+ 	if (tx_end) {
+ 		s5p_sg_done(dev);
++		if (err_dma_hx == 1)
++			s5p_set_dma_hashdata(dev, dev->hash_sg_iter);
+ 
+ 		spin_unlock_irqrestore(&dev->lock, flags);
+ 
+@@ -497,21 +801,1274 @@ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
+ 			s5p_set_dma_outdata(dev, dev->sg_dst);
+ 		if (err_dma_rx == 1)
+ 			s5p_set_dma_indata(dev, dev->sg_src);
++		if (err_dma_hx == 1)
++			s5p_set_dma_hashdata(dev, dev->hash_sg_iter);
+ 
+ 		spin_unlock_irqrestore(&dev->lock, flags);
+ 	}
+ 
+-	return IRQ_HANDLED;
++	goto hash_irq_end;
+ 
+ error:
+ 	s5p_sg_done(dev);
+ 	dev->busy = false;
++	if (err_dma_hx == 1)
++		s5p_set_dma_hashdata(dev, dev->hash_sg_iter);
++
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ 	s5p_aes_complete(dev, err);
+ 
++hash_irq_end:
++	/*
++	 * Note about else if:
++	 *   when hash_sg_iter reaches end and its UPDATE op,
++	 *   issue SSS_HASH_PAUSE and wait for HPART irq
++	 */
++	if (hx_end)
++		tasklet_schedule(&dev->hash_tasklet);
++	else if ((err_dma_hx == 2) &&
++		!test_bit(HASH_FLAGS_FINAL, &dev->hash_flags))
++		s5p_hash_write(dev, SSS_REG_HASH_CTRL_PAUSE,
++			       SSS_HASH_PAUSE);
++
+ 	return IRQ_HANDLED;
+ }
+ 
++/**
++ * s5p_hash_read_msg - read message or IV from HW
++ * @req:	AHASH request
++ */
++static void s5p_hash_read_msg(struct ahash_request *req)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	struct s5p_aes_dev *dd = ctx->dd;
++	u32 *hash = (u32 *)ctx->digest;
++	int i;
++
++	for (i = 0; i < ctx->nregs; i++)
++		hash[i] = s5p_hash_read(dd, SSS_REG_HASH_OUT(i));
++}
++
++/**
++ * s5p_hash_write_ctx_iv - write IV for next partial/finup op.
++ * @dd:		device
++ * @ctx:	request context
++ */
++static void s5p_hash_write_ctx_iv(struct s5p_aes_dev *dd,
++				  struct s5p_hash_reqctx *ctx)
++{
++	u32 *hash = (u32 *)ctx->digest;
++	int i;
++
++	for (i = 0; i < ctx->nregs; i++)
++		s5p_hash_write(dd, SSS_REG_HASH_IV(i), hash[i]);
++}
++
++/**
++ * s5p_hash_write_iv - write IV for next partial/finup op.
++ * @req:	AHASH request
++ */
++static void s5p_hash_write_iv(struct ahash_request *req)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	struct s5p_aes_dev *dd = ctx->dd;
++
++	s5p_hash_write_ctx_iv(dd, ctx);
++}
++
++/**
++ * s5p_hash_copy_result - copy digest into req->result
++ * @req:	AHASH request
++ */
++static void s5p_hash_copy_result(struct ahash_request *req)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	int d = ctx->nregs;
++
++	if (!req->result)
++		return;
++
++	memcpy(req->result, (u8 *)ctx->digest, d * HASH_REG_SIZEOF);
++}
++
++/**
++ * s5p_hash_dma_flush - flush HASH DMA
++ * @dev:	secss device
++ */
++static void s5p_hash_dma_flush(struct s5p_aes_dev *dev)
++{
++	SSS_WRITE(dev, FCHRDMAC, SSS_FCHRDMAC_FLUSH);
++}
++
++/**
++ * s5p_hash_dma_enable()
++ * @dev:	secss device
++ *
++ * enable DMA mode for HASH
++ */
++static void s5p_hash_dma_enable(struct s5p_aes_dev *dev)
++{
++	s5p_hash_write(dev, SSS_REG_HASH_CTRL_FIFO, SSS_HASH_FIFO_MODE_DMA);
++}
++
++/**
++ * s5p_hash_irq_disable - disable irq HASH signals
++ * @dev:	secss device
++ * @flags:	bitfield with irq's to be disabled
++ */
++static void s5p_hash_irq_disable(struct s5p_aes_dev *dev, u32 flags)
++{
++	SSS_WRITE(dev, FCINTENCLR, flags);
++}
++
++/**
++ * s5p_hash_irq_enable - enable irq signals
++ * @dev:	secss device
++ * @flags:	bitfield with irq's to be enabled
++ */
++static void s5p_hash_irq_enable(struct s5p_aes_dev *dev, int flags)
++{
++	SSS_WRITE(dev, FCINTENSET, flags);
++}
++
++/**
++ * s5p_hash_set_flow()
++ * @dev:	secss device
++ * @hashflow:	HASH stream flow with/without crypto AES/DES
++ */
++static void s5p_hash_set_flow(struct s5p_aes_dev *dev, u32 hashflow)
++{
++	unsigned long flags;
++	u32 flow;
++
++	spin_lock_irqsave(&dev->lock, flags);
++
++	flow = SSS_READ(dev, FCFIFOCTRL);
++
++	hashflow &= SSS_HASHIN_MASK;
++	flow &= ~SSS_HASHIN_MASK;
++	flow |= hashflow;
++
++	SSS_WRITE(dev, FCFIFOCTRL, hashflow);
++
++	spin_unlock_irqrestore(&dev->lock, flags);
++}
++
++/**
++ * s5p_ahash_dma_init -
++ * @dev:	secss device
++ * @hashflow:	HASH stream flow with/without AES/DES
++ *
++ * flush HASH DMA and enable DMA,
++ * set HASH stream flow inside SecSS HW
++ * enable HASH irq's HRDMA, HDONE, HPART
++ */
++static void s5p_ahash_dma_init(struct s5p_aes_dev *dev, u32 hashflow)
++{
++	s5p_hash_irq_disable(dev, SSS_FCINTENCLR_HRDMAINTENCLR |
++			     SSS_FCINTENCLR_HDONEINTENCLR |
++			     SSS_FCINTENCLR_HPARTINTENCLR);
++	s5p_hash_dma_flush(dev);
++
++	s5p_hash_dma_enable(dev);
++	s5p_hash_set_flow(dev, hashflow);
++
++	s5p_hash_irq_enable(dev, SSS_FCINTENSET_HRDMAINTENSET |
++			    SSS_FCINTENSET_HDONEINTENSET |
++			    SSS_FCINTENSET_HPARTINTENSET);
++}
++
++/**
++ * s5p_hash_hw_init -
++ * @dev:	secss device
++ */
++static int s5p_hash_hw_init(struct s5p_aes_dev *dev)
++{
++	set_bit(HASH_FLAGS_INIT, &dev->hash_flags);
++	s5p_ahash_dma_init(dev, SSS_HASHIN_INDEPENDENT);
++
++	return 0;
++}
++
++/**
++ * s5p_hash_write_ctrl -
++ * @dd:		secss device
++ * @length:	length for request
++ * @final:	0=not final
++ *
++ * Prepare SSS HASH block for processing bytes in DMA mode.
++ * If it is called after previous updates, fill up IV words.
++ * For final, calculate and set lengths for SSS HASH so it can
++ * finalize hash.
++ * For partial, set SSS HASH length as 2^63 so it will be never
++ * reached and set to zero prelow and prehigh.
++ *
++ * This function do not start DMA transfer.
++ */
++static void s5p_hash_write_ctrl(struct s5p_aes_dev *dd, size_t length,
++				int final)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(dd->hash_req);
++	u32 configflags, swapflags;
++	u32 prelow, prehigh, low, high;
++	u64 tmplen;
++
++	configflags = ctx->engine | SSS_HASH_INIT_BIT;
++
++	if (likely(ctx->digcnt)) {
++		s5p_hash_write_ctx_iv(dd, ctx);
++		configflags |= SSS_HASH_USER_IV_EN;
++	}
++
++	if (final) {
++		/* number of bytes for last part */
++		low = length; high = 0;
++		/* total number of bits prev hashed */
++		tmplen = ctx->digcnt * 8;
++		prelow = (u32)tmplen;
++		prehigh = (u32)(tmplen >> 32);
++	} else {
++		prelow = 0; prehigh = 0;
++		low = 0; high = BIT(31);
++	}
++
++	swapflags = SSS_HASH_BYTESWAP_DI | SSS_HASH_BYTESWAP_DO |
++		    SSS_HASH_BYTESWAP_IV | SSS_HASH_BYTESWAP_KEY;
++
++	s5p_hash_write(dd, SSS_REG_HASH_MSG_SIZE_LOW, low);
++	s5p_hash_write(dd, SSS_REG_HASH_MSG_SIZE_HIGH, high);
++	s5p_hash_write(dd, SSS_REG_HASH_PRE_MSG_SIZE_LOW, prelow);
++	s5p_hash_write(dd, SSS_REG_HASH_PRE_MSG_SIZE_HIGH, prehigh);
++
++	s5p_hash_write(dd, SSS_REG_HASH_CTRL_SWAP, swapflags);
++	s5p_hash_write(dd, SSS_REG_HASH_CTRL, configflags);
++}
++
++/**
++ * s5p_hash_xmit_dma - start DMA hash processing
++ * @dd:		secss device
++ * @length:	length for request
++ * @final:	0=not final
++ *
++ * Map ctx->sg into DMA_TO_DEVICE,
++ * remember sg and cnt in device dd->hash_sg_iter, dd->hash_sg_cnt
++ * so it can be used in loop inside irq handler.
++ * Update ctx->digcnt, need this to keep number of processed bytes
++ * for last final/finup request.
++ * Set dma address and length, this starts DMA,
++ * return with -EINPROGRESS.
++ * HW HASH block will issue signal for irq handler.
++ */
++static int s5p_hash_xmit_dma(struct s5p_aes_dev *dd, size_t length,
++			      int final)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(dd->hash_req);
++	int cnt;
++
++	dev_dbg(dd->dev, "xmit_dma: digcnt: %lld, length: %u, final: %d\n",
++						ctx->digcnt, length, final);
++
++	cnt = dma_map_sg(dd->dev, ctx->sg, ctx->sg_len, DMA_TO_DEVICE);
++	if (!cnt) {
++		dev_err(dd->dev, "dma_map_sg error\n");
++		set_bit(HASH_FLAGS_ERROR, &ctx->flags);
++		return -EINVAL;
++	}
++
++	set_bit(HASH_FLAGS_DMA_ACTIVE, &dd->hash_flags);
++	dd->hash_sg_iter = ctx->sg;
++	dd->hash_sg_cnt = cnt;
++	s5p_hash_write_ctrl(dd, length, final);
++	/* update digcnt in request */
++	ctx->digcnt += length;
++	ctx->total -= length;
++
++	/* catch last interrupt */
++	if (final)
++		set_bit(HASH_FLAGS_FINAL, &dd->hash_flags);
++
++	s5p_set_dma_hashdata(dd, dd->hash_sg_iter); /* DMA starts */
++
++	return -EINPROGRESS;
++}
++
++/**
++ * s5p_hash_copy_sgs -
++ * @ctx:	request context
++ * @sg:		source scatterlist request
++ * @bs:		block size
++ * @new_len:	number of bytes to process from sg
++ *
++ * Allocate new buffer, copy data for HASH into it.
++ * If there was xmit_buf filled, copy it first, then
++ * copy data from sg into it.
++ * Prepare one sgl[0] with allocated buffer.
++ *
++ * Set ctx->sg to sgl[0].
++ * Set flag so we can free it after irq ends processing.
++ */
++static int s5p_hash_copy_sgs(struct s5p_hash_reqctx *ctx,
++			     struct scatterlist *sg, int bs, int new_len)
++{
++	int pages;
++	void *buf;
++	int len;
++
++	len = new_len + ctx->bufcnt;
++	pages = get_order(len);
++
++	buf = (void *)__get_free_pages(GFP_ATOMIC, pages);
++	if (!buf) {
++		dev_err(ctx->dd->dev, "alloc pages for unaligned case.\n");
++		set_bit(HASH_FLAGS_ERROR, &ctx->flags);
++		return -ENOMEM;
++	}
++
++	if (ctx->bufcnt)
++		memcpy(buf, ctx->dd->xmit_buf, ctx->bufcnt);
++
++	scatterwalk_map_and_copy(buf + ctx->bufcnt, sg, ctx->skip,
++				 new_len, 0);
++	sg_init_table(ctx->sgl, 1);
++	sg_set_buf(ctx->sgl, buf, len);
++	ctx->sg = ctx->sgl;
++	ctx->sg_len = 1;
++	ctx->bufcnt = 0;
++	ctx->skip = 0;
++	set_bit(HASH_FLAGS_SGS_COPIED, &ctx->dd->hash_flags);
++
++	return 0;
++}
++
++/**
++ * s5p_hash_copy_sg_lists -
++ * @rctx:	request context
++ * @sg:		source scatterlist request
++ * @bs:		block size
++ * @new_len:	number of bytes to process from sg
++ *
++ * Allocate new scatterlist table, copy data for HASH into it.
++ * If there was xmit_buf filled, prepare it first, then
++ * copy page, length and offset from source sg into it,
++ * adjusting begin and/or end for skip offset and hash_later value.
++ *
++ * Resulting sg table will be assigned to ctx->sg.
++ * Set flag so we can free it after irq ends processing.
++ */
++static int s5p_hash_copy_sg_lists(struct s5p_hash_reqctx *ctx,
++				  struct scatterlist *sg, int bs, int new_len)
++{
++	int n = sg_nents(sg);
++	struct scatterlist *tmp;
++	int offset = ctx->skip;
++
++	if (ctx->bufcnt)
++		n++;
++
++	ctx->sg = kmalloc_array(n, sizeof(*sg), GFP_KERNEL);
++	if (!ctx->sg) {
++		set_bit(HASH_FLAGS_ERROR, &ctx->flags);
++		return -ENOMEM;
++	}
++
++	sg_init_table(ctx->sg, n);
++
++	tmp = ctx->sg;
++
++	ctx->sg_len = 0;
++
++	if (ctx->bufcnt) {
++		sg_set_buf(tmp, ctx->dd->xmit_buf, ctx->bufcnt);
++		tmp = sg_next(tmp);
++		ctx->sg_len++;
++	}
++
++	while (sg && new_len) {
++		int len = sg->length - offset;
++
++		if (offset) {
++			offset -= sg->length;
++			if (offset < 0)
++				offset = 0;
++		}
++
++		if (new_len < len)
++			len = new_len;
++
++		if (len > 0) {
++			new_len -= len;
++			sg_set_page(tmp, sg_page(sg), len, sg->offset);
++			if (new_len <= 0)
++				sg_mark_end(tmp);
++			tmp = sg_next(tmp);
++			ctx->sg_len++;
++		}
++
++		sg = sg_next(sg);
++	}
++
++	set_bit(HASH_FLAGS_SGS_ALLOCED, &ctx->dd->hash_flags);
++
++	ctx->bufcnt = 0;
++
++	return 0;
++}
++
++/**
++ * s5p_hash_prepare_sgs -
++ * @sg:		source scatterlist request
++ * @nbytes:	number of bytes to process from sg
++ * @bs:		block size
++ * @final:	final flag
++ * @rctx:	request context
++ *
++ * Check two conditions: (1) if buffers in sg have len aligned data,
++ * and (2) sg table have good aligned elements (list_ok)
++ * If one of this checks fails, then either
++ * (1) allocates new buffer for data with s5p_hash_copy_sgs,
++ * copy data into this buffer and prepare request in sgl, or
++ * (2) allocates new sg table and prepare sg elements
++ *
++ * For digest or finup all conditions can be good, and we may not need
++ * any fixes.
++ */
++static int s5p_hash_prepare_sgs(struct scatterlist *sg,
++				int nbytes, int bs, bool final,
++				struct s5p_hash_reqctx *rctx)
++{
++	int n = 0;
++	bool aligned = true;
++	bool list_ok = true;
++	struct scatterlist *sg_tmp = sg;
++	int offset = rctx->skip;
++	int new_len;
++
++	if (!sg || !sg->length || !nbytes)
++		return 0;
++
++	new_len = nbytes;
++
++	if (offset)
++		list_ok = false;
++
++	if (!final)
++		list_ok = false;
++
++	while (nbytes > 0 && sg_tmp) {
++		n++;
++
++		if (offset < sg_tmp->length) {
++			if (!IS_ALIGNED(sg_tmp->length - offset, bs)) {
++				aligned = false;
++				break;
++			}
++		}
++
++		if (!sg_tmp->length) {
++			aligned = false;
++			break;
++		}
++
++		if (offset) {
++			offset -= sg_tmp->length;
++			if (offset < 0) {
++				nbytes += offset;
++				offset = 0;
++			}
++		} else {
++			nbytes -= sg_tmp->length;
++		}
++
++		sg_tmp = sg_next(sg_tmp);
++
++		if (nbytes < 0) { /* when hash_later is > 0 */
++			list_ok = false;
++			break;
++		}
++	}
++
++	if (!aligned)
++		return s5p_hash_copy_sgs(rctx, sg, bs, new_len);
++	else if (!list_ok)
++		return s5p_hash_copy_sg_lists(rctx, sg, bs, new_len);
++
++	/* have aligned data from previous operation and/or current
++	 * Note: will enter here only if (digest or finup) and aligned
++	 */
++	if (rctx->bufcnt) {
++		rctx->sg_len = n;
++		sg_init_table(rctx->sgl, 2);
++		sg_set_buf(rctx->sgl, rctx->dd->xmit_buf, rctx->bufcnt);
++		sg_chain(rctx->sgl, 2, sg);
++		rctx->sg = rctx->sgl;
++		rctx->sg_len++;
++	} else {
++		rctx->sg = sg;
++		rctx->sg_len = n;
++	}
++
++	return 0;
++}
++
++/**
++ * s5p_hash_prepare_request -
++ * @req:	AHASH request
++ * @update:	true if UPDATE op
++ *
++ * Note 1: we can have update flag _and_ final flag at the same time.
++ * Note 2: we enter here when digcnt > BUFLEN (=HASH_BLOCK_SIZE) or
++ *	   either req->nbytes or ctx->bufcnt + req->nbytes is > BUFLEN or
++ *	   we have final op
++ */
++static int s5p_hash_prepare_request(struct ahash_request *req, bool update)
++{
++	struct s5p_hash_reqctx *rctx = ahash_request_ctx(req);
++	int bs;
++	int ret;
++	int nbytes;
++	bool final = rctx->flags & BIT(HASH_FLAGS_FINUP);
++	int xmit_len, hash_later;
++
++	if (!req)
++		return 0;
++
++	bs = BUFLEN;
++	if (update)
++		nbytes = req->nbytes;
++	else
++		nbytes = 0;
++
++	rctx->total = nbytes + rctx->bufcnt;
++	if (!rctx->total)
++		return 0;
++
++	if (nbytes && (!IS_ALIGNED(rctx->bufcnt, BUFLEN))) {
++		/* bytes left from previous request, so fill up to BUFLEN */
++		int len = BUFLEN - rctx->bufcnt % BUFLEN;
++
++		if (len > nbytes)
++			len = nbytes;
++
++		scatterwalk_map_and_copy(rctx->buffer + rctx->bufcnt, req->src,
++					 0, len, 0);
++		rctx->bufcnt += len;
++		nbytes -= len;
++		rctx->skip = len;
++	} else {
++		rctx->skip = 0;
++	}
++
++	if (rctx->bufcnt)
++		memcpy(rctx->dd->xmit_buf, rctx->buffer, rctx->bufcnt);
++
++	xmit_len = rctx->total;
++	if (final) {
++		hash_later = 0;
++	} else {
++		if (IS_ALIGNED(xmit_len, bs))
++			xmit_len -= bs;
++		else
++			xmit_len -= xmit_len & (bs - 1);
++
++		hash_later = rctx->total - xmit_len;
++		WARN_ON(req->nbytes == 0);
++		WARN_ON(hash_later <= 0);
++		/* == if bufcnt was BUFLEN */
++		WARN_ON(req->nbytes < hash_later);
++		WARN_ON(rctx->skip > (req->nbytes - hash_later));
++		/* copy hash_later bytes from end of req->src */
++		/* previous bytes are in xmit_buf, so no overwrite */
++		scatterwalk_map_and_copy(rctx->buffer, req->src,
++					 req->nbytes - hash_later,
++					 hash_later, 0);
++	}
++
++	WARN_ON(hash_later < 0);
++	WARN_ON(nbytes < hash_later);
++	if (xmit_len > bs) {
++		WARN_ON(nbytes <= hash_later);
++		ret = s5p_hash_prepare_sgs(req->src, nbytes - hash_later, bs,
++					   final, rctx);
++		if (ret)
++			return ret;
++	} else {
++		/* have buffered data only */
++		if (unlikely(!rctx->bufcnt)) {
++			/* first update didn't fill up buffer */
++			WARN_ON(xmit_len != BUFLEN);
++			scatterwalk_map_and_copy(rctx->dd->xmit_buf, req->src,
++				0, xmit_len, 0);
++		}
++
++		sg_init_table(rctx->sgl, 1);
++		sg_set_buf(rctx->sgl, rctx->dd->xmit_buf, xmit_len);
++
++		rctx->sg = rctx->sgl;
++		rctx->sg_len = 1;
++	}
++
++	rctx->bufcnt = hash_later;
++	if (!final)
++		rctx->total = xmit_len;
++
++	return 0;
++}
++
++/**
++ * s5p_hash_update_dma_stop()
++ * @dd:		secss device
++ *
++ * Unmap scatterlist ctx->sg.
++ */
++static int s5p_hash_update_dma_stop(struct s5p_aes_dev *dd)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(dd->hash_req);
++
++	dma_unmap_sg(dd->dev, ctx->sg, ctx->sg_len, DMA_TO_DEVICE);
++	clear_bit(HASH_FLAGS_DMA_ACTIVE, &dd->hash_flags);
++
++	return 0;
++}
++
++/**
++ * s5p_hash_update_req - process AHASH request
++ * @dd:		device s5p_aes_dev
++ *
++ * Processes the input data from AHASH request using DMA
++ * Current request should have ctx->sg prepared before.
++ *
++ * Returns: see s5p_hash_final below.
++ */
++static int s5p_hash_update_req(struct s5p_aes_dev *dd)
++{
++	struct ahash_request *req = dd->hash_req;
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	int err;
++	bool final = ctx->flags & BIT(HASH_FLAGS_FINUP);
++
++	dev_dbg(dd->dev, "update_req: total: %u, digcnt: %lld, finup: %d\n",
++		 ctx->total, ctx->digcnt, final);
++
++	err = s5p_hash_xmit_dma(dd, ctx->total, final);
++
++	/* wait for dma completion before can take more data */
++	dev_dbg(dd->dev, "update: err: %d, digcnt: %lld\n", err, ctx->digcnt);
++
++	return err;
++}
++
++/**
++ * s5p_hash_final_req - process the final AHASH request
++ * @dd:		device s5p_aes_dev
++ *
++ * Processes the input data from the last AHASH request
++ * using . Resets the buffer counter (ctx->bufcnt)
++ *
++ * Returns: see s5p_hash_final below.
++ */
++static int s5p_hash_final_req(struct s5p_aes_dev *dd)
++{
++	struct ahash_request *req = dd->hash_req;
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	int err = 0;
++
++	err = s5p_hash_xmit_dma(dd, ctx->total, 1);
++	ctx->bufcnt = 0;
++	dev_dbg(dd->dev, "final_req: err: %d\n", err);
++
++	return err;
++}
++
++/**
++ * s5p_hash_finish - copy calculated digest to crypto layer
++ * @req:	AHASH request
++ *
++ * Copies the calculated hash value to the buffer provided
++ * by req->result
++ *
++ * Returns 0 on success and negative values on error.
++ */
++static int s5p_hash_finish(struct ahash_request *req)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	struct s5p_aes_dev *dd = ctx->dd;
++	int err = 0;
++
++	if (ctx->digcnt)
++		s5p_hash_copy_result(req);
++
++	dev_dbg(dd->dev, "digcnt: %lld, bufcnt: %d\n", ctx->digcnt,
++		ctx->bufcnt);
++
++	return err;
++}
++
++/**
++ * s5p_hash_finish_req - finish request
++ * @req:	AHASH request
++ * @err:	error
++ *
++ * Clear flags, free memory,
++ * if FINAL then read output into ctx->digest,
++ * call completetion
++ */
++static void s5p_hash_finish_req(struct ahash_request *req, int err)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	struct s5p_aes_dev *dd = ctx->dd;
++
++	if (test_bit(HASH_FLAGS_SGS_COPIED, &dd->hash_flags))
++		free_pages((unsigned long)sg_virt(ctx->sg),
++			   get_order(ctx->sg->length));
++
++	if (test_bit(HASH_FLAGS_SGS_ALLOCED, &dd->hash_flags))
++		kfree(ctx->sg);
++
++	ctx->sg = NULL;
++
++	dd->hash_flags &= ~(BIT(HASH_FLAGS_SGS_ALLOCED) |
++			    BIT(HASH_FLAGS_SGS_COPIED));
++
++	if (!err && !test_bit(HASH_FLAGS_ERROR, &ctx->flags)) {
++		s5p_hash_read_msg(req);
++		if (test_bit(HASH_FLAGS_FINAL, &dd->hash_flags))
++			err = s5p_hash_finish(req);
++	} else {
++		ctx->flags |= BIT(HASH_FLAGS_ERROR);
++	}
++
++	/* atomic operation is not needed here */
++	dd->hash_flags &= ~(BIT(HASH_FLAGS_BUSY) | BIT(HASH_FLAGS_FINAL) |
++			    BIT(HASH_FLAGS_DMA_READY) |
++			    BIT(HASH_FLAGS_OUTPUT_READY));
++
++	if (req->base.complete)
++		req->base.complete(&req->base, err);
++}
++
++/**
++ * s5p_hash_handle_queue - handle hash queue
++ * @dd:		device s5p_aes_dev
++ * @req:	AHASH request
++ *
++ * If req!=NULL enqueue it
++ *
++ * Enqueues the current AHASH request on dd->queue and
++ * if FLAGS_BUSY is not set on the device then processes
++ * the first request from the dd->queue
++ *
++ * Returns: see s5p_hash_final below.
++ */
++static int s5p_hash_handle_queue(struct s5p_aes_dev *dd,
++				  struct ahash_request *req)
++{
++	struct crypto_async_request *async_req, *backlog;
++	struct s5p_hash_reqctx *ctx;
++	unsigned long flags;
++	int err = 0, ret = 0;
++
++retry:
++	spin_lock_irqsave(&dd->hash_lock, flags);
++	if (req)
++		ret = ahash_enqueue_request(&dd->hash_queue, req);
++	if (test_bit(HASH_FLAGS_BUSY, &dd->hash_flags)) {
++		spin_unlock_irqrestore(&dd->hash_lock, flags);
++		return ret;
++	}
++	backlog = crypto_get_backlog(&dd->hash_queue);
++	async_req = crypto_dequeue_request(&dd->hash_queue);
++	if (async_req)
++		set_bit(HASH_FLAGS_BUSY, &dd->hash_flags);
++	spin_unlock_irqrestore(&dd->hash_lock, flags);
++
++	if (!async_req)
++		return ret;
++
++	if (backlog)
++		backlog->complete(backlog, -EINPROGRESS);
++
++	req = ahash_request_cast(async_req);
++	dd->hash_req = req;
++	ctx = ahash_request_ctx(req);
++
++	err = s5p_hash_prepare_request(req, ctx->op == HASH_OP_UPDATE);
++	if (err || !ctx->total)
++		goto err1;
++
++	dev_dbg(dd->dev, "handling new req, op: %u, nbytes: %d\n",
++						ctx->op, req->nbytes);
++
++	err = s5p_hash_hw_init(dd);
++	if (err)
++		goto err1;
++
++	dd->hash_err = 0;
++	if (ctx->digcnt)
++		/* request has changed - restore hash */
++		s5p_hash_write_iv(req);
++
++	if (ctx->op == HASH_OP_UPDATE) {
++		err = s5p_hash_update_req(dd);
++		if (err != -EINPROGRESS &&
++		   (ctx->flags & BIT(HASH_FLAGS_FINUP)))
++			/* no final() after finup() */
++			err = s5p_hash_final_req(dd);
++	} else if (ctx->op == HASH_OP_FINAL) {
++		err = s5p_hash_final_req(dd);
++	}
++err1:
++	dev_dbg(dd->dev, "exit, err: %d\n", err);
++
++	if (err != -EINPROGRESS) {
++		/* hash_tasklet_cb will not finish it, so do it here */
++		s5p_hash_finish_req(req, err);
++		req = NULL;
++
++		/*
++		 * Execute next request immediately if there is anything
++		 * in queue.
++		 */
++		goto retry;
++	}
++
++	return ret;
++}
++
++/**
++ * s5p_hash_tasklet_cb - hash tasklet
++ * @data:	ptr to s5p_aes_dev
++ *
++ */
++static void s5p_hash_tasklet_cb(unsigned long data)
++{
++	struct s5p_aes_dev *dd = (struct s5p_aes_dev *)data;
++	int err = 0;
++
++	if (!test_bit(HASH_FLAGS_BUSY, &dd->hash_flags)) {
++		s5p_hash_handle_queue(dd, NULL);
++		return;
++	}
++
++	if (test_bit(HASH_FLAGS_DMA_READY, &dd->hash_flags)) {
++		if (test_and_clear_bit(HASH_FLAGS_DMA_ACTIVE,
++				       &dd->hash_flags)) {
++			s5p_hash_update_dma_stop(dd);
++			if (dd->hash_err) {
++				err = dd->hash_err;
++				goto finish;
++			}
++		}
++		if (test_and_clear_bit(HASH_FLAGS_OUTPUT_READY,
++				       &dd->hash_flags)) {
++			/* hash or semi-hash ready */
++			clear_bit(HASH_FLAGS_DMA_READY, &dd->hash_flags);
++				goto finish;
++		}
++	}
++
++	return;
++
++finish:
++	dev_dbg(dd->dev, "update done: err: %d\n", err);
++	/* finish curent request */
++	s5p_hash_finish_req(dd->hash_req, err);
++
++	/* If we are not busy, process next req */
++	if (!test_bit(HASH_FLAGS_BUSY, &dd->hash_flags))
++		s5p_hash_handle_queue(dd, NULL);
++}
++
++/**
++ * s5p_hash_enqueue - enqueue request
++ * @req:	AHASH request
++ * @op:		operation UPDATE or FINAL
++ *
++ * Sets the operation flag in the AHASH request context
++ * structure and calls s5p_hash_handle_queue().
++ *
++ * Returns: see s5p_hash_final below.
++ */
++static int s5p_hash_enqueue(struct ahash_request *req, unsigned int op)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	struct s5p_hash_ctx *tctx = crypto_tfm_ctx(req->base.tfm);
++	struct s5p_aes_dev *dd = tctx->dd;
++
++	ctx->op = op;
++
++	return s5p_hash_handle_queue(dd, req);
++}
++
++/**
++ * s5p_hash_update - process the hash input data
++ * @req:	AHASH request
++ *
++ * If request will fit in buffer, copy it and return immediately
++ * else enqueue it wit OP_UPDATE.
++ *
++ * Returns: see s5p_hash_final below.
++ */
++static int s5p_hash_update(struct ahash_request *req)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++
++	if (!req->nbytes)
++		return 0;
++
++	if (ctx->bufcnt + req->nbytes <= BUFLEN) {
++		scatterwalk_map_and_copy(ctx->buffer + ctx->bufcnt, req->src,
++					 0, req->nbytes, 0);
++		ctx->bufcnt += req->nbytes;
++		return 0;
++	}
++
++	return s5p_hash_enqueue(req, HASH_OP_UPDATE);
++}
++
++/**
++ * s5p_hash_shash_digest - calculate shash digest
++ * @tfm:	crypto transformation
++ * @flags:	tfm flags
++ * @data:	input data
++ * @len:	length of data
++ * @out:	output buffer
++ */
++static int s5p_hash_shash_digest(struct crypto_shash *tfm, u32 flags,
++				  const u8 *data, unsigned int len, u8 *out)
++{
++	SHASH_DESC_ON_STACK(shash, tfm);
++
++	shash->tfm = tfm;
++	shash->flags = flags & CRYPTO_TFM_REQ_MAY_SLEEP;
++
++	return crypto_shash_digest(shash, data, len, out);
++}
++
++/**
++ * s5p_hash_final_shash - calculate shash digest
++ * @req:	AHASH request
++ *
++ * calculate digest from ctx->buffer,
++ * with data length ctx->bufcnt,
++ * store digest in req->result
++ */
++static int s5p_hash_final_shash(struct ahash_request *req)
++{
++	struct s5p_hash_ctx *tctx = crypto_tfm_ctx(req->base.tfm);
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++
++	return s5p_hash_shash_digest(tctx->fallback, req->base.flags,
++				     ctx->buffer, ctx->bufcnt, req->result);
++}
++
++/**
++ * s5p_hash_final - close up hash and calculate digest
++ * @req:	AHASH request
++ *
++ * Set FLAGS_FINUP flag for the current AHASH request context.
++ *
++ * If there were no input data processed yet and the buffered
++ * hash data is less than BUFLEN (64) then calculate the final
++ * hash immediately by using SW algorithm fallback.
++ *
++ * Otherwise enqueues the current AHASH request with OP_FINAL
++ * operation flag and finalize hash message in HW.
++ * Note that if digcnt!=0 then there were previous update op,
++ * so there are always some buffered bytes in ctx->buffer,
++ * which means that ctx->bufcnt!=0
++ *
++ * Returns:
++ * 0 if the request has been processed immediately,
++ * -EINPROGRESS if the operation has been queued for later
++ *	execution or is set to processing by HW,
++ * -EBUSY if queue is full and request should be resubmitted later,
++ * other negative values on error.
++ *
++ * Note: req->src do not have any data
++ */
++static int s5p_hash_final(struct ahash_request *req)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++
++	ctx->flags |= BIT(HASH_FLAGS_FINUP);
++
++	if (ctx->flags & BIT(HASH_FLAGS_ERROR))
++		return -EINVAL; /* uncompleted hash is not needed */
++
++	/*
++	 * If message is small (digcnt==0) and buffersize is less
++	 * than BUFLEN, we use fallback, as using DMA + HW in this
++	 * case doesn't provide any benefit.
++	 * This is also the case for zero-length message.
++	 */
++	if (!ctx->digcnt && ctx->bufcnt < BUFLEN)
++		return s5p_hash_final_shash(req);
++
++	WARN_ON(ctx->bufcnt == 0);
++
++	return s5p_hash_enqueue(req, HASH_OP_FINAL);
++}
++
++/**
++ * s5p_hash_finup - process last req->src and calculate digest
++ * @req:	AHASH request containing the last update data
++ *
++ * Set FLAGS_FINUP flag in context.
++ * Call update(req) and exit if it was enqueued or is being processing.
++ * If update returns without enqueue, call final(req).
++ *
++ * Return values: see s5p_hash_final above.
++ */
++static int s5p_hash_finup(struct ahash_request *req)
++{
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	int err1, err2;
++
++	ctx->flags |= BIT(HASH_FLAGS_FINUP);
++
++	err1 = s5p_hash_update(req);
++	if (err1 == -EINPROGRESS || err1 == -EBUSY)
++		return err1;
++	/*
++	 * final() has to be always called to cleanup resources
++	 * even if update() failed, except EINPROGRESS
++	 * or calculate digest for small size
++	 */
++	err2 = s5p_hash_final(req);
++
++	return err1 ?: err2;
++}
++
++/**
++ * s5p_hash_init - initialize AHASH request contex
++ * @req:	AHASH request
++ *
++ * Init async hash request context.
++ */
++static int s5p_hash_init(struct ahash_request *req)
++{
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct s5p_hash_ctx *tctx = crypto_ahash_ctx(tfm);
++	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
++	struct s5p_aes_dev *dd = tctx->dd;
++
++	ctx->dd = dd;
++	ctx->flags = 0;
++
++	dev_dbg(dd->dev, "init: digest size: %d\n",
++		crypto_ahash_digestsize(tfm));
++
++	switch (crypto_ahash_digestsize(tfm)) {
++	case MD5_DIGEST_SIZE:
++		ctx->flags |= HASH_FLAGS_MODE_MD5;
++		ctx->engine = SSS_HASH_ENGINE_MD5;
++		ctx->nregs = HASH_MD5_MAX_REG;
++		break;
++	case SHA1_DIGEST_SIZE:
++		ctx->flags |= HASH_FLAGS_MODE_SHA1;
++		ctx->engine = SSS_HASH_ENGINE_SHA1;
++		ctx->nregs = HASH_SHA1_MAX_REG;
++		break;
++	case SHA256_DIGEST_SIZE:
++		ctx->flags |= HASH_FLAGS_MODE_SHA256;
++		ctx->engine = SSS_HASH_ENGINE_SHA256;
++		ctx->nregs = HASH_SHA256_MAX_REG;
++		break;
++	}
++
++	ctx->bufcnt = 0;
++	ctx->digcnt = 0;
++	ctx->total = 0;
++	ctx->skip = 0;
++	ctx->buflen = BUFLEN;
++
++	return 0;
++}
++
++/**
++ * s5p_hash_digest - calculate digest from req->src
++ * @req:	AHASH request
++ *
++ * Return values: see s5p_hash_final above.
++ */
++static int s5p_hash_digest(struct ahash_request *req)
++{
++	return s5p_hash_init(req) ?: s5p_hash_finup(req);
++}
++
++/**
++ * s5p_hash_cra_init_alg - init crypto alg transformation
++ * @tfm:	crypto transformation
++ */
++static int s5p_hash_cra_init_alg(struct crypto_tfm *tfm)
++{
++	struct s5p_hash_ctx *tctx = crypto_tfm_ctx(tfm);
++	const char *alg_name = crypto_tfm_alg_name(tfm);
++
++	tctx->dd = s5p_dev;
++	/* Allocate a fallback and abort if it failed. */
++	tctx->fallback = crypto_alloc_shash(alg_name, 0,
++					    CRYPTO_ALG_NEED_FALLBACK);
++	if (IS_ERR(tctx->fallback)) {
++		pr_err("fallback alloc fails for '%s'\n", alg_name);
++		return PTR_ERR(tctx->fallback);
++	}
++
++	crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm),
++				 sizeof(struct s5p_hash_reqctx) + BUFLEN);
++
++	return 0;
++}
++
++/**
++ * s5p_hash_cra_init - init crypto tfm
++ * @tfm:	crypto transformation
++ */
++static int s5p_hash_cra_init(struct crypto_tfm *tfm)
++{
++	return s5p_hash_cra_init_alg(tfm);
++}
++
++/**
++ * s5p_hash_cra_exit - exit crypto tfm
++ * @tfm:	crypto transformation
++ *
++ * free allocated fallback
++ */
++static void s5p_hash_cra_exit(struct crypto_tfm *tfm)
++{
++	struct s5p_hash_ctx *tctx = crypto_tfm_ctx(tfm);
++
++	crypto_free_shash(tctx->fallback);
++	tctx->fallback = NULL;
++}
++
++/**
++ * s5p_hash_export - export hash state
++ * @req:	AHASH request
++ * @out:	buffer for exported state
++ */
++static int s5p_hash_export(struct ahash_request *req, void *out)
++{
++	struct s5p_hash_reqctx *rctx = ahash_request_ctx(req);
++
++	memcpy(out, rctx, sizeof(*rctx) + rctx->bufcnt);
++
++	return 0;
++}
++
++/**
++ * s5p_hash_import - import hash state
++ * @req:	AHASH request
++ * @in:		buffer with state to be imported from
++ */
++static int s5p_hash_import(struct ahash_request *req, const void *in)
++{
++	struct s5p_hash_reqctx *rctx = ahash_request_ctx(req);
++	const struct s5p_hash_reqctx *ctx_in = in;
++
++	WARN_ON(ctx_in->bufcnt < 0);
++	WARN_ON(ctx_in->bufcnt > BUFLEN);
++	memcpy(rctx, in, sizeof(*rctx) + BUFLEN);
++
++	return 0;
++}
++
++/**
++ * struct algs_sha1_md5
++ */
++static struct ahash_alg algs_sha1_md5[] = {
++{
++	.init		= s5p_hash_init,
++	.update		= s5p_hash_update,
++	.final		= s5p_hash_final,
++	.finup		= s5p_hash_finup,
++	.digest		= s5p_hash_digest,
++	.halg.digestsize	= SHA1_DIGEST_SIZE,
++	.halg.base	= {
++		.cra_name		= "sha1",
++		.cra_driver_name	= "exynos-sha1",
++		.cra_priority		= 100,
++		.cra_flags		= CRYPTO_ALG_TYPE_AHASH |
++					  CRYPTO_ALG_KERN_DRIVER_ONLY |
++					  CRYPTO_ALG_ASYNC |
++					  CRYPTO_ALG_NEED_FALLBACK,
++		.cra_blocksize		= HASH_BLOCK_SIZE,
++		.cra_ctxsize		= sizeof(struct s5p_hash_ctx),
++		.cra_alignmask		= SSS_DMA_ALIGN_MASK,
++		.cra_module		= THIS_MODULE,
++		.cra_init		= s5p_hash_cra_init,
++		.cra_exit		= s5p_hash_cra_exit,
++	}
++},
++{
++	.init		= s5p_hash_init,
++	.update		= s5p_hash_update,
++	.final		= s5p_hash_final,
++	.finup		= s5p_hash_finup,
++	.digest		= s5p_hash_digest,
++	.halg.digestsize	= MD5_DIGEST_SIZE,
++	.halg.base	= {
++		.cra_name		= "md5",
++		.cra_driver_name	= "exynos-md5",
++		.cra_priority		= 100,
++		.cra_flags		= CRYPTO_ALG_TYPE_AHASH |
++					  CRYPTO_ALG_KERN_DRIVER_ONLY |
++					  CRYPTO_ALG_ASYNC |
++					  CRYPTO_ALG_NEED_FALLBACK,
++		.cra_blocksize		= HASH_BLOCK_SIZE,
++		.cra_ctxsize		= sizeof(struct s5p_hash_ctx),
++		.cra_alignmask		= SSS_DMA_ALIGN_MASK,
++		.cra_module		= THIS_MODULE,
++		.cra_init		= s5p_hash_cra_init,
++		.cra_exit		= s5p_hash_cra_exit,
++	}
++}
++};
++
++/**
++ * struct algs_sha256
++ */
++static struct ahash_alg algs_sha256[] = {
++{
++	.init		= s5p_hash_init,
++	.update		= s5p_hash_update,
++	.final		= s5p_hash_final,
++	.finup		= s5p_hash_finup,
++	.digest		= s5p_hash_digest,
++	.halg.digestsize	= SHA256_DIGEST_SIZE,
++	.halg.base	= {
++		.cra_name		= "sha256",
++		.cra_driver_name	= "exynos-sha256",
++		.cra_priority		= 100,
++		.cra_flags		= CRYPTO_ALG_TYPE_AHASH |
++					  CRYPTO_ALG_KERN_DRIVER_ONLY |
++					  CRYPTO_ALG_ASYNC |
++					  CRYPTO_ALG_NEED_FALLBACK,
++		.cra_blocksize		= HASH_BLOCK_SIZE,
++		.cra_ctxsize		= sizeof(struct s5p_hash_ctx),
++		.cra_alignmask		= SSS_DMA_ALIGN_MASK,
++		.cra_module		= THIS_MODULE,
++		.cra_init		= s5p_hash_cra_init,
++		.cra_exit		= s5p_hash_cra_exit,
++	}
++}
++};
++
++/**
++ * struct exynos_hash_algs_info
++ */
++static struct sss_hash_algs_info exynos_hash_algs_info[] = {
++	{
++		.algs_list	= algs_sha1_md5,
++		.size		= ARRAY_SIZE(algs_sha1_md5),
++	},
++	{
++		.algs_list	= algs_sha256,
++		.size		= ARRAY_SIZE(algs_sha256),
++	},
++};
++
+ static void s5p_set_aes(struct s5p_aes_dev *dev,
+ 			uint8_t *key, uint8_t *iv, unsigned int keylen)
+ {
+@@ -822,13 +2379,16 @@ static struct crypto_alg algs[] = {
+ 	},
+ };
+ 
++bool use_hash;
++
+ static int s5p_aes_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	int i, j, err = -ENODEV;
++	int i, hash_i, hash_algs_size = 0, j, err = -ENODEV;
+ 	struct samsung_aes_variant *variant;
+ 	struct s5p_aes_dev *pdata;
+ 	struct resource *res;
++	struct sss_hash_algs_info *hash_algs_i;
+ 
+ 	if (s5p_dev)
+ 		return -EEXIST;
+@@ -837,12 +2397,38 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	if (!pdata)
+ 		return -ENOMEM;
+ 
++	variant = find_s5p_sss_version(pdev);
++	pdata->pdata = variant;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pdata->ioaddr = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(pdata->ioaddr))
+-		return PTR_ERR(pdata->ioaddr);
++	/* HACK: HASH and PRNG uses the same registers in secss,
++	 * avoid overwrite each other. This will drop HASH when
++	 * CONFIG_EXYNOS_RNG is enabled.
++	 * We need larger size for HASH registers in secss, current
++	 * describe only AES/DES
++	 */
++	if (variant == &exynos_aes_data) {
++		pdata->pdata->hash_algs_info = exynos_hash_algs_info;
++		pdata->pdata->hash_algs_size =
++			ARRAY_SIZE(exynos_hash_algs_info);
++#ifdef CONFIG_CRYPTO_DEV_EXYNOS_HASH
++		res->end += 0x300;
++		use_hash = true;
++#endif
++	}
+ 
+-	variant = find_s5p_sss_version(pdev);
++	pdata->res = res;
++	pdata->ioaddr = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(pdata->ioaddr)) {
++		if (!use_hash)
++			return PTR_ERR(pdata->ioaddr);
++		/* try AES without HASH */
++		res->end -= 0x300;
++		use_hash = false;
++		pdata->ioaddr = devm_ioremap_resource(&pdev->dev, res);
++		if (IS_ERR(pdata->ioaddr))
++			return PTR_ERR(pdata->ioaddr);
++	}
+ 
+ 	pdata->clk = devm_clk_get(dev, "secss");
+ 	if (IS_ERR(pdata->clk)) {
+@@ -857,8 +2443,10 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	spin_lock_init(&pdata->lock);
++	spin_lock_init(&pdata->hash_lock);
+ 
+ 	pdata->aes_ioaddr = pdata->ioaddr + variant->aes_offset;
++	pdata->io_hash_base = pdata->ioaddr + variant->hash_offset;
+ 
+ 	pdata->irq_fc = platform_get_irq(pdev, 0);
+ 	if (pdata->irq_fc < 0) {
+@@ -877,6 +2465,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	pdata->busy = false;
+ 	pdata->dev = dev;
+ 	platform_set_drvdata(pdev, pdata);
++
+ 	s5p_dev = pdata;
+ 
+ 	tasklet_init(&pdata->tasklet, s5p_tasklet_cb, (unsigned long)pdata);
+@@ -884,17 +2473,58 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < ARRAY_SIZE(algs); i++) {
+ 		err = crypto_register_alg(&algs[i]);
+-		if (err)
++		if (err) {
++			dev_err(dev, "can't register '%s': %d\n",
++				algs[i].cra_name, err);
+ 			goto err_algs;
++		}
++	}
++
++	if (use_hash) {
++		hash_algs_size = pdata->pdata->hash_algs_size;
++		tasklet_init(&pdata->hash_tasklet, s5p_hash_tasklet_cb,
++			(unsigned long)pdata);
++		crypto_init_queue(&pdata->hash_queue, SSS_HASH_QUEUE_LENGTH);
++	}
++
++	for (hash_i = 0; hash_i < hash_algs_size; hash_i++) {
++		hash_algs_i = pdata->pdata->hash_algs_info;
++		hash_algs_i[hash_i].registered = 0;
++		for (j = 0; j < hash_algs_i[hash_i].size; j++) {
++			struct ahash_alg *alg;
++
++			alg = &(hash_algs_i[hash_i].algs_list[j]);
++			alg->export = s5p_hash_export;
++			alg->import = s5p_hash_import;
++			alg->halg.statesize = sizeof(struct s5p_hash_reqctx) +
++					      BUFLEN;
++			err = crypto_register_ahash(alg);
++			if (err) {
++				dev_err(dev, "can't register '%s': %d\n",
++					alg->halg.base.cra_driver_name, err);
++				goto err_hash;
++			}
++
++			hash_algs_i[hash_i].registered++;
++		}
+ 	}
+ 
+ 	dev_info(dev, "s5p-sss driver registered\n");
+ 
+ 	return 0;
+ 
+-err_algs:
+-	dev_err(dev, "can't register '%s': %d\n", algs[i].cra_name, err);
++err_hash:
++	for (hash_i = hash_algs_size - 1; hash_i >= 0; hash_i--)
++		for (j = hash_algs_i[hash_i].registered - 1;
++		     j >= 0; j--)
++			crypto_unregister_ahash(
++				&(hash_algs_i[hash_i].algs_list[j]));
++
++	tasklet_kill(&pdata->hash_tasklet);
++	res->end -= 0x300;
++	use_hash = false;
+ 
++err_algs:
+ 	for (j = 0; j < i; j++)
+ 		crypto_unregister_alg(&algs[j]);
+ 
+@@ -911,7 +2541,8 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ static int s5p_aes_remove(struct platform_device *pdev)
+ {
+ 	struct s5p_aes_dev *pdata = platform_get_drvdata(pdev);
+-	int i;
++	struct sss_hash_algs_info *hash_algs_i;
++	int i, j;
+ 
+ 	if (!pdata)
+ 		return -ENODEV;
+@@ -919,10 +2550,19 @@ static int s5p_aes_remove(struct platform_device *pdev)
+ 	for (i = 0; i < ARRAY_SIZE(algs); i++)
+ 		crypto_unregister_alg(&algs[i]);
+ 
+-	tasklet_kill(&pdata->tasklet);
++	if (use_hash) {
++		hash_algs_i = pdata->pdata->hash_algs_info;
++		for (i = pdata->pdata->hash_algs_size - 1; i >= 0; i--)
++			for (j = hash_algs_i[i].registered - 1; j >= 0; j--)
++				crypto_unregister_ahash(
++					&(hash_algs_i[i].algs_list[j]));
++		pdata->res->end -= 0x300;
++		tasklet_kill(&pdata->hash_tasklet);
++		use_hash = false;
++	}
+ 
++	tasklet_kill(&pdata->tasklet);
+ 	clk_disable_unprepare(pdata->clk);
+-
+ 	s5p_dev = NULL;
+ 
+ 	return 0;
+@@ -942,3 +2582,4 @@ module_platform_driver(s5p_aes_crypto);
+ MODULE_DESCRIPTION("S5PV210 AES hw acceleration support.");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Vladimir Zapolskiy <vzapolskiy@gmail.com>");
++MODULE_AUTHOR("Kamil Konieczny <k.konieczny@partner.samsung.com>");
+-- 
+2.14.1.536.g6867272d5b56
