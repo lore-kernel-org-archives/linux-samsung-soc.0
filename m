@@ -1,110 +1,51 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/5] ARM: dts: exynos: Cleanup HDMI DCC definitions
-Date: Fri, 15 Sep 2017 11:11:21 +0200
-Message-ID: <1505466683-32148-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 1/5] dt-bindings: Explicitely mark Exynos HDMI DDC node as
+ deprecated
+Date: Fri, 15 Sep 2017 11:11:19 +0200
+Message-ID: <1505466683-32148-2-git-send-email-m.szyprowski@samsung.com>
 References: <1505466683-32148-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170915091140eucas1p268cefeea0d564c340ede8ab54788ff6a@eucas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+        <CGME20170915091139eucas1p2d3ee5da70946b4f377242642af117635@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44220 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751157AbdIOJLn (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 15 Sep 2017 05:11:43 -0400
 In-reply-to: <1505466683-32148-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
 
-Q29tbWl0IDJiNzY4MTMyNmRjMiAoImRybS9leHlub3M6IGhkbWk6IHJlbW92ZSB0aGUgaTJjIGRy
-aXZlcnMgYW5kIHVzZSIpCm1lcmdlZCB0byB2My4xNSBrZXJuZWwgYWRkZWQgYSByZXF1aXJlZCAn
-ZGRjJyBwcm9wZXJ0eSB0byBFeHlub3MgSERNSQpkZXZpY2UgdHJlZSBiaW5kaW5ncywgd2hpY2gg
-c2hvdWxkIHBvaW50IHRvIGkyYyBidXMgdXNlZCBmb3IgaGFuZGxpbmcgRERDCihtYWlubHkgcmVh
-ZGluZyBkaXNwbGF5J3MgRURJRCBpbmZvcm1hdGlvbikuIEl0IGhhcyBiZWVuIGVub3VnaCB0aW1l
-IHRvCmNvbnZlcnQgYWxsIGJvYXJkcyB0byB1c2UgbmV3IGJpbmRpbmdzLCBidXQgc2FkbHkgZHVl
-IHRvIGNvcHkvcGFzdGUgZGVzaWduCnRoZSBvbGQgYXBwcm9hY2ggdXNpbmcgc2VwYXJhdGUgbm9k
-ZSB3aXRoICdzYW1zdW5nLGV4eW5vczQyMTAtaGRtaWRkYycKY29tcGF0aWJsZSB3YXMgdXNlZCBh
-bHNvIGZvciBtYW55IG5ldyBib2FyZHMuIFRoaXMgcGF0Y2ggZmluYWxseSBjb252ZXJ0cwphbGwg
-Ym9hcmRzIHRvIHRoZSBuZXcgYXBwcm9hY2ggYW5kIHVuaWZpZXMgSERNSSBEREMgZGVmaW5pdGlv
-biBhY3Jvc3MgYWxsCkV4eW5vcyBib2FyZHMuCgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93
-c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNTI1MC1hcm5kYWxlLmR0cyAgICAgICAgICAgfCA5ICsrLS0tLS0tLQogYXJjaC9hcm0vYm9v
-dC9kdHMvZXh5bm9zNTI1MC1zbWRrNTI1MC5kdHMgICAgICAgICAgfCA3ICsrLS0tLS0KIGFyY2gv
-YXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc25vdy1jb21tb24uZHRzaSAgICAgIHwgNiArLS0tLS0K
-IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cyAgICAgICAgICAgIHwgNiAr
-LS0tLS0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtc21kazU0MjAuZHRzICAgICAgICAg
-IHwgNyArKy0tLS0tCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIyLW9kcm9pZHh1My1jb21t
-b24uZHRzaSB8IDcgKystLS0tLQogNiBmaWxlcyBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAz
-MiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUw
-LWFybmRhbGUuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1hcm5kYWxlLmR0cwpp
-bmRleCA3ZWYyNTdiNzU1NjIuLmEzODBjZmY0NjZhZSAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9v
-dC9kdHMvZXh5bm9zNTI1MC1hcm5kYWxlLmR0cworKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlu
-b3M1MjUwLWFybmRhbGUuZHRzCkBAIC0xNTIsNiArMTUyLDcgQEAKIH07CiAKICZoZG1pIHsKKwlk
-ZGMgPSA8JmkyY18yPjsKIAlocGQtZ3Bpb3MgPSA8JmdweDMgNyBHUElPX0FDVElWRV9MT1c+Owog
-CXZkZF9vc2Mtc3VwcGx5ID0gPCZsZG8xMF9yZWc+OwogCXZkZF9wbGwtc3VwcGx5ID0gPCZsZG84
-X3JlZz47CkBAIC00NTUsMTUgKzQ1Niw5IEBACiAKICZpMmNfMiB7CiAJc3RhdHVzID0gIm9rYXki
-OwotCisJLyogdXNlZCBieSBIRE1JIEREQyAqLwogCXNhbXN1bmcsaTJjLXNkYS1kZWxheSA9IDwx
-MDA+OwogCXNhbXN1bmcsaTJjLW1heC1idXMtZnJlcSA9IDw2NjAwMD47Ci0Jc2Ftc3VuZyxpMmMt
-c2xhdmUtYWRkciA9IDwweDUwPjsKLQotCWhkbWlkZGNANTAgewotCQljb21wYXRpYmxlID0gInNh
-bXN1bmcsZXh5bm9zNDIxMC1oZG1pZGRjIjsKLQkJcmVnID0gPDB4NTA+OwotCX07CiB9OwogCiAm
-aTJjXzMgewpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbWRrNTI1
-MC5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNtZGs1MjUwLmR0cwppbmRleCAy
-NGU1YWJjOWZiOWQuLjEzMzBkZWQ5MTQ0NSAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMv
-ZXh5bm9zNTI1MC1zbWRrNTI1MC5kdHMKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1
-MC1zbWRrNTI1MC5kdHMKQEAgLTExNiw2ICsxMTYsNyBAQAogfTsKIAogJmhkbWkgeworCWRkYyA9
-IDwmaTJjXzI+OwogCWhwZC1ncGlvcyA9IDwmZ3B4MyA3IEdQSU9fQUNUSVZFX0hJR0g+OwogfTsK
-IApAQCAtMzA4LDEzICszMDksOSBAQAogCiAmaTJjXzIgewogCXN0YXR1cyA9ICJva2F5IjsKKwkv
-KiB1c2VkIGJ5IEhETUkgRERDICovCiAJc2Ftc3VuZyxpMmMtc2RhLWRlbGF5ID0gPDEwMD47CiAJ
-c2Ftc3VuZyxpMmMtbWF4LWJ1cy1mcmVxID0gPDY2MDAwPjsKLQotCWhkbWlkZGNANTAgewotCQlj
-b21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMC1oZG1pZGRjIjsKLQkJcmVnID0gPDB4NTA+
-OwotCX07CiB9OwogCiAmaTJjXzggewpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNTI1MC1zbm93LWNvbW1vbi5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1z
-bm93LWNvbW1vbi5kdHNpCmluZGV4IDA3N2JlNTM1NWJmOS4uODhhODY1NmNhN2IzIDEwMDY0NAot
-LS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNub3ctY29tbW9uLmR0c2kKKysrIGIv
-YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbm93LWNvbW1vbi5kdHNpCkBAIC00NDksMTMg
-KzQ0OSw5IEBACiAKICZpMmNfMiB7CiAJc3RhdHVzID0gIm9rYXkiOworCS8qIHVzZWQgYnkgSERN
-SSBEREMgKi8KIAlzYW1zdW5nLGkyYy1zZGEtZGVsYXkgPSA8MTAwPjsKIAlzYW1zdW5nLGkyYy1t
-YXgtYnVzLWZyZXEgPSA8NjYwMDA+OwotCi0JaGRtaWRkY0A1MCB7Ci0JCWNvbXBhdGlibGUgPSAi
-c2Ftc3VuZyxleHlub3M0MjEwLWhkbWlkZGMiOwotCQlyZWcgPSA8MHg1MD47Ci0JfTsKIH07CiAK
-ICZpMmNfMyB7CmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNwcmlu
-Zy5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNwcmluZy5kdHMKaW5kZXggZWJm
-MGIyZDViMzYzLi5iM2NjMjI1NjgwMzMgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4
-eW5vczUyNTAtc3ByaW5nLmR0cworKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNw
-cmluZy5kdHMKQEAgLTM2MSwxMyArMzYxLDkgQEAKIAogJmkyY18yIHsKIAlzdGF0dXMgPSAib2th
-eSI7CisJLyogdXNlZCBieSBIRE1JIEREQyAqLwogCXNhbXN1bmcsaTJjLXNkYS1kZWxheSA9IDwx
-MDA+OwogCXNhbXN1bmcsaTJjLW1heC1idXMtZnJlcSA9IDw2NjAwMD47Ci0KLQloZG1pZGRjQDUw
-IHsKLQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQyMTAtaGRtaWRkYyI7Ci0JCXJlZyA9
-IDwweDUwPjsKLQl9OwogfTsKIAogJmkyY18zIHsKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczU0MjAtc21kazU0MjAuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQy
-MC1zbWRrNTQyMC5kdHMKaW5kZXggMDhjOGFiMTczZTg3Li5jYzQ0ZGM2MGQ4MWUgMTAwNjQ0Ci0t
-LSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtc21kazU0MjAuZHRzCisrKyBiL2FyY2gv
-YXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtc21kazU0MjAuZHRzCkBAIC0xMzAsNiArMTMwLDcgQEAK
-IAogJmhkbWkgewogCXN0YXR1cyA9ICJva2F5IjsKKwlkZGMgPSA8JmkyY18yPjsKIAlocGQtZ3Bp
-b3MgPSA8JmdweDMgNyBHUElPX0FDVElWRV9ISUdIPjsKIAlwaW5jdHJsLW5hbWVzID0gImRlZmF1
-bHQiOwogCXBpbmN0cmwtMCA9IDwmaGRtaV9ocGRfaXJxPjsKQEAgLTM0NywxMiArMzQ4LDggQEAK
-ICZpMmNfMiB7CiAJc2Ftc3VuZyxpMmMtc2RhLWRlbGF5ID0gPDEwMD47CiAJc2Ftc3VuZyxpMmMt
-bWF4LWJ1cy1mcmVxID0gPDY2MDAwPjsKKwkvKiB1c2VkIGJ5IEhETUkgRERDICovCiAJc3RhdHVz
-ID0gIm9rYXkiOwotCi0JaGRtaWRkY0A1MCB7Ci0JCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlu
-b3M0MjEwLWhkbWlkZGMiOwotCQlyZWcgPSA8MHg1MD47Ci0JfTsKIH07CiAKICZtbWNfMCB7CmRp
-ZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIyLW9kcm9pZHh1My1jb21tb24u
-ZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjItb2Ryb2lkeHUzLWNvbW1vbi5kdHNp
-CmluZGV4IDRlNWNiZTg5NjhlZC4uOTQwOWZiY2VlZGVjIDEwMDY0NAotLS0gYS9hcmNoL2FybS9i
-b290L2R0cy9leHlub3M1NDIyLW9kcm9pZHh1My1jb21tb24uZHRzaQorKysgYi9hcmNoL2FybS9i
-b290L2R0cy9leHlub3M1NDIyLW9kcm9pZHh1My1jb21tb24uZHRzaQpAQCAtMjc3LDYgKzI3Nyw3
-IEBACiAKICZoZG1pIHsKIAlzdGF0dXMgPSAib2theSI7CisJZGRjID0gPCZpMmNfMj47CiAJaHBk
-LWdwaW9zID0gPCZncHgzIDcgR1BJT19BQ1RJVkVfSElHSD47CiAJcGluY3RybC1uYW1lcyA9ICJk
-ZWZhdWx0IjsKIAlwaW5jdHJsLTAgPSA8JmhkbWlfaHBkX2lycT47CkBAIC01NDYsMTIgKzU0Nyw4
-IEBACiAmaTJjXzIgewogCXNhbXN1bmcsaTJjLXNkYS1kZWxheSA9IDwxMDA+OwogCXNhbXN1bmcs
-aTJjLW1heC1idXMtZnJlcSA9IDw2NjAwMD47CisJLyogdXNlZCBieSBIRE1JIEREQyAqLwogCXN0
-YXR1cyA9ICJva2F5IjsKLQotCWhkbWlkZGNANTAgewotCQljb21wYXRpYmxlID0gInNhbXN1bmcs
-ZXh5bm9zNDIxMC1oZG1pZGRjIjsKLQkJcmVnID0gPDB4NTA+OwotCX07CiB9OwogCiAmbW1jXzAg
-ewotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+Commit 2b7681326dc2 ("drm/exynos: hdmi: remove the i2c drivers and use")
+merged to v3.15 kernel added a required 'ddc' property to Exynos HDMI
+device tree bindings, which should point to i2c bus used for handling DDC
+(mainly reading display's EDID information). Since that commit
+separate node with "samsung,exynos4210-hdmiddc" compatible is no longer
+needed, so mark it finally as deprecated.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ Documentation/devicetree/bindings/display/exynos/exynos_hdmiddc.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_hdmiddc.txt b/Documentation/devicetree/bindings/display/exynos/exynos_hdmiddc.txt
+index 41eee971562b..6f807e523ccb 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos_hdmiddc.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos_hdmiddc.txt
+@@ -1,9 +1,12 @@
+ Device-Tree bindings for hdmiddc driver
+ 
++This binding is deprecated. Please use 'ddc' property in Exynos HDMI
++node (see exynos_hdmi.txt for details).
++
+ Required properties:
+ - compatible: value should be one of the following
+ 	1) "samsung,exynos5-hdmiddc" <DEPRECATED>
+-	2) "samsung,exynos4210-hdmiddc"
++	2) "samsung,exynos4210-hdmiddc" <DEPRECATED>
+ 
+ - reg: I2C address of the hdmiddc device.
+ 
+-- 
+1.9.1
