@@ -1,100 +1,149 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos4: Enable VPLL and EPLL clocks for
- suspend/resume cycle
-Date: Fri, 15 Sep 2017 12:03:48 +0900
-Message-ID: <59BB4314.7070405@samsung.com>
-References: <CGME20170914143749eucas1p1f3206ff81fabc945ffc79cbddb45afc9@eucas1p1.samsung.com>
-        <1505399852-4787-1-git-send-email-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] crypto: s5p-sss: Add HASH support for Exynos
+Date: Fri, 15 Sep 2017 08:10:16 +0200
+Message-ID: <CAJKOXPcZT9S4Z5QoTOf_u2bDE=-dVq5+YYo3zLorTkeA6QiYtA@mail.gmail.com>
+References: <CGME20170913124433eucas1p11ac46af1676151477000f8952b0ca654@eucas1p1.samsung.com>
+ <51b3b386-22c0-7663-6f54-d166ebebd332@partner.samsung.com>
+ <CAJKOXPcQhn9gq2cm_1nc8N6MEbJ0ntZqfwmY9XDYwc5VEERvdA@mail.gmail.com> <77dbef9a-a648-8380-ca08-e6874b4d27fb@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1505399852-4787-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:55882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750871AbdIOGKS (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 15 Sep 2017 02:10:18 -0400
+In-Reply-To: <77dbef9a-a648-8380-ca08-e6874b4d27fb@partner.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Marek,
+On Wed, Sep 13, 2017 at 4:24 PM, Kamil Konieczny
+<k.konieczny@partner.samsung.com> wrote:
+> Hi Krzysztof,
+>
+> On 13.09.2017 15:18, Krzysztof Kozlowski wrote:
+>> On Wed, Sep 13, 2017 at 2:44 PM, Kamil Konieczny
+>> <k.konieczny@partner.samsung.com> wrote:
+>>> Add support for MD5, SHA1, SHA256 hash algorithms for Exynos HW.
+>>> It uses the crypto framework asynchronous hash api.
+>>> It is based on omap-sham.c driver.
+>>> S5P has some HW differencies and is not implemented.
+>>>
+>>> Modifications in s5p-sss:
+>>>
+>>> - Add hash supporting structures and functions.
+>>>
+>>> - Modify irq handler to handle both aes and hash signals.
+>>>
+>>> - Disable HASH in probe if Exynos PRNG is enabled.
+>>>
+>>> - Add new copyright line and new author.
+>>>
+>>> - Tested on Odroid-U3 with Exynos 4412 CPU, kernel 4.13-rc6
+>>>   with crypto run-time self test testmgr
+>>>   and with tcrypt module with: modprobe tcrypt sec=1 mode=N
+>>>   where N=402, 403, 404 (MD5, SHA1, SHA256).
+>>>
+>>> Modifications in drivers/crypto/Kconfig:
+>>>
+>>> - Select sw algorithms MD5, SHA1 and SHA256 in S5P
+>>>   as they are nedded for fallback.
+>>>
+>>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+>>> ---
+>>>  drivers/crypto/Kconfig   |    6 +
+>>>  drivers/crypto/s5p-sss.c | 2062 +++++++++++++++++++++++++++++++++++++++++++---
+>>>  2 files changed, 1939 insertions(+), 129 deletions(-)
+>>>
+>>
+>> Nice work, thanks!
+>>
+>> You need to split the patch, it is just too huge making it very
+>> difficult to review. Please split it per logically sensible
+>> improvements.
+>
+> Can you suggest how to break it up ?>
+> It is now big update, added working functionallity in one piece,
+> but I agree it can be hard to read
+> as git did some strange things,
+> like delete few aes functions (and mixing this delete with '+' lines)
+> and then adding the same aes without any change.
 
-On 2017년 09월 14일 23:37, Marek Szyprowski wrote:
-> Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
-> PLL36XX clocks") added enable/disable operations to PLL clocks. Prior that
-> VPLL and EPPL clocks were always enabled because the enable bit was never
-> touched. Those clocks have to be enabled during suspend/resume cycle,
-> because otherwise board fails to enter sleep mode. This patch enables them
-> unconditionally before entering system suspend state. System restore
-> function will set them to the previous state saved in the register cache
-> done before that unconditional enable.
-> 
-> Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for PLL36XX clocks")
-> CC: stable@vger.kernel.org # v4.13
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index e40b77583c47..d2fa36bef7d1 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -294,6 +294,15 @@ enum exynos4_plls {
->  #define PLL_ENABLED	(1 << 31)
->  #define PLL_LOCKED	(1 << 29)
->  
-> +static void exynos4_clk_enable_pll(u32 reg)
-> +{
-> +	u32 pll_con;
-> +
-> +	pll_con = readl(reg_base + reg);
-> +	pll_con |= PLL_ENABLED;
-> +	writel(pll_con, reg_base + reg);
+You know the changes you want to do, you know the new architecture so
+usually it is easier for you to figure out the split.
+But few ideas:
+1. For the problem of functions being deleted-moved without any
+changes, you can try to reorder new code so diff will not show these
+hunks. Indeed a lot diff here looks like weird matching of diff/patch.
+This definitely has to be fixed because I cannot figure out the real
+changes around existing functions (e.g. s5p_set_indata_start(),
+s5p_aes_crypt_start()).
+2. You add debugging code - FLOW_LOG - this is one candidate to split entirely.
+3. Cleanups go to separate patch.
 
+Probably working on (1) above will bring the most benefit.
 
-The original PLL3xx enable function waits for lock time
-after enabling the PLL in drivers/clk/samsung/clk-pll.c as following:
-But, this patch just sets the bit of PLL_ENABLED without waiting.
-You need to wait the lock time.
+>
+>> I see some cleanups mixed with new features - this
+>> definitely must be split out.
+>
+> What cleanups do you see ?
 
-Or if possible, you better to use the pll enable function
-in order to remove the duplicate code.
+For example:
+- * @aes_ioaddr:        Per-varian offset for AES block IO memory
++ * @aes_ioaddr:        Per-variant offset for AES block IO memory
 
-static int samsung_pll3xxx_enable(struct clk_hw *hw)
-{
-       struct samsung_clk_pll *pll = to_clk_pll(hw);
-       u32 tmp;
+- * @tasklet:   New request scheduling jib
++ * @tasklet:   New request scheduling job
 
-       tmp = readl_relaxed(pll->con_reg);
-       tmp |= BIT(pll->enable_offs);
-       writel_relaxed(tmp, pll->con_reg);
+Seriously, you should not what you did in this patch, not me. There
+might be more like this but it is difficult to find them out in
+current patch.
 
-       /* wait lock time */
-       do {
-               cpu_relax();
-               tmp = readl_relaxed(pll->con_reg);
-       } while (!(tmp & BIT(pll->lock_offs)));
+> You mean this one "#if 0" ?
+>
+>> This looks more or less like an early work or RFC... because I see
+>> things like "#if 0",
+>
+> You are right, I will remove it.
+>
+>> "HACK" or "CONFIG_....". If so, ask the question
+>> about your problems directly. Do not force readers to find them out...
+>
+> The problem is in dts there are described
+> only AES registers (the range is too small),
+> and HASH and PRNG uses the same HASH_CONTROL_1 register
+> (setting SecSS engine).
+> Both AES and HASH must use FC control registers for irq
+> and flow setting.
+>
+> So this 'hack' prevents using both exynos-prng and s5p-sss HASH,
+> and in presence of exynos-prng it will load only s5p-sss aes part.
+>
+> This will disable exynos-prng in scenario:
+>
+> remove exynos-prng
+> remove s5p-sss
+> load s5p-sss
+>
+> now exynos-prng module will not load.
 
-       return 0;
-}
+Then nack for this parts. Your driver cannot in hidden way influence
+any other driver, you should not reference to any other CONFIG_ from
+within the code... The solution for this problem depends whether it
+would be possible to have them working in the same time or not. IOW,
+whether there is a conflict on registers or not.
 
-> +}
-> +
->  static void exynos4_clk_wait_for_pll(u32 reg)
->  {
->  	u32 pll_con;
-> @@ -315,6 +324,9 @@ static int exynos4_clk_suspend(void)
->  	samsung_clk_save(reg_base, exynos4_save_pll,
->  				ARRAY_SIZE(exynos4_clk_pll_regs));
->  
-> +	exynos4_clk_enable_pll(EPLL_CON0);
-> +	exynos4_clk_enable_pll(VPLL_CON0);
-> +
->  	if (exynos4_soc == EXYNOS4210) {
->  		samsung_clk_save(reg_base, exynos4_save_soc,
->  					ARRAY_SIZE(exynos4210_clk_save));
-> 
+Possible solutions:
+1. In case of conflict: Add Kconfig dependency (negative dependency),
+2. If they use the same registers but in non-conflicting mode, make
+both drivers children of MFD driver with regmap-mmio shared between
+them. IRQ could be handled by regmap_irq_chip.
+3. Combination of 1+2 above: split out some generic RNG code from RNG
+driver, implement the RNG also here (so there will be two RNG drivers)
+and add !dependency between these two.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Best regards,
+Krzysztof
