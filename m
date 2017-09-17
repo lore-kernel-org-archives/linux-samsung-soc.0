@@ -1,40 +1,50 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 3/3] ARM: dts: exynos: Remove the display-timing and
- delay from rinato dts
-Date: Sun, 17 Sep 2017 09:32:33 +0200
-Message-ID: <20170917073233.GA19716@kozik-book>
-References: <1499912443-3671-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170713022057epcas1p464b817a426638cc1566e665aa7903ed7@epcas1p4.samsung.com>
- <1499912443-3671-4-git-send-email-hoegeun.kwon@samsung.com>
- <2be78f06-8c3a-0076-a19b-07d501c3d460@samsung.com>
- <CAJKOXPc0oOmx7jVbmDrSWnb-GWvO6Re1qgwiOF6CzL4Mbmx-1A@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: fix incomplete Odroid-XU3/4
+ thermal-zones definition
+Date: Sun, 17 Sep 2017 09:34:05 +0200
+Message-ID: <20170917073405.GB19716@kozik-book>
+References: <CGME20170907161007epcas1p316fba6e329eaabedde8a98628ebb9751@epcas1p3.samsung.com>
+ <1848394.K3C0KxojUN@amdc3058>
+ <20170908164015.rayfh2kluy45ktfi@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38349 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbdIQHcj (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 17 Sep 2017 03:32:39 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPc0oOmx7jVbmDrSWnb-GWvO6Re1qgwiOF6CzL4Mbmx-1A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20170908164015.rayfh2kluy45ktfi@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Willy Wolff <willy.mh.wolff@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, a.hajda@samsung.com
 
-On Tue, Aug 29, 2017 at 07:58:52AM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Aug 29, 2017 at 4:52 AM, Hoegeun Kwon <hoegeun.kwon@samsung.com> wrote:
-> > Hi Krzysztof,
-> >
-> > The driver has been merged into exynos-drm-misc.
-> > Could you please check this patch(3/3).
+On Fri, Sep 08, 2017 at 06:40:15PM +0200, Krzysztof Kozlowski wrote:
+> On Thu, Sep 07, 2017 at 06:10:00PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > From: Willy Wolff <willy.mh.wolff@gmail.com>
+> > 
+> > Odroid XU3/4 boards have thermal sensors per 4 pairs of A7+A15
+> > cores but currently there is only one thermal-zone (including
+> > cooling maps) defined (for the first pair of cores - the first
+> > core of the A7 cluster and the first core of A15 cluster) so
+> > i.e. if the task is running on any of A15 cores but the first
+> > one, such core can reach high temperature without any proper
+> > cooling action.
+> > 
+> > Fix it by adding missing thermal-zones definitions.
+> > 
+> > Also while at it fix the number of steps in cpufreq cooling for
+> > cpu4 (11 steps for A15 corresponds to 700MHz, for 600MHz 12 steps
+> > should be used).
+> > 
+> > Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Russell King <linux@armlinux.org.uk>
+> > Cc: Kukjin Kim <kgene@kernel.org>
+> > [b.zolnierkie: rewrote patch subject & description + minor fixups]
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > 
-> Hi, OK, no problems for me but it is too late for current cycle so it
-> will go in for v4.15.
->
+> Thanks for taking care of this. I'll take it after merge window.
 
-Patch does not apply. Could you rebase on current mainline (v4.14-rc1) and resend?
+Thanks, applied.
 
 Best regards,
 Krzysztof
