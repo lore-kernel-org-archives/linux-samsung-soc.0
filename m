@@ -1,73 +1,49 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 4/4] arm: dts: r8a7790: add cpu capacity-dmips-mhz
- information
-Date: Mon, 18 Sep 2017 09:39:46 +0200
-Message-ID: <20170918073946.GA9156@verge.net.au>
-References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
- <20170830144120.9312-5-dietmar.eggemann@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50474 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbdIRHkH (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 03:40:07 -0400
-Content-Disposition: inline
-In-Reply-To: <20170830144120.9312-5-dietmar.eggemann@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 1/2] ARM: dts: exynos: Add dwc3 SUSPHY quirk
+Date: Mon, 18 Sep 2017 12:02:13 +0200
+Message-ID: <1505728934-6200-2-git-send-email-andrzej.p@samsung.com>
+References: <1505728934-6200-1-git-send-email-andrzej.p@samsung.com>
+        <CGME20170918100230eucas1p29fae00c53f1106af1961a6e269740b2f@eucas1p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1505728934-6200-1-git-send-email-andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@arm.com>
 
-On Wed, Aug 30, 2017 at 03:41:20PM +0100, Dietmar Eggemann wrote:
-> The following 'capacity-dmips-mhz' dt property values are used:
-> 
-> Cortex-A15: 1024, Cortex-A7: 539
-> 
-> They have been derived form the cpu_efficiency values:
-> 
-> Cortex-A15: 3891, Cortex-A7: 2048
-> 
-> by scaling them so that the Cortex-A15s (big cores) use 1024.
-> 
-> The cpu_efficiency values were originally derived from the "Big.LITTLE
-> Processing with ARM Cortex™-A15 & Cortex-A7" white paper
-> (http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
-> (3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
-> Dhrystone benchmark.
-> 
-> The following platform is affected once cpu-invariant accounting
-> support is re-connected to the task scheduler:
+Odroid XU4 board does not enumerate SuperSpeed devices.
+This patch makes exynos5 series chips use USB SUSPHY quirk,
+which solves the problem.
 
-Thanks, applied for v4.15.
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos54xx.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-My understanding from the following comment in the cover letter is that not
-currently the case and this there is no behavioural change in applying this
-patch.
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index 0389e8a..8ca4fef 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -134,6 +134,7 @@
+ 				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+ 				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
+ 				phy-names = "usb2-phy", "usb3-phy";
++				snps,dis_u3_susphy_quirk;
+ 			};
+ 		};
+ 
+@@ -154,6 +155,7 @@
+ 				reg = <0x12400000 0x10000>;
+ 				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
+ 				phy-names = "usb2-phy", "usb3-phy";
++				snps,dis_u3_susphy_quirk;
+ 			};
+ 		};
+ 
+-- 
+1.9.1
 
-For the record I observed the following with and without this patch
-applied. I believe this is the expected result.
-
-v4.14-rc1
-# cat /sys/devices/system/cpu/cpu*/cpu_capacity
-1535
-1535
-1535
-1535
-1024
-1024
-1024
-1024
-
-v4.14-rc1 + patch
-# cat /sys/devices/system/cpu/cpu*/cpu_capacity
-1024
-1024
-1024
-1024
-539
-539
-539
-539
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
