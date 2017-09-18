@@ -1,44 +1,69 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RESEND PATCH v4 3/3] ARM: dts: exynos: Remove the
- display-timing and delay from rinato dts
-Date: Mon, 18 Sep 2017 19:06:20 +0200
-Message-ID: <20170918170620.zwxjxqnvnudw6m47@kozik-lap>
-References: <CGME20170918025448epcas2p22a44b6c8efeac613e7e90c3c49b3eb8a@epcas2p2.samsung.com>
- <1505703264-6704-1-git-send-email-hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Add power button for Odroid XU3/4
+Date: Mon, 18 Sep 2017 20:37:54 +0200
+Message-ID: <20170918183754.y6bkp7jy3s4qsaq3@kozik-lap>
+References: <CGME20170912115804eucas1p1959db12366143b87d14725e227520854@eucas1p1.samsung.com>
+ <1505217474-14725-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35085 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932941AbdIRRGZ (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36616 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752898AbdIRSh5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 13:06:25 -0400
+        Mon, 18 Sep 2017 14:37:57 -0400
+Received: by mail-wm0-f67.google.com with SMTP id r136so1731355wmf.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Sep 2017 11:37:57 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1505703264-6704-1-git-send-email-hoegeun.kwon@samsung.com>
+In-Reply-To: <1505217474-14725-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, a.hajda@samsung.com, inki.dae@samsung.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Brian Kim <brian.kim@hardkernel.com>
 
-On Mon, Sep 18, 2017 at 11:54:24AM +0900, Hoegeun Kwon wrote:
->  The display-timing and delay are included in the panel driver. So it
->  should be removed in dts.
+On Tue, Sep 12, 2017 at 01:57:54PM +0200, Marek Szyprowski wrote:
+> From: Brian Kim <brian.kim@hardkernel.com>
 > 
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> The power button (SW2) on Odroid XU3/4 is connected to the PWRON pin
+> of the S2MPS11 PMIC.
+> 
+> The S2MPS11 datasheet says that ONOB pin operates as 'PWRON key active
+> low signal'. In fact, S2MPS11 PMIC acts as a 16ms debouce filter and
+> signal inverter, thus effectively repeating PWRON (active high) to ONOB
+> pin (active low).
+> 
+> ONOB PMIC pin is then connected to XEINT3 SoC pin, so we get the state
+> of the power button on the gpx0-3 GPIO.
+> 
+> This patch adds device-tree bindings for the power button of Odroid
+> XU3/4 boards.
+> 
+> Signed-off-by: Brian Kim <brian.kim@hardkernel.com>
+> [mszyprow: extended commit message, added comments and fixed minor
+>  issues in the dts]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
+> Changelog:
 > 
-> Hi Krzysztof,
+> v2: fixed minor issues pointed by Krzysztof Kozlowski:
+> - added comments to dts
+> - extended commit message
+> - removed useless interrupts property
+> - used proper macros for gpios
+> - removed gpio prefix
 > 
-> This patch was rebased to the mainline (v4.14-rc1).
+> v1: initial submission
+> https://patchwork.kernel.org/patch/9605023/
 > 
-> Best regards,
-> Hoegeun
-> 
->  arch/arm/boot/dts/exynos3250-rinato.dts | 22 ----------------------
->  1 file changed, 22 deletions(-)
-> 
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 29 ++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>
 
-Thanks, applied.
+Thanks, Marek (and Bartlomiej from other thread), for working on these
+patches. Nice job!
+
+Applied.
 
 Best regards,
 Krzysztof
