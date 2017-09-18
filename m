@@ -1,103 +1,47 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 2/2] ARM: dts: exynos: Add HDMI and Sil9234 to Trats2
- board
-Date: Sun, 17 Sep 2017 09:43:22 +0200
-Message-ID: <20170917074322.GA27936@kozik-book>
-References: <1505201648-9240-1-git-send-email-m.purski@samsung.com>
- <CGME20170912073505eucas1p2e4fb706c97e406a0f46282af66e8f90c@eucas1p2.samsung.com>
- <1505201648-9240-3-git-send-email-m.purski@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [RESEND PATCH v4 3/3] ARM: dts: exynos: Remove the display-timing
+ and delay from rinato dts
+Date: Mon, 18 Sep 2017 11:54:24 +0900
+Message-ID: <1505703264-6704-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170918025448epcas2p22a44b6c8efeac613e7e90c3c49b3eb8a@epcas2p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34421 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbdIQHn1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 17 Sep 2017 03:43:27 -0400
-Content-Disposition: inline
-In-Reply-To: <1505201648-9240-3-git-send-email-m.purski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: krzk@kernel.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, thierry.reding@gmail.com, kgene@kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maciej Purski <m.purski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 
-On Tue, Sep 12, 2017 at 09:34:08AM +0200, Maciej Purski wrote:
-> Add HDMI and Sil9234 MHL converter to Trats2 board.
-> Following in SoC devices have been enabled:
-> - HDMI (HDMI signal encoder),
-> - Mixer (video buffer scanout device),
-> - I2C_5 bus (used for HDMI DDC)
-> - I2C_8 bus (used for HDMI_PHY control).
-> 
-> Based on previous work by:
-> Tomasz Stanislawski <t.stanislaws@samsung.com>
-> 
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4412-trats2.dts | 112 ++++++++++++++++++++++++++++++++
->  1 file changed, 112 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> index 35e9b94..742e02a 100644
-> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> @@ -18,6 +18,7 @@
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/clock/maxim,max77686.h>
-> +#include <dt-bindings/pinctrl/samsung.h>
->  
->  / {
->  	model = "Samsung Trats 2 based on Exynos4412";
-> @@ -97,6 +98,34 @@
->  			gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
->  			enable-active-high;
->  		};
-> +
-> +		vsil12: voltage-regulator-6 {
-> +			compatible = "regulator-fixed";
-> +			regulator-name = "VSIL_1.2V";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-> +			enable-active-high;
-> +			vin-supply = <&buck7_reg>;
-> +		};
-> +
-> +		vcc33mhl: voltage-regulator-7 {
-> +			compatible = "regulator-fixed";
-> +			regulator-name = "VCC_3.3_MHL";
-> +			regulator-min-microvolt = <3300000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-> +			enable-active-high;
-> +		};
-> +
-> +		vcc18mhl: voltage-regulator-8 {
-> +			compatible = "regulator-fixed";
-> +			regulator-name = "VCC_1.8_MHL";
-> +			regulator-min-microvolt = <1800000>;
-> +			regulator-max-microvolt = <1800000>;
-> +			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-> +			enable-active-high;
-> +		};
->  	};
->  
->  	gpio-keys {
-> @@ -229,6 +258,36 @@
->  		};
->  	};
->  
-> +	i2c-mhl {
-> +		compatible = "i2c-gpio";
-> +		gpios = <&gpf0 4 GPIO_ACTIVE_HIGH &gpf0 6 GPIO_ACTIVE_HIGH>;
-
-Please split it like in other nodes:
-	gpios = <...>, <...>
-
-AFAIR they should work the same so keep it consistent.
-
-Rest looks good but the bindings have to be accepted first.
-
-Best regards,
-Krzysztof
+IFRoZSBkaXNwbGF5LXRpbWluZyBhbmQgZGVsYXkgYXJlIGluY2x1ZGVkIGluIHRoZSBwYW5lbCBk
+cml2ZXIuIFNvIGl0CiBzaG91bGQgYmUgcmVtb3ZlZCBpbiBkdHMuCgpTaWduZWQtb2ZmLWJ5OiBI
+b2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1zdW5nLmNvbT4KLS0tCgpIaSBLcnp5c3p0b2Ys
+CgpUaGlzIHBhdGNoIHdhcyByZWJhc2VkIHRvIHRoZSBtYWlubGluZSAodjQuMTQtcmMxKS4KCkJl
+c3QgcmVnYXJkcywKSG9lZ2V1bgoKIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRv
+LmR0cyB8IDIyIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAyMiBkZWxl
+dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLXJpbmF0
+by5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMKaW5kZXggMGI0
+NTQ2Ny4uZmY3OTJmZiAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1y
+aW5hdG8uZHRzCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cwpA
+QCAtMjI3LDI4ICsyMjcsNiBAQAogCQl2Y2ktc3VwcGx5ID0gPCZsZG8yMF9yZWc+OwogCQlyZXNl
+dC1ncGlvcyA9IDwmZ3BlMCAxIEdQSU9fQUNUSVZFX0xPVz47CiAJCXRlLWdwaW9zID0gPCZncHgw
+IDYgR1BJT19BQ1RJVkVfSElHSD47Ci0JCXBvd2VyLW9uLWRlbGF5PSA8MzA+OwotCQlwb3dlci1v
+ZmYtZGVsYXk9IDwxMjA+OwotCQlyZXNldC1kZWxheSA9IDw1PjsKLQkJaW5pdC1kZWxheSA9IDwx
+MDA+OwotCQlmbGlwLWhvcml6b250YWw7Ci0JCWZsaXAtdmVydGljYWw7Ci0JCXBhbmVsLXdpZHRo
+LW1tID0gPDI5PjsKLQkJcGFuZWwtaGVpZ2h0LW1tID0gPDI5PjsKLQotCQlkaXNwbGF5LXRpbWlu
+Z3MgewotCQkJdGltaW5nLTAgewotCQkJCWNsb2NrLWZyZXF1ZW5jeSA9IDw0NjAwMDAwPjsKLQkJ
+CQloYWN0aXZlID0gPDMyMD47Ci0JCQkJdmFjdGl2ZSA9IDwzMjA+OwotCQkJCWhmcm9udC1wb3Jj
+aCA9IDwxPjsKLQkJCQloYmFjay1wb3JjaCA9IDwxPjsKLQkJCQloc3luYy1sZW4gPSA8MT47Ci0J
+CQkJdmZyb250LXBvcmNoID0gPDE1MD47Ci0JCQkJdmJhY2stcG9yY2ggPSA8MT47Ci0JCQkJdnN5
+bmMtbGVuID0gPDI+OwotCQkJfTsKLQkJfTsKIAl9OwogfTsKIAotLSAKMS45LjEKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
