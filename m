@@ -1,43 +1,61 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/5] dt-bindings: Explicitely mark Exynos HDMI DDC node
- as deprecated
-Date: Tue, 19 Sep 2017 19:37:17 +0200
-Message-ID: <20170919173717.g36ugkaih4t2nyr7@kozik-lap>
-References: <1505466683-32148-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170915091139eucas1p2d3ee5da70946b4f377242642af117635@eucas1p2.samsung.com>
- <1505466683-32148-2-git-send-email-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] ARM: dts: exynos: Add dwc3 SUSPHY quirk
+Date: Tue, 19 Sep 2017 19:40:38 +0200
+Message-ID: <20170919174038.2sspjvadt6ggka65@kozik-lap>
+References: <1505728934-6200-1-git-send-email-andrzej.p@samsung.com>
+ <CGME20170918100230eucas1p29fae00c53f1106af1961a6e269740b2f@eucas1p2.samsung.com>
+ <1505728934-6200-2-git-send-email-andrzej.p@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38753 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750919AbdISRkn (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 19 Sep 2017 13:40:43 -0400
 Content-Disposition: inline
-In-Reply-To: <1505466683-32148-2-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1505728934-6200-2-git-send-email-andrzej.p@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On Fri, Sep 15, 2017 at 11:11:19AM +0200, Marek Szyprowski wrote:
-> Commit 2b7681326dc2 ("drm/exynos: hdmi: remove the i2c drivers and use")
-> merged to v3.15 kernel added a required 'ddc' property to Exynos HDMI
-> device tree bindings, which should point to i2c bus used for handling DDC
-> (mainly reading display's EDID information). Since that commit
-> separate node with "samsung,exynos4210-hdmiddc" compatible is no longer
-> needed, so mark it finally as deprecated.
+On Mon, Sep 18, 2017 at 12:02:13PM +0200, Andrzej Pietrasiewicz wrote:
+> Odroid XU4 board does not enumerate SuperSpeed devices.
+> This patch makes exynos5 series chips use USB SUSPHY quirk,
+> which solves the problem.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 > ---
->  Documentation/devicetree/bindings/display/exynos/exynos_hdmiddc.txt | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
+>  arch/arm/boot/dts/exynos54xx.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-(I guess this patch will go through DRM or media, but let me know if I
-should take it)
+Makes sense to me... was it tested also on XU3 and XU?
 
 Best regards,
 Krzysztof
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+> index 0389e8a..8ca4fef 100644
+> --- a/arch/arm/boot/dts/exynos54xx.dtsi
+> +++ b/arch/arm/boot/dts/exynos54xx.dtsi
+> @@ -134,6 +134,7 @@
+>  				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+>  				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
+>  				phy-names = "usb2-phy", "usb3-phy";
+> +				snps,dis_u3_susphy_quirk;
+>  			};
+>  		};
+>  
+> @@ -154,6 +155,7 @@
+>  				reg = <0x12400000 0x10000>;
+>  				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
+>  				phy-names = "usb2-phy", "usb3-phy";
+> +				snps,dis_u3_susphy_quirk;
+>  			};
+>  		};
+>  
+> -- 
+> 1.9.1
+> 
