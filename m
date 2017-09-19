@@ -1,45 +1,78 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 5/5] ARM: dts: exynos: Add status property to Exynos 54xx
- Mixer nodes
-Date: Tue, 19 Sep 2017 19:52:27 +0200
-Message-ID: <20170919175227.n2ellrfep4xi7ceu@kozik-lap>
-References: <1505466683-32148-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170915091141eucas1p2622dd1def1799e6bfde948ff17d497b9@eucas1p2.samsung.com>
- <1505466683-32148-6-git-send-email-m.szyprowski@samsung.com>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: dts: exynos: Add dwc3 SUSPHY quirk
+Date: Tue, 19 Sep 2017 19:10:00 +0100
+Message-ID: <fcefaaab-b99c-a8cc-9684-98cc3c4d803e@arm.com>
+References: <1505728934-6200-1-git-send-email-andrzej.p@samsung.com>
+ <CGME20170918100230eucas1p29fae00c53f1106af1961a6e269740b2f@eucas1p2.samsung.com>
+ <1505728934-6200-2-git-send-email-andrzej.p@samsung.com>
+ <20170919174038.2sspjvadt6ggka65@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36451 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750872AbdISRwa (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 13:52:30 -0400
-Received: by mail-wm0-f67.google.com with SMTP id r136so319918wmf.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Sep 2017 10:52:30 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1505466683-32148-6-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170919174038.2sspjvadt6ggka65@kozik-lap>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Fri, Sep 15, 2017 at 11:11:23AM +0200, Marek Szyprowski wrote:
-> HDMI support requires some additional off-SoC logic, so Mixer device (part
-> of HDMI display path) should be disabled by default in SoC dtsi and enabled
-> then in each board dts. This patch unifies Mixer handling with other
-> Exynos SoCs.
+On 19/09/17 18:40, Krzysztof Kozlowski wrote:
+> On Mon, Sep 18, 2017 at 12:02:13PM +0200, Andrzej Pietrasiewicz wrote:
+>> Odroid XU4 board does not enumerate SuperSpeed devices.
+>> This patch makes exynos5 series chips use USB SUSPHY quirk,
+>> which solves the problem.
+>>
+>> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>  arch/arm/boot/dts/exynos54xx.dtsi | 2 ++
+>>  1 file changed, 2 insertions(+)
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 4 ++++
->  arch/arm/boot/dts/exynos5420-peach-pit.dts         | 4 ++++
->  arch/arm/boot/dts/exynos5420-smdk5420.dts          | 4 ++++
->  arch/arm/boot/dts/exynos5420.dtsi                  | 1 +
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 ++++
->  5 files changed, 17 insertions(+)
+> Makes sense to me... was it tested also on XU3 and XU?
+
+Well, it at least doesn't make USB3 on my XU any more or less broken
+than it was before ;) (both ports still report an over-current condition
+even with nothing plugged in - I suspect there's probably still some
+pinctrl/regulator stuff missing)
+
+Robin.
+
+> 
+> Best regards,
+> Krzysztof
+> 
+>>
+>> diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+>> index 0389e8a..8ca4fef 100644
+>> --- a/arch/arm/boot/dts/exynos54xx.dtsi
+>> +++ b/arch/arm/boot/dts/exynos54xx.dtsi
+>> @@ -134,6 +134,7 @@
+>>  				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+>>  				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
+>>  				phy-names = "usb2-phy", "usb3-phy";
+>> +				snps,dis_u3_susphy_quirk;
+>>  			};
+>>  		};
+>>  
+>> @@ -154,6 +155,7 @@
+>>  				reg = <0x12400000 0x10000>;
+>>  				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
+>>  				phy-names = "usb2-phy", "usb3-phy";
+>> +				snps,dis_u3_susphy_quirk;
+>>  			};
+>>  		};
+>>  
+>> -- 
+>> 1.9.1
+>>
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 > 
 
-Thanks, applied.
-
-Best regards,
-Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
