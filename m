@@ -1,50 +1,44 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/5] ARM: dts: exynos: Cleanup HDMI DCC definitions
-Date: Tue, 19 Sep 2017 19:49:51 +0200
-Message-ID: <20170919174951.as3svj2gbnyoona7@kozik-lap>
+Subject: Re: [PATCH 4/5] ARM: dts: exynos: Add status property to Exynos 5250
+ HDMI and Mixer nodes
+Date: Tue, 19 Sep 2017 19:51:49 +0200
+Message-ID: <20170919175149.htvpvskcdb7vntz3@kozik-lap>
 References: <1505466683-32148-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170915091140eucas1p268cefeea0d564c340ede8ab54788ff6a@eucas1p2.samsung.com>
- <1505466683-32148-4-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170915091140eucas1p25c1c554f07c2fd0e4326a432ed23f587@eucas1p2.samsung.com>
+ <1505466683-32148-5-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38906 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751353AbdISRtz (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 13:49:55 -0400
-Received: by mail-wm0-f68.google.com with SMTP id x17so305421wmd.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Sep 2017 10:49:55 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <1505466683-32148-4-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1505466683-32148-5-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 15, 2017 at 11:11:21AM +0200, Marek Szyprowski wrote:
-> Commit 2b7681326dc2 ("drm/exynos: hdmi: remove the i2c drivers and use")
-> merged to v3.15 kernel added a required 'ddc' property to Exynos HDMI
-> device tree bindings, which should point to i2c bus used for handling DDC
-> (mainly reading display's EDID information). It has been enough time to
-> convert all boards to use new bindings, but sadly due to copy/paste design
-> the old approach using separate node with 'samsung,exynos4210-hdmiddc'
-> compatible was used also for many new boards. This patch finally converts
-> all boards to the new approach and unifies HDMI DDC definition across all
-> Exynos boards.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250-arndale.dts           | 9 ++-------
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          | 7 ++-----
->  arch/arm/boot/dts/exynos5250-snow-common.dtsi      | 6 +-----
->  arch/arm/boot/dts/exynos5250-spring.dts            | 6 +-----
->  arch/arm/boot/dts/exynos5420-smdk5420.dts          | 7 ++-----
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 7 ++-----
->  6 files changed, 10 insertions(+), 32 deletions(-)
-> 
-
-Thanks, applied.
-
-Best regards,
-Krzysztof
+T24gRnJpLCBTZXAgMTUsIDIwMTcgYXQgMTE6MTE6MjJBTSArMDIwMCwgTWFyZWsgU3p5cHJvd3Nr
+aSB3cm90ZToKPiBIRE1JIHN1cHBvcnQgcmVxdWlyZXMgc29tZSBhZGRpdGlvbmFsIG9mZi1Tb0Mg
+bG9naWMsIHNvIEhETUkgYW5kIE1peGVyCj4gZGV2aWNlcyBzaG91bGQgYmUgZGlzYWJsZWQgYnkg
+ZGVmYXVsdCBpbiAgU29DIGR0c2kgYW5kIGVuYWJsZWQgdGhlbgo+IGluIGVhY2ggYm9hcmQgZHRz
+LiBUaGlzIHBhdGNoIHVuaWZpZXMgSERNSSBhbmQgTWl4ZXIgaGFuZGxpbmcgd2l0aCBvdGhlcgo+
+IEV4eW5vcyBTb0NzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5
+cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1
+MC1hcm5kYWxlLmR0cyAgICAgIHwgNSArKysrKwo+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1
+MjUwLXNtZGs1MjUwLmR0cyAgICAgfCA1ICsrKysrCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
+czUyNTAtc25vdy1jb21tb24uZHRzaSB8IDUgKysrKysKPiAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5
+bm9zNTI1MC1zcHJpbmcuZHRzICAgICAgIHwgNSArKysrKwo+ICBhcmNoL2FybS9ib290L2R0cy9l
+eHlub3M1MjUwLmR0c2kgICAgICAgICAgICAgfCA0ICsrKy0KPiAgNSBmaWxlcyBjaGFuZ2VkLCAy
+MyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCgpUaGFua3MsIGFwcGxpZWQuCgpCZXN0
+IHJlZ2FyZHMsCktyenlzenRvZgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
