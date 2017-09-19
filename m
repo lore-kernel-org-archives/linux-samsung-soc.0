@@ -1,61 +1,44 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: Add dwc3 SUSPHY quirk
-Date: Tue, 19 Sep 2017 19:40:38 +0200
-Message-ID: <20170919174038.2sspjvadt6ggka65@kozik-lap>
-References: <1505728934-6200-1-git-send-email-andrzej.p@samsung.com>
- <CGME20170918100230eucas1p29fae00c53f1106af1961a6e269740b2f@eucas1p2.samsung.com>
- <1505728934-6200-2-git-send-email-andrzej.p@samsung.com>
+Subject: Re: [PATCH 2/5] ARM: dts: exynos: Move HDMI PHY node to
+ exynos5250.dtsi
+Date: Tue, 19 Sep 2017 19:47:42 +0200
+Message-ID: <20170919174742.kmbktkjll4lsavwa@kozik-lap>
+References: <1505466683-32148-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170915091139eucas1p2eb6d2d81ee77ee5a47f1c32f9ccce268@eucas1p2.samsung.com>
+ <1505466683-32148-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38753 "EHLO
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35094 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750919AbdISRkn (ORCPT
+        with ESMTP id S1751690AbdISRrq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 13:40:43 -0400
+        Tue, 19 Sep 2017 13:47:46 -0400
+Received: by mail-wm0-f68.google.com with SMTP id e64so318043wmi.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Sep 2017 10:47:45 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1505728934-6200-2-git-send-email-andrzej.p@samsung.com>
+In-Reply-To: <1505466683-32148-3-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Sep 18, 2017 at 12:02:13PM +0200, Andrzej Pietrasiewicz wrote:
-> Odroid XU4 board does not enumerate SuperSpeed devices.
-> This patch makes exynos5 series chips use USB SUSPHY quirk,
-> which solves the problem.
+On Fri, Sep 15, 2017 at 11:11:20AM +0200, Marek Szyprowski wrote:
+> All Exynos 5250 SoCs have HDMI PHY connected via dedicated I2C bus (bus
+> number 8), so HDMI PHY should be defined in exynos5250.dtsi instead of
+> duplicating it in every board, which enable HDMI support.
 > 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos54xx.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/arm/boot/dts/exynos5250-arndale.dts      | 8 +-------
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts     | 6 +-----
+>  arch/arm/boot/dts/exynos5250-snow-common.dtsi | 7 +------
+>  arch/arm/boot/dts/exynos5250-spring.dts       | 7 +------
+>  arch/arm/boot/dts/exynos5250.dtsi             | 6 ++++++
+>  5 files changed, 10 insertions(+), 24 deletions(-)
+> 
 
-Makes sense to me... was it tested also on XU3 and XU?
+Thanks, applied.
 
 Best regards,
 Krzysztof
-
-> 
-> diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-> index 0389e8a..8ca4fef 100644
-> --- a/arch/arm/boot/dts/exynos54xx.dtsi
-> +++ b/arch/arm/boot/dts/exynos54xx.dtsi
-> @@ -134,6 +134,7 @@
->  				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
->  				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
->  				phy-names = "usb2-phy", "usb3-phy";
-> +				snps,dis_u3_susphy_quirk;
->  			};
->  		};
->  
-> @@ -154,6 +155,7 @@
->  				reg = <0x12400000 0x10000>;
->  				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
->  				phy-names = "usb2-phy", "usb3-phy";
-> +				snps,dis_u3_susphy_quirk;
->  			};
->  		};
->  
-> -- 
-> 1.9.1
-> 
