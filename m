@@ -1,1492 +1,745 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH 2/6] drm/exynos: ipp: Add IPP v2 framework
-Date: Wed, 20 Sep 2017 18:57:31 +0900
-Message-ID: <e597316e-0740-2a19-31dd-c6991a305fdd@samsung.com>
+Subject: Re: [PATCH 4/6] drm/exynos: gsc: Convert driver to IPP v2 core API
+Date: Wed, 20 Sep 2017 18:57:44 +0900
+Message-ID: <1732b986-368c-11aa-d68c-8a179a154de4@samsung.com>
 References: <1505203739-29747-1-git-send-email-m.szyprowski@samsung.com>
-        <CGME20170912080911eucas1p1a9ca05ec684dc4b71f8fb984b5baa161@eucas1p1.samsung.com>
-        <1505203739-29747-3-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170912080911eucas1p10018705e16e07e61239db3c9f32ca956@eucas1p1.samsung.com>
+ <1505203739-29747-5-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:10273 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751612AbdITJ5b (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Sep 2017 05:57:31 -0400
-In-reply-to: <1505203739-29747-3-git-send-email-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1505203739-29747-5-git-send-email-m.szyprowski@samsung.com>
 Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
-
-Tested-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-
-Best regards,
-Hoegeun
-
-
-
-On 09/12/2017 05:08 PM, Marek Szyprowski wrote:
-> This patch adds Exynos IPP v2 subsystem and userspace API.
->
-> New userspace API is focused ONLY on memory-to-memory image processing.
-> The two remainging IPP operation modes (framebuffer writeback and
-> local-path output with image processing) can be implemented using
-> standard DRM features: writeback connectors and additional DRM planes with
-> scaling features.
->
-> V2 IPP userspace API is not compatible with old IPP ioctls. This is a
-> significant change, but the old IPP subsystem in mainline Linux kernel was
-> partially disfunctional anyway and not used in any open-source project.
->
-> V2 IPP userspace API is based on stateless approach, which much better fits
-> to memory-to-memory image processing model. It also provides support for
-> all image formats, which are both already defined in DRM API and supported
-> by the existing IPP hardware modules.
->
-> The API consists of the following ioctls:
-> - DRM_IOCTL_EXYNOS_IPP_GET_RESOURCES: to enumerate all available image
->    processing modules,
-> - DRM_IOCTL_EXYNOS_IPP_GET_CAPS: to query capabilities and supported image
->    formats of given IPP module,
-> - DRM_IOCTL_EXYNOS_IPP_GET_LIMITS: to query hardware limitiations for
->    selected image format of given IPP module,
-> - DRM_IOCTL_EXYNOS_IPP_COMMIT: to perform operation described by the
->    provided structures (source and destination buffers, operation rectangle,
->    transformation, etc).
->
-> The proposed userspace API is extensible. In the future more advanced image
-> processing operations can be defined to support for example blending.
->
-> Userspace API is fully functional also on DRM render nodes, so it is not
-> limited to the root/privileged client.
->
-> Internal driver API also has been completely rewritten. New IPP core
-> performs all possible input validation, checks and object life-time
-> control. The drivers can focus only on writing configuration to hardware
-> registers. Stateless nature of DRM_IOCTL_EXYNOS_IPP_COMMIT ioctl simplifies
-> the driver API. Minimal driver needs to provide a single callback for
-> starting processing and an array with supported image formats.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   drivers/gpu/drm/exynos/Kconfig          |   3 +
->   drivers/gpu/drm/exynos/Makefile         |   1 +
->   drivers/gpu/drm/exynos/exynos_drm_drv.c |   9 +
->   drivers/gpu/drm/exynos/exynos_drm_ipp.c | 893 ++++++++++++++++++++++++++++++++
->   drivers/gpu/drm/exynos/exynos_drm_ipp.h | 188 +++++++
->   include/uapi/drm/exynos_drm.h           | 227 ++++++++
->   6 files changed, 1321 insertions(+)
->   create mode 100644 drivers/gpu/drm/exynos/exynos_drm_ipp.c
->   create mode 100644 drivers/gpu/drm/exynos/exynos_drm_ipp.h
->
-> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-> index 88cff0e039b6..2e097a81df12 100644
-> --- a/drivers/gpu/drm/exynos/Kconfig
-> +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -94,6 +94,9 @@ config DRM_EXYNOS_G2D
->   	help
->   	  Choose this option if you want to use Exynos G2D for DRM.
->   
-> +config DRM_EXYNOS_IPP
-> +	bool
-> +
->   config DRM_EXYNOS_FIMC
->   	bool "FIMC"
->   	depends on BROKEN && MFD_SYSCON
-> diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
-> index 09bb002c9555..f663490e949d 100644
-> --- a/drivers/gpu/drm/exynos/Makefile
-> +++ b/drivers/gpu/drm/exynos/Makefile
-> @@ -17,6 +17,7 @@ exynosdrm-$(CONFIG_DRM_EXYNOS_MIXER)	+= exynos_mixer.o
->   exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI)	+= exynos_hdmi.o
->   exynosdrm-$(CONFIG_DRM_EXYNOS_VIDI)	+= exynos_drm_vidi.o
->   exynosdrm-$(CONFIG_DRM_EXYNOS_G2D)	+= exynos_drm_g2d.o
-> +exynosdrm-$(CONFIG_DRM_EXYNOS_IPP)	+= exynos_drm_ipp.o
->   exynosdrm-$(CONFIG_DRM_EXYNOS_FIMC)	+= exynos_drm_fimc.o
->   exynosdrm-$(CONFIG_DRM_EXYNOS_ROTATOR)	+= exynos_drm_rotator.o
->   exynosdrm-$(CONFIG_DRM_EXYNOS_GSC)	+= exynos_drm_gsc.o
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 7f19054ebce3..645046c5943a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -26,6 +26,7 @@
->   #include "exynos_drm_fb.h"
->   #include "exynos_drm_gem.h"
->   #include "exynos_drm_plane.h"
-> +#include "exynos_drm_ipp.h"
->   #include "exynos_drm_vidi.h"
->   #include "exynos_drm_g2d.h"
->   #include "exynos_drm_iommu.h"
-> @@ -114,6 +115,14 @@ static void exynos_drm_lastclose(struct drm_device *dev)
->   			DRM_AUTH | DRM_RENDER_ALLOW),
->   	DRM_IOCTL_DEF_DRV(EXYNOS_G2D_EXEC, exynos_g2d_exec_ioctl,
->   			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_RESOURCES, exynos_drm_ipp_get_res_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_CAPS, exynos_drm_ipp_get_caps_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_LIMITS, exynos_drm_ipp_get_limits_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_COMMIT, exynos_drm_ipp_commit_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
->   };
->   
->   static const struct file_operations exynos_drm_driver_fops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> new file mode 100644
-> index 000000000000..11be6a1bf839
-> --- /dev/null
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> @@ -0,0 +1,892 @@
-> +/*
-> + * Copyright (C) 2017 Samsung Electronics Co.Ltd
-> + * Authors:
-> + *	Marek Szyprowski <m.szyprowski@samsung.com>
-> + *
-> + * Exynos DRM Image Post Processing (IPP) related functions
-> + *
-> + * Permission is hereby granted, free of charge, to any person obtaining a
-> + * copy of this software and associated documentation files (the "Software"),
-> + * to deal in the Software without restriction, including without limitation
-> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> + * and/or sell copies of the Software, and to permit persons to whom the
-> + * Software is furnished to do so, subject to the following conditions:
-> + *
-> + * The above copyright notice and this permission notice shall be included in
-> + * all copies or substantial portions of the Software.
-> + */
-> +
-> +
-> +#include <drm/drmP.h>
-> +#include <drm/drm_mode.h>
-> +#include <uapi/drm/exynos_drm.h>
-> +
-> +#include "exynos_drm_drv.h"
-> +#include "exynos_drm_gem.h"
-> +#include "exynos_drm_ipp.h"
-> +
-> +static int num_ipp;
-> +static LIST_HEAD(ipp_list);
-> +
-> +struct drm_pending_exynos_ipp_event {
-> +	struct drm_pending_event base;
-> +	struct drm_exynos_ipp_event event;
-> +};
-> +
-> +/**
-> + * exynos_drm_ipp_register - Register a new picture processor hardware module
-> + * @dev: DRM device
-> + * @ipp: ipp module to init
-> + * @funcs: callbacks for the new ipp object
-> + * @caps: bitmask of ipp capabilities (%DRM_EXYNOS_IPP_CAP_*)
-> + * @formats: array of supported formats (%DRM_FORMAT_*)
-> + * @name: name (for debugging purposes)
-> + *
-> + * Initializes a ipp module.
-> + *
-> + * Returns:
-> + * Zero on success, error code on failure.
-> + */
-> +int exynos_drm_ipp_register(struct drm_device *dev, struct exynos_drm_ipp *ipp,
-> +		const struct exynos_drm_ipp_funcs *funcs, unsigned int caps,
-> +		const struct exynos_drm_ipp_formats *formats, const char *name)
-> +{
-> +	WARN_ON(!ipp);
-> +	WARN_ON(!funcs);
-> +	WARN_ON(!formats);
-> +
-> +	spin_lock_init(&ipp->lock);
-> +	INIT_LIST_HEAD(&ipp->todo_list);
-> +	init_waitqueue_head(&ipp->done_wq);
-> +	ipp->dev = dev;
-> +	ipp->funcs = funcs;
-> +	ipp->capabilities = caps;
-> +	ipp->name = name;
-> +	ipp->formats = formats;
-> +	while (formats++->fourcc)
-> +		ipp->num_formats++;
-> +
-> +	list_add_tail(&ipp->head, &ipp_list);
-> +	ipp->id = num_ipp++;
-> +
-> +	DRM_DEBUG_DRIVER("Registered ipp %d\n", ipp->id);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_unregister - Unregister the picture processor module
-> + * @dev: DRM device
-> + * @ipp: ipp module
-> + */
-> +void exynos_drm_ipp_unregister(struct drm_device *dev,
-> +			       struct exynos_drm_ipp *ipp)
-> +{
-> +	BUG_ON(ipp->task);
-> +	BUG_ON(!list_empty(&ipp->todo_list));
-> +	list_del(&ipp->head);
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_ioctl_get_res_ioctl - enumerate all ipp modules
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a list of ipp ids.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_get_res_ioctl(struct drm_device *dev, void *data,
-> +				 struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_get_res *resp = data;
-> +	struct exynos_drm_ipp *ipp;
-> +	uint32_t __user *ipp_ptr = (uint32_t __user *)
-> +						(unsigned long)resp->ipp_id_ptr;
-> +	unsigned int count = num_ipp, copied = 0;
-> +
-> +	/*
-> +	 * This ioctl is called twice, once to determine how much space is
-> +	 * needed, and the 2nd time to fill it.
-> +	 */
-> +	if (count && resp->count_ipps >= count) {
-> +		list_for_each_entry(ipp, &ipp_list, head) {
-> +			if (put_user(ipp->id, ipp_ptr + copied))
-> +				return -EFAULT;
-> +			copied++;
-> +		}
-> +	}
-> +	resp->count_ipps = count;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline struct exynos_drm_ipp *__ipp_get(uint32_t id)
-> +{
-> +	struct exynos_drm_ipp *ipp;
-> +
-> +	list_for_each_entry(ipp, &ipp_list, head)
-> +		if (ipp->id == id)
-> +			return ipp;
-> +	return NULL;
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_ioctl_get_caps - get ipp module capabilities and formats
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a structure describing ipp module capabilities.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_get_caps_ioctl(struct drm_device *dev, void *data,
-> +				  struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_get_caps *resp = data;
-> +	void __user *ptr = (void __user *)(unsigned long)resp->formats_ptr;
-> +	struct exynos_drm_ipp *ipp;
-> +	int i;
-> +
-> +	ipp = __ipp_get(resp->ipp_id);
-> +	if (!ipp)
-> +		return -ENOENT;
-> +
-> +	resp->ipp_id = ipp->id;
-> +	resp->capabilities = ipp->capabilities;
-> +
-> +	/*
-> +	 * This ioctl is called twice, once to determine how much space is
-> +	 * needed, and the 2nd time to fill it.
-> +	 */
-> +	if (resp->formats_count >= ipp->num_formats) {
-> +		for (i = 0; i < ipp->num_formats; i++) {
-> +			struct exynos_drm_ipp_format tmp = {
-> +				.fourcc = ipp->formats[i].fourcc,
-> +				.type = ipp->formats[i].type,
-> +				.modifier = ipp->formats[i].modifier,
-> +			};
-> +
-> +			if (copy_to_user(ptr, &tmp, sizeof(tmp)))
-> +				return -EFAULT;
-> +			ptr += sizeof(tmp);
-> +		}
-> +	}
-> +	resp->formats_count = ipp->num_formats;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline const struct exynos_drm_ipp_formats *__ipp_format_get(
-> +			uint32_t fourcc, uint64_t mod, unsigned long type,
-> +			const struct exynos_drm_ipp_formats *f)
-> +{
-> +	for (; f->fourcc; f++)
-> +		if ((f->type & type) && f->fourcc == fourcc &&
-> +		    f->modifier == mod)
-> +			return f;
-> +	return NULL;
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_get_limits_ioctl - get ipp module limits
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a structure describing ipp module limitations for provided
-> + * picture format.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_get_limits_ioctl(struct drm_device *dev, void *data,
-> +				    struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_get_limits *resp = data;
-> +	void __user *ptr = (void __user *)(unsigned long)resp->limits_ptr;
-> +	const struct exynos_drm_ipp_formats *format;
-> +	const struct drm_exynos_ipp_limit *limits, *l;
-> +	struct exynos_drm_ipp *ipp;
-> +	int count = 0;
-> +
-> +	if (resp->type != DRM_EXYNOS_IPP_FORMAT_SOURCE &&
-> +	    resp->type != DRM_EXYNOS_IPP_FORMAT_DESTINATION)
-> +		return -EINVAL;
-> +
-> +	ipp = __ipp_get(resp->ipp_id);
-> +	if (!ipp)
-> +		return -ENOENT;
-> +
-> +	format = __ipp_format_get(resp->fourcc, resp->modifier, resp->type,
-> +			      ipp->formats);
-> +	if (!format)
-> +		return -EINVAL;
-> +
-> +	limits = format->limits;
-> +	for (l = limits; l->type; l++)
-> +		count++;
-> +
-> +	/*
-> +	 * This ioctl is called twice, once to determine how much space is
-> +	 * needed, and the 2nd time to fill it.
-> +	 */
-> +	if (count && resp->limits_size >= count * sizeof(*l)) {
-> +		for (l = limits; l->type; l++, ptr += sizeof(*l))
-> +			if (copy_to_user((void __user *)ptr, l, sizeof(*l)))
-> +				return -EFAULT;
-> +	}
-> +	resp->limits_size = count * sizeof(*l);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline struct exynos_drm_ipp_task *
-> +	exynos_drm_ipp_task_alloc(struct exynos_drm_ipp *ipp)
-> +{
-> +	struct exynos_drm_ipp_task *task;
-> +
-> +	task = kzalloc(sizeof(*task), GFP_KERNEL);
-> +	if (!task)
-> +		return NULL;
-> +
-> +	task->dev = ipp->dev;
-> +	task->ipp = ipp;
-> +
-> +	/* some defaults */
-> +	task->src.rect.w = task->dst.rect.w = UINT_MAX;
-> +	task->src.rect.h = task->dst.rect.h = UINT_MAX;
-> +	task->transform.rotation = DRM_MODE_ROTATE_0;
-> +
-> +	DRM_DEBUG_DRIVER("Allocated task %pK\n", task);
-> +
-> +	return task;
-> +}
-> +
-> +struct exynos_drm_param_map {
-> +	unsigned int id;
-> +	unsigned int size;
-> +	unsigned int offset;
-> +} exynos_drm_ipp_params_maps[] = {
-> +	{
-> +		DRM_EXYNOS_IPP_TASK_BUFFER | DRM_EXYNOS_IPP_TASK_TYPE_SOURCE,
-> +		sizeof(struct drm_exynos_ipp_task_buffer),
-> +		offsetof(struct exynos_drm_ipp_task, src.buf),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_BUFFER | DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION,
-> +		sizeof(struct drm_exynos_ipp_task_buffer),
-> +		offsetof(struct exynos_drm_ipp_task, dst.buf),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_RECTANGLE | DRM_EXYNOS_IPP_TASK_TYPE_SOURCE,
-> +		sizeof(struct drm_exynos_ipp_task_rect),
-> +		offsetof(struct exynos_drm_ipp_task, src.rect),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_RECTANGLE | DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION,
-> +		sizeof(struct drm_exynos_ipp_task_rect),
-> +		offsetof(struct exynos_drm_ipp_task, dst.rect),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_TRANSFORM,
-> +		sizeof(struct drm_exynos_ipp_task_transform),
-> +		offsetof(struct exynos_drm_ipp_task, transform),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_ALPHA,
-> +		sizeof(struct drm_exynos_ipp_task_alpha),
-> +		offsetof(struct exynos_drm_ipp_task, alpha),
-> +	},
-> +};
-> +
-> +static int exynos_drm_ipp_task_set(struct exynos_drm_ipp_task *task,
-> +				  struct drm_exynos_ioctl_ipp_commit *arg)
-> +{
-> +	unsigned int size = arg->params_size;
-> +	void *p, *params;
-> +	int ret = 0;
-> +
-> +	if (size > PAGE_SIZE)
-> +		return -ERANGE;
-> +
-> +	p = kmalloc(size, GFP_KERNEL);
-> +	if (!p)
-> +		return -ENOMEM;
-> +
-> +	if (copy_from_user(p, (void __user *)(unsigned long)arg->params_ptr,
-> +			   size)) {
-> +		ret = -EFAULT;
-> +		DRM_DEBUG_DRIVER("Failed to copy configuration from userspace\n");
-> +		goto free;
-> +	}
-> +
-> +	params = p;
-> +	while (size) {
-> +		struct exynos_drm_param_map *map = exynos_drm_ipp_params_maps;
-> +		u32 *id = params;
-> +		int i;
-> +
-> +		for (i = 0; i < ARRAY_SIZE(exynos_drm_ipp_params_maps); i++)
-> +			if (map[i].id == *id)
-> +				break;
-> +
-> +		if (i < ARRAY_SIZE(exynos_drm_ipp_params_maps) &&
-> +		    map[i].size <= size) {
-> +			memcpy((void *)task + map[i].offset, params,
-> +			       map[i].size);
-> +			params += map[i].size;
-> +			size -= map[i].size;
-> +		} else {
-> +			ret = -EINVAL;
-> +			goto free;
-> +		}
-> +	}
-> +
-> +	DRM_DEBUG_DRIVER("Got task %pK configuration from userspace\n", task);
-> +free:
-> +	kfree(p);
-> +	return ret;
-> +}
-> +
-> +static int exynos_drm_ipp_task_setup_buffer(struct exynos_drm_ipp_buffer *buf,
-> +					    struct drm_file *filp)
-> +{
-> +	int ret = 0;
-> +	int i;
-> +
-> +	/* basic checks */
-> +	if (buf->buf.width == 0 || buf->buf.height == 0)
-> +		return -EINVAL;
-> +	buf->format = drm_format_info(buf->buf.fourcc);
-> +	for (i = 0; i < buf->format->num_planes; i++) {
-> +		unsigned int width = (i == 0) ? buf->buf.width :
-> +			     DIV_ROUND_UP(buf->buf.width, buf->format->hsub);
-> +
-> +		if (buf->buf.pitch[i] == 0)
-> +			buf->buf.pitch[i] = width * buf->format->cpp[i];
-> +		if (buf->buf.pitch[i] < width * buf->format->cpp[i])
-> +			return -EINVAL;
-> +		if (!buf->buf.gem_id[i])
-> +			return -ENOENT;
-> +	}
-> +
-> +	/* get GEM buffers and check their size */
-> +	for (i = 0; i < buf->format->num_planes; i++) {
-> +		unsigned int height = (i == 0) ? buf->buf.height :
-> +			     DIV_ROUND_UP(buf->buf.height, buf->format->vsub);
-> +		unsigned long size = height * buf->buf.pitch[i] +
-> +				     buf->buf.offset[i];
-> +		struct drm_gem_object *obj = drm_gem_object_lookup(filp,
-> +							    buf->buf.gem_id[i]);
-> +		if (!obj) {
-> +			ret = -ENOENT;
-> +			goto gem_free;
-> +		}
-> +		buf->exynos_gem[i] = to_exynos_gem(obj);
-> +
-> +		if (size > buf->exynos_gem[i]->size) {
-> +			i++;
-> +			ret = -EINVAL;
-> +			goto gem_free;
-> +		}
-> +		buf->dma_addr[i] = buf->exynos_gem[i]->dma_addr +
-> +				   buf->buf.offset[i];
-> +	}
-> +
-> +	return 0;
-> +gem_free:
-> +	while (i--) {
-> +		drm_gem_object_put_unlocked(&buf->exynos_gem[i]->base);
-> +		buf->exynos_gem[i] = NULL;
-> +	}
-> +	return ret;
-> +}
-> +
-> +static void exynos_drm_ipp_task_release_buffer(struct exynos_drm_ipp_buffer *buf)
-> +{
-> +	int i;
-> +
-> +	if (!buf->exynos_gem[0])
-> +		return;
-> +	for (i = 0; i < buf->format->num_planes; i++)
-> +		drm_gem_object_put_unlocked(&buf->exynos_gem[i]->base);
-> +}
-> +
-> +static void exynos_drm_ipp_task_free(struct exynos_drm_ipp *ipp,
-> +				 struct exynos_drm_ipp_task *task)
-> +{
-> +	DRM_DEBUG_DRIVER("Freeing task %pK\n", task);
-> +
-> +	exynos_drm_ipp_task_release_buffer(&task->src);
-> +	exynos_drm_ipp_task_release_buffer(&task->dst);
-> +	if (task->event)
-> +		drm_event_cancel_free(ipp->dev, &task->event->base);
-> +	kfree(task);
-> +}
-> +
-> +struct drm_ipp_limit {
-> +	struct drm_exynos_ipp_limit_val h;
-> +	struct drm_exynos_ipp_limit_val v;
-> +};
-> +
-> +enum drm_ipp_size_id {
-> +	IPP_LIMIT_BUFFER, IPP_LIMIT_AREA, IPP_LIMIT_ROTATED, IPP_LIMIT_MAX
-> +};
-> +
-> +static const enum drm_ipp_size_id limit_id_fallback[IPP_LIMIT_MAX][4] = {
-> +	[IPP_LIMIT_BUFFER]  = { DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER },
-> +	[IPP_LIMIT_AREA]    = { DRM_EXYNOS_IPP_LIMIT_SIZE_AREA,
-> +				DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER },
-> +	[IPP_LIMIT_ROTATED] = { DRM_EXYNOS_IPP_LIMIT_SIZE_ROTATED,
-> +				DRM_EXYNOS_IPP_LIMIT_SIZE_AREA,
-> +				DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER },
-> +};
-> +
-> +static inline void __limit_set_val(unsigned int *ptr, unsigned int val)
-> +{
-> +	if (!*ptr)
-> +		*ptr = val;
-> +}
-> +
-> +static void __get_size_limit(const struct drm_exynos_ipp_limit *limits,
-> +			     enum drm_ipp_size_id id, struct drm_ipp_limit *res)
-> +{
-> +	const struct drm_exynos_ipp_limit *l = limits;
-> +	int i = 0;
-> +
-> +	memset(res, 0, sizeof(*res));
-> +	for (i = 0; limit_id_fallback[id][i]; i++)
-> +		for (l = limits; l->type; l++) {
-> +			if (((l->type & DRM_EXYNOS_IPP_LIMIT_TYPE_MASK) !=
-> +			      DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE) ||
-> +			    ((l->type & DRM_EXYNOS_IPP_LIMIT_SIZE_MASK) !=
-> +						     limit_id_fallback[id][i]))
-> +				continue;
-> +			__limit_set_val(&res->h.min, l->h.min);
-> +			__limit_set_val(&res->h.max, l->h.max);
-> +			__limit_set_val(&res->h.align, l->h.align);
-> +			__limit_set_val(&res->v.min, l->v.min);
-> +			__limit_set_val(&res->v.max, l->v.max);
-> +			__limit_set_val(&res->v.align, l->v.align);
-> +		}
-> +}
-> +
-> +static inline bool __align_check(unsigned int val, unsigned int align)
-> +{
-> +	if (align && (val & (align - 1)))
-> +		return false;
-> +	return true;
-> +}
-> +
-> +static inline bool __size_limit_check(unsigned int val,
-> +				 struct drm_exynos_ipp_limit_val *l)
-> +{
-> +	if ((l->min && val < l->min) || (l->max && val > l->max) ||
-> +	    !__align_check(val, l->align))
-> +		return false;
-> +	return true;
-> +}
-> +
-> +static int exynos_drm_ipp_check_size_limits(struct exynos_drm_ipp_buffer *buf,
-> +	const struct drm_exynos_ipp_limit *limits, bool rotate, bool swap)
-> +{
-> +	enum drm_ipp_size_id id = rotate ? IPP_LIMIT_ROTATED : IPP_LIMIT_AREA;
-> +	struct drm_ipp_limit l;
-> +	struct drm_exynos_ipp_limit_val *lh = &l.h, *lv = &l.v;
-> +
-> +	if (!limits)
-> +		return 0;
-> +
-> +	__get_size_limit(limits, IPP_LIMIT_BUFFER, &l);
-> +	if (!__size_limit_check(buf->buf.width, &l.h) ||
-> +	    !__size_limit_check(buf->buf.height, &l.v))
-> +		return -EINVAL;
-> +
-> +	if (swap) {
-> +		lv = &l.h;
-> +		lh = &l.v;
-> +	}
-> +	__get_size_limit(limits, id, &l);
-> +	if (!__size_limit_check(buf->rect.w, lh) ||
-> +	    !__align_check(buf->rect.x, lh->align) ||
-> +	    !__size_limit_check(buf->rect.h, lv) ||
-> +	    !__align_check(buf->rect.y, lv->align))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int exynos_drm_ipp_check_scale_limits(struct drm_exynos_ipp_task_rect *src,
-> +	struct drm_exynos_ipp_task_rect *dst,
-> +	const struct drm_exynos_ipp_limit *limits, bool swap)
-> +{
-> +	const struct drm_exynos_ipp_limit_val *lh, *lv;
-> +
-> +	if (!limits)
-> +		return 0;
-> +
-> +	for (; limits->type; limits++)
-> +		if ((limits->type & DRM_EXYNOS_IPP_LIMIT_TYPE_MASK) ==
-> +		    DRM_EXYNOS_IPP_LIMIT_TYPE_SCALE)
-> +			break;
-> +	if (!limits->type)
-> +		return 0;
-> +
-> +	lh = (!swap) ? &limits->h : &limits->v;
-> +	lv = (!swap) ? &limits->v : &limits->h;
-> +
-> +	if ((lh->max && dst->w > src->w * lh->max) ||
-> +	    (lh->min && (dst->w << 16) < src->w * lh->min) ||
-> +	    (lv->max && dst->h > src->h * lv->max) ||
-> +	    (lv->min && (dst->h << 16) < src->h * lv->min))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int exynos_drm_ipp_task_check(struct exynos_drm_ipp_task *task,
-> +				    struct drm_file *filp)
-> +{
-> +	struct exynos_drm_ipp *ipp = task->ipp;
-> +	const struct exynos_drm_ipp_formats *src_format, *dst_format;
-> +	struct exynos_drm_ipp_buffer *src = &task->src, *dst = &task->dst;
-> +	unsigned int rotation = task->transform.rotation;
-> +	int ret = 0;
-> +	bool scale = false, swap = false;
-> +
-> +	DRM_DEBUG_DRIVER("Checking %pK\n", task);
-> +
-> +	if (src->rect.w == UINT_MAX)
-> +		src->rect.w = src->buf.width;
-> +	if (src->rect.h == UINT_MAX)
-> +		src->rect.h = src->buf.height;
-> +	if (dst->rect.w == UINT_MAX)
-> +		dst->rect.w = dst->buf.width;
-> +	if (dst->rect.h == UINT_MAX)
-> +		dst->rect.h = dst->buf.height;
-> +
-> +	if (src->rect.x + src->rect.w > (src->buf.width) ||
-> +	    src->rect.y + src->rect.h > (src->buf.height) ||
-> +	    dst->rect.x + dst->rect.w > (dst->buf.width) ||
-> +	    dst->rect.y + dst->rect.h > (dst->buf.height))
-> +		return -EINVAL;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: basic checks done\n", task);
-> +
-> +	if (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_CROP) &&
-> +	    (src->rect.x || src->rect.y || dst->rect.x || dst->rect.y))
-> +		return -EINVAL;
-> +
-> +	if (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_ROTATE) &&
-> +	    rotation != DRM_MODE_ROTATE_0)
-> +		return -EINVAL;
-> +
-> +	if (drm_rotation_90_or_270(rotation))
-> +		swap = true;
-> +
-> +	if ((!swap && (src->rect.w != dst->rect.w || src->rect.h != dst->rect.h)) ||
-> +	    (swap && (src->rect.w != dst->rect.h || src->rect.h != dst->rect.w)))
-> +		scale = true;
-> +
-> +	if (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_SCALE) && scale)
-> +		return -EINVAL;
-> +
-> +	if (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_CONVERT) &&
-> +	    src->buf.fourcc != dst->buf.fourcc)
-> +		return -EINVAL;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: capability checks done\n", task);
-> +
-> +	src_format = __ipp_format_get(src->buf.fourcc, src->buf.modifier,
-> +				  DRM_EXYNOS_IPP_FORMAT_SOURCE, ipp->formats);
-> +	if (!src_format)
-> +		return -EINVAL;
-> +	ret = exynos_drm_ipp_check_size_limits(src, src_format->limits,
-> +					  rotation != DRM_MODE_ROTATE_0, false);
-> +	if (ret)
-> +		return ret;
-> +	ret = exynos_drm_ipp_check_scale_limits(&src->rect, &dst->rect,
-> +						src_format->limits, swap);
-> +	if (ret)
-> +		return ret;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: source image checks done\n", task);
-> +
-> +	dst_format = __ipp_format_get(dst->buf.fourcc, dst->buf.modifier,
-> +			       DRM_EXYNOS_IPP_FORMAT_DESTINATION, ipp->formats);
-> +	if (!dst_format)
-> +		return -EINVAL;
-> +	ret = exynos_drm_ipp_check_size_limits(dst, dst_format->limits,
-> +					   rotation != DRM_MODE_ROTATE_0, swap);
-> +	if (ret)
-> +		return ret;
-> +	ret = exynos_drm_ipp_check_scale_limits(&src->rect, &dst->rect,
-> +						dst_format->limits, swap);
-> +	if (ret)
-> +		return ret;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: destination image checks done\n", task);
-> +
-> +	ret = exynos_drm_ipp_task_setup_buffer(src, filp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: source buffer checks done\n", task);
-> +
-> +	ret = exynos_drm_ipp_task_setup_buffer(dst, filp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: destination buffer checks done\n", task);
-> +
-> +	if (ipp->funcs->check)
-> +		ret = ipp->funcs->check(ipp, task);
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: all checks done.\n", task);
-> +
-> +	return ret;
-> +}
-> +
-> +static int exynos_drm_ipp_event_create(struct exynos_drm_ipp_task *task,
-> +			struct drm_file *file_priv, uint64_t user_data)
-> +{
-> +	struct drm_pending_exynos_ipp_event *e = NULL;
-> +	int ret;
-> +
-> +	e = kzalloc(sizeof(*e), GFP_KERNEL);
-> +	if (!e)
-> +		return -ENOMEM;
-> +
-> +	e->event.base.type = DRM_EXYNOS_IPP_EVENT;
-> +	e->event.base.length = sizeof(e->event);
-> +	e->event.user_data = user_data;
-> +
-> +	ret = drm_event_reserve_init(task->dev, file_priv, &e->base,
-> +				     &e->event.base);
-> +	if (ret)
-> +		goto free;
-> +
-> +	task->event = e;
-> +	return 0;
-> +free:
-> +	kfree(e);
-> +	return ret;
-> +}
-> +
-> +static void exynos_drm_ipp_event_send(struct exynos_drm_ipp_task *task)
-> +{
-> +	struct timeval now = ktime_to_timeval(ktime_get());
-> +
-> +	task->event->event.tv_sec = now.tv_sec;
-> +	task->event->event.tv_usec = now.tv_usec;
-> +	task->event->event.sequence = atomic_inc_return(&task->ipp->sequence);
-> +
-> +	drm_send_event(task->dev, &task->event->base);
-> +}
-> +
-> +static int exynos_drm_ipp_task_cleanup(struct exynos_drm_ipp_task *task)
-> +{
-> +	int ret = task->ret;
-> +
-> +	if (ret == 0 && task->event) {
-> +		exynos_drm_ipp_event_send(task);
-> +		/* ensure event won't be canceled on task free */
-> +		task->event = NULL;
-> +	}
-> +
-> +	exynos_drm_ipp_task_free(task->ipp, task);
-> +	return ret;
-> +}
-> +
-> +static void exynos_drm_ipp_cleanup_work(struct work_struct *work)
-> +{
-> +	struct exynos_drm_ipp_task *task = container_of(work,
-> +				struct exynos_drm_ipp_task, cleanup_work);
-> +
-> +	exynos_drm_ipp_task_cleanup(task);
-> +}
-> +
-> +static void exynos_drm_ipp_next_task(struct exynos_drm_ipp *ipp);
-> +
-> +/**
-> + * exynos_drm_ipp_task_done - finish given task and set return code
-> + * @task: ipp task to finish
-> + * @ret: error code or 0 if operation has been performed successfully
-> + */
-> +void exynos_drm_ipp_task_done(struct exynos_drm_ipp_task *task, int ret)
-> +{
-> +	struct exynos_drm_ipp *ipp = task->ipp;
-> +	unsigned long flags;
-> +
-> +	DRM_DEBUG_DRIVER("ipp: %d, task %pK done\n", ipp->id, task);
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +	if (ipp->task == task)
-> +		ipp->task = NULL;
-> +	task->flags |= DRM_EXYNOS_IPP_TASK_DONE;
-> +	task->ret = ret;
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +
-> +	exynos_drm_ipp_next_task(ipp);
-> +	wake_up(&ipp->done_wq);
-> +
-> +	if (task->flags & DRM_EXYNOS_IPP_TASK_ASYNC) {
-> +		INIT_WORK(&task->cleanup_work, exynos_drm_ipp_cleanup_work);
-> +		schedule_work(&task->cleanup_work);
-> +	}
-> +}
-> +
-> +static void exynos_drm_ipp_next_task(struct exynos_drm_ipp *ipp)
-> +{
-> +	struct exynos_drm_ipp_task *task;
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	DRM_DEBUG_DRIVER("ipp: %d, try to run new task\n", ipp->id);
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +
-> +	if (ipp->task || list_empty(&ipp->todo_list)) {
-> +		spin_unlock_irqrestore(&ipp->lock, flags);
-> +		return;
-> +	}
-> +
-> +	task = list_first_entry(&ipp->todo_list, struct exynos_drm_ipp_task,
-> +				head);
-> +	list_del_init(&task->head);
-> +	ipp->task = task;
-> +
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +
-> +	DRM_DEBUG_DRIVER("ipp: %d, selected task %pK to run\n", ipp->id, task);
-> +
-> +	ret = ipp->funcs->commit(ipp, task);
-> +	if (ret)
-> +		exynos_drm_ipp_task_done(task, ret);
-> +}
-> +
-> +static void exynos_drm_ipp_schedule_task(struct exynos_drm_ipp *ipp,
-> +				     struct exynos_drm_ipp_task *task)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +	list_add(&task->head, &ipp->todo_list);
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +
-> +	exynos_drm_ipp_next_task(ipp);
-> +}
-> +
-> +static void exynos_drm_ipp_task_abort(struct exynos_drm_ipp *ipp,
-> +				  struct exynos_drm_ipp_task *task)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +	if (task->flags & DRM_EXYNOS_IPP_TASK_DONE) {
-> +		/* already completed task */
-> +		exynos_drm_ipp_task_cleanup(task);
-> +	} else if (ipp->task != task) {
-> +		/* task has not been scheduled for execution yet */
-> +		list_del_init(&task->head);
-> +		exynos_drm_ipp_task_cleanup(task);
-> +	} else {
-> +		/*
-> +		 * currently processed task, call abort() and perform
-> +		 * cleanup with async worker
-> +		 */
-> +		task->flags |= DRM_EXYNOS_IPP_TASK_ASYNC;
-> +		spin_unlock_irqrestore(&ipp->lock, flags);
-> +		if (ipp->funcs->abort)
-> +			ipp->funcs->abort(ipp, task);
-> +		return;
-> +	}
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_commit_ioctl - perform image processing operation
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a ipp task from the set of properties provided from the user
-> + * and try to schedule it to framebuffer processor hardware.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_commit_ioctl(struct drm_device *dev, void *data,
-> +			  struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_commit *arg = data;
-> +	struct exynos_drm_ipp *ipp;
-> +	struct exynos_drm_ipp_task *task;
-> +	int ret = 0;
-> +
-> +	if ((arg->flags & ~DRM_EXYNOS_IPP_FLAGS) || arg->reserved)
-> +		return -EINVAL;
-> +
-> +	/* can't test and expect an event at the same time */
-> +	if ((arg->flags & DRM_EXYNOS_IPP_FLAG_TEST_ONLY) &&
-> +			(arg->flags & DRM_EXYNOS_IPP_FLAG_EVENT))
-> +		return -EINVAL;
-> +
-> +	ipp = __ipp_get(arg->ipp_id);
-> +	if (!ipp)
-> +		return -ENOENT;
-> +
-> +	task = exynos_drm_ipp_task_alloc(ipp);
-> +	if (!task)
-> +		return -ENOMEM;
-> +
-> +	ret = exynos_drm_ipp_task_set(task, arg);
-> +	if (ret)
-> +		goto free;
-> +
-> +	ret = exynos_drm_ipp_task_check(task, file_priv);
-> +	if (ret || arg->flags & DRM_EXYNOS_IPP_FLAG_TEST_ONLY)
-> +		goto free;
-> +
-> +	if (arg->flags & DRM_EXYNOS_IPP_FLAG_EVENT) {
-> +		ret = exynos_drm_ipp_event_create(task, file_priv,
-> +						 arg->user_data);
-> +		if (ret)
-> +			goto free;
-> +	}
-> +
-> +	/*
-> +	 * Queue task for processing on the hardware. task object will be
-> +	 * then freed after exynos_drm_ipp_task_done()
-> +	 */
-> +	if (arg->flags & DRM_EXYNOS_IPP_FLAG_NONBLOCK) {
-> +		DRM_DEBUG_DRIVER("ipp: %d, nonblocking processing task %pK\n",
-> +				 ipp->id, task);
-> +
-> +		task->flags |= DRM_EXYNOS_IPP_TASK_ASYNC;
-> +		exynos_drm_ipp_schedule_task(task->ipp, task);
-> +		ret = 0;
-> +	} else {
-> +		DRM_DEBUG_DRIVER("ipp: %d, processing task %pK\n", ipp->id, task);
-> +		exynos_drm_ipp_schedule_task(ipp, task);
-> +		ret = wait_event_interruptible(ipp->done_wq,
-> +					task->flags & DRM_EXYNOS_IPP_TASK_DONE);
-> +		if (ret)
-> +			exynos_drm_ipp_task_abort(ipp, task);
-> +		else
-> +			ret = exynos_drm_ipp_task_cleanup(task);
-> +	}
-> +	return ret;
-> +free:
-> +	exynos_drm_ipp_task_free(ipp, task);
-> +
-> +	return ret;
-> +}
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-> new file mode 100644
-> index 000000000000..532a60698a6a
-> --- /dev/null
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-> @@ -0,0 +1,188 @@
-> +/*
-> + * Copyright (c) 2017 Samsung Electronics Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute  it and/or modify it
-> + * under  the terms of  the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +#ifndef _EXYNOS_DRM_IPP_H_
-> +#define _EXYNOS_DRM_IPP_H_
-> +
-> +#include <drm/drmP.h>
-> +
-> +struct exynos_drm_ipp;
-> +struct exynos_drm_ipp_task;
-> +
-> +/**
-> + * struct exynos_drm_ipp_funcs - exynos_drm_ipp control functions
-> + */
-> +struct exynos_drm_ipp_funcs {
-> +	/**
-> +	 * @check:
-> +	 *
-> +	 * This is the optional hook to validate an ipp task. This function
-> +	 * must reject any task which the hardware or driver doesn't support.
-> +	 * This includes but is of course not limited to:
-> +	 *
-> +	 *  - Checking that the buffers, scaling and placement requirements
-> +	 *    and so on are within the limits of the hardware not specified by
-> +	 *    limits array.
-> +	 *
-> +	 *  - The driver does not need to repeat basic input validation like
-> +	 *    done in the exynos_drm_ipp_task_check() function. The core does
-> +	 *    that before calling this hook.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * 0 on success or one of the below negative error codes:
-> +	 *
-> +	 *  - -EINVAL, if any of the above constraints are violated.
-> +	 */
-> +	int (*check)(struct exynos_drm_ipp *ipp,
-> +		     struct exynos_drm_ipp_task *task);
-> +
-> +	/**
-> +	 * @commit:
-> +	 *
-> +	 * This is the main entry point to start framebuffer processing
-> +	 * in the hardware. The exynos_drm_ipp_task has been already validated.
-> +	 * This function must not wait until the device finishes processing.
-> +	 * When the driver finishes processing, it has to call
-> +	 * exynos_exynos_drm_ipp_task_done() function.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * 0 on success or negative error codes in case of failure.
-> +	 */
-> +	int (*commit)(struct exynos_drm_ipp *ipp,
-> +		      struct exynos_drm_ipp_task *task);
-> +
-> +	/**
-> +	 * @abort:
-> +	 *
-> +	 * Informs the driver that it has to abort the currently running
-> +	 * task as soon as possible (i.e. as soon as it can stop the device
-> +	 * safely), even if the task would not have been finished by then.
-> +	 * After the driver performs the necessary steps, it has to call
-> +	 * exynos_drm_ipp_task_done() (as if the task ended normally).
-> +	 * This function does not have to (and will usually not) wait
-> +	 * until the device enters a state when it can be stopped.
-> +	 */
-> +	void (*abort)(struct exynos_drm_ipp *ipp,
-> +		      struct exynos_drm_ipp_task *task);
-> +};
-> +
-> +/**
-> + * struct exynos_drm_ipp - central picture processor module structure
-> + */
-> +struct exynos_drm_ipp {
-> +	struct drm_device *dev;
-> +	struct list_head head;
-> +	unsigned int id;
-> +
-> +	const char *name;
-> +	const struct exynos_drm_ipp_funcs *funcs;
-> +	unsigned int capabilities;
-> +	const struct exynos_drm_ipp_formats *formats;
-> +	unsigned int num_formats;
-> +	atomic_t sequence;
-> +
-> +	spinlock_t lock;
-> +	struct exynos_drm_ipp_task *task;
-> +	struct list_head todo_list;
-> +	wait_queue_head_t done_wq;
-> +};
-> +
-> +struct exynos_drm_ipp_buffer {
-> +	struct drm_exynos_ipp_task_buffer buf;
-> +	struct drm_exynos_ipp_task_rect rect;
-> +
-> +	struct exynos_drm_gem *exynos_gem[MAX_FB_BUFFER];
-> +	const struct drm_format_info *format;
-> +	dma_addr_t dma_addr[MAX_FB_BUFFER];
-> +};
-> +
-> +/**
-> + * struct exynos_drm_ipp_task - a structure describing transformation that
-> + * has to be performed by the picture processor hardware module
-> + */
-> +struct exynos_drm_ipp_task {
-> +	struct drm_device *dev;
-> +	struct exynos_drm_ipp *ipp;
-> +	struct list_head head;
-> +
-> +	struct exynos_drm_ipp_buffer src;
-> +	struct exynos_drm_ipp_buffer dst;
-> +
-> +	struct drm_exynos_ipp_task_transform transform;
-> +	struct drm_exynos_ipp_task_alpha alpha;
-> +
-> +	struct work_struct cleanup_work;
-> +	unsigned int flags;
-> +	int ret;
-> +
-> +	struct drm_pending_exynos_ipp_event *event;
-> +};
-> +
-> +#define DRM_EXYNOS_IPP_TASK_DONE	(1 << 0)
-> +#define DRM_EXYNOS_IPP_TASK_ASYNC	(1 << 1)
-> +
-> +struct exynos_drm_ipp_formats {
-> +	u32 fourcc;
-> +	u32 type;
-> +	u64 modifier;
-> +	const struct drm_exynos_ipp_limit *limits;
-> +};
-> +
-> +/* helper macros to set exynos_drm_ipp_formats structure and limits*/
-> +#define IPP_SRCDST_MFORMAT(f, m, l) \
-> +     .fourcc = DRM_FORMAT_##f, .modifier = m, .limits = l, \
-> +     .type = (DRM_EXYNOS_IPP_FORMAT_SOURCE | DRM_EXYNOS_IPP_FORMAT_DESTINATION)
-> +
-> +#define IPP_SRCDST_FORMAT(f, l) IPP_SRCDST_MFORMAT(f, 0, l)
-> +
-> +#define IPP_SIZE_LIMIT(l, val...)	\
-> +     .type = (DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE | DRM_EXYNOS_IPP_LIMIT_SIZE_##l), \
-> +     val
-> +
-> +int exynos_drm_ipp_register(struct drm_device *dev, struct exynos_drm_ipp *ipp,
-> +		const struct exynos_drm_ipp_funcs *funcs, unsigned int caps,
-> +		const struct exynos_drm_ipp_formats *formats, const char *name);
-> +void exynos_drm_ipp_unregister(struct drm_device *dev, struct exynos_drm_ipp *ipp);
-> +
-> +void exynos_drm_ipp_task_done(struct exynos_drm_ipp_task *task, int ret);
-> +
-> +#ifdef CONFIG_DRM_EXYNOS_IPP
-> +int exynos_drm_ipp_get_res_ioctl(struct drm_device *dev, void *data,
-> +				 struct drm_file *file_priv);
-> +int exynos_drm_ipp_get_caps_ioctl(struct drm_device *dev, void *data,
-> +				  struct drm_file *file_priv);
-> +int exynos_drm_ipp_get_limits_ioctl(struct drm_device *dev, void *data,
-> +				    struct drm_file *file_priv);
-> +int exynos_drm_ipp_commit_ioctl(struct drm_device *dev,
-> +				void *data, struct drm_file *file_priv);
-> +#else
-> +static inline int exynos_drm_ipp_get_res_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline int exynos_drm_ipp_get_caps_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline int exynos_drm_ipp_get_limits_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline int exynos_drm_ipp_commit_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
-> +{
-> +	return -ENODEV;
-> +}
-> +#endif
-> +#endif
-> diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-> index 544db2cecb36..239e09022d75 100644
-> --- a/include/uapi/drm/exynos_drm.h
-> +++ b/include/uapi/drm/exynos_drm.h
-> @@ -134,6 +134,208 @@ struct drm_exynos_g2d_exec {
->   	__u64					async;
->   };
->   
-> +/* Exynos DRM IPP v2 API */
-> +
-> +/**
-> + * Enumerate available IPP hardware modules.
-> + *
-> + * @count_ipps: size of ipp_id array / number of ipp modules (set by driver)
-> + * @reserved: padding
-> + * @ipp_id_ptr: pointer to ipp_id array or NULL
-> + */
-> +struct drm_exynos_ioctl_ipp_get_res {
-> +	__u32 count_ipps;
-> +	__u32 reserved;
-> +	__u64 ipp_id_ptr;
-> +};
-> +
-> +enum drm_exynos_ipp_format_type {
-> +	DRM_EXYNOS_IPP_FORMAT_SOURCE		= 0x01,
-> +	DRM_EXYNOS_IPP_FORMAT_DESTINATION	= 0x02,
-> +};
-> +
-> +struct exynos_drm_ipp_format {
-> +	__u32 fourcc;
-> +	__u32 type;
-> +	__u64 modifier;
-> +};
-> +
-> +enum drm_exynos_ipp_capability {
-> +	DRM_EXYNOS_IPP_CAP_CROP		= 0x01,
-> +	DRM_EXYNOS_IPP_CAP_ROTATE	= 0x02,
-> +	DRM_EXYNOS_IPP_CAP_SCALE	= 0x04,
-> +	DRM_EXYNOS_IPP_CAP_CONVERT	= 0x08,
-> +};
-> +
-> +/**
-> + * Get IPP hardware capabilities and supported image formats.
-> + *
-> + * @ipp_id: id of IPP module to query
-> + * @capabilities: bitmask of drm_exynos_ipp_capability (set by driver)
-> + * @reserved: padding
-> + * @formats_count: size of formats array (in entries) / number of filled
-> + *		   formats (set by driver)
-> + * @formats_ptr: pointer to formats array or NULL
-> + */
-> +struct drm_exynos_ioctl_ipp_get_caps {
-> +	__u32 ipp_id;
-> +	__u32 capabilities;
-> +	__u32 reserved;
-> +	__u32 formats_count;
-> +	__u64 formats_ptr;
-> +};
-> +
-> +enum drm_exynos_ipp_limit_type {
-> +	/* size (horizontal/vertial) limits, in pixels (min, max, alignment) */
-> +	DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE		= 0x0001,
-> +	/* scale ratio (horizonta/vertial), 16.16 fixed point (min, max) */
-> +	DRM_EXYNOS_IPP_LIMIT_TYPE_SCALE		= 0x0002,
-> +
-> +	/* image buffer area */
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER	= 0x0001 << 16,
-> +	/* src/dst rectangle area */
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_AREA		= 0x0002 << 16,
-> +	/* src/dst rectangle area when rotation enabled */
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_ROTATED	= 0x0003 << 16,
-> +
-> +	DRM_EXYNOS_IPP_LIMIT_TYPE_MASK		= 0x000f,
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_MASK		= 0x000f << 16,
-> +};
-> +
-> +struct drm_exynos_ipp_limit_val {
-> +	__u32 min, max, align;
-> +};
-> +
-> +/**
-> + * IPP module limitation.
-> + *
-> + * @type: limit type (see drm_exynos_ipp_limit_type enum)
-> + * @h, @v: horizontal and vertical limits
-> + */
-> +struct drm_exynos_ipp_limit {
-> +	__u32 type;
-> +	struct drm_exynos_ipp_limit_val h;
-> +	struct drm_exynos_ipp_limit_val v;
-> +};
-> +
-> +/**
-> + * Get IPP limits for given image format.
-> + *
-> + * @ipp_id: id of IPP module to query
-> + * @fourcc: image format code (see DRM_FORMAT_* in drm_fourcc.h)
-> + * @modifier: image format modifier (see DRM_FORMAT_MOD_* in drm_fourcc.h)
-> + * @type: source/destination identifier (drm_exynos_ipp_format_flag enum)
-> + * @limits_size: size of limits array (in bytes) / size of filled entries
-> + *		 (set by driver)
-> + * @limits_ptr: pointer to limits array or NULL
-> + */
-> +struct drm_exynos_ioctl_ipp_get_limits {
-> +	__u32 ipp_id;
-> +	__u32 fourcc;
-> +	__u64 modifier;
-> +	__u32 type;
-> +	__u32 limits_size;
-> +	__u64 limits_ptr;
-> +};
-> +
-> +enum drm_exynos_ipp_task_id {
-> +	/* buffer described by struct drm_exynos_ipp_task_buffer */
-> +	DRM_EXYNOS_IPP_TASK_BUFFER		= 0x0001,
-> +	/* rectangle described by struct drm_exynos_ipp_task_rect */
-> +	DRM_EXYNOS_IPP_TASK_RECTANGLE		= 0x0002,
-> +	/* transformation described by struct drm_exynos_ipp_task_transform */
-> +	DRM_EXYNOS_IPP_TASK_TRANSFORM		= 0x0003,
-> +	/* alpha configuration described by struct drm_exynos_ipp_task_alpha */
-> +	DRM_EXYNOS_IPP_TASK_ALPHA		= 0x0004,
-> +
-> +	/* source image data (for buffer and rectangle chunks) */
-> +	DRM_EXYNOS_IPP_TASK_TYPE_SOURCE		= 0x0001 << 16,
-> +	/* destination image data (for buffer and rectangle chunks) */
-> +	DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION	= 0x0002 << 16,
-> +};
-> +
-> +/**
-> + * Memory buffer with image data.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_BUFFER
-> + * other parameters are same as for AddFB2 generic DRM ioctl
-> + */
-> +struct drm_exynos_ipp_task_buffer {
-> +	__u32	id;
-> +	__u32	fourcc;
-> +	__u32	width, height;
-> +	__u32	gem_id[4];
-> +	__u32	offset[4];
-> +	__u32	pitch[4];
-> +	__u64	modifier;
-> +};
-> +
-> +/**
-> + * Rectangle for processing.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_RECTANGLE
-> + * @x,@y: left corner in pixels
-> + * @w,@h: width/height in pixels
-> + */
-> +struct drm_exynos_ipp_task_rect {
-> +	__u32	id;
-> +	__u32	x, y, w, h;
-> +};
-> +
-> +/**
-> + * Image tranformation description.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_TRANSFORM
-> + * @rotation: DRM_MODE_ROTATE_* and DRM_MODE_REFLECT_* values
-> + */
-> +struct drm_exynos_ipp_task_transform {
-> +	__u32	id;
-> +	__u32	rotation;
-> +};
-> +
-> +/**
-> + * Image global alpha configuration for formats without alpha values.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_ALPHA
-> + * @value: global alpha value (0-255)
-> + */
-> +struct drm_exynos_ipp_task_alpha {
-> +	__u32	id;
-> +	__u32	value;
-> +};
-> +
-> +enum drm_exynos_ipp_flag {
-> +	/* generate DRM event after processing */
-> +	DRM_EXYNOS_IPP_FLAG_EVENT	= 0x01,
-> +	/* dry run, only check task parameters */
-> +	DRM_EXYNOS_IPP_FLAG_TEST_ONLY	= 0x02,
-> +	/* non-blocking processing */
-> +	DRM_EXYNOS_IPP_FLAG_NONBLOCK	= 0x04,
-> +};
-> +
-> +#define DRM_EXYNOS_IPP_FLAGS (DRM_EXYNOS_IPP_FLAG_EVENT |\
-> +		DRM_EXYNOS_IPP_FLAG_TEST_ONLY | DRM_EXYNOS_IPP_FLAG_NONBLOCK)
-> +
-> +/**
-> + * Perform image processing described by array of drm_exynos_ipp_task_*
-> + * structures (parameters array).
-> + *
-> + * @ipp_id: id of IPP module to run the task
-> + * @flags: bitmask of drm_exynos_ipp_flag values
-> + * @reserved: padding
-> + * @params_size: size of parameters array (in bytes)
-> + * @params_ptr: pointer to parameters array or NULL
-> + * @user_data: (optional) data for drm event
-> + */
-> +struct drm_exynos_ioctl_ipp_commit {
-> +	__u32 ipp_id;
-> +	__u32 flags;
-> +	__u32 reserved;
-> +	__u32 params_size;
-> +	__u64 params_ptr;
-> +	__u64 user_data;
-> +};
-> +
->   #define DRM_EXYNOS_GEM_CREATE		0x00
->   #define DRM_EXYNOS_GEM_MAP		0x01
->   /* Reserved 0x03 ~ 0x05 for exynos specific gem ioctl */
-> @@ -146,6 +348,11 @@ struct drm_exynos_g2d_exec {
->   #define DRM_EXYNOS_G2D_EXEC		0x22
->   
->   /* Reserved 0x30 ~ 0x33 for obsolete Exynos IPP ioctls */
-> +/* IPP - Image Post Processing */
-> +#define DRM_EXYNOS_IPP_GET_RESOURCES	0x40
-> +#define DRM_EXYNOS_IPP_GET_CAPS		0x41
-> +#define DRM_EXYNOS_IPP_GET_LIMITS	0x42
-> +#define DRM_EXYNOS_IPP_COMMIT		0x43
->   
->   #define DRM_IOCTL_EXYNOS_GEM_CREATE		DRM_IOWR(DRM_COMMAND_BASE + \
->   		DRM_EXYNOS_GEM_CREATE, struct drm_exynos_gem_create)
-> @@ -164,8 +371,18 @@ struct drm_exynos_g2d_exec {
->   #define DRM_IOCTL_EXYNOS_G2D_EXEC		DRM_IOWR(DRM_COMMAND_BASE + \
->   		DRM_EXYNOS_G2D_EXEC, struct drm_exynos_g2d_exec)
->   
-> +#define DRM_IOCTL_EXYNOS_IPP_GET_RESOURCES	DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_GET_RESOURCES, struct drm_exynos_ioctl_ipp_get_res)
-> +#define DRM_IOCTL_EXYNOS_IPP_GET_CAPS		DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_GET_CAPS, struct drm_exynos_ioctl_ipp_get_caps)
-> +#define DRM_IOCTL_EXYNOS_IPP_GET_LIMITS		DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_GET_LIMITS, struct drm_exynos_ioctl_ipp_get_limits)
-> +#define DRM_IOCTL_EXYNOS_IPP_COMMIT		DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_COMMIT, struct drm_exynos_ioctl_ipp_commit)
-> +
->   /* EXYNOS specific events */
->   #define DRM_EXYNOS_G2D_EVENT		0x80000000
-> +#define DRM_EXYNOS_IPP_EVENT		0x80000002
->   
->   struct drm_exynos_g2d_event {
->   	struct drm_event	base;
-> @@ -176,6 +393,16 @@ struct drm_exynos_g2d_event {
->   	__u32			reserved;
->   };
->   
-> +struct drm_exynos_ipp_event {
-> +	struct drm_event	base;
-> +	__u64			user_data;
-> +	__u32			tv_sec;
-> +	__u32			tv_usec;
-> +	__u32			ipp_id;
-> +	__u32			sequence;
-> +	__u64			reserved;
-> +};
-> +
->   #if defined(__cplusplus)
->   }
->   #endif
+SGkgTWFyZWssCgpUZXN0ZWQtYnk6IEhvZWdldW4gS3dvbiA8aG9lZ2V1bi5rd29uQHNhbXN1bmcu
+Y29tPgoKQmVzdCByZWdhcmRzLApIb2VnZXVuCgoKCk9uIDA5LzEyLzIwMTcgMDU6MDggUE0sIE1h
+cmVrIFN6eXByb3dza2kgd3JvdGU6Cj4gVGhpcyBwYXRjaCBhZGFwdHMgRXh5bm9zIERSTSByb3Rh
+dG9yIGRyaXZlciB0byBuZXcgSVBQIHYyIGNvcmUgQVBJLgo+IFRoZSBzaWRlIGVmZmVjdCBvZiB0
+aGlzIGNvbnZlcnNpb24gaXMgYSBzd2l0Y2ggdG8gZHJpdmVyIGNvbXBvbmVudCBBUEkKPiB0byBy
+ZWdpc3RlciBwcm9wZXJseSBpbiB0aGUgRXh5bm9zIERSTSBjb3JlLgo+Cj4gU2lnbmVkLW9mZi1i
+eTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnICAgICAgICAgIHwgICAzICstCj4gICBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgIDEgKwo+ICAgZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jIHwgODUzICsrKysrKysrLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmgg
+fCAgMjQgLQo+ICAgNCBmaWxlcyBjaGFuZ2VkLCAxOTggaW5zZXJ0aW9ucygrKSwgNjgzIGRlbGV0
+aW9ucygtKQo+ICAgZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9nc2MuaAo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2Nv
+bmZpZyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZwo+IGluZGV4IGMxMGM5Y2EwZDhi
+NC4uNGJiOWVkYjAwNjAxIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2Nv
+bmZpZwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZwo+IEBAIC0xMTEsNyAr
+MTExLDggQEAgY29uZmlnIERSTV9FWFlOT1NfUk9UQVRPUgo+ICAgCj4gICBjb25maWcgRFJNX0VY
+WU5PU19HU0MKPiAgIAlib29sICJHU2NhbGVyIgo+IC0JZGVwZW5kcyBvbiBCUk9LRU4gJiYgQVJD
+SF9FWFlOT1M1ICYmIFZJREVPX1NBTVNVTkdfRVhZTk9TX0dTQz1uCj4gKwlkZXBlbmRzIG9uIEFS
+Q0hfRVhZTk9TNSAmJiBWSURFT19TQU1TVU5HX0VYWU5PU19HU0M9bgo+ICsJc2VsZWN0IERSTV9F
+WFlOT1NfSVBQCj4gICAJaGVscAo+ICAgCSAgQ2hvb3NlIHRoaXMgb3B0aW9uIGlmIHlvdSB3YW50
+IHRvIHVzZSBFeHlub3MgR1NDIGZvciBEUk0uCj4gICAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2Rydi5jCj4gaW5kZXggMjc3ZTQ0NGIwYmU2Li4yNzI0MmFmMTAzZWEgMTAwNjQ0
+Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4gQEAgLTI3Miw2ICsyNzIs
+NyBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9kcml2ZXJfaW5mbyB7Cj4gICAJCURSTV9DT01QT05FTlRf
+RFJJVkVSCj4gICAJfSwgewo+ICAgCQlEUlZfUFRSKGdzY19kcml2ZXIsIENPTkZJR19EUk1fRVhZ
+Tk9TX0dTQyksCj4gKwkJRFJNX0NPTVBPTkVOVF9EUklWRVIKPiAgIAl9LCB7Cj4gICAJCSZleHlu
+b3NfZHJtX3BsYXRmb3JtX2RyaXZlciwKPiAgIAkJRFJNX1ZJUlRVQUxfREVWSUNFCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYwo+IGluZGV4IDA1MDZiMmIxN2FjMS4uMTI5
+MzQ0MWE0MjEyIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9nc2MuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYwo+
+IEBAIC0xMiw2ICsxMiw3IEBACj4gICAgKgo+ICAgICovCj4gICAjaW5jbHVkZSA8bGludXgva2Vy
+bmVsLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9jb21wb25lbnQuaD4KPiAgICNpbmNsdWRlIDxsaW51
+eC9wbGF0Zm9ybV9kZXZpY2UuaD4KPiAgICNpbmNsdWRlIDxsaW51eC9jbGsuaD4KPiAgICNpbmNs
+dWRlIDxsaW51eC9wbV9ydW50aW1lLmg+Cj4gQEAgLTIyLDggKzIzLDggQEAKPiAgICNpbmNsdWRl
+IDxkcm0vZXh5bm9zX2RybS5oPgo+ICAgI2luY2x1ZGUgInJlZ3MtZ3NjLmgiCj4gICAjaW5jbHVk
+ZSAiZXh5bm9zX2RybV9kcnYuaCIKPiArI2luY2x1ZGUgImV4eW5vc19kcm1faW9tbXUuaCIKPiAg
+ICNpbmNsdWRlICJleHlub3NfZHJtX2lwcC5oIgo+IC0jaW5jbHVkZSAiZXh5bm9zX2RybV9nc2Mu
+aCIKPiAgIAo+ICAgLyoKPiAgICAqIEdTQyBzdGFuZHMgZm9yIEdlbmVyYWwgU0NhbGVyIGFuZAo+
+IEBAIC0zMSwyNiArMzIsOSBAQAo+ICAgICogaW5wdXQgRE1BIHJlYWRzIGltYWdlIGRhdGEgZnJv
+bSB0aGUgbWVtb3J5Lgo+ICAgICogb3V0cHV0IERNQSB3cml0ZXMgaW1hZ2UgZGF0YSB0byBtZW1v
+cnkuCj4gICAgKiBHU0Mgc3VwcG9ydHMgaW1hZ2Ugcm90YXRpb24gYW5kIGltYWdlIGVmZmVjdCBm
+dW5jdGlvbnMuCj4gLSAqCj4gLSAqIE0yTSBvcGVyYXRpb24gOiBzdXBwb3J0cyBjcm9wL3NjYWxl
+L3JvdGF0aW9uL2NzYyBzbyBvbi4KPiAtICogTWVtb3J5IC0tLS0+IEdTQyBIL1cgLS0tLT4gTWVt
+b3J5Lgo+IC0gKiBXcml0ZWJhY2sgb3BlcmF0aW9uIDogc3VwcG9ydHMgY2xvbmVkIHNjcmVlbiB3
+aXRoIEZJTUQuCj4gLSAqIEZJTUQgLS0tLT4gR1NDIEgvVyAtLS0tPiBNZW1vcnkuCj4gLSAqIE91
+dHB1dCBvcGVyYXRpb24gOiBzdXBwb3J0cyBkaXJlY3QgZGlzcGxheSB1c2luZyBsb2NhbCBwYXRo
+Lgo+IC0gKiBNZW1vcnkgLS0tLT4gR1NDIEgvVyAtLS0tPiBGSU1ELCBNaXhlci4KPiAgICAqLwo+
+ICAgCj4gLS8qCj4gLSAqIFRPRE8KPiAtICogMS4gY2hlY2sgc3VzcGVuZC9yZXN1bWUgYXBpIGlm
+IG5lZWRlZC4KPiAtICogMi4gbmVlZCB0byBjaGVjayB1c2UgY2FzZSBwbGF0Zm9ybV9kZXZpY2Vf
+aWQuCj4gLSAqIDMuIGNoZWNrIHNyYy9kc3Qgc2l6ZSB3aXRoLCBoZWlnaHQuCj4gLSAqIDQuIGFk
+ZGVkIGNoZWNrX3ByZXBhcmUgYXBpIGZvciByaWdodCByZWdpc3Rlci4KPiAtICogNS4gbmVlZCB0
+byBhZGQgc3VwcG9ydGVkIGxpc3QgaW4gcHJvcF9saXN0Lgo+IC0gKiA2LiBjaGVjayBwcmVzY2Fs
+ZXIvc2NhbGVyIG9wdGltaXphdGlvbi4KPiAtICovCj4gICAKPiAtI2RlZmluZSBHU0NfTUFYX0RF
+VlMJNAo+ICAgI2RlZmluZSBHU0NfTUFYX1NSQwkJNAo+ICAgI2RlZmluZSBHU0NfTUFYX0RTVAkJ
+MTYKPiAgICNkZWZpbmUgR1NDX1JFU0VUX1RJTUVPVVQJNTAKPiBAQCAtNjUsOCArNDksNiBAQAo+
+ICAgI2RlZmluZSBHU0NfU0NfRE9XTl9SQVRJT180XzgJCTEzMTA3Mgo+ICAgI2RlZmluZSBHU0Nf
+U0NfRE9XTl9SQVRJT18zXzgJCTE3NDc2Mgo+ICAgI2RlZmluZSBHU0NfU0NfRE9XTl9SQVRJT18y
+XzgJCTI2MjE0NAo+IC0jZGVmaW5lIEdTQ19SRUZSRVNIX01JTgkxMgo+IC0jZGVmaW5lIEdTQ19S
+RUZSRVNIX01BWAk2MAo+ICAgI2RlZmluZSBHU0NfQ1JPUF9NQVgJODE5Mgo+ICAgI2RlZmluZSBH
+U0NfQ1JPUF9NSU4JMzIKPiAgICNkZWZpbmUgR1NDX1NDQUxFX01BWAk0MjI0Cj4gQEAgLTc5LDgg
+KzYxLDYgQEAKPiAgICNkZWZpbmUgR1NDX0NPRUZfREVQVEgJMwo+ICAgCj4gICAjZGVmaW5lIGdl
+dF9nc2NfY29udGV4dChkZXYpCXBsYXRmb3JtX2dldF9kcnZkYXRhKHRvX3BsYXRmb3JtX2Rldmlj
+ZShkZXYpKQo+IC0jZGVmaW5lIGdldF9jdHhfZnJvbV9pcHBkcnYoaXBwZHJ2KQljb250YWluZXJf
+b2YoaXBwZHJ2LFwKPiAtCQkJCQlzdHJ1Y3QgZ3NjX2NvbnRleHQsIGlwcGRydik7Cj4gICAjZGVm
+aW5lIGdzY19yZWFkKG9mZnNldCkJCXJlYWRsKGN0eC0+cmVncyArIChvZmZzZXQpKQo+ICAgI2Rl
+ZmluZSBnc2Nfd3JpdGUoY2ZnLCBvZmZzZXQpCXdyaXRlbChjZmcsIGN0eC0+cmVncyArIChvZmZz
+ZXQpKQo+ICAgCj4gQEAgLTEyNCw3ICsxMDQsNiBAQCBzdHJ1Y3QgZ3NjX2NhcGFiaWxpdHkgewo+
+ICAgLyoKPiAgICAqIEEgc3RydWN0dXJlIG9mIGdzYyBjb250ZXh0Lgo+ICAgICoKPiAtICogQGlw
+cGRydjogcHJlcGFyZSBpbml0aWFsaXphdGlvbiB1c2luZyBpcHBkcnYuCj4gICAgKiBAcmVnc19y
+ZXM6IHJlZ2lzdGVyIHJlc291cmNlcy4KPiAgICAqIEByZWdzOiBtZW1vcnkgbWFwcGVkIGlvIHJl
+Z2lzdGVycy4KPiAgICAqIEBzeXNyZWc6IGhhbmRsZSB0byBTWVNSRUcgYmxvY2sgcmVnbWFwLgo+
+IEBAIC0xMzcsMTEgKzExNiwxNCBAQCBzdHJ1Y3QgZ3NjX2NhcGFiaWxpdHkgewo+ICAgICogQHN1
+c3BlbmRlZDogcW9zIG9wZXJhdGlvbnMuCj4gICAgKi8KPiAgIHN0cnVjdCBnc2NfY29udGV4dCB7
+Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RybV9pcHBkcnYJaXBwZHJ2Owo+ICsJc3RydWN0IGV4eW5vc19k
+cm1faXBwIGlwcDsKPiArCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2Owo+ICsJc3RydWN0IGRl
+dmljZQkqZGV2Owo+ICsJc3RydWN0IGV4eW5vc19kcm1faXBwX3Rhc2sJKnRhc2s7Cj4gKwo+ICAg
+CXN0cnVjdCByZXNvdXJjZQkqcmVnc19yZXM7Cj4gICAJdm9pZCBfX2lvbWVtCSpyZWdzOwo+ICAg
+CXN0cnVjdCByZWdtYXAJKnN5c3JlZzsKPiAtCXN0cnVjdCBtdXRleAlsb2NrOwo+ICAgCXN0cnVj
+dCBjbGsJKmdzY19jbGs7Cj4gICAJc3RydWN0IGdzY19zY2FsZXIJc2M7Cj4gICAJaW50CWlkOwo+
+IEBAIC00MzgsMjUgKzQyMCw2IEBAIHN0YXRpYyBpbnQgZ3NjX3N3X3Jlc2V0KHN0cnVjdCBnc2Nf
+Y29udGV4dCAqY3R4KQo+ICAgCXJldHVybiAwOwo+ICAgfQo+ICAgCj4gLXN0YXRpYyB2b2lkIGdz
+Y19zZXRfZ3NjYmxrX2ZpbWRfd2Ioc3RydWN0IGdzY19jb250ZXh0ICpjdHgsIGJvb2wgZW5hYmxl
+KQo+IC17Cj4gLQl1bnNpZ25lZCBpbnQgZ3NjYmxrX2NmZzsKPiAtCj4gLQlpZiAoIWN0eC0+c3lz
+cmVnKQo+IC0JCXJldHVybjsKPiAtCj4gLQlyZWdtYXBfcmVhZChjdHgtPnN5c3JlZywgU1lTUkVH
+X0dTQ0JMS19DRkcxLCAmZ3NjYmxrX2NmZyk7Cj4gLQo+IC0JaWYgKGVuYWJsZSkKPiAtCQlnc2Ni
+bGtfY2ZnIHw9IEdTQ19CTEtfRElTUDFXQl9ERVNUKGN0eC0+aWQpIHwKPiAtCQkJCUdTQ19CTEtf
+R1NDTF9XQl9JTl9TUkNfU0VMKGN0eC0+aWQpIHwKPiAtCQkJCUdTQ19CTEtfU1dfUkVTRVRfV0Jf
+REVTVChjdHgtPmlkKTsKPiAtCWVsc2UKPiAtCQlnc2NibGtfY2ZnIHw9IEdTQ19CTEtfUFhMQVNZ
+TkNfTE9fTUFTS19XQihjdHgtPmlkKTsKPiAtCj4gLQlyZWdtYXBfd3JpdGUoY3R4LT5zeXNyZWcs
+IFNZU1JFR19HU0NCTEtfQ0ZHMSwgZ3NjYmxrX2NmZyk7Cj4gLX0KPiAtCj4gICBzdGF0aWMgdm9p
+ZCBnc2NfaGFuZGxlX2lycShzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCwgYm9vbCBlbmFibGUsCj4g
+ICAJCWJvb2wgb3ZlcmZsb3csIGJvb2wgZG9uZSkKPiAgIHsKPiBAQCAtNDg3LDEwICs0NTAsOCBA
+QCBzdGF0aWMgdm9pZCBnc2NfaGFuZGxlX2lycShzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCwgYm9v
+bCBlbmFibGUsCj4gICB9Cj4gICAKPiAgIAo+IC1zdGF0aWMgaW50IGdzY19zcmNfc2V0X2ZtdChz
+dHJ1Y3QgZGV2aWNlICpkZXYsIHUzMiBmbXQpCj4gK3N0YXRpYyBpbnQgZ3NjX3NyY19zZXRfZm10
+KHN0cnVjdCBnc2NfY29udGV4dCAqY3R4LCB1MzIgZm10KQo+ICAgewo+IC0Jc3RydWN0IGdzY19j
+b250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2KTsKPiAtCXN0cnVjdCBleHlub3NfZHJt
+X2lwcGRydiAqaXBwZHJ2ID0gJmN0eC0+aXBwZHJ2Owo+ICAgCXUzMiBjZmc7Cj4gICAKPiAgIAlE
+Uk1fREVCVUdfS01TKCJmbXRbMHgleF1cbiIsIGZtdCk7Cj4gQEAgLTU0OSw3ICs1MTAsNyBAQCBz
+dGF0aWMgaW50IGdzY19zcmNfc2V0X2ZtdChzdHJ1Y3QgZGV2aWNlICpkZXYsIHUzMiBmbXQpCj4g
+ICAJCQlHU0NfSU5fWVVWNDIwXzJQKTsKPiAgIAkJYnJlYWs7Cj4gICAJZGVmYXVsdDoKPiAtCQlk
+ZXZfZXJyKGlwcGRydi0+ZGV2LCAiaW52YWxpZCB0YXJnZXQgeXV2IG9yZGVyIDB4JXguXG4iLCBm
+bXQpOwo+ICsJCWRldl9lcnIoY3R4LT5kZXYsICJpbnZhbGlkIHRhcmdldCB5dXYgb3JkZXIgMHgl
+eC5cbiIsIGZtdCk7Cj4gICAJCXJldHVybiAtRUlOVkFMOwo+ICAgCX0KPiAgIAo+IEBAIC01NTgs
+MTA1ICs1MTksODEgQEAgc3RhdGljIGludCBnc2Nfc3JjX3NldF9mbXQoc3RydWN0IGRldmljZSAq
+ZGV2LCB1MzIgZm10KQo+ICAgCXJldHVybiAwOwo+ICAgfQo+ICAgCj4gLXN0YXRpYyBpbnQgZ3Nj
+X3NyY19zZXRfdHJhbnNmKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAtCQllbnVtIGRybV9leHlub3Nf
+ZGVncmVlIGRlZ3JlZSwKPiAtCQllbnVtIGRybV9leHlub3NfZmxpcCBmbGlwLCBib29sICpzd2Fw
+KQo+ICtzdGF0aWMgaW50IGdzY19zcmNfc2V0X3RyYW5zZihzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0
+eCwgdW5zaWduZWQgaW50IHJvdGF0aW9uKQo+ICAgewo+IC0Jc3RydWN0IGdzY19jb250ZXh0ICpj
+dHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2KTsKPiAtCXN0cnVjdCBleHlub3NfZHJtX2lwcGRydiAq
+aXBwZHJ2ID0gJmN0eC0+aXBwZHJ2Owo+ICsJdW5zaWduZWQgaW50IGRlZ3JlZSA9IHJvdGF0aW9u
+ICYgRFJNX01PREVfUk9UQVRFX01BU0s7Cj4gICAJdTMyIGNmZzsKPiAgIAo+IC0JRFJNX0RFQlVH
+X0tNUygiZGVncmVlWyVkXWZsaXBbMHgleF1cbiIsIGRlZ3JlZSwgZmxpcCk7Cj4gLQo+ICAgCWNm
+ZyA9IGdzY19yZWFkKEdTQ19JTl9DT04pOwo+ICAgCWNmZyAmPSB+R1NDX0lOX1JPVF9NQVNLOwo+
+ICAgCj4gICAJc3dpdGNoIChkZWdyZWUpIHsKPiAtCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMDoK
+PiAtCQlpZiAoZmxpcCAmIEVYWU5PU19EUk1fRkxJUF9WRVJUSUNBTCkKPiArCWNhc2UgRFJNX01P
+REVfUk9UQVRFXzA6Cj4gKwkJaWYgKHJvdGF0aW9uICYgRFJNX01PREVfUkVGTEVDVF9ZKQo+ICAg
+CQkJY2ZnIHw9IEdTQ19JTl9ST1RfWEZMSVA7Cj4gLQkJaWYgKGZsaXAgJiBFWFlOT1NfRFJNX0ZM
+SVBfSE9SSVpPTlRBTCkKPiArCQlpZiAocm90YXRpb24gJiBEUk1fTU9ERV9SRUZMRUNUX1gpCj4g
+ICAJCQljZmcgfD0gR1NDX0lOX1JPVF9ZRkxJUDsKPiAgIAkJYnJlYWs7Cj4gLQljYXNlIEVYWU5P
+U19EUk1fREVHUkVFXzkwOgo+IC0JCWlmIChmbGlwICYgRVhZTk9TX0RSTV9GTElQX1ZFUlRJQ0FM
+KQo+ICsJY2FzZSBEUk1fTU9ERV9ST1RBVEVfOTA6Cj4gKwkJaWYgKHJvdGF0aW9uICYgRFJNX01P
+REVfUkVGTEVDVF9ZKQo+ICAgCQkJY2ZnIHw9IEdTQ19JTl9ST1RfOTBfWEZMSVA7Cj4gLQkJZWxz
+ZSBpZiAoZmxpcCAmIEVYWU5PU19EUk1fRkxJUF9IT1JJWk9OVEFMKQo+ICsJCWVsc2UgaWYgKHJv
+dGF0aW9uICYgRFJNX01PREVfUkVGTEVDVF9YKQo+ICAgCQkJY2ZnIHw9IEdTQ19JTl9ST1RfOTBf
+WUZMSVA7Cj4gICAJCWVsc2UKPiAgIAkJCWNmZyB8PSBHU0NfSU5fUk9UXzkwOwo+ICAgCQlicmVh
+azsKPiAtCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMTgwOgo+ICsJY2FzZSBEUk1fTU9ERV9ST1RB
+VEVfMTgwOgo+ICAgCQljZmcgfD0gR1NDX0lOX1JPVF8xODA7Cj4gLQkJaWYgKGZsaXAgJiBFWFlO
+T1NfRFJNX0ZMSVBfVkVSVElDQUwpCj4gKwkJaWYgKHJvdGF0aW9uICYgRFJNX01PREVfUkVGTEVD
+VF9ZKQo+ICAgCQkJY2ZnICY9IH5HU0NfSU5fUk9UX1hGTElQOwo+IC0JCWlmIChmbGlwICYgRVhZ
+Tk9TX0RSTV9GTElQX0hPUklaT05UQUwpCj4gKwkJaWYgKHJvdGF0aW9uICYgRFJNX01PREVfUkVG
+TEVDVF9YKQo+ICAgCQkJY2ZnICY9IH5HU0NfSU5fUk9UX1lGTElQOwo+ICAgCQlicmVhazsKPiAt
+CWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMjcwOgo+ICsJY2FzZSBEUk1fTU9ERV9ST1RBVEVfMjcw
+Ogo+ICAgCQljZmcgfD0gR1NDX0lOX1JPVF8yNzA7Cj4gLQkJaWYgKGZsaXAgJiBFWFlOT1NfRFJN
+X0ZMSVBfVkVSVElDQUwpCj4gKwkJaWYgKHJvdGF0aW9uICYgRFJNX01PREVfUkVGTEVDVF9ZKQo+
+ICAgCQkJY2ZnICY9IH5HU0NfSU5fUk9UX1hGTElQOwo+IC0JCWlmIChmbGlwICYgRVhZTk9TX0RS
+TV9GTElQX0hPUklaT05UQUwpCj4gKwkJaWYgKHJvdGF0aW9uICYgRFJNX01PREVfUkVGTEVDVF9Y
+KQo+ICAgCQkJY2ZnICY9IH5HU0NfSU5fUk9UX1lGTElQOwo+ICAgCQlicmVhazsKPiAtCWRlZmF1
+bHQ6Cj4gLQkJZGV2X2VycihpcHBkcnYtPmRldiwgImludmFsaWQgZGVncmVlIHZhbHVlICVkLlxu
+IiwgZGVncmVlKTsKPiAtCQlyZXR1cm4gLUVJTlZBTDsKPiAgIAl9Cj4gICAKPiAgIAlnc2Nfd3Jp
+dGUoY2ZnLCBHU0NfSU5fQ09OKTsKPiAgIAo+ICAgCWN0eC0+cm90YXRpb24gPSAoY2ZnICYgR1ND
+X0lOX1JPVF85MCkgPyAxIDogMDsKPiAtCSpzd2FwID0gY3R4LT5yb3RhdGlvbjsKPiAtCj4gICAJ
+cmV0dXJuIDA7Cj4gICB9Cj4gICAKPiAtc3RhdGljIGludCBnc2Nfc3JjX3NldF9zaXplKHN0cnVj
+dCBkZXZpY2UgKmRldiwgaW50IHN3YXAsCj4gLQkJc3RydWN0IGRybV9leHlub3NfcG9zICpwb3Ms
+IHN0cnVjdCBkcm1fZXh5bm9zX3N6ICpzeikKPiArc3RhdGljIGludCBnc2Nfc3JjX3NldF9zaXpl
+KHN0cnVjdCBnc2NfY29udGV4dCAqY3R4LAo+ICsJCXN0cnVjdCBleHlub3NfZHJtX2lwcF9idWZm
+ZXIgKmJ1ZikKPiAgIHsKPiAtCXN0cnVjdCBnc2NfY29udGV4dCAqY3R4ID0gZ2V0X2dzY19jb250
+ZXh0KGRldik7Cj4gLQlzdHJ1Y3QgZHJtX2V4eW5vc19wb3MgaW1nX3BvcyA9ICpwb3M7Cj4gICAJ
+c3RydWN0IGdzY19zY2FsZXIgKnNjID0gJmN0eC0+c2M7Cj4gICAJdTMyIGNmZzsKPiAgIAo+IC0J
+RFJNX0RFQlVHX0tNUygic3dhcFslZF14WyVkXXlbJWRdd1slZF1oWyVkXVxuIiwKPiAtCQlzd2Fw
+LCBwb3MtPngsIHBvcy0+eSwgcG9zLT53LCBwb3MtPmgpOwo+IC0KPiAtCWlmIChzd2FwKSB7Cj4g
+LQkJaW1nX3Bvcy53ID0gcG9zLT5oOwo+IC0JCWltZ19wb3MuaCA9IHBvcy0+dzsKPiAtCX0KPiAt
+Cj4gICAJLyogcGl4ZWwgb2Zmc2V0ICovCj4gLQljZmcgPSAoR1NDX1NSQ0lNR19PRkZTRVRfWChp
+bWdfcG9zLngpIHwKPiAtCQlHU0NfU1JDSU1HX09GRlNFVF9ZKGltZ19wb3MueSkpOwo+ICsJY2Zn
+ID0gKEdTQ19TUkNJTUdfT0ZGU0VUX1goYnVmLT5yZWN0LngpIHwKPiArCQlHU0NfU1JDSU1HX09G
+RlNFVF9ZKGJ1Zi0+cmVjdC55KSk7Cj4gICAJZ3NjX3dyaXRlKGNmZywgR1NDX1NSQ0lNR19PRkZT
+RVQpOwo+ICAgCj4gICAJLyogY3JvcHBlZCBzaXplICovCj4gLQljZmcgPSAoR1NDX0NST1BQRURf
+V0lEVEgoaW1nX3Bvcy53KSB8Cj4gLQkJR1NDX0NST1BQRURfSEVJR0hUKGltZ19wb3MuaCkpOwo+
+ICsJY2ZnID0gKEdTQ19DUk9QUEVEX1dJRFRIKGJ1Zi0+cmVjdC53KSB8Cj4gKwkJR1NDX0NST1BQ
+RURfSEVJR0hUKGJ1Zi0+cmVjdC5oKSk7Cj4gICAJZ3NjX3dyaXRlKGNmZywgR1NDX0NST1BQRURf
+U0laRSk7Cj4gICAKPiAtCURSTV9ERUJVR19LTVMoImhzaXplWyVkXXZzaXplWyVkXVxuIiwgc3ot
+PmhzaXplLCBzei0+dnNpemUpOwo+IC0KPiAgIAkvKiBvcmlnaW5hbCBzaXplICovCj4gICAJY2Zn
+ID0gZ3NjX3JlYWQoR1NDX1NSQ0lNR19TSVpFKTsKPiAgIAljZmcgJj0gfihHU0NfU1JDSU1HX0hF
+SUdIVF9NQVNLIHwKPiAgIAkJR1NDX1NSQ0lNR19XSURUSF9NQVNLKTsKPiAgIAo+IC0JY2ZnIHw9
+IChHU0NfU1JDSU1HX1dJRFRIKHN6LT5oc2l6ZSkgfAo+IC0JCUdTQ19TUkNJTUdfSEVJR0hUKHN6
+LT52c2l6ZSkpOwo+ICsJY2ZnIHw9IChHU0NfU1JDSU1HX1dJRFRIKGJ1Zi0+YnVmLndpZHRoKSB8
+Cj4gKwkJR1NDX1NSQ0lNR19IRUlHSFQoYnVmLT5idWYuaGVpZ2h0KSk7Cj4gICAKPiAgIAlnc2Nf
+d3JpdGUoY2ZnLCBHU0NfU1JDSU1HX1NJWkUpOwo+ICAgCj4gICAJY2ZnID0gZ3NjX3JlYWQoR1ND
+X0lOX0NPTik7Cj4gICAJY2ZnICY9IH5HU0NfSU5fUkdCX1RZUEVfTUFTSzsKPiAgIAo+IC0JRFJN
+X0RFQlVHX0tNUygid2lkdGhbJWRdcmFuZ2VbJWRdXG4iLCBwb3MtPncsIHNjLT5yYW5nZSk7Cj4g
+LQo+IC0JaWYgKHBvcy0+dyA+PSBHU0NfV0lEVEhfSVRVXzcwOSkKPiArCWlmIChidWYtPnJlY3Qu
+dyA+PSBHU0NfV0lEVEhfSVRVXzcwOSkKPiAgIAkJaWYgKHNjLT5yYW5nZSkKPiAgIAkJCWNmZyB8
+PSBHU0NfSU5fUkdCX0hEX1dJREU7Cj4gICAJCWVsc2UKPiBAQCAtNjczLDMwICs2MTAsMTUgQEAg
+c3RhdGljIGludCBnc2Nfc3JjX3NldF9zaXplKHN0cnVjdCBkZXZpY2UgKmRldiwgaW50IHN3YXAs
+Cj4gICB9Cj4gICAKPiAgIHN0YXRpYyBpbnQgZ3NjX3NyY19zZXRfYnVmX3NlcShzdHJ1Y3QgZ3Nj
+X2NvbnRleHQgKmN0eCwgdTMyIGJ1Zl9pZCwKPiAtCQllbnVtIGRybV9leHlub3NfaXBwX2J1Zl90
+eXBlIGJ1Zl90eXBlKQo+ICsJCQkgICAgICAgYm9vbCBlbnF1ZXVlKQo+ICAgewo+IC0Jc3RydWN0
+IGV4eW5vc19kcm1faXBwZHJ2ICppcHBkcnYgPSAmY3R4LT5pcHBkcnY7Cj4gLQlib29sIG1hc2tl
+ZDsKPiArCWJvb2wgbWFza2VkID0gIWVucXVldWU7Cj4gICAJdTMyIGNmZzsKPiAgIAl1MzIgbWFz
+ayA9IDB4MDAwMDAwMDEgPDwgYnVmX2lkOwo+ICAgCj4gLQlEUk1fREVCVUdfS01TKCJidWZfaWRb
+JWRdYnVmX3R5cGVbJWRdXG4iLCBidWZfaWQsIGJ1Zl90eXBlKTsKPiAtCj4gICAJLyogbWFzayBy
+ZWdpc3RlciBzZXQgKi8KPiAgIAljZmcgPSBnc2NfcmVhZChHU0NfSU5fQkFTRV9BRERSX1lfTUFT
+Syk7Cj4gICAKPiAtCXN3aXRjaCAoYnVmX3R5cGUpIHsKPiAtCWNhc2UgSVBQX0JVRl9FTlFVRVVF
+Ogo+IC0JCW1hc2tlZCA9IGZhbHNlOwo+IC0JCWJyZWFrOwo+IC0JY2FzZSBJUFBfQlVGX0RFUVVF
+VUU6Cj4gLQkJbWFza2VkID0gdHJ1ZTsKPiAtCQlicmVhazsKPiAtCWRlZmF1bHQ6Cj4gLQkJZGV2
+X2VycihpcHBkcnYtPmRldiwgImludmFsaWQgYnVmIGN0cmwgcGFyYW1ldGVyLlxuIik7Cj4gLQkJ
+cmV0dXJuIC1FSU5WQUw7Cj4gLQl9Cj4gLQo+ICAgCS8qIHNlcXVlbmNlIGlkICovCj4gICAJY2Zn
+ICY9IH5tYXNrOwo+ICAgCWNmZyB8PSBtYXNrZWQgPDwgYnVmX2lkOwo+IEBAIC03MDcsNjQgKzYy
+OSwxOSBAQCBzdGF0aWMgaW50IGdzY19zcmNfc2V0X2J1Zl9zZXEoc3RydWN0IGdzY19jb250ZXh0
+ICpjdHgsIHUzMiBidWZfaWQsCj4gICAJcmV0dXJuIDA7Cj4gICB9Cj4gICAKPiAtc3RhdGljIGlu
+dCBnc2Nfc3JjX3NldF9hZGRyKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAtCQlzdHJ1Y3QgZHJtX2V4
+eW5vc19pcHBfYnVmX2luZm8gKmJ1Zl9pbmZvLCB1MzIgYnVmX2lkLAo+IC0JCWVudW0gZHJtX2V4
+eW5vc19pcHBfYnVmX3R5cGUgYnVmX3R5cGUpCj4gK3N0YXRpYyBpbnQgZ3NjX3NyY19zZXRfYWRk
+cihzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCwgdTMyIGJ1Zl9pZCwKPiArCQkJICAgIHN0cnVjdCBl
+eHlub3NfZHJtX2lwcF9idWZmZXIgKmJ1ZikKPiAgIHsKPiAtCXN0cnVjdCBnc2NfY29udGV4dCAq
+Y3R4ID0gZ2V0X2dzY19jb250ZXh0KGRldik7Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RybV9pcHBkcnYg
+KmlwcGRydiA9ICZjdHgtPmlwcGRydjsKPiAtCXN0cnVjdCBkcm1fZXh5bm9zX2lwcF9jbWRfbm9k
+ZSAqY19ub2RlID0gaXBwZHJ2LT5jX25vZGU7Cj4gLQlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfcHJv
+cGVydHkgKnByb3BlcnR5Owo+IC0KPiAtCWlmICghY19ub2RlKSB7Cj4gLQkJRFJNX0VSUk9SKCJm
+YWlsZWQgdG8gZ2V0IGNfbm9kZS5cbiIpOwo+IC0JCXJldHVybiAtRUZBVUxUOwo+IC0JfQo+IC0K
+PiAtCXByb3BlcnR5ID0gJmNfbm9kZS0+cHJvcGVydHk7Cj4gLQo+IC0JRFJNX0RFQlVHX0tNUygi
+cHJvcF9pZFslZF1idWZfaWRbJWRdYnVmX3R5cGVbJWRdXG4iLAo+IC0JCXByb3BlcnR5LT5wcm9w
+X2lkLCBidWZfaWQsIGJ1Zl90eXBlKTsKPiAtCj4gLQlpZiAoYnVmX2lkID4gR1NDX01BWF9TUkMp
+IHsKPiAtCQlkZXZfaW5mbyhpcHBkcnYtPmRldiwgImludmFsaWQgYnVmX2lkICVkLlxuIiwgYnVm
+X2lkKTsKPiAtCQlyZXR1cm4gLUVJTlZBTDsKPiAtCX0KPiAtCj4gICAJLyogYWRkcmVzcyByZWdp
+c3RlciBzZXQgKi8KPiAtCXN3aXRjaCAoYnVmX3R5cGUpIHsKPiAtCWNhc2UgSVBQX0JVRl9FTlFV
+RVVFOgo+IC0JCWdzY193cml0ZShidWZfaW5mby0+YmFzZVtFWFlOT1NfRFJNX1BMQU5BUl9ZXSwK
+PiAtCQkJR1NDX0lOX0JBU0VfQUREUl9ZKGJ1Zl9pZCkpOwo+IC0JCWdzY193cml0ZShidWZfaW5m
+by0+YmFzZVtFWFlOT1NfRFJNX1BMQU5BUl9DQl0sCj4gLQkJCUdTQ19JTl9CQVNFX0FERFJfQ0Io
+YnVmX2lkKSk7Cj4gLQkJZ3NjX3dyaXRlKGJ1Zl9pbmZvLT5iYXNlW0VYWU5PU19EUk1fUExBTkFS
+X0NSXSwKPiAtCQkJR1NDX0lOX0JBU0VfQUREUl9DUihidWZfaWQpKTsKPiAtCQlicmVhazsKPiAt
+CWNhc2UgSVBQX0JVRl9ERVFVRVVFOgo+IC0JCWdzY193cml0ZSgweDAsIEdTQ19JTl9CQVNFX0FE
+RFJfWShidWZfaWQpKTsKPiAtCQlnc2Nfd3JpdGUoMHgwLCBHU0NfSU5fQkFTRV9BRERSX0NCKGJ1
+Zl9pZCkpOwo+IC0JCWdzY193cml0ZSgweDAsIEdTQ19JTl9CQVNFX0FERFJfQ1IoYnVmX2lkKSk7
+Cj4gLQkJYnJlYWs7Cj4gLQlkZWZhdWx0Ogo+IC0JCS8qIGJ5cGFzcyAqLwo+IC0JCWJyZWFrOwo+
+IC0JfQo+ICsJZ3NjX3dyaXRlKGJ1Zi0+ZG1hX2FkZHJbMF0sIEdTQ19JTl9CQVNFX0FERFJfWShi
+dWZfaWQpKTsKPiArCWdzY193cml0ZShidWYtPmRtYV9hZGRyWzFdLCBHU0NfSU5fQkFTRV9BRERS
+X0NCKGJ1Zl9pZCkpOwo+ICsJZ3NjX3dyaXRlKGJ1Zi0+ZG1hX2FkZHJbMl0sIEdTQ19JTl9CQVNF
+X0FERFJfQ1IoYnVmX2lkKSk7Cj4gICAKPiAtCXJldHVybiBnc2Nfc3JjX3NldF9idWZfc2VxKGN0
+eCwgYnVmX2lkLCBidWZfdHlwZSk7Cj4gKwlyZXR1cm4gZ3NjX3NyY19zZXRfYnVmX3NlcShjdHgs
+IGJ1Zl9pZCwgdHJ1ZSk7Cj4gICB9Cj4gICAKPiAtc3RhdGljIHN0cnVjdCBleHlub3NfZHJtX2lw
+cF9vcHMgZ3NjX3NyY19vcHMgPSB7Cj4gLQkuc2V0X2ZtdCA9IGdzY19zcmNfc2V0X2ZtdCwKPiAt
+CS5zZXRfdHJhbnNmID0gZ3NjX3NyY19zZXRfdHJhbnNmLAo+IC0JLnNldF9zaXplID0gZ3NjX3Ny
+Y19zZXRfc2l6ZSwKPiAtCS5zZXRfYWRkciA9IGdzY19zcmNfc2V0X2FkZHIsCj4gLX07Cj4gLQo+
+IC1zdGF0aWMgaW50IGdzY19kc3Rfc2V0X2ZtdChzdHJ1Y3QgZGV2aWNlICpkZXYsIHUzMiBmbXQp
+Cj4gK3N0YXRpYyBpbnQgZ3NjX2RzdF9zZXRfZm10KHN0cnVjdCBnc2NfY29udGV4dCAqY3R4LCB1
+MzIgZm10KQo+ICAgewo+IC0Jc3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRl
+eHQoZGV2KTsKPiAtCXN0cnVjdCBleHlub3NfZHJtX2lwcGRydiAqaXBwZHJ2ID0gJmN0eC0+aXBw
+ZHJ2Owo+ICAgCXUzMiBjZmc7Cj4gICAKPiAgIAlEUk1fREVCVUdfS01TKCJmbXRbMHgleF1cbiIs
+IGZtdCk7Cj4gQEAgLTgxOSw5ICs2OTYsNiBAQCBzdGF0aWMgaW50IGdzY19kc3Rfc2V0X2ZtdChz
+dHJ1Y3QgZGV2aWNlICpkZXYsIHUzMiBmbXQpCj4gICAJCWNmZyB8PSAoR1NDX09VVF9DSFJPTUFf
+T1JERVJfQ0JDUiB8Cj4gICAJCQlHU0NfT1VUX1lVVjQyMF8yUCk7Cj4gICAJCWJyZWFrOwo+IC0J
+ZGVmYXVsdDoKPiAtCQlkZXZfZXJyKGlwcGRydi0+ZGV2LCAiaW52YWxpZCB0YXJnZXQgeXV2IG9y
+ZGVyIDB4JXguXG4iLCBmbXQpOwo+IC0JCXJldHVybiAtRUlOVkFMOwo+ICAgCX0KPiAgIAo+ICAg
+CWdzY193cml0ZShjZmcsIEdTQ19PVVRfQ09OKTsKPiBAQCAtODI5LDYxICs3MDMsNiBAQCBzdGF0
+aWMgaW50IGdzY19kc3Rfc2V0X2ZtdChzdHJ1Y3QgZGV2aWNlICpkZXYsIHUzMiBmbXQpCj4gICAJ
+cmV0dXJuIDA7Cj4gICB9Cj4gICAKPiAtc3RhdGljIGludCBnc2NfZHN0X3NldF90cmFuc2Yoc3Ry
+dWN0IGRldmljZSAqZGV2LAo+IC0JCWVudW0gZHJtX2V4eW5vc19kZWdyZWUgZGVncmVlLAo+IC0J
+CWVudW0gZHJtX2V4eW5vc19mbGlwIGZsaXAsIGJvb2wgKnN3YXApCj4gLXsKPiAtCXN0cnVjdCBn
+c2NfY29udGV4dCAqY3R4ID0gZ2V0X2dzY19jb250ZXh0KGRldik7Cj4gLQlzdHJ1Y3QgZXh5bm9z
+X2RybV9pcHBkcnYgKmlwcGRydiA9ICZjdHgtPmlwcGRydjsKPiAtCXUzMiBjZmc7Cj4gLQo+IC0J
+RFJNX0RFQlVHX0tNUygiZGVncmVlWyVkXWZsaXBbMHgleF1cbiIsIGRlZ3JlZSwgZmxpcCk7Cj4g
+LQo+IC0JY2ZnID0gZ3NjX3JlYWQoR1NDX0lOX0NPTik7Cj4gLQljZmcgJj0gfkdTQ19JTl9ST1Rf
+TUFTSzsKPiAtCj4gLQlzd2l0Y2ggKGRlZ3JlZSkgewo+IC0JY2FzZSBFWFlOT1NfRFJNX0RFR1JF
+RV8wOgo+IC0JCWlmIChmbGlwICYgRVhZTk9TX0RSTV9GTElQX1ZFUlRJQ0FMKQo+IC0JCQljZmcg
+fD0gR1NDX0lOX1JPVF9YRkxJUDsKPiAtCQlpZiAoZmxpcCAmIEVYWU5PU19EUk1fRkxJUF9IT1JJ
+Wk9OVEFMKQo+IC0JCQljZmcgfD0gR1NDX0lOX1JPVF9ZRkxJUDsKPiAtCQlicmVhazsKPiAtCWNh
+c2UgRVhZTk9TX0RSTV9ERUdSRUVfOTA6Cj4gLQkJaWYgKGZsaXAgJiBFWFlOT1NfRFJNX0ZMSVBf
+VkVSVElDQUwpCj4gLQkJCWNmZyB8PSBHU0NfSU5fUk9UXzkwX1hGTElQOwo+IC0JCWVsc2UgaWYg
+KGZsaXAgJiBFWFlOT1NfRFJNX0ZMSVBfSE9SSVpPTlRBTCkKPiAtCQkJY2ZnIHw9IEdTQ19JTl9S
+T1RfOTBfWUZMSVA7Cj4gLQkJZWxzZQo+IC0JCQljZmcgfD0gR1NDX0lOX1JPVF85MDsKPiAtCQli
+cmVhazsKPiAtCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMTgwOgo+IC0JCWNmZyB8PSBHU0NfSU5f
+Uk9UXzE4MDsKPiAtCQlpZiAoZmxpcCAmIEVYWU5PU19EUk1fRkxJUF9WRVJUSUNBTCkKPiAtCQkJ
+Y2ZnICY9IH5HU0NfSU5fUk9UX1hGTElQOwo+IC0JCWlmIChmbGlwICYgRVhZTk9TX0RSTV9GTElQ
+X0hPUklaT05UQUwpCj4gLQkJCWNmZyAmPSB+R1NDX0lOX1JPVF9ZRkxJUDsKPiAtCQlicmVhazsK
+PiAtCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMjcwOgo+IC0JCWNmZyB8PSBHU0NfSU5fUk9UXzI3
+MDsKPiAtCQlpZiAoZmxpcCAmIEVYWU5PU19EUk1fRkxJUF9WRVJUSUNBTCkKPiAtCQkJY2ZnICY9
+IH5HU0NfSU5fUk9UX1hGTElQOwo+IC0JCWlmIChmbGlwICYgRVhZTk9TX0RSTV9GTElQX0hPUkla
+T05UQUwpCj4gLQkJCWNmZyAmPSB+R1NDX0lOX1JPVF9ZRkxJUDsKPiAtCQlicmVhazsKPiAtCWRl
+ZmF1bHQ6Cj4gLQkJZGV2X2VycihpcHBkcnYtPmRldiwgImludmFsaWQgZGVncmVlIHZhbHVlICVk
+LlxuIiwgZGVncmVlKTsKPiAtCQlyZXR1cm4gLUVJTlZBTDsKPiAtCX0KPiAtCj4gLQlnc2Nfd3Jp
+dGUoY2ZnLCBHU0NfSU5fQ09OKTsKPiAtCj4gLQljdHgtPnJvdGF0aW9uID0gKGNmZyAmIEdTQ19J
+Tl9ST1RfOTApID8gMSA6IDA7Cj4gLQkqc3dhcCA9IGN0eC0+cm90YXRpb247Cj4gLQo+IC0JcmV0
+dXJuIDA7Cj4gLX0KPiAtCj4gICBzdGF0aWMgaW50IGdzY19nZXRfcmF0aW9fc2hpZnQodTMyIHNy
+YywgdTMyIGRzdCwgdTMyICpyYXRpbykKPiAgIHsKPiAgIAlEUk1fREVCVUdfS01TKCJzcmNbJWRd
+ZHN0WyVkXVxuIiwgc3JjLCBkc3QpOwo+IEBAIC05MTksOSArNzM4LDggQEAgc3RhdGljIHZvaWQg
+Z3NjX2dldF9wcmVzY2FsZXJfc2hmYWN0b3IodTMyIGhyYXRpbywgdTMyIHZyYXRpbywgdTMyICpz
+aGZhY3RvcikKPiAgIH0KPiAgIAo+ICAgc3RhdGljIGludCBnc2Nfc2V0X3ByZXNjYWxlcihzdHJ1
+Y3QgZ3NjX2NvbnRleHQgKmN0eCwgc3RydWN0IGdzY19zY2FsZXIgKnNjLAo+IC0JCXN0cnVjdCBk
+cm1fZXh5bm9zX3BvcyAqc3JjLCBzdHJ1Y3QgZHJtX2V4eW5vc19wb3MgKmRzdCkKPiArICAgICBz
+dHJ1Y3QgZHJtX2V4eW5vc19pcHBfdGFza19yZWN0ICpzcmMsIHN0cnVjdCBkcm1fZXh5bm9zX2lw
+cF90YXNrX3JlY3QgKmRzdCkKPiAgIHsKPiAtCXN0cnVjdCBleHlub3NfZHJtX2lwcGRydiAqaXBw
+ZHJ2ID0gJmN0eC0+aXBwZHJ2Owo+ICAgCXUzMiBjZmc7Cj4gICAJdTMyIHNyY193LCBzcmNfaCwg
+ZHN0X3csIGRzdF9oOwo+ICAgCWludCByZXQgPSAwOwo+IEBAIC05MzksMTMgKzc1NywxMyBAQCBz
+dGF0aWMgaW50IGdzY19zZXRfcHJlc2NhbGVyKHN0cnVjdCBnc2NfY29udGV4dCAqY3R4LCBzdHJ1
+Y3QgZ3NjX3NjYWxlciAqc2MsCj4gICAKPiAgIAlyZXQgPSBnc2NfZ2V0X3JhdGlvX3NoaWZ0KHNy
+Y193LCBkc3RfdywgJnNjLT5wcmVfaHJhdGlvKTsKPiAgIAlpZiAocmV0KSB7Cj4gLQkJZGV2X2Vy
+cihpcHBkcnYtPmRldiwgImZhaWxlZCB0byBnZXQgcmF0aW8gaG9yaXpvbnRhbC5cbiIpOwo+ICsJ
+CWRldl9lcnIoY3R4LT5kZXYsICJmYWlsZWQgdG8gZ2V0IHJhdGlvIGhvcml6b250YWwuXG4iKTsK
+PiAgIAkJcmV0dXJuIHJldDsKPiAgIAl9Cj4gICAKPiAgIAlyZXQgPSBnc2NfZ2V0X3JhdGlvX3No
+aWZ0KHNyY19oLCBkc3RfaCwgJnNjLT5wcmVfdnJhdGlvKTsKPiAgIAlpZiAocmV0KSB7Cj4gLQkJ
+ZGV2X2VycihpcHBkcnYtPmRldiwgImZhaWxlZCB0byBnZXQgcmF0aW8gdmVydGljYWwuXG4iKTsK
+PiArCQlkZXZfZXJyKGN0eC0+ZGV2LCAiZmFpbGVkIHRvIGdldCByYXRpbyB2ZXJ0aWNhbC5cbiIp
+Owo+ICAgCQlyZXR1cm4gcmV0Owo+ICAgCX0KPiAgIAo+IEBAIC0xMDM5LDQ3ICs4NTcsMzEgQEAg
+c3RhdGljIHZvaWQgZ3NjX3NldF9zY2FsZXIoc3RydWN0IGdzY19jb250ZXh0ICpjdHgsIHN0cnVj
+dCBnc2Nfc2NhbGVyICpzYykKPiAgIAlnc2Nfd3JpdGUoY2ZnLCBHU0NfTUFJTl9WX1JBVElPKTsK
+PiAgIH0KPiAgIAo+IC1zdGF0aWMgaW50IGdzY19kc3Rfc2V0X3NpemUoc3RydWN0IGRldmljZSAq
+ZGV2LCBpbnQgc3dhcCwKPiAtCQlzdHJ1Y3QgZHJtX2V4eW5vc19wb3MgKnBvcywgc3RydWN0IGRy
+bV9leHlub3Nfc3ogKnN6KQo+ICtzdGF0aWMgaW50IGdzY19kc3Rfc2V0X3NpemUoc3RydWN0IGdz
+Y19jb250ZXh0ICpjdHgsCj4gKwkJCSAgICBzdHJ1Y3QgZXh5bm9zX2RybV9pcHBfYnVmZmVyICpi
+dWYpCj4gICB7Cj4gLQlzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29udGV4dChk
+ZXYpOwo+IC0Jc3RydWN0IGRybV9leHlub3NfcG9zIGltZ19wb3MgPSAqcG9zOwo+ICAgCXN0cnVj
+dCBnc2Nfc2NhbGVyICpzYyA9ICZjdHgtPnNjOwo+ICAgCXUzMiBjZmc7Cj4gICAKPiAtCURSTV9E
+RUJVR19LTVMoInN3YXBbJWRdeFslZF15WyVkXXdbJWRdaFslZF1cbiIsCj4gLQkJc3dhcCwgcG9z
+LT54LCBwb3MtPnksIHBvcy0+dywgcG9zLT5oKTsKPiAtCj4gLQlpZiAoc3dhcCkgewo+IC0JCWlt
+Z19wb3MudyA9IHBvcy0+aDsKPiAtCQlpbWdfcG9zLmggPSBwb3MtPnc7Cj4gLQl9Cj4gLQo+ICAg
+CS8qIHBpeGVsIG9mZnNldCAqLwo+IC0JY2ZnID0gKEdTQ19EU1RJTUdfT0ZGU0VUX1gocG9zLT54
+KSB8Cj4gLQkJR1NDX0RTVElNR19PRkZTRVRfWShwb3MtPnkpKTsKPiArCWNmZyA9IChHU0NfRFNU
+SU1HX09GRlNFVF9YKGJ1Zi0+cmVjdC54KSB8Cj4gKwkJR1NDX0RTVElNR19PRkZTRVRfWShidWYt
+PnJlY3QueSkpOwo+ICAgCWdzY193cml0ZShjZmcsIEdTQ19EU1RJTUdfT0ZGU0VUKTsKPiAgIAo+
+ICAgCS8qIHNjYWxlZCBzaXplICovCj4gLQljZmcgPSAoR1NDX1NDQUxFRF9XSURUSChpbWdfcG9z
+LncpIHwgR1NDX1NDQUxFRF9IRUlHSFQoaW1nX3Bvcy5oKSk7Cj4gKwljZmcgPSAoR1NDX1NDQUxF
+RF9XSURUSChidWYtPnJlY3QudykgfCBHU0NfU0NBTEVEX0hFSUdIVChidWYtPnJlY3QuaCkpOwo+
+ICAgCWdzY193cml0ZShjZmcsIEdTQ19TQ0FMRURfU0laRSk7Cj4gICAKPiAtCURSTV9ERUJVR19L
+TVMoImhzaXplWyVkXXZzaXplWyVkXVxuIiwgc3otPmhzaXplLCBzei0+dnNpemUpOwo+IC0KPiAg
+IAkvKiBvcmlnaW5hbCBzaXplICovCj4gICAJY2ZnID0gZ3NjX3JlYWQoR1NDX0RTVElNR19TSVpF
+KTsKPiAtCWNmZyAmPSB+KEdTQ19EU1RJTUdfSEVJR0hUX01BU0sgfAo+IC0JCUdTQ19EU1RJTUdf
+V0lEVEhfTUFTSyk7Cj4gLQljZmcgfD0gKEdTQ19EU1RJTUdfV0lEVEgoc3otPmhzaXplKSB8Cj4g
+LQkJR1NDX0RTVElNR19IRUlHSFQoc3otPnZzaXplKSk7Cj4gKwljZmcgJj0gfihHU0NfRFNUSU1H
+X0hFSUdIVF9NQVNLIHwgR1NDX0RTVElNR19XSURUSF9NQVNLKTsKPiArCWNmZyB8PSAoR1NDX0RT
+VElNR19XSURUSChidWYtPmJ1Zi53aWR0aCkgfCBHU0NfRFNUSU1HX0hFSUdIVChidWYtPmJ1Zi5o
+ZWlnaHQpKTsKPiAgIAlnc2Nfd3JpdGUoY2ZnLCBHU0NfRFNUSU1HX1NJWkUpOwo+ICAgCj4gICAJ
+Y2ZnID0gZ3NjX3JlYWQoR1NDX09VVF9DT04pOwo+ICAgCWNmZyAmPSB+R1NDX09VVF9SR0JfVFlQ
+RV9NQVNLOwo+ICAgCj4gLQlEUk1fREVCVUdfS01TKCJ3aWR0aFslZF1yYW5nZVslZF1cbiIsIHBv
+cy0+dywgc2MtPnJhbmdlKTsKPiAtCj4gLQlpZiAocG9zLT53ID49IEdTQ19XSURUSF9JVFVfNzA5
+KQo+ICsJaWYgKGJ1Zi0+cmVjdC53ID49IEdTQ19XSURUSF9JVFVfNzA5KQo+ICAgCQlpZiAoc2Mt
+PnJhbmdlKQo+ICAgCQkJY2ZnIHw9IEdTQ19PVVRfUkdCX0hEX1dJREU7Cj4gICAJCWVsc2UKPiBA
+QCAtMTExMiwzNCArOTE0LDE2IEBAIHN0YXRpYyBpbnQgZ3NjX2RzdF9nZXRfYnVmX3NlcShzdHJ1
+Y3QgZ3NjX2NvbnRleHQgKmN0eCkKPiAgIH0KPiAgIAo+ICAgc3RhdGljIGludCBnc2NfZHN0X3Nl
+dF9idWZfc2VxKHN0cnVjdCBnc2NfY29udGV4dCAqY3R4LCB1MzIgYnVmX2lkLAo+IC0JCWVudW0g
+ZHJtX2V4eW5vc19pcHBfYnVmX3R5cGUgYnVmX3R5cGUpCj4gKwkJCSAgICAgICBib29sIGVucXVl
+dWUpCj4gICB7Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RybV9pcHBkcnYgKmlwcGRydiA9ICZjdHgtPmlw
+cGRydjsKPiAtCWJvb2wgbWFza2VkOwo+ICsJYm9vbCBtYXNrZWQgPSAhZW5xdWV1ZTsKPiAgIAl1
+MzIgY2ZnOwo+ICAgCXUzMiBtYXNrID0gMHgwMDAwMDAwMSA8PCBidWZfaWQ7Cj4gICAJaW50IHJl
+dCA9IDA7Cj4gICAKPiAtCURSTV9ERUJVR19LTVMoImJ1Zl9pZFslZF1idWZfdHlwZVslZF1cbiIs
+IGJ1Zl9pZCwgYnVmX3R5cGUpOwo+IC0KPiAtCW11dGV4X2xvY2soJmN0eC0+bG9jayk7Cj4gLQo+
+ICAgCS8qIG1hc2sgcmVnaXN0ZXIgc2V0ICovCj4gICAJY2ZnID0gZ3NjX3JlYWQoR1NDX09VVF9C
+QVNFX0FERFJfWV9NQVNLKTsKPiAgIAo+IC0Jc3dpdGNoIChidWZfdHlwZSkgewo+IC0JY2FzZSBJ
+UFBfQlVGX0VOUVVFVUU6Cj4gLQkJbWFza2VkID0gZmFsc2U7Cj4gLQkJYnJlYWs7Cj4gLQljYXNl
+IElQUF9CVUZfREVRVUVVRToKPiAtCQltYXNrZWQgPSB0cnVlOwo+IC0JCWJyZWFrOwo+IC0JZGVm
+YXVsdDoKPiAtCQlkZXZfZXJyKGlwcGRydi0+ZGV2LCAiaW52YWxpZCBidWYgY3RybCBwYXJhbWV0
+ZXIuXG4iKTsKPiAtCQlyZXQgPSAgLUVJTlZBTDsKPiAtCQlnb3RvIGVycl91bmxvY2s7Cj4gLQl9
+Cj4gLQo+ICAgCS8qIHNlcXVlbmNlIGlkICovCj4gICAJY2ZnICY9IH5tYXNrOwo+ICAgCWNmZyB8
+PSBtYXNrZWQgPDwgYnVmX2lkOwo+IEBAIC0xMTQ4LDc0ICs5MzIsMjcgQEAgc3RhdGljIGludCBn
+c2NfZHN0X3NldF9idWZfc2VxKHN0cnVjdCBnc2NfY29udGV4dCAqY3R4LCB1MzIgYnVmX2lkLAo+
+ICAgCWdzY193cml0ZShjZmcsIEdTQ19PVVRfQkFTRV9BRERSX0NSX01BU0spOwo+ICAgCj4gICAJ
+LyogaW50ZXJydXB0IGVuYWJsZSAqLwo+IC0JaWYgKGJ1Zl90eXBlID09IElQUF9CVUZfRU5RVUVV
+RSAmJgo+IC0JICAgIGdzY19kc3RfZ2V0X2J1Zl9zZXEoY3R4KSA+PSBHU0NfQlVGX1NUQVJUKQo+
+ICsJaWYgKGVucXVldWUgJiYgZ3NjX2RzdF9nZXRfYnVmX3NlcShjdHgpID49IEdTQ19CVUZfU1RB
+UlQpCj4gICAJCWdzY19oYW5kbGVfaXJxKGN0eCwgdHJ1ZSwgZmFsc2UsIHRydWUpOwo+ICAgCj4g
+ICAJLyogaW50ZXJydXB0IGRpc2FibGUgKi8KPiAtCWlmIChidWZfdHlwZSA9PSBJUFBfQlVGX0RF
+UVVFVUUgJiYKPiAtCSAgICBnc2NfZHN0X2dldF9idWZfc2VxKGN0eCkgPD0gR1NDX0JVRl9TVE9Q
+KQo+ICsJaWYgKCFlbnF1ZXVlICYmIGdzY19kc3RfZ2V0X2J1Zl9zZXEoY3R4KSA8PSBHU0NfQlVG
+X1NUT1ApCj4gICAJCWdzY19oYW5kbGVfaXJxKGN0eCwgZmFsc2UsIGZhbHNlLCB0cnVlKTsKPiAg
+IAo+IC1lcnJfdW5sb2NrOgo+IC0JbXV0ZXhfdW5sb2NrKCZjdHgtPmxvY2spOwo+ICAgCXJldHVy
+biByZXQ7Cj4gICB9Cj4gICAKPiAtc3RhdGljIGludCBnc2NfZHN0X3NldF9hZGRyKHN0cnVjdCBk
+ZXZpY2UgKmRldiwKPiAtCQlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfYnVmX2luZm8gKmJ1Zl9pbmZv
+LCB1MzIgYnVmX2lkLAo+IC0JCWVudW0gZHJtX2V4eW5vc19pcHBfYnVmX3R5cGUgYnVmX3R5cGUp
+Cj4gK3N0YXRpYyBpbnQgZ3NjX2RzdF9zZXRfYWRkcihzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCwK
+PiArCQl1MzIgYnVmX2lkLCBzdHJ1Y3QgZXh5bm9zX2RybV9pcHBfYnVmZmVyICpidWYpCj4gICB7
+Cj4gLQlzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29udGV4dChkZXYpOwo+IC0J
+c3RydWN0IGV4eW5vc19kcm1faXBwZHJ2ICppcHBkcnYgPSAmY3R4LT5pcHBkcnY7Cj4gLQlzdHJ1
+Y3QgZHJtX2V4eW5vc19pcHBfY21kX25vZGUgKmNfbm9kZSA9IGlwcGRydi0+Y19ub2RlOwo+IC0J
+c3RydWN0IGRybV9leHlub3NfaXBwX3Byb3BlcnR5ICpwcm9wZXJ0eTsKPiAtCj4gLQlpZiAoIWNf
+bm9kZSkgewo+IC0JCURSTV9FUlJPUigiZmFpbGVkIHRvIGdldCBjX25vZGUuXG4iKTsKPiAtCQly
+ZXR1cm4gLUVGQVVMVDsKPiAtCX0KPiAtCj4gLQlwcm9wZXJ0eSA9ICZjX25vZGUtPnByb3BlcnR5
+Owo+IC0KPiAtCURSTV9ERUJVR19LTVMoInByb3BfaWRbJWRdYnVmX2lkWyVkXWJ1Zl90eXBlWyVk
+XVxuIiwKPiAtCQlwcm9wZXJ0eS0+cHJvcF9pZCwgYnVmX2lkLCBidWZfdHlwZSk7Cj4gLQo+IC0J
+aWYgKGJ1Zl9pZCA+IEdTQ19NQVhfRFNUKSB7Cj4gLQkJZGV2X2luZm8oaXBwZHJ2LT5kZXYsICJp
+bnZhbGlkIGJ1Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gLQkJcmV0dXJuIC1FSU5WQUw7Cj4gLQl9
+Cj4gLQo+ICAgCS8qIGFkZHJlc3MgcmVnaXN0ZXIgc2V0ICovCj4gLQlzd2l0Y2ggKGJ1Zl90eXBl
+KSB7Cj4gLQljYXNlIElQUF9CVUZfRU5RVUVVRToKPiAtCQlnc2Nfd3JpdGUoYnVmX2luZm8tPmJh
+c2VbRVhZTk9TX0RSTV9QTEFOQVJfWV0sCj4gLQkJCUdTQ19PVVRfQkFTRV9BRERSX1koYnVmX2lk
+KSk7Cj4gLQkJZ3NjX3dyaXRlKGJ1Zl9pbmZvLT5iYXNlW0VYWU5PU19EUk1fUExBTkFSX0NCXSwK
+PiAtCQkJR1NDX09VVF9CQVNFX0FERFJfQ0IoYnVmX2lkKSk7Cj4gLQkJZ3NjX3dyaXRlKGJ1Zl9p
+bmZvLT5iYXNlW0VYWU5PU19EUk1fUExBTkFSX0NSXSwKPiAtCQkJR1NDX09VVF9CQVNFX0FERFJf
+Q1IoYnVmX2lkKSk7Cj4gLQkJYnJlYWs7Cj4gLQljYXNlIElQUF9CVUZfREVRVUVVRToKPiAtCQln
+c2Nfd3JpdGUoMHgwLCBHU0NfT1VUX0JBU0VfQUREUl9ZKGJ1Zl9pZCkpOwo+IC0JCWdzY193cml0
+ZSgweDAsIEdTQ19PVVRfQkFTRV9BRERSX0NCKGJ1Zl9pZCkpOwo+IC0JCWdzY193cml0ZSgweDAs
+IEdTQ19PVVRfQkFTRV9BRERSX0NSKGJ1Zl9pZCkpOwo+IC0JCWJyZWFrOwo+IC0JZGVmYXVsdDoK
+PiAtCQkvKiBieXBhc3MgKi8KPiAtCQlicmVhazsKPiAtCX0KPiArCWdzY193cml0ZShidWYtPmRt
+YV9hZGRyWzBdLCBHU0NfT1VUX0JBU0VfQUREUl9ZKGJ1Zl9pZCkpOwo+ICsJZ3NjX3dyaXRlKGJ1
+Zi0+ZG1hX2FkZHJbMV0sIEdTQ19PVVRfQkFTRV9BRERSX0NCKGJ1Zl9pZCkpOwo+ICsJZ3NjX3dy
+aXRlKGJ1Zi0+ZG1hX2FkZHJbMl0sIEdTQ19PVVRfQkFTRV9BRERSX0NSKGJ1Zl9pZCkpOwo+ICAg
+Cj4gLQlyZXR1cm4gZ3NjX2RzdF9zZXRfYnVmX3NlcShjdHgsIGJ1Zl9pZCwgYnVmX3R5cGUpOwo+
+ICsJcmV0dXJuIGdzY19kc3Rfc2V0X2J1Zl9zZXEoY3R4LCBidWZfaWQsIHRydWUpOwo+ICAgfQo+
+ICAgCj4gLXN0YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9pcHBfb3BzIGdzY19kc3Rfb3BzID0gewo+
+IC0JLnNldF9mbXQgPSBnc2NfZHN0X3NldF9mbXQsCj4gLQkuc2V0X3RyYW5zZiA9IGdzY19kc3Rf
+c2V0X3RyYW5zZiwKPiAtCS5zZXRfc2l6ZSA9IGdzY19kc3Rfc2V0X3NpemUsCj4gLQkuc2V0X2Fk
+ZHIgPSBnc2NfZHN0X3NldF9hZGRyLAo+IC19Owo+IC0KPiAgIHN0YXRpYyBpbnQgZ3NjX2Nsa19j
+dHJsKHN0cnVjdCBnc2NfY29udGV4dCAqY3R4LCBib29sIGVuYWJsZSkKPiAgIHsKPiAgIAlEUk1f
+REVCVUdfS01TKCJlbmFibGVbJWRdXG4iLCBlbmFibGUpOwo+IEBAIC0xMjQ5LDIwICs5ODYsMjAg
+QEAgc3RhdGljIGludCBnc2NfZ2V0X3NyY19idWZfaW5kZXgoc3RydWN0IGdzY19jb250ZXh0ICpj
+dHgpCj4gICAJCX0KPiAgIAl9Cj4gICAKPiArCURSTV9ERUJVR19LTVMoImNmZ1sweCV4XWN1cnJf
+aW5kZXhbJWRdYnVmX2lkWyVkXVxuIiwgY2ZnLAo+ICsJCWN1cnJfaW5kZXgsIGJ1Zl9pZCk7Cj4g
+Kwo+ICAgCWlmIChidWZfaWQgPT0gR1NDX01BWF9TUkMpIHsKPiAgIAkJRFJNX0VSUk9SKCJmYWls
+ZWQgdG8gZ2V0IGluIGJ1ZmZlciBpbmRleC5cbiIpOwo+ICAgCQlyZXR1cm4gLUVJTlZBTDsKPiAg
+IAl9Cj4gICAKPiAtCXJldCA9IGdzY19zcmNfc2V0X2J1Zl9zZXEoY3R4LCBidWZfaWQsIElQUF9C
+VUZfREVRVUVVRSk7Cj4gKwlyZXQgPSBnc2Nfc3JjX3NldF9idWZfc2VxKGN0eCwgYnVmX2lkLCBm
+YWxzZSk7Cj4gICAJaWYgKHJldCA8IDApIHsKPiAgIAkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gZGVx
+dWV1ZS5cbiIpOwo+ICAgCQlyZXR1cm4gcmV0Owo+ICAgCX0KPiAgIAo+IC0JRFJNX0RFQlVHX0tN
+UygiY2ZnWzB4JXhdY3Vycl9pbmRleFslZF1idWZfaWRbJWRdXG4iLCBjZmcsCj4gLQkJY3Vycl9p
+bmRleCwgYnVmX2lkKTsKPiAtCj4gICAJcmV0dXJuIGJ1Zl9pZDsKPiAgIH0KPiAgIAo+IEBAIC0x
+Mjg5LDcgKzEwMjYsNyBAQCBzdGF0aWMgaW50IGdzY19nZXRfZHN0X2J1Zl9pbmRleChzdHJ1Y3Qg
+Z3NjX2NvbnRleHQgKmN0eCkKPiAgIAkJcmV0dXJuIC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gLQly
+ZXQgPSBnc2NfZHN0X3NldF9idWZfc2VxKGN0eCwgYnVmX2lkLCBJUFBfQlVGX0RFUVVFVUUpOwo+
+ICsJcmV0ID0gZ3NjX2RzdF9zZXRfYnVmX3NlcShjdHgsIGJ1Zl9pZCwgZmFsc2UpOwo+ICAgCWlm
+IChyZXQgPCAwKSB7Cj4gICAJCURSTV9FUlJPUigiZmFpbGVkIHRvIGRlcXVldWUuXG4iKTsKPiAg
+IAkJcmV0dXJuIHJldDsKPiBAQCAtMTMwNCwyMTUgKzEwNDEsNTQgQEAgc3RhdGljIGludCBnc2Nf
+Z2V0X2RzdF9idWZfaW5kZXgoc3RydWN0IGdzY19jb250ZXh0ICpjdHgpCj4gICBzdGF0aWMgaXJx
+cmV0dXJuX3QgZ3NjX2lycV9oYW5kbGVyKGludCBpcnEsIHZvaWQgKmRldl9pZCkKPiAgIHsKPiAg
+IAlzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGRldl9pZDsKPiAtCXN0cnVjdCBleHlub3NfZHJt
+X2lwcGRydiAqaXBwZHJ2ID0gJmN0eC0+aXBwZHJ2Owo+IC0Jc3RydWN0IGRybV9leHlub3NfaXBw
+X2NtZF9ub2RlICpjX25vZGUgPSBpcHBkcnYtPmNfbm9kZTsKPiAtCXN0cnVjdCBkcm1fZXh5bm9z
+X2lwcF9ldmVudF93b3JrICpldmVudF93b3JrID0KPiAtCQljX25vZGUtPmV2ZW50X3dvcms7Cj4g
+ICAJdTMyIHN0YXR1czsKPiAtCWludCBidWZfaWRbRVhZTk9TX0RSTV9PUFNfTUFYXTsKPiArCWlu
+dCBlcnIgPSAwOwo+ICAgCj4gICAJRFJNX0RFQlVHX0tNUygiZ3NjIGlkWyVkXVxuIiwgY3R4LT5p
+ZCk7Cj4gICAKPiAgIAlzdGF0dXMgPSBnc2NfcmVhZChHU0NfSVJRKTsKPiAgIAlpZiAoc3RhdHVz
+ICYgR1NDX0lSUV9TVEFUVVNfT1JfSVJRKSB7Cj4gLQkJZGV2X2VycihpcHBkcnYtPmRldiwgIm9j
+Y3VycmVkIG92ZXJmbG93IGF0ICVkLCBzdGF0dXMgMHgleC5cbiIsCj4gKwkJZGV2X2VycihjdHgt
+PmRldiwgIm9jY3VycmVkIG92ZXJmbG93IGF0ICVkLCBzdGF0dXMgMHgleC5cbiIsCj4gICAJCQlj
+dHgtPmlkLCBzdGF0dXMpOwo+IC0JCXJldHVybiBJUlFfTk9ORTsKPiArCQllcnIgPSAtRUlOVkFM
+Owo+ICAgCX0KPiAgIAo+ICAgCWlmIChzdGF0dXMgJiBHU0NfSVJRX1NUQVRVU19PUl9GUk1fRE9O
+RSkgewo+IC0JCWRldl9kYmcoaXBwZHJ2LT5kZXYsICJvY2N1cnJlZCBmcmFtZSBkb25lIGF0ICVk
+LCBzdGF0dXMgMHgleC5cbiIsCj4gLQkJCWN0eC0+aWQsIHN0YXR1cyk7Cj4gLQo+IC0JCWJ1Zl9p
+ZFtFWFlOT1NfRFJNX09QU19TUkNdID0gZ3NjX2dldF9zcmNfYnVmX2luZGV4KGN0eCk7Cj4gLQkJ
+aWYgKGJ1Zl9pZFtFWFlOT1NfRFJNX09QU19TUkNdIDwgMCkKPiAtCQkJcmV0dXJuIElSUV9IQU5E
+TEVEOwo+IC0KPiAtCQlidWZfaWRbRVhZTk9TX0RSTV9PUFNfRFNUXSA9IGdzY19nZXRfZHN0X2J1
+Zl9pbmRleChjdHgpOwo+IC0JCWlmIChidWZfaWRbRVhZTk9TX0RSTV9PUFNfRFNUXSA8IDApCj4g
+LQkJCXJldHVybiBJUlFfSEFORExFRDsKPiArCQlpbnQgc3JjX2J1Zl9pZCwgZHN0X2J1Zl9pZDsK
+PiAgIAo+IC0JCURSTV9ERUJVR19LTVMoImJ1Zl9pZF9zcmNbJWRdYnVmX2lkX2RzdFslZF1cbiIs
+Cj4gLQkJCWJ1Zl9pZFtFWFlOT1NfRFJNX09QU19TUkNdLCBidWZfaWRbRVhZTk9TX0RSTV9PUFNf
+RFNUXSk7Cj4gLQo+IC0JCWV2ZW50X3dvcmstPmlwcGRydiA9IGlwcGRydjsKPiAtCQlldmVudF93
+b3JrLT5idWZfaWRbRVhZTk9TX0RSTV9PUFNfU1JDXSA9Cj4gLQkJCWJ1Zl9pZFtFWFlOT1NfRFJN
+X09QU19TUkNdOwo+IC0JCWV2ZW50X3dvcmstPmJ1Zl9pZFtFWFlOT1NfRFJNX09QU19EU1RdID0K
+PiAtCQkJYnVmX2lkW0VYWU5PU19EUk1fT1BTX0RTVF07Cj4gLQkJcXVldWVfd29yayhpcHBkcnYt
+PmV2ZW50X3dvcmtxLCAmZXZlbnRfd29yay0+d29yayk7Cj4gLQl9Cj4gLQo+IC0JcmV0dXJuIElS
+UV9IQU5ETEVEOwo+IC19Cj4gLQo+IC1zdGF0aWMgaW50IGdzY19pbml0X3Byb3BfbGlzdChzdHJ1
+Y3QgZXh5bm9zX2RybV9pcHBkcnYgKmlwcGRydikKPiAtewo+IC0Jc3RydWN0IGRybV9leHlub3Nf
+aXBwX3Byb3BfbGlzdCAqcHJvcF9saXN0ID0gJmlwcGRydi0+cHJvcF9saXN0Owo+IC0KPiAtCXBy
+b3BfbGlzdC0+dmVyc2lvbiA9IDE7Cj4gLQlwcm9wX2xpc3QtPndyaXRlYmFjayA9IDE7Cj4gLQlw
+cm9wX2xpc3QtPnJlZnJlc2hfbWluID0gR1NDX1JFRlJFU0hfTUlOOwo+IC0JcHJvcF9saXN0LT5y
+ZWZyZXNoX21heCA9IEdTQ19SRUZSRVNIX01BWDsKPiAtCXByb3BfbGlzdC0+ZmxpcCA9ICgxIDw8
+IEVYWU5PU19EUk1fRkxJUF9WRVJUSUNBTCkgfAo+IC0JCQkJKDEgPDwgRVhZTk9TX0RSTV9GTElQ
+X0hPUklaT05UQUwpOwo+IC0JcHJvcF9saXN0LT5kZWdyZWUgPSAoMSA8PCBFWFlOT1NfRFJNX0RF
+R1JFRV8wKSB8Cj4gLQkJCQkoMSA8PCBFWFlOT1NfRFJNX0RFR1JFRV85MCkgfAo+IC0JCQkJKDEg
+PDwgRVhZTk9TX0RSTV9ERUdSRUVfMTgwKSB8Cj4gLQkJCQkoMSA8PCBFWFlOT1NfRFJNX0RFR1JF
+RV8yNzApOwo+IC0JcHJvcF9saXN0LT5jc2MgPSAxOwo+IC0JcHJvcF9saXN0LT5jcm9wID0gMTsK
+PiAtCXByb3BfbGlzdC0+Y3JvcF9tYXguaHNpemUgPSBHU0NfQ1JPUF9NQVg7Cj4gLQlwcm9wX2xp
+c3QtPmNyb3BfbWF4LnZzaXplID0gR1NDX0NST1BfTUFYOwo+IC0JcHJvcF9saXN0LT5jcm9wX21p
+bi5oc2l6ZSA9IEdTQ19DUk9QX01JTjsKPiAtCXByb3BfbGlzdC0+Y3JvcF9taW4udnNpemUgPSBH
+U0NfQ1JPUF9NSU47Cj4gLQlwcm9wX2xpc3QtPnNjYWxlID0gMTsKPiAtCXByb3BfbGlzdC0+c2Nh
+bGVfbWF4LmhzaXplID0gR1NDX1NDQUxFX01BWDsKPiAtCXByb3BfbGlzdC0+c2NhbGVfbWF4LnZz
+aXplID0gR1NDX1NDQUxFX01BWDsKPiAtCXByb3BfbGlzdC0+c2NhbGVfbWluLmhzaXplID0gR1ND
+X1NDQUxFX01JTjsKPiAtCXByb3BfbGlzdC0+c2NhbGVfbWluLnZzaXplID0gR1NDX1NDQUxFX01J
+TjsKPiAtCj4gLQlyZXR1cm4gMDsKPiAtfQo+IC0KPiAtc3RhdGljIGlubGluZSBib29sIGdzY19j
+aGVja19kcm1fZmxpcChlbnVtIGRybV9leHlub3NfZmxpcCBmbGlwKQo+IC17Cj4gLQlzd2l0Y2gg
+KGZsaXApIHsKPiAtCWNhc2UgRVhZTk9TX0RSTV9GTElQX05PTkU6Cj4gLQljYXNlIEVYWU5PU19E
+Uk1fRkxJUF9WRVJUSUNBTDoKPiAtCWNhc2UgRVhZTk9TX0RSTV9GTElQX0hPUklaT05UQUw6Cj4g
+LQljYXNlIEVYWU5PU19EUk1fRkxJUF9CT1RIOgo+IC0JCXJldHVybiB0cnVlOwo+IC0JZGVmYXVs
+dDoKPiAtCQlEUk1fREVCVUdfS01TKCJpbnZhbGlkIGZsaXBcbiIpOwo+IC0JCXJldHVybiBmYWxz
+ZTsKPiAtCX0KPiAtfQo+IC0KPiAtc3RhdGljIGludCBnc2NfaXBwZHJ2X2NoZWNrX3Byb3BlcnR5
+KHN0cnVjdCBkZXZpY2UgKmRldiwKPiAtCQlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfcHJvcGVydHkg
+KnByb3BlcnR5KQo+IC17Cj4gLQlzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29u
+dGV4dChkZXYpOwo+IC0Jc3RydWN0IGV4eW5vc19kcm1faXBwZHJ2ICppcHBkcnYgPSAmY3R4LT5p
+cHBkcnY7Cj4gLQlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfcHJvcF9saXN0ICpwcCA9ICZpcHBkcnYt
+PnByb3BfbGlzdDsKPiAtCXN0cnVjdCBkcm1fZXh5bm9zX2lwcF9jb25maWcgKmNvbmZpZzsKPiAt
+CXN0cnVjdCBkcm1fZXh5bm9zX3BvcyAqcG9zOwo+IC0Jc3RydWN0IGRybV9leHlub3Nfc3ogKnN6
+Owo+IC0JYm9vbCBzd2FwOwo+IC0JaW50IGk7Cj4gLQo+IC0JZm9yX2VhY2hfaXBwX29wcyhpKSB7
+Cj4gLQkJaWYgKChpID09IEVYWU5PU19EUk1fT1BTX1NSQykgJiYKPiAtCQkJKHByb3BlcnR5LT5j
+bWQgPT0gSVBQX0NNRF9XQikpCj4gLQkJCWNvbnRpbnVlOwo+IC0KPiAtCQljb25maWcgPSAmcHJv
+cGVydHktPmNvbmZpZ1tpXTsKPiAtCQlwb3MgPSAmY29uZmlnLT5wb3M7Cj4gLQkJc3ogPSAmY29u
+ZmlnLT5zejsKPiAtCj4gLQkJLyogY2hlY2sgZm9yIGZsaXAgKi8KPiAtCQlpZiAoIWdzY19jaGVj
+a19kcm1fZmxpcChjb25maWctPmZsaXApKSB7Cj4gLQkJCURSTV9FUlJPUigiaW52YWxpZCBmbGlw
+LlxuIik7Cj4gLQkJCWdvdG8gZXJyX3Byb3BlcnR5Owo+IC0JCX0KPiAtCj4gLQkJLyogY2hlY2sg
+Zm9yIGRlZ3JlZSAqLwo+IC0JCXN3aXRjaCAoY29uZmlnLT5kZWdyZWUpIHsKPiAtCQljYXNlIEVY
+WU5PU19EUk1fREVHUkVFXzkwOgo+IC0JCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMjcwOgo+IC0J
+CQlzd2FwID0gdHJ1ZTsKPiAtCQkJYnJlYWs7Cj4gLQkJY2FzZSBFWFlOT1NfRFJNX0RFR1JFRV8w
+Ogo+IC0JCWNhc2UgRVhZTk9TX0RSTV9ERUdSRUVfMTgwOgo+IC0JCQlzd2FwID0gZmFsc2U7Cj4g
+LQkJCWJyZWFrOwo+IC0JCWRlZmF1bHQ6Cj4gLQkJCURSTV9FUlJPUigiaW52YWxpZCBkZWdyZWUu
+XG4iKTsKPiAtCQkJZ290byBlcnJfcHJvcGVydHk7Cj4gLQkJfQo+ICsJCWRldl9kYmcoY3R4LT5k
+ZXYsICJvY2N1cnJlZCBmcmFtZSBkb25lIGF0ICVkLCBzdGF0dXMgMHgleC5cbiIsCj4gKwkJCWN0
+eC0+aWQsIHN0YXR1cyk7Cj4gICAKPiAtCQkvKiBjaGVjayBmb3IgYnVmZmVyIGJvdW5kICovCj4g
+LQkJaWYgKChwb3MtPnggKyBwb3MtPncgPiBzei0+aHNpemUpIHx8Cj4gLQkJCShwb3MtPnkgKyBw
+b3MtPmggPiBzei0+dnNpemUpKSB7Cj4gLQkJCURSTV9FUlJPUigib3V0IG9mIGJ1ZiBib3VuZC5c
+biIpOwo+IC0JCQlnb3RvIGVycl9wcm9wZXJ0eTsKPiAtCQl9Cj4gKwkJc3JjX2J1Zl9pZCA9IGdz
+Y19nZXRfc3JjX2J1Zl9pbmRleChjdHgpOwo+ICsJCWRzdF9idWZfaWQgPSBnc2NfZ2V0X2RzdF9i
+dWZfaW5kZXgoY3R4KTsKPiAgIAo+IC0JCS8qIGNoZWNrIGZvciBjcm9wICovCj4gLQkJaWYgKChp
+ID09IEVYWU5PU19EUk1fT1BTX1NSQykgJiYgKHBwLT5jcm9wKSkgewo+IC0JCQlpZiAoc3dhcCkg
+ewo+IC0JCQkJaWYgKChwb3MtPmggPCBwcC0+Y3JvcF9taW4uaHNpemUpIHx8Cj4gLQkJCQkJKHN6
+LT52c2l6ZSA+IHBwLT5jcm9wX21heC5oc2l6ZSkgfHwKPiAtCQkJCQkocG9zLT53IDwgcHAtPmNy
+b3BfbWluLnZzaXplKSB8fAo+IC0JCQkJCShzei0+aHNpemUgPiBwcC0+Y3JvcF9tYXgudnNpemUp
+KSB7Cj4gLQkJCQkJRFJNX0VSUk9SKCJvdXQgb2YgY3JvcCBzaXplLlxuIik7Cj4gLQkJCQkJZ290
+byBlcnJfcHJvcGVydHk7Cj4gLQkJCQl9Cj4gLQkJCX0gZWxzZSB7Cj4gLQkJCQlpZiAoKHBvcy0+
+dyA8IHBwLT5jcm9wX21pbi5oc2l6ZSkgfHwKPiAtCQkJCQkoc3otPmhzaXplID4gcHAtPmNyb3Bf
+bWF4LmhzaXplKSB8fAo+IC0JCQkJCShwb3MtPmggPCBwcC0+Y3JvcF9taW4udnNpemUpIHx8Cj4g
+LQkJCQkJKHN6LT52c2l6ZSA+IHBwLT5jcm9wX21heC52c2l6ZSkpIHsKPiAtCQkJCQlEUk1fRVJS
+T1IoIm91dCBvZiBjcm9wIHNpemUuXG4iKTsKPiAtCQkJCQlnb3RvIGVycl9wcm9wZXJ0eTsKPiAt
+CQkJCX0KPiAtCQkJfQo+IC0JCX0KPiArCQlEUk1fREVCVUdfS01TKCJidWZfaWRfc3JjWyVkXWJ1
+Zl9pZF9kc3RbJWRdXG4iLAlzcmNfYnVmX2lkLAo+ICsJCQkgICAgICBkc3RfYnVmX2lkKTsKPiAg
+IAo+IC0JCS8qIGNoZWNrIGZvciBzY2FsZSAqLwo+IC0JCWlmICgoaSA9PSBFWFlOT1NfRFJNX09Q
+U19EU1QpICYmIChwcC0+c2NhbGUpKSB7Cj4gLQkJCWlmIChzd2FwKSB7Cj4gLQkJCQlpZiAoKHBv
+cy0+aCA8IHBwLT5zY2FsZV9taW4uaHNpemUpIHx8Cj4gLQkJCQkJKHN6LT52c2l6ZSA+IHBwLT5z
+Y2FsZV9tYXguaHNpemUpIHx8Cj4gLQkJCQkJKHBvcy0+dyA8IHBwLT5zY2FsZV9taW4udnNpemUp
+IHx8Cj4gLQkJCQkJKHN6LT5oc2l6ZSA+IHBwLT5zY2FsZV9tYXgudnNpemUpKSB7Cj4gLQkJCQkJ
+RFJNX0VSUk9SKCJvdXQgb2Ygc2NhbGUgc2l6ZS5cbiIpOwo+IC0JCQkJCWdvdG8gZXJyX3Byb3Bl
+cnR5Owo+IC0JCQkJfQo+IC0JCQl9IGVsc2Ugewo+IC0JCQkJaWYgKChwb3MtPncgPCBwcC0+c2Nh
+bGVfbWluLmhzaXplKSB8fAo+IC0JCQkJCShzei0+aHNpemUgPiBwcC0+c2NhbGVfbWF4LmhzaXpl
+KSB8fAo+IC0JCQkJCShwb3MtPmggPCBwcC0+c2NhbGVfbWluLnZzaXplKSB8fAo+IC0JCQkJCShz
+ei0+dnNpemUgPiBwcC0+c2NhbGVfbWF4LnZzaXplKSkgewo+IC0JCQkJCURSTV9FUlJPUigib3V0
+IG9mIHNjYWxlIHNpemUuXG4iKTsKPiAtCQkJCQlnb3RvIGVycl9wcm9wZXJ0eTsKPiAtCQkJCX0K
+PiAtCQkJfQo+IC0JCX0KPiArCQlpZiAoc3JjX2J1Zl9pZCA8IDAgfHwgZHN0X2J1Zl9pZCA8IDAp
+Cj4gKwkJCWVyciA9IC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gLQlyZXR1cm4gMDsKPiArCWlmIChj
+dHgtPnRhc2spIHsKPiArCQlzdHJ1Y3QgZXh5bm9zX2RybV9pcHBfdGFzayAqdGFzayA9IGN0eC0+
+dGFzazsKPiAgIAo+IC1lcnJfcHJvcGVydHk6Cj4gLQlmb3JfZWFjaF9pcHBfb3BzKGkpIHsKPiAt
+CQlpZiAoKGkgPT0gRVhZTk9TX0RSTV9PUFNfU1JDKSAmJgo+IC0JCQkocHJvcGVydHktPmNtZCA9
+PSBJUFBfQ01EX1dCKSkKPiAtCQkJY29udGludWU7Cj4gLQo+IC0JCWNvbmZpZyA9ICZwcm9wZXJ0
+eS0+Y29uZmlnW2ldOwo+IC0JCXBvcyA9ICZjb25maWctPnBvczsKPiAtCQlzeiA9ICZjb25maWct
+PnN6Owo+IC0KPiAtCQlEUk1fRVJST1IoIlslc11mWyVkXXJbJWRdcG9zWyVkICVkICVkICVkXXN6
+WyVkICVkXVxuIiwKPiAtCQkJaSA/ICJkc3QiIDogInNyYyIsIGNvbmZpZy0+ZmxpcCwgY29uZmln
+LT5kZWdyZWUsCj4gLQkJCXBvcy0+eCwgcG9zLT55LCBwb3MtPncsIHBvcy0+aCwKPiAtCQkJc3ot
+PmhzaXplLCBzei0+dnNpemUpOwo+ICsJCWN0eC0+dGFzayA9IE5VTEw7Cj4gKwkJcG1fcnVudGlt
+ZV9wdXQoY3R4LT5kZXYpOwo+ICsJCWV4eW5vc19kcm1faXBwX3Rhc2tfZG9uZSh0YXNrLCBlcnIp
+Owo+ICAgCX0KPiAgIAo+IC0JcmV0dXJuIC1FSU5WQUw7Cj4gKwlyZXR1cm4gSVJRX0hBTkRMRUQ7
+Cj4gICB9Cj4gICAKPiAtCj4gLXN0YXRpYyBpbnQgZ3NjX2lwcGRydl9yZXNldChzdHJ1Y3QgZGV2
+aWNlICpkZXYpCj4gK3N0YXRpYyBpbnQgZ3NjX3Jlc2V0KHN0cnVjdCBnc2NfY29udGV4dCAqY3R4
+KQo+ICAgewo+IC0Jc3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2
+KTsKPiAgIAlzdHJ1Y3QgZ3NjX3NjYWxlciAqc2MgPSAmY3R4LT5zYzsKPiAgIAlpbnQgcmV0Owo+
+ICAgCj4gICAJLyogcmVzZXQgaC93IGJsb2NrICovCj4gICAJcmV0ID0gZ3NjX3N3X3Jlc2V0KGN0
+eCk7Cj4gICAJaWYgKHJldCA8IDApIHsKPiAtCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byByZXNl
+dCBoYXJkd2FyZS5cbiIpOwo+ICsJCWRldl9lcnIoY3R4LT5kZXYsICJmYWlsZWQgdG8gcmVzZXQg
+aGFyZHdhcmUuXG4iKTsKPiAgIAkJcmV0dXJuIHJldDsKPiAgIAl9Cj4gICAKPiBAQCAtMTUyMyw5
+NiArMTA5OSwyOSBAQCBzdGF0aWMgaW50IGdzY19pcHBkcnZfcmVzZXQoc3RydWN0IGRldmljZSAq
+ZGV2KQo+ICAgCXJldHVybiAwOwo+ICAgfQo+ICAgCj4gLXN0YXRpYyBpbnQgZ3NjX2lwcGRydl9z
+dGFydChzdHJ1Y3QgZGV2aWNlICpkZXYsIGVudW0gZHJtX2V4eW5vc19pcHBfY21kIGNtZCkKPiAr
+c3RhdGljIGludCBnc2Nfc3RhcnQoc3RydWN0IGdzY19jb250ZXh0ICpjdHgpCj4gICB7Cj4gLQlz
+dHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29udGV4dChkZXYpOwo+IC0Jc3RydWN0
+IGV4eW5vc19kcm1faXBwZHJ2ICppcHBkcnYgPSAmY3R4LT5pcHBkcnY7Cj4gLQlzdHJ1Y3QgZHJt
+X2V4eW5vc19pcHBfY21kX25vZGUgKmNfbm9kZSA9IGlwcGRydi0+Y19ub2RlOwo+IC0Jc3RydWN0
+IGRybV9leHlub3NfaXBwX3Byb3BlcnR5ICpwcm9wZXJ0eTsKPiAtCXN0cnVjdCBkcm1fZXh5bm9z
+X2lwcF9jb25maWcgKmNvbmZpZzsKPiAtCXN0cnVjdCBkcm1fZXh5bm9zX3BvcwlpbWdfcG9zW0VY
+WU5PU19EUk1fT1BTX01BWF07Cj4gLQlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfc2V0X3diIHNldF93
+YjsKPiAgIAl1MzIgY2ZnOwo+IC0JaW50IHJldCwgaTsKPiAtCj4gLQlEUk1fREVCVUdfS01TKCJj
+bWRbJWRdXG4iLCBjbWQpOwo+IC0KPiAtCWlmICghY19ub2RlKSB7Cj4gLQkJRFJNX0VSUk9SKCJm
+YWlsZWQgdG8gZ2V0IGNfbm9kZS5cbiIpOwo+IC0JCXJldHVybiAtRUlOVkFMOwo+IC0JfQo+IC0K
+PiAtCXByb3BlcnR5ID0gJmNfbm9kZS0+cHJvcGVydHk7Cj4gICAKPiAgIAlnc2NfaGFuZGxlX2ly
+cShjdHgsIHRydWUsIGZhbHNlLCB0cnVlKTsKPiAgIAo+IC0JZm9yX2VhY2hfaXBwX29wcyhpKSB7
+Cj4gLQkJY29uZmlnID0gJnByb3BlcnR5LT5jb25maWdbaV07Cj4gLQkJaW1nX3Bvc1tpXSA9IGNv
+bmZpZy0+cG9zOwo+IC0JfQo+ICsJLyogZW5hYmxlIG9uZSBzaG90ICovCj4gKwljZmcgPSBnc2Nf
+cmVhZChHU0NfRU5BQkxFKTsKPiArCWNmZyAmPSB+KEdTQ19FTkFCTEVfT05fQ0xFQVJfTUFTSyB8
+Cj4gKwkJR1NDX0VOQUJMRV9DTEtfR0FURV9NT0RFX01BU0spOwo+ICsJY2ZnIHw9IEdTQ19FTkFC
+TEVfT05fQ0xFQVJfT05FU0hPVDsKPiArCWdzY193cml0ZShjZmcsIEdTQ19FTkFCTEUpOwo+ICAg
+Cj4gLQlzd2l0Y2ggKGNtZCkgewo+IC0JY2FzZSBJUFBfQ01EX00yTToKPiAtCQkvKiBlbmFibGUg
+b25lIHNob3QgKi8KPiAtCQljZmcgPSBnc2NfcmVhZChHU0NfRU5BQkxFKTsKPiAtCQljZmcgJj0g
+fihHU0NfRU5BQkxFX09OX0NMRUFSX01BU0sgfAo+IC0JCQlHU0NfRU5BQkxFX0NMS19HQVRFX01P
+REVfTUFTSyk7Cj4gLQkJY2ZnIHw9IEdTQ19FTkFCTEVfT05fQ0xFQVJfT05FU0hPVDsKPiAtCQln
+c2Nfd3JpdGUoY2ZnLCBHU0NfRU5BQkxFKTsKPiAtCj4gLQkJLyogc3JjIGRtYSBtZW1vcnkgKi8K
+PiAtCQljZmcgPSBnc2NfcmVhZChHU0NfSU5fQ09OKTsKPiAtCQljZmcgJj0gfihHU0NfSU5fUEFU
+SF9NQVNLIHwgR1NDX0lOX0xPQ0FMX1NFTF9NQVNLKTsKPiAtCQljZmcgfD0gR1NDX0lOX1BBVEhf
+TUVNT1JZOwo+IC0JCWdzY193cml0ZShjZmcsIEdTQ19JTl9DT04pOwo+IC0KPiAtCQkvKiBkc3Qg
+ZG1hIG1lbW9yeSAqLwo+IC0JCWNmZyA9IGdzY19yZWFkKEdTQ19PVVRfQ09OKTsKPiAtCQljZmcg
+fD0gR1NDX09VVF9QQVRIX01FTU9SWTsKPiAtCQlnc2Nfd3JpdGUoY2ZnLCBHU0NfT1VUX0NPTik7
+Cj4gLQkJYnJlYWs7Cj4gLQljYXNlIElQUF9DTURfV0I6Cj4gLQkJc2V0X3diLmVuYWJsZSA9IDE7
+Cj4gLQkJc2V0X3diLnJlZnJlc2ggPSBwcm9wZXJ0eS0+cmVmcmVzaF9yYXRlOwo+IC0JCWdzY19z
+ZXRfZ3NjYmxrX2ZpbWRfd2IoY3R4LCBzZXRfd2IuZW5hYmxlKTsKPiAtCQlleHlub3NfZHJtX2lw
+cG5iX3NlbmRfZXZlbnQoSVBQX1NFVF9XUklURUJBQ0ssICh2b2lkICopJnNldF93Yik7Cj4gLQo+
+IC0JCS8qIHNyYyBsb2NhbCBwYXRoICovCj4gLQkJY2ZnID0gZ3NjX3JlYWQoR1NDX0lOX0NPTik7
+Cj4gLQkJY2ZnICY9IH4oR1NDX0lOX1BBVEhfTUFTSyB8IEdTQ19JTl9MT0NBTF9TRUxfTUFTSyk7
+Cj4gLQkJY2ZnIHw9IChHU0NfSU5fUEFUSF9MT0NBTCB8IEdTQ19JTl9MT0NBTF9GSU1EX1dCKTsK
+PiAtCQlnc2Nfd3JpdGUoY2ZnLCBHU0NfSU5fQ09OKTsKPiAtCj4gLQkJLyogZHN0IGRtYSBtZW1v
+cnkgKi8KPiAtCQljZmcgPSBnc2NfcmVhZChHU0NfT1VUX0NPTik7Cj4gLQkJY2ZnIHw9IEdTQ19P
+VVRfUEFUSF9NRU1PUlk7Cj4gLQkJZ3NjX3dyaXRlKGNmZywgR1NDX09VVF9DT04pOwo+IC0JCWJy
+ZWFrOwo+IC0JY2FzZSBJUFBfQ01EX09VVFBVVDoKPiAtCQkvKiBzcmMgZG1hIG1lbW9yeSAqLwo+
+IC0JCWNmZyA9IGdzY19yZWFkKEdTQ19JTl9DT04pOwo+IC0JCWNmZyAmPSB+KEdTQ19JTl9QQVRI
+X01BU0sgfCBHU0NfSU5fTE9DQUxfU0VMX01BU0spOwo+IC0JCWNmZyB8PSBHU0NfSU5fUEFUSF9N
+RU1PUlk7Cj4gLQkJZ3NjX3dyaXRlKGNmZywgR1NDX0lOX0NPTik7Cj4gLQo+IC0JCS8qIGRzdCBs
+b2NhbCBwYXRoICovCj4gLQkJY2ZnID0gZ3NjX3JlYWQoR1NDX09VVF9DT04pOwo+IC0JCWNmZyB8
+PSBHU0NfT1VUX1BBVEhfTUVNT1JZOwo+IC0JCWdzY193cml0ZShjZmcsIEdTQ19PVVRfQ09OKTsK
+PiAtCQlicmVhazsKPiAtCWRlZmF1bHQ6Cj4gLQkJcmV0ID0gLUVJTlZBTDsKPiAtCQlkZXZfZXJy
+KGRldiwgImludmFsaWQgb3BlcmF0aW9ucy5cbiIpOwo+IC0JCXJldHVybiByZXQ7Cj4gLQl9Cj4g
+KwkvKiBzcmMgZG1hIG1lbW9yeSAqLwo+ICsJY2ZnID0gZ3NjX3JlYWQoR1NDX0lOX0NPTik7Cj4g
+KwljZmcgJj0gfihHU0NfSU5fUEFUSF9NQVNLIHwgR1NDX0lOX0xPQ0FMX1NFTF9NQVNLKTsKPiAr
+CWNmZyB8PSBHU0NfSU5fUEFUSF9NRU1PUlk7Cj4gKwlnc2Nfd3JpdGUoY2ZnLCBHU0NfSU5fQ09O
+KTsKPiAgIAo+IC0JcmV0ID0gZ3NjX3NldF9wcmVzY2FsZXIoY3R4LCAmY3R4LT5zYywKPiAtCQkm
+aW1nX3Bvc1tFWFlOT1NfRFJNX09QU19TUkNdLAo+IC0JCSZpbWdfcG9zW0VYWU5PU19EUk1fT1BT
+X0RTVF0pOwo+IC0JaWYgKHJldCkgewo+IC0JCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIHNldCBw
+cmVzY2FsZXIuXG4iKTsKPiAtCQlyZXR1cm4gcmV0Owo+IC0JfQo+ICsJLyogZHN0IGRtYSBtZW1v
+cnkgKi8KPiArCWNmZyA9IGdzY19yZWFkKEdTQ19PVVRfQ09OKTsKPiArCWNmZyB8PSBHU0NfT1VU
+X1BBVEhfTUVNT1JZOwo+ICsJZ3NjX3dyaXRlKGNmZywgR1NDX09VVF9DT04pOwo+ICAgCj4gICAJ
+Z3NjX3NldF9zY2FsZXIoY3R4LCAmY3R4LT5zYyk7Cj4gICAKPiBAQCAtMTYyMyw2MCArMTEzMiwx
+MTIgQEAgc3RhdGljIGludCBnc2NfaXBwZHJ2X3N0YXJ0KHN0cnVjdCBkZXZpY2UgKmRldiwgZW51
+bSBkcm1fZXh5bm9zX2lwcF9jbWQgY21kKQo+ICAgCXJldHVybiAwOwo+ICAgfQo+ICAgCj4gLXN0
+YXRpYyB2b2lkIGdzY19pcHBkcnZfc3RvcChzdHJ1Y3QgZGV2aWNlICpkZXYsIGVudW0gZHJtX2V4
+eW5vc19pcHBfY21kIGNtZCkKPiArc3RhdGljIGludCBnc2NfY29tbWl0KHN0cnVjdCBleHlub3Nf
+ZHJtX2lwcCAqaXBwLAo+ICsJCQkgIHN0cnVjdCBleHlub3NfZHJtX2lwcF90YXNrICp0YXNrKQo+
+ICAgewo+IC0Jc3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2KTsK
+PiAtCXN0cnVjdCBkcm1fZXh5bm9zX2lwcF9zZXRfd2Igc2V0X3diID0gezAsIDB9Owo+IC0JdTMy
+IGNmZzsKPiArCXN0cnVjdCBnc2NfY29udGV4dCAqY3R4ID0gY29udGFpbmVyX29mKGlwcCwgc3Ry
+dWN0IGdzY19jb250ZXh0LCBpcHApOwo+ICsKPiArCXBtX3J1bnRpbWVfZ2V0X3N5bmMoY3R4LT5k
+ZXYpOwo+ICsJY3R4LT50YXNrID0gdGFzazsKPiArCj4gKwlnc2NfcmVzZXQoY3R4KTsKPiArCWdz
+Y19zcmNfc2V0X2ZtdChjdHgsIHRhc2stPnNyYy5idWYuZm91cmNjKTsKPiArCWdzY19zcmNfc2V0
+X3RyYW5zZihjdHgsIHRhc2stPnRyYW5zZm9ybS5yb3RhdGlvbik7Cj4gKwlnc2Nfc3JjX3NldF9z
+aXplKGN0eCwgJnRhc2stPnNyYyk7Cj4gKwlnc2Nfc3JjX3NldF9hZGRyKGN0eCwgMCwgJnRhc2st
+PnNyYyk7Cj4gKwlnc2NfZHN0X3NldF9mbXQoY3R4LCB0YXNrLT5kc3QuYnVmLmZvdXJjYyk7Cj4g
+Kwlnc2NfZHN0X3NldF9zaXplKGN0eCwgJnRhc2stPmRzdCk7Cj4gKwlnc2NfZHN0X3NldF9hZGRy
+KGN0eCwgMCwgJnRhc2stPmRzdCk7Cj4gKwlnc2Nfc2V0X3ByZXNjYWxlcihjdHgsICZjdHgtPnNj
+LCAmdGFzay0+c3JjLnJlY3QsICZ0YXNrLT5kc3QucmVjdCk7Cj4gKwlnc2Nfc3RhcnQoY3R4KTsK
+PiAgIAo+IC0JRFJNX0RFQlVHX0tNUygiY21kWyVkXVxuIiwgY21kKTsKPiArCXJldHVybiAwOwo+
+ICt9Cj4gICAKPiAtCXN3aXRjaCAoY21kKSB7Cj4gLQljYXNlIElQUF9DTURfTTJNOgo+IC0JCS8q
+IGJ5cGFzcyAqLwo+IC0JCWJyZWFrOwo+IC0JY2FzZSBJUFBfQ01EX1dCOgo+IC0JCWdzY19zZXRf
+Z3NjYmxrX2ZpbWRfd2IoY3R4LCBzZXRfd2IuZW5hYmxlKTsKPiAtCQlleHlub3NfZHJtX2lwcG5i
+X3NlbmRfZXZlbnQoSVBQX1NFVF9XUklURUJBQ0ssICh2b2lkICopJnNldF93Yik7Cj4gLQkJYnJl
+YWs7Cj4gLQljYXNlIElQUF9DTURfT1VUUFVUOgo+IC0JZGVmYXVsdDoKPiAtCQlkZXZfZXJyKGRl
+diwgImludmFsaWQgb3BlcmF0aW9ucy5cbiIpOwo+IC0JCWJyZWFrOwo+ICtzdGF0aWMgdm9pZCBn
+c2NfYWJvcnQoc3RydWN0IGV4eW5vc19kcm1faXBwICppcHAsCj4gKwkJCSAgc3RydWN0IGV4eW5v
+c19kcm1faXBwX3Rhc2sgKnRhc2spCj4gK3sKPiArCXN0cnVjdCBnc2NfY29udGV4dCAqY3R4ID0K
+PiArCQkJY29udGFpbmVyX29mKGlwcCwgc3RydWN0IGdzY19jb250ZXh0LCBpcHApOwo+ICsKPiAr
+CWdzY19yZXNldChjdHgpOwo+ICsJaWYgKGN0eC0+dGFzaykgewo+ICsJCXN0cnVjdCBleHlub3Nf
+ZHJtX2lwcF90YXNrICp0YXNrID0gY3R4LT50YXNrOwo+ICsKPiArCQljdHgtPnRhc2sgPSBOVUxM
+Owo+ICsJCXBtX3J1bnRpbWVfcHV0KGN0eC0+ZGV2KTsKPiArCQlleHlub3NfZHJtX2lwcF90YXNr
+X2RvbmUodGFzaywgLUVJTyk7Cj4gICAJfQo+ICt9Cj4gICAKPiAtCWdzY19oYW5kbGVfaXJxKGN0
+eCwgZmFsc2UsIGZhbHNlLCB0cnVlKTsKPiArc3RhdGljIHN0cnVjdCBleHlub3NfZHJtX2lwcF9m
+dW5jcyBpcHBfZnVuY3MgPSB7Cj4gKwkuY29tbWl0ID0gZ3NjX2NvbW1pdCwKPiArCS5hYm9ydCA9
+IGdzY19hYm9ydCwKPiArfTsKPiAgIAo+IC0JLyogcmVzZXQgc2VxdWVuY2UgKi8KPiAtCWdzY193
+cml0ZSgweGZmLCBHU0NfT1VUX0JBU0VfQUREUl9ZX01BU0spOwo+IC0JZ3NjX3dyaXRlKDB4ZmYs
+IEdTQ19PVVRfQkFTRV9BRERSX0NCX01BU0spOwo+IC0JZ3NjX3dyaXRlKDB4ZmYsIEdTQ19PVVRf
+QkFTRV9BRERSX0NSX01BU0spOwo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGV4eW5vc19kcm1faXBw
+X2Zvcm1hdHMgZ3NjX2Zvcm1hdHNbXSA9IHsKPiArCXsgSVBQX1NSQ0RTVF9GT1JNQVQoWFJHQjg4
+ODgsIE5VTEwpIH0sCj4gKwl7IElQUF9TUkNEU1RfRk9STUFUKFJHQjU2NSwgTlVMTCkgfSwKPiAr
+CXsgSVBQX1NSQ0RTVF9GT1JNQVQoQkdSWDg4ODgsIE5VTEwpIH0sCj4gKwl7IElQUF9TUkNEU1Rf
+Rk9STUFUKE5WMTIsIE5VTEwpIH0sCj4gKwl7IElQUF9TUkNEU1RfRk9STUFUKE5WMTYsIE5VTEwp
+IH0sCj4gKwl7IElQUF9TUkNEU1RfRk9STUFUKE5WMjEsIE5VTEwpIH0sCj4gKwl7IElQUF9TUkNE
+U1RfRk9STUFUKE5WNjEsIE5VTEwpIH0sCj4gKwl7IElQUF9TUkNEU1RfRk9STUFUKFVZVlksIE5V
+TEwpIH0sCj4gKwl7IElQUF9TUkNEU1RfRk9STUFUKFZZVVksIE5VTEwpIH0sCj4gKwl7IElQUF9T
+UkNEU1RfRk9STUFUKFlVWVYsIE5VTEwpIH0sCj4gKwl7IElQUF9TUkNEU1RfRk9STUFUKFlWWVUs
+IE5VTEwpIH0sCj4gKwl7IElQUF9TUkNEU1RfRk9STUFUKFlVVjQyMCwgTlVMTCkgfSwKPiArCXsg
+SVBQX1NSQ0RTVF9GT1JNQVQoWVZVNDIwLCBOVUxMKSB9LAo+ICsJeyBJUFBfU1JDRFNUX0ZPUk1B
+VChZVVY0MjIsIE5VTEwpIH0sCj4gKwl7IH0KPiArfTsKPiAgIAo+IC0JY2ZnID0gZ3NjX3JlYWQo
+R1NDX0VOQUJMRSk7Cj4gLQljZmcgJj0gfkdTQ19FTkFCTEVfT047Cj4gLQlnc2Nfd3JpdGUoY2Zn
+LCBHU0NfRU5BQkxFKTsKPiArc3RhdGljIGludCBnc2NfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYs
+IHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKPiArewo+ICsJc3RydWN0IGdzY19j
+b250ZXh0ICpjdHggPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiArCXN0cnVjdCBkcm1fZGV2aWNl
+ICpkcm1fZGV2ID0gZGF0YTsKPiArCXN0cnVjdCBleHlub3NfZHJtX2lwcCAqaXBwID0gJmN0eC0+
+aXBwOwo+ICsKPiArCWN0eC0+ZHJtX2RldiA9IGRybV9kZXY7Cj4gKwlkcm1faW9tbXVfYXR0YWNo
+X2RldmljZShkcm1fZGV2LCBkZXYpOwo+ICsKPiArCWV4eW5vc19kcm1faXBwX3JlZ2lzdGVyKGRy
+bV9kZXYsIGlwcCwgJmlwcF9mdW5jcywKPiArCQkJICAgRFJNX0VYWU5PU19JUFBfQ0FQX0NST1Ag
+fCBEUk1fRVhZTk9TX0lQUF9DQVBfUk9UQVRFIHwKPiArCQkJICAgRFJNX0VYWU5PU19JUFBfQ0FQ
+X1NDQUxFIHwgRFJNX0VYWU5PU19JUFBfQ0FQX0NPTlZFUlQsCj4gKwkJCSAgIGdzY19mb3JtYXRz
+LCAiZ3NjIik7Cj4gKwo+ICsJZGV2X2luZm8oZGV2LCAiVGhlIGV4eW5vcyBnc2NhbGVyIGlzIHBy
+b2JlZCBzdWNjZXNzZnVsbHlcbiIpOwo+ICsKPiArCXJldHVybiAwOwo+ICAgfQo+ICAgCj4gK3N0
+YXRpYyB2b2lkIGdzY191bmJpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICpt
+YXN0ZXIsCj4gKwkJCXZvaWQgKmRhdGEpCj4gK3sKPiArCXN0cnVjdCBnc2NfY29udGV4dCAqY3R4
+ID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gKwo+ICsJZHJtX2lvbW11X2RldGFjaF9kZXZpY2Uo
+Y3R4LT5kcm1fZGV2LCBjdHgtPmRldik7Cj4gK30KPiArCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qg
+Y29tcG9uZW50X29wcyBnc2NfY29tcG9uZW50X29wcyA9IHsKPiArCS5iaW5kCT0gZ3NjX2JpbmQs
+Cj4gKwkudW5iaW5kID0gZ3NjX3VuYmluZCwKPiArfTsKPiArCj4gKwo+ICAgc3RhdGljIGludCBn
+c2NfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgIHsKPiAgIAlzdHJ1Y3Qg
+ZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Owo+ICAgCXN0cnVjdCBnc2NfY29udGV4dCAqY3R4Owo+
+ICAgCXN0cnVjdCByZXNvdXJjZSAqcmVzOwo+IC0Jc3RydWN0IGV4eW5vc19kcm1faXBwZHJ2ICpp
+cHBkcnY7Cj4gICAJaW50IHJldDsKPiAgIAo+ICAgCWN0eCA9IGRldm1fa3phbGxvYyhkZXYsIHNp
+emVvZigqY3R4KSwgR0ZQX0tFUk5FTCk7Cj4gICAJaWYgKCFjdHgpCj4gICAJCXJldHVybiAtRU5P
+TUVNOwo+ICAgCj4gLQlpZiAoZGV2LT5vZl9ub2RlKSB7Cj4gLQkJY3R4LT5zeXNyZWcgPSBzeXNj
+b25fcmVnbWFwX2xvb2t1cF9ieV9waGFuZGxlKGRldi0+b2Zfbm9kZSwKPiAtCQkJCQkJCSJzYW1z
+dW5nLHN5c3JlZyIpOwo+IC0JCWlmIChJU19FUlIoY3R4LT5zeXNyZWcpKSB7Cj4gLQkJCWRldl93
+YXJuKGRldiwgImZhaWxlZCB0byBnZXQgc3lzdGVtIHJlZ2lzdGVyLlxuIik7Cj4gLQkJCWN0eC0+
+c3lzcmVnID0gTlVMTDsKPiAtCQl9Cj4gLQl9Cj4gKwljdHgtPmRldiA9IGRldjsKPiAgIAo+ICAg
+CS8qIGNsb2NrIGNvbnRyb2wgKi8KPiAgIAljdHgtPmdzY19jbGsgPSBkZXZtX2Nsa19nZXQoZGV2
+LCAiZ3NjbCIpOwo+IEBAIC0xNjk5LDggKzEyNjAsOCBAQCBzdGF0aWMgaW50IGdzY19wcm9iZShz
+dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAgCX0KPiAgIAo+ICAgCWN0eC0+aXJxID0g
+cmVzLT5zdGFydDsKPiAtCXJldCA9IGRldm1fcmVxdWVzdF90aHJlYWRlZF9pcnEoZGV2LCBjdHgt
+PmlycSwgTlVMTCwgZ3NjX2lycV9oYW5kbGVyLAo+IC0JCUlSUUZfT05FU0hPVCwgImRybV9nc2Mi
+LCBjdHgpOwo+ICsJcmV0ID0gZGV2bV9yZXF1ZXN0X2lycShkZXYsIGN0eC0+aXJxLCBnc2NfaXJx
+X2hhbmRsZXIsIDAsCj4gKwkJCSAgICAgICBkZXZfbmFtZShkZXYpLCBjdHgpOwo+ICAgCWlmIChy
+ZXQgPCAwKSB7Cj4gICAJCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIHJlcXVlc3QgaXJxLlxuIik7
+Cj4gICAJCXJldHVybiByZXQ7Cj4gQEAgLTE3MDksMzggKzEyNzAsMTkgQEAgc3RhdGljIGludCBn
+c2NfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgIAkvKiBjb250ZXh0IGlu
+aXRhaWxpemF0aW9uICovCj4gICAJY3R4LT5pZCA9IHBkZXYtPmlkOwo+ICAgCj4gLQlpcHBkcnYg
+PSAmY3R4LT5pcHBkcnY7Cj4gLQlpcHBkcnYtPmRldiA9IGRldjsKPiAtCWlwcGRydi0+b3BzW0VY
+WU5PU19EUk1fT1BTX1NSQ10gPSAmZ3NjX3NyY19vcHM7Cj4gLQlpcHBkcnYtPm9wc1tFWFlOT1Nf
+RFJNX09QU19EU1RdID0gJmdzY19kc3Rfb3BzOwo+IC0JaXBwZHJ2LT5jaGVja19wcm9wZXJ0eSA9
+IGdzY19pcHBkcnZfY2hlY2tfcHJvcGVydHk7Cj4gLQlpcHBkcnYtPnJlc2V0ID0gZ3NjX2lwcGRy
+dl9yZXNldDsKPiAtCWlwcGRydi0+c3RhcnQgPSBnc2NfaXBwZHJ2X3N0YXJ0Owo+IC0JaXBwZHJ2
+LT5zdG9wID0gZ3NjX2lwcGRydl9zdG9wOwo+IC0JcmV0ID0gZ3NjX2luaXRfcHJvcF9saXN0KGlw
+cGRydik7Cj4gLQlpZiAocmV0IDwgMCkgewo+IC0JCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGlu
+aXQgcHJvcGVydHkgbGlzdC5cbiIpOwo+IC0JCXJldHVybiByZXQ7Cj4gLQl9Cj4gLQo+IC0JRFJN
+X0RFQlVHX0tNUygiaWRbJWRdaXBwZHJ2WyVwS11cbiIsIGN0eC0+aWQsIGlwcGRydik7Cj4gLQo+
+IC0JbXV0ZXhfaW5pdCgmY3R4LT5sb2NrKTsKPiAgIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2
+LCBjdHgpOwo+ICAgCj4gICAJcG1fcnVudGltZV9lbmFibGUoZGV2KTsKPiAgIAo+IC0JcmV0ID0g
+ZXh5bm9zX2RybV9pcHBkcnZfcmVnaXN0ZXIoaXBwZHJ2KTsKPiAtCWlmIChyZXQgPCAwKSB7Cj4g
+LQkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gcmVnaXN0ZXIgZHJtIGdzYyBkZXZpY2UuXG4iKTsK
+PiAtCQlnb3RvIGVycl9pcHBkcnZfcmVnaXN0ZXI7Cj4gLQl9Cj4gKwlyZXQgPSBjb21wb25lbnRf
+YWRkKGRldiwgJmdzY19jb21wb25lbnRfb3BzKTsKPiArCWlmIChyZXQpCj4gKwkJZ290byBlcnJf
+cG1fZGlzOwo+ICAgCj4gICAJZGV2X2luZm8oZGV2LCAiZHJtIGdzYyByZWdpc3RlcmVkIHN1Y2Nl
+c3NmdWxseS5cbiIpOwo+ICAgCj4gICAJcmV0dXJuIDA7Cj4gICAKPiAtZXJyX2lwcGRydl9yZWdp
+c3RlcjoKPiArZXJyX3BtX2RpczoKPiAgIAlwbV9ydW50aW1lX2Rpc2FibGUoZGV2KTsKPiAgIAly
+ZXR1cm4gcmV0Owo+ICAgfQo+IEBAIC0xNzQ4LDExICsxMjkwLDYgQEAgc3RhdGljIGludCBnc2Nf
+cHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgIHN0YXRpYyBpbnQgZ3NjX3Jl
+bW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAgewo+ICAgCXN0cnVjdCBkZXZp
+Y2UgKmRldiA9ICZwZGV2LT5kZXY7Cj4gLQlzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGdldF9n
+c2NfY29udGV4dChkZXYpOwo+IC0Jc3RydWN0IGV4eW5vc19kcm1faXBwZHJ2ICppcHBkcnYgPSAm
+Y3R4LT5pcHBkcnY7Cj4gLQo+IC0JZXh5bm9zX2RybV9pcHBkcnZfdW5yZWdpc3RlcihpcHBkcnYp
+Owo+IC0JbXV0ZXhfZGVzdHJveSgmY3R4LT5sb2NrKTsKPiAgIAo+ICAgCXBtX3J1bnRpbWVfc2V0
+X3N1c3BlbmRlZChkZXYpOwo+ICAgCXBtX3J1bnRpbWVfZGlzYWJsZShkZXYpOwo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmggYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmgKPiBkZWxldGVkIGZpbGUgbW9kZSAxMDA2NDQK
+PiBpbmRleCAyOWVjMWM1ZWZjZjIuLjAwMDAwMDAwMDAwMAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9nc2MuaAo+ICsrKyAvZGV2L251bGwKPiBAQCAtMSwyNCArMCww
+IEBACj4gLS8qCj4gLSAqIENvcHlyaWdodCAoYykgMjAxMiBTYW1zdW5nIEVsZWN0cm9uaWNzIENv
+LiwgTHRkLgo+IC0gKgo+IC0gKiBBdXRob3JzOgo+IC0gKglFdW5jaHVsIEtpbSA8Y2h1bHNwcm8u
+a2ltQHNhbXN1bmcuY29tPgo+IC0gKglKaW55b3VuZyBKZW9uIDxqeTAuamVvbkBzYW1zdW5nLmNv
+bT4KPiAtICoJU2FuZ21pbiBMZWUgPGxzbWluLmxlZUBzYW1zdW5nLmNvbT4KPiAtICoKPiAtICog
+VGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlICBpdCBh
+bmQvb3IgbW9kaWZ5IGl0Cj4gLSAqIHVuZGVyICB0aGUgdGVybXMgb2YgIHRoZSBHTlUgR2VuZXJh
+bCAgUHVibGljIExpY2Vuc2UgYXMgcHVibGlzaGVkIGJ5IHRoZQo+IC0gKiBGcmVlIFNvZnR3YXJl
+IEZvdW5kYXRpb247ICBlaXRoZXIgdmVyc2lvbiAyIG9mIHRoZSAgTGljZW5zZSwgb3IgKGF0IHlv
+dXIKPiAtICogb3B0aW9uKSBhbnkgbGF0ZXIgdmVyc2lvbi4KPiAtICovCj4gLQo+IC0jaWZuZGVm
+IF9FWFlOT1NfRFJNX0dTQ19IXwo+IC0jZGVmaW5lIF9FWFlOT1NfRFJNX0dTQ19IXwo+IC0KPiAt
+LyoKPiAtICogVE9ETwo+IC0gKiBGSU1EIG91dHB1dCBpbnRlcmZhY2Ugbm90aWZpZXIgY2FsbGJh
+Y2suCj4gLSAqIE1peGVyIG91dHB1dCBpbnRlcmZhY2Ugbm90aWZpZXIgY2FsbGJhY2suCj4gLSAq
+Lwo+IC0KPiAtI2VuZGlmIC8qIF9FWFlOT1NfRFJNX0dTQ19IXyAqLwoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
