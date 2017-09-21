@@ -1,43 +1,88 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/5] dt-bindings: Explicitely mark Exynos HDMI DDC node
- as deprecated
-Date: Wed, 20 Sep 2017 15:52:26 -0500
-Message-ID: <20170920205226.pg6rjw27h3tvhqzs@rob-hp-laptop>
-References: <1505466683-32148-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170915091139eucas1p2d3ee5da70946b4f377242642af117635@eucas1p2.samsung.com>
- <1505466683-32148-2-git-send-email-m.szyprowski@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 8/8] PM / devfreq: exynos-bus: Register cooling device
+Date: Thu, 21 Sep 2017 09:33:52 +0900
+Message-ID: <1505954032-3327-9-git-send-email-cw00.choi@samsung.com>
+References: <1505954032-3327-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20170921003356epcas1p34bf88ccd1b9630577a83f14f0c291b1d@epcas1p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1505466683-32148-2-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1505954032-3327-1-git-send-email-cw00.choi@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, inki.dae@samsung.com, Kukjin Kim <kgene@kernel.org>, chanwoo@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBTZXAgMTUsIDIwMTcgYXQgMTE6MTE6MTlBTSArMDIwMCwgTWFyZWsgU3p5cHJvd3Nr
-aSB3cm90ZToKPiBDb21taXQgMmI3NjgxMzI2ZGMyICgiZHJtL2V4eW5vczogaGRtaTogcmVtb3Zl
-IHRoZSBpMmMgZHJpdmVycyBhbmQgdXNlIikKPiBtZXJnZWQgdG8gdjMuMTUga2VybmVsIGFkZGVk
-IGEgcmVxdWlyZWQgJ2RkYycgcHJvcGVydHkgdG8gRXh5bm9zIEhETUkKPiBkZXZpY2UgdHJlZSBi
-aW5kaW5ncywgd2hpY2ggc2hvdWxkIHBvaW50IHRvIGkyYyBidXMgdXNlZCBmb3IgaGFuZGxpbmcg
-RERDCj4gKG1haW5seSByZWFkaW5nIGRpc3BsYXkncyBFRElEIGluZm9ybWF0aW9uKS4gU2luY2Ug
-dGhhdCBjb21taXQKPiBzZXBhcmF0ZSBub2RlIHdpdGggInNhbXN1bmcsZXh5bm9zNDIxMC1oZG1p
-ZGRjIiBjb21wYXRpYmxlIGlzIG5vIGxvbmdlcgo+IG5lZWRlZCwgc28gbWFyayBpdCBmaW5hbGx5
-IGFzIGRlcHJlY2F0ZWQuCj4gCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5z
-enlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWlkZGMudHh0IHwgNSArKysrLQo+ICAx
-IGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpBY2tlZC1ieTog
-Um9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This patch registers the Exynos Bus-Frequency scaling device
+as a cooling device of thermal management.
+
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/devfreq/Kconfig      |  1 +
+ drivers/devfreq/exynos-bus.c | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index 6a172d338f6d..eb8128e08b2c 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -81,6 +81,7 @@ config ARM_EXYNOS_BUS_DEVFREQ
+ 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+ 	select DEVFREQ_GOV_PASSIVE
+ 	select DEVFREQ_EVENT_EXYNOS_PPMU
++	select DEVFREQ_THERMAL
+ 	select PM_DEVFREQ_EVENT
+ 	select PM_OPP
+ 	help
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index c25658b26598..200ca0d11834 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -15,6 +15,7 @@
+ #include <linux/clk.h>
+ #include <linux/devfreq.h>
+ #include <linux/devfreq-event.h>
++#include <linux/devfreq_cooling.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
+ #include <linux/module.h>
+@@ -41,6 +42,8 @@ struct exynos_bus {
+ 	struct clk *clk;
+ 	unsigned int voltage_tolerance;
+ 	unsigned int ratio;
++
++	struct thermal_cooling_device *cdev;
+ };
+ 
+ /*
+@@ -468,6 +471,14 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
++	/* Register devfreq cooling device */
++	bus->cdev = of_devfreq_cooling_register(np, bus->devfreq);
++	if (IS_ERR(bus->cdev) < 0) {
++		dev_err(dev, "failed to register cooling device\n");
++		ret = PTR_ERR(bus->cdev);
++		goto err;
++	}
++
+ 	goto out;
+ passive:
+ 	/* Initialize the struct profile and governor data for passive device */
+-- 
+1.9.1
