@@ -1,75 +1,100 @@
-From: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
-Subject: [PATCH] pinctrl: samsung: add pinctrl_force_sleep() for "sleep"
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: add pinctrl_force_sleep() for "sleep"
  pinctrl state
-Date: Thu, 21 Sep 2017 21:32:29 +0900
-Message-ID: <006801d332d5$b0ca09d0$125e1d70$@samsung.com>
+Date: Fri, 22 Sep 2017 01:14:45 +0900
+Message-ID: <CA+Ln22GXr4TRDvgSm1HWQbucBjJ8c=dfnTOARXyM4EZU64QQww@mail.gmail.com>
 References: <CGME20170921123230epcas1p4d3c1de108af7d34053d2c4f40dd42119@epcas1p4.samsung.com>
+ <006801d332d5$b0ca09d0$125e1d70$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-language: ko
+In-Reply-To: <006801d332d5$b0ca09d0$125e1d70$@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
-To: tomasz.figa@gmail.com, krzk@kernel.org, s.nawrocki@samsung.com
-Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+To: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds pinctrl_for_sleep() in samsung_pinctrl_suspend()
-to support configuration of "sleep" pinctrl state.
+Hi Youngmin,
 
-For example, we can configure "sleep" pinctrl state of "gpf1-6"
-as "INPUT, PULL DOWN" by configuring power down mode register.
+2017-09-21 21:32 GMT+09:00 =EB=82=A8=EC=98=81=EB=AF=BC <youngmin.nam@samsun=
+g.com>:
+> This patch adds pinctrl_for_sleep() in samsung_pinctrl_suspend()
+> to support configuration of "sleep" pinctrl state.
+>
+> For example, we can configure "sleep" pinctrl state of "gpf1-6"
+> as "INPUT, PULL DOWN" by configuring power down mode register.
+>
+> &pinctrl_5 {
+>         pinctrl-names =3D "default","sleep";
+>         pinctrl-0 =3D <&initial5>;
+>         pinctrl-1 =3D <&sleep5>;
+>
+>         initial5: initial-state {
+>                 samsung,pins =3D gpf1-6;
+>                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+>         };
+>         sleep5: sleep-state {
+>                 samsung,pins =3D gpf1-6;
+>                 samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_INPUT>;
+>                 samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_DOWN>;
 
-&pinctrl_5 {
-	pinctrl-names = "default","sleep";
-	pinctrl-0 = <&initial5>;
-	pinctrl-1 = <&sleep5>;
+This isn't a very good example, because pin-con-pdn and pin-pud-pdn
+are used to program dedicated sleep state registers in the pin
+controller and they can be programmed at any time. Typically one would
+include them in "default" state.
 
-	initial5: initial-state {
-		samsung,pins = gpf1-6;
-		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-	};
-	sleep5: sleep-state {
-		samsung,pins = gpf1-6;
-		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_INPUT>;
-		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_DOWN>;
-	};
-};
+As for pins which don't have dedicated sleep state registers, i.e. the
+alive banks, which retain their value, the DT node of device
+associated with the pins would have "sleep" pinctrl state and its
+driver would activate it on suspend.
 
-Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+The only remaining use case would be pins in alive banks not
+associated with any device, but I can't imagine any practical case
+that would need to change the value on suspend in such case.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index e04f7fe0a65d..b4d12f8db475 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1099,6 +1099,11 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
- {
- 	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
- 	int i;
-+	int ret;
-+
-+	ret = pinctrl_force_sleep(drvdata->pctl_dev);
-+	if (ret)
-+		dev_err(dev, "could not set sleep pinstate %d\n", ret);
- 
- 	for (i = 0; i < drvdata->nr_banks; i++) {
- 		struct samsung_pin_bank *bank = &drvdata->pin_banks[i];
-@@ -1187,6 +1192,11 @@ static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
- 	if (drvdata->retention_ctrl && drvdata->retention_ctrl->disable)
- 		drvdata->retention_ctrl->disable(drvdata);
- 
-+	/* For changing state without writing register. */
-+	if (!IS_ERR(drvdata->pctl_dev->p) &&
-+	    !IS_ERR(drvdata->pctl_dev->hog_default))
-+		drvdata->pctl_dev->p->state = drvdata->pctl_dev->hog_default;
-+
- 	return 0;
- }
- 
--- 
-2.13.0
+Do you have an example of a real use case for this patch?
 
+>         };
+> };
+>
+> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/=
+samsung/pinctrl-samsung.c
+> index e04f7fe0a65d..b4d12f8db475 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1099,6 +1099,11 @@ static int __maybe_unused samsung_pinctrl_suspend(=
+struct device *dev)
+>  {
+>         struct samsung_pinctrl_drv_data *drvdata =3D dev_get_drvdata(dev)=
+;
+>         int i;
+> +       int ret;
+> +
+> +       ret =3D pinctrl_force_sleep(drvdata->pctl_dev);
+> +       if (ret)
+> +               dev_err(dev, "could not set sleep pinstate %d\n", ret);
+>
+>         for (i =3D 0; i < drvdata->nr_banks; i++) {
+>                 struct samsung_pin_bank *bank =3D &drvdata->pin_banks[i];
+> @@ -1187,6 +1192,11 @@ static int __maybe_unused samsung_pinctrl_resume(s=
+truct device *dev)
+>         if (drvdata->retention_ctrl && drvdata->retention_ctrl->disable)
+>                 drvdata->retention_ctrl->disable(drvdata);
+>
+> +       /* For changing state without writing register. */
+> +       if (!IS_ERR(drvdata->pctl_dev->p) &&
+> +           !IS_ERR(drvdata->pctl_dev->hog_default))
+> +               drvdata->pctl_dev->p->state =3D drvdata->pctl_dev->hog_de=
+fault;
 
+How is this supposed to work? The pins were reconfigured at suspend,
+where are they restored back to the values before suspend?
+
+Best regards,
+Tomasz
