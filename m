@@ -1,100 +1,52 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: add pinctrl_force_sleep() for "sleep"
- pinctrl state
-Date: Fri, 22 Sep 2017 01:14:45 +0900
-Message-ID: <CA+Ln22GXr4TRDvgSm1HWQbucBjJ8c=dfnTOARXyM4EZU64QQww@mail.gmail.com>
-References: <CGME20170921123230epcas1p4d3c1de108af7d34053d2c4f40dd42119@epcas1p4.samsung.com>
- <006801d332d5$b0ca09d0$125e1d70$@samsung.com>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: dts: exynos: Add dwc3 SUSPHY quirk
+Date: Fri, 22 Sep 2017 10:18:54 +0200
+Message-ID: <894725fe-595b-45dc-e567-41caf48a012b@samsung.com>
+References: <1505728934-6200-1-git-send-email-andrzej.p@samsung.com>
+        <CGME20170918100230eucas1p29fae00c53f1106af1961a6e269740b2f@eucas1p2.samsung.com>
+        <1505728934-6200-2-git-send-email-andrzej.p@samsung.com>
+        <20170919174038.2sspjvadt6ggka65@kozik-lap>
+        <fcefaaab-b99c-a8cc-9684-98cc3c4d803e@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <006801d332d5$b0ca09d0$125e1d70$@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:50206 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751704AbdIVITI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 22 Sep 2017 04:19:08 -0400
+In-reply-to: <fcefaaab-b99c-a8cc-9684-98cc3c4d803e@arm.com>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Robin Murphy <robin.murphy@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.org>, Felipe Balbi <balbi@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Youngmin,
+Hi,
 
-2017-09-21 21:32 GMT+09:00 =EB=82=A8=EC=98=81=EB=AF=BC <youngmin.nam@samsun=
-g.com>:
-> This patch adds pinctrl_for_sleep() in samsung_pinctrl_suspend()
-> to support configuration of "sleep" pinctrl state.
->
-> For example, we can configure "sleep" pinctrl state of "gpf1-6"
-> as "INPUT, PULL DOWN" by configuring power down mode register.
->
-> &pinctrl_5 {
->         pinctrl-names =3D "default","sleep";
->         pinctrl-0 =3D <&initial5>;
->         pinctrl-1 =3D <&sleep5>;
->
->         initial5: initial-state {
->                 samsung,pins =3D gpf1-6;
->                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
->         };
->         sleep5: sleep-state {
->                 samsung,pins =3D gpf1-6;
->                 samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_INPUT>;
->                 samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_DOWN>;
+W dniu 19.09.2017 o 20:10, Robin Murphy pisze:
+> On 19/09/17 18:40, Krzysztof Kozlowski wrote:
+>> On Mon, Sep 18, 2017 at 12:02:13PM +0200, Andrzej Pietrasiewicz wrote:
+>>> Odroid XU4 board does not enumerate SuperSpeed devices.
+>>> This patch makes exynos5 series chips use USB SUSPHY quirk,
+>>> which solves the problem.
+>>>
+>>> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+>>> ---
+>>>   arch/arm/boot/dts/exynos54xx.dtsi | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>
+>> Makes sense to me... was it tested also on XU3 and XU?
+> 
+> Well, it at least doesn't make USB3 on my XU any more or less broken
+> than it was before ;) (both ports still report an over-current condition
+> even with nothing plugged in - I suspect there's probably still some
+> pinctrl/regulator stuff missing)
+> 
+> Robin.
+> 
+Similar with XU3: nothing is any more or less broken with this patch
+compared to the situation without the patch.
 
-This isn't a very good example, because pin-con-pdn and pin-pud-pdn
-are used to program dedicated sleep state registers in the pin
-controller and they can be programmed at any time. Typically one would
-include them in "default" state.
-
-As for pins which don't have dedicated sleep state registers, i.e. the
-alive banks, which retain their value, the DT node of device
-associated with the pins would have "sleep" pinctrl state and its
-driver would activate it on suspend.
-
-The only remaining use case would be pins in alive banks not
-associated with any device, but I can't imagine any practical case
-that would need to change the value on suspend in such case.
-
-Do you have an example of a real use case for this patch?
-
->         };
-> };
->
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/=
-samsung/pinctrl-samsung.c
-> index e04f7fe0a65d..b4d12f8db475 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -1099,6 +1099,11 @@ static int __maybe_unused samsung_pinctrl_suspend(=
-struct device *dev)
->  {
->         struct samsung_pinctrl_drv_data *drvdata =3D dev_get_drvdata(dev)=
-;
->         int i;
-> +       int ret;
-> +
-> +       ret =3D pinctrl_force_sleep(drvdata->pctl_dev);
-> +       if (ret)
-> +               dev_err(dev, "could not set sleep pinstate %d\n", ret);
->
->         for (i =3D 0; i < drvdata->nr_banks; i++) {
->                 struct samsung_pin_bank *bank =3D &drvdata->pin_banks[i];
-> @@ -1187,6 +1192,11 @@ static int __maybe_unused samsung_pinctrl_resume(s=
-truct device *dev)
->         if (drvdata->retention_ctrl && drvdata->retention_ctrl->disable)
->                 drvdata->retention_ctrl->disable(drvdata);
->
-> +       /* For changing state without writing register. */
-> +       if (!IS_ERR(drvdata->pctl_dev->p) &&
-> +           !IS_ERR(drvdata->pctl_dev->hog_default))
-> +               drvdata->pctl_dev->p->state =3D drvdata->pctl_dev->hog_de=
-fault;
-
-How is this supposed to work? The pins were reconfigured at suspend,
-where are they restored back to the values before suspend?
-
-Best regards,
-Tomasz
+Andrzej
