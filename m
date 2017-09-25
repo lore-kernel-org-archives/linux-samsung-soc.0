@@ -1,73 +1,65 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add power button for Odroid XU3/4
-Date: Mon, 25 Sep 2017 01:22:40 +0530
-Message-ID: <CANAwSgREuPj5czY_Pg6NL4vxDHaWx32=4LhMWWY-=HqtCZv4zA@mail.gmail.com>
-References: <CGME20170912115804eucas1p1959db12366143b87d14725e227520854@eucas1p1.samsung.com>
- <1505217474-14725-1-git-send-email-m.szyprowski@samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: Re: [PATCH v2] crypto: s5p-sss: Add HASH support for Exynos
+Date: Mon, 25 Sep 2017 14:08:34 +0200
+Message-ID: <0d5028d7-6559-abe5-0825-01da230ce01c@partner.samsung.com>
+References: <CGME20170915175007eucas1p2912e7a9e1b44e976f96a53d8c8e442ec@eucas1p2.samsung.com>
+        <ee7efd48-434b-e07f-b391-9ceeee980e3e@partner.samsung.com>
+        <20170919190341.5vi5icaxnmynywre@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33969 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752758AbdIXTxB (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 24 Sep 2017 15:53:01 -0400
-Received: by mail-oi0-f66.google.com with SMTP id v188so2518198oia.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Sep 2017 12:53:01 -0700 (PDT)
-In-Reply-To: <1505217474-14725-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20170919190341.5vi5icaxnmynywre@kozik-lap>
+Content-language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Brian Kim <brian.kim@hardkernel.com>
 
-Hi Marek/Krzysztof,
 
-On 12 September 2017 at 17:27, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> From: Brian Kim <brian.kim@hardkernel.com>
->
-> The power button (SW2) on Odroid XU3/4 is connected to the PWRON pin
-> of the S2MPS11 PMIC.
->
-> The S2MPS11 datasheet says that ONOB pin operates as 'PWRON key active
-> low signal'. In fact, S2MPS11 PMIC acts as a 16ms debouce filter and
-> signal inverter, thus effectively repeating PWRON (active high) to ONOB
-> pin (active low).
->
-> ONOB PMIC pin is then connected to XEINT3 SoC pin, so we get the state
-> of the power button on the gpx0-3 GPIO.
->
-> This patch adds device-tree bindings for the power button of Odroid
-> XU3/4 boards.
->
-> Signed-off-by: Brian Kim <brian.kim@hardkernel.com>
-> [mszyprow: extended commit message, added comments and fixed minor
->  issues in the dts]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Changelog:
->
-> v2: fixed minor issues pointed by Krzysztof Kozlowski:
-> - added comments to dts
-> - extended commit message
-> - removed useless interrupts property
-> - used proper macros for gpios
-> - removed gpio prefix
->
-> v1: initial submission
-> https://patchwork.kernel.org/patch/9605023/
+On 19.09.2017 21:03, Krzysztof Kozlowski wrote:
+> On Fri, Sep 15, 2017 at 07:50:06PM +0200, Kamil Konieczny wrote:
+>> Add support for MD5, SHA1, SHA256 hash algorithms for Exynos HW.
+>> It uses the crypto framework asynchronous hash api.
+>> It is based on omap-sham.c driver.
+>> S5P has some HW differencies and is not implemented.
+>>
+>> Modifications in s5p-sss: [...]
 
-[snip]
+Below I will address only 'const' questions.
 
-Is their another way to reset the S2MPS11 PMIC during software reboot.
-what I mean is the clear all the previously programmed output voltage
-in the internal registers.
-the reason I am asking this all the peripherals attached to the board
-do not reset to initial states.
-for example scdard/emmc and usb ports do not reset when we performer reboot.
+>>[...]
+>> +	struct crypto_queue		hash_queue;
+>> +	struct ahash_request		*hash_req;
+>> +	struct scatterlist		*hash_sg_iter;
+>> +	int				hash_sg_cnt;
+>> +
+>> +	struct samsung_aes_variant	*pdata;
+> 
+> This should be const as pdata should not be modified.
 
-What would be the correct way to so reset of S2MPS11 PMIC during
-software reboot.
+I will remove this.
 
-Best Regards
--Anand
+>>  [...]
+>> -static const struct samsung_aes_variant s5p_aes_data = {
+>> +static struct samsung_aes_variant s5p_aes_data = {
+> 
+> Why do you need to drop the const? This should not be modified.
+
+OK, I will not modify this.
+
+> [...]
+>> [...]
+>> + */
+>> +static struct sss_hash_algs_info exynos_hash_algs_info[] = {
+> 
+> Can it be const?
+
+No, it contains '.registered' var, used at probe/error path/remove.
+
+>>[...]
+
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
