@@ -1,295 +1,242 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3] drm: exynos: Add driver for HDMI audio interface
-Date: Tue, 26 Sep 2017 16:17:49 +0200
-Message-ID: <1506435469-10591-1-git-send-email-s.nawrocki@samsung.com>
-References: <CGME20170926141814epcas1p1923ab779847932395bf2c2899291dfcd@epcas1p1.samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: Re: [PATCH v2] crypto: s5p-sss: Add HASH support for Exynos
+Date: Tue, 26 Sep 2017 17:54:42 +0200
+Message-ID: <fe4298c9-4f90-b027-9351-a40837b909c4@partner.samsung.com>
+References: <CGME20170915175007eucas1p2912e7a9e1b44e976f96a53d8c8e442ec@eucas1p2.samsung.com>
+        <ee7efd48-434b-e07f-b391-9ceeee980e3e@partner.samsung.com>
+        <20170919190341.5vi5icaxnmynywre@kozik-lap>
+        <8924d30c-6581-28f3-c223-c2a24c491887@partner.samsung.com>
+        <20170925182713.ti4esyznyrjr7xh7@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, jcsing.lee@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20170925182713.ti4esyznyrjr7xh7@kozik-lap>
+Content-language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIGhkbWktY29kZWMgaW50ZXJmYWNlIGFkZGVkIGluIHRoaXMgcGF0Y2ggaXMgcmVxdWlyZWQg
-dG8gcHJvcGVybHkKc3VwcG9ydCBIRE1JIGF1ZGlvLiBDdXJyZW50bHkgdGhlIGF1ZGlvIHBhcnQg
-b2YgdGhlIFNvQyBpbnRlcm5hbApIRE1JIHRyYW5zbWl0dGVyIGlzIGNvbmZpZ3VyZWQgd2l0aCBm
-aXhlZCB2YWx1ZXMsIHdoaWNoIG1ha2VzIEhETUkKYXVkaW8gd29ya2luZyBieSBjaGFuY2UsIG9u
-bHkgb24gYm9hcmRzIGhhdmluZyBhbiBleHRlcm5hbCBhdWRpbwpjb2RlYyBjb25uZWN0ZWQgaW4g
-cGFyYWxsZWwgd2l0aCB0aGUgSERNSSBhdWRpbyB0cmFuc21pdHRlcidzIGlucHV0CkkyUyBpbnRl
-cmZhY2UuCgpTaWduZWQtb2ZmLWJ5OiBTeWx3ZXN0ZXIgTmF3cm9ja2kgPHMubmF3cm9ja2lAc2Ft
-c3VuZy5jb20+ClJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29t
-PgoKLS0tClRlc3RlZCBvbiBPZHJvaWQgWFUzIGFuZCBPZHJvaWQgWFU0IHdpdGggVWJ1bnR1IDE0
-LjA0LgoKQ2hhbmdlcyBzaW5jZSB2MjoKIC0gdTggcmVwbGFjZWQgd2l0aCBib29sIHR5cGUsCiAt
-IHRoZSAgSERNSSBjb2RlYyBpZWMuc3RhdHVzIGRhdGEgdXNlZCBkaXJlY3RseSBmb3Igc2V0dGlu
-ZyB1cAogICB0aGUgSERNSSBjb250cm9sbGVyIHJlZ2lzdGVycyByYXRoZXIgdGhhbiB1c2luZyBo
-YXJkIGNvZGVkCiAgIGNvbnN0YW50cywKIC0gY29uc3RhbnRzIHVzZWQgZm9yIGNvbmZpZ3VyaW5n
-IHRoZSBIRE1JX0FVSV9DT04gcmVnaXN0ZXIKICAgaW5zdGVhZCBvZiBwbGFpbiBudW1iZXJzLAog
-LSBpZi9JU19FUlIvcmV0dXJuIHJlcGxhY2VkIHdpdGggUFRSX0VSUl9PUl9aRVJPKCkuCgpDaGFu
-Z2VzIHNpbmNlIHYxOgogLSByZWJhc2VkIG9udG8gdjQuMTQtcmMxIGFuZCBhZGFwdGVkIGxvY2tp
-bmcKCkNoYW5nZXMgc2luY2UgUkZDIHZlcnNpb246CiAtIGZpeGVkIGhkbWktY29kZWMgbG9ja2lu
-ZyBpc3N1ZQogLSBhZGRlZCBhIGNvbW1lbnQgZG9jdW1lbnRpbmcgc3RydWN0IGhkbWlfY29udGV4
-OjptdXRleAotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZyAgICAgICB8ICAgMSAr
-CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgfCAyNTMgKysrKysrKysrKysr
-KysrKysrKysrKysrKystLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1oZG1p
-LmggICB8ICAgOCArLQogMyBmaWxlcyBjaGFuZ2VkLCAxOTcgaW5zZXJ0aW9ucygrKSwgNjUgZGVs
-ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnCmluZGV4IDMwNWRjM2QuLjVhN2M5ZDggMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZworKysgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL0tjb25maWcKQEAgLTMsNiArMyw3IEBAIGNvbmZpZyBEUk1fRVhZTk9TCiAJ
-ZGVwZW5kcyBvbiBPRiAmJiBEUk0gJiYgKEFSQ0hfUzNDNjRYWCB8fCBBUkNIX0VYWU5PUyB8fCBB
-UkNIX01VTFRJUExBVEZPUk0pCiAJc2VsZWN0IERSTV9LTVNfSEVMUEVSCiAJc2VsZWN0IFZJREVP
-TU9ERV9IRUxQRVJTCisJc2VsZWN0IFNORF9TT0NfSERNSV9DT0RFQyBpZiBTTkRfU09DCiAJaGVs
-cAogCSAgQ2hvb3NlIHRoaXMgb3B0aW9uIGlmIHlvdSBoYXZlIGEgU2Ftc3VuZyBTb0MgRVhZTk9T
-IGNoaXBzZXQuCiAJICBJZiBNIGlzIHNlbGVjdGVkIHRoZSBtb2R1bGUgd2lsbCBiZSBjYWxsZWQg
-ZXh5bm9zZHJtLgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRt
-aS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCmluZGV4IDIxNGZhNWUu
-LmQyYjM4OWEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWku
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKQEAgLTQwLDcgKzQw
-LDcgQEAKICNpbmNsdWRlIDxsaW51eC9jb21wb25lbnQuaD4KICNpbmNsdWRlIDxsaW51eC9tZmQv
-c3lzY29uLmg+CiAjaW5jbHVkZSA8bGludXgvcmVnbWFwLmg+Ci0KKyNpbmNsdWRlIDxzb3VuZC9o
-ZG1pLWNvZGVjLmg+CiAjaW5jbHVkZSA8ZHJtL2V4eW5vc19kcm0uaD4KCiAjaW5jbHVkZSA8bWVk
-aWEvY2VjLW5vdGlmaWVyLmg+CkBAIC0xMTEsMTIgKzExMSwxOCBAQCBzdHJ1Y3QgaGRtaV9kcml2
-ZXJfZGF0YSB7CiAJc3RydWN0IHN0cmluZ19hcnJheV9zcGVjIGNsa19tdXhlczsKIH07Cgorc3Ry
-dWN0IGhkbWlfYXVkaW8geworCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UJCSpwZGV2OworCXN0cnVj
-dCBoZG1pX2F1ZGlvX2luZm9mcmFtZQlpbmZvZnJhbWU7CisJc3RydWN0IGhkbWlfY29kZWNfcGFy
-YW1zCXBhcmFtczsKKwlib29sCQkJCWVuYWJsZTsKK307CisKIHN0cnVjdCBoZG1pX2NvbnRleHQg
-ewogCXN0cnVjdCBkcm1fZW5jb2RlcgkJZW5jb2RlcjsKIAlzdHJ1Y3QgZGV2aWNlCQkJKmRldjsK
-IAlzdHJ1Y3QgZHJtX2RldmljZQkJKmRybV9kZXY7CiAJc3RydWN0IGRybV9jb25uZWN0b3IJCWNv
-bm5lY3RvcjsKLQlib29sCQkJCXBvd2VyZWQ7CiAJYm9vbAkJCQlkdmlfbW9kZTsKIAlzdHJ1Y3Qg
-ZGVsYXllZF93b3JrCQlob3RwbHVnX3dvcms7CiAJc3RydWN0IGRybV9kaXNwbGF5X21vZGUJCWN1
-cnJlbnRfbW9kZTsKQEAgLTEzNyw2ICsxNDMsMTEgQEAgc3RydWN0IGhkbWlfY29udGV4dCB7CiAJ
-c3RydWN0IHJlZ3VsYXRvcgkJKnJlZ19oZG1pX2VuOwogCXN0cnVjdCBleHlub3NfZHJtX2NsawkJ
-cGh5X2NsazsKIAlzdHJ1Y3QgZHJtX2JyaWRnZQkJKmJyaWRnZTsKKworCS8qIG11dGV4IHByb3Rl
-Y3Rpbmcgc3Vic2VxdWVudCBmaWVsZHMgYmVsb3cgKi8KKwlzdHJ1Y3QgbXV0ZXgJCQltdXRleDsK
-KwlzdHJ1Y3QgaGRtaV9hdWRpbwkJYXVkaW87CisJYm9vbAkJCQlwb3dlcmVkOwogfTsKCiBzdGF0
-aWMgaW5saW5lIHN0cnVjdCBoZG1pX2NvbnRleHQgKmVuY29kZXJfdG9faGRtaShzdHJ1Y3QgZHJt
-X2VuY29kZXIgKmUpCkBAIC03NjgsNiArNzc5LDIyIEBAIHN0YXRpYyBpbnQgaGRtaV9jbGtfc2V0
-X3BhcmVudHMoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEsIGJvb2wgdG9fcGh5KQogCXJldHVy
-biByZXQ7CiB9Cgorc3RhdGljIGludCBoZG1pX2F1ZGlvX2luZm9mcmFtZV9hcHBseShzdHJ1Y3Qg
-aGRtaV9jb250ZXh0ICpoZGF0YSkKK3sKKwlzdHJ1Y3QgaGRtaV9hdWRpb19pbmZvZnJhbWUgKmlu
-Zm9mcmFtZSA9ICZoZGF0YS0+YXVkaW8uaW5mb2ZyYW1lOworCXU4IGJ1ZltIRE1JX0lORk9GUkFN
-RV9TSVpFKEFVRElPKV07CisJaW50IGxlbjsKKworCWxlbiA9IGhkbWlfYXVkaW9faW5mb2ZyYW1l
-X3BhY2soaW5mb2ZyYW1lLCBidWYsIHNpemVvZihidWYpKTsKKwlpZiAobGVuIDwgMCkKKwkJcmV0
-dXJuIGxlbjsKKworCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9BVUlfQ09OLCBIRE1JX0FV
-SV9DT05fRVZFUllfVlNZTkMpOworCWhkbWlfcmVnX3dyaXRlX2J1ZihoZGF0YSwgSERNSV9BVUlf
-SEVBREVSMCwgYnVmLCBsZW4pOworCisJcmV0dXJuIDA7Cit9CisKIHN0YXRpYyB2b2lkIGhkbWlf
-cmVnX2luZm9mcmFtZXMoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCiB7CiAJdW5pb24gaGRt
-aV9pbmZvZnJhbWUgZnJtOwpAQCAtODA1LDE1ICs4MzIsNyBAQCBzdGF0aWMgdm9pZCBoZG1pX3Jl
-Z19pbmZvZnJhbWVzKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQogCQloZG1pX3JlZ193cml0
-ZV9idWYoaGRhdGEsIEhETUlfVlNJX0RBVEEoMCksIGJ1ZiArIDMsIHJldCAtIDMpOwogCX0KCi0J
-cmV0ID0gaGRtaV9hdWRpb19pbmZvZnJhbWVfaW5pdCgmZnJtLmF1ZGlvKTsKLQlpZiAoIXJldCkg
-ewotCQlmcm0uYXVkaW8uY2hhbm5lbHMgPSAyOwotCQlyZXQgPSBoZG1pX2F1ZGlvX2luZm9mcmFt
-ZV9wYWNrKCZmcm0uYXVkaW8sIGJ1Ziwgc2l6ZW9mKGJ1ZikpOwotCX0KLQlpZiAocmV0ID4gMCkg
-ewotCQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfQVVJX0NPTiwgSERNSV9BVUlfQ09OX0VW
-RVJZX1ZTWU5DKTsKLQkJaGRtaV9yZWdfd3JpdGVfYnVmKGhkYXRhLCBIRE1JX0FVSV9IRUFERVIw
-LCBidWYsIHJldCk7Ci0JfQorCWhkbWlfYXVkaW9faW5mb2ZyYW1lX2FwcGx5KGhkYXRhKTsKIH0K
-CiBzdGF0aWMgZW51bSBkcm1fY29ubmVjdG9yX3N0YXR1cyBoZG1pX2RldGVjdChzdHJ1Y3QgZHJt
-X2Nvbm5lY3RvciAqY29ubmVjdG9yLApAQCAtOTk1LDIzICsxMDE0LDE4IEBAIHN0YXRpYyB2b2lk
-IGhkbWlfcmVnX2FjcihzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSwgdTMyIGZyZXEpCiAJaGRt
-aV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0FDUl9DT04sIDQpOwogfQoKLXN0YXRpYyB2b2lkIGhk
-bWlfYXVkaW9faW5pdChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKK3N0YXRpYyB2b2lkIGhk
-bWlfYXVkaW9fY29uZmlnKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQogewotCXUzMiBzYW1w
-bGVfcmF0ZSwgYml0c19wZXJfc2FtcGxlOwotCXUzMiBkYXRhX251bSwgYml0X2NoLCBzYW1wbGVf
-ZnJxOwotCXUzMiB2YWw7Ci0KLQlzYW1wbGVfcmF0ZSA9IDQ0MTAwOwotCWJpdHNfcGVyX3NhbXBs
-ZSA9IDE2OworCXUzMiBiaXRfY2ggPSAxOworCXUzMiBkYXRhX251bSwgdmFsOworCWludCBpOwoK
-LQlzd2l0Y2ggKGJpdHNfcGVyX3NhbXBsZSkgeworCXN3aXRjaCAoaGRhdGEtPmF1ZGlvLnBhcmFt
-cy5zYW1wbGVfd2lkdGgpIHsKIAljYXNlIDIwOgogCQlkYXRhX251bSA9IDI7Ci0JCWJpdF9jaCA9
-IDE7CiAJCWJyZWFrOwogCWNhc2UgMjQ6CiAJCWRhdGFfbnVtID0gMzsKLQkJYml0X2NoID0gMTsK
-IAkJYnJlYWs7CiAJZGVmYXVsdDoKIAkJZGF0YV9udW0gPSAxOwpAQCAtMTAxOSw3ICsxMDMzLDcg
-QEAgc3RhdGljIHZvaWQgaGRtaV9hdWRpb19pbml0KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRh
-KQogCQlicmVhazsKIAl9CgotCWhkbWlfcmVnX2FjcihoZGF0YSwgc2FtcGxlX3JhdGUpOworCWhk
-bWlfcmVnX2FjcihoZGF0YSwgaGRhdGEtPmF1ZGlvLnBhcmFtcy5zYW1wbGVfcmF0ZSk7CgogCWhk
-bWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9JMlNfTVVYX0NPTiwgSERNSV9JMlNfSU5fRElTQUJM
-RQogCQkJCXwgSERNSV9JMlNfQVVEX0kyUyB8IEhETUlfSTJTX0NVVl9JMlNfRU5BQkxFCkBAIC0x
-MDI5LDEyICsxMDQzLDYgQEAgc3RhdGljIHZvaWQgaGRtaV9hdWRpb19pbml0KHN0cnVjdCBoZG1p
-X2NvbnRleHQgKmhkYXRhKQogCQkJfCBIRE1JX0kyU19DSDFfRU4gfCBIRE1JX0kyU19DSDJfRU4p
-OwoKIAloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSTJTX01VWF9DVVYsIEhETUlfSTJTX0NV
-Vl9STF9FTik7Ci0KLQlzYW1wbGVfZnJxID0gKHNhbXBsZV9yYXRlID09IDQ0MTAwKSA/IDAgOgot
-CQkJKHNhbXBsZV9yYXRlID09IDQ4MDAwKSA/IDIgOgotCQkJKHNhbXBsZV9yYXRlID09IDMyMDAw
-KSA/IDMgOgotCQkJKHNhbXBsZV9yYXRlID09IDk2MDAwKSA/IDB4YSA6IDB4MDsKLQogCWhkbWlf
-cmVnX3dyaXRlYihoZGF0YSwgSERNSV9JMlNfQ0xLX0NPTiwgSERNSV9JMlNfQ0xLX0RJUyk7CiAJ
-aGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0kyU19DTEtfQ09OLCBIRE1JX0kyU19DTEtfRU4p
-OwoKQEAgLTEwNTgsMzEgKzEwNjYsMjQgQEAgc3RhdGljIHZvaWQgaGRtaV9hdWRpb19pbml0KHN0
-cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQogCQkJfCBIRE1JX0kyU19TRVRfU0RBVEFfQklUKGRh
-dGFfbnVtKQogCQkJfCBIRE1JX0kyU19CQVNJQ19GT1JNQVQpOwoKLQkvKiBDb25maWd1cmUgcmVn
-aXN0ZXIgcmVsYXRlZCB0byBDVVYgaW5mb3JtYXRpb24gKi8KLQloZG1pX3JlZ193cml0ZWIoaGRh
-dGEsIEhETUlfSTJTX0NIX1NUXzAsIEhETUlfSTJTX0NIX1NUQVRVU19NT0RFXzAKLQkJCXwgSERN
-SV9JMlNfMkFVRF9DSF9XSVRIT1VUX1BSRUVNUEgKLQkJCXwgSERNSV9JMlNfQ09QWVJJR0hUCi0J
-CQl8IEhETUlfSTJTX0xJTkVBUl9QQ00KLQkJCXwgSERNSV9JMlNfQ09OU1VNRVJfRk9STUFUKTsK
-LQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSTJTX0NIX1NUXzEsIEhETUlfSTJTX0NEX1BM
-QVlFUik7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0kyU19DSF9TVF8yLCBIRE1JX0ky
-U19TRVRfU09VUkNFX05VTSgwKSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0kyU19D
-SF9TVF8zLCBIRE1JX0kyU19DTEtfQUNDVVJfTEVWRUxfMgotCQkJfCBIRE1JX0kyU19TRVRfU01Q
-X0ZSRVEoc2FtcGxlX2ZycSkpOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9JMlNfQ0hf
-U1RfNCwKLQkJCUhETUlfSTJTX09SR19TTVBfRlJFUV80NF8xCi0JCQl8IEhETUlfSTJTX1dPUkRf
-TEVOX01BWDI0XzI0QklUUwotCQkJfCBIRE1JX0kyU19XT1JEX0xFTl9NQVhfMjRCSVRTKTsKKwkv
-KiBDb25maWd1cmUgcmVnaXN0ZXJzIHJlbGF0ZWQgdG8gQ1VWIGluZm9ybWF0aW9uICovCisJZm9y
-IChpID0gMDsgaSA8IEhETUlfSTJTX0NIX1NUX01BWE5VTTsgaSsrKQorCQloZG1pX3JlZ193cml0
-ZWIoaGRhdGEsIEhETUlfSTJTX0NIX1NUKGkpLAorCQkJCWhkYXRhLT5hdWRpby5wYXJhbXMuaWVj
-LnN0YXR1c1tpXSk7CgogCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9JMlNfQ0hfU1RfQ09O
-LCBIRE1JX0kyU19DSF9TVEFUVVNfUkVMT0FEKTsKIH0KCi1zdGF0aWMgdm9pZCBoZG1pX2F1ZGlv
-X2NvbnRyb2woc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEsIGJvb2wgb25vZmYpCitzdGF0aWMg
-dm9pZCBoZG1pX2F1ZGlvX2NvbnRyb2woc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCiB7CisJ
-Ym9vbCBlbmFibGUgPSBoZGF0YS0+YXVkaW8uZW5hYmxlOworCiAJaWYgKGhkYXRhLT5kdmlfbW9k
-ZSkKIAkJcmV0dXJuOwoKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfQVVJX0NPTiwgb25v
-ZmYgPyAyIDogMCk7Ci0JaGRtaV9yZWdfd3JpdGVtYXNrKGhkYXRhLCBIRE1JX0NPTl8wLCBvbm9m
-ZiA/CisJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0FVSV9DT04sIGVuYWJsZSA/CisJCQlI
-RE1JX0FWSV9DT05fRVZFUllfVlNZTkMgOiBIRE1JX0FVSV9DT05fTk9fVFJBTik7CisJaGRtaV9y
-ZWdfd3JpdGVtYXNrKGhkYXRhLCBIRE1JX0NPTl8wLCBlbmFibGUgPwogCQkJSERNSV9BU1BfRU4g
-OiBIRE1JX0FTUF9ESVMsIEhETUlfQVNQX01BU0spOwogfQoKQEAgLTEzOTgsMTMgKzEzOTksMTQg
-QEAgc3RhdGljIHZvaWQgaGRtaXBoeV9jb25mX2FwcGx5KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhk
-YXRhKQogCWhkbWlwaHlfd2FpdF9mb3JfcGxsKGhkYXRhKTsKIH0KCisvKiBTaG91bGQgYmUgY2Fs
-bGVkIHdpdGggaGRhdGEtPm11dGV4IG11dGV4IGhlbGQgKi8KIHN0YXRpYyB2b2lkIGhkbWlfY29u
-Zl9hcHBseShzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIHsKIAloZG1pX3N0YXJ0KGhkYXRh
-LCBmYWxzZSk7CiAJaGRtaV9jb25mX2luaXQoaGRhdGEpOwotCWhkbWlfYXVkaW9faW5pdChoZGF0
-YSk7CisJaGRtaV9hdWRpb19jb25maWcoaGRhdGEpOwogCWhkbWlfbW9kZV9hcHBseShoZGF0YSk7
-Ci0JaGRtaV9hdWRpb19jb250cm9sKGhkYXRhLCB0cnVlKTsKKwloZG1pX2F1ZGlvX2NvbnRyb2wo
-aGRhdGEpOwogfQoKIHN0YXRpYyB2b2lkIGhkbWlfbW9kZV9zZXQoc3RydWN0IGRybV9lbmNvZGVy
-ICplbmNvZGVyLApAQCAtMTQzMSw2ICsxNDMzLDcgQEAgc3RhdGljIHZvaWQgaGRtaV9zZXRfcmVm
-Y2xrKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCBib29sIG9uKQogCQkJICAgU1lTUkVHX0hE
-TUlfUkVGQ0xLX0lOVF9DTEssIG9uID8gfjAgOiAwKTsKIH0KCisvKiBTaG91bGQgYmUgY2FsbGVk
-IHdpdGggaGRhdGEtPm11dGV4IG11dGV4IGhlbGQuICovCiBzdGF0aWMgdm9pZCBoZG1pcGh5X2Vu
-YWJsZShzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIHsKIAlpZiAoaGRhdGEtPnBvd2VyZWQp
-CkBAIC0xNDUzLDYgKzE0NTYsNyBAQCBzdGF0aWMgdm9pZCBoZG1pcGh5X2VuYWJsZShzdHJ1Y3Qg
-aGRtaV9jb250ZXh0ICpoZGF0YSkKIAloZGF0YS0+cG93ZXJlZCA9IHRydWU7CiB9CgorLyogU2hv
-dWxkIGJlIGNhbGxlZCB3aXRoIGhkYXRhLT5tdXRleCBtdXRleCBoZWxkLiAqLwogc3RhdGljIHZv
-aWQgaGRtaXBoeV9kaXNhYmxlKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQogewogCWlmICgh
-aGRhdGEtPnBvd2VyZWQpCkBAIC0xNDc4LDI4ICsxNDgyLDM4IEBAIHN0YXRpYyB2b2lkIGhkbWlf
-ZW5hYmxlKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKIHsKIAlzdHJ1Y3QgaGRtaV9jb250
-ZXh0ICpoZGF0YSA9IGVuY29kZXJfdG9faGRtaShlbmNvZGVyKTsKCisJbXV0ZXhfbG9jaygmaGRh
-dGEtPm11dGV4KTsKKwogCWhkbWlwaHlfZW5hYmxlKGhkYXRhKTsKIAloZG1pX2NvbmZfYXBwbHko
-aGRhdGEpOworCisJbXV0ZXhfdW5sb2NrKCZoZGF0YS0+bXV0ZXgpOwogfQoKIHN0YXRpYyB2b2lk
-IGhkbWlfZGlzYWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCiB7CiAJc3RydWN0IGhk
-bWlfY29udGV4dCAqaGRhdGEgPSBlbmNvZGVyX3RvX2hkbWkoZW5jb2Rlcik7CgotCWlmICghaGRh
-dGEtPnBvd2VyZWQpCisJbXV0ZXhfbG9jaygmaGRhdGEtPm11dGV4KTsKKworCWlmIChoZGF0YS0+
-cG93ZXJlZCkgeworCQkvKgorCQkgKiBUaGUgU0ZScyBvZiBWUCBhbmQgTWl4ZXIgYXJlIHVwZGF0
-ZWQgYnkgVmVydGljYWwgU3luYyBvZgorCQkgKiBUaW1pbmcgZ2VuZXJhdG9yIHdoaWNoIGlzIGEg
-cGFydCBvZiBIRE1JIHNvIHRoZSBzZXF1ZW5jZQorCQkgKiB0byBkaXNhYmxlIFRWIFN1YnN5c3Rl
-bSBzaG91bGQgYmUgYXMgZm9sbG93aW5nLAorCQkgKglWUCAtPiBNaXhlciAtPiBIRE1JCisJCSAq
-CisJCSAqIFRvIGFjaGlldmUgc3VjaCBzZXF1ZW5jZSBIRE1JIGlzIGRpc2FibGVkIHRvZ2V0aGVy
-IHdpdGgKKwkJICogSERNSSBQSFksIHZpYSBwaXBlIGNsb2NrIGNhbGxiYWNrLgorCQkgKi8KKwkJ
-bXV0ZXhfdW5sb2NrKCZoZGF0YS0+bXV0ZXgpOworCQljYW5jZWxfZGVsYXllZF93b3JrKCZoZGF0
-YS0+aG90cGx1Z193b3JrKTsKKwkJY2VjX25vdGlmaWVyX3NldF9waHlzX2FkZHIoaGRhdGEtPm5v
-dGlmaWVyLAorCQkJCQkgICBDRUNfUEhZU19BRERSX0lOVkFMSUQpOwogCQlyZXR1cm47CisJfQoK
-LQkvKgotCSAqIFRoZSBTRlJzIG9mIFZQIGFuZCBNaXhlciBhcmUgdXBkYXRlZCBieSBWZXJ0aWNh
-bCBTeW5jIG9mCi0JICogVGltaW5nIGdlbmVyYXRvciB3aGljaCBpcyBhIHBhcnQgb2YgSERNSSBz
-byB0aGUgc2VxdWVuY2UKLQkgKiB0byBkaXNhYmxlIFRWIFN1YnN5c3RlbSBzaG91bGQgYmUgYXMg
-Zm9sbG93aW5nLAotCSAqCVZQIC0+IE1peGVyIC0+IEhETUkKLQkgKgotCSAqIFRvIGFjaGlldmUg
-c3VjaCBzZXF1ZW5jZSBIRE1JIGlzIGRpc2FibGVkIHRvZ2V0aGVyIHdpdGggSERNSSBQSFksIHZp
-YQotCSAqIHBpcGUgY2xvY2sgY2FsbGJhY2suCi0JICovCi0JY2FuY2VsX2RlbGF5ZWRfd29yaygm
-aGRhdGEtPmhvdHBsdWdfd29yayk7Ci0JY2VjX25vdGlmaWVyX3NldF9waHlzX2FkZHIoaGRhdGEt
-Pm5vdGlmaWVyLCBDRUNfUEhZU19BRERSX0lOVkFMSUQpOworCW11dGV4X3VubG9jaygmaGRhdGEt
-Pm11dGV4KTsKIH0KCiBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9lbmNvZGVyX2hlbHBlcl9mdW5j
-cyBleHlub3NfaGRtaV9lbmNvZGVyX2hlbHBlcl9mdW5jcyA9IHsKQEAgLTE1MTMsNiArMTUyNywx
-MDQgQEAgc3RhdGljIHZvaWQgaGRtaV9kaXNhYmxlKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2Rl
-cikKIAkuZGVzdHJveSA9IGRybV9lbmNvZGVyX2NsZWFudXAsCiB9OwoKK3N0YXRpYyB2b2lkIGhk
-bWlfYXVkaW9fc2h1dGRvd24oc3RydWN0IGRldmljZSAqZGV2LCB2b2lkICpkYXRhKQoreworCXN0
-cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhID0gZGV2X2dldF9kcnZkYXRhKGRldik7CisKKwltdXRl
-eF9sb2NrKCZoZGF0YS0+bXV0ZXgpOworCisJaGRhdGEtPmF1ZGlvLmVuYWJsZSA9IGZhbHNlOwor
-CisJaWYgKGhkYXRhLT5wb3dlcmVkKQorCQloZG1pX2F1ZGlvX2NvbnRyb2woaGRhdGEpOworCisJ
-bXV0ZXhfdW5sb2NrKCZoZGF0YS0+bXV0ZXgpOworfQorCitzdGF0aWMgaW50IGhkbWlfYXVkaW9f
-aHdfcGFyYW1zKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSwKKwkJCQlzdHJ1Y3QgaGRt
-aV9jb2RlY19kYWlmbXQgKmRhaWZtdCwKKwkJCQlzdHJ1Y3QgaGRtaV9jb2RlY19wYXJhbXMgKnBh
-cmFtcykKK3sKKwlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9IGRldl9nZXRfZHJ2ZGF0YShk
-ZXYpOworCisJaWYgKGRhaWZtdC0+Zm10ICE9IEhETUlfSTJTIHx8IGRhaWZtdC0+Yml0X2Nsa19p
-bnYgfHwKKwkgICAgZGFpZm10LT5mcmFtZV9jbGtfaW52IHx8IGRhaWZtdC0+Yml0X2Nsa19tYXN0
-ZXIgfHwKKwkgICAgZGFpZm10LT5mcmFtZV9jbGtfbWFzdGVyKSB7CisJCWRldl9lcnIoZGV2LCAi
-JXM6IEJhZCBmbGFncyAlZCAlZCAlZCAlZFxuIiwgX19mdW5jX18sCisJCQlkYWlmbXQtPmJpdF9j
-bGtfaW52LCBkYWlmbXQtPmZyYW1lX2Nsa19pbnYsCisJCQlkYWlmbXQtPmJpdF9jbGtfbWFzdGVy
-LAorCQkJZGFpZm10LT5mcmFtZV9jbGtfbWFzdGVyKTsKKwkJcmV0dXJuIC1FSU5WQUw7CisJfQor
-CisJbXV0ZXhfbG9jaygmaGRhdGEtPm11dGV4KTsKKworCWhkYXRhLT5hdWRpby5wYXJhbXMgPSAq
-cGFyYW1zOworCisJaWYgKGhkYXRhLT5wb3dlcmVkKSB7CisJCWhkbWlfYXVkaW9fY29uZmlnKGhk
-YXRhKTsKKwkJaGRtaV9hdWRpb19pbmZvZnJhbWVfYXBwbHkoaGRhdGEpOworCX0KKworCW11dGV4
-X3VubG9jaygmaGRhdGEtPm11dGV4KTsKKworCXJldHVybiAwOworfQorCitzdGF0aWMgaW50IGhk
-bWlfYXVkaW9fZGlnaXRhbF9tdXRlKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSwgYm9v
-bCBtdXRlKQoreworCXN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhID0gZGV2X2dldF9kcnZkYXRh
-KGRldik7CisKKwltdXRleF9sb2NrKCZoZGF0YS0+bXV0ZXgpOworCisJaGRhdGEtPmF1ZGlvLmVu
-YWJsZSA9ICFtdXRlOworCisJaWYgKGhkYXRhLT5wb3dlcmVkKQorCQloZG1pX2F1ZGlvX2NvbnRy
-b2woaGRhdGEpOworCisJbXV0ZXhfdW5sb2NrKCZoZGF0YS0+bXV0ZXgpOworCisJcmV0dXJuIDA7
-Cit9CisKK3N0YXRpYyBpbnQgaGRtaV9hdWRpb19nZXRfZWxkKHN0cnVjdCBkZXZpY2UgKmRldiwg
-dm9pZCAqZGF0YSwgdWludDhfdCAqYnVmLAorCQkJICAgICAgc2l6ZV90IGxlbikKK3sKKwlzdHJ1
-Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOworCXN0cnVjdCBk
-cm1fY29ubmVjdG9yICpjb25uZWN0b3IgPSAmaGRhdGEtPmNvbm5lY3RvcjsKKworCW1lbWNweShi
-dWYsIGNvbm5lY3Rvci0+ZWxkLCBtaW4oc2l6ZW9mKGNvbm5lY3Rvci0+ZWxkKSwgbGVuKSk7CisK
-KwlyZXR1cm4gMDsKK30KKworc3RhdGljIGNvbnN0IHN0cnVjdCBoZG1pX2NvZGVjX29wcyBhdWRp
-b19jb2RlY19vcHMgPSB7CisJLmh3X3BhcmFtcyA9IGhkbWlfYXVkaW9faHdfcGFyYW1zLAorCS5h
-dWRpb19zaHV0ZG93biA9IGhkbWlfYXVkaW9fc2h1dGRvd24sCisJLmRpZ2l0YWxfbXV0ZSA9IGhk
-bWlfYXVkaW9fZGlnaXRhbF9tdXRlLAorCS5nZXRfZWxkID0gaGRtaV9hdWRpb19nZXRfZWxkLAor
-fTsKKworc3RhdGljIGludCBoZG1pX3JlZ2lzdGVyX2F1ZGlvX2RldmljZShzdHJ1Y3QgaGRtaV9j
-b250ZXh0ICpoZGF0YSkKK3sKKwlzdHJ1Y3QgaGRtaV9jb2RlY19wZGF0YSBjb2RlY19kYXRhID0g
-eworCQkub3BzID0gJmF1ZGlvX2NvZGVjX29wcywKKwkJLm1heF9pMnNfY2hhbm5lbHMgPSA2LAor
-CQkuaTJzID0gMSwKKwl9OworCisJaGRhdGEtPmF1ZGlvLnBkZXYgPSBwbGF0Zm9ybV9kZXZpY2Vf
-cmVnaXN0ZXJfZGF0YSgKKwkJaGRhdGEtPmRldiwgSERNSV9DT0RFQ19EUlZfTkFNRSwgUExBVEZP
-Uk1fREVWSURfQVVUTywKKwkJJmNvZGVjX2RhdGEsIHNpemVvZihjb2RlY19kYXRhKSk7CisKKwly
-ZXR1cm4gUFRSX0VSUl9PUl9aRVJPKGhkYXRhLT5hdWRpby5wZGV2KTsKK30KKworc3RhdGljIHZv
-aWQgaGRtaV91bnJlZ2lzdGVyX2F1ZGlvX2RldmljZShzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0
-YSkKK3sKKwlwbGF0Zm9ybV9kZXZpY2VfdW5yZWdpc3RlcihoZGF0YS0+YXVkaW8ucGRldik7Cit9
-CisKIHN0YXRpYyB2b2lkIGhkbWlfaG90cGx1Z193b3JrX2Z1bmMoc3RydWN0IHdvcmtfc3RydWN0
-ICp3b3JrKQogewogCXN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhOwpAQCAtMTU4OCwxMSArMTcw
-MCwxNCBAQCBzdGF0aWMgdm9pZCBoZG1pcGh5X2Nsa19lbmFibGUoc3RydWN0IGV4eW5vc19kcm1f
-Y2xrICpjbGssIGJvb2wgZW5hYmxlKQogewogCXN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhID0g
-Y29udGFpbmVyX29mKGNsaywgc3RydWN0IGhkbWlfY29udGV4dCwKIAkJCQkJCSAgcGh5X2Nsayk7
-CisJbXV0ZXhfbG9jaygmaGRhdGEtPm11dGV4KTsKCiAJaWYgKGVuYWJsZSkKIAkJaGRtaXBoeV9l
-bmFibGUoaGRhdGEpOwogCWVsc2UKIAkJaGRtaXBoeV9kaXNhYmxlKGhkYXRhKTsKKworCW11dGV4
-X3VubG9jaygmaGRhdGEtPm11dGV4KTsKIH0KCiBzdGF0aWMgaW50IGhkbWlfYnJpZGdlX2luaXQo
-c3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCkBAIC0xNjk3LDYgKzE4MTIsNyBAQCBzdGF0aWMg
-aW50IGhkbWlfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwg
-dm9pZCAqZGF0YSkKIAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiA9IGRhdGE7CiAJc3RydWN0
-IGhkbWlfY29udGV4dCAqaGRhdGEgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKIAlzdHJ1Y3QgZHJt
-X2VuY29kZXIgKmVuY29kZXIgPSAmaGRhdGEtPmVuY29kZXI7CisJc3RydWN0IGhkbWlfYXVkaW9f
-aW5mb2ZyYW1lICphdWRpb19pbmZvZnJhbWUgPSAmaGRhdGEtPmF1ZGlvLmluZm9mcmFtZTsKIAlz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjOwogCWludCByZXQ7CgpAQCAtMTcwNCw2ICsxODIw
-LDEyIEBAIHN0YXRpYyBpbnQgaGRtaV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRl
-dmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQoKIAloZGF0YS0+cGh5X2Nsay5lbmFibGUgPSBoZG1p
-cGh5X2Nsa19lbmFibGU7CgorCWhkbWlfYXVkaW9faW5mb2ZyYW1lX2luaXQoYXVkaW9faW5mb2Zy
-YW1lKTsKKwlhdWRpb19pbmZvZnJhbWUtPmNvZGluZ190eXBlID0gSERNSV9BVURJT19DT0RJTkdf
-VFlQRV9TVFJFQU07CisJYXVkaW9faW5mb2ZyYW1lLT5zYW1wbGVfc2l6ZSA9IEhETUlfQVVESU9f
-U0FNUExFX1NJWkVfU1RSRUFNOworCWF1ZGlvX2luZm9mcmFtZS0+c2FtcGxlX2ZyZXF1ZW5jeSA9
-IEhETUlfQVVESU9fU0FNUExFX0ZSRVFVRU5DWV9TVFJFQU07CisJYXVkaW9faW5mb2ZyYW1lLT5j
-aGFubmVscyA9IDI7CisKIAlkcm1fZW5jb2Rlcl9pbml0KGRybV9kZXYsIGVuY29kZXIsICZleHlu
-b3NfaGRtaV9lbmNvZGVyX2Z1bmNzLAogCQkJIERSTV9NT0RFX0VOQ09ERVJfVE1EUywgTlVMTCk7
-CgpAQCAtMTgxOCw2ICsxOTQwLDggQEAgc3RhdGljIGludCBoZG1pX3Byb2JlKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYpCgogCWhkYXRhLT5kZXYgPSBkZXY7CgorCW11dGV4X2luaXQoJmhk
-YXRhLT5tdXRleCk7CisKIAlyZXQgPSBoZG1pX3Jlc291cmNlc19pbml0KGhkYXRhKTsKIAlpZiAo
-cmV0KSB7CiAJCWlmIChyZXQgIT0gLUVQUk9CRV9ERUZFUikKQEAgLTE4NzcsMTIgKzIwMDEsMTkg
-QEAgc3RhdGljIGludCBoZG1pX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCgog
-CXBtX3J1bnRpbWVfZW5hYmxlKGRldik7CgotCXJldCA9IGNvbXBvbmVudF9hZGQoJnBkZXYtPmRl
-diwgJmhkbWlfY29tcG9uZW50X29wcyk7CisJcmV0ID0gaGRtaV9yZWdpc3Rlcl9hdWRpb19kZXZp
-Y2UoaGRhdGEpOwogCWlmIChyZXQpCiAJCWdvdG8gZXJyX25vdGlmaWVyX3B1dDsKCisJcmV0ID0g
-Y29tcG9uZW50X2FkZCgmcGRldi0+ZGV2LCAmaGRtaV9jb21wb25lbnRfb3BzKTsKKwlpZiAocmV0
-KQorCQlnb3RvIGVycl91bnJlZ2lzdGVyX2F1ZGlvOworCiAJcmV0dXJuIHJldDsKCitlcnJfdW5y
-ZWdpc3Rlcl9hdWRpbzoKKwloZG1pX3VucmVnaXN0ZXJfYXVkaW9fZGV2aWNlKGhkYXRhKTsKKwog
-ZXJyX25vdGlmaWVyX3B1dDoKIAljZWNfbm90aWZpZXJfcHV0KGhkYXRhLT5ub3RpZmllcik7CiAJ
-cG1fcnVudGltZV9kaXNhYmxlKGRldik7CkBAIC0xOTIxLDYgKzIwNTIsOCBAQCBzdGF0aWMgaW50
-IGhkbWlfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCgogCXB1dF9kZXZpY2Uo
-JmhkYXRhLT5kZGNfYWRwdC0+ZGV2KTsKCisJbXV0ZXhfZGVzdHJveSgmaGRhdGEtPm11dGV4KTsK
-KwogCXJldHVybiAwOwogfQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVn
-cy1oZG1pLmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtaGRtaS5oCmluZGV4IGEwNTA3
-ZGMuLmQ4NDNiMWYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1oZG1p
-LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWhkbWkuaApAQCAtNDE5LDExICs0
-MTksOSBAQAogI2RlZmluZSBIRE1JX0kyU19EU0RfQ09OCQlIRE1JX0kyU19CQVNFKDB4MDFjKQog
-I2RlZmluZSBIRE1JX0kyU19NVVhfQ09OCQlIRE1JX0kyU19CQVNFKDB4MDIwKQogI2RlZmluZSBI
-RE1JX0kyU19DSF9TVF9DT04JCUhETUlfSTJTX0JBU0UoMHgwMjQpCi0jZGVmaW5lIEhETUlfSTJT
-X0NIX1NUXzAJCUhETUlfSTJTX0JBU0UoMHgwMjgpCi0jZGVmaW5lIEhETUlfSTJTX0NIX1NUXzEJ
-CUhETUlfSTJTX0JBU0UoMHgwMmMpCi0jZGVmaW5lIEhETUlfSTJTX0NIX1NUXzIJCUhETUlfSTJT
-X0JBU0UoMHgwMzApCi0jZGVmaW5lIEhETUlfSTJTX0NIX1NUXzMJCUhETUlfSTJTX0JBU0UoMHgw
-MzQpCi0jZGVmaW5lIEhETUlfSTJTX0NIX1NUXzQJCUhETUlfSTJTX0JBU0UoMHgwMzgpCisvKiBu
-IG11c3QgYmUgd2l0aGluZyByYW5nZSAwLi4uKEhETUlfSTJTX0NIX1NUX01BWE5VTSAtIDEpICov
-CisjZGVmaW5lIEhETUlfSTJTX0NIX1NUX01BWE5VTQkJNQorI2RlZmluZSBIRE1JX0kyU19DSF9T
-VChuKQkJSERNSV9JMlNfQkFTRSgweDAyOCArIDQgKiAobikpCiAjZGVmaW5lIEhETUlfSTJTX0NI
-X1NUX1NIXzAJCUhETUlfSTJTX0JBU0UoMHgwM2MpCiAjZGVmaW5lIEhETUlfSTJTX0NIX1NUX1NI
-XzEJCUhETUlfSTJTX0JBU0UoMHgwNDApCiAjZGVmaW5lIEhETUlfSTJTX0NIX1NUX1NIXzIJCUhE
-TUlfSTJTX0JBU0UoMHgwNDQpCi0tCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+On 25.09.2017 20:27, Krzysztof Kozlowski wrote:
+> On Fri, Sep 22, 2017 at 08:00:17PM +0200, Kamil Konieczny wrote:
+>> On 19.09.2017 21:03, Krzysztof Kozlowski wrote:
+>>> On Fri, Sep 15, 2017 at 07:50:06PM +0200, Kamil Konieczny wrote:
+> 
+> (...)
+> 
+>>>> +
+>>>> +/* HASH flags */
+>>>
+>>> All defines below have "HASH_FLAGS" prefix... so actually useful would
+>>> be to explain also what is a hash flag.
+>>
+>> These are bit numbers used by device driver, setting in dev->hash_flags,
+>> used with set_bit(), clear_bit() or test_bit(), and with macro BIT(),
+>> to keep device state BUSY or FREE, or to signal state from irq_handler
+>> to hash_tasklet.
+> 
+> Then add something similar as comment to the code.
+
+OK.
+
+[...]
+>>>>   * @lock:	Lock for protecting both access to device hardware registers
+>>>> - *		and fields related to current request (including the busy field).
+>>>> + *		and fields related to current request (including the busy
+>>>> + *		field).
+>>>> + * @res:	Resources for hash.
+>>>> + * @io_hash_base: Per-variant offset for HASH block IO memory.
+>>>> + * @hash_lock:	Lock for protecting hash_req and other HASH variables.
+>>>
+>>> I must admit that I do not see how it protects the hash_req. The
+>>> hash_req looks untouched (not read, not modified) during this lock
+>>> critical section. Can you share some more thoughts about it?
+>>
+>> It protects dev->hash_queue and dev->hash_flags
+>> in begin of function s5p_hash_handle_queue.
+>>
+>> After dequeue non-null request, bit HASH_BUSY is set in dd->hash_flags,
+>> and this bit protects dd->hash_req and other fields. From there device
+>> works with dd->hash_req until finish in irq_handler and hash_tasklet.
+> 
+> Few thoughts here:
+> 1. Other accesses to HASH_BUSY bit of hash_flags are not protected with
+>    lock and you are using set_bit/clear_bit which are atomic operations,
+>    so from this perspective it does not protect hash_flags.
+> 2. This means the only field protected here is hash_queue so I guess you
+>    expect possibility of multiple concurrent calls to s5p_hash_handle_queue().
+>    This makes sense but then description has to be updated.
+
+OK, I will update it.
+Other bits in dev->hash_flags can be set and cleared only in BUSY state.
+
+[...]
+>>>> +	struct tasklet_struct		hash_tasklet;
+>>>> +	u8				xmit_buf[BUFLEN] SSS_ALIGNED;
+>>>> +
+>>>> +	unsigned long			hash_flags;
+>>>
+>>> This should be probably DECLARE_BITMAP.
+>>
+>> I do not get it, it is used for bits HASH_FLAGS_... and is not HW related.
+>> This will grow this patch even longer.
+> 
+> Why longer? Only declaration changes, rest should be the same.
+> Just instead of playing with bits over unsigned long explicitly use a
+> type for that purpose - DECLARE_BITMAP.
+
+It will make code ugly, using &dev->hash_flags[0] instead of &dev->hash_flags.
+I have 9 bits used, and I will not anticipate it grow above 64.
+If you insist, I can add DECLARE_BITMAP and rewrite all calls to _bits()
+functions.
+
+[...]
+>>>> +	struct samsung_aes_variant	*pdata;
+>>>
+>>> This should be const as pdata should not be modified.
+>>
+>> You are right, and I do not modify _offsets parts, but only hash
+>> functions pointers and hash array size. It is made non-const due
+>> to keeping it in the place, and not moving struct samsung_aes_variant
+>> below hash functions definitions.
+>>
+>> If I need to keep them const, then I will move whole part below, just
+>> before _probe, so I can properly set hash_algs_info and
+>> hash_algs_size (and again, small change, but bigger patch).
+>>
+>> I can do this, if you think it is safer to have them const.
+> 
+> I see, you are modifiying the variant->hash_algs_info and
+> variant->hash_algs_size. However all of them should be static const as
+> this is not a dynamic data. It does not depend on any runtime
+> conditions, except of course choosing the variant itself.
+
+You are right, I will make samsung_aes_variant const again.
+
+[...]
+>>>> +/**
+>>>> + * s5p_hash_finish_req - finish request
+>>>> + * @req:	AHASH request
+>>>> + * @err:	error
+>>>> + *
+>>>> + * Clear flags, free memory,
+>>>> + * if FINAL then read output into ctx->digest,
+>>>> + * call completetion
+>>>> + */
+>>>> +static void s5p_hash_finish_req(struct ahash_request *req, int err)
+>>>> +{
+>>>> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
+>>>> +	struct s5p_aes_dev *dd = ctx->dd;
+>>>> +
+>>>> +	if (test_bit(HASH_FLAGS_SGS_COPIED, &dd->hash_flags))
+>>>> +		free_pages((unsigned long)sg_virt(ctx->sg),
+>>>> +			   get_order(ctx->sg->length));
+>>>> +
+>>>> +	if (test_bit(HASH_FLAGS_SGS_ALLOCED, &dd->hash_flags))
+>>>> +		kfree(ctx->sg);
+>>>> +
+>>>> +	ctx->sg = NULL;
+>>>> +
+>>>> +	dd->hash_flags &= ~(BIT(HASH_FLAGS_SGS_ALLOCED) |
+>>>> +			    BIT(HASH_FLAGS_SGS_COPIED));
+>>>> +
+>>>> +	if (!err && !test_bit(HASH_FLAGS_ERROR, &ctx->flags)) {
+>>>> +		s5p_hash_read_msg(req);
+>>>> +		if (test_bit(HASH_FLAGS_FINAL, &dd->hash_flags))
+>>>> +			err = s5p_hash_finish(req);
+>>>> +	} else {
+>>>> +		ctx->flags |= BIT(HASH_FLAGS_ERROR);
+>>>> +	}
+>>>> +
+>>>> +	/* atomic operation is not needed here */
+>>>
+>>> Ok, but why?
+>>>
+>>
+>> Good question, I frankly copy&paste this. The hash vars in s5p_aes_dev
+>> are no longer used as all transfers ended, we have req context here
+>> so after complete we can work on next request,
+>> and clearing bit HASH_FLAGS_BUSY allows this.
+> 
+> I think you need them. Here and few lines before. In
+> s5p_hash_handle_queue() you use spin-lock because it might be executed
+> multiple times. Having that assumption (multiple calls to
+> s5p_hash_handle_queue()) you can have:
+> 
+> Thread #1:                     Thread #2
+>  s5p_hash_finish_req()         s5p_hash_handle_queue()
+>  dd->hash_flags &= ...
+>    which equals to:
+
+somewhere here will be (in Thread #2):
+			if(test_bit(HASH_FLAGS_BUSY,dd->hash_flags)) {
+					unlock, return; }
+
+>    tmp = dd->hash_flags;
+>    tmp &= ~(BIT...)
+>                                  set_bit(HASH_FLAGS_BUSY, &dd->hash_flags);
+>    dd->hash_flags = tmp
+> 
+> Which means that in last assignment you effectively lost the
+> HASH_FLAGS_BUSY bit.
+> 
+> In general, you need to use atomics (or locks) everywhere, unless you
+> are 100% sure that given lockless section cannot be executed with other
+> code which uses locks.  Otherwise the atomics/locks become uneffective.
+
+I can add spinlock as I am not 100% sure if below is true:
+
+HASH_FLAGS_BUSY is protected by order of instructions and by test_bit.
+First, this bit is set only in one place, in s5p_hash_handle_queue() and cleared 
+also only in one place, s5p_hash_finish_req().
+
+In function s5p_hash_handle_queue(), after spinlock, bit HASH_FLAGS_BUSY
+is tested and if set, there is unlock and exit, and the flow reaches next
+instructions only when this bit was not set. Setting bit is in the same spinlock
+section, so as you write, concurrent calls to s5p_hash_handle_queue are
+protected by spinlock.
+
+[...]
+>>>> + */
+>>>> +static struct sss_hash_algs_info exynos_hash_algs_info[] = {
+>>>
+>>> Can it be const?
+>>>
+>>
+>> They can, but for this I must move aes variant structures and _variant function
+>> before _probe.
+> 
+> Ok, move them, maybe in different patch in that case since this is just
+> re-order and this commit is pretty big already.
+
+There are some fields set in this struct before HASH algorithm registration
+(in _probe()). I will try to avoid aes code moves.
+
+[...]
+
+>>> Run checkpatch.
+>>>
+>>
+>> Can you write more ? What options I should use ?
+>> I ran and it gives zero errors, one warn about __attribute__(aligned()),
+>> and one about Kconfig change (description len too low).
+> 
+> Oh, my bad, I thought it would complain about comment coding style.
+> There should be opening /* before any text:
+> /*
+>  * this is
+>  * long comment
+>  */
+> 
+> But anyway you can run it with --strict and fix the minor issues for new
+> code (like "Alignment should match open parenthesis", "Please use a
+> blank line after"). These are not critical but for new code they are
+> welcomed, I think.
+
+Thank you, I will add this option to my process.
+
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
