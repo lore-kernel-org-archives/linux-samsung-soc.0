@@ -1,57 +1,87 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: Add dwc3 SUSPHY quirk
-Date: Mon, 25 Sep 2017 20:49:58 +0200
-Message-ID: <20170925184958.quneytvejne2pjyb@kozik-lap>
-References: <1505728934-6200-1-git-send-email-andrzej.p@samsung.com>
- <CGME20170918100230eucas1p29fae00c53f1106af1961a6e269740b2f@eucas1p2.samsung.com>
- <1505728934-6200-2-git-send-email-andrzej.p@samsung.com>
- <20170919174038.2sspjvadt6ggka65@kozik-lap>
- <fcefaaab-b99c-a8cc-9684-98cc3c4d803e@arm.com>
- <894725fe-595b-45dc-e567-41caf48a012b@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38083 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754157AbdIYSuC (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 14:50:02 -0400
-Content-Disposition: inline
-In-Reply-To: <894725fe-595b-45dc-e567-41caf48a012b@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2.1] PM / devfreq: exynos-bus: Register cooling device
+Date: Tue, 26 Sep 2017 11:31:48 +0900
+Message-ID: <1506393108-17456-1-git-send-email-cw00.choi@samsung.com>
+References: <1505954032-3327-1-git-send-email-cw00.choi@samsung.com>
+        <CGME20170926023151epcas1p41f999f2804facb4548b2d42ac3a00601@epcas1p4.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1505954032-3327-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com
+Cc: rafael.j.wysocki@intel.com, chanwoo@kernel.org, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.org>, Felipe Balbi <balbi@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Fri, Sep 22, 2017 at 10:18:54AM +0200, Andrzej Pietrasiewicz wrote:
-> Hi,
-> 
-> W dniu 19.09.2017 o 20:10, Robin Murphy pisze:
-> > On 19/09/17 18:40, Krzysztof Kozlowski wrote:
-> > > On Mon, Sep 18, 2017 at 12:02:13PM +0200, Andrzej Pietrasiewicz wrote:
-> > > > Odroid XU4 board does not enumerate SuperSpeed devices.
-> > > > This patch makes exynos5 series chips use USB SUSPHY quirk,
-> > > > which solves the problem.
-> > > > 
-> > > > Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-> > > > ---
-> > > >   arch/arm/boot/dts/exynos54xx.dtsi | 2 ++
-> > > >   1 file changed, 2 insertions(+)
-> > > 
-> > > Makes sense to me... was it tested also on XU3 and XU?
-> > 
-> > Well, it at least doesn't make USB3 on my XU any more or less broken
-> > than it was before ;) (both ports still report an over-current condition
-> > even with nothing plugged in - I suspect there's probably still some
-> > pinctrl/regulator stuff missing)
-> > 
-> > Robin.
-> > 
-> Similar with XU3: nothing is any more or less broken with this patch
-> compared to the situation without the patch.
+This patch registers the Exynos Bus-Frequency scaling device
+as a cooling device of thermal management.
 
-OK, thanks, applied!
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/devfreq/exynos-bus.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index c25658b26598..fe9ef6a3238b 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -15,6 +15,7 @@
+ #include <linux/clk.h>
+ #include <linux/devfreq.h>
+ #include <linux/devfreq-event.h>
++#include <linux/devfreq_cooling.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
+ #include <linux/module.h>
+@@ -41,6 +42,8 @@ struct exynos_bus {
+ 	struct clk *clk;
+ 	unsigned int voltage_tolerance;
+ 	unsigned int ratio;
++
++	struct thermal_cooling_device *cdev;
+ };
+ 
+ /*
+@@ -468,6 +471,13 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
++	/* Register devfreq cooling device */
++	bus->cdev = of_devfreq_cooling_register(np, bus->devfreq);
++	if (IS_ERR(bus->cdev)) {
++		dev_err(dev, "running exynos-bus without cooling device\n");
++		bus->cdev = NULL;
++	}
++
+ 	goto out;
+ passive:
+ 	/* Initialize the struct profile and governor data for passive device */
+@@ -514,6 +524,15 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static int exynos_bus_remove(struct platform_device *pdev)
++{
++	struct exynos_bus *bus = platform_get_drvdata(pdev);
++
++	devfreq_cooling_unregister(bus->cdev);
++
++	return 0;
++}
++
+ #ifdef CONFIG_PM_SLEEP
+ static int exynos_bus_resume(struct device *dev)
+ {
+@@ -556,6 +575,7 @@ static int exynos_bus_suspend(struct device *dev)
+ 
+ static struct platform_driver exynos_bus_platdrv = {
+ 	.probe		= exynos_bus_probe,
++	.remove		= exynos_bus_remove,
+ 	.driver = {
+ 		.name	= "exynos-bus",
+ 		.pm	= &exynos_bus_pm,
+-- 
+1.9.1
