@@ -1,87 +1,75 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2.1] PM / devfreq: exynos-bus: Register cooling device
-Date: Tue, 26 Sep 2017 11:31:48 +0900
-Message-ID: <1506393108-17456-1-git-send-email-cw00.choi@samsung.com>
-References: <1505954032-3327-1-git-send-email-cw00.choi@samsung.com>
-        <CGME20170926023151epcas1p41f999f2804facb4548b2d42ac3a00601@epcas1p4.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1505954032-3327-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com
-Cc: rafael.j.wysocki@intel.com, chanwoo@kernel.org, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC
+ example)
+Date: Tue, 26 Sep 2017 12:04:24 +0200
+Message-ID: <be61a74a-55bd-53cf-20c6-49d3f91d944a@samsung.com>
+References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
+        <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
+        <150483237153.48525.1363518996437790191@resonance>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38229 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934122AbdIZKEh (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 26 Sep 2017 06:04:37 -0400
+In-reply-to: <150483237153.48525.1363518996437790191@resonance>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-This patch registers the Exynos Bus-Frequency scaling device
-as a cooling device of thermal management.
+Hi Michael,
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/devfreq/exynos-bus.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+On 2017-09-08 02:59, Michael Turquette wrote:
+> Hi Marek,
+>
+> Quoting Marek Szyprowski (2017-08-21 01:04:58)
+>> Dear All,
+>>
+>> This patchset adds runtime PM support to common clock framework. This is an
+>> attempt to implement support for clock controllers, which belongs to a power
+>> domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
+>> us to solve various freeze/crash issues related to power management.
+>>
+>> The main idea behind this patchset is to keep clock's controller power domain
+>> enabled every time when at least one of its clock is enabled or access to its
+>> registers is being made. Clock controller driver (clock provider) can
+>> supply a struct device pointer, which is the used by clock core for tracking and
+>> managing clock's controller runtime pm state. Each clk_prepare() operation will
+>> first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
+>> will do pm_runtime_put() at the end.
+>>
+>> This runtime PM feature has been tested with Exynos4412 (not included in this
+>> patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
+>> respective power domains and need special handling during power on/off
+>> procedures. Till now it wasn't handled at all, what caused various problems.
+>>
+>> Patches for clocks drivers change the way the clock provider is initialized.
+>> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
+>> infrastructure is being used. This is needed to let driver to use runtime PM
+>> feature and integrate with generic power domains. The side-effect of this change
+>> is a delay in clock provider registeration during system boot, so early
+>> initialized drivers might get EPROBEDEFER error when requesting their clocks.
+>> This was an issue for IOMMU drivers, but IOMMU deferred probe support has been
+>> finally merged to v4.13-rc1 and now it is handled correctly.
+>>
+>> Patches are based and tested on v4.13-rc5, but applies fine also on v4.13-rc1.
+> Patches look good to me. It's too late for the v4.14 PR, but I'll merge
+> this to clk-next after -rc1 drops.
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index c25658b26598..fe9ef6a3238b 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -15,6 +15,7 @@
- #include <linux/clk.h>
- #include <linux/devfreq.h>
- #include <linux/devfreq-event.h>
-+#include <linux/devfreq_cooling.h>
- #include <linux/device.h>
- #include <linux/export.h>
- #include <linux/module.h>
-@@ -41,6 +42,8 @@ struct exynos_bus {
- 	struct clk *clk;
- 	unsigned int voltage_tolerance;
- 	unsigned int ratio;
-+
-+	struct thermal_cooling_device *cdev;
- };
- 
- /*
-@@ -468,6 +471,13 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
-+	/* Register devfreq cooling device */
-+	bus->cdev = of_devfreq_cooling_register(np, bus->devfreq);
-+	if (IS_ERR(bus->cdev)) {
-+		dev_err(dev, "running exynos-bus without cooling device\n");
-+		bus->cdev = NULL;
-+	}
-+
- 	goto out;
- passive:
- 	/* Initialize the struct profile and governor data for passive device */
-@@ -514,6 +524,15 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int exynos_bus_remove(struct platform_device *pdev)
-+{
-+	struct exynos_bus *bus = platform_get_drvdata(pdev);
-+
-+	devfreq_cooling_unregister(bus->cdev);
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- static int exynos_bus_resume(struct device *dev)
- {
-@@ -556,6 +575,7 @@ static int exynos_bus_suspend(struct device *dev)
- 
- static struct platform_driver exynos_bus_platdrv = {
- 	.probe		= exynos_bus_probe,
-+	.remove		= exynos_bus_remove,
- 	.driver = {
- 		.name	= "exynos-bus",
- 		.pm	= &exynos_bus_pm,
+Gentle ping.
+
+v4.14-rc2 has been released yesterday. Is there a chance to get this 
+patchset merged
+to clk-next soon? It definitely needs some time for testing in 
+linux-next and now it
+is the best time for that...
+
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
