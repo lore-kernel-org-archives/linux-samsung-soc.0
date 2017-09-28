@@ -1,53 +1,38 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [RESEND PATCH v2 13/17] media: v4l2-async: simplify
- v4l2_async_subdev structure
-Date: Thu, 28 Sep 2017 16:27:45 +0300
-Message-ID: <20170928132745.6pojquwpzcccu6g5@valkosipuli.retiisi.org.uk>
-References: <20170928125316.texy2qrzpvzekp7a@valkosipuli.retiisi.org.uk>
+From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
+Subject: [PATCH v2] ARM: multi_v7_defconfig: Enable USB3503 driver
+Date: Thu, 28 Sep 2017 22:27:03 +0200
+Message-ID: <20170928202703.21364-1-linus.luessing@c0d3.blue>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:55632 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752987AbdI1N1t (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Sep 2017 09:27:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20170928125316.texy2qrzpvzekp7a@valkosipuli.retiisi.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org
 
-Hi Mauro,
+The Odroid U3 (Exynos 4412 based) for instance needs this driver,
+otherwise its USB hub will not come up.
 
-On Wed, Sep 27, 2017 at 06:46:56PM -0300, Mauro Carvalho Chehab wrote:
-> The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
-> struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
-> match criteria requires just a device name.
-> 
-> So, it doesn't make sense to enclose those into structs,
-> as the criteria can go directly into the union.
-> 
-> That makes easier to document it, as we don't need to document
-> weird senseless structs.
+Also selecting it as built-in to allow booting from USB without
+an initrd/initramfs. exynos_defconfig does the same already, too.
 
-The idea is that in the union, there's a struct which is specific to the
-match_type field. I wouldn't call it senseless.
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+---
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-In the two cases there's just a single field in the containing struct. You
-could remove the struct in that case as you do in this patch, and just use
-the field. But I think the result is less clean and so I wouldn't make this
-change.
-
-The confusion comes possibly from the fact that the struct is named the
-same as the field in the struct. These used to be called of and node, but
-with the fwnode property framework the references to the fwnode are, well,
-typically similarly called "fwnode". There's no underlying firmware
-interface with that name, fwnode property API is just an API.
-
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 0cacdbf..c2484ef 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -693,6 +693,7 @@ CONFIG_USB_MUSB_HDRC=m
+ CONFIG_USB_MUSB_SUNXI=m
+ CONFIG_USB_DWC3=y
+ CONFIG_USB_DWC2=y
++CONFIG_USB_HSIC_USB3503=y
+ CONFIG_USB_CHIPIDEA=y
+ CONFIG_USB_CHIPIDEA_UDC=y
+ CONFIG_USB_CHIPIDEA_HOST=y
 -- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+2.1.4
