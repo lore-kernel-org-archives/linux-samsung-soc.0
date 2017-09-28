@@ -1,40 +1,46 @@
-From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-Subject: [PATCH] ARM: multi_v7_defconfig: Enable USB3503 driver
-Date: Thu, 28 Sep 2017 04:40:22 +0200
-Message-ID: <20170928024022.2071-1-linus.luessing@c0d3.blue>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable USB3503 driver
+Date: Thu, 28 Sep 2017 08:21:26 +0200
+Message-ID: <CAJKOXPfQ3nXHVYXUn0iDfzVQc+ML1sSCz3NG_bwUw=WDK0id_w@mail.gmail.com>
+References: <20170928024022.2071-1-linus.luessing@c0d3.blue>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:40280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751236AbdI1GV3 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 28 Sep 2017 02:21:29 -0400
+In-Reply-To: <20170928024022.2071-1-linus.luessing@c0d3.blue>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?Linus_L=C3=BCssing?= <linus.luessing@c0d3.blue>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-VGhlIE9kcm9pZCBVMyAoRXh5bm9zIDQ0MTIgYmFzZWQpIGZvciBpbnN0YW5jZSBuZWVkcyB0aGlz
-IGRyaXZlciwKb3RoZXJ3aXNlIGl0cyBVU0IgaHViIHdpbGwgbm90IGNvbWUgdXAuCgpleHlub3Nf
-ZGVmY29uZmlnIGFscmVhZHkgaGFzIHRoaXMgZW5hYmxlZCBhcyBidWlsdC1pbiwgdG9vLiBTbwpq
-dXN0IGRvaW5nIHRoZSBzYW1lIGhlcmUgaW4gbXVsdGlfdjdfZGVmY29uZmlnLgoKU2lnbmVkLW9m
-Zi1ieTogTGludXMgTMO8c3NpbmcgPGxpbnVzLmx1ZXNzaW5nQGMwZDMuYmx1ZT4KCi0tLQpUaGFu
-a3MgdG8gVG9iaWFzIEpha29iaSwgd2hvIGluZGlyZWN0bHkgbWFkZSBtZSBhd2FyZSBvZiB3aHkg
-VVNCCmRpZCBub3Qgd29yayBmb3IgbWUuCgogYXJjaC9hcm0vY29uZmlncy9tdWx0aV92N19kZWZj
-b25maWcgfCAxICsKIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQoKZGlmZiAtLWdpdCBh
-L2FyY2gvYXJtL2NvbmZpZ3MvbXVsdGlfdjdfZGVmY29uZmlnIGIvYXJjaC9hcm0vY29uZmlncy9t
-dWx0aV92N19kZWZjb25maWcKaW5kZXggMGNhY2RiZi4uYzI0ODRlZiAxMDA2NDQKLS0tIGEvYXJj
-aC9hcm0vY29uZmlncy9tdWx0aV92N19kZWZjb25maWcKKysrIGIvYXJjaC9hcm0vY29uZmlncy9t
-dWx0aV92N19kZWZjb25maWcKQEAgLTY5Myw2ICs2OTMsNyBAQCBDT05GSUdfVVNCX01VU0JfSERS
-Qz1tCiBDT05GSUdfVVNCX01VU0JfU1VOWEk9bQogQ09ORklHX1VTQl9EV0MzPXkKIENPTkZJR19V
-U0JfRFdDMj15CitDT05GSUdfVVNCX0hTSUNfVVNCMzUwMz15CiBDT05GSUdfVVNCX0NISVBJREVB
-PXkKIENPTkZJR19VU0JfQ0hJUElERUFfVURDPXkKIENPTkZJR19VU0JfQ0hJUElERUFfSE9TVD15
-Ci0tIAoyLjEuNAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2xpbnV4LWFybS1rZXJuZWwK
+On Thu, Sep 28, 2017 at 4:40 AM, Linus Lüssing <linus.luessing@c0d3.blue> wrote:
+> The Odroid U3 (Exynos 4412 based) for instance needs this driver,
+> otherwise its USB hub will not come up.
+>
+> exynos_defconfig already has this enabled as built-in, too. So
+> just doing the same here in multi_v7_defconfig.
+>
+> Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+>
+> ---
+> Thanks to Tobias Jakobi, who indirectly made me aware of why USB
+> did not work for me.
+>
+>  arch/arm/configs/multi_v7_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+
+Partially this was part of my patchset fixing powersequence for
+usb3503 and lan9730:
+https://patchwork.kernel.org/patch/9502939/
+but that patch waits still for power sequence.
+
+Anyway please define this as a module (unless it can't... but it
+worked in my case).
+
+Best regards,
+Krzysztof
