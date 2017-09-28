@@ -1,45 +1,48 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable USB3503 driver
-Date: Thu, 28 Sep 2017 14:22:03 +0200
-Message-ID: <CAJKOXPeN+Rtseaz+szF6-QFqq2kRYPVEwy+t8NTqO6VyefUiJg@mail.gmail.com>
-References: <20170928024022.2071-1-linus.luessing@c0d3.blue>
- <CAJKOXPfQ3nXHVYXUn0iDfzVQc+ML1sSCz3NG_bwUw=WDK0id_w@mail.gmail.com> <20170928104351.GE6726@otheros>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752580AbdI1MWG (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Sep 2017 08:22:06 -0400
-In-Reply-To: <20170928104351.GE6726@otheros>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/4] Make max expected current configurable for ina2xx
+ drivers
+Date: Thu, 28 Sep 2017 14:50:11 +0200
+Message-ID: <1506603015-27202-1-git-send-email-m.purski@samsung.com>
+References: <CGME20170928125043eucas1p14a7e57443912a37152037b844c1b9967@eucas1p1.samsung.com>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Linus_L=C3=BCssing?= <linus.luessing@c0d3.blue>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-On Thu, Sep 28, 2017 at 12:43 PM, Linus Lüssing
-<linus.luessing@c0d3.blue> wrote:
-> Hi Krzysztof,
->
-> Thanks for your quick reply!
->
-> On Thu, Sep 28, 2017 at 08:21:26AM +0200, Krzysztof Kozlowski wrote:
->> [...]
->> Anyway please define this as a module (unless it can't... but it
->> worked in my case).
->
-> In that case you used an initrd, right? I see various cases of USB
-> built-ins, like CONFIG_USB_STORAGE=y, CONFIG_USB_DWC2=y and so on in
-> multi_v7_defconfig. So my impression was that multi_v7_defconfig was
-> supposed to allow booting a rootfs from a USB storage device even
-> without an initrd.
+Hi all,
 
-We use modules for multi_v7 as much as possible with that exception as
-fair as I remember - no need of initramfs/initrd for boots. If this is
-your intention, please mention this in commit message ("using usb3503
-as builtin to provide boot from USB without initrd/initramfs").
+this patchset makes it possible to calibrate ina2xx drivers with different
+calibration values, which are calculated using max expected current value.
+It can be read from device tree, platform data or changed during run-time
+using sysfs. If it isn't specified in device tree or platform data, the
+driver uses default value, thanks to which the behaviour of the driver
+don't change in this case.
 
-Best regards,
-Krzysztof
+There are two drivers for ina2xx: hwmon and iio. Changes are made
+for both of them and their bindings as well.
+
+These changes allow setting sensor's precision to the required by the board.
+It is useful in Odroid XU3. Therefore this patchset also sets
+max-expected-current in OdroidXU3 device tree to values from documentation.
+
+Best Regards,
+
+	Maciej Purski
+
+Maciej Purski (4):
+  iio: adc: ina2xx: Make max expected current configurable
+  hwmon: (ina2xx) Make max expected current configurable
+  dt-bindings: hwmon: Add max-expected-current property to ina2xx
+  ARM: dts: Add max-expected-current properties for ina231 in Odroid XU3
+
+ Documentation/devicetree/bindings/hwmon/ina2xx.txt |   4 +-
+ Documentation/hwmon/ina2xx                         |   9 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   4 +
+ drivers/hwmon/ina2xx.c                             | 105 +++++++++++++++++---
+ drivers/iio/adc/ina2xx-adc.c                       | 110 ++++++++++++++++++---
+ include/linux/platform_data/ina2xx.h               |   2 +
+ 6 files changed, 203 insertions(+), 31 deletions(-)
+
+-- 
+2.7.4
