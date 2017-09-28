@@ -1,23 +1,26 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: [RESEND PATCH v2 13/17] media: v4l2-async: simplify
  v4l2_async_subdev structure
-Date: Thu, 28 Sep 2017 15:53:58 +0300
-Message-ID: <20170928125358.pkolmjxc4hdqcrud@valkosipuli.retiisi.org.uk>
+Date: Thu, 28 Sep 2017 15:02:37 +0200
+Message-ID: <90cfb08b-b363-a317-8781-dcb191805c80@samsung.com>
 References: <cover.1506548682.git.mchehab@s-opensource.com>
- <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
+        <20170928125316.texy2qrzpvzekp7a@valkosipuli.retiisi.org.uk>
+        <CGME20170928130249epcas2p2c1f6e52226c3a5c72829b1bf3cbaa0cd@epcas2p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <20170928125316.texy2qrzpvzekp7a@valkosipuli.retiisi.org.uk>
+Content-language: en-GB
+Sender: linux-doc-owner@vger.kernel.org
+To: Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Linux Doc Mailing List <linux-doc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mauro,
-
-On Wed, Sep 27, 2017 at 06:46:56PM -0300, Mauro Carvalho Chehab wrote:
+On 09/28/2017 02:53 PM, Mauro Carvalho Chehab wrote:
+> (Resending for Mauro, while dropping the non-list recipients. The original
+> likely had too many recipients.)
+> 
 > The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
 > struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
 > match criteria requires just a device name.
@@ -27,23 +30,10 @@ On Wed, Sep 27, 2017 at 06:46:56PM -0300, Mauro Carvalho Chehab wrote:
 > 
 > That makes easier to document it, as we don't need to document
 > weird senseless structs.
+> 
+> At drivers, this makes even clearer about the match criteria.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-The idea is that in the union, there's a struct which is specific to the
-match_type field. I wouldn't call it senseless.
 
-In the two cases there's just a single field in the containing struct. You
-could remove the struct in that case as you do in this patch, and just use
-the field. But I think the result is less clean and so I wouldn't make this
-change.
-
-The confusion comes possibly from the fact that the struct is named the
-same as the field in the struct. These used to be called of and node, but
-with the fwnode property framework the references to the fwnode are, well,
-typically similarly called "fwnode". There's no underlying firmware
-interface with that name, fwnode property API is just an API.
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
