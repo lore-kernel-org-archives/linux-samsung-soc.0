@@ -1,40 +1,40 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 13/17] media: v4l2-async: simplify v4l2_async_subdev
- structure
-Date: Thu, 28 Sep 2017 11:06:13 +0200
-Message-ID: <2c9c90cc-a41a-ae08-1a50-7d2532aef3e2@samsung.com>
-References: <cover.1506548682.git.mchehab@s-opensource.com>
-        <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
-        <CGME20170928090623epcas2p37888b0350217812c84921c4e11340df1@epcas2p3.samsung.com>
+From: Linus =?utf-8?Q?L=C3=BCssing?= <linus.luessing@c0d3.blue>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable USB3503 driver
+Date: Thu, 28 Sep 2017 12:43:51 +0200
+Message-ID: <20170928104351.GE6726@otheros>
+References: <20170928024022.2071-1-linus.luessing@c0d3.blue>
+ <CAJKOXPfQ3nXHVYXUn0iDfzVQc+ML1sSCz3NG_bwUw=WDK0id_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17022 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751082AbdI1JG0 (ORCPT
+Received: from mail.aperture-lab.de ([138.201.29.205]:41730 "EHLO
+        mail.aperture-lab.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751946AbdI1Knz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Sep 2017 05:06:26 -0400
-In-reply-to: <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
-Content-language: en-GB
+        Thu, 28 Sep 2017 06:43:55 -0400
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPfQ3nXHVYXUn0iDfzVQc+ML1sSCz3NG_bwUw=WDK0id_w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, Songjun Wu <songjun.wu@microchip.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Javi Merino <javi.merino@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org, Yannick Fertre <yannick.fertre@st.com>, linux-samsung-soc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Tuukka Toivonen <tuukka.toivonen@intel.com>, Steve Longerbeam <slongerbeam@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-On 09/27/2017 11:46 PM, Mauro Carvalho Chehab wrote:
-> The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
-> struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
-> match criteria requires just a device name.
-> 
-> So, it doesn't make sense to enclose those into structs,
-> as the criteria can go directly into the union.
-> 
-> That makes easier to document it, as we don't need to document
-> weird senseless structs.
-> 
-> At drivers, this makes even clearer about the match criteria.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Hi Krzysztof,
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Thanks for your quick reply!
+
+On Thu, Sep 28, 2017 at 08:21:26AM +0200, Krzysztof Kozlowski wrote:
+> [...]
+> Anyway please define this as a module (unless it can't... but it
+> worked in my case).
+
+In that case you used an initrd, right? I see various cases of USB
+built-ins, like CONFIG_USB_STORAGE=y, CONFIG_USB_DWC2=y and so on in
+multi_v7_defconfig. So my impression was that multi_v7_defconfig was
+supposed to allow booting a rootfs from a USB storage device even
+without an initrd.
+
+Let me know if that impression is wrong though, I'll happily resend
+(and test) the patch with CONFIG_USB_HSIC_USB3503=m then :-).
+
+Regards, Linus
