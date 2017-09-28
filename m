@@ -1,59 +1,45 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v2 13/17] media: v4l2-async: simplify v4l2_async_subdev
- structure
-Date: Thu, 28 Sep 2017 15:09:21 +0300
-Message-ID: <20170928120920.ywgbtikkrts25qlj@valkosipuli.retiisi.org.uk>
-References: <cover.1506548682.git.mchehab@s-opensource.com>
- <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable USB3503 driver
+Date: Thu, 28 Sep 2017 14:22:03 +0200
+Message-ID: <CAJKOXPeN+Rtseaz+szF6-QFqq2kRYPVEwy+t8NTqO6VyefUiJg@mail.gmail.com>
+References: <20170928024022.2071-1-linus.luessing@c0d3.blue>
+ <CAJKOXPfQ3nXHVYXUn0iDfzVQc+ML1sSCz3NG_bwUw=WDK0id_w@mail.gmail.com> <20170928104351.GE6726@otheros>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Songjun Wu <songjun.wu@microchip.com>, "Lad,
- Prabhakar" <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javi Merino <javi.merino@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org, Yannick Fertre <yannick.fertre@st.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Tuukka Toivonen <tuukka.toivonen@intel.com>, Steve Longerbeam <slongerbeam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linux Media Mailing List <linux-media@vger.kernel.o>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:42060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752580AbdI1MWG (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 28 Sep 2017 08:22:06 -0400
+In-Reply-To: <20170928104351.GE6726@otheros>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?Linus_L=C3=BCssing?= <linus.luessing@c0d3.blue>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hi Mauro,
+On Thu, Sep 28, 2017 at 12:43 PM, Linus Lüssing
+<linus.luessing@c0d3.blue> wrote:
+> Hi Krzysztof,
+>
+> Thanks for your quick reply!
+>
+> On Thu, Sep 28, 2017 at 08:21:26AM +0200, Krzysztof Kozlowski wrote:
+>> [...]
+>> Anyway please define this as a module (unless it can't... but it
+>> worked in my case).
+>
+> In that case you used an initrd, right? I see various cases of USB
+> built-ins, like CONFIG_USB_STORAGE=y, CONFIG_USB_DWC2=y and so on in
+> multi_v7_defconfig. So my impression was that multi_v7_defconfig was
+> supposed to allow booting a rootfs from a USB storage device even
+> without an initrd.
 
-On Wed, Sep 27, 2017 at 06:46:56PM -0300, Mauro Carvalho Chehab wrote:
-> The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
-> struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
-> match criteria requires just a device name.
-> 
-> So, it doesn't make sense to enclose those into structs,
-> as the criteria can go directly into the union.
-> 
-> That makes easier to document it, as we don't need to document
-> weird senseless structs.
+We use modules for multi_v7 as much as possible with that exception as
+fair as I remember - no need of initramfs/initrd for boots. If this is
+your intention, please mention this in commit message ("using usb3503
+as builtin to provide boot from USB without initrd/initramfs").
 
-The idea is that in the union, there's a struct which is specific to the
-match_type field. I wouldn't call it senseless.
-
-In the two cases there's just a single field in the containing struct. You
-could remove the struct in that case as you do in this patch, and just use
-the field. But I think the result is less clean and so I wouldn't make this
-change.
-
-The confusion comes possibly from the fact that the struct is named the
-same as the field in the struct. These used to be called of and node, but
-with the fwnode property framework the references to the fwnode are, well,
-typically similarly called "fwnode". There's no underlying firmware
-interface with that name, fwnode property API is just an API.
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Best regards,
+Krzysztof
