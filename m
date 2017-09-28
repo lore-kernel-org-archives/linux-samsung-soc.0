@@ -1,61 +1,45 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH 2/4] arm64: dts: exynos: add micro-USB connector node to
- TM2 platforms
-Date: Thu, 28 Sep 2017 15:07:28 +0200
-Message-ID: <20170928130730.8747-3-a.hajda@samsung.com>
-References: <20170928130730.8747-1-a.hajda@samsung.com>
- <CGME20170928130735eucas1p1298c683dcd7ab5f3ae7a5e19295d2a03@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170928130730.8747-1-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [RFC PATCH 0/4] dt-bindings: add bindings for USB physical
+ connector
+Date: Thu, 28 Sep 2017 15:07:26 +0200
+Message-ID: <20170928130730.8747-1-a.hajda@samsung.com>
+References: <CGME20170928130734eucas1p299c0e8135df3fb0484d72452cbd2ee47@eucas1p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-U2luY2UgVVNCIGNvbm5lY3RvciBiaW5kaW5ncyBhcmUgYXZhaWxhYmxlIHdlIGNhbiBkZXNjcmli
-ZSBpdCBvbiBUTTIoZSkuCgpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNh
-bXN1bmcuY29tPgotLS0KIC4uLi9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTItY29tbW9u
-LmR0c2kgICAgIHwgNDcgKysrKysrKysrKysrKysrKysrKystLQogMSBmaWxlIGNoYW5nZWQsIDQ0
-IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9i
-b290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTItY29tbW9uLmR0c2kgYi9hcmNoL2FybTY0L2Jv
-b3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi1jb21tb24uZHRzaQppbmRleCBlMzBiYWU0Y2Y4
-NzguLjM5YjFjYTBlZjRjZCAxMDA2NDQKLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3Mv
-ZXh5bm9zNTQzMy10bTItY29tbW9uLmR0c2kKKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9leHlu
-b3MvZXh5bm9zNTQzMy10bTItY29tbW9uLmR0c2kKQEAgLTEzNSw2ICsxMzUsMjggQEAKIAkJCSJS
-Q1YiLCAiSFBPVVQzUiI7CiAJCXN0YXR1cyA9ICJva2F5IjsKIAl9OworCisJbXVzYl9jb246IG11
-c2JfY29ubmVjdG9yIHsKKwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHVzYi1jb25uZWN0b3ItMTFw
-aW4iLCAidXNiLWNvbm5lY3RvciI7CisJCWxhYmVsID0gIm1pY3JvLXVzYiI7CisJCXR5cGUgPSAi
-YiI7CisJCXNpemUgPSAibWljcm8iOworCQltYXgtbW9kZSA9ICJocyI7CisKKwkJcG9ydCB7CisJ
-CQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKKwkJCSNzaXplLWNlbGxzID0gPDA+OworCisJCQltdXNi
-X2Nvbl90b19tdWljOiBlbmRwb2ludEAwIHsKKwkJCQlyZWcgPSA8MD47CisJCQkJcmVtb3RlLWVu
-ZHBvaW50ID0gPCZtdWljX3RvX211c2JfY29uPjsKKwkJCX07CisJCQltdXNiX2Nvbl90b19taGw6
-IGVuZHBvaW50QDEgeworCQkJCXJlZyA9IDwxPjsKKwkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8Jm1o
-bF90b19tdXNiX2Nvbj47CisJCQl9OworCQl9OworCX07CiB9OwogCiAmYWRjIHsKQEAgLTc2OCw5
-ICs3OTAsMjIgQEAKIAkJY2xvY2tzID0gPCZwbXVfc3lzdGVtX2NvbnRyb2xsZXIgMD47CiAJCWNs
-b2NrLW5hbWVzID0gInh0YWwiOwogCi0JCXBvcnQgewotCQkJbWhsX3RvX2hkbWk6IGVuZHBvaW50
-IHsKLQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmhkbWlfdG9fbWhsPjsKKwkJcG9ydHMgeworCQkJ
-I2FkZHJlc3MtY2VsbHMgPSA8MT47CisJCQkjc2l6ZS1jZWxscyA9IDwwPjsKKworCQkJcG9ydEAw
-IHsKKwkJCQlyZWcgPSA8MD47CisJCQkJbWhsX3RvX2hkbWk6IGVuZHBvaW50IHsKKwkJCQkJcmVt
-b3RlLWVuZHBvaW50ID0gPCZoZG1pX3RvX21obD47CisJCQkJfTsKKwkJCX07CisKKwkJCXBvcnRA
-MSB7CisJCQkJcmVnID0gPDE+OworCQkJCW1obF90b19tdXNiX2NvbjogZW5kcG9pbnQgeworCQkJ
-CQlyZW1vdGUtZW5kcG9pbnQgPSA8Jm11c2JfY29uX3RvX21obD47CisJCQkJfTsKIAkJCX07CiAJ
-CX07CiAJfTsKQEAgLTc4Nyw2ICs4MjIsMTIgQEAKIAogCQltdWljOiBtYXg3Nzg0My1tdWljIHsK
-IAkJCWNvbXBhdGlibGUgPSAibWF4aW0sbWF4Nzc4NDMtbXVpYyI7CisKKwkJCXBvcnQgeworCQkJ
-CW11aWNfdG9fbXVzYl9jb246IGVuZHBvaW50QDAgeworCQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8
-Jm11c2JfY29uX3RvX211aWM+OworCQkJCX07CisJCQl9OwogCQl9OwogCiAJCXJlZ3VsYXRvcnMg
-ewotLSAKMi4xNC4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+Hi,
+
+This patchset introduces USB connector bindings, together with working example.
+I have added comments in relevant patches to describe possible issues.
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (3):
+  dt-bindings: add bindings for USB physical connector
+  arm64: dts: exynos: add micro-USB connector node to TM2 platforms
+  extcon: add possibility to get extcon device by of node
+
+Maciej Purski (1):
+  drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
+
+ .../bindings/connector/usb-connector.txt           | 49 +++++++++++
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 47 ++++++++++-
+ drivers/extcon/extcon.c                            | 44 +++++++---
+ drivers/gpu/drm/bridge/sil-sii8620.c               | 98 +++++++++++++++++++++-
+ include/linux/extcon.h                             |  6 ++
+ 5 files changed, 228 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
+
+-- 
+2.14.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
