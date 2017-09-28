@@ -1,39 +1,61 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RESEND PATCH v2 13/17] media: v4l2-async: simplify
- v4l2_async_subdev structure
-Date: Thu, 28 Sep 2017 15:02:37 +0200
-Message-ID: <90cfb08b-b363-a317-8781-dcb191805c80@samsung.com>
-References: <cover.1506548682.git.mchehab@s-opensource.com>
-        <20170928125316.texy2qrzpvzekp7a@valkosipuli.retiisi.org.uk>
-        <CGME20170928130249epcas2p2c1f6e52226c3a5c72829b1bf3cbaa0cd@epcas2p2.samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [RFC PATCH 2/4] arm64: dts: exynos: add micro-USB connector node to
+ TM2 platforms
+Date: Thu, 28 Sep 2017 15:07:28 +0200
+Message-ID: <20170928130730.8747-3-a.hajda@samsung.com>
+References: <20170928130730.8747-1-a.hajda@samsung.com>
+ <CGME20170928130735eucas1p1298c683dcd7ab5f3ae7a5e19295d2a03@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <20170928125316.texy2qrzpvzekp7a@valkosipuli.retiisi.org.uk>
-Content-language: en-GB
-Sender: linux-doc-owner@vger.kernel.org
-To: Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170928130730.8747-1-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/28/2017 02:53 PM, Mauro Carvalho Chehab wrote:
-> (Resending for Mauro, while dropping the non-list recipients. The original
-> likely had too many recipients.)
-> 
-> The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
-> struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
-> match criteria requires just a device name.
-> 
-> So, it doesn't make sense to enclose those into structs,
-> as the criteria can go directly into the union.
-> 
-> That makes easier to document it, as we don't need to document
-> weird senseless structs.
-> 
-> At drivers, this makes even clearer about the match criteria.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-
-
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+U2luY2UgVVNCIGNvbm5lY3RvciBiaW5kaW5ncyBhcmUgYXZhaWxhYmxlIHdlIGNhbiBkZXNjcmli
+ZSBpdCBvbiBUTTIoZSkuCgpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNh
+bXN1bmcuY29tPgotLS0KIC4uLi9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTItY29tbW9u
+LmR0c2kgICAgIHwgNDcgKysrKysrKysrKysrKysrKysrKystLQogMSBmaWxlIGNoYW5nZWQsIDQ0
+IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9i
+b290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTItY29tbW9uLmR0c2kgYi9hcmNoL2FybTY0L2Jv
+b3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi1jb21tb24uZHRzaQppbmRleCBlMzBiYWU0Y2Y4
+NzguLjM5YjFjYTBlZjRjZCAxMDA2NDQKLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3Mv
+ZXh5bm9zNTQzMy10bTItY29tbW9uLmR0c2kKKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9leHlu
+b3MvZXh5bm9zNTQzMy10bTItY29tbW9uLmR0c2kKQEAgLTEzNSw2ICsxMzUsMjggQEAKIAkJCSJS
+Q1YiLCAiSFBPVVQzUiI7CiAJCXN0YXR1cyA9ICJva2F5IjsKIAl9OworCisJbXVzYl9jb246IG11
+c2JfY29ubmVjdG9yIHsKKwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHVzYi1jb25uZWN0b3ItMTFw
+aW4iLCAidXNiLWNvbm5lY3RvciI7CisJCWxhYmVsID0gIm1pY3JvLXVzYiI7CisJCXR5cGUgPSAi
+YiI7CisJCXNpemUgPSAibWljcm8iOworCQltYXgtbW9kZSA9ICJocyI7CisKKwkJcG9ydCB7CisJ
+CQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKKwkJCSNzaXplLWNlbGxzID0gPDA+OworCisJCQltdXNi
+X2Nvbl90b19tdWljOiBlbmRwb2ludEAwIHsKKwkJCQlyZWcgPSA8MD47CisJCQkJcmVtb3RlLWVu
+ZHBvaW50ID0gPCZtdWljX3RvX211c2JfY29uPjsKKwkJCX07CisJCQltdXNiX2Nvbl90b19taGw6
+IGVuZHBvaW50QDEgeworCQkJCXJlZyA9IDwxPjsKKwkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8Jm1o
+bF90b19tdXNiX2Nvbj47CisJCQl9OworCQl9OworCX07CiB9OwogCiAmYWRjIHsKQEAgLTc2OCw5
+ICs3OTAsMjIgQEAKIAkJY2xvY2tzID0gPCZwbXVfc3lzdGVtX2NvbnRyb2xsZXIgMD47CiAJCWNs
+b2NrLW5hbWVzID0gInh0YWwiOwogCi0JCXBvcnQgewotCQkJbWhsX3RvX2hkbWk6IGVuZHBvaW50
+IHsKLQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmhkbWlfdG9fbWhsPjsKKwkJcG9ydHMgeworCQkJ
+I2FkZHJlc3MtY2VsbHMgPSA8MT47CisJCQkjc2l6ZS1jZWxscyA9IDwwPjsKKworCQkJcG9ydEAw
+IHsKKwkJCQlyZWcgPSA8MD47CisJCQkJbWhsX3RvX2hkbWk6IGVuZHBvaW50IHsKKwkJCQkJcmVt
+b3RlLWVuZHBvaW50ID0gPCZoZG1pX3RvX21obD47CisJCQkJfTsKKwkJCX07CisKKwkJCXBvcnRA
+MSB7CisJCQkJcmVnID0gPDE+OworCQkJCW1obF90b19tdXNiX2NvbjogZW5kcG9pbnQgeworCQkJ
+CQlyZW1vdGUtZW5kcG9pbnQgPSA8Jm11c2JfY29uX3RvX21obD47CisJCQkJfTsKIAkJCX07CiAJ
+CX07CiAJfTsKQEAgLTc4Nyw2ICs4MjIsMTIgQEAKIAogCQltdWljOiBtYXg3Nzg0My1tdWljIHsK
+IAkJCWNvbXBhdGlibGUgPSAibWF4aW0sbWF4Nzc4NDMtbXVpYyI7CisKKwkJCXBvcnQgeworCQkJ
+CW11aWNfdG9fbXVzYl9jb246IGVuZHBvaW50QDAgeworCQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8
+Jm11c2JfY29uX3RvX211aWM+OworCQkJCX07CisJCQl9OwogCQl9OwogCiAJCXJlZ3VsYXRvcnMg
+ewotLSAKMi4xNC4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
