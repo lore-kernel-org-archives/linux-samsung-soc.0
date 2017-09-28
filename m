@@ -1,45 +1,114 @@
-From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [RFC PATCH 0/4] dt-bindings: add bindings for USB physical
- connector
-Date: Thu, 28 Sep 2017 15:07:26 +0200
-Message-ID: <20170928130730.8747-1-a.hajda@samsung.com>
-References: <CGME20170928130734eucas1p299c0e8135df3fb0484d72452cbd2ee47@eucas1p2.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [RFC PATCH 4/4] drm/bridge/sii8620: use micro-USB cable detection
+ logic to detect MHL
+Date: Thu, 28 Sep 2017 15:07:30 +0200
+Message-ID: <20170928130730.8747-5-a.hajda@samsung.com>
+References: <20170928130730.8747-1-a.hajda@samsung.com>
+ <CGME20170928130737eucas1p15a82a6fd0f9175075249e02c072e6b0d@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170928130730.8747-1-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-This patchset introduces USB connector bindings, together with working example.
-I have added comments in relevant patches to describe possible issues.
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (3):
-  dt-bindings: add bindings for USB physical connector
-  arm64: dts: exynos: add micro-USB connector node to TM2 platforms
-  extcon: add possibility to get extcon device by of node
-
-Maciej Purski (1):
-  drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
-
- .../bindings/connector/usb-connector.txt           | 49 +++++++++++
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 47 ++++++++++-
- drivers/extcon/extcon.c                            | 44 +++++++---
- drivers/gpu/drm/bridge/sil-sii8620.c               | 98 +++++++++++++++++++++-
- include/linux/extcon.h                             |  6 ++
- 5 files changed, 228 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
-
--- 
-2.14.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+RnJvbTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+CgpDdXJyZW50bHkgTUhM
+IGNoaXAgbXVzdCBiZSB0dXJuZWQgb24gcGVybWFuZW50bHkgdG8gZGV0ZWN0IE1ITCBjYWJsZS4g
+SXQKZHVwbGljYXRlcyBtaWNyby1VU0IgY29udHJvbGxlcidzIChNVUlDKSBmdW5jdGlvbmFsaXR5
+IGFuZCBjb25zdW1lcwp1bm5lY2Vzc2FyeSBwb3dlci4gTGV0cyB1c2UgZXh0Y29uIGF0dGFjaGVk
+IHRvIE1VSUMgdG8gZW5hYmxlIE1ITCBjaGlwCm9ubHkgaWYgaXQgZGV0ZWN0cyBNSEwgY2FibGUu
+CgpTaWduZWQtb2ZmLWJ5OiBNYWNpZWogUHVyc2tpIDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KU2ln
+bmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tClRoaXMg
+aXMgcmV3b3JrIG9mIHRoZSBwYXRjaCBieSBNYWNpZWogd2l0aCBmb2xsb3dpbmcgY2hhbmdlczoK
+LSB1c2UgbWljcm8tVVNCIHBvcnQgYmluZGluZ3MgdG8gZ2V0IGV4dGNvbiwgaW5zdGVhZCBvZiBl
+eHRjb24gcHJvcGVydHksCi0gZml4ZWQgcmVtb3ZlIHNlcXVlbmNlLAotIGZpeGVkIGV4dGNvbiBn
+ZXQgc3RhdGUgbG9naWMuCgpDb2RlIGZpbmRpbmcgZXh0Y29uIG5vZGUgaXMgaGFja3kgSU1PLCBJ
+IGd1ZXNzIHVsdGltYXRlbHkgaXQgc2hvdWxkIGJlIGRvbmUKdmlhIHNvbWUgZnJhbWV3b3JrICht
+YXliZSBldmVuIGV4dGNvbiksIG9yIGF0IGxlYXN0IHZpYSBoZWxwZXIsIEkgaG9wZSBpdApjYW4g
+c3RheSBhcyBpcyB1bnRpbCB0aGUgcHJvcGVyIHNvbHV0aW9uIHdpbGwgYmUgbWVyZ2VkLgoKU2ln
+bmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2
+ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4NjIwLmMgfCA5OCArKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrLS0KIDEgZmlsZSBjaGFuZ2VkLCA5NSBpbnNlcnRpb25zKCspLCAzIGRl
+bGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2
+MjAuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYwppbmRleCA1MTMxYmZi
+OTRmMDYuLjZmNDBjYmMyNDQ1ZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9z
+aWwtc2lpODYyMC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYwpA
+QCAtMTcsNiArMTcsNyBAQAogCiAjaW5jbHVkZSA8bGludXgvY2xrLmg+CiAjaW5jbHVkZSA8bGlu
+dXgvZGVsYXkuaD4KKyNpbmNsdWRlIDxsaW51eC9leHRjb24uaD4KICNpbmNsdWRlIDxsaW51eC9n
+cGlvL2NvbnN1bWVyLmg+CiAjaW5jbHVkZSA8bGludXgvaTJjLmg+CiAjaW5jbHVkZSA8bGludXgv
+aW50ZXJydXB0Lmg+CkBAIC0yNSw2ICsyNiw3IEBACiAjaW5jbHVkZSA8bGludXgvbGlzdC5oPgog
+I2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgogI2luY2x1ZGUgPGxpbnV4L211dGV4Lmg+CisjaW5j
+bHVkZSA8bGludXgvb2ZfZ3JhcGguaD4KICNpbmNsdWRlIDxsaW51eC9yZWd1bGF0b3IvY29uc3Vt
+ZXIuaD4KICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+CiAKQEAgLTc4LDYgKzgwLDEwIEBAIHN0cnVj
+dCBzaWk4NjIwIHsKIAlzdHJ1Y3QgZWRpZCAqZWRpZDsKIAl1bnNpZ25lZCBpbnQgZ2VuMl93cml0
+ZV9idXJzdDoxOwogCWVudW0gc2lpODYyMF9tdF9zdGF0ZSBtdF9zdGF0ZTsKKwlzdHJ1Y3QgZXh0
+Y29uX2RldiAqZXh0Y29uOworCXN0cnVjdCBub3RpZmllcl9ibG9jayBleHRjb25fbmI7CisJc3Ry
+dWN0IHdvcmtfc3RydWN0IGV4dGNvbl93cTsKKwlpbnQgY2FibGVfc3RhdGU7CiAJc3RydWN0IGxp
+c3RfaGVhZCBtdF9xdWV1ZTsKIAlzdHJ1Y3QgewogCQlpbnQgcl9zaXplOwpAQCAtMjEwMiw2ICsy
+MTA4LDc4IEBAIHN0YXRpYyB2b2lkIHNpaTg2MjBfY2FibGVfaW4oc3RydWN0IHNpaTg2MjAgKmN0
+eCkKIAllbmFibGVfaXJxKHRvX2kyY19jbGllbnQoY3R4LT5kZXYpLT5pcnEpOwogfQogCitzdGF0
+aWMgdm9pZCBzaWk4NjIwX2NhYmxlX291dChzdHJ1Y3Qgc2lpODYyMCAqY3R4KQoreworCWRpc2Fi
+bGVfaXJxKHRvX2kyY19jbGllbnQoY3R4LT5kZXYpLT5pcnEpOworCXNpaTg2MjBfaHdfb2ZmKGN0
+eCk7Cit9CisKK3N0YXRpYyB2b2lkIHNpaTg2MjBfZXh0Y29uX3dvcmsoc3RydWN0IHdvcmtfc3Ry
+dWN0ICp3b3JrKQoreworCXN0cnVjdCBzaWk4NjIwICpjdHggPQorCQljb250YWluZXJfb2Yod29y
+aywgc3RydWN0IHNpaTg2MjAsIGV4dGNvbl93cSk7CisJaW50IHN0YXRlID0gZXh0Y29uX2dldF9z
+dGF0ZShjdHgtPmV4dGNvbiwgRVhUQ09OX0RJU1BfTUhMKTsKKworCWlmIChzdGF0ZSA9PSBjdHgt
+PmNhYmxlX3N0YXRlKQorCQlyZXR1cm47CisKKwljdHgtPmNhYmxlX3N0YXRlID0gc3RhdGU7CisK
+KwlpZiAoc3RhdGUgPiAwKQorCQlzaWk4NjIwX2NhYmxlX2luKGN0eCk7CisJZWxzZQorCQlzaWk4
+NjIwX2NhYmxlX291dChjdHgpOworfQorCitzdGF0aWMgaW50IHNpaTg2MjBfZXh0Y29uX25vdGlm
+aWVyKHN0cnVjdCBub3RpZmllcl9ibG9jayAqc2VsZiwKKwkJCXVuc2lnbmVkIGxvbmcgZXZlbnQs
+IHZvaWQgKnB0cikKK3sKKwlzdHJ1Y3Qgc2lpODYyMCAqY3R4ID0KKwkJY29udGFpbmVyX29mKHNl
+bGYsIHN0cnVjdCBzaWk4NjIwLCBleHRjb25fbmIpOworCisJc2NoZWR1bGVfd29yaygmY3R4LT5l
+eHRjb25fd3EpOworCisJcmV0dXJuIE5PVElGWV9ET05FOworfQorCitzdGF0aWMgaW50IHNpaTg2
+MjBfZXh0Y29uX2luaXQoc3RydWN0IHNpaTg2MjAgKmN0eCkKK3sKKwlzdHJ1Y3QgZXh0Y29uX2Rl
+diAqZWRldjsKKwlzdHJ1Y3QgZGV2aWNlX25vZGUgKm11c2IsICptdWljOworCWludCByZXQ7CisK
+KwkvKiBnZXQgbWljcm8tVVNCIGNvbm5lY3RvciBub2RlICovCisJbXVzYiA9IG9mX2dyYXBoX2dl
+dF9yZW1vdGVfbm9kZShjdHgtPmRldi0+b2Zfbm9kZSwgMSwgLTEpOworCS8qIG5leHQgZ2V0IG1p
+Y3JvLVVTQiBJbnRlcmZhY2UgQ29udHJvbGxlciBub2RlICovCisJbXVpYyA9IG9mX2dyYXBoX2dl
+dF9yZW1vdGVfbm9kZShtdXNiLCAtMSwgMCk7CisJb2Zfbm9kZV9wdXQobXVzYik7CisKKwlpZiAo
+IW11aWMpIHsKKwkJZGV2X2luZm8oY3R4LT5kZXYsICJubyBleHRjb24gZm91bmQsIHN3aXRjaGlu
+ZyB0byAnYWx3YXlzIG9uJyBtb2RlXG4iKTsKKwkJcmV0dXJuIDA7CisJfQorCisJZWRldiA9IGV4
+dGNvbl9nZXRfZWRldl9ieV9vZl9ub2RlKG11aWMpOworCW9mX25vZGVfcHV0KG11aWMpOworCWlm
+IChJU19FUlIoZWRldikpIHsKKwkJaWYgKFBUUl9FUlIoZWRldikgPT0gLUVQUk9CRV9ERUZFUikK
+KwkJCXJldHVybiAtRVBST0JFX0RFRkVSOworCQlkZXZfZXJyKGN0eC0+ZGV2LCAiSW52YWxpZCBv
+ciBtaXNzaW5nIGV4dGNvblxuIik7CisJCXJldHVybiBQVFJfRVJSKGVkZXYpOworCX0KKworCWN0
+eC0+ZXh0Y29uID0gZWRldjsKKwljdHgtPmV4dGNvbl9uYi5ub3RpZmllcl9jYWxsID0gc2lpODYy
+MF9leHRjb25fbm90aWZpZXI7CisJSU5JVF9XT1JLKCZjdHgtPmV4dGNvbl93cSwgc2lpODYyMF9l
+eHRjb25fd29yayk7CisJcmV0ID0gZXh0Y29uX3JlZ2lzdGVyX25vdGlmaWVyKGVkZXYsIEVYVENP
+Tl9ESVNQX01ITCwgJmN0eC0+ZXh0Y29uX25iKTsKKwlpZiAocmV0KSB7CisJCWRldl9lcnIoY3R4
+LT5kZXYsICJmYWlsZWQgdG8gcmVnaXN0ZXIgbm90aWZpZXIgZm9yIE1ITFxuIik7CisJCXJldHVy
+biByZXQ7CisJfQorCisJcmV0dXJuIDA7Cit9CisKIHN0YXRpYyBpbmxpbmUgc3RydWN0IHNpaTg2
+MjAgKmJyaWRnZV90b19zaWk4NjIwKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiB7CiAJcmV0
+dXJuIGNvbnRhaW5lcl9vZihicmlkZ2UsIHN0cnVjdCBzaWk4NjIwLCBicmlkZ2UpOwpAQCAtMjIw
+MSwxMyArMjI3OSwyMCBAQCBzdGF0aWMgaW50IHNpaTg2MjBfcHJvYmUoc3RydWN0IGkyY19jbGll
+bnQgKmNsaWVudCwKIAlpZiAocmV0KQogCQlyZXR1cm4gcmV0OwogCisJcmV0ID0gc2lpODYyMF9l
+eHRjb25faW5pdChjdHgpOworCWlmIChyZXQgPCAwKSB7CisJCWRldl9lcnIoY3R4LT5kZXYsICJm
+YWlsZWQgdG8gaW5pdGlhbGl6ZSBFWFRDT05cbiIpOworCQlyZXR1cm4gcmV0OworCX0KKwogCWky
+Y19zZXRfY2xpZW50ZGF0YShjbGllbnQsIGN0eCk7CiAKIAljdHgtPmJyaWRnZS5mdW5jcyA9ICZz
+aWk4NjIwX2JyaWRnZV9mdW5jczsKIAljdHgtPmJyaWRnZS5vZl9ub2RlID0gZGV2LT5vZl9ub2Rl
+OwogCWRybV9icmlkZ2VfYWRkKCZjdHgtPmJyaWRnZSk7CiAKLQlzaWk4NjIwX2NhYmxlX2luKGN0
+eCk7CisJaWYgKCFjdHgtPmV4dGNvbikKKwkJc2lpODYyMF9jYWJsZV9pbihjdHgpOwogCiAJcmV0
+dXJuIDA7CiB9CkBAIC0yMjE2LDkgKzIzMDEsMTYgQEAgc3RhdGljIGludCBzaWk4NjIwX3JlbW92
+ZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50KQogewogCXN0cnVjdCBzaWk4NjIwICpjdHggPSBp
+MmNfZ2V0X2NsaWVudGRhdGEoY2xpZW50KTsKIAotCWRpc2FibGVfaXJxKHRvX2kyY19jbGllbnQo
+Y3R4LT5kZXYpLT5pcnEpOworCWlmIChjdHgtPmV4dGNvbikgeworCQlleHRjb25fdW5yZWdpc3Rl
+cl9ub3RpZmllcihjdHgtPmV4dGNvbiwgRVhUQ09OX0RJU1BfTUhMLAorCQkJCQkgICAmY3R4LT5l
+eHRjb25fbmIpOworCQlmbHVzaF93b3JrKCZjdHgtPmV4dGNvbl93cSk7CisJCWlmIChjdHgtPmNh
+YmxlX3N0YXRlID4gMCkKKwkJCXNpaTg2MjBfY2FibGVfb3V0KGN0eCk7CisJfSBlbHNlIHsKKwkJ
+c2lpODYyMF9jYWJsZV9vdXQoY3R4KTsKKwl9CiAJZHJtX2JyaWRnZV9yZW1vdmUoJmN0eC0+YnJp
+ZGdlKTsKLQlzaWk4NjIwX2h3X29mZihjdHgpOwogCiAJcmV0dXJuIDA7CiB9Ci0tIAoyLjE0LjEK
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
