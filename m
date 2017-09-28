@@ -1,86 +1,246 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH 3/4] extcon: add possibility to get extcon device by of
- node
-Date: Thu, 28 Sep 2017 15:07:29 +0200
-Message-ID: <20170928130730.8747-4-a.hajda@samsung.com>
-References: <20170928130730.8747-1-a.hajda@samsung.com>
- <CGME20170928130736eucas1p250bb9d854204ea142a2160cd9ab56194@eucas1p2.samsung.com>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH 2/4] hwmon: (ina2xx) Make max expected current
+ configurable
+Date: Thu, 28 Sep 2017 06:25:54 -0700
+Message-ID: <2c2de1bb-1396-6d1c-efb0-3411c40f638c@roeck-us.net>
+References: <1506603015-27202-1-git-send-email-m.purski@samsung.com>
+ <CGME20170928125057eucas1p2e8a2db5db29e7d7886c3906c7fffd390@eucas1p2.samsung.com>
+ <1506603015-27202-3-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170928130730.8747-1-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1506603015-27202-3-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Language: en-US
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-U2luY2UgZXh0Y29uIHByb3BlcnR5IGlzIG5vdCBhbGxvd2VkIGluIERULCBleHRjb24gc3Vic3lz
-dGVtIHJlcXVpcmVzCmFub3RoZXIgd2F5IHRvIGdldCBleHRjb24gZGV2aWNlLiBMZXRzIHRyeSB0
-aGUgc2ltcGxlc3QgYXBwcm9hY2ggLSBnZXQKZWRldiBieSBvZl9ub2RlLgoKU2lnbmVkLW9mZi1i
-eTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2V4dGNv
-bi9leHRjb24uYyB8IDQ0ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0t
-LS0tCiBpbmNsdWRlL2xpbnV4L2V4dGNvbi5oICB8ICA2ICsrKysrKwogMiBmaWxlcyBjaGFuZ2Vk
-LCA0MCBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2V4dGNvbi9leHRjb24uYyBiL2RyaXZlcnMvZXh0Y29uL2V4dGNvbi5jCmluZGV4IGNiMzhjMjc0
-NzY4NC4uZmRiOGMxZDc2N2MxIDEwMDY0NAotLS0gYS9kcml2ZXJzL2V4dGNvbi9leHRjb24uYwor
-KysgYi9kcml2ZXJzL2V4dGNvbi9leHRjb24uYwpAQCAtMTMzNiw2ICsxMzM2LDI4IEBAIHZvaWQg
-ZXh0Y29uX2Rldl91bnJlZ2lzdGVyKHN0cnVjdCBleHRjb25fZGV2ICplZGV2KQogRVhQT1JUX1NZ
-TUJPTF9HUEwoZXh0Y29uX2Rldl91bnJlZ2lzdGVyKTsKIAogI2lmZGVmIENPTkZJR19PRgorCisv
-KgorICogZXh0Y29uX2dldF9lZGV2X2J5X29mX25vZGUgLSBHZXQgdGhlIGV4dGNvbiBkZXZpY2Ug
-ZnJvbSBkZXZpY2V0cmVlLgorICogQG5vZGUJOiBPRiBub2RlIGlkZW50eWZ5aW5nIGVkZXYKKyAq
-CisgKiBSZXR1cm4gdGhlIHBvaW50ZXIgb2YgZXh0Y29uIGRldmljZSBpZiBzdWNjZXNzIG9yIEVS
-Ul9QVFIoZXJyKSBpZiBmYWlsLgorICovCitzdHJ1Y3QgZXh0Y29uX2RldiAqZXh0Y29uX2dldF9l
-ZGV2X2J5X29mX25vZGUoc3RydWN0IGRldmljZV9ub2RlICpub2RlKQoreworCXN0cnVjdCBleHRj
-b25fZGV2ICplZGV2OworCisJbXV0ZXhfbG9jaygmZXh0Y29uX2Rldl9saXN0X2xvY2spOworCWxp
-c3RfZm9yX2VhY2hfZW50cnkoZWRldiwgJmV4dGNvbl9kZXZfbGlzdCwgZW50cnkpCisJCWlmIChl
-ZGV2LT5kZXYucGFyZW50ICYmIGVkZXYtPmRldi5wYXJlbnQtPm9mX25vZGUgPT0gbm9kZSkKKwkJ
-CWdvdG8gZW5kOworCWVkZXYgPSBFUlJfUFRSKC1FUFJPQkVfREVGRVIpOworZW5kOgorCW11dGV4
-X3VubG9jaygmZXh0Y29uX2Rldl9saXN0X2xvY2spOworCisJcmV0dXJuIGVkZXY7Cit9CisKIC8q
-CiAgKiBleHRjb25fZ2V0X2VkZXZfYnlfcGhhbmRsZSAtIEdldCB0aGUgZXh0Y29uIGRldmljZSBm
-cm9tIGRldmljZXRyZWUuCiAgKiBAZGV2CQk6IHRoZSBpbnN0YW5jZSB0byB0aGUgZ2l2ZW4gZGV2
-aWNlCkBAIC0xMzYzLDI1ICsxMzg1LDI3IEBAIHN0cnVjdCBleHRjb25fZGV2ICpleHRjb25fZ2V0
-X2VkZXZfYnlfcGhhbmRsZShzdHJ1Y3QgZGV2aWNlICpkZXYsIGludCBpbmRleCkKIAkJcmV0dXJu
-IEVSUl9QVFIoLUVOT0RFVik7CiAJfQogCi0JbXV0ZXhfbG9jaygmZXh0Y29uX2Rldl9saXN0X2xv
-Y2spOwotCWxpc3RfZm9yX2VhY2hfZW50cnkoZWRldiwgJmV4dGNvbl9kZXZfbGlzdCwgZW50cnkp
-IHsKLQkJaWYgKGVkZXYtPmRldi5wYXJlbnQgJiYgZWRldi0+ZGV2LnBhcmVudC0+b2Zfbm9kZSA9
-PSBub2RlKSB7Ci0JCQltdXRleF91bmxvY2soJmV4dGNvbl9kZXZfbGlzdF9sb2NrKTsKLQkJCW9m
-X25vZGVfcHV0KG5vZGUpOwotCQkJcmV0dXJuIGVkZXY7Ci0JCX0KLQl9Ci0JbXV0ZXhfdW5sb2Nr
-KCZleHRjb25fZGV2X2xpc3RfbG9jayk7CisJZWRldiA9IGV4dGNvbl9nZXRfZWRldl9ieV9vZl9u
-b2RlKG5vZGUpOwogCW9mX25vZGVfcHV0KG5vZGUpOwogCi0JcmV0dXJuIEVSUl9QVFIoLUVQUk9C
-RV9ERUZFUik7CisJcmV0dXJuIGVkZXY7CiB9CisKICNlbHNlCisKK3N0cnVjdCBleHRjb25fZGV2
-ICpleHRjb25fZ2V0X2VkZXZfYnlfb2Zfbm9kZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUpCit7
-CisJcmV0dXJuIEVSUl9QVFIoLUVOT1NZUyk7Cit9CisKIHN0cnVjdCBleHRjb25fZGV2ICpleHRj
-b25fZ2V0X2VkZXZfYnlfcGhhbmRsZShzdHJ1Y3QgZGV2aWNlICpkZXYsIGludCBpbmRleCkKIHsK
-IAlyZXR1cm4gRVJSX1BUUigtRU5PU1lTKTsKIH0KKwogI2VuZGlmIC8qIENPTkZJR19PRiAqLwor
-CitFWFBPUlRfU1lNQk9MX0dQTChleHRjb25fZ2V0X2VkZXZfYnlfb2Zfbm9kZSk7CiBFWFBPUlRf
-U1lNQk9MX0dQTChleHRjb25fZ2V0X2VkZXZfYnlfcGhhbmRsZSk7CiAKIC8qKgpkaWZmIC0tZ2l0
-IGEvaW5jbHVkZS9saW51eC9leHRjb24uaCBiL2luY2x1ZGUvbGludXgvZXh0Y29uLmgKaW5kZXgg
-NzQ0ZDYwY2E4MGMzLi4yZjg4ZTc0OTE2NzIgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvZXh0
-Y29uLmgKKysrIGIvaW5jbHVkZS9saW51eC9leHRjb24uaApAQCAtMjYxLDYgKzI2MSw3IEBAIGV4
-dGVybiB2b2lkIGRldm1fZXh0Y29uX3VucmVnaXN0ZXJfbm90aWZpZXJfYWxsKHN0cnVjdCBkZXZp
-Y2UgKmRldiwKICAqIEZvbGxvd2luZyBBUElzIGdldCB0aGUgZXh0Y29uX2RldiBmcm9tIGRldmlj
-ZXRyZWUgb3IgYnkgdGhyb3VnaCBleHRjb24gbmFtZS4KICAqLwogZXh0ZXJuIHN0cnVjdCBleHRj
-b25fZGV2ICpleHRjb25fZ2V0X2V4dGNvbl9kZXYoY29uc3QgY2hhciAqZXh0Y29uX25hbWUpOwor
-ZXh0ZXJuIHN0cnVjdCBleHRjb25fZGV2ICpleHRjb25fZ2V0X2VkZXZfYnlfb2Zfbm9kZShzdHJ1
-Y3QgZGV2aWNlX25vZGUgKm5vZGUpOwogZXh0ZXJuIHN0cnVjdCBleHRjb25fZGV2ICpleHRjb25f
-Z2V0X2VkZXZfYnlfcGhhbmRsZShzdHJ1Y3QgZGV2aWNlICpkZXYsCiAJCQkJCQkgICAgIGludCBp
-bmRleCk7CiAKQEAgLTM4Miw2ICszODMsMTEgQEAgc3RhdGljIGlubGluZSBzdHJ1Y3QgZXh0Y29u
-X2RldiAqZXh0Y29uX2dldF9leHRjb25fZGV2KGNvbnN0IGNoYXIgKmV4dGNvbl9uYW1lKQogCXJl
-dHVybiBFUlJfUFRSKC1FTk9ERVYpOwogfQogCitzdGF0aWMgaW5saW5lIHN0cnVjdCBleHRjb25f
-ZGV2ICpleHRjb25fZ2V0X2VkZXZfYnlfb2Zfbm9kZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUp
-Cit7CisJcmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7Cit9CisKIHN0YXRpYyBpbmxpbmUgc3RydWN0
-IGV4dGNvbl9kZXYgKmV4dGNvbl9nZXRfZWRldl9ieV9waGFuZGxlKHN0cnVjdCBkZXZpY2UgKmRl
-diwKIAkJCQlpbnQgaW5kZXgpCiB7Ci0tIAoyLjE0LjEKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 09/28/2017 05:50 AM, Maciej Purski wrote:
+> Max expected current is used for calculating calibration register value,
+> Current LSB and Power LSB according to equations found in ina datasheet.
+> Max expected current is now implicitly set to default value,
+> which is 2^15, thanks to which Current LSB is equal to 1 mA and
+> Power LSB is equal to 20000 uW or 25000 uW depending on ina model.
+> 
+> Make max expected current configurable, just like it's already done
+> with shunt resistance: from device tree, platform_data or later
+> from sysfs. On each max_expected_current change, calculate new values
+> for Current LSB and Power LSB. According to datasheet Current LSB should
+> be calculated by dividing max expected current by 2^15, as values read
+> from device registers are in this case 16-bit integers. Power LSB
+> is calculated by multiplying Current LSB by a factor, which is defined
+> in ina documentation.
+> 
+> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>   drivers/hwmon/ina2xx.c | 105 +++++++++++++++++++++++++++++++++++++++++++------
+>   1 file changed, 93 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+> index 62e38fa..d956013 100644
+> --- a/drivers/hwmon/ina2xx.c
+> +++ b/drivers/hwmon/ina2xx.c
+> @@ -80,6 +80,8 @@
+>   /* common attrs, ina226 attrs and NULL */
+>   #define INA2XX_MAX_ATTRIBUTE_GROUPS	3
+>   
+> +#define INA2XX_MAX_EXPECTED_A_DEFAULT  (1 << 15)       /* current_lsb = 1 mA */
+> +
+>   /*
+>    * Both bus voltage and shunt voltage conversion times for ina226 are set
+>    * to 0b0100 on POR, which translates to 2200 microseconds in total.
+> @@ -100,13 +102,16 @@ struct ina2xx_config {
+>   	int shunt_div;
+>   	int bus_voltage_shift;
+>   	int bus_voltage_lsb;	/* uV */
+> -	int power_lsb;		/* uW */
+> +	int power_lsb_factor;
+>   };
+>   
+>   struct ina2xx_data {
+>   	const struct ina2xx_config *config;
+>   
+> -	long rshunt;
+> +	long rshunt;				/* uOhms */
+> +	unsigned int max_expected_current;	/* mA */
+> +	int current_lsb;			/* uA */
+> +	int power_lsb;				/* uW */
+>   	struct mutex config_lock;
+>   	struct regmap *regmap;
+>   
+> @@ -121,7 +126,7 @@ static const struct ina2xx_config ina2xx_config[] = {
+>   		.shunt_div = 100,
+>   		.bus_voltage_shift = 3,
+>   		.bus_voltage_lsb = 4000,
+> -		.power_lsb = 20000,
+> +		.power_lsb_factor = 20,
+>   	},
+>   	[ina226] = {
+>   		.config_default = INA226_CONFIG_DEFAULT,
+> @@ -130,7 +135,7 @@ static const struct ina2xx_config ina2xx_config[] = {
+>   		.shunt_div = 400,
+>   		.bus_voltage_shift = 0,
+>   		.bus_voltage_lsb = 1250,
+> -		.power_lsb = 25000,
+> +		.power_lsb_factor = 25,
+>   	},
+>   };
+>   
+> @@ -169,10 +174,17 @@ static u16 ina226_interval_to_reg(int interval)
+>   	return INA226_SHIFT_AVG(avg_bits);
+>   }
+>   
+> +/*
+> + * Calculate calibration value according to equation 1 in ina226 datasheet
+> + * http://www.ti.com/lit/ds/symlink/ina226.pdf.
+> + * Current LSB is in uA and RShunt is in uOhms, so in order to keep
+> + * calibration value scaled RShunt must be converted to mOhms.
+> + */
+>   static int ina2xx_calibrate(struct ina2xx_data *data)
+>   {
+> +	int r_shunt = DIV_ROUND_CLOSEST(data->rshunt, 1000);
+>   	u16 val = DIV_ROUND_CLOSEST(data->config->calibration_factor,
+> -				    data->rshunt);
+> +				    data->current_lsb * r_shunt);
+>   
+>   	return regmap_write(data->regmap, INA2XX_CALIBRATION, val);
+>   }
+> @@ -187,13 +199,28 @@ static int ina2xx_init(struct ina2xx_data *data)
+>   	if (ret < 0)
+>   		return ret;
+>   
+> -	/*
+> -	 * Set current LSB to 1mA, shunt is in uOhms
+> -	 * (equation 13 in datasheet).
+> -	 */
+>   	return ina2xx_calibrate(data);
+>   }
+>   
+> +/*
+> + * Set max_expected_current (mA) and calculate current_lsb (uA),
+> + * according to equation 2 in ina226 datasheet. Power LSB is calculated
+> + * by multiplying Current LSB by a given factor, which may vary depending
+> + * on ina version.
+> + */
+> +static int set_max_expected_current(struct ina2xx_data *data, unsigned int val)
+> +{
+> +	if (val <= 0 || val > data->config->calibration_factor)
+> +		return -EINVAL;
+> +
+> +	data->max_expected_current = val;
+> +	data->current_lsb = DIV_ROUND_CLOSEST(data->max_expected_current * 1000,
+> +					      1 << 15);
+> +	data->power_lsb = data->current_lsb * data->config->power_lsb_factor;
+> +
+> +	return 0;
+> +}
+> +
+>   static int ina2xx_read_reg(struct device *dev, int reg, unsigned int *regval)
+>   {
+>   	struct ina2xx_data *data = dev_get_drvdata(dev);
+> @@ -268,11 +295,11 @@ static int ina2xx_get_value(struct ina2xx_data *data, u8 reg,
+>   		val = DIV_ROUND_CLOSEST(val, 1000);
+>   		break;
+>   	case INA2XX_POWER:
+> -		val = regval * data->config->power_lsb;
+> +		val = regval * data->power_lsb;
+>   		break;
+>   	case INA2XX_CURRENT:
+> -		/* signed register, LSB=1mA (selected), in mA */
+> -		val = (s16)regval;
+> +		val = (s16)regval * data->current_lsb;
+> +		val = DIV_ROUND_CLOSEST(val, 1000);
+>   		break;
+>   	case INA2XX_CALIBRATION:
+>   		val = DIV_ROUND_CLOSEST(data->config->calibration_factor,
+> @@ -369,6 +396,39 @@ static ssize_t ina226_show_interval(struct device *dev,
+>   	return snprintf(buf, PAGE_SIZE, "%d\n", ina226_reg_to_interval(regval));
+>   }
+>   
+> +static ssize_t ina2xx_max_expected_current_show(struct device *dev,
+> +					  struct device_attribute *attr,
+> +					  char *buf)
+> +{
+> +	struct ina2xx_data *data = dev_get_drvdata(dev);
+> +
+> +	return sprintf(buf, "%d\n", data->max_expected_current);
+> +}
+> +
+> +static ssize_t ina2xx_max_expected_current_set(struct device *dev,
+> +					   struct device_attribute *attr,
+> +					   const char *buf, size_t len)
+> +{
+> +	struct ina2xx_data *data = dev_get_drvdata(dev);
+> +	unsigned long val;
+> +	int ret;
+> +
+> +	ret = kstrtoul((const char *) buf, 10, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = set_max_expected_current(data, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Update the Calibration register */
+> +	ret = ina2xx_calibrate(data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+>   /* shunt voltage */
+>   static SENSOR_DEVICE_ATTR(in0_input, S_IRUGO, ina2xx_show_value, NULL,
+>   			  INA2XX_SHUNT_VOLTAGE);
+> @@ -390,6 +450,11 @@ static SENSOR_DEVICE_ATTR(shunt_resistor, S_IRUGO | S_IWUSR,
+>   			  ina2xx_show_value, ina2xx_set_shunt,
+>   			  INA2XX_CALIBRATION);
+>   
+> +/* max expected current */
+> +static SENSOR_DEVICE_ATTR(max_expected_current, S_IRUGO | S_IWUSR,
+> +			  ina2xx_max_expected_current_show,
+> +			  ina2xx_max_expected_current_set, 0);
+> +
+>   /* update interval (ina226 only) */
+>   static SENSOR_DEVICE_ATTR(update_interval, S_IRUGO | S_IWUSR,
+>   			  ina226_show_interval, ina226_set_interval, 0);
+> @@ -401,6 +466,7 @@ static struct attribute *ina2xx_attrs[] = {
+>   	&sensor_dev_attr_curr1_input.dev_attr.attr,
+>   	&sensor_dev_attr_power1_input.dev_attr.attr,
+>   	&sensor_dev_attr_shunt_resistor.dev_attr.attr,
+> +	&sensor_dev_attr_max_expected_current.dev_attr.attr,
+
+We do have standard attributes (presumably currX_max or possibly currX_crit).
+Please use them, or explain in detail why you don't.
+
+Guenter
+
+>   	NULL,
+>   };
+>   
+> @@ -453,6 +519,21 @@ static int ina2xx_probe(struct i2c_client *client,
+>   
+>   	data->rshunt = val;
+>   
+> +	if (of_property_read_u32(dev->of_node, "max-expected-current",
+> +				 &val) < 0) {
+> +		struct ina2xx_platform_data *pdata =
+> +		    dev_get_platdata(&client->dev);
+> +
+> +		if (pdata && pdata->max_mA != 0)
+> +			val = pdata->max_mA;
+> +		else
+> +			val = INA2XX_MAX_EXPECTED_A_DEFAULT;
+> +	}
+> +
+> +	ret = set_max_expected_current(data, val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>   	ina2xx_regmap_config.max_register = data->config->registers;
+>   
+>   	data->regmap = devm_regmap_init_i2c(client, &ina2xx_regmap_config);
+> 
