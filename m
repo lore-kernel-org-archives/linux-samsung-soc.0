@@ -1,73 +1,68 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 07/11] drm/exynos: add mode_fixup callback to
- exynos_drm_crtc_ops
-Date: Fri, 29 Sep 2017 12:05:38 +0200
-Message-ID: <20170929100542.12849-8-a.hajda@samsung.com>
+Subject: [PATCH v2 09/11] drm/exynos/hdmi: quirk for support mode timings
+ conversion
+Date: Fri, 29 Sep 2017 12:05:40 +0200
+Message-ID: <20170929100542.12849-10-a.hajda@samsung.com>
 References: <20170929100542.12849-1-a.hajda@samsung.com>
-        <CGME20170929100548eucas1p26c83f7cf1e82d4cd052e19d4d06cdbfa@eucas1p2.samsung.com>
+        <CGME20170929100549eucas1p2053fdf47957c11fa39d0e026267f088c@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42655 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42661 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750922AbdI2KFw (ORCPT
+        with ESMTP id S1752050AbdI2KFx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 06:05:52 -0400
+        Fri, 29 Sep 2017 06:05:53 -0400
 In-reply-to: <20170929100542.12849-1-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-crtc::mode_fixup callback is required by crtcs which internally use
-a different mode than requested by user - case of Exynos Mixer.
+MIXER in SoCs prior to Exynos5420 supports only 4 video modes:
+720x480, 720x576, 1280x720, 1920x1080. Support for other modes
+can be enabled by manipulating timings of HDMI. To do it
+adjusted_mode should contain actual mode set on crtc.
+With this patch it is possible to enable 1024x768 and 1280x1024
+modes in MIXER.
 
+Suggested-by: Daniel Drake <drake@endlessm.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 15 +++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |  3 +++
- 2 files changed, 18 insertions(+)
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 6ce0821590df..dc01342e759a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -95,8 +95,23 @@ static enum drm_mode_status exynos_crtc_mode_valid(struct drm_crtc *crtc,
- 	return MODE_OK;
- }
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 7225b6521148..4b081f6cfdcb 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1239,6 +1239,17 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+ {
+ 	struct drm_display_mode *m = &hdata->encoder.crtc->state->mode;
++	struct drm_display_mode *am = &hdata->encoder.crtc->state->adjusted_mode;
++	int hquirk = 0;
++
++	/*
++	 * In case video mode coming from CRTC differs from requested one HDMI
++	 * sometimes is able to almost properly perform conversion - only
++	 * first line is distorted.
++	 */
++	if ((m->vdisplay != am->vdisplay) &&
++	    (m->hdisplay == 1280 || m->hdisplay == 1024))
++		hquirk = 258;
  
-+static bool exynos_crtc_mode_fixup(struct drm_crtc *crtc,
-+		const struct drm_display_mode *mode,
-+		struct drm_display_mode *adjusted_mode)
-+{
-+	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-+
-+	if (exynos_crtc->ops->mode_fixup)
-+		return exynos_crtc->ops->mode_fixup(exynos_crtc, mode,
-+				adjusted_mode);
-+
-+	return true;
-+}
-+
-+
- static const struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
- 	.mode_valid	= exynos_crtc_mode_valid,
-+	.mode_fixup	= exynos_crtc_mode_fixup,
- 	.atomic_check	= exynos_crtc_atomic_check,
- 	.atomic_begin	= exynos_crtc_atomic_begin,
- 	.atomic_flush	= exynos_crtc_atomic_flush,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index cf131c2aa23e..e8bcc7223016 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -136,6 +136,9 @@ struct exynos_drm_crtc_ops {
- 	u32 (*get_vblank_counter)(struct exynos_drm_crtc *crtc);
- 	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
- 		const struct drm_display_mode *mode);
-+	bool (*mode_fixup)(struct exynos_drm_crtc *crtc,
-+			   const struct drm_display_mode *mode,
-+			   struct drm_display_mode *adjusted_mode);
- 	int (*atomic_check)(struct exynos_drm_crtc *crtc,
- 			    struct drm_crtc_state *state);
- 	void (*atomic_begin)(struct exynos_drm_crtc *crtc);
+ 	hdmi_reg_writev(hdata, HDMI_H_BLANK_0, 2, m->htotal - m->hdisplay);
+ 	hdmi_reg_writev(hdata, HDMI_V_LINE_0, 2, m->vtotal);
+@@ -1332,8 +1343,8 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+ 	hdmi_reg_writev(hdata, HDMI_V_SYNC_LINE_AFT_PXL_6_0, 2, 0xffff);
+ 
+ 	hdmi_reg_writev(hdata, HDMI_TG_H_FSZ_L, 2, m->htotal);
+-	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay);
+-	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay);
++	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay - hquirk);
++	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay + hquirk);
+ 	hdmi_reg_writev(hdata, HDMI_TG_V_FSZ_L, 2, m->vtotal);
+ 	if (hdata->drv_data == &exynos5433_hdmi_driver_data)
+ 		hdmi_reg_writeb(hdata, HDMI_TG_DECON_EN, 1);
 -- 
 2.14.1
