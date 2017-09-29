@@ -1,59 +1,147 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 00/11] drm/exynos: TV path improvements
-Date: Fri, 29 Sep 2017 12:05:31 +0200
-Message-ID: <20170929100542.12849-1-a.hajda@samsung.com>
-References: <CGME20170929100545eucas1p24e82643e9ba934c6a0a1f437f4c0891a@eucas1p2.samsung.com>
+Subject: [PATCH v2 08/11] drm/exynos/mixer: pass actual mode on MIXER to
+ encoder
+Date: Fri, 29 Sep 2017 12:05:39 +0200
+Message-ID: <20170929100542.12849-9-a.hajda@samsung.com>
+References: <20170929100542.12849-1-a.hajda@samsung.com>
+        <CGME20170929100549eucas1p2eddc8a5e6908a69c9c91be488906852f@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42630 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42660 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750709AbdI2KFt (ORCPT
+        with ESMTP id S1750709AbdI2KFx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 06:05:49 -0400
+        Fri, 29 Sep 2017 06:05:53 -0400
+In-reply-to: <20170929100542.12849-1-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-Hi all,
+MIXER in SoCs prior to Exynos5420 supports only 4 video modes:
+720x480, 720x576, 1280x720, 1920x1080. Support for other modes can be
+enabled by manipulating timings of HDMI. To allow it MIXER must pass
+actual video mode to HDMI, the proper way to do it is to modify
+adjusted_mode property in crtc::mode_fixup callback. Adding such callback
+allows also to simplify mixer_cfg_scan code - choosing mode is performed
+already in crtc::mode_fixup. mode_fixup is also better place to check
+interlace flag.
 
-This patchset does two main things:
-- removes mode limitation for Exynos542x chips, multiple modes were filtered
-  out due to lack of HW version checking code,
-- enables two modes on older chips, thanks to quirk found by Daniel Drake,
-  and published by Tobias Jakobi [1][2].
-Beside this it consolidates the code and performs multiple cleanups.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 70 +++++++++++++++++++++++++----------
+ 1 file changed, 50 insertions(+), 20 deletions(-)
 
-v2:
-- addressed comments by Tobias,
-- added Daniel's patch adding 1366x768Hz mode
-
-[1]: http://www.spinics.net/lists/linux-samsung-soc/msg24617.html
-[2]: https://www.spinics.net/lists/dri-devel/msg150906.html
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (10):
-  drm/exynos/mixer: abstract out output mode setup code
-  drm/exynos/mixer: move mode commit to enable callback
-  drm/exynos/mixer: move resolution configuration to single function
-  drm/exynos/mixer: fix mode validation code
-  drm/exynos/mixer: remove mixer_resources sub-structure
-  drm/exynos/hdmi: remove redundant mode field
-  drm/exynos: add mode_fixup callback to exynos_drm_crtc_ops
-  drm/exynos/mixer: pass actual mode on MIXER to encoder
-  drm/exynos/hdmi: quirk for support mode timings conversion
-  drm/exynos/mixer: enable support for 1024x768 and 1280x1024 modes
-
-Daniel Drake (1):
-  drm/exynos/hdmi: add 85.5MHz pixel clock for v14 HDMI PHY
-
- drivers/gpu/drm/exynos/exynos_drm_crtc.c |  15 +
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |   3 +
- drivers/gpu/drm/exynos/exynos_hdmi.c     |  58 ++--
- drivers/gpu/drm/exynos/exynos_mixer.c    | 458 +++++++++++++++----------------
- 4 files changed, 278 insertions(+), 256 deletions(-)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 2d8905ea0141..8baa93f80106 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -115,6 +115,7 @@ struct mixer_context {
+ 	struct clk		*sclk_hdmi;
+ 	struct clk		*mout_mixer;
+ 	enum mixer_version_id	mxr_ver;
++	int			scan_value;
+ };
+ 
+ struct mixer_drv_data {
+@@ -367,23 +368,11 @@ static void mixer_cfg_scan(struct mixer_context *ctx, int width, int height)
+ 	val = test_bit(MXR_BIT_INTERLACE, &ctx->flags) ?
+ 		MXR_CFG_SCAN_INTERLACE : MXR_CFG_SCAN_PROGRESSIVE;
+ 
+-	/* setup display size */
+-	if (ctx->mxr_ver == MXR_VER_128_0_0_184) {
++	if (ctx->mxr_ver == MXR_VER_128_0_0_184)
+ 		mixer_reg_write(ctx, MXR_RESOLUTION,
+ 			MXR_MXR_RES_HEIGHT(height) | MXR_MXR_RES_WIDTH(width));
+-	} else {
+-		/* choosing between proper HD and SD mode */
+-		if (height <= 480)
+-			val |= MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD;
+-		else if (height <= 576)
+-			val |= MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD;
+-		else if (height <= 720)
+-			val |= MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
+-		else if (height <= 1080)
+-			val |= MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD;
+-		else
+-			val |= MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
+-	}
++	else
++		val |= ctx->scan_value;
+ 
+ 	mixer_reg_writemask(ctx, MXR_CFG, val, MXR_CFG_SCAN_MASK);
+ }
+@@ -467,11 +456,6 @@ static void mixer_commit(struct mixer_context *ctx)
+ {
+ 	struct drm_display_mode *mode = &ctx->crtc->base.state->adjusted_mode;
+ 
+-	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+-		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
+-	else
+-		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
+-
+ 	mixer_cfg_scan(ctx, mode->hdisplay, mode->vdisplay);
+ 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+ 	mixer_run(ctx);
+@@ -1033,6 +1017,51 @@ static int mixer_mode_valid(struct exynos_drm_crtc *crtc,
+ 	return MODE_BAD;
+ }
+ 
++static bool mixer_mode_fixup(struct exynos_drm_crtc *crtc,
++		   const struct drm_display_mode *mode,
++		   struct drm_display_mode *adjusted_mode)
++{
++	struct mixer_context *ctx = crtc->ctx;
++	int width = mode->hdisplay, height = mode->vdisplay, i;
++
++	struct {
++		int hdisplay, vdisplay, htotal, vtotal, scan_val;
++	} static const modes[] = {
++		{ 720, 480, 858, 525, MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD },
++		{ 720, 576, 864, 625, MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD },
++		{ 1280, 720, 1650, 750, MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD },
++		{ 1920, 1080, 2200, 1125, MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD }
++	};
++
++	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
++		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
++	else
++		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
++
++	if (ctx->mxr_ver == MXR_VER_128_0_0_184)
++		return true;
++
++	for (i = 0; i < ARRAY_SIZE(modes); ++i)
++		if (width <= modes[i].hdisplay && height <= modes[i].vdisplay) {
++			ctx->scan_value = modes[i].scan_val;
++			if (width < modes[i].hdisplay ||
++			    height < modes[i].vdisplay) {
++				adjusted_mode->hdisplay = modes[i].hdisplay;
++				adjusted_mode->hsync_start = modes[i].hdisplay;
++				adjusted_mode->hsync_end = modes[i].htotal;
++				adjusted_mode->htotal = modes[i].htotal;
++				adjusted_mode->vdisplay = modes[i].vdisplay;
++				adjusted_mode->vsync_start = modes[i].vdisplay;
++				adjusted_mode->vsync_end = modes[i].vtotal;
++				adjusted_mode->vtotal = modes[i].vtotal;
++			}
++
++			return true;
++		}
++
++	return false;
++}
++
+ static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
+ 	.enable			= mixer_enable,
+ 	.disable		= mixer_disable,
+@@ -1043,6 +1072,7 @@ static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
+ 	.disable_plane		= mixer_disable_plane,
+ 	.atomic_flush		= mixer_atomic_flush,
+ 	.mode_valid		= mixer_mode_valid,
++	.mode_fixup		= mixer_mode_fixup,
+ };
+ 
+ static const struct mixer_drv_data exynos5420_mxr_drv_data = {
 -- 
 2.14.1
