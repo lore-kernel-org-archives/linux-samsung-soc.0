@@ -1,129 +1,106 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: [PATCH v2 13/17] media: v4l2-async: simplify v4l2_async_subdev
- structure
-Date: Fri, 29 Sep 2017 06:27:13 -0300
-Message-ID: <20170929062119.192e4fd1@vento.lan>
-References: <cover.1506548682.git.mchehab@s-opensource.com>
- <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
- <20170928120920.ywgbtikkrts25qlj@valkosipuli.retiisi.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170928120920.ywgbtikkrts25qlj@valkosipuli.retiisi.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Songjun Wu <songjun.wu@microchip.com>, "Lad,
- Prabhakar" <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javi Merino <javi.merino@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org, Yannick Fertre <yannick.fertre@st.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Tuukka Toivonen <tuukka.toivonen@intel.com>, Steve Longerbeam <slongerbeam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linux Media Mailing List <linux-media@vger.kernel.o>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 01/11] drm/exynos/mixer: abstract out output mode setup
+ code
+Date: Fri, 29 Sep 2017 12:05:32 +0200
+Message-ID: <20170929100542.12849-2-a.hajda@samsung.com>
+References: <20170929100542.12849-1-a.hajda@samsung.com>
+        <CGME20170929100546eucas1p2c06bf97d6961259c617b1e6d3a63f081@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42633 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750922AbdI2KFt (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 29 Sep 2017 06:05:49 -0400
+In-reply-to: <20170929100542.12849-1-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-Em Thu, 28 Sep 2017 15:09:21 +0300
-Sakari Ailus <sakari.ailus@iki.fi> escreveu:
+Mode setup code is called from video plane update and mixer plane update.
+Let's group it together in mixer_commit function like in case of other
+Exynos CRTCs.
 
-> Hi Mauro,
-> 
-> On Wed, Sep 27, 2017 at 06:46:56PM -0300, Mauro Carvalho Chehab wrote:
-> > The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
-> > struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
-> > match criteria requires just a device name.
-> > 
-> > So, it doesn't make sense to enclose those into structs,
-> > as the criteria can go directly into the union.
-> > 
-> > That makes easier to document it, as we don't need to document
-> > weird senseless structs.  
-> 
-> The idea is that in the union, there's a struct which is specific to the
-> match_type field. I wouldn't call it senseless.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
-Why a struct for each specific match_type is **needed**? It it is not
-needed, then it is senseless per definition :-) 
-
-In the specific case of fwnode, there's already a named struct
-for fwnode_handle. The only thing is that it is declared outside
-enum v4l2_async_match_type. So, I don't see any reason to do things
-like:
-
-		struct {
-			struct fwnode_handle *fwnode;
-		} fwnode;
-
-If you're in doubt about that, think on how would you document
-both fwnode structs. Both fwnode structs specify the match
-criteria if %V4L2_ASYNC_MATCH_FWNODE.
-
-The same applies to this:
-
-		struct {
-			const char *name;
-		} device_name;
-
-Both device_name and name specifies the match criteria if
-%V4L2_ASYNC_MATCH_DEVNAME.
-
-> 
-> In the two cases there's just a single field in the containing struct. You
-> could remove the struct in that case as you do in this patch, and just use
-> the field. But I think the result is less clean and so I wouldn't make this
-> change.
-
-It is actually cleaner without the stucts.
-
-Without the useless struct, if one wants to match a firmware node, it
-should be doing:
-
- 		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
-		pdata->asd[i]->match.fwnode = of_fwnode_handle(rem);
-
-And that' it. For anyone that reads the above code, even not knowing
-all details of "match", is clear that the match criteria is whatever
-of_fwnode_handle() returns.
-
-Now, on this:
-
- 		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
-		pdata->asd[i]->match.fwnode.fwnode = of_fwnode_handle(rem);
-
-It sounds that something is missing, as only one field of match.fwnode
-was specified. Anyone not familiar with that non-conventional usage of
-a struct with just one struct field inside would need to seek for the
-header file declaring the struct. That would consume a lot of time for
-code reviewers for no good reason.
-
-The same apply for devname search:
-
-In this case:
-		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
-		asd->match.device_name.name = imxsd->devname;
-
-I would be expecting something else to be filled at device_name's
-struct, for example to specify a case sensitive or case insensitive
-match criteria, to allow seeking for a device's substring, or to
-allow using other struct device fields to narrow the seek.
-
-With this:
-
-		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
-		asd->match.device_name = imxsd->devname;
-
-It is clear that the match criteria is fully specified.
-
-> The confusion comes possibly from the fact that the struct is named the
-> same as the field in the struct. These used to be called of and node, but
-> with the fwnode property framework the references to the fwnode are, well,
-> typically similarly called "fwnode". There's no underlying firmware
-> interface with that name, fwnode property API is just an API.
-
-The duplicated "fwnode" name only made it more evident that we don't
-need to enclose a single match criteria field inside a struct.
-
-Thanks,
-Mauro
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 002755415e00..499ebdca4fed 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -473,6 +473,22 @@ static void mixer_stop(struct mixer_context *ctx)
+ 		usleep_range(10000, 12000);
+ }
+ 
++static void mixer_commit(struct mixer_context *ctx)
++{
++	struct drm_display_mode *mode = &ctx->crtc->base.state->adjusted_mode;
++
++	/* setup display size */
++	if (ctx->mxr_ver == MXR_VER_128_0_0_184) {
++		u32 val  = MXR_MXR_RES_HEIGHT(mode->vdisplay)
++			 | MXR_MXR_RES_WIDTH(mode->hdisplay);
++		mixer_reg_write(&ctx->mixer_res, MXR_RESOLUTION, val);
++	}
++
++	mixer_cfg_scan(ctx, mode->vdisplay);
++	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
++	mixer_run(ctx);
++}
++
+ static void vp_video_buffer(struct mixer_context *ctx,
+ 			    struct exynos_drm_plane *plane)
+ {
+@@ -553,11 +569,9 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	vp_reg_write(res, VP_TOP_C_PTR, chroma_addr[0]);
+ 	vp_reg_write(res, VP_BOT_C_PTR, chroma_addr[1]);
+ 
+-	mixer_cfg_scan(ctx, mode->vdisplay);
+-	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+ 	mixer_cfg_layer(ctx, plane->index, priority, true);
+ 	mixer_cfg_vp_blend(ctx);
+-	mixer_run(ctx);
++	mixer_commit(ctx);
+ 
+ 	spin_unlock_irqrestore(&res->reg_slock, flags);
+ 
+@@ -638,14 +652,6 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win),
+ 			fb->pitches[0] / fb->format->cpp[0]);
+ 
+-	/* setup display size */
+-	if (ctx->mxr_ver == MXR_VER_128_0_0_184 &&
+-		win == DEFAULT_WIN) {
+-		val  = MXR_MXR_RES_HEIGHT(mode->vdisplay);
+-		val |= MXR_MXR_RES_WIDTH(mode->hdisplay);
+-		mixer_reg_write(res, MXR_RESOLUTION, val);
+-	}
+-
+ 	val  = MXR_GRP_WH_WIDTH(state->src.w);
+ 	val |= MXR_GRP_WH_HEIGHT(state->src.h);
+ 	val |= MXR_GRP_WH_H_SCALE(x_ratio);
+@@ -660,18 +666,15 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	/* set buffer address to mixer */
+ 	mixer_reg_write(res, MXR_GRAPHIC_BASE(win), dma_addr);
+ 
+-	mixer_cfg_scan(ctx, mode->vdisplay);
+-	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+ 	mixer_cfg_layer(ctx, win, priority, true);
+ 	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->format->format));
++	mixer_commit(ctx);
+ 
+ 	/* layer update mandatory for mixer 16.0.33.0 */
+ 	if (ctx->mxr_ver == MXR_VER_16_0_33_0 ||
+ 		ctx->mxr_ver == MXR_VER_128_0_0_184)
+ 		mixer_layer_update(ctx);
+ 
+-	mixer_run(ctx);
+-
+ 	spin_unlock_irqrestore(&res->reg_slock, flags);
+ 
+ 	mixer_regs_dump(ctx);
+-- 
+2.14.1
