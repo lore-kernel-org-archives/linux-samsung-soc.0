@@ -1,145 +1,87 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v2 13/17] media: v4l2-async: simplify v4l2_async_subdev
- structure
-Date: Sat, 30 Sep 2017 01:05:24 +0300
-Message-ID: <20170929220524.gsx3tmirdni2mhpx@valkosipuli.retiisi.org.uk>
-References: <cover.1506548682.git.mchehab@s-opensource.com>
- <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
- <20170928120920.ywgbtikkrts25qlj@valkosipuli.retiisi.org.uk>
- <20170929062119.192e4fd1@vento.lan>
+From: Jochen Sprickerhof <git@jochen.sprickerhof.de>
+Subject: [PATCH] ARM: dts: exynos: Use dwc3 quirk for USB3 and LAN on Odroid
+ XU4
+Date: Sat, 30 Sep 2017 16:54:54 +0200
+Message-ID: <20170930145454.sm2zpwonemlfsemo@vis>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dcm7oqzhrdh4s5b3"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:43548 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752320AbdI2WF2 (ORCPT
+Received: from smtprelay01.ispgateway.de ([80.67.31.24]:60770 "EHLO
+        smtprelay01.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751048AbdI3PNm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 18:05:28 -0400
+        Sat, 30 Sep 2017 11:13:42 -0400
 Content-Disposition: inline
-In-Reply-To: <20170929062119.192e4fd1@vento.lan>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Vagrant Cascadian <vagrant@debian.org>
 
-Hi Mauro,
 
-(Removing the non-list recipients.)
+--dcm7oqzhrdh4s5b3
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 29, 2017 at 06:27:13AM -0300, Mauro Carvalho Chehab wrote:
-> Em Thu, 28 Sep 2017 15:09:21 +0300
-> Sakari Ailus <sakari.ailus@iki.fi> escreveu:
-> 
-> > Hi Mauro,
-> > 
-> > On Wed, Sep 27, 2017 at 06:46:56PM -0300, Mauro Carvalho Chehab wrote:
-> > > The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
-> > > struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
-> > > match criteria requires just a device name.
-> > > 
-> > > So, it doesn't make sense to enclose those into structs,
-> > > as the criteria can go directly into the union.
-> > > 
-> > > That makes easier to document it, as we don't need to document
-> > > weird senseless structs.  
-> > 
-> > The idea is that in the union, there's a struct which is specific to the
-> > match_type field. I wouldn't call it senseless.
-> 
-> Why a struct for each specific match_type is **needed**? It it is not
-> needed, then it is senseless per definition :-) 
-> 
-> In the specific case of fwnode, there's already a named struct
-> for fwnode_handle. The only thing is that it is declared outside
-> enum v4l2_async_match_type. So, I don't see any reason to do things
-> like:
-> 
-> 		struct {
-> 			struct fwnode_handle *fwnode;
-> 		} fwnode;
-> 
-> If you're in doubt about that, think on how would you document
-> both fwnode structs. Both fwnode structs specify the match
-> criteria if %V4L2_ASYNC_MATCH_FWNODE.
-> 
-> The same applies to this:
-> 
-> 		struct {
-> 			const char *name;
-> 		} device_name;
-> 
-> Both device_name and name specifies the match criteria if
-> %V4L2_ASYNC_MATCH_DEVNAME.
-> 
-> > 
-> > In the two cases there's just a single field in the containing struct. You
-> > could remove the struct in that case as you do in this patch, and just use
-> > the field. But I think the result is less clean and so I wouldn't make this
-> > change.
-> 
-> It is actually cleaner without the stucts.
-> 
-> Without the useless struct, if one wants to match a firmware node, it
-> should be doing:
-> 
->  		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
-> 		pdata->asd[i]->match.fwnode = of_fwnode_handle(rem);
+Without this, the USB3 and LAN ports don't show up.
 
-This code should be and will be moved out of drivers. See:
+See also https://bugs.debian.org/843448
 
-<URL:http://www.spinics.net/lists/linux-media/msg122688.html>
+This was first proposed in https://lkml.org/lkml/2015/3/18/400 but for
+exynos5420.dtsi. I only tested it on Odroid XU4, so I propose it only
+for that board. Also I found the dis_u2_susphy_quirk to make no
+difference, so it's not included.
 
-So there are going to be quite a bit fewer instances of it, and none should
-remain in drivers. I frankly don't have a strong opinion on this; there are
-arguments for and against. I just don't see a reason to change it.
+A second proposal is in https://lkml.org/lkml/2017/1/24/402, but only
+for USB3, not for the LAN port.
 
-It'd be nice to have Hans's and Laurent's opinion though.
+Signed-off-by: Jochen Sprickerhof <git@jochen.sprickerhof.de>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu4.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> 
-> And that' it. For anyone that reads the above code, even not knowing
-> all details of "match", is clear that the match criteria is whatever
-> of_fwnode_handle() returns.
-> 
-> Now, on this:
-> 
->  		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
-> 		pdata->asd[i]->match.fwnode.fwnode = of_fwnode_handle(rem);
-> 
-> It sounds that something is missing, as only one field of match.fwnode
-> was specified. Anyone not familiar with that non-conventional usage of
-> a struct with just one struct field inside would need to seek for the
-> header file declaring the struct. That would consume a lot of time for
-> code reviewers for no good reason.
-> 
-> The same apply for devname search:
-> 
-> In this case:
-> 		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
-> 		asd->match.device_name.name = imxsd->devname;
-> 
-> I would be expecting something else to be filled at device_name's
-> struct, for example to specify a case sensitive or case insensitive
-> match criteria, to allow seeking for a device's substring, or to
-> allow using other struct device fields to narrow the seek.
-> 
-> With this:
-> 
-> 		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
-> 		asd->match.device_name = imxsd->devname;
-> 
-> It is clear that the match criteria is fully specified.
-> 
-> > The confusion comes possibly from the fact that the struct is named the
-> > same as the field in the struct. These used to be called of and node, but
-> > with the fwnode property framework the references to the fwnode are, well,
-> > typically similarly called "fwnode". There's no underlying firmware
-> > interface with that name, fwnode property API is just an API.
-> 
-> The duplicated "fwnode" name only made it more evident that we don't
-> need to enclose a single match criteria field inside a struct.
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts=
+/exynos5422-odroidxu4.dts
+index 2faf88627a48..30fc4d35422e 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+@@ -43,6 +43,13 @@
+ 	status =3D "okay";
+ };
+=20
++&usbdrd_dwc3_0 {
++	/* quirk is needed to make USB3 ports work */
++	snps,dis_u3_susphy_quirk;
++};
++
+ &usbdrd_dwc3_1 {
+ 	dr_mode =3D "host";
++	/* quirk is needed to make LAN port work */
++	snps,dis_u3_susphy_quirk;
+ };
+--=20
+2.14.2
 
--- 
-Kind regards,
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+--dcm7oqzhrdh4s5b3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEc7KZy9TurdzAF+h6W//cwljmlDMFAlnPsDcACgkQW//cwljm
+lDMFAQ//SQNezDJM3LtGNAQ5AsK1KSWqf8CLvKeRX0QgFZ25c4HWzsO6ygmjU85N
+b9zyOJrAuh/lGF3JKhYXLPbtjZxdj8Wpf85yFlQcmSeb/LqXnOSXhiTKY663Z7ya
+oA87MLVsbK/0vwbHygTcMNbcEXQwc57VXhg0JWmNdfxnt8KN7WBGf1N3BpquZafz
+qKkjaq6Mo2LdbIhg9vCISHRiMB2lS63Xku+kuUgqY/f6aIKuud+mW6p7zuvPNcVb
+pi5e52WYMbRohPqzJ3z204XMr/z+JaS1nD6us0FYVBWOfPvtf5pKzFEBh/ftYWfo
+4+/8yzkNhSPq8fAugDTSak4UsY0xg3TidJo3PpkvEFEmMwdV33LP73ec7a1iik5N
+QaS0WUmHHoipo0VObGkn599YTFllqbUIyTgiDJ4lv6Mvrhqa+5tPetM7qCQfGK2t
+Gjs1w7ov/9JkHtEHDpF398jNRabo7QusyrQCs2Sg10weePFeZwuwDadycv8yH7MX
+HibgfneLwQzAvJlJUVtCKm6ODDg5vO4HDpotpa/3XHb965hDlcIt22oLjGsEkHYl
+ybAeEvo0wiVrgrdpbQcD84dvG6dTxOS2NiZXWiXSXg7syBIZZkY5WjerV4e7qy5j
+VPwXCSFy6iyRx1Y06sp8zqjUrVRobj1YF0erqk9PSfsA+pDsIFo=
+=Sa7N
+-----END PGP SIGNATURE-----
+
+--dcm7oqzhrdh4s5b3--
