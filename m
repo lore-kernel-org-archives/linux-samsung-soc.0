@@ -1,1225 +1,301 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 2/3] ARM: dts: exynos: Add support for Hardkernel's Odroid
- HC1 board
-Date: Sun, 1 Oct 2017 10:47:04 +0530
-Message-ID: <CANAwSgRVeC=Nx1ygdZh78eJEB9FwMCbsXaTUchjJJmDgGPp90w@mail.gmail.com>
-References: <CGME20170929113314eucas1p250037030204ab9d0f936afa6f660923f@eucas1p2.samsung.com>
- <1506684783-9722-1-git-send-email-m.szyprowski@samsung.com> <1506684783-9722-3-git-send-email-m.szyprowski@samsung.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH 1/4] iio: adc: ina2xx: Make max expected current
+ configurable
+Date: Sun, 1 Oct 2017 11:29:34 +0100
+Message-ID: <20171001112934.360c840b@archlinux>
+References: <1506603015-27202-1-git-send-email-m.purski@samsung.com>
+        <CGME20170928125053eucas1p19e757ac5c3774f54c7cd0ee4525decbe@eucas1p1.samsung.com>
+        <1506603015-27202-2-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:56658 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750842AbdJAFRZ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 1 Oct 2017 01:17:25 -0400
-Received: by mail-oi0-f66.google.com with SMTP id m198so2811483oig.13
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Sep 2017 22:17:25 -0700 (PDT)
-In-Reply-To: <1506684783-9722-3-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+In-Reply-To: <1506603015-27202-2-git-send-email-m.purski@samsung.com>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: Maciej Purski <m.purski@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Marek,
+On Thu, 28 Sep 2017 14:50:12 +0200
+Maciej Purski <m.purski@samsung.com> wrote:
 
-On 29 September 2017 at 17:03, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Odroid HC1 board is based on Odroid XU4 board, but it has no HDMI,
-> no eMMC, no build-in USB3.0 hub, no extension port pins, and no GPIO
-> button. USB3.0 ports are used for build-in JMicron USB to SATA bridge
-> and Gigabit R8152 ethernet chips. HC1 uses only passive cooling.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Max expected current is used for calculating calibration register value,
+> Current LSB and Power LSB according to equations found in ina datasheet.
+> Max expected current is now implicitly set to default value,
+> which is 2^15, thanks to which Current LSB is equal to 1 mA and
+> Power LSB is equal to 20000 uW or 25000 uW depending on ina model.
+> 
+> Make max expected current configurable, just like it's already done
+> with shunt resistance: from device tree, platform_data or later
+> from sysfs. On each max_expected_current change, calculate new values
+> for Current LSB and Power LSB. According to datasheet Current LSB should
+> be calculated by dividing max expected current by 2^15, as values read
+> from device registers are in this case 16-bit integers. Power LSB
+> is calculated by multiplying Current LSB by a factor, which is defined
+> in ina documentation.
+
+One odd bit of casting inline.  Also this is new userspace ABI.
+It needs documenting in 
+
+Documentation/ABI/testing/sysfs-bus-iio* as appropriate.
+I'm also unclear on one element about this - is it a value used only
+for calibration or are we talking about the actual 'range' of the device?
+
+The interpretation of this value isn't clear against the more general
+ABI.
+
+In particular it is it in raw units (adc counts) or mA?  Docs say
+that but the naming of the attribute doesn't make this clear.
+
+Also I'm unconvinced this isn't better represented using the
+range specifications available for any IIO attribute on the raw
+value in combination with adjusting the scale value.
+Note not many drivers yet provide ranges on their raw outputs
+but we do have core support for it.  I've been meaning to start
+pushing this out into drivers, but been busy since we introduced
+the core support.  The dpot-dac driver does use it for examplel
+
+This moves the burden of calculating the 1lsb value to userspace,
+but importantly it would give us a consistent ABI where this fits
+in with existing elements (largely buy not introducing any new
+ones :).
+
+Thanks,
+
+Jonathan
+> 
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
 > ---
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 443 +++++++++++++++++++++
->  arch/arm/boot/dts/exynos5422-odroidhc1.dts         | 217 ++++++++++
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 428 +-------------------
->  4 files changed, 662 insertions(+), 427 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos5422-odroid-core.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos5422-odroidhc1.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 9cf688d404b8..54b06a576551 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -176,6 +176,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
->         exynos5420-arndale-octa.dtb \
->         exynos5420-peach-pit.dtb \
->         exynos5420-smdk5420.dtb \
-> +       exynos5422-odroidhc1.dtb \
->         exynos5422-odroidxu3.dtb \
->         exynos5422-odroidxu3-lite.dtb \
->         exynos5422-odroidxu4.dtb \
-> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> new file mode 100644
-> index 000000000000..a5b8d0f0877e
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> @@ -0,0 +1,443 @@
+>  drivers/iio/adc/ina2xx-adc.c         | 110 ++++++++++++++++++++++++++++++-----
+>  include/linux/platform_data/ina2xx.h |   2 +
+>  2 files changed, 98 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ina2xx-adc.c b/drivers/iio/adc/ina2xx-adc.c
+> index f387b97..883fede 100644
+> --- a/drivers/iio/adc/ina2xx-adc.c
+> +++ b/drivers/iio/adc/ina2xx-adc.c
+> @@ -56,6 +56,7 @@
+>  #define INA226_DEFAULT_IT		1110
+>  
+>  #define INA2XX_RSHUNT_DEFAULT           10000
+> +#define INA2XX_MAX_EXPECTED_A_DEFAULT	(1 << 15)	/* current_lsb = 1 mA */
+>  
+>  /*
+>   * bit masks for reading the settings in the configuration register
+> @@ -114,7 +115,7 @@ struct ina2xx_config {
+>  	int shunt_div;
+>  	int bus_voltage_shift;
+>  	int bus_voltage_lsb;	/* uV */
+> -	int power_lsb;		/* uW */
+> +	int power_lsb_factor;
+>  	enum ina2xx_ids chip_id;
+>  };
+>  
+> @@ -123,7 +124,10 @@ struct ina2xx_chip_info {
+>  	struct task_struct *task;
+>  	const struct ina2xx_config *config;
+>  	struct mutex state_lock;
+> -	unsigned int shunt_resistor;
+> +	unsigned int shunt_resistor;		/* uOhms */
+> +	unsigned int max_expected_current;	/* mA */
+> +	int current_lsb;			/* uA */
+> +	int power_lsb;				/* uW */
+>  	int avg;
+>  	int int_time_vbus; /* Bus voltage integration time uS */
+>  	int int_time_vshunt; /* Shunt voltage integration time uS */
+> @@ -137,7 +141,7 @@ static const struct ina2xx_config ina2xx_config[] = {
+>  		.shunt_div = 100,
+>  		.bus_voltage_shift = 3,
+>  		.bus_voltage_lsb = 4000,
+> -		.power_lsb = 20000,
+> +		.power_lsb_factor = 20,
+>  		.chip_id = ina219,
+>  	},
+>  	[ina226] = {
+> @@ -146,7 +150,7 @@ static const struct ina2xx_config ina2xx_config[] = {
+>  		.shunt_div = 400,
+>  		.bus_voltage_shift = 0,
+>  		.bus_voltage_lsb = 1250,
+> -		.power_lsb = 25000,
+> +		.power_lsb_factor = 25,
+>  		.chip_id = ina226,
+>  	},
+>  };
+> @@ -210,14 +214,15 @@ static int ina2xx_read_raw(struct iio_dev *indio_dev,
+>  
+>  		case INA2XX_POWER:
+>  			/* processed (mW) = raw*lsb (uW) / 1000 */
+> -			*val = chip->config->power_lsb;
+> +			*val = chip->power_lsb;
+>  			*val2 = 1000;
+>  			return IIO_VAL_FRACTIONAL;
+>  
+>  		case INA2XX_CURRENT:
+> -			/* processed (mA) = raw (mA) */
+> -			*val = 1;
+> -			return IIO_VAL_INT;
+> +			/* processed (mA) = raw*lsb (uA) / 1000 */
+> +			*val = chip->current_lsb;
+> +			*val2 = 1000;
+> +			return IIO_VAL_FRACTIONAL;
+>  		}
+>  	}
+>  
+> @@ -434,24 +439,47 @@ static ssize_t ina2xx_allow_async_readout_store(struct device *dev,
+>  }
+>  
+>  /*
+> - * Set current LSB to 1mA, shunt is in uOhms
+> - * (equation 13 in datasheet). We hardcode a Current_LSB
+> - * of 1.0 x10-6. The only remaining parameter is RShunt.
+> + * Calculate calibration value according to equation 1 in ina226 datasheet
+> + * http://www.ti.com/lit/ds/symlink/ina226.pdf.
+> + * Current LSB is in uA and RShunt is in uOhms, so RShunt should be
+> + * converted to mOhms in order to keep the scale.
+>   * There is no need to expose the CALIBRATION register
+>   * to the user for now. But we need to reset this register
+> - * if the user updates RShunt after driver init, e.g upon
+> - * reading an EEPROM/Probe-type value.
+> + * if the user updates RShunt or max expected current after driver
+> + * init, e.g upon reading an EEPROM/Probe-type value.
+>   */
+>  static int ina2xx_set_calibration(struct ina2xx_chip_info *chip)
+>  {
+> +	unsigned int rshunt = DIV_ROUND_CLOSEST(chip->shunt_resistor, 1000);
+>  	u16 regval = DIV_ROUND_CLOSEST(chip->config->calibration_factor,
+> -				   chip->shunt_resistor);
+> +				     chip->current_lsb * rshunt);
+>  
+>  	return regmap_write(chip->regmap, INA2XX_CALIBRATION, regval);
+>  }
+>  
 > +/*
-> + * Hardkernel Odroid XU3/XU4/HC1 boards core device tree source
-> + *
-> + * Copyright (c) 2017 Marek Szyprowski
-> + * Copyright (c) 2013-2017 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <dt-bindings/clock/samsung,s2mps11.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include "exynos5800.dtsi"
-> +#include "exynos5422-cpus.dtsi"
-> +
-> +/ {
-> +       memory@40000000 {
-> +               device_type = "memory";
-> +               reg = <0x40000000 0x7EA00000>;
-> +       };
-> +
-> +       chosen {
-> +               stdout-path = "serial2:115200n8";
-> +       };
-> +
-> +       firmware@02073000 {
-> +               compatible = "samsung,secure-firmware";
-> +               reg = <0x02073000 0x1000>;
-> +       };
-> +
-> +       fixed-rate-clocks {
-> +               oscclk {
-> +                       compatible = "samsung,exynos5420-oscclk";
-> +                       clock-frequency = <24000000>;
-> +               };
-> +       };
-> +};
-> +
-> +&bus_wcore {
-> +       devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
-> +                       <&nocp_mem1_0>, <&nocp_mem1_1>;
-> +       vdd-supply = <&buck3_reg>;
-> +       exynos,saturation-ratio = <100>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_noc {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_fsys_apb {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_fsys {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_fsys2 {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_mfc {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_gen {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_peri {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_g2d {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_g2d_acp {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_jpeg {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_jpeg_apb {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_disp1_fimd {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_disp1 {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_gscl_scaler {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&bus_mscl {
-> +       devfreq = <&bus_wcore>;
-> +       status = "okay";
-> +};
-> +
-> +&cpu0 {
-> +       cpu-supply = <&buck6_reg>;
-> +};
-> +
-> +&cpu4 {
-> +       cpu-supply = <&buck2_reg>;
-> +};
-> +
-> +&hsi2c_4 {
-> +       status = "okay";
-> +
-> +       s2mps11_pmic@66 {
-> +               compatible = "samsung,s2mps11-pmic";
-> +               reg = <0x66>;
-> +               samsung,s2mps11-acokb-ground;
-> +
-> +               interrupt-parent = <&gpx0>;
-> +               interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&s2mps11_irq>;
-> +
-> +               s2mps11_osc: clocks {
-> +                       #clock-cells = <1>;
-> +                       clock-output-names = "s2mps11_ap",
-> +                                       "s2mps11_cp", "s2mps11_bt";
-> +               };
-> +
-> +               regulators {
-> +                       ldo1_reg: LDO1 {
-> +                               regulator-name = "vdd_ldo1";
-> +                               regulator-min-microvolt = <1000000>;
-> +                               regulator-max-microvolt = <1000000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo3_reg: LDO3 {
-> +                               regulator-name = "vddq_mmc0";
-> +                               regulator-min-microvolt = <1800000>;
-> +                               regulator-max-microvolt = <1800000>;
-> +                       };
-> +
-> +                       ldo4_reg: LDO4 {
-> +                               regulator-name = "vdd_adc";
-> +                               regulator-min-microvolt = <1800000>;
-> +                               regulator-max-microvolt = <1800000>;
-> +                       };
-> +
-> +                       ldo5_reg: LDO5 {
-> +                               regulator-name = "vdd_ldo5";
-> +                               regulator-min-microvolt = <1800000>;
-> +                               regulator-max-microvolt = <1800000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo6_reg: LDO6 {
-> +                               regulator-name = "vdd_ldo6";
-> +                               regulator-min-microvolt = <1000000>;
-> +                               regulator-max-microvolt = <1000000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo7_reg: LDO7 {
-> +                               regulator-name = "vdd_ldo7";
-> +                               regulator-min-microvolt = <1800000>;
-> +                               regulator-max-microvolt = <1800000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo8_reg: LDO8 {
-> +                               regulator-name = "vdd_ldo8";
-> +                               regulator-min-microvolt = <1800000>;
-> +                               regulator-max-microvolt = <1800000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo9_reg: LDO9 {
-> +                               regulator-name = "vdd_ldo9";
-> +                               regulator-min-microvolt = <3000000>;
-> +                               regulator-max-microvolt = <3000000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo10_reg: LDO10 {
-> +                               regulator-name = "vdd_ldo10";
-> +                               regulator-min-microvolt = <1800000>;
-> +                               regulator-max-microvolt = <1800000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo11_reg: LDO11 {
-> +                               regulator-name = "vdd_ldo11";
-> +                               regulator-min-microvolt = <1000000>;
-> +                               regulator-max-microvolt = <1000000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo12_reg: LDO12 {
-> +                               regulator-name = "vdd_ldo12";
-> +                               regulator-min-microvolt = <1800000>;
-> +                               regulator-max-microvolt = <1800000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo13_reg: LDO13 {
-> +                               regulator-name = "vddq_mmc2";
-> +                               regulator-min-microvolt = <2800000>;
-> +                               regulator-max-microvolt = <2800000>;
-> +                       };
-> +
-> +                       ldo15_reg: LDO15 {
-> +                               regulator-name = "vdd_ldo15";
-> +                               regulator-min-microvolt = <3100000>;
-> +                               regulator-max-microvolt = <3100000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo16_reg: LDO16 {
-> +                               regulator-name = "vdd_ldo16";
-> +                               regulator-min-microvolt = <2200000>;
-> +                               regulator-max-microvolt = <2200000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo17_reg: LDO17 {
-> +                               regulator-name = "tsp_avdd";
-> +                               regulator-min-microvolt = <3300000>;
-> +                               regulator-max-microvolt = <3300000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo18_reg: LDO18 {
-> +                               regulator-name = "vdd_emmc_1V8";
-> +                               regulator-min-microvolt = <1800000>;
-> +                               regulator-max-microvolt = <1800000>;
-> +                       };
-> +
-> +                       ldo19_reg: LDO19 {
-> +                               regulator-name = "vdd_sd";
-> +                               regulator-min-microvolt = <2800000>;
-> +                               regulator-max-microvolt = <2800000>;
-> +                       };
-> +
-> +                       ldo24_reg: LDO24 {
-> +                               regulator-name = "tsp_io";
-> +                               regulator-min-microvolt = <2800000>;
-> +                               regulator-max-microvolt = <2800000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       ldo26_reg: LDO26 {
-> +                               regulator-name = "vdd_ldo26";
-> +                               regulator-min-microvolt = <3000000>;
-> +                               regulator-max-microvolt = <3000000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       buck1_reg: BUCK1 {
-> +                               regulator-name = "vdd_mif";
-> +                               regulator-min-microvolt = <800000>;
-> +                               regulator-max-microvolt = <1300000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +
-> +                       buck2_reg: BUCK2 {
-> +                               regulator-name = "vdd_arm";
-> +                               regulator-min-microvolt = <800000>;
-> +                               regulator-max-microvolt = <1500000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +
-> +                       buck3_reg: BUCK3 {
-> +                               regulator-name = "vdd_int";
-> +                               regulator-min-microvolt = <800000>;
-> +                               regulator-max-microvolt = <1400000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +
-> +                       buck4_reg: BUCK4 {
-> +                               regulator-name = "vdd_g3d";
-> +                               regulator-min-microvolt = <800000>;
-> +                               regulator-max-microvolt = <1400000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +
-> +                       buck5_reg: BUCK5 {
-> +                               regulator-name = "vdd_mem";
-> +                               regulator-min-microvolt = <800000>;
-> +                               regulator-max-microvolt = <1400000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +
-> +                       buck6_reg: BUCK6 {
-> +                               regulator-name = "vdd_kfc";
-> +                               regulator-min-microvolt = <800000>;
-> +                               regulator-max-microvolt = <1500000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +
-> +                       buck7_reg: BUCK7 {
-> +                               regulator-name = "vdd_1.0v_ldo";
-> +                               regulator-min-microvolt = <800000>;
-> +                               regulator-max-microvolt = <1500000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +
-> +                       buck8_reg: BUCK8 {
-> +                               regulator-name = "vdd_1.8v_ldo";
-> +                               regulator-min-microvolt = <800000>;
-> +                               regulator-max-microvolt = <1500000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +
-> +                       buck9_reg: BUCK9 {
-> +                               regulator-name = "vdd_2.8v_ldo";
-> +                               regulator-min-microvolt = <3000000>;
-> +                               regulator-max-microvolt = <3750000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +
-> +                       buck10_reg: BUCK10 {
-> +                               regulator-name = "vdd_vmem";
-> +                               regulator-min-microvolt = <2850000>;
-> +                               regulator-max-microvolt = <2850000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +               };
-> +       };
-> +};
-> +
-> +&mmc_2 {
-> +       status = "okay";
-> +       card-detect-delay = <200>;
-> +       samsung,dw-mshc-ciu-div = <3>;
-> +       samsung,dw-mshc-sdr-timing = <0 4>;
-> +       samsung,dw-mshc-ddr-timing = <0 2>;
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-> +       bus-width = <4>;
-> +       cap-sd-highspeed;
-> +       vmmc-supply = <&ldo19_reg>;
-> +       vqmmc-supply = <&ldo13_reg>;
-> +};
-> +
-> +&nocp_mem0_0 {
-> +       status = "okay";
-> +};
-> +
-> +&nocp_mem0_1 {
-> +       status = "okay";
-> +};
-> +
-> +&nocp_mem1_0 {
-> +       status = "okay";
-> +};
-> +
-> +&nocp_mem1_1 {
-> +       status = "okay";
-> +};
-> +
-> +&pinctrl_0 {
-> +       s2mps11_irq: s2mps11-irq {
-> +               samsung,pins = "gpx0-4";
-> +               samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
-> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +               samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +       };
-> +};
-> +
-> +&tmu_cpu0 {
-> +       vtmu-supply = <&ldo7_reg>;
-> +};
-> +
-> +&tmu_cpu1 {
-> +       vtmu-supply = <&ldo7_reg>;
-> +};
-> +
-> +&tmu_cpu2 {
-> +       vtmu-supply = <&ldo7_reg>;
-> +};
-> +
-> +&tmu_cpu3 {
-> +       vtmu-supply = <&ldo7_reg>;
-> +};
-> +
-> +&tmu_gpu {
-> +       vtmu-supply = <&ldo7_reg>;
-> +};
-> +
-> +&rtc {
-> +       status = "okay";
-> +       clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
-> +       clock-names = "rtc", "rtc_src";
-> +};
-> +
-> +&usbdrd_dwc3_0 {
-> +       dr_mode = "host";
-> +};
-> +
-> +/* usbdrd_dwc3_1 mode customized in each board */
-> +
-> +&usbdrd3_0 {
-> +       vdd33-supply = <&ldo9_reg>;
-> +       vdd10-supply = <&ldo11_reg>;
-> +};
-> +
-> +&usbdrd3_1 {
-> +       vdd33-supply = <&ldo9_reg>;
-> +       vdd10-supply = <&ldo11_reg>;
-> +};
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidhc1.dts b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
-> new file mode 100644
-> index 000000000000..2b3bd3cac5c1
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
-> @@ -0,0 +1,217 @@
-> +/*
-> + * Hardkernel Odroid HC1 board device tree source
-> + *
-> + * Copyright (c) 2017 Marek Szyprowski
-> + * Copyright (c) 2017 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/dts-v1/;
-> +#include "exynos5422-odroid-core.dtsi"
-> +
-> +/ {
-> +       model = "Hardkernel Odroid HC1";
-> +       compatible = "hardkernel,odroid-hc1", "samsung,exynos5800", \
-> +                    "samsung,exynos5";
-> +
-> +       pwmleds {
-> +               compatible = "pwm-leds";
-> +
-> +               blueled {
-> +                       label = "blue:heartbeat";
-> +                       pwms = <&pwm 2 2000000 0>;
-> +                       pwm-names = "pwm2";
-> +                       max_brightness = <255>;
-> +                       linux,default-trigger = "heartbeat";
-> +               };
-> +       };
-> +
+> + * Set max_expected_current (mA) and calculate current_lsb (uA),
+> + * according to equation 2 in ina226 datasheet. Power LSB is calculated
+> + * by multiplying Current LSB by a given factor, which may vary depending
+> + * on ina version.
+> + */
+> +static int set_max_expected_current(struct ina2xx_chip_info *chip,
+> +				    unsigned int val)
+> +{
+> +	if (val <= 0 || val > chip->config->calibration_factor)
+> +		return -EINVAL;
+> +
+> +	chip->max_expected_current = val;
+> +	chip->current_lsb = DIV_ROUND_CLOSEST(chip->max_expected_current * 1000,
+> +					      1 << 15);
+> +	chip->power_lsb = chip->current_lsb * chip->config->power_lsb_factor;
+> +
+> +	return 0;
+> +}
+> +
+>  static int set_shunt_resistor(struct ina2xx_chip_info *chip, unsigned int val)
+>  {
+> +
+>  	if (val <= 0 || val > chip->config->calibration_factor)
+>  		return -EINVAL;
+>  
+> @@ -493,6 +521,39 @@ static ssize_t ina2xx_shunt_resistor_store(struct device *dev,
+>  	return len;
+>  }
+>  
+> +static ssize_t ina2xx_max_expected_current_show(struct device *dev,
+> +					  struct device_attribute *attr,
+> +					  char *buf)
+> +{
+> +	struct ina2xx_chip_info *chip = iio_priv(dev_to_iio_dev(dev));
+> +
+> +	return sprintf(buf, "%d\n", chip->max_expected_current);
+> +}
+> +
+> +static ssize_t ina2xx_max_expected_current_store(struct device *dev,
+> +					   struct device_attribute *attr,
+> +					   const char *buf, size_t len)
+> +{
+> +	struct ina2xx_chip_info *chip = iio_priv(dev_to_iio_dev(dev));
+> +	unsigned long val;
+> +	int ret;
+> +
+> +	ret = kstrtoul((const char *) buf, 10, &val);
 
-It looks like you are setting up thermal zone to this board
-but I would like to have this setting for all Exynos5422 platforms in
-common file,
-as Odroid XU4 and Odroid XU4Q support passive cool.
-I have Odroid XU4Q/HC1 and it get pretty hot on heavy load as they run for 24x7.
+Odd bit of casting given that's what it already is...
 
-If possible we should support the thermal-zone with active and passive
-cooling trips.
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = set_max_expected_current(chip, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Update the Calibration register */
+> +	ret = ina2xx_set_calibration(chip);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+>  #define INA219_CHAN(_type, _index, _address) { \
+>  	.type = (_type), \
+>  	.address = (_address), \
+> @@ -755,10 +816,15 @@ static IIO_DEVICE_ATTR(in_shunt_resistor, S_IRUGO | S_IWUSR,
+>  		       ina2xx_shunt_resistor_show,
+>  		       ina2xx_shunt_resistor_store, 0);
+>  
+> +static IIO_DEVICE_ATTR(in_max_expected_current, S_IRUGO | S_IWUSR,
+> +		       ina2xx_max_expected_current_show,
+> +		       ina2xx_max_expected_current_store, 0);
+> +
+>  static struct attribute *ina219_attributes[] = {
+>  	&iio_dev_attr_in_allow_async_readout.dev_attr.attr,
+>  	&iio_const_attr_ina219_integration_time_available.dev_attr.attr,
+>  	&iio_dev_attr_in_shunt_resistor.dev_attr.attr,
+> +	&iio_dev_attr_in_max_expected_current.dev_attr.attr,
+>  	NULL,
+>  };
+>  
+> @@ -766,6 +832,7 @@ static struct attribute *ina226_attributes[] = {
+>  	&iio_dev_attr_in_allow_async_readout.dev_attr.attr,
+>  	&iio_const_attr_ina226_integration_time_available.dev_attr.attr,
+>  	&iio_dev_attr_in_shunt_resistor.dev_attr.attr,
+> +	&iio_dev_attr_in_max_expected_current.dev_attr.attr,
+>  	NULL,
+>  };
+>  
+> @@ -851,6 +918,21 @@ static int ina2xx_probe(struct i2c_client *client,
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (of_property_read_u32(client->dev.of_node,
+> +				  "max-expected-current", &val) < 0) {
+> +		struct ina2xx_platform_data *pdata =
+> +		    dev_get_platdata(&client->dev);
+> +
+> +		if (pdata && pdata->max_mA != 0)
+> +			val = pdata->max_mA;
+> +		else
+> +			val = INA2XX_MAX_EXPECTED_A_DEFAULT;
+> +	}
+> +
+> +	ret = set_max_expected_current(chip, val);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* Patch the current config register with default. */
+>  	val = chip->config->config_default;
+>  
+> diff --git a/include/linux/platform_data/ina2xx.h b/include/linux/platform_data/ina2xx.h
+> index 9abc0ca..f02b1d8 100644
+> --- a/include/linux/platform_data/ina2xx.h
+> +++ b/include/linux/platform_data/ina2xx.h
+> @@ -13,7 +13,9 @@
+>  /**
+>   * struct ina2xx_platform_data - ina2xx info
+>   * @shunt_uohms		shunt resistance in microohms
+> + * @max_mA		max expected current in mA
+>   */
+>  struct ina2xx_platform_data {
+>  	long shunt_uohms;
+> +	int max_mA;
+>  };
 
-Plus the current exynos-tmu driver is missing some core changes to
-support this board.
-I will be working on this to provide proper fix to this issue and
-submit my changes soon.
-
-> +       thermal-zones {
-> +               cpu0_thermal: cpu0-thermal {
-> +                       thermal-sensors = <&tmu_cpu0 0>;
-> +                       trips {
-> +                               cpu0_alert0: cpu-alert-1 {
-> +                                       temperature = <70000>; /* millicelsius */
-> +                                       hysteresis = <10000>; /* millicelsius */
-> +                                       type = "active";
-> +                               };
-> +                               cpu0_alert1: cpu-alert-1 {
-> +                                       temperature = <85000>; /* millicelsius */
-> +                                       hysteresis = <10000>; /* millicelsius */
-> +                                       type = "active";
-> +                               };
-> +                               cpu0_crit0: cpu-crit-0 {
-> +                                       temperature = <120000>; /* millicelsius */
-> +                                       hysteresis = <0>; /* millicelsius */
-> +                                       type = "critical";
-> +                               };
-> +                       };
-> +
-> +                       cooling-maps {
-> +                               /*
-> +                                * When reaching cpu0_alert0, reduce CPU
-> +                                * by 2 steps. On Exynos5422/5800 that would
-> +                                * be: 1600 MHz and 1100 MHz.
-> +                                */
-> +                               map0 {
-> +                                       trip = <&cpu0_alert0>;
-> +                                       cooling-device = <&cpu0 0 2>;
-> +                               };
-> +                               map1 {
-> +                                       trip = <&cpu0_alert0>;
-> +                                       cooling-device = <&cpu4 0 2>;
-> +                               };
-> +                               /*
-> +                                * When reaching cpu0_alert1, reduce CPU
-> +                                * further, down to 600 MHz (12 steps for big,
-> +                                * 7 steps for LITTLE).
-> +                                */
-> +                               map2 {
-> +                                       trip = <&cpu0_alert1>;
-> +                                       cooling-device = <&cpu0 3 7>;
-> +                               };
-> +                               map3 {
-> +                                       trip = <&cpu0_alert1>;
-> +                                       cooling-device = <&cpu4 3 12>;
-> +                               };
-> +                       };
-> +               };
-> +               cpu1_thermal: cpu1-thermal {
-> +                       thermal-sensors = <&tmu_cpu1 0>;
-> +                       trips {
-> +                               cpu1_alert0: cpu-alert-0 {
-> +                                       temperature = <70000>;
-> +                                       hysteresis = <10000>;
-> +                                       type = "active";
-> +                               };
-> +                               cpu1_alert1: cpu-alert-1 {
-> +                                       temperature = <85000>;
-> +                                       hysteresis = <10000>;
-> +                                       type = "active";
-> +                               };
-> +                               cpu1_crit0: cpu-crit-0 {
-> +                                       temperature = <120000>;
-> +                                       hysteresis = <0>;
-> +                                       type = "critical";
-> +                               };
-> +                       };
-> +                       cooling-maps {
-> +                               map0 {
-> +                                       trip = <&cpu1_alert0>;
-> +                                       cooling-device = <&cpu0 0 2>;
-> +                               };
-> +                               map1 {
-> +                                       trip = <&cpu1_alert0>;
-> +                                       cooling-device = <&cpu4 0 2>;
-> +                               };
-> +                               map2 {
-> +                                       trip = <&cpu1_alert1>;
-> +                                       cooling-device = <&cpu0 3 7>;
-> +                               };
-> +                               map3 {
-> +                                       trip = <&cpu1_alert1>;
-> +                                       cooling-device = <&cpu4 3 12>;
-> +                               };
-> +                       };
-> +               };
-> +               cpu2_thermal: cpu2-thermal {
-> +                       thermal-sensors = <&tmu_cpu2 0>;
-> +                       polling-delay-passive = <250>;
-> +                       polling-delay = <0>;
-> +                       trips {
-> +                               cpu2_alert0: cpu-alert-0 {
-> +                                       temperature = <70000>;
-> +                                       hysteresis = <10000>;
-> +                                       type = "active";
-> +                               };
-> +                               cpu2_alert1: cpu-alert-1 {
-> +                                       temperature = <85000>;
-> +                                       hysteresis = <10000>;
-> +                                       type = "active";
-> +                               };
-> +                               cpu2_crit0: cpu-crit-0 {
-> +                                       temperature = <120000>;
-> +                                       hysteresis = <0>;
-> +                                       type = "critical";
-> +                               };
-> +                       };
-> +                       cooling-maps {
-> +                               map0 {
-> +                                       trip = <&cpu2_alert0>;
-> +                                       cooling-device = <&cpu0 0 2>;
-> +                               };
-> +                               map1 {
-> +                                       trip = <&cpu2_alert0>;
-> +                                       cooling-device = <&cpu4 0 2>;
-> +                               };
-> +                               map2 {
-> +                                       trip = <&cpu2_alert1>;
-> +                                       cooling-device = <&cpu0 3 7>;
-> +                               };
-> +                               map3 {
-> +                                       trip = <&cpu2_alert1>;
-> +                                       cooling-device = <&cpu4 3 12>;
-> +                               };
-> +                       };
-> +               };
-> +               cpu3_thermal: cpu3-thermal {
-> +                       thermal-sensors = <&tmu_cpu3 0>;
-> +                       polling-delay-passive = <250>;
-> +                       polling-delay = <0>;
-> +                       trips {
-> +                               cpu3_alert0: cpu-alert-1 {
-> +                                       temperature = <70000>;
-> +                                       hysteresis = <10000>;
-> +                                       type = "active";
-> +                               };
-> +                               cpu3_alert1: cpu-alert-1 {
-> +                                       temperature = <85000>;
-> +                                       hysteresis = <10000>;
-> +                                       type = "active";
-> +                               };
-> +                               cpu3_crit0: cpu-crit-0 {
-> +                                       temperature = <120000>;
-> +                                       hysteresis = <0>;
-> +                                       type = "critical";
-> +                               };
-> +                       };
-> +                       cooling-maps {
-> +                               map0 {
-> +                                       trip = <&cpu3_alert0>;
-> +                                       cooling-device = <&cpu0 0 2>;
-> +                               };
-> +                               map1 {
-> +                                       trip = <&cpu3_alert0>;
-> +                                       cooling-device = <&cpu4 0 2>;
-> +                               };
-> +                               map2 {
-> +                                       trip = <&cpu3_alert1>;
-> +                                       cooling-device = <&cpu0 3 7>;
-> +                               };
-> +                               map3 {
-> +                                       trip = <&cpu3_alert1>;
-> +                                       cooling-device = <&cpu4 3 12>;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
-> +};
-> +
-> +&pwm {
-> +       /*
-> +        * PWM 2 -- Blue LED
-> +        */
-> +       pinctrl-0 = <&pwm2_out>;
-> +       pinctrl-names = "default";
-> +       samsung,pwm-outputs = <2>;
-> +       status = "okay";
-> +};
-> +
-> +&usbdrd_dwc3_1 {
-> +       dr_mode = "host";
-> +};
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index 4478a089353a..445c6c5a1300 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -12,35 +12,10 @@
->   * published by the Free Software Foundation.
->  */
->
-> -#include <dt-bindings/clock/samsung,s2mps11.h>
->  #include <dt-bindings/input/input.h>
-> -#include <dt-bindings/interrupt-controller/irq.h>
-> -#include <dt-bindings/gpio/gpio.h>
-> -#include "exynos5800.dtsi"
-> -#include "exynos5422-cpus.dtsi"
-> +#include "exynos5422-odroid-core.dtsi"
->
->  / {
-> -       memory@40000000 {
-> -               device_type = "memory";
-> -               reg = <0x40000000 0x7EA00000>;
-> -       };
-> -
-> -       chosen {
-> -               stdout-path = "serial2:115200n8";
-> -       };
-> -
-> -       firmware@02073000 {
-> -               compatible = "samsung,secure-firmware";
-> -               reg = <0x02073000 0x1000>;
-> -       };
-> -
-> -       fixed-rate-clocks {
-> -               oscclk {
-> -                       compatible = "samsung,exynos5420-oscclk";
-> -                       clock-frequency = <24000000>;
-> -               };
-> -       };
-> -
->         gpio_keys {
->                 compatible = "gpio-keys";
->                 pinctrl-names = "default";
-> @@ -371,97 +346,6 @@
->         status = "okay";
->  };
->
-> -&bus_wcore {
-> -       devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
-> -                       <&nocp_mem1_0>, <&nocp_mem1_1>;
-> -       vdd-supply = <&buck3_reg>;
-> -       exynos,saturation-ratio = <100>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_noc {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_fsys_apb {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_fsys {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_fsys2 {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_mfc {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_gen {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_peri {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_g2d {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_g2d_acp {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_jpeg {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_jpeg_apb {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_disp1_fimd {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_disp1 {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_gscl_scaler {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&bus_mscl {
-> -       devfreq = <&bus_wcore>;
-> -       status = "okay";
-> -};
-> -
-> -&cpu0 {
-> -       cpu-supply = <&buck6_reg>;
-> -};
-> -
-> -&cpu4 {
-> -       cpu-supply = <&buck2_reg>;
-> -};
-> -
->  &hdmi {
->         status = "okay";
->         ddc = <&i2c_2>;
-> @@ -479,237 +363,6 @@
->         needs-hpd;
->  };
->
-> -&hsi2c_4 {
-> -       status = "okay";
-> -
-> -       s2mps11_pmic@66 {
-> -               compatible = "samsung,s2mps11-pmic";
-> -               reg = <0x66>;
-> -               samsung,s2mps11-acokb-ground;
-> -
-> -               interrupt-parent = <&gpx0>;
-> -               interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-> -               pinctrl-names = "default";
-> -               pinctrl-0 = <&s2mps11_irq>;
-> -
-> -               s2mps11_osc: clocks {
-> -                       #clock-cells = <1>;
-> -                       clock-output-names = "s2mps11_ap",
-> -                                       "s2mps11_cp", "s2mps11_bt";
-> -               };
-> -
-> -               regulators {
-> -                       ldo1_reg: LDO1 {
-> -                               regulator-name = "vdd_ldo1";
-> -                               regulator-min-microvolt = <1000000>;
-> -                               regulator-max-microvolt = <1000000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo3_reg: LDO3 {
-> -                               regulator-name = "vddq_mmc0";
-> -                               regulator-min-microvolt = <1800000>;
-> -                               regulator-max-microvolt = <1800000>;
-> -                       };
-> -
-> -                       ldo4_reg: LDO4 {
-> -                               regulator-name = "vdd_adc";
-> -                               regulator-min-microvolt = <1800000>;
-> -                               regulator-max-microvolt = <1800000>;
-> -                       };
-> -
-> -                       ldo5_reg: LDO5 {
-> -                               regulator-name = "vdd_ldo5";
-> -                               regulator-min-microvolt = <1800000>;
-> -                               regulator-max-microvolt = <1800000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo6_reg: LDO6 {
-> -                               regulator-name = "vdd_ldo6";
-> -                               regulator-min-microvolt = <1000000>;
-> -                               regulator-max-microvolt = <1000000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo7_reg: LDO7 {
-> -                               regulator-name = "vdd_ldo7";
-> -                               regulator-min-microvolt = <1800000>;
-> -                               regulator-max-microvolt = <1800000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo8_reg: LDO8 {
-> -                               regulator-name = "vdd_ldo8";
-> -                               regulator-min-microvolt = <1800000>;
-> -                               regulator-max-microvolt = <1800000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo9_reg: LDO9 {
-> -                               regulator-name = "vdd_ldo9";
-> -                               regulator-min-microvolt = <3000000>;
-> -                               regulator-max-microvolt = <3000000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo10_reg: LDO10 {
-> -                               regulator-name = "vdd_ldo10";
-> -                               regulator-min-microvolt = <1800000>;
-> -                               regulator-max-microvolt = <1800000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo11_reg: LDO11 {
-> -                               regulator-name = "vdd_ldo11";
-> -                               regulator-min-microvolt = <1000000>;
-> -                               regulator-max-microvolt = <1000000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo12_reg: LDO12 {
-> -                               regulator-name = "vdd_ldo12";
-> -                               regulator-min-microvolt = <1800000>;
-> -                               regulator-max-microvolt = <1800000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo13_reg: LDO13 {
-> -                               regulator-name = "vddq_mmc2";
-> -                               regulator-min-microvolt = <2800000>;
-> -                               regulator-max-microvolt = <2800000>;
-> -                       };
-> -
-> -                       ldo15_reg: LDO15 {
-> -                               regulator-name = "vdd_ldo15";
-> -                               regulator-min-microvolt = <3100000>;
-> -                               regulator-max-microvolt = <3100000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo16_reg: LDO16 {
-> -                               regulator-name = "vdd_ldo16";
-> -                               regulator-min-microvolt = <2200000>;
-> -                               regulator-max-microvolt = <2200000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo17_reg: LDO17 {
-> -                               regulator-name = "tsp_avdd";
-> -                               regulator-min-microvolt = <3300000>;
-> -                               regulator-max-microvolt = <3300000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo18_reg: LDO18 {
-> -                               regulator-name = "vdd_emmc_1V8";
-> -                               regulator-min-microvolt = <1800000>;
-> -                               regulator-max-microvolt = <1800000>;
-> -                       };
-> -
-> -                       ldo19_reg: LDO19 {
-> -                               regulator-name = "vdd_sd";
-> -                               regulator-min-microvolt = <2800000>;
-> -                               regulator-max-microvolt = <2800000>;
-> -                       };
-> -
-> -                       ldo24_reg: LDO24 {
-> -                               regulator-name = "tsp_io";
-> -                               regulator-min-microvolt = <2800000>;
-> -                               regulator-max-microvolt = <2800000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       ldo26_reg: LDO26 {
-> -                               regulator-name = "vdd_ldo26";
-> -                               regulator-min-microvolt = <3000000>;
-> -                               regulator-max-microvolt = <3000000>;
-> -                               regulator-always-on;
-> -                       };
-> -
-> -                       buck1_reg: BUCK1 {
-> -                               regulator-name = "vdd_mif";
-> -                               regulator-min-microvolt = <800000>;
-> -                               regulator-max-microvolt = <1300000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -
-> -                       buck2_reg: BUCK2 {
-> -                               regulator-name = "vdd_arm";
-> -                               regulator-min-microvolt = <800000>;
-> -                               regulator-max-microvolt = <1500000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -
-> -                       buck3_reg: BUCK3 {
-> -                               regulator-name = "vdd_int";
-> -                               regulator-min-microvolt = <800000>;
-> -                               regulator-max-microvolt = <1400000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -
-> -                       buck4_reg: BUCK4 {
-> -                               regulator-name = "vdd_g3d";
-> -                               regulator-min-microvolt = <800000>;
-> -                               regulator-max-microvolt = <1400000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -
-> -                       buck5_reg: BUCK5 {
-> -                               regulator-name = "vdd_mem";
-> -                               regulator-min-microvolt = <800000>;
-> -                               regulator-max-microvolt = <1400000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -
-> -                       buck6_reg: BUCK6 {
-> -                               regulator-name = "vdd_kfc";
-> -                               regulator-min-microvolt = <800000>;
-> -                               regulator-max-microvolt = <1500000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -
-> -                       buck7_reg: BUCK7 {
-> -                               regulator-name = "vdd_1.0v_ldo";
-> -                               regulator-min-microvolt = <800000>;
-> -                               regulator-max-microvolt = <1500000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -
-> -                       buck8_reg: BUCK8 {
-> -                               regulator-name = "vdd_1.8v_ldo";
-> -                               regulator-min-microvolt = <800000>;
-> -                               regulator-max-microvolt = <1500000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -
-> -                       buck9_reg: BUCK9 {
-> -                               regulator-name = "vdd_2.8v_ldo";
-> -                               regulator-min-microvolt = <3000000>;
-> -                               regulator-max-microvolt = <3750000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -
-> -                       buck10_reg: BUCK10 {
-> -                               regulator-name = "vdd_vmem";
-> -                               regulator-min-microvolt = <2850000>;
-> -                               regulator-max-microvolt = <2850000>;
-> -                               regulator-always-on;
-> -                               regulator-boot-on;
-> -                       };
-> -               };
-> -       };
-> -};
-> -
->  &i2c_2 {
->         samsung,i2c-sda-delay = <100>;
->         samsung,i2c-max-bus-freq = <66000>;
-> @@ -740,36 +393,6 @@
->         vqmmc-supply = <&ldo3_reg>;
->  };
->
-> -&mmc_2 {
-> -       status = "okay";
-> -       card-detect-delay = <200>;
-> -       samsung,dw-mshc-ciu-div = <3>;
-> -       samsung,dw-mshc-sdr-timing = <0 4>;
-> -       samsung,dw-mshc-ddr-timing = <0 2>;
-> -       pinctrl-names = "default";
-> -       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-> -       bus-width = <4>;
-> -       cap-sd-highspeed;
-> -       vmmc-supply = <&ldo19_reg>;
-> -       vqmmc-supply = <&ldo13_reg>;
-> -};
-> -
-> -&nocp_mem0_0 {
-> -       status = "okay";
-> -};
-> -
-> -&nocp_mem0_1 {
-> -       status = "okay";
-> -};
-> -
-> -&nocp_mem1_0 {
-> -       status = "okay";
-> -};
-> -
-> -&nocp_mem1_1 {
-> -       status = "okay";
-> -};
-> -
->  &pinctrl_0 {
->         power_key: power-key {
->                 samsung,pins = "gpx0-3";
-> @@ -784,13 +407,6 @@
->                 samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
->                 samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
->         };
-> -
-> -       s2mps11_irq: s2mps11-irq {
-> -               samsung,pins = "gpx0-4";
-> -               samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
-> -               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> -               samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> -       };
->  };
->
->  &pinctrl_1 {
-> @@ -801,45 +417,3 @@
->                 samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
->         };
->  };
-> -
-> -&tmu_cpu0 {
-> -       vtmu-supply = <&ldo7_reg>;
-> -};
-> -
-> -&tmu_cpu1 {
-> -       vtmu-supply = <&ldo7_reg>;
-> -};
-> -
-> -&tmu_cpu2 {
-> -       vtmu-supply = <&ldo7_reg>;
-> -};
-> -
-> -&tmu_cpu3 {
-> -       vtmu-supply = <&ldo7_reg>;
-> -};
-> -
-> -&tmu_gpu {
-> -       vtmu-supply = <&ldo7_reg>;
-> -};
-> -
-> -&rtc {
-> -       status = "okay";
-> -       clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
-> -       clock-names = "rtc", "rtc_src";
-> -};
-> -
-> -&usbdrd_dwc3_0 {
-> -       dr_mode = "host";
-> -};
-> -
-> -/* usbdrd_dwc3_1 mode customized in each board */
-> -
-> -&usbdrd3_0 {
-> -       vdd33-supply = <&ldo9_reg>;
-> -       vdd10-supply = <&ldo11_reg>;
-> -};
-> -
-> -&usbdrd3_1 {
-> -       vdd33-supply = <&ldo9_reg>;
-> -       vdd10-supply = <&ldo11_reg>;
-> -};
-
-Best Regards
--Anand
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
