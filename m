@@ -1,41 +1,42 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/4] clk: samsung: Instantiate Exynos4412 ISP clocks only
- when available
-Date: Mon, 2 Oct 2017 19:40:47 +0200
-Message-ID: <20171002174047.erucrnbh4dtvkjib@kozik-lap>
-References: <20171002104759.25944-1-m.szyprowski@samsung.com>
- <CGME20171002104824eucas1p1de6466888524f3f3f097086b1e2388ff@eucas1p1.samsung.com>
- <20171002104759.25944-2-m.szyprowski@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/6] ARM-S3C24xx: Adjustments for four function implementations
+Date: Mon, 2 Oct 2017 19:56:56 +0200
+Message-ID: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38910 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbdJBRkv (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Oct 2017 13:40:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20171002104759.25944-2-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Language: en-GB
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Oct 02, 2017 at 12:47:56PM +0200, Marek Szyprowski wrote:
-> Some additional registers for the ISP (Camera subsystem) clocks are
-> partially located in the SOC area, which belongs to ISP power domain.
-> Istatiate those clocks only when provided clock registers resource
-> covers those registers. This is a preparation for adding a separate
-> clock driver for ISP clocks, which will be intergated with power
-> domain using runtime PM feature.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c | 31 ++++++++++++++++++++++++-------
->  1 file changed, 24 insertions(+), 7 deletions(-)
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Oct 2017 19:50:05 +0200
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+A few update suggestions were taken into account
+from static source code analysis.
 
-Best regards,
-Krzysztof
+Markus Elfring (6):
+  Delete an error message for a failed memory allocation in s3c2410_iotiming_get()
+  Improve a size determination in s3c2410_iotiming_get()
+  s3c2410: Fix a typo in a comment line
+  Delete an error message for a failed memory allocation in s3c2412_iotiming_get()
+  Improve a size determination in s3c2412_iotiming_get()
+  s3c2412: Fix a typo in a comment line
+
+ arch/arm/mach-s3c24xx/iotiming-s3c2410.c | 8 +++-----
+ arch/arm/mach-s3c24xx/iotiming-s3c2412.c | 8 +++-----
+ 2 files changed, 6 insertions(+), 10 deletions(-)
+
+-- 
+2.14.2
