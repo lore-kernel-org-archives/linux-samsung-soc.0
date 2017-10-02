@@ -1,64 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 1/2] ARM: s3c64xx: Delete two error messages for a failed
- memory allocation in samsung_bl_set()
-Date: Mon, 2 Oct 2017 22:39:56 +0200
-Message-ID: <7f06d074-231b-85b9-3649-304edce6bc2c@users.sourceforge.net>
-References: <0b695686-2e07-910d-6278-91d54a1b0b2f@users.sourceforge.net>
+From: Josh Poimboeuf <jpoimboe-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: 4879b7ae05 ("Merge tag 'dmaengine-4.12-rc1' of .."): WARNING:
+ kernel stack regs at bd92bc2e in 01-cpu-hotplug:3811 has bad 'bp' value
+ 000001be
+Date: Mon, 2 Oct 2017 16:26:54 -0500
+Message-ID: <20171002212654.rsm4uj3hfioddldd@treble>
+References: <59d177a7.vsiddgOxdHRIlRvy%fengguang.wu@intel.com>
+ <CA+55aFz_ijfUxyk2kdLhfzfS1z0_uRBw6eQb9UxFvh=5zOzzaw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <0b695686-2e07-910d-6278-91d54a1b0b2f@users.sourceforge.net>
-Content-Language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CA+55aFz_ijfUxyk2kdLhfzfS1z0_uRBw6eQb9UxFvh=5zOzzaw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Cc: kernel test robot <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKP <lkp-JC7UmRfGjtg@public.gmane.org>, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dma <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, wfg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Oct 2017 22:20:39 +0200
+On Mon, Oct 02, 2017 at 01:09:31PM -0700, Linus Torvalds wrote:
+> Bringing in Josh on this, because the merge commit gets fingered
+> because it seems to be an interaction between the new code from the
+> merge and the ORC unwinder changes. It's probably some almost trivial
+> code difference that just causes some code generation to change.
+> 
+> And because Josh wasn't implicated in the merge, he didn't get cc'd by
+> the kernel test robot.
+> 
+> Of course, the stack trace itself seems to be pretty useless, since
+> that randconfig doesn't have KALLSYMS enabled, so it's just random hex
+> numbers.
+> 
+> Josh, original email on lkml and a few other mailing lists, see for example:
+> 
+>     https://www.spinics.net/lists/devicetree/msg196692.html
+> 
+> Any ideas?
 
-Omit extra messages for a memory allocation failure in this function.
+The bisect is pointing to a commit which is almost 5 months old, so this
+is pre-ORC.  Kallsyms *is* enabled, but the unwinder dump isn't smart
+enough to realize it's dumping misaligned stack addresses:
 
-This issue was detected by using the Coccinelle software.
+[  110.399425] WARNING: kernel stack regs at bd92bc2e in 01-cpu-hotplug:3811 has bad 'bp' value 000001be
+[  110.399428] unwind stack type:0 next_sp:  (null) mask:0x2 graph_idx:0
+[  110.399431] bd92bc2e: 92bc7f00 (0x92bc7f00)
+[  110.399433] bd92bc32: c27041bd (0xc27041bd)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-s3c64xx/dev-backlight.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+So kallsyms doesn't help if I'm dumping bad data.  Oops.
 
-diff --git a/arch/arm/mach-s3c64xx/dev-backlight.c b/arch/arm/mach-s3c64xx/dev-backlight.c
-index e62e789f9aee..7e2db762c442 100644
---- a/arch/arm/mach-s3c64xx/dev-backlight.c
-+++ b/arch/arm/mach-s3c64xx/dev-backlight.c
-@@ -94,17 +94,14 @@ void __init samsung_bl_set(struct samsung_bl_gpio_info *gpio_info,
+I tried to recreate it with the reproducer script and a similar GCC
+version, but no luck.
+
+Fengguang, assuming it's reliably recreatable, any chance you could
+recreate with the following patch?
+
+
+diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
+index 82c6d7f1fd73..64282ec73eb8 100644
+--- a/arch/x86/kernel/unwind_frame.c
++++ b/arch/x86/kernel/unwind_frame.c
+@@ -42,7 +42,7 @@ static void unwind_dump(struct unwind_state *state)
+ 			state->stack_info.type, state->stack_info.next_sp,
+ 			state->stack_mask, state->graph_idx);
  
- 	samsung_bl_device = kmemdup(&samsung_dfl_bl_device,
- 			sizeof(struct platform_device), GFP_KERNEL);
--	if (!samsung_bl_device) {
--		printk(KERN_ERR "%s: no memory for platform dev\n", __func__);
-+	if (!samsung_bl_device)
- 		return;
--	}
+-	for (sp = state->orig_sp; sp; sp = PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
++	for (sp = PTR_ALIGN(state->orig_sp); sp; sp = PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
+ 		if (get_stack_info(sp, state->task, &stack_info, &visit_mask))
+ 			break;
  
- 	samsung_bl_drvdata = kmemdup(&samsung_dfl_bl_data,
- 				sizeof(samsung_dfl_bl_data), GFP_KERNEL);
--	if (!samsung_bl_drvdata) {
--		printk(KERN_ERR "%s: no memory for platform dev\n", __func__);
-+	if (!samsung_bl_drvdata)
- 		goto err_data;
--	}
-+
- 	samsung_bl_device->dev.platform_data = &samsung_bl_drvdata->plat_data;
- 	samsung_bl_drvdata->gpio_info = gpio_info;
- 	samsung_bl_data = &samsung_bl_drvdata->plat_data;
--- 
-2.14.2
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
