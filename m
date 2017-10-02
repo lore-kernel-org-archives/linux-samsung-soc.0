@@ -1,72 +1,39 @@
-From: Josh Poimboeuf <jpoimboe-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 Subject: Re: 4879b7ae05 ("Merge tag 'dmaengine-4.12-rc1' of .."): WARNING:
  kernel stack regs at bd92bc2e in 01-cpu-hotplug:3811 has bad 'bp' value
  000001be
-Date: Mon, 2 Oct 2017 16:26:54 -0500
-Message-ID: <20171002212654.rsm4uj3hfioddldd@treble>
+Date: Mon, 2 Oct 2017 16:31:09 -0500
+Message-ID: <20171002213109.5n3skzy76edhwkvf@treble>
 References: <59d177a7.vsiddgOxdHRIlRvy%fengguang.wu@intel.com>
  <CA+55aFz_ijfUxyk2kdLhfzfS1z0_uRBw6eQb9UxFvh=5zOzzaw@mail.gmail.com>
+ <20171002212654.rsm4uj3hfioddldd@treble>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CA+55aFz_ijfUxyk2kdLhfzfS1z0_uRBw6eQb9UxFvh=5zOzzaw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Cc: kernel test robot <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKP <lkp-JC7UmRfGjtg@public.gmane.org>, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dma <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, wfg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
+In-Reply-To: <20171002212654.rsm4uj3hfioddldd@treble>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kernel test robot <fengguang.wu@intel.com>, LKP <lkp@01.org>, linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, dma <dmaengine@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, LKML <linux-kernel@vger.kernel.org>, wfg@linux.intel.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 02, 2017 at 01:09:31PM -0700, Linus Torvalds wrote:
-> Bringing in Josh on this, because the merge commit gets fingered
-> because it seems to be an interaction between the new code from the
-> merge and the ORC unwinder changes. It's probably some almost trivial
-> code difference that just causes some code generation to change.
-> 
-> And because Josh wasn't implicated in the merge, he didn't get cc'd by
-> the kernel test robot.
-> 
-> Of course, the stack trace itself seems to be pretty useless, since
-> that randconfig doesn't have KALLSYMS enabled, so it's just random hex
-> numbers.
-> 
-> Josh, original email on lkml and a few other mailing lists, see for example:
-> 
->     https://www.spinics.net/lists/devicetree/msg196692.html
-> 
-> Any ideas?
+On Mon, Oct 02, 2017 at 04:26:54PM -0500, Josh Poimboeuf wrote:
+> Fengguang, assuming it's reliably recreatable, any chance you could
+> recreate with the following patch?
 
-The bisect is pointing to a commit which is almost 5 months old, so this
-is pre-ORC.  Kallsyms *is* enabled, but the unwinder dump isn't smart
-enough to realize it's dumping misaligned stack addresses:
-
-[  110.399425] WARNING: kernel stack regs at bd92bc2e in 01-cpu-hotplug:3811 has bad 'bp' value 000001be
-[  110.399428] unwind stack type:0 next_sp:  (null) mask:0x2 graph_idx:0
-[  110.399431] bd92bc2e: 92bc7f00 (0x92bc7f00)
-[  110.399433] bd92bc32: c27041bd (0xc27041bd)
-
-So kallsyms doesn't help if I'm dumping bad data.  Oops.
-
-I tried to recreate it with the reproducer script and a similar GCC
-version, but no luck.
-
-Fengguang, assuming it's reliably recreatable, any chance you could
-recreate with the following patch?
-
+Sorry, here's a version which actually compiles.
 
 diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
-index 82c6d7f1fd73..64282ec73eb8 100644
+index d145a0b1f529..00234fa5a33a 100644
 --- a/arch/x86/kernel/unwind_frame.c
 +++ b/arch/x86/kernel/unwind_frame.c
-@@ -42,7 +42,7 @@ static void unwind_dump(struct unwind_state *state)
+@@ -44,7 +44,8 @@ static void unwind_dump(struct unwind_state *state)
  			state->stack_info.type, state->stack_info.next_sp,
  			state->stack_mask, state->graph_idx);
  
 -	for (sp = state->orig_sp; sp; sp = PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
-+	for (sp = PTR_ALIGN(state->orig_sp); sp; sp = PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
++	for (sp = PTR_ALIGN(state->orig_sp, sizeof(long)); sp;
++	     sp = PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
  		if (get_stack_info(sp, state->task, &stack_info, &visit_mask))
  			break;
  
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
