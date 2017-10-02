@@ -1,34 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 4/4] clk: samsung: Remove obsolete code for Exynos4412
- ISP clocks
-Date: Mon, 2 Oct 2017 20:00:37 +0200
-Message-ID: <20171002180037.negsvbgcues4k7wk@kozik-lap>
-References: <20171002104759.25944-1-m.szyprowski@samsung.com>
- <CGME20171002104826eucas1p17b7ea22d3984f1dea0e3efb45733d728@eucas1p1.samsung.com>
- <20171002104759.25944-5-m.szyprowski@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 3/6] ARM: s3c2410: Fix a typo in a comment line
+Date: Mon, 2 Oct 2017 20:00:27 +0200
+Message-ID: <b93ca267-88d2-b68a-1570-dc8fc71f3888@users.sourceforge.net>
+References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171002104759.25944-5-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 02, 2017 at 12:47:59PM +0200, Marek Szyprowski wrote:
-> Exynos4412 ISP clock are provided by separate Exynos4412 ISP clock
-> driver, so support for them in Exynos4-clk driver can be removed.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c   | 81 -------------------------------------
->  include/dt-bindings/clock/exynos4.h | 30 --------------
->  2 files changed, 111 deletions(-)
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Oct 2017 19:34:36 +0200
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Adjust a word in this function description.
 
-Best regards,
-Krzysztof
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-s3c24xx/iotiming-s3c2410.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
+index c18769b5f15a..d5f1f06e4811 100644
+--- a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
++++ b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
+@@ -206,7 +206,7 @@ static int calc_tacc(unsigned int cyc, int nwait_en,
+ }
+ 
+ /**
+- * s3c2410_calc_bank - calculate bank timing infromation
++ * s3c2410_calc_bank - calculate bank timing information
+  * @cfg: The configuration we need to calculate for.
+  * @bt: The bank timing information.
+  *
+-- 
+2.14.2
