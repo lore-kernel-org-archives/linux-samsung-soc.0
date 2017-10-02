@@ -1,44 +1,50 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 0/9] Exynos DRM: rewrite IPP subsystem and userspace
- API
-Date: Mon, 02 Oct 2017 08:03:54 +0200
-Message-ID: <a693f334-4622-0147-73ae-5e0f95f865d5@samsung.com>
-References: <CGME20170929073300eucas1p29f75848701e8181d1482ce4e202c4b6e@eucas1p2.samsung.com>
-        <1506670374-15689-1-git-send-email-m.szyprowski@samsung.com>
-        <609b4512-b8e1-c28a-126d-25b0ac2f533c@math.uni-bielefeld.de>
+Subject: Re: [PATCH 2/3] ARM: dts: exynos: Add support for Hardkernel's
+ Odroid HC1 board
+Date: Mon, 02 Oct 2017 08:34:04 +0200
+Message-ID: <5166bb0e-41f9-a010-70ae-161abb26382d@samsung.com>
+References: <1506684783-9722-1-git-send-email-m.szyprowski@samsung.com>
+        <CGME20170929113314eucas1p250037030204ab9d0f936afa6f660923f@eucas1p2.samsung.com>
+        <1506684783-9722-3-git-send-email-m.szyprowski@samsung.com>
+        <20170930172320.trklynm33x2ra75g@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:52040 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54331 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750760AbdJBGEB (ORCPT
+        with ESMTP id S1750760AbdJBGeK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Oct 2017 02:04:01 -0400
-In-reply-to: <609b4512-b8e1-c28a-126d-25b0ac2f533c@math.uni-bielefeld.de>
+        Mon, 2 Oct 2017 02:34:10 -0400
+In-reply-to: <20170930172320.trklynm33x2ra75g@kozik-lap>
 Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Tobias,
+Hi Krzysztof,
 
-On 2017-09-29 15:24, Tobias Jakobi wrote:
-> Hello Marek,
->
-> I just tested this series, and I noticed a lot of these lines:
->> exynos-sysmmu 11a40000.sysmmu: restoring state
->> exynos-sysmmu 11a40000.sysmmu: saving state
-> I guess it would make sense to enable autosuspend for runtime PM in each of the
-> hw drivers.
->
-> I've just send a patch that does it for the FIMC (the only hw I can test this
-> on). This improves frame time stability for me.
+On 2017-09-30 19:23, Krzysztof Kozlowski wrote:
+> On Fri, Sep 29, 2017 at 01:33:02PM +0200, Marek Szyprowski wrote:
+>> Odroid HC1 board is based on Odroid XU4 board, but it has no HDMI,
+>> no eMMC, no build-in USB3.0 hub, no extension port pins, and no GPIO
+>> button. USB3.0 ports are used for build-in JMicron USB to SATA bridge
+>> and Gigabit R8152 ethernet chips. HC1 uses only passive cooling.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   arch/arm/boot/dts/Makefile                         |   1 +
+>>   arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 443 +++++++++++++++++++++
+>>   arch/arm/boot/dts/exynos5422-odroidhc1.dts         | 217 ++++++++++
+>>   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 428 +-------------------
+> Please experiment with -M (maybe -M20%?) and -B so this would be
+> detected as rename. It might create much simpler patch thus making the
+> review easy (one could see that the changes are just movements).
 
-Right, autosuspend definitely makes sense in case of IPP drivers. I will 
-update all
-to use it. Thanks for testing this stuff and pointing this issue!
+I didn't manage to generate different patch with those options. I have
+however checked that odroidxu3/xu3-lite/xu4 dtbs are exactly the same after
+applying this patch (using dtx_diff tool).
 
  > ...
 
