@@ -1,80 +1,75 @@
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
 Subject: Re: 4879b7ae05 ("Merge tag 'dmaengine-4.12-rc1' of .."): WARNING:
  kernel stack regs at bd92bc2e in 01-cpu-hotplug:3811 has bad 'bp' value
  000001be
-Date: Mon, 2 Oct 2017 20:17:17 -0500
-Message-ID: <20171003011717.gl6sbyoykb3lzhed@treble>
+Date: Tue, 3 Oct 2017 11:45:38 +0800
+Message-ID: <20171003034538.ntvuwtm2uha6wt6h@wfg-t540p.sh.intel.com>
 References: <59d177a7.vsiddgOxdHRIlRvy%fengguang.wu@intel.com>
  <CA+55aFz_ijfUxyk2kdLhfzfS1z0_uRBw6eQb9UxFvh=5zOzzaw@mail.gmail.com>
  <20171002212654.rsm4uj3hfioddldd@treble>
- <CA+55aFwo4U3vHFtKyCrGaumcfCMszfS48QSxNfEC3pD5wLxQnA@mail.gmail.com>
+ <20171002213109.5n3skzy76edhwkvf@treble>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CA+55aFwo4U3vHFtKyCrGaumcfCMszfS48QSxNfEC3pD5wLxQnA@mail.gmail.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kernel test robot <fengguang.wu@intel.com>, LKP <lkp@01.org>, linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, dma <dmaengine@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, LKML <linux-kernel@vger.kernel.org>, wfg@linux.intel.com
+In-Reply-To: <20171002213109.5n3skzy76edhwkvf@treble>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKP <lkp@01.org>, linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, dma <dmaengine@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 02, 2017 at 02:58:08PM -0700, Linus Torvalds wrote:
-> On Mon, Oct 2, 2017 at 2:26 PM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > The bisect is pointing to a commit which is almost 5 months old, so this
-> > is pre-ORC.  Kallsyms *is* enabled, but the unwinder dump isn't smart
-> > enough to realize it's dumping misaligned stack addresses:
-> 
-> Ahh, I didn't pick up on that "esp isn't aligned" part.
-> 
-> That said, if %esp gets unaligned at some point, it's not clear
-> exactly when we should align it. An unaligned stack pointer will
-> continue to _work_ just potentially perform fairly badly.
+Hi Josh,
 
-True, but unaligned stacks seem to be very rare, and I don't remember
-ever seeing one with frame pointers enabled.  I think the call return
-addresses will always be aligned, so I think it makes sense to align the
-starting address before dumping.
+On Mon, Oct 02, 2017 at 04:31:09PM -0500, Josh Poimboeuf wrote:
+>On Mon, Oct 02, 2017 at 04:26:54PM -0500, Josh Poimboeuf wrote:
+>> Fengguang, assuming it's reliably recreatable, any chance you could
+>> recreate with the following patch?
 
-> But more likely, we picked the wrong frame value to begin with.
+Sure, I'll try your patch on v4.14-rc3 since it looks the most
+reproducible kernel. For the bisected 4879b7ae05, the warning only
+shows up once out of 909 boots according to the below stats. So I'm
+not sure whether it's the _first_ bad commit. To double confirm, I
+just queued 5000 more boot tests for each of its parent commits.
 
-Agreed.
+> ecc721a72c  Merge tag 'pwm/for-4.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm
+> be13ec668d  Merge branch 'topic/pl330' into for-linus
+> 4879b7ae05  Merge tag 'dmaengine-4.12-rc1' of git://git.infradead.org/users/vkoul/slave-dma
+> 9e66317d3c  Linux 4.14-rc3
+> 1418b85217  Add linux-next specific files for 20170929
+> +-------------------------------------------------------+------------+------------+------------+-----------+---------------+
+> |                                                       | ecc721a72c | be13ec668d | 4879b7ae05 | v4.14-rc3 | next-20170929 |
+> +-------------------------------------------------------+------------+------------+------------+-----------+---------------+
+> | boot_successes                                        | 1009       | 1009       | 909        | 5         | 510           |
+> | boot_failures                                         | 0          | 0          | 1          | 4         | 153           |
+> | WARNING:kernel_stack                                  | 0          | 0          | 1          | 3         | 111           |
+> | BUG:unable_to_handle_kernel                           | 0          | 0          | 0          | 3         | 48            |
+> | Oops:#[##]                                            | 0          | 0          | 0          | 3         | 48            |
+> | EIP:update_stack_state                                | 0          | 0          | 0          | 3         | 48            |
+> | Kernel_panic-not_syncing:Fatal_exception_in_interrupt | 0          | 0          | 0          | 3         | 48            |
+> | invoked_oom-killer:gfp_mask=0x                        | 0          | 0          | 0          | 1         | 16            |
+> | Mem-Info                                              | 0          | 0          | 0          | 1         | 16            |
+> | EIP:clear_user                                        | 0          | 0          | 0          | 0         | 2             |
+> | EIP:copy_page_to_iter                                 | 0          | 0          | 0          | 0         | 1             |
+> +-------------------------------------------------------+------------+------------+------------+-----------+---------------+
 
-> For example, maybe that decode_frame_pointer() logic really should
-> check not that the low bit in bp is set, but instead check that it's a
-> valid "unsigned long *" that has the low bit set.
-> 
-> IOW, the difference would be that instead of checking
-> 
->         if (!(regs & 0x1))
->                 return NULL;
-> 
-> if would check
-> 
->         if ((regs & (sizeof(unsigned long)-1)) != 1)
->                 return NULL;
+>Sorry, here's a version which actually compiles.
 
-Yeah, that would be an improvement.
+OK.
 
-> but also maybe add logic to simply not trust a next frame pointer that
-> isn't appropriately aligned.
+Thanks,
+Fengguang
 
-Also a good idea.
-
-> So I think adding PTR_ALIGN() there in the unwind dumper might be a
-> bit late. By that time it has already accepted what looks like a
-> garbage frame. No?
-
-Yeah, maybe.  I guess it really depends on what exactly the root cause
-is.  It got a bad frame pointer somehow, but maybe not *too* bad because
-it still ended up in the task stack somehow.  It's not clear how that
-happened, but it's possible the task stack had some clues about what led
-up to it.
-
-I'll implement your suggestions in addition to the patch to align sp in
-the dump code.  Having all of them together would hopefully enable the
-unwinder to detect a bad condition as early as possible and also do a
-better job at dumping it.
-
--- 
-Josh
+>diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
+>index d145a0b1f529..00234fa5a33a 100644
+>--- a/arch/x86/kernel/unwind_frame.c
+>+++ b/arch/x86/kernel/unwind_frame.c
+>@@ -44,7 +44,8 @@ static void unwind_dump(struct unwind_state *state)
+> 			state->stack_info.type, state->stack_info.next_sp,
+> 			state->stack_mask, state->graph_idx);
+>
+>-	for (sp = state->orig_sp; sp; sp = PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
+>+	for (sp = PTR_ALIGN(state->orig_sp, sizeof(long)); sp;
+>+	     sp = PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
+> 		if (get_stack_info(sp, state->task, &stack_info, &visit_mask))
+> 			break;
+>
