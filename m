@@ -1,75 +1,58 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Subject: Re: 4879b7ae05 ("Merge tag 'dmaengine-4.12-rc1' of .."): WARNING:
- kernel stack regs at bd92bc2e in 01-cpu-hotplug:3811 has bad 'bp' value
- 000001be
-Date: Tue, 3 Oct 2017 11:45:38 +0800
-Message-ID: <20171003034538.ntvuwtm2uha6wt6h@wfg-t540p.sh.intel.com>
-References: <59d177a7.vsiddgOxdHRIlRvy%fengguang.wu@intel.com>
- <CA+55aFz_ijfUxyk2kdLhfzfS1z0_uRBw6eQb9UxFvh=5zOzzaw@mail.gmail.com>
- <20171002212654.rsm4uj3hfioddldd@treble>
- <20171002213109.5n3skzy76edhwkvf@treble>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
+Date: Tue, 03 Oct 2017 08:03:02 +0200
+Message-ID: <ec302c3d-c120-320a-dd58-4d26a9294907@samsung.com>
+References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
+        <20171002104759.25944-1-m.szyprowski@samsung.com>
+        <20171002173631.lgkqfrtbacyzqeml@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171002213109.5n3skzy76edhwkvf@treble>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKP <lkp@01.org>, linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, dma <dmaengine@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20171002173631.lgkqfrtbacyzqeml@kozik-lap>
+Content-language: en-US
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Josh,
+Hi Krzysztof,
 
-On Mon, Oct 02, 2017 at 04:31:09PM -0500, Josh Poimboeuf wrote:
->On Mon, Oct 02, 2017 at 04:26:54PM -0500, Josh Poimboeuf wrote:
->> Fengguang, assuming it's reliably recreatable, any chance you could
->> recreate with the following patch?
-
-Sure, I'll try your patch on v4.14-rc3 since it looks the most
-reproducible kernel. For the bisected 4879b7ae05, the warning only
-shows up once out of 909 boots according to the below stats. So I'm
-not sure whether it's the _first_ bad commit. To double confirm, I
-just queued 5000 more boot tests for each of its parent commits.
-
-> ecc721a72c  Merge tag 'pwm/for-4.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm
-> be13ec668d  Merge branch 'topic/pl330' into for-linus
-> 4879b7ae05  Merge tag 'dmaengine-4.12-rc1' of git://git.infradead.org/users/vkoul/slave-dma
-> 9e66317d3c  Linux 4.14-rc3
-> 1418b85217  Add linux-next specific files for 20170929
-> +-------------------------------------------------------+------------+------------+------------+-----------+---------------+
-> |                                                       | ecc721a72c | be13ec668d | 4879b7ae05 | v4.14-rc3 | next-20170929 |
-> +-------------------------------------------------------+------------+------------+------------+-----------+---------------+
-> | boot_successes                                        | 1009       | 1009       | 909        | 5         | 510           |
-> | boot_failures                                         | 0          | 0          | 1          | 4         | 153           |
-> | WARNING:kernel_stack                                  | 0          | 0          | 1          | 3         | 111           |
-> | BUG:unable_to_handle_kernel                           | 0          | 0          | 0          | 3         | 48            |
-> | Oops:#[##]                                            | 0          | 0          | 0          | 3         | 48            |
-> | EIP:update_stack_state                                | 0          | 0          | 0          | 3         | 48            |
-> | Kernel_panic-not_syncing:Fatal_exception_in_interrupt | 0          | 0          | 0          | 3         | 48            |
-> | invoked_oom-killer:gfp_mask=0x                        | 0          | 0          | 0          | 1         | 16            |
-> | Mem-Info                                              | 0          | 0          | 0          | 1         | 16            |
-> | EIP:clear_user                                        | 0          | 0          | 0          | 0         | 2             |
-> | EIP:copy_page_to_iter                                 | 0          | 0          | 0          | 0         | 1             |
-> +-------------------------------------------------------+------------+------------+------------+-----------+---------------+
-
->Sorry, here's a version which actually compiles.
-
-OK.
-
-Thanks,
-Fengguang
-
->diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
->index d145a0b1f529..00234fa5a33a 100644
->--- a/arch/x86/kernel/unwind_frame.c
->+++ b/arch/x86/kernel/unwind_frame.c
->@@ -44,7 +44,8 @@ static void unwind_dump(struct unwind_state *state)
-> 			state->stack_info.type, state->stack_info.next_sp,
-> 			state->stack_mask, state->graph_idx);
+On 2017-10-02 19:36, Krzysztof Kozlowski wrote:
+> On Mon, Oct 02, 2017 at 12:47:55PM +0200, Marek Szyprowski wrote:
+>> Exynos4412 ISP clock controller is located in the SOC area, which belongs
+>> to ISP power domain. This was not properly handled by the current
+>> Exynos4-clk driver. This patchset instantiates a separate clock driver
+>> for those clocks, updates all clients of ISP clocks and ensures that
+>> the driver is properly integrated in ISP power domin using runtime PM
+>> feature of the clock framework.
+>>
+>> This finally solves all the mysterious freezes in accessing ISP clocks
+>> when ISP power domain is disabled.
+>>
+>> The last patch breaks support for old dtbs. It can be applied when all
+>> boards are updated. Exynos4412 ISP subsystem is only used by Trats2
+>> boards, for which kernel is updated always together with the dtb file,
+>> so the last patch can be applied to the next kernel release after merging
+>> the DTS patch.
+> I am fine with this approach. However I see that third patch (dts)
+> depends on previous so it will also wait one cycle. arm-soc folks for
+> some time do not accept code mixed with dts.
 >
->-	for (sp = state->orig_sp; sp; sp = PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
->+	for (sp = PTR_ALIGN(state->orig_sp, sizeof(long)); sp;
->+	     sp = PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
-> 		if (get_stack_info(sp, state->task, &stack_info, &visit_mask))
-> 			break;
->
+> Unless you can split dts into two patches: adding new clock controller
+> and removing old. In such case the new clock could be applied in
+> parallel to clk code changes.
+
+DTS patch cannot be split into two patches without breaking ISP support,
+because adding a new clock controller requires changes in the clients and
+register resource size of the old one, so either old or new one has to be
+fully defined. If arm-soc cannot pull mixed branches, then I'm okay with
+postponing DTS changes by one release.
+
+ > ...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
