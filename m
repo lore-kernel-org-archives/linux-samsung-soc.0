@@ -1,63 +1,77 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 0/9] Various cleanups for Samsung clocks drivers
-Date: Tue, 03 Oct 2017 12:00:07 +0200
-Message-ID: <20171003100016.32029-1-m.szyprowski@samsung.com>
-References: <CGME20171003100028eucas1p11057e4643675c66f6144d0737e8b933a@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51414 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751354AbdJCKAc (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 06:00:32 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/9] clk: samsung: Remove support for obsolete Exynos4212
+ CPU clock
+Date: Tue, 03 Oct 2017 12:00:08 +0200
+Message-ID: <20171003100016.32029-2-m.szyprowski@samsung.com>
+References: <20171003100016.32029-1-m.szyprowski@samsung.com>
+        <CGME20171003100029eucas1p2c706e911f316a58f35be7c443824f07c@eucas1p2.samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20171003100016.32029-1-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi!
+Support for Exynos 4212 SoC has been removed by commit bca9085e0ae9 ("ARM:
+dts: exynos: remove Exynos4212 support (dead code)"), so there is no need
+to keep dead code.
 
-While touching Samsung clock drivers I found that there is still some
-legacy code left. This patchset is a quick cleanup of the issues I've
-noticed so far. The most significant change is removal clkdev alias
-support from generic macros used for instantiating all the clocks in
-the Samsung drivers. This should reduce the total size of the clock init
-structures. Required clkdev aliases can be still created using
-samsung_clk_register_alias() function if given platform still needs
-them.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c | 33 ++++-----------------------------
+ 1 file changed, 4 insertions(+), 29 deletions(-)
 
-Patches have been generated on top of linux-next with "clk: samsung:
-Properly propagate flags in __PLL macro" patch applied.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Marek Szyprowski (9):
-  clk: samsung: Remove support for obsolete Exynos4212 CPU clock
-  clk: samsung: Remove clkdev alias support in Exynos4 clk driver
-  clk: samsung: Remove double assignment to CLK_ARM_CLK id in Exynos4
-    driver
-  clk: samsung: Remove clkdev alias support in Exynos5250 clk driver
-  clk: samsung: Drop useless alias in Exynos5420 clk driver
-  clk: samsung: Rework clkdev alias handling in Exynos5440 driver
-  clk: samsung: Rework clkdev alias handling in S3C2443 driver
-  clk: samsung: Add explicit MPLL and EPLL clkdev aliases in S3C2443
-    driver
-  clk: samsung: Remove obsolete clkdev alias support
-
- drivers/clk/samsung/clk-exynos4.c    | 82 +++++++-----------------------------
- drivers/clk/samsung/clk-exynos5250.c | 18 ++++----
- drivers/clk/samsung/clk-exynos5420.c |  3 +-
- drivers/clk/samsung/clk-exynos5440.c | 12 +++++-
- drivers/clk/samsung/clk-pll.c        |  9 ----
- drivers/clk/samsung/clk-s3c2443.c    | 16 ++++---
- drivers/clk/samsung/clk.c            | 33 ++-------------
- drivers/clk/samsung/clk.h            | 71 ++++++-------------------------
- include/dt-bindings/clock/s3c2443.h  |  2 +
- 9 files changed, 62 insertions(+), 184 deletions(-)
-
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index e40b77583c47..9a51ce9a658f 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1401,24 +1401,6 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
+ 	{  0 },
+ };
+ 
+-static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
+-	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
+-	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
+-	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
+-	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
+-	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
+-	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
+-	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
+-	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
+-	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+-	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+-	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+-	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+-	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+-	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
+-	{  0 },
+-};
+-
+ #define E4412_CPU_DIV1(cores, hpm, copy)				\
+ 		(((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
+ 
+@@ -1533,17 +1515,10 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 		samsung_clk_register_fixed_factor(ctx,
+ 			exynos4x12_fixed_factor_clks,
+ 			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
+-		if (of_machine_is_compatible("samsung,exynos4412")) {
+-			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+-				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
+-				e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
+-				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+-		} else {
+-			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+-				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
+-				e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
+-				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+-		}
++		exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
++			mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
++			e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
++			CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+ 	}
+ 
+ 	samsung_clk_register_alias(ctx, exynos4_aliases,
 -- 
 2.14.2
+
