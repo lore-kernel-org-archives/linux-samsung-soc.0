@@ -1,100 +1,46 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] crypto: s5p-sss: Add HASH support for Exynos
-Date: Tue, 3 Oct 2017 21:30:39 +0200
-Message-ID: <20171003193039.sadrgdxeeawu3jnx@kozik-lap>
-References: <CGME20170927122551eucas1p2ce5b868e59bfa99941672936ba3c7bed@eucas1p2.samsung.com>
- <fddf226a-b0d8-fd68-3713-347ac3a0de20@partner.samsung.com>
- <20170930195044.kyhiit2nqmjgcwtl@kozik-lap>
- <77ef8f3f-a686-0043-c55d-761033a11956@partner.samsung.com>
+Subject: Re: [PATCH v2] clk: samsung: Add a separate driver for Exynos4412
+ ISP clocks
+Date: Tue, 3 Oct 2017 21:32:34 +0200
+Message-ID: <20171003193234.kqex4kwa57sjegcr@kozik-lap>
+References: <20171002180007.asan73h53nfot6nr@kozik-lap>
+ <CGME20171003061657eucas1p27badb05b29f1130e598aeb2fa2aef92f@eucas1p2.samsung.com>
+ <20171003061644.2597-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38612 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751115AbdJCTcj (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 3 Oct 2017 15:32:39 -0400
 Content-Disposition: inline
-In-Reply-To: <77ef8f3f-a686-0043-c55d-761033a11956@partner.samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20171003061644.2597-1-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Tue, Oct 03, 2017 at 04:57:43PM +0200, Kamil Konieczny wrote:
- 
-> >> [...]
-> >> +static struct ahash_alg algs_sha256[] = {
-> >> +{
-> >> +	.init		= s5p_hash_init,
-> >> +	.update		= s5p_hash_update,
-> >> +	.final		= s5p_hash_final,
-> >> +	.finup		= s5p_hash_finup,
-> >> +	.digest		= s5p_hash_digest,
-> >> +	.halg.digestsize	= SHA256_DIGEST_SIZE,
-> >> +	.halg.base	= {
-> >> +		.cra_name		= "sha256",
-> >> +		.cra_driver_name	= "exynos-sha256",
-> >> +		.cra_priority		= 100,
-> >> +		.cra_flags		= CRYPTO_ALG_TYPE_AHASH |
-> >> +					  CRYPTO_ALG_KERN_DRIVER_ONLY |
-> >> +					  CRYPTO_ALG_ASYNC |
-> >> +					  CRYPTO_ALG_NEED_FALLBACK,
-> >> +		.cra_blocksize		= HASH_BLOCK_SIZE,
-> >> +		.cra_ctxsize		= sizeof(struct s5p_hash_ctx),
-> >> +		.cra_alignmask		= SSS_DMA_ALIGN_MASK,
-> >> +		.cra_module		= THIS_MODULE,
-> >> +		.cra_init		= s5p_hash_cra_init,
-> >> +		.cra_exit		= s5p_hash_cra_exit,
-> >> +	}
-> >> +}
-> >> +
-> >> +};
-> >> +
-> >> +static struct sss_hash_algs_info exynos_hash_algs_info[] = {
-> > 
-> > You have warnings in your code. Please be sure that all compiler,
-> > Smatch, Sparse, checkpatch and coccicheck warnings are fixed.
-> > 
-> > ../drivers/crypto/s5p-sss.c:1896:34: warning: ‘exynos_hash_algs_info’ defined but not used [-Wunused-variable]
-> >  static struct sss_hash_algs_info exynos_hash_algs_info[] = {
-> > 
-> > Probably this should be __maybe_unused.
+On Tue, Oct 03, 2017 at 08:16:44AM +0200, Marek Szyprowski wrote:
+> Some registers for the Exynos 4412 ISP (Camera subsystem) clocks are
+> partially located in the SOC area, which belongs to ISP power domain.
+> Because those registers are also located in a different memory region
+> than the main clock controller, support for them can be provided by
+> a separate clock controller. This in turn allows to almost seamlessly
+> make it aware of the power domain using recently introduced runtime
+> PM support for clocks.
 > 
-> You are right, I did not check this with EXYNOS_HASH disabled, I will
-> rewrite it.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/exynos4-clock.txt    |  27 ++++
+>  drivers/clk/samsung/Makefile                       |   1 +
+>  drivers/clk/samsung/clk-exynos4412-isp.c           | 179 +++++++++++++++++++++
+>  include/dt-bindings/clock/exynos4.h                |  35 ++++
+>  4 files changed, 242 insertions(+)
+>  create mode 100644 drivers/clk/samsung/clk-exynos4412-isp.c
 > 
-> > Also this should be const. I do not understand why you have to add one
-> > more static variable (which sticks the driver to only one instance...)
-> > and then modify it during runtime. Everything should be stored in device
-> > state container (s5p_aes_dev) - directly or through some other pointers.
-> 
-> There is .registered field which is incremented with each algo register.
-> I can move assignes to fields .import, .export and .statesize into struct.
-> When I tried add const, I got compiler warn:
-> drivers/crypto/s5p-sss.c: In function ‘s5p_aes_remove’:
-> drivers/crypto/s5p-sss.c:2397:6: warning: passing argument 1 of ‘crypto_unregister_ahash’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
->       &hash_algs_i[i].algs_list[j]);
-> so it was not designed to be const (in crypto framework).
-> In AES code the alg struct is also static:
-> static struct crypto_alg algs[] = {
 
-The crypto_alg and ahash_alg must indeed stay non-const but
-sss_hash_algs_info is different. You do not pass it to crypto-core.
-
-> What you mean by 'stick the driver to only one instance' ? In Exynos 4412 there
-> is only one SecSS block, in some other Exynos there is SlimSS, but it is not
-> the same (it has lower capabilities and other io addresses), so there should not
-> be two s5p_aes_dev drivers loaded at the same time. 
-
-Current driver matches hardware in one-to-one so indeed there cannot be
-two s5p_aes_dev devices. However this might change thus almost every
-driver tries to follow the pattern of state-container passed to device
-(e.g. platform_set_drvdata()). With this approach the code is nicely
-encapsulated and usually much easier to review. Globals (or file-scope
-variables) usually makes code more difficult to maintain.
-
-In this driver this is not entirely possible as some crypto-functions do
-not allow passing driver-supplied opaque pointer. But except this case,
-everywhere else the driver should follow common convention - do not use
-static variables.
-
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
