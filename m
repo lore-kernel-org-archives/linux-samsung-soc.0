@@ -1,39 +1,39 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 3/7] mmc: sdhci-s3c: Fix driver data for Exynos4 SoCs
-Date: Wed, 4 Oct 2017 12:50:06 +0200
-Message-ID: <CAPDyKFqCXofOLTFSNR+N2DgXBp-f22=qCdj--YtRZ+xxcD9x0Q@mail.gmail.com>
-References: <20171004063828.22068-1-m.szyprowski@samsung.com>
- <CGME20171004063835eucas1p1082954a0113f374f11ff364cf4b95408@eucas1p1.samsung.com>
- <20171004063828.22068-4-m.szyprowski@samsung.com> <104fe074-3e54-f37c-ac4b-704e5153c154@samsung.com>
- <c4980018-dbef-9ec7-9103-5b0dea00a828@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] ARM-SAMSUNG: Adjustments for 14 function implementations
+Date: Wed, 4 Oct 2017 13:10:44 +0200
+Message-ID: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <c4980018-dbef-9ec7-9103-5b0dea00a828@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Language: en-GB
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 4 October 2017 at 12:03, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-> On 10/04/2017 10:39 AM, Sylwester Nawrocki wrote:
->> On 10/04/2017 08:38 AM, Marek Szyprowski wrote:
->>> Support for non-dt based initialization for Exynos SoCs has been removed,
->>> so there is no need to keep driver IDs for this case. While touching this,
->>> replace odd conditional code for instantiating driver data for Exynos4
->>> SoCs with a simple reference and move that driver data under CONFIG_OF.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
->> Reviewed-by: Sylwester Nawrocki <m.szyprowski@samsung.com>
->
-> Oops, this should have been:
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->
-> I guess it's too late to fix that since the patch is applied to a stable
-> branch.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Oct 2017 12:48:24 +0200
 
-I can deal with that, no worries.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Kind regards
-Uffe
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in three functions
+  Improve a size determination in 13 functions
+
+ arch/arm/plat-samsung/adc.c          | 12 ++++--------
+ arch/arm/plat-samsung/devs.c         | 33 +++++++++++----------------------
+ arch/arm/plat-samsung/platformdata.c |  4 +---
+ 3 files changed, 16 insertions(+), 33 deletions(-)
+
+-- 
+2.14.2
