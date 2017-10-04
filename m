@@ -1,15 +1,14 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 5/7] clk: samsung: Remove support for Exynos4212 SoCs in
- Exynos CLKOUT driver
-Date: Wed, 04 Oct 2017 08:38:26 +0200
-Message-ID: <20171004063828.22068-6-m.szyprowski@samsung.com>
+Subject: [PATCH 6/7] phy: samsung: Remove dependency on obsolete SoC support
+Date: Wed, 04 Oct 2017 08:38:27 +0200
+Message-ID: <20171004063828.22068-7-m.szyprowski@samsung.com>
 References: <20171004063828.22068-1-m.szyprowski@samsung.com>
-        <CGME20171004063836eucas1p1ab64c174baf2773eb17d1c94cd05ed8c@eucas1p1.samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
+        <CGME20171004063837eucas1p22344a95b7ad1b36c6a6bc70d5d5c5ada@eucas1p2.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20171004063828.22068-1-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Viresh Kumar <viresh.kumar@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Support for Exynos4212 SoCs has been removed by commit bca9085e0ae9 ("ARM:
@@ -18,22 +17,21 @@ to keep remaining dead code related to this SoC version.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos-clkout.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/phy/samsung/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index a21aea062bae..f29fb5824005 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -144,8 +144,6 @@ static void __init exynos4_clkout_init(struct device_node *node)
- }
- CLK_OF_DECLARE_DRIVER(exynos4210_clkout, "samsung,exynos4210-pmu",
- 		exynos4_clkout_init);
--CLK_OF_DECLARE_DRIVER(exynos4212_clkout, "samsung,exynos4212-pmu",
--		exynos4_clkout_init);
- CLK_OF_DECLARE_DRIVER(exynos4412_clkout, "samsung,exynos4412-pmu",
- 		exynos4_clkout_init);
- CLK_OF_DECLARE_DRIVER(exynos3250_clkout, "samsung,exynos3250-pmu",
+diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+index b7e0645a7bd9..2a5d33cb0e7e 100644
+--- a/drivers/phy/samsung/Kconfig
++++ b/drivers/phy/samsung/Kconfig
+@@ -49,7 +49,7 @@ config PHY_EXYNOS4210_USB2
+ config PHY_EXYNOS4X12_USB2
+ 	bool
+ 	depends on PHY_SAMSUNG_USB2
+-	default SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412
++	default SOC_EXYNOS3250 || SOC_EXYNOS4412
+ 
+ config PHY_EXYNOS5250_USB2
+ 	bool
 -- 
 2.14.2
-
