@@ -1,32 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/9] clk: samsung: Remove support for obsolete Exynos4212
- CPU clock
-Date: Wed, 4 Oct 2017 14:54:16 +0200
-Message-ID: <CAJKOXPejmE6xZGL19ms_xZH61Ey7pg8+n7x=V9rtx6-8o+PLYA@mail.gmail.com>
-References: <CGME20171003100029eucas1p2c706e911f316a58f35be7c443824f07c@eucas1p2.samsung.com>
- <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-2-m.szyprowski@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [bug report] drm/exynos: Fix suspend/resume support
+Date: Wed, 4 Oct 2017 16:00:56 +0300
+Message-ID: <20171004130056.gemn33lk5mrzfamt@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20171003100016.32029-2-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:42174 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751905AbdJDNBI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 4 Oct 2017 09:01:08 -0400
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: m.szyprowski@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 3, 2017 at 12:00 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Support for Exynos 4212 SoC has been removed by commit bca9085e0ae9 ("ARM:
-> dts: exynos: remove Exynos4212 support (dead code)"), so there is no need
-> to keep dead code.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c | 33 ++++-----------------------------
->  1 file changed, 4 insertions(+), 29 deletions(-)
->
+Hello Marek Szyprowski,
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+This is a semi-automatic email about new static checker warnings.
 
-Best regards,
-Krzysztof
+The patch 6e8edf8a7d8d: "drm/exynos: Fix suspend/resume support" from 
+Sep 14, 2017, leads to the following Smatch complaint:
+
+drivers/gpu/drm/exynos/exynos_drm_drv.c:173 exynos_drm_suspend()
+	 warn: variable dereferenced before check 'drm_dev' (see line 171)
+
+drivers/gpu/drm/exynos/exynos_drm_drv.c
+   170		struct drm_device *drm_dev = dev_get_drvdata(dev);
+   171		struct exynos_drm_private *private = drm_dev->dev_private;
+                                                     ^^^^^^^^^^^^^^^^^^^^
+The patch adds a new dereference,
+
+   172	
+   173		if (pm_runtime_suspended(dev) || !drm_dev)
+                                                  ^^^^^^^
+but the old code had a check for NULL.
+
+   174			return 0;
+   175	
+
+There is a similar issue in exynos_drm_resume().
+
+regards,
+dan carpenter
