@@ -1,36 +1,68 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 7/7] cpufreq: dt: Remove support for Exynos4212 SoCs
-Date: Wed, 04 Oct 2017 08:38:28 +0200
-Message-ID: <20171004063828.22068-8-m.szyprowski@samsung.com>
+Subject: [PATCH 3/7] mmc: sdhci-s3c: Fix driver data for Exynos4 SoCs
+Date: Wed, 04 Oct 2017 08:38:24 +0200
+Message-ID: <20171004063828.22068-4-m.szyprowski@samsung.com>
 References: <20171004063828.22068-1-m.szyprowski@samsung.com>
-        <CGME20171004063837eucas1p2a2c9dbc268fbb37da5253c329a0a8683@eucas1p2.samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
+        <CGME20171004063835eucas1p1082954a0113f374f11ff364cf4b95408@eucas1p1.samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
 In-reply-to: <20171004063828.22068-1-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Support for Exynos4212 SoCs has been removed by commit bca9085e0ae9 ("ARM:
-dts: exynos: remove Exynos4212 support (dead code)"), so there is no need
-to keep remaining dead code related to this SoC version.
+Support for non-dt based initialization for Exynos SoCs has been removed,
+so there is no need to keep driver IDs for this case. While touching this,
+replace odd conditional code for instantiating driver data for Exynos4
+SoCs with a simple reference and move that driver data under CONFIG_OF.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/mmc/host/sdhci-s3c.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index a753c50e9e41..4946ac528b72 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -48,7 +48,6 @@ static const struct of_device_id whitelist[] __initconst = {
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index d328fcf284d1..cda83ccb2702 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -761,32 +761,24 @@ static const struct dev_pm_ops sdhci_s3c_pmops = {
+ 			   NULL)
+ };
  
- 	{ .compatible = "samsung,exynos3250", },
- 	{ .compatible = "samsung,exynos4210", },
--	{ .compatible = "samsung,exynos4212", },
- 	{ .compatible = "samsung,exynos5250", },
- #ifndef CONFIG_BL_SWITCHER
- 	{ .compatible = "samsung,exynos5800", },
+-#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212)
+-static struct sdhci_s3c_drv_data exynos4_sdhci_drv_data = {
+-	.no_divider = true,
+-};
+-#define EXYNOS4_SDHCI_DRV_DATA ((kernel_ulong_t)&exynos4_sdhci_drv_data)
+-#else
+-#define EXYNOS4_SDHCI_DRV_DATA ((kernel_ulong_t)NULL)
+-#endif
+-
+ static const struct platform_device_id sdhci_s3c_driver_ids[] = {
+ 	{
+ 		.name		= "s3c-sdhci",
+ 		.driver_data	= (kernel_ulong_t)NULL,
+-	}, {
+-		.name		= "exynos4-sdhci",
+-		.driver_data	= EXYNOS4_SDHCI_DRV_DATA,
+ 	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, sdhci_s3c_driver_ids);
+ 
+ #ifdef CONFIG_OF
++static struct sdhci_s3c_drv_data exynos4_sdhci_drv_data = {
++	.no_divider = true,
++};
++
+ static const struct of_device_id sdhci_s3c_dt_match[] = {
+ 	{ .compatible = "samsung,s3c6410-sdhci", },
+ 	{ .compatible = "samsung,exynos4210-sdhci",
+-		.data = (void *)EXYNOS4_SDHCI_DRV_DATA },
++		.data = &exynos4_sdhci_drv_data },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, sdhci_s3c_dt_match);
 -- 
 2.14.2
+
