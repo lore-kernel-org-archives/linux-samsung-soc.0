@@ -1,175 +1,93 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 2/2] ARM: SAMSUNG: Improve a size determination in 13
- functions
-Date: Wed, 4 Oct 2017 13:12:55 +0200
-Message-ID: <7f196313-ad49-2cd8-e45f-be487e089547@users.sourceforge.net>
-References: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH 1/9] clk: samsung: Remove support for obsolete Exynos4212
+ CPU clock
+Date: Wed, 4 Oct 2017 21:50:11 +0900
+Message-ID: <CAGTfZH0z5SzU2Lzv=YJxR=JH63piFG2_yDfzBs51LtF4nwz-Pw@mail.gmail.com>
+References: <CGME20171003100029eucas1p2c706e911f316a58f35be7c443824f07c@eucas1p2.samsung.com>
+ <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-2-m.szyprowski@samsung.com>
+Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.3]:62905 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751673AbdJDLNc (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34951 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751673AbdJDMuw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 07:13:32 -0400
-In-Reply-To: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
-Content-Language: en-GB
+        Wed, 4 Oct 2017 08:50:52 -0400
+In-Reply-To: <20171003100016.32029-2-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 4 Oct 2017 09:52:33 +0200
+Hi,
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+On Tue, Oct 3, 2017 at 7:00 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Support for Exynos 4212 SoC has been removed by commit bca9085e0ae9 ("ARM:
+> dts: exynos: remove Exynos4212 support (dead code)"), so there is no need
+> to keep dead code.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 33 ++++-----------------------------
+>  1 file changed, 4 insertions(+), 29 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index e40b77583c47..9a51ce9a658f 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -1401,24 +1401,6 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
+>         {  0 },
+>  };
+>
+> -static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
+> -       { 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
+> -       { 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
+> -       { 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
+> -       { 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
+> -       { 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
+> -       { 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
+> -       {  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
+> -       {  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
+> -       {  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> -       {  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> -       {  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> -       {  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> -       {  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> -       {  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
+> -       {  0 },
+> -};
+> -
+>  #define E4412_CPU_DIV1(cores, hpm, copy)                               \
+>                 (((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
+>
+> @@ -1533,17 +1515,10 @@ static void __init exynos4_clk_init(struct device_node *np,
+>                 samsung_clk_register_fixed_factor(ctx,
+>                         exynos4x12_fixed_factor_clks,
+>                         ARRAY_SIZE(exynos4x12_fixed_factor_clks));
+> -               if (of_machine_is_compatible("samsung,exynos4412")) {
+> -                       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+> -                               mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
+> -                               e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
+> -                               CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+> -               } else {
+> -                       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+> -                               mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
+> -                               e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
+> -                               CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+> -               }
+> +               exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+> +                       mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
+> +                       e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
+> +                       CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+>         }
+>
+>         samsung_clk_register_alias(ctx, exynos4_aliases,
 
-This issue was detected by using the Coccinelle software.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/plat-samsung/adc.c  |  4 ++--
- arch/arm/plat-samsung/devs.c | 33 +++++++++++----------------------
- 2 files changed, 13 insertions(+), 24 deletions(-)
-
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index f8d6206e4daa..e9de9e92ce01 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -238,7 +238,7 @@ struct s3c_adc_client *s3c_adc_register(struct platform_device *pdev,
- 	if (!pdev)
- 		return ERR_PTR(-EINVAL);
- 
--	client = kzalloc(sizeof(struct s3c_adc_client), GFP_KERNEL);
-+	client = kzalloc(sizeof(*client), GFP_KERNEL);
- 	if (!client)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -342,7 +342,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	int ret;
- 	unsigned tmp;
- 
--	adc = devm_kzalloc(dev, sizeof(struct adc_device), GFP_KERNEL);
-+	adc = devm_kzalloc(dev, sizeof(*adc), GFP_KERNEL);
- 	if (!adc)
- 		return -ENOMEM;
- 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index dc269d9143bc..5668e4eb03df 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -339,8 +339,7 @@ void __init s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *pd)
- 		pd->bus_num = 0;
- 	}
- 
--	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
--			       &s3c_device_i2c0);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_i2c0);
- 
- 	if (!npd->cfg_gpio)
- 		npd->cfg_gpio = s3c_i2c0_cfg_gpio;
-@@ -368,8 +367,7 @@ void __init s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *pd)
- 		pd->bus_num = 1;
- 	}
- 
--	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
--			       &s3c_device_i2c1);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_i2c1);
- 
- 	if (!npd->cfg_gpio)
- 		npd->cfg_gpio = s3c_i2c1_cfg_gpio;
-@@ -398,8 +396,7 @@ void __init s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *pd)
- 		pd->bus_num = 2;
- 	}
- 
--	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
--			       &s3c_device_i2c2);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_i2c2);
- 
- 	if (!npd->cfg_gpio)
- 		npd->cfg_gpio = s3c_i2c2_cfg_gpio;
-@@ -428,8 +425,7 @@ void __init s3c_i2c3_set_platdata(struct s3c2410_platform_i2c *pd)
- 		pd->bus_num = 3;
- 	}
- 
--	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
--			       &s3c_device_i2c3);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_i2c3);
- 
- 	if (!npd->cfg_gpio)
- 		npd->cfg_gpio = s3c_i2c3_cfg_gpio;
-@@ -458,8 +454,7 @@ void __init s3c_i2c4_set_platdata(struct s3c2410_platform_i2c *pd)
- 		pd->bus_num = 4;
- 	}
- 
--	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
--			       &s3c_device_i2c4);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_i2c4);
- 
- 	if (!npd->cfg_gpio)
- 		npd->cfg_gpio = s3c_i2c4_cfg_gpio;
-@@ -488,8 +483,7 @@ void __init s3c_i2c5_set_platdata(struct s3c2410_platform_i2c *pd)
- 		pd->bus_num = 5;
- 	}
- 
--	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
--			       &s3c_device_i2c5);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_i2c5);
- 
- 	if (!npd->cfg_gpio)
- 		npd->cfg_gpio = s3c_i2c5_cfg_gpio;
-@@ -518,8 +512,7 @@ void __init s3c_i2c6_set_platdata(struct s3c2410_platform_i2c *pd)
- 		pd->bus_num = 6;
- 	}
- 
--	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
--			       &s3c_device_i2c6);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_i2c6);
- 
- 	if (!npd->cfg_gpio)
- 		npd->cfg_gpio = s3c_i2c6_cfg_gpio;
-@@ -548,8 +541,7 @@ void __init s3c_i2c7_set_platdata(struct s3c2410_platform_i2c *pd)
- 		pd->bus_num = 7;
- 	}
- 
--	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
--			       &s3c_device_i2c7);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_i2c7);
- 
- 	if (!npd->cfg_gpio)
- 		npd->cfg_gpio = s3c_i2c7_cfg_gpio;
-@@ -615,8 +607,7 @@ void __init samsung_keypad_set_platdata(struct samsung_keypad_platdata *pd)
- {
- 	struct samsung_keypad_platdata *npd;
- 
--	npd = s3c_set_platdata(pd, sizeof(struct samsung_keypad_platdata),
--			&samsung_device_keypad);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &samsung_device_keypad);
- 
- 	if (!npd->cfg_gpio)
- 		npd->cfg_gpio = samsung_keypad_cfg_gpio;
-@@ -721,8 +712,7 @@ void __init s3c_nand_set_platdata(struct s3c2410_platform_nand *nand)
- 	 * time then there is little chance the system is going to run.
- 	 */
- 
--	npd = s3c_set_platdata(nand, sizeof(struct s3c2410_platform_nand),
--				&s3c_device_nand);
-+	npd = s3c_set_platdata(nand, sizeof(*npd), &s3c_device_nand);
- 	if (!npd)
- 		return;
- 
-@@ -1022,8 +1012,7 @@ void __init dwc2_hsotg_set_platdata(struct dwc2_hsotg_plat *pd)
- {
- 	struct dwc2_hsotg_plat *npd;
- 
--	npd = s3c_set_platdata(pd, sizeof(struct dwc2_hsotg_plat),
--			&s3c_device_usb_hsotg);
-+	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_usb_hsotg);
- 
- 	if (!npd->phy_init)
- 		npd->phy_init = s5p_usb_phy_init;
 -- 
-2.14.2
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
