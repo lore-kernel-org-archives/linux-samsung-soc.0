@@ -1,52 +1,55 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCHv2 0/2]
-Date: Wed, 4 Oct 2017 09:52:24 +0530
-Message-ID: <b9aad201-78b9-f04b-238d-5297e6096ee7@ti.com>
-References: <ba580a0c-36c3-b227-61ee-97637532823e@ti.com>
- <CGME20171003125944eucas1p1fad23e6171786fda69ccd9419354911b@eucas1p1.samsung.com>
- <1507035578-24945-1-git-send-email-andrzej.p@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 RESEND] clk: samsung: exynos4: Enable VPLL and EPLL
+ clocks for suspend/resume cycle
+Date: Wed, 04 Oct 2017 08:08:57 +0200
+Message-ID: <2073050f-70c3-f007-64e4-275ddabdc473@samsung.com>
+References: <CGME20170919100345eucas1p1391a495dab09faecdc2acf9635e4c42d@eucas1p1.samsung.com>
+        <1505815279-19097-1-git-send-email-m.szyprowski@samsung.com>
+        <bb559caa-4b3a-6bff-e8e6-2921f372d272@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:23703 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbdJDEXU (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 00:23:20 -0400
-In-Reply-To: <1507035578-24945-1-git-send-email-andrzej.p@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <bb559caa-4b3a-6bff-e8e6-2921f372d272@samsung.com>
+Content-language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Hi,
+Hi All,
 
-On Tuesday 03 October 2017 06:29 PM, Andrzej Pietrasiewicz wrote:
-> Hi all,
-> 
-> This is the second version of patches in this thread.
-> 
-> The series fixes problems with enumerating of SuperSpeed devices
-> on an Odroid XU3. There was a patch series from Vivek Gautam in
-> circulation, but it got lost somehow. Please see:
-> 
-> https://lkml.org/lkml/2014/9/2/166
-> https://lkml.org/lkml/2015/2/2/257
-> 
-> I adapted his patch so that it does not use a hacky solution to force
-> additional initialization in order for calibration to happen.
-> With this patch enumeration happens correctly and a super speed device
-> is recognized as such.
-> 
-> @Kishon:
-> 
-> As far as I understand what you suggest is to move phy_init() and
-> phy_power_on() invocations from dwc3/core.c to xhci-plat, but,
-> to the best of my knowledge, they are needed in device mode, too.
+On 2017-09-19 12:28, Sylwester Nawrocki wrote:
+> On 09/19/2017 12:01 PM, Marek Szyprowski wrote:
+>> Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
+>> PLL36XX clocks") added enable/disable operations to PLL clocks. Prior 
+>> that
+>> VPLL and EPPL clocks were always enabled because the enable bit was 
+>> never
+>> touched. Those clocks have to be enabled during suspend/resume cycle,
+>> because otherwise board fails to enter sleep mode. This patch enables 
+>> them
+>> unconditionally before entering system suspend state. System restore
+>> function will set them to the previous state saved in the register cache
+>> done before that unconditional enable.
+>>
+>> Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for 
+>> PLL36XX clocks")
+>> CC: stable@vger.kernel.org # v4.13
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>
+> Stephen, Mike, could you please apply this patch directly?
 
-What I meant is perform phy initializations for host mode in xhci and keep only
-device mode phy initialization in dwc3.
+Gentle ping.
 
-Thanks
-Kishon
+Any chance to have this patch merged as a fix to v4.14-rcX?
+
+ > ...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
