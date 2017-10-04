@@ -1,68 +1,39 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/7] mmc: sdhci-s3c: Fix driver data for Exynos4 SoCs
-Date: Wed, 04 Oct 2017 08:38:24 +0200
-Message-ID: <20171004063828.22068-4-m.szyprowski@samsung.com>
+Subject: [PATCH 5/7] clk: samsung: Remove support for Exynos4212 SoCs in
+ Exynos CLKOUT driver
+Date: Wed, 04 Oct 2017 08:38:26 +0200
+Message-ID: <20171004063828.22068-6-m.szyprowski@samsung.com>
 References: <20171004063828.22068-1-m.szyprowski@samsung.com>
-        <CGME20171004063835eucas1p1082954a0113f374f11ff364cf4b95408@eucas1p1.samsung.com>
-Return-path: <linux-mmc-owner@vger.kernel.org>
+        <CGME20171004063836eucas1p1ab64c174baf2773eb17d1c94cd05ed8c@eucas1p1.samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
 In-reply-to: <20171004063828.22068-1-m.szyprowski@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Support for non-dt based initialization for Exynos SoCs has been removed,
-so there is no need to keep driver IDs for this case. While touching this,
-replace odd conditional code for instantiating driver data for Exynos4
-SoCs with a simple reference and move that driver data under CONFIG_OF.
+Support for Exynos4212 SoCs has been removed by commit bca9085e0ae9 ("ARM:
+dts: exynos: remove Exynos4212 support (dead code)"), so there is no need
+to keep remaining dead code related to this SoC version.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/mmc/host/sdhci-s3c.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ drivers/clk/samsung/clk-exynos-clkout.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index d328fcf284d1..cda83ccb2702 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -761,32 +761,24 @@ static const struct dev_pm_ops sdhci_s3c_pmops = {
- 			   NULL)
- };
- 
--#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212)
--static struct sdhci_s3c_drv_data exynos4_sdhci_drv_data = {
--	.no_divider = true,
--};
--#define EXYNOS4_SDHCI_DRV_DATA ((kernel_ulong_t)&exynos4_sdhci_drv_data)
--#else
--#define EXYNOS4_SDHCI_DRV_DATA ((kernel_ulong_t)NULL)
--#endif
--
- static const struct platform_device_id sdhci_s3c_driver_ids[] = {
- 	{
- 		.name		= "s3c-sdhci",
- 		.driver_data	= (kernel_ulong_t)NULL,
--	}, {
--		.name		= "exynos4-sdhci",
--		.driver_data	= EXYNOS4_SDHCI_DRV_DATA,
- 	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(platform, sdhci_s3c_driver_ids);
- 
- #ifdef CONFIG_OF
-+static struct sdhci_s3c_drv_data exynos4_sdhci_drv_data = {
-+	.no_divider = true,
-+};
-+
- static const struct of_device_id sdhci_s3c_dt_match[] = {
- 	{ .compatible = "samsung,s3c6410-sdhci", },
- 	{ .compatible = "samsung,exynos4210-sdhci",
--		.data = (void *)EXYNOS4_SDHCI_DRV_DATA },
-+		.data = &exynos4_sdhci_drv_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, sdhci_s3c_dt_match);
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index a21aea062bae..f29fb5824005 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -144,8 +144,6 @@ static void __init exynos4_clkout_init(struct device_node *node)
+ }
+ CLK_OF_DECLARE_DRIVER(exynos4210_clkout, "samsung,exynos4210-pmu",
+ 		exynos4_clkout_init);
+-CLK_OF_DECLARE_DRIVER(exynos4212_clkout, "samsung,exynos4212-pmu",
+-		exynos4_clkout_init);
+ CLK_OF_DECLARE_DRIVER(exynos4412_clkout, "samsung,exynos4412-pmu",
+ 		exynos4_clkout_init);
+ CLK_OF_DECLARE_DRIVER(exynos3250_clkout, "samsung,exynos3250-pmu",
 -- 
 2.14.2
 
