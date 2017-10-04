@@ -1,22 +1,18 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 4/7] media: exynos4-is: Remove dependency on obsolete SoC support
-Date: Wed, 4 Oct 2017 10:16:22 +0200
-Message-ID: <CAJKOXPfP_QdCTQjHduCyh0ruWQF-c81Ld-F=Mw+mcqtKbhtT7A@mail.gmail.com>
-References: <CGME20171004063836eucas1p1c45902d81f8520b4bfc6b06ded50cc2b@eucas1p1.samsung.com>
- <20171004063828.22068-1-m.szyprowski@samsung.com> <20171004063828.22068-5-m.szyprowski@samsung.com>
+Subject: Re: [PATCH 5/7] clk: samsung: Remove support for Exynos4212 SoCs in
+ Exynos CLKOUT driver
+Date: Wed, 4 Oct 2017 10:16:37 +0200
+Message-ID: <CAJKOXPeQpwMYwcP8iG1_UrbVeEV1XRBNj8bCYHxLgKtoqoEnpg@mail.gmail.com>
+References: <CGME20171004063836eucas1p1ab64c174baf2773eb17d1c94cd05ed8c@eucas1p1.samsung.com>
+ <20171004063828.22068-1-m.szyprowski@samsung.com> <20171004063828.22068-6-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:51456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751120AbdJDIQZ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 04:16:25 -0400
-In-Reply-To: <20171004063828.22068-5-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20171004063828.22068-6-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On Wed, Oct 4, 2017 at 8:38 AM, Marek Szyprowski
 <m.szyprowski@samsung.com> wrote:
@@ -26,10 +22,8 @@ On Wed, Oct 4, 2017 at 8:38 AM, Marek Szyprowski
 >
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/media/platform/exynos4-is/Kconfig     | 2 +-
->  drivers/media/platform/exynos4-is/fimc-core.c | 2 +-
->  drivers/media/platform/exynos4-is/fimc-lite.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+>  drivers/clk/samsung/clk-exynos-clkout.c | 2 --
+>  1 file changed, 2 deletions(-)
 
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
