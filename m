@@ -1,84 +1,44 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: [PATCH 3/7] mmc: sdhci-s3c: Fix driver data for Exynos4 SoCs
-Date: Wed, 4 Oct 2017 10:59:30 +0200
-Message-ID: <CAPDyKFqU0AUX8HB9yS3guikwLJuwza27SuO6rE+Cn_5ikZgbxA@mail.gmail.com>
-References: <CGME20171004063835eucas1p1082954a0113f374f11ff364cf4b95408@eucas1p1.samsung.com>
- <20171004063828.22068-1-m.szyprowski@samsung.com> <20171004063828.22068-4-m.szyprowski@samsung.com>
+Date: Wed, 04 Oct 2017 12:03:41 +0200
+Message-ID: <c4980018-dbef-9ec7-9103-5b0dea00a828@samsung.com>
+References: <20171004063828.22068-1-m.szyprowski@samsung.com>
+        <CGME20171004063835eucas1p1082954a0113f374f11ff364cf4b95408@eucas1p1.samsung.com>
+        <20171004063828.22068-4-m.szyprowski@samsung.com>
+        <104fe074-3e54-f37c-ac4b-704e5153c154@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:55280 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752110AbdJDI7b (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:15557 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751273AbdJDKDs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 04:59:31 -0400
-Received: by mail-io0-f173.google.com with SMTP id h66so9894794ioh.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Oct 2017 01:59:31 -0700 (PDT)
-In-Reply-To: <20171004063828.22068-4-m.szyprowski@samsung.com>
+        Wed, 4 Oct 2017 06:03:48 -0400
+In-reply-to: <104fe074-3e54-f37c-ac4b-704e5153c154@samsung.com>
+Content-language: en-GB
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-On 4 October 2017 at 08:38, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> Support for non-dt based initialization for Exynos SoCs has been removed,
-> so there is no need to keep driver IDs for this case. While touching this,
-> replace odd conditional code for instantiating driver data for Exynos4
-> SoCs with a simple reference and move that driver data under CONFIG_OF.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On 10/04/2017 10:39 AM, Sylwester Nawrocki wrote:
+> On 10/04/2017 08:38 AM, Marek Szyprowski wrote:
+>> Support for non-dt based initialization for Exynos SoCs has been removed,
+>> so there is no need to keep driver IDs for this case. While touching this,
+>> replace odd conditional code for instantiating driver data for Exynos4
+>> SoCs with a simple reference and move that driver data under CONFIG_OF.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Thanks, applied for next!
+> Reviewed-by: Sylwester Nawrocki <m.szyprowski@samsung.com>
 
-Kind regards
-Uffe
+Oops, this should have been:
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-> ---
->  drivers/mmc/host/sdhci-s3c.c | 18 +++++-------------
->  1 file changed, 5 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index d328fcf284d1..cda83ccb2702 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -761,32 +761,24 @@ static const struct dev_pm_ops sdhci_s3c_pmops = {
->                            NULL)
->  };
->
-> -#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212)
-> -static struct sdhci_s3c_drv_data exynos4_sdhci_drv_data = {
-> -       .no_divider = true,
-> -};
-> -#define EXYNOS4_SDHCI_DRV_DATA ((kernel_ulong_t)&exynos4_sdhci_drv_data)
-> -#else
-> -#define EXYNOS4_SDHCI_DRV_DATA ((kernel_ulong_t)NULL)
-> -#endif
-> -
->  static const struct platform_device_id sdhci_s3c_driver_ids[] = {
->         {
->                 .name           = "s3c-sdhci",
->                 .driver_data    = (kernel_ulong_t)NULL,
-> -       }, {
-> -               .name           = "exynos4-sdhci",
-> -               .driver_data    = EXYNOS4_SDHCI_DRV_DATA,
->         },
->         { }
->  };
->  MODULE_DEVICE_TABLE(platform, sdhci_s3c_driver_ids);
->
->  #ifdef CONFIG_OF
-> +static struct sdhci_s3c_drv_data exynos4_sdhci_drv_data = {
-> +       .no_divider = true,
-> +};
-> +
->  static const struct of_device_id sdhci_s3c_dt_match[] = {
->         { .compatible = "samsung,s3c6410-sdhci", },
->         { .compatible = "samsung,exynos4210-sdhci",
-> -               .data = (void *)EXYNOS4_SDHCI_DRV_DATA },
-> +               .data = &exynos4_sdhci_drv_data },
->         {},
->  };
->  MODULE_DEVICE_TABLE(of, sdhci_s3c_dt_match);
-> --
-> 2.14.2
->
+I guess it's too late to fix that since the patch is applied to a stable
+branch.
+
+--
+Regards,
+Sylwester
