@@ -1,81 +1,60 @@
 From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH 6/9] clk: samsung: Rework clkdev alias handling in
- Exynos5440 driver
-Date: Thu, 5 Oct 2017 00:02:33 +0900
-Message-ID: <CAGTfZH3y7A0JrFBnvBWigALDB2miJz94qDsmEuJjGg54ydMd=w@mail.gmail.com>
-References: <CGME20171003100031eucas1p145edaae6b857c194139d594ebdc9447e@eucas1p1.samsung.com>
- <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-7-m.szyprowski@samsung.com>
+Subject: Re: [PATCH 7/9] clk: samsung: Rework clkdev alias handling in S3C2443 driver
+Date: Thu, 5 Oct 2017 00:04:16 +0900
+Message-ID: <CAGTfZH1iDS_t3B_LpKija4qq6wO8eB5HpJodiUfR8C_DshPNPQ@mail.gmail.com>
+References: <CGME20171003100031eucas1p29f34d4e1878d839a7af9ea05ba15ece9@eucas1p2.samsung.com>
+ <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-8-m.szyprowski@samsung.com>
 Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20171003100016.32029-7-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36935 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752310AbdJDPE6 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 4 Oct 2017 11:04:58 -0400
+In-Reply-To: <20171003100016.32029-8-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
-Hi,
 
 On Tue, Oct 3, 2017 at 7:00 PM, Marek Szyprowski
 <m.szyprowski@samsung.com> wrote:
-> Exynos5440 still uses old, non-dt CPUfreq driver, which requires clkdev
+> S3C2443 SoCs still uses old, non-dt CPUfreq driver, which requires clkdev
 > aliases to get access to proper clocks. Create those aliases using
 > samsung_clk_register_alias() function instead of using *_A clock macros,
 > which will be removed soon.
 >
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos5440.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+>  drivers/clk/samsung/clk-s3c2443.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-> index a80f3ef20801..b08bd54c5e76 100644
-> --- a/drivers/clk/samsung/clk-exynos5440.c
-> +++ b/drivers/clk/samsung/clk-exynos5440.c
-> @@ -53,8 +53,7 @@ static const struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __
->  /* mux clocks */
->  static const struct samsung_mux_clock exynos5440_mux_clks[] __initconst = {
->         MUX(0, "mout_spi", mout_spi_p, MISC_DOUT1, 5, 1),
-> -       MUX_A(CLK_ARM_CLK, "arm_clk", mout_armclk_p,
-> -                       CPU_CLK_STATUS, 0, 1, "armclk"),
-> +       MUX(CLK_ARM_CLK, "arm_clk", mout_armclk_p, CPU_CLK_STATUS, 0, 1),
+> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+> index abb935c42916..45166033f638 100644
+> --- a/drivers/clk/samsung/clk-s3c2443.c
+> +++ b/drivers/clk/samsung/clk-s3c2443.c
+> @@ -117,8 +117,8 @@ struct samsung_mux_clock s3c2443_common_muxes[] __initdata = {
+>         MUX(0, "epllref", epllref_p, CLKSRC, 7, 2),
+>         MUX(ESYSCLK, "esysclk", esysclk_p, CLKSRC, 6, 1),
+>         MUX(0, "mpllref", mpllref_p, CLKSRC, 3, 1),
+> -       MUX_A(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1, "msysclk"),
+> -       MUX_A(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1, "armclk"),
+> +       MUX(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1),
+> +       MUX(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1),
+>         MUX(0, "mux_i2s0", i2s0_p, CLKSRC, 14, 2),
 >  };
 >
->  /* divider clocks */
-> @@ -117,6 +116,13 @@ static const struct samsung_pll_clock exynos5440_plls[] __initconst = {
->         PLL(pll_2550x, CLK_CPLLB, "cpllb", "xtal", 0, 0x50, NULL),
+> @@ -189,6 +189,8 @@ struct samsung_gate_clock s3c2443_common_gates[] __initdata = {
 >  };
 >
-> +/*
-> + * Clock aliases for legacy clkdev look-up.
-> + */
-> +static const struct samsung_clock_alias exynos5440_aliases[] __initconst = {
-> +       ALIAS(CLK_ARM_CLK, NULL, "armclk"),
-> +};
-> +
->  /* register exynos5440 clocks */
->  static void __init exynos5440_clk_init(struct device_node *np)
->  {
-> @@ -147,6 +153,8 @@ static void __init exynos5440_clk_init(struct device_node *np)
->                         ARRAY_SIZE(exynos5440_div_clks));
->         samsung_clk_register_gate(ctx, exynos5440_gate_clks,
->                         ARRAY_SIZE(exynos5440_gate_clks));
-> +       samsung_clk_register_alias(ctx, exynos5440_aliases,
-> +                                               ARRAY_SIZE(exynos5440_aliases));
->
->         samsung_clk_of_add_provider(np, ctx);
->
-> --
-> 2.14.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-On this patchset, patch9 removes the *_A macro as the Marek's comment.
-So, this patch looks good to me.
+>  struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
+> +       ALIAS(MSYSCLK, NULL, "msysclk"),
+> +       ALIAS(ARMCLK, NULL, "armclk"),
+>         ALIAS(HCLK, NULL, "hclk"),
+>         ALIAS(HCLK_SSMC, NULL, "nand"),
+>         ALIAS(PCLK_UART0, "s3c2440-uart.0", "uart"),
 
 Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
