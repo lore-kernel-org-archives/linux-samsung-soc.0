@@ -1,213 +1,90 @@
 From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v5 2/2] ARM: dts: exynos: Add HDMI and Sil9234 to Trats2
- board
-Date: Thu, 05 Oct 2017 16:07:11 +0200
-Message-ID: <1507212431-5801-3-git-send-email-m.purski@samsung.com>
-References: <1507212431-5801-1-git-send-email-m.purski@samsung.com>
-        <CGME20171005140823eucas1p13dbb713c2aa513372694a395bbd25d91@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43590 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751332AbdJEOI1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 10:08:27 -0400
-In-reply-to: <1507212431-5801-1-git-send-email-m.purski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: Re: [PATCH 3/4] dt-bindings: hwmon: Add max-expected-current
+ property to ina2xx
+Date: Thu, 05 Oct 2017 17:15:07 +0200
+Message-ID: <b990ff1b-80d6-4686-eb8f-51f045a92858@samsung.com>
+References: <1506603015-27202-1-git-send-email-m.purski@samsung.com>
+        <CGME20170928125104eucas1p20a3ead82624005331e36b8ebeca46815@eucas1p2.samsung.com>
+        <1506603015-27202-4-git-send-email-m.purski@samsung.com>
+        <20171001113145.2e839bc1@archlinux>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <20171001113145.2e839bc1@archlinux>
+Content-language: en-US
+Sender: linux-doc-owner@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, krzk@kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Maciej Purski <m.purski@samsung.com>
 
-Add HDMI and Sil9234 MHL converter to Trats2 board.
-Following in SoC devices have been enabled:
-- HDMI (HDMI signal encoder),
-- Mixer (video buffer scanout device),
-- I2C_5 bus (used for HDMI DDC)
-- I2C_8 bus (used for HDMI_PHY control).
+On 10/01/2017 12:31 PM, Jonathan Cameron wrote:
+> On Thu, 28 Sep 2017 14:50:14 +0200
+> Maciej Purski <m.purski@samsung.com> wrote:
+> 
+>> Add optional max expected current property which allows calibrating
+>> the ina sensor in order to achieve requested precision. Document
+>> the changes in Documentation/hwmon/ina2xx.
+>>
+> 
+> This is introducing new generic devicetree bindings..
+> I'm not totally sure we want to do this rather than having a
+> manufacturer specific binding...  I don't have a good feeling for
+> how common this will be in other devices.
+> 
+> If it's generic, then this isn't necessarily the place to define it.
+> 
+> Jonathan
+>
 
-Based on previous work by:
-Tomasz Stanislawski <t.stanislaws@samsung.com>
+I agree, this should be manufacturer-specific property. Thanks.
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 111 ++++++++++++++++++++++++++++++++
- 1 file changed, 111 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 35e9b94..4483deb 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -18,6 +18,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/clock/maxim,max77686.h>
-+#include <dt-bindings/pinctrl/samsung.h>
- 
- / {
- 	model = "Samsung Trats 2 based on Exynos4412";
-@@ -97,6 +98,34 @@
- 			gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
-+
-+		vsil12: voltage-regulator-6 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "VSIL_1.2V";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&buck7_reg>;
-+		};
-+
-+		vcc33mhl: voltage-regulator-7 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "VCC_3.3_MHL";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+		};
-+
-+		vcc18mhl: voltage-regulator-8 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "VCC_1.8_MHL";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+		};
- 	};
- 
- 	gpio-keys {
-@@ -229,6 +258,36 @@
- 		};
- 	};
- 
-+	i2c-mhl {
-+		compatible = "i2c-gpio";
-+		gpios = <&gpf0 4 GPIO_ACTIVE_HIGH>, <&gpf0 6 GPIO_ACTIVE_HIGH>;
-+		i2c-gpio,delay-us = <100>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pinctrl-0 = <&i2c_mhl_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+
-+		sii9234: hdmi-bridge@39 {
-+			compatible = "sil,sii9234";
-+			avcc33-supply = <&vcc33mhl>;
-+			iovcc18-supply = <&vcc18mhl>;
-+			avcc12-supply = <&vsil12>;
-+			cvcc12-supply = <&vsil12>;
-+			reset-gpios = <&gpf3 4 GPIO_ACTIVE_LOW>;
-+			interrupt-parent = <&gpf3>;
-+			interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x39>;
-+
-+			port {
-+				mhl_to_hdmi: endpoint {
-+					remote-endpoint = <&hdmi_to_mhl>;
-+				};
-+			};
-+		};
-+	};
-+
- 	camera: camera {
- 		pinctrl-0 = <&cam_port_a_clk_active &cam_port_b_clk_active>;
- 		pinctrl-names = "default";
-@@ -522,6 +581,29 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_hpd>;
-+	vdd-supply = <&ldo3_reg>;
-+	vdd_osc-supply = <&ldo4_reg>;
-+	vdd_pll-supply = <&ldo3_reg>;
-+	ddc = <&i2c_5>;
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			reg = <1>;
-+			hdmi_to_mhl: endpoint {
-+				remote-endpoint = <&mhl_to_hdmi>;
-+			};
-+		};
-+	};
-+};
-+
- &hsotg {
- 	vusb_d-supply = <&ldo15_reg>;
- 	vusb_a-supply = <&ldo12_reg>;
-@@ -600,6 +682,10 @@
- 	};
- };
- 
-+&i2c_5 {
-+	status = "okay";
-+};
-+
- &i2c_7 {
- 	samsung,i2c-sda-delay = <100>;
- 	samsung,i2c-slave-addr = <0x10>;
-@@ -894,12 +980,20 @@
- 	};
- };
- 
-+&i2c_8 {
-+	status = "okay";
-+};
-+
- &i2s0 {
- 	pinctrl-0 = <&i2s0_bus>;
- 	pinctrl-names = "default";
- 	status = "okay";
- };
- 
-+&mixer {
-+	status = "okay";
-+};
-+
- &mshc_0 {
- 	num-slots = <1>;
- 	broken-cd;
-@@ -926,6 +1020,18 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sleep0>;
- 
-+	mhl_int: mhl-int {
-+		samsung,pins = "gpf3-5";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+
-+	i2c_mhl_bus: i2c-mhl-bus {
-+		samsung,pins = "gpf0-4", "gpf0-6";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
- 	sleep0: sleep-states {
- 		PIN_SLP(gpa0-0, INPUT, NONE);
- 		PIN_SLP(gpa0-1, OUT0, NONE);
-@@ -1029,6 +1135,11 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sleep1>;
- 
-+	hdmi_hpd: hdmi-hpd {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-+	};
-+
- 	sleep1: sleep-states {
- 		PIN_SLP(gpk0-0, PREV, NONE);
- 		PIN_SLP(gpk0-1, PREV, NONE);
--- 
-2.7.4
+>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+>> ---
+>>   Documentation/devicetree/bindings/hwmon/ina2xx.txt | 4 +++-
+>>   Documentation/hwmon/ina2xx                         | 9 +++++----
+>>   2 files changed, 8 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/hwmon/ina2xx.txt b/Documentation/devicetree/bindings/hwmon/ina2xx.txt
+>> index 02af0d9..25ba372 100644
+>> --- a/Documentation/devicetree/bindings/hwmon/ina2xx.txt
+>> +++ b/Documentation/devicetree/bindings/hwmon/ina2xx.txt
+>> @@ -14,11 +14,13 @@ Optional properties:
+>>   
+>>   - shunt-resistor
+>>   	Shunt resistor value in micro-Ohm
+>> -
+>> +- max-expected-current
+>> +	Max expected current value in mA
+>>   Example:
+>>   
+>>   ina220@44 {
+>>   	compatible = "ti,ina220";
+>>   	reg = <0x44>;
+>>   	shunt-resistor = <1000>;
+>> +	max-expected-current = <3000>;
+>>   };
+>> diff --git a/Documentation/hwmon/ina2xx b/Documentation/hwmon/ina2xx
+>> index cfd31d9..e9ca838 100644
+>> --- a/Documentation/hwmon/ina2xx
+>> +++ b/Documentation/hwmon/ina2xx
+>> @@ -51,10 +51,11 @@ INA230 and INA231 are high or low side current shunt and power monitors
+>>   with an I2C interface. The chips monitor both a shunt voltage drop and
+>>   bus supply voltage.
+>>   
+>> -The shunt value in micro-ohms can be set via platform data or device tree at
+>> -compile-time or via the shunt_resistor attribute in sysfs at run-time. Please
+>> -refer to the Documentation/devicetree/bindings/i2c/ina2xx.txt for bindings
+>> -if the device tree is used.
+>> +The shunt value in micro-ohms and max expected current in mA can be set
+>> +via platform data or device tree at compile-time or via the shunt_resistor
+>> +and max_expected_current attributes in sysfs at run-time. Please refer to the
+>> +Documentation/devicetree/bindings/i2c/ina2xx.txt for bindings if the
+>> +device tree is used.
+>>   
+>>   Additionally ina226 supports update_interval attribute as described in
+>>   Documentation/hwmon/sysfs-interface. Internally the interval is the sum of
+> 
+> 
+> 
+> 
