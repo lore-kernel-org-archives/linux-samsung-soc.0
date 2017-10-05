@@ -1,47 +1,71 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCHv3 2/2] phy: exynos5-usbdrd: Calibrate LOS levels for
- exynos5420/5800
-Date: Thu, 05 Oct 2017 14:28:24 +0200
-Message-ID: <88cf66cc-0bca-3ad9-183b-d55f7f258028@samsung.com>
-References: <6935498c-9788-14e6-844f-f9e8288026dc@samsung.com>
-        <1507205511-23048-1-git-send-email-andrzej.p@samsung.com>
-        <CGME20171005121202eucas1p249a72bb6d8dde4a61134ffb49216d4c5@eucas1p2.samsung.com>
-        <1507205511-23048-3-git-send-email-andrzej.p@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1507205511-23048-3-git-send-email-andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-language: en-GB
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+From: Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH v5 0/2] add Silicon Image SiI9234 driver
+Date: Thu, 05 Oct 2017 16:07:09 +0200
+Message-ID: <1507212431-5801-1-git-send-email-m.purski@samsung.com>
+References: <CGME20171005140754eucas1p26437dba3d34f8ec461bb3393244904cf@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36578 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751094AbdJEOH6 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 5 Oct 2017 10:07:58 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, krzk@kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Maciej Purski <m.purski@samsung.com>
 
-On 10/05/2017 02:11 PM, Andrzej Pietrasiewicz wrote:
-> +static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
-> +						u32 val, u32 cmd)
-> +{
-> +	u32 usec = 100;
-> +	unsigned int result;
-> +
-> +	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-> +
-> +	do {
-> +		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
-> +		if (result & PHYREG1_CR_ACK)
-> +			break;
-> +
-> +		udelay(1);
-> +	} while (usec-- > 0);
+Hi everyone,
 
-It looks like you could use readl_poll_timeout_atomic() macro 
-instead of these polling loops.
+These patches are a continuation of work by Tomasz Stanislawski on sii9324 driver, which was described
+in th following letter:
+https://lists.freedesktop.org/archives/dri-devel/2014-April/057481.html
+
+The main differences from the previous code are:
+* driver moved to /gpu/drm/bridge/ and integrated with drm/bridge subsystem
+* added filtering-out unsupported display modes
+* changed gpio interface to up-to-date
+* changed interrupt handling
+* improve code style
+* add hdmi and sii9324 to exynos4412-trats2 device tree
+
+All comments are welcome.
+
+Regards,
+Maciej Purski
+
+Changes in v5:
+- fix checkpatch warnings
+- fix gpios property in i2c-mhl
+
+Changes in v4:
+- change documentation to more accurate
+- use msleep() instead of usleep() and usleep_range()
+- improve code style
+
+Changes in v3:
+- change sii9234 device tree node name
+- use defines from dt-bindings/pinctrl/samsung.h
+
+Changes in v2:
+- regulators used in driver now model all physical regulators
+  used by the device
+- substitute some of the magic values with macros
+- improve coding style
+- improve error handling in sii9234_probe()
+- fix commit message
+
+Maciej Purski (2):
+  drm/bridge: add Silicon Image SiI9234 driver
+  ARM: dts: exynos: Add HDMI and Sil9234 to Trats2 board
+
+ .../devicetree/bindings/display/bridge/sii9234.txt |  49 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            | 112 +++
+ drivers/gpu/drm/bridge/Kconfig                     |   8 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/sii9234.c                   | 996 +++++++++++++++++++++
+ 5 files changed, 1166 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/sii9234.txt
+ create mode 100644 drivers/gpu/drm/bridge/sii9234.c
 
 -- 
-Regards,
-Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.7.4
