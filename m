@@ -1,374 +1,180 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4] crypto: s5p-sss: Add HASH support for Exynos
-Date: Fri, 6 Oct 2017 20:37:27 +0200
-Message-ID: <20171006183727.xzjjlw3fypwpk2yt@kozik-lap>
-References: <CGME20171004163813eucas1p1c807cbbb50b82f60beaec6ac23bf9f82@eucas1p1.samsung.com>
- <fcabbf6d-b6f2-ba66-bc8d-5f0179effe23@partner.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <fcabbf6d-b6f2-ba66-bc8d-5f0179effe23@partner.samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Liming Sun <lsun@mellanox.com>
+Subject: [PATCH 3/9] Revert "mmc: dw_mmc: use the 'slot' instead of 'cur_slot'"
+Date: Fri,  6 Oct 2017 15:21:26 -0400
+Message-ID: <3d034212389a67aa703ffb76a1e381c87c8fc945.1507315433.git.lsun@mellanox.com>
+References: <cover.1507315433.git.lsun@mellanox.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1507315433.git.lsun@mellanox.com>
+In-Reply-To: <cover.1507315433.git.lsun@mellanox.com>
+References: <cover.1507315433.git.lsun@mellanox.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liming Sun <lsun@mellanox.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 04, 2017 at 06:38:11PM +0200, Kamil Konieczny wrote:
-> Add support for MD5, SHA1, SHA256 hash algorithms for Exynos HW.
-> It uses the crypto framework asynchronous hash api.
-> It is based on omap-sham.c driver.
-> S5P has some HW differencies and is not implemented.
-> 
-> Modifications in s5p-sss:
-> 
-> - Add hash supporting structures and functions.
-> 
-> - Modify irq handler to handle both aes and hash signals.
-> 
-> - Resize resource end in probe if EXYNOS_HASH is enabled in
->   Kconfig.
-> 
-> - Add new copyright line and new author.
-> 
-> - Tested on Odroid-U3 with Exynos 4412 CPU, kernel 4.13-rc6
->   with crypto run-time self test testmgr
->   and with tcrypt module with: modprobe tcrypt sec=1 mode=N
->   where N=402, 403, 404 (MD5, SHA1, SHA256).
-> 
-> Modifications in drivers/crypto/Kconfig:
-> 
-> - Add new CRYPTO_DEV_EXYNOS_HASH, depend on !EXYNOS_RNG
->   and CRYPTO_DEV_S5P
-> 
-> - Select sw algorithms MD5, SHA1 and SHA256 in EXYNOS_HASH
->   as they are nedded for fallback.
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
-> version 4:
-> - fixes suggested by Krzysztof Kozlowski: reformat comments, convert context
->   flag into two bool vars, drop SSS_ALIGNED, change name of SSS_DMA_ALIGN and
->   SSS_DMA_ALIGN_MASK, split assignments into separate lines, use IS_ENABLED in
->   place of ifdef, remove sss_hash_algs_info and simplify register and deregister
->   HASH algs
-> 
-> version 3:
-> - many fixes suggested by Krzysztof Kozlowski: comments, uppercases in const,
->   remove unused defines, remove unused variable bs, constify aes_variant,
->   remove global var use_hash, remove WARN_ON, improve hash_import(),
->   change goto label into 'out' in s5p_hash_handle_queue(), reorder variable
->   declarations, add spinlock to protect clearing HASH_FLAGS_BUSY
-> - simplify code: replace one-line functions s5p_hash_update_req(),
->   s5p_hash_final_req() with call to s5p_hash_xmit_dma(), and delete them
-> - replace call to s5p_hash_hw_init() into s5p_ahash_dma_init() and delete it
-> - fix clearing shash flag CRYPTO_TFM_REQ_MAY_SLEEP
-> - fix s5p_hash_set_flow()
-> 
-> version 2:
-> - change patch format so number of lines drops
-> - change in Kconfig as suggested by Krzysztof Kozlowski, add
-> 	EXYNOS_HASH subsection
-> - change #ifndef EXYNOS_RNG into #ifdef CRYPTO_DEV_EXYNOS_HASH
-> - remove style fixups in aes, as they should go in separate patch
-> - remove FLOW_LOG, FLOW_DUMP macros and its uses
-> - remove #if 0 ... endif
-> - remove unused function hash_wait and its defines
-> - fix compiler warning in dev_dbg
-> - remove some comments
-> - other minor fixes in comments
-> 
->  drivers/crypto/Kconfig   |   14 +
->  drivers/crypto/s5p-sss.c | 1441 +++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 1445 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-> index fe33c199fc1a..01cf07ce34c5 100644
-> --- a/drivers/crypto/Kconfig
-> +++ b/drivers/crypto/Kconfig
-> @@ -439,6 +439,20 @@ config CRYPTO_DEV_S5P
->  	  Select this to offload Samsung S5PV210 or S5PC110, Exynos from AES
->  	  algorithms execution.
->  
-> +config CRYPTO_DEV_EXYNOS_HASH
-> +	bool "Support for Samsung Exynos HASH accelerator"
-> +	depends on CRYPTO_DEV_S5P
-> +	depends on !CRYPTO_DEV_EXYNOS_RNG && CRYPTO_DEV_EXYNOS_RNG!=m
-> +	select CRYPTO_SHA1
-> +	select CRYPTO_MD5
-> +	select CRYPTO_SHA256
-> +	help
-> +	  Select this to offload Exynos from HASH MD5/SHA1/SHA256.
-> +	  This will select software SHA1, MD5 and SHA256 as they are
-> +	  needed for small and zero-size messages.
-> +	  HASH algorithms will be disabled if EXYNOS_RNG
-> +	  is enabled due to hw conflict.
-> +
->  config CRYPTO_DEV_NX
->  	bool "Support for IBM PowerPC Nest (NX) cryptographic acceleration"
->  	depends on PPC64
-> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> index 7ac657f46d15..2864efeaf8f8 100644
-> --- a/drivers/crypto/s5p-sss.c
-> +++ b/drivers/crypto/s5p-sss.c
-> @@ -1,18 +1,21 @@
->  /*
->   * Cryptographic API.
->   *
-> - * Support for Samsung S5PV210 HW acceleration.
-> + * Support for Samsung S5PV210 and Exynos HW acceleration.
->   *
->   * Copyright (C) 2011 NetUP Inc. All rights reserved.
-> + * Copyright (c) 2017 Samsung Electronics Co., Ltd. All rights reserved.
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License version 2 as published
->   * by the Free Software Foundation.
->   *
-> + * Hash part based on omap-sham.c driver.
->   */
->  
->  #include <linux/clk.h>
->  #include <linux/crypto.h>
-> +#include <linux/delay.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/err.h>
->  #include <linux/errno.h>
-> @@ -30,28 +33,41 @@
->  #include <crypto/algapi.h>
->  #include <crypto/scatterwalk.h>
->  
-> +#include <crypto/hash.h>
-> +#include <crypto/md5.h>
-> +#include <crypto/sha.h>
-> +#include <crypto/internal/hash.h>
-> +
->  #define _SBF(s, v)                      ((v) << (s))
->  
->  /* Feed control registers */
->  #define SSS_REG_FCINTSTAT               0x0000
-> +#define SSS_FCINTSTAT_HPARTINT		BIT(7)
-> +#define SSS_FCINTSTAT_HDONEINT		BIT(5)
->  #define SSS_FCINTSTAT_BRDMAINT          BIT(3)
->  #define SSS_FCINTSTAT_BTDMAINT          BIT(2)
->  #define SSS_FCINTSTAT_HRDMAINT          BIT(1)
->  #define SSS_FCINTSTAT_PKDMAINT          BIT(0)
->  
->  #define SSS_REG_FCINTENSET              0x0004
-> +#define SSS_FCINTENSET_HPARTINTENSET	BIT(7)
-> +#define SSS_FCINTENSET_HDONEINTENSET	BIT(5)
->  #define SSS_FCINTENSET_BRDMAINTENSET    BIT(3)
->  #define SSS_FCINTENSET_BTDMAINTENSET    BIT(2)
->  #define SSS_FCINTENSET_HRDMAINTENSET    BIT(1)
->  #define SSS_FCINTENSET_PKDMAINTENSET    BIT(0)
->  
->  #define SSS_REG_FCINTENCLR              0x0008
-> +#define SSS_FCINTENCLR_HPARTINTENCLR	BIT(7)
-> +#define SSS_FCINTENCLR_HDONEINTENCLR	BIT(5)
->  #define SSS_FCINTENCLR_BRDMAINTENCLR    BIT(3)
->  #define SSS_FCINTENCLR_BTDMAINTENCLR    BIT(2)
->  #define SSS_FCINTENCLR_HRDMAINTENCLR    BIT(1)
->  #define SSS_FCINTENCLR_PKDMAINTENCLR    BIT(0)
->  
->  #define SSS_REG_FCINTPEND               0x000C
-> +#define SSS_FCINTPEND_HPARTINTP		BIT(7)
-> +#define SSS_FCINTPEND_HDONEINTP		BIT(5)
->  #define SSS_FCINTPEND_BRDMAINTP         BIT(3)
->  #define SSS_FCINTPEND_BTDMAINTP         BIT(2)
->  #define SSS_FCINTPEND_HRDMAINTP         BIT(1)
-> @@ -72,6 +88,7 @@
->  #define SSS_HASHIN_INDEPENDENT          _SBF(0, 0x00)
->  #define SSS_HASHIN_CIPHER_INPUT         _SBF(0, 0x01)
->  #define SSS_HASHIN_CIPHER_OUTPUT        _SBF(0, 0x02)
-> +#define SSS_HASHIN_MASK			_SBF(0, 0x03)
->  
->  #define SSS_REG_FCBRDMAS                0x0020
->  #define SSS_REG_FCBRDMAL                0x0024
-> @@ -146,9 +163,84 @@
->  #define AES_KEY_LEN         16
->  #define CRYPTO_QUEUE_LEN    1
->  
-> +/* HASH registers */
-> +#define SSS_REG_HASH_CTRL		0x00
-> +
-> +#define SSS_HASH_USER_IV_EN		BIT(5)
-> +#define SSS_HASH_INIT_BIT		BIT(4)
-> +#define SSS_HASH_ENGINE_SHA1		_SBF(1, 0x00)
-> +#define SSS_HASH_ENGINE_MD5		_SBF(1, 0x01)
-> +#define SSS_HASH_ENGINE_SHA256		_SBF(1, 0x02)
-> +
-> +#define SSS_HASH_ENGINE_MASK		_SBF(1, 0x03)
-> +
-> +#define SSS_REG_HASH_CTRL_PAUSE		0x04
-> +
-> +#define SSS_HASH_PAUSE			BIT(0)
-> +
-> +#define SSS_REG_HASH_CTRL_FIFO		0x08
-> +
-> +#define SSS_HASH_FIFO_MODE_DMA		BIT(0)
-> +#define SSS_HASH_FIFO_MODE_CPU          0
-> +
-> +#define SSS_REG_HASH_CTRL_SWAP		0x0C
-> +
-> +#define SSS_HASH_BYTESWAP_DI		BIT(3)
-> +#define SSS_HASH_BYTESWAP_DO		BIT(2)
-> +#define SSS_HASH_BYTESWAP_IV		BIT(1)
-> +#define SSS_HASH_BYTESWAP_KEY		BIT(0)
-> +
-> +#define SSS_REG_HASH_STATUS		0x10
-> +
-> +#define SSS_HASH_STATUS_MSG_DONE	BIT(6)
-> +#define SSS_HASH_STATUS_PARTIAL_DONE	BIT(4)
-> +#define SSS_HASH_STATUS_BUFFER_READY	BIT(0)
-> +
-> +#define SSS_REG_HASH_MSG_SIZE_LOW	0x20
-> +#define SSS_REG_HASH_MSG_SIZE_HIGH	0x24
-> +
-> +#define SSS_REG_HASH_PRE_MSG_SIZE_LOW	0x28
-> +#define SSS_REG_HASH_PRE_MSG_SIZE_HIGH	0x2C
-> +
-> +#define SSS_REG_HASH_IV(s)		(0xB0 + ((s) << 2))
-> +#define SSS_REG_HASH_OUT(s)		(0x100 + ((s) << 2))
-> +
-> +#define HASH_BLOCK_SIZE			64
-> +#define HASH_REG_SIZEOF			4
-> +#define HASH_MD5_MAX_REG		(MD5_DIGEST_SIZE / HASH_REG_SIZEOF)
-> +#define HASH_SHA1_MAX_REG		(SHA1_DIGEST_SIZE / HASH_REG_SIZEOF)
-> +#define HASH_SHA256_MAX_REG		(SHA256_DIGEST_SIZE / HASH_REG_SIZEOF)
-> +
-> +/*
-> + * HASH bit numbers, used by device, setting in dev->hash_flags with
-> + * functions set_bit(), clear_bit() or tested with test_bit() or BIT(),
-> + * to keep HASH state BUSY or FREE, or to signal state from irq_handler
-> + * to hash_tasklet. SGS keep track of allocated memory for scatterlist
-> + */
-> +#define HASH_FLAGS_BUSY		0
-> +#define HASH_FLAGS_FINAL	1
-> +#define HASH_FLAGS_DMA_ACTIVE	2
-> +#define HASH_FLAGS_OUTPUT_READY	3
-> +#define HASH_FLAGS_DMA_READY	4
-> +#define HASH_FLAGS_SGS_COPIED	5
-> +#define HASH_FLAGS_SGS_ALLOCED	6
-> +
-> +/* HASH op codes */
-> +#define HASH_OP_UPDATE		1
-> +#define HASH_OP_FINAL		2
-> +
-> +/* HASH HW constants */
-> +#define BUFLEN			HASH_BLOCK_SIZE
-> +
-> +#define SSS_HASH_DMA_LEN_ALIGN	8
-> +#define SSS_HASH_DMA_ALIGN_MASK	(SSS_HASH_DMA_LEN_ALIGN - 1)
-> +
-> +#define SSS_HASH_QUEUE_LENGTH	10
-> +
->  /**
->   * struct samsung_aes_variant - platform specific SSS driver data
->   * @aes_offset: AES register offset from SSS module's base.
-> + * @hash_offset: HASH register offset from SSS module's base.
->   *
->   * Specifies platform specific configuration of SSS module.
->   * Note: A structure for driver specific platform data is used for future
-> @@ -156,6 +248,7 @@
->   */
->  struct samsung_aes_variant {
->  	unsigned int			aes_offset;
-> +	unsigned int			hash_offset;
->  };
->  
->  struct s5p_aes_reqctx {
-> @@ -195,6 +288,19 @@ struct s5p_aes_ctx {
->   *		protects against concurrent access to these fields.
->   * @lock:	Lock for protecting both access to device hardware registers
->   *		and fields related to current request (including the busy field).
-> + * @res:	Resources for hash.
-> + * @io_hash_base: Per-variant offset for HASH block IO memory.
-> + * @hash_lock:	Lock for protecting hash_req, hash_queue and hash_flags
-> + *		variable.
-> + * @hash_tasklet: New HASH request scheduling job.
-> + * @xmit_buf:	Buffer for current HASH request transfer into SSS block.
-> + * @hash_flags:	Flags for current HASH op.
-> + * @hash_queue:	Async hash queue.
-> + * @hash_req:	Current request sending to SSS HASH block.
-> + * @hash_sg_iter: Scatterlist transferred through DMA into SSS HASH block.
-> + * @hash_sg_cnt: Counter for hash_sg_iter.
-> + *
-> + * @use_hash:	true if HASH algs enabled
->   */
->  struct s5p_aes_dev {
->  	struct device			*dev;
-> @@ -215,16 +321,84 @@ struct s5p_aes_dev {
->  	struct crypto_queue		queue;
->  	bool				busy;
->  	spinlock_t			lock;
-> +
-> +	struct resource			*res;
-> +	void __iomem			*io_hash_base;
-> +
-> +	spinlock_t			hash_lock; /* protect hash_ vars */
-> +	unsigned long			hash_flags;
-> +	struct crypto_queue		hash_queue;
-> +	struct tasklet_struct		hash_tasklet;
-> +
-> +	u8				xmit_buf[BUFLEN];
-> +	struct ahash_request		*hash_req;
-> +	struct scatterlist		*hash_sg_iter;
-> +	int				hash_sg_cnt;
-> +
-> +	bool				use_hash;
->  };
->  
-> -static struct s5p_aes_dev *s5p_dev;
-> +/**
-> + * struct s5p_hash_reqctx - HASH request context
-> + * @dev:	Associated device
-> + * @flags:	Bits for current HASH request
-> + * @op:		Current request operation (OP_UPDATE or UP_FINAL)
+This reverts commit 42f989c002f235557e3a03feac3b2f16b17d53f6.
 
-s/UP_FINAL/OP_FINAL/
+The Mellanox BlueField SoC requires multiple slot dw-mmc support.
 
-> + * @digcnt:	Number of bytes processed by HW (without buffer[] ones)
-> + * @digest:	Digest message or IV for partial result
-> + * @bufcnt:	Number of bytes holded in buffer[]
-> + * @nregs:	Number of HW registers for digest or IV read/write
-> + * @engine:	Bits for selecting type of HASH in SSS block
-> + * @sg:		sg for DMA transfer
-> + * @sg_len:	Length of sg for DMA transfer
-> + * @sgl[]:	sg for joining buffer and req->src scatterlist
-> + * @skip:	Skip offset in req->src for current op
-> + * @total:	Total number of bytes for current request
-> + * @finup:	Keep state for finup or final.
-> + * @error:	Keep track of error.
-> + * @buffer[]:	For byte(s) from end of req->src in UPDATE op
-> + */
-> +struct s5p_hash_reqctx {
-> +	struct s5p_aes_dev	*dd;
-> +	int			op;
+Signed-off-by: Liming Sun <lsun@mellanox.com>
+---
+ drivers/mmc/host/dw_mmc-exynos.c |  4 ++--
+ drivers/mmc/host/dw_mmc.c        | 33 +++++++++++++++++----------------
+ drivers/mmc/host/dw_mmc.h        |  3 +++
+ 3 files changed, 22 insertions(+), 18 deletions(-)
 
-Thanks for converting it from bit-type. Since it can be only UPDATE or
-FINAL then please replace this and #defines with just enum.
-
-Rest looks good for me.
-
-Best regards,
-Krzysztof
-
-> +
-> +	u64			digcnt;
-> +	u8			digest[SHA256_DIGEST_SIZE];
-> +	u32			bufcnt;
-> +
-> +	int			nregs; /* digest_size / sizeof(reg) */
-> +	u32			engine;
-> +
-> +	struct scatterlist	*sg;
-> +	int			sg_len;
-> +	struct scatterlist	sgl[2];
-> +	int			skip;
-> +	unsigned int		total;
-> +	bool			finup;
-> +	bool			error;
-> +
-> +	u8			buffer[0];
-> +};
-> +
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index 3502679..25691cc 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -157,8 +157,8 @@ static void dw_mci_exynos_set_clksel_timing(struct dw_mci *host, u32 timing)
+ 	 * HOLD register should be bypassed in case there is no phase shift
+ 	 * applied on CMD/DATA that is sent to the card.
+ 	 */
+-	if (!SDMMC_CLKSEL_GET_DRV_WD3(clksel) && host->slot)
+-		set_bit(DW_MMC_CARD_NO_USE_HOLD, &host->slot->flags);
++	if (!SDMMC_CLKSEL_GET_DRV_WD3(clksel) && host->cur_slot)
++		set_bit(DW_MMC_CARD_NO_USE_HOLD, &host->cur_slot->flags);
+ }
+ 
+ #ifdef CONFIG_PM
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index c9f81db..62c0791 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -392,7 +392,7 @@ static u32 dw_mci_prep_stop_abort(struct dw_mci *host, struct mmc_command *cmd)
+ 	cmdr = stop->opcode | SDMMC_CMD_STOP |
+ 		SDMMC_CMD_RESP_CRC | SDMMC_CMD_RESP_EXP;
+ 
+-	if (!test_bit(DW_MMC_CARD_NO_USE_HOLD, &host->slot->flags))
++	if (!test_bit(DW_MMC_CARD_NO_USE_HOLD, &host->cur_slot->flags))
+ 		cmdr |= SDMMC_CMD_USE_HOLD_REG;
+ 
+ 	return cmdr;
+@@ -499,7 +499,7 @@ static void dw_mci_dmac_complete_dma(void *arg)
+ 	if ((host->use_dma == TRANS_MODE_EDMAC) &&
+ 	    data && (data->flags & MMC_DATA_READ))
+ 		/* Invalidate cache after read */
+-		dma_sync_sg_for_cpu(mmc_dev(host->slot->mmc),
++		dma_sync_sg_for_cpu(mmc_dev(host->cur_slot->mmc),
+ 				    data->sg,
+ 				    data->sg_len,
+ 				    DMA_FROM_DEVICE);
+@@ -839,7 +839,7 @@ static int dw_mci_edmac_start_dma(struct dw_mci *host,
+ 
+ 	/* Flush cache before write */
+ 	if (host->data->flags & MMC_DATA_WRITE)
+-		dma_sync_sg_for_device(mmc_dev(host->slot->mmc), sgl,
++		dma_sync_sg_for_device(mmc_dev(host->cur_slot->mmc), sgl,
+ 				       sg_elems, DMA_TO_DEVICE);
+ 
+ 	dma_async_issue_pending(host->dms->ch);
+@@ -1301,6 +1301,7 @@ static void __dw_mci_start_request(struct dw_mci *host,
+ 
+ 	mrq = slot->mrq;
+ 
++	host->cur_slot = slot;
+ 	host->mrq = mrq;
+ 
+ 	host->pending_events = 0;
+@@ -1781,7 +1782,7 @@ static bool dw_mci_reset(struct dw_mci *host)
+ 
+ ciu_out:
+ 	/* After a CTRL reset we need to have CIU set clock registers  */
+-	mci_send_cmd(host->slot, SDMMC_CMD_UPD_CLK, 0);
++	mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
+ 
+ 	return ret;
+ }
+@@ -1808,11 +1809,11 @@ static void dw_mci_request_end(struct dw_mci *host, struct mmc_request *mrq)
+ 	__acquires(&host->lock)
+ {
+ 	struct dw_mci_slot *slot;
+-	struct mmc_host	*prev_mmc = host->slot->mmc;
++	struct mmc_host	*prev_mmc = host->cur_slot->mmc;
+ 
+ 	WARN_ON(host->cmd || host->data);
+ 
+-	host->slot->mrq = NULL;
++	host->cur_slot->mrq = NULL;
+ 	host->mrq = NULL;
+ 	if (!list_empty(&host->queue)) {
+ 		slot = list_entry(host->queue.next,
+@@ -1962,7 +1963,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
+ 			err = dw_mci_command_complete(host, cmd);
+ 			if (cmd == mrq->sbc && !err) {
+ 				prev_state = state = STATE_SENDING_CMD;
+-				__dw_mci_start_request(host, host->slot,
++				__dw_mci_start_request(host, host->cur_slot,
+ 						       mrq->cmd);
+ 				goto unlock;
+ 			}
+@@ -3308,9 +3309,9 @@ int dw_mci_runtime_suspend(struct device *dev)
+ 
+ 	clk_disable_unprepare(host->ciu_clk);
+ 
+-	if (host->slot &&
+-	    (mmc_can_gpio_cd(host->slot->mmc) ||
+-	     !mmc_card_is_removable(host->slot->mmc)))
++	if (host->cur_slot &&
++	    (mmc_can_gpio_cd(host->cur_slot->mmc) ||
++	     !mmc_card_is_removable(host->cur_slot->mmc)))
+ 		clk_disable_unprepare(host->biu_clk);
+ 
+ 	return 0;
+@@ -3323,9 +3324,9 @@ int dw_mci_runtime_resume(struct device *dev)
+ 	struct dw_mci *host = dev_get_drvdata(dev);
+ 	struct dw_mci_slot *slot = host->slot;
+ 
+-	if (host->slot &&
+-	    (mmc_can_gpio_cd(host->slot->mmc) ||
+-	     !mmc_card_is_removable(host->slot->mmc))) {
++	if (host->cur_slot &&
++	    (mmc_can_gpio_cd(host->cur_slot->mmc) ||
++	     !mmc_card_is_removable(host->cur_slot->mmc))) {
+ 		ret = clk_prepare_enable(host->biu_clk);
+ 		if (ret)
+ 			return ret;
+@@ -3373,9 +3374,9 @@ int dw_mci_runtime_resume(struct device *dev)
+ 	return 0;
+ 
+ err:
+-	if (host->slot &&
+-	    (mmc_can_gpio_cd(host->slot->mmc) ||
+-	     !mmc_card_is_removable(host->slot->mmc)))
++	if (host->cur_slot &&
++	    (mmc_can_gpio_cd(host->cur_slot->mmc) ||
++	     !mmc_card_is_removable(host->cur_slot->mmc)))
+ 		clk_disable_unprepare(host->biu_clk);
+ 
+ 	return ret;
+diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+index 34474ad..20a956e 100644
+--- a/drivers/mmc/host/dw_mmc.h
++++ b/drivers/mmc/host/dw_mmc.h
+@@ -133,6 +133,7 @@ struct dw_mci_dma_slave {
+  * =======
+  *
+  * @lock is a softirq-safe spinlock protecting @queue as well as
++ * @cur_slot, @mrq and @state. These must always be updated
+  * at the same time while holding @lock.
+  *
+  * @irq_lock is an irq-safe spinlock protecting the INTMASK register
+@@ -168,6 +169,7 @@ struct dw_mci {
+ 	struct scatterlist	*sg;
+ 	struct sg_mapping_iter	sg_miter;
+ 
++	struct dw_mci_slot	*cur_slot;
+ 	struct mmc_request	*mrq;
+ 	struct mmc_command	*cmd;
+ 	struct mmc_data		*data;
+@@ -203,6 +205,7 @@ struct dw_mci {
+ 
+ 	u32			bus_hz;
+ 	u32			current_speed;
++	u32			num_slots;
+ 	u32			fifoth_val;
+ 	u16			verid;
+ 	struct device		*dev;
+-- 
+1.8.3.1
