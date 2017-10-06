@@ -1,190 +1,374 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC PATCH 1/4] dt-bindings: add bindings for USB physical
- connector
-Date: Fri, 6 Oct 2017 12:23:42 -0500
-Message-ID: <CAL_JsqJLfU9mmrdz14rNktCx1GMJ8rB1Oq-fmFHOgHGiO8udAg@mail.gmail.com>
-References: <20170928130730.8747-1-a.hajda@samsung.com>
- <CGME20170928130735eucas1p1da4f062b6948350289bba9c8bc911dd7@eucas1p1.samsung.com>
- <20170928130730.8747-2-a.hajda@samsung.com>
- <20171005231204.ghvohuue26knemn6@rob-hp-laptop>
- <f242145c-d69d-9dce-3ea4-0ed00a400eef@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4] crypto: s5p-sss: Add HASH support for Exynos
+Date: Fri, 6 Oct 2017 20:37:27 +0200
+Message-ID: <20171006183727.xzjjlw3fypwpk2yt@kozik-lap>
+References: <CGME20171004163813eucas1p1c807cbbb50b82f60beaec6ac23bf9f82@eucas1p1.samsung.com>
+ <fcabbf6d-b6f2-ba66-bc8d-5f0179effe23@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <f242145c-d69d-9dce-3ea4-0ed00a400eef@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux USB List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <fcabbf6d-b6f2-ba66-bc8d-5f0179effe23@partner.samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBPY3QgNiwgMjAxNyBhdCA2OjEwIEFNLCBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNh
-bXN1bmcuY29tPiB3cm90ZToKPiBIaSBSb2IsCj4KPiBUaGFua3MgZm9yIHJldmlldy4KPgo+IE9u
-IDA2LjEwLjIwMTcgMDE6MTIsIFJvYiBIZXJyaW5nIHdyb3RlOgo+PiBPbiBUaHUsIFNlcCAyOCwg
-MjAxNyBhdCAwMzowNzoyN1BNICswMjAwLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+Pj4gVGhlc2Ug
-YmluZGluZ3MgYWxsb3dzIHRvIGRlc2NyaWJlIG1vc3Qga25vd24gc3RhbmRhcmQgVVNCIGNvbm5l
-Y3RvcnMKPj4+IGFuZCBpdCBzaG91bGQgYmUgcG9zc2libGUgdG8gZXh0ZW5kIGl0IGlmIG5lY2Vz
-c2FyeS4KPj4+IFVTQiBjb25uZWN0b3JzLCBiZXNpZGUgVVNCIGNhbiBiZSB1c2VkIHRvIHJvdXRl
-IG90aGVyIHByb3RvY29scywKPj4+IGZvciBleGFtcGxlIFVBUlQsIEF1ZGlvLCBNSEwuIEluIHN1
-Y2ggY2FzZSBldmVyeSBkZXZpY2UgcGFzc2luZyBkYXRhCj4+PiB0aHJvdWdoIHRoZSBjb25uZWN0
-b3Igc2hvdWxkIGhhdmUgYXBwcm9wcmlhdGUgZ3JhcGggYmluZGluZ3MuCj4+IFlheSEKPj4KPj4+
-IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4+PiAt
-LS0KPj4+IFRoZXJlIGFyZSBmZXcgdGhpbmdzIGZvciBkaXNjdXNzaW9uIChJTU8pOgo+Pj4gMS4g
-dmVuZG9yIHNwZWNpZmljIGNvbm5lY3RvcnMsIEkgaGF2ZSBhZGRlZCB0aGVtIGhlcmUsIGJ1dCBt
-YXliZSBiZXR0ZXIgaXMKPj4+ICAgIHRvIHBsYWNlIHRoZW0gaW4gc2VwYXJhdGUgZmlsZXMuCj4+
-IEknZCB3b3JyeSBhYm91dCB0aGUgc3RhbmRhcmQgY29ubmVjdG9ycyBmaXJzdCwgYnV0IHByb2Jh
-Ymx5IGdvb2QgdG8gaGF2ZQo+PiBhbiBpZGVhIG9mIGhvdyB2ZW5kb3IgY29ubmVjdG9ycyBuZWVk
-IHRvIGJlIGV4dGVuZGVkLgo+Pgo+Pj4gMi4gcGh5c2ljYWwgY29ubmVjdG9yIGRlc2NyaXB0aW9u
-IC0gSSBoYXZlIHNwbGl0IGl0IHRvIHRocmVlIHByb3BlcnRpZXM6Cj4+PiAgICB0eXBlKGEsYixh
-YixjKSwgbWF4LW1vZGUobHMsZnMsaHMsc3Msc3MrKSwgc2l6ZShtaW5pLG1pY3JvLHBvd2VyZWQp
-Lgo+Pj4gICAgVGhpcyB0cmlwbGVkIGlzIGFibGUgdG8gZGVzY3JpYmUgYWxsIFVTQi1zdGFuZGFy
-ZCBjb25uZWN0b3JzLCBidXQgdGhlcmUKPj4+ICAgIGFyZSBhbHNvIGltcG9zc2libGUgY29tYmlu
-YXRpb25zLCBmb3IgZXhhbXBsZShjLCAqLCBtaWNybykuIE1heWJlIGJldHRlcgo+Pj4gICAgd291
-bGQgYmUgdG8ganVzdCBlbnVtZXJhdGUgYWxsIHBvc3NpYmxlIGNvbm5lY3RvcnMgaW4gaW5jbHVk
-ZSBmaWxlLgo+PiBXZSBkaWQgInR5cGUiIGZvciBoZG1pLWNvbm5lY3RvciwgYnV0IEkgdGhpbmsg
-SSdkIHJlYWxseSBwcmVmZXIKPj4gY29tcGF0aWJsZSBiZSB1c2VkIHRvIGRpc3Rpbmd1aXNoIGFz
-IGxlYXN0IHdoZXJlIGl0IG1heSBtYXR0ZXIgdG8gcy93Lgo+PiBJbiB0aGUgSERNSSBjYXNlLCB0
-aGV5IGFsbCBhcmUgcHJldHR5IG11Y2ggdGhlIHNhbWUsIGp1c3QgZGlmZmVyZW50Cj4+IHBoeXNp
-Y2FsIHNpemUuCj4KPiBJIGd1ZXNzIHRoYXQgZnJvbSBTL1cgcG9pbnQgb2YgdmlldyBvbmx5IG1h
-dHRlcnM6Cj4gLSB3aGljaCBJUCBpcyBjb25uZWN0ZWQgdG8gd2hpY2ggcGFydCBvZiB0aGUgY29u
-bmVjdG9yLCBhbmQgdGhpcyBjYW4gYmUKPiBoYW5kbGVkIGJ5IHBvcnQgbm9kZShzKSwKPiAtIFR5
-cGU6IEEsIEIsIEMKPiAtIHByb2JhYmx5IG1heGltYWwgc3VwcG9ydGVkIHNwZWVkIG9mIHRoZSBj
-b25uZWN0b3IgLSBmb3IgZXhhbXBsZSBTUysKPiBjb25uZWN0b3JzIGhhdmUgdGhlIHNhbWUgd2ly
-ZXMgYnV0IGRpZmZlcmVudCBlbGVjdHJpY2FsIGNoYXJhY3RlcmlzdGljcwo+IHRoYW4gU1MgYXMg
-SSB1bmRlcnN0YW5kLAo+Cj4gV2l0aCB0aGlzIGluIG1pbmQgbWF5YmUgd2UgY2FuIGRyb3AgJ3R5
-cGUnIGFuZCBpbnRyb2R1Y2UgZm9sbG93aW5nCj4gY29tcGF0aWJsZXM6Cj4gLSB1c2ItYS1jb25u
-ZWN0b3IsCj4gLSB1c2ItYi1jb25uZWN0b3IsCj4gLSB1c2ItYy1jb25uZWN0b3IuCj4gRW5jb2Rp
-bmcgb3RoZXIgcHJvcGVydGllcyBpbiBjb21wYXRpYmxlIHdvdWxkIGV4cGxvZGUgdGhlaXIgbnVt
-YmVyLCBzbyBJCj4gd291bGQgcHJlZmVyIHRvIGF2b2lkIGl0Lgo+IEkgd291bGQgbGVhdmUgb3Ro
-ZXIgcHJvcHM6Cj4gbWF4LXNwZWVkOiBocywgc3MsIHNzKywKPiAob3B0aW9uYWwpc2l6ZTogbWlj
-cm8sIG1pbmkKPgo+IEkgd291bGQgZHJvcCBhbHNvIHVucG9wdWxhci9vYnNvbGV0ZSB2YXJpYW50
-czogdHlwZS1hYiwgcG93ZXJlZCwgdGhleQo+IGNhbiBiZSBhZGRlZCBsYXRlciBpZiBuZWNlc3Nh
-cnkuCj4KPiBKdXN0IGZvciByZWZlcmVuY2UsIGxpc3Qgb2YgY29ubmVjdG9ycyBkZWZpbmVkIGJ5
-IFVTQiAoPj0gMikgc3BlY2lmaWNhdGlvbnM6Cj4gMS4gVVNCIDIuMCAod2l0aCBsYXRlciBhbWVu
-ZG1lbnRzKToKPiAtIFN0YW5kYXJkLUEgcGx1ZyBhbmQgcmVjZXB0YWNsZQo+IC0gU3RhbmRhcmQt
-QiBwbHVnIGFuZCByZWNlcHRhY2xlCj4gLSBNaW5pLUIgcGx1ZyBhbmQgcmVjZXB0YWNsZQo+IC0g
-TWljcm8tQiBwbHVnIGFuZCByZWNlcHRhY2xlCj4gLSBNaWNyby1BQiByZWNlcHRhY2xlCj4gLSBN
-aWNyby1BIHBsdWcKPiAyLiBVU0IgMy4wOgo+IC0gVVNCIDMuMCBTdGFuZGFyZC1BIHBsdWcgYW5k
-IHJlY2VwdGFjbGUKPiAtIFVTQiAzLjAgU3RhbmRhcmQtQiBwbHVnIGFuZCByZWNlcHRhY2xlCj4g
-LSBVU0IgMy4wIFBvd2VyZWQtQiBwbHVnIGFuZCByZWNlcHRhY2xlCj4gLSBVU0IgMy4wIE1pY3Jv
-LUIgcGx1ZyBhbmQgcmVjZXB0YWNsZQo+IC0gVVNCIDMuMCBNaWNyby1BIHBsdWcKPiAtIFVTQiAz
-LjAgTWljcm8tQUIgcmVjZXB0YWNsZQo+IDMuIFVTQiAzLjE6Cj4gLSBFbmhhbmNlZCBTdXBlclNw
-ZWVkIFN0YW5kYXJkLUEgcGx1ZyBhbmQgcmVjZXB0YWNsZQo+IC0gRW5oYW5jZWQgU3VwZXJTcGVl
-ZCBTdGFuZGFyZC1CIHBsdWcgYW5kIHJlY2VwdGFjbGUKPiAtIEVuaGFuY2VkIFN1cGVyU3BlZWQg
-TWljcm8tQiBwbHVnIGFuZCByZWNlcHRhY2xlCj4gLSBFbmhhbmNlZCBTdXBlclNwZWVkIE1pY3Jv
-LUEgcGx1Zwo+IC0gRW5oYW5jZWQgU3VwZXJTcGVlZCBNaWNyby1BQiByZWNlcHRhY2xlCj4gNC4g
-VVNCLUMgKHJlbGVhc2UgMS4zKToKPiAtIFVTQiBGdWxsLUZlYXR1cmVkIFR5cGUtQyByZWNlcHRh
-Y2xlCj4gLSBVU0IgMi4wIFR5cGUtQyByZWNlcHRhY2xlCj4gLSBVU0IgRnVsbC1GZWF0dXJlZCBU
-eXBlLUMgcGx1Zwo+IC0gVVNCIDIuMCBUeXBlLUMgcGx1Zwo+IC0gVVNCIFR5cGUtQyBQb3dlci1P
-bmx5IHBsdWcKPgo+Pj4gMy4gTnVtYmVyaW5nIG9mIHBvcnQvcmVtb3RlIG5vZGVzLCBjdXJyZW50
-bHkgb25seSAwIGlzIGFzc2lnbmVkIGZvciBJbnRlcmZhY2UKPj4+ICAgIENvbnRyb2xsZXIuIE1h
-eWJlIG90aGVyIGZ1bmN0aW9ucyBzaG91bGQgYmUgYWxzbyBhc3NpZ25lZDoKPj4+ICAgIEhTLCBT
-UywgQ0MsIFNCVSwgLi4uIHdoYXRldmVyLiBNYXliZSBmdW5jdGlvbnMgc2hvdWxkIGJlIGRlc2Ny
-aWJlZAo+Pj4gICAgYXMgYW4gYWRkaXRpb25hbCBwcm9wZXJ0eSBvZiByZW1vdGUgbm9kZT8KPj4g
-Y2hpbGQgb2YgdGhlIGNvbnRyb2xsZXIgaXMgYWxzbyBhbiBvcHRpb24uIFRoZXJlJ3MgYWxyZWFk
-eSBwcmVjCj4KPiBTaGFsbCB3ZSBzdXBwb3J0IGJvdGggc29sdXRpb25zIG9yIGp1c3QgbWFrZSBv
-bmUgbWFuZGF0b3J5PwoKT29wcywgSSB3YXMganVzdCBnb2luZyB0byBzYXkgZm9yIGRpc3BsYXks
-IHRoZXJlJ3MgYWxyZWFkeSBwcmVjZWRlbnQKdGhhdCBwb3J0cyBhcmUgdXNlZC4gU28gdGhhdCBt
-ZWFucyBhdCBsZWFzdCBTUyBzaG91bGQganVzdCBiZQpkZXNjcmliZWQgd2l0aCBwb3J0cy4gVGhl
-biBIUyBwcm9iYWJseSBzaG91bGQgYmUgYSBwb3J0IHRvbyBqdXN0IHRvIGJlCnN5bW1ldHJpY2Fs
-LgoKVGhlIGNvbm5lY3RvciBiZWluZyBhIGNoaWxkIG9mIHRoZSBVU0ItUEQgKG9yIG90aGVyIGNv
-bnRyb2xsZXIgY2hpcCkKaXMgcHJvYmFibHkgdGhlIG9ubHkgdGhpbmcgdGhhdCBtYWtlcyBzZW5z
-ZS4gSSBndWVzcyB0aGUgcXVlc3Rpb24gaXMKd2hldGhlciB0aGVyZSBhcmUgY2FzZXMgd2hlcmUg
-dGhhdCBkb2Vzbid0IG1ha2Ugc2Vuc2UuCgo+Pj4gLS0tCj4+PiAgLi4uL2JpbmRpbmdzL2Nvbm5l
-Y3Rvci91c2ItY29ubmVjdG9yLnR4dCAgICAgICAgICAgfCA0OSArKysrKysrKysrKysrKysrKysr
-KysrCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDQ5IGluc2VydGlvbnMoKykKPj4+ICBjcmVhdGUgbW9k
-ZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2It
-Y29ubmVjdG9yLnR4dAo+Pj4KPj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvY29ubmVjdG9yL3VzYi1jb25uZWN0b3IudHh0IGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dAo+Pj4gbmV3IGZp
-bGUgbW9kZSAxMDA2NDQKPj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uZjNhNGU4NTEyMmQ1Cj4+PiAt
-LS0gL2Rldi9udWxsCj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-Y29ubmVjdG9yL3VzYi1jb25uZWN0b3IudHh0Cj4+PiBAQCAtMCwwICsxLDQ5IEBACj4+PiArVVNC
-IENvbm5lY3Rvcgo+Pj4gKz09PT09PT09PT09PT0KPj4+ICsKPj4+ICtSZXF1aXJlZCBwcm9wZXJ0
-aWVzOgo+Pj4gKy0gY29tcGF0aWJsZTogInVzYi1jb25uZWN0b3IiCj4+PiArICBjb25uZWN0b3Jz
-IHdpdGggdmVuZG9yIHNwZWNpZmljIGV4dGVuc2lvbnMgY2FuIGFkZCBvbmUgb2YgYWRkaXRpb25h
-bAo+Pj4gKyAgY29tcGF0aWJsZXM6Cj4+PiArICAgICJzYW1zdW5nLHVzYi1jb25uZWN0b3ItMTFw
-aW4iOiAxMS1waW4gU2Ftc3VuZyBtaWNyby1VU0IgY29ubmVjdG9yCj4+PiArLSB0eXBlOiB0aGUg
-VVNCIGNvbm5lY3RvciB0eXBlOiAiYSIsICJiIiwgImFiIiwgImMiCj4+PiArLSBtYXgtbW9kZTog
-bWF4IFVTQiBzcGVlZCBtb2RlIHN1cHBvcnRlZCBieSB0aGUgY29ubmVjdG9yOgo+Pj4gKyAgImxz
-IiwgImZzIiwgImhzIiwgInNzIiwgInNzKyIKPj4gRG8gd2UgcmVhbGx5IHNlZSBjYXNlcyB3aGVy
-ZSB0aGUgY29ubmVjdG9yIGlzIHNsb3dlciB0aGFuIHRoZQo+PiBjb250cm9sbGVyPyBQbHVzIHRo
-aW5ncyBsaWtlICJscyIgd2l0aCBhbiB0eXBlIEEgY29ubmVjdG9yIGFyZSBub3QKPj4gdmFsaWQu
-Cj4KPiBGb3IgZXhhbXBsZSBHYWxheHkgTm90ZSA0IC0gaXQgaGFzIFVTQjMgY29udHJvbGxlciBh
-bmQgbWljcm8tVVNCIDIuMAo+IGNvbm5lY3Rvci4KCkhvdyBkb2VzIG9uZSBkaXN0aW5ndWlzaCBh
-IG1pY3JvLUIgU1MgY29ubmVjdG9yIHdpdGggYSBIUyBwbHVnIHZzLiBhClNTIHBsdWc/IEl0IG11
-c3QgYmUgYXQgcnVuLXRpbWUuIFdvdWxkbid0IGEgSFMgY29ubmVjdG9yIGJlaGF2ZQpvcGVyYXRl
-IHRoZSBzYW1lIGFzIHRoZSBmb3JtZXIgY2FzZT8KCklmIHdlIGRvIG5lZWQgdG8gZGlzdGluZ3Vp
-c2ggaGVyZSwgdGhlbiBJIHRoaW5rIGl0IHNob3VsZCBiZSBieQpjb21wYXRpYmxlLiBTYXkgInVz
-Yi1zcy1iLWNvbm5lY3RvciI/Cgo+Pj4gK09wdGlvbmFsIHByb3BlcnRpZXM6Cj4+PiArLSBsYWJl
-bDogYSBzeW1ib2xpYyBuYW1lIGZvciB0aGUgY29ubmVjdG9yCj4+PiArLSBzaXplOiBzaXplIG9m
-IHRoZSBjb25uZWN0b3IsIHNob3VsZCBiZSBzcGVjaWZpZWQgaW4gY2FzZSBvZgo+Pj4gKyAgbm9u
-LXN0YW5kYXJkIFVTQiBjb25uZWN0b3JzOiAibWluaSIsICJtaWNybyIsICJwb3dlcmVkIgo+PiBX
-aGF0IGRvZXMgcG93ZXJlZCBtZWFuPwo+Cj4gSXQgaXMgc3RhbmRhcmQtQiBjb25uZWN0b3Igd2l0
-aCBhZGRpdGlvbmFsIHBvd2VyIHBpbnMsIGFzIGRlZmluZWQgaW4KPiBVU0IzLjAgc3BlYywgd2Ug
-Y2FuIGRyb3AgaXQgYXMgbm90LXBvcHVsYXIgb25lLgoKT2theS4gTm90aGluZyBhYm91dCBpdCBv
-biB3aWtpcGVkaWEuCgo+Pgo+PiBUaGlzIGlzIHJlYWxseSAidHlwZSIgaWYgeW91IGNvbXBhcmUg
-dG8gSERNSS4KPgo+IEFzIHR5cGUgaXMgYWxyZWFkeSB1c2VkLCAgSSBoYXZlIHRvIHVzZSBvdGhl
-ciB3b3JkLCBtYXliZSAnZm9ybScgd291bGQKPiBiZSBiZXR0ZXIuCgpCdXQgeW91J3ZlIGRyb3Bw
-ZWQgdHlwZSBpbiBmYXZvciBvZiBjb21wYXRpYmxlIHN0cmluZ3MsIHNvIHlvdSBjYW4gYWRkCml0
-IGJhY2sgdG8gcmVwbGFjZSBzaXplIGFuZCBrZWVwIHRoZSBtZWFuaW5nIGFsaWduZWQgd2l0aCBI
-RE1JLgoKPj4+ICsKPj4+ICtSZXF1aXJlZCBub2RlczoKPj4+ICstIGFueSBkYXRhIGJ1cyB0byB0
-aGUgY29ubmVjdG9yIHNob3VsZCBiZSBtb2RlbGVkIHVzaW5nIHRoZQo+Pj4gKyAgT0YgZ3JhcGgg
-YmluZGluZ3Mgc3BlY2lmaWVkIGluIGJpbmRpbmdzL2dyYXBoLnR4dC4KPj4+ICsgIFRoZXJlIHNo
-b3VsZCBiZSBleGFjdGx5IG9uZSBwb3J0IHdpdGggYXQgbGVhc3Qgb25lIGVuZHBvaW50IHRvCj4+
-PiArICBkaWZmZXJlbnQgZGV2aWNlIG5vZGVzLiBUaGUgZmlyc3QgZW5kcG9pbnQgKHJlZyA9IDww
-Pikgc2hvdWxkCj4+PiArICBwb2ludCB0byBVU0IgSW50ZXJmYWNlIENvbnRyb2xsZXIuCj4+PiAr
-Cj4+PiArRXhhbXBsZQo+Pj4gKy0tLS0tLS0KPj4+ICsKPj4+ICttdXNiX2NvbjogY29ubmVjdG9y
-IHsKPj4+ICsgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLHVzYi1jb25uZWN0b3ItMTFwaW4iLCAi
-dXNiLWNvbm5lY3RvciI7Cj4+PiArICAgIGxhYmVsID0gInVzYiI7Cj4+PiArICAgIHR5cGUgPSAi
-YiI7Cj4+PiArICAgIHNpemUgPSAibWljcm8iOwo+Pj4gKyAgICBtYXgtbW9kZSA9ICJocyI7Cj4+
-IFRoZXNlIGFsbCBhcmUgaW1wbGllZCBieSAic2Ftc3VuZyx1c2ItY29ubmVjdG9yLTExcGluIi4K
-Pgo+IFllcywgYnV0ICJ1c2ItY29ubmVjdG9yIiBjb21wYXRpYmxlIHJlcXVpcmVzL3Blcm1pdHMg
-aXQsIG9yIGFtIEkgd3JvbmcgPwoKWWVzLCBidXQgd2UncmUgbWl4aW5nIHdoZXJlIHRoZSBjb21w
-YXRpYmxlIGltcGxpZXMgYWxsIHRoZSBpbmZvcm1hdGlvbgphbmQgd2hlcmUgaXQncyBzZXBhcmF0
-ZSBmaWVsZHMuCgo+Pj4gKyAgICBwb3J0IHsKPj4+ICsgICAgICAgICAgICAjYWRkcmVzcy1jZWxs
-cyA9IDwxPjsKPj4+ICsgICAgICAgICAgICAjc2l6ZS1jZWxscyA9IDwwPjsKPj4+ICsKPj4+ICsg
-ICAgICAgICAgICBtdXNiX2Nvbl91c2JfaW46IGVuZHBvaW50QDAgewo+Pj4gKyAgICAgICAgICAg
-ICAgICAgICAgcmVnID0gPDA+Owo+Pj4gKyAgICAgICAgICAgICAgICAgICAgcmVtb3RlLWVuZHBv
-aW50ID0gPCZtdWljX3VzYl9vdXQ+Owo+Pj4gKyAgICAgICAgICAgIH07Cj4+PiArCj4+PiArICAg
-ICAgICAgICAgbXVzYl9jb25fbWhsX2luOiBlbmRwb2ludEAxIHsKPj4+ICsgICAgICAgICAgICAg
-ICAgICAgIHJlZyA9IDwxPjsKPj4+ICsgICAgICAgICAgICAgICAgICAgIHJlbW90ZS1lbmRwb2lu
-dCA9IDwmbWhsX291dD47Cj4+PiArICAgICAgICAgICAgfTsKPj4gSSB0aGluayB0aGlzIHNob3Vs
-ZCBiZSAyIHBvcnRzLCBub3QgMiBlbmRwb2ludHMuIFRoaW5rIG9mIHBvcnRzIGFzCj4+IGRpZmZl
-cmVudCBkYXRhIHN0cmVhbXMgYW5kIGVuZHBvaW50cyBhcmUgZWl0aGVyIHRoZSBzYW1lIGRhdGEg
-c3RyZWFtCj4+IG11eGVkIG9yIGZhbm5lZCBvdXQgZGVwZW5kaW5nIG9uIGRpcmVjdGlvbi4gTm93
-IGZvciBUeXBlLUMsIDEgcG9ydCBmb3IKPj4gVVNCIGFuZCBhbHRlcm5hdGUgbW9kZXMgaXMgcHJv
-YmFibHkgY29ycmVjdC4KPgo+IEkgYWdyZWUgZm9yIHBvcnRzLgo+IFJlZ2FyZGluZyB0eXBlLWMs
-IGl0IGhhcyBzZXBhcmF0ZSBsaW5lcyBmb3IgSFMgYW5kIGZvciBTUy4gSFMgbGluZXMKPiBvZnRl
-biBnbyB0byBJbnRlcmZhY2UgQ29udHJvbGxlciBhcyB0aGV5IGNhbiBiZSB1c2VkIHRvIGxlZ2Fj
-eSBkZXRlY3Rpb24KPiBtZXRob2RzIGFuZCBhbHRlcm5hdGl2ZWx5IG11eGVkIHRvIFVBUlQuCj4g
-U1MgbGluZXMgZ28gZGlyZWN0bHkgdG8gVVNCMyBjaGlwLCBzZWUgZm9yIGV4YW1wbGUgVFBTNjU5
-ODIgWzFdWzJdLiBGb3IKPiBtZSBpdCBpcyBhbiBhcmd1bWVudCBhZ2FpbnN0IG1lcmdpbmcgU1Mg
-YW5kIEhTIGxpbmVzIGludG8gb25lIHBvcnQuIFdoYXQKPiBkbyB5b3UgdGhpbms/CgpJZiB5b3Ug
-c3VwcG9ydCBVU0IzIGFuZCBIRE1JL0RQIGFsdGVybmF0ZSBtb2RlcywgdGhlcmUgaGFzIHRvIGJl
-IGEgbXV4CnNvbWV3aGVyZS4gSXQgY291bGQgYmUgb24gdGhlIFNvQyBvciBleHRlcm5hbCBjaGlw
-LgoKPiBNeSBwcm9wb3NpdGlvbiBvZiBwb3J0IG51bWJlcmluZzoKPiAwOiBJRCBmb3IgdHlwZS1C
-LCBDQyBmb3IgdHlwZS1DCgpJJ2QgZXhwZWN0IElEIGlzIGp1c3QgYSBHUElPIGxpbmUsIHBoeSBw
-aW4gb3IgZ29lcyB0byBzb21lIGNvbnRyb2wgSUMuCgo+IDE6IEhTCj4gMjogVkJVUyAtIEkgYW0g
-bm90IHN1cmUgaWYgdGhpcyBzaG91bGQgYmUgbW9kZWxlZCB0aGlzIHdheSwgYXMgaXQgaXMgbm90
-Cj4gYSBkYXRhIGxpbmUsCgpQcm9iYWJseSBub3QuIFByZSBVU0ItUEQsIGl0J3MgZ29pbmcgdG8g
-YmUgYSByZWd1bGF0b3Igc3VwcGx5IG9yIHNpbmsKb3IgZ29lcyB0byBzb21lIGNvbnRyb2wgSUMu
-IEluIHRoZSBsYXN0IGNhc2UsIHdlIGp1c3QgbmVlZCBhIHBoYW5kbGUKcmVmZXJlbmNlIG9mIHNv
-bWUgc29ydC4gRm9yIFVTQi1QRCwgSSdkIGV4cGVjdCB0aGF0IFZidXMsIENDLCBTQlUgYW5kCnBl
-cmhhcHMgYWxsIHRoZSBTUyBsaW5lcyBhcmUganVzdCByb3V0ZWQgdG8gc29tZSBjb250cm9sbGVy
-LiBNYXliZQpqdXN0IG5lZWQgYSBzaW1pbGFyIHBoYW5kbGUgcmVmZXJlbmNlLgoKPiAzOiBTUwo+
-IDQ6IFNCVQoKSGFuZGxpbmcgdGhlc2UgaXMgcHJvYmFibHkgc29tZXdoYXQgb3V0IG9mIHNjb3Bl
-IG9mIHRoZSBjb25uZWN0b3IuCkhETUkgZXhwZWN0cyB0byBoYXZlIGEgImRkYy1pMmMtYnVzIiBh
-bmQgaHBkLWdwaW9zIHByb3BlcnRpZXMKdHlwaWNhbGx5LiBXaGVyZSBkbyB3ZSBwdXQgdGhvc2Ug
-aW4gdGhpcyB1c2UgY2FzZT8KClJvYgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+On Wed, Oct 04, 2017 at 06:38:11PM +0200, Kamil Konieczny wrote:
+> Add support for MD5, SHA1, SHA256 hash algorithms for Exynos HW.
+> It uses the crypto framework asynchronous hash api.
+> It is based on omap-sham.c driver.
+> S5P has some HW differencies and is not implemented.
+> 
+> Modifications in s5p-sss:
+> 
+> - Add hash supporting structures and functions.
+> 
+> - Modify irq handler to handle both aes and hash signals.
+> 
+> - Resize resource end in probe if EXYNOS_HASH is enabled in
+>   Kconfig.
+> 
+> - Add new copyright line and new author.
+> 
+> - Tested on Odroid-U3 with Exynos 4412 CPU, kernel 4.13-rc6
+>   with crypto run-time self test testmgr
+>   and with tcrypt module with: modprobe tcrypt sec=1 mode=N
+>   where N=402, 403, 404 (MD5, SHA1, SHA256).
+> 
+> Modifications in drivers/crypto/Kconfig:
+> 
+> - Add new CRYPTO_DEV_EXYNOS_HASH, depend on !EXYNOS_RNG
+>   and CRYPTO_DEV_S5P
+> 
+> - Select sw algorithms MD5, SHA1 and SHA256 in EXYNOS_HASH
+>   as they are nedded for fallback.
+> 
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+> version 4:
+> - fixes suggested by Krzysztof Kozlowski: reformat comments, convert context
+>   flag into two bool vars, drop SSS_ALIGNED, change name of SSS_DMA_ALIGN and
+>   SSS_DMA_ALIGN_MASK, split assignments into separate lines, use IS_ENABLED in
+>   place of ifdef, remove sss_hash_algs_info and simplify register and deregister
+>   HASH algs
+> 
+> version 3:
+> - many fixes suggested by Krzysztof Kozlowski: comments, uppercases in const,
+>   remove unused defines, remove unused variable bs, constify aes_variant,
+>   remove global var use_hash, remove WARN_ON, improve hash_import(),
+>   change goto label into 'out' in s5p_hash_handle_queue(), reorder variable
+>   declarations, add spinlock to protect clearing HASH_FLAGS_BUSY
+> - simplify code: replace one-line functions s5p_hash_update_req(),
+>   s5p_hash_final_req() with call to s5p_hash_xmit_dma(), and delete them
+> - replace call to s5p_hash_hw_init() into s5p_ahash_dma_init() and delete it
+> - fix clearing shash flag CRYPTO_TFM_REQ_MAY_SLEEP
+> - fix s5p_hash_set_flow()
+> 
+> version 2:
+> - change patch format so number of lines drops
+> - change in Kconfig as suggested by Krzysztof Kozlowski, add
+> 	EXYNOS_HASH subsection
+> - change #ifndef EXYNOS_RNG into #ifdef CRYPTO_DEV_EXYNOS_HASH
+> - remove style fixups in aes, as they should go in separate patch
+> - remove FLOW_LOG, FLOW_DUMP macros and its uses
+> - remove #if 0 ... endif
+> - remove unused function hash_wait and its defines
+> - fix compiler warning in dev_dbg
+> - remove some comments
+> - other minor fixes in comments
+> 
+>  drivers/crypto/Kconfig   |   14 +
+>  drivers/crypto/s5p-sss.c | 1441 +++++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 1445 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+> index fe33c199fc1a..01cf07ce34c5 100644
+> --- a/drivers/crypto/Kconfig
+> +++ b/drivers/crypto/Kconfig
+> @@ -439,6 +439,20 @@ config CRYPTO_DEV_S5P
+>  	  Select this to offload Samsung S5PV210 or S5PC110, Exynos from AES
+>  	  algorithms execution.
+>  
+> +config CRYPTO_DEV_EXYNOS_HASH
+> +	bool "Support for Samsung Exynos HASH accelerator"
+> +	depends on CRYPTO_DEV_S5P
+> +	depends on !CRYPTO_DEV_EXYNOS_RNG && CRYPTO_DEV_EXYNOS_RNG!=m
+> +	select CRYPTO_SHA1
+> +	select CRYPTO_MD5
+> +	select CRYPTO_SHA256
+> +	help
+> +	  Select this to offload Exynos from HASH MD5/SHA1/SHA256.
+> +	  This will select software SHA1, MD5 and SHA256 as they are
+> +	  needed for small and zero-size messages.
+> +	  HASH algorithms will be disabled if EXYNOS_RNG
+> +	  is enabled due to hw conflict.
+> +
+>  config CRYPTO_DEV_NX
+>  	bool "Support for IBM PowerPC Nest (NX) cryptographic acceleration"
+>  	depends on PPC64
+> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+> index 7ac657f46d15..2864efeaf8f8 100644
+> --- a/drivers/crypto/s5p-sss.c
+> +++ b/drivers/crypto/s5p-sss.c
+> @@ -1,18 +1,21 @@
+>  /*
+>   * Cryptographic API.
+>   *
+> - * Support for Samsung S5PV210 HW acceleration.
+> + * Support for Samsung S5PV210 and Exynos HW acceleration.
+>   *
+>   * Copyright (C) 2011 NetUP Inc. All rights reserved.
+> + * Copyright (c) 2017 Samsung Electronics Co., Ltd. All rights reserved.
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2 as published
+>   * by the Free Software Foundation.
+>   *
+> + * Hash part based on omap-sham.c driver.
+>   */
+>  
+>  #include <linux/clk.h>
+>  #include <linux/crypto.h>
+> +#include <linux/delay.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/err.h>
+>  #include <linux/errno.h>
+> @@ -30,28 +33,41 @@
+>  #include <crypto/algapi.h>
+>  #include <crypto/scatterwalk.h>
+>  
+> +#include <crypto/hash.h>
+> +#include <crypto/md5.h>
+> +#include <crypto/sha.h>
+> +#include <crypto/internal/hash.h>
+> +
+>  #define _SBF(s, v)                      ((v) << (s))
+>  
+>  /* Feed control registers */
+>  #define SSS_REG_FCINTSTAT               0x0000
+> +#define SSS_FCINTSTAT_HPARTINT		BIT(7)
+> +#define SSS_FCINTSTAT_HDONEINT		BIT(5)
+>  #define SSS_FCINTSTAT_BRDMAINT          BIT(3)
+>  #define SSS_FCINTSTAT_BTDMAINT          BIT(2)
+>  #define SSS_FCINTSTAT_HRDMAINT          BIT(1)
+>  #define SSS_FCINTSTAT_PKDMAINT          BIT(0)
+>  
+>  #define SSS_REG_FCINTENSET              0x0004
+> +#define SSS_FCINTENSET_HPARTINTENSET	BIT(7)
+> +#define SSS_FCINTENSET_HDONEINTENSET	BIT(5)
+>  #define SSS_FCINTENSET_BRDMAINTENSET    BIT(3)
+>  #define SSS_FCINTENSET_BTDMAINTENSET    BIT(2)
+>  #define SSS_FCINTENSET_HRDMAINTENSET    BIT(1)
+>  #define SSS_FCINTENSET_PKDMAINTENSET    BIT(0)
+>  
+>  #define SSS_REG_FCINTENCLR              0x0008
+> +#define SSS_FCINTENCLR_HPARTINTENCLR	BIT(7)
+> +#define SSS_FCINTENCLR_HDONEINTENCLR	BIT(5)
+>  #define SSS_FCINTENCLR_BRDMAINTENCLR    BIT(3)
+>  #define SSS_FCINTENCLR_BTDMAINTENCLR    BIT(2)
+>  #define SSS_FCINTENCLR_HRDMAINTENCLR    BIT(1)
+>  #define SSS_FCINTENCLR_PKDMAINTENCLR    BIT(0)
+>  
+>  #define SSS_REG_FCINTPEND               0x000C
+> +#define SSS_FCINTPEND_HPARTINTP		BIT(7)
+> +#define SSS_FCINTPEND_HDONEINTP		BIT(5)
+>  #define SSS_FCINTPEND_BRDMAINTP         BIT(3)
+>  #define SSS_FCINTPEND_BTDMAINTP         BIT(2)
+>  #define SSS_FCINTPEND_HRDMAINTP         BIT(1)
+> @@ -72,6 +88,7 @@
+>  #define SSS_HASHIN_INDEPENDENT          _SBF(0, 0x00)
+>  #define SSS_HASHIN_CIPHER_INPUT         _SBF(0, 0x01)
+>  #define SSS_HASHIN_CIPHER_OUTPUT        _SBF(0, 0x02)
+> +#define SSS_HASHIN_MASK			_SBF(0, 0x03)
+>  
+>  #define SSS_REG_FCBRDMAS                0x0020
+>  #define SSS_REG_FCBRDMAL                0x0024
+> @@ -146,9 +163,84 @@
+>  #define AES_KEY_LEN         16
+>  #define CRYPTO_QUEUE_LEN    1
+>  
+> +/* HASH registers */
+> +#define SSS_REG_HASH_CTRL		0x00
+> +
+> +#define SSS_HASH_USER_IV_EN		BIT(5)
+> +#define SSS_HASH_INIT_BIT		BIT(4)
+> +#define SSS_HASH_ENGINE_SHA1		_SBF(1, 0x00)
+> +#define SSS_HASH_ENGINE_MD5		_SBF(1, 0x01)
+> +#define SSS_HASH_ENGINE_SHA256		_SBF(1, 0x02)
+> +
+> +#define SSS_HASH_ENGINE_MASK		_SBF(1, 0x03)
+> +
+> +#define SSS_REG_HASH_CTRL_PAUSE		0x04
+> +
+> +#define SSS_HASH_PAUSE			BIT(0)
+> +
+> +#define SSS_REG_HASH_CTRL_FIFO		0x08
+> +
+> +#define SSS_HASH_FIFO_MODE_DMA		BIT(0)
+> +#define SSS_HASH_FIFO_MODE_CPU          0
+> +
+> +#define SSS_REG_HASH_CTRL_SWAP		0x0C
+> +
+> +#define SSS_HASH_BYTESWAP_DI		BIT(3)
+> +#define SSS_HASH_BYTESWAP_DO		BIT(2)
+> +#define SSS_HASH_BYTESWAP_IV		BIT(1)
+> +#define SSS_HASH_BYTESWAP_KEY		BIT(0)
+> +
+> +#define SSS_REG_HASH_STATUS		0x10
+> +
+> +#define SSS_HASH_STATUS_MSG_DONE	BIT(6)
+> +#define SSS_HASH_STATUS_PARTIAL_DONE	BIT(4)
+> +#define SSS_HASH_STATUS_BUFFER_READY	BIT(0)
+> +
+> +#define SSS_REG_HASH_MSG_SIZE_LOW	0x20
+> +#define SSS_REG_HASH_MSG_SIZE_HIGH	0x24
+> +
+> +#define SSS_REG_HASH_PRE_MSG_SIZE_LOW	0x28
+> +#define SSS_REG_HASH_PRE_MSG_SIZE_HIGH	0x2C
+> +
+> +#define SSS_REG_HASH_IV(s)		(0xB0 + ((s) << 2))
+> +#define SSS_REG_HASH_OUT(s)		(0x100 + ((s) << 2))
+> +
+> +#define HASH_BLOCK_SIZE			64
+> +#define HASH_REG_SIZEOF			4
+> +#define HASH_MD5_MAX_REG		(MD5_DIGEST_SIZE / HASH_REG_SIZEOF)
+> +#define HASH_SHA1_MAX_REG		(SHA1_DIGEST_SIZE / HASH_REG_SIZEOF)
+> +#define HASH_SHA256_MAX_REG		(SHA256_DIGEST_SIZE / HASH_REG_SIZEOF)
+> +
+> +/*
+> + * HASH bit numbers, used by device, setting in dev->hash_flags with
+> + * functions set_bit(), clear_bit() or tested with test_bit() or BIT(),
+> + * to keep HASH state BUSY or FREE, or to signal state from irq_handler
+> + * to hash_tasklet. SGS keep track of allocated memory for scatterlist
+> + */
+> +#define HASH_FLAGS_BUSY		0
+> +#define HASH_FLAGS_FINAL	1
+> +#define HASH_FLAGS_DMA_ACTIVE	2
+> +#define HASH_FLAGS_OUTPUT_READY	3
+> +#define HASH_FLAGS_DMA_READY	4
+> +#define HASH_FLAGS_SGS_COPIED	5
+> +#define HASH_FLAGS_SGS_ALLOCED	6
+> +
+> +/* HASH op codes */
+> +#define HASH_OP_UPDATE		1
+> +#define HASH_OP_FINAL		2
+> +
+> +/* HASH HW constants */
+> +#define BUFLEN			HASH_BLOCK_SIZE
+> +
+> +#define SSS_HASH_DMA_LEN_ALIGN	8
+> +#define SSS_HASH_DMA_ALIGN_MASK	(SSS_HASH_DMA_LEN_ALIGN - 1)
+> +
+> +#define SSS_HASH_QUEUE_LENGTH	10
+> +
+>  /**
+>   * struct samsung_aes_variant - platform specific SSS driver data
+>   * @aes_offset: AES register offset from SSS module's base.
+> + * @hash_offset: HASH register offset from SSS module's base.
+>   *
+>   * Specifies platform specific configuration of SSS module.
+>   * Note: A structure for driver specific platform data is used for future
+> @@ -156,6 +248,7 @@
+>   */
+>  struct samsung_aes_variant {
+>  	unsigned int			aes_offset;
+> +	unsigned int			hash_offset;
+>  };
+>  
+>  struct s5p_aes_reqctx {
+> @@ -195,6 +288,19 @@ struct s5p_aes_ctx {
+>   *		protects against concurrent access to these fields.
+>   * @lock:	Lock for protecting both access to device hardware registers
+>   *		and fields related to current request (including the busy field).
+> + * @res:	Resources for hash.
+> + * @io_hash_base: Per-variant offset for HASH block IO memory.
+> + * @hash_lock:	Lock for protecting hash_req, hash_queue and hash_flags
+> + *		variable.
+> + * @hash_tasklet: New HASH request scheduling job.
+> + * @xmit_buf:	Buffer for current HASH request transfer into SSS block.
+> + * @hash_flags:	Flags for current HASH op.
+> + * @hash_queue:	Async hash queue.
+> + * @hash_req:	Current request sending to SSS HASH block.
+> + * @hash_sg_iter: Scatterlist transferred through DMA into SSS HASH block.
+> + * @hash_sg_cnt: Counter for hash_sg_iter.
+> + *
+> + * @use_hash:	true if HASH algs enabled
+>   */
+>  struct s5p_aes_dev {
+>  	struct device			*dev;
+> @@ -215,16 +321,84 @@ struct s5p_aes_dev {
+>  	struct crypto_queue		queue;
+>  	bool				busy;
+>  	spinlock_t			lock;
+> +
+> +	struct resource			*res;
+> +	void __iomem			*io_hash_base;
+> +
+> +	spinlock_t			hash_lock; /* protect hash_ vars */
+> +	unsigned long			hash_flags;
+> +	struct crypto_queue		hash_queue;
+> +	struct tasklet_struct		hash_tasklet;
+> +
+> +	u8				xmit_buf[BUFLEN];
+> +	struct ahash_request		*hash_req;
+> +	struct scatterlist		*hash_sg_iter;
+> +	int				hash_sg_cnt;
+> +
+> +	bool				use_hash;
+>  };
+>  
+> -static struct s5p_aes_dev *s5p_dev;
+> +/**
+> + * struct s5p_hash_reqctx - HASH request context
+> + * @dev:	Associated device
+> + * @flags:	Bits for current HASH request
+> + * @op:		Current request operation (OP_UPDATE or UP_FINAL)
+
+s/UP_FINAL/OP_FINAL/
+
+> + * @digcnt:	Number of bytes processed by HW (without buffer[] ones)
+> + * @digest:	Digest message or IV for partial result
+> + * @bufcnt:	Number of bytes holded in buffer[]
+> + * @nregs:	Number of HW registers for digest or IV read/write
+> + * @engine:	Bits for selecting type of HASH in SSS block
+> + * @sg:		sg for DMA transfer
+> + * @sg_len:	Length of sg for DMA transfer
+> + * @sgl[]:	sg for joining buffer and req->src scatterlist
+> + * @skip:	Skip offset in req->src for current op
+> + * @total:	Total number of bytes for current request
+> + * @finup:	Keep state for finup or final.
+> + * @error:	Keep track of error.
+> + * @buffer[]:	For byte(s) from end of req->src in UPDATE op
+> + */
+> +struct s5p_hash_reqctx {
+> +	struct s5p_aes_dev	*dd;
+> +	int			op;
+
+Thanks for converting it from bit-type. Since it can be only UPDATE or
+FINAL then please replace this and #defines with just enum.
+
+Rest looks good for me.
+
+Best regards,
+Krzysztof
+
+> +
+> +	u64			digcnt;
+> +	u8			digest[SHA256_DIGEST_SIZE];
+> +	u32			bufcnt;
+> +
+> +	int			nregs; /* digest_size / sizeof(reg) */
+> +	u32			engine;
+> +
+> +	struct scatterlist	*sg;
+> +	int			sg_len;
+> +	struct scatterlist	sgl[2];
+> +	int			skip;
+> +	unsigned int		total;
+> +	bool			finup;
+> +	bool			error;
+> +
+> +	u8			buffer[0];
+> +};
+> +
