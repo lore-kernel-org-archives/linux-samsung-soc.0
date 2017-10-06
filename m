@@ -1,141 +1,72 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 1/4] dt-bindings: add bindings for USB physical
- connector
-Date: Thu, 5 Oct 2017 18:12:04 -0500
-Message-ID: <20171005231204.ghvohuue26knemn6@rob-hp-laptop>
-References: <20170928130730.8747-1-a.hajda@samsung.com>
- <CGME20170928130735eucas1p1da4f062b6948350289bba9c8bc911dd7@eucas1p1.samsung.com>
- <20170928130730.8747-2-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170928130730.8747-2-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [RFC 1/2] ARM: dts: exynos: update the usbdrd phy and ref clk
+Date: Fri,  6 Oct 2017 04:36:34 +0000
+Message-ID: <1507264595-3565-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37409 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750710AbdJFEgo (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 6 Oct 2017 00:36:44 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Vivek Gautam <vivek.gautam@codeaurora.org>, Anand Moon <linux.amoon@gmail.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 28, 2017 at 03:07:27PM +0200, Andrzej Hajda wrote:
-> These bindings allows to describe most known standard USB connectors
-> and it should be possible to extend it if necessary.
-> USB connectors, beside USB can be used to route other protocols,
-> for example UART, Audio, MHL. In such case every device passing data
-> through the connector should have appropriate graph bindings.
+update the usbdrd link control and phy contol clks.
 
-Yay!
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+Tested on Odroid XU4 and Odroid HC1 develpment board.
+Did not test Odroid XU develpment board.
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 4 ++--
+ arch/arm/boot/dts/exynos5420.dtsi | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> There are few things for discussion (IMO):
-> 1. vendor specific connectors, I have added them here, but maybe better is
->    to place them in separate files.
-
-I'd worry about the standard connectors first, but probably good to have 
-an idea of how vendor connectors need to be extended.
-
-> 2. physical connector description - I have split it to three properties:
->    type(a,b,ab,c), max-mode(ls,fs,hs,ss,ss+), size(mini,micro,powered).
->    This tripled is able to describe all USB-standard connectors, but there
->    are also impossible combinations, for example(c, *, micro). Maybe better
->    would be to just enumerate all possible connectors in include file.
-
-We did "type" for hdmi-connector, but I think I'd really prefer 
-compatible be used to distinguish as least where it may matter to s/w. 
-In the HDMI case, they all are pretty much the same, just different 
-physical size.
-
-> 3. Numbering of port/remote nodes, currently only 0 is assigned for Interface
->    Controller. Maybe other functions should be also assigned:
->    HS, SS, CC, SBU, ... whatever. Maybe functions should be described
->    as an additional property of remote node?
-
-child of the controller is also an option. There's already prec
-
-> ...
-> 
-> Regards
-> Andrzej
-> ---
->  .../bindings/connector/usb-connector.txt           | 49 ++++++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> new file mode 100644
-> index 000000000000..f3a4e85122d5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> @@ -0,0 +1,49 @@
-> +USB Connector
-> +=============
-> +
-> +Required properties:
-> +- compatible: "usb-connector"
-> +  connectors with vendor specific extensions can add one of additional
-> +  compatibles:
-> +    "samsung,usb-connector-11pin": 11-pin Samsung micro-USB connector
-> +- type: the USB connector type: "a", "b", "ab", "c"
-> +- max-mode: max USB speed mode supported by the connector:
-> +  "ls", "fs", "hs", "ss", "ss+"
-
-Do we really see cases where the connector is slower than the 
-controller? Plus things like "ls" with an type A connector are not 
-valid.
-
-> +
-> +Optional properties:
-> +- label: a symbolic name for the connector
-> +- size: size of the connector, should be specified in case of
-> +  non-standard USB connectors: "mini", "micro", "powered"
-
-What does powered mean?
-
-This is really "type" if you compare to HDMI.
-
-> +
-> +Required nodes:
-> +- any data bus to the connector should be modeled using the
-> +  OF graph bindings specified in bindings/graph.txt.
-> +  There should be exactly one port with at least one endpoint to
-> +  different device nodes. The first endpoint (reg = <0>) should
-> +  point to USB Interface Controller.
-> +
-> +Example
-> +-------
-> +
-> +musb_con: connector {
-> +	compatible = "samsung,usb-connector-11pin", "usb-connector";
-> +	label = "usb";
-
-> +	type = "b";
-> +	size = "micro";
-> +	max-mode = "hs";
-
-These all are implied by "samsung,usb-connector-11pin".
-
-> +
-> +	port {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		musb_con_usb_in: endpoint@0 {
-> +			reg = <0>;
-> +			remote-endpoint = <&muic_usb_out>;
-> +		};
-> +
-> +		musb_con_mhl_in: endpoint@1 {
-> +			reg = <1>;
-> +			remote-endpoint = <&mhl_out>;
-> +		};
-
-I think this should be 2 ports, not 2 endpoints. Think of ports as 
-different data streams and endpoints are either the same data stream 
-muxed or fanned out depending on direction. Now for Type-C, 1 port for 
-USB and alternate modes is probably correct.
-
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 7eab4bc..5af9f4b 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -385,7 +385,7 @@
+ };
+ 
+ &usbdrd_phy0 {
+-	clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
++	clocks = <&clock CLK_SCLK_USBPHY300>, <&clock CLK_SCLK_USBD300>;
+ 	clock-names = "phy", "ref";
+ 	samsung,pmu-syscon = <&pmu_system_controller>;
+ };
+@@ -400,7 +400,7 @@
+ };
+ 
+ &usbdrd_phy1 {
+-	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
++	clocks = <&clock CLK_SCLK_USBPHY301>, <&clock CLK_SCLK_USBD301>;
+ 	clock-names = "phy", "ref";
+ 	samsung,pmu-syscon = <&pmu_system_controller>;
+ };
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 88e5d6d..36d26ab 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -1461,7 +1461,7 @@
+ };
+ 
+ &usbdrd_phy0 {
+-	clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
++	clocks = <&clock CLK_SCLK_USBPHY300>, <&clock CLK_SCLK_USBD300>;
+ 	clock-names = "phy", "ref";
+ 	samsung,pmu-syscon = <&pmu_system_controller>;
+ };
+@@ -1476,7 +1476,7 @@
+ };
+ 
+ &usbdrd_phy1 {
+-	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
++	clocks = <&clock CLK_SCLK_USBPHY301>, <&clock CLK_SCLK_USBD301>;
+ 	clock-names = "phy", "ref";
+ 	samsung,pmu-syscon = <&pmu_system_controller>;
+ };
+-- 
+2.7.4
