@@ -1,89 +1,157 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC 2/2] phy: exynos5-usbdrd: remove disable and enable of phy clk
-Date: Fri, 6 Oct 2017 08:42:22 +0200
-Message-ID: <CAJKOXPe9FCKqrvsgdohTAN9tXXwbMOuyaDiHPxZ1Ym1LLPD41w@mail.gmail.com>
-References: <1507264595-3565-1-git-send-email-linux.amoon@gmail.com> <1507264595-3565-2-git-send-email-linux.amoon@gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC PATCH 1/4] dt-bindings: add bindings for USB physical
+ connector
+Date: Fri, 06 Oct 2017 13:10:39 +0200
+Message-ID: <f242145c-d69d-9dce-3ea4-0ed00a400eef@samsung.com>
+References: <20170928130730.8747-1-a.hajda@samsung.com>
+ <CGME20170928130735eucas1p1da4f062b6948350289bba9c8bc911dd7@eucas1p1.samsung.com>
+ <20170928130730.8747-2-a.hajda@samsung.com>
+ <20171005231204.ghvohuue26knemn6@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1507264595-3565-2-git-send-email-linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20171005231204.ghvohuue26knemn6@rob-hp-laptop>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 6, 2017 at 6:36 AM, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> remove the disable and enable of phy clk.
-> phy clk is needed to tune the phy controller.
-
-Drivers should in general enable and disable the clocks they use. Just
-like in patch #1 please describe why you are doing this, what kind of
-problem are you trying to solve and what exactly are you trying to do
-here.
-
-BR,
-Krzysztof
-
->
-> Before:
->     mout_usbd300                          1            1 24000000          0 0
->        dout_usbd300                       0            0    24000000          0 0
->           sclk_usbd300                    0            0    24000000          0 0
->        dout_usbphy300                     1            1    24000000          0 0
->           sclk_usbphy300                  3            3    24000000          0 0
->     mout_usbd301                          1            1    24000000          0 0
->        dout_usbd301                       0            0    24000000          0 0
->           sclk_usbd301                    0            0    24000000          0 0
->        dout_usbphy301                     1            1    24000000          0 0
->           sclk_usbphy301                  2            2    24000000          0 0
-> After:
->     mout_usbd300                          2            2    24000000          0 0
->        dout_usbd300                       1            1    24000000          0 0
->           sclk_usbd300                    2            2    24000000          0 0
->        dout_usbphy300                     1            1    24000000          0 0
->           sclk_usbphy300                  3            3    24000000          0 0
->     mout_usbd301                          2            2    24000000          0 0
->        dout_usbd301                       1            1    24000000          0 0
->           sclk_usbd301                    2            2    24000000          0 0
->        dout_usbphy301                     1            1    24000000          0 0
->           sclk_usbphy301                  2            2    24000000          0 0
->
-> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/phy/samsung/phy-exynos5-usbdrd.c | 7 -------
->  1 file changed, 7 deletions(-)
->
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index 22c68f5..5e8054c 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -409,22 +409,15 @@ static int exynos5_usbdrd_phy_init(struct phy *phy)
->         reg &= ~PHYCLKRST_PORTRESET;
->         writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
->
-> -       clk_disable_unprepare(phy_drd->clk);
-> -
->         return 0;
->  }
->
->  static int exynos5_usbdrd_phy_exit(struct phy *phy)
->  {
-> -       int ret;
->         u32 reg;
->         struct phy_usb_instance *inst = phy_get_drvdata(phy);
->         struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
->
-> -       ret = clk_prepare_enable(phy_drd->clk);
-> -       if (ret)
-> -               return ret;
-> -
->         reg =   PHYUTMI_OTGDISABLE |
->                 PHYUTMI_FORCESUSPEND |
->                 PHYUTMI_FORCESLEEP;
-> --
-> 2.7.4
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgUm9iLAoKVGhhbmtzIGZvciByZXZpZXcuCgpPbiAwNi4xMC4yMDE3IDAxOjEyLCBSb2IgSGVy
+cmluZyB3cm90ZToKPiBPbiBUaHUsIFNlcCAyOCwgMjAxNyBhdCAwMzowNzoyN1BNICswMjAwLCBB
+bmRyemVqIEhhamRhIHdyb3RlOgo+PiBUaGVzZSBiaW5kaW5ncyBhbGxvd3MgdG8gZGVzY3JpYmUg
+bW9zdCBrbm93biBzdGFuZGFyZCBVU0IgY29ubmVjdG9ycwo+PiBhbmQgaXQgc2hvdWxkIGJlIHBv
+c3NpYmxlIHRvIGV4dGVuZCBpdCBpZiBuZWNlc3NhcnkuCj4+IFVTQiBjb25uZWN0b3JzLCBiZXNp
+ZGUgVVNCIGNhbiBiZSB1c2VkIHRvIHJvdXRlIG90aGVyIHByb3RvY29scywKPj4gZm9yIGV4YW1w
+bGUgVUFSVCwgQXVkaW8sIE1ITC4gSW4gc3VjaCBjYXNlIGV2ZXJ5IGRldmljZSBwYXNzaW5nIGRh
+dGEKPj4gdGhyb3VnaCB0aGUgY29ubmVjdG9yIHNob3VsZCBoYXZlIGFwcHJvcHJpYXRlIGdyYXBo
+IGJpbmRpbmdzLgo+IFlheSEKPgo+PiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhh
+amRhQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gVGhlcmUgYXJlIGZldyB0aGluZ3MgZm9yIGRpc2N1
+c3Npb24gKElNTyk6Cj4+IDEuIHZlbmRvciBzcGVjaWZpYyBjb25uZWN0b3JzLCBJIGhhdmUgYWRk
+ZWQgdGhlbSBoZXJlLCBidXQgbWF5YmUgYmV0dGVyIGlzCj4+ICAgIHRvIHBsYWNlIHRoZW0gaW4g
+c2VwYXJhdGUgZmlsZXMuCj4gSSdkIHdvcnJ5IGFib3V0IHRoZSBzdGFuZGFyZCBjb25uZWN0b3Jz
+IGZpcnN0LCBidXQgcHJvYmFibHkgZ29vZCB0byBoYXZlIAo+IGFuIGlkZWEgb2YgaG93IHZlbmRv
+ciBjb25uZWN0b3JzIG5lZWQgdG8gYmUgZXh0ZW5kZWQuCj4KPj4gMi4gcGh5c2ljYWwgY29ubmVj
+dG9yIGRlc2NyaXB0aW9uIC0gSSBoYXZlIHNwbGl0IGl0IHRvIHRocmVlIHByb3BlcnRpZXM6Cj4+
+ICAgIHR5cGUoYSxiLGFiLGMpLCBtYXgtbW9kZShscyxmcyxocyxzcyxzcyspLCBzaXplKG1pbmks
+bWljcm8scG93ZXJlZCkuCj4+ICAgIFRoaXMgdHJpcGxlZCBpcyBhYmxlIHRvIGRlc2NyaWJlIGFs
+bCBVU0Itc3RhbmRhcmQgY29ubmVjdG9ycywgYnV0IHRoZXJlCj4+ICAgIGFyZSBhbHNvIGltcG9z
+c2libGUgY29tYmluYXRpb25zLCBmb3IgZXhhbXBsZShjLCAqLCBtaWNybykuIE1heWJlIGJldHRl
+cgo+PiAgICB3b3VsZCBiZSB0byBqdXN0IGVudW1lcmF0ZSBhbGwgcG9zc2libGUgY29ubmVjdG9y
+cyBpbiBpbmNsdWRlIGZpbGUuCj4gV2UgZGlkICJ0eXBlIiBmb3IgaGRtaS1jb25uZWN0b3IsIGJ1
+dCBJIHRoaW5rIEknZCByZWFsbHkgcHJlZmVyIAo+IGNvbXBhdGlibGUgYmUgdXNlZCB0byBkaXN0
+aW5ndWlzaCBhcyBsZWFzdCB3aGVyZSBpdCBtYXkgbWF0dGVyIHRvIHMvdy4gCj4gSW4gdGhlIEhE
+TUkgY2FzZSwgdGhleSBhbGwgYXJlIHByZXR0eSBtdWNoIHRoZSBzYW1lLCBqdXN0IGRpZmZlcmVu
+dCAKPiBwaHlzaWNhbCBzaXplLgoKSSBndWVzcyB0aGF0IGZyb20gUy9XIHBvaW50IG9mIHZpZXcg
+b25seSBtYXR0ZXJzOgotIHdoaWNoIElQIGlzIGNvbm5lY3RlZCB0byB3aGljaCBwYXJ0IG9mIHRo
+ZSBjb25uZWN0b3IsIGFuZCB0aGlzIGNhbiBiZQpoYW5kbGVkIGJ5IHBvcnQgbm9kZShzKSwKLSBU
+eXBlOiBBLCBCLCBDCi0gcHJvYmFibHkgbWF4aW1hbCBzdXBwb3J0ZWQgc3BlZWQgb2YgdGhlIGNv
+bm5lY3RvciAtIGZvciBleGFtcGxlIFNTKwpjb25uZWN0b3JzIGhhdmUgdGhlIHNhbWUgd2lyZXMg
+YnV0IGRpZmZlcmVudCBlbGVjdHJpY2FsIGNoYXJhY3RlcmlzdGljcwp0aGFuIFNTIGFzIEkgdW5k
+ZXJzdGFuZCwKCldpdGggdGhpcyBpbiBtaW5kIG1heWJlIHdlIGNhbiBkcm9wICd0eXBlJyBhbmQg
+aW50cm9kdWNlIGZvbGxvd2luZwpjb21wYXRpYmxlczoKLSB1c2ItYS1jb25uZWN0b3IsCi0gdXNi
+LWItY29ubmVjdG9yLAotIHVzYi1jLWNvbm5lY3Rvci4KRW5jb2Rpbmcgb3RoZXIgcHJvcGVydGll
+cyBpbiBjb21wYXRpYmxlIHdvdWxkIGV4cGxvZGUgdGhlaXIgbnVtYmVyLCBzbyBJCndvdWxkIHBy
+ZWZlciB0byBhdm9pZCBpdC4KSSB3b3VsZCBsZWF2ZSBvdGhlciBwcm9wczoKbWF4LXNwZWVkOiBo
+cywgc3MsIHNzKywKKG9wdGlvbmFsKXNpemU6IG1pY3JvLCBtaW5pCgpJIHdvdWxkIGRyb3AgYWxz
+byB1bnBvcHVsYXIvb2Jzb2xldGUgdmFyaWFudHM6IHR5cGUtYWIsIHBvd2VyZWQsIHRoZXkKY2Fu
+IGJlIGFkZGVkIGxhdGVyIGlmIG5lY2Vzc2FyeS4KCkp1c3QgZm9yIHJlZmVyZW5jZSwgbGlzdCBv
+ZiBjb25uZWN0b3JzIGRlZmluZWQgYnkgVVNCICg+PSAyKSBzcGVjaWZpY2F0aW9uczoKMS4gVVNC
+IDIuMCAod2l0aCBsYXRlciBhbWVuZG1lbnRzKToKLSBTdGFuZGFyZC1BIHBsdWcgYW5kIHJlY2Vw
+dGFjbGUKLSBTdGFuZGFyZC1CIHBsdWcgYW5kIHJlY2VwdGFjbGUKLSBNaW5pLUIgcGx1ZyBhbmQg
+cmVjZXB0YWNsZQotIE1pY3JvLUIgcGx1ZyBhbmQgcmVjZXB0YWNsZQotIE1pY3JvLUFCIHJlY2Vw
+dGFjbGUKLSBNaWNyby1BIHBsdWcKMi4gVVNCIDMuMDoKLSBVU0IgMy4wIFN0YW5kYXJkLUEgcGx1
+ZyBhbmQgcmVjZXB0YWNsZQotIFVTQiAzLjAgU3RhbmRhcmQtQiBwbHVnIGFuZCByZWNlcHRhY2xl
+Ci0gVVNCIDMuMCBQb3dlcmVkLUIgcGx1ZyBhbmQgcmVjZXB0YWNsZQotIFVTQiAzLjAgTWljcm8t
+QiBwbHVnIGFuZCByZWNlcHRhY2xlCi0gVVNCIDMuMCBNaWNyby1BIHBsdWcKLSBVU0IgMy4wIE1p
+Y3JvLUFCIHJlY2VwdGFjbGUKMy4gVVNCIDMuMToKLSBFbmhhbmNlZCBTdXBlclNwZWVkIFN0YW5k
+YXJkLUEgcGx1ZyBhbmQgcmVjZXB0YWNsZQotIEVuaGFuY2VkIFN1cGVyU3BlZWQgU3RhbmRhcmQt
+QiBwbHVnIGFuZCByZWNlcHRhY2xlCi0gRW5oYW5jZWQgU3VwZXJTcGVlZCBNaWNyby1CIHBsdWcg
+YW5kIHJlY2VwdGFjbGUKLSBFbmhhbmNlZCBTdXBlclNwZWVkIE1pY3JvLUEgcGx1ZwotIEVuaGFu
+Y2VkIFN1cGVyU3BlZWQgTWljcm8tQUIgcmVjZXB0YWNsZQo0LiBVU0ItQyAocmVsZWFzZSAxLjMp
+OgotIFVTQiBGdWxsLUZlYXR1cmVkIFR5cGUtQyByZWNlcHRhY2xlCi0gVVNCIDIuMCBUeXBlLUMg
+cmVjZXB0YWNsZQotIFVTQiBGdWxsLUZlYXR1cmVkIFR5cGUtQyBwbHVnCi0gVVNCIDIuMCBUeXBl
+LUMgcGx1ZwotIFVTQiBUeXBlLUMgUG93ZXItT25seSBwbHVnCgo+PiAzLiBOdW1iZXJpbmcgb2Yg
+cG9ydC9yZW1vdGUgbm9kZXMsIGN1cnJlbnRseSBvbmx5IDAgaXMgYXNzaWduZWQgZm9yIEludGVy
+ZmFjZQo+PiAgICBDb250cm9sbGVyLiBNYXliZSBvdGhlciBmdW5jdGlvbnMgc2hvdWxkIGJlIGFs
+c28gYXNzaWduZWQ6Cj4+ICAgIEhTLCBTUywgQ0MsIFNCVSwgLi4uIHdoYXRldmVyLiBNYXliZSBm
+dW5jdGlvbnMgc2hvdWxkIGJlIGRlc2NyaWJlZAo+PiAgICBhcyBhbiBhZGRpdGlvbmFsIHByb3Bl
+cnR5IG9mIHJlbW90ZSBub2RlPwo+IGNoaWxkIG9mIHRoZSBjb250cm9sbGVyIGlzIGFsc28gYW4g
+b3B0aW9uLiBUaGVyZSdzIGFscmVhZHkgcHJlYwoKU2hhbGwgd2Ugc3VwcG9ydCBib3RoIHNvbHV0
+aW9ucyBvciBqdXN0IG1ha2Ugb25lIG1hbmRhdG9yeT8KCj4KPj4gLi4uCj4+Cj4+IFJlZ2FyZHMK
+Pj4gQW5kcnplago+PiAtLS0KPj4gIC4uLi9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rv
+ci50eHQgICAgICAgICAgIHwgNDkgKysrKysrKysrKysrKysrKysrKysrKwo+PiAgMSBmaWxlIGNo
+YW5nZWQsIDQ5IGluc2VydGlvbnMoKykKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY29ubmVjdG9yL3VzYi1jb25uZWN0b3IudHh0Cj4+Cj4+
+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY29ubmVjdG9y
+L3VzYi1jb25uZWN0b3IudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nv
+bm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dAo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+PiBpbmRl
+eCAwMDAwMDAwMDAwMDAuLmYzYTRlODUxMjJkNQo+PiAtLS0gL2Rldi9udWxsCj4+ICsrKyBiL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci50
+eHQKPj4gQEAgLTAsMCArMSw0OSBAQAo+PiArVVNCIENvbm5lY3Rvcgo+PiArPT09PT09PT09PT09
+PQo+PiArCj4+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+PiArLSBjb21wYXRpYmxlOiAidXNiLWNv
+bm5lY3RvciIKPj4gKyAgY29ubmVjdG9ycyB3aXRoIHZlbmRvciBzcGVjaWZpYyBleHRlbnNpb25z
+IGNhbiBhZGQgb25lIG9mIGFkZGl0aW9uYWwKPj4gKyAgY29tcGF0aWJsZXM6Cj4+ICsgICAgInNh
+bXN1bmcsdXNiLWNvbm5lY3Rvci0xMXBpbiI6IDExLXBpbiBTYW1zdW5nIG1pY3JvLVVTQiBjb25u
+ZWN0b3IKPj4gKy0gdHlwZTogdGhlIFVTQiBjb25uZWN0b3IgdHlwZTogImEiLCAiYiIsICJhYiIs
+ICJjIgo+PiArLSBtYXgtbW9kZTogbWF4IFVTQiBzcGVlZCBtb2RlIHN1cHBvcnRlZCBieSB0aGUg
+Y29ubmVjdG9yOgo+PiArICAibHMiLCAiZnMiLCAiaHMiLCAic3MiLCAic3MrIgo+IERvIHdlIHJl
+YWxseSBzZWUgY2FzZXMgd2hlcmUgdGhlIGNvbm5lY3RvciBpcyBzbG93ZXIgdGhhbiB0aGUgCj4g
+Y29udHJvbGxlcj8gUGx1cyB0aGluZ3MgbGlrZSAibHMiIHdpdGggYW4gdHlwZSBBIGNvbm5lY3Rv
+ciBhcmUgbm90IAo+IHZhbGlkLgoKRm9yIGV4YW1wbGUgR2FsYXh5IE5vdGUgNCAtIGl0IGhhcyBV
+U0IzIGNvbnRyb2xsZXIgYW5kIG1pY3JvLVVTQiAyLjAKY29ubmVjdG9yLgoKPgo+PiArCj4+ICtP
+cHRpb25hbCBwcm9wZXJ0aWVzOgo+PiArLSBsYWJlbDogYSBzeW1ib2xpYyBuYW1lIGZvciB0aGUg
+Y29ubmVjdG9yCj4+ICstIHNpemU6IHNpemUgb2YgdGhlIGNvbm5lY3Rvciwgc2hvdWxkIGJlIHNw
+ZWNpZmllZCBpbiBjYXNlIG9mCj4+ICsgIG5vbi1zdGFuZGFyZCBVU0IgY29ubmVjdG9yczogIm1p
+bmkiLCAibWljcm8iLCAicG93ZXJlZCIKPiBXaGF0IGRvZXMgcG93ZXJlZCBtZWFuPwoKSXQgaXMg
+c3RhbmRhcmQtQiBjb25uZWN0b3Igd2l0aCBhZGRpdGlvbmFsIHBvd2VyIHBpbnMsIGFzIGRlZmlu
+ZWQgaW4KVVNCMy4wIHNwZWMsIHdlIGNhbiBkcm9wIGl0IGFzIG5vdC1wb3B1bGFyIG9uZS4KCgo+
+Cj4gVGhpcyBpcyByZWFsbHkgInR5cGUiIGlmIHlvdSBjb21wYXJlIHRvIEhETUkuCgpBcyB0eXBl
+IGlzIGFscmVhZHkgdXNlZCzCoCBJIGhhdmUgdG8gdXNlIG90aGVyIHdvcmQsIG1heWJlICdmb3Jt
+JyB3b3VsZApiZSBiZXR0ZXIuCgo+Cj4+ICsKPj4gK1JlcXVpcmVkIG5vZGVzOgo+PiArLSBhbnkg
+ZGF0YSBidXMgdG8gdGhlIGNvbm5lY3RvciBzaG91bGQgYmUgbW9kZWxlZCB1c2luZyB0aGUKPj4g
+KyAgT0YgZ3JhcGggYmluZGluZ3Mgc3BlY2lmaWVkIGluIGJpbmRpbmdzL2dyYXBoLnR4dC4KPj4g
+KyAgVGhlcmUgc2hvdWxkIGJlIGV4YWN0bHkgb25lIHBvcnQgd2l0aCBhdCBsZWFzdCBvbmUgZW5k
+cG9pbnQgdG8KPj4gKyAgZGlmZmVyZW50IGRldmljZSBub2Rlcy4gVGhlIGZpcnN0IGVuZHBvaW50
+IChyZWcgPSA8MD4pIHNob3VsZAo+PiArICBwb2ludCB0byBVU0IgSW50ZXJmYWNlIENvbnRyb2xs
+ZXIuCj4+ICsKPj4gK0V4YW1wbGUKPj4gKy0tLS0tLS0KPj4gKwo+PiArbXVzYl9jb246IGNvbm5l
+Y3RvciB7Cj4+ICsJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHVzYi1jb25uZWN0b3ItMTFwaW4iLCAi
+dXNiLWNvbm5lY3RvciI7Cj4+ICsJbGFiZWwgPSAidXNiIjsKPj4gKwl0eXBlID0gImIiOwo+PiAr
+CXNpemUgPSAibWljcm8iOwo+PiArCW1heC1tb2RlID0gImhzIjsKPiBUaGVzZSBhbGwgYXJlIGlt
+cGxpZWQgYnkgInNhbXN1bmcsdXNiLWNvbm5lY3Rvci0xMXBpbiIuCgpZZXMsIGJ1dCAidXNiLWNv
+bm5lY3RvciIgY29tcGF0aWJsZSByZXF1aXJlcy9wZXJtaXRzIGl0LCBvciBhbSBJIHdyb25nID8K
+Cj4KPj4gKwo+PiArCXBvcnQgewo+PiArCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKPj4gKwkJI3Np
+emUtY2VsbHMgPSA8MD47Cj4+ICsKPj4gKwkJbXVzYl9jb25fdXNiX2luOiBlbmRwb2ludEAwIHsK
+Pj4gKwkJCXJlZyA9IDwwPjsKPj4gKwkJCXJlbW90ZS1lbmRwb2ludCA9IDwmbXVpY191c2Jfb3V0
+PjsKPj4gKwkJfTsKPj4gKwo+PiArCQltdXNiX2Nvbl9taGxfaW46IGVuZHBvaW50QDEgewo+PiAr
+CQkJcmVnID0gPDE+Owo+PiArCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZtaGxfb3V0PjsKPj4gKwkJ
+fTsKPiBJIHRoaW5rIHRoaXMgc2hvdWxkIGJlIDIgcG9ydHMsIG5vdCAyIGVuZHBvaW50cy4gVGhp
+bmsgb2YgcG9ydHMgYXMgCj4gZGlmZmVyZW50IGRhdGEgc3RyZWFtcyBhbmQgZW5kcG9pbnRzIGFy
+ZSBlaXRoZXIgdGhlIHNhbWUgZGF0YSBzdHJlYW0gCj4gbXV4ZWQgb3IgZmFubmVkIG91dCBkZXBl
+bmRpbmcgb24gZGlyZWN0aW9uLiBOb3cgZm9yIFR5cGUtQywgMSBwb3J0IGZvciAKPiBVU0IgYW5k
+IGFsdGVybmF0ZSBtb2RlcyBpcyBwcm9iYWJseSBjb3JyZWN0LgoKSSBhZ3JlZSBmb3IgcG9ydHMu
+ClJlZ2FyZGluZyB0eXBlLWMsIGl0IGhhcyBzZXBhcmF0ZSBsaW5lcyBmb3IgSFMgYW5kIGZvciBT
+Uy4gSFMgbGluZXMKb2Z0ZW4gZ28gdG8gSW50ZXJmYWNlIENvbnRyb2xsZXIgYXMgdGhleSBjYW4g
+YmUgdXNlZCB0byBsZWdhY3kgZGV0ZWN0aW9uCm1ldGhvZHMgYW5kIGFsdGVybmF0aXZlbHkgbXV4
+ZWQgdG8gVUFSVC4KU1MgbGluZXMgZ28gZGlyZWN0bHkgdG8gVVNCMyBjaGlwLCBzZWUgZm9yIGV4
+YW1wbGUgVFBTNjU5ODIgWzFdWzJdLiBGb3IKbWUgaXQgaXMgYW4gYXJndW1lbnQgYWdhaW5zdCBt
+ZXJnaW5nIFNTIGFuZCBIUyBsaW5lcyBpbnRvIG9uZSBwb3J0LiBXaGF0CmRvIHlvdSB0aGluaz8K
+TXkgcHJvcG9zaXRpb24gb2YgcG9ydCBudW1iZXJpbmc6CjA6IElEIGZvciB0eXBlLUIsIENDIGZv
+ciB0eXBlLUMKMTogSFMKMjogVkJVUyAtIEkgYW0gbm90IHN1cmUgaWYgdGhpcyBzaG91bGQgYmUg
+bW9kZWxlZCB0aGlzIHdheSwgYXMgaXQgaXMgbm90CmEgZGF0YSBsaW5lLAozOiBTUwo0OiBTQlUK
+CkluIGNhc2Ugb2YgY29ubmVjdG9yIGJlaW5nIGNoaWxkIG5vZGUgb2YgY29udHJvbGxlciBzb21l
+IHBvcnRzIGNhbiBiZQpvbWl0ZWQuCgpbMV06IGh0dHA6Ly93d3cudGkuY29tL29kcy9pbWFnZXMv
+U0xWU0QwMkMvcGcxX3NsdnNkMDIuZ2lmClsyXTogaHR0cDovL3d3dy50aS5jb20vcHJvZHVjdC9U
+UFM2NTk4Mi9kYXRhc2hlZXQKClJlZ2FyZHMKQW5kcnplagoKPgo+IFJvYgo+Cj4KPgoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
