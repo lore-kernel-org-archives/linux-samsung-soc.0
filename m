@@ -1,99 +1,92 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [RFC 1/2] ARM: dts: exynos: update the usbdrd phy and ref clk
-Date: Mon, 9 Oct 2017 02:36:13 +0530
-Message-ID: <CANAwSgRX0FJ0piYd_T_FeUpKP=Dg5sCjhAH+7r_=JUvS-CNONQ@mail.gmail.com>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 2/2] phy: exynos5-usbdrd: remove disable and enable of phy clk
+Date: Mon, 9 Oct 2017 02:37:14 +0530
+Message-ID: <CANAwSgSMFBS8n48=_OnNNs_=Di9Oqq2tNeiwZM9u1qaLevLP4w@mail.gmail.com>
 References: <1507264595-3565-1-git-send-email-linux.amoon@gmail.com>
- <CAJKOXPe=hd7QdsaqpqPv3cNvL59FBqCfy24mYmGdQvi7Yp8wBQ@mail.gmail.com>
- <CANAwSgRK+F62xKFeFM9ZJ_rgPWj831ca=tX9BSKXUyRBhN4yhA@mail.gmail.com> <20171008154759.moic645jwrp7nztg@kozik-lap>
+ <1507264595-3565-2-git-send-email-linux.amoon@gmail.com> <CAJKOXPe9FCKqrvsgdohTAN9tXXwbMOuyaDiHPxZ1Ym1LLPD41w@mail.gmail.com>
+ <CANAwSgSbHR+e_2wX3i3VoVxPe10mUOoS94uRpvebfUfybaNQ+g@mail.gmail.com> <20171008155015.252gefhsc4tks7k6@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171008154759.moic645jwrp7nztg@kozik-lap>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Vivek Gautam <vivek.gautam@codeaurora.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171008155015.252gefhsc4tks7k6@kozik-lap>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Krzysztof,
 
-On 8 October 2017 at 21:17, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Sun, Oct 08, 2017 at 06:06:19PM +0530, Anand Moon wrote:
+On 8 October 2017 at 21:20, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Sun, Oct 08, 2017 at 06:11:12PM +0530, Anand Moon wrote:
 >> Hi Krzysztof,
 >>
->> On 6 October 2017 at 12:08, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> > On Fri, Oct 6, 2017 at 6:36 AM, Anand Moon <linux.amoon@gmail.com> wrote:
->> >> update the usbdrd link control and phy contol clks.
+>> On 6 October 2017 at 12:12, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+>> > On Fri, Oct 6, 2017 at 6:36 AM, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> >> remove the disable and enable of phy clk.
+>> >> phy clk is needed to tune the phy controller.
 >> >
->> > The commit title and especially commit message should explain why you
->> > are doing this and what are you doing. "Update" is not enough.
->> > Everything could be called update.
->> >
->> > Therefore I do not understand the reason behind the patch.
+>> > Drivers should in general enable and disable the clocks they use. Just
+>> > like in patch #1 please describe why you are doing this, what kind of
+>> > problem are you trying to solve and what exactly are you trying to do
+>> > here.
 >> >
 >> > BR,
 >> > Krzysztof
+>> >
 >>
->> so as per the driver.
->> @clk: phy clock for register access
->> @ref_clk: reference clock to PHY block from which PHY's operational
->> clocks are derived
+>> [snip]
 >>
->> Both CLK_SCLK_USBPHY300 and CLK_SCLK_USBD300 belong to FSYS Clock
->> and CLK_USBD300 clk is being used by the usbdrd dwc3 module.
+>> Usually we would disable the clk on error patch and return with failed.
+>> but in the current code we disable the clk in init routine and
+>> enable the clk in disable routine which seem incorrect.
+>
+> No. For example for exynos5_usbdrd_phy_exit() the driver enables the
+> clock only for the access to PHY block (PHY registers).
+>
+
+But I dont get it why we disable code phy clk, which could be used in
+future phy tune or link control as it part of CLK_FSYS.
+
 >>
->> [0] https://github.com/torvalds/linux/blob/master/drivers/clk/samsung/clk-exynos5420.c#L1040-L1053
+>> [0] https://github.com/torvalds/linux/blob/master/drivers/phy/samsung/phy-exynos5-usbdrd.c#L362-L412
+>> [1] https://github.com/torvalds/linux/blob/master/drivers/phy/samsung/phy-exynos5-usbdrd.c#L424-L446
 >>
->> So their is mismatch of the clk used by the usbdrd driver.
+>> On 3.10.x kernel clk_summary all the clk are enables.
+>>
+>>     mout_usbdrd300              3           3            24000000
+>>        dout_usbdrd300           2           2            24000000
+>>           sclk_usbdrd300        1           1            24000000
+>>        dout_usbphy300           2           2            24000000
+>>           sclk_usbphy300        1           1            24000000
+>>     mout_usbdrd301              3           3            24000000
+>>        dout_usbdrd301           2           2            24000000
+>>           sclk_usbdrd301        1           1            24000000
+>>        dout_usbphy301           2           2            24000000
+>>           sclk_usbphy301        1           1            24000000
+>>
+>> Some more changes in clk driver might be required to stabilize the usb module.
 >
-> Where is the mismatch? I do not understand.
->
->> with the above changes the driver work well with camera and disk drives
->> connected to usb 3.0 ports and their is improvement in the performance.
->
-> If something is not working now, please describe it exactly so we could
-> both reproduce and then observe the end results of fix.
->
-> I do not understand how the change of these clocks brings improvement in
-> performance... ok, sometimes it might happen if the rate of clock is
-> being used on bus. Is this the case?
+> Please describe the issues with stability first.
 >
 > Best regards,
 > Krzysztof
 >
-[snip]
+On stability:
 
-As per Exynos5422 CMU
+USB 3.0 read / write performance is not up to mark with moderate data
+read / write speed,
+If you give long compilation of kernel or any source code it would
+likely be slow
+It work pretty good with USB 3.0 SSD but generally failed with 2.5' inc HDD.
 
-CLK_SCLK_USBPHY300 and CLK_SCLK_USBD300 are special clk meant to
-control the usbdrd
+If needed I will share you some performance test result with and
+without these patches.
 
-CLK_SCLK_USBPHY300/1 is used for phy control
-CLK_SCLK_USBD300/1 is used for link control.
-
-Following link share the details of the CMU_TOP
-[0] https://imgur.com/9OKaXEM
-
-On Odroid cloudshell module with old hard disk it time to time do reset of hub.
-on heavy traffic of data.
-
-[46953.765974] usb 4-1.1: reset SuperSpeed USB device number 3 using xhci-hcd
-[47006.851310] usb 4-1.1: reset SuperSpeed USB device number 3 using xhci-hcd
-
-[  730.078441] sd 1:0:0:0: [sdb] tag#5 CDB: opcode=0x2a 2a 00 26 b6 58
-80 00 00 80 00
-[  730.078471] sd 1:0:0:0: [sdb] tag#6 uas_zap_pending 0 uas-tag 7 inflight: CMD
-[  730.078498] sd 1:0:0:0: [sdb] tag#6 CDB: opcode=0x28 28 00 00 00 20
-00 00 04 00 00
-[  730.161071] usb 4-1.2: reset SuperSpeed USB device number 4 using xhci-hcd
-[  730.187194] scsi host1: uas_eh_bus_reset_handler success
-
-At some time it work stable but eventfully their is loss of data.
-
-On 3.10.x
-It clk gate is tuned to support CLK_GATE_MULTI_BIT_SET, I am not sure
-how this will apply on 4.x kernel
-
-[1] https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/drivers/clk/samsung/clk-exynos5422.c#L1771-L1777
+I have some more changes related to usbdrd phy change queued along this on.
 
 Best Regards
 -Anand
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
