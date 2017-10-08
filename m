@@ -1,12 +1,13 @@
 From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [RFC 1/2] ARM: dts: exynos: update the usbdrd phy and ref clk
-Date: Sun, 8 Oct 2017 18:06:19 +0530
-Message-ID: <CANAwSgRK+F62xKFeFM9ZJ_rgPWj831ca=tX9BSKXUyRBhN4yhA@mail.gmail.com>
-References: <1507264595-3565-1-git-send-email-linux.amoon@gmail.com> <CAJKOXPe=hd7QdsaqpqPv3cNvL59FBqCfy24mYmGdQvi7Yp8wBQ@mail.gmail.com>
+Subject: Re: [RFC 2/2] phy: exynos5-usbdrd: remove disable and enable of phy clk
+Date: Sun, 8 Oct 2017 18:11:12 +0530
+Message-ID: <CANAwSgSbHR+e_2wX3i3VoVxPe10mUOoS94uRpvebfUfybaNQ+g@mail.gmail.com>
+References: <1507264595-3565-1-git-send-email-linux.amoon@gmail.com>
+ <1507264595-3565-2-git-send-email-linux.amoon@gmail.com> <CAJKOXPe9FCKqrvsgdohTAN9tXXwbMOuyaDiHPxZ1Ym1LLPD41w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPe=hd7QdsaqpqPv3cNvL59FBqCfy24mYmGdQvi7Yp8wBQ@mail.gmail.com>
+In-Reply-To: <CAJKOXPe9FCKqrvsgdohTAN9tXXwbMOuyaDiHPxZ1Ym1LLPD41w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Vivek Gautam <vivek.gautam@codeaurora.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
@@ -14,45 +15,43 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Krzysztof,
 
-On 6 October 2017 at 12:08, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 6 October 2017 at 12:12, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > On Fri, Oct 6, 2017 at 6:36 AM, Anand Moon <linux.amoon@gmail.com> wrote:
->> update the usbdrd link control and phy contol clks.
+>> remove the disable and enable of phy clk.
+>> phy clk is needed to tune the phy controller.
 >
-> The commit title and especially commit message should explain why you
-> are doing this and what are you doing. "Update" is not enough.
-> Everything could be called update.
->
-> Therefore I do not understand the reason behind the patch.
+> Drivers should in general enable and disable the clocks they use. Just
+> like in patch #1 please describe why you are doing this, what kind of
+> problem are you trying to solve and what exactly are you trying to do
+> here.
 >
 > BR,
 > Krzysztof
+>
 
-so as per the driver.
-@clk: phy clock for register access
-@ref_clk: reference clock to PHY block from which PHY's operational
-clocks are derived
+[snip]
 
-Both CLK_SCLK_USBPHY300 and CLK_SCLK_USBD300 belong to FSYS Clock
-and CLK_USBD300 clk is being used by the usbdrd dwc3 module.
+Usually we would disable the clk on error patch and return with failed.
+but in the current code we disable the clk in init routine and
+enable the clk in disable routine which seem incorrect.
 
-[0] https://github.com/torvalds/linux/blob/master/drivers/clk/samsung/clk-exynos5420.c#L1040-L1053
+[0] https://github.com/torvalds/linux/blob/master/drivers/phy/samsung/phy-exynos5-usbdrd.c#L362-L412
+[1] https://github.com/torvalds/linux/blob/master/drivers/phy/samsung/phy-exynos5-usbdrd.c#L424-L446
 
-So their is mismatch of the clk used by the usbdrd driver.
-with the above changes the driver work well with camera and disk drives
-connected to usb 3.0 ports and their is improvement in the performance.
+On 3.10.x kernel clk_summary all the clk are enables.
 
-root@odroid:~# lsusb -t
-/:  Bus 06.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
-/:  Bus 05.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
-    |__ Port 1: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 480M
-/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
-    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 5000M
-        |__ Port 1: Dev 3, If 0, Class=Mass Storage, Driver=uas, 5000M
-        |__ Port 2: Dev 4, If 0, Class=Mass Storage, Driver=uas, 5000M
-/:  Bus 03.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
-    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 480M
-/:  Bus 02.Port 1: Dev 1, Class=root_hub, Driver=exynos-ohci/3p, 12M
-/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=exynos-ehci/3p, 480M
+    mout_usbdrd300              3           3            24000000
+       dout_usbdrd300           2           2            24000000
+          sclk_usbdrd300        1           1            24000000
+       dout_usbphy300           2           2            24000000
+          sclk_usbphy300        1           1            24000000
+    mout_usbdrd301              3           3            24000000
+       dout_usbdrd301           2           2            24000000
+          sclk_usbdrd301        1           1            24000000
+       dout_usbphy301           2           2            24000000
+          sclk_usbphy301        1           1            24000000
+
+Some more changes in clk driver might be required to stabilize the usb module.
 
 Best Regards
 -Anand
