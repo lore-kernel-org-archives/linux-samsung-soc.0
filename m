@@ -1,110 +1,124 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: [PATCHv4 1/2] drivers: phy: add calibrate method
-Date: Mon, 09 Oct 2017 14:00:50 +0200
-Message-ID: <1507550451-21324-2-git-send-email-andrzej.p@samsung.com>
-References: <6de8a17a-745b-0fa2-c39d-cdeb28fc9489@ti.com>
-        <1507550451-21324-1-git-send-email-andrzej.p@samsung.com>
-        <CGME20171009120101eucas1p1c79faf4b39df7f9ff622404a15922875@eucas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] iommu/exynos: Remove initconst attribute to avoid
+ potential kernel oops
+Date: Mon, 9 Oct 2017 14:42:26 +0200
+Message-ID: <CAJKOXPf2uq7FsfzW9bQyN78ikLMLnuaZdK_zCJNgu1zrgjc6gw@mail.gmail.com>
+References: <CGME20171009114035eucas1p102089b889ad374b33c3302f1ad84e783@eucas1p1.samsung.com>
+ <20171009114023.3427-1-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41281 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751184AbdJIMBG (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:46792 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751241AbdJIMm3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 08:01:06 -0400
-In-reply-to: <1507550451-21324-1-git-send-email-andrzej.p@samsung.com>
+        Mon, 9 Oct 2017 08:42:29 -0400
+Received: from mail-wm0-f42.google.com (mail-wm0-f42.google.com [74.125.82.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A802521924
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Oct 2017 12:42:28 +0000 (UTC)
+Received: by mail-wm0-f42.google.com with SMTP id q132so23082477wmd.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Oct 2017 05:42:28 -0700 (PDT)
+In-Reply-To: <20171009114023.3427-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Some quirky UDCs (like dwc3 on Exynos) need to have their phys calibrated e.g.
-for using super speed. This patch adds a new phy_calibrate() method.
-When the calibration should be used is dependent on actual chip.
+On Mon, Oct 9, 2017 at 1:40 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Exynos SYSMMU registers standard platform device with sysmmu_of_match
+> table, what means that this table is accessed every time a new platform
+> device is registered in a system. This might happen also after the boot,
+> so the table must not be attributed as initconst to avoid potential kernel
+> oops caused by access to freed memory.
+>
+> Fixes: 6b21a5db3642 ("iommu/exynos: Support for device tree")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Hi!
+>
+> This issue was there from the beggining of the device tree
+> support, I'm really surprised that it has not been noticed it till
+> now. This patch fixes the following hard-to-debug kernel issue:
+>
+> Unable to handle kernel paging request at virtual address ffffff80090fb018
+> Mem abort info:
+>   Exception class = DABT (current EL), IL = 32 bits
+>   SET = 0, FnV = 0
+>   EA = 0, S1PTW = 0
+> Data abort info:
+>   ISV = 0, ISS = 0x00000007
+>   CM = 0, WnR = 0
+> swapper pgtable: 4k pages, 39-bit VAs, pgd = ffffff80097f9000
+> [ffffff80090fb018] *pgd=00000008ffffe003, *pud=00000008ffffe003, *pmd=00000008ffffb003, *pte=0000000000000000
+> Internal error: Oops: 96000007 [#1] PREEMPT SMP
+> Modules linked in:
+> CPU: 7 PID: 102 Comm: kworker/7:1 Tainted: G S              4.14.0-rc1+ #4572
+> Hardware name: Samsung DREAMLTE EUR rev10 board based on EXYNOS8895 (DT)
+> Workqueue: events deferred_probe_work_func
+> task: ffffffc87a7f1b00 task.stack: ffffff8009b88000
+> PC is at __of_match_node+0x24/0x7c
+> LR is at of_match_node+0x38/0x5c
+> pc : [<ffffff800871ac6c>] lr : [<ffffff800871acfc>] pstate: a00001c5
+> sp : ffffff8009b8bba0
+> x29: ffffff8009b8bba0 x28: ffffffc87ff8fc00
+> x27: ffffff80095c7000 x26: ffffff80096e76e0
+> x25: ffffff8008f1e7a0 x24: ffffff800965d000
+> x23: ffffff800977d008 x22: 0000000000000000
+> x21: ffffffc87ffcd598 x20: 0000000000000000
+> x19: ffffff80090fb018 x18: 0000000000000000
+> x17: 0000000000000000 x16: 0000000000000000
+> x15: 0000000000000008 x14: 0000000000000000
+> x13: 0000000000000040 x12: 0000000000000038
+> x11: 0000000000000001 x10: 0101010101010101
+> x9 : 06fefeff01fefeff x8 : 7f7f7f7f7f7f7f7f
+> x7 : 2f2f2f2f382f3030 x6 : 4354571454455d5d
+> x5 : 5d5d455414575443 x4 : ffffff8009b8c000
+> x3 : ffffff8009b88000 x2 : 0000000000000000
+> x1 : ffffffc87ffcd598 x0 : ffffff80090fb018
+> Process kworker/7:1 (pid: 102, stack limit = 0xffffff8009b88000)
+> Call trace:
+> Exception stack(0xffffff8009b8ba60 to 0xffffff8009b8bba0)
+> ba60: ffffff80090fb018 ffffffc87ffcd598 0000000000000000 ffffff8009b88000
+> ba80: ffffff8009b8c000 5d5d455414575443 4354571454455d5d 2f2f2f2f382f3030
+> baa0: 7f7f7f7f7f7f7f7f 06fefeff01fefeff 0101010101010101 0000000000000001
+> bac0: 0000000000000038 0000000000000040 0000000000000000 0000000000000008
+> bae0: 0000000000000000 0000000000000000 0000000000000000 ffffff80090fb018
+> bb00: 0000000000000000 ffffffc87ffcd598 0000000000000000 ffffff800977d008
+> bb20: ffffff800965d000 ffffff8008f1e7a0 ffffff80096e76e0 ffffff80095c7000
+> bb40: ffffffc87ff8fc00 ffffff8009b8bba0 ffffff800871acfc ffffff8009b8bba0
+> bb60: ffffff800871ac6c 00000000a00001c5 ffffffc800000000 ffffff800871acec
+> bb80: ffffffffffffffff ffffff800871acec ffffff8009b8bba0 ffffff800871ac6c
+> [<ffffff800871ac6c>] __of_match_node+0x24/0x7c
+> [<ffffff800871acfc>] of_match_node+0x38/0x5c
+> [<ffffff800871c5d0>] of_match_device+0x18/0x28
+> [<ffffff80085031c0>] platform_match+0x4c/0xc8
+> [<ffffff8008500c68>] __device_attach_driver+0x3c/0x138
+> [<ffffff80084fe7a0>] bus_for_each_drv+0x54/0x94
+> [<ffffff8008500510>] __device_attach+0xc4/0x154
+> [<ffffff8008500d74>] device_initial_probe+0x10/0x18
+> [<ffffff80084ff844>] bus_probe_device+0x90/0x98
+> [<ffffff80084ffdf8>] deferred_probe_work_func+0x64/0x18c
+> [<ffffff80080b5f24>] process_one_work+0x150/0x3dc
+> [<ffffff80080b6208>] worker_thread+0x58/0x3b8
+> [<ffffff80080bbbc4>] kthread+0x104/0x130
+> [<ffffff8008085340>] ret_from_fork+0x10/0x20
+> Code: aa0103f5 b40002a0 52800014 d2800016 (39400264)
+> ---[ end trace 4a748776163027e1 ]---
+>
+> I'm not sure however if it makes sense to add the above kernel log to the
+> commit message as it doesn't directly point to the code fixed by this patch.
+>
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> ---
+>  drivers/iommu/exynos-iommu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-In case of dwc3 on Exynos the calibration must happen after usb_add_hcd()
-(while in host mode), because certain phy parameters like Tx LOS levels
-and boost levels need to be calibrated further post initialization of xHCI
-controller, to get SuperSpeed operations working. But an hcd must be
-prepared first in order to pass it to usb_add_hcd(), so, in particular, dwc3
-registers must be available first, and in order for the latter to happen
-the phys must be initialized. This poses a chicken and egg problem if
-the calibration were to be performed in phy_init(). To break the circular
-dependency a separate method is added which can be called at a desired
-moment after phy intialization.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
----
- drivers/phy/phy-core.c  | 15 +++++++++++++++
- include/linux/phy/phy.h | 10 ++++++++++
- 2 files changed, 25 insertions(+)
-
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index a268f4d..b4964b0 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -372,6 +372,21 @@ int phy_reset(struct phy *phy)
- }
- EXPORT_SYMBOL_GPL(phy_reset);
- 
-+int phy_calibrate(struct phy *phy)
-+{
-+	int ret;
-+
-+	if (!phy || !phy->ops->calibrate)
-+		return 0;
-+
-+	mutex_lock(&phy->mutex);
-+	ret = phy->ops->calibrate(phy);
-+	mutex_unlock(&phy->mutex);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(phy_calibrate);
-+
- /**
-  * _of_phy_get() - lookup and obtain a reference to a phy by phandle
-  * @np: device_node for which to get the phy
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index e694d40..87580c8 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -39,6 +39,7 @@ enum phy_mode {
-  * @power_off: powering off the phy
-  * @set_mode: set the mode of the phy
-  * @reset: resetting the phy
-+ * @calibrate: calibrate the phy
-  * @owner: the module owner containing the ops
-  */
- struct phy_ops {
-@@ -48,6 +49,7 @@ struct phy_ops {
- 	int	(*power_off)(struct phy *phy);
- 	int	(*set_mode)(struct phy *phy, enum phy_mode mode);
- 	int	(*reset)(struct phy *phy);
-+	int	(*calibrate)(struct phy *phy);
- 	struct module *owner;
- };
- 
-@@ -141,6 +143,7 @@ static inline void *phy_get_drvdata(struct phy *phy)
- int phy_power_off(struct phy *phy);
- int phy_set_mode(struct phy *phy, enum phy_mode mode);
- int phy_reset(struct phy *phy);
-+int phy_calibrate(struct phy *phy);
- static inline int phy_get_bus_width(struct phy *phy)
- {
- 	return phy->attrs.bus_width;
-@@ -262,6 +265,13 @@ static inline int phy_reset(struct phy *phy)
- 	return -ENOSYS;
- }
- 
-+static inline int phy_calibrate(struct phy *phy)
-+{
-+	if (!phy)
-+		return 0;
-+	return -ENOSYS;
-+}
-+
- static inline int phy_get_bus_width(struct phy *phy)
- {
- 	return -ENOSYS;
--- 
-1.9.1
+Best regards,
+Krzysztof
