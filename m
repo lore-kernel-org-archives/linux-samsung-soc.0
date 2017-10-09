@@ -1,100 +1,80 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [RFC 2/2] phy: exynos5-usbdrd: remove disable and enable of phy clk
-Date: Mon, 9 Oct 2017 20:46:48 +0530
-Message-ID: <CANAwSgRmyEqTbw1ZfZhenC8Cs4ffgeYB4vyDNsGeX-zvg92aPw@mail.gmail.com>
-References: <1507264595-3565-1-git-send-email-linux.amoon@gmail.com>
- <1507264595-3565-2-git-send-email-linux.amoon@gmail.com> <CAJKOXPe9FCKqrvsgdohTAN9tXXwbMOuyaDiHPxZ1Ym1LLPD41w@mail.gmail.com>
- <CANAwSgSbHR+e_2wX3i3VoVxPe10mUOoS94uRpvebfUfybaNQ+g@mail.gmail.com>
- <20171008155015.252gefhsc4tks7k6@kozik-lap> <CANAwSgSMFBS8n48=_OnNNs_=Di9Oqq2tNeiwZM9u1qaLevLP4w@mail.gmail.com>
+From: "Jingoo Han" <jingoohan1@gmail.com>
+Subject: Re: [PATCH] PCI: exynos: remove redundant code in exynos_pcie_establish_link
+Date: Mon, 9 Oct 2017 12:16:33 -0400
+Message-ID: <000101d34119$f9e18290$eda487b0$@gmail.com>
+References: <CGME20171009141438epcas2p4ead7e2f2d1af7e0950f2c026e3a9943b@epcas2p4.samsung.com> <1507558478-3218-1-git-send-email-pankaj.dubey@samsung.com> <CAJKOXPeC=cS2cvAXHrKuK5F4tEqH6PppwYkxC+Z8+5D--48CAg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:34001 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751636AbdJIPRK (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:34663 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752208AbdJIQQg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 11:17:10 -0400
-In-Reply-To: <CANAwSgSMFBS8n48=_OnNNs_=Di9Oqq2tNeiwZM9u1qaLevLP4w@mail.gmail.com>
+        Mon, 9 Oct 2017 12:16:36 -0400
+In-Reply-To: <CAJKOXPeC=cS2cvAXHrKuK5F4tEqH6PppwYkxC+Z8+5D--48CAg@mail.gmail.com>
+Content-Language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Vivek Gautam <vivek.gautam@codeaurora.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>
+Cc: inux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Anvesh Salveru' <anvesh.s@samsung.com>
 
-hi Krzysztof,
+On Monday, October 9, 2017 10:44 AM, Krzysztof Kozlowski wrote:
+> 
+> On Mon, Oct 9, 2017 at 4:14 PM, Pankaj Dubey <pankaj.dubey@samsung.com>
+> wrote:
+> > From: Anvesh Salveru <anvesh.s@samsung.com>
+> >
+> > In exynos_pcie_establish_link if driver is not using generic phy,
+> > we are resetting PHY twice, which is redundant, so this patch removes
+> 
+> Hi Pankaj,
+> 
+> This lacks the information why it is redundant.
 
-On 9 October 2017 at 02:37, Anand Moon <linux.amoon@gmail.com> wrote:
-> Hi Krzysztof,
->
-> On 8 October 2017 at 21:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On Sun, Oct 08, 2017 at 06:11:12PM +0530, Anand Moon wrote:
->>> Hi Krzysztof,
->>>
->>> On 6 October 2017 at 12:12, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> > On Fri, Oct 6, 2017 at 6:36 AM, Anand Moon <linux.amoon@gmail.com> wrote:
->>> >> remove the disable and enable of phy clk.
->>> >> phy clk is needed to tune the phy controller.
->>> >
->>> > Drivers should in general enable and disable the clocks they use. Just
->>> > like in patch #1 please describe why you are doing this, what kind of
->>> > problem are you trying to solve and what exactly are you trying to do
->>> > here.
->>> >
->>> > BR,
->>> > Krzysztof
->>> >
->>>
->>> [snip]
->>>
->>> Usually we would disable the clk on error patch and return with failed.
->>> but in the current code we disable the clk in init routine and
->>> enable the clk in disable routine which seem incorrect.
->>
+I think so, too.
 
-disable of clk could affect the PMU used to control the phy driver.
+Did you test this code on some boards with Exynos PCIe?
+Or did hardware engineers confirm this?
+Please add more information on this patch.
 
->> No. For example for exynos5_usbdrd_phy_exit() the driver enables the
->> clock only for the access to PHY block (PHY registers).
->>
->
-> But I dont get it why we disable code phy clk, which could be used in
-> future phy tune or link control as it part of CLK_FSYS.
->
->>>
->>> [0] https://github.com/torvalds/linux/blob/master/drivers/phy/samsung/phy-exynos5-usbdrd.c#L362-L412
->>> [1] https://github.com/torvalds/linux/blob/master/drivers/phy/samsung/phy-exynos5-usbdrd.c#L424-L446
->>>
->>> On 3.10.x kernel clk_summary all the clk are enables.
->>>
->>>     mout_usbdrd300              3           3            24000000
->>>        dout_usbdrd300           2           2            24000000
->>>           sclk_usbdrd300        1           1            24000000
->>>        dout_usbphy300           2           2            24000000
->>>           sclk_usbphy300        1           1            24000000
->>>     mout_usbdrd301              3           3            24000000
->>>        dout_usbdrd301           2           2            24000000
->>>           sclk_usbdrd301        1           1            24000000
->>>        dout_usbphy301           2           2            24000000
->>>           sclk_usbphy301        1           1            24000000
->>>
->>> Some more changes in clk driver might be required to stabilize the usb module.
->>
->> Please describe the issues with stability first.
->>
->> Best regards,
->> Krzysztof
->>
-> On stability:
->
-> USB 3.0 read / write performance is not up to mark with moderate data
-> read / write speed,
-> If you give long compilation of kernel or any source code it would
-> likely be slow
-> It work pretty good with USB 3.0 SSD but generally failed with 2.5' inc HDD.
->
-> If needed I will share you some performance test result with and
-> without these patches.
->
-> I have some more changes related to usbdrd phy change queued along this on.
->
-> Best Regards
-> -Anand
+Best regards,
+Jingoo Han
+
+> 
+> > repeated lines of code for PHY reset.
+> >
+> > Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
+> 
+> Your Signed-off-by is needed here.
+> 
+> Best regards,
+> Krzysztof
+> 
+> > ---
+> >  drivers/pci/dwc/pci-exynos.c | 7 -------
+> >  1 file changed, 7 deletions(-)
+> >
+> > diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
+> > index 5596fde..85d2f4b 100644
+> > --- a/drivers/pci/dwc/pci-exynos.c
+> > +++ b/drivers/pci/dwc/pci-exynos.c
+> > @@ -423,13 +423,6 @@ static int exynos_pcie_establish_link(struct
+> exynos_pcie *ep)
+> >                 exynos_pcie_deassert_phy_reset(ep);
+> >                 exynos_pcie_power_on_phy(ep);
+> >                 exynos_pcie_init_phy(ep);
+> > -
+> > -               /* pulse for common reset */
+> > -               exynos_pcie_writel(ep->mem_res->block_base, 1,
+> > -                                       PCIE_PHY_COMMON_RESET);
+> > -               udelay(500);
+> > -               exynos_pcie_writel(ep->mem_res->block_base, 0,
+> > -                                       PCIE_PHY_COMMON_RESET);
+> >         }
+> >
+> >         /* pulse for common reset */
+> > --
+> > 2.7.4
+> >
