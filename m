@@ -1,383 +1,146 @@
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH 1/4] iio: adc: ina2xx: Make max expected current
- configurable
-Date: Mon, 9 Oct 2017 14:35:39 +0100
-Message-ID: <20171009143539.00002222@huawei.com>
-References: <1506603015-27202-1-git-send-email-m.purski@samsung.com>
-        <CGME20170928125053eucas1p19e757ac5c3774f54c7cd0ee4525decbe@eucas1p1.samsung.com>
-        <1506603015-27202-2-git-send-email-m.purski@samsung.com>
-        <20171001112934.360c840b@archlinux>
-        <f04fb517-9866-39fe-310d-b65a915375ca@samsung.com>
-        <20171008104756.6eaa62c5@archlinux>
-        <662441b9-1b04-3e8b-baac-5852ba873ca5@samsung.com>
+From: <carmen.croonquist@alfredadler.edu>
+Subject: (unknown)
+Date: Mon, 09 Oct 2017 13:19:22 -0000
+Message-ID: <150755516254.18525.5529325560999048256@vnpt.vn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <662441b9-1b04-3e8b-baac-5852ba873ca5@samsung.com>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: Maciej Purski <m.purski@samsung.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: application/zip; name="20689.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from static.vnpt.vn ([113.183.255.48]:37875 "HELO vnpt.vn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1754259AbdJINT0 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 9 Oct 2017 09:19:26 -0400
+Subject: 
+Content-Disposition: attachment
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On Mon, 9 Oct 2017 10:08:42 +0200
-Maciej Purski <m.purski@samsung.com> wrote:
-
-> On 10/08/2017 11:47 AM, Jonathan Cameron wrote:
-> > On Wed, 04 Oct 2017 09:11:31 +0200
-> > Maciej Purski <m.purski@samsung.com> wrote:
-> >   
-> >> On 10/01/2017 12:29 PM, Jonathan Cameron wrote:  
-> >>> On Thu, 28 Sep 2017 14:50:12 +0200
-> >>> Maciej Purski <m.purski@samsung.com> wrote:
-> >>>      
-> >>>> Max expected current is used for calculating calibration register value,
-> >>>> Current LSB and Power LSB according to equations found in ina datasheet.
-> >>>> Max expected current is now implicitly set to default value,
-> >>>> which is 2^15, thanks to which Current LSB is equal to 1 mA and
-> >>>> Power LSB is equal to 20000 uW or 25000 uW depending on ina model.
-> >>>>
-> >>>> Make max expected current configurable, just like it's already done
-> >>>> with shunt resistance: from device tree, platform_data or later
-> >>>> from sysfs. On each max_expected_current change, calculate new values
-> >>>> for Current LSB and Power LSB. According to datasheet Current LSB should
-> >>>> be calculated by dividing max expected current by 2^15, as values read
-> >>>> from device registers are in this case 16-bit integers. Power LSB
-> >>>> is calculated by multiplying Current LSB by a factor, which is defined
-> >>>> in ina documentation.  
-> >>>
-> >>> One odd bit of casting inline.  Also this is new userspace ABI.
-> >>> It needs documenting in
-> >>>
-> >>> Documentation/ABI/testing/sysfs-bus-iio* as appropriate.
-> >>> I'm also unclear on one element about this - is it a value used only
-> >>> for calibration or are we talking about the actual 'range' of the device?
-> >>>      
-> >>
-> >> This is used for calibration. The device measures directly only voltage.
-> >> However, it has also current and power registers. Their values are
-> >> calculated by the device using the calibration register which is calculated
-> >> using max expected current. So I guess that it's not what you mean
-> >> by the actual 'range' of the device.
-> >>  
-> >>> The interpretation of this value isn't clear against the more general
-> >>> ABI.
-> >>>
-> >>> In particular it is it in raw units (adc counts) or mA?  Docs say
-> >>> that but the naming of the attribute doesn't make this clear.
-> >>>      
-> >>
-> >> It's in mA. I can make it clear in the attribute name.
-> >>  
-> >>> Also I'm unconvinced this isn't better represented using the
-> >>> range specifications available for any IIO attribute on the raw
-> >>> value in combination with adjusting the scale value.
-> >>> Note not many drivers yet provide ranges on their raw outputs
-> >>> but we do have core support for it.  I've been meaning to start
-> >>> pushing this out into drivers, but been busy since we introduced
-> >>> the core support.  The dpot-dac driver does use it for examplel
-> >>>     
-> >>
-> >>
-> >> I'm not sure if what I'm about to add is similar to what is done
-> >> in the mentioned dpot-dac driver. It seems that the callback read_avail
-> >> returns information on raw values which can be obtained from the device.
-> >> What I need is an adjustable value, which is then used by the device internally
-> >> in order to calculate current with the requested precision. Max expected current
-> >> is also used for calculating the scale value.
-> >> Tell me if I'm wrong. Maybe I misunderstood the 'range' concept in IIO and
-> >> your solution fits in here.
-> >>  
-> > 
-> > I think I answered this in the other branch of the thread.
-> > _calibscale is what you want here as it's internal to the device.
-> > 
-> > It's not one often used for ADCs but quite a few other types of
-> > device provide some front end analog adjustment (whilst it is digital
-> > here, it is applied within the device - so we don't need to care).
-> > 
-> > Jonathan  
-> 
-> Thank you for your explanation. Calibscale seems suitable for me in this case,
-> but what do you think I should do then with SCALE attribute? Should I get rid of 
-> it for current and use only calibscale? Or should I use both calibscale and 
-> scale attributes and for current they will be the same value?
-
-You'll have to leave it as it is existing ABI.  It won't have the same value
-as calibscale.  Calibscale is for internal changes that don't effect the raw
-value.  scale is to be applied by userspace to the raw value. As I understand it
-here the calibscale value should have no effect on scale.
-> 
-> I should mention that currenst_lsb value is also used for calculating power_lsb
-> as they have a fixed ratio (20 or 25) given in the documentation.
-
-Then expose it for power as well (appropriately adjusted).
-In IIO ABI it is fine to have two elements addressing the same underlying hardware
-value - rule is you change something, you check everything else hasn't changed.
-
-Jonathan 
-> 
-> Thanks,
-> 
-> Maciej
-> 
-> >   
-> >> Best regards,
-> >>
-> >> 	Maciej  
-> >>> This moves the burden of calculating the 1lsb value to userspace,
-> >>> but importantly it would give us a consistent ABI where this fits
-> >>> in with existing elements (largely buy not introducing any new
-> >>> ones :).
-> >>>
-> >>> Thanks,
-> >>>
-> >>> Jonathan  
-> >>>>
-> >>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> >>>> ---
-> >>>>    drivers/iio/adc/ina2xx-adc.c         | 110 ++++++++++++++++++++++++++++++-----
-> >>>>    include/linux/platform_data/ina2xx.h |   2 +
-> >>>>    2 files changed, 98 insertions(+), 14 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/iio/adc/ina2xx-adc.c b/drivers/iio/adc/ina2xx-adc.c
-> >>>> index f387b97..883fede 100644
-> >>>> --- a/drivers/iio/adc/ina2xx-adc.c
-> >>>> +++ b/drivers/iio/adc/ina2xx-adc.c
-> >>>> @@ -56,6 +56,7 @@
-> >>>>    #define INA226_DEFAULT_IT		1110
-> >>>>    
-> >>>>    #define INA2XX_RSHUNT_DEFAULT           10000
-> >>>> +#define INA2XX_MAX_EXPECTED_A_DEFAULT	(1 << 15)	/* current_lsb = 1 mA */
-> >>>>    
-> >>>>    /*
-> >>>>     * bit masks for reading the settings in the configuration register
-> >>>> @@ -114,7 +115,7 @@ struct ina2xx_config {
-> >>>>    	int shunt_div;
-> >>>>    	int bus_voltage_shift;
-> >>>>    	int bus_voltage_lsb;	/* uV */
-> >>>> -	int power_lsb;		/* uW */
-> >>>> +	int power_lsb_factor;
-> >>>>    	enum ina2xx_ids chip_id;
-> >>>>    };
-> >>>>    
-> >>>> @@ -123,7 +124,10 @@ struct ina2xx_chip_info {
-> >>>>    	struct task_struct *task;
-> >>>>    	const struct ina2xx_config *config;
-> >>>>    	struct mutex state_lock;
-> >>>> -	unsigned int shunt_resistor;
-> >>>> +	unsigned int shunt_resistor;		/* uOhms */
-> >>>> +	unsigned int max_expected_current;	/* mA */
-> >>>> +	int current_lsb;			/* uA */
-> >>>> +	int power_lsb;				/* uW */
-> >>>>    	int avg;
-> >>>>    	int int_time_vbus; /* Bus voltage integration time uS */
-> >>>>    	int int_time_vshunt; /* Shunt voltage integration time uS */
-> >>>> @@ -137,7 +141,7 @@ static const struct ina2xx_config ina2xx_config[] = {
-> >>>>    		.shunt_div = 100,
-> >>>>    		.bus_voltage_shift = 3,
-> >>>>    		.bus_voltage_lsb = 4000,
-> >>>> -		.power_lsb = 20000,
-> >>>> +		.power_lsb_factor = 20,
-> >>>>    		.chip_id = ina219,
-> >>>>    	},
-> >>>>    	[ina226] = {
-> >>>> @@ -146,7 +150,7 @@ static const struct ina2xx_config ina2xx_config[] = {
-> >>>>    		.shunt_div = 400,
-> >>>>    		.bus_voltage_shift = 0,
-> >>>>    		.bus_voltage_lsb = 1250,
-> >>>> -		.power_lsb = 25000,
-> >>>> +		.power_lsb_factor = 25,
-> >>>>    		.chip_id = ina226,
-> >>>>    	},
-> >>>>    };
-> >>>> @@ -210,14 +214,15 @@ static int ina2xx_read_raw(struct iio_dev *indio_dev,
-> >>>>    
-> >>>>    		case INA2XX_POWER:
-> >>>>    			/* processed (mW) = raw*lsb (uW) / 1000 */
-> >>>> -			*val = chip->config->power_lsb;
-> >>>> +			*val = chip->power_lsb;
-> >>>>    			*val2 = 1000;
-> >>>>    			return IIO_VAL_FRACTIONAL;
-> >>>>    
-> >>>>    		case INA2XX_CURRENT:
-> >>>> -			/* processed (mA) = raw (mA) */
-> >>>> -			*val = 1;
-> >>>> -			return IIO_VAL_INT;
-> >>>> +			/* processed (mA) = raw*lsb (uA) / 1000 */
-> >>>> +			*val = chip->current_lsb;
-> >>>> +			*val2 = 1000;
-> >>>> +			return IIO_VAL_FRACTIONAL;
-> >>>>    		}
-> >>>>    	}
-> >>>>    
-> >>>> @@ -434,24 +439,47 @@ static ssize_t ina2xx_allow_async_readout_store(struct device *dev,
-> >>>>    }
-> >>>>    
-> >>>>    /*
-> >>>> - * Set current LSB to 1mA, shunt is in uOhms
-> >>>> - * (equation 13 in datasheet). We hardcode a Current_LSB
-> >>>> - * of 1.0 x10-6. The only remaining parameter is RShunt.
-> >>>> + * Calculate calibration value according to equation 1 in ina226 datasheet
-> >>>> + * http://www.ti.com/lit/ds/symlink/ina226.pdf.
-> >>>> + * Current LSB is in uA and RShunt is in uOhms, so RShunt should be
-> >>>> + * converted to mOhms in order to keep the scale.
-> >>>>     * There is no need to expose the CALIBRATION register
-> >>>>     * to the user for now. But we need to reset this register
-> >>>> - * if the user updates RShunt after driver init, e.g upon
-> >>>> - * reading an EEPROM/Probe-type value.
-> >>>> + * if the user updates RShunt or max expected current after driver
-> >>>> + * init, e.g upon reading an EEPROM/Probe-type value.
-> >>>>     */
-> >>>>    static int ina2xx_set_calibration(struct ina2xx_chip_info *chip)
-> >>>>    {
-> >>>> +	unsigned int rshunt = DIV_ROUND_CLOSEST(chip->shunt_resistor, 1000);
-> >>>>    	u16 regval = DIV_ROUND_CLOSEST(chip->config->calibration_factor,
-> >>>> -				   chip->shunt_resistor);
-> >>>> +				     chip->current_lsb * rshunt);
-> >>>>    
-> >>>>    	return regmap_write(chip->regmap, INA2XX_CALIBRATION, regval);
-> >>>>    }
-> >>>>    
-> >>>> +/*
-> >>>> + * Set max_expected_current (mA) and calculate current_lsb (uA),
-> >>>> + * according to equation 2 in ina226 datasheet. Power LSB is calculated
-> >>>> + * by multiplying Current LSB by a given factor, which may vary depending
-> >>>> + * on ina version.
-> >>>> + */
-> >>>> +static int set_max_expected_current(struct ina2xx_chip_info *chip,
-> >>>> +				    unsigned int val)
-> >>>> +{
-> >>>> +	if (val <= 0 || val > chip->config->calibration_factor)
-> >>>> +		return -EINVAL;
-> >>>> +
-> >>>> +	chip->max_expected_current = val;
-> >>>> +	chip->current_lsb = DIV_ROUND_CLOSEST(chip->max_expected_current * 1000,
-> >>>> +					      1 << 15);
-> >>>> +	chip->power_lsb = chip->current_lsb * chip->config->power_lsb_factor;
-> >>>> +
-> >>>> +	return 0;
-> >>>> +}
-> >>>> +
-> >>>>    static int set_shunt_resistor(struct ina2xx_chip_info *chip, unsigned int val)
-> >>>>    {
-> >>>> +
-> >>>>    	if (val <= 0 || val > chip->config->calibration_factor)
-> >>>>    		return -EINVAL;
-> >>>>    
-> >>>> @@ -493,6 +521,39 @@ static ssize_t ina2xx_shunt_resistor_store(struct device *dev,
-> >>>>    	return len;
-> >>>>    }
-> >>>>    
-> >>>> +static ssize_t ina2xx_max_expected_current_show(struct device *dev,
-> >>>> +					  struct device_attribute *attr,
-> >>>> +					  char *buf)
-> >>>> +{
-> >>>> +	struct ina2xx_chip_info *chip = iio_priv(dev_to_iio_dev(dev));
-> >>>> +
-> >>>> +	return sprintf(buf, "%d\n", chip->max_expected_current);
-> >>>> +}
-> >>>> +
-> >>>> +static ssize_t ina2xx_max_expected_current_store(struct device *dev,
-> >>>> +					   struct device_attribute *attr,
-> >>>> +					   const char *buf, size_t len)
-> >>>> +{
-> >>>> +	struct ina2xx_chip_info *chip = iio_priv(dev_to_iio_dev(dev));
-> >>>> +	unsigned long val;
-> >>>> +	int ret;
-> >>>> +
-> >>>> +	ret = kstrtoul((const char *) buf, 10, &val);  
-> >>>
-> >>> Odd bit of casting given that's what it already is...
-> >>>      
-> >>>> +	if (ret)
-> >>>> +		return ret;
-> >>>> +
-> >>>> +	ret = set_max_expected_current(chip, val);
-> >>>> +	if (ret)
-> >>>> +		return ret;
-> >>>> +
-> >>>> +	/* Update the Calibration register */
-> >>>> +	ret = ina2xx_set_calibration(chip);
-> >>>> +	if (ret)
-> >>>> +		return ret;
-> >>>> +
-> >>>> +	return len;
-> >>>> +}
-> >>>> +
-> >>>>    #define INA219_CHAN(_type, _index, _address) { \
-> >>>>    	.type = (_type), \
-> >>>>    	.address = (_address), \
-> >>>> @@ -755,10 +816,15 @@ static IIO_DEVICE_ATTR(in_shunt_resistor, S_IRUGO | S_IWUSR,
-> >>>>    		       ina2xx_shunt_resistor_show,
-> >>>>    		       ina2xx_shunt_resistor_store, 0);
-> >>>>    
-> >>>> +static IIO_DEVICE_ATTR(in_max_expected_current, S_IRUGO | S_IWUSR,
-> >>>> +		       ina2xx_max_expected_current_show,
-> >>>> +		       ina2xx_max_expected_current_store, 0);
-> >>>> +
-> >>>>    static struct attribute *ina219_attributes[] = {
-> >>>>    	&iio_dev_attr_in_allow_async_readout.dev_attr.attr,
-> >>>>    	&iio_const_attr_ina219_integration_time_available.dev_attr.attr,
-> >>>>    	&iio_dev_attr_in_shunt_resistor.dev_attr.attr,
-> >>>> +	&iio_dev_attr_in_max_expected_current.dev_attr.attr,
-> >>>>    	NULL,
-> >>>>    };
-> >>>>    
-> >>>> @@ -766,6 +832,7 @@ static struct attribute *ina226_attributes[] = {
-> >>>>    	&iio_dev_attr_in_allow_async_readout.dev_attr.attr,
-> >>>>    	&iio_const_attr_ina226_integration_time_available.dev_attr.attr,
-> >>>>    	&iio_dev_attr_in_shunt_resistor.dev_attr.attr,
-> >>>> +	&iio_dev_attr_in_max_expected_current.dev_attr.attr,
-> >>>>    	NULL,
-> >>>>    };
-> >>>>    
-> >>>> @@ -851,6 +918,21 @@ static int ina2xx_probe(struct i2c_client *client,
-> >>>>    	if (ret)
-> >>>>    		return ret;
-> >>>>    
-> >>>> +	if (of_property_read_u32(client->dev.of_node,
-> >>>> +				  "max-expected-current", &val) < 0) {
-> >>>> +		struct ina2xx_platform_data *pdata =
-> >>>> +		    dev_get_platdata(&client->dev);
-> >>>> +
-> >>>> +		if (pdata && pdata->max_mA != 0)
-> >>>> +			val = pdata->max_mA;
-> >>>> +		else
-> >>>> +			val = INA2XX_MAX_EXPECTED_A_DEFAULT;
-> >>>> +	}
-> >>>> +
-> >>>> +	ret = set_max_expected_current(chip, val);
-> >>>> +	if (ret)
-> >>>> +		return ret;
-> >>>> +
-> >>>>    	/* Patch the current config register with default. */
-> >>>>    	val = chip->config->config_default;
-> >>>>    
-> >>>> diff --git a/include/linux/platform_data/ina2xx.h b/include/linux/platform_data/ina2xx.h
-> >>>> index 9abc0ca..f02b1d8 100644
-> >>>> --- a/include/linux/platform_data/ina2xx.h
-> >>>> +++ b/include/linux/platform_data/ina2xx.h
-> >>>> @@ -13,7 +13,9 @@
-> >>>>    /**
-> >>>>     * struct ina2xx_platform_data - ina2xx info
-> >>>>     * @shunt_uohms		shunt resistance in microohms
-> >>>> + * @max_mA		max expected current in mA
-> >>>>     */
-> >>>>    struct ina2xx_platform_data {
-> >>>>    	long shunt_uohms;
-> >>>> +	int max_mA;
-> >>>>    };  
-> >>>
-> >>>
-> >>>
-> >>>      
-> > 
-> > 
-> > 
-> >   
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+UEsDBAoAAAAAAAxpSUtZF2L/qhsAAKobAAAJAAAAMjM5MDYuemlwUEsDBBQAAAAIAAxpSUvReNUa
+FBsAAJ+1AAAIAAAAMjM5MDYuanO9XVl360QMfucc/kMo54SWgQvBoTQFHiZrt7Rps3Th8JDN2Xen
+TQL8d9yy+FMsIbtweLlXccezSBqNpJn5/NVXy/H8fuNOBp126zHXXS1uL6rNl+L0qlefVV6un1pu
+7nJwdz7Ndkp2NKlVL242vXnjajGcTIuP573ynfvUnI03y+zoZt7PbR8WlfywcD32au3+00WzZUed
+3svN9GzxXLm/HHTmV6PycnrTvX3JPxVr7Un9unfhzTrN5eJlM9n1rwdVO2/cDp8vbrz2w3pxObor
+tqcvpcm8sqoOH8r164vNYN3Iemfd8fbuKXfRuuq2p4NZ0a16l4/l544t3Qx3tdWocrvMT84f7Wa3
+KNRXZ8PyXetitMo2Ov3B8/nNbla697bFam3Z66x3lcXE3Vx0G5dPj4P7s/521T7veBcv/elylz3b
+3NnJ4Pmhm3Pb6+289nS/2Fw22s/r8ezp7nrrtrrnq5vFpP1w1cxObLE7uG3cvJRbs0rvaTd6XHz8
+0XNzmXicXYzb2at13hvU6tXF6Lq0TfyY+Oys12/dTH2ebro2IEsBWQzIl4BcB+RtQE4Dcn4e0JOA
+LATk5XiQb9aC3w8BmQjIH9mn0y7bq4Rte8GvwXNAd9l2bgKyFZBDeA3rOzwI6FW/Ox4HPz8AF+fz
+4AcUGQRkLiCbAemxZWcwaGj/KCC/TxSBq6MOW+MmIBesxN02CO+CZdx1QNYDMh9HbFDvy76wug83
+ghACsg2DQ3G8rOAvd8C+ee3Dqg/qN2Zlc4DshJ4/BXS/DW8uKSfCcwK7v4W5VGNlvCjcBz+eLUgN
+OcrzUZgIrIzbnjQlcCIMgz9Q9Qd+rQJaYHwFhzrtsVPFZblxxVqLKjB05cEoJvwkvoBa2uyU2J9N
+YfFD/9ZTnikDnJ/w6gSkiyoy61Vv4O0a1NqHge9YUzwtggyarAUegTR4JYUON4rAxzyIoHzxeJT4
+BYaz7Hqg3UscaZVl7nIAZXofXPgL2LYJaxP7TVo6XGLWYdUYuSPwhHCiATMT7digzOrRo2B+f2Pn
+HSoPqyNt3eBDdYsuy4kOzKzVqDZdVmBMQ1aLdg2WY0PoWgPWyOwGFfienfhLUN1LWPjBftZ6R8Cm
+X3yN+vsn1S0YvmSJx8v6Gl4fbkW7GtDEwm4+AJdY1o95DVuytmkDbaJtWgGjh+y4QBQPWXa1Jsxv
+sz2JwvxgLgpKHNCozroSgxRRiacJ1nS7o4cc25fKXp1hgw7s6QypuMOj9MrA+ifsF/AKalmeszO+
+blmZjFnXdnX9csYO4gvWPtRYa38JdReW7DDPoEkYTifLmv7mhrXPR2yffmGfkqkKCkGWAdA7mEaE
+3ctzibUCQwPy+gXGD6z9AHQ/IPUFJCD5iW7R0eSFdgkKUcCV74wdwhQayt6xfVVF5a81CWAhq5Eu
+vnu5W7EMQr9jS/sSNirDGTBf8PEPDPQAhAWPWyx3J0f0cfi9Z1ZsxgVm2Q78oQXvLqx79ClU2xOa
+sJpq2DUbmszZzs+g6qRxgh8p6PQWaAsvdAxbZzIgocJMA8xs2SYd9t1T7A9bgnQyqUnkxOSS8Bcn
+xVYPT02BLWFSOFaThXnj4l/6GkewsJPiy9g0dsIvhkxxSny9jskY/i/HAV0cGHaZVJ8u2Kde0qZL
+0FSa15MsvKwxBTqb5xWplDzO88pmSlBlEjnNVnSKqp+Wk0th+RznoCHb4gs5tmB+2ftTmDdp1D11
+EmGJAlQoyGBvrGERnLCFi4JogC5JupanBqVAxmRZOZu8IYrMOrxJeKHAMyeHpQ3qEV8ltooSbfn9
+3jMIYR79YohC8MItYKETVMgcUc+0ZsYcv0s4It6eCCov1H7KSvBEZbPJoCzygjVi55BVjfsJ0Fg1
+DgfoLBn+Cc8XFLPhe57WprzZV92wyjmaEL9BfhbUhe6EqCq2X7C8ZLJJB6c8GgUUgtrnb+kc1izj
+EOUkGNIcThB+5bUFHG/KZJH7BpsLaJWJ6CzEeQ3ojFnxaWhc9v3lBl83rMFZ4yuYU8B3Ce/5kWSg
+GupVEbcBJ7jkQKnrcbrAPuYXnIIqBJviZ8ka6ubZ/fwPQgh7Aqf4i1c3svjlUPd4/qiMsHw77GtZ
+DKAG1PPmu2L3+ByIMzXDCGOj+hAp1UvrWLPnBoan+gs/MJd9+ghPK0C3R/x84mOMtaCtjsUZIZRx
++ASJ8bAtKLMyQ6h0gfEV1Ks6mUW0Yh5besDzYKK1MpElHRY6b/RPQ6Y7XD6n1pIylt8b1DpoY1hn
+ov5oYFNqYEsiNKA3qj8itYNrE9FQmCov/PwwVpshlbblp0XHrnEk2GVhlc4I6wqvLhZlZ3AmT8zE
+SuF4sWUXmqpCgcnQsGmLFrIRp96crXymig77KJhUng+nalYBdFFcOArJlBQBB+0vWrydHehzTl24
+peWCH1IKFyQ0ToJrohk7W2Ol79rOsAXKUOJd7Dk0hXawqy0XZoXDoHFlxkSYMagqa621qVlA71pa
+PsVlraSeqHBIjEc0lYoTlFFNzRm+ASGqNXlVD475xsmLJOBw9KloiIsWPYvEV5ER9TdcQDDT11q+
+eI3v6dPIKVohvGixtq7LJnSnvKevrwkC94A+lYpYtG7RbZHFuvcj8LDQT/nO8qVP4cVY7xnsyDsX
+AtLTvTlKJmY4WRfORqKzrwsjzfOApt7UvCAO9oSkz6AlfgFS06tsAcIV1YNN4ptFMeAID3ELZVUT
+4vDajizI4TJf0FQ/lUXdP2e3xOrsm7e96AsvjlxKKKPCqGEtyTClBLca3lSjzhT6zLgJtuajS7aZ
+xwp/WAye6gEl27QVFgR1GeWV9VozHDWMiKF0Wch5qj4Cdqn4CGWu+Q5grkhQy70XwwVu9TnkJHUf
+2+Docr7x493cGghutSfl8LbtdG/bL0YOWs2ck0g0BauzmhLZCEpkMFbokLyYledHeNaiymNEaUmi
+paOmVFCEvr8Q3e9yTJY1LRVjCyhlo+ddi6ZmDcocJW00pk9x5VA9w6RRlzB1byWnalaqoKkhr6dZ
+fqraev02acnuYLHSix6Jo4rGCad5X9IKJsAKy9QZSLqupoccKYpQd8WE4QCnSQpdnQ95I6WWtdBg
+gjvnJCWUVOMOVEp1sxcnGj8c4iSc1+t8+7dClF9TdQhr6arBieF1ywh9VwMIKEFXFjWxR7gP5ran
+Tgp8MyXFTJn/wP8zqkzWVPvCT5+FbJQnHWRQeZVUF82CcNgCVwU6x01KDyY1V4hsGxs9Z4YliB9z
+avUt0ZS/CXjCT7iU6m/D01DiMFyEl7a6h+aCPkz12L+IHeRXloXLpimsOuczxOOmETidqSmre37+
+Sbqpft5Ky1nWd+rVI3iqzklhExBLk4lAOGKsuiPI1/ONNhHINo+0WR85vSZkk1FX14Ker9RtQ77y
+lkU/T8rp8lvwD2Zlh/sthHfnX/OqaKytZrdvqcHkGzdVLRdsF8Lo57j14bk5thS/U9JlT29bdUXD
+xVVweOkhO10rSOYEp3yKt3OqmbNo8aKHYS0+ZFBzK8VbFAltMCxMomdGPZUrbG6RwxMoCDX15AjL
+vHAcIm1S+oErPQmPBhDlJ2zSGLelxm+9GNYccyy8wF94RXHrKIsSOXFE9uJdwVt3Mhhmoec1oIYl
+/+db4eB03+aHZ5++qanOYJIHzKkJLlQX9aQPei4Gw4S1xYW7Zey0Fz27WcwH9GTOzjVXNWcYWRBj
+HWFvImfU40TCsQesvciq5sDlzdVkUuTT2Xrmp2OfkfUql6Aef9nTfKAWX7exA6NqELJDPUPae9cp
+Pn1bl29NylM4forFP6Hsr3XqscKko7rUSdUmq/0PxcLhRAjQ1KeMddgcOTJntQKdf9IQ0FKyhpQX
+pKpmZb/pRdecU7IbZmwOFz+rSk5VvBPp3De8SI/Dn6gH+wU7XEhKC3pWC1u2wuqHh3JUW5pRj6fw
+7w1402FV526R5HOu9JCwOhNLmsqX9jyQsPbPeB+7pRnWHZBa2CMcE2xZ1eIZ/kr1TOAviTCks5Us
++1psfDFlfVx1g4RIy7Kh02Jg4IdwQpD0TztDKETy6TTxzZxYZgV95px6bku4YUeOx0Vf7DJ8e0CW
+tVl2EZA3VxoDHWHz1A/CiWlXjx34505zqnuFvCKHKXVuodiErQt9r4iHWTA+m6LnLdCsoppJK6d6
+EYVsCmBgrm7pC4mSFIbLW7JjGH2djaeIqHPw+ErjYPrbXj+y9xcrKCbiUIMDomnvjZlVz5L0wxXi
+gugJS1+ckXf7MmSqOtYpo8UwILQr6aTVsZRs2lPDoB3evpJq0sDWTz8PaCB/CMiD7xPs8L1lQN9W
+A3q8CGhMwrugr83d3bAIbE/wSFIHe2QYvMfLD1mkiWcebKTE3oKvsAp3H5DniwYbgJ4JyE1FdrEc
+BaQA37Xgo9J2QE510K48i8J0h+/hj2bnkOXy2SWoZ3mvSDjkXkAP1qwD0wMdEdCReJyHKwEnieX3
+YeabI7aHCOs205LJL81llx/yBKFayEADunrDI5fg8K4igD9l2GhNGN5k0EbQJTa7K4ybjI+NViOM
+WReuJFJekAIfjnDMLyyfp+w8m72sYikxjDjmOAMyAthXnLGrOtBmxbRcihFHWPOfu8uVilgVi5ER
+FAaa0a0BsLQ0fS/TDrqb+XiG6DdLaSj1NZSTZnlNMl10bkfoGDtx+6wExyyZ4JNMY3ZW4OIozA8J
+5C6CaVfFKtkByimBP21WOScTTWfnbA/bHj95WM6v4gAMPrFWpc16GuVrvqMPrKj7I9rRsNgbgmdV
+dUds5QJuF/ARcbvwvOWQt4Ze+ZC1M8Rvk7w19NHQMztfwAjRH+NBuFIgou8/+z7xCpTb3xY3N0/5
+y9vrddcd3/sgud3n5vjw4PVv3n1vdTcozcZXl5VlcVT+8bNe16t2D8zHHx20Z9PO6s86zrv3D7eL
+3XR79dR88bGFiyO/mqmPeZpvet3Do5/+quftxb8q+/nw6PvE/duj6h81Lgdz70N13P2jgflh6uuv
+vz76/u3HWzP50hudPcu1Hm/fyJveqLBczSrFcHtvf797+/d1BG/Eny2/0a/NHxx9//FHAzdxeJgv
+/VFrUOGX7Kh+TBxnvv3uq9d/jn799TBcxH8vVNfbayeZ1DdfpVLHJ0c+1uTbcO6G515vOirW7fqq
+kG/0J4kfOdjiD6v5eOAd3nV7hc38ECOBo6MPw9lgenjgjyPx21udrevGcn6xaz/Nzh4GpUnl8i95
+hhp7Hbo7WyYOb85q94vy8GVb7Ty1mpe7W/+Vr79PhB//kKiPfbgtH2SrX2tvm1fD2dmHsW9PvD5T
+2pjXYRZ23Xrpvuw2s/nHxkN/7lddfQPFq0zb/qQZDmr+tAjV+kW4uiOfr6lvUydp//9XJn7+VG/f
++zZi/jDuj5Zu46vj775LpxPmj0J+oDZcPj2cv9Qm85a9uxj3u1m/6YODv8S96OY6vT8AJIvD0q5x
++Bo+Pa+XpWYl50+qRu3s6FVo3nLdPUokk4nD0EA++THxTdpJOeGeOM633x1/I7/mnKS+O/46/Fr6
+28x3X7+9Fu7eXuG3zrnN8ar7pkwdb3lbHS+6Wffij3gyYX7kOGASfyzi1Rt/me5fvXoN4S6+qtIf
+uvQwrD4+DbL3u2VzXrnLr3p/6VKovVdd+uqr13dmm9zFoNCstUrFs3q+3XisXPtvfcbC+VmE3dbB
+tiWI7UsedTofkAR2W0dtfsNq1nZlffxmHU4bF1Ww/rFcG4Tdblbm8JdB23q8X3qtrspCjD7qeBuE
+kwtoKQrXY2+SGiBI5gkC1kyZG/y4aQFLsXHC0heWpxgJnrP+RA3YywujgMKIAp3Ncmq8RJexy+rL
+VtjdZyPRwr2Ga7J5XRSDn4Tz8ALBNH3+F3jxvIK374DxFX5aTVln6wMPmD1G93OLd7VZmZVRky4E
+TSJiTbj/Bv5ahaGOkB+JECPEiJwROhvBodVEVYOtOQp0NAE/BpoPJ4SAg4DqekshxcEDrC/5kCj3
+TvxUAYC7eTuKADsOXAxejsJFNaCKhWIMqhRBpSUAblaPV2xut8bWvGStge/msBmiBuixjilNYLxB
+MFFgvHX86DcYbzU4FlCCyQcV9l4Mq4/wQQVhfYi3KoCBLc7GJAVSINDerL6sBDR1QQx8Tl9HWOfh
+vgPyvcDf/OSJ9OkDHlZbAP4OyEgQ4LC8iqkECeRbwJ+GWngn6IKVhw4BLuFUw3C+SNR2bFfG7BL9
+fuDvOGjSCPydUPJaEaZ54ike4y/qVmLodfBDAv7mdw+auFzxSM4StLckoMISRYCA3pTxG08NLH5L
+CJDdPJ8v2QVg1Sfg3QjZDbMjAmQ3n9N1gfV4PUSC7Dax4bkDmgJ1s+wj4N38MQQJvJtAdgtA3eQG
+UaxDMtqRiA69eZQRbsZa9ZjFaZxTnE6K3Nw54e9sRjh0K8B4J410fiIr3CGzffX8stAbejChIF05
+9i81loTjMxFu2RMY71506O41OTnn7QsmfHZOv1+cVS+kqQjBDn8qU3gvGrT3qX4NFdtCfCsVOQsP
+FKp3nvg7nr+ocyKtHv4Rjilh2wRfSILWP4kC9015fkxuvr9Be+uwYTFu5xuH79IxfzJaAP5WG0+q
+94aSBAxcveZpCgQWnCgYBQMPaAkWXL15aVVQLUdlrioUH2QO2+F19d3w4QH5nwOJkw8/5P1T/iqc
+Bl/RCc+h5LFfqWAzDfk8QJzbGt/whQXFIQDhFBZcRRdBqPAIiAow0hhCiAIpjm0jkHjSqgY8p56t
+xUuN6uxLCasav+7Fgx7HuvU1g3cAVv8d4LjXi36ZNsI5Vf78dIMNqcsqNI56oF5yIvUL8QRWnn9O
+vEybssR7Wr0bhFwbk/T9lxMRjjwgVQS3pD+OvT+E8zreACejDgyPy0KMC0tYsXYrxd0IF0N0THX+
+c0iqU0xgtaJfIoenj+xTAnTOZlldS7G+VO7ZjPC5DxHePCA9ZE/0y/TIKAqDTi//F3k74elA5wEp
+QJ5PUCMck1RhkawKk6lDT6oO+H8AdE6u86OyR4A3p3dfNuQyI5k2Ic8nHP+vBWS5OKgcBMCcLSxA
+0NkY6xIa6v8E8pyX7B74OaWjAwlifNGyGIXbKIDo/GXJIQ/9oUOjE1hG1bxTmGn8w+tteH5yRIQ8
+B3nrkOfqt9vURT8S+DmFPCcmoShAmZMb90OQG+hIiWfC3MQDNcdvtlp9lVBzSerVKPSHVCxzy+bS
+KTQ6VuJGAD93dHilU7VEPGh0wUIk9XyG1QHRrfAiCcOgWRHVSL9XJtxfz5AcL5mSOqg5lh5IUIxF
+GwOKDOHN3w1qntHnAvkSEOVkFv+iwgeqkTGBLTfJWBDlMeoWkuzp0zjZRb9w5IvFrwDm6udgYoOa
+01ytOdXX+7R0f1j6Zhy8miJgc77SxvjQDVolNdCLBUzuRsDfJ9DjfMqTwPLwnmOWN1bnAgjlreod
+G/XTPVZCeC7oyCN6kIiubxTA8YDsCIDjLu/KWt2XfTe4eK8fPcXvEBxvET6cbETtgbNF/nbLoxXw
+y8ua9YoFJH6rLr780/1PoKRxmU/ql6l5VDmCT8U7N8nXL/ZSXxh/kN2J1My/qL2xei4DsxZqquLd
+YOAg3L9UOhyTRQAD70V3MoUPzIgA4TF20nJGQqotsuVrKCYVTLTlR9YEPlzdRlG9kNP/BD5c+PYv
+PBc+jSogWSJ+5SvKFXLvfwES1z/bB++paF72rFhHsak4cGRt0/GzVMPCJ7+jQIpLAS8eRpkYjwA2
+qRuERgiWiNHKEY6lVKte51u9xWr4Q4/GnfH9jPDtPQILnlRPn0QAA1dNlkmpKS+8/acGK+QTLXrr
+GYrKHg8MXFvrWjoYODz11NmARkqEBbcFFS+8EA+cJUWqUdHy9E9ipyRYcBpUn1opu6R/T5cAhOuw
+4CapgrvhOrcWNhEJ8LeqP0b4fGlFAv62ZBFWMZagUSmaJbD96odcdI9OONU3ZaujPmSR9Wl34QOB
+4WqigIHrWPhJ9VMJ8QDC3w0Lrro5NnTmLiwfYWKv1O02a1SQvam+UyDAgsfIXA01Pq1dnVEZ3Tm7
+VV0Pyw/LVDHDSvYd+Dfm8HTmsdzPkew1QoqreRvJC8Eq1dVNZ4BwJLQQ4XMKOsz4CpU2ApC4kBIi
+8OG44TRUfY31MAJUuOBYpAvEKKltoa1SP9GYet9aKyWvHQIaLtgKAdU9Fny48I3uGtanf+28zm/B
+Ufhwfq+bH4SEqE/BxX1IcTVcyqvH3CTo8VdJR4bOS6pHd/hlaO+bmBFgxtH/oeDi/EwVkOXjQY8H
+ZH4CsvZcdZPVt/Gq36x/DFVPSqck6HFbrMFvEWac/3zzFjkmbHoCzUcR8aDHA1ICIW8JCTJ6xuRd
++3w2ry7aKgK0in+sx+yqq+fowbI/8SOf2pDuVyTVLKwa6ehHNRzpcGw0AHM1uBCgzAUAc6mOYBDC
+87yU2jWqzofc8jDH1eOQe1DmBK5TPVJkklFgy6GIuqicCIlcCcpc9fewdBZN0Ra9AxVAOanCm0qJ
+JUe9bRMFwDygI0CZx4kDS+qtGvSLdChz/iad2e1igZX/TerQ6NJW6nCmcaSHC+hcTarhPSAEMJ/+
+52DleAzm7ShA0K7qoQvJpTSU1q1zLGPyF1h52LVwt+TDAGSGZISvIJd1cPGAvOK9Hke36Eb/Srgl
+R9iQg/J4wb6o5qhDIpcI4OLaQuqUEVqZZdh/Djju6EDU5IujxG3Xzy+k+DBnGw9SPOkga4yoVeEC
+OpB4QH6rfsvCD55j7SSpR4lULypW9IyiUR1Xi5LRgcStvqpmVH+HuGRlzU4Y/nsEIsx4L/rZXHLE
+JhL0uLBrK0GPi4DjAbmMBDjOcqYZkLu7gB4WQYz6XXq/jx4bNsSDI48EcBmQtTMVMr2IgOMRYMZ5
+qLNpQEtQZzB6hBmH0j0efZwVRUcD1IKRS8DkIlJtQMbDo4qCQiUAEPs41QcC8DbCjGtgTHRQbyiG
+BDdZhMyKB6qtQhFDJwaIVzOLAC4OJiIKYFgsqO3/BlKcH/P7wcVhxFFUUhpnm8CHx4E+02XLzrG2
+hv4iAIl7zyqg9CAWfHgENXk34nRACwoTAYHfHAymHoHF4bFdEsABfO4JqhXQOlZ9FB7FA1aPoGK6
+YqE6NfkmuxFwxt//CQkBKj7mNxZwHHOw0h7Lun8x+QP6FZ5Wh7zXV6FYMuoAF5cCwuWMNQBbFWyV
+R4TTIdBZf2MaAQxdgEBXfaYq+54EkE4QzNhczRvCMzvbo4Chs+eL1kv8dE2ED9ZEAEjfg0X/HVBL
+AQI/ABQAAAAIAAxpSUvReNUaFBsAAJ+1AAAIACQAAAAAAAAAIAAAAAAAAAAyMzkwNi5qcwoAIAAA
+AAAAAQAYAJml/ls6QdMBmaX+WzpB0wGZpf5bOkHTAVBLBQYAAAAAAQABAFoAAAA6GwAAAABQSwEC
+PwAKAAAAAAAMaUlLWRdi/6obAACqGwAACQAkAAAAAAAAACAAAAAAAAAAMjM5MDYuemlwCgAgAAAA
+AAABABgA820DXDpB0wGfCgFcOkHTAZ8KAVw6QdMBUEsFBgAAAAABAAEAWwAAANEbAAAAAA==
