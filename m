@@ -1,77 +1,93 @@
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Subject: Re: [PATCH 4/4] arm: dts: r8a7790: add cpu capacity-dmips-mhz
- information
-Date: Mon, 9 Oct 2017 18:55:07 +0100
-Message-ID: <a0099e02-096c-f8e0-0380-ecb9549f20b4@arm.com>
-References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
- <20170830144120.9312-5-dietmar.eggemann@arm.com>
- <20170918073946.GA9156@verge.net.au>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5] crypto: s5p-sss: Add HASH support for Exynos
+Date: Mon, 9 Oct 2017 20:52:52 +0200
+Message-ID: <20171009185252.h57236ngyotx3vrl@kozik-lap>
+References: <CGME20171009111232eucas1p1d17afaae66931a7dd234dbfa1d5a193f@eucas1p1.samsung.com>
+ <afa6482f-dc1e-6aab-5754-fa86f554e0b2@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170918073946.GA9156@verge.net.au>
-Content-Language: en-GB
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@arm.com>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <afa6482f-dc1e-6aab-5754-fa86f554e0b2@partner.samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 18/09/17 08:39, Simon Horman wrote:
-> On Wed, Aug 30, 2017 at 03:41:20PM +0100, Dietmar Eggemann wrote:
->> The following 'capacity-dmips-mhz' dt property values are used:
->>
->> Cortex-A15: 1024, Cortex-A7: 539
->>
->> They have been derived form the cpu_efficiency values:
->>
->> Cortex-A15: 3891, Cortex-A7: 2048
->>
->> by scaling them so that the Cortex-A15s (big cores) use 1024.
->>
->> The cpu_efficiency values were originally derived from the "Big.LITTLE
->> Processing with ARM Cortex™-A15 & Cortex-A7" white paper
->> (http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
->> (3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
->> Dhrystone benchmark.
->>
->> The following platform is affected once cpu-invariant accounting
->> support is re-connected to the task scheduler:
+On Mon, Oct 09, 2017 at 01:12:30PM +0200, Kamil Konieczny wrote:
+> Add support for MD5, SHA1, SHA256 hash algorithms for Exynos HW.
+> It uses the crypto framework asynchronous hash api.
+> It is based on omap-sham.c driver.
+> S5P has some HW differencies and is not implemented.
 > 
-> Thanks, applied for v4.15.
+> Modifications in s5p-sss:
 > 
-> My understanding from the following comment in the cover letter is that not
-> currently the case and this there is no behavioural change in applying this
-> patch.
+> - Add hash supporting structures and functions.
 > 
-> For the record I observed the following with and without this patch
-> applied. I believe this is the expected result.
+> - Modify irq handler to handle both aes and hash signals.
 > 
-> v4.14-rc1
-> # cat /sys/devices/system/cpu/cpu*/cpu_capacity
-> 1535
-> 1535
-> 1535
-> 1535
-> 1024
-> 1024
-> 1024
-> 1024
+> - Resize resource end in probe if EXYNOS_HASH is enabled in
+>   Kconfig.
 > 
-> v4.14-rc1 + patch
-> # cat /sys/devices/system/cpu/cpu*/cpu_capacity
-> 1024
-> 1024
-> 1024
-> 1024
-> 539
-> 539
-> 539
-> 539
+> - Add new copyright line and new author.
+> 
+> - Tested on Odroid-U3 with Exynos 4412 CPU, kernel 4.13-rc6
+>   with crypto run-time self test testmgr
+>   and with tcrypt module with: modprobe tcrypt sec=1 mode=N
+>   where N=402, 403, 404 (MD5, SHA1, SHA256).
+> 
+> Modifications in drivers/crypto/Kconfig:
+> 
+> - Add new CRYPTO_DEV_EXYNOS_HASH, depend on !EXYNOS_RNG
+>   and CRYPTO_DEV_S5P
+> 
+> - Select sw algorithms MD5, SHA1 and SHA256 in EXYNOS_HASH
+>   as they are nedded for fallback.
+> 
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+> version 5:
+> - fix suggested by Krzysztof Kozlowski: change defines HASH_OP into enum, fix
+>   comments
+> 
+> version 4:
+> - fixes suggested by Krzysztof Kozlowski: reformat comments, convert context
+>   flags into two bool vars, drop SSS_ALIGNED, change name of SSS_DMA_ALIGN and
+>   SSS_DMA_ALIGN_MASK, split assignments into separate lines, use IS_ENABLED in
+>   place of ifdef, remove sss_hash_algs_info and simplify register and deregister
+>   HASH algs
+> 
+> version 3:
+> - many fixes suggested by Krzysztof Kozlowski: comments, uppercases in const,
+>   remove unused defines, remove unused variable bs, constify aes_variant,
+>   remove global var use_hash, remove WARN_ON, improve hash_import(),
+>   change goto label into 'out' in s5p_hash_handle_queue(), reorder variable
+>   declarations, add spinlock to protect clearing HASH_FLAGS_BUSY
+> - simplify code: replace one-line functions s5p_hash_update_req(),
+>   s5p_hash_final_req() with call to s5p_hash_xmit_dma(), and delete them
+> - replace call to s5p_hash_hw_init() into s5p_ahash_dma_init() and delete it
+> - fix clearing shash flag CRYPTO_TFM_REQ_MAY_SLEEP
+> - fix s5p_hash_set_flow()
+> 
+> version 2:
+> - change patch format so number of lines drops
+> - change in Kconfig as suggested by Krzysztof Kozlowski, add
+> 	EXYNOS_HASH subsection
+> - change #ifndef EXYNOS_RNG into #ifdef CRYPTO_DEV_EXYNOS_HASH
+> - remove style fixups in aes, as they should go in separate patch
+> - remove FLOW_LOG, FLOW_DUMP macros and its uses
+> - remove #if 0 ... endif
+> - remove unused function hash_wait and its defines
+> - fix compiler warning in dev_dbg
+> - remove some comments
+> - other minor fixes in comments
+> 
+>  drivers/crypto/Kconfig   |   14 +
+>  drivers/crypto/s5p-sss.c | 1441 +++++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 1445 insertions(+), 10 deletions(-)
+> 
 
-Thanks Simon! Yes, that is the expected behaviour. And sorry for not
-responding earlier!
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-With exynos542{0,2} and r8a7790 switching to the 'capacity-dmips-mhz'
-based solution in v4.15, I can push for removal of the cpu_efficency
-code [patch 1/4].
+Best regards,
+Krzysztof
