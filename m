@@ -1,45 +1,77 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RESEND PATCH v5] ARM: dts: exynos: Add HDMI and Sil9234 to
- Trats2 board
-Date: Mon, 9 Oct 2017 19:51:02 +0200
-Message-ID: <20171009175102.egq3kshmvce6opkq@kozik-lap>
-References: <20171008114819.deffq33oqbvr4azc@kozik-lap>
- <CGME20171009074012eucas1p17a1e713558fc8faf18220643bdee0afc@eucas1p1.samsung.com>
- <1507534778-31447-1-git-send-email-m.purski@samsung.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: Re: [PATCH 4/4] arm: dts: r8a7790: add cpu capacity-dmips-mhz
+ information
+Date: Mon, 9 Oct 2017 18:55:07 +0100
+Message-ID: <a0099e02-096c-f8e0-0380-ecb9549f20b4@arm.com>
+References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
+ <20170830144120.9312-5-dietmar.eggemann@arm.com>
+ <20170918073946.GA9156@verge.net.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1507534778-31447-1-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20170918073946.GA9156@verge.net.au>
+Content-Language: en-GB
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 09, 2017 at 09:39:38AM +0200, Maciej Purski wrote:
-> Add HDMI and Sil9234 MHL converter to Trats2 board.
-> Following in SoC devices have been enabled:
-> - HDMI (HDMI signal encoder),
-> - Mixer (video buffer scanout device),
-> - I2C_5 bus (used for HDMI DDC)
-> - I2C_8 bus (used for HDMI_PHY control).
+On 18/09/17 08:39, Simon Horman wrote:
+> On Wed, Aug 30, 2017 at 03:41:20PM +0100, Dietmar Eggemann wrote:
+>> The following 'capacity-dmips-mhz' dt property values are used:
+>>
+>> Cortex-A15: 1024, Cortex-A7: 539
+>>
+>> They have been derived form the cpu_efficiency values:
+>>
+>> Cortex-A15: 3891, Cortex-A7: 2048
+>>
+>> by scaling them so that the Cortex-A15s (big cores) use 1024.
+>>
+>> The cpu_efficiency values were originally derived from the "Big.LITTLE
+>> Processing with ARM Cortex™-A15 & Cortex-A7" white paper
+>> (http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
+>> (3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
+>> Dhrystone benchmark.
+>>
+>> The following platform is affected once cpu-invariant accounting
+>> support is re-connected to the task scheduler:
 > 
-> Based on previous work by:
-> Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Thanks, applied for v4.15.
 > 
-> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos4412-trats2.dts | 111 ++++++++++++++++++++++++++++++++
->  1 file changed, 111 insertions(+)
+> My understanding from the following comment in the cover letter is that not
+> currently the case and this there is no behavioural change in applying this
+> patch.
 > 
+> For the record I observed the following with and without this patch
+> applied. I believe this is the expected result.
+> 
+> v4.14-rc1
+> # cat /sys/devices/system/cpu/cpu*/cpu_capacity
+> 1535
+> 1535
+> 1535
+> 1535
+> 1024
+> 1024
+> 1024
+> 1024
+> 
+> v4.14-rc1 + patch
+> # cat /sys/devices/system/cpu/cpu*/cpu_capacity
+> 1024
+> 1024
+> 1024
+> 1024
+> 539
+> 539
+> 539
+> 539
 
-Thanks, applied.
+Thanks Simon! Yes, that is the expected behaviour. And sorry for not
+responding earlier!
 
-Best regards,
-Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With exynos542{0,2} and r8a7790 switching to the 'capacity-dmips-mhz'
+based solution in v4.15, I can push for removal of the cpu_efficency
+code [patch 1/4].
