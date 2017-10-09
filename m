@@ -1,146 +1,48 @@
-From: <carmen.croonquist@alfredadler.edu>
-Subject: (unknown)
-Date: Mon, 09 Oct 2017 13:19:22 -0000
-Message-ID: <150755516254.18525.5529325560999048256@vnpt.vn>
-Mime-Version: 1.0
-Content-Type: application/zip; name="20689.zip"
-Content-Transfer-Encoding: base64
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH] PCI: exynos: remove redundant code in
+ exynos_pcie_establish_link
+Date: Mon, 09 Oct 2017 19:44:38 +0530
+Message-ID: <1507558478-3218-1-git-send-email-pankaj.dubey@samsung.com>
+References: <CGME20171009141438epcas2p4ead7e2f2d1af7e0950f2c026e3a9943b@epcas2p4.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from static.vnpt.vn ([113.183.255.48]:37875 "HELO vnpt.vn"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1754259AbdJINT0 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:55328 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754098AbdJIOOl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 09:19:26 -0400
-Subject: 
-Content-Disposition: attachment
+        Mon, 9 Oct 2017 10:14:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: inux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Jingoo Han <jingoohan1@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Anvesh Salveru <anvesh.s@samsung.com>
 
-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
+From: Anvesh Salveru <anvesh.s@samsung.com>
+
+In exynos_pcie_establish_link if driver is not using generic phy,
+we are resetting PHY twice, which is redundant, so this patch removes
+repeated lines of code for PHY reset.
+
+Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
+---
+ drivers/pci/dwc/pci-exynos.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
+index 5596fde..85d2f4b 100644
+--- a/drivers/pci/dwc/pci-exynos.c
++++ b/drivers/pci/dwc/pci-exynos.c
+@@ -423,13 +423,6 @@ static int exynos_pcie_establish_link(struct exynos_pcie *ep)
+ 		exynos_pcie_deassert_phy_reset(ep);
+ 		exynos_pcie_power_on_phy(ep);
+ 		exynos_pcie_init_phy(ep);
+-
+-		/* pulse for common reset */
+-		exynos_pcie_writel(ep->mem_res->block_base, 1,
+-					PCIE_PHY_COMMON_RESET);
+-		udelay(500);
+-		exynos_pcie_writel(ep->mem_res->block_base, 0,
+-					PCIE_PHY_COMMON_RESET);
+ 	}
+ 
+ 	/* pulse for common reset */
+-- 
+2.7.4
