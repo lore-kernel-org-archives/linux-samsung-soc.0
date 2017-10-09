@@ -1,58 +1,39 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/exynos: Fix potential NULL pointer dereference in
- suspend/resume paths
-Date: Mon, 09 Oct 2017 10:43:53 +0200
-Message-ID: <20171009084353.7190-1-m.szyprowski@samsung.com>
-References: <CGME20171009084401eucas1p17ff028dedb2d3ea47b6271beb16f854d@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: Clear drvdata after component unbind
+Date: Mon, 09 Oct 2017 10:44:01 +0200
+Message-ID: <20171009084401.7237-1-m.szyprowski@samsung.com>
+References: <CGME20171009084411eucas1p213cce9d027a1861d3c96ce99837a6fb0@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40982 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbdJIIoP (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 9 Oct 2017 04:44:15 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-VGhlIHBhdGNoIDZlOGVkZjhhN2Q4ZDogImRybS9leHlub3M6IEZpeCBzdXNwZW5kL3Jlc3VtZSBz
-dXBwb3J0IiBpbnRyb2R1Y2VkCmEgbmV3IGNvZGUgaW4gc3VzcGVuZC9yZXN1bWUgcGF0aHMuIEhv
-d2V2ZXIgaXQgdW5jb25kaXRpb25hbGx5IGRlcmVmZXJlbmNlCmRybV9kZXYgcG9pbnRlciwgd2hp
-Y2ggbWlnaHQgYmUgTlVMTCBpZiBzdXNwZW5kL3Jlc3VtZSBoYXBwZW5zIGJlZm9yZQpFeHlub3Mg
-RFJNIGRyaXZlciBjb21wb25lbnRzIGJpbmQuIFRoaXMgcGF0Y2ggZml4ZXMgdGhpcyBpc3N1ZS4K
-ClJlcG9ydGVkLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+CkZp
-eGVzOiA2ZThlZGY4YTdkOGQgImRybS9leHlub3M6IEZpeCBzdXNwZW5kL3Jlc3VtZSBzdXBwb3J0
-IgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5j
-b20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgNyArKysr
-Ky0tCiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQoKZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwppbmRleCBlNjUxYTU4YzE4Y2YuLmFh
-NzcwYmIwMTUzYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2Rydi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwpAQCAt
-MTY4LDExICsxNjgsMTMgQEAgc3RhdGljIHN0cnVjdCBkcm1fZHJpdmVyIGV4eW5vc19kcm1fZHJp
-dmVyID0gewogc3RhdGljIGludCBleHlub3NfZHJtX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2
-KQogewogCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0gZGV2X2dldF9kcnZkYXRhKGRldik7
-Ci0Jc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdmF0ZSA9IGRybV9kZXYtPmRldl9wcml2
-YXRlOworCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKnByaXZhdGU7CiAKIAlpZiAocG1fcnVu
-dGltZV9zdXNwZW5kZWQoZGV2KSB8fCAhZHJtX2RldikKIAkJcmV0dXJuIDA7CiAKKwlwcml2YXRl
-ID0gZHJtX2Rldi0+ZGV2X3ByaXZhdGU7CisKIAlkcm1fa21zX2hlbHBlcl9wb2xsX2Rpc2FibGUo
-ZHJtX2Rldik7CiAJZXh5bm9zX2RybV9mYmRldl9zdXNwZW5kKGRybV9kZXYpOwogCXByaXZhdGUt
-PnN1c3BlbmRfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9zdXNwZW5kKGRybV9kZXYpOwpAQCAt
-MTg4LDExICsxOTAsMTIgQEAgc3RhdGljIGludCBleHlub3NfZHJtX3N1c3BlbmQoc3RydWN0IGRl
-dmljZSAqZGV2KQogc3RhdGljIGludCBleHlub3NfZHJtX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpk
-ZXYpCiB7CiAJc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkZXZfZ2V0X2RydmRhdGEoZGV2
-KTsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpwcml2YXRlID0gZHJtX2Rldi0+ZGV2X3By
-aXZhdGU7CisJc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdmF0ZTsKIAogCWlmIChwbV9y
-dW50aW1lX3N1c3BlbmRlZChkZXYpIHx8ICFkcm1fZGV2KQogCQlyZXR1cm4gMDsKIAorCXByaXZh
-dGUgPSBkcm1fZGV2LT5kZXZfcHJpdmF0ZTsKIAlkcm1fYXRvbWljX2hlbHBlcl9yZXN1bWUoZHJt
-X2RldiwgcHJpdmF0ZS0+c3VzcGVuZF9zdGF0ZSk7CiAJZXh5bm9zX2RybV9mYmRldl9yZXN1bWUo
-ZHJtX2Rldik7CiAJZHJtX2ttc19oZWxwZXJfcG9sbF9lbmFibGUoZHJtX2Rldik7Ci0tIAoyLjE0
-LjIKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+When components are unbound, DRM driver is unregistered and freed,
+so clear drvdata to avoid potential use-after-free issue in
+suspend/resume paths.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index aa770bb0153c..82b72425a42f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -430,6 +430,7 @@ static void exynos_drm_unbind(struct device *dev)
+ 
+ 	kfree(drm->dev_private);
+ 	drm->dev_private = NULL;
++	dev_set_drvdata(dev, NULL);
+ 
+ 	drm_dev_unref(drm);
+ }
+-- 
+2.14.2
