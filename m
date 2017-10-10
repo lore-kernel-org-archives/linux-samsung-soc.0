@@ -1,32 +1,70 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: Re: ARM: SAMSUNG: Improve a size determination in 13 functions
-Date: Tue, 10 Oct 2017 11:28:08 +0200
-Message-ID: <6d573f66-8735-f745-e0bd-27cc29880eb0@users.sourceforge.net>
-References: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
- <7f196313-ad49-2cd8-e45f-be487e089547@users.sourceforge.net>
- <20171004191102.mnswu25bjxynuh4o@kozik-lap>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5433: mark PM functions as
+ __maybe_unused
+Date: Tue, 10 Oct 2017 11:30:19 +0200
+Message-ID: <66c87919-60a7-b1de-a880-90b007c7efe4@samsung.com>
+References: <CGME20171010091530epcas3p2e03b0e52f91e7dc2ab0dd9fea687d891@epcas3p2.samsung.com>
+        <20171010091522.2286344-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:57090 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755662AbdJJJ2n (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34563 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755844AbdJJJaZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 05:28:43 -0400
-In-Reply-To: <20171004191102.mnswu25bjxynuh4o@kozik-lap>
-Content-Language: en-GB
+        Tue, 10 Oct 2017 05:30:25 -0400
+In-reply-to: <20171010091522.2286344-1-arnd@arndb.de>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-> Thanks, applied.
+Hi Arnd,
 
-Is the chosen commit description “Simplify the size argument of kzalloc() memory allocation
-by using …” really appropriate when calls were adjusted for further two function names
-by this update suggestion?
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=09e1cf829c45a2f030c7fd49533a86b0935d068a
+On 2017-10-10 11:15, Arnd Bergmann wrote:
+> The suspend/resume functions are referenced conditionally, causing
+> a harmless warning when CONFIG_PM is disabled:
+>
+> drivers/clk/samsung/clk-exynos5433.c:5476:12: error: 'exynos5433_cmu_resume' defined but not used [-Werror=unused-function]
+> drivers/clk/samsung/clk-exynos5433.c:5453:12: error: 'exynos5433_cmu_suspend' defined but not used [-Werror=unused-function]
+>
+> This marks both as __maybe_unused to shut up the warning.
+>
+> Fixes: 523d3de41f02 ("clk: samsung: exynos5433: Add support for runtime PM")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Regards,
-Markus
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+> ---
+>   drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index cd9337613dd8..db270908037a 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -5450,7 +5450,7 @@ struct exynos5433_cmu_data {
+>   	struct samsung_clk_provider ctx;
+>   };
+>   
+> -static int exynos5433_cmu_suspend(struct device *dev)
+> +static int __maybe_unused exynos5433_cmu_suspend(struct device *dev)
+>   {
+>   	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+>   	int i;
+> @@ -5473,7 +5473,7 @@ static int exynos5433_cmu_suspend(struct device *dev)
+>   	return 0;
+>   }
+>   
+> -static int exynos5433_cmu_resume(struct device *dev)
+> +static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
+>   {
+>   	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+>   	int i;
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
