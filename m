@@ -1,38 +1,33 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] clk: samsung: exynos5433: mark PM functions as __maybe_unused
-Date: Tue, 10 Oct 2017 12:41:20 +0200
-Message-ID: <CAPDyKFozf1MfEgj2mCmogyJLzSmszoFXzg0Q=Ae-kv-itz+SGA@mail.gmail.com>
-References: <20171010091522.2286344-1-arnd@arndb.de>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH] iommu/exynos: Remove initconst attribute to avoid
+ potential kernel oops
+Date: Tue, 10 Oct 2017 14:13:59 +0200
+Message-ID: <20171010121359.kb7b22regypsg2vd@8bytes.org>
+References: <CGME20171009114035eucas1p102089b889ad374b33c3302f1ad84e783@eucas1p1.samsung.com>
+ <20171009114023.3427-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-it0-f54.google.com ([209.85.214.54]:56008 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751826AbdJJKlV (ORCPT
+Received: from 8bytes.org ([81.169.241.247]:57376 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755888AbdJJMOC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 06:41:21 -0400
-Received: by mail-it0-f54.google.com with SMTP id l196so1899542itl.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Oct 2017 03:41:21 -0700 (PDT)
-In-Reply-To: <20171010091522.2286344-1-arnd@arndb.de>
+        Tue, 10 Oct 2017 08:14:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20171009114023.3427-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 10 October 2017 at 11:15, Arnd Bergmann <arnd@arndb.de> wrote:
-> The suspend/resume functions are referenced conditionally, causing
-> a harmless warning when CONFIG_PM is disabled:
->
-> drivers/clk/samsung/clk-exynos5433.c:5476:12: error: 'exynos5433_cmu_resume' defined but not used [-Werror=unused-function]
-> drivers/clk/samsung/clk-exynos5433.c:5453:12: error: 'exynos5433_cmu_suspend' defined but not used [-Werror=unused-function]
->
-> This marks both as __maybe_unused to shut up the warning.
->
-> Fixes: 523d3de41f02 ("clk: samsung: exynos5433: Add support for runtime PM")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Mon, Oct 09, 2017 at 01:40:23PM +0200, Marek Szyprowski wrote:
+> Exynos SYSMMU registers standard platform device with sysmmu_of_match
+> table, what means that this table is accessed every time a new platform
+> device is registered in a system. This might happen also after the boot,
+> so the table must not be attributed as initconst to avoid potential kernel
+> oops caused by access to freed memory.
+> 
+> Fixes: 6b21a5db3642 ("iommu/exynos: Support for device tree")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-FWIW:
-
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-[...]
+Applied, thanks.
