@@ -1,46 +1,44 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
-Date: Wed, 11 Oct 2017 11:33:12 +0200
-Message-ID: <c1462299-45d3-4838-797a-a4cadc09bdbb@samsung.com>
-References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
-        <20171002104759.25944-1-m.szyprowski@samsung.com>
-        <cdea0207-adea-d9e3-f95a-64188bd4bcca@samsung.com>
-        <CAJKOXPd5_tV_VenxOL-H_z+ej0QR7X8F3DBZ=Mneu_9pe+h4QQ@mail.gmail.com>
-        <76fcaecf-7c38-a1a6-b4b1-47e6966f8b34@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 2/9] drm/exynos: ipp: Add IPP v2 framework
+Date: Wed, 11 Oct 2017 11:46:27 +0200
+Message-ID: <8dda88b2-2226-fdc4-d555-7a1ca5480910@samsung.com>
+References: <1506670374-15689-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170929073301eucas1p1d3702871116ca478a313da6db9ff4aab@eucas1p1.samsung.com>
+ <1506670374-15689-3-git-send-email-m.szyprowski@samsung.com>
+ <ed10a947-5a83-e95d-5608-25f70e308d8d@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44140 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752264AbdJKJdX (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 05:33:23 -0400
-In-reply-to: <76fcaecf-7c38-a1a6-b4b1-47e6966f8b34@samsung.com>
-Content-language: en-GB
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <ed10a947-5a83-e95d-5608-25f70e308d8d@samsung.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 10/09/2017 12:58 PM, Sylwester Nawrocki wrote:
-> On 10/09/2017 12:49 PM, Krzysztof Kozlowski wrote:
->> On Mon, Oct 9, 2017 at 12:34 PM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
->>> On 10/02/2017 12:47 PM, Marek Szyprowski wrote:
->>>> Patch summary:
->>>>
->>>> Marek Szyprowski (4):
->>>>   clk: samsung: Instantiate Exynos4412 ISP clocks only when available
->>>>   clk: samsung: Add a separate driver for Exynos4412 ISP clocks
->>>>   ARM: dts: exynos: Add Exynos4412 ISP clock controller
->>>>   clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
->>> I have applied whole series, with v2 of patch 2/4, thanks.
->> You mean you applied 1/4 and 2/4 for now, right? 3/4 will go through
->> my tree in release after this and 4/4 even later?
-> Ah yes, sorry, just noticed that. Indeed I've taken only first two 
-> patches, the third is for dts and the last one will be applied after 
-> some time as you say.
-
-For the record, I have dropped these 2 patches as there is now
-posted v3 addressing review comments.
+RGVhciBIb2VnZXVuLAoKT24gMjAxNy0xMC0xMSAwNzo0OSwgSG9lZ2V1biBLd29uIHdyb3RlOgo+
+IEhpIE1hcmVrLAo+Cj4gQ3VycmVudGx5LCBJUFAgdjIgYW5kIGdzYyBkbyBub3Qgc2VlbSB0byBo
+YXZlIGFueSBjb2RlIHRvCj4gY2hlY2sgZm9yIGhhcmR3YXJlIGxpbWl0cy4gSG93IGNhbiBJIGNo
+ZWNrIHRoZSBoYXJkd2FyZSBsaW1pdHMKPiBvZiBkZXZpY2UoZ3NjLCByb3RhdG9yLCAuLi4pIGF0
+IElQUCB2Mj8KPgoKIEZyb20gdXNlcnNwYWNlIG9uZSBjYW4gaXNzdWUgRFJNX0lPQ1RMX0VYWU5P
+U19JUFBfR0VUX0xJTUlUUyBpb2N0bCwKc29tZSBleGFtcGxlcyBjYW4gYmUgZm91bmQgaW4gVG9i
+aWFzJyBsaWJkcm0gZ2l0OgpodHRwczovL2dpdGh1Yi5jb20vdG9iaWFzamFrb2JpL2xpYmRybS9i
+bG9iL2lwcHYyL2V4eW5vcy9leHlub3NfaXBwLmMKCkluIHRoZSBjdXJyZW50IHZlcnNpb24gb2Yg
+cGF0Y2hlcywgR1NDIGFuZCBGSU1DIGRyaXZlcnMgaGF2ZSBubyBsaW1pdHMKZGVmaW5lZCwgYmVj
+YXVzZSB0aGUgb2xkIHYxIElQUCBkcml2ZXJzIGRpZG4ndCBoYXZlIHN1Y2ggaW5mb3JtYXRpb24u
+Ckkgd2lsbCB0cnkgdG8gYWRkIHRoZW0gaW4gdjMgb2YgdGhpcyBwYXRjaHNldCwgSSB3aWxsIGFs
+c28gaW5jbHVkZSB5b3VyCnJlY2VudGx5IHByb3Bvc2VkIHVwZGF0ZXMgdG8gR1NDIGRyaXZlciBi
+aW5kaW5ncyBhbmQgcm90YXRlZCBpbWFnZSBzaXplCmxpbWl0LgoKID4gLi4uCgpCZXN0IHJlZ2Fy
+ZHMKLS0gCk1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9sYW5k
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
