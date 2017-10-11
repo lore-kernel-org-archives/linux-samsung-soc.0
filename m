@@ -1,435 +1,141 @@
-From: Jonathan Cameron <Jonathan.Cameron-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/4] iio: adc: ina2xx: Make max expected current
- configurable
-Date: Wed, 11 Oct 2017 16:59:41 +0100
-Message-ID: <20171011165941.00006914@huawei.com>
-References: <1506603015-27202-1-git-send-email-m.purski@samsung.com>
-        <CGME20170928125053eucas1p19e757ac5c3774f54c7cd0ee4525decbe@eucas1p1.samsung.com>
-        <1506603015-27202-2-git-send-email-m.purski@samsung.com>
-        <20171001112934.360c840b@archlinux>
-        <f04fb517-9866-39fe-310d-b65a915375ca@samsung.com>
-        <20171008104756.6eaa62c5@archlinux>
-        <662441b9-1b04-3e8b-baac-5852ba873ca5@samsung.com>
-        <20171009143539.00002222@huawei.com>
-        <3a64c5a7-6acb-41dd-a18d-6b92b2bef560@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/5] clk: samsung: Add dt bindings for Exynos4412 ISP
+ clock controller
+Date: Wed, 11 Oct 2017 19:05:59 +0200
+Message-ID: <20171011170559.6mlczwmbeevevbzv@kozik-lap>
+References: <20171011092515.1698-1-m.szyprowski@samsung.com>
+ <CGME20171011092521eucas1p12fa702013b7bdbb4f9250e9da3fda8a1@eucas1p1.samsung.com>
+ <20171011092515.1698-3-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3a64c5a7-6acb-41dd-a18d-6b92b2bef560-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37816 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751350AbdJKRGE (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 11 Oct 2017 13:06:04 -0400
+Content-Disposition: inline
+In-Reply-To: <20171011092515.1698-3-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, devicetree@vger.kernel.org
 
-On Wed, 11 Oct 2017 16:42:53 +0200
-Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-
-> On 10/09/2017 03:35 PM, Jonathan Cameron wrote:
-> > On Mon, 9 Oct 2017 10:08:42 +0200
-> > Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> >   
-> >> On 10/08/2017 11:47 AM, Jonathan Cameron wrote:  
-> >>> On Wed, 04 Oct 2017 09:11:31 +0200
-> >>> Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> >>>      
-> >>>> On 10/01/2017 12:29 PM, Jonathan Cameron wrote:  
-> >>>>> On Thu, 28 Sep 2017 14:50:12 +0200
-> >>>>> Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> >>>>>         
-> >>>>>> Max expected current is used for calculating calibration register value,
-> >>>>>> Current LSB and Power LSB according to equations found in ina datasheet.
-> >>>>>> Max expected current is now implicitly set to default value,
-> >>>>>> which is 2^15, thanks to which Current LSB is equal to 1 mA and
-> >>>>>> Power LSB is equal to 20000 uW or 25000 uW depending on ina model.
-> >>>>>>
-> >>>>>> Make max expected current configurable, just like it's already done
-> >>>>>> with shunt resistance: from device tree, platform_data or later
-> >>>>>> from sysfs. On each max_expected_current change, calculate new values
-> >>>>>> for Current LSB and Power LSB. According to datasheet Current LSB should
-> >>>>>> be calculated by dividing max expected current by 2^15, as values read
-> >>>>>> from device registers are in this case 16-bit integers. Power LSB
-> >>>>>> is calculated by multiplying Current LSB by a factor, which is defined
-> >>>>>> in ina documentation.  
-> >>>>>
-> >>>>> One odd bit of casting inline.  Also this is new userspace ABI.
-> >>>>> It needs documenting in
-> >>>>>
-> >>>>> Documentation/ABI/testing/sysfs-bus-iio* as appropriate.
-> >>>>> I'm also unclear on one element about this - is it a value used only
-> >>>>> for calibration or are we talking about the actual 'range' of the device?
-> >>>>>         
-> >>>>
-> >>>> This is used for calibration. The device measures directly only voltage.
-> >>>> However, it has also current and power registers. Their values are
-> >>>> calculated by the device using the calibration register which is calculated
-> >>>> using max expected current. So I guess that it's not what you mean
-> >>>> by the actual 'range' of the device.
-> >>>>     
-> >>>>> The interpretation of this value isn't clear against the more general
-> >>>>> ABI.
-> >>>>>
-> >>>>> In particular it is it in raw units (adc counts) or mA?  Docs say
-> >>>>> that but the naming of the attribute doesn't make this clear.
-> >>>>>         
-> >>>>
-> >>>> It's in mA. I can make it clear in the attribute name.
-> >>>>     
-> >>>>> Also I'm unconvinced this isn't better represented using the
-> >>>>> range specifications available for any IIO attribute on the raw
-> >>>>> value in combination with adjusting the scale value.
-> >>>>> Note not many drivers yet provide ranges on their raw outputs
-> >>>>> but we do have core support for it.  I've been meaning to start
-> >>>>> pushing this out into drivers, but been busy since we introduced
-> >>>>> the core support.  The dpot-dac driver does use it for examplel
-> >>>>>        
-> >>>>
-> >>>>
-> >>>> I'm not sure if what I'm about to add is similar to what is done
-> >>>> in the mentioned dpot-dac driver. It seems that the callback read_avail
-> >>>> returns information on raw values which can be obtained from the device.
-> >>>> What I need is an adjustable value, which is then used by the device internally
-> >>>> in order to calculate current with the requested precision. Max expected current
-> >>>> is also used for calculating the scale value.
-> >>>> Tell me if I'm wrong. Maybe I misunderstood the 'range' concept in IIO and
-> >>>> your solution fits in here.
-> >>>>     
-> >>>
-> >>> I think I answered this in the other branch of the thread.
-> >>> _calibscale is what you want here as it's internal to the device.
-> >>>
-> >>> It's not one often used for ADCs but quite a few other types of
-> >>> device provide some front end analog adjustment (whilst it is digital
-> >>> here, it is applied within the device - so we don't need to care).
-> >>>
-> >>> Jonathan  
-> >>
-> >> Thank you for your explanation. Calibscale seems suitable for me in this case,
-> >> but what do you think I should do then with SCALE attribute? Should I get rid of
-> >> it for current and use only calibscale? Or should I use both calibscale and
-> >> scale attributes and for current they will be the same value?  
-> > 
-> > You'll have to leave it as it is existing ABI.  It won't have the same value
-> > as calibscale.  Calibscale is for internal changes that don't effect the raw
-> > value.  scale is to be applied by userspace to the raw value. As I understand it
-> > here the calibscale value should have no effect on scale.  
+On Wed, Oct 11, 2017 at 11:25:12AM +0200, Marek Szyprowski wrote:
+> Some registers for the Exynos 4412 ISP (Camera subsystem) clocks are
+> located in the ISP power domain. Because those registers are also
+> located in a different memory region than the main clock controller,
+> support for them can be provided by a separate clock controller.
 > 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/exynos4-clock.txt    | 43 ++++++++++++++++++++++
+>  include/dt-bindings/clock/exynos4.h                | 35 ++++++++++++++++++
+>  2 files changed, 78 insertions(+)
 > 
-> Sorry, but now I'm a little bit confused. Which value would you
-> like me to substitute with calibscale - max_expected_current or current_lsb?
+> diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> index f5a5b19ed3b2..bc61c952cb0b 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> @@ -41,3 +41,46 @@ Example 2: UART controller node that consumes the clock generated by the clock
+>  		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+>  		clock-names = "uart", "clk_uart_baud0";
+>  	};
+> +
+> +Exynos4412 SoC contains some additional clocks for FIMC-ISP (Camera ISP)
+> +subsystem. Registers for those clocks are located in the ISP power domain.
+> +Because those registers are also located in a different memory region than
+> +the main clock controller, a separate clock controller has to be defined for
+> +handling them.
+> +
+> +Required Properties:
+> +
+> +- compatible: should be "samsung,exynos4412-isp-clock".
+> +
+> +- reg: physical base address of the ISP clock controller and length of memory
+> +  mapped region.
+> +
+> +- #clock-cells: should be 1.
+> +
+> +- clocks: list of the clock controller input clock identifiers,
+> +  from common clock bindings, should point to CLK_ACLK200 and
+> +  CLK_ACLK400_MCUISP clocks from the main clock controller.
+> +
+> +- clock-names: list of the clock controller input clock names,
+> +  as described in clock-bindings.txt, should be "aclk200" and
+> +  "aclk400_mcuisp".
+> +
+> +- power-domains: a phandle to ISP power domain node as described by
+> +  generic PM domain bindings.
+> +
+> +Example 3: The clock controllers bindings for Exynos4412 SoCs.
+> +
+> +	clock: clock-controller@10030000 {
+> +		compatible = "samsung,exynos4412-clock";
+> +		reg = <0x10030000 0x18000>;
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +	isp_clock: clock-controller@10048000 {
+> +		compatible = "samsung,exynos4412-isp-clock";
+> +		reg = <0x10048000 0x1000>;
+> +		#clock-cells = <1>;
+> +		power-domains = <&pd_isp>;
+> +		clocks = <&clock CLK_ACLK200>, <&clock CLK_ACLK400_MCUISP>;
+> +		clock-names = "aclk200", "aclk400_mcuisp";
+> +	};
+> diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
+> index c40111f36d5e..e9f9d400c322 100644
+> --- a/include/dt-bindings/clock/exynos4.h
+> +++ b/include/dt-bindings/clock/exynos4.h
+> @@ -272,4 +272,39 @@
+>  /* must be greater than maximal clock id */
+>  #define CLK_NR_CLKS		461
+>  
+> +/* Exynos4x12 ISP clocks */
 
-As it is an internal scale it actually doesn't matter which one you use.  Both
-are valid.
+Shouldn't the clock IDs go with driver changes? I think only the
+Documentation/ part should be separate.
 
-> Both values do have effect on the scale, as scale is basically
-> current_lsb / 1000 and on the raw value, as current register is calculated
-> internally using current_lsb.
-
-Hmm The terminology in the datasheet is confusing.  I read it as these were
-intended to 'calibrate' the system.  They aren't - they are intended to apply
-a scaling to make the output use the full range. 
-
-So they will effect the scale which is nasty.
-The annoying bit about this is that means the key value you should be modifying
-is scale and you should not use calibscale at all.  It isn't appropriate because
-that is not meant to effect the scale of the exposed value.  It's for calibration
-to correct device inaccuracies. That isn't true here.
-
-Anyhow, so scale is all you should need.  A bit ugly but there we are.
+Best regards,
+Krzysztof
 
 
+> +#define CLK_ISP_FIMC_ISP		 1
+> +#define CLK_ISP_FIMC_DRC		 2
+> +#define CLK_ISP_FIMC_FD			 3
+> +#define CLK_ISP_FIMC_LITE0		 4
+> +#define CLK_ISP_FIMC_LITE1		 5
+> +#define CLK_ISP_MCUISP			 6
+> +#define CLK_ISP_GICISP			 7
+> +#define CLK_ISP_SMMU_ISP		 8
+> +#define CLK_ISP_SMMU_DRC		 9
+> +#define CLK_ISP_SMMU_FD			10
+> +#define CLK_ISP_SMMU_LITE0		11
+> +#define CLK_ISP_SMMU_LITE1		12
+> +#define CLK_ISP_PPMUISPMX		13
+> +#define CLK_ISP_PPMUISPX		14
+> +#define CLK_ISP_MCUCTL_ISP		15
+> +#define CLK_ISP_MPWM_ISP		16
+> +#define CLK_ISP_I2C0_ISP		17
+> +#define CLK_ISP_I2C1_ISP		18
+> +#define CLK_ISP_MTCADC_ISP		19
+> +#define CLK_ISP_PWM_ISP			20
+> +#define CLK_ISP_WDT_ISP			21
+> +#define CLK_ISP_UART_ISP		22
+> +#define CLK_ISP_ASYNCAXIM		23
+> +#define CLK_ISP_SMMU_ISPCX		24
+> +#define CLK_ISP_SPI0_ISP		25
+> +#define CLK_ISP_SPI1_ISP		26
+> +
+> +#define CLK_ISP_DIV_ISP0		27
+> +#define CLK_ISP_DIV_ISP1		28
+> +#define CLK_ISP_DIV_MCUISP0		29
+> +#define CLK_ISP_DIV_MCUISP1		30
+> +
+> +#define CLK_NR_ISP_CLKS			31
+> +
+>  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_4_H */
+> -- 
+> 2.14.2
 > 
-> The content of current register is always RAW unless we set current_lsb to 1. 
-> See the documentation:
-> http://www.ti.com/lit/ds/symlink/ina231.pdf
-> page 15
-> 
-> Thanks,
-> 
-> Maciej
-> 
-> >>
-> >> I should mention that currenst_lsb value is also used for calculating power_lsb
-> >> as they have a fixed ratio (20 or 25) given in the documentation.  
-> > 
-> > Then expose it for power as well (appropriately adjusted).
-> > In IIO ABI it is fine to have two elements addressing the same underlying hardware
-> > value - rule is you change something, you check everything else hasn't changed.
-> > 
-> > Jonathan >>  
-> >> Thanks,
-> >>
-> >> Maciej
-> >>  
-> >>>      
-> >>>> Best regards,
-> >>>>
-> >>>> 	Maciej  
-> >>>>> This moves the burden of calculating the 1lsb value to userspace,
-> >>>>> but importantly it would give us a consistent ABI where this fits
-> >>>>> in with existing elements (largely buy not introducing any new
-> >>>>> ones :).
-> >>>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>> Jonathan  
-> >>>>>>
-> >>>>>> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>>>>> ---
-> >>>>>>     drivers/iio/adc/ina2xx-adc.c         | 110 ++++++++++++++++++++++++++++++-----
-> >>>>>>     include/linux/platform_data/ina2xx.h |   2 +
-> >>>>>>     2 files changed, 98 insertions(+), 14 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/iio/adc/ina2xx-adc.c b/drivers/iio/adc/ina2xx-adc.c
-> >>>>>> index f387b97..883fede 100644
-> >>>>>> --- a/drivers/iio/adc/ina2xx-adc.c
-> >>>>>> +++ b/drivers/iio/adc/ina2xx-adc.c
-> >>>>>> @@ -56,6 +56,7 @@
-> >>>>>>     #define INA226_DEFAULT_IT		1110
-> >>>>>>     
-> >>>>>>     #define INA2XX_RSHUNT_DEFAULT           10000
-> >>>>>> +#define INA2XX_MAX_EXPECTED_A_DEFAULT	(1 << 15)	/* current_lsb = 1 mA */
-> >>>>>>     
-> >>>>>>     /*
-> >>>>>>      * bit masks for reading the settings in the configuration register
-> >>>>>> @@ -114,7 +115,7 @@ struct ina2xx_config {
-> >>>>>>     	int shunt_div;
-> >>>>>>     	int bus_voltage_shift;
-> >>>>>>     	int bus_voltage_lsb;	/* uV */
-> >>>>>> -	int power_lsb;		/* uW */
-> >>>>>> +	int power_lsb_factor;
-> >>>>>>     	enum ina2xx_ids chip_id;
-> >>>>>>     };
-> >>>>>>     
-> >>>>>> @@ -123,7 +124,10 @@ struct ina2xx_chip_info {
-> >>>>>>     	struct task_struct *task;
-> >>>>>>     	const struct ina2xx_config *config;
-> >>>>>>     	struct mutex state_lock;
-> >>>>>> -	unsigned int shunt_resistor;
-> >>>>>> +	unsigned int shunt_resistor;		/* uOhms */
-> >>>>>> +	unsigned int max_expected_current;	/* mA */
-> >>>>>> +	int current_lsb;			/* uA */
-> >>>>>> +	int power_lsb;				/* uW */
-> >>>>>>     	int avg;
-> >>>>>>     	int int_time_vbus; /* Bus voltage integration time uS */
-> >>>>>>     	int int_time_vshunt; /* Shunt voltage integration time uS */
-> >>>>>> @@ -137,7 +141,7 @@ static const struct ina2xx_config ina2xx_config[] = {
-> >>>>>>     		.shunt_div = 100,
-> >>>>>>     		.bus_voltage_shift = 3,
-> >>>>>>     		.bus_voltage_lsb = 4000,
-> >>>>>> -		.power_lsb = 20000,
-> >>>>>> +		.power_lsb_factor = 20,
-> >>>>>>     		.chip_id = ina219,
-> >>>>>>     	},
-> >>>>>>     	[ina226] = {
-> >>>>>> @@ -146,7 +150,7 @@ static const struct ina2xx_config ina2xx_config[] = {
-> >>>>>>     		.shunt_div = 400,
-> >>>>>>     		.bus_voltage_shift = 0,
-> >>>>>>     		.bus_voltage_lsb = 1250,
-> >>>>>> -		.power_lsb = 25000,
-> >>>>>> +		.power_lsb_factor = 25,
-> >>>>>>     		.chip_id = ina226,
-> >>>>>>     	},
-> >>>>>>     };
-> >>>>>> @@ -210,14 +214,15 @@ static int ina2xx_read_raw(struct iio_dev *indio_dev,
-> >>>>>>     
-> >>>>>>     		case INA2XX_POWER:
-> >>>>>>     			/* processed (mW) = raw*lsb (uW) / 1000 */
-> >>>>>> -			*val = chip->config->power_lsb;
-> >>>>>> +			*val = chip->power_lsb;
-> >>>>>>     			*val2 = 1000;
-> >>>>>>     			return IIO_VAL_FRACTIONAL;
-> >>>>>>     
-> >>>>>>     		case INA2XX_CURRENT:
-> >>>>>> -			/* processed (mA) = raw (mA) */
-> >>>>>> -			*val = 1;
-> >>>>>> -			return IIO_VAL_INT;
-> >>>>>> +			/* processed (mA) = raw*lsb (uA) / 1000 */
-> >>>>>> +			*val = chip->current_lsb;
-> >>>>>> +			*val2 = 1000;
-> >>>>>> +			return IIO_VAL_FRACTIONAL;
-> >>>>>>     		}
-> >>>>>>     	}
-> >>>>>>     
-> >>>>>> @@ -434,24 +439,47 @@ static ssize_t ina2xx_allow_async_readout_store(struct device *dev,
-> >>>>>>     }
-> >>>>>>     
-> >>>>>>     /*
-> >>>>>> - * Set current LSB to 1mA, shunt is in uOhms
-> >>>>>> - * (equation 13 in datasheet). We hardcode a Current_LSB
-> >>>>>> - * of 1.0 x10-6. The only remaining parameter is RShunt.
-> >>>>>> + * Calculate calibration value according to equation 1 in ina226 datasheet
-> >>>>>> + * http://www.ti.com/lit/ds/symlink/ina226.pdf.
-> >>>>>> + * Current LSB is in uA and RShunt is in uOhms, so RShunt should be
-> >>>>>> + * converted to mOhms in order to keep the scale.
-> >>>>>>      * There is no need to expose the CALIBRATION register
-> >>>>>>      * to the user for now. But we need to reset this register
-> >>>>>> - * if the user updates RShunt after driver init, e.g upon
-> >>>>>> - * reading an EEPROM/Probe-type value.
-> >>>>>> + * if the user updates RShunt or max expected current after driver
-> >>>>>> + * init, e.g upon reading an EEPROM/Probe-type value.
-> >>>>>>      */
-> >>>>>>     static int ina2xx_set_calibration(struct ina2xx_chip_info *chip)
-> >>>>>>     {
-> >>>>>> +	unsigned int rshunt = DIV_ROUND_CLOSEST(chip->shunt_resistor, 1000);
-> >>>>>>     	u16 regval = DIV_ROUND_CLOSEST(chip->config->calibration_factor,
-> >>>>>> -				   chip->shunt_resistor);
-> >>>>>> +				     chip->current_lsb * rshunt);
-> >>>>>>     
-> >>>>>>     	return regmap_write(chip->regmap, INA2XX_CALIBRATION, regval);
-> >>>>>>     }
-> >>>>>>     
-> >>>>>> +/*
-> >>>>>> + * Set max_expected_current (mA) and calculate current_lsb (uA),
-> >>>>>> + * according to equation 2 in ina226 datasheet. Power LSB is calculated
-> >>>>>> + * by multiplying Current LSB by a given factor, which may vary depending
-> >>>>>> + * on ina version.
-> >>>>>> + */
-> >>>>>> +static int set_max_expected_current(struct ina2xx_chip_info *chip,
-> >>>>>> +				    unsigned int val)
-> >>>>>> +{
-> >>>>>> +	if (val <= 0 || val > chip->config->calibration_factor)
-> >>>>>> +		return -EINVAL;
-> >>>>>> +
-> >>>>>> +	chip->max_expected_current = val;
-> >>>>>> +	chip->current_lsb = DIV_ROUND_CLOSEST(chip->max_expected_current * 1000,
-> >>>>>> +					      1 << 15);
-> >>>>>> +	chip->power_lsb = chip->current_lsb * chip->config->power_lsb_factor;
-> >>>>>> +
-> >>>>>> +	return 0;
-> >>>>>> +}
-> >>>>>> +
-> >>>>>>     static int set_shunt_resistor(struct ina2xx_chip_info *chip, unsigned int val)
-> >>>>>>     {
-> >>>>>> +
-> >>>>>>     	if (val <= 0 || val > chip->config->calibration_factor)
-> >>>>>>     		return -EINVAL;
-> >>>>>>     
-> >>>>>> @@ -493,6 +521,39 @@ static ssize_t ina2xx_shunt_resistor_store(struct device *dev,
-> >>>>>>     	return len;
-> >>>>>>     }
-> >>>>>>     
-> >>>>>> +static ssize_t ina2xx_max_expected_current_show(struct device *dev,
-> >>>>>> +					  struct device_attribute *attr,
-> >>>>>> +					  char *buf)
-> >>>>>> +{
-> >>>>>> +	struct ina2xx_chip_info *chip = iio_priv(dev_to_iio_dev(dev));
-> >>>>>> +
-> >>>>>> +	return sprintf(buf, "%d\n", chip->max_expected_current);
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static ssize_t ina2xx_max_expected_current_store(struct device *dev,
-> >>>>>> +					   struct device_attribute *attr,
-> >>>>>> +					   const char *buf, size_t len)
-> >>>>>> +{
-> >>>>>> +	struct ina2xx_chip_info *chip = iio_priv(dev_to_iio_dev(dev));
-> >>>>>> +	unsigned long val;
-> >>>>>> +	int ret;
-> >>>>>> +
-> >>>>>> +	ret = kstrtoul((const char *) buf, 10, &val);  
-> >>>>>
-> >>>>> Odd bit of casting given that's what it already is...
-> >>>>>         
-> >>>>>> +	if (ret)
-> >>>>>> +		return ret;
-> >>>>>> +
-> >>>>>> +	ret = set_max_expected_current(chip, val);
-> >>>>>> +	if (ret)
-> >>>>>> +		return ret;
-> >>>>>> +
-> >>>>>> +	/* Update the Calibration register */
-> >>>>>> +	ret = ina2xx_set_calibration(chip);
-> >>>>>> +	if (ret)
-> >>>>>> +		return ret;
-> >>>>>> +
-> >>>>>> +	return len;
-> >>>>>> +}
-> >>>>>> +
-> >>>>>>     #define INA219_CHAN(_type, _index, _address) { \
-> >>>>>>     	.type = (_type), \
-> >>>>>>     	.address = (_address), \
-> >>>>>> @@ -755,10 +816,15 @@ static IIO_DEVICE_ATTR(in_shunt_resistor, S_IRUGO | S_IWUSR,
-> >>>>>>     		       ina2xx_shunt_resistor_show,
-> >>>>>>     		       ina2xx_shunt_resistor_store, 0);
-> >>>>>>     
-> >>>>>> +static IIO_DEVICE_ATTR(in_max_expected_current, S_IRUGO | S_IWUSR,
-> >>>>>> +		       ina2xx_max_expected_current_show,
-> >>>>>> +		       ina2xx_max_expected_current_store, 0);
-> >>>>>> +
-> >>>>>>     static struct attribute *ina219_attributes[] = {
-> >>>>>>     	&iio_dev_attr_in_allow_async_readout.dev_attr.attr,
-> >>>>>>     	&iio_const_attr_ina219_integration_time_available.dev_attr.attr,
-> >>>>>>     	&iio_dev_attr_in_shunt_resistor.dev_attr.attr,
-> >>>>>> +	&iio_dev_attr_in_max_expected_current.dev_attr.attr,
-> >>>>>>     	NULL,
-> >>>>>>     };
-> >>>>>>     
-> >>>>>> @@ -766,6 +832,7 @@ static struct attribute *ina226_attributes[] = {
-> >>>>>>     	&iio_dev_attr_in_allow_async_readout.dev_attr.attr,
-> >>>>>>     	&iio_const_attr_ina226_integration_time_available.dev_attr.attr,
-> >>>>>>     	&iio_dev_attr_in_shunt_resistor.dev_attr.attr,
-> >>>>>> +	&iio_dev_attr_in_max_expected_current.dev_attr.attr,
-> >>>>>>     	NULL,
-> >>>>>>     };
-> >>>>>>     
-> >>>>>> @@ -851,6 +918,21 @@ static int ina2xx_probe(struct i2c_client *client,
-> >>>>>>     	if (ret)
-> >>>>>>     		return ret;
-> >>>>>>     
-> >>>>>> +	if (of_property_read_u32(client->dev.of_node,
-> >>>>>> +				  "max-expected-current", &val) < 0) {
-> >>>>>> +		struct ina2xx_platform_data *pdata =
-> >>>>>> +		    dev_get_platdata(&client->dev);
-> >>>>>> +
-> >>>>>> +		if (pdata && pdata->max_mA != 0)
-> >>>>>> +			val = pdata->max_mA;
-> >>>>>> +		else
-> >>>>>> +			val = INA2XX_MAX_EXPECTED_A_DEFAULT;
-> >>>>>> +	}
-> >>>>>> +
-> >>>>>> +	ret = set_max_expected_current(chip, val);
-> >>>>>> +	if (ret)
-> >>>>>> +		return ret;
-> >>>>>> +
-> >>>>>>     	/* Patch the current config register with default. */
-> >>>>>>     	val = chip->config->config_default;
-> >>>>>>     
-> >>>>>> diff --git a/include/linux/platform_data/ina2xx.h b/include/linux/platform_data/ina2xx.h
-> >>>>>> index 9abc0ca..f02b1d8 100644
-> >>>>>> --- a/include/linux/platform_data/ina2xx.h
-> >>>>>> +++ b/include/linux/platform_data/ina2xx.h
-> >>>>>> @@ -13,7 +13,9 @@
-> >>>>>>     /**
-> >>>>>>      * struct ina2xx_platform_data - ina2xx info
-> >>>>>>      * @shunt_uohms		shunt resistance in microohms
-> >>>>>> + * @max_mA		max expected current in mA
-> >>>>>>      */
-> >>>>>>     struct ina2xx_platform_data {
-> >>>>>>     	long shunt_uohms;
-> >>>>>> +	int max_mA;
-> >>>>>>     };  
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>>         
-> >>>
-> >>>
-> >>>
-> >>>      
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> >> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html  
-> > 
-> > 
-> > 
-> >   
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
