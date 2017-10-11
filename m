@@ -1,156 +1,180 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v3 7/8] PM / devfreq: Define the constant governor name
-Date: Wed, 11 Oct 2017 12:09:23 +0900
-Message-ID: <1507691364-3899-8-git-send-email-cw00.choi@samsung.com>
-References: <1507691364-3899-1-git-send-email-cw00.choi@samsung.com>
-        <CGME20171011030947epcas1p3fead28d00a52590b344b728dfca59138@epcas1p3.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1507691364-3899-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com
-Cc: rafael.j.wysocki@intel.com, chanwoo@kernel.org, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [RFC 1/2] ARM: dts: exynos: update the usbdrd phy and ref clk
+Date: Wed, 11 Oct 2017 11:16:22 +0530
+Message-ID: <CANAwSgSmw1=b_57Zt7D_ijg-OaqqpuBqDMZKACT_7Wn16WAUdA@mail.gmail.com>
+References: <1507264595-3565-1-git-send-email-linux.amoon@gmail.com>
+ <CAJKOXPe=hd7QdsaqpqPv3cNvL59FBqCfy24mYmGdQvi7Yp8wBQ@mail.gmail.com>
+ <CANAwSgRK+F62xKFeFM9ZJ_rgPWj831ca=tX9BSKXUyRBhN4yhA@mail.gmail.com> <368b8301-3b7e-ecf7-ff8d-8f94728749df@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:51671 "EHLO
+        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750729AbdJKFqo (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 11 Oct 2017 01:46:44 -0400
+In-Reply-To: <368b8301-3b7e-ecf7-ff8d-8f94728749df@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Prior to that, the devfreq device uses the governor name when adding
-the itself. In order to prevent the mistake used the wrong governor name,
-this patch defines the governor name as a constant and then uses them
-instead of using the string directly.
+Hi Vivek,
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/devfreq/exynos-bus.c              | 5 +++--
- drivers/devfreq/governor_passive.c        | 2 +-
- drivers/devfreq/governor_performance.c    | 2 +-
- drivers/devfreq/governor_powersave.c      | 2 +-
- drivers/devfreq/governor_simpleondemand.c | 2 +-
- drivers/devfreq/governor_userspace.c      | 2 +-
- drivers/devfreq/rk3399_dmc.c              | 2 +-
- include/linux/devfreq.h                   | 7 +++++++
- 8 files changed, 16 insertions(+), 8 deletions(-)
+On 10 October 2017 at 11:57, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+>
+>
+> On 10/08/2017 06:06 PM, Anand Moon wrote:
+>>
+>> Hi Krzysztof,
+>>
+>> On 6 October 2017 at 12:08, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>
+>>> On Fri, Oct 6, 2017 at 6:36 AM, Anand Moon <linux.amoon@gmail.com> wrote:
+>>>>
+>>>> update the usbdrd link control and phy contol clks.
+>>>
+>>> The commit title and especially commit message should explain why you
+>>> are doing this and what are you doing. "Update" is not enough.
+>>> Everything could be called update.
+>>>
+>>> Therefore I do not understand the reason behind the patch.
+>>>
+>>> BR,
+>>> Krzysztof
+>>
+>> so as per the driver.
+>> @clk: phy clock for register access
+>> @ref_clk: reference clock to PHY block from which PHY's operational
+>> clocks are derived
+>>
+>> Both CLK_SCLK_USBPHY300 and CLK_SCLK_USBD300 belong to FSYS Clock
+>> and CLK_USBD300 clk is being used by the usbdrd dwc3 module.
+>
+>
+> From what i vaguely remember, the CLK_SCLK* are the parent clocks going to
+> the
+> FSYS block. In this FSYS block the two clocks - CLK_USBD300, and
+> CLK_SCLK_USBPHY300
+> are coming.
+>
+> "phy" - represents the AHB clock used only for the register writes, and is
+> required only
+> during register access. Since we don't need this clock for phy operation,
+> your next change
+> that removes the clk_disable() sounds incorrect to me.
+> Just to double check, this AHB clock should be 200MHz (from what i remember)
+> "ref_clk" - the phy reference that clocks the phy PLL. This is a 24MHz
+> clock.
+>
+> Clubbing the changes in two patches:
+> - You change the "phy" clock from CLK_USBD300 to CLK_SCLK_USBPHY300, and
+> then
+>   you _had_ to remove the clk_disable().
+>   I think you needed the second patch just because you introduced this
+> change in the clocks.
+>
+> - Like Krzysztof mentioned in the thread, if there's a performance
+> improvement you may
+> want to double check the clock rates.
+>
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 49f68929e024..c25658b26598 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -436,7 +436,8 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	ondemand_data->downdifferential = 5;
- 
- 	/* Add devfreq device to monitor and handle the exynos bus */
--	bus->devfreq = devm_devfreq_add_device(dev, profile, "simple_ondemand",
-+	bus->devfreq = devm_devfreq_add_device(dev, profile,
-+						DEVFREQ_GOV_SIMPLE_ONDEMAND,
- 						ondemand_data);
- 	if (IS_ERR(bus->devfreq)) {
- 		dev_err(dev, "failed to add devfreq device\n");
-@@ -488,7 +489,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	passive_data->parent = parent_devfreq;
- 
- 	/* Add devfreq device for exynos bus with passive governor */
--	bus->devfreq = devm_devfreq_add_device(dev, profile, "passive",
-+	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
- 						passive_data);
- 	if (IS_ERR(bus->devfreq)) {
- 		dev_err(dev,
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-index 673ad8cc9a1d..3bc29acbd54e 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -183,7 +183,7 @@ static int devfreq_passive_event_handler(struct devfreq *devfreq,
- }
- 
- static struct devfreq_governor devfreq_passive = {
--	.name = "passive",
-+	.name = DEVFREQ_GOV_PASSIVE,
- 	.immutable = 1,
- 	.get_target_freq = devfreq_passive_get_target_freq,
- 	.event_handler = devfreq_passive_event_handler,
-diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
-index c72f942f30a8..4d23ecfbd948 100644
---- a/drivers/devfreq/governor_performance.c
-+++ b/drivers/devfreq/governor_performance.c
-@@ -42,7 +42,7 @@ static int devfreq_performance_handler(struct devfreq *devfreq,
- }
- 
- static struct devfreq_governor devfreq_performance = {
--	.name = "performance",
-+	.name = DEVFREQ_GOV_PERFORMANCE,
- 	.get_target_freq = devfreq_performance_func,
- 	.event_handler = devfreq_performance_handler,
+Yes their is slight improvement with these changes
+I will share my test result once I add few more changes to this drive.
+
+>
+> Best regards
+> Vivek
+>
+
+Thank for your explanation on the clk internals.
+I have read few detail on the initial mainline list.
+
+[0] https://lkml.org/lkml/2014/4/8/247
+
+CLK_GATE_TOP_SCLK_FSYS
+
+SCLK_USBDRD301       Gating SUSPEND_CLK for USBDRD30_1
+SCLK_USBDRD300       Gating SUSPEND_CLK for USBDRD30_0
+SCLK_USBPHY300        Gating USB30_SCLK_100M for USBDRD30_PHY_0
+                                            Gating USB20_PICO_CLKCORE
+for PICO PHY
+SCLK_USBPHY300        Gating USB30_SCLK_100M for USBDRD30_PHY_1
+
+So we did not considered the SUSPEN_CLK for phy.
+
+Below is the clk structure diagram for usb drd phy.
+
+[1] https://lkml.org/lkml/2014/4/10/240
+
+Here is how it shown in manual.
+
+                                   ___________________
+                                   |                                          |
+SUSPEND_CLK     |      ____________        |
+ ------------------------- |      | PHY                 |        |
+                                   |      | controller
+|------|--------------------------------------------------------
+                                   |      |___________|        |
+                                                                   |
+                                   |
+       |
+           |
+                                   |
+       |
+          |
+                                   |         USB 3.0
+|      USB30_SCLK_100M------------- |-------------------------------|
+                                   |           DRD
+ |                                                               |
+                                    |---->vbus
+                                   ---------------------------------
+                                                            |
+                               |
+                                   |        Controller
+|                                                               |
+ |---------------------|    |
+                                   |
+       |            Pipe interface                          |       |
+USB 3.0 DRD  |    |
+                                   |      ----------------
+  |-----------------------------------------------|
+|____________|    |
+                                   |     |       PHY       |
+  |            UTMI+ Interface                       |
+                        |
+                                   |     | Link cont.    |
+|-----------------------------------------------|
+                   |
+                                   |     |-----------------|
+ |
+|__________________|
+                                   |
+       |
+                                   |__________________|
+
+
+So how can we support SUSPEND_CLK ?
+Do we need to keep this SUSPEND_CLK enable ?
+
+As of now my dts change are wrong
+How about below changes.
+
+ &usbdrd_phy0 {
+-       clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
++       clocks = <&clock CLK_SCLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
+        clock-names = "phy", "ref";
+        samsung,pmu-syscon = <&pmu_system_controller>;
  };
-diff --git a/drivers/devfreq/governor_powersave.c b/drivers/devfreq/governor_powersave.c
-index 0c6bed567e6d..0c42f23249ef 100644
---- a/drivers/devfreq/governor_powersave.c
-+++ b/drivers/devfreq/governor_powersave.c
-@@ -39,7 +39,7 @@ static int devfreq_powersave_handler(struct devfreq *devfreq,
- }
- 
- static struct devfreq_governor devfreq_powersave = {
--	.name = "powersave",
-+	.name = DEVFREQ_GOV_POWERSAVE,
- 	.get_target_freq = devfreq_powersave_func,
- 	.event_handler = devfreq_powersave_handler,
+@@ -1476,7 +1476,7 @@
  };
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index ae72ba5e78df..28e0f2de7100 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -125,7 +125,7 @@ static int devfreq_simple_ondemand_handler(struct devfreq *devfreq,
- }
- 
- static struct devfreq_governor devfreq_simple_ondemand = {
--	.name = "simple_ondemand",
-+	.name = DEVFREQ_GOV_SIMPLE_ONDEMAND,
- 	.get_target_freq = devfreq_simple_ondemand_func,
- 	.event_handler = devfreq_simple_ondemand_handler,
+
+ &usbdrd_phy1 {
+-       clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
++       clocks = <&clock CLK_SCLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+        clock-names = "phy", "ref";
+        samsung,pmu-syscon = <&pmu_system_controller>;
  };
-diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
-index 77028c27593c..080607c3f34d 100644
---- a/drivers/devfreq/governor_userspace.c
-+++ b/drivers/devfreq/governor_userspace.c
-@@ -87,7 +87,7 @@ static ssize_t show_freq(struct device *dev, struct device_attribute *attr,
- 	NULL,
- };
- static const struct attribute_group dev_attr_group = {
--	.name	= "userspace",
-+	.name	= DEVFREQ_GOV_USERSPACE,
- 	.attrs	= dev_entries,
- };
- 
-diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-index 1b89ebbad02c..5dfbfa3cc878 100644
---- a/drivers/devfreq/rk3399_dmc.c
-+++ b/drivers/devfreq/rk3399_dmc.c
-@@ -431,7 +431,7 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
- 
- 	data->devfreq = devm_devfreq_add_device(dev,
- 					   &rk3399_devfreq_dmc_profile,
--					   "simple_ondemand",
-+					   DEVFREQ_GOV_SIMPLE_ONDEMAND,
- 					   &data->ondemand_data);
- 	if (IS_ERR(data->devfreq))
- 		return PTR_ERR(data->devfreq);
-diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index 597294e0cc40..a3ad2074bebe 100644
---- a/include/linux/devfreq.h
-+++ b/include/linux/devfreq.h
-@@ -19,6 +19,13 @@
- 
- #define DEVFREQ_NAME_LEN 16
- 
-+/* DEVFREQ governor name */
-+#define DEVFREQ_GOV_SIMPLE_ONDEMAND	"simple_ondemand"
-+#define DEVFREQ_GOV_PERFORMANCE		"performance"
-+#define DEVFREQ_GOV_POWERSAVE		"powersave"
-+#define DEVFREQ_GOV_USERSPACE		"userspace"
-+#define DEVFREQ_GOV_PASSIVE		"passive"
-+
- /* DEVFREQ notifier interface */
- #define DEVFREQ_TRANSITION_NOTIFIER	(0)
- 
--- 
-1.9.1
+
+Best Regards
+-Anand
