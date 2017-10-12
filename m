@@ -1,318 +1,1086 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3] drm: exynos: Add driver for HDMI audio interface
-Date: Thu, 12 Oct 2017 11:51:10 +0200
-Message-ID: <dce1bc56-ecb1-e029-6d2b-ddf3b560d894@samsung.com>
-References: <CGME20170926141814epcas1p1923ab779847932395bf2c2899291dfcd@epcas1p1.samsung.com>
- <1506435469-10591-1-git-send-email-s.nawrocki@samsung.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH v5] crypto: s5p-sss: Add HASH support for Exynos
+Date: Thu, 12 Oct 2017 14:45:47 +0300
+Message-ID: <4e9717c5-43d1-46d1-60ed-ea8168a91cc4@mentor.com>
+References: <CGME20171009111232eucas1p1d17afaae66931a7dd234dbfa1d5a193f@eucas1p1.samsung.com>
+ <afa6482f-dc1e-6aab-5754-fa86f554e0b2@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1506435469-10591-1-git-send-email-s.nawrocki@samsung.com>
-Content-language: en-GB
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, jcsing.lee@samsung.com, sw0312.kim@samsung.com, krzk@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <afa6482f-dc1e-6aab-5754-fa86f554e0b2@partner.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDkvMjYvMjAxNyAwNDoxNyBQTSwgU3lsd2VzdGVyIE5hd3JvY2tpIHdyb3RlOgo+IFRoZSBo
-ZG1pLWNvZGVjIGludGVyZmFjZSBhZGRlZCBpbiB0aGlzIHBhdGNoIGlzIHJlcXVpcmVkIHRvIHBy
-b3Blcmx5Cj4gc3VwcG9ydCBIRE1JIGF1ZGlvLiBDdXJyZW50bHkgdGhlIGF1ZGlvIHBhcnQgb2Yg
-dGhlIFNvQyBpbnRlcm5hbAo+IEhETUkgdHJhbnNtaXR0ZXIgaXMgY29uZmlndXJlZCB3aXRoIGZp
-eGVkIHZhbHVlcywgd2hpY2ggbWFrZXMgSERNSQo+IGF1ZGlvIHdvcmtpbmcgYnkgY2hhbmNlLCBv
-bmx5IG9uIGJvYXJkcyBoYXZpbmcgYW4gZXh0ZXJuYWwgYXVkaW8KPiBjb2RlYyBjb25uZWN0ZWQg
-aW4gcGFyYWxsZWwgd2l0aCB0aGUgSERNSSBhdWRpbyB0cmFuc21pdHRlcidzIGlucHV0Cj4gSTJT
-IGludGVyZmFjZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTeWx3ZXN0ZXIgTmF3cm9ja2kgPHMubmF3
-cm9ja2lAc2Ftc3VuZy5jb20+Cj4gUmV2aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFA
-c2Ftc3VuZy5jb20+CgpBbnkgY29tbWVudHMgb24gdGhpcyBwYXRjaD8KClRoYW5rcywKU3lsd2Vz
-dGVyCgo+IC0tLQo+IFRlc3RlZCBvbiBPZHJvaWQgWFUzIGFuZCBPZHJvaWQgWFU0IHdpdGggVWJ1
-bnR1IDE0LjA0Lgo+IAo+IENoYW5nZXMgc2luY2UgdjI6Cj4gIC0gdTggcmVwbGFjZWQgd2l0aCBi
-b29sIHR5cGUsCj4gIC0gdGhlICBIRE1JIGNvZGVjIGllYy5zdGF0dXMgZGF0YSB1c2VkIGRpcmVj
-dGx5IGZvciBzZXR0aW5nIHVwCj4gICAgdGhlIEhETUkgY29udHJvbGxlciByZWdpc3RlcnMgcmF0
-aGVyIHRoYW4gdXNpbmcgaGFyZCBjb2RlZAo+ICAgIGNvbnN0YW50cywKPiAgLSBjb25zdGFudHMg
-dXNlZCBmb3IgY29uZmlndXJpbmcgdGhlIEhETUlfQVVJX0NPTiByZWdpc3Rlcgo+ICAgIGluc3Rl
-YWQgb2YgcGxhaW4gbnVtYmVycywKPiAgLSBpZi9JU19FUlIvcmV0dXJuIHJlcGxhY2VkIHdpdGgg
-UFRSX0VSUl9PUl9aRVJPKCkuCj4gCj4gQ2hhbmdlcyBzaW5jZSB2MToKPiAgLSByZWJhc2VkIG9u
-dG8gdjQuMTQtcmMxIGFuZCBhZGFwdGVkIGxvY2tpbmcKPiAKPiBDaGFuZ2VzIHNpbmNlIFJGQyB2
-ZXJzaW9uOgo+ICAtIGZpeGVkIGhkbWktY29kZWMgbG9ja2luZyBpc3N1ZQo+ICAtIGFkZGVkIGEg
-Y29tbWVudCBkb2N1bWVudGluZyBzdHJ1Y3QgaGRtaV9jb250ZXg6Om11dGV4Cj4gLS0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZyAgICAgICB8ICAgMSArCj4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyB8IDI1MyArKysrKysrKysrKysrKysrKysrKysrKysr
-Ky0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtaGRtaS5oICAgfCAgIDgg
-Ky0KPiAgMyBmaWxlcyBjaGFuZ2VkLCAxOTcgaW5zZXJ0aW9ucygrKSwgNjUgZGVsZXRpb25zKC0p
-Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZwo+IGluZGV4IDMwNWRjM2QuLjVhN2M5ZDggMTAwNjQ0
-Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9LY29uZmlnCj4gQEAgLTMsNiArMyw3IEBAIGNvbmZpZyBEUk1fRVhZTk9T
-Cj4gIAlkZXBlbmRzIG9uIE9GICYmIERSTSAmJiAoQVJDSF9TM0M2NFhYIHx8IEFSQ0hfRVhZTk9T
-IHx8IEFSQ0hfTVVMVElQTEFURk9STSkKPiAgCXNlbGVjdCBEUk1fS01TX0hFTFBFUgo+ICAJc2Vs
-ZWN0IFZJREVPTU9ERV9IRUxQRVJTCj4gKwlzZWxlY3QgU05EX1NPQ19IRE1JX0NPREVDIGlmIFNO
-RF9TT0MKPiAgCWhlbHAKPiAgCSAgQ2hvb3NlIHRoaXMgb3B0aW9uIGlmIHlvdSBoYXZlIGEgU2Ft
-c3VuZyBTb0MgRVhZTk9TIGNoaXBzZXQuCj4gIAkgIElmIE0gaXMgc2VsZWN0ZWQgdGhlIG1vZHVs
-ZSB3aWxsIGJlIGNhbGxlZCBleHlub3Nkcm0uCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
-bWkuYwo+IGluZGV4IDIxNGZhNWUuLmQyYjM4OWEgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfaGRtaS5jCj4gQEAgLTQwLDcgKzQwLDcgQEAKPiAgI2luY2x1ZGUgPGxpbnV4L2NvbXBv
-bmVudC5oPgo+ICAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5oPgo+ICAjaW5jbHVkZSA8bGlu
-dXgvcmVnbWFwLmg+Cj4gLQo+ICsjaW5jbHVkZSA8c291bmQvaGRtaS1jb2RlYy5oPgo+ICAjaW5j
-bHVkZSA8ZHJtL2V4eW5vc19kcm0uaD4KPiAKPiAgI2luY2x1ZGUgPG1lZGlhL2NlYy1ub3RpZmll
-ci5oPgo+IEBAIC0xMTEsMTIgKzExMSwxOCBAQCBzdHJ1Y3QgaGRtaV9kcml2ZXJfZGF0YSB7Cj4g
-IAlzdHJ1Y3Qgc3RyaW5nX2FycmF5X3NwZWMgY2xrX211eGVzOwo+ICB9Owo+IAo+ICtzdHJ1Y3Qg
-aGRtaV9hdWRpbyB7Cj4gKwlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlCQkqcGRldjsKPiArCXN0cnVj
-dCBoZG1pX2F1ZGlvX2luZm9mcmFtZQlpbmZvZnJhbWU7Cj4gKwlzdHJ1Y3QgaGRtaV9jb2RlY19w
-YXJhbXMJcGFyYW1zOwo+ICsJYm9vbAkJCQllbmFibGU7Cj4gK307Cj4gKwo+ICBzdHJ1Y3QgaGRt
-aV9jb250ZXh0IHsKPiAgCXN0cnVjdCBkcm1fZW5jb2RlcgkJZW5jb2RlcjsKPiAgCXN0cnVjdCBk
-ZXZpY2UJCQkqZGV2Owo+ICAJc3RydWN0IGRybV9kZXZpY2UJCSpkcm1fZGV2Owo+ICAJc3RydWN0
-IGRybV9jb25uZWN0b3IJCWNvbm5lY3RvcjsKPiAtCWJvb2wJCQkJcG93ZXJlZDsKPiAgCWJvb2wJ
-CQkJZHZpX21vZGU7Cj4gIAlzdHJ1Y3QgZGVsYXllZF93b3JrCQlob3RwbHVnX3dvcms7Cj4gIAlz
-dHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZQkJY3VycmVudF9tb2RlOwo+IEBAIC0xMzcsNiArMTQzLDEx
-IEBAIHN0cnVjdCBoZG1pX2NvbnRleHQgewo+ICAJc3RydWN0IHJlZ3VsYXRvcgkJKnJlZ19oZG1p
-X2VuOwo+ICAJc3RydWN0IGV4eW5vc19kcm1fY2xrCQlwaHlfY2xrOwo+ICAJc3RydWN0IGRybV9i
-cmlkZ2UJCSpicmlkZ2U7Cj4gKwo+ICsJLyogbXV0ZXggcHJvdGVjdGluZyBzdWJzZXF1ZW50IGZp
-ZWxkcyBiZWxvdyAqLwo+ICsJc3RydWN0IG11dGV4CQkJbXV0ZXg7Cj4gKwlzdHJ1Y3QgaGRtaV9h
-dWRpbwkJYXVkaW87Cj4gKwlib29sCQkJCXBvd2VyZWQ7Cj4gIH07Cj4gCj4gIHN0YXRpYyBpbmxp
-bmUgc3RydWN0IGhkbWlfY29udGV4dCAqZW5jb2Rlcl90b19oZG1pKHN0cnVjdCBkcm1fZW5jb2Rl
-ciAqZSkKPiBAQCAtNzY4LDYgKzc3OSwyMiBAQCBzdGF0aWMgaW50IGhkbWlfY2xrX3NldF9wYXJl
-bnRzKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCBib29sIHRvX3BoeSkKPiAgCXJldHVybiBy
-ZXQ7Cj4gIH0KPiAKPiArc3RhdGljIGludCBoZG1pX2F1ZGlvX2luZm9mcmFtZV9hcHBseShzdHJ1
-Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPiArewo+ICsJc3RydWN0IGhkbWlfYXVkaW9faW5mb2Zy
-YW1lICppbmZvZnJhbWUgPSAmaGRhdGEtPmF1ZGlvLmluZm9mcmFtZTsKPiArCXU4IGJ1ZltIRE1J
-X0lORk9GUkFNRV9TSVpFKEFVRElPKV07Cj4gKwlpbnQgbGVuOwo+ICsKPiArCWxlbiA9IGhkbWlf
-YXVkaW9faW5mb2ZyYW1lX3BhY2soaW5mb2ZyYW1lLCBidWYsIHNpemVvZihidWYpKTsKPiArCWlm
-IChsZW4gPCAwKQo+ICsJCXJldHVybiBsZW47Cj4gKwo+ICsJaGRtaV9yZWdfd3JpdGViKGhkYXRh
-LCBIRE1JX0FVSV9DT04sIEhETUlfQVVJX0NPTl9FVkVSWV9WU1lOQyk7Cj4gKwloZG1pX3JlZ193
-cml0ZV9idWYoaGRhdGEsIEhETUlfQVVJX0hFQURFUjAsIGJ1ZiwgbGVuKTsKPiArCj4gKwlyZXR1
-cm4gMDsKPiArfQo+ICsKPiAgc3RhdGljIHZvaWQgaGRtaV9yZWdfaW5mb2ZyYW1lcyhzdHJ1Y3Qg
-aGRtaV9jb250ZXh0ICpoZGF0YSkKPiAgewo+ICAJdW5pb24gaGRtaV9pbmZvZnJhbWUgZnJtOwo+
-IEBAIC04MDUsMTUgKzgzMiw3IEBAIHN0YXRpYyB2b2lkIGhkbWlfcmVnX2luZm9mcmFtZXMoc3Ry
-dWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4gIAkJaGRtaV9yZWdfd3JpdGVfYnVmKGhkYXRhLCBI
-RE1JX1ZTSV9EQVRBKDApLCBidWYgKyAzLCByZXQgLSAzKTsKPiAgCX0KPiAKPiAtCXJldCA9IGhk
-bWlfYXVkaW9faW5mb2ZyYW1lX2luaXQoJmZybS5hdWRpbyk7Cj4gLQlpZiAoIXJldCkgewo+IC0J
-CWZybS5hdWRpby5jaGFubmVscyA9IDI7Cj4gLQkJcmV0ID0gaGRtaV9hdWRpb19pbmZvZnJhbWVf
-cGFjaygmZnJtLmF1ZGlvLCBidWYsIHNpemVvZihidWYpKTsKPiAtCX0KPiAtCWlmIChyZXQgPiAw
-KSB7Cj4gLQkJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0FVSV9DT04sIEhETUlfQVVJX0NP
-Tl9FVkVSWV9WU1lOQyk7Cj4gLQkJaGRtaV9yZWdfd3JpdGVfYnVmKGhkYXRhLCBIRE1JX0FVSV9I
-RUFERVIwLCBidWYsIHJldCk7Cj4gLQl9Cj4gKwloZG1pX2F1ZGlvX2luZm9mcmFtZV9hcHBseSho
-ZGF0YSk7Cj4gIH0KPiAKPiAgc3RhdGljIGVudW0gZHJtX2Nvbm5lY3Rvcl9zdGF0dXMgaGRtaV9k
-ZXRlY3Qoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwKPiBAQCAtOTk1LDIzICsxMDE0
-LDE4IEBAIHN0YXRpYyB2b2lkIGhkbWlfcmVnX2FjcihzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0
-YSwgdTMyIGZyZXEpCj4gIAloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfQUNSX0NPTiwgNCk7
-Cj4gIH0KPiAKPiAtc3RhdGljIHZvaWQgaGRtaV9hdWRpb19pbml0KHN0cnVjdCBoZG1pX2NvbnRl
-eHQgKmhkYXRhKQo+ICtzdGF0aWMgdm9pZCBoZG1pX2F1ZGlvX2NvbmZpZyhzdHJ1Y3QgaGRtaV9j
-b250ZXh0ICpoZGF0YSkKPiAgewo+IC0JdTMyIHNhbXBsZV9yYXRlLCBiaXRzX3Blcl9zYW1wbGU7
-Cj4gLQl1MzIgZGF0YV9udW0sIGJpdF9jaCwgc2FtcGxlX2ZycTsKPiAtCXUzMiB2YWw7Cj4gLQo+
-IC0Jc2FtcGxlX3JhdGUgPSA0NDEwMDsKPiAtCWJpdHNfcGVyX3NhbXBsZSA9IDE2Owo+ICsJdTMy
-IGJpdF9jaCA9IDE7Cj4gKwl1MzIgZGF0YV9udW0sIHZhbDsKPiArCWludCBpOwo+IAo+IC0Jc3dp
-dGNoIChiaXRzX3Blcl9zYW1wbGUpIHsKPiArCXN3aXRjaCAoaGRhdGEtPmF1ZGlvLnBhcmFtcy5z
-YW1wbGVfd2lkdGgpIHsKPiAgCWNhc2UgMjA6Cj4gIAkJZGF0YV9udW0gPSAyOwo+IC0JCWJpdF9j
-aCA9IDE7Cj4gIAkJYnJlYWs7Cj4gIAljYXNlIDI0Ogo+ICAJCWRhdGFfbnVtID0gMzsKPiAtCQli
-aXRfY2ggPSAxOwo+ICAJCWJyZWFrOwo+ICAJZGVmYXVsdDoKPiAgCQlkYXRhX251bSA9IDE7Cj4g
-QEAgLTEwMTksNyArMTAzMyw3IEBAIHN0YXRpYyB2b2lkIGhkbWlfYXVkaW9faW5pdChzdHJ1Y3Qg
-aGRtaV9jb250ZXh0ICpoZGF0YSkKPiAgCQlicmVhazsKPiAgCX0KPiAKPiAtCWhkbWlfcmVnX2Fj
-cihoZGF0YSwgc2FtcGxlX3JhdGUpOwo+ICsJaGRtaV9yZWdfYWNyKGhkYXRhLCBoZGF0YS0+YXVk
-aW8ucGFyYW1zLnNhbXBsZV9yYXRlKTsKPiAKPiAgCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERN
-SV9JMlNfTVVYX0NPTiwgSERNSV9JMlNfSU5fRElTQUJMRQo+ICAJCQkJfCBIRE1JX0kyU19BVURf
-STJTIHwgSERNSV9JMlNfQ1VWX0kyU19FTkFCTEUKPiBAQCAtMTAyOSwxMiArMTA0Myw2IEBAIHN0
-YXRpYyB2b2lkIGhkbWlfYXVkaW9faW5pdChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPiAg
-CQkJfCBIRE1JX0kyU19DSDFfRU4gfCBIRE1JX0kyU19DSDJfRU4pOwo+IAo+ICAJaGRtaV9yZWdf
-d3JpdGViKGhkYXRhLCBIRE1JX0kyU19NVVhfQ1VWLCBIRE1JX0kyU19DVVZfUkxfRU4pOwo+IC0K
-PiAtCXNhbXBsZV9mcnEgPSAoc2FtcGxlX3JhdGUgPT0gNDQxMDApID8gMCA6Cj4gLQkJCShzYW1w
-bGVfcmF0ZSA9PSA0ODAwMCkgPyAyIDoKPiAtCQkJKHNhbXBsZV9yYXRlID09IDMyMDAwKSA/IDMg
-Ogo+IC0JCQkoc2FtcGxlX3JhdGUgPT0gOTYwMDApID8gMHhhIDogMHgwOwo+IC0KPiAgCWhkbWlf
-cmVnX3dyaXRlYihoZGF0YSwgSERNSV9JMlNfQ0xLX0NPTiwgSERNSV9JMlNfQ0xLX0RJUyk7Cj4g
-IAloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSTJTX0NMS19DT04sIEhETUlfSTJTX0NMS19F
-Tik7Cj4gCj4gQEAgLTEwNTgsMzEgKzEwNjYsMjQgQEAgc3RhdGljIHZvaWQgaGRtaV9hdWRpb19p
-bml0KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+ICAJCQl8IEhETUlfSTJTX1NFVF9TREFU
-QV9CSVQoZGF0YV9udW0pCj4gIAkJCXwgSERNSV9JMlNfQkFTSUNfRk9STUFUKTsKPiAKPiAtCS8q
-IENvbmZpZ3VyZSByZWdpc3RlciByZWxhdGVkIHRvIENVViBpbmZvcm1hdGlvbiAqLwo+IC0JaGRt
-aV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0kyU19DSF9TVF8wLCBIRE1JX0kyU19DSF9TVEFUVVNf
-TU9ERV8wCj4gLQkJCXwgSERNSV9JMlNfMkFVRF9DSF9XSVRIT1VUX1BSRUVNUEgKPiAtCQkJfCBI
-RE1JX0kyU19DT1BZUklHSFQKPiAtCQkJfCBIRE1JX0kyU19MSU5FQVJfUENNCj4gLQkJCXwgSERN
-SV9JMlNfQ09OU1VNRVJfRk9STUFUKTsKPiAtCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9J
-MlNfQ0hfU1RfMSwgSERNSV9JMlNfQ0RfUExBWUVSKTsKPiAtCWhkbWlfcmVnX3dyaXRlYihoZGF0
-YSwgSERNSV9JMlNfQ0hfU1RfMiwgSERNSV9JMlNfU0VUX1NPVVJDRV9OVU0oMCkpOwo+IC0JaGRt
-aV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0kyU19DSF9TVF8zLCBIRE1JX0kyU19DTEtfQUNDVVJf
-TEVWRUxfMgo+IC0JCQl8IEhETUlfSTJTX1NFVF9TTVBfRlJFUShzYW1wbGVfZnJxKSk7Cj4gLQlo
-ZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSTJTX0NIX1NUXzQsCj4gLQkJCUhETUlfSTJTX09S
-R19TTVBfRlJFUV80NF8xCj4gLQkJCXwgSERNSV9JMlNfV09SRF9MRU5fTUFYMjRfMjRCSVRTCj4g
-LQkJCXwgSERNSV9JMlNfV09SRF9MRU5fTUFYXzI0QklUUyk7Cj4gKwkvKiBDb25maWd1cmUgcmVn
-aXN0ZXJzIHJlbGF0ZWQgdG8gQ1VWIGluZm9ybWF0aW9uICovCj4gKwlmb3IgKGkgPSAwOyBpIDwg
-SERNSV9JMlNfQ0hfU1RfTUFYTlVNOyBpKyspCj4gKwkJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBI
-RE1JX0kyU19DSF9TVChpKSwKPiArCQkJCWhkYXRhLT5hdWRpby5wYXJhbXMuaWVjLnN0YXR1c1tp
-XSk7Cj4gCj4gIAloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSTJTX0NIX1NUX0NPTiwgSERN
-SV9JMlNfQ0hfU1RBVFVTX1JFTE9BRCk7Cj4gIH0KPiAKPiAtc3RhdGljIHZvaWQgaGRtaV9hdWRp
-b19jb250cm9sKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCBib29sIG9ub2ZmKQo+ICtzdGF0
-aWMgdm9pZCBoZG1pX2F1ZGlvX2NvbnRyb2woc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4g
-IHsKPiArCWJvb2wgZW5hYmxlID0gaGRhdGEtPmF1ZGlvLmVuYWJsZTsKPiArCj4gIAlpZiAoaGRh
-dGEtPmR2aV9tb2RlKQo+ICAJCXJldHVybjsKPiAKPiAtCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwg
-SERNSV9BVUlfQ09OLCBvbm9mZiA/IDIgOiAwKTsKPiAtCWhkbWlfcmVnX3dyaXRlbWFzayhoZGF0
-YSwgSERNSV9DT05fMCwgb25vZmYgPwo+ICsJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0FV
-SV9DT04sIGVuYWJsZSA/Cj4gKwkJCUhETUlfQVZJX0NPTl9FVkVSWV9WU1lOQyA6IEhETUlfQVVJ
-X0NPTl9OT19UUkFOKTsKPiArCWhkbWlfcmVnX3dyaXRlbWFzayhoZGF0YSwgSERNSV9DT05fMCwg
-ZW5hYmxlID8KPiAgCQkJSERNSV9BU1BfRU4gOiBIRE1JX0FTUF9ESVMsIEhETUlfQVNQX01BU0sp
-Owo+ICB9Cj4gCj4gQEAgLTEzOTgsMTMgKzEzOTksMTQgQEAgc3RhdGljIHZvaWQgaGRtaXBoeV9j
-b25mX2FwcGx5KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+ICAJaGRtaXBoeV93YWl0X2Zv
-cl9wbGwoaGRhdGEpOwo+ICB9Cj4gCj4gKy8qIFNob3VsZCBiZSBjYWxsZWQgd2l0aCBoZGF0YS0+
-bXV0ZXggbXV0ZXggaGVsZCAqLwo+ICBzdGF0aWMgdm9pZCBoZG1pX2NvbmZfYXBwbHkoc3RydWN0
-IGhkbWlfY29udGV4dCAqaGRhdGEpCj4gIHsKPiAgCWhkbWlfc3RhcnQoaGRhdGEsIGZhbHNlKTsK
-PiAgCWhkbWlfY29uZl9pbml0KGhkYXRhKTsKPiAtCWhkbWlfYXVkaW9faW5pdChoZGF0YSk7Cj4g
-KwloZG1pX2F1ZGlvX2NvbmZpZyhoZGF0YSk7Cj4gIAloZG1pX21vZGVfYXBwbHkoaGRhdGEpOwo+
-IC0JaGRtaV9hdWRpb19jb250cm9sKGhkYXRhLCB0cnVlKTsKPiArCWhkbWlfYXVkaW9fY29udHJv
-bChoZGF0YSk7Cj4gIH0KPiAKPiAgc3RhdGljIHZvaWQgaGRtaV9tb2RlX3NldChzdHJ1Y3QgZHJt
-X2VuY29kZXIgKmVuY29kZXIsCj4gQEAgLTE0MzEsNiArMTQzMyw3IEBAIHN0YXRpYyB2b2lkIGhk
-bWlfc2V0X3JlZmNsayhzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSwgYm9vbCBvbikKPiAgCQkJ
-ICAgU1lTUkVHX0hETUlfUkVGQ0xLX0lOVF9DTEssIG9uID8gfjAgOiAwKTsKPiAgfQo+IAo+ICsv
-KiBTaG91bGQgYmUgY2FsbGVkIHdpdGggaGRhdGEtPm11dGV4IG11dGV4IGhlbGQuICovCj4gIHN0
-YXRpYyB2b2lkIGhkbWlwaHlfZW5hYmxlKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+ICB7
-Cj4gIAlpZiAoaGRhdGEtPnBvd2VyZWQpCj4gQEAgLTE0NTMsNiArMTQ1Niw3IEBAIHN0YXRpYyB2
-b2lkIGhkbWlwaHlfZW5hYmxlKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+ICAJaGRhdGEt
-PnBvd2VyZWQgPSB0cnVlOwo+ICB9Cj4gCj4gKy8qIFNob3VsZCBiZSBjYWxsZWQgd2l0aCBoZGF0
-YS0+bXV0ZXggbXV0ZXggaGVsZC4gKi8KPiAgc3RhdGljIHZvaWQgaGRtaXBoeV9kaXNhYmxlKHN0
-cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+ICB7Cj4gIAlpZiAoIWhkYXRhLT5wb3dlcmVkKQo+
-IEBAIC0xNDc4LDI4ICsxNDgyLDM4IEBAIHN0YXRpYyB2b2lkIGhkbWlfZW5hYmxlKHN0cnVjdCBk
-cm1fZW5jb2RlciAqZW5jb2RlcikKPiAgewo+ICAJc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEg
-PSBlbmNvZGVyX3RvX2hkbWkoZW5jb2Rlcik7Cj4gCj4gKwltdXRleF9sb2NrKCZoZGF0YS0+bXV0
-ZXgpOwo+ICsKPiAgCWhkbWlwaHlfZW5hYmxlKGhkYXRhKTsKPiAgCWhkbWlfY29uZl9hcHBseSho
-ZGF0YSk7Cj4gKwo+ICsJbXV0ZXhfdW5sb2NrKCZoZGF0YS0+bXV0ZXgpOwo+ICB9Cj4gCj4gIHN0
-YXRpYyB2b2lkIGhkbWlfZGlzYWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCj4gIHsK
-PiAgCXN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhID0gZW5jb2Rlcl90b19oZG1pKGVuY29kZXIp
-Owo+IAo+IC0JaWYgKCFoZGF0YS0+cG93ZXJlZCkKPiArCW11dGV4X2xvY2soJmhkYXRhLT5tdXRl
-eCk7Cj4gKwo+ICsJaWYgKGhkYXRhLT5wb3dlcmVkKSB7Cj4gKwkJLyoKPiArCQkgKiBUaGUgU0ZS
-cyBvZiBWUCBhbmQgTWl4ZXIgYXJlIHVwZGF0ZWQgYnkgVmVydGljYWwgU3luYyBvZgo+ICsJCSAq
-IFRpbWluZyBnZW5lcmF0b3Igd2hpY2ggaXMgYSBwYXJ0IG9mIEhETUkgc28gdGhlIHNlcXVlbmNl
-Cj4gKwkJICogdG8gZGlzYWJsZSBUViBTdWJzeXN0ZW0gc2hvdWxkIGJlIGFzIGZvbGxvd2luZywK
-PiArCQkgKglWUCAtPiBNaXhlciAtPiBIRE1JCj4gKwkJICoKPiArCQkgKiBUbyBhY2hpZXZlIHN1
-Y2ggc2VxdWVuY2UgSERNSSBpcyBkaXNhYmxlZCB0b2dldGhlciB3aXRoCj4gKwkJICogSERNSSBQ
-SFksIHZpYSBwaXBlIGNsb2NrIGNhbGxiYWNrLgo+ICsJCSAqLwo+ICsJCW11dGV4X3VubG9jaygm
-aGRhdGEtPm11dGV4KTsKPiArCQljYW5jZWxfZGVsYXllZF93b3JrKCZoZGF0YS0+aG90cGx1Z193
-b3JrKTsKPiArCQljZWNfbm90aWZpZXJfc2V0X3BoeXNfYWRkcihoZGF0YS0+bm90aWZpZXIsCj4g
-KwkJCQkJICAgQ0VDX1BIWVNfQUREUl9JTlZBTElEKTsKPiAgCQlyZXR1cm47Cj4gKwl9Cj4gCj4g
-LQkvKgo+IC0JICogVGhlIFNGUnMgb2YgVlAgYW5kIE1peGVyIGFyZSB1cGRhdGVkIGJ5IFZlcnRp
-Y2FsIFN5bmMgb2YKPiAtCSAqIFRpbWluZyBnZW5lcmF0b3Igd2hpY2ggaXMgYSBwYXJ0IG9mIEhE
-TUkgc28gdGhlIHNlcXVlbmNlCj4gLQkgKiB0byBkaXNhYmxlIFRWIFN1YnN5c3RlbSBzaG91bGQg
-YmUgYXMgZm9sbG93aW5nLAo+IC0JICoJVlAgLT4gTWl4ZXIgLT4gSERNSQo+IC0JICoKPiAtCSAq
-IFRvIGFjaGlldmUgc3VjaCBzZXF1ZW5jZSBIRE1JIGlzIGRpc2FibGVkIHRvZ2V0aGVyIHdpdGgg
-SERNSSBQSFksIHZpYQo+IC0JICogcGlwZSBjbG9jayBjYWxsYmFjay4KPiAtCSAqLwo+IC0JY2Fu
-Y2VsX2RlbGF5ZWRfd29yaygmaGRhdGEtPmhvdHBsdWdfd29yayk7Cj4gLQljZWNfbm90aWZpZXJf
-c2V0X3BoeXNfYWRkcihoZGF0YS0+bm90aWZpZXIsIENFQ19QSFlTX0FERFJfSU5WQUxJRCk7Cj4g
-KwltdXRleF91bmxvY2soJmhkYXRhLT5tdXRleCk7Cj4gIH0KPiAKPiAgc3RhdGljIGNvbnN0IHN0
-cnVjdCBkcm1fZW5jb2Rlcl9oZWxwZXJfZnVuY3MgZXh5bm9zX2hkbWlfZW5jb2Rlcl9oZWxwZXJf
-ZnVuY3MgPSB7Cj4gQEAgLTE1MTMsNiArMTUyNywxMDQgQEAgc3RhdGljIHZvaWQgaGRtaV9kaXNh
-YmxlKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKPiAgCS5kZXN0cm95ID0gZHJtX2VuY29k
-ZXJfY2xlYW51cCwKPiAgfTsKPiAKPiArc3RhdGljIHZvaWQgaGRtaV9hdWRpb19zaHV0ZG93bihz
-dHJ1Y3QgZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEpCj4gK3sKPiArCXN0cnVjdCBoZG1pX2NvbnRl
-eHQgKmhkYXRhID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gKwo+ICsJbXV0ZXhfbG9jaygmaGRh
-dGEtPm11dGV4KTsKPiArCj4gKwloZGF0YS0+YXVkaW8uZW5hYmxlID0gZmFsc2U7Cj4gKwo+ICsJ
-aWYgKGhkYXRhLT5wb3dlcmVkKQo+ICsJCWhkbWlfYXVkaW9fY29udHJvbChoZGF0YSk7Cj4gKwo+
-ICsJbXV0ZXhfdW5sb2NrKCZoZGF0YS0+bXV0ZXgpOwo+ICt9Cj4gKwo+ICtzdGF0aWMgaW50IGhk
-bWlfYXVkaW9faHdfcGFyYW1zKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSwKPiArCQkJ
-CXN0cnVjdCBoZG1pX2NvZGVjX2RhaWZtdCAqZGFpZm10LAo+ICsJCQkJc3RydWN0IGhkbWlfY29k
-ZWNfcGFyYW1zICpwYXJhbXMpCj4gK3sKPiArCXN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhID0g
-ZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gKwo+ICsJaWYgKGRhaWZtdC0+Zm10ICE9IEhETUlfSTJT
-IHx8IGRhaWZtdC0+Yml0X2Nsa19pbnYgfHwKPiArCSAgICBkYWlmbXQtPmZyYW1lX2Nsa19pbnYg
-fHwgZGFpZm10LT5iaXRfY2xrX21hc3RlciB8fAo+ICsJICAgIGRhaWZtdC0+ZnJhbWVfY2xrX21h
-c3Rlcikgewo+ICsJCWRldl9lcnIoZGV2LCAiJXM6IEJhZCBmbGFncyAlZCAlZCAlZCAlZFxuIiwg
-X19mdW5jX18sCj4gKwkJCWRhaWZtdC0+Yml0X2Nsa19pbnYsIGRhaWZtdC0+ZnJhbWVfY2xrX2lu
-diwKPiArCQkJZGFpZm10LT5iaXRfY2xrX21hc3RlciwKPiArCQkJZGFpZm10LT5mcmFtZV9jbGtf
-bWFzdGVyKTsKPiArCQlyZXR1cm4gLUVJTlZBTDsKPiArCX0KPiArCj4gKwltdXRleF9sb2NrKCZo
-ZGF0YS0+bXV0ZXgpOwo+ICsKPiArCWhkYXRhLT5hdWRpby5wYXJhbXMgPSAqcGFyYW1zOwo+ICsK
-PiArCWlmIChoZGF0YS0+cG93ZXJlZCkgewo+ICsJCWhkbWlfYXVkaW9fY29uZmlnKGhkYXRhKTsK
-PiArCQloZG1pX2F1ZGlvX2luZm9mcmFtZV9hcHBseShoZGF0YSk7Cj4gKwl9Cj4gKwo+ICsJbXV0
-ZXhfdW5sb2NrKCZoZGF0YS0+bXV0ZXgpOwo+ICsKPiArCXJldHVybiAwOwo+ICt9Cj4gKwo+ICtz
-dGF0aWMgaW50IGhkbWlfYXVkaW9fZGlnaXRhbF9tdXRlKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9p
-ZCAqZGF0YSwgYm9vbCBtdXRlKQo+ICt7Cj4gKwlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9
-IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+ICsKPiArCW11dGV4X2xvY2soJmhkYXRhLT5tdXRleCk7
-Cj4gKwo+ICsJaGRhdGEtPmF1ZGlvLmVuYWJsZSA9ICFtdXRlOwo+ICsKPiArCWlmIChoZGF0YS0+
-cG93ZXJlZCkKPiArCQloZG1pX2F1ZGlvX2NvbnRyb2woaGRhdGEpOwo+ICsKPiArCW11dGV4X3Vu
-bG9jaygmaGRhdGEtPm11dGV4KTsKPiArCj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiArc3RhdGlj
-IGludCBoZG1pX2F1ZGlvX2dldF9lbGQoc3RydWN0IGRldmljZSAqZGV2LCB2b2lkICpkYXRhLCB1
-aW50OF90ICpidWYsCj4gKwkJCSAgICAgIHNpemVfdCBsZW4pCj4gK3sKPiArCXN0cnVjdCBoZG1p
-X2NvbnRleHQgKmhkYXRhID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gKwlzdHJ1Y3QgZHJtX2Nv
-bm5lY3RvciAqY29ubmVjdG9yID0gJmhkYXRhLT5jb25uZWN0b3I7Cj4gKwo+ICsJbWVtY3B5KGJ1
-ZiwgY29ubmVjdG9yLT5lbGQsIG1pbihzaXplb2YoY29ubmVjdG9yLT5lbGQpLCBsZW4pKTsKPiAr
-Cj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiArc3RhdGljIGNvbnN0IHN0cnVjdCBoZG1pX2NvZGVj
-X29wcyBhdWRpb19jb2RlY19vcHMgPSB7Cj4gKwkuaHdfcGFyYW1zID0gaGRtaV9hdWRpb19od19w
-YXJhbXMsCj4gKwkuYXVkaW9fc2h1dGRvd24gPSBoZG1pX2F1ZGlvX3NodXRkb3duLAo+ICsJLmRp
-Z2l0YWxfbXV0ZSA9IGhkbWlfYXVkaW9fZGlnaXRhbF9tdXRlLAo+ICsJLmdldF9lbGQgPSBoZG1p
-X2F1ZGlvX2dldF9lbGQsCj4gK307Cj4gKwo+ICtzdGF0aWMgaW50IGhkbWlfcmVnaXN0ZXJfYXVk
-aW9fZGV2aWNlKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+ICt7Cj4gKwlzdHJ1Y3QgaGRt
-aV9jb2RlY19wZGF0YSBjb2RlY19kYXRhID0gewo+ICsJCS5vcHMgPSAmYXVkaW9fY29kZWNfb3Bz
-LAo+ICsJCS5tYXhfaTJzX2NoYW5uZWxzID0gNiwKPiArCQkuaTJzID0gMSwKPiArCX07Cj4gKwo+
-ICsJaGRhdGEtPmF1ZGlvLnBkZXYgPSBwbGF0Zm9ybV9kZXZpY2VfcmVnaXN0ZXJfZGF0YSgKPiAr
-CQloZGF0YS0+ZGV2LCBIRE1JX0NPREVDX0RSVl9OQU1FLCBQTEFURk9STV9ERVZJRF9BVVRPLAo+
-ICsJCSZjb2RlY19kYXRhLCBzaXplb2YoY29kZWNfZGF0YSkpOwo+ICsKPiArCXJldHVybiBQVFJf
-RVJSX09SX1pFUk8oaGRhdGEtPmF1ZGlvLnBkZXYpOwo+ICt9Cj4gKwo+ICtzdGF0aWMgdm9pZCBo
-ZG1pX3VucmVnaXN0ZXJfYXVkaW9fZGV2aWNlKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+
-ICt7Cj4gKwlwbGF0Zm9ybV9kZXZpY2VfdW5yZWdpc3RlcihoZGF0YS0+YXVkaW8ucGRldik7Cj4g
-K30KPiArCj4gIHN0YXRpYyB2b2lkIGhkbWlfaG90cGx1Z193b3JrX2Z1bmMoc3RydWN0IHdvcmtf
-c3RydWN0ICp3b3JrKQo+ICB7Cj4gIAlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YTsKPiBAQCAt
-MTU4OCwxMSArMTcwMCwxNCBAQCBzdGF0aWMgdm9pZCBoZG1pcGh5X2Nsa19lbmFibGUoc3RydWN0
-IGV4eW5vc19kcm1fY2xrICpjbGssIGJvb2wgZW5hYmxlKQo+ICB7Cj4gIAlzdHJ1Y3QgaGRtaV9j
-b250ZXh0ICpoZGF0YSA9IGNvbnRhaW5lcl9vZihjbGssIHN0cnVjdCBoZG1pX2NvbnRleHQsCj4g
-IAkJCQkJCSAgcGh5X2Nsayk7Cj4gKwltdXRleF9sb2NrKCZoZGF0YS0+bXV0ZXgpOwo+IAo+ICAJ
-aWYgKGVuYWJsZSkKPiAgCQloZG1pcGh5X2VuYWJsZShoZGF0YSk7Cj4gIAllbHNlCj4gIAkJaGRt
-aXBoeV9kaXNhYmxlKGhkYXRhKTsKPiArCj4gKwltdXRleF91bmxvY2soJmhkYXRhLT5tdXRleCk7
-Cj4gIH0KPiAKPiAgc3RhdGljIGludCBoZG1pX2JyaWRnZV9pbml0KHN0cnVjdCBoZG1pX2NvbnRl
-eHQgKmhkYXRhKQo+IEBAIC0xNjk3LDYgKzE4MTIsNyBAQCBzdGF0aWMgaW50IGhkbWlfYmluZChz
-dHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKPiAg
-CXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0gZGF0YTsKPiAgCXN0cnVjdCBoZG1pX2NvbnRl
-eHQgKmhkYXRhID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gIAlzdHJ1Y3QgZHJtX2VuY29kZXIg
-KmVuY29kZXIgPSAmaGRhdGEtPmVuY29kZXI7Cj4gKwlzdHJ1Y3QgaGRtaV9hdWRpb19pbmZvZnJh
-bWUgKmF1ZGlvX2luZm9mcmFtZSA9ICZoZGF0YS0+YXVkaW8uaW5mb2ZyYW1lOwo+ICAJc3RydWN0
-IGV4eW5vc19kcm1fY3J0YyAqY3J0YzsKPiAgCWludCByZXQ7Cj4gCj4gQEAgLTE3MDQsNiArMTgy
-MCwxMiBAQCBzdGF0aWMgaW50IGhkbWlfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBk
-ZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKPiAKPiAgCWhkYXRhLT5waHlfY2xrLmVuYWJsZSA9
-IGhkbWlwaHlfY2xrX2VuYWJsZTsKPiAKPiArCWhkbWlfYXVkaW9faW5mb2ZyYW1lX2luaXQoYXVk
-aW9faW5mb2ZyYW1lKTsKPiArCWF1ZGlvX2luZm9mcmFtZS0+Y29kaW5nX3R5cGUgPSBIRE1JX0FV
-RElPX0NPRElOR19UWVBFX1NUUkVBTTsKPiArCWF1ZGlvX2luZm9mcmFtZS0+c2FtcGxlX3NpemUg
-PSBIRE1JX0FVRElPX1NBTVBMRV9TSVpFX1NUUkVBTTsKPiArCWF1ZGlvX2luZm9mcmFtZS0+c2Ft
-cGxlX2ZyZXF1ZW5jeSA9IEhETUlfQVVESU9fU0FNUExFX0ZSRVFVRU5DWV9TVFJFQU07Cj4gKwlh
-dWRpb19pbmZvZnJhbWUtPmNoYW5uZWxzID0gMjsKPiArCj4gIAlkcm1fZW5jb2Rlcl9pbml0KGRy
-bV9kZXYsIGVuY29kZXIsICZleHlub3NfaGRtaV9lbmNvZGVyX2Z1bmNzLAo+ICAJCQkgRFJNX01P
-REVfRU5DT0RFUl9UTURTLCBOVUxMKTsKPiAKPiBAQCAtMTgxOCw2ICsxOTQwLDggQEAgc3RhdGlj
-IGludCBoZG1pX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gCj4gIAloZGF0
-YS0+ZGV2ID0gZGV2Owo+IAo+ICsJbXV0ZXhfaW5pdCgmaGRhdGEtPm11dGV4KTsKPiArCj4gIAly
-ZXQgPSBoZG1pX3Jlc291cmNlc19pbml0KGhkYXRhKTsKPiAgCWlmIChyZXQpIHsKPiAgCQlpZiAo
-cmV0ICE9IC1FUFJPQkVfREVGRVIpCj4gQEAgLTE4NzcsMTIgKzIwMDEsMTkgQEAgc3RhdGljIGlu
-dCBoZG1pX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gCj4gIAlwbV9ydW50
-aW1lX2VuYWJsZShkZXYpOwo+IAo+IC0JcmV0ID0gY29tcG9uZW50X2FkZCgmcGRldi0+ZGV2LCAm
-aGRtaV9jb21wb25lbnRfb3BzKTsKPiArCXJldCA9IGhkbWlfcmVnaXN0ZXJfYXVkaW9fZGV2aWNl
-KGhkYXRhKTsKPiAgCWlmIChyZXQpCj4gIAkJZ290byBlcnJfbm90aWZpZXJfcHV0Owo+IAo+ICsJ
-cmV0ID0gY29tcG9uZW50X2FkZCgmcGRldi0+ZGV2LCAmaGRtaV9jb21wb25lbnRfb3BzKTsKPiAr
-CWlmIChyZXQpCj4gKwkJZ290byBlcnJfdW5yZWdpc3Rlcl9hdWRpbzsKPiArCj4gIAlyZXR1cm4g
-cmV0Owo+IAo+ICtlcnJfdW5yZWdpc3Rlcl9hdWRpbzoKPiArCWhkbWlfdW5yZWdpc3Rlcl9hdWRp
-b19kZXZpY2UoaGRhdGEpOwo+ICsKPiAgZXJyX25vdGlmaWVyX3B1dDoKPiAgCWNlY19ub3RpZmll
-cl9wdXQoaGRhdGEtPm5vdGlmaWVyKTsKPiAgCXBtX3J1bnRpbWVfZGlzYWJsZShkZXYpOwo+IEBA
-IC0xOTIxLDYgKzIwNTIsOCBAQCBzdGF0aWMgaW50IGhkbWlfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9y
-bV9kZXZpY2UgKnBkZXYpCj4gCj4gIAlwdXRfZGV2aWNlKCZoZGF0YS0+ZGRjX2FkcHQtPmRldik7
-Cj4gCj4gKwltdXRleF9kZXN0cm95KCZoZGF0YS0+bXV0ZXgpOwo+ICsKPiAgCXJldHVybiAwOwo+
-ICB9Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1oZG1pLmgg
-Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtaGRtaS5oCj4gaW5kZXggYTA1MDdkYy4uZDg0
-M2IxZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtaGRtaS5oCj4g
-KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWhkbWkuaAo+IEBAIC00MTksMTEgKzQx
-OSw5IEBACj4gICNkZWZpbmUgSERNSV9JMlNfRFNEX0NPTgkJSERNSV9JMlNfQkFTRSgweDAxYykK
-PiAgI2RlZmluZSBIRE1JX0kyU19NVVhfQ09OCQlIRE1JX0kyU19CQVNFKDB4MDIwKQo+ICAjZGVm
-aW5lIEhETUlfSTJTX0NIX1NUX0NPTgkJSERNSV9JMlNfQkFTRSgweDAyNCkKPiAtI2RlZmluZSBI
-RE1JX0kyU19DSF9TVF8wCQlIRE1JX0kyU19CQVNFKDB4MDI4KQo+IC0jZGVmaW5lIEhETUlfSTJT
-X0NIX1NUXzEJCUhETUlfSTJTX0JBU0UoMHgwMmMpCj4gLSNkZWZpbmUgSERNSV9JMlNfQ0hfU1Rf
-MgkJSERNSV9JMlNfQkFTRSgweDAzMCkKPiAtI2RlZmluZSBIRE1JX0kyU19DSF9TVF8zCQlIRE1J
-X0kyU19CQVNFKDB4MDM0KQo+IC0jZGVmaW5lIEhETUlfSTJTX0NIX1NUXzQJCUhETUlfSTJTX0JB
-U0UoMHgwMzgpCj4gKy8qIG4gbXVzdCBiZSB3aXRoaW5nIHJhbmdlIDAuLi4oSERNSV9JMlNfQ0hf
-U1RfTUFYTlVNIC0gMSkgKi8KPiArI2RlZmluZSBIRE1JX0kyU19DSF9TVF9NQVhOVU0JCTUKPiAr
-I2RlZmluZSBIRE1JX0kyU19DSF9TVChuKQkJSERNSV9JMlNfQkFTRSgweDAyOCArIDQgKiAobikp
-Cj4gICNkZWZpbmUgSERNSV9JMlNfQ0hfU1RfU0hfMAkJSERNSV9JMlNfQkFTRSgweDAzYykKPiAg
-I2RlZmluZSBIRE1JX0kyU19DSF9TVF9TSF8xCQlIRE1JX0kyU19CQVNFKDB4MDQwKQo+ICAjZGVm
-aW5lIEhETUlfSTJTX0NIX1NUX1NIXzIJCUhETUlfSTJTX0JBU0UoMHgwNDQpCj4gLS0KPiAxLjku
-MQoKCgotLSAKU3lsd2VzdGVyIE5hd3JvY2tpClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Kamil,
+
+thank you for the change, please find below a number of minor
+review comments.
+
+On 10/09/2017 02:12 PM, Kamil Konieczny wrote:
+> Add support for MD5, SHA1, SHA256 hash algorithms for Exynos HW.
+> It uses the crypto framework asynchronous hash api.
+> It is based on omap-sham.c driver.
+> S5P has some HW differencies and is not implemented.
+> 
+
+[snip]
+
+>  
+>  /* Feed control registers */
+>  #define SSS_REG_FCINTSTAT               0x0000
+> +#define SSS_FCINTSTAT_HPARTINT		BIT(7)
+> +#define SSS_FCINTSTAT_HDONEINT		BIT(5)
+
+                                      ^^^^^^^^^
+Please use the same style of whitespaces as it is found around.
+
+Generally I do agree that the tabs are better here, please feel free
+to send a preceding change, which changes the spacing to tabs, otherwise
+use space symbols in this change.
+
+>  #define SSS_FCINTSTAT_BRDMAINT          BIT(3)
+>  #define SSS_FCINTSTAT_BTDMAINT          BIT(2)
+>  #define SSS_FCINTSTAT_HRDMAINT          BIT(1)
+>  #define SSS_FCINTSTAT_PKDMAINT          BIT(0)
+>  
+>  #define SSS_REG_FCINTENSET              0x0004
+> +#define SSS_FCINTENSET_HPARTINTENSET	BIT(7)
+> +#define SSS_FCINTENSET_HDONEINTENSET	BIT(5)
+
+Same as above.
+
+>  #define SSS_FCINTENSET_BRDMAINTENSET    BIT(3)
+>  #define SSS_FCINTENSET_BTDMAINTENSET    BIT(2)
+>  #define SSS_FCINTENSET_HRDMAINTENSET    BIT(1)
+>  #define SSS_FCINTENSET_PKDMAINTENSET    BIT(0)
+>  
+>  #define SSS_REG_FCINTENCLR              0x0008
+> +#define SSS_FCINTENCLR_HPARTINTENCLR	BIT(7)
+> +#define SSS_FCINTENCLR_HDONEINTENCLR	BIT(5)
+
+Same as above.
+
+>  #define SSS_FCINTENCLR_BRDMAINTENCLR    BIT(3)
+>  #define SSS_FCINTENCLR_BTDMAINTENCLR    BIT(2)
+>  #define SSS_FCINTENCLR_HRDMAINTENCLR    BIT(1)
+>  #define SSS_FCINTENCLR_PKDMAINTENCLR    BIT(0)
+>  
+>  #define SSS_REG_FCINTPEND               0x000C
+> +#define SSS_FCINTPEND_HPARTINTP		BIT(7)
+> +#define SSS_FCINTPEND_HDONEINTP		BIT(5)
+
+Same as above.
+
+>  #define SSS_FCINTPEND_BRDMAINTP         BIT(3)
+>  #define SSS_FCINTPEND_BTDMAINTP         BIT(2)
+>  #define SSS_FCINTPEND_HRDMAINTP         BIT(1)
+> @@ -72,6 +88,7 @@
+>  #define SSS_HASHIN_INDEPENDENT          _SBF(0, 0x00)
+>  #define SSS_HASHIN_CIPHER_INPUT         _SBF(0, 0x01)
+>  #define SSS_HASHIN_CIPHER_OUTPUT        _SBF(0, 0x02)
+> +#define SSS_HASHIN_MASK			_SBF(0, 0x03)
+
+Same as above.
+
+[snip]
+
+>  struct s5p_aes_reqctx {
+> @@ -195,6 +284,19 @@ struct s5p_aes_ctx {
+>   *		protects against concurrent access to these fields.
+>   * @lock:	Lock for protecting both access to device hardware registers
+>   *		and fields related to current request (including the busy field).
+> + * @res:	Resources for hash.
+> + * @io_hash_base: Per-variant offset for HASH block IO memory.
+> + * @hash_lock:	Lock for protecting hash_req, hash_queue and hash_flags
+> + *		variable.
+> + * @hash_tasklet: New HASH request scheduling job.
+> + * @xmit_buf:	Buffer for current HASH request transfer into SSS block.
+> + * @hash_flags:	Flags for current HASH op.
+> + * @hash_queue:	Async hash queue.
+> + * @hash_req:	Current request sending to SSS HASH block.
+> + * @hash_sg_iter: Scatterlist transferred through DMA into SSS HASH block.
+> + * @hash_sg_cnt: Counter for hash_sg_iter.
+> + *
+> + * @use_hash:	true if HASH algs enabled
+
+You may want to reorder the lines to get the same order as in the struct.
+
+>   */
+>  struct s5p_aes_dev {
+>  	struct device			*dev;
+> @@ -215,16 +317,88 @@ struct s5p_aes_dev {
+>  	struct crypto_queue		queue;
+>  	bool				busy;
+>  	spinlock_t			lock;
+> +
+> +	struct resource			*res;
+> +	void __iomem			*io_hash_base;
+> +
+> +	spinlock_t			hash_lock; /* protect hash_ vars */
+> +	unsigned long			hash_flags;
+> +	struct crypto_queue		hash_queue;
+> +	struct tasklet_struct		hash_tasklet;
+> +
+> +	u8				xmit_buf[BUFLEN];
+> +	struct ahash_request		*hash_req;
+> +	struct scatterlist		*hash_sg_iter;
+> +	int				hash_sg_cnt;
+
+Please change the type to 'unsigned int'.
+
+> +
+> +	bool				use_hash;
+>  };
+>  
+> -static struct s5p_aes_dev *s5p_dev;
+> +enum hash_op {
+> +	HASH_OP_UPDATE = 1,
+> +	HASH_OP_FINAL = 2
+> +};
+
+If this type is not going to be extended, then I'd rather suggest to
+use a boolean correspondent field in the struct s5p_hash_reqctx instead
+of a new introduced type.
+
+> +
+> +/**
+> + * struct s5p_hash_reqctx - HASH request context
+> + * @dev:	Associated device
+> + * @op:		Current request operation (OP_UPDATE or OP_FINAL)
+
+See a comment above.
+
+> + * @digcnt:	Number of bytes processed by HW (without buffer[] ones)
+> + * @digest:	Digest message or IV for partial result
+> + * @bufcnt:	Number of bytes holded in buffer[]
+> + * @nregs:	Number of HW registers for digest or IV read/write
+> + * @engine:	Bits for selecting type of HASH in SSS block
+> + * @sg:		sg for DMA transfer
+> + * @sg_len:	Length of sg for DMA transfer
+> + * @sgl[]:	sg for joining buffer and req->src scatterlist
+> + * @skip:	Skip offset in req->src for current op
+> + * @total:	Total number of bytes for current request
+> + * @finup:	Keep state for finup or final.
+> + * @error:	Keep track of error.
+> + * @buffer[]:	For byte(s) from end of req->src in UPDATE op
+> + */
+> +struct s5p_hash_reqctx {
+> +	struct s5p_aes_dev	*dd;
+> +	enum hash_op		op;
+
+See a comment above.
+
+> +
+> +	u64			digcnt;
+> +	u8			digest[SHA256_DIGEST_SIZE];
+> +	u32			bufcnt;
+> +
+> +	int			nregs; /* digest_size / sizeof(reg) */
+
+It should be "unsigned int nregs", please change the type.
+
+> +	u32			engine;
+> +
+> +	struct scatterlist	*sg;
+> +	int			sg_len;
+
+It should be "unsigned int sg_len", please change the type.
+
+> +	struct scatterlist	sgl[2];
+> +	int			skip;
+
+It should be "unsigned int skip", please change the type.
+
+> +	unsigned int		total;
+> +	bool			finup;
+> +	bool			error;
+> +
+> +	u8			buffer[0];
+
+IMHO here
+
+	u8 *buffer;
+or
+	void *buffer;
+
+is good enough, if I didn't miss something.
+
+Also you may want to move it up closer to "bufcnt".
+
+[snip]
+
+> +/**
+> + * s5p_hash_rx() - get next hash_sg_iter
+> + * @dev:	device
+> + *
+> + * Return:
+> + * 2	if there is no more data and it is UPDATE op
+> + * 1	if new receiving (input) data is ready and can be written to device
+> + * 0	if there is no more data and it is FINAL op
+> + */
+> +static int s5p_hash_rx(struct s5p_aes_dev *dev)
+> +{
+> +	int ret;
+> +
+> +	if (dev->hash_sg_cnt > 0) {
+> +		dev->hash_sg_iter = sg_next(dev->hash_sg_iter);
+> +		ret = 1;
+> +	} else {
+> +		set_bit(HASH_FLAGS_DMA_READY, &dev->hash_flags);
+> +		if (test_bit(HASH_FLAGS_FINAL, &dev->hash_flags))
+> +			ret = 0;
+> +		else
+> +			ret = 2;
+> +	}
+> +
+> +	return ret;
+> +}
+
+Let's reduce the level of indentation. Please reuse a version below,
+which is shorter and more comprehensible in my opinion:
+
+static unsigned int s5p_hash_rx(struct s5p_aes_dev *dev)
+{
+	if (dev->hash_sg_cnt) {
+		dev->hash_sg_iter = sg_next(dev->hash_sg_iter);
+		return 1;
+	}
+
+	set_bit(HASH_FLAGS_DMA_READY, &dev->hash_flags);
+	if (test_bit(HASH_FLAGS_FINAL, &dev->hash_flags))
+		return 0;
+
+	return 2;
+}
+
+[snip]
+
+> +/**
+> + * s5p_hash_read_msg() - read message or IV from HW
+> + * @req:	AHASH request
+> + */
+> +static void s5p_hash_read_msg(struct ahash_request *req)
+> +{
+> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
+> +	struct s5p_aes_dev *dd = ctx->dd;
+> +	u32 *hash = (u32 *)ctx->digest;
+> +	int i;
+
+Please use 'unsigned int i';
+
+> +
+> +	for (i = 0; i < ctx->nregs; i++)
+> +		hash[i] = s5p_hash_read(dd, SSS_REG_HASH_OUT(i));
+> +}
+> +
+> +/**
+> + * s5p_hash_write_ctx_iv() - write IV for next partial/finup op.
+> + * @dd:		device
+> + * @ctx:	request context
+> + */
+> +static void s5p_hash_write_ctx_iv(struct s5p_aes_dev *dd,
+> +				  struct s5p_hash_reqctx *ctx)
+> +{
+> +	u32 *hash = (u32 *)ctx->digest;
+> +	int i;
+
+Please use 'unsigned int i;'
+
+> +
+> +	for (i = 0; i < ctx->nregs; i++)
+> +		s5p_hash_write(dd, SSS_REG_HASH_IV(i), hash[i]);
+> +}
+> +
+> +/**
+> + * s5p_hash_write_iv() - write IV for next partial/finup op.
+> + * @req:	AHASH request
+> + */
+> +static void s5p_hash_write_iv(struct ahash_request *req)
+> +{
+> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
+> +	struct s5p_aes_dev *dd = ctx->dd;
+> +
+> +	s5p_hash_write_ctx_iv(dd, ctx);
+
+s5p_hash_write_ctx_iv(ctx->dd, ctx) and drop one line of code?
+
+> +}
+> +
+> +/**
+> + * s5p_hash_copy_result() - copy digest into req->result
+> + * @req:	AHASH request
+> + */
+> +static void s5p_hash_copy_result(struct ahash_request *req)
+> +{
+> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
+> +	int d = ctx->nregs;
+
+Please define it as 'unsigned int'. And in fact I'd rather suggest
+to remove this local variable completely.
+
+> +
+> +	if (!req->result)
+> +		return;
+> +
+> +	memcpy(req->result, (u8 *)ctx->digest, d * HASH_REG_SIZEOF);
+
+And (u8 *) cast above is not needed, remove it, please.
+
+[snip]
+
+> +/**
+> + * s5p_hash_set_flow() - set flow inside SecSS AES/DES with/without HASH
+> + * @dev:	secss device
+> + * @hashflow:	HASH stream flow with/without crypto AES/DES
+> + */
+> +static void s5p_hash_set_flow(struct s5p_aes_dev *dev, u32 hashflow)
+> +{
+> +	unsigned long flags;
+> +	u32 flow;
+> +
+> +	spin_lock_irqsave(&dev->lock, flags);
+> +
+> +	flow = SSS_READ(dev, FCFIFOCTRL);
+> +	hashflow &= SSS_HASHIN_MASK;
+> +	flow &= ~SSS_HASHIN_MASK;
+> +	flow |= hashflow;
+
+I would suggest to do
+
+	s5p_hash_set_flow(dev, hashflow & SSS_HASHIN_MASK)
+
+on caller's side at s5p_ahash_dma_init(), then you can drop
+one line above, which uses "hashflow" as a local variable.
+
+> +	SSS_WRITE(dev, FCFIFOCTRL, flow);
+> +
+> +	spin_unlock_irqrestore(&dev->lock, flags);
+> +}
+> +
+
+[snip]
+
+> +/**
+> + * s5p_hash_write_ctrl() - prepare HASH block in SecSS for processing
+> + * @dd:		secss device
+> + * @length:	length for request
+> + * @final:	0=not final
+> + *
+> + * Prepare SSS HASH block for processing bytes in DMA mode. If it is called
+> + * after previous updates, fill up IV words. For final, calculate and set
+> + * lengths for HASH so SecSS can finalize hash. For partial, set SSS HASH
+> + * length as 2^63 so it will be never reached and set to zero prelow and
+> + * prehigh.
+> + *
+> + * This function does not start DMA transfer.
+> + */
+> +static void s5p_hash_write_ctrl(struct s5p_aes_dev *dd, size_t length,
+> +				int final)
+
+Please change the type, it should be "bool final".
+
+[snip]
+
+> +
+> +/**
+> + * s5p_hash_xmit_dma() - start DMA hash processing
+> + * @dd:		secss device
+> + * @length:	length for request
+> + * @final:	0=not final
+> + *
+> + * Update digcnt here, as it is needed for finup/final op.
+> + */
+> +static int s5p_hash_xmit_dma(struct s5p_aes_dev *dd, size_t length,
+> +			     int final)
+
+Please change the type, it should be "bool final".
+
+> +{
+> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(dd->hash_req);
+> +	int cnt;
+
+'unsigned int cnt' might be preferred here.
+
+> +
+> +	cnt = dma_map_sg(dd->dev, ctx->sg, ctx->sg_len, DMA_TO_DEVICE);
+> +	if (!cnt) {
+> +		dev_err(dd->dev, "dma_map_sg error\n");
+> +		ctx->error = true;
+> +		return -EINVAL;
+> +	}
+> +
+> +	set_bit(HASH_FLAGS_DMA_ACTIVE, &dd->hash_flags);
+> +	dd->hash_sg_iter = ctx->sg;
+> +	dd->hash_sg_cnt = cnt;
+> +	s5p_hash_write_ctrl(dd, length, final);
+> +	ctx->digcnt += length;
+> +	ctx->total -= length;
+
+Please add an empty line right here.
+
+> +	/* catch last interrupt */
+> +	if (final)
+> +		set_bit(HASH_FLAGS_FINAL, &dd->hash_flags);
+> +
+> +	s5p_set_dma_hashdata(dd, dd->hash_sg_iter); /* DMA starts */
+> +
+> +	return -EINPROGRESS;
+> +}
+> +
+> +/**
+> + * s5p_hash_copy_sgs() - copy request's bytes into new buffer
+> + * @ctx:	request context
+> + * @sg:		source scatterlist request
+> + * @new_len:	number of bytes to process from sg
+> + *
+> + * Allocate new buffer, copy data for HASH into it. If there was xmit_buf
+> + * filled, copy it first, then copy data from sg into it. Prepare one sgl[0]
+> + * with allocated buffer.
+> + *
+> + * Set bit in dd->hash_flag so we can free it after irq ends processing.
+> + */
+> +static int s5p_hash_copy_sgs(struct s5p_hash_reqctx *ctx,
+> +			     struct scatterlist *sg, int new_len)
+
+Please change the type, it should be
+
+	unsigned int new_len
+
+> +{
+> +	int pages;
+> +	void *buf;
+> +	int len;
+
+It should be
+
+	unsigned int pages, len;
+	void *buf;
+
+> +
+> +	len = new_len + ctx->bufcnt;
+> +	pages = get_order(len);
+> +
+> +	buf = (void *)__get_free_pages(GFP_ATOMIC, pages);
+> +	if (!buf) {
+> +		dev_err(ctx->dd->dev, "alloc pages for unaligned case.\n");
+> +		ctx->error = true;
+> +		return -ENOMEM;
+> +	}
+> +
+> +	if (ctx->bufcnt)
+> +		memcpy(buf, ctx->dd->xmit_buf, ctx->bufcnt);
+> +
+> +	scatterwalk_map_and_copy(buf + ctx->bufcnt, sg, ctx->skip,
+> +				 new_len, 0);
+> +	sg_init_table(ctx->sgl, 1);
+> +	sg_set_buf(ctx->sgl, buf, len);
+> +	ctx->sg = ctx->sgl;
+> +	ctx->sg_len = 1;
+> +	ctx->bufcnt = 0;
+> +	ctx->skip = 0;
+> +	set_bit(HASH_FLAGS_SGS_COPIED, &ctx->dd->hash_flags);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * s5p_hash_copy_sg_lists() - copy sg list and make fixes in copy
+> + * @rctx:	request context
+> + * @sg:		source scatterlist request
+> + * @new_len:	number of bytes to process from sg
+> + *
+> + * Allocate new scatterlist table, copy data for HASH into it. If there was
+> + * xmit_buf filled, prepare it first, then copy page, length and offset from
+> + * source sg into it, adjusting begin and/or end for skip offset and
+> + * hash_later value.
+> + *
+> + * Resulting sg table will be assigned to ctx->sg. Set flag so we can free
+> + * it after irq ends processing.
+> + */
+> +static int s5p_hash_copy_sg_lists(struct s5p_hash_reqctx *ctx,
+> +				  struct scatterlist *sg, int new_len)
+
+unsigned int new_len
+
+> +{
+> +	int offset = ctx->skip;
+> +	int n = sg_nents(sg);
+
+unsigned int offset = ctx->skip, n = sg_nents(sg);
+
+> +	struct scatterlist *tmp;
+> +
+> +	if (ctx->bufcnt)
+> +		n++;
+> +
+> +	ctx->sg = kmalloc_array(n, sizeof(*sg), GFP_KERNEL);
+> +	if (!ctx->sg) {
+> +		ctx->error = true;
+> +		return -ENOMEM;
+> +	}
+> +
+> +	sg_init_table(ctx->sg, n);
+> +
+> +	tmp = ctx->sg;
+> +
+> +	ctx->sg_len = 0;
+> +
+> +	if (ctx->bufcnt) {
+> +		sg_set_buf(tmp, ctx->dd->xmit_buf, ctx->bufcnt);
+> +		tmp = sg_next(tmp);
+> +		ctx->sg_len++;
+> +	}
+> +
+> +	while (sg && new_len) {
+> +		int len = sg->length - offset;
+
+unsigned int len
+
+> +
+> +		if (offset) {
+> +			offset -= sg->length;
+> +			if (offset < 0)
+> +				offset = 0;
+> +		}
+
+if (offset >= sg->length)
+	offset -= sg->length;
+else
+	offset = 0;
+
+is equal, please use this shorter version.
+
+> +
+> +		if (new_len < len)
+> +			len = new_len;
+> +
+> +		if (len > 0) {
+> +			new_len -= len;
+> +			sg_set_page(tmp, sg_page(sg), len, sg->offset);
+> +			if (new_len <= 0)
+> +				sg_mark_end(tmp);
+> +			tmp = sg_next(tmp);
+> +			ctx->sg_len++;
+> +		}
+> +
+> +		sg = sg_next(sg);
+> +	}
+> +
+> +	set_bit(HASH_FLAGS_SGS_ALLOCED, &ctx->dd->hash_flags);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * s5p_hash_prepare_sgs() - prepare sg for processing
+> + * @sg:		source scatterlist request
+> + * @nbytes:	number of bytes to process from sg
+> + * @bs:		block size
+
+bs argument of the function is not found at all.
+
+> + * @final:	final flag
+> + * @rctx:	request context
+
+In your change sometimes you use 'rctx' and sometimes 'ctx' name
+of a pointer to "struct s5p_hash_reqctx" type of storage.
+
+Please select just one name and use it everywhere, there should be
+no name conflicts, I believe.
+
+> + *
+> + * Check two conditions: (1) if buffers in sg have len aligned data, and (2)
+> + * sg table have good aligned elements (list_ok). If one of this checks fails,
+> + * then either (1) allocates new buffer for data with s5p_hash_copy_sgs, copy
+> + * data into this buffer and prepare request in sgl, or (2) allocates new sg
+> + * table and prepare sg elements.
+> + *
+> + * For digest or finup all conditions can be good, and we may not need any
+> + * fixes.
+> + */
+> +static int s5p_hash_prepare_sgs(struct scatterlist *sg,
+> +				int nbytes, bool final,
+
+unsigned int nbytes
+
+> +				struct s5p_hash_reqctx *rctx)
+
+Can you please reorder the arguments by placing rctx as the first one?
+
+> +{
+> +	int n = 0;
+> +	bool aligned = true;
+> +	bool list_ok = true;
+> +	struct scatterlist *sg_tmp = sg;
+> +	int offset = rctx->skip;
+> +	int new_len;
+
+Please use the 'reverse Christmas tree' order and put declarations on
+a single line when it is possible:
+
+	unsigned int offset = rctx->skip, new_len = nbytes, n = 0;
+	bool aligned = true, list_ok = true;
+	struct scatterlist *sg_tmp = sg;
+
+> +
+> +	if (!sg || !sg->length || !nbytes)
+> +		return 0;
+> +
+> +	new_len = nbytes;
+> +
+> +	if (offset)
+> +		list_ok = false;
+> +
+> +	if (!final)
+> +		list_ok = false;
+
+if (offset || !final)
+	list_ok = false;
+
+> +
+> +	while (nbytes > 0 && sg_tmp) {
+> +		n++;
+> +
+> +		if (offset < sg_tmp->length) {
+> +			if (!IS_ALIGNED(sg_tmp->length - offset, BUFLEN)) {
+> +				aligned = false;
+> +				break;
+> +			}
+> +		}
+> +
+> +		if (!sg_tmp->length) {
+> +			aligned = false;
+> +			break;
+> +		}
+> +
+> +		if (offset) {
+> +			offset -= sg_tmp->length;
+> +			if (offset < 0) {
+> +				nbytes += offset;
+> +				offset = 0;
+> +			}
+> +		} else {
+> +			nbytes -= sg_tmp->length;
+> +		}
+> +
+> +		sg_tmp = sg_next(sg_tmp);
+> +
+> +		if (nbytes < 0) { /* when hash_later is > 0 */
+> +			list_ok = false;
+> +			break;
+> +		}
+
+Huh, please use an alternative version, which works with unsigned integers
+(and a bit more faster):
+
+	if (offset >= sg_tmp->length) {
+		offset -= sg_tmp->length;
+	} else {
+		if (offset)
+			offset = 0;
+
+		if (nbytes + offset < sg_tmp->length) {
+			list_ok = false;
+			break;
+		}
+
+		nbytes += offset - sg_tmp->length;
+	}
+
+	sg_tmp = sg_next(sg_tmp);
+
+> +	}
+> +
+
+[snip]
+
+> +/**
+> + * s5p_hash_update_dma_stop() - unmap DMA
+> + * @dd:		secss device
+> + *
+> + * Unmap scatterlist ctx->sg.
+> + */
+> +static int s5p_hash_update_dma_stop(struct s5p_aes_dev *dd)
+> +{
+> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(dd->hash_req);
+> +
+> +	dma_unmap_sg(dd->dev, ctx->sg, ctx->sg_len, DMA_TO_DEVICE);
+> +	clear_bit(HASH_FLAGS_DMA_ACTIVE, &dd->hash_flags);
+> +
+> +	return 0;
+
+static void s5p_hash_update_dma_stop(struct s5p_aes_dev *dd) then?
+
+> +}
+> +
+> +/**
+> + * s5p_hash_finish() - copy calculated digest to crypto layer
+> + * @req:	AHASH request
+> + *
+> + * Returns 0 on success and negative values on error.
+> + */
+> +static int s5p_hash_finish(struct ahash_request *req)
+> +{
+> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
+> +	struct s5p_aes_dev *dd = ctx->dd;
+> +	int err = 0;
+> +
+> +	if (ctx->digcnt)
+> +		s5p_hash_copy_result(req);
+> +
+> +	dev_dbg(dd->dev, "hash_finish digcnt: %lld\n", ctx->digcnt);
+> +
+> +	return err;
+
+return 0, err is unused. And please consider to change the return
+type of the function to void as well.
+
+[snip]
+
+> +static int s5p_hash_handle_queue(struct s5p_aes_dev *dd,
+> +				 struct ahash_request *req)
+> +{
+> +	struct crypto_async_request *async_req, *backlog;
+> +	struct s5p_hash_reqctx *ctx;
+> +	unsigned long flags;
+> +	int err = 0, ret = 0;
+> +
+> +retry:
+> +	spin_lock_irqsave(&dd->hash_lock, flags);
+> +	if (req)
+> +		ret = ahash_enqueue_request(&dd->hash_queue, req);
+> +	if (test_bit(HASH_FLAGS_BUSY, &dd->hash_flags)) {
+> +		spin_unlock_irqrestore(&dd->hash_lock, flags);
+> +		return ret;
+> +	}
+
+Please add an empty line after the closing bracket.
+
+> +	backlog = crypto_get_backlog(&dd->hash_queue);
+> +	async_req = crypto_dequeue_request(&dd->hash_queue);
+> +	if (async_req)
+> +		set_bit(HASH_FLAGS_BUSY, &dd->hash_flags);
+> +	spin_unlock_irqrestore(&dd->hash_lock, flags);
+> +
+> +	if (!async_req)
+> +		return ret;
+> +
+> +	if (backlog)
+> +		backlog->complete(backlog, -EINPROGRESS);
+> +
+> +	req = ahash_request_cast(async_req);
+> +	dd->hash_req = req;
+> +	ctx = ahash_request_ctx(req);
+> +
+> +	err = s5p_hash_prepare_request(req, ctx->op == HASH_OP_UPDATE);
+> +	if (err || !ctx->total)
+> +		goto out;
+> +
+> +	dev_dbg(dd->dev, "handling new req, op: %u, nbytes: %d\n",
+> +		ctx->op, req->nbytes);
+> +
+> +	s5p_ahash_dma_init(dd, SSS_HASHIN_INDEPENDENT);
+> +	if (ctx->digcnt)
+> +		s5p_hash_write_iv(req); /* restore hash IV */
+> +
+> +	if (ctx->op == HASH_OP_UPDATE) {
+> +		err = s5p_hash_xmit_dma(dd, ctx->total, ctx->finup);
+> +		if (err != -EINPROGRESS && ctx->finup)
+> +			/* no final() after finup() */
+> +			err = s5p_hash_xmit_dma(dd, ctx->total, 1);
+> +	} else if (ctx->op == HASH_OP_FINAL) {
+> +		err = s5p_hash_xmit_dma(dd, ctx->total, 1);
+> +	}
+> +out:
+> +	if (err != -EINPROGRESS) {
+> +		/* hash_tasklet_cb will not finish it, so do it here */
+> +		s5p_hash_finish_req(req, err);
+> +		req = NULL;
+> +
+> +		/*
+> +		 * Execute next request immediately if there is anything
+> +		 * in queue.
+> +		 */
+> +		goto retry;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * s5p_hash_tasklet_cb() - hash tasklet
+> + * @data:	ptr to s5p_aes_dev
+> + */
+> +static void s5p_hash_tasklet_cb(unsigned long data)
+> +{
+> +	struct s5p_aes_dev *dd = (struct s5p_aes_dev *)data;
+> +	int err = 0;
+> +
+> +	if (!test_bit(HASH_FLAGS_BUSY, &dd->hash_flags)) {
+> +		s5p_hash_handle_queue(dd, NULL);
+> +		return;
+> +	}
+> +
+> +	if (test_bit(HASH_FLAGS_DMA_READY, &dd->hash_flags)) {
+> +		if (test_and_clear_bit(HASH_FLAGS_DMA_ACTIVE,
+> +				       &dd->hash_flags)) {
+> +			s5p_hash_update_dma_stop(dd);
+> +		}
+> +
+> +		if (test_and_clear_bit(HASH_FLAGS_OUTPUT_READY,
+> +				       &dd->hash_flags)) {
+> +			/* hash or semi-hash ready */
+> +			clear_bit(HASH_FLAGS_DMA_READY, &dd->hash_flags);
+> +				goto finish;
+> +		}
+> +	}
+> +
+> +	return;
+> +
+> +finish:
+> +	/* finish curent request */
+> +	s5p_hash_finish_req(dd->hash_req, err);
+
+s5p_hash_finish_req(dd->hash_req, 0);
+
+> +
+> +	/* If we are not busy, process next req */
+> +	if (!test_bit(HASH_FLAGS_BUSY, &dd->hash_flags))
+> +		s5p_hash_handle_queue(dd, NULL);
+> +}
+> +
+> +/**
+> + * s5p_hash_enqueue() - enqueue request
+> + * @req:	AHASH request
+> + * @op:		operation UPDATE or FINAL
+> + *
+> + * Returns: see s5p_hash_final below.
+> + */
+> +static int s5p_hash_enqueue(struct ahash_request *req, enum hash_op op)
+> +{
+> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
+> +	struct s5p_hash_ctx *tctx = crypto_tfm_ctx(req->base.tfm);
+> +	struct s5p_aes_dev *dd = tctx->dd;
+> +
+> +	ctx->op = op;
+> +
+> +	return s5p_hash_handle_queue(dd, req);
+
+return s5p_hash_handle_queue(tctx->dd, req) and drop a local variable.
+
+[snip]
+
+> +/**
+> + * s5p_hash_finup() - process last req->src and calculate digest
+> + * @req:	AHASH request containing the last update data
+> + *
+> + * Return values: see s5p_hash_final above.
+> + */
+> +static int s5p_hash_finup(struct ahash_request *req)
+> +{
+> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
+> +	int err1, err2;
+> +
+> +	ctx->finup = true;
+> +
+> +	err1 = s5p_hash_update(req);
+> +	if (err1 == -EINPROGRESS || err1 == -EBUSY)
+> +		return err1;
+
+Please add an empty line before the comment block.
+
+> +	/*
+> +	 * final() has to be always called to cleanup resources even if
+> +	 * update() failed, except EINPROGRESS or calculate digest for small
+> +	 * size
+> +	 */
+> +	err2 = s5p_hash_final(req);
+> +
+> +	return err1 ?: err2;
+> +}
+> +
+> +/**
+> + * s5p_hash_init() - initialize AHASH request contex
+> + * @req:	AHASH request
+> + *
+> + * Init async hash request context.
+> + */
+> +static int s5p_hash_init(struct ahash_request *req)
+> +{
+> +	struct s5p_hash_reqctx *ctx = ahash_request_ctx(req);
+> +	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+> +	struct s5p_hash_ctx *tctx = crypto_ahash_ctx(tfm);
+> +	struct s5p_aes_dev *dd = tctx->dd;
+> +
+> +	ctx->dd = dd;
+
+ctx->dd = tctx->dd and drop a local variable;
+
+> +	ctx->error = false;
+> +	ctx->finup = false;
+> +
+> +	dev_dbg(dd->dev, "init: digest size: %d\n",
+> +		crypto_ahash_digestsize(tfm));
+> +
+> +	switch (crypto_ahash_digestsize(tfm)) {
+> +	case MD5_DIGEST_SIZE:
+> +		ctx->engine = SSS_HASH_ENGINE_MD5;
+> +		ctx->nregs = HASH_MD5_MAX_REG;
+> +		break;
+> +	case SHA1_DIGEST_SIZE:
+> +		ctx->engine = SSS_HASH_ENGINE_SHA1;
+> +		ctx->nregs = HASH_SHA1_MAX_REG;
+> +		break;
+> +	case SHA256_DIGEST_SIZE:
+> +		ctx->engine = SSS_HASH_ENGINE_SHA256;
+> +		ctx->nregs = HASH_SHA256_MAX_REG;
+> +		break;
+> +	}
+> +
+> +	ctx->bufcnt = 0;
+> +	ctx->digcnt = 0;
+> +	ctx->total = 0;
+> +	ctx->skip = 0;
+> +
+> +	return 0;
+
+The function can be void.
+
+> +}
+> +
+> +/**
+> + * s5p_hash_digest - calculate digest from req->src
+> + * @req:	AHASH request
+> + *
+> + * Return values: see s5p_hash_final above.
+> + */
+> +static int s5p_hash_digest(struct ahash_request *req)
+> +{
+> +	return s5p_hash_init(req) ?: s5p_hash_finup(req);
+
+Hmm, missing 0?
+
+return s5p_hash_init(req) ? 0 : s5p_hash_finup(req);
+
+> +}
+> +
+> +/**
+> + * s5p_hash_cra_init_alg - init crypto alg transformation
+> + * @tfm:	crypto transformation
+> + */
+> +static int s5p_hash_cra_init_alg(struct crypto_tfm *tfm)
+> +{
+> +	struct s5p_hash_ctx *tctx = crypto_tfm_ctx(tfm);
+> +	const char *alg_name = crypto_tfm_alg_name(tfm);
+> +
+> +	tctx->dd = s5p_dev;
+> +	/* Allocate a fallback and abort if it failed. */
+> +	tctx->fallback = crypto_alloc_shash(alg_name, 0,
+> +					    CRYPTO_ALG_NEED_FALLBACK);
+> +	if (IS_ERR(tctx->fallback)) {
+> +		pr_err("fallback alloc fails for '%s'\n", alg_name);
+> +		return PTR_ERR(tctx->fallback);
+> +	}
+> +
+> +	crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm),
+> +				 sizeof(struct s5p_hash_reqctx) + BUFLEN);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * s5p_hash_cra_init - init crypto tfm
+> + * @tfm:	crypto transformation
+> + */
+> +static int s5p_hash_cra_init(struct crypto_tfm *tfm)
+> +{
+> +	return s5p_hash_cra_init_alg(tfm);
+> +}
+> +
+> +/**
+> + * s5p_hash_cra_exit - exit crypto tfm
+> + * @tfm:	crypto transformation
+> + *
+> + * free allocated fallback
+> + */
+> +static void s5p_hash_cra_exit(struct crypto_tfm *tfm)
+> +{
+> +	struct s5p_hash_ctx *tctx = crypto_tfm_ctx(tfm);
+> +
+> +	crypto_free_shash(tctx->fallback);
+> +	tctx->fallback = NULL;
+> +}
+> +
+> +/**
+> + * s5p_hash_export - export hash state
+> + * @req:	AHASH request
+> + * @out:	buffer for exported state
+> + */
+> +static int s5p_hash_export(struct ahash_request *req, void *out)
+
+static void s5p_hash_export(struct ahash_request *req, void *out)
+
+> +{
+> +	struct s5p_hash_reqctx *rctx = ahash_request_ctx(req);
+> +
+> +	memcpy(out, rctx, sizeof(*rctx) + rctx->bufcnt);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * s5p_hash_import - import hash state
+> + * @req:	AHASH request
+> + * @in:		buffer with state to be imported from
+> + */
+> +static int s5p_hash_import(struct ahash_request *req, const void *in)
+> +{
+> +	struct s5p_hash_reqctx *rctx = ahash_request_ctx(req);
+> +	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+> +	struct s5p_hash_ctx *tctx = crypto_ahash_ctx(tfm);
+> +	const struct s5p_hash_reqctx *ctx_in = in;
+> +
+> +	memcpy(rctx, in, sizeof(*rctx) + BUFLEN);
+> +	if ((ctx_in->bufcnt < 0) || (ctx_in->bufcnt > BUFLEN)) {
+
+Here checkpatch fairly complains that two pairs of parentheses are
+unnecessary, plese remove them.
+
+> +		rctx->error = true;
+> +		return -EINVAL;
+> +	}
+> +
+> +	rctx->dd = tctx->dd;
+> +	rctx->error = false;
+> +
+> +	return 0;
+> +}
+
+[snip]
+
+>  static void s5p_set_aes(struct s5p_aes_dev *dev,
+>  			uint8_t *key, uint8_t *iv, unsigned int keylen)
+>  {
+> @@ -829,6 +2190,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
+>  	struct samsung_aes_variant *variant;
+>  	struct s5p_aes_dev *pdata;
+>  	struct resource *res;
+> +	int hash_i;
+
+unsigned int hash_i;
+
+>  
+>  	if (s5p_dev)
+>  		return -EEXIST;
+> @@ -837,12 +2199,33 @@ static int s5p_aes_probe(struct platform_device *pdev)
+>  	if (!pdata)
+>  		return -ENOMEM;
+
+[snip]
+
+--
+With best wishes,
+Vladimir
