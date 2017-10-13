@@ -1,75 +1,161 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates for 4.15
-Date: Fri, 13 Oct 2017 14:27:00 +0200
-Message-ID: <965b1a13-72a9-76a1-d5f5-5276944761cd@samsung.com>
-References: <CGME20171013122704epcas2p205fdf3238de4a42ae773eb8a2c4b790d@epcas2p2.samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2 0/9] Exynos DRM: rewrite IPP subsystem and userspace
+ API
+Date: Fri, 13 Oct 2017 18:08:04 +0200
+Message-ID: <36a61c88-374d-c229-9e0d-7c891a926591@math.uni-bielefeld.de>
+References: <CGME20170929073300eucas1p29f75848701e8181d1482ce4e202c4b6e@eucas1p2.samsung.com>
+ <1506670374-15689-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-language: en-GB
-Sender: linux-clk-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:53905 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751660AbdJMQIJ (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 13 Oct 2017 12:08:09 -0400
+In-Reply-To: <1506670374-15689-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 
-Hi Stephen, Mike,
+Hello everyone,
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+I have finished some first (working) version of my mpv video backend for IPPv2.
 
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+You can find the tree here:
+https://github.com/tobiasjakobi/mpv
 
-are available in the git repository at:
+I've also created some RFC pull request upstream, to get some input on the
+current patches:
+https://github.com/mpv-player/mpv/pull/4986
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.15-samsung
+As you can see, a lot is currently missing, but at least the video presentation
+(for YUV420) already works and shows good performance.
 
-for you to fetch changes up to a4f21e9ceb5c81f5b297cabb98dac0b5c03bd4dc:
+I have also cleaned up my ippv2 libdrm branch. Now it should just contain the
+IPPv2 bits:
+https://github.com/tobiasjakobi/libdrm/tree/ippv2
 
-  clk: samsung: Remove obsolete clkdev alias support (2017-10-09 11:34:03 +0200)
-
-----------------------------------------------------------------
-clk/samsung updates for v4.15
-
-Overall clk/samsung clean up and fixes. Removed remaining unused code
-after removal of exynos4212 SoC support; dropped internal data structure
-fields and related code for registering clkdev lookup entry for each
-possible clock object, clkdev aliases could still be defined if needed
-in a separate table; other minor fixes of the clock tree definitions.
-
-----------------------------------------------------------------
-Andrzej Pietrasiewicz (1):
-      clk: samsung: Fix m2m scaler clock on Exynos542x
-
-Marek Szyprowski (11):
-      clk: samsung: Properly propagate flags in __PLL macro
-      clk: samsung: Remove support for Exynos4212 SoCs in Exynos CLKOUT driver
-      clk: samsung: Remove support for obsolete Exynos4212 CPU clock
-      clk: samsung: Remove clkdev alias support in Exynos4 clk driver
-      clk: samsung: Remove double assignment of CLK_ARM_CLK in Exynos4 driver
-      clk: samsung: Remove clkdev alias support in Exynos5250 clk driver
-      clk: samsung: Drop useless alias in Exynos5420 clk driver
-      clk: samsung: Rework clkdev alias handling in Exynos5440 driver
-      clk: samsung: Rework clkdev alias handling in S3C2443 driver
-      clk: samsung: Add explicit MPLL, EPLL clkdev aliases in S3C2443 driver
-      clk: samsung: Remove obsolete clkdev alias support
-
-Markus Elfring (1):
-      clk: samsung: Delete a memory allocation error message in clk-cpu.c
-
- drivers/clk/samsung/clk-cpu.c           |  2 -
- drivers/clk/samsung/clk-exynos-clkout.c |  2 -
- drivers/clk/samsung/clk-exynos4.c       | 82 ++++++-----------------------
- drivers/clk/samsung/clk-exynos5250.c    | 18 +++----
- drivers/clk/samsung/clk-exynos5420.c    |  5 +-
- drivers/clk/samsung/clk-exynos5440.c    | 12 ++++-
- drivers/clk/samsung/clk-pll.c           |  9 ----
- drivers/clk/samsung/clk-s3c2443.c       | 16 +++---
- drivers/clk/samsung/clk.c               | 33 ++----------
- drivers/clk/samsung/clk.h               | 73 +++++--------------------
- include/dt-bindings/clock/s3c2443.h     |  2 +
- 11 files changed, 64 insertions(+), 190 deletions(-)
+With best wishes,
+Tobias
 
 
--- 
-Thanks,
-Sylwester
+
+Marek Szyprowski wrote:
+> Dear all,
+> 
+> This patchset performs complete rewrite of Exynos DRM IPP subsystem and
+> its userspace API.
+> 
+> Why such rewrite is needed? Exynos DRM IPP API is over-engineered in
+> general, but not really extensible on the other side. It is also buggy,
+> with significant design flaws:
+> - Userspace API covers memory-2-memory picture operations together with
+>   CRTC writeback and duplicating features, which belongs to video plane.
+> - Lack of support of the all required image formats (for example NV12
+>   Samsung-tiled cannot be used due to lack of pixel format modifier
+>   support).
+> - Userspace API designed only to mimic hardware behaviour, not easy to
+>   understand.
+> - Lack of proper input validation in the core, drivers also didn't do that
+>   correctly, so it was possible to set incorrect parameters and easil
+>   trigger IOMMU fault or memory trash.
+> - Drivers were partially disfunctional or supported only a subset of modes.
+> 
+> Due to the above limitations and issues the Exynos DRM IPP API was not
+> used by any of the open-source projects. I assume that it is safe to remove
+> this broken API without any damage to open-source community. All remaining
+> users (mainly Tizen project related) will be updated to the new version.
+> 
+> This patchset changes Exynos DRM IPP subsystem to something useful. The
+> userspace API is much simpler, state-less and easy to understand. Also
+> the code of the core and driver is significantly smaller and easier to
+> understand.
+> 
+> Patches were tested on Exynos4412 based Odroid U3 and Exynos5422
+> Odroid XU3 boards, on top of Linux next-20170928 kernel.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> 
+> Changelog:
+> 
+> v2:
+> - fixed minor issues pointed by other developers:
+>   * fixed possible null pointer dereferrence (Tobias)
+>   * changed limits_size to limits_count (Tobias)
+>   * renamed struct exynos_drm_ipp_format to drm_exynos_ipp_format (Andrzej)
+>   * added proper return value from exynos_drm_ipp_get_res_ioctl when no IPP
+>     driver is present (Andrzej)
+>   * properly aligned all uapi structures to be 32/64 bit safe (Emil)
+>   * properly initialize all strucutres
+> - added new Exynos Scaler driver from Andrzej Pietrasiewicz
+> 
+> v1: https://www.spinics.net/lists/linux-samsung-soc/msg60492.html
+> - initial version of IPP v2
+> 
+> My previous works in this area:
+> 
+> "[RFC v2 0/2] Exynos DRM: add Picture Processor extension"
+> https://www.spinics.net/lists/dri-devel/msg140669.html
+> - removed usage of DRM objects and properties - replaced them with simple
+>   list of parameters with predefined IDs
+> 
+> "[RFC 0/4] Exynos DRM: add Picture Processor extension"
+> https://www.spinics.net/lists/linux-samsung-soc/msg59323.html
+> - moved this feature from DRM core to Exynos DRM driver
+> - changed name from framebuffer processor to picture processor
+> - simplified code to cover only things needed by Exynos drivers
+> - implemented simple fifo task scheduler
+> - cleaned up rotator driver conversion (removed IPP remainings)
+> 
+> "[RFC 0/2] New feature: Framebuffer processors"
+> https://www.spinics.net/lists/linux-samsung-soc/msg54810.html
+> - generic approach implemented in DRM core, rejected
+> 
+> 
+> Patch summary:
+> 
+> Andrzej Pietrasiewicz (3):
+>   drm/exynos: Add driver for Exynos Scaler module
+>   drivers: clk: samsung: Fix m2m scaler clock on Exynos542x
+>   ARM: dts: exynos: Add mem-2-mem Scaler devices
+> 
+> Marek Szyprowski (6):
+>   drm/exynos: ipp: Remove Exynos DRM IPP subsystem
+>   drm/exynos: ipp: Add IPP v2 framework
+>   drm/exynos: rotator: Convert driver to IPP v2 core API
+>   drm/exynos: gsc: Convert driver to IPP v2 core API
+>   drm/exynos: Add generic support for devices shared with V4L2 subsystem
+>   drm/exynos: fimc: Convert driver to IPP v2 core API
+> 
+>  .../devicetree/bindings/gpu/samsung-scaler.txt     |   25 +
+>  arch/arm/boot/dts/exynos5420.dtsi                  |   35 +
+>  drivers/clk/samsung/clk-exynos5420.c               |    2 +-
+>  drivers/gpu/drm/exynos/Kconfig                     |   18 +-
+>  drivers/gpu/drm/exynos/Makefile                    |    1 +
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c            |   36 +-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h            |    5 +-
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.c           |  893 +++-----
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.h           |   23 -
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c            |  853 ++------
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.h            |   24 -
+>  drivers/gpu/drm/exynos/exynos_drm_ipp.c            | 2240 ++++++--------------
+>  drivers/gpu/drm/exynos/exynos_drm_ipp.h            |  357 ++--
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.c        |  735 ++-----
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.h        |   19 -
+>  drivers/gpu/drm/exynos/exynos_drm_scaler.c         |  675 ++++++
+>  drivers/gpu/drm/exynos/regs-scaler.h               |  426 ++++
+>  include/uapi/drm/exynos_drm.h                      |  326 +--
+>  18 files changed, 2818 insertions(+), 3875 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+>  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_fimc.h
+>  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_gsc.h
+>  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_rotator.h
+>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_scaler.c
+>  create mode 100644 drivers/gpu/drm/exynos/regs-scaler.h
+> 
