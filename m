@@ -1,53 +1,75 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] Exynos/S5P updates for 4.15
-Date: Fri, 13 Oct 2017 13:33:11 +0200
-Message-ID: <24a660f7-c3bf-0484-acbf-95ffd03b496b@samsung.com>
-References: <CGME20171013113314epcas1p457aa6db29020300ffbea61e468752f24@epcas1p4.samsung.com>
+Subject: [GIT PULL] clk/samsung updates for 4.15
+Date: Fri, 13 Oct 2017 14:27:00 +0200
+Message-ID: <965b1a13-72a9-76a1-d5f5-5276944761cd@samsung.com>
+References: <CGME20171013122704epcas2p205fdf3238de4a42ae773eb8a2c4b790d@epcas2p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:33168 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751480AbdJMLdR (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 07:33:17 -0400
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-language: en-GB
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
+Hi Stephen, Mike,
 
-Hi Mauro,
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
-The following changes since commit 8382e556b1a2f30c4bf866f021b33577a64f9ebf:
-
-  Simplify major/minor non-dynamic logic (2017-10-11 15:32:11 -0400)
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
 
 are available in the git repository at:
 
-  git://linuxtv.org/snawrocki/samsung.git for-v4.15/media/next
+  git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.15-samsung
 
-for you to fetch changes up to e5fa99e5df93e815920e87e907e5cb61e765505b:
+for you to fetch changes up to a4f21e9ceb5c81f5b297cabb98dac0b5c03bd4dc:
 
-  s5p-mfc: Adjust a null pointer check in four functions (2017-10-13 13:17:49 +0200)
+  clk: samsung: Remove obsolete clkdev alias support (2017-10-09 11:34:03 +0200)
 
 ----------------------------------------------------------------
-Hoegeun Kwon (2):
-      exynos-gsc: Add compatible for Exynos 5250 and 5420 SoC version
-      exynos-gsc: Add hardware rotation limits
+clk/samsung updates for v4.15
 
-Markus Elfring (3):
-      s5p-mfc: Delete an error message for a failed memory allocation
-      s5p-mfc: Improve a size determination in s5p_mfc_alloc_memdev()
-      s5p-mfc: Adjust a null pointer check in four functions
+Overall clk/samsung clean up and fixes. Removed remaining unused code
+after removal of exynos4212 SoC support; dropped internal data structure
+fields and related code for registering clkdev lookup entry for each
+possible clock object, clkdev aliases could still be defined if needed
+in a separate table; other minor fixes of the clock tree definitions.
 
- .../devicetree/bindings/media/exynos5-gsc.txt |   9 +-
- drivers/media/platform/exynos-gsc/gsc-core.c  | 127 ++++++++++++++++-
- drivers/media/platform/s5p-mfc/s5p_mfc.c      |  14 +-
- 3 files changed, 134 insertions(+), 16 deletions(-)
+----------------------------------------------------------------
+Andrzej Pietrasiewicz (1):
+      clk: samsung: Fix m2m scaler clock on Exynos542x
+
+Marek Szyprowski (11):
+      clk: samsung: Properly propagate flags in __PLL macro
+      clk: samsung: Remove support for Exynos4212 SoCs in Exynos CLKOUT driver
+      clk: samsung: Remove support for obsolete Exynos4212 CPU clock
+      clk: samsung: Remove clkdev alias support in Exynos4 clk driver
+      clk: samsung: Remove double assignment of CLK_ARM_CLK in Exynos4 driver
+      clk: samsung: Remove clkdev alias support in Exynos5250 clk driver
+      clk: samsung: Drop useless alias in Exynos5420 clk driver
+      clk: samsung: Rework clkdev alias handling in Exynos5440 driver
+      clk: samsung: Rework clkdev alias handling in S3C2443 driver
+      clk: samsung: Add explicit MPLL, EPLL clkdev aliases in S3C2443 driver
+      clk: samsung: Remove obsolete clkdev alias support
+
+Markus Elfring (1):
+      clk: samsung: Delete a memory allocation error message in clk-cpu.c
+
+ drivers/clk/samsung/clk-cpu.c           |  2 -
+ drivers/clk/samsung/clk-exynos-clkout.c |  2 -
+ drivers/clk/samsung/clk-exynos4.c       | 82 ++++++-----------------------
+ drivers/clk/samsung/clk-exynos5250.c    | 18 +++----
+ drivers/clk/samsung/clk-exynos5420.c    |  5 +-
+ drivers/clk/samsung/clk-exynos5440.c    | 12 ++++-
+ drivers/clk/samsung/clk-pll.c           |  9 ----
+ drivers/clk/samsung/clk-s3c2443.c       | 16 +++---
+ drivers/clk/samsung/clk.c               | 33 ++----------
+ drivers/clk/samsung/clk.h               | 73 +++++--------------------
+ include/dt-bindings/clock/s3c2443.h     |  2 +
+ 11 files changed, 64 insertions(+), 190 deletions(-)
 
 
 -- 
-Regards,
+Thanks,
 Sylwester
