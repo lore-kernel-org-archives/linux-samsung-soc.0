@@ -1,248 +1,329 @@
-From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/4] iio: adc: ina2xx: Make max expected current
- configurable
-Date: Sun, 15 Oct 2017 11:38:48 +0100
-Message-ID: <20171015113848.7f0d678f@archlinux>
-References: <1507814282-1486-1-git-send-email-m.purski@samsung.com>
-        <CGME20171012131814eucas1p172faad38314e077e3395befaceef77af@eucas1p1.samsung.com>
-        <1507814282-1486-2-git-send-email-m.purski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v3] drm: exynos: Add driver for HDMI audio interface
+Date: Mon, 16 Oct 2017 07:48:22 +0900
+Message-ID: <59E3E5B6.9050300@samsung.com>
+References: <CGME20170926141814epcas1p1923ab779847932395bf2c2899291dfcd@epcas1p1.samsung.com>
+ <1506435469-10591-1-git-send-email-s.nawrocki@samsung.com>
+ <dce1bc56-ecb1-e029-6d2b-ddf3b560d894@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1507814282-1486-2-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <dce1bc56-ecb1-e029-6d2b-ddf3b560d894@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, jcsing.lee@samsung.com, sw0312.kim@samsung.com, krzk@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 12 Oct 2017 15:17:59 +0200
-Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-
-> Max expected current is used for calculating calibration register value,
-> Current LSB and Power LSB according to equations found in ina datasheet:
-> current_lsb = max_expected_current / 2^15
-> calibration_register = 0.00512 / (current_lsb * r_shunt)
-> power_lsb = 25 * current_lsb (for ina231, 230, 226)
-> power_lsb = 20 * current_lsb (for older ones)
-> 
-> Max expected current is now implicitly set to default value,
-> which is 2^15, thanks to which Current LSB is equal to 1 mA and
-> Power LSB is equal to 20000 uW or 25000 uW depending on ina model, but
-> users have no impact on the precision of the device.
-> 
-> Make max expected current configurable from device tree or platform_data.
-> Allow changing current_lsb from sysfs. It is exposed in sysfs as
-> scale attribute for IIO current channel. Update calibration register and
-> power_lsb value on each scale change.
-> 
-> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-I'm going to hold off on this until the discussion around Stefan's
-point in the thread
-Re: [2/3] iio: adc: ina2xx: Adhere to documented ABI, use Ohm instead of uOhm
-is addressed.
-
-There he points out that current_lsb and presumably the calibration register
-are just conveniences, but that they result in lost precision.
-
-As I understand it, Stefan's suggestion is that we always use a fixed
-value and perform any 'calibration' by providing appropriate scale values
-to let it be done in userspace where floating point is available.
-
-Other than that fundamental question of whether this makes sense at all,
-the below looks good to me.
-
-Jonathan
-> ---
->  drivers/iio/adc/ina2xx-adc.c         | 96 ++++++++++++++++++++++++++----------
->  include/linux/platform_data/ina2xx.h |  2 +
->  2 files changed, 73 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ina2xx-adc.c b/drivers/iio/adc/ina2xx-adc.c
-> index a16f8c6..be26dfc 100644
-> --- a/drivers/iio/adc/ina2xx-adc.c
-> +++ b/drivers/iio/adc/ina2xx-adc.c
-> @@ -56,6 +56,7 @@
->  #define INA226_DEFAULT_IT		1110
->  
->  #define INA2XX_RSHUNT_DEFAULT           10000
-> +#define INA2XX_MAX_EXPECTED_MA_DEFAULT	BIT(15)	/* current_lsb = 1 mA */
->  
->  /*
->   * bit masks for reading the settings in the configuration register
-> @@ -114,7 +115,7 @@ struct ina2xx_config {
->  	int shunt_div;
->  	int bus_voltage_shift;
->  	int bus_voltage_lsb;	/* uV */
-> -	int power_lsb;		/* uW */
-> +	int power_lsb_factor;
->  	enum ina2xx_ids chip_id;
->  };
->  
-> @@ -123,7 +124,9 @@ struct ina2xx_chip_info {
->  	struct task_struct *task;
->  	const struct ina2xx_config *config;
->  	struct mutex state_lock;
-> -	unsigned int shunt_resistor;
-> +	unsigned int shunt_resistor;		/* uOhms */
-> +	int current_lsb;			/* uA */
-> +	int power_lsb;				/* uW */
->  	int avg;
->  	int int_time_vbus; /* Bus voltage integration time uS */
->  	int int_time_vshunt; /* Shunt voltage integration time uS */
-> @@ -137,7 +140,7 @@ static const struct ina2xx_config ina2xx_config[] = {
->  		.shunt_div = 100,
->  		.bus_voltage_shift = 3,
->  		.bus_voltage_lsb = 4000,
-> -		.power_lsb = 20000,
-> +		.power_lsb_factor = 20,
->  		.chip_id = ina219,
->  	},
->  	[ina226] = {
-> @@ -146,7 +149,7 @@ static const struct ina2xx_config ina2xx_config[] = {
->  		.shunt_div = 400,
->  		.bus_voltage_shift = 0,
->  		.bus_voltage_lsb = 1250,
-> -		.power_lsb = 25000,
-> +		.power_lsb_factor = 25,
->  		.chip_id = ina226,
->  	},
->  };
-> @@ -210,14 +213,15 @@ static int ina2xx_read_raw(struct iio_dev *indio_dev,
->  
->  		case INA2XX_POWER:
->  			/* processed (mW) = raw*lsb (uW) / 1000 */
-> -			*val = chip->config->power_lsb;
-> +			*val = chip->power_lsb;
->  			*val2 = 1000;
->  			return IIO_VAL_FRACTIONAL;
->  
->  		case INA2XX_CURRENT:
-> -			/* processed (mA) = raw (mA) */
-> -			*val = 1;
-> -			return IIO_VAL_INT;
-> +			/* processed (mA) = raw*lsb (uA) / 1000 */
-> +			*val = chip->current_lsb;
-> +			*val2 = 1000;
-> +			return IIO_VAL_FRACTIONAL;
->  		}
->  	}
->  
-> @@ -353,6 +357,36 @@ static int ina219_set_int_time_vshunt(struct ina2xx_chip_info *chip,
->  	return 0;
->  }
->  
-> +/*
-> + * Calculate calibration value according to equation 1 in ina226 datasheet
-> + * http://www.ti.com/lit/ds/symlink/ina226.pdf.
-> + * Current LSB is in uA and RShunt is in uOhms, so RShunt should be
-> + * converted to mOhms in order to keep the scale.
-> + * There is no need to expose the CALIBRATION register
-> + * to the user for now. But we need to reset this register
-> + * if the user updates RShunt or max expected current after driver
-> + * init, e.g upon reading an EEPROM/Probe-type value.
-> + */
-> +static int ina2xx_set_calibration(struct ina2xx_chip_info *chip)
-> +{
-> +	unsigned int rshunt = DIV_ROUND_CLOSEST(chip->shunt_resistor, 1000);
-> +	u16 regval = DIV_ROUND_CLOSEST(chip->config->calibration_factor,
-> +				     chip->current_lsb * rshunt);
-> +
-> +	return regmap_write(chip->regmap, INA2XX_CALIBRATION, regval);
-> +}
-> +
-> +static int ina2xx_set_scale(struct ina2xx_chip_info *chip, unsigned int val)
-> +{
-> +	if (val <= 0 || val > chip->config->calibration_factor)
-> +		return -EINVAL;
-> +
-> +	chip->current_lsb = val;
-> +	chip->power_lsb = chip->current_lsb * chip->config->power_lsb_factor;
-> +
-> +	return 0;
-> +}
-> +
->  static int ina2xx_write_raw(struct iio_dev *indio_dev,
->  			    struct iio_chan_spec const *chan,
->  			    int val, int val2, long mask)
-> @@ -394,7 +428,18 @@ static int ina2xx_write_raw(struct iio_dev *indio_dev,
->  							       &tmp);
->  		}
->  		break;
-> -
-> +	case IIO_CHAN_INFO_SCALE:
-> +		switch (chan->type) {
-> +		case IIO_CURRENT:
-> +			val = val * 1000 + DIV_ROUND_CLOSEST(val2, 1000);
-> +			ret = ina2xx_set_scale(chip, val);
-> +			if (!ret)
-> +				ret = ina2xx_set_calibration(chip);
-> +			break;
-> +		default:
-> +			ret = -EINVAL;
-> +		}
-> +		break;
->  	default:
->  		ret = -EINVAL;
->  	}
-> @@ -433,22 +478,6 @@ static ssize_t ina2xx_allow_async_readout_store(struct device *dev,
->  	return len;
->  }
->  
-> -/*
-> - * Set current LSB to 1mA, shunt is in uOhms
-> - * (equation 13 in datasheet). We hardcode a Current_LSB
-> - * of 1.0 x10-6. The only remaining parameter is RShunt.
-> - * There is no need to expose the CALIBRATION register
-> - * to the user for now. But we need to reset this register
-> - * if the user updates RShunt after driver init, e.g upon
-> - * reading an EEPROM/Probe-type value.
-> - */
-> -static int ina2xx_set_calibration(struct ina2xx_chip_info *chip)
-> -{
-> -	u16 regval = DIV_ROUND_CLOSEST(chip->config->calibration_factor,
-> -				   chip->shunt_resistor);
-> -
-> -	return regmap_write(chip->regmap, INA2XX_CALIBRATION, regval);
-> -}
->  
->  static int set_shunt_resistor(struct ina2xx_chip_info *chip, unsigned int val)
->  {
-> @@ -849,6 +878,23 @@ static int ina2xx_probe(struct i2c_client *client,
->  	if (ret)
->  		return ret;
->  
-> +	if (of_property_read_u32(client->dev.of_node,
-> +				"ti-max-expected-current-milliamp", &val) < 0) {
-> +		struct ina2xx_platform_data *pdata =
-> +		    dev_get_platdata(&client->dev);
-> +
-> +		if (pdata && pdata->max_mA != 0)
-> +			val = pdata->max_mA;
-> +		else
-> +			val = INA2XX_MAX_EXPECTED_MA_DEFAULT;
-> +	}
-> +
-> +	/* Calculate current_lsb: max-expected-current / 2^15 */
-> +	val = DIV_ROUND_CLOSEST(val * 1000, (1 << 15));
-> +	ret = ina2xx_set_scale(chip, val);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* Patch the current config register with default. */
->  	val = chip->config->config_default;
->  
-> diff --git a/include/linux/platform_data/ina2xx.h b/include/linux/platform_data/ina2xx.h
-> index 9abc0ca..f02b1d8 100644
-> --- a/include/linux/platform_data/ina2xx.h
-> +++ b/include/linux/platform_data/ina2xx.h
-> @@ -13,7 +13,9 @@
->  /**
->   * struct ina2xx_platform_data - ina2xx info
->   * @shunt_uohms		shunt resistance in microohms
-> + * @max_mA		max expected current in mA
->   */
->  struct ina2xx_platform_data {
->  	long shunt_uohms;
-> +	int max_mA;
->  };
+CgoyMDE364WEIDEw7JuUIDEy7J28IDE4OjUx7JeQIFN5bHdlc3RlciBOYXdyb2NraSDsnbQo6rCA
+KSDsk7Qg6riAOgo+IE9uIDA5LzI2LzIwMTcgMDQ6MTcgUE0sIFN5bHdlc3RlciBOYXdyb2NraSB3
+cm90ZToKPj4gVGhlIGhkbWktY29kZWMgaW50ZXJmYWNlIGFkZGVkIGluIHRoaXMgcGF0Y2ggaXMg
+cmVxdWlyZWQgdG8gcHJvcGVybHkKPj4gc3VwcG9ydCBIRE1JIGF1ZGlvLiBDdXJyZW50bHkgdGhl
+IGF1ZGlvIHBhcnQgb2YgdGhlIFNvQyBpbnRlcm5hbAo+PiBIRE1JIHRyYW5zbWl0dGVyIGlzIGNv
+bmZpZ3VyZWQgd2l0aCBmaXhlZCB2YWx1ZXMsIHdoaWNoIG1ha2VzIEhETUkKPj4gYXVkaW8gd29y
+a2luZyBieSBjaGFuY2UsIG9ubHkgb24gYm9hcmRzIGhhdmluZyBhbiBleHRlcm5hbCBhdWRpbwo+
+PiBjb2RlYyBjb25uZWN0ZWQgaW4gcGFyYWxsZWwgd2l0aCB0aGUgSERNSSBhdWRpbyB0cmFuc21p
+dHRlcidzIGlucHV0Cj4+IEkyUyBpbnRlcmZhY2UuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IFN5bHdl
+c3RlciBOYXdyb2NraSA8cy5uYXdyb2NraUBzYW1zdW5nLmNvbT4KPj4gUmV2aWV3ZWQtYnk6IEFu
+ZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gCj4gQW55IGNvbW1lbnRzIG9uIHRo
+aXMgcGF0Y2g/CgpJIHdpbGwgcmV2aWV3IHRoaXMgcGF0Y2ggaW5jbHVkaW5nIG90aGVyIHBhdGNo
+IHNlcmllcyB3aGljaCBzaG91bGQgZ28gdG8gLW5leHQgYXQgZW5kIG9mIHRoaXMgd2Vlay4KClRo
+YW5rcywKSW5raSBEYWUKCj4gCj4gVGhhbmtzLAo+IFN5bHdlc3Rlcgo+IAo+PiAtLS0KPj4gVGVz
+dGVkIG9uIE9kcm9pZCBYVTMgYW5kIE9kcm9pZCBYVTQgd2l0aCBVYnVudHUgMTQuMDQuCj4+Cj4+
+IENoYW5nZXMgc2luY2UgdjI6Cj4+ICAtIHU4IHJlcGxhY2VkIHdpdGggYm9vbCB0eXBlLAo+PiAg
+LSB0aGUgIEhETUkgY29kZWMgaWVjLnN0YXR1cyBkYXRhIHVzZWQgZGlyZWN0bHkgZm9yIHNldHRp
+bmcgdXAKPj4gICAgdGhlIEhETUkgY29udHJvbGxlciByZWdpc3RlcnMgcmF0aGVyIHRoYW4gdXNp
+bmcgaGFyZCBjb2RlZAo+PiAgICBjb25zdGFudHMsCj4+ICAtIGNvbnN0YW50cyB1c2VkIGZvciBj
+b25maWd1cmluZyB0aGUgSERNSV9BVUlfQ09OIHJlZ2lzdGVyCj4+ICAgIGluc3RlYWQgb2YgcGxh
+aW4gbnVtYmVycywKPj4gIC0gaWYvSVNfRVJSL3JldHVybiByZXBsYWNlZCB3aXRoIFBUUl9FUlJf
+T1JfWkVSTygpLgo+Pgo+PiBDaGFuZ2VzIHNpbmNlIHYxOgo+PiAgLSByZWJhc2VkIG9udG8gdjQu
+MTQtcmMxIGFuZCBhZGFwdGVkIGxvY2tpbmcKPj4KPj4gQ2hhbmdlcyBzaW5jZSBSRkMgdmVyc2lv
+bjoKPj4gIC0gZml4ZWQgaGRtaS1jb2RlYyBsb2NraW5nIGlzc3VlCj4+ICAtIGFkZGVkIGEgY29t
+bWVudCBkb2N1bWVudGluZyBzdHJ1Y3QgaGRtaV9jb250ZXg6Om11dGV4Cj4+IC0tLQo+PiAgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnICAgICAgIHwgICAxICsKPj4gIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyB8IDI1MyArKysrKysrKysrKysrKysrKysrKysrKysr
+Ky0tLS0tLS0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWhkbWkuaCAgIHwgICA4
+ICstCj4+ICAzIGZpbGVzIGNoYW5nZWQsIDE5NyBpbnNlcnRpb25zKCspLCA2NSBkZWxldGlvbnMo
+LSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZwo+PiBpbmRleCAzMDVkYzNkLi41YTdjOWQ4IDEw
+MDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcKPj4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnCj4+IEBAIC0zLDYgKzMsNyBAQCBjb25maWcgRFJN
+X0VYWU5PUwo+PiAgCWRlcGVuZHMgb24gT0YgJiYgRFJNICYmIChBUkNIX1MzQzY0WFggfHwgQVJD
+SF9FWFlOT1MgfHwgQVJDSF9NVUxUSVBMQVRGT1JNKQo+PiAgCXNlbGVjdCBEUk1fS01TX0hFTFBF
+Ugo+PiAgCXNlbGVjdCBWSURFT01PREVfSEVMUEVSUwo+PiArCXNlbGVjdCBTTkRfU09DX0hETUlf
+Q09ERUMgaWYgU05EX1NPQwo+PiAgCWhlbHAKPj4gIAkgIENob29zZSB0aGlzIG9wdGlvbiBpZiB5
+b3UgaGF2ZSBhIFNhbXN1bmcgU29DIEVYWU5PUyBjaGlwc2V0Lgo+PiAgCSAgSWYgTSBpcyBzZWxl
+Y3RlZCB0aGUgbW9kdWxlIHdpbGwgYmUgY2FsbGVkIGV4eW5vc2RybS4KPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2hkbWkuYwo+PiBpbmRleCAyMTRmYTVlLi5kMmIzODlhIDEwMDY0NAo+PiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4+IEBAIC00MCw3ICs0MCw3IEBACj4+ICAj
+aW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+Cj4+ICAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nv
+bi5oPgo+PiAgI2luY2x1ZGUgPGxpbnV4L3JlZ21hcC5oPgo+PiAtCj4+ICsjaW5jbHVkZSA8c291
+bmQvaGRtaS1jb2RlYy5oPgo+PiAgI2luY2x1ZGUgPGRybS9leHlub3NfZHJtLmg+Cj4+Cj4+ICAj
+aW5jbHVkZSA8bWVkaWEvY2VjLW5vdGlmaWVyLmg+Cj4+IEBAIC0xMTEsMTIgKzExMSwxOCBAQCBz
+dHJ1Y3QgaGRtaV9kcml2ZXJfZGF0YSB7Cj4+ICAJc3RydWN0IHN0cmluZ19hcnJheV9zcGVjIGNs
+a19tdXhlczsKPj4gIH07Cj4+Cj4+ICtzdHJ1Y3QgaGRtaV9hdWRpbyB7Cj4+ICsJc3RydWN0IHBs
+YXRmb3JtX2RldmljZQkJKnBkZXY7Cj4+ICsJc3RydWN0IGhkbWlfYXVkaW9faW5mb2ZyYW1lCWlu
+Zm9mcmFtZTsKPj4gKwlzdHJ1Y3QgaGRtaV9jb2RlY19wYXJhbXMJcGFyYW1zOwo+PiArCWJvb2wJ
+CQkJZW5hYmxlOwo+PiArfTsKPj4gKwo+PiAgc3RydWN0IGhkbWlfY29udGV4dCB7Cj4+ICAJc3Ry
+dWN0IGRybV9lbmNvZGVyCQllbmNvZGVyOwo+PiAgCXN0cnVjdCBkZXZpY2UJCQkqZGV2Owo+PiAg
+CXN0cnVjdCBkcm1fZGV2aWNlCQkqZHJtX2RldjsKPj4gIAlzdHJ1Y3QgZHJtX2Nvbm5lY3RvcgkJ
+Y29ubmVjdG9yOwo+PiAtCWJvb2wJCQkJcG93ZXJlZDsKPj4gIAlib29sCQkJCWR2aV9tb2RlOwo+
+PiAgCXN0cnVjdCBkZWxheWVkX3dvcmsJCWhvdHBsdWdfd29yazsKPj4gIAlzdHJ1Y3QgZHJtX2Rp
+c3BsYXlfbW9kZQkJY3VycmVudF9tb2RlOwo+PiBAQCAtMTM3LDYgKzE0MywxMSBAQCBzdHJ1Y3Qg
+aGRtaV9jb250ZXh0IHsKPj4gIAlzdHJ1Y3QgcmVndWxhdG9yCQkqcmVnX2hkbWlfZW47Cj4+ICAJ
+c3RydWN0IGV4eW5vc19kcm1fY2xrCQlwaHlfY2xrOwo+PiAgCXN0cnVjdCBkcm1fYnJpZGdlCQkq
+YnJpZGdlOwo+PiArCj4+ICsJLyogbXV0ZXggcHJvdGVjdGluZyBzdWJzZXF1ZW50IGZpZWxkcyBi
+ZWxvdyAqLwo+PiArCXN0cnVjdCBtdXRleAkJCW11dGV4Owo+PiArCXN0cnVjdCBoZG1pX2F1ZGlv
+CQlhdWRpbzsKPj4gKwlib29sCQkJCXBvd2VyZWQ7Cj4+ICB9Owo+Pgo+PiAgc3RhdGljIGlubGlu
+ZSBzdHJ1Y3QgaGRtaV9jb250ZXh0ICplbmNvZGVyX3RvX2hkbWkoc3RydWN0IGRybV9lbmNvZGVy
+ICplKQo+PiBAQCAtNzY4LDYgKzc3OSwyMiBAQCBzdGF0aWMgaW50IGhkbWlfY2xrX3NldF9wYXJl
+bnRzKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCBib29sIHRvX3BoeSkKPj4gIAlyZXR1cm4g
+cmV0Owo+PiAgfQo+Pgo+PiArc3RhdGljIGludCBoZG1pX2F1ZGlvX2luZm9mcmFtZV9hcHBseShz
+dHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPj4gK3sKPj4gKwlzdHJ1Y3QgaGRtaV9hdWRpb19p
+bmZvZnJhbWUgKmluZm9mcmFtZSA9ICZoZGF0YS0+YXVkaW8uaW5mb2ZyYW1lOwo+PiArCXU4IGJ1
+ZltIRE1JX0lORk9GUkFNRV9TSVpFKEFVRElPKV07Cj4+ICsJaW50IGxlbjsKPj4gKwo+PiArCWxl
+biA9IGhkbWlfYXVkaW9faW5mb2ZyYW1lX3BhY2soaW5mb2ZyYW1lLCBidWYsIHNpemVvZihidWYp
+KTsKPj4gKwlpZiAobGVuIDwgMCkKPj4gKwkJcmV0dXJuIGxlbjsKPj4gKwo+PiArCWhkbWlfcmVn
+X3dyaXRlYihoZGF0YSwgSERNSV9BVUlfQ09OLCBIRE1JX0FVSV9DT05fRVZFUllfVlNZTkMpOwo+
+PiArCWhkbWlfcmVnX3dyaXRlX2J1ZihoZGF0YSwgSERNSV9BVUlfSEVBREVSMCwgYnVmLCBsZW4p
+Owo+PiArCj4+ICsJcmV0dXJuIDA7Cj4+ICt9Cj4+ICsKPj4gIHN0YXRpYyB2b2lkIGhkbWlfcmVn
+X2luZm9mcmFtZXMoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4+ICB7Cj4+ICAJdW5pb24g
+aGRtaV9pbmZvZnJhbWUgZnJtOwo+PiBAQCAtODA1LDE1ICs4MzIsNyBAQCBzdGF0aWMgdm9pZCBo
+ZG1pX3JlZ19pbmZvZnJhbWVzKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+PiAgCQloZG1p
+X3JlZ193cml0ZV9idWYoaGRhdGEsIEhETUlfVlNJX0RBVEEoMCksIGJ1ZiArIDMsIHJldCAtIDMp
+Owo+PiAgCX0KPj4KPj4gLQlyZXQgPSBoZG1pX2F1ZGlvX2luZm9mcmFtZV9pbml0KCZmcm0uYXVk
+aW8pOwo+PiAtCWlmICghcmV0KSB7Cj4+IC0JCWZybS5hdWRpby5jaGFubmVscyA9IDI7Cj4+IC0J
+CXJldCA9IGhkbWlfYXVkaW9faW5mb2ZyYW1lX3BhY2soJmZybS5hdWRpbywgYnVmLCBzaXplb2Yo
+YnVmKSk7Cj4+IC0JfQo+PiAtCWlmIChyZXQgPiAwKSB7Cj4+IC0JCWhkbWlfcmVnX3dyaXRlYiho
+ZGF0YSwgSERNSV9BVUlfQ09OLCBIRE1JX0FVSV9DT05fRVZFUllfVlNZTkMpOwo+PiAtCQloZG1p
+X3JlZ193cml0ZV9idWYoaGRhdGEsIEhETUlfQVVJX0hFQURFUjAsIGJ1ZiwgcmV0KTsKPj4gLQl9
+Cj4+ICsJaGRtaV9hdWRpb19pbmZvZnJhbWVfYXBwbHkoaGRhdGEpOwo+PiAgfQo+Pgo+PiAgc3Rh
+dGljIGVudW0gZHJtX2Nvbm5lY3Rvcl9zdGF0dXMgaGRtaV9kZXRlY3Qoc3RydWN0IGRybV9jb25u
+ZWN0b3IgKmNvbm5lY3RvciwKPj4gQEAgLTk5NSwyMyArMTAxNCwxOCBAQCBzdGF0aWMgdm9pZCBo
+ZG1pX3JlZ19hY3Ioc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEsIHUzMiBmcmVxKQo+PiAgCWhk
+bWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9BQ1JfQ09OLCA0KTsKPj4gIH0KPj4KPj4gLXN0YXRp
+YyB2b2lkIGhkbWlfYXVkaW9faW5pdChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPj4gK3N0
+YXRpYyB2b2lkIGhkbWlfYXVkaW9fY29uZmlnKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+
+PiAgewo+PiAtCXUzMiBzYW1wbGVfcmF0ZSwgYml0c19wZXJfc2FtcGxlOwo+PiAtCXUzMiBkYXRh
+X251bSwgYml0X2NoLCBzYW1wbGVfZnJxOwo+PiAtCXUzMiB2YWw7Cj4+IC0KPj4gLQlzYW1wbGVf
+cmF0ZSA9IDQ0MTAwOwo+PiAtCWJpdHNfcGVyX3NhbXBsZSA9IDE2Owo+PiArCXUzMiBiaXRfY2gg
+PSAxOwo+PiArCXUzMiBkYXRhX251bSwgdmFsOwo+PiArCWludCBpOwo+Pgo+PiAtCXN3aXRjaCAo
+Yml0c19wZXJfc2FtcGxlKSB7Cj4+ICsJc3dpdGNoIChoZGF0YS0+YXVkaW8ucGFyYW1zLnNhbXBs
+ZV93aWR0aCkgewo+PiAgCWNhc2UgMjA6Cj4+ICAJCWRhdGFfbnVtID0gMjsKPj4gLQkJYml0X2No
+ID0gMTsKPj4gIAkJYnJlYWs7Cj4+ICAJY2FzZSAyNDoKPj4gIAkJZGF0YV9udW0gPSAzOwo+PiAt
+CQliaXRfY2ggPSAxOwo+PiAgCQlicmVhazsKPj4gIAlkZWZhdWx0Ogo+PiAgCQlkYXRhX251bSA9
+IDE7Cj4+IEBAIC0xMDE5LDcgKzEwMzMsNyBAQCBzdGF0aWMgdm9pZCBoZG1pX2F1ZGlvX2luaXQo
+c3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4+ICAJCWJyZWFrOwo+PiAgCX0KPj4KPj4gLQlo
+ZG1pX3JlZ19hY3IoaGRhdGEsIHNhbXBsZV9yYXRlKTsKPj4gKwloZG1pX3JlZ19hY3IoaGRhdGEs
+IGhkYXRhLT5hdWRpby5wYXJhbXMuc2FtcGxlX3JhdGUpOwo+Pgo+PiAgCWhkbWlfcmVnX3dyaXRl
+YihoZGF0YSwgSERNSV9JMlNfTVVYX0NPTiwgSERNSV9JMlNfSU5fRElTQUJMRQo+PiAgCQkJCXwg
+SERNSV9JMlNfQVVEX0kyUyB8IEhETUlfSTJTX0NVVl9JMlNfRU5BQkxFCj4+IEBAIC0xMDI5LDEy
+ICsxMDQzLDYgQEAgc3RhdGljIHZvaWQgaGRtaV9hdWRpb19pbml0KHN0cnVjdCBoZG1pX2NvbnRl
+eHQgKmhkYXRhKQo+PiAgCQkJfCBIRE1JX0kyU19DSDFfRU4gfCBIRE1JX0kyU19DSDJfRU4pOwo+
+Pgo+PiAgCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9JMlNfTVVYX0NVViwgSERNSV9JMlNf
+Q1VWX1JMX0VOKTsKPj4gLQo+PiAtCXNhbXBsZV9mcnEgPSAoc2FtcGxlX3JhdGUgPT0gNDQxMDAp
+ID8gMCA6Cj4+IC0JCQkoc2FtcGxlX3JhdGUgPT0gNDgwMDApID8gMiA6Cj4+IC0JCQkoc2FtcGxl
+X3JhdGUgPT0gMzIwMDApID8gMyA6Cj4+IC0JCQkoc2FtcGxlX3JhdGUgPT0gOTYwMDApID8gMHhh
+IDogMHgwOwo+PiAtCj4+ICAJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0kyU19DTEtfQ09O
+LCBIRE1JX0kyU19DTEtfRElTKTsKPj4gIAloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSTJT
+X0NMS19DT04sIEhETUlfSTJTX0NMS19FTik7Cj4+Cj4+IEBAIC0xMDU4LDMxICsxMDY2LDI0IEBA
+IHN0YXRpYyB2b2lkIGhkbWlfYXVkaW9faW5pdChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkK
+Pj4gIAkJCXwgSERNSV9JMlNfU0VUX1NEQVRBX0JJVChkYXRhX251bSkKPj4gIAkJCXwgSERNSV9J
+MlNfQkFTSUNfRk9STUFUKTsKPj4KPj4gLQkvKiBDb25maWd1cmUgcmVnaXN0ZXIgcmVsYXRlZCB0
+byBDVVYgaW5mb3JtYXRpb24gKi8KPj4gLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSTJT
+X0NIX1NUXzAsIEhETUlfSTJTX0NIX1NUQVRVU19NT0RFXzAKPj4gLQkJCXwgSERNSV9JMlNfMkFV
+RF9DSF9XSVRIT1VUX1BSRUVNUEgKPj4gLQkJCXwgSERNSV9JMlNfQ09QWVJJR0hUCj4+IC0JCQl8
+IEhETUlfSTJTX0xJTkVBUl9QQ00KPj4gLQkJCXwgSERNSV9JMlNfQ09OU1VNRVJfRk9STUFUKTsK
+Pj4gLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSTJTX0NIX1NUXzEsIEhETUlfSTJTX0NE
+X1BMQVlFUik7Cj4+IC0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0kyU19DSF9TVF8yLCBI
+RE1JX0kyU19TRVRfU09VUkNFX05VTSgwKSk7Cj4+IC0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBI
+RE1JX0kyU19DSF9TVF8zLCBIRE1JX0kyU19DTEtfQUNDVVJfTEVWRUxfMgo+PiAtCQkJfCBIRE1J
+X0kyU19TRVRfU01QX0ZSRVEoc2FtcGxlX2ZycSkpOwo+PiAtCWhkbWlfcmVnX3dyaXRlYihoZGF0
+YSwgSERNSV9JMlNfQ0hfU1RfNCwKPj4gLQkJCUhETUlfSTJTX09SR19TTVBfRlJFUV80NF8xCj4+
+IC0JCQl8IEhETUlfSTJTX1dPUkRfTEVOX01BWDI0XzI0QklUUwo+PiAtCQkJfCBIRE1JX0kyU19X
+T1JEX0xFTl9NQVhfMjRCSVRTKTsKPj4gKwkvKiBDb25maWd1cmUgcmVnaXN0ZXJzIHJlbGF0ZWQg
+dG8gQ1VWIGluZm9ybWF0aW9uICovCj4+ICsJZm9yIChpID0gMDsgaSA8IEhETUlfSTJTX0NIX1NU
+X01BWE5VTTsgaSsrKQo+PiArCQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSTJTX0NIX1NU
+KGkpLAo+PiArCQkJCWhkYXRhLT5hdWRpby5wYXJhbXMuaWVjLnN0YXR1c1tpXSk7Cj4+Cj4+ICAJ
+aGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0kyU19DSF9TVF9DT04sIEhETUlfSTJTX0NIX1NU
+QVRVU19SRUxPQUQpOwo+PiAgfQo+Pgo+PiAtc3RhdGljIHZvaWQgaGRtaV9hdWRpb19jb250cm9s
+KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCBib29sIG9ub2ZmKQo+PiArc3RhdGljIHZvaWQg
+aGRtaV9hdWRpb19jb250cm9sKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+PiAgewo+PiAr
+CWJvb2wgZW5hYmxlID0gaGRhdGEtPmF1ZGlvLmVuYWJsZTsKPj4gKwo+PiAgCWlmIChoZGF0YS0+
+ZHZpX21vZGUpCj4+ICAJCXJldHVybjsKPj4KPj4gLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhE
+TUlfQVVJX0NPTiwgb25vZmYgPyAyIDogMCk7Cj4+IC0JaGRtaV9yZWdfd3JpdGVtYXNrKGhkYXRh
+LCBIRE1JX0NPTl8wLCBvbm9mZiA/Cj4+ICsJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0FV
+SV9DT04sIGVuYWJsZSA/Cj4+ICsJCQlIRE1JX0FWSV9DT05fRVZFUllfVlNZTkMgOiBIRE1JX0FV
+SV9DT05fTk9fVFJBTik7Cj4+ICsJaGRtaV9yZWdfd3JpdGVtYXNrKGhkYXRhLCBIRE1JX0NPTl8w
+LCBlbmFibGUgPwo+PiAgCQkJSERNSV9BU1BfRU4gOiBIRE1JX0FTUF9ESVMsIEhETUlfQVNQX01B
+U0spOwo+PiAgfQo+Pgo+PiBAQCAtMTM5OCwxMyArMTM5OSwxNCBAQCBzdGF0aWMgdm9pZCBoZG1p
+cGh5X2NvbmZfYXBwbHkoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4+ICAJaGRtaXBoeV93
+YWl0X2Zvcl9wbGwoaGRhdGEpOwo+PiAgfQo+Pgo+PiArLyogU2hvdWxkIGJlIGNhbGxlZCB3aXRo
+IGhkYXRhLT5tdXRleCBtdXRleCBoZWxkICovCj4+ICBzdGF0aWMgdm9pZCBoZG1pX2NvbmZfYXBw
+bHkoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4+ICB7Cj4+ICAJaGRtaV9zdGFydChoZGF0
+YSwgZmFsc2UpOwo+PiAgCWhkbWlfY29uZl9pbml0KGhkYXRhKTsKPj4gLQloZG1pX2F1ZGlvX2lu
+aXQoaGRhdGEpOwo+PiArCWhkbWlfYXVkaW9fY29uZmlnKGhkYXRhKTsKPj4gIAloZG1pX21vZGVf
+YXBwbHkoaGRhdGEpOwo+PiAtCWhkbWlfYXVkaW9fY29udHJvbChoZGF0YSwgdHJ1ZSk7Cj4+ICsJ
+aGRtaV9hdWRpb19jb250cm9sKGhkYXRhKTsKPj4gIH0KPj4KPj4gIHN0YXRpYyB2b2lkIGhkbWlf
+bW9kZV9zZXQoc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyLAo+PiBAQCAtMTQzMSw2ICsxNDMz
+LDcgQEAgc3RhdGljIHZvaWQgaGRtaV9zZXRfcmVmY2xrKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhk
+YXRhLCBib29sIG9uKQo+PiAgCQkJICAgU1lTUkVHX0hETUlfUkVGQ0xLX0lOVF9DTEssIG9uID8g
+fjAgOiAwKTsKPj4gIH0KPj4KPj4gKy8qIFNob3VsZCBiZSBjYWxsZWQgd2l0aCBoZGF0YS0+bXV0
+ZXggbXV0ZXggaGVsZC4gKi8KPj4gIHN0YXRpYyB2b2lkIGhkbWlwaHlfZW5hYmxlKHN0cnVjdCBo
+ZG1pX2NvbnRleHQgKmhkYXRhKQo+PiAgewo+PiAgCWlmIChoZGF0YS0+cG93ZXJlZCkKPj4gQEAg
+LTE0NTMsNiArMTQ1Niw3IEBAIHN0YXRpYyB2b2lkIGhkbWlwaHlfZW5hYmxlKHN0cnVjdCBoZG1p
+X2NvbnRleHQgKmhkYXRhKQo+PiAgCWhkYXRhLT5wb3dlcmVkID0gdHJ1ZTsKPj4gIH0KPj4KPj4g
+Ky8qIFNob3VsZCBiZSBjYWxsZWQgd2l0aCBoZGF0YS0+bXV0ZXggbXV0ZXggaGVsZC4gKi8KPj4g
+IHN0YXRpYyB2b2lkIGhkbWlwaHlfZGlzYWJsZShzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkK
+Pj4gIHsKPj4gIAlpZiAoIWhkYXRhLT5wb3dlcmVkKQo+PiBAQCAtMTQ3OCwyOCArMTQ4MiwzOCBA
+QCBzdGF0aWMgdm9pZCBoZG1pX2VuYWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCj4+
+ICB7Cj4+ICAJc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBlbmNvZGVyX3RvX2hkbWkoZW5j
+b2Rlcik7Cj4+Cj4+ICsJbXV0ZXhfbG9jaygmaGRhdGEtPm11dGV4KTsKPj4gKwo+PiAgCWhkbWlw
+aHlfZW5hYmxlKGhkYXRhKTsKPj4gIAloZG1pX2NvbmZfYXBwbHkoaGRhdGEpOwo+PiArCj4+ICsJ
+bXV0ZXhfdW5sb2NrKCZoZGF0YS0+bXV0ZXgpOwo+PiAgfQo+Pgo+PiAgc3RhdGljIHZvaWQgaGRt
+aV9kaXNhYmxlKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKPj4gIHsKPj4gIAlzdHJ1Y3Qg
+aGRtaV9jb250ZXh0ICpoZGF0YSA9IGVuY29kZXJfdG9faGRtaShlbmNvZGVyKTsKPj4KPj4gLQlp
+ZiAoIWhkYXRhLT5wb3dlcmVkKQo+PiArCW11dGV4X2xvY2soJmhkYXRhLT5tdXRleCk7Cj4+ICsK
+Pj4gKwlpZiAoaGRhdGEtPnBvd2VyZWQpIHsKPj4gKwkJLyoKPj4gKwkJICogVGhlIFNGUnMgb2Yg
+VlAgYW5kIE1peGVyIGFyZSB1cGRhdGVkIGJ5IFZlcnRpY2FsIFN5bmMgb2YKPj4gKwkJICogVGlt
+aW5nIGdlbmVyYXRvciB3aGljaCBpcyBhIHBhcnQgb2YgSERNSSBzbyB0aGUgc2VxdWVuY2UKPj4g
+KwkJICogdG8gZGlzYWJsZSBUViBTdWJzeXN0ZW0gc2hvdWxkIGJlIGFzIGZvbGxvd2luZywKPj4g
+KwkJICoJVlAgLT4gTWl4ZXIgLT4gSERNSQo+PiArCQkgKgo+PiArCQkgKiBUbyBhY2hpZXZlIHN1
+Y2ggc2VxdWVuY2UgSERNSSBpcyBkaXNhYmxlZCB0b2dldGhlciB3aXRoCj4+ICsJCSAqIEhETUkg
+UEhZLCB2aWEgcGlwZSBjbG9jayBjYWxsYmFjay4KPj4gKwkJICovCj4+ICsJCW11dGV4X3VubG9j
+aygmaGRhdGEtPm11dGV4KTsKPj4gKwkJY2FuY2VsX2RlbGF5ZWRfd29yaygmaGRhdGEtPmhvdHBs
+dWdfd29yayk7Cj4+ICsJCWNlY19ub3RpZmllcl9zZXRfcGh5c19hZGRyKGhkYXRhLT5ub3RpZmll
+ciwKPj4gKwkJCQkJICAgQ0VDX1BIWVNfQUREUl9JTlZBTElEKTsKPj4gIAkJcmV0dXJuOwo+PiAr
+CX0KPj4KPj4gLQkvKgo+PiAtCSAqIFRoZSBTRlJzIG9mIFZQIGFuZCBNaXhlciBhcmUgdXBkYXRl
+ZCBieSBWZXJ0aWNhbCBTeW5jIG9mCj4+IC0JICogVGltaW5nIGdlbmVyYXRvciB3aGljaCBpcyBh
+IHBhcnQgb2YgSERNSSBzbyB0aGUgc2VxdWVuY2UKPj4gLQkgKiB0byBkaXNhYmxlIFRWIFN1YnN5
+c3RlbSBzaG91bGQgYmUgYXMgZm9sbG93aW5nLAo+PiAtCSAqCVZQIC0+IE1peGVyIC0+IEhETUkK
+Pj4gLQkgKgo+PiAtCSAqIFRvIGFjaGlldmUgc3VjaCBzZXF1ZW5jZSBIRE1JIGlzIGRpc2FibGVk
+IHRvZ2V0aGVyIHdpdGggSERNSSBQSFksIHZpYQo+PiAtCSAqIHBpcGUgY2xvY2sgY2FsbGJhY2su
+Cj4+IC0JICovCj4+IC0JY2FuY2VsX2RlbGF5ZWRfd29yaygmaGRhdGEtPmhvdHBsdWdfd29yayk7
+Cj4+IC0JY2VjX25vdGlmaWVyX3NldF9waHlzX2FkZHIoaGRhdGEtPm5vdGlmaWVyLCBDRUNfUEhZ
+U19BRERSX0lOVkFMSUQpOwo+PiArCW11dGV4X3VubG9jaygmaGRhdGEtPm11dGV4KTsKPj4gIH0K
+Pj4KPj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2VuY29kZXJfaGVscGVyX2Z1bmNzIGV4eW5v
+c19oZG1pX2VuY29kZXJfaGVscGVyX2Z1bmNzID0gewo+PiBAQCAtMTUxMyw2ICsxNTI3LDEwNCBA
+QCBzdGF0aWMgdm9pZCBoZG1pX2Rpc2FibGUoc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyKQo+
+PiAgCS5kZXN0cm95ID0gZHJtX2VuY29kZXJfY2xlYW51cCwKPj4gIH07Cj4+Cj4+ICtzdGF0aWMg
+dm9pZCBoZG1pX2F1ZGlvX3NodXRkb3duKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSkK
+Pj4gK3sKPj4gKwlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9IGRldl9nZXRfZHJ2ZGF0YShk
+ZXYpOwo+PiArCj4+ICsJbXV0ZXhfbG9jaygmaGRhdGEtPm11dGV4KTsKPj4gKwo+PiArCWhkYXRh
+LT5hdWRpby5lbmFibGUgPSBmYWxzZTsKPj4gKwo+PiArCWlmIChoZGF0YS0+cG93ZXJlZCkKPj4g
+KwkJaGRtaV9hdWRpb19jb250cm9sKGhkYXRhKTsKPj4gKwo+PiArCW11dGV4X3VubG9jaygmaGRh
+dGEtPm11dGV4KTsKPj4gK30KPj4gKwo+PiArc3RhdGljIGludCBoZG1pX2F1ZGlvX2h3X3BhcmFt
+cyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEsCj4+ICsJCQkJc3RydWN0IGhkbWlfY29k
+ZWNfZGFpZm10ICpkYWlmbXQsCj4+ICsJCQkJc3RydWN0IGhkbWlfY29kZWNfcGFyYW1zICpwYXJh
+bXMpCj4+ICt7Cj4+ICsJc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBkZXZfZ2V0X2RydmRh
+dGEoZGV2KTsKPj4gKwo+PiArCWlmIChkYWlmbXQtPmZtdCAhPSBIRE1JX0kyUyB8fCBkYWlmbXQt
+PmJpdF9jbGtfaW52IHx8Cj4+ICsJICAgIGRhaWZtdC0+ZnJhbWVfY2xrX2ludiB8fCBkYWlmbXQt
+PmJpdF9jbGtfbWFzdGVyIHx8Cj4+ICsJICAgIGRhaWZtdC0+ZnJhbWVfY2xrX21hc3Rlcikgewo+
+PiArCQlkZXZfZXJyKGRldiwgIiVzOiBCYWQgZmxhZ3MgJWQgJWQgJWQgJWRcbiIsIF9fZnVuY19f
+LAo+PiArCQkJZGFpZm10LT5iaXRfY2xrX2ludiwgZGFpZm10LT5mcmFtZV9jbGtfaW52LAo+PiAr
+CQkJZGFpZm10LT5iaXRfY2xrX21hc3RlciwKPj4gKwkJCWRhaWZtdC0+ZnJhbWVfY2xrX21hc3Rl
+cik7Cj4+ICsJCXJldHVybiAtRUlOVkFMOwo+PiArCX0KPj4gKwo+PiArCW11dGV4X2xvY2soJmhk
+YXRhLT5tdXRleCk7Cj4+ICsKPj4gKwloZGF0YS0+YXVkaW8ucGFyYW1zID0gKnBhcmFtczsKPj4g
+Kwo+PiArCWlmIChoZGF0YS0+cG93ZXJlZCkgewo+PiArCQloZG1pX2F1ZGlvX2NvbmZpZyhoZGF0
+YSk7Cj4+ICsJCWhkbWlfYXVkaW9faW5mb2ZyYW1lX2FwcGx5KGhkYXRhKTsKPj4gKwl9Cj4+ICsK
+Pj4gKwltdXRleF91bmxvY2soJmhkYXRhLT5tdXRleCk7Cj4+ICsKPj4gKwlyZXR1cm4gMDsKPj4g
+K30KPj4gKwo+PiArc3RhdGljIGludCBoZG1pX2F1ZGlvX2RpZ2l0YWxfbXV0ZShzdHJ1Y3QgZGV2
+aWNlICpkZXYsIHZvaWQgKmRhdGEsIGJvb2wgbXV0ZSkKPj4gK3sKPj4gKwlzdHJ1Y3QgaGRtaV9j
+b250ZXh0ICpoZGF0YSA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+PiArCj4+ICsJbXV0ZXhfbG9j
+aygmaGRhdGEtPm11dGV4KTsKPj4gKwo+PiArCWhkYXRhLT5hdWRpby5lbmFibGUgPSAhbXV0ZTsK
+Pj4gKwo+PiArCWlmIChoZGF0YS0+cG93ZXJlZCkKPj4gKwkJaGRtaV9hdWRpb19jb250cm9sKGhk
+YXRhKTsKPj4gKwo+PiArCW11dGV4X3VubG9jaygmaGRhdGEtPm11dGV4KTsKPj4gKwo+PiArCXJl
+dHVybiAwOwo+PiArfQo+PiArCj4+ICtzdGF0aWMgaW50IGhkbWlfYXVkaW9fZ2V0X2VsZChzdHJ1
+Y3QgZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEsIHVpbnQ4X3QgKmJ1ZiwKPj4gKwkJCSAgICAgIHNp
+emVfdCBsZW4pCj4+ICt7Cj4+ICsJc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBkZXZfZ2V0
+X2RydmRhdGEoZGV2KTsKPj4gKwlzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yID0gJmhk
+YXRhLT5jb25uZWN0b3I7Cj4+ICsKPj4gKwltZW1jcHkoYnVmLCBjb25uZWN0b3ItPmVsZCwgbWlu
+KHNpemVvZihjb25uZWN0b3ItPmVsZCksIGxlbikpOwo+PiArCj4+ICsJcmV0dXJuIDA7Cj4+ICt9
+Cj4+ICsKPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgaGRtaV9jb2RlY19vcHMgYXVkaW9fY29kZWNf
+b3BzID0gewo+PiArCS5od19wYXJhbXMgPSBoZG1pX2F1ZGlvX2h3X3BhcmFtcywKPj4gKwkuYXVk
+aW9fc2h1dGRvd24gPSBoZG1pX2F1ZGlvX3NodXRkb3duLAo+PiArCS5kaWdpdGFsX211dGUgPSBo
+ZG1pX2F1ZGlvX2RpZ2l0YWxfbXV0ZSwKPj4gKwkuZ2V0X2VsZCA9IGhkbWlfYXVkaW9fZ2V0X2Vs
+ZCwKPj4gK307Cj4+ICsKPj4gK3N0YXRpYyBpbnQgaGRtaV9yZWdpc3Rlcl9hdWRpb19kZXZpY2Uo
+c3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4+ICt7Cj4+ICsJc3RydWN0IGhkbWlfY29kZWNf
+cGRhdGEgY29kZWNfZGF0YSA9IHsKPj4gKwkJLm9wcyA9ICZhdWRpb19jb2RlY19vcHMsCj4+ICsJ
+CS5tYXhfaTJzX2NoYW5uZWxzID0gNiwKPj4gKwkJLmkycyA9IDEsCj4+ICsJfTsKPj4gKwo+PiAr
+CWhkYXRhLT5hdWRpby5wZGV2ID0gcGxhdGZvcm1fZGV2aWNlX3JlZ2lzdGVyX2RhdGEoCj4+ICsJ
+CWhkYXRhLT5kZXYsIEhETUlfQ09ERUNfRFJWX05BTUUsIFBMQVRGT1JNX0RFVklEX0FVVE8sCj4+
+ICsJCSZjb2RlY19kYXRhLCBzaXplb2YoY29kZWNfZGF0YSkpOwo+PiArCj4+ICsJcmV0dXJuIFBU
+Ul9FUlJfT1JfWkVSTyhoZGF0YS0+YXVkaW8ucGRldik7Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyB2
+b2lkIGhkbWlfdW5yZWdpc3Rlcl9hdWRpb19kZXZpY2Uoc3RydWN0IGhkbWlfY29udGV4dCAqaGRh
+dGEpCj4+ICt7Cj4+ICsJcGxhdGZvcm1fZGV2aWNlX3VucmVnaXN0ZXIoaGRhdGEtPmF1ZGlvLnBk
+ZXYpOwo+PiArfQo+PiArCj4+ICBzdGF0aWMgdm9pZCBoZG1pX2hvdHBsdWdfd29ya19mdW5jKHN0
+cnVjdCB3b3JrX3N0cnVjdCAqd29yaykKPj4gIHsKPj4gIAlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpo
+ZGF0YTsKPj4gQEAgLTE1ODgsMTEgKzE3MDAsMTQgQEAgc3RhdGljIHZvaWQgaGRtaXBoeV9jbGtf
+ZW5hYmxlKHN0cnVjdCBleHlub3NfZHJtX2NsayAqY2xrLCBib29sIGVuYWJsZSkKPj4gIHsKPj4g
+IAlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9IGNvbnRhaW5lcl9vZihjbGssIHN0cnVjdCBo
+ZG1pX2NvbnRleHQsCj4+ICAJCQkJCQkgIHBoeV9jbGspOwo+PiArCW11dGV4X2xvY2soJmhkYXRh
+LT5tdXRleCk7Cj4+Cj4+ICAJaWYgKGVuYWJsZSkKPj4gIAkJaGRtaXBoeV9lbmFibGUoaGRhdGEp
+Owo+PiAgCWVsc2UKPj4gIAkJaGRtaXBoeV9kaXNhYmxlKGhkYXRhKTsKPj4gKwo+PiArCW11dGV4
+X3VubG9jaygmaGRhdGEtPm11dGV4KTsKPj4gIH0KPj4KPj4gIHN0YXRpYyBpbnQgaGRtaV9icmlk
+Z2VfaW5pdChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPj4gQEAgLTE2OTcsNiArMTgxMiw3
+IEBAIHN0YXRpYyBpbnQgaGRtaV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmlj
+ZSAqbWFzdGVyLCB2b2lkICpkYXRhKQo+PiAgCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0g
+ZGF0YTsKPj4gIAlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9IGRldl9nZXRfZHJ2ZGF0YShk
+ZXYpOwo+PiAgCXN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciA9ICZoZGF0YS0+ZW5jb2RlcjsK
+Pj4gKwlzdHJ1Y3QgaGRtaV9hdWRpb19pbmZvZnJhbWUgKmF1ZGlvX2luZm9mcmFtZSA9ICZoZGF0
+YS0+YXVkaW8uaW5mb2ZyYW1lOwo+PiAgCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGM7Cj4+
+ICAJaW50IHJldDsKPj4KPj4gQEAgLTE3MDQsNiArMTgyMCwxMiBAQCBzdGF0aWMgaW50IGhkbWlf
+YmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0
+YSkKPj4KPj4gIAloZGF0YS0+cGh5X2Nsay5lbmFibGUgPSBoZG1pcGh5X2Nsa19lbmFibGU7Cj4+
+Cj4+ICsJaGRtaV9hdWRpb19pbmZvZnJhbWVfaW5pdChhdWRpb19pbmZvZnJhbWUpOwo+PiArCWF1
+ZGlvX2luZm9mcmFtZS0+Y29kaW5nX3R5cGUgPSBIRE1JX0FVRElPX0NPRElOR19UWVBFX1NUUkVB
+TTsKPj4gKwlhdWRpb19pbmZvZnJhbWUtPnNhbXBsZV9zaXplID0gSERNSV9BVURJT19TQU1QTEVf
+U0laRV9TVFJFQU07Cj4+ICsJYXVkaW9faW5mb2ZyYW1lLT5zYW1wbGVfZnJlcXVlbmN5ID0gSERN
+SV9BVURJT19TQU1QTEVfRlJFUVVFTkNZX1NUUkVBTTsKPj4gKwlhdWRpb19pbmZvZnJhbWUtPmNo
+YW5uZWxzID0gMjsKPj4gKwo+PiAgCWRybV9lbmNvZGVyX2luaXQoZHJtX2RldiwgZW5jb2Rlciwg
+JmV4eW5vc19oZG1pX2VuY29kZXJfZnVuY3MsCj4+ICAJCQkgRFJNX01PREVfRU5DT0RFUl9UTURT
+LCBOVUxMKTsKPj4KPj4gQEAgLTE4MTgsNiArMTk0MCw4IEBAIHN0YXRpYyBpbnQgaGRtaV9wcm9i
+ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+Pgo+PiAgCWhkYXRhLT5kZXYgPSBkZXY7
+Cj4+Cj4+ICsJbXV0ZXhfaW5pdCgmaGRhdGEtPm11dGV4KTsKPj4gKwo+PiAgCXJldCA9IGhkbWlf
+cmVzb3VyY2VzX2luaXQoaGRhdGEpOwo+PiAgCWlmIChyZXQpIHsKPj4gIAkJaWYgKHJldCAhPSAt
+RVBST0JFX0RFRkVSKQo+PiBAQCAtMTg3NywxMiArMjAwMSwxOSBAQCBzdGF0aWMgaW50IGhkbWlf
+cHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPj4KPj4gIAlwbV9ydW50aW1lX2Vu
+YWJsZShkZXYpOwo+Pgo+PiAtCXJldCA9IGNvbXBvbmVudF9hZGQoJnBkZXYtPmRldiwgJmhkbWlf
+Y29tcG9uZW50X29wcyk7Cj4+ICsJcmV0ID0gaGRtaV9yZWdpc3Rlcl9hdWRpb19kZXZpY2UoaGRh
+dGEpOwo+PiAgCWlmIChyZXQpCj4+ICAJCWdvdG8gZXJyX25vdGlmaWVyX3B1dDsKPj4KPj4gKwly
+ZXQgPSBjb21wb25lbnRfYWRkKCZwZGV2LT5kZXYsICZoZG1pX2NvbXBvbmVudF9vcHMpOwo+PiAr
+CWlmIChyZXQpCj4+ICsJCWdvdG8gZXJyX3VucmVnaXN0ZXJfYXVkaW87Cj4+ICsKPj4gIAlyZXR1
+cm4gcmV0Owo+Pgo+PiArZXJyX3VucmVnaXN0ZXJfYXVkaW86Cj4+ICsJaGRtaV91bnJlZ2lzdGVy
+X2F1ZGlvX2RldmljZShoZGF0YSk7Cj4+ICsKPj4gIGVycl9ub3RpZmllcl9wdXQ6Cj4+ICAJY2Vj
+X25vdGlmaWVyX3B1dChoZGF0YS0+bm90aWZpZXIpOwo+PiAgCXBtX3J1bnRpbWVfZGlzYWJsZShk
+ZXYpOwo+PiBAQCAtMTkyMSw2ICsyMDUyLDggQEAgc3RhdGljIGludCBoZG1pX3JlbW92ZShzdHJ1
+Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+Pgo+PiAgCXB1dF9kZXZpY2UoJmhkYXRhLT5kZGNf
+YWRwdC0+ZGV2KTsKPj4KPj4gKwltdXRleF9kZXN0cm95KCZoZGF0YS0+bXV0ZXgpOwo+PiArCj4+
+ICAJcmV0dXJuIDA7Cj4+ICB9Cj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL3JlZ3MtaGRtaS5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWhkbWkuaAo+PiBp
+bmRleCBhMDUwN2RjLi5kODQzYjFmIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL3JlZ3MtaGRtaS5oCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1oZG1p
+LmgKPj4gQEAgLTQxOSwxMSArNDE5LDkgQEAKPj4gICNkZWZpbmUgSERNSV9JMlNfRFNEX0NPTgkJ
+SERNSV9JMlNfQkFTRSgweDAxYykKPj4gICNkZWZpbmUgSERNSV9JMlNfTVVYX0NPTgkJSERNSV9J
+MlNfQkFTRSgweDAyMCkKPj4gICNkZWZpbmUgSERNSV9JMlNfQ0hfU1RfQ09OCQlIRE1JX0kyU19C
+QVNFKDB4MDI0KQo+PiAtI2RlZmluZSBIRE1JX0kyU19DSF9TVF8wCQlIRE1JX0kyU19CQVNFKDB4
+MDI4KQo+PiAtI2RlZmluZSBIRE1JX0kyU19DSF9TVF8xCQlIRE1JX0kyU19CQVNFKDB4MDJjKQo+
+PiAtI2RlZmluZSBIRE1JX0kyU19DSF9TVF8yCQlIRE1JX0kyU19CQVNFKDB4MDMwKQo+PiAtI2Rl
+ZmluZSBIRE1JX0kyU19DSF9TVF8zCQlIRE1JX0kyU19CQVNFKDB4MDM0KQo+PiAtI2RlZmluZSBI
+RE1JX0kyU19DSF9TVF80CQlIRE1JX0kyU19CQVNFKDB4MDM4KQo+PiArLyogbiBtdXN0IGJlIHdp
+dGhpbmcgcmFuZ2UgMC4uLihIRE1JX0kyU19DSF9TVF9NQVhOVU0gLSAxKSAqLwo+PiArI2RlZmlu
+ZSBIRE1JX0kyU19DSF9TVF9NQVhOVU0JCTUKPj4gKyNkZWZpbmUgSERNSV9JMlNfQ0hfU1QobikJ
+CUhETUlfSTJTX0JBU0UoMHgwMjggKyA0ICogKG4pKQo+PiAgI2RlZmluZSBIRE1JX0kyU19DSF9T
+VF9TSF8wCQlIRE1JX0kyU19CQVNFKDB4MDNjKQo+PiAgI2RlZmluZSBIRE1JX0kyU19DSF9TVF9T
+SF8xCQlIRE1JX0kyU19CQVNFKDB4MDQwKQo+PiAgI2RlZmluZSBIRE1JX0kyU19DSF9TVF9TSF8y
+CQlIRE1JX0kyU19CQVNFKDB4MDQ0KQo+PiAtLQo+PiAxLjkuMQo+IAo+IAo+IApfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
