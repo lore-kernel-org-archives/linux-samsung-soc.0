@@ -1,54 +1,43 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Mon, 16 Oct 2017 08:01:25 +0900
-Message-ID: <1508108485-3402-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20171015230125epcas2p3a74e507c3d2627500f5179ab83117e33@epcas2p3.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:13941 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751030AbdJOXB2 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 15 Oct 2017 19:01:28 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: [PATCH 0/5] rockchip: kevin: Enable edp display
+Date: Mon, 16 Oct 2017 17:59:13 +0800
+Message-ID: <20171016095918.25588-1-jeffy.chen@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Klaus Goger <klaus.goger@theobroma-systems.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Daniel Thompson <daniel.thompson@linaro.org>, linux-samsung-soc@vger.kernel.org, briannorris@chromium.org, Krzysztof Kozlowski <krzk@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, linux-rockchip@lists.infradead.org, Matthias Kaehlcke <mka@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Caesar Wang <wxt@rock-chips.com>, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jef
 List-Id: linux-samsung-soc@vger.kernel.org
-To: airlied@linux.ie
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-Hi Dave,
-
-   Just two regression fixups to potential use-after-free and
-   NULL pointer dereference issues in suspend/resume.
-
-   Please kindly let me know if there is any problem.
-
-
-Thanks,
-Inki Dae
-
-
-The following changes since commit a480f30846d19b50106b3243d9d48683d2966249:
-
-  Merge tag 'drm-intel-fixes-2017-10-11' of git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2017-10-14 09:59:20 +1000)
-
-are available in the git repository at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v4.14-rc5
-
-for you to fetch changes up to 238604ca0b708319e089e22545bcda39afb5faa8:
-
-  drm/exynos: Clear drvdata after component unbind (2017-10-16 07:44:49 +0900)
-
-----------------------------------------------------------------
-- Fix potential use-after-free issue in suspend/resume
-  by cleanning up drvdata at unbind.
-- Fix potential NULL pointer dereference issue in suspend/resume
-  by setting drm_dev after checking if drm_dev is null or not.
-
-----------------------------------------------------------------
-Marek Szyprowski (2):
-      drm/exynos: Fix potential NULL pointer dereference in suspend/resume paths
-      drm/exynos: Clear drvdata after component unbind
-
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Ck1ha2UgZWRwIGRpc3BsYXkgd29ya3Mgb24gY2hyb21lYm9vayBrZXZpbihhdCBsZWFzdCBmb3Ig
+Ym9vdCBhbmltYXRpb24pLgoKQWxzbyBzb2x2ZSBzb21lIGlzc3VlcyBpIG1lZXQgZHVyaW5nIHRo
+ZSBicmluZ3VwLgoKCkplZmZ5IENoZW4gKDQpOgogIGFybTY0OiBkdHM6IHJvY2tjaGlwOiBFbmFi
+bGUgZWRwIGRpc2FwbGF5IG9uIGtldmluCiAgYmFja2xpZ2h0OiBwd21fYmw6IEFkZCBkZXZpY2Ug
+bGluayBmb3IgcHdtX2JsIGFuZCBwd20KICBkcm0vcm9ja2NoaXA6IEZpeCBlcnJvciBoYW5kbGlu
+ZyBwYXRoIGluIHJvY2tjaGlwX2RwX2JpbmQoKQogIGRybS9yb2NrY2hpcDogQWRkIGRldmljZSBs
+aW5rcyBmb3IgbWFzdGVyIGFuZCBjb21wb25lbnRzCgpUb21hc3ogRmlnYSAoMSk6CiAgZHJtL2Jy
+aWRnZS9hbmFsb2dpeDogRG8gbm90IHVzZSBkZXZpY2UncyBkcnZkYXRhCgogYXJjaC9hcm02NC9i
+b290L2R0cy9yb2NrY2hpcC9yazMzOTktZ3J1LWtldmluLmR0cyAgfCAyOSArKysrKysrKysrKwog
+YXJjaC9hcm02NC9ib290L2R0cy9yb2NrY2hpcC9yazMzOTktZ3J1LmR0c2kgICAgICAgfCAxNiAr
+KysrKysKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5j
+IHwgNTAgKysrKysrKystLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHAuYyAgICAgICAgICAgICAgICAgfCAyNiArKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vcm9j
+a2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAgICB8IDU3ICsrKysrKysrKysrKysrLS0tLS0t
+LS0KIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMgICAgICAgIHwg
+MjQgKysrKysrKy0tCiBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wd21fYmwuYyAgICAgICAgICAg
+ICAgICAgICB8ICAyICsKIGluY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oICAgICAgICAg
+ICAgICAgICAgIHwgMTkgKysrKystLS0KIDggZmlsZXMgY2hhbmdlZCwgMTUxIGluc2VydGlvbnMo
+KyksIDcyIGRlbGV0aW9ucygtKQoKLS0gCjIuMTEuMAoKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
