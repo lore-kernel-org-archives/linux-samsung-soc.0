@@ -1,121 +1,79 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 8/9] ARM: dts: exynos: Add mem-2-mem Scaler devices
-Date: Tue, 17 Oct 2017 13:07:51 +0200
-Message-ID: <20171017110752.25096-9-m.szyprowski@samsung.com>
-References: <20171017110752.25096-1-m.szyprowski@samsung.com>
-        <CGME20171017110815eucas1p176ec31bb797825518cb6e131124a120c@eucas1p1.samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v7 0/2] crypto: s5p-sss: Add HASH support for Exynos
+Date: Tue, 17 Oct 2017 13:28:22 +0200
+Message-ID: <20171017112824.10231-1-k.konieczny@partner.samsung.com>
+References: <CGME20171017112845eucas1p2f760753a372a15eafba4fd3368520eb0@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38800 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41759 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758877AbdJQLIS (ORCPT
+        with ESMTP id S1756913AbdJQL2t (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 07:08:18 -0400
-In-reply-to: <20171017110752.25096-1-m.szyprowski@samsung.com>
+        Tue, 17 Oct 2017 07:28:49 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+To: linux-crypto@vger.kernel.org
+Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+First patch cleans up spaces in defines, second adds HASH support for Exynos.
+Changes:
 
-There are 3 Scaler devices in Exynos5420 SoCs, all are a part of MSCL
-power domain. MSCL power domain and SYSMMU controllers (two per each
-scaler device) have been already added to exynos5420.dtsi earlier,
-so bind them to newly added devices.
+version 7:
+- fix ifdef into if(IS_ENABLED()) as suggested by Krzysztof Kozlowski
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+version 6:
+- fixes suggested by Vladimir Zapolskiy: change HASH_OP enum into bool, fix
+  comments, change int into unsigned int in several functions, change some
+  functions to return void, remove unnecessary parentheses in s5p_hash_import,
+  replace rctx with ctx for request context, drop some dd vars and use tctx->dd
+  instead, simplify s5p_hash_rx, s5p_hash_copy_result and s5p_hash_set_flow,
+  change int final into bool final, reoder some declarations, split patch into
+  two
+- rewrite and fix while loop in s5p_hash_copy_sg_lists
+- rewrite while loop in s5p_hash_prepare_sgs
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 88e5d6d3f901..7894045bd91b 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -678,6 +678,35 @@
- 			iommus = <&sysmmu_gscl1>;
- 		};
- 
-+		scaler_0: scaler@12800000 {
-+			compatible = "samsung,exynos5420-scaler";
-+			reg = <0x12800000 0x1294>;
-+			interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock CLK_MSCL0>;
-+			clock-names = "mscl";
-+			power-domains = <&msc_pd>;
-+			iommus = <&sysmmu_scaler0r>, <&sysmmu_scaler0w>;
-+		};
-+
-+		scaler_1: scaler@12810000 {
-+			compatible = "samsung,exynos5420-scaler";
-+			reg = <0x12810000 0x1294>;
-+			interrupts = <0 221 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock CLK_MSCL1>;
-+			clock-names = "mscl";
-+			power-domains = <&msc_pd>;
-+			iommus = <&sysmmu_scaler1r>, <&sysmmu_scaler1w>;
-+		};
-+		scaler_2: scaler@12820000 {
-+			compatible = "samsung,exynos5420-scaler";
-+			reg = <0x12820000 0x1294>;
-+			interrupts = <0 222 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock CLK_MSCL2>;
-+			clock-names = "mscl";
-+			power-domains = <&msc_pd>;
-+			iommus = <&sysmmu_scaler2r>, <&sysmmu_scaler2w>;
-+		};
-+
- 		jpeg_0: jpeg@11F50000 {
- 			compatible = "samsung,exynos5420-jpeg";
- 			reg = <0x11F50000 0x1000>;
-@@ -812,6 +841,7 @@
- 			interrupts = <22 4>;
- 			clock-names = "sysmmu", "master";
- 			clocks = <&clock CLK_SMMU_MSCL0>, <&clock CLK_MSCL0>;
-+			power-domains = <&msc_pd>;
- 			#iommu-cells = <0>;
- 		};
- 
-@@ -821,6 +851,7 @@
- 			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-names = "sysmmu", "master";
- 			clocks = <&clock CLK_SMMU_MSCL1>, <&clock CLK_MSCL1>;
-+			power-domains = <&msc_pd>;
- 			#iommu-cells = <0>;
- 		};
- 
-@@ -830,6 +861,7 @@
- 			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-names = "sysmmu", "master";
- 			clocks = <&clock CLK_SMMU_MSCL2>, <&clock CLK_MSCL2>;
-+			power-domains = <&msc_pd>;
- 			#iommu-cells = <0>;
- 		};
- 
-@@ -840,6 +872,7 @@
- 			interrupts = <27 2>;
- 			clock-names = "sysmmu", "master";
- 			clocks = <&clock CLK_SMMU_MSCL0>, <&clock CLK_MSCL0>;
-+			power-domains = <&msc_pd>;
- 			#iommu-cells = <0>;
- 		};
- 
-@@ -850,6 +883,7 @@
- 			interrupts = <22 6>;
- 			clock-names = "sysmmu", "master";
- 			clocks = <&clock CLK_SMMU_MSCL1>, <&clock CLK_MSCL1>;
-+			power-domains = <&msc_pd>;
- 			#iommu-cells = <0>;
- 		};
- 
-@@ -860,6 +894,7 @@
- 			interrupts = <19 6>;
- 			clock-names = "sysmmu", "master";
- 			clocks = <&clock CLK_SMMU_MSCL2>, <&clock CLK_MSCL2>;
-+			power-domains = <&msc_pd>;
- 			#iommu-cells = <0>;
- 		};
- 
+version 5:
+- fix suggested by Krzysztof Kozlowski: change defines HASH_OP into enum, fix
+  comments
+
+version 4:
+- fixes suggested by Krzysztof Kozlowski: reformat comments, convert context
+  flags into two bool vars, drop SSS_ALIGNED, change name of SSS_DMA_ALIGN and
+  SSS_DMA_ALIGN_MASK, split assignments into separate lines, use IS_ENABLED in
+  place of ifdef, remove sss_hash_algs_info and simplify register and deregister
+  HASH algs
+
+version 3:
+- many fixes suggested by Krzysztof Kozlowski: comments, uppercases in const,
+  remove unused defines, remove unused variable bs, constify aes_variant,
+  remove global var use_hash, remove WARN_ON, improve hash_import(),
+  change goto label into 'out' in s5p_hash_handle_queue(), reorder variable
+  declarations, add spinlock to protect clearing HASH_FLAGS_BUSY
+- simplify code: replace one-line functions s5p_hash_update_req(),
+  s5p_hash_final_req() with call to s5p_hash_xmit_dma(), and delete them
+- replace call to s5p_hash_hw_init() into s5p_ahash_dma_init() and delete it
+- fix clearing shash flag CRYPTO_TFM_REQ_MAY_SLEEP
+- fix s5p_hash_set_flow()
+
+version 2:
+- change patch format so number of lines drops
+- change in Kconfig as suggested by Krzysztof Kozlowski, add
+	EXYNOS_HASH subsection
+- change #ifndef EXYNOS_RNG into #ifdef CRYPTO_DEV_EXYNOS_HASH
+- remove style fixups in aes, as they should go in separate patch
+- remove FLOW_LOG, FLOW_DUMP macros and its uses
+- remove #if 0 ... endif
+- remove unused function hash_wait and its defines
+- fix compiler warning in dev_dbg
+- remove some comments
+- other minor fixes in comments
+
+Kamil Konieczny (2):
+  change spaces into tabs in defines
+  Add HASH support for Exynos
+
+ drivers/crypto/Kconfig   |   14 +
+ drivers/crypto/s5p-sss.c | 1597 +++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 1506 insertions(+), 105 deletions(-)
+
 -- 
-2.14.2
+2.14.1.536.g6867272d5b56
