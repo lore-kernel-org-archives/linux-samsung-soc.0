@@ -1,74 +1,121 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 5/9] drm/exynos: Add generic support for devices shared
- with V4L2 subsystem
-Date: Tue, 17 Oct 2017 13:07:48 +0200
-Message-ID: <20171017110752.25096-6-m.szyprowski@samsung.com>
+Subject: [PATCH v3 8/9] ARM: dts: exynos: Add mem-2-mem Scaler devices
+Date: Tue, 17 Oct 2017 13:07:51 +0200
+Message-ID: <20171017110752.25096-9-m.szyprowski@samsung.com>
 References: <20171017110752.25096-1-m.szyprowski@samsung.com>
- <CGME20171017110813eucas1p19603112d8f9ff41a77c17203b46f5041@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+        <CGME20171017110815eucas1p176ec31bb797825518cb6e131124a120c@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38800 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758877AbdJQLIS (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 17 Oct 2017 07:08:18 -0400
 In-reply-to: <20171017110752.25096-1-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-U29tZSBoYXJkd2FyZSBtb2R1bGVzLCBsaWtlIEZJTUMgaW4gRXh5bm9zNCBzZXJpZXMgYXJlIHNo
-YXJlZCBiZXR3ZWVuClY0TDIgKGNhbWVyYSBzdXBwb3J0KSBhbmQgRFJNIChtZW1vcnktdG8tbWVt
-b3J5IHByb2Nlc3NpbmcpIHN1YnN5c3RlbXMuClRoaXMgcGF0Y2ggcHJvdmlkZXMgYSBzaW1wbGUg
-Y2hlY2sgdG8gbGV0IHN1Y2ggZHJpdmVycyB0byBiZSB1c2VkIGluIHRoZQpkcml2ZXIgY29tcG9u
-ZW50cyBmcmFtZXdvcmsuCgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXBy
-b3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2Rydi5jIHwgMTcgKysrKysrKysrKysrKysrKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kcnYuaCB8ICAyICsrCiAyIGZpbGVzIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKyks
-IDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKaW5k
-ZXggY2FjMGQ4NDM4NWQzLi42MGFlNmFlMDZlYjIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHJ2LmMKQEAgLTIxNiw2ICsyMTYsNyBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9kcml2
-ZXJfaW5mbyB7CiAjZGVmaW5lIERSTV9DT01QT05FTlRfRFJJVkVSCUJJVCgwKQkvKiBzdXBwb3J0
-cyBjb21wb25lbnQgZnJhbWV3b3JrICovCiAjZGVmaW5lIERSTV9WSVJUVUFMX0RFVklDRQlCSVQo
-MSkJLyogY3JlYXRlIHZpcnR1YWwgcGxhdGZvcm0gZGV2aWNlICovCiAjZGVmaW5lIERSTV9ETUFf
-REVWSUNFCQlCSVQoMikJLyogY2FuIGJlIHVzZWQgZm9yIGRtYSBhbGxvY2F0aW9ucyAqLworI2Rl
-ZmluZSBEUk1fU0hBUkVEX0RFVklDRQlCSVQoMykJLyogZGV2aWNlcyBzaGFyZWQgd2l0aCBWNEwy
-IHN1YnN5c3RlbSAqLwogCiAjZGVmaW5lIERSVl9QVFIoZHJ2LCBjb25kKSAoSVNfRU5BQkxFRChj
-b25kKSA/ICZkcnYgOiBOVUxMKQogCkBAIC0yNjcsNiArMjY4LDE3IEBAIHN0YXRpYyBzdHJ1Y3Qg
-ZXh5bm9zX2RybV9kcml2ZXJfaW5mbyBleHlub3NfZHJtX2RyaXZlcnNbXSA9IHsKIAl9CiB9Owog
-CitpbnQgZXh5bm9zX2RybV9jaGVja19zaGFyZWRfZGV2aWNlKHN0cnVjdCBkZXZpY2UgKmRldikK
-K3sKKwkvKgorCSAqIEV4eW5vcyBEUk0gZHJpdmVycyBoYW5kbGUgb25seSBkZXZpY2VzIHRoYXQg
-c3VwcG9ydAorCSAqIHRoZSBMQ0QgV3JpdGViYWNrIGRhdGEgcGF0aCwgcmVzdCBpcyBoYW5kbGVk
-IGJ5IFY0TDIgZHJpdmVyCisJICovCisJaWYgKCFvZl9wcm9wZXJ0eV9yZWFkX2Jvb2woZGV2LT5v
-Zl9ub2RlLCAic2Ftc3VuZyxsY2Qtd2IiKSkKKwkJcmV0dXJuIC1FTk9ERVY7CisJcmV0dXJuIDA7
-Cit9CisKIHN0YXRpYyBpbnQgY29tcGFyZV9kZXYoc3RydWN0IGRldmljZSAqZGV2LCB2b2lkICpk
-YXRhKQogewogCXJldHVybiBkZXYgPT0gKHN0cnVjdCBkZXZpY2UgKilkYXRhOwpAQCAtMjg4LDcg
-KzMwMCwxMCBAQCBzdGF0aWMgc3RydWN0IGNvbXBvbmVudF9tYXRjaCAqZXh5bm9zX2RybV9tYXRj
-aF9hZGQoc3RydWN0IGRldmljZSAqZGV2KQogCQkJCQkgICAgJmluZm8tPmRyaXZlci0+ZHJpdmVy
-LAogCQkJCQkgICAgKHZvaWQgKilwbGF0Zm9ybV9idXNfdHlwZS5tYXRjaCkpKSB7CiAJCQlwdXRf
-ZGV2aWNlKHApOwotCQkJY29tcG9uZW50X21hdGNoX2FkZChkZXYsICZtYXRjaCwgY29tcGFyZV9k
-ZXYsIGQpOworCisJCQlpZiAoIShpbmZvLT5mbGFncyAmIERSTV9TSEFSRURfREVWSUNFKSB8fAor
-CQkJICAgIGV4eW5vc19kcm1fY2hlY2tfc2hhcmVkX2RldmljZShkKSA9PSAwKQorCQkJCWNvbXBv
-bmVudF9tYXRjaF9hZGQoZGV2LCAmbWF0Y2gsIGNvbXBhcmVfZGV2LCBkKTsKIAkJCXAgPSBkOwog
-CQl9CiAJCXB1dF9kZXZpY2UocCk7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
-LmgKaW5kZXggYjQ3ZjgxMGQ2NGQyLi44YjNiMzFkMzUxNjggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHJ2LmgKQEAgLTI3NSw2ICsyNzUsOCBAQCBzdGF0aWMgaW5saW5lIGlu
-dCBleHlub3NfZHBpX2JpbmQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKIH0KICNlbmRpZgogCitp
-bnQgZXh5bm9zX2RybV9jaGVja19zaGFyZWRfZGV2aWNlKHN0cnVjdCBkZXZpY2UgKmRldik7CisK
-IGludCBleHlub3NfYXRvbWljX2NvbW1pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3Qg
-ZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUsCiAJCQkgYm9vbCBub25ibG9jayk7CiBpbnQgZXh5bm9z
-X2F0b21pY19jaGVjayhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2F0b21pY19z
-dGF0ZSAqc3RhdGUpOwotLSAKMi4xNC4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+
+There are 3 Scaler devices in Exynos5420 SoCs, all are a part of MSCL
+power domain. MSCL power domain and SYSMMU controllers (two per each
+scaler device) have been already added to exynos5420.dtsi earlier,
+so bind them to newly added devices.
+
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 88e5d6d3f901..7894045bd91b 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -678,6 +678,35 @@
+ 			iommus = <&sysmmu_gscl1>;
+ 		};
+ 
++		scaler_0: scaler@12800000 {
++			compatible = "samsung,exynos5420-scaler";
++			reg = <0x12800000 0x1294>;
++			interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clock CLK_MSCL0>;
++			clock-names = "mscl";
++			power-domains = <&msc_pd>;
++			iommus = <&sysmmu_scaler0r>, <&sysmmu_scaler0w>;
++		};
++
++		scaler_1: scaler@12810000 {
++			compatible = "samsung,exynos5420-scaler";
++			reg = <0x12810000 0x1294>;
++			interrupts = <0 221 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clock CLK_MSCL1>;
++			clock-names = "mscl";
++			power-domains = <&msc_pd>;
++			iommus = <&sysmmu_scaler1r>, <&sysmmu_scaler1w>;
++		};
++		scaler_2: scaler@12820000 {
++			compatible = "samsung,exynos5420-scaler";
++			reg = <0x12820000 0x1294>;
++			interrupts = <0 222 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clock CLK_MSCL2>;
++			clock-names = "mscl";
++			power-domains = <&msc_pd>;
++			iommus = <&sysmmu_scaler2r>, <&sysmmu_scaler2w>;
++		};
++
+ 		jpeg_0: jpeg@11F50000 {
+ 			compatible = "samsung,exynos5420-jpeg";
+ 			reg = <0x11F50000 0x1000>;
+@@ -812,6 +841,7 @@
+ 			interrupts = <22 4>;
+ 			clock-names = "sysmmu", "master";
+ 			clocks = <&clock CLK_SMMU_MSCL0>, <&clock CLK_MSCL0>;
++			power-domains = <&msc_pd>;
+ 			#iommu-cells = <0>;
+ 		};
+ 
+@@ -821,6 +851,7 @@
+ 			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "sysmmu", "master";
+ 			clocks = <&clock CLK_SMMU_MSCL1>, <&clock CLK_MSCL1>;
++			power-domains = <&msc_pd>;
+ 			#iommu-cells = <0>;
+ 		};
+ 
+@@ -830,6 +861,7 @@
+ 			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "sysmmu", "master";
+ 			clocks = <&clock CLK_SMMU_MSCL2>, <&clock CLK_MSCL2>;
++			power-domains = <&msc_pd>;
+ 			#iommu-cells = <0>;
+ 		};
+ 
+@@ -840,6 +872,7 @@
+ 			interrupts = <27 2>;
+ 			clock-names = "sysmmu", "master";
+ 			clocks = <&clock CLK_SMMU_MSCL0>, <&clock CLK_MSCL0>;
++			power-domains = <&msc_pd>;
+ 			#iommu-cells = <0>;
+ 		};
+ 
+@@ -850,6 +883,7 @@
+ 			interrupts = <22 6>;
+ 			clock-names = "sysmmu", "master";
+ 			clocks = <&clock CLK_SMMU_MSCL1>, <&clock CLK_MSCL1>;
++			power-domains = <&msc_pd>;
+ 			#iommu-cells = <0>;
+ 		};
+ 
+@@ -860,6 +894,7 @@
+ 			interrupts = <19 6>;
+ 			clock-names = "sysmmu", "master";
+ 			clocks = <&clock CLK_SMMU_MSCL2>, <&clock CLK_MSCL2>;
++			power-domains = <&msc_pd>;
+ 			#iommu-cells = <0>;
+ 		};
+ 
+-- 
+2.14.2
