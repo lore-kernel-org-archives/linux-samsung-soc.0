@@ -1,17 +1,11 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 10/11] drm/exynos/mixer: enable support for 1024x768
- and 1280x1024 modes
-Date: Tue, 17 Oct 2017 10:09:20 +0200
-Message-ID: <25c56ecb-09fc-df37-6963-bb5607c42d34@samsung.com>
-References: <20170929100542.12849-1-a.hajda@samsung.com>
- <CGME20170929100549eucas1p29a39ec9db45d6009f23b89fd2d6b77f9@eucas1p2.samsung.com>
- <20170929100542.12849-11-a.hajda@samsung.com> <59E5B5BB.6080506@samsung.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: [RFC PATCH v3 0/5] rockchip: kevin: Enable edp display
+Date: Tue, 17 Oct 2017 16:09:20 +0800
+Message-ID: <20171017080925.23763-1-jeffy.chen@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <59E5B5BB.6080506@samsung.com>
-Content-language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -21,31 +15,34 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, rjw@rjwysocki.net, Will Deacon <will.deacon@arm.com>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, briannorris@chromium.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Matthias Kaehlcke <mka@chromium.org>, Catalin Marinas <catalin.marinas@arm.com>, Caesar Wang <wxt@rock-chips.com>, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Jeffy Chen <jeffy.chen@rock-chips.com>, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, zain wang <wzz@rock-chips.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, dmitry.torokhov@gmail.com, Seung
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMTcuMTAuMjAxNyAwOTo0OCwgSW5raSBEYWUgd3JvdGU6Cj4KPiAyMDE364WEIDA57JuUIDI5
-7J28IDE5OjA17JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4gU2luY2UgSERN
-SSBjYW4gaGFuZGxlIHRoZXNlIG1vZGVzIGRlc3BpdGUgb2YgTUlYRVIgbGltaXRhdGlvbnMgbGV0
-J3MKPj4gZW5hYmxlIHRoZW0uCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEu
-aGFqZGFAc2Ftc3VuZy5jb20+Cj4+IFJldmlld2VkLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2Jp
-QG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19taXhlci5jIHwgMyArKysKPj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
-KykKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVy
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+IGluZGV4IDhiYWE5
-M2Y4MDEwNi4uODVkMzMxMzdjZmQ4IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19taXhlci5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X21peGVyLmMKPj4gQEAgLTEwMTQsNiArMTAxNCw5IEBAIHN0YXRpYyBpbnQgbWl4ZXJfbW9kZV92
-YWxpZChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAo+PiAgCSAgICAodyA+PSAxNjY0ICYm
-IHcgPD0gMTkyMCAmJiBoID49IDkzNiAmJiBoIDw9IDEwODApKQo+PiAgCQlyZXR1cm4gTU9ERV9P
-SzsKPj4gIAo+PiArCWlmICgodyA9PSAxMDI0ICYmIGggPT0gNzY4KSB8fCAodyA9PSAxMjgwICYm
-IGggPT0gMTAyNCkpCj4+ICsJCXJldHVybiBNT0RFX09LOwo+IG1peGVyX21vZGVfdmFsaWQgZnVu
-Y3Rpb24gaXMgY29tbW9uIHRvIGFsbCBFeHlub3MgU29DIG1hbmFnZWQgYnkgRXh5bm9zIERSTSBk
-cml2ZXIuCj4gU28gaXMgaXQgdmFsaWQgZm9yIGFsbCBvZiB0aGVtPwoKSXQgaXMgdmFsaWQgZm9y
-IGFsbCBTb0NzIGhhdmluZyBtaXhlciwgaXQgd2FzIHRlc3RlZCBvbiBPZHJvaWQKVTMoRXh5bm9z
-NDQxMikgYW5kIFhVMyAoRXh5bm9zNTQyMikuCgpSZWdhcmRzCkFuZHJ6ZWoKCj4KPiBUaGFua3Ms
-Cj4gSW5raSBEYWUKPgo+Cj4KPj4gKwo+PiAgCXJldHVybiBNT0RFX0JBRDsKPj4gIH0KPj4gIAo+
-Pgo+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Ck1ha2UgZWRwIGRpc3BsYXkgd29ya3Mgb24gY2hyb21lYm9vayBrZXZpbihhdCBsZWFzdCBmb3Ig
+Ym9vdCBhbmltYXRpb24pLgoKQWxzbyBzb2x2ZSBzb21lIGlzc3VlcyBpIG1lZXQgZHVyaW5nIHRo
+ZSBicmluZ3VwLgoKQ2hhbmdlcyBpbiB2MzoKQXNzaWduIG9ycGhhbiBwd21zIHRvIGR1bW15IHB3
+bWNoaXAgaW5zdGVhZCBvZiBhZGRpbmcgZGV2aWNlIGxpbmsgaW4gdGhlCmN1c3RvbWVyIGRyaXZl
+ci4KCkNoYW5nZXMgaW4gdjI6ClVzZSBkZXZpY2UgbGluayB0byBjb3JyZWN0IHRoZSBzdXNwZW5k
+L3Jlc3VtZSBhbmQgc2h1dGRvd24gb3JkZXJpbmcsCmluc3RlYWQgb2YgY29udmVydGluZyByb2Nr
+Y2hpcCBzcGkncyBzdXNwZW5kL3Jlc3VtZSBQTSBjYWxsYmFja3MgdG8KbGF0ZSBzdXNwZW5kL3Jl
+c3VtZSBQTSBjYWxsYmFja3MuCgpKZWZmeSBDaGVuICg0KToKICBhcm02NDogZHRzOiByb2NrY2hp
+cDogRW5hYmxlIGVkcCBkaXNhcGxheSBvbiBrZXZpbgogIGRybS9yb2NrY2hpcDogRml4IGVycm9y
+IGhhbmRsaW5nIHBhdGggaW4gcm9ja2NoaXBfZHBfYmluZCgpCiAgcHdtOiBBZGQgZHVtbXkgcHdt
+Y2hpcCBmb3Igb3JwaGFuIHB3bXMKICBkcm0vcm9ja2NoaXA6IEFkZCBkZXZpY2UgbGlua3MgZm9y
+IG1hc3RlciBhbmQgY29tcG9uZW50cwoKVG9tYXN6IEZpZ2EgKDEpOgogIGRybS9icmlkZ2UvYW5h
+bG9naXg6IERvIG5vdCB1c2UgZGV2aWNlJ3MgZHJ2ZGF0YQoKIGFyY2gvYXJtNjQvYm9vdC9kdHMv
+cm9ja2NoaXAvcmszMzk5LWdydS1rZXZpbi5kdHMgIHwgMjkgKysrKysrKysKIGFyY2gvYXJtNjQv
+Ym9vdC9kdHMvcm9ja2NoaXAvcmszMzk5LWdydS5kdHNpICAgICAgIHwgMTYgKysrKysKIGRyaXZl
+cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgNTAgKysrKysr
+LS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHAuYyAgICAgICAgICAgICAg
+ICAgfCAyNiArKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9j
+a2NoaXAuYyAgICB8IDU3ICsrKysrKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlw
+L3JvY2tjaGlwX2RybV9kcnYuYyAgICAgICAgfCAyNCArKysrKystCiBkcml2ZXJzL3B3bS9jb3Jl
+LmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDg0ICsrKysrKysrKysrKysrKysr
+KysrLS0KIGluY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICAgICAg
+IHwgMTkgKystLS0KIDggZmlsZXMgY2hhbmdlZCwgMjI2IGluc2VydGlvbnMoKyksIDc5IGRlbGV0
+aW9ucygtKQoKLS0gCjIuMTEuMAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
