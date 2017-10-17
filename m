@@ -1,251 +1,278 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 3/5] mmc: dw_mmc: Add locking to the CTO timer
-Date: Tue, 17 Oct 2017 09:40:03 -0700
-Message-ID: <CAD=FV=W7u0_kr9HXHpKmw=Hgco2P=u3jeSb8v0OoVvD+2kJorw@mail.gmail.com>
-References: <20171012201118.23570-1-dianders@chromium.org> <20171012201118.23570-4-dianders@chromium.org>
- <41ae1571-4723-2700-1f03-7215e874c42e@rock-chips.com> <CAD=FV=UMuJBKV2-pNo4yiyfxXxYJo_tX6RkxCCzm_UFg9XyjyQ@mail.gmail.com>
- <d6acce96-b292-ee4e-8f9b-1d524c14e0fc@rock-chips.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [RFC PATCH v4 6/8] drm/bridge/analogix: Do not use device's
+ drvdata
+Date: Tue, 17 Oct 2017 14:18:39 -0400
+Message-ID: <20171017181839.nse6dgfeafkmvzog@art_vandelay>
+References: <20171017101624.12506-1-jeffy.chen@rock-chips.com>
+ <20171017101624.12506-7-jeffy.chen@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d6acce96-b292-ee4e-8f9b-1d524c14e0fc@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Ziyuan Xu <xzy.xu@rock-chips.com>, Alexandru M Stan <amstan@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Brian Norris <briannorris@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20171017101624.12506-7-jeffy.chen@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: rjw@rjwysocki.net, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, briannorris@chromium.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Caesar Wang <wxt@rock-chips.com>, broonie@kernel.org, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org, zain wang <wzz@rock-chips.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, dmitry.torokhov@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>, dianders@chromium.org, tfiga@chromium.org, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Mon, Oct 16, 2017 at 5:54 PM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
-> Hi Doug
->
->
-> On 2017/10/13 12:20, Doug Anderson wrote:
->>
->> Shawn,
->>
->> On Thu, Oct 12, 2017 at 6:32 PM, Shawn Lin <shawn.lin@rock-chips.com>
->> wrote:
->>>
->>>
->>> On 2017/10/13 4:11, Douglas Anderson wrote:
->>>>
->>>>
->>>> This attempts to instill a bit of paranoia to the code dealing with
->>>> the CTO timer.  It's believed that this will make the CTO timer more
->>>> robust in the case that we're having very long interrupt latencies.
->>>>
->>>
->>> Ack. It could help fix some problems observed.
->>>
->>>
->>>> Note that I originally thought that perhaps this patch was being
->>>> overly paranoid and wasn't really needed, but then while I was running
->>>> mmc_test on an rk3399 board I saw one instance of the message:
->>>>     dwmmc_rockchip fe320000.dwmmc: Unexpected interrupt latency
->>>>
->>>> I had debug prints in the CTO timer code and I found that it was
->>>> running CMD 13 at the time.
->>>>
->>>> ...so even though this patch seems like it might be overly paranoid,
->>>> maybe it really isn't?
->>>>
->>>> Presumably the bad interrupt latency experienced was due to the fact
->>>> that I had serial console enabled as serial console is typically where
->>>> I place blame when I see absurdly large interrupt latencies.  In this
->>>> particular case there was an (unrelated) printout to the serial
->>>> console just before I saw the "Unexpected interrupt latency" printout.
->>>>
->>>> ...and actually, I managed to even reproduce the problems by running
->>>> "iw mlan0 scan > /dev/null" while mmc_test was running.  That not only
->>>> does a bunch of PCIe traffic but it also (on my system) outputs some
->>>> SELinux log spam.
->>>>>
->>>>> Fixes: 03de19212ea3 ("mmc: dw_mmc: introduce timer for broken command
->>>
->>>
->>> transfer over scheme")
->>>>
->>>>
->>>> Tested-by: Emil Renner Berthing <kernel@esmil.dk>
->>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->>>> ---
->>>>
->>>> Changes in v2:
->>>> - Removed extra "int i"
->>>>
->>>>    drivers/mmc/host/dw_mmc.c | 91
->>>> +++++++++++++++++++++++++++++++++++++++++------
->>>>    1 file changed, 81 insertions(+), 10 deletions(-)
->>>>
->>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>>> index 16516c528a88..50148991f30e 100644
->>>> --- a/drivers/mmc/host/dw_mmc.c
->>>> +++ b/drivers/mmc/host/dw_mmc.c
->>>> @@ -403,6 +403,7 @@ static inline void dw_mci_set_cto(struct dw_mci
->>>> *host)
->>>>          unsigned int cto_clks;
->>>>          unsigned int cto_div;
->>>>          unsigned int cto_ms;
->>>> +       unsigned long irqflags;
->>>>          cto_clks = mci_readl(host, TMOUT) & 0xff;
->>>>          cto_div = (mci_readl(host, CLKDIV) & 0xff) * 2;
->>>> @@ -413,8 +414,24 @@ static inline void dw_mci_set_cto(struct dw_mci
->>>> *host)
->>>>          /* add a bit spare time */
->>>>          cto_ms += 10;
->>>>    -     mod_timer(&host->cto_timer,
->>>> -                 jiffies + msecs_to_jiffies(cto_ms) + 1);
->>>> +       /*
->>>> +        * The durations we're working with are fairly short so we have
->>>> to
->>>> be
->>>> +        * extra careful about synchronization here.  Specifically in
->>>> hardware a
->>>> +        * command timeout is _at most_ 5.1 ms, so that means we expect
->>>> an
->>>> +        * interrupt (either command done or timeout) to come rather
->>>> quickly
->>>> +        * after the mci_writel.  ...but just in case we have a long
->>>> interrupt
->>>> +        * latency let's add a bit of paranoia.
->>>> +        *
->>>> +        * In general we'll assume that at least an interrupt will be
->>>> asserted
->>>> +        * in hardware by the time the cto_timer runs.  ...and if it
->>>> hasn't
->>>> +        * been asserted in hardware by that time then we'll assume
->>>> it'll
->>>> never
->>>> +        * come.
->>>> +        */
->>>> +       spin_lock_irqsave(&host->irq_lock, irqflags);
->>>> +       if (!test_bit(EVENT_CMD_COMPLETE, &host->pending_events))
->>>> +               mod_timer(&host->cto_timer,
->>>> +                       jiffies + msecs_to_jiffies(cto_ms) + 1);
->>>> +       spin_unlock_irqrestore(&host->irq_lock, irqflags);
->>>
->>>
->>>
->>> IIUC, this change is beacuse you move
->>> mci_writel(host, CMD, cmd_flags | SDMMC_CMD_START) before
->>> setting up the timer, so there is a timing gap that the cmd_done
->>> already comes and handled by dw_mci_interrupt->dw_mci_cmd_interrupt.
->>> At this point, we don't need the cto timer at all.
->>
->>
->> As per below, if I don't move the mci_writel() before setting up the
->> timer then there's still a race.  ...and actually that race was harder
->> for me to write code for, but I invite you to try to see if it's
->> somehow cleaner.
->>
->>
->>>>    }
->>>>      static void dw_mci_start_command(struct dw_mci *host,
->>>> @@ -429,11 +446,11 @@ static void dw_mci_start_command(struct dw_mci
->>>> *host,
->>>>          wmb(); /* drain writebuffer */
->>>>          dw_mci_wait_while_busy(host, cmd_flags);
->>>>    +     mci_writel(host, CMD, cmd_flags | SDMMC_CMD_START);
->>>> +
->>>>          /* response expected command only */
->>>>          if (cmd_flags & SDMMC_CMD_RESP_EXP)
->>>>                  dw_mci_set_cto(host);
->>>> -
->>>> -       mci_writel(host, CMD, cmd_flags | SDMMC_CMD_START);
->>>
->>>
->>>
->>>
->>> But why? If we still keep the original logic, it's always correct
->>> that cmd_done comes after setting up the cto timer. So could you
->>> eleborate a bit more to help me understand the real intention here?
->>
->>
->> No matter which order you put things, there's a race one way or the
->> other.  You need a lock.
->>
->> Let's think about the old code you wrote.  You did this:
->> 1. Start the CTO timer.
->> 2. Start the command.
->>
->> Now if you (somehow) take 20 ms to handle the interrupt, then this
->> happens:
->>
->> 1. Start the CTO timer.
->> 2. Start the command.
->> 3. Interrupt is pending, but interrupt handler doesn't run yet.
->> 4. CTO timer fires and enqueues CTO timeout.
->> 5. Interrupt finally fires.
->
->
-> OK, got it.
->
->
->>
->>
->> Now normally things are pretty bad if you've got an interrupt latency
->> of 20 ms.  ...and, in fact, I originally wrote up a commit that simply
->> explained why the race didn't matter and was thinking of posting that
->> instead of this one.  I wrote up:
->>
->>       * Start a timer to detect missing cmd timeout if we expect a
->> response.
->>       *
->>       * Note that we need to be a little careful about race conditions
->> here
->>       * since our timer will be racing with the actual hardware interrupt
->>       * and things would get confused if both of them happened.
->>       *
->>       * We end up avoiding races here mostly because of our 10 ms "spare
->>       * time" buffer above.  That's probably reliable enough because:
->>       * - There's "guaranteed" "very little" time between setting the
->> timer
->>       *   and starting the command.  We're holding a spinlock (host->lock)
->>       *   in all calls to this function so we won't get preempted.
->> Possibly
->>       *   we could get interrupts still, but that shouldn't add up to
->>       *   anything like the 10 ms spare time.
->>       * - We expect that when the actual interrupt fires that our
->> interrupt
->>       *   routine should get called "relatively quickly" (compared to the
->>       *   10 ms buffer) and will be able to cancel this timer.
->>
->> ...but then I ran a whole bunch of tests and I found that, as far as I
->> could tell, we actually _were_ getting a super long interrupt latency.
->> Specifically I saw the printout "Unexpected interrupt latency" in my
->> patch.  In order to see that printout in my patch (which even starts
->> the command _before_ the CTO timer), the only explanation is bad
->> interrupt latency, right?  Also: based on my past experience I believe
->> it is possible to get upwards of 100 ms interrupt latency if you've
->> got serial console enabled.  printk, especially printk from an
->> interrupt context, can do some funny things.
->>
->
-> Right! It makes sense to me now.
->
->>
->> ...but this stuff is always hard to get right, so if I messed up the
->> above please let me know!  I tried to think of all of the cases so it
->> would work no matter if delays happened in any random place but
->> concurrency is hard.
->
->
-> Yes, it looks hard to get concurrency right. I have a comment for your
-> DRTO case(patch 5). Let's do some brainstorm there.
-
-Since your comments in this patch are positive and you've now added
-your Reviewed-by to patch #5, I'm going to assume that you'd also like
-your Reviewed-by on this patch?
-
-
-Jaehoon: I think I have Shawn's review on all this series.  It would
-be great if you could review them yourself and/or pick them up in your
-tree.  Since they fix a regression on 4.14 we really don't want to
-delay too long.  If you're busy, please yell and we can figure out a
-way to get these in (either through Ulf directly or we should find
-someone else to make a git tree and send a pull request).
-
-Thanks!
-
--Doug
+T24gVHVlLCBPY3QgMTcsIDIwMTcgYXQgMDY6MTY6MjJQTSArMDgwMCwgSmVmZnkgQ2hlbiB3cm90
+ZToKPiBGcm9tOiBUb21hc3ogRmlnYSA8dGZpZ2FAY2hyb21pdW0ub3JnPgo+IAo+IFRoZSBkcml2
+ZXIgdGhhdCBpbnN0YW50aWF0ZXMgdGhlIGJyaWRnZSBzaG91bGQgb3duIHRoZSBkcnZkYXRhLCBh
+cyBhbGwKPiBkcml2ZXIgbW9kZWwgY2FsbGJhY2tzIChwcm9iZSwgcmVtb3ZlLCBzaHV0ZG93biwg
+UE0gb3BzLCBldGMuKSBhcmUgYWxzbwo+IG93bmVkIGJ5IGl0cyBkcml2ZXIgc3RydWN0LiBNb3Jl
+b3Zlciwgc3RvcmluZyB0d28gZGlmZmVyZW50IHBvaW50ZXIKPiB0eXBlcyBpbiBkcml2ZXIgZGF0
+YSBkZXBlbmRpbmcgb24gZHJpdmVyIGluaXRpYWxpemF0aW9uIHN0YXR1cyBpcyBiYXJlbHkKPiBh
+IGdvb2QgcHJhY3RpY2UgYW5kIGluIGZhY3QgaGFzIGxlZCB0byBtYW55IGJ1Z3MgaW4gdGhpcyBk
+cml2ZXIuCj4gCj4gTGV0J3MgY2xlYW4gdXAgdGhpcyBtZXNzIGFuZCBjaGFuZ2UgQW5hbG9naXgg
+ZW50cnkgcG9pbnRzIHRvIHNpbXBseQo+IGFjY2VwdCBzb21lIG9wYXF1ZSBzdHJ1Y3QgcG9pbnRl
+ciwgYWRqdXN0aW5nIHRoZWlyIHVzZXJzIGF0IHRoZSBzYW1lCj4gdGltZSB0byBhdm9pZCBicmVh
+a2luZyB0aGUgY29tcGlsYXRpb24uCj4gCj4gU2lnbmVkLW9mZi1ieTogVG9tYXN6IEZpZ2EgPHRm
+aWdhQGNocm9taXVtLm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBKZWZmeSBDaGVuIDxqZWZmeS5jaGVu
+QHJvY2stY2hpcHMuY29tPgo+IFJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNh
+bXN1bmcuY29tPgoKUmV2aWV3ZWQtYnk6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hyb21pdW0ub3Jn
+PgoKPiAtLS0KPiAKPiBDaGFuZ2VzIGluIHY0OiBOb25lCj4gQ2hhbmdlcyBpbiB2MzogTm9uZQo+
+IENoYW5nZXMgaW4gdjI6IE5vbmUKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dp
+eC9hbmFsb2dpeF9kcF9jb3JlLmMgfCA1MCArKysrKysrKystLS0tLS0tLS0tLS0tCj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwLmMgICAgICAgICAgICAgICAgIHwgMjYgKysrKysr
+LS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMg
+ICAgfCA0NyArKysrKysrKysrKy0tLS0tLS0tLQo+ICBpbmNsdWRlL2RybS9icmlkZ2UvYW5hbG9n
+aXhfZHAuaCAgICAgICAgICAgICAgICAgICB8IDE5ICsrKystLS0tCj4gIDQgZmlsZXMgY2hhbmdl
+ZCwgNzMgaW5zZXJ0aW9ucygrKSwgNjkgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIGIvZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKPiBpbmRleCA1ZGQz
+ZjFjZDA3NGEuLjc0ZDI3NGI2ZDMxZCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jCj4gQEAgLTk4LDE3ICs5OCwxNSBAQCBz
+dGF0aWMgaW50IGFuYWxvZ2l4X2RwX2RldGVjdF9ocGQoc3RydWN0IGFuYWxvZ2l4X2RwX2Rldmlj
+ZSAqZHApCj4gIAlyZXR1cm4gMDsKPiAgfQo+ICAKPiAtaW50IGFuYWxvZ2l4X2RwX3Bzcl9zdXBw
+b3J0ZWQoc3RydWN0IGRldmljZSAqZGV2KQo+ICtpbnQgYW5hbG9naXhfZHBfcHNyX3N1cHBvcnRl
+ZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKPiAgewo+IC0Jc3RydWN0IGFuYWxvZ2l4
+X2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiAgCj4gIAlyZXR1cm4gZHAt
+PnBzcl9zdXBwb3J0Owo+ICB9Cj4gIEVYUE9SVF9TWU1CT0xfR1BMKGFuYWxvZ2l4X2RwX3Bzcl9z
+dXBwb3J0ZWQpOwo+ICAKPiAtaW50IGFuYWxvZ2l4X2RwX2VuYWJsZV9wc3Ioc3RydWN0IGRldmlj
+ZSAqZGV2KQo+ICtpbnQgYW5hbG9naXhfZHBfZW5hYmxlX3BzcihzdHJ1Y3QgYW5hbG9naXhfZHBf
+ZGV2aWNlICpkcCkKPiAgewo+IC0Jc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAgPSBkZXZf
+Z2V0X2RydmRhdGEoZGV2KTsKPiAgCXN0cnVjdCBlZHBfdnNjX3BzciBwc3JfdnNjOwo+ICAKPiAg
+CWlmICghZHAtPnBzcl9zdXBwb3J0KQo+IEBAIC0xMjksOSArMTI3LDggQEAgaW50IGFuYWxvZ2l4
+X2RwX2VuYWJsZV9wc3Ioc3RydWN0IGRldmljZSAqZGV2KQo+ICB9Cj4gIEVYUE9SVF9TWU1CT0xf
+R1BMKGFuYWxvZ2l4X2RwX2VuYWJsZV9wc3IpOwo+ICAKPiAtaW50IGFuYWxvZ2l4X2RwX2Rpc2Fi
+bGVfcHNyKHN0cnVjdCBkZXZpY2UgKmRldikKPiAraW50IGFuYWxvZ2l4X2RwX2Rpc2FibGVfcHNy
+KHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQo+ICB7Cj4gLQlzdHJ1Y3QgYW5hbG9naXhf
+ZHBfZGV2aWNlICpkcCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+ICAJc3RydWN0IGVkcF92c2Nf
+cHNyIHBzcl92c2M7Cj4gIAlpbnQgcmV0Owo+ICAKPiBAQCAtMTI4MSw4ICsxMjc4LDkgQEAgc3Rh
+dGljIHNzaXplX3QgYW5hbG9naXhfZHBhdXhfdHJhbnNmZXIoc3RydWN0IGRybV9kcF9hdXggKmF1
+eCwKPiAgCXJldHVybiBhbmFsb2dpeF9kcF90cmFuc2ZlcihkcCwgbXNnKTsKPiAgfQo+ICAKPiAt
+aW50IGFuYWxvZ2l4X2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2Rldmlj
+ZSAqZHJtX2RldiwKPiAtCQkgICAgIHN0cnVjdCBhbmFsb2dpeF9kcF9wbGF0X2RhdGEgKnBsYXRf
+ZGF0YSkKPiArc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqCj4gK2FuYWxvZ2l4X2RwX2JpbmQo
+c3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKPiArCQkgc3Ry
+dWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YSAqcGxhdF9kYXRhKQo+ICB7Cj4gIAlzdHJ1Y3QgcGxh
+dGZvcm1fZGV2aWNlICpwZGV2ID0gdG9fcGxhdGZvcm1fZGV2aWNlKGRldik7Cj4gIAlzdHJ1Y3Qg
+YW5hbG9naXhfZHBfZGV2aWNlICpkcDsKPiBAQCAtMTI5MiwxNCArMTI5MCwxMiBAQCBpbnQgYW5h
+bG9naXhfZHBfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZGV2aWNlICpkcm1f
+ZGV2LAo+ICAKPiAgCWlmICghcGxhdF9kYXRhKSB7Cj4gIAkJZGV2X2VycihkZXYsICJJbnZhbGlk
+ZWQgaW5wdXQgcGxhdF9kYXRhXG4iKTsKPiAtCQlyZXR1cm4gLUVJTlZBTDsKPiArCQlyZXR1cm4g
+RVJSX1BUUigtRUlOVkFMKTsKPiAgCX0KPiAgCj4gIAlkcCA9IGRldm1fa3phbGxvYyhkZXYsIHNp
+emVvZihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlKSwgR0ZQX0tFUk5FTCk7Cj4gIAlpZiAoIWRw
+KQo+IC0JCXJldHVybiAtRU5PTUVNOwo+IC0KPiAtCWRldl9zZXRfZHJ2ZGF0YShkZXYsIGRwKTsK
+PiArCQlyZXR1cm4gRVJSX1BUUigtRU5PTUVNKTsKPiAgCj4gIAlkcC0+ZGV2ID0gJnBkZXYtPmRl
+djsKPiAgCWRwLT5kcG1zX21vZGUgPSBEUk1fTU9ERV9EUE1TX09GRjsKPiBAQCAtMTMxNiw3ICsx
+MzEyLDcgQEAgaW50IGFuYWxvZ2l4X2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZHJtX2RldiwKPiAgCj4gIAlyZXQgPSBhbmFsb2dpeF9kcF9kdF9wYXJzZV9w
+ZGF0YShkcCk7Cj4gIAlpZiAocmV0KQo+IC0JCXJldHVybiByZXQ7Cj4gKwkJcmV0dXJuIEVSUl9Q
+VFIocmV0KTsKPiAgCj4gIAlkcC0+cGh5ID0gZGV2bV9waHlfZ2V0KGRwLT5kZXYsICJkcCIpOwo+
+ICAJaWYgKElTX0VSUihkcC0+cGh5KSkgewo+IEBAIC0xMzMwLDE0ICsxMzI2LDE0IEBAIGludCBh
+bmFsb2dpeF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRybV9kZXZpY2UgKmRy
+bV9kZXYsCj4gIAkJCWlmIChyZXQgPT0gLUVOT1NZUyB8fCByZXQgPT0gLUVOT0RFVikKPiAgCQkJ
+CWRwLT5waHkgPSBOVUxMOwo+ICAJCQllbHNlCj4gLQkJCQlyZXR1cm4gcmV0Owo+ICsJCQkJcmV0
+dXJuIEVSUl9QVFIocmV0KTsKPiAgCQl9Cj4gIAl9Cj4gIAo+ICAJZHAtPmNsb2NrID0gZGV2bV9j
+bGtfZ2V0KCZwZGV2LT5kZXYsICJkcCIpOwo+ICAJaWYgKElTX0VSUihkcC0+Y2xvY2spKSB7Cj4g
+IAkJZGV2X2VycigmcGRldi0+ZGV2LCAiZmFpbGVkIHRvIGdldCBjbG9ja1xuIik7Cj4gLQkJcmV0
+dXJuIFBUUl9FUlIoZHAtPmNsb2NrKTsKPiArCQlyZXR1cm4gRVJSX0NBU1QoZHAtPmNsb2NrKTsK
+PiAgCX0KPiAgCj4gIAljbGtfcHJlcGFyZV9lbmFibGUoZHAtPmNsb2NrKTsKPiBAQCAtMTM0Niw3
+ICsxMzQyLDcgQEAgaW50IGFuYWxvZ2l4X2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1
+Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKPiAgCj4gIAlkcC0+cmVnX2Jhc2UgPSBkZXZtX2lvcmVt
+YXBfcmVzb3VyY2UoJnBkZXYtPmRldiwgcmVzKTsKPiAgCWlmIChJU19FUlIoZHAtPnJlZ19iYXNl
+KSkKPiAtCQlyZXR1cm4gUFRSX0VSUihkcC0+cmVnX2Jhc2UpOwo+ICsJCXJldHVybiBFUlJfQ0FT
+VChkcC0+cmVnX2Jhc2UpOwo+ICAKPiAgCWRwLT5mb3JjZV9ocGQgPSBvZl9wcm9wZXJ0eV9yZWFk
+X2Jvb2woZGV2LT5vZl9ub2RlLCAiZm9yY2UtaHBkIik7Cj4gIAo+IEBAIC0xMzY3LDcgKzEzNjMs
+NyBAQCBpbnQgYW5hbG9naXhfZHBfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1f
+ZGV2aWNlICpkcm1fZGV2LAo+ICAJCQkJCSAgICAiaHBkX2dwaW8iKTsKPiAgCQlpZiAocmV0KSB7
+Cj4gIAkJCWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgaHBkIGdwaW9cbiIpOwo+
+IC0JCQlyZXR1cm4gcmV0Owo+ICsJCQlyZXR1cm4gRVJSX1BUUihyZXQpOwo+ICAJCX0KPiAgCQlk
+cC0+aXJxID0gZ3Bpb190b19pcnEoZHAtPmhwZF9ncGlvKTsKPiAgCQlpcnFfZmxhZ3MgPSBJUlFG
+X1RSSUdHRVJfUklTSU5HIHwgSVJRRl9UUklHR0VSX0ZBTExJTkc7Cj4gQEAgLTEzNzksNyArMTM3
+NSw3IEBAIGludCBhbmFsb2dpeF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRy
+bV9kZXZpY2UgKmRybV9kZXYsCj4gIAo+ICAJaWYgKGRwLT5pcnEgPT0gLUVOWElPKSB7Cj4gIAkJ
+ZGV2X2VycigmcGRldi0+ZGV2LCAiZmFpbGVkIHRvIGdldCBpcnFcbiIpOwo+IC0JCXJldHVybiAt
+RU5PREVWOwo+ICsJCXJldHVybiBFUlJfUFRSKC1FTk9ERVYpOwo+ICAJfQo+ICAKPiAgCXBtX3J1
+bnRpbWVfZW5hYmxlKGRldik7Cj4gQEAgLTE0MjAsNyArMTQxNiw3IEBAIGludCBhbmFsb2dpeF9k
+cF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4g
+IAlwaHlfcG93ZXJfb2ZmKGRwLT5waHkpOwo+ICAJcG1fcnVudGltZV9wdXQoZGV2KTsKPiAgCj4g
+LQlyZXR1cm4gMDsKPiArCXJldHVybiBkcDsKPiAgCj4gIGVycl9kaXNhYmxlX3BtX3J1bnRpbWU6
+Cj4gIAo+IEBAIC0xNDI4LDE1ICsxNDI0LDEyIEBAIGludCBhbmFsb2dpeF9kcF9iaW5kKHN0cnVj
+dCBkZXZpY2UgKmRldiwgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gIAlwbV9ydW50aW1l
+X3B1dChkZXYpOwo+ICAJcG1fcnVudGltZV9kaXNhYmxlKGRldik7Cj4gIAo+IC0JcmV0dXJuIHJl
+dDsKPiArCXJldHVybiBFUlJfUFRSKHJldCk7Cj4gIH0KPiAgRVhQT1JUX1NZTUJPTF9HUEwoYW5h
+bG9naXhfZHBfYmluZCk7Cj4gIAo+IC12b2lkIGFuYWxvZ2l4X2RwX3VuYmluZChzdHJ1Y3QgZGV2
+aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKPiAtCQkJdm9pZCAqZGF0YSkKPiArdm9p
+ZCBhbmFsb2dpeF9kcF91bmJpbmQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCj4gIHsK
+PiAtCXN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwID0gZGV2X2dldF9kcnZkYXRhKGRldik7
+Cj4gLQo+ICAJYW5hbG9naXhfZHBfYnJpZGdlX2Rpc2FibGUoZHAtPmJyaWRnZSk7Cj4gIAlkcC0+
+Y29ubmVjdG9yLmZ1bmNzLT5kZXN0cm95KCZkcC0+Y29ubmVjdG9yKTsKPiAgCWRwLT5lbmNvZGVy
+LT5mdW5jcy0+ZGVzdHJveShkcC0+ZW5jb2Rlcik7Cj4gQEAgLTE0NDksMTYgKzE0NDIsMTQgQEAg
+dm9pZCBhbmFsb2dpeF9kcF91bmJpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNl
+ICptYXN0ZXIsCj4gIAl9Cj4gIAo+ICAJZHJtX2RwX2F1eF91bnJlZ2lzdGVyKCZkcC0+YXV4KTsK
+PiAtCXBtX3J1bnRpbWVfZGlzYWJsZShkZXYpOwo+ICsJcG1fcnVudGltZV9kaXNhYmxlKGRwLT5k
+ZXYpOwo+ICAJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGRwLT5jbG9jayk7Cj4gIH0KPiAgRVhQT1JU
+X1NZTUJPTF9HUEwoYW5hbG9naXhfZHBfdW5iaW5kKTsKPiAgCj4gICNpZmRlZiBDT05GSUdfUE0K
+PiAtaW50IGFuYWxvZ2l4X2RwX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQo+ICtpbnQgYW5h
+bG9naXhfZHBfc3VzcGVuZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKPiAgewo+IC0J
+c3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiAt
+Cj4gIAljbGtfZGlzYWJsZV91bnByZXBhcmUoZHAtPmNsb2NrKTsKPiAgCj4gIAlpZiAoZHAtPnBs
+YXRfZGF0YS0+cGFuZWwpIHsKPiBAQCAtMTQ3MCw5ICsxNDYxLDggQEAgaW50IGFuYWxvZ2l4X2Rw
+X3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQo+ICB9Cj4gIEVYUE9SVF9TWU1CT0xfR1BMKGFu
+YWxvZ2l4X2RwX3N1c3BlbmQpOwo+ICAKPiAtaW50IGFuYWxvZ2l4X2RwX3Jlc3VtZShzdHJ1Y3Qg
+ZGV2aWNlICpkZXYpCj4gK2ludCBhbmFsb2dpeF9kcF9yZXN1bWUoc3RydWN0IGFuYWxvZ2l4X2Rw
+X2RldmljZSAqZHApCj4gIHsKPiAtCXN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwID0gZGV2
+X2dldF9kcnZkYXRhKGRldik7Cj4gIAlpbnQgcmV0Owo+ICAKPiAgCXJldCA9IGNsa19wcmVwYXJl
+X2VuYWJsZShkcC0+Y2xvY2spOwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHAuYwo+IGluZGV4
+IDM5NjI5ZTdhODBiOS4uZjdlNWIyYzQwNWVkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RwLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcC5jCj4gQEAgLTQxLDYgKzQxLDcgQEAgc3RydWN0IGV4eW5vc19kcF9kZXZpY2Ugewo+ICAJ
+c3RydWN0IGRldmljZSAgICAgICAgICAgICAgKmRldjsKPiAgCj4gIAlzdHJ1Y3QgdmlkZW9tb2Rl
+ICAgICAgICAgICB2bTsKPiArCXN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmFkcDsKPiAgCXN0
+cnVjdCBhbmFsb2dpeF9kcF9wbGF0X2RhdGEgcGxhdF9kYXRhOwo+ICB9Owo+ICAKPiBAQCAtMTU3
+LDEzICsxNTgsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRl
+diwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQo+ICAJc3RydWN0IGRybV9kZXZp
+Y2UgKmRybV9kZXYgPSBkYXRhOwo+ICAJaW50IHJldDsKPiAgCj4gLQkvKgo+IC0JICogSnVzdCBs
+aWtlIHRoZSBwcm9iZSBmdW5jdGlvbiBzYWlkLCB3ZSBkb24ndCBuZWVkIHRoZQo+IC0JICogZGV2
+aWNlIGRydnJhdGUgYW55bW9yZSwgd2Ugc2hvdWxkIGxlYXZlIHRoZSBjaGFyZ2UgdG8KPiAtCSAq
+IGFuYWxvZ2l4IGRwIGRyaXZlciwgc2V0IHRoZSBkZXZpY2UgZHJ2ZGF0YSB0byBOVUxMLgo+IC0J
+ICovCj4gLQlkZXZfc2V0X2RydmRhdGEoZGV2LCBOVUxMKTsKPiAtCj4gIAlkcC0+ZGV2ID0gZGV2
+Owo+ICAJZHAtPmRybV9kZXYgPSBkcm1fZGV2Owo+ICAKPiBAQCAtMTkwLDEzICsxODQsMTkgQEAg
+c3RhdGljIGludCBleHlub3NfZHBfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZp
+Y2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKPiAgCj4gIAlkcC0+cGxhdF9kYXRhLmVuY29kZXIgPSBl
+bmNvZGVyOwo+ICAKPiAtCXJldHVybiBhbmFsb2dpeF9kcF9iaW5kKGRldiwgZHAtPmRybV9kZXYs
+ICZkcC0+cGxhdF9kYXRhKTsKPiArCWRwLT5hZHAgPSBhbmFsb2dpeF9kcF9iaW5kKGRldiwgZHAt
+PmRybV9kZXYsICZkcC0+cGxhdF9kYXRhKTsKPiArCWlmIChJU19FUlIoZHAtPmFkcCkpCj4gKwkJ
+cmV0dXJuIFBUUl9FUlIoZHAtPmFkcCk7Cj4gKwo+ICsJcmV0dXJuIDA7Cj4gIH0KPiAgCj4gIHN0
+YXRpYyB2b2lkIGV4eW5vc19kcF91bmJpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2
+aWNlICptYXN0ZXIsCj4gIAkJCSAgICAgdm9pZCAqZGF0YSkKPiAgewo+IC0JcmV0dXJuIGFuYWxv
+Z2l4X2RwX3VuYmluZChkZXYsIG1hc3RlciwgZGF0YSk7Cj4gKwlzdHJ1Y3QgZXh5bm9zX2RwX2Rl
+dmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiArCj4gKwlyZXR1cm4gYW5hbG9naXhf
+ZHBfdW5iaW5kKGRwLT5hZHApOwo+ICB9Cj4gIAo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGNvbXBv
+bmVudF9vcHMgZXh5bm9zX2RwX29wcyA9IHsKPiBAQCAtMjU3LDEyICsyNTcsMTYgQEAgc3RhdGlj
+IGludCBleHlub3NfZHBfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gICNp
+ZmRlZiBDT05GSUdfUE0KPiAgc3RhdGljIGludCBleHlub3NfZHBfc3VzcGVuZChzdHJ1Y3QgZGV2
+aWNlICpkZXYpCj4gIHsKPiAtCXJldHVybiBhbmFsb2dpeF9kcF9zdXNwZW5kKGRldik7Cj4gKwlz
+dHJ1Y3QgZXh5bm9zX2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiArCj4g
+KwlyZXR1cm4gYW5hbG9naXhfZHBfc3VzcGVuZChkcC0+YWRwKTsKPiAgfQo+ICAKPiAgc3RhdGlj
+IGludCBleHlub3NfZHBfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKPiAgewo+IC0JcmV0dXJu
+IGFuYWxvZ2l4X2RwX3Jlc3VtZShkZXYpOwo+ICsJc3RydWN0IGV4eW5vc19kcF9kZXZpY2UgKmRw
+ID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gKwo+ICsJcmV0dXJuIGFuYWxvZ2l4X2RwX3Jlc3Vt
+ZShkcC0+YWRwKTsKPiAgfQo+ICAjZW5kaWYKPiAgCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jIGIvZHJpdmVycy9ncHUvZHJtL3Jv
+Y2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPiBpbmRleCA0YjY4OWMwZjNmYzEuLmI1ZjM5
+YmY1OTIzNCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhf
+ZHAtcm9ja2NoaXAuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9k
+cC1yb2NrY2hpcC5jCj4gQEAgLTc3LDYgKzc3LDcgQEAgc3RydWN0IHJvY2tjaGlwX2RwX2Rldmlj
+ZSB7Cj4gIAo+ICAJY29uc3Qgc3RydWN0IHJvY2tjaGlwX2RwX2NoaXBfZGF0YSAqZGF0YTsKPiAg
+Cj4gKwlzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICphZHA7Cj4gIAlzdHJ1Y3QgYW5hbG9naXhf
+ZHBfcGxhdF9kYXRhIHBsYXRfZGF0YTsKPiAgfTsKPiAgCj4gQEAgLTg1LDcgKzg2LDcgQEAgc3Rh
+dGljIHZvaWQgYW5hbG9naXhfZHBfcHNyX3NldChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIs
+IGJvb2wgZW5hYmxlZCkKPiAgCXN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwID0gdG9fZHAo
+ZW5jb2Rlcik7Cj4gIAl1bnNpZ25lZCBsb25nIGZsYWdzOwo+ICAKPiAtCWlmICghYW5hbG9naXhf
+ZHBfcHNyX3N1cHBvcnRlZChkcC0+ZGV2KSkKPiArCWlmICghYW5hbG9naXhfZHBfcHNyX3N1cHBv
+cnRlZChkcC0+YWRwKSkKPiAgCQlyZXR1cm47Cj4gIAo+ICAJRFJNX0RFVl9ERUJVRyhkcC0+ZGV2
+LCAiJXMgUFNSLi4uXG4iLCBlbmFibGVkID8gIkVudHJ5IiA6ICJFeGl0Iik7Cj4gQEAgLTExNiw5
+ICsxMTcsOSBAQCBzdGF0aWMgdm9pZCBhbmFsb2dpeF9kcF9wc3Jfd29yayhzdHJ1Y3Qgd29ya19z
+dHJ1Y3QgKndvcmspCj4gIAo+ICAJc3Bpbl9sb2NrX2lycXNhdmUoJmRwLT5wc3JfbG9jaywgZmxh
+Z3MpOwo+ICAJaWYgKGRwLT5wc3Jfc3RhdGUgPT0gRURQX1ZTQ19QU1JfU1RBVEVfQUNUSVZFKQo+
+IC0JCWFuYWxvZ2l4X2RwX2VuYWJsZV9wc3IoZHAtPmRldik7Cj4gKwkJYW5hbG9naXhfZHBfZW5h
+YmxlX3BzcihkcC0+YWRwKTsKPiAgCWVsc2UKPiAtCQlhbmFsb2dpeF9kcF9kaXNhYmxlX3Bzcihk
+cC0+ZGV2KTsKPiArCQlhbmFsb2dpeF9kcF9kaXNhYmxlX3BzcihkcC0+YWRwKTsKPiAgCXNwaW5f
+dW5sb2NrX2lycXJlc3RvcmUoJmRwLT5wc3JfbG9jaywgZmxhZ3MpOwo+ICB9Cj4gIAo+IEBAIC0z
+NTAsMTMgKzM1MSw2IEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBfZHBfYmluZChzdHJ1Y3QgZGV2aWNl
+ICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKPiAgCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1f
+ZGV2ID0gZGF0YTsKPiAgCWludCByZXQ7Cj4gIAo+IC0JLyoKPiAtCSAqIEp1c3QgbGlrZSB0aGUg
+cHJvYmUgZnVuY3Rpb24gc2FpZCwgd2UgZG9uJ3QgbmVlZCB0aGUKPiAtCSAqIGRldmljZSBkcnZy
+YXRlIGFueW1vcmUsIHdlIHNob3VsZCBsZWF2ZSB0aGUgY2hhcmdlIHRvCj4gLQkgKiBhbmFsb2dp
+eCBkcCBkcml2ZXIsIHNldCB0aGUgZGV2aWNlIGRydmRhdGEgdG8gTlVMTC4KPiAtCSAqLwo+IC0J
+ZGV2X3NldF9kcnZkYXRhKGRldiwgTlVMTCk7Cj4gLQo+ICAJZHBfZGF0YSA9IG9mX2RldmljZV9n
+ZXRfbWF0Y2hfZGF0YShkZXYpOwo+ICAJaWYgKCFkcF9kYXRhKQo+ICAJCXJldHVybiAtRU5PREVW
+Owo+IEBAIC0zODcsOSArMzgxLDExIEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBfZHBfYmluZChzdHJ1
+Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKPiAgCj4gIAlyb2NrY2hpcF9k
+cm1fcHNyX3JlZ2lzdGVyKCZkcC0+ZW5jb2RlciwgYW5hbG9naXhfZHBfcHNyX3NldCk7Cj4gIAo+
+IC0JcmV0ID0gYW5hbG9naXhfZHBfYmluZChkZXYsIGRwLT5kcm1fZGV2LCAmZHAtPnBsYXRfZGF0
+YSk7Cj4gLQlpZiAocmV0IDwgMCkKPiArCWRwLT5hZHAgPSBhbmFsb2dpeF9kcF9iaW5kKGRldiwg
+ZHAtPmRybV9kZXYsICZkcC0+cGxhdF9kYXRhKTsKPiArCWlmIChJU19FUlIoZHAtPmFkcCkpIHsK
+PiArCQlyZXQgPSBQVFJfRVJSKGRwLT5hZHApOwo+ICAJCWdvdG8gZXJyX3VucmVnX3BzcjsKPiAr
+CX0KPiAgCXJldHVybiAwOwo+ICAKPiAgZXJyX3VucmVnX3BzcjoKPiBAQCAtNDA3LDcgKzQwMyw3
+IEBAIHN0YXRpYyB2b2lkIHJvY2tjaGlwX2RwX3VuYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0
+cnVjdCBkZXZpY2UgKm1hc3RlciwKPiAgCj4gIAlyb2NrY2hpcF9kcm1fcHNyX3VucmVnaXN0ZXIo
+JmRwLT5lbmNvZGVyKTsKPiAgCj4gLQlhbmFsb2dpeF9kcF91bmJpbmQoZGV2LCBtYXN0ZXIsIGRh
+dGEpOwo+ICsJYW5hbG9naXhfZHBfdW5iaW5kKGRwLT5hZHApOwo+ICAJY2xrX2Rpc2FibGVfdW5w
+cmVwYXJlKGRwLT5wY2xrKTsKPiAgfQo+ICAKPiBAQCAtNDM1LDExICs0MzEsNiBAQCBzdGF0aWMg
+aW50IHJvY2tjaGlwX2RwX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAo+
+ICAJZHAtPnBsYXRfZGF0YS5wYW5lbCA9IHBhbmVsOwo+ICAKPiAtCS8qCj4gLQkgKiBXZSBqdXN0
+IHVzZSB0aGUgZHJ2ZGF0YSB1bnRpbCBkcml2ZXIgcnVuIGludG8gY29tcG9uZW50Cj4gLQkgKiBh
+ZGQgZnVuY3Rpb24sIGFuZCB0aGVuIHdlIHdvdWxkIHNldCBkcnZkYXRhIHRvIG51bGwsIHNvCj4g
+LQkgKiB0aGF0IGFuYWxvZ2l4IGRwIGRyaXZlciBjb3VsZCB0YWtlIGNoYXJnZSBvZiB0aGUgZHJ2
+ZGF0YS4KPiAtCSAqLwo+ICAJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgZHApOwo+ICAKPiAg
+CXJldHVybiBjb21wb25lbnRfYWRkKGRldiwgJnJvY2tjaGlwX2RwX2NvbXBvbmVudF9vcHMpOwo+
+IEBAIC00NTIsMTAgKzQ0MywyNiBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX3JlbW92ZShzdHJ1
+Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJcmV0dXJuIDA7Cj4gIH0KPiAgCj4gKyNpZmRl
+ZiBDT05GSUdfUE1fU0xFRVAKPiArc3RhdGljIGludCByb2NrY2hpcF9kcF9zdXNwZW5kKHN0cnVj
+dCBkZXZpY2UgKmRldikKPiArewo+ICsJc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHAgPSBk
+ZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiArCj4gKwlyZXR1cm4gYW5hbG9naXhfZHBfc3VzcGVuZChk
+cC0+YWRwKTsKPiArfQo+ICsKPiArc3RhdGljIGludCByb2NrY2hpcF9kcF9yZXN1bWUoc3RydWN0
+IGRldmljZSAqZGV2KQo+ICt7Cj4gKwlzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCA9IGRl
+dl9nZXRfZHJ2ZGF0YShkZXYpOwo+ICsKPiArCXJldHVybiBhbmFsb2dpeF9kcF9yZXN1bWUoZHAt
+PmFkcCk7Cj4gK30KPiArI2VuZGlmCj4gKwo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9v
+cHMgcm9ja2NoaXBfZHBfcG1fb3BzID0gewo+ICAjaWZkZWYgQ09ORklHX1BNX1NMRUVQCj4gLQku
+c3VzcGVuZCA9IGFuYWxvZ2l4X2RwX3N1c3BlbmQsCj4gLQkucmVzdW1lX2Vhcmx5ID0gYW5hbG9n
+aXhfZHBfcmVzdW1lLAo+ICsJLnN1c3BlbmQgPSByb2NrY2hpcF9kcF9zdXNwZW5kLAo+ICsJLnJl
+c3VtZV9lYXJseSA9IHJvY2tjaGlwX2RwX3Jlc3VtZSwKPiAgI2VuZGlmCj4gIH07Cj4gIAo+IGRp
+ZmYgLS1naXQgYS9pbmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaCBiL2luY2x1ZGUvZHJt
+L2JyaWRnZS9hbmFsb2dpeF9kcC5oCj4gaW5kZXggYzk5ZDZlYWVmMWFjLi41NTE4ZmM3NWRkNmUg
+MTAwNjQ0Cj4gLS0tIGEvaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmgKPiArKysgYi9p
+bmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaAo+IEBAIC0xMyw2ICsxMyw4IEBACj4gIAo+
+ICAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjLmg+Cj4gIAo+ICtzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2
+aWNlOwo+ICsKPiAgZW51bSBhbmFsb2dpeF9kcF9kZXZ0eXBlIHsKPiAgCUVYWU5PU19EUCwKPiAg
+CVJLMzI4OF9EUCwKPiBAQCAtMzgsMTYgKzQwLDE3IEBAIHN0cnVjdCBhbmFsb2dpeF9kcF9wbGF0
+X2RhdGEgewo+ICAJCQkgc3RydWN0IGRybV9jb25uZWN0b3IgKik7Cj4gIH07Cj4gIAo+IC1pbnQg
+YW5hbG9naXhfZHBfcHNyX3N1cHBvcnRlZChzdHJ1Y3QgZGV2aWNlICpkZXYpOwo+IC1pbnQgYW5h
+bG9naXhfZHBfZW5hYmxlX3BzcihzdHJ1Y3QgZGV2aWNlICpkZXYpOwo+IC1pbnQgYW5hbG9naXhf
+ZHBfZGlzYWJsZV9wc3Ioc3RydWN0IGRldmljZSAqZGV2KTsKPiAraW50IGFuYWxvZ2l4X2RwX3Bz
+cl9zdXBwb3J0ZWQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApOwo+ICtpbnQgYW5hbG9n
+aXhfZHBfZW5hYmxlX3BzcihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7Cj4gK2ludCBh
+bmFsb2dpeF9kcF9kaXNhYmxlX3BzcihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7Cj4g
+IAo+IC1pbnQgYW5hbG9naXhfZHBfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldik7Cj4gLWludCBh
+bmFsb2dpeF9kcF9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldik7Cj4gK2ludCBhbmFsb2dpeF9k
+cF9yZXN1bWUoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApOwo+ICtpbnQgYW5hbG9naXhf
+ZHBfc3VzcGVuZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7Cj4gIAo+IC1pbnQgYW5h
+bG9naXhfZHBfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZGV2aWNlICpkcm1f
+ZGV2LAo+IC0JCSAgICAgc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YSAqcGxhdF9kYXRhKTsK
+PiAtdm9pZCBhbmFsb2dpeF9kcF91bmJpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2
+aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpOwo+ICtzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICoK
+PiArYW5hbG9naXhfZHBfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZGV2aWNl
+ICpkcm1fZGV2LAo+ICsJCSBzdHJ1Y3QgYW5hbG9naXhfZHBfcGxhdF9kYXRhICpwbGF0X2RhdGEp
+Owo+ICt2b2lkIGFuYWxvZ2l4X2RwX3VuYmluZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpk
+cCk7Cj4gIAo+ICBpbnQgYW5hbG9naXhfZHBfc3RhcnRfY3JjKHN0cnVjdCBkcm1fY29ubmVjdG9y
+ICpjb25uZWN0b3IpOwo+ICBpbnQgYW5hbG9naXhfZHBfc3RvcF9jcmMoc3RydWN0IGRybV9jb25u
+ZWN0b3IgKmNvbm5lY3Rvcik7Cj4gLS0gCj4gMi4xMS4wCj4gCj4gCgotLSAKU2VhbiBQYXVsLCBT
+b2Z0d2FyZSBFbmdpbmVlciwgR29vZ2xlIC8gQ2hyb21pdW0gT1MKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
