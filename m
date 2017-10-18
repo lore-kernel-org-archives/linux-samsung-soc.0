@@ -1,73 +1,101 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 0/9] Exynos DRM: rewrite IPP subsystem and userspace
- API
-Date: Wed, 18 Oct 2017 09:41:32 +0200
-Message-ID: <588f72f2-6044-3825-7efd-c079c94bc156@samsung.com>
-References: <CGME20171017110810eucas1p13e4fd9a96b7866324da0f49a356db558@eucas1p1.samsung.com>
-        <20171017110752.25096-1-m.szyprowski@samsung.com>
-        <20171017122456.m7ul76s73hhvddch@phenom.ffwll.local>
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: hwmon: Add
+ ti-max-expected-current-microamp property to ina2xx
+Date: Wed, 18 Oct 2017 09:12:26 +0100
+Message-ID: <20171018091226.000017dd@huawei.com>
+References: <1507811765-31005-1-git-send-email-m.purski@samsung.com>
+        <CGME20171012123635eucas1p1ff9a982db9d541cd0475d44d114ff92a@eucas1p1.samsung.com>
+        <1507811765-31005-4-git-send-email-m.purski@samsung.com>
+        <20171017203631.xaut7o3szaiucnqh@rob-hp-laptop>
+        <20171017205821.GA8737@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:53335 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762087AbdJRHli (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:41:38 -0400
-In-reply-to: <20171017122456.m7ul76s73hhvddch@phenom.ffwll.local>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+In-Reply-To: <20171017205821.GA8737@roeck-us.net>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Rob Herring <robh@kernel.org>, Maciej Purski <m.purski@samsung.com>, devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-Hi Daniel,
+On Tue, 17 Oct 2017 13:58:21 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-On 2017-10-17 14:24, Daniel Vetter wrote:
-> On Tue, Oct 17, 2017 at 01:07:43PM +0200, Marek Szyprowski wrote:
->> This patchset performs complete rewrite of Exynos DRM IPP subsystem and
->> its userspace API.
->>
->> Why such rewrite is needed? Exynos DRM IPP API is over-engineered in
->> general, but not really extensible on the other side. It is also buggy,
->> with significant design flaws:
->> - Userspace API covers memory-2-memory picture operations together with
->>    CRTC writeback and duplicating features, which belongs to video plane.
->> - Lack of support of the all required image formats (for example NV12
->>    Samsung-tiled cannot be used due to lack of pixel format modifier
->>    support).
->> - Userspace API designed only to mimic hardware behaviour, not easy to
->>    understand.
->> - Lack of proper input validation in the core, drivers also didn't do that
->>    correctly, so it was possible to set incorrect parameters and easil
->>    trigger IOMMU fault or memory trash.
->> - Drivers were partially disfunctional or supported only a subset of modes.
->>
->> Due to the above limitations and issues the Exynos DRM IPP API was not
->> used by any of the open-source projects. I assume that it is safe to remove
->> this broken API without any damage to open-source community. All remaining
->> users (mainly Tizen project related) will be updated to the new version.
->>
->> This patchset changes Exynos DRM IPP subsystem to something useful. The
->> userspace API is much simpler, state-less and easy to understand. Also
->> the code of the core and driver is significantly smaller and easier to
->> understand.
->>
->> Patches were tested on Exynos4412 based Odroid U3, Exynos5422
->> Odroid XU3 and Exynos5433 TM2 boards, on top of Linux next-20171016 kernel.
-> When submitting uapi changes, please link to the corresponding userspace
-> work. Otherwise pretty hard to find this stuff.
+> On Tue, Oct 17, 2017 at 03:36:31PM -0500, Rob Herring wrote:
+> > On Thu, Oct 12, 2017 at 02:36:04PM +0200, Maciej Purski wrote:  
+> > > Add optional max expected current property which allows calibrating
+> > > the ina sensor in order to achieve requested measure scale. Document
+> > > the changes in Documentation/hwmon/ina2xx.
+> > > 
+> > > Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/hwmon/ina2xx.txt | 4 +++-
+> > >  Documentation/hwmon/ina2xx                         | 3 +++
+> > >  2 files changed, 6 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/hwmon/ina2xx.txt b/Documentation/devicetree/bindings/hwmon/ina2xx.txt
+> > > index 02af0d9..49ef0be 100644
+> > > --- a/Documentation/devicetree/bindings/hwmon/ina2xx.txt
+> > > +++ b/Documentation/devicetree/bindings/hwmon/ina2xx.txt
+> > > @@ -14,11 +14,13 @@ Optional properties:
+> > >  
+> > >  - shunt-resistor
+> > >  	Shunt resistor value in micro-Ohm
+> > > -
+> > > +- ti-max-expected-current-microamp
+> > > +	Max expected current value in mA  
+> > 
+> > ti,max-...
+> > 
+> > The property name is a bit long. Does "expected" add anything? Is there 
+> > a max unexpected current?
+> >   
+> I am not too happy with it either. To me it suggests that there _can_ be
+> an unexpected current (why specify a max _expected_ current otherwise ?),
+> and that unexpected current won't be measurable and thus not reported
+> because it is ... well, unexpected.
 
-A simple userspace test tool has been sent together with v1:
-https://www.spinics.net/lists/linux-samsung-soc/msg60498.html
+After calibration I 'think' this corresponds to the maximum current
+that the device can measure (it's applying scaling inside to make full use
+of available range of the register - there are some arguments that there is
+an optimum value after which we could do better in software).
 
-Tobias Jakobi has added support for this new API to his fork of libdrm and
-mpv video player:
-https://github.com/tobiasjakobi/libdrm/tree/ippv2
-https://github.com/tobiasjakobi/mpv
+I guess the issue here is that this that we might need to separate the maximum
+current the device is capable of measuring from what it is currently configured
+to measure.  No idea how to describe that :)
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Jonathan
+
+> 
+> Guenter
+> 
+> > >  Example:
+> > >  
+> > >  ina220@44 {
+> > >  	compatible = "ti,ina220";
+> > >  	reg = <0x44>;
+> > >  	shunt-resistor = <1000>;
+> > > +	ti-max-expected-current-microamp = <3000>;
+> > >  };
+> > > diff --git a/Documentation/hwmon/ina2xx b/Documentation/hwmon/ina2xx
+> > > index cfd31d9..30620e8 100644
+> > > --- a/Documentation/hwmon/ina2xx
+> > > +++ b/Documentation/hwmon/ina2xx
+> > > @@ -55,6 +55,9 @@ The shunt value in micro-ohms can be set via platform data or device tree at
+> > >  compile-time or via the shunt_resistor attribute in sysfs at run-time. Please
+> > >  refer to the Documentation/devicetree/bindings/i2c/ina2xx.txt for bindings
+> > >  if the device tree is used.
+> > > +The max expected current value in miliamp can be set via platform data
+> > > +or device tree at compile-time or via currX_max attribute in sysfs
+> > > +at run-time.
+> > >  
+> > >  Additionally ina226 supports update_interval attribute as described in
+> > >  Documentation/hwmon/sysfs-interface. Internally the interval is the sum of
+> > > -- 
+> > > 2.7.4
+> > >   
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
