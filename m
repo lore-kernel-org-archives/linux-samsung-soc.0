@@ -1,122 +1,72 @@
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: [PATCH v5 4/9] drm/bridge: analogix_dp: Fix connector & encoder cleanup
-Date: Wed, 18 Oct 2017 20:09:39 +0800
-Message-ID: <20171018120944.7819-5-jeffy.chen@rock-chips.com>
-References: <20171018120944.7819-1-jeffy.chen@rock-chips.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCHv4 0/2] dwc3 on XU3
+Date: Wed, 18 Oct 2017 18:17:26 +0530
+Message-ID: <01b6deb8-21a7-7315-546a-d8a462326789@ti.com>
+References: <6de8a17a-745b-0fa2-c39d-cdeb28fc9489@ti.com>
+ <CGME20171009120100eucas1p2400a1ee4a7c70eed37c653de780b715d@eucas1p2.samsung.com>
+ <1507550451-21324-1-git-send-email-andrzej.p@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.134]:57940 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934574AbdJRMK3 (ORCPT
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:18666 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965715AbdJRMsO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 08:10:29 -0400
-In-Reply-To: <20171018120944.7819-1-jeffy.chen@rock-chips.com>
+        Wed, 18 Oct 2017 08:48:14 -0400
+In-Reply-To: <1507550451-21324-1-git-send-email-andrzej.p@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: briannorris@chromium.org, seanpaul@chromium.org, dianders@chromium.org, heiko@sntech.de, tfiga@chromium.org, Jeffy Chen <jeffy.chen@rock-chips.com>, Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, Caesar Wang <wxt@rock-chips.com>, David Airlie <airlied@linux.ie>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-rockchip@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, zain wang <wzz@rock-chips.com>, Ar
+To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Since we are initing connector in the core driver and encoder in the
-plat driver, let's clean them up in the right places.
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
----
 
-Changes in v5: None
+On Monday 09 October 2017 05:30 PM, Andrzej Pietrasiewicz wrote:
+> Hi all,
+> 
+> This is the fourth version of patches in this thread.
+> 
+> The series fixes problems with enumerating of SuperSpeed devices
+> on an Odroid XU3. There was a patch series from Vivek Gautam in
+> circulation, but it got lost somehow. Please see:
+> 
+> https://lkml.org/lkml/2014/9/2/166
+> https://lkml.org/lkml/2015/2/2/257
+> 
+> I adapted his patch so that it does not use a hacky solution to force
+> additional initialization in order for calibration to happen.
+> With this patch enumeration happens correctly and a super speed device
+> is recognized as such.
+> 
+> Changes since v3:
+> 
+> - improved the commit message in phy_calibrate() commit
+>   (as suggested by Kishon)
+> - rebased onto v4.14-rc4
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  2 --
- drivers/gpu/drm/exynos/exynos_dp.c                 |  7 +++++--
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 15 ++++++---------
- 3 files changed, 11 insertions(+), 13 deletions(-)
+merged, thanks!
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 74d274b6d31d..3f910ab36ff6 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1409,7 +1409,6 @@ analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
- 	ret = analogix_dp_create_bridge(drm_dev, dp);
- 	if (ret) {
- 		DRM_ERROR("failed to create bridge (%d)\n", ret);
--		drm_encoder_cleanup(dp->encoder);
- 		goto err_disable_pm_runtime;
- 	}
- 
-@@ -1432,7 +1431,6 @@ void analogix_dp_unbind(struct analogix_dp_device *dp)
- {
- 	analogix_dp_bridge_disable(dp->bridge);
- 	dp->connector.funcs->destroy(&dp->connector);
--	dp->encoder->funcs->destroy(dp->encoder);
- 
- 	if (dp->plat_data->panel) {
- 		if (drm_panel_unprepare(dp->plat_data->panel))
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index f7e5b2c405ed..33319a858f3a 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -185,8 +185,10 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	dp->plat_data.encoder = encoder;
- 
- 	dp->adp = analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
--	if (IS_ERR(dp->adp))
-+	if (IS_ERR(dp->adp)) {
-+		dp->encoder.funcs->destroy(&dp->encoder);
- 		return PTR_ERR(dp->adp);
-+	}
- 
- 	return 0;
- }
-@@ -196,7 +198,8 @@ static void exynos_dp_unbind(struct device *dev, struct device *master,
- {
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 
--	return analogix_dp_unbind(dp->adp);
-+	analogix_dp_unbind(dp->adp);
-+	dp->encoder.funcs->destroy(&dp->encoder);
- }
- 
- static const struct component_ops exynos_dp_ops = {
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index fa0365de31d2..c0fb3f3748f4 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -261,13 +261,8 @@ static struct drm_encoder_helper_funcs rockchip_dp_encoder_helper_funcs = {
- 	.atomic_check = rockchip_dp_drm_encoder_atomic_check,
- };
- 
--static void rockchip_dp_drm_encoder_destroy(struct drm_encoder *encoder)
--{
--	drm_encoder_cleanup(encoder);
--}
--
- static struct drm_encoder_funcs rockchip_dp_encoder_funcs = {
--	.destroy = rockchip_dp_drm_encoder_destroy,
-+	.destroy = drm_encoder_cleanup,
- };
- 
- static int rockchip_dp_of_probe(struct rockchip_dp_device *dp)
-@@ -361,12 +356,13 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 	dp->psr_state = ~EDP_VSC_PSR_STATE_ACTIVE;
- 	INIT_WORK(&dp->psr_work, analogix_dp_psr_work);
- 
--	rockchip_drm_psr_register(&dp->encoder, analogix_dp_psr_set);
--
- 	dp->adp = analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
--	if (IS_ERR(dp->adp))
-+	if (IS_ERR(dp->adp)) {
-+		dp->encoder.funcs->destroy(&dp->encoder);
- 		return PTR_ERR(dp->adp);
-+	}
- 
-+	rockchip_drm_psr_register(&dp->encoder, analogix_dp_psr_set);
- 	return 0;
- }
- 
-@@ -377,6 +373,7 @@ static void rockchip_dp_unbind(struct device *dev, struct device *master,
- 
- 	rockchip_drm_psr_unregister(&dp->encoder);
- 	analogix_dp_unbind(dp->adp);
-+	dp->encoder.funcs->destroy(&dp->encoder);
- }
- 
- static const struct component_ops rockchip_dp_component_ops = {
--- 
-2.11.0
+-Kishon
+> 
+> Changes since v2:
+> 
+> - exported the "calibrate_phy" symbol
+> 
+> Changes since v1:
+> 
+> - added calibrate() callback to phy
+> - used calibrate() instead of reset() to trigger the calibration
+> 
+> Andrzej Pietrasiewicz (1):
+>   drivers: phy: add calibrate method
+> 
+> Vivek Gautam (1):
+>   phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
+> 
+>  drivers/phy/phy-core.c                   |  15 +++
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 183 +++++++++++++++++++++++++++++++
+>  drivers/usb/dwc3/core.c                  |   7 +-
+>  include/linux/phy/phy.h                  |  10 ++
+>  4 files changed, 213 insertions(+), 2 deletions(-)
+> 
