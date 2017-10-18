@@ -1,79 +1,73 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ASoC: samsung: i2s: disable secondary DAI until it gets
- fixed
-Date: Wed, 18 Oct 2017 09:25:34 +0200
-Message-ID: <20171018072534.21204-1-m.szyprowski@samsung.com>
-References: <CGME20171018072552eucas1p2ec41e98c5bc004f6ada02987fd55222a@eucas1p2.samsung.com>
+Subject: Re: [PATCH v3 0/9] Exynos DRM: rewrite IPP subsystem and userspace
+ API
+Date: Wed, 18 Oct 2017 09:41:32 +0200
+Message-ID: <588f72f2-6044-3825-7efd-c079c94bc156@samsung.com>
+References: <CGME20171017110810eucas1p13e4fd9a96b7866324da0f49a356db558@eucas1p1.samsung.com>
+        <20171017110752.25096-1-m.szyprowski@samsung.com>
+        <20171017122456.m7ul76s73hhvddch@phenom.ffwll.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51248 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53335 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935588AbdJRHZ4 (ORCPT
+        with ESMTP id S1762087AbdJRHli (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:25:56 -0400
+        Wed, 18 Oct 2017 03:41:38 -0400
+In-reply-to: <20171017122456.m7ul76s73hhvddch@phenom.ffwll.local>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-Secondary DAI in Exynos I2S driver is not used by any of the currently
-supported boards and it causes problems due to some limitations in the
-ASoC code. Disable it until it gets proper support both by board-specific
-and ASoC core code. Also disable IDMA support, which relies on secondary
-DAI presence.
+Hi Daniel,
 
-This patch fixes following kernel warning:
-samsung-i2s 3830000.i2s: ASoC: Failed to create component debugfs directory
-samsung-i2s 3830000.i2s: ASoC: Failed to create component debugfs directory
-------------[ cut here ]------------
-WARNING: CPU: 3 PID: 82 at fs/proc/generic.c:330 proc_register+0xec/0x10c
-proc_dir_entry 'sub0/prealloc' already registered
-Modules linked in:
-CPU: 3 PID: 82 Comm: kworker/3:1 Not tainted 4.14.0-rc5-next-20171017 #3089
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-Workqueue: events deferred_probe_work_func
-[<c0110114>] (unwind_backtrace) from [<c010c900>] (show_stack+0x10/0x14)
-[<c010c900>] (show_stack) from [<c083e664>] (dump_stack+0x90/0xc8)
-[<c083e664>] (dump_stack) from [<c011d2b8>] (__warn+0xd4/0x100)
-[<c011d2b8>] (__warn) from [<c011d384>] (warn_slowpath_fmt+0x38/0x48)
-[<c011d384>] (warn_slowpath_fmt) from [<c0271268>] (proc_register+0xec/0x10c)
-[<c0271268>] (proc_register) from [<c027130c>] (proc_create_data+0x84/0xc8)
-[<c027130c>] (proc_create_data) from [<c061afbc>] (snd_info_register+0x64/0xcc)
-[<c061afbc>] (snd_info_register) from [<c062a6e0>] (snd_pcm_lib_preallocate_pages1+0x78/0x1a0)
-[<c062a6e0>] (snd_pcm_lib_preallocate_pages1) from [<c063eef4>] (dmaengine_pcm_new+0xa0/0x1ec)
-[<c063eef4>] (dmaengine_pcm_new) from [<c062b9f8>] (snd_soc_platform_drv_pcm_new+0x1c/0x28)
-[<c062b9f8>] (snd_soc_platform_drv_pcm_new) from [<c063d54c>] (soc_new_pcm+0x2f4/0x4f4)
-[<c063d54c>] (soc_new_pcm) from [<c063107c>] (snd_soc_register_card+0xc4c/0xdc4)
-[<c063107c>] (snd_soc_register_card) from [<c063db30>] (devm_snd_soc_register_card+0x34/0x70)
-[<c063db30>] (devm_snd_soc_register_card) from [<c064af60>] (asoc_simple_card_probe+0x230/0x47c)
-[<c064af60>] (asoc_simple_card_probe) from [<c047f8fc>] (platform_drv_probe+0x50/0xb0)
-[<c047f8fc>] (platform_drv_probe) from [<c047dee0>] (driver_probe_device+0x2a0/0x46c)
-[<c047dee0>] (driver_probe_device) from [<c047c0bc>] (bus_for_each_drv+0x44/0x8c)
-[<c047c0bc>] (bus_for_each_drv) from [<c047db50>] (__device_attach+0xa0/0x134)
-[<c047db50>] (__device_attach) from [<c047cf7c>] (bus_probe_device+0x88/0x90)
-[<c047cf7c>] (bus_probe_device) from [<c047d484>] (deferred_probe_work_func+0x3c/0x168)
-[<c047d484>] (deferred_probe_work_func) from [<c01371f8>] (process_one_work+0x188/0x41c)
-[<c01371f8>] (process_one_work) from [<c01374b4>] (process_scheduled_works+0x28/0x38)
-[<c01374b4>] (process_scheduled_works) from [<c01376d4>] (worker_thread+0x210/0x4dc)
-[<c01376d4>] (worker_thread) from [<c013d9cc>] (kthread+0x128/0x164)
-[<c013d9cc>] (kthread) from [<c0108848>] (ret_from_fork+0x14/0x2c)
----[ end trace bad8db6ee771d094 ]--
+On 2017-10-17 14:24, Daniel Vetter wrote:
+> On Tue, Oct 17, 2017 at 01:07:43PM +0200, Marek Szyprowski wrote:
+>> This patchset performs complete rewrite of Exynos DRM IPP subsystem and
+>> its userspace API.
+>>
+>> Why such rewrite is needed? Exynos DRM IPP API is over-engineered in
+>> general, but not really extensible on the other side. It is also buggy,
+>> with significant design flaws:
+>> - Userspace API covers memory-2-memory picture operations together with
+>>    CRTC writeback and duplicating features, which belongs to video plane.
+>> - Lack of support of the all required image formats (for example NV12
+>>    Samsung-tiled cannot be used due to lack of pixel format modifier
+>>    support).
+>> - Userspace API designed only to mimic hardware behaviour, not easy to
+>>    understand.
+>> - Lack of proper input validation in the core, drivers also didn't do that
+>>    correctly, so it was possible to set incorrect parameters and easil
+>>    trigger IOMMU fault or memory trash.
+>> - Drivers were partially disfunctional or supported only a subset of modes.
+>>
+>> Due to the above limitations and issues the Exynos DRM IPP API was not
+>> used by any of the open-source projects. I assume that it is safe to remove
+>> this broken API without any damage to open-source community. All remaining
+>> users (mainly Tizen project related) will be updated to the new version.
+>>
+>> This patchset changes Exynos DRM IPP subsystem to something useful. The
+>> userspace API is much simpler, state-less and easy to understand. Also
+>> the code of the core and driver is significantly smaller and easier to
+>> understand.
+>>
+>> Patches were tested on Exynos4412 based Odroid U3, Exynos5422
+>> Odroid XU3 and Exynos5433 TM2 boards, on top of Linux next-20171016 kernel.
+> When submitting uapi changes, please link to the corresponding userspace
+> work. Otherwise pretty hard to find this stuff.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- sound/soc/samsung/i2s.c | 1 +
- 1 file changed, 1 insertion(+)
+A simple userspace test tool has been sent together with v1:
+https://www.spinics.net/lists/linux-samsung-soc/msg60498.html
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 8d5e1861abb1..233f1c9a4b6c 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1292,6 +1292,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 			}
- 		}
- 	}
-+	quirks &= ~(QUIRK_SEC_DAI | QUIRK_SUPPORTS_IDMA);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pri_dai->addr = devm_ioremap_resource(&pdev->dev, res);
+Tobias Jakobi has added support for this new API to his fork of libdrm and
+mpv video player:
+https://github.com/tobiasjakobi/libdrm/tree/ippv2
+https://github.com/tobiasjakobi/mpv
+
+Best regards
 -- 
-2.14.2
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
