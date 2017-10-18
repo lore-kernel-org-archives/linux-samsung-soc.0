@@ -1,85 +1,97 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/2] extcon: max88743: Add OTG power control to the MUIC
- driver
-Date: Wed, 18 Oct 2017 11:28:01 +0200
-Message-ID: <20171018092802.25390-2-m.szyprowski@samsung.com>
-References: <20171018092802.25390-1-m.szyprowski@samsung.com>
-        <CGME20171018092808eucas1p28a1a35b47d26687997798f68315d2a1f@eucas1p2.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20171018092802.25390-1-m.szyprowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v2 09/11] drm/exynos/hdmi: quirk for support mode
+ timings conversion
+Date: Wed, 18 Oct 2017 11:36:43 +0200
+Message-ID: <4609ed85-1bd0-22d9-b7c8-b887b05d9da9@samsung.com>
+References: <20170929100542.12849-1-a.hajda@samsung.com>
+ <CGME20170929100549eucas1p2053fdf47957c11fa39d0e026267f088c@eucas1p2.samsung.com>
+ <20170929100542.12849-10-a.hajda@samsung.com> <59E5B37C.0@samsung.com>
+ <8201fc31-1070-1971-558b-dce0c952e142@samsung.com>
+ <59E6BD1B.6030201@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <59E6BD1B.6030201@samsung.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Enabling power on VBUS micro-usb pin is required only when passive OTG
-cable is connected. Initially OTG VBUS power control was planned to be
-done in charger driver. However such information is not really available
-from the extcon notifications, so VBUS power control has to be done
-directly in MUIC driver, which has all information about the attached
-accessory.
-
-For example SmartDock is externally powered accessory, provides OTG
-(USB HOST) functionality and use VBUS pin for charging a device battery,
-so the VBUS charging pump should be disabled in such case.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/extcon/extcon-max77843.c     | 16 ++++++++++++++++
- include/linux/mfd/max77843-private.h |  3 +++
- 2 files changed, 19 insertions(+)
-
-diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
-index 6e722d552cf1..217c743405f8 100644
---- a/drivers/extcon/extcon-max77843.c
-+++ b/drivers/extcon/extcon-max77843.c
-@@ -240,6 +240,21 @@ static int max77843_muic_set_path(struct max77843_muic_info *info,
- 	return 0;
- }
- 
-+static void max77843_charger_set_otg_vbus(struct max77843_muic_info *info,
-+		 bool on)
-+{
-+	struct max77693_dev *max77843 = info->max77843;
-+	unsigned int cnfg00;
-+
-+	if (on)
-+		cnfg00 = MAX77843_CHG_OTG_MASK | MAX77843_CHG_BOOST_MASK;
-+	else
-+		cnfg00 = MAX77843_CHG_ENABLE | MAX77843_CHG_BUCK_MASK;
-+
-+	regmap_update_bits(max77843->regmap_chg, MAX77843_CHG_REG_CHG_CNFG_00,
-+			   MAX77843_CHG_MODE_MASK, cnfg00);
-+}
-+
- static int max77843_muic_get_cable_type(struct max77843_muic_info *info,
- 		enum max77843_muic_cable_group group, bool *attached)
- {
-@@ -355,6 +370,7 @@ static int max77843_muic_adc_gnd_handler(struct max77843_muic_info *info)
- 			return ret;
- 
- 		extcon_set_state_sync(info->edev, EXTCON_USB_HOST, attached);
-+		max77843_charger_set_otg_vbus(info, attached);
- 		break;
- 	case MAX77843_MUIC_GND_MHL_VB:
- 	case MAX77843_MUIC_GND_MHL:
-diff --git a/include/linux/mfd/max77843-private.h b/include/linux/mfd/max77843-private.h
-index c19303b0ccfd..0223cd5941c8 100644
---- a/include/linux/mfd/max77843-private.h
-+++ b/include/linux/mfd/max77843-private.h
-@@ -245,10 +245,13 @@ enum max77843_irq_muic {
- #define MAX77843_CHG_OVER_CURRENT_BAT		(0x06 << 4)
- 
- /* MAX77843 CHG_CNFG_00 register */
-+#define MAX77843_CHG_MODE_MASK			0x0f
- #define MAX77843_CHG_DISABLE			0x00
- #define MAX77843_CHG_ENABLE			0x05
- #define MAX77843_CHG_MASK			0x01
-+#define MAX77843_CHG_OTG_MASK			0x02
- #define MAX77843_CHG_BUCK_MASK			0x04
-+#define MAX77843_CHG_BOOST_MASK			0x08
- 
- /* MAX77843 CHG_CNFG_01 register */
- #define MAX77843_CHG_RESTART_THRESHOLD_100	0x00
--- 
-2.14.2
+T24gMTguMTAuMjAxNyAwNDozMSwgSW5raSBEYWUgd3JvdGU6Cj4KPiAyMDE364WEIDEw7JuUIDE3
+7J28IDE3OjA07JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4gT24gMTcuMTAu
+MjAxNyAwOTozOCwgSW5raSBEYWUgd3JvdGU6Cj4+PiAyMDE364WEIDA57JuUIDI57J28IDE5OjA1
+7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+PiBNSVhFUiBpbiBTb0NzIHBy
+aW9yIHRvIEV4eW5vczU0MjAgc3VwcG9ydHMgb25seSA0IHZpZGVvIG1vZGVzOgo+Pj4+IDcyMHg0
+ODAsIDcyMHg1NzYsIDEyODB4NzIwLCAxOTIweDEwODAuIFN1cHBvcnQgZm9yIG90aGVyIG1vZGVz
+Cj4+Pj4gY2FuIGJlIGVuYWJsZWQgYnkgbWFuaXB1bGF0aW5nIHRpbWluZ3Mgb2YgSERNSS4gVG8g
+ZG8gaXQKPj4+PiBhZGp1c3RlZF9tb2RlIHNob3VsZCBjb250YWluIGFjdHVhbCBtb2RlIHNldCBv
+biBjcnRjLgo+Pj4+IFdpdGggdGhpcyBwYXRjaCBpdCBpcyBwb3NzaWJsZSB0byBlbmFibGUgMTAy
+NHg3NjggYW5kIDEyODB4MTAyNAo+Pj4+IG1vZGVzIGluIE1JWEVSLgo+Pj4+Cj4+Pj4gU3VnZ2Vz
+dGVkLWJ5OiBEYW5pZWwgRHJha2UgPGRyYWtlQGVuZGxlc3NtLmNvbT4KPj4+PiBTaWduZWQtb2Zm
+LWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+Pj4+IFJldmlld2VkLWJ5
+OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPj4+PiAtLS0K
+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIHwgMTUgKysrKysrKysr
+KysrKy0tCj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9u
+cygtKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+Pj4+IGluZGV4
+IDcyMjViNjUyMTE0OC4uNGIwODFmNmNmZGNiIDEwMDY0NAo+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2hkbWkuYwo+Pj4+IEBAIC0xMjM5LDYgKzEyMzksMTcgQEAgc3RhdGljIHZvaWQg
+aGRtaV92MTNfbW9kZV9hcHBseShzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPj4+PiAgc3Rh
+dGljIHZvaWQgaGRtaV92MTRfbW9kZV9hcHBseShzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkK
+Pj4+PiAgewo+Pj4+ICAJc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm0gPSAmaGRhdGEtPmVuY29k
+ZXIuY3J0Yy0+c3RhdGUtPm1vZGU7Cj4+Pj4gKwlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqYW0g
+PSAmaGRhdGEtPmVuY29kZXIuY3J0Yy0+c3RhdGUtPmFkanVzdGVkX21vZGU7Cj4+Pj4gKwlpbnQg
+aHF1aXJrID0gMDsKPj4+PiArCj4+Pj4gKwkvKgo+Pj4+ICsJICogSW4gY2FzZSB2aWRlbyBtb2Rl
+IGNvbWluZyBmcm9tIENSVEMgZGlmZmVycyBmcm9tIHJlcXVlc3RlZCBvbmUgSERNSQo+Pj4+ICsJ
+ICogc29tZXRpbWVzIGlzIGFibGUgdG8gYWxtb3N0IHByb3Blcmx5IHBlcmZvcm0gY29udmVyc2lv
+biAtIG9ubHkKPj4+PiArCSAqIGZpcnN0IGxpbmUgaXMgZGlzdG9ydGVkLgo+Pj4+ICsJICovCj4+
+Pj4gKwlpZiAoKG0tPnZkaXNwbGF5ICE9IGFtLT52ZGlzcGxheSkgJiYKPj4+PiArCSAgICAobS0+
+aGRpc3BsYXkgPT0gMTI4MCB8fCBtLT5oZGlzcGxheSA9PSAxMDI0KSkKPj4+PiArCQlocXVpcmsg
+PSAyNTg7Cj4+PiBBbmRyemVqLAo+Pj4KPj4+IFRoZSBkaXN0b3J0ZWQgdmFsdWUgY291bGRuJ3Qg
+YmUgZGVzY3JpYmVkIGxvZ2ljYWxseT8gSnVzdCBJIHdvbmRlciB3aHkgdGhlIGRpZmZlcmVuY2Ug
+aGFwcGVucy4KPj4gV2l0aG91dCBsb3cgbGV2ZWwgZG9jdW1lbnRhdGlvbiBvZiB0aGUgSVAgb25l
+IGNvdWxkIG9ubHkgZ3Vlc3Mgd2hhdAo+PiBoYXBwZW5zIHRoZXJlLgo+PiBJbiBjYXNlIG9mIDEw
+MjR4NzY4IG9uZSBjYW4gcmVhc29uIGFzIGZvbGxvd3M6Cj4+IC0gbWl4ZXIgc2VuZHMgaW1hZ2Ug
+aW4gZm9ybWF0IDEyODB4NzIwLCBzbyBpdCBzZW5kcyAxMjgwIC0gMTAyNCA9IDI1Ngo+PiBwaXhl
+bHMgdG9vIG11Y2gsIHNvIGlmIHdlIHRyaW0gaXQgaW4gSERNSSBieSAyNTYgaXQgc2hvdWxkIGRp
+c3BsYXkgaXQKPj4gY29ycmVjdGx5LAo+PiAtIGJ1dCBhbm90aGVyIHF1aXJrIGZldyBsaW5lcyBs
+YXRlciBzdXBwcmVzcyAyIHBpeGVscyBmcm9tCj4+IGhzeW5jXyhzdGFydCxlbmQpLCBzbyB0byBi
+YWxhbmNlIGl0IHdlIHNob3VsZCBhZGQgdGhlc2UgcGl4ZWxzIGhlcmUsIHNvCj4+IGZpbmFsbHkg
+d2UgaGF2ZSAyNTYgKyAyID0gMjU4Lgo+Pgo+PiBUaGlzIGV4cGxhbmF0aW9uIHNlZW1zIHF1aXRl
+IHJlYXNvbmFibGUsIGV4Y2VwdCBpdCBkb2VzIG5vdCB3b3JrIGZvcgo+PiAxMjgweDEwMjQgbW9k
+ZS4KPiBXZSBhcmVuJ3Qgc3VyZSAxMDAlIGJ1dCBhYm92ZSBjb21tZW50IHdvdWxkIGJlIGhlbHBm
+dWwgdG8gb3RoZXIgZGV2ZWxvcGVycy4gU28gY291bGQgeW91IGxlYXZlIHRoZSBjb21tZW50PwoK
+SSBoYXZlIG1hZGUgYSBtaXN0YWtlLCBpbiBjYXNlIG9mIHJlcXVlc3RlZCAxMDI0eDc2OCBtb2Rl
+IG1peGVyIHNlbmRzCmltYWdlIGluIDE5MjB4MTA4MCBmb3JtYXQuClNvIHRoZSB3aG9sZSByZWFz
+b25pbmcgZG9lcyBub3QgbWFrZSBzZW5zZS4KClJlZ2FyZHMKQW5kcnplagoKPgo+IFRoYW5rcywK
+PiBJbmtpIERhZQo+Cj4+IFJlZ2FyZHMKPj4gQW5kcnplago+Pgo+Pj4gVGhhbmtzLAo+Pj4gSW5r
+aSBEYWUKPj4+Cj4+Pj4gIAo+Pj4+ICAJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX0hfQkxB
+TktfMCwgMiwgbS0+aHRvdGFsIC0gbS0+aGRpc3BsYXkpOwo+Pj4+ICAJaGRtaV9yZWdfd3JpdGV2
+KGhkYXRhLCBIRE1JX1ZfTElORV8wLCAyLCBtLT52dG90YWwpOwo+Pj4+IEBAIC0xMzMyLDggKzEz
+NDMsOCBAQCBzdGF0aWMgdm9pZCBoZG1pX3YxNF9tb2RlX2FwcGx5KHN0cnVjdCBoZG1pX2NvbnRl
+eHQgKmhkYXRhKQo+Pj4+ICAJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5F
+X0FGVF9QWExfNl8wLCAyLCAweGZmZmYpOwo+Pj4+ICAKPj4+PiAgCWhkbWlfcmVnX3dyaXRldiho
+ZGF0YSwgSERNSV9UR19IX0ZTWl9MLCAyLCBtLT5odG90YWwpOwo+Pj4+IC0JaGRtaV9yZWdfd3Jp
+dGV2KGhkYXRhLCBIRE1JX1RHX0hBQ1RfU1RfTCwgMiwgbS0+aHRvdGFsIC0gbS0+aGRpc3BsYXkp
+Owo+Pj4+IC0JaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1RHX0hBQ1RfU1pfTCwgMiwgbS0+
+aGRpc3BsYXkpOwo+Pj4+ICsJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1RHX0hBQ1RfU1Rf
+TCwgMiwgbS0+aHRvdGFsIC0gbS0+aGRpc3BsYXkgLSBocXVpcmspOwo+Pj4+ICsJaGRtaV9yZWdf
+d3JpdGV2KGhkYXRhLCBIRE1JX1RHX0hBQ1RfU1pfTCwgMiwgbS0+aGRpc3BsYXkgKyBocXVpcmsp
+Owo+Pj4+ICAJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1RHX1ZfRlNaX0wsIDIsIG0tPnZ0
+b3RhbCk7Cj4+Pj4gIAlpZiAoaGRhdGEtPmRydl9kYXRhID09ICZleHlub3M1NDMzX2hkbWlfZHJp
+dmVyX2RhdGEpCj4+Pj4gIAkJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1RHX0RFQ09OX0VO
+LCAxKTsKPj4+Pgo+Pgo+Pgo+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
