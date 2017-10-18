@@ -1,102 +1,138 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC PATCH 1/4] dt-bindings: add bindings for USB physical
- connector
-Date: Wed, 18 Oct 2017 18:11:25 +0300
-Message-ID: <3079487.ip075DyLUk@avalon>
-References: <20170928130730.8747-1-a.hajda@samsung.com>
- <CGME20170928130735eucas1p1da4f062b6948350289bba9c8bc911dd7@eucas1p1.samsung.com>
- <20170928130730.8747-2-a.hajda@samsung.com>
+Subject: Re: [RFC PATCH 1/4] dt-bindings: add bindings for USB physical connector
+Date: Wed, 18 Oct 2017 18:47:01 +0300
+Message-ID: <2206421.ioyYkBuUpd@avalon>
+References: <20170928130730.8747-1-a.hajda@samsung.com> <20170928130730.8747-2-a.hajda@samsung.com> <3079487.ip075DyLUk@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170928130730.8747-2-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:43112 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751339AbdJRPqm (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 18 Oct 2017 11:46:42 -0400
+In-Reply-To: <3079487.ip075DyLUk@avalon>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Archit Taneja <architt@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 
-SGkgQW5kcnplaiwKClRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoLgoKT24gVGh1cnNkYXksIDI4IFNl
-cHRlbWJlciAyMDE3IDE2OjA3OjI3IEVFU1QgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBUaGVzZSBi
-aW5kaW5ncyBhbGxvd3MgdG8gZGVzY3JpYmUgbW9zdCBrbm93biBzdGFuZGFyZCBVU0IgY29ubmVj
-dG9ycwo+IGFuZCBpdCBzaG91bGQgYmUgcG9zc2libGUgdG8gZXh0ZW5kIGl0IGlmIG5lY2Vzc2Fy
-eS4KPiBVU0IgY29ubmVjdG9ycywgYmVzaWRlIFVTQiBjYW4gYmUgdXNlZCB0byByb3V0ZSBvdGhl
-ciBwcm90b2NvbHMsCj4gZm9yIGV4YW1wbGUgVUFSVCwgQXVkaW8sIE1ITC4gSW4gc3VjaCBjYXNl
-IGV2ZXJ5IGRldmljZSBwYXNzaW5nIGRhdGEKPiB0aHJvdWdoIHRoZSBjb25uZWN0b3Igc2hvdWxk
-IGhhdmUgYXBwcm9wcmlhdGUgZ3JhcGggYmluZGluZ3MuCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5k
-cnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiBUaGVyZSBhcmUgZmV3IHRo
-aW5ncyBmb3IgZGlzY3Vzc2lvbiAoSU1PKToKPiAxLiB2ZW5kb3Igc3BlY2lmaWMgY29ubmVjdG9y
-cywgSSBoYXZlIGFkZGVkIHRoZW0gaGVyZSwgYnV0IG1heWJlIGJldHRlciBpcwo+ICAgIHRvIHBs
-YWNlIHRoZW0gaW4gc2VwYXJhdGUgZmlsZXMuCgpJdCdzIHVzZWZ1bCB0byBoYXZlIG9uZSB2ZW5k
-b3Itc3BlY2lmaWMgY29tcGF0aWJsZSBzdHJpbmcgdG8gYmUgdXNlZCBpbiB0aGUgCmV4YW1wbGUu
-IFdlIGNvdWxkIHNwbGl0IHZlbmRvci1zcGVjaWZpYyBjb25uZWN0b3JzIHRvIHNlcGFyYXRlIGZp
-bGVzIGxhdGVyIGlmIApuZWVkZWQsIGJ1dCBmb3Igbm93IEknbSBmaW5lIGtlZXBpbmcgdGhlbSBo
-ZXJlLgoKPiAyLiBwaHlzaWNhbCBjb25uZWN0b3IgZGVzY3JpcHRpb24gLSBJIGhhdmUgc3BsaXQg
-aXQgdG8gdGhyZWUgcHJvcGVydGllczoKPiAgICB0eXBlKGEsYixhYixjKSwgbWF4LW1vZGUobHMs
-ZnMsaHMsc3Msc3MrKSwgc2l6ZShtaW5pLG1pY3JvLHBvd2VyZWQpLgo+ICAgIFRoaXMgdHJpcGxl
-ZCBpcyBhYmxlIHRvIGRlc2NyaWJlIGFsbCBVU0Itc3RhbmRhcmQgY29ubmVjdG9ycywgYnV0IHRo
-ZXJlCj4gICAgYXJlIGFsc28gaW1wb3NzaWJsZSBjb21iaW5hdGlvbnMsIGZvciBleGFtcGxlKGMs
-ICosIG1pY3JvKS4gTWF5YmUgYmV0dGVyCj4gICAgd291bGQgYmUgdG8ganVzdCBlbnVtZXJhdGUg
-YWxsIHBvc3NpYmxlIGNvbm5lY3RvcnMgaW4gaW5jbHVkZSBmaWxlLgoKSSBkb24ndCBoYXZlIGEg
-c3Ryb25nIG9waW5pb24gb24gdGhpcy4gVGhlIHRocmVlIHByb3BlcnRpZXMgYXJlIG5pY2VseSAK
-ZGVzY3JpcHRpdmUuIFlvdSBtaWdodCB3YW50IHRvIGxpc3QgdGhlIHZhbGlkIGNvbWJpbmF0aW9u
-cyBpbiB0aGUgYmluZGluZ3MgCnRob3VnaC4KCj4gMy4gTnVtYmVyaW5nIG9mIHBvcnQvcmVtb3Rl
-IG5vZGVzLCBjdXJyZW50bHkgb25seSAwIGlzIGFzc2lnbmVkIGZvcgo+IEludGVyZmFjZSBDb250
-cm9sbGVyLiBNYXliZSBvdGhlciBmdW5jdGlvbnMgc2hvdWxkIGJlIGFsc28gYXNzaWduZWQ6Cj4g
-ICAgSFMsIFNTLCBDQywgU0JVLCAuLi4gd2hhdGV2ZXIuIE1heWJlIGZ1bmN0aW9ucyBzaG91bGQg
-YmUgZGVzY3JpYmVkCj4gICAgYXMgYW4gYWRkaXRpb25hbCBwcm9wZXJ0eSBvZiByZW1vdGUgbm9k
-ZT8KCkdpdmVuIHRoYXQgb25lIG9mIHRoZSBtYWluIHJlYXNvbnMgdGhpcyBiaW5kaW5nIGlzIG5l
-ZWRlZCBpcyB0byBkZXNjcmliZSBNSEwgCmNvbm5lY3Rpb24gdG8gYSBVU0IgY29ubmVjdG9yLCBJ
-IHRoaW5rIHdlJ2xsIG5lZWQgdG8gZGVmaW5lIGFkZGl0aW9uYWwgCmZ1bmN0aW9ucywgeWVzLiBJ
-J20gbm90IHN1cmUgeWV0IGhvdyB0aGF0IHNob3VsZCBsb29rIGxpa2UgdGhvdWdoLgoKPiAtLS0K
-PiAgLi4uL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dCAgICAgICAgICAgfCA0
-OSArKysrKysrKysrKysrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCA0OSBpbnNlcnRpb25zKCsp
-Cj4gIGNyZWF0ZSBtb2RlIDEwMDY0NAo+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci50eHQKPiAKPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dAo+IGIv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9y
-LnR4dCBuZXcgZmlsZQo+IG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMDAwMDAwLi5mM2E0ZTg1
-MTIyZDUKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dAo+IEBAIC0wLDAgKzEsNDkgQEAKPiAr
-VVNCIENvbm5lY3Rvcgo+ICs9PT09PT09PT09PT09Cj4gKwo+ICtSZXF1aXJlZCBwcm9wZXJ0aWVz
-Ogo+ICstIGNvbXBhdGlibGU6ICJ1c2ItY29ubmVjdG9yIgo+ICsgIGNvbm5lY3RvcnMgd2l0aCB2
-ZW5kb3Igc3BlY2lmaWMgZXh0ZW5zaW9ucyBjYW4gYWRkIG9uZSBvZiBhZGRpdGlvbmFsCj4gKyAg
-Y29tcGF0aWJsZXM6Cj4gKyAgICAic2Ftc3VuZyx1c2ItY29ubmVjdG9yLTExcGluIjogMTEtcGlu
-IFNhbXN1bmcgbWljcm8tVVNCIGNvbm5lY3Rvcgo+ICstIHR5cGU6IHRoZSBVU0IgY29ubmVjdG9y
-IHR5cGU6ICJhIiwgImIiLCAiYWIiLCAiYyIKPiArLSBtYXgtbW9kZTogbWF4IFVTQiBzcGVlZCBt
-b2RlIHN1cHBvcnRlZCBieSB0aGUgY29ubmVjdG9yOgo+ICsgICJscyIsICJmcyIsICJocyIsICJz
-cyIsICJzcysiCj4gKwo+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOgo+ICstIGxhYmVsOiBhIHN5bWJv
-bGljIG5hbWUgZm9yIHRoZSBjb25uZWN0b3IKPiArLSBzaXplOiBzaXplIG9mIHRoZSBjb25uZWN0
-b3IsIHNob3VsZCBiZSBzcGVjaWZpZWQgaW4gY2FzZSBvZgo+ICsgIG5vbi1zdGFuZGFyZCBVU0Ig
-Y29ubmVjdG9yczogIm1pbmkiLCAibWljcm8iLCAicG93ZXJlZCIKCiJub24tc3RhbmRhcmQiIHNv
-dW5kcyBsaWtlICJ2ZW5kb3Itc3BlY2lmaWMiLCB3aGlsZSBJIGFzc3VtZSB5b3UncmUgdGFsa2lu
-ZyAKYWJvdXQgdGhlIHNpemUuIFRoZSBVU0Igc3BlY2lmaWNhdGlvbiB1c2VzIHRoZSB0ZXJtICJz
-dGFuZGFyZCIgZm9yIHRoaXMgCnB1cnBvc2UsIHNvIGl0J3MgaGFyZCB0byB1c2UgYW5vdGhlciBv
-bmUgdGhhdCB3b3VsZCBjb252ZXkgdGhlIHJpZ2h0IG1lYW5pbmcgCnByZWNpc2VseS4gTWF5YmUg
-Im5vbi1zdGFuZGFyZCAoJ2xhcmdlJykgVVNCIGNvbm5lY3RvciBzaXplcyIgPwoKPiArUmVxdWly
-ZWQgbm9kZXM6Cj4gKy0gYW55IGRhdGEgYnVzIHRvIHRoZSBjb25uZWN0b3Igc2hvdWxkIGJlIG1v
-ZGVsZWQgdXNpbmcgdGhlCj4gKyAgT0YgZ3JhcGggYmluZGluZ3Mgc3BlY2lmaWVkIGluIGJpbmRp
-bmdzL2dyYXBoLnR4dC4KPiArICBUaGVyZSBzaG91bGQgYmUgZXhhY3RseSBvbmUgcG9ydCB3aXRo
-IGF0IGxlYXN0IG9uZSBlbmRwb2ludCB0bwo+ICsgIGRpZmZlcmVudCBkZXZpY2Ugbm9kZXMuIFRo
-ZSBmaXJzdCBlbmRwb2ludCAocmVnID0gPDA+KSBzaG91bGQKPiArICBwb2ludCB0byBVU0IgSW50
-ZXJmYWNlIENvbnRyb2xsZXIuCj4gKwo+ICtFeGFtcGxlCj4gKy0tLS0tLS0KPiArCj4gK211c2Jf
-Y29uOiBjb25uZWN0b3Igewo+ICsJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHVzYi1jb25uZWN0b3It
-MTFwaW4iLCAidXNiLWNvbm5lY3RvciI7Cj4gKwlsYWJlbCA9ICJ1c2IiOwo+ICsJdHlwZSA9ICJi
-IjsKPiArCXNpemUgPSAibWljcm8iOwo+ICsJbWF4LW1vZGUgPSAiaHMiOwo+ICsKPiArCXBvcnQg
-ewo+ICsJCSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ICsJCSNzaXplLWNlbGxzID0gPDA+Owo+ICsK
-PiArCQltdXNiX2Nvbl91c2JfaW46IGVuZHBvaW50QDAgewo+ICsJCQlyZWcgPSA8MD47Cj4gKwkJ
-CXJlbW90ZS1lbmRwb2ludCA9IDwmbXVpY191c2Jfb3V0PjsKPiArCQl9Owo+ICsKPiArCQltdXNi
-X2Nvbl9taGxfaW46IGVuZHBvaW50QDEgewo+ICsJCQlyZWcgPSA8MT47Cj4gKwkJCXJlbW90ZS1l
-bmRwb2ludCA9IDwmbWhsX291dD47Cj4gKwkJfTsKPiArCX07Cj4gK307CgotLSAKUmVnYXJkcywK
-CkxhdXJlbnQgUGluY2hhcnQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Hi Andrzej,
+
+On Wednesday, 18 October 2017 18:11:25 EEST Laurent Pinchart wrote:
+> On Thursday, 28 September 2017 16:07:27 EEST Andrzej Hajda wrote:
+> > These bindings allows to describe most known standard USB connectors
+> > and it should be possible to extend it if necessary.
+> > USB connectors, beside USB can be used to route other protocols,
+> > for example UART, Audio, MHL. In such case every device passing data
+> > through the connector should have appropriate graph bindings.
+> > 
+> > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> > ---
+> > There are few things for discussion (IMO):
+> > 1. vendor specific connectors, I have added them here, but maybe better is
+> > 
+> >    to place them in separate files.
+> 
+> It's useful to have one vendor-specific compatible string to be used in the
+> example. We could split vendor-specific connectors to separate files later
+> if needed, but for now I'm fine keeping them here.
+> 
+> > 2. physical connector description - I have split it to three properties:
+> >    type(a,b,ab,c), max-mode(ls,fs,hs,ss,ss+), size(mini,micro,powered).
+> >    This tripled is able to describe all USB-standard connectors, but there
+> >    are also impossible combinations, for example(c, *, micro). Maybe
+> >    better
+> >    would be to just enumerate all possible connectors in include file.
+> 
+> I don't have a strong opinion on this. The three properties are nicely
+> descriptive. You might want to list the valid combinations in the bindings
+> though.
+> 
+> > 3. Numbering of port/remote nodes, currently only 0 is assigned for
+> > 
+> > Interface Controller. Maybe other functions should be also assigned:
+> >    HS, SS, CC, SBU, ... whatever. Maybe functions should be described
+> >    as an additional property of remote node?
+> 
+> Given that one of the main reasons this binding is needed is to describe MHL
+> connection to a USB connector, I think we'll need to define additional
+> functions, yes. I'm not sure yet how that should look like though.
+> > ---
+> > 
+> >  .../bindings/connector/usb-connector.txt           | 49 +++++++++++++++++
+> >  1 file changed, 49 insertions(+)
+> >  create mode 100644
+> > 
+> > Documentation/devicetree/bindings/connector/usb-connector.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt
+> > b/Documentation/devicetree/bindings/connector/usb-connector.txt new file
+> > mode 100644
+> > index 000000000000..f3a4e85122d5
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
+> > @@ -0,0 +1,49 @@
+> > +USB Connector
+> > +=============
+> > +
+> > +Required properties:
+> > +- compatible: "usb-connector"
+> > +  connectors with vendor specific extensions can add one of additional
+> > +  compatibles:
+> > +    "samsung,usb-connector-11pin": 11-pin Samsung micro-USB connector
+> > +- type: the USB connector type: "a", "b", "ab", "c"
+> > +- max-mode: max USB speed mode supported by the connector:
+> > +  "ls", "fs", "hs", "ss", "ss+"
+> > +
+> > +Optional properties:
+> > +- label: a symbolic name for the connector
+> > +- size: size of the connector, should be specified in case of
+> > +  non-standard USB connectors: "mini", "micro", "powered"
+> 
+> "non-standard" sounds like "vendor-specific", while I assume you're talking
+> about the size. The USB specification uses the term "standard" for this
+> purpose, so it's hard to use another one that would convey the right meaning
+> precisely. Maybe "non-standard ('large') USB connector sizes" ?
+> 
+> > +Required nodes:
+> > +- any data bus to the connector should be modeled using the
+> > +  OF graph bindings specified in bindings/graph.txt.
+> > +  There should be exactly one port with at least one endpoint to
+> > +  different device nodes. The first endpoint (reg = <0>) should
+> > +  point to USB Interface Controller.
+> > +
+> > +Example
+> > +-------
+> > +
+> > +musb_con: connector {
+> > +	compatible = "samsung,usb-connector-11pin", "usb-connector";
+> > +	label = "usb";
+> > +	type = "b";
+> > +	size = "micro";
+> > +	max-mode = "hs";
+> > +
+> > +	port {
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +
+> > +		musb_con_usb_in: endpoint@0 {
+> > +			reg = <0>;
+> > +			remote-endpoint = <&muic_usb_out>;
+> > +		};
+> > +
+> > +		musb_con_mhl_in: endpoint@1 {
+> > +			reg = <1>;
+> > +			remote-endpoint = <&mhl_out>;
+> > +		};
+> > +	};
+> > +};
+
+One more comment, do I assume correctly that the Samsung 11-pin connector 
+carries USB and MHL on different pins ?
+
+-- 
+Regards,
+
+Laurent Pinchart
