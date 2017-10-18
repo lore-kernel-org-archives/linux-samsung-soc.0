@@ -1,55 +1,75 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [RFC PATCH v4 6/8] drm/bridge/analogix: Do not use device's drvdata
-Date: Tue, 17 Oct 2017 19:43:56 -0400
-Message-ID: <000101d347a1$cd216160$67642420$@gmail.com>
-References: <20171017101624.12506-1-jeffy.chen@rock-chips.com> <20171017101624.12506-7-jeffy.chen@rock-chips.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 8/8] PM / devfreq: exynos-bus: Register cooling
+ device
+Date: Wed, 18 Oct 2017 11:08:28 +0900
+Message-ID: <59E6B79C.2040000@samsung.com>
+References: <CGME20171013074837epcas1p49957bd030fc1a27cc845d63c50ad0aba@epcas1p4.samsung.com>
+        <1507880904-31956-1-git-send-email-cw00.choi@samsung.com>
+        <1507880904-31956-9-git-send-email-cw00.choi@samsung.com>
+        <CAJ0PZbRkfNt5eQK5qzunAnFiGmwEF1Dj-TKuqXNhxhN=BxzVEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171017101624.12506-7-jeffy.chen@rock-chips.com>
-Content-language: en-us
+In-reply-to: <CAJ0PZbRkfNt5eQK5qzunAnFiGmwEF1Dj-TKuqXNhxhN=BxzVEw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jeffy Chen' <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org
-Cc: dmitry.torokhov@gmail.com, heiko@sntech.de, briannorris@chromium.org, rjw@rjwysocki.net, dianders@chromium.org, tfiga@chromium.org, broonie@kernel.org, seanpaul@chromium.org, 'Andrzej Hajda' <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, 'Caesar Wang' <wxt@rock-chips.com>, 'David Airlie' <airlied@linux.ie>, 'Laurent Pinchart' <Laurent.pinchart@ideasonboard.com>, linux-samsung-soc@vger.kernel.org, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Inki Dae' <inki.dae@samsung.com>, linux-rockchip@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Tomeu Vizoso' <tomeu.vizoso@collabora.com>, 'Vincent Abriou' <vincent.abri>
+To: myungjoo.ham@gmail.com
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, chanwoo@kernel.org, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, LKML <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, October 17, 2017 6:16 AM, Jeffy Chen wrote:
-> 
-> From: Tomasz Figa <tfiga@chromium.org>
-> 
-> The driver that instantiates the bridge should own the drvdata, as all
-> driver model callbacks (probe, remove, shutdown, PM ops, etc.) are also
-> owned by its driver struct. Moreover, storing two different pointer
-> types in driver data depending on driver initialization status is barely
-> a good practice and in fact has led to many bugs in this driver.
-> 
-> Let's clean up this mess and change Analogix entry points to simply
-> accept some opaque struct pointer, adjusting their users at the same
-> time to avoid breaking the compilation.
-> 
-> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Hi,
 
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
+On 2017년 10월 18일 00:11, MyungJoo Ham wrote:
+> On Fri, Oct 13, 2017 at 4:48 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> This patch registers the Exynos Bus-Frequency scaling device
+>> as a cooling device of thermal management.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Cc: Kukjin Kim <kgene@kernel.org>
+>> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+>> Cc: linux-samsung-soc@vger.kernel.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+> 
+> I've got a question below.
+> 
+>> ---
+>>  drivers/devfreq/exynos-bus.c | 27 +++++++++++++++++++++++++++
+>>  1 file changed, 27 insertions(+)
+>>
+>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+>> index c25658b26598..1c7521b65c2f 100644
+> []> @@ -468,6 +471,19 @@ static int exynos_bus_probe(struct
+> platform_device *pdev)
+>>                 goto err;
+>>         }
+>>
+>> +       /*
+>> +        * Register devfreq cooling device if thermal DT code
+>> +        * takes care of matching them.
+>> +        */
+>> +       if (of_find_property(np, "#cooling-cells", NULL)) {
+>> +               bus->cdev = of_devfreq_cooling_register(np, bus->devfreq);
+>> +               if (IS_ERR(bus->cdev)) {
+>> +                       dev_err(dev, "running exynos-bus without cooling device\n");
+>> +                       bus->cdev = NULL;
+>> +               }
+>> +       }
+>> +       of_node_put(np);
+> 
+> Is this of_node_put() is a pair of of_find_property? or for something else?
+> (do you need to call put for of_find_property? or for something else?
+> I'm not seeing a function with "get")
 
-Best regards,
-Jingoo Han
+You're right. The of_node_put(np) call is unneeded.
+Actually, the extcon-bus.c have to use the of_node_get instead of accessing
+the 'dev->of_node' directly.
 
-> ---
-> 
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2: None
-> 
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 50 +++++++++--------
-> -----
->  drivers/gpu/drm/exynos/exynos_dp.c                 | 26 ++++++-----
->  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 47
-+++++++++++-------
-> --
->  include/drm/bridge/analogix_dp.h                   | 19 ++++----
->  4 files changed, 73 insertions(+), 69 deletions(-)
-> 
+And, when I test this patch, I got a bug related to passive governor.
+I need more time for debugging and redevelopment.
+So, I'll drop this patch on next patchset (v5).
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
