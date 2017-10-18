@@ -1,47 +1,86 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 0/2] MAX77843-extcon: add proper OTG and Dock (OTG+MHL)
- support
-Date: Wed, 18 Oct 2017 11:56:20 +0200
-Message-ID: <20171018095622.23738-1-m.szyprowski@samsung.com>
-References: <CGME20171018095630eucas1p1dd88e65e6519a22c6d685ae77f2c41f5@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36208 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933038AbdJRJ4e (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 05:56:34 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 1/2] extcon: max77843: Add OTG power control to the MUIC
+ driver
+Date: Wed, 18 Oct 2017 11:56:21 +0200
+Message-ID: <20171018095622.23738-2-m.szyprowski@samsung.com>
+References: <20171018095622.23738-1-m.szyprowski@samsung.com>
+        <CGME20171018095630eucas1p263041d2da8d87aef67162fc13a01affb@eucas1p2.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20171018095622.23738-1-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi!
+Enabling power on VBUS micro-usb pin is required only when passive OTG
+cable is connected. Initially OTG VBUS power control was planned to be
+done in charger driver. However such information is not really available
+from the extcon notifications, so VBUS power control has to be done
+directly in MUIC driver, which has all information about the attached
+accessory.
 
-This patchset enables proper detection and support for the following
-micro USB accessories: standard OTG cable (passive) and so called
-SmartDock (a Dock with OTG and MHL features).
+For example SmartDock is externally powered accessory, provides OTG
+(USB HOST) functionality and use VBUS pin for charging a device battery,
+so the VBUS charging pump should be disabled in such case.
 
-Tested on Exynos5433 TM2 board.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/extcon/extcon-max77843.c     | 16 ++++++++++++++++
+ include/linux/mfd/max77843-private.h |  3 +++
+ 2 files changed, 19 insertions(+)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-Changelog:
-v2:
-- fixed typo in subject (max88743 to max77843)
-- added Chanwoo acks
-
-v1:
-- initial version
-
-Marek Szyprowski (2):
-  extcon: max88743: Add OTG power control to the MUIC driver
-  extcon: max88743: Add support for SmartDock accessory
-
- drivers/extcon/extcon-max77843.c     | 93 ++++++++++++++++++++++++++++++------
- include/linux/mfd/max77843-private.h |  5 ++
- 2 files changed, 84 insertions(+), 14 deletions(-)
-
+diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
+index 6e722d552cf1..217c743405f8 100644
+--- a/drivers/extcon/extcon-max77843.c
++++ b/drivers/extcon/extcon-max77843.c
+@@ -240,6 +240,21 @@ static int max77843_muic_set_path(struct max77843_muic_info *info,
+ 	return 0;
+ }
+ 
++static void max77843_charger_set_otg_vbus(struct max77843_muic_info *info,
++		 bool on)
++{
++	struct max77693_dev *max77843 = info->max77843;
++	unsigned int cnfg00;
++
++	if (on)
++		cnfg00 = MAX77843_CHG_OTG_MASK | MAX77843_CHG_BOOST_MASK;
++	else
++		cnfg00 = MAX77843_CHG_ENABLE | MAX77843_CHG_BUCK_MASK;
++
++	regmap_update_bits(max77843->regmap_chg, MAX77843_CHG_REG_CHG_CNFG_00,
++			   MAX77843_CHG_MODE_MASK, cnfg00);
++}
++
+ static int max77843_muic_get_cable_type(struct max77843_muic_info *info,
+ 		enum max77843_muic_cable_group group, bool *attached)
+ {
+@@ -355,6 +370,7 @@ static int max77843_muic_adc_gnd_handler(struct max77843_muic_info *info)
+ 			return ret;
+ 
+ 		extcon_set_state_sync(info->edev, EXTCON_USB_HOST, attached);
++		max77843_charger_set_otg_vbus(info, attached);
+ 		break;
+ 	case MAX77843_MUIC_GND_MHL_VB:
+ 	case MAX77843_MUIC_GND_MHL:
+diff --git a/include/linux/mfd/max77843-private.h b/include/linux/mfd/max77843-private.h
+index c19303b0ccfd..0223cd5941c8 100644
+--- a/include/linux/mfd/max77843-private.h
++++ b/include/linux/mfd/max77843-private.h
+@@ -245,10 +245,13 @@ enum max77843_irq_muic {
+ #define MAX77843_CHG_OVER_CURRENT_BAT		(0x06 << 4)
+ 
+ /* MAX77843 CHG_CNFG_00 register */
++#define MAX77843_CHG_MODE_MASK			0x0f
+ #define MAX77843_CHG_DISABLE			0x00
+ #define MAX77843_CHG_ENABLE			0x05
+ #define MAX77843_CHG_MASK			0x01
++#define MAX77843_CHG_OTG_MASK			0x02
+ #define MAX77843_CHG_BUCK_MASK			0x04
++#define MAX77843_CHG_BOOST_MASK			0x08
+ 
+ /* MAX77843 CHG_CNFG_01 register */
+ #define MAX77843_CHG_RESTART_THRESHOLD_100	0x00
 -- 
 2.14.2
