@@ -1,321 +1,106 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] media: s5p-mfc: Add support for V4L2_MEMORY_DMABUF type
-Date: Fri, 20 Oct 2017 15:59:49 +0200
-Message-ID: <acd3bfd1-991d-4f39-603c-5d07b90ebb98@math.uni-bielefeld.de>
-References: <CGME20171020101455eucas1p1ad826b685fab9d93bb5f12b2b27096c6@eucas1p1.samsung.com>
- <20171020101433.30119-1-m.szyprowski@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 0/9] Enable dw-mmc multi-card support
+Date: Fri, 20 Oct 2017 23:06:07 +0900
+Message-ID: <f71d94dc-7277-8675-c21e-9c2ec77174e7@samsung.com>
+References: <cover.1507315433.git.lsun@mellanox.com>
+        <8e433531-8f67-d575-635e-c6ced29f6804@rock-chips.com>
+        <CGME20171017155217epcas3p4de2f27b921ce77234a2d3e46e4b17473@epcas3p4.samsung.com>
+        <AM2PR05MB07533A822C7CCBA7111FD58FA14C0@AM2PR05MB0753.eurprd05.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:38818 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751096AbdJTN7y (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:30050 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751493AbdJTOGL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 09:59:54 -0400
-In-Reply-To: <20171020101433.30119-1-m.szyprowski@samsung.com>
+        Fri, 20 Oct 2017 10:06:11 -0400
+In-reply-to: <AM2PR05MB07533A822C7CCBA7111FD58FA14C0@AM2PR05MB0753.eurprd05.prod.outlook.com>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, JaeChul Lee <jcsing.lee@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>
+To: Liming Sun <lsun@mellanox.com>, Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chris Metcalf <cmetcalf@mellanox.com>
 
-Hey Marek and others,
+Sorry for late this..
 
-just wanted to point out that I've also played around with Seung-Woo' patch for
-a while. However this patch alone is very much incomplete.
-
-In particular this is missing:
-- At least v5 MFC hw needs source buffers to be also writable, so dma mapping
-needs to be setup bidirectional.
-- Like with mmap, all buffers need to be setup before decoding can begin. This
-is due to how MFC hw gets initialized. dmabufs that are added later are not
-going to be used before MFC hw isn't reinitialized.
-- Removing dmabufs, or replacing them seems to be impossible with the current
-code architecture.
-
-I had extended samsung-utils with some C++ app to test stuff when I was looking
-into this. You can find the code here:
-https://github.com/tobiasjakobi/samsung-utils/tree/devel/v4l2-mfc-drm-direct
-
-Now here is what happens. I allocate N buffer objects in DRM land to be used as
-destination for the MFC decoder. The BOs are exported, so that I can then use
-them in V4L2 space. I have to queue n (with n < N) buffers before I can start
-the MFC engine.
-
-If I do start the engine at that point (n buffers queued), I soon get an IOMMU
-pagefault. I need to queue all N buffers before anything works at all. Queueing
-a buffer the first time also registers it, and this has to happen before the MFC
-hw is initialized.
-
-In particular I can't just allocate more buffers from DRM and use them here
-_after_ decoding has started.
-
-To me it looks like the MFC code was never written with dmabuf in mind. It's
-centered around a static memory setup that is fixed before decoding begins.
-
-Anyway, just my 2 cents :)
-
-- Tobias
-
-
-Marek Szyprowski wrote:
-> From: Seung-Woo Kim <sw0312.kim@samsung.com>
+On 10/18/2017 12:52 AM, Liming Sun wrote:
+>>> Hrm.... it's so unlucky that your patchset comes a little late. As your patch 8 and 9 said, you need them to fix problem for multi-card support, so definitely there was no such use case, and even the code was buggy to support it right? That makes the code hard to read and maintain, so we decide to remove it.
 > 
-> There is memory constraint for the buffers in V5 of the MFC hardware, but
-> when IOMMU is used, then this constraint is meaningless. Other version of
-> the MFC hardware don't have such limitations. So in such cases the driver
-> is able to use buffers placed anywhere in the system memory, thus USERPTR
-> and DMABUF operation modes can be also enabled.
+> Thanks for the feedback. Yes, earlier the multi-card support was buggy indeed. We spent some time to debug it and got it working.
 > 
-> This patch also removes USERPTR operation mode from encoder node, as it
-> doesn't work with v5 MFC hardware without IOMMU being enabled.
+>>> Havn'e check the databook for details yet, but I think it's ok to re-introduce multi-slot support if a real user benefits from it. But you need a new patch to silent the log "num-slots property not found, assuming 1 slot is available" as we removed all the num-slots from DT at that time.
 > 
-> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-> [mszyprow: adapted to v4.14 code base and updated commit message]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/media/platform/s5p-mfc/s5p_mfc.c     | 14 ++++--
->  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 73 ++++++++++++++++++++++++----
->  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c | 24 ++++++---
->  3 files changed, 89 insertions(+), 22 deletions(-)
+> The " num-slots property not found..." log message has already been removed by 8a629d26f back in 2016. Looks like we're good on this one. In dw_mci_probe (), it has code to check pdata->num_slots. If 0, the host->num_slots will be set to 1. So the logic of setting default num_slots seems already there. But correct me if I am wrong.
 > 
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> index cf68aed59e0d..f975523dc040 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -754,6 +754,7 @@ static int s5p_mfc_open(struct file *file)
->  	struct s5p_mfc_dev *dev = video_drvdata(file);
->  	struct s5p_mfc_ctx *ctx = NULL;
->  	struct vb2_queue *q;
-> +	unsigned int io_modes;
->  	int ret = 0;
->  
->  	mfc_debug_enter();
-> @@ -839,16 +840,21 @@ static int s5p_mfc_open(struct file *file)
->  		if (ret)
->  			goto err_init_hw;
->  	}
-> +
-> +	io_modes = VB2_MMAP;
-> +	if (exynos_is_iommu_available(&dev->plat_dev->dev) || !IS_TWOPORT(dev))
-> +		io_modes |= VB2_USERPTR | VB2_DMABUF;
-> +
->  	/* Init videobuf2 queue for CAPTURE */
->  	q = &ctx->vq_dst;
->  	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
->  	q->drv_priv = &ctx->fh;
->  	q->lock = &dev->mfc_mutex;
->  	if (vdev == dev->vfd_dec) {
-> -		q->io_modes = VB2_MMAP;
-> +		q->io_modes = io_modes;
->  		q->ops = get_dec_queue_ops();
->  	} else if (vdev == dev->vfd_enc) {
-> -		q->io_modes = VB2_MMAP | VB2_USERPTR;
-> +		q->io_modes = io_modes;
->  		q->ops = get_enc_queue_ops();
->  	} else {
->  		ret = -ENOENT;
-> @@ -872,10 +878,10 @@ static int s5p_mfc_open(struct file *file)
->  	q->drv_priv = &ctx->fh;
->  	q->lock = &dev->mfc_mutex;
->  	if (vdev == dev->vfd_dec) {
-> -		q->io_modes = VB2_MMAP;
-> +		q->io_modes = io_modes;
->  		q->ops = get_dec_queue_ops();
->  	} else if (vdev == dev->vfd_enc) {
-> -		q->io_modes = VB2_MMAP | VB2_USERPTR;
-> +		q->io_modes = io_modes;
->  		q->ops = get_enc_queue_ops();
->  	} else {
->  		ret = -ENOENT;
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> index 8937b0af7cb3..efe65fce4880 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> @@ -546,14 +546,27 @@ static int reqbufs_capture(struct s5p_mfc_dev *dev, struct s5p_mfc_ctx *ctx,
->  			goto out;
->  		}
->  
-> -		WARN_ON(ctx->dst_bufs_cnt != ctx->total_dpb_count);
-> -		ctx->capture_state = QUEUE_BUFS_MMAPED;
-> +		if (reqbufs->memory == V4L2_MEMORY_MMAP) {
-> +			if (ctx->dst_bufs_cnt == ctx->total_dpb_count) {
-> +				ctx->capture_state = QUEUE_BUFS_MMAPED;
-> +			} else {
-> +				mfc_err("Not all buffers passed to buf_init\n");
-> +				reqbufs->count = 0;
-> +				ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
-> +				s5p_mfc_hw_call(dev->mfc_ops,
-> +						release_codec_buffers, ctx);
-> +				ret = -ENOMEM;
-> +				goto out;
-> +			}
-> +		}
->  
->  		if (s5p_mfc_ctx_ready(ctx))
->  			set_work_bit_irqsave(ctx);
->  		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
-> -		s5p_mfc_wait_for_done_ctx(ctx, S5P_MFC_R2H_CMD_INIT_BUFFERS_RET,
-> -					  0);
-> +		if (reqbufs->memory == V4L2_MEMORY_MMAP) {
-> +			s5p_mfc_wait_for_done_ctx(ctx,
-> +					 S5P_MFC_R2H_CMD_INIT_BUFFERS_RET, 0);
-> +		}
->  	} else {
->  		mfc_err("Buffers have already been requested\n");
->  		ret = -EINVAL;
-> @@ -571,15 +584,19 @@ static int vidioc_reqbufs(struct file *file, void *priv,
->  {
->  	struct s5p_mfc_dev *dev = video_drvdata(file);
->  	struct s5p_mfc_ctx *ctx = fh_to_ctx(priv);
-> -
-> -	if (reqbufs->memory != V4L2_MEMORY_MMAP) {
-> -		mfc_debug(2, "Only V4L2_MEMORY_MMAP is supported\n");
-> -		return -EINVAL;
-> -	}
-> +	int ret;
->  
->  	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-> +		ret = vb2_verify_memory_type(&ctx->vq_src, reqbufs->memory,
-> +					     reqbufs->type);
-> +		if (ret)
-> +			return ret;
->  		return reqbufs_output(dev, ctx, reqbufs);
->  	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> +		ret = vb2_verify_memory_type(&ctx->vq_dst, reqbufs->memory,
-> +					     reqbufs->type);
-> +		if (ret)
-> +			return ret;
->  		return reqbufs_capture(dev, ctx, reqbufs);
->  	} else {
->  		mfc_err("Invalid type requested\n");
-> @@ -998,6 +1015,27 @@ static int s5p_mfc_buf_init(struct vb2_buffer *vb)
->  	return 0;
->  }
->  
-> +static int s5p_mfc_buf_prepare(struct vb2_buffer *vb)
-> +{
-> +	struct vb2_queue *vq = vb->vb2_queue;
-> +	struct s5p_mfc_ctx *ctx = fh_to_ctx(vq->drv_priv);
-> +
-> +	if (vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> +		if (vb2_plane_size(vb, 0) < ctx->luma_size ||
-> +			vb2_plane_size(vb, 1) < ctx->chroma_size) {
-> +			mfc_err("Plane buffer (CAPTURE) is too small.\n");
-> +			return -EINVAL;
-> +		}
-> +	} else if (vq->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-> +		if (vb2_plane_size(vb, 0) < ctx->dec_src_buf_size) {
-> +			mfc_err("Plane buffer (OUTPUT) is too small.\n");
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int s5p_mfc_start_streaming(struct vb2_queue *q, unsigned int count)
->  {
->  	struct s5p_mfc_ctx *ctx = fh_to_ctx(q->drv_priv);
-> @@ -1066,6 +1104,7 @@ static void s5p_mfc_buf_queue(struct vb2_buffer *vb)
->  	struct s5p_mfc_dev *dev = ctx->dev;
->  	unsigned long flags;
->  	struct s5p_mfc_buf *mfc_buf;
-> +	int wait_flag = 0;
->  
->  	if (vq->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->  		mfc_buf = &ctx->src_bufs[vb->index];
-> @@ -1083,12 +1122,25 @@ static void s5p_mfc_buf_queue(struct vb2_buffer *vb)
->  		list_add_tail(&mfc_buf->list, &ctx->dst_queue);
->  		ctx->dst_queue_cnt++;
->  		spin_unlock_irqrestore(&dev->irqlock, flags);
-> +		if ((vq->memory == V4L2_MEMORY_USERPTR ||
-> +			vq->memory == V4L2_MEMORY_DMABUF) &&
-> +			ctx->dst_queue_cnt == ctx->total_dpb_count)
-> +			ctx->capture_state = QUEUE_BUFS_MMAPED;
->  	} else {
->  		mfc_err("Unsupported buffer type (%d)\n", vq->type);
->  	}
-> -	if (s5p_mfc_ctx_ready(ctx))
-> +	if (s5p_mfc_ctx_ready(ctx)) {
->  		set_work_bit_irqsave(ctx);
-> +		if ((vq->memory == V4L2_MEMORY_USERPTR ||
-> +			vq->memory == V4L2_MEMORY_DMABUF) &&
-> +			ctx->state == MFCINST_HEAD_PARSED &&
-> +			ctx->capture_state == QUEUE_BUFS_MMAPED)
-> +			wait_flag = 1;
-> +	}
->  	s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
-> +	if (wait_flag)
-> +		s5p_mfc_wait_for_done_ctx(ctx,
-> +				S5P_MFC_R2H_CMD_INIT_BUFFERS_RET, 0);
->  }
->  
->  static struct vb2_ops s5p_mfc_dec_qops = {
-> @@ -1096,6 +1148,7 @@ static struct vb2_ops s5p_mfc_dec_qops = {
->  	.wait_prepare		= vb2_ops_wait_prepare,
->  	.wait_finish		= vb2_ops_wait_finish,
->  	.buf_init		= s5p_mfc_buf_init,
-> +	.buf_prepare		= s5p_mfc_buf_prepare,
->  	.start_streaming	= s5p_mfc_start_streaming,
->  	.stop_streaming		= s5p_mfc_stop_streaming,
->  	.buf_queue		= s5p_mfc_buf_queue,
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-> index 2a5fd7c42cd5..63a2cb3c7555 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-> @@ -1130,11 +1130,11 @@ static int vidioc_reqbufs(struct file *file, void *priv,
->  	struct s5p_mfc_ctx *ctx = fh_to_ctx(priv);
->  	int ret = 0;
->  
-> -	/* if memory is not mmp or userptr return error */
-> -	if ((reqbufs->memory != V4L2_MEMORY_MMAP) &&
-> -		(reqbufs->memory != V4L2_MEMORY_USERPTR))
-> -		return -EINVAL;
->  	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> +		ret = vb2_verify_memory_type(&ctx->vq_dst, reqbufs->memory,
-> +					     reqbufs->type);
-> +		if (ret)
-> +			return ret;
->  		if (reqbufs->count == 0) {
->  			mfc_debug(2, "Freeing buffers\n");
->  			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
-> @@ -1164,6 +1164,10 @@ static int vidioc_reqbufs(struct file *file, void *priv,
->  			return -ENOMEM;
->  		}
->  	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-> +		ret = vb2_verify_memory_type(&ctx->vq_dst, reqbufs->memory,
-> +					     reqbufs->type);
-> +		if (ret)
-> +			return ret;
->  		if (reqbufs->count == 0) {
->  			mfc_debug(2, "Freeing buffers\n");
->  			ret = vb2_reqbufs(&ctx->vq_src, reqbufs);
-> @@ -1209,11 +1213,11 @@ static int vidioc_querybuf(struct file *file, void *priv,
->  	struct s5p_mfc_ctx *ctx = fh_to_ctx(priv);
->  	int ret = 0;
->  
-> -	/* if memory is not mmp or userptr return error */
-> -	if ((buf->memory != V4L2_MEMORY_MMAP) &&
-> -		(buf->memory != V4L2_MEMORY_USERPTR))
-> -		return -EINVAL;
->  	if (buf->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> +		ret = vb2_verify_memory_type(&ctx->vq_dst, buf->memory,
-> +					     buf->type);
-> +		if (ret)
-> +			return ret;
->  		if (ctx->state != MFCINST_GOT_INST) {
->  			mfc_err("invalid context state: %d\n", ctx->state);
->  			return -EINVAL;
-> @@ -1225,6 +1229,10 @@ static int vidioc_querybuf(struct file *file, void *priv,
->  		}
->  		buf->m.planes[0].m.mem_offset += DST_QUEUE_OFF_BASE;
->  	} else if (buf->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-> +		ret = vb2_verify_memory_type(&ctx->vq_src, buf->memory,
-> +					     buf->type);
-> +		if (ret)
-> +			return ret;
->  		ret = vb2_querybuf(&ctx->vq_src, buf);
->  		if (ret != 0) {
->  			mfc_err("error in vb2_querybuf() for E(S)\n");
+> Thanks,
+> Liming
+> 
+> -----Original Message-----
+> From: Shawn Lin [mailto:shawn.lin@rock-chips.com] 
+> Sent: Monday, October 16, 2017 9:36 PM
+> To: Liming Sun <lsun@mellanox.com>; Jaehoon Chung <jh80.chung@samsung.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>; Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Kukjin Kim <kgene@kernel.org>; Krzysztof Kozlowski <krzk@kernel.org>; shawn.lin@rock-chips.com; linux-mmc@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org
+> Subject: Re: [PATCH 0/9] Enable dw-mmc multi-card support
+> 
+> 
+> On 2017/10/7 3:21, Liming Sun wrote:
+>> This series of commits enables the multi-card support for the dw-mmc 
+>> controller. It includes two parts as below.
+>>
+>> The first part (patches 1-7) reverts the series of recent commits that 
+>> removed the multi-card support with comments saying there was no such 
+>> use case in the real world. Actually this feature is being used in 
+>> Mellanox Bluefield SoC and has been requested by customers.
+> 
+> Hrm.... it's so unlucky that your patchset comes a little late. As your patch 8 and 9 said, you need them to fix problem for multi-card support, so definitely there was no such use case, and even the code was buggy to support it right? That makes the code hard to read and maintain, so we decide to remove it.
+
+Hmm..
+Well, if i missed your reply for my removing patch, it's my fault..but i didn't see any reply..
+At that time, we didn't see any usage and also now...
+
+Are there any patches for using multi slot? 
+e,g) device-tree file or your own driver
+
+If there are big benefits to revert them,  i don't want to back them..during almost 6 years, never use it..
+
+> 
+>>
+>> The second part (patches 8-9) fixes the DesignWare multi-card support 
+>> according to the dw-mmc databook (synnopsys: DesignWare Cores Mobile 
+>> Storage Host Databook, 2.70a). It has changes to set the card number 
+>> into the CMD register to multiplex requests to different cards when 
+>> working in SD_MMC_CEATA mode, set the CTYPE / CLKENA / CDTHRCTL 
+>> registers properly according to the spec, and parse the per-card 
+>> configuration to match the Linux Documentation 
+>> (bindings/mmc/synopsys-dw-mshc.txt).
+
+the second part seems that it's only support since v2.70a..?
+
+> 
+> Havn'e check the databook for details yet, but I think it's ok to re-introduce multi-slot support if a real user benefits from it. But you need a new patch to silent the log "num-slots property not found, assuming 1 slot is available" as we removed all the num-slots from DT at that time.
+> 
+> 
+>>
+>> Liming Sun (9):
+>>    Revert "Documentation: dw-mshc: deprecate num-slots"
+>>    Revert "mmc: dw_mmc: remove the unnecessary slot variable"
+>>    Revert "mmc: dw_mmc: use the 'slot' instead of 'cur_slot'"
+>>    Revert "mmc: dw_mmc: remove the 'id' arguments about functions
+>>      relevant to slot"
+>>    Revert "mmc: dw_mmc: change the array of slots"
+>>    Revert "mmc: dw_mmc: remove the loop about finding slots"
+>>    Revert "mmc: dw_mmc: deprecated the "num-slots" property"
+>>    mmc: dw_mmc: Support two SD_MMC_CE-ATA cards
+>>    mmc: dw_mmc: Parse slot-specific configuration
+>>
+>>   .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |  16 +-
+>>   drivers/mmc/host/dw_mmc-exynos.c                   |   4 +-
+>>   drivers/mmc/host/dw_mmc.c                          | 277 ++++++++++++++++-----
+>>   drivers/mmc/host/dw_mmc.h                          |  17 +-
+>>   4 files changed, 236 insertions(+), 78 deletions(-)
+>>
+> 
+> 
+> 
 > 
