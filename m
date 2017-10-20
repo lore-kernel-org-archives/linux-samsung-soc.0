@@ -1,45 +1,80 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: add cpu perf counters to Exynos54xx boards
-Date: Fri, 20 Oct 2017 14:21:02 +0200
-Message-ID: <CAJKOXPdZAzQr0QYFn5jGMBGgkC1XL-RUr5QbhBaoqMceDwA4aQ@mail.gmail.com>
-References: <CAM3PiRxi8sxf6T990K8rd7UsOLd2D5TaLciF=c_wF=9gmpLKYg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:49986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751015AbdJTMVF (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 08:21:05 -0400
-In-Reply-To: <CAM3PiRxi8sxf6T990K8rd7UsOLd2D5TaLciF=c_wF=9gmpLKYg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: memeka <mihailescu2m@gmail.com>
+Subject: [PATCH] ARM: dts: exynos: add cpu perf counters to Exynos54xx boards
+Date: Fri, 20 Oct 2017 23:19:34 +1030
+Message-ID: <1508503774-2328-1-git-send-email-mihailescu2m@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marian Mihailescu <mihailescu2m@gmail.com>, Willy Wolff <willy.mh.wolff@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marian Mihailescu <mihailescu2m@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 20, 2017 at 2:09 PM, Marian Mihailescu
-<mihailescu2m@gmail.com> wrote:
-> Hi,
->
-> This patch enables support for ARM Performance Monitoring Units
-> available in Cortex-A7
-> and Cortex-A15 CPU cores for Exynos54xx SoCs (5410, 5420 and 5422/5800).
->
-> Exynos5410 currently has only Cortex-A7 nodes defined in the device tree,
-> so the Cortex-A15 PMU is defined in the exynos5420 device tree file.
->
-> Tested with perf on Odroid XU4 (Exynos5422):
-> armv7_cortex_a7 PMU driver: 5 counters available
-> armv7_cortex_a15 PMU driver: 7 counters available
+From: Marian Mihailescu <mihailescu2m@gmail.com>
 
-Please send this as simple text mail, not a multi-part message with
-attachments. I cannot comment inline for multi-part, not mentioning
-that patch is not being displayed at all. Probably this is also the
-reason why patch is not present in patchwork
-(https://patchwork.kernel.org/project/linux-samsung-soc/list/).
+Enable support for ARM Performance Monitoring Units available in Cortex-A7
+and Cortex-A15 CPU cores for Exynos54xx SoCs (5410, 5420 and 5422/5800).
 
-The easiest is to just run "git format-patch -1" and then "git
-send-email --to .. --cc .. 0001-*".
+Exynos5410 currently has only Cortex-A7 nodes defined in the device tree,
+so the Cortex-A15 PMU is defined in the exynos5420 device tree file.
 
-Best regards,
-Krzysztof
+Tested with perf on Odroid XU4 (Exynos5422):
+armv7_cortex_a7 PMU driver: 5 counters available
+armv7_cortex_a15 PMU driver: 7 counters available
+
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 13 +++++++++++++
+ arch/arm/boot/dts/exynos54xx.dtsi | 13 +++++++++++++
+ 2 files changed, 26 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 02d2f89..468059e 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -695,6 +695,19 @@
+ 			iommus = <&sysmmu_jpeg1>;
+ 		};
+ 
++		arm-a15-pmu {
++			compatible = "arm,cortex-a15-pmu";
++			interrupt-parent = <&combiner>;
++			interrupts = <1 2>,
++				<7 0>,
++				<16 6>,
++				<19 2>;
++			interrupt-affinity = <&cpu4>,
++				<&cpu5>,
++				<&cpu6>,
++				<&cpu7>;
++		};
++
+ 		pmu_system_controller: system-controller@10040000 {
+ 			compatible = "samsung,exynos5420-pmu", "syscon";
+ 			reg = <0x10040000 0x5000>;
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index 8ca4fef..8e007a4 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -79,6 +79,19 @@
+ 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		arm-a7-pmu {
++			compatible = "arm,cortex-a7-pmu";
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-affinity = <&cpu0>,
++				<&cpu1>,
++				<&cpu2>,
++				<&cpu3>;
++		};
++
+ 		sss: sss@10830000 {
+ 			compatible = "samsung,exynos4210-secss";
+ 			reg = <0x10830000 0x300>;
+-- 
+2.7.4
