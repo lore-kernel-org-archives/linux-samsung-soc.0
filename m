@@ -1,65 +1,79 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] crypto/s5p-sss: Use common error handling code in
- s5p_aes_probe()
-Date: Sun, 22 Oct 2017 15:05:05 +0200
-Message-ID: <791df15e-3a35-d270-0acf-1661bd89adad@users.sourceforge.net>
+Subject: [PATCH] devfreq/exynos-bus: Use common error handling code in
+ exynos_bus_target()
+Date: Sun, 22 Oct 2017 15:40:48 +0200
+Message-ID: <4a407cd6-020c-1750-019a-6c0ceb40e245@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Language: en-GB
-Sender: linux-crypto-owner@vger.kernel.org
-To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Oct 2017 15:00:27 +0200
+Date: Sun, 22 Oct 2017 15:33:06 +0200
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Adjust jump targets so that a bit of exception handling can be better
+reused at the end of this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/s5p-sss.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/devfreq/exynos-bus.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 7ac657f46d15..ea59e184c199 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -863,16 +863,13 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 	pdata->irq_fc = platform_get_irq(pdev, 0);
- 	if (pdata->irq_fc < 0) {
- 		err = pdata->irq_fc;
--		dev_warn(dev, "feed control interrupt is not available.\n");
--		goto err_irq;
-+		goto report_failure;
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 49f68929e024..e38d456b2d7d 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -124,34 +124,33 @@ static int exynos_bus_target(struct device *dev, unsigned long *freq, u32 flags)
+ 
+ 	if (old_freq < new_freq) {
+ 		ret = regulator_set_voltage_tol(bus->regulator, new_volt, tol);
+-		if (ret < 0) {
+-			dev_err(bus->dev, "failed to set voltage\n");
+-			goto out;
+-		}
++		if (ret < 0)
++			goto report_failure;
  	}
- 	err = devm_request_threaded_irq(dev, pdata->irq_fc, NULL,
- 					s5p_aes_interrupt, IRQF_ONESHOT,
- 					pdev->name, pdev);
--	if (err < 0) {
--		dev_warn(dev, "feed control interrupt is not available.\n");
--		goto err_irq;
--	}
-+	if (err < 0)
-+		goto report_failure;
  
- 	pdata->busy = false;
- 	pdata->dev = dev;
-@@ -906,6 +903,10 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 	s5p_dev = NULL;
+ 	ret = clk_set_rate(bus->clk, new_freq);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to change clock of bus\n");
+ 		clk_set_rate(bus->clk, old_freq);
+-		goto out;
++		goto unlock;
+ 	}
  
- 	return err;
+ 	if (old_freq > new_freq) {
+ 		ret = regulator_set_voltage_tol(bus->regulator, new_volt, tol);
+-		if (ret < 0) {
+-			dev_err(bus->dev, "failed to set voltage\n");
+-			goto out;
+-		}
++		if (ret < 0)
++			goto report_failure;
+ 	}
+ 	bus->curr_freq = new_freq;
+ 
+ 	dev_dbg(dev, "Set the frequency of bus (%luHz -> %luHz, %luHz)\n",
+ 			old_freq, new_freq, clk_get_rate(bus->clk));
+-out:
++unlock:
+ 	mutex_unlock(&bus->lock);
+-
+ 	return ret;
 +
 +report_failure:
-+	dev_warn(dev, "feed control interrupt is not available.\n");
-+	goto err_irq;
++	dev_err(bus->dev, "failed to set voltage\n");
++	goto unlock;
  }
  
- static int s5p_aes_remove(struct platform_device *pdev)
+ static int exynos_bus_get_dev_status(struct device *dev,
 -- 
 2.14.2
