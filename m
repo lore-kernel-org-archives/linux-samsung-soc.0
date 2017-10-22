@@ -1,50 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: add cpu perf counters to Exynos54xx
- boards
-Date: Sat, 21 Oct 2017 22:14:01 +0200
-Message-ID: <20171021201401.enzhfzjkzyihtjvv@kozik-lap>
-References: <CAM3PiRxi8sxf6T990K8rd7UsOLd2D5TaLciF=c_wF=9gmpLKYg@mail.gmail.com>
- <e2b87fe2-bc04-242d-8f4f-9cd21743e3aa@arm.com>
- <CAM3PiRyEdXX26aBfuS=3rQK3k7ovR=HeeoF8Qcz0Dt-zdiXuww@mail.gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: Re: [PATCH v7 1/2] crypto: s5p-sss: change spaces into tabs in
+ defines
+Date: Sun, 22 Oct 2017 13:18:33 +0300
+Message-ID: <b66817b2-bbb6-ad18-b384-628d5d6b0157@mleia.com>
+References: <20171017112824.10231-1-k.konieczny@partner.samsung.com>
+ <CGME20171017112845eucas1p2cd73bf6b6e97ada996c7693639e5a037@eucas1p2.samsung.com>
+ <20171017112824.10231-2-k.konieczny@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAM3PiRyEdXX26aBfuS=3rQK3k7ovR=HeeoF8Qcz0Dt-zdiXuww@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marian Mihailescu <mihailescu2m@gmail.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mleia.com ([178.79.152.223]:37501 "EHLO mail.mleia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751436AbdJVK0s (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 22 Oct 2017 06:26:48 -0400
+In-Reply-To: <20171017112824.10231-2-k.konieczny@partner.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>, linux-crypto@vger.kernel.org
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 21, 2017 at 05:54:31PM +1030, Marian Mihailescu wrote:
-> Hi Robin,
-> 
-> Apologies, I did not really check which cluster is described for the
-> 5410 (since 5422 boots from the A7).
-> 
-> Should I define both pmu nodes (w/o interrupt affinity) in the
-> exynos54xx,dtsi, and set the status property to "disabled"?
-> And then add the interrupt affinity to the SoC variant, and enable
-> them as required...
+Hi Kamil,
 
-After putting it under common exynos54xx you would have to anyway
-override/extend most of the nodes so I think there is no much sense for
-that. Instead it should be in exynos5410.dtsi and exynos5422.dtsi.
+On 10/17/2017 02:28 PM, Kamil Konieczny wrote:
+> change spaces into tabs in defines
+
+Here a grammatically correct sentence in English is welcome.
 
 > 
-> The problem that I see however is that, while 5410 is easy to deal
-> with (it has the cpus defined in exynos5420.dtsi for all boards), 542x
-> variants have the cpus included in the board dts. So there would be
-> the same pmu nodes with interrupt affinity copied in all 542x and 5800
-> boards dts (and there are several of them), instead of being included
-> in exynos542x.dtsi...
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
 
-You mean exynos5420-cpus.dtsi, not board DTS?
+Please feel free to add a tag
 
-For exynos542x/5800 you could indeed add it directly to
-exynos542x-cpus.dtsi, following existing pattern about cpus (with
-comment).
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
 
-
-Best regards,
-Krzysztof
+--
+With best wishes,
+Vladimir
