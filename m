@@ -1,53 +1,45 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 1/2] extcon: max77843: Add OTG power control to the
- MUIC driver
-Date: Mon, 23 Oct 2017 16:46:54 +0100
-Message-ID: <20171023154654.mzomcxhkk4zmcmr5@dell>
-References: <20171018095622.23738-1-m.szyprowski@samsung.com>
- <CGME20171018095630eucas1p263041d2da8d87aef67162fc13a01affb@eucas1p2.samsung.com>
- <20171018095622.23738-2-m.szyprowski@samsung.com>
- <20171023154340.z2vmkbfoey2xtgks@dell>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 3/5] mmc: dw_mmc: Add locking to the CTO timer
+Date: Mon, 23 Oct 2017 10:59:02 -0700
+Message-ID: <CAD=FV=XdWD1dk67yixy+5U7RubxKY2WAh-jhZfTOmb4ndf3b5g@mail.gmail.com>
+References: <20171012201118.23570-1-dianders@chromium.org> <20171012201118.23570-4-dianders@chromium.org>
+ <41ae1571-4723-2700-1f03-7215e874c42e@rock-chips.com> <CAD=FV=UMuJBKV2-pNo4yiyfxXxYJo_tX6RkxCCzm_UFg9XyjyQ@mail.gmail.com>
+ <d6acce96-b292-ee4e-8f9b-1d524c14e0fc@rock-chips.com> <CAD=FV=W7u0_kr9HXHpKmw=Hgco2P=u3jeSb8v0OoVvD+2kJorw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171023154340.z2vmkbfoey2xtgks@dell>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=W7u0_kr9HXHpKmw=Hgco2P=u3jeSb8v0OoVvD+2kJorw@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Ziyuan Xu <xzy.xu@rock-chips.com>, Alexandru M Stan <amstan@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Brian Norris <briannorris@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 23 Oct 2017, Lee Jones wrote:
+Hi,
 
-> On Wed, 18 Oct 2017, Marek Szyprowski wrote:
-> 
-> > Enabling power on VBUS micro-usb pin is required only when passive OTG
-> > cable is connected. Initially OTG VBUS power control was planned to be
-> > done in charger driver. However such information is not really available
-> > from the extcon notifications, so VBUS power control has to be done
-> > directly in MUIC driver, which has all information about the attached
-> > accessory.
-> > 
-> > For example SmartDock is externally powered accessory, provides OTG
-> > (USB HOST) functionality and use VBUS pin for charging a device battery,
-> > so the VBUS charging pump should be disabled in such case.
-> > 
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > ---
-> >  drivers/extcon/extcon-max77843.c     | 16 ++++++++++++++++
-> 
-> >  include/linux/mfd/max77843-private.h |  3 +++
-> 
-> Applied, thanks.
+On Tue, Oct 17, 2017 at 9:40 AM, Doug Anderson <dianders@chromium.org> wrote:
+> ...
+> ...
+>> Yes, it looks hard to get concurrency right. I have a comment for your
+>> DRTO case(patch 5). Let's do some brainstorm there.
+>
+> Since your comments in this patch are positive and you've now added
+> your Reviewed-by to patch #5, I'm going to assume that you'd also like
+> your Reviewed-by on this patch?
+>
+>
+> Jaehoon: I think I have Shawn's review on all this series.  It would
+> be great if you could review them yourself and/or pick them up in your
+> tree.  Since they fix a regression on 4.14 we really don't want to
+> delay too long.  If you're busy, please yell and we can figure out a
+> way to get these in (either through Ulf directly or we should find
+> someone else to make a git tree and send a pull request).
 
-Sorry, wrong key combo:
+Ulf: I still haven't heard anything for Jaehoon.  Do you have any
+interest in landing this series directly to your tree?  I think the
+whole series has been reviewed by Shawn.  I'm happy to re-post with
+collected tags or anything else you'd like.  It would be nice to get
+the regression fixed sooner rather than later...
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Thanks!  :)
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+-Doug
