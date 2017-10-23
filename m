@@ -1,48 +1,38 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 1/2] extcon: max77843: Add OTG power control to the
- MUIC driver
-Date: Mon, 23 Oct 2017 16:43:40 +0100
-Message-ID: <20171023154340.z2vmkbfoey2xtgks@dell>
+Subject: Re: [PATCH v2 2/2] extcon: max77843: Add support for SmartDock
+ accessory
+Date: Mon, 23 Oct 2017 16:44:14 +0100
+Message-ID: <20171023154414.44rtitbjpp7thb2u@dell>
 References: <20171018095622.23738-1-m.szyprowski@samsung.com>
- <CGME20171018095630eucas1p263041d2da8d87aef67162fc13a01affb@eucas1p2.samsung.com>
- <20171018095622.23738-2-m.szyprowski@samsung.com>
+ <CGME20171018095631eucas1p1238fdd6c4180f5c753fa20c4aac7b821@eucas1p1.samsung.com>
+ <20171018095622.23738-3-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56078 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932141AbdJWPnx (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Oct 2017 11:43:53 -0400
-Received: by mail-wm0-f66.google.com with SMTP id u138so10723688wmu.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Oct 2017 08:43:52 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171018095622.23738-2-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20171018095622.23738-3-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On Wed, 18 Oct 2017, Marek Szyprowski wrote:
 
-> Enabling power on VBUS micro-usb pin is required only when passive OTG
-> cable is connected. Initially OTG VBUS power control was planned to be
-> done in charger driver. However such information is not really available
-> from the extcon notifications, so VBUS power control has to be done
-> directly in MUIC driver, which has all information about the attached
-> accessory.
+> SmartDock uses ADC_RESERVED_ACC_3 (0x10) ADC ID type and provides following
+> features:
+> 1. USB host with embedded USB hub (2-4 ports) for mice, keyboard, etc,
+> 2. MHL for video output,
+> 3. charging.
 > 
-> For example SmartDock is externally powered accessory, provides OTG
-> (USB HOST) functionality and use VBUS pin for charging a device battery,
-> so the VBUS charging pump should be disabled in such case.
+> Tested with Unitek Y-2165 MHL+OTG Hub Smart Phone Dock.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->  drivers/extcon/extcon-max77843.c     | 16 ++++++++++++++++
+>  drivers/extcon/extcon-max77843.c     | 77 +++++++++++++++++++++++++++++-------
 
->  include/linux/mfd/max77843-private.h |  3 +++
+>  include/linux/mfd/max77843-private.h |  2 +
 
 Applied, thanks.
 
