@@ -1,91 +1,67 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 9/9] ARM64: dts: exynos: Add mem-2-mem Scaler devices
-Date: Mon, 23 Oct 2017 09:54:28 +0200
-Message-ID: <20171023075428.7003-10-m.szyprowski@samsung.com>
-References: <20171023075428.7003-1-m.szyprowski@samsung.com>
-        <CGME20171023075453eucas1p18c5a22b967399885c14bff39b1e218f2@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47318 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751326AbdJWHy5 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Oct 2017 03:54:57 -0400
-In-reply-to: <20171023075428.7003-1-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3] drm: exynos: Add driver for HDMI audio interface
+Date: Mon, 23 Oct 2017 14:20:41 +0200
+Message-ID: <0b112664-d462-ebeb-b8e1-58e270833d2f@samsung.com>
+References: <CGME20170926141814epcas1p1923ab779847932395bf2c2899291dfcd@epcas1p1.samsung.com>
+ <1506435469-10591-1-git-send-email-s.nawrocki@samsung.com>
+ <59ED4584.5030608@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <59ED4584.5030608@samsung.com>
+Content-language: en-GB
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, jcsing.lee@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-
-There are two Scaler devices in Exynos5433 SoCs. Add nodes for them and
-their SYSMMU controllers.
-
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 42 ++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 7fe994b750da..97866114767f 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -920,6 +920,28 @@
- 			iommus = <&sysmmu_gscl2>;
- 		};
- 
-+		scaler_0: scaler@15000000 {
-+			compatible = "samsung,exynos5433-scaler";
-+			reg = <0x15000000 0x1294>;
-+			interrupts = <0 402 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "pclk", "aclk", "aclk_xiu";
-+			clocks = <&cmu_mscl CLK_PCLK_M2MSCALER0>,
-+				 <&cmu_mscl CLK_ACLK_M2MSCALER0>,
-+				 <&cmu_mscl CLK_ACLK_XIU_MSCLX>;
-+			iommus = <&sysmmu_scaler_0>;
-+		};
-+
-+		scaler_1: scaler@15010000 {
-+			compatible = "samsung,exynos5433-scaler";
-+			reg = <0x15010000 0x1294>;
-+			interrupts = <0 403 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "pclk", "aclk", "aclk_xiu";
-+			clocks = <&cmu_mscl CLK_PCLK_M2MSCALER1>,
-+				 <&cmu_mscl CLK_ACLK_M2MSCALER1>,
-+				 <&cmu_mscl CLK_ACLK_XIU_MSCLX>;
-+			iommus = <&sysmmu_scaler_1>;
-+		};
-+
- 		jpeg: codec@15020000 {
- 			compatible = "samsung,exynos5433-jpeg";
- 			reg = <0x15020000 0x10000>;
-@@ -1014,6 +1036,26 @@
- 			#iommu-cells = <0>;
- 		};
- 
-+		sysmmu_scaler_0: sysmmu@0x15040000 {
-+			compatible = "samsung,exynos-sysmmu";
-+			reg = <0x15040000 0x1000>;
-+			interrupts = <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "pclk", "aclk";
-+			clocks = <&cmu_mscl CLK_PCLK_SMMU_M2MSCALER0>,
-+				 <&cmu_mscl CLK_ACLK_SMMU_M2MSCALER0>;
-+			#iommu-cells = <0>;
-+		};
-+
-+		sysmmu_scaler_1: sysmmu@0x15050000 {
-+			compatible = "samsung,exynos-sysmmu";
-+			reg = <0x15050000 0x1000>;
-+			interrupts = <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "pclk", "aclk";
-+			clocks = <&cmu_mscl CLK_PCLK_SMMU_M2MSCALER1>,
-+				 <&cmu_mscl CLK_ACLK_SMMU_M2MSCALER1>;
-+			#iommu-cells = <0>;
-+		};
-+
- 		sysmmu_jpeg: sysmmu@15060000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x15060000 0x1000>;
--- 
-2.14.2
+T24gMTAvMjMvMjAxNyAwMzoyNyBBTSwgSW5raSBEYWUgd3JvdGU6Cgo+PiArc3RhdGljIGludCBo
+ZG1pX2F1ZGlvX2RpZ2l0YWxfbXV0ZShzdHJ1Y3QgZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEsIGJv
+b2wgbXV0ZSkKPj4gK3sKPj4gKwlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9IGRldl9nZXRf
+ZHJ2ZGF0YShkZXYpOwo+PiArCj4+ICsJbXV0ZXhfbG9jaygmaGRhdGEtPm11dGV4KTsKPj4gKwo+
+PiArCWhkYXRhLT5hdWRpby5lbmFibGUgPSAhbXV0ZTsKPiAKPiBXb3VsZG4ndCBpdCBiZSBiZXR0
+ZXIgdG8ga2VlcCAnbXV0ZScgaW5zdGVhZCBvZiAnZW5hYmxlJz8gJ2hkYXRhLT5hdWRpby5lbmFi
+bGUnIAppcyB1c2VkIGJ5IG9ubHkgaGRtaV9hZGlvX2NvbnRyb2wgZnVuY3Rpb24gYW5kIHdoZXRo
+ZXIgaGRtaSBpcyBwb3dlciBvbiBvciBuaXMgYWxyZWFkeSBjaGVja2VkIGJ5ICdoZGF0YS0+cG93
+ZXJlZCcKWWVzLCBtYWtlcyBzZW5zZSwgSSdsbCBjaGFuZ2UgaXQuCiAKPj4gKwo+PiArCWlmICho
+ZGF0YS0+cG93ZXJlZCkKPj4gKwkJaGRtaV9hdWRpb19jb250cm9sKGhkYXRhKTsKPj4gKwo+PiAr
+CW11dGV4X3VubG9jaygmaGRhdGEtPm11dGV4KTsKPj4gKwo+PiArCXJldHVybiAwOwo+PiArfQoK
+Cj4+ICtzdGF0aWMgdm9pZCBoZG1pX3VucmVnaXN0ZXJfYXVkaW9fZGV2aWNlKHN0cnVjdCBoZG1p
+X2NvbnRleHQgKmhkYXRhKQo+PiArewo+PiArCXBsYXRmb3JtX2RldmljZV91bnJlZ2lzdGVyKGhk
+YXRhLT5hdWRpby5wZGV2KTsKPj4gK30KPiAKPiBUaGlzIGZ1bmN0aW9uIGlzIHVubmVjZXNzYXJ5
+IHdyYXBwZXIuIFlvdSBjYW4gdXNlIHBsYXRmb3JtX2RldmljZV91bnJlZ2lzdGVyKGhkYXRhLT5h
+dWRpby5wZGV2KSBhdCBwcm9iZSBjYWxsYmFjay4KPiBBbmQgeW91IHdvdWxkIG5lZWQgdG8gdW5y
+ZWdpc3RlciBhdWRpbyBkZXZpY2UgYXQgcmVtb3ZlIGNhbGxiYWNrLgoKRml4ZWQgaW4gdjQuCgo+
+PiAgc3RhdGljIGludCBoZG1pX2JyaWRnZV9pbml0KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRh
+KQo+PiBAQCAtMTY5Nyw2ICsxODEyLDcgQEAgc3RhdGljIGludCBoZG1pX2JpbmQoc3RydWN0IGRl
+dmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4+ICAJc3RydWN0
+IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkYXRhOwo+PiAgCXN0cnVjdCBoZG1pX2NvbnRleHQgKmhk
+YXRhID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4+ICAJc3RydWN0IGRybV9lbmNvZGVyICplbmNv
+ZGVyID0gJmhkYXRhLT5lbmNvZGVyOwo+PiArCXN0cnVjdCBoZG1pX2F1ZGlvX2luZm9mcmFtZSAq
+YXVkaW9faW5mb2ZyYW1lID0gJmhkYXRhLT5hdWRpby5pbmZvZnJhbWU7Cj4+ICAJc3RydWN0IGV4
+eW5vc19kcm1fY3J0YyAqY3J0YzsKPj4gIAlpbnQgcmV0Owo+Pgo+PiBAQCAtMTcwNCw2ICsxODIw
+LDEyIEBAIHN0YXRpYyBpbnQgaGRtaV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRl
+dmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQo+Pgo+PiAgCWhkYXRhLT5waHlfY2xrLmVuYWJsZSA9
+IGhkbWlwaHlfY2xrX2VuYWJsZTsKPj4KPj4gKwloZG1pX2F1ZGlvX2luZm9mcmFtZV9pbml0KGF1
+ZGlvX2luZm9mcmFtZSk7Cj4+ICsJYXVkaW9faW5mb2ZyYW1lLT5jb2RpbmdfdHlwZSA9IEhETUlf
+QVVESU9fQ09ESU5HX1RZUEVfU1RSRUFNOwo+PiArCWF1ZGlvX2luZm9mcmFtZS0+c2FtcGxlX3Np
+emUgPSBIRE1JX0FVRElPX1NBTVBMRV9TSVpFX1NUUkVBTTsKPj4gKwlhdWRpb19pbmZvZnJhbWUt
+PnNhbXBsZV9mcmVxdWVuY3kgPSBIRE1JX0FVRElPX1NBTVBMRV9GUkVRVUVOQ1lfU1RSRUFNOwo+
+PiArCWF1ZGlvX2luZm9mcmFtZS0+Y2hhbm5lbHMgPSAyOwo+IAo+IEF1ZGlvIGRldmljZSBpcyBy
+ZWdpc3RlcmVkIGF0IHByb2JlIGNhbGxiYWNrIHNvIGl0IHdvdWxkIGJlIGJldHRlciB0byBtb3Zl
+IGFib3ZlIGNvZGUgaW50byBwcm9iZSBjYWxsYmFjay4KPiBJIGNvdWRsbid0IHNlZSBpbml0aWFs
+aXppbmcgYXVkaW8gaW5mb2ZyYW1lIHNob3VsZCBiZSBkb25lIGhlcmUuCgpZZXMsIGl0IG1ha2Vz
+IG1vcmUgc2Vuc2UgaW5kZWVkIHRvIGhhdmUgdGhpcyBpbml0aWFsaXphdGlvbiBpbiBwcm9iZSgp
+LgoKVGhhbmtzIGZvciB5b3VyIHJldmlldy4KClJlZ2FyZHMsClN5bHdlc3RlcgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
