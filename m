@@ -1,245 +1,73 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH v8 1/2] crypto: s5p-sss: Change spaces to tabs
-Date: Wed, 25 Oct 2017 17:27:34 +0200
-Message-ID: <20171025152735.11382-2-k.konieczny@partner.samsung.com>
-References: <20171025152735.11382-1-k.konieczny@partner.samsung.com>
-        <CGME20171025152755eucas1p253b583d324701826b21272ee477d93e0@eucas1p2.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20171025152735.11382-1-k.konieczny@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-crypto@vger.kernel.org
-Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 0/9] Enable dw-mmc multi-card support
+Date: Wed, 25 Oct 2017 18:47:08 +0200
+Message-ID: <CAPDyKFo9jt6V01WWGEXuB7QFz6_-Gqiuzcujh3R-VO2A052DTA@mail.gmail.com>
+References: <cover.1507315433.git.lsun@mellanox.com> <8e433531-8f67-d575-635e-c6ced29f6804@rock-chips.com>
+ <CGME20171017155217epcas3p4de2f27b921ce77234a2d3e46e4b17473@epcas3p4.samsung.com>
+ <AM2PR05MB07533A822C7CCBA7111FD58FA14C0@AM2PR05MB0753.eurprd05.prod.outlook.com>
+ <f71d94dc-7277-8675-c21e-9c2ec77174e7@samsung.com> <AM2PR05MB07537D50A18D391CD2295D84A1430@AM2PR05MB0753.eurprd05.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <AM2PR05MB07537D50A18D391CD2295D84A1430@AM2PR05MB0753.eurprd05.prod.outlook.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Liming Sun <lsun@mellanox.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chris Metcalf <cmetcalf@mellanox.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Change #define lines to use tabs consistently.
+Hi Liming,
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
----
- drivers/crypto/s5p-sss.c | 190 +++++++++++++++++++++++------------------------
- 1 file changed, 95 insertions(+), 95 deletions(-)
+Sorry for jumping into the discussion like this.
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 7ac657f46d15..dfae1865c384 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -30,98 +30,98 @@
- #include <crypto/algapi.h>
- #include <crypto/scatterwalk.h>
- 
--#define _SBF(s, v)                      ((v) << (s))
-+#define _SBF(s, v)			((v) << (s))
- 
- /* Feed control registers */
--#define SSS_REG_FCINTSTAT               0x0000
--#define SSS_FCINTSTAT_BRDMAINT          BIT(3)
--#define SSS_FCINTSTAT_BTDMAINT          BIT(2)
--#define SSS_FCINTSTAT_HRDMAINT          BIT(1)
--#define SSS_FCINTSTAT_PKDMAINT          BIT(0)
--
--#define SSS_REG_FCINTENSET              0x0004
--#define SSS_FCINTENSET_BRDMAINTENSET    BIT(3)
--#define SSS_FCINTENSET_BTDMAINTENSET    BIT(2)
--#define SSS_FCINTENSET_HRDMAINTENSET    BIT(1)
--#define SSS_FCINTENSET_PKDMAINTENSET    BIT(0)
--
--#define SSS_REG_FCINTENCLR              0x0008
--#define SSS_FCINTENCLR_BRDMAINTENCLR    BIT(3)
--#define SSS_FCINTENCLR_BTDMAINTENCLR    BIT(2)
--#define SSS_FCINTENCLR_HRDMAINTENCLR    BIT(1)
--#define SSS_FCINTENCLR_PKDMAINTENCLR    BIT(0)
--
--#define SSS_REG_FCINTPEND               0x000C
--#define SSS_FCINTPEND_BRDMAINTP         BIT(3)
--#define SSS_FCINTPEND_BTDMAINTP         BIT(2)
--#define SSS_FCINTPEND_HRDMAINTP         BIT(1)
--#define SSS_FCINTPEND_PKDMAINTP         BIT(0)
--
--#define SSS_REG_FCFIFOSTAT              0x0010
--#define SSS_FCFIFOSTAT_BRFIFOFUL        BIT(7)
--#define SSS_FCFIFOSTAT_BRFIFOEMP        BIT(6)
--#define SSS_FCFIFOSTAT_BTFIFOFUL        BIT(5)
--#define SSS_FCFIFOSTAT_BTFIFOEMP        BIT(4)
--#define SSS_FCFIFOSTAT_HRFIFOFUL        BIT(3)
--#define SSS_FCFIFOSTAT_HRFIFOEMP        BIT(2)
--#define SSS_FCFIFOSTAT_PKFIFOFUL        BIT(1)
--#define SSS_FCFIFOSTAT_PKFIFOEMP        BIT(0)
--
--#define SSS_REG_FCFIFOCTRL              0x0014
--#define SSS_FCFIFOCTRL_DESSEL           BIT(2)
--#define SSS_HASHIN_INDEPENDENT          _SBF(0, 0x00)
--#define SSS_HASHIN_CIPHER_INPUT         _SBF(0, 0x01)
--#define SSS_HASHIN_CIPHER_OUTPUT        _SBF(0, 0x02)
--
--#define SSS_REG_FCBRDMAS                0x0020
--#define SSS_REG_FCBRDMAL                0x0024
--#define SSS_REG_FCBRDMAC                0x0028
--#define SSS_FCBRDMAC_BYTESWAP           BIT(1)
--#define SSS_FCBRDMAC_FLUSH              BIT(0)
--
--#define SSS_REG_FCBTDMAS                0x0030
--#define SSS_REG_FCBTDMAL                0x0034
--#define SSS_REG_FCBTDMAC                0x0038
--#define SSS_FCBTDMAC_BYTESWAP           BIT(1)
--#define SSS_FCBTDMAC_FLUSH              BIT(0)
--
--#define SSS_REG_FCHRDMAS                0x0040
--#define SSS_REG_FCHRDMAL                0x0044
--#define SSS_REG_FCHRDMAC                0x0048
--#define SSS_FCHRDMAC_BYTESWAP           BIT(1)
--#define SSS_FCHRDMAC_FLUSH              BIT(0)
--
--#define SSS_REG_FCPKDMAS                0x0050
--#define SSS_REG_FCPKDMAL                0x0054
--#define SSS_REG_FCPKDMAC                0x0058
--#define SSS_FCPKDMAC_BYTESWAP           BIT(3)
--#define SSS_FCPKDMAC_DESCEND            BIT(2)
--#define SSS_FCPKDMAC_TRANSMIT           BIT(1)
--#define SSS_FCPKDMAC_FLUSH              BIT(0)
--
--#define SSS_REG_FCPKDMAO                0x005C
-+#define SSS_REG_FCINTSTAT		0x0000
-+#define SSS_FCINTSTAT_BRDMAINT		BIT(3)
-+#define SSS_FCINTSTAT_BTDMAINT		BIT(2)
-+#define SSS_FCINTSTAT_HRDMAINT		BIT(1)
-+#define SSS_FCINTSTAT_PKDMAINT		BIT(0)
-+
-+#define SSS_REG_FCINTENSET		0x0004
-+#define SSS_FCINTENSET_BRDMAINTENSET	BIT(3)
-+#define SSS_FCINTENSET_BTDMAINTENSET	BIT(2)
-+#define SSS_FCINTENSET_HRDMAINTENSET	BIT(1)
-+#define SSS_FCINTENSET_PKDMAINTENSET	BIT(0)
-+
-+#define SSS_REG_FCINTENCLR		0x0008
-+#define SSS_FCINTENCLR_BRDMAINTENCLR	BIT(3)
-+#define SSS_FCINTENCLR_BTDMAINTENCLR	BIT(2)
-+#define SSS_FCINTENCLR_HRDMAINTENCLR	BIT(1)
-+#define SSS_FCINTENCLR_PKDMAINTENCLR	BIT(0)
-+
-+#define SSS_REG_FCINTPEND		0x000C
-+#define SSS_FCINTPEND_BRDMAINTP		BIT(3)
-+#define SSS_FCINTPEND_BTDMAINTP		BIT(2)
-+#define SSS_FCINTPEND_HRDMAINTP		BIT(1)
-+#define SSS_FCINTPEND_PKDMAINTP		BIT(0)
-+
-+#define SSS_REG_FCFIFOSTAT		0x0010
-+#define SSS_FCFIFOSTAT_BRFIFOFUL	BIT(7)
-+#define SSS_FCFIFOSTAT_BRFIFOEMP	BIT(6)
-+#define SSS_FCFIFOSTAT_BTFIFOFUL	BIT(5)
-+#define SSS_FCFIFOSTAT_BTFIFOEMP	BIT(4)
-+#define SSS_FCFIFOSTAT_HRFIFOFUL	BIT(3)
-+#define SSS_FCFIFOSTAT_HRFIFOEMP	BIT(2)
-+#define SSS_FCFIFOSTAT_PKFIFOFUL	BIT(1)
-+#define SSS_FCFIFOSTAT_PKFIFOEMP	BIT(0)
-+
-+#define SSS_REG_FCFIFOCTRL		0x0014
-+#define SSS_FCFIFOCTRL_DESSEL		BIT(2)
-+#define SSS_HASHIN_INDEPENDENT		_SBF(0, 0x00)
-+#define SSS_HASHIN_CIPHER_INPUT		_SBF(0, 0x01)
-+#define SSS_HASHIN_CIPHER_OUTPUT	_SBF(0, 0x02)
-+
-+#define SSS_REG_FCBRDMAS		0x0020
-+#define SSS_REG_FCBRDMAL		0x0024
-+#define SSS_REG_FCBRDMAC		0x0028
-+#define SSS_FCBRDMAC_BYTESWAP		BIT(1)
-+#define SSS_FCBRDMAC_FLUSH		BIT(0)
-+
-+#define SSS_REG_FCBTDMAS		0x0030
-+#define SSS_REG_FCBTDMAL		0x0034
-+#define SSS_REG_FCBTDMAC		0x0038
-+#define SSS_FCBTDMAC_BYTESWAP		BIT(1)
-+#define SSS_FCBTDMAC_FLUSH		BIT(0)
-+
-+#define SSS_REG_FCHRDMAS		0x0040
-+#define SSS_REG_FCHRDMAL		0x0044
-+#define SSS_REG_FCHRDMAC		0x0048
-+#define SSS_FCHRDMAC_BYTESWAP		BIT(1)
-+#define SSS_FCHRDMAC_FLUSH		BIT(0)
-+
-+#define SSS_REG_FCPKDMAS		0x0050
-+#define SSS_REG_FCPKDMAL		0x0054
-+#define SSS_REG_FCPKDMAC		0x0058
-+#define SSS_FCPKDMAC_BYTESWAP		BIT(3)
-+#define SSS_FCPKDMAC_DESCEND		BIT(2)
-+#define SSS_FCPKDMAC_TRANSMIT		BIT(1)
-+#define SSS_FCPKDMAC_FLUSH		BIT(0)
-+
-+#define SSS_REG_FCPKDMAO		0x005C
- 
- /* AES registers */
- #define SSS_REG_AES_CONTROL		0x00
--#define SSS_AES_BYTESWAP_DI             BIT(11)
--#define SSS_AES_BYTESWAP_DO             BIT(10)
--#define SSS_AES_BYTESWAP_IV             BIT(9)
--#define SSS_AES_BYTESWAP_CNT            BIT(8)
--#define SSS_AES_BYTESWAP_KEY            BIT(7)
--#define SSS_AES_KEY_CHANGE_MODE         BIT(6)
--#define SSS_AES_KEY_SIZE_128            _SBF(4, 0x00)
--#define SSS_AES_KEY_SIZE_192            _SBF(4, 0x01)
--#define SSS_AES_KEY_SIZE_256            _SBF(4, 0x02)
--#define SSS_AES_FIFO_MODE               BIT(3)
--#define SSS_AES_CHAIN_MODE_ECB          _SBF(1, 0x00)
--#define SSS_AES_CHAIN_MODE_CBC          _SBF(1, 0x01)
--#define SSS_AES_CHAIN_MODE_CTR          _SBF(1, 0x02)
--#define SSS_AES_MODE_DECRYPT            BIT(0)
-+#define SSS_AES_BYTESWAP_DI		BIT(11)
-+#define SSS_AES_BYTESWAP_DO		BIT(10)
-+#define SSS_AES_BYTESWAP_IV		BIT(9)
-+#define SSS_AES_BYTESWAP_CNT		BIT(8)
-+#define SSS_AES_BYTESWAP_KEY		BIT(7)
-+#define SSS_AES_KEY_CHANGE_MODE		BIT(6)
-+#define SSS_AES_KEY_SIZE_128		_SBF(4, 0x00)
-+#define SSS_AES_KEY_SIZE_192		_SBF(4, 0x01)
-+#define SSS_AES_KEY_SIZE_256		_SBF(4, 0x02)
-+#define SSS_AES_FIFO_MODE		BIT(3)
-+#define SSS_AES_CHAIN_MODE_ECB		_SBF(1, 0x00)
-+#define SSS_AES_CHAIN_MODE_CBC		_SBF(1, 0x01)
-+#define SSS_AES_CHAIN_MODE_CTR		_SBF(1, 0x02)
-+#define SSS_AES_MODE_DECRYPT		BIT(0)
- 
- #define SSS_REG_AES_STATUS		0x04
--#define SSS_AES_BUSY                    BIT(2)
--#define SSS_AES_INPUT_READY             BIT(1)
--#define SSS_AES_OUTPUT_READY            BIT(0)
-+#define SSS_AES_BUSY			BIT(2)
-+#define SSS_AES_INPUT_READY		BIT(1)
-+#define SSS_AES_OUTPUT_READY		BIT(0)
- 
- #define SSS_REG_AES_IN_DATA(s)		(0x10 + (s << 2))
- #define SSS_REG_AES_OUT_DATA(s)		(0x20 + (s << 2))
-@@ -129,22 +129,22 @@
- #define SSS_REG_AES_CNT_DATA(s)		(0x40 + (s << 2))
- #define SSS_REG_AES_KEY_DATA(s)		(0x80 + (s << 2))
- 
--#define SSS_REG(dev, reg)               ((dev)->ioaddr + (SSS_REG_##reg))
--#define SSS_READ(dev, reg)              __raw_readl(SSS_REG(dev, reg))
--#define SSS_WRITE(dev, reg, val)        __raw_writel((val), SSS_REG(dev, reg))
-+#define SSS_REG(dev, reg)		((dev)->ioaddr + (SSS_REG_##reg))
-+#define SSS_READ(dev, reg)		__raw_readl(SSS_REG(dev, reg))
-+#define SSS_WRITE(dev, reg, val)	__raw_writel((val), SSS_REG(dev, reg))
- 
--#define SSS_AES_REG(dev, reg)           ((dev)->aes_ioaddr + SSS_REG_##reg)
-+#define SSS_AES_REG(dev, reg)		((dev)->aes_ioaddr + SSS_REG_##reg)
- #define SSS_AES_WRITE(dev, reg, val)    __raw_writel((val), \
- 						SSS_AES_REG(dev, reg))
- 
- /* HW engine modes */
--#define FLAGS_AES_DECRYPT               BIT(0)
--#define FLAGS_AES_MODE_MASK             _SBF(1, 0x03)
--#define FLAGS_AES_CBC                   _SBF(1, 0x01)
--#define FLAGS_AES_CTR                   _SBF(1, 0x02)
-+#define FLAGS_AES_DECRYPT		BIT(0)
-+#define FLAGS_AES_MODE_MASK		_SBF(1, 0x03)
-+#define FLAGS_AES_CBC			_SBF(1, 0x01)
-+#define FLAGS_AES_CTR			_SBF(1, 0x02)
- 
--#define AES_KEY_LEN         16
--#define CRYPTO_QUEUE_LEN    1
-+#define AES_KEY_LEN			16
-+#define CRYPTO_QUEUE_LEN		1
- 
- /**
-  * struct samsung_aes_variant - platform specific SSS driver data
--- 
-2.14.1.536.g6867272d5b56
+[...]
+
+>> >> This series of commits enables the multi-card support for the dw-mmc
+>> >> controller. It includes two parts as below.
+>> >>
+>> >> The first part (patches 1-7) reverts the series of recent commits
+>> >> that removed the multi-card support with comments saying there was no
+>> >> such use case in the real world. Actually this feature is being used
+>> >> in Mellanox Bluefield SoC and has been requested by customers.
+>> >
+>> > Hrm.... it's so unlucky that your patchset comes a little late. As your patch 8
+>> and 9 said, you need them to fix problem for multi-card support, so definitely
+>> there was no such use case, and even the code was buggy to support it right?
+>> That makes the code hard to read and maintain, so we decide to remove it.
+
+Unfortunate patch 8 and 9 does *not* solve the fundamental problem
+with multiple slots. You can't solve it without involving the mmc
+core, as explained in earlier discussions [1].
+
+>>
+>> Hmm..
+>> Well, if i missed your reply for my removing patch, it's my fault..but i didn't
+>> see any reply..
+>> At that time, we didn't see any usage and also now...
+>
+> [Liming] It is definitely not anybody's fault. My apology that I should have made it very clear.
+> This is a new SoC which uses two eMMC cards. This feature has been requested by customer.
+> We made it working with patches, then realized that the support for the 2nd card was removed recently from upstream kernel.
+> To avoid reinventing the wheel, a better approach appears to bring back the changes.
+>
+>>
+
+Having multiple slots of eMMC:s, attached to one single mmc
+controller, is really a terrible idea, even if one could get it to
+somewhat work.
+
+To deal with multiple slots from the mmc core point of view, we would
+need to introduce  a kind of "bus slot lock", which needs to be taken
+whenever the core access any of the registered two mmc hosts.
+
+However, that then means that the upper block device layers can no
+longer perform proper I/O scheduling of requests to the eMMC cards. In
+other words, requests on one eMMC device can then starve requests
+reaching the other eMMC device. It all falls apart.
+
+Perhaps that is a limitation you think is okay to live with, but I am
+really not so sure it's worth adding "multiple slot" support.
+
+[...]
+
+Kind regards
+Uffe
