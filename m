@@ -1,56 +1,85 @@
 From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: Re: [PATCH 2/2] crypto: s5p-sss: Add HASH support for Exynos
-Date: Wed, 25 Oct 2017 17:26:28 +0200
-Message-ID: <3aa6f120-cd5a-ee4e-317c-133f0c91f05d@partner.samsung.com>
-References: <20171025145746.9712-1-k.konieczny@partner.samsung.com>
-        <CGME20171025145805eucas1p13412c8e28388c2323ccc3d104ccbfc64@eucas1p1.samsung.com>
-        <20171025145746.9712-3-k.konieczny@partner.samsung.com>
-        <82a1fda5-d60b-2b79-033b-c9c1055aee4b@mleia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v8 0/2] crypto: s5p-sss: Add HASH support for Exynos
+Date: Wed, 25 Oct 2017 17:27:33 +0200
+Message-ID: <20171025152735.11382-1-k.konieczny@partner.samsung.com>
+References: <CGME20171025152754eucas1p2854a8c48544949585dcbfdd0286ad499@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41134 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751374AbdJYP0d (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:50023 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbdJYP16 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Oct 2017 11:26:33 -0400
-In-reply-to: <82a1fda5-d60b-2b79-033b-c9c1055aee4b@mleia.com>
-Content-language: en-US
+        Wed, 25 Oct 2017 11:27:58 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org
+Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Vladimir,
+First patch change spaces to tabs, second adds HASH support for Exynos.
+Changes:
 
-On 25.10.2017 17:09, Vladimir Zapolskiy wrote:
-> 
-> thank you for updates, everything looks good from my point of view.
-> 
+version 8:
+- fixes suggested by Vladimir Zapolskiy: drop first condition check in 
+  s5p_hash_import, delete unused include delay.h, fix typo in commit
+  message, fix descriptions of struct s5p_hash_reqctx and function
+  s5p_hash_final()
 
-Thank you for your work, I am still newbie, I forgot 'v8'
-and to: linux-crypto :( 
-So I will resend this patch series with improved title 
-and your Ack added.
+version 7:
+- fix ifdef into if(IS_ENABLED()) as suggested by Krzysztof Kozlowski
 
-> On 10/25/2017 05:57 PM, Kamil Konieczny wrote:
->> Add support for MD5, SHA1, SHA256 hash algorithms for Exynos HW.
->> It uses the crypto framework asynchronous hash api.
->> It is based on omap-sham.c driver.
->> S5P has some HW differencies and is not implemented.
->>[...]
->> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
->> ---
-> 
-> I won't linger this time :)
-> 
-> Please feel free to add 
-> 
-> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
-> 
+version 6:
+- fixes suggested by Vladimir Zapolskiy: change HASH_OP enum into bool, fix
+  comments, change int into unsigned int in several functions, change some
+  functions to return void, remove unnecessary parentheses in s5p_hash_import,
+  replace rctx with ctx for request context, drop some dd vars and use tctx->dd
+  instead, simplify s5p_hash_rx, s5p_hash_copy_result and s5p_hash_set_flow,
+  change int final into bool final, reoder some declarations, split patch into
+  two
+- rewrite and fix while loop in s5p_hash_copy_sg_lists
+- rewrite while loop in s5p_hash_prepare_sgs
+
+version 5:
+- fix suggested by Krzysztof Kozlowski: change defines HASH_OP into enum, fix
+  comments
+
+version 4:
+- fixes suggested by Krzysztof Kozlowski: reformat comments, convert context
+  flags into two bool vars, drop SSS_ALIGNED, change name of SSS_DMA_ALIGN and
+  SSS_DMA_ALIGN_MASK, split assignments into separate lines, use IS_ENABLED in
+  place of ifdef, remove sss_hash_algs_info and simplify register and deregister
+  HASH algs
+
+version 3:
+- many fixes suggested by Krzysztof Kozlowski: comments, uppercases in const,
+  remove unused defines, remove unused variable bs, constify aes_variant,
+  remove global var use_hash, remove WARN_ON, improve hash_import(),
+  change goto label into 'out' in s5p_hash_handle_queue(), reorder variable
+  declarations, add spinlock to protect clearing HASH_FLAGS_BUSY
+- simplify code: replace one-line functions s5p_hash_update_req(),
+  s5p_hash_final_req() with call to s5p_hash_xmit_dma(), and delete them
+- replace call to s5p_hash_hw_init() into s5p_ahash_dma_init() and delete it
+- fix clearing shash flag CRYPTO_TFM_REQ_MAY_SLEEP
+- fix s5p_hash_set_flow()
+
+version 2:
+- change patch format so number of lines drops
+- change in Kconfig as suggested by Krzysztof Kozlowski, add
+	EXYNOS_HASH subsection
+- change #ifndef EXYNOS_RNG into #ifdef CRYPTO_DEV_EXYNOS_HASH
+- remove style fixups in aes, as they should go in separate patch
+- remove FLOW_LOG, FLOW_DUMP macros and its uses
+- remove #if 0 ... endif
+- remove unused function hash_wait and its defines
+- fix compiler warning in dev_dbg
+- remove some comments
+- other minor fixes in comments
+
+Kamil Konieczny (2):
+  crypto: s5p-sss: Change spaces to tabs
+  crypto: s5p-sss: Add HASH support for Exynos
+
+ drivers/crypto/Kconfig   |   14 +
+ drivers/crypto/s5p-sss.c | 1596 +++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 1505 insertions(+), 105 deletions(-)
+
 -- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
+2.14.1.536.g6867272d5b56
