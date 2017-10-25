@@ -1,39 +1,85 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] I2C-S3C2410: Use common error handling code in
- s3c24xx_i2c_probe()
-Date: Wed, 25 Oct 2017 16:26:20 +0300
-Message-ID: <20171025132620.l7scp2eachnarpzt@mwanda>
-References: <32c82282-ee0a-137f-4913-310b194b60f3@users.sourceforge.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <32c82282-ee0a-137f-4913-310b194b60f3@users.sourceforge.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v8 0/2] crypto: s5p-sss: Add HASH support for Exynos
+Date: Wed, 25 Oct 2017 16:57:44 +0200
+Message-ID: <20171025145746.9712-1-k.konieczny@partner.samsung.com>
+References: <CGME20171025145804eucas1p26c3abe7d20ebf3afd803ba228daa785f@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42921 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750823AbdJYO6H (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 25 Oct 2017 10:58:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: k.konieczny@partner.samsung.com
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> @@ -1180,24 +1179,21 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
->  		i2c->irq = ret = platform_get_irq(pdev, 0);
->  		if (ret <= 0) {
+First patch change spaces to tabs, second adds HASH support for Exynos.
+Changes:
 
-Not related to this patch, but the comparison here should be < 0.  Or
-otherwise we should set an error code.  The bug was introduced in commit
-e0d1ec97853f ("i2c-s3c2410: Change IRQ to be plain integer.").
+version 8:
+- fixes suggested by Vladimir Zapolskiy: drop first condition check in 
+  s5p_hash_import, delete unused include delay.h, fix typo in commit
+  message, fix descriptions of struct s5p_hash_reqctx and function
+  s5p_hash_final()
 
->  			dev_err(&pdev->dev, "cannot find IRQ\n");
-> -			clk_unprepare(i2c->clk);
-> -			return ret;
+version 7:
+- fix ifdef into if(IS_ENABLED()) as suggested by Krzysztof Kozlowski
 
-regards,
-dan carpenter
+version 6:
+- fixes suggested by Vladimir Zapolskiy: change HASH_OP enum into bool, fix
+  comments, change int into unsigned int in several functions, change some
+  functions to return void, remove unnecessary parentheses in s5p_hash_import,
+  replace rctx with ctx for request context, drop some dd vars and use tctx->dd
+  instead, simplify s5p_hash_rx, s5p_hash_copy_result and s5p_hash_set_flow,
+  change int final into bool final, reoder some declarations, split patch into
+  two
+- rewrite and fix while loop in s5p_hash_copy_sg_lists
+- rewrite while loop in s5p_hash_prepare_sgs
+
+version 5:
+- fix suggested by Krzysztof Kozlowski: change defines HASH_OP into enum, fix
+  comments
+
+version 4:
+- fixes suggested by Krzysztof Kozlowski: reformat comments, convert context
+  flags into two bool vars, drop SSS_ALIGNED, change name of SSS_DMA_ALIGN and
+  SSS_DMA_ALIGN_MASK, split assignments into separate lines, use IS_ENABLED in
+  place of ifdef, remove sss_hash_algs_info and simplify register and deregister
+  HASH algs
+
+version 3:
+- many fixes suggested by Krzysztof Kozlowski: comments, uppercases in const,
+  remove unused defines, remove unused variable bs, constify aes_variant,
+  remove global var use_hash, remove WARN_ON, improve hash_import(),
+  change goto label into 'out' in s5p_hash_handle_queue(), reorder variable
+  declarations, add spinlock to protect clearing HASH_FLAGS_BUSY
+- simplify code: replace one-line functions s5p_hash_update_req(),
+  s5p_hash_final_req() with call to s5p_hash_xmit_dma(), and delete them
+- replace call to s5p_hash_hw_init() into s5p_ahash_dma_init() and delete it
+- fix clearing shash flag CRYPTO_TFM_REQ_MAY_SLEEP
+- fix s5p_hash_set_flow()
+
+version 2:
+- change patch format so number of lines drops
+- change in Kconfig as suggested by Krzysztof Kozlowski, add
+	EXYNOS_HASH subsection
+- change #ifndef EXYNOS_RNG into #ifdef CRYPTO_DEV_EXYNOS_HASH
+- remove style fixups in aes, as they should go in separate patch
+- remove FLOW_LOG, FLOW_DUMP macros and its uses
+- remove #if 0 ... endif
+- remove unused function hash_wait and its defines
+- fix compiler warning in dev_dbg
+- remove some comments
+- other minor fixes in comments
+
+Kamil Konieczny (2):
+  crypto: s5p-sss: Change spaces to tabs
+  crypto: s5p-sss: Add HASH support for Exynos
+
+ drivers/crypto/Kconfig   |   14 +
+ drivers/crypto/s5p-sss.c | 1596 +++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 1505 insertions(+), 105 deletions(-)
+
+-- 
+2.14.1.536.g6867272d5b56
