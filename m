@@ -1,41 +1,75 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 0/9] Enable dw-mmc multi-card support
-Date: Wed, 25 Oct 2017 18:50:08 +0200
-Message-ID: <CAPDyKFrjWiQAVTFxWLvmY4Vdom5UNZ5T2Jvw+jdwKi8soudy9A@mail.gmail.com>
-References: <cover.1507315433.git.lsun@mellanox.com> <8e433531-8f67-d575-635e-c6ced29f6804@rock-chips.com>
- <CGME20171017155217epcas3p4de2f27b921ce77234a2d3e46e4b17473@epcas3p4.samsung.com>
- <AM2PR05MB07533A822C7CCBA7111FD58FA14C0@AM2PR05MB0753.eurprd05.prod.outlook.com>
- <f71d94dc-7277-8675-c21e-9c2ec77174e7@samsung.com> <AM2PR05MB07537D50A18D391CD2295D84A1430@AM2PR05MB0753.eurprd05.prod.outlook.com>
- <CAPDyKFo9jt6V01WWGEXuB7QFz6_-Gqiuzcujh3R-VO2A052DTA@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Thu, 26 Oct 2017 10:37:08 +0900
+Message-ID: <1508981828-5178-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20171026013709epcas2p2525d1249a7f2ad640ce9028df12e2436@epcas2p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f175.google.com ([209.85.223.175]:48659 "EHLO
-        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751637AbdJYQuK (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Oct 2017 12:50:10 -0400
-Received: by mail-io0-f175.google.com with SMTP id j17so1691358iod.5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2017 09:50:10 -0700 (PDT)
-In-Reply-To: <CAPDyKFo9jt6V01WWGEXuB7QFz6_-Gqiuzcujh3R-VO2A052DTA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Liming Sun <lsun@mellanox.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chris Metcalf <cmetcalf@mellanox.com>
 
-[...]
-
-> Unfortunate patch 8 and 9 does *not* solve the fundamental problem
-> with multiple slots. You can't solve it without involving the mmc
-> core, as explained in earlier discussions [1].
->
-
-This link got lost, so here it is:
-
-[1]
-https://www.spinics.net/lists/linux-mmc/msg46549.html
-
-[...]
-
-Kind regards
-Uffe
+SGkgRGF2ZSwKCiAgIEltcHJvdmluZyBFeHlub3MgRFJNIEhETUkgYW5kIE1peGVyIGRyaXZlcnMg
+YW5kIGFsc28gYWRkaW5nCiAgIEhETUkgYXVkaW8gc3VwcG9ydC4KCiAgIFBsZWFzZSBraW5kbHkg
+bGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IHByb2JsZW0uCgogICBQcy4gd2UgYXJlIHJldmll
+d2luZyBJUFAgdjIgZHJpdmVyWzFdIHdoaWNoIGNvbnRyb2xzIHBvc3QgcHJvY2Vzc29yIGRldmlj
+ZXMKICAgICAgIHN1Y2ggYXMgRklNQywgR1NjYWxlciBhbmQgUm90YXRvciBvZiBFeHlub3MgU29D
+LiBTbyBJIHBsYW4gdG8gcmVxdWVzdAogICAgICAgZ2l0IHB1bGwgb25lIG1vcmUgdGltZSBhZnRl
+ciByZXZpZXcuCgpUaGFua3MsCklua2kgRGFlCgpbMV0gaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQv
+bGlzdHMvbGludXgtc2Ftc3VuZy1zb2MvbXNnNjA5ODEuaHRtbAogICAgVGhpcyBpcyBhIGxpbmsg
+dG8gdjMgcGF0Y2ggc2V0IGFuZCBub3cgdjQgaGFzIGJlZW4gcG9zdGVkLgoKVGhlIGZvbGxvd2lu
+ZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCA2Mjg4NGNkMzg2Yjg3NjYzODcyMGVmODgzNzRiMzFhODRj
+YTdlZTVmOgoKICBkcm06IEFkZCBmb3VyIGlvY3RscyBmb3IgbWFuYWdpbmcgZHJtIG1vZGUgb2Jq
+ZWN0IGxlYXNlcyBbdjddICgyMDE3LTEwLTI1IDE2OjMxOjMwICsxMDAwKQoKYXJlIGF2YWlsYWJs
+ZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgogIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9z
+Y20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFncy9leHlub3MtZHJtLW5l
+eHQtZm9yLXY0LjE1Cgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gNjkxZGE3NmY5Yzkw
+ZmE2MTg2ODJiODhmMzg2YjZhMWVmMzA0NjY2ZToKCiAgZHJtOiBleHlub3M6IEFkZCBkcml2ZXIg
+Zm9yIEhETUkgYXVkaW8gaW50ZXJmYWNlICgyMDE3LTEwLTI2IDA5OjA2OjM0ICswOTAwKQoKLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQotIEltcHJvdmVkIEhETUkgYW5kIE1peGVyIGRyaXZlcnMKICAuIEl0IG1vdmVzIG1vZGUg
+c2V0dXAgYW5kIHBsYW5lIHVwZGF0ZSBjb2RlIHRvIGNvbW1pdAogICAgbGlrZSBvdGhlciBDUlRD
+IGRyaXZlcnMKICAuIEl0IG1ha2VzIG1vZGUgY29tbWl0IHRvIGJlIGNhbGxlZCBpbiBlbmFibGUg
+Y2FsbGJhY2sgb25seSBvbmUgdGltZQogIC4gc29tZSBjbGVhbnVwIGFuZCBmaXh1cCB0byBIRE1J
+IGFuZCBNaXhlciBkcml2ZXJzLgogIC4gSXQgYWRkcyAxMDI0eDc2OCwgMTI4MHgxMDI0IGFuZCAx
+MzY2eDc2OCBtb2RlcyBzdXBwb3J0Ci0gQWRkZWQgSERNSSBhdWRpbyBpbnRlcmZhY2UgZHJpdmVy
+CiAgLiBBcyBvZiBub3csIEhETUkgYXVkaW8gd29ya2VkIG9uIGJvYXJkcyB3aXRoIGV4dGVybmFs
+IGF1ZGlvIGNvZGVjIGNvbm5lY3RlZAogICAgaW4gcGFyYWxsZWwgd2l0aCB0aGUgSERNSSBhdWRp
+byB0cmFuc21pdHRlcidzIEkyUyBpbnRlcmZhY2UuCiAgICBUaGlzIHBhdGNoIGlzIHJlcXVpcmVk
+IHRvIHN1cHBvcnQgSERNSSBhdWRpbyBwcm9wZXJseS4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQW5kcnplaiBIYWpkYSAo
+MTApOgogICAgICBkcm0vZXh5bm9zL21peGVyOiBhYnN0cmFjdCBvdXQgb3V0cHV0IG1vZGUgc2V0
+dXAgY29kZQogICAgICBkcm0vZXh5bm9zL21peGVyOiBtb3ZlIG1vZGUgY29tbWl0IHRvIGVuYWJs
+ZSBjYWxsYmFjawogICAgICBkcm0vZXh5bm9zL21peGVyOiBtb3ZlIHJlc29sdXRpb24gY29uZmln
+dXJhdGlvbiB0byBzaW5nbGUgZnVuY3Rpb24KICAgICAgZHJtL2V4eW5vcy9taXhlcjogZml4IG1v
+ZGUgdmFsaWRhdGlvbiBjb2RlCiAgICAgIGRybS9leHlub3MvbWl4ZXI6IHJlbW92ZSBtaXhlcl9y
+ZXNvdXJjZXMgc3ViLXN0cnVjdHVyZQogICAgICBkcm0vZXh5bm9zL2hkbWk6IHJlbW92ZSByZWR1
+bmRhbnQgbW9kZSBmaWVsZAogICAgICBkcm0vZXh5bm9zOiBhZGQgbW9kZV9maXh1cCBjYWxsYmFj
+ayB0byBleHlub3NfZHJtX2NydGNfb3BzCiAgICAgIGRybS9leHlub3MvbWl4ZXI6IHBhc3MgYWN0
+dWFsIG1vZGUgb24gTUlYRVIgdG8gZW5jb2RlcgogICAgICBkcm0vZXh5bm9zL2hkbWk6IHF1aXJr
+IGZvciBzdXBwb3J0IG1vZGUgdGltaW5ncyBjb252ZXJzaW9uCiAgICAgIGRybS9leHlub3MvbWl4
+ZXI6IGVuYWJsZSBzdXBwb3J0IGZvciAxMDI0eDc2OCBhbmQgMTI4MHgxMDI0IG1vZGVzCgpEYW5p
+ZWwgRHJha2UgKDEpOgogICAgICBkcm0vZXh5bm9zL2hkbWk6IGFkZCA4NS41TUh6IHBpeGVsIGNs
+b2NrIGZvciB2MTQgSERNSSBQSFkKClN5bHdlc3RlciBOYXdyb2NraSAoMSk6CiAgICAgIGRybTog
+ZXh5bm9zOiBBZGQgZHJpdmVyIGZvciBIRE1JIGF1ZGlvIGludGVyZmFjZQoKIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvS2NvbmZpZyAgICAgICAgICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2NydGMuYyB8ICAxNSArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHJ2LmggIHwgICAzICsKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
+bWkuYyAgICAgfCAzMTAgKysrKysrKysrKysrKysrLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19taXhlci5jICAgIHwgNDYwICsrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0t
+LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1oZG1pLmggICAgICAgfCAgIDggKy0KIDYg
+ZmlsZXMgY2hhbmdlZCwgNDc2IGluc2VydGlvbnMoKyksIDMyMSBkZWxldGlvbnMoLSkKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
