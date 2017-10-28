@@ -1,75 +1,52 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-next
-Date: Thu, 26 Oct 2017 10:37:08 +0900
-Message-ID: <1508981828-5178-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20171026013709epcas2p2525d1249a7f2ad640ce9028df12e2436@epcas2p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Subject: [PATCH] ARM: dts: exynos: fix property values of LDO15/17 for ODROID-XU3/4
+Date: Sat, 28 Oct 2017 13:32:48 -0400
+Message-ID: <20171028173329.15368-1-tobetter@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEltcHJvdmluZyBFeHlub3MgRFJNIEhETUkgYW5kIE1peGVyIGRyaXZlcnMg
-YW5kIGFsc28gYWRkaW5nCiAgIEhETUkgYXVkaW8gc3VwcG9ydC4KCiAgIFBsZWFzZSBraW5kbHkg
-bGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IHByb2JsZW0uCgogICBQcy4gd2UgYXJlIHJldmll
-d2luZyBJUFAgdjIgZHJpdmVyWzFdIHdoaWNoIGNvbnRyb2xzIHBvc3QgcHJvY2Vzc29yIGRldmlj
-ZXMKICAgICAgIHN1Y2ggYXMgRklNQywgR1NjYWxlciBhbmQgUm90YXRvciBvZiBFeHlub3MgU29D
-LiBTbyBJIHBsYW4gdG8gcmVxdWVzdAogICAgICAgZ2l0IHB1bGwgb25lIG1vcmUgdGltZSBhZnRl
-ciByZXZpZXcuCgpUaGFua3MsCklua2kgRGFlCgpbMV0gaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQv
-bGlzdHMvbGludXgtc2Ftc3VuZy1zb2MvbXNnNjA5ODEuaHRtbAogICAgVGhpcyBpcyBhIGxpbmsg
-dG8gdjMgcGF0Y2ggc2V0IGFuZCBub3cgdjQgaGFzIGJlZW4gcG9zdGVkLgoKVGhlIGZvbGxvd2lu
-ZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCA2Mjg4NGNkMzg2Yjg3NjYzODcyMGVmODgzNzRiMzFhODRj
-YTdlZTVmOgoKICBkcm06IEFkZCBmb3VyIGlvY3RscyBmb3IgbWFuYWdpbmcgZHJtIG1vZGUgb2Jq
-ZWN0IGxlYXNlcyBbdjddICgyMDE3LTEwLTI1IDE2OjMxOjMwICsxMDAwKQoKYXJlIGF2YWlsYWJs
-ZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgogIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9z
-Y20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFncy9leHlub3MtZHJtLW5l
-eHQtZm9yLXY0LjE1Cgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gNjkxZGE3NmY5Yzkw
-ZmE2MTg2ODJiODhmMzg2YjZhMWVmMzA0NjY2ZToKCiAgZHJtOiBleHlub3M6IEFkZCBkcml2ZXIg
-Zm9yIEhETUkgYXVkaW8gaW50ZXJmYWNlICgyMDE3LTEwLTI2IDA5OjA2OjM0ICswOTAwKQoKLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQotIEltcHJvdmVkIEhETUkgYW5kIE1peGVyIGRyaXZlcnMKICAuIEl0IG1vdmVzIG1vZGUg
-c2V0dXAgYW5kIHBsYW5lIHVwZGF0ZSBjb2RlIHRvIGNvbW1pdAogICAgbGlrZSBvdGhlciBDUlRD
-IGRyaXZlcnMKICAuIEl0IG1ha2VzIG1vZGUgY29tbWl0IHRvIGJlIGNhbGxlZCBpbiBlbmFibGUg
-Y2FsbGJhY2sgb25seSBvbmUgdGltZQogIC4gc29tZSBjbGVhbnVwIGFuZCBmaXh1cCB0byBIRE1J
-IGFuZCBNaXhlciBkcml2ZXJzLgogIC4gSXQgYWRkcyAxMDI0eDc2OCwgMTI4MHgxMDI0IGFuZCAx
-MzY2eDc2OCBtb2RlcyBzdXBwb3J0Ci0gQWRkZWQgSERNSSBhdWRpbyBpbnRlcmZhY2UgZHJpdmVy
-CiAgLiBBcyBvZiBub3csIEhETUkgYXVkaW8gd29ya2VkIG9uIGJvYXJkcyB3aXRoIGV4dGVybmFs
-IGF1ZGlvIGNvZGVjIGNvbm5lY3RlZAogICAgaW4gcGFyYWxsZWwgd2l0aCB0aGUgSERNSSBhdWRp
-byB0cmFuc21pdHRlcidzIEkyUyBpbnRlcmZhY2UuCiAgICBUaGlzIHBhdGNoIGlzIHJlcXVpcmVk
-IHRvIHN1cHBvcnQgSERNSSBhdWRpbyBwcm9wZXJseS4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQW5kcnplaiBIYWpkYSAo
-MTApOgogICAgICBkcm0vZXh5bm9zL21peGVyOiBhYnN0cmFjdCBvdXQgb3V0cHV0IG1vZGUgc2V0
-dXAgY29kZQogICAgICBkcm0vZXh5bm9zL21peGVyOiBtb3ZlIG1vZGUgY29tbWl0IHRvIGVuYWJs
-ZSBjYWxsYmFjawogICAgICBkcm0vZXh5bm9zL21peGVyOiBtb3ZlIHJlc29sdXRpb24gY29uZmln
-dXJhdGlvbiB0byBzaW5nbGUgZnVuY3Rpb24KICAgICAgZHJtL2V4eW5vcy9taXhlcjogZml4IG1v
-ZGUgdmFsaWRhdGlvbiBjb2RlCiAgICAgIGRybS9leHlub3MvbWl4ZXI6IHJlbW92ZSBtaXhlcl9y
-ZXNvdXJjZXMgc3ViLXN0cnVjdHVyZQogICAgICBkcm0vZXh5bm9zL2hkbWk6IHJlbW92ZSByZWR1
-bmRhbnQgbW9kZSBmaWVsZAogICAgICBkcm0vZXh5bm9zOiBhZGQgbW9kZV9maXh1cCBjYWxsYmFj
-ayB0byBleHlub3NfZHJtX2NydGNfb3BzCiAgICAgIGRybS9leHlub3MvbWl4ZXI6IHBhc3MgYWN0
-dWFsIG1vZGUgb24gTUlYRVIgdG8gZW5jb2RlcgogICAgICBkcm0vZXh5bm9zL2hkbWk6IHF1aXJr
-IGZvciBzdXBwb3J0IG1vZGUgdGltaW5ncyBjb252ZXJzaW9uCiAgICAgIGRybS9leHlub3MvbWl4
-ZXI6IGVuYWJsZSBzdXBwb3J0IGZvciAxMDI0eDc2OCBhbmQgMTI4MHgxMDI0IG1vZGVzCgpEYW5p
-ZWwgRHJha2UgKDEpOgogICAgICBkcm0vZXh5bm9zL2hkbWk6IGFkZCA4NS41TUh6IHBpeGVsIGNs
-b2NrIGZvciB2MTQgSERNSSBQSFkKClN5bHdlc3RlciBOYXdyb2NraSAoMSk6CiAgICAgIGRybTog
-ZXh5bm9zOiBBZGQgZHJpdmVyIGZvciBIRE1JIGF1ZGlvIGludGVyZmFjZQoKIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvS2NvbmZpZyAgICAgICAgICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuYyB8ICAxNSArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHJ2LmggIHwgICAzICsKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
-bWkuYyAgICAgfCAzMTAgKysrKysrKysrKysrKysrLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19taXhlci5jICAgIHwgNDYwICsrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0t
-LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1oZG1pLmggICAgICAgfCAgIDggKy0KIDYg
-ZmlsZXMgY2hhbmdlZCwgNDc2IGluc2VydGlvbnMoKyksIDMyMSBkZWxldGlvbnMoLSkKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+
+Looking at the schematic, LDO15 and LDO17 are tied as a power source of a
+builtin network chipset. The voltage on LDO15 is corrected to 3.3V and the
+name of LDO17 is corrected to "vdd_ldo17".
+
+Signed-off-by: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index a183b56283f8..68780569371d 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -372,8 +372,8 @@
+ 
+ 			ldo15_reg: LDO15 {
+ 				regulator-name = "vdd_ldo15";
+-				regulator-min-microvolt = <3100000>;
+-				regulator-max-microvolt = <3100000>;
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
+ 				regulator-always-on;
+ 			};
+ 
+@@ -385,7 +385,7 @@
+ 			};
+ 
+ 			ldo17_reg: LDO17 {
+-				regulator-name = "tsp_avdd";
++				regulator-name = "vdd_ldo17";
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
+ 				regulator-always-on;
+-- 
+2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
