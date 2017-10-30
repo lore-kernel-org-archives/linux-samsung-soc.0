@@ -1,84 +1,158 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/exynos: Fix dma-buf import
-Date: Mon, 30 Oct 2017 08:28:09 +0100
-Message-ID: <20171030072809.12456-1-m.szyprowski@samsung.com>
-References: <CGME20171030072827eucas1p2264ae476f8c5dba59f917ac09246b04e@eucas1p2.samsung.com>
+From: Marian Mihailescu <mihailescu2m@gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: add cpu perf counters to Exynos54xx boards
+Date: Mon, 30 Oct 2017 20:04:12 +1030
+Message-ID: <CAM3PiRwqS21a-z6L0yqM0stUSnbKY9pdWKGJfpnyePQ3AZJqdw@mail.gmail.com>
+References: <1508812196-14478-1-git-send-email-mihailescu2m@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marian Mihailescu <mihailescu2m@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:44519 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751251AbdJ3JeO (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 30 Oct 2017 05:34:14 -0400
+In-Reply-To: <1508812196-14478-1-git-send-email-mihailescu2m@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: memeka <mihailescu2m@gmail.com>, Willy Wolff <willy.mh.wolff@gmail.com>
 
-V2hlbiBJT01NVSBzdXBwb3J0IHdhcyBlbmFibGVkLCBkbWEtYnVmIGltcG9ydCBpbiBFeHlub3Mg
-RFJNIHdhcyBicm9rZW4Kc2luY2UgY29tbWl0IGY0M2MzNTk2NmE1YSAoImRybS9leHlub3M6IHVz
-ZSByZWFsIGRldmljZSBmb3IgRE1BLW1hcHBpbmcKb3BlcmF0aW9ucyIpIGR1ZSB0byB1c2luZyB3
-cm9uZyBzdHJ1Y3QgZGV2aWNlIGluIGRybV9nZW1fcHJpbWVfaW1wb3J0KCkKZnVuY3Rpb24uIFRo
-aXMgcGF0Y2ggZml4ZXMgZm9sbG93aW5nIGtlcm5lbCBCVUcgY2F1c2VkIGJ5IGluY29ycmVjdCBi
-dWZmZXIKbWFwcGluZyB0byBETUEgYWRkcmVzcyBzcGFjZToKCmV4eW5vcy1zeXNtbXUgMTQ2NTAw
-MDAuc3lzbW11OiAxNDQ1MDAwMC5taXhlcjogUEFHRSBGQVVMVCBvY2N1cnJlZCBhdCAweGIyZTAw
-MDAwCi0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLQprZXJuZWwgQlVHIGF0IGRy
-aXZlcnMvaW9tbXUvZXh5bm9zLWlvbW11LmM6NDQ5IQpJbnRlcm5hbCBlcnJvcjogT29wcyAtIEJV
-RzogMCBbIzFdIFBSRUVNUFQgU01QIEFSTQpNb2R1bGVzIGxpbmtlZCBpbjoKQ1BVOiAwIFBJRDog
-MCBDb21tOiBzd2FwcGVyLzAgTm90IHRhaW50ZWQgNC4xNC4wLXJjNC1uZXh0LTIwMTcxMDE2LTAw
-MDMzLWc5OTBkNzIzNjY5ZmQgIzMxNjUKSGFyZHdhcmUgbmFtZTogU0FNU1VORyBFWFlOT1MgKEZs
-YXR0ZW5lZCBEZXZpY2UgVHJlZSkKdGFzazogYzBlMGI3YzAgdGFzay5zdGFjazogYzBlMDAwMDAK
-UEMgaXMgYXQgZXh5bm9zX3N5c21tdV9pcnErMHgxZDAvMHgyNGMKTFIgaXMgYXQgZXh5bm9zX3N5
-c21tdV9pcnErMHgxNTQvMHgyNGMKLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0t
-CgpSZXBvcnRlZC1ieTogTWFyaWFuIE1paGFpbGVzY3UgPG1paGFpbGVzY3UybUBnbWFpbC5jb20+
-CkZpeGVzOiBmNDNjMzU5NjZhNWEgKCJkcm0vZXh5bm9zOiB1c2UgcmVhbCBkZXZpY2UgZm9yIERN
-QS1tYXBwaW5nIG9wZXJhdGlvbnMiKQpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxt
-LnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2Rydi5jIHwgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dl
-bS5jIHwgNiArKysrKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uaCB8
-IDIgKysKIDMgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCmluZGV4IGU2NTFhNThjMThjZi4u
-MDgyMmM1MzQxYmE0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCkBA
-IC0xNDgsNyArMTQ4LDcgQEAgc3RhdGljIHN0cnVjdCBkcm1fZHJpdmVyIGV4eW5vc19kcm1fZHJp
-dmVyID0gewogCS5wcmltZV9oYW5kbGVfdG9fZmQJPSBkcm1fZ2VtX3ByaW1lX2hhbmRsZV90b19m
-ZCwKIAkucHJpbWVfZmRfdG9faGFuZGxlCT0gZHJtX2dlbV9wcmltZV9mZF90b19oYW5kbGUsCiAJ
-LmdlbV9wcmltZV9leHBvcnQJPSBkcm1fZ2VtX3ByaW1lX2V4cG9ydCwKLQkuZ2VtX3ByaW1lX2lt
-cG9ydAk9IGRybV9nZW1fcHJpbWVfaW1wb3J0LAorCS5nZW1fcHJpbWVfaW1wb3J0CT0gZXh5bm9z
-X2RybV9nZW1fcHJpbWVfaW1wb3J0LAogCS5nZW1fcHJpbWVfZ2V0X3NnX3RhYmxlCT0gZXh5bm9z
-X2RybV9nZW1fcHJpbWVfZ2V0X3NnX3RhYmxlLAogCS5nZW1fcHJpbWVfaW1wb3J0X3NnX3RhYmxl
-CT0gZXh5bm9zX2RybV9nZW1fcHJpbWVfaW1wb3J0X3NnX3RhYmxlLAogCS5nZW1fcHJpbWVfdm1h
-cAkJPSBleHlub3NfZHJtX2dlbV9wcmltZV92bWFwLApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2dlbS5jCmluZGV4IDA3N2RlMDE0ZDYxMC4uZWYzNWJjMjNiYjM2IDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jCkBAIC01MDYsNiArNTA2LDEyIEBAIGludCBl
-eHlub3NfZHJtX2dlbV9tbWFwKHN0cnVjdCBmaWxlICpmaWxwLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1
-Y3QgKnZtYSkKIH0KIAogLyogbG93LWxldmVsIGludGVyZmFjZSBwcmltZSBoZWxwZXJzICovCitz
-dHJ1Y3QgZHJtX2dlbV9vYmplY3QgKmV4eW5vc19kcm1fZ2VtX3ByaW1lX2ltcG9ydChzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZGV2LAorCQkJCQkgICAgc3RydWN0IGRtYV9idWYgKmRtYV9idWYpCit7CisJ
-cmV0dXJuIGRybV9nZW1fcHJpbWVfaW1wb3J0X2RldihkZXYsIGRtYV9idWYsIHRvX2RtYV9kZXYo
-ZGV2KSk7Cit9CisKIHN0cnVjdCBzZ190YWJsZSAqZXh5bm9zX2RybV9nZW1fcHJpbWVfZ2V0X3Nn
-X3RhYmxlKHN0cnVjdCBkcm1fZ2VtX29iamVjdCAqb2JqKQogewogCXN0cnVjdCBleHlub3NfZHJt
-X2dlbSAqZXh5bm9zX2dlbSA9IHRvX2V4eW5vc19nZW0ob2JqKTsKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9nZW0uaAppbmRleCBlODZkMWE5NTE4YzMuLjVhNGM3ZGU4MGY2NSAxMDA2
-NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5oCisrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uaApAQCAtMTE3LDYgKzExNyw4IEBA
-IGludCBleHlub3NfZHJtX2dlbV9mYXVsdChzdHJ1Y3Qgdm1fZmF1bHQgKnZtZik7CiBpbnQgZXh5
-bm9zX2RybV9nZW1fbW1hcChzdHJ1Y3QgZmlsZSAqZmlscCwgc3RydWN0IHZtX2FyZWFfc3RydWN0
-ICp2bWEpOwogCiAvKiBsb3ctbGV2ZWwgaW50ZXJmYWNlIHByaW1lIGhlbHBlcnMgKi8KK3N0cnVj
-dCBkcm1fZ2VtX29iamVjdCAqZXh5bm9zX2RybV9nZW1fcHJpbWVfaW1wb3J0KHN0cnVjdCBkcm1f
-ZGV2aWNlICpkZXYsCisJCQkJCSAgICBzdHJ1Y3QgZG1hX2J1ZiAqZG1hX2J1Zik7CiBzdHJ1Y3Qg
-c2dfdGFibGUgKmV4eW5vc19kcm1fZ2VtX3ByaW1lX2dldF9zZ190YWJsZShzdHJ1Y3QgZHJtX2dl
-bV9vYmplY3QgKm9iaik7CiBzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKgogZXh5bm9zX2RybV9nZW1f
-cHJpbWVfaW1wb3J0X3NnX3RhYmxlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCi0tIAoyLjE0LjIK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi,
+
+Can I get feedback on this last patch?
+
+Thanks,
+Marian
+Either I've been missing something or nothing has been going on. (K. E. Gordon)
+
+
+On Tue, Oct 24, 2017 at 12:59 PM, memeka <mihailescu2m@gmail.com> wrote:
+> Enable support for ARM Performance Monitoring Units available in Cortex-A7
+> and Cortex-A15 CPU cores for Exynos54xx SoCs (5410, 5420 and 5422/5800).
+>
+> The PMUs interrupts are defined in the common exynos54xx.dtsi device tree,
+> but the PMUs are enabled and have their interrupt CPU affinity defined
+> next to each SoC's cpus node.
+>
+> Tested with perf on Odroid XU4 (Exynos5422):
+> armv7_cortex_a7 PMU driver: 5 counters available
+> armv7_cortex_a15 PMU driver: 7 counters available
+>
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+> Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
+>
+> ---
+> Changes since v1:
+>  - both Cortex-A7 and Cortex-A15 PMUs are now defined in exynos54xx.dtsi
+>  - CPU affinity is defined for each SoC *after* the cpus node entry
+>  - PMUs are disabled in exynos54xx.dtsi and enabled for each SoC
+>  - cpus labels have been fixed in the interrupt-affinity property for
+>    Exynos5410 and Exynos5420 SoCs
+>
+> ---
+>  arch/arm/boot/dts/exynos5410.dtsi      |  8 ++++++++
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 16 ++++++++++++++++
+>  arch/arm/boot/dts/exynos5422-cpus.dtsi | 16 ++++++++++++++++
+>  arch/arm/boot/dts/exynos54xx.dtsi      | 20 ++++++++++++++++++++
+>  4 files changed, 60 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index 7eab4bc..f42b04b 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -428,4 +428,12 @@
+>         samsung,syscon-phandle = <&pmu_system_controller>;
+>  };
+>
+> +&arm_a15_pmu {
+> +       interrupt-affinity = <&cpu0>,
+> +               <&cpu1>,
+> +               <&cpu2>,
+> +               <&cpu3>;
+> +       status = "okay";
+> +};
+> +
+>  #include "exynos5410-pinctrl.dtsi"
+> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> index 5c052d7..518b7d8 100644
+> --- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> @@ -124,3 +124,19 @@
+>                 };
+>         };
+>  };
+> +
+> +&arm_a7_pmu {
+> +       interrupt-affinity = <&cpu4>,
+> +               <&cpu5>,
+> +               <&cpu4>,
+> +               <&cpu5>;
+> +       status = "okay";
+> +};
+> +
+> +&arm_a15_pmu {
+> +       interrupt-affinity = <&cpu0>,
+> +               <&cpu1>,
+> +               <&cpu2>,
+> +               <&cpu3>;
+> +       status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> index ab4c718..92676be 100644
+> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> @@ -131,3 +131,19 @@
+>                 };
+>         };
+>  };
+> +
+> +&arm_a7_pmu {
+> +       interrupt-affinity = <&cpu0>,
+> +               <&cpu1>,
+> +               <&cpu2>,
+> +               <&cpu3>;
+> +       status = "okay";
+> +};
+> +
+> +&arm_a15_pmu {
+> +       interrupt-affinity = <&cpu4>,
+> +               <&cpu5>,
+> +               <&cpu6>,
+> +               <&cpu7>;
+> +       status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+> index 8ca4fef..f0bd27d 100644
+> --- a/arch/arm/boot/dts/exynos54xx.dtsi
+> +++ b/arch/arm/boot/dts/exynos54xx.dtsi
+> @@ -79,6 +79,26 @@
+>                         interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+>                 };
+>
+> +               arm_a7_pmu: arm-a7-pmu {
+> +                       compatible = "arm,cortex-a7-pmu";
+> +                       interrupt-parent = <&gic>;
+> +                       interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> +                               <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+> +                               <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+> +                               <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               arm_a15_pmu: arm-a15-pmu {
+> +                       compatible = "arm,cortex-a15-pmu";
+> +                       interrupt-parent = <&combiner>;
+> +                       interrupts = <1 2>,
+> +                               <7 0>,
+> +                               <16 6>,
+> +                               <19 2>;
+> +                       status = "disabled";
+> +               };
+> +
+>                 sss: sss@10830000 {
+>                         compatible = "samsung,exynos4210-secss";
+>                         reg = <0x10830000 0x300>;
+> --
+> 2.7.4
+>
