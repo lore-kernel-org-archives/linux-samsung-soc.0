@@ -1,52 +1,84 @@
-From: tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Subject: [PATCH] ARM: dts: exynos: fix property values of LDO15/17 for ODROID-XU3/4
-Date: Sat, 28 Oct 2017 13:32:48 -0400
-Message-ID: <20171028173329.15368-1-tobetter@gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: Fix dma-buf import
+Date: Mon, 30 Oct 2017 08:28:09 +0100
+Message-ID: <20171030072809.12456-1-m.szyprowski@samsung.com>
+References: <CGME20171030072827eucas1p2264ae476f8c5dba59f917ac09246b04e@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marian Mihailescu <mihailescu2m@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Looking at the schematic, LDO15 and LDO17 are tied as a power source of a
-builtin network chipset. The voltage on LDO15 is corrected to 3.3V and the
-name of LDO17 is corrected to "vdd_ldo17".
-
-Signed-off-by: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index a183b56283f8..68780569371d 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -372,8 +372,8 @@
- 
- 			ldo15_reg: LDO15 {
- 				regulator-name = "vdd_ldo15";
--				regulator-min-microvolt = <3100000>;
--				regulator-max-microvolt = <3100000>;
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
- 			};
- 
-@@ -385,7 +385,7 @@
- 			};
- 
- 			ldo17_reg: LDO17 {
--				regulator-name = "tsp_avdd";
-+				regulator-name = "vdd_ldo17";
- 				regulator-min-microvolt = <3300000>;
- 				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
--- 
-2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+V2hlbiBJT01NVSBzdXBwb3J0IHdhcyBlbmFibGVkLCBkbWEtYnVmIGltcG9ydCBpbiBFeHlub3Mg
+RFJNIHdhcyBicm9rZW4Kc2luY2UgY29tbWl0IGY0M2MzNTk2NmE1YSAoImRybS9leHlub3M6IHVz
+ZSByZWFsIGRldmljZSBmb3IgRE1BLW1hcHBpbmcKb3BlcmF0aW9ucyIpIGR1ZSB0byB1c2luZyB3
+cm9uZyBzdHJ1Y3QgZGV2aWNlIGluIGRybV9nZW1fcHJpbWVfaW1wb3J0KCkKZnVuY3Rpb24uIFRo
+aXMgcGF0Y2ggZml4ZXMgZm9sbG93aW5nIGtlcm5lbCBCVUcgY2F1c2VkIGJ5IGluY29ycmVjdCBi
+dWZmZXIKbWFwcGluZyB0byBETUEgYWRkcmVzcyBzcGFjZToKCmV4eW5vcy1zeXNtbXUgMTQ2NTAw
+MDAuc3lzbW11OiAxNDQ1MDAwMC5taXhlcjogUEFHRSBGQVVMVCBvY2N1cnJlZCBhdCAweGIyZTAw
+MDAwCi0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLQprZXJuZWwgQlVHIGF0IGRy
+aXZlcnMvaW9tbXUvZXh5bm9zLWlvbW11LmM6NDQ5IQpJbnRlcm5hbCBlcnJvcjogT29wcyAtIEJV
+RzogMCBbIzFdIFBSRUVNUFQgU01QIEFSTQpNb2R1bGVzIGxpbmtlZCBpbjoKQ1BVOiAwIFBJRDog
+MCBDb21tOiBzd2FwcGVyLzAgTm90IHRhaW50ZWQgNC4xNC4wLXJjNC1uZXh0LTIwMTcxMDE2LTAw
+MDMzLWc5OTBkNzIzNjY5ZmQgIzMxNjUKSGFyZHdhcmUgbmFtZTogU0FNU1VORyBFWFlOT1MgKEZs
+YXR0ZW5lZCBEZXZpY2UgVHJlZSkKdGFzazogYzBlMGI3YzAgdGFzay5zdGFjazogYzBlMDAwMDAK
+UEMgaXMgYXQgZXh5bm9zX3N5c21tdV9pcnErMHgxZDAvMHgyNGMKTFIgaXMgYXQgZXh5bm9zX3N5
+c21tdV9pcnErMHgxNTQvMHgyNGMKLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0t
+CgpSZXBvcnRlZC1ieTogTWFyaWFuIE1paGFpbGVzY3UgPG1paGFpbGVzY3UybUBnbWFpbC5jb20+
+CkZpeGVzOiBmNDNjMzU5NjZhNWEgKCJkcm0vZXh5bm9zOiB1c2UgcmVhbCBkZXZpY2UgZm9yIERN
+QS1tYXBwaW5nIG9wZXJhdGlvbnMiKQpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxt
+LnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2Rydi5jIHwgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dl
+bS5jIHwgNiArKysrKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uaCB8
+IDIgKysKIDMgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCmluZGV4IGU2NTFhNThjMThjZi4u
+MDgyMmM1MzQxYmE0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCkBA
+IC0xNDgsNyArMTQ4LDcgQEAgc3RhdGljIHN0cnVjdCBkcm1fZHJpdmVyIGV4eW5vc19kcm1fZHJp
+dmVyID0gewogCS5wcmltZV9oYW5kbGVfdG9fZmQJPSBkcm1fZ2VtX3ByaW1lX2hhbmRsZV90b19m
+ZCwKIAkucHJpbWVfZmRfdG9faGFuZGxlCT0gZHJtX2dlbV9wcmltZV9mZF90b19oYW5kbGUsCiAJ
+LmdlbV9wcmltZV9leHBvcnQJPSBkcm1fZ2VtX3ByaW1lX2V4cG9ydCwKLQkuZ2VtX3ByaW1lX2lt
+cG9ydAk9IGRybV9nZW1fcHJpbWVfaW1wb3J0LAorCS5nZW1fcHJpbWVfaW1wb3J0CT0gZXh5bm9z
+X2RybV9nZW1fcHJpbWVfaW1wb3J0LAogCS5nZW1fcHJpbWVfZ2V0X3NnX3RhYmxlCT0gZXh5bm9z
+X2RybV9nZW1fcHJpbWVfZ2V0X3NnX3RhYmxlLAogCS5nZW1fcHJpbWVfaW1wb3J0X3NnX3RhYmxl
+CT0gZXh5bm9zX2RybV9nZW1fcHJpbWVfaW1wb3J0X3NnX3RhYmxlLAogCS5nZW1fcHJpbWVfdm1h
+cAkJPSBleHlub3NfZHJtX2dlbV9wcmltZV92bWFwLApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2dlbS5jCmluZGV4IDA3N2RlMDE0ZDYxMC4uZWYzNWJjMjNiYjM2IDEwMDY0NAotLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMKKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jCkBAIC01MDYsNiArNTA2LDEyIEBAIGludCBl
+eHlub3NfZHJtX2dlbV9tbWFwKHN0cnVjdCBmaWxlICpmaWxwLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1
+Y3QgKnZtYSkKIH0KIAogLyogbG93LWxldmVsIGludGVyZmFjZSBwcmltZSBoZWxwZXJzICovCitz
+dHJ1Y3QgZHJtX2dlbV9vYmplY3QgKmV4eW5vc19kcm1fZ2VtX3ByaW1lX2ltcG9ydChzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZGV2LAorCQkJCQkgICAgc3RydWN0IGRtYV9idWYgKmRtYV9idWYpCit7CisJ
+cmV0dXJuIGRybV9nZW1fcHJpbWVfaW1wb3J0X2RldihkZXYsIGRtYV9idWYsIHRvX2RtYV9kZXYo
+ZGV2KSk7Cit9CisKIHN0cnVjdCBzZ190YWJsZSAqZXh5bm9zX2RybV9nZW1fcHJpbWVfZ2V0X3Nn
+X3RhYmxlKHN0cnVjdCBkcm1fZ2VtX29iamVjdCAqb2JqKQogewogCXN0cnVjdCBleHlub3NfZHJt
+X2dlbSAqZXh5bm9zX2dlbSA9IHRvX2V4eW5vc19nZW0ob2JqKTsKZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9nZW0uaAppbmRleCBlODZkMWE5NTE4YzMuLjVhNGM3ZGU4MGY2NSAxMDA2
+NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5oCisrKyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uaApAQCAtMTE3LDYgKzExNyw4IEBA
+IGludCBleHlub3NfZHJtX2dlbV9mYXVsdChzdHJ1Y3Qgdm1fZmF1bHQgKnZtZik7CiBpbnQgZXh5
+bm9zX2RybV9nZW1fbW1hcChzdHJ1Y3QgZmlsZSAqZmlscCwgc3RydWN0IHZtX2FyZWFfc3RydWN0
+ICp2bWEpOwogCiAvKiBsb3ctbGV2ZWwgaW50ZXJmYWNlIHByaW1lIGhlbHBlcnMgKi8KK3N0cnVj
+dCBkcm1fZ2VtX29iamVjdCAqZXh5bm9zX2RybV9nZW1fcHJpbWVfaW1wb3J0KHN0cnVjdCBkcm1f
+ZGV2aWNlICpkZXYsCisJCQkJCSAgICBzdHJ1Y3QgZG1hX2J1ZiAqZG1hX2J1Zik7CiBzdHJ1Y3Qg
+c2dfdGFibGUgKmV4eW5vc19kcm1fZ2VtX3ByaW1lX2dldF9zZ190YWJsZShzdHJ1Y3QgZHJtX2dl
+bV9vYmplY3QgKm9iaik7CiBzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKgogZXh5bm9zX2RybV9nZW1f
+cHJpbWVfaW1wb3J0X3NnX3RhYmxlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCi0tIAoyLjE0LjIK
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
