@@ -1,54 +1,97 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos: add cpu perf counters to Exynos54xx boards
-Date: Mon, 30 Oct 2017 10:38:38 +0100
-Message-ID: <CAJKOXPekn5JUmjcmcqT6HHQUbd7yCGC9mA-oPcEMRjTL0OvQ3g@mail.gmail.com>
-References: <1508812196-14478-1-git-send-email-mihailescu2m@gmail.com> <CAM3PiRwqS21a-z6L0yqM0stUSnbKY9pdWKGJfpnyePQ3AZJqdw@mail.gmail.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH] drm/exynos: Fix dma-buf import
+Date: Mon, 30 Oct 2017 11:04:00 +0100
+Message-ID: <34d1d8db-5df7-1293-1893-9249cb4e1181@math.uni-bielefeld.de>
+References: <CGME20171030072827eucas1p2264ae476f8c5dba59f917ac09246b04e@eucas1p2.samsung.com>
+ <20171030072809.12456-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAM3PiRwqS21a-z6L0yqM0stUSnbKY9pdWKGJfpnyePQ3AZJqdw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marian Mihailescu <mihailescu2m-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Willy Wolff <willy.mh.wolff-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:56134 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932315AbdJ3KEF (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 30 Oct 2017 06:04:05 -0400
+In-Reply-To: <20171030072809.12456-1-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>
 
-On Mon, Oct 30, 2017 at 10:34 AM, Marian Mihailescu
-<mihailescu2m-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi,
->
-> Can I get feedback on this last patch?
+Marek Szyprowski wrote:
+> When IOMMU support was enabled, dma-buf import in Exynos DRM was broken
+> since commit f43c35966a5a ("drm/exynos: use real device for DMA-mapping
+> operations") due to using wrong struct device in drm_gem_prime_import()
+> function. This patch fixes following kernel BUG caused by incorrect buffer
+> mapping to DMA address space:
+> 
+> exynos-sysmmu 14650000.sysmmu: 14450000.mixer: PAGE FAULT occurred at 0xb2e00000
+> ------------[ cut here ]------------
+> kernel BUG at drivers/iommu/exynos-iommu.c:449!
+> Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+> Modules linked in:
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.14.0-rc4-next-20171016-00033-g990d723669fd #3165
+> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> task: c0e0b7c0 task.stack: c0e00000
+> PC is at exynos_sysmmu_irq+0x1d0/0x24c
+> LR is at exynos_sysmmu_irq+0x154/0x24c
+> ------------[ cut here ]------------
+Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Just six days passed... I'll take a look soon, it is not lost. But
-anyway merge window is too close so I am not planning to take anything
-more for upcoming release.
 
-Best regards.
-Krzysztof
+- Tobias
 
-
->
-> Thanks,
-> Marian
-> Either I've been missing something or nothing has been going on. (K. E. Gordon)
->
->
-> On Tue, Oct 24, 2017 at 12:59 PM, memeka <mihailescu2m-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> Enable support for ARM Performance Monitoring Units available in Cortex-A7
->> and Cortex-A15 CPU cores for Exynos54xx SoCs (5410, 5420 and 5422/5800).
->>
->> The PMUs interrupts are defined in the common exynos54xx.dtsi device tree,
->> but the PMUs are enabled and have their interrupt CPU affinity defined
->> next to each SoC's cpus node.
->>
->> Tested with perf on Odroid XU4 (Exynos5422):
->> armv7_cortex_a7 PMU driver: 5 counters available
->> armv7_cortex_a15 PMU driver: 7 counters available
->>
->> Suggested-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Signed-off-by: Marian Mihailescu <mihailescu2m-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Signed-off-by: Willy Wolff <willy.mh.wolff-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Reported-by: Marian Mihailescu <mihailescu2m@gmail.com>
+> Fixes: f43c35966a5a ("drm/exynos: use real device for DMA-mapping operations")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 6 ++++++
+>  drivers/gpu/drm/exynos/exynos_drm_gem.h | 2 ++
+>  3 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index e651a58c18cf..0822c5341ba4 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -148,7 +148,7 @@ static struct drm_driver exynos_drm_driver = {
+>  	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
+>  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+>  	.gem_prime_export	= drm_gem_prime_export,
+> -	.gem_prime_import	= drm_gem_prime_import,
+> +	.gem_prime_import	= exynos_drm_gem_prime_import,
+>  	.gem_prime_get_sg_table	= exynos_drm_gem_prime_get_sg_table,
+>  	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
+>  	.gem_prime_vmap		= exynos_drm_gem_prime_vmap,
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> index 077de014d610..ef35bc23bb36 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> @@ -506,6 +506,12 @@ int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+>  }
+>  
+>  /* low-level interface prime helpers */
+> +struct drm_gem_object *exynos_drm_gem_prime_import(struct drm_device *dev,
+> +					    struct dma_buf *dma_buf)
+> +{
+> +	return drm_gem_prime_import_dev(dev, dma_buf, to_dma_dev(dev));
+> +}
+> +
+>  struct sg_table *exynos_drm_gem_prime_get_sg_table(struct drm_gem_object *obj)
+>  {
+>  	struct exynos_drm_gem *exynos_gem = to_exynos_gem(obj);
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.h b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> index e86d1a9518c3..5a4c7de80f65 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> @@ -117,6 +117,8 @@ int exynos_drm_gem_fault(struct vm_fault *vmf);
+>  int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+>  
+>  /* low-level interface prime helpers */
+> +struct drm_gem_object *exynos_drm_gem_prime_import(struct drm_device *dev,
+> +					    struct dma_buf *dma_buf);
+>  struct sg_table *exynos_drm_gem_prime_get_sg_table(struct drm_gem_object *obj);
+>  struct drm_gem_object *
+>  exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
+> 
