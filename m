@@ -1,48 +1,49 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] I2C-S3C2410: Use common error handling code in
- s3c24xx_i2c_probe()
-Date: Tue, 31 Oct 2017 14:36:50 +0000
-Message-ID: <20171031143650.GA13049@trinity.fluff.org>
-References: <32c82282-ee0a-137f-4913-310b194b60f3@users.sourceforge.net>
- <20171025132620.l7scp2eachnarpzt@mwanda>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20171025132620.l7scp2eachnarpzt@mwanda>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, SF Markus Elfring <elfring@users.sourceforge.net>, linux-arm-kernel@lists.infradead.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: gem: Drop NONCONTIG flag for buffers allocated
+ without IOMMU
+Date: Tue, 31 Oct 2017 17:28:13 +0100
+Message-ID: <20171031162813.1546-1-m.szyprowski@samsung.com>
+References: <CGME20171031162824eucas1p1d15c2ea1d529edd18e16506b26669b91@eucas1p1.samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marian Mihailescu <mihailescu2m@gmail.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 25, 2017 at 04:26:20PM +0300, Dan Carpenter wrote:
-> > @@ -1180,24 +1179,21 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
-> >  		i2c->irq = ret = platform_get_irq(pdev, 0);
-> >  		if (ret <= 0) {
-> 
-> Not related to this patch, but the comparison here should be < 0.  Or
-> otherwise we should set an error code.  The bug was introduced in commit
-> e0d1ec97853f ("i2c-s3c2410: Change IRQ to be plain integer.").
-> 
-> >  			dev_err(&pdev->dev, "cannot find IRQ\n");
-> > -			clk_unprepare(i2c->clk);
-> > -			return ret;
-> 
-> regards,
-> dan carpenter
+When no IOMMU is available, all GEM buffers allocated by Exynos DRM driver
+are contiguous, because of the underlying dma_alloc_attrs() function
+provides only such buffers. In such case it makes no sense to keep
+BO_NONCONTIG flag for the allocated GEM buffers. This allows to avoid
+failures for buffer contiguity checks in the subsequent operations on GEM
+objects.
 
-I believe (ret < 0) { } should be the correct case here.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+CC: stable@vger.kernel.org # v4.4+
+---
+This issue is there since commit 0519f9a12d011 ("drm/exynos: add iommu
+support for exynos drm framework"), but this patch applies cleanly
+only to v4.4+ kernel releases due changes in the surrounding code.
+---
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 02f978bb9261..476c00fe1998 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -227,6 +227,13 @@ struct exynos_drm_gem *exynos_drm_gem_create(struct drm_device *dev,
+ 	if (IS_ERR(exynos_gem))
+ 		return exynos_gem;
+ 
++	/*
++	 * when no IOMMU is available, all allocated buffers are contiguous
++	 * anyway, so drop EXYNOS_BO_NONCONTIG flag
++	 */
++	if (!is_drm_iommu_supported(dev))
++		flags &= ~EXYNOS_BO_NONCONTIG;
++
+ 	/* set memory type and cache attribute from user side. */
+ 	exynos_gem->flags = flags;
+ 
 -- 
-Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
-
-Large Hadron Colada: A large Pina Colada that makes the universe disappear.
+2.14.2
