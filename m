@@ -1,134 +1,80 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: exynos IOMMU status
-Date: Tue, 31 Oct 2017 17:51:48 +0100
-Message-ID: <c7acc842-278b-9aad-4710-63cae2239b5c@samsung.com>
-References: <CGME20171016233825epcas2p233cda76c774a9629d5dba24150d8bbc5@epcas2p2.samsung.com>
-        <CAM3PiRwMwms=dqewOn9whmYKgNjB+rUnLdYThv9zZHxEaVrPZQ@mail.gmail.com>
-        <f6f2f7c5-1d37-9391-e71a-af1ee988d6e7@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 0/5] mmc: dw_mmc: Fix the CTO timer patch, plus the DTO timer
+Date: Tue, 31 Oct 2017 11:14:53 -0700
+Message-ID: <CAD=FV=UFmKBonWJVRT-OPb-FY0GzHgf0HZo=NAZuxSk0e6URWA@mail.gmail.com>
+References: <20171012201118.23570-1-dianders@chromium.org> <CAPDyKFqaZxGJyJRB36-K3zVK_-V637ge1S6bpiQjbfDe_5PhLw@mail.gmail.com>
+ <da14d1a3-c85f-b415-1cb6-b5d1f3a1ed7a@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50609 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751295AbdJaQvx (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 31 Oct 2017 12:51:53 -0400
-In-reply-to: <f6f2f7c5-1d37-9391-e71a-af1ee988d6e7@samsung.com>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <da14d1a3-c85f-b415-1cb6-b5d1f3a1ed7a@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Ziyuan Xu <xzy.xu@rock-chips.com>, Alexandru Stan <amstan@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Brian Norris <briannorris@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marian Mihailescu <mihailescu2m@gmail.com>, linux-samsung-soc@vger.kernel.org, shuahkhan@gmail.com
 
-Hi All,
+Hi,
 
-On 2017-10-31 10:59, Marek Szyprowski wrote:
-> On 2017-10-17 01:38, Marian Mihailescu wrote:
->> What is the current status of CONFIG_EXYNOS_IOMMU in 4.14? It's still
->> disabled by default in exynos_defconfig.
->> Is the implementation working?
+On Tue, Oct 31, 2017 at 12:05 AM, Shawn Lin <shawn.lin@rock-chips.com> wrot=
+e:
+> Hi Ulf,
 >
-> Exynos IOMMU driver is fully functional, however there are still some 
-> unsupported
-> scenarios. One of it is booting with display stack enabled, what 
-> results in IOMMU
-> page fault early during the boot (for example this happens on 
-> Chomebook boards,
-> which boots with display pre-configured by bootloader). This is the 
-> main reason
-> for keeping it disabled by default in exynos_defconfig.
 >
-> All other issues, which might be observed, are other drivers bugs and 
-> have to be
-> traced and fixed.
->
->> I have observed with CONFIG_EXYNOS_IOMMU=y on Odroid XU4, that a
->> gstreamer pipeline to kmssink will lock the board IF
->> capture-io-mode=dmabuf is used by the element in front of it. With
->> capture-io-mode=mmap it's working fine (but much slower of course).
->> Without CONFIG_EXYNOS_IOMMU, kmssink with dmabuf-import works
->> correctly (e.g. playing a 1080p video to kmssink uses 5% CPU).
->
-> This was my fault, the regression has been introduced in Linux v4.6 in 
-> Exynos DRM
-> core. This has been fixed by the following patch:
-> https://www.spinics.net/lists/linux-samsung-soc/msg61115.html
->
->> On the other hand, without it, X11 fails to start when using armsoc ddx:
+> On 2017/10/30 19:40, Ulf Hansson wrote:
 >>
->> [   528.356] (II) ARMSOC(0): Output HDMI-1 connected
->> [   528.356] (II) ARMSOC(0): Using exact sizes for initial modes
->> [   528.356] (II) ARMSOC(0): Output HDMI-1 using initial mode 
->> 1920x1080 +0+0
->> [   528.356] (II) ARMSOC(0): Got KMS resources
->> [   528.356] (**) ARMSOC(0): Display dimensions: (510, 290) mm
->> [   528.356] (**) ARMSOC(0): DPI set to (95, 94)
->> [   528.356] (II) Loading sub module "dri2"
->> [   528.356] (II) LoadModule: "dri2"
->> [   528.356] (II) Module "dri2" already built-in
->> [   528.356] (II) Loading sub module "exa"
->> [   528.356] (II) LoadModule: "exa"
->> [   528.357] (II) Loading /usr/lib/xorg/modules/libexa.so
->> [   528.358] (II) Module exa: vendor="X.Org Foundation"
->> [   528.358]    compiled for 1.18.4, module version = 2.6.0
->> [   528.358]    ABI class: X.Org Video Driver, version 20.0
->> [   528.358] (II) Loading sub module "fb"
->> [   528.358] (II) LoadModule: "fb"
->> [   528.358] (II) Loading /usr/lib/xorg/modules/libfb.so
->> [   528.359] (II) Module fb: vendor="X.Org Foundation"
->> [   528.359]    compiled for 1.18.4, module version = 1.0.0
->> [   528.359]    ABI class: X.Org ANSI C Emulation, version 0.4
->> [   528.359] (--) Depth 24 pixmap format is 32 bpp
->> [   528.367] (II) ARMSOC(0): Soft EXA mode
->> [   528.368] (II) EXA(0): Driver allocated offscreen pixmaps
->> [   528.368] (II) EXA(0): Driver registered support for the following
->> operations:
->> [   528.368] (II)         Solid
->> [   528.368] (II)         Copy
->> [   528.368] (II)         Composite (RENDER acceleration)
->> [   528.368] (II) ARMSOC(0): G2D Initialized.
->> [   528.368] (II) ARMSOC(0): Setting swap chain size: 2
->> [   528.368] (II) ARMSOC(0): [DRI2] Setup complete
->> [   528.368] (II) ARMSOC(0): [DRI2]   DRI driver: armsoc
->> [   528.368] (==) ARMSOC(0): Backing store enabled
->> [   528.368] (==) ARMSOC(0): Silken mouse enabled
->> [   528.368] (II) ARMSOC(0): HW cursor init()
->> [   528.376] (EE) ARMSOC(0): ERROR: HW cursor: drmModeAddFB2 failed:
->> Invalid argument
->> [   528.385] (WW) depth 32 FB unsupported : falling back to depth 24
->> [   528.394] (EE) ARMSOC(0): ERROR: Failed to add framebuffer to the
->> scanout buffer
->> [   528.418] (EE) ARMSOC(0): ERROR: xf86SetDesiredModes() failed!
->> [   528.418] (EE) ARMSOC(0): ERROR: ARMSOCEnterVT() failed!
->> [   528.419] (EE)
->> [   528.419] (EE) Backtrace:
->> [   528.420] (EE)
->> [   528.420] (EE) Segmentation fault at address 0x200
->> [   528.420] (EE)
->> Fatal server error:
->> [   528.420] (EE) Caught signal 11 (Segmentation fault). Server aborting
+>> On 12 October 2017 at 22:11, Douglas Anderson <dianders@chromium.org>
+>> wrote:
+>>>
+>>> Recently we landed 03de19212ea3 ("mmc: dw_mmc: introduce timer for
+>>> broken command transfer over scheme").  I found a bunch of problems
+>>> with that patch, so this series attempts to solve some of them.
+>>>
+>>> This also fixes the DTO timer in some of the same ways even though I
+>>> haven't personally seen problems with the DTO timer.
+>>>
+>>> NOTE: this series has only been lighly tested so far.  I can at least
+>>> reproduce the need for the CTO timer on one of my devices and so I can
+>>> confirm that part still works.  As mentioned in the 3rd patch I also
+>>> ran the mmc_test kernel module on this and did manage to see the 3rd
+>>> patch doing something useful.
+>>>
+>>> Changes in v2:
+>>> - Removed extra "int i"
+>>> - Fix the DTO timeout calculation new for v2
+>>> - Cleanup the DTO timer new for v2
+>>>
+>>> Douglas Anderson (5):
+>>>    mmc: dw_mmc: cancel the CTO timer after a voltage switch
+>>>    mmc: dw_mmc: Fix the CTO timeout calculation
+>>>    mmc: dw_mmc: Add locking to the CTO timer
+>>>    mmc: dw_mmc: Fix the DTO timeout calculation
+>>>    mmc: dw_mmc: Cleanup the DTO timer like the CTO one
+>>>
+>>>   drivers/mmc/host/dw_mmc.c | 162
+>>> +++++++++++++++++++++++++++++++++++++++++-----
+>>>   1 file changed, 146 insertions(+), 16 deletions(-)
+>>>
 >>
->> Please note, I am not sure yet if CONFIG_EXYNOS_IOMMU=n is at fault
->> for X11 not working, I need to do some debugging.
+>> Douglas, Jaehoon,
+>>
+>> I decided to pick patch 1->4 for fixes and the patch 5 for next, that
+>> should help us to get them more tested, while Jaehoon is still
+>> catching up.
+>>
+>> I can add ack/drop patches for yet a couple of days this week.
 >
-> That's probably the issue of Exynos DRM GEM and the flags provided by 
-> ARMSOC
-> XServer, which requests NONCONTIG buffers, which cannot be used by 
-> Exynos DRM
-> CRTCs without IOMMU enabled.
-
-Just for the reference, this issue has been fixed by the following patch:
-https://patchwork.kernel.org/patch/10034919/
-
 >
->> But I wanted to ask first if CONFIG_EXYNOS_IOMMU is safe to enable or
->> not, and if it's known it's messing with DRM/KMS dmabuf-import (as
->> seen with kmssink).
+> Patch 4 introduce a warning:
 >
-> Enabling IOMMU should be safe, it always improves security and allows to
-> track DMA access bugs in the drivers.
+> warning: unused variable =E2=80=98irqflags=E2=80=99 [-Wunused-variable]
+>
+> irqflags should be introduced in patch 5 in the same place.
+> As it seems patch 5 will be candidate for 4.15, so could you please
+> help fix patch 4 and 5 manually? Or Doug need to resend patch 4 and 5?
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thanks for catching this and sorry for the dumb screwup.  Ulf: I'm
+happy to do do whatever makes it easiest for you.  If you want me to
+re-post it should be very quick.
+
+-Doug
