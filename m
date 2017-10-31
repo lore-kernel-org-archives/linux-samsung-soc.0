@@ -1,49 +1,39 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/exynos: gem: Drop NONCONTIG flag for buffers allocated
- without IOMMU
-Date: Tue, 31 Oct 2017 17:28:13 +0100
-Message-ID: <20171031162813.1546-1-m.szyprowski@samsung.com>
-References: <CGME20171031162824eucas1p1d15c2ea1d529edd18e16506b26669b91@eucas1p1.samsung.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marian Mihailescu <mihailescu2m@gmail.com>, stable@vger.kernel.org
+Subject: [PATCH 1/2] media: exynos-gsc: drop obsolete capabilities
+Date: Tue, 31 Oct 2017 17:45:43 +0100
+Message-ID: <20171031164544.2401-1-m.szyprowski@samsung.com>
+References: <CGME20171031164549eucas1p2322d11106997b38122e5d2be47eb7808@eucas1p2.samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When no IOMMU is available, all GEM buffers allocated by Exynos DRM driver
-are contiguous, because of the underlying dma_alloc_attrs() function
-provides only such buffers. In such case it makes no sense to keep
-BO_NONCONTIG flag for the allocated GEM buffers. This allows to avoid
-failures for buffer contiguity checks in the subsequent operations on GEM
-objects.
+Setting both V4L2_CAP_VIDEO_CAPTURE_MPLANE and V4L2_CAP_VIDEO_OUTPUT_MPLANE
+for mem2mem video nodes is obsolete since commit f0476a83d61a ("[media]
+V4L: Add capability flags for memory-to-memory devices"). It was enough
+time to adapt all users to the new flags, so drop the legacy caps for now
+to match other mem2mem drivers.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-CC: stable@vger.kernel.org # v4.4+
 ---
-This issue is there since commit 0519f9a12d011 ("drm/exynos: add iommu
-support for exynos drm framework"), but this patch applies cleanly
-only to v4.4+ kernel releases due changes in the surrounding code.
----
- drivers/gpu/drm/exynos/exynos_drm_gem.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/media/platform/exynos-gsc/gsc-m2m.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index 02f978bb9261..476c00fe1998 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -227,6 +227,13 @@ struct exynos_drm_gem *exynos_drm_gem_create(struct drm_device *dev,
- 	if (IS_ERR(exynos_gem))
- 		return exynos_gem;
- 
-+	/*
-+	 * when no IOMMU is available, all allocated buffers are contiguous
-+	 * anyway, so drop EXYNOS_BO_NONCONTIG flag
-+	 */
-+	if (!is_drm_iommu_supported(dev))
-+		flags &= ~EXYNOS_BO_NONCONTIG;
-+
- 	/* set memory type and cache attribute from user side. */
- 	exynos_gem->flags = flags;
- 
+diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+index 722d7c45bf9e..785e67752194 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
++++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+@@ -298,9 +298,7 @@ static int gsc_m2m_querycap(struct file *file, void *fh,
+ 	strlcpy(cap->card, GSC_MODULE_NAME " gscaler", sizeof(cap->card));
+ 	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s",
+ 		 dev_name(&gsc->pdev->dev));
+-	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_M2M_MPLANE |
+-		V4L2_CAP_VIDEO_CAPTURE_MPLANE |	V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+-
++	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_M2M_MPLANE;
+ 	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
+ 	return 0;
+ }
 -- 
 2.14.2
