@@ -1,68 +1,77 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: gem: Drop NONCONTIG flag for buffers
- allocated without IOMMU
-Date: Wed, 01 Nov 2017 15:31:28 +0900
-Message-ID: <59F96A40.5080101@samsung.com>
-References: <CGME20171031162824eucas1p1d15c2ea1d529edd18e16506b26669b91@eucas1p1.samsung.com>
-        <20171031162813.1546-1-m.szyprowski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v4 2/9] drm/exynos: ipp: Add IPP v2 framework
+Date: Wed, 1 Nov 2017 15:18:44 +0100
+Message-ID: <aa856baa-abc0-0cb6-60c1-2be07fe454b5@math.uni-bielefeld.de>
+References: <CGME20171023075449eucas1p18211ed64e964860d201aaeb53a87a8be@eucas1p1.samsung.com>
+ <20171023075428.7003-1-m.szyprowski@samsung.com>
+ <20171023075428.7003-3-m.szyprowski@samsung.com>
+ <CAPM=9tyy135aOOiMFiUzkfJQYbD0a_v_p9SsRk=TT-=VVSPaug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:43439 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751391AbdKAGbc (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40718 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751525AbdKAOSs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 02:31:32 -0400
-In-reply-to: <20171031162813.1546-1-m.szyprowski@samsung.com>
+        Wed, 1 Nov 2017 10:18:48 -0400
+In-Reply-To: <CAPM=9tyy135aOOiMFiUzkfJQYbD0a_v_p9SsRk=TT-=VVSPaug@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marian Mihailescu <mihailescu2m@gmail.com>, stable@vger.kernel.org
+To: Dave Airlie <airlied@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-
-
-2017년 11월 01일 01:28에 Marek Szyprowski 이(가) 쓴 글:
-> When no IOMMU is available, all GEM buffers allocated by Exynos DRM driver
-> are contiguous, because of the underlying dma_alloc_attrs() function
-> provides only such buffers. In such case it makes no sense to keep
-> BO_NONCONTIG flag for the allocated GEM buffers. This allows to avoid
-> failures for buffer contiguity checks in the subsequent operations on GEM
-> objects.
+Dave Airlie wrote:
+> On 23 October 2017 at 17:54, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>> This patch adds Exynos IPP v2 subsystem and userspace API.
+>>
+>> New userspace API is focused ONLY on memory-to-memory image processing.
+>> The two remainging IPP operation modes (framebuffer writeback and
+>> local-path output with image processing) can be implemented using
+>> standard DRM features: writeback connectors and additional DRM planes with
+>> scaling features.
+>>
+>> V2 IPP userspace API is not compatible with old IPP ioctls. This is a
+>> significant change, but the old IPP subsystem in mainline Linux kernel was
+>> partially disfunctional anyway and not used in any open-source project.
+>>
+>> V2 IPP userspace API is based on stateless approach, which much better fits
+>> to memory-to-memory image processing model. It also provides support for
+>> all image formats, which are both already defined in DRM API and supported
+>> by the existing IPP hardware modules.
+>>
+>> The API consists of the following ioctls:
+>> - DRM_IOCTL_EXYNOS_IPP_GET_RESOURCES: to enumerate all available image
+>>   processing modules,
+>> - DRM_IOCTL_EXYNOS_IPP_GET_CAPS: to query capabilities and supported image
+>>   formats of given IPP module,
+>> - DRM_IOCTL_EXYNOS_IPP_GET_LIMITS: to query hardware limitiations for
+>>   selected image format of given IPP module,
+>> - DRM_IOCTL_EXYNOS_IPP_COMMIT: to perform operation described by the
+>>   provided structures (source and destination buffers, operation rectangle,
+>>   transformation, etc).
+>>
+>> The proposed userspace API is extensible. In the future more advanced image
+>> processing operations can be defined to support for example blending.
+>>
+>> Userspace API is fully functional also on DRM render nodes, so it is not
+>> limited to the root/privileged client.
+>>
+>> Internal driver API also has been completely rewritten. New IPP core
+>> performs all possible input validation, checks and object life-time
+>> control. The drivers can focus only on writing configuration to hardware
+>> registers. Stateless nature of DRM_IOCTL_EXYNOS_IPP_COMMIT ioctl simplifies
+>> the driver API. Minimal driver needs to provide a single callback for
+>> starting processing and an array with supported image formats.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> CC: stable@vger.kernel.org # v4.4+
-> ---
-> This issue is there since commit 0519f9a12d011 ("drm/exynos: add iommu
-> support for exynos drm framework"), but this patch applies cleanly
-> only to v4.4+ kernel releases due changes in the surrounding code.
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_gem.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Is there userspace user for this? This is pretty significant
+> driver-specific API addition.
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> index 02f978bb9261..476c00fe1998 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> @@ -227,6 +227,13 @@ struct exynos_drm_gem *exynos_drm_gem_create(struct drm_device *dev,
->  	if (IS_ERR(exynos_gem))
->  		return exynos_gem;
->  
-> +	/*
-> +	 * when no IOMMU is available, all allocated buffers are contiguous
-> +	 * anyway, so drop EXYNOS_BO_NONCONTIG flag
-> +	 */
-> +	if (!is_drm_iommu_supported(dev))
-> +		flags &= ~EXYNOS_BO_NONCONTIG;
+> The commit should contain pointers to a userspace project using this,
+> or patches to one.
+The pointers are in the cover letter of the series.
 
-Even through iommu isn't supported, there could be 3D GPU or other DMA devices which support IOMMU. Of course, in this case, at least one memory copy will be required to pass it to Display controller.
-So I'm not clear yet and it would bring more dicussions here.
+- Tobias
 
-Thanks,
-Inki Dae
-
-> +
->  	/* set memory type and cache attribute from user side. */
->  	exynos_gem->flags = flags;
->  
+> Dave.
 > 
