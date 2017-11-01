@@ -1,100 +1,68 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v4 5/9] drm/exynos: Add generic support for devices
- shared with V4L2 subsystem
-Date: Wed, 01 Nov 2017 15:26:27 +0900
-Message-ID: <59F96913.4040000@samsung.com>
-References: <20171023075428.7003-1-m.szyprowski@samsung.com>
-        <CGME20171023075450eucas1p24923c2a0793ac24364b97770dadd56e0@eucas1p2.samsung.com>
-        <20171023075428.7003-6-m.szyprowski@samsung.com>
+Subject: Re: [PATCH] drm/exynos: gem: Drop NONCONTIG flag for buffers
+ allocated without IOMMU
+Date: Wed, 01 Nov 2017 15:31:28 +0900
+Message-ID: <59F96A40.5080101@samsung.com>
+References: <CGME20171031162824eucas1p1d15c2ea1d529edd18e16506b26669b91@eucas1p1.samsung.com>
+        <20171031162813.1546-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37452 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751652AbdKAG0b (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:43439 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751391AbdKAGbc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 02:26:31 -0400
-In-reply-to: <20171023075428.7003-6-m.szyprowski@samsung.com>
+        Wed, 1 Nov 2017 02:31:32 -0400
+In-reply-to: <20171031162813.1546-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marian Mihailescu <mihailescu2m@gmail.com>, stable@vger.kernel.org
 
 
 
-2017년 10월 23일 16:54에 Marek Szyprowski 이(가) 쓴 글:
-> Some hardware modules, like FIMC in Exynos4 series are shared between
-> V4L2 (camera support) and DRM (memory-to-memory processing) subsystems.
-> This patch provides a simple check to let such drivers to be used in the
-> driver components framework.
+2017년 11월 01일 01:28에 Marek Szyprowski 이(가) 쓴 글:
+> When no IOMMU is available, all GEM buffers allocated by Exynos DRM driver
+> are contiguous, because of the underlying dma_alloc_attrs() function
+> provides only such buffers. In such case it makes no sense to keep
+> BO_NONCONTIG flag for the allocated GEM buffers. This allows to avoid
+> failures for buffer contiguity checks in the subsequent operations on GEM
+> objects.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> CC: stable@vger.kernel.org # v4.4+
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c | 17 ++++++++++++++++-
->  drivers/gpu/drm/exynos/exynos_drm_drv.h |  2 ++
->  2 files changed, 18 insertions(+), 1 deletion(-)
+> This issue is there since commit 0519f9a12d011 ("drm/exynos: add iommu
+> support for exynos drm framework"), but this patch applies cleanly
+> only to v4.4+ kernel releases due changes in the surrounding code.
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index cac0d84385d3..60ae6ae06eb2 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -216,6 +216,7 @@ struct exynos_drm_driver_info {
->  #define DRM_COMPONENT_DRIVER	BIT(0)	/* supports component framework */
->  #define DRM_VIRTUAL_DEVICE	BIT(1)	/* create virtual platform device */
->  #define DRM_DMA_DEVICE		BIT(2)	/* can be used for dma allocations */
-> +#define DRM_SHARED_DEVICE	BIT(3)	/* devices shared with V4L2 subsystem */
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> index 02f978bb9261..476c00fe1998 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> @@ -227,6 +227,13 @@ struct exynos_drm_gem *exynos_drm_gem_create(struct drm_device *dev,
+>  	if (IS_ERR(exynos_gem))
+>  		return exynos_gem;
 >  
->  #define DRV_PTR(drv, cond) (IS_ENABLED(cond) ? &drv : NULL)
->  
-> @@ -267,6 +268,17 @@ static struct exynos_drm_driver_info exynos_drm_drivers[] = {
->  	}
->  };
->  
-> +int exynos_drm_check_shared_device(struct device *dev)
-> +{
 > +	/*
-> +	 * Exynos DRM drivers handle only devices that support
-> +	 * the LCD Writeback data path, rest is handled by V4L2 driver
+> +	 * when no IOMMU is available, all allocated buffers are contiguous
+> +	 * anyway, so drop EXYNOS_BO_NONCONTIG flag
 > +	 */
-> +	if (!of_property_read_bool(dev->of_node, "samsung,lcd-wb"))
-> +		return -ENODEV;
-> +	return 0;
-> +}
-> +
->  static int compare_dev(struct device *dev, void *data)
->  {
->  	return dev == (struct device *)data;
-> @@ -288,7 +300,10 @@ static struct component_match *exynos_drm_match_add(struct device *dev)
->  					    &info->driver->driver,
->  					    (void *)platform_bus_type.match))) {
->  			put_device(p);
-> -			component_match_add(dev, &match, compare_dev, d);
-> +
-> +			if (!(info->flags & DRM_SHARED_DEVICE) ||
-> +			    exynos_drm_check_shared_device(d) == 0)
-> +				component_match_add(dev, &match, compare_dev, d);
+> +	if (!is_drm_iommu_supported(dev))
+> +		flags &= ~EXYNOS_BO_NONCONTIG;
 
-Seems above line make fimc device driver to be bound only when fimc device node has "samsung,lcd-wb" property. However, Exynos DRM FIMC driver is able to various transfomations such as color space conversion, scaling up/down and rotation.
-And this driver is used as mem to mem device driver. However, 'writeback' feature means 'dma to memory', which delivers one blended image in display controller into system memory.
+Even through iommu isn't supported, there could be 3D GPU or other DMA devices which support IOMMU. Of course, in this case, at least one memory copy will be required to pass it to Display controller.
+So I'm not clear yet and it would bring more dicussions here.
 
 Thanks,
 Inki Dae
 
->  			p = d;
->  		}
->  		put_device(p);
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> index b47f810d64d2..8b3b31d35168 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> @@ -275,6 +275,8 @@ static inline int exynos_dpi_bind(struct drm_device *dev,
->  }
->  #endif
->  
-> +int exynos_drm_check_shared_device(struct device *dev);
 > +
->  int exynos_atomic_commit(struct drm_device *dev, struct drm_atomic_state *state,
->  			 bool nonblock);
->  int exynos_atomic_check(struct drm_device *dev, struct drm_atomic_state *state);
+>  	/* set memory type and cache attribute from user side. */
+>  	exynos_gem->flags = flags;
+>  
 > 
