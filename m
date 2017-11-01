@@ -1,77 +1,91 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v4 2/9] drm/exynos: ipp: Add IPP v2 framework
-Date: Wed, 1 Nov 2017 15:18:44 +0100
-Message-ID: <aa856baa-abc0-0cb6-60c1-2be07fe454b5@math.uni-bielefeld.de>
-References: <CGME20171023075449eucas1p18211ed64e964860d201aaeb53a87a8be@eucas1p1.samsung.com>
- <20171023075428.7003-1-m.szyprowski@samsung.com>
- <20171023075428.7003-3-m.szyprowski@samsung.com>
- <CAPM=9tyy135aOOiMFiUzkfJQYbD0a_v_p9SsRk=TT-=VVSPaug@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 0/5] mmc: dw_mmc: Fix the CTO timer patch, plus the DTO timer
+Date: Wed, 1 Nov 2017 15:18:59 +0100
+Message-ID: <CAPDyKFo68qK3pgnJJsM1TdbxTuKpwYGwWpzYxGXTgAE73878nw@mail.gmail.com>
+References: <20171012201118.23570-1-dianders@chromium.org> <CAPDyKFqaZxGJyJRB36-K3zVK_-V637ge1S6bpiQjbfDe_5PhLw@mail.gmail.com>
+ <da14d1a3-c85f-b415-1cb6-b5d1f3a1ed7a@rock-chips.com> <CAD=FV=UFmKBonWJVRT-OPb-FY0GzHgf0HZo=NAZuxSk0e6URWA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40718 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751525AbdKAOSs (ORCPT
+Received: from mail-io0-f180.google.com ([209.85.223.180]:47050 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751853AbdKAOTB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 10:18:48 -0400
-In-Reply-To: <CAPM=9tyy135aOOiMFiUzkfJQYbD0a_v_p9SsRk=TT-=VVSPaug@mail.gmail.com>
+        Wed, 1 Nov 2017 10:19:01 -0400
+Received: by mail-io0-f180.google.com with SMTP id 101so6373826ioj.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Nov 2017 07:19:00 -0700 (PDT)
+In-Reply-To: <CAD=FV=UFmKBonWJVRT-OPb-FY0GzHgf0HZo=NAZuxSk0e6URWA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dave Airlie <airlied@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ziyuan Xu <xzy.xu@rock-chips.com>, Alexandru Stan <amstan@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Brian Norris <briannorris@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Dave Airlie wrote:
-> On 23 October 2017 at 17:54, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> This patch adds Exynos IPP v2 subsystem and userspace API.
+On 31 October 2017 at 19:14, Doug Anderson <dianders@chromium.org> wrote:
+> Hi,
+>
+> On Tue, Oct 31, 2017 at 12:05 AM, Shawn Lin <shawn.lin@rock-chips.com> wr=
+ote:
+>> Hi Ulf,
 >>
->> New userspace API is focused ONLY on memory-to-memory image processing.
->> The two remainging IPP operation modes (framebuffer writeback and
->> local-path output with image processing) can be implemented using
->> standard DRM features: writeback connectors and additional DRM planes with
->> scaling features.
 >>
->> V2 IPP userspace API is not compatible with old IPP ioctls. This is a
->> significant change, but the old IPP subsystem in mainline Linux kernel was
->> partially disfunctional anyway and not used in any open-source project.
+>> On 2017/10/30 19:40, Ulf Hansson wrote:
+>>>
+>>> On 12 October 2017 at 22:11, Douglas Anderson <dianders@chromium.org>
+>>> wrote:
+>>>>
+>>>> Recently we landed 03de19212ea3 ("mmc: dw_mmc: introduce timer for
+>>>> broken command transfer over scheme").  I found a bunch of problems
+>>>> with that patch, so this series attempts to solve some of them.
+>>>>
+>>>> This also fixes the DTO timer in some of the same ways even though I
+>>>> haven't personally seen problems with the DTO timer.
+>>>>
+>>>> NOTE: this series has only been lighly tested so far.  I can at least
+>>>> reproduce the need for the CTO timer on one of my devices and so I can
+>>>> confirm that part still works.  As mentioned in the 3rd patch I also
+>>>> ran the mmc_test kernel module on this and did manage to see the 3rd
+>>>> patch doing something useful.
+>>>>
+>>>> Changes in v2:
+>>>> - Removed extra "int i"
+>>>> - Fix the DTO timeout calculation new for v2
+>>>> - Cleanup the DTO timer new for v2
+>>>>
+>>>> Douglas Anderson (5):
+>>>>    mmc: dw_mmc: cancel the CTO timer after a voltage switch
+>>>>    mmc: dw_mmc: Fix the CTO timeout calculation
+>>>>    mmc: dw_mmc: Add locking to the CTO timer
+>>>>    mmc: dw_mmc: Fix the DTO timeout calculation
+>>>>    mmc: dw_mmc: Cleanup the DTO timer like the CTO one
+>>>>
+>>>>   drivers/mmc/host/dw_mmc.c | 162
+>>>> +++++++++++++++++++++++++++++++++++++++++-----
+>>>>   1 file changed, 146 insertions(+), 16 deletions(-)
+>>>>
+>>>
+>>> Douglas, Jaehoon,
+>>>
+>>> I decided to pick patch 1->4 for fixes and the patch 5 for next, that
+>>> should help us to get them more tested, while Jaehoon is still
+>>> catching up.
+>>>
+>>> I can add ack/drop patches for yet a couple of days this week.
 >>
->> V2 IPP userspace API is based on stateless approach, which much better fits
->> to memory-to-memory image processing model. It also provides support for
->> all image formats, which are both already defined in DRM API and supported
->> by the existing IPP hardware modules.
 >>
->> The API consists of the following ioctls:
->> - DRM_IOCTL_EXYNOS_IPP_GET_RESOURCES: to enumerate all available image
->>   processing modules,
->> - DRM_IOCTL_EXYNOS_IPP_GET_CAPS: to query capabilities and supported image
->>   formats of given IPP module,
->> - DRM_IOCTL_EXYNOS_IPP_GET_LIMITS: to query hardware limitiations for
->>   selected image format of given IPP module,
->> - DRM_IOCTL_EXYNOS_IPP_COMMIT: to perform operation described by the
->>   provided structures (source and destination buffers, operation rectangle,
->>   transformation, etc).
+>> Patch 4 introduce a warning:
 >>
->> The proposed userspace API is extensible. In the future more advanced image
->> processing operations can be defined to support for example blending.
+>> warning: unused variable =E2=80=98irqflags=E2=80=99 [-Wunused-variable]
 >>
->> Userspace API is fully functional also on DRM render nodes, so it is not
->> limited to the root/privileged client.
->>
->> Internal driver API also has been completely rewritten. New IPP core
->> performs all possible input validation, checks and object life-time
->> control. The drivers can focus only on writing configuration to hardware
->> registers. Stateless nature of DRM_IOCTL_EXYNOS_IPP_COMMIT ioctl simplifies
->> the driver API. Minimal driver needs to provide a single callback for
->> starting processing and an array with supported image formats.
-> 
-> Is there userspace user for this? This is pretty significant
-> driver-specific API addition.
-> 
-> The commit should contain pointers to a userspace project using this,
-> or patches to one.
-The pointers are in the cover letter of the series.
+>> irqflags should be introduced in patch 5 in the same place.
+>> As it seems patch 5 will be candidate for 4.15, so could you please
+>> help fix patch 4 and 5 manually? Or Doug need to resend patch 4 and 5?
+>
+> Thanks for catching this and sorry for the dumb screwup.  Ulf: I'm
+> happy to do do whatever makes it easiest for you.  If you want me to
+> re-post it should be very quick.
 
-- Tobias
+I fixed it myself, by amending the commits, no worries this time!
 
-> Dave.
-> 
+Kind regards
+Uffe
