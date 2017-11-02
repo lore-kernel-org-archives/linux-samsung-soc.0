@@ -1,82 +1,84 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] exynos: drm: use monotonic timestamps
-Date: Thu,  2 Nov 2017 12:43:54 +0100
-Message-ID: <20171102114415.1811842-1-arnd@arndb.de>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] media: s5p-mfc: Add support for V4L2_MEMORY_DMABUF type
+Date: Thu, 02 Nov 2017 15:17:34 +0100
+Message-ID: <6c8f740e-c084-ece9-d189-50e151f95390@samsung.com>
+References: <CGME20171020101455eucas1p1ad826b685fab9d93bb5f12b2b27096c6@eucas1p1.samsung.com>
+        <20171020101433.30119-1-m.szyprowski@samsung.com>
+        <acd3bfd1-991d-4f39-603c-5d07b90ebb98@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41685 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933121AbdKBORj (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 2 Nov 2017 10:17:39 -0400
+In-reply-to: <acd3bfd1-991d-4f39-603c-5d07b90ebb98@math.uni-bielefeld.de>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, JaeChul Lee <jcsing.lee@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-VGhlIGV4eW5vcyBEUk0gZHJpdmVyIHVzZXMgcmVhbC10aW1lICdzdHJ1Y3QgdGltZXZhbCcgdmFs
-dWVzCmZvciBleHBvcnRpbmcgaXRzIHRpbWVzdGFtcHMgdG8gdXNlciBzcGFjZS4gVGhpcyBoYXMg
-bXVsdGlwbGUKcHJvYmxlbXM6CgoxLiBzaWduZWQgc2Vjb25kcyBvdmVyZmxvdyBpbiB5MjAzOAoy
-LiB0aGUgJ3N0cnVjdCB0aW1ldmFsJyBkZWZpbml0aW9uIGlzIGRlcHJlY2F0ZWQgaW4gdGhlIGtl
-cm5lbAozLiB0aW1lIG1heSBqdW1wIG9yIGdvIGJhY2t3YXJkcyBhZnRlciBhICdzZXR0aW1lb2Zk
-YXkoKScgc3lzY2FsbAo0LiBvdGhlciBEUk0gdGltZXN0YW1wcyBhcmUgaW4gQ0xPQ0tfTU9OT1RP
-TklDIGRvbWFpbiwgc28gdGhleQogICBjYW4ndCBiZSBjb21wYXJlZAo1LiBleHBvcnRpbmcgbWlj
-cm9zZWNvbmRzIHJlcXVpcmVzIGEgZGl2aXNpb24gYnkgMTAwMCwgd2hpY2ggbWF5CiAgIGJlIHNs
-b3cgb24gc29tZSBhcmNoaXRlY3R1cmVzLgoKSWRlYWxseSB0aW1lc3RhbXBzIHNob3VsZCBqdXN0
-IHVzZSA2NC1iaXQgbmFub3NlY29uZHMgaW5zdGVhZCwgYnV0Cm9mIGNvdXJzZSB3ZSBjYW4ndCBj
-aGFuZ2UgdGhhdCBub3cuIEluc3RlYWQsIHRoaXMgdHJpZXMgdG8gYWRkcmVzcwp0aGUgZmlyc3Qg
-Zm91ciBwb2ludHMgYWJvdmUgYnkgdXNpbmcgbW9ub3RvbmljICd0aW1lc3BlYycgdmFsdWVzLgoK
-VGhlIGRvd25zaWRlIGlzIHRoYXQgdGhlcmUgaXMgYSBzbWFsbCByaXNrIG9mIGJyZWFraW5nIHVz
-ZXIgc3BhY2UKaWYgdGhhdCBleHBlY3RzIHRoZSBhYnNvbHV0ZSB0aW1lc3RhbXAgbnVtYmVycyB0
-byByZWxhdGUgdG8gdGhlCnJlc3VsdCBvZiAnZ2V0dGltZW9mZGF5KCknLiBQbGVhc2UgcmV2aWV3
-IHRoZSB1c2VyIHNwYWNlIGRyaXZlcgpiZWZvcmUgYXBwbHlpbmcgdGhpcyBwYXRjaCB0byBlbnN1
-cmUgdGhpcyB3b3Jrcy4KClNpZ25lZC1vZmYtYnk6IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIu
-ZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIHwgNiArKyst
-LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyB8IDggKysrKy0tLS0K
-IDIgZmlsZXMgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQoKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwppbmRleCAyYjhiZjJkZDYzODcuLjllZmZl
-NDBmNWZhNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cy
-ZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwpAQCAtOTI2
-LDcgKzkyNiw3IEBAIHN0YXRpYyB2b2lkIGcyZF9maW5pc2hfZXZlbnQoc3RydWN0IGcyZF9kYXRh
-ICpnMmQsIHUzMiBjbWRsaXN0X25vKQogCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0gZzJk
-LT5zdWJkcnYuZHJtX2RldjsKIAlzdHJ1Y3QgZzJkX3J1bnF1ZXVlX25vZGUgKnJ1bnF1ZXVlX25v
-ZGUgPSBnMmQtPnJ1bnF1ZXVlX25vZGU7CiAJc3RydWN0IGRybV9leHlub3NfcGVuZGluZ19nMmRf
-ZXZlbnQgKmU7Ci0Jc3RydWN0IHRpbWV2YWwgbm93OworCXN0cnVjdCB0aW1lc3BlYzY0IG5vdzsK
-IAogCWlmIChsaXN0X2VtcHR5KCZydW5xdWV1ZV9ub2RlLT5ldmVudF9saXN0KSkKIAkJcmV0dXJu
-OwpAQCAtOTM0LDkgKzkzNCw5IEBAIHN0YXRpYyB2b2lkIGcyZF9maW5pc2hfZXZlbnQoc3RydWN0
-IGcyZF9kYXRhICpnMmQsIHUzMiBjbWRsaXN0X25vKQogCWUgPSBsaXN0X2ZpcnN0X2VudHJ5KCZy
-dW5xdWV1ZV9ub2RlLT5ldmVudF9saXN0LAogCQkJICAgICBzdHJ1Y3QgZHJtX2V4eW5vc19wZW5k
-aW5nX2cyZF9ldmVudCwgYmFzZS5saW5rKTsKIAotCWRvX2dldHRpbWVvZmRheSgmbm93KTsKKwlr
-dGltZV9nZXRfdHM2NCgmbm93KTsKIAllLT5ldmVudC50dl9zZWMgPSBub3cudHZfc2VjOwotCWUt
-PmV2ZW50LnR2X3VzZWMgPSBub3cudHZfdXNlYzsKKwllLT5ldmVudC50dl91c2VjID0gbm93LnR2
-X25zZWMgLyBOU0VDX1BFUl9VU0VDOwogCWUtPmV2ZW50LmNtZGxpc3Rfbm8gPSBjbWRsaXN0X25v
-OwogCiAJZHJtX3NlbmRfZXZlbnQoZHJtX2RldiwgJmUtPmJhc2UpOwpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2lwcC5jCmluZGV4IDNlZGRhMThjYzJkMi4uM2Y5ZDhkNzliYmRlIDEw
-MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmMKKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5jCkBAIC0xNDA2LDcgKzE0MDYs
-NyBAQCBzdGF0aWMgaW50IGlwcF9zZW5kX2V2ZW50KHN0cnVjdCBleHlub3NfZHJtX2lwcGRydiAq
-aXBwZHJ2LAogCXN0cnVjdCBkcm1fZXh5bm9zX2lwcF9xdWV1ZV9idWYgcWJ1ZjsKIAlzdHJ1Y3Qg
-ZHJtX2V4eW5vc19pcHBfc2VuZF9ldmVudCAqZTsKIAlzdHJ1Y3QgbGlzdF9oZWFkICpoZWFkOwot
-CXN0cnVjdCB0aW1ldmFsIG5vdzsKKwlzdHJ1Y3QgdGltZXNwZWM2NCBub3c7CiAJdTMyIHRidWZf
-aWRbRVhZTk9TX0RSTV9PUFNfTUFYXSA9IHswLCB9OwogCWludCByZXQsIGk7CiAKQEAgLTE1MDks
-MTAgKzE1MDksMTAgQEAgc3RhdGljIGludCBpcHBfc2VuZF9ldmVudChzdHJ1Y3QgZXh5bm9zX2Ry
-bV9pcHBkcnYgKmlwcGRydiwKIAllID0gbGlzdF9maXJzdF9lbnRyeSgmY19ub2RlLT5ldmVudF9s
-aXN0LAogCQlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfc2VuZF9ldmVudCwgYmFzZS5saW5rKTsKIAot
-CWRvX2dldHRpbWVvZmRheSgmbm93KTsKLQlEUk1fREVCVUdfS01TKCJ0dl9zZWNbJWxkXXR2X3Vz
-ZWNbJWxkXVxuIiwgbm93LnR2X3NlYywgbm93LnR2X3VzZWMpOworCWt0aW1lX2dldF90czY0KCZu
-b3cpOworCURSTV9ERUJVR19LTVMoInR2X3NlY1slbGxkXXR2X25zZWNbJWxkXVxuIiwgKHM2NClu
-b3cudHZfc2VjLCBub3cudHZfbnNlYyk7CiAJZS0+ZXZlbnQudHZfc2VjID0gbm93LnR2X3NlYzsK
-LQllLT5ldmVudC50dl91c2VjID0gbm93LnR2X3VzZWM7CisJZS0+ZXZlbnQudHZfdXNlYyA9IG5v
-dy50dl9uc2VjIC8gTlNFQ19QRVJfVVNFQzsKIAllLT5ldmVudC5wcm9wX2lkID0gcHJvcGVydHkt
-PnByb3BfaWQ7CiAKIAkvKiBzZXQgYnVmZmVyIGlkIGFib3V0IHNvdXJjZSBkZXN0aW5hdGlvbiAq
-LwotLSAKMi45LjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+Hi Tobias,
+
+On 2017-10-20 15:59, Tobias Jakobi wrote:
+> Hey Marek and others,
+>
+> just wanted to point out that I've also played around with Seung-Woo' patch for
+> a while. However this patch alone is very much incomplete.
+>
+> In particular this is missing:
+> - At least v5 MFC hw needs source buffers to be also writable, so dma mapping
+> needs to be setup bidirectional.
+> - Like with mmap, all buffers need to be setup before decoding can begin. This
+> is due to how MFC hw gets initialized. dmabufs that are added later are not
+> going to be used before MFC hw isn't reinitialized.
+> - Removing dmabufs, or replacing them seems to be impossible with the current
+> code architecture.
+
+Right. Those are limitations of the hardware and in next version of this 
+patch I will
+add checks for them.
+
+> I had extended samsung-utils with some C++ app to test stuff when I was looking
+> into this. You can find the code here:
+> https://github.com/tobiasjakobi/samsung-utils/tree/devel/v4l2-mfc-drm-direct
+>
+> Now here is what happens. I allocate N buffer objects in DRM land to be used as
+> destination for the MFC decoder. The BOs are exported, so that I can then use
+> them in V4L2 space. I have to queue n (with n < N) buffers before I can start
+> the MFC engine.
+
+According to my knowledge of the MFC HW, if you want to use N buffers 
+with MFC,
+you have to queue all N buffers to initialize the HW. Otherwise, HW will 
+produce
+video data only to the n buffer queued on stream on.
+
+> If I do start the engine at that point (n buffers queued), I soon get an IOMMU
+> pagefault. I need to queue all N buffers before anything works at all. Queueing
+> a buffer the first time also registers it, and this has to happen before the MFC
+> hw is initialized.
+>
+> In particular I can't just allocate more buffers from DRM and use them here
+> _after_ decoding has started.
+>
+> To me it looks like the MFC code was never written with dmabuf in mind. It's
+> centered around a static memory setup that is fixed before decoding begins.
+
+That's true, but still, using it with DMA-bufs might be convenient in 
+some cases,
+even with the above limitations. The IOMMU fault can be mitigated by 
+enabling
+bidirectional flag on OUTPUT queue. This is a bit strange, but that's 
+how the
+hardware behaves. From my research it looks that it happens only in case 
+of MFCv5,
+higher versions don't modify source stream.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
