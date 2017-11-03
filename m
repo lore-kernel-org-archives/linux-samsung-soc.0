@@ -1,93 +1,36 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] exynos: drm: use monotonic timestamps
-Date: Fri, 3 Nov 2017 15:04:15 +0100
-Message-ID: <f6a26bf4-e3b6-97c1-3a92-00ffe97ae293@math.uni-bielefeld.de>
-References: <20171102114415.1811842-1-arnd@arndb.de>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v8 0/2] crypto: s5p-sss: Add HASH support for Exynos
+Date: Fri, 3 Nov 2017 22:28:00 +0800
+Message-ID: <20171103142800.GR9011@gondor.apana.org.au>
+References: <CGME20171025152754eucas1p2854a8c48544949585dcbfdd0286ad499@eucas1p2.samsung.com>
+ <20171025152735.11382-1-k.konieczny@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20171102114415.1811842-1-arnd@arndb.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from orcrist.hmeau.com ([104.223.48.154]:38356 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752252AbdKCO2e (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 3 Nov 2017 10:28:34 -0400
+Content-Disposition: inline
+In-Reply-To: <20171025152735.11382-1-k.konieczny@partner.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: linux-crypto@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGVsbG8gQXJuZCwKCkkgZ3Vlc3MgeW91IGNvdWxkIGNvb3JkaW5hdGUgdGhlIElQUCBjaGFuZ2Vz
-IHdpdGggTWFyZWssIHdobyBpcyByZXdyaXRpbmcgdGhlCklQUCBzdWJzeXN0ZW0gYW55d2F5IChh
-ZGRlZCBNYXJlayB0byBDYykuCgpIZXJlIGlzIHRoZSBtb3N0IHJlY2VudCBJUFB2MiBzZXJpZXM6
-Cmh0dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2xpbnV4LXNhbXN1bmctc29jL21zZzYxMDY2
-Lmh0bWwKCkNvbmNlcm5pbmcgdGhlIEcyRCBjaGFuZ2VzLCBJIGRvbid0IHRoaW5rIGFueXRoaW5n
-IGluIHVzZXJzcGFjZSB1c2VzIHRoZQp0aW1lc3RhbXBzIChlLmcuIGZvciBzeW5jaHJvbmlzYXRp
-b24pLgoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoKQXJuZCBCZXJnbWFubiB3cm90ZToKPiBU
-aGUgZXh5bm9zIERSTSBkcml2ZXIgdXNlcyByZWFsLXRpbWUgJ3N0cnVjdCB0aW1ldmFsJyB2YWx1
-ZXMKPiBmb3IgZXhwb3J0aW5nIGl0cyB0aW1lc3RhbXBzIHRvIHVzZXIgc3BhY2UuIFRoaXMgaGFz
-IG11bHRpcGxlCj4gcHJvYmxlbXM6Cj4gCj4gMS4gc2lnbmVkIHNlY29uZHMgb3ZlcmZsb3cgaW4g
-eTIwMzgKPiAyLiB0aGUgJ3N0cnVjdCB0aW1ldmFsJyBkZWZpbml0aW9uIGlzIGRlcHJlY2F0ZWQg
-aW4gdGhlIGtlcm5lbAo+IDMuIHRpbWUgbWF5IGp1bXAgb3IgZ28gYmFja3dhcmRzIGFmdGVyIGEg
-J3NldHRpbWVvZmRheSgpJyBzeXNjYWxsCj4gNC4gb3RoZXIgRFJNIHRpbWVzdGFtcHMgYXJlIGlu
-IENMT0NLX01PTk9UT05JQyBkb21haW4sIHNvIHRoZXkKPiAgICBjYW4ndCBiZSBjb21wYXJlZAo+
-IDUuIGV4cG9ydGluZyBtaWNyb3NlY29uZHMgcmVxdWlyZXMgYSBkaXZpc2lvbiBieSAxMDAwLCB3
-aGljaCBtYXkKPiAgICBiZSBzbG93IG9uIHNvbWUgYXJjaGl0ZWN0dXJlcy4KPiAKPiBJZGVhbGx5
-IHRpbWVzdGFtcHMgc2hvdWxkIGp1c3QgdXNlIDY0LWJpdCBuYW5vc2Vjb25kcyBpbnN0ZWFkLCBi
-dXQKPiBvZiBjb3Vyc2Ugd2UgY2FuJ3QgY2hhbmdlIHRoYXQgbm93LiBJbnN0ZWFkLCB0aGlzIHRy
-aWVzIHRvIGFkZHJlc3MKPiB0aGUgZmlyc3QgZm91ciBwb2ludHMgYWJvdmUgYnkgdXNpbmcgbW9u
-b3RvbmljICd0aW1lc3BlYycgdmFsdWVzLgo+IAo+IFRoZSBkb3duc2lkZSBpcyB0aGF0IHRoZXJl
-IGlzIGEgc21hbGwgcmlzayBvZiBicmVha2luZyB1c2VyIHNwYWNlCj4gaWYgdGhhdCBleHBlY3Rz
-IHRoZSBhYnNvbHV0ZSB0aW1lc3RhbXAgbnVtYmVycyB0byByZWxhdGUgdG8gdGhlCj4gcmVzdWx0
-IG9mICdnZXR0aW1lb2ZkYXkoKScuIFBsZWFzZSByZXZpZXcgdGhlIHVzZXIgc3BhY2UgZHJpdmVy
-Cj4gYmVmb3JlIGFwcGx5aW5nIHRoaXMgcGF0Y2ggdG8gZW5zdXJlIHRoaXMgd29ya3MuCj4gCj4g
-U2lnbmVkLW9mZi1ieTogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4KPiAtLS0KPiAgZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIHwgNiArKystLS0KPiAgZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5jIHwgOCArKysrLS0tLQo+ICAyIGZpbGVz
-IGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCj4gaW5kZXggMmI4YmYyZGQ2Mzg3Li45ZWZmZTQw
-ZjVmYTUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cy
-ZC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCj4gQEAg
-LTkyNiw3ICs5MjYsNyBAQCBzdGF0aWMgdm9pZCBnMmRfZmluaXNoX2V2ZW50KHN0cnVjdCBnMmRf
-ZGF0YSAqZzJkLCB1MzIgY21kbGlzdF9ubykKPiAgCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2
-ID0gZzJkLT5zdWJkcnYuZHJtX2RldjsKPiAgCXN0cnVjdCBnMmRfcnVucXVldWVfbm9kZSAqcnVu
-cXVldWVfbm9kZSA9IGcyZC0+cnVucXVldWVfbm9kZTsKPiAgCXN0cnVjdCBkcm1fZXh5bm9zX3Bl
-bmRpbmdfZzJkX2V2ZW50ICplOwo+IC0Jc3RydWN0IHRpbWV2YWwgbm93Owo+ICsJc3RydWN0IHRp
-bWVzcGVjNjQgbm93Owo+ICAKPiAgCWlmIChsaXN0X2VtcHR5KCZydW5xdWV1ZV9ub2RlLT5ldmVu
-dF9saXN0KSkKPiAgCQlyZXR1cm47Cj4gQEAgLTkzNCw5ICs5MzQsOSBAQCBzdGF0aWMgdm9pZCBn
-MmRfZmluaXNoX2V2ZW50KHN0cnVjdCBnMmRfZGF0YSAqZzJkLCB1MzIgY21kbGlzdF9ubykKPiAg
-CWUgPSBsaXN0X2ZpcnN0X2VudHJ5KCZydW5xdWV1ZV9ub2RlLT5ldmVudF9saXN0LAo+ICAJCQkg
-ICAgIHN0cnVjdCBkcm1fZXh5bm9zX3BlbmRpbmdfZzJkX2V2ZW50LCBiYXNlLmxpbmspOwo+ICAK
-PiAtCWRvX2dldHRpbWVvZmRheSgmbm93KTsKPiArCWt0aW1lX2dldF90czY0KCZub3cpOwo+ICAJ
-ZS0+ZXZlbnQudHZfc2VjID0gbm93LnR2X3NlYzsKPiAtCWUtPmV2ZW50LnR2X3VzZWMgPSBub3cu
-dHZfdXNlYzsKPiArCWUtPmV2ZW50LnR2X3VzZWMgPSBub3cudHZfbnNlYyAvIE5TRUNfUEVSX1VT
-RUM7Cj4gIAllLT5ldmVudC5jbWRsaXN0X25vID0gY21kbGlzdF9ubzsKPiAgCj4gIAlkcm1fc2Vu
-ZF9ldmVudChkcm1fZGV2LCAmZS0+YmFzZSk7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9pcHAuYwo+IGluZGV4IDNlZGRhMThjYzJkMi4uM2Y5ZDhkNzliYmRlIDEwMDY0NAo+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuYwo+ICsrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuYwo+IEBAIC0xNDA2LDcgKzE0MDYsNyBA
-QCBzdGF0aWMgaW50IGlwcF9zZW5kX2V2ZW50KHN0cnVjdCBleHlub3NfZHJtX2lwcGRydiAqaXBw
-ZHJ2LAo+ICAJc3RydWN0IGRybV9leHlub3NfaXBwX3F1ZXVlX2J1ZiBxYnVmOwo+ICAJc3RydWN0
-IGRybV9leHlub3NfaXBwX3NlbmRfZXZlbnQgKmU7Cj4gIAlzdHJ1Y3QgbGlzdF9oZWFkICpoZWFk
-Owo+IC0Jc3RydWN0IHRpbWV2YWwgbm93Owo+ICsJc3RydWN0IHRpbWVzcGVjNjQgbm93Owo+ICAJ
-dTMyIHRidWZfaWRbRVhZTk9TX0RSTV9PUFNfTUFYXSA9IHswLCB9Owo+ICAJaW50IHJldCwgaTsK
-PiAgCj4gQEAgLTE1MDksMTAgKzE1MDksMTAgQEAgc3RhdGljIGludCBpcHBfc2VuZF9ldmVudChz
-dHJ1Y3QgZXh5bm9zX2RybV9pcHBkcnYgKmlwcGRydiwKPiAgCWUgPSBsaXN0X2ZpcnN0X2VudHJ5
-KCZjX25vZGUtPmV2ZW50X2xpc3QsCj4gIAkJc3RydWN0IGRybV9leHlub3NfaXBwX3NlbmRfZXZl
-bnQsIGJhc2UubGluayk7Cj4gIAo+IC0JZG9fZ2V0dGltZW9mZGF5KCZub3cpOwo+IC0JRFJNX0RF
-QlVHX0tNUygidHZfc2VjWyVsZF10dl91c2VjWyVsZF1cbiIsIG5vdy50dl9zZWMsIG5vdy50dl91
-c2VjKTsKPiArCWt0aW1lX2dldF90czY0KCZub3cpOwo+ICsJRFJNX0RFQlVHX0tNUygidHZfc2Vj
-WyVsbGRddHZfbnNlY1slbGRdXG4iLCAoczY0KW5vdy50dl9zZWMsIG5vdy50dl9uc2VjKTsKPiAg
-CWUtPmV2ZW50LnR2X3NlYyA9IG5vdy50dl9zZWM7Cj4gLQllLT5ldmVudC50dl91c2VjID0gbm93
-LnR2X3VzZWM7Cj4gKwllLT5ldmVudC50dl91c2VjID0gbm93LnR2X25zZWMgLyBOU0VDX1BFUl9V
-U0VDOwo+ICAJZS0+ZXZlbnQucHJvcF9pZCA9IHByb3BlcnR5LT5wcm9wX2lkOwo+ICAKPiAgCS8q
-IHNldCBidWZmZXIgaWQgYWJvdXQgc291cmNlIGRlc3RpbmF0aW9uICovCj4gCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Wed, Oct 25, 2017 at 05:27:33PM +0200, Kamil Konieczny wrote:
+> First patch change spaces to tabs, second adds HASH support for Exynos.
+> Changes:
+> 
+> version 8:
+> - fixes suggested by Vladimir Zapolskiy: drop first condition check in 
+>   s5p_hash_import, delete unused include delay.h, fix typo in commit
+>   message, fix descriptions of struct s5p_hash_reqctx and function
+>   s5p_hash_final()
+
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
