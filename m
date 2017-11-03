@@ -1,27 +1,84 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 0/2] ARM: dts: exynos: Updates for Odroid HDMI audio
-Date: Fri, 03 Nov 2017 18:04:15 +0100
-Message-ID: <601cbeda-3aab-f128-6c41-a030b993bf9f@samsung.com>
-References: <CGME20171103164358epcas2p1556289ae7a9f2e29da932fc24651d592@epcas2p1.samsung.com>
-        <20171103164314.14919-1-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20171103164314.14919-1-s.nawrocki@samsung.com>
-Content-language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: krzk@kernel.org
-Cc: kgene@kernel.org, mihailescu2m@gmail.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: s3c64xx: remove redundant pointer sci" to the spi tree
+Date: Fri, 03 Nov 2017 18:50:58 +0000
+Message-ID: <E1eAh3S-0005u1-W6@debutante>
+References: <20171103133525.8173-1-colin.king@canonical.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60980 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756314AbdKCSvF (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 3 Nov 2017 14:51:05 -0400
+In-Reply-To: <20171103133525.8173-1-colin.king@canonical.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti <andi.shyti@samsung.com>Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orglinux-spi@vger.kernel.org
 
-On 11/03/2017 05:43 PM, Sylwester Nawrocki wrote:
-> These patches are intended for v4.16-rc1 as they depend on the
-> HDMI codec patch which is going to be merged in coming merge
-> window.
-> 
-> Sylwester Nawrocki (2):
->   ARM: dts: exynos: Switch to dedicated Odroid-XU3 sound card binding
->   ARM: dts: exynos: Add sound support for Odroid XU4
+The patch
 
-Please ignore this patch set, I've sent wrong patches :/, will post v2.
+   spi: s3c64xx: remove redundant pointer sci
+
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 4132b8b9107badf75bf30c8b4b3ac2cebd03389d Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 3 Nov 2017 13:35:25 +0000
+Subject: [PATCH] spi: s3c64xx: remove redundant pointer sci
+
+The pointer sci is assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
+
+drivers/spi/spi-s3c64xx.c:791:2: warning: Value stored to 'sci' is
+never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-s3c64xx.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index b392cca8fa4f..de7df20f8712 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -752,7 +752,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ {
+ 	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
+ 	struct s3c64xx_spi_driver_data *sdd;
+-	struct s3c64xx_spi_info *sci;
+ 	int err;
+ 
+ 	sdd = spi_master_get_devdata(spi->master);
+@@ -788,8 +787,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ 		spi_set_ctldata(spi, cs);
+ 	}
+ 
+-	sci = sdd->cntrlr_info;
+-
+ 	pm_runtime_get_sync(&sdd->pdev->dev);
+ 
+ 	/* Check if we can provide the requested rate */
+-- 
+2.15.0
