@@ -1,17 +1,17 @@
 From: Simon Shields <simon@lineageos.org>
-Subject: [PATCH] arm/dts/trats2: add bcm4334 device node
-Date: Thu, 9 Nov 2017 00:01:32 +1100
-Message-ID: <20171108130126.GA8455@lineageos.org>
+Subject: [PATCH v2] arm/dts/trats2: add bcm4334 device node
+Date: Thu, 9 Nov 2017 00:23:04 +1100
+Message-ID: <20171108132258.GA15728@lineageos.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:52811 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751893AbdKHNBl (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:43437 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752584AbdKHNXO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 08:01:41 -0500
-Received: by mail-pf0-f195.google.com with SMTP id e64so1676410pfk.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Nov 2017 05:01:41 -0800 (PST)
+        Wed, 8 Nov 2017 08:23:14 -0500
+Received: by mail-pg0-f65.google.com with SMTP id s75so1848918pgs.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Nov 2017 05:23:14 -0800 (PST)
 Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -27,7 +27,7 @@ Signed-off-by: Simon Shields <simon@lineageos.org>
  1 file changed, 28 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 2da6ced64ee0..c34982739d8d 100644
+index 2da6ced64ee0..2560e8a348ff 100644
 --- a/arch/arm/boot/dts/exynos4412-trats2.dts
 +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
 @@ -240,6 +240,13 @@
@@ -51,7 +51,7 @@ index 2da6ced64ee0..c34982739d8d 100644
 +&sdhci_3 {
 +	#address-cells = <1>;
 +	#size-cells = <0>;
-+	broken-cd;
++	non-removable;
 +	bus-width = <4>;
 +
 +	mmc-pwrseq = <&wlan_pwrseq>;
