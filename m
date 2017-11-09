@@ -1,1577 +1,3325 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v5 2/8] drm/exynos: ipp: Add IPP v2 framework
-Date: Thu, 09 Nov 2017 13:42:54 +0900
-Message-ID: <5A03DCCE.9020700@samsung.com>
+Subject: Re: [PATCH v5 4/8] drm/exynos: gsc: Convert driver to IPP v2 core
+ API
+Date: Thu, 09 Nov 2017 13:43:36 +0900
+Message-ID: <5A03DCF8.1020704@samsung.com>
 References: <20171108094147.25854-1-m.szyprowski@samsung.com>
-        <CGME20171108094154eucas1p2816cd2fbfc37fee88b81ce227c34cd43@eucas1p2.samsung.com>
-        <20171108094147.25854-3-m.szyprowski@samsung.com>
+        <CGME20171108094155eucas1p23c2252e98ac9f325984f74fbe1a01d1e@eucas1p2.samsung.com>
+        <20171108094147.25854-5-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:16327 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751716AbdKIEm6 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:17715 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752005AbdKIEnj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 23:42:58 -0500
-In-reply-to: <20171108094147.25854-3-m.szyprowski@samsung.com>
+        Wed, 8 Nov 2017 23:43:39 -0500
+In-reply-to: <20171108094147.25854-5-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-Many warings,
-
-WARNING: line over 80 characters
-#181: FILE: drivers/gpu/drm/exynos/exynos_drm_drv.c:118:
-+	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_RESOURCES, exynos_drm_ipp_get_res_ioctl,
-
-WARNING: line over 80 characters
-#185: FILE: drivers/gpu/drm/exynos/exynos_drm_drv.c:122:
-+	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_LIMITS, exynos_drm_ipp_get_limits_ioctl,
-
-WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-#193: 
-new file mode 100644
-
-WARNING: Avoid crashing the kernel - try using WARN_ON & recovery code rather than BUG() or BUG_ON()
-#280: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:83:
-+	BUG_ON(ipp->task);
-
-WARNING: Avoid crashing the kernel - try using WARN_ON & recovery code rather than BUG() or BUG_ON()
-#281: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:84:
-+	BUG_ON(!list_empty(&ipp->todo_list));
+Also warnings,
 
 WARNING: please, no spaces at the start of a line
-#384: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:187:
-+   struct exynos_drm_ipp *ipp, uint32_t fourcc, uint64_t mod, unsigned int type)$
+#2667: FILE: drivers/gpu/drm/exynos/exynos_drm_gsc.c:727:
++     struct drm_exynos_ipp_task_rect *src, struct drm_exynos_ipp_task_rect *dst)$
 
 WARNING: line over 80 characters
-#482: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:285:
-+		DRM_EXYNOS_IPP_TASK_BUFFER | DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION,
+#3098: FILE: drivers/gpu/drm/exynos/exynos_drm_gsc.c:1158:
++			   DRM_EXYNOS_IPP_CAP_SCALE | DRM_EXYNOS_IPP_CAP_CONVERT,
 
-WARNING: line over 80 characters
-#490: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:293:
-+		DRM_EXYNOS_IPP_TASK_RECTANGLE | DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION,
-
-WARNING: line over 80 characters
-#679: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:482:
-+		DRM_DEBUG_DRIVER("Value %d exceeds hw limits (min %d, max %d)\n",
-
-WARNING: line over 80 characters
-#721: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:524:
-+		DRM_DEBUG_DRIVER("Scale from %d to %d exceeds hw limits (ratio min %d.%05d, max %d.%05d)\n",
-
-WARNING: line over 80 characters
-#724: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:527:
-+				 max >> 16, 100000 * (max & 0xffff) / (1 << 16));
-
-WARNING: line over 80 characters
-#730: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:533:
-+static int exynos_drm_ipp_check_scale_limits(struct drm_exynos_ipp_task_rect *src,
-
-WARNING: line over 80 characters
-#781: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.c:584:
-+		DRM_DEBUG_DRIVER("Task %pK: defined area is outside provided buffers\n",
-
-WARNING: please, no spaces at the start of a line
-#1215: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.h:118:
-+     .fourcc = DRM_FORMAT_##f, .modifier = m, .limits = l, \$
-
-WARNING: please, no spaces at the start of a line
-#1216: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.h:119:
-+     .num_limits = ARRAY_SIZE(l), \$
-
-WARNING: please, no spaces at the start of a line
-#1217: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.h:120:
-+     .type = (DRM_EXYNOS_IPP_FORMAT_SOURCE | DRM_EXYNOS_IPP_FORMAT_DESTINATION)$
-
-WARNING: please, no spaces at the start of a line
-#1222: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.h:125:
-+     .type = (DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE | DRM_EXYNOS_IPP_LIMIT_SIZE_##l), \$
-
-WARNING: please, no spaces at the start of a line
-#1223: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.h:126:
-+     val$
-
-WARNING: please, no spaces at the start of a line
-#1226: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.h:129:
-+     .type = (DRM_EXYNOS_IPP_LIMIT_TYPE_SCALE), val$
-
-WARNING: line over 80 characters
-#1232: FILE: drivers/gpu/drm/exynos/exynos_drm_ipp.h:135:
-+void exynos_drm_ipp_unregister(struct drm_device *dev, struct exynos_drm_ipp *ipp);
-
-WARNING: line over 80 characters
-#1512: FILE: include/uapi/drm/exynos_drm.h:387:
-+		DRM_EXYNOS_IPP_GET_RESOURCES, struct drm_exynos_ioctl_ipp_get_res)
-
-WARNING: line over 80 characters
-#1516: FILE: include/uapi/drm/exynos_drm.h:391:
-+		DRM_EXYNOS_IPP_GET_LIMITS, struct drm_exynos_ioctl_ipp_get_limits)
-
-total: 0 errors, 22 warnings, 1368 lines checked
+WARNING: Missing a blank line after declarations
+#3248: FILE: drivers/gpu/drm/exynos/exynos_drm_gsc.c:1308:
++		int ret = clk_prepare_enable(ctx->clocks[i]);
++		if (ret) {
 
 Thanks,
 Inki Dae
 
 2017년 11월 08일 18:41에 Marek Szyprowski 이(가) 쓴 글:
-> This patch adds Exynos IPP v2 subsystem and userspace API.
+> This patch adapts Exynos DRM GScaler driver to new IPP v2 core API.
+> The side effect of this conversion is a switch to driver component API
+> to register properly in the Exynos DRM core.
 > 
-> New userspace API is focused ONLY on memory-to-memory image processing.
-> The two remainging IPP operation modes (framebuffer writeback and
-> local-path output with image processing) can be implemented using
-> standard DRM features: writeback connectors and additional DRM planes with
-> scaling features.
-> 
-> V2 IPP userspace API is not compatible with old IPP ioctls. This is a
-> significant change, but the old IPP subsystem in mainline Linux kernel was
-> partially disfunctional anyway and not used in any open-source project.
-> 
-> V2 IPP userspace API is based on stateless approach, which much better fits
-> to memory-to-memory image processing model. It also provides support for
-> all image formats, which are both already defined in DRM API and supported
-> by the existing IPP hardware modules.
-> 
-> The API consists of the following ioctls:
-> - DRM_IOCTL_EXYNOS_IPP_GET_RESOURCES: to enumerate all available image
->   processing modules,
-> - DRM_IOCTL_EXYNOS_IPP_GET_CAPS: to query capabilities and supported image
->   formats of given IPP module,
-> - DRM_IOCTL_EXYNOS_IPP_GET_LIMITS: to query hardware limitiations for
->   selected image format of given IPP module,
-> - DRM_IOCTL_EXYNOS_IPP_COMMIT: to perform operation described by the
->   provided structures (source and destination buffers, operation rectangle,
->   transformation, etc).
-> 
-> The proposed userspace API is extensible. In the future more advanced image
-> processing operations can be defined to support for example blending.
-> 
-> Userspace API is fully functional also on DRM render nodes, so it is not
-> limited to the root/privileged client.
-> 
-> Internal driver API also has been completely rewritten. New IPP core
-> performs all possible input validation, checks and object life-time
-> control. The drivers can focus only on writing configuration to hardware
-> registers. Stateless nature of DRM_IOCTL_EXYNOS_IPP_COMMIT ioctl simplifies
-> the driver API. Minimal driver needs to provide a single callback for
-> starting processing and an array with supported image formats.
+> During the conversion driver has been adapted to support more specific
+> compatible strings to distinguish between Exynos5250 and Exynos5420
+> (different hardware limits). Support for Exynos5433 variant
+> has been added too (different limits table, removed dependency
+> on ARCH_EXYNOS5).
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Tested-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
 > ---
->  drivers/gpu/drm/exynos/Kconfig          |   3 +
->  drivers/gpu/drm/exynos/Makefile         |   1 +
->  drivers/gpu/drm/exynos/exynos_drm_drv.c |   9 +
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 894 ++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/exynos/exynos_drm_ipp.h | 173 ++++++
->  include/uapi/drm/exynos_drm.h           | 238 +++++++++
->  6 files changed, 1318 insertions(+)
->  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_ipp.c
->  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_ipp.h
+>  drivers/gpu/drm/exynos/Kconfig          |    3 +-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c |    1 +
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c | 3199 ++++++++++++++-----------------
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.h |   24 -
+>  4 files changed, 1399 insertions(+), 1828 deletions(-)
+>  rewrite drivers/gpu/drm/exynos/exynos_drm_gsc.c (43%)
+>  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_gsc.h
 > 
 > diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-> index 88cff0e039b6..2e097a81df12 100644
+> index c10c9ca0d8b4..9b66a9838dca 100644
 > --- a/drivers/gpu/drm/exynos/Kconfig
 > +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -94,6 +94,9 @@ config DRM_EXYNOS_G2D
->  	help
->  	  Choose this option if you want to use Exynos G2D for DRM.
+> @@ -111,7 +111,8 @@ config DRM_EXYNOS_ROTATOR
 >  
-> +config DRM_EXYNOS_IPP
-> +	bool
-> +
->  config DRM_EXYNOS_FIMC
->  	bool "FIMC"
->  	depends on BROKEN && MFD_SYSCON
-> diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
-> index a51c5459bb13..bdf4212dde7b 100644
-> --- a/drivers/gpu/drm/exynos/Makefile
-> +++ b/drivers/gpu/drm/exynos/Makefile
-> @@ -18,6 +18,7 @@ exynosdrm-$(CONFIG_DRM_EXYNOS_MIXER)	+= exynos_mixer.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI)	+= exynos_hdmi.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_VIDI)	+= exynos_drm_vidi.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_G2D)	+= exynos_drm_g2d.o
-> +exynosdrm-$(CONFIG_DRM_EXYNOS_IPP)	+= exynos_drm_ipp.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_FIMC)	+= exynos_drm_fimc.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_ROTATOR)	+= exynos_drm_rotator.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_GSC)	+= exynos_drm_gsc.o
+>  config DRM_EXYNOS_GSC
+>  	bool "GScaler"
+> -	depends on BROKEN && ARCH_EXYNOS5 && VIDEO_SAMSUNG_EXYNOS_GSC=n
+> +	depends on VIDEO_SAMSUNG_EXYNOS_GSC=n
+> +	select DRM_EXYNOS_IPP
+>  	help
+>  	  Choose this option if you want to use Exynos GSC for DRM.
+>  
 > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 04f286d450a4..aaed23f397d7 100644
+> index 26d82bbd9080..72344b74387d 100644
 > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
 > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -26,6 +26,7 @@
->  #include "exynos_drm_fb.h"
->  #include "exynos_drm_gem.h"
->  #include "exynos_drm_plane.h"
-> +#include "exynos_drm_ipp.h"
->  #include "exynos_drm_vidi.h"
->  #include "exynos_drm_g2d.h"
->  #include "exynos_drm_iommu.h"
-> @@ -114,6 +115,14 @@ static const struct drm_ioctl_desc exynos_ioctls[] = {
->  			DRM_AUTH | DRM_RENDER_ALLOW),
->  	DRM_IOCTL_DEF_DRV(EXYNOS_G2D_EXEC, exynos_g2d_exec_ioctl,
->  			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_RESOURCES, exynos_drm_ipp_get_res_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_CAPS, exynos_drm_ipp_get_caps_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_LIMITS, exynos_drm_ipp_get_limits_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_COMMIT, exynos_drm_ipp_commit_ioctl,
-> +			DRM_AUTH | DRM_RENDER_ALLOW),
->  };
->  
->  static const struct file_operations exynos_drm_driver_fops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> new file mode 100644
-> index 000000000000..9a5fb6ccc42f
-> --- /dev/null
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> @@ -0,0 +1,894 @@
+> @@ -263,6 +263,7 @@ static struct exynos_drm_driver_info exynos_drm_drivers[] = {
+>  		DRM_COMPONENT_DRIVER
+>  	}, {
+>  		DRV_PTR(gsc_driver, CONFIG_DRM_EXYNOS_GSC),
+> +		DRM_COMPONENT_DRIVER
+>  	}, {
+>  		&exynos_drm_platform_driver,
+>  		DRM_VIRTUAL_DEVICE
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> dissimilarity index 43%
+> index 0506b2b17ac1..b6ab58429c1c 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> @@ -1,1803 +1,1396 @@
+> -/*
+> - * Copyright (C) 2012 Samsung Electronics Co.Ltd
+> - * Authors:
+> - *	Eunchul Kim <chulspro.kim@samsung.com>
+> - *	Jinyoung Jeon <jy0.jeon@samsung.com>
+> - *	Sangmin Lee <lsmin.lee@samsung.com>
+> - *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+> - *
+> - */
+> -#include <linux/kernel.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/clk.h>
+> -#include <linux/pm_runtime.h>
+> -#include <linux/mfd/syscon.h>
+> -#include <linux/regmap.h>
+> -
+> -#include <drm/drmP.h>
+> -#include <drm/exynos_drm.h>
+> -#include "regs-gsc.h"
+> -#include "exynos_drm_drv.h"
+> -#include "exynos_drm_ipp.h"
+> -#include "exynos_drm_gsc.h"
+> -
+> -/*
+> - * GSC stands for General SCaler and
+> - * supports image scaler/rotator and input/output DMA operations.
+> - * input DMA reads image data from the memory.
+> - * output DMA writes image data to memory.
+> - * GSC supports image rotation and image effect functions.
+> - *
+> - * M2M operation : supports crop/scale/rotation/csc so on.
+> - * Memory ----> GSC H/W ----> Memory.
+> - * Writeback operation : supports cloned screen with FIMD.
+> - * FIMD ----> GSC H/W ----> Memory.
+> - * Output operation : supports direct display using local path.
+> - * Memory ----> GSC H/W ----> FIMD, Mixer.
+> - */
+> -
+> -/*
+> - * TODO
+> - * 1. check suspend/resume api if needed.
+> - * 2. need to check use case platform_device_id.
+> - * 3. check src/dst size with, height.
+> - * 4. added check_prepare api for right register.
+> - * 5. need to add supported list in prop_list.
+> - * 6. check prescaler/scaler optimization.
+> - */
+> -
+> -#define GSC_MAX_DEVS	4
+> -#define GSC_MAX_SRC		4
+> -#define GSC_MAX_DST		16
+> -#define GSC_RESET_TIMEOUT	50
+> -#define GSC_BUF_STOP	1
+> -#define GSC_BUF_START	2
+> -#define GSC_REG_SZ		16
+> -#define GSC_WIDTH_ITU_709	1280
+> -#define GSC_SC_UP_MAX_RATIO		65536
+> -#define GSC_SC_DOWN_RATIO_7_8		74898
+> -#define GSC_SC_DOWN_RATIO_6_8		87381
+> -#define GSC_SC_DOWN_RATIO_5_8		104857
+> -#define GSC_SC_DOWN_RATIO_4_8		131072
+> -#define GSC_SC_DOWN_RATIO_3_8		174762
+> -#define GSC_SC_DOWN_RATIO_2_8		262144
+> -#define GSC_REFRESH_MIN	12
+> -#define GSC_REFRESH_MAX	60
+> -#define GSC_CROP_MAX	8192
+> -#define GSC_CROP_MIN	32
+> -#define GSC_SCALE_MAX	4224
+> -#define GSC_SCALE_MIN	32
+> -#define GSC_COEF_RATIO	7
+> -#define GSC_COEF_PHASE	9
+> -#define GSC_COEF_ATTR	16
+> -#define GSC_COEF_H_8T	8
+> -#define GSC_COEF_V_4T	4
+> -#define GSC_COEF_DEPTH	3
+> -
+> -#define get_gsc_context(dev)	platform_get_drvdata(to_platform_device(dev))
+> -#define get_ctx_from_ippdrv(ippdrv)	container_of(ippdrv,\
+> -					struct gsc_context, ippdrv);
+> -#define gsc_read(offset)		readl(ctx->regs + (offset))
+> -#define gsc_write(cfg, offset)	writel(cfg, ctx->regs + (offset))
+> -
+> -/*
+> - * A structure of scaler.
+> - *
+> - * @range: narrow, wide.
+> - * @pre_shfactor: pre sclaer shift factor.
+> - * @pre_hratio: horizontal ratio of the prescaler.
+> - * @pre_vratio: vertical ratio of the prescaler.
+> - * @main_hratio: the main scaler's horizontal ratio.
+> - * @main_vratio: the main scaler's vertical ratio.
+> - */
+> -struct gsc_scaler {
+> -	bool	range;
+> -	u32	pre_shfactor;
+> -	u32	pre_hratio;
+> -	u32	pre_vratio;
+> -	unsigned long main_hratio;
+> -	unsigned long main_vratio;
+> -};
+> -
+> -/*
+> - * A structure of scaler capability.
+> - *
+> - * find user manual 49.2 features.
+> - * @tile_w: tile mode or rotation width.
+> - * @tile_h: tile mode or rotation height.
+> - * @w: other cases width.
+> - * @h: other cases height.
+> - */
+> -struct gsc_capability {
+> -	/* tile or rotation */
+> -	u32	tile_w;
+> -	u32	tile_h;
+> -	/* other cases */
+> -	u32	w;
+> -	u32	h;
+> -};
+> -
+> -/*
+> - * A structure of gsc context.
+> - *
+> - * @ippdrv: prepare initialization using ippdrv.
+> - * @regs_res: register resources.
+> - * @regs: memory mapped io registers.
+> - * @sysreg: handle to SYSREG block regmap.
+> - * @lock: locking of operations.
+> - * @gsc_clk: gsc gate clock.
+> - * @sc: scaler infomations.
+> - * @id: gsc id.
+> - * @irq: irq number.
+> - * @rotation: supports rotation of src.
+> - * @suspended: qos operations.
+> - */
+> -struct gsc_context {
+> -	struct exynos_drm_ippdrv	ippdrv;
+> -	struct resource	*regs_res;
+> -	void __iomem	*regs;
+> -	struct regmap	*sysreg;
+> -	struct mutex	lock;
+> -	struct clk	*gsc_clk;
+> -	struct gsc_scaler	sc;
+> -	int	id;
+> -	int	irq;
+> -	bool	rotation;
+> -	bool	suspended;
+> -};
+> -
+> -/* 8-tap Filter Coefficient */
+> -static const int h_coef_8t[GSC_COEF_RATIO][GSC_COEF_ATTR][GSC_COEF_H_8T] = {
+> -	{	/* Ratio <= 65536 (~8:8) */
+> -		{  0,  0,   0, 128,   0,   0,  0,  0 },
+> -		{ -1,  2,  -6, 127,   7,  -2,  1,  0 },
+> -		{ -1,  4, -12, 125,  16,  -5,  1,  0 },
+> -		{ -1,  5, -15, 120,  25,  -8,  2,  0 },
+> -		{ -1,  6, -18, 114,  35, -10,  3, -1 },
+> -		{ -1,  6, -20, 107,  46, -13,  4, -1 },
+> -		{ -2,  7, -21,  99,  57, -16,  5, -1 },
+> -		{ -1,  6, -20,  89,  68, -18,  5, -1 },
+> -		{ -1,  6, -20,  79,  79, -20,  6, -1 },
+> -		{ -1,  5, -18,  68,  89, -20,  6, -1 },
+> -		{ -1,  5, -16,  57,  99, -21,  7, -2 },
+> -		{ -1,  4, -13,  46, 107, -20,  6, -1 },
+> -		{ -1,  3, -10,  35, 114, -18,  6, -1 },
+> -		{  0,  2,  -8,  25, 120, -15,  5, -1 },
+> -		{  0,  1,  -5,  16, 125, -12,  4, -1 },
+> -		{  0,  1,  -2,   7, 127,  -6,  2, -1 }
+> -	}, {	/* 65536 < Ratio <= 74898 (~8:7) */
+> -		{  3, -8,  14, 111,  13,  -8,  3,  0 },
+> -		{  2, -6,   7, 112,  21, -10,  3, -1 },
+> -		{  2, -4,   1, 110,  28, -12,  4, -1 },
+> -		{  1, -2,  -3, 106,  36, -13,  4, -1 },
+> -		{  1, -1,  -7, 103,  44, -15,  4, -1 },
+> -		{  1,  1, -11,  97,  53, -16,  4, -1 },
+> -		{  0,  2, -13,  91,  61, -16,  4, -1 },
+> -		{  0,  3, -15,  85,  69, -17,  4, -1 },
+> -		{  0,  3, -16,  77,  77, -16,  3,  0 },
+> -		{ -1,  4, -17,  69,  85, -15,  3,  0 },
+> -		{ -1,  4, -16,  61,  91, -13,  2,  0 },
+> -		{ -1,  4, -16,  53,  97, -11,  1,  1 },
+> -		{ -1,  4, -15,  44, 103,  -7, -1,  1 },
+> -		{ -1,  4, -13,  36, 106,  -3, -2,  1 },
+> -		{ -1,  4, -12,  28, 110,   1, -4,  2 },
+> -		{ -1,  3, -10,  21, 112,   7, -6,  2 }
+> -	}, {	/* 74898 < Ratio <= 87381 (~8:6) */
+> -		{ 2, -11,  25,  96, 25, -11,   2,  0 },
+> -		{ 2, -10,  19,  96, 31, -12,   2,  0 },
+> -		{ 2,  -9,  14,  94, 37, -12,   2,  0 },
+> -		{ 2,  -8,  10,  92, 43, -12,   1,  0 },
+> -		{ 2,  -7,   5,  90, 49, -12,   1,  0 },
+> -		{ 2,  -5,   1,  86, 55, -12,   0,  1 },
+> -		{ 2,  -4,  -2,  82, 61, -11,  -1,  1 },
+> -		{ 1,  -3,  -5,  77, 67,  -9,  -1,  1 },
+> -		{ 1,  -2,  -7,  72, 72,  -7,  -2,  1 },
+> -		{ 1,  -1,  -9,  67, 77,  -5,  -3,  1 },
+> -		{ 1,  -1, -11,  61, 82,  -2,  -4,  2 },
+> -		{ 1,   0, -12,  55, 86,   1,  -5,  2 },
+> -		{ 0,   1, -12,  49, 90,   5,  -7,  2 },
+> -		{ 0,   1, -12,  43, 92,  10,  -8,  2 },
+> -		{ 0,   2, -12,  37, 94,  14,  -9,  2 },
+> -		{ 0,   2, -12,  31, 96,  19, -10,  2 }
+> -	}, {	/* 87381 < Ratio <= 104857 (~8:5) */
+> -		{ -1,  -8, 33,  80, 33,  -8,  -1,  0 },
+> -		{ -1,  -8, 28,  80, 37,  -7,  -2,  1 },
+> -		{  0,  -8, 24,  79, 41,  -7,  -2,  1 },
+> -		{  0,  -8, 20,  78, 46,  -6,  -3,  1 },
+> -		{  0,  -8, 16,  76, 50,  -4,  -3,  1 },
+> -		{  0,  -7, 13,  74, 54,  -3,  -4,  1 },
+> -		{  1,  -7, 10,  71, 58,  -1,  -5,  1 },
+> -		{  1,  -6,  6,  68, 62,   1,  -5,  1 },
+> -		{  1,  -6,  4,  65, 65,   4,  -6,  1 },
+> -		{  1,  -5,  1,  62, 68,   6,  -6,  1 },
+> -		{  1,  -5, -1,  58, 71,  10,  -7,  1 },
+> -		{  1,  -4, -3,  54, 74,  13,  -7,  0 },
+> -		{  1,  -3, -4,  50, 76,  16,  -8,  0 },
+> -		{  1,  -3, -6,  46, 78,  20,  -8,  0 },
+> -		{  1,  -2, -7,  41, 79,  24,  -8,  0 },
+> -		{  1,  -2, -7,  37, 80,  28,  -8, -1 }
+> -	}, {	/* 104857 < Ratio <= 131072 (~8:4) */
+> -		{ -3,   0, 35,  64, 35,   0,  -3,  0 },
+> -		{ -3,  -1, 32,  64, 38,   1,  -3,  0 },
+> -		{ -2,  -2, 29,  63, 41,   2,  -3,  0 },
+> -		{ -2,  -3, 27,  63, 43,   4,  -4,  0 },
+> -		{ -2,  -3, 24,  61, 46,   6,  -4,  0 },
+> -		{ -2,  -3, 21,  60, 49,   7,  -4,  0 },
+> -		{ -1,  -4, 19,  59, 51,   9,  -4, -1 },
+> -		{ -1,  -4, 16,  57, 53,  12,  -4, -1 },
+> -		{ -1,  -4, 14,  55, 55,  14,  -4, -1 },
+> -		{ -1,  -4, 12,  53, 57,  16,  -4, -1 },
+> -		{ -1,  -4,  9,  51, 59,  19,  -4, -1 },
+> -		{  0,  -4,  7,  49, 60,  21,  -3, -2 },
+> -		{  0,  -4,  6,  46, 61,  24,  -3, -2 },
+> -		{  0,  -4,  4,  43, 63,  27,  -3, -2 },
+> -		{  0,  -3,  2,  41, 63,  29,  -2, -2 },
+> -		{  0,  -3,  1,  38, 64,  32,  -1, -3 }
+> -	}, {	/* 131072 < Ratio <= 174762 (~8:3) */
+> -		{ -1,   8, 33,  48, 33,   8,  -1,  0 },
+> -		{ -1,   7, 31,  49, 35,   9,  -1, -1 },
+> -		{ -1,   6, 30,  49, 36,  10,  -1, -1 },
+> -		{ -1,   5, 28,  48, 38,  12,  -1, -1 },
+> -		{ -1,   4, 26,  48, 39,  13,   0, -1 },
+> -		{ -1,   3, 24,  47, 41,  15,   0, -1 },
+> -		{ -1,   2, 23,  47, 42,  16,   0, -1 },
+> -		{ -1,   2, 21,  45, 43,  18,   1, -1 },
+> -		{ -1,   1, 19,  45, 45,  19,   1, -1 },
+> -		{ -1,   1, 18,  43, 45,  21,   2, -1 },
+> -		{ -1,   0, 16,  42, 47,  23,   2, -1 },
+> -		{ -1,   0, 15,  41, 47,  24,   3, -1 },
+> -		{ -1,   0, 13,  39, 48,  26,   4, -1 },
+> -		{ -1,  -1, 12,  38, 48,  28,   5, -1 },
+> -		{ -1,  -1, 10,  36, 49,  30,   6, -1 },
+> -		{ -1,  -1,  9,  35, 49,  31,   7, -1 }
+> -	}, {	/* 174762 < Ratio <= 262144 (~8:2) */
+> -		{  2,  13, 30,  38, 30,  13,   2,  0 },
+> -		{  2,  12, 29,  38, 30,  14,   3,  0 },
+> -		{  2,  11, 28,  38, 31,  15,   3,  0 },
+> -		{  2,  10, 26,  38, 32,  16,   4,  0 },
+> -		{  1,  10, 26,  37, 33,  17,   4,  0 },
+> -		{  1,   9, 24,  37, 34,  18,   5,  0 },
+> -		{  1,   8, 24,  37, 34,  19,   5,  0 },
+> -		{  1,   7, 22,  36, 35,  20,   6,  1 },
+> -		{  1,   6, 21,  36, 36,  21,   6,  1 },
+> -		{  1,   6, 20,  35, 36,  22,   7,  1 },
+> -		{  0,   5, 19,  34, 37,  24,   8,  1 },
+> -		{  0,   5, 18,  34, 37,  24,   9,  1 },
+> -		{  0,   4, 17,  33, 37,  26,  10,  1 },
+> -		{  0,   4, 16,  32, 38,  26,  10,  2 },
+> -		{  0,   3, 15,  31, 38,  28,  11,  2 },
+> -		{  0,   3, 14,  30, 38,  29,  12,  2 }
+> -	}
+> -};
+> -
+> -/* 4-tap Filter Coefficient */
+> -static const int v_coef_4t[GSC_COEF_RATIO][GSC_COEF_ATTR][GSC_COEF_V_4T] = {
+> -	{	/* Ratio <= 65536 (~8:8) */
+> -		{  0, 128,   0,  0 },
+> -		{ -4, 127,   5,  0 },
+> -		{ -6, 124,  11, -1 },
+> -		{ -8, 118,  19, -1 },
+> -		{ -8, 111,  27, -2 },
+> -		{ -8, 102,  37, -3 },
+> -		{ -8,  92,  48, -4 },
+> -		{ -7,  81,  59, -5 },
+> -		{ -6,  70,  70, -6 },
+> -		{ -5,  59,  81, -7 },
+> -		{ -4,  48,  92, -8 },
+> -		{ -3,  37, 102, -8 },
+> -		{ -2,  27, 111, -8 },
+> -		{ -1,  19, 118, -8 },
+> -		{ -1,  11, 124, -6 },
+> -		{  0,   5, 127, -4 }
+> -	}, {	/* 65536 < Ratio <= 74898 (~8:7) */
+> -		{  8, 112,   8,  0 },
+> -		{  4, 111,  14, -1 },
+> -		{  1, 109,  20, -2 },
+> -		{ -2, 105,  27, -2 },
+> -		{ -3, 100,  34, -3 },
+> -		{ -5,  93,  43, -3 },
+> -		{ -5,  86,  51, -4 },
+> -		{ -5,  77,  60, -4 },
+> -		{ -5,  69,  69, -5 },
+> -		{ -4,  60,  77, -5 },
+> -		{ -4,  51,  86, -5 },
+> -		{ -3,  43,  93, -5 },
+> -		{ -3,  34, 100, -3 },
+> -		{ -2,  27, 105, -2 },
+> -		{ -2,  20, 109,  1 },
+> -		{ -1,  14, 111,  4 }
+> -	}, {	/* 74898 < Ratio <= 87381 (~8:6) */
+> -		{ 16,  96,  16,  0 },
+> -		{ 12,  97,  21, -2 },
+> -		{  8,  96,  26, -2 },
+> -		{  5,  93,  32, -2 },
+> -		{  2,  89,  39, -2 },
+> -		{  0,  84,  46, -2 },
+> -		{ -1,  79,  53, -3 },
+> -		{ -2,  73,  59, -2 },
+> -		{ -2,  66,  66, -2 },
+> -		{ -2,  59,  73, -2 },
+> -		{ -3,  53,  79, -1 },
+> -		{ -2,  46,  84,  0 },
+> -		{ -2,  39,  89,  2 },
+> -		{ -2,  32,  93,  5 },
+> -		{ -2,  26,  96,  8 },
+> -		{ -2,  21,  97, 12 }
+> -	}, {	/* 87381 < Ratio <= 104857 (~8:5) */
+> -		{ 22,  84,  22,  0 },
+> -		{ 18,  85,  26, -1 },
+> -		{ 14,  84,  31, -1 },
+> -		{ 11,  82,  36, -1 },
+> -		{  8,  79,  42, -1 },
+> -		{  6,  76,  47, -1 },
+> -		{  4,  72,  52,  0 },
+> -		{  2,  68,  58,  0 },
+> -		{  1,  63,  63,  1 },
+> -		{  0,  58,  68,  2 },
+> -		{  0,  52,  72,  4 },
+> -		{ -1,  47,  76,  6 },
+> -		{ -1,  42,  79,  8 },
+> -		{ -1,  36,  82, 11 },
+> -		{ -1,  31,  84, 14 },
+> -		{ -1,  26,  85, 18 }
+> -	}, {	/* 104857 < Ratio <= 131072 (~8:4) */
+> -		{ 26,  76,  26,  0 },
+> -		{ 22,  76,  30,  0 },
+> -		{ 19,  75,  34,  0 },
+> -		{ 16,  73,  38,  1 },
+> -		{ 13,  71,  43,  1 },
+> -		{ 10,  69,  47,  2 },
+> -		{  8,  66,  51,  3 },
+> -		{  6,  63,  55,  4 },
+> -		{  5,  59,  59,  5 },
+> -		{  4,  55,  63,  6 },
+> -		{  3,  51,  66,  8 },
+> -		{  2,  47,  69, 10 },
+> -		{  1,  43,  71, 13 },
+> -		{  1,  38,  73, 16 },
+> -		{  0,  34,  75, 19 },
+> -		{  0,  30,  76, 22 }
+> -	}, {	/* 131072 < Ratio <= 174762 (~8:3) */
+> -		{ 29,  70,  29,  0 },
+> -		{ 26,  68,  32,  2 },
+> -		{ 23,  67,  36,  2 },
+> -		{ 20,  66,  39,  3 },
+> -		{ 17,  65,  43,  3 },
+> -		{ 15,  63,  46,  4 },
+> -		{ 12,  61,  50,  5 },
+> -		{ 10,  58,  53,  7 },
+> -		{  8,  56,  56,  8 },
+> -		{  7,  53,  58, 10 },
+> -		{  5,  50,  61, 12 },
+> -		{  4,  46,  63, 15 },
+> -		{  3,  43,  65, 17 },
+> -		{  3,  39,  66, 20 },
+> -		{  2,  36,  67, 23 },
+> -		{  2,  32,  68, 26 }
+> -	}, {	/* 174762 < Ratio <= 262144 (~8:2) */
+> -		{ 32,  64,  32,  0 },
+> -		{ 28,  63,  34,  3 },
+> -		{ 25,  62,  37,  4 },
+> -		{ 22,  62,  40,  4 },
+> -		{ 19,  61,  43,  5 },
+> -		{ 17,  59,  46,  6 },
+> -		{ 15,  58,  48,  7 },
+> -		{ 13,  55,  51,  9 },
+> -		{ 11,  53,  53, 11 },
+> -		{  9,  51,  55, 13 },
+> -		{  7,  48,  58, 15 },
+> -		{  6,  46,  59, 17 },
+> -		{  5,  43,  61, 19 },
+> -		{  4,  40,  62, 22 },
+> -		{  4,  37,  62, 25 },
+> -		{  3,  34,  63, 28 }
+> -	}
+> -};
+> -
+> -static int gsc_sw_reset(struct gsc_context *ctx)
+> -{
+> -	u32 cfg;
+> -	int count = GSC_RESET_TIMEOUT;
+> -
+> -	/* s/w reset */
+> -	cfg = (GSC_SW_RESET_SRESET);
+> -	gsc_write(cfg, GSC_SW_RESET);
+> -
+> -	/* wait s/w reset complete */
+> -	while (count--) {
+> -		cfg = gsc_read(GSC_SW_RESET);
+> -		if (!cfg)
+> -			break;
+> -		usleep_range(1000, 2000);
+> -	}
+> -
+> -	if (cfg) {
+> -		DRM_ERROR("failed to reset gsc h/w.\n");
+> -		return -EBUSY;
+> -	}
+> -
+> -	/* reset sequence */
+> -	cfg = gsc_read(GSC_IN_BASE_ADDR_Y_MASK);
+> -	cfg |= (GSC_IN_BASE_ADDR_MASK |
+> -		GSC_IN_BASE_ADDR_PINGPONG(0));
+> -	gsc_write(cfg, GSC_IN_BASE_ADDR_Y_MASK);
+> -	gsc_write(cfg, GSC_IN_BASE_ADDR_CB_MASK);
+> -	gsc_write(cfg, GSC_IN_BASE_ADDR_CR_MASK);
+> -
+> -	cfg = gsc_read(GSC_OUT_BASE_ADDR_Y_MASK);
+> -	cfg |= (GSC_OUT_BASE_ADDR_MASK |
+> -		GSC_OUT_BASE_ADDR_PINGPONG(0));
+> -	gsc_write(cfg, GSC_OUT_BASE_ADDR_Y_MASK);
+> -	gsc_write(cfg, GSC_OUT_BASE_ADDR_CB_MASK);
+> -	gsc_write(cfg, GSC_OUT_BASE_ADDR_CR_MASK);
+> -
+> -	return 0;
+> -}
+> -
+> -static void gsc_set_gscblk_fimd_wb(struct gsc_context *ctx, bool enable)
+> -{
+> -	unsigned int gscblk_cfg;
+> -
+> -	if (!ctx->sysreg)
+> -		return;
+> -
+> -	regmap_read(ctx->sysreg, SYSREG_GSCBLK_CFG1, &gscblk_cfg);
+> -
+> -	if (enable)
+> -		gscblk_cfg |= GSC_BLK_DISP1WB_DEST(ctx->id) |
+> -				GSC_BLK_GSCL_WB_IN_SRC_SEL(ctx->id) |
+> -				GSC_BLK_SW_RESET_WB_DEST(ctx->id);
+> -	else
+> -		gscblk_cfg |= GSC_BLK_PXLASYNC_LO_MASK_WB(ctx->id);
+> -
+> -	regmap_write(ctx->sysreg, SYSREG_GSCBLK_CFG1, gscblk_cfg);
+> -}
+> -
+> -static void gsc_handle_irq(struct gsc_context *ctx, bool enable,
+> -		bool overflow, bool done)
+> -{
+> -	u32 cfg;
+> -
+> -	DRM_DEBUG_KMS("enable[%d]overflow[%d]level[%d]\n",
+> -			enable, overflow, done);
+> -
+> -	cfg = gsc_read(GSC_IRQ);
+> -	cfg |= (GSC_IRQ_OR_MASK | GSC_IRQ_FRMDONE_MASK);
+> -
+> -	if (enable)
+> -		cfg |= GSC_IRQ_ENABLE;
+> -	else
+> -		cfg &= ~GSC_IRQ_ENABLE;
+> -
+> -	if (overflow)
+> -		cfg &= ~GSC_IRQ_OR_MASK;
+> -	else
+> -		cfg |= GSC_IRQ_OR_MASK;
+> -
+> -	if (done)
+> -		cfg &= ~GSC_IRQ_FRMDONE_MASK;
+> -	else
+> -		cfg |= GSC_IRQ_FRMDONE_MASK;
+> -
+> -	gsc_write(cfg, GSC_IRQ);
+> -}
+> -
+> -
+> -static int gsc_src_set_fmt(struct device *dev, u32 fmt)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	u32 cfg;
+> -
+> -	DRM_DEBUG_KMS("fmt[0x%x]\n", fmt);
+> -
+> -	cfg = gsc_read(GSC_IN_CON);
+> -	cfg &= ~(GSC_IN_RGB_TYPE_MASK | GSC_IN_YUV422_1P_ORDER_MASK |
+> -		 GSC_IN_CHROMA_ORDER_MASK | GSC_IN_FORMAT_MASK |
+> -		 GSC_IN_TILE_TYPE_MASK | GSC_IN_TILE_MODE |
+> -		 GSC_IN_CHROM_STRIDE_SEL_MASK | GSC_IN_RB_SWAP_MASK);
+> -
+> -	switch (fmt) {
+> -	case DRM_FORMAT_RGB565:
+> -		cfg |= GSC_IN_RGB565;
+> -		break;
+> -	case DRM_FORMAT_XRGB8888:
+> -		cfg |= GSC_IN_XRGB8888;
+> -		break;
+> -	case DRM_FORMAT_BGRX8888:
+> -		cfg |= (GSC_IN_XRGB8888 | GSC_IN_RB_SWAP);
+> -		break;
+> -	case DRM_FORMAT_YUYV:
+> -		cfg |= (GSC_IN_YUV422_1P |
+> -			GSC_IN_YUV422_1P_ORDER_LSB_Y |
+> -			GSC_IN_CHROMA_ORDER_CBCR);
+> -		break;
+> -	case DRM_FORMAT_YVYU:
+> -		cfg |= (GSC_IN_YUV422_1P |
+> -			GSC_IN_YUV422_1P_ORDER_LSB_Y |
+> -			GSC_IN_CHROMA_ORDER_CRCB);
+> -		break;
+> -	case DRM_FORMAT_UYVY:
+> -		cfg |= (GSC_IN_YUV422_1P |
+> -			GSC_IN_YUV422_1P_OEDER_LSB_C |
+> -			GSC_IN_CHROMA_ORDER_CBCR);
+> -		break;
+> -	case DRM_FORMAT_VYUY:
+> -		cfg |= (GSC_IN_YUV422_1P |
+> -			GSC_IN_YUV422_1P_OEDER_LSB_C |
+> -			GSC_IN_CHROMA_ORDER_CRCB);
+> -		break;
+> -	case DRM_FORMAT_NV21:
+> -	case DRM_FORMAT_NV61:
+> -		cfg |= (GSC_IN_CHROMA_ORDER_CRCB |
+> -			GSC_IN_YUV420_2P);
+> -		break;
+> -	case DRM_FORMAT_YUV422:
+> -		cfg |= GSC_IN_YUV422_3P;
+> -		break;
+> -	case DRM_FORMAT_YUV420:
+> -	case DRM_FORMAT_YVU420:
+> -		cfg |= GSC_IN_YUV420_3P;
+> -		break;
+> -	case DRM_FORMAT_NV12:
+> -	case DRM_FORMAT_NV16:
+> -		cfg |= (GSC_IN_CHROMA_ORDER_CBCR |
+> -			GSC_IN_YUV420_2P);
+> -		break;
+> -	default:
+> -		dev_err(ippdrv->dev, "invalid target yuv order 0x%x.\n", fmt);
+> -		return -EINVAL;
+> -	}
+> -
+> -	gsc_write(cfg, GSC_IN_CON);
+> -
+> -	return 0;
+> -}
+> -
+> -static int gsc_src_set_transf(struct device *dev,
+> -		enum drm_exynos_degree degree,
+> -		enum drm_exynos_flip flip, bool *swap)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	u32 cfg;
+> -
+> -	DRM_DEBUG_KMS("degree[%d]flip[0x%x]\n", degree, flip);
+> -
+> -	cfg = gsc_read(GSC_IN_CON);
+> -	cfg &= ~GSC_IN_ROT_MASK;
+> -
+> -	switch (degree) {
+> -	case EXYNOS_DRM_DEGREE_0:
+> -		if (flip & EXYNOS_DRM_FLIP_VERTICAL)
+> -			cfg |= GSC_IN_ROT_XFLIP;
+> -		if (flip & EXYNOS_DRM_FLIP_HORIZONTAL)
+> -			cfg |= GSC_IN_ROT_YFLIP;
+> -		break;
+> -	case EXYNOS_DRM_DEGREE_90:
+> -		if (flip & EXYNOS_DRM_FLIP_VERTICAL)
+> -			cfg |= GSC_IN_ROT_90_XFLIP;
+> -		else if (flip & EXYNOS_DRM_FLIP_HORIZONTAL)
+> -			cfg |= GSC_IN_ROT_90_YFLIP;
+> -		else
+> -			cfg |= GSC_IN_ROT_90;
+> -		break;
+> -	case EXYNOS_DRM_DEGREE_180:
+> -		cfg |= GSC_IN_ROT_180;
+> -		if (flip & EXYNOS_DRM_FLIP_VERTICAL)
+> -			cfg &= ~GSC_IN_ROT_XFLIP;
+> -		if (flip & EXYNOS_DRM_FLIP_HORIZONTAL)
+> -			cfg &= ~GSC_IN_ROT_YFLIP;
+> -		break;
+> -	case EXYNOS_DRM_DEGREE_270:
+> -		cfg |= GSC_IN_ROT_270;
+> -		if (flip & EXYNOS_DRM_FLIP_VERTICAL)
+> -			cfg &= ~GSC_IN_ROT_XFLIP;
+> -		if (flip & EXYNOS_DRM_FLIP_HORIZONTAL)
+> -			cfg &= ~GSC_IN_ROT_YFLIP;
+> -		break;
+> -	default:
+> -		dev_err(ippdrv->dev, "invalid degree value %d.\n", degree);
+> -		return -EINVAL;
+> -	}
+> -
+> -	gsc_write(cfg, GSC_IN_CON);
+> -
+> -	ctx->rotation = (cfg & GSC_IN_ROT_90) ? 1 : 0;
+> -	*swap = ctx->rotation;
+> -
+> -	return 0;
+> -}
+> -
+> -static int gsc_src_set_size(struct device *dev, int swap,
+> -		struct drm_exynos_pos *pos, struct drm_exynos_sz *sz)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct drm_exynos_pos img_pos = *pos;
+> -	struct gsc_scaler *sc = &ctx->sc;
+> -	u32 cfg;
+> -
+> -	DRM_DEBUG_KMS("swap[%d]x[%d]y[%d]w[%d]h[%d]\n",
+> -		swap, pos->x, pos->y, pos->w, pos->h);
+> -
+> -	if (swap) {
+> -		img_pos.w = pos->h;
+> -		img_pos.h = pos->w;
+> -	}
+> -
+> -	/* pixel offset */
+> -	cfg = (GSC_SRCIMG_OFFSET_X(img_pos.x) |
+> -		GSC_SRCIMG_OFFSET_Y(img_pos.y));
+> -	gsc_write(cfg, GSC_SRCIMG_OFFSET);
+> -
+> -	/* cropped size */
+> -	cfg = (GSC_CROPPED_WIDTH(img_pos.w) |
+> -		GSC_CROPPED_HEIGHT(img_pos.h));
+> -	gsc_write(cfg, GSC_CROPPED_SIZE);
+> -
+> -	DRM_DEBUG_KMS("hsize[%d]vsize[%d]\n", sz->hsize, sz->vsize);
+> -
+> -	/* original size */
+> -	cfg = gsc_read(GSC_SRCIMG_SIZE);
+> -	cfg &= ~(GSC_SRCIMG_HEIGHT_MASK |
+> -		GSC_SRCIMG_WIDTH_MASK);
+> -
+> -	cfg |= (GSC_SRCIMG_WIDTH(sz->hsize) |
+> -		GSC_SRCIMG_HEIGHT(sz->vsize));
+> -
+> -	gsc_write(cfg, GSC_SRCIMG_SIZE);
+> -
+> -	cfg = gsc_read(GSC_IN_CON);
+> -	cfg &= ~GSC_IN_RGB_TYPE_MASK;
+> -
+> -	DRM_DEBUG_KMS("width[%d]range[%d]\n", pos->w, sc->range);
+> -
+> -	if (pos->w >= GSC_WIDTH_ITU_709)
+> -		if (sc->range)
+> -			cfg |= GSC_IN_RGB_HD_WIDE;
+> -		else
+> -			cfg |= GSC_IN_RGB_HD_NARROW;
+> -	else
+> -		if (sc->range)
+> -			cfg |= GSC_IN_RGB_SD_WIDE;
+> -		else
+> -			cfg |= GSC_IN_RGB_SD_NARROW;
+> -
+> -	gsc_write(cfg, GSC_IN_CON);
+> -
+> -	return 0;
+> -}
+> -
+> -static int gsc_src_set_buf_seq(struct gsc_context *ctx, u32 buf_id,
+> -		enum drm_exynos_ipp_buf_type buf_type)
+> -{
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	bool masked;
+> -	u32 cfg;
+> -	u32 mask = 0x00000001 << buf_id;
+> -
+> -	DRM_DEBUG_KMS("buf_id[%d]buf_type[%d]\n", buf_id, buf_type);
+> -
+> -	/* mask register set */
+> -	cfg = gsc_read(GSC_IN_BASE_ADDR_Y_MASK);
+> -
+> -	switch (buf_type) {
+> -	case IPP_BUF_ENQUEUE:
+> -		masked = false;
+> -		break;
+> -	case IPP_BUF_DEQUEUE:
+> -		masked = true;
+> -		break;
+> -	default:
+> -		dev_err(ippdrv->dev, "invalid buf ctrl parameter.\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	/* sequence id */
+> -	cfg &= ~mask;
+> -	cfg |= masked << buf_id;
+> -	gsc_write(cfg, GSC_IN_BASE_ADDR_Y_MASK);
+> -	gsc_write(cfg, GSC_IN_BASE_ADDR_CB_MASK);
+> -	gsc_write(cfg, GSC_IN_BASE_ADDR_CR_MASK);
+> -
+> -	return 0;
+> -}
+> -
+> -static int gsc_src_set_addr(struct device *dev,
+> -		struct drm_exynos_ipp_buf_info *buf_info, u32 buf_id,
+> -		enum drm_exynos_ipp_buf_type buf_type)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	struct drm_exynos_ipp_cmd_node *c_node = ippdrv->c_node;
+> -	struct drm_exynos_ipp_property *property;
+> -
+> -	if (!c_node) {
+> -		DRM_ERROR("failed to get c_node.\n");
+> -		return -EFAULT;
+> -	}
+> -
+> -	property = &c_node->property;
+> -
+> -	DRM_DEBUG_KMS("prop_id[%d]buf_id[%d]buf_type[%d]\n",
+> -		property->prop_id, buf_id, buf_type);
+> -
+> -	if (buf_id > GSC_MAX_SRC) {
+> -		dev_info(ippdrv->dev, "invalid buf_id %d.\n", buf_id);
+> -		return -EINVAL;
+> -	}
+> -
+> -	/* address register set */
+> -	switch (buf_type) {
+> -	case IPP_BUF_ENQUEUE:
+> -		gsc_write(buf_info->base[EXYNOS_DRM_PLANAR_Y],
+> -			GSC_IN_BASE_ADDR_Y(buf_id));
+> -		gsc_write(buf_info->base[EXYNOS_DRM_PLANAR_CB],
+> -			GSC_IN_BASE_ADDR_CB(buf_id));
+> -		gsc_write(buf_info->base[EXYNOS_DRM_PLANAR_CR],
+> -			GSC_IN_BASE_ADDR_CR(buf_id));
+> -		break;
+> -	case IPP_BUF_DEQUEUE:
+> -		gsc_write(0x0, GSC_IN_BASE_ADDR_Y(buf_id));
+> -		gsc_write(0x0, GSC_IN_BASE_ADDR_CB(buf_id));
+> -		gsc_write(0x0, GSC_IN_BASE_ADDR_CR(buf_id));
+> -		break;
+> -	default:
+> -		/* bypass */
+> -		break;
+> -	}
+> -
+> -	return gsc_src_set_buf_seq(ctx, buf_id, buf_type);
+> -}
+> -
+> -static struct exynos_drm_ipp_ops gsc_src_ops = {
+> -	.set_fmt = gsc_src_set_fmt,
+> -	.set_transf = gsc_src_set_transf,
+> -	.set_size = gsc_src_set_size,
+> -	.set_addr = gsc_src_set_addr,
+> -};
+> -
+> -static int gsc_dst_set_fmt(struct device *dev, u32 fmt)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	u32 cfg;
+> -
+> -	DRM_DEBUG_KMS("fmt[0x%x]\n", fmt);
+> -
+> -	cfg = gsc_read(GSC_OUT_CON);
+> -	cfg &= ~(GSC_OUT_RGB_TYPE_MASK | GSC_OUT_YUV422_1P_ORDER_MASK |
+> -		 GSC_OUT_CHROMA_ORDER_MASK | GSC_OUT_FORMAT_MASK |
+> -		 GSC_OUT_CHROM_STRIDE_SEL_MASK | GSC_OUT_RB_SWAP_MASK |
+> -		 GSC_OUT_GLOBAL_ALPHA_MASK);
+> -
+> -	switch (fmt) {
+> -	case DRM_FORMAT_RGB565:
+> -		cfg |= GSC_OUT_RGB565;
+> -		break;
+> -	case DRM_FORMAT_XRGB8888:
+> -		cfg |= GSC_OUT_XRGB8888;
+> -		break;
+> -	case DRM_FORMAT_BGRX8888:
+> -		cfg |= (GSC_OUT_XRGB8888 | GSC_OUT_RB_SWAP);
+> -		break;
+> -	case DRM_FORMAT_YUYV:
+> -		cfg |= (GSC_OUT_YUV422_1P |
+> -			GSC_OUT_YUV422_1P_ORDER_LSB_Y |
+> -			GSC_OUT_CHROMA_ORDER_CBCR);
+> -		break;
+> -	case DRM_FORMAT_YVYU:
+> -		cfg |= (GSC_OUT_YUV422_1P |
+> -			GSC_OUT_YUV422_1P_ORDER_LSB_Y |
+> -			GSC_OUT_CHROMA_ORDER_CRCB);
+> -		break;
+> -	case DRM_FORMAT_UYVY:
+> -		cfg |= (GSC_OUT_YUV422_1P |
+> -			GSC_OUT_YUV422_1P_OEDER_LSB_C |
+> -			GSC_OUT_CHROMA_ORDER_CBCR);
+> -		break;
+> -	case DRM_FORMAT_VYUY:
+> -		cfg |= (GSC_OUT_YUV422_1P |
+> -			GSC_OUT_YUV422_1P_OEDER_LSB_C |
+> -			GSC_OUT_CHROMA_ORDER_CRCB);
+> -		break;
+> -	case DRM_FORMAT_NV21:
+> -	case DRM_FORMAT_NV61:
+> -		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV420_2P);
+> -		break;
+> -	case DRM_FORMAT_YUV422:
+> -	case DRM_FORMAT_YUV420:
+> -	case DRM_FORMAT_YVU420:
+> -		cfg |= GSC_OUT_YUV420_3P;
+> -		break;
+> -	case DRM_FORMAT_NV12:
+> -	case DRM_FORMAT_NV16:
+> -		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR |
+> -			GSC_OUT_YUV420_2P);
+> -		break;
+> -	default:
+> -		dev_err(ippdrv->dev, "invalid target yuv order 0x%x.\n", fmt);
+> -		return -EINVAL;
+> -	}
+> -
+> -	gsc_write(cfg, GSC_OUT_CON);
+> -
+> -	return 0;
+> -}
+> -
+> -static int gsc_dst_set_transf(struct device *dev,
+> -		enum drm_exynos_degree degree,
+> -		enum drm_exynos_flip flip, bool *swap)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	u32 cfg;
+> -
+> -	DRM_DEBUG_KMS("degree[%d]flip[0x%x]\n", degree, flip);
+> -
+> -	cfg = gsc_read(GSC_IN_CON);
+> -	cfg &= ~GSC_IN_ROT_MASK;
+> -
+> -	switch (degree) {
+> -	case EXYNOS_DRM_DEGREE_0:
+> -		if (flip & EXYNOS_DRM_FLIP_VERTICAL)
+> -			cfg |= GSC_IN_ROT_XFLIP;
+> -		if (flip & EXYNOS_DRM_FLIP_HORIZONTAL)
+> -			cfg |= GSC_IN_ROT_YFLIP;
+> -		break;
+> -	case EXYNOS_DRM_DEGREE_90:
+> -		if (flip & EXYNOS_DRM_FLIP_VERTICAL)
+> -			cfg |= GSC_IN_ROT_90_XFLIP;
+> -		else if (flip & EXYNOS_DRM_FLIP_HORIZONTAL)
+> -			cfg |= GSC_IN_ROT_90_YFLIP;
+> -		else
+> -			cfg |= GSC_IN_ROT_90;
+> -		break;
+> -	case EXYNOS_DRM_DEGREE_180:
+> -		cfg |= GSC_IN_ROT_180;
+> -		if (flip & EXYNOS_DRM_FLIP_VERTICAL)
+> -			cfg &= ~GSC_IN_ROT_XFLIP;
+> -		if (flip & EXYNOS_DRM_FLIP_HORIZONTAL)
+> -			cfg &= ~GSC_IN_ROT_YFLIP;
+> -		break;
+> -	case EXYNOS_DRM_DEGREE_270:
+> -		cfg |= GSC_IN_ROT_270;
+> -		if (flip & EXYNOS_DRM_FLIP_VERTICAL)
+> -			cfg &= ~GSC_IN_ROT_XFLIP;
+> -		if (flip & EXYNOS_DRM_FLIP_HORIZONTAL)
+> -			cfg &= ~GSC_IN_ROT_YFLIP;
+> -		break;
+> -	default:
+> -		dev_err(ippdrv->dev, "invalid degree value %d.\n", degree);
+> -		return -EINVAL;
+> -	}
+> -
+> -	gsc_write(cfg, GSC_IN_CON);
+> -
+> -	ctx->rotation = (cfg & GSC_IN_ROT_90) ? 1 : 0;
+> -	*swap = ctx->rotation;
+> -
+> -	return 0;
+> -}
+> -
+> -static int gsc_get_ratio_shift(u32 src, u32 dst, u32 *ratio)
+> -{
+> -	DRM_DEBUG_KMS("src[%d]dst[%d]\n", src, dst);
+> -
+> -	if (src >= dst * 8) {
+> -		DRM_ERROR("failed to make ratio and shift.\n");
+> -		return -EINVAL;
+> -	} else if (src >= dst * 4)
+> -		*ratio = 4;
+> -	else if (src >= dst * 2)
+> -		*ratio = 2;
+> -	else
+> -		*ratio = 1;
+> -
+> -	return 0;
+> -}
+> -
+> -static void gsc_get_prescaler_shfactor(u32 hratio, u32 vratio, u32 *shfactor)
+> -{
+> -	if (hratio == 4 && vratio == 4)
+> -		*shfactor = 4;
+> -	else if ((hratio == 4 && vratio == 2) ||
+> -		 (hratio == 2 && vratio == 4))
+> -		*shfactor = 3;
+> -	else if ((hratio == 4 && vratio == 1) ||
+> -		 (hratio == 1 && vratio == 4) ||
+> -		 (hratio == 2 && vratio == 2))
+> -		*shfactor = 2;
+> -	else if (hratio == 1 && vratio == 1)
+> -		*shfactor = 0;
+> -	else
+> -		*shfactor = 1;
+> -}
+> -
+> -static int gsc_set_prescaler(struct gsc_context *ctx, struct gsc_scaler *sc,
+> -		struct drm_exynos_pos *src, struct drm_exynos_pos *dst)
+> -{
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	u32 cfg;
+> -	u32 src_w, src_h, dst_w, dst_h;
+> -	int ret = 0;
+> -
+> -	src_w = src->w;
+> -	src_h = src->h;
+> -
+> -	if (ctx->rotation) {
+> -		dst_w = dst->h;
+> -		dst_h = dst->w;
+> -	} else {
+> -		dst_w = dst->w;
+> -		dst_h = dst->h;
+> -	}
+> -
+> -	ret = gsc_get_ratio_shift(src_w, dst_w, &sc->pre_hratio);
+> -	if (ret) {
+> -		dev_err(ippdrv->dev, "failed to get ratio horizontal.\n");
+> -		return ret;
+> -	}
+> -
+> -	ret = gsc_get_ratio_shift(src_h, dst_h, &sc->pre_vratio);
+> -	if (ret) {
+> -		dev_err(ippdrv->dev, "failed to get ratio vertical.\n");
+> -		return ret;
+> -	}
+> -
+> -	DRM_DEBUG_KMS("pre_hratio[%d]pre_vratio[%d]\n",
+> -		sc->pre_hratio, sc->pre_vratio);
+> -
+> -	sc->main_hratio = (src_w << 16) / dst_w;
+> -	sc->main_vratio = (src_h << 16) / dst_h;
+> -
+> -	DRM_DEBUG_KMS("main_hratio[%ld]main_vratio[%ld]\n",
+> -		sc->main_hratio, sc->main_vratio);
+> -
+> -	gsc_get_prescaler_shfactor(sc->pre_hratio, sc->pre_vratio,
+> -		&sc->pre_shfactor);
+> -
+> -	DRM_DEBUG_KMS("pre_shfactor[%d]\n", sc->pre_shfactor);
+> -
+> -	cfg = (GSC_PRESC_SHFACTOR(sc->pre_shfactor) |
+> -		GSC_PRESC_H_RATIO(sc->pre_hratio) |
+> -		GSC_PRESC_V_RATIO(sc->pre_vratio));
+> -	gsc_write(cfg, GSC_PRE_SCALE_RATIO);
+> -
+> -	return ret;
+> -}
+> -
+> -static void gsc_set_h_coef(struct gsc_context *ctx, unsigned long main_hratio)
+> -{
+> -	int i, j, k, sc_ratio;
+> -
+> -	if (main_hratio <= GSC_SC_UP_MAX_RATIO)
+> -		sc_ratio = 0;
+> -	else if (main_hratio <= GSC_SC_DOWN_RATIO_7_8)
+> -		sc_ratio = 1;
+> -	else if (main_hratio <= GSC_SC_DOWN_RATIO_6_8)
+> -		sc_ratio = 2;
+> -	else if (main_hratio <= GSC_SC_DOWN_RATIO_5_8)
+> -		sc_ratio = 3;
+> -	else if (main_hratio <= GSC_SC_DOWN_RATIO_4_8)
+> -		sc_ratio = 4;
+> -	else if (main_hratio <= GSC_SC_DOWN_RATIO_3_8)
+> -		sc_ratio = 5;
+> -	else
+> -		sc_ratio = 6;
+> -
+> -	for (i = 0; i < GSC_COEF_PHASE; i++)
+> -		for (j = 0; j < GSC_COEF_H_8T; j++)
+> -			for (k = 0; k < GSC_COEF_DEPTH; k++)
+> -				gsc_write(h_coef_8t[sc_ratio][i][j],
+> -					GSC_HCOEF(i, j, k));
+> -}
+> -
+> -static void gsc_set_v_coef(struct gsc_context *ctx, unsigned long main_vratio)
+> -{
+> -	int i, j, k, sc_ratio;
+> -
+> -	if (main_vratio <= GSC_SC_UP_MAX_RATIO)
+> -		sc_ratio = 0;
+> -	else if (main_vratio <= GSC_SC_DOWN_RATIO_7_8)
+> -		sc_ratio = 1;
+> -	else if (main_vratio <= GSC_SC_DOWN_RATIO_6_8)
+> -		sc_ratio = 2;
+> -	else if (main_vratio <= GSC_SC_DOWN_RATIO_5_8)
+> -		sc_ratio = 3;
+> -	else if (main_vratio <= GSC_SC_DOWN_RATIO_4_8)
+> -		sc_ratio = 4;
+> -	else if (main_vratio <= GSC_SC_DOWN_RATIO_3_8)
+> -		sc_ratio = 5;
+> -	else
+> -		sc_ratio = 6;
+> -
+> -	for (i = 0; i < GSC_COEF_PHASE; i++)
+> -		for (j = 0; j < GSC_COEF_V_4T; j++)
+> -			for (k = 0; k < GSC_COEF_DEPTH; k++)
+> -				gsc_write(v_coef_4t[sc_ratio][i][j],
+> -					GSC_VCOEF(i, j, k));
+> -}
+> -
+> -static void gsc_set_scaler(struct gsc_context *ctx, struct gsc_scaler *sc)
+> -{
+> -	u32 cfg;
+> -
+> -	DRM_DEBUG_KMS("main_hratio[%ld]main_vratio[%ld]\n",
+> -		sc->main_hratio, sc->main_vratio);
+> -
+> -	gsc_set_h_coef(ctx, sc->main_hratio);
+> -	cfg = GSC_MAIN_H_RATIO_VALUE(sc->main_hratio);
+> -	gsc_write(cfg, GSC_MAIN_H_RATIO);
+> -
+> -	gsc_set_v_coef(ctx, sc->main_vratio);
+> -	cfg = GSC_MAIN_V_RATIO_VALUE(sc->main_vratio);
+> -	gsc_write(cfg, GSC_MAIN_V_RATIO);
+> -}
+> -
+> -static int gsc_dst_set_size(struct device *dev, int swap,
+> -		struct drm_exynos_pos *pos, struct drm_exynos_sz *sz)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct drm_exynos_pos img_pos = *pos;
+> -	struct gsc_scaler *sc = &ctx->sc;
+> -	u32 cfg;
+> -
+> -	DRM_DEBUG_KMS("swap[%d]x[%d]y[%d]w[%d]h[%d]\n",
+> -		swap, pos->x, pos->y, pos->w, pos->h);
+> -
+> -	if (swap) {
+> -		img_pos.w = pos->h;
+> -		img_pos.h = pos->w;
+> -	}
+> -
+> -	/* pixel offset */
+> -	cfg = (GSC_DSTIMG_OFFSET_X(pos->x) |
+> -		GSC_DSTIMG_OFFSET_Y(pos->y));
+> -	gsc_write(cfg, GSC_DSTIMG_OFFSET);
+> -
+> -	/* scaled size */
+> -	cfg = (GSC_SCALED_WIDTH(img_pos.w) | GSC_SCALED_HEIGHT(img_pos.h));
+> -	gsc_write(cfg, GSC_SCALED_SIZE);
+> -
+> -	DRM_DEBUG_KMS("hsize[%d]vsize[%d]\n", sz->hsize, sz->vsize);
+> -
+> -	/* original size */
+> -	cfg = gsc_read(GSC_DSTIMG_SIZE);
+> -	cfg &= ~(GSC_DSTIMG_HEIGHT_MASK |
+> -		GSC_DSTIMG_WIDTH_MASK);
+> -	cfg |= (GSC_DSTIMG_WIDTH(sz->hsize) |
+> -		GSC_DSTIMG_HEIGHT(sz->vsize));
+> -	gsc_write(cfg, GSC_DSTIMG_SIZE);
+> -
+> -	cfg = gsc_read(GSC_OUT_CON);
+> -	cfg &= ~GSC_OUT_RGB_TYPE_MASK;
+> -
+> -	DRM_DEBUG_KMS("width[%d]range[%d]\n", pos->w, sc->range);
+> -
+> -	if (pos->w >= GSC_WIDTH_ITU_709)
+> -		if (sc->range)
+> -			cfg |= GSC_OUT_RGB_HD_WIDE;
+> -		else
+> -			cfg |= GSC_OUT_RGB_HD_NARROW;
+> -	else
+> -		if (sc->range)
+> -			cfg |= GSC_OUT_RGB_SD_WIDE;
+> -		else
+> -			cfg |= GSC_OUT_RGB_SD_NARROW;
+> -
+> -	gsc_write(cfg, GSC_OUT_CON);
+> -
+> -	return 0;
+> -}
+> -
+> -static int gsc_dst_get_buf_seq(struct gsc_context *ctx)
+> -{
+> -	u32 cfg, i, buf_num = GSC_REG_SZ;
+> -	u32 mask = 0x00000001;
+> -
+> -	cfg = gsc_read(GSC_OUT_BASE_ADDR_Y_MASK);
+> -
+> -	for (i = 0; i < GSC_REG_SZ; i++)
+> -		if (cfg & (mask << i))
+> -			buf_num--;
+> -
+> -	DRM_DEBUG_KMS("buf_num[%d]\n", buf_num);
+> -
+> -	return buf_num;
+> -}
+> -
+> -static int gsc_dst_set_buf_seq(struct gsc_context *ctx, u32 buf_id,
+> -		enum drm_exynos_ipp_buf_type buf_type)
+> -{
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	bool masked;
+> -	u32 cfg;
+> -	u32 mask = 0x00000001 << buf_id;
+> -	int ret = 0;
+> -
+> -	DRM_DEBUG_KMS("buf_id[%d]buf_type[%d]\n", buf_id, buf_type);
+> -
+> -	mutex_lock(&ctx->lock);
+> -
+> -	/* mask register set */
+> -	cfg = gsc_read(GSC_OUT_BASE_ADDR_Y_MASK);
+> -
+> -	switch (buf_type) {
+> -	case IPP_BUF_ENQUEUE:
+> -		masked = false;
+> -		break;
+> -	case IPP_BUF_DEQUEUE:
+> -		masked = true;
+> -		break;
+> -	default:
+> -		dev_err(ippdrv->dev, "invalid buf ctrl parameter.\n");
+> -		ret =  -EINVAL;
+> -		goto err_unlock;
+> -	}
+> -
+> -	/* sequence id */
+> -	cfg &= ~mask;
+> -	cfg |= masked << buf_id;
+> -	gsc_write(cfg, GSC_OUT_BASE_ADDR_Y_MASK);
+> -	gsc_write(cfg, GSC_OUT_BASE_ADDR_CB_MASK);
+> -	gsc_write(cfg, GSC_OUT_BASE_ADDR_CR_MASK);
+> -
+> -	/* interrupt enable */
+> -	if (buf_type == IPP_BUF_ENQUEUE &&
+> -	    gsc_dst_get_buf_seq(ctx) >= GSC_BUF_START)
+> -		gsc_handle_irq(ctx, true, false, true);
+> -
+> -	/* interrupt disable */
+> -	if (buf_type == IPP_BUF_DEQUEUE &&
+> -	    gsc_dst_get_buf_seq(ctx) <= GSC_BUF_STOP)
+> -		gsc_handle_irq(ctx, false, false, true);
+> -
+> -err_unlock:
+> -	mutex_unlock(&ctx->lock);
+> -	return ret;
+> -}
+> -
+> -static int gsc_dst_set_addr(struct device *dev,
+> -		struct drm_exynos_ipp_buf_info *buf_info, u32 buf_id,
+> -		enum drm_exynos_ipp_buf_type buf_type)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	struct drm_exynos_ipp_cmd_node *c_node = ippdrv->c_node;
+> -	struct drm_exynos_ipp_property *property;
+> -
+> -	if (!c_node) {
+> -		DRM_ERROR("failed to get c_node.\n");
+> -		return -EFAULT;
+> -	}
+> -
+> -	property = &c_node->property;
+> -
+> -	DRM_DEBUG_KMS("prop_id[%d]buf_id[%d]buf_type[%d]\n",
+> -		property->prop_id, buf_id, buf_type);
+> -
+> -	if (buf_id > GSC_MAX_DST) {
+> -		dev_info(ippdrv->dev, "invalid buf_id %d.\n", buf_id);
+> -		return -EINVAL;
+> -	}
+> -
+> -	/* address register set */
+> -	switch (buf_type) {
+> -	case IPP_BUF_ENQUEUE:
+> -		gsc_write(buf_info->base[EXYNOS_DRM_PLANAR_Y],
+> -			GSC_OUT_BASE_ADDR_Y(buf_id));
+> -		gsc_write(buf_info->base[EXYNOS_DRM_PLANAR_CB],
+> -			GSC_OUT_BASE_ADDR_CB(buf_id));
+> -		gsc_write(buf_info->base[EXYNOS_DRM_PLANAR_CR],
+> -			GSC_OUT_BASE_ADDR_CR(buf_id));
+> -		break;
+> -	case IPP_BUF_DEQUEUE:
+> -		gsc_write(0x0, GSC_OUT_BASE_ADDR_Y(buf_id));
+> -		gsc_write(0x0, GSC_OUT_BASE_ADDR_CB(buf_id));
+> -		gsc_write(0x0, GSC_OUT_BASE_ADDR_CR(buf_id));
+> -		break;
+> -	default:
+> -		/* bypass */
+> -		break;
+> -	}
+> -
+> -	return gsc_dst_set_buf_seq(ctx, buf_id, buf_type);
+> -}
+> -
+> -static struct exynos_drm_ipp_ops gsc_dst_ops = {
+> -	.set_fmt = gsc_dst_set_fmt,
+> -	.set_transf = gsc_dst_set_transf,
+> -	.set_size = gsc_dst_set_size,
+> -	.set_addr = gsc_dst_set_addr,
+> -};
+> -
+> -static int gsc_clk_ctrl(struct gsc_context *ctx, bool enable)
+> -{
+> -	DRM_DEBUG_KMS("enable[%d]\n", enable);
+> -
+> -	if (enable) {
+> -		clk_prepare_enable(ctx->gsc_clk);
+> -		ctx->suspended = false;
+> -	} else {
+> -		clk_disable_unprepare(ctx->gsc_clk);
+> -		ctx->suspended = true;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static int gsc_get_src_buf_index(struct gsc_context *ctx)
+> -{
+> -	u32 cfg, curr_index, i;
+> -	u32 buf_id = GSC_MAX_SRC;
+> -	int ret;
+> -
+> -	DRM_DEBUG_KMS("gsc id[%d]\n", ctx->id);
+> -
+> -	cfg = gsc_read(GSC_IN_BASE_ADDR_Y_MASK);
+> -	curr_index = GSC_IN_CURR_GET_INDEX(cfg);
+> -
+> -	for (i = curr_index; i < GSC_MAX_SRC; i++) {
+> -		if (!((cfg >> i) & 0x1)) {
+> -			buf_id = i;
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (buf_id == GSC_MAX_SRC) {
+> -		DRM_ERROR("failed to get in buffer index.\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	ret = gsc_src_set_buf_seq(ctx, buf_id, IPP_BUF_DEQUEUE);
+> -	if (ret < 0) {
+> -		DRM_ERROR("failed to dequeue.\n");
+> -		return ret;
+> -	}
+> -
+> -	DRM_DEBUG_KMS("cfg[0x%x]curr_index[%d]buf_id[%d]\n", cfg,
+> -		curr_index, buf_id);
+> -
+> -	return buf_id;
+> -}
+> -
+> -static int gsc_get_dst_buf_index(struct gsc_context *ctx)
+> -{
+> -	u32 cfg, curr_index, i;
+> -	u32 buf_id = GSC_MAX_DST;
+> -	int ret;
+> -
+> -	DRM_DEBUG_KMS("gsc id[%d]\n", ctx->id);
+> -
+> -	cfg = gsc_read(GSC_OUT_BASE_ADDR_Y_MASK);
+> -	curr_index = GSC_OUT_CURR_GET_INDEX(cfg);
+> -
+> -	for (i = curr_index; i < GSC_MAX_DST; i++) {
+> -		if (!((cfg >> i) & 0x1)) {
+> -			buf_id = i;
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (buf_id == GSC_MAX_DST) {
+> -		DRM_ERROR("failed to get out buffer index.\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	ret = gsc_dst_set_buf_seq(ctx, buf_id, IPP_BUF_DEQUEUE);
+> -	if (ret < 0) {
+> -		DRM_ERROR("failed to dequeue.\n");
+> -		return ret;
+> -	}
+> -
+> -	DRM_DEBUG_KMS("cfg[0x%x]curr_index[%d]buf_id[%d]\n", cfg,
+> -		curr_index, buf_id);
+> -
+> -	return buf_id;
+> -}
+> -
+> -static irqreturn_t gsc_irq_handler(int irq, void *dev_id)
+> -{
+> -	struct gsc_context *ctx = dev_id;
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	struct drm_exynos_ipp_cmd_node *c_node = ippdrv->c_node;
+> -	struct drm_exynos_ipp_event_work *event_work =
+> -		c_node->event_work;
+> -	u32 status;
+> -	int buf_id[EXYNOS_DRM_OPS_MAX];
+> -
+> -	DRM_DEBUG_KMS("gsc id[%d]\n", ctx->id);
+> -
+> -	status = gsc_read(GSC_IRQ);
+> -	if (status & GSC_IRQ_STATUS_OR_IRQ) {
+> -		dev_err(ippdrv->dev, "occurred overflow at %d, status 0x%x.\n",
+> -			ctx->id, status);
+> -		return IRQ_NONE;
+> -	}
+> -
+> -	if (status & GSC_IRQ_STATUS_OR_FRM_DONE) {
+> -		dev_dbg(ippdrv->dev, "occurred frame done at %d, status 0x%x.\n",
+> -			ctx->id, status);
+> -
+> -		buf_id[EXYNOS_DRM_OPS_SRC] = gsc_get_src_buf_index(ctx);
+> -		if (buf_id[EXYNOS_DRM_OPS_SRC] < 0)
+> -			return IRQ_HANDLED;
+> -
+> -		buf_id[EXYNOS_DRM_OPS_DST] = gsc_get_dst_buf_index(ctx);
+> -		if (buf_id[EXYNOS_DRM_OPS_DST] < 0)
+> -			return IRQ_HANDLED;
+> -
+> -		DRM_DEBUG_KMS("buf_id_src[%d]buf_id_dst[%d]\n",
+> -			buf_id[EXYNOS_DRM_OPS_SRC], buf_id[EXYNOS_DRM_OPS_DST]);
+> -
+> -		event_work->ippdrv = ippdrv;
+> -		event_work->buf_id[EXYNOS_DRM_OPS_SRC] =
+> -			buf_id[EXYNOS_DRM_OPS_SRC];
+> -		event_work->buf_id[EXYNOS_DRM_OPS_DST] =
+> -			buf_id[EXYNOS_DRM_OPS_DST];
+> -		queue_work(ippdrv->event_workq, &event_work->work);
+> -	}
+> -
+> -	return IRQ_HANDLED;
+> -}
+> -
+> -static int gsc_init_prop_list(struct exynos_drm_ippdrv *ippdrv)
+> -{
+> -	struct drm_exynos_ipp_prop_list *prop_list = &ippdrv->prop_list;
+> -
+> -	prop_list->version = 1;
+> -	prop_list->writeback = 1;
+> -	prop_list->refresh_min = GSC_REFRESH_MIN;
+> -	prop_list->refresh_max = GSC_REFRESH_MAX;
+> -	prop_list->flip = (1 << EXYNOS_DRM_FLIP_VERTICAL) |
+> -				(1 << EXYNOS_DRM_FLIP_HORIZONTAL);
+> -	prop_list->degree = (1 << EXYNOS_DRM_DEGREE_0) |
+> -				(1 << EXYNOS_DRM_DEGREE_90) |
+> -				(1 << EXYNOS_DRM_DEGREE_180) |
+> -				(1 << EXYNOS_DRM_DEGREE_270);
+> -	prop_list->csc = 1;
+> -	prop_list->crop = 1;
+> -	prop_list->crop_max.hsize = GSC_CROP_MAX;
+> -	prop_list->crop_max.vsize = GSC_CROP_MAX;
+> -	prop_list->crop_min.hsize = GSC_CROP_MIN;
+> -	prop_list->crop_min.vsize = GSC_CROP_MIN;
+> -	prop_list->scale = 1;
+> -	prop_list->scale_max.hsize = GSC_SCALE_MAX;
+> -	prop_list->scale_max.vsize = GSC_SCALE_MAX;
+> -	prop_list->scale_min.hsize = GSC_SCALE_MIN;
+> -	prop_list->scale_min.vsize = GSC_SCALE_MIN;
+> -
+> -	return 0;
+> -}
+> -
+> -static inline bool gsc_check_drm_flip(enum drm_exynos_flip flip)
+> -{
+> -	switch (flip) {
+> -	case EXYNOS_DRM_FLIP_NONE:
+> -	case EXYNOS_DRM_FLIP_VERTICAL:
+> -	case EXYNOS_DRM_FLIP_HORIZONTAL:
+> -	case EXYNOS_DRM_FLIP_BOTH:
+> -		return true;
+> -	default:
+> -		DRM_DEBUG_KMS("invalid flip\n");
+> -		return false;
+> -	}
+> -}
+> -
+> -static int gsc_ippdrv_check_property(struct device *dev,
+> -		struct drm_exynos_ipp_property *property)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	struct drm_exynos_ipp_prop_list *pp = &ippdrv->prop_list;
+> -	struct drm_exynos_ipp_config *config;
+> -	struct drm_exynos_pos *pos;
+> -	struct drm_exynos_sz *sz;
+> -	bool swap;
+> -	int i;
+> -
+> -	for_each_ipp_ops(i) {
+> -		if ((i == EXYNOS_DRM_OPS_SRC) &&
+> -			(property->cmd == IPP_CMD_WB))
+> -			continue;
+> -
+> -		config = &property->config[i];
+> -		pos = &config->pos;
+> -		sz = &config->sz;
+> -
+> -		/* check for flip */
+> -		if (!gsc_check_drm_flip(config->flip)) {
+> -			DRM_ERROR("invalid flip.\n");
+> -			goto err_property;
+> -		}
+> -
+> -		/* check for degree */
+> -		switch (config->degree) {
+> -		case EXYNOS_DRM_DEGREE_90:
+> -		case EXYNOS_DRM_DEGREE_270:
+> -			swap = true;
+> -			break;
+> -		case EXYNOS_DRM_DEGREE_0:
+> -		case EXYNOS_DRM_DEGREE_180:
+> -			swap = false;
+> -			break;
+> -		default:
+> -			DRM_ERROR("invalid degree.\n");
+> -			goto err_property;
+> -		}
+> -
+> -		/* check for buffer bound */
+> -		if ((pos->x + pos->w > sz->hsize) ||
+> -			(pos->y + pos->h > sz->vsize)) {
+> -			DRM_ERROR("out of buf bound.\n");
+> -			goto err_property;
+> -		}
+> -
+> -		/* check for crop */
+> -		if ((i == EXYNOS_DRM_OPS_SRC) && (pp->crop)) {
+> -			if (swap) {
+> -				if ((pos->h < pp->crop_min.hsize) ||
+> -					(sz->vsize > pp->crop_max.hsize) ||
+> -					(pos->w < pp->crop_min.vsize) ||
+> -					(sz->hsize > pp->crop_max.vsize)) {
+> -					DRM_ERROR("out of crop size.\n");
+> -					goto err_property;
+> -				}
+> -			} else {
+> -				if ((pos->w < pp->crop_min.hsize) ||
+> -					(sz->hsize > pp->crop_max.hsize) ||
+> -					(pos->h < pp->crop_min.vsize) ||
+> -					(sz->vsize > pp->crop_max.vsize)) {
+> -					DRM_ERROR("out of crop size.\n");
+> -					goto err_property;
+> -				}
+> -			}
+> -		}
+> -
+> -		/* check for scale */
+> -		if ((i == EXYNOS_DRM_OPS_DST) && (pp->scale)) {
+> -			if (swap) {
+> -				if ((pos->h < pp->scale_min.hsize) ||
+> -					(sz->vsize > pp->scale_max.hsize) ||
+> -					(pos->w < pp->scale_min.vsize) ||
+> -					(sz->hsize > pp->scale_max.vsize)) {
+> -					DRM_ERROR("out of scale size.\n");
+> -					goto err_property;
+> -				}
+> -			} else {
+> -				if ((pos->w < pp->scale_min.hsize) ||
+> -					(sz->hsize > pp->scale_max.hsize) ||
+> -					(pos->h < pp->scale_min.vsize) ||
+> -					(sz->vsize > pp->scale_max.vsize)) {
+> -					DRM_ERROR("out of scale size.\n");
+> -					goto err_property;
+> -				}
+> -			}
+> -		}
+> -	}
+> -
+> -	return 0;
+> -
+> -err_property:
+> -	for_each_ipp_ops(i) {
+> -		if ((i == EXYNOS_DRM_OPS_SRC) &&
+> -			(property->cmd == IPP_CMD_WB))
+> -			continue;
+> -
+> -		config = &property->config[i];
+> -		pos = &config->pos;
+> -		sz = &config->sz;
+> -
+> -		DRM_ERROR("[%s]f[%d]r[%d]pos[%d %d %d %d]sz[%d %d]\n",
+> -			i ? "dst" : "src", config->flip, config->degree,
+> -			pos->x, pos->y, pos->w, pos->h,
+> -			sz->hsize, sz->vsize);
+> -	}
+> -
+> -	return -EINVAL;
+> -}
+> -
+> -
+> -static int gsc_ippdrv_reset(struct device *dev)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct gsc_scaler *sc = &ctx->sc;
+> -	int ret;
+> -
+> -	/* reset h/w block */
+> -	ret = gsc_sw_reset(ctx);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to reset hardware.\n");
+> -		return ret;
+> -	}
+> -
+> -	/* scaler setting */
+> -	memset(&ctx->sc, 0x0, sizeof(ctx->sc));
+> -	sc->range = true;
+> -
+> -	return 0;
+> -}
+> -
+> -static int gsc_ippdrv_start(struct device *dev, enum drm_exynos_ipp_cmd cmd)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -	struct drm_exynos_ipp_cmd_node *c_node = ippdrv->c_node;
+> -	struct drm_exynos_ipp_property *property;
+> -	struct drm_exynos_ipp_config *config;
+> -	struct drm_exynos_pos	img_pos[EXYNOS_DRM_OPS_MAX];
+> -	struct drm_exynos_ipp_set_wb set_wb;
+> -	u32 cfg;
+> -	int ret, i;
+> -
+> -	DRM_DEBUG_KMS("cmd[%d]\n", cmd);
+> -
+> -	if (!c_node) {
+> -		DRM_ERROR("failed to get c_node.\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	property = &c_node->property;
+> -
+> -	gsc_handle_irq(ctx, true, false, true);
+> -
+> -	for_each_ipp_ops(i) {
+> -		config = &property->config[i];
+> -		img_pos[i] = config->pos;
+> -	}
+> -
+> -	switch (cmd) {
+> -	case IPP_CMD_M2M:
+> -		/* enable one shot */
+> -		cfg = gsc_read(GSC_ENABLE);
+> -		cfg &= ~(GSC_ENABLE_ON_CLEAR_MASK |
+> -			GSC_ENABLE_CLK_GATE_MODE_MASK);
+> -		cfg |= GSC_ENABLE_ON_CLEAR_ONESHOT;
+> -		gsc_write(cfg, GSC_ENABLE);
+> -
+> -		/* src dma memory */
+> -		cfg = gsc_read(GSC_IN_CON);
+> -		cfg &= ~(GSC_IN_PATH_MASK | GSC_IN_LOCAL_SEL_MASK);
+> -		cfg |= GSC_IN_PATH_MEMORY;
+> -		gsc_write(cfg, GSC_IN_CON);
+> -
+> -		/* dst dma memory */
+> -		cfg = gsc_read(GSC_OUT_CON);
+> -		cfg |= GSC_OUT_PATH_MEMORY;
+> -		gsc_write(cfg, GSC_OUT_CON);
+> -		break;
+> -	case IPP_CMD_WB:
+> -		set_wb.enable = 1;
+> -		set_wb.refresh = property->refresh_rate;
+> -		gsc_set_gscblk_fimd_wb(ctx, set_wb.enable);
+> -		exynos_drm_ippnb_send_event(IPP_SET_WRITEBACK, (void *)&set_wb);
+> -
+> -		/* src local path */
+> -		cfg = gsc_read(GSC_IN_CON);
+> -		cfg &= ~(GSC_IN_PATH_MASK | GSC_IN_LOCAL_SEL_MASK);
+> -		cfg |= (GSC_IN_PATH_LOCAL | GSC_IN_LOCAL_FIMD_WB);
+> -		gsc_write(cfg, GSC_IN_CON);
+> -
+> -		/* dst dma memory */
+> -		cfg = gsc_read(GSC_OUT_CON);
+> -		cfg |= GSC_OUT_PATH_MEMORY;
+> -		gsc_write(cfg, GSC_OUT_CON);
+> -		break;
+> -	case IPP_CMD_OUTPUT:
+> -		/* src dma memory */
+> -		cfg = gsc_read(GSC_IN_CON);
+> -		cfg &= ~(GSC_IN_PATH_MASK | GSC_IN_LOCAL_SEL_MASK);
+> -		cfg |= GSC_IN_PATH_MEMORY;
+> -		gsc_write(cfg, GSC_IN_CON);
+> -
+> -		/* dst local path */
+> -		cfg = gsc_read(GSC_OUT_CON);
+> -		cfg |= GSC_OUT_PATH_MEMORY;
+> -		gsc_write(cfg, GSC_OUT_CON);
+> -		break;
+> -	default:
+> -		ret = -EINVAL;
+> -		dev_err(dev, "invalid operations.\n");
+> -		return ret;
+> -	}
+> -
+> -	ret = gsc_set_prescaler(ctx, &ctx->sc,
+> -		&img_pos[EXYNOS_DRM_OPS_SRC],
+> -		&img_pos[EXYNOS_DRM_OPS_DST]);
+> -	if (ret) {
+> -		dev_err(dev, "failed to set prescaler.\n");
+> -		return ret;
+> -	}
+> -
+> -	gsc_set_scaler(ctx, &ctx->sc);
+> -
+> -	cfg = gsc_read(GSC_ENABLE);
+> -	cfg |= GSC_ENABLE_ON;
+> -	gsc_write(cfg, GSC_ENABLE);
+> -
+> -	return 0;
+> -}
+> -
+> -static void gsc_ippdrv_stop(struct device *dev, enum drm_exynos_ipp_cmd cmd)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct drm_exynos_ipp_set_wb set_wb = {0, 0};
+> -	u32 cfg;
+> -
+> -	DRM_DEBUG_KMS("cmd[%d]\n", cmd);
+> -
+> -	switch (cmd) {
+> -	case IPP_CMD_M2M:
+> -		/* bypass */
+> -		break;
+> -	case IPP_CMD_WB:
+> -		gsc_set_gscblk_fimd_wb(ctx, set_wb.enable);
+> -		exynos_drm_ippnb_send_event(IPP_SET_WRITEBACK, (void *)&set_wb);
+> -		break;
+> -	case IPP_CMD_OUTPUT:
+> -	default:
+> -		dev_err(dev, "invalid operations.\n");
+> -		break;
+> -	}
+> -
+> -	gsc_handle_irq(ctx, false, false, true);
+> -
+> -	/* reset sequence */
+> -	gsc_write(0xff, GSC_OUT_BASE_ADDR_Y_MASK);
+> -	gsc_write(0xff, GSC_OUT_BASE_ADDR_CB_MASK);
+> -	gsc_write(0xff, GSC_OUT_BASE_ADDR_CR_MASK);
+> -
+> -	cfg = gsc_read(GSC_ENABLE);
+> -	cfg &= ~GSC_ENABLE_ON;
+> -	gsc_write(cfg, GSC_ENABLE);
+> -}
+> -
+> -static int gsc_probe(struct platform_device *pdev)
+> -{
+> -	struct device *dev = &pdev->dev;
+> -	struct gsc_context *ctx;
+> -	struct resource *res;
+> -	struct exynos_drm_ippdrv *ippdrv;
+> -	int ret;
+> -
+> -	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> -	if (!ctx)
+> -		return -ENOMEM;
+> -
+> -	if (dev->of_node) {
+> -		ctx->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
+> -							"samsung,sysreg");
+> -		if (IS_ERR(ctx->sysreg)) {
+> -			dev_warn(dev, "failed to get system register.\n");
+> -			ctx->sysreg = NULL;
+> -		}
+> -	}
+> -
+> -	/* clock control */
+> -	ctx->gsc_clk = devm_clk_get(dev, "gscl");
+> -	if (IS_ERR(ctx->gsc_clk)) {
+> -		dev_err(dev, "failed to get gsc clock.\n");
+> -		return PTR_ERR(ctx->gsc_clk);
+> -	}
+> -
+> -	/* resource memory */
+> -	ctx->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	ctx->regs = devm_ioremap_resource(dev, ctx->regs_res);
+> -	if (IS_ERR(ctx->regs))
+> -		return PTR_ERR(ctx->regs);
+> -
+> -	/* resource irq */
+> -	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> -	if (!res) {
+> -		dev_err(dev, "failed to request irq resource.\n");
+> -		return -ENOENT;
+> -	}
+> -
+> -	ctx->irq = res->start;
+> -	ret = devm_request_threaded_irq(dev, ctx->irq, NULL, gsc_irq_handler,
+> -		IRQF_ONESHOT, "drm_gsc", ctx);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to request irq.\n");
+> -		return ret;
+> -	}
+> -
+> -	/* context initailization */
+> -	ctx->id = pdev->id;
+> -
+> -	ippdrv = &ctx->ippdrv;
+> -	ippdrv->dev = dev;
+> -	ippdrv->ops[EXYNOS_DRM_OPS_SRC] = &gsc_src_ops;
+> -	ippdrv->ops[EXYNOS_DRM_OPS_DST] = &gsc_dst_ops;
+> -	ippdrv->check_property = gsc_ippdrv_check_property;
+> -	ippdrv->reset = gsc_ippdrv_reset;
+> -	ippdrv->start = gsc_ippdrv_start;
+> -	ippdrv->stop = gsc_ippdrv_stop;
+> -	ret = gsc_init_prop_list(ippdrv);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to init property list.\n");
+> -		return ret;
+> -	}
+> -
+> -	DRM_DEBUG_KMS("id[%d]ippdrv[%pK]\n", ctx->id, ippdrv);
+> -
+> -	mutex_init(&ctx->lock);
+> -	platform_set_drvdata(pdev, ctx);
+> -
+> -	pm_runtime_enable(dev);
+> -
+> -	ret = exynos_drm_ippdrv_register(ippdrv);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to register drm gsc device.\n");
+> -		goto err_ippdrv_register;
+> -	}
+> -
+> -	dev_info(dev, "drm gsc registered successfully.\n");
+> -
+> -	return 0;
+> -
+> -err_ippdrv_register:
+> -	pm_runtime_disable(dev);
+> -	return ret;
+> -}
+> -
+> -static int gsc_remove(struct platform_device *pdev)
+> -{
+> -	struct device *dev = &pdev->dev;
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+> -
+> -	exynos_drm_ippdrv_unregister(ippdrv);
+> -	mutex_destroy(&ctx->lock);
+> -
+> -	pm_runtime_set_suspended(dev);
+> -	pm_runtime_disable(dev);
+> -
+> -	return 0;
+> -}
+> -
+> -static int __maybe_unused gsc_runtime_suspend(struct device *dev)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -
+> -	DRM_DEBUG_KMS("id[%d]\n", ctx->id);
+> -
+> -	return  gsc_clk_ctrl(ctx, false);
+> -}
+> -
+> -static int __maybe_unused gsc_runtime_resume(struct device *dev)
+> -{
+> -	struct gsc_context *ctx = get_gsc_context(dev);
+> -
+> -	DRM_DEBUG_KMS("id[%d]\n", ctx->id);
+> -
+> -	return  gsc_clk_ctrl(ctx, true);
+> -}
+> -
+> -static const struct dev_pm_ops gsc_pm_ops = {
+> -	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> -				pm_runtime_force_resume)
+> -	SET_RUNTIME_PM_OPS(gsc_runtime_suspend, gsc_runtime_resume, NULL)
+> -};
+> -
+> -static const struct of_device_id exynos_drm_gsc_of_match[] = {
+> -	{ .compatible = "samsung,exynos5-gsc" },
+> -	{ },
+> -};
+> -MODULE_DEVICE_TABLE(of, exynos_drm_gsc_of_match);
+> -
+> -struct platform_driver gsc_driver = {
+> -	.probe		= gsc_probe,
+> -	.remove		= gsc_remove,
+> -	.driver		= {
+> -		.name	= "exynos-drm-gsc",
+> -		.owner	= THIS_MODULE,
+> -		.pm	= &gsc_pm_ops,
+> -		.of_match_table = of_match_ptr(exynos_drm_gsc_of_match),
+> -	},
+> -};
+> -
 > +/*
-> + * Copyright (C) 2017 Samsung Electronics Co.Ltd
+> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
 > + * Authors:
-> + *	Marek Szyprowski <m.szyprowski@samsung.com>
-> + *
-> + * Exynos DRM Image Post Processing (IPP) related functions
-> + *
-> + * Permission is hereby granted, free of charge, to any person obtaining a
-> + * copy of this software and associated documentation files (the "Software"),
-> + * to deal in the Software without restriction, including without limitation
-> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> + * and/or sell copies of the Software, and to permit persons to whom the
-> + * Software is furnished to do so, subject to the following conditions:
-> + *
-> + * The above copyright notice and this permission notice shall be included in
-> + * all copies or substantial portions of the Software.
-> + */
-> +
-> +
-> +#include <drm/drmP.h>
-> +#include <drm/drm_mode.h>
-> +#include <uapi/drm/exynos_drm.h>
-> +
-> +#include "exynos_drm_drv.h"
-> +#include "exynos_drm_gem.h"
-> +#include "exynos_drm_ipp.h"
-> +
-> +static int num_ipp;
-> +static LIST_HEAD(ipp_list);
-> +
-> +/**
-> + * exynos_drm_ipp_register - Register a new picture processor hardware module
-> + * @dev: DRM device
-> + * @ipp: ipp module to init
-> + * @funcs: callbacks for the new ipp object
-> + * @caps: bitmask of ipp capabilities (%DRM_EXYNOS_IPP_CAP_*)
-> + * @formats: array of supported formats
-> + * @num_formats: size of the supported formats array
-> + * @name: name (for debugging purposes)
-> + *
-> + * Initializes a ipp module.
-> + *
-> + * Returns:
-> + * Zero on success, error code on failure.
-> + */
-> +int exynos_drm_ipp_register(struct drm_device *dev, struct exynos_drm_ipp *ipp,
-> +		const struct exynos_drm_ipp_funcs *funcs, unsigned int caps,
-> +		const struct exynos_drm_ipp_formats *formats,
-> +		unsigned int num_formats, const char *name)
-> +{
-> +	WARN_ON(!ipp);
-> +	WARN_ON(!funcs);
-> +	WARN_ON(!formats);
-> +	WARN_ON(!num_formats);
-> +
-> +	spin_lock_init(&ipp->lock);
-> +	INIT_LIST_HEAD(&ipp->todo_list);
-> +	init_waitqueue_head(&ipp->done_wq);
-> +	ipp->dev = dev;
-> +	ipp->funcs = funcs;
-> +	ipp->capabilities = caps;
-> +	ipp->name = name;
-> +	ipp->formats = formats;
-> +	ipp->num_formats = num_formats;
-> +
-> +	/* ipp_list modification is serialized by component framework */
-> +	list_add_tail(&ipp->head, &ipp_list);
-> +	ipp->id = num_ipp++;
-> +
-> +	DRM_DEBUG_DRIVER("Registered ipp %d\n", ipp->id);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_unregister - Unregister the picture processor module
-> + * @dev: DRM device
-> + * @ipp: ipp module
-> + */
-> +void exynos_drm_ipp_unregister(struct drm_device *dev,
-> +			       struct exynos_drm_ipp *ipp)
-> +{
-> +	BUG_ON(ipp->task);
-> +	BUG_ON(!list_empty(&ipp->todo_list));
-> +	list_del(&ipp->head);
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_ioctl_get_res_ioctl - enumerate all ipp modules
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a list of ipp ids.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_get_res_ioctl(struct drm_device *dev, void *data,
-> +				 struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_get_res *resp = data;
-> +	struct exynos_drm_ipp *ipp;
-> +	uint32_t __user *ipp_ptr = (uint32_t __user *)
-> +						(unsigned long)resp->ipp_id_ptr;
-> +	unsigned int count = num_ipp, copied = 0;
-> +
-> +	/*
-> +	 * This ioctl is called twice, once to determine how much space is
-> +	 * needed, and the 2nd time to fill it.
-> +	 */
-> +	if (count && resp->count_ipps >= count) {
-> +		list_for_each_entry(ipp, &ipp_list, head) {
-> +			if (put_user(ipp->id, ipp_ptr + copied))
-> +				return -EFAULT;
-> +			copied++;
-> +		}
-> +	}
-> +	resp->count_ipps = count;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline struct exynos_drm_ipp *__ipp_get(uint32_t id)
-> +{
-> +	struct exynos_drm_ipp *ipp;
-> +
-> +	list_for_each_entry(ipp, &ipp_list, head)
-> +		if (ipp->id == id)
-> +			return ipp;
-> +	return NULL;
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_ioctl_get_caps - get ipp module capabilities and formats
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a structure describing ipp module capabilities.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_get_caps_ioctl(struct drm_device *dev, void *data,
-> +				  struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_get_caps *resp = data;
-> +	void __user *ptr = (void __user *)(unsigned long)resp->formats_ptr;
-> +	struct exynos_drm_ipp *ipp;
-> +	int i;
-> +
-> +	ipp = __ipp_get(resp->ipp_id);
-> +	if (!ipp)
-> +		return -ENOENT;
-> +
-> +	resp->ipp_id = ipp->id;
-> +	resp->capabilities = ipp->capabilities;
-> +
-> +	/*
-> +	 * This ioctl is called twice, once to determine how much space is
-> +	 * needed, and the 2nd time to fill it.
-> +	 */
-> +	if (resp->formats_count >= ipp->num_formats) {
-> +		for (i = 0; i < ipp->num_formats; i++) {
-> +			struct drm_exynos_ipp_format tmp = {
-> +				.fourcc = ipp->formats[i].fourcc,
-> +				.type = ipp->formats[i].type,
-> +				.modifier = ipp->formats[i].modifier,
-> +			};
-> +
-> +			if (copy_to_user(ptr, &tmp, sizeof(tmp)))
-> +				return -EFAULT;
-> +			ptr += sizeof(tmp);
-> +		}
-> +	}
-> +	resp->formats_count = ipp->num_formats;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline const struct exynos_drm_ipp_formats *__ipp_format_get(
-> +   struct exynos_drm_ipp *ipp, uint32_t fourcc, uint64_t mod, unsigned int type)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ipp->num_formats; i++) {
-> +		if ((ipp->formats[i].type & type) &&
-> +		    ipp->formats[i].fourcc == fourcc &&
-> +		    ipp->formats[i].modifier == mod)
-> +			return &ipp->formats[i];
-> +	}
-> +	return NULL;
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_get_limits_ioctl - get ipp module limits
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a structure describing ipp module limitations for provided
-> + * picture format.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_get_limits_ioctl(struct drm_device *dev, void *data,
-> +				    struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_get_limits *resp = data;
-> +	void __user *ptr = (void __user *)(unsigned long)resp->limits_ptr;
-> +	const struct exynos_drm_ipp_formats *format;
-> +	struct exynos_drm_ipp *ipp;
-> +
-> +	if (resp->type != DRM_EXYNOS_IPP_FORMAT_SOURCE &&
-> +	    resp->type != DRM_EXYNOS_IPP_FORMAT_DESTINATION)
-> +		return -EINVAL;
-> +
-> +	ipp = __ipp_get(resp->ipp_id);
-> +	if (!ipp)
-> +		return -ENOENT;
-> +
-> +	format = __ipp_format_get(ipp, resp->fourcc, resp->modifier,
-> +				  resp->type);
-> +	if (!format)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * This ioctl is called twice, once to determine how much space is
-> +	 * needed, and the 2nd time to fill it.
-> +	 */
-> +	if (format->num_limits && resp->limits_count >= format->num_limits)
-> +		if (copy_to_user((void __user *)ptr, format->limits,
-> +				 sizeof(*format->limits) * format->num_limits))
-> +			return -EFAULT;
-> +	resp->limits_count = format->num_limits;
-> +
-> +	return 0;
-> +}
-> +
-> +struct drm_pending_exynos_ipp_event {
-> +	struct drm_pending_event base;
-> +	struct drm_exynos_ipp_event event;
-> +};
-> +
-> +static inline struct exynos_drm_ipp_task *
-> +			exynos_drm_ipp_task_alloc(struct exynos_drm_ipp *ipp)
-> +{
-> +	struct exynos_drm_ipp_task *task;
-> +
-> +	task = kzalloc(sizeof(*task), GFP_KERNEL);
-> +	if (!task)
-> +		return NULL;
-> +
-> +	task->dev = ipp->dev;
-> +	task->ipp = ipp;
-> +
-> +	/* some defaults */
-> +	task->src.rect.w = task->dst.rect.w = UINT_MAX;
-> +	task->src.rect.h = task->dst.rect.h = UINT_MAX;
-> +	task->transform.rotation = DRM_MODE_ROTATE_0;
-> +
-> +	DRM_DEBUG_DRIVER("Allocated task %pK\n", task);
-> +
-> +	return task;
-> +}
-> +
-> +static const struct exynos_drm_param_map {
-> +	unsigned int id;
-> +	unsigned int size;
-> +	unsigned int offset;
-> +} exynos_drm_ipp_params_maps[] = {
-> +	{
-> +		DRM_EXYNOS_IPP_TASK_BUFFER | DRM_EXYNOS_IPP_TASK_TYPE_SOURCE,
-> +		sizeof(struct drm_exynos_ipp_task_buffer),
-> +		offsetof(struct exynos_drm_ipp_task, src.buf),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_BUFFER | DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION,
-> +		sizeof(struct drm_exynos_ipp_task_buffer),
-> +		offsetof(struct exynos_drm_ipp_task, dst.buf),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_RECTANGLE | DRM_EXYNOS_IPP_TASK_TYPE_SOURCE,
-> +		sizeof(struct drm_exynos_ipp_task_rect),
-> +		offsetof(struct exynos_drm_ipp_task, src.rect),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_RECTANGLE | DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION,
-> +		sizeof(struct drm_exynos_ipp_task_rect),
-> +		offsetof(struct exynos_drm_ipp_task, dst.rect),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_TRANSFORM,
-> +		sizeof(struct drm_exynos_ipp_task_transform),
-> +		offsetof(struct exynos_drm_ipp_task, transform),
-> +	}, {
-> +		DRM_EXYNOS_IPP_TASK_ALPHA,
-> +		sizeof(struct drm_exynos_ipp_task_alpha),
-> +		offsetof(struct exynos_drm_ipp_task, alpha),
-> +	},
-> +};
-> +
-> +static int exynos_drm_ipp_task_set(struct exynos_drm_ipp_task *task,
-> +				   struct drm_exynos_ioctl_ipp_commit *arg)
-> +{
-> +	const struct exynos_drm_param_map *map = exynos_drm_ipp_params_maps;
-> +	void __user *params = (void __user *)(unsigned long)arg->params_ptr;
-> +	unsigned int size = arg->params_size;
-> +	uint32_t id;
-> +	int i;
-> +
-> +	while (size) {
-> +		if (get_user(id, (uint32_t __user *)params))
-> +			return -EFAULT;
-> +
-> +		for (i = 0; i < ARRAY_SIZE(exynos_drm_ipp_params_maps); i++)
-> +			if (map[i].id == id)
-> +				break;
-> +		if (i == ARRAY_SIZE(exynos_drm_ipp_params_maps) ||
-> +		    map[i].size > size)
-> +			return -EINVAL;
-> +
-> +		if (copy_from_user((void *)task + map[i].offset, params,
-> +				   map[i].size))
-> +			return -EFAULT;
-> +
-> +		params += map[i].size;
-> +		size -= map[i].size;
-> +	}
-> +
-> +	DRM_DEBUG_DRIVER("Got task %pK configuration from userspace\n", task);
-> +	return 0;
-> +}
-> +
-> +static int exynos_drm_ipp_task_setup_buffer(struct exynos_drm_ipp_buffer *buf,
-> +					    struct drm_file *filp)
-> +{
-> +	int ret = 0;
-> +	int i;
-> +
-> +	/* basic checks */
-> +	if (buf->buf.width == 0 || buf->buf.height == 0)
-> +		return -EINVAL;
-> +	buf->format = drm_format_info(buf->buf.fourcc);
-> +	for (i = 0; i < buf->format->num_planes; i++) {
-> +		unsigned int width = (i == 0) ? buf->buf.width :
-> +			     DIV_ROUND_UP(buf->buf.width, buf->format->hsub);
-> +
-> +		if (buf->buf.pitch[i] == 0)
-> +			buf->buf.pitch[i] = width * buf->format->cpp[i];
-> +		if (buf->buf.pitch[i] < width * buf->format->cpp[i])
-> +			return -EINVAL;
-> +		if (!buf->buf.gem_id[i])
-> +			return -ENOENT;
-> +	}
-> +
-> +	/* pitch for additional planes must match */
-> +	if (buf->format->num_planes > 2 &&
-> +	    buf->buf.pitch[1] != buf->buf.pitch[2])
-> +		return -EINVAL;
-> +
-> +	/* get GEM buffers and check their size */
-> +	for (i = 0; i < buf->format->num_planes; i++) {
-> +		unsigned int height = (i == 0) ? buf->buf.height :
-> +			     DIV_ROUND_UP(buf->buf.height, buf->format->vsub);
-> +		unsigned long size = height * buf->buf.pitch[i] +
-> +				     buf->buf.offset[i];
-> +		struct drm_gem_object *obj = drm_gem_object_lookup(filp,
-> +							    buf->buf.gem_id[i]);
-> +		if (!obj) {
-> +			ret = -ENOENT;
-> +			goto gem_free;
-> +		}
-> +		buf->exynos_gem[i] = to_exynos_gem(obj);
-> +
-> +		if (size > buf->exynos_gem[i]->size) {
-> +			i++;
-> +			ret = -EINVAL;
-> +			goto gem_free;
-> +		}
-> +		buf->dma_addr[i] = buf->exynos_gem[i]->dma_addr +
-> +				   buf->buf.offset[i];
-> +	}
-> +
-> +	return 0;
-> +gem_free:
-> +	while (i--) {
-> +		drm_gem_object_put_unlocked(&buf->exynos_gem[i]->base);
-> +		buf->exynos_gem[i] = NULL;
-> +	}
-> +	return ret;
-> +}
-> +
-> +static void exynos_drm_ipp_task_release_buf(struct exynos_drm_ipp_buffer *buf)
-> +{
-> +	int i;
-> +
-> +	if (!buf->exynos_gem[0])
-> +		return;
-> +	for (i = 0; i < buf->format->num_planes; i++)
-> +		drm_gem_object_put_unlocked(&buf->exynos_gem[i]->base);
-> +}
-> +
-> +static void exynos_drm_ipp_task_free(struct exynos_drm_ipp *ipp,
-> +				 struct exynos_drm_ipp_task *task)
-> +{
-> +	DRM_DEBUG_DRIVER("Freeing task %pK\n", task);
-> +
-> +	exynos_drm_ipp_task_release_buf(&task->src);
-> +	exynos_drm_ipp_task_release_buf(&task->dst);
-> +	if (task->event)
-> +		drm_event_cancel_free(ipp->dev, &task->event->base);
-> +	kfree(task);
-> +}
-> +
-> +struct drm_ipp_limit {
-> +	struct drm_exynos_ipp_limit_val h;
-> +	struct drm_exynos_ipp_limit_val v;
-> +};
-> +
-> +enum drm_ipp_size_id {
-> +	IPP_LIMIT_BUFFER, IPP_LIMIT_AREA, IPP_LIMIT_ROTATED, IPP_LIMIT_MAX
-> +};
-> +
-> +static const enum drm_ipp_size_id limit_id_fallback[IPP_LIMIT_MAX][4] = {
-> +	[IPP_LIMIT_BUFFER]  = { DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER },
-> +	[IPP_LIMIT_AREA]    = { DRM_EXYNOS_IPP_LIMIT_SIZE_AREA,
-> +				DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER },
-> +	[IPP_LIMIT_ROTATED] = { DRM_EXYNOS_IPP_LIMIT_SIZE_ROTATED,
-> +				DRM_EXYNOS_IPP_LIMIT_SIZE_AREA,
-> +				DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER },
-> +};
-> +
-> +static inline void __limit_set_val(unsigned int *ptr, unsigned int val)
-> +{
-> +	if (!*ptr)
-> +		*ptr = val;
-> +}
-> +
-> +static void __get_size_limit(const struct drm_exynos_ipp_limit *limits,
-> +			     unsigned int num_limits, enum drm_ipp_size_id id,
-> +			     struct drm_ipp_limit *res)
-> +{
-> +	const struct drm_exynos_ipp_limit *l = limits;
-> +	int i = 0;
-> +
-> +	memset(res, 0, sizeof(*res));
-> +	for (i = 0; limit_id_fallback[id][i]; i++)
-> +		for (l = limits; l - limits < num_limits; l++) {
-> +			if (((l->type & DRM_EXYNOS_IPP_LIMIT_TYPE_MASK) !=
-> +			      DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE) ||
-> +			    ((l->type & DRM_EXYNOS_IPP_LIMIT_SIZE_MASK) !=
-> +						     limit_id_fallback[id][i]))
-> +				continue;
-> +			__limit_set_val(&res->h.min, l->h.min);
-> +			__limit_set_val(&res->h.max, l->h.max);
-> +			__limit_set_val(&res->h.align, l->h.align);
-> +			__limit_set_val(&res->v.min, l->v.min);
-> +			__limit_set_val(&res->v.max, l->v.max);
-> +			__limit_set_val(&res->v.align, l->v.align);
-> +		}
-> +}
-> +
-> +static inline bool __align_check(unsigned int val, unsigned int align)
-> +{
-> +	if (align && (val & (align - 1))) {
-> +		DRM_DEBUG_DRIVER("Value %d exceeds hw limits (align %d)\n",
-> +				 val, align);
-> +		return false;
-> +	}
-> +	return true;
-> +}
-> +
-> +static inline bool __size_limit_check(unsigned int val,
-> +				 struct drm_exynos_ipp_limit_val *l)
-> +{
-> +	if ((l->min && val < l->min) || (l->max && val > l->max)) {
-> +		DRM_DEBUG_DRIVER("Value %d exceeds hw limits (min %d, max %d)\n",
-> +				 val, l->min, l->max);
-> +		return false;
-> +	}
-> +	return __align_check(val, l->align);
-> +}
-> +
-> +static int exynos_drm_ipp_check_size_limits(struct exynos_drm_ipp_buffer *buf,
-> +	const struct drm_exynos_ipp_limit *limits, unsigned int num_limits,
-> +	bool rotate, bool swap)
-> +{
-> +	enum drm_ipp_size_id id = rotate ? IPP_LIMIT_ROTATED : IPP_LIMIT_AREA;
-> +	struct drm_ipp_limit l;
-> +	struct drm_exynos_ipp_limit_val *lh = &l.h, *lv = &l.v;
-> +
-> +	if (!limits)
-> +		return 0;
-> +
-> +	__get_size_limit(limits, num_limits, IPP_LIMIT_BUFFER, &l);
-> +	if (!__size_limit_check(buf->buf.width, &l.h) ||
-> +	    !__size_limit_check(buf->buf.height, &l.v))
-> +		return -EINVAL;
-> +
-> +	if (swap) {
-> +		lv = &l.h;
-> +		lh = &l.v;
-> +	}
-> +	__get_size_limit(limits, num_limits, id, &l);
-> +	if (!__size_limit_check(buf->rect.w, lh) ||
-> +	    !__align_check(buf->rect.x, lh->align) ||
-> +	    !__size_limit_check(buf->rect.h, lv) ||
-> +	    !__align_check(buf->rect.y, lv->align))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline bool __scale_limit_check(unsigned int src, unsigned int dst,
-> +				       unsigned int min, unsigned int max)
-> +{
-> +	if ((max && (dst << 16) > src * max) ||
-> +	    (min && (dst << 16) < src * min)) {
-> +		DRM_DEBUG_DRIVER("Scale from %d to %d exceeds hw limits (ratio min %d.%05d, max %d.%05d)\n",
-> +				 src, dst,
-> +				 min >> 16, 100000 * (min & 0xffff) / (1 << 16),
-> +				 max >> 16, 100000 * (max & 0xffff) / (1 << 16));
-> +		return false;
-> +	}
-> +	return true;
-> +}
-> +
-> +static int exynos_drm_ipp_check_scale_limits(struct drm_exynos_ipp_task_rect *src,
-> +				struct drm_exynos_ipp_task_rect *dst,
-> +				const struct drm_exynos_ipp_limit *limits,
-> +				unsigned int num_limits, bool swap)
-> +{
-> +	const struct drm_exynos_ipp_limit_val *lh, *lv;
-> +
-> +	for (; num_limits; limits++, num_limits--)
-> +		if ((limits->type & DRM_EXYNOS_IPP_LIMIT_TYPE_MASK) ==
-> +		    DRM_EXYNOS_IPP_LIMIT_TYPE_SCALE)
-> +			break;
-> +	if (!num_limits)
-> +		return 0;
-> +
-> +	lh = (!swap) ? &limits->h : &limits->v;
-> +	lv = (!swap) ? &limits->v : &limits->h;
-> +
-> +	if (!__scale_limit_check(src->w, dst->w, lh->min, lh->max) ||
-> +	    !__scale_limit_check(src->h, dst->h, lv->min, lv->max))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int exynos_drm_ipp_task_check(struct exynos_drm_ipp_task *task,
-> +				     struct drm_file *filp)
-> +{
-> +	struct exynos_drm_ipp *ipp = task->ipp;
-> +	const struct exynos_drm_ipp_formats *src_fmt, *dst_fmt;
-> +	struct exynos_drm_ipp_buffer *src = &task->src, *dst = &task->dst;
-> +	unsigned int rotation = task->transform.rotation;
-> +	int ret = 0;
-> +	bool swap = drm_rotation_90_or_270(rotation);
-> +	bool rotate = (rotation != DRM_MODE_ROTATE_0);
-> +	bool scale = false;
-> +
-> +	DRM_DEBUG_DRIVER("Checking task %pK\n", task);
-> +
-> +	if (src->rect.w == UINT_MAX)
-> +		src->rect.w = src->buf.width;
-> +	if (src->rect.h == UINT_MAX)
-> +		src->rect.h = src->buf.height;
-> +	if (dst->rect.w == UINT_MAX)
-> +		dst->rect.w = dst->buf.width;
-> +	if (dst->rect.h == UINT_MAX)
-> +		dst->rect.h = dst->buf.height;
-> +
-> +	if (src->rect.x + src->rect.w > (src->buf.width) ||
-> +	    src->rect.y + src->rect.h > (src->buf.height) ||
-> +	    dst->rect.x + dst->rect.w > (dst->buf.width) ||
-> +	    dst->rect.y + dst->rect.h > (dst->buf.height)) {
-> +		DRM_DEBUG_DRIVER("Task %pK: defined area is outside provided buffers\n",
-> +				 task);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if ((!swap && (src->rect.w != dst->rect.w ||
-> +		       src->rect.h != dst->rect.h)) ||
-> +	    (swap && (src->rect.w != dst->rect.h ||
-> +		      src->rect.h != dst->rect.w)))
-> +		scale = true;
-> +
-> +	if ((!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_CROP) &&
-> +	     (src->rect.x || src->rect.y || dst->rect.x || dst->rect.y)) ||
-> +	    (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_ROTATE) && rotate) ||
-> +	    (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_SCALE) && scale) ||
-> +	    (!(ipp->capabilities & DRM_EXYNOS_IPP_CAP_CONVERT) &&
-> +	     src->buf.fourcc != dst->buf.fourcc)) {
-> +		DRM_DEBUG_DRIVER("Task %pK: hw capabilities exceeded\n", task);
-> +		return -EINVAL;
-> +	}
-> +
-> +	src_fmt = __ipp_format_get(ipp, src->buf.fourcc, src->buf.modifier,
-> +				   DRM_EXYNOS_IPP_FORMAT_SOURCE);
-> +	if (!src_fmt) {
-> +		DRM_DEBUG_DRIVER("Task %pK: src format not supported\n", task);
-> +		return -EINVAL;
-> +	}
-> +	ret = exynos_drm_ipp_check_size_limits(src, src_fmt->limits,
-> +					       src_fmt->num_limits,
-> +					       rotate, false);
-> +	if (ret)
-> +		return ret;
-> +	ret = exynos_drm_ipp_check_scale_limits(&src->rect, &dst->rect,
-> +						src_fmt->limits,
-> +						src_fmt->num_limits, swap);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dst_fmt = __ipp_format_get(ipp, dst->buf.fourcc, dst->buf.modifier,
-> +				   DRM_EXYNOS_IPP_FORMAT_DESTINATION);
-> +	if (!dst_fmt) {
-> +		DRM_DEBUG_DRIVER("Task %pK: dst format not supported\n", task);
-> +		return -EINVAL;
-> +	}
-> +	ret = exynos_drm_ipp_check_size_limits(dst, dst_fmt->limits,
-> +					       dst_fmt->num_limits,
-> +					       rotate, swap);
-> +	if (ret)
-> +		return ret;
-> +	ret = exynos_drm_ipp_check_scale_limits(&src->rect, &dst->rect,
-> +						dst_fmt->limits,
-> +						dst_fmt->num_limits, swap);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = exynos_drm_ipp_task_setup_buffer(src, filp);
-> +	if (ret) {
-> +		DRM_DEBUG_DRIVER("Task %pK: src buffer setup failed\n", task);
-> +		return ret;
-> +	}
-> +	ret = exynos_drm_ipp_task_setup_buffer(dst, filp);
-> +	if (ret) {
-> +		DRM_DEBUG_DRIVER("Task %pK: dst buffer setup failed\n", task);
-> +		return ret;
-> +	}
-> +
-> +	DRM_DEBUG_DRIVER("Task %pK: all checks done.\n", task);
-> +
-> +	return ret;
-> +}
-> +
-> +
-> +static int exynos_drm_ipp_event_create(struct exynos_drm_ipp_task *task,
-> +				 struct drm_file *file_priv, uint64_t user_data)
-> +{
-> +	struct drm_pending_exynos_ipp_event *e = NULL;
-> +	int ret;
-> +
-> +	e = kzalloc(sizeof(*e), GFP_KERNEL);
-> +	if (!e)
-> +		return -ENOMEM;
-> +
-> +	e->event.base.type = DRM_EXYNOS_IPP_EVENT;
-> +	e->event.base.length = sizeof(e->event);
-> +	e->event.user_data = user_data;
-> +
-> +	ret = drm_event_reserve_init(task->dev, file_priv, &e->base,
-> +				     &e->event.base);
-> +	if (ret)
-> +		goto free;
-> +
-> +	task->event = e;
-> +	return 0;
-> +free:
-> +	kfree(e);
-> +	return ret;
-> +}
-> +
-> +static void exynos_drm_ipp_event_send(struct exynos_drm_ipp_task *task)
-> +{
-> +	struct timespec64 now;
-> +
-> +	ktime_get_ts64(&now);
-> +	task->event->event.tv_sec = now.tv_sec;
-> +	task->event->event.tv_usec = now.tv_nsec / NSEC_PER_USEC;
-> +	task->event->event.sequence = atomic_inc_return(&task->ipp->sequence);
-> +
-> +	drm_send_event(task->dev, &task->event->base);
-> +}
-> +
-> +static int exynos_drm_ipp_task_cleanup(struct exynos_drm_ipp_task *task)
-> +{
-> +	int ret = task->ret;
-> +
-> +	if (ret == 0 && task->event) {
-> +		exynos_drm_ipp_event_send(task);
-> +		/* ensure event won't be canceled on task free */
-> +		task->event = NULL;
-> +	}
-> +
-> +	exynos_drm_ipp_task_free(task->ipp, task);
-> +	return ret;
-> +}
-> +
-> +static void exynos_drm_ipp_cleanup_work(struct work_struct *work)
-> +{
-> +	struct exynos_drm_ipp_task *task = container_of(work,
-> +				      struct exynos_drm_ipp_task, cleanup_work);
-> +
-> +	exynos_drm_ipp_task_cleanup(task);
-> +}
-> +
-> +static void exynos_drm_ipp_next_task(struct exynos_drm_ipp *ipp);
-> +
-> +/**
-> + * exynos_drm_ipp_task_done - finish given task and set return code
-> + * @task: ipp task to finish
-> + * @ret: error code or 0 if operation has been performed successfully
-> + */
-> +void exynos_drm_ipp_task_done(struct exynos_drm_ipp_task *task, int ret)
-> +{
-> +	struct exynos_drm_ipp *ipp = task->ipp;
-> +	unsigned long flags;
-> +
-> +	DRM_DEBUG_DRIVER("ipp: %d, task %pK done\n", ipp->id, task);
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +	if (ipp->task == task)
-> +		ipp->task = NULL;
-> +	task->flags |= DRM_EXYNOS_IPP_TASK_DONE;
-> +	task->ret = ret;
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +
-> +	exynos_drm_ipp_next_task(ipp);
-> +	wake_up(&ipp->done_wq);
-> +
-> +	if (task->flags & DRM_EXYNOS_IPP_TASK_ASYNC) {
-> +		INIT_WORK(&task->cleanup_work, exynos_drm_ipp_cleanup_work);
-> +		schedule_work(&task->cleanup_work);
-> +	}
-> +}
-> +
-> +static void exynos_drm_ipp_next_task(struct exynos_drm_ipp *ipp)
-> +{
-> +	struct exynos_drm_ipp_task *task;
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	DRM_DEBUG_DRIVER("ipp: %d, try to run new task\n", ipp->id);
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +
-> +	if (ipp->task || list_empty(&ipp->todo_list)) {
-> +		spin_unlock_irqrestore(&ipp->lock, flags);
-> +		return;
-> +	}
-> +
-> +	task = list_first_entry(&ipp->todo_list, struct exynos_drm_ipp_task,
-> +				head);
-> +	list_del_init(&task->head);
-> +	ipp->task = task;
-> +
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +
-> +	DRM_DEBUG_DRIVER("ipp: %d, selected task %pK to run\n", ipp->id, task);
-> +
-> +	ret = ipp->funcs->commit(ipp, task);
-> +	if (ret)
-> +		exynos_drm_ipp_task_done(task, ret);
-> +}
-> +
-> +static void exynos_drm_ipp_schedule_task(struct exynos_drm_ipp *ipp,
-> +					 struct exynos_drm_ipp_task *task)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +	list_add(&task->head, &ipp->todo_list);
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +
-> +	exynos_drm_ipp_next_task(ipp);
-> +}
-> +
-> +static void exynos_drm_ipp_task_abort(struct exynos_drm_ipp *ipp,
-> +				      struct exynos_drm_ipp_task *task)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&ipp->lock, flags);
-> +	if (task->flags & DRM_EXYNOS_IPP_TASK_DONE) {
-> +		/* already completed task */
-> +		exynos_drm_ipp_task_cleanup(task);
-> +	} else if (ipp->task != task) {
-> +		/* task has not been scheduled for execution yet */
-> +		list_del_init(&task->head);
-> +		exynos_drm_ipp_task_cleanup(task);
-> +	} else {
-> +		/*
-> +		 * currently processed task, call abort() and perform
-> +		 * cleanup with async worker
-> +		 */
-> +		task->flags |= DRM_EXYNOS_IPP_TASK_ASYNC;
-> +		spin_unlock_irqrestore(&ipp->lock, flags);
-> +		if (ipp->funcs->abort)
-> +			ipp->funcs->abort(ipp, task);
-> +		return;
-> +	}
-> +	spin_unlock_irqrestore(&ipp->lock, flags);
-> +}
-> +
-> +/**
-> + * exynos_drm_ipp_commit_ioctl - perform image processing operation
-> + * @dev: DRM device
-> + * @data: ioctl data
-> + * @file_priv: DRM file info
-> + *
-> + * Construct a ipp task from the set of properties provided from the user
-> + * and try to schedule it to framebuffer processor hardware.
-> + *
-> + * Called by the user via ioctl.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int exynos_drm_ipp_commit_ioctl(struct drm_device *dev, void *data,
-> +				struct drm_file *file_priv)
-> +{
-> +	struct drm_exynos_ioctl_ipp_commit *arg = data;
-> +	struct exynos_drm_ipp *ipp;
-> +	struct exynos_drm_ipp_task *task;
-> +	int ret = 0;
-> +
-> +	if ((arg->flags & ~DRM_EXYNOS_IPP_FLAGS) || arg->reserved)
-> +		return -EINVAL;
-> +
-> +	/* can't test and expect an event at the same time */
-> +	if ((arg->flags & DRM_EXYNOS_IPP_FLAG_TEST_ONLY) &&
-> +			(arg->flags & DRM_EXYNOS_IPP_FLAG_EVENT))
-> +		return -EINVAL;
-> +
-> +	ipp = __ipp_get(arg->ipp_id);
-> +	if (!ipp)
-> +		return -ENOENT;
-> +
-> +	task = exynos_drm_ipp_task_alloc(ipp);
-> +	if (!task)
-> +		return -ENOMEM;
-> +
-> +	ret = exynos_drm_ipp_task_set(task, arg);
-> +	if (ret)
-> +		goto free;
-> +
-> +	ret = exynos_drm_ipp_task_check(task, file_priv);
-> +	if (ret || arg->flags & DRM_EXYNOS_IPP_FLAG_TEST_ONLY)
-> +		goto free;
-> +
-> +	if (arg->flags & DRM_EXYNOS_IPP_FLAG_EVENT) {
-> +		ret = exynos_drm_ipp_event_create(task, file_priv,
-> +						 arg->user_data);
-> +		if (ret)
-> +			goto free;
-> +	}
-> +
-> +	/*
-> +	 * Queue task for processing on the hardware. task object will be
-> +	 * then freed after exynos_drm_ipp_task_done()
-> +	 */
-> +	if (arg->flags & DRM_EXYNOS_IPP_FLAG_NONBLOCK) {
-> +		DRM_DEBUG_DRIVER("ipp: %d, nonblocking processing task %pK\n",
-> +				 ipp->id, task);
-> +
-> +		task->flags |= DRM_EXYNOS_IPP_TASK_ASYNC;
-> +		exynos_drm_ipp_schedule_task(task->ipp, task);
-> +		ret = 0;
-> +	} else {
-> +		DRM_DEBUG_DRIVER("ipp: %d, processing task %pK\n", ipp->id,
-> +				 task);
-> +		exynos_drm_ipp_schedule_task(ipp, task);
-> +		ret = wait_event_interruptible(ipp->done_wq,
-> +					task->flags & DRM_EXYNOS_IPP_TASK_DONE);
-> +		if (ret)
-> +			exynos_drm_ipp_task_abort(ipp, task);
-> +		else
-> +			ret = exynos_drm_ipp_task_cleanup(task);
-> +	}
-> +	return ret;
-> +free:
-> +	exynos_drm_ipp_task_free(ipp, task);
-> +
-> +	return ret;
-> +}
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-> new file mode 100644
-> index 000000000000..49b0980a3876
-> --- /dev/null
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-> @@ -0,0 +1,173 @@
-> +/*
-> + * Copyright (c) 2017 Samsung Electronics Co., Ltd.
+> + *	Eunchul Kim <chulspro.kim@samsung.com>
+> + *	Jinyoung Jeon <jy0.jeon@samsung.com>
+> + *	Sangmin Lee <lsmin.lee@samsung.com>
 > + *
 > + * This program is free software; you can redistribute  it and/or modify it
 > + * under  the terms of  the GNU General  Public License as published by the
 > + * Free Software Foundation;  either version 2 of the  License, or (at your
 > + * option) any later version.
+> + *
 > + */
-> +
-> +#ifndef _EXYNOS_DRM_IPP_H_
-> +#define _EXYNOS_DRM_IPP_H_
+> +#include <linux/kernel.h>
+> +#include <linux/component.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/clk.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
 > +
 > +#include <drm/drmP.h>
+> +#include <drm/exynos_drm.h>
+> +#include "regs-gsc.h"
+> +#include "exynos_drm_drv.h"
+> +#include "exynos_drm_iommu.h"
+> +#include "exynos_drm_ipp.h"
 > +
-> +struct exynos_drm_ipp;
-> +struct exynos_drm_ipp_task;
+> +/*
+> + * GSC stands for General SCaler and
+> + * supports image scaler/rotator and input/output DMA operations.
+> + * input DMA reads image data from the memory.
+> + * output DMA writes image data to memory.
+> + * GSC supports image rotation and image effect functions.
+> + */
+> +
+> +
+> +#define GSC_MAX_CLOCKS	8
+> +#define GSC_MAX_SRC		4
+> +#define GSC_MAX_DST		16
+> +#define GSC_RESET_TIMEOUT	50
+> +#define GSC_BUF_STOP	1
+> +#define GSC_BUF_START	2
+> +#define GSC_REG_SZ		16
+> +#define GSC_WIDTH_ITU_709	1280
+> +#define GSC_SC_UP_MAX_RATIO		65536
+> +#define GSC_SC_DOWN_RATIO_7_8		74898
+> +#define GSC_SC_DOWN_RATIO_6_8		87381
+> +#define GSC_SC_DOWN_RATIO_5_8		104857
+> +#define GSC_SC_DOWN_RATIO_4_8		131072
+> +#define GSC_SC_DOWN_RATIO_3_8		174762
+> +#define GSC_SC_DOWN_RATIO_2_8		262144
+> +#define GSC_CROP_MAX	8192
+> +#define GSC_CROP_MIN	32
+> +#define GSC_SCALE_MAX	4224
+> +#define GSC_SCALE_MIN	32
+> +#define GSC_COEF_RATIO	7
+> +#define GSC_COEF_PHASE	9
+> +#define GSC_COEF_ATTR	16
+> +#define GSC_COEF_H_8T	8
+> +#define GSC_COEF_V_4T	4
+> +#define GSC_COEF_DEPTH	3
+> +#define GSC_AUTOSUSPEND_DELAY		2000
+> +
+> +#define get_gsc_context(dev)	platform_get_drvdata(to_platform_device(dev))
+> +#define gsc_read(offset)		readl(ctx->regs + (offset))
+> +#define gsc_write(cfg, offset)	writel(cfg, ctx->regs + (offset))
+> +
+> +/*
+> + * A structure of scaler.
+> + *
+> + * @range: narrow, wide.
+> + * @pre_shfactor: pre sclaer shift factor.
+> + * @pre_hratio: horizontal ratio of the prescaler.
+> + * @pre_vratio: vertical ratio of the prescaler.
+> + * @main_hratio: the main scaler's horizontal ratio.
+> + * @main_vratio: the main scaler's vertical ratio.
+> + */
+> +struct gsc_scaler {
+> +	bool	range;
+> +	u32	pre_shfactor;
+> +	u32	pre_hratio;
+> +	u32	pre_vratio;
+> +	unsigned long main_hratio;
+> +	unsigned long main_vratio;
+> +};
+> +
+> +/*
+> + * A structure of gsc context.
+> + *
+> + * @regs_res: register resources.
+> + * @regs: memory mapped io registers.
+> + * @gsc_clk: gsc gate clock.
+> + * @sc: scaler infomations.
+> + * @id: gsc id.
+> + * @irq: irq number.
+> + * @rotation: supports rotation of src.
+> + */
+> +struct gsc_context {
+> +	struct exynos_drm_ipp ipp;
+> +	struct drm_device *drm_dev;
+> +	struct device	*dev;
+> +	struct exynos_drm_ipp_task	*task;
+> +	struct exynos_drm_ipp_formats	*formats;
+> +	unsigned int			num_formats;
+> +
+> +	struct resource	*regs_res;
+> +	void __iomem	*regs;
+> +	const char	**clk_names;
+> +	struct clk	*clocks[GSC_MAX_CLOCKS];
+> +	int		num_clocks;
+> +	struct gsc_scaler	sc;
+> +	int	id;
+> +	int	irq;
+> +	bool	rotation;
+> +};
 > +
 > +/**
-> + * struct exynos_drm_ipp_funcs - exynos_drm_ipp control functions
+> + * struct gsc_driverdata - per device type driver data for init time.
+> + *
+> + * @limits: picture size limits array
+> + * @clk_names: names of clocks needed by this variant
+> + * @num_clocks: the number of clocks needed by this variant
 > + */
-> +struct exynos_drm_ipp_funcs {
-> +	/**
-> +	 * @commit:
-> +	 *
-> +	 * This is the main entry point to start framebuffer processing
-> +	 * in the hardware. The exynos_drm_ipp_task has been already validated.
-> +	 * This function must not wait until the device finishes processing.
-> +	 * When the driver finishes processing, it has to call
-> +	 * exynos_exynos_drm_ipp_task_done() function.
-> +	 *
-> +	 * RETURNS:
-> +	 *
-> +	 * 0 on success or negative error codes in case of failure.
-> +	 */
-> +	int (*commit)(struct exynos_drm_ipp *ipp,
-> +		      struct exynos_drm_ipp_task *task);
-> +
-> +	/**
-> +	 * @abort:
-> +	 *
-> +	 * Informs the driver that it has to abort the currently running
-> +	 * task as soon as possible (i.e. as soon as it can stop the device
-> +	 * safely), even if the task would not have been finished by then.
-> +	 * After the driver performs the necessary steps, it has to call
-> +	 * exynos_drm_ipp_task_done() (as if the task ended normally).
-> +	 * This function does not have to (and will usually not) wait
-> +	 * until the device enters a state when it can be stopped.
-> +	 */
-> +	void (*abort)(struct exynos_drm_ipp *ipp,
-> +		      struct exynos_drm_ipp_task *task);
-> +};
-> +
-> +/**
-> + * struct exynos_drm_ipp - central picture processor module structure
-> + */
-> +struct exynos_drm_ipp {
-> +	struct drm_device *dev;
-> +	struct list_head head;
-> +	unsigned int id;
-> +
-> +	const char *name;
-> +	const struct exynos_drm_ipp_funcs *funcs;
-> +	unsigned int capabilities;
-> +	const struct exynos_drm_ipp_formats *formats;
-> +	unsigned int num_formats;
-> +	atomic_t sequence;
-> +
-> +	spinlock_t lock;
-> +	struct exynos_drm_ipp_task *task;
-> +	struct list_head todo_list;
-> +	wait_queue_head_t done_wq;
-> +};
-> +
-> +struct exynos_drm_ipp_buffer {
-> +	struct drm_exynos_ipp_task_buffer buf;
-> +	struct drm_exynos_ipp_task_rect rect;
-> +
-> +	struct exynos_drm_gem *exynos_gem[MAX_FB_BUFFER];
-> +	const struct drm_format_info *format;
-> +	dma_addr_t dma_addr[MAX_FB_BUFFER];
-> +};
-> +
-> +/**
-> + * struct exynos_drm_ipp_task - a structure describing transformation that
-> + * has to be performed by the picture processor hardware module
-> + */
-> +struct exynos_drm_ipp_task {
-> +	struct drm_device *dev;
-> +	struct exynos_drm_ipp *ipp;
-> +	struct list_head head;
-> +
-> +	struct exynos_drm_ipp_buffer src;
-> +	struct exynos_drm_ipp_buffer dst;
-> +
-> +	struct drm_exynos_ipp_task_transform transform;
-> +	struct drm_exynos_ipp_task_alpha alpha;
-> +
-> +	struct work_struct cleanup_work;
-> +	unsigned int flags;
-> +	int ret;
-> +
-> +	struct drm_pending_exynos_ipp_event *event;
-> +};
-> +
-> +#define DRM_EXYNOS_IPP_TASK_DONE	(1 << 0)
-> +#define DRM_EXYNOS_IPP_TASK_ASYNC	(1 << 1)
-> +
-> +struct exynos_drm_ipp_formats {
-> +	uint32_t fourcc;
-> +	uint32_t type;
-> +	uint64_t modifier;
+> +struct gsc_driverdata {
 > +	const struct drm_exynos_ipp_limit *limits;
-> +	unsigned int num_limits;
+> +	int		num_limits;
+> +	const char	*clk_names[GSC_MAX_CLOCKS];
+> +	int		num_clocks;
 > +};
 > +
-> +/* helper macros to set exynos_drm_ipp_formats structure and limits*/
-> +#define IPP_SRCDST_MFORMAT(f, m, l) \
-> +     .fourcc = DRM_FORMAT_##f, .modifier = m, .limits = l, \
-> +     .num_limits = ARRAY_SIZE(l), \
-> +     .type = (DRM_EXYNOS_IPP_FORMAT_SOURCE | DRM_EXYNOS_IPP_FORMAT_DESTINATION)
+> +/* 8-tap Filter Coefficient */
+> +static const int h_coef_8t[GSC_COEF_RATIO][GSC_COEF_ATTR][GSC_COEF_H_8T] = {
+> +	{	/* Ratio <= 65536 (~8:8) */
+> +		{  0,  0,   0, 128,   0,   0,  0,  0 },
+> +		{ -1,  2,  -6, 127,   7,  -2,  1,  0 },
+> +		{ -1,  4, -12, 125,  16,  -5,  1,  0 },
+> +		{ -1,  5, -15, 120,  25,  -8,  2,  0 },
+> +		{ -1,  6, -18, 114,  35, -10,  3, -1 },
+> +		{ -1,  6, -20, 107,  46, -13,  4, -1 },
+> +		{ -2,  7, -21,  99,  57, -16,  5, -1 },
+> +		{ -1,  6, -20,  89,  68, -18,  5, -1 },
+> +		{ -1,  6, -20,  79,  79, -20,  6, -1 },
+> +		{ -1,  5, -18,  68,  89, -20,  6, -1 },
+> +		{ -1,  5, -16,  57,  99, -21,  7, -2 },
+> +		{ -1,  4, -13,  46, 107, -20,  6, -1 },
+> +		{ -1,  3, -10,  35, 114, -18,  6, -1 },
+> +		{  0,  2,  -8,  25, 120, -15,  5, -1 },
+> +		{  0,  1,  -5,  16, 125, -12,  4, -1 },
+> +		{  0,  1,  -2,   7, 127,  -6,  2, -1 }
+> +	}, {	/* 65536 < Ratio <= 74898 (~8:7) */
+> +		{  3, -8,  14, 111,  13,  -8,  3,  0 },
+> +		{  2, -6,   7, 112,  21, -10,  3, -1 },
+> +		{  2, -4,   1, 110,  28, -12,  4, -1 },
+> +		{  1, -2,  -3, 106,  36, -13,  4, -1 },
+> +		{  1, -1,  -7, 103,  44, -15,  4, -1 },
+> +		{  1,  1, -11,  97,  53, -16,  4, -1 },
+> +		{  0,  2, -13,  91,  61, -16,  4, -1 },
+> +		{  0,  3, -15,  85,  69, -17,  4, -1 },
+> +		{  0,  3, -16,  77,  77, -16,  3,  0 },
+> +		{ -1,  4, -17,  69,  85, -15,  3,  0 },
+> +		{ -1,  4, -16,  61,  91, -13,  2,  0 },
+> +		{ -1,  4, -16,  53,  97, -11,  1,  1 },
+> +		{ -1,  4, -15,  44, 103,  -7, -1,  1 },
+> +		{ -1,  4, -13,  36, 106,  -3, -2,  1 },
+> +		{ -1,  4, -12,  28, 110,   1, -4,  2 },
+> +		{ -1,  3, -10,  21, 112,   7, -6,  2 }
+> +	}, {	/* 74898 < Ratio <= 87381 (~8:6) */
+> +		{ 2, -11,  25,  96, 25, -11,   2,  0 },
+> +		{ 2, -10,  19,  96, 31, -12,   2,  0 },
+> +		{ 2,  -9,  14,  94, 37, -12,   2,  0 },
+> +		{ 2,  -8,  10,  92, 43, -12,   1,  0 },
+> +		{ 2,  -7,   5,  90, 49, -12,   1,  0 },
+> +		{ 2,  -5,   1,  86, 55, -12,   0,  1 },
+> +		{ 2,  -4,  -2,  82, 61, -11,  -1,  1 },
+> +		{ 1,  -3,  -5,  77, 67,  -9,  -1,  1 },
+> +		{ 1,  -2,  -7,  72, 72,  -7,  -2,  1 },
+> +		{ 1,  -1,  -9,  67, 77,  -5,  -3,  1 },
+> +		{ 1,  -1, -11,  61, 82,  -2,  -4,  2 },
+> +		{ 1,   0, -12,  55, 86,   1,  -5,  2 },
+> +		{ 0,   1, -12,  49, 90,   5,  -7,  2 },
+> +		{ 0,   1, -12,  43, 92,  10,  -8,  2 },
+> +		{ 0,   2, -12,  37, 94,  14,  -9,  2 },
+> +		{ 0,   2, -12,  31, 96,  19, -10,  2 }
+> +	}, {	/* 87381 < Ratio <= 104857 (~8:5) */
+> +		{ -1,  -8, 33,  80, 33,  -8,  -1,  0 },
+> +		{ -1,  -8, 28,  80, 37,  -7,  -2,  1 },
+> +		{  0,  -8, 24,  79, 41,  -7,  -2,  1 },
+> +		{  0,  -8, 20,  78, 46,  -6,  -3,  1 },
+> +		{  0,  -8, 16,  76, 50,  -4,  -3,  1 },
+> +		{  0,  -7, 13,  74, 54,  -3,  -4,  1 },
+> +		{  1,  -7, 10,  71, 58,  -1,  -5,  1 },
+> +		{  1,  -6,  6,  68, 62,   1,  -5,  1 },
+> +		{  1,  -6,  4,  65, 65,   4,  -6,  1 },
+> +		{  1,  -5,  1,  62, 68,   6,  -6,  1 },
+> +		{  1,  -5, -1,  58, 71,  10,  -7,  1 },
+> +		{  1,  -4, -3,  54, 74,  13,  -7,  0 },
+> +		{  1,  -3, -4,  50, 76,  16,  -8,  0 },
+> +		{  1,  -3, -6,  46, 78,  20,  -8,  0 },
+> +		{  1,  -2, -7,  41, 79,  24,  -8,  0 },
+> +		{  1,  -2, -7,  37, 80,  28,  -8, -1 }
+> +	}, {	/* 104857 < Ratio <= 131072 (~8:4) */
+> +		{ -3,   0, 35,  64, 35,   0,  -3,  0 },
+> +		{ -3,  -1, 32,  64, 38,   1,  -3,  0 },
+> +		{ -2,  -2, 29,  63, 41,   2,  -3,  0 },
+> +		{ -2,  -3, 27,  63, 43,   4,  -4,  0 },
+> +		{ -2,  -3, 24,  61, 46,   6,  -4,  0 },
+> +		{ -2,  -3, 21,  60, 49,   7,  -4,  0 },
+> +		{ -1,  -4, 19,  59, 51,   9,  -4, -1 },
+> +		{ -1,  -4, 16,  57, 53,  12,  -4, -1 },
+> +		{ -1,  -4, 14,  55, 55,  14,  -4, -1 },
+> +		{ -1,  -4, 12,  53, 57,  16,  -4, -1 },
+> +		{ -1,  -4,  9,  51, 59,  19,  -4, -1 },
+> +		{  0,  -4,  7,  49, 60,  21,  -3, -2 },
+> +		{  0,  -4,  6,  46, 61,  24,  -3, -2 },
+> +		{  0,  -4,  4,  43, 63,  27,  -3, -2 },
+> +		{  0,  -3,  2,  41, 63,  29,  -2, -2 },
+> +		{  0,  -3,  1,  38, 64,  32,  -1, -3 }
+> +	}, {	/* 131072 < Ratio <= 174762 (~8:3) */
+> +		{ -1,   8, 33,  48, 33,   8,  -1,  0 },
+> +		{ -1,   7, 31,  49, 35,   9,  -1, -1 },
+> +		{ -1,   6, 30,  49, 36,  10,  -1, -1 },
+> +		{ -1,   5, 28,  48, 38,  12,  -1, -1 },
+> +		{ -1,   4, 26,  48, 39,  13,   0, -1 },
+> +		{ -1,   3, 24,  47, 41,  15,   0, -1 },
+> +		{ -1,   2, 23,  47, 42,  16,   0, -1 },
+> +		{ -1,   2, 21,  45, 43,  18,   1, -1 },
+> +		{ -1,   1, 19,  45, 45,  19,   1, -1 },
+> +		{ -1,   1, 18,  43, 45,  21,   2, -1 },
+> +		{ -1,   0, 16,  42, 47,  23,   2, -1 },
+> +		{ -1,   0, 15,  41, 47,  24,   3, -1 },
+> +		{ -1,   0, 13,  39, 48,  26,   4, -1 },
+> +		{ -1,  -1, 12,  38, 48,  28,   5, -1 },
+> +		{ -1,  -1, 10,  36, 49,  30,   6, -1 },
+> +		{ -1,  -1,  9,  35, 49,  31,   7, -1 }
+> +	}, {	/* 174762 < Ratio <= 262144 (~8:2) */
+> +		{  2,  13, 30,  38, 30,  13,   2,  0 },
+> +		{  2,  12, 29,  38, 30,  14,   3,  0 },
+> +		{  2,  11, 28,  38, 31,  15,   3,  0 },
+> +		{  2,  10, 26,  38, 32,  16,   4,  0 },
+> +		{  1,  10, 26,  37, 33,  17,   4,  0 },
+> +		{  1,   9, 24,  37, 34,  18,   5,  0 },
+> +		{  1,   8, 24,  37, 34,  19,   5,  0 },
+> +		{  1,   7, 22,  36, 35,  20,   6,  1 },
+> +		{  1,   6, 21,  36, 36,  21,   6,  1 },
+> +		{  1,   6, 20,  35, 36,  22,   7,  1 },
+> +		{  0,   5, 19,  34, 37,  24,   8,  1 },
+> +		{  0,   5, 18,  34, 37,  24,   9,  1 },
+> +		{  0,   4, 17,  33, 37,  26,  10,  1 },
+> +		{  0,   4, 16,  32, 38,  26,  10,  2 },
+> +		{  0,   3, 15,  31, 38,  28,  11,  2 },
+> +		{  0,   3, 14,  30, 38,  29,  12,  2 }
+> +	}
+> +};
 > +
-> +#define IPP_SRCDST_FORMAT(f, l) IPP_SRCDST_MFORMAT(f, 0, l)
+> +/* 4-tap Filter Coefficient */
+> +static const int v_coef_4t[GSC_COEF_RATIO][GSC_COEF_ATTR][GSC_COEF_V_4T] = {
+> +	{	/* Ratio <= 65536 (~8:8) */
+> +		{  0, 128,   0,  0 },
+> +		{ -4, 127,   5,  0 },
+> +		{ -6, 124,  11, -1 },
+> +		{ -8, 118,  19, -1 },
+> +		{ -8, 111,  27, -2 },
+> +		{ -8, 102,  37, -3 },
+> +		{ -8,  92,  48, -4 },
+> +		{ -7,  81,  59, -5 },
+> +		{ -6,  70,  70, -6 },
+> +		{ -5,  59,  81, -7 },
+> +		{ -4,  48,  92, -8 },
+> +		{ -3,  37, 102, -8 },
+> +		{ -2,  27, 111, -8 },
+> +		{ -1,  19, 118, -8 },
+> +		{ -1,  11, 124, -6 },
+> +		{  0,   5, 127, -4 }
+> +	}, {	/* 65536 < Ratio <= 74898 (~8:7) */
+> +		{  8, 112,   8,  0 },
+> +		{  4, 111,  14, -1 },
+> +		{  1, 109,  20, -2 },
+> +		{ -2, 105,  27, -2 },
+> +		{ -3, 100,  34, -3 },
+> +		{ -5,  93,  43, -3 },
+> +		{ -5,  86,  51, -4 },
+> +		{ -5,  77,  60, -4 },
+> +		{ -5,  69,  69, -5 },
+> +		{ -4,  60,  77, -5 },
+> +		{ -4,  51,  86, -5 },
+> +		{ -3,  43,  93, -5 },
+> +		{ -3,  34, 100, -3 },
+> +		{ -2,  27, 105, -2 },
+> +		{ -2,  20, 109,  1 },
+> +		{ -1,  14, 111,  4 }
+> +	}, {	/* 74898 < Ratio <= 87381 (~8:6) */
+> +		{ 16,  96,  16,  0 },
+> +		{ 12,  97,  21, -2 },
+> +		{  8,  96,  26, -2 },
+> +		{  5,  93,  32, -2 },
+> +		{  2,  89,  39, -2 },
+> +		{  0,  84,  46, -2 },
+> +		{ -1,  79,  53, -3 },
+> +		{ -2,  73,  59, -2 },
+> +		{ -2,  66,  66, -2 },
+> +		{ -2,  59,  73, -2 },
+> +		{ -3,  53,  79, -1 },
+> +		{ -2,  46,  84,  0 },
+> +		{ -2,  39,  89,  2 },
+> +		{ -2,  32,  93,  5 },
+> +		{ -2,  26,  96,  8 },
+> +		{ -2,  21,  97, 12 }
+> +	}, {	/* 87381 < Ratio <= 104857 (~8:5) */
+> +		{ 22,  84,  22,  0 },
+> +		{ 18,  85,  26, -1 },
+> +		{ 14,  84,  31, -1 },
+> +		{ 11,  82,  36, -1 },
+> +		{  8,  79,  42, -1 },
+> +		{  6,  76,  47, -1 },
+> +		{  4,  72,  52,  0 },
+> +		{  2,  68,  58,  0 },
+> +		{  1,  63,  63,  1 },
+> +		{  0,  58,  68,  2 },
+> +		{  0,  52,  72,  4 },
+> +		{ -1,  47,  76,  6 },
+> +		{ -1,  42,  79,  8 },
+> +		{ -1,  36,  82, 11 },
+> +		{ -1,  31,  84, 14 },
+> +		{ -1,  26,  85, 18 }
+> +	}, {	/* 104857 < Ratio <= 131072 (~8:4) */
+> +		{ 26,  76,  26,  0 },
+> +		{ 22,  76,  30,  0 },
+> +		{ 19,  75,  34,  0 },
+> +		{ 16,  73,  38,  1 },
+> +		{ 13,  71,  43,  1 },
+> +		{ 10,  69,  47,  2 },
+> +		{  8,  66,  51,  3 },
+> +		{  6,  63,  55,  4 },
+> +		{  5,  59,  59,  5 },
+> +		{  4,  55,  63,  6 },
+> +		{  3,  51,  66,  8 },
+> +		{  2,  47,  69, 10 },
+> +		{  1,  43,  71, 13 },
+> +		{  1,  38,  73, 16 },
+> +		{  0,  34,  75, 19 },
+> +		{  0,  30,  76, 22 }
+> +	}, {	/* 131072 < Ratio <= 174762 (~8:3) */
+> +		{ 29,  70,  29,  0 },
+> +		{ 26,  68,  32,  2 },
+> +		{ 23,  67,  36,  2 },
+> +		{ 20,  66,  39,  3 },
+> +		{ 17,  65,  43,  3 },
+> +		{ 15,  63,  46,  4 },
+> +		{ 12,  61,  50,  5 },
+> +		{ 10,  58,  53,  7 },
+> +		{  8,  56,  56,  8 },
+> +		{  7,  53,  58, 10 },
+> +		{  5,  50,  61, 12 },
+> +		{  4,  46,  63, 15 },
+> +		{  3,  43,  65, 17 },
+> +		{  3,  39,  66, 20 },
+> +		{  2,  36,  67, 23 },
+> +		{  2,  32,  68, 26 }
+> +	}, {	/* 174762 < Ratio <= 262144 (~8:2) */
+> +		{ 32,  64,  32,  0 },
+> +		{ 28,  63,  34,  3 },
+> +		{ 25,  62,  37,  4 },
+> +		{ 22,  62,  40,  4 },
+> +		{ 19,  61,  43,  5 },
+> +		{ 17,  59,  46,  6 },
+> +		{ 15,  58,  48,  7 },
+> +		{ 13,  55,  51,  9 },
+> +		{ 11,  53,  53, 11 },
+> +		{  9,  51,  55, 13 },
+> +		{  7,  48,  58, 15 },
+> +		{  6,  46,  59, 17 },
+> +		{  5,  43,  61, 19 },
+> +		{  4,  40,  62, 22 },
+> +		{  4,  37,  62, 25 },
+> +		{  3,  34,  63, 28 }
+> +	}
+> +};
 > +
-> +#define IPP_SIZE_LIMIT(l, val...)	\
-> +     .type = (DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE | DRM_EXYNOS_IPP_LIMIT_SIZE_##l), \
-> +     val
-> +
-> +#define IPP_SCALE_LIMIT(val...)		\
-> +     .type = (DRM_EXYNOS_IPP_LIMIT_TYPE_SCALE), val
-> +
-> +int exynos_drm_ipp_register(struct drm_device *dev, struct exynos_drm_ipp *ipp,
-> +		const struct exynos_drm_ipp_funcs *funcs, unsigned int caps,
-> +		const struct exynos_drm_ipp_formats *formats,
-> +		unsigned int num_formats, const char *name);
-> +void exynos_drm_ipp_unregister(struct drm_device *dev, struct exynos_drm_ipp *ipp);
-> +
-> +void exynos_drm_ipp_task_done(struct exynos_drm_ipp_task *task, int ret);
-> +
-> +#ifdef CONFIG_DRM_EXYNOS_IPP
-> +int exynos_drm_ipp_get_res_ioctl(struct drm_device *dev, void *data,
-> +				 struct drm_file *file_priv);
-> +int exynos_drm_ipp_get_caps_ioctl(struct drm_device *dev, void *data,
-> +				  struct drm_file *file_priv);
-> +int exynos_drm_ipp_get_limits_ioctl(struct drm_device *dev, void *data,
-> +				    struct drm_file *file_priv);
-> +int exynos_drm_ipp_commit_ioctl(struct drm_device *dev,
-> +				void *data, struct drm_file *file_priv);
-> +#else
-> +static inline int exynos_drm_ipp_get_res_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
+> +static int gsc_sw_reset(struct gsc_context *ctx)
 > +{
-> +	struct drm_exynos_ioctl_ipp_get_res *resp = data;
+> +	u32 cfg;
+> +	int count = GSC_RESET_TIMEOUT;
 > +
-> +	resp->count_ipps = 0;
+> +	/* s/w reset */
+> +	cfg = (GSC_SW_RESET_SRESET);
+> +	gsc_write(cfg, GSC_SW_RESET);
+> +
+> +	/* wait s/w reset complete */
+> +	while (count--) {
+> +		cfg = gsc_read(GSC_SW_RESET);
+> +		if (!cfg)
+> +			break;
+> +		usleep_range(1000, 2000);
+> +	}
+> +
+> +	if (cfg) {
+> +		DRM_ERROR("failed to reset gsc h/w.\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	/* reset sequence */
+> +	cfg = gsc_read(GSC_IN_BASE_ADDR_Y_MASK);
+> +	cfg |= (GSC_IN_BASE_ADDR_MASK |
+> +		GSC_IN_BASE_ADDR_PINGPONG(0));
+> +	gsc_write(cfg, GSC_IN_BASE_ADDR_Y_MASK);
+> +	gsc_write(cfg, GSC_IN_BASE_ADDR_CB_MASK);
+> +	gsc_write(cfg, GSC_IN_BASE_ADDR_CR_MASK);
+> +
+> +	cfg = gsc_read(GSC_OUT_BASE_ADDR_Y_MASK);
+> +	cfg |= (GSC_OUT_BASE_ADDR_MASK |
+> +		GSC_OUT_BASE_ADDR_PINGPONG(0));
+> +	gsc_write(cfg, GSC_OUT_BASE_ADDR_Y_MASK);
+> +	gsc_write(cfg, GSC_OUT_BASE_ADDR_CB_MASK);
+> +	gsc_write(cfg, GSC_OUT_BASE_ADDR_CR_MASK);
+> +
 > +	return 0;
 > +}
-> +static inline int exynos_drm_ipp_get_caps_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
+> +
+> +static void gsc_handle_irq(struct gsc_context *ctx, bool enable,
+> +		bool overflow, bool done)
 > +{
-> +	return -ENODEV;
+> +	u32 cfg;
+> +
+> +	DRM_DEBUG_KMS("enable[%d]overflow[%d]level[%d]\n",
+> +			enable, overflow, done);
+> +
+> +	cfg = gsc_read(GSC_IRQ);
+> +	cfg |= (GSC_IRQ_OR_MASK | GSC_IRQ_FRMDONE_MASK);
+> +
+> +	if (enable)
+> +		cfg |= GSC_IRQ_ENABLE;
+> +	else
+> +		cfg &= ~GSC_IRQ_ENABLE;
+> +
+> +	if (overflow)
+> +		cfg &= ~GSC_IRQ_OR_MASK;
+> +	else
+> +		cfg |= GSC_IRQ_OR_MASK;
+> +
+> +	if (done)
+> +		cfg &= ~GSC_IRQ_FRMDONE_MASK;
+> +	else
+> +		cfg |= GSC_IRQ_FRMDONE_MASK;
+> +
+> +	gsc_write(cfg, GSC_IRQ);
 > +}
-> +static inline int exynos_drm_ipp_get_limits_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
+> +
+> +
+> +static void gsc_src_set_fmt(struct gsc_context *ctx, u32 fmt)
 > +{
-> +	return -ENODEV;
+> +	u32 cfg;
+> +
+> +	DRM_DEBUG_KMS("fmt[0x%x]\n", fmt);
+> +
+> +	cfg = gsc_read(GSC_IN_CON);
+> +	cfg &= ~(GSC_IN_RGB_TYPE_MASK | GSC_IN_YUV422_1P_ORDER_MASK |
+> +		 GSC_IN_CHROMA_ORDER_MASK | GSC_IN_FORMAT_MASK |
+> +		 GSC_IN_TILE_TYPE_MASK | GSC_IN_TILE_MODE |
+> +		 GSC_IN_CHROM_STRIDE_SEL_MASK | GSC_IN_RB_SWAP_MASK);
+> +
+> +	switch (fmt) {
+> +	case DRM_FORMAT_RGB565:
+> +		cfg |= GSC_IN_RGB565;
+> +		break;
+> +	case DRM_FORMAT_XRGB8888:
+> +		cfg |= GSC_IN_XRGB8888;
+> +		break;
+> +	case DRM_FORMAT_BGRX8888:
+> +		cfg |= (GSC_IN_XRGB8888 | GSC_IN_RB_SWAP);
+> +		break;
+> +	case DRM_FORMAT_YUYV:
+> +		cfg |= (GSC_IN_YUV422_1P |
+> +			GSC_IN_YUV422_1P_ORDER_LSB_Y |
+> +			GSC_IN_CHROMA_ORDER_CBCR);
+> +		break;
+> +	case DRM_FORMAT_YVYU:
+> +		cfg |= (GSC_IN_YUV422_1P |
+> +			GSC_IN_YUV422_1P_ORDER_LSB_Y |
+> +			GSC_IN_CHROMA_ORDER_CRCB);
+> +		break;
+> +	case DRM_FORMAT_UYVY:
+> +		cfg |= (GSC_IN_YUV422_1P |
+> +			GSC_IN_YUV422_1P_OEDER_LSB_C |
+> +			GSC_IN_CHROMA_ORDER_CBCR);
+> +		break;
+> +	case DRM_FORMAT_VYUY:
+> +		cfg |= (GSC_IN_YUV422_1P |
+> +			GSC_IN_YUV422_1P_OEDER_LSB_C |
+> +			GSC_IN_CHROMA_ORDER_CRCB);
+> +		break;
+> +	case DRM_FORMAT_NV21:
+> +	case DRM_FORMAT_NV61:
+> +		cfg |= (GSC_IN_CHROMA_ORDER_CRCB |
+> +			GSC_IN_YUV420_2P);
+> +		break;
+> +	case DRM_FORMAT_YUV422:
+> +		cfg |= GSC_IN_YUV422_3P;
+> +		break;
+> +	case DRM_FORMAT_YUV420:
+> +	case DRM_FORMAT_YVU420:
+> +		cfg |= GSC_IN_YUV420_3P;
+> +		break;
+> +	case DRM_FORMAT_NV12:
+> +	case DRM_FORMAT_NV16:
+> +		cfg |= (GSC_IN_CHROMA_ORDER_CBCR |
+> +			GSC_IN_YUV420_2P);
+> +		break;
+> +	}
+> +
+> +	gsc_write(cfg, GSC_IN_CON);
 > +}
-> +static inline int exynos_drm_ipp_commit_ioctl(struct drm_device *dev,
-> +	 void *data, struct drm_file *file_priv)
+> +
+> +static void gsc_src_set_transf(struct gsc_context *ctx, unsigned int rotation)
 > +{
-> +	return -ENODEV;
+> +	unsigned int degree = rotation & DRM_MODE_ROTATE_MASK;
+> +	u32 cfg;
+> +
+> +	cfg = gsc_read(GSC_IN_CON);
+> +	cfg &= ~GSC_IN_ROT_MASK;
+> +
+> +	switch (degree) {
+> +	case DRM_MODE_ROTATE_0:
+> +		if (rotation & DRM_MODE_REFLECT_Y)
+> +			cfg |= GSC_IN_ROT_XFLIP;
+> +		if (rotation & DRM_MODE_REFLECT_X)
+> +			cfg |= GSC_IN_ROT_YFLIP;
+> +		break;
+> +	case DRM_MODE_ROTATE_90:
+> +		if (rotation & DRM_MODE_REFLECT_Y)
+> +			cfg |= GSC_IN_ROT_90_XFLIP;
+> +		else if (rotation & DRM_MODE_REFLECT_X)
+> +			cfg |= GSC_IN_ROT_90_YFLIP;
+> +		else
+> +			cfg |= GSC_IN_ROT_90;
+> +		break;
+> +	case DRM_MODE_ROTATE_180:
+> +		cfg |= GSC_IN_ROT_180;
+> +		if (rotation & DRM_MODE_REFLECT_Y)
+> +			cfg &= ~GSC_IN_ROT_XFLIP;
+> +		if (rotation & DRM_MODE_REFLECT_X)
+> +			cfg &= ~GSC_IN_ROT_YFLIP;
+> +		break;
+> +	case DRM_MODE_ROTATE_270:
+> +		cfg |= GSC_IN_ROT_270;
+> +		if (rotation & DRM_MODE_REFLECT_Y)
+> +			cfg &= ~GSC_IN_ROT_XFLIP;
+> +		if (rotation & DRM_MODE_REFLECT_X)
+> +			cfg &= ~GSC_IN_ROT_YFLIP;
+> +		break;
+> +	}
+> +
+> +	gsc_write(cfg, GSC_IN_CON);
+> +
+> +	ctx->rotation = (cfg & GSC_IN_ROT_90) ? 1 : 0;
 > +}
-> +#endif
-> +#endif
-> diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-> index 4a54305120e0..a57f97bf30aa 100644
-> --- a/include/uapi/drm/exynos_drm.h
-> +++ b/include/uapi/drm/exynos_drm.h
-> @@ -135,6 +135,219 @@ struct drm_exynos_g2d_exec {
->  	__u64					async;
->  };
->  
-> +/* Exynos DRM IPP v2 API */
 > +
-> +/**
-> + * Enumerate available IPP hardware modules.
-> + *
-> + * @count_ipps: size of ipp_id array / number of ipp modules (set by driver)
-> + * @reserved: padding
-> + * @ipp_id_ptr: pointer to ipp_id array or NULL
-> + */
-> +struct drm_exynos_ioctl_ipp_get_res {
-> +	__u32 count_ipps;
-> +	__u32 reserved;
-> +	__u64 ipp_id_ptr;
+> +static void gsc_src_set_size(struct gsc_context *ctx,
+> +			     struct exynos_drm_ipp_buffer *buf)
+> +{
+> +	struct gsc_scaler *sc = &ctx->sc;
+> +	u32 cfg;
+> +
+> +	/* pixel offset */
+> +	cfg = (GSC_SRCIMG_OFFSET_X(buf->rect.x) |
+> +		GSC_SRCIMG_OFFSET_Y(buf->rect.y));
+> +	gsc_write(cfg, GSC_SRCIMG_OFFSET);
+> +
+> +	/* cropped size */
+> +	cfg = (GSC_CROPPED_WIDTH(buf->rect.w) |
+> +		GSC_CROPPED_HEIGHT(buf->rect.h));
+> +	gsc_write(cfg, GSC_CROPPED_SIZE);
+> +
+> +	/* original size */
+> +	cfg = gsc_read(GSC_SRCIMG_SIZE);
+> +	cfg &= ~(GSC_SRCIMG_HEIGHT_MASK |
+> +		GSC_SRCIMG_WIDTH_MASK);
+> +
+> +	cfg |= (GSC_SRCIMG_WIDTH(buf->buf.width) |
+> +		GSC_SRCIMG_HEIGHT(buf->buf.height));
+> +
+> +	gsc_write(cfg, GSC_SRCIMG_SIZE);
+> +
+> +	cfg = gsc_read(GSC_IN_CON);
+> +	cfg &= ~GSC_IN_RGB_TYPE_MASK;
+> +
+> +	if (buf->rect.w >= GSC_WIDTH_ITU_709)
+> +		if (sc->range)
+> +			cfg |= GSC_IN_RGB_HD_WIDE;
+> +		else
+> +			cfg |= GSC_IN_RGB_HD_NARROW;
+> +	else
+> +		if (sc->range)
+> +			cfg |= GSC_IN_RGB_SD_WIDE;
+> +		else
+> +			cfg |= GSC_IN_RGB_SD_NARROW;
+> +
+> +	gsc_write(cfg, GSC_IN_CON);
+> +}
+> +
+> +static void gsc_src_set_buf_seq(struct gsc_context *ctx, u32 buf_id,
+> +			       bool enqueue)
+> +{
+> +	bool masked = !enqueue;
+> +	u32 cfg;
+> +	u32 mask = 0x00000001 << buf_id;
+> +
+> +	/* mask register set */
+> +	cfg = gsc_read(GSC_IN_BASE_ADDR_Y_MASK);
+> +
+> +	/* sequence id */
+> +	cfg &= ~mask;
+> +	cfg |= masked << buf_id;
+> +	gsc_write(cfg, GSC_IN_BASE_ADDR_Y_MASK);
+> +	gsc_write(cfg, GSC_IN_BASE_ADDR_CB_MASK);
+> +	gsc_write(cfg, GSC_IN_BASE_ADDR_CR_MASK);
+> +}
+> +
+> +static void gsc_src_set_addr(struct gsc_context *ctx, u32 buf_id,
+> +			    struct exynos_drm_ipp_buffer *buf)
+> +{
+> +	/* address register set */
+> +	gsc_write(buf->dma_addr[0], GSC_IN_BASE_ADDR_Y(buf_id));
+> +	gsc_write(buf->dma_addr[1], GSC_IN_BASE_ADDR_CB(buf_id));
+> +	gsc_write(buf->dma_addr[2], GSC_IN_BASE_ADDR_CR(buf_id));
+> +
+> +	gsc_src_set_buf_seq(ctx, buf_id, true);
+> +}
+> +
+> +static void gsc_dst_set_fmt(struct gsc_context *ctx, u32 fmt)
+> +{
+> +	u32 cfg;
+> +
+> +	DRM_DEBUG_KMS("fmt[0x%x]\n", fmt);
+> +
+> +	cfg = gsc_read(GSC_OUT_CON);
+> +	cfg &= ~(GSC_OUT_RGB_TYPE_MASK | GSC_OUT_YUV422_1P_ORDER_MASK |
+> +		 GSC_OUT_CHROMA_ORDER_MASK | GSC_OUT_FORMAT_MASK |
+> +		 GSC_OUT_CHROM_STRIDE_SEL_MASK | GSC_OUT_RB_SWAP_MASK |
+> +		 GSC_OUT_GLOBAL_ALPHA_MASK);
+> +
+> +	switch (fmt) {
+> +	case DRM_FORMAT_RGB565:
+> +		cfg |= GSC_OUT_RGB565;
+> +		break;
+> +	case DRM_FORMAT_XRGB8888:
+> +		cfg |= GSC_OUT_XRGB8888;
+> +		break;
+> +	case DRM_FORMAT_BGRX8888:
+> +		cfg |= (GSC_OUT_XRGB8888 | GSC_OUT_RB_SWAP);
+> +		break;
+> +	case DRM_FORMAT_YUYV:
+> +		cfg |= (GSC_OUT_YUV422_1P |
+> +			GSC_OUT_YUV422_1P_ORDER_LSB_Y |
+> +			GSC_OUT_CHROMA_ORDER_CBCR);
+> +		break;
+> +	case DRM_FORMAT_YVYU:
+> +		cfg |= (GSC_OUT_YUV422_1P |
+> +			GSC_OUT_YUV422_1P_ORDER_LSB_Y |
+> +			GSC_OUT_CHROMA_ORDER_CRCB);
+> +		break;
+> +	case DRM_FORMAT_UYVY:
+> +		cfg |= (GSC_OUT_YUV422_1P |
+> +			GSC_OUT_YUV422_1P_OEDER_LSB_C |
+> +			GSC_OUT_CHROMA_ORDER_CBCR);
+> +		break;
+> +	case DRM_FORMAT_VYUY:
+> +		cfg |= (GSC_OUT_YUV422_1P |
+> +			GSC_OUT_YUV422_1P_OEDER_LSB_C |
+> +			GSC_OUT_CHROMA_ORDER_CRCB);
+> +		break;
+> +	case DRM_FORMAT_NV21:
+> +	case DRM_FORMAT_NV61:
+> +		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV420_2P);
+> +		break;
+> +	case DRM_FORMAT_YUV422:
+> +	case DRM_FORMAT_YUV420:
+> +	case DRM_FORMAT_YVU420:
+> +		cfg |= GSC_OUT_YUV420_3P;
+> +		break;
+> +	case DRM_FORMAT_NV12:
+> +	case DRM_FORMAT_NV16:
+> +		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR |
+> +			GSC_OUT_YUV420_2P);
+> +		break;
+> +	}
+> +
+> +	gsc_write(cfg, GSC_OUT_CON);
+> +}
+> +
+> +static int gsc_get_ratio_shift(u32 src, u32 dst, u32 *ratio)
+> +{
+> +	DRM_DEBUG_KMS("src[%d]dst[%d]\n", src, dst);
+> +
+> +	if (src >= dst * 8) {
+> +		DRM_ERROR("failed to make ratio and shift.\n");
+> +		return -EINVAL;
+> +	} else if (src >= dst * 4)
+> +		*ratio = 4;
+> +	else if (src >= dst * 2)
+> +		*ratio = 2;
+> +	else
+> +		*ratio = 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static void gsc_get_prescaler_shfactor(u32 hratio, u32 vratio, u32 *shfactor)
+> +{
+> +	if (hratio == 4 && vratio == 4)
+> +		*shfactor = 4;
+> +	else if ((hratio == 4 && vratio == 2) ||
+> +		 (hratio == 2 && vratio == 4))
+> +		*shfactor = 3;
+> +	else if ((hratio == 4 && vratio == 1) ||
+> +		 (hratio == 1 && vratio == 4) ||
+> +		 (hratio == 2 && vratio == 2))
+> +		*shfactor = 2;
+> +	else if (hratio == 1 && vratio == 1)
+> +		*shfactor = 0;
+> +	else
+> +		*shfactor = 1;
+> +}
+> +
+> +static int gsc_set_prescaler(struct gsc_context *ctx, struct gsc_scaler *sc,
+> +     struct drm_exynos_ipp_task_rect *src, struct drm_exynos_ipp_task_rect *dst)
+> +{
+> +	u32 cfg;
+> +	u32 src_w, src_h, dst_w, dst_h;
+> +	int ret = 0;
+> +
+> +	src_w = src->w;
+> +	src_h = src->h;
+> +
+> +	if (ctx->rotation) {
+> +		dst_w = dst->h;
+> +		dst_h = dst->w;
+> +	} else {
+> +		dst_w = dst->w;
+> +		dst_h = dst->h;
+> +	}
+> +
+> +	ret = gsc_get_ratio_shift(src_w, dst_w, &sc->pre_hratio);
+> +	if (ret) {
+> +		dev_err(ctx->dev, "failed to get ratio horizontal.\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = gsc_get_ratio_shift(src_h, dst_h, &sc->pre_vratio);
+> +	if (ret) {
+> +		dev_err(ctx->dev, "failed to get ratio vertical.\n");
+> +		return ret;
+> +	}
+> +
+> +	DRM_DEBUG_KMS("pre_hratio[%d]pre_vratio[%d]\n",
+> +		sc->pre_hratio, sc->pre_vratio);
+> +
+> +	sc->main_hratio = (src_w << 16) / dst_w;
+> +	sc->main_vratio = (src_h << 16) / dst_h;
+> +
+> +	DRM_DEBUG_KMS("main_hratio[%ld]main_vratio[%ld]\n",
+> +		sc->main_hratio, sc->main_vratio);
+> +
+> +	gsc_get_prescaler_shfactor(sc->pre_hratio, sc->pre_vratio,
+> +		&sc->pre_shfactor);
+> +
+> +	DRM_DEBUG_KMS("pre_shfactor[%d]\n", sc->pre_shfactor);
+> +
+> +	cfg = (GSC_PRESC_SHFACTOR(sc->pre_shfactor) |
+> +		GSC_PRESC_H_RATIO(sc->pre_hratio) |
+> +		GSC_PRESC_V_RATIO(sc->pre_vratio));
+> +	gsc_write(cfg, GSC_PRE_SCALE_RATIO);
+> +
+> +	return ret;
+> +}
+> +
+> +static void gsc_set_h_coef(struct gsc_context *ctx, unsigned long main_hratio)
+> +{
+> +	int i, j, k, sc_ratio;
+> +
+> +	if (main_hratio <= GSC_SC_UP_MAX_RATIO)
+> +		sc_ratio = 0;
+> +	else if (main_hratio <= GSC_SC_DOWN_RATIO_7_8)
+> +		sc_ratio = 1;
+> +	else if (main_hratio <= GSC_SC_DOWN_RATIO_6_8)
+> +		sc_ratio = 2;
+> +	else if (main_hratio <= GSC_SC_DOWN_RATIO_5_8)
+> +		sc_ratio = 3;
+> +	else if (main_hratio <= GSC_SC_DOWN_RATIO_4_8)
+> +		sc_ratio = 4;
+> +	else if (main_hratio <= GSC_SC_DOWN_RATIO_3_8)
+> +		sc_ratio = 5;
+> +	else
+> +		sc_ratio = 6;
+> +
+> +	for (i = 0; i < GSC_COEF_PHASE; i++)
+> +		for (j = 0; j < GSC_COEF_H_8T; j++)
+> +			for (k = 0; k < GSC_COEF_DEPTH; k++)
+> +				gsc_write(h_coef_8t[sc_ratio][i][j],
+> +					GSC_HCOEF(i, j, k));
+> +}
+> +
+> +static void gsc_set_v_coef(struct gsc_context *ctx, unsigned long main_vratio)
+> +{
+> +	int i, j, k, sc_ratio;
+> +
+> +	if (main_vratio <= GSC_SC_UP_MAX_RATIO)
+> +		sc_ratio = 0;
+> +	else if (main_vratio <= GSC_SC_DOWN_RATIO_7_8)
+> +		sc_ratio = 1;
+> +	else if (main_vratio <= GSC_SC_DOWN_RATIO_6_8)
+> +		sc_ratio = 2;
+> +	else if (main_vratio <= GSC_SC_DOWN_RATIO_5_8)
+> +		sc_ratio = 3;
+> +	else if (main_vratio <= GSC_SC_DOWN_RATIO_4_8)
+> +		sc_ratio = 4;
+> +	else if (main_vratio <= GSC_SC_DOWN_RATIO_3_8)
+> +		sc_ratio = 5;
+> +	else
+> +		sc_ratio = 6;
+> +
+> +	for (i = 0; i < GSC_COEF_PHASE; i++)
+> +		for (j = 0; j < GSC_COEF_V_4T; j++)
+> +			for (k = 0; k < GSC_COEF_DEPTH; k++)
+> +				gsc_write(v_coef_4t[sc_ratio][i][j],
+> +					GSC_VCOEF(i, j, k));
+> +}
+> +
+> +static void gsc_set_scaler(struct gsc_context *ctx, struct gsc_scaler *sc)
+> +{
+> +	u32 cfg;
+> +
+> +	DRM_DEBUG_KMS("main_hratio[%ld]main_vratio[%ld]\n",
+> +		sc->main_hratio, sc->main_vratio);
+> +
+> +	gsc_set_h_coef(ctx, sc->main_hratio);
+> +	cfg = GSC_MAIN_H_RATIO_VALUE(sc->main_hratio);
+> +	gsc_write(cfg, GSC_MAIN_H_RATIO);
+> +
+> +	gsc_set_v_coef(ctx, sc->main_vratio);
+> +	cfg = GSC_MAIN_V_RATIO_VALUE(sc->main_vratio);
+> +	gsc_write(cfg, GSC_MAIN_V_RATIO);
+> +}
+> +
+> +static void gsc_dst_set_size(struct gsc_context *ctx,
+> +			     struct exynos_drm_ipp_buffer *buf)
+> +{
+> +	struct gsc_scaler *sc = &ctx->sc;
+> +	u32 cfg;
+> +
+> +	/* pixel offset */
+> +	cfg = (GSC_DSTIMG_OFFSET_X(buf->rect.x) |
+> +		GSC_DSTIMG_OFFSET_Y(buf->rect.y));
+> +	gsc_write(cfg, GSC_DSTIMG_OFFSET);
+> +
+> +	/* scaled size */
+> +	if (ctx->rotation)
+> +		cfg = (GSC_SCALED_WIDTH(buf->rect.h) |
+> +		       GSC_SCALED_HEIGHT(buf->rect.w));
+> +	else
+> +		cfg = (GSC_SCALED_WIDTH(buf->rect.w) |
+> +		       GSC_SCALED_HEIGHT(buf->rect.h));
+> +	gsc_write(cfg, GSC_SCALED_SIZE);
+> +
+> +	/* original size */
+> +	cfg = gsc_read(GSC_DSTIMG_SIZE);
+> +	cfg &= ~(GSC_DSTIMG_HEIGHT_MASK | GSC_DSTIMG_WIDTH_MASK);
+> +	cfg |= GSC_DSTIMG_WIDTH(buf->buf.width) |
+> +	       GSC_DSTIMG_HEIGHT(buf->buf.height);
+> +	gsc_write(cfg, GSC_DSTIMG_SIZE);
+> +
+> +	cfg = gsc_read(GSC_OUT_CON);
+> +	cfg &= ~GSC_OUT_RGB_TYPE_MASK;
+> +
+> +	if (buf->rect.w >= GSC_WIDTH_ITU_709)
+> +		if (sc->range)
+> +			cfg |= GSC_OUT_RGB_HD_WIDE;
+> +		else
+> +			cfg |= GSC_OUT_RGB_HD_NARROW;
+> +	else
+> +		if (sc->range)
+> +			cfg |= GSC_OUT_RGB_SD_WIDE;
+> +		else
+> +			cfg |= GSC_OUT_RGB_SD_NARROW;
+> +
+> +	gsc_write(cfg, GSC_OUT_CON);
+> +}
+> +
+> +static int gsc_dst_get_buf_seq(struct gsc_context *ctx)
+> +{
+> +	u32 cfg, i, buf_num = GSC_REG_SZ;
+> +	u32 mask = 0x00000001;
+> +
+> +	cfg = gsc_read(GSC_OUT_BASE_ADDR_Y_MASK);
+> +
+> +	for (i = 0; i < GSC_REG_SZ; i++)
+> +		if (cfg & (mask << i))
+> +			buf_num--;
+> +
+> +	DRM_DEBUG_KMS("buf_num[%d]\n", buf_num);
+> +
+> +	return buf_num;
+> +}
+> +
+> +static void gsc_dst_set_buf_seq(struct gsc_context *ctx, u32 buf_id,
+> +				bool enqueue)
+> +{
+> +	bool masked = !enqueue;
+> +	u32 cfg;
+> +	u32 mask = 0x00000001 << buf_id;
+> +
+> +	/* mask register set */
+> +	cfg = gsc_read(GSC_OUT_BASE_ADDR_Y_MASK);
+> +
+> +	/* sequence id */
+> +	cfg &= ~mask;
+> +	cfg |= masked << buf_id;
+> +	gsc_write(cfg, GSC_OUT_BASE_ADDR_Y_MASK);
+> +	gsc_write(cfg, GSC_OUT_BASE_ADDR_CB_MASK);
+> +	gsc_write(cfg, GSC_OUT_BASE_ADDR_CR_MASK);
+> +
+> +	/* interrupt enable */
+> +	if (enqueue && gsc_dst_get_buf_seq(ctx) >= GSC_BUF_START)
+> +		gsc_handle_irq(ctx, true, false, true);
+> +
+> +	/* interrupt disable */
+> +	if (!enqueue && gsc_dst_get_buf_seq(ctx) <= GSC_BUF_STOP)
+> +		gsc_handle_irq(ctx, false, false, true);
+> +}
+> +
+> +static void gsc_dst_set_addr(struct gsc_context *ctx,
+> +			     u32 buf_id, struct exynos_drm_ipp_buffer *buf)
+> +{
+> +	/* address register set */
+> +	gsc_write(buf->dma_addr[0], GSC_OUT_BASE_ADDR_Y(buf_id));
+> +	gsc_write(buf->dma_addr[1], GSC_OUT_BASE_ADDR_CB(buf_id));
+> +	gsc_write(buf->dma_addr[2], GSC_OUT_BASE_ADDR_CR(buf_id));
+> +
+> +	gsc_dst_set_buf_seq(ctx, buf_id, true);
+> +}
+> +
+> +static int gsc_get_src_buf_index(struct gsc_context *ctx)
+> +{
+> +	u32 cfg, curr_index, i;
+> +	u32 buf_id = GSC_MAX_SRC;
+> +
+> +	DRM_DEBUG_KMS("gsc id[%d]\n", ctx->id);
+> +
+> +	cfg = gsc_read(GSC_IN_BASE_ADDR_Y_MASK);
+> +	curr_index = GSC_IN_CURR_GET_INDEX(cfg);
+> +
+> +	for (i = curr_index; i < GSC_MAX_SRC; i++) {
+> +		if (!((cfg >> i) & 0x1)) {
+> +			buf_id = i;
+> +			break;
+> +		}
+> +	}
+> +
+> +	DRM_DEBUG_KMS("cfg[0x%x]curr_index[%d]buf_id[%d]\n", cfg,
+> +		curr_index, buf_id);
+> +
+> +	if (buf_id == GSC_MAX_SRC) {
+> +		DRM_ERROR("failed to get in buffer index.\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	gsc_src_set_buf_seq(ctx, buf_id, false);
+> +
+> +	return buf_id;
+> +}
+> +
+> +static int gsc_get_dst_buf_index(struct gsc_context *ctx)
+> +{
+> +	u32 cfg, curr_index, i;
+> +	u32 buf_id = GSC_MAX_DST;
+> +
+> +	DRM_DEBUG_KMS("gsc id[%d]\n", ctx->id);
+> +
+> +	cfg = gsc_read(GSC_OUT_BASE_ADDR_Y_MASK);
+> +	curr_index = GSC_OUT_CURR_GET_INDEX(cfg);
+> +
+> +	for (i = curr_index; i < GSC_MAX_DST; i++) {
+> +		if (!((cfg >> i) & 0x1)) {
+> +			buf_id = i;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (buf_id == GSC_MAX_DST) {
+> +		DRM_ERROR("failed to get out buffer index.\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	gsc_dst_set_buf_seq(ctx, buf_id, false);
+> +
+> +	DRM_DEBUG_KMS("cfg[0x%x]curr_index[%d]buf_id[%d]\n", cfg,
+> +		curr_index, buf_id);
+> +
+> +	return buf_id;
+> +}
+> +
+> +static irqreturn_t gsc_irq_handler(int irq, void *dev_id)
+> +{
+> +	struct gsc_context *ctx = dev_id;
+> +	u32 status;
+> +	int err = 0;
+> +
+> +	DRM_DEBUG_KMS("gsc id[%d]\n", ctx->id);
+> +
+> +	status = gsc_read(GSC_IRQ);
+> +	if (status & GSC_IRQ_STATUS_OR_IRQ) {
+> +		dev_err(ctx->dev, "occurred overflow at %d, status 0x%x.\n",
+> +			ctx->id, status);
+> +		err = -EINVAL;
+> +	}
+> +
+> +	if (status & GSC_IRQ_STATUS_OR_FRM_DONE) {
+> +		int src_buf_id, dst_buf_id;
+> +
+> +		dev_dbg(ctx->dev, "occurred frame done at %d, status 0x%x.\n",
+> +			ctx->id, status);
+> +
+> +		src_buf_id = gsc_get_src_buf_index(ctx);
+> +		dst_buf_id = gsc_get_dst_buf_index(ctx);
+> +
+> +		DRM_DEBUG_KMS("buf_id_src[%d]buf_id_dst[%d]\n",	src_buf_id,
+> +			      dst_buf_id);
+> +
+> +		if (src_buf_id < 0 || dst_buf_id < 0)
+> +			err = -EINVAL;
+> +	}
+> +
+> +	if (ctx->task) {
+> +		struct exynos_drm_ipp_task *task = ctx->task;
+> +
+> +		ctx->task = NULL;
+> +		pm_runtime_mark_last_busy(ctx->dev);
+> +		pm_runtime_put_autosuspend(ctx->dev);
+> +		exynos_drm_ipp_task_done(task, err);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int gsc_reset(struct gsc_context *ctx)
+> +{
+> +	struct gsc_scaler *sc = &ctx->sc;
+> +	int ret;
+> +
+> +	/* reset h/w block */
+> +	ret = gsc_sw_reset(ctx);
+> +	if (ret < 0) {
+> +		dev_err(ctx->dev, "failed to reset hardware.\n");
+> +		return ret;
+> +	}
+> +
+> +	/* scaler setting */
+> +	memset(&ctx->sc, 0x0, sizeof(ctx->sc));
+> +	sc->range = true;
+> +
+> +	return 0;
+> +}
+> +
+> +static void gsc_start(struct gsc_context *ctx)
+> +{
+> +	u32 cfg;
+> +
+> +	gsc_handle_irq(ctx, true, false, true);
+> +
+> +	/* enable one shot */
+> +	cfg = gsc_read(GSC_ENABLE);
+> +	cfg &= ~(GSC_ENABLE_ON_CLEAR_MASK |
+> +		GSC_ENABLE_CLK_GATE_MODE_MASK);
+> +	cfg |= GSC_ENABLE_ON_CLEAR_ONESHOT;
+> +	gsc_write(cfg, GSC_ENABLE);
+> +
+> +	/* src dma memory */
+> +	cfg = gsc_read(GSC_IN_CON);
+> +	cfg &= ~(GSC_IN_PATH_MASK | GSC_IN_LOCAL_SEL_MASK);
+> +	cfg |= GSC_IN_PATH_MEMORY;
+> +	gsc_write(cfg, GSC_IN_CON);
+> +
+> +	/* dst dma memory */
+> +	cfg = gsc_read(GSC_OUT_CON);
+> +	cfg |= GSC_OUT_PATH_MEMORY;
+> +	gsc_write(cfg, GSC_OUT_CON);
+> +
+> +	gsc_set_scaler(ctx, &ctx->sc);
+> +
+> +	cfg = gsc_read(GSC_ENABLE);
+> +	cfg |= GSC_ENABLE_ON;
+> +	gsc_write(cfg, GSC_ENABLE);
+> +}
+> +
+> +static int gsc_commit(struct exynos_drm_ipp *ipp,
+> +			  struct exynos_drm_ipp_task *task)
+> +{
+> +	struct gsc_context *ctx = container_of(ipp, struct gsc_context, ipp);
+> +	int ret;
+> +
+> +	pm_runtime_get_sync(ctx->dev);
+> +	ctx->task = task;
+> +
+> +	ret = gsc_reset(ctx);
+> +	if (ret) {
+> +		pm_runtime_put_autosuspend(ctx->dev);
+> +		ctx->task = NULL;
+> +		return ret;
+> +	}
+> +
+> +	gsc_src_set_fmt(ctx, task->src.buf.fourcc);
+> +	gsc_src_set_transf(ctx, task->transform.rotation);
+> +	gsc_src_set_size(ctx, &task->src);
+> +	gsc_src_set_addr(ctx, 0, &task->src);
+> +	gsc_dst_set_fmt(ctx, task->dst.buf.fourcc);
+> +	gsc_dst_set_size(ctx, &task->dst);
+> +	gsc_dst_set_addr(ctx, 0, &task->dst);
+> +	gsc_set_prescaler(ctx, &ctx->sc, &task->src.rect, &task->dst.rect);
+> +	gsc_start(ctx);
+> +
+> +	return 0;
+> +}
+> +
+> +static void gsc_abort(struct exynos_drm_ipp *ipp,
+> +			  struct exynos_drm_ipp_task *task)
+> +{
+> +	struct gsc_context *ctx =
+> +			container_of(ipp, struct gsc_context, ipp);
+> +
+> +	gsc_reset(ctx);
+> +	if (ctx->task) {
+> +		struct exynos_drm_ipp_task *task = ctx->task;
+> +
+> +		ctx->task = NULL;
+> +		pm_runtime_mark_last_busy(ctx->dev);
+> +		pm_runtime_put_autosuspend(ctx->dev);
+> +		exynos_drm_ipp_task_done(task, -EIO);
+> +	}
+> +}
+> +
+> +static struct exynos_drm_ipp_funcs ipp_funcs = {
+> +	.commit = gsc_commit,
+> +	.abort = gsc_abort,
 > +};
 > +
-> +enum drm_exynos_ipp_format_type {
-> +	DRM_EXYNOS_IPP_FORMAT_SOURCE		= 0x01,
-> +	DRM_EXYNOS_IPP_FORMAT_DESTINATION	= 0x02,
+> +static int gsc_bind(struct device *dev, struct device *master, void *data)
+> +{
+> +	struct gsc_context *ctx = dev_get_drvdata(dev);
+> +	struct drm_device *drm_dev = data;
+> +	struct exynos_drm_ipp *ipp = &ctx->ipp;
+> +
+> +	ctx->drm_dev = drm_dev;
+> +	drm_iommu_attach_device(drm_dev, dev);
+> +
+> +	exynos_drm_ipp_register(drm_dev, ipp, &ipp_funcs,
+> +			   DRM_EXYNOS_IPP_CAP_CROP | DRM_EXYNOS_IPP_CAP_ROTATE |
+> +			   DRM_EXYNOS_IPP_CAP_SCALE | DRM_EXYNOS_IPP_CAP_CONVERT,
+> +			   ctx->formats, ctx->num_formats, "gsc");
+> +
+> +	dev_info(dev, "The exynos gscaler has been probed successfully\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static void gsc_unbind(struct device *dev, struct device *master,
+> +			void *data)
+> +{
+> +	struct gsc_context *ctx = dev_get_drvdata(dev);
+> +	struct drm_device *drm_dev = data;
+> +	struct exynos_drm_ipp *ipp = &ctx->ipp;
+> +
+> +	exynos_drm_ipp_unregister(drm_dev, ipp);
+> +	drm_iommu_detach_device(drm_dev, dev);
+> +}
+> +
+> +static const struct component_ops gsc_component_ops = {
+> +	.bind	= gsc_bind,
+> +	.unbind = gsc_unbind,
 > +};
 > +
-> +struct drm_exynos_ipp_format {
-> +	__u32 fourcc;
-> +	__u32 type;
-> +	__u64 modifier;
+> +static const unsigned int gsc_formats[] = {
+> +	DRM_FORMAT_XRGB8888, DRM_FORMAT_RGB565, DRM_FORMAT_BGRX8888,
+> +	DRM_FORMAT_NV12, DRM_FORMAT_NV16, DRM_FORMAT_NV21, DRM_FORMAT_NV61,
+> +	DRM_FORMAT_UYVY, DRM_FORMAT_VYUY, DRM_FORMAT_YUYV, DRM_FORMAT_YVYU,
+> +	DRM_FORMAT_YUV420, DRM_FORMAT_YVU420, DRM_FORMAT_YUV422,
 > +};
 > +
-> +enum drm_exynos_ipp_capability {
-> +	DRM_EXYNOS_IPP_CAP_CROP		= 0x01,
-> +	DRM_EXYNOS_IPP_CAP_ROTATE	= 0x02,
-> +	DRM_EXYNOS_IPP_CAP_SCALE	= 0x04,
-> +	DRM_EXYNOS_IPP_CAP_CONVERT	= 0x08,
+> +static int gsc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct gsc_driverdata *driver_data;
+> +	struct exynos_drm_ipp_formats *formats;
+> +	struct gsc_context *ctx;
+> +	struct resource *res;
+> +	int ret, i;
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	formats = devm_kzalloc(dev, sizeof(*formats) *
+> +			       (ARRAY_SIZE(gsc_formats)), GFP_KERNEL);
+> +	if (!formats)
+> +		return -ENOMEM;
+> +
+> +	driver_data = (struct gsc_driverdata *)of_device_get_match_data(dev);
+> +	ctx->dev = dev;
+> +	ctx->num_clocks = driver_data->num_clocks;
+> +	ctx->clk_names = driver_data->clk_names;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(gsc_formats); i++) {
+> +		formats[i].fourcc = gsc_formats[i];
+> +		formats[i].type = DRM_EXYNOS_IPP_FORMAT_SOURCE |
+> +				  DRM_EXYNOS_IPP_FORMAT_DESTINATION;
+> +		formats[i].limits = driver_data->limits;
+> +		formats[i].num_limits = driver_data->num_limits;
+> +	}
+> +	ctx->formats = formats;
+> +	ctx->num_formats = ARRAY_SIZE(gsc_formats);
+> +
+> +	/* clock control */
+> +	for (i = 0; i < ctx->num_clocks; i++) {
+> +		ctx->clocks[i] = devm_clk_get(dev, ctx->clk_names[i]);
+> +		if (IS_ERR(ctx->clocks[i])) {
+> +			dev_err(dev, "failed to get clock: %s\n",
+> +				ctx->clk_names[i]);
+> +			return PTR_ERR(ctx->clocks[i]);
+> +		}
+> +	}
+> +
+> +	/* resource memory */
+> +	ctx->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	ctx->regs = devm_ioremap_resource(dev, ctx->regs_res);
+> +	if (IS_ERR(ctx->regs))
+> +		return PTR_ERR(ctx->regs);
+> +
+> +	/* resource irq */
+> +	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> +	if (!res) {
+> +		dev_err(dev, "failed to request irq resource.\n");
+> +		return -ENOENT;
+> +	}
+> +
+> +	ctx->irq = res->start;
+> +	ret = devm_request_irq(dev, ctx->irq, gsc_irq_handler, 0,
+> +			       dev_name(dev), ctx);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to request irq.\n");
+> +		return ret;
+> +	}
+> +
+> +	/* context initailization */
+> +	ctx->id = pdev->id;
+> +
+> +	platform_set_drvdata(pdev, ctx);
+> +
+> +	pm_runtime_use_autosuspend(dev);
+> +	pm_runtime_set_autosuspend_delay(dev, GSC_AUTOSUSPEND_DELAY);
+> +	pm_runtime_enable(dev);
+> +
+> +	ret = component_add(dev, &gsc_component_ops);
+> +	if (ret)
+> +		goto err_pm_dis;
+> +
+> +	dev_info(dev, "drm gsc registered successfully.\n");
+> +
+> +	return 0;
+> +
+> +err_pm_dis:
+> +	pm_runtime_dont_use_autosuspend(dev);
+> +	pm_runtime_disable(dev);
+> +	return ret;
+> +}
+> +
+> +static int gsc_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +
+> +	pm_runtime_dont_use_autosuspend(dev);
+> +	pm_runtime_disable(dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused gsc_runtime_suspend(struct device *dev)
+> +{
+> +	struct gsc_context *ctx = get_gsc_context(dev);
+> +	int i;
+> +
+> +	DRM_DEBUG_KMS("id[%d]\n", ctx->id);
+> +
+> +	for (i = ctx->num_clocks - 1; i >= 0; i--)
+> +		clk_disable_unprepare(ctx->clocks[i]);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused gsc_runtime_resume(struct device *dev)
+> +{
+> +	struct gsc_context *ctx = get_gsc_context(dev);
+> +	int i;
+> +
+> +	DRM_DEBUG_KMS("id[%d]\n", ctx->id);
+> +
+> +	for (i = 0; i < ctx->num_clocks; i++) {
+> +		int ret = clk_prepare_enable(ctx->clocks[i]);
+> +		if (ret) {
+> +			while (--i > 0)
+> +				clk_disable_unprepare(ctx->clocks[i]);
+> +			return ret;
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops gsc_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				pm_runtime_force_resume)
+> +	SET_RUNTIME_PM_OPS(gsc_runtime_suspend, gsc_runtime_resume, NULL)
 > +};
 > +
-> +/**
-> + * Get IPP hardware capabilities and supported image formats.
-> + *
-> + * @ipp_id: id of IPP module to query
-> + * @capabilities: bitmask of drm_exynos_ipp_capability (set by driver)
-> + * @reserved: padding
-> + * @formats_count: size of formats array (in entries) / number of filled
-> + *		   formats (set by driver)
-> + * @formats_ptr: pointer to formats array or NULL
-> + */
-> +struct drm_exynos_ioctl_ipp_get_caps {
-> +	__u32 ipp_id;
-> +	__u32 capabilities;
-> +	__u32 reserved;
-> +	__u32 formats_count;
-> +	__u64 formats_ptr;
+> +static const struct drm_exynos_ipp_limit gsc_5250_limits[] = {
+> +	{ IPP_SIZE_LIMIT(BUFFER, .h = { 32, 4800, 8 }, .v = { 16, 3344, 8 }) },
+> +	{ IPP_SIZE_LIMIT(AREA, .h = { 16, 4800, 2 }, .v = { 8, 3344, 2 }) },
+> +	{ IPP_SIZE_LIMIT(ROTATED, .h = { 32, 2048 }, .v = { 16, 2048 }) },
+> +	{ IPP_SCALE_LIMIT(.h = { (1 << 16) / 16, (1 << 16) * 8 },
+> +			  .v = { (1 << 16) / 16, (1 << 16) * 8 }) },
 > +};
 > +
-> +enum drm_exynos_ipp_limit_type {
-> +	/* size (horizontal/vertial) limits, in pixels (min, max, alignment) */
-> +	DRM_EXYNOS_IPP_LIMIT_TYPE_SIZE		= 0x0001,
-> +	/* scale ratio (horizonta/vertial), 16.16 fixed point (min, max) */
-> +	DRM_EXYNOS_IPP_LIMIT_TYPE_SCALE		= 0x0002,
-> +
-> +	/* image buffer area */
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_BUFFER	= 0x0001 << 16,
-> +	/* src/dst rectangle area */
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_AREA		= 0x0002 << 16,
-> +	/* src/dst rectangle area when rotation enabled */
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_ROTATED	= 0x0003 << 16,
-> +
-> +	DRM_EXYNOS_IPP_LIMIT_TYPE_MASK		= 0x000f,
-> +	DRM_EXYNOS_IPP_LIMIT_SIZE_MASK		= 0x000f << 16,
+> +static const struct drm_exynos_ipp_limit gsc_5420_limits[] = {
+> +	{ IPP_SIZE_LIMIT(BUFFER, .h = { 32, 4800, 8 }, .v = { 16, 3344, 8 }) },
+> +	{ IPP_SIZE_LIMIT(AREA, .h = { 16, 4800, 2 }, .v = { 8, 3344, 2 }) },
+> +	{ IPP_SIZE_LIMIT(ROTATED, .h = { 16, 2016 }, .v = { 8, 2016 }) },
+> +	{ IPP_SCALE_LIMIT(.h = { (1 << 16) / 16, (1 << 16) * 8 },
+> +			  .v = { (1 << 16) / 16, (1 << 16) * 8 }) },
 > +};
 > +
-> +struct drm_exynos_ipp_limit_val {
-> +	__u32 min;
-> +	__u32 max;
-> +	__u32 align;
-> +	__u32 reserved;
+> +static const struct drm_exynos_ipp_limit gsc_5433_limits[] = {
+> +	{ IPP_SIZE_LIMIT(BUFFER, .h = { 32, 8191, 8 }, .v = { 16, 8191, 8 }) },
+> +	{ IPP_SIZE_LIMIT(AREA, .h = { 16, 4800, 2 }, .v = { 8, 3344, 2 }) },
+> +	{ IPP_SIZE_LIMIT(ROTATED, .h = { 16, 2047 }, .v = { 8, 2047 }) },
+> +	{ IPP_SCALE_LIMIT(.h = { (1 << 16) / 16, (1 << 16) * 8 },
+> +			  .v = { (1 << 16) / 16, (1 << 16) * 8 }) },
 > +};
 > +
-> +/**
-> + * IPP module limitation.
-> + *
-> + * @type: limit type (see drm_exynos_ipp_limit_type enum)
-> + * @reserved: padding
-> + * @h: horizontal limits
-> + * @v: vertical limits
-> + */
-> +struct drm_exynos_ipp_limit {
-> +	__u32 type;
-> +	__u32 reserved;
-> +	struct drm_exynos_ipp_limit_val h;
-> +	struct drm_exynos_ipp_limit_val v;
+> +static struct gsc_driverdata gsc_exynos5250_drvdata = {
+> +	.clk_names = {"gscl"},
+> +	.num_clocks = 1,
+> +	.limits = gsc_5250_limits,
+> +	.num_limits = ARRAY_SIZE(gsc_5250_limits),
 > +};
 > +
-> +/**
-> + * Get IPP limits for given image format.
-> + *
-> + * @ipp_id: id of IPP module to query
-> + * @fourcc: image format code (see DRM_FORMAT_* in drm_fourcc.h)
-> + * @modifier: image format modifier (see DRM_FORMAT_MOD_* in drm_fourcc.h)
-> + * @type: source/destination identifier (drm_exynos_ipp_format_flag enum)
-> + * @limits_count: size of limits array (in entries) / number of filled entries
-> + *		 (set by driver)
-> + * @limits_ptr: pointer to limits array or NULL
-> + */
-> +struct drm_exynos_ioctl_ipp_get_limits {
-> +	__u32 ipp_id;
-> +	__u32 fourcc;
-> +	__u64 modifier;
-> +	__u32 type;
-> +	__u32 limits_count;
-> +	__u64 limits_ptr;
+> +static struct gsc_driverdata gsc_exynos5420_drvdata = {
+> +	.clk_names = {"gscl"},
+> +	.num_clocks = 1,
+> +	.limits = gsc_5420_limits,
+> +	.num_limits = ARRAY_SIZE(gsc_5420_limits),
 > +};
 > +
-> +enum drm_exynos_ipp_task_id {
-> +	/* buffer described by struct drm_exynos_ipp_task_buffer */
-> +	DRM_EXYNOS_IPP_TASK_BUFFER		= 0x0001,
-> +	/* rectangle described by struct drm_exynos_ipp_task_rect */
-> +	DRM_EXYNOS_IPP_TASK_RECTANGLE		= 0x0002,
-> +	/* transformation described by struct drm_exynos_ipp_task_transform */
-> +	DRM_EXYNOS_IPP_TASK_TRANSFORM		= 0x0003,
-> +	/* alpha configuration described by struct drm_exynos_ipp_task_alpha */
-> +	DRM_EXYNOS_IPP_TASK_ALPHA		= 0x0004,
-> +
-> +	/* source image data (for buffer and rectangle chunks) */
-> +	DRM_EXYNOS_IPP_TASK_TYPE_SOURCE		= 0x0001 << 16,
-> +	/* destination image data (for buffer and rectangle chunks) */
-> +	DRM_EXYNOS_IPP_TASK_TYPE_DESTINATION	= 0x0002 << 16,
+> +static struct gsc_driverdata gsc_exynos5433_drvdata = {
+> +	.clk_names = {"pclk", "aclk", "aclk_xiu", "aclk_gsclbend"},
+> +	.num_clocks = 4,
+> +	.limits = gsc_5433_limits,
+> +	.num_limits = ARRAY_SIZE(gsc_5433_limits),
 > +};
 > +
-> +/**
-> + * Memory buffer with image data.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_BUFFER
-> + * other parameters are same as for AddFB2 generic DRM ioctl
-> + */
-> +struct drm_exynos_ipp_task_buffer {
-> +	__u32	id;
-> +	__u32	fourcc;
-> +	__u32	width, height;
-> +	__u32	gem_id[4];
-> +	__u32	offset[4];
-> +	__u32	pitch[4];
-> +	__u64	modifier;
+> +static const struct of_device_id exynos_drm_gsc_of_match[] = {
+> +	{
+> +		.compatible = "samsung,exynos5-gsc",
+> +		.data = &gsc_exynos5250_drvdata,
+> +	}, {
+> +		.compatible = "samsung,exynos5250-gsc",
+> +		.data = &gsc_exynos5250_drvdata,
+> +	}, {
+> +		.compatible = "samsung,exynos5420-gsc",
+> +		.data = &gsc_exynos5420_drvdata,
+> +	}, {
+> +		.compatible = "samsung,exynos5433-gsc",
+> +		.data = &gsc_exynos5433_drvdata,
+> +	}, {
+> +	},
+> +};
+> +MODULE_DEVICE_TABLE(of, exynos_drm_gsc_of_match);
+> +
+> +struct platform_driver gsc_driver = {
+> +	.probe		= gsc_probe,
+> +	.remove		= gsc_remove,
+> +	.driver		= {
+> +		.name	= "exynos-drm-gsc",
+> +		.owner	= THIS_MODULE,
+> +		.pm	= &gsc_pm_ops,
+> +		.of_match_table = of_match_ptr(exynos_drm_gsc_of_match),
+> +	},
 > +};
 > +
-> +/**
-> + * Rectangle for processing.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_RECTANGLE
-> + * @reserved: padding
-> + * @x,@y: left corner in pixels
-> + * @w,@h: width/height in pixels
-> + */
-> +struct drm_exynos_ipp_task_rect {
-> +	__u32	id;
-> +	__u32	reserved;
-> +	__u32	x;
-> +	__u32	y;
-> +	__u32	w;
-> +	__u32	h;
-> +};
-> +
-> +/**
-> + * Image tranformation description.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_TRANSFORM
-> + * @rotation: DRM_MODE_ROTATE_* and DRM_MODE_REFLECT_* values
-> + */
-> +struct drm_exynos_ipp_task_transform {
-> +	__u32	id;
-> +	__u32	rotation;
-> +};
-> +
-> +/**
-> + * Image global alpha configuration for formats without alpha values.
-> + *
-> + * @id: must be DRM_EXYNOS_IPP_TASK_ALPHA
-> + * @value: global alpha value (0-255)
-> + */
-> +struct drm_exynos_ipp_task_alpha {
-> +	__u32	id;
-> +	__u32	value;
-> +};
-> +
-> +enum drm_exynos_ipp_flag {
-> +	/* generate DRM event after processing */
-> +	DRM_EXYNOS_IPP_FLAG_EVENT	= 0x01,
-> +	/* dry run, only check task parameters */
-> +	DRM_EXYNOS_IPP_FLAG_TEST_ONLY	= 0x02,
-> +	/* non-blocking processing */
-> +	DRM_EXYNOS_IPP_FLAG_NONBLOCK	= 0x04,
-> +};
-> +
-> +#define DRM_EXYNOS_IPP_FLAGS (DRM_EXYNOS_IPP_FLAG_EVENT |\
-> +		DRM_EXYNOS_IPP_FLAG_TEST_ONLY | DRM_EXYNOS_IPP_FLAG_NONBLOCK)
-> +
-> +/**
-> + * Perform image processing described by array of drm_exynos_ipp_task_*
-> + * structures (parameters array).
-> + *
-> + * @ipp_id: id of IPP module to run the task
-> + * @flags: bitmask of drm_exynos_ipp_flag values
-> + * @reserved: padding
-> + * @params_size: size of parameters array (in bytes)
-> + * @params_ptr: pointer to parameters array or NULL
-> + * @user_data: (optional) data for drm event
-> + */
-> +struct drm_exynos_ioctl_ipp_commit {
-> +	__u32 ipp_id;
-> +	__u32 flags;
-> +	__u32 reserved;
-> +	__u32 params_size;
-> +	__u64 params_ptr;
-> +	__u64 user_data;
-> +};
-> +
->  #define DRM_EXYNOS_GEM_CREATE		0x00
->  #define DRM_EXYNOS_GEM_MAP		0x01
->  /* Reserved 0x03 ~ 0x05 for exynos specific gem ioctl */
-> @@ -147,6 +360,11 @@ struct drm_exynos_g2d_exec {
->  #define DRM_EXYNOS_G2D_EXEC		0x22
->  
->  /* Reserved 0x30 ~ 0x33 for obsolete Exynos IPP ioctls */
-> +/* IPP - Image Post Processing */
-> +#define DRM_EXYNOS_IPP_GET_RESOURCES	0x40
-> +#define DRM_EXYNOS_IPP_GET_CAPS		0x41
-> +#define DRM_EXYNOS_IPP_GET_LIMITS	0x42
-> +#define DRM_EXYNOS_IPP_COMMIT		0x43
->  
->  #define DRM_IOCTL_EXYNOS_GEM_CREATE		DRM_IOWR(DRM_COMMAND_BASE + \
->  		DRM_EXYNOS_GEM_CREATE, struct drm_exynos_gem_create)
-> @@ -165,8 +383,18 @@ struct drm_exynos_g2d_exec {
->  #define DRM_IOCTL_EXYNOS_G2D_EXEC		DRM_IOWR(DRM_COMMAND_BASE + \
->  		DRM_EXYNOS_G2D_EXEC, struct drm_exynos_g2d_exec)
->  
-> +#define DRM_IOCTL_EXYNOS_IPP_GET_RESOURCES	DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_GET_RESOURCES, struct drm_exynos_ioctl_ipp_get_res)
-> +#define DRM_IOCTL_EXYNOS_IPP_GET_CAPS		DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_GET_CAPS, struct drm_exynos_ioctl_ipp_get_caps)
-> +#define DRM_IOCTL_EXYNOS_IPP_GET_LIMITS		DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_GET_LIMITS, struct drm_exynos_ioctl_ipp_get_limits)
-> +#define DRM_IOCTL_EXYNOS_IPP_COMMIT		DRM_IOWR(DRM_COMMAND_BASE + \
-> +		DRM_EXYNOS_IPP_COMMIT, struct drm_exynos_ioctl_ipp_commit)
-> +
->  /* EXYNOS specific events */
->  #define DRM_EXYNOS_G2D_EVENT		0x80000000
-> +#define DRM_EXYNOS_IPP_EVENT		0x80000002
->  
->  struct drm_exynos_g2d_event {
->  	struct drm_event	base;
-> @@ -177,6 +405,16 @@ struct drm_exynos_g2d_event {
->  	__u32			reserved;
->  };
->  
-> +struct drm_exynos_ipp_event {
-> +	struct drm_event	base;
-> +	__u64			user_data;
-> +	__u32			tv_sec;
-> +	__u32			tv_usec;
-> +	__u32			ipp_id;
-> +	__u32			sequence;
-> +	__u64			reserved;
-> +};
-> +
->  #if defined(__cplusplus)
->  }
->  #endif
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.h b/drivers/gpu/drm/exynos/exynos_drm_gsc.h
+> deleted file mode 100644
+> index 29ec1c5efcf2..000000000000
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.h
+> +++ /dev/null
+> @@ -1,24 +0,0 @@
+> -/*
+> - * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+> - *
+> - * Authors:
+> - *	Eunchul Kim <chulspro.kim@samsung.com>
+> - *	Jinyoung Jeon <jy0.jeon@samsung.com>
+> - *	Sangmin Lee <lsmin.lee@samsung.com>
+> - *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+> - */
+> -
+> -#ifndef _EXYNOS_DRM_GSC_H_
+> -#define _EXYNOS_DRM_GSC_H_
+> -
+> -/*
+> - * TODO
+> - * FIMD output interface notifier callback.
+> - * Mixer output interface notifier callback.
+> - */
+> -
+> -#endif /* _EXYNOS_DRM_GSC_H_ */
 > 
