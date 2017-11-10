@@ -1,96 +1,165 @@
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Subject: Re: [PATCH v6 00/10] rockchip: kevin: Enable edp display
-Date: Fri, 10 Nov 2017 13:15:30 +0100
-Message-ID: <CAFqH_501Zvpw+dthWg5Pze5R=T6grVHqz6isy5u+a8R3D7vr1g@mail.gmail.com>
-References: <20171019034812.13768-1-jeffy.chen@rock-chips.com>
- <2449324.8EdsLz1NaV@phil> <59F7FE17.80405@rock-chips.com> <20171101193307.4pnn6u5keo7o5yut@art_vandelay>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/2] ARM: dts: exynos: Switch to dedicated Odroid-XU3
+ sound card binding
+Date: Fri, 10 Nov 2017 18:14:17 +0100
+Message-ID: <20171110171417.qbnn7gsihor2fwng@kozik-lap>
+References: <20171103165446.15438-1-s.nawrocki@samsung.com>
+ <CGME20171103165539epcas1p48cc87811574dace9dfe91d8e9ec6f7ca@epcas1p4.samsung.com>
+ <20171103165446.15438-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20171101193307.4pnn6u5keo7o5yut@art_vandelay>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>
-Cc: JeffyChen <jeffy.chen@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, dri-devel <dri-devel@lists.freedesktop.org>, Doug Anderson <dianders@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Romain Perier <romain.perier@collabora.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Kevin Hilman <khilman@baylibre.com>, Brian Norris <briannorris@chromium.org>, Krzysztof Kozlowski <krzk@kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Matt
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52723 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbdKJROW (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 10 Nov 2017 12:14:22 -0500
+Content-Disposition: inline
+In-Reply-To: <20171103165446.15438-2-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, mihailescu2m@gmail.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Dear all,
+On Fri, Nov 03, 2017 at 05:54:45PM +0100, Sylwester Nawrocki wrote:
+> The new sound card DT binding is used for Odroid XU3 in order
+> to properly support the HDMI audio path.
+> Clocks configuration is changed so the I2S controller is now the bit
+> and the frame clock master with EPLL as the root clock source.
 
-2017-11-01 20:33 GMT+01:00 Sean Paul <seanpaul@chromium.org>:
-> On Tue, Oct 31, 2017 at 12:37:43PM +0800, JeffyChen wrote:
->> Hi Heiko,
->>
->> On 10/31/2017 07:01 AM, Heiko Stuebner wrote:
->> > As I was just looking at the edp dts change in patch1 again, does this
->> > series also contain a fix for the issue below [0] ?
->> >
->> > I'm still seeing this on 4.14-rc6 with the most recent drm tree merged in.
->> >
->> i saw that too, it should due to our psr code...i think Zain has solved
->> these in chromeos kernel, i will ask Zain if he have time to upstream them,
->> or maybe i'll try to upstream them.
->
-> You need the patchset where I've refactored the psr locking/workers. I have a
-> version of it based on Heiko's tree at
-> https://cgit.freedesktop.org/~seanpaul/dogwood/log/?h=rk3399-display
->
-> With this kernel, the backlight comes on, but I don't have anything on the
-> display (which is why I didn't post it). I'll try putting this set on top and
-> see what happens.
->
+Patch looks good but I do not understand this last sentence. What did
+you want to say?
 
-There is a patch in the ML sent by Emil [1], similar to the Sean
-patch, that solves the issue.
+Best regards,
+Krzysztof
 
-And I can confirm that the Jeffy's patches + Emil patch makes the
-display work on kevin or current rc8
 
-[1] https://patchwork.kernel.org/patch/9985237/
-
-Enric
-
-> Sean
->
->> >
->> > Heiko
->> >
->> > [0]
->> >
->> > [   27.960120] BUG: scheduling while atomic: kworker/1:1/68/0x00000002
->> > [   27.974429] Modules linked in: rockchipdrm dw_hdmi analogix_dp drm_kms_helper panel_simple crc32_ce drm crct10dif_ce rockchip_saradc pwm_bl pwm_cros_ec rockchip_thermal ip_tables x_tabl
->> > es ipv6 smsc95xx smsc75xx ax88179_178a asix usbnet phy_rockchip_pcie pcie_rockchip
->> > [   28.008769] CPU: 1 PID: 68 Comm: kworker/1:1 Tainted: G        W       4.14.0-rc7-03201-g12490811b353 #559
->> > [   28.008774] Hardware name: Google Kevin (DT)
->> > [   28.008825] Workqueue: events analogix_dp_psr_work [rockchipdrm]
->> > [   28.008828] Call trace:
->> > [   28.008838] [<ffff000008088d60>] dump_backtrace+0x0/0x378
->> > [   28.008842] [<ffff0000080890ec>] show_stack+0x14/0x20
->> > [   28.008847] [<ffff0000089b04d8>] dump_stack+0x9c/0xbc
->> > [   28.008852] [<ffff0000080ec4b4>] __schedule_bug+0x4c/0x70
->> > [   28.008856] [<ffff0000089c4828>] __schedule+0x558/0x5e8
->> > [   28.008859] [<ffff0000089c48f0>] schedule+0x38/0xa0
->> > [   28.008864] [<ffff0000089c8194>] schedule_hrtimeout_range_clock+0x84/0xe8
->> > [   28.008867] [<ffff0000089c8208>] schedule_hrtimeout_range+0x10/0x18
->> > [   28.008870] [<ffff0000089c7c74>] usleep_range+0x64/0x78
->> > [   28.008882] [<ffff000000ef56e4>] analogix_dp_transfer+0x16c/0xa88 [analogix_dp]
->> > [   28.008891] [<ffff000000ef2190>] analogix_dpaux_transfer+0x10/0x18 [analogix_dp]
->> > [   28.008950] [<ffff000000ddbb1c>] drm_dp_dpcd_access+0x4c/0xf8 [drm_kms_helper]
->> > [   28.008994] [<ffff000000ddbbe4>] drm_dp_dpcd_write+0x1c/0x28 [drm_kms_helper]
->> > [   28.009002] [<ffff000000ef2130>] analogix_dp_disable_psr+0x60/0xb0 [analogix_dp]
->> > [   28.009036] [<ffff000000f8398c>] analogix_dp_psr_work+0x4c/0xc0 [rockchipdrm]
->> > [   28.009040] [<ffff0000080dff44>] process_one_work+0x1d4/0x348
->> > [   28.009043] [<ffff0000080e0100>] worker_thread+0x48/0x470
->> > [   28.009048] [<ffff0000080e63d4>] kthread+0x12c/0x130
->> > [   28.009052] [<ffff000008084b88>] ret_from_fork+0x10/0x18
->> >
->> >
->> >
->> >
->>
->>
->
-> --
-> Sean Paul, Software Engineer, Google / Chromium OS
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi                    |  1 +
+>  arch/arm/boot/dts/exynos5420.dtsi                 |  1 +
+>  arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 60 ++++++++++++++---------
+>  3 files changed, 40 insertions(+), 22 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index 5739389f5bb8..f82647c0adb1 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -755,6 +755,7 @@
+>  		phy = <&hdmi_i2c_phy>;
+>  		power-domains = <&pd_tv>;
+>  		samsung,syscon-phandle = <&pmu_system_controller>;
+> +		#sound-dai-cells = <0>;
+>  		status = "disabled";
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 88e5d6d3f901..6f0414cce854 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -618,6 +618,7 @@
+>  			samsung,syscon-phandle = <&pmu_system_controller>;
+>  			status = "disabled";
+>  			power-domains = <&disp_pd>;
+> +			#sound-dai-cells = <0>;
+>  		};
+>  
+>  		hdmiphy: hdmiphy@145D0000 {
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+> index da3141a307d5..fe4d8ef094d0 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Hardkernel Odroid XU3 Audio Codec device tree source
+> + * Hardkernel Odroid XU3 audio subsystem device tree source
+>   *
+>   * Copyright (c) 2015 Krzysztof Kozlowski
+>   * Copyright (c) 2014 Collabora Ltd.
+> @@ -15,13 +15,13 @@
+>  
+>  / {
+>  	sound: sound {
+> -		compatible = "simple-audio-card";
+> +		compatible = "samsung,odroid-xu3-audio";
+> +		model = "Odroid-XU3";
+>  
+> -		simple-audio-card,name = "Odroid-XU3";
+> -		simple-audio-card,widgets =
+> +		samsung,audio-widgets =
+>  			"Headphone", "Headphone Jack",
+>  			"Speakers", "Speakers";
+> -		simple-audio-card,routing =
+> +		samsung,audio-routing =
+>  			"Headphone Jack", "HPL",
+>  			"Headphone Jack", "HPR",
+>  			"Headphone Jack", "MICBIAS",
+> @@ -29,31 +29,47 @@
+>  			"Speakers", "SPKL",
+>  			"Speakers", "SPKR";
+>  
+> -		simple-audio-card,format = "i2s";
+> -		simple-audio-card,bitclock-master = <&link0_codec>;
+> -		simple-audio-card,frame-master = <&link0_codec>;
+> +		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
+> +				<&clock CLK_MOUT_EPLL>,
+> +				<&clock CLK_MOUT_MAU_EPLL>,
+> +				<&clock CLK_MOUT_USER_MAU_EPLL>,
+> +				<&clock_audss EXYNOS_MOUT_AUDSS>,
+> +				<&clock_audss EXYNOS_MOUT_I2S>,
+> +				<&clock_audss EXYNOS_DOUT_SRP>,
+> +				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
+> +				<&clock_audss EXYNOS_DOUT_I2S>;
+>  
+> -		simple-audio-card,cpu {
+> +		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
+> +				<&clock CLK_FOUT_EPLL>,
+> +				<&clock CLK_MOUT_EPLL>,
+> +				<&clock CLK_MOUT_MAU_EPLL>,
+> +				<&clock CLK_MAU_EPLL>,
+> +				<&clock_audss EXYNOS_MOUT_AUDSS>;
+> +
+> +		assigned-clock-rates = <0>,
+> +				<0>,
+> +				<0>,
+> +				<0>,
+> +				<0>,
+> +				<0>,
+> +				<196608001>,
+> +				<(196608002 / 2)>,
+> +				<196608000>;
+> +
+> +		cpu {
+>  			sound-dai = <&i2s0 0>;
+> -			system-clock-frequency = <19200000>;
+>  		};
+> -
+> -		link0_codec: simple-audio-card,codec {
+> -			sound-dai = <&max98090>;
+> -			clocks = <&i2s0 CLK_I2S_CDCLK>;
+> +		codec {
+> +			sound-dai = <&hdmi>, <&max98090>;
+>  		};
+>  	};
+>  };
+>  
+>  &clock_audss {
+> -	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
+> -			<&clock_audss EXYNOS_MOUT_I2S>,
+> -			<&clock_audss EXYNOS_DOUT_AUD_BUS>;
+> -	assigned-clock-parents = <&clock CLK_FIN_PLL>,
+> -			<&clock_audss EXYNOS_MOUT_AUDSS>;
+> -	assigned-clock-rates = <0>,
+> -			<0>,
+> -			<19200000>;
+> +	assigned-clocks = <&clock_audss EXYNOS_DOUT_SRP>,
+> +			  <&clock CLK_FOUT_EPLL>;
+> +	assigned-clock-rates = <(196608000 / 256)>,
+> +			       <196608000>;
+>  };
+>  
+>  &hsi2c_5 {
+> -- 
+> 2.14.2
+> 
