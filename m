@@ -1,32 +1,96 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung/s3c24xx: add CONFIG_OF dependency
-Date: Fri, 10 Nov 2017 11:40:52 +0100
-Message-ID: <CACRpkdbSPqATnL_ROFM2VtCYcBPyybxxmnyQbn6bohDeFYa09g@mail.gmail.com>
-References: <20171107141244.3377780-1-arnd@arndb.de>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH v6 00/10] rockchip: kevin: Enable edp display
+Date: Fri, 10 Nov 2017 13:15:30 +0100
+Message-ID: <CAFqH_501Zvpw+dthWg5Pze5R=T6grVHqz6isy5u+a8R3D7vr1g@mail.gmail.com>
+References: <20171019034812.13768-1-jeffy.chen@rock-chips.com>
+ <2449324.8EdsLz1NaV@phil> <59F7FE17.80405@rock-chips.com> <20171101193307.4pnn6u5keo7o5yut@art_vandelay>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20171107141244.3377780-1-arnd@arndb.de>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20171101193307.4pnn6u5keo7o5yut@art_vandelay>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: JeffyChen <jeffy.chen@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, dri-devel <dri-devel@lists.freedesktop.org>, Doug Anderson <dianders@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Romain Perier <romain.perier@collabora.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Kevin Hilman <khilman@baylibre.com>, Brian Norris <briannorris@chromium.org>, Krzysztof Kozlowski <krzk@kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Matt
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 7, 2017 at 3:12 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+Dear all,
 
-> The driver fails to build without CONFIG_OF:
+2017-11-01 20:33 GMT+01:00 Sean Paul <seanpaul@chromium.org>:
+> On Tue, Oct 31, 2017 at 12:37:43PM +0800, JeffyChen wrote:
+>> Hi Heiko,
+>>
+>> On 10/31/2017 07:01 AM, Heiko Stuebner wrote:
+>> > As I was just looking at the edp dts change in patch1 again, does this
+>> > series also contain a fix for the issue below [0] ?
+>> >
+>> > I'm still seeing this on 4.14-rc6 with the most recent drm tree merged in.
+>> >
+>> i saw that too, it should due to our psr code...i think Zain has solved
+>> these in chromeos kernel, i will ask Zain if he have time to upstream them,
+>> or maybe i'll try to upstream them.
 >
-> drivers/pinctrl/samsung/pinctrl-samsung.c: In function 'samsung_gpiolib_register':
-> drivers/pinctrl/samsung/pinctrl-samsung.c:936:5: error: 'struct gpio_chip' has no member named 'of_node'
+> You need the patchset where I've refactored the psr locking/workers. I have a
+> version of it based on Heiko's tree at
+> https://cgit.freedesktop.org/~seanpaul/dogwood/log/?h=rk3399-display
 >
-> This configuration is now possible since we can now select the
-> PINCTRL subsystem on S3C24xx machines other than the device tree
-> based ones.
+> With this kernel, the backlight comes on, but I don't have anything on the
+> display (which is why I didn't post it). I'll try putting this set on top and
+> see what happens.
 >
-> Fixes: d219b924611a ("pinctrl: change Kconfig PINCTRL variable to a menuconfig")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Patch applied!
+There is a patch in the ML sent by Emil [1], similar to the Sean
+patch, that solves the issue.
 
-Yours,
-Linus Walleij
+And I can confirm that the Jeffy's patches + Emil patch makes the
+display work on kevin or current rc8
+
+[1] https://patchwork.kernel.org/patch/9985237/
+
+Enric
+
+> Sean
+>
+>> >
+>> > Heiko
+>> >
+>> > [0]
+>> >
+>> > [   27.960120] BUG: scheduling while atomic: kworker/1:1/68/0x00000002
+>> > [   27.974429] Modules linked in: rockchipdrm dw_hdmi analogix_dp drm_kms_helper panel_simple crc32_ce drm crct10dif_ce rockchip_saradc pwm_bl pwm_cros_ec rockchip_thermal ip_tables x_tabl
+>> > es ipv6 smsc95xx smsc75xx ax88179_178a asix usbnet phy_rockchip_pcie pcie_rockchip
+>> > [   28.008769] CPU: 1 PID: 68 Comm: kworker/1:1 Tainted: G        W       4.14.0-rc7-03201-g12490811b353 #559
+>> > [   28.008774] Hardware name: Google Kevin (DT)
+>> > [   28.008825] Workqueue: events analogix_dp_psr_work [rockchipdrm]
+>> > [   28.008828] Call trace:
+>> > [   28.008838] [<ffff000008088d60>] dump_backtrace+0x0/0x378
+>> > [   28.008842] [<ffff0000080890ec>] show_stack+0x14/0x20
+>> > [   28.008847] [<ffff0000089b04d8>] dump_stack+0x9c/0xbc
+>> > [   28.008852] [<ffff0000080ec4b4>] __schedule_bug+0x4c/0x70
+>> > [   28.008856] [<ffff0000089c4828>] __schedule+0x558/0x5e8
+>> > [   28.008859] [<ffff0000089c48f0>] schedule+0x38/0xa0
+>> > [   28.008864] [<ffff0000089c8194>] schedule_hrtimeout_range_clock+0x84/0xe8
+>> > [   28.008867] [<ffff0000089c8208>] schedule_hrtimeout_range+0x10/0x18
+>> > [   28.008870] [<ffff0000089c7c74>] usleep_range+0x64/0x78
+>> > [   28.008882] [<ffff000000ef56e4>] analogix_dp_transfer+0x16c/0xa88 [analogix_dp]
+>> > [   28.008891] [<ffff000000ef2190>] analogix_dpaux_transfer+0x10/0x18 [analogix_dp]
+>> > [   28.008950] [<ffff000000ddbb1c>] drm_dp_dpcd_access+0x4c/0xf8 [drm_kms_helper]
+>> > [   28.008994] [<ffff000000ddbbe4>] drm_dp_dpcd_write+0x1c/0x28 [drm_kms_helper]
+>> > [   28.009002] [<ffff000000ef2130>] analogix_dp_disable_psr+0x60/0xb0 [analogix_dp]
+>> > [   28.009036] [<ffff000000f8398c>] analogix_dp_psr_work+0x4c/0xc0 [rockchipdrm]
+>> > [   28.009040] [<ffff0000080dff44>] process_one_work+0x1d4/0x348
+>> > [   28.009043] [<ffff0000080e0100>] worker_thread+0x48/0x470
+>> > [   28.009048] [<ffff0000080e63d4>] kthread+0x12c/0x130
+>> > [   28.009052] [<ffff000008084b88>] ret_from_fork+0x10/0x18
+>> >
+>> >
+>> >
+>> >
+>>
+>>
+>
+> --
+> Sean Paul, Software Engineer, Google / Chromium OS
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
