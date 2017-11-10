@@ -1,25 +1,32 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] crypto: s5p-sss - Remove a stray tab
-Date: Fri, 10 Nov 2017 09:08:47 +0100
-Message-ID: <CAJKOXPduq1n+iGEVLATa6e__SoUUFppA_-So1wrz-VaafhXdJA@mail.gmail.com>
-References: <20171109212604.i3zbzlmfotz5b7rr@mwanda>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: samsung/s3c24xx: add CONFIG_OF dependency
+Date: Fri, 10 Nov 2017 11:40:52 +0100
+Message-ID: <CACRpkdbSPqATnL_ROFM2VtCYcBPyybxxmnyQbn6bohDeFYa09g@mail.gmail.com>
+References: <20171107141244.3377780-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20171109212604.i3zbzlmfotz5b7rr@mwanda>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20171107141244.3377780-1-arnd@arndb.de>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 9, 2017 at 10:26 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> This code seems correct, but the goto was indented too far.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+On Tue, Nov 7, 2017 at 3:12 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> The driver fails to build without CONFIG_OF:
+>
+> drivers/pinctrl/samsung/pinctrl-samsung.c: In function 'samsung_gpiolib_register':
+> drivers/pinctrl/samsung/pinctrl-samsung.c:936:5: error: 'struct gpio_chip' has no member named 'of_node'
+>
+> This configuration is now possible since we can now select the
+> PINCTRL subsystem on S3C24xx machines other than the device tree
+> based ones.
+>
+> Fixes: d219b924611a ("pinctrl: change Kconfig PINCTRL variable to a menuconfig")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Best regards,
-Krzysztof
+Patch applied!
+
+Yours,
+Linus Walleij
