@@ -1,118 +1,66 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] drm/exynos: gem: Drop NONCONTIG flag for buffers
- allocated without IOMMU
-Date: Mon, 13 Nov 2017 15:28:28 +0100
-Message-ID: <0347331c-263f-a077-53d3-7bd92ddc833b@samsung.com>
-References: <CGME20171031162824eucas1p1d15c2ea1d529edd18e16506b26669b91@eucas1p1.samsung.com>
- <20171031162813.1546-1-m.szyprowski@samsung.com>
- <5A051757.9020101@samsung.com>
- <065ca47d-11e8-adb3-e264-a874a0b84067@samsung.com>
- <5A08F43A.8010204@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 1/3] irqchip/mips-gic: pr_err() strings should end with
+ newlines
+Date: Mon, 13 Nov 2017 14:39:44 +0000
+Message-ID: <6c243286-203e-3d05-feb9-7a81a0eb624a@arm.com>
+References: <cover.1510580710.git.arvind.yadav.cs@gmail.com>
+ <500e0c48a5e46003d33b31a257806a4991c0ff9d.1510580710.git.arvind.yadav.cs@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5A08F43A.8010204@samsung.com>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47154 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752653AbdKMOjr (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 13 Nov 2017 09:39:47 -0500
+In-Reply-To: <500e0c48a5e46003d33b31a257806a4991c0ff9d.1510580710.git.arvind.yadav.cs@gmail.com>
+Content-Language: en-GB
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>, tglx@linutronix.de, jason@lakedaemon.net, kgene@kernel.org, krzk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-SGkgSW5raSwKCk9uIDIwMTctMTEtMTMgMDI6MjQsIElua2kgRGFlIHdyb3RlOgo+IEhpIE1hcmVr
-LAo+Cj4gMjAxN+uFhCAxMeyblCAxMOydvCAxNjozNeyXkCBNYXJlayBTenlwcm93c2tpIOydtCjq
-sIApIOyTtCDquIA6Cj4+IERlYXIgSW5raSwKPj4KPj4gT24gMjAxNy0xMS0xMCAwNDowNCwgSW5r
-aSBEYWUgd3JvdGU6Cj4+PiAyMDE364WEIDEx7JuUIDAx7J28IDAxOjI47JeQIE1hcmVrIFN6eXBy
-b3dza2kg7J20KOqwgCkg7JO0IOq4gDoKPj4+PiBXaGVuIG5vIElPTU1VIGlzIGF2YWlsYWJsZSwg
-YWxsIEdFTSBidWZmZXJzIGFsbG9jYXRlZCBieSBFeHlub3MgRFJNIGRyaXZlcgo+Pj4+IGFyZSBj
-b250aWd1b3VzLCBiZWNhdXNlIG9mIHRoZSB1bmRlcmx5aW5nIGRtYV9hbGxvY19hdHRycygpIGZ1
-bmN0aW9uCj4+Pj4gcHJvdmlkZXMgb25seSBzdWNoIGJ1ZmZlcnMuIEluIHN1Y2ggY2FzZSBpdCBt
-YWtlcyBubyBzZW5zZSB0byBrZWVwCj4+PiBXaGF0IGlmIHVzZXIgZGlzYWJsZWQgQ01BIHN1cHBv
-cnQ/IEluIHRoaXMgY2FzZSwgaXQgZ3VhcmFudGVlcyBhbHNvIHRvIGFsbG9jYXRlIHBoeXNpY2Fs
-bHkgY29udGlndW91cyBtZW1vcnk/Cj4+PiBJIHRoaW5rIGl0IGRlcGVuZHMgb24gQ01BIHN1cHBv
-cnQgc28gd291bGRuJ3QgYmUgdHJ1ZS4KPj4gZG1hX2FsbG9jX2F0dHJzKCkgYWx3YXlzIGd1YXJh
-bnRlZXMgdGhlIGNvbnRpZ3VpdHkgb2YgdGhlIGFsbG9jYXRlZCBtZW1vcnkKPj4gaW4gRE1BIGFk
-ZHJlc3Mgc3BhY2UuIFdoZW4gTk9JT01NVSBpcyBhdmFpbGFibGUsIHRoaXMgbWVhbiB0aGF0IHRo
-ZSBhbGxvY2F0ZWQKPj4gYnVmZmVyIGlzIGNvbnRpZ3VvdXMgaW4gdGhlIHBoeXNpY2FsIG1lbW9y
-eS4gV2hlbiBDTUEgaXMgZGlzYWJsZWQsCj4+IGRtYV9hbGxvY19hdHRycygpIHVzZXMgYWxsb2Nf
-cGFnZXMoKSBhbGxvY2F0b3IuIFRoZSBkcmF3YmFjayBvZiBhbGxvY19wYWdlcygpCj4+IGlzIHRo
-YXQgaXQgZWFzaWx5IGZhaWxzIGlmIHBoeXNpY2FsIG1lbW9yeSBpcyBmcmFnbWVudGVkIGFuZCBp
-dCBjYW5ub3QKPj4gYWxsb2NhdGUgbWVtb3J5IGxhcmdlciB0aGFuIE1BWF9PUkRFUiAoNE1pQiBp
-biBjYXNlIG9mIEFSTTMyYml0KS4KPiBZb3UgYXJlIHJpZ2h0LiBXaXRob3V0IElPTU1VIHN1cHBv
-dCBhbGxvY19wYWdlcyBhbHdheXMgdHJ5aWVzIHRvIGFsbG9jYXRlIGNvbnRpZ3VvdXMgbWVtb3J5
-LAo+IG9yZGVyID0gZ2V0X29yZGVyKHNpemUpOwo+IHBhZ2UgPSBhbGxvY19wYWdlcyguLi4sIG9y
-ZGVyKTsKPiBpZiAoIXBhZ2UpCj4gCXJldHVybiBOVUxMOwo+IC4uLgoKUmlnaHQKCj4+PiBSZWFs
-IHByb2JsZW0gSSB0aGluayBpcyB0aGF0IHVzZXIgZG9uJ3Qga25vdyB3aGV0aGVyIHRoZSBnZW0g
-YnVmZmVyIGFsbG9jYXRlZCB3aXRoIENPTlRJRyBvciBOT05DT05USUcgZmxhZyBjYW4gYmUgdXNl
-ZCBhcyBhIFNDQU5PVVQgYnVmZmVyLgo+Pj4gU28gdXNlciBjYW4gcmVxdWVzdCBhIHBhZ2UgZmxp
-cCB3aXRoIE5PTkNPTlRJRyBidWZmZXIgdG8ga2VybmVsIHdoaWNoIGRvZXNuJ3Qgc3VwcG9ydCBJ
-T01NVS4KPj4+Cj4+PiBBbmQgYW5vdGhlciBpcyB0aGF0IHVzZXIgbWF5IHdhbnQgdG8gdXNlIE5P
-TkNPTlRJRyBidWZmZXIgZm9yIGFub3RoZXIgcHVycG9zZSwgbm90IHNjYW5vdXQuCj4+PiBTbyBp
-ZiB3ZSBlbmZvcmNlIG9uIHVzaW5nIENPTlRJRyBidWZmZXIgb24ga2VybmVsIHdpdGhvdXQgSU9N
-TVUgc3VwcG9ydCwgdGhlbiBpdCB3b3VsZG4ndCBiZSByZWFsbHkgd2hhdCB1c2VyIGludGVuZGVk
-Lgo+PiBXaGVuIElPTU1VIHN1cHBvcnQgaXMgZGlzYWJsZWQsIEFOWSBidWZmZXIgYWxsb2NhdGVk
-IHdpdGggZG1hX2FsbG9jX2F0dHJzKCkKPj4gd2lsbCBiZSBjb250aWd1b3VzLCBzbyBJIHNlZSBu
-byBwb2ludCBwcm9wYWdhdGluZyBpbmNvcnJlY3QgZmxhZyBmb3IgaXQuCj4+Cj4+IFRoZSBvbmx5
-IHdheSB0byBjcmVhdGUgYSBOT05DT05USUcgYnVmZmVyIHdpdGggSU9NTVUgZGlzYWJsZWQgaXMg
-dG8gaW1wb3J0Cj4+IGl0IGZyb20gb3RoZXIgZHJpdmVyIGFuZCB0aGlzIHBhdGggaXMgYWxyZWFk
-eSBoYW5kbGVkIGNvcnJlY3RseS4KPj4KPj4+IE15IGlkZWEgaXMgdG8gcHJvdmlkZSBhIG5ldyBm
-bGFnIC0gaS5lLiwgRVhZTk9TX0JPX1NDQU5PVVQgLSB3aGljaCBjYW4gYWxsb2NhdGUgYSBidWZm
-ZXIgd2l0aCBhIGRpZmZlcmVudCBhbGxvY2F0aW9uIHR5cGUgLSBDT05USUcgb3IgTk9OQ09OVElH
-IC0gYWNjb3JkaW5nIHRvIElPTU1VIHN1cHBvcnQuCj4+PiBBbmQgYW55IHBhZ2UgZmxpcCByZXF1
-ZXN0IHdpdGggTk9OQ09OVElHIGJ1ZmZlciB0byBrZXJuZWwgd2l0aG91dCBJT01NVSBzdXBwb3J0
-IHNob3VsZCBmYWlsIGFuZCBpdCBoYXMgdG8gcmV0dXJuIGEgZXJyb3Igd2l0aCBhIHByb3BlciBl
-cnJvciBtZXNzYWdlLgo+PiBJIGRvbid0IHRoaW5rIHRoYXQgd2UgbmVlZCBpdC4gV2l0aCB0aGUg
-cHJvcG9zZWQgcGF0Y2ggdGhlIHNhbWUgdXNlcnNwYWNlIHdpbGwKPj4gd29yayBmaW5lIGluIGJv
-dGggY2FzZXMgSU9NTVUgZW5hYmxlZCBhbmQgZGlzYWJsZWQsIGV2ZW4gaWYgaXQgYWxsb2NhdGUg
-R0VNCj4+IHdpdGggTk9OQ09OVElHIGZsYWcuIFdlIGNhbiBhc3N1bWUgdGhhdCBDT05USUcgaXMg
-YSBzcGVjaWFsIGNhc2Ugb2YgTk9OQ09OVElHCj4+IHRoZW4uCj4gVGhlIHByb2JsZW0gaXMgcmVh
-bGx5IG5vdCB3aGV0aGVyIHVzZXIgc3BhY2Ugd2lsbCB3b3JrIGZpbmUgb3Igbm90IGJ1dCBpcyB0
-aGF0IHRoaXMgbWF5IGJlIG5vdCB3aGF0IHVzZXIgc3BhY2Ugd2FudGVkLgo+IEkuZS4sIHVzZXIg
-c3BhY2UgZXhwZWN0cyB0aGUgYWxsb2NhdGVkIGJ1ZmZlciBpcyBOT05DT05USUcgYnVmZmVyIGJl
-Y2F1c2UgdXNlciBzcGFjZSByZXF1ZXN0ZWQgTk9OQ09OVElHIGJ1ZmZlciBidXQga2VybmVsIGlu
-dGVybmFsbHksIHRoaXMgaXMgY2hhbmdlZCB0byBDT05USUcgYnVmZmVyLgoKV2hhdCdzIHRoZSBw
-cm9ibGVtIHdoZW4ga2VybmVsIGFsbG9jYXRlZCBjb250aWd1b3VzIGJ1ZmZlciBidXQgdXNlcgpy
-ZXF1ZXN0ZWQgbm9uLWNvbnRpZ3VvdXM/IENvbnRpZ3VvdXMgaXMgYSBzdWJjbGFzcyBvZiBub24t
-Y29udGlndW91cwppbiBnZW5lcmFsLiBUaGVyZSBpcyBubyBkcml2ZXIgbm9yIHNjZW5hcmlvIHdo
-aWNoIHdpbGwgbm90IHdvcmsgYmVjYXVzZQpvZiBzdWNoIGNoYW5nZSAoYW55IGNvZGUgZm9yIGhh
-bmRpbmcgbi1zZWdtZW50cyBzaG91bGQgYmUgZmluZSB3aXRoIG9ubHkKMSBzZWdtZW50KS4gSW4g
-c29tZSBjb25kaXRpb25zLCBieSBsdWNrLCBrZXJuZWwgbWlnaHQgYWxsb2NhdGUKYSBjb250aWd1
-b3VzIGJ1ZmZlciBldmVuIHdpdGggSU9NTVUgZW5hYmxlZC4gV2hlbiB3ZSBrbm93IHRoYXQgdGhl
-CmJ1ZmZlciBpcyBjb250aWd1b3VzLCB0aGVuIGZsYWcgaXQgYXMgc3VjaC4KCj4gU28geW91IGNv
-dWxkIHByb3ZpZGUgc29tZSBpbmZvcm1hdGlvbiAtIG1heWJlIHdhcm5pbmcgbWVzc2FnZT8/IC0g
-dG8gdXNlciBzcGFjZSB0aGUgYnVmZmVyIHR5cGUgaXMgY2hhbmdlZCB0byBDT05USUcgYnVmZmVy
-IGR1ZSB0byBOTyBJT01NVSBzdXBwb3J0LgoKSSBkb24ndCB0aGluayB0aGlzIG5lZWRzIGEgd2Fy
-bmluZy4gSSBqdXN0IHRoaW5rIHRoYXQgd2hlbiB3ZSBrbm93IHRoYXQKdGhlIGFsbG9jYXRlZCBi
-dWZmZXIgSVMgY29udGlndW91cyB0aGVyZSBpcyBubyBwb2ludCBmbGFnZ2luZyBpdCBhcwpub24t
-Y29udGlndW91cyBhbmQgZmFpbCBhIGZldyBjYWxscyBsYXRlciBhbHRob3VnaCB0aGUgZHJpdmVy
-IGFsbG9jYXRlZAp0aGUgY29udGlndW91cyBidWZmZXIgaW4gZmFjdC4gVGhhdCdzIGFsbC4KCj4g
-UmVnYXJkaW5nIHRoZSBidWZmZXIgdHlwZSBFeHlub3MgRFJNIGhhcywgSSdtIG5vdCBzdXJlIHRo
-YXQgcHJvdmlkaW5nIENPTlRJRyBhbmQgTk9OQ09OVElHIGJ1ZmZlciB0eXBlcyB0byB1c2VyIHNw
-YWNlIGlzIHJlYXNvbmFibGUgYmVjYXVzZSBJIHRoaW5rIHN1Y2ggYnVmZmVyIHR5cGVzIC0gcGh5
-c2ljYWxseSBjb250aWd1b3VzIG9yIG5vbiBjb250aWd1b3VzIC0gc2hvdWxkIGJlIHRyYW5zcGFy
-ZW50IHRvIHVzZXIgc3BhY2UuCj4gQW5kIEkgbG9va2VkIGludG8gb3RoZXIgQVJNIERSTSBkcml2
-ZXJzIC0gb21hcCBhbmQgbXNtIHByb3ZpZGVzIFNDQU5PVVQgYnVmZmVyIHR5cGUsIHRlZ3JhIGFu
-ZCByb2NrY2hpcCBoYXZlIG5vIHN1Y2ggYnVmZmVyIHR5cGVzIChjb250aWd1b3VzIG9yIG5vbi1j
-b250aWd1b3VzKS4KPgo+IFRoaXMgaXMgYWxzbyBhIHRoaW5nIEkgZmVsdCB3aGlsZSB3b3JraW5n
-IG9uIGtlcm5lbCBpbiBjb2xsYWJvcmF0aW5nIHdpdGggUGxhdGZvcm0gZ3V5cyAtIHdlIG1hZGUg
-dXNlciBzcGFjZXMgdG8gY2FyZSBhYm91dCB0aGUgbWVtb3J5IGFsbG9jYXRpb24gd2F5Lgo+Cj4g
-SSB3b25kZXIgd2h5IHlvdSBzYXkgU0NBTk9VVCB0eXBlIGlzIGluY29ycmVjdCBmbGFnLgoKSSdt
-IG5vdCBhZ2FpbnN0IGFkZGluZyBTQ0FOT1VUIGZsYWcuIEl0IGlzIGEgZ29vZCBpZGVhIGluIGdl
-bmVyYWwsCmVzcGVjaWFsbHkgaWYgdGhlIGRyaXZlciBjYW4gc2ltcGx5IHNlbGVjdCB3aGljaCBz
-ZXQgb2YgZmxhZ3Mgd2lsbApiZSBiZXN0IGZvciBzdWNoIHVzZSBjYXNlIG9uIHRoZSBnaXZlbiBo
-YXJkd2FyZSAoSU9NTVUgaXMgcHJhY3RpY2FsbHkKYWx3YXlzIHVzZWQgb24gbmV3ZXIgRXh5bm9z
-IFNvQ3MsIElPTU1VIGhhcyBlbm91Z2ggVExCIGNhY2hlIGFuZApoYW5kbGluZyBvZiBub24tY29u
-dGlndW91cyBidWZmZXJzIGlzIGNoZWFwIHRoZXJlKS4KCkkgd291bGQgb25seSBzZXBhcmF0ZSBp
-dCBmcm9tIGZpeGluZyB0aGUgY3VycmVudCBjb2RlLgoKQmVzdCByZWdhcmRzCi0tIApNYXJlayBT
-enlwcm93c2tpLCBQaEQKU2Ftc3VuZyBSJkQgSW5zdGl0dXRlIFBvbGFuZAoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 13/11/17 13:53, Arvind Yadav wrote:
+> pr_err() messages should end with a new-line to avoid other messages
+> being concatenated.
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
+>  drivers/irqchip/irq-mips-gic.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
+> index c90976d..e87d33b 100644
+> --- a/drivers/irqchip/irq-mips-gic.c
+> +++ b/drivers/irqchip/irq-mips-gic.c
+> @@ -737,7 +737,7 @@ static int __init gic_of_init(struct device_node *node,
+>  					       gic_shared_intrs, 0,
+>  					       &gic_irq_domain_ops, NULL);
+>  	if (!gic_irq_domain) {
+> -		pr_err("Failed to add GIC IRQ domain");
+> +		pr_err("Failed to add GIC IRQ domain\n");
+>  		return -ENXIO;
+>  	}
+>  
+> @@ -746,7 +746,7 @@ static int __init gic_of_init(struct device_node *node,
+>  						  GIC_NUM_LOCAL_INTRS + gic_shared_intrs,
+>  						  node, &gic_ipi_domain_ops, NULL);
+>  	if (!gic_ipi_domain) {
+> -		pr_err("Failed to add GIC IPI domain");
+> +		pr_err("Failed to add GIC IPI domain\n");
+>  		return -ENXIO;
+>  	}
+>  
+> 
+
+This patch doesn't apply to the current state of the irqchip tree, nor
+of tip/irq/core. Please verify that it applies and resubmit if required.
+
+I've applied patches 2 and 3.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
