@@ -1,69 +1,56 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Subject: Re: [GIT PULL] exynos-drm-next
-Date: Wed, 15 Nov 2017 10:27:20 +0000
-Message-ID: <CAPj87rNTgnoE49k4bbrj=gyZsWVE9p6jxboLX0OSmw5V-kpt2Q@mail.gmail.com>
-References: <CGME20171026013709epcas2p2525d1249a7f2ad640ce9028df12e2436@epcas2p2.samsung.com>
- <1508981828-5178-1-git-send-email-inki.dae@samsung.com>
- <CAPM=9ty-Boo8mjREQ8T2AaGYoU5ZcAu70iQpwJy_oawZxoS+Pg@mail.gmail.com>
- <5A0B97D5.1090202@samsung.com>
+From: " M,Shakour Rosarita" <hassanamira04@gmail.com>
+Subject: Hello Dear...
+Date: Wed, 15 Nov 2017 11:33:00 +0000
+Message-ID: <CADmkupjYEcBxoBbseCrhGgr=CORKRp8Vc4bWDm+QXPmL0OCQ+Q@mail.gmail.com>
+Reply-To: mshakourrosarita22@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5A0B97D5.1090202@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45748 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932176AbdKOLdC (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 15 Nov 2017 06:33:02 -0500
+Received: by mail-qt0-f193.google.com with SMTP id n32so17372617qtb.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Nov 2017 03:33:01 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSW5raSwKCk9uIDE1IE5vdmVtYmVyIDIwMTcgYXQgMDE6MjYsIElua2kgRGFlIDxpbmtpLmRh
-ZUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4gMjAxN+uFhCAxMeyblCAxNOydvCAxMzoyMuyXkCBEYXZl
-IEFpcmxpZSDsnbQo6rCAKSDsk7Qg6riAOgo+PiBPbiAyNiBPY3RvYmVyIDIwMTcgYXQgMTE6Mzcs
-IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+PiAgICBQcy4gd2UgYXJl
-IHJldmlld2luZyBJUFAgdjIgZHJpdmVyWzFdIHdoaWNoIGNvbnRyb2xzIHBvc3QgcHJvY2Vzc29y
-IGRldmljZXMKPj4+ICAgICAgICBzdWNoIGFzIEZJTUMsIEdTY2FsZXIgYW5kIFJvdGF0b3Igb2Yg
-RXh5bm9zIFNvQy4gU28gSSBwbGFuIHRvIHJlcXVlc3QKPj4+ICAgICAgICBnaXQgcHVsbCBvbmUg
-bW9yZSB0aW1lIGFmdGVyIHJldmlldy4KPj4KPj4gSSBkcm9wcGVkIHRoZSBiYWxsIGEgYml0IGhl
-cmUsIEkgZG8gdGhpbmsgdGhlIHNlY29uZCBwdWxsIHdpdGggSVBQIGlzCj4+IHByb2JhYmx5IGEg
-Yml0IGxhdGUsCj4+IEkgdGhpbmsgSSdkIGxpa2UgbW9yZSBhc3N1cmFuY2UgdGhhdCB0aGUgVUFQ
-SSBmb3IgSVBQIGlzIHRvIGJlIHVzZWQgaW4KPj4gc29tZSB1cHN0cmVhbQo+PiBzaGlwcGluZyBw
-cm9qZWN0IChmb3JrcyBvZiBtcHYgbm90IHdpdGhzdGFuZGluZywgdW5sZXNzIHRoaXMgZm9yawo+
-PiBzaGlwcyBpbiBzb21lIGRpc3Rybwo+PiBvciBwcm9kdWN0KS4KPgo+IEkgYWxzbyBjb21tZW50
-ZWQgc2FtZSB0aGluZyBpbnRlcm5hbGx5IHRvIGF1dGhvciAtIE1hcmVrIC0gb2YgSVBQIHYyIGJ1
-dCBJIHRob3VnaHQgZXhpc3Rpbmcgb25lIGlzIHJlYWxseSB1Z2x5IHRoaW5nIHNvIG1heSBiZSBi
-ZXR0ZXIgdG8gY2hhbmdlIGl0IGFzIHNvb24gYXMgcG9zc2libGUgYmVmb3JlIG90aGVyIHVzZXJz
-IHVzZSB0aGlzIG9uZS4KPiBBbnl3YXksIHdlIHdpbGwgbWVyZ2UgdXNlciBzcGFjZSBmb3IgSVBQ
-IHYyIHRvIGxpYmRybSBmaXJzdCwgYW5kIHRoZW4gTGludXggcGxhdGZvcm0uIEkgaG9wZSBJUFB2
-MiB3b3VsZCBiZSBtZXJnZWQgYXMgc29vbiBhcyBwb3NzaWJsZSBpbiBuZXh0IHR1cm4uCgpUaGlz
-IGlzIHB1dHRpbmcgdGhlIGNhcnQgYmVmb3JlIHRoZSBob3JzZSBhIGxpdHRsZSBiaXQuIFRoaXMg
-aXMgdGhlCnByb2Nlc3MgZm9yIG1lcmdpbmcgbmV3IERSTSBBUEk6CgpQcmVwYXJlIHRoZSBrZXJu
-ZWwgYW5kIGxpYmRybS9ldGMgcGF0Y2hlcyBleHBvc2luZyB0aGUgbmV3IEFQSSwgYW5kCmFsc28g
-ZGV2ZWxvcCBhIF9yZWFsXyB1c2VyIGZvciBpdC4gVXNpbmcgSVBQIGFzIGFuIGV4YW1wbGUsIGFu
-CmFjY2VwdGFibGUgdXNlcnNwYWNlIHdvdWxkIGJlIFZMQywgS29kaSwgV2VzdG9uLCBYb3JnLCBv
-ciBzaW1pbGFyLgpsaWJkcm0gc2FtcGxlIGNsaWVudHMgYXJlIGV4cGxpY2l0bHkgbm90IGVub3Vn
-aCBmb3IgdGhpcy4KCk9uY2UgdGhpcyBpcyBkb25lLCB5b3Ugc2hvdWxkIGdldCByZXZpZXcvYWNr
-IGZvciBhbGwgb2YgdGhlc2UuIFRoZQprZXJuZWwgY29kZSBhbmQgQVBJIHNob3VsZCBoYXZlIHJl
-dmlldyBmb3IgZ29vZCBBUEkgKHNlZSBmb3IgZXhhbXBsZQpEYW5pZWwgVmV0dGVyJ3MgJ2JvdGNo
-aW5nIHVwIGlvY3RscycgZG9jdW1lbnRhdGlvbikgYW5kIGNvZGUsIGFuZCB0aGUKdXNlcnNwYWNl
-IChWTEMvS29kaS8uLi4pIHNob3VsZCBoYXZlIHJldmlldyBmb3IgYm90aCBjb2RlIGNvcnJlY3Ru
-ZXNzCmFzIHdlbGwgYXMgYW4gZXhwbGljaXQgY2hlY2sgZnJvbSB0aGUgdXNlcnNwYWNlIHNpZGUg
-dGhhdCB0aGV5IGZlZWwgaXQKaXMgZ29vZCBBUEkgd2hpY2ggd29ya3MgZm9yIHRoZW0uIElmIHRo
-ZSB3b3JrIGp1c3QgZXhpc3RzIGluIGEgZm9yawp3aGljaCBoYXMgbm90IGdvdCByZWFsIHVwc3Ry
-ZWFtIHJldmlldywgdGhpcyBpcyBhbHNvIG5vdCBlbm91Z2guCgpXaGVuIGFsbCBwYXJ0cyBoYXZl
-IHJldmlldywgeW91IGNhbiBtZXJnZSB0aGUgbmV3IGtlcm5lbCBBUEkgd2l0aCBhCnBvaW50ZXIg
-dG8gdGhlIHVzZXJzcGFjZSByZXZpZXcsIGV4cGxpY2l0bHkgc3RhdGluZyB0aGF0IHRoZXkgZmVl
-bCBpdAppcyBhY2NlcHRhYmxlLiBPbmNlIHRoZSBrZXJuZWwgY29kZSBoYXMgbGFuZGVkIGluIGEg
-bm9uLXJlYmFzaW5nIHRyZWUKKG9uZSB3aGljaCBEYXZlIHdpbGwgYmUgc2VuZGluZyBhcyBhIHB1
-bGwpLCBsaWJkcm0gY29kZSBjYW4gYmUgbWVyZ2VkLAphbmQgdGhlbiB0aGUgdXNlcnNwYWNlIGNv
-ZGUgY2FuIGZpbmFsbHkgYmUgbWVyZ2VkLgoKQ2hlZXJzLApEYW5pZWwKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Dear...
+
+I know that this message will come to you as a surprise. I hoped that
+you will not expose or betray this trust and confident that I am about
+to repose on you, my name is M, Shakour Rosarita. I am 19 years old
+Girl, female, from Tartu Syria, (never married) 61 kg, white in
+complexion, and I am currently living in the refugee camp here in
+Abidjan Ivory Coast, My late beloved father M,Shakour Hassin was a
+renowned businessman and owner of Natour Petrol Station in Syria, he
+was killed in a stampede riot in Tartu, Syria.
+When I got the news about my parents. I fled to a nearby country
+Jordan before I joined a ferry to Africa and came to Abidjan capital
+city Ivory Coast West Africa find safety here.
+I came in 2015 to Abidjan and I now live in refugee camps here as
+refugees are allowed freely to enter here without, My late father
+deposited (US$6.200.000.00m) My late father kept the money at the bank
+of Africa, I want you to help me transfer the money to your hand so
+that you will help me bring me into your country for my continue
+education.
+
+I sent my pictures here for you to see. Who I am seriously looking for
+a good-person in my life, so I want to hear from you soon and learn
+more about you.
+
+I am an open-minded and friendly girl to share a good time with you
+and have fun and enjoy on the go, bird watching, the rest of our
+lives. My Hobbies, tourism books, dance, music, soccer, tennis,
+swimming and cinema.
+I would just think about you, including your dose and doesn=E2=80=99t .I
+believe we will do well together, and live like one family.
+Thank you and God bless you, for you in your promise to help me here,
+looking forward to your reply by the grace of God and have a good day.
+I hope you send me your photos as well? I await your next reply in
+faith please reply through my private email at
+(mshakourrosarita22@gmail.com):
+Thanks.
+Ms Rosarita
