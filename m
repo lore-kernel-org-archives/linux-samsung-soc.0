@@ -1,92 +1,117 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [GIT PULL] exynos-drm-next
-Date: Thu, 16 Nov 2017 07:51:29 +0900
-Message-ID: <5A0CC4F1.4090505@samsung.com>
-References: <CGME20171026013709epcas2p2525d1249a7f2ad640ce9028df12e2436@epcas2p2.samsung.com>
-        <1508981828-5178-1-git-send-email-inki.dae@samsung.com>
-        <CAPM=9ty-Boo8mjREQ8T2AaGYoU5ZcAu70iQpwJy_oawZxoS+Pg@mail.gmail.com>
-        <5A0B97D5.1090202@samsung.com>
-        <CAPj87rNTgnoE49k4bbrj=gyZsWVE9p6jxboLX0OSmw5V-kpt2Q@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] drm/exynos: gem: Drop NONCONTIG flag for buffers
+ allocated without IOMMU
+Date: Thu, 16 Nov 2017 10:10:03 +0100
+Message-ID: <9c19a95c-a538-198c-aba1-8c5f7bab5f14@samsung.com>
+References: <CGME20171031162824eucas1p1d15c2ea1d529edd18e16506b26669b91@eucas1p1.samsung.com>
+ <20171031162813.1546-1-m.szyprowski@samsung.com>
+ <5A051757.9020101@samsung.com>
+ <065ca47d-11e8-adb3-e264-a874a0b84067@samsung.com>
+ <5A08F43A.8010204@samsung.com>
+ <0347331c-263f-a077-53d3-7bd92ddc833b@samsung.com>
+ <5A0A2EC0.8050503@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56091 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753936AbdKOWvd (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 17:51:33 -0500
-In-reply-to: <CAPj87rNTgnoE49k4bbrj=gyZsWVE9p6jxboLX0OSmw5V-kpt2Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <5A0A2EC0.8050503@samsung.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Dave Airlie <airlied@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-Hi Daniel,
-
-2017년 11월 15일 19:27에 Daniel Stone 이(가) 쓴 글:
-> Hi Inki,
-> 
-> On 15 November 2017 at 01:26, Inki Dae <inki.dae@samsung.com> wrote:
->> 2017년 11월 14일 13:22에 Dave Airlie 이(가) 쓴 글:
->>> On 26 October 2017 at 11:37, Inki Dae <inki.dae@samsung.com> wrote:
->>>>    Ps. we are reviewing IPP v2 driver[1] which controls post processor devices
->>>>        such as FIMC, GScaler and Rotator of Exynos SoC. So I plan to request
->>>>        git pull one more time after review.
->>>
->>> I dropped the ball a bit here, I do think the second pull with IPP is
->>> probably a bit late,
->>> I think I'd like more assurance that the UAPI for IPP is to be used in
->>> some upstream
->>> shipping project (forks of mpv not withstanding, unless this fork
->>> ships in some distro
->>> or product).
->>
->> I also commented same thing internally to author - Marek - of IPP v2 but I thought existing one is really ugly thing so may be better to change it as soon as possible before other users use this one.
->> Anyway, we will merge user space for IPP v2 to libdrm first, and then Linux platform. I hope IPPv2 would be merged as soon as possible in next turn.
-> 
-> This is putting the cart before the horse a little bit. This is the
-> process for merging new DRM API:
-> 
-> Prepare the kernel and libdrm/etc patches exposing the new API, and
-> also develop a _real_ user for it. Using IPP as an example, an
-> acceptable userspace would be VLC, Kodi, Weston, Xorg, or similar.
-> libdrm sample clients are explicitly not enough for this.
-> 
-> Once this is done, you should get review/ack for all of these. The
-> kernel code and API should have review for good API (see for example
-> Daniel Vetter's 'botching up ioctls' documentation) and code, and the
-> userspace (VLC/Kodi/...) should have review for both code correctness
-> as well as an explicit check from the userspace side that they feel it
-> is good API which works for them. If the work just exists in a fork
-> which has not got real upstream review, this is also not enough.
-> 
-> When all parts have review, you can merge the new kernel API with a
-> pointer to the userspace review, explicitly stating that they feel it
-> is acceptable. Once the kernel code has landed in a non-rebasing tree
-> (one which Dave will be sending as a pull), libdrm code can be merged,
-> and then the userspace code can finally be merged.
-
-I know that. Before requesting git-pull I commented like below to the author,
-"I think other maintainer will require real user space - not thing like libdrm - which uses new ABI.
-The solution I think would be to apply the new ABI to tdm exynos backend of Tizen platform below,
-https://review.tizen.org/git/?p=platform/adaptation/samsung_exynos/libtdm-exynos.git;a=blob;f=src/tdm_exynos_pp.c;h=db20e6f226d313672d1d468e06d80526ea30121c;hb=refs/heads/tizen"
-
-Anyway, Linux platform I mentioned is _real_ user, Tizen[1], for it. Sorry about it. I didn't comment exactly what is the Linux platform.
-And thanks for explanation.
-
-[1] https://www.tizen.org/
-
-Thanks,
-Inki Dae
-
-> 
-> Cheers,
-> Daniel
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+SGkgSW5raSwKCk9uIDIwMTctMTEtMTQgMDA6NDYsIElua2kgRGFlIHdyb3RlOgo+IDIwMTfrhYQg
+MTHsm5QgMTPsnbwgMjM6Mjjsl5AgTWFyZWsgU3p5cHJvd3NraSDsnbQo6rCAKSDsk7Qg6riAOgo+
+PiBPbiAyMDE3LTExLTEzIDAyOjI0LCBJbmtpIERhZSB3cm90ZToKPj4+IDIwMTfrhYQgMTHsm5Qg
+MTDsnbwgMTY6MzXsl5AgTWFyZWsgU3p5cHJvd3NraSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4+IE9u
+IDIwMTctMTEtMTAgMDQ6MDQsIElua2kgRGFlIHdyb3RlOgo+Pj4+PiAyMDE364WEIDEx7JuUIDAx
+7J28IDAxOjI47JeQIE1hcmVrIFN6eXByb3dza2kg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4+IFdo
+ZW4gbm8gSU9NTVUgaXMgYXZhaWxhYmxlLCBhbGwgR0VNIGJ1ZmZlcnMgYWxsb2NhdGVkIGJ5IEV4
+eW5vcyBEUk0gZHJpdmVyCj4+Pj4+PiBhcmUgY29udGlndW91cywgYmVjYXVzZSBvZiB0aGUgdW5k
+ZXJseWluZyBkbWFfYWxsb2NfYXR0cnMoKSBmdW5jdGlvbgo+Pj4+Pj4gcHJvdmlkZXMgb25seSBz
+dWNoIGJ1ZmZlcnMuIEluIHN1Y2ggY2FzZSBpdCBtYWtlcyBubyBzZW5zZSB0byBrZWVwCj4+Pj4+
+IFdoYXQgaWYgdXNlciBkaXNhYmxlZCBDTUEgc3VwcG9ydD8gSW4gdGhpcyBjYXNlLCBpdCBndWFy
+YW50ZWVzIGFsc28gdG8gYWxsb2NhdGUgcGh5c2ljYWxseSBjb250aWd1b3VzIG1lbW9yeT8KPj4+
+Pj4gSSB0aGluayBpdCBkZXBlbmRzIG9uIENNQSBzdXBwb3J0IHNvIHdvdWxkbid0IGJlIHRydWUu
+Cj4+Pj4gZG1hX2FsbG9jX2F0dHJzKCkgYWx3YXlzIGd1YXJhbnRlZXMgdGhlIGNvbnRpZ3VpdHkg
+b2YgdGhlIGFsbG9jYXRlZCBtZW1vcnkKPj4+PiBpbiBETUEgYWRkcmVzcyBzcGFjZS4gV2hlbiBO
+T0lPTU1VIGlzIGF2YWlsYWJsZSwgdGhpcyBtZWFuIHRoYXQgdGhlIGFsbG9jYXRlZAo+Pj4+IGJ1
+ZmZlciBpcyBjb250aWd1b3VzIGluIHRoZSBwaHlzaWNhbCBtZW1vcnkuIFdoZW4gQ01BIGlzIGRp
+c2FibGVkLAo+Pj4+IGRtYV9hbGxvY19hdHRycygpIHVzZXMgYWxsb2NfcGFnZXMoKSBhbGxvY2F0
+b3IuIFRoZSBkcmF3YmFjayBvZiBhbGxvY19wYWdlcygpCj4+Pj4gaXMgdGhhdCBpdCBlYXNpbHkg
+ZmFpbHMgaWYgcGh5c2ljYWwgbWVtb3J5IGlzIGZyYWdtZW50ZWQgYW5kIGl0IGNhbm5vdAo+Pj4+
+IGFsbG9jYXRlIG1lbW9yeSBsYXJnZXIgdGhhbiBNQVhfT1JERVIgKDRNaUIgaW4gY2FzZSBvZiBB
+Uk0zMmJpdCkuCj4+PiBZb3UgYXJlIHJpZ2h0LiBXaXRob3V0IElPTU1VIHN1cHBvdCBhbGxvY19w
+YWdlcyBhbHdheXMgdHJ5aWVzIHRvIGFsbG9jYXRlIGNvbnRpZ3VvdXMgbWVtb3J5LAo+Pj4gb3Jk
+ZXIgPSBnZXRfb3JkZXIoc2l6ZSk7Cj4+PiBwYWdlID0gYWxsb2NfcGFnZXMoLi4uLCBvcmRlcik7
+Cj4+PiBpZiAoIXBhZ2UpCj4+PiAgICAgIHJldHVybiBOVUxMOwo+Pj4gLi4uCj4+IFJpZ2h0Cj4+
+Cj4+Pj4+IFJlYWwgcHJvYmxlbSBJIHRoaW5rIGlzIHRoYXQgdXNlciBkb24ndCBrbm93IHdoZXRo
+ZXIgdGhlIGdlbSBidWZmZXIgYWxsb2NhdGVkIHdpdGggQ09OVElHIG9yIE5PTkNPTlRJRyBmbGFn
+IGNhbiBiZSB1c2VkIGFzIGEgU0NBTk9VVCBidWZmZXIuCj4+Pj4+IFNvIHVzZXIgY2FuIHJlcXVl
+c3QgYSBwYWdlIGZsaXAgd2l0aCBOT05DT05USUcgYnVmZmVyIHRvIGtlcm5lbCB3aGljaCBkb2Vz
+bid0IHN1cHBvcnQgSU9NTVUuCj4+Pj4+Cj4+Pj4+IEFuZCBhbm90aGVyIGlzIHRoYXQgdXNlciBt
+YXkgd2FudCB0byB1c2UgTk9OQ09OVElHIGJ1ZmZlciBmb3IgYW5vdGhlciBwdXJwb3NlLCBub3Qg
+c2Nhbm91dC4KPj4+Pj4gU28gaWYgd2UgZW5mb3JjZSBvbiB1c2luZyBDT05USUcgYnVmZmVyIG9u
+IGtlcm5lbCB3aXRob3V0IElPTU1VIHN1cHBvcnQsIHRoZW4gaXQgd291bGRuJ3QgYmUgcmVhbGx5
+IHdoYXQgdXNlciBpbnRlbmRlZC4KPj4+PiBXaGVuIElPTU1VIHN1cHBvcnQgaXMgZGlzYWJsZWQs
+IEFOWSBidWZmZXIgYWxsb2NhdGVkIHdpdGggZG1hX2FsbG9jX2F0dHJzKCkKPj4+PiB3aWxsIGJl
+IGNvbnRpZ3VvdXMsIHNvIEkgc2VlIG5vIHBvaW50IHByb3BhZ2F0aW5nIGluY29ycmVjdCBmbGFn
+IGZvciBpdC4KPj4+Pgo+Pj4+IFRoZSBvbmx5IHdheSB0byBjcmVhdGUgYSBOT05DT05USUcgYnVm
+ZmVyIHdpdGggSU9NTVUgZGlzYWJsZWQgaXMgdG8gaW1wb3J0Cj4+Pj4gaXQgZnJvbSBvdGhlciBk
+cml2ZXIgYW5kIHRoaXMgcGF0aCBpcyBhbHJlYWR5IGhhbmRsZWQgY29ycmVjdGx5Lgo+Pj4+Cj4+
+Pj4+IE15IGlkZWEgaXMgdG8gcHJvdmlkZSBhIG5ldyBmbGFnIC0gaS5lLiwgRVhZTk9TX0JPX1ND
+QU5PVVQgLSB3aGljaCBjYW4gYWxsb2NhdGUgYSBidWZmZXIgd2l0aCBhIGRpZmZlcmVudCBhbGxv
+Y2F0aW9uIHR5cGUgLSBDT05USUcgb3IgTk9OQ09OVElHIC0gYWNjb3JkaW5nIHRvIElPTU1VIHN1
+cHBvcnQuCj4+Pj4+IEFuZCBhbnkgcGFnZSBmbGlwIHJlcXVlc3Qgd2l0aCBOT05DT05USUcgYnVm
+ZmVyIHRvIGtlcm5lbCB3aXRob3V0IElPTU1VIHN1cHBvcnQgc2hvdWxkIGZhaWwgYW5kIGl0IGhh
+cyB0byByZXR1cm4gYSBlcnJvciB3aXRoIGEgcHJvcGVyIGVycm9yIG1lc3NhZ2UuCj4+Pj4gSSBk
+b24ndCB0aGluayB0aGF0IHdlIG5lZWQgaXQuIFdpdGggdGhlIHByb3Bvc2VkIHBhdGNoIHRoZSBz
+YW1lIHVzZXJzcGFjZSB3aWxsCj4+Pj4gd29yayBmaW5lIGluIGJvdGggY2FzZXMgSU9NTVUgZW5h
+YmxlZCBhbmQgZGlzYWJsZWQsIGV2ZW4gaWYgaXQgYWxsb2NhdGUgR0VNCj4+Pj4gd2l0aCBOT05D
+T05USUcgZmxhZy4gV2UgY2FuIGFzc3VtZSB0aGF0IENPTlRJRyBpcyBhIHNwZWNpYWwgY2FzZSBv
+ZiBOT05DT05USUcKPj4+PiB0aGVuLgo+Pj4gVGhlIHByb2JsZW0gaXMgcmVhbGx5IG5vdCB3aGV0
+aGVyIHVzZXIgc3BhY2Ugd2lsbCB3b3JrIGZpbmUgb3Igbm90IGJ1dCBpcyB0aGF0IHRoaXMgbWF5
+IGJlIG5vdCB3aGF0IHVzZXIgc3BhY2Ugd2FudGVkLgo+Pj4gSS5lLiwgdXNlciBzcGFjZSBleHBl
+Y3RzIHRoZSBhbGxvY2F0ZWQgYnVmZmVyIGlzIE5PTkNPTlRJRyBidWZmZXIgYmVjYXVzZSB1c2Vy
+IHNwYWNlIHJlcXVlc3RlZCBOT05DT05USUcgYnVmZmVyIGJ1dCBrZXJuZWwgaW50ZXJuYWxseSwg
+dGhpcyBpcyBjaGFuZ2VkIHRvIENPTlRJRyBidWZmZXIuCj4+IFdoYXQncyB0aGUgcHJvYmxlbSB3
+aGVuIGtlcm5lbCBhbGxvY2F0ZWQgY29udGlndW91cyBidWZmZXIgYnV0IHVzZXIKPj4gcmVxdWVz
+dGVkIG5vbi1jb250aWd1b3VzPyBDb250aWd1b3VzIGlzIGEgc3ViY2xhc3Mgb2Ygbm9uLWNvbnRp
+Z3VvdXMKPj4gaW4gZ2VuZXJhbC4gVGhlcmUgaXMgbm8gZHJpdmVyIG5vciBzY2VuYXJpbyB3aGlj
+aCB3aWxsIG5vdCB3b3JrIGJlY2F1c2UKPj4gb2Ygc3VjaCBjaGFuZ2UgKGFueSBjb2RlIGZvciBo
+YW5kaW5nIG4tc2VnbWVudHMgc2hvdWxkIGJlIGZpbmUgd2l0aCBvbmx5Cj4+IDEgc2VnbWVudCku
+IEluIHNvbWUgY29uZGl0aW9ucywgYnkgbHVjaywga2VybmVsIG1pZ2h0IGFsbG9jYXRlCj4+IGEg
+Y29udGlndW91cyBidWZmZXIgZXZlbiB3aXRoIElPTU1VIGVuYWJsZWQuIFdoZW4gd2Uga25vdyB0
+aGF0IHRoZQo+PiBidWZmZXIgaXMgY29udGlndW91cywgdGhlbiBmbGFnIGl0IGFzIHN1Y2guCj4g
+SSdkIGxpa2UgdG8gc2F5IHdoYXQgSSBleHBlcmllbmNlZCBiZWZvcmUgaGVyZS4gSSdkIGV2ZXIg
+bW9kaWZpZWQgaW4taG91c2Uga2VybmVsIHdpdGggc2ltaWxhciBpc3N1ZSB0aGF0IHdpdGggSU9N
+TVUgc29tZXRpbWVzIHBhZ2UgZmF1bHQgaGFwcGVuZGVkLiBTbyB0ZW1wYXJhcmlseSBJIGFsd2F5
+cyBtYWRlIGdlbSBhbGxvY2F0aW9uIHJlcXVlc3QgZnJvbSB1c2VyIHNwYWNlIHRvIGFsbG9jYXRl
+IENPTlRJRyBidWZmZXIgYW5kIGl0IHdvcmtlZCB3ZWxsIHdpdGhvdXQgcGFnZSBmYXVsdC4gU2V2
+ZXJhbCBkYXlzIGFnbywgYSBQbGF0Zm9ybSBndXkgcmVwb3J0ZWQgb25lIGlzc3VlIHRoYXQgZ2Vt
+IGFsbG9jYXRpb24gcmVxdWVzdCBmYWlsZWQgZXZlbiB0aHJvdWdoIGl0IGhhcyBmcmVlIG1lbW9y
+eSBlbm91Z2guIFRoZSBpc3N1cyB3YXMgYXMgeW91IGd1ZXNzIGZyYWdlbWVudGF0aW9uIGlzc3Vl
+IGFuZCBJIHRhbGtlZCB0byBoaW0gbWVtb3J5IGZyYWdtZW50YXRpb24gaGFwcGVuZGVkLgo+Cj4g
+SG93ZXZlciwgdGhhdCBndXkgZGlkbid0IHVuZGVyc3RhbmQgd2h5IG1lbW9yeSBmcmFnZW1lbnRh
+dGlvbiBoYXBwZW5kZWQgYmVjYXVzZSBoZSBkZWZpbml0ZWx5IHJlcXVlc3RlZCBOT05DT05USUcg
+YnVmZmVyIGFsbG9jYXRpb24uIFRodXMsIGlmIEkgcHJvdmlkZWQgYSBzb21lIGhpdCAtIGdlbSBh
+bGxvY2F0aW9uIHdheSBpcyBjaGFuZ2VkIHRvIENPTlRJRyBkdWUgdG8gc29tZSByZWFzb24gLSB0
+byB1c2VyIHNwYWNlIHRoZW4gaGUgY291bGQgdW5kZXJzdGFuZCB0aGUgZnJhZ21lbnRhdGlvbiBp
+c3N1ZSB3aXRob3V0IGNvbnRhY3RpbmcgbWUuIFRoaXMgcGF0Y2ggY291bGQgZml4IHRoZSBYIFNl
+cnZlciBpc3N1ZSBidXQgdGhlIFggU2VydmVyIG5ldmVyIGtub3cgdGhhdCB0aGUgYWxsb2NhdGVk
+IGJ1ZmZlciBpcyBjb250aWd1b3VzIGJlY2F1c2UgeW91IGNoYW5nZWQgdGhlIGFsbG9jYXRpb24g
+dHlwZSB3aXRvdXQgdXNlcidzIGtub3dsZWRnZS4KCk9rYXksIEkgd2lsbCBwb3N0IGEgdjIgd2l0
+aCBhIHdhcm5pbmcuCgpCZXN0IHJlZ2FyZHMKLS0gCk1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1z
+dW5nIFImRCBJbnN0aXR1dGUgUG9sYW5kCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
