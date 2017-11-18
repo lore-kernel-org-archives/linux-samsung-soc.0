@@ -1,117 +1,65 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] drm/exynos: gem: Drop NONCONTIG flag for buffers
- allocated without IOMMU
-Date: Thu, 16 Nov 2017 10:10:03 +0100
-Message-ID: <9c19a95c-a538-198c-aba1-8c5f7bab5f14@samsung.com>
-References: <CGME20171031162824eucas1p1d15c2ea1d529edd18e16506b26669b91@eucas1p1.samsung.com>
- <20171031162813.1546-1-m.szyprowski@samsung.com>
- <5A051757.9020101@samsung.com>
- <065ca47d-11e8-adb3-e264-a874a0b84067@samsung.com>
- <5A08F43A.8010204@samsung.com>
- <0347331c-263f-a077-53d3-7bd92ddc833b@samsung.com>
- <5A0A2EC0.8050503@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5A0A2EC0.8050503@samsung.com>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Dongjin Kim <tobetter@gmail.com>
+Subject: [PATCH] ARM: exynos: add machine description for ODROID-XU3/4
+Date: Sat, 18 Nov 2017 15:35:44 -0500
+Message-ID: <20171118203544.19431-1-tobetter@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:46334 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162168AbdKRUg3 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sat, 18 Nov 2017 15:36:29 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+Cc: Dongjin Kim <tobetter@gmail.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgSW5raSwKCk9uIDIwMTctMTEtMTQgMDA6NDYsIElua2kgRGFlIHdyb3RlOgo+IDIwMTfrhYQg
-MTHsm5QgMTPsnbwgMjM6Mjjsl5AgTWFyZWsgU3p5cHJvd3NraSDsnbQo6rCAKSDsk7Qg6riAOgo+
-PiBPbiAyMDE3LTExLTEzIDAyOjI0LCBJbmtpIERhZSB3cm90ZToKPj4+IDIwMTfrhYQgMTHsm5Qg
-MTDsnbwgMTY6MzXsl5AgTWFyZWsgU3p5cHJvd3NraSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4+IE9u
-IDIwMTctMTEtMTAgMDQ6MDQsIElua2kgRGFlIHdyb3RlOgo+Pj4+PiAyMDE364WEIDEx7JuUIDAx
-7J28IDAxOjI47JeQIE1hcmVrIFN6eXByb3dza2kg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4+IFdo
-ZW4gbm8gSU9NTVUgaXMgYXZhaWxhYmxlLCBhbGwgR0VNIGJ1ZmZlcnMgYWxsb2NhdGVkIGJ5IEV4
-eW5vcyBEUk0gZHJpdmVyCj4+Pj4+PiBhcmUgY29udGlndW91cywgYmVjYXVzZSBvZiB0aGUgdW5k
-ZXJseWluZyBkbWFfYWxsb2NfYXR0cnMoKSBmdW5jdGlvbgo+Pj4+Pj4gcHJvdmlkZXMgb25seSBz
-dWNoIGJ1ZmZlcnMuIEluIHN1Y2ggY2FzZSBpdCBtYWtlcyBubyBzZW5zZSB0byBrZWVwCj4+Pj4+
-IFdoYXQgaWYgdXNlciBkaXNhYmxlZCBDTUEgc3VwcG9ydD8gSW4gdGhpcyBjYXNlLCBpdCBndWFy
-YW50ZWVzIGFsc28gdG8gYWxsb2NhdGUgcGh5c2ljYWxseSBjb250aWd1b3VzIG1lbW9yeT8KPj4+
-Pj4gSSB0aGluayBpdCBkZXBlbmRzIG9uIENNQSBzdXBwb3J0IHNvIHdvdWxkbid0IGJlIHRydWUu
-Cj4+Pj4gZG1hX2FsbG9jX2F0dHJzKCkgYWx3YXlzIGd1YXJhbnRlZXMgdGhlIGNvbnRpZ3VpdHkg
-b2YgdGhlIGFsbG9jYXRlZCBtZW1vcnkKPj4+PiBpbiBETUEgYWRkcmVzcyBzcGFjZS4gV2hlbiBO
-T0lPTU1VIGlzIGF2YWlsYWJsZSwgdGhpcyBtZWFuIHRoYXQgdGhlIGFsbG9jYXRlZAo+Pj4+IGJ1
-ZmZlciBpcyBjb250aWd1b3VzIGluIHRoZSBwaHlzaWNhbCBtZW1vcnkuIFdoZW4gQ01BIGlzIGRp
-c2FibGVkLAo+Pj4+IGRtYV9hbGxvY19hdHRycygpIHVzZXMgYWxsb2NfcGFnZXMoKSBhbGxvY2F0
-b3IuIFRoZSBkcmF3YmFjayBvZiBhbGxvY19wYWdlcygpCj4+Pj4gaXMgdGhhdCBpdCBlYXNpbHkg
-ZmFpbHMgaWYgcGh5c2ljYWwgbWVtb3J5IGlzIGZyYWdtZW50ZWQgYW5kIGl0IGNhbm5vdAo+Pj4+
-IGFsbG9jYXRlIG1lbW9yeSBsYXJnZXIgdGhhbiBNQVhfT1JERVIgKDRNaUIgaW4gY2FzZSBvZiBB
-Uk0zMmJpdCkuCj4+PiBZb3UgYXJlIHJpZ2h0LiBXaXRob3V0IElPTU1VIHN1cHBvdCBhbGxvY19w
-YWdlcyBhbHdheXMgdHJ5aWVzIHRvIGFsbG9jYXRlIGNvbnRpZ3VvdXMgbWVtb3J5LAo+Pj4gb3Jk
-ZXIgPSBnZXRfb3JkZXIoc2l6ZSk7Cj4+PiBwYWdlID0gYWxsb2NfcGFnZXMoLi4uLCBvcmRlcik7
-Cj4+PiBpZiAoIXBhZ2UpCj4+PiAgICAgIHJldHVybiBOVUxMOwo+Pj4gLi4uCj4+IFJpZ2h0Cj4+
-Cj4+Pj4+IFJlYWwgcHJvYmxlbSBJIHRoaW5rIGlzIHRoYXQgdXNlciBkb24ndCBrbm93IHdoZXRo
-ZXIgdGhlIGdlbSBidWZmZXIgYWxsb2NhdGVkIHdpdGggQ09OVElHIG9yIE5PTkNPTlRJRyBmbGFn
-IGNhbiBiZSB1c2VkIGFzIGEgU0NBTk9VVCBidWZmZXIuCj4+Pj4+IFNvIHVzZXIgY2FuIHJlcXVl
-c3QgYSBwYWdlIGZsaXAgd2l0aCBOT05DT05USUcgYnVmZmVyIHRvIGtlcm5lbCB3aGljaCBkb2Vz
-bid0IHN1cHBvcnQgSU9NTVUuCj4+Pj4+Cj4+Pj4+IEFuZCBhbm90aGVyIGlzIHRoYXQgdXNlciBt
-YXkgd2FudCB0byB1c2UgTk9OQ09OVElHIGJ1ZmZlciBmb3IgYW5vdGhlciBwdXJwb3NlLCBub3Qg
-c2Nhbm91dC4KPj4+Pj4gU28gaWYgd2UgZW5mb3JjZSBvbiB1c2luZyBDT05USUcgYnVmZmVyIG9u
-IGtlcm5lbCB3aXRob3V0IElPTU1VIHN1cHBvcnQsIHRoZW4gaXQgd291bGRuJ3QgYmUgcmVhbGx5
-IHdoYXQgdXNlciBpbnRlbmRlZC4KPj4+PiBXaGVuIElPTU1VIHN1cHBvcnQgaXMgZGlzYWJsZWQs
-IEFOWSBidWZmZXIgYWxsb2NhdGVkIHdpdGggZG1hX2FsbG9jX2F0dHJzKCkKPj4+PiB3aWxsIGJl
-IGNvbnRpZ3VvdXMsIHNvIEkgc2VlIG5vIHBvaW50IHByb3BhZ2F0aW5nIGluY29ycmVjdCBmbGFn
-IGZvciBpdC4KPj4+Pgo+Pj4+IFRoZSBvbmx5IHdheSB0byBjcmVhdGUgYSBOT05DT05USUcgYnVm
-ZmVyIHdpdGggSU9NTVUgZGlzYWJsZWQgaXMgdG8gaW1wb3J0Cj4+Pj4gaXQgZnJvbSBvdGhlciBk
-cml2ZXIgYW5kIHRoaXMgcGF0aCBpcyBhbHJlYWR5IGhhbmRsZWQgY29ycmVjdGx5Lgo+Pj4+Cj4+
-Pj4+IE15IGlkZWEgaXMgdG8gcHJvdmlkZSBhIG5ldyBmbGFnIC0gaS5lLiwgRVhZTk9TX0JPX1ND
-QU5PVVQgLSB3aGljaCBjYW4gYWxsb2NhdGUgYSBidWZmZXIgd2l0aCBhIGRpZmZlcmVudCBhbGxv
-Y2F0aW9uIHR5cGUgLSBDT05USUcgb3IgTk9OQ09OVElHIC0gYWNjb3JkaW5nIHRvIElPTU1VIHN1
-cHBvcnQuCj4+Pj4+IEFuZCBhbnkgcGFnZSBmbGlwIHJlcXVlc3Qgd2l0aCBOT05DT05USUcgYnVm
-ZmVyIHRvIGtlcm5lbCB3aXRob3V0IElPTU1VIHN1cHBvcnQgc2hvdWxkIGZhaWwgYW5kIGl0IGhh
-cyB0byByZXR1cm4gYSBlcnJvciB3aXRoIGEgcHJvcGVyIGVycm9yIG1lc3NhZ2UuCj4+Pj4gSSBk
-b24ndCB0aGluayB0aGF0IHdlIG5lZWQgaXQuIFdpdGggdGhlIHByb3Bvc2VkIHBhdGNoIHRoZSBz
-YW1lIHVzZXJzcGFjZSB3aWxsCj4+Pj4gd29yayBmaW5lIGluIGJvdGggY2FzZXMgSU9NTVUgZW5h
-YmxlZCBhbmQgZGlzYWJsZWQsIGV2ZW4gaWYgaXQgYWxsb2NhdGUgR0VNCj4+Pj4gd2l0aCBOT05D
-T05USUcgZmxhZy4gV2UgY2FuIGFzc3VtZSB0aGF0IENPTlRJRyBpcyBhIHNwZWNpYWwgY2FzZSBv
-ZiBOT05DT05USUcKPj4+PiB0aGVuLgo+Pj4gVGhlIHByb2JsZW0gaXMgcmVhbGx5IG5vdCB3aGV0
-aGVyIHVzZXIgc3BhY2Ugd2lsbCB3b3JrIGZpbmUgb3Igbm90IGJ1dCBpcyB0aGF0IHRoaXMgbWF5
-IGJlIG5vdCB3aGF0IHVzZXIgc3BhY2Ugd2FudGVkLgo+Pj4gSS5lLiwgdXNlciBzcGFjZSBleHBl
-Y3RzIHRoZSBhbGxvY2F0ZWQgYnVmZmVyIGlzIE5PTkNPTlRJRyBidWZmZXIgYmVjYXVzZSB1c2Vy
-IHNwYWNlIHJlcXVlc3RlZCBOT05DT05USUcgYnVmZmVyIGJ1dCBrZXJuZWwgaW50ZXJuYWxseSwg
-dGhpcyBpcyBjaGFuZ2VkIHRvIENPTlRJRyBidWZmZXIuCj4+IFdoYXQncyB0aGUgcHJvYmxlbSB3
-aGVuIGtlcm5lbCBhbGxvY2F0ZWQgY29udGlndW91cyBidWZmZXIgYnV0IHVzZXIKPj4gcmVxdWVz
-dGVkIG5vbi1jb250aWd1b3VzPyBDb250aWd1b3VzIGlzIGEgc3ViY2xhc3Mgb2Ygbm9uLWNvbnRp
-Z3VvdXMKPj4gaW4gZ2VuZXJhbC4gVGhlcmUgaXMgbm8gZHJpdmVyIG5vciBzY2VuYXJpbyB3aGlj
-aCB3aWxsIG5vdCB3b3JrIGJlY2F1c2UKPj4gb2Ygc3VjaCBjaGFuZ2UgKGFueSBjb2RlIGZvciBo
-YW5kaW5nIG4tc2VnbWVudHMgc2hvdWxkIGJlIGZpbmUgd2l0aCBvbmx5Cj4+IDEgc2VnbWVudCku
-IEluIHNvbWUgY29uZGl0aW9ucywgYnkgbHVjaywga2VybmVsIG1pZ2h0IGFsbG9jYXRlCj4+IGEg
-Y29udGlndW91cyBidWZmZXIgZXZlbiB3aXRoIElPTU1VIGVuYWJsZWQuIFdoZW4gd2Uga25vdyB0
-aGF0IHRoZQo+PiBidWZmZXIgaXMgY29udGlndW91cywgdGhlbiBmbGFnIGl0IGFzIHN1Y2guCj4g
-SSdkIGxpa2UgdG8gc2F5IHdoYXQgSSBleHBlcmllbmNlZCBiZWZvcmUgaGVyZS4gSSdkIGV2ZXIg
-bW9kaWZpZWQgaW4taG91c2Uga2VybmVsIHdpdGggc2ltaWxhciBpc3N1ZSB0aGF0IHdpdGggSU9N
-TVUgc29tZXRpbWVzIHBhZ2UgZmF1bHQgaGFwcGVuZGVkLiBTbyB0ZW1wYXJhcmlseSBJIGFsd2F5
-cyBtYWRlIGdlbSBhbGxvY2F0aW9uIHJlcXVlc3QgZnJvbSB1c2VyIHNwYWNlIHRvIGFsbG9jYXRl
-IENPTlRJRyBidWZmZXIgYW5kIGl0IHdvcmtlZCB3ZWxsIHdpdGhvdXQgcGFnZSBmYXVsdC4gU2V2
-ZXJhbCBkYXlzIGFnbywgYSBQbGF0Zm9ybSBndXkgcmVwb3J0ZWQgb25lIGlzc3VlIHRoYXQgZ2Vt
-IGFsbG9jYXRpb24gcmVxdWVzdCBmYWlsZWQgZXZlbiB0aHJvdWdoIGl0IGhhcyBmcmVlIG1lbW9y
-eSBlbm91Z2guIFRoZSBpc3N1cyB3YXMgYXMgeW91IGd1ZXNzIGZyYWdlbWVudGF0aW9uIGlzc3Vl
-IGFuZCBJIHRhbGtlZCB0byBoaW0gbWVtb3J5IGZyYWdtZW50YXRpb24gaGFwcGVuZGVkLgo+Cj4g
-SG93ZXZlciwgdGhhdCBndXkgZGlkbid0IHVuZGVyc3RhbmQgd2h5IG1lbW9yeSBmcmFnZW1lbnRh
-dGlvbiBoYXBwZW5kZWQgYmVjYXVzZSBoZSBkZWZpbml0ZWx5IHJlcXVlc3RlZCBOT05DT05USUcg
-YnVmZmVyIGFsbG9jYXRpb24uIFRodXMsIGlmIEkgcHJvdmlkZWQgYSBzb21lIGhpdCAtIGdlbSBh
-bGxvY2F0aW9uIHdheSBpcyBjaGFuZ2VkIHRvIENPTlRJRyBkdWUgdG8gc29tZSByZWFzb24gLSB0
-byB1c2VyIHNwYWNlIHRoZW4gaGUgY291bGQgdW5kZXJzdGFuZCB0aGUgZnJhZ21lbnRhdGlvbiBp
-c3N1ZSB3aXRob3V0IGNvbnRhY3RpbmcgbWUuIFRoaXMgcGF0Y2ggY291bGQgZml4IHRoZSBYIFNl
-cnZlciBpc3N1ZSBidXQgdGhlIFggU2VydmVyIG5ldmVyIGtub3cgdGhhdCB0aGUgYWxsb2NhdGVk
-IGJ1ZmZlciBpcyBjb250aWd1b3VzIGJlY2F1c2UgeW91IGNoYW5nZWQgdGhlIGFsbG9jYXRpb24g
-dHlwZSB3aXRvdXQgdXNlcidzIGtub3dsZWRnZS4KCk9rYXksIEkgd2lsbCBwb3N0IGEgdjIgd2l0
-aCBhIHdhcm5pbmcuCgpCZXN0IHJlZ2FyZHMKLS0gCk1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1z
-dW5nIFImRCBJbnN0aXR1dGUgUG9sYW5kCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+This patch is to add the machine descriptions for ODROID-XU3/4 boards
+in order to present the hardware name at /proc/cputinfo rather than
+"SAMSUNG EXYNOS (Flattened Device Tree)". An embedded open source project,
+such as DietPi, reads the hardware name to run different features.
+
+	$ cat /proc/cpuinfo | grep Hardware
+	Hardware        : ODROID-XU4
+
+Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+---
+ arch/arm/mach-exynos/exynos.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index c404c15ad07f..6197dbf9f48b 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -241,3 +241,31 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+ 	.dt_compat	= exynos_dt_compat,
+ 	.dt_fixup	= exynos_dt_fixup,
+ MACHINE_END
++
++#define ODROID_MACHINE_START(name, compat)			\
++	DT_MACHINE_START(EXYNOS5422_ODROID_##name, "ODROID-"#name)	\
++		.l2c_aux_val	= 0x3c400001,			\
++		.l2c_aux_mask	= 0xc20fffff,			\
++		.smp		= smp_ops(exynos_smp_ops),	\
++		.map_io		= exynos_init_io,		\
++		.init_early	= exynos_firmware_init,		\
++		.init_irq	= exynos_init_irq,		\
++		.init_machine	= exynos_dt_machine_init,	\
++		.init_late	= exynos_init_late,		\
++		.dt_compat	= compat,			\
++		.dt_fixup	= exynos_dt_fixup,		\
++	MACHINE_END
++
++static char const *const exynos5422_odroidxu3_dt_compat[] __initconst = {
++	"hardkernel,odroid-xu3",
++	"hardkernel,odroid-xu3-lite",
++	NULL,
++};
++
++static char const *const exynos5422_odroidxu4_dt_compat[] __initconst = {
++	"hardkernel,odroid-xu4",
++	NULL,
++};
++
++ODROID_MACHINE_START(XU3, exynos5422_odroidxu3_dt_compat)
++ODROID_MACHINE_START(XU4, exynos5422_odroidxu4_dt_compat)
+-- 
+2.11.0
