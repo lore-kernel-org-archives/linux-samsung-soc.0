@@ -1,74 +1,84 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [GIT PULL] exynos-drm-next
-Date: Mon, 20 Nov 2017 08:33:07 +0100
-Message-ID: <20171120073307.odudjlw4f6vsocjj@phenom.ffwll.local>
-References: <CGME20171026013709epcas2p2525d1249a7f2ad640ce9028df12e2436@epcas2p2.samsung.com>
- <1508981828-5178-1-git-send-email-inki.dae@samsung.com>
- <CAPM=9ty-Boo8mjREQ8T2AaGYoU5ZcAu70iQpwJy_oawZxoS+Pg@mail.gmail.com>
- <5A0B97D5.1090202@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: exynos: add machine description for ODROID-XU3/4
+Date: Mon, 20 Nov 2017 08:37:21 +0100
+Message-ID: <CAJKOXPc=iMzT_3K9Rysnv4B06wqOmmdXWxSjU6yDTC8vMnujNg@mail.gmail.com>
+References: <20171118203544.19431-1-tobetter@gmail.com> <9f1311f1-2986-21f1-7016-29efc7b2a543@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36637 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751107AbdKTHdL (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:48314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751103AbdKTHhY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Nov 2017 02:33:11 -0500
-Received: by mail-wm0-f66.google.com with SMTP id r68so16601489wmr.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Nov 2017 23:33:11 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <5A0B97D5.1090202@samsung.com>
+        Mon, 20 Nov 2017 02:37:24 -0500
+In-Reply-To: <9f1311f1-2986-21f1-7016-29efc7b2a543@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Dave Airlie <airlied@gmail.com>, Dave Airlie <airlied@linux.ie>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Dongjin Kim <tobetter@gmail.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 15, 2017 at 10:26:45AM +0900, Inki Dae wrote:
-> Hi Dave,
-> 
-> 2017년 11월 14일 13:22에 Dave Airlie 이(가) 쓴 글:
-> > On 26 October 2017 at 11:37, Inki Dae <inki.dae@samsung.com> wrote:
-> >> Hi Dave,
-> >>
-> >>    Improving Exynos DRM HDMI and Mixer drivers and also adding
-> >>    HDMI audio support.
-> >>
-> >>    Please kindly let me know if there is any problem.
-> >>
-> >>    Ps. we are reviewing IPP v2 driver[1] which controls post processor devices
-> >>        such as FIMC, GScaler and Rotator of Exynos SoC. So I plan to request
-> >>        git pull one more time after review.
-> > 
-> > Hi Inki,
-> > 
-> > I dropped the ball a bit here, I do think the second pull with IPP is
-> > probably a bit late,
-> > I think I'd like more assurance that the UAPI for IPP is to be used in
-> > some upstream
-> > shipping project (forks of mpv not withstanding, unless this fork
-> > ships in some distro
-> > or product).
-> 
-> I also commented same thing internally to author - Marek - of IPP v2 but I thought existing one is really ugly thing so may be better to change it as soon as possible before other users use this one.
-> Anyway, we will merge user space for IPP v2 to libdrm first, and then Linux platform. I hope IPPv2 would be merged as soon as possible in next turn.
+On Sun, Nov 19, 2017 at 6:21 PM, Tobias Jakobi
+<tjakobi@math.uni-bielefeld.de> wrote:
+> I don't think this approach scales at all. DietPi can just read the devicetree
+> through sysfs and retrieve the compatible and/or model of the base node.
 
-Beyond what Daniel said we unfortunately don't have time machines, so
-fixing bad uapi isn't really possible. The problem is that even if you
-create ippv2, then people can still use ippv1, and it needs to keep
-working (almost) forever. So once a bad uapi is in, it's in, and there's
-no good reason to add more uapi (since in 2 years you might again realize
-it's not a good idea) to "fix" that. You can't fix bad uapi.
+Exactly, do not add new machines just for reading DT. Use
+/sys/firmware/devicetree/base/compatible for this.
 
-That's why we have all these rules to make sure as little bad uapi as
-possible lands, since the cost is so bad.
+Best regards,
+Krzysztof
 
-So yeah unless you have new hw that needs it, or there's another clear
-need (performance, features), you're stuck with ippv1. "It's cleaner" is
-not a good reason to rev uapi, since our experience with all the uapi in
-drm clearly shows we can't predict the future :-)
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> - Tobias
+>
+> Dongjin Kim wrote:
+>> This patch is to add the machine descriptions for ODROID-XU3/4 boards
+>> in order to present the hardware name at /proc/cputinfo rather than
+>> "SAMSUNG EXYNOS (Flattened Device Tree)". An embedded open source project,
+>> such as DietPi, reads the hardware name to run different features.
+>>
+>>       $ cat /proc/cpuinfo | grep Hardware
+>>       Hardware        : ODROID-XU4
+>>
+>> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+>> ---
+>>  arch/arm/mach-exynos/exynos.c | 28 ++++++++++++++++++++++++++++
+>>  1 file changed, 28 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+>> index c404c15ad07f..6197dbf9f48b 100644
+>> --- a/arch/arm/mach-exynos/exynos.c
+>> +++ b/arch/arm/mach-exynos/exynos.c
+>> @@ -241,3 +241,31 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+>>       .dt_compat      = exynos_dt_compat,
+>>       .dt_fixup       = exynos_dt_fixup,
+>>  MACHINE_END
+>> +
+>> +#define ODROID_MACHINE_START(name, compat)                   \
+>> +     DT_MACHINE_START(EXYNOS5422_ODROID_##name, "ODROID-"#name)      \
+>> +             .l2c_aux_val    = 0x3c400001,                   \
+>> +             .l2c_aux_mask   = 0xc20fffff,                   \
+>> +             .smp            = smp_ops(exynos_smp_ops),      \
+>> +             .map_io         = exynos_init_io,               \
+>> +             .init_early     = exynos_firmware_init,         \
+>> +             .init_irq       = exynos_init_irq,              \
+>> +             .init_machine   = exynos_dt_machine_init,       \
+>> +             .init_late      = exynos_init_late,             \
+>> +             .dt_compat      = compat,                       \
+>> +             .dt_fixup       = exynos_dt_fixup,              \
+>> +     MACHINE_END
+>> +
+>> +static char const *const exynos5422_odroidxu3_dt_compat[] __initconst = {
+>> +     "hardkernel,odroid-xu3",
+>> +     "hardkernel,odroid-xu3-lite",
+>> +     NULL,
+>> +};
+>> +
+>> +static char const *const exynos5422_odroidxu4_dt_compat[] __initconst = {
+>> +     "hardkernel,odroid-xu4",
+>> +     NULL,
+>> +};
+>> +
+>> +ODROID_MACHINE_START(XU3, exynos5422_odroidxu3_dt_compat)
+>> +ODROID_MACHINE_START(XU4, exynos5422_odroidxu4_dt_compat)
+>>
+>
