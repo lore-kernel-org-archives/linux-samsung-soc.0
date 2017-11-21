@@ -1,98 +1,42 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/bridge: analogix dp: Fix runtime PM state in
- get_modes() callback
-Date: Tue, 21 Nov 2017 08:49:36 +0100
-Message-ID: <20171121074936.22520-1-m.szyprowski@samsung.com>
-References: <CGME20171121074940eucas1p17779b35232466785d43c56382dad01b7@eucas1p1.samsung.com>
+Subject: Re: Google snow chromebook hard freeze with 4.14
+Date: Tue, 21 Nov 2017 08:56:21 +0100
+Message-ID: <ba26b180-a635-8dcf-236f-651bff13e3a7@samsung.com>
+References: <CGME20171120151128epcas5p24380fda5dbb1e73d647c8c77bb98a8dd@epcas5p2.samsung.com>
+        <CANLc0-YnQ93F2RouL4NxVhQ=2KYqGj60BA7_ttVZhGhvas6L3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Misha Komarovskiy <zombah@gmail.com>, stable@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Yakir Yang <ykk@rock-chips.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37925 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751175AbdKUH4Z (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 21 Nov 2017 02:56:25 -0500
+In-reply-to: <CANLc0-YnQ93F2RouL4NxVhQ=2KYqGj60BA7_ttVZhGhvas6L3Q@mail.gmail.com>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Misha Komarovskiy <zombah@gmail.com>, linux-samsung-soc@vger.kernel.org
 
-Z2V0X21vZGVzKCkgY2FsbGJhY2sgbWlnaHQgYmUgY2FsbGVkIGFzeW5jaHJvbm91c2x5IGZyb20g
-dGhlIERSTSBjb3JlIGFuZAppdCBpcyBub3Qgc3luY2hyb25pemVkIHdpdGggYnJpZGdlX2VuYWJs
-ZSgpLCB3aGljaCBzZXRzIHByb3BlciBydW50aW1lIFBNCnN0YXRlIG9mIHRoZSBtYWluIERQIGRl
-dmljZS4gRml4IHRoaXMgYnkgY2FsbGluZyBwbV9ydW50aW1lX2dldF9zeW5jKCkKYmVmb3JlIGNh
-bGxpbmcgZHJtX2dldF9lZGlkKCksIHdoaWNoIGluIHR1cm4gY2FsbHMgZHJtX2RwX2kyY194ZmVy
-KCkgYW5kCmFuYWxvZ2l4X2RwX3RyYW5zZmVyKCkgdG8gZW5zdXJlIHRoYXQgbWFpbiBEUCBkZXZp
-Y2UgaXMgcnVudGltZSBhY3RpdmUKd2hlbiBkb2luZyBhbnkgYWNjZXNzIHRvIGl0cyByZWdpc3Rl
-cnMuCgpUaGlzIGZpeGVzIHRoZSBmb2xsb3dpbmcga2VybmVsIGlzc3VlIG9uIFNhbXN1bmcgRXh5
-bm9zNTI1MCBTbm93IGJvYXJkOgpVbmhhbmRsZWQgZmF1bHQ6IGltcHJlY2lzZSBleHRlcm5hbCBh
-Ym9ydCAoMHg0MDYpIGF0IDB4MDAwMDAwMDAKcGdkID0gYzAwMDQwMDAKWzAwMDAwMDAwXSAqcGdk
-PTAwMDAwMDAwCkludGVybmFsIGVycm9yOiA6IDQwNiBbIzFdIFBSRUVNUFQgU01QIEFSTQpNb2R1
-bGVzIGxpbmtlZCBpbjoKQ1BVOiAwIFBJRDogNjIgQ29tbToga3dvcmtlci8wOjIgTm90IHRhaW50
-ZWQgNC4xMy4wLXJjMi0wMDM2NC1nNGE5N2EzZGE0MjBiICMzMzU3CkhhcmR3YXJlIG5hbWU6IFNB
-TVNVTkcgRVhZTk9TIChGbGF0dGVuZWQgRGV2aWNlIFRyZWUpCldvcmtxdWV1ZTogZXZlbnRzIG91
-dHB1dF9wb2xsX2V4ZWN1dGUKdGFzazogZWRjMTQ4MDAgdGFzay5zdGFjazogZWRjYjIwMDAKUEMg
-aXMgYXQgYW5hbG9naXhfZHBfdHJhbnNmZXIrMHgxNWMvMHgyZmMKTFIgaXMgYXQgYW5hbG9naXhf
-ZHBfdHJhbnNmZXIrMHgxMzQvMHgyZmMKcGMgOiBbPGMwNDY4NTM4Pl0gICAgbHIgOiBbPGMwNDY4
-NTEwPl0gICAgcHNyOiA2MDAwMDAxMwpzcCA6IGVkY2IzYmU4ICBpcCA6IDAwMDAwMDJhICBmcCA6
-IDAwMDAwMDAxCnIxMDogMDAwMDAwMDAgIHI5IDogZWRjYjNjZDggIHI4IDogZWRjYjNjNDAKcjcg
-OiAwMDAwMDAwMCAgcjYgOiBlZGQzYjM4MCAgcjUgOiBlZGQzYjAxMCAgcjQgOiAwMDAwMDA2NApy
-MyA6IDAwMDAwMDAwICByMiA6IGYwYWQzMDAwICByMSA6IGVkY2IzYzQwICByMCA6IGVkZDNiMDEw
-CkZsYWdzOiBuWkN2ICBJUlFzIG9uICBGSVFzIG9uICBNb2RlIFNWQ18zMiAgSVNBIEFSTSAgU2Vn
-bWVudCBub25lCkNvbnRyb2w6IDEwYzUzODdkICBUYWJsZTogNDAwMDQwNmEgIERBQzogMDAwMDAw
-NTEKUHJvY2VzcyBrd29ya2VyLzA6MiAocGlkOiA2Miwgc3RhY2sgbGltaXQgPSAweGVkY2IyMjEw
-KQpTdGFjazogKDB4ZWRjYjNiZTggdG8gMHhlZGNiNDAwMCkKWzxjMDQ2ODUzOD5dIChhbmFsb2dp
-eF9kcF90cmFuc2ZlcikgZnJvbSBbPGMwNDI0YmE0Pl0gKGRybV9kcF9pMmNfZG9fbXNnKzB4OGMv
-MHgyYjQpCls8YzA0MjRiYTQ+XSAoZHJtX2RwX2kyY19kb19tc2cpIGZyb20gWzxjMDQyNGU2ND5d
-IChkcm1fZHBfaTJjX3hmZXIrMHg5OC8weDIxNCkKWzxjMDQyNGU2ND5dIChkcm1fZHBfaTJjX3hm
-ZXIpIGZyb20gWzxjMDU3YjJkOD5dIChfX2kyY190cmFuc2ZlcisweDE0MC8weDI5YykKWzxjMDU3
-YjJkOD5dIChfX2kyY190cmFuc2ZlcikgZnJvbSBbPGMwNTdiNGE0Pl0gKGkyY190cmFuc2Zlcisw
-eDcwLzB4ZTQpCls8YzA1N2I0YTQ+XSAoaTJjX3RyYW5zZmVyKSBmcm9tIFs8YzA0NDFkZTQ+XSAo
-ZHJtX2RvX3Byb2JlX2RkY19lZGlkKzB4YjQvMHgxMTQpCls8YzA0NDFkZTQ+XSAoZHJtX2RvX3By
-b2JlX2RkY19lZGlkKSBmcm9tIFs8YzA0NDFlNWM+XSAoZHJtX3Byb2JlX2RkYysweDE4LzB4Mjgp
-Cls8YzA0NDFlNWM+XSAoZHJtX3Byb2JlX2RkYykgZnJvbSBbPGMwNDQ1NzI4Pl0gKGRybV9nZXRf
-ZWRpZCsweDEyNC8weDJkNCkKWzxjMDQ0NTcyOD5dIChkcm1fZ2V0X2VkaWQpIGZyb20gWzxjMDQ2
-NWVhMD5dIChhbmFsb2dpeF9kcF9nZXRfbW9kZXMrMHg5MC8weDExNCkKWzxjMDQ2NWVhMD5dIChh
-bmFsb2dpeF9kcF9nZXRfbW9kZXMpIGZyb20gWzxjMDQyNWU4Yz5dIChkcm1faGVscGVyX3Byb2Jl
-X3NpbmdsZV9jb25uZWN0b3JfbW9kZXMrMHgxOTgvMHg2OGMpCls8YzA0MjVlOGM+XSAoZHJtX2hl
-bHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzKSBmcm9tIFs8YzA0MzI1ZDQ+XSAoZHJt
-X3NldHVwX2NydGNzKzB4MWI0LzB4ZDE4KQpbPGMwNDMyNWQ0Pl0gKGRybV9zZXR1cF9jcnRjcykg
-ZnJvbSBbPGMwNDM0NGE4Pl0gKGRybV9mYl9oZWxwZXJfaG90cGx1Z19ldmVudCsweDk0LzB4ZDAp
-Cls8YzA0MzQ0YTg+XSAoZHJtX2ZiX2hlbHBlcl9ob3RwbHVnX2V2ZW50KSBmcm9tIFs8YzA0MjVh
-NTA+XSAoZHJtX2ttc19oZWxwZXJfaG90cGx1Z19ldmVudCsweDI0LzB4MjgpCls8YzA0MjVhNTA+
-XSAoZHJtX2ttc19oZWxwZXJfaG90cGx1Z19ldmVudCkgZnJvbSBbPGMwNDI2M2VjPl0gKG91dHB1
-dF9wb2xsX2V4ZWN1dGUrMHg2Yy8weDE3NCkKWzxjMDQyNjNlYz5dIChvdXRwdXRfcG9sbF9leGVj
-dXRlKSBmcm9tIFs8YzAxMzZmMTg+XSAocHJvY2Vzc19vbmVfd29yaysweDE4OC8weDNmYykKWzxj
-MDEzNmYxOD5dIChwcm9jZXNzX29uZV93b3JrKSBmcm9tIFs8YzAxMzcxZjQ+XSAod29ya2VyX3Ro
-cmVhZCsweDMwLzB4NGI4KQpbPGMwMTM3MWY0Pl0gKHdvcmtlcl90aHJlYWQpIGZyb20gWzxjMDEz
-ZGFmOD5dIChrdGhyZWFkKzB4MTI4LzB4MTY0KQpbPGMwMTNkYWY4Pl0gKGt0aHJlYWQpIGZyb20g
-WzxjMDEwODUxMD5dIChyZXRfZnJvbV9mb3JrKzB4MTQvMHgyNCkKQ29kZTogMGEwMDAwMDIgZWEw
-MDAwMDkgZTI1NDQwMDEgMGEwMDAwNGEgKGU1OTUzN2M4KQotLS1bIGVuZCB0cmFjZSBjZGRjNzkx
-OWM3OWY3ODc4IF0tLS0KClJlcG9ydGVkLWJ5OiBNaXNoYSBLb21hcm92c2tpeSA8em9tYmFoQGdt
-YWlsLmNvbT4KQ0M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcgIyB2NC4xMCsKU2lnbmVkLW9mZi1i
-eTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KVGhpcyBp
-c3N1ZSB3YXMgdGhlcmUgZnJvbSB0aGUgYmVnaW5uaW5nLCBidXQgcmVjZW50IGNoYW5nZXMgdG8g
-RFJNCmNvcmUgcmV2ZWFsZWQgaXQuIEl0IG1ha2VzIHNlbnNlIHRvIGJhY2twb3J0IGl0IHRvIHBh
-dGNoIGYwYThiNDljMDNkMgooImRybS9icmlkZ2U6IGFuYWxvZ2l4IGRwOiBGaXggcnVudGltZSBQ
-TSBzdGF0ZSBvbiBkcml2ZXIgYmluZCIpLAp3aGljaCBmaXhlZCBzaW1pbGFyIGlzc3VlIG9uIGRy
-aXZlciBiaW5kLCB0aHVzIEkndmUgbWFya2VkIGl0IGZvcgpzdGFibGUgdjQuMTArLgoKQmVzdCBy
-ZWdhcmRzCk1hcmVrIFN6eXByb3dza2kKU2Ftc3VuZyBSJkQgSW5zdGl0dXRlIFBvbGFuZAotLS0K
-IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgMiAr
-KwogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKaW5kZXggNWRkM2YxY2QwNzRh
-Li5hODkwNTA0OWI5ZGEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
-aXgvYW5hbG9naXhfZHBfY29yZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
-aXgvYW5hbG9naXhfZHBfY29yZS5jCkBAIC05NDYsNyArOTQ2LDkgQEAgc3RhdGljIGludCBhbmFs
-b2dpeF9kcF9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikKIAkJCXJl
-dHVybiAwOwogCQl9CiAKKwkJcG1fcnVudGltZV9nZXRfc3luYyhkcC0+ZGV2KTsKIAkJZWRpZCA9
-IGRybV9nZXRfZWRpZChjb25uZWN0b3IsICZkcC0+YXV4LmRkYyk7CisJCXBtX3J1bnRpbWVfcHV0
-KGRwLT5kZXYpOwogCQlpZiAoZWRpZCkgewogCQkJZHJtX21vZGVfY29ubmVjdG9yX3VwZGF0ZV9l
-ZGlkX3Byb3BlcnR5KCZkcC0+Y29ubmVjdG9yLAogCQkJCQkJCQllZGlkKTsKLS0gCjIuMTQuMgoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Misha,
+
+On 2017-11-20 16:11, Misha Komarovskiy wrote:
+> Hello,
+> After upgrade to kernel version 4.14 i receive hard freeze 4 of 5
+> boots on snow with error Unhandled fault: asynchronous external abort
+> (0x211) at 0x00000000 , here is full serial output of kernel log with
+> fault trace [1].
+> With kernel 4.13 device boots fine.
+>
+> [1] - http://paste.opensuse.org/96574215
+
+Thanks for the report. It looks that recent changes in DRM core revealed
+a bug in Analogix DP driver.
+
+This patch: https://patchwork.kernel.org/patch/10067709/ fixes this issue.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
