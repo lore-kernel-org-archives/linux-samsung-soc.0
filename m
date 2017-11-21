@@ -1,60 +1,44 @@
-From: Misha Komarovskiy <zombah@gmail.com>
-Subject: Re: Google snow chromebook hard freeze with 4.14
-Date: Tue, 21 Nov 2017 11:26:56 +0300
-Message-ID: <CANLc0-a0DPWL6ZjOg_oYbs5hCB9DofMZoG2801REccyfco-Mrw@mail.gmail.com>
-References: <CGME20171120151128epcas5p24380fda5dbb1e73d647c8c77bb98a8dd@epcas5p2.samsung.com>
- <CANLc0-YnQ93F2RouL4NxVhQ=2KYqGj60BA7_ttVZhGhvas6L3Q@mail.gmail.com> <ba26b180-a635-8dcf-236f-651bff13e3a7@samsung.com>
+From: Simon Shields <simon@lineageos.org>
+Subject: [PATCH] ARM: dts: exynos: correct trats2 panel reset line
+Date: Tue, 21 Nov 2017 22:24:24 +1100
+Message-ID: <20171121112424.GA6650@lineageos.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:45616 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751226AbdKUI1S (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:34881 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751523AbdKULYe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Nov 2017 03:27:18 -0500
-Received: by mail-lf0-f50.google.com with SMTP id f131so5070825lff.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2017 00:27:17 -0800 (PST)
-In-Reply-To: <ba26b180-a635-8dcf-236f-651bff13e3a7@samsung.com>
+        Tue, 21 Nov 2017 06:24:34 -0500
+Received: by mail-pg0-f65.google.com with SMTP id l19so9916776pgo.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2017 03:24:34 -0800 (PST)
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hello Marek,
+trats2 uses gpf2-1 as the panel reset GPIO. gpy4-5 was only used
+on early revisions of the board.
 
-On Tue, Nov 21, 2017 at 10:56 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Hi Misha,
->
-> On 2017-11-20 16:11, Misha Komarovskiy wrote:
->>
->> Hello,
->> After upgrade to kernel version 4.14 i receive hard freeze 4 of 5
->> boots on snow with error Unhandled fault: asynchronous external abort
->> (0x211) at 0x00000000 , here is full serial output of kernel log with
->> fault trace [1].
->> With kernel 4.13 device boots fine.
->>
->> [1] - http://paste.opensuse.org/96574215
->
->
-> Thanks for the report. It looks that recent changes in DRM core revealed
-> a bug in Analogix DP driver.
->
-> This patch: https://patchwork.kernel.org/patch/10067709/ fixes this issue.
+Fixes: 420ae8451a22 ("ARM: dts: exynos4412-trats2: add panel node")
+Signed-off-by: Simon Shields <simon@lineageos.org>
+---
+ arch/arm/boot/dts/exynos4412-trats2.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you very much!
-
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
-
-
-
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 220cdf109405..9f4672ba9943 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -454,7 +454,7 @@
+ 		reg = <0>;
+ 		vdd3-supply = <&lcd_vdd3_reg>;
+ 		vci-supply = <&ldo25_reg>;
+-		reset-gpios = <&gpy4 5 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpf2 1 GPIO_ACTIVE_HIGH>;
+ 		power-on-delay= <50>;
+ 		reset-delay = <100>;
+ 		init-delay = <100>;
 -- 
-Best Regards,
-Misha Komarovskiy
-zombahatgmaildotcom
+2.15.0
