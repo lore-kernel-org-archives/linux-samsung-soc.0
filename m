@@ -1,63 +1,62 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] drm/exynos: gem: Drop NONCONTIG flag for buffers
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2] drm/exynos: gem: Drop NONCONTIG flag for buffers
  allocated without IOMMU
-Date: Wed, 22 Nov 2017 14:14:47 +0100
-Message-ID: <20171122131447.25627-1-m.szyprowski@samsung.com>
+Date: Wed, 22 Nov 2017 18:33:17 +0100
+Message-ID: <556ad6ed-77a0-aeb2-f7dc-f8b047c3f499@math.uni-bielefeld.de>
 References: <CGME20171122131501eucas1p1557c57b70990b11084228e64d54726c2@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36987 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751244AbdKVNPF (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Nov 2017 08:15:05 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+ <20171122131447.25627-1-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20171122131447.25627-1-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Marian Mihailescu <mihailescu2m@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marian Mihailescu <mihailescu2m@gmail.com>, stable@vger.kernel.org
 
-When no IOMMU is available, all GEM buffers allocated by Exynos DRM driver
-are contiguous, because of the underlying dma_alloc_attrs() function
-provides only such buffers. In such case it makes no sense to keep
-BO_NONCONTIG flag for the allocated GEM buffers. This allows to avoid
-failures for buffer contiguity checks in the subsequent operations on GEM
-objects.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-CC: stable@vger.kernel.org # v4.4+
----
-This issue is there since commit 0519f9a12d011 ("drm/exynos: add iommu
-support for exynos drm framework"), but this patch applies cleanly
-only to v4.4+ kernel releases due changes in the surrounding code.
-
-Changelog:
-v2:
-- added warning message when buffer flags are updadated (requested by Inki)
-
-v1: https://patchwork.kernel.org/patch/10034919/
-- initial version
----
- drivers/gpu/drm/exynos/exynos_drm_gem.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index 077de014d610..4400efe3974a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -247,6 +247,15 @@ struct exynos_drm_gem *exynos_drm_gem_create(struct drm_device *dev,
- 	if (IS_ERR(exynos_gem))
- 		return exynos_gem;
- 
-+	if (!is_drm_iommu_supported(dev) && (flags & EXYNOS_BO_NONCONTIG)) {
-+		/*
-+		 * when no IOMMU is available, all allocated buffers are
-+		 * contiguous anyway, so drop EXYNOS_BO_NONCONTIG flag
-+		 */
-+		flags &= ~EXYNOS_BO_NONCONTIG;
-+		DRM_WARN("Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer\n");
-+	}
-+
- 	/* set memory type and cache attribute from user side. */
- 	exynos_gem->flags = flags;
- 
--- 
-2.14.2
+TWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBXaGVuIG5vIElPTU1VIGlzIGF2YWlsYWJsZSwgYWxs
+IEdFTSBidWZmZXJzIGFsbG9jYXRlZCBieSBFeHlub3MgRFJNIGRyaXZlcgo+IGFyZSBjb250aWd1
+b3VzLCBiZWNhdXNlIG9mIHRoZSB1bmRlcmx5aW5nIGRtYV9hbGxvY19hdHRycygpIGZ1bmN0aW9u
+Cj4gcHJvdmlkZXMgb25seSBzdWNoIGJ1ZmZlcnMuIEluIHN1Y2ggY2FzZSBpdCBtYWtlcyBubyBz
+ZW5zZSB0byBrZWVwCj4gQk9fTk9OQ09OVElHIGZsYWcgZm9yIHRoZSBhbGxvY2F0ZWQgR0VNIGJ1
+ZmZlcnMuIFRoaXMgYWxsb3dzIHRvIGF2b2lkCj4gZmFpbHVyZXMgZm9yIGJ1ZmZlciBjb250aWd1
+aXR5IGNoZWNrcyBpbiB0aGUgc3Vic2VxdWVudCBvcGVyYXRpb25zIG9uIEdFTQo+IG9iamVjdHMu
+CgpSZXZpZXdlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQu
+ZGU+CgotIFRvYmlhcwoKPiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXBy
+b3dza2lAc2Ftc3VuZy5jb20+Cj4gQ0M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcgIyB2NC40Kwo+
+IC0tLQo+IFRoaXMgaXNzdWUgaXMgdGhlcmUgc2luY2UgY29tbWl0IDA1MTlmOWExMmQwMTEgKCJk
+cm0vZXh5bm9zOiBhZGQgaW9tbXUKPiBzdXBwb3J0IGZvciBleHlub3MgZHJtIGZyYW1ld29yayIp
+LCBidXQgdGhpcyBwYXRjaCBhcHBsaWVzIGNsZWFubHkKPiBvbmx5IHRvIHY0LjQrIGtlcm5lbCBy
+ZWxlYXNlcyBkdWUgY2hhbmdlcyBpbiB0aGUgc3Vycm91bmRpbmcgY29kZS4KPiAKPiBDaGFuZ2Vs
+b2c6Cj4gdjI6Cj4gLSBhZGRlZCB3YXJuaW5nIG1lc3NhZ2Ugd2hlbiBidWZmZXIgZmxhZ3MgYXJl
+IHVwZGFkYXRlZCAocmVxdWVzdGVkIGJ5IElua2kpCj4gCj4gdjE6IGh0dHBzOi8vcGF0Y2h3b3Jr
+Lmtlcm5lbC5vcmcvcGF0Y2gvMTAwMzQ5MTkvCj4gLSBpbml0aWFsIHZlcnNpb24KPiAtLS0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jIHwgOSArKysrKysrKysKPiAg
+MSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZ2VtLmMKPiBpbmRleCAwNzdkZTAxNGQ2MTAuLjQ0MDBlZmUzOTc0YSAxMDA2
+NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMKPiArKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMKPiBAQCAtMjQ3LDYgKzI0
+NywxNSBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9nZW0gKmV4eW5vc19kcm1fZ2VtX2NyZWF0ZShzdHJ1
+Y3QgZHJtX2RldmljZSAqZGV2LAo+ICAJaWYgKElTX0VSUihleHlub3NfZ2VtKSkKPiAgCQlyZXR1
+cm4gZXh5bm9zX2dlbTsKPiAgCj4gKwlpZiAoIWlzX2RybV9pb21tdV9zdXBwb3J0ZWQoZGV2KSAm
+JiAoZmxhZ3MgJiBFWFlOT1NfQk9fTk9OQ09OVElHKSkgewo+ICsJCS8qCj4gKwkJICogd2hlbiBu
+byBJT01NVSBpcyBhdmFpbGFibGUsIGFsbCBhbGxvY2F0ZWQgYnVmZmVycyBhcmUKPiArCQkgKiBj
+b250aWd1b3VzIGFueXdheSwgc28gZHJvcCBFWFlOT1NfQk9fTk9OQ09OVElHIGZsYWcKPiArCQkg
+Ki8KPiArCQlmbGFncyAmPSB+RVhZTk9TX0JPX05PTkNPTlRJRzsKPiArCQlEUk1fV0FSTigiTm9u
+LWNvbnRpZ3VvdXMgYWxsb2NhdGlvbiBpcyBub3Qgc3VwcG9ydGVkIHdpdGhvdXQgSU9NTVUsIGZh
+bGxpbmcgYmFjayB0byBjb250aWd1b3VzIGJ1ZmZlclxuIik7Cj4gKwl9Cj4gKwo+ICAJLyogc2V0
+IG1lbW9yeSB0eXBlIGFuZCBjYWNoZSBhdHRyaWJ1dGUgZnJvbSB1c2VyIHNpZGUuICovCj4gIAll
+eHlub3NfZ2VtLT5mbGFncyA9IGZsYWdzOwo+ICAKPiAKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
