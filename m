@@ -1,76 +1,81 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: mixer: avoid Oops in vp_video_buffer()
-Date: Thu, 23 Nov 2017 15:16:06 +0100
-Message-ID: <e0bed8b5-1b86-159c-05b7-b1d09bfa4d5b@math.uni-bielefeld.de>
-References: <20171123141440.29911-1-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20171123141440.29911-1-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Subject: [PATCH v2] drm/exynos: mixer: avoid Oops in vp_video_buffer()
+Date: Thu, 23 Nov 2017 15:19:00 +0100
+Message-ID: <20171123141900.30196-1-tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:36458 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753094AbdKWOTH (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 23 Nov 2017 09:19:07 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-UGxlYXNlIGRpc3JlZ2FyZCB0aGlzIG9uZSwgbmVlZCB0byByZWJhc2UuIHYyIGluIGEgbWludXRl
-Li4uCgotIFRvYmlhcwoKClRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4gSWYgYW4gaW50ZXJsYWNlZCB2
-aWRlbyBtb2RlIGlzIHNlbGVjdGVkLCBhIElPTU1VIHBhZ2VmYXVsdCBpcwo+IHRyaWdnZXJlZCBi
-eSB2cF92aWRlb19idWZmZXIoKS4KPiAKPiBGaXggdGhlIG1vc3QgYXBwYXJlbnQgYnVnczoKPiAt
-IHBpdGNoIHZhbHVlIGZvciBjaHJvbWEgcGxhbmUKPiAtIGRpdmlkZSBieSB0d28gb2YgaGVpZ2h0
-IGFuZCB2cG9zCj4gCj4gVGhpcyBpcyBtb3JlIGxpa2UgYSBiYW5kLWFpZCBhdCB0aGlzIHBvaW50
-LiBUaGUgVlAgcGxhbmUgaXMKPiBzdGlsbCBjb3JydXB0ZWQsIGJ1dCBhdCBsZWFzdCB0aGVyZSBh
-cmUgbm8gbW9yZSBwYWdlZmF1bHRzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkg
-PHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMjEgKysrKysrKysrKystLS0tLS0tLS0tCj4gIDEgZmls
-ZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBpbmRleCBkYzVkNzk0NjVmOWIuLmMzODJmOTll
-MGY1YiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5j
-Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IEBAIC00ODUs
-NyArNDg1LDcgQEAgc3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250
-ZXh0ICpjdHgsCj4gIAkJCWNocm9tYV9hZGRyWzFdID0gY2hyb21hX2FkZHJbMF0gKyAweDQwOwo+
-ICAJCX0gZWxzZSB7Cj4gIAkJCWx1bWFfYWRkclsxXSA9IGx1bWFfYWRkclswXSArIGZiLT5waXRj
-aGVzWzBdOwo+IC0JCQljaHJvbWFfYWRkclsxXSA9IGNocm9tYV9hZGRyWzBdICsgZmItPnBpdGNo
-ZXNbMF07Cj4gKwkJCWNocm9tYV9hZGRyWzFdID0gY2hyb21hX2FkZHJbMF0gKyBmYi0+cGl0Y2hl
-c1sxXTsKPiAgCQl9Cj4gIAl9IGVsc2Ugewo+ICAJCWx1bWFfYWRkclsxXSA9IDA7Cj4gQEAgLTUw
-NywyNSArNTA3LDI2IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJf
-Y29udGV4dCAqY3R4LAo+ICAJdnBfcmVnX3dyaXRlKGN0eCwgVlBfSU1HX1NJWkVfWSwgVlBfSU1H
-X0hTSVpFKGZiLT5waXRjaGVzWzBdKSB8Cj4gIAkJVlBfSU1HX1ZTSVpFKGZiLT5oZWlnaHQpKTsK
-PiAgCS8qIGNocm9tYSBwbGFuZSBmb3IgTlYxMi9OVjIxIGlzIGhhbGYgdGhlIGhlaWdodCBvZiB0
-aGUgbHVtYSBwbGFuZSAqLwo+IC0JdnBfcmVnX3dyaXRlKGN0eCwgVlBfSU1HX1NJWkVfQywgVlBf
-SU1HX0hTSVpFKGZiLT5waXRjaGVzWzBdKSB8Cj4gKwl2cF9yZWdfd3JpdGUoY3R4LCBWUF9JTUdf
-U0laRV9DLCBWUF9JTUdfSFNJWkUoZmItPnBpdGNoZXNbMV0pIHwKPiAgCQlWUF9JTUdfVlNJWkUo
-ZmItPmhlaWdodCAvIDIpKTsKPiAgCj4gIAl2cF9yZWdfd3JpdGUoY3R4LCBWUF9TUkNfV0lEVEgs
-IHN0YXRlLT5zcmMudyk7Cj4gLQl2cF9yZWdfd3JpdGUoY3R4LCBWUF9TUkNfSEVJR0hULCBzdGF0
-ZS0+c3JjLmgpOwo+ICAJdnBfcmVnX3dyaXRlKGN0eCwgVlBfU1JDX0hfUE9TSVRJT04sCj4gIAkJ
-CVZQX1NSQ19IX1BPU0lUSU9OX1ZBTChzdGF0ZS0+c3JjLngpKTsKPiAtCXZwX3JlZ193cml0ZShj
-dHgsIFZQX1NSQ19WX1BPU0lUSU9OLCBzdGF0ZS0+c3JjLnkpOwo+ICAKPiAtCXZwX3JlZ193cml0
-ZShjdHgsIFZQX0RTVF9XSURUSCwgc3RhdGUtPmNydGMudyk7Cj4gLQl2cF9yZWdfd3JpdGUoY3R4
-LCBWUF9EU1RfSF9QT1NJVElPTiwgc3RhdGUtPmNydGMueCk7Cj4gIAlpZiAodGVzdF9iaXQoTVhS
-X0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdzKSkgewo+IC0JCXZwX3JlZ193cml0ZShjdHgsIFZQ
-X0RTVF9IRUlHSFQsIHN0YXRlLT5jcnRjLmggLyAyKTsKPiAtCQl2cF9yZWdfd3JpdGUoY3R4LCBW
-UF9EU1RfVl9QT1NJVElPTiwgc3RhdGUtPmNydGMueSAvIDIpOwo+ICsJCXZwX3JlZ193cml0ZShy
-ZXMsIFZQX1NSQ19IRUlHSFQsIHN0YXRlLT5zcmMuaCAvIDIpOwo+ICsJCXZwX3JlZ193cml0ZShy
-ZXMsIFZQX1NSQ19WX1BPU0lUSU9OLCBzdGF0ZS0+c3JjLnkgLyAyKTsKPiAgCX0gZWxzZSB7Cj4g
-LQkJdnBfcmVnX3dyaXRlKGN0eCwgVlBfRFNUX0hFSUdIVCwgc3RhdGUtPmNydGMuaCk7Cj4gLQkJ
-dnBfcmVnX3dyaXRlKGN0eCwgVlBfRFNUX1ZfUE9TSVRJT04sIHN0YXRlLT5jcnRjLnkpOwo+ICsJ
-CXZwX3JlZ193cml0ZShyZXMsIFZQX1NSQ19IRUlHSFQsIHN0YXRlLT5zcmMuaCk7Cj4gKwkJdnBf
-cmVnX3dyaXRlKHJlcywgVlBfU1JDX1ZfUE9TSVRJT04sIHN0YXRlLT5zcmMueSk7Cj4gIAl9Cj4g
-IAo+ICsJdnBfcmVnX3dyaXRlKHJlcywgVlBfRFNUX1dJRFRILCBzdGF0ZS0+Y3J0Yy53KTsKPiAr
-CXZwX3JlZ193cml0ZShyZXMsIFZQX0RTVF9IX1BPU0lUSU9OLCBzdGF0ZS0+Y3J0Yy54KTsKPiAr
-CXZwX3JlZ193cml0ZShyZXMsIFZQX0RTVF9IRUlHSFQsIHN0YXRlLT5jcnRjLmgpOwo+ICsJdnBf
-cmVnX3dyaXRlKHJlcywgVlBfRFNUX1ZfUE9TSVRJT04sIHN0YXRlLT5jcnRjLnkpOwo+ICsKPiAg
-CXZwX3JlZ193cml0ZShjdHgsIFZQX0hfUkFUSU8sIHN0YXRlLT5oX3JhdGlvKTsKPiAgCXZwX3Jl
-Z193cml0ZShjdHgsIFZQX1ZfUkFUSU8sIHN0YXRlLT52X3JhdGlvKTsKPiAgCj4gCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+If an interlaced video mode is selected, a IOMMU pagefault is
+triggered by vp_video_buffer().
+
+Fix the most apparent bugs:
+- pitch value for chroma plane
+- divide by two of height and vpos
+
+This is more like a band-aid at this point. The VP plane is
+still corrupted, but at least there are no more pagefaults.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index dc5d79465f9b..a18426379e57 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -485,7 +485,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 			chroma_addr[1] = chroma_addr[0] + 0x40;
+ 		} else {
+ 			luma_addr[1] = luma_addr[0] + fb->pitches[0];
+-			chroma_addr[1] = chroma_addr[0] + fb->pitches[0];
++			chroma_addr[1] = chroma_addr[0] + fb->pitches[1];
+ 		}
+ 	} else {
+ 		luma_addr[1] = 0;
+@@ -507,25 +507,26 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	vp_reg_write(ctx, VP_IMG_SIZE_Y, VP_IMG_HSIZE(fb->pitches[0]) |
+ 		VP_IMG_VSIZE(fb->height));
+ 	/* chroma plane for NV12/NV21 is half the height of the luma plane */
+-	vp_reg_write(ctx, VP_IMG_SIZE_C, VP_IMG_HSIZE(fb->pitches[0]) |
++	vp_reg_write(ctx, VP_IMG_SIZE_C, VP_IMG_HSIZE(fb->pitches[1]) |
+ 		VP_IMG_VSIZE(fb->height / 2));
+ 
+ 	vp_reg_write(ctx, VP_SRC_WIDTH, state->src.w);
+-	vp_reg_write(ctx, VP_SRC_HEIGHT, state->src.h);
+ 	vp_reg_write(ctx, VP_SRC_H_POSITION,
+ 			VP_SRC_H_POSITION_VAL(state->src.x));
+-	vp_reg_write(ctx, VP_SRC_V_POSITION, state->src.y);
+ 
+-	vp_reg_write(ctx, VP_DST_WIDTH, state->crtc.w);
+-	vp_reg_write(ctx, VP_DST_H_POSITION, state->crtc.x);
+ 	if (test_bit(MXR_BIT_INTERLACE, &ctx->flags)) {
+-		vp_reg_write(ctx, VP_DST_HEIGHT, state->crtc.h / 2);
+-		vp_reg_write(ctx, VP_DST_V_POSITION, state->crtc.y / 2);
++		vp_reg_write(ctx, VP_SRC_HEIGHT, state->src.h / 2);
++		vp_reg_write(ctx, VP_SRC_V_POSITION, state->src.y / 2);
+ 	} else {
+-		vp_reg_write(ctx, VP_DST_HEIGHT, state->crtc.h);
+-		vp_reg_write(ctx, VP_DST_V_POSITION, state->crtc.y);
++		vp_reg_write(ctx, VP_SRC_HEIGHT, state->src.h);
++		vp_reg_write(ctx, VP_SRC_V_POSITION, state->src.y);
+ 	}
+ 
++	vp_reg_write(ctx, VP_DST_WIDTH, state->crtc.w);
++	vp_reg_write(ctx, VP_DST_H_POSITION, state->crtc.x);
++	vp_reg_write(ctx, VP_DST_HEIGHT, state->crtc.h);
++	vp_reg_write(ctx, VP_DST_V_POSITION, state->crtc.y);
++
+ 	vp_reg_write(ctx, VP_H_RATIO, state->h_ratio);
+ 	vp_reg_write(ctx, VP_V_RATIO, state->v_ratio);
+ 
+-- 
+2.13.5
