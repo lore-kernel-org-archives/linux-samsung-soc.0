@@ -1,56 +1,62 @@
 From: Olof Johansson <olof@lixom.net>
 Subject: Re: mainline boot: 8 passed 1 failed (mainline/v4.14)
-Date: Thu, 23 Nov 2017 11:40:21 -0800
-Message-ID: <CAOesGMgdqNrZbF5dOEdHKmuNVZiiFoV0_ipsPBi5HkGZUgYm_g@mail.gmail.com>
+Date: Thu, 23 Nov 2017 11:50:11 -0800
+Message-ID: <CAOesGMh1SOdO0PL+D5+y4t3ikHb_ELBQkcW7tKPhCRDO3-7YMQ@mail.gmail.com>
 References: <5a16144d.0be9620a.4490d.4375@mx.google.com> <CAK8P3a1OWob9We9zfvhBRN=fQYsw+nkZpqMJ9z6Q_A-N9_V3rQ@mail.gmail.com>
+ <CAOesGMgdqNrZbF5dOEdHKmuNVZiiFoV0_ipsPBi5HkGZUgYm_g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:40430 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753229AbdKWTkY (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:45483 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753311AbdKWTuO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Nov 2017 14:40:24 -0500
-Received: by mail-lf0-f45.google.com with SMTP id d10so12045760lfj.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2017 11:40:23 -0800 (PST)
-In-Reply-To: <CAK8P3a1OWob9We9zfvhBRN=fQYsw+nkZpqMJ9z6Q_A-N9_V3rQ@mail.gmail.com>
+        Thu, 23 Nov 2017 14:50:14 -0500
+Received: by mail-lf0-f43.google.com with SMTP id f131so15109677lff.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2017 11:50:13 -0800 (PST)
+In-Reply-To: <CAOesGMgdqNrZbF5dOEdHKmuNVZiiFoV0_ipsPBi5HkGZUgYm_g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>
 Cc: Olof's autobooter <build@lixom.net>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-On Thu, Nov 23, 2017 at 1:49 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thu, Nov 23, 2017 at 1:20 AM, Olof's autobooter <build@lixom.net> wrote:
+On Thu, Nov 23, 2017 at 11:40 AM, Olof Johansson <olof@lixom.net> wrote:
+> On Thu, Nov 23, 2017 at 1:49 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Thu, Nov 23, 2017 at 1:20 AM, Olof's autobooter <build@lixom.net> wrote:
+>>>
+>>> Full logs are available at http://arm-soc.lixom.net/bootlogs/mainline/v4.14/
+>>>
+>>> Failed boards:
+>>>
+>>>     arndale            arm-multi_v7_nosmp_defconfig  :  FAILED          1:15.09
+>>>
+>>> Successful boards:
+>>>     cubie2             arm-multi_v7_nosmp_defconfig  :  warnings        0:46.50
+>>> ...
+>>>
+>>>         Last entries of failed logs below:
 >>
->> Full logs are available at http://arm-soc.lixom.net/bootlogs/mainline/v4.14/
+>> It looks like Olof's boot bot came back after a time without running
+>> any tests, and found
+>> a regression on Arndale when running with CONFIG_SMP disabled. cubie2 did not
+>> run into the same problem.
 >>
->> Failed boards:
->>
->>     arndale            arm-multi_v7_nosmp_defconfig  :  FAILED          1:15.09
->>
->> Successful boards:
->>     cubie2             arm-multi_v7_nosmp_defconfig  :  warnings        0:46.50
->> ...
->>
->>         Last entries of failed logs below:
+>> The backtrace looks a bit suspicous. I can see __switch_to() calling
+>> the notifiers, which would be vfp_notifier_block and contextidr_notifier_block
+>> on both those machines.
 >
-> It looks like Olof's boot bot came back after a time without running
-> any tests, and found
-> a regression on Arndale when running with CONFIG_SMP disabled. cubie2 did not
-> run into the same problem.
+> I was doing a trial run with just a few boards, it's a bit premature
+> to claim it's back. I didn't mean for the email to go out.
 >
-> The backtrace looks a bit suspicous. I can see __switch_to() calling
-> the notifiers, which would be vfp_notifier_block and contextidr_notifier_block
-> on both those machines.
+> Looks like kernelci doesn't cover CONFIG_SMP=n boots, so I guess this
+> might be a new issue.
+>
+> I haven't automated the new setup yet, so this was a one-off. I'll
+> bisect it over the weekend.
 
-I was doing a trial run with just a few boards, it's a bit premature
-to claim it's back. I didn't mean for the email to go out.
-
-Looks like kernelci doesn't cover CONFIG_SMP=n boots, so I guess this
-might be a new issue.
-
-I haven't automated the new setup yet, so this was a one-off. I'll
-bisect it over the weekend.
+Actually, !SMP on Arndale has been broken for as long as I've been
+attempting to boot it, but it used to just lock up silently instead.
+So while this is a bug to sort out at some point, it's nowhere new.
 
 
 -Olof
