@@ -1,33 +1,58 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: Add nodes for True Random Number Generator
-Date: Thu, 23 Nov 2017 17:33:04 +0100
-Message-ID: <CAJKOXPf18cX_3vy-UdSZpyX6EV8DoR9TGYmspow8M_qNhw4-4g@mail.gmail.com>
-References: <CGME20171123151008eucas1p24436487b1b3f8de6d8cc768f05aea7a9@eucas1p2.samsung.com>
- <20171123150914.31462-1-l.stelmach@samsung.com> <20171123150914.31462-4-l.stelmach@samsung.com>
+From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Cleanup Security Subsystem nodes for
+ Exynos5
+Date: Thu, 23 Nov 2017 19:05:53 +0100
+Message-ID: <87vai0dg5a.fsf%l.stelmach@samsung.com>
+References: <CAJKOXPcOKRGg2robtWS9apVrXzZVHgugb_n3JBBsVeSEkvJnFg@mail.gmail.com>
+        <CGME20171123180559eucas1p2c07a9d1de1e00e725b9fcda657d44be5@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20171123150914.31462-4-l.stelmach@samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35959 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753143AbdKWSGE (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 23 Nov 2017 13:06:04 -0500
+In-reply-to: <CAJKOXPcOKRGg2robtWS9apVrXzZVHgugb_n3JBBsVeSEkvJnFg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo?= =?utf-8?Q?=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
 
-On Thu, Nov 23, 2017 at 4:09 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
-> Add nodes for the True Random Number Generator found in Samsung Exynos
-> 5250+ SoCs.
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+It was <2017-11-23 czw 17:16>, when Krzysztof Kozlowski wrote:
+> On Thu, Nov 23, 2017 at 3:34 PM, =C5=81ukasz Stelmach <l.stelmach@samsung=
+.com> wrote:
+>> Move Security Subsystem nodes to exynos5.dtsi. Adjust clock entries for
+>> Exynos 5250 and Exynos 54xx.
 >
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5.dtsi    | 5 +++++
->  arch/arm/boot/dts/exynos5250.dtsi | 5 +++++
->  arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
->  arch/arm/boot/dts/exynos5420.dtsi | 5 +++++
->  4 files changed, 20 insertions(+)
->
+> From the code I can figure it out, but the commit msg should say why
+> you are doing this. Actually the "why" is more important then "what"
+> because I can easily see "what" the patch is doing.
 
-Look okay, I'll take it once bindings and driver get accepted as wel.
+Marek, can you tell us more? It was your idea ;-)
 
-Best regards,
-Krzysztof
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBCAAGBQJaFw4BAAoJELCuHpyYpYAQcKoH/iv3bHCHMEN3t34F7j1tV6C0
+VD1Ccy3L6XoY7JzW3TTk5glijDDEQLSjOsYpsCkAl3DQOzdwkT/NiisodHPlccF+
+6FePxRUHYaeKeIxnXChqYRH2k5lD2PedP6Xzt73zuwTHX3W4D34eDxWXUQpPyAkc
+KIhMakmCZf6XpKzXkOKZ0TVtMgUEeVYHswaG/RVaVR345QJd3oDGnTDQw4zvNwOV
+zytj6kA2XkRs1LFZOeRVpeJAeXRZw3YOLeKp3GG+deXE7uinYnYC3mvlogI8foRh
+IRsB1cK2JYp6rMPJyrpyybkui7wckfUWRknBTA9497fLBjpbl/fdlt2/oqSMpio=
+=xR/y
+-----END PGP SIGNATURE-----
+--=-=-=--
