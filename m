@@ -1,49 +1,94 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 0/3] Exynos: add CPU performance counters
-Date: Thu, 23 Nov 2017 15:34:28 +0100
-Message-ID: <20171123143431.12434-1-m.szyprowski@samsung.com>
-References: <CGME20171123143445eucas1p1fec892cbeaf16f5642eff952b8d9e1cb@eucas1p1.samsung.com>
+From: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH] ARM: dts: exynos: Cleanup Security Subsystem nodes for
+ Exynos5
+Date: Thu, 23 Nov 2017 15:34:35 +0100
+Message-ID: <20171123143435.30747-1-l.stelmach@samsung.com>
+References: <CGME20171123143456eucas1p13a29e8e0c0c0bf63a3875e458cc76d72@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49744 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752699AbdKWOev (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52874 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752248AbdKWOe7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Nov 2017 09:34:51 -0500
+        Thu, 23 Nov 2017 09:34:59 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>
+To: krzk@kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, b.zolnierkie@samsung.com, =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
 
-Hi!
+Move Security Subsystem nodes to exynos5.dtsi. Adjust clock entries for
+Exynos 5250 and Exynos 54xx.
 
-This patchset enables support for ARM PMU (Performance Monitoring Units)
-available in all supported Exynos SoCs. ARM PMU nodes were missing in dts
-for Exynos 4210, 4412, 5410, 542x, 5433 SoCs.
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+---
+ arch/arm/boot/dts/exynos5.dtsi    |  6 ++++++
+ arch/arm/boot/dts/exynos5250.dtsi | 13 +++++--------
+ arch/arm/boot/dts/exynos54xx.dtsi |  6 ------
+ 3 files changed, 11 insertions(+), 14 deletions(-)
 
-Tested on Odroid U3, Odroid XU3, Google Snow and TM2 boards.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Marek Szyprowski (2):
-  ARM: dts: exynos: Add CPU performance counters to Exynos4 boards
-  ARM64: dts: exynos: Add CPU performance counters to Exynos5433 boards
-
-Marian Mihailescu (1):
-  ARM: dts: exynos: Add CPU perf counters to Exynos54xx boards
-
- arch/arm/boot/dts/exynos4210.dtsi          |  6 ++++++
- arch/arm/boot/dts/exynos4412.dtsi          |  6 ++++++
- arch/arm/boot/dts/exynos5410.dtsi          |  5 +++++
- arch/arm/boot/dts/exynos5420-cpus.dtsi     | 10 ++++++++++
- arch/arm/boot/dts/exynos5422-cpus.dtsi     | 10 ++++++++++
- arch/arm/boot/dts/exynos54xx.dtsi          | 20 ++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 18 ++++++++++++++++++
- 7 files changed, 75 insertions(+)
-
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index 66d22521c976..7da4a4285b24 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -204,5 +204,11 @@
+ 			#size-cells = <0>;
+ 			status = "disabled";
+ 		};
++
++		sss: sss@10830000 {
++			compatible = "samsung,exynos4210-secss";
++			reg = <0x10830000 0x300>;
++			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
++		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 8dbeb873e99c..8032d7e567fc 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -731,14 +731,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		sss@10830000 {
+-			compatible = "samsung,exynos4210-secss";
+-			reg = <0x10830000 0x300>;
+-			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clock CLK_SSS>;
+-			clock-names = "secss";
+-		};
+-
+ 		sysmmu_g2d: sysmmu@10A60000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x10A60000 0x1000>;
+@@ -1084,4 +1076,9 @@
+ 	dma-names = "rx", "tx";
+ };
+ 
++&sss {
++	clocks = <&clock CLK_SSS>;
++	clock-names = "secss";
++};
++
+ #include "exynos5250-pinctrl.dtsi"
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index 0389e8a10d0b..d0124f45b66a 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -79,12 +79,6 @@
+ 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+-		sss: sss@10830000 {
+-			compatible = "samsung,exynos4210-secss";
+-			reg = <0x10830000 0x300>;
+-			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+-		};
+-
+ 		/* i2c_0-3 are defined in exynos5.dtsi */
+ 		hsi2c_4: i2c@12ca0000 {
+ 			compatible = "samsung,exynos5250-hsi2c";
 -- 
-2.14.2
+2.11.0
