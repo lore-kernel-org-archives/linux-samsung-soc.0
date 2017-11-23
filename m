@@ -1,102 +1,70 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH] ARM: dts: move G2D node to exynos5
-Date: Thu, 23 Nov 2017 14:58:21 +0100
-Message-ID: <20171123135821.29489-1-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:36400 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752785AbdKWN63 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Nov 2017 08:58:29 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] drm/exynos: mixer: avoid Oops in vp_video_buffer()
+Date: Thu, 23 Nov 2017 15:14:40 +0100
+Message-ID: <20171123141440.29911-1-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, devicetree@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Current the node is only defined in the exynos5250 DT, while
-the corresponding MMUs are also to be found in the exynos5420
-DT. Move the node to exynos5 and only setup the MMUs in the
-corresponding DT.
-
-Disable the node by default, since exynos5410 also includes
-the dtsi, but currently does not define the G2D clock.
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- arch/arm/boot/dts/exynos5.dtsi    |  7 +++++++
- arch/arm/boot/dts/exynos5250.dtsi | 16 +++++++---------
- arch/arm/boot/dts/exynos5420.dtsi |  7 +++++++
- 3 files changed, 21 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 66d22521c976..f3fec03a7595 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -204,5 +204,12 @@
- 			#size-cells = <0>;
- 			status = "disabled";
- 		};
-+
-+		g2d: g2d@10850000 {
-+			compatible = "samsung,exynos5250-g2d";
-+			reg = <0x10850000 0x1000>;
-+			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 5286084e1032..b6a8a2ef499a 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -245,15 +245,6 @@
- 			samsung,syscon-phandle = <&pmu_system_controller>;
- 		};
- 
--		g2d@10850000 {
--			compatible = "samsung,exynos5250-g2d";
--			reg = <0x10850000 0x1000>;
--			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clock CLK_G2D>;
--			clock-names = "fimg2d";
--			iommus = <&sysmmu_g2d>;
--		};
--
- 		mfc: codec@11000000 {
- 			compatible = "samsung,mfc-v6";
- 			reg = <0x11000000 0x10000>;
-@@ -1024,6 +1015,13 @@
- 	iommus = <&sysmmu_fimd1>;
- };
- 
-+&g2d {
-+	iommus = <&sysmmu_g2d>;
-+	clocks = <&clock CLK_G2D>;
-+	clock-names = "fimg2d";
-+	status = "okay";
-+};
-+
- &i2c_0 {
- 	clocks = <&clock CLK_I2C0>;
- 	clock-names = "i2c";
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 8aa2cc7aa125..81447fffcc94 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1349,6 +1349,13 @@
- 	iommu-names = "m0", "m1";
- };
- 
-+&g2d {
-+	iommus = <&sysmmu_g2dr>, <&sysmmu_g2dw>;
-+	clocks = <&clock CLK_G2D>;
-+	clock-names = "fimg2d";
-+	status = "okay";
-+};
-+
- &i2c_0 {
- 	clocks = <&clock CLK_I2C0>;
- 	clock-names = "i2c";
--- 
-2.13.5
+SWYgYW4gaW50ZXJsYWNlZCB2aWRlbyBtb2RlIGlzIHNlbGVjdGVkLCBhIElPTU1VIHBhZ2VmYXVs
+dCBpcwp0cmlnZ2VyZWQgYnkgdnBfdmlkZW9fYnVmZmVyKCkuCgpGaXggdGhlIG1vc3QgYXBwYXJl
+bnQgYnVnczoKLSBwaXRjaCB2YWx1ZSBmb3IgY2hyb21hIHBsYW5lCi0gZGl2aWRlIGJ5IHR3byBv
+ZiBoZWlnaHQgYW5kIHZwb3MKClRoaXMgaXMgbW9yZSBsaWtlIGEgYmFuZC1haWQgYXQgdGhpcyBw
+b2ludC4gVGhlIFZQIHBsYW5lIGlzCnN0aWxsIGNvcnJ1cHRlZCwgYnV0IGF0IGxlYXN0IHRoZXJl
+IGFyZSBubyBtb3JlIHBhZ2VmYXVsdHMuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0
+amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19taXhlci5jIHwgMjEgKysrKysrKysrKystLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdl
+ZCwgMTEgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX21peGVyLmMKaW5kZXggZGM1ZDc5NDY1ZjliLi5jMzgyZjk5ZTBmNWIgMTAwNjQ0Ci0t
+LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtNDg1LDcgKzQ4NSw3IEBAIHN0YXRpYyB2
+b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAogCQkJY2hyb21h
+X2FkZHJbMV0gPSBjaHJvbWFfYWRkclswXSArIDB4NDA7CiAJCX0gZWxzZSB7CiAJCQlsdW1hX2Fk
+ZHJbMV0gPSBsdW1hX2FkZHJbMF0gKyBmYi0+cGl0Y2hlc1swXTsKLQkJCWNocm9tYV9hZGRyWzFd
+ID0gY2hyb21hX2FkZHJbMF0gKyBmYi0+cGl0Y2hlc1swXTsKKwkJCWNocm9tYV9hZGRyWzFdID0g
+Y2hyb21hX2FkZHJbMF0gKyBmYi0+cGl0Y2hlc1sxXTsKIAkJfQogCX0gZWxzZSB7CiAJCWx1bWFf
+YWRkclsxXSA9IDA7CkBAIC01MDcsMjUgKzUwNywyNiBAQCBzdGF0aWMgdm9pZCB2cF92aWRlb19i
+dWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKIAl2cF9yZWdfd3JpdGUoY3R4LCBWUF9J
+TUdfU0laRV9ZLCBWUF9JTUdfSFNJWkUoZmItPnBpdGNoZXNbMF0pIHwKIAkJVlBfSU1HX1ZTSVpF
+KGZiLT5oZWlnaHQpKTsKIAkvKiBjaHJvbWEgcGxhbmUgZm9yIE5WMTIvTlYyMSBpcyBoYWxmIHRo
+ZSBoZWlnaHQgb2YgdGhlIGx1bWEgcGxhbmUgKi8KLQl2cF9yZWdfd3JpdGUoY3R4LCBWUF9JTUdf
+U0laRV9DLCBWUF9JTUdfSFNJWkUoZmItPnBpdGNoZXNbMF0pIHwKKwl2cF9yZWdfd3JpdGUoY3R4
+LCBWUF9JTUdfU0laRV9DLCBWUF9JTUdfSFNJWkUoZmItPnBpdGNoZXNbMV0pIHwKIAkJVlBfSU1H
+X1ZTSVpFKGZiLT5oZWlnaHQgLyAyKSk7CiAKIAl2cF9yZWdfd3JpdGUoY3R4LCBWUF9TUkNfV0lE
+VEgsIHN0YXRlLT5zcmMudyk7Ci0JdnBfcmVnX3dyaXRlKGN0eCwgVlBfU1JDX0hFSUdIVCwgc3Rh
+dGUtPnNyYy5oKTsKIAl2cF9yZWdfd3JpdGUoY3R4LCBWUF9TUkNfSF9QT1NJVElPTiwKIAkJCVZQ
+X1NSQ19IX1BPU0lUSU9OX1ZBTChzdGF0ZS0+c3JjLngpKTsKLQl2cF9yZWdfd3JpdGUoY3R4LCBW
+UF9TUkNfVl9QT1NJVElPTiwgc3RhdGUtPnNyYy55KTsKIAotCXZwX3JlZ193cml0ZShjdHgsIFZQ
+X0RTVF9XSURUSCwgc3RhdGUtPmNydGMudyk7Ci0JdnBfcmVnX3dyaXRlKGN0eCwgVlBfRFNUX0hf
+UE9TSVRJT04sIHN0YXRlLT5jcnRjLngpOwogCWlmICh0ZXN0X2JpdChNWFJfQklUX0lOVEVSTEFD
+RSwgJmN0eC0+ZmxhZ3MpKSB7Ci0JCXZwX3JlZ193cml0ZShjdHgsIFZQX0RTVF9IRUlHSFQsIHN0
+YXRlLT5jcnRjLmggLyAyKTsKLQkJdnBfcmVnX3dyaXRlKGN0eCwgVlBfRFNUX1ZfUE9TSVRJT04s
+IHN0YXRlLT5jcnRjLnkgLyAyKTsKKwkJdnBfcmVnX3dyaXRlKHJlcywgVlBfU1JDX0hFSUdIVCwg
+c3RhdGUtPnNyYy5oIC8gMik7CisJCXZwX3JlZ193cml0ZShyZXMsIFZQX1NSQ19WX1BPU0lUSU9O
+LCBzdGF0ZS0+c3JjLnkgLyAyKTsKIAl9IGVsc2UgewotCQl2cF9yZWdfd3JpdGUoY3R4LCBWUF9E
+U1RfSEVJR0hULCBzdGF0ZS0+Y3J0Yy5oKTsKLQkJdnBfcmVnX3dyaXRlKGN0eCwgVlBfRFNUX1Zf
+UE9TSVRJT04sIHN0YXRlLT5jcnRjLnkpOworCQl2cF9yZWdfd3JpdGUocmVzLCBWUF9TUkNfSEVJ
+R0hULCBzdGF0ZS0+c3JjLmgpOworCQl2cF9yZWdfd3JpdGUocmVzLCBWUF9TUkNfVl9QT1NJVElP
+Tiwgc3RhdGUtPnNyYy55KTsKIAl9CiAKKwl2cF9yZWdfd3JpdGUocmVzLCBWUF9EU1RfV0lEVEgs
+IHN0YXRlLT5jcnRjLncpOworCXZwX3JlZ193cml0ZShyZXMsIFZQX0RTVF9IX1BPU0lUSU9OLCBz
+dGF0ZS0+Y3J0Yy54KTsKKwl2cF9yZWdfd3JpdGUocmVzLCBWUF9EU1RfSEVJR0hULCBzdGF0ZS0+
+Y3J0Yy5oKTsKKwl2cF9yZWdfd3JpdGUocmVzLCBWUF9EU1RfVl9QT1NJVElPTiwgc3RhdGUtPmNy
+dGMueSk7CisKIAl2cF9yZWdfd3JpdGUoY3R4LCBWUF9IX1JBVElPLCBzdGF0ZS0+aF9yYXRpbyk7
+CiAJdnBfcmVnX3dyaXRlKGN0eCwgVlBfVl9SQVRJTywgc3RhdGUtPnZfcmF0aW8pOwogCi0tIAoy
+LjEzLjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
