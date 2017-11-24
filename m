@@ -1,53 +1,74 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: mainline boot: 8 passed 1 failed (mainline/v4.14)
-Date: Fri, 24 Nov 2017 11:14:27 +0000
-Message-ID: <20171124111427.zzfi6dw27fm6y2rb@sirena.org.uk>
-References: <5a16144d.0be9620a.4490d.4375@mx.google.com>
- <CAK8P3a1OWob9We9zfvhBRN=fQYsw+nkZpqMJ9z6Q_A-N9_V3rQ@mail.gmail.com>
- <CAOesGMgdqNrZbF5dOEdHKmuNVZiiFoV0_ipsPBi5HkGZUgYm_g@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/3] hwrng: exynos - add Samsung Exynos True RNG driver
+Date: Fri, 24 Nov 2017 13:09:06 +0100
+Message-ID: <CAJKOXPc2MGf_b3xA=R=p2_fQ0+SQvwLL8vfZLGhGAAEssD=hJA@mail.gmail.com>
+References: <CGME20171123184736eucas1p15d4e73d5a6596a6cba1f940dcc473c9a@eucas1p1.samsung.com>
+ <CAJKOXPfaofwB7Sp5Lg0JuZzFwC2RahdWDG5KfsJyNcKDt3b_mA@mail.gmail.com> <87o9nsde9r.fsf%l.stelmach@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="64quzi4ovsxljnew"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52730 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752848AbdKXLOi (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 06:14:38 -0500
-Content-Disposition: inline
-In-Reply-To: <CAOesGMgdqNrZbF5dOEdHKmuNVZiiFoV0_ipsPBi5HkGZUgYm_g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <87o9nsde9r.fsf%l.stelmach@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, =?UTF-8?Q?Stephan_M=C3=BCller?= <smueller@chronox.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+
+On Thu, Nov 23, 2017 at 7:46 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
+> It was <2017-11-23 czw 17:31>, when Krzysztof Kozlowski wrote:
+>> On Thu, Nov 23, 2017 at 4:09 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
+>>> Add support for True Random Number Generator found in Samsung Exynos
+>>> 5250+ SoCs.
+>>>
+>>> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+>>> ---
+>>>  MAINTAINERS                          |   7 +
+>>>  drivers/char/hw_random/Kconfig       |  12 ++
+>>>  drivers/char/hw_random/Makefile      |   1 +
+>>>  drivers/char/hw_random/exynos-trng.c | 256 +++++++++++++++++++++++++++++++++++
+>>>  4 files changed, 276 insertions(+)
+>>>  create mode 100644 drivers/char/hw_random/exynos-trng.c
+>>>
+>
+
++Cc Stephan Müller, who reviewed intensively exynos-rng.c.
+
+> [...]
+>
+>>>  endif # HW_RANDOM
+>>
+>> Thanks for working on TRNG.
+>>
+>> 1. I was rather thinking about extending existing exynos-rng.c [1] so
+>> it would be using TRNG as seed for PRNG as this gives you much more
+>> random data. Instead you developed totally separate driver which has
+>> its own benefits - one can choose which interface he wants. Although
+>> it is a little bit duplication.
+>
+> As far as I can tell, these are two different devices. However, PRNG
+> shares hardware with the hash engine. Indeed there is a hardware to
+> connect TRNG and PRNG, but, IMHO, it might be hard to model that
+> dependency in kernel.
+
+It should be as simple as setting few more registers in SSS module
+(actually maybe just enabling TRNG_SEED_START in PRNG). You do not
+have to model it in a kernel like connecting some hw_rng entity to
+cryptoai's rng_alg. See the jitterentropy-kcapi.c. I understand that
+in that case existing exynos-rng.c could expose two different RNG
+devices - one PRNG based on user's seed and second TRNG (actually
+TRNG+PRNG).
+
+It does not seem difficult to model but the question is whether that
+makes sense.
 
 
---64quzi4ovsxljnew
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> To me it seems easier to read TRNG (or
+> /dev/random) and and write the result to PRNG manually (in software).
 
-On Thu, Nov 23, 2017 at 11:40:21AM -0800, Olof Johansson wrote:
+Indeed this gives more flexibility to the user (choice of engine) but
+first, it is slower, and second it reduces the quality of random
+numbers (PRNG reseeds itself... but in this model cannot reseed from
+TRNG).
 
-> Looks like kernelci doesn't cover CONFIG_SMP=n boots, so I guess this
-> might be a new issue.
-
-We turned it off because it was constantly broken and nobody really
-cared - personally I'm not sure it's worth doing on systems that aren't
-actually uniprocessor.
-
---64quzi4ovsxljnew
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloX/w8ACgkQJNaLcl1U
-h9C2XQf5AdimcbsGprSxqT2rppWQSK9WvYKAnTVQg0Ky1Oz82u1HnLqr0cV3qxcr
-iaJlDUkDF4f+5eIFXrqe2bxDuYYC23ASIZzucqBD2L/kEia+EMATASLPjl3KsfQi
-1qS+BxFvXb+CgULRIV+JtAv7v6oXuzozh7URkJ66H/DSXq8WCHZcdu8DAwrfQ9TB
-2KeapV7EhivYJOunht1BQV+4f6FT9tcW0fiubkfSh0rRxK+M0D63HJPOD4G3rNFY
-v4hahl4eBVs8edDqxp4pZ+WTUUe4SJMHoPAlpXlY45YNjsRDCm0Qz9COrCD1zSg8
-zAcaW1F+fPKBBJfbidM1Qq8N75uS9A==
-=kyGh
------END PGP SIGNATURE-----
-
---64quzi4ovsxljnew--
+Best regards,
+Krzysztof
