@@ -1,36 +1,41 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5] ARM: dts: exynos: add bcm4334 device node to trats2
-Date: Mon, 27 Nov 2017 19:14:21 +0100
-Message-ID: <20171127181421.nfbchfhbbisk7tf6@kozik-lap>
-References: <20171113005203.GA15175@lineageos.org>
- <20171114175333.kosfvgrsspkrv3p6@kozik-lap>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Remove duplicate definitions of SSS
+ nodes for Exynos5
+Date: Mon, 27 Nov 2017 19:23:20 +0100
+Message-ID: <20171127182320.4zxmiotk7gcth244@kozik-lap>
+References: <CGME20171127123722eucas1p209c2fd2b0f8bedec45b135348e5573cd@eucas1p2.samsung.com>
+ <20171127123711.12081-1-l.stelmach@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:46968 "EHLO
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40089 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751752AbdK0SOZ (ORCPT
+        with ESMTP id S1752856AbdK0SXX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Nov 2017 13:14:25 -0500
-Received: by mail-wm0-f67.google.com with SMTP id u83so36180888wmb.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Nov 2017 10:14:25 -0800 (PST)
+        Mon, 27 Nov 2017 13:23:23 -0500
+Received: by mail-wm0-f67.google.com with SMTP id b189so36810750wmd.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Nov 2017 10:23:23 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20171114175333.kosfvgrsspkrv3p6@kozik-lap>
+In-Reply-To: <20171127123711.12081-1-l.stelmach@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Simon Shields <simon@lineageos.org>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
+To: =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 
-On Tue, Nov 14, 2017 at 06:53:33PM +0100, Krzysztof Kozlowski wrote:
-> On Mon, Nov 13, 2017 at 11:52:03AM +1100, Simon Shields wrote:
-> > This patch allows the bcm4334 to power on and enables
-> > wifi functionality on trats2.
-> > 
-> > Signed-off-by: Simon Shields <simon@lineageos.org>
-> > ---
-> >  arch/arm/boot/dts/exynos4412-trats2.dts | 27 +++++++++++++++++++++++++++
-> >  1 file changed, 27 insertions(+)
-> >
+On Mon, Nov 27, 2017 at 01:37:11PM +0100, Łukasz Stelmach wrote:
+> Move Security Subsystem nodes common for Exynos 5250 and Exynos 54xx
+> to exynos5.dtsi to avoid duplication.
+> 
+> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5.dtsi    |  6 ++++++
+>  arch/arm/boot/dts/exynos5250.dtsi | 13 +++++--------
+>  arch/arm/boot/dts/exynos54xx.dtsi |  6 ------
+>  3 files changed, 11 insertions(+), 14 deletions(-)
+> 
+> Changes in v2:
+> - Rephrased commit message
 > 
 
 Thanks, applied.
