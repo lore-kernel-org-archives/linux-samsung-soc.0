@@ -1,129 +1,118 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH] clk: samsung: s3c: Remove unneeded enumeration
-Date: Mon, 27 Nov 2017 11:31:48 +0900
-Message-ID: <1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
-References: <CGME20171127023145epcas1p1b97c3c66ce624f5362c8d9bf74997c7f@epcas1p1.samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com
-Cc: kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH] drm/bridge: analogix dp: Fix runtime PM state in
+ get_modes() callback
+Date: Mon, 27 Nov 2017 09:10:42 +0530
+Message-ID: <5ae5ce53-d15d-c18e-ec47-4a579e039e3a@codeaurora.org>
+References: <CGME20171121074940eucas1p17779b35232466785d43c56382dad01b7@eucas1p1.samsung.com>
+ <20171121074936.22520-1-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33336 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751107AbdK0Dkt (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 26 Nov 2017 22:40:49 -0500
+In-Reply-To: <20171121074936.22520-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Yakir Yang <ykk@rock-chips.com>, Sean Paul <seanpaul@chromium.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Misha Komarovskiy <zombah@gmail.com>, stable@vger.kernel.org, hjc@rock-chips.com
 
-This patch just removes the unneeded enumeration for PLL index.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-s3c2412.c | 11 ++---------
- drivers/clk/samsung/clk-s3c2443.c | 17 ++++-------------
- drivers/clk/samsung/clk-s3c64xx.c | 17 ++++++-----------
- 3 files changed, 12 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
-index b8340a49921b..1555e407529e 100644
---- a/drivers/clk/samsung/clk-s3c2412.c
-+++ b/drivers/clk/samsung/clk-s3c2412.c
-@@ -27,11 +27,6 @@
- #define CLKSRC		0x1c
- #define SWRST		0x30
- 
--/* list of PLLs to be registered */
--enum s3c2412_plls {
--	mpll, upll,
--};
--
- static void __iomem *reg_base;
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -144,10 +139,8 @@ struct samsung_mux_clock s3c2412_muxes[] __initdata = {
- };
- 
- static struct samsung_pll_clock s3c2412_plls[] __initdata = {
--	[mpll] = PLL(pll_s3c2440_mpll, MPLL, "mpll", "xti",
--						LOCKTIME, MPLLCON, NULL),
--	[upll] = PLL(pll_s3c2410_upll, UPLL, "upll", "urefclk",
--						LOCKTIME, UPLLCON, NULL),
-+	PLL(pll_s3c2440_mpll, MPLL, "mpll", "xti", LOCKTIME, MPLLCON, NULL),
-+	PLL(pll_s3c2410_upll, UPLL, "upll", "urefclk", LOCKTIME, UPLLCON, NULL),
- };
- 
- struct samsung_gate_clock s3c2412_gates[] __initdata = {
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index d94b85a42356..9580a6baf4d7 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -41,11 +41,6 @@ enum supported_socs {
- 	S3C2450,
- };
- 
--/* list of PLLs to be registered */
--enum s3c2443_plls {
--	mpll, epll,
--};
--
- static void __iomem *reg_base;
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -225,10 +220,8 @@ struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
- /* S3C2416 specific clocks */
- 
- static struct samsung_pll_clock s3c2416_pll_clks[] __initdata = {
--	[mpll] = PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref",
--						LOCKCON0, MPLLCON, NULL),
--	[epll] = PLL(pll_6553, EPLL, "epll", "epllref",
--						LOCKCON1, EPLLCON, NULL),
-+	PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref", LOCKCON0, MPLLCON, NULL),
-+	PLL(pll_6553, EPLL, "epll", "epllref", LOCKCON1, EPLLCON, NULL),
- };
- 
- PNAME(s3c2416_hsmmc0_p) = { "sclk_hsmmc0", "sclk_hsmmcext" };
-@@ -279,10 +272,8 @@ struct samsung_clock_alias s3c2416_aliases[] __initdata = {
- /* S3C2443 specific clocks */
- 
- static struct samsung_pll_clock s3c2443_pll_clks[] __initdata = {
--	[mpll] = PLL(pll_3000, MPLL, "mpll", "mpllref",
--						LOCKCON0, MPLLCON, NULL),
--	[epll] = PLL(pll_2126, EPLL, "epll", "epllref",
--						LOCKCON1, EPLLCON, NULL),
-+	PLL(pll_3000, MPLL, "mpll", "mpllref", LOCKCON0, MPLLCON, NULL),
-+	PLL(pll_2126, EPLL, "epll", "epllref", LOCKCON1, EPLLCON, NULL),
- };
- 
- static struct clk_div_table armdiv_s3c2443_d[] = {
-diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
-index 7306867a0ab8..6db01cf5ab83 100644
---- a/drivers/clk/samsung/clk-s3c64xx.c
-+++ b/drivers/clk/samsung/clk-s3c64xx.c
-@@ -56,11 +56,6 @@
- #define GATE_ON(_id, cname, pname, o, b) \
- 		GATE(_id, cname, pname, o, b, CLK_IGNORE_UNUSED, 0)
- 
--/* list of PLLs to be registered */
--enum s3c64xx_plls {
--	apll, mpll, epll,
--};
--
- static void __iomem *reg_base;
- static bool is_s3c6400;
- 
-@@ -364,12 +359,12 @@ static void __init s3c64xx_clk_sleep_init(void) {}
- 
- /* List of PLL clocks. */
- static struct samsung_pll_clock s3c64xx_pll_clks[] __initdata = {
--	[apll] = PLL(pll_6552, FOUT_APLL, "fout_apll", "fin_pll",
--						APLL_LOCK, APLL_CON, NULL),
--	[mpll] = PLL(pll_6552, FOUT_MPLL, "fout_mpll", "fin_pll",
--						MPLL_LOCK, MPLL_CON, NULL),
--	[epll] = PLL(pll_6553, FOUT_EPLL, "fout_epll", "fin_pll",
--						EPLL_LOCK, EPLL_CON0, NULL),
-+	PLL(pll_6552, FOUT_APLL, "fout_apll", "fin_pll",
-+					APLL_LOCK, APLL_CON, NULL),
-+	PLL(pll_6552, FOUT_MPLL, "fout_mpll", "fin_pll",
-+					MPLL_LOCK, MPLL_CON, NULL),
-+	PLL(pll_6553, FOUT_EPLL, "fout_epll", "fin_pll",
-+					EPLL_LOCK, EPLL_CON0, NULL),
- };
- 
- /* Aliases for common s3c64xx clocks. */
+On 11/21/2017 01:19 PM, Marek Szyprowski wrote:
+> get_modes() callback might be called asynchronously from the DRM core and
+> it is not synchronized with bridge_enable(), which sets proper runtime PM
+> state of the main DP device. Fix this by calling pm_runtime_get_sync()
+> before calling drm_get_edid(), which in turn calls drm_dp_i2c_xfer() and
+> analogix_dp_transfer() to ensure that main DP device is runtime active
+> when doing any access to its registers.
+
+Looks good to me. Would be nice to get an ack from rockchip too. Will queue it
+to drm-misc-fixes (so that it's merged for 4.15-rc2) if no one has any
+objections.
+
+Thanks,
+Archit
+
+> 
+> This fixes the following kernel issue on Samsung Exynos5250 Snow board:
+> Unhandled fault: imprecise external abort (0x406) at 0x00000000
+> pgd = c0004000
+> [00000000] *pgd=00000000
+> Internal error: : 406 [#1] PREEMPT SMP ARM
+> Modules linked in:
+> CPU: 0 PID: 62 Comm: kworker/0:2 Not tainted 4.13.0-rc2-00364-g4a97a3da420b #3357
+> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> Workqueue: events output_poll_execute
+> task: edc14800 task.stack: edcb2000
+> PC is at analogix_dp_transfer+0x15c/0x2fc
+> LR is at analogix_dp_transfer+0x134/0x2fc
+> pc : [<c0468538>]    lr : [<c0468510>]    psr: 60000013
+> sp : edcb3be8  ip : 0000002a  fp : 00000001
+> r10: 00000000  r9 : edcb3cd8  r8 : edcb3c40
+> r7 : 00000000  r6 : edd3b380  r5 : edd3b010  r4 : 00000064
+> r3 : 00000000  r2 : f0ad3000  r1 : edcb3c40  r0 : edd3b010
+> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+> Control: 10c5387d  Table: 4000406a  DAC: 00000051
+> Process kworker/0:2 (pid: 62, stack limit = 0xedcb2210)
+> Stack: (0xedcb3be8 to 0xedcb4000)
+> [<c0468538>] (analogix_dp_transfer) from [<c0424ba4>] (drm_dp_i2c_do_msg+0x8c/0x2b4)
+> [<c0424ba4>] (drm_dp_i2c_do_msg) from [<c0424e64>] (drm_dp_i2c_xfer+0x98/0x214)
+> [<c0424e64>] (drm_dp_i2c_xfer) from [<c057b2d8>] (__i2c_transfer+0x140/0x29c)
+> [<c057b2d8>] (__i2c_transfer) from [<c057b4a4>] (i2c_transfer+0x70/0xe4)
+> [<c057b4a4>] (i2c_transfer) from [<c0441de4>] (drm_do_probe_ddc_edid+0xb4/0x114)
+> [<c0441de4>] (drm_do_probe_ddc_edid) from [<c0441e5c>] (drm_probe_ddc+0x18/0x28)
+> [<c0441e5c>] (drm_probe_ddc) from [<c0445728>] (drm_get_edid+0x124/0x2d4)
+> [<c0445728>] (drm_get_edid) from [<c0465ea0>] (analogix_dp_get_modes+0x90/0x114)
+> [<c0465ea0>] (analogix_dp_get_modes) from [<c0425e8c>] (drm_helper_probe_single_connector_modes+0x198/0x68c)
+> [<c0425e8c>] (drm_helper_probe_single_connector_modes) from [<c04325d4>] (drm_setup_crtcs+0x1b4/0xd18)
+> [<c04325d4>] (drm_setup_crtcs) from [<c04344a8>] (drm_fb_helper_hotplug_event+0x94/0xd0)
+> [<c04344a8>] (drm_fb_helper_hotplug_event) from [<c0425a50>] (drm_kms_helper_hotplug_event+0x24/0x28)
+> [<c0425a50>] (drm_kms_helper_hotplug_event) from [<c04263ec>] (output_poll_execute+0x6c/0x174)
+> [<c04263ec>] (output_poll_execute) from [<c0136f18>] (process_one_work+0x188/0x3fc)
+> [<c0136f18>] (process_one_work) from [<c01371f4>] (worker_thread+0x30/0x4b8)
+> [<c01371f4>] (worker_thread) from [<c013daf8>] (kthread+0x128/0x164)
+> [<c013daf8>] (kthread) from [<c0108510>] (ret_from_fork+0x14/0x24)
+> Code: 0a000002 ea000009 e2544001 0a00004a (e59537c8)
+> ---[ end trace cddc7919c79f7878 ]---
+> 
+> Reported-by: Misha Komarovskiy <zombah@gmail.com>
+> CC: stable@vger.kernel.org # v4.10+
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> This issue was there from the beginning, but recent changes to DRM
+> core revealed it. It makes sense to backport it to patch f0a8b49c03d2
+> ("drm/bridge: analogix dp: Fix runtime PM state on driver bind"),
+> which fixed similar issue on driver bind, thus I've marked it for
+> stable v4.10+.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> ---
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index 5dd3f1cd074a..a8905049b9da 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -946,7 +946,9 @@ static int analogix_dp_get_modes(struct drm_connector *connector)
+>   			return 0;
+>   		}
+>   
+> +		pm_runtime_get_sync(dp->dev);
+>   		edid = drm_get_edid(connector, &dp->aux.ddc);
+> +		pm_runtime_put(dp->dev);
+>   		if (edid) {
+>   			drm_mode_connector_update_edid_property(&dp->connector,
+>   								edid);
+> 
+
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
