@@ -1,60 +1,66 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: BUG if jumping to usermode address in kernel
- mode
-Date: Mon, 27 Nov 2017 15:37:54 +0100
-Message-ID: <34b1d5b5-8730-e25f-46ad-92fb1612a5d3@samsung.com>
-References: <20171125113302.GY31757@n2100.armlinux.org.uk>
-        <CGME20171125113437epcas2p4f1fcbe7dc2375f08410576ba826bc188@epcas2p4.samsung.com>
-        <E1eIYiX-0007t0-AH@rmk-PC.armlinux.org.uk>
-        <83b9ac11-a01a-c407-ed46-a62ac5037431@samsung.com>
-        <20171127143219.GF31757@n2100.armlinux.org.uk>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: exynos: fix property values of LDO15/17 for
+ ODROID-XU3/4
+Date: Mon, 27 Nov 2017 18:47:07 +0100
+Message-ID: <20171127174707.34kgjdggqo3qhs7b@kozik-lap>
+References: <20171028173329.15368-1-tobetter@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59204 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbdK0Oh7 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Nov 2017 09:37:59 -0500
-In-reply-to: <20171127143219.GF31757@n2100.armlinux.org.uk>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20171028173329.15368-1-tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Alex Shi <alex.shi@linaro.org>, "Jon Medhurst (Tixy)" <tixy@linaro.org>, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
 
-Hi Russel,
+On Sat, Oct 28, 2017 at 01:32:48PM -0400, tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org wrote:
+> From: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> 
+> Looking at the schematic, LDO15 and LDO17 are tied as a power source of a
+> builtin network chipset. The voltage on LDO15 is corrected to 3.3V and the
+> name of LDO17 is corrected to "vdd_ldo17".
+> 
+> Signed-off-by: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
 
-On 2017-11-27 15:32, Russell King - ARM Linux wrote:
-> On Mon, Nov 27, 2017 at 03:27:03PM +0100, Marek Szyprowski wrote:
->> Dear All,
->>
->> On 2017-11-25 12:33, Russell King wrote:
->>> Detect if we are returning to usermode via the normal kernel exit paths
->>> but the saved PSR value indicates that we are in kernel mode.  This
->>> could occur due to corrupted stack state, which has been observed with
->>> "ftracetest".
->>>
->>> This ensures that we catch the problem case before we get to user code.
->>>
->>> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
->> This patch brakes kernel booting on Exynos 4412-based Odroid U3 board:
-> "brakes" are what you have on a car. "breaks" is the verb, which is
-> what you mean here.
+Patch does not apply on top of v4.15-rc1. Please rebase on v4.15-rc1 (or
+on my next/dt branch).
 
-I'm sorry, I wrote that mail in a hurry before leaving the office.
+Best regards,
+Krzysztof
 
-> It's known as of this morning, and I have a patch going through the
-> build testers at the moment.
->
-> Just replace the 0xcf in these with PSR_I_BIT | 0x0f.
->
-> Also wonder why your platform is running with SCR.FW clear...
-
-Yes, this fixes the issue. Thanks.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index a183b56283f8..68780569371d 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -372,8 +372,8 @@
+>  
+>  			ldo15_reg: LDO15 {
+>  				regulator-name = "vdd_ldo15";
+> -				regulator-min-microvolt = <3100000>;
+> -				regulator-max-microvolt = <3100000>;
+> +				regulator-min-microvolt = <3300000>;
+> +				regulator-max-microvolt = <3300000>;
+>  				regulator-always-on;
+>  			};
+>  
+> @@ -385,7 +385,7 @@
+>  			};
+>  
+>  			ldo17_reg: LDO17 {
+> -				regulator-name = "tsp_avdd";
+> +				regulator-name = "vdd_ldo17";
+>  				regulator-min-microvolt = <3300000>;
+>  				regulator-max-microvolt = <3300000>;
+>  				regulator-always-on;
+> -- 
+> 2.11.0
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
