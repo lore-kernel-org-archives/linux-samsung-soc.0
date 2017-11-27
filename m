@@ -1,66 +1,41 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: exynos: fix property values of LDO15/17 for
- ODROID-XU3/4
-Date: Mon, 27 Nov 2017 18:47:07 +0100
-Message-ID: <20171127174707.34kgjdggqo3qhs7b@kozik-lap>
-References: <20171028173329.15368-1-tobetter@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/2] ARM: dts: exynos: Switch to dedicated Odroid-XU3
+ sound card binding
+Date: Mon, 27 Nov 2017 19:12:13 +0100
+Message-ID: <20171127181213.lxtbbiw75wbz2dbz@kozik-lap>
+References: <20171103165446.15438-1-s.nawrocki@samsung.com>
+ <CGME20171103165539epcas1p48cc87811574dace9dfe91d8e9ec6f7ca@epcas1p4.samsung.com>
+ <20171103165446.15438-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34952 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752353AbdK0SMR (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 27 Nov 2017 13:12:17 -0500
 Content-Disposition: inline
-In-Reply-To: <20171028173329.15368-1-tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20171103165446.15438-2-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, mihailescu2m@gmail.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On Sat, Oct 28, 2017 at 01:32:48PM -0400, tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org wrote:
-> From: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Fri, Nov 03, 2017 at 05:54:45PM +0100, Sylwester Nawrocki wrote:
+> The new sound card DT binding is used for Odroid XU3 in order
+> to properly support the HDMI audio path.
+> Clocks configuration is changed so the I2S controller is now the bit
+> and the frame clock master with EPLL as the root clock source.
 > 
-> Looking at the schematic, LDO15 and LDO17 are tied as a power source of a
-> builtin network chipset. The voltage on LDO15 is corrected to 3.3V and the
-> name of LDO17 is corrected to "vdd_ldo17".
-> 
-> Signed-off-by: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  arch/arm/boot/dts/exynos4.dtsi                    |  1 +
+>  arch/arm/boot/dts/exynos5420.dtsi                 |  1 +
+>  arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 60 ++++++++++++++---------
+>  3 files changed, 40 insertions(+), 22 deletions(-)
 > 
 
-Patch does not apply on top of v4.15-rc1. Please rebase on v4.15-rc1 (or
-on my next/dt branch).
+Thanks, applied both.
 
 Best regards,
 Krzysztof
-
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index a183b56283f8..68780569371d 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -372,8 +372,8 @@
->  
->  			ldo15_reg: LDO15 {
->  				regulator-name = "vdd_ldo15";
-> -				regulator-min-microvolt = <3100000>;
-> -				regulator-max-microvolt = <3100000>;
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
->  				regulator-always-on;
->  			};
->  
-> @@ -385,7 +385,7 @@
->  			};
->  
->  			ldo17_reg: LDO17 {
-> -				regulator-name = "tsp_avdd";
-> +				regulator-name = "vdd_ldo17";
->  				regulator-min-microvolt = <3300000>;
->  				regulator-max-microvolt = <3300000>;
->  				regulator-always-on;
-> -- 
-> 2.11.0
-> 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
