@@ -1,30 +1,129 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: hwrng: Add Samsung Exynos 5250+ True
- RNG bindings
-Date: Sun, 26 Nov 2017 16:07:09 -0600
-Message-ID: <20171126220709.3wmbndorzny2okar@rob-hp-laptop>
-References: <20171123150914.31462-1-l.stelmach@samsung.com>
- <CGME20171123151002eucas1p207b8eb77fce5a2977a9f520e05dfe9f5@eucas1p2.samsung.com>
- <20171123150914.31462-2-l.stelmach@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171123150914.31462-2-l.stelmach@samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Cc: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] clk: samsung: s3c: Remove unneeded enumeration
+Date: Mon, 27 Nov 2017 11:31:48 +0900
+Message-ID: <1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
+References: <CGME20171127023145epcas1p1b97c3c66ce624f5362c8d9bf74997c7f@epcas1p1.samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com
+Cc: kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 23, 2017 at 04:09:12PM +0100, Łukasz Stelmach wrote:
-> Add binding documentation for the True Random Number Generator
-> found on Samsung Exynos 5250+ SoCs.
-> 
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  .../devicetree/bindings/rng/samsung,exynos5250-trng.txt | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+This patch just removes the unneeded enumeration for PLL index.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/clk/samsung/clk-s3c2412.c | 11 ++---------
+ drivers/clk/samsung/clk-s3c2443.c | 17 ++++-------------
+ drivers/clk/samsung/clk-s3c64xx.c | 17 ++++++-----------
+ 3 files changed, 12 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
+index b8340a49921b..1555e407529e 100644
+--- a/drivers/clk/samsung/clk-s3c2412.c
++++ b/drivers/clk/samsung/clk-s3c2412.c
+@@ -27,11 +27,6 @@
+ #define CLKSRC		0x1c
+ #define SWRST		0x30
+ 
+-/* list of PLLs to be registered */
+-enum s3c2412_plls {
+-	mpll, upll,
+-};
+-
+ static void __iomem *reg_base;
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -144,10 +139,8 @@ struct samsung_mux_clock s3c2412_muxes[] __initdata = {
+ };
+ 
+ static struct samsung_pll_clock s3c2412_plls[] __initdata = {
+-	[mpll] = PLL(pll_s3c2440_mpll, MPLL, "mpll", "xti",
+-						LOCKTIME, MPLLCON, NULL),
+-	[upll] = PLL(pll_s3c2410_upll, UPLL, "upll", "urefclk",
+-						LOCKTIME, UPLLCON, NULL),
++	PLL(pll_s3c2440_mpll, MPLL, "mpll", "xti", LOCKTIME, MPLLCON, NULL),
++	PLL(pll_s3c2410_upll, UPLL, "upll", "urefclk", LOCKTIME, UPLLCON, NULL),
+ };
+ 
+ struct samsung_gate_clock s3c2412_gates[] __initdata = {
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index d94b85a42356..9580a6baf4d7 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -41,11 +41,6 @@ enum supported_socs {
+ 	S3C2450,
+ };
+ 
+-/* list of PLLs to be registered */
+-enum s3c2443_plls {
+-	mpll, epll,
+-};
+-
+ static void __iomem *reg_base;
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -225,10 +220,8 @@ struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
+ /* S3C2416 specific clocks */
+ 
+ static struct samsung_pll_clock s3c2416_pll_clks[] __initdata = {
+-	[mpll] = PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref",
+-						LOCKCON0, MPLLCON, NULL),
+-	[epll] = PLL(pll_6553, EPLL, "epll", "epllref",
+-						LOCKCON1, EPLLCON, NULL),
++	PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref", LOCKCON0, MPLLCON, NULL),
++	PLL(pll_6553, EPLL, "epll", "epllref", LOCKCON1, EPLLCON, NULL),
+ };
+ 
+ PNAME(s3c2416_hsmmc0_p) = { "sclk_hsmmc0", "sclk_hsmmcext" };
+@@ -279,10 +272,8 @@ struct samsung_clock_alias s3c2416_aliases[] __initdata = {
+ /* S3C2443 specific clocks */
+ 
+ static struct samsung_pll_clock s3c2443_pll_clks[] __initdata = {
+-	[mpll] = PLL(pll_3000, MPLL, "mpll", "mpllref",
+-						LOCKCON0, MPLLCON, NULL),
+-	[epll] = PLL(pll_2126, EPLL, "epll", "epllref",
+-						LOCKCON1, EPLLCON, NULL),
++	PLL(pll_3000, MPLL, "mpll", "mpllref", LOCKCON0, MPLLCON, NULL),
++	PLL(pll_2126, EPLL, "epll", "epllref", LOCKCON1, EPLLCON, NULL),
+ };
+ 
+ static struct clk_div_table armdiv_s3c2443_d[] = {
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index 7306867a0ab8..6db01cf5ab83 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -56,11 +56,6 @@
+ #define GATE_ON(_id, cname, pname, o, b) \
+ 		GATE(_id, cname, pname, o, b, CLK_IGNORE_UNUSED, 0)
+ 
+-/* list of PLLs to be registered */
+-enum s3c64xx_plls {
+-	apll, mpll, epll,
+-};
+-
+ static void __iomem *reg_base;
+ static bool is_s3c6400;
+ 
+@@ -364,12 +359,12 @@ static void __init s3c64xx_clk_sleep_init(void) {}
+ 
+ /* List of PLL clocks. */
+ static struct samsung_pll_clock s3c64xx_pll_clks[] __initdata = {
+-	[apll] = PLL(pll_6552, FOUT_APLL, "fout_apll", "fin_pll",
+-						APLL_LOCK, APLL_CON, NULL),
+-	[mpll] = PLL(pll_6552, FOUT_MPLL, "fout_mpll", "fin_pll",
+-						MPLL_LOCK, MPLL_CON, NULL),
+-	[epll] = PLL(pll_6553, FOUT_EPLL, "fout_epll", "fin_pll",
+-						EPLL_LOCK, EPLL_CON0, NULL),
++	PLL(pll_6552, FOUT_APLL, "fout_apll", "fin_pll",
++					APLL_LOCK, APLL_CON, NULL),
++	PLL(pll_6552, FOUT_MPLL, "fout_mpll", "fin_pll",
++					MPLL_LOCK, MPLL_CON, NULL),
++	PLL(pll_6553, FOUT_EPLL, "fout_epll", "fin_pll",
++					EPLL_LOCK, EPLL_CON0, NULL),
+ };
+ 
+ /* Aliases for common s3c64xx clocks. */
+-- 
+1.9.1
+
