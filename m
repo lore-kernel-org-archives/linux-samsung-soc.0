@@ -1,57 +1,98 @@
-From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Subject: Re: [PATCH 2/3] hwrng: exynos - add Samsung Exynos True RNG driver
-Date: Mon, 27 Nov 2017 08:23:50 +0100
-Message-ID: <87indwchh5.fsf%l.stelmach@samsung.com>
-References: <CANc+2y4=Eas-i0jRwgTxqFeAngpPMKoUjVwsXWeU7G24g4252w@mail.gmail.com>
-        <CGME20171127072355eucas1p218e3cbaeb1ba16b5a1262deda350d850@eucas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-reply-to: <CANc+2y4=Eas-i0jRwgTxqFeAngpPMKoUjVwsXWeU7G24g4252w@mail.gmail.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] drm/exynos: remove unnecessary function declaration
+Date: Mon, 27 Nov 2017 17:06:37 +0900
+Message-ID: <1511769997-3223-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20171127080639epcas2p3d6ab12d9a00fc55af2b7b09741052704@epcas2p3.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:49161 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751126AbdK0IGl (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 27 Nov 2017 03:06:41 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, Inki Dae <inki.dae@samsung.com>
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Removed exynos_drm_get_dma_device funtion declaration on top
+of exynos_drm_drv.c file.
 
-It was <2017-11-24 pi=C4=85 16:25>, when PrasannaKumar Muralidharan wrote:
->> +}
->> +
->> +static int exynos_trng_do_read(struct hwrng *rng, void *data, size_t ma=
-x,
->> +                              bool wait)
->> +{
->> +       struct exynos_trng_dev *trng;
->> +       u32 val;
->> +
->> +       max =3D max > (EXYNOS_TRNG_FIFO_LEN * 4) ?
->> +               (EXYNOS_TRNG_FIFO_LEN * 4) : max;
->
-> max is always > 32. This condition is not required.
+We can remove this declaration by moving the implementation
+of this function upwards.
 
-No, it is not. http://elixir.free-electrons.com/linux/latest/source/drivers=
-/char/hw_random/core.c#L67
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 44 ++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 23 deletions(-)
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBCAAGBQJaG72GAAoJELCuHpyYpYAQ7TwH/RluMZvecCAMUJ+TOwqhwmo8
-Pnd91DSwwzYfQdNuXapahStONC3jjrQOd6eRaKrxo6084H9iUpSeJIiZhBMvduDu
-jvgi3Se+IkrlNZgsXeLHeTrxDoUvutib7tklV2yhrNEx5K/Yduf5/h5cK+jwCTzU
-8ptGH41kAbRcMSwEau2MBYf48a0gWru27cFiSTIymdIjqHMBZH41BZSpdh0ivKnW
-7nDd3+ZIANec+xyzt03fvHijtPOJlDjTN5N1ai+BC7DSc18EnPb58TaoYa1A1LQD
-NjXi3SlzW9c2Xa3KdogCxQcOdLGMcGmEMq+KsFIkN0uJzS3aHMed2b+Gudo7GvU=
-=mKSe
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index a6ff3a5..27e423b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -37,8 +37,6 @@
+ #define DRIVER_MAJOR	1
+ #define DRIVER_MINOR	0
+ 
+-static struct device *exynos_drm_get_dma_device(void);
+-
+ int exynos_atomic_check(struct drm_device *dev,
+ 			struct drm_atomic_state *state)
+ {
+@@ -301,6 +299,27 @@ static struct component_match *exynos_drm_match_add(struct device *dev)
+ 	return match ?: ERR_PTR(-ENODEV);
+ }
+ 
++static struct device *exynos_drm_get_dma_device(void)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(exynos_drm_drivers); ++i) {
++		struct exynos_drm_driver_info *info = &exynos_drm_drivers[i];
++		struct device *dev;
++
++		if (!info->driver || !(info->flags & DRM_DMA_DEVICE))
++			continue;
++
++		while ((dev = bus_find_device(&platform_bus_type, NULL,
++					    &info->driver->driver,
++					    (void *)platform_bus_type.match))) {
++			put_device(dev);
++			return dev;
++		}
++	}
++	return NULL;
++}
++
+ static int exynos_drm_bind(struct device *dev)
+ {
+ 	struct exynos_drm_private *private;
+@@ -469,27 +488,6 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
+ 	},
+ };
+ 
+-static struct device *exynos_drm_get_dma_device(void)
+-{
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(exynos_drm_drivers); ++i) {
+-		struct exynos_drm_driver_info *info = &exynos_drm_drivers[i];
+-		struct device *dev;
+-
+-		if (!info->driver || !(info->flags & DRM_DMA_DEVICE))
+-			continue;
+-
+-		while ((dev = bus_find_device(&platform_bus_type, NULL,
+-					    &info->driver->driver,
+-					    (void *)platform_bus_type.match))) {
+-			put_device(dev);
+-			return dev;
+-		}
+-	}
+-	return NULL;
+-}
+-
+ static void exynos_drm_unregister_devices(void)
+ {
+ 	int i;
+-- 
+1.9.1
