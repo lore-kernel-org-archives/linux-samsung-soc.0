@@ -1,45 +1,111 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 10/10] arm64: dts: exynos: remove i80-if-timings nodes
-Date: Tue, 28 Nov 2017 12:56:08 +0100
-Message-ID: <CAJKOXPfPovJX-7hoD9ORTx7h8pLK1-oiSvpFCHmJEHzoPDRbyA@mail.gmail.com>
-References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
- <CGME20170824133412eucas1p23233d7bed8b83d86b26de01bc1ecf2a1@eucas1p2.samsung.com>
- <1503581639-580-11-git-send-email-a.hajda@samsung.com> <20170908164752.mrxqrhkszmfqbk6x@kozik-lap>
+From: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH] ARM: dts: exynos: add DT nodes for PRNG in Exynos5 SoCs
+Date: Tue, 28 Nov 2017 13:50:09 +0100
+Message-ID: <20171128125009.30195-1-l.stelmach@samsung.com>
+References: <CGME20171128125013eucas1p1767769224b6bc9455fe2b3158c1d7fad@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170908164752.mrxqrhkszmfqbk6x@kozik-lap>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57880 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751377AbdK1MuR (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 28 Nov 2017 07:50:17 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, krzk@kernel.org
+Cc: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 
-On Fri, Sep 8, 2017 at 6:47 PM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Thu, Aug 24, 2017 at 03:33:59PM +0200, Andrzej Hajda wrote:
->> Since i80/command mode is determined in runtime by propagating info
->> from panel this property can be removed.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 6 ------
->>  1 file changed, 6 deletions(-)
->>
->
-> I understand this should go in after merging the driver changes to
-> preserve bisectability?
+Add nodes for PRNG in dts files decribing Exynos5 chips.
 
-Dear Inki Dae,
+Rename the device node in exynos4.dtsi to match names
+in exynos5.dtsi.
 
-This was a DeviceTree patch and it should be kept separate from driver
-changes. You should not apply it then. Especially without an ack from
-arm-soc or Exynos maintainers... because the usual path is through
-arm-soc.
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi    | 2 +-
+ arch/arm/boot/dts/exynos5.dtsi    | 5 +++++
+ arch/arm/boot/dts/exynos5250.dtsi | 5 +++++
+ arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
+ arch/arm/boot/dts/exynos5420.dtsi | 5 +++++
+ 5 files changed, 21 insertions(+), 1 deletion(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=88a5e22a90efd12dfde642ed55d4c669ab658b0f
-
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 5739389f5bb8..bfa4c9062449 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -1005,7 +1005,7 @@
+ 		clock-names = "secss";
+ 	};
+ 
+-	prng: rng@10830400 {
++	prng: prng@10830400 {
+ 		compatible = "samsung,exynos4-rng";
+ 		reg = <0x10830400 0x200>;
+ 		clocks = <&clock CLK_SSS>;
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index 7da4a4285b24..8429d9f4dc52 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -210,5 +210,10 @@
+ 			reg = <0x10830000 0x300>;
+ 			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
++
++		prng: prng@10830400 {
++		      compatible = "samsung,exynos4-rng";
++		      reg = <0x10830400 0x200>;
++		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 8032d7e567fc..51aa83ba8c87 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -1036,6 +1036,11 @@
+ 	pinctrl-0 = <&i2c3_bus>;
+ };
+ 
++&prng {
++	clocks = <&clock CLK_SSS>;
++	clock-names = "secss";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 7eab4bc07cec..1604cb1b837d 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -325,6 +325,11 @@
+ 	clock-names = "fin_pll", "mct";
+ };
+ 
++&prng {
++	clocks = <&clock CLK_SSS>;
++	clock-names = "secss";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 02d2f898efa6..31c77ea9123d 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -1409,6 +1409,11 @@
+ 	clock-names = "fin_pll", "mct";
+ };
+ 
++&prng {
++	clocks = <&clock CLK_SSS>;
++	clock-names = "secss";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+-- 
+2.11.0
