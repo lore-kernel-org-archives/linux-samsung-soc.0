@@ -1,36 +1,45 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH] crypto: Add myself as co-maintainer for s5p-sss.c
-Date: Tue, 28 Nov 2017 11:07:05 +0100
-Message-ID: <f2871875-a4ed-6c5e-5a67-1051e44c6dd9@partner.samsung.com>
-References: <CGME20171128100706eucas1p1aa80a6c7eb4f1f4facbde258dfe9ceda@eucas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 10/10] arm64: dts: exynos: remove i80-if-timings nodes
+Date: Tue, 28 Nov 2017 12:56:08 +0100
+Message-ID: <CAJKOXPfPovJX-7hoD9ORTx7h8pLK1-oiSvpFCHmJEHzoPDRbyA@mail.gmail.com>
+References: <1503581639-580-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170824133412eucas1p23233d7bed8b83d86b26de01bc1ecf2a1@eucas1p2.samsung.com>
+ <1503581639-580-11-git-send-email-a.hajda@samsung.com> <20170908164752.mrxqrhkszmfqbk6x@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-language: en-US
-Sender: linux-crypto-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, k.konieczny@partner.samsung.com, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170908164752.mrxqrhkszmfqbk6x@kozik-lap>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add myself as co-maintainer for Samsung Security SubSystem driver.
+On Fri, Sep 8, 2017 at 6:47 PM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Thu, Aug 24, 2017 at 03:33:59PM +0200, Andrzej Hajda wrote:
+>> Since i80/command mode is determined in runtime by propagating info
+>> from panel this property can be removed.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 6 ------
+>>  1 file changed, 6 deletions(-)
+>>
+>
+> I understand this should go in after merging the driver changes to
+> preserve bisectability?
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Dear Inki Dae,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aa71ab52fd76..3f6cadf2e087 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11982,6 +11982,7 @@ F:	drivers/media/i2c/s5k5baf.c
- SAMSUNG S5P Security SubSystem (SSS) DRIVER
- M:	Krzysztof Kozlowski <krzk@kernel.org>
- M:	Vladimir Zapolskiy <vz@mleia.com>
-+M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
- L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
--- 
-2.15.0
+This was a DeviceTree patch and it should be kept separate from driver
+changes. You should not apply it then. Especially without an ack from
+arm-soc or Exynos maintainers... because the usual path is through
+arm-soc.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=88a5e22a90efd12dfde642ed55d4c669ab658b0f
+
+Best regards,
+Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
