@@ -1,139 +1,103 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: add DT nodes for PRNG in Exynos5 SoCs
-Date: Tue, 28 Nov 2017 13:56:42 +0100
-Message-ID: <CAJKOXPexERCdXgYbE9TSE1RzNEyLwiSM9wCMwVJahQoapjSrJw@mail.gmail.com>
-References: <CGME20171128125013eucas1p1767769224b6bc9455fe2b3158c1d7fad@eucas1p1.samsung.com>
- <20171128125009.30195-1-l.stelmach@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [GIT PULL] exynos-drm-next
+Date: Tue, 28 Nov 2017 14:45:49 +0100
+Message-ID: <9ef0a1c1-a10c-978a-6c90-b02a968d8c6c@samsung.com>
+References: <CGME20171026013709epcas2p2525d1249a7f2ad640ce9028df12e2436@epcas2p2.samsung.com>
+ <1508981828-5178-1-git-send-email-inki.dae@samsung.com>
+ <CAPM=9ty-Boo8mjREQ8T2AaGYoU5ZcAu70iQpwJy_oawZxoS+Pg@mail.gmail.com>
+ <5A0B97D5.1090202@samsung.com>
+ <20171120073307.odudjlw4f6vsocjj@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:56514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751555AbdK1M4o (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 07:56:44 -0500
-Received: from mail-wr0-f177.google.com (mail-wr0-f177.google.com [209.85.128.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2289721943
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2017 12:56:44 +0000 (UTC)
-Received: by mail-wr0-f177.google.com with SMTP id o14so241350wrf.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2017 04:56:44 -0800 (PST)
-In-Reply-To: <20171128125009.30195-1-l.stelmach@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20171120073307.odudjlw4f6vsocjj@phenom.ffwll.local>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>, Inki Dae <inki.dae@samsung.com>
+Cc: Dave Airlie <airlied@linux.ie>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-On Tue, Nov 28, 2017 at 1:50 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
-> Add nodes for PRNG in dts files decribing Exynos5 chips.
->
-> Rename the device node in exynos4.dtsi to match names
-> in exynos5.dtsi.
->
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4.dtsi    | 2 +-
->  arch/arm/boot/dts/exynos5.dtsi    | 5 +++++
->  arch/arm/boot/dts/exynos5250.dtsi | 5 +++++
->  arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
->  arch/arm/boot/dts/exynos5420.dtsi | 5 +++++
->  5 files changed, 21 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 5739389f5bb8..bfa4c9062449 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -1005,7 +1005,7 @@
->                 clock-names = "secss";
->         };
->
-> -       prng: rng@10830400 {
-> +       prng: prng@10830400 {
-
-When you added a trng node in Exynos TRNG patch [1] I was thinking
-about using just "rng" as node name. However it seemed not that
-important to raise a review concern.
-
-However now you want to convert rng to prng... I think no. It should
-be rng because this is the generic name of a device class (as pointed
-by ePAPR).
-
-Please use scripts/get_maintainers.pl to get the list of people to CC
-(+Cc Kukjin).
-
-[1] https://patchwork.kernel.org/patch/10076239/
-
-Best regards,
-Krzysztof
-
->                 compatible = "samsung,exynos4-rng";
->                 reg = <0x10830400 0x200>;
->                 clocks = <&clock CLK_SSS>;
-> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-> index 7da4a4285b24..8429d9f4dc52 100644
-> --- a/arch/arm/boot/dts/exynos5.dtsi
-> +++ b/arch/arm/boot/dts/exynos5.dtsi
-> @@ -210,5 +210,10 @@
->                         reg = <0x10830000 0x300>;
->                         interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
->                 };
-> +
-> +               prng: prng@10830400 {
-> +                     compatible = "samsung,exynos4-rng";
-> +                     reg = <0x10830400 0x200>;
-> +               };
->         };
->  };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 8032d7e567fc..51aa83ba8c87 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -1036,6 +1036,11 @@
->         pinctrl-0 = <&i2c3_bus>;
->  };
->
-> +&prng {
-> +       clocks = <&clock CLK_SSS>;
-> +       clock-names = "secss";
-> +};
-> +
->  &pwm {
->         clocks = <&clock CLK_PWM>;
->         clock-names = "timers";
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index 7eab4bc07cec..1604cb1b837d 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -325,6 +325,11 @@
->         clock-names = "fin_pll", "mct";
->  };
->
-> +&prng {
-> +       clocks = <&clock CLK_SSS>;
-> +       clock-names = "secss";
-> +};
-> +
->  &pwm {
->         clocks = <&clock CLK_PWM>;
->         clock-names = "timers";
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 02d2f898efa6..31c77ea9123d 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -1409,6 +1409,11 @@
->         clock-names = "fin_pll", "mct";
->  };
->
-> +&prng {
-> +       clocks = <&clock CLK_SSS>;
-> +       clock-names = "secss";
-> +};
-> +
->  &pwm {
->         clocks = <&clock CLK_PWM>;
->         clock-names = "timers";
-> --
-> 2.11.0
->
+SGkgRGFuaWVsLAoKT24gMjAxNy0xMS0yMCAwODozMywgRGFuaWVsIFZldHRlciB3cm90ZToKPiBP
+biBXZWQsIE5vdiAxNSwgMjAxNyBhdCAxMDoyNjo0NUFNICswOTAwLCBJbmtpIERhZSB3cm90ZToK
+Pj4gMjAxN+uFhCAxMeyblCAxNOydvCAxMzoyMuyXkCBEYXZlIEFpcmxpZSDsnbQo6rCAKSDsk7Qg
+6riAOgo+Pj4gT24gMjYgT2N0b2JlciAyMDE3IGF0IDExOjM3LCBJbmtpIERhZSA8aW5raS5kYWVA
+c2Ftc3VuZy5jb20+IHdyb3RlOgo+Pj4+ICAgICBJbXByb3ZpbmcgRXh5bm9zIERSTSBIRE1JIGFu
+ZCBNaXhlciBkcml2ZXJzIGFuZCBhbHNvIGFkZGluZwo+Pj4+ICAgICBIRE1JIGF1ZGlvIHN1cHBv
+cnQuCj4+Pj4KPj4+PiAgICAgUGxlYXNlIGtpbmRseSBsZXQgbWUga25vdyBpZiB0aGVyZSBpcyBh
+bnkgcHJvYmxlbS4KPj4+Pgo+Pj4+ICAgICBQcy4gd2UgYXJlIHJldmlld2luZyBJUFAgdjIgZHJp
+dmVyWzFdIHdoaWNoIGNvbnRyb2xzIHBvc3QgcHJvY2Vzc29yIGRldmljZXMKPj4+PiAgICAgICAg
+IHN1Y2ggYXMgRklNQywgR1NjYWxlciBhbmQgUm90YXRvciBvZiBFeHlub3MgU29DLiBTbyBJIHBs
+YW4gdG8gcmVxdWVzdAo+Pj4+ICAgICAgICAgZ2l0IHB1bGwgb25lIG1vcmUgdGltZSBhZnRlciBy
+ZXZpZXcuCj4+PiBJIGRyb3BwZWQgdGhlIGJhbGwgYSBiaXQgaGVyZSwgSSBkbyB0aGluayB0aGUg
+c2Vjb25kIHB1bGwgd2l0aCBJUFAgaXMKPj4+IHByb2JhYmx5IGEgYml0IGxhdGUsCj4+PiBJIHRo
+aW5rIEknZCBsaWtlIG1vcmUgYXNzdXJhbmNlIHRoYXQgdGhlIFVBUEkgZm9yIElQUCBpcyB0byBi
+ZSB1c2VkIGluCj4+PiBzb21lIHVwc3RyZWFtCj4+PiBzaGlwcGluZyBwcm9qZWN0IChmb3JrcyBv
+ZiBtcHYgbm90IHdpdGhzdGFuZGluZywgdW5sZXNzIHRoaXMgZm9yawo+Pj4gc2hpcHMgaW4gc29t
+ZSBkaXN0cm8KPj4+IG9yIHByb2R1Y3QpLgo+PiBJIGFsc28gY29tbWVudGVkIHNhbWUgdGhpbmcg
+aW50ZXJuYWxseSB0byBhdXRob3IgLSBNYXJlayAtIG9mIElQUCB2MiBidXQgSSB0aG91Z2h0IGV4
+aXN0aW5nIG9uZSBpcyByZWFsbHkgdWdseSB0aGluZyBzbyBtYXkgYmUgYmV0dGVyIHRvIGNoYW5n
+ZSBpdCBhcyBzb29uIGFzIHBvc3NpYmxlIGJlZm9yZSBvdGhlciB1c2VycyB1c2UgdGhpcyBvbmUu
+Cj4+IEFueXdheSwgd2Ugd2lsbCBtZXJnZSB1c2VyIHNwYWNlIGZvciBJUFAgdjIgdG8gbGliZHJt
+IGZpcnN0LCBhbmQgdGhlbiBMaW51eCBwbGF0Zm9ybS4gSSBob3BlIElQUHYyIHdvdWxkIGJlIG1l
+cmdlZCBhcyBzb29uIGFzIHBvc3NpYmxlIGluIG5leHQgdHVybi4KPiBCZXlvbmQgd2hhdCBEYW5p
+ZWwgc2FpZCB3ZSB1bmZvcnR1bmF0ZWx5IGRvbid0IGhhdmUgdGltZSBtYWNoaW5lcywgc28KPiBm
+aXhpbmcgYmFkIHVhcGkgaXNuJ3QgcmVhbGx5IHBvc3NpYmxlLiBUaGUgcHJvYmxlbSBpcyB0aGF0
+IGV2ZW4gaWYgeW91Cj4gY3JlYXRlIGlwcHYyLCB0aGVuIHBlb3BsZSBjYW4gc3RpbGwgdXNlIGlw
+cHYxLCBhbmQgaXQgbmVlZHMgdG8ga2VlcAo+IHdvcmtpbmcgKGFsbW9zdCkgZm9yZXZlci4gU28g
+b25jZSBhIGJhZCB1YXBpIGlzIGluLCBpdCdzIGluLCBhbmQgdGhlcmUncwo+IG5vIGdvb2QgcmVh
+c29uIHRvIGFkZCBtb3JlIHVhcGkgKHNpbmNlIGluIDIgeWVhcnMgeW91IG1pZ2h0IGFnYWluIHJl
+YWxpemUKPiBpdCdzIG5vdCBhIGdvb2QgaWRlYSkgdG8gImZpeCIgdGhhdC4gWW91IGNhbid0IGZp
+eCBiYWQgdWFwaS4KPgo+IFRoYXQncyB3aHkgd2UgaGF2ZSBhbGwgdGhlc2UgcnVsZXMgdG8gbWFr
+ZSBzdXJlIGFzIGxpdHRsZSBiYWQgdWFwaSBhcwo+IHBvc3NpYmxlIGxhbmRzLCBzaW5jZSB0aGUg
+Y29zdCBpcyBzbyBiYWQuCj4KPiBTbyB5ZWFoIHVubGVzcyB5b3UgaGF2ZSBuZXcgaHcgdGhhdCBu
+ZWVkcyBpdCwgb3IgdGhlcmUncyBhbm90aGVyIGNsZWFyCj4gbmVlZCAocGVyZm9ybWFuY2UsIGZl
+YXR1cmVzKSwgeW91J3JlIHN0dWNrIHdpdGggaXBwdjEuICJJdCdzIGNsZWFuZXIiIGlzCj4gbm90
+IGEgZ29vZCByZWFzb24gdG8gcmV2IHVhcGksIHNpbmNlIG91ciBleHBlcmllbmNlIHdpdGggYWxs
+IHRoZSB1YXBpIGluCj4gZHJtIGNsZWFybHkgc2hvd3Mgd2UgY2FuJ3QgcHJlZGljdCB0aGUgZnV0
+dXJlIDotKQoKSSBnZW5lcmFsbHkgYWdyZWUgdGhhdCBVQVBJIGludGVyZmFjZSBoYXMgdG8gYmUg
+c3RhYmxlIGFuZCB3ZWxsIGRlc2lnbmVkLgoKVGhlcmUgYXJlIGhvd2V2ZXIgc29tZSAnZmVhdHVy
+ZXMnIElQUHYxIHVhcGkgdGhhdCByZWFsbHkgYWxsb3dzIHVzIHRvCm9ic29sZXRlIGl0OgoKMS4g
+SVBQIEFQSSBjYW4gYmUgb3B0aW9uYWwgaW4gRXh5bm9zIERSTSwgc28gdXNlcnNwYWNlIHNob3Vs
+ZCBub3QgcmVseSB0aGF0Cml0IGlzIGFsd2F5cyBhdmFpbGFibGUgYW5kIHNob3VsZCBoYXZlIGEg
+c29mdHdhcmUgZmFsbGJhY2sgaW4gY2FzZSBpdCBpcyBub3QKYXZhaWxhYmxlLgoKMi4gVGhlIG9u
+bHkgbW9kZSB3aGljaCB3YXMgaW5pdGlhbGx5IHNlbWktd29ya2luZyB3YXMgbWVtb3J5LXRvLW1l
+bW9yeS4gVGhlCnJlbWFpbmluZyBtb2RlcyAobGNkLXdyaXRlYmFjayBhbmQgb3V0cHV0KSB3ZXJl
+IG5ldmVyIG9wZXJhdGlvbmFsIChib3RoIGluCm1haW5saW5lIGFuZCBldmVuIHZlbmRvciBrZXJu
+ZWxzKS4KCjMuIElQUCBtYWlubGluZSB1YXBpIGNvbXBhdGliaWxpdHkgZm9yIG1lbW9yeS10by1t
+ZW1vcnkgZ290IGJyb2tlbiB2ZXJ5CmVhcmx5IGJ5IGNvbW1pdCAwODM1MDBiYWVmZDVmNGMyMTVh
+NWE5M2FlZjI0OTJjMWFhNzc1ODI4ICgiZHJtOiByZW1vdmUKRFJNX0ZPUk1BVF9OVjEyTVQiLCB3
+aGljaCByZW1vdmVkIHRoZSBzdXBwb3J0IGZvciB0aWxlZCBmb3JtYXRzLCB0aGUgbWFpbgpmZWF0
+dXJlIHdoaWNoIG1hZGUgdGhpcyBhcGkgc29tZWhvdyB1c2VmdWwgb24gRXh5bm9zIHBsYXRmb3Jt
+cyAodmlkZW8gY29kZWMKdGhhdCB0aW1lIHByb2R1Y2VkIG9ubHkgdGlsZWQgZnJhbWVzLCB0byBp
+bXBsZW1lbnQgeHZpZGVvIG9yIGFueSBvdGhlcgp2aWRlbyBvdmVybGF5LCBvbmUgaGFzIHRvIGRl
+dGlsZSB0aGVtIGZvciBwcm9wZXIgZGlzcGxheSkuCgo0LiBCcm9rZW4gZHJpdmVycy4gRXNwZWNp
+YWxseSBvbmNlIHN1cHBvcnQgZm9yIElPTU1VIGhhcyBiZWVuIGFkZGVkLCBpdApyZXZlYWxlZCB0
+aGF0IGRyaXZlcnMgZG9uJ3QgY29uZmlndXJlIERNQSBvcGVyYXRpb25zIHByb3Blcmx5IGFuZCBp
+biBtYW55CmNhc2VzIG9wZXJhdGUgb3V0c2lkZSB0aGUgcHJvdmlkZWQgYnVmZmVycyB0cmFzaGlu
+ZyBtZW1vcnkgYXJvdW5kLgoKNS4gTmVlZCBmb3IgZXh0ZXJuYWwgcGF0Y2hlcy4gQWx0aG91Z2gg
+SVBQIHVhcGkgaGFzIGJlZW4gdXNlZCBpbiBzb21lCnZlbmRvciBrZXJuZWxzLCBidXQgaW4gc3Vj
+aCBjYXNlcyB0aGVyZSB3ZXJlIGFkZGl0aW9uYWwgcGF0Y2hlcyBhcHBsaWVkCihsaWtlIHJldmVy
+dGluZyBtZW50aW9uZWQgMDgzNTAwYmFlZmQ1IHBhdGNoKSB3aGF0IG1lYW5zIHRoYXQgdGhvc2UK
+dXNlcnNwYWNlIGFwcHMgd2hpY2ggbWlnaHQgdXNlIGl0LCBzdGlsbCB3b24ndCB3b3JrIHdpdGgg
+dGhlIG1haW5saW5lCnZlcnNpb24uCgpSaWdodCwgYXMgeW91IGFscmVhZHkgc2FpZCB3ZSBkb24n
+dCBoYXZlIHRpbWUgbWFjaGluZXMsIHNvIHdlIGNhbm5vdCBjaGFuZ2UKaXQsIGJ1dCBJUFAgZXh0
+ZW5zaW9uIHNob3VsZCBuZXZlciBoYXZlIGJlZW4gbWVyZ2VkIHRvIG1haW5saW5lIGluIHRoYXQK
+Zm9ybS4KCldlIGNhbiBob3dldmVyIG9ic29sZXRlIGl0IG5vdyBhcyBpdCBpcyByZWFsbHkgbm9u
+LWZ1bmN0aW9uYWwgYW5kIGZyYW5rbHkKc3BlYWtpbmcgZGVhZC1jb2RlLiBJZiB5b3UgYWdyZWUg
+d2l0aCB0aGUgYWJvdmUgdGhhbiBhdCBsZWFzdCB0aGUgZmlyc3QKcGF0Y2ggY2FuIGJlIG1lcmdl
+ZCwgd2hpY2ggY2xlYXJseSBtYXJrcyB0aGF0IEV4eW5vcyBJUFAgaXMgYnJva2VuIGFuZApldmVy
+IHJlYWxseSBmdW5jdGlvbmFsLiBJIGJldCBubyBvbmUgd2lsbCBjb21wbGFpbi4gVGhlbiB3ZSBj
+YW4gY29udGludWUKdGhlIGRpc2N1c3Npb24gYWJvdXQgSVBQdjIgdWFwaS9wYXRjaGVzLgoKQmVz
+dCByZWdhcmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBSJkQgSW5zdGl0dXRl
+IFBvbGFuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
