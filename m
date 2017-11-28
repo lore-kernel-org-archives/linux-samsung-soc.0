@@ -1,42 +1,49 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 0/3] Exynos: add CPU performance counters
-Date: Mon, 27 Nov 2017 19:34:52 +0100
-Message-ID: <20171127183452.fdapp2wvt62hd6z2@kozik-lap>
-References: <CGME20171123143445eucas1p1fec892cbeaf16f5642eff952b8d9e1cb@eucas1p1.samsung.com>
- <20171123143431.12434-1-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:43993 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdK0Se4 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Nov 2017 13:34:56 -0500
-Received: by mail-wm0-f42.google.com with SMTP id x63so36063464wmf.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Nov 2017 10:34:55 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20171123143431.12434-1-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [REBASED PATCH] ARM: dts: exynos: fix property values of LDO15/17 for ODROID-XU3/4
+Date: Mon, 27 Nov 2017 19:15:01 -0500
+Message-ID: <20171128001501.12740-1-tobetter@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>
 
-On Thu, Nov 23, 2017 at 03:34:28PM +0100, Marek Szyprowski wrote:
-> Hi!
-> 
-> This patchset enables support for ARM PMU (Performance Monitoring Units)
-> available in all supported Exynos SoCs. ARM PMU nodes were missing in dts
-> for Exynos 4210, 4412, 5410, 542x, 5433 SoCs.
-> 
-> Tested on Odroid U3, Odroid XU3, Google Snow and TM2 boards.
-> 
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
-> 
-> 
+Looking at the schematic, LDO15 and LDO17 are tied as a power source of a
+builtin network chipset. The voltage on LDO15 is corrected to 3.3V and the
+name of LDO17 is corrected to "vdd_ldo17".
 
-Thanks, applied all three.
+Signed-off-by: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index a5b8d0f0877e..81cbb77204a8 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -233,8 +233,8 @@
+ 
+ 			ldo15_reg: LDO15 {
+ 				regulator-name = "vdd_ldo15";
+-				regulator-min-microvolt = <3100000>;
+-				regulator-max-microvolt = <3100000>;
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
+ 				regulator-always-on;
+ 			};
+ 
+@@ -246,7 +246,7 @@
+ 			};
+ 
+ 			ldo17_reg: LDO17 {
+-				regulator-name = "tsp_avdd";
++				regulator-name = "vdd_ldo17";
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
+ 				regulator-always-on;
+-- 
+2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
