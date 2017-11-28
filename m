@@ -1,49 +1,36 @@
-From: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [REBASED PATCH] ARM: dts: exynos: fix property values of LDO15/17 for ODROID-XU3/4
-Date: Mon, 27 Nov 2017 19:15:01 -0500
-Message-ID: <20171128001501.12740-1-tobetter@gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH] crypto: Add myself as co-maintainer for s5p-sss.c
+Date: Tue, 28 Nov 2017 11:07:05 +0100
+Message-ID: <f2871875-a4ed-6c5e-5a67-1051e44c6dd9@partner.samsung.com>
+References: <CGME20171128100706eucas1p1aa80a6c7eb4f1f4facbde258dfe9ceda@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-language: en-US
+Sender: linux-crypto-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, k.konieczny@partner.samsung.com, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Looking at the schematic, LDO15 and LDO17 are tied as a power source of a
-builtin network chipset. The voltage on LDO15 is corrected to 3.3V and the
-name of LDO17 is corrected to "vdd_ldo17".
+Add myself as co-maintainer for Samsung Security SubSystem driver.
 
-Signed-off-by: Dongjin Kim <tobetter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 ---
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index a5b8d0f0877e..81cbb77204a8 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -233,8 +233,8 @@
- 
- 			ldo15_reg: LDO15 {
- 				regulator-name = "vdd_ldo15";
--				regulator-min-microvolt = <3100000>;
--				regulator-max-microvolt = <3100000>;
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
- 			};
- 
-@@ -246,7 +246,7 @@
- 			};
- 
- 			ldo17_reg: LDO17 {
--				regulator-name = "tsp_avdd";
-+				regulator-name = "vdd_ldo17";
- 				regulator-min-microvolt = <3300000>;
- 				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index aa71ab52fd76..3f6cadf2e087 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11982,6 +11982,7 @@ F:	drivers/media/i2c/s5k5baf.c
+ SAMSUNG S5P Security SubSystem (SSS) DRIVER
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Vladimir Zapolskiy <vz@mleia.com>
++M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
+ L:	linux-crypto@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
 -- 
-2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.15.0
