@@ -1,103 +1,79 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [GIT PULL] exynos-drm-next
-Date: Tue, 28 Nov 2017 14:45:49 +0100
-Message-ID: <9ef0a1c1-a10c-978a-6c90-b02a968d8c6c@samsung.com>
+Date: Wed, 29 Nov 2017 07:40:07 +0900
+Message-ID: <5A1DE5C7.807@samsung.com>
 References: <CGME20171026013709epcas2p2525d1249a7f2ad640ce9028df12e2436@epcas2p2.samsung.com>
- <1508981828-5178-1-git-send-email-inki.dae@samsung.com>
- <CAPM=9ty-Boo8mjREQ8T2AaGYoU5ZcAu70iQpwJy_oawZxoS+Pg@mail.gmail.com>
- <5A0B97D5.1090202@samsung.com>
- <20171120073307.odudjlw4f6vsocjj@phenom.ffwll.local>
+        <1508981828-5178-1-git-send-email-inki.dae@samsung.com>
+        <CAPM=9ty-Boo8mjREQ8T2AaGYoU5ZcAu70iQpwJy_oawZxoS+Pg@mail.gmail.com>
+        <5A0B97D5.1090202@samsung.com>
+        <20171120073307.odudjlw4f6vsocjj@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:27575 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751497AbdK1WkP (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 28 Nov 2017 17:40:15 -0500
 In-reply-to: <20171120073307.odudjlw4f6vsocjj@phenom.ffwll.local>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>, Inki Dae <inki.dae@samsung.com>
-Cc: Dave Airlie <airlied@linux.ie>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Dave Airlie <airlied@gmail.com>, Dave Airlie <airlied@linux.ie>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-SGkgRGFuaWVsLAoKT24gMjAxNy0xMS0yMCAwODozMywgRGFuaWVsIFZldHRlciB3cm90ZToKPiBP
-biBXZWQsIE5vdiAxNSwgMjAxNyBhdCAxMDoyNjo0NUFNICswOTAwLCBJbmtpIERhZSB3cm90ZToK
-Pj4gMjAxN+uFhCAxMeyblCAxNOydvCAxMzoyMuyXkCBEYXZlIEFpcmxpZSDsnbQo6rCAKSDsk7Qg
-6riAOgo+Pj4gT24gMjYgT2N0b2JlciAyMDE3IGF0IDExOjM3LCBJbmtpIERhZSA8aW5raS5kYWVA
-c2Ftc3VuZy5jb20+IHdyb3RlOgo+Pj4+ICAgICBJbXByb3ZpbmcgRXh5bm9zIERSTSBIRE1JIGFu
-ZCBNaXhlciBkcml2ZXJzIGFuZCBhbHNvIGFkZGluZwo+Pj4+ICAgICBIRE1JIGF1ZGlvIHN1cHBv
-cnQuCj4+Pj4KPj4+PiAgICAgUGxlYXNlIGtpbmRseSBsZXQgbWUga25vdyBpZiB0aGVyZSBpcyBh
-bnkgcHJvYmxlbS4KPj4+Pgo+Pj4+ICAgICBQcy4gd2UgYXJlIHJldmlld2luZyBJUFAgdjIgZHJp
-dmVyWzFdIHdoaWNoIGNvbnRyb2xzIHBvc3QgcHJvY2Vzc29yIGRldmljZXMKPj4+PiAgICAgICAg
-IHN1Y2ggYXMgRklNQywgR1NjYWxlciBhbmQgUm90YXRvciBvZiBFeHlub3MgU29DLiBTbyBJIHBs
-YW4gdG8gcmVxdWVzdAo+Pj4+ICAgICAgICAgZ2l0IHB1bGwgb25lIG1vcmUgdGltZSBhZnRlciBy
-ZXZpZXcuCj4+PiBJIGRyb3BwZWQgdGhlIGJhbGwgYSBiaXQgaGVyZSwgSSBkbyB0aGluayB0aGUg
-c2Vjb25kIHB1bGwgd2l0aCBJUFAgaXMKPj4+IHByb2JhYmx5IGEgYml0IGxhdGUsCj4+PiBJIHRo
-aW5rIEknZCBsaWtlIG1vcmUgYXNzdXJhbmNlIHRoYXQgdGhlIFVBUEkgZm9yIElQUCBpcyB0byBi
-ZSB1c2VkIGluCj4+PiBzb21lIHVwc3RyZWFtCj4+PiBzaGlwcGluZyBwcm9qZWN0IChmb3JrcyBv
-ZiBtcHYgbm90IHdpdGhzdGFuZGluZywgdW5sZXNzIHRoaXMgZm9yawo+Pj4gc2hpcHMgaW4gc29t
-ZSBkaXN0cm8KPj4+IG9yIHByb2R1Y3QpLgo+PiBJIGFsc28gY29tbWVudGVkIHNhbWUgdGhpbmcg
-aW50ZXJuYWxseSB0byBhdXRob3IgLSBNYXJlayAtIG9mIElQUCB2MiBidXQgSSB0aG91Z2h0IGV4
-aXN0aW5nIG9uZSBpcyByZWFsbHkgdWdseSB0aGluZyBzbyBtYXkgYmUgYmV0dGVyIHRvIGNoYW5n
-ZSBpdCBhcyBzb29uIGFzIHBvc3NpYmxlIGJlZm9yZSBvdGhlciB1c2VycyB1c2UgdGhpcyBvbmUu
-Cj4+IEFueXdheSwgd2Ugd2lsbCBtZXJnZSB1c2VyIHNwYWNlIGZvciBJUFAgdjIgdG8gbGliZHJt
-IGZpcnN0LCBhbmQgdGhlbiBMaW51eCBwbGF0Zm9ybS4gSSBob3BlIElQUHYyIHdvdWxkIGJlIG1l
-cmdlZCBhcyBzb29uIGFzIHBvc3NpYmxlIGluIG5leHQgdHVybi4KPiBCZXlvbmQgd2hhdCBEYW5p
-ZWwgc2FpZCB3ZSB1bmZvcnR1bmF0ZWx5IGRvbid0IGhhdmUgdGltZSBtYWNoaW5lcywgc28KPiBm
-aXhpbmcgYmFkIHVhcGkgaXNuJ3QgcmVhbGx5IHBvc3NpYmxlLiBUaGUgcHJvYmxlbSBpcyB0aGF0
-IGV2ZW4gaWYgeW91Cj4gY3JlYXRlIGlwcHYyLCB0aGVuIHBlb3BsZSBjYW4gc3RpbGwgdXNlIGlw
-cHYxLCBhbmQgaXQgbmVlZHMgdG8ga2VlcAo+IHdvcmtpbmcgKGFsbW9zdCkgZm9yZXZlci4gU28g
-b25jZSBhIGJhZCB1YXBpIGlzIGluLCBpdCdzIGluLCBhbmQgdGhlcmUncwo+IG5vIGdvb2QgcmVh
-c29uIHRvIGFkZCBtb3JlIHVhcGkgKHNpbmNlIGluIDIgeWVhcnMgeW91IG1pZ2h0IGFnYWluIHJl
-YWxpemUKPiBpdCdzIG5vdCBhIGdvb2QgaWRlYSkgdG8gImZpeCIgdGhhdC4gWW91IGNhbid0IGZp
-eCBiYWQgdWFwaS4KPgo+IFRoYXQncyB3aHkgd2UgaGF2ZSBhbGwgdGhlc2UgcnVsZXMgdG8gbWFr
-ZSBzdXJlIGFzIGxpdHRsZSBiYWQgdWFwaSBhcwo+IHBvc3NpYmxlIGxhbmRzLCBzaW5jZSB0aGUg
-Y29zdCBpcyBzbyBiYWQuCj4KPiBTbyB5ZWFoIHVubGVzcyB5b3UgaGF2ZSBuZXcgaHcgdGhhdCBu
-ZWVkcyBpdCwgb3IgdGhlcmUncyBhbm90aGVyIGNsZWFyCj4gbmVlZCAocGVyZm9ybWFuY2UsIGZl
-YXR1cmVzKSwgeW91J3JlIHN0dWNrIHdpdGggaXBwdjEuICJJdCdzIGNsZWFuZXIiIGlzCj4gbm90
-IGEgZ29vZCByZWFzb24gdG8gcmV2IHVhcGksIHNpbmNlIG91ciBleHBlcmllbmNlIHdpdGggYWxs
-IHRoZSB1YXBpIGluCj4gZHJtIGNsZWFybHkgc2hvd3Mgd2UgY2FuJ3QgcHJlZGljdCB0aGUgZnV0
-dXJlIDotKQoKSSBnZW5lcmFsbHkgYWdyZWUgdGhhdCBVQVBJIGludGVyZmFjZSBoYXMgdG8gYmUg
-c3RhYmxlIGFuZCB3ZWxsIGRlc2lnbmVkLgoKVGhlcmUgYXJlIGhvd2V2ZXIgc29tZSAnZmVhdHVy
-ZXMnIElQUHYxIHVhcGkgdGhhdCByZWFsbHkgYWxsb3dzIHVzIHRvCm9ic29sZXRlIGl0OgoKMS4g
-SVBQIEFQSSBjYW4gYmUgb3B0aW9uYWwgaW4gRXh5bm9zIERSTSwgc28gdXNlcnNwYWNlIHNob3Vs
-ZCBub3QgcmVseSB0aGF0Cml0IGlzIGFsd2F5cyBhdmFpbGFibGUgYW5kIHNob3VsZCBoYXZlIGEg
-c29mdHdhcmUgZmFsbGJhY2sgaW4gY2FzZSBpdCBpcyBub3QKYXZhaWxhYmxlLgoKMi4gVGhlIG9u
-bHkgbW9kZSB3aGljaCB3YXMgaW5pdGlhbGx5IHNlbWktd29ya2luZyB3YXMgbWVtb3J5LXRvLW1l
-bW9yeS4gVGhlCnJlbWFpbmluZyBtb2RlcyAobGNkLXdyaXRlYmFjayBhbmQgb3V0cHV0KSB3ZXJl
-IG5ldmVyIG9wZXJhdGlvbmFsIChib3RoIGluCm1haW5saW5lIGFuZCBldmVuIHZlbmRvciBrZXJu
-ZWxzKS4KCjMuIElQUCBtYWlubGluZSB1YXBpIGNvbXBhdGliaWxpdHkgZm9yIG1lbW9yeS10by1t
-ZW1vcnkgZ290IGJyb2tlbiB2ZXJ5CmVhcmx5IGJ5IGNvbW1pdCAwODM1MDBiYWVmZDVmNGMyMTVh
-NWE5M2FlZjI0OTJjMWFhNzc1ODI4ICgiZHJtOiByZW1vdmUKRFJNX0ZPUk1BVF9OVjEyTVQiLCB3
-aGljaCByZW1vdmVkIHRoZSBzdXBwb3J0IGZvciB0aWxlZCBmb3JtYXRzLCB0aGUgbWFpbgpmZWF0
-dXJlIHdoaWNoIG1hZGUgdGhpcyBhcGkgc29tZWhvdyB1c2VmdWwgb24gRXh5bm9zIHBsYXRmb3Jt
-cyAodmlkZW8gY29kZWMKdGhhdCB0aW1lIHByb2R1Y2VkIG9ubHkgdGlsZWQgZnJhbWVzLCB0byBp
-bXBsZW1lbnQgeHZpZGVvIG9yIGFueSBvdGhlcgp2aWRlbyBvdmVybGF5LCBvbmUgaGFzIHRvIGRl
-dGlsZSB0aGVtIGZvciBwcm9wZXIgZGlzcGxheSkuCgo0LiBCcm9rZW4gZHJpdmVycy4gRXNwZWNp
-YWxseSBvbmNlIHN1cHBvcnQgZm9yIElPTU1VIGhhcyBiZWVuIGFkZGVkLCBpdApyZXZlYWxlZCB0
-aGF0IGRyaXZlcnMgZG9uJ3QgY29uZmlndXJlIERNQSBvcGVyYXRpb25zIHByb3Blcmx5IGFuZCBp
-biBtYW55CmNhc2VzIG9wZXJhdGUgb3V0c2lkZSB0aGUgcHJvdmlkZWQgYnVmZmVycyB0cmFzaGlu
-ZyBtZW1vcnkgYXJvdW5kLgoKNS4gTmVlZCBmb3IgZXh0ZXJuYWwgcGF0Y2hlcy4gQWx0aG91Z2gg
-SVBQIHVhcGkgaGFzIGJlZW4gdXNlZCBpbiBzb21lCnZlbmRvciBrZXJuZWxzLCBidXQgaW4gc3Vj
-aCBjYXNlcyB0aGVyZSB3ZXJlIGFkZGl0aW9uYWwgcGF0Y2hlcyBhcHBsaWVkCihsaWtlIHJldmVy
-dGluZyBtZW50aW9uZWQgMDgzNTAwYmFlZmQ1IHBhdGNoKSB3aGF0IG1lYW5zIHRoYXQgdGhvc2UK
-dXNlcnNwYWNlIGFwcHMgd2hpY2ggbWlnaHQgdXNlIGl0LCBzdGlsbCB3b24ndCB3b3JrIHdpdGgg
-dGhlIG1haW5saW5lCnZlcnNpb24uCgpSaWdodCwgYXMgeW91IGFscmVhZHkgc2FpZCB3ZSBkb24n
-dCBoYXZlIHRpbWUgbWFjaGluZXMsIHNvIHdlIGNhbm5vdCBjaGFuZ2UKaXQsIGJ1dCBJUFAgZXh0
-ZW5zaW9uIHNob3VsZCBuZXZlciBoYXZlIGJlZW4gbWVyZ2VkIHRvIG1haW5saW5lIGluIHRoYXQK
-Zm9ybS4KCldlIGNhbiBob3dldmVyIG9ic29sZXRlIGl0IG5vdyBhcyBpdCBpcyByZWFsbHkgbm9u
-LWZ1bmN0aW9uYWwgYW5kIGZyYW5rbHkKc3BlYWtpbmcgZGVhZC1jb2RlLiBJZiB5b3UgYWdyZWUg
-d2l0aCB0aGUgYWJvdmUgdGhhbiBhdCBsZWFzdCB0aGUgZmlyc3QKcGF0Y2ggY2FuIGJlIG1lcmdl
-ZCwgd2hpY2ggY2xlYXJseSBtYXJrcyB0aGF0IEV4eW5vcyBJUFAgaXMgYnJva2VuIGFuZApldmVy
-IHJlYWxseSBmdW5jdGlvbmFsLiBJIGJldCBubyBvbmUgd2lsbCBjb21wbGFpbi4gVGhlbiB3ZSBj
-YW4gY29udGludWUKdGhlIGRpc2N1c3Npb24gYWJvdXQgSVBQdjIgdWFwaS9wYXRjaGVzLgoKQmVz
-dCByZWdhcmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBSJkQgSW5zdGl0dXRl
-IFBvbGFuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Daniel,
+
+2017년 11월 20일 16:33에 Daniel Vetter 이(가) 쓴 글:
+> On Wed, Nov 15, 2017 at 10:26:45AM +0900, Inki Dae wrote:
+>> Hi Dave,
+>>
+>> 2017년 11월 14일 13:22에 Dave Airlie 이(가) 쓴 글:
+>>> On 26 October 2017 at 11:37, Inki Dae <inki.dae@samsung.com> wrote:
+>>>> Hi Dave,
+>>>>
+>>>>    Improving Exynos DRM HDMI and Mixer drivers and also adding
+>>>>    HDMI audio support.
+>>>>
+>>>>    Please kindly let me know if there is any problem.
+>>>>
+>>>>    Ps. we are reviewing IPP v2 driver[1] which controls post processor devices
+>>>>        such as FIMC, GScaler and Rotator of Exynos SoC. So I plan to request
+>>>>        git pull one more time after review.
+>>>
+>>> Hi Inki,
+>>>
+>>> I dropped the ball a bit here, I do think the second pull with IPP is
+>>> probably a bit late,
+>>> I think I'd like more assurance that the UAPI for IPP is to be used in
+>>> some upstream
+>>> shipping project (forks of mpv not withstanding, unless this fork
+>>> ships in some distro
+>>> or product).
+>>
+>> I also commented same thing internally to author - Marek - of IPP v2 but I thought existing one is really ugly thing so may be better to change it as soon as possible before other users use this one.
+>> Anyway, we will merge user space for IPP v2 to libdrm first, and then Linux platform. I hope IPPv2 would be merged as soon as possible in next turn.
+> 
+> Beyond what Daniel said we unfortunately don't have time machines, so
+> fixing bad uapi isn't really possible. The problem is that even if you
+> create ippv2, then people can still use ippv1, and it needs to keep
+> working (almost) forever. So once a bad uapi is in, it's in, and there's
+
+I'd like to make sure one thing. Yes, there may be some users who still use ippv1 but we should consider them even they aren't 'real user'? I.e., some test applications used internally.
+As long as I know, only 'real user' who uses ippv1 would be me and my team. If we have to consider all users including in-house test applications then we may need to keep UAPI v1 and only change its implementation.
+
+Thanks,
+Inki Dae
+
+> no good reason to add more uapi (since in 2 years you might again realize
+> it's not a good idea) to "fix" that. You can't fix bad uapi.
+> 
+> That's why we have all these rules to make sure as little bad uapi as
+> possible lands, since the cost is so bad.
+> 
+> So yeah unless you have new hw that needs it, or there's another clear
+> need (performance, features), you're stuck with ippv1. "It's cleaner" is
+> not a good reason to rev uapi, since our experience with all the uapi in
+> drm clearly shows we can't predict the future :-)
+> -Daniel
+> 
