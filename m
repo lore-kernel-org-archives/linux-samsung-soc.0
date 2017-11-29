@@ -1,104 +1,80 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 1/6] arm64: dts: exynos: Add GSCL power domain to Exynos
+Subject: [PATCH v2 4/6] arm64: dts: exynos: Add MFC power domain to Exynos
  5433 SoC
-Date: Wed, 29 Nov 2017 12:26:33 +0100
-Message-ID: <20171129112638.15813-2-m.szyprowski@samsung.com>
+Date: Wed, 29 Nov 2017 12:26:36 +0100
+Message-ID: <20171129112638.15813-5-m.szyprowski@samsung.com>
 References: <20171129112638.15813-1-m.szyprowski@samsung.com>
-        <CGME20171129112649eucas1p1e631c8dd108b28b39924e3b3228dfa73@eucas1p1.samsung.com>
+        <CGME20171129112650eucas1p14c99978fbf664f9246d57360ca91353e@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37118 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932247AbdK2L0w (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57059 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932287AbdK2L0y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 06:26:52 -0500
+        Wed, 29 Nov 2017 06:26:54 -0500
 In-reply-to: <20171129112638.15813-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-This patch adds support for GSCL power domain to Exynos 5433 SoCs, which
-contains following devices: a clock controller, three GSCL video scalers and
-their SYSMMUs.
+This patch adds support for MFC power domain to Exynos 5433 SoCs, which
+contains following devices: a clock controller, MFC codec device and its
+SYSMMUs.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 9484d2f867dc..2a03be0c9ae7 100644
+index 0a06be283a31..cfa2a0d4dc2f 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -443,6 +443,7 @@
- 			clocks = <&xxti>,
- 				<&cmu_top CLK_ACLK_GSCL_111>,
- 				<&cmu_top CLK_ACLK_GSCL_333>;
-+			power-domains = <&pd_gscl>;
+@@ -486,6 +486,7 @@
+ 
+ 			clock-names = "oscclk", "aclk_mfc_400";
+ 			clocks = <&xxti>, <&cmu_top CLK_ACLK_MFC_400>;
++			power-domains = <&pd_mfc>;
  		};
  
- 		cmu_apollo: clock-controller@11900000 {
-@@ -543,6 +544,13 @@
- 				<&cmu_top CLK_ACLK_CAM1_552>;
+ 		cmu_hevc: clock-controller@14f80000 {
+@@ -567,6 +568,13 @@
+ 			label = "DISP";
  		};
  
-+		pd_gscl: power-domain@105c4000 {
++		pd_mfc: power-domain@105c4180 {
 +			compatible = "samsung,exynos5433-pd";
-+			reg = <0x105c4000 0x20>;
++			reg = <0x105c4180 0x20>;
 +			#power-domain-cells = <0>;
-+			label = "GSCL";
++			label = "MFC";
 +		};
 +
  		tmu_atlas0: tmu@10060000 {
  			compatible = "samsung,exynos5433-tmu";
  			reg = <0x10060000 0x200>;
-@@ -910,6 +918,7 @@
- 				 <&cmu_gscl CLK_ACLK_XIU_GSCLX>,
- 				 <&cmu_gscl CLK_ACLK_GSCLBEND_333>;
- 			iommus = <&sysmmu_gscl0>;
-+			power-domains = <&pd_gscl>;
+@@ -992,6 +1000,7 @@
+ 				 <&cmu_mfc CLK_ACLK_XIU_MFCX>;
+ 			iommus = <&sysmmu_mfc_0>, <&sysmmu_mfc_1>;
+ 			iommu-names = "left", "right";
++			power-domains = <&pd_mfc>;
  		};
  
- 		gsc_1: video-scaler@13C10000 {
-@@ -923,6 +932,7 @@
- 				 <&cmu_gscl CLK_ACLK_XIU_GSCLX>,
- 				 <&cmu_gscl CLK_ACLK_GSCLBEND_333>;
- 			iommus = <&sysmmu_gscl1>;
-+			power-domains = <&pd_gscl>;
- 		};
- 
- 		gsc_2: video-scaler@13C20000 {
-@@ -936,6 +946,7 @@
- 				 <&cmu_gscl CLK_ACLK_XIU_GSCLX>,
- 				 <&cmu_gscl CLK_ACLK_GSCLBEND_333>;
- 			iommus = <&sysmmu_gscl2>;
-+			power-domains = <&pd_gscl>;
- 		};
- 
- 		jpeg: codec@15020000 {
-@@ -1010,6 +1021,7 @@
- 			clocks = <&cmu_gscl CLK_ACLK_SMMU_GSCL0>,
- 				 <&cmu_gscl CLK_PCLK_SMMU_GSCL0>;
+ 		sysmmu_decon0x: sysmmu@13a00000 {
+@@ -1090,6 +1099,7 @@
+ 			clocks = <&cmu_mfc CLK_PCLK_SMMU_MFC_0>,
+ 				 <&cmu_mfc CLK_ACLK_SMMU_MFC_0>;
  			#iommu-cells = <0>;
-+			power-domains = <&pd_gscl>;
++			power-domains = <&pd_mfc>;
  		};
  
- 		sysmmu_gscl1: sysmmu@13c90000 {
-@@ -1020,6 +1032,7 @@
- 			clocks = <&cmu_gscl CLK_ACLK_SMMU_GSCL1>,
- 				 <&cmu_gscl CLK_PCLK_SMMU_GSCL1>;
+ 		sysmmu_mfc_1: sysmmu@15210000 {
+@@ -1100,6 +1110,7 @@
+ 			clocks = <&cmu_mfc CLK_PCLK_SMMU_MFC_1>,
+ 				 <&cmu_mfc CLK_ACLK_SMMU_MFC_1>;
  			#iommu-cells = <0>;
-+			power-domains = <&pd_gscl>;
++			power-domains = <&pd_mfc>;
  		};
  
- 		sysmmu_gscl2: sysmmu@13ca0000 {
-@@ -1030,6 +1043,7 @@
- 			clocks = <&cmu_gscl CLK_ACLK_SMMU_GSCL2>,
- 				 <&cmu_gscl CLK_PCLK_SMMU_GSCL2>;
- 			#iommu-cells = <0>;
-+			power-domains = <&pd_gscl>;
- 		};
- 
- 		sysmmu_jpeg: sysmmu@15060000 {
+ 		serial_0: serial@14c10000 {
 -- 
 2.15.0
