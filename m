@@ -1,56 +1,51 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 1/2] ARM: dts: exynos: Switch to dedicated Odroid-XU3
- sound card binding
-Date: Wed, 29 Nov 2017 18:55:48 +0100
-Message-ID: <CAJKOXPegJsQPrbDH8mXBhypOBnT9+Nn1T6NF=Cav=PV+9b-2MA@mail.gmail.com>
-References: <20171103165446.15438-1-s.nawrocki@samsung.com>
- <CGME20171103165539epcas1p48cc87811574dace9dfe91d8e9ec6f7ca@epcas1p4.samsung.com>
- <20171103165446.15438-2-s.nawrocki@samsung.com>
- <20171127181213.lxtbbiw75wbz2dbz@kozik-lap>
+Subject: Re: [PATCH RESEND] ARM: dts: exynos: Move G2D node to exynos5.dtsi
+Date: Wed, 29 Nov 2017 19:06:29 +0100
+Message-ID: <20171129180629.uo34k2kmprdu3kid@kozik-lap>
+References: <CGME20171129114250eucas1p17b5a0213e7a486c85f72ef7a5d39f0d5@eucas1p1.samsung.com>
+ <20171129114234.16132-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20171127181213.lxtbbiw75wbz2dbz@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, kgene@kernel.org, mihailescu2m@gmail.com, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:42126 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752588AbdK2SNS (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 29 Nov 2017 13:13:18 -0500
+Received: by mail-wm0-f50.google.com with SMTP id l141so8187595wmg.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2017 10:13:18 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20171129114234.16132-1-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-On Mon, Nov 27, 2017 at 7:12 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Fri, Nov 03, 2017 at 05:54:45PM +0100, Sylwester Nawrocki wrote:
->> The new sound card DT binding is used for Odroid XU3 in order
->> to properly support the HDMI audio path.
->> Clocks configuration is changed so the I2S controller is now the bit
->> and the frame clock master with EPLL as the root clock source.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos4.dtsi                    |  1 +
->>  arch/arm/boot/dts/exynos5420.dtsi                 |  1 +
->>  arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 60 ++++++++++++++---------
->>  3 files changed, 40 insertions(+), 22 deletions(-)
->>
+On Wed, Nov 29, 2017 at 12:42:34PM +0100, Marek Szyprowski wrote:
+> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> 
+> Current the node is only defined in the exynos5250 DT, while
+> the corresponding SYSMMUs are also to be found in the exynos5420
+> DT. Move the node to exynos5 and only setup the SYSMMUs in the
+> corresponding DT.
+> 
+> Disable the node by default, since exynos5410 also includes
+> the dtsi, but currently does not define the G2D clock.
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> [mszyprow: rephrased commit message]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> resend on Krzysztof's request
+> ---
+>  arch/arm/boot/dts/exynos5.dtsi    |  7 +++++++
+>  arch/arm/boot/dts/exynos5250.dtsi | 16 +++++++---------
+>  arch/arm/boot/dts/exynos5420.dtsi |  7 +++++++
+>  3 files changed, 21 insertions(+), 9 deletions(-)
+> 
 
-
-Unfortunately this patch causes the audio card to disappear on Odroid
-XU3. "aplay -L" shows nothing and obviously speaker-test fails.
-
-Applied on v4.15-rc1... any dependencies are missing?
-
-Full boot-logs are here:
-http://www.krzk.eu/#/builders/1/builds/976
-(test exits on aplay -L).
-
-Should this be dropped?
+Thanks, applied.
 
 Best regards,
 Krzysztof
