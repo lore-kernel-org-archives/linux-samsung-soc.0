@@ -1,48 +1,39 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH RESEND] ARM: dts: exynos: Move G2D node to exynos5.dtsi
-Date: Wed, 29 Nov 2017 19:06:29 +0100
-Message-ID: <20171129180629.uo34k2kmprdu3kid@kozik-lap>
-References: <CGME20171129114250eucas1p17b5a0213e7a486c85f72ef7a5d39f0d5@eucas1p1.samsung.com>
- <20171129114234.16132-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 4/5] ARM: dts: exynos: Add Exynos4412 ISP clock
+ controller
+Date: Wed, 29 Nov 2017 19:08:05 +0100
+Message-ID: <20171129180805.yn35ib7ierqcd4bl@kozik-lap>
+References: <20171011092515.1698-1-m.szyprowski@samsung.com>
+ <CGME20171011092522eucas1p13c442dd9daa51e610618b39ee436e100@eucas1p1.samsung.com>
+ <20171011092515.1698-5-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:42126 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752588AbdK2SNS (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35763 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753348AbdK2SPl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 13:13:18 -0500
-Received: by mail-wm0-f50.google.com with SMTP id l141so8187595wmg.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2017 10:13:18 -0800 (PST)
+        Wed, 29 Nov 2017 13:15:41 -0500
 Content-Disposition: inline
-In-Reply-To: <20171129114234.16132-1-m.szyprowski@samsung.com>
+In-Reply-To: <20171011092515.1698-5-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, Nov 29, 2017 at 12:42:34PM +0100, Marek Szyprowski wrote:
-> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+On Wed, Oct 11, 2017 at 11:25:14AM +0200, Marek Szyprowski wrote:
+> Exynos4412 ISP clock controller is located in the SOC area, which belongs
+> to ISP power domain. This patch instantiates a separate clock driver
+> for those clocks, updates all clients of ISP clocks and ensures that the
+> driver is properly integrated in ISP power domin.
 > 
-> Current the node is only defined in the exynos5250 DT, while
-> the corresponding SYSMMUs are also to be found in the exynos5420
-> DT. Move the node to exynos5 and only setup the SYSMMUs in the
-> corresponding DT.
+> This finally solves all the mysterious freezes in accessing ISP clocks
+> when ISP power domain is disabled.
 > 
-> Disable the node by default, since exynos5410 also includes
-> the dtsi, but currently does not define the G2D clock.
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> [mszyprow: rephrased commit message]
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
-> resend on Krzysztof's request
-> ---
->  arch/arm/boot/dts/exynos5.dtsi    |  7 +++++++
->  arch/arm/boot/dts/exynos5250.dtsi | 16 +++++++---------
->  arch/arm/boot/dts/exynos5420.dtsi |  7 +++++++
->  3 files changed, 21 insertions(+), 9 deletions(-)
+>  arch/arm/boot/dts/exynos4412.dtsi | 71 ++++++++++++++++++++++++---------------
+>  1 file changed, 44 insertions(+), 27 deletions(-)
 > 
 
 Thanks, applied.
