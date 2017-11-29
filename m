@@ -1,120 +1,97 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 2/6] arm64: dts: exynos: Add DISP power domain to Exynos
- 5433 SoC
-Date: Wed, 29 Nov 2017 12:26:34 +0100
-Message-ID: <20171129112638.15813-3-m.szyprowski@samsung.com>
-References: <20171129112638.15813-1-m.szyprowski@samsung.com>
-        <CGME20171129112649eucas1p16bc5ac7a6237eba11fc42ec2bd38dc52@eucas1p1.samsung.com>
+Subject: [PATCH v2] ARM: dts: exynos: Add audio power domain support to
+ Exynos542x SoCs
+Date: Wed, 29 Nov 2017 12:35:14 +0100
+Message-ID: <20171129113514.15988-1-m.szyprowski@samsung.com>
+References: <CGME20171129113526eucas1p11045cbb1dcdd42a68c2f5ba81a635213@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37120 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932262AbdK2L0w (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59313 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752530AbdK2Lf3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 06:26:52 -0500
-In-reply-to: <20171129112638.15813-1-m.szyprowski@samsung.com>
+        Wed, 29 Nov 2017 06:35:29 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-This patch adds support for DISP power domain to Exynos 5433 SoCs, which
-contains following devices: a clock controller, two display controllers
-(DECON and DECON TV), their SYSMMUs, MIC, DSI and HDMI video devices.
+Audio power domain includes following hardware modules: Pin controller
+for GPZ bank, AudioSS clock controller, PL330 ADMA device and Exynos I2S
+controller.
 
-OCSigned-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Currently this domain will not be turned off, because pinctrl driver
+don't support runtime PM and PL330 ADMA requires irq-safe runtime PM.
+This will be fixed in the future.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 2a03be0c9ae7..95f30ccc00a3 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -386,6 +386,7 @@
- 				<&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
- 				<&cmu_mif CLK_SCLK_DECON_TV_VCLK_DISP>,
- 				<&cmu_mif CLK_ACLK_DISP_333>;
-+			power-domains = <&pd_disp>;
+Issues pointed in the discussion of v1 has been resolved by commit
+07731019c59c ("pinctrl: samsung: Move retention control from mach-exynos
+to the pinctrl driver").
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+Changelog:
+v2:
+- added domain label
+
+v1: https://patchwork.kernel.org/patch/9485083/
+- initial version
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 8aa2cc7aa125..933075bfce2a 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -188,6 +188,7 @@
+ 			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MAU_EPLL>,
+ 				 <&clock CLK_SCLK_MAUDIO0>, <&clock CLK_SCLK_MAUPCM0>;
+ 			clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
++			power-domains = <&mau_pd>;
  		};
  
- 		cmu_aud: clock-controller@114c0000 {
-@@ -551,6 +552,13 @@
- 			label = "GSCL";
+ 		mfc: codec@11000000 {
+@@ -322,6 +323,13 @@
+ 			clock-names = "oscclk", "clk0", "clk1", "clk2", "asb0", "asb1";
  		};
  
-+		pd_disp: power-domain@105c4080 {
-+			compatible = "samsung,exynos5433-pd";
-+			reg = <0x105c4080 0x20>;
++		mau_pd: power-domain@100440E0 {
++			compatible = "samsung,exynos4210-pd";
++			reg = <0x100440E0 0x20>;
 +			#power-domain-cells = <0>;
-+			label = "DISP";
++			label = "MAU";
 +		};
 +
- 		tmu_atlas0: tmu@10060000 {
- 			compatible = "samsung,exynos5433-tmu";
- 			reg = <0x10060000 0x200>;
-@@ -754,6 +762,7 @@
- 			clock-names = "pclk", "aclk_decon", "aclk_smmu_decon0x",
- 				"aclk_xiu_decon0x", "pclk_smmu_decon0x",
- 				"sclk_decon_vclk", "sclk_decon_eclk";
-+			power-domains = <&pd_disp>;
- 			interrupt-names = "fifo", "vsync", "lcd_sys";
- 			interrupts = <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-@@ -791,6 +800,7 @@
- 				      "aclk_xiu_decon0x", "pclk_smmu_decon0x",
- 				      "sclk_decon_vclk", "sclk_decon_eclk";
- 			samsung,disp-sysreg = <&syscon_disp>;
-+			power-domains = <&pd_disp>;
- 			interrupt-names = "fifo", "vsync", "lcd_sys";
- 			interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
-@@ -816,6 +826,7 @@
- 					"phyclk_mipidphy0_rxclkesc0",
- 					"sclk_rgb_vclk_to_dsim0",
- 					"sclk_mipi";
-+			power-domains = <&pd_disp>;
+ 		pinctrl_0: pinctrl@13400000 {
+ 			compatible = "samsung,exynos5420-pinctrl";
+ 			reg = <0x13400000 0x1000>;
+@@ -356,6 +364,7 @@
+ 			compatible = "samsung,exynos5420-pinctrl";
+ 			reg = <0x03860000 0x1000>;
+ 			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&mau_pd>;
+ 		};
+ 
+ 		amba {
+@@ -374,6 +383,7 @@
+ 				#dma-cells = <1>;
+ 				#dma-channels = <6>;
+ 				#dma-requests = <16>;
++				power-domains = <&mau_pd>;
+ 			};
+ 
+ 			pdma0: pdma@121A0000 {
+@@ -446,6 +456,7 @@
+ 			samsung,idma-addr = <0x03000000>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&i2s0_bus>;
++			power-domains = <&mau_pd>;
  			status = "disabled";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -839,6 +850,7 @@
- 			clocks = <&cmu_disp CLK_PCLK_MIC0>,
- 				<&cmu_disp CLK_SCLK_RGB_VCLK_TO_MIC0>;
- 			clock-names = "pclk_mic0", "sclk_rgb_vclk_to_mic0";
-+			power-domains = <&pd_disp>;
- 			samsung,disp-syscon = <&syscon_disp>;
- 			status = "disabled";
- 
-@@ -980,6 +992,7 @@
- 			clock-names = "pclk", "aclk";
- 			clocks = <&cmu_disp CLK_PCLK_SMMU_DECON0X>,
- 				<&cmu_disp CLK_ACLK_SMMU_DECON0X>;
-+			power-domains = <&pd_disp>;
- 			#iommu-cells = <0>;
  		};
  
-@@ -991,6 +1004,7 @@
- 			clocks = <&cmu_disp CLK_PCLK_SMMU_DECON1X>,
- 				<&cmu_disp CLK_ACLK_SMMU_DECON1X>;
- 			#iommu-cells = <0>;
-+			power-domains = <&pd_disp>;
- 		};
- 
- 		sysmmu_tv0x: sysmmu@13a20000 {
-@@ -1001,6 +1015,7 @@
- 			clocks = <&cmu_disp CLK_PCLK_SMMU_TV0X>,
- 				<&cmu_disp CLK_ACLK_SMMU_TV0X>;
- 			#iommu-cells = <0>;
-+			power-domains = <&pd_disp>;
- 		};
- 
- 		sysmmu_tv1x: sysmmu@13a30000 {
-@@ -1011,6 +1026,7 @@
- 			clocks = <&cmu_disp CLK_PCLK_SMMU_TV1X>,
- 				<&cmu_disp CLK_ACLK_SMMU_TV1X>;
- 			#iommu-cells = <0>;
-+			power-domains = <&pd_disp>;
- 		};
- 
- 		sysmmu_gscl0: sysmmu@13c80000 {
 -- 
 2.15.0
