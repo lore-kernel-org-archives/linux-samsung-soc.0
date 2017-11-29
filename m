@@ -1,39 +1,28 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 4/5] ARM: dts: exynos: Add Exynos4412 ISP clock
- controller
-Date: Wed, 29 Nov 2017 19:08:05 +0100
-Message-ID: <20171129180805.yn35ib7ierqcd4bl@kozik-lap>
-References: <20171011092515.1698-1-m.szyprowski@samsung.com>
- <CGME20171011092522eucas1p13c442dd9daa51e610618b39ee436e100@eucas1p1.samsung.com>
- <20171011092515.1698-5-m.szyprowski@samsung.com>
+Subject: Re: [REBASED PATCH] ARM: dts: exynos: fix property values of
+ LDO15/17 for ODROID-XU3/4
+Date: Wed, 29 Nov 2017 19:27:44 +0100
+Message-ID: <20171129182744.6brikrehd6sejwab@kozik-lap>
+References: <20171128001501.12740-1-tobetter@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35763 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753348AbdK2SPl (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 13:15:41 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171011092515.1698-5-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20171128001501.12740-1-tobetter@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, Oct 11, 2017 at 11:25:14AM +0200, Marek Szyprowski wrote:
-> Exynos4412 ISP clock controller is located in the SOC area, which belongs
-> to ISP power domain. This patch instantiates a separate clock driver
-> for those clocks, updates all clients of ISP clocks and ensures that the
-> driver is properly integrated in ISP power domin.
+On Mon, Nov 27, 2017 at 07:15:01PM -0500, Dongjin Kim wrote:
+> Looking at the schematic, LDO15 and LDO17 are tied as a power source of a
+> builtin network chipset. The voltage on LDO15 is corrected to 3.3V and the
+> name of LDO17 is corrected to "vdd_ldo17".
 > 
-> This finally solves all the mysterious freezes in accessing ISP clocks
-> when ISP power domain is disabled.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
 > ---
->  arch/arm/boot/dts/exynos4412.dtsi | 71 ++++++++++++++++++++++++---------------
->  1 file changed, 44 insertions(+), 27 deletions(-)
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
 
 Thanks, applied.
