@@ -1,94 +1,76 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] clk: Manage proper runtime PM state in clk_change_rate()
-Date: Thu, 30 Nov 2017 13:14:51 +0100
-Message-ID: <20171130121451.6710-1-m.szyprowski@samsung.com>
-References: <CGME20171130121511eucas1p1832c1f6e5bc9e263860e40478efca132@eucas1p1.samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 3/6] arm64: dts: exynos: Add MSCL power domain to
+ Exynos 5433 SoC
+Date: Thu, 30 Nov 2017 13:21:09 +0100
+Message-ID: <8c9ccbc5-21ee-3df7-ac7f-2a4506e6fa43@samsung.com>
+References: <20171129112638.15813-1-m.szyprowski@samsung.com>
+        <CGME20171129112650eucas1p13a3cc167bc64d133cf24e4f621865203@eucas1p1.samsung.com>
+        <20171129112638.15813-4-m.szyprowski@samsung.com>
+        <5A1F6AF3.5050809@samsung.com> <5A1F7219.5080506@samsung.com>
+        <dc21a17f-c281-cb71-8d06-5a15f8d9a04e@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47597 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752130AbdK3MVO (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 30 Nov 2017 07:21:14 -0500
+In-reply-to: <dc21a17f-c281-cb71-8d06-5a15f8d9a04e@samsung.com>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-clk_change_rate() propagates rate change down to all its children. Such
-operation requires managing proper runtime PM state of each child, what
-was missing. Add needed calls to clk_pm_runtime*() to ensure that
-set_rate() clock callback is called on runtime active clock.
+Dear Chanwoo,
 
-This fixes following issue found on Exynos5433 TM2 board with devfreq
-enabled:
+On 2017-11-30 10:35, Marek Szyprowski wrote:
+> On 2017-11-30 03:51, Chanwoo Choi wrote:
+>> On 2017년 11월 30일 11:20, Chanwoo Choi wrote:
+>>> On 2017년 11월 29일 20:26, Marek Szyprowski wrote:
+>>>> This patch adds support for MSCL power domain to Exynos 5433 SoCs, 
+>>>> which
+>>>> contains following devices: a clock controller, JPEG codec device 
+>>>> and its
+>>>> SYSMMU.
+>>>>
+>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> ---
+>>>>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 10 ++++++++++
+>>>>   1 file changed, 10 insertions(+)
+>>> Looks good to me.
+>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>
+>>> [snip]
+>>>
+>> When I tested this patch with enabling exynos-bus.c,
+>> I got the following external abort. In order to fix this abort,
+>> I add the power-domain property to 
+>> arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+>> as following:
+>
+> Thanks for this report. You are right that exynos-bus devices should be
+> also added to respective power domains. I will also check how to add
+> runtime PM support and awareness of power domain to exynos-bus driver,
+> to avoid blocking respective power domains in turned on state.
 
-Synchronous External Abort: synchronous external abort (0x96000210) at 0xffffff80093f5600
-Internal error: : 96000210 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 5 Comm: kworker/u16:0 Not tainted 4.15.0-rc1-next-20171129+ #4
-Hardware name: Samsung TM2 board (DT)
-Workqueue: devfreq_wq devfreq_monitor
-task: ffffffc0ca96b600 task.stack: ffffff80093a8000
-pstate: a0000085 (NzCv daIf -PAN -UAO)
-pc : clk_divider_set_rate+0x54/0x118
-lr : clk_divider_set_rate+0x44/0x118
-...
-Process kworker/u16:0 (pid: 5, stack limit = 0xffffff80093a8000)
-Call trace:
- clk_divider_set_rate+0x54/0x118
- clk_change_rate+0xfc/0x4e0
- clk_change_rate+0x1f0/0x4e0
- clk_change_rate+0x1f0/0x4e0
- clk_change_rate+0x1f0/0x4e0
- clk_core_set_rate_nolock+0x138/0x148
- clk_set_rate+0x28/0x50
- exynos_bus_passive_target+0x6c/0x11c
- update_devfreq_passive+0x58/0xb4
- devfreq_passive_notifier_call+0x50/0x5c
- notifier_call_chain+0x4c/0x88
- __srcu_notifier_call_chain+0x54/0x80
- srcu_notifier_call_chain+0x14/0x1c
- update_devfreq+0x100/0x1b4
- devfreq_monitor+0x2c/0x88
- process_one_work+0x148/0x3d8
- worker_thread+0x13c/0x3f8
- kthread+0x100/0x12c
- ret_from_fork+0x10/0x18
+I've investigated it further and it turned out to be a missing case in
+my runtime PM patch for clocks core.
 
-Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
-Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-For some unknown reason handling of this case was missing in the initial
-patch, which added runtime PM support for clock core. Even tests in
-linux-next did not revealed this issue. This patch finaly fixes it,
-as it is now easy to trigger it with v4.15-rc1.
+In this case exynos-bus operates on a clock, which is in the
+TOP CMU and TOP power domain (always on), which has no relation with
+the newly added MSCL power domain. We should not mix this by forcing
+exynos-bus to be in the MSCL domain.
+
+The reported external abort is solved by proper patch for clock core:
+https://patchwork.kernel.org/patch/10084725/
+
+This patch (and the other patches from this patch series) can be applied
+without any changes.
 
 Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
----
- drivers/clk/clk.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 647d056df88c..8a1860a36c77 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1564,6 +1564,9 @@ static void clk_change_rate(struct clk_core *core)
- 		best_parent_rate = core->parent->rate;
- 	}
- 
-+	if (clk_pm_runtime_get(core))
-+		return;
-+
- 	if (core->flags & CLK_SET_RATE_UNGATE) {
- 		unsigned long flags;
- 
-@@ -1634,6 +1637,8 @@ static void clk_change_rate(struct clk_core *core)
- 	/* handle the new child who might not be in core->children yet */
- 	if (core->new_child)
- 		clk_change_rate(core->new_child);
-+
-+	clk_pm_runtime_put(core);
- }
- 
- static int clk_core_set_rate_nolock(struct clk_core *core,
 -- 
-2.15.0
-
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
