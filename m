@@ -1,35 +1,118 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 12/22] media: s3c-camif: add missing description at s3c_camif_find_format()
-Date: Wed, 29 Nov 2017 14:08:30 -0500
-Message-ID: <2ec72455321f17abb27438af36db2185ffc13540.1511982439.git.mchehab@s-opensource.com>
-References: <73497577f67fbb917e40ab4328104ff310a7c356.1511982439.git.mchehab@s-opensource.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <73497577f67fbb917e40ab4328104ff310a7c356.1511982439.git.mchehab@s-opensource.com>
-In-Reply-To: <73497577f67fbb917e40ab4328104ff310a7c356.1511982439.git.mchehab@s-opensource.com>
-References: <73497577f67fbb917e40ab4328104ff310a7c356.1511982439.git.mchehab@s-opensource.com>
-Sender: linux-media-owner@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 1/6] arm64: dts: exynos: Add GSCL power domain to
+ Exynos 5433 SoC
+Date: Thu, 30 Nov 2017 11:18:17 +0900
+Message-ID: <5A1F6A69.7070604@samsung.com>
+References: <20171129112638.15813-1-m.szyprowski@samsung.com>
+        <CGME20171129112649eucas1p1e631c8dd108b28b39924e3b3228dfa73@eucas1p1.samsung.com>
+        <20171129112638.15813-2-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:44069 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751495AbdK3CSU (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 29 Nov 2017 21:18:20 -0500
+In-reply-to: <20171129112638.15813-2-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-Fix this warning:
-	drivers/media/platform/s3c-camif/camif-core.c:112: warning: No description found for parameter 'vp'
+Dear Marek,
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
----
- drivers/media/platform/s3c-camif/camif-core.c | 1 +
- 1 file changed, 1 insertion(+)
+On 2017년 11월 29일 20:26, Marek Szyprowski wrote:
+> This patch adds support for GSCL power domain to Exynos 5433 SoCs, which
+> contains following devices: a clock controller, three GSCL video scalers and
+> their SYSMMUs.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 9484d2f867dc..2a03be0c9ae7 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -443,6 +443,7 @@
+>  			clocks = <&xxti>,
+>  				<&cmu_top CLK_ACLK_GSCL_111>,
+>  				<&cmu_top CLK_ACLK_GSCL_333>;
+> +			power-domains = <&pd_gscl>;
+>  		};
+>  
+>  		cmu_apollo: clock-controller@11900000 {
+> @@ -543,6 +544,13 @@
+>  				<&cmu_top CLK_ACLK_CAM1_552>;
+>  		};
+>  
+> +		pd_gscl: power-domain@105c4000 {
+> +			compatible = "samsung,exynos5433-pd";
+> +			reg = <0x105c4000 0x20>;
+> +			#power-domain-cells = <0>;
+> +			label = "GSCL";
+> +		};
+> +
+>  		tmu_atlas0: tmu@10060000 {
+>  			compatible = "samsung,exynos5433-tmu";
+>  			reg = <0x10060000 0x200>;
+> @@ -910,6 +918,7 @@
+>  				 <&cmu_gscl CLK_ACLK_XIU_GSCLX>,
+>  				 <&cmu_gscl CLK_ACLK_GSCLBEND_333>;
+>  			iommus = <&sysmmu_gscl0>;
+> +			power-domains = <&pd_gscl>;
+>  		};
+>  
+>  		gsc_1: video-scaler@13C10000 {
+> @@ -923,6 +932,7 @@
+>  				 <&cmu_gscl CLK_ACLK_XIU_GSCLX>,
+>  				 <&cmu_gscl CLK_ACLK_GSCLBEND_333>;
+>  			iommus = <&sysmmu_gscl1>;
+> +			power-domains = <&pd_gscl>;
+>  		};
+>  
+>  		gsc_2: video-scaler@13C20000 {
+> @@ -936,6 +946,7 @@
+>  				 <&cmu_gscl CLK_ACLK_XIU_GSCLX>,
+>  				 <&cmu_gscl CLK_ACLK_GSCLBEND_333>;
+>  			iommus = <&sysmmu_gscl2>;
+> +			power-domains = <&pd_gscl>;
+>  		};
+>  
+>  		jpeg: codec@15020000 {
+> @@ -1010,6 +1021,7 @@
+>  			clocks = <&cmu_gscl CLK_ACLK_SMMU_GSCL0>,
+>  				 <&cmu_gscl CLK_PCLK_SMMU_GSCL0>;
+>  			#iommu-cells = <0>;
+> +			power-domains = <&pd_gscl>;
+>  		};
+>  
+>  		sysmmu_gscl1: sysmmu@13c90000 {
+> @@ -1020,6 +1032,7 @@
+>  			clocks = <&cmu_gscl CLK_ACLK_SMMU_GSCL1>,
+>  				 <&cmu_gscl CLK_PCLK_SMMU_GSCL1>;
+>  			#iommu-cells = <0>;
+> +			power-domains = <&pd_gscl>;
+>  		};
+>  
+>  		sysmmu_gscl2: sysmmu@13ca0000 {
+> @@ -1030,6 +1043,7 @@
+>  			clocks = <&cmu_gscl CLK_ACLK_SMMU_GSCL2>,
+>  				 <&cmu_gscl CLK_PCLK_SMMU_GSCL2>;
+>  			#iommu-cells = <0>;
+> +			power-domains = <&pd_gscl>;
+>  		};
+>  
+>  		sysmmu_jpeg: sysmmu@15060000 {
+> 
 
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index c4ab63986c8f..79bc0ef6bb41 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -103,6 +103,7 @@ static const struct camif_fmt camif_formats[] = {
- 
- /**
-  * s3c_camif_find_format() - lookup camif color format by fourcc or an index
-+ * @vp: video path (DMA) description (codec/preview)
-  * @pixelformat: fourcc to match, ignored if null
-  * @index: index to the camif_formats array, ignored if negative
-  */
+Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.14.3
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
