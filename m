@@ -1,70 +1,62 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] ARM64: dts: exynos: Add support for S3FWRN5 NFC chip to
- TM2(e) boards
-Date: Thu, 30 Nov 2017 15:57:50 +0900
-Message-ID: <5A1FABEE.5080904@samsung.com>
-References: <CGME20171129111327eucas1p2ddc03a0352a7bf2b3e1b9d4f9db99511@eucas1p2.samsung.com>
-        <20171129111320.14592-1-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] ARM: dts: exynos: Switch to dedicated Odroid-XU3
+ sound card binding
+Date: Thu, 30 Nov 2017 08:30:11 +0100
+Message-ID: <46152007-e599-23eb-6a07-cc5f3ff32c70@samsung.com>
+References: <20171103165446.15438-1-s.nawrocki@samsung.com>
+        <CGME20171103165539epcas1p48cc87811574dace9dfe91d8e9ec6f7ca@epcas1p4.samsung.com>
+        <20171103165446.15438-2-s.nawrocki@samsung.com>
+        <20171127181213.lxtbbiw75wbz2dbz@kozik-lap>
+        <CAJKOXPegJsQPrbDH8mXBhypOBnT9+Nn1T6NF=Cav=PV+9b-2MA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:34138 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751487AbdK3G5v (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 01:57:51 -0500
-In-reply-to: <20171129111320.14592-1-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAJKOXPegJsQPrbDH8mXBhypOBnT9+Nn1T6NF=Cav=PV+9b-2MA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mihailescu2m-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 2017년 11월 29일 20:13, Marek Szyprowski wrote:
-> Add device tree node with S3FWRN5 NFC chip to TM2(e) boards. The chip is
-> connected through HS-I2C bus #4.
-> 
-> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
-> [mszyprow: rebased onto v4.15-rc1, moved node to exynos5433-tm2-common.dtsi,
->  rephrased commit message]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> index 297597442c44..5028d7352856 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> @@ -741,6 +741,19 @@
->  	};
->  };
->  
-> +&hsi2c_4 {
-> +	status = "okay";
-> +
-> +	s3fwrn5: nfc@27 {
-> +		compatible = "samsung,s3fwrn5-i2c";
-> +		reg = <0x27>;
-> +		interrupt-parent = <&gpa1>;
-> +		interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-> +		s3fwrn5,en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
-> +		s3fwrn5,fw-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
-> +	};
-> +};
-> +
->  &hsi2c_5 {
->  	status = "okay";
->  
-> 
+Hi Krzysztof,
 
-I tested it by using neard daemon. The NFC device on TM2
-detects the external NFC id card.
+On 2017-11-29 18:55, Krzysztof Kozlowski wrote:
+> On Mon, Nov 27, 2017 at 7:12 PM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+>> On Fri, Nov 03, 2017 at 05:54:45PM +0100, Sylwester Nawrocki wrote:
+>>> The new sound card DT binding is used for Odroid XU3 in order
+>>> to properly support the HDMI audio path.
+>>> Clocks configuration is changed so the I2S controller is now the bit
+>>> and the frame clock master with EPLL as the root clock source.
+>>>
+>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> ---
+>>>   arch/arm/boot/dts/exynos4.dtsi                    |  1 +
+>>>   arch/arm/boot/dts/exynos5420.dtsi                 |  1 +
+>>>   arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 60 ++++++++++++++---------
+>>>   3 files changed, 40 insertions(+), 22 deletions(-)
+>>>
+>
+> Unfortunately this patch causes the audio card to disappear on Odroid
+> XU3. "aplay -L" shows nothing and obviously speaker-test fails.
+>
+> Applied on v4.15-rc1... any dependencies are missing?
+>
+> Full boot-logs are here:
+> http://www.krzk.eu/#/builders/1/builds/976
+> (test exits on aplay -L).
+>
+> Should this be dropped?
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+Please add CONFIG_SND_SOC_ODROID=y to you .config. Probably exynos_defconfig
+and multi_v7_defconfig should be updated too.
 
+Best regards
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
