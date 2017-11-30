@@ -1,76 +1,90 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 3/6] arm64: dts: exynos: Add MSCL power domain to
- Exynos 5433 SoC
-Date: Thu, 30 Nov 2017 13:21:09 +0100
-Message-ID: <8c9ccbc5-21ee-3df7-ac7f-2a4506e6fa43@samsung.com>
-References: <20171129112638.15813-1-m.szyprowski@samsung.com>
-        <CGME20171129112650eucas1p13a3cc167bc64d133cf24e4f621865203@eucas1p1.samsung.com>
-        <20171129112638.15813-4-m.szyprowski@samsung.com>
-        <5A1F6AF3.5050809@samsung.com> <5A1F7219.5080506@samsung.com>
-        <dc21a17f-c281-cb71-8d06-5a15f8d9a04e@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2] PM / Domains: Remove obsolete "samsung,power-domain" check
+Date: Thu, 30 Nov 2017 14:21:42 +0100
+Message-ID: <CAPDyKFqnY6KCvhNM3WwGZRcUdyPyzs3PqLJ7LwKSnC7jQBVxEw@mail.gmail.com>
+References: <1512042868-23017-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47597 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752130AbdK3MVO (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 07:21:14 -0500
-In-reply-to: <dc21a17f-c281-cb71-8d06-5a15f8d9a04e@samsung.com>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1512042868-23017-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-Dear Chanwoo,
-
-On 2017-11-30 10:35, Marek Szyprowski wrote:
-> On 2017-11-30 03:51, Chanwoo Choi wrote:
->> On 2017년 11월 30일 11:20, Chanwoo Choi wrote:
->>> On 2017년 11월 29일 20:26, Marek Szyprowski wrote:
->>>> This patch adds support for MSCL power domain to Exynos 5433 SoCs, 
->>>> which
->>>> contains following devices: a clock controller, JPEG codec device 
->>>> and its
->>>> SYSMMU.
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> ---
->>>>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 10 ++++++++++
->>>>   1 file changed, 10 insertions(+)
->>> Looks good to me.
->>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>
->>> [snip]
->>>
->> When I tested this patch with enabling exynos-bus.c,
->> I got the following external abort. In order to fix this abort,
->> I add the power-domain property to 
->> arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
->> as following:
+On 30 November 2017 at 12:54, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Currently the generic PM Domain code code checks for the presence of
+> both (generic) "power-domains" and (Samsung Exynos legacy)
+> "samsung,power-domain" properties in all device tree nodes representing
+> devices.
 >
-> Thanks for this report. You are right that exynos-bus devices should be
-> also added to respective power domains. I will also check how to add
-> runtime PM support and awareness of power domain to exynos-bus driver,
-> to avoid blocking respective power domains in turned on state.
+> There are two issues with this:
+>   1. This imposes a small boot-time penalty on all platforms using DT,
+>   2. Platform-specific checks do not really belong in core framework
+>      code.
+>
+> Remove the platform-specific check, as the last user of
+> "samsung,power-domain" was removed in commit 46dcf0ff0de35da8 ("ARM:
+> dts: exynos: Remove exynos4415.dtsi").  All other users were converted
+> before in commit 0da6587041363033 ("ARM: dts: convert to generic power
+> domain bindings for exynos DT").
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I've investigated it further and it turned out to be a missing case in
-my runtime PM patch for clocks core.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-In this case exynos-bus operates on a clock, which is in the
-TOP CMU and TOP power domain (always on), which has no relation with
-the newly added MSCL power domain. We should not mix this by forcing
-exynos-bus to be in the MSCL domain.
+Kind regards
+Uffe
 
-The reported external abort is solved by proper patch for clock core:
-https://patchwork.kernel.org/patch/10084725/
-
-This patch (and the other patches from this patch series) can be applied
-without any changes.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> ---
+> This is v2 of 'PM / Domains: Restrict "samsung,power-domain" checks to
+> ARCH_EXYNOS'.
+>
+> "samsung,power-domain" was only ever used in:
+>   - arch/arm/boot/dts/exynos4415.dtsi: Removed
+>   - arch/arm/boot/dts/exynos3250.dtsi: CONFIG_ARCH_EXYNOS3
+>   - arch/arm/boot/dts/exynos4.dtsi:    CONFIG_ARCH_EXYNOS4
+>   - arch/arm/boot/dts/exynos4x12.dtsi: CONFIG_ARCH_EXYNOS4
+>   - arch/arm/boot/dts/exynos5250.dtsi: CONFIG_ARCH_EXYNOS5
+>   - arch/arm/boot/dts/exynos5420.dtsi: CONFIG_ARCH_EXYNOS5
+>
+> v2:
+>   - Remove the check completely instead of restricting it to
+>     ARCH_EXYNOS, as suggested Javier Martinez Canillas one year ago
+>     ("Removing the support for the deprecated property sound sensible to me",
+>     http://lists.infradead.org/pipermail/linux-arm-kernel/2016-October/462868.html).
+> ---
+>  drivers/base/power/domain.c | 16 ++--------------
+>  1 file changed, 2 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 0c80bea05bcb92be..f9dcc981b6b9328c 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2199,20 +2199,8 @@ int genpd_dev_pm_attach(struct device *dev)
+>
+>         ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
+>                                         "#power-domain-cells", 0, &pd_args);
+> -       if (ret < 0) {
+> -               if (ret != -ENOENT)
+> -                       return ret;
+> -
+> -               /*
+> -                * Try legacy Samsung-specific bindings
+> -                * (for backwards compatibility of DT ABI)
+> -                */
+> -               pd_args.args_count = 0;
+> -               pd_args.np = of_parse_phandle(dev->of_node,
+> -                                               "samsung,power-domain", 0);
+> -               if (!pd_args.np)
+> -                       return -ENOENT;
+> -       }
+> +       if (ret < 0)
+> +               return ret;
+>
+>         mutex_lock(&gpd_list_lock);
+>         pd = genpd_get_from_provider(&pd_args);
+> --
+> 2.7.4
+>
