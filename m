@@ -1,24 +1,21 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 3/6] arm64: dts: exynos: Add MSCL power domain to
- Exynos 5433 SoC
-Date: Fri, 01 Dec 2017 10:18:21 +0900
-Message-ID: <5A20ADDD.8020203@samsung.com>
+Subject: Re: [PATCH v2 5/6] arm64: dts: exynos: Add AUD power domain to
+ Exynos5433 SoC
+Date: Fri, 01 Dec 2017 10:20:14 +0900
+Message-ID: <5A20AE4E.3020604@samsung.com>
 References: <20171129112638.15813-1-m.szyprowski@samsung.com>
-        <CGME20171129112650eucas1p13a3cc167bc64d133cf24e4f621865203@eucas1p1.samsung.com>
-        <20171129112638.15813-4-m.szyprowski@samsung.com>
-        <5A1F6AF3.5050809@samsung.com> <5A1F7219.5080506@samsung.com>
-        <dc21a17f-c281-cb71-8d06-5a15f8d9a04e@samsung.com>
-        <8c9ccbc5-21ee-3df7-ac7f-2a4506e6fa43@samsung.com>
+        <CGME20171129112651eucas1p18703aa0c427252abed987e1553ff4efe@eucas1p1.samsung.com>
+        <20171129112638.15813-6-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:62012 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751383AbdLABSi (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:41224 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751303AbdLABUP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 20:18:38 -0500
-In-reply-to: <8c9ccbc5-21ee-3df7-ac7f-2a4506e6fa43@samsung.com>
+        Thu, 30 Nov 2017 20:20:15 -0500
+In-reply-to: <20171129112638.15813-6-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
@@ -26,51 +23,86 @@ Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kerne
 
 Dear Marek,
 
-On 2017년 11월 30일 21:21, Marek Szyprowski wrote:
-> Dear Chanwoo,
+On 2017년 11월 29일 20:26, Marek Szyprowski wrote:
+> This patch adds support for AUD power domain to Exynos5433 SoCs, which
+> contains following devices: a clock controller, a pin controller, LPASS
+> module, I2S controller, ADMA PL330 engine and UART #3 device.
 > 
-> On 2017-11-30 10:35, Marek Szyprowski wrote:
->> On 2017-11-30 03:51, Chanwoo Choi wrote:
->>> On 2017년 11월 30일 11:20, Chanwoo Choi wrote:
->>>> On 2017년 11월 29일 20:26, Marek Szyprowski wrote:
->>>>> This patch adds support for MSCL power domain to Exynos 5433 SoCs, which
->>>>> contains following devices: a clock controller, JPEG codec device and its
->>>>> SYSMMU.
->>>>>
->>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>> ---
->>>>>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 10 ++++++++++
->>>>>   1 file changed, 10 insertions(+)
->>>> Looks good to me.
->>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>
->>>> [snip]
->>>>
->>> When I tested this patch with enabling exynos-bus.c,
->>> I got the following external abort. In order to fix this abort,
->>> I add the power-domain property to arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
->>> as following:
->>
->> Thanks for this report. You are right that exynos-bus devices should be
->> also added to respective power domains. I will also check how to add
->> runtime PM support and awareness of power domain to exynos-bus driver,
->> to avoid blocking respective power domains in turned on state.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
-> I've investigated it further and it turned out to be a missing case in
-> my runtime PM patch for clocks core.
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index cfa2a0d4dc2f..2c019a0fd8e3 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -395,6 +395,7 @@
+>  			#clock-cells = <1>;
+>  			clock-names = "oscclk", "fout_aud_pll";
+>  			clocks = <&xxti>, <&cmu_top CLK_FOUT_AUD_PLL>;
+> +			power-domains = <&pd_aud>;
+>  		};
+>  
+>  		cmu_bus0: clock-controller@13600000 {
+> @@ -568,6 +569,13 @@
+>  			label = "DISP";
+>  		};
+>  
+> +		pd_aud: power-domain@105c40c0 {
+> +			compatible = "samsung,exynos5433-pd";
+> +			reg = <0x105c40c0 0x20>;
+> +			#power-domain-cells = <0>;
+> +			label = "AUD";
+> +		};
+> +
+>  		pd_mfc: power-domain@105c4180 {
+>  			compatible = "samsung,exynos5433-pd";
+>  			reg = <0x105c4180 0x20>;
+> @@ -687,6 +695,7 @@
+>  			compatible = "samsung,exynos5433-pinctrl";
+>  			reg = <0x114b0000 0x1000>;
+>  			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+> +			power-domains = <&pd_aud>;
+>  		};
+>  
+>  		pinctrl_cpif: pinctrl@10fe0000 {
+> @@ -1566,6 +1575,7 @@
+>  			clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
+>  			clock-names = "sfr0_ctrl";
+>  			samsung,pmu-syscon = <&pmu_system_controller>;
+> +			power-domains = <&pd_aud>;
+>  			#address-cells = <1>;
+>  			#size-cells = <1>;
+>  			ranges;
+> @@ -1579,6 +1589,7 @@
+>  				#dma-cells = <1>;
+>  				#dma-channels = <8>;
+>  				#dma-requests = <32>;
+> +				power-domains = <&pd_aud>;
+>  			};
+>  
+>  			i2s0: i2s0@11440000 {
+> @@ -1595,6 +1606,7 @@
+>  				clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+>  				pinctrl-names = "default";
+>  				pinctrl-0 = <&i2s0_bus>;
+> +				power-domains = <&pd_aud>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -1607,6 +1619,7 @@
+>  				clock-names = "uart", "clk_uart_baud0";
+>  				pinctrl-names = "default";
+>  				pinctrl-0 = <&uart_aud_bus>;
+> +				power-domains = <&pd_aud>;
+>  				status = "disabled";
+>  			};
+>  		};
 > 
-> In this case exynos-bus operates on a clock, which is in the
-> TOP CMU and TOP power domain (always on), which has no relation with
-> the newly added MSCL power domain. We should not mix this by forcing
-> exynos-bus to be in the MSCL domain.
-> 
-> The reported external abort is solved by proper patch for clock core:
-> https://patchwork.kernel.org/patch/10084725/
-> 
-> This patch (and the other patches from this patch series) can be applied
-> without any changes.
 
-I tested it with your clk patch. It is well working. Thanks.
+Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
 Best Regards,
