@@ -1,48 +1,40 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH v2] crypto: Add myself as co-maintainer for s5p-sss.c
-Date: Fri, 01 Dec 2017 17:51:02 +0100
-Message-ID: <acd334d8-987e-c161-bb4b-d43c7336a0df@partner.samsung.com>
-References: <CGME20171201165104eucas1p1bb39f164ff03b3c335a8e2dd4a91cff8@eucas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Add missing interrupt-controller
+ properties to Exynos5410 PMU
+Date: Sun, 3 Dec 2017 13:07:27 +0100
+Message-ID: <20171203120727.f32ynwpgploef7eu@kozik-lap>
+References: <20171129183610.26305-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59606 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750742AbdLAQvH (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38356 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751108AbdLCMHb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Dec 2017 11:51:07 -0500
-Content-language: en-US
+        Sun, 3 Dec 2017 07:07:31 -0500
+Content-Disposition: inline
+In-Reply-To: <20171129183610.26305-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, k.konieczny@partner.samsung.com
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Add myself as co-maintainer for Samsung Security SubSystem driver.
-I have added major functionality to the driver [hash acceleration],
-I have access to documentation and to hardware for testing, I can
-also dedicate some of my paid time for reviewing and verifying changes
-to the driver.
+On Wed, Nov 29, 2017 at 07:36:10PM +0100, Krzysztof Kozlowski wrote:
+> PMU (system-controller@10040000) is used as interrupt-parent for certain
+> nodes thus it should be marked as interrupt-controller to silence
+> warnings when building Exynos5410-based DTBs:
+> 
+>   arch/arm/boot/dts/exynos5410-odroidxu.dtb: Warning (interrupts_property):
+>     Missing interrupt-controller or interrupt-map property in /soc/system-controller@10040000
+>   arch/arm/boot/dts/exynos5410-odroidxu.dtb: Warning (interrupts_property):
+>     Missing #interrupt-cells in interrupt-parent /soc/system-controller@10040000
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos5410.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
----
-Changes:
- v2: clarify reasons for co-maintenance.
+For the record, applied.
 
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aa71ab52fd76..3f6cadf2e087 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11982,6 +11982,7 @@ F:	drivers/media/i2c/s5k5baf.c
- SAMSUNG S5P Security SubSystem (SSS) DRIVER
- M:	Krzysztof Kozlowski <krzk@kernel.org>
- M:	Vladimir Zapolskiy <vz@mleia.com>
-+M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
- L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
--- 
-2.15.0
+Best regards,
+Krzysztof
