@@ -1,33 +1,36 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 2/3] hwrng: exynos - add Samsung Exynos True RNG driver
-Date: Mon, 4 Dec 2017 14:19:16 +0100
-Message-ID: <CAJKOXPcbyMV7n2TEWn9QzPLbwGor1R6ReyT+tY=MVUVt=_WL=g@mail.gmail.com>
-References: <CGME20171204125415eucas1p1f94e6996f08938f686c08c00247c62ce@eucas1p1.samsung.com>
- <20171204125351.26805-1-l.stelmach@samsung.com> <20171204125351.26805-3-l.stelmach@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynos: increase bus frequency for MHL chip
+Date: Mon, 4 Dec 2017 17:51:45 +0100
+Message-ID: <20171204165145.4f72dvpazgcxydkf@kozik-lap>
+References: <CGME20171201113426eucas1p247ef5f5113c466409f0a001297aaf9b6@eucas1p2.samsung.com>
+ <20171201113351.16361-1-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20171204125351.26805-3-l.stelmach@samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Cc: "Andrew F . Davis" <afd@ti.com>, PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, Rob Herring <robh+dt@kernel.org>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20171201113351.16361-1-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 4, 2017 at 1:53 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
-> Add support for True Random Number Generator found in Samsung Exynos
-> 5250+ SoCs.
->
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  MAINTAINERS                          |   7 +
->  drivers/char/hw_random/Kconfig       |  12 ++
->  drivers/char/hw_random/Makefile      |   1 +
->  drivers/char/hw_random/exynos-trng.c | 245 +++++++++++++++++++++++++++++++++++
->  4 files changed, 265 insertions(+)
->  create mode 100644 drivers/char/hw_random/exynos-trng.c
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+T24gRnJpLCBEZWMgMDEsIDIwMTcgYXQgMTI6MzM6NTFQTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPiBzaWk4NjIwIHN1cHBvcnRzIDFNSHogY2xvY2ssIGl0IGFsbG93cyBmYXN0ZXIgdHJh
+bnNtaXNzaW9ucyBhbmQgYWNjb3JkaW5nCj4gdG8gZXh0ZW5zaXZlIHRlc3RzIGFsbG93cyB0byBt
+aXRpZ2F0ZSBzb21lIG9ic2N1cmUgYnVncyBpbiBJMkMgY2xpZW50Cj4gbG9naWMgb2YgdGhlIGNo
+aXAuCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNv
+bT4KPiAtLS0KPiAgYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTItY29t
+bW9uLmR0c2kgfCAxICsKPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCj4gCgpUaGFu
+a3MsIGFwcGxpZWQuCgpCZXN0IHJlZ2FyZHMsCktyenlzenRvZgoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
