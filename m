@@ -1,58 +1,57 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add audio power domain support to
- Exynos542x SoCs
-Date: Sun, 3 Dec 2017 13:08:34 +0100
-Message-ID: <20171203120834.5yiqloldmpwcsnct@kozik-lap>
-References: <CGME20171129113526eucas1p11045cbb1dcdd42a68c2f5ba81a635213@eucas1p1.samsung.com>
- <20171129113514.15988-1-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: dts: exynos: Add CPU performance counters to
+ Exynos4 boards
+Date: Mon, 04 Dec 2017 10:49:29 +0100
+Message-ID: <b3da343b-96ce-64d9-e8ad-86eaf2900fe5@samsung.com>
+References: <20171123143431.12434-1-m.szyprowski@samsung.com>
+        <CGME20171123143445eucas1p211f591cae7ad5121f5b5e19ede898db7@eucas1p2.samsung.com>
+        <20171123143431.12434-2-m.szyprowski@samsung.com>
+        <5d262ced-6f3b-75a7-53b3-01c64eecebad@fivetechno.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:44983 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751033AbdLCMIh (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49058 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751111AbdLDJte (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 3 Dec 2017 07:08:37 -0500
-Received: by mail-wm0-f66.google.com with SMTP id t8so1312005wmc.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Dec 2017 04:08:37 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20171129113514.15988-1-m.szyprowski@samsung.com>
+        Mon, 4 Dec 2017 04:49:34 -0500
+In-reply-to: <5d262ced-6f3b-75a7-53b3-01c64eecebad@fivetechno.de>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Markus Reichl <m.reichl@fivetechno.de>, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>
 
-On Wed, Nov 29, 2017 at 12:35:14PM +0100, Marek Szyprowski wrote:
-> Audio power domain includes following hardware modules: Pin controller
-> for GPZ bank, AudioSS clock controller, PL330 ADMA device and Exynos I2S
-> controller.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Currently this domain will not be turned off, because pinctrl driver
-> don't support runtime PM and PL330 ADMA requires irq-safe runtime PM.
-> This will be fixed in the future.
-> 
-> Issues pointed in the discussion of v1 has been resolved by commit
-> 07731019c59c ("pinctrl: samsung: Move retention control from mach-exynos
-> to the pinctrl driver").
-> 
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
-> 
-> Changelog:
-> v2:
-> - added domain label
-> 
-> v1: https://patchwork.kernel.org/patch/9485083/
-> - initial version
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
+Hi Markus,
 
-Thanks, applied.
+On 2017-12-01 12:12, Markus Reichl wrote:
+> Hi Marek,
+>
+> with this patch (linux-next-20171201) I get on odroid-X2
+>
+> [    0.671862] hw perfevents: no interrupt-affinity property for /pmu, guessing.
+> [    0.672242] hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7 counters available
+> [    0.672618] hw perfevents: no interrupt-affinity property for /arm_pmu, guessing.
+> [    0.672696] genirq: Flags mismatch irq 38. 00010c00 (arm-pmu) vs. 00010c00 (arm-pmu)
+> [    0.672716] hw perfevents: unable to request IRQ38 for ARM PMU counters
+> [    0.672733] hw perfevents: /arm_pmu: failed to register PMU devices!
+> [    0.672761] armv7-pmu: probe of arm_pmu failed with error -16
+>
+> without it
+>
+> [    0.686817] hw perfevents: no interrupt-affinity property for /pmu, guessing.
+> [    0.687194] hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7 counters available
+>
+> Looks like arm_pmu in exynos4412.dtsi doubles pmu from exynos4.dtsi.
 
-Best regards,
-Krzysztof
+You are right. I swear that I've checked exynos4 dts before preparing my 
+patch
+and didn't notice existing ARM PMU node there. This means that my patch 
+has to
+be reverted/dropped then. Sorry for the noise.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
