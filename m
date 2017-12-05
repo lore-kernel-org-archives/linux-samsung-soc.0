@@ -1,108 +1,73 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/3] crypto: exynos - Improve performance of PRNG
-Date: Tue, 5 Dec 2017 19:06:28 +0100
-Message-ID: <CAJKOXPfRu-CseVCJUabXcaJP+uBVfkcHV63O0pVegYz6mKxBqg@mail.gmail.com>
-References: <5101426.uadkujNqxF@tauon.chronox.de> <CGME20171205164319eucas1p1e79b9798d655851762cc83a6737b73b4@eucas1p1.samsung.com>
- <87zi6x9lcx.fsf%l.stelmach@samsung.com> <20171205175331.psayjpxolxv5vg3t@kozik-lap>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] clk: Manage proper runtime PM state in clk_change_rate()
+Date: Tue, 5 Dec 2017 15:26:46 -0800
+Message-ID: <20171205232646.GA4283@codeaurora.org>
+References: <CGME20171130121511eucas1p1832c1f6e5bc9e263860e40478efca132@eucas1p1.samsung.com>
+ <20171130121451.6710-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:52208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752126AbdLESGb (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:52708 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752587AbdLEX0s (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 13:06:31 -0500
-In-Reply-To: <20171205175331.psayjpxolxv5vg3t@kozik-lap>
+        Tue, 5 Dec 2017 18:26:48 -0500
+Content-Disposition: inline
+In-Reply-To: <20171130121451.6710-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Cc: Stephan Mueller <smueller@chronox.de>, robh+dt@kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Tue, Dec 5, 2017 at 6:53 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Tue, Dec 05, 2017 at 05:43:10PM +0100, Łukasz Stelmach wrote:
->> It was <2017-12-05 wto 14:54>, when Stephan Mueller wrote:
->> > Am Dienstag, 5. Dezember 2017, 13:35:57 CET schrieb Łukasz Stelmach:
->> >
->> > Hi Łukasz,
->> >
->> >> Use memcpy_fromio() instead of custom exynos_rng_copy_random() function
->> >> to retrieve generated numbers from the registers of PRNG.
->> >>
->> >> Remove unnecessary invocation of cpu_relax().
->> >>
->> >> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
->> >> ---
->> >>  drivers/crypto/exynos-rng.c | 36 +++++-------------------------------
->> >>  1 file changed, 5 insertions(+), 31 deletions(-)
->> >>
->> >> diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
->> >> index 894ef93ef5ec..002e9d2a83cc 100644
->> >> --- a/drivers/crypto/exynos-rng.c
->> >> +++ b/drivers/crypto/exynos-rng.c
->>
->> [...]
->>
->> >> @@ -171,6 +143,8 @@ static int exynos_rng_get_random(struct exynos_rng_dev
->> >> *rng, {
->> >>    int retry = EXYNOS_RNG_WAIT_RETRIES;
->> >>
->> >> +  *read = min_t(size_t, dlen, EXYNOS_RNG_SEED_SIZE);
->> >> +
->> >>    if (rng->type == EXYNOS_PRNG_TYPE4) {
->> >>            exynos_rng_writel(rng, EXYNOS_RNG_CONTROL_START,
->> >>                              EXYNOS_RNG_CONTROL);
->> >> @@ -180,8 +154,8 @@ static int exynos_rng_get_random(struct exynos_rng_dev
->> >> *rng, }
->> >>
->> >>    while (!(exynos_rng_readl(rng,
->> >> -                  EXYNOS_RNG_STATUS) & EXYNOS_RNG_STATUS_RNG_DONE) && --retry)
->> >> -          cpu_relax();
->> >> +                  EXYNOS_RNG_STATUS) & EXYNOS_RNG_STATUS_RNG_DONE) &&
->> >> +         --retry);
->> SM>
->> SM> Is this related to the patch?
->>
->> KK> It looks like unrelated change so split it into separate commit with
->> KK> explanation why you are changing the common busy-loop pattern.
->> KK> exynos_rng_readl() uses relaxed versions of readl() so I would expect
->> KK> here cpu_relax().
->>
->> Yes. As far as I can tell this gives the major part of the performance
->> improvement brought by this patch.
->
-> In that case definitely split and explain... what and why you want to
-> achieve here.
->
->>
->> The busy loop is not very busy. Every time I checked the loop (w/o
->> cpu_relax()) was executed twice (retry was 98) and the operation was
->> reliable. I don't see why do we need a memory barrier here. On the other
->> hand, I am not sure the whole exynos_rng_get_random() shouldn't be ran
->> under a mutex or a spinlock (I don't see anything like this in the upper
->> layers of the crypto framework).
->>
->> The *_relaxed() I/O operations do not enforce memory
->
-> The cpu_relax() is a common pattern for busy-loop. If you want to break
-> this pattern - please explain why only this part of kernel should not
-> follow it (and rest of kernel should).
->
-> The other part - this code is already using relaxed versions which might
-> get you into difficult to debug issues. You mentioned that loop works
-> reliable after removing the cpu_relax... yeah, it might for 99.999% but
-> that's not the argument. I remember few emails from Arnd Bergmann
-> mentioning explicitly to avoid using relaxed versions "just because",
-> unless it is necessary or really understood.
->
-> The code first writes to control register, then checks for status so you
-> should have these operations strictly ordered. Therefore I think
-> cpu_relax() should not be removed.
+On 11/30, Marek Szyprowski wrote:
+> clk_change_rate() propagates rate change down to all its children. Such
+> operation requires managing proper runtime PM state of each child, what
+> was missing. Add needed calls to clk_pm_runtime*() to ensure that
+> set_rate() clock callback is called on runtime active clock.
+> 
+> This fixes following issue found on Exynos5433 TM2 board with devfreq
+> enabled:
+> 
+> Synchronous External Abort: synchronous external abort (0x96000210) at 0xffffff80093f5600
+> Internal error: : 96000210 [#1] PREEMPT SMP
+> Modules linked in:
+> CPU: 0 PID: 5 Comm: kworker/u16:0 Not tainted 4.15.0-rc1-next-20171129+ #4
+> Hardware name: Samsung TM2 board (DT)
+> Workqueue: devfreq_wq devfreq_monitor
+> task: ffffffc0ca96b600 task.stack: ffffff80093a8000
+> pstate: a0000085 (NzCv daIf -PAN -UAO)
+> pc : clk_divider_set_rate+0x54/0x118
+> lr : clk_divider_set_rate+0x44/0x118
+> ...
+> Process kworker/u16:0 (pid: 5, stack limit = 0xffffff80093a8000)
+> Call trace:
+>  clk_divider_set_rate+0x54/0x118
+>  clk_change_rate+0xfc/0x4e0
+>  clk_change_rate+0x1f0/0x4e0
+>  clk_change_rate+0x1f0/0x4e0
+>  clk_change_rate+0x1f0/0x4e0
+>  clk_core_set_rate_nolock+0x138/0x148
+>  clk_set_rate+0x28/0x50
+>  exynos_bus_passive_target+0x6c/0x11c
+>  update_devfreq_passive+0x58/0xb4
+>  devfreq_passive_notifier_call+0x50/0x5c
+>  notifier_call_chain+0x4c/0x88
+>  __srcu_notifier_call_chain+0x54/0x80
+>  srcu_notifier_call_chain+0x14/0x1c
+>  update_devfreq+0x100/0x1b4
+>  devfreq_monitor+0x2c/0x88
+>  process_one_work+0x148/0x3d8
+>  worker_thread+0x13c/0x3f8
+>  kthread+0x100/0x12c
+>  ret_from_fork+0x10/0x18
+> 
+> Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
 
-... or just convert it to readl_poll_timeout() because it makes code
-more readable, takes care of timeout and you do not have care about
-specific implementation (whether there should or should not be
-cpu_relax).
+Applied to clk-fixes
 
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
