@@ -1,148 +1,53 @@
-From: Misha Komarovskiy <zombah@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 Subject: Re: [PATCH] drm/bridge: analogix dp: Fix runtime PM state in
  get_modes() callback
-Date: Tue, 5 Dec 2017 17:06:48 +0300
-Message-ID: <CANLc0-bR00kRu6M6BNu5zv4zmT8S=TjhfPOhWDbyKwkEre9UJg@mail.gmail.com>
+Date: Tue, 05 Dec 2017 15:12:05 +0100
+Message-ID: <580cfc6f-863e-d977-b1f7-4c96df0ba6ff@samsung.com>
 References: <CGME20171121074940eucas1p17779b35232466785d43c56382dad01b7@eucas1p1.samsung.com>
- <20171121074936.22520-1-m.szyprowski@samsung.com> <5ae5ce53-d15d-c18e-ec47-4a579e039e3a@codeaurora.org>
+ <20171121074936.22520-1-m.szyprowski@samsung.com>
+ <5ae5ce53-d15d-c18e-ec47-4a579e039e3a@codeaurora.org>
+ <CANLc0-bR00kRu6M6BNu5zv4zmT8S=TjhfPOhWDbyKwkEre9UJg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <5ae5ce53-d15d-c18e-ec47-4a579e039e3a@codeaurora.org>
-Sender: stable-owner@vger.kernel.org
-To: Archit Taneja <architt@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Yakir Yang <ykk@rock-chips.com>, Sean Paul <seanpaul@chromium.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, stable@vger.kernel.org, hjc@rock-chips.com
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CANLc0-bR00kRu6M6BNu5zv4zmT8S=TjhfPOhWDbyKwkEre9UJg@mail.gmail.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Misha Komarovskiy <zombah@gmail.com>, Archit Taneja <architt@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Yakir Yang <ykk@rock-chips.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-On Mon, Nov 27, 2017 at 6:40 AM, Archit Taneja <architt@codeaurora.org> wrote:
->
->
-> On 11/21/2017 01:19 PM, Marek Szyprowski wrote:
->>
->> get_modes() callback might be called asynchronously from the DRM core and
->> it is not synchronized with bridge_enable(), which sets proper runtime PM
->> state of the main DP device. Fix this by calling pm_runtime_get_sync()
->> before calling drm_get_edid(), which in turn calls drm_dp_i2c_xfer() and
->> analogix_dp_transfer() to ensure that main DP device is runtime active
->> when doing any access to its registers.
->
->
-> Looks good to me. Would be nice to get an ack from rockchip too. Will queue
-> it
-> to drm-misc-fixes (so that it's merged for 4.15-rc2) if no one has any
-> objections.
->
-
-After this patch accepted to 4.15-rc2 any chances to have it also in
-4.14 stable?
-
-I tested it manualy and it fixes boot freeze on snow with 4.14.
-If required,
-Tested-by: Misha Komarovskiy <zombah@gmail.com>
-
-> Thanks,
-> Archit
->
->>
->> This fixes the following kernel issue on Samsung Exynos5250 Snow board:
->> Unhandled fault: imprecise external abort (0x406) at 0x00000000
->> pgd = c0004000
->> [00000000] *pgd=00000000
->> Internal error: : 406 [#1] PREEMPT SMP ARM
->> Modules linked in:
->> CPU: 0 PID: 62 Comm: kworker/0:2 Not tainted
->> 4.13.0-rc2-00364-g4a97a3da420b #3357
->> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->> Workqueue: events output_poll_execute
->> task: edc14800 task.stack: edcb2000
->> PC is at analogix_dp_transfer+0x15c/0x2fc
->> LR is at analogix_dp_transfer+0x134/0x2fc
->> pc : [<c0468538>]    lr : [<c0468510>]    psr: 60000013
->> sp : edcb3be8  ip : 0000002a  fp : 00000001
->> r10: 00000000  r9 : edcb3cd8  r8 : edcb3c40
->> r7 : 00000000  r6 : edd3b380  r5 : edd3b010  r4 : 00000064
->> r3 : 00000000  r2 : f0ad3000  r1 : edcb3c40  r0 : edd3b010
->> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
->> Control: 10c5387d  Table: 4000406a  DAC: 00000051
->> Process kworker/0:2 (pid: 62, stack limit = 0xedcb2210)
->> Stack: (0xedcb3be8 to 0xedcb4000)
->> [<c0468538>] (analogix_dp_transfer) from [<c0424ba4>]
->> (drm_dp_i2c_do_msg+0x8c/0x2b4)
->> [<c0424ba4>] (drm_dp_i2c_do_msg) from [<c0424e64>]
->> (drm_dp_i2c_xfer+0x98/0x214)
->> [<c0424e64>] (drm_dp_i2c_xfer) from [<c057b2d8>]
->> (__i2c_transfer+0x140/0x29c)
->> [<c057b2d8>] (__i2c_transfer) from [<c057b4a4>] (i2c_transfer+0x70/0xe4)
->> [<c057b4a4>] (i2c_transfer) from [<c0441de4>]
->> (drm_do_probe_ddc_edid+0xb4/0x114)
->> [<c0441de4>] (drm_do_probe_ddc_edid) from [<c0441e5c>]
->> (drm_probe_ddc+0x18/0x28)
->> [<c0441e5c>] (drm_probe_ddc) from [<c0445728>] (drm_get_edid+0x124/0x2d4)
->> [<c0445728>] (drm_get_edid) from [<c0465ea0>]
->> (analogix_dp_get_modes+0x90/0x114)
->> [<c0465ea0>] (analogix_dp_get_modes) from [<c0425e8c>]
->> (drm_helper_probe_single_connector_modes+0x198/0x68c)
->> [<c0425e8c>] (drm_helper_probe_single_connector_modes) from [<c04325d4>]
->> (drm_setup_crtcs+0x1b4/0xd18)
->> [<c04325d4>] (drm_setup_crtcs) from [<c04344a8>]
->> (drm_fb_helper_hotplug_event+0x94/0xd0)
->> [<c04344a8>] (drm_fb_helper_hotplug_event) from [<c0425a50>]
->> (drm_kms_helper_hotplug_event+0x24/0x28)
->> [<c0425a50>] (drm_kms_helper_hotplug_event) from [<c04263ec>]
->> (output_poll_execute+0x6c/0x174)
->> [<c04263ec>] (output_poll_execute) from [<c0136f18>]
->> (process_one_work+0x188/0x3fc)
->> [<c0136f18>] (process_one_work) from [<c01371f4>]
->> (worker_thread+0x30/0x4b8)
->> [<c01371f4>] (worker_thread) from [<c013daf8>] (kthread+0x128/0x164)
->> [<c013daf8>] (kthread) from [<c0108510>] (ret_from_fork+0x14/0x24)
->> Code: 0a000002 ea000009 e2544001 0a00004a (e59537c8)
->> ---[ end trace cddc7919c79f7878 ]---
->>
->> Reported-by: Misha Komarovskiy <zombah@gmail.com>
->> CC: stable@vger.kernel.org # v4.10+
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->> This issue was there from the beginning, but recent changes to DRM
->> core revealed it. It makes sense to backport it to patch f0a8b49c03d2
->> ("drm/bridge: analogix dp: Fix runtime PM state on driver bind"),
->> which fixed similar issue on driver bind, thus I've marked it for
->> stable v4.10+.
->>
->> Best regards
->> Marek Szyprowski
->> Samsung R&D Institute Poland
->> ---
->>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index 5dd3f1cd074a..a8905049b9da 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -946,7 +946,9 @@ static int analogix_dp_get_modes(struct drm_connector
->> *connector)
->>                         return 0;
->>                 }
->>   +             pm_runtime_get_sync(dp->dev);
->>                 edid = drm_get_edid(connector, &dp->aux.ddc);
->> +               pm_runtime_put(dp->dev);
->>                 if (edid) {
->>
->> drm_mode_connector_update_edid_property(&dp->connector,
->>                                                                 edid);
->>
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-
-
-
--- 
-Best Regards,
-Misha Komarovskiy
-zombahatgmaildotcom
+SGkgTWlzaGEsCgpPbiAyMDE3LTEyLTA1IDE1OjA2LCBNaXNoYSBLb21hcm92c2tpeSB3cm90ZToK
+PiBPbiBNb24sIE5vdiAyNywgMjAxNyBhdCA2OjQwIEFNLCBBcmNoaXQgVGFuZWphIDxhcmNoaXR0
+QGNvZGVhdXJvcmEub3JnPiB3cm90ZToKPj4gT24gMTEvMjEvMjAxNyAwMToxOSBQTSwgTWFyZWsg
+U3p5cHJvd3NraSB3cm90ZToKPj4+IGdldF9tb2RlcygpIGNhbGxiYWNrIG1pZ2h0IGJlIGNhbGxl
+ZCBhc3luY2hyb25vdXNseSBmcm9tIHRoZSBEUk0gY29yZSBhbmQKPj4+IGl0IGlzIG5vdCBzeW5j
+aHJvbml6ZWQgd2l0aCBicmlkZ2VfZW5hYmxlKCksIHdoaWNoIHNldHMgcHJvcGVyIHJ1bnRpbWUg
+UE0KPj4+IHN0YXRlIG9mIHRoZSBtYWluIERQIGRldmljZS4gRml4IHRoaXMgYnkgY2FsbGluZyBw
+bV9ydW50aW1lX2dldF9zeW5jKCkKPj4+IGJlZm9yZSBjYWxsaW5nIGRybV9nZXRfZWRpZCgpLCB3
+aGljaCBpbiB0dXJuIGNhbGxzIGRybV9kcF9pMmNfeGZlcigpIGFuZAo+Pj4gYW5hbG9naXhfZHBf
+dHJhbnNmZXIoKSB0byBlbnN1cmUgdGhhdCBtYWluIERQIGRldmljZSBpcyBydW50aW1lIGFjdGl2
+ZQo+Pj4gd2hlbiBkb2luZyBhbnkgYWNjZXNzIHRvIGl0cyByZWdpc3RlcnMuCj4+IExvb2tzIGdv
+b2QgdG8gbWUuIFdvdWxkIGJlIG5pY2UgdG8gZ2V0IGFuIGFjayBmcm9tIHJvY2tjaGlwIHRvby4g
+V2lsbCBxdWV1ZQo+PiBpdAo+PiB0byBkcm0tbWlzYy1maXhlcyAoc28gdGhhdCBpdCdzIG1lcmdl
+ZCBmb3IgNC4xNS1yYzIpIGlmIG5vIG9uZSBoYXMgYW55Cj4+IG9iamVjdGlvbnMuCj4gQWZ0ZXIg
+dGhpcyBwYXRjaCBhY2NlcHRlZCB0byA0LjE1LXJjMiBhbnkgY2hhbmNlcyB0byBoYXZlIGl0IGFs
+c28gaW4KPiA0LjE0IHN0YWJsZT8KPgo+IEkgdGVzdGVkIGl0IG1hbnVhbHkgYW5kIGl0IGZpeGVz
+IGJvb3QgZnJlZXplIG9uIHNub3cgd2l0aCA0LjE0Lgo+IElmIHJlcXVpcmVkLAo+IFRlc3RlZC1i
+eTogTWlzaGEgS29tYXJvdnNraXkgPHpvbWJhaEBnbWFpbC5jb20+CgpUaGUgcGF0Y2ggaXMgdGFn
+Z2VkIGNjOiBzdGFibGUsIHNvIGl0IHNob3VsZCBhdXRvbWF0aWNhbGx5IGdldCBpbnRvIHY0LjE0
+LnkKc2VyaWVzIG9uY2UgaXQgZmluYWxseSBsYW5kcyBpbiB2NC4xNS1yY1ggc2VyaWVzLgoKID4g
+Li4uCgpCZXN0IHJlZ2FyZHMKLS0gCk1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1zdW5nIFImRCBJ
+bnN0aXR1dGUgUG9sYW5kCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
