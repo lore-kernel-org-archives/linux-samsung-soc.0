@@ -1,87 +1,148 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/3] crypto: exynos - Reseed PRNG after generating 2^16
- random bytes
-Date: Tue, 5 Dec 2017 14:55:37 +0100
-Message-ID: <CAJKOXPd3jARFr=e2Pevdcg2_ePRLd7sEwyVyvdXZ3+QkOLcqdA@mail.gmail.com>
-References: <CGME20171205123604eucas1p2a6a2738e3cf1f9c300e8d128362429ed@eucas1p2.samsung.com>
- <20171205123558.31087-1-l.stelmach@samsung.com> <20171205123558.31087-4-l.stelmach@samsung.com>
+From: Misha Komarovskiy <zombah@gmail.com>
+Subject: Re: [PATCH] drm/bridge: analogix dp: Fix runtime PM state in
+ get_modes() callback
+Date: Tue, 5 Dec 2017 17:06:48 +0300
+Message-ID: <CANLc0-bR00kRu6M6BNu5zv4zmT8S=TjhfPOhWDbyKwkEre9UJg@mail.gmail.com>
+References: <CGME20171121074940eucas1p17779b35232466785d43c56382dad01b7@eucas1p1.samsung.com>
+ <20171121074936.22520-1-m.szyprowski@samsung.com> <5ae5ce53-d15d-c18e-ec47-4a579e039e3a@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171205123558.31087-4-l.stelmach@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Cc: robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <5ae5ce53-d15d-c18e-ec47-4a579e039e3a@codeaurora.org>
+Sender: stable-owner@vger.kernel.org
+To: Archit Taneja <architt@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Yakir Yang <ykk@rock-chips.com>, Sean Paul <seanpaul@chromium.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, stable@vger.kernel.org, hjc@rock-chips.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 5, 2017 at 1:35 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
-> Reseed PRNG after reading 65 kB of randomness. Although this may reduce
-> performance, in most casese the loss is not noticable.
-s/casese/cases/
-s/noticable/noticeable/
+Hello,
 
-Please explain why you want to reseed after 65 kB (as opposite to
-current implementation). Mention also why you are changing the time of
-reseed.
+On Mon, Nov 27, 2017 at 6:40 AM, Archit Taneja <architt@codeaurora.org> wrote:
+>
+>
+> On 11/21/2017 01:19 PM, Marek Szyprowski wrote:
+>>
+>> get_modes() callback might be called asynchronously from the DRM core and
+>> it is not synchronized with bridge_enable(), which sets proper runtime PM
+>> state of the main DP device. Fix this by calling pm_runtime_get_sync()
+>> before calling drm_get_edid(), which in turn calls drm_dp_i2c_xfer() and
+>> analogix_dp_transfer() to ensure that main DP device is runtime active
+>> when doing any access to its registers.
+>
+>
+> Looks good to me. Would be nice to get an ack from rockchip too. Will queue
+> it
+> to drm-misc-fixes (so that it's merged for 4.15-rc2) if no one has any
+> objections.
+>
 
->
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  drivers/crypto/exynos-rng.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
-> index 002e9d2a83cc..0bf07a655813 100644
-> --- a/drivers/crypto/exynos-rng.c
-> +++ b/drivers/crypto/exynos-rng.c
-> @@ -54,12 +54,15 @@ enum exynos_prng_type {
->  };
->
->  /*
-> - * Driver re-seeds itself with generated random numbers to increase
-> - * the randomness.
-> + * Driver re-seeds itself with generated random numbers to hinder
-> + * backtracking of the original seed.
->   *
->   * Time for next re-seed in ms.
->   */
-> -#define EXYNOS_RNG_RESEED_TIME         100
-> +#define EXYNOS_RNG_RESEED_TIME         1000
-> +#define EXYNOS_RNG_RESEED_BYTES                65536
-> +
-> +
+After this patch accepted to 4.15-rc2 any chances to have it also in
+4.14 stable?
 
-Just one empty line.
+I tested it manualy and it fixes boot freeze on snow with 4.14.
+If required,
+Tested-by: Misha Komarovskiy <zombah@gmail.com>
 
->  /*
->   * In polling mode, do not wait infinitely for the engine to finish the work.
->   */
-> @@ -81,6 +84,8 @@ struct exynos_rng_dev {
->         unsigned int                    seed_save_len;
->         /* Time of last seeding in jiffies */
->         unsigned long                   last_seeding;
-> +       /* Bytes generated since last seeding */
-> +       unsigned long                   bytes_seeding;
->  };
+> Thanks,
+> Archit
 >
->  static struct exynos_rng_dev *exynos_rng_dev;
-> @@ -125,6 +130,7 @@ static int exynos_rng_set_seed(struct exynos_rng_dev *rng,
->         }
+>>
+>> This fixes the following kernel issue on Samsung Exynos5250 Snow board:
+>> Unhandled fault: imprecise external abort (0x406) at 0x00000000
+>> pgd = c0004000
+>> [00000000] *pgd=00000000
+>> Internal error: : 406 [#1] PREEMPT SMP ARM
+>> Modules linked in:
+>> CPU: 0 PID: 62 Comm: kworker/0:2 Not tainted
+>> 4.13.0-rc2-00364-g4a97a3da420b #3357
+>> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>> Workqueue: events output_poll_execute
+>> task: edc14800 task.stack: edcb2000
+>> PC is at analogix_dp_transfer+0x15c/0x2fc
+>> LR is at analogix_dp_transfer+0x134/0x2fc
+>> pc : [<c0468538>]    lr : [<c0468510>]    psr: 60000013
+>> sp : edcb3be8  ip : 0000002a  fp : 00000001
+>> r10: 00000000  r9 : edcb3cd8  r8 : edcb3c40
+>> r7 : 00000000  r6 : edd3b380  r5 : edd3b010  r4 : 00000064
+>> r3 : 00000000  r2 : f0ad3000  r1 : edcb3c40  r0 : edd3b010
+>> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+>> Control: 10c5387d  Table: 4000406a  DAC: 00000051
+>> Process kworker/0:2 (pid: 62, stack limit = 0xedcb2210)
+>> Stack: (0xedcb3be8 to 0xedcb4000)
+>> [<c0468538>] (analogix_dp_transfer) from [<c0424ba4>]
+>> (drm_dp_i2c_do_msg+0x8c/0x2b4)
+>> [<c0424ba4>] (drm_dp_i2c_do_msg) from [<c0424e64>]
+>> (drm_dp_i2c_xfer+0x98/0x214)
+>> [<c0424e64>] (drm_dp_i2c_xfer) from [<c057b2d8>]
+>> (__i2c_transfer+0x140/0x29c)
+>> [<c057b2d8>] (__i2c_transfer) from [<c057b4a4>] (i2c_transfer+0x70/0xe4)
+>> [<c057b4a4>] (i2c_transfer) from [<c0441de4>]
+>> (drm_do_probe_ddc_edid+0xb4/0x114)
+>> [<c0441de4>] (drm_do_probe_ddc_edid) from [<c0441e5c>]
+>> (drm_probe_ddc+0x18/0x28)
+>> [<c0441e5c>] (drm_probe_ddc) from [<c0445728>] (drm_get_edid+0x124/0x2d4)
+>> [<c0445728>] (drm_get_edid) from [<c0465ea0>]
+>> (analogix_dp_get_modes+0x90/0x114)
+>> [<c0465ea0>] (analogix_dp_get_modes) from [<c0425e8c>]
+>> (drm_helper_probe_single_connector_modes+0x198/0x68c)
+>> [<c0425e8c>] (drm_helper_probe_single_connector_modes) from [<c04325d4>]
+>> (drm_setup_crtcs+0x1b4/0xd18)
+>> [<c04325d4>] (drm_setup_crtcs) from [<c04344a8>]
+>> (drm_fb_helper_hotplug_event+0x94/0xd0)
+>> [<c04344a8>] (drm_fb_helper_hotplug_event) from [<c0425a50>]
+>> (drm_kms_helper_hotplug_event+0x24/0x28)
+>> [<c0425a50>] (drm_kms_helper_hotplug_event) from [<c04263ec>]
+>> (output_poll_execute+0x6c/0x174)
+>> [<c04263ec>] (output_poll_execute) from [<c0136f18>]
+>> (process_one_work+0x188/0x3fc)
+>> [<c0136f18>] (process_one_work) from [<c01371f4>]
+>> (worker_thread+0x30/0x4b8)
+>> [<c01371f4>] (worker_thread) from [<c013daf8>] (kthread+0x128/0x164)
+>> [<c013daf8>] (kthread) from [<c0108510>] (ret_from_fork+0x14/0x24)
+>> Code: 0a000002 ea000009 e2544001 0a00004a (e59537c8)
+>> ---[ end trace cddc7919c79f7878 ]---
+>>
+>> Reported-by: Misha Komarovskiy <zombah@gmail.com>
+>> CC: stable@vger.kernel.org # v4.10+
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>> This issue was there from the beginning, but recent changes to DRM
+>> core revealed it. It makes sense to backport it to patch f0a8b49c03d2
+>> ("drm/bridge: analogix dp: Fix runtime PM state on driver bind"),
+>> which fixed similar issue on driver bind, thus I've marked it for
+>> stable v4.10+.
+>>
+>> Best regards
+>> Marek Szyprowski
+>> Samsung R&D Institute Poland
+>> ---
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index 5dd3f1cd074a..a8905049b9da 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -946,7 +946,9 @@ static int analogix_dp_get_modes(struct drm_connector
+>> *connector)
+>>                         return 0;
+>>                 }
+>>   +             pm_runtime_get_sync(dp->dev);
+>>                 edid = drm_get_edid(connector, &dp->aux.ddc);
+>> +               pm_runtime_put(dp->dev);
+>>                 if (edid) {
+>>
+>> drm_mode_connector_update_edid_property(&dp->connector,
+>>                                                                 edid);
+>>
 >
->         rng->last_seeding = jiffies;
-> +       rng->bytes_seeding = 0;
->
->         return 0;
->  }
-> @@ -166,6 +172,8 @@ static int exynos_rng_get_random(struct exynos_rng_dev *rng,
->         memcpy_fromio(dst, rng->mem + EXYNOS_RNG_OUT_BASE, *read);
->
->         return 0;
-> +
-> +
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 
-No need for these lines.
 
-Best regards,
-Krzysztof
+
+-- 
+Best Regards,
+Misha Komarovskiy
+zombahatgmaildotcom
