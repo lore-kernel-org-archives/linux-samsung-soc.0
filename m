@@ -1,45 +1,56 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 1/3] crypto: exynos - Support Exynos5250+ SoCs
-Date: Wed, 06 Dec 2017 09:56:11 -0800
-Message-ID: <1512582971.960.6.camel@perches.com>
-References: <CGME20171206134305eucas1p218c38b977c14cae58763586458c3e78d@eucas1p2.samsung.com>
-         <CAJKOXPf9JpBkR_z4frT-knxSUv53K=94wHoJkqD2fzVz2K6mGA@mail.gmail.com>
-         <87bmjc9dlr.fsf%l.stelmach@samsung.com>
-         <CAJKOXPfep5BeJMz=qHqF4m05c2=5DgnFjPeA21n2EMJnyXvoQA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPfep5BeJMz=qHqF4m05c2=5DgnFjPeA21n2EMJnyXvoQA@mail.gmail.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?Q?Bart=C5=82omiej_?= =?UTF-8?Q?=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-fixes
+Date: Thu, 07 Dec 2017 11:17:57 +0900
+Message-ID: <1512613077-16804-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20171207021757epcas1p4a5d5acadbddee99b174908aa831eeb3b@epcas1p4.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:14216 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752047AbdLGCSC (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 6 Dec 2017 21:18:02 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, 2017-12-06 at 15:05 +0100, Krzysztof Kozlowski wrote:
-> On Wed, Dec 6, 2017 at 2:42 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
-> > It was <2017-12-05 wto 14:34>, when Krzysztof Kozlowski wrote:
-> > > On Tue, Dec 5, 2017 at 1:35 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
-> > > > Add support for PRNG in Exynos5250+ SoCs.
-[]
-> > > > diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
-[]
-> > > > @@ -300,7 +323,10 @@ static int exynos_rng_probe(struct platform_device *pdev)
-> > > >                 dev_err(&pdev->dev,
-> > > >                         "Couldn't register rng crypto alg: %d\n", ret);
-> > > >                 exynos_rng_dev = NULL;
-> > > > -       }
-> > > > +       } else
-> > > 
-> > > Missing {} around else clause. Probably checkpatch should point it.
-> > 
-> > It doesn't. Fixed.
+Hi Dave,
+   Just a regression fixup and several cleanups.
 
-checkpatch does report this if using --strict
+   Please kindly let me know if there is any problem.
 
-$ ./scripts/checkpatch.pl --strict -
-CHECK: Unbalanced braces around else statement
-#119: FILE: drivers/crypto/exynos-rng.c:326:
-+	} else
+   Thanks,
+   Inki Dae
 
-Arguably, this should always be reported.
+The following changes since commit bd3a3a2e92624942a143e485c83e641b2492d828:
+
+  Merge tag 'drm-misc-fixes-2017-12-06' of git://anongit.freedesktop.org/drm/drm-misc into drm-fixes (2017-12-07 08:29:26 +1000)
+
+are available in the git repository at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v4.15-rc3
+
+for you to fetch changes up to 1cd6ae355bb2092a6a511558334564cb1f4ffd43:
+
+  drm/exynos: remove unnecessary function declaration (2017-12-07 10:34:40 +0900)
+
+----------------------------------------------------------------
+- fix page fault issue due to using wrong device object in prime import.
+- drop NONCONTIG flag without IOMMU support.
+- remove unnecessary members and declaration.
+
+----------------------------------------------------------------
+Inki Dae (2):
+      drm/exynos: remove unnecessary descrptions
+      drm/exynos: remove unnecessary function declaration
+
+Marek Szyprowski (2):
+      drm/exynos: Fix dma-buf import
+      drm/exynos: gem: Drop NONCONTIG flag for buffers allocated without IOMMU
+
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 46 ++++++++++++++++-----------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h |  5 ----
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_gem.h |  2 ++
+ 4 files changed, 39 insertions(+), 29 deletions(-)
