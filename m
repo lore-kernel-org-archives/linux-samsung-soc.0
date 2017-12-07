@@ -1,51 +1,102 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH 0/3] i2c: exynos5: bus recovery implementation
-Date: Thu, 07 Dec 2017 16:36:07 +0900
-Message-ID: <20171207073607.GB1355@gangnam.samsung>
-References: <CGME20171130143017eucas1p172b94622814eff172a27176c82f6e6fe@eucas1p1.samsung.com>
-        <20171130143007.30258-1-a.hajda@samsung.com>
+From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Subject: Re: [PATCH 1/3] crypto: exynos - Support Exynos5250+ SoCs
+Date: Thu, 07 Dec 2017 10:20:27 +0100
+Message-ID: <87y3me99no.fsf%l.stelmach@samsung.com>
+References: <CAJKOXPfuGaE1ZaYU7RaLEr1sM+ib5qO8VeNNA_S_RJJm2rSkVw@mail.gmail.com>
+        <CGME20171207092032eucas1p296f7cbc547d159c52561182cc6461504@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34588 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752142AbdLGHgK (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35051 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbdLGJUh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 02:36:10 -0500
-Content-disposition: inline
-In-reply-to: <20171130143007.30258-1-a.hajda@samsung.com>
+        Thu, 7 Dec 2017 04:20:37 -0500
+In-reply-to: <CAJKOXPfuGaE1ZaYU7RaLEr1sM+ib5qO8VeNNA_S_RJJm2rSkVw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo?= =?utf-8?Q?=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
 
-Hi Andrzej,
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-> This patchset adds bus recovery functionality to Exynos HSI2C, it is used in
-> case of transmission timeouts.
-> Internal tests shows that it significantly improves I2C transmissions.
-> 
-> Andi, could you take a look at it/test, feedback welcome.
-> 
-> Later, I will post also patches to MHL chip which uses this functionality.
-> MHL chip has known bug of being in incorrect state after hard reset,
-> I2C bus recovery cures it.
-> 
-> Regards
-> Andrzej
-> 
-> 
-> Andrzej Hajda (3):
->   i2c: exynos5: change internal transmission timeout to 100ms
->   i2c: exynos5: implement bus recovery functionality
->   i2c: exynos5: do not check TRANS_STATUS in case of Exynos7 variant
+It was <2017-12-06 =C5=9Bro 16:28>, when Krzysztof Kozlowski wrote:
+> On Wed, Dec 6, 2017 at 3:53 PM, =C5=81ukasz Stelmach <l.stelmach@samsung.=
+com> wrote:
+>> It was <2017-12-06 =C5=9Bro 15:05>, when Krzysztof Kozlowski wrote:
+>>> On Wed, Dec 6, 2017 at 2:42 PM, =C5=81ukasz Stelmach <l.stelmach@samsun=
+g.com> wrote:
+>>>> It was <2017-12-05 wto 14:34>, when Krzysztof Kozlowski wrote:
+>>>>> On Tue, Dec 5, 2017 at 1:35 PM, =C5=81ukasz Stelmach <l.stelmach@sams=
+ung.com> wrote:
+>>>>>> Add support for PRNG in Exynos5250+ SoCs.
+>>>>>>
+>>>>>> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+>>>>>> ---
 
-Thanks for the patches, they look good and I tested them.
+[...]
 
-You can add for all three
+>>>>>> +               dev_info(&pdev->dev,
+>>>>>> +                        "Exynos Pseudo Random Number Generator (typ=
+e:%d)\n",
+>>>>>
+>>>>> dev_dbg, this is not that important information to affect the boot ti=
+me.
+>>>>
+>>>> Quite many devices report their presence during boot with such
+>>>> messages. For example:
+>>>>
+>>>> [    3.390247] exynos-ehci 12110000.usb: EHCI Host Controller
+>>>> [    3.395493] exynos-ehci 12110000.usb: new USB bus registered, assig=
+ned bus number 1
+>>>> [    3.403702] exynos-ehci 12110000.usb: irq 80, io mem 0x12110000
+>>>> [    3.431793] exynos-ehci 12110000.usb: USB 2.0 started, EHCI 1.00
+>>>>
+>>>> From my experience it isn't printk() itself that slows down boot but t=
+he
+>>>> serial console.
+>>>
+>>> True, the console is bottleneck (not necessarily serial) [1] but that
+>>> does not change the fact there is no need to print the type of RNG.
+>>
+>> With values of the enum not being meaningful themselves printing the
+>> type does not make much sense for me too. Is it ok just to print report
+>> the device presence?
+>
+> This does not change mine arguments - this printk does not bring any
+> information except that there is such device. Later you might want to
+> print this for Exynos TRNG. Later for other module, and other. Thus I
+> prefer not to add it. On the other hand that is not a reason to stop
+> this patch so for example you could split it into separate commit.
 
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-Tested-by: Andi Shyti <andi.shyti@samsung.com>
+Done.
 
-Thanks,
-Andi
+> It is kind of unrelated change and keeping it separate will not block
+> everything if maintainer will not want it.
+
+I will. As a user a prefer when devices report their presence in the log
+buffer and I will submit such patch.
+
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBCAAGBQJaKQfbAAoJELCuHpyYpYAQw3QH/1f5OLQe+NIv24w1/YJikhPX
+fpJM9LzXipNTD96cEa+yI9WSXsGIBo4d6iOuM3UGSCmgWIWG5vNap9BjB6fRD+vZ
+KYxfeAruW6UzglzjOEcDNlh5x2wIcmaPfDhUi4+rHreEZeqV7Ggl8VjLzEJJTieE
+tql9KI9z/iEZ4CYEqRGGsmjVJqnmZKd1OMXffdteEmI/GnNMja4jmq3uF3xiiIHT
+efpbwKyxZY6tOQOtqj2ehEHmJ01ex7YkxrLFfEOqWKEFHK/o+/3u9DmWLQVgBffw
+1MgIK2ob+d0Pb019Sz4k1YPdAEoj0QAe7c6JpfNBjQc9w+3WXQsH0wgbL0EBLjA=
+=8qlz
+-----END PGP SIGNATURE-----
+--=-=-=--
