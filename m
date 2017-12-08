@@ -1,102 +1,64 @@
-From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Subject: Re: [PATCH 1/3] crypto: exynos - Support Exynos5250+ SoCs
-Date: Thu, 07 Dec 2017 10:20:27 +0100
-Message-ID: <87y3me99no.fsf%l.stelmach@samsung.com>
-References: <CAJKOXPfuGaE1ZaYU7RaLEr1sM+ib5qO8VeNNA_S_RJJm2rSkVw@mail.gmail.com>
-        <CGME20171207092032eucas1p296f7cbc547d159c52561182cc6461504@eucas1p2.samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next/master boot: 270 boots: 35 failed, 213 passed with 20
+ offline, 2 untried/unknown (next-20171207)
+Date: Fri, 8 Dec 2017 12:20:07 +0000
+Message-ID: <20171208122007.GB7606@sirena.org.uk>
+References: <5a29d4c7.4fabdf0a.716d7.8485@mx.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4bRzO86E/ozDv8r1"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35051 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbdLGJUh (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43678 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751800AbdLHMUN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:20:37 -0500
-In-reply-to: <CAJKOXPfuGaE1ZaYU7RaLEr1sM+ib5qO8VeNNA_S_RJJm2rSkVw@mail.gmail.com>
+        Fri, 8 Dec 2017 07:20:13 -0500
+Content-Disposition: inline
+In-Reply-To: <5a29d4c7.4fabdf0a.716d7.8485@mx.google.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo?= =?utf-8?Q?=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Guenter Roeck <groeck@google.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "kernelci.org bot" <bot@kernelci.org>, kernel-build-reports@lists.linaro.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-It was <2017-12-06 =C5=9Bro 16:28>, when Krzysztof Kozlowski wrote:
-> On Wed, Dec 6, 2017 at 3:53 PM, =C5=81ukasz Stelmach <l.stelmach@samsung.=
-com> wrote:
->> It was <2017-12-06 =C5=9Bro 15:05>, when Krzysztof Kozlowski wrote:
->>> On Wed, Dec 6, 2017 at 2:42 PM, =C5=81ukasz Stelmach <l.stelmach@samsun=
-g.com> wrote:
->>>> It was <2017-12-05 wto 14:34>, when Krzysztof Kozlowski wrote:
->>>>> On Tue, Dec 5, 2017 at 1:35 PM, =C5=81ukasz Stelmach <l.stelmach@sams=
-ung.com> wrote:
->>>>>> Add support for PRNG in Exynos5250+ SoCs.
->>>>>>
->>>>>> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
->>>>>> ---
+--4bRzO86E/ozDv8r1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[...]
+On Thu, Dec 07, 2017 at 03:54:47PM -0800, kernelci.org bot wrote:
 
->>>>>> +               dev_info(&pdev->dev,
->>>>>> +                        "Exynos Pseudo Random Number Generator (typ=
-e:%d)\n",
->>>>>
->>>>> dev_dbg, this is not that important information to affect the boot ti=
-me.
->>>>
->>>> Quite many devices report their presence during boot with such
->>>> messages. For example:
->>>>
->>>> [    3.390247] exynos-ehci 12110000.usb: EHCI Host Controller
->>>> [    3.395493] exynos-ehci 12110000.usb: new USB bus registered, assig=
-ned bus number 1
->>>> [    3.403702] exynos-ehci 12110000.usb: irq 80, io mem 0x12110000
->>>> [    3.431793] exynos-ehci 12110000.usb: USB 2.0 started, EHCI 1.00
->>>>
->>>> From my experience it isn't printk() itself that slows down boot but t=
-he
->>>> serial console.
->>>
->>> True, the console is bottleneck (not necessarily serial) [1] but that
->>> does not change the fact there is no need to print the type of RNG.
->>
->> With values of the enum not being meaningful themselves printing the
->> type does not make much sense for me too. Is it ok just to print report
->> the device presence?
->
-> This does not change mine arguments - this printk does not bring any
-> information except that there is such device. Later you might want to
-> print this for Exynos TRNG. Later for other module, and other. Thus I
-> prefer not to add it. On the other hand that is not a reason to stop
-> this patch so for example you could split it into separate commit.
+Today's -next failed to boot on peach-pi:
 
-Done.
+>     exynos_defconfig:
+>         exynos5800-peach-pi:
+>             lab-collabora: new failure (last pass: next-20171205)
 
-> It is kind of unrelated change and keeping it separate will not block
-> everything if maintainer will not want it.
+with details at https://kernelci.org/boot/id/5a2a2e7859b5141bc2afa17c/
+(including logs and comparisons with other boots, the last good boot was
+Wednesday).  It looks like it hangs somewhere late on in boot, the last
+output on the console is:
 
-I will. As a user a prefer when devices report their presence in the log
-buffer and I will submit such patch.
+[    4.827139] smsc95xx 3-1.1:1.0 eth0: register 'smsc95xx' at usb-xhci-hcd.3.auto-1.1, smsc95xx USB 2.0 Ethernet, 94:eb:2c:00:03:c0
+[    5.781037] dma-pl330 3880000.adma: Loaded driver for PL330 DMAC-241330
+[    5.786247] dma-pl330 3880000.adma: 	DBUFF-4x8bytes Num_Chans-6 Num_Peri-16 Num_Events-6
+[    5.819200] dma-pl330 3880000.adma: PM domain MAU will not be powered off
+[   64.529228] random: crng init done
 
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+and there's failures earlier to instantiate the display.
 
---=-=-=
+--4bRzO86E/ozDv8r1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iQEcBAEBCAAGBQJaKQfbAAoJELCuHpyYpYAQw3QH/1f5OLQe+NIv24w1/YJikhPX
-fpJM9LzXipNTD96cEa+yI9WSXsGIBo4d6iOuM3UGSCmgWIWG5vNap9BjB6fRD+vZ
-KYxfeAruW6UzglzjOEcDNlh5x2wIcmaPfDhUi4+rHreEZeqV7Ggl8VjLzEJJTieE
-tql9KI9z/iEZ4CYEqRGGsmjVJqnmZKd1OMXffdteEmI/GnNMja4jmq3uF3xiiIHT
-efpbwKyxZY6tOQOtqj2ehEHmJ01ex7YkxrLFfEOqWKEFHK/o+/3u9DmWLQVgBffw
-1MgIK2ob+d0Pb019Sz4k1YPdAEoj0QAe7c6JpfNBjQc9w+3WXQsH0wgbL0EBLjA=
-=8qlz
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloqg3YACgkQJNaLcl1U
+h9AICQf+MfUWSJeOo7PVJt3b6gU9FEwduxFkCSplJmPFOb3hKtAPGPvqty0NE5Hw
+15OGV3BmRe8xaxSpFp6e3HiCJFQR1WAvlLEX+RQVzU0LpUATHMZVGFeljddPoNLl
+eOwdgUfCwJIP/a8hCbFywU+QbBs1Af+tnF1Wg+LDu8qWmPAbmKQgm7sq7IhonAz4
+5vhpzvEnh/Wh0MrCrjrlwmEBa63tGlltJec2zrZMseHaN6MPiQ7mgmGHjg+I566O
+A1cDvyXgjumD23/5/VttPVXiN8fUDUU3LWQjYsEvCHoebRk0hM96HSmcO9z0iquS
+cYDbNG9geOlmbYxHrJ5nio7OVRtNYQ==
+=KiVf
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--4bRzO86E/ozDv8r1--
