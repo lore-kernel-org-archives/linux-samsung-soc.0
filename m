@@ -1,86 +1,68 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/3] ARM: dts: exynos: Add audio power domain to Exynos5250
-Date: Fri, 08 Dec 2017 15:53:55 +0100
-Message-ID: <20171208145356.24152-3-m.szyprowski@samsung.com>
-References: <20171208145356.24152-1-m.szyprowski@samsung.com>
-        <CGME20171208145403eucas1p15c5b3075062c6ca28a877976d8d647bc@eucas1p1.samsung.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: next/master boot: 270 boots: 35 failed, 213 passed with 20
+ offline, 2 untried/unknown (next-20171207)
+Date: Fri, 8 Dec 2017 08:59:43 -0800
+Message-ID: <20171208165943.GC4283@codeaurora.org>
+References: <5a29d4c7.4fabdf0a.716d7.8485@mx.google.com>
+ <20171208122007.GB7606@sirena.org.uk>
+ <20171208122703.GC7606@sirena.org.uk>
+ <CGME20171208123350epcas3p2da09a6b41fb4ee626860fe5ac698e265@epcas3p2.samsung.com>
+ <CAJKOXPcfgXTzacEYyPFV=UJYdKz9v86pEjbjaWJ_7BYhdNafqA@mail.gmail.com>
+ <7ad6d330-d277-85ae-b891-cb76367461ce@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50881 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754133AbdLHOyG (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:54048 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752479AbdLHQ7q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Dec 2017 09:54:06 -0500
-In-reply-to: <20171208145356.24152-1-m.szyprowski@samsung.com>
+        Fri, 8 Dec 2017 11:59:46 -0500
+Content-Disposition: inline
+In-Reply-To: <7ad6d330-d277-85ae-b891-cb76367461ce@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, Guenter Roeck <groeck@google.com>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "kernelci.org bot" <bot@kernelci.org>, kernel-build-reports@lists.linaro.org
 
-Audio power domain includes following hardware modules: Pin controller
-for GPZ bank, AudioSS clock controller and three Exynos I2S controller.
+On 12/08, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> On 2017-12-08 13:33, Krzysztof Kozlowski wrote:
+> >On Fri, Dec 8, 2017 at 1:27 PM, Mark Brown <broonie@kernel.org> wrote:
+> >>On Fri, Dec 08, 2017 at 12:20:07PM +0000, Mark Brown wrote:
+> >>>On Thu, Dec 07, 2017 at 03:54:47PM -0800, kernelci.org bot wrote:
+> >>>
+> >>>Today's -next failed to boot on peach-pi:
+> >>>
+> >>>>     exynos_defconfig:
+> >>>>         exynos5800-peach-pi:
+> >>>>             lab-collabora: new failure (last pass: next-20171205)
+> >>>with details at https://kernelci.org/boot/id/5a2a2e7859b5141bc2afa17c/
+> >>>(including logs and comparisons with other boots, the last good boot was
+> >>>Wednesday).  It looks like it hangs somewhere late on in boot, the last
+> >>>output on the console is:
+> >>>
+> >>>[    4.827139] smsc95xx 3-1.1:1.0 eth0: register 'smsc95xx' at usb-xhci-hcd.3.auto-1.1, smsc95xx USB 2.0 Ethernet, 94:eb:2c:00:03:c0
+> >>>[    5.781037] dma-pl330 3880000.adma: Loaded driver for PL330 DMAC-241330
+> >>>[    5.786247] dma-pl330 3880000.adma:        DBUFF-4x8bytes Num_Chans-6 Num_Peri-16 Num_Events-6
+> >>>[    5.819200] dma-pl330 3880000.adma: PM domain MAU will not be powered off
+> >>>[   64.529228] random: crng init done
+> >>>
+> >>>and there's failures earlier to instantiate the display.
+> >>I just noticed that further up the log there's a lockdep splat with a
+> >>conflict between the genpd and clock API locking - an ABBA issue with
+> >>genpd->mlock and the clock API prepare_lock.
+> >+Cc Marek Szyprowski,
+> >
+> >The lockdep issue and display failures (including regulator warning)
+> >were present for some time. They also appear in boot log for
+> >next-20171206 (https://storage.kernelci.org/next/master/next-20171206/arm/exynos_defconfig/lab-collabora/boot-exynos5800-peach-pi.html).
+> >The difference is that 20171208 hangs on "random: crng init done"
+> >which did not appear before at all.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+I haven't looked at the lockdep splat yet, but is that happening
+because of runtime PM usage by the clk framework?
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index a4168aa926f9..709a54743d73 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -136,6 +136,13 @@
- 			clock-names = "oscclk", "clk0", "clk1";
- 		};
- 
-+		pd_mau: power-domain@100440C0 {
-+			compatible = "samsung,exynos4210-pd";
-+			reg = <0x100440C0 0x20>;
-+			#power-domain-cells = <0>;
-+			label = "MAU";
-+		};
-+
- 		clock: clock-controller@10010000 {
- 			compatible = "samsung,exynos5250-clock";
- 			reg = <0x10010000 0x30000>;
-@@ -149,6 +156,7 @@
- 			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_FOUT_EPLL>,
- 				 <&clock CLK_SCLK_AUDIO0>, <&clock CLK_DIV_PCM0>;
- 			clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
-+			power-domains = <&pd_mau>;
- 		};
- 
- 		timer {
-@@ -223,6 +231,7 @@
- 			compatible = "samsung,exynos5250-pinctrl";
- 			reg = <0x03860000 0x1000>;
- 			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&pd_mau>;
- 		};
- 
- 		pmu_system_controller: system-controller@10040000 {
-@@ -486,6 +495,7 @@
- 			samsung,idma-addr = <0x03000000>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&i2s0_bus>;
-+			power-domains = <&pd_mau>;
- 		};
- 
- 		i2s1: i2s@12D60000 {
-@@ -499,6 +509,7 @@
- 			clock-names = "iis", "i2s_opclk0";
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&i2s1_bus>;
-+			power-domains = <&pd_mau>;
- 		};
- 
- 		i2s2: i2s@12D70000 {
-@@ -512,6 +523,7 @@
- 			clock-names = "iis", "i2s_opclk0";
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&i2s2_bus>;
-+			power-domains = <&pd_mau>;
- 		};
- 
- 		usb_dwc3 {
 -- 
-2.15.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
