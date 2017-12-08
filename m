@@ -1,14 +1,13 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/3] ARM: dts: exynos: Fix power domain node names for
- Exynos5250
-Date: Fri, 08 Dec 2017 15:53:54 +0100
-Message-ID: <20171208145356.24152-2-m.szyprowski@samsung.com>
+Subject: [PATCH 2/3] ARM: dts: exynos: Add audio power domain to Exynos5250
+Date: Fri, 08 Dec 2017 15:53:55 +0100
+Message-ID: <20171208145356.24152-3-m.szyprowski@samsung.com>
 References: <20171208145356.24152-1-m.szyprowski@samsung.com>
-        <CGME20171208145403eucas1p1c20d4373468b3a506ea0e2925526acdd@eucas1p1.samsung.com>
+        <CGME20171208145403eucas1p15c5b3075062c6ca28a877976d8d647bc@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50874 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50881 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753940AbdLHOyG (ORCPT
+        with ESMTP id S1754133AbdLHOyG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Fri, 8 Dec 2017 09:54:06 -0500
 In-reply-to: <20171208145356.24152-1-m.szyprowski@samsung.com>
@@ -17,42 +16,71 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Device nodes in device tree should use generic names, so rename
-all existing domains to "power-domain".
+Audio power domain includes following hardware modules: Pin controller
+for GPZ bank, AudioSS clock controller and three Exynos I2S controller.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos5250.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index f7ca2b689a46..a4168aa926f9 100644
+index a4168aa926f9..709a54743d73 100644
 --- a/arch/arm/boot/dts/exynos5250.dtsi
 +++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -111,21 +111,21 @@
- 			};
+@@ -136,6 +136,13 @@
+ 			clock-names = "oscclk", "clk0", "clk1";
  		};
  
--		pd_gsc: gsc-power-domain@10044000 {
-+		pd_gsc: power-domain@10044000 {
- 			compatible = "samsung,exynos4210-pd";
- 			reg = <0x10044000 0x20>;
- 			#power-domain-cells = <0>;
- 			label = "GSC";
++		pd_mau: power-domain@100440C0 {
++			compatible = "samsung,exynos4210-pd";
++			reg = <0x100440C0 0x20>;
++			#power-domain-cells = <0>;
++			label = "MAU";
++		};
++
+ 		clock: clock-controller@10010000 {
+ 			compatible = "samsung,exynos5250-clock";
+ 			reg = <0x10010000 0x30000>;
+@@ -149,6 +156,7 @@
+ 			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_FOUT_EPLL>,
+ 				 <&clock CLK_SCLK_AUDIO0>, <&clock CLK_DIV_PCM0>;
+ 			clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
++			power-domains = <&pd_mau>;
  		};
  
--		pd_mfc: mfc-power-domain@10044040 {
-+		pd_mfc: power-domain@10044040 {
- 			compatible = "samsung,exynos4210-pd";
- 			reg = <0x10044040 0x20>;
- 			#power-domain-cells = <0>;
- 			label = "MFC";
+ 		timer {
+@@ -223,6 +231,7 @@
+ 			compatible = "samsung,exynos5250-pinctrl";
+ 			reg = <0x03860000 0x1000>;
+ 			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&pd_mau>;
  		};
  
--		pd_disp1: disp1-power-domain@100440A0 {
-+		pd_disp1: power-domain@100440A0 {
- 			compatible = "samsung,exynos4210-pd";
- 			reg = <0x100440A0 0x20>;
- 			#power-domain-cells = <0>;
+ 		pmu_system_controller: system-controller@10040000 {
+@@ -486,6 +495,7 @@
+ 			samsung,idma-addr = <0x03000000>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&i2s0_bus>;
++			power-domains = <&pd_mau>;
+ 		};
+ 
+ 		i2s1: i2s@12D60000 {
+@@ -499,6 +509,7 @@
+ 			clock-names = "iis", "i2s_opclk0";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&i2s1_bus>;
++			power-domains = <&pd_mau>;
+ 		};
+ 
+ 		i2s2: i2s@12D70000 {
+@@ -512,6 +523,7 @@
+ 			clock-names = "iis", "i2s_opclk0";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&i2s2_bus>;
++			power-domains = <&pd_mau>;
+ 		};
+ 
+ 		usb_dwc3 {
 -- 
 2.15.0
