@@ -1,113 +1,83 @@
-From: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [PATCH v3] ARM: dts: exynos: add DT nodes for PRNG in Exynos5 SoCs
-Date: Mon, 11 Dec 2017 09:54:15 +0100
-Message-ID: <20171211085415.27947-1-l.stelmach@samsung.com>
-References: <20171204120429.22892-1-l.stelmach@samsung.com>
-        <CGME20171211085422eucas1p19a7e20669d9d3d4d41cf1b96c7039a33@eucas1p1.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: next/master boot: 270 boots: 35 failed, 213 passed with 20
+ offline, 2 untried/unknown (next-20171207)
+Date: Mon, 11 Dec 2017 10:28:54 +0100
+Message-ID: <11a4d79d-73a5-5e98-c83f-f5e47bcfcdf2@samsung.com>
+References: <5a29d4c7.4fabdf0a.716d7.8485@mx.google.com>
+        <20171208122007.GB7606@sirena.org.uk> <20171208122703.GC7606@sirena.org.uk>
+        <CGME20171208123350epcas3p2da09a6b41fb4ee626860fe5ac698e265@epcas3p2.samsung.com>
+        <CAJKOXPcfgXTzacEYyPFV=UJYdKz9v86pEjbjaWJ_7BYhdNafqA@mail.gmail.com>
+        <7ad6d330-d277-85ae-b891-cb76367461ce@samsung.com>
+        <20171208165943.GC4283@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41011 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752336AbdLKIy0 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33361 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752259AbdLKJ3A (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Dec 2017 03:54:26 -0500
-In-reply-to: <20171204120429.22892-1-l.stelmach@samsung.com>
+        Mon, 11 Dec 2017 04:29:00 -0500
+In-reply-to: <20171208165943.GC4283@codeaurora.org>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, krzk@kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, Guenter Roeck <groeck@google.com>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "kernelci.org bot" <bot@kernelci.org>, kernel-build-reports@lists.linaro.org
 
-Add nodes for PRNG in dts files decribing Exynos5 chips.
+Hi Stephen,
 
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
----
-Changes since v2:
+On 2017-12-08 17:59, Stephen Boyd wrote:
+> On 12/08, Marek Szyprowski wrote:
+>> On 2017-12-08 13:33, Krzysztof Kozlowski wrote:
+>>> On Fri, Dec 8, 2017 at 1:27 PM, Mark Brown <broonie@kernel.org> wrote:
+>>>> On Fri, Dec 08, 2017 at 12:20:07PM +0000, Mark Brown wrote:
+>>>>> On Thu, Dec 07, 2017 at 03:54:47PM -0800, kernelci.org bot wrote:
+>>>>>
+>>>>> Today's -next failed to boot on peach-pi:
+>>>>>
+>>>>>>      exynos_defconfig:
+>>>>>>          exynos5800-peach-pi:
+>>>>>>              lab-collabora: new failure (last pass: next-20171205)
+>>>>> with details at https://kernelci.org/boot/id/5a2a2e7859b5141bc2afa17c/
+>>>>> (including logs and comparisons with other boots, the last good boot was
+>>>>> Wednesday).  It looks like it hangs somewhere late on in boot, the last
+>>>>> output on the console is:
+>>>>>
+>>>>> [    4.827139] smsc95xx 3-1.1:1.0 eth0: register 'smsc95xx' at usb-xhci-hcd.3.auto-1.1, smsc95xx USB 2.0 Ethernet, 94:eb:2c:00:03:c0
+>>>>> [    5.781037] dma-pl330 3880000.adma: Loaded driver for PL330 DMAC-241330
+>>>>> [    5.786247] dma-pl330 3880000.adma:        DBUFF-4x8bytes Num_Chans-6 Num_Peri-16 Num_Events-6
+>>>>> [    5.819200] dma-pl330 3880000.adma: PM domain MAU will not be powered off
+>>>>> [   64.529228] random: crng init done
+>>>>>
+>>>>> and there's failures earlier to instantiate the display.
+>>>> I just noticed that further up the log there's a lockdep splat with a
+>>>> conflict between the genpd and clock API locking - an ABBA issue with
+>>>> genpd->mlock and the clock API prepare_lock.
+>>> +Cc Marek Szyprowski,
+>>>
+>>> The lockdep issue and display failures (including regulator warning)
+>>> were present for some time. They also appear in boot log for
+>>> next-20171206 (https://storage.kernelci.org/next/master/next-20171206/arm/exynos_defconfig/lab-collabora/boot-exynos5800-peach-pi.html).
+>>> The difference is that 20171208 hangs on "random: crng init done"
+>>> which did not appear before at all.
+> I haven't looked at the lockdep splat yet, but is that happening
+> because of runtime PM usage by the clk framework?
 
-- Rebased according to Krzysztof Kozłowski's request.
+This is a false positive. The deplock doesn't distinguish each domain 
+instance.
+Only some instances of exynos power domains use clocks (as an old 
+workaround of
+the lack possibility to integrate proper clock rate/topology restoration 
+after
+power off/on cycle in the clock provider driver).
 
-Changes since v1:
+Those clock controllers, which implements runtime pm, are assigned to power
+domain, which doesn't touch clocks at all.
 
-- Use "rng" as the node-name for all RNG regardles of their type.
-- Introduce "samsung,exynos5250-prng" compatible (binding documentation
-  will follow).
+I still have no idea how to fix the code to make deplock happy.
 
- arch/arm/boot/dts/exynos5.dtsi    | 6 ++++++
- arch/arm/boot/dts/exynos5250.dtsi | 5 +++++
- arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
- arch/arm/boot/dts/exynos5420.dtsi | 5 +++++
- 4 files changed, 21 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 347224589451..a7eb74617be4 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -211,11 +211,17 @@
- 			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		prng: rng@10830400 {
-+		      compatible = "samsung,exynos5250-prng";
-+		      reg = <0x10830400 0x200>;
-+		};
-+
- 		g2d: g2d@10850000 {
- 			compatible = "samsung,exynos5250-g2d";
- 			reg = <0x10850000 0x1000>;
- 			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
- 		};
-+
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 232d8801d9e0..e55748798845 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -1061,6 +1061,11 @@
- 	pinctrl-0 = <&i2c3_bus>;
- };
- 
-+&prng {
-+	clocks = <&clock CLK_SSS>;
-+	clock-names = "secss";
-+};
-+
- &pwm {
- 	clocks = <&clock CLK_PWM>;
- 	clock-names = "timers";
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 7b34970e6ac7..f5541000606b 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -333,6 +333,11 @@
- 	clock-names = "fin_pll", "mct";
- };
- 
-+&prng {
-+	clocks = <&clock CLK_SSS>;
-+	clock-names = "secss";
-+};
-+
- &pwm {
- 	clocks = <&clock CLK_PWM>;
- 	clock-names = "timers";
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index a44aec348502..3611f5c05235 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1429,6 +1429,11 @@
- 	clock-names = "fin_pll", "mct";
- };
- 
-+&prng {
-+	clocks = <&clock CLK_SSS>;
-+	clock-names = "secss";
-+};
-+
- &pwm {
- 	clocks = <&clock CLK_PWM>;
- 	clock-names = "timers";
+Best regards
 -- 
-2.11.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
