@@ -1,53 +1,45 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] ARM: dts: exynos: add DT nodes for PRNG in Exynos5
- SoCs
-Date: Mon, 11 Dec 2017 19:47:31 +0100
-Message-ID: <20171211184731.qjeo3wwqn2zon55z@kozik-lap>
-References: <20171204120429.22892-1-l.stelmach@samsung.com>
- <CGME20171211085422eucas1p19a7e20669d9d3d4d41cf1b96c7039a33@eucas1p1.samsung.com>
- <20171211085415.27947-1-l.stelmach@samsung.com>
+Subject: Re: [PATCH v3 3/3] ARM: dts: exynos: Add nodes for True Random
+ Number Generator
+Date: Mon, 11 Dec 2017 19:49:13 +0100
+Message-ID: <20171211184913.n67q7vbv2gzknjeb@kozik-lap>
+References: <20171204125351.26805-1-l.stelmach@samsung.com>
+ <CGME20171204125416eucas1p141878ea587d807a2559c90f590eab7fb@eucas1p1.samsung.com>
+ <20171204125351.26805-4-l.stelmach@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:44870 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752316AbdLKSrf (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:41395 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752329AbdLKStR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Dec 2017 13:47:35 -0500
-Received: by mail-wm0-f48.google.com with SMTP id t8so16346948wmc.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2017 10:47:35 -0800 (PST)
+        Mon, 11 Dec 2017 13:49:17 -0500
 Content-Disposition: inline
-In-Reply-To: <20171211085415.27947-1-l.stelmach@samsung.com>
+In-Reply-To: <20171204125351.26805-4-l.stelmach@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Cc: kgene@kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+Cc: "Andrew F . Davis" <afd@ti.com>, PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, Rob Herring <robh+dt@kernel.org>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Dec 11, 2017 at 09:54:15AM +0100, Łukasz Stelmach wrote:
-> Add nodes for PRNG in dts files decribing Exynos5 chips.
+On Mon, Dec 04, 2017 at 01:53:51PM +0100, Łukasz Stelmach wrote:
+> Add nodes for the True Random Number Generator found in Samsung Exynos
+> 5250+ SoCs.
 > 
 > Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
 > ---
-> Changes since v2:
-> 
-> - Rebased according to Krzysztof Kozłowski's request.
-> 
-> Changes since v1:
-> 
-> - Use "rng" as the node-name for all RNG regardles of their type.
-> - Introduce "samsung,exynos5250-prng" compatible (binding documentation
->   will follow).
-> 
->  arch/arm/boot/dts/exynos5.dtsi    | 6 ++++++
+>  arch/arm/boot/dts/exynos5.dtsi    | 5 +++++
 >  arch/arm/boot/dts/exynos5250.dtsi | 5 +++++
 >  arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
 >  arch/arm/boot/dts/exynos5420.dtsi | 5 +++++
->  4 files changed, 21 insertions(+)
-> 
+>  4 files changed, 20 insertions(+)
+>
 
-Thanks, applied (with removal of one unneeded empty line in patch and
-minor change in msg).
+Unfortunately the same story as with your PRNG patch - does not apply on
+top of my next/dt (after taking PRNG). Also did not apply on v4.15-rc1 +
+PRNG.
+
+Could you rebase on my next/dt?
 
 Best regards,
 Krzysztof
