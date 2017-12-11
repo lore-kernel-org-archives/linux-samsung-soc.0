@@ -1,30 +1,64 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH v2] crypto: Add myself as co-maintainer for s5p-sss.c
-Date: Mon, 11 Dec 2017 22:50:45 +1100
-Message-ID: <20171211115045.GL12014@gondor.apana.org.au>
-References: <CGME20171201165104eucas1p1bb39f164ff03b3c335a8e2dd4a91cff8@eucas1p1.samsung.com>
- <acd334d8-987e-c161-bb4b-d43c7336a0df@partner.samsung.com>
+From: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v2 0/4] Assorted changes for Exynos PRNG driver
+Date: Mon, 11 Dec 2017 15:06:19 +0100
+Message-ID: <20171211140623.7673-1-l.stelmach@samsung.com>
+References: <20171205123558.31087-1-l.stelmach@samsung.com>
+        <CGME20171211140635eucas1p22ab5dac69623926c583779a6b93872ce@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <acd334d8-987e-c161-bb4b-d43c7336a0df@partner.samsung.com>
+In-reply-to: <20171205123558.31087-1-l.stelmach@samsung.com>
 Sender: linux-crypto-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 01, 2017 at 05:51:02PM +0100, Kamil Konieczny wrote:
-> Add myself as co-maintainer for Samsung Security SubSystem driver.
-> I have added major functionality to the driver [hash acceleration],
-> I have access to documentation and to hardware for testing, I can
-> also dedicate some of my paid time for reviewing and verifying changes
-> to the driver.
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Hello,
 
-Patch applied.  Thanks.
+This is a series of patches for exynos-rng driver I've decided to
+create after adding support for Exynos5250+ chips. They do not
+strictly depend on each other, but I think it is better to send them
+as a single patch-set.
+
+The driver requires appropriate DT configuration introduced in
+
+    https://patchwork.kernel.org/patch/10104445/
+
+Patch #1 Add support for PRNG in Exynos5250+ SoCs
+
+Patch #2 Improve output performance by using memcpy() rather than a
+custom function to retrieve random bytes from registers. Rearrange
+the loop for polling the hardware.
+
+Patch #3 Reseed the PRNG after reading 2^16 bytes. Simmilar approach
+is implemented in DRBG. (Thanks Stephan Mueller)
+
+Patch #4 Introduce locking to prevent simultaneous access to the
+hardware from more than one thread/process.
+
+Changes since v1:
+
+- Added Patch #4.
+- Extended commit message for patch #3.
+- Changed exynos_prng_type enum and a define according to Krzysztof Kozłowski's
+  recommendations.
+- Brought back cpu_relax() in a rearranged loop in
+  exynos_rng_get_random().
+- Moved an assignment of the read valuea away from an error path.
+- Removed dev_info() reporting hardware presence from
+  exynos_rng_probe().
+
+Łukasz Stelmach (4):
+  crypto: exynos - Support Exynos5250+ SoCs
+  crypto: exynos - Improve performance of PRNG
+  crypto: exynos - Reseed PRNG after generating 2^16 random bytes
+  crypto: exynos - Introduce mutex to prevent concurrent access to
+    hardware
+
+ .../bindings/crypto/samsung,exynos-rng4.txt        |   4 +-
+ drivers/crypto/exynos-rng.c                        | 104 +++++++++++++--------
+ 2 files changed, 70 insertions(+), 38 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.11.0
