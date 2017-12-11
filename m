@@ -1,49 +1,70 @@
 From: Russell King - ARM Linux <linux@armlinux.org.uk>
 Subject: Re: mainline/master boot bisection: v4.15-rc3 on peach-pi
  #3228-staging
-Date: Mon, 11 Dec 2017 22:58:29 +0000
-Message-ID: <20171211225829.GA1959@n2100.armlinux.org.uk>
+Date: Mon, 11 Dec 2017 23:02:13 +0000
+Message-ID: <20171211230213.GB1959@n2100.armlinux.org.uk>
 References: <680389204.71.1512980755810.JavaMail.jenkins@ip-172-30-0-246>
  <51e6d7fb-ac9e-a59f-ea63-ad06219b429d@collabora.com>
  <CAKMK7uFcGftSeQjkKu9SZmkQd8-irbUTMcOnUwi7HZtb5TePag@mail.gmail.com>
  <CABxcv=mUHgTxvYpOYstE7rQn8fKS3QGiTT=FzBUc8DREvVuTeQ@mail.gmail.com>
  <CABxcv=m-fYZvYN4gLwBf8NwHvJb7PtNdVKR+SXgVKExZGtW4Qw@mail.gmail.com>
+ <20171211225829.GA1959@n2100.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:56092 "EHLO
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:56158 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750759AbdLKW6u (ORCPT
+        with ESMTP id S1752068AbdLKXCX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Dec 2017 17:58:50 -0500
+        Mon, 11 Dec 2017 18:02:23 -0500
 Content-Disposition: inline
-In-Reply-To: <CABxcv=m-fYZvYN4gLwBf8NwHvJb7PtNdVKR+SXgVKExZGtW4Qw@mail.gmail.com>
+In-Reply-To: <20171211225829.GA1959@n2100.armlinux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Marek Szyprowski <m.szyprowski@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, kernel-build-reports@lists.linaro.org, Thierry Escande <thierry.escande@collabora.co.uk>, Kevin Hilman <khilman@baylibre.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, kernel-build-reports@lists.linaro.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Shuah Khan <shuahkh@osg.samsung.com>, Thierry Escande <thierry.escande@collabora.co.uk>, Kevin Hilman <khilman@baylibre.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Mon, Dec 11, 2017 at 11:54:48PM +0100, Javier Martinez Canillas wrote:
-> So I gave a quick look to this, and at the very least there's a bug in
-> the Exynos5800 Peach Pi DTS caused by commit 1cb686c08d12 ("ARM: dts:
-> exynos: Add status property to Exynos 542x Mixer nodes").
+On Mon, Dec 11, 2017 at 10:58:29PM +0000, Russell King - ARM Linux wrote:
+> On Mon, Dec 11, 2017 at 11:54:48PM +0100, Javier Martinez Canillas wrote:
+> > So I gave a quick look to this, and at the very least there's a bug in
+> > the Exynos5800 Peach Pi DTS caused by commit 1cb686c08d12 ("ARM: dts:
+> > exynos: Add status property to Exynos 542x Mixer nodes").
+> > 
+> > I've posted a fix for that:
+> > 
+> > https://patchwork.kernel.org/patch/10105921/
+> > 
+> > I believe this could be also be the cause for the boot failure, since
+> > I see in the boot log that things start to go wrong after exynos-drm
+> > fails to bind the HDMI component:
+> > 
+> > [ 2.916347] exynos-drm exynos-drm: failed to bind 14530000.hdmi (ops
+> > 0xc1398690): -1
 > 
-> I've posted a fix for that:
+> Umm, -1 ?  Looking that error code up in
+> include/uapi/asm-generic/errno-base.h says it's -EPERM.
 > 
-> https://patchwork.kernel.org/patch/10105921/
-> 
-> I believe this could be also be the cause for the boot failure, since
-> I see in the boot log that things start to go wrong after exynos-drm
-> fails to bind the HDMI component:
-> 
-> [ 2.916347] exynos-drm exynos-drm: failed to bind 14530000.hdmi (ops
-> 0xc1398690): -1
+> I suspect that's someone just returning -1 because they're lazy...
+> which is real bad form and needs fixing.
 
-Umm, -1 ?  Looking that error code up in
-include/uapi/asm-generic/errno-base.h says it's -EPERM.
+Oh, it really is -EPERM:
 
-I suspect that's someone just returning -1 because they're lazy...
-which is real bad form and needs fixing.
+struct exynos_drm_crtc *exynos_drm_crtc_get_by_type(struct drm_device *drm_dev,
+                                       enum exynos_drm_output_type out_type)
+{
+        struct drm_crtc *crtc;
+
+        drm_for_each_crtc(crtc, drm_dev)
+                if (to_exynos_crtc(crtc)->type == out_type)
+                        return to_exynos_crtc(crtc);
+
+        return ERR_PTR(-EPERM);
+}
+
+Does "Operation not permitted" really convey the error here?  It doesn't
+look like a permission error to me.
+
+Can we please avoid abusing errno codes?
 
 -- 
 RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
