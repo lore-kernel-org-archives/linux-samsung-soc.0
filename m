@@ -1,97 +1,117 @@
-From: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Enable Mixer node for Exynos5800
- Peach Pi machine
-Date: Tue, 12 Dec 2017 11:07:06 +0000
-Message-ID: <4a8edb50-72cf-8603-8ba5-5176cbef9636@collabora.com>
-References: <20171212074208.30753-1-javierm@redhat.com>
- <CAJKOXPc1rJCWABXUuyU2MKxnLY-MptrM9Mm0HyHVCJn870R+sg@mail.gmail.com>
- <CGME20171212100905epcas5p35a40946af3936f2020b4cabb6ee2cc95@epcas5p3.samsung.com>
- <CAJKOXPc1_n2cdgjuFbA9jNdcSXxfr8Zjf=fUx_jt_N3+LP0n8A@mail.gmail.com>
- <a42670aa-b3df-7a53-8ed2-f3acd97fd0d4@samsung.com>
- <ad03e2a8-00eb-464e-6983-374f83b9abf5@collabora.com>
- <1bbedec6-6250-f02a-bf9a-4b9849833de2@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 4/4] crypto: exynos - Introduce mutex to prevent
+ concurrent access to hardware
+Date: Tue, 12 Dec 2017 12:09:48 +0100
+Message-ID: <CAJKOXPc_QyahFZKGNfwxaNfeCdL2P8PYUYX0oxxpPDR057_nXQ@mail.gmail.com>
+References: <CGME20171212103021eucas1p19a2a24930cadde55eac2f822a6a9f80c@eucas1p1.samsung.com>
+ <CAJKOXPeXHuOVScgBE0WS5Wh79zbAPJ-9P+QvG+Y+NYkxGzNXxA@mail.gmail.com> <87o9n46xxl.fsf%l.stelmach@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1bbedec6-6250-f02a-bf9a-4b9849833de2-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javierm-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:41942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750749AbdLLLJv (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 12 Dec 2017 06:09:51 -0500
+In-Reply-To: <87o9n46xxl.fsf%l.stelmach@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Cc: robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 12/12/17 10:55, Marek Szyprowski wrote:
-> Hi Guillaume,
-> 
-> On 2017-12-12 11:43, Guillaume Tucker wrote:
->> On 12/12/17 10:17, Marek Szyprowski wrote:
->>> Hi Krzysztof,
+On Tue, Dec 12, 2017 at 11:30 AM, Łukasz Stelmach
+<l.stelmach@samsung.com> wrote:
+> It was <2017-12-11 pon 16:03>, when Krzysztof Kozlowski wrote:
+>> On Mon, Dec 11, 2017 at 3:06 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
+>>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 >>>
->>> On 2017-12-12 11:09, Krzysztof Kozlowski wrote:
->>>> On Tue, Dec 12, 2017 at 10:55 AM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->>>>> On Tue, Dec 12, 2017 at 8:42 AM, Javier Martinez Canillas
->>>>> <javierm-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org> wrote:
->>>>>> Commit 1cb686c08d12 ("ARM: dts: exynos: Add status property to Exynos 542x
->>>>>> Mixer nodes") disabled the Mixer node by default in the DTSI and enabled
->>>>>> for each Exynos 542x DTS. But unfortunately it missed to enable it for the
->>>>>> Exynos5800 Peach Pi machine, since the 5800 is also an 542x SoC variant.
->>>>>>
->>>>>> Fixes: 1cb686c08d12 ("ARM: dts: exynos: Add status property to Exynos 542x Mixer nodes")
->>>>>> Signed-off-by: Javier Martinez Canillas <javierm-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
->>>>>> Acked-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>>>
->>>>>> ---
->>>>>>
->>>>>> Changes in v2:
->>>>>> - Remove RFT tag.
->>>>> Thanks guys! However I still would like to see a tested-by for this on
->>>>> Peach Pi (AFAIU, Marek's only acked the code/solution).
->>>> On the other hand I could just apply it for my for-next branch and
->>>> we'll see if it fixes kernel-ci boot tests... Not a nice way of
->>>> testing but apparently no one has Peach Pi.
+>>> Hardware operations like reading random numbers and setting a seed need
+>>> to be conducted in a single thread. Therefore a mutex is required to
+>>> prevent multiple threads (processes) from accessing the hardware at the
+>>> same time.
 >>>
->>> Frankly, I don't expect that this will solve the boot hang issue on PeachPi.
->>> However it should at least hide the unbalanced regulator issue.
+>>> The sequence of mutex_lock() and mutex_unlock() in the exynos_rng_reseed()
+>>> function enables switching between different threads waiting for the
+>>> driver to generate random numbers for them.
+>>>
+>>> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+>>> ---
+>>>  drivers/crypto/exynos-rng.c | 21 +++++++++++++++++++++
+>>>  1 file changed, 21 insertions(+)
+>>>
+>>> diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
+>>> index c72a838f1932..6209035ca659 100644
+>>> --- a/drivers/crypto/exynos-rng.c
+>>> +++ b/drivers/crypto/exynos-rng.c
+>>> @@ -22,6 +22,7 @@
+>>>  #include <linux/err.h>
+>>>  #include <linux/io.h>
+>>>  #include <linux/module.h>
+>>> +#include <linux/mutex.h>
+>>>  #include <linux/of_device.h>
+>>>  #include <linux/platform_device.h>
+>>>
+>>> @@ -79,6 +80,7 @@ struct exynos_rng_dev {
+>>>         enum exynos_prng_type           type;
+>>>         void __iomem                    *mem;
+>>>         struct clk                      *clk;
+>>> +       struct mutex                    lock;
+>>>         /* Generated numbers stored for seeding during resume */
+>>>         u8                              seed_save[EXYNOS_RNG_SEED_SIZE];
+>>>         unsigned int                    seed_save_len;
+>>> @@ -192,6 +194,10 @@ static void exynos_rng_reseed(struct exynos_rng_dev *rng)
+>>>                 return;
+>>>
+>>>         exynos_rng_set_seed(rng, seed, read);
+>>> +
+>>> +       /* Let others do some of their job. */
+>>> +       mutex_unlock(&rng->lock);
+>>> +       mutex_lock(&rng->lock);
+>>>  }
+>>>
+>>>  static int exynos_rng_generate(struct crypto_rng *tfm,
+>>> @@ -207,6 +213,7 @@ static int exynos_rng_generate(struct crypto_rng *tfm,
+>>>         if (ret)
+>>>                 return ret;
+>>>
+>>> +       mutex_lock(&rng->lock);
+>>>         do {
+>>>                 ret = exynos_rng_get_random(rng, dst, dlen, &read);
+>>>                 if (ret)
+>>> @@ -217,6 +224,7 @@ static int exynos_rng_generate(struct crypto_rng *tfm,
+>>>
+>>>                 exynos_rng_reseed(rng);
+>>>         } while (dlen > 0);
+>>> +       mutex_unlock(&rng->lock);
+>>>
+>>>         clk_disable_unprepare(rng->clk);
+>>>
+>>> @@ -234,7 +242,9 @@ static int exynos_rng_seed(struct crypto_rng *tfm, const u8 *seed,
+>>>         if (ret)
+>>>                 return ret;
+>>>
+>>> +       mutex_lock(&rng->lock);
+>>>         ret = exynos_rng_set_seed(ctx->rng, seed, slen);
+>>> +       mutex_unlock(&rng->lock);
 >>
->> We have a peach-pi in our LAVA lab so I've tested it and
->> actually, it does fix the hang on v4.15-rc3:
+>> I think the number of mutex locks/unlock statements can be reduced
+>> (including the mutex unlock+lock pattern) after moving the mutex to
+>> exynos_rng_set_seed() and exynos_rng_get_random() because actually you
+>> want to protect them. This would remove the new code from suspend and
+>> resume path and gave you the fairness.
 >>
->>   https://lava.collabora.co.uk/scheduler/job/1019877
->>   https://lava.collabora.co.uk/scheduler/job/1019878
->>
->> I ran it twice and it booted both times.  I also ran the same
->> boot tests with the same kernel but the dtb from v4.15-rc3
->> without the fix to double check and these failed:
->>
->>   https://lava.collabora.co.uk/scheduler/job/1019879
->>   https://lava.collabora.co.uk/scheduler/job/1019880
->>
->>
->> Tested-by: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->>
->>
->> Thanks for the fix!
-> 
-> Well, thanks for the test! It proves that there the boot failure is
-> caused by an issue somewhere in the error path of Exynos DRM, Analogix
-> DP, Simple Panel or other drivers.
-> 
-> This patch simply hides it by fixing the source issue of the Exynos
-> DRM initialization failure. :-)
-> 
-> I hope Javier will be able to investigate the discussed hang issue
-> later, as fixing it is also imho important.
+>> On the other hand the mutex would be unlocked+locked many times for
+>> large generate() calls...
+>
+> Moving locks/unlocks to exynos_rng_get_random() means taking a lock to
+> retrieve 20 bytes. It doesn't scale at all. I really wanted to avoid it,
+> because the performance loss is quite noticable in such case. That is
+> why I put the lock around the loop in exynos_rng_generatr(). As a
+> consequence I had to move locks out of exynos_rng_set_seed() too.
 
-Sure.  This device tree change is needed to get HDMI to work so
-it's still a fix for that.  Also it's good to know that nothing
-else breaks when the driver issue is "hidden".  Might be worth
-testing on -next as well as it might help spot any new issues
-that haven't been merged in mainline yet, or in general give
-another data point.
+I understand. With the fix for first line (cc):
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Guillaume
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
