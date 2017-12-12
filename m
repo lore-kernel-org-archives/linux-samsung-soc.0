@@ -1,101 +1,85 @@
-From: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4] ARM: dts: exynos: Add nodes for True Random Number
- Generator
-Date: Tue, 12 Dec 2017 13:09:02 +0100
-Message-ID: <20171212120902.16561-1-l.stelmach@samsung.com>
-References: <20171204125351.26805-4-l.stelmach@samsung.com>
-        <CGME20171212120906eucas1p23883590efde24a67800473b0d34871e5@eucas1p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] spi: s3c64xx: add SPDX identifier
+Date: Tue, 12 Dec 2017 14:45:12 +0100
+Message-ID: <CAJKOXPc8o2_bMbXjwPopOtsoML0NqOzzHnYXCL9oU9VkU2cQYA@mail.gmail.com>
+References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
+ <20171212075815.8683-1-andi.shyti@samsung.com> <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A@mail.gmail.com>
+ <20171212130313.GC1072@brancaleone.zhora.eu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20171204125351.26805-4-l.stelmach-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Andrew F . Davis" <afd-l0cyMroinI0@public.gmane.org>, PrasannaKumar Muralidharan <prasannatsmkumar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171212130313.GC1072@brancaleone.zhora.eu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andi Shyti <andi@etezian.org>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add nodes for the True Random Number Generator found in Samsung Exynos
-5250+ SoCs.
+On Tue, Dec 12, 2017 at 2:03 PM, Andi Shyti <andi@etezian.org> wrote:
+> Hi Krzysztof,
+>
+>> > - * Copyright (C) 2009 Samsung Electronics Ltd.
+>> > - *     Jaswinder Singh <jassi.brar@samsung.com>
+>> > - *
+>> > - * This program is free software; you can redistribute it and/or modify
+>> > - * it under the terms of the GNU General Public License as published by
+>> > - * the Free Software Foundation; either version 2 of the License, or
+>> > - * (at your option) any later version.
+>> > - *
+>> > - * This program is distributed in the hope that it will be useful,
+>> > - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> > - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> > - * GNU General Public License for more details.
+>> > - */
+>> > +// SPDX-License-Identifier: GPL-2.0
+>>
+>
+>> Existing license corresponds to GPL-2.0+, not GPL-2.0.
+>
+> mmmhhh... isn't it deprecated from 2.0rc2? Current SPDX version
+> 2.6 doesn't have GPL-2.0+ in the list of licenses.
+>
+> https://spdx.org/licenses/
+>
+> I can improve the commit log to state it more clearly. Would that
+> work?
 
-Signed-off-by: Łukasz Stelmach <l.stelmach-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
-Changes since v3:
+No. The license identifier is deprecated, not the license itself.
+Instead the, the SPDX says: <<This new syntax supports the ability to
+use a simple “+” operator after a license short identifier to indicate
+“or later version” (e.g. GPL-2.0+)>>. The spec [1] mentions it again:
+"An SPDX License List Short Form Identifier with a unary"+" operator
+suffix to represent the current version of the license or any later
+version.  For example: GPL-2.0+"
 
-- Rebased accroding to Krzysztof Kozłowski's request
+Existing kernel sources follow this convention.
 
- arch/arm/boot/dts/exynos5.dtsi    | 5 +++++
- arch/arm/boot/dts/exynos5250.dtsi | 5 +++++
- arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
- arch/arm/boot/dts/exynos5420.dtsi | 5 +++++
- 4 files changed, 20 insertions(+)
+> BTW, is it really a change of license?
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 6cc5c37a9b2a..b3c8428de389 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -216,6 +216,11 @@
- 		      reg = <0x10830400 0x200>;
- 		};
- 
-+		trng: rng@10830600 {
-+		      compatible = "samsung,exynos5250-trng";
-+		      reg = <0x10830600 0x100>;
-+		};
-+
- 		g2d: g2d@10850000 {
- 			compatible = "samsung,exynos5250-g2d";
- 			reg = <0x10850000 0x1000>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index e55748798845..bdd742e3f3c3 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -1111,4 +1111,9 @@
- 	clock-names = "secss";
- };
- 
-+&trng {
-+	clocks = <&clock CLK_SSS>;
-+	clock-names = "secss";
-+};
-+
- #include "exynos5250-pinctrl.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index f5541000606b..4e5d9bad085f 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -392,6 +392,11 @@
- 		  3 0 0x07000000 0x20000>;
- };
- 
-+&trng {
-+	clocks = <&clock CLK_SSS>;
-+	clock-names = "secss";
-+};
-+
- &usbdrd3_0 {
- 	clocks = <&clock CLK_USBD300>;
- 	clock-names = "usbdrd30";
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 3611f5c05235..f7c2ba61830b 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1479,6 +1479,11 @@
- 	clock-names = "secss";
- };
- 
-+&trng {
-+	clocks = <&clock CLK_SSS>;
-+	clock-names = "secss";
-+};
-+
- &usbdrd3_0 {
- 	clocks = <&clock CLK_USBD300>;
- 	clock-names = "usbdrd30";
--- 
-2.11.0
+Yes, it is. Or maybe not license itself but it terms and specific
+elements. GPL-2.0 does not say "any later option at your choice". Let
+me quote:
+"Each version is given a distinguishing version number. If the Program
+specifies a version number of this License which applies to it and
+"any later version", you have the option of following the terms and
+conditions either of that version or of any later version published by
+the Free Software Foundation. If the Program does not specify a
+version number of this License, you may choose any version ever
+published by the Free Software Foundation." [2]
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+What to add more here? GPL-2.0 only does not allow you to use any
+later version ever published by FSF.
+
+>
+>> Why changing the comment style?
+>
+> That's SPDX, right? by adding the SPDX-License-Identifier the
+> GPLv2 statement becomes redundant and we can remove some lines.
+
+But it does not explain why existing comment has to be rewritten into //.
+
+[1] https://spdx.org/spdx-specification-21-web-version
+[2] https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
+
+Best regards,
+Krzysztof
