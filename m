@@ -1,82 +1,66 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] spi: s3c64xx: add SPDX identifier
-Date: Tue, 12 Dec 2017 10:17:09 +0100
-Message-ID: <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A@mail.gmail.com>
-References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
- <20171212075815.8683-1-andi.shyti@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Enable Mixer node for Exynos5800
+ Peach Pi machine
+Date: Tue, 12 Dec 2017 10:55:36 +0100
+Message-ID: <CAJKOXPc1rJCWABXUuyU2MKxnLY-MptrM9Mm0HyHVCJn870R+sg@mail.gmail.com>
+References: <20171212074208.30753-1-javierm@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:52124 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:46520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750731AbdLLJRM (ORCPT
+        id S1750853AbdLLJzj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 04:17:12 -0500
-In-Reply-To: <20171212075815.8683-1-andi.shyti@samsung.com>
+        Tue, 12 Dec 2017 04:55:39 -0500
+In-Reply-To: <20171212074208.30753-1-javierm@redhat.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Guillaume Tucker <guillaume.tucker@collabora.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Shuah Khan <shuahkh@osg.samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Dec 12, 2017 at 8:58 AM, Andi Shyti <andi.shyti@samsung.com> wrote:
-> Replace the original license statement with the SPDX identifier.
+On Tue, Dec 12, 2017 at 8:42 AM, Javier Martinez Canillas
+<javierm@redhat.com> wrote:
+> Commit 1cb686c08d12 ("ARM: dts: exynos: Add status property to Exynos 542x
+> Mixer nodes") disabled the Mixer node by default in the DTSI and enabled
+> for each Exynos 542x DTS. But unfortunately it missed to enable it for the
+> Exynos5800 Peach Pi machine, since the 5800 is also an 542x SoC variant.
 >
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Fixes: 1cb686c08d12 ("ARM: dts: exynos: Add status property to Exynos 542x Mixer nodes")
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
 > ---
->  drivers/spi/spi-s3c64xx.c                 | 18 ++++--------------
->  include/linux/platform_data/spi-s3c64xx.h |  4 +---
->  2 files changed, 5 insertions(+), 17 deletions(-)
 >
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index de7df20f8712..7ef68d45edfb 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1,17 +1,7 @@
-> -/*
-> - * Copyright (C) 2009 Samsung Electronics Ltd.
-> - *     Jaswinder Singh <jassi.brar@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0
+> Changes in v2:
+> - Remove RFT tag.
 
-Hi,
-
-Existing license corresponds to GPL-2.0+, not GPL-2.0.
-Why changing the comment style?
+Thanks guys! However I still would like to see a tested-by for this on
+Peach Pi (AFAIU, Marek's only acked the code/solution).
 
 Best regards,
 Krzysztof
 
-> +//
-> +// Copyright (c) 2009 Samsung Electronics Co., Ltd.
-> +//      Jaswinder Singh <jassi.brar@samsung.com>
+> - Add Marek's Acked-by tag.
+> - Add fixes tag.
 >
->  #include <linux/init.h>
->  #include <linux/module.h>
-> diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-> index da79774078a7..8917f38c97c5 100644
-> --- a/include/linux/platform_data/spi-s3c64xx.h
-> +++ b/include/linux/platform_data/spi-s3c64xx.h
-> @@ -2,9 +2,7 @@
->   * Copyright (C) 2009 Samsung Electronics Ltd.
->   *     Jaswinder Singh <jassi.brar@samsung.com>
->   *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> + * SPDX-License-Identifier: GPL-2.0
->   */
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
 >
->  #ifndef __SPI_S3C64XX_H
+> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> index b2b95ff205e8..0029ec27819c 100644
+> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> @@ -664,6 +664,10 @@
+>         status = "okay";
+>  };
+>
+> +&mixer {
+> +       status = "okay";
+> +};
+> +
+>  /* eMMC flash */
+>  &mmc_0 {
+>         status = "okay";
 > --
-> 2.15.1
+> 2.14.3
 >
