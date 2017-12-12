@@ -1,111 +1,148 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Philippe Ombredanne <pombredanne@nexb.com>
 Subject: Re: [PATCH] spi: s3c64xx: add SPDX identifier
-Date: Tue, 12 Dec 2017 16:00:02 +0100
-Message-ID: <CAJKOXPeZi=TWqoCo9x-Wa372ey8D=r8-Lf3CvJ95dgaMAF1kxQ@mail.gmail.com>
+Date: Tue, 12 Dec 2017 16:24:21 +0100
+Message-ID: <CAOFm3uEAzEgN-PgSOccbwO3aWfABsHywUmm8eXasR8CXy=NPJQ@mail.gmail.com>
 References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
  <20171212075815.8683-1-andi.shyti@samsung.com> <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A@mail.gmail.com>
  <20171212130313.GC1072@brancaleone.zhora.eu> <CAJKOXPc8o2_bMbXjwPopOtsoML0NqOzzHnYXCL9oU9VkU2cQYA@mail.gmail.com>
- <CAOFm3uHobATjskAKG83QoSQjXgzv1RQFv0vrgt_QgnZoxNQ2-w@mail.gmail.com>
+ <CAOFm3uHobATjskAKG83QoSQjXgzv1RQFv0vrgt_QgnZoxNQ2-w@mail.gmail.com> <CAJKOXPeZi=TWqoCo9x-Wa372ey8D=r8-Lf3CvJ95dgaMAF1kxQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOFm3uHobATjskAKG83QoSQjXgzv1RQFv0vrgt_QgnZoxNQ2-w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Andi Shyti <andi@etezian.org>, Andi Shyti <andi.shyti@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:43879 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752595AbdLLPZD (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 12 Dec 2017 10:25:03 -0500
+Received: by mail-wm0-f49.google.com with SMTP id n138so21351571wmg.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Dec 2017 07:25:03 -0800 (PST)
+In-Reply-To: <CAJKOXPeZi=TWqoCo9x-Wa372ey8D=r8-Lf3CvJ95dgaMAF1kxQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andi Shyti <andi@etezian.org>, Andi Shyti <andi.shyti@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Dec 12, 2017 at 3:48 PM, Philippe Ombredanne
-<pombredanne@nexb.com> wrote:
-> On Tue, Dec 12, 2017 at 2:45 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On Tue, Dec 12, 2017 at 2:03 PM, Andi Shyti <andi@etezian.org> wrote:
->>> Hi Krzysztof,
->>>
->>>> > - * Copyright (C) 2009 Samsung Electronics Ltd.
->>>> > - *     Jaswinder Singh <jassi.brar@samsung.com>
->>>> > - *
->>>> > - * This program is free software; you can redistribute it and/or modify
->>>> > - * it under the terms of the GNU General Public License as published by
->>>> > - * the Free Software Foundation; either version 2 of the License, or
->>>> > - * (at your option) any later version.
->>>> > - *
->>>> > - * This program is distributed in the hope that it will be useful,
->>>> > - * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>>> > - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>>> > - * GNU General Public License for more details.
->>>> > - */
->>>> > +// SPDX-License-Identifier: GPL-2.0
+Dear Krzysztof,
+
+On Tue, Dec 12, 2017 at 4:00 PM, Krzysztof Kozlowski <krzk@kernel.org> wrot=
+e:
+> On Tue, Dec 12, 2017 at 3:48 PM, Philippe Ombredanne
+> <pombredanne@nexb.com> wrote:
+>> On Tue, Dec 12, 2017 at 2:45 PM, Krzysztof Kozlowski <krzk@kernel.org> w=
+rote:
+>>> On Tue, Dec 12, 2017 at 2:03 PM, Andi Shyti <andi@etezian.org> wrote:
+>>>> Hi Krzysztof,
 >>>>
+>>>>> > - * Copyright (C) 2009 Samsung Electronics Ltd.
+>>>>> > - *     Jaswinder Singh <jassi.brar@samsung.com>
+>>>>> > - *
+>>>>> > - * This program is free software; you can redistribute it and/or m=
+odify
+>>>>> > - * it under the terms of the GNU General Public License as publish=
+ed by
+>>>>> > - * the Free Software Foundation; either version 2 of the License, =
+or
+>>>>> > - * (at your option) any later version.
+>>>>> > - *
+>>>>> > - * This program is distributed in the hope that it will be useful,
+>>>>> > - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>>>> > - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>>>> > - * GNU General Public License for more details.
+>>>>> > - */
+>>>>> > +// SPDX-License-Identifier: GPL-2.0
+>>>>>
+>>>>
+>>>>> Existing license corresponds to GPL-2.0+, not GPL-2.0.
+>>>>
+>>>> mmmhhh... isn't it deprecated from 2.0rc2? Current SPDX version
+>>>> 2.6 doesn't have GPL-2.0+ in the list of licenses.
+>>>>
+>>>> https://spdx.org/licenses/
+>>>>
+>>>> I can improve the commit log to state it more clearly. Would that
+>>>> work?
 >>>
->>>> Existing license corresponds to GPL-2.0+, not GPL-2.0.
+>>> No. The license identifier is deprecated, not the license itself.
+>>> Instead the, the SPDX says: <<This new syntax supports the ability to
+>>> use a simple =E2=80=9C+=E2=80=9D operator after a license short identif=
+ier to indicate
+>>> =E2=80=9Cor later version=E2=80=9D (e.g. GPL-2.0+)>>. The spec [1] ment=
+ions it again:
+>>> "An SPDX License List Short Form Identifier with a unary"+" operator
+>>> suffix to represent the current version of the license or any later
+>>> version.  For example: GPL-2.0+"
 >>>
->>> mmmhhh... isn't it deprecated from 2.0rc2? Current SPDX version
->>> 2.6 doesn't have GPL-2.0+ in the list of licenses.
+>>> Existing kernel sources follow this convention.
 >>>
->>> https://spdx.org/licenses/
+>>>> BTW, is it really a change of license?
 >>>
->>> I can improve the commit log to state it more clearly. Would that
->>> work?
->>
->> No. The license identifier is deprecated, not the license itself.
->> Instead the, the SPDX says: <<This new syntax supports the ability to
->> use a simple “+” operator after a license short identifier to indicate
->> “or later version” (e.g. GPL-2.0+)>>. The spec [1] mentions it again:
->> "An SPDX License List Short Form Identifier with a unary"+" operator
->> suffix to represent the current version of the license or any later
->> version.  For example: GPL-2.0+"
->>
->> Existing kernel sources follow this convention.
->>
->>> BTW, is it really a change of license?
->>
->> Yes, it is. Or maybe not license itself but it terms and specific
->> elements. GPL-2.0 does not say "any later option at your choice". Let
->> me quote:
->> "Each version is given a distinguishing version number. If the Program
->> specifies a version number of this License which applies to it and
->> "any later version", you have the option of following the terms and
->> conditions either of that version or of any later version published by
->> the Free Software Foundation. If the Program does not specify a
->> version number of this License, you may choose any version ever
->> published by the Free Software Foundation." [2]
->>
->> What to add more here? GPL-2.0 only does not allow you to use any
->> later version ever published by FSF.
->>
+>>> Yes, it is. Or maybe not license itself but it terms and specific
+>>> elements. GPL-2.0 does not say "any later option at your choice". Let
+>>> me quote:
+>>> "Each version is given a distinguishing version number. If the Program
+>>> specifies a version number of this License which applies to it and
+>>> "any later version", you have the option of following the terms and
+>>> conditions either of that version or of any later version published by
+>>> the Free Software Foundation. If the Program does not specify a
+>>> version number of this License, you may choose any version ever
+>>> published by the Free Software Foundation." [2]
 >>>
->>>> Why changing the comment style?
+>>> What to add more here? GPL-2.0 only does not allow you to use any
+>>> later version ever published by FSF.
 >>>
->>> That's SPDX, right? by adding the SPDX-License-Identifier the
->>> GPLv2 statement becomes redundant and we can remove some lines.
+>>>>
+>>>>> Why changing the comment style?
+>>>>
+>>>> That's SPDX, right? by adding the SPDX-License-Identifier the
+>>>> GPLv2 statement becomes redundant and we can remove some lines.
+>>>
+>>> But it does not explain why existing comment has to be rewritten into /=
+/.
+>>>
+>>> [1] https://spdx.org/spdx-specification-21-web-version
+>>> [2] https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
+>>>
+>>> Best regards,
+>>> Krzysztof
 >>
->> But it does not explain why existing comment has to be rewritten into //.
->>
->> [1] https://spdx.org/spdx-specification-21-web-version
->> [2] https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
->>
->> Best regards,
->> Krzysztof
+>> IMHO you should refer to Thomas doc patches instead of looking for
+>> details elsewhere [1]
+>> They are the authoritative doc for the kernel.
 >
-> IMHO you should refer to Thomas doc patches instead of looking for
-> details elsewhere [1]
-> They are the authoritative doc for the kernel.
-
-I was actually checking this with existing source code (after applying
-these patches) and GPLv2.0+any_later was converted to "GPL-2.0+".
-Let's look at specific example:
-https://lkml.org/lkml/2017/12/4/946
-"+ For 'GNU General Public License (GPL) version 2 or any later version' use:
-+    SPDX-License-Identifier: GPL-2.0+"
-
-I do not understand then whether you are agreeing or arguing with my point. :)
-
-Best regards,
-Krzysztof
-
+> I was actually checking this with existing source code (after applying
+> these patches) and GPLv2.0+any_later was converted to "GPL-2.0+".
+> Let's look at specific example:
+> https://lkml.org/lkml/2017/12/4/946
+> "+ For 'GNU General Public License (GPL) version 2 or any later version' =
+use:
+> +    SPDX-License-Identifier: GPL-2.0+"
 >
-> CC: Greg Kroah-Hartman
-> CC: Thomas Gleixner
+> I do not understand then whether you are agreeing or arguing with my poin=
+t. :)
 >
-> [1] https://lkml.org/lkml/2017/12/4/934
+> Best regards,
+> Krzysztof
+>
+>>
+>> CC: Greg Kroah-Hartman
+>> CC: Thomas Gleixner
+>>
+>> [1] https://lkml.org/lkml/2017/12/4/934
+
+Here, this should be as a top line:
+
+// SPDX-License-Identifier: GPL-2.0+
+
+
+So I agree with the SPDX id but also pointing to the use of the C++ //
+comment style as requested by Linus [1]
+
+[1] https://lkml.org/lkml/2017/11/25/133
+[2] https://lkml.org/lkml/2017/11/25/125
+[3] https://lkml.org/lkml/2017/11/2/715
+[4] https://lkml.org/lkml/2017/11/2/805
+
+--=20
+Cordially
+Philippe Ombredanne
