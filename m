@@ -1,45 +1,41 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4] ARM: dts: exynos: Add nodes for True Random Number
- Generator
-Date: Tue, 12 Dec 2017 18:44:08 +0100
-Message-ID: <20171212174408.bnyedkd2qebqtpiq@kozik-lap>
-References: <20171204125351.26805-4-l.stelmach@samsung.com>
- <CGME20171212120906eucas1p23883590efde24a67800473b0d34871e5@eucas1p2.samsung.com>
- <20171212120902.16561-1-l.stelmach@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Enable Mixer node for Exynos5800
+ Peach Pi machine
+Date: Tue, 12 Dec 2017 18:47:08 +0100
+Message-ID: <20171212174708.miyqt2gtcanumgow@kozik-lap>
+References: <20171212074208.30753-1-javierm@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:43449 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751612AbdLLRoM (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 12:44:12 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171212120902.16561-1-l.stelmach@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20171212074208.30753-1-javierm@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Guillaume Tucker <guillaume.tucker@collabora.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Shuah Khan <shuahkh@osg.samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Cc: "Andrew F . Davis" <afd@ti.com>, PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, Rob Herring <robh+dt@kernel.org>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Tue, Dec 12, 2017 at 01:09:02PM +0100, Łukasz Stelmach wrote:
-> Add nodes for the True Random Number Generator found in Samsung Exynos
-> 5250+ SoCs.
+On Tue, Dec 12, 2017 at 08:42:08AM +0100, Javier Martinez Canillas wrote:
+> Commit 1cb686c08d12 ("ARM: dts: exynos: Add status property to Exynos 542x
+> Mixer nodes") disabled the Mixer node by default in the DTSI and enabled
+> for each Exynos 542x DTS. But unfortunately it missed to enable it for the
+> Exynos5800 Peach Pi machine, since the 5800 is also an 542x SoC variant.
 > 
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+> Fixes: 1cb686c08d12 ("ARM: dts: exynos: Add status property to Exynos 542x Mixer nodes")
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
 > ---
-> Changes since v3:
 > 
-> - Rebased accroding to Krzysztof Kozłowski's request
+> Changes in v2:
+> - Remove RFT tag.
+> - Add Marek's Acked-by tag.
+> - Add fixes tag.
 > 
->  arch/arm/boot/dts/exynos5.dtsi    | 5 +++++
->  arch/arm/boot/dts/exynos5250.dtsi | 5 +++++
->  arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
->  arch/arm/boot/dts/exynos5420.dtsi | 5 +++++
->  4 files changed, 20 insertions(+)
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 
-Thanks, applied.
+Thanks, applied for current cycle (fixes).
 
 Best regards,
 Krzysztof
