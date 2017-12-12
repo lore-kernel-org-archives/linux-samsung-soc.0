@@ -1,85 +1,52 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] spi: s3c64xx: add SPDX identifier
-Date: Tue, 12 Dec 2017 14:45:12 +0100
-Message-ID: <CAJKOXPc8o2_bMbXjwPopOtsoML0NqOzzHnYXCL9oU9VkU2cQYA@mail.gmail.com>
-References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
- <20171212075815.8683-1-andi.shyti@samsung.com> <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A@mail.gmail.com>
- <20171212130313.GC1072@brancaleone.zhora.eu>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171212130313.GC1072@brancaleone.zhora.eu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andi Shyti <andi@etezian.org>
-Cc: Andi Shyti <andi.shyti@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Simon Shields <simon@lineageos.org>
+Subject: [PATCH 0/3] Add Exynos4412-based midas boards support
+Date: Wed, 13 Dec 2017 01:08:12 +1100
+Message-ID: <20171212140815.28257-1-simon@lineageos.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44753 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753052AbdLLOIf (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 12 Dec 2017 09:08:35 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, Simon Shields <simon@lineageos.org>
 
-On Tue, Dec 12, 2017 at 2:03 PM, Andi Shyti <andi@etezian.org> wrote:
-> Hi Krzysztof,
->
->> > - * Copyright (C) 2009 Samsung Electronics Ltd.
->> > - *     Jaswinder Singh <jassi.brar@samsung.com>
->> > - *
->> > - * This program is free software; you can redistribute it and/or modify
->> > - * it under the terms of the GNU General Public License as published by
->> > - * the Free Software Foundation; either version 2 of the License, or
->> > - * (at your option) any later version.
->> > - *
->> > - * This program is distributed in the hope that it will be useful,
->> > - * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> > - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> > - * GNU General Public License for more details.
->> > - */
->> > +// SPDX-License-Identifier: GPL-2.0
->>
->
->> Existing license corresponds to GPL-2.0+, not GPL-2.0.
->
-> mmmhhh... isn't it deprecated from 2.0rc2? Current SPDX version
-> 2.6 doesn't have GPL-2.0+ in the list of licenses.
->
-> https://spdx.org/licenses/
->
-> I can improve the commit log to state it more clearly. Would that
-> work?
+Hi,
 
-No. The license identifier is deprecated, not the license itself.
-Instead the, the SPDX says: <<This new syntax supports the ability to
-use a simple “+” operator after a license short identifier to indicate
-“or later version” (e.g. GPL-2.0+)>>. The spec [1] mentions it again:
-"An SPDX License List Short Form Identifier with a unary"+" operator
-suffix to represent the current version of the license or any later
-version.  For example: GPL-2.0+"
+This patch series adds support for a new set of boards, codenamed
+"midas". These are the Galaxy S3 (m0/m3) and the Galaxy Note 2 (t0).
+These boards are closely related to trats2 - m0 is a trats2 but with a
+bootloader geared towards booting Android rather than a traditional Linux
+distribution - and because of this, the dts files are largely based off
+what is already in-place for trats2.
 
-Existing kernel sources follow this convention.
+Patch #1 adds documentation for the bindings used by the boards,
+patch #2 adds the device-tree files themselves, and patch #3 enables
+cpuidle support for the boards.
 
-> BTW, is it really a change of license?
+Cheers,
+Simon
 
-Yes, it is. Or maybe not license itself but it terms and specific
-elements. GPL-2.0 does not say "any later option at your choice". Let
-me quote:
-"Each version is given a distinguishing version number. If the Program
-specifies a version number of this License which applies to it and
-"any later version", you have the option of following the terms and
-conditions either of that version or of any later version published by
-the Free Software Foundation. If the Program does not specify a
-version number of this License, you may choose any version ever
-published by the Free Software Foundation." [2]
+Simon Shields (3):
+  dt-bindings: samsung: document bindings for Midas family boards
+  ARM: dts: add Samsung's exynos4412-based midas boards
+  ARM: exynos: extend cpuidle support to midas boards
 
-What to add more here? GPL-2.0 only does not allow you to use any
-later version ever published by FSF.
+ .../bindings/arm/samsung/samsung-boards.txt        |    4 +
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi        |  144 +++
+ arch/arm/boot/dts/exynos4412-m0.dts                |   14 +
+ arch/arm/boot/dts/exynos4412-m3.dts                |   19 +
+ arch/arm/boot/dts/exynos4412-midas.dtsi            | 1291 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos4412-t0.dts                |   51 +
+ arch/arm/mach-exynos/exynos.c                      |    3 +-
+ 7 files changed, 1525 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4412-m0.dts
+ create mode 100644 arch/arm/boot/dts/exynos4412-m3.dts
+ create mode 100644 arch/arm/boot/dts/exynos4412-midas.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4412-t0.dts
 
->
->> Why changing the comment style?
->
-> That's SPDX, right? by adding the SPDX-License-Identifier the
-> GPLv2 statement becomes redundant and we can remove some lines.
-
-But it does not explain why existing comment has to be rewritten into //.
-
-[1] https://spdx.org/spdx-specification-21-web-version
-[2] https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
-
-Best regards,
-Krzysztof
+-- 
+2.15.1
