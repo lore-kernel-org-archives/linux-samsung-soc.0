@@ -1,60 +1,69 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] spi: s3c64xx: add SPDX identifier
-Date: Tue, 12 Dec 2017 10:31:42 +0000
-Message-ID: <20171212103142.GC16323@sirena.org.uk>
-References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
- <20171212075815.8683-1-andi.shyti@samsung.com>
- <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A@mail.gmail.com>
- <20171212100730.GA16323@sirena.org.uk>
- <CAJKOXPdM+C_JWOiqT8obEAsEsGJ1GvJMG=o2Kq0TCiOwdmZOxw@mail.gmail.com>
+From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Subject: Re: [PATCH v3 3/3] ARM: dts: exynos: Add nodes for True Random
+ Number Generator
+Date: Tue, 12 Dec 2017 11:35:56 +0100
+Message-ID: <87k1xs6xo3.fsf%l.stelmach@samsung.com>
+References: <20171211184913.n67q7vbv2gzknjeb@kozik-lap>
+        <CGME20171212103557eucas1p202966a9335d52149ce69ef122f1758d8@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NKoe5XOeduwbEQHU"
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39040 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752473AbdLLKbr (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42739 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbdLLKgC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 05:31:47 -0500
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPdM+C_JWOiqT8obEAsEsGJ1GvJMG=o2Kq0TCiOwdmZOxw@mail.gmail.com>
+        Tue, 12 Dec 2017 05:36:02 -0500
+In-reply-to: <20171211184913.n67q7vbv2gzknjeb@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andi Shyti <andi.shyti@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Cc: "Andrew F . Davis" <afd@ti.com>, PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, Rob Herring <robh+dt@kernel.org>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
---NKoe5XOeduwbEQHU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It was <2017-12-11 pon 19:49>, when Krzysztof Kozlowski wrote:
+> On Mon, Dec 04, 2017 at 01:53:51PM +0100, =C5=81ukasz Stelmach wrote:
+>> Add nodes for the True Random Number Generator found in Samsung Exynos
+>> 5250+ SoCs.
+>>=20
+>> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5.dtsi    | 5 +++++
+>>  arch/arm/boot/dts/exynos5250.dtsi | 5 +++++
+>>  arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
+>>  arch/arm/boot/dts/exynos5420.dtsi | 5 +++++
+>>  4 files changed, 20 insertions(+)
+>>
+>
+> Unfortunately the same story as with your PRNG patch - does not apply on
+> top of my next/dt (after taking PRNG). Also did not apply on v4.15-rc1 +
+> PRNG.
+>
+> Could you rebase on my next/dt?
 
-On Tue, Dec 12, 2017 at 11:13:26AM +0100, Krzysztof Kozlowski wrote:
-> On Tue, Dec 12, 2017 at 11:07 AM, Mark Brown <broonie@kernel.org> wrote:
+Sure. Should I send it as along with the other two patches, if there were
+no changes in them since?
 
-> > Apparently that's the thing for SPDX headers.
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
 
-> Yes (although in sources one can find /* */ as well) but the rest of
-> comment does not have to be changed in that case. With quick grep
-> through sources I could not find such practice.
-
-Yes, it's not great.  There was some discussion about it which you can
-dig out of the archives indicating a desire to use C++ comments more but
-there's not been much effort to communicate that and there's no tooling
-to back it up so it's all messy.
-
---NKoe5XOeduwbEQHU
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlovsA0ACgkQJNaLcl1U
-h9AaQAf9HWY1mDja1iyWRTlBj98j3wOVIS33lDBUMQPtxvgpdTtMv89M1kWH5ROU
-LklKkgQEoa3oYqvwSxTEgVIOaNoNJXqU4foccW1/a/lET4HdVyZ5bHwL4fGu0R9M
-Rl6rrFbzeloZCe/YQa2Pw7ozqpqM1+CiLWkABNAikLOkaoBQEyW0ieBHj2mbv0FU
-nahsRsB6wUPh2KTYFowKkVdidk0s/9nbKAGyETk/zZhS1ZtI6x1M9kG9pNC9SEgf
-5zgYxI6hJa0jpT89XkTJvCWxt7tfuSb1GNA7hz0fQtW7j6O4NCi+i7VBI/ERI5/c
-OXwO04usTjoIe1zW8mzkun/cTIJZfA==
-=VnCq
+iQEcBAEBCAAGBQJaL7EMAAoJELCuHpyYpYAQm8gH/1fXvDs208U1zfesgTY1okfO
+HD7Gzp8aRLP3s99nD89fncOtjp21EfC+uDPFlbtR9q1rkNs95USfzMj+1axGBnJb
+sp2/VKDaGAY6Pa/nV3y42fIR0U1jBghMoUO//Vu8VPUgJVFCeWk6o7cq/aJB9oqW
+LtJn2tmNlEclRRDe0hKJuX/b3TSAQKOjwlfpFtQpO/U4NIOrbpn3UOO1e/SEADNK
+DYJa25df21/mGmZAUpT6f5D+DSj8CnlDsDO2k0JyWPUUcpVo39it42cVeiY7p9x1
+hx+xke5oIa2tWL6ehxec0NXDibKQ+FwVSVzk1aGsPhmSSUOyfFLif/78vPmW1mQ=
+=PWl1
 -----END PGP SIGNATURE-----
-
---NKoe5XOeduwbEQHU--
+--=-=-=--
