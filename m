@@ -1,157 +1,107 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: mainline/master boot bisection: v4.15-rc3 on peach-pi
- #3228-staging
-Date: Tue, 12 Dec 2017 07:47:29 -0700
-Message-ID: <beef1026-3dbe-5284-d2fa-a2298c52e7c0@osg.samsung.com>
-References: <680389204.71.1512980755810.JavaMail.jenkins@ip-172-30-0-246>
- <51e6d7fb-ac9e-a59f-ea63-ad06219b429d@collabora.com>
- <CAKMK7uFcGftSeQjkKu9SZmkQd8-irbUTMcOnUwi7HZtb5TePag@mail.gmail.com>
- <CABxcv=mUHgTxvYpOYstE7rQn8fKS3QGiTT=FzBUc8DREvVuTeQ@mail.gmail.com>
- <CABxcv=m-fYZvYN4gLwBf8NwHvJb7PtNdVKR+SXgVKExZGtW4Qw@mail.gmail.com>
- <20171211225829.GA1959@n2100.armlinux.org.uk>
- <20171211230213.GB1959@n2100.armlinux.org.uk>
- <CGME20171211232533epcas1p1821f8808ca6da7bd28c57fb4121d36fa@epcas1p1.samsung.com>
- <2df0fc74-8b79-5cca-7a8a-9e005b44d8d8@osg.samsung.com>
- <2139f436-5646-7f9f-a6cb-285a0fd31969@samsung.com>
- <CABxcv=n9PvoYr1xwB8CHBmE00XaTUqT642g7F8nuZd-d031h5Q@mail.gmail.com>
- <88bebc9d-a889-403b-a742-c11ad6617638@samsung.com>
+From: Philippe Ombredanne <pombredanne-od1rfyK75/E@public.gmane.org>
+Subject: Re: [PATCH] spi: s3c64xx: add SPDX identifier
+Date: Tue, 12 Dec 2017 15:48:15 +0100
+Message-ID: <CAOFm3uHobATjskAKG83QoSQjXgzv1RQFv0vrgt_QgnZoxNQ2-w@mail.gmail.com>
+References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
+ <20171212075815.8683-1-andi.shyti@samsung.com> <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A@mail.gmail.com>
+ <20171212130313.GC1072@brancaleone.zhora.eu> <CAJKOXPc8o2_bMbXjwPopOtsoML0NqOzzHnYXCL9oU9VkU2cQYA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from osg.samsung.com ([64.30.133.232]:42252 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752425AbdLLOrc (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 09:47:32 -0500
-In-Reply-To: <88bebc9d-a889-403b-a742-c11ad6617638@samsung.com>
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAJKOXPc8o2_bMbXjwPopOtsoML0NqOzzHnYXCL9oU9VkU2cQYA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, kernel-build-reports@lists.linaro.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Escande <thierry.escande@collabora.co.uk>, Kevin Hilman <khilman@baylibre.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shuah Khan <shuahkh@osg.samsung.com>
 
-On 12/12/2017 01:47 AM, Marek Szyprowski wrote:
-> Hi Javier,
-> 
-> On 2017-12-12 09:00, Javier Martinez Canillas wrote:
->> On Tue, Dec 12, 2017 at 8:54 AM, Marek Szyprowski
->> <m.szyprowski@samsung.com> wrote:
->>> On 2017-12-12 00:25, Shuah Khan wrote:
->>>> On 12/11/2017 04:02 PM, Russell King - ARM Linux wrote:
->>>>> On Mon, Dec 11, 2017 at 10:58:29PM +0000, Russell King - ARM Linux wrote:
->>>>>> On Mon, Dec 11, 2017 at 11:54:48PM +0100, Javier Martinez Canillas
->>>>>> wrote:
->>>>>>> So I gave a quick look to this, and at the very least there's a bug in
->>>>>>> the Exynos5800 Peach Pi DTS caused by commit 1cb686c08d12 ("ARM: dts:
->>>>>>> exynos: Add status property to Exynos 542x Mixer nodes").
->>>>>>>
->>>>>>> I've posted a fix for that:
->>>>>>>
->>>>>>> https://patchwork.kernel.org/patch/10105921/
->>>>>>>
->>>>>>> I believe this could be also be the cause for the boot failure, since
->>>>>>> I see in the boot log that things start to go wrong after exynos-drm
->>>>>>> fails to bind the HDMI component:
->>>>>>>
->>>>>>> [ 2.916347] exynos-drm exynos-drm: failed to bind 14530000.hdmi (ops
->>>>>>> 0xc1398690): -1
->>>>>> Umm, -1 ?  Looking that error code up in
->>>>>> include/uapi/asm-generic/errno-base.h says it's -EPERM.
->>>>>>
->>>>>> I suspect that's someone just returning -1 because they're lazy...
->>>>>> which is real bad form and needs fixing.
->>>>> Oh, it really is -EPERM:
->>>>>
->>>>> struct exynos_drm_crtc *exynos_drm_crtc_get_by_type(struct drm_device
->>>>> *drm_dev,
->>>>>                                          enum exynos_drm_output_type
->>>>> out_type)
->>>>> {
->>>>>           struct drm_crtc *crtc;
->>>>>
->>>>>           drm_for_each_crtc(crtc, drm_dev)
->>>>>                   if (to_exynos_crtc(crtc)->type == out_type)
->>>>>                           return to_exynos_crtc(crtc);
->>>>>
->>>>>           return ERR_PTR(-EPERM);
->>>>> }
->>>>>
->>>>> Does "Operation not permitted" really convey the error here?  It doesn't
->>>>> look like a permission error to me.
->>>>>
->>>>> Can we please avoid abusing errno codes?
->>>> I tried 4.15-rc3 on odroid-xu4 after seeing drm issues reported. 4.15-rc2+
->>>> with top commit g968edbd worked just fine for me last Friday. I ran
->>>> several
->>>> tests and everything checked out except the exynos-gsc lockdep issue I
->>>> sent
->>>> a 4.14 patch for.
->>>>
->>>> However, with 4.15-rc3, dmesg is gets filled with
->>>>
->>>> [  342.337181] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  342.337470] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  342.337851] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  402.382346] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  402.396682] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  402.399244] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  402.399496] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  402.399848] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  402.400163] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  402.400495] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  402.401294] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>> [  402.401595] [drm] Non-contiguous allocation is not supported without
->>>> IOMMU, falling back to contiguous buffer
->>>>
->>>> Something broke in 4.15-rc3 on odroix-xu4 badly with exynos_defconfig.
->>>>
->>>> I will start bisect and try to isolate the problem. I suspect this is
->>>> related to dts
->>>> changes perhaps? I used to this problem a while back and it has been
->>>> fixed.
->>>
->>> This warning has been added intentionally, see following discussions:
->>> https://patchwork.kernel.org/patch/10034919/
->>> https://patchwork.kernel.org/patch/10070475/
->>>
->>> This means that your test apps should be updated or you should enable Exynos
->>> IOMMU support in your config. Maybe it is a good time to finally enable it
->>> in exynos_defconfig.
->>>
->> Has the issue that the boot-loader keeps the display controller
->> enabled and scanning pages on the Exynos Chromebooks resolved?
+On Tue, Dec 12, 2017 at 2:45 PM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrot=
+e:
+> On Tue, Dec 12, 2017 at 2:03 PM, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org> wrote:
+>> Hi Krzysztof,
 >>
->> I think that's that preventing to enable it by default in
->> exynos_defconfig since it caused boot failures when enabled on these
->> machines. I don't follow exynos development too closely nowadays so
->> maybe there's a fix in place now.
-> 
-> Not directly. I still didn't find time to properly add support for
-> devices, which were left in-working state (with active DMA
-> transactions) by bootloader, but due to some other changes in the
-> order of operations during boot process, power domains are
-> initialized very early and due to temporary lack of devices (which
-> are not yet added to the system), are turned off. This practically
-> stops FIMD for scanning framebuffer and "solves" this issue.
-> 
-> I've checked now and Exynos Snow Chromebook boots fine with IOMMU
-> support enabled, both with v4.15-rc3 and linux-next.
-> 
+>>> > - * Copyright (C) 2009 Samsung Electronics Ltd.
+>>> > - *     Jaswinder Singh <jassi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> > - *
+>>> > - * This program is free software; you can redistribute it and/or mod=
+ify
+>>> > - * it under the terms of the GNU General Public License as published=
+ by
+>>> > - * the Free Software Foundation; either version 2 of the License, or
+>>> > - * (at your option) any later version.
+>>> > - *
+>>> > - * This program is distributed in the hope that it will be useful,
+>>> > - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>> > - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>> > - * GNU General Public License for more details.
+>>> > - */
+>>> > +// SPDX-License-Identifier: GPL-2.0
+>>>
+>>
+>>> Existing license corresponds to GPL-2.0+, not GPL-2.0.
+>>
+>> mmmhhh... isn't it deprecated from 2.0rc2? Current SPDX version
+>> 2.6 doesn't have GPL-2.0+ in the list of licenses.
+>>
+>> https://spdx.org/licenses/
+>>
+>> I can improve the commit log to state it more clearly. Would that
+>> work?
+>
+> No. The license identifier is deprecated, not the license itself.
+> Instead the, the SPDX says: <<This new syntax supports the ability to
+> use a simple =E2=80=9C+=E2=80=9D operator after a license short identifie=
+r to indicate
+> =E2=80=9Cor later version=E2=80=9D (e.g. GPL-2.0+)>>. The spec [1] mentio=
+ns it again:
+> "An SPDX License List Short Form Identifier with a unary"+" operator
+> suffix to represent the current version of the license or any later
+> version.  For example: GPL-2.0+"
+>
+> Existing kernel sources follow this convention.
+>
+>> BTW, is it really a change of license?
+>
+> Yes, it is. Or maybe not license itself but it terms and specific
+> elements. GPL-2.0 does not say "any later option at your choice". Let
+> me quote:
+> "Each version is given a distinguishing version number. If the Program
+> specifies a version number of this License which applies to it and
+> "any later version", you have the option of following the terms and
+> conditions either of that version or of any later version published by
+> the Free Software Foundation. If the Program does not specify a
+> version number of this License, you may choose any version ever
+> published by the Free Software Foundation." [2]
+>
+> What to add more here? GPL-2.0 only does not allow you to use any
+> later version ever published by FSF.
+>
+>>
+>>> Why changing the comment style?
+>>
+>> That's SPDX, right? by adding the SPDX-License-Identifier the
+>> GPLv2 statement becomes redundant and we can remove some lines.
+>
+> But it does not explain why existing comment has to be rewritten into //.
+>
+> [1] https://spdx.org/spdx-specification-21-web-version
+> [2] https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
+>
+> Best regards,
+> Krzysztof
 
-Good to know it doesn't break Exynos Snow. This is why I test without
-IOMMU and then enable IOMMU on odroid-xu4 for test with IOMMU
+IMHO you should refer to Thomas doc patches instead of looking for
+details elsewhere [1]
+They are the authoritative doc for the kernel.
 
-thanks,
--- Shuah
+CC: Greg Kroah-Hartman
+CC: Thomas Gleixner
+
+[1] https://lkml.org/lkml/2017/12/4/934
+--=20
+Cordially
+Philippe Ombredanne
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
