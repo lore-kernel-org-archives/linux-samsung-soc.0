@@ -1,117 +1,112 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 4/4] crypto: exynos - Introduce mutex to prevent
- concurrent access to hardware
-Date: Tue, 12 Dec 2017 12:09:48 +0100
-Message-ID: <CAJKOXPc_QyahFZKGNfwxaNfeCdL2P8PYUYX0oxxpPDR057_nXQ@mail.gmail.com>
-References: <CGME20171212103021eucas1p19a2a24930cadde55eac2f822a6a9f80c@eucas1p1.samsung.com>
- <CAJKOXPeXHuOVScgBE0WS5Wh79zbAPJ-9P+QvG+Y+NYkxGzNXxA@mail.gmail.com> <87o9n46xxl.fsf%l.stelmach@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: mainline/master boot bisection: v4.15-rc3 on peach-pi
+ #3228-staging
+Date: Tue, 12 Dec 2017 12:38:52 +0100
+Message-ID: <8e506908-153f-2782-e7ef-7f2cc2c48662@samsung.com>
+References: <680389204.71.1512980755810.JavaMail.jenkins@ip-172-30-0-246>
+        <51e6d7fb-ac9e-a59f-ea63-ad06219b429d@collabora.com>
+        <CAKMK7uFcGftSeQjkKu9SZmkQd8-irbUTMcOnUwi7HZtb5TePag@mail.gmail.com>
+        <CGME20171211222845epcas3p25dca41e692c07c85f127ad946c4ec9a6@epcas3p2.samsung.com>
+        <CABxcv=mUHgTxvYpOYstE7rQn8fKS3QGiTT=FzBUc8DREvVuTeQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:41942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750749AbdLLLJv (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:60015 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750749AbdLLLi7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 06:09:51 -0500
-In-Reply-To: <87o9n46xxl.fsf%l.stelmach@samsung.com>
+        Tue, 12 Dec 2017 06:38:59 -0500
+In-reply-to: <CABxcv=mUHgTxvYpOYstE7rQn8fKS3QGiTT=FzBUc8DREvVuTeQ@mail.gmail.com>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Cc: robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Guillaume Tucker <guillaume.tucker@collabora.com>, Mark Brown <broonie@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Matt Hart <matthew.hart@linaro.org>, Thierry Escande <thierry.escande@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, kernel-build-reports@lists.linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Dec 12, 2017 at 11:30 AM, Łukasz Stelmach
-<l.stelmach@samsung.com> wrote:
-> It was <2017-12-11 pon 16:03>, when Krzysztof Kozlowski wrote:
->> On Mon, Dec 11, 2017 at 3:06 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
->>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>>
->>> Hardware operations like reading random numbers and setting a seed need
->>> to be conducted in a single thread. Therefore a mutex is required to
->>> prevent multiple threads (processes) from accessing the hardware at the
->>> same time.
->>>
->>> The sequence of mutex_lock() and mutex_unlock() in the exynos_rng_reseed()
->>> function enables switching between different threads waiting for the
->>> driver to generate random numbers for them.
->>>
->>> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
->>> ---
->>>  drivers/crypto/exynos-rng.c | 21 +++++++++++++++++++++
->>>  1 file changed, 21 insertions(+)
->>>
->>> diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
->>> index c72a838f1932..6209035ca659 100644
->>> --- a/drivers/crypto/exynos-rng.c
->>> +++ b/drivers/crypto/exynos-rng.c
->>> @@ -22,6 +22,7 @@
->>>  #include <linux/err.h>
->>>  #include <linux/io.h>
->>>  #include <linux/module.h>
->>> +#include <linux/mutex.h>
->>>  #include <linux/of_device.h>
->>>  #include <linux/platform_device.h>
->>>
->>> @@ -79,6 +80,7 @@ struct exynos_rng_dev {
->>>         enum exynos_prng_type           type;
->>>         void __iomem                    *mem;
->>>         struct clk                      *clk;
->>> +       struct mutex                    lock;
->>>         /* Generated numbers stored for seeding during resume */
->>>         u8                              seed_save[EXYNOS_RNG_SEED_SIZE];
->>>         unsigned int                    seed_save_len;
->>> @@ -192,6 +194,10 @@ static void exynos_rng_reseed(struct exynos_rng_dev *rng)
->>>                 return;
->>>
->>>         exynos_rng_set_seed(rng, seed, read);
->>> +
->>> +       /* Let others do some of their job. */
->>> +       mutex_unlock(&rng->lock);
->>> +       mutex_lock(&rng->lock);
->>>  }
->>>
->>>  static int exynos_rng_generate(struct crypto_rng *tfm,
->>> @@ -207,6 +213,7 @@ static int exynos_rng_generate(struct crypto_rng *tfm,
->>>         if (ret)
->>>                 return ret;
->>>
->>> +       mutex_lock(&rng->lock);
->>>         do {
->>>                 ret = exynos_rng_get_random(rng, dst, dlen, &read);
->>>                 if (ret)
->>> @@ -217,6 +224,7 @@ static int exynos_rng_generate(struct crypto_rng *tfm,
->>>
->>>                 exynos_rng_reseed(rng);
->>>         } while (dlen > 0);
->>> +       mutex_unlock(&rng->lock);
->>>
->>>         clk_disable_unprepare(rng->clk);
->>>
->>> @@ -234,7 +242,9 @@ static int exynos_rng_seed(struct crypto_rng *tfm, const u8 *seed,
->>>         if (ret)
->>>                 return ret;
->>>
->>> +       mutex_lock(&rng->lock);
->>>         ret = exynos_rng_set_seed(ctx->rng, seed, slen);
->>> +       mutex_unlock(&rng->lock);
->>
->> I think the number of mutex locks/unlock statements can be reduced
->> (including the mutex unlock+lock pattern) after moving the mutex to
->> exynos_rng_set_seed() and exynos_rng_get_random() because actually you
->> want to protect them. This would remove the new code from suspend and
->> resume path and gave you the fairness.
->>
->> On the other hand the mutex would be unlocked+locked many times for
->> large generate() calls...
+Hi All,
+
+On 2017-12-11 23:28, Javier Martinez Canillas wrote:
+> [adding Marek and Shuah to cc list]
 >
-> Moving locks/unlocks to exynos_rng_get_random() means taking a lock to
-> retrieve 20 bytes. It doesn't scale at all. I really wanted to avoid it,
-> because the performance loss is quite noticable in such case. That is
-> why I put the lock around the loop in exynos_rng_generatr(). As a
-> consequence I had to move locks out of exynos_rng_set_seed() too.
+> On Mon, Dec 11, 2017 at 6:05 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>> On Mon, Dec 11, 2017 at 11:30 AM, Guillaume Tucker
+>> <guillaume.tucker@collabora.com> wrote:
+>>> Hi Daniel,
+>>>
+>>> Please see below, I've had several bisection results pointing at
+>>> that commit over the week-end on mainline but also on linux-next
+>>> and net-next.  While the peach-pi is a bit flaky at the moment
+>>> and is likely to have more than one issue, it does seem like this
+>>> commit is causing some well reproducible kernel hang.
+>>>
+>>> Here's a re-run with v4.15-rc3 showing the issue:
+>>>
+>>>    https://lava.collabora.co.uk/scheduler/job/1018478
+>>>
+>>> and here's another one with the change mentioned below reverted:
+>>>
+>>>    https://lava.collabora.co.uk/scheduler/job/1018479
+>>>
+>>> They both show a warning about "unbalanced disables for lcd_vdd",
+>>> I don't know if this is related as I haven't investigated any
+>>> further.  It does appear to reliably hang with v4.15-rc3 and
+>>> boot most of the time with the commit reverted though.
+>>>
+>>> The automated kernelci.org bisection is still an experimental
+>>> tool and it may well be a false positive, so please take this
+>>> result with a pinch of salt...
+>> The patch just very minimal moves the connector cleanup around (so
+>> timing change), but except when you unload a driver (or maybe that
+>> funny EPROBE_DEFER stuff) it shouldn't matter. So if you don't have
+>> more info than "seems to hang a bit more" I have no idea what's wrong.
+>> The patch itself should work, at least it survived quite some serious
+>> testing we do on everything.
+>> -Daniel
+>>
+> Marek was pointing to a different culprit [0] in this [1] thread. I
+> see that both commits made it to v4.15-rc3, which is the first version
+> where boot fails. So maybe is a combination of both? Or rather
+> reverting one patch masks the error in the other.
+>
+> I've access to the machine but unfortunately not a lot of time to dig
+> on this, I could try to do it in the weekend though.
 
-I understand. With the fix for first line (cc):
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+After a recent discussion on the Javier's patch:
+https://patchwork.kernel.org/patch/10106417/
+I've managed to reproduce this issue also on Exynos5250 based Samsung
+Snow Chromebook and investigate a bit.
 
-Best regards,
-Krzysztof
+It is caused by a deadlock in the main kernel workqueue. Here are details:
+
+1. Exynos DRM fails to initialize due to missing regulators and gets moved
+to deferred probe device list
+
+2. Deferred probe is triggered and kernel "events" workqueue calls
+deferred_probe_work_func()
+
+3. exynos_drm_bind() is called, component_bind_all() fails due to missing
+Exynos Mixer device
+
+4. error handling path is executed in exynos_drm_bind(), which calls
+drm_mode_config_cleanup()
+
+5. drm_mode_config_cleanup() calls flush_scheduled_work(), what causes
+deadlock.
+
+Do You have idea how to fix this issue properly?
+
+Taking a look at git blame, this indeed shows that the issue has been
+introduced by the commit a703c55004e1 ("drm: safely free connectors from
+connector_ite"), which added a call to flush_scheduled_work() in
+drm_mode_config_cleanup().
+
+drm_mode_config_cleanup() should avoid calling flush_scheduled_work() if
+called from the workqueue, but I don't have idea how to check that. The
+other way of fixing it would be to resurrect separate workqueue for DRM
+related events.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
