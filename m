@@ -1,41 +1,128 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Enable Mixer node for Exynos5800
- Peach Pi machine
-Date: Tue, 12 Dec 2017 18:47:08 +0100
-Message-ID: <20171212174708.miyqt2gtcanumgow@kozik-lap>
-References: <20171212074208.30753-1-javierm@redhat.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: mainline/master boot bisection: v4.15-rc3 on peach-pi #3228-staging
+Date: Tue, 12 Dec 2017 19:14:18 +0100
+Message-ID: <CAKMK7uF75WFrVMX=7zQyZp=y8GSZBQTMzjLDVf46rYqq=aFumQ@mail.gmail.com>
+References: <680389204.71.1512980755810.JavaMail.jenkins@ip-172-30-0-246>
+ <51e6d7fb-ac9e-a59f-ea63-ad06219b429d@collabora.com> <CAKMK7uFcGftSeQjkKu9SZmkQd8-irbUTMcOnUwi7HZtb5TePag@mail.gmail.com>
+ <CGME20171211222845epcas3p25dca41e692c07c85f127ad946c4ec9a6@epcas3p2.samsung.com>
+ <CABxcv=mUHgTxvYpOYstE7rQn8fKS3QGiTT=FzBUc8DREvVuTeQ@mail.gmail.com> <8e506908-153f-2782-e7ef-7f2cc2c48662@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171212074208.30753-1-javierm@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Guillaume Tucker <guillaume.tucker@collabora.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Shuah Khan <shuahkh@osg.samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-it0-f53.google.com ([209.85.214.53]:40051 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbdLLSOU (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 12 Dec 2017 13:14:20 -0500
+Received: by mail-it0-f53.google.com with SMTP id f190so440828ita.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Dec 2017 10:14:19 -0800 (PST)
+In-Reply-To: <8e506908-153f-2782-e7ef-7f2cc2c48662@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Shuah Khan <shuahkh@osg.samsung.com>, Guillaume Tucker <guillaume.tucker@collabora.com>, Mark Brown <broonie@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Matt Hart <matthew.hart@linaro.org>, Thierry Escande <thierry.escande@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, kernel-build-reports@lists.linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Dec 12, 2017 at 08:42:08AM +0100, Javier Martinez Canillas wrote:
-> Commit 1cb686c08d12 ("ARM: dts: exynos: Add status property to Exynos 542x
-> Mixer nodes") disabled the Mixer node by default in the DTSI and enabled
-> for each Exynos 542x DTS. But unfortunately it missed to enable it for the
-> Exynos5800 Peach Pi machine, since the 5800 is also an 542x SoC variant.
-> 
-> Fixes: 1cb686c08d12 ("ARM: dts: exynos: Add status property to Exynos 542x Mixer nodes")
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> ---
-> 
-> Changes in v2:
-> - Remove RFT tag.
-> - Add Marek's Acked-by tag.
-> - Add fixes tag.
-> 
->  arch/arm/boot/dts/exynos5800-peach-pi.dts | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+On Tue, Dec 12, 2017 at 12:38 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hi All,
+>
+>
+> On 2017-12-11 23:28, Javier Martinez Canillas wrote:
+>>
+>> [adding Marek and Shuah to cc list]
+>>
+>> On Mon, Dec 11, 2017 at 6:05 PM, Daniel Vetter <daniel.vetter@ffwll.ch>
+>> wrote:
+>>>
+>>> On Mon, Dec 11, 2017 at 11:30 AM, Guillaume Tucker
+>>> <guillaume.tucker@collabora.com> wrote:
+>>>>
+>>>> Hi Daniel,
+>>>>
+>>>> Please see below, I've had several bisection results pointing at
+>>>> that commit over the week-end on mainline but also on linux-next
+>>>> and net-next.  While the peach-pi is a bit flaky at the moment
+>>>> and is likely to have more than one issue, it does seem like this
+>>>> commit is causing some well reproducible kernel hang.
+>>>>
+>>>> Here's a re-run with v4.15-rc3 showing the issue:
+>>>>
+>>>>    https://lava.collabora.co.uk/scheduler/job/1018478
+>>>>
+>>>> and here's another one with the change mentioned below reverted:
+>>>>
+>>>>    https://lava.collabora.co.uk/scheduler/job/1018479
+>>>>
+>>>> They both show a warning about "unbalanced disables for lcd_vdd",
+>>>> I don't know if this is related as I haven't investigated any
+>>>> further.  It does appear to reliably hang with v4.15-rc3 and
+>>>> boot most of the time with the commit reverted though.
+>>>>
+>>>> The automated kernelci.org bisection is still an experimental
+>>>> tool and it may well be a false positive, so please take this
+>>>> result with a pinch of salt...
+>>>
+>>> The patch just very minimal moves the connector cleanup around (so
+>>> timing change), but except when you unload a driver (or maybe that
+>>> funny EPROBE_DEFER stuff) it shouldn't matter. So if you don't have
+>>> more info than "seems to hang a bit more" I have no idea what's wrong.
+>>> The patch itself should work, at least it survived quite some serious
+>>> testing we do on everything.
+>>> -Daniel
+>>>
+>> Marek was pointing to a different culprit [0] in this [1] thread. I
+>> see that both commits made it to v4.15-rc3, which is the first version
+>> where boot fails. So maybe is a combination of both? Or rather
+>> reverting one patch masks the error in the other.
+>>
+>> I've access to the machine but unfortunately not a lot of time to dig
+>> on this, I could try to do it in the weekend though.
+>
+>
+> After a recent discussion on the Javier's patch:
+> https://patchwork.kernel.org/patch/10106417/
+> I've managed to reproduce this issue also on Exynos5250 based Samsung
+> Snow Chromebook and investigate a bit.
+>
+> It is caused by a deadlock in the main kernel workqueue. Here are details:
+>
+> 1. Exynos DRM fails to initialize due to missing regulators and gets moved
+> to deferred probe device list
+>
+> 2. Deferred probe is triggered and kernel "events" workqueue calls
+> deferred_probe_work_func()
+>
+> 3. exynos_drm_bind() is called, component_bind_all() fails due to missing
+> Exynos Mixer device
+>
+> 4. error handling path is executed in exynos_drm_bind(), which calls
+> drm_mode_config_cleanup()
+>
+> 5. drm_mode_config_cleanup() calls flush_scheduled_work(), what causes
+> deadlock.
+>
+> Do You have idea how to fix this issue properly?
+>
+> Taking a look at git blame, this indeed shows that the issue has been
+> introduced by the commit a703c55004e1 ("drm: safely free connectors from
+> connector_ite"), which added a call to flush_scheduled_work() in
+> drm_mode_config_cleanup().
+>
+> drm_mode_config_cleanup() should avoid calling flush_scheduled_work() if
+> called from the workqueue, but I don't have idea how to check that. The
+> other way of fixing it would be to resurrect separate workqueue for DRM
+> related events.
 
-Thanks, applied for current cycle (fixes).
+We need to flush the work there, or things will go wrong on unload. I
+think the real fix is to make sure that the connector cleanup work
+isn't run on the same work stuff as any driver bind stuff, which yes
+means new separate workqueue just for this.
 
-Best regards,
-Krzysztof
+I guess the simple fix is to do that in the drm, but tbh I'm surprised
+that driver bind/deferred probe hasn't run into this problem anywhere
+else yet.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
