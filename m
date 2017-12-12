@@ -1,110 +1,67 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: mainline/master boot bisection: v4.15-rc3 on peach-pi
- #3228-staging
-Date: Tue, 12 Dec 2017 08:54:44 +0100
-Message-ID: <2139f436-5646-7f9f-a6cb-285a0fd31969@samsung.com>
-References: <680389204.71.1512980755810.JavaMail.jenkins@ip-172-30-0-246>
-        <51e6d7fb-ac9e-a59f-ea63-ad06219b429d@collabora.com>
-        <CAKMK7uFcGftSeQjkKu9SZmkQd8-irbUTMcOnUwi7HZtb5TePag@mail.gmail.com>
-        <CABxcv=mUHgTxvYpOYstE7rQn8fKS3QGiTT=FzBUc8DREvVuTeQ@mail.gmail.com>
-        <CABxcv=m-fYZvYN4gLwBf8NwHvJb7PtNdVKR+SXgVKExZGtW4Qw@mail.gmail.com>
-        <20171211225829.GA1959@n2100.armlinux.org.uk>
-        <20171211230213.GB1959@n2100.armlinux.org.uk>
-        <CGME20171211232533epcas1p1821f8808ca6da7bd28c57fb4121d36fa@epcas1p1.samsung.com>
-        <2df0fc74-8b79-5cca-7a8a-9e005b44d8d8@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: [PATCH] spi: s3c64xx: add SPDX identifier
+Date: Tue, 12 Dec 2017 16:58:15 +0900
+Message-ID: <20171212075815.8683-1-andi.shyti@samsung.com>
+References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:32836 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751585AbdLLHyu (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:33658 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750715AbdLLH6d (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 02:54:50 -0500
-In-reply-to: <2df0fc74-8b79-5cca-7a8a-9e005b44d8d8@osg.samsung.com>
-Content-language: en-US
+        Tue, 12 Dec 2017 02:58:33 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shuah Khan <shuahkh@osg.samsung.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Javier Martinez Canillas <javier@dowhile0.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, kernel-build-reports@lists.linaro.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Escande <thierry.escande@collabora.co.uk>, Kevin Hilman <khilman@baylibre.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 
-Hi Shuah,
+Replace the original license statement with the SPDX identifier.
 
-On 2017-12-12 00:25, Shuah Khan wrote:
-> On 12/11/2017 04:02 PM, Russell King - ARM Linux wrote:
->> On Mon, Dec 11, 2017 at 10:58:29PM +0000, Russell King - ARM Linux wrote:
->>> On Mon, Dec 11, 2017 at 11:54:48PM +0100, Javier Martinez Canillas wrote:
->>>> So I gave a quick look to this, and at the very least there's a bug in
->>>> the Exynos5800 Peach Pi DTS caused by commit 1cb686c08d12 ("ARM: dts:
->>>> exynos: Add status property to Exynos 542x Mixer nodes").
->>>>
->>>> I've posted a fix for that:
->>>>
->>>> https://patchwork.kernel.org/patch/10105921/
->>>>
->>>> I believe this could be also be the cause for the boot failure, since
->>>> I see in the boot log that things start to go wrong after exynos-drm
->>>> fails to bind the HDMI component:
->>>>
->>>> [ 2.916347] exynos-drm exynos-drm: failed to bind 14530000.hdmi (ops
->>>> 0xc1398690): -1
->>> Umm, -1 ?  Looking that error code up in
->>> include/uapi/asm-generic/errno-base.h says it's -EPERM.
->>>
->>> I suspect that's someone just returning -1 because they're lazy...
->>> which is real bad form and needs fixing.
->> Oh, it really is -EPERM:
->>
->> struct exynos_drm_crtc *exynos_drm_crtc_get_by_type(struct drm_device *drm_dev,
->>                                         enum exynos_drm_output_type out_type)
->> {
->>          struct drm_crtc *crtc;
->>
->>          drm_for_each_crtc(crtc, drm_dev)
->>                  if (to_exynos_crtc(crtc)->type == out_type)
->>                          return to_exynos_crtc(crtc);
->>
->>          return ERR_PTR(-EPERM);
->> }
->>
->> Does "Operation not permitted" really convey the error here?  It doesn't
->> look like a permission error to me.
->>
->> Can we please avoid abusing errno codes?
-> I tried 4.15-rc3 on odroid-xu4 after seeing drm issues reported. 4.15-rc2+
-> with top commit g968edbd worked just fine for me last Friday. I ran several
-> tests and everything checked out except the exynos-gsc lockdep issue I sent
-> a 4.14 patch for.
->
-> However, with 4.15-rc3, dmesg is gets filled with
->
-> [  342.337181] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  342.337470] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  342.337851] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  402.382346] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  402.396682] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  402.399244] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  402.399496] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  402.399848] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  402.400163] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  402.400495] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  402.401294] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
-> [  402.401595] [drm] Non-contiguous allocation is not supported without IOMMU, falling back to contiguous buffer
->
-> Something broke in 4.15-rc3 on odroix-xu4 badly with exynos_defconfig.
->
-> I will start bisect and try to isolate the problem. I suspect this is related to dts
-> changes perhaps? I used to this problem a while back and it has been fixed.
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c                 | 18 ++++--------------
+ include/linux/platform_data/spi-s3c64xx.h |  4 +---
+ 2 files changed, 5 insertions(+), 17 deletions(-)
 
-This warning has been added intentionally, see following discussions:
-https://patchwork.kernel.org/patch/10034919/
-https://patchwork.kernel.org/patch/10070475/
-
-This means that your test apps should be updated or you should enable Exynos
-IOMMU support in your config. Maybe it is a good time to finally enable it
-in exynos_defconfig.
-
-Best regards
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index de7df20f8712..7ef68d45edfb 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2009 Samsung Electronics Ltd.
+- *	Jaswinder Singh <jassi.brar@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2009 Samsung Electronics Co., Ltd.
++//      Jaswinder Singh <jassi.brar@samsung.com>
+ 
+ #include <linux/init.h>
+ #include <linux/module.h>
+diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
+index da79774078a7..8917f38c97c5 100644
+--- a/include/linux/platform_data/spi-s3c64xx.h
++++ b/include/linux/platform_data/spi-s3c64xx.h
+@@ -2,9 +2,7 @@
+  * Copyright (C) 2009 Samsung Electronics Ltd.
+  *	Jaswinder Singh <jassi.brar@samsung.com>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
++ * SPDX-License-Identifier: GPL-2.0
+  */
+ 
+ #ifndef __SPI_S3C64XX_H
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.15.1
