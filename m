@@ -1,57 +1,122 @@
-From: Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
-Subject: Re: [PATCH] spi: s3c64xx: add SPDX identifier
-Date: Tue, 12 Dec 2017 22:03:13 +0900
-Message-ID: <20171212130313.GC1072@brancaleone.zhora.eu>
-References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
- <20171212075815.8683-1-andi.shyti@samsung.com>
- <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A@mail.gmail.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: mainline/master boot bisection: v4.15-rc3 on peach-pi
+ #3228-staging
+Date: Tue, 12 Dec 2017 07:39:26 -0700
+Message-ID: <e58a8003-8989-af0c-1f30-3e16e3b5f114@osg.samsung.com>
+References: <680389204.71.1512980755810.JavaMail.jenkins@ip-172-30-0-246>
+ <51e6d7fb-ac9e-a59f-ea63-ad06219b429d@collabora.com>
+ <CAKMK7uFcGftSeQjkKu9SZmkQd8-irbUTMcOnUwi7HZtb5TePag@mail.gmail.com>
+ <CGME20171211222845epcas3p25dca41e692c07c85f127ad946c4ec9a6@epcas3p2.samsung.com>
+ <CABxcv=mUHgTxvYpOYstE7rQn8fKS3QGiTT=FzBUc8DREvVuTeQ@mail.gmail.com>
+ <8e506908-153f-2782-e7ef-7f2cc2c48662@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from osg.samsung.com ([64.30.133.232]:33667 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750915AbdLLOjo (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 12 Dec 2017 09:39:44 -0500
+In-Reply-To: <8e506908-153f-2782-e7ef-7f2cc2c48662@samsung.com>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Guillaume Tucker <guillaume.tucker@collabora.com>, Mark Brown <broonie@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Matt Hart <matthew.hart@linaro.org>, Thierry Escande <thierry.escande@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, kernel-build-reports@lists.linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shuah Khan <shuahkh@osg.samsung.com>
 
-Hi Krzysztof,
+Hi Marek,
 
-> > - * Copyright (C) 2009 Samsung Electronics Ltd.
-> > - *     Jaswinder Singh <jassi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > - *
-> > - * This program is free software; you can redistribute it and/or modify
-> > - * it under the terms of the GNU General Public License as published by
-> > - * the Free Software Foundation; either version 2 of the License, or
-> > - * (at your option) any later version.
-> > - *
-> > - * This program is distributed in the hope that it will be useful,
-> > - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > - * GNU General Public License for more details.
-> > - */
-> > +// SPDX-License-Identifier: GPL-2.0
+On 12/12/2017 04:38 AM, Marek Szyprowski wrote:
+> Hi All,
+> 
+> On 2017-12-11 23:28, Javier Martinez Canillas wrote:
+>> [adding Marek and Shuah to cc list]
+>>
+>> On Mon, Dec 11, 2017 at 6:05 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>>> On Mon, Dec 11, 2017 at 11:30 AM, Guillaume Tucker
+>>> <guillaume.tucker@collabora.com> wrote:
+>>>> Hi Daniel,
+>>>>
+>>>> Please see below, I've had several bisection results pointing at
+>>>> that commit over the week-end on mainline but also on linux-next
+>>>> and net-next.  While the peach-pi is a bit flaky at the moment
+>>>> and is likely to have more than one issue, it does seem like this
+>>>> commit is causing some well reproducible kernel hang.
+>>>>
+>>>> Here's a re-run with v4.15-rc3 showing the issue:
+>>>>
+>>>>    https://lava.collabora.co.uk/scheduler/job/1018478
+>>>>
+>>>> and here's another one with the change mentioned below reverted:
+>>>>
+>>>>    https://lava.collabora.co.uk/scheduler/job/1018479
+>>>>
+>>>> They both show a warning about "unbalanced disables for lcd_vdd",
+>>>> I don't know if this is related as I haven't investigated any
+>>>> further.  It does appear to reliably hang with v4.15-rc3 and
+>>>> boot most of the time with the commit reverted though.
+>>>>
+>>>> The automated kernelci.org bisection is still an experimental
+>>>> tool and it may well be a false positive, so please take this
+>>>> result with a pinch of salt...
+>>> The patch just very minimal moves the connector cleanup around (so
+>>> timing change), but except when you unload a driver (or maybe that
+>>> funny EPROBE_DEFER stuff) it shouldn't matter. So if you don't have
+>>> more info than "seems to hang a bit more" I have no idea what's wrong.
+>>> The patch itself should work, at least it survived quite some serious
+>>> testing we do on everything.
+>>> -Daniel
+>>>
+>> Marek was pointing to a different culprit [0] in this [1] thread. I
+>> see that both commits made it to v4.15-rc3, which is the first version
+>> where boot fails. So maybe is a combination of both? Or rather
+>> reverting one patch masks the error in the other.
+>>
+>> I've access to the machine but unfortunately not a lot of time to dig
+>> on this, I could try to do it in the weekend though.
+> 
+> After a recent discussion on the Javier's patch:
+> https://patchwork.kernel.org/patch/10106417/
+> I've managed to reproduce this issue also on Exynos5250 based Samsung
+> Snow Chromebook and investigate a bit.
+> 
+> It is caused by a deadlock in the main kernel workqueue. Here are details:
+> 
+> 1. Exynos DRM fails to initialize due to missing regulators and gets moved
+> to deferred probe device list
+> 
+> 2. Deferred probe is triggered and kernel "events" workqueue calls
+> deferred_probe_work_func()
+> 
+> 3. exynos_drm_bind() is called, component_bind_all() fails due to missing
+> Exynos Mixer device
+> 
+> 4. error handling path is executed in exynos_drm_bind(), which calls
+> drm_mode_config_cleanup()
+> 
+> 5. drm_mode_config_cleanup() calls flush_scheduled_work(), what causes
+> deadlock.
+> 
+> Do You have idea how to fix this issue properly?
+> 
+> Taking a look at git blame, this indeed shows that the issue has been
+> introduced by the commit a703c55004e1 ("drm: safely free connectors from
+> connector_ite"), which added a call to flush_scheduled_work() in
+> drm_mode_config_cleanup().
+
+This commit is making its way into stable releases. It has been added to
+4.14-6 stable. If this patch poses problems, maybe somebody should comment
+on the stable release thread.
+
+> 
+> drm_mode_config_cleanup() should avoid calling flush_scheduled_work() if
+> called from the workqueue, but I don't have idea how to check that. The
+> other way of fixing it would be to resurrect separate workqueue for DRM
+> related events.
 > 
 
-> Existing license corresponds to GPL-2.0+, not GPL-2.0.
+Especially since there is no solution :)
 
-mmmhhh... isn't it deprecated from 2.0rc2? Current SPDX version
-2.6 doesn't have GPL-2.0+ in the list of licenses.
-
-https://spdx.org/licenses/
-
-I can improve the commit log to state it more clearly. Would that
-work?
-
-BTW, is it really a change of license?
-
-> Why changing the comment style?
-
-That's SPDX, right? by adding the SPDX-License-Identifier the
-GPLv2 statement becomes redundant and we can remove some lines.
-
-Andi
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+thanks,
+-- Shuah
