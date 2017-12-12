@@ -1,107 +1,76 @@
-From: Philippe Ombredanne <pombredanne-od1rfyK75/E@public.gmane.org>
-Subject: Re: [PATCH] spi: s3c64xx: add SPDX identifier
-Date: Tue, 12 Dec 2017 15:48:15 +0100
-Message-ID: <CAOFm3uHobATjskAKG83QoSQjXgzv1RQFv0vrgt_QgnZoxNQ2-w@mail.gmail.com>
-References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
- <20171212075815.8683-1-andi.shyti@samsung.com> <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A@mail.gmail.com>
- <20171212130313.GC1072@brancaleone.zhora.eu> <CAJKOXPc8o2_bMbXjwPopOtsoML0NqOzzHnYXCL9oU9VkU2cQYA@mail.gmail.com>
+From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Subject: Re: [PATCH v2 2/4] crypto: exynos - Improve performance of PRNG
+Date: Tue, 12 Dec 2017 15:49:47 +0100
+Message-ID: <877ets6lx0.fsf%l.stelmach@samsung.com>
+References: <CAJKOXPf-Znkiq49ny=uOuTrY+=LX+CxZOQyqbKTy5EBi5MQSTg@mail.gmail.com>
+        <CGME20171212144953eucas1p2079156cb46dc72e2a73868ca2d88ba05@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAJKOXPc8o2_bMbXjwPopOtsoML0NqOzzHnYXCL9oU9VkU2cQYA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-reply-to: <CAJKOXPf-Znkiq49ny=uOuTrY+=LX+CxZOQyqbKTy5EBi5MQSTg@mail.gmail.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 12, 2017 at 2:45 PM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrot=
-e:
-> On Tue, Dec 12, 2017 at 2:03 PM, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org> wrote:
->> Hi Krzysztof,
->>
->>> > - * Copyright (C) 2009 Samsung Electronics Ltd.
->>> > - *     Jaswinder Singh <jassi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> > - *
->>> > - * This program is free software; you can redistribute it and/or mod=
-ify
->>> > - * it under the terms of the GNU General Public License as published=
- by
->>> > - * the Free Software Foundation; either version 2 of the License, or
->>> > - * (at your option) any later version.
->>> > - *
->>> > - * This program is distributed in the hope that it will be useful,
->>> > - * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>> > - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>> > - * GNU General Public License for more details.
->>> > - */
->>> > +// SPDX-License-Identifier: GPL-2.0
->>>
->>
->>> Existing license corresponds to GPL-2.0+, not GPL-2.0.
->>
->> mmmhhh... isn't it deprecated from 2.0rc2? Current SPDX version
->> 2.6 doesn't have GPL-2.0+ in the list of licenses.
->>
->> https://spdx.org/licenses/
->>
->> I can improve the commit log to state it more clearly. Would that
->> work?
->
-> No. The license identifier is deprecated, not the license itself.
-> Instead the, the SPDX says: <<This new syntax supports the ability to
-> use a simple =E2=80=9C+=E2=80=9D operator after a license short identifie=
-r to indicate
-> =E2=80=9Cor later version=E2=80=9D (e.g. GPL-2.0+)>>. The spec [1] mentio=
-ns it again:
-> "An SPDX License List Short Form Identifier with a unary"+" operator
-> suffix to represent the current version of the license or any later
-> version.  For example: GPL-2.0+"
->
-> Existing kernel sources follow this convention.
->
->> BTW, is it really a change of license?
->
-> Yes, it is. Or maybe not license itself but it terms and specific
-> elements. GPL-2.0 does not say "any later option at your choice". Let
-> me quote:
-> "Each version is given a distinguishing version number. If the Program
-> specifies a version number of this License which applies to it and
-> "any later version", you have the option of following the terms and
-> conditions either of that version or of any later version published by
-> the Free Software Foundation. If the Program does not specify a
-> version number of this License, you may choose any version ever
-> published by the Free Software Foundation." [2]
->
-> What to add more here? GPL-2.0 only does not allow you to use any
-> later version ever published by FSF.
->
->>
->>> Why changing the comment style?
->>
->> That's SPDX, right? by adding the SPDX-License-Identifier the
->> GPLv2 statement becomes redundant and we can remove some lines.
->
-> But it does not explain why existing comment has to be rewritten into //.
->
-> [1] https://spdx.org/spdx-specification-21-web-version
-> [2] https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
->
-> Best regards,
-> Krzysztof
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-IMHO you should refer to Thomas doc patches instead of looking for
-details elsewhere [1]
-They are the authoritative doc for the kernel.
+It was <2017-12-11 pon 15:54>, when Krzysztof Kozlowski wrote:
+> On Mon, Dec 11, 2017 at 3:06 PM, =C5=81ukasz Stelmach <l.stelmach@samsung=
+.com> wrote:
+>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej
+>> Zolnierkiewicz <b.zolnierkie@samsung.com>
+>
+> This should not appear here.
 
-CC: Greg Kroah-Hartman
-CC: Thomas Gleixner
+A glitch in a scripted invocation of git-format-patch, fixed.
 
-[1] https://lkml.org/lkml/2017/12/4/934
---=20
-Cordially
-Philippe Ombredanne
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Use memcpy_fromio() instead of custom exynos_rng_copy_random() function
+>> to retrieve generated numbers from the registers of PRNG.
+>>
+>> Rearrange the loop around cpu_relax(). In a loop with while() at the
+>> beginning and the cpu_relax() removed the retry variable is decremented
+>> twice (down to 98).
+>
+> I had troubles with understanding this sentence... and then I figured
+> out that you are referring to some case without cpu_relax(). I do not
+> see how it is relevant to this case. Compare the new code with old,
+> not with some imaginary case without barriers (thus maybe reordered?).
+>
+> Your solution is strictly performance oriented so it would be nice to
+> see here the exact difference in numbers justifying the change. But
+> only the change for while() -> do-while(), not mixed with
+> memcpy_fromio.
+
+Apparently, after trhough tests, I must admit, the way the status
+register is being polled is insignificant for the performance. I will
+remove from the patch any changes in the loop.
+
+It is the way, the random bytes are copied from the regiesteres, that
+makes the difference (5.9 MB/s vs 7.1 MB/s)
+
+Thank you very much for your assistance in reaching this conclusion.
+
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBCAAGBQJaL+yMAAoJELCuHpyYpYAQDDEIAJEkaEUo7tLg/+kYYdmhBa2a
+PgYBu4rSJ/xF4MDLpFOZJCW4iuspSBc2nLjnqScQ0h5C9IDlcQS5cRy400pY9x6U
+X5o6NOPJ8R3QrbUYeMZoUIPuMOzQOMKwPAHdXq6HAx0nPHd4gDLfUIUiInLHHZ9o
++O9nlOvH/AZ/i4KizNJK4CDpbTV/0tRJWLBs3ajmNxh6kkc/a+RvF3OAojutPre8
+lPY11Q+MyEugnuhVGdU4rrHuJvZ3fUydWtiiCXnZ4vpWgOemNdQjC5yrWXCBkoUu
+fbW8OOGhZphKoNd1iQWuQ4rvCjt3tqetWUcHMNM6aUFuu0XgW1myAq7RJvYE8Ds=
+=L6rH
+-----END PGP SIGNATURE-----
+--=-=-=--
