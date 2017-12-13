@@ -1,75 +1,29 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v2] spi: s3c64xx: add SPDX identifier
-Date: Wed, 13 Dec 2017 17:05:30 +0900
-Message-ID: <20171213080530.12724-1-andi.shyti@samsung.com>
-References: <CGME20171213080544epcas2p29731b6c65f760ab1b9ac71d530fcaf77@epcas2p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:48965 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbdLMIFr (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 03:05:47 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/4] crypto: exynos - Support Exynos5250+ SoCs
+Date: Wed, 13 Dec 2017 09:06:37 +0100
+Message-ID: <CAJKOXPetPjgZ=AZk38gAYmZHWiTyNQk6wX8vn-tRH3RS1SurXw@mail.gmail.com>
+References: <CGME20171212163610eucas1p2c42f1448547bb4914fd7c1b79fc2e892@eucas1p2.samsung.com>
+ <20171212163607.2985-1-l.stelmach@samsung.com> <20171212163607.2985-2-l.stelmach@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <20171212163607.2985-2-l.stelmach@samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Cc: robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 
-Replace the original license statement with the SPDX identifier.
+On Tue, Dec 12, 2017 at 5:36 PM, Łukasz Stelmach <l.stelmach@samsung.com> wrote:
+> Add support for PRNG in Exynos5250+ SoCs.
+>
+> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+> ---
+>  .../bindings/crypto/samsung,exynos-rng4.txt        |  4 +++-
+>  drivers/crypto/exynos-rng.c                        | 27 ++++++++++++++++++++--
+>  2 files changed, 28 insertions(+), 3 deletions(-)
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
----
-Hi,
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-this second version unlike v1, where I tried to move the license
-from GPLv2+ to GPLv2, preserves the original licese while adding
-the SPDX identifier.
-
-Andi
-
- drivers/spi/spi-s3c64xx.c                 | 18 ++++--------------
- include/linux/platform_data/spi-s3c64xx.h |  4 +---
- 2 files changed, 5 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index de7df20f8712..baa3a9fa2638 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1,17 +1,7 @@
--/*
-- * Copyright (C) 2009 Samsung Electronics Ltd.
-- *	Jaswinder Singh <jassi.brar@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Copyright (c) 2009 Samsung Electronics Co., Ltd.
-+//      Jaswinder Singh <jassi.brar@samsung.com>
- 
- #include <linux/init.h>
- #include <linux/module.h>
-diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-index da79774078a7..8917f38c97c5 100644
---- a/include/linux/platform_data/spi-s3c64xx.h
-+++ b/include/linux/platform_data/spi-s3c64xx.h
-@@ -2,9 +2,7 @@
-  * Copyright (C) 2009 Samsung Electronics Ltd.
-  *	Jaswinder Singh <jassi.brar@samsung.com>
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-+ * SPDX-License-Identifier: GPL-2.0
-  */
- 
- #ifndef __SPI_S3C64XX_H
--- 
-2.15.1
+Best regards,
+Krzysztof
