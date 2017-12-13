@@ -1,45 +1,64 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH] ARM: exynos_defconfig - enable CONFIG_EXYNOS_IOMMU
-Date: Tue, 12 Dec 2017 14:31:10 -0700
-Message-ID: <20171212213110.20893-1-shuahkh@osg.samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH] spi: s3c64xx: add SPDX identifier
+Date: Wed, 13 Dec 2017 10:48:54 +0900
+Message-ID: <20171213014854.GG20051@gangnam.samsung>
+References: <CGME20171212075830epcas2p31afc4a2e715e857694082748fd2bbe49@epcas2p3.samsung.com>
+        <20171212075815.8683-1-andi.shyti@samsung.com>
+        <CAJKOXPfdKyT8-bpM7tmveb3jWCRSSXwnkifhsRw_ag8X9z0W8A@mail.gmail.com>
+        <20171212130313.GC1072@brancaleone.zhora.eu>
+        <CAJKOXPc8o2_bMbXjwPopOtsoML0NqOzzHnYXCL9oU9VkU2cQYA@mail.gmail.com>
+        <CAOFm3uHobATjskAKG83QoSQjXgzv1RQFv0vrgt_QgnZoxNQ2-w@mail.gmail.com>
+        <CAJKOXPeZi=TWqoCo9x-Wa372ey8D=r8-Lf3CvJ95dgaMAF1kxQ@mail.gmail.com>
+        <CAOFm3uEAzEgN-PgSOccbwO3aWfABsHywUmm8eXasR8CXy=NPJQ@mail.gmail.com>
+        <CAJKOXPeCBPdCi2NnpBWimb4Py_zDZrsSK9o1cCswKM+XNeyqxQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from osg.samsung.com ([64.30.133.232]:53060 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752415AbdLLVbf (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:56216 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750886AbdLMBs6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 16:31:35 -0500
+        Tue, 12 Dec 2017 20:48:58 -0500
+Content-disposition: inline
+In-reply-to: <CAJKOXPeCBPdCi2NnpBWimb4Py_zDZrsSK9o1cCswKM+XNeyqxQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux.amoon@gmail.com, arnd@arndb.de, javier@dowhile0.org, robie@justgohome.co.uk, shuah@kernel.org, viresh.kumar@linaro.org, m.szyprowski@samsung.com
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>, Andi Shyti <andi@etezian.org>, Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>
 
-EXYNOS_IOMMU is disabled in exynos_defconfig since it is known to cause
-boot failures on Exynos Chrome-books. The recommendation is for IOMMU to
-be enabled manually on systems as needed.
+Hi Krzysztof,
 
-A recent exynos_drm change added a warning message when EXYNOS_IOMMU is
-disabled. It is necessary to enable it to avoid the warning messages.
-A few initial tests have shown that enabling EXYNOS_IOMMU might be safe
-on Exynos Chrome-books.
+> > Here, this should be as a top line:
+> >
+> > // SPDX-License-Identifier: GPL-2.0+
+> >
+> >
+> > So I agree with the SPDX id but also pointing to the use of the C++ //
+> > comment style as requested by Linus [1]
+> 
+> Thanks for the reference. I see that Linus prefers converting entire
+> comment into // style. I was not arguing about SPDX line but entire
+> existing copyright comment which follows it:
+> 
+> > +//
+> > +// Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> > +//      Jaswinder Singh <jassi.brar@samsung.com>
 
-Enable CONFIG_EXYNOS_IOMMU in exynos_defconfig.
+it just looks ugly to me to have something like
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
----
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+  // SPDX...
+  
+  /*
+   * Copyright (c)...
+   *      Jasw...
+   */
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index f1d7834..0ccd5eb 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -281,6 +281,7 @@ CONFIG_DEVFREQ_GOV_POWERSAVE=y
- CONFIG_DEVFREQ_GOV_USERSPACE=y
- CONFIG_ARM_EXYNOS_BUS_DEVFREQ=y
- CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=y
-+CONFIG_EXYNOS_IOMMU=y
- CONFIG_EXTCON=y
- CONFIG_EXTCON_MAX14577=y
- CONFIG_EXTCON_MAX77693=y
--- 
-2.7.4
+I would make everything of the '//' style (I've also seen that
+this is the trend also in other subsystems), but honestly I don't
+really care. If you're strong on not moving entirely in '//' style
+then I can resend it with the double comment style.
+
+Andi
+
+P.S. About GPLv2 vs GPLv2+ I checked and I will repost it keeping
+the license as its original. Thanks!
