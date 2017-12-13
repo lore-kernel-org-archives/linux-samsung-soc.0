@@ -1,116 +1,90 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [PATCH] drm: Fix possible deadlock in drm_mode_config_cleanup()
-Date: Wed, 13 Dec 2017 09:03:21 +0000
-Message-ID: <151315580179.4445.15893201408981715923@mail.alporthouse.com>
-References: <CGME20171213085736eucas1p28d10718330c5c2eac834bd26786c84fc@eucas1p2.samsung.com>
- <20171213085720.6059-1-m.szyprowski@samsung.com>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Subject: Re: [PATCH v2] spi: s3c64xx: add SPDX identifier
+Date: Wed, 13 Dec 2017 10:20:20 +0100
+Message-ID: <CAOFm3uHP-4UN+gzXzZc1ptptFm5f9uhafKyE963+DiamzdRTdw@mail.gmail.com>
+References: <CGME20171213080544epcas2p29731b6c65f760ab1b9ac71d530fcaf77@epcas2p2.samsung.com>
+ <20171213080530.12724-1-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20171213085720.6059-1-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Gustavo Padovan <gustavo@padovan.org>, Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>
-Cc: linux-samsung-soc@vger.kernel.org, Guillaume Tucker <guillaume.tucker@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <shuahkh@osg.samsung.com>, Mark Brown <broonie@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Thierry Escande <thierry.escande@collaboraco.uk>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Javier Martinez Canillas <javier@dowhile0.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Matt Hart <matthew.hart@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171213080530.12724-1-andi.shyti@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Marek Szyprowski (2017-12-13 08:57:20)
-> drm_mode_config_cleanup() might be called from a workqueue context (for
-> example in error path handling of deferred probe), so it must not call
-> flush_scheduled_work(), because it would deadlock in such case. Replace
-> that call with explicit counting of the scheduled connector free works
-> and waiting until it reaches zero.
-> 
-> Fixes: a703c55004e1 ("drm: safely free connectors from connector_iter")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> This fixes the issue discussed in the following thread:
-> https://www.spinics.net/lists/arm-kernel/msg622332.html
-> ---
->  drivers/gpu/drm/drm_connector.c   |  6 +++++-
->  drivers/gpu/drm/drm_mode_config.c |  6 +++++-
->  include/drm/drm_mode_config.h     | 13 +++++++++++++
->  3 files changed, 23 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index 0b7e0974e6da..7620ac1ad1b1 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -161,6 +161,8 @@ static void drm_connector_free_work_fn(struct work_struct *work)
->  
->         drm_mode_object_unregister(dev, &connector->base);
->         connector->funcs->destroy(connector);
-> +       atomic_dec(&dev->mode_config.connector_free_works);
-> +       wake_up_all(&dev->mode_config.connector_free_queue);
->  }
->  
->  /**
-> @@ -552,8 +554,10 @@ EXPORT_SYMBOL(drm_connector_list_iter_begin);
->  static void
->  drm_connector_put_safe(struct drm_connector *conn)
->  {
-> -       if (refcount_dec_and_test(&conn->base.refcount.refcount))
-> +       if (refcount_dec_and_test(&conn->base.refcount.refcount)) {
-> +               atomic_inc(&conn->dev->mode_config.connector_free_works);
->                 schedule_work(&conn->free_work);
-> +       }
->  }
->  
->  /**
-> diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode_config.c
-> index 6ffe952142e6..cca443faebd8 100644
-> --- a/drivers/gpu/drm/drm_mode_config.c
-> +++ b/drivers/gpu/drm/drm_mode_config.c
-> @@ -381,6 +381,7 @@ void drm_mode_config_init(struct drm_device *dev)
->         idr_init(&dev->mode_config.tile_idr);
->         ida_init(&dev->mode_config.connector_ida);
->         spin_lock_init(&dev->mode_config.connector_list_lock);
-> +       init_waitqueue_head(&dev->mode_config.connector_free_queue);
->  
->         drm_mode_create_standard_properties(dev);
->  
-> @@ -431,8 +432,11 @@ void drm_mode_config_cleanup(struct drm_device *dev)
->                 drm_connector_put(connector);
->         }
->         drm_connector_list_iter_end(&conn_iter);
-> +
->         /* connector_iter drops references in a work item. */
-> -       flush_scheduled_work();
-> +       wait_event(dev->mode_config.connector_free_queue,
-> +                  !atomic_read(&dev->mode_config.connector_free_works));
-> +
->         if (WARN_ON(!list_empty(&dev->mode_config.connector_list))) {
->                 drm_connector_list_iter_begin(dev, &conn_iter);
->                 drm_for_each_connector_iter(connector, &conn_iter)
-> diff --git a/include/drm/drm_mode_config.h b/include/drm/drm_mode_config.h
-> index a0afeb591dcb..83a7db997e83 100644
-> --- a/include/drm/drm_mode_config.h
-> +++ b/include/drm/drm_mode_config.h
-> @@ -413,6 +413,19 @@ struct drm_mode_config {
->          * &struct drm_connector_list_iter to walk this list.
->          */
->         struct list_head connector_list;
-> +       /**
-> +        * @pending_connector_free_works:
-> +        *
-> +        * Number of scheduled connector->free_work instances, see
-> +        * drm_connector_put_safe().
-> +        */
-> +       atomic_t connector_free_works;
-> +       /**
-> +        * @pending_connector_free_queue:
-> +        *
-> +        * Wait queue for waiting until connector->free_work is finished.
-> +        */
-> +       wait_queue_head_t connector_free_queue;
+Andi,
 
-Just move from a system_wq to a local wq?
--Chris
+On Wed, Dec 13, 2017 at 9:05 AM, Andi Shyti <andi.shyti@samsung.com> wrote:
+> Replace the original license statement with the SPDX identifier.
+>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+> Hi,
+>
+> this second version unlike v1, where I tried to move the license
+> from GPLv2+ to GPLv2, preserves the original licese while adding
+> the SPDX identifier.
+>
+> Andi
+>
+>  drivers/spi/spi-s3c64xx.c                 | 18 ++++--------------
+>  include/linux/platform_data/spi-s3c64xx.h |  4 +---
+>  2 files changed, 5 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index de7df20f8712..baa3a9fa2638 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -1,17 +1,7 @@
+> -/*
+> - * Copyright (C) 2009 Samsung Electronics Ltd.
+> - *     Jaswinder Singh <jassi.brar@samsung.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - */
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> +//      Jaswinder Singh <jassi.brar@samsung.com>
+>
+>  #include <linux/init.h>
+>  #include <linux/module.h>
+> diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
+> index da79774078a7..8917f38c97c5 100644
+> --- a/include/linux/platform_data/spi-s3c64xx.h
+> +++ b/include/linux/platform_data/spi-s3c64xx.h
+> @@ -2,9 +2,7 @@
+>   * Copyright (C) 2009 Samsung Electronics Ltd.
+>   *     Jaswinder Singh <jassi.brar@samsung.com>
+>   *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> + * SPDX-License-Identifier: GPL-2.0
+>   */
+>
+>  #ifndef __SPI_S3C64XX_H
+> --
+> 2.15.1
+>
+
+
+You still need to put this line at the very top of the file, first
+line. That's the convention for the SPDX tags as documented by Thomas
+Gleixner.
+
+> + * SPDX-License-Identifier: GPL-2.0
+
+
+-- 
+Cordially
+Philippe Ombredanne
