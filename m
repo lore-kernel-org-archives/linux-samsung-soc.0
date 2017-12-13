@@ -1,85 +1,137 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm: Fix possible deadlock in drm_mode_config_cleanup()
-Date: Wed, 13 Dec 2017 09:57:20 +0100
-Message-ID: <20171213085720.6059-1-m.szyprowski@samsung.com>
-References: <CGME20171213085736eucas1p28d10718330c5c2eac834bd26786c84fc@eucas1p2.samsung.com>
+Subject: Re: mainline/master boot bisection: v4.15-rc3 on peach-pi
+ #3228-staging
+Date: Wed, 13 Dec 2017 10:02:24 +0100
+Message-ID: <ebb1ef93-b710-c4ee-a365-b5bded64f3c0@samsung.com>
+References: <680389204.71.1512980755810.JavaMail.jenkins@ip-172-30-0-246>
+        <51e6d7fb-ac9e-a59f-ea63-ad06219b429d@collabora.com>
+        <CAKMK7uFcGftSeQjkKu9SZmkQd8-irbUTMcOnUwi7HZtb5TePag@mail.gmail.com>
+        <CGME20171211222845epcas3p25dca41e692c07c85f127ad946c4ec9a6@epcas3p2.samsung.com>
+        <CABxcv=mUHgTxvYpOYstE7rQn8fKS3QGiTT=FzBUc8DREvVuTeQ@mail.gmail.com>
+        <8e506908-153f-2782-e7ef-7f2cc2c48662@samsung.com>
+        <CAKMK7uF75WFrVMX=7zQyZp=y8GSZBQTMzjLDVf46rYqq=aFumQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Gustavo Padovan <gustavo@padovan.org>, Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>
-Cc: linux-samsung-soc@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@baylibre.com>, Thierry Escande <thierry.escande@collaboraco.uk>, Shuah Khan <shuahkh@osg.samsung.com>, Mark Brown <broonie@kernel.org>, Matt Hart <matthew.hart@linaro.org>, Guillaume Tucker <guillaume.tucker@collabora.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44183 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751088AbdLMJCa (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 13 Dec 2017 04:02:30 -0500
+In-reply-to: <CAKMK7uF75WFrVMX=7zQyZp=y8GSZBQTMzjLDVf46rYqq=aFumQ@mail.gmail.com>
+Content-language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Shuah Khan <shuahkh@osg.samsung.com>, Guillaume Tucker <guillaume.tucker@collabora.com>, Mark Brown <broonie@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Matt Hart <matthew.hart@linaro.org>, Thierry Escande <thierry.escande@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, kernel-build-reports@lists.linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-ZHJtX21vZGVfY29uZmlnX2NsZWFudXAoKSBtaWdodCBiZSBjYWxsZWQgZnJvbSBhIHdvcmtxdWV1
-ZSBjb250ZXh0IChmb3IKZXhhbXBsZSBpbiBlcnJvciBwYXRoIGhhbmRsaW5nIG9mIGRlZmVycmVk
-IHByb2JlKSwgc28gaXQgbXVzdCBub3QgY2FsbApmbHVzaF9zY2hlZHVsZWRfd29yaygpLCBiZWNh
-dXNlIGl0IHdvdWxkIGRlYWRsb2NrIGluIHN1Y2ggY2FzZS4gUmVwbGFjZQp0aGF0IGNhbGwgd2l0
-aCBleHBsaWNpdCBjb3VudGluZyBvZiB0aGUgc2NoZWR1bGVkIGNvbm5lY3RvciBmcmVlIHdvcmtz
-CmFuZCB3YWl0aW5nIHVudGlsIGl0IHJlYWNoZXMgemVyby4KCkZpeGVzOiBhNzAzYzU1MDA0ZTEg
-KCJkcm06IHNhZmVseSBmcmVlIGNvbm5lY3RvcnMgZnJvbSBjb25uZWN0b3JfaXRlciIpClNpZ25l
-ZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0t
-ClRoaXMgZml4ZXMgdGhlIGlzc3VlIGRpc2N1c3NlZCBpbiB0aGUgZm9sbG93aW5nIHRocmVhZDoK
-aHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvYXJtLWtlcm5lbC9tc2c2MjIzMzIuaHRtbAot
-LS0KIGRyaXZlcnMvZ3B1L2RybS9kcm1fY29ubmVjdG9yLmMgICB8ICA2ICsrKysrLQogZHJpdmVy
-cy9ncHUvZHJtL2RybV9tb2RlX2NvbmZpZy5jIHwgIDYgKysrKystCiBpbmNsdWRlL2RybS9kcm1f
-bW9kZV9jb25maWcuaCAgICAgfCAxMyArKysrKysrKysrKysrCiAzIGZpbGVzIGNoYW5nZWQsIDIz
-IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL2RybV9jb25uZWN0b3IuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fY29ubmVjdG9yLmMKaW5k
-ZXggMGI3ZTA5NzRlNmRhLi43NjIwYWMxYWQxYjEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9kcm1fY29ubmVjdG9yLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9jb25uZWN0b3IuYwpA
-QCAtMTYxLDYgKzE2MSw4IEBAIHN0YXRpYyB2b2lkIGRybV9jb25uZWN0b3JfZnJlZV93b3JrX2Zu
-KHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yaykKIAogCWRybV9tb2RlX29iamVjdF91bnJlZ2lzdGVy
-KGRldiwgJmNvbm5lY3Rvci0+YmFzZSk7CiAJY29ubmVjdG9yLT5mdW5jcy0+ZGVzdHJveShjb25u
-ZWN0b3IpOworCWF0b21pY19kZWMoJmRldi0+bW9kZV9jb25maWcuY29ubmVjdG9yX2ZyZWVfd29y
-a3MpOworCXdha2VfdXBfYWxsKCZkZXYtPm1vZGVfY29uZmlnLmNvbm5lY3Rvcl9mcmVlX3F1ZXVl
-KTsKIH0KIAogLyoqCkBAIC01NTIsOCArNTU0LDEwIEBAIEVYUE9SVF9TWU1CT0woZHJtX2Nvbm5l
-Y3Rvcl9saXN0X2l0ZXJfYmVnaW4pOwogc3RhdGljIHZvaWQKIGRybV9jb25uZWN0b3JfcHV0X3Nh
-ZmUoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm4pCiB7Ci0JaWYgKHJlZmNvdW50X2RlY19hbmRf
-dGVzdCgmY29ubi0+YmFzZS5yZWZjb3VudC5yZWZjb3VudCkpCisJaWYgKHJlZmNvdW50X2RlY19h
-bmRfdGVzdCgmY29ubi0+YmFzZS5yZWZjb3VudC5yZWZjb3VudCkpIHsKKwkJYXRvbWljX2luYygm
-Y29ubi0+ZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0b3JfZnJlZV93b3Jrcyk7CiAJCXNjaGVkdWxl
-X3dvcmsoJmNvbm4tPmZyZWVfd29yayk7CisJfQogfQogCiAvKioKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9kcm1fbW9kZV9jb25maWcuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9kZV9j
-b25maWcuYwppbmRleCA2ZmZlOTUyMTQyZTYuLmNjYTQ0M2ZhZWJkOCAxMDA2NDQKLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2RybV9tb2RlX2NvbmZpZy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1f
-bW9kZV9jb25maWcuYwpAQCAtMzgxLDYgKzM4MSw3IEBAIHZvaWQgZHJtX21vZGVfY29uZmlnX2lu
-aXQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKIAlpZHJfaW5pdCgmZGV2LT5tb2RlX2NvbmZpZy50
-aWxlX2lkcik7CiAJaWRhX2luaXQoJmRldi0+bW9kZV9jb25maWcuY29ubmVjdG9yX2lkYSk7CiAJ
-c3Bpbl9sb2NrX2luaXQoJmRldi0+bW9kZV9jb25maWcuY29ubmVjdG9yX2xpc3RfbG9jayk7CisJ
-aW5pdF93YWl0cXVldWVfaGVhZCgmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0b3JfZnJlZV9xdWV1
-ZSk7CiAKIAlkcm1fbW9kZV9jcmVhdGVfc3RhbmRhcmRfcHJvcGVydGllcyhkZXYpOwogCkBAIC00
-MzEsOCArNDMyLDExIEBAIHZvaWQgZHJtX21vZGVfY29uZmlnX2NsZWFudXAoc3RydWN0IGRybV9k
-ZXZpY2UgKmRldikKIAkJZHJtX2Nvbm5lY3Rvcl9wdXQoY29ubmVjdG9yKTsKIAl9CiAJZHJtX2Nv
-bm5lY3Rvcl9saXN0X2l0ZXJfZW5kKCZjb25uX2l0ZXIpOworCiAJLyogY29ubmVjdG9yX2l0ZXIg
-ZHJvcHMgcmVmZXJlbmNlcyBpbiBhIHdvcmsgaXRlbS4gKi8KLQlmbHVzaF9zY2hlZHVsZWRfd29y
-aygpOworCXdhaXRfZXZlbnQoZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0b3JfZnJlZV9xdWV1ZSwK
-KwkJICAgIWF0b21pY19yZWFkKCZkZXYtPm1vZGVfY29uZmlnLmNvbm5lY3Rvcl9mcmVlX3dvcmtz
-KSk7CisKIAlpZiAoV0FSTl9PTighbGlzdF9lbXB0eSgmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0
-b3JfbGlzdCkpKSB7CiAJCWRybV9jb25uZWN0b3JfbGlzdF9pdGVyX2JlZ2luKGRldiwgJmNvbm5f
-aXRlcik7CiAJCWRybV9mb3JfZWFjaF9jb25uZWN0b3JfaXRlcihjb25uZWN0b3IsICZjb25uX2l0
-ZXIpCmRpZmYgLS1naXQgYS9pbmNsdWRlL2RybS9kcm1fbW9kZV9jb25maWcuaCBiL2luY2x1ZGUv
-ZHJtL2RybV9tb2RlX2NvbmZpZy5oCmluZGV4IGEwYWZlYjU5MWRjYi4uODNhN2RiOTk3ZTgzIDEw
-MDY0NAotLS0gYS9pbmNsdWRlL2RybS9kcm1fbW9kZV9jb25maWcuaAorKysgYi9pbmNsdWRlL2Ry
-bS9kcm1fbW9kZV9jb25maWcuaApAQCAtNDEzLDYgKzQxMywxOSBAQCBzdHJ1Y3QgZHJtX21vZGVf
-Y29uZmlnIHsKIAkgKiAmc3RydWN0IGRybV9jb25uZWN0b3JfbGlzdF9pdGVyIHRvIHdhbGsgdGhp
-cyBsaXN0LgogCSAqLwogCXN0cnVjdCBsaXN0X2hlYWQgY29ubmVjdG9yX2xpc3Q7CisJLyoqCisJ
-ICogQHBlbmRpbmdfY29ubmVjdG9yX2ZyZWVfd29ya3M6CisJICoKKwkgKiBOdW1iZXIgb2Ygc2No
-ZWR1bGVkIGNvbm5lY3Rvci0+ZnJlZV93b3JrIGluc3RhbmNlcywgc2VlCisJICogZHJtX2Nvbm5l
-Y3Rvcl9wdXRfc2FmZSgpLgorCSAqLworCWF0b21pY190IGNvbm5lY3Rvcl9mcmVlX3dvcmtzOwor
-CS8qKgorCSAqIEBwZW5kaW5nX2Nvbm5lY3Rvcl9mcmVlX3F1ZXVlOgorCSAqCisJICogV2FpdCBx
-dWV1ZSBmb3Igd2FpdGluZyB1bnRpbCBjb25uZWN0b3ItPmZyZWVfd29yayBpcyBmaW5pc2hlZC4K
-KwkgKi8KKwl3YWl0X3F1ZXVlX2hlYWRfdCBjb25uZWN0b3JfZnJlZV9xdWV1ZTsKIAkvKioKIAkg
-KiBAbnVtX2VuY29kZXI6CiAJICoKLS0gCjIuMTUuMAoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Daniel,
+
+On 2017-12-12 19:14, Daniel Vetter wrote:
+> On Tue, Dec 12, 2017 at 12:38 PM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> Hi All,
+>>
+>>
+>> On 2017-12-11 23:28, Javier Martinez Canillas wrote:
+>>> [adding Marek and Shuah to cc list]
+>>>
+>>> On Mon, Dec 11, 2017 at 6:05 PM, Daniel Vetter <daniel.vetter@ffwll.ch>
+>>> wrote:
+>>>> On Mon, Dec 11, 2017 at 11:30 AM, Guillaume Tucker
+>>>> <guillaume.tucker@collabora.com> wrote:
+>>>>> Hi Daniel,
+>>>>>
+>>>>> Please see below, I've had several bisection results pointing at
+>>>>> that commit over the week-end on mainline but also on linux-next
+>>>>> and net-next.  While the peach-pi is a bit flaky at the moment
+>>>>> and is likely to have more than one issue, it does seem like this
+>>>>> commit is causing some well reproducible kernel hang.
+>>>>>
+>>>>> Here's a re-run with v4.15-rc3 showing the issue:
+>>>>>
+>>>>>     https://lava.collabora.co.uk/scheduler/job/1018478
+>>>>>
+>>>>> and here's another one with the change mentioned below reverted:
+>>>>>
+>>>>>     https://lava.collabora.co.uk/scheduler/job/1018479
+>>>>>
+>>>>> They both show a warning about "unbalanced disables for lcd_vdd",
+>>>>> I don't know if this is related as I haven't investigated any
+>>>>> further.  It does appear to reliably hang with v4.15-rc3 and
+>>>>> boot most of the time with the commit reverted though.
+>>>>>
+>>>>> The automated kernelci.org bisection is still an experimental
+>>>>> tool and it may well be a false positive, so please take this
+>>>>> result with a pinch of salt...
+>>>> The patch just very minimal moves the connector cleanup around (so
+>>>> timing change), but except when you unload a driver (or maybe that
+>>>> funny EPROBE_DEFER stuff) it shouldn't matter. So if you don't have
+>>>> more info than "seems to hang a bit more" I have no idea what's wrong.
+>>>> The patch itself should work, at least it survived quite some serious
+>>>> testing we do on everything.
+>>>> -Daniel
+>>>>
+>>> Marek was pointing to a different culprit [0] in this [1] thread. I
+>>> see that both commits made it to v4.15-rc3, which is the first version
+>>> where boot fails. So maybe is a combination of both? Or rather
+>>> reverting one patch masks the error in the other.
+>>>
+>>> I've access to the machine but unfortunately not a lot of time to dig
+>>> on this, I could try to do it in the weekend though.
+>>
+>> After a recent discussion on the Javier's patch:
+>> https://patchwork.kernel.org/patch/10106417/
+>> I've managed to reproduce this issue also on Exynos5250 based Samsung
+>> Snow Chromebook and investigate a bit.
+>>
+>> It is caused by a deadlock in the main kernel workqueue. Here are details:
+>>
+>> 1. Exynos DRM fails to initialize due to missing regulators and gets moved
+>> to deferred probe device list
+>>
+>> 2. Deferred probe is triggered and kernel "events" workqueue calls
+>> deferred_probe_work_func()
+>>
+>> 3. exynos_drm_bind() is called, component_bind_all() fails due to missing
+>> Exynos Mixer device
+>>
+>> 4. error handling path is executed in exynos_drm_bind(), which calls
+>> drm_mode_config_cleanup()
+>>
+>> 5. drm_mode_config_cleanup() calls flush_scheduled_work(), what causes
+>> deadlock.
+>>
+>> Do You have idea how to fix this issue properly?
+>>
+>> Taking a look at git blame, this indeed shows that the issue has been
+>> introduced by the commit a703c55004e1 ("drm: safely free connectors from
+>> connector_ite"), which added a call to flush_scheduled_work() in
+>> drm_mode_config_cleanup().
+>>
+>> drm_mode_config_cleanup() should avoid calling flush_scheduled_work() if
+>> called from the workqueue, but I don't have idea how to check that. The
+>> other way of fixing it would be to resurrect separate workqueue for DRM
+>> related events.
+> We need to flush the work there, or things will go wrong on unload. I
+> think the real fix is to make sure that the connector cleanup work
+> isn't run on the same work stuff as any driver bind stuff, which yes
+> means new separate workqueue just for this.
+>
+> I guess the simple fix is to do that in the drm, but tbh I'm surprised
+> that driver bind/deferred probe hasn't run into this problem anywhere
+> else yet.
+
+Well, this means that no-one tested the error paths in deferred probe
+case. It's not that surprising, if we assume that typically platform
+devices are deferred only once. Second probe() call (which is done from
+workqueue) is successful in that case.
+
+I've managed to fix this deadlock without additional workqueue:
+https://patchwork.freedesktop.org/patch/193069/
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
