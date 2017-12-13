@@ -1,68 +1,133 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig - enable CONFIG_EXYNOS_IOMMU
-Date: Wed, 13 Dec 2017 10:42:33 +0100
-Message-ID: <d7d38ca9-ca53-8cb1-6c8a-c219ec94f005@samsung.com>
-References: <CGME20171212213136epcas2p45d4b1a2489e341f38362ca59b35977ec@epcas2p4.samsung.com>
-        <20171212213110.20893-1-shuahkh@osg.samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm: Fix possible deadlock in drm_mode_config_cleanup()
+Date: Wed, 13 Dec 2017 11:45:35 +0100
+Message-ID: <20171213104535.GH526@phenom.ffwll.local>
+References: <CGME20171213085736eucas1p28d10718330c5c2eac834bd26786c84fc@eucas1p2.samsung.com>
+ <20171213085720.6059-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20171212213110.20893-1-shuahkh@osg.samsung.com>
-Content-language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Shuah Khan <shuahkh@osg.samsung.com>, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux.amoon@gmail.com, arnd@arndb.de, javier@dowhile0.org, robie@justgohome.co.uk, shuah@kernel.org, viresh.kumar@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36811 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751121AbdLMKpj (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 13 Dec 2017 05:45:39 -0500
+Received: by mail-wm0-f68.google.com with SMTP id b76so4161961wmg.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Dec 2017 02:45:38 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20171213085720.6059-1-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Gustavo Padovan <gustavo@padovan.org>, Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>, linux-samsung-soc@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@baylibre.com>, Thierry Escande <thierry.escande@collaboraco.uk>, Shuah Khan <shuahkh@osg.samsung.com>, Mark Brown <broonie@kernel.org>, Matt Hart <matthew.hart@linaro.org>, Guillaume Tucker <guillaume.tucker@collabora.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-arm-kernel@lists.infradead.org
 
-Hi Shuah,
+On Wed, Dec 13, 2017 at 09:57:20AM +0100, Marek Szyprowski wrote:
+> drm_mode_config_cleanup() might be called from a workqueue context (for
+> example in error path handling of deferred probe), so it must not call
+> flush_scheduled_work(), because it would deadlock in such case. Replace
+> that call with explicit counting of the scheduled connector free works
+> and waiting until it reaches zero.
+> 
+> Fixes: a703c55004e1 ("drm: safely free connectors from connector_iter")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 2017-12-12 22:31, Shuah Khan wrote:
-> EXYNOS_IOMMU is disabled in exynos_defconfig since it is known to cause
-> boot failures on Exynos Chrome-books. The recommendation is for IOMMU to
-> be enabled manually on systems as needed.
->
-> A recent exynos_drm change added a warning message when EXYNOS_IOMMU is
-> disabled. It is necessary to enable it to avoid the warning messages.
-> A few initial tests have shown that enabling EXYNOS_IOMMU might be safe
-> on Exynos Chrome-books.
->
-> Enable CONFIG_EXYNOS_IOMMU in exynos_defconfig.
->
-> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-
-Due to some other changes in the order of operations during boot process,
-power domains are initialized very early and because of the temporary
-lack of devices (which are not yet added to the system), are turned off.
-
-This practically stops FIMD for scanning framebuffer very early during
-boot, before IOMMU gets initialized and "solves" the issue, which was
-the reason to disable Exynos IOMMU by default.
-
-Like I've already said, I've checked Exynos Snow Chromebook boots fine
-with IOMMU support enabled, both with v4.15-rc3 and linux-next.
-
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
+I don't like hand-rolling wait stuff if it's avoidable (although
+cross-release will catch all the fun nowadays). I'm working on a patch to
+rework the cleanup logic so we can flush stuff directly. Bit more work,
+but imo cleaner logic.
+-Daniel
 > ---
->   arch/arm/configs/exynos_defconfig | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index f1d7834..0ccd5eb 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -281,6 +281,7 @@ CONFIG_DEVFREQ_GOV_POWERSAVE=y
->   CONFIG_DEVFREQ_GOV_USERSPACE=y
->   CONFIG_ARM_EXYNOS_BUS_DEVFREQ=y
->   CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=y
-> +CONFIG_EXYNOS_IOMMU=y
->   CONFIG_EXTCON=y
->   CONFIG_EXTCON_MAX14577=y
->   CONFIG_EXTCON_MAX77693=y
+> This fixes the issue discussed in the following thread:
+> https://www.spinics.net/lists/arm-kernel/msg622332.html
+> ---
+>  drivers/gpu/drm/drm_connector.c   |  6 +++++-
+>  drivers/gpu/drm/drm_mode_config.c |  6 +++++-
+>  include/drm/drm_mode_config.h     | 13 +++++++++++++
+>  3 files changed, 23 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+> index 0b7e0974e6da..7620ac1ad1b1 100644
+> --- a/drivers/gpu/drm/drm_connector.c
+> +++ b/drivers/gpu/drm/drm_connector.c
+> @@ -161,6 +161,8 @@ static void drm_connector_free_work_fn(struct work_struct *work)
+>  
+>  	drm_mode_object_unregister(dev, &connector->base);
+>  	connector->funcs->destroy(connector);
+> +	atomic_dec(&dev->mode_config.connector_free_works);
+> +	wake_up_all(&dev->mode_config.connector_free_queue);
+>  }
+>  
+>  /**
+> @@ -552,8 +554,10 @@ EXPORT_SYMBOL(drm_connector_list_iter_begin);
+>  static void
+>  drm_connector_put_safe(struct drm_connector *conn)
+>  {
+> -	if (refcount_dec_and_test(&conn->base.refcount.refcount))
+> +	if (refcount_dec_and_test(&conn->base.refcount.refcount)) {
+> +		atomic_inc(&conn->dev->mode_config.connector_free_works);
+>  		schedule_work(&conn->free_work);
+> +	}
+>  }
+>  
+>  /**
+> diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode_config.c
+> index 6ffe952142e6..cca443faebd8 100644
+> --- a/drivers/gpu/drm/drm_mode_config.c
+> +++ b/drivers/gpu/drm/drm_mode_config.c
+> @@ -381,6 +381,7 @@ void drm_mode_config_init(struct drm_device *dev)
+>  	idr_init(&dev->mode_config.tile_idr);
+>  	ida_init(&dev->mode_config.connector_ida);
+>  	spin_lock_init(&dev->mode_config.connector_list_lock);
+> +	init_waitqueue_head(&dev->mode_config.connector_free_queue);
+>  
+>  	drm_mode_create_standard_properties(dev);
+>  
+> @@ -431,8 +432,11 @@ void drm_mode_config_cleanup(struct drm_device *dev)
+>  		drm_connector_put(connector);
+>  	}
+>  	drm_connector_list_iter_end(&conn_iter);
+> +
+>  	/* connector_iter drops references in a work item. */
+> -	flush_scheduled_work();
+> +	wait_event(dev->mode_config.connector_free_queue,
+> +		   !atomic_read(&dev->mode_config.connector_free_works));
+> +
+>  	if (WARN_ON(!list_empty(&dev->mode_config.connector_list))) {
+>  		drm_connector_list_iter_begin(dev, &conn_iter);
+>  		drm_for_each_connector_iter(connector, &conn_iter)
+> diff --git a/include/drm/drm_mode_config.h b/include/drm/drm_mode_config.h
+> index a0afeb591dcb..83a7db997e83 100644
+> --- a/include/drm/drm_mode_config.h
+> +++ b/include/drm/drm_mode_config.h
+> @@ -413,6 +413,19 @@ struct drm_mode_config {
+>  	 * &struct drm_connector_list_iter to walk this list.
+>  	 */
+>  	struct list_head connector_list;
+> +	/**
+> +	 * @pending_connector_free_works:
+> +	 *
+> +	 * Number of scheduled connector->free_work instances, see
+> +	 * drm_connector_put_safe().
+> +	 */
+> +	atomic_t connector_free_works;
+> +	/**
+> +	 * @pending_connector_free_queue:
+> +	 *
+> +	 * Wait queue for waiting until connector->free_work is finished.
+> +	 */
+> +	wait_queue_head_t connector_free_queue;
+>  	/**
+>  	 * @num_encoder:
+>  	 *
+> -- 
+> 2.15.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
