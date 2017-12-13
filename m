@@ -1,41 +1,85 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] spi: s3c64xx: add SPDX identifier
-Date: Wed, 13 Dec 2017 09:13:34 +0100
-Message-ID: <CAJKOXPdOEjDshEMDuraoOm53nTipWApkV70d8wSHQH4BUr6b4w@mail.gmail.com>
-References: <CGME20171213080544epcas2p29731b6c65f760ab1b9ac71d530fcaf77@epcas2p2.samsung.com>
- <20171213080530.12724-1-andi.shyti@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm: Fix possible deadlock in drm_mode_config_cleanup()
+Date: Wed, 13 Dec 2017 09:57:20 +0100
+Message-ID: <20171213085720.6059-1-m.szyprowski@samsung.com>
+References: <CGME20171213085736eucas1p28d10718330c5c2eac834bd26786c84fc@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:55428 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750751AbdLMINh (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 03:13:37 -0500
-In-Reply-To: <20171213080530.12724-1-andi.shyti@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Gustavo Padovan <gustavo@padovan.org>, Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>
+Cc: linux-samsung-soc@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@baylibre.com>, Thierry Escande <thierry.escande@collaboraco.uk>, Shuah Khan <shuahkh@osg.samsung.com>, Mark Brown <broonie@kernel.org>, Matt Hart <matthew.hart@linaro.org>, Guillaume Tucker <guillaume.tucker@collabora.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-On Wed, Dec 13, 2017 at 9:05 AM, Andi Shyti <andi.shyti@samsung.com> wrote:
-> Replace the original license statement with the SPDX identifier.
->
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
-> Hi,
->
-> this second version unlike v1, where I tried to move the license
-> from GPLv2+ to GPLv2, preserves the original licese while adding
-> the SPDX identifier.
->
-> Andi
->
->  drivers/spi/spi-s3c64xx.c                 | 18 ++++--------------
->  include/linux/platform_data/spi-s3c64xx.h |  4 +---
->  2 files changed, 5 insertions(+), 17 deletions(-)
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+ZHJtX21vZGVfY29uZmlnX2NsZWFudXAoKSBtaWdodCBiZSBjYWxsZWQgZnJvbSBhIHdvcmtxdWV1
+ZSBjb250ZXh0IChmb3IKZXhhbXBsZSBpbiBlcnJvciBwYXRoIGhhbmRsaW5nIG9mIGRlZmVycmVk
+IHByb2JlKSwgc28gaXQgbXVzdCBub3QgY2FsbApmbHVzaF9zY2hlZHVsZWRfd29yaygpLCBiZWNh
+dXNlIGl0IHdvdWxkIGRlYWRsb2NrIGluIHN1Y2ggY2FzZS4gUmVwbGFjZQp0aGF0IGNhbGwgd2l0
+aCBleHBsaWNpdCBjb3VudGluZyBvZiB0aGUgc2NoZWR1bGVkIGNvbm5lY3RvciBmcmVlIHdvcmtz
+CmFuZCB3YWl0aW5nIHVudGlsIGl0IHJlYWNoZXMgemVyby4KCkZpeGVzOiBhNzAzYzU1MDA0ZTEg
+KCJkcm06IHNhZmVseSBmcmVlIGNvbm5lY3RvcnMgZnJvbSBjb25uZWN0b3JfaXRlciIpClNpZ25l
+ZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0t
+ClRoaXMgZml4ZXMgdGhlIGlzc3VlIGRpc2N1c3NlZCBpbiB0aGUgZm9sbG93aW5nIHRocmVhZDoK
+aHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvYXJtLWtlcm5lbC9tc2c2MjIzMzIuaHRtbAot
+LS0KIGRyaXZlcnMvZ3B1L2RybS9kcm1fY29ubmVjdG9yLmMgICB8ICA2ICsrKysrLQogZHJpdmVy
+cy9ncHUvZHJtL2RybV9tb2RlX2NvbmZpZy5jIHwgIDYgKysrKystCiBpbmNsdWRlL2RybS9kcm1f
+bW9kZV9jb25maWcuaCAgICAgfCAxMyArKysrKysrKysrKysrCiAzIGZpbGVzIGNoYW5nZWQsIDIz
+IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2RybV9jb25uZWN0b3IuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fY29ubmVjdG9yLmMKaW5k
+ZXggMGI3ZTA5NzRlNmRhLi43NjIwYWMxYWQxYjEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9kcm1fY29ubmVjdG9yLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9jb25uZWN0b3IuYwpA
+QCAtMTYxLDYgKzE2MSw4IEBAIHN0YXRpYyB2b2lkIGRybV9jb25uZWN0b3JfZnJlZV93b3JrX2Zu
+KHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yaykKIAogCWRybV9tb2RlX29iamVjdF91bnJlZ2lzdGVy
+KGRldiwgJmNvbm5lY3Rvci0+YmFzZSk7CiAJY29ubmVjdG9yLT5mdW5jcy0+ZGVzdHJveShjb25u
+ZWN0b3IpOworCWF0b21pY19kZWMoJmRldi0+bW9kZV9jb25maWcuY29ubmVjdG9yX2ZyZWVfd29y
+a3MpOworCXdha2VfdXBfYWxsKCZkZXYtPm1vZGVfY29uZmlnLmNvbm5lY3Rvcl9mcmVlX3F1ZXVl
+KTsKIH0KIAogLyoqCkBAIC01NTIsOCArNTU0LDEwIEBAIEVYUE9SVF9TWU1CT0woZHJtX2Nvbm5l
+Y3Rvcl9saXN0X2l0ZXJfYmVnaW4pOwogc3RhdGljIHZvaWQKIGRybV9jb25uZWN0b3JfcHV0X3Nh
+ZmUoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm4pCiB7Ci0JaWYgKHJlZmNvdW50X2RlY19hbmRf
+dGVzdCgmY29ubi0+YmFzZS5yZWZjb3VudC5yZWZjb3VudCkpCisJaWYgKHJlZmNvdW50X2RlY19h
+bmRfdGVzdCgmY29ubi0+YmFzZS5yZWZjb3VudC5yZWZjb3VudCkpIHsKKwkJYXRvbWljX2luYygm
+Y29ubi0+ZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0b3JfZnJlZV93b3Jrcyk7CiAJCXNjaGVkdWxl
+X3dvcmsoJmNvbm4tPmZyZWVfd29yayk7CisJfQogfQogCiAvKioKZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9kcm1fbW9kZV9jb25maWcuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9kZV9j
+b25maWcuYwppbmRleCA2ZmZlOTUyMTQyZTYuLmNjYTQ0M2ZhZWJkOCAxMDA2NDQKLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL2RybV9tb2RlX2NvbmZpZy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1f
+bW9kZV9jb25maWcuYwpAQCAtMzgxLDYgKzM4MSw3IEBAIHZvaWQgZHJtX21vZGVfY29uZmlnX2lu
+aXQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKIAlpZHJfaW5pdCgmZGV2LT5tb2RlX2NvbmZpZy50
+aWxlX2lkcik7CiAJaWRhX2luaXQoJmRldi0+bW9kZV9jb25maWcuY29ubmVjdG9yX2lkYSk7CiAJ
+c3Bpbl9sb2NrX2luaXQoJmRldi0+bW9kZV9jb25maWcuY29ubmVjdG9yX2xpc3RfbG9jayk7CisJ
+aW5pdF93YWl0cXVldWVfaGVhZCgmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0b3JfZnJlZV9xdWV1
+ZSk7CiAKIAlkcm1fbW9kZV9jcmVhdGVfc3RhbmRhcmRfcHJvcGVydGllcyhkZXYpOwogCkBAIC00
+MzEsOCArNDMyLDExIEBAIHZvaWQgZHJtX21vZGVfY29uZmlnX2NsZWFudXAoc3RydWN0IGRybV9k
+ZXZpY2UgKmRldikKIAkJZHJtX2Nvbm5lY3Rvcl9wdXQoY29ubmVjdG9yKTsKIAl9CiAJZHJtX2Nv
+bm5lY3Rvcl9saXN0X2l0ZXJfZW5kKCZjb25uX2l0ZXIpOworCiAJLyogY29ubmVjdG9yX2l0ZXIg
+ZHJvcHMgcmVmZXJlbmNlcyBpbiBhIHdvcmsgaXRlbS4gKi8KLQlmbHVzaF9zY2hlZHVsZWRfd29y
+aygpOworCXdhaXRfZXZlbnQoZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0b3JfZnJlZV9xdWV1ZSwK
+KwkJICAgIWF0b21pY19yZWFkKCZkZXYtPm1vZGVfY29uZmlnLmNvbm5lY3Rvcl9mcmVlX3dvcmtz
+KSk7CisKIAlpZiAoV0FSTl9PTighbGlzdF9lbXB0eSgmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0
+b3JfbGlzdCkpKSB7CiAJCWRybV9jb25uZWN0b3JfbGlzdF9pdGVyX2JlZ2luKGRldiwgJmNvbm5f
+aXRlcik7CiAJCWRybV9mb3JfZWFjaF9jb25uZWN0b3JfaXRlcihjb25uZWN0b3IsICZjb25uX2l0
+ZXIpCmRpZmYgLS1naXQgYS9pbmNsdWRlL2RybS9kcm1fbW9kZV9jb25maWcuaCBiL2luY2x1ZGUv
+ZHJtL2RybV9tb2RlX2NvbmZpZy5oCmluZGV4IGEwYWZlYjU5MWRjYi4uODNhN2RiOTk3ZTgzIDEw
+MDY0NAotLS0gYS9pbmNsdWRlL2RybS9kcm1fbW9kZV9jb25maWcuaAorKysgYi9pbmNsdWRlL2Ry
+bS9kcm1fbW9kZV9jb25maWcuaApAQCAtNDEzLDYgKzQxMywxOSBAQCBzdHJ1Y3QgZHJtX21vZGVf
+Y29uZmlnIHsKIAkgKiAmc3RydWN0IGRybV9jb25uZWN0b3JfbGlzdF9pdGVyIHRvIHdhbGsgdGhp
+cyBsaXN0LgogCSAqLwogCXN0cnVjdCBsaXN0X2hlYWQgY29ubmVjdG9yX2xpc3Q7CisJLyoqCisJ
+ICogQHBlbmRpbmdfY29ubmVjdG9yX2ZyZWVfd29ya3M6CisJICoKKwkgKiBOdW1iZXIgb2Ygc2No
+ZWR1bGVkIGNvbm5lY3Rvci0+ZnJlZV93b3JrIGluc3RhbmNlcywgc2VlCisJICogZHJtX2Nvbm5l
+Y3Rvcl9wdXRfc2FmZSgpLgorCSAqLworCWF0b21pY190IGNvbm5lY3Rvcl9mcmVlX3dvcmtzOwor
+CS8qKgorCSAqIEBwZW5kaW5nX2Nvbm5lY3Rvcl9mcmVlX3F1ZXVlOgorCSAqCisJICogV2FpdCBx
+dWV1ZSBmb3Igd2FpdGluZyB1bnRpbCBjb25uZWN0b3ItPmZyZWVfd29yayBpcyBmaW5pc2hlZC4K
+KwkgKi8KKwl3YWl0X3F1ZXVlX2hlYWRfdCBjb25uZWN0b3JfZnJlZV9xdWV1ZTsKIAkvKioKIAkg
+KiBAbnVtX2VuY29kZXI6CiAJICoKLS0gCjIuMTUuMAoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
