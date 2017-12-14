@@ -1,96 +1,72 @@
-From: Philippe Ombredanne <pombredanne-od1rfyK75/E@public.gmane.org>
-Subject: Re: [PATCH v3] spi: s3c64xx: add SPDX identifier
-Date: Thu, 14 Dec 2017 09:56:54 +0100
-Message-ID: <CAOFm3uEyUevF5mhi6VpGWz8qv5cXBtBt5BU3R93JGZCpJXOo9A@mail.gmail.com>
-References: <CGME20171214062903epcas2p3e6fdc84e9e36bbf7368601cd3cf5252b@epcas2p3.samsung.com>
- <20171214062827.12573-1-andi.shyti@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/3] ARM: dts: add Samsung's exynos4412-based midas
+ boards
+Date: Thu, 14 Dec 2017 10:04:45 +0100
+Message-ID: <d20f09ee-e41c-7f90-86ed-d201e2a48407@samsung.com>
+References: <20171212140815.28257-1-simon@lineageos.org>
+        <20171212140815.28257-3-simon@lineageos.org>
+        <CGME20171214084826epcas4p16bd7d4fb803b4120444003da38ed843a@epcas4p1.samsung.com>
+        <CAJKOXPfkQvo09r6WpZG-E+EgUk+p32dVycxWi6L07kHzv1EsWQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171214062827.12573-1-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAJKOXPfkQvo09r6WpZG-E+EgUk+p32dVycxWi6L07kHzv1EsWQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 14, 2017 at 7:28 AM, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Replace the original license statement with the SPDX identifier.
->
-> Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
-> Hi,
->
-> v2 to v3:
->  - move the SPDX identifier on top as a separate comment as per
->    documentation
->  - add Krzysztof's review
->
-> v1 to v2:
->  - keep the original license
->
-> Andi
->
->  drivers/spi/spi-s3c64xx.c                 | 18 ++++--------------
->  include/linux/platform_data/spi-s3c64xx.h |  6 ++----
->  2 files changed, 6 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index de7df20f8712..baa3a9fa2638 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1,17 +1,7 @@
-> -/*
-> - * Copyright (C) 2009 Samsung Electronics Ltd.
-> - *     Jaswinder Singh <jassi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// Copyright (c) 2009 Samsung Electronics Co., Ltd.
-> +//      Jaswinder Singh <jassi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
->  #include <linux/init.h>
->  #include <linux/module.h>
-> diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-> index da79774078a7..773daf7915a3 100644
-> --- a/include/linux/platform_data/spi-s3c64xx.h
-> +++ b/include/linux/platform_data/spi-s3c64xx.h
-> @@ -1,10 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
->  /*
->   * Copyright (C) 2009 Samsung Electronics Ltd.
->   *     Jaswinder Singh <jassi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
->   */
->
->  #ifndef __SPI_S3C64XX_H
-> --
-> 2.15.1
->
-
-Acked-by: Philippe Ombredanne <pombredanne-od1rfyK75/E@public.gmane.org>
-
-Thanks!
+Hi Krzysztof,
 
 
+On 2017-12-14 09:48, Krzysztof Kozlowski wrote:
+> Hi Simon,
+>
+> Thanks for new boards!
+>
+> +Cc Marek, Bartlomiej,
+>
+> On Tue, Dec 12, 2017 at 3:08 PM, Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org> wrote:
+>> "midas" is the codename for a family of smartphones released by Samsung
+>> Mobile. It includes the Galaxy S3 (GT-I9300/I9305) and the Galaxy
+>> Note 2 (GT-N7100/N7105). The boards largely have the same peripherals:
+>> the main differences are touchscreen, display panel and cellular modem.
+>>
+>> Signed-off-by: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
+>> ---
+>>   arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi |  144 +++
+>>   arch/arm/boot/dts/exynos4412-m0.dts         |   14 +
+>>   arch/arm/boot/dts/exynos4412-m3.dts         |   19 +
+>>   arch/arm/boot/dts/exynos4412-midas.dtsi     | 1291 +++++++++++++++++++++++++++
+> M0 is essentially Trats2. You are duplicating here almost entire
+> Trats2 which means:
+> 1. A lot of duplicated code thus it will require more maintenance to
+> keep DTS synced,
+> 2. It is very difficult to spot the changes and possible errors
+> between Trats2 and Midas DTSI/M0.
+>
+> Please make a generic family of devices based on Midas, including
+> Trats2. You might make it in steps for easier review:
+> 1. Split common Trats2 part,
+> 2. Add new boards.
+
+Krzysztof is right. Trats2 should also be based on midas.dtsi (it is very
+similar to gt-i9300, the difference in mainly in the casing). We also used
+gt-i9300 with modified bootloader with Trats2 dts.
+
+It should not be hard to adapt it for common midas.dtsi base (hind: use
+scripts/dtc/dtx_diff for checking if the final dts is correct).
+
+ > ...
+
+Best regards
 -- 
-Cordially
-Philippe Ombredanne
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
