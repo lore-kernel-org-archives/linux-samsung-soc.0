@@ -1,58 +1,83 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: exynos_defconfig - enable CONFIG_EXYNOS_IOMMU
-Date: Thu, 14 Dec 2017 19:00:42 +0100
-Message-ID: <20171214180042.5rbeqeocdfyt3xj7@kozik-lap>
-References: <CGME20171212213136epcas2p45d4b1a2489e341f38362ca59b35977ec@epcas2p4.samsung.com>
- <20171212213110.20893-1-shuahkh@osg.samsung.com>
- <d7d38ca9-ca53-8cb1-6c8a-c219ec94f005@samsung.com>
+Subject: Re: [PATCH] drm/exynos: ipp: Remove Exynos DRM IPP subsystem
+Date: Thu, 14 Dec 2017 19:04:19 +0100
+Message-ID: <20171214180419.ljsarnioiujtyl5v@kozik-lap>
+References: <CGME20171214151022eucas1p2d4fbf88e33398521a71a4dcbdf508047@eucas1p2.samsung.com>
+ <20171214151015.5580-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:41129 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753537AbdLNSAq (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 13:00:46 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <d7d38ca9-ca53-8cb1-6c8a-c219ec94f005@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20171214151015.5580-1-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux@armlinux.org.uk, kgene@kernel.org, linux.amoon@gmail.com, arnd@arndb.de, javier@dowhile0.org, robie@justgohome.co.uk, shuah@kernel.org, viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 13, 2017 at 10:42:33AM +0100, Marek Szyprowski wrote:
-> Hi Shuah,
-> 
-> On 2017-12-12 22:31, Shuah Khan wrote:
-> > EXYNOS_IOMMU is disabled in exynos_defconfig since it is known to cause
-> > boot failures on Exynos Chrome-books. The recommendation is for IOMMU to
-> > be enabled manually on systems as needed.
-> > 
-> > A recent exynos_drm change added a warning message when EXYNOS_IOMMU is
-> > disabled. It is necessary to enable it to avoid the warning messages.
-> > A few initial tests have shown that enabling EXYNOS_IOMMU might be safe
-> > on Exynos Chrome-books.
-> > 
-> > Enable CONFIG_EXYNOS_IOMMU in exynos_defconfig.
-> > 
-> > Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-> 
-> Due to some other changes in the order of operations during boot process,
-> power domains are initialized very early and because of the temporary
-> lack of devices (which are not yet added to the system), are turned off.
-> 
-> This practically stops FIMD for scanning framebuffer very early during
-> boot, before IOMMU gets initialized and "solves" the issue, which was
-> the reason to disable Exynos IOMMU by default.
-> 
-> Like I've already said, I've checked Exynos Snow Chromebook boots fine
-> with IOMMU support enabled, both with v4.15-rc3 and linux-next.
-> 
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Thanks, applied with rephrased and extended message using Marek's
-explanation.
-
-Best regards,
-Krzysztof
+T24gVGh1LCBEZWMgMTQsIDIwMTcgYXQgMDQ6MTA6MTVQTSArMDEwMCwgTWFyZWsgU3p5cHJvd3Nr
+aSB3cm90ZToKPiBFeHlub3MgRFJNIElQUCBzdWJzeXN0ZW0gaXMgaW4gZmFjdCBub24tZnVuY3Rp
+b25hbCBhbmQgZnJhbmtseSBzcGVha2luZwo+IGRlYWQtY29kZS4gVGhpcyBwYXRjaCBjbGVhcmx5
+IG1hcmtzIHRoYXQgRXh5bm9zIERSTSBJUFAgc3Vic3lzdGVtIGlzCj4gYnJva2VuIGFuZCBuZXZl
+ciByZWFsbHkgZnVuY3Rpb25hbC4gSXQgd2lsbCBiZSByZXBsYWNlZCBieSBhIGNvbXBsZXRlbHkK
+PiByZXdyaXR0ZW4gQVBJLgo+IAo+IEV4eW5vcyBEUk0gSVBQIHVzZXItc3BhY2UgQVBJIGNhbiBi
+ZSBvYnNvbGV0ZWQgZm9yIHRoZSBmb2xsb3dpbmcKPiByZWFzb25zOgo+IAo+IDEuIEV4eW5vcyBE
+Uk0gSVBQIHVzZXItc3BhY2UgQVBJIGNhbiBiZSBvcHRpb25hbCBpbiBFeHlub3MgRFJNLCBzbwo+
+IHVzZXJzcGFjZSBzaG91bGQgbm90IHJlbHkgdGhhdCBpdCBpcyBhbHdheXMgYXZhaWxhYmxlIGFu
+ZCBzaG91bGQgaGF2ZQo+IGEgc29mdHdhcmUgZmFsbGJhY2sgaW4gY2FzZSBpdCBpcyBub3QgdGhl
+cmUuCj4gCj4gMi4gVGhlIG9ubHkgbW9kZSB3aGljaCB3YXMgaW5pdGlhbGx5IHNlbWktd29ya2lu
+ZyB3YXMgbWVtb3J5LXRvLW1lbW9yeQo+IGltYWdlIHByb2Nlc3NpbmcuIFRoZSByZW1haW5pbmcg
+bW9kZXMgKExDRC0id3JpdGViYWNrIiBhbmQgIm91dHB1dCIpCj4gd2VyZSBuZXZlciBvcGVyYXRp
+b25hbCBkdWUgdG8gbWlzc2luZyBjb2RlIChib3RoIGluIG1haW5saW5lIGFuZCBldmVuCj4gdmVu
+ZG9yIGtlcm5lbHMpLgo+IAo+IDMuIEV4eW5vcyBEUk0gSVBQIG1haW5saW5lIHVzZXItc3BhY2Ug
+QVBJIGNvbXBhdGliaWxpdHkgZm9yCj4gbWVtb3J5LXRvLW1lbW9yeSBnb3QgYnJva2VuIHZlcnkg
+ZWFybHkgYnkgY29tbWl0IDA4MzUwMGJhZWZkNSAoImRybToKPiByZW1vdmUgRFJNX0ZPUk1BVF9O
+VjEyTVQiLCB3aGljaCByZW1vdmVkIHRoZSBzdXBwb3J0IGZvciB0aWxlZCBmb3JtYXRzLAo+IHRo
+ZSBtYWluIGZlYXR1cmUgd2hpY2ggbWFkZSB0aGlzIEFQSSBzb21laG93IHVzZWZ1bCBvbiBFeHlu
+b3MgcGxhdGZvcm1zCj4gKHZpZGVvIGNvZGVjIHRoYXQgdGltZSBwcm9kdWNlZCBvbmx5IHRpbGVk
+IGZyYW1lcywgdG8gaW1wbGVtZW50IHh2aWRlbwo+IG9yIGFueSBvdGhlciB2aWRlbyBvdmVybGF5
+LCBvbmUgaGFzIHRvIGRlLXRpbGUgdGhlbSBmb3IgcHJvcGVyCj4gZGlzcGxheSkuCj4gCj4gNC4g
+QnJva2VuIGRyaXZlcnMuIEVzcGVjaWFsbHkgb25jZSBzdXBwb3J0IGZvciBJT01NVSBoYXMgYmVl
+biBhZGRlZCwKPiBpdCByZXZlYWxlZCB0aGF0IGRyaXZlcnMgZG9uJ3QgY29uZmlndXJlIERNQSBv
+cGVyYXRpb25zIHByb3Blcmx5IGFuZCBpbgo+IG1hbnkgY2FzZXMgb3BlcmF0ZSBvdXRzaWRlIHRo
+ZSBwcm92aWRlZCBidWZmZXJzIHRyYXNoaW5nIG1lbW9yeSBhcm91bmQuCj4gCj4gNS4gTmVlZCBm
+b3IgZXh0ZXJuYWwgcGF0Y2hlcy4gQWx0aG91Z2ggSVBQIHVzZXItc3BhY2UgQVBJIGhhcyBiZWVu
+IHVzZWQKPiBpbiBzb21lIHZlbmRvciBrZXJuZWxzLCBidXQgaW4gc3VjaCBjYXNlcyB0aGVyZSB3
+ZXJlIGFkZGl0aW9uYWwgcGF0Y2hlcwo+IGFwcGxpZWQgKGxpa2UgcmV2ZXJ0aW5nIG1lbnRpb25l
+ZCAwODM1MDBiYWVmZDUgcGF0Y2gpIHdoYXQgbWVhbnMgdGhhdAo+IHRob3NlIHVzZXJzcGFjZSBh
+cHBzIHdoaWNoIG1pZ2h0IHVzZSBpdCwgc3RpbGwgd29uJ3Qgd29yayB3aXRoIHRoZQo+IG1haW5s
+aW5lIGtlcm5lbCB2ZXJzaW9uLgo+IAo+IFdlIGRvbid0IGhhdmUgdGltZSBtYWNoaW5lcywgc28g
+d2UgY2Fubm90IGNoYW5nZSBpdCwgYnV0IEV4eW5vcyBEUk0gSVBQCj4gZXh0ZW5zaW9uIHNob3Vs
+ZCBuZXZlciBoYXZlIGJlZW4gbWVyZ2VkIHRvIG1haW5saW5lIGluIHRoYXQgZm9ybS4KPiAKPiBF
+eHlub3MgSVBQIHN1YnN5c3RlbSBhbmQgdXNlci1zcGFjZSBBUEkgd2lsbCBiZSByZXdyaXR0ZW4s
+IHNvIHJlbW92ZQo+IGN1cnJlbnQgSVBQIGNvcmUgY29kZSBhbmQgbWFyayBleGlzdGluZyBkcml2
+ZXJzIGFzIEJST0tFTi4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6
+eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gVGhpcyBpcyBhIGZvbGxvdy11cCBvZiB0aGUg
+ZGlzY3Vzc2lvbiBpbiB0aGUgZm9sbG93aW5nIHRocmVhZDoKPiBodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9hcmNoaXZlcy9kcmktZGV2ZWwvMjAxNy1Ob3ZlbWJlci8xNTg5ODkuaHRtbAo+
+IAo+IFRoaXMgcGF0Y2ggd2FzIGEgcGFydCBvZiB0aGUgIkV4eW5vcyBEUk06IHJld3JpdGUgSVBQ
+IHN1YnN5c3RlbSBhbmQKPiB1c2Vyc3BhY2UgQVBJIiBwYXRjaHNldDoKPiBodHRwczovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZlcy9kcmktZGV2ZWwvMjAxNy1Ob3ZlbWJlci8xNTcxMzAu
+aHRtbAo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgfCAg
+IDExICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvTWFrZWZpbGUgICAgICAgICB8ICAgIDEg
+LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgIDEyIC0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIHwgICAgMiAtCj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyB8IDE4MDYgLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBw
+LmggfCAgMjUyIC0tLS0tCj4gIGluY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oICAgICAgICAg
+ICB8ICAxOTIgKy0tLQo+ICA3IGZpbGVzIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMjI3MiBk
+ZWxldGlvbnMoLSkKPiAgZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9pcHAuYwo+ICBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2lwcC5oCj4gCgpBY2tlZC1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8
+a3J6a0BrZXJuZWwub3JnPgoKQmVzdCByZWdhcmRzLApLcnp5c3p0b2YKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
