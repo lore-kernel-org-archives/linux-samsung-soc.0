@@ -1,590 +1,2477 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] media: s5p-mfc: Add support for V4L2_MEMORY_DMABUF
- type
-Date: Thu, 14 Dec 2017 15:11:36 +0100
-Message-ID: <e360971a-cb3b-0546-e621-ab56f8ed8f36@samsung.com>
-References: <CGME20171103081132eucas1p2212e32d26e7921340336d78d0d92cb1b@eucas1p2.samsung.com>
-        <20171103081124.30119-1-m.szyprowski@samsung.com>
-        <1509716721.3607.6.camel@ndufresne.ca>
-        <decd38f5-d3c0-6a60-cdbb-20bb804be3a5@samsung.com>
-        <1509996082.30233.51.camel@ndufresne.ca>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH] drm/exynos: ipp: Remove Exynos DRM IPP subsystem
+Date: Thu, 14 Dec 2017 16:10:15 +0100
+Message-ID: <20171214151015.5580-1-m.szyprowski@samsung.com>
+References: <CGME20171214151022eucas1p2d4fbf88e33398521a71a4dcbdf508047@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48911 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:37731 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752567AbdLNOLm (ORCPT
+        with ESMTP id S1752840AbdLNPK0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 09:11:42 -0500
-In-reply-to: <1509996082.30233.51.camel@ndufresne.ca>
-Content-language: en-US
+        Thu, 14 Dec 2017 10:10:26 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Nicolas Dufresne <nicolas@ndufresne.ca>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, JaeChul Lee <jcsing.lee@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Hans,
+Exynos DRM IPP subsystem is in fact non-functional and frankly speaking
+dead-code. This patch clearly marks that Exynos DRM IPP subsystem is
+broken and never really functional. It will be replaced by a completely
+rewritten API.
 
-I would like to get your opinion on this patch. Do you think it makes 
-sense to:
+Exynos DRM IPP user-space API can be obsoleted for the following
+reasons:
 
-1. add limited support for USERPTR and DMA-buf import? (limited means 
-driver will accept setting buffer pointer/fd only once after reqbufs for 
-each buffer index)
+1. Exynos DRM IPP user-space API can be optional in Exynos DRM, so
+userspace should not rely that it is always available and should have
+a software fallback in case it is not there.
 
-2. add a V4L2 device flag to let userspace to discover if device support 
-queue buffer reconfiguration on-fly or not?
+2. The only mode which was initially semi-working was memory-to-memory
+image processing. The remaining modes (LCD-"writeback" and "output")
+were never operational due to missing code (both in mainline and even
+vendor kernels).
 
-Here is the discussion: https://patchwork.linuxtv.org/patch/45305/
+3. Exynos DRM IPP mainline user-space API compatibility for
+memory-to-memory got broken very early by commit 083500baefd5 ("drm:
+remove DRM_FORMAT_NV12MT", which removed the support for tiled formats,
+the main feature which made this API somehow useful on Exynos platforms
+(video codec that time produced only tiled frames, to implement xvideo
+or any other video overlay, one has to de-tile them for proper
+display).
 
-Best regards
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+4. Broken drivers. Especially once support for IOMMU has been added,
+it revealed that drivers don't configure DMA operations properly and in
+many cases operate outside the provided buffers trashing memory around.
 
+5. Need for external patches. Although IPP user-space API has been used
+in some vendor kernels, but in such cases there were additional patches
+applied (like reverting mentioned 083500baefd5 patch) what means that
+those userspace apps which might use it, still won't work with the
+mainline kernel version.
 
-On 2017-11-06 20:21, Nicolas Dufresne wrote:
-> Le lundi 06 novembre 2017 à 10:28 +0100, Marek Szyprowski a écrit :
->> On 2017-11-03 14:45, Nicolas Dufresne wrote:
->>> Le vendredi 03 novembre 2017 à 09:11 +0100, Marek Szyprowski a écrit :
->>>> MFC driver supports only MMAP operation mode mainly due to the hardware
->>>> restrictions of the addresses of the DMA buffers (MFC v5 hardware can
->>>> access buffers only in 128MiB memory region starting from the base address
->>>> of its firmware). When IOMMU is available, this requirement is easily
->>>> fulfilled even for the buffers located anywhere in the memory - typically
->>>> by mapping them in the DMA address space as close as possible to the
->>>> firmware. Later hardware revisions don't have this limitations at all.
->>>>
->>>> The second limitation of the MFC hardware related to the memory buffers
->>>> is constant buffer address. Once the hardware has been initialized for
->>>> operation on given buffer set, the addresses of the buffers cannot be
->>>> changed.
->>>>
->>>> With the above assumptions, a limited support for USERPTR and DMABUF
->>>> operation modes can be added. The main requirement is to have all buffers
->>>> known when starting hardware. This has been achieved by postponing
->>>> hardware initialization once all the DMABUF or USERPTR buffers have been
->>>> queued for the first time. Once then, buffers cannot be modified to point
->>>> to other memory area.
->>> I am concerned about enabling this support with existing userspace.
->>> Userspace application will be left with some driver with this
->>> limitation and other drivers without. I think it is harmful to enable
->>> that feature without providing userspace the ability to know.
->>>
->>> This is specially conflicting with let's say UVC driver providing
->>> buffers, since UVC driver implementing CREATE_BUFS ioctl. So even if
->>> userspace start making an effort to maintain the same DMABuf for the
->>> same buffer index, if a new buffer is created, we won't be able to use
->>> it.
->> Sorry, but I don't get this as an 'issue'. The typical use scenario is to
->> configure buffer queue and start streaming. Basically ReqBufs, stream on and
->> a sequence of bufq/bufdq. This is handled without any problem by MFC driver
->> with this patch. After releasing a queue with reqbufs(0), one can use
->> different set of buffers.
-> In real life, you often have capture code decorelated from the encoder
-> code. At least, it's the case in GStreamer. The encoder have no
-> information about how many buffers were pre-allocated by let's say the
-> capture driver. As a side effect, we cannot make sure the importation
-> queue is of the same size (amount of buffer). Specially if you have UVC
-> driver that allow allocating more buffers at run-time. This is used in
-> real-life to compensate additional latency that get's added when a
-> pipeline topology is changed (at run-time). Only workaround I had in
-> mind, would be to always prepare the queue with the maximum (32), and
-> use this as a cache size, but for now, this is not how the deployed
-> userspace works unfortunately.
->
-> Your reqbuf(0) technique cause a break in the stream (probably a new
-> keyframe), as you are forced to STREAMOFF. This is often unwanted, and
-> it may create a time discontinuity in case the allocation took time.
->
->> What is the point of changing the buffers during the streaming? IMHO it was
->> one of the biggest pathology of the V4L2 USERPTR API that the buffers
->> were in
->> fact 'created' on the first queue operation. By creating I mean creating all
->> the kernel all needed structures and mappings between the real memory (user
->> ptr value) and the buffer index. The result of this was userspace, which
->> don't
->> use buffer indices and always queues buffers with index = 0, what means that
->> kernel has to reacquire direct access to each buffer every single frame.
->> That
->> is highly inefficient approach. DMABUF operation mode inherited this
->> drawback.
-> This in fact is an implementation detail of the caching in the kernel
-> framework. There is nothing that prevent the framework to maintain a
-> validation cache that isn't bound to the queue size. DMABuf simply
-> makes the buffer identification easier and safer. I bet it is difficult
-> and it will stay like this, so it should at least be documented.
->
-> I am completely aware of the inefficiency of the GStreamer behaviour,
-> though it remains much faster in many case then copying raw frames
-> using the CPU. You can complain as much as you can about what this
-> userspace doing, but it as has been working better then nothing for
-> many users. It might not be like this forever, someone could optimize
-> this by signalling the missing information or with the 32 buffer hack I
-> just mention, but I don't see anyone standing up for that work atm,
-> which I have assumed to be good enough (for now). We see a lot more
-> overhead from other component when piling up with a wayland compositor,
-> a GL stack and more.
->
->> When we have a pipeline for processing video data it should use N buffers on
->> both input and output of each element when DMAbuf is used. Once we
->> allocate N
->> buffers, using N dmabuf-imported buffers which maps 1-1 is trivial. Only
->> this
->> way you will have true zero-copy processing without any additional overhead.
-> Though, it is not a strict requirement. This is specific to V4L2 here,
-> other kernel framework provide rather more flexible API, which indeed
-> can have small period of inefficiency (during allocation and first
-> importation) but will stabilize later on if userspace implements enough
-> caching. Also, the cost of importation will vary a lot per driver.
->
-> My point here, is just that we need to know from userspace if there is
-> a strict limitation like this, because otherwise it may completely fall
-> apart instead of being slightly inefficient.
->
->>>> This patch also removes unconditional USERPTR operation mode from encoder
->>>> video node, because it doesn't work with v5 MFC hardware without IOMMU
->>>> being enabled.
->>>>
->>>> In case of MFC v5 a bidirectional queue flag has to be enabled as a
->>>> workaround of the strange hardware behavior - MFC performs a few writes
->>>> to source data during the operation.
->>> Do you have more information about this ? It is quite terrible, since
->>> if you enable buffer importation, the buffer might be multi-plex across
->>> multiple encoder instance. That is another way this feature can be
->>> harmful to existing userspace.
->> I also don't like this behavior of the hardware. I will probably investigate
->> it further once I have some time. The other workaround would be to
->> always use
->> driver allocated buffers and simply copy input stream in case of USERPTR or
->> DMABUF to avoid modifying source data. It would mean copying the compressed
->> stream, what should not hurt us that much.
-> Thanks for letting us know. So the writes are strictly for the decoder
-> ? I was referring to the encoder in my comment. On Qualcomm Venus side,
-> the writes are done in a portion expose to user space (see data_offset
-> in mplane structures). As a side effect, importation is skipped, since
-> there is no upstream driver that will magically provide this padding
-> data.
->
->>>> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
->>>> [mszyprow: adapted to v4.14 code base, rewrote and extended commit message,
->>>>    added checks for changing buffer addresses, added bidirectional queue
->>>>    flags and comments]
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> ---
->>>> v2:
->>>> - fixed copy/paste bug, which broke encoding support (thanks to Marian
->>>>     Mihailescu for reporting it)
->>>> - added checks for changing buffers DMA addresses
->>>> - added bidirectional queue flags
->>>>
->>>> v1:
->>>> - inital version
->>>> ---
->>>>    drivers/media/platform/s5p-mfc/s5p_mfc.c     |  23 +++++-
->>>>    drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 111 +++++++++++++++++++--------
->>>>    drivers/media/platform/s5p-mfc/s5p_mfc_enc.c |  64 +++++++++++----
->>>>    3 files changed, 147 insertions(+), 51 deletions(-)
->>>>
->>>> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
->>>> index 1839a86cc2a5..f1ab8d198158 100644
->>>> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
->>>> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
->>>> @@ -754,6 +754,7 @@ static int s5p_mfc_open(struct file *file)
->>>>    	struct s5p_mfc_dev *dev = video_drvdata(file);
->>>>    	struct s5p_mfc_ctx *ctx = NULL;
->>>>    	struct vb2_queue *q;
->>>> +	unsigned int io_modes;
->>>>    	int ret = 0;
->>>>    
->>>>    	mfc_debug_enter();
->>>> @@ -839,16 +840,25 @@ static int s5p_mfc_open(struct file *file)
->>>>    		if (ret)
->>>>    			goto err_init_hw;
->>>>    	}
->>>> +
->>>> +	io_modes = VB2_MMAP;
->>>> +	if (exynos_is_iommu_available(&dev->plat_dev->dev) || !IS_TWOPORT(dev))
->>>> +		io_modes |= VB2_USERPTR | VB2_DMABUF;
->>>> +
->>>>    	/* Init videobuf2 queue for CAPTURE */
->>>>    	q = &ctx->vq_dst;
->>>>    	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
->>>> +	q->io_modes = io_modes;
->>>> +	/*
->>>> +	 * Destination buffers are always bidirectional, they use used as
->>>> +	 * reference data, which require READ access
->>>> +	 */
->>>> +	q->bidirectional = true;
->>>>    	q->drv_priv = &ctx->fh;
->>>>    	q->lock = &dev->mfc_mutex;
->>>>    	if (vdev == dev->vfd_dec) {
->>>> -		q->io_modes = VB2_MMAP;
->>>>    		q->ops = get_dec_queue_ops();
->>>>    	} else if (vdev == dev->vfd_enc) {
->>>> -		q->io_modes = VB2_MMAP | VB2_USERPTR;
->>>>    		q->ops = get_enc_queue_ops();
->>>>    	} else {
->>>>    		ret = -ENOENT;
->>>> @@ -869,13 +879,18 @@ static int s5p_mfc_open(struct file *file)
->>>>    	/* Init videobuf2 queue for OUTPUT */
->>>>    	q = &ctx->vq_src;
->>>>    	q->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
->>>> +	q->io_modes = io_modes;
->>>> +	/*
->>>> +	 * MFV v5 performs write operations on source data, so make queue
->>>> +	 * bidirectional to avoid IOMMU protection fault.
->>>> +	 */
->>>> +	if (!IS_MFCV6_PLUS(dev))
->>>> +		q->bidirectional = true;
->>>>    	q->drv_priv = &ctx->fh;
->>>>    	q->lock = &dev->mfc_mutex;
->>>>    	if (vdev == dev->vfd_dec) {
->>>> -		q->io_modes = VB2_MMAP;
->>>>    		q->ops = get_dec_queue_ops();
->>>>    	} else if (vdev == dev->vfd_enc) {
->>>> -		q->io_modes = VB2_MMAP | VB2_USERPTR;
->>>>    		q->ops = get_enc_queue_ops();
->>>>    	} else {
->>>>    		ret = -ENOENT;
->>>> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
->>>> index e3e5c442902a..26ee8315e2cf 100644
->>>> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
->>>> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
->>>> @@ -551,14 +551,27 @@ static int reqbufs_capture(struct s5p_mfc_dev *dev, struct s5p_mfc_ctx *ctx,
->>>>    			goto out;
->>>>    		}
->>>>    
->>>> -		WARN_ON(ctx->dst_bufs_cnt != ctx->total_dpb_count);
->>>> -		ctx->capture_state = QUEUE_BUFS_MMAPED;
->>>> +		if (reqbufs->memory == V4L2_MEMORY_MMAP) {
->>>> +			if (ctx->dst_bufs_cnt == ctx->total_dpb_count) {
->>>> +				ctx->capture_state = QUEUE_BUFS_MMAPED;
->>>> +			} else {
->>>> +				mfc_err("Not all buffers passed to buf_init\n");
->>>> +				reqbufs->count = 0;
->>>> +				ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
->>>> +				s5p_mfc_hw_call(dev->mfc_ops,
->>>> +						release_codec_buffers, ctx);
->>>> +				ret = -ENOMEM;
->>>> +				goto out;
->>>> +			}
->>>> +		}
->>>>    
->>>>    		if (s5p_mfc_ctx_ready(ctx))
->>>>    			set_work_bit_irqsave(ctx);
->>>>    		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
->>>> -		s5p_mfc_wait_for_done_ctx(ctx, S5P_MFC_R2H_CMD_INIT_BUFFERS_RET,
->>>> -					  0);
->>>> +		if (reqbufs->memory == V4L2_MEMORY_MMAP) {
->>>> +			s5p_mfc_wait_for_done_ctx(ctx,
->>>> +					 S5P_MFC_R2H_CMD_INIT_BUFFERS_RET, 0);
->>>> +		}
->>>>    	} else {
->>>>    		mfc_err("Buffers have already been requested\n");
->>>>    		ret = -EINVAL;
->>>> @@ -576,15 +589,19 @@ static int vidioc_reqbufs(struct file *file, void *priv,
->>>>    {
->>>>    	struct s5p_mfc_dev *dev = video_drvdata(file);
->>>>    	struct s5p_mfc_ctx *ctx = fh_to_ctx(priv);
->>>> -
->>>> -	if (reqbufs->memory != V4L2_MEMORY_MMAP) {
->>>> -		mfc_debug(2, "Only V4L2_MEMORY_MMAP is supported\n");
->>>> -		return -EINVAL;
->>>> -	}
->>>> +	int ret;
->>>>    
->>>>    	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->>>> +		ret = vb2_verify_memory_type(&ctx->vq_src, reqbufs->memory,
->>>> +					     reqbufs->type);
->>>> +		if (ret)
->>>> +			return ret;
->>>>    		return reqbufs_output(dev, ctx, reqbufs);
->>>>    	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
->>>> +		ret = vb2_verify_memory_type(&ctx->vq_dst, reqbufs->memory,
->>>> +					     reqbufs->type);
->>>> +		if (ret)
->>>> +			return ret;
->>>>    		return reqbufs_capture(dev, ctx, reqbufs);
->>>>    	} else {
->>>>    		mfc_err("Invalid type requested\n");
->>>> @@ -600,16 +617,20 @@ static int vidioc_querybuf(struct file *file, void *priv,
->>>>    	int ret;
->>>>    	int i;
->>>>    
->>>> -	if (buf->memory != V4L2_MEMORY_MMAP) {
->>>> -		mfc_err("Only mmaped buffers can be used\n");
->>>> -		return -EINVAL;
->>>> -	}
->>>>    	mfc_debug(2, "State: %d, buf->type: %d\n", ctx->state, buf->type);
->>>>    	if (ctx->state == MFCINST_GOT_INST &&
->>>>    			buf->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->>>> +		ret = vb2_verify_memory_type(&ctx->vq_src, buf->memory,
->>>> +					     buf->type);
->>>> +		if (ret)
->>>> +			return ret;
->>>>    		ret = vb2_querybuf(&ctx->vq_src, buf);
->>>>    	} else if (ctx->state == MFCINST_RUNNING &&
->>>>    			buf->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
->>>> +		ret = vb2_verify_memory_type(&ctx->vq_dst, buf->memory,
->>>> +					     buf->type);
->>>> +		if (ret)
->>>> +			return ret;
->>>>    		ret = vb2_querybuf(&ctx->vq_dst, buf);
->>>>    		for (i = 0; i < buf->length; i++)
->>>>    			buf->m.planes[i].m.mem_offset += DST_QUEUE_OFF_BASE;
->>>> @@ -940,10 +961,12 @@ static int s5p_mfc_queue_setup(struct vb2_queue *vq,
->>>>    		else
->>>>    			alloc_devs[0] = ctx->dev->mem_dev[BANK_R_CTX];
->>>>    		alloc_devs[1] = ctx->dev->mem_dev[BANK_L_CTX];
->>>> +		memset(ctx->dst_bufs, 0, sizeof(ctx->dst_bufs));
->>>>    	} else if (vq->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE &&
->>>>    		   ctx->state == MFCINST_INIT) {
->>>>    		psize[0] = ctx->dec_src_buf_size;
->>>>    		alloc_devs[0] = ctx->dev->mem_dev[BANK_L_CTX];
->>>> +		memset(ctx->src_bufs, 0, sizeof(ctx->src_bufs));
->>>>    	} else {
->>>>    		mfc_err("This video node is dedicated to decoding. Decoding not initialized\n");
->>>>    		return -EINVAL;
->>>> @@ -959,30 +982,35 @@ static int s5p_mfc_buf_init(struct vb2_buffer *vb)
->>>>    	unsigned int i;
->>>>    
->>>>    	if (vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
->>>> +		dma_addr_t luma, chroma;
->>>> +
->>>>    		if (ctx->capture_state == QUEUE_BUFS_MMAPED)
->>>>    			return 0;
->>>> -		for (i = 0; i < ctx->dst_fmt->num_planes; i++) {
->>>> -			if (IS_ERR_OR_NULL(ERR_PTR(
->>>> -					vb2_dma_contig_plane_dma_addr(vb, i)))) {
->>>> -				mfc_err("Plane mem not allocated\n");
->>>> -				return -EINVAL;
->>>> -			}
->>>> -		}
->>>> -		if (vb2_plane_size(vb, 0) < ctx->luma_size ||
->>>> -			vb2_plane_size(vb, 1) < ctx->chroma_size) {
->>>> -			mfc_err("Plane buffer (CAPTURE) is too small\n");
->>>> +
->>>> +		luma = vb2_dma_contig_plane_dma_addr(vb, 0);
->>>> +		chroma = vb2_dma_contig_plane_dma_addr(vb, 1);
->>>> +		if (!luma || !chroma) {
->>>> +			mfc_err("Plane mem not allocated\n");
->>>>    			return -EINVAL;
->>>>    		}
->>>> +
->>>>    		i = vb->index;
->>>> +		if ((ctx->dst_bufs[i].cookie.raw.luma &&
->>>> +		     ctx->dst_bufs[i].cookie.raw.luma != luma) ||
->>>> +		    (ctx->dst_bufs[i].cookie.raw.chroma &&
->>>> +		     ctx->dst_bufs[i].cookie.raw.chroma != chroma)) {
->>>> +			mfc_err("Changing CAPTURE buffer address during straming is not possible\n");
->>>> +			return -EINVAL;
->>>> +		}
->>>> +
->>>>    		ctx->dst_bufs[i].b = vbuf;
->>>> -		ctx->dst_bufs[i].cookie.raw.luma =
->>>> -					vb2_dma_contig_plane_dma_addr(vb, 0);
->>>> -		ctx->dst_bufs[i].cookie.raw.chroma =
->>>> -					vb2_dma_contig_plane_dma_addr(vb, 1);
->>>> +		ctx->dst_bufs[i].cookie.raw.luma = luma;
->>>> +		ctx->dst_bufs[i].cookie.raw.chroma = chroma;
->>>>    		ctx->dst_bufs_cnt++;
->>>>    	} else if (vq->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->>>> -		if (IS_ERR_OR_NULL(ERR_PTR(
->>>> -					vb2_dma_contig_plane_dma_addr(vb, 0)))) {
->>>> +		dma_addr_t stream = vb2_dma_contig_plane_dma_addr(vb, 0);
->>>> +
->>>> +		if (!stream) {
->>>>    			mfc_err("Plane memory not allocated\n");
->>>>    			return -EINVAL;
->>>>    		}
->>>> @@ -992,9 +1020,14 @@ static int s5p_mfc_buf_init(struct vb2_buffer *vb)
->>>>    		}
->>>>    
->>>>    		i = vb->index;
->>>> +		if (ctx->src_bufs[i].cookie.stream &&
->>>> +		     ctx->src_bufs[i].cookie.stream != stream) {
->>>> +			mfc_err("Changing OUTPUT buffer address during straming is not possible\n");
->>>> +			return -EINVAL;
->>>> +		}
->>>> +
->>>>    		ctx->src_bufs[i].b = vbuf;
->>>> -		ctx->src_bufs[i].cookie.stream =
->>>> -					vb2_dma_contig_plane_dma_addr(vb, 0);
->>>> +		ctx->src_bufs[i].cookie.stream = stream;
->>>>    		ctx->src_bufs_cnt++;
->>>>    	} else {
->>>>    		mfc_err("s5p_mfc_buf_init: unknown queue type\n");
->>>> @@ -1071,6 +1104,7 @@ static void s5p_mfc_buf_queue(struct vb2_buffer *vb)
->>>>    	struct s5p_mfc_dev *dev = ctx->dev;
->>>>    	unsigned long flags;
->>>>    	struct s5p_mfc_buf *mfc_buf;
->>>> +	int wait_flag = 0;
->>>>    
->>>>    	if (vq->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->>>>    		mfc_buf = &ctx->src_bufs[vb->index];
->>>> @@ -1088,12 +1122,25 @@ static void s5p_mfc_buf_queue(struct vb2_buffer *vb)
->>>>    		list_add_tail(&mfc_buf->list, &ctx->dst_queue);
->>>>    		ctx->dst_queue_cnt++;
->>>>    		spin_unlock_irqrestore(&dev->irqlock, flags);
->>>> +		if ((vq->memory == V4L2_MEMORY_USERPTR ||
->>>> +			vq->memory == V4L2_MEMORY_DMABUF) &&
->>>> +			ctx->dst_queue_cnt == ctx->total_dpb_count)
->>>> +			ctx->capture_state = QUEUE_BUFS_MMAPED;
->>>>    	} else {
->>>>    		mfc_err("Unsupported buffer type (%d)\n", vq->type);
->>>>    	}
->>>> -	if (s5p_mfc_ctx_ready(ctx))
->>>> +	if (s5p_mfc_ctx_ready(ctx)) {
->>>>    		set_work_bit_irqsave(ctx);
->>>> +		if ((vq->memory == V4L2_MEMORY_USERPTR ||
->>>> +			vq->memory == V4L2_MEMORY_DMABUF) &&
->>>> +			ctx->state == MFCINST_HEAD_PARSED &&
->>>> +			ctx->capture_state == QUEUE_BUFS_MMAPED)
->>>> +			wait_flag = 1;
->>>> +	}
->>>>    	s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
->>>> +	if (wait_flag)
->>>> +		s5p_mfc_wait_for_done_ctx(ctx,
->>>> +				S5P_MFC_R2H_CMD_INIT_BUFFERS_RET, 0);
->>>>    }
->>>>    
->>>>    static struct vb2_ops s5p_mfc_dec_qops = {
->>>> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->>>> index 7b041e5ee4be..33fc3f3ef48a 100644
->>>> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->>>> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->>>> @@ -1125,11 +1125,11 @@ static int vidioc_reqbufs(struct file *file, void *priv,
->>>>    	struct s5p_mfc_ctx *ctx = fh_to_ctx(priv);
->>>>    	int ret = 0;
->>>>    
->>>> -	/* if memory is not mmp or userptr return error */
->>>> -	if ((reqbufs->memory != V4L2_MEMORY_MMAP) &&
->>>> -		(reqbufs->memory != V4L2_MEMORY_USERPTR))
->>>> -		return -EINVAL;
->>>>    	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
->>>> +		ret = vb2_verify_memory_type(&ctx->vq_dst, reqbufs->memory,
->>>> +					     reqbufs->type);
->>>> +		if (ret)
->>>> +			return ret;
->>>>    		if (reqbufs->count == 0) {
->>>>    			mfc_debug(2, "Freeing buffers\n");
->>>>    			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
->>>> @@ -1159,6 +1159,10 @@ static int vidioc_reqbufs(struct file *file, void *priv,
->>>>    			return -ENOMEM;
->>>>    		}
->>>>    	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->>>> +		ret = vb2_verify_memory_type(&ctx->vq_src, reqbufs->memory,
->>>> +					     reqbufs->type);
->>>> +		if (ret)
->>>> +			return ret;
->>>>    		if (reqbufs->count == 0) {
->>>>    			mfc_debug(2, "Freeing buffers\n");
->>>>    			ret = vb2_reqbufs(&ctx->vq_src, reqbufs);
->>>> @@ -1190,6 +1194,8 @@ static int vidioc_reqbufs(struct file *file, void *priv,
->>>>    			mfc_err("error in vb2_reqbufs() for E(S)\n");
->>>>    			return ret;
->>>>    		}
->>>> +		if (reqbufs->memory != V4L2_MEMORY_MMAP)
->>>> +			ctx->src_bufs_cnt = reqbufs->count;
->>>>    		ctx->output_state = QUEUE_BUFS_REQUESTED;
->>>>    	} else {
->>>>    		mfc_err("invalid buf type\n");
->>>> @@ -1204,11 +1210,11 @@ static int vidioc_querybuf(struct file *file, void *priv,
->>>>    	struct s5p_mfc_ctx *ctx = fh_to_ctx(priv);
->>>>    	int ret = 0;
->>>>    
->>>> -	/* if memory is not mmp or userptr return error */
->>>> -	if ((buf->memory != V4L2_MEMORY_MMAP) &&
->>>> -		(buf->memory != V4L2_MEMORY_USERPTR))
->>>> -		return -EINVAL;
->>>>    	if (buf->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
->>>> +		ret = vb2_verify_memory_type(&ctx->vq_dst, buf->memory,
->>>> +					     buf->type);
->>>> +		if (ret)
->>>> +			return ret;
->>>>    		if (ctx->state != MFCINST_GOT_INST) {
->>>>    			mfc_err("invalid context state: %d\n", ctx->state);
->>>>    			return -EINVAL;
->>>> @@ -1220,6 +1226,10 @@ static int vidioc_querybuf(struct file *file, void *priv,
->>>>    		}
->>>>    		buf->m.planes[0].m.mem_offset += DST_QUEUE_OFF_BASE;
->>>>    	} else if (buf->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->>>> +		ret = vb2_verify_memory_type(&ctx->vq_src, buf->memory,
->>>> +					     buf->type);
->>>> +		if (ret)
->>>> +			return ret;
->>>>    		ret = vb2_querybuf(&ctx->vq_src, buf);
->>>>    		if (ret != 0) {
->>>>    			mfc_err("error in vb2_querybuf() for E(S)\n");
->>>> @@ -1828,6 +1838,7 @@ static int s5p_mfc_queue_setup(struct vb2_queue *vq,
->>>>    			*buf_count = MFC_MAX_BUFFERS;
->>>>    		psize[0] = ctx->enc_dst_buf_size;
->>>>    		alloc_devs[0] = ctx->dev->mem_dev[BANK_L_CTX];
->>>> +		memset(ctx->dst_bufs, 0, sizeof(ctx->dst_bufs));
->>>>    	} else if (vq->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->>>>    		if (ctx->src_fmt)
->>>>    			*plane_count = ctx->src_fmt->num_planes;
->>>> @@ -1849,6 +1860,7 @@ static int s5p_mfc_queue_setup(struct vb2_queue *vq,
->>>>    			alloc_devs[0] = ctx->dev->mem_dev[BANK_R_CTX];
->>>>    			alloc_devs[1] = ctx->dev->mem_dev[BANK_R_CTX];
->>>>    		}
->>>> +		memset(ctx->src_bufs, 0, sizeof(ctx->src_bufs));
->>>>    	} else {
->>>>    		mfc_err("invalid queue type: %d\n", vq->type);
->>>>    		return -EINVAL;
->>>> @@ -1865,25 +1877,47 @@ static int s5p_mfc_buf_init(struct vb2_buffer *vb)
->>>>    	int ret;
->>>>    
->>>>    	if (vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
->>>> +		dma_addr_t stream;
->>>> +
->>>>    		ret = check_vb_with_fmt(ctx->dst_fmt, vb);
->>>>    		if (ret < 0)
->>>>    			return ret;
->>>> +
->>>> +		stream = vb2_dma_contig_plane_dma_addr(vb, 0);
->>>>    		i = vb->index;
->>>> +		if (ctx->dst_bufs[i].cookie.stream &&
->>>> +		    ctx->src_bufs[i].cookie.stream != stream) {
->>>> +			mfc_err("Changing CAPTURE buffer address during straming is not possible\n");
->>>> +			return -EINVAL;
->>>> +		}
->>>> +
->>>>    		ctx->dst_bufs[i].b = vbuf;
->>>> -		ctx->dst_bufs[i].cookie.stream =
->>>> -					vb2_dma_contig_plane_dma_addr(vb, 0);
->>>> +		ctx->dst_bufs[i].cookie.stream = stream;
->>>>    		ctx->dst_bufs_cnt++;
->>>>    	} else if (vq->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->>>> +		dma_addr_t luma, chroma;
->>>> +
->>>>    		ret = check_vb_with_fmt(ctx->src_fmt, vb);
->>>>    		if (ret < 0)
->>>>    			return ret;
->>>> +
->>>> +		luma = vb2_dma_contig_plane_dma_addr(vb, 0);
->>>> +		chroma = vb2_dma_contig_plane_dma_addr(vb, 1);
->>>> +
->>>>    		i = vb->index;
->>>> +		if ((ctx->src_bufs[i].cookie.raw.luma &&
->>>> +		     ctx->src_bufs[i].cookie.raw.luma != luma) ||
->>>> +		    (ctx->src_bufs[i].cookie.raw.chroma &&
->>>> +		     ctx->src_bufs[i].cookie.raw.chroma != chroma)) {
->>>> +			mfc_err("Changing OUTPUT buffer address during straming is not possible\n");
->>>> +			return -EINVAL;
->>>> +		}
->>>> +
->>>>    		ctx->src_bufs[i].b = vbuf;
->>>> -		ctx->src_bufs[i].cookie.raw.luma =
->>>> -					vb2_dma_contig_plane_dma_addr(vb, 0);
->>>> -		ctx->src_bufs[i].cookie.raw.chroma =
->>>> -					vb2_dma_contig_plane_dma_addr(vb, 1);
->>>> -		ctx->src_bufs_cnt++;
->>>> +		ctx->src_bufs[i].cookie.raw.luma = luma;
->>>> +		ctx->src_bufs[i].cookie.raw.chroma = chroma;
->>>> +		if (vb->memory == V4L2_MEMORY_MMAP)
->>>> +			ctx->src_bufs_cnt++;
->>>>    	} else {
->>>>    		mfc_err("invalid queue type: %d\n", vq->type);
->>>>    		return -EINVAL;
+We don't have time machines, so we cannot change it, but Exynos DRM IPP
+extension should never have been merged to mainline in that form.
+
+Exynos IPP subsystem and user-space API will be rewritten, so remove
+current IPP core code and mark existing drivers as BROKEN.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This is a follow-up of the discussion in the following thread:
+https://lists.freedesktop.org/archives/dri-devel/2017-November/158989.html
+
+This patch was a part of the "Exynos DRM: rewrite IPP subsystem and
+userspace API" patchset:
+https://lists.freedesktop.org/archives/dri-devel/2017-November/157130.html
+---
+ drivers/gpu/drm/exynos/Kconfig          |   11 +-
+ drivers/gpu/drm/exynos/Makefile         |    1 -
+ drivers/gpu/drm/exynos/exynos_drm_drv.c |   12 -
+ drivers/gpu/drm/exynos/exynos_drm_drv.h |    2 -
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 1806 -------------------------------
+ drivers/gpu/drm/exynos/exynos_drm_ipp.h |  252 -----
+ include/uapi/drm/exynos_drm.h           |  192 +---
+ 7 files changed, 4 insertions(+), 2272 deletions(-)
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_ipp.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_ipp.h
+
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 5a7c9d8abd6b..735ce47688f9 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -95,26 +95,21 @@ config DRM_EXYNOS_G2D
+ 	help
+ 	  Choose this option if you want to use Exynos G2D for DRM.
+ 
+-config DRM_EXYNOS_IPP
+-	bool "Image Post Processor"
+-	help
+-	  Choose this option if you want to use IPP feature for DRM.
+-
+ config DRM_EXYNOS_FIMC
+ 	bool "FIMC"
+-	depends on DRM_EXYNOS_IPP && MFD_SYSCON
++	depends on BROKEN && MFD_SYSCON
+ 	help
+ 	  Choose this option if you want to use Exynos FIMC for DRM.
+ 
+ config DRM_EXYNOS_ROTATOR
+ 	bool "Rotator"
+-	depends on DRM_EXYNOS_IPP
++	depends on BROKEN
+ 	help
+ 	  Choose this option if you want to use Exynos Rotator for DRM.
+ 
+ config DRM_EXYNOS_GSC
+ 	bool "GScaler"
+-	depends on DRM_EXYNOS_IPP && ARCH_EXYNOS5 && VIDEO_SAMSUNG_EXYNOS_GSC=n
++	depends on BROKEN && ARCH_EXYNOS5 && VIDEO_SAMSUNG_EXYNOS_GSC=n
+ 	help
+ 	  Choose this option if you want to use Exynos GSC for DRM.
+ 
+diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
+index bdf4212dde7b..a51c5459bb13 100644
+--- a/drivers/gpu/drm/exynos/Makefile
++++ b/drivers/gpu/drm/exynos/Makefile
+@@ -18,7 +18,6 @@ exynosdrm-$(CONFIG_DRM_EXYNOS_MIXER)	+= exynos_mixer.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI)	+= exynos_hdmi.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_VIDI)	+= exynos_drm_vidi.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_G2D)	+= exynos_drm_g2d.o
+-exynosdrm-$(CONFIG_DRM_EXYNOS_IPP)	+= exynos_drm_ipp.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_FIMC)	+= exynos_drm_fimc.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_ROTATOR)	+= exynos_drm_rotator.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_GSC)	+= exynos_drm_gsc.o
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 82b72425a42f..41ad19e59f8d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -28,7 +28,6 @@
+ #include "exynos_drm_plane.h"
+ #include "exynos_drm_vidi.h"
+ #include "exynos_drm_g2d.h"
+-#include "exynos_drm_ipp.h"
+ #include "exynos_drm_iommu.h"
+ 
+ #define DRIVER_NAME	"exynos"
+@@ -115,14 +114,6 @@ static const struct drm_ioctl_desc exynos_ioctls[] = {
+ 			DRM_AUTH | DRM_RENDER_ALLOW),
+ 	DRM_IOCTL_DEF_DRV(EXYNOS_G2D_EXEC, exynos_g2d_exec_ioctl,
+ 			DRM_AUTH | DRM_RENDER_ALLOW),
+-	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_PROPERTY, exynos_drm_ipp_get_property,
+-			DRM_AUTH | DRM_RENDER_ALLOW),
+-	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_SET_PROPERTY, exynos_drm_ipp_set_property,
+-			DRM_AUTH | DRM_RENDER_ALLOW),
+-	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_QUEUE_BUF, exynos_drm_ipp_queue_buf,
+-			DRM_AUTH | DRM_RENDER_ALLOW),
+-	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_CMD_CTRL, exynos_drm_ipp_cmd_ctrl,
+-			DRM_AUTH | DRM_RENDER_ALLOW),
+ };
+ 
+ static const struct file_operations exynos_drm_driver_fops = {
+@@ -262,9 +253,6 @@ static struct exynos_drm_driver_info exynos_drm_drivers[] = {
+ 		DRV_PTR(rotator_driver, CONFIG_DRM_EXYNOS_ROTATOR),
+ 	}, {
+ 		DRV_PTR(gsc_driver, CONFIG_DRM_EXYNOS_GSC),
+-	}, {
+-		DRV_PTR(ipp_driver, CONFIG_DRM_EXYNOS_IPP),
+-		DRM_VIRTUAL_DEVICE
+ 	}, {
+ 		&exynos_drm_platform_driver,
+ 		DRM_VIRTUAL_DEVICE
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index c6847fa708fa..1b5e2ecb240c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -188,7 +188,6 @@ struct exynos_drm_g2d_private {
+ 
+ struct drm_exynos_file_private {
+ 	struct exynos_drm_g2d_private	*g2d_priv;
+-	struct device			*ipp_dev;
+ };
+ 
+ /*
+@@ -296,6 +295,5 @@ extern struct platform_driver g2d_driver;
+ extern struct platform_driver fimc_driver;
+ extern struct platform_driver rotator_driver;
+ extern struct platform_driver gsc_driver;
+-extern struct platform_driver ipp_driver;
+ extern struct platform_driver mic_driver;
+ #endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+deleted file mode 100644
+index 3edda18cc2d2..000000000000
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ /dev/null
+@@ -1,1806 +0,0 @@
+-/*
+- * Copyright (C) 2012 Samsung Electronics Co.Ltd
+- * Authors:
+- *	Eunchul Kim <chulspro.kim@samsung.com>
+- *	Jinyoung Jeon <jy0.jeon@samsung.com>
+- *	Sangmin Lee <lsmin.lee@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- */
+-#include <linux/kernel.h>
+-#include <linux/platform_device.h>
+-#include <linux/types.h>
+-#include <linux/clk.h>
+-#include <linux/pm_runtime.h>
+-
+-#include <drm/drmP.h>
+-#include <drm/exynos_drm.h>
+-#include "exynos_drm_drv.h"
+-#include "exynos_drm_gem.h"
+-#include "exynos_drm_ipp.h"
+-#include "exynos_drm_iommu.h"
+-
+-/*
+- * IPP stands for Image Post Processing and
+- * supports image scaler/rotator and input/output DMA operations.
+- * using FIMC, GSC, Rotator, so on.
+- * IPP is integration device driver of same attribute h/w
+- */
+-
+-/*
+- * TODO
+- * 1. expand command control id.
+- * 2. integrate	property and config.
+- * 3. removed send_event id check routine.
+- * 4. compare send_event id if needed.
+- * 5. free subdrv_remove notifier callback list if needed.
+- * 6. need to check subdrv_open about multi-open.
+- * 7. need to power_on implement power and sysmmu ctrl.
+- */
+-
+-#define get_ipp_context(dev)	platform_get_drvdata(to_platform_device(dev))
+-#define ipp_is_m2m_cmd(c)	(c == IPP_CMD_M2M)
+-
+-/*
+- * A structure of event.
+- *
+- * @base: base of event.
+- * @event: ipp event.
+- */
+-struct drm_exynos_ipp_send_event {
+-	struct drm_pending_event	base;
+-	struct drm_exynos_ipp_event	event;
+-};
+-
+-/*
+- * A structure of memory node.
+- *
+- * @list: list head to memory queue information.
+- * @ops_id: id of operations.
+- * @prop_id: id of property.
+- * @buf_id: id of buffer.
+- * @buf_info: gem objects and dma address, size.
+- * @filp: a pointer to drm_file.
+- */
+-struct drm_exynos_ipp_mem_node {
+-	struct list_head	list;
+-	enum drm_exynos_ops_id	ops_id;
+-	u32	prop_id;
+-	u32	buf_id;
+-	struct drm_exynos_ipp_buf_info	buf_info;
+-};
+-
+-/*
+- * A structure of ipp context.
+- *
+- * @subdrv: prepare initialization using subdrv.
+- * @ipp_lock: lock for synchronization of access to ipp_idr.
+- * @prop_lock: lock for synchronization of access to prop_idr.
+- * @ipp_idr: ipp driver idr.
+- * @prop_idr: property idr.
+- * @event_workq: event work queue.
+- * @cmd_workq: command work queue.
+- */
+-struct ipp_context {
+-	struct exynos_drm_subdrv	subdrv;
+-	struct mutex	ipp_lock;
+-	struct mutex	prop_lock;
+-	struct idr	ipp_idr;
+-	struct idr	prop_idr;
+-	struct workqueue_struct	*event_workq;
+-	struct workqueue_struct	*cmd_workq;
+-};
+-
+-static LIST_HEAD(exynos_drm_ippdrv_list);
+-static DEFINE_MUTEX(exynos_drm_ippdrv_lock);
+-static BLOCKING_NOTIFIER_HEAD(exynos_drm_ippnb_list);
+-
+-int exynos_drm_ippdrv_register(struct exynos_drm_ippdrv *ippdrv)
+-{
+-	mutex_lock(&exynos_drm_ippdrv_lock);
+-	list_add_tail(&ippdrv->drv_list, &exynos_drm_ippdrv_list);
+-	mutex_unlock(&exynos_drm_ippdrv_lock);
+-
+-	return 0;
+-}
+-
+-int exynos_drm_ippdrv_unregister(struct exynos_drm_ippdrv *ippdrv)
+-{
+-	mutex_lock(&exynos_drm_ippdrv_lock);
+-	list_del(&ippdrv->drv_list);
+-	mutex_unlock(&exynos_drm_ippdrv_lock);
+-
+-	return 0;
+-}
+-
+-static int ipp_create_id(struct idr *id_idr, struct mutex *lock, void *obj)
+-{
+-	int ret;
+-
+-	mutex_lock(lock);
+-	ret = idr_alloc(id_idr, obj, 1, 0, GFP_KERNEL);
+-	mutex_unlock(lock);
+-
+-	return ret;
+-}
+-
+-static void ipp_remove_id(struct idr *id_idr, struct mutex *lock, u32 id)
+-{
+-	mutex_lock(lock);
+-	idr_remove(id_idr, id);
+-	mutex_unlock(lock);
+-}
+-
+-static void *ipp_find_obj(struct idr *id_idr, struct mutex *lock, u32 id)
+-{
+-	void *obj;
+-
+-	mutex_lock(lock);
+-	obj = idr_find(id_idr, id);
+-	mutex_unlock(lock);
+-
+-	return obj;
+-}
+-
+-static int ipp_check_driver(struct exynos_drm_ippdrv *ippdrv,
+-			    struct drm_exynos_ipp_property *property)
+-{
+-	if (ippdrv->dedicated || (!ipp_is_m2m_cmd(property->cmd) &&
+-				  !pm_runtime_suspended(ippdrv->dev)))
+-		return -EBUSY;
+-
+-	if (ippdrv->check_property &&
+-	    ippdrv->check_property(ippdrv->dev, property))
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-static struct exynos_drm_ippdrv *ipp_find_driver(struct ipp_context *ctx,
+-		struct drm_exynos_ipp_property *property)
+-{
+-	struct exynos_drm_ippdrv *ippdrv;
+-	u32 ipp_id = property->ipp_id;
+-	int ret;
+-
+-	if (ipp_id) {
+-		ippdrv = ipp_find_obj(&ctx->ipp_idr, &ctx->ipp_lock, ipp_id);
+-		if (!ippdrv) {
+-			DRM_DEBUG("ipp%d driver not found\n", ipp_id);
+-			return ERR_PTR(-ENODEV);
+-		}
+-
+-		ret = ipp_check_driver(ippdrv, property);
+-		if (ret < 0) {
+-			DRM_DEBUG("ipp%d driver check error %d\n", ipp_id, ret);
+-			return ERR_PTR(ret);
+-		}
+-
+-		return ippdrv;
+-	} else {
+-		list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
+-			ret = ipp_check_driver(ippdrv, property);
+-			if (ret == 0)
+-				return ippdrv;
+-		}
+-
+-		DRM_DEBUG("cannot find driver suitable for given property.\n");
+-	}
+-
+-	return ERR_PTR(-ENODEV);
+-}
+-
+-static struct exynos_drm_ippdrv *ipp_find_drv_by_handle(u32 prop_id)
+-{
+-	struct exynos_drm_ippdrv *ippdrv;
+-	struct drm_exynos_ipp_cmd_node *c_node;
+-	int count = 0;
+-
+-	DRM_DEBUG_KMS("prop_id[%d]\n", prop_id);
+-
+-	/*
+-	 * This case is search ipp driver by prop_id handle.
+-	 * sometimes, ipp subsystem find driver by prop_id.
+-	 * e.g PAUSE state, queue buf, command control.
+-	 */
+-	list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
+-		DRM_DEBUG_KMS("count[%d]ippdrv[%pK]\n", count++, ippdrv);
+-
+-		mutex_lock(&ippdrv->cmd_lock);
+-		list_for_each_entry(c_node, &ippdrv->cmd_list, list) {
+-			if (c_node->property.prop_id == prop_id) {
+-				mutex_unlock(&ippdrv->cmd_lock);
+-				return ippdrv;
+-			}
+-		}
+-		mutex_unlock(&ippdrv->cmd_lock);
+-	}
+-
+-	return ERR_PTR(-ENODEV);
+-}
+-
+-int exynos_drm_ipp_get_property(struct drm_device *drm_dev, void *data,
+-		struct drm_file *file)
+-{
+-	struct drm_exynos_file_private *file_priv = file->driver_priv;
+-	struct device *dev = file_priv->ipp_dev;
+-	struct ipp_context *ctx = get_ipp_context(dev);
+-	struct drm_exynos_ipp_prop_list *prop_list = data;
+-	struct exynos_drm_ippdrv *ippdrv;
+-	int count = 0;
+-
+-	if (!ctx) {
+-		DRM_ERROR("invalid context.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (!prop_list) {
+-		DRM_ERROR("invalid property parameter.\n");
+-		return -EINVAL;
+-	}
+-
+-	DRM_DEBUG_KMS("ipp_id[%d]\n", prop_list->ipp_id);
+-
+-	if (!prop_list->ipp_id) {
+-		list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list)
+-			count++;
+-
+-		/*
+-		 * Supports ippdrv list count for user application.
+-		 * First step user application getting ippdrv count.
+-		 * and second step getting ippdrv capability using ipp_id.
+-		 */
+-		prop_list->count = count;
+-	} else {
+-		/*
+-		 * Getting ippdrv capability by ipp_id.
+-		 * some device not supported wb, output interface.
+-		 * so, user application detect correct ipp driver
+-		 * using this ioctl.
+-		 */
+-		ippdrv = ipp_find_obj(&ctx->ipp_idr, &ctx->ipp_lock,
+-						prop_list->ipp_id);
+-		if (!ippdrv) {
+-			DRM_ERROR("not found ipp%d driver.\n",
+-					prop_list->ipp_id);
+-			return -ENODEV;
+-		}
+-
+-		*prop_list = ippdrv->prop_list;
+-	}
+-
+-	return 0;
+-}
+-
+-static void ipp_print_property(struct drm_exynos_ipp_property *property,
+-		int idx)
+-{
+-	struct drm_exynos_ipp_config *config = &property->config[idx];
+-	struct drm_exynos_pos *pos = &config->pos;
+-	struct drm_exynos_sz *sz = &config->sz;
+-
+-	DRM_DEBUG_KMS("prop_id[%d]ops[%s]fmt[0x%x]\n",
+-		property->prop_id, idx ? "dst" : "src", config->fmt);
+-
+-	DRM_DEBUG_KMS("pos[%d %d %d %d]sz[%d %d]f[%d]r[%d]\n",
+-		pos->x, pos->y, pos->w, pos->h,
+-		sz->hsize, sz->vsize, config->flip, config->degree);
+-}
+-
+-static struct drm_exynos_ipp_cmd_work *ipp_create_cmd_work(void)
+-{
+-	struct drm_exynos_ipp_cmd_work *cmd_work;
+-
+-	cmd_work = kzalloc(sizeof(*cmd_work), GFP_KERNEL);
+-	if (!cmd_work)
+-		return ERR_PTR(-ENOMEM);
+-
+-	INIT_WORK((struct work_struct *)cmd_work, ipp_sched_cmd);
+-
+-	return cmd_work;
+-}
+-
+-static struct drm_exynos_ipp_event_work *ipp_create_event_work(void)
+-{
+-	struct drm_exynos_ipp_event_work *event_work;
+-
+-	event_work = kzalloc(sizeof(*event_work), GFP_KERNEL);
+-	if (!event_work)
+-		return ERR_PTR(-ENOMEM);
+-
+-	INIT_WORK(&event_work->work, ipp_sched_event);
+-
+-	return event_work;
+-}
+-
+-int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
+-		struct drm_file *file)
+-{
+-	struct drm_exynos_file_private *file_priv = file->driver_priv;
+-	struct device *dev = file_priv->ipp_dev;
+-	struct ipp_context *ctx = get_ipp_context(dev);
+-	struct drm_exynos_ipp_property *property = data;
+-	struct exynos_drm_ippdrv *ippdrv;
+-	struct drm_exynos_ipp_cmd_node *c_node;
+-	u32 prop_id;
+-	int ret, i;
+-
+-	if (!ctx) {
+-		DRM_ERROR("invalid context.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (!property) {
+-		DRM_ERROR("invalid property parameter.\n");
+-		return -EINVAL;
+-	}
+-
+-	prop_id = property->prop_id;
+-
+-	/*
+-	 * This is log print for user application property.
+-	 * user application set various property.
+-	 */
+-	for_each_ipp_ops(i)
+-		ipp_print_property(property, i);
+-
+-	/*
+-	 * In case prop_id is not zero try to set existing property.
+-	 */
+-	if (prop_id) {
+-		c_node = ipp_find_obj(&ctx->prop_idr, &ctx->prop_lock, prop_id);
+-
+-		if (!c_node || c_node->filp != file) {
+-			DRM_DEBUG_KMS("prop_id[%d] not found\n", prop_id);
+-			return -EINVAL;
+-		}
+-
+-		if (c_node->state != IPP_STATE_STOP) {
+-			DRM_DEBUG_KMS("prop_id[%d] not stopped\n", prop_id);
+-			return -EINVAL;
+-		}
+-
+-		c_node->property = *property;
+-
+-		return 0;
+-	}
+-
+-	/* find ipp driver using ipp id */
+-	ippdrv = ipp_find_driver(ctx, property);
+-	if (IS_ERR(ippdrv)) {
+-		DRM_ERROR("failed to get ipp driver.\n");
+-		return -EINVAL;
+-	}
+-
+-	/* allocate command node */
+-	c_node = kzalloc(sizeof(*c_node), GFP_KERNEL);
+-	if (!c_node)
+-		return -ENOMEM;
+-
+-	ret = ipp_create_id(&ctx->prop_idr, &ctx->prop_lock, c_node);
+-	if (ret < 0) {
+-		DRM_ERROR("failed to create id.\n");
+-		goto err_clear;
+-	}
+-	property->prop_id = ret;
+-
+-	DRM_DEBUG_KMS("created prop_id[%d]cmd[%d]ippdrv[%pK]\n",
+-		property->prop_id, property->cmd, ippdrv);
+-
+-	/* stored property information and ippdrv in private data */
+-	c_node->property = *property;
+-	c_node->state = IPP_STATE_IDLE;
+-	c_node->filp = file;
+-
+-	c_node->start_work = ipp_create_cmd_work();
+-	if (IS_ERR(c_node->start_work)) {
+-		DRM_ERROR("failed to create start work.\n");
+-		ret = PTR_ERR(c_node->start_work);
+-		goto err_remove_id;
+-	}
+-
+-	c_node->stop_work = ipp_create_cmd_work();
+-	if (IS_ERR(c_node->stop_work)) {
+-		DRM_ERROR("failed to create stop work.\n");
+-		ret = PTR_ERR(c_node->stop_work);
+-		goto err_free_start;
+-	}
+-
+-	c_node->event_work = ipp_create_event_work();
+-	if (IS_ERR(c_node->event_work)) {
+-		DRM_ERROR("failed to create event work.\n");
+-		ret = PTR_ERR(c_node->event_work);
+-		goto err_free_stop;
+-	}
+-
+-	mutex_init(&c_node->lock);
+-	mutex_init(&c_node->mem_lock);
+-	mutex_init(&c_node->event_lock);
+-
+-	init_completion(&c_node->start_complete);
+-	init_completion(&c_node->stop_complete);
+-
+-	for_each_ipp_ops(i)
+-		INIT_LIST_HEAD(&c_node->mem_list[i]);
+-
+-	INIT_LIST_HEAD(&c_node->event_list);
+-	mutex_lock(&ippdrv->cmd_lock);
+-	list_add_tail(&c_node->list, &ippdrv->cmd_list);
+-	mutex_unlock(&ippdrv->cmd_lock);
+-
+-	/* make dedicated state without m2m */
+-	if (!ipp_is_m2m_cmd(property->cmd))
+-		ippdrv->dedicated = true;
+-
+-	return 0;
+-
+-err_free_stop:
+-	kfree(c_node->stop_work);
+-err_free_start:
+-	kfree(c_node->start_work);
+-err_remove_id:
+-	ipp_remove_id(&ctx->prop_idr, &ctx->prop_lock, property->prop_id);
+-err_clear:
+-	kfree(c_node);
+-	return ret;
+-}
+-
+-static int ipp_validate_mem_node(struct drm_device *drm_dev,
+-				 struct drm_exynos_ipp_mem_node *m_node,
+-				 struct drm_exynos_ipp_cmd_node *c_node)
+-{
+-	struct drm_exynos_ipp_config *ipp_cfg;
+-	unsigned int num_plane;
+-	unsigned long size, buf_size = 0, plane_size, img_size = 0;
+-	unsigned int bpp, width, height;
+-	int i;
+-
+-	ipp_cfg = &c_node->property.config[m_node->ops_id];
+-	num_plane = drm_format_num_planes(ipp_cfg->fmt);
+-
+-	/**
+-	 * This is a rather simplified validation of a memory node.
+-	 * It basically verifies provided gem object handles
+-	 * and the buffer sizes with respect to current configuration.
+-	 * This is not the best that can be done
+-	 * but it seems more than enough
+-	 */
+-	for (i = 0; i < num_plane; ++i) {
+-		width = ipp_cfg->sz.hsize;
+-		height = ipp_cfg->sz.vsize;
+-		bpp = drm_format_plane_cpp(ipp_cfg->fmt, i);
+-
+-		/*
+-		 * The result of drm_format_plane_cpp() for chroma planes must
+-		 * be used with drm_format_xxxx_chroma_subsampling() for
+-		 * correct result.
+-		 */
+-		if (i > 0) {
+-			width /= drm_format_horz_chroma_subsampling(
+-								ipp_cfg->fmt);
+-			height /= drm_format_vert_chroma_subsampling(
+-								ipp_cfg->fmt);
+-		}
+-		plane_size = width * height * bpp;
+-		img_size += plane_size;
+-
+-		if (m_node->buf_info.handles[i]) {
+-			size = exynos_drm_gem_get_size(drm_dev,
+-					m_node->buf_info.handles[i],
+-					c_node->filp);
+-			if (plane_size > size) {
+-				DRM_ERROR(
+-					"buffer %d is smaller than required\n",
+-					i);
+-				return -EINVAL;
+-			}
+-
+-			buf_size += size;
+-		}
+-	}
+-
+-	if (buf_size < img_size) {
+-		DRM_ERROR("size of buffers(%lu) is smaller than image(%lu)\n",
+-			buf_size, img_size);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static int ipp_put_mem_node(struct drm_device *drm_dev,
+-		struct drm_exynos_ipp_cmd_node *c_node,
+-		struct drm_exynos_ipp_mem_node *m_node)
+-{
+-	int i;
+-
+-	DRM_DEBUG_KMS("node[%pK]\n", m_node);
+-
+-	if (!m_node) {
+-		DRM_ERROR("invalid dequeue node.\n");
+-		return -EFAULT;
+-	}
+-
+-	DRM_DEBUG_KMS("ops_id[%d]\n", m_node->ops_id);
+-
+-	/* put gem buffer */
+-	for_each_ipp_planar(i) {
+-		unsigned long handle = m_node->buf_info.handles[i];
+-		if (handle)
+-			exynos_drm_gem_put_dma_addr(drm_dev, handle,
+-							c_node->filp);
+-	}
+-
+-	list_del(&m_node->list);
+-	kfree(m_node);
+-
+-	return 0;
+-}
+-
+-static struct drm_exynos_ipp_mem_node
+-		*ipp_get_mem_node(struct drm_device *drm_dev,
+-		struct drm_exynos_ipp_cmd_node *c_node,
+-		struct drm_exynos_ipp_queue_buf *qbuf)
+-{
+-	struct drm_exynos_ipp_mem_node *m_node;
+-	struct drm_exynos_ipp_buf_info *buf_info;
+-	int i;
+-
+-	m_node = kzalloc(sizeof(*m_node), GFP_KERNEL);
+-	if (!m_node)
+-		return ERR_PTR(-ENOMEM);
+-
+-	buf_info = &m_node->buf_info;
+-
+-	/* operations, buffer id */
+-	m_node->ops_id = qbuf->ops_id;
+-	m_node->prop_id = qbuf->prop_id;
+-	m_node->buf_id = qbuf->buf_id;
+-	INIT_LIST_HEAD(&m_node->list);
+-
+-	DRM_DEBUG_KMS("m_node[%pK]ops_id[%d]\n", m_node, qbuf->ops_id);
+-	DRM_DEBUG_KMS("prop_id[%d]buf_id[%d]\n", qbuf->prop_id, m_node->buf_id);
+-
+-	for_each_ipp_planar(i) {
+-		DRM_DEBUG_KMS("i[%d]handle[0x%x]\n", i, qbuf->handle[i]);
+-
+-		/* get dma address by handle */
+-		if (qbuf->handle[i]) {
+-			dma_addr_t *addr;
+-
+-			addr = exynos_drm_gem_get_dma_addr(drm_dev,
+-					qbuf->handle[i], c_node->filp);
+-			if (IS_ERR(addr)) {
+-				DRM_ERROR("failed to get addr.\n");
+-				ipp_put_mem_node(drm_dev, c_node, m_node);
+-				return ERR_PTR(-EFAULT);
+-			}
+-
+-			buf_info->handles[i] = qbuf->handle[i];
+-			buf_info->base[i] = *addr;
+-			DRM_DEBUG_KMS("i[%d]base[%pad]hd[0x%lx]\n", i,
+-				      &buf_info->base[i], buf_info->handles[i]);
+-		}
+-	}
+-
+-	mutex_lock(&c_node->mem_lock);
+-	if (ipp_validate_mem_node(drm_dev, m_node, c_node)) {
+-		ipp_put_mem_node(drm_dev, c_node, m_node);
+-		mutex_unlock(&c_node->mem_lock);
+-		return ERR_PTR(-EFAULT);
+-	}
+-	list_add_tail(&m_node->list, &c_node->mem_list[qbuf->ops_id]);
+-	mutex_unlock(&c_node->mem_lock);
+-
+-	return m_node;
+-}
+-
+-static void ipp_clean_mem_nodes(struct drm_device *drm_dev,
+-			       struct drm_exynos_ipp_cmd_node *c_node, int ops)
+-{
+-	struct drm_exynos_ipp_mem_node *m_node, *tm_node;
+-	struct list_head *head = &c_node->mem_list[ops];
+-
+-	mutex_lock(&c_node->mem_lock);
+-
+-	list_for_each_entry_safe(m_node, tm_node, head, list) {
+-		int ret;
+-
+-		ret = ipp_put_mem_node(drm_dev, c_node, m_node);
+-		if (ret)
+-			DRM_ERROR("failed to put m_node.\n");
+-	}
+-
+-	mutex_unlock(&c_node->mem_lock);
+-}
+-
+-static int ipp_get_event(struct drm_device *drm_dev,
+-		struct drm_exynos_ipp_cmd_node *c_node,
+-		struct drm_exynos_ipp_queue_buf *qbuf)
+-{
+-	struct drm_exynos_ipp_send_event *e;
+-	int ret;
+-
+-	DRM_DEBUG_KMS("ops_id[%d]buf_id[%d]\n", qbuf->ops_id, qbuf->buf_id);
+-
+-	e = kzalloc(sizeof(*e), GFP_KERNEL);
+-	if (!e)
+-		return -ENOMEM;
+-
+-	/* make event */
+-	e->event.base.type = DRM_EXYNOS_IPP_EVENT;
+-	e->event.base.length = sizeof(e->event);
+-	e->event.user_data = qbuf->user_data;
+-	e->event.prop_id = qbuf->prop_id;
+-	e->event.buf_id[EXYNOS_DRM_OPS_DST] = qbuf->buf_id;
+-
+-	ret = drm_event_reserve_init(drm_dev, c_node->filp, &e->base, &e->event.base);
+-	if (ret) {
+-		kfree(e);
+-		return ret;
+-	}
+-
+-	mutex_lock(&c_node->event_lock);
+-	list_add_tail(&e->base.link, &c_node->event_list);
+-	mutex_unlock(&c_node->event_lock);
+-
+-	return 0;
+-}
+-
+-static void ipp_put_event(struct drm_exynos_ipp_cmd_node *c_node,
+-		struct drm_exynos_ipp_queue_buf *qbuf)
+-{
+-	struct drm_exynos_ipp_send_event *e, *te;
+-	int count = 0;
+-
+-	mutex_lock(&c_node->event_lock);
+-	list_for_each_entry_safe(e, te, &c_node->event_list, base.link) {
+-		DRM_DEBUG_KMS("count[%d]e[%pK]\n", count++, e);
+-
+-		/*
+-		 * qbuf == NULL condition means all event deletion.
+-		 * stop operations want to delete all event list.
+-		 * another case delete only same buf id.
+-		 */
+-		if (!qbuf) {
+-			/* delete list */
+-			list_del(&e->base.link);
+-			kfree(e);
+-		}
+-
+-		/* compare buffer id */
+-		if (qbuf && (qbuf->buf_id ==
+-		    e->event.buf_id[EXYNOS_DRM_OPS_DST])) {
+-			/* delete list */
+-			list_del(&e->base.link);
+-			kfree(e);
+-			goto out_unlock;
+-		}
+-	}
+-
+-out_unlock:
+-	mutex_unlock(&c_node->event_lock);
+-	return;
+-}
+-
+-static void ipp_clean_cmd_node(struct ipp_context *ctx,
+-				struct drm_exynos_ipp_cmd_node *c_node)
+-{
+-	int i;
+-
+-	/* cancel works */
+-	cancel_work_sync(&c_node->start_work->work);
+-	cancel_work_sync(&c_node->stop_work->work);
+-	cancel_work_sync(&c_node->event_work->work);
+-
+-	/* put event */
+-	ipp_put_event(c_node, NULL);
+-
+-	for_each_ipp_ops(i)
+-		ipp_clean_mem_nodes(ctx->subdrv.drm_dev, c_node, i);
+-
+-	/* delete list */
+-	list_del(&c_node->list);
+-
+-	ipp_remove_id(&ctx->prop_idr, &ctx->prop_lock,
+-			c_node->property.prop_id);
+-
+-	/* destroy mutex */
+-	mutex_destroy(&c_node->lock);
+-	mutex_destroy(&c_node->mem_lock);
+-	mutex_destroy(&c_node->event_lock);
+-
+-	/* free command node */
+-	kfree(c_node->start_work);
+-	kfree(c_node->stop_work);
+-	kfree(c_node->event_work);
+-	kfree(c_node);
+-}
+-
+-static bool ipp_check_mem_list(struct drm_exynos_ipp_cmd_node *c_node)
+-{
+-	switch (c_node->property.cmd) {
+-	case IPP_CMD_WB:
+-		return !list_empty(&c_node->mem_list[EXYNOS_DRM_OPS_DST]);
+-	case IPP_CMD_OUTPUT:
+-		return !list_empty(&c_node->mem_list[EXYNOS_DRM_OPS_SRC]);
+-	case IPP_CMD_M2M:
+-	default:
+-		return !list_empty(&c_node->mem_list[EXYNOS_DRM_OPS_SRC]) &&
+-		       !list_empty(&c_node->mem_list[EXYNOS_DRM_OPS_DST]);
+-	}
+-}
+-
+-static struct drm_exynos_ipp_mem_node
+-		*ipp_find_mem_node(struct drm_exynos_ipp_cmd_node *c_node,
+-		struct drm_exynos_ipp_queue_buf *qbuf)
+-{
+-	struct drm_exynos_ipp_mem_node *m_node;
+-	struct list_head *head;
+-	int count = 0;
+-
+-	DRM_DEBUG_KMS("buf_id[%d]\n", qbuf->buf_id);
+-
+-	/* source/destination memory list */
+-	head = &c_node->mem_list[qbuf->ops_id];
+-
+-	/* find memory node from memory list */
+-	list_for_each_entry(m_node, head, list) {
+-		DRM_DEBUG_KMS("count[%d]m_node[%pK]\n", count++, m_node);
+-
+-		/* compare buffer id */
+-		if (m_node->buf_id == qbuf->buf_id)
+-			return m_node;
+-	}
+-
+-	return NULL;
+-}
+-
+-static int ipp_set_mem_node(struct exynos_drm_ippdrv *ippdrv,
+-		struct drm_exynos_ipp_cmd_node *c_node,
+-		struct drm_exynos_ipp_mem_node *m_node)
+-{
+-	struct exynos_drm_ipp_ops *ops = NULL;
+-	int ret = 0;
+-
+-	DRM_DEBUG_KMS("node[%pK]\n", m_node);
+-
+-	if (!m_node) {
+-		DRM_ERROR("invalid queue node.\n");
+-		return -EFAULT;
+-	}
+-
+-	DRM_DEBUG_KMS("ops_id[%d]\n", m_node->ops_id);
+-
+-	/* get operations callback */
+-	ops = ippdrv->ops[m_node->ops_id];
+-	if (!ops) {
+-		DRM_ERROR("not support ops.\n");
+-		return -EFAULT;
+-	}
+-
+-	/* set address and enable irq */
+-	if (ops->set_addr) {
+-		ret = ops->set_addr(ippdrv->dev, &m_node->buf_info,
+-			m_node->buf_id, IPP_BUF_ENQUEUE);
+-		if (ret) {
+-			DRM_ERROR("failed to set addr.\n");
+-			return ret;
+-		}
+-	}
+-
+-	return ret;
+-}
+-
+-static void ipp_handle_cmd_work(struct device *dev,
+-		struct exynos_drm_ippdrv *ippdrv,
+-		struct drm_exynos_ipp_cmd_work *cmd_work,
+-		struct drm_exynos_ipp_cmd_node *c_node)
+-{
+-	struct ipp_context *ctx = get_ipp_context(dev);
+-
+-	cmd_work->ippdrv = ippdrv;
+-	cmd_work->c_node = c_node;
+-	queue_work(ctx->cmd_workq, &cmd_work->work);
+-}
+-
+-static int ipp_queue_buf_with_run(struct device *dev,
+-		struct drm_exynos_ipp_cmd_node *c_node,
+-		struct drm_exynos_ipp_mem_node *m_node,
+-		struct drm_exynos_ipp_queue_buf *qbuf)
+-{
+-	struct exynos_drm_ippdrv *ippdrv;
+-	struct drm_exynos_ipp_property *property;
+-	struct exynos_drm_ipp_ops *ops;
+-	int ret;
+-
+-	ippdrv = ipp_find_drv_by_handle(qbuf->prop_id);
+-	if (IS_ERR(ippdrv)) {
+-		DRM_ERROR("failed to get ipp driver.\n");
+-		return -EFAULT;
+-	}
+-
+-	ops = ippdrv->ops[qbuf->ops_id];
+-	if (!ops) {
+-		DRM_ERROR("failed to get ops.\n");
+-		return -EFAULT;
+-	}
+-
+-	property = &c_node->property;
+-
+-	if (c_node->state != IPP_STATE_START) {
+-		DRM_DEBUG_KMS("bypass for invalid state.\n");
+-		return 0;
+-	}
+-
+-	mutex_lock(&c_node->mem_lock);
+-	if (!ipp_check_mem_list(c_node)) {
+-		mutex_unlock(&c_node->mem_lock);
+-		DRM_DEBUG_KMS("empty memory.\n");
+-		return 0;
+-	}
+-
+-	/*
+-	 * If set destination buffer and enabled clock,
+-	 * then m2m operations need start operations at queue_buf
+-	 */
+-	if (ipp_is_m2m_cmd(property->cmd)) {
+-		struct drm_exynos_ipp_cmd_work *cmd_work = c_node->start_work;
+-
+-		cmd_work->ctrl = IPP_CTRL_PLAY;
+-		ipp_handle_cmd_work(dev, ippdrv, cmd_work, c_node);
+-	} else {
+-		ret = ipp_set_mem_node(ippdrv, c_node, m_node);
+-		if (ret) {
+-			mutex_unlock(&c_node->mem_lock);
+-			DRM_ERROR("failed to set m node.\n");
+-			return ret;
+-		}
+-	}
+-	mutex_unlock(&c_node->mem_lock);
+-
+-	return 0;
+-}
+-
+-static void ipp_clean_queue_buf(struct drm_device *drm_dev,
+-		struct drm_exynos_ipp_cmd_node *c_node,
+-		struct drm_exynos_ipp_queue_buf *qbuf)
+-{
+-	struct drm_exynos_ipp_mem_node *m_node, *tm_node;
+-
+-	/* delete list */
+-	mutex_lock(&c_node->mem_lock);
+-	list_for_each_entry_safe(m_node, tm_node,
+-		&c_node->mem_list[qbuf->ops_id], list) {
+-		if (m_node->buf_id == qbuf->buf_id &&
+-		    m_node->ops_id == qbuf->ops_id)
+-			ipp_put_mem_node(drm_dev, c_node, m_node);
+-	}
+-	mutex_unlock(&c_node->mem_lock);
+-}
+-
+-int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
+-		struct drm_file *file)
+-{
+-	struct drm_exynos_file_private *file_priv = file->driver_priv;
+-	struct device *dev = file_priv->ipp_dev;
+-	struct ipp_context *ctx = get_ipp_context(dev);
+-	struct drm_exynos_ipp_queue_buf *qbuf = data;
+-	struct drm_exynos_ipp_cmd_node *c_node;
+-	struct drm_exynos_ipp_mem_node *m_node;
+-	int ret;
+-
+-	if (!qbuf) {
+-		DRM_ERROR("invalid buf parameter.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (qbuf->ops_id >= EXYNOS_DRM_OPS_MAX) {
+-		DRM_ERROR("invalid ops parameter.\n");
+-		return -EINVAL;
+-	}
+-
+-	DRM_DEBUG_KMS("prop_id[%d]ops_id[%s]buf_id[%d]buf_type[%d]\n",
+-		qbuf->prop_id, qbuf->ops_id ? "dst" : "src",
+-		qbuf->buf_id, qbuf->buf_type);
+-
+-	/* find command node */
+-	c_node = ipp_find_obj(&ctx->prop_idr, &ctx->prop_lock,
+-		qbuf->prop_id);
+-	if (!c_node || c_node->filp != file) {
+-		DRM_ERROR("failed to get command node.\n");
+-		return -ENODEV;
+-	}
+-
+-	/* buffer control */
+-	switch (qbuf->buf_type) {
+-	case IPP_BUF_ENQUEUE:
+-		/* get memory node */
+-		m_node = ipp_get_mem_node(drm_dev, c_node, qbuf);
+-		if (IS_ERR(m_node)) {
+-			DRM_ERROR("failed to get m_node.\n");
+-			return PTR_ERR(m_node);
+-		}
+-
+-		/*
+-		 * first step get event for destination buffer.
+-		 * and second step when M2M case run with destination buffer
+-		 * if needed.
+-		 */
+-		if (qbuf->ops_id == EXYNOS_DRM_OPS_DST) {
+-			/* get event for destination buffer */
+-			ret = ipp_get_event(drm_dev, c_node, qbuf);
+-			if (ret) {
+-				DRM_ERROR("failed to get event.\n");
+-				goto err_clean_node;
+-			}
+-
+-			/*
+-			 * M2M case run play control for streaming feature.
+-			 * other case set address and waiting.
+-			 */
+-			ret = ipp_queue_buf_with_run(dev, c_node, m_node, qbuf);
+-			if (ret) {
+-				DRM_ERROR("failed to run command.\n");
+-				goto err_clean_node;
+-			}
+-		}
+-		break;
+-	case IPP_BUF_DEQUEUE:
+-		mutex_lock(&c_node->lock);
+-
+-		/* put event for destination buffer */
+-		if (qbuf->ops_id == EXYNOS_DRM_OPS_DST)
+-			ipp_put_event(c_node, qbuf);
+-
+-		ipp_clean_queue_buf(drm_dev, c_node, qbuf);
+-
+-		mutex_unlock(&c_node->lock);
+-		break;
+-	default:
+-		DRM_ERROR("invalid buffer control.\n");
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-
+-err_clean_node:
+-	DRM_ERROR("clean memory nodes.\n");
+-
+-	ipp_clean_queue_buf(drm_dev, c_node, qbuf);
+-	return ret;
+-}
+-
+-static bool exynos_drm_ipp_check_valid(struct device *dev,
+-		enum drm_exynos_ipp_ctrl ctrl, enum drm_exynos_ipp_state state)
+-{
+-	if (ctrl != IPP_CTRL_PLAY) {
+-		if (pm_runtime_suspended(dev)) {
+-			DRM_ERROR("pm:runtime_suspended.\n");
+-			goto err_status;
+-		}
+-	}
+-
+-	switch (ctrl) {
+-	case IPP_CTRL_PLAY:
+-		if (state != IPP_STATE_IDLE)
+-			goto err_status;
+-		break;
+-	case IPP_CTRL_STOP:
+-		if (state == IPP_STATE_STOP)
+-			goto err_status;
+-		break;
+-	case IPP_CTRL_PAUSE:
+-		if (state != IPP_STATE_START)
+-			goto err_status;
+-		break;
+-	case IPP_CTRL_RESUME:
+-		if (state != IPP_STATE_STOP)
+-			goto err_status;
+-		break;
+-	default:
+-		DRM_ERROR("invalid state.\n");
+-		goto err_status;
+-	}
+-
+-	return true;
+-
+-err_status:
+-	DRM_ERROR("invalid status:ctrl[%d]state[%d]\n", ctrl, state);
+-	return false;
+-}
+-
+-int exynos_drm_ipp_cmd_ctrl(struct drm_device *drm_dev, void *data,
+-		struct drm_file *file)
+-{
+-	struct drm_exynos_file_private *file_priv = file->driver_priv;
+-	struct exynos_drm_ippdrv *ippdrv = NULL;
+-	struct device *dev = file_priv->ipp_dev;
+-	struct ipp_context *ctx = get_ipp_context(dev);
+-	struct drm_exynos_ipp_cmd_ctrl *cmd_ctrl = data;
+-	struct drm_exynos_ipp_cmd_work *cmd_work;
+-	struct drm_exynos_ipp_cmd_node *c_node;
+-
+-	if (!ctx) {
+-		DRM_ERROR("invalid context.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (!cmd_ctrl) {
+-		DRM_ERROR("invalid control parameter.\n");
+-		return -EINVAL;
+-	}
+-
+-	DRM_DEBUG_KMS("ctrl[%d]prop_id[%d]\n",
+-		cmd_ctrl->ctrl, cmd_ctrl->prop_id);
+-
+-	ippdrv = ipp_find_drv_by_handle(cmd_ctrl->prop_id);
+-	if (IS_ERR(ippdrv)) {
+-		DRM_ERROR("failed to get ipp driver.\n");
+-		return PTR_ERR(ippdrv);
+-	}
+-
+-	c_node = ipp_find_obj(&ctx->prop_idr, &ctx->prop_lock,
+-		cmd_ctrl->prop_id);
+-	if (!c_node || c_node->filp != file) {
+-		DRM_ERROR("invalid command node list.\n");
+-		return -ENODEV;
+-	}
+-
+-	if (!exynos_drm_ipp_check_valid(ippdrv->dev, cmd_ctrl->ctrl,
+-	    c_node->state)) {
+-		DRM_ERROR("invalid state.\n");
+-		return -EINVAL;
+-	}
+-
+-	switch (cmd_ctrl->ctrl) {
+-	case IPP_CTRL_PLAY:
+-		if (pm_runtime_suspended(ippdrv->dev))
+-			pm_runtime_get_sync(ippdrv->dev);
+-
+-		c_node->state = IPP_STATE_START;
+-
+-		cmd_work = c_node->start_work;
+-		cmd_work->ctrl = cmd_ctrl->ctrl;
+-		ipp_handle_cmd_work(dev, ippdrv, cmd_work, c_node);
+-		break;
+-	case IPP_CTRL_STOP:
+-		cmd_work = c_node->stop_work;
+-		cmd_work->ctrl = cmd_ctrl->ctrl;
+-		ipp_handle_cmd_work(dev, ippdrv, cmd_work, c_node);
+-
+-		if (!wait_for_completion_timeout(&c_node->stop_complete,
+-		    msecs_to_jiffies(300))) {
+-			DRM_ERROR("timeout stop:prop_id[%d]\n",
+-				c_node->property.prop_id);
+-		}
+-
+-		c_node->state = IPP_STATE_STOP;
+-		ippdrv->dedicated = false;
+-		mutex_lock(&ippdrv->cmd_lock);
+-		ipp_clean_cmd_node(ctx, c_node);
+-
+-		if (list_empty(&ippdrv->cmd_list))
+-			pm_runtime_put_sync(ippdrv->dev);
+-		mutex_unlock(&ippdrv->cmd_lock);
+-		break;
+-	case IPP_CTRL_PAUSE:
+-		cmd_work = c_node->stop_work;
+-		cmd_work->ctrl = cmd_ctrl->ctrl;
+-		ipp_handle_cmd_work(dev, ippdrv, cmd_work, c_node);
+-
+-		if (!wait_for_completion_timeout(&c_node->stop_complete,
+-		    msecs_to_jiffies(200))) {
+-			DRM_ERROR("timeout stop:prop_id[%d]\n",
+-				c_node->property.prop_id);
+-		}
+-
+-		c_node->state = IPP_STATE_STOP;
+-		break;
+-	case IPP_CTRL_RESUME:
+-		c_node->state = IPP_STATE_START;
+-		cmd_work = c_node->start_work;
+-		cmd_work->ctrl = cmd_ctrl->ctrl;
+-		ipp_handle_cmd_work(dev, ippdrv, cmd_work, c_node);
+-		break;
+-	default:
+-		DRM_ERROR("could not support this state currently.\n");
+-		return -EINVAL;
+-	}
+-
+-	DRM_DEBUG_KMS("done ctrl[%d]prop_id[%d]\n",
+-		cmd_ctrl->ctrl, cmd_ctrl->prop_id);
+-
+-	return 0;
+-}
+-
+-int exynos_drm_ippnb_register(struct notifier_block *nb)
+-{
+-	return blocking_notifier_chain_register(
+-		&exynos_drm_ippnb_list, nb);
+-}
+-
+-int exynos_drm_ippnb_unregister(struct notifier_block *nb)
+-{
+-	return blocking_notifier_chain_unregister(
+-		&exynos_drm_ippnb_list, nb);
+-}
+-
+-int exynos_drm_ippnb_send_event(unsigned long val, void *v)
+-{
+-	return blocking_notifier_call_chain(
+-		&exynos_drm_ippnb_list, val, v);
+-}
+-
+-static int ipp_set_property(struct exynos_drm_ippdrv *ippdrv,
+-		struct drm_exynos_ipp_property *property)
+-{
+-	struct exynos_drm_ipp_ops *ops = NULL;
+-	bool swap = false;
+-	int ret, i;
+-
+-	if (!property) {
+-		DRM_ERROR("invalid property parameter.\n");
+-		return -EINVAL;
+-	}
+-
+-	DRM_DEBUG_KMS("prop_id[%d]\n", property->prop_id);
+-
+-	/* reset h/w block */
+-	if (ippdrv->reset &&
+-	    ippdrv->reset(ippdrv->dev)) {
+-		return -EINVAL;
+-	}
+-
+-	/* set source,destination operations */
+-	for_each_ipp_ops(i) {
+-		struct drm_exynos_ipp_config *config =
+-			&property->config[i];
+-
+-		ops = ippdrv->ops[i];
+-		if (!ops || !config) {
+-			DRM_ERROR("not support ops and config.\n");
+-			return -EINVAL;
+-		}
+-
+-		/* set format */
+-		if (ops->set_fmt) {
+-			ret = ops->set_fmt(ippdrv->dev, config->fmt);
+-			if (ret)
+-				return ret;
+-		}
+-
+-		/* set transform for rotation, flip */
+-		if (ops->set_transf) {
+-			ret = ops->set_transf(ippdrv->dev, config->degree,
+-				config->flip, &swap);
+-			if (ret)
+-				return ret;
+-		}
+-
+-		/* set size */
+-		if (ops->set_size) {
+-			ret = ops->set_size(ippdrv->dev, swap, &config->pos,
+-				&config->sz);
+-			if (ret)
+-				return ret;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int ipp_start_property(struct exynos_drm_ippdrv *ippdrv,
+-		struct drm_exynos_ipp_cmd_node *c_node)
+-{
+-	struct drm_exynos_ipp_mem_node *m_node;
+-	struct drm_exynos_ipp_property *property = &c_node->property;
+-	struct list_head *head;
+-	int ret, i;
+-
+-	DRM_DEBUG_KMS("prop_id[%d]\n", property->prop_id);
+-
+-	/* store command info in ippdrv */
+-	ippdrv->c_node = c_node;
+-
+-	mutex_lock(&c_node->mem_lock);
+-	if (!ipp_check_mem_list(c_node)) {
+-		DRM_DEBUG_KMS("empty memory.\n");
+-		ret = -ENOMEM;
+-		goto err_unlock;
+-	}
+-
+-	/* set current property in ippdrv */
+-	ret = ipp_set_property(ippdrv, property);
+-	if (ret) {
+-		DRM_ERROR("failed to set property.\n");
+-		ippdrv->c_node = NULL;
+-		goto err_unlock;
+-	}
+-
+-	/* check command */
+-	switch (property->cmd) {
+-	case IPP_CMD_M2M:
+-		for_each_ipp_ops(i) {
+-			/* source/destination memory list */
+-			head = &c_node->mem_list[i];
+-
+-			m_node = list_first_entry(head,
+-				struct drm_exynos_ipp_mem_node, list);
+-
+-			DRM_DEBUG_KMS("m_node[%pK]\n", m_node);
+-
+-			ret = ipp_set_mem_node(ippdrv, c_node, m_node);
+-			if (ret) {
+-				DRM_ERROR("failed to set m node.\n");
+-				goto err_unlock;
+-			}
+-		}
+-		break;
+-	case IPP_CMD_WB:
+-		/* destination memory list */
+-		head = &c_node->mem_list[EXYNOS_DRM_OPS_DST];
+-
+-		list_for_each_entry(m_node, head, list) {
+-			ret = ipp_set_mem_node(ippdrv, c_node, m_node);
+-			if (ret) {
+-				DRM_ERROR("failed to set m node.\n");
+-				goto err_unlock;
+-			}
+-		}
+-		break;
+-	case IPP_CMD_OUTPUT:
+-		/* source memory list */
+-		head = &c_node->mem_list[EXYNOS_DRM_OPS_SRC];
+-
+-		list_for_each_entry(m_node, head, list) {
+-			ret = ipp_set_mem_node(ippdrv, c_node, m_node);
+-			if (ret) {
+-				DRM_ERROR("failed to set m node.\n");
+-				goto err_unlock;
+-			}
+-		}
+-		break;
+-	default:
+-		DRM_ERROR("invalid operations.\n");
+-		ret = -EINVAL;
+-		goto err_unlock;
+-	}
+-	mutex_unlock(&c_node->mem_lock);
+-
+-	DRM_DEBUG_KMS("cmd[%d]\n", property->cmd);
+-
+-	/* start operations */
+-	if (ippdrv->start) {
+-		ret = ippdrv->start(ippdrv->dev, property->cmd);
+-		if (ret) {
+-			DRM_ERROR("failed to start ops.\n");
+-			ippdrv->c_node = NULL;
+-			return ret;
+-		}
+-	}
+-
+-	return 0;
+-
+-err_unlock:
+-	mutex_unlock(&c_node->mem_lock);
+-	ippdrv->c_node = NULL;
+-	return ret;
+-}
+-
+-static int ipp_stop_property(struct drm_device *drm_dev,
+-		struct exynos_drm_ippdrv *ippdrv,
+-		struct drm_exynos_ipp_cmd_node *c_node)
+-{
+-	struct drm_exynos_ipp_property *property = &c_node->property;
+-	int i;
+-
+-	DRM_DEBUG_KMS("prop_id[%d]\n", property->prop_id);
+-
+-	/* stop operations */
+-	if (ippdrv->stop)
+-		ippdrv->stop(ippdrv->dev, property->cmd);
+-
+-	/* check command */
+-	switch (property->cmd) {
+-	case IPP_CMD_M2M:
+-		for_each_ipp_ops(i)
+-			ipp_clean_mem_nodes(drm_dev, c_node, i);
+-		break;
+-	case IPP_CMD_WB:
+-		ipp_clean_mem_nodes(drm_dev, c_node, EXYNOS_DRM_OPS_DST);
+-		break;
+-	case IPP_CMD_OUTPUT:
+-		ipp_clean_mem_nodes(drm_dev, c_node, EXYNOS_DRM_OPS_SRC);
+-		break;
+-	default:
+-		DRM_ERROR("invalid operations.\n");
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-void ipp_sched_cmd(struct work_struct *work)
+-{
+-	struct drm_exynos_ipp_cmd_work *cmd_work =
+-		container_of(work, struct drm_exynos_ipp_cmd_work, work);
+-	struct exynos_drm_ippdrv *ippdrv;
+-	struct drm_exynos_ipp_cmd_node *c_node;
+-	struct drm_exynos_ipp_property *property;
+-	int ret;
+-
+-	ippdrv = cmd_work->ippdrv;
+-	if (!ippdrv) {
+-		DRM_ERROR("invalid ippdrv list.\n");
+-		return;
+-	}
+-
+-	c_node = cmd_work->c_node;
+-	if (!c_node) {
+-		DRM_ERROR("invalid command node list.\n");
+-		return;
+-	}
+-
+-	mutex_lock(&c_node->lock);
+-
+-	property = &c_node->property;
+-
+-	switch (cmd_work->ctrl) {
+-	case IPP_CTRL_PLAY:
+-	case IPP_CTRL_RESUME:
+-		ret = ipp_start_property(ippdrv, c_node);
+-		if (ret) {
+-			DRM_ERROR("failed to start property:prop_id[%d]\n",
+-				c_node->property.prop_id);
+-			goto err_unlock;
+-		}
+-
+-		/*
+-		 * M2M case supports wait_completion of transfer.
+-		 * because M2M case supports single unit operation
+-		 * with multiple queue.
+-		 * M2M need to wait completion of data transfer.
+-		 */
+-		if (ipp_is_m2m_cmd(property->cmd)) {
+-			if (!wait_for_completion_timeout
+-			    (&c_node->start_complete, msecs_to_jiffies(200))) {
+-				DRM_ERROR("timeout event:prop_id[%d]\n",
+-					c_node->property.prop_id);
+-				goto err_unlock;
+-			}
+-		}
+-		break;
+-	case IPP_CTRL_STOP:
+-	case IPP_CTRL_PAUSE:
+-		ret = ipp_stop_property(ippdrv->drm_dev, ippdrv,
+-			c_node);
+-		if (ret) {
+-			DRM_ERROR("failed to stop property.\n");
+-			goto err_unlock;
+-		}
+-
+-		complete(&c_node->stop_complete);
+-		break;
+-	default:
+-		DRM_ERROR("unknown control type\n");
+-		break;
+-	}
+-
+-	DRM_DEBUG_KMS("ctrl[%d] done.\n", cmd_work->ctrl);
+-
+-err_unlock:
+-	mutex_unlock(&c_node->lock);
+-}
+-
+-static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
+-		struct drm_exynos_ipp_cmd_node *c_node, int *buf_id)
+-{
+-	struct drm_device *drm_dev = ippdrv->drm_dev;
+-	struct drm_exynos_ipp_property *property = &c_node->property;
+-	struct drm_exynos_ipp_mem_node *m_node;
+-	struct drm_exynos_ipp_queue_buf qbuf;
+-	struct drm_exynos_ipp_send_event *e;
+-	struct list_head *head;
+-	struct timeval now;
+-	u32 tbuf_id[EXYNOS_DRM_OPS_MAX] = {0, };
+-	int ret, i;
+-
+-	for_each_ipp_ops(i)
+-		DRM_DEBUG_KMS("%s buf_id[%d]\n", i ? "dst" : "src", buf_id[i]);
+-
+-	if (!drm_dev) {
+-		DRM_ERROR("failed to get drm_dev.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (!property) {
+-		DRM_ERROR("failed to get property.\n");
+-		return -EINVAL;
+-	}
+-
+-	mutex_lock(&c_node->event_lock);
+-	if (list_empty(&c_node->event_list)) {
+-		DRM_DEBUG_KMS("event list is empty.\n");
+-		ret = 0;
+-		goto err_event_unlock;
+-	}
+-
+-	mutex_lock(&c_node->mem_lock);
+-	if (!ipp_check_mem_list(c_node)) {
+-		DRM_DEBUG_KMS("empty memory.\n");
+-		ret = 0;
+-		goto err_mem_unlock;
+-	}
+-
+-	/* check command */
+-	switch (property->cmd) {
+-	case IPP_CMD_M2M:
+-		for_each_ipp_ops(i) {
+-			/* source/destination memory list */
+-			head = &c_node->mem_list[i];
+-
+-			m_node = list_first_entry(head,
+-				struct drm_exynos_ipp_mem_node, list);
+-
+-			tbuf_id[i] = m_node->buf_id;
+-			DRM_DEBUG_KMS("%s buf_id[%d]\n",
+-				i ? "dst" : "src", tbuf_id[i]);
+-
+-			ret = ipp_put_mem_node(drm_dev, c_node, m_node);
+-			if (ret)
+-				DRM_ERROR("failed to put m_node.\n");
+-		}
+-		break;
+-	case IPP_CMD_WB:
+-		/* clear buf for finding */
+-		memset(&qbuf, 0x0, sizeof(qbuf));
+-		qbuf.ops_id = EXYNOS_DRM_OPS_DST;
+-		qbuf.buf_id = buf_id[EXYNOS_DRM_OPS_DST];
+-
+-		/* get memory node entry */
+-		m_node = ipp_find_mem_node(c_node, &qbuf);
+-		if (!m_node) {
+-			DRM_ERROR("empty memory node.\n");
+-			ret = -ENOMEM;
+-			goto err_mem_unlock;
+-		}
+-
+-		tbuf_id[EXYNOS_DRM_OPS_DST] = m_node->buf_id;
+-
+-		ret = ipp_put_mem_node(drm_dev, c_node, m_node);
+-		if (ret)
+-			DRM_ERROR("failed to put m_node.\n");
+-		break;
+-	case IPP_CMD_OUTPUT:
+-		/* source memory list */
+-		head = &c_node->mem_list[EXYNOS_DRM_OPS_SRC];
+-
+-		m_node = list_first_entry(head,
+-			struct drm_exynos_ipp_mem_node, list);
+-
+-		tbuf_id[EXYNOS_DRM_OPS_SRC] = m_node->buf_id;
+-
+-		ret = ipp_put_mem_node(drm_dev, c_node, m_node);
+-		if (ret)
+-			DRM_ERROR("failed to put m_node.\n");
+-		break;
+-	default:
+-		DRM_ERROR("invalid operations.\n");
+-		ret = -EINVAL;
+-		goto err_mem_unlock;
+-	}
+-	mutex_unlock(&c_node->mem_lock);
+-
+-	if (tbuf_id[EXYNOS_DRM_OPS_DST] != buf_id[EXYNOS_DRM_OPS_DST])
+-		DRM_ERROR("failed to match buf_id[%d %d]prop_id[%d]\n",
+-			tbuf_id[1], buf_id[1], property->prop_id);
+-
+-	/*
+-	 * command node have event list of destination buffer
+-	 * If destination buffer enqueue to mem list,
+-	 * then we make event and link to event list tail.
+-	 * so, we get first event for first enqueued buffer.
+-	 */
+-	e = list_first_entry(&c_node->event_list,
+-		struct drm_exynos_ipp_send_event, base.link);
+-
+-	do_gettimeofday(&now);
+-	DRM_DEBUG_KMS("tv_sec[%ld]tv_usec[%ld]\n", now.tv_sec, now.tv_usec);
+-	e->event.tv_sec = now.tv_sec;
+-	e->event.tv_usec = now.tv_usec;
+-	e->event.prop_id = property->prop_id;
+-
+-	/* set buffer id about source destination */
+-	for_each_ipp_ops(i)
+-		e->event.buf_id[i] = tbuf_id[i];
+-
+-	drm_send_event(drm_dev, &e->base);
+-	mutex_unlock(&c_node->event_lock);
+-
+-	DRM_DEBUG_KMS("done cmd[%d]prop_id[%d]buf_id[%d]\n",
+-		property->cmd, property->prop_id, tbuf_id[EXYNOS_DRM_OPS_DST]);
+-
+-	return 0;
+-
+-err_mem_unlock:
+-	mutex_unlock(&c_node->mem_lock);
+-err_event_unlock:
+-	mutex_unlock(&c_node->event_lock);
+-	return ret;
+-}
+-
+-void ipp_sched_event(struct work_struct *work)
+-{
+-	struct drm_exynos_ipp_event_work *event_work =
+-		container_of(work, struct drm_exynos_ipp_event_work, work);
+-	struct exynos_drm_ippdrv *ippdrv;
+-	struct drm_exynos_ipp_cmd_node *c_node;
+-	int ret;
+-
+-	if (!event_work) {
+-		DRM_ERROR("failed to get event_work.\n");
+-		return;
+-	}
+-
+-	DRM_DEBUG_KMS("buf_id[%d]\n", event_work->buf_id[EXYNOS_DRM_OPS_DST]);
+-
+-	ippdrv = event_work->ippdrv;
+-	if (!ippdrv) {
+-		DRM_ERROR("failed to get ipp driver.\n");
+-		return;
+-	}
+-
+-	c_node = ippdrv->c_node;
+-	if (!c_node) {
+-		DRM_ERROR("failed to get command node.\n");
+-		return;
+-	}
+-
+-	/*
+-	 * IPP supports command thread, event thread synchronization.
+-	 * If IPP close immediately from user land, then IPP make
+-	 * synchronization with command thread, so make complete event.
+-	 * or going out operations.
+-	 */
+-	if (c_node->state != IPP_STATE_START) {
+-		DRM_DEBUG_KMS("bypass state[%d]prop_id[%d]\n",
+-			c_node->state, c_node->property.prop_id);
+-		goto err_completion;
+-	}
+-
+-	ret = ipp_send_event(ippdrv, c_node, event_work->buf_id);
+-	if (ret) {
+-		DRM_ERROR("failed to send event.\n");
+-		goto err_completion;
+-	}
+-
+-err_completion:
+-	if (ipp_is_m2m_cmd(c_node->property.cmd))
+-		complete(&c_node->start_complete);
+-}
+-
+-static int ipp_subdrv_probe(struct drm_device *drm_dev, struct device *dev)
+-{
+-	struct ipp_context *ctx = get_ipp_context(dev);
+-	struct exynos_drm_ippdrv *ippdrv;
+-	int ret, count = 0;
+-
+-	/* get ipp driver entry */
+-	list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
+-		ippdrv->drm_dev = drm_dev;
+-
+-		ret = ipp_create_id(&ctx->ipp_idr, &ctx->ipp_lock, ippdrv);
+-		if (ret < 0) {
+-			DRM_ERROR("failed to create id.\n");
+-			goto err;
+-		}
+-		ippdrv->prop_list.ipp_id = ret;
+-
+-		DRM_DEBUG_KMS("count[%d]ippdrv[%pK]ipp_id[%d]\n",
+-			count++, ippdrv, ret);
+-
+-		/* store parent device for node */
+-		ippdrv->parent_dev = dev;
+-
+-		/* store event work queue and handler */
+-		ippdrv->event_workq = ctx->event_workq;
+-		ippdrv->sched_event = ipp_sched_event;
+-		INIT_LIST_HEAD(&ippdrv->cmd_list);
+-		mutex_init(&ippdrv->cmd_lock);
+-
+-		ret = drm_iommu_attach_device(drm_dev, ippdrv->dev);
+-		if (ret) {
+-			DRM_ERROR("failed to activate iommu\n");
+-			goto err;
+-		}
+-	}
+-
+-	return 0;
+-
+-err:
+-	/* get ipp driver entry */
+-	list_for_each_entry_continue_reverse(ippdrv, &exynos_drm_ippdrv_list,
+-						drv_list) {
+-		drm_iommu_detach_device(drm_dev, ippdrv->dev);
+-
+-		ipp_remove_id(&ctx->ipp_idr, &ctx->ipp_lock,
+-				ippdrv->prop_list.ipp_id);
+-	}
+-
+-	return ret;
+-}
+-
+-static void ipp_subdrv_remove(struct drm_device *drm_dev, struct device *dev)
+-{
+-	struct exynos_drm_ippdrv *ippdrv, *t;
+-	struct ipp_context *ctx = get_ipp_context(dev);
+-
+-	/* get ipp driver entry */
+-	list_for_each_entry_safe(ippdrv, t, &exynos_drm_ippdrv_list, drv_list) {
+-		drm_iommu_detach_device(drm_dev, ippdrv->dev);
+-
+-		ipp_remove_id(&ctx->ipp_idr, &ctx->ipp_lock,
+-				ippdrv->prop_list.ipp_id);
+-
+-		ippdrv->drm_dev = NULL;
+-		exynos_drm_ippdrv_unregister(ippdrv);
+-	}
+-}
+-
+-static int ipp_subdrv_open(struct drm_device *drm_dev, struct device *dev,
+-		struct drm_file *file)
+-{
+-	struct drm_exynos_file_private *file_priv = file->driver_priv;
+-
+-	file_priv->ipp_dev = dev;
+-
+-	DRM_DEBUG_KMS("done priv[%pK]\n", dev);
+-
+-	return 0;
+-}
+-
+-static void ipp_subdrv_close(struct drm_device *drm_dev, struct device *dev,
+-		struct drm_file *file)
+-{
+-	struct exynos_drm_ippdrv *ippdrv = NULL;
+-	struct ipp_context *ctx = get_ipp_context(dev);
+-	struct drm_exynos_ipp_cmd_node *c_node, *tc_node;
+-	int count = 0;
+-
+-	list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
+-		mutex_lock(&ippdrv->cmd_lock);
+-		list_for_each_entry_safe(c_node, tc_node,
+-			&ippdrv->cmd_list, list) {
+-			DRM_DEBUG_KMS("count[%d]ippdrv[%pK]\n",
+-				count++, ippdrv);
+-
+-			if (c_node->filp == file) {
+-				/*
+-				 * userland goto unnormal state. process killed.
+-				 * and close the file.
+-				 * so, IPP didn't called stop cmd ctrl.
+-				 * so, we are make stop operation in this state.
+-				 */
+-				if (c_node->state == IPP_STATE_START) {
+-					ipp_stop_property(drm_dev, ippdrv,
+-						c_node);
+-					c_node->state = IPP_STATE_STOP;
+-				}
+-
+-				ippdrv->dedicated = false;
+-				ipp_clean_cmd_node(ctx, c_node);
+-				if (list_empty(&ippdrv->cmd_list))
+-					pm_runtime_put_sync(ippdrv->dev);
+-			}
+-		}
+-		mutex_unlock(&ippdrv->cmd_lock);
+-	}
+-
+-	return;
+-}
+-
+-static int ipp_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct ipp_context *ctx;
+-	struct exynos_drm_subdrv *subdrv;
+-	int ret;
+-
+-	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
+-
+-	mutex_init(&ctx->ipp_lock);
+-	mutex_init(&ctx->prop_lock);
+-
+-	idr_init(&ctx->ipp_idr);
+-	idr_init(&ctx->prop_idr);
+-
+-	/*
+-	 * create single thread for ipp event
+-	 * IPP supports event thread for IPP drivers.
+-	 * IPP driver send event_work to this thread.
+-	 * and IPP event thread send event to user process.
+-	 */
+-	ctx->event_workq = create_singlethread_workqueue("ipp_event");
+-	if (!ctx->event_workq) {
+-		dev_err(dev, "failed to create event workqueue\n");
+-		return -EINVAL;
+-	}
+-
+-	/*
+-	 * create single thread for ipp command
+-	 * IPP supports command thread for user process.
+-	 * user process make command node using set property ioctl.
+-	 * and make start_work and send this work to command thread.
+-	 * and then this command thread start property.
+-	 */
+-	ctx->cmd_workq = create_singlethread_workqueue("ipp_cmd");
+-	if (!ctx->cmd_workq) {
+-		dev_err(dev, "failed to create cmd workqueue\n");
+-		ret = -EINVAL;
+-		goto err_event_workq;
+-	}
+-
+-	/* set sub driver informations */
+-	subdrv = &ctx->subdrv;
+-	subdrv->dev = dev;
+-	subdrv->probe = ipp_subdrv_probe;
+-	subdrv->remove = ipp_subdrv_remove;
+-	subdrv->open = ipp_subdrv_open;
+-	subdrv->close = ipp_subdrv_close;
+-
+-	platform_set_drvdata(pdev, ctx);
+-
+-	ret = exynos_drm_subdrv_register(subdrv);
+-	if (ret < 0) {
+-		DRM_ERROR("failed to register drm ipp device.\n");
+-		goto err_cmd_workq;
+-	}
+-
+-	dev_info(dev, "drm ipp registered successfully.\n");
+-
+-	return 0;
+-
+-err_cmd_workq:
+-	destroy_workqueue(ctx->cmd_workq);
+-err_event_workq:
+-	destroy_workqueue(ctx->event_workq);
+-	return ret;
+-}
+-
+-static int ipp_remove(struct platform_device *pdev)
+-{
+-	struct ipp_context *ctx = platform_get_drvdata(pdev);
+-
+-	/* unregister sub driver */
+-	exynos_drm_subdrv_unregister(&ctx->subdrv);
+-
+-	/* remove,destroy ipp idr */
+-	idr_destroy(&ctx->ipp_idr);
+-	idr_destroy(&ctx->prop_idr);
+-
+-	mutex_destroy(&ctx->ipp_lock);
+-	mutex_destroy(&ctx->prop_lock);
+-
+-	/* destroy command, event work queue */
+-	destroy_workqueue(ctx->cmd_workq);
+-	destroy_workqueue(ctx->event_workq);
+-
+-	return 0;
+-}
+-
+-struct platform_driver ipp_driver = {
+-	.probe		= ipp_probe,
+-	.remove		= ipp_remove,
+-	.driver		= {
+-		.name	= "exynos-drm-ipp",
+-		.owner	= THIS_MODULE,
+-	},
+-};
+-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
+deleted file mode 100644
+index 2a61547a39d0..000000000000
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.h
++++ /dev/null
+@@ -1,252 +0,0 @@
+-/*
+- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+- *
+- * Authors:
+- *	Eunchul Kim <chulspro.kim@samsung.com>
+- *	Jinyoung Jeon <jy0.jeon@samsung.com>
+- *	Sangmin Lee <lsmin.lee@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- */
+-
+-#ifndef _EXYNOS_DRM_IPP_H_
+-#define _EXYNOS_DRM_IPP_H_
+-
+-#define for_each_ipp_ops(pos)	\
+-	for (pos = 0; pos < EXYNOS_DRM_OPS_MAX; pos++)
+-#define for_each_ipp_planar(pos)	\
+-	for (pos = 0; pos < EXYNOS_DRM_PLANAR_MAX; pos++)
+-
+-#define IPP_GET_LCD_WIDTH	_IOR('F', 302, int)
+-#define IPP_GET_LCD_HEIGHT	_IOR('F', 303, int)
+-#define IPP_SET_WRITEBACK	_IOW('F', 304, u32)
+-
+-/* definition of state */
+-enum drm_exynos_ipp_state {
+-	IPP_STATE_IDLE,
+-	IPP_STATE_START,
+-	IPP_STATE_STOP,
+-};
+-
+-/*
+- * A structure of command work information.
+- * @work: work structure.
+- * @ippdrv: current work ippdrv.
+- * @c_node: command node information.
+- * @ctrl: command control.
+- */
+-struct drm_exynos_ipp_cmd_work {
+-	struct work_struct	work;
+-	struct exynos_drm_ippdrv	*ippdrv;
+-	struct drm_exynos_ipp_cmd_node *c_node;
+-	enum drm_exynos_ipp_ctrl	ctrl;
+-};
+-
+-/*
+- * A structure of command node.
+- *
+- * @list: list head to command queue information.
+- * @event_list: list head of event.
+- * @mem_list: list head to source,destination memory queue information.
+- * @lock: lock for synchronization of access to ioctl.
+- * @mem_lock: lock for synchronization of access to memory nodes.
+- * @event_lock: lock for synchronization of access to scheduled event.
+- * @start_complete: completion of start of command.
+- * @stop_complete: completion of stop of command.
+- * @property: property information.
+- * @start_work: start command work structure.
+- * @stop_work: stop command work structure.
+- * @event_work: event work structure.
+- * @state: state of command node.
+- * @filp: associated file pointer.
+- */
+-struct drm_exynos_ipp_cmd_node {
+-	struct list_head	list;
+-	struct list_head	event_list;
+-	struct list_head	mem_list[EXYNOS_DRM_OPS_MAX];
+-	struct mutex	lock;
+-	struct mutex	mem_lock;
+-	struct mutex	event_lock;
+-	struct completion	start_complete;
+-	struct completion	stop_complete;
+-	struct drm_exynos_ipp_property	property;
+-	struct drm_exynos_ipp_cmd_work *start_work;
+-	struct drm_exynos_ipp_cmd_work *stop_work;
+-	struct drm_exynos_ipp_event_work *event_work;
+-	enum drm_exynos_ipp_state	state;
+-	struct drm_file	*filp;
+-};
+-
+-/*
+- * A structure of buffer information.
+- *
+- * @handles: Y, Cb, Cr each gem object handle.
+- * @base: Y, Cb, Cr each planar address.
+- */
+-struct drm_exynos_ipp_buf_info {
+-	unsigned long	handles[EXYNOS_DRM_PLANAR_MAX];
+-	dma_addr_t	base[EXYNOS_DRM_PLANAR_MAX];
+-};
+-
+-/*
+- * A structure of wb setting information.
+- *
+- * @enable: enable flag for wb.
+- * @refresh: HZ of the refresh rate.
+- */
+-struct drm_exynos_ipp_set_wb {
+-	__u32	enable;
+-	__u32	refresh;
+-};
+-
+-/*
+- * A structure of event work information.
+- *
+- * @work: work structure.
+- * @ippdrv: current work ippdrv.
+- * @buf_id: id of src, dst buffer.
+- */
+-struct drm_exynos_ipp_event_work {
+-	struct work_struct	work;
+-	struct exynos_drm_ippdrv *ippdrv;
+-	u32	buf_id[EXYNOS_DRM_OPS_MAX];
+-};
+-
+-/*
+- * A structure of source,destination operations.
+- *
+- * @set_fmt: set format of image.
+- * @set_transf: set transform(rotations, flip).
+- * @set_size: set size of region.
+- * @set_addr: set address for dma.
+- */
+-struct exynos_drm_ipp_ops {
+-	int (*set_fmt)(struct device *dev, u32 fmt);
+-	int (*set_transf)(struct device *dev,
+-		enum drm_exynos_degree degree,
+-		enum drm_exynos_flip flip, bool *swap);
+-	int (*set_size)(struct device *dev, int swap,
+-		struct drm_exynos_pos *pos, struct drm_exynos_sz *sz);
+-	int (*set_addr)(struct device *dev,
+-		 struct drm_exynos_ipp_buf_info *buf_info, u32 buf_id,
+-		enum drm_exynos_ipp_buf_type buf_type);
+-};
+-
+-/*
+- * A structure of ipp driver.
+- *
+- * @drv_list: list head for registed sub driver information.
+- * @parent_dev: parent device information.
+- * @dev: platform device.
+- * @drm_dev: drm device.
+- * @dedicated: dedicated ipp device.
+- * @ops: source, destination operations.
+- * @event_workq: event work queue.
+- * @c_node: current command information.
+- * @cmd_list: list head for command information.
+- * @cmd_lock: lock for synchronization of access to cmd_list.
+- * @prop_list: property informations of current ipp driver.
+- * @check_property: check property about format, size, buffer.
+- * @reset: reset ipp block.
+- * @start: ipp each device start.
+- * @stop: ipp each device stop.
+- * @sched_event: work schedule handler.
+- */
+-struct exynos_drm_ippdrv {
+-	struct list_head	drv_list;
+-	struct device	*parent_dev;
+-	struct device	*dev;
+-	struct drm_device	*drm_dev;
+-	bool	dedicated;
+-	struct exynos_drm_ipp_ops	*ops[EXYNOS_DRM_OPS_MAX];
+-	struct workqueue_struct	*event_workq;
+-	struct drm_exynos_ipp_cmd_node *c_node;
+-	struct list_head	cmd_list;
+-	struct mutex	cmd_lock;
+-	struct drm_exynos_ipp_prop_list prop_list;
+-
+-	int (*check_property)(struct device *dev,
+-		struct drm_exynos_ipp_property *property);
+-	int (*reset)(struct device *dev);
+-	int (*start)(struct device *dev, enum drm_exynos_ipp_cmd cmd);
+-	void (*stop)(struct device *dev, enum drm_exynos_ipp_cmd cmd);
+-	void (*sched_event)(struct work_struct *work);
+-};
+-
+-#ifdef CONFIG_DRM_EXYNOS_IPP
+-extern int exynos_drm_ippdrv_register(struct exynos_drm_ippdrv *ippdrv);
+-extern int exynos_drm_ippdrv_unregister(struct exynos_drm_ippdrv *ippdrv);
+-extern int exynos_drm_ipp_get_property(struct drm_device *drm_dev, void *data,
+-					 struct drm_file *file);
+-extern int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
+-					 struct drm_file *file);
+-extern int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
+-					 struct drm_file *file);
+-extern int exynos_drm_ipp_cmd_ctrl(struct drm_device *drm_dev, void *data,
+-					 struct drm_file *file);
+-extern int exynos_drm_ippnb_register(struct notifier_block *nb);
+-extern int exynos_drm_ippnb_unregister(struct notifier_block *nb);
+-extern int exynos_drm_ippnb_send_event(unsigned long val, void *v);
+-extern void ipp_sched_cmd(struct work_struct *work);
+-extern void ipp_sched_event(struct work_struct *work);
+-
+-#else
+-static inline int exynos_drm_ippdrv_register(struct exynos_drm_ippdrv *ippdrv)
+-{
+-	return -ENODEV;
+-}
+-
+-static inline int exynos_drm_ippdrv_unregister(struct exynos_drm_ippdrv *ippdrv)
+-{
+-	return -ENODEV;
+-}
+-
+-static inline int exynos_drm_ipp_get_property(struct drm_device *drm_dev,
+-						void *data,
+-						struct drm_file *file_priv)
+-{
+-	return -ENOTTY;
+-}
+-
+-static inline int exynos_drm_ipp_set_property(struct drm_device *drm_dev,
+-						void *data,
+-						struct drm_file *file_priv)
+-{
+-	return -ENOTTY;
+-}
+-
+-static inline int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev,
+-						void *data,
+-						struct drm_file *file)
+-{
+-	return -ENOTTY;
+-}
+-
+-static inline int exynos_drm_ipp_cmd_ctrl(struct drm_device *drm_dev,
+-						void *data,
+-						struct drm_file *file)
+-{
+-	return -ENOTTY;
+-}
+-
+-static inline int exynos_drm_ippnb_register(struct notifier_block *nb)
+-{
+-	return -ENODEV;
+-}
+-
+-static inline int exynos_drm_ippnb_unregister(struct notifier_block *nb)
+-{
+-	return -ENODEV;
+-}
+-
+-static inline int exynos_drm_ippnb_send_event(unsigned long val, void *v)
+-{
+-	return -ENOTTY;
+-}
+-#endif
+-
+-#endif /* _EXYNOS_DRM_IPP_H_ */
+-
+diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
+index d01087b2a651..4a54305120e0 100644
+--- a/include/uapi/drm/exynos_drm.h
++++ b/include/uapi/drm/exynos_drm.h
+@@ -135,172 +135,6 @@ struct drm_exynos_g2d_exec {
+ 	__u64					async;
+ };
+ 
+-enum drm_exynos_ops_id {
+-	EXYNOS_DRM_OPS_SRC,
+-	EXYNOS_DRM_OPS_DST,
+-	EXYNOS_DRM_OPS_MAX,
+-};
+-
+-struct drm_exynos_sz {
+-	__u32	hsize;
+-	__u32	vsize;
+-};
+-
+-struct drm_exynos_pos {
+-	__u32	x;
+-	__u32	y;
+-	__u32	w;
+-	__u32	h;
+-};
+-
+-enum drm_exynos_flip {
+-	EXYNOS_DRM_FLIP_NONE = (0 << 0),
+-	EXYNOS_DRM_FLIP_VERTICAL = (1 << 0),
+-	EXYNOS_DRM_FLIP_HORIZONTAL = (1 << 1),
+-	EXYNOS_DRM_FLIP_BOTH = EXYNOS_DRM_FLIP_VERTICAL |
+-			EXYNOS_DRM_FLIP_HORIZONTAL,
+-};
+-
+-enum drm_exynos_degree {
+-	EXYNOS_DRM_DEGREE_0,
+-	EXYNOS_DRM_DEGREE_90,
+-	EXYNOS_DRM_DEGREE_180,
+-	EXYNOS_DRM_DEGREE_270,
+-};
+-
+-enum drm_exynos_planer {
+-	EXYNOS_DRM_PLANAR_Y,
+-	EXYNOS_DRM_PLANAR_CB,
+-	EXYNOS_DRM_PLANAR_CR,
+-	EXYNOS_DRM_PLANAR_MAX,
+-};
+-
+-/**
+- * A structure for ipp supported property list.
+- *
+- * @version: version of this structure.
+- * @ipp_id: id of ipp driver.
+- * @count: count of ipp driver.
+- * @writeback: flag of writeback supporting.
+- * @flip: flag of flip supporting.
+- * @degree: flag of degree information.
+- * @csc: flag of csc supporting.
+- * @crop: flag of crop supporting.
+- * @scale: flag of scale supporting.
+- * @refresh_min: min hz of refresh.
+- * @refresh_max: max hz of refresh.
+- * @crop_min: crop min resolution.
+- * @crop_max: crop max resolution.
+- * @scale_min: scale min resolution.
+- * @scale_max: scale max resolution.
+- */
+-struct drm_exynos_ipp_prop_list {
+-	__u32	version;
+-	__u32	ipp_id;
+-	__u32	count;
+-	__u32	writeback;
+-	__u32	flip;
+-	__u32	degree;
+-	__u32	csc;
+-	__u32	crop;
+-	__u32	scale;
+-	__u32	refresh_min;
+-	__u32	refresh_max;
+-	__u32	reserved;
+-	struct drm_exynos_sz	crop_min;
+-	struct drm_exynos_sz	crop_max;
+-	struct drm_exynos_sz	scale_min;
+-	struct drm_exynos_sz	scale_max;
+-};
+-
+-/**
+- * A structure for ipp config.
+- *
+- * @ops_id: property of operation directions.
+- * @flip: property of mirror, flip.
+- * @degree: property of rotation degree.
+- * @fmt: property of image format.
+- * @sz: property of image size.
+- * @pos: property of image position(src-cropped,dst-scaler).
+- */
+-struct drm_exynos_ipp_config {
+-	__u32 ops_id;
+-	__u32 flip;
+-	__u32 degree;
+-	__u32	fmt;
+-	struct drm_exynos_sz	sz;
+-	struct drm_exynos_pos	pos;
+-};
+-
+-enum drm_exynos_ipp_cmd {
+-	IPP_CMD_NONE,
+-	IPP_CMD_M2M,
+-	IPP_CMD_WB,
+-	IPP_CMD_OUTPUT,
+-	IPP_CMD_MAX,
+-};
+-
+-/**
+- * A structure for ipp property.
+- *
+- * @config: source, destination config.
+- * @cmd: definition of command.
+- * @ipp_id: id of ipp driver.
+- * @prop_id: id of property.
+- * @refresh_rate: refresh rate.
+- */
+-struct drm_exynos_ipp_property {
+-	struct drm_exynos_ipp_config config[EXYNOS_DRM_OPS_MAX];
+-	__u32	cmd;
+-	__u32	ipp_id;
+-	__u32	prop_id;
+-	__u32	refresh_rate;
+-};
+-
+-enum drm_exynos_ipp_buf_type {
+-	IPP_BUF_ENQUEUE,
+-	IPP_BUF_DEQUEUE,
+-};
+-
+-/**
+- * A structure for ipp buffer operations.
+- *
+- * @ops_id: operation directions.
+- * @buf_type: definition of buffer.
+- * @prop_id: id of property.
+- * @buf_id: id of buffer.
+- * @handle: Y, Cb, Cr each planar handle.
+- * @user_data: user data.
+- */
+-struct drm_exynos_ipp_queue_buf {
+-	__u32	ops_id;
+-	__u32	buf_type;
+-	__u32	prop_id;
+-	__u32	buf_id;
+-	__u32	handle[EXYNOS_DRM_PLANAR_MAX];
+-	__u32	reserved;
+-	__u64	user_data;
+-};
+-
+-enum drm_exynos_ipp_ctrl {
+-	IPP_CTRL_PLAY,
+-	IPP_CTRL_STOP,
+-	IPP_CTRL_PAUSE,
+-	IPP_CTRL_RESUME,
+-	IPP_CTRL_MAX,
+-};
+-
+-/**
+- * A structure for ipp start/stop operations.
+- *
+- * @prop_id: id of property.
+- * @ctrl: definition of control.
+- */
+-struct drm_exynos_ipp_cmd_ctrl {
+-	__u32	prop_id;
+-	__u32	ctrl;
+-};
+-
+ #define DRM_EXYNOS_GEM_CREATE		0x00
+ #define DRM_EXYNOS_GEM_MAP		0x01
+ /* Reserved 0x03 ~ 0x05 for exynos specific gem ioctl */
+@@ -312,11 +146,7 @@ struct drm_exynos_ipp_cmd_ctrl {
+ #define DRM_EXYNOS_G2D_SET_CMDLIST	0x21
+ #define DRM_EXYNOS_G2D_EXEC		0x22
+ 
+-/* IPP - Image Post Processing */
+-#define DRM_EXYNOS_IPP_GET_PROPERTY	0x30
+-#define DRM_EXYNOS_IPP_SET_PROPERTY	0x31
+-#define DRM_EXYNOS_IPP_QUEUE_BUF	0x32
+-#define DRM_EXYNOS_IPP_CMD_CTRL	0x33
++/* Reserved 0x30 ~ 0x33 for obsolete Exynos IPP ioctls */
+ 
+ #define DRM_IOCTL_EXYNOS_GEM_CREATE		DRM_IOWR(DRM_COMMAND_BASE + \
+ 		DRM_EXYNOS_GEM_CREATE, struct drm_exynos_gem_create)
+@@ -335,18 +165,8 @@ struct drm_exynos_ipp_cmd_ctrl {
+ #define DRM_IOCTL_EXYNOS_G2D_EXEC		DRM_IOWR(DRM_COMMAND_BASE + \
+ 		DRM_EXYNOS_G2D_EXEC, struct drm_exynos_g2d_exec)
+ 
+-#define DRM_IOCTL_EXYNOS_IPP_GET_PROPERTY	DRM_IOWR(DRM_COMMAND_BASE + \
+-		DRM_EXYNOS_IPP_GET_PROPERTY, struct drm_exynos_ipp_prop_list)
+-#define DRM_IOCTL_EXYNOS_IPP_SET_PROPERTY	DRM_IOWR(DRM_COMMAND_BASE + \
+-		DRM_EXYNOS_IPP_SET_PROPERTY, struct drm_exynos_ipp_property)
+-#define DRM_IOCTL_EXYNOS_IPP_QUEUE_BUF	DRM_IOWR(DRM_COMMAND_BASE + \
+-		DRM_EXYNOS_IPP_QUEUE_BUF, struct drm_exynos_ipp_queue_buf)
+-#define DRM_IOCTL_EXYNOS_IPP_CMD_CTRL		DRM_IOWR(DRM_COMMAND_BASE + \
+-		DRM_EXYNOS_IPP_CMD_CTRL, struct drm_exynos_ipp_cmd_ctrl)
+-
+ /* EXYNOS specific events */
+ #define DRM_EXYNOS_G2D_EVENT		0x80000000
+-#define DRM_EXYNOS_IPP_EVENT		0x80000001
+ 
+ struct drm_exynos_g2d_event {
+ 	struct drm_event	base;
+@@ -357,16 +177,6 @@ struct drm_exynos_g2d_event {
+ 	__u32			reserved;
+ };
+ 
+-struct drm_exynos_ipp_event {
+-	struct drm_event	base;
+-	__u64			user_data;
+-	__u32			tv_sec;
+-	__u32			tv_usec;
+-	__u32			prop_id;
+-	__u32			reserved;
+-	__u32			buf_id[EXYNOS_DRM_OPS_MAX];
+-};
+-
+ #if defined(__cplusplus)
+ }
+ #endif
+-- 
+2.15.0
