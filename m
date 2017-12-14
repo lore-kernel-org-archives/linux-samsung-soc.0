@@ -1,72 +1,54 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: dts: add Samsung's exynos4412-based midas
- boards
-Date: Thu, 14 Dec 2017 10:04:45 +0100
-Message-ID: <d20f09ee-e41c-7f90-86ed-d201e2a48407@samsung.com>
-References: <20171212140815.28257-1-simon@lineageos.org>
-        <20171212140815.28257-3-simon@lineageos.org>
-        <CGME20171214084826epcas4p16bd7d4fb803b4120444003da38ed843a@epcas4p1.samsung.com>
-        <CAJKOXPfkQvo09r6WpZG-E+EgUk+p32dVycxWi6L07kHzv1EsWQ@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2] spi: s3c64xx: add SPDX identifier
+Date: Thu, 14 Dec 2017 10:41:23 +0000
+Message-ID: <20171214104123.GA9788@sirena.org.uk>
+References: <CGME20171213080544epcas2p29731b6c65f760ab1b9ac71d530fcaf77@epcas2p2.samsung.com>
+ <20171213080530.12724-1-andi.shyti@samsung.com>
+ <CAOFm3uHP-4UN+gzXzZc1ptptFm5f9uhafKyE963+DiamzdRTdw@mail.gmail.com>
+ <20171214013109.GC11657@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAJKOXPfkQvo09r6WpZG-E+EgUk+p32dVycxWi6L07kHzv1EsWQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171214013109.GC11657@gangnam.samsung>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
 
+--9jxsPFA5p3P2qPhR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2017-12-14 09:48, Krzysztof Kozlowski wrote:
-> Hi Simon,
->
-> Thanks for new boards!
->
-> +Cc Marek, Bartlomiej,
->
-> On Tue, Dec 12, 2017 at 3:08 PM, Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org> wrote:
->> "midas" is the codename for a family of smartphones released by Samsung
->> Mobile. It includes the Galaxy S3 (GT-I9300/I9305) and the Galaxy
->> Note 2 (GT-N7100/N7105). The boards largely have the same peripherals:
->> the main differences are touchscreen, display panel and cellular modem.
->>
->> Signed-off-by: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
->> ---
->>   arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi |  144 +++
->>   arch/arm/boot/dts/exynos4412-m0.dts         |   14 +
->>   arch/arm/boot/dts/exynos4412-m3.dts         |   19 +
->>   arch/arm/boot/dts/exynos4412-midas.dtsi     | 1291 +++++++++++++++++++++++++++
-> M0 is essentially Trats2. You are duplicating here almost entire
-> Trats2 which means:
-> 1. A lot of duplicated code thus it will require more maintenance to
-> keep DTS synced,
-> 2. It is very difficult to spot the changes and possible errors
-> between Trats2 and Midas DTSI/M0.
->
-> Please make a generic family of devices based on Midas, including
-> Trats2. You might make it in steps for easier review:
-> 1. Split common Trats2 part,
-> 2. Add new boards.
+On Thu, Dec 14, 2017 at 10:31:09AM +0900, Andi Shyti wrote:
 
-Krzysztof is right. Trats2 should also be based on midas.dtsi (it is very
-similar to gt-i9300, the difference in mainly in the casing). We also used
-gt-i9300 with modified bootloader with Trats2 dts.
+> 1. Strictly by Thomas documentation:
+>=20
+>   /* SPDX-License-Identifier: GPL-2.0 */
+>=20
+>   /*
+>    * Copyright (C) 2009 Samsung Electronics Ltd.
+>    *     Jaswinder Singh <jassi.brar@samsung.com>
+>    */
 
-It should not be hard to adapt it for common midas.dtsi base (hind: use
-scripts/dtc/dtx_diff for checking if the final dts is correct).
+Use C++ comments.
 
- > ...
+--9jxsPFA5p3P2qPhR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+-----BEGIN PGP SIGNATURE-----
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloyVVAACgkQJNaLcl1U
+h9ArbQf/Q2LQnfLWr/mn4Rosh1g6P/N5Bm6MBK60vOL8+0qHN7JHKv++PMi/qkfu
+hfGEzm20k7PvE982XjX6eqtqcarq7XBoYtSStow59yYroV3soixiEOV0hqzt0IdU
+76tQCPrDuSVftOzXLtSsc9PIYEEzauoi/6/nSbP1rI+HajzOGYwA5er5GSmvfJPU
+udH5g/a4NhOMg7FX9m48Qa6dO0vXK24w0INoNA3BCiZqfPp4gPekOS1hG9UEFcJ5
+R62EIS2ut3pMErEPG1H7iA10esMQhOsh8iqvu3tzAr+OAte5WBe5KQFDsGqAz7N6
+EhoAOLONI7mJxUfWJsyRONfYi8WFtQ==
+=VEyb
+-----END PGP SIGNATURE-----
+
+--9jxsPFA5p3P2qPhR--
