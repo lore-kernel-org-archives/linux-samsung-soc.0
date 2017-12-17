@@ -1,60 +1,84 @@
-From: 58402403@mylife.unisa.ac.za
-Subject: Hallo mein lieber Freund,
-Date: Sat, 16 Dec 2017 15:39:31 +0530
-Message-ID: <HE1PR0102MB2681DD7883AF272A44D34143B3080@HE1PR0102MB2681.eurprd01.prod.exchangelabs.com>
-Reply-To: verahollin88@gmail.com
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2] PM / Domains: Remove obsolete "samsung,power-domain" check
+Date: Sun, 17 Dec 2017 18:59:57 +0100
+Message-ID: <1667553.TIa4WidOe2@aspire.rjw.lan>
+References: <1512042868-23017-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-db5eur03hn0241.outbound.protection.outlook.com ([104.47.10.241]:48971
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756164AbdLPKIr (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 16 Dec 2017 05:08:47 -0500
-Content-Description: Mail message body
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1512042868-23017-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-pm-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Recipients <58402403@mylife.unisa.ac.za>
 
-Hallo mein lieber Freund,
+On Thursday, November 30, 2017 12:54:28 PM CET Geert Uytterhoeven wrote:
+> Currently the generic PM Domain code code checks for the presence of
+> both (generic) "power-domains" and (Samsung Exynos legacy)
+> "samsung,power-domain" properties in all device tree nodes representing
+> devices.
+> 
+> There are two issues with this:
+>   1. This imposes a small boot-time penalty on all platforms using DT,
+>   2. Platform-specific checks do not really belong in core framework
+>      code.
+> 
+> Remove the platform-specific check, as the last user of
+> "samsung,power-domain" was removed in commit 46dcf0ff0de35da8 ("ARM:
+> dts: exynos: Remove exynos4415.dtsi").  All other users were converted
+> before in commit 0da6587041363033 ("ARM: dts: convert to generic power
+> domain bindings for exynos DT").
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This is v2 of 'PM / Domains: Restrict "samsung,power-domain" checks to
+> ARCH_EXYNOS'.
+> 
+> "samsung,power-domain" was only ever used in:
+>   - arch/arm/boot/dts/exynos4415.dtsi: Removed
+>   - arch/arm/boot/dts/exynos3250.dtsi: CONFIG_ARCH_EXYNOS3
+>   - arch/arm/boot/dts/exynos4.dtsi:    CONFIG_ARCH_EXYNOS4
+>   - arch/arm/boot/dts/exynos4x12.dtsi: CONFIG_ARCH_EXYNOS4
+>   - arch/arm/boot/dts/exynos5250.dtsi: CONFIG_ARCH_EXYNOS5
+>   - arch/arm/boot/dts/exynos5420.dtsi: CONFIG_ARCH_EXYNOS5
+> 
+> v2:
+>   - Remove the check completely instead of restricting it to
+>     ARCH_EXYNOS, as suggested Javier Martinez Canillas one year ago
+>     ("Removing the support for the deprecated property sound sensible to me",
+>     http://lists.infradead.org/pipermail/linux-arm-kernel/2016-October/462868.html).
+> ---
+>  drivers/base/power/domain.c | 16 ++--------------
+>  1 file changed, 2 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 0c80bea05bcb92be..f9dcc981b6b9328c 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2199,20 +2199,8 @@ int genpd_dev_pm_attach(struct device *dev)
+>  
+>  	ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
+>  					"#power-domain-cells", 0, &pd_args);
+> -	if (ret < 0) {
+> -		if (ret != -ENOENT)
+> -			return ret;
+> -
+> -		/*
+> -		 * Try legacy Samsung-specific bindings
+> -		 * (for backwards compatibility of DT ABI)
+> -		 */
+> -		pd_args.args_count = 0;
+> -		pd_args.np = of_parse_phandle(dev->of_node,
+> -						"samsung,power-domain", 0);
+> -		if (!pd_args.np)
+> -			return -ENOENT;
+> -	}
+> +	if (ret < 0)
+> +		return ret;
+>  
+>  	mutex_lock(&gpd_list_lock);
+>  	pd = genpd_get_from_provider(&pd_args);
+> 
 
-Ich schreibe Ihnen diese Post mit schweren Tr=E4nen In meinen Augen und gro=
-=DFem Kummer in meinem Herzen, Mein Name ist Vera Hollin Kvan, und ich kont=
-aktiere Sie aus meinem Land Indien Ich m=F6chte Ihnen dies sagen, weil ich =
-keine habe andere Option, als Ihnen zu sagen, wie ich ber=FChrt wurde, um S=
-ie zu =F6ffnen, ich heiratete mit Herrn Hollin Kvan, der mit der tunesische=
-n Botschaft in Madrid Spanien f=FCr neun Jahre arbeitete, bevor er im Jahr =
-2005 starb.Wir waren seit elf Jahren ohne eine Kind.
-
-Er starb nach einer kurzen Krankheit, die nur f=FCnf Tage dauerte. Seit sei=
-nem Tod habe ich beschlossen, nicht wieder zu heiraten. Als mein verstorben=
-er Ehemann lebte, deponierte er die Summe von $ 4,850,000.00USD (vier Milli=
-onen achthundertundf=FCnfzigtausend Dollar) in einer Bank hier in Indien. N=
-ew Delhi die Hauptstadt von Indien, derzeit dieses Geld ist immer noch in d=
-er Bank.
-
-Er machte dieses Geld f=FCr den Export von Gold aus Madrid Spanien Bergbau-=
-Factary.K=FCrzlich mein Arzt sagte mir, dass ich nicht f=FCr die Dauer von =
-sieben Monaten wegen Krebs Problem dauern w=FCrde. Derjenige, der mich am m=
-eisten st=F6rt, ist meine Schlaganfallkrankheit. Nachdem ich meinen Zustand=
- gekannt habe, habe ich mich entschlossen, Ihnen dieses Geld zu geben, um a=
-uf die weniger privilegierten Leute aufzupassen, Sie werden dieses Geld ver=
-wenden, wie ich hier unterweisen werde.
-
-Ich m=F6chte, dass Sie 30 Prozent des gesamten Geldes f=FCr Ihren pers=F6nl=
-ichen Gebrauch verwenden, w=E4hrend 70% des Geldes f=FCr wohlt=E4tige Zweck=
-e, Menschen auf der Stra=DFe und Hilfe f=FCr das Waisenhaus verwendet werde=
-n. Ich bin als Waise aufgewachsen und habe keinen K=F6rper als Familienmitg=
-lied, nur um zu enden, dass das Haus Gottes auch erhalten bleibt. Tue dies,=
- damit Gott meine S=FCnden vergibt und meine Seele annimmt, weil diese Kran=
-kheiten mich so sehr gelitten haben. Sobald ich Ihre Antwort erhalten habe,=
- werde ich Ihnen den Kontakt der Bank hier in Delhi Indien geben und ich we=
-rde auch den Bankmanager anweisen, Ihnen ein Autorit=E4tsschreiben auszuste=
-llen, das Sie als den gegenw=E4rtigen Beg=FCnstigten des Geldes in der Bank=
- beweisen wird, wenn Sie versichern mir, dass Sie entsprechend handeln, wie=
- ich es hier dargelegt habe.
-
-In der Hoffnung, Ihre Antwort zu erhalten.
-Von Vera Hollin kVan
+Applied, thanks!
