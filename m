@@ -1,57 +1,89 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] media: s5p-mfc: Add support for V4L2_MEMORY_DMABUF
- type
-Date: Mon, 18 Dec 2017 09:19:11 +0100
-Message-ID: <c894f9b6-5381-b7eb-ba77-35e71958bf45@samsung.com>
-References: <CGME20171103081132eucas1p2212e32d26e7921340336d78d0d92cb1b@eucas1p2.samsung.com>
-        <20171103081124.30119-1-m.szyprowski@samsung.com>
-        <1509716721.3607.6.camel@ndufresne.ca>
-        <decd38f5-d3c0-6a60-cdbb-20bb804be3a5@samsung.com>
-        <1509996082.30233.51.camel@ndufresne.ca>
-        <e360971a-cb3b-0546-e621-ab56f8ed8f36@samsung.com>
-        <e71e9a74-736a-5185-a544-845fff4ff63c@xs4all.nl>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 04/25] arm: exynos/s3c: dts: Remove leading 0x and 0s from
+ bindings notation
+Date: Mon, 18 Dec 2017 10:40:18 +0100
+Message-ID: <CAJKOXPdkYLisej5965rh2SbOjbFms-RK2VnXt=L==MW_JcA+OA@mail.gmail.com>
+References: <20171215124630.30082-1-malat@debian.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44359 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757971AbdLRITS (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 03:19:18 -0500
-In-reply-to: <e71e9a74-736a-5185-a544-845fff4ff63c@xs4all.nl>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171215124630.30082-1-malat-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mathieu Malaterre <malat-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Nicolas Dufresne <nicolas@ndufresne.ca>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, JaeChul Lee <jcsing.lee@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hi Hans,
-
-On 2017-12-15 16:57, Hans Verkuil wrote:
-> On 14/12/17 15:11, Marek Szyprowski wrote:
->> I would like to get your opinion on this patch. Do you think it makes sense to:
->>
->> 1. add limited support for USERPTR and DMA-buf import? (limited means driver will accept setting buffer pointer/fd only once after reqbufs for each buffer index)
-> I don't like this. It's unexpected almost-but-not-quite behavior that will make
-> life very difficult for userspace.
+On Fri, Dec 15, 2017 at 1:46 PM, Mathieu Malaterre <malat-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org> wrote:
+> Improve the DTS files by removing all the leading "0x" and zeros to fix the
+> following dtc warnings:
 >
->> 2. add a V4L2 device flag to let userspace to discover if device support queue buffer reconfiguration on-fly or not?
-> This seems to me a better approach. It should be possible to implement most/all of this
-> in vb2, but we need to find a way to signal this to the user.
+> Warning (unit_address_format): Node /XXX unit name should not have leading "0x"
+>
+> and
+>
+> Warning (unit_address_format): Node /XXX unit name should not have leading 0s
+>
+> Converted using the following command:
+>
+> find . -type f \( -iname *.dts -o -iname *.dtsi \) -exec sed -i -e "s/@\([0-9a-fA-FxX\.;:#]+\)\s*{/@\L\1 {/g" -e "s/@0x\(.*\) {/@\1 {/g" -e "s/@0+\(.*\) {/@\1 {/g" {} +^C
+>
+> For simplicity, two sed expressions were used to solve each warnings separately.
+>
+> To make the regex expression more robust a few other issues were resolved,
+> namely setting unit-address to lower case, and adding a whitespace before the
+> the opening curly brace:
+>
+> https://elinux.org/Device_Tree_Linux#Linux_conventions
+>
+> This will solve as a side effect warning:
+>
+> Warning (simple_bus_reg): Node /XXX@<UPPER> simple-bus unit address format error, expected "<lower>"
+>
+> This is a follow up to commit 4c9847b7375a ("dt-bindings: Remove leading 0x from bindings notation")
+>
+> Reported-by: David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
+> Suggested-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-Okay, I will prepare a patch with such flag soon.
+Ack was for different patchset, touching only three files...
 
-> Is this an MFC limitation for the decoder, encoder or both? And is it a limitation
-> of the capture or output side or both?
+> Signed-off-by: Mathieu Malaterre <malat-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos3250.dtsi             | 34 ++++++------
+>  arch/arm/boot/dts/exynos4.dtsi                | 56 +++++++++----------
+>  arch/arm/boot/dts/exynos4210.dtsi             |  8 +--
+>  arch/arm/boot/dts/exynos4412-pinctrl.dtsi     |  2 +-
+>  arch/arm/boot/dts/exynos4412.dtsi             | 22 ++++----
+>  arch/arm/boot/dts/exynos5.dtsi                | 22 ++++----
+>  arch/arm/boot/dts/exynos5250.dtsi             | 64 +++++++++++-----------
+>  arch/arm/boot/dts/exynos5260.dtsi             | 26 ++++-----
+>  arch/arm/boot/dts/exynos5420.dtsi             | 78 +++++++++++++--------------
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  2 +-
+>  arch/arm/boot/dts/exynos5440.dtsi             | 14 ++---
+>  arch/arm/boot/dts/s3c2416.dtsi                |  8 +--
+>  12 files changed, 168 insertions(+), 168 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index 2bd3872221a1..8d47571b3984 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -164,31 +164,31 @@
+>                         syscon = <&pmu_system_controller>;
+>                 };
+>
+> -               pd_cam: cam-power-domain@10023C00 {
+> +               pd_cam: cam-power-domain@10023c00 {
 
-Both and both. DMA addresses of all buffers must be known while 
-initializing decoder
-and encoder.
+This is not related to this patch and it was not present in the
+version I acked. I also already fixed this here:
+https://patchwork.kernel.org/patch/10113323/
 
- > ...
+There is no changelog explaining the difference in patches. Original
+patch was okay, why changing it?
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best regards,
+Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
