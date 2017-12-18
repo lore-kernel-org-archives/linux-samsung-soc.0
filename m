@@ -1,34 +1,21 @@
-From: Benoit Parrot <bparrot@ti.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Subject: Re: [PATCH 3/8] media: v4l2-async: simplify v4l2_async_subdev
  structure
-Date: Mon, 18 Dec 2017 14:01:20 -0600
-Message-ID: <20171218200120.GA15588@ti.com>
+Date: Mon, 18 Dec 2017 23:27:05 +0100
+Message-ID: <20171218222705.GK15162@piout.net>
 References: <cover.1513625884.git.mchehab@s-opensource.com>
  <014b64d13c8b9d516afc3319a9de1a97b2a845de.1513625884.git.mchehab@s-opensource.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <014b64d13c8b9d516afc3319a9de1a97b2a845de.1513625884.git.mchehab@s-opensource.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Songjun Wu <songjun.wu@microchip.com>, Hans Verkuil <hverkuil@xs4all.nl>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alexandre Torgue <alexandre.torgue@st.com>, devel@driverdev.osuosl.org, linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Kukjin Kim <kgene@kernel.org>, Steve Longerbeam <slongerbeam@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Hugues Fruchet <hugues.fruchet@st.com>, Petr Cvek <petr.cvek>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Songjun Wu <songjun.wu@microchip.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Todor Tomov <todor.tomov@linaro.org>, Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Benoi
 List-Id: linux-samsung-soc@vger.kernel.org
 
-For am437x/am437x-vpfe.c & ti-vpe/cal.c
-
-Acked-by: Benoit Parrot <bparrot@ti.com>
-
-Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote on Mon [2017-Dec-18 17:53:57 -0200]:
+On 18/12/2017 at 17:53:57 -0200, Mauro Carvalho Chehab wrote:
 > The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
 > struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
 > match criteria requires just a device name.
@@ -41,6 +28,10 @@ Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote on Mon [2017-Dec-18 17:53
 > 
 > At drivers, this makes even clearer about the match criteria.
 > 
+
+For atmel:
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+
 > Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 > ---
@@ -423,3 +414,8 @@ Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote on Mon [2017-Dec-18 17:53
 > -- 
 > 2.14.3
 > 
+
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
