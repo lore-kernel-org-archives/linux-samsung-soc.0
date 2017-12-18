@@ -1,102 +1,75 @@
-From: Mathieu Malaterre <malat-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 04/25] arm: exynos/s3c: dts: Remove leading 0x and 0s from
- bindings notation
-Date: Mon, 18 Dec 2017 11:17:24 +0100
-Message-ID: <CA+7wUsxp_n6V--PE9PQSsT1xu3b0HJn5gWBhnp=ngRNqBSVvFg@mail.gmail.com>
-References: <20171215124630.30082-1-malat@debian.org> <CAJKOXPdkYLisej5965rh2SbOjbFms-RK2VnXt=L==MW_JcA+OA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
+Subject: [PATCH v3 0/4] Add Exynos4412-based midas boards support
+Date: Mon, 18 Dec 2017 23:38:01 +1100
+Message-ID: <20171218123805.26345-1-simon@lineageos.org>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAJKOXPdkYLisej5965rh2SbOjbFms-RK2VnXt=L==MW_JcA+OA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?q?Bart=C5=82omiej=20=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 18, 2017 at 10:40 AM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Fri, Dec 15, 2017 at 1:46 PM, Mathieu Malaterre <malat-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org> wrote:
->> Improve the DTS files by removing all the leading "0x" and zeros to fix the
->> following dtc warnings:
->>
->> Warning (unit_address_format): Node /XXX unit name should not have leading "0x"
->>
->> and
->>
->> Warning (unit_address_format): Node /XXX unit name should not have leading 0s
->>
->> Converted using the following command:
->>
->> find . -type f \( -iname *.dts -o -iname *.dtsi \) -exec sed -i -e "s/@\([0-9a-fA-FxX\.;:#]+\)\s*{/@\L\1 {/g" -e "s/@0x\(.*\) {/@\1 {/g" -e "s/@0+\(.*\) {/@\1 {/g" {} +^C
->>
->> For simplicity, two sed expressions were used to solve each warnings separately.
->>
->> To make the regex expression more robust a few other issues were resolved,
->> namely setting unit-address to lower case, and adding a whitespace before the
->> the opening curly brace:
->>
->> https://elinux.org/Device_Tree_Linux#Linux_conventions
->>
->> This will solve as a side effect warning:
->>
->> Warning (simple_bus_reg): Node /XXX@<UPPER> simple-bus unit address format error, expected "<lower>"
->>
->> This is a follow up to commit 4c9847b7375a ("dt-bindings: Remove leading 0x from bindings notation")
->>
->> Reported-by: David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
->> Suggested-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->
-> Ack was for different patchset, touching only three files...
+Hi,
 
-So sorry, when I read your email:
+This patch series adds support for a new set of boards, codenamed
+"midas". These are the Galaxy S3 (m0/m3, GT-I9300/GT-I9305)
+and the Galaxy Note 2 (t0, GT-N7100/GT-N7105).
 
-https://lkml.org/lkml/2017/12/15/152
+These boards are closely related to trats2 - m0 is a trats2 but with a
+bootloader geared towards booting Android rather than a traditional Linux
+distribution - and because of this, the dts files are largely based off
+what is already in-place for trats2. Trats2 is modified to use
+the dts files added by this series.
 
-I assumed you meant for all the Exynos* and S3C* DTS files, but I did
-not check carefully which files were touched originally.
+Patch #1 adds documentation for the bindings used by the boards.
+Patch #2 splits the existing trats2 DTS into the common midas,
+m0/m3/trats2-specific, and trats2-specific parts.
+Patch #3 adds the device-tree files for the other boards.
+Patch #4 enables cpuidle support for all added boards.
 
->> Signed-off-by: Mathieu Malaterre <malat-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>
->> ---
->>  arch/arm/boot/dts/exynos3250.dtsi             | 34 ++++++------
->>  arch/arm/boot/dts/exynos4.dtsi                | 56 +++++++++----------
->>  arch/arm/boot/dts/exynos4210.dtsi             |  8 +--
->>  arch/arm/boot/dts/exynos4412-pinctrl.dtsi     |  2 +-
->>  arch/arm/boot/dts/exynos4412.dtsi             | 22 ++++----
->>  arch/arm/boot/dts/exynos5.dtsi                | 22 ++++----
->>  arch/arm/boot/dts/exynos5250.dtsi             | 64 +++++++++++-----------
->>  arch/arm/boot/dts/exynos5260.dtsi             | 26 ++++-----
->>  arch/arm/boot/dts/exynos5420.dtsi             | 78 +++++++++++++--------------
->>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  2 +-
->>  arch/arm/boot/dts/exynos5440.dtsi             | 14 ++---
->>  arch/arm/boot/dts/s3c2416.dtsi                |  8 +--
->>  12 files changed, 168 insertions(+), 168 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
->> index 2bd3872221a1..8d47571b3984 100644
->> --- a/arch/arm/boot/dts/exynos3250.dtsi
->> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->> @@ -164,31 +164,31 @@
->>                         syscon = <&pmu_system_controller>;
->>                 };
->>
->> -               pd_cam: cam-power-domain@10023C00 {
->> +               pd_cam: cam-power-domain@10023c00 {
->
-> This is not related to this patch and it was not present in the
-> version I acked. I also already fixed this here:
-> https://patchwork.kernel.org/patch/10113323/
->
-> There is no changelog explaining the difference in patches. Original
-> patch was okay, why changing it?
+Changes since v1:
+* Include trats2 in inheritance
+* Add the new dtbs to the makefile
+* Cleanup style per Krzysztof's comments
 
-Accept my sincere apologizes I really messed this series. I discover
-my original ARM patch did not apply lower case to all unit-address
-equally, so I added at last minute a sed expression to make all
-unit-address lower case.
+Changes since v2:
+* Rebase on linux-next 20171218 (adds some fixes yet to land in mainline)
+* Leave any changes to the DTS out of patch #2
+* Minimise diff of exynos4412-midas.dtsi, using format-patch -B30%
+  (thanks for the suggestion, Krzysztof)
+* Leave original trats2 copyrights on midas and galaxy-s3 DTS files
+* Preserve ABI for the cpuidle compatability check
+* Explain the m0/m3/t0 -> GT-I9300/GT-I9305/GT-N7100/GT-N7105 relationship
+ in the DT binding docs.
 
-I guess you can just drop this one for now.
+Cheers,
+Simon
 
--M
+Simon Shields (4):
+  dt-bindings: samsung: document bindings for Midas family boards
+  ARM: dts: split trats2 DTS in preparation for midas boards
+  ARM: dts: add Samsung's exynos4412-based midas boards
+  ARM: exynos: extend cpuidle support to midas boards
+
+ .../bindings/arm/samsung/samsung-boards.txt        |    4 +
+ arch/arm/boot/dts/Makefile                         |    3 +
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi        |  145 ++
+ arch/arm/boot/dts/exynos4412-m0.dts                |   27 +
+ arch/arm/boot/dts/exynos4412-m3.dts                |   14 +
+ ...exynos4412-trats2.dts => exynos4412-midas.dtsi} |  117 +-
+ arch/arm/boot/dts/exynos4412-t0.dts                |   40 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            | 1446 +-------------------
+ arch/arm/mach-exynos/exynos.c                      |    3 +-
+ 9 files changed, 274 insertions(+), 1525 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4412-m0.dts
+ create mode 100644 arch/arm/boot/dts/exynos4412-m3.dts
+ copy arch/arm/boot/dts/{exynos4412-trats2.dts => exynos4412-midas.dtsi} (92%)
+ create mode 100644 arch/arm/boot/dts/exynos4412-t0.dts
+ rewrite arch/arm/boot/dts/exynos4412-trats2.dts (97%)
+
+-- 
+2.15.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
