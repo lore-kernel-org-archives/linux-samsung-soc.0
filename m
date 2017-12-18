@@ -1,108 +1,83 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: [PATCH v2 13/17] media: v4l2-async: simplify v4l2_async_subdev
- structure
-Date: Mon, 18 Dec 2017 17:04:34 -0200
-Message-ID: <20171218170434.111c1e44@vento.lan>
-References: <cover.1506548682.git.mchehab@s-opensource.com>
-        <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
-        <20170928120920.ywgbtikkrts25qlj@valkosipuli.retiisi.org.uk>
-        <20170929062119.192e4fd1@vento.lan>
-        <20170929220524.gsx3tmirdni2mhpx@valkosipuli.retiisi.org.uk>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 0/8] Some V4L2 documentation pending patches
+Date: Mon, 18 Dec 2017 17:53:54 -0200
+Message-ID: <cover.1513625884.git.mchehab@s-opensource.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:33892 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760252AbdLRTEo (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 14:04:44 -0500
-In-Reply-To: <20170929220524.gsx3tmirdni2mhpx@valkosipuli.retiisi.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Songjun Wu <songjun.wu@microchip.com>, Hans Verkuil <hverkuil@xs4all.nl>, Pravin Shedge <pravin.shedge4linux@gmail.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Markus Elfring <elfring@users.sourceforge.net>, Marek Szyprowski <m.szyprowski@samsung.com>, devel@driverdev.osuosl.org, linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Kukjin Kim <kgene@kernel.org>, Mats Randgaard <matr>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org
 
-Em Sat, 30 Sep 2017 01:05:24 +0300
-Sakari Ailus <sakari.ailus@iki.fi> escreveu:
+This series contain the patches of a /17 and a /24 series
+of documentation that required non-trivial changes.
 
-> Hi Mauro,
-> 
-> (Removing the non-list recipients.)
-> 
-> On Fri, Sep 29, 2017 at 06:27:13AM -0300, Mauro Carvalho Chehab wrote:
-> > Em Thu, 28 Sep 2017 15:09:21 +0300
-> > Sakari Ailus <sakari.ailus@iki.fi> escreveu:
-> >   
-> > > Hi Mauro,
-> > > 
-> > > On Wed, Sep 27, 2017 at 06:46:56PM -0300, Mauro Carvalho Chehab wrote:  
-> > > > The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
-> > > > struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
-> > > > match criteria requires just a device name.
-> > > > 
-> > > > So, it doesn't make sense to enclose those into structs,
-> > > > as the criteria can go directly into the union.
-> > > > 
-> > > > That makes easier to document it, as we don't need to document
-> > > > weird senseless structs.    
-> > > 
-> > > The idea is that in the union, there's a struct which is specific to the
-> > > match_type field. I wouldn't call it senseless.  
-> > 
-> > Why a struct for each specific match_type is **needed**? It it is not
-> > needed, then it is senseless per definition :-) 
-> > 
-> > In the specific case of fwnode, there's already a named struct
-> > for fwnode_handle. The only thing is that it is declared outside
-> > enum v4l2_async_match_type. So, I don't see any reason to do things
-> > like:
-> > 
-> > 		struct {
-> > 			struct fwnode_handle *fwnode;
-> > 		} fwnode;
-> > 
-> > If you're in doubt about that, think on how would you document
-> > both fwnode structs. Both fwnode structs specify the match
-> > criteria if %V4L2_ASYNC_MATCH_FWNODE.
-> > 
-> > The same applies to this:
-> > 
-> > 		struct {
-> > 			const char *name;
-> > 		} device_name;
-> > 
-> > Both device_name and name specifies the match criteria if
-> > %V4L2_ASYNC_MATCH_DEVNAME.
-> >   
-> > > 
-> > > In the two cases there's just a single field in the containing struct. You
-> > > could remove the struct in that case as you do in this patch, and just use
-> > > the field. But I think the result is less clean and so I wouldn't make this
-> > > change.  
-> > 
-> > It is actually cleaner without the stucts.
-> > 
-> > Without the useless struct, if one wants to match a firmware node, it
-> > should be doing:
-> > 
-> >  		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
-> > 		pdata->asd[i]->match.fwnode = of_fwnode_handle(rem);  
-> 
-> This code should be and will be moved out of drivers. See:
-> 
-> <URL:http://www.spinics.net/lists/linux-media/msg122688.html>
-> 
-> So there are going to be quite a bit fewer instances of it, and none should
-> remain in drivers. I frankly don't have a strong opinion on this; there are
-> arguments for and against. I just don't see a reason to change it.
+Mauro Carvalho Chehab (8):
+  media: v4l2-device.h: document helper macros
+  media: v4l2-ioctl.h: convert debug into an enum of bits
+  media: v4l2-async: simplify v4l2_async_subdev structure
+  media: v4l2-async: better describe match union at async match struct
+  media: v4l2-mediabus: convert flags to enums and document them
+  media: v4l2-subdev: get rid of __V4L2_SUBDEV_MK_GET_TRY() macro
+  media: v4l2-subdev: document remaining undocumented functions
+  media: v4l2-subdev: use kernel-doc markups to document subdev flags
 
-There are still a few occurrences on drivers. Just rebased it.
-I'll post it in a few, inside a new patch series.
+ drivers/media/i2c/adv7180.c                        |  10 +-
+ drivers/media/i2c/ml86v7667.c                      |   5 +-
+ drivers/media/i2c/mt9m111.c                        |   8 +-
+ drivers/media/i2c/ov6650.c                         |  19 +-
+ drivers/media/i2c/soc_camera/imx074.c              |   6 +-
+ drivers/media/i2c/soc_camera/mt9m001.c             |  10 +-
+ drivers/media/i2c/soc_camera/mt9t031.c             |  11 +-
+ drivers/media/i2c/soc_camera/mt9t112.c             |  11 +-
+ drivers/media/i2c/soc_camera/mt9v022.c             |  16 +-
+ drivers/media/i2c/soc_camera/ov5642.c              |   5 +-
+ drivers/media/i2c/soc_camera/ov772x.c              |  10 +-
+ drivers/media/i2c/soc_camera/ov9640.c              |  10 +-
+ drivers/media/i2c/soc_camera/ov9740.c              |  10 +-
+ drivers/media/i2c/soc_camera/rj54n1cb0c.c          |  12 +-
+ drivers/media/i2c/soc_camera/tw9910.c              |  13 +-
+ drivers/media/i2c/tc358743.c                       |  10 +-
+ drivers/media/i2c/tvp5150.c                        |   6 +-
+ drivers/media/platform/am437x/am437x-vpfe.c        |   6 +-
+ drivers/media/platform/atmel/atmel-isc.c           |   2 +-
+ drivers/media/platform/atmel/atmel-isi.c           |   2 +-
+ drivers/media/platform/davinci/vpif_capture.c      |   4 +-
+ drivers/media/platform/exynos4-is/media-dev.c      |   4 +-
+ drivers/media/platform/pxa_camera.c                |  10 +-
+ drivers/media/platform/qcom/camss-8x16/camss.c     |   2 +-
+ drivers/media/platform/rcar-vin/rcar-core.c        |   6 +-
+ drivers/media/platform/rcar-vin/rcar-dma.c         |   4 +-
+ drivers/media/platform/rcar_drif.c                 |   4 +-
+ .../platform/soc_camera/sh_mobile_ceu_camera.c     |   2 +-
+ drivers/media/platform/soc_camera/soc_camera.c     |   5 +-
+ .../platform/soc_camera/soc_camera_platform.c      |   2 +-
+ drivers/media/platform/soc_camera/soc_mediabus.c   |   2 +-
+ drivers/media/platform/stm32/stm32-dcmi.c          |   2 +-
+ drivers/media/platform/ti-vpe/cal.c                |   2 +-
+ drivers/media/platform/xilinx/xilinx-vipp.c        |   2 +-
+ drivers/media/v4l2-core/v4l2-async.c               |  16 +-
+ drivers/media/v4l2-core/v4l2-dev.c                 |  18 +-
+ drivers/media/v4l2-core/v4l2-fwnode.c              |  15 +-
+ drivers/media/v4l2-core/v4l2-ioctl.c               |   7 +-
+ drivers/staging/media/imx/imx-media-dev.c          |   4 +-
+ include/media/v4l2-async.h                         |  33 ++-
+ include/media/v4l2-device.h                        | 246 ++++++++++++++++++---
+ include/media/v4l2-fwnode.h                        |   4 +-
+ include/media/v4l2-ioctl.h                         |  33 +--
+ include/media/v4l2-mediabus.h                      | 145 ++++++++----
+ include/media/v4l2-subdev.h                        | 143 +++++++++---
+ 45 files changed, 632 insertions(+), 265 deletions(-)
 
-Simplifying the name of the match rules makes easier to understand
-what's going on.
-
-
-Thanks,
-Mauro
+-- 
+2.14.3
