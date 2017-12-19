@@ -1,416 +1,359 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH v2 3/8] media: v4l2-async: simplify v4l2_async_subdev structure
-Date: Tue, 19 Dec 2017 09:18:19 -0200
-Message-ID: <9702fbf0c9dd2f6a657aff0c7fff3ca849d76713.1513682135.git.mchehab@s-opensource.com>
+From: Hyun Kwon <hyunk@xilinx.com>
+Subject: RE: [PATCH v2 3/8] media: v4l2-async: simplify v4l2_async_subdev
+ structure
+Date: Tue, 19 Dec 2017 18:38:46 +0000
+Message-ID: <BY1PR0201MB100085F878601DFBB5B3EF0FD60F0@BY1PR0201MB1000.namprd02.prod.outlook.com>
 References: <cover.1513682135.git.mchehab@s-opensource.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from osg.samsung.com ([64.30.133.232]:55807 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751462AbdLSLSo (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 06:18:44 -0500
-In-Reply-To: <cover.1513682135.git.mchehab@s-opensource.com>
-In-Reply-To: <cover.1513682135.git.mchehab@s-opensource.com>
-References: <cover.1513682135.git.mchehab@s-opensource.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+ <9702fbf0c9dd2f6a657aff0c7fff3ca849d76713.1513682135.git.mchehab@s-opensource.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <9702fbf0c9dd2f6a657aff0c7fff3ca849d76713.1513682135.git.mchehab@s-opensource.com>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Songjun Wu <songjun.wu@microchip.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Todor Tomov <todor.tomov@linaro.org>, =?utf-8?B?TmlrbGFzIFPDtmRlcmx1bmQ=?= <niklas.soderlund@ragnatech.se>, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Songjun Wu <songjun.wu@microchip.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Todor Tomov <todor.tomov@linaro.org>, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Maxime Coquelin <mcoquelin.stm32@gmail.com>Alexan
 
-The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
-struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
-match criteria requires just a device name.
-
-So, it doesn't make sense to enclose those into structs,
-as the criteria can go directly into the union.
-
-That makes easier to document it, as we don't need to document
-weird senseless structs.
-
-At drivers, this makes even clearer about the match criteria.
-
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Benoit Parrot <bparrot@ti.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
----
- drivers/media/platform/am437x/am437x-vpfe.c    |  6 +++---
- drivers/media/platform/atmel/atmel-isc.c       |  2 +-
- drivers/media/platform/atmel/atmel-isi.c       |  2 +-
- drivers/media/platform/davinci/vpif_capture.c  |  4 ++--
- drivers/media/platform/exynos4-is/media-dev.c  |  4 ++--
- drivers/media/platform/pxa_camera.c            |  2 +-
- drivers/media/platform/qcom/camss-8x16/camss.c |  2 +-
- drivers/media/platform/rcar-vin/rcar-core.c    |  2 +-
- drivers/media/platform/rcar_drif.c             |  4 ++--
- drivers/media/platform/soc_camera/soc_camera.c |  2 +-
- drivers/media/platform/stm32/stm32-dcmi.c      |  2 +-
- drivers/media/platform/ti-vpe/cal.c            |  2 +-
- drivers/media/platform/xilinx/xilinx-vipp.c    |  2 +-
- drivers/media/v4l2-core/v4l2-async.c           | 16 ++++++++--------
- drivers/media/v4l2-core/v4l2-fwnode.c          | 10 +++++-----
- drivers/staging/media/imx/imx-media-dev.c      |  4 ++--
- include/media/v4l2-async.h                     |  8 ++------
- 17 files changed, 35 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
-index 0997c640191d..601ae6487617 100644
---- a/drivers/media/platform/am437x/am437x-vpfe.c
-+++ b/drivers/media/platform/am437x/am437x-vpfe.c
-@@ -2304,8 +2304,8 @@ vpfe_async_bound(struct v4l2_async_notifier *notifier,
- 	vpfe_dbg(1, vpfe, "vpfe_async_bound\n");
- 
- 	for (i = 0; i < ARRAY_SIZE(vpfe->cfg->asd); i++) {
--		if (vpfe->cfg->asd[i]->match.fwnode.fwnode ==
--		    asd[i].match.fwnode.fwnode) {
-+		if (vpfe->cfg->asd[i]->match.fwnode ==
-+		    asd[i].match.fwnode) {
- 			sdinfo = &vpfe->cfg->sub_devs[i];
- 			vpfe->sd[i] = subdev;
- 			vpfe->sd[i]->grp_id = sdinfo->grp_id;
-@@ -2510,7 +2510,7 @@ vpfe_get_pdata(struct platform_device *pdev)
- 		}
- 
- 		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
--		pdata->asd[i]->match.fwnode.fwnode = of_fwnode_handle(rem);
-+		pdata->asd[i]->match.fwnode = of_fwnode_handle(rem);
- 		of_node_put(rem);
- 	}
- 
-diff --git a/drivers/media/platform/atmel/atmel-isc.c b/drivers/media/platform/atmel/atmel-isc.c
-index 0c2635647f69..34676409ca08 100644
---- a/drivers/media/platform/atmel/atmel-isc.c
-+++ b/drivers/media/platform/atmel/atmel-isc.c
-@@ -2088,7 +2088,7 @@ static int isc_parse_dt(struct device *dev, struct isc_device *isc)
- 			subdev_entity->pfe_cfg0 |= ISC_PFE_CFG0_PPOL_LOW;
- 
- 		subdev_entity->asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
--		subdev_entity->asd->match.fwnode.fwnode =
-+		subdev_entity->asd->match.fwnode =
- 			of_fwnode_handle(rem);
- 		list_add_tail(&subdev_entity->list, &isc->subdev_entities);
- 	}
-diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
-index e900995143a3..9958918e2449 100644
---- a/drivers/media/platform/atmel/atmel-isi.c
-+++ b/drivers/media/platform/atmel/atmel-isi.c
-@@ -1128,7 +1128,7 @@ static int isi_graph_parse(struct atmel_isi *isi, struct device_node *node)
- 		/* Remote node to connect */
- 		isi->entity.node = remote;
- 		isi->entity.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--		isi->entity.asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+		isi->entity.asd.match.fwnode = of_fwnode_handle(remote);
- 		return 0;
- 	}
- }
-diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
-index e45916f69def..e1c273c8b9a6 100644
---- a/drivers/media/platform/davinci/vpif_capture.c
-+++ b/drivers/media/platform/davinci/vpif_capture.c
-@@ -1390,7 +1390,7 @@ static int vpif_async_bound(struct v4l2_async_notifier *notifier,
- 
- 	for (i = 0; i < vpif_obj.config->asd_sizes[0]; i++) {
- 		struct v4l2_async_subdev *_asd = vpif_obj.config->asd[i];
--		const struct fwnode_handle *fwnode = _asd->match.fwnode.fwnode;
-+		const struct fwnode_handle *fwnode = _asd->match.fwnode;
- 
- 		if (fwnode == subdev->fwnode) {
- 			vpif_obj.sd[i] = subdev;
-@@ -1595,7 +1595,7 @@ vpif_capture_get_pdata(struct platform_device *pdev)
- 		}
- 
- 		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
--		pdata->asd[i]->match.fwnode.fwnode = of_fwnode_handle(rem);
-+		pdata->asd[i]->match.fwnode = of_fwnode_handle(rem);
- 		of_node_put(rem);
- 	}
- 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 0ef583cfc424..78b48a1fa26c 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -456,7 +456,7 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	}
- 
- 	fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--	fmd->sensor[index].asd.match.fwnode.fwnode = of_fwnode_handle(rem);
-+	fmd->sensor[index].asd.match.fwnode = of_fwnode_handle(rem);
- 	fmd->async_subdevs[index] = &fmd->sensor[index].asd;
- 
- 	fmd->num_sensors++;
-@@ -1364,7 +1364,7 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
- 
- 	/* Find platform data for this sensor subdev */
- 	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
--		if (fmd->sensor[i].asd.match.fwnode.fwnode ==
-+		if (fmd->sensor[i].asd.match.fwnode ==
- 		    of_fwnode_handle(subdev->dev->of_node))
- 			si = &fmd->sensor[i];
- 
-diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
-index 305cf1cac210..f028084f0775 100644
---- a/drivers/media/platform/pxa_camera.c
-+++ b/drivers/media/platform/pxa_camera.c
-@@ -2335,7 +2335,7 @@ static int pxa_camera_pdata_from_dt(struct device *dev,
- 	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
- 	remote = of_graph_get_remote_port(np);
- 	if (remote) {
--		asd->match.fwnode.fwnode = of_fwnode_handle(remote);
-+		asd->match.fwnode = of_fwnode_handle(remote);
- 		of_node_put(remote);
- 	} else {
- 		dev_notice(dev, "no remote for %pOF\n", np);
-diff --git a/drivers/media/platform/qcom/camss-8x16/camss.c b/drivers/media/platform/qcom/camss-8x16/camss.c
-index 390a42c17b66..05f06c98aa64 100644
---- a/drivers/media/platform/qcom/camss-8x16/camss.c
-+++ b/drivers/media/platform/qcom/camss-8x16/camss.c
-@@ -341,7 +341,7 @@ static int camss_of_parse_ports(struct device *dev,
- 		}
- 
- 		csd->asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--		csd->asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+		csd->asd.match.fwnode = of_fwnode_handle(remote);
- 	}
- 
- 	return notifier->num_subdevs;
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 108d776f3265..f1fc7978d6d1 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -187,7 +187,7 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 		return -ENODEV;
- 
- 	vin_dbg(vin, "Found digital subdevice %pOF\n",
--		to_of_node(vin->digital->asd.match.fwnode.fwnode));
-+		to_of_node(vin->digital->asd.match.fwnode));
- 
- 	vin->notifier.ops = &rvin_digital_notify_ops;
- 	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
-diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
-index 63c94f4028a7..b2e080ef5391 100644
---- a/drivers/media/platform/rcar_drif.c
-+++ b/drivers/media/platform/rcar_drif.c
-@@ -1107,7 +1107,7 @@ static int rcar_drif_notify_bound(struct v4l2_async_notifier *notifier,
- 	struct rcar_drif_sdr *sdr =
- 		container_of(notifier, struct rcar_drif_sdr, notifier);
- 
--	if (sdr->ep.asd.match.fwnode.fwnode !=
-+	if (sdr->ep.asd.match.fwnode !=
- 	    of_fwnode_handle(subdev->dev->of_node)) {
- 		rdrif_err(sdr, "subdev %s cannot bind\n", subdev->name);
- 		return -EINVAL;
-@@ -1235,7 +1235,7 @@ static int rcar_drif_parse_subdevs(struct rcar_drif_sdr *sdr)
- 		return -EINVAL;
- 	}
- 
--	sdr->ep.asd.match.fwnode.fwnode = fwnode;
-+	sdr->ep.asd.match.fwnode = fwnode;
- 	sdr->ep.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
- 	notifier->num_subdevs++;
- 
-diff --git a/drivers/media/platform/soc_camera/soc_camera.c b/drivers/media/platform/soc_camera/soc_camera.c
-index 916ff68b73d4..d13e2c5fb06f 100644
---- a/drivers/media/platform/soc_camera/soc_camera.c
-+++ b/drivers/media/platform/soc_camera/soc_camera.c
-@@ -1517,7 +1517,7 @@ static int soc_of_bind(struct soc_camera_host *ici,
- 	if (!info)
- 		return -ENOMEM;
- 
--	info->sasd.asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+	info->sasd.asd.match.fwnode = of_fwnode_handle(remote);
- 	info->sasd.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
- 	info->subdev = &info->sasd.asd;
- 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index ac4c450a6c7d..9460b3080dca 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -1520,7 +1520,7 @@ static int dcmi_graph_parse(struct stm32_dcmi *dcmi, struct device_node *node)
- 		/* Remote node to connect */
- 		dcmi->entity.node = remote;
- 		dcmi->entity.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--		dcmi->entity.asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+		dcmi->entity.asd.match.fwnode = of_fwnode_handle(remote);
- 		return 0;
- 	}
- }
-diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index 719ed1d79957..d1febe5baa6d 100644
---- a/drivers/media/platform/ti-vpe/cal.c
-+++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -1702,7 +1702,7 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
- 		goto cleanup_exit;
- 	}
- 	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
--	asd->match.fwnode.fwnode = of_fwnode_handle(sensor_node);
-+	asd->match.fwnode = of_fwnode_handle(sensor_node);
- 
- 	remote_ep = of_graph_get_remote_endpoint(ep_node);
- 	if (!remote_ep) {
-diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
-index f4c3e48ed2c0..6bb28cd49dae 100644
---- a/drivers/media/platform/xilinx/xilinx-vipp.c
-+++ b/drivers/media/platform/xilinx/xilinx-vipp.c
-@@ -387,7 +387,7 @@ static int xvip_graph_parse_one(struct xvip_composite_device *xdev,
- 
- 		entity->node = remote;
- 		entity->asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--		entity->asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+		entity->asd.match.fwnode = of_fwnode_handle(remote);
- 		list_add_tail(&entity->list, &xdev->entities);
- 		xdev->num_subdevs++;
- 	}
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index e5acfab470a5..2b08d03b251d 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -68,12 +68,12 @@ static bool match_i2c(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
- static bool match_devname(struct v4l2_subdev *sd,
- 			  struct v4l2_async_subdev *asd)
- {
--	return !strcmp(asd->match.device_name.name, dev_name(sd->dev));
-+	return !strcmp(asd->match.device_name, dev_name(sd->dev));
- }
- 
- static bool match_fwnode(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
- {
--	return sd->fwnode == asd->match.fwnode.fwnode;
-+	return sd->fwnode == asd->match.fwnode;
- }
- 
- static bool match_custom(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
-@@ -319,7 +319,7 @@ static bool __v4l2_async_notifier_fwnode_has_async_subdev(
- 		if (asd->match_type != V4L2_ASYNC_MATCH_FWNODE)
- 			continue;
- 
--		if (asd->match.fwnode.fwnode == fwnode)
-+		if (asd->match.fwnode == fwnode)
- 			return true;
- 	}
- 
-@@ -330,7 +330,7 @@ static bool __v4l2_async_notifier_fwnode_has_async_subdev(
- 		if (sd->asd->match_type != V4L2_ASYNC_MATCH_FWNODE)
- 			continue;
- 
--		if (sd->asd->match.fwnode.fwnode == fwnode)
-+		if (sd->asd->match.fwnode == fwnode)
- 			return true;
- 	}
- 
-@@ -355,8 +355,8 @@ static bool v4l2_async_notifier_fwnode_has_async_subdev(
- 		struct v4l2_async_subdev *other_asd = notifier->subdevs[j];
- 
- 		if (other_asd->match_type == V4L2_ASYNC_MATCH_FWNODE &&
--		    asd->match.fwnode.fwnode ==
--		    other_asd->match.fwnode.fwnode)
-+		    asd->match.fwnode ==
-+		    other_asd->match.fwnode)
- 			return true;
- 	}
- 
-@@ -395,7 +395,7 @@ static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
- 			break;
- 		case V4L2_ASYNC_MATCH_FWNODE:
- 			if (v4l2_async_notifier_fwnode_has_async_subdev(
--				    notifier, asd->match.fwnode.fwnode, i)) {
-+				    notifier, asd->match.fwnode, i)) {
- 				dev_err(dev,
- 					"fwnode has already been registered or in notifier's subdev list\n");
- 				ret = -EEXIST;
-@@ -510,7 +510,7 @@ void v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
- 
- 		switch (asd->match_type) {
- 		case V4L2_ASYNC_MATCH_FWNODE:
--			fwnode_handle_put(asd->match.fwnode.fwnode);
-+			fwnode_handle_put(asd->match.fwnode);
- 			break;
- 		default:
- 			WARN_ON_ONCE(true);
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index fb72c7ac04d4..d630640642ee 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -359,9 +359,9 @@ static int v4l2_async_notifier_fwnode_parse_endpoint(
- 		return -ENOMEM;
- 
- 	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
--	asd->match.fwnode.fwnode =
-+	asd->match.fwnode =
- 		fwnode_graph_get_remote_port_parent(endpoint);
--	if (!asd->match.fwnode.fwnode) {
-+	if (!asd->match.fwnode) {
- 		dev_warn(dev, "bad remote port parent\n");
- 		ret = -EINVAL;
- 		goto out_err;
-@@ -393,7 +393,7 @@ static int v4l2_async_notifier_fwnode_parse_endpoint(
- 	return 0;
- 
- out_err:
--	fwnode_handle_put(asd->match.fwnode.fwnode);
-+	fwnode_handle_put(asd->match.fwnode);
- 	kfree(asd);
- 
- 	return ret == -ENOTCONN ? 0 : ret;
-@@ -566,7 +566,7 @@ static int v4l2_fwnode_reference_parse(
- 		}
- 
- 		notifier->subdevs[notifier->num_subdevs] = asd;
--		asd->match.fwnode.fwnode = args.fwnode;
-+		asd->match.fwnode = args.fwnode;
- 		asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
- 		notifier->num_subdevs++;
- 	}
-@@ -853,7 +853,7 @@ static int v4l2_fwnode_reference_parse_int_props(
- 		}
- 
- 		notifier->subdevs[notifier->num_subdevs] = asd;
--		asd->match.fwnode.fwnode = fwnode;
-+		asd->match.fwnode = fwnode;
- 		asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
- 		notifier->num_subdevs++;
- 	}
-diff --git a/drivers/staging/media/imx/imx-media-dev.c b/drivers/staging/media/imx/imx-media-dev.c
-index 2800700482d6..f7ed5f506fa9 100644
---- a/drivers/staging/media/imx/imx-media-dev.c
-+++ b/drivers/staging/media/imx/imx-media-dev.c
-@@ -48,7 +48,7 @@ find_async_subdev(struct imx_media_dev *imxmd,
- 		asd = &imxasd->asd;
- 		switch (asd->match_type) {
- 		case V4L2_ASYNC_MATCH_FWNODE:
--			if (fwnode && asd->match.fwnode.fwnode == fwnode)
-+			if (fwnode && asd->match.fwnode == fwnode)
- 				return asd;
- 			break;
- 		case V4L2_ASYNC_MATCH_DEVNAME:
-@@ -104,7 +104,7 @@ int imx_media_add_async_subdev(struct imx_media_dev *imxmd,
- 
- 	if (fwnode) {
- 		asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
--		asd->match.fwnode.fwnode = fwnode;
-+		asd->match.fwnode = fwnode;
- 	} else {
- 		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
- 		asd->match.device_name.name = devname;
-diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-index 6152434cbe82..a010af5134b2 100644
---- a/include/media/v4l2-async.h
-+++ b/include/media/v4l2-async.h
-@@ -58,12 +58,8 @@ enum v4l2_async_match_type {
- struct v4l2_async_subdev {
- 	enum v4l2_async_match_type match_type;
- 	union {
--		struct {
--			struct fwnode_handle *fwnode;
--		} fwnode;
--		struct {
--			const char *name;
--		} device_name;
-+		struct fwnode_handle *fwnode;
-+		const char *device_name;
- 		struct {
- 			int adapter_id;
- 			unsigned short address;
--- 
-2.14.3
+SGkgTWF1cm8sDQoNClRoYW5rcyBmb3IgdGhlIHBhdGNoLg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVz
+c2FnZS0tLS0tDQo+IEZyb206IE1hdXJvIENhcnZhbGhvIENoZWhhYiBbbWFpbHRvOm1jaGVoYWJA
+c210cC5zLW9wZW5zb3VyY2UuY29tXQ0KPiBPbiBCZWhhbGYgT2YgTWF1cm8gQ2FydmFsaG8gQ2hl
+aGFiDQo+IFNlbnQ6IFR1ZXNkYXksIERlY2VtYmVyIDE5LCAyMDE3IDM6MTggQU0NCj4gVG86IExp
+bnV4IE1lZGlhIE1haWxpbmcgTGlzdCA8bGludXgtbWVkaWFAdmdlci5rZXJuZWwub3JnPg0KPiBD
+YzogTWF1cm8gQ2FydmFsaG8gQ2hlaGFiIDxtY2hlaGFiQHMtb3BlbnNvdXJjZS5jb20+OyBNYXVy
+bw0KPiBDYXJ2YWxobyBDaGVoYWIgPG1jaGVoYWJAaW5mcmFkZWFkLm9yZz47IExhZCwgUHJhYmhh
+a2FyDQo+IDxwcmFiaGFrYXIuY3NlbmdnQGdtYWlsLmNvbT47IFNvbmdqdW4gV3UNCj4gPHNvbmdq
+dW4ud3VAbWljcm9jaGlwLmNvbT47IE5pY29sYXMgRmVycmUNCj4gPG5pY29sYXMuZmVycmVAbWlj
+cm9jaGlwLmNvbT47IEFsZXhhbmRyZSBCZWxsb25pIDxhbGV4YW5kcmUuYmVsbG9uaUBmcmVlLQ0K
+PiBlbGVjdHJvbnMuY29tPjsgTHVkb3ZpYyBEZXNyb2NoZXMgPGx1ZG92aWMuZGVzcm9jaGVzQG1p
+Y3JvY2hpcC5jb20+Ow0KPiBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29t
+PjsgU3lsd2VzdGVyIE5hd3JvY2tpDQo+IDxzLm5hd3JvY2tpQHNhbXN1bmcuY29tPjsgS3Vramlu
+IEtpbSA8a2dlbmVAa2VybmVsLm9yZz47IEtyenlzenRvZg0KPiBLb3psb3dza2kgPGtyemtAa2Vy
+bmVsLm9yZz47IFRvZG9yIFRvbW92IDx0b2Rvci50b21vdkBsaW5hcm8ub3JnPjsNCj4gTmlrbGFz
+IFPDtmRlcmx1bmQgPG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPjsgUmFtZXNoDQo+IFNo
+YW5tdWdhc3VuZGFyYW0gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPjsN
+Cj4gR3Vlbm5hZGkgTGlha2hvdmV0c2tpIDxnLmxpYWtob3ZldHNraUBnbXguZGU+OyBNYXhpbWUg
+Q29xdWVsaW4NCj4gPG1jb3F1ZWxpbi5zdG0zMkBnbWFpbC5jb20+OyBBbGV4YW5kcmUgVG9yZ3Vl
+DQo+IDxhbGV4YW5kcmUudG9yZ3VlQHN0LmNvbT47IEJlbm9pdCBQYXJyb3QgPGJwYXJyb3RAdGku
+Y29tPjsgSHl1biBLd29uDQo+IDxoeXVua0B4aWxpbnguY29tPjsgTGF1cmVudCBQaW5jaGFydA0K
+PiA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPjsgTWljaGFsIFNpbWVrDQo+IDxt
+aWNoYWwuc2ltZWtAeGlsaW54LmNvbT47IFN0ZXZlIExvbmdlcmJlYW0gPHNsb25nZXJiZWFtQGdt
+YWlsLmNvbT47DQo+IFBoaWxpcHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+OyBHcmVn
+IEtyb2FoLUhhcnRtYW4NCj4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsgSGFucyBWZXJr
+dWlsIDxodmVya3VpbEB4czRhbGwubmw+OyBQZXRyDQo+IEN2ZWsgPHBldHIuY3Zla0B0dWwuY3o+
+OyBTYWthcmkgQWlsdXMgPHNha2FyaS5haWx1c0Bpa2kuZmk+OyBKdWxpYSBMYXdhbGwNCj4gPEp1
+bGlhLkxhd2FsbEBsaXA2LmZyPjsgQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT47IEh1Z3Vl
+cyBGcnVjaGV0DQo+IDxodWd1ZXMuZnJ1Y2hldEBzdC5jb20+OyBHdXN0YXZvIEEuIFIuIFNpbHZh
+DQo+IDxnYXJzaWx2YUBlbWJlZGRlZG9yLmNvbT47IFNlYmFzdGlhbiBSZWljaGVsIDxzcmVAa2Vy
+bmVsLm9yZz47IFRvbWFzeg0KPiBGaWdhIDx0ZmlnYUBjaHJvbWl1bS5vcmc+OyBsaW51eC1hcm0t
+a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LQ0KPiBzYW1zdW5nLXNvY0B2Z2VyLmtl
+cm5lbC5vcmc7IGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2ZWxAZHJp
+dmVyZGV2Lm9zdW9zbC5vcmcNCj4gU3ViamVjdDogW1BBVENIIHYyIDMvOF0gbWVkaWE6IHY0bDIt
+YXN5bmM6IHNpbXBsaWZ5IHY0bDJfYXN5bmNfc3ViZGV2DQo+IHN0cnVjdHVyZQ0KPiANCj4gVGhl
+IFY0TDJfQVNZTkNfTUFUQ0hfRldOT0RFIG1hdGNoIGNyaXRlcmlhIHJlcXVpcmVzIGp1c3Qgb25l
+DQo+IHN0cnVjdCB0byBiZSBmaWxsZWQgKHN0cnVjdCBmd25vZGVfaGFuZGxlKS4gVGhlDQo+IFY0
+TDJfQVNZTkNfTUFUQ0hfREVWTkFNRQ0KPiBtYXRjaCBjcml0ZXJpYSByZXF1aXJlcyBqdXN0IGEg
+ZGV2aWNlIG5hbWUuDQo+IA0KPiBTbywgaXQgZG9lc24ndCBtYWtlIHNlbnNlIHRvIGVuY2xvc2Ug
+dGhvc2UgaW50byBzdHJ1Y3RzLA0KPiBhcyB0aGUgY3JpdGVyaWEgY2FuIGdvIGRpcmVjdGx5IGlu
+dG8gdGhlIHVuaW9uLg0KPiANCj4gVGhhdCBtYWtlcyBlYXNpZXIgdG8gZG9jdW1lbnQgaXQsIGFz
+IHdlIGRvbid0IG5lZWQgdG8gZG9jdW1lbnQNCj4gd2VpcmQgc2Vuc2VsZXNzIHN0cnVjdHMuDQo+
+IA0KPiBBdCBkcml2ZXJzLCB0aGlzIG1ha2VzIGV2ZW4gY2xlYXJlciBhYm91dCB0aGUgbWF0Y2gg
+Y3JpdGVyaWEuDQo+IA0KPiBBY2tlZC1ieTogU3lsd2VzdGVyIE5hd3JvY2tpIDxzLm5hd3JvY2tp
+QHNhbXN1bmcuY29tPg0KPiBBY2tlZC1ieTogQmVub2l0IFBhcnJvdCA8YnBhcnJvdEB0aS5jb20+
+DQo+IEFja2VkLWJ5OiBBbGV4YW5kcmUgQmVsbG9uaSA8YWxleGFuZHJlLmJlbGxvbmlAZnJlZS1l
+bGVjdHJvbnMuY29tPg0KPiBBY2tlZC1ieTogU2FrYXJpIEFpbHVzIDxzYWthcmkuYWlsdXNAbGlu
+dXguaW50ZWwuY29tPg0KPiBBY2tlZC1ieTogUGhpbGlwcCBaYWJlbCA8cC56YWJlbEBwZW5ndXRy
+b25peC5kZT4NCj4gU2lnbmVkLW9mZi1ieTogTWF1cm8gQ2FydmFsaG8gQ2hlaGFiIDxtY2hlaGFi
+QHMtb3BlbnNvdXJjZS5jb20+DQoNCkZvciB4aWxpbngtdmlwcC5jLCBwbGVhc2UgYWRkLA0KDQoJ
+QWNrZWQtYnk6IEh5dW4gS3dvbiA8aHl1bi5rd29uQHhpbGlueC5jb20+DQoNClRoYW5rcywNCi1o
+eXVuDQoNCj4gLS0tDQo+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL2FtNDM3eC9hbTQzN3gtdnBm
+ZS5jICAgIHwgIDYgKysrLS0tDQo+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL2F0bWVsL2F0bWVs
+LWlzYy5jICAgICAgIHwgIDIgKy0NCj4gIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vYXRtZWwvYXRt
+ZWwtaXNpLmMgICAgICAgfCAgMiArLQ0KPiAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9kYXZpbmNp
+L3ZwaWZfY2FwdHVyZS5jICB8ICA0ICsrLS0NCj4gIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vZXh5
+bm9zNC1pcy9tZWRpYS1kZXYuYyAgfCAgNCArKy0tDQo+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3Jt
+L3B4YV9jYW1lcmEuYyAgICAgICAgICAgIHwgIDIgKy0NCj4gIGRyaXZlcnMvbWVkaWEvcGxhdGZv
+cm0vcWNvbS9jYW1zcy04eDE2L2NhbXNzLmMgfCAgMiArLQ0KPiAgZHJpdmVycy9tZWRpYS9wbGF0
+Zm9ybS9yY2FyLXZpbi9yY2FyLWNvcmUuYyAgICB8ICAyICstDQo+ICBkcml2ZXJzL21lZGlhL3Bs
+YXRmb3JtL3JjYXJfZHJpZi5jICAgICAgICAgICAgIHwgIDQgKystLQ0KPiAgZHJpdmVycy9tZWRp
+YS9wbGF0Zm9ybS9zb2NfY2FtZXJhL3NvY19jYW1lcmEuYyB8ICAyICstDQo+ICBkcml2ZXJzL21l
+ZGlhL3BsYXRmb3JtL3N0bTMyL3N0bTMyLWRjbWkuYyAgICAgIHwgIDIgKy0NCj4gIGRyaXZlcnMv
+bWVkaWEvcGxhdGZvcm0vdGktdnBlL2NhbC5jICAgICAgICAgICAgfCAgMiArLQ0KPiAgZHJpdmVy
+cy9tZWRpYS9wbGF0Zm9ybS94aWxpbngveGlsaW54LXZpcHAuYyAgICB8ICAyICstDQo+ICBkcml2
+ZXJzL21lZGlhL3Y0bDItY29yZS92NGwyLWFzeW5jLmMgICAgICAgICAgIHwgMTYgKysrKysrKyst
+LS0tLS0tLQ0KPiAgZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdjRsMi1md25vZGUuYyAgICAgICAg
+ICB8IDEwICsrKysrLS0tLS0NCj4gIGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9pbXgvaW14LW1lZGlh
+LWRldi5jICAgICAgfCAgNCArKy0tDQo+ICBpbmNsdWRlL21lZGlhL3Y0bDItYXN5bmMuaCAgICAg
+ICAgICAgICAgICAgICAgIHwgIDggKystLS0tLS0NCj4gIDE3IGZpbGVzIGNoYW5nZWQsIDM1IGlu
+c2VydGlvbnMoKyksIDM5IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+bWVkaWEvcGxhdGZvcm0vYW00Mzd4L2FtNDM3eC12cGZlLmMNCj4gYi9kcml2ZXJzL21lZGlhL3Bs
+YXRmb3JtL2FtNDM3eC9hbTQzN3gtdnBmZS5jDQo+IGluZGV4IDA5OTdjNjQwMTkxZC4uNjAxYWU2
+NDg3NjE3IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2FtNDM3eC9hbTQz
+N3gtdnBmZS5jDQo+ICsrKyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vYW00Mzd4L2FtNDM3eC12
+cGZlLmMNCj4gQEAgLTIzMDQsOCArMjMwNCw4IEBAIHZwZmVfYXN5bmNfYm91bmQoc3RydWN0IHY0
+bDJfYXN5bmNfbm90aWZpZXINCj4gKm5vdGlmaWVyLA0KPiAgCXZwZmVfZGJnKDEsIHZwZmUsICJ2
+cGZlX2FzeW5jX2JvdW5kXG4iKTsNCj4gDQo+ICAJZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUo
+dnBmZS0+Y2ZnLT5hc2QpOyBpKyspIHsNCj4gLQkJaWYgKHZwZmUtPmNmZy0+YXNkW2ldLT5tYXRj
+aC5md25vZGUuZndub2RlID09DQo+IC0JCSAgICBhc2RbaV0ubWF0Y2guZndub2RlLmZ3bm9kZSkg
+ew0KPiArCQlpZiAodnBmZS0+Y2ZnLT5hc2RbaV0tPm1hdGNoLmZ3bm9kZSA9PQ0KPiArCQkgICAg
+YXNkW2ldLm1hdGNoLmZ3bm9kZSkgew0KPiAgCQkJc2RpbmZvID0gJnZwZmUtPmNmZy0+c3ViX2Rl
+dnNbaV07DQo+ICAJCQl2cGZlLT5zZFtpXSA9IHN1YmRldjsNCj4gIAkJCXZwZmUtPnNkW2ldLT5n
+cnBfaWQgPSBzZGluZm8tPmdycF9pZDsNCj4gQEAgLTI1MTAsNyArMjUxMCw3IEBAIHZwZmVfZ2V0
+X3BkYXRhKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJCX0NCj4gDQo+ICAJCXBk
+YXRhLT5hc2RbaV0tPm1hdGNoX3R5cGUgPQ0KPiBWNEwyX0FTWU5DX01BVENIX0ZXTk9ERTsNCj4g
+LQkJcGRhdGEtPmFzZFtpXS0+bWF0Y2guZndub2RlLmZ3bm9kZSA9DQo+IG9mX2Z3bm9kZV9oYW5k
+bGUocmVtKTsNCj4gKwkJcGRhdGEtPmFzZFtpXS0+bWF0Y2guZndub2RlID0gb2ZfZndub2RlX2hh
+bmRsZShyZW0pOw0KPiAgCQlvZl9ub2RlX3B1dChyZW0pOw0KPiAgCX0NCj4gDQo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2F0bWVsL2F0bWVsLWlzYy5jDQo+IGIvZHJpdmVy
+cy9tZWRpYS9wbGF0Zm9ybS9hdG1lbC9hdG1lbC1pc2MuYw0KPiBpbmRleCAwYzI2MzU2NDdmNjku
+LjM0Njc2NDA5Y2EwOCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9hdG1l
+bC9hdG1lbC1pc2MuYw0KPiArKysgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2F0bWVsL2F0bWVs
+LWlzYy5jDQo+IEBAIC0yMDg4LDcgKzIwODgsNyBAQCBzdGF0aWMgaW50IGlzY19wYXJzZV9kdChz
+dHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdA0KPiBpc2NfZGV2aWNlICppc2MpDQo+ICAJCQlzdWJk
+ZXZfZW50aXR5LT5wZmVfY2ZnMCB8PQ0KPiBJU0NfUEZFX0NGRzBfUFBPTF9MT1c7DQo+IA0KPiAg
+CQlzdWJkZXZfZW50aXR5LT5hc2QtPm1hdGNoX3R5cGUgPQ0KPiBWNEwyX0FTWU5DX01BVENIX0ZX
+Tk9ERTsNCj4gLQkJc3ViZGV2X2VudGl0eS0+YXNkLT5tYXRjaC5md25vZGUuZndub2RlID0NCj4g
+KwkJc3ViZGV2X2VudGl0eS0+YXNkLT5tYXRjaC5md25vZGUgPQ0KPiAgCQkJb2ZfZndub2RlX2hh
+bmRsZShyZW0pOw0KPiAgCQlsaXN0X2FkZF90YWlsKCZzdWJkZXZfZW50aXR5LT5saXN0LCAmaXNj
+LT5zdWJkZXZfZW50aXRpZXMpOw0KPiAgCX0NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEv
+cGxhdGZvcm0vYXRtZWwvYXRtZWwtaXNpLmMNCj4gYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2F0
+bWVsL2F0bWVsLWlzaS5jDQo+IGluZGV4IGU5MDA5OTUxNDNhMy4uOTk1ODkxOGUyNDQ5IDEwMDY0
+NA0KPiAtLS0gYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2F0bWVsL2F0bWVsLWlzaS5jDQo+ICsr
+KyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vYXRtZWwvYXRtZWwtaXNpLmMNCj4gQEAgLTExMjgs
+NyArMTEyOCw3IEBAIHN0YXRpYyBpbnQgaXNpX2dyYXBoX3BhcnNlKHN0cnVjdCBhdG1lbF9pc2kg
+KmlzaSwNCj4gc3RydWN0IGRldmljZV9ub2RlICpub2RlKQ0KPiAgCQkvKiBSZW1vdGUgbm9kZSB0
+byBjb25uZWN0ICovDQo+ICAJCWlzaS0+ZW50aXR5Lm5vZGUgPSByZW1vdGU7DQo+ICAJCWlzaS0+
+ZW50aXR5LmFzZC5tYXRjaF90eXBlID0NCj4gVjRMMl9BU1lOQ19NQVRDSF9GV05PREU7DQo+IC0J
+CWlzaS0+ZW50aXR5LmFzZC5tYXRjaC5md25vZGUuZndub2RlID0NCj4gb2ZfZndub2RlX2hhbmRs
+ZShyZW1vdGUpOw0KPiArCQlpc2ktPmVudGl0eS5hc2QubWF0Y2guZndub2RlID0gb2ZfZndub2Rl
+X2hhbmRsZShyZW1vdGUpOw0KPiAgCQlyZXR1cm4gMDsNCj4gIAl9DQo+ICB9DQo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2RhdmluY2kvdnBpZl9jYXB0dXJlLmMNCj4gYi9k
+cml2ZXJzL21lZGlhL3BsYXRmb3JtL2RhdmluY2kvdnBpZl9jYXB0dXJlLmMNCj4gaW5kZXggZTQ1
+OTE2ZjY5ZGVmLi5lMWMyNzNjOGI5YTYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWVkaWEvcGxh
+dGZvcm0vZGF2aW5jaS92cGlmX2NhcHR1cmUuYw0KPiArKysgYi9kcml2ZXJzL21lZGlhL3BsYXRm
+b3JtL2RhdmluY2kvdnBpZl9jYXB0dXJlLmMNCj4gQEAgLTEzOTAsNyArMTM5MCw3IEBAIHN0YXRp
+YyBpbnQgdnBpZl9hc3luY19ib3VuZChzdHJ1Y3QNCj4gdjRsMl9hc3luY19ub3RpZmllciAqbm90
+aWZpZXIsDQo+IA0KPiAgCWZvciAoaSA9IDA7IGkgPCB2cGlmX29iai5jb25maWctPmFzZF9zaXpl
+c1swXTsgaSsrKSB7DQo+ICAJCXN0cnVjdCB2NGwyX2FzeW5jX3N1YmRldiAqX2FzZCA9IHZwaWZf
+b2JqLmNvbmZpZy0+YXNkW2ldOw0KPiAtCQljb25zdCBzdHJ1Y3QgZndub2RlX2hhbmRsZSAqZndu
+b2RlID0gX2FzZC0NCj4gPm1hdGNoLmZ3bm9kZS5md25vZGU7DQo+ICsJCWNvbnN0IHN0cnVjdCBm
+d25vZGVfaGFuZGxlICpmd25vZGUgPSBfYXNkLQ0KPiA+bWF0Y2guZndub2RlOw0KPiANCj4gIAkJ
+aWYgKGZ3bm9kZSA9PSBzdWJkZXYtPmZ3bm9kZSkgew0KPiAgCQkJdnBpZl9vYmouc2RbaV0gPSBz
+dWJkZXY7DQo+IEBAIC0xNTk1LDcgKzE1OTUsNyBAQCB2cGlmX2NhcHR1cmVfZ2V0X3BkYXRhKHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UNCj4gKnBkZXYpDQo+ICAJCX0NCj4gDQo+ICAJCXBkYXRhLT5h
+c2RbaV0tPm1hdGNoX3R5cGUgPQ0KPiBWNEwyX0FTWU5DX01BVENIX0ZXTk9ERTsNCj4gLQkJcGRh
+dGEtPmFzZFtpXS0+bWF0Y2guZndub2RlLmZ3bm9kZSA9DQo+IG9mX2Z3bm9kZV9oYW5kbGUocmVt
+KTsNCj4gKwkJcGRhdGEtPmFzZFtpXS0+bWF0Y2guZndub2RlID0gb2ZfZndub2RlX2hhbmRsZShy
+ZW0pOw0KPiAgCQlvZl9ub2RlX3B1dChyZW0pOw0KPiAgCX0NCj4gDQo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL21lZGlhL3BsYXRmb3JtL2V4eW5vczQtaXMvbWVkaWEtZGV2LmMNCj4gYi9kcml2ZXJz
+L21lZGlhL3BsYXRmb3JtL2V4eW5vczQtaXMvbWVkaWEtZGV2LmMNCj4gaW5kZXggMGVmNTgzY2Zj
+NDI0Li43OGI0OGExZmEyNmMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0v
+ZXh5bm9zNC1pcy9tZWRpYS1kZXYuYw0KPiArKysgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2V4
+eW5vczQtaXMvbWVkaWEtZGV2LmMNCj4gQEAgLTQ1Niw3ICs0NTYsNyBAQCBzdGF0aWMgaW50IGZp
+bWNfbWRfcGFyc2VfcG9ydF9ub2RlKHN0cnVjdA0KPiBmaW1jX21kICpmbWQsDQo+ICAJfQ0KPiAN
+Cj4gIAlmbWQtPnNlbnNvcltpbmRleF0uYXNkLm1hdGNoX3R5cGUgPQ0KPiBWNEwyX0FTWU5DX01B
+VENIX0ZXTk9ERTsNCj4gLQlmbWQtPnNlbnNvcltpbmRleF0uYXNkLm1hdGNoLmZ3bm9kZS5md25v
+ZGUgPQ0KPiBvZl9md25vZGVfaGFuZGxlKHJlbSk7DQo+ICsJZm1kLT5zZW5zb3JbaW5kZXhdLmFz
+ZC5tYXRjaC5md25vZGUgPSBvZl9md25vZGVfaGFuZGxlKHJlbSk7DQo+ICAJZm1kLT5hc3luY19z
+dWJkZXZzW2luZGV4XSA9ICZmbWQtPnNlbnNvcltpbmRleF0uYXNkOw0KPiANCj4gIAlmbWQtPm51
+bV9zZW5zb3JzKys7DQo+IEBAIC0xMzY0LDcgKzEzNjQsNyBAQCBzdGF0aWMgaW50IHN1YmRldl9u
+b3RpZmllcl9ib3VuZChzdHJ1Y3QNCj4gdjRsMl9hc3luY19ub3RpZmllciAqbm90aWZpZXIsDQo+
+IA0KPiAgCS8qIEZpbmQgcGxhdGZvcm0gZGF0YSBmb3IgdGhpcyBzZW5zb3Igc3ViZGV2ICovDQo+
+ICAJZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUoZm1kLT5zZW5zb3IpOyBpKyspDQo+IC0JCWlm
+IChmbWQtPnNlbnNvcltpXS5hc2QubWF0Y2guZndub2RlLmZ3bm9kZSA9PQ0KPiArCQlpZiAoZm1k
+LT5zZW5zb3JbaV0uYXNkLm1hdGNoLmZ3bm9kZSA9PQ0KPiAgCQkgICAgb2ZfZndub2RlX2hhbmRs
+ZShzdWJkZXYtPmRldi0+b2Zfbm9kZSkpDQo+ICAJCQlzaSA9ICZmbWQtPnNlbnNvcltpXTsNCj4g
+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3B4YV9jYW1lcmEuYw0KPiBi
+L2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vcHhhX2NhbWVyYS5jDQo+IGluZGV4IDMwNWNmMWNhYzIx
+MC4uZjAyODA4NGYwNzc1IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3B4
+YV9jYW1lcmEuYw0KPiArKysgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3B4YV9jYW1lcmEuYw0K
+PiBAQCAtMjMzNSw3ICsyMzM1LDcgQEAgc3RhdGljIGludCBweGFfY2FtZXJhX3BkYXRhX2Zyb21f
+ZHQoc3RydWN0DQo+IGRldmljZSAqZGV2LA0KPiAgCWFzZC0+bWF0Y2hfdHlwZSA9IFY0TDJfQVNZ
+TkNfTUFUQ0hfRldOT0RFOw0KPiAgCXJlbW90ZSA9IG9mX2dyYXBoX2dldF9yZW1vdGVfcG9ydChu
+cCk7DQo+ICAJaWYgKHJlbW90ZSkgew0KPiAtCQlhc2QtPm1hdGNoLmZ3bm9kZS5md25vZGUgPSBv
+Zl9md25vZGVfaGFuZGxlKHJlbW90ZSk7DQo+ICsJCWFzZC0+bWF0Y2guZndub2RlID0gb2ZfZndu
+b2RlX2hhbmRsZShyZW1vdGUpOw0KPiAgCQlvZl9ub2RlX3B1dChyZW1vdGUpOw0KPiAgCX0gZWxz
+ZSB7DQo+ICAJCWRldl9ub3RpY2UoZGV2LCAibm8gcmVtb3RlIGZvciAlcE9GXG4iLCBucCk7DQo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3Fjb20vY2Ftc3MtOHgxNi9jYW1z
+cy5jDQo+IGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9xY29tL2NhbXNzLTh4MTYvY2Ftc3MuYw0K
+PiBpbmRleCAzOTBhNDJjMTdiNjYuLjA1ZjA2Yzk4YWE2NCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
+cy9tZWRpYS9wbGF0Zm9ybS9xY29tL2NhbXNzLTh4MTYvY2Ftc3MuYw0KPiArKysgYi9kcml2ZXJz
+L21lZGlhL3BsYXRmb3JtL3Fjb20vY2Ftc3MtOHgxNi9jYW1zcy5jDQo+IEBAIC0zNDEsNyArMzQx
+LDcgQEAgc3RhdGljIGludCBjYW1zc19vZl9wYXJzZV9wb3J0cyhzdHJ1Y3QgZGV2aWNlICpkZXYs
+DQo+ICAJCX0NCj4gDQo+ICAJCWNzZC0+YXNkLm1hdGNoX3R5cGUgPSBWNEwyX0FTWU5DX01BVENI
+X0ZXTk9ERTsNCj4gLQkJY3NkLT5hc2QubWF0Y2guZndub2RlLmZ3bm9kZSA9DQo+IG9mX2Z3bm9k
+ZV9oYW5kbGUocmVtb3RlKTsNCj4gKwkJY3NkLT5hc2QubWF0Y2guZndub2RlID0gb2ZfZndub2Rl
+X2hhbmRsZShyZW1vdGUpOw0KPiAgCX0NCj4gDQo+ICAJcmV0dXJuIG5vdGlmaWVyLT5udW1fc3Vi
+ZGV2czsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vcmNhci12aW4vcmNh
+ci1jb3JlLmMNCj4gYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3JjYXItdmluL3JjYXItY29yZS5j
+DQo+IGluZGV4IDEwOGQ3NzZmMzI2NS4uZjFmYzc5NzhkNmQxIDEwMDY0NA0KPiAtLS0gYS9kcml2
+ZXJzL21lZGlhL3BsYXRmb3JtL3JjYXItdmluL3JjYXItY29yZS5jDQo+ICsrKyBiL2RyaXZlcnMv
+bWVkaWEvcGxhdGZvcm0vcmNhci12aW4vcmNhci1jb3JlLmMNCj4gQEAgLTE4Nyw3ICsxODcsNyBA
+QCBzdGF0aWMgaW50IHJ2aW5fZGlnaXRhbF9ncmFwaF9pbml0KHN0cnVjdCBydmluX2Rldg0KPiAq
+dmluKQ0KPiAgCQlyZXR1cm4gLUVOT0RFVjsNCj4gDQo+ICAJdmluX2RiZyh2aW4sICJGb3VuZCBk
+aWdpdGFsIHN1YmRldmljZSAlcE9GXG4iLA0KPiAtCQl0b19vZl9ub2RlKHZpbi0+ZGlnaXRhbC0+
+YXNkLm1hdGNoLmZ3bm9kZS5md25vZGUpKTsNCj4gKwkJdG9fb2Zfbm9kZSh2aW4tPmRpZ2l0YWwt
+PmFzZC5tYXRjaC5md25vZGUpKTsNCj4gDQo+ICAJdmluLT5ub3RpZmllci5vcHMgPSAmcnZpbl9k
+aWdpdGFsX25vdGlmeV9vcHM7DQo+ICAJcmV0ID0gdjRsMl9hc3luY19ub3RpZmllcl9yZWdpc3Rl
+cigmdmluLT52NGwyX2RldiwgJnZpbi0+bm90aWZpZXIpOw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9tZWRpYS9wbGF0Zm9ybS9yY2FyX2RyaWYuYw0KPiBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0v
+cmNhcl9kcmlmLmMNCj4gaW5kZXggNjNjOTRmNDAyOGE3Li5iMmUwODBlZjUzOTEgMTAwNjQ0DQo+
+IC0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vcmNhcl9kcmlmLmMNCj4gKysrIGIvZHJpdmVy
+cy9tZWRpYS9wbGF0Zm9ybS9yY2FyX2RyaWYuYw0KPiBAQCAtMTEwNyw3ICsxMTA3LDcgQEAgc3Rh
+dGljIGludCByY2FyX2RyaWZfbm90aWZ5X2JvdW5kKHN0cnVjdA0KPiB2NGwyX2FzeW5jX25vdGlm
+aWVyICpub3RpZmllciwNCj4gIAlzdHJ1Y3QgcmNhcl9kcmlmX3NkciAqc2RyID0NCj4gIAkJY29u
+dGFpbmVyX29mKG5vdGlmaWVyLCBzdHJ1Y3QgcmNhcl9kcmlmX3Nkciwgbm90aWZpZXIpOw0KPiAN
+Cj4gLQlpZiAoc2RyLT5lcC5hc2QubWF0Y2guZndub2RlLmZ3bm9kZSAhPQ0KPiArCWlmIChzZHIt
+PmVwLmFzZC5tYXRjaC5md25vZGUgIT0NCj4gIAkgICAgb2ZfZndub2RlX2hhbmRsZShzdWJkZXYt
+PmRldi0+b2Zfbm9kZSkpIHsNCj4gIAkJcmRyaWZfZXJyKHNkciwgInN1YmRldiAlcyBjYW5ub3Qg
+YmluZFxuIiwgc3ViZGV2LT5uYW1lKTsNCj4gIAkJcmV0dXJuIC1FSU5WQUw7DQo+IEBAIC0xMjM1
+LDcgKzEyMzUsNyBAQCBzdGF0aWMgaW50IHJjYXJfZHJpZl9wYXJzZV9zdWJkZXZzKHN0cnVjdA0K
+PiByY2FyX2RyaWZfc2RyICpzZHIpDQo+ICAJCXJldHVybiAtRUlOVkFMOw0KPiAgCX0NCj4gDQo+
+IC0Jc2RyLT5lcC5hc2QubWF0Y2guZndub2RlLmZ3bm9kZSA9IGZ3bm9kZTsNCj4gKwlzZHItPmVw
+LmFzZC5tYXRjaC5md25vZGUgPSBmd25vZGU7DQo+ICAJc2RyLT5lcC5hc2QubWF0Y2hfdHlwZSA9
+IFY0TDJfQVNZTkNfTUFUQ0hfRldOT0RFOw0KPiAgCW5vdGlmaWVyLT5udW1fc3ViZGV2cysrOw0K
+PiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc29jX2NhbWVyYS9zb2Nf
+Y2FtZXJhLmMNCj4gYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3NvY19jYW1lcmEvc29jX2NhbWVy
+YS5jDQo+IGluZGV4IDkxNmZmNjhiNzNkNC4uZDEzZTJjNWZiMDZmIDEwMDY0NA0KPiAtLS0gYS9k
+cml2ZXJzL21lZGlhL3BsYXRmb3JtL3NvY19jYW1lcmEvc29jX2NhbWVyYS5jDQo+ICsrKyBiL2Ry
+aXZlcnMvbWVkaWEvcGxhdGZvcm0vc29jX2NhbWVyYS9zb2NfY2FtZXJhLmMNCj4gQEAgLTE1MTcs
+NyArMTUxNyw3IEBAIHN0YXRpYyBpbnQgc29jX29mX2JpbmQoc3RydWN0IHNvY19jYW1lcmFfaG9z
+dA0KPiAqaWNpLA0KPiAgCWlmICghaW5mbykNCj4gIAkJcmV0dXJuIC1FTk9NRU07DQo+IA0KPiAt
+CWluZm8tPnNhc2QuYXNkLm1hdGNoLmZ3bm9kZS5md25vZGUgPSBvZl9md25vZGVfaGFuZGxlKHJl
+bW90ZSk7DQo+ICsJaW5mby0+c2FzZC5hc2QubWF0Y2guZndub2RlID0gb2ZfZndub2RlX2hhbmRs
+ZShyZW1vdGUpOw0KPiAgCWluZm8tPnNhc2QuYXNkLm1hdGNoX3R5cGUgPSBWNEwyX0FTWU5DX01B
+VENIX0ZXTk9ERTsNCj4gIAlpbmZvLT5zdWJkZXYgPSAmaW5mby0+c2FzZC5hc2Q7DQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdG0zMi9zdG0zMi1kY21pLmMNCj4g
+Yi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0bTMyL3N0bTMyLWRjbWkuYw0KPiBpbmRleCBhYzRj
+NDUwYTZjN2QuLjk0NjBiMzA4MGRjYSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0
+Zm9ybS9zdG0zMi9zdG0zMi1kY21pLmMNCj4gKysrIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9z
+dG0zMi9zdG0zMi1kY21pLmMNCj4gQEAgLTE1MjAsNyArMTUyMCw3IEBAIHN0YXRpYyBpbnQgZGNt
+aV9ncmFwaF9wYXJzZShzdHJ1Y3Qgc3RtMzJfZGNtaQ0KPiAqZGNtaSwgc3RydWN0IGRldmljZV9u
+b2RlICpub2RlKQ0KPiAgCQkvKiBSZW1vdGUgbm9kZSB0byBjb25uZWN0ICovDQo+ICAJCWRjbWkt
+PmVudGl0eS5ub2RlID0gcmVtb3RlOw0KPiAgCQlkY21pLT5lbnRpdHkuYXNkLm1hdGNoX3R5cGUg
+PQ0KPiBWNEwyX0FTWU5DX01BVENIX0ZXTk9ERTsNCj4gLQkJZGNtaS0+ZW50aXR5LmFzZC5tYXRj
+aC5md25vZGUuZndub2RlID0NCj4gb2ZfZndub2RlX2hhbmRsZShyZW1vdGUpOw0KPiArCQlkY21p
+LT5lbnRpdHkuYXNkLm1hdGNoLmZ3bm9kZSA9DQo+IG9mX2Z3bm9kZV9oYW5kbGUocmVtb3RlKTsN
+Cj4gIAkJcmV0dXJuIDA7DQo+ICAJfQ0KPiAgfQ0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRp
+YS9wbGF0Zm9ybS90aS12cGUvY2FsLmMNCj4gYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3RpLXZw
+ZS9jYWwuYw0KPiBpbmRleCA3MTllZDFkNzk5NTcuLmQxZmViZTViYWE2ZCAxMDA2NDQNCj4gLS0t
+IGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS90aS12cGUvY2FsLmMNCj4gKysrIGIvZHJpdmVycy9t
+ZWRpYS9wbGF0Zm9ybS90aS12cGUvY2FsLmMNCj4gQEAgLTE3MDIsNyArMTcwMiw3IEBAIHN0YXRp
+YyBpbnQgb2ZfY2FsX2NyZWF0ZV9pbnN0YW5jZShzdHJ1Y3QgY2FsX2N0eA0KPiAqY3R4LCBpbnQg
+aW5zdCkNCj4gIAkJZ290byBjbGVhbnVwX2V4aXQ7DQo+ICAJfQ0KPiAgCWFzZC0+bWF0Y2hfdHlw
+ZSA9IFY0TDJfQVNZTkNfTUFUQ0hfRldOT0RFOw0KPiAtCWFzZC0+bWF0Y2guZndub2RlLmZ3bm9k
+ZSA9IG9mX2Z3bm9kZV9oYW5kbGUoc2Vuc29yX25vZGUpOw0KPiArCWFzZC0+bWF0Y2guZndub2Rl
+ID0gb2ZfZndub2RlX2hhbmRsZShzZW5zb3Jfbm9kZSk7DQo+IA0KPiAgCXJlbW90ZV9lcCA9IG9m
+X2dyYXBoX2dldF9yZW1vdGVfZW5kcG9pbnQoZXBfbm9kZSk7DQo+ICAJaWYgKCFyZW1vdGVfZXAp
+IHsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0veGlsaW54L3hpbGlueC12
+aXBwLmMNCj4gYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3hpbGlueC94aWxpbngtdmlwcC5jDQo+
+IGluZGV4IGY0YzNlNDhlZDJjMC4uNmJiMjhjZDQ5ZGFlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
+L21lZGlhL3BsYXRmb3JtL3hpbGlueC94aWxpbngtdmlwcC5jDQo+ICsrKyBiL2RyaXZlcnMvbWVk
+aWEvcGxhdGZvcm0veGlsaW54L3hpbGlueC12aXBwLmMNCj4gQEAgLTM4Nyw3ICszODcsNyBAQCBz
+dGF0aWMgaW50IHh2aXBfZ3JhcGhfcGFyc2Vfb25lKHN0cnVjdA0KPiB4dmlwX2NvbXBvc2l0ZV9k
+ZXZpY2UgKnhkZXYsDQo+IA0KPiAgCQllbnRpdHktPm5vZGUgPSByZW1vdGU7DQo+ICAJCWVudGl0
+eS0+YXNkLm1hdGNoX3R5cGUgPSBWNEwyX0FTWU5DX01BVENIX0ZXTk9ERTsNCj4gLQkJZW50aXR5
+LT5hc2QubWF0Y2guZndub2RlLmZ3bm9kZSA9DQo+IG9mX2Z3bm9kZV9oYW5kbGUocmVtb3RlKTsN
+Cj4gKwkJZW50aXR5LT5hc2QubWF0Y2guZndub2RlID0gb2ZfZndub2RlX2hhbmRsZShyZW1vdGUp
+Ow0KPiAgCQlsaXN0X2FkZF90YWlsKCZlbnRpdHktPmxpc3QsICZ4ZGV2LT5lbnRpdGllcyk7DQo+
+ICAJCXhkZXYtPm51bV9zdWJkZXZzKys7DQo+ICAJfQ0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9t
+ZWRpYS92NGwyLWNvcmUvdjRsMi1hc3luYy5jIGIvZHJpdmVycy9tZWRpYS92NGwyLQ0KPiBjb3Jl
+L3Y0bDItYXN5bmMuYw0KPiBpbmRleCBlNWFjZmFiNDcwYTUuLjJiMDhkMDNiMjUxZCAxMDA2NDQN
+Cj4gLS0tIGEvZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdjRsMi1hc3luYy5jDQo+ICsrKyBiL2Ry
+aXZlcnMvbWVkaWEvdjRsMi1jb3JlL3Y0bDItYXN5bmMuYw0KPiBAQCAtNjgsMTIgKzY4LDEyIEBA
+IHN0YXRpYyBib29sIG1hdGNoX2kyYyhzdHJ1Y3QgdjRsMl9zdWJkZXYgKnNkLA0KPiBzdHJ1Y3Qg
+djRsMl9hc3luY19zdWJkZXYgKmFzZCkNCj4gIHN0YXRpYyBib29sIG1hdGNoX2Rldm5hbWUoc3Ry
+dWN0IHY0bDJfc3ViZGV2ICpzZCwNCj4gIAkJCSAgc3RydWN0IHY0bDJfYXN5bmNfc3ViZGV2ICph
+c2QpDQo+ICB7DQo+IC0JcmV0dXJuICFzdHJjbXAoYXNkLT5tYXRjaC5kZXZpY2VfbmFtZS5uYW1l
+LCBkZXZfbmFtZShzZC0NCj4gPmRldikpOw0KPiArCXJldHVybiAhc3RyY21wKGFzZC0+bWF0Y2gu
+ZGV2aWNlX25hbWUsIGRldl9uYW1lKHNkLT5kZXYpKTsNCj4gIH0NCj4gDQo+ICBzdGF0aWMgYm9v
+bCBtYXRjaF9md25vZGUoc3RydWN0IHY0bDJfc3ViZGV2ICpzZCwgc3RydWN0DQo+IHY0bDJfYXN5
+bmNfc3ViZGV2ICphc2QpDQo+ICB7DQo+IC0JcmV0dXJuIHNkLT5md25vZGUgPT0gYXNkLT5tYXRj
+aC5md25vZGUuZndub2RlOw0KPiArCXJldHVybiBzZC0+Zndub2RlID09IGFzZC0+bWF0Y2guZndu
+b2RlOw0KPiAgfQ0KPiANCj4gIHN0YXRpYyBib29sIG1hdGNoX2N1c3RvbShzdHJ1Y3QgdjRsMl9z
+dWJkZXYgKnNkLCBzdHJ1Y3QNCj4gdjRsMl9hc3luY19zdWJkZXYgKmFzZCkNCj4gQEAgLTMxOSw3
+ICszMTksNyBAQCBzdGF0aWMgYm9vbA0KPiBfX3Y0bDJfYXN5bmNfbm90aWZpZXJfZndub2RlX2hh
+c19hc3luY19zdWJkZXYoDQo+ICAJCWlmIChhc2QtPm1hdGNoX3R5cGUgIT0gVjRMMl9BU1lOQ19N
+QVRDSF9GV05PREUpDQo+ICAJCQljb250aW51ZTsNCj4gDQo+IC0JCWlmIChhc2QtPm1hdGNoLmZ3
+bm9kZS5md25vZGUgPT0gZndub2RlKQ0KPiArCQlpZiAoYXNkLT5tYXRjaC5md25vZGUgPT0gZndu
+b2RlKQ0KPiAgCQkJcmV0dXJuIHRydWU7DQo+ICAJfQ0KPiANCj4gQEAgLTMzMCw3ICszMzAsNyBA
+QCBzdGF0aWMgYm9vbA0KPiBfX3Y0bDJfYXN5bmNfbm90aWZpZXJfZndub2RlX2hhc19hc3luY19z
+dWJkZXYoDQo+ICAJCWlmIChzZC0+YXNkLT5tYXRjaF90eXBlICE9IFY0TDJfQVNZTkNfTUFUQ0hf
+RldOT0RFKQ0KPiAgCQkJY29udGludWU7DQo+IA0KPiAtCQlpZiAoc2QtPmFzZC0+bWF0Y2guZndu
+b2RlLmZ3bm9kZSA9PSBmd25vZGUpDQo+ICsJCWlmIChzZC0+YXNkLT5tYXRjaC5md25vZGUgPT0g
+Zndub2RlKQ0KPiAgCQkJcmV0dXJuIHRydWU7DQo+ICAJfQ0KPiANCj4gQEAgLTM1NSw4ICszNTUs
+OCBAQCBzdGF0aWMgYm9vbA0KPiB2NGwyX2FzeW5jX25vdGlmaWVyX2Z3bm9kZV9oYXNfYXN5bmNf
+c3ViZGV2KA0KPiAgCQlzdHJ1Y3QgdjRsMl9hc3luY19zdWJkZXYgKm90aGVyX2FzZCA9IG5vdGlm
+aWVyLT5zdWJkZXZzW2pdOw0KPiANCj4gIAkJaWYgKG90aGVyX2FzZC0+bWF0Y2hfdHlwZSA9PQ0K
+PiBWNEwyX0FTWU5DX01BVENIX0ZXTk9ERSAmJg0KPiAtCQkgICAgYXNkLT5tYXRjaC5md25vZGUu
+Zndub2RlID09DQo+IC0JCSAgICBvdGhlcl9hc2QtPm1hdGNoLmZ3bm9kZS5md25vZGUpDQo+ICsJ
+CSAgICBhc2QtPm1hdGNoLmZ3bm9kZSA9PQ0KPiArCQkgICAgb3RoZXJfYXNkLT5tYXRjaC5md25v
+ZGUpDQo+ICAJCQlyZXR1cm4gdHJ1ZTsNCj4gIAl9DQo+IA0KPiBAQCAtMzk1LDcgKzM5NSw3IEBA
+IHN0YXRpYyBpbnQgX192NGwyX2FzeW5jX25vdGlmaWVyX3JlZ2lzdGVyKHN0cnVjdA0KPiB2NGwy
+X2FzeW5jX25vdGlmaWVyICpub3RpZmllcikNCj4gIAkJCWJyZWFrOw0KPiAgCQljYXNlIFY0TDJf
+QVNZTkNfTUFUQ0hfRldOT0RFOg0KPiAgCQkJaWYgKHY0bDJfYXN5bmNfbm90aWZpZXJfZndub2Rl
+X2hhc19hc3luY19zdWJkZXYoDQo+IC0JCQkJICAgIG5vdGlmaWVyLCBhc2QtPm1hdGNoLmZ3bm9k
+ZS5md25vZGUsIGkpKSB7DQo+ICsJCQkJICAgIG5vdGlmaWVyLCBhc2QtPm1hdGNoLmZ3bm9kZSwg
+aSkpIHsNCj4gIAkJCQlkZXZfZXJyKGRldiwNCj4gIAkJCQkJImZ3bm9kZSBoYXMgYWxyZWFkeSBi
+ZWVuIHJlZ2lzdGVyZWQNCj4gb3IgaW4gbm90aWZpZXIncyBzdWJkZXYgbGlzdFxuIik7DQo+ICAJ
+CQkJcmV0ID0gLUVFWElTVDsNCj4gQEAgLTUxMCw3ICs1MTAsNyBAQCB2b2lkIHY0bDJfYXN5bmNf
+bm90aWZpZXJfY2xlYW51cChzdHJ1Y3QNCj4gdjRsMl9hc3luY19ub3RpZmllciAqbm90aWZpZXIp
+DQo+IA0KPiAgCQlzd2l0Y2ggKGFzZC0+bWF0Y2hfdHlwZSkgew0KPiAgCQljYXNlIFY0TDJfQVNZ
+TkNfTUFUQ0hfRldOT0RFOg0KPiAtCQkJZndub2RlX2hhbmRsZV9wdXQoYXNkLT5tYXRjaC5md25v
+ZGUuZndub2RlKTsNCj4gKwkJCWZ3bm9kZV9oYW5kbGVfcHV0KGFzZC0+bWF0Y2guZndub2RlKTsN
+Cj4gIAkJCWJyZWFrOw0KPiAgCQlkZWZhdWx0Og0KPiAgCQkJV0FSTl9PTl9PTkNFKHRydWUpOw0K
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdjRsMi1md25vZGUuYyBiL2Ry
+aXZlcnMvbWVkaWEvdjRsMi0NCj4gY29yZS92NGwyLWZ3bm9kZS5jDQo+IGluZGV4IGZiNzJjN2Fj
+MDRkNC4uZDYzMDY0MDY0MmVlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL21lZGlhL3Y0bDItY29y
+ZS92NGwyLWZ3bm9kZS5jDQo+ICsrKyBiL2RyaXZlcnMvbWVkaWEvdjRsMi1jb3JlL3Y0bDItZndu
+b2RlLmMNCj4gQEAgLTM1OSw5ICszNTksOSBAQCBzdGF0aWMgaW50DQo+IHY0bDJfYXN5bmNfbm90
+aWZpZXJfZndub2RlX3BhcnNlX2VuZHBvaW50KA0KPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gDQo+
+ICAJYXNkLT5tYXRjaF90eXBlID0gVjRMMl9BU1lOQ19NQVRDSF9GV05PREU7DQo+IC0JYXNkLT5t
+YXRjaC5md25vZGUuZndub2RlID0NCj4gKwlhc2QtPm1hdGNoLmZ3bm9kZSA9DQo+ICAJCWZ3bm9k
+ZV9ncmFwaF9nZXRfcmVtb3RlX3BvcnRfcGFyZW50KGVuZHBvaW50KTsNCj4gLQlpZiAoIWFzZC0+
+bWF0Y2guZndub2RlLmZ3bm9kZSkgew0KPiArCWlmICghYXNkLT5tYXRjaC5md25vZGUpIHsNCj4g
+IAkJZGV2X3dhcm4oZGV2LCAiYmFkIHJlbW90ZSBwb3J0IHBhcmVudFxuIik7DQo+ICAJCXJldCA9
+IC1FSU5WQUw7DQo+ICAJCWdvdG8gb3V0X2VycjsNCj4gQEAgLTM5Myw3ICszOTMsNyBAQCBzdGF0
+aWMgaW50DQo+IHY0bDJfYXN5bmNfbm90aWZpZXJfZndub2RlX3BhcnNlX2VuZHBvaW50KA0KPiAg
+CXJldHVybiAwOw0KPiANCj4gIG91dF9lcnI6DQo+IC0JZndub2RlX2hhbmRsZV9wdXQoYXNkLT5t
+YXRjaC5md25vZGUuZndub2RlKTsNCj4gKwlmd25vZGVfaGFuZGxlX3B1dChhc2QtPm1hdGNoLmZ3
+bm9kZSk7DQo+ICAJa2ZyZWUoYXNkKTsNCj4gDQo+ICAJcmV0dXJuIHJldCA9PSAtRU5PVENPTk4g
+PyAwIDogcmV0Ow0KPiBAQCAtNTY2LDcgKzU2Niw3IEBAIHN0YXRpYyBpbnQgdjRsMl9md25vZGVf
+cmVmZXJlbmNlX3BhcnNlKA0KPiAgCQl9DQo+IA0KPiAgCQlub3RpZmllci0+c3ViZGV2c1tub3Rp
+Zmllci0+bnVtX3N1YmRldnNdID0gYXNkOw0KPiAtCQlhc2QtPm1hdGNoLmZ3bm9kZS5md25vZGUg
+PSBhcmdzLmZ3bm9kZTsNCj4gKwkJYXNkLT5tYXRjaC5md25vZGUgPSBhcmdzLmZ3bm9kZTsNCj4g
+IAkJYXNkLT5tYXRjaF90eXBlID0gVjRMMl9BU1lOQ19NQVRDSF9GV05PREU7DQo+ICAJCW5vdGlm
+aWVyLT5udW1fc3ViZGV2cysrOw0KPiAgCX0NCj4gQEAgLTg1Myw3ICs4NTMsNyBAQCBzdGF0aWMg
+aW50IHY0bDJfZndub2RlX3JlZmVyZW5jZV9wYXJzZV9pbnRfcHJvcHMoDQo+ICAJCX0NCj4gDQo+
+ICAJCW5vdGlmaWVyLT5zdWJkZXZzW25vdGlmaWVyLT5udW1fc3ViZGV2c10gPSBhc2Q7DQo+IC0J
+CWFzZC0+bWF0Y2guZndub2RlLmZ3bm9kZSA9IGZ3bm9kZTsNCj4gKwkJYXNkLT5tYXRjaC5md25v
+ZGUgPSBmd25vZGU7DQo+ICAJCWFzZC0+bWF0Y2hfdHlwZSA9IFY0TDJfQVNZTkNfTUFUQ0hfRldO
+T0RFOw0KPiAgCQlub3RpZmllci0+bnVtX3N1YmRldnMrKzsNCj4gIAl9DQo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvaW14L2lteC1tZWRpYS1kZXYuYw0KPiBiL2RyaXZlcnMv
+c3RhZ2luZy9tZWRpYS9pbXgvaW14LW1lZGlhLWRldi5jDQo+IGluZGV4IDI4MDA3MDA0ODJkNi4u
+ZjdlZDVmNTA2ZmE5IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvaW14L2lt
+eC1tZWRpYS1kZXYuYw0KPiArKysgYi9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvaW14L2lteC1tZWRp
+YS1kZXYuYw0KPiBAQCAtNDgsNyArNDgsNyBAQCBmaW5kX2FzeW5jX3N1YmRldihzdHJ1Y3QgaW14
+X21lZGlhX2RldiAqaW14bWQsDQo+ICAJCWFzZCA9ICZpbXhhc2QtPmFzZDsNCj4gIAkJc3dpdGNo
+IChhc2QtPm1hdGNoX3R5cGUpIHsNCj4gIAkJY2FzZSBWNEwyX0FTWU5DX01BVENIX0ZXTk9ERToN
+Cj4gLQkJCWlmIChmd25vZGUgJiYgYXNkLT5tYXRjaC5md25vZGUuZndub2RlID09DQo+IGZ3bm9k
+ZSkNCj4gKwkJCWlmIChmd25vZGUgJiYgYXNkLT5tYXRjaC5md25vZGUgPT0gZndub2RlKQ0KPiAg
+CQkJCXJldHVybiBhc2Q7DQo+ICAJCQlicmVhazsNCj4gIAkJY2FzZSBWNEwyX0FTWU5DX01BVENI
+X0RFVk5BTUU6DQo+IEBAIC0xMDQsNyArMTA0LDcgQEAgaW50IGlteF9tZWRpYV9hZGRfYXN5bmNf
+c3ViZGV2KHN0cnVjdA0KPiBpbXhfbWVkaWFfZGV2ICppbXhtZCwNCj4gDQo+ICAJaWYgKGZ3bm9k
+ZSkgew0KPiAgCQlhc2QtPm1hdGNoX3R5cGUgPSBWNEwyX0FTWU5DX01BVENIX0ZXTk9ERTsNCj4g
+LQkJYXNkLT5tYXRjaC5md25vZGUuZndub2RlID0gZndub2RlOw0KPiArCQlhc2QtPm1hdGNoLmZ3
+bm9kZSA9IGZ3bm9kZTsNCj4gIAl9IGVsc2Ugew0KPiAgCQlhc2QtPm1hdGNoX3R5cGUgPSBWNEwy
+X0FTWU5DX01BVENIX0RFVk5BTUU7DQo+ICAJCWFzZC0+bWF0Y2guZGV2aWNlX25hbWUubmFtZSA9
+IGRldm5hbWU7DQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL21lZGlhL3Y0bDItYXN5bmMuaCBiL2lu
+Y2x1ZGUvbWVkaWEvdjRsMi1hc3luYy5oDQo+IGluZGV4IDYxNTI0MzRjYmU4Mi4uYTAxMGFmNTEz
+NGIyIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL21lZGlhL3Y0bDItYXN5bmMuaA0KPiArKysgYi9p
+bmNsdWRlL21lZGlhL3Y0bDItYXN5bmMuaA0KPiBAQCAtNTgsMTIgKzU4LDggQEAgZW51bSB2NGwy
+X2FzeW5jX21hdGNoX3R5cGUgew0KPiAgc3RydWN0IHY0bDJfYXN5bmNfc3ViZGV2IHsNCj4gIAll
+bnVtIHY0bDJfYXN5bmNfbWF0Y2hfdHlwZSBtYXRjaF90eXBlOw0KPiAgCXVuaW9uIHsNCj4gLQkJ
+c3RydWN0IHsNCj4gLQkJCXN0cnVjdCBmd25vZGVfaGFuZGxlICpmd25vZGU7DQo+IC0JCX0gZndu
+b2RlOw0KPiAtCQlzdHJ1Y3Qgew0KPiAtCQkJY29uc3QgY2hhciAqbmFtZTsNCj4gLQkJfSBkZXZp
+Y2VfbmFtZTsNCj4gKwkJc3RydWN0IGZ3bm9kZV9oYW5kbGUgKmZ3bm9kZTsNCj4gKwkJY29uc3Qg
+Y2hhciAqZGV2aWNlX25hbWU7DQo+ICAJCXN0cnVjdCB7DQo+ICAJCQlpbnQgYWRhcHRlcl9pZDsN
+Cj4gIAkJCXVuc2lnbmVkIHNob3J0IGFkZHJlc3M7DQo+IC0tDQo+IDIuMTQuMw0KDQo=
