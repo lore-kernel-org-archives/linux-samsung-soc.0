@@ -1,32 +1,62 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: samsung: document bindings for Midas
- family boards
-Date: Wed, 20 Dec 2017 12:17:59 -0600
-Message-ID: <20171220181759.6r4waz4seerh6q4i@rob-hp-laptop>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 2/4] ARM: dts: split trats2 DTS in preparation for
+ midas boards
+Date: Wed, 20 Dec 2017 12:19:08 -0600
+Message-ID: <20171220181908.vl7jmcyrt7ow6rni@rob-hp-laptop>
 References: <20171218123805.26345-1-simon@lineageos.org>
- <20171218123805.26345-2-simon@lineageos.org>
+ <20171218123805.26345-3-simon@lineageos.org>
+ <CAJKOXPdzAvsaAOo6P+UA8VWYd7YjmtSqtkyKtNaz7jNdUXUH4A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:36026 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755292AbdLTSSC (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 13:18:02 -0500
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20171218123805.26345-2-simon@lineageos.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <CAJKOXPdzAvsaAOo6P+UA8VWYd7YjmtSqtkyKtNaz7jNdUXUH4A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Simon Shields <simon@lineageos.org>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
 
-On Mon, Dec 18, 2017 at 11:38:02PM +1100, Simon Shields wrote:
-> Document GT-I9300, GT-I9305, GT-N7100, and GT-N7105 bindings, along
-> with the shared "midas" binding.
+On Wed, Dec 20, 2017 at 03:05:18PM +0100, Krzysztof Kozlowski wrote:
+> On Mon, Dec 18, 2017 at 1:38 PM, Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org> wrote:
+> > The midas boards share a lot with trats2. Split the common parts
+> > out of trats2 into a common midas dtsi and a common "galaxy s3" dts.
+> >
+> > Signed-off-by: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
+> > ---
+> >  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi        |  145 ++
+> >  ...exynos4412-trats2.dts => exynos4412-midas.dtsi} |  117 +-
+> >  arch/arm/boot/dts/exynos4412-trats2.dts            | 1446 +-------------------
+> >  3 files changed, 184 insertions(+), 1524 deletions(-)
+> >  create mode 100644 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> >  copy arch/arm/boot/dts/{exynos4412-trats2.dts => exynos4412-midas.dtsi} (92%)
+> >  rewrite arch/arm/boot/dts/exynos4412-trats2.dts (97%)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> > new file mode 100644
+> > index 000000000000..2806236484a6
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> > @@ -0,0 +1,145 @@
+> > +/*
+> > + * Samsung's Exynos4412 based Galaxy S3 board device tree source
+> > + *
+> > + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> > + *             http://www.samsung.com
+> > + *
+> > + * Device tree source file for Samsung's Galaxy S3 boards which are based on
+> > + * Samsung's Exynos4412 SoC.
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
 > 
-> Signed-off-by: Simon Shields <simon@lineageos.org>
-> ---
->  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+> One new line to make it consistent with others.
 
-My comment on v2 remains.
+If you're going to change it, use an SPDX tag.
+
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
