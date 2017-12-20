@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/3] ARM: defconfig: exynos: config for v4.16
-Date: Wed, 20 Dec 2017 18:36:41 +0100
-Message-ID: <20171220173643.5840-2-krzk@kernel.org>
+Subject: [GIT PULL 2/3] arm64: dts: exynos: DTS for v4.16
+Date: Wed, 20 Dec 2017 18:36:43 +0100
+Message-ID: <20171220173643.5840-4-krzk@kernel.org>
 References: <20171220173643.5840-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171220173643.5840-1-krzk@kernel.org>
@@ -17,27 +17,34 @@ The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
 
 are available in the git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.16
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.16
 
-for you to fetch changes up to 6b732dfb698991b5f518be1ddf329c1c2eb3d7cb:
+for you to fetch changes up to 3808354701090723b53c73afaccfcafdeb8a5bfe:
 
-  ARM: exynos_defconfig: Enable CONFIG_EXYNOS_IOMMU (2017-12-14 18:57:38 +0100)
-
-----------------------------------------------------------------
-Samsung defconfig changes for v4.16
-
-1. Enable missing drivers for supported Exynos boards (PMU, CEC, MHL
-   bridge, ASoC for Odroid XU3/XU4).
-2. Enable Exynos IOMMU driver on exynos_defconfig.
+  arm64: dts: exynos: Increase bus frequency for MHL chip (2017-12-04 17:51:10 +0100)
 
 ----------------------------------------------------------------
-Marek Szyprowski (2):
-      ARM: exynos_defconfig: Enable missing drivers for supported Exynos boards
-      ARM: multi_v7_defconfig: Enable missing drivers for supported Exynos boards
+Samsung DTS ARM64 changes for v4.16
 
-Shuah Khan (1):
-      ARM: exynos_defconfig: Enable CONFIG_EXYNOS_IOMMU
+1. Add CPU perf counters to Exynos5433.
+2. Add missing power domains to Exynos5433.
+3. Add NFC chip to Exynos5433 TM2/TM2E.
+4. Fix obscure bugs on I2C transfers to MHL chip on TM2/TM2E.
 
- arch/arm/configs/exynos_defconfig   | 7 +++++++
- arch/arm/configs/multi_v7_defconfig | 5 +++++
- 2 files changed, 12 insertions(+)
+----------------------------------------------------------------
+Andrzej Hajda (1):
+      arm64: dts: exynos: Increase bus frequency for MHL chip
+
+Marek Szyprowski (8):
+      arm64: dts: exynos: Add CPU performance counters to Exynos5433 boards
+      arm64: dts: exynos: Add support for S3FWRN5 NFC chip to TM2(e) boards
+      arm64: dts: exynos: Add GSCL power domain to Exynos 5433 SoC
+      arm64: dts: exynos: Add DISP power domain to Exynos 5433 SoC
+      arm64: dts: exynos: Add MSCL power domain to Exynos 5433 SoC
+      arm64: dts: exynos: Add MFC power domain to Exynos 5433 SoC
+      arm64: dts: exynos: Add AUD power domain to Exynos5433 SoC
+      arm64: dts: exynos: Add remaining power domains to Exynos5433 SoC
+
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     |  14 +++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 132 +++++++++++++++++++++
+ 2 files changed, 146 insertions(+)
