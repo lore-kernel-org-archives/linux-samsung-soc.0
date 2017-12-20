@@ -1,21 +1,43 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 0/3] ARM: exynos: Pull for v4.16
-Date: Wed, 20 Dec 2017 18:36:40 +0100
-Message-ID: <20171220173643.5840-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755532AbdLTRhS (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 12:37:18 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL 3/3] ARM: defconfig: exynos: config for v4.16
+Date: Wed, 20 Dec 2017 18:36:41 +0100
+Message-ID: <20171220173643.5840-2-krzk@kernel.org>
+References: <20171220173643.5840-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171220173643.5840-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-Nothing special, no specific order of pulls, no dependencies.
+The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
 
-Best regards,
-Krzysztof
+  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.16
+
+for you to fetch changes up to 6b732dfb698991b5f518be1ddf329c1c2eb3d7cb:
+
+  ARM: exynos_defconfig: Enable CONFIG_EXYNOS_IOMMU (2017-12-14 18:57:38 +0100)
+
+----------------------------------------------------------------
+Samsung defconfig changes for v4.16
+
+1. Enable missing drivers for supported Exynos boards (PMU, CEC, MHL
+   bridge, ASoC for Odroid XU3/XU4).
+2. Enable Exynos IOMMU driver on exynos_defconfig.
+
+----------------------------------------------------------------
+Marek Szyprowski (2):
+      ARM: exynos_defconfig: Enable missing drivers for supported Exynos boards
+      ARM: multi_v7_defconfig: Enable missing drivers for supported Exynos boards
+
+Shuah Khan (1):
+      ARM: exynos_defconfig: Enable CONFIG_EXYNOS_IOMMU
+
+ arch/arm/configs/exynos_defconfig   | 7 +++++++
+ arch/arm/configs/multi_v7_defconfig | 5 +++++
+ 2 files changed, 12 insertions(+)
