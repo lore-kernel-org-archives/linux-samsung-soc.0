@@ -1,62 +1,92 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 2/4] ARM: dts: split trats2 DTS in preparation for
- midas boards
-Date: Wed, 20 Dec 2017 12:19:08 -0600
-Message-ID: <20171220181908.vl7jmcyrt7ow6rni@rob-hp-laptop>
-References: <20171218123805.26345-1-simon@lineageos.org>
- <20171218123805.26345-3-simon@lineageos.org>
- <CAJKOXPdzAvsaAOo6P+UA8VWYd7YjmtSqtkyKtNaz7jNdUXUH4A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPdzAvsaAOo6P+UA8VWYd7YjmtSqtkyKtNaz7jNdUXUH4A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/2] arm64: dts: exynos: Use lower case hex addresses in node unit addresses
+Date: Wed, 20 Dec 2017 20:27:01 +0100
+Message-ID: <20171220192702.32515-1-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:53910 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756045AbdLTT1a (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 20 Dec 2017 14:27:30 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Dec 20, 2017 at 03:05:18PM +0100, Krzysztof Kozlowski wrote:
-> On Mon, Dec 18, 2017 at 1:38 PM, Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org> wrote:
-> > The midas boards share a lot with trats2. Split the common parts
-> > out of trats2 into a common midas dtsi and a common "galaxy s3" dts.
-> >
-> > Signed-off-by: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
-> > ---
-> >  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi        |  145 ++
-> >  ...exynos4412-trats2.dts => exynos4412-midas.dtsi} |  117 +-
-> >  arch/arm/boot/dts/exynos4412-trats2.dts            | 1446 +-------------------
-> >  3 files changed, 184 insertions(+), 1524 deletions(-)
-> >  create mode 100644 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> >  copy arch/arm/boot/dts/{exynos4412-trats2.dts => exynos4412-midas.dtsi} (92%)
-> >  rewrite arch/arm/boot/dts/exynos4412-trats2.dts (97%)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> > new file mode 100644
-> > index 000000000000..2806236484a6
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> > @@ -0,0 +1,145 @@
-> > +/*
-> > + * Samsung's Exynos4412 based Galaxy S3 board device tree source
-> > + *
-> > + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> > + *             http://www.samsung.com
-> > + *
-> > + * Device tree source file for Samsung's Galaxy S3 boards which are based on
-> > + * Samsung's Exynos4412 SoC.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + */
-> 
-> One new line to make it consistent with others.
+Convert all hex addresses in node unit addresses to lower case to
+fix warnings like:
+    arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning (simple_bus_reg):
+      Node /soc/video-scaler@13C00000 simple-bus unit address format error, expected "13c00000"
 
-If you're going to change it, use an SPDX tag.
+Conversion was done using sed:
+    $ sed -e 's/@\([a-zA-Z0-9_-]*\) {/@\L\1 {/' -i arch/arm64/boot/dts/exynos/*.dts*
 
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 8 ++++----
+ arch/arm64/boot/dts/exynos/exynos7.dtsi    | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 1962b8074349..0ba5df825eff 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -994,7 +994,7 @@
+ 			reg = <0x145f0000 0x1038>;
+ 		};
+ 
+-		gsc_0: video-scaler@13C00000 {
++		gsc_0: video-scaler@13c00000 {
+ 			compatible = "samsung,exynos5433-gsc";
+ 			reg = <0x13c00000 0x1000>;
+ 			interrupts = <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1008,7 +1008,7 @@
+ 			power-domains = <&pd_gscl>;
+ 		};
+ 
+-		gsc_1: video-scaler@13C10000 {
++		gsc_1: video-scaler@13c10000 {
+ 			compatible = "samsung,exynos5433-gsc";
+ 			reg = <0x13c10000 0x1000>;
+ 			interrupts = <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1022,7 +1022,7 @@
+ 			power-domains = <&pd_gscl>;
+ 		};
+ 
+-		gsc_2: video-scaler@13C20000 {
++		gsc_2: video-scaler@13c20000 {
+ 			compatible = "samsung,exynos5433-gsc";
+ 			reg = <0x13c20000 0x1000>;
+ 			interrupts = <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1049,7 +1049,7 @@
+ 			power-domains = <&pd_mscl>;
+ 		};
+ 
+-		mfc: codec@152E0000 {
++		mfc: codec@152e0000 {
+ 			compatible = "samsung,exynos5433-mfc";
+ 			reg = <0x152E0000 0x10000>;
+ 			interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index 9a3fbed1765a..3504837b1d43 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -103,7 +103,7 @@
+ 			#size-cells = <1>;
+ 			ranges;
+ 
+-			pdma0: pdma@10E10000 {
++			pdma0: pdma@10e10000 {
+ 				compatible = "arm,pl330", "arm,primecell";
+ 				reg = <0x10E10000 0x1000>;
+ 				interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+@@ -114,7 +114,7 @@
+ 				#dma-requests = <32>;
+ 			};
+ 
+-			pdma1: pdma@10EB0000 {
++			pdma1: pdma@10eb0000 {
+ 				compatible = "arm,pl330", "arm,primecell";
+ 				reg = <0x10EB0000 0x1000>;
+ 				interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+2.11.0
