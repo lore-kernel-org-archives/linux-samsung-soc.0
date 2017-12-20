@@ -1,122 +1,141 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: next/master boot: 270 boots: 35 failed, 213 passed with 20
- offline, 2 untried/unknown (next-20171207)
-Date: Tue, 19 Dec 2017 12:05:23 -0800
-Message-ID: <20171219200523.GE7997@codeaurora.org>
-References: <5a29d4c7.4fabdf0a.716d7.8485@mx.google.com>
- <20171208122007.GB7606@sirena.org.uk>
- <20171208122703.GC7606@sirena.org.uk>
- <CGME20171208123350epcas3p2da09a6b41fb4ee626860fe5ac698e265@epcas3p2.samsung.com>
- <CAJKOXPcfgXTzacEYyPFV=UJYdKz9v86pEjbjaWJ_7BYhdNafqA@mail.gmail.com>
- <7ad6d330-d277-85ae-b891-cb76367461ce@samsung.com>
- <20171208165943.GC4283@codeaurora.org>
- <11a4d79d-73a5-5e98-c83f-f5e47bcfcdf2@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] clk: samsung: s3c: Remove unneeded enumeration
+Date: Wed, 20 Dec 2017 18:14:52 +0900
+Message-ID: <5A3A2A0C.8040601@samsung.com>
+References: <CGME20171127023145epcas1p1b97c3c66ce624f5362c8d9bf74997c7f@epcas1p1.samsung.com>
+        <1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:52196 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751308AbdLSUF0 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 15:05:26 -0500
-Content-Disposition: inline
-In-Reply-To: <11a4d79d-73a5-5e98-c83f-f5e47bcfcdf2@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, Guenter Roeck <groeck@google.com>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "kernelci.org bot" <bot@kernelci.org>, kernel-build-reports@lists.linaro.org
 
-On 12/11, Marek Szyprowski wrote:
-> Hi Stephen,
+Dear Sylwester,
+
+Gently Ping.
+
+Regards,
+Chanwoo Choi
+
+On 2017년 11월 27일 11:31, Chanwoo Choi wrote:
+> This patch just removes the unneeded enumeration for PLL index.
 > 
-> On 2017-12-08 17:59, Stephen Boyd wrote:
-> >On 12/08, Marek Szyprowski wrote:
-> >>On 2017-12-08 13:33, Krzysztof Kozlowski wrote:
-> >>>On Fri, Dec 8, 2017 at 1:27 PM, Mark Brown <broonie@kernel.org> wrote:
-> >>>>On Fri, Dec 08, 2017 at 12:20:07PM +0000, Mark Brown wrote:
-> >>>>>On Thu, Dec 07, 2017 at 03:54:47PM -0800, kernelci.org bot wrote:
-> >>>>>
-> >>>>>Today's -next failed to boot on peach-pi:
-> >>>>>
-> >>>>>>     exynos_defconfig:
-> >>>>>>         exynos5800-peach-pi:
-> >>>>>>             lab-collabora: new failure (last pass: next-20171205)
-> >>>>>with details at https://kernelci.org/boot/id/5a2a2e7859b5141bc2afa17c/
-> >>>>>(including logs and comparisons with other boots, the last good boot was
-> >>>>>Wednesday).  It looks like it hangs somewhere late on in boot, the last
-> >>>>>output on the console is:
-> >>>>>
-> >>>>>[    4.827139] smsc95xx 3-1.1:1.0 eth0: register 'smsc95xx' at usb-xhci-hcd.3.auto-1.1, smsc95xx USB 2.0 Ethernet, 94:eb:2c:00:03:c0
-> >>>>>[    5.781037] dma-pl330 3880000.adma: Loaded driver for PL330 DMAC-241330
-> >>>>>[    5.786247] dma-pl330 3880000.adma:        DBUFF-4x8bytes Num_Chans-6 Num_Peri-16 Num_Events-6
-> >>>>>[    5.819200] dma-pl330 3880000.adma: PM domain MAU will not be powered off
-> >>>>>[   64.529228] random: crng init done
-> >>>>>
-> >>>>>and there's failures earlier to instantiate the display.
-> >>>>I just noticed that further up the log there's a lockdep splat with a
-> >>>>conflict between the genpd and clock API locking - an ABBA issue with
-> >>>>genpd->mlock and the clock API prepare_lock.
-> >>>+Cc Marek Szyprowski,
-> >>>
-> >>>The lockdep issue and display failures (including regulator warning)
-> >>>were present for some time. They also appear in boot log for
-> >>>next-20171206 (https://storage.kernelci.org/next/master/next-20171206/arm/exynos_defconfig/lab-collabora/boot-exynos5800-peach-pi.html).
-> >>>The difference is that 20171208 hangs on "random: crng init done"
-> >>>which did not appear before at all.
-> >I haven't looked at the lockdep splat yet, but is that happening
-> >because of runtime PM usage by the clk framework?
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-s3c2412.c | 11 ++---------
+>  drivers/clk/samsung/clk-s3c2443.c | 17 ++++-------------
+>  drivers/clk/samsung/clk-s3c64xx.c | 17 ++++++-----------
+>  3 files changed, 12 insertions(+), 33 deletions(-)
 > 
-> This is a false positive. The deplock doesn't distinguish each
-> domain instance.
-> Only some instances of exynos power domains use clocks (as an old
-> workaround of
-> the lack possibility to integrate proper clock rate/topology
-> restoration after
-> power off/on cycle in the clock provider driver).
+> diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
+> index b8340a49921b..1555e407529e 100644
+> --- a/drivers/clk/samsung/clk-s3c2412.c
+> +++ b/drivers/clk/samsung/clk-s3c2412.c
+> @@ -27,11 +27,6 @@
+>  #define CLKSRC		0x1c
+>  #define SWRST		0x30
+>  
+> -/* list of PLLs to be registered */
+> -enum s3c2412_plls {
+> -	mpll, upll,
+> -};
+> -
+>  static void __iomem *reg_base;
+>  
+>  #ifdef CONFIG_PM_SLEEP
+> @@ -144,10 +139,8 @@ struct samsung_mux_clock s3c2412_muxes[] __initdata = {
+>  };
+>  
+>  static struct samsung_pll_clock s3c2412_plls[] __initdata = {
+> -	[mpll] = PLL(pll_s3c2440_mpll, MPLL, "mpll", "xti",
+> -						LOCKTIME, MPLLCON, NULL),
+> -	[upll] = PLL(pll_s3c2410_upll, UPLL, "upll", "urefclk",
+> -						LOCKTIME, UPLLCON, NULL),
+> +	PLL(pll_s3c2440_mpll, MPLL, "mpll", "xti", LOCKTIME, MPLLCON, NULL),
+> +	PLL(pll_s3c2410_upll, UPLL, "upll", "urefclk", LOCKTIME, UPLLCON, NULL),
+>  };
+>  
+>  struct samsung_gate_clock s3c2412_gates[] __initdata = {
+> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+> index d94b85a42356..9580a6baf4d7 100644
+> --- a/drivers/clk/samsung/clk-s3c2443.c
+> +++ b/drivers/clk/samsung/clk-s3c2443.c
+> @@ -41,11 +41,6 @@ enum supported_socs {
+>  	S3C2450,
+>  };
+>  
+> -/* list of PLLs to be registered */
+> -enum s3c2443_plls {
+> -	mpll, epll,
+> -};
+> -
+>  static void __iomem *reg_base;
+>  
+>  #ifdef CONFIG_PM_SLEEP
+> @@ -225,10 +220,8 @@ struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
+>  /* S3C2416 specific clocks */
+>  
+>  static struct samsung_pll_clock s3c2416_pll_clks[] __initdata = {
+> -	[mpll] = PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref",
+> -						LOCKCON0, MPLLCON, NULL),
+> -	[epll] = PLL(pll_6553, EPLL, "epll", "epllref",
+> -						LOCKCON1, EPLLCON, NULL),
+> +	PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref", LOCKCON0, MPLLCON, NULL),
+> +	PLL(pll_6553, EPLL, "epll", "epllref", LOCKCON1, EPLLCON, NULL),
+>  };
+>  
+>  PNAME(s3c2416_hsmmc0_p) = { "sclk_hsmmc0", "sclk_hsmmcext" };
+> @@ -279,10 +272,8 @@ struct samsung_clock_alias s3c2416_aliases[] __initdata = {
+>  /* S3C2443 specific clocks */
+>  
+>  static struct samsung_pll_clock s3c2443_pll_clks[] __initdata = {
+> -	[mpll] = PLL(pll_3000, MPLL, "mpll", "mpllref",
+> -						LOCKCON0, MPLLCON, NULL),
+> -	[epll] = PLL(pll_2126, EPLL, "epll", "epllref",
+> -						LOCKCON1, EPLLCON, NULL),
+> +	PLL(pll_3000, MPLL, "mpll", "mpllref", LOCKCON0, MPLLCON, NULL),
+> +	PLL(pll_2126, EPLL, "epll", "epllref", LOCKCON1, EPLLCON, NULL),
+>  };
+>  
+>  static struct clk_div_table armdiv_s3c2443_d[] = {
+> diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+> index 7306867a0ab8..6db01cf5ab83 100644
+> --- a/drivers/clk/samsung/clk-s3c64xx.c
+> +++ b/drivers/clk/samsung/clk-s3c64xx.c
+> @@ -56,11 +56,6 @@
+>  #define GATE_ON(_id, cname, pname, o, b) \
+>  		GATE(_id, cname, pname, o, b, CLK_IGNORE_UNUSED, 0)
+>  
+> -/* list of PLLs to be registered */
+> -enum s3c64xx_plls {
+> -	apll, mpll, epll,
+> -};
+> -
+>  static void __iomem *reg_base;
+>  static bool is_s3c6400;
+>  
+> @@ -364,12 +359,12 @@ static void __init s3c64xx_clk_sleep_init(void) {}
+>  
+>  /* List of PLL clocks. */
+>  static struct samsung_pll_clock s3c64xx_pll_clks[] __initdata = {
+> -	[apll] = PLL(pll_6552, FOUT_APLL, "fout_apll", "fin_pll",
+> -						APLL_LOCK, APLL_CON, NULL),
+> -	[mpll] = PLL(pll_6552, FOUT_MPLL, "fout_mpll", "fin_pll",
+> -						MPLL_LOCK, MPLL_CON, NULL),
+> -	[epll] = PLL(pll_6553, FOUT_EPLL, "fout_epll", "fin_pll",
+> -						EPLL_LOCK, EPLL_CON0, NULL),
+> +	PLL(pll_6552, FOUT_APLL, "fout_apll", "fin_pll",
+> +					APLL_LOCK, APLL_CON, NULL),
+> +	PLL(pll_6552, FOUT_MPLL, "fout_mpll", "fin_pll",
+> +					MPLL_LOCK, MPLL_CON, NULL),
+> +	PLL(pll_6553, FOUT_EPLL, "fout_epll", "fin_pll",
+> +					EPLL_LOCK, EPLL_CON0, NULL),
+>  };
+>  
+>  /* Aliases for common s3c64xx clocks. */
 > 
-> Those clock controllers, which implements runtime pm, are assigned to power
-> domain, which doesn't touch clocks at all.
-> 
-> I still have no idea how to fix the code to make deplock happy.
-> 
 
-Right. Once lockdep complains lockdep turns itself off, so we
-lose the ability to detect other problems. Even if it's a false
-positive, it's a potential problem on some device so it's
-concerning that runtime PM usage from clk framework has created
-this potential problem.
-
-Is it possible to remove the clk operations from the exynos power
-domains? You say it's to deal with the lack of rate/topology
-restoration so maybe it can be changed. That will at least allow
-lockdep to continue working here and detect the "real" deadlock
-here. Otherwise, do we need to revert runtime PM for clk
-framework and back out all the Samsung changes on top of that? If
-we need to do that, we need to do it soon.
-
-We'll need to think about how to resolve the cross-subsystem
-locking problem regardless. We definitely want to have genpd be
-able to do CCF things, and CCF to use runtime PM and genpds too.
-It seems that we have a classic AB-BA deadlock potential between
-the clk prepare lock and the genpd domain mutex. Both frameworks
-are holding a mutex across the operations of their providers
-(either clk_ops or genpd power_on/off) so we can't have the CCF
-call genpd things and genpd call CCF things or lockdep will
-complain.  I was worried about runtime PM usage by CCF causing
-this problem, but I missed that genpd was behind runtime PM so I
-didn't consider the locks in that part of the chain. Ugh.
-
-Maybe we can have runtime PM things done outside of the prepare
-lock in CCF, that way we aren't holding any locks that genpd may
-need to use. That would fix the problem, but would expose us to
-clk tree topology changes happening while we enable runtime PM
-for clks. It would be great if we could drop all framework level
-locks when we call into provider drivers. I'm not sure how to do
-that yet, but that's probably the end goal.
-
-Anyway, this needs some thought to figure out how to redesign the
-CCF locking scheme so this problem doesn't exist.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
