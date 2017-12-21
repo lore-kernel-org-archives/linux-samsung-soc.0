@@ -1,43 +1,46 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 3/3] ARM: defconfig: exynos: config for v4.16
-Date: Thu, 21 Dec 2017 17:52:16 +0100
-Message-ID: <CAK8P3a2ZtNmk0pzd-3THPSL42PzsQU-P8PoJ2BqBEyymmYBdDw@mail.gmail.com>
-References: <20171220173643.5840-1-krzk@kernel.org> <20171220173643.5840-2-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [GIT PULL 2/3] arm64: dts: exynos: DTS for v4.16
+Date: Thu, 21 Dec 2017 20:31:48 +0100
+Message-ID: <CAJKOXPfKXWAmWUb86YW3zP3iniCU_hnZuacW4HONvYbmi0uoag@mail.gmail.com>
+References: <20171220173643.5840-1-krzk@kernel.org> <20171220173643.5840-4-krzk@kernel.org>
+ <CAK8P3a2obLRFK8cZ3B1M1qCzDQq=-7ux4_Tu4kG+ksW6NCieYg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:37117 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755331AbdLUQwR (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:43086 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752732AbdLUTbv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 11:52:17 -0500
-In-Reply-To: <20171220173643.5840-2-krzk@kernel.org>
+        Thu, 21 Dec 2017 14:31:51 -0500
+In-Reply-To: <CAK8P3a2obLRFK8cZ3B1M1qCzDQq=-7ux4_Tu4kG+ksW6NCieYg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Dec 20, 2017 at 6:36 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Thu, Dec 21, 2017 at 5:50 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Dec 20, 2017 at 6:36 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> Samsung DTS ARM64 changes for v4.16
+>>
+>> 1. Add CPU perf counters to Exynos5433.
+>> 2. Add missing power domains to Exynos5433.
+>> 3. Add NFC chip to Exynos5433 TM2/TM2E.
+>> 4. Fix obscure bugs on I2C transfers to MHL chip on TM2/TM2E.
 >
-> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+> Pulled into next/dt, thanks!
 >
->   Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.16
->
-> for you to fetch changes up to 6b732dfb698991b5f518be1ddf329c1c2eb3d7cb:
->
->   ARM: exynos_defconfig: Enable CONFIG_EXYNOS_IOMMU (2017-12-14 18:57:38 +0100)
->
-> ----------------------------------------------------------------
-> Samsung defconfig changes for v4.16
->
-> 1. Enable missing drivers for supported Exynos boards (PMU, CEC, MHL
->    bridge, ASoC for Odroid XU3/XU4).
-> 2. Enable Exynos IOMMU driver on exynos_defconfig.
+> One question: do you know if anyone is working on support for the newer
+> Exynos chips, or the Nexell S5P6818 series? It seems odd that none of
+> the chips from the past three years are supported yet.
 
-Pulled into next/soc, thanks!
+For the new Exynos chips - I think Samsung folks are working on them.
+Indeed it looks like the pace for new chips has slowed down.
 
-        Arnd
+The Nexell series are similar to Exynos but this is different company
+so probably they would end up in different sub-arch. Only some IP
+blocks are similar to Exynos even though the datasheet has Samsung
+marks. I saw patches for U-Boot (I do not remember the author) so
+maybe soon something will happen on LKML.
+
+Best regards,
+Krzysztof
