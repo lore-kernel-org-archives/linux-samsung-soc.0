@@ -1,24 +1,29 @@
-From: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [RFC 2/2] pci: dwc: pci-exynos: add the codes to support the
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [RFC 2/2] pci: dwc: pci-exynos: add the coedes to support the
  exynos5433
-Date: Thu, 21 Dec 2017 21:14:07 +0900
-Message-ID: <20171221121408.22636-2-jh80.chung@samsung.com>
+Date: Thu, 21 Dec 2017 21:14:08 +0900
+Message-ID: <20171221121408.22636-3-jh80.chung@samsung.com>
 References: <20171221121408.22636-1-jh80.chung@samsung.com>
-        <CGME20171221121409epcas1p1a12d0f3b0b5d5e732da865ee78f6bb47@epcas1p1.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20171221121408.22636-1-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+        <CGME20171221121409epcas1p1a65748f09d457de61c141ebfab9c14d3@epcas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:11378 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753336AbdLUMON (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 21 Dec 2017 07:14:13 -0500
+In-reply-to: <20171221121408.22636-1-jh80.chung@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, krzk@kernel.org, jingoohan1@gmail.com, kgene@kernel.org, lorenzo.pieralisi@arm.com, Jaehoon Chung <jh80.chung@samsung.com>
 
 Exynos5433 has the PCIe for WiFi.
-Added the codes relevant to PCIe for supporting the exynos5433.
+Add the codes relevant to PCIe for supporting the exynos5433.
 Also changed the binding documentation name to
 'samsung,exynos-pcie.txt'.
 (It's not only exynos5440 anymore.)
 
-Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 ---
  ...exynos5440-pcie.txt => samsung,exynos-pcie.txt} |   2 +-
  drivers/pci/dwc/pci-exynos.c                       | 183 ++++++++++++++++-----
@@ -344,9 +349,4 @@ index 5596fdedbb94..8dee2e90347e 100644
 -subsys_initcall(exynos_pcie_init);
 +builtin_platform_driver(exynos_pcie_driver);
 -- 
-2.15.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.15.0
