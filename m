@@ -1,80 +1,101 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 2/4] ARM: dts: split trats2 DTS in preparation for
- midas boards
-Date: Thu, 21 Dec 2017 08:57:46 +0100
-Message-ID: <CAJKOXPeq2mQWKJjv+PvjjJdUcREje_6BXCCP+SxJH2WpKv8sUg@mail.gmail.com>
-References: <20171218123805.26345-1-simon@lineageos.org> <20171218123805.26345-3-simon@lineageos.org>
- <CAJKOXPdzAvsaAOo6P+UA8VWYd7YjmtSqtkyKtNaz7jNdUXUH4A@mail.gmail.com>
- <20171220181908.vl7jmcyrt7ow6rni@rob-hp-laptop> <20171221015415.GB23568@lineageos.org>
+Subject: Re: [GIT PULL 3/3] ARM: defconfig: exynos: config for v4.16
+Date: Thu, 21 Dec 2017 09:11:34 +0100
+Message-ID: <CAJKOXPc+VNh_djbJCNmX8iA=rzJjfVL4PTJSKKcpex8f+K5y+Q@mail.gmail.com>
+References: <20171220173643.5840-1-krzk@kernel.org> <20171220173643.5840-2-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:41834 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:43188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750948AbdLUH5t (ORCPT
+        id S1750801AbdLUILh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 02:57:49 -0500
-In-Reply-To: <20171221015415.GB23568@lineageos.org>
+        Thu, 21 Dec 2017 03:11:37 -0500
+In-Reply-To: <20171220173643.5840-2-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Simon Shields <simon@lineageos.org>
-Cc: Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Dec 21, 2017 at 2:54 AM, Simon Shields <simon@lineageos.org> wrote:
-> Hi Rob,
+On Wed, Dec 20, 2017 at 6:36 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> On Wed, Dec 20, 2017 at 12:19:08PM -0600, Rob Herring wrote:
->> On Wed, Dec 20, 2017 at 03:05:18PM +0100, Krzysztof Kozlowski wrote:
->> > On Mon, Dec 18, 2017 at 1:38 PM, Simon Shields <simon@lineageos.org> wrote:
->> > > The midas boards share a lot with trats2. Split the common parts
->> > > out of trats2 into a common midas dtsi and a common "galaxy s3" dts.
->> > >
->> > > Signed-off-by: Simon Shields <simon@lineageos.org>
->> > > ---
->> > >  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi        |  145 ++
->> > >  ...exynos4412-trats2.dts => exynos4412-midas.dtsi} |  117 +-
->> > >  arch/arm/boot/dts/exynos4412-trats2.dts            | 1446 +-------------------
->> > >  3 files changed, 184 insertions(+), 1524 deletions(-)
->> > >  create mode 100644 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
->> > >  copy arch/arm/boot/dts/{exynos4412-trats2.dts => exynos4412-midas.dtsi} (92%)
->> > >  rewrite arch/arm/boot/dts/exynos4412-trats2.dts (97%)
->> > >
->> > > diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
->> > > new file mode 100644
->> > > index 000000000000..2806236484a6
->> > > --- /dev/null
->> > > +++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
->> > > @@ -0,0 +1,145 @@
->> > > +/*
->> > > + * Samsung's Exynos4412 based Galaxy S3 board device tree source
->> > > + *
->> > > + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
->> > > + *             http://www.samsung.com
->> > > + *
->> > > + * Device tree source file for Samsung's Galaxy S3 boards which are based on
->> > > + * Samsung's Exynos4412 SoC.
->> > > + *
->> > > + * This program is free software; you can redistribute it and/or modify
->> > > + * it under the terms of the GNU General Public License version 2 as
->> > > + * published by the Free Software Foundation.
->> > > + */
->> >
->> > One new line to make it consistent with others.
->>
->> If you're going to change it, use an SPDX tag.
->>
+> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
 >
-> I initially did this in v2[1], but Krzysztof said to keep
-> the trats2 copyright header, since the galaxy-s3 dts is a
-> subset of the old trats2 DTS. Is adding the SPDX tag and
-> keeping the Samsung copyright stanza the preferred approach
-> here?
+>   Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
 >
-> [1]: https://patchwork.kernel.org/patch/10111971/
->> Rob
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.16
+>
+> for you to fetch changes up to 6b732dfb698991b5f518be1ddf329c1c2eb3d7cb:
+>
+>   ARM: exynos_defconfig: Enable CONFIG_EXYNOS_IOMMU (2017-12-14 18:57:38 +0100)
+>
+> ----------------------------------------------------------------
+> Samsung defconfig changes for v4.16
+>
+> 1. Enable missing drivers for supported Exynos boards (PMU, CEC, MHL
+>    bridge, ASoC for Odroid XU3/XU4).
+> 2. Enable Exynos IOMMU driver on exynos_defconfig.
+>
+> ----------------------------------------------------------------
+> Marek Szyprowski (2):
+>       ARM: exynos_defconfig: Enable missing drivers for supported Exynos boards
+>       ARM: multi_v7_defconfig: Enable missing drivers for supported Exynos boards
+>
+> Shuah Khan (1):
+>       ARM: exynos_defconfig: Enable CONFIG_EXYNOS_IOMMU
+>
+>  arch/arm/configs/exynos_defconfig   | 7 +++++++
+>  arch/arm/configs/multi_v7_defconfig | 5 +++++
+>  2 files changed, 12 insertions(+)
 
-Yes, but I was referring only to copyright header. The SPDX tag
-replaces the license, not the copyright.
+I forgot to mention possible conflict for multi_v7_defconfig (with
+changes coming from keystone tree). The resolution is to take
+everything from both branches. Something like:
+
+@@@ -558,7 -583,8 +559,9 @@@ CONFIG_VIDEO_STI_DELTA=
+  CONFIG_VIDEO_RENESAS_JPU=m
+  CONFIG_VIDEO_RENESAS_VSP1=m
+  CONFIG_V4L_TEST_DRIVERS=y
+ +CONFIG_VIDEO_VIVID=m
++ CONFIG_CEC_PLATFORM_DRIVERS=y
++ CONFIG_VIDEO_SAMSUNG_S5P_CEC=m
+  # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
+  CONFIG_VIDEO_ADV7180=m
+  CONFIG_VIDEO_ML86V7667=m
+@@@ -582,16 -613,12 +585,17 @@@ CONFIG_DRM_RCAR_DU=
+  CONFIG_DRM_RCAR_LVDS=y
+  CONFIG_DRM_SUN4I=m
+  CONFIG_DRM_TEGRA=y
+ +CONFIG_DRM_PANEL_SIMPLE=y
+  CONFIG_DRM_PANEL_SAMSUNG_LD9040=m
+  CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
+ -CONFIG_DRM_PANEL_SIMPLE=y
+ +CONFIG_DRM_DUMB_VGA_DAC=m
+ +CONFIG_DRM_NXP_PTN3460=m
+ +CONFIG_DRM_PARADE_PS8622=m
+ +CONFIG_DRM_I2C_ADV7511=m
+ +CONFIG_DRM_I2C_ADV7511_AUDIO=y
++ CONFIG_DRM_SII9234=m
+  CONFIG_DRM_STI=m
+ -CONFIG_DRM_VC4=y
+ +CONFIG_DRM_VC4=m
+  CONFIG_FB_ARMCLCD=y
+  CONFIG_FB_EFI=y
+  CONFIG_FB_WM8505=y
+@@@ -626,9 -655,10 +630,10 @@@ CONFIG_SND_SOC_SAMSUNG=
+  CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994=m
+  CONFIG_SND_SOC_SMDK_WM8994_PCM=m
+  CONFIG_SND_SOC_SNOW=m
++ CONFIG_SND_SOC_ODROID=m
+  CONFIG_SND_SOC_SH4_FSI=m
+  CONFIG_SND_SOC_RCAR=m
+ -CONFIG_SND_SIMPLE_SCU_CARD=m
+ +CONFIG_SND_SOC_STI=m
+  CONFIG_SND_SUN4I_CODEC=m
+  CONFIG_SND_SOC_TEGRA=m
+  CONFIG_SND_SOC_TEGRA20_I2S=m
 
 Best regards,
 Krzysztof
