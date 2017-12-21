@@ -1,101 +1,35 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 3/3] ARM: defconfig: exynos: config for v4.16
-Date: Thu, 21 Dec 2017 09:11:34 +0100
-Message-ID: <CAJKOXPc+VNh_djbJCNmX8iA=rzJjfVL4PTJSKKcpex8f+K5y+Q@mail.gmail.com>
-References: <20171220173643.5840-1-krzk@kernel.org> <20171220173643.5840-2-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:43188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750801AbdLUILh (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 03:11:37 -0500
-In-Reply-To: <20171220173643.5840-2-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [RFC 1/2] pci: dwc: pci-exynos: modify the Kconfig dependency
+Date: Thu, 21 Dec 2017 21:14:06 +0900
+Message-ID: <20171221121408.22636-1-jh80.chung@samsung.com>
+References: <CGME20171221121409epcas1p2af291857b9df115d2dec9a3d3300e0aa@epcas1p2.samsung.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, krzk@kernel.org, jingoohan1@gmail.com, kgene@kernel.org, lorenzo.pieralisi@arm.com, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Dec 20, 2017 at 6:36 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
->
->   Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.16
->
-> for you to fetch changes up to 6b732dfb698991b5f518be1ddf329c1c2eb3d7cb:
->
->   ARM: exynos_defconfig: Enable CONFIG_EXYNOS_IOMMU (2017-12-14 18:57:38 +0100)
->
-> ----------------------------------------------------------------
-> Samsung defconfig changes for v4.16
->
-> 1. Enable missing drivers for supported Exynos boards (PMU, CEC, MHL
->    bridge, ASoC for Odroid XU3/XU4).
-> 2. Enable Exynos IOMMU driver on exynos_defconfig.
->
-> ----------------------------------------------------------------
-> Marek Szyprowski (2):
->       ARM: exynos_defconfig: Enable missing drivers for supported Exynos boards
->       ARM: multi_v7_defconfig: Enable missing drivers for supported Exynos boards
->
-> Shuah Khan (1):
->       ARM: exynos_defconfig: Enable CONFIG_EXYNOS_IOMMU
->
->  arch/arm/configs/exynos_defconfig   | 7 +++++++
->  arch/arm/configs/multi_v7_defconfig | 5 +++++
->  2 files changed, 12 insertions(+)
+PCI_EXYNOS has the dependency with SOC_EXYNOS5440.
+It's modified to ARCH_EXYNOS from SOC_EXYNOS5440, because other
+SoCs needs to use this driver.
 
-I forgot to mention possible conflict for multi_v7_defconfig (with
-changes coming from keystone tree). The resolution is to take
-everything from both branches. Something like:
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+---
+ drivers/pci/dwc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-@@@ -558,7 -583,8 +559,9 @@@ CONFIG_VIDEO_STI_DELTA=
-  CONFIG_VIDEO_RENESAS_JPU=m
-  CONFIG_VIDEO_RENESAS_VSP1=m
-  CONFIG_V4L_TEST_DRIVERS=y
- +CONFIG_VIDEO_VIVID=m
-+ CONFIG_CEC_PLATFORM_DRIVERS=y
-+ CONFIG_VIDEO_SAMSUNG_S5P_CEC=m
-  # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
-  CONFIG_VIDEO_ADV7180=m
-  CONFIG_VIDEO_ML86V7667=m
-@@@ -582,16 -613,12 +585,17 @@@ CONFIG_DRM_RCAR_DU=
-  CONFIG_DRM_RCAR_LVDS=y
-  CONFIG_DRM_SUN4I=m
-  CONFIG_DRM_TEGRA=y
- +CONFIG_DRM_PANEL_SIMPLE=y
-  CONFIG_DRM_PANEL_SAMSUNG_LD9040=m
-  CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
- -CONFIG_DRM_PANEL_SIMPLE=y
- +CONFIG_DRM_DUMB_VGA_DAC=m
- +CONFIG_DRM_NXP_PTN3460=m
- +CONFIG_DRM_PARADE_PS8622=m
- +CONFIG_DRM_I2C_ADV7511=m
- +CONFIG_DRM_I2C_ADV7511_AUDIO=y
-+ CONFIG_DRM_SII9234=m
-  CONFIG_DRM_STI=m
- -CONFIG_DRM_VC4=y
- +CONFIG_DRM_VC4=m
-  CONFIG_FB_ARMCLCD=y
-  CONFIG_FB_EFI=y
-  CONFIG_FB_WM8505=y
-@@@ -626,9 -655,10 +630,10 @@@ CONFIG_SND_SOC_SAMSUNG=
-  CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994=m
-  CONFIG_SND_SOC_SMDK_WM8994_PCM=m
-  CONFIG_SND_SOC_SNOW=m
-+ CONFIG_SND_SOC_ODROID=m
-  CONFIG_SND_SOC_SH4_FSI=m
-  CONFIG_SND_SOC_RCAR=m
- -CONFIG_SND_SIMPLE_SCU_CARD=m
- +CONFIG_SND_SOC_STI=m
-  CONFIG_SND_SUN4I_CODEC=m
-  CONFIG_SND_SOC_TEGRA=m
-  CONFIG_SND_SOC_TEGRA20_I2S=m
-
-Best regards,
-Krzysztof
+diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
+index 113e09440f85..0ff9795df8e8 100644
+--- a/drivers/pci/dwc/Kconfig
++++ b/drivers/pci/dwc/Kconfig
+@@ -65,7 +65,7 @@ config PCIE_DW_PLAT
+ config PCI_EXYNOS
+ 	bool "Samsung Exynos PCIe controller"
+ 	depends on PCI
+-	depends on SOC_EXYNOS5440
++	depends on ARCH_EXYNOS
+ 	depends on PCI_MSI_IRQ_DOMAIN
+ 	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
+-- 
+2.15.1
