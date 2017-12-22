@@ -1,47 +1,30 @@
 From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH v3 2/3] hwrng: exynos - add Samsung Exynos True RNG driver
-Date: Fri, 22 Dec 2017 19:35:51 +1100
-Message-ID: <20171222083551.GF29663@gondor.apana.org.au>
-References: <20171204125351.26805-1-l.stelmach@samsung.com>
- <CGME20171204125415eucas1p1f94e6996f08938f686c08c00247c62ce@eucas1p1.samsung.com>
- <20171204125351.26805-3-l.stelmach@samsung.com>
- <20171222082412.GB29663@gondor.apana.org.au>
- <916163bb-594b-779d-700c-de9fa15239dd@samsung.com>
+Subject: Re: [PATCH] crypto: exynos - Icrease the priority of the driver
+Date: Fri, 22 Dec 2017 19:38:29 +1100
+Message-ID: <20171222083829.GB30924@gondor.apana.org.au>
+References: <CGME20171205162048eucas1p241590a1f62f8c49af8a7fb9282daed80@eucas1p2.samsung.com>
+ <20171205162046.11621-1-l.stelmach@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-crypto-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <916163bb-594b-779d-700c-de9fa15239dd@samsung.com>
+In-Reply-To: <20171205162046.11621-1-l.stelmach@samsung.com>
 Sender: linux-crypto-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>, "Andrew F . Davis" <afd@ti.com>, PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, Rob Herring <robh+dt@kernel.org>, Matt Mackall <mpm@selenic.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, robh+dt@kernel.org, Stephan Mueller <smueller@chronox.de>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 22, 2017 at 09:29:38AM +0100, Marek Szyprowski wrote:
-> Hi,
+On Tue, Dec 05, 2017 at 05:20:46PM +0100, Łukasz Stelmach wrote:
+> exynos-rng is one of many implementations of stdrng. With priority as
+> low as 100 it isn't selected, if software implementations (DRBG) are
+> available. The value 300 was selected to give the PRNG priority before
+> software implementations, but allow them to be selected in FIPS-mode
+> (fips=1 in the kernel command line).
 > 
-> On 2017-12-22 09:24, Herbert Xu wrote:
-> >On Mon, Dec 04, 2017 at 01:53:50PM +0100, Łukasz Stelmach wrote:
-> >>Add support for True Random Number Generator found in Samsung Exynos
-> >>5250+ SoCs.
-> >>
-> >>Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> >This doesn't build for me:
-> >
-> >   CC [M]  drivers/char/hw_random/exynos-trng.o
-> >../drivers/char/hw_random/exynos-trng.c:230:1: error: \u2018exynos_rng_dt_match\u2019 undeclared here (not in a function)
-> >../drivers/char/hw_random/exynos-trng.c:230:1: error: \u2018__mod_of__exynos_rng_dt_match_device_table\u2019 aliased to undefined symbol \u2018exynos_rng_dt_match\u2019
-> >make[2]: *** [drivers/char/hw_random/exynos-trng.o] Error 1
-> >make[1]: *** [_module_drivers/char/hw_random] Error 2
-> 
-> This looks like a missing dependency on "OF" when "COMPILE_TEST" is
-> selected.
+> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
 
-Actually it looks like a typo.  The variable is actually called
-exynos_trng_dt_match as opposed to exynos_rng_dt_match.
-
-Cheers,
+Patch applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
