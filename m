@@ -1,85 +1,75 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: fix RTC interrupt for exynos5410
-Date: Fri, 22 Dec 2017 10:19:24 +0100
-Message-ID: <CAJKOXPfj0dFEzuu4wSqb2jV-S9QyDTStJiHQxR6r8HwrTxRoYg@mail.gmail.com>
-References: <20171221213020.3080361-1-arnd@arndb.de>
+From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 2/3] hwrng: exynos - add Samsung Exynos True RNG
+ driver
+Date: Fri, 22 Dec 2017 13:41:18 +0100
+Message-ID: <878tdvhr4h.fsf%l.stelmach@samsung.com>
+References: <20171222083551.GF29663@gondor.apana.org.au>
+        <CGME20171222124132eucas1p281d0ae6925ec5358baa3bbbc4e35b628@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171221213020.3080361-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20171222083551.GF29663-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Andrew F . Davis" <afd-l0cyMroinI0@public.gmane.org>, PrasannaKumar Muralidharan <prasannatsmkumar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 21, 2017 at 10:30 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> According to the comment added to exynos_dt_pmu_match[] in commit
-> 8b283c025443 ("ARM: exynos4/5: convert pmu wakeup to stacked domains"),
-> the RTC is not able to wake up the system through the PMU on Exynos5410,
-> unlike Exynos5420.
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+It was <2017-12-22 pi=C4=85 09:35>, when Herbert Xu wrote:
+> On Fri, Dec 22, 2017 at 09:29:38AM +0100, Marek Szyprowski wrote:
+>> Hi,
+>>=20
+>> On 2017-12-22 09:24, Herbert Xu wrote:
+>> >On Mon, Dec 04, 2017 at 01:53:50PM +0100, =C5=81ukasz Stelmach wrote:
+>> >>Add support for True Random Number Generator found in Samsung Exynos
+>> >>5250+ SoCs.
+>> >>
+>> >>Signed-off-by: =C5=81ukasz Stelmach <l.stelmach-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> >This doesn't build for me:
+>> >
+>> >   CC [M]  drivers/char/hw_random/exynos-trng.o
+>> >../drivers/char/hw_random/exynos-trng.c:230:1: error: \u2018exynos_rng_=
+dt_match\u2019 undeclared here (not in a function)
+>> >../drivers/char/hw_random/exynos-trng.c:230:1: error: \u2018__mod_of__e=
+xynos_rng_dt_match_device_table\u2019 aliased to undefined symbol \u2018exy=
+nos_rng_dt_match\u2019
+>> >make[2]: *** [drivers/char/hw_random/exynos-trng.o] Error 1
+>> >make[1]: *** [_module_drivers/char/hw_random] Error 2
+>>=20
+>> This looks like a missing dependency on "OF" when "COMPILE_TEST" is
+>> selected.
 >
-> However, when the RTC DT node got added, it was a straight copy of
-> the Exynos5420 node, which now causes a warning from dtc.
->
-> This removes the incorrect interrupt-parent, which should get the
-> interrupt working and avoid the warning.
->
-> Fixes: e1e146b1b062 ("ARM: dts: exynos: Add RTC and I2C to Exynos5410")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/boot/dts/exynos5410.dtsi | 1 -
->  1 file changed, 1 deletion(-)
+> Actually it looks like a typo.  The variable is actually called
+> exynos_trng_dt_match as opposed to exynos_rng_dt_match.
 
-In my pull request thread [1] you mentioned that PMU should not be
-interrupt controller for Exynos5410. Yes, I think you are right.
-Regardless whether Exynos5410 really supports Suspend to RAM or not,
-now it is not configured as IRQ controller so the RTC's should go
-straight to GIC. I think your fix is correct and I should drop my
-patch.
+Indeed. Honestly, I haven't seen this problem, not even once. Right, I
+have never compiled it as a module. Thanks for spotting.
 
-I do not have Exynos5410 anymore (Odroid XU was left at Samsung
-Poland) so I cannot test it. Maybe guys in Poland can test it? Marek?
-Sylwester? Bartlomiej?
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
 
-BTW,
-It annoys me so much that it is so difficult to get Samsung boards. I
-was writing to Samsung many times - to HQ, Open Source Group, LSI,
-Artik and nothing. They do not have any boards... or they do not want
-to share. This is how Samsung's support for Open Source really looks
-like.
->From the three boards I have, two of them I bought myself by my own
-money, one was donated to me by Markus Reichl (Odroid U3, thanks!).
-When I was working in Samsung Poland they provided me with boards
-(thanks guys!) but only for the time of work there and I am not
-Samsung employee anymore.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So except this board from Markus, all infrastructure I have was built
-by my own money. Eh, it is not that expensive, one board costs like
-50-70 USD with shipment, but come on! Seriously, damn big company,
-with damn big marketing budget and plenty of people and they cannot
-provide their own boards to open-source... It really pisses me off
-sometimes...
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Back to the topic - thanks for the patch!
-
-Best regards,
-Krzysztof
-
-[1] https://www.spinics.net/lists/arm-kernel/msg624966.html
-
->
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index 06713ec86f0d..d2174727df9a 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -333,7 +333,6 @@
->  &rtc {
->         clocks = <&clock CLK_RTC>;
->         clock-names = "rtc";
-> -       interrupt-parent = <&pmu_system_controller>;
->         status = "disabled";
->  };
->
-> --
-> 2.9.0
->
+iQEcBAEBCAAGBQJaPP1vAAoJELCuHpyYpYAQZ7YH/38P2/ByWqbh4RAvQ/L3diOt
+DaQhoivn62rb57snikdvkWaX4QspIUyGFBb1E+bPeFBbVr3Fthq3ZrCqea5fV7ev
+6mh+NdjnoGq/bpzZ+uH24uX61MSd2UIICd+l20y7DnoqgrLGW6+q2zrSrWyiijnQ
+UGSmezEKlhemftRit1wykKkMipr0iHnLYT2aL9PmcqIxTEmh7y85MMk3CgVstt1K
+79UXufCcPnmg0AOIrwY2NlrB0XyGPVZXQT54XKy2vzU5drd2BpmIyKZKixbrTZSj
+0SMnqhQJESGbARh2LNyop9o1UiWXpqzTjuQRN5HeH37aRYiQHBsQ376JwXYQB8A=
+=u3N/
+-----END PGP SIGNATURE-----
+--=-=-=--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
