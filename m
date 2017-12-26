@@ -1,56 +1,49 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RESEND PATCH v2 2/2] drm/exynos/decon: Add include guard to the
- Exynos7 header
-Date: Tue, 26 Dec 2017 14:07:19 +0100
-Message-ID: <1514293639-18785-2-git-send-email-krzk@kernel.org>
-References: <1514293639-18785-1-git-send-email-krzk@kernel.org>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: samsung: document bindings for Midas
+ family boards
+Date: Tue, 26 Dec 2017 12:02:11 -0600
+Message-ID: <CAL_JsqJo0NZ6qhr-cfAEVKc95qMuBPWN0Y8X6ZTa_wk3y2OMwQ@mail.gmail.com>
+References: <20171218123805.26345-1-simon@lineageos.org> <20171218123805.26345-2-simon@lineageos.org>
+ <20171220181759.6r4waz4seerh6q4i@rob-hp-laptop> <20171221014246.GA23568@lineageos.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1514293639-18785-1-git-send-email-krzk@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171221014246.GA23568-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QWx0aG91Z2ggaGVhZGVyIGlzIGluY2x1ZGVkIG9ubHkgb25jZSBidXQgc3RpbGwgaGF2aW5nIGFu
-IGluY2x1ZGUgZ3VhcmQKaXMgYSBnb29kIHByYWN0aWNlLiAgVG8gYXZvaWQgY29uZnVzaW9uLCBh
-ZGQgU29DIHByZWZpeCB0byBleGlzdGluZwpFeHlub3M1NDMzIGhlYWRlciBpbmNsdWRlIGd1YXJk
-LgoKU2lnbmVkLW9mZi1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgoK
-LS0tCgpSZXNlbmQgYWZ0ZXIgaGFsZiBhIHllYXIuLi4KCkNoYW5nZXMgc2luY2UgdjE6CjEuIEp1
-c3QgcmUtb3JkZXIgcGF0Y2hlcyBpbiBwYXRjaHNldCBhbmQgc2xpZ2h0bHkgYWRqdXN0IGluY2x1
-ZGUgZ3VhcmQKICAgbmFtZS4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtZGVjb241
-NDMzLmggfCA2ICsrKy0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNy5oICAg
-IHwgNSArKysrKwogMiBmaWxlcyBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25z
-KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNTQzMy5o
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNTQzMy5oCmluZGV4IDc4OTU3Yzk2
-MjZmNS4uMTlhZDllNDc5NDVlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3Jl
-Z3MtZGVjb241NDMzLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNTQz
-My5oCkBAIC02LDggKzYsOCBAQAogICogcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZv
-dW5kYXRpb25yCiAgKi8KIAotI2lmbmRlZiBFWFlOT1NfUkVHU19ERUNPTl9ICi0jZGVmaW5lIEVY
-WU5PU19SRUdTX0RFQ09OX0gKKyNpZm5kZWYgRVhZTk9TX1JFR1NfREVDT041NDMzX0gKKyNkZWZp
-bmUgRVhZTk9TX1JFR1NfREVDT041NDMzX0gKIAogLyogRXh5bm9zNTQzWCBERUNPTiAqLwogI2Rl
-ZmluZSBERUNPTl9WSURDT04wCQkJMHgwMDAwCkBAIC0yMDYsNCArMjA2LDQgQEAKICNkZWZpbmUg
-Q1JDQ1RSTF9DUkNFTgkJCSgweDEgPDwgMCkKICNkZWZpbmUgQ1JDQ1RSTF9NQVNLCQkJKDB4NykK
-IAotI2VuZGlmIC8qIEVYWU5PU19SRUdTX0RFQ09OX0ggKi8KKyNlbmRpZiAvKiBFWFlOT1NfUkVH
-U19ERUNPTjU0MzNfSCAqLwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdz
-LWRlY29uNy5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNy5oCmluZGV4IDMz
-OWVhMTAwN2ZmNS4uNWRmNzc2NWQyMzk3IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL3JlZ3MtZGVjb243LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29u
-Ny5oCkBAIC04LDYgKzgsOSBAQAogICogb3B0aW9uKSBhbnkgbGF0ZXIgdmVyc2lvbi4KICAqLwog
-CisjaWZuZGVmIEVYWU5PU19SRUdTX0RFQ09ON19ICisjZGVmaW5lIEVYWU5PU19SRUdTX0RFQ09O
-N19ICisKIC8qIFZJRENPTjAgKi8KICNkZWZpbmUgVklEQ09OMAkJCQkJMHgwMAogCkBAIC0zNDYs
-MyArMzQ5LDUgQEAKIAogI2RlZmluZSBERUNPTl9VUERBVEVfU0xBVkVfU1lOQwkJCSgxIDw8IDQp
-CiAjZGVmaW5lIERFQ09OX1VQREFURV9TVEFOREFMT05FX0YJCSgxIDw8IDApCisKKyNlbmRpZiAv
-KiBFWFlOT1NfUkVHU19ERUNPTjdfSCAqLwotLSAKMi43LjQKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Wed, Dec 20, 2017 at 7:42 PM, Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org> wrote:
+> Hi Rob,
+>
+> Thanks for the review.
+>
+> On Wed, Dec 20, 2017 at 12:17:59PM -0600, Rob Herring wrote:
+>> On Mon, Dec 18, 2017 at 11:38:02PM +1100, Simon Shields wrote:
+>> > Document GT-I9300, GT-I9305, GT-N7100, and GT-N7105 bindings, along
+>> > with the shared "midas" binding.
+>> >
+>> > Signed-off-by: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
+>> > ---
+>> >  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 4 ++++
+>> >  1 file changed, 4 insertions(+)
+>>
+>> My comment on v2 remains.
+>
+> Do you have any example of a better description? All the other ARM board
+> descriptions seem similarly terse.
+>
+> Alternatively, maybe changing the compatible strings is a better
+> solution? "samsung,n710x" for t0, "samsung,i9300" for m0, and
+> "samsung,i9305" for m3?
+
+Yes, it was the compatible string I was commenting on. I don't really
+care about the description because for most boards I have no idea what
+they are.
+
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
