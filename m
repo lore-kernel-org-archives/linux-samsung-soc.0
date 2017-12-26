@@ -1,343 +1,200 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] pinctrl: samsung: Add SPDX license identifiers
-Date: Tue, 26 Dec 2017 19:09:42 +0100
-Message-ID: <1514311782-5187-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Philippe Ombredanne <pombredanne@nexb.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC 2/2] pci: dwc: pci-exynos: add the codes to support the
+ exynos5433
+Date: Tue, 26 Dec 2017 15:11:24 -0600
+Message-ID: <20171226211123.feje5l46y62aft7u@rob-hp-laptop>
+References: <20171221121408.22636-1-jh80.chung@samsung.com>
+ <CGME20171221121409epcas1p1a12d0f3b0b5d5e732da865ee78f6bb47@epcas1p1.samsung.com>
+ <20171221121408.22636-2-jh80.chung@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20171221121408.22636-2-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Replace GPL license statements with SPDX GPL-2.0+ license identifiers.
+On Thu, Dec 21, 2017 at 09:14:07PM +0900, Jaehoon Chung wrote:
+> Exynos5433 has the PCIe for WiFi.
+> Added the codes relevant to PCIe for supporting the exynos5433.
+> Also changed the binding documentation name to
+> 'samsung,exynos-pcie.txt'.
+> (It's not only exynos5440 anymore.)
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  ...exynos5440-pcie.txt => samsung,exynos-pcie.txt} |   2 +-
+>  drivers/pci/dwc/pci-exynos.c                       | 183 ++++++++++++++++-----
+>  2 files changed, 144 insertions(+), 41 deletions(-)
+>  rename Documentation/devicetree/bindings/pci/{samsung,exynos5440-pcie.txt => samsung,exynos-pcie.txt} (97%)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.txt
+> similarity index 97%
+> rename from Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+> rename to Documentation/devicetree/bindings/pci/samsung,exynos-pcie.txt
+> index 34a11bfbfb60..958dcc150505 100644
+> --- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.txt
+> @@ -4,7 +4,7 @@ This PCIe host controller is based on the Synopsys DesignWare PCIe IP
+>  and thus inherits all the common properties defined in designware-pcie.txt.
+>  
+>  Required properties:
+> -- compatible: "samsung,exynos5440-pcie"
+> +- compatible: "samsung,exynos5440-pcie" or "samsung,exynos5433-pcie"
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/pinctrl/samsung/Kconfig                |  1 +
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c   | 33 ++++++++++-------------
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 33 ++++++++++-------------
- drivers/pinctrl/samsung/pinctrl-exynos.c       | 33 ++++++++++-------------
- drivers/pinctrl/samsung/pinctrl-exynos.h       |  6 +----
- drivers/pinctrl/samsung/pinctrl-exynos5440.c   | 21 ++++++---------
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c      | 23 +++++++---------
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c      | 27 ++++++++-----------
- drivers/pinctrl/samsung/pinctrl-samsung.c      | 37 +++++++++++---------------
- drivers/pinctrl/samsung/pinctrl-samsung.h      |  6 +----
- 10 files changed, 89 insertions(+), 131 deletions(-)
+Quite a lot of driver changes for just a new compatible.
 
-diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
-index ecfb90059eeb..11b5eeb14c4a 100644
---- a/drivers/pinctrl/samsung/Kconfig
-+++ b/drivers/pinctrl/samsung/Kconfig
-@@ -1,3 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
- #
- # Samsung Pin control drivers
- #
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-index 071084d3ee9c..c32399faff57 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-@@ -1,22 +1,17 @@
--/*
-- * Exynos specific support for Samsung pinctrl/gpiolib driver with eint support.
-- *
-- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- * Copyright (c) 2012 Linaro Ltd
-- *		http://www.linaro.org
-- *
-- * Author: Thomas Abraham <thomas.ab@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This file contains the Samsung Exynos specific information required by the
-- * the Samsung pinctrl/gpiolib driver. It also includes the implementation of
-- * external gpio and wakeup interrupt support.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Exynos specific support for Samsung pinctrl/gpiolib driver with eint support.
-+//
-+// Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+//		http://www.samsung.com
-+// Copyright (c) 2012 Linaro Ltd
-+//		http://www.linaro.org
-+//
-+// Author: Thomas Abraham <thomas.ab@samsung.com>
-+//
-+// This file contains the Samsung Exynos specific information required by the
-+// the Samsung pinctrl/gpiolib driver. It also includes the implementation of
-+// external gpio and wakeup interrupt support.
- 
- #include <linux/device.h>
- #include <linux/of_address.h>
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-index 08e9fdb58fd2..fc8f7833bec0 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-@@ -1,22 +1,17 @@
--/*
-- * Exynos ARMv8 specific support for Samsung pinctrl/gpiolib driver
-- * with eint support.
-- *
-- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- * Copyright (c) 2012 Linaro Ltd
-- *		http://www.linaro.org
-- * Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This file contains the Samsung Exynos specific information required by the
-- * the Samsung pinctrl/gpiolib driver. It also includes the implementation of
-- * external gpio and wakeup interrupt support.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Exynos ARMv8 specific support for Samsung pinctrl/gpiolib driver
-+// with eint support.
-+//
-+// Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+//		http://www.samsung.com
-+// Copyright (c) 2012 Linaro Ltd
-+//		http://www.linaro.org
-+// Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
-+//
-+// This file contains the Samsung Exynos specific information required by the
-+// the Samsung pinctrl/gpiolib driver. It also includes the implementation of
-+// external gpio and wakeup interrupt support.
- 
- #include <linux/slab.h>
- #include <linux/soc/samsung/exynos-regs-pmu.h>
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index c8d0de7ea160..0a625a64ff5d 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -1,22 +1,17 @@
--/*
-- * Exynos specific support for Samsung pinctrl/gpiolib driver with eint support.
-- *
-- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- * Copyright (c) 2012 Linaro Ltd
-- *		http://www.linaro.org
-- *
-- * Author: Thomas Abraham <thomas.ab@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This file contains the Samsung Exynos specific information required by the
-- * the Samsung pinctrl/gpiolib driver. It also includes the implementation of
-- * external gpio and wakeup interrupt support.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Exynos specific support for Samsung pinctrl/gpiolib driver with eint support.
-+//
-+// Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+//		http://www.samsung.com
-+// Copyright (c) 2012 Linaro Ltd
-+//		http://www.linaro.org
-+//
-+// Author: Thomas Abraham <thomas.ab@samsung.com>
-+//
-+// This file contains the Samsung Exynos specific information required by the
-+// the Samsung pinctrl/gpiolib driver. It also includes the implementation of
-+// external gpio and wakeup interrupt support.
- 
- #include <linux/device.h>
- #include <linux/interrupt.h>
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
-index 7639b926c5c1..abd43aa7eb0d 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * Exynos specific definitions for Samsung pinctrl and gpiolib driver.
-  *
-@@ -10,11 +11,6 @@
-  * pinctrl/gpiolib interface drivers.
-  *
-  * Author: Thomas Abraham <thomas.ab@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef __PINCTRL_SAMSUNG_EXYNOS_H
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-index 32a3a9fd65c4..3d8d5e812839 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-@@ -1,16 +1,11 @@
--/*
-- * pin-controller/pin-mux/pin-config/gpio-driver for Samsung's EXYNOS5440 SoC.
-- *
-- * Author: Thomas Abraham <thomas.ab@samsung.com>
-- *
-- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// pin-controller/pin-mux/pin-config/gpio-driver for Samsung's EXYNOS5440 SoC.
-+//
-+// Author: Thomas Abraham <thomas.ab@samsung.com>
-+//
-+// Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+//		http://www.samsung.com
- 
- #include <linux/init.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-index edf27264b603..10187cb0e9b9 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-@@ -1,17 +1,12 @@
--/*
-- * S3C24XX specific support for Samsung pinctrl/gpiolib driver.
-- *
-- * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This file contains the SamsungS3C24XX specific information required by the
-- * Samsung pinctrl/gpiolib driver. It also includes the implementation of
-- * external gpio and wakeup interrupt support.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// S3C24XX specific support for Samsung pinctrl/gpiolib driver.
-+//
-+// Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
-+//
-+// This file contains the SamsungS3C24XX specific information required by the
-+// Samsung pinctrl/gpiolib driver. It also includes the implementation of
-+// external gpio and wakeup interrupt support.
- 
- #include <linux/init.h>
- #include <linux/device.h>
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-index e63663b32907..679628ac4b31 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-@@ -1,19 +1,14 @@
--/*
-- * S3C64xx specific support for pinctrl-samsung driver.
-- *
-- * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-- *
-- * Based on pinctrl-exynos.c, please see the file for original copyrights.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This file contains the Samsung S3C64xx specific information required by the
-- * the Samsung pinctrl/gpiolib driver. It also includes the implementation of
-- * external gpio and wakeup interrupt support.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// S3C64xx specific support for pinctrl-samsung driver.
-+//
-+// Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-+//
-+// Based on pinctrl-exynos.c, please see the file for original copyrights.
-+//
-+// This file contains the Samsung S3C64xx specific information required by the
-+// the Samsung pinctrl/gpiolib driver. It also includes the implementation of
-+// external gpio and wakeup interrupt support.
- 
- #include <linux/init.h>
- #include <linux/device.h>
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index e04f7fe0a65d..da58e4554137 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1,24 +1,19 @@
--/*
-- * pin-controller/pin-mux/pin-config/gpio-driver for Samsung's SoC's.
-- *
-- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- * Copyright (c) 2012 Linaro Ltd
-- *		http://www.linaro.org
-- *
-- * Author: Thomas Abraham <thomas.ab@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This driver implements the Samsung pinctrl driver. It supports setting up of
-- * pinmux and pinconf configurations. The gpiolib interface is also included.
-- * External interrupt (gpio and wakeup) support are not included in this driver
-- * but provides extensions to which platform specific implementation of the gpio
-- * and wakeup interrupts can be hooked to.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// pin-controller/pin-mux/pin-config/gpio-driver for Samsung's SoC's.
-+//
-+// Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+//		http://www.samsung.com
-+// Copyright (c) 2012 Linaro Ltd
-+//		http://www.linaro.org
-+//
-+// Author: Thomas Abraham <thomas.ab@samsung.com>
-+//
-+// This driver implements the Samsung pinctrl driver. It supports setting up of
-+// pinmux and pinconf configurations. The gpiolib interface is also included.
-+// External interrupt (gpio and wakeup) support are not included in this driver
-+// but provides extensions to which platform specific implementation of the gpio
-+// and wakeup interrupts can be hooked to.
- 
- #include <linux/init.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 9af07af6cad6..e204f609823b 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * pin-controller/pin-mux/pin-config/gpio-driver for Samsung's SoC's.
-  *
-@@ -7,11 +8,6 @@
-  *		http://www.linaro.org
-  *
-  * Author: Thomas Abraham <thomas.ab@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef __PINCTRL_SAMSUNG_H
--- 
-2.7.4
+>  - reg: base addresses and lengths of the PCIe controller,
 
+For example, you're adding the DBI registers which is not documented 
+here. 
+
+Perhaps it is time to remove the old phy support before adding a new 
+platform.
+
+>  	the PHY controller, additional register for the PHY controller.
+>  	(Registers for the PHY controller are DEPRECATED.
+> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
+> index 5596fdedbb94..8dee2e90347e 100644
+> --- a/drivers/pci/dwc/pci-exynos.c
+> +++ b/drivers/pci/dwc/pci-exynos.c
+> @@ -40,6 +40,8 @@
+>  #define PCIE_IRQ_SPECIAL		0x008
+>  #define PCIE_IRQ_EN_PULSE		0x00c
+>  #define PCIE_IRQ_EN_LEVEL		0x010
+> +#define PCIE_SW_WAKE			0x018
+> +#define PCIE_BUS_EN			BIT(1)
+>  #define IRQ_MSI_ENABLE			BIT(2)
+>  #define PCIE_IRQ_EN_SPECIAL		0x014
+>  #define PCIE_PWR_RESET			0x018
+> @@ -49,7 +51,8 @@
+>  #define PCIE_NONSTICKY_RESET		0x024
+>  #define PCIE_APP_INIT_RESET		0x028
+>  #define PCIE_APP_LTSSM_ENABLE		0x02c
+> -#define PCIE_ELBI_RDLH_LINKUP		0x064
+> +#define PCIE_ELBI_RDLH_LINKUP		0x074
+> +#define PCIE_ELBI_XMLH_LINKUP		BIT(4)
+>  #define PCIE_ELBI_LTSSM_ENABLE		0x1
+>  #define PCIE_ELBI_SLV_AWMISC		0x11c
+>  #define PCIE_ELBI_SLV_ARMISC		0x120
+> @@ -94,6 +97,10 @@
+>  #define PCIE_PHY_TRSV3_PD_TSV		BIT(7)
+>  #define PCIE_PHY_TRSV3_LVCC		0x31c
+>  
+> +/* DBI register */
+> +#define PCIE_MISC_CONTROL_1_OFF		0x8BC
+> +#define DBI_RO_WR_EN			BIT(0)
+> +
+>  struct exynos_pcie_mem_res {
+>  	void __iomem *elbi_base;   /* DT 0th resource: PCIe CTRL */
+>  	void __iomem *phy_base;    /* DT 1st resource: PHY CTRL */
+> @@ -221,6 +228,96 @@ static const struct exynos_pcie_ops exynos5440_pcie_ops = {
+>  	.deinit_clk_resources	= exynos5440_pcie_deinit_clk_resources,
+>  };
+>  
+> +static int exynos5433_pcie_get_mem_resources(struct platform_device *pdev,
+> +					     struct exynos_pcie *ep)
+> +{
+> +	struct dw_pcie *pci = ep->pci;
+> +	struct device *dev = pci->dev;
+> +	struct resource *res;
+> +
+> +	ep->mem_res = devm_kzalloc(dev, sizeof(*ep->mem_res), GFP_KERNEL);
+> +	if (!ep->mem_res)
+> +		return -ENOMEM;
+> +
+> +	/* External Local Bus interface(ELBI) Register */
+
+These are standard DW registers IIRC. So the DW core should handle this.
+
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
+> +	ep->mem_res->elbi_base = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(ep->mem_res->elbi_base))
+> +		return PTR_ERR(ep->mem_res->elbi_base);
+> +
+> +	/* Data Bus Interface(DBI) Register */
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
+> +	pci->dbi_base = devm_ioremap_resource(&pdev->dev, res);
+
+This is handled by the DW plat driver. Perhaps the DW core should handle 
+it too. 
+
+Does the 5440 really not have DBI registers or you just happen to not 
+need to access them?
+
+> +	if (IS_ERR(pci->dbi_base))
+> +		return PTR_ERR(pci->dbi_base);
+> +
+> +	return 0;
+> +}
+> +
+> +static int exynos5433_pcie_get_clk_resources(struct exynos_pcie *ep)
+> +{
+> +	struct dw_pcie *pci = ep->pci;
+> +	struct device *dev = pci->dev;
+> +
+> +	ep->clk_res = devm_kzalloc(dev, sizeof(*ep->clk_res), GFP_KERNEL);
+> +	if (!ep->clk_res)
+> +		return -ENOMEM;
+> +
+> +	ep->clk_res->clk = devm_clk_get(dev, "pcie");
+> +	if (IS_ERR(ep->clk_res->clk)) {
+> +		dev_err(dev, "Failed to get pcie rc clock\n");
+> +		return PTR_ERR(ep->clk_res->clk);
+> +	}
+> +
+> +	ep->clk_res->bus_clk = devm_clk_get(dev, "pcie_bus");
+> +	if (IS_ERR(ep->clk_res->bus_clk)) {
+> +		dev_err(dev, "Failed to get pcie bus clock\n");
+> +		return PTR_ERR(ep->clk_res->bus_clk);
+> +	}
+> +
+> +	return 0;
+> +}
+
+Can't you reuse exynos5440_pcie_get_clk_resources? They appear to be the 
+same.
+
+> +
+> +static void exynos5433_pcie_deinit_clk_resources(struct exynos_pcie *ep)
+> +{
+> +	clk_disable_unprepare(ep->clk_res->bus_clk);
+> +	clk_disable_unprepare(ep->clk_res->clk);
+> +}
+> +
+> +
+> +static int exynos5433_pcie_init_clk_resources(struct exynos_pcie *ep)
+> +{
+> +	struct dw_pcie *pci = ep->pci;
+> +	struct device *dev = pci->dev;
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(ep->clk_res->clk);
+> +	if (ret) {
+> +		dev_err(dev, "cannot enable pcie rc clock");
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(ep->clk_res->bus_clk);
+> +	if (ret) {
+> +		dev_err(dev, "cannot enable pcie bus clock");
+> +		goto err_bus_clk;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_bus_clk:
+> +	clk_disable_unprepare(ep->clk_res->clk);
+> +
+> +	return ret;
+> +}
+
+Ditto.
+
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
