@@ -1,94 +1,56 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RESEND PATCH v2 1/2] drm/exynos/decon: Move headers from global to local place
-Date: Tue, 26 Dec 2017 14:07:18 +0100
-Message-ID: <1514293639-18785-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:50232 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750705AbdLZNHb (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 26 Dec 2017 08:07:31 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [RESEND PATCH v2 2/2] drm/exynos/decon: Add include guard to the
+ Exynos7 header
+Date: Tue, 26 Dec 2017 14:07:19 +0100
+Message-ID: <1514293639-18785-2-git-send-email-krzk@kernel.org>
+References: <1514293639-18785-1-git-send-email-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1514293639-18785-1-git-send-email-krzk@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The DECON headers contain only defines for registers.  There are no
-other drivers using them so this should be put locally to the Exynos DRM
-driver.  Keeping headers local helps managing the code.
-
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
----
-
-Resend after half a year...
-
-Changes since v1:
-1. Just re-order patches in patchset.
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c                          | 3 +--
- drivers/gpu/drm/exynos/exynos7_drm_decon.c                             | 2 +-
- .../exynos5433_decon.h => drivers/gpu/drm/exynos/regs-decon5433.h      | 0
- include/video/exynos7_decon.h => drivers/gpu/drm/exynos/regs-decon7.h  | 3 +--
- 4 files changed, 3 insertions(+), 5 deletions(-)
- rename include/video/exynos5433_decon.h => drivers/gpu/drm/exynos/regs-decon5433.h (100%)
- rename include/video/exynos7_decon.h => drivers/gpu/drm/exynos/regs-decon7.h (99%)
-
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 6be5b53c3b27..1427c385bddc 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -21,13 +21,12 @@
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- 
--#include <video/exynos5433_decon.h>
--
- #include "exynos_drm_drv.h"
- #include "exynos_drm_crtc.h"
- #include "exynos_drm_fb.h"
- #include "exynos_drm_plane.h"
- #include "exynos_drm_iommu.h"
-+#include "regs-decon5433.h"
- 
- #define DSD_CFG_MUX 0x1004
- #define DSD_CFG_MUX_TE_UNMASK_GLOBAL BIT(13)
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index 615efcf7782a..3931d5e33fe0 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -25,13 +25,13 @@
- 
- #include <video/of_display_timing.h>
- #include <video/of_videomode.h>
--#include <video/exynos7_decon.h>
- 
- #include "exynos_drm_crtc.h"
- #include "exynos_drm_plane.h"
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fb.h"
- #include "exynos_drm_iommu.h"
-+#include "regs-decon7.h"
- 
- /*
-  * DECON stands for Display and Enhancement controller.
-diff --git a/include/video/exynos5433_decon.h b/drivers/gpu/drm/exynos/regs-decon5433.h
-similarity index 100%
-rename from include/video/exynos5433_decon.h
-rename to drivers/gpu/drm/exynos/regs-decon5433.h
-diff --git a/include/video/exynos7_decon.h b/drivers/gpu/drm/exynos/regs-decon7.h
-similarity index 99%
-rename from include/video/exynos7_decon.h
-rename to drivers/gpu/drm/exynos/regs-decon7.h
-index a62b11b613f6..339ea1007ff5 100644
---- a/include/video/exynos7_decon.h
-+++ b/drivers/gpu/drm/exynos/regs-decon7.h
-@@ -1,5 +1,4 @@
--/* include/video/exynos7_decon.h
-- *
-+/*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-  * Author: Ajay Kumar <ajaykumar.rs@samsung.com>
-  *
--- 
-2.7.4
+QWx0aG91Z2ggaGVhZGVyIGlzIGluY2x1ZGVkIG9ubHkgb25jZSBidXQgc3RpbGwgaGF2aW5nIGFu
+IGluY2x1ZGUgZ3VhcmQKaXMgYSBnb29kIHByYWN0aWNlLiAgVG8gYXZvaWQgY29uZnVzaW9uLCBh
+ZGQgU29DIHByZWZpeCB0byBleGlzdGluZwpFeHlub3M1NDMzIGhlYWRlciBpbmNsdWRlIGd1YXJk
+LgoKU2lnbmVkLW9mZi1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgoK
+LS0tCgpSZXNlbmQgYWZ0ZXIgaGFsZiBhIHllYXIuLi4KCkNoYW5nZXMgc2luY2UgdjE6CjEuIEp1
+c3QgcmUtb3JkZXIgcGF0Y2hlcyBpbiBwYXRjaHNldCBhbmQgc2xpZ2h0bHkgYWRqdXN0IGluY2x1
+ZGUgZ3VhcmQKICAgbmFtZS4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtZGVjb241
+NDMzLmggfCA2ICsrKy0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNy5oICAg
+IHwgNSArKysrKwogMiBmaWxlcyBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25z
+KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNTQzMy5o
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNTQzMy5oCmluZGV4IDc4OTU3Yzk2
+MjZmNS4uMTlhZDllNDc5NDVlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3Jl
+Z3MtZGVjb241NDMzLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNTQz
+My5oCkBAIC02LDggKzYsOCBAQAogICogcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZv
+dW5kYXRpb25yCiAgKi8KIAotI2lmbmRlZiBFWFlOT1NfUkVHU19ERUNPTl9ICi0jZGVmaW5lIEVY
+WU5PU19SRUdTX0RFQ09OX0gKKyNpZm5kZWYgRVhZTk9TX1JFR1NfREVDT041NDMzX0gKKyNkZWZp
+bmUgRVhZTk9TX1JFR1NfREVDT041NDMzX0gKIAogLyogRXh5bm9zNTQzWCBERUNPTiAqLwogI2Rl
+ZmluZSBERUNPTl9WSURDT04wCQkJMHgwMDAwCkBAIC0yMDYsNCArMjA2LDQgQEAKICNkZWZpbmUg
+Q1JDQ1RSTF9DUkNFTgkJCSgweDEgPDwgMCkKICNkZWZpbmUgQ1JDQ1RSTF9NQVNLCQkJKDB4NykK
+IAotI2VuZGlmIC8qIEVYWU5PU19SRUdTX0RFQ09OX0ggKi8KKyNlbmRpZiAvKiBFWFlOT1NfUkVH
+U19ERUNPTjU0MzNfSCAqLwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdz
+LWRlY29uNy5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29uNy5oCmluZGV4IDMz
+OWVhMTAwN2ZmNS4uNWRmNzc2NWQyMzk3IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL3JlZ3MtZGVjb243LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWRlY29u
+Ny5oCkBAIC04LDYgKzgsOSBAQAogICogb3B0aW9uKSBhbnkgbGF0ZXIgdmVyc2lvbi4KICAqLwog
+CisjaWZuZGVmIEVYWU5PU19SRUdTX0RFQ09ON19ICisjZGVmaW5lIEVYWU5PU19SRUdTX0RFQ09O
+N19ICisKIC8qIFZJRENPTjAgKi8KICNkZWZpbmUgVklEQ09OMAkJCQkJMHgwMAogCkBAIC0zNDYs
+MyArMzQ5LDUgQEAKIAogI2RlZmluZSBERUNPTl9VUERBVEVfU0xBVkVfU1lOQwkJCSgxIDw8IDQp
+CiAjZGVmaW5lIERFQ09OX1VQREFURV9TVEFOREFMT05FX0YJCSgxIDw8IDApCisKKyNlbmRpZiAv
+KiBFWFlOT1NfUkVHU19ERUNPTjdfSCAqLwotLSAKMi43LjQKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
