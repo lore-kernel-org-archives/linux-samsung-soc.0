@@ -1,199 +1,230 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: [RFC 2/2] pci: dwc: pci-exynos: add the codes to support the
  exynos5433
-Date: Tue, 26 Dec 2017 15:11:24 -0600
-Message-ID: <20171226211123.feje5l46y62aft7u@rob-hp-laptop>
+Date: Wed, 27 Dec 2017 14:58:08 +0900
+Message-ID: <ff1f1aeb-60e7-9dc4-c18d-aee237699ff3@samsung.com>
 References: <20171221121408.22636-1-jh80.chung@samsung.com>
- <CGME20171221121409epcas1p1a12d0f3b0b5d5e732da865ee78f6bb47@epcas1p1.samsung.com>
- <20171221121408.22636-2-jh80.chung@samsung.com>
+        <CGME20171221121409epcas1p1a12d0f3b0b5d5e732da865ee78f6bb47@epcas1p1.samsung.com>
+        <20171221121408.22636-2-jh80.chung@samsung.com>
+        <20171226211123.feje5l46y62aft7u@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171221121408.22636-2-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-reply-to: <20171226211123.feje5l46y62aft7u@rob-hp-laptop>
+Content-language: en-US
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 21, 2017 at 09:14:07PM +0900, Jaehoon Chung wrote:
-> Exynos5433 has the PCIe for WiFi.
-> Added the codes relevant to PCIe for supporting the exynos5433.
-> Also changed the binding documentation name to
-> 'samsung,exynos-pcie.txt'.
-> (It's not only exynos5440 anymore.)
+On 12/27/2017 06:11 AM, Rob Herring wrote:
+> On Thu, Dec 21, 2017 at 09:14:07PM +0900, Jaehoon Chung wrote:
+>> Exynos5433 has the PCIe for WiFi.
+>> Added the codes relevant to PCIe for supporting the exynos5433.
+>> Also changed the binding documentation name to
+>> 'samsung,exynos-pcie.txt'.
+>> (It's not only exynos5440 anymore.)
+>>
+>> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>  ...exynos5440-pcie.txt => samsung,exynos-pcie.txt} |   2 +-
+>>  drivers/pci/dwc/pci-exynos.c                       | 183 ++++++++++++++++-----
+>>  2 files changed, 144 insertions(+), 41 deletions(-)
+>>  rename Documentation/devicetree/bindings/pci/{samsung,exynos5440-pcie.txt => samsung,exynos-pcie.txt} (97%)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.txt
+>> similarity index 97%
+>> rename from Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+>> rename to Documentation/devicetree/bindings/pci/samsung,exynos-pcie.txt
+>> index 34a11bfbfb60..958dcc150505 100644
+>> --- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+>> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.txt
+>> @@ -4,7 +4,7 @@ This PCIe host controller is based on the Synopsys DesignWare PCIe IP
+>>  and thus inherits all the common properties defined in designware-pcie.txt.
+>>  
+>>  Required properties:
+>> -- compatible: "samsung,exynos5440-pcie"
+>> +- compatible: "samsung,exynos5440-pcie" or "samsung,exynos5433-pcie"
 > 
-> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  ...exynos5440-pcie.txt => samsung,exynos-pcie.txt} |   2 +-
->  drivers/pci/dwc/pci-exynos.c                       | 183 ++++++++++++++++-----
->  2 files changed, 144 insertions(+), 41 deletions(-)
->  rename Documentation/devicetree/bindings/pci/{samsung,exynos5440-pcie.txt => samsung,exynos-pcie.txt} (97%)
+> Quite a lot of driver changes for just a new compatible.
+
+It needs to distinguish between exynos5440 and other exynos variants.
+So needs to add the new common compatible likes "samsung,exynos5-pcie" or "samsung,exynos-pcie".
+
+Actually, i hope that exynos5440 can be removed from mainline kernel.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.txt
-> similarity index 97%
-> rename from Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> rename to Documentation/devicetree/bindings/pci/samsung,exynos-pcie.txt
-> index 34a11bfbfb60..958dcc150505 100644
-> --- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.txt
-> @@ -4,7 +4,7 @@ This PCIe host controller is based on the Synopsys DesignWare PCIe IP
->  and thus inherits all the common properties defined in designware-pcie.txt.
->  
->  Required properties:
-> -- compatible: "samsung,exynos5440-pcie"
-> +- compatible: "samsung,exynos5440-pcie" or "samsung,exynos5433-pcie"
+>>  - reg: base addresses and lengths of the PCIe controller,
+> 
+> For example, you're adding the DBI registers which is not documented 
+> here. 
+> 
+> Perhaps it is time to remove the old phy support before adding a new 
+> platform.
 
-Quite a lot of driver changes for just a new compatible.
+Ok, I will send the patches to remove the old phy.
 
->  - reg: base addresses and lengths of the PCIe controller,
+> 
+>>  	the PHY controller, additional register for the PHY controller.
+>>  	(Registers for the PHY controller are DEPRECATED.
+>> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
+>> index 5596fdedbb94..8dee2e90347e 100644
+>> --- a/drivers/pci/dwc/pci-exynos.c
+>> +++ b/drivers/pci/dwc/pci-exynos.c
+>> @@ -40,6 +40,8 @@
+>>  #define PCIE_IRQ_SPECIAL		0x008
+>>  #define PCIE_IRQ_EN_PULSE		0x00c
+>>  #define PCIE_IRQ_EN_LEVEL		0x010
+>> +#define PCIE_SW_WAKE			0x018
+>> +#define PCIE_BUS_EN			BIT(1)
+>>  #define IRQ_MSI_ENABLE			BIT(2)
+>>  #define PCIE_IRQ_EN_SPECIAL		0x014
+>>  #define PCIE_PWR_RESET			0x018
+>> @@ -49,7 +51,8 @@
+>>  #define PCIE_NONSTICKY_RESET		0x024
+>>  #define PCIE_APP_INIT_RESET		0x028
+>>  #define PCIE_APP_LTSSM_ENABLE		0x02c
+>> -#define PCIE_ELBI_RDLH_LINKUP		0x064
+>> +#define PCIE_ELBI_RDLH_LINKUP		0x074
+>> +#define PCIE_ELBI_XMLH_LINKUP		BIT(4)
+>>  #define PCIE_ELBI_LTSSM_ENABLE		0x1
+>>  #define PCIE_ELBI_SLV_AWMISC		0x11c
+>>  #define PCIE_ELBI_SLV_ARMISC		0x120
+>> @@ -94,6 +97,10 @@
+>>  #define PCIE_PHY_TRSV3_PD_TSV		BIT(7)
+>>  #define PCIE_PHY_TRSV3_LVCC		0x31c
+>>  
+>> +/* DBI register */
+>> +#define PCIE_MISC_CONTROL_1_OFF		0x8BC
+>> +#define DBI_RO_WR_EN			BIT(0)
+>> +
+>>  struct exynos_pcie_mem_res {
+>>  	void __iomem *elbi_base;   /* DT 0th resource: PCIe CTRL */
+>>  	void __iomem *phy_base;    /* DT 1st resource: PHY CTRL */
+>> @@ -221,6 +228,96 @@ static const struct exynos_pcie_ops exynos5440_pcie_ops = {
+>>  	.deinit_clk_resources	= exynos5440_pcie_deinit_clk_resources,
+>>  };
+>>  
+>> +static int exynos5433_pcie_get_mem_resources(struct platform_device *pdev,
+>> +					     struct exynos_pcie *ep)
+>> +{
+>> +	struct dw_pcie *pci = ep->pci;
+>> +	struct device *dev = pci->dev;
+>> +	struct resource *res;
+>> +
+>> +	ep->mem_res = devm_kzalloc(dev, sizeof(*ep->mem_res), GFP_KERNEL);
+>> +	if (!ep->mem_res)
+>> +		return -ENOMEM;
+>> +
+>> +	/* External Local Bus interface(ELBI) Register */
+> 
+> These are standard DW registers IIRC. So the DW core should handle this.
+> 
+>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
+>> +	ep->mem_res->elbi_base = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(ep->mem_res->elbi_base))
+>> +		return PTR_ERR(ep->mem_res->elbi_base);
+>> +
+>> +	/* Data Bus Interface(DBI) Register */
+>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
+>> +	pci->dbi_base = devm_ioremap_resource(&pdev->dev, res);
+> 
+> This is handled by the DW plat driver. Perhaps the DW core should handle 
+> it too. 
 
-For example, you're adding the DBI registers which is not documented 
-here. 
+Will fix.
 
-Perhaps it is time to remove the old phy support before adding a new 
-platform.
+> 
+> Does the 5440 really not have DBI registers or you just happen to not 
+> need to access them?
 
->  	the PHY controller, additional register for the PHY controller.
->  	(Registers for the PHY controller are DEPRECATED.
-> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
-> index 5596fdedbb94..8dee2e90347e 100644
-> --- a/drivers/pci/dwc/pci-exynos.c
-> +++ b/drivers/pci/dwc/pci-exynos.c
-> @@ -40,6 +40,8 @@
->  #define PCIE_IRQ_SPECIAL		0x008
->  #define PCIE_IRQ_EN_PULSE		0x00c
->  #define PCIE_IRQ_EN_LEVEL		0x010
-> +#define PCIE_SW_WAKE			0x018
-> +#define PCIE_BUS_EN			BIT(1)
->  #define IRQ_MSI_ENABLE			BIT(2)
->  #define PCIE_IRQ_EN_SPECIAL		0x014
->  #define PCIE_PWR_RESET			0x018
-> @@ -49,7 +51,8 @@
->  #define PCIE_NONSTICKY_RESET		0x024
->  #define PCIE_APP_INIT_RESET		0x028
->  #define PCIE_APP_LTSSM_ENABLE		0x02c
-> -#define PCIE_ELBI_RDLH_LINKUP		0x064
-> +#define PCIE_ELBI_RDLH_LINKUP		0x074
-> +#define PCIE_ELBI_XMLH_LINKUP		BIT(4)
->  #define PCIE_ELBI_LTSSM_ENABLE		0x1
->  #define PCIE_ELBI_SLV_AWMISC		0x11c
->  #define PCIE_ELBI_SLV_ARMISC		0x120
-> @@ -94,6 +97,10 @@
->  #define PCIE_PHY_TRSV3_PD_TSV		BIT(7)
->  #define PCIE_PHY_TRSV3_LVCC		0x31c
->  
-> +/* DBI register */
-> +#define PCIE_MISC_CONTROL_1_OFF		0x8BC
-> +#define DBI_RO_WR_EN			BIT(0)
-> +
->  struct exynos_pcie_mem_res {
->  	void __iomem *elbi_base;   /* DT 0th resource: PCIe CTRL */
->  	void __iomem *phy_base;    /* DT 1st resource: PHY CTRL */
-> @@ -221,6 +228,96 @@ static const struct exynos_pcie_ops exynos5440_pcie_ops = {
->  	.deinit_clk_resources	= exynos5440_pcie_deinit_clk_resources,
->  };
->  
-> +static int exynos5433_pcie_get_mem_resources(struct platform_device *pdev,
-> +					     struct exynos_pcie *ep)
-> +{
-> +	struct dw_pcie *pci = ep->pci;
-> +	struct device *dev = pci->dev;
-> +	struct resource *res;
-> +
-> +	ep->mem_res = devm_kzalloc(dev, sizeof(*ep->mem_res), GFP_KERNEL);
-> +	if (!ep->mem_res)
-> +		return -ENOMEM;
-> +
-> +	/* External Local Bus interface(ELBI) Register */
+I didn't have exynso5440 TRM, do you means exynos5433? It doesn't have its own DBI register.
 
-These are standard DW registers IIRC. So the DW core should handle this.
+> 
+>> +	if (IS_ERR(pci->dbi_base))
+>> +		return PTR_ERR(pci->dbi_base);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int exynos5433_pcie_get_clk_resources(struct exynos_pcie *ep)
+>> +{
+>> +	struct dw_pcie *pci = ep->pci;
+>> +	struct device *dev = pci->dev;
+>> +
+>> +	ep->clk_res = devm_kzalloc(dev, sizeof(*ep->clk_res), GFP_KERNEL);
+>> +	if (!ep->clk_res)
+>> +		return -ENOMEM;
+>> +
+>> +	ep->clk_res->clk = devm_clk_get(dev, "pcie");
+>> +	if (IS_ERR(ep->clk_res->clk)) {
+>> +		dev_err(dev, "Failed to get pcie rc clock\n");
+>> +		return PTR_ERR(ep->clk_res->clk);
+>> +	}
+>> +
+>> +	ep->clk_res->bus_clk = devm_clk_get(dev, "pcie_bus");
+>> +	if (IS_ERR(ep->clk_res->bus_clk)) {
+>> +		dev_err(dev, "Failed to get pcie bus clock\n");
+>> +		return PTR_ERR(ep->clk_res->bus_clk);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+> 
+> Can't you reuse exynos5440_pcie_get_clk_resources? They appear to be the 
+> same.
 
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
-> +	ep->mem_res->elbi_base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(ep->mem_res->elbi_base))
-> +		return PTR_ERR(ep->mem_res->elbi_base);
-> +
-> +	/* Data Bus Interface(DBI) Register */
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-> +	pci->dbi_base = devm_ioremap_resource(&pdev->dev, res);
+Will reuse.
 
-This is handled by the DW plat driver. Perhaps the DW core should handle 
-it too. 
+> 
+>> +
+>> +static void exynos5433_pcie_deinit_clk_resources(struct exynos_pcie *ep)
+>> +{
+>> +	clk_disable_unprepare(ep->clk_res->bus_clk);
+>> +	clk_disable_unprepare(ep->clk_res->clk);
+>> +}
+>> +
+>> +
+>> +static int exynos5433_pcie_init_clk_resources(struct exynos_pcie *ep)
+>> +{
+>> +	struct dw_pcie *pci = ep->pci;
+>> +	struct device *dev = pci->dev;
+>> +	int ret;
+>> +
+>> +	ret = clk_prepare_enable(ep->clk_res->clk);
+>> +	if (ret) {
+>> +		dev_err(dev, "cannot enable pcie rc clock");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(ep->clk_res->bus_clk);
+>> +	if (ret) {
+>> +		dev_err(dev, "cannot enable pcie bus clock");
+>> +		goto err_bus_clk;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +err_bus_clk:
+>> +	clk_disable_unprepare(ep->clk_res->clk);
+>> +
+>> +	return ret;
+>> +}
+> 
+> Ditto.
 
-Does the 5440 really not have DBI registers or you just happen to not 
-need to access them?
+Ok. Will fix.
 
-> +	if (IS_ERR(pci->dbi_base))
-> +		return PTR_ERR(pci->dbi_base);
-> +
-> +	return 0;
-> +}
-> +
-> +static int exynos5433_pcie_get_clk_resources(struct exynos_pcie *ep)
-> +{
-> +	struct dw_pcie *pci = ep->pci;
-> +	struct device *dev = pci->dev;
-> +
-> +	ep->clk_res = devm_kzalloc(dev, sizeof(*ep->clk_res), GFP_KERNEL);
-> +	if (!ep->clk_res)
-> +		return -ENOMEM;
-> +
-> +	ep->clk_res->clk = devm_clk_get(dev, "pcie");
-> +	if (IS_ERR(ep->clk_res->clk)) {
-> +		dev_err(dev, "Failed to get pcie rc clock\n");
-> +		return PTR_ERR(ep->clk_res->clk);
-> +	}
-> +
-> +	ep->clk_res->bus_clk = devm_clk_get(dev, "pcie_bus");
-> +	if (IS_ERR(ep->clk_res->bus_clk)) {
-> +		dev_err(dev, "Failed to get pcie bus clock\n");
-> +		return PTR_ERR(ep->clk_res->bus_clk);
-> +	}
-> +
-> +	return 0;
-> +}
+Best Regards,
+Jaehoon Chung
 
-Can't you reuse exynos5440_pcie_get_clk_resources? They appear to be the 
-same.
+> 
+> Rob
+> 
+> 
+> 
 
-> +
-> +static void exynos5433_pcie_deinit_clk_resources(struct exynos_pcie *ep)
-> +{
-> +	clk_disable_unprepare(ep->clk_res->bus_clk);
-> +	clk_disable_unprepare(ep->clk_res->clk);
-> +}
-> +
-> +
-> +static int exynos5433_pcie_init_clk_resources(struct exynos_pcie *ep)
-> +{
-> +	struct dw_pcie *pci = ep->pci;
-> +	struct device *dev = pci->dev;
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(ep->clk_res->clk);
-> +	if (ret) {
-> +		dev_err(dev, "cannot enable pcie rc clock");
-> +		return ret;
-> +	}
-> +
-> +	ret = clk_prepare_enable(ep->clk_res->bus_clk);
-> +	if (ret) {
-> +		dev_err(dev, "cannot enable pcie bus clock");
-> +		goto err_bus_clk;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_bus_clk:
-> +	clk_disable_unprepare(ep->clk_res->clk);
-> +
-> +	return ret;
-> +}
-
-Ditto.
-
-Rob
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
