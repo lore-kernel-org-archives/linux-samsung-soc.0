@@ -1,18 +1,18 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
+From: "Jingoo Han" <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] PCI: exynos: remove the deprecated phy codes
-Date: Wed, 27 Dec 2017 12:01:54 -0500
-Message-ID: <000001d37f34$664d5f50$32e81df0$@gmail.com>
+Date: Wed, 27 Dec 2017 12:05:49 -0500
+Message-ID: <000501d37f34$f21b03c0$d6510b40$@gmail.com>
 References: <CGME20171227094329epcas1p2a7b0a0f6130db4361592d8966d5ecb85@epcas1p2.samsung.com> <20171227094327.5671-1-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain;
         charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171227094327.5671-1-jh80.chung@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171227094327.5671-1-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Content-Language: en-us
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, bhelgaas@kernel.org, robh+dt@kernel.org, krzk@kernel.org, mark.rutland@arm.com, kgene@kernel.org, lorenzo.pieralisi@arm.com
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Jaehoon Chung' <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Bjorn Helgaas' <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On Wednesday, December 27, 2017 1:43 AM, Jaehoon Chung wrote:
@@ -24,12 +24,15 @@ On Wednesday, December 27, 2017 1:43 AM, Jaehoon Chung wrote:
 > 
 > Modified the binding documentation.
 > 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+(I resend my email, because Bjorn's address was wrong in the previous
+email.)
 
 Thank you for your patch.
 It looks good.
 
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
+Acked-by: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
 Best regards,
 Jingoo Han
@@ -492,3 +495,10 @@ Jingoo Han
 >  		ep->ops->deinit_clk_resources(ep);
 > --
 > 2.15.1
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
