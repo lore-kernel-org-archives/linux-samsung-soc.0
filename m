@@ -1,8 +1,8 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 Subject: Re: [PATCH] PCI: exynos: remove redundant code in
  exynos_pcie_establish_link
-Date: Thu, 28 Dec 2017 18:58:02 +0900
-Message-ID: <533c6579-065f-100a-9a8f-c852ad4d0398@samsung.com>
+Date: Thu, 28 Dec 2017 15:59:24 +0530
+Message-ID: <7f35d656-7bb9-5b0a-551c-bea6bfb6d111@samsung.com>
 References: <CGME20171009141438epcas2p4ead7e2f2d1af7e0950f2c026e3a9943b@epcas2p4.samsung.com>
         <1507558478-3218-1-git-send-email-pankaj.dubey@samsung.com>
         <CAJKOXPeC=cS2cvAXHrKuK5F4tEqH6PppwYkxC+Z8+5D--48CAg@mail.gmail.com>
@@ -10,142 +10,144 @@ References: <CGME20171009141438epcas2p4ead7e2f2d1af7e0950f2c026e3a9943b@epcas2p4
         <b81a09be-1873-ab81-dcb2-c3b29ff7e430@samsung.com>
         <000101d37a79$2bdb4c20$8391e460$@gmail.com>
         <cd0c5923-899c-0652-20ce-7f08f4bf32e1@samsung.com>
+        <533c6579-065f-100a-9a8f-c852ad4d0398@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:12017 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbdL1J6H (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Dec 2017 04:58:07 -0500
-In-reply-to: <cd0c5923-899c-0652-20ce-7f08f4bf32e1@samsung.com>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, 'Krzysztof Kozlowski' <krzk@kernel.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <533c6579-065f-100a-9a8f-c852ad4d0398@samsung.com>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, 'Krzysztof Kozlowski' <krzk@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
 Cc: 'linux-pci' <linux-pci@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Anvesh Salveru' <anvesh.s@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Pankaj,
+Hi Jaehoon,
 
-On 12/28/2017 06:50 PM, Pankaj Dubey wrote:
-> Hi Jingoo,
-> 
-> 
-> On 12/21/2017 10:01 PM, Jingoo Han wrote:
->> On Tuesday, October 10, 2017 9:46 AM, Pankaj Dubey wrote:
->>> Hi Jingoo,
->>>
->>>
->>> On 10/09/2017 09:50 PM, Jingoo Han wrote:
->>>> On Monday, October 9, 2017 10:44 AM, Krzysztof Kozlowski wrote:
->>>>> On Mon, Oct 9, 2017 at 4:14 PM, Pankaj Dubey <pankaj.dubey@samsung.com>
->>>>> wrote:
->>>>>> From: Anvesh Salveru <anvesh.s@samsung.com>
+
+On 12/28/2017 03:28 PM, Jaehoon Chung wrote:
+> Hi Pankaj,
+>
+> On 12/28/2017 06:50 PM, Pankaj Dubey wrote:
+>> Hi Jingoo,
+>>
+>>
+>> On 12/21/2017 10:01 PM, Jingoo Han wrote:
+>>> On Tuesday, October 10, 2017 9:46 AM, Pankaj Dubey wrote:
+>>>> Hi Jingoo,
+>>>>
+>>>>
+>>>> On 10/09/2017 09:50 PM, Jingoo Han wrote:
+>>>>> On Monday, October 9, 2017 10:44 AM, Krzysztof Kozlowski wrote:
+>>>>>> On Mon, Oct 9, 2017 at 4:14 PM, Pankaj Dubey <pankaj.dubey@samsung.com>
+>>>>>> wrote:
+>>>>>>> From: Anvesh Salveru <anvesh.s@samsung.com>
+>>>>>>>
+>>>>>>> In exynos_pcie_establish_link if driver is not using generic phy,
+>>>>>>> we are resetting PHY twice, which is redundant, so this patch removes
+>>>>>> Hi Pankaj,
 >>>>>>
->>>>>> In exynos_pcie_establish_link if driver is not using generic phy,
->>>>>> we are resetting PHY twice, which is redundant, so this patch removes
->>>>> Hi Pankaj,
+>>>>>> This lacks the information why it is redundant.
+>>>>> (I resend this mail, because email address of pci list was corrupted.)
+>>>> Thanks, somehow I typed wrong email id.
+>>>>> I think so, too.
 >>>>>
->>>>> This lacks the information why it is redundant.
->>>> (I resend this mail, because email address of pci list was corrupted.)
->>> Thanks, somehow I typed wrong email id.
->>>> I think so, too.
+>>>>> Did you test this code on some boards with Exynos PCIe?
+>>>>> Or did hardware engineers confirm this?
+>>>>> Please add more information on this patch.
+>>>> I have replied reason behind this patch in reply to Krzysztof, hope I am
+>>>> able to
+>>>> explain logic behind this change.
 >>>>
->>>> Did you test this code on some boards with Exynos PCIe?
->>>> Or did hardware engineers confirm this?
->>>> Please add more information on this patch.
->>> I have replied reason behind this patch in reply to Krzysztof, hope I am
->>> able to
->>> explain logic behind this change.
->>>
->>> I do not have access to Exynos5440 PCIe, and this PHY_COMMON_RESET is not
->>> applicable to other Exynos SoC which I have with me, so I can't test
->>> this change,
->>> but if you see the change it is an obvious change, before introducing
->>> generic phy
->>> support to this driver PHY_COMMON_RESET was programmed only once, then
->>> in case platform is not using PHY it suppose to be done only once during
->>> linkup.
->>> I am not sure when Jaehoon introduced this patch, he verified this on
->>> Exynos5440 or
->>> not. We are just trying to make the logic as it was before without
->>> affecting anything.
->>>
->>> Thanks,
->>> Pankaj Dubey
->>>> Best regards,
->>>> Jingoo Han
+>>>> I do not have access to Exynos5440 PCIe, and this PHY_COMMON_RESET is not
+>>>> applicable to other Exynos SoC which I have with me, so I can't test
+>>>> this change,
+>>>> but if you see the change it is an obvious change, before introducing
+>>>> generic phy
+>>>> support to this driver PHY_COMMON_RESET was programmed only once, then
+>>>> in case platform is not using PHY it suppose to be done only once during
+>>>> linkup.
+>>>> I am not sure when Jaehoon introduced this patch, he verified this on
+>>>> Exynos5440 or
+>>>> not. We are just trying to make the logic as it was before without
+>>>> affecting anything.
 >>>>
->>>>>> repeated lines of code for PHY reset.
->>>>>>
->>>>>> Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
->>>>> Your Signed-off-by is needed here.
->> Sorry for being late.
->> I checked that this patch is right.
->>
->> Can you send this patch again with your Signed-off-by?
->> Also, you can add my Acked-by to your new patch.
->>
->> Acked-by: Jingoo Han <jingoohan1@gmail.com>
-> 
-> Thanks for review and ack.
-> Will resubmit the patch along with my Signed-off-by and your Acked-by.
-
-Maybe it will be removed with my patch.
-
-https://patchwork.ozlab.org/patch/853119/
-
-Because of my personal reason, i can't send the email to Bjorn's account..so i removed his account from cc.
-Sorry.
-
-Best Regards,
-Jaehoon Chung
-
-> 
-> Thanks,
-> Pankaj Dubey
->> Best regards,
->> Jingoo Han
->>
+>>>> Thanks,
+>>>> Pankaj Dubey
 >>>>> Best regards,
->>>>> Krzysztof
+>>>>> Jingoo Han
 >>>>>
->>>>>> ---
->>>>>>    drivers/pci/dwc/pci-exynos.c | 7 -------
->>>>>>    1 file changed, 7 deletions(-)
+>>>>>>> repeated lines of code for PHY reset.
+>>>>>>>
+>>>>>>> Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
+>>>>>> Your Signed-off-by is needed here.
+>>> Sorry for being late.
+>>> I checked that this patch is right.
+>>>
+>>> Can you send this patch again with your Signed-off-by?
+>>> Also, you can add my Acked-by to your new patch.
+>>>
+>>> Acked-by: Jingoo Han <jingoohan1@gmail.com>
+>> Thanks for review and ack.
+>> Will resubmit the patch along with my Signed-off-by and your Acked-by.
+> Maybe it will be removed with my patch.
+>
+> https://patchwork.ozlab.org/patch/853119/
+>
+> Because of my personal reason, i can't send the email to Bjorn's account..so i removed his account from cc.
+> Sorry.
+
+As per submission date, we have submitted it first, so it should
+be taken in that order, but I I am fine with any of the patch, so I will 
+leave this on Bjorn.
+
+Thanks,
+Pankaj Dubey
+> Best Regards,
+> Jaehoon Chung
+>
+>> Thanks,
+>> Pankaj Dubey
+>>> Best regards,
+>>> Jingoo Han
+>>>
+>>>>>> Best regards,
+>>>>>> Krzysztof
 >>>>>>
->>>>>> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-
->>> exynos.c
->>>>>> index 5596fde..85d2f4b 100644
->>>>>> --- a/drivers/pci/dwc/pci-exynos.c
->>>>>> +++ b/drivers/pci/dwc/pci-exynos.c
->>>>>> @@ -423,13 +423,6 @@ static int exynos_pcie_establish_link(struct
->>>>> exynos_pcie *ep)
->>>>>>                   exynos_pcie_deassert_phy_reset(ep);
->>>>>>                   exynos_pcie_power_on_phy(ep);
->>>>>>                   exynos_pcie_init_phy(ep);
->>>>>> -
->>>>>> -               /* pulse for common reset */
->>>>>> -               exynos_pcie_writel(ep->mem_res->block_base, 1,
->>>>>> -                                       PCIE_PHY_COMMON_RESET);
->>>>>> -               udelay(500);
->>>>>> -               exynos_pcie_writel(ep->mem_res->block_base, 0,
->>>>>> -                                       PCIE_PHY_COMMON_RESET);
->>>>>>           }
->>>>>>
->>>>>>           /* pulse for common reset */
->>>>>> --
->>>>>> 2.7.4
->>>>>>
->>>>
->>>>
->>>>
+>>>>>>> ---
+>>>>>>>     drivers/pci/dwc/pci-exynos.c | 7 -------
+>>>>>>>     1 file changed, 7 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-
+>>>> exynos.c
+>>>>>>> index 5596fde..85d2f4b 100644
+>>>>>>> --- a/drivers/pci/dwc/pci-exynos.c
+>>>>>>> +++ b/drivers/pci/dwc/pci-exynos.c
+>>>>>>> @@ -423,13 +423,6 @@ static int exynos_pcie_establish_link(struct
+>>>>>> exynos_pcie *ep)
+>>>>>>>                    exynos_pcie_deassert_phy_reset(ep);
+>>>>>>>                    exynos_pcie_power_on_phy(ep);
+>>>>>>>                    exynos_pcie_init_phy(ep);
+>>>>>>> -
+>>>>>>> -               /* pulse for common reset */
+>>>>>>> -               exynos_pcie_writel(ep->mem_res->block_base, 1,
+>>>>>>> -                                       PCIE_PHY_COMMON_RESET);
+>>>>>>> -               udelay(500);
+>>>>>>> -               exynos_pcie_writel(ep->mem_res->block_base, 0,
+>>>>>>> -                                       PCIE_PHY_COMMON_RESET);
+>>>>>>>            }
+>>>>>>>
+>>>>>>>            /* pulse for common reset */
+>>>>>>> --
+>>>>>>> 2.7.4
+>>>>>>>
+>>>>>
+>>>>>
+>>>
+>>>
+>>>
 >>
 >>
 >>
->>
-> 
-> 
-> 
-> 
+>
+>
