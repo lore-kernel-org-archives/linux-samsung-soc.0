@@ -1,57 +1,28 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH 3/5] ARM: S3C64XX: Add SPDX license identifier
-Date: Fri, 29 Dec 2017 10:52:12 +0000
-Message-ID: <20171229105212.thkj4q4qezsg2jdl@localhost.localdomain>
-References: <1514231675-17582-1-git-send-email-krzk@kernel.org>
- <1514231675-17582-3-git-send-email-krzk@kernel.org>
+From: Loretta Robles <Loretta.Robles@hci.utah.edu>
+Subject: RE: ATTENTION!!!
+Date: Sat, 30 Dec 2017 00:28:56 +0000
+Message-ID: <35D4F79A8B8138489F38DE5CF6200454E572AB2F__40456.3620956198$1514594397$gmane$org@HCI-EX-MB2.hci.utah.edu>
+References: <35D4F79A8B8138489F38DE5CF6200454E570015C@HCI-EX-MB2.hci.utah.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1514231675-17582-3-git-send-email-krzk@kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Simtec Linux Team <linux@simtec.co.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, patches@opensource.cirrus.com, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ipo7.cc.utah.edu ([155.97.144.42]:56546 "EHLO ipo7.cc.utah.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750709AbdL3AlD (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 29 Dec 2017 19:41:03 -0500
+In-Reply-To: <35D4F79A8B8138489F38DE5CF6200454E570015C@HCI-EX-MB2.hci.utah.edu>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Loretta Robles <Loretta.Robles@hci.utah.edu>
 
-On Mon, Dec 25, 2017 at 08:54:33PM +0100, Krzysztof Kozlowski wrote:
-> Replace GPL license statements with a SPDX license indentifiers (GPL-2.0
-> and GPL-2.0+).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/mach-s3c64xx/crag6410.h                  |  5 +----
->  arch/arm/mach-s3c64xx/mach-crag6410-module.c      | 15 ++++++-------
->  arch/arm/mach-s3c64xx/mach-crag6410.c             | 19 ++++++-----------
 
-For the Cragganmore bits:
+________________________________
+From: Loretta Robles
+Sent: Friday, December 29, 2017 1:01 PM
+To: Loretta Robles
+Subject: ATTENTION!!!
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-
-Thanks,
-Charles
-
-> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-> index ea5f2169c850..29ed7b7bafb6 100644
-> --- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-> +++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-> @@ -1,12 +1,9 @@
-> -/* Speyside modules for Cragganmore - board data probing
-> - *
-> - * Copyright 2011 Wolfson Microelectronics plc
-> - *	Mark Brown <broonie@opensource.wolfsonmicro.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +//Speyside modules for Cragganmore - board data probing
-
-There is a space missing here but probably only worth fixing if
-you are respinning the series for other reasons anyway.
-
-> +//
-> +// Copyright 2011 Wolfson Microelectronics plc
-> +//	Mark Brown <broonie@opensource.wolfsonmicro.com>
+You have been randomly selected for a donation. Contact soriz4040@gmail.com for claims.
