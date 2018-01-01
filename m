@@ -1,14 +1,14 @@
 From: Bryan O'Donoghue <pure.logic-SyKdqv6vbfZdzvEItQ6vdLNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v2 01/34] clk_ops: change round_rate() to return
+Subject: [PATCH v3 01/34] clk_ops: change round_rate() to return
 	unsigned long
-Date: Mon,  1 Jan 2018 19:07:28 +0000
-Message-ID: <1514833681-30737-2-git-send-email-pure.logic@nexus-software.ie>
-References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+Date: Mon,  1 Jan 2018 19:42:40 +0000
+Message-ID: <1514835793-1104-2-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic-SyKdqv6vbfZdzvEItQ6vdLNAH6kLmebB@public.gmane.org>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic-SyKdqv6vbfZdzvEItQ6vdLNAH6kLmebB@public.gmane.org>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
  <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/freedreno>
