@@ -1,208 +1,75 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [U-boot] Odroidxu3/4 -s2mps11 bind pmic failed
-Date: Wed, 3 Jan 2018 01:54:57 +0530
-Message-ID: <CANAwSgSrNEfy-78cYRm+HeBa_MDk1xn5P4neYJPiDW-RpfW-Gw@mail.gmail.com>
+From: Bryan O'Donoghue <pure.logic-SyKdqv6vbfZdzvEItQ6vdLNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 01/33] clk_ops: change round_rate() to
+ return unsigned long
+Date: Tue, 2 Jan 2018 20:43:44 +0000
+Message-ID: <c2212d56-a8b5-cba5-46a7-c2c7f66e752b@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+ <1514596392-22270-2-git-send-email-pure.logic@nexus-software.ie>
+ <9f4bef5a-8a71-6f30-5cfb-5e8fe133e3d3@kapsi.fi>
+ <6d83a5c3-6589-24bc-4ca5-4d1bbca47432@nexus-software.ie>
+ <20180102190159.GH7997@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36481 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751007AbeABUZS (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 15:25:18 -0500
-Received: by mail-oi0-f51.google.com with SMTP id j14so22762375oih.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jan 2018 12:25:18 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20180102190159.GH7997-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rtc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, uclinux-h8-devel-5NWGOfrQmneRv+LV9MX5uooqe+aC9MnS@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, patches-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Simon Glass <sjg@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, U-Boot Mailing List <u-boot@lists.denx.de>, linux-samsung-soc@vger.kernel.org
-Cc: Lukasz Majewski <lukma@denx.de>, Jaehoon Chung <jh80.chung@samsung.com>
 
-Hi All,
-
-I would like to get the s2mps11 regulator binding for u-boot to work
-on Odroid XU3/XU4
-as in case of Odroid U3 we have max77686_bind function which dose the job.
-
-what will be the correct way to reset s2mps11 control register to the
-default values
-in-order to support reset of some regulators.
-
-Below is the command I tried to gather some information but it failed.
-
-Best Regards
--Anand Moon
------------------------------------------------------------------------------------------------------------------------------------------
-U-Boot 2018.01-rc3-00060-g1314bd1 (Jan 02 2018 - 17:56:26 +0000) for
-ODROID-XU3/XU4/HC1
-
-CPU:   Exynos5422 @ 800 MHz
-Model: Odroid XU3 based on EXYNOS5422
-Board: Odroid XU3 based on EXYNOS5422
-Type:  xu4
-DRAM:  2 GiB
-MMC:   EXYNOS DWMMC: 0, EXYNOS DWMMC: 1
-*** Warning - bad CRC, using default environment
-
-In:    serial
-Out:   serial
-Err:   serial
-Net:   No ethernet found.
-Hit any key to stop autoboot:  0
-Card did not respond to voltage select!
-mmc_init: -95, time 11
-switch to partitions #0, OK
-mmc0 is current device
-Scanning mmc 0:1...
-reading /exynos5422-odroidxu4.dtb
-62815 bytes read in 9 ms (6.7 MiB/s)
-starting USB...
-USB0:   USB EHCI 1.00
-USB1:   Register 2000140 NbrPorts 2
-Starting the controller
-USB XHCI 1.00
-USB2:   Register 2000140 NbrPorts 2
-Starting the controller
-USB XHCI 1.00
-scanning bus 0 for devices... 1 USB Device(s) found
-scanning bus 1 for devices... 3 USB Device(s) found
-scanning bus 2 for devices... 2 USB Device(s) found
-       scanning usb for storage devices... 0 Storage Device(s) found
-       scanning usb for ethernet devices... 1 Ethernet Device(s) found
-Waiting for Ethernet connection... done.
-BOOTP broadcast 1
-BOOTP broadcast 2
-DHCP client bound to address 10.0.0.144 (1200 ms)
-*** Warning: no boot file name; using '0A000090.img'
-Using r8152#0 device
-TFTP from server 0.0.0.0; our IP address is 10.0.0.144; sending
-through gateway 10.0.0.1
-Filename '0A000090.img'.
-Load address: 0x43e00000
-Loading: *
-TFTP error: 'File not found' (1)
-Not retrying...
-missing environment variable: pxeuuid
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/0A000090
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/0A00009
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/0A0000
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/0A000
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/0A00
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/0A0
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/0A
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/0
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/default-arm-exynos
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/default-arm
-*** ERROR: `serverip' not set
-missing environment variable: bootfile
-Retrieving file: pxelinux.cfg/default
-*** ERROR: `serverip' not set
-Config file not found
-BOOTP broadcast 1
-DHCP client bound to address 10.0.0.144 (644 ms)
-Using r8152#0 device
-TFTP from server 0.0.0.0; our IP address is 10.0.0.144; sending
-through gateway 10.0.0.1
-Filename 'boot.scr.uimg'.
-Load address: 0x50000000
-Loading: *
-TFTP error: 'File not found' (1)
-Not retrying...
-BOOTP broadcast 1
-BOOTP broadcast 2
-DHCP client bound to address 10.0.0.144 (1257 ms)
-Using r8152#0 device
-TFTP from server 0.0.0.0; our IP address is 10.0.0.144; sending
-through gateway 10.0.0.1
-Filename 'boot.scr.uimg'.
-Load address: 0x42000000
-Loading: *
-TFTP error: 'File not found' (1)
-Not retrying...
-ODROID-XU3 #
-ODROID-XU3 #
-ODROID-XU3 # pmic s2mps11 dump
-pmic -  operations
-
-Usage:
-pmic list          - list pmic devices
-pmic dev [name]    - show or [set] operating PMIC device
-pmic dump          - dump registers
-pmic read address  - read byte of register at address
-pmic write address - write byte to register at address
-
-ODROID-XU3 # pmic list
-| Name                            | Parent name         | Parent uclass @ seq
-| s2mps11_pmic@66                 | i2c@12CA0000        | i2c @ 4
-ODROID-XU3 # pmic s2mps11_pmic dump
-pmic -  operations
-
-Usage:
-pmic list          - list pmic devices
-pmic dev [name]    - show or [set] operating PMIC device
-pmic dump          - dump registers
-pmic read address  - read byte of register at address
-pmic write address - write byte to register at address
-
-ODROID-XU3 # pmic dump
-First, set the PMIC device!
-pmic -  operations
-
-Usage:
-pmic list          - list pmic devices
-pmic dev [name]    - show or [set] operating PMIC device
-pmic dump          - dump registers
-pmic read address  - read byte of register at address
-pmic write address - write byte to register at address
-
-ODROID-XU3 # pmic s2mps11_pmic
-pmic -  operations
-
-Usage:
-pmic list          - list pmic devices
-pmic dev [name]    - show or [set] operating PMIC device
-pmic dump          - dump registers
-pmic read address  - read byte of register at address
-pmic write address - write byte to register at address
-
-ODROID-XU3 # pmic read
-First, set the PMIC device!
-pmic -  operations
-
-Usage:
-pmic list          - list pmic devices
-pmic dev [name]    - show or [set] operating PMIC device
-pmic dump          - dump registers
-pmic read address  - read byte of register at address
-pmic write address - write byte to register at address
-
-ODROID-XU3 # pmic read 12CA0000
-First, set the PMIC device!
-pmic -  operations
-
-Usage:
-pmic list          - list pmic devices
-pmic dev [name]    - show or [set] operating PMIC device
-pmic dump          - dump registers
-pmic read address  - read byte of register at address
-pmic write address - write byte to register at address
-
-ODROID-XU3 #
+T24gMDIvMDEvMTggMTk6MDEsIFN0ZXBoZW4gQm95ZCB3cm90ZToKPiBPbiAxMi8zMSwgQnJ5YW4g
+TydEb25vZ2h1ZSB3cm90ZToKPj4gT24gMzAvMTIvMTcgMTY6MzYsIE1pa2tvIFBlcnR0dW5lbiB3
+cm90ZToKPj4+IEZXSVcsIHdlIGhhZCB0aGlzIHByb2JsZW0gc29tZSB5ZWFycyBhZ28gd2l0aCB0
+aGUgVGVncmEgQ1BVIGNsb2NrCj4+PiAtIHRoZW4gaXQgd2FzIGRldGVybWluZWQgdGhhdCBhIHNp
+bXBsZXIgc29sdXRpb24gd2FzIHRvIGhhdmUgdGhlCj4+PiBkZXRlcm1pbmVfcmF0ZSBjYWxsYmFj
+ayBzdXBwb3J0IHVuc2lnbmVkIGxvbmcgcmF0ZXMgLSBzbyBjbG9jawo+Pj4gZHJpdmVycyB0aGF0
+IG5lZWQgdG8gcmV0dXJuIHJhdGVzIGhpZ2hlciB0aGFuIDJeMzEgY2FuIGluc3RlYWQKPj4+IGlt
+cGxlbWVudCB0aGUgZGV0ZXJtaW5lX3JhdGUgY2FsbGJhY2suIFRoYXQgaXMgd2hhdCdzIGN1cnJl
+bnRseQo+Pj4gaW1wbGVtZW50ZWQuCj4+Pgo+Pj4gTWlra28KPj4KPj4gR3JhbnRlZCB3ZSBjb3Vs
+ZCB3b3JrIGFyb3VuZCBpdCBidXQsIGhhdmluZyBib3RoIHplcm8gYW5kIGxlc3MgdGhhbgo+PiB6
+ZXJvIGluZGljYXRlIGVycm9yIG1lYW5zIHlvdSBjYW4ndCBzdXBwb3J0IGxhcmdlciB0aGFuIExP
+TkdfTUFYCj4+IHdoaWNoIGlzIEkgdGhpbmsgd29ydGggZml4aW5nLgo+Pgo+IAo+IE9rLiBCdXQg
+Y2FuIHlvdSBpbXBsZW1lbnQgdGhlIGRldGVybWluZV9yYXRlIG9wIGluc3RlYWQgb2YgdGhlCj4g
+cm91bmRfcmF0ZSBvcCBmb3IgeW91ciBjbGs/CgpEb24ndCBrbm93IC4KCj4gSXQncyBub3QgYSB3
+b3JrLWFyb3VuZCwgaXQncyB0aGUKPiBwcmVmZXJyZWQgc29sdXRpb24uIFRoYXQgd291bGQgYWxs
+b3cgcmF0ZXMgbGFyZ2VyIHRoYW4gMl4zMSBmb3IKPiB0aGUgY2xrIHdpdGhvdXQgcHVzaGluZyB0
+aHJvdWdoIGEgY2hhbmdlIHRvIGFsbCB0aGUgZHJpdmVycyB0bwo+IGV4cHJlc3MgemVybyBhcyAi
+ZXJyb3IiIGFuZCBub24temVybyBhcyB0aGUgcm91bmRlZCByYXRlLgo+IAo+IEknbSBub3QgZW50
+aXJlbHkgb3Bwb3NlZCB0byB0aGlzIGFwcHJvYWNoLCBiZWNhdXNlIHdlIHByb2JhYmx5Cj4gZG9u
+J3QgY2FyZSB0byBwYXNzIHRoZSBwYXJ0aWN1bGFyIGVycm9yIHZhbHVlIGZyb20gYSBjbGsgcHJv
+dmlkZXIKPiB0byBhIGNsayBjb25zdW1lciBhYm91dCB3aGF0IHRoZSBlcnJvciBpcy4KCldoaWNo
+IHdhcyBteSB0aG91Z2h0LiBUaGUgcmV0dXJuIHZhbHVlIG9mIGNsa19vcHMtPnJvdW5kX3JhdGUo
+KSBhcHBlYXJzIApub3QgdG8gZ2V0IHB1c2hlZCB1cCB0aGUgc3RhY2ssIHdoaWNoIGlzIHdoYXQg
+dGhlIGxhc3QgcGF0Y2ggaW4gdGhpcyAKc2VyaWVzIGRlYWxzIHdpdGguCgpbUEFUQ0ggMzMvMzNd
+IGNsazogY2hhbmdlIGhhbmRsaW5nIG9mIHJvdW5kX3JhdGUoKSBzdWNoIHRoYXQgb25seSB6ZXJv
+IAppcyBhbiBlcnJvcgoKPiBJdCdzIGFjdHVhbGx5IHdoYXQgd2UKPiBwcm9wb3NlZCBhcyB0aGUg
+c29sdXRpb24gZm9yIGNsa19yb3VuZF9yYXRlKCkgdG8gcmV0dXJuIHZhbHVlcwo+IGxhcmdlciB0
+aGFuIExPTkdfTUFYIHRvIGNvbnN1bWVycy4gQnV0IGRvaW5nIHRoYXQgY29uc3VtZXIgQVBJCj4g
+Y2hhbmdlIG9yIHRoaXMgcHJvdmlkZXIgc2lkZSBjaGFuZ2UgaXMgZ29pbmcgdG8gcmVxdWlyZSB1
+cyB0bwo+IGV2YWx1YXRlIGFsbCB0aGUgY29uc3VtZXJzIG9mIHRoZXNlIGNsa3MgdG8gbWFrZSBz
+dXJlIHRoZXkgZG9uJ3QKPiBjaGVjayBmb3Igc29tZSBlcnJvciB2YWx1ZSB0aGF0J3MgbGVzcyB0
+aGFuIHplcm8uIFRoaXMgc2VyaWVzCj4gZG9lcyBoYWxmIHRoZSB3b3JrLAoKRG8geW91IG1lYW4g
+dXNlcnMgb2YgY2xrX3JvdW5kYV9yYXRlKCkgPyBJIGhhdmUgYSBzZXQgb2YgcGF0Y2hlcyBmb3Ig
+CnRoYXQgYnV0IHdhbnRlZCB0byBzZXBhcmF0ZSB0aGF0IGZyb20gY2xrX29wcy0+cm91bmRfcmF0
+ZSgpIHNvIGFzIG5vdCB0byAKc2VuZCB+NzAgcGF0Y2hlcyBvdXQgdG8gTEtNTCBhdCBvbmNlIC0g
+ZXZlbiBpZiB0aGV5IGFyZSBpbiB0d28gYmxvY2tzLgoKSWYgc28sIEkgY2FuIHB1Ymxpc2ggdGhh
+dCBzZXQgdG9vIGZvciByZWZlcmVuY2UuCgpBRkFJQ1Qgb24gY2xrX29wcy0+cm91bmRfcmF0ZSB0
+aGUgbGFzdCBwYXRjaCAjMzMgb3VnaHQgdG8gY292ZXIgdGhlIAp1c2FnZSBvZiB0aGUgcmV0dXJu
+IHZhbHVlIG9mIGNsa19vcHMtPnJvdW5kX3JhdGUoKS4KCkhhdmUgSSBtaXNzZWQgc29tZXRoaW5n
+ID8KCj4gYnkgY2hhbmdpbmcgdGhlIHByb3ZpZGVyIHNpZGUsIHdoaWxlIGlnbm9yaW5nCj4gdGhl
+IGNvbnN1bWVyIHNpZGUgYW5kIGFueSBwb3RlbnRpYWwgZmFsbG91dCBvZiB0aGUgbGVzcyB0aGFu
+IHplcm8KPiB0byB6ZXJvIHJldHVybiB2YWx1ZSBjaGFuZ2UuCj4gCgpDYW4geW91IGxvb2sgYXQg
+IzMzID8gSSdtIG5vdCBzdXJlIGlmIHlvdSBzYXcgdGhhdCBvbmUuCgoKLS0tCmJvZApfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVlZHJlbm8gbWFpbGlu
+ZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8K
