@@ -1,55 +1,33 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 1/3] ARM: dts: exynos: DTS for v4.16
-Date: Wed, 3 Jan 2018 18:04:31 +0100
-Message-ID: <CAJKOXPdhn-BC=pQb9-zMp1yJdiRXYrc=4Pcb+gtf2VmfiyQEiA@mail.gmail.com>
-References: <20171220173643.5840-1-krzk@kernel.org> <20171220173643.5840-3-krzk@kernel.org>
- <CAK8P3a2wSt5WjT26MT1QhYVxCcYJ8YV0cdsx19zvYZPqUgF+7Q@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: s3c: Remove unneeded enumeration
+Date: Wed, 03 Jan 2018 18:29:56 +0100
+Message-ID: <e178400d-12b5-7836-6fe0-cdd3b5a68107@samsung.com>
+References: <CGME20171127023145epcas1p1b97c3c66ce624f5362c8d9bf74997c7f@epcas1p1.samsung.com>
+        <1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a2wSt5WjT26MT1QhYVxCcYJ8YV0cdsx19zvYZPqUgF+7Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Markus Reichl <m.reichl@fivetechno.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
+Content-language: en-GB
+Sender: linux-clk-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, sboyd@codeaurora.org
+Cc: tomasz.figa@gmail.com, kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 21, 2017 at 10:29 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wed, Dec 20, 2017 at 6:36 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
->> Krzysztof Kozlowski (2):
->>       ARM: dts: exynos: Add missing interrupt-controller properties to Exynos5410 PMU
->
-> I just looked through the remaining warnings in 4.15 and noticed that
-> you had sent this
-> only for 4.16, not as a bug fix.
->
-> Looking closer, it seems incorrect:
->
-> According to the comment added to exynos_dt_pmu_match[] in commit
-> 8b283c025443 ("ARM: exynos4/5: convert pmu wakeup to stacked domains"),
-> the RTC is not able to wake up the system through the PMU on Exynos5410,
-> unlike Exynos5420. However, when the RTC DT node got added in commit
-> e1e146b1b062 ("ARM: dts: exynos: Add RTC and I2C to Exynos5410"), it was
-> a straight copy of the Exynos5420 node, which now causes the warning from dtc,
-> and now you add the "interrupt-controller" property to the device node, but
-> the code still doesn't handle it at all.
+On 11/27/2017 03:31 AM, Chanwoo Choi wrote:
+> This patch just removes the unneeded enumeration for PLL index.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-I received a Odroid XU board, based on Exynos5410, from Markus Reichl
-(big thanks! it is second board from fivetechno.de) but I did not
-setup testing infrastructure on it yet.
 
-I see you pulled my entire DT branch, including the change around
-Exynos5410 PMU's interrupts. I think your analysis and your follow-up
-patch are correct which means that RTC on Exynso5410 might be broken
-now. It is getting late in RC-cycle so I could send a follow-up pull
-with fixed DT including your patch [1].
+Thanks for the patch Chanwoo, I have applied it to my tree but 
+I'm afraid it will now need to wait until v4.17.
 
-The other way is to drop my commit entirely. I could prepare a rebased
-DT branch for this as well.
+Stephen, if you decide to apply it directly for v4.16-rc1
 
-Let me know if you have any preferences.
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Best regards,
-Krzysztof
-
-[1] https://patchwork.kernel.org/patch/10128431/
+--
+Thanks,
+Sylwester
