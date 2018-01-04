@@ -1,45 +1,30 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] clk: samsung: s3c: Remove unneeded enumeration
-Date: Thu, 04 Jan 2018 07:58:32 +0900
-Message-ID: <5A4D6018.1050000@samsung.com>
-References: <CGME20171127023145epcas1p1b97c3c66ce624f5362c8d9bf74997c7f@epcas1p1.samsung.com>
-        <1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
-        <e178400d-12b5-7836-6fe0-cdd3b5a68107@samsung.com>
+From: "Peter Deng" <peterddeng2000@securemailer.com>
+Subject: Business Possibility
+Date: Thu, 4 Jan 2018 16:14:00 +0000
+Message-ID: <25324064617522878121245@nadneaa2>
+Reply-To: peterddeng2000@secsuremailer.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <e178400d-12b5-7836-6fe0-cdd3b5a68107@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, sboyd@codeaurora.org
-Cc: tomasz.figa@gmail.com, kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from host116-16-237-212.serverdedicati.aruba.it ([212.237.16.116]:45024
+        "EHLO host.arubacloud.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752463AbeADQTt (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 4 Jan 2018 11:19:49 -0500
+Received: from slsourcinggroup.com (nadneaa2.miniserver.com [78.31.108.146])
+        by host.arubacloud.com (Postfix) with ESMTPA id 925F7756AE
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jan 2018 17:13:32 +0100 (CET)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On 2018년 01월 04일 02:29, Sylwester Nawrocki wrote:
-> On 11/27/2017 03:31 AM, Chanwoo Choi wrote:
->> This patch just removes the unneeded enumeration for PLL index.
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> 
-> 
-> Thanks for the patch Chanwoo, I have applied it to my tree but 
-> I'm afraid it will now need to wait until v4.17.
+Hello there, My name is Peter Deng a South African citizen and a friend to Mrs Mugabe sister . I got your contact through Korean business online directory. I represent the interest of Mrs Mugabe who wishes to move a total amount of $19 million  into a safe account owns by a trusted business man who is capable of accommodating such volume of funds with absolute trust & confidentiality.
 
-No problem. Thanks.
+We are willing to give 5-10 percent of the total money for this efforts . A non disclosure non circumvent agreement will be signed before the eventual transfer of funds. It is important for to know that the fund owner is going through a period of political turmoil and she is in a precarious position, so this transaction has to be highly secretive & very confidential.
 
-> 
-> Stephen, if you decide to apply it directly for v4.16-rc1
-> 
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> --
-> Thanks,
-> Sylwester
-> 
-> 
+Kindly respond back to me if this is what you can handle .
 
+Regards,
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Peter.
