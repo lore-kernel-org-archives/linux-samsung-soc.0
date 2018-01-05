@@ -1,30 +1,35 @@
-From: "Peter Deng" <peterddeng2000@securemailer.com>
-Subject: Business Possibility
-Date: Thu, 4 Jan 2018 16:14:00 +0000
-Message-ID: <25324064617522878121245@nadneaa2>
-Reply-To: peterddeng2000@secsuremailer.com
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v5] hwrng: exynos - add Samsung Exynos True RNG driver
+Date: Fri, 5 Jan 2018 22:14:44 +1100
+Message-ID: <20180105111444.GA16156@gondor.apana.org.au>
+References: <20171222132338.30054-1-l.stelmach@samsung.com>
+ <CGME20171222164840eucas1p17e3d17666ba3d0c5fced2d1c9259bf0b@eucas1p1.samsung.com>
+ <20171222164835.1051-1-l.stelmach@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from host116-16-237-212.serverdedicati.aruba.it ([212.237.16.116]:45024
-        "EHLO host.arubacloud.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752463AbeADQTt (ORCPT
+Received: from [128.1.224.119] ([128.1.224.119]:49966 "EHLO ringil.hmeau.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1751290AbeAELPD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 11:19:49 -0500
-Received: from slsourcinggroup.com (nadneaa2.miniserver.com [78.31.108.146])
-        by host.arubacloud.com (Postfix) with ESMTPA id 925F7756AE
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jan 2018 17:13:32 +0100 (CET)
+        Fri, 5 Jan 2018 06:15:03 -0500
+Content-Disposition: inline
+In-Reply-To: <20171222164835.1051-1-l.stelmach@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>, "Andrew F . Davis" <afd@ti.com>, PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, Rob Herring <robh+dt@kernel.org>, Matt Mackall <mpm@selenic.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello there, My name is Peter Deng a South African citizen and a friend to Mrs Mugabe sister . I got your contact through Korean business online directory. I represent the interest of Mrs Mugabe who wishes to move a total amount of $19 million  into a safe account owns by a trusted business man who is capable of accommodating such volume of funds with absolute trust & confidentiality.
+On Fri, Dec 22, 2017 at 05:48:35PM +0100, Łukasz Stelmach wrote:
+> Add support for True Random Number Generator found in Samsung Exynos
+> 5250+ SoCs.
+> 
+> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-We are willing to give 5-10 percent of the total money for this efforts . A non disclosure non circumvent agreement will be signed before the eventual transfer of funds. It is important for to know that the fund owner is going through a period of political turmoil and she is in a precarious position, so this transaction has to be highly secretive & very confidential.
-
-Kindly respond back to me if this is what you can handle .
-
-Regards,
-
-Peter.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
