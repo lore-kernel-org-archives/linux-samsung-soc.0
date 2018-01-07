@@ -1,196 +1,235 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 19/19] fs: handle inode->i_version more efficiently
-Date: Sun, 7 Jan 2018 13:44:52 +0100
-Message-ID: <CAJKOXPd8ojTjiGF3nKQKWtVrEsjWfjvg6rLL+RGnbu_SZMDu7g@mail.gmail.com>
-References: <20171222120556.7435-1-jlayton@kernel.org> <20171222120556.7435-20-jlayton@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [U-boot] Odroidxu3/4 -s2mps11 bind pmic failed
+Date: Sun, 7 Jan 2018 21:04:53 +0530
+Message-ID: <CANAwSgQnnBwiXAeJk25_+JmQBNUc-_Vz+BqNUgJHPUL9VXZ8=Q@mail.gmail.com>
+References: <CANAwSgSrNEfy-78cYRm+HeBa_MDk1xn5P4neYJPiDW-RpfW-Gw@mail.gmail.com>
+ <20180102231706.7b7f446d@jawa> <CANAwSgQrHUjOFLJL=soG7aFooZ2D-PwP5vLT+hdxzaRL6JPM7Q@mail.gmail.com>
+ <20180103093846.0fa8b8e2@jawa>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171222120556.7435-20-jlayton-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jeff Layton <jlayton-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org, neilb-l3A5Bk7waGM@public.gmane.org, jack-l3A5Bk7waGM@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tytso-3s7WtUTddSA@public.gmane.org, adilger.kernel-m1MBpc4rdrD3fQ9qLvQP4Q@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, darrick.wong-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, clm-b10kYP2dOMg@public.gmane.org, jbacik-b10kYP2dOMg@public.gmane.org, dsterba-IBi9RG/b67k@public.gmane.org, linux-integrity-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, zohar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, dmitry.kasatkin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-afs-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, jaltman-hRzEac23uH1Wk0Htik3J/w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:42243 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753452AbeAGPfO (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 7 Jan 2018 10:35:14 -0500
+Received: by mail-oi0-f44.google.com with SMTP id o64so5930578oia.9
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Jan 2018 07:35:14 -0800 (PST)
+In-Reply-To: <20180103093846.0fa8b8e2@jawa>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Simon Glass <sjg@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, U-Boot Mailing List <u-boot@lists.denx.de>, linux-samsung-soc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
 
-On Fri, Dec 22, 2017 at 1:05 PM, Jeff Layton <jlayton-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> From: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Hi Lukasz,
+
+On 3 January 2018 at 14:08, Lukasz Majewski <lukma@denx.de> wrote:
+> Hi Anand,
 >
-> Since i_version is mostly treated as an opaque value, we can exploit that
-> fact to avoid incrementing it when no one is watching. With that change,
-> we can avoid incrementing the counter on writes, unless someone has
-> queried for it since it was last incremented. If the a/c/mtime don't
-> change, and the i_version hasn't changed, then there's no need to dirty
-> the inode metadata on a write.
+>> Hi Lukasz
+>>
+>> On 3 January 2018 at 03:47, Lukasz Majewski <lukma@denx.de> wrote:
+>> > On Wed, 3 Jan 2018 01:54:57 +0530
+>> > Anand Moon <linux.amoon@gmail.com> wrote:
+>> >
+>> >> Hi All,
+>> >>
+>> >> I would like to get the s2mps11 regulator binding for u-boot to
+>> >> work on Odroid XU3/XU4
+>> >> as in case of Odroid U3 we have max77686_bind function which dose
+>> >> the job.
+>> >>
+>> >> what will be the correct way to reset s2mps11 control register to
+>> >> the default values
+>> >> in-order to support reset of some regulators.
+>> >>
+>> >> Below is the command I tried to gather some information but it
+>> >> failed.
+>> >>
+>> >> Best Regards
+>> >> -Anand Moon
+>> >> -----------------------------------------------------------------------------------------------------------------------------------------
+>> >> U-Boot 2018.01-rc3-00060-g1314bd1 (Jan 02 2018 - 17:56:26 +0000)
+>> >> for ODROID-XU3/XU4/HC1
+>> >>
+>> >> CPU:   Exynos5422 @ 800 MHz
+>> >> Model: Odroid XU3 based on EXYNOS5422
+>> >> Board: Odroid XU3 based on EXYNOS5422
+>> >> Type:  xu4
+>> >> DRAM:  2 GiB
+>> >> MMC:   EXYNOS DWMMC: 0, EXYNOS DWMMC: 1
+>> >> *** Warning - bad CRC, using default environment
+>> >>
+>> >> In:    serial
+>> >> Out:   serial
+>> >> Err:   serial
+>> >> Net:   No ethernet found.
+>> >> Hit any key to stop autoboot:  0
+>> >> Card did not respond to voltage select!
+>> >> mmc_init: -95, time 11
+>> >> switch to partitions #0, OK
+>> >> mmc0 is current device
+>> >> Scanning mmc 0:1...
+>> >> reading /exynos5422-odroidxu4.dtb
+>> >> 62815 bytes read in 9 ms (6.7 MiB/s)
+>> >> starting USB...
+>> >> USB0:   USB EHCI 1.00
+>> >> USB1:   Register 2000140 NbrPorts 2
+>> >> Starting the controller
+>> >> USB XHCI 1.00
+>> >> USB2:   Register 2000140 NbrPorts 2
+>> >> Starting the controller
+>> >> USB XHCI 1.00
+>> >> scanning bus 0 for devices... 1 USB Device(s) found
+>> >> scanning bus 1 for devices... 3 USB Device(s) found
+>> >> scanning bus 2 for devices... 2 USB Device(s) found
+>> >>        scanning usb for storage devices... 0 Storage Device(s)
+>> >> found scanning usb for ethernet devices... 1 Ethernet Device(s)
+>> >> found Waiting for Ethernet connection... done.
+>> >> BOOTP broadcast 1
+>> >> BOOTP broadcast 2
+>> >> DHCP client bound to address 10.0.0.144 (1200 ms)
+>> >> *** Warning: no boot file name; using '0A000090.img'
+>> >> Using r8152#0 device
+>> >> TFTP from server 0.0.0.0; our IP address is 10.0.0.144; sending
+>> >> through gateway 10.0.0.1
+>> >> Filename '0A000090.img'.
+>> >> Load address: 0x43e00000
+>> >> Loading: *
+>> >> TFTP error: 'File not found' (1)
+>> >> Not retrying...
+>> >> missing environment variable: pxeuuid
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/0A000090
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/0A00009
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/0A0000
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/0A000
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/0A00
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/0A0
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/0A
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/0
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/default-arm-exynos
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/default-arm
+>> >> *** ERROR: `serverip' not set
+>> >> missing environment variable: bootfile
+>> >> Retrieving file: pxelinux.cfg/default
+>> >> *** ERROR: `serverip' not set
+>> >> Config file not found
+>> >> BOOTP broadcast 1
+>> >> DHCP client bound to address 10.0.0.144 (644 ms)
+>> >> Using r8152#0 device
+>> >> TFTP from server 0.0.0.0; our IP address is 10.0.0.144; sending
+>> >> through gateway 10.0.0.1
+>> >> Filename 'boot.scr.uimg'.
+>> >> Load address: 0x50000000
+>> >> Loading: *
+>> >> TFTP error: 'File not found' (1)
+>> >> Not retrying...
+>> >> BOOTP broadcast 1
+>> >> BOOTP broadcast 2
+>> >> DHCP client bound to address 10.0.0.144 (1257 ms)
+>> >> Using r8152#0 device
+>> >> TFTP from server 0.0.0.0; our IP address is 10.0.0.144; sending
+>> >> through gateway 10.0.0.1
+>> >> Filename 'boot.scr.uimg'.
+>> >> Load address: 0x42000000
+>> >> Loading: *
+>> >> TFTP error: 'File not found' (1)
+>> >> Not retrying...
+>> >> ODROID-XU3 #
+>> >> ODROID-XU3 #
+>> >> ODROID-XU3 # pmic s2mps11 dump
+>> >> pmic -  operations
+>> >>
+>> >> Usage:
+>> >> pmic list          - list pmic devices
+>> >> pmic dev [name]    - show or [set] operating PMIC device
+>> >> pmic dump          - dump registers
+>> >> pmic read address  - read byte of register at address
+>> >> pmic write address - write byte to register at address
+>> >
+>> > First try to:
+>> >
+>> > pmic list
+>> > pmic dev s2mps11_pmic@66
+>> >
+>> > pmic dump
+>> > pmic write 0xXX for your device
+>> >
+>> >
+>> [snip]
+>>
+>> Thanks for your input.
+>>
+>> ODROID-XU3 #
+>> | Name                            | Parent name         | Parent
+>> uclass @ seq | s2mps11_pmic@66                 | i2c@12CA0000
+>> | i2c @ 4 ODROID-XU3 # pmic dev s2mps11_pmic@66
+>> dev: 0 @ s2mps11_pmic@66
+>> ODROID-XU3 # pmic dump
+>> Dump pmic: s2mps11_pmic@66 registers
+>>
+>> 0x00: 83 00 11 00 ff 3b 03 1a 00 00 04 01 10 00 00 57
+>> 0x10: 5f 55 ff ff ff ff ff 00 00 00 00 00 00 00 00 00
+>> 0x20: 00 50 12 ca dc d8 50 f8 40 f9 40 f8 40 fe 3f 60
+>> 0x30: 78 90 c0 d8 44 d8 30 d8 64 d9 50 d8 a8 c8 d4 14
+>> 0x40: d4 d4 c8 d4 d4 f2 d4 c8 d4 f2 2c f2 dc f2 14 f2
+>> 0x50: 14 14 10 cc e8 14 ec c8 f2 14 f2 14 14 14 2c 10
+>> 0x60: 14 14 28
+>>
+>> Actually, I am looking into setting some of the s2mps11 control
+>> register + reset clk values
+>> during board initialization.
 >
-> Convert the i_version counter to an atomic64_t, and use the lowest order
-> bit to hold a flag that will tell whether anyone has queried the value
-> since it was last incremented.
+> You can try to set those values by writing some u-boot script or bring
+> the below (needed) code upstream, so those could be reused by others.
 >
-> When we go to maybe increment it, we fetch the value and check the flag
-> bit.  If it's clear then we don't need to do anything if the update
-> isn't being forced.
->
-> If we do need to update, then we increment the counter by 2, and clear
-> the flag bit, and then use a CAS op to swap it into place. If that
-> works, we return true. If it doesn't then do it again with the value
-> that we fetch from the CAS operation.
->
-> On the query side, if the flag is already set, then we just shift the
-> value down by 1 bit and return it. Otherwise, we set the flag in our
-> on-stack value and again use cmpxchg to swap it into place if it hasn't
-> changed. If it has, then we use the value from the cmpxchg as the new
-> "old" value and try again.
->
-> This method allows us to avoid incrementing the counter on writes (and
-> dirtying the metadata) under typical workloads. We only need to increment
-> if it has been queried since it was last changed.
->
-> Signed-off-by: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-> ---
->  include/linux/fs.h       |   2 +-
->  include/linux/iversion.h | 208 ++++++++++++++++++++++++++++++++++-------------
->  2 files changed, 154 insertions(+), 56 deletions(-)
->
+[snip]
 
-Hi,
+I dont have s2mps11 datasheet with me.
+but I tried to write simple .probe function with debug message
+but print message did not invoke during the booting of the device.
 
-On recent linux-next my ARM/Exynos boards fail to boot over nfsroot.
-This commit popped up through bisect (log at the end). Systemd
-timeouts on some device-specific services, including mounting ext4
-/home:
+neither did the debug print appeared during the pmci dump command.
 
-[ *** ] (1 of 4) A start job is running for…ress polling (1min 41s / no limit)
-[ TIME ] Timed out waiting for device dev-ttySAC2.device.
-Jan 07 13:29:38 [DEPEND] Dependency failed for Serial Getty on ttySAC2.
-Jan 07 13:29:38 [ TIME ] Timed out waiting for device
-dev-disk-by\x2dlabel-home.device.
-Jan 07 13:29:38 [DEPEND] Dependency failed for /home.
-Jan 07 13:29:38 [DEPEND] Dependency failed for Local File Systems.
-Jan 07 13:29:38 [DEPEND] Dependency failed for File System Check on
-/dev/disk/by-label/home.
-Jan 07 13:30:02 [ *** ] (1 of 2) A start job is running for…ress
-polling (1min 53s / no limit)
+ODROID-XU3 #
+ODROID-XU3 # pmic list
+| Name                            | Parent name         | Parent uclass @ seq
+| s2mps11_pmic@66                 | i2c@12CA0000        | i2c @ 4
+ODROID-XU3 # pmic dev s2mps11_pmic@66
+dev: 0 @ s2mps11_pmic@66
+ODROID-XU3 # pmic dump
+Dump pmic: s2mps11_pmic@66 registers
 
-Kernel command line:
-console=tty1 console=ttySAC2,115200n8
-ip=192.168.1.11:192.168.1.10:192.168.1.1:255.255.255.0::eth0:none
-nfsrootdebug root=/dev/nfs
-nfsroot=192.168.1.10:/srv/nfs/odroidxu3,vers=4,nolock rootwait rw
-smsc95xx.macaddr=00:1e:06:61:7a:93 no_console_suspend
+0x00: 83 00 11 00 ff 3b 03 1a 00 00 04 01 10 00 00 57
+0x10: 5f 55 ff ff ff ff ff 00 00 00 00 00 00 00 00 00
+0x20: 00 50 12 ca dc d8 50 f8 40 f9 40 f8 40 fe 3f 60
+0x30: 78 90 c0 d8 44 d8 30 d8 64 d9 50 d8 a8 c8 d4 14
+0x40: d4 d4 c8 d4 d4 f2 d4 c8 d4 f2 2c f2 dc f2 14 f2
+0x50: 14 14 10 cc e8 14 ec c8 f2 14 f2 14 14 14 2c 10
+0x60: 14 14 28
 
-/home is /dev/mmcblk1p2:
-kozik@odroidxu3:~$ tune2fs -l /dev/mmcblk1p2
-tune2fs 1.43.7 (16-Oct-2017)
-Filesystem volume name:   home
-Last mounted on:          /home
-Filesystem UUID:          3f9dbeba-2738-45d3-807e-c1b2e21128ed
-Filesystem magic number:  0xEF53
-Filesystem revision #:    1 (dynamic)
-Filesystem features:      has_journal ext_attr resize_inode dir_index
-filetype needs_recovery extent flex_bg sparse_super large_file
-uninit_bg dir_nlink extra_isize
-Filesystem flags:         signed_directory_hash
-Default mount options:    user_xattr acl
-Filesystem state:         clean
-Errors behavior:          Continue
-Filesystem OS type:       Linux
-Inode count:              1430800
-Block count:              5717760
-Reserved block count:     285888
-Free blocks:              5467576
-Free inodes:              1428301
-First block:              0
-Block size:               4096
-Fragment size:            4096
-Reserved GDT blocks:      1022
-Blocks per group:         32768
-Fragments per group:      32768
-Inodes per group:         8176
-Inode blocks per group:   511
-Flex block group size:    16
-Filesystem created:       Thu May 21 12:17:05 2015
-Last mount time:          Thu Dec 21 13:31:26 2017
-Last write time:          Thu Dec 21 13:31:26 2017
-Mount count:              1
-Maximum mount count:      -1
-Last checked:             Thu Dec 21 13:31:25 2017
-Check interval:           0 (<none>)
-Lifetime writes:          126 GB
-Reserved blocks uid:      0 (user root)
-Reserved blocks gid:      0 (group root)
-First inode:              11
-Inode size:           256
-Required extra isize:     28
-Desired extra isize:      28
-Journal inode:            8
-Default directory hash:   half_md4
-Directory Hash Seed:      42e17e23-86b2-4356-ad63-78aa51651d03
-Journal backup:           inode blocks
+----
+How can we invoke and verify the s2mps11 init function during board
+initialization ?
 
-
-Full dmesg log:
-http://www.krzk.eu/#/builders/1/builds/1258/steps/10/logs/serial0
-
-The regular boot from rootfs on SD card also fails - but without any
-serial console logs (just "Starting kernel...") so the real cause is
-unknown.
-
-Any hints?
-
-Best regards,
-Krzysztof
-
-
-bisect log:
-# bad: [73005e1a35fd67c644b0645c9e4c1efabd0fe62c] Add linux-next
-specific files for 20180103
-# good: [30a7acd573899fd8b8ac39236eff6468b195ac7d] Linux 4.15-rc6
-git bisect start 'next/master' 'next/stable'
-# bad: [c1d290f9ce8daa2b0a79d2fe48c1b7c3c5370f5a] Merge
-remote-tracking branch 'crypto/master'
-git bisect bad c1d290f9ce8daa2b0a79d2fe48c1b7c3c5370f5a
-# bad: [55695d94f0915121d106cd2d1ab94983a32f3e9a] Merge
-remote-tracking branch 'hid/for-next'
-git bisect bad 55695d94f0915121d106cd2d1ab94983a32f3e9a
-# good: [cffae1eead0dd91be1a3069a8348127bb00158f3] Merge
-remote-tracking branch 'realtek/for-next'
-git bisect good cffae1eead0dd91be1a3069a8348127bb00158f3
-# good: [5f889f1176dc99636c6bf8af7c286decc888c007] Merge
-remote-tracking branch 'btrfs/next'
-git bisect good 5f889f1176dc99636c6bf8af7c286decc888c007
-# good: [984c35877f36bee305e43a1c58176169854d85cf] Merge
-remote-tracking branch 'xfs/for-next'
-git bisect good 984c35877f36bee305e43a1c58176169854d85cf
-# bad: [f9fec502daea2a869232b6dff33ba3de79dd0d61] Merge
-remote-tracking branch 'printk/for-next'
-git bisect bad f9fec502daea2a869232b6dff33ba3de79dd0d61
-# good: [c71d227fc4133f949dae620ed5e3a250b43f2415] make kernel-side
-POLL... arch-independent
-git bisect good c71d227fc4133f949dae620ed5e3a250b43f2415
-# good: [416d20e8c31107f5dfd45d1d80d1e6c8e4871180] Merge branches
-'work.get_user_pages_fast', 'work.wmci', 'work.sock_recvmsg',
-'misc.netdrv', 'misc.poll', 'work.mqueue', 'work.whack-a-mole' and
-'work.misc' into for-next
-git bisect good 416d20e8c31107f5dfd45d1d80d1e6c8e4871180
-# good: [325a1de4a691512a48c1426b943a7b0b9f8d6744] xfs: convert to new
-i_version API
-git bisect good 325a1de4a691512a48c1426b943a7b0b9f8d6744
-# good: [a94fe10fb114c169e7ddaecd8251521886409121] checkpatch: add
-pF/pf deprecation warning
-git bisect good a94fe10fb114c169e7ddaecd8251521886409121
-# good: [6b3911dffd1184fdcd63299a5fee59ac000f2067] btrfs: only dirty
-the inode in btrfs_update_time if something was changed
-git bisect good 6b3911dffd1184fdcd63299a5fee59ac000f2067
-# bad: [448f8c749a7a0ae03505823910ec45a112678048] Merge
-remote-tracking branch 'iversion/iversion-next'
-git bisect bad 448f8c749a7a0ae03505823910ec45a112678048
-# bad: [8618bff776758ebff5b55211e7b5a60a0fc119a5] fs: handle
-inode->i_version more efficiently
-git bisect bad 8618bff776758ebff5b55211e7b5a60a0fc119a5
-# first bad commit: [8618bff776758ebff5b55211e7b5a60a0fc119a5] fs:
-handle inode->i_version more efficiently
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best Regards
+-Anand
