@@ -1,235 +1,168 @@
-From: Anand Moon <linux.amoon@gmail.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
 Subject: Re: [U-boot] Odroidxu3/4 -s2mps11 bind pmic failed
-Date: Sun, 7 Jan 2018 21:04:53 +0530
-Message-ID: <CANAwSgQnnBwiXAeJk25_+JmQBNUc-_Vz+BqNUgJHPUL9VXZ8=Q@mail.gmail.com>
+Date: Mon, 08 Jan 2018 15:26:05 +0900
+Message-ID: <7088671e-9572-cf33-a8d0-a285d31ff1db@samsung.com>
 References: <CANAwSgSrNEfy-78cYRm+HeBa_MDk1xn5P4neYJPiDW-RpfW-Gw@mail.gmail.com>
- <20180102231706.7b7f446d@jawa> <CANAwSgQrHUjOFLJL=soG7aFooZ2D-PwP5vLT+hdxzaRL6JPM7Q@mail.gmail.com>
+ <20180102231706.7b7f446d@jawa>
+ <CANAwSgQrHUjOFLJL=soG7aFooZ2D-PwP5vLT+hdxzaRL6JPM7Q@mail.gmail.com>
  <20180103093846.0fa8b8e2@jawa>
+ <CGME20180107153516epcas5p37d4e6ec5b6dd9cde536d0af5d8cda1a4@epcas5p3.samsung.com>
+ <CANAwSgQnnBwiXAeJk25_+JmQBNUc-_Vz+BqNUgJHPUL9VXZ8=Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:42243 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753452AbeAGPfO (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 7 Jan 2018 10:35:14 -0500
-Received: by mail-oi0-f44.google.com with SMTP id o64so5930578oia.9
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Jan 2018 07:35:14 -0800 (PST)
-In-Reply-To: <20180103093846.0fa8b8e2@jawa>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <u-boot-bounces@lists.denx.de>
+In-reply-to: <CANAwSgQnnBwiXAeJk25_+JmQBNUc-_Vz+BqNUgJHPUL9VXZ8=Q@mail.gmail.com>
+Content-language: en-US
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+To: Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <lukma@denx.de>
+Cc: U-Boot Mailing List <u-boot@lists.denx.de>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Simon Glass <sjg@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, U-Boot Mailing List <u-boot@lists.denx.de>, linux-samsung-soc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
 
-Hi Lukasz,
-
-On 3 January 2018 at 14:08, Lukasz Majewski <lukma@denx.de> wrote:
-> Hi Anand,
->
->> Hi Lukasz
->>
->> On 3 January 2018 at 03:47, Lukasz Majewski <lukma@denx.de> wrote:
->> > On Wed, 3 Jan 2018 01:54:57 +0530
->> > Anand Moon <linux.amoon@gmail.com> wrote:
->> >
->> >> Hi All,
->> >>
->> >> I would like to get the s2mps11 regulator binding for u-boot to
->> >> work on Odroid XU3/XU4
->> >> as in case of Odroid U3 we have max77686_bind function which dose
->> >> the job.
->> >>
->> >> what will be the correct way to reset s2mps11 control register to
->> >> the default values
->> >> in-order to support reset of some regulators.
->> >>
->> >> Below is the command I tried to gather some information but it
->> >> failed.
->> >>
->> >> Best Regards
->> >> -Anand Moon
->> >> -----------------------------------------------------------------------------------------------------------------------------------------
->> >> U-Boot 2018.01-rc3-00060-g1314bd1 (Jan 02 2018 - 17:56:26 +0000)
->> >> for ODROID-XU3/XU4/HC1
->> >>
->> >> CPU:   Exynos5422 @ 800 MHz
->> >> Model: Odroid XU3 based on EXYNOS5422
->> >> Board: Odroid XU3 based on EXYNOS5422
->> >> Type:  xu4
->> >> DRAM:  2 GiB
->> >> MMC:   EXYNOS DWMMC: 0, EXYNOS DWMMC: 1
->> >> *** Warning - bad CRC, using default environment
->> >>
->> >> In:    serial
->> >> Out:   serial
->> >> Err:   serial
->> >> Net:   No ethernet found.
->> >> Hit any key to stop autoboot:  0
->> >> Card did not respond to voltage select!
->> >> mmc_init: -95, time 11
->> >> switch to partitions #0, OK
->> >> mmc0 is current device
->> >> Scanning mmc 0:1...
->> >> reading /exynos5422-odroidxu4.dtb
->> >> 62815 bytes read in 9 ms (6.7 MiB/s)
->> >> starting USB...
->> >> USB0:   USB EHCI 1.00
->> >> USB1:   Register 2000140 NbrPorts 2
->> >> Starting the controller
->> >> USB XHCI 1.00
->> >> USB2:   Register 2000140 NbrPorts 2
->> >> Starting the controller
->> >> USB XHCI 1.00
->> >> scanning bus 0 for devices... 1 USB Device(s) found
->> >> scanning bus 1 for devices... 3 USB Device(s) found
->> >> scanning bus 2 for devices... 2 USB Device(s) found
->> >>        scanning usb for storage devices... 0 Storage Device(s)
->> >> found scanning usb for ethernet devices... 1 Ethernet Device(s)
->> >> found Waiting for Ethernet connection... done.
->> >> BOOTP broadcast 1
->> >> BOOTP broadcast 2
->> >> DHCP client bound to address 10.0.0.144 (1200 ms)
->> >> *** Warning: no boot file name; using '0A000090.img'
->> >> Using r8152#0 device
->> >> TFTP from server 0.0.0.0; our IP address is 10.0.0.144; sending
->> >> through gateway 10.0.0.1
->> >> Filename '0A000090.img'.
->> >> Load address: 0x43e00000
->> >> Loading: *
->> >> TFTP error: 'File not found' (1)
->> >> Not retrying...
->> >> missing environment variable: pxeuuid
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/0A000090
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/0A00009
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/0A0000
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/0A000
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/0A00
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/0A0
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/0A
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/0
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/default-arm-exynos
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/default-arm
->> >> *** ERROR: `serverip' not set
->> >> missing environment variable: bootfile
->> >> Retrieving file: pxelinux.cfg/default
->> >> *** ERROR: `serverip' not set
->> >> Config file not found
->> >> BOOTP broadcast 1
->> >> DHCP client bound to address 10.0.0.144 (644 ms)
->> >> Using r8152#0 device
->> >> TFTP from server 0.0.0.0; our IP address is 10.0.0.144; sending
->> >> through gateway 10.0.0.1
->> >> Filename 'boot.scr.uimg'.
->> >> Load address: 0x50000000
->> >> Loading: *
->> >> TFTP error: 'File not found' (1)
->> >> Not retrying...
->> >> BOOTP broadcast 1
->> >> BOOTP broadcast 2
->> >> DHCP client bound to address 10.0.0.144 (1257 ms)
->> >> Using r8152#0 device
->> >> TFTP from server 0.0.0.0; our IP address is 10.0.0.144; sending
->> >> through gateway 10.0.0.1
->> >> Filename 'boot.scr.uimg'.
->> >> Load address: 0x42000000
->> >> Loading: *
->> >> TFTP error: 'File not found' (1)
->> >> Not retrying...
->> >> ODROID-XU3 #
->> >> ODROID-XU3 #
->> >> ODROID-XU3 # pmic s2mps11 dump
->> >> pmic -  operations
->> >>
->> >> Usage:
->> >> pmic list          - list pmic devices
->> >> pmic dev [name]    - show or [set] operating PMIC device
->> >> pmic dump          - dump registers
->> >> pmic read address  - read byte of register at address
->> >> pmic write address - write byte to register at address
->> >
->> > First try to:
->> >
->> > pmic list
->> > pmic dev s2mps11_pmic@66
->> >
->> > pmic dump
->> > pmic write 0xXX for your device
->> >
->> >
->> [snip]
->>
->> Thanks for your input.
->>
->> ODROID-XU3 #
->> | Name                            | Parent name         | Parent
->> uclass @ seq | s2mps11_pmic@66                 | i2c@12CA0000
->> | i2c @ 4 ODROID-XU3 # pmic dev s2mps11_pmic@66
->> dev: 0 @ s2mps11_pmic@66
->> ODROID-XU3 # pmic dump
->> Dump pmic: s2mps11_pmic@66 registers
->>
->> 0x00: 83 00 11 00 ff 3b 03 1a 00 00 04 01 10 00 00 57
->> 0x10: 5f 55 ff ff ff ff ff 00 00 00 00 00 00 00 00 00
->> 0x20: 00 50 12 ca dc d8 50 f8 40 f9 40 f8 40 fe 3f 60
->> 0x30: 78 90 c0 d8 44 d8 30 d8 64 d9 50 d8 a8 c8 d4 14
->> 0x40: d4 d4 c8 d4 d4 f2 d4 c8 d4 f2 2c f2 dc f2 14 f2
->> 0x50: 14 14 10 cc e8 14 ec c8 f2 14 f2 14 14 14 2c 10
->> 0x60: 14 14 28
->>
->> Actually, I am looking into setting some of the s2mps11 control
->> register + reset clk values
->> during board initialization.
->
-> You can try to set those values by writing some u-boot script or bring
-> the below (needed) code upstream, so those could be reused by others.
->
-[snip]
-
-I dont have s2mps11 datasheet with me.
-but I tried to write simple .probe function with debug message
-but print message did not invoke during the booting of the device.
-
-neither did the debug print appeared during the pmci dump command.
-
-ODROID-XU3 #
-ODROID-XU3 # pmic list
-| Name                            | Parent name         | Parent uclass @ seq
-| s2mps11_pmic@66                 | i2c@12CA0000        | i2c @ 4
-ODROID-XU3 # pmic dev s2mps11_pmic@66
-dev: 0 @ s2mps11_pmic@66
-ODROID-XU3 # pmic dump
-Dump pmic: s2mps11_pmic@66 registers
-
-0x00: 83 00 11 00 ff 3b 03 1a 00 00 04 01 10 00 00 57
-0x10: 5f 55 ff ff ff ff ff 00 00 00 00 00 00 00 00 00
-0x20: 00 50 12 ca dc d8 50 f8 40 f9 40 f8 40 fe 3f 60
-0x30: 78 90 c0 d8 44 d8 30 d8 64 d9 50 d8 a8 c8 d4 14
-0x40: d4 d4 c8 d4 d4 f2 d4 c8 d4 f2 2c f2 dc f2 14 f2
-0x50: 14 14 10 cc e8 14 ec c8 f2 14 f2 14 14 14 2c 10
-0x60: 14 14 28
-
-----
-How can we invoke and verify the s2mps11 init function during board
-initialization ?
-
-Best Regards
--Anand
+T24gMDEvMDgvMjAxOCAxMjozNCBBTSwgQW5hbmQgTW9vbiB3cm90ZToKPiBIaSBMdWthc3osCj4g
+Cj4gT24gMyBKYW51YXJ5IDIwMTggYXQgMTQ6MDgsIEx1a2FzeiBNYWpld3NraSA8bHVrbWFAZGVu
+eC5kZT4gd3JvdGU6Cj4+IEhpIEFuYW5kLAo+Pgo+Pj4gSGkgTHVrYXN6Cj4+Pgo+Pj4gT24gMyBK
+YW51YXJ5IDIwMTggYXQgMDM6NDcsIEx1a2FzeiBNYWpld3NraSA8bHVrbWFAZGVueC5kZT4gd3Jv
+dGU6Cj4+Pj4gT24gV2VkLCAzIEphbiAyMDE4IDAxOjU0OjU3ICswNTMwCj4+Pj4gQW5hbmQgTW9v
+biA8bGludXguYW1vb25AZ21haWwuY29tPiB3cm90ZToKPj4+Pgo+Pj4+PiBIaSBBbGwsCj4+Pj4+
+Cj4+Pj4+IEkgd291bGQgbGlrZSB0byBnZXQgdGhlIHMybXBzMTEgcmVndWxhdG9yIGJpbmRpbmcg
+Zm9yIHUtYm9vdCB0bwo+Pj4+PiB3b3JrIG9uIE9kcm9pZCBYVTMvWFU0Cj4+Pj4+IGFzIGluIGNh
+c2Ugb2YgT2Ryb2lkIFUzIHdlIGhhdmUgbWF4Nzc2ODZfYmluZCBmdW5jdGlvbiB3aGljaCBkb3Nl
+Cj4+Pj4+IHRoZSBqb2IuCj4+Pj4+Cj4+Pj4+IHdoYXQgd2lsbCBiZSB0aGUgY29ycmVjdCB3YXkg
+dG8gcmVzZXQgczJtcHMxMSBjb250cm9sIHJlZ2lzdGVyIHRvCj4+Pj4+IHRoZSBkZWZhdWx0IHZh
+bHVlcwo+Pj4+PiBpbi1vcmRlciB0byBzdXBwb3J0IHJlc2V0IG9mIHNvbWUgcmVndWxhdG9ycy4K
+Pj4+Pj4KPj4+Pj4gQmVsb3cgaXMgdGhlIGNvbW1hbmQgSSB0cmllZCB0byBnYXRoZXIgc29tZSBp
+bmZvcm1hdGlvbiBidXQgaXQKPj4+Pj4gZmFpbGVkLgo+Pj4+Pgo+Pj4+PiBCZXN0IFJlZ2FyZHMK
+Pj4+Pj4gLUFuYW5kIE1vb24KPj4+Pj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPj4+Pj4gVS1C
+b290IDIwMTguMDEtcmMzLTAwMDYwLWcxMzE0YmQxIChKYW4gMDIgMjAxOCAtIDE3OjU2OjI2ICsw
+MDAwKQo+Pj4+PiBmb3IgT0RST0lELVhVMy9YVTQvSEMxCj4+Pj4+Cj4+Pj4+IENQVTogICBFeHlu
+b3M1NDIyIEAgODAwIE1Iego+Pj4+PiBNb2RlbDogT2Ryb2lkIFhVMyBiYXNlZCBvbiBFWFlOT1M1
+NDIyCj4+Pj4+IEJvYXJkOiBPZHJvaWQgWFUzIGJhc2VkIG9uIEVYWU5PUzU0MjIKPj4+Pj4gVHlw
+ZTogIHh1NAo+Pj4+PiBEUkFNOiAgMiBHaUIKPj4+Pj4gTU1DOiAgIEVYWU5PUyBEV01NQzogMCwg
+RVhZTk9TIERXTU1DOiAxCj4+Pj4+ICoqKiBXYXJuaW5nIC0gYmFkIENSQywgdXNpbmcgZGVmYXVs
+dCBlbnZpcm9ubWVudAo+Pj4+Pgo+Pj4+PiBJbjogICAgc2VyaWFsCj4+Pj4+IE91dDogICBzZXJp
+YWwKPj4+Pj4gRXJyOiAgIHNlcmlhbAo+Pj4+PiBOZXQ6ICAgTm8gZXRoZXJuZXQgZm91bmQuCj4+
+Pj4+IEhpdCBhbnkga2V5IHRvIHN0b3AgYXV0b2Jvb3Q6ICAwCj4+Pj4+IENhcmQgZGlkIG5vdCBy
+ZXNwb25kIHRvIHZvbHRhZ2Ugc2VsZWN0IQo+Pj4+PiBtbWNfaW5pdDogLTk1LCB0aW1lIDExCj4+
+Pj4+IHN3aXRjaCB0byBwYXJ0aXRpb25zICMwLCBPSwo+Pj4+PiBtbWMwIGlzIGN1cnJlbnQgZGV2
+aWNlCj4+Pj4+IFNjYW5uaW5nIG1tYyAwOjEuLi4KPj4+Pj4gcmVhZGluZyAvZXh5bm9zNTQyMi1v
+ZHJvaWR4dTQuZHRiCj4+Pj4+IDYyODE1IGJ5dGVzIHJlYWQgaW4gOSBtcyAoNi43IE1pQi9zKQo+
+Pj4+PiBzdGFydGluZyBVU0IuLi4KPj4+Pj4gVVNCMDogICBVU0IgRUhDSSAxLjAwCj4+Pj4+IFVT
+QjE6ICAgUmVnaXN0ZXIgMjAwMDE0MCBOYnJQb3J0cyAyCj4+Pj4+IFN0YXJ0aW5nIHRoZSBjb250
+cm9sbGVyCj4+Pj4+IFVTQiBYSENJIDEuMDAKPj4+Pj4gVVNCMjogICBSZWdpc3RlciAyMDAwMTQw
+IE5iclBvcnRzIDIKPj4+Pj4gU3RhcnRpbmcgdGhlIGNvbnRyb2xsZXIKPj4+Pj4gVVNCIFhIQ0kg
+MS4wMAo+Pj4+PiBzY2FubmluZyBidXMgMCBmb3IgZGV2aWNlcy4uLiAxIFVTQiBEZXZpY2Uocykg
+Zm91bmQKPj4+Pj4gc2Nhbm5pbmcgYnVzIDEgZm9yIGRldmljZXMuLi4gMyBVU0IgRGV2aWNlKHMp
+IGZvdW5kCj4+Pj4+IHNjYW5uaW5nIGJ1cyAyIGZvciBkZXZpY2VzLi4uIDIgVVNCIERldmljZShz
+KSBmb3VuZAo+Pj4+PiAgICAgICAgc2Nhbm5pbmcgdXNiIGZvciBzdG9yYWdlIGRldmljZXMuLi4g
+MCBTdG9yYWdlIERldmljZShzKQo+Pj4+PiBmb3VuZCBzY2FubmluZyB1c2IgZm9yIGV0aGVybmV0
+IGRldmljZXMuLi4gMSBFdGhlcm5ldCBEZXZpY2UocykKPj4+Pj4gZm91bmQgV2FpdGluZyBmb3Ig
+RXRoZXJuZXQgY29ubmVjdGlvbi4uLiBkb25lLgo+Pj4+PiBCT09UUCBicm9hZGNhc3QgMQo+Pj4+
+PiBCT09UUCBicm9hZGNhc3QgMgo+Pj4+PiBESENQIGNsaWVudCBib3VuZCB0byBhZGRyZXNzIDEw
+LjAuMC4xNDQgKDEyMDAgbXMpCj4+Pj4+ICoqKiBXYXJuaW5nOiBubyBib290IGZpbGUgbmFtZTsg
+dXNpbmcgJzBBMDAwMDkwLmltZycKPj4+Pj4gVXNpbmcgcjgxNTIjMCBkZXZpY2UKPj4+Pj4gVEZU
+UCBmcm9tIHNlcnZlciAwLjAuMC4wOyBvdXIgSVAgYWRkcmVzcyBpcyAxMC4wLjAuMTQ0OyBzZW5k
+aW5nCj4+Pj4+IHRocm91Z2ggZ2F0ZXdheSAxMC4wLjAuMQo+Pj4+PiBGaWxlbmFtZSAnMEEwMDAw
+OTAuaW1nJy4KPj4+Pj4gTG9hZCBhZGRyZXNzOiAweDQzZTAwMDAwCj4+Pj4+IExvYWRpbmc6ICoK
+Pj4+Pj4gVEZUUCBlcnJvcjogJ0ZpbGUgbm90IGZvdW5kJyAoMSkKPj4+Pj4gTm90IHJldHJ5aW5n
+Li4uCj4+Pj4+IG1pc3NpbmcgZW52aXJvbm1lbnQgdmFyaWFibGU6IHB4ZXV1aWQKPj4+Pj4gbWlz
+c2luZyBlbnZpcm9ubWVudCB2YXJpYWJsZTogYm9vdGZpbGUKPj4+Pj4gUmV0cmlldmluZyBmaWxl
+OiBweGVsaW51eC5jZmcvMEEwMDAwOTAKPj4+Pj4gKioqIEVSUk9SOiBgc2VydmVyaXAnIG5vdCBz
+ZXQKPj4+Pj4gbWlzc2luZyBlbnZpcm9ubWVudCB2YXJpYWJsZTogYm9vdGZpbGUKPj4+Pj4gUmV0
+cmlldmluZyBmaWxlOiBweGVsaW51eC5jZmcvMEEwMDAwOQo+Pj4+PiAqKiogRVJST1I6IGBzZXJ2
+ZXJpcCcgbm90IHNldAo+Pj4+PiBtaXNzaW5nIGVudmlyb25tZW50IHZhcmlhYmxlOiBib290Zmls
+ZQo+Pj4+PiBSZXRyaWV2aW5nIGZpbGU6IHB4ZWxpbnV4LmNmZy8wQTAwMDAKPj4+Pj4gKioqIEVS
+Uk9SOiBgc2VydmVyaXAnIG5vdCBzZXQKPj4+Pj4gbWlzc2luZyBlbnZpcm9ubWVudCB2YXJpYWJs
+ZTogYm9vdGZpbGUKPj4+Pj4gUmV0cmlldmluZyBmaWxlOiBweGVsaW51eC5jZmcvMEEwMDAKPj4+
+Pj4gKioqIEVSUk9SOiBgc2VydmVyaXAnIG5vdCBzZXQKPj4+Pj4gbWlzc2luZyBlbnZpcm9ubWVu
+dCB2YXJpYWJsZTogYm9vdGZpbGUKPj4+Pj4gUmV0cmlldmluZyBmaWxlOiBweGVsaW51eC5jZmcv
+MEEwMAo+Pj4+PiAqKiogRVJST1I6IGBzZXJ2ZXJpcCcgbm90IHNldAo+Pj4+PiBtaXNzaW5nIGVu
+dmlyb25tZW50IHZhcmlhYmxlOiBib290ZmlsZQo+Pj4+PiBSZXRyaWV2aW5nIGZpbGU6IHB4ZWxp
+bnV4LmNmZy8wQTAKPj4+Pj4gKioqIEVSUk9SOiBgc2VydmVyaXAnIG5vdCBzZXQKPj4+Pj4gbWlz
+c2luZyBlbnZpcm9ubWVudCB2YXJpYWJsZTogYm9vdGZpbGUKPj4+Pj4gUmV0cmlldmluZyBmaWxl
+OiBweGVsaW51eC5jZmcvMEEKPj4+Pj4gKioqIEVSUk9SOiBgc2VydmVyaXAnIG5vdCBzZXQKPj4+
+Pj4gbWlzc2luZyBlbnZpcm9ubWVudCB2YXJpYWJsZTogYm9vdGZpbGUKPj4+Pj4gUmV0cmlldmlu
+ZyBmaWxlOiBweGVsaW51eC5jZmcvMAo+Pj4+PiAqKiogRVJST1I6IGBzZXJ2ZXJpcCcgbm90IHNl
+dAo+Pj4+PiBtaXNzaW5nIGVudmlyb25tZW50IHZhcmlhYmxlOiBib290ZmlsZQo+Pj4+PiBSZXRy
+aWV2aW5nIGZpbGU6IHB4ZWxpbnV4LmNmZy9kZWZhdWx0LWFybS1leHlub3MKPj4+Pj4gKioqIEVS
+Uk9SOiBgc2VydmVyaXAnIG5vdCBzZXQKPj4+Pj4gbWlzc2luZyBlbnZpcm9ubWVudCB2YXJpYWJs
+ZTogYm9vdGZpbGUKPj4+Pj4gUmV0cmlldmluZyBmaWxlOiBweGVsaW51eC5jZmcvZGVmYXVsdC1h
+cm0KPj4+Pj4gKioqIEVSUk9SOiBgc2VydmVyaXAnIG5vdCBzZXQKPj4+Pj4gbWlzc2luZyBlbnZp
+cm9ubWVudCB2YXJpYWJsZTogYm9vdGZpbGUKPj4+Pj4gUmV0cmlldmluZyBmaWxlOiBweGVsaW51
+eC5jZmcvZGVmYXVsdAo+Pj4+PiAqKiogRVJST1I6IGBzZXJ2ZXJpcCcgbm90IHNldAo+Pj4+PiBD
+b25maWcgZmlsZSBub3QgZm91bmQKPj4+Pj4gQk9PVFAgYnJvYWRjYXN0IDEKPj4+Pj4gREhDUCBj
+bGllbnQgYm91bmQgdG8gYWRkcmVzcyAxMC4wLjAuMTQ0ICg2NDQgbXMpCj4+Pj4+IFVzaW5nIHI4
+MTUyIzAgZGV2aWNlCj4+Pj4+IFRGVFAgZnJvbSBzZXJ2ZXIgMC4wLjAuMDsgb3VyIElQIGFkZHJl
+c3MgaXMgMTAuMC4wLjE0NDsgc2VuZGluZwo+Pj4+PiB0aHJvdWdoIGdhdGV3YXkgMTAuMC4wLjEK
+Pj4+Pj4gRmlsZW5hbWUgJ2Jvb3Quc2NyLnVpbWcnLgo+Pj4+PiBMb2FkIGFkZHJlc3M6IDB4NTAw
+MDAwMDAKPj4+Pj4gTG9hZGluZzogKgo+Pj4+PiBURlRQIGVycm9yOiAnRmlsZSBub3QgZm91bmQn
+ICgxKQo+Pj4+PiBOb3QgcmV0cnlpbmcuLi4KPj4+Pj4gQk9PVFAgYnJvYWRjYXN0IDEKPj4+Pj4g
+Qk9PVFAgYnJvYWRjYXN0IDIKPj4+Pj4gREhDUCBjbGllbnQgYm91bmQgdG8gYWRkcmVzcyAxMC4w
+LjAuMTQ0ICgxMjU3IG1zKQo+Pj4+PiBVc2luZyByODE1MiMwIGRldmljZQo+Pj4+PiBURlRQIGZy
+b20gc2VydmVyIDAuMC4wLjA7IG91ciBJUCBhZGRyZXNzIGlzIDEwLjAuMC4xNDQ7IHNlbmRpbmcK
+Pj4+Pj4gdGhyb3VnaCBnYXRld2F5IDEwLjAuMC4xCj4+Pj4+IEZpbGVuYW1lICdib290LnNjci51
+aW1nJy4KPj4+Pj4gTG9hZCBhZGRyZXNzOiAweDQyMDAwMDAwCj4+Pj4+IExvYWRpbmc6ICoKPj4+
+Pj4gVEZUUCBlcnJvcjogJ0ZpbGUgbm90IGZvdW5kJyAoMSkKPj4+Pj4gTm90IHJldHJ5aW5nLi4u
+Cj4+Pj4+IE9EUk9JRC1YVTMgIwo+Pj4+PiBPRFJPSUQtWFUzICMKPj4+Pj4gT0RST0lELVhVMyAj
+IHBtaWMgczJtcHMxMSBkdW1wCj4+Pj4+IHBtaWMgLSAgb3BlcmF0aW9ucwo+Pj4+Pgo+Pj4+PiBV
+c2FnZToKPj4+Pj4gcG1pYyBsaXN0ICAgICAgICAgIC0gbGlzdCBwbWljIGRldmljZXMKPj4+Pj4g
+cG1pYyBkZXYgW25hbWVdICAgIC0gc2hvdyBvciBbc2V0XSBvcGVyYXRpbmcgUE1JQyBkZXZpY2UK
+Pj4+Pj4gcG1pYyBkdW1wICAgICAgICAgIC0gZHVtcCByZWdpc3RlcnMKPj4+Pj4gcG1pYyByZWFk
+IGFkZHJlc3MgIC0gcmVhZCBieXRlIG9mIHJlZ2lzdGVyIGF0IGFkZHJlc3MKPj4+Pj4gcG1pYyB3
+cml0ZSBhZGRyZXNzIC0gd3JpdGUgYnl0ZSB0byByZWdpc3RlciBhdCBhZGRyZXNzCj4+Pj4KPj4+
+PiBGaXJzdCB0cnkgdG86Cj4+Pj4KPj4+PiBwbWljIGxpc3QKPj4+PiBwbWljIGRldiBzMm1wczEx
+X3BtaWNANjYKPj4+Pgo+Pj4+IHBtaWMgZHVtcAo+Pj4+IHBtaWMgd3JpdGUgMHhYWCBmb3IgeW91
+ciBkZXZpY2UKPj4+Pgo+Pj4+Cj4+PiBbc25pcF0KPj4+Cj4+PiBUaGFua3MgZm9yIHlvdXIgaW5w
+dXQuCj4+Pgo+Pj4gT0RST0lELVhVMyAjCj4+PiB8IE5hbWUgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgfCBQYXJlbnQgbmFtZSAgICAgICAgIHwgUGFyZW50Cj4+PiB1Y2xhc3MgQCBzZXEgfCBz
+Mm1wczExX3BtaWNANjYgICAgICAgICAgICAgICAgIHwgaTJjQDEyQ0EwMDAwCj4+PiB8IGkyYyBA
+IDQgT0RST0lELVhVMyAjIHBtaWMgZGV2IHMybXBzMTFfcG1pY0A2Ngo+Pj4gZGV2OiAwIEAgczJt
+cHMxMV9wbWljQDY2Cj4+PiBPRFJPSUQtWFUzICMgcG1pYyBkdW1wCj4+PiBEdW1wIHBtaWM6IHMy
+bXBzMTFfcG1pY0A2NiByZWdpc3RlcnMKPj4+Cj4+PiAweDAwOiA4MyAwMCAxMSAwMCBmZiAzYiAw
+MyAxYSAwMCAwMCAwNCAwMSAxMCAwMCAwMCA1Nwo+Pj4gMHgxMDogNWYgNTUgZmYgZmYgZmYgZmYg
+ZmYgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAKPj4+IDB4MjA6IDAwIDUwIDEyIGNhIGRjIGQ4
+IDUwIGY4IDQwIGY5IDQwIGY4IDQwIGZlIDNmIDYwCj4+PiAweDMwOiA3OCA5MCBjMCBkOCA0NCBk
+OCAzMCBkOCA2NCBkOSA1MCBkOCBhOCBjOCBkNCAxNAo+Pj4gMHg0MDogZDQgZDQgYzggZDQgZDQg
+ZjIgZDQgYzggZDQgZjIgMmMgZjIgZGMgZjIgMTQgZjIKPj4+IDB4NTA6IDE0IDE0IDEwIGNjIGU4
+IDE0IGVjIGM4IGYyIDE0IGYyIDE0IDE0IDE0IDJjIDEwCj4+PiAweDYwOiAxNCAxNCAyOAo+Pj4K
+Pj4+IEFjdHVhbGx5LCBJIGFtIGxvb2tpbmcgaW50byBzZXR0aW5nIHNvbWUgb2YgdGhlIHMybXBz
+MTEgY29udHJvbAo+Pj4gcmVnaXN0ZXIgKyByZXNldCBjbGsgdmFsdWVzCj4+PiBkdXJpbmcgYm9h
+cmQgaW5pdGlhbGl6YXRpb24uCj4+Cj4+IFlvdSBjYW4gdHJ5IHRvIHNldCB0aG9zZSB2YWx1ZXMg
+Ynkgd3JpdGluZyBzb21lIHUtYm9vdCBzY3JpcHQgb3IgYnJpbmcKPj4gdGhlIGJlbG93IChuZWVk
+ZWQpIGNvZGUgdXBzdHJlYW0sIHNvIHRob3NlIGNvdWxkIGJlIHJldXNlZCBieSBvdGhlcnMuCj4+
+Cj4gW3NuaXBdCj4gCj4gSSBkb250IGhhdmUgczJtcHMxMSBkYXRhc2hlZXQgd2l0aCBtZS4KPiBi
+dXQgSSB0cmllZCB0byB3cml0ZSBzaW1wbGUgLnByb2JlIGZ1bmN0aW9uIHdpdGggZGVidWcgbWVz
+c2FnZQo+IGJ1dCBwcmludCBtZXNzYWdlIGRpZCBub3QgaW52b2tlIGR1cmluZyB0aGUgYm9vdGlu
+ZyBvZiB0aGUgZGV2aWNlLgo+IAo+IG5laXRoZXIgZGlkIHRoZSBkZWJ1ZyBwcmludCBhcHBlYXJl
+ZCBkdXJpbmcgdGhlIHBtY2kgZHVtcCBjb21tYW5kLgo+IAo+IE9EUk9JRC1YVTMgIwo+IE9EUk9J
+RC1YVTMgIyBwbWljIGxpc3QKPiB8IE5hbWUgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCBQ
+YXJlbnQgbmFtZSAgICAgICAgIHwgUGFyZW50IHVjbGFzcyBAIHNlcQo+IHwgczJtcHMxMV9wbWlj
+QDY2ICAgICAgICAgICAgICAgICB8IGkyY0AxMkNBMDAwMCAgICAgICAgfCBpMmMgQCA0Cj4gT0RS
+T0lELVhVMyAjIHBtaWMgZGV2IHMybXBzMTFfcG1pY0A2Ngo+IGRldjogMCBAIHMybXBzMTFfcG1p
+Y0A2Ngo+IE9EUk9JRC1YVTMgIyBwbWljIGR1bXAKPiBEdW1wIHBtaWM6IHMybXBzMTFfcG1pY0A2
+NiByZWdpc3RlcnMKPiAKPiAweDAwOiA4MyAwMCAxMSAwMCBmZiAzYiAwMyAxYSAwMCAwMCAwNCAw
+MSAxMCAwMCAwMCA1Nwo+IDB4MTA6IDVmIDU1IGZmIGZmIGZmIGZmIGZmIDAwIDAwIDAwIDAwIDAw
+IDAwIDAwIDAwIDAwCj4gMHgyMDogMDAgNTAgMTIgY2EgZGMgZDggNTAgZjggNDAgZjkgNDAgZjgg
+NDAgZmUgM2YgNjAKPiAweDMwOiA3OCA5MCBjMCBkOCA0NCBkOCAzMCBkOCA2NCBkOSA1MCBkOCBh
+OCBjOCBkNCAxNAo+IDB4NDA6IGQ0IGQ0IGM4IGQ0IGQ0IGYyIGQ0IGM4IGQ0IGYyIDJjIGYyIGRj
+IGYyIDE0IGYyCj4gMHg1MDogMTQgMTQgMTAgY2MgZTggMTQgZWMgYzggZjIgMTQgZjIgMTQgMTQg
+MTQgMmMgMTAKPiAweDYwOiAxNCAxNCAyOAo+IAo+IC0tLS0KPiBIb3cgY2FuIHdlIGludm9rZSBh
+bmQgdmVyaWZ5IHRoZSBzMm1wczExIGluaXQgZnVuY3Rpb24gZHVyaW5nIGJvYXJkCj4gaW5pdGlh
+bGl6YXRpb24gPwoKV2hlbiBpIGhhdmUgY2hlY2tlZCB0aGUgYWJvdmUgdmFsdWVzLCB0aG9zZSBh
+cmUgdGhlIHJlc2V0IHZhbHVlIGF0IGVhY2ggcmVnaXN0ZXJzLgpidXQgc29tZSByZWdpc3RlcnMg
+YXJlIGRpZmZlcmVudCB3aXRoIHJlc2V0IHZhbHVlcy4KCmRvIHlvdSB3YW50IHRvIGNoYW5nZSB0
+aGUgcG1pYyByZWdpc3RlciB2YWx1ZSBhdCBpbml0IHRpbWU/CgpCZXN0IFJlZ2FyZHMsCkphZWhv
+b24gQ2h1bmcKCj4gCj4gQmVzdCBSZWdhcmRzCj4gLUFuYW5kCj4gCj4gCj4gCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpVLUJvb3QgbWFpbGluZyBsaXN0
+ClUtQm9vdEBsaXN0cy5kZW54LmRlCmh0dHBzOi8vbGlzdHMuZGVueC5kZS9saXN0aW5mby91LWJv
+b3QK
