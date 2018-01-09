@@ -1,94 +1,109 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 3/9] soc: samsung: pmu: Add the PMU data of exynos5433 to
- support low-power state
-Date: Tue, 9 Jan 2018 14:11:57 +0000
-Message-ID: <b639da18-a069-aeb7-ceca-30c79b1c25c8@arm.com>
-References: <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
- <CGME20180109075905epcas1p321b8898a0d45287d63364e1aa768fdab@epcas1p3.samsung.com>
- <1515484746-10656-4-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] ARM: dts: samsung: Remove unused samsung_k3pe0e000b
+Date: Tue,  9 Jan 2018 18:42:23 +0100
+Message-ID: <20180109174223.6303-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1515484746-10656-4-git-send-email-cw00.choi@samsung.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, krzk@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, tomasz.figa@gmail.com, chanwoo@kernel.org, jh80.chung@samsung.com, inki.dae@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sricharan R <r.sricharan@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+The only user of DTSI for Samsung K3PE0E000B memory was removed in
+commit fa63d037283a ("ARM: dts: omap5: Make uevm as the official board
+and deprecate sevm support") so get rid of this DTSI as well.
 
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ MAINTAINERS                               |  1 -
+ arch/arm/boot/dts/samsung_k3pe0e000b.dtsi | 68 -------------------------------
+ 2 files changed, 69 deletions(-)
+ delete mode 100644 arch/arm/boot/dts/samsung_k3pe0e000b.dtsi
 
-On 09/01/18 07:59, Chanwoo Choi wrote:
-> This patch adds the PMU (Power Management Unit) data of exynos5433 SoC
-> in order to support the various power modes. Each power mode has
-> the different value for reducing the power-consumption.
-> 
-> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  arch/arm/mach-exynos/common.h               |   2 -
->  drivers/soc/samsung/Makefile                |   3 +-
->  drivers/soc/samsung/exynos-pmu.c            |   1 +
->  drivers/soc/samsung/exynos-pmu.h            |   2 +
->  drivers/soc/samsung/exynos5433-pmu.c        | 286 ++++++++++++++++++++++++++++
->  include/linux/soc/samsung/exynos-regs-pmu.h | 148 ++++++++++++++
->  6 files changed, 439 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/soc/samsung/exynos5433-pmu.c
-> 
-
-> diff --git a/drivers/soc/samsung/exynos5433-pmu.c b/drivers/soc/samsung/exynos5433-pmu.c
-> new file mode 100644
-> index 000000000000..2571e61522f0
-> --- /dev/null
-> +++ b/drivers/soc/samsung/exynos5433-pmu.c
-> @@ -0,0 +1,286 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright (c) 2018 Samsung Electronics Co., Ltd.
-> +// Copyright (c) Jonghwa Lee <jonghwa3.lee@samsung.com>
-> +// Copyright (c) Chanwoo Choi <cw00.choi@samsung.com>
-> +//
-> +// EXYNOS5433 - CPU PMU (Power Management Unit) support
-> +
-> +#include <linux/soc/samsung/exynos-regs-pmu.h>
-> +#include <linux/soc/samsung/exynos-pmu.h>
-> +
-> +#include "exynos-pmu.h"
-> +
-> +static struct exynos_pmu_conf exynos5433_pmu_config[] = {
-> +	/* { .offset = address,	.val = { AFTR, LPA, SLEEP } } */
-> +	{ EXYNOS5433_ATLAS_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
-> +	{ EXYNOS5433_ATLAS_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
-> +	{ EXYNOS5433_ATLAS_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
-> +	{ EXYNOS5433_ATLAS_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
-> +	{ EXYNOS5433_APOLLO_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
-> +	{ EXYNOS5433_APOLLO_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
-> +	{ EXYNOS5433_APOLLO_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
-> +	{ EXYNOS5433_APOLLO_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
-> +	{ EXYNOS5433_ATLAS_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> +	{ EXYNOS5433_APOLLO_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-
-
-1. First of all why do you need any of these CPU related PMU config
-   registers in kernel ? From the information I gathered this is ARM64
-   SoC using PSCI. These are needed just in PSCI implementation and not
-   in kernel. So can you elaborate on why there are present here ?
-
-2. Are there any public documents that these names map to ?
-   If there is none, please replace these codenames(ATLAS, APOLLO) with
-   appropriately.
-
-Sorry if these are already answered, just point me to those threads.
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2842ce504fe3..36a5a13a1af4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1849,7 +1849,6 @@ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
+ S:	Maintained
+ F:	arch/arm/boot/dts/s3c*
+ F:	arch/arm/boot/dts/s5p*
+-F:	arch/arm/boot/dts/samsung*
+ F:	arch/arm/boot/dts/exynos*
+ F:	arch/arm64/boot/dts/exynos/
+ F:	arch/arm/plat-samsung/
+diff --git a/arch/arm/boot/dts/samsung_k3pe0e000b.dtsi b/arch/arm/boot/dts/samsung_k3pe0e000b.dtsi
+deleted file mode 100644
+index dbdda36179ee..000000000000
+--- a/arch/arm/boot/dts/samsung_k3pe0e000b.dtsi
++++ /dev/null
+@@ -1,68 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Timings and Geometry for Samsung K3PE0E000B memory part
+- */
+-
+-/ {
+-	samsung_K3PE0E000B: lpddr2 {
+-		compatible	= "Samsung,K3PE0E000B","jedec,lpddr2-s4";
+-		density		= <4096>;
+-		io-width	= <32>;
+-
+-		tRPab-min-tck	= <3>;
+-		tRCD-min-tck	= <3>;
+-		tWR-min-tck	= <3>;
+-		tRASmin-min-tck	= <3>;
+-		tRRD-min-tck	= <2>;
+-		tWTR-min-tck	= <2>;
+-		tXP-min-tck	= <2>;
+-		tRTP-min-tck	= <2>;
+-		tCKE-min-tck	= <3>;
+-		tCKESR-min-tck	= <3>;
+-		tFAW-min-tck	= <8>;
+-
+-		timings_samsung_K3PE0E000B_533MHz: lpddr2-timings@0 {
+-			compatible	= "jedec,lpddr2-timings";
+-			min-freq	= <10000000>;
+-			max-freq	= <533333333>;
+-			tRPab		= <21000>;
+-			tRCD		= <18000>;
+-			tWR		= <15000>;
+-			tRAS-min	= <42000>;
+-			tRRD		= <10000>;
+-			tWTR		= <7500>;
+-			tXP		= <7500>;
+-			tRTP		= <7500>;
+-			tCKESR		= <15000>;
+-			tDQSCK-max	= <5500>;
+-			tFAW		= <50000>;
+-			tZQCS		= <90000>;
+-			tZQCL		= <360000>;
+-			tZQinit		= <1000000>;
+-			tRAS-max-ns	= <70000>;
+-			tDQSCK-max-derated = <6000>;
+-		};
+-
+-		timings_samsung_K3PE0E000B_266MHz: lpddr2-timings@1 {
+-			compatible	= "jedec,lpddr2-timings";
+-			min-freq	= <10000000>;
+-			max-freq	= <266666666>;
+-			tRPab		= <21000>;
+-			tRCD		= <18000>;
+-			tWR		= <15000>;
+-			tRAS-min	= <42000>;
+-			tRRD		= <10000>;
+-			tWTR		= <7500>;
+-			tXP		= <7500>;
+-			tRTP		= <7500>;
+-			tCKESR		= <15000>;
+-			tDQSCK-max	= <5500>;
+-			tFAW		= <50000>;
+-			tZQCS		= <90000>;
+-			tZQCL		= <360000>;
+-			tZQinit		= <1000000>;
+-			tRAS-max-ns	= <70000>;
+-			tDQSCK-max-derated = <6000>;
+-		};
+-	};
+-};
 -- 
-Regards,
-Sudeep
+2.11.0
