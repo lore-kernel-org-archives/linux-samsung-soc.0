@@ -1,40 +1,129 @@
 From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 19/19] fs: handle inode->i_version more efficiently
-Date: Tue, 9 Jan 2018 10:27:50 +0100
-Message-ID: <CAJKOXPfW8h4U8RKY86Sz-5BVxRQAu-ACEJtZ0hCiLVSn7tEB0Q@mail.gmail.com>
-References: <20171222120556.7435-1-jlayton@kernel.org> <20171222120556.7435-20-jlayton@kernel.org>
- <CAJKOXPd8ojTjiGF3nKQKWtVrEsjWfjvg6rLL+RGnbu_SZMDu7g@mail.gmail.com>
- <1515416208.3486.14.camel@kernel.org> <CAJKOXPfv4eSERDiUuZuJ7KdpyGU0=Eqt_A+J6knp-FEW9BZoSw@mail.gmail.com>
- <1515418164.3486.18.camel@kernel.org> <20180108172928.aqndozcpljb73uj6@kozik-lap>
- <1515434419.3486.41.camel@kernel.org> <20180108183353.emiwsd4aic4gmytr@kozik-lap>
- <1515438929.3486.48.camel@kernel.org> <20180108201713.rdfjn7j65cuqmwuo@kozik-lap>
- <1515447593.3486.54.camel@kernel.org>
+Subject: Re: [PATCH 1/9] clk: samsung: exynos5433: Add clock flag to support suspend-to-ram
+Date: Tue, 9 Jan 2018 12:44:12 +0100
+Message-ID: <CAJKOXPc2Y0KX=gozGaMfJJM1B2gsPgLQ4rF5_R8wq5F6=Sxc7g@mail.gmail.com>
+References: <CGME20180109075905epcas1p1486543d8fec46f47d9d5ac350d841337@epcas1p1.samsung.com>
+ <1515484746-10656-1-git-send-email-cw00.choi@samsung.com> <1515484746-10656-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1515447593.3486.54.camel-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jeff Layton <jlayton-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org, neilb-l3A5Bk7waGM@public.gmane.org, jack-l3A5Bk7waGM@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tytso-3s7WtUTddSA@public.gmane.org, adilger.kernel-m1MBpc4rdrD3fQ9qLvQP4Q@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, darrick.wong-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, clm-b10kYP2dOMg@public.gmane.org, jbacik-b10kYP2dOMg@public.gmane.org, dsterba-IBi9RG/b67k@public.gmane.org, linux-integrity-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, zohar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, dmitry.kasatkin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-afs-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, jaltman-hRzEac23uH1Wk0Htik3J/w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1515484746-10656-2-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 8, 2018 at 10:39 PM, Jeff Layton <jlayton-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->>
+On Tue, Jan 9, 2018 at 8:58 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch adds the CLK_IS_CRITICAL and CLK_IGNORE_UNUSED flag
+> to some clocks in order to avoid the hang-out in the suspend mode.
 >
-> Got it, that's helpful. Does this patch help (on top of the others) ?
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+> Cc: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
 >
-> ------------------------8<--------------------------
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index db270908037a..3dc53cd0c730 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -583,25 +583,25 @@
+>                         CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>         GATE(CLK_ACLK_CAM1_333, "aclk_cam1_333", "div_aclk_cam1_333",
+>                         ENABLE_ACLK_TOP, 13,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
+>                         ENABLE_ACLK_TOP, 12,
+>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
+>                         ENABLE_ACLK_TOP, 11,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM0_333, "aclk_cam0_333", "div_aclk_cam0_333",
+>                         ENABLE_ACLK_TOP, 10,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
+>                         ENABLE_ACLK_TOP, 9,
+>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
+>                         ENABLE_ACLK_TOP, 8,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_ISP_DIS_400, "aclk_isp_dis_400", "div_aclk_isp_dis_400",
+>                         ENABLE_ACLK_TOP, 7,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
+>                         ENABLE_ACLK_TOP, 6,
+>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+> @@ -624,11 +624,11 @@
 >
-> SQUASH: nfs: compare raw iversion counter since that's what's
->  being stored
->
+>         /* ENABLE_SCLK_TOP_CAM1 */
+>         GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "div_sclk_isp_sensor2_b",
+> -                       ENABLE_SCLK_TOP_CAM1, 7, 0, 0),
+> +                       ENABLE_SCLK_TOP_CAM1, 7, CLK_IGNORE_UNUSED, 0),
+>         GATE(CLK_SCLK_ISP_SENSOR1, "sclk_isp_sensor1", "div_sclk_isp_sensor1_b",
+>                         ENABLE_SCLK_TOP_CAM1, 6, 0, 0),
+>         GATE(CLK_SCLK_ISP_SENSOR0, "sclk_isp_sensor0", "div_sclk_isp_sensor0_b",
+> -                       ENABLE_SCLK_TOP_CAM1, 5, 0, 0),
+> +                       ENABLE_SCLK_TOP_CAM1, 5, CLK_IGNORE_UNUSED, 0),
 
-Did not apply cleanly (in include/linux/iversion.h) but it was easy to
-adjust. However still no improvements. Applied on top of others.
+Marking this and few others related to ISP as ignore_unused or
+is_critical looks like a hacky workaround for wrong topology or
+missing clock users. The real cause should be fixed instead marking
+all the clocks as critical or ignore_unused.
 
 Best regards,
 Krzysztof
+
+>         GATE(CLK_SCLK_ISP_MCTADC_CAM1, "sclk_isp_mctadc_cam1", "oscclk",
+>                         ENABLE_SCLK_TOP_CAM1, 4, 0, 0),
+>         GATE(CLK_SCLK_ISP_UART_CAM1, "sclk_isp_uart_cam1", "div_sclk_isp_uart",
+> @@ -636,7 +636,7 @@
+>         GATE(CLK_SCLK_ISP_SPI1_CAM1, "sclk_isp_spi1_cam1", "div_sclk_isp_spi1_b",
+>                         ENABLE_SCLK_TOP_CAM1, 1, 0, 0),
+>         GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
+> -                       ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
+> +                       ENABLE_SCLK_TOP_CAM1, 0, CLK_IGNORE_UNUSED, 0),
+>
+>         /* ENABLE_SCLK_TOP_DISP */
+>         GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
+> @@ -654,7 +654,7 @@
+>                         ENABLE_SCLK_TOP_FSYS, 4, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_UFSUNIPRO_FSYS, "sclk_ufsunipro_fsys",
+>                         "div_sclk_ufsunipro", ENABLE_SCLK_TOP_FSYS,
+> -                       3, CLK_SET_RATE_PARENT, 0),
+> +                       3, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_SCLK_USBHOST30_FSYS, "sclk_usbhost30_fsys",
+>                         "div_sclk_usbhost30", ENABLE_SCLK_TOP_FSYS,
+>                         1, CLK_SET_RATE_PARENT, 0),
+> @@ -2982,7 +2982,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+>         GATE(CLK_PCLK_AUD_SLIMBUS, "pclk_aud_slimbus", "div_aclk_aud",
+>                         ENABLE_PCLK_AUD, 6, 0, 0),
+>         GATE(CLK_PCLK_AUD_UART, "pclk_aud_uart", "div_aclk_aud",
+> -                       ENABLE_PCLK_AUD, 5, 0, 0),
+> +                       ENABLE_PCLK_AUD, 5, CLK_IS_CRITICAL, 0),
+>         GATE(CLK_PCLK_AUD_PCM, "pclk_aud_pcm", "div_aclk_aud",
+>                         ENABLE_PCLK_AUD, 4, 0, 0),
+>         GATE(CLK_PCLK_AUD_I2S, "pclk_aud_i2s", "div_aclk_aud",
+> @@ -3008,7 +3008,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+>         GATE(CLK_SCLK_AUD_SLIMBUS, "sclk_aud_slimbus", "div_sclk_aud_slimbus",
+>                         ENABLE_SCLK_AUD1, 4, 0, 0),
+>         GATE(CLK_SCLK_AUD_UART, "sclk_aud_uart", "div_sclk_aud_uart",
+> -                       ENABLE_SCLK_AUD1, 3, CLK_IGNORE_UNUSED, 0),
+> +                       ENABLE_SCLK_AUD1, 3, CLK_IS_CRITICAL, 0),
+>         GATE(CLK_SCLK_AUD_PCM, "sclk_aud_pcm", "div_sclk_aud_pcm",
+>                         ENABLE_SCLK_AUD1, 2, 0, 0),
+>         GATE(CLK_SCLK_I2S_BCLK, "sclk_i2s_bclk", "ioclk_i2s_bclk",
+> --
+> 1.9.1
+>
 --
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
