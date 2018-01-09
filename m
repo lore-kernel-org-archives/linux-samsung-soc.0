@@ -1,305 +1,124 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [RFC PATCH 4/9] soc: samsung: Add generic power-management driver
- for Exynos
-Date: Tue, 09 Jan 2018 16:59:01 +0900
-Message-ID: <1515484746-10656-5-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 1/9] clk: samsung: exynos5433: Add clock flag to support
+ suspend-to-ram
+Date: Tue, 09 Jan 2018 16:58:58 +0900
+Message-ID: <1515484746-10656-2-git-send-email-cw00.choi@samsung.com>
 References: <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
-        <CGME20180109075905epcas1p40431a90ecc3530f2200ade028bf54594@epcas1p4.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+ <CGME20180109075905epcas1p1486543d8fec46f47d9d5ac350d841337@epcas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: krzk@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
-Cc: tomasz.figa@gmail.com, cw00.choi@samsung.com, chanwoo@kernel.org, jh80.chung@samsung.com, inki.dae@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>
+Cc: inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, tomasz.figa@gmail.com, linux-kernel@vger.kernel.org, jh80.chung@samsung.com, cw00.choi@samsung.com, chanwoo@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To enter suspend, Exynos SoC requires the some machine dependent procedures.
-This patch introduces the generic power-management driver to support
-those requirements and generic interface for power state management.
+This patch adds the CLK_IS_CRITICAL and CLK_IGNORE_UNUSED flag
+to some clocks in order to avoid the hang-out in the suspend mode.
 
-Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
 ---
- arch/arm/mach-exynos/common.h         |   1 -
- arch/arm/mach-exynos/exynos.c         |  23 +----
- drivers/soc/samsung/Makefile          |   2 +-
- drivers/soc/samsung/exynos-pm.c       | 176 ++++++++++++++++++++++++++++++++++
- include/linux/soc/samsung/exynos-pm.h |  21 ++++
- 5 files changed, 199 insertions(+), 24 deletions(-)
- create mode 100644 drivers/soc/samsung/exynos-pm.c
- create mode 100644 include/linux/soc/samsung/exynos-pm.h
+ drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index afbc143a3d5d..ad482c0fc131 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -119,7 +119,6 @@ enum {
-  * Magic values for bootloader indicating chosen low power mode.
-  * See also Documentation/arm/Samsung/Bootloader-interface.txt
-  */
--#define EXYNOS_SLEEP_MAGIC	0x00000bad
- #define EXYNOS_AFTR_MAGIC	0xfcba0d10
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index db270908037a..3dc53cd0c730 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -583,25 +583,25 @@
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_CAM1_333, "aclk_cam1_333", "div_aclk_cam1_333",
+ 			ENABLE_ACLK_TOP, 13,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
+ 			ENABLE_ACLK_TOP, 12,
+ 			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
+ 			ENABLE_ACLK_TOP, 11,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_CAM0_333, "aclk_cam0_333", "div_aclk_cam0_333",
+ 			ENABLE_ACLK_TOP, 10,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
+ 			ENABLE_ACLK_TOP, 9,
+ 			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
+ 			ENABLE_ACLK_TOP, 8,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_ISP_DIS_400, "aclk_isp_dis_400", "div_aclk_isp_dis_400",
+ 			ENABLE_ACLK_TOP, 7,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
+ 			ENABLE_ACLK_TOP, 6,
+ 			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+@@ -624,11 +624,11 @@
 
- void exynos_set_boot_flag(unsigned int cpu, unsigned int mode);
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index fbd108ce8745..0d5265d175c4 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -12,6 +12,7 @@
- #include <linux/of_fdt.h>
- #include <linux/platform_device.h>
- #include <linux/irqchip.h>
-+#include <linux/soc/samsung/exynos-pm.h>
- #include <linux/soc/samsung/exynos-regs-pmu.h>
+ 	/* ENABLE_SCLK_TOP_CAM1 */
+ 	GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "div_sclk_isp_sensor2_b",
+-			ENABLE_SCLK_TOP_CAM1, 7, 0, 0),
++			ENABLE_SCLK_TOP_CAM1, 7, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_ISP_SENSOR1, "sclk_isp_sensor1", "div_sclk_isp_sensor1_b",
+ 			ENABLE_SCLK_TOP_CAM1, 6, 0, 0),
+ 	GATE(CLK_SCLK_ISP_SENSOR0, "sclk_isp_sensor0", "div_sclk_isp_sensor0_b",
+-			ENABLE_SCLK_TOP_CAM1, 5, 0, 0),
++			ENABLE_SCLK_TOP_CAM1, 5, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_ISP_MCTADC_CAM1, "sclk_isp_mctadc_cam1", "oscclk",
+ 			ENABLE_SCLK_TOP_CAM1, 4, 0, 0),
+ 	GATE(CLK_SCLK_ISP_UART_CAM1, "sclk_isp_uart_cam1", "div_sclk_isp_uart",
+@@ -636,7 +636,7 @@
+ 	GATE(CLK_SCLK_ISP_SPI1_CAM1, "sclk_isp_spi1_cam1", "div_sclk_isp_spi1_b",
+ 			ENABLE_SCLK_TOP_CAM1, 1, 0, 0),
+ 	GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
+-			ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
++			ENABLE_SCLK_TOP_CAM1, 0, CLK_IGNORE_UNUSED, 0),
 
- #include <asm/cacheflush.h>
-@@ -41,28 +42,6 @@
- 	.id                = -1,
- };
-
--void __iomem *sysram_base_addr __ro_after_init;
--void __iomem *sysram_ns_base_addr __ro_after_init;
--
--void __init exynos_sysram_init(void)
--{
--	struct device_node *node;
--
--	for_each_compatible_node(node, NULL, "samsung,exynos4210-sysram") {
--		if (!of_device_is_available(node))
--			continue;
--		sysram_base_addr = of_iomap(node, 0);
--		break;
--	}
--
--	for_each_compatible_node(node, NULL, "samsung,exynos4210-sysram-ns") {
--		if (!of_device_is_available(node))
--			continue;
--		sysram_ns_base_addr = of_iomap(node, 0);
--		break;
--	}
--}
--
- static void __init exynos_init_late(void)
- {
- 	if (of_machine_is_compatible("samsung,exynos5440"))
-diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-index d2e637339a45..58ca5bdabf1f 100644
---- a/drivers/soc/samsung/Makefile
-+++ b/drivers/soc/samsung/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
-+obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos-pm.o
-
- obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
- 					exynos5250-pmu.o exynos5420-pmu.o \
-diff --git a/drivers/soc/samsung/exynos-pm.c b/drivers/soc/samsung/exynos-pm.c
-new file mode 100644
-index 000000000000..45d84bbe5e61
---- /dev/null
-+++ b/drivers/soc/samsung/exynos-pm.c
-@@ -0,0 +1,176 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// based on arch/arm/mach-exynos/suspend.c
-+// Copyright (c) 2018 Samsung Electronics Co., Ltd.
-+//
-+// Exynos Power Management support driver
-+
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_fdt.h>
-+#include <linux/kernel.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/syscore_ops.h>
-+#include <linux/suspend.h>
-+
-+#include <asm/cpuidle.h>
-+#include <asm/io.h>
-+#include <asm/suspend.h>
-+
-+#include <linux/soc/samsung/exynos-pm.h>
-+#include <linux/soc/samsung/exynos-pmu.h>
-+
-+/*
-+ * The struct exynos_pm_data contains the callbacks of
-+ * both struct platform_suspend_ops and syscore_ops.
-+ * This structure is listed according to the call order,
-+ * because the callback call order for the two structures is mixed.
-+ */
-+struct exynos_pm_data {
-+	int (*prepare)(void);			/* for platform_suspend_ops */
-+	int (*suspend)(void);			/* for syscore_ops */
-+	int (*enter)(suspend_state_t state);	/* for platform_suspend_ops */
-+	void (*resume)(void);			/* for syscore_ops */
-+	void (*finish)(void);			/* for platform_suspend_ops */
-+};
-+
-+static struct platform_suspend_ops exynos_pm_suspend_ops;
-+static struct syscore_ops exynos_pm_syscore_ops;
-+static const struct exynos_pm_data *pm_data  __ro_after_init;
-+
-+void __iomem *sysram_base_addr __ro_after_init;
-+void __iomem *sysram_ns_base_addr __ro_after_init;
-+
-+static int exynos_pm_prepare(void)
-+{
-+	int ret;
-+
-+	/*
-+	 * REVISIT: It would be better if struct platform_suspend_ops
-+	 * .prepare handler get the suspend_state_t as a parameter to
-+	 * avoid hard-coding the suspend to mem state. It's safe to do
-+	 * it now only because the suspend_valid_only_mem function is
-+	 * used as the .valid callback used to check if a given state
-+	 * is supported by the platform anyways.
-+	 */
-+	ret = regulator_suspend_prepare(PM_SUSPEND_MEM);
-+	if (ret) {
-+		pr_err("Failed to prepare regulators for suspend (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	if (pm_data->prepare) {
-+		ret = pm_data->prepare();
-+		if (ret) {
-+			pr_err("Failed to prepare for suspend (%d)\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int exynos_pm_suspend(void)
-+{
-+	if (pm_data->suspend)
-+		return pm_data->suspend();
-+
-+	return 0;
-+}
-+
-+static int exynos_pm_enter(suspend_state_t state)
-+{
-+	int ret;
-+
-+	exynos_sys_powerdown_conf(SYS_SLEEP);
-+
-+	ret = pm_data->enter(state);
-+	if (ret) {
-+		pr_err("Failed to enter sleep\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void exynos_pm_resume(void)
-+{
-+	exynos_sys_powerup_conf(SYS_SLEEP);
-+
-+	if (pm_data->resume)
-+		pm_data->resume();
-+}
-+
-+static void exynos_pm_finish(void)
-+{
-+	int ret;
-+
-+	ret = regulator_suspend_finish();
-+	if (ret)
-+		pr_warn("Failed to resume regulators from suspend (%d)\n", ret);
-+
-+	if (pm_data->finish)
-+		pm_data->finish();
-+}
-+
-+/*
-+ * Split the data between ARM architectures because it is relatively big
-+ * and useless on other arch.
-+ */
-+#ifdef CONFIG_EXYNOS_PMU_ARM_DRIVERS
-+#define exynos_pm_data_arm_ptr(data)	(&data)
-+#else
-+#define exynos_pm_data_arm_ptr(data)	NULL
-+#endif
-+
-+static const struct of_device_id exynos_pm_of_device_ids[] = {
-+	{ /*sentinel*/ },
-+};
-+
-+void __init exynos_sysram_init(void)
-+{
-+	struct device_node *np;
-+
-+	for_each_compatible_node(np, NULL, "samsung,exynos4210-sysram") {
-+		if (!of_device_is_available(np))
-+			continue;
-+		sysram_base_addr = of_iomap(np, 0);
-+		break;
-+	}
-+
-+	for_each_compatible_node(np, NULL, "samsung,exynos4210-sysram-ns") {
-+		if (!of_device_is_available(np))
-+			continue;
-+		sysram_ns_base_addr = of_iomap(np, 0);
-+		break;
-+	}
-+}
-+
-+static int __init exynos_pm_init(void)
-+{
-+	const struct of_device_id *match;
-+	struct device_node *np;
-+
-+	np = of_find_matching_node_and_match(NULL,
-+					exynos_pm_of_device_ids, &match);
-+	if (!np) {
-+		pr_err("Failed to find PMU node for Exynos Power-Management\n");
-+		return -ENODEV;
-+	}
-+	pm_data = (const struct exynos_pm_data *) match->data;
-+
-+	exynos_sysram_init();
-+
-+	exynos_pm_suspend_ops.valid	= suspend_valid_only_mem;
-+	exynos_pm_suspend_ops.prepare	= exynos_pm_prepare;
-+	exynos_pm_syscore_ops.suspend	= exynos_pm_suspend;
-+	exynos_pm_suspend_ops.enter	= exynos_pm_enter;
-+	exynos_pm_syscore_ops.resume	= exynos_pm_resume;
-+	exynos_pm_suspend_ops.finish	= exynos_pm_finish;
-+
-+	register_syscore_ops(&exynos_pm_syscore_ops);
-+	suspend_set_ops(&exynos_pm_suspend_ops);
-+
-+	return 0;
-+}
-+postcore_initcall(exynos_pm_init);
-diff --git a/include/linux/soc/samsung/exynos-pm.h b/include/linux/soc/samsung/exynos-pm.h
-new file mode 100644
-index 000000000000..b1afe95ed10c
---- /dev/null
-+++ b/include/linux/soc/samsung/exynos-pm.h
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2018 Samsung Electronics Co., Ltd.
-+//
-+// Header for Exynos Power-Management support driver
-+
-+#ifndef __LINUX_SOC_EXYNOS_PM_H
-+#define __LINUX_SOC_EXYNOS_PM_H
-+
-+/*
-+ * Magic values for bootloader indicating chosen low power mode.
-+ * See also Documentation/arm/Samsung/Bootloader-interface.txt
-+ */
-+#define EXYNOS_SLEEP_MAGIC	0x00000bad
-+
-+extern void __iomem *sysram_base_addr;
-+extern void __iomem *sysram_ns_base_addr;
-+
-+extern void exynos_sysram_init(void);
-+
-+#endif /* __LINUX_SOC_EXYNOS_PMU_H */
+ 	/* ENABLE_SCLK_TOP_DISP */
+ 	GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
+@@ -654,7 +654,7 @@
+ 			ENABLE_SCLK_TOP_FSYS, 4, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UFSUNIPRO_FSYS, "sclk_ufsunipro_fsys",
+ 			"div_sclk_ufsunipro", ENABLE_SCLK_TOP_FSYS,
+-			3, CLK_SET_RATE_PARENT, 0),
++			3, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_SCLK_USBHOST30_FSYS, "sclk_usbhost30_fsys",
+ 			"div_sclk_usbhost30", ENABLE_SCLK_TOP_FSYS,
+ 			1, CLK_SET_RATE_PARENT, 0),
+@@ -2982,7 +2982,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+ 	GATE(CLK_PCLK_AUD_SLIMBUS, "pclk_aud_slimbus", "div_aclk_aud",
+ 			ENABLE_PCLK_AUD, 6, 0, 0),
+ 	GATE(CLK_PCLK_AUD_UART, "pclk_aud_uart", "div_aclk_aud",
+-			ENABLE_PCLK_AUD, 5, 0, 0),
++			ENABLE_PCLK_AUD, 5, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_PCLK_AUD_PCM, "pclk_aud_pcm", "div_aclk_aud",
+ 			ENABLE_PCLK_AUD, 4, 0, 0),
+ 	GATE(CLK_PCLK_AUD_I2S, "pclk_aud_i2s", "div_aclk_aud",
+@@ -3008,7 +3008,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+ 	GATE(CLK_SCLK_AUD_SLIMBUS, "sclk_aud_slimbus", "div_sclk_aud_slimbus",
+ 			ENABLE_SCLK_AUD1, 4, 0, 0),
+ 	GATE(CLK_SCLK_AUD_UART, "sclk_aud_uart", "div_sclk_aud_uart",
+-			ENABLE_SCLK_AUD1, 3, CLK_IGNORE_UNUSED, 0),
++			ENABLE_SCLK_AUD1, 3, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_SCLK_AUD_PCM, "sclk_aud_pcm", "div_sclk_aud_pcm",
+ 			ENABLE_SCLK_AUD1, 2, 0, 0),
+ 	GATE(CLK_SCLK_I2S_BCLK, "sclk_i2s_bclk", "ioclk_i2s_bclk",
 --
 1.9.1
