@@ -1,64 +1,94 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 6/9] arm64: dts: exynos: Add iRAM device-tree node for Exynos5433
-Date: Tue, 9 Jan 2018 13:46:53 +0100
-Message-ID: <CAJKOXPcfxPgU188ukVTMhLUagmaY9o_8VHf2COxzDhNVAxnznA@mail.gmail.com>
-References: <CGME20180109075905epcas2p4aa0174854c0796cc7fa75bdf8a273791@epcas2p4.samsung.com>
- <1515484746-10656-1-git-send-email-cw00.choi@samsung.com> <1515484746-10656-7-git-send-email-cw00.choi@samsung.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 3/9] soc: samsung: pmu: Add the PMU data of exynos5433 to
+ support low-power state
+Date: Tue, 9 Jan 2018 14:11:57 +0000
+Message-ID: <b639da18-a069-aeb7-ceca-30c79b1c25c8@arm.com>
+References: <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20180109075905epcas1p321b8898a0d45287d63364e1aa768fdab@epcas1p3.samsung.com>
+ <1515484746-10656-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1515484746-10656-7-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1515484746-10656-4-git-send-email-cw00.choi@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, krzk@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>, tomasz.figa@gmail.com, chanwoo@kernel.org, jh80.chung@samsung.com, inki.dae@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 9, 2018 at 8:59 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> This patch adds the iRAM device-tree node of Exynos5433 which
-> defines the memory map of iRAM as following and it is used for suspend.
-> - address: 0x0202_0000 ~ 0x3000_0000
->
-> Signed-off-by: Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+
+On 09/01/18 07:59, Chanwoo Choi wrote:
+> This patch adds the PMU (Power Management Unit) data of exynos5433 SoC
+> in order to support the various power modes. Each power mode has
+> the different value for reducing the power-consumption.
+> 
+> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index 62f276970174..77f4321b247c 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -262,6 +262,20 @@
->                         interrupt-affinity = <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
->                 };
->
-> +               sysram@02020000 {
+>  arch/arm/mach-exynos/common.h               |   2 -
+>  drivers/soc/samsung/Makefile                |   3 +-
+>  drivers/soc/samsung/exynos-pmu.c            |   1 +
+>  drivers/soc/samsung/exynos-pmu.h            |   2 +
+>  drivers/soc/samsung/exynos5433-pmu.c        | 286 ++++++++++++++++++++++++++++
+>  include/linux/soc/samsung/exynos-regs-pmu.h | 148 ++++++++++++++
+>  6 files changed, 439 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/soc/samsung/exynos5433-pmu.c
+> 
 
-Remove leading 0.
-
-Best regards,
-Krzysztof
-
-> +                       compatible = "mmio-sram";
-> +                       reg = <0x02020000 0x5c000>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +                       ranges = <0 0x02020000 0x5c000>;
-> +                       status = "okay";
+> diff --git a/drivers/soc/samsung/exynos5433-pmu.c b/drivers/soc/samsung/exynos5433-pmu.c
+> new file mode 100644
+> index 000000000000..2571e61522f0
+> --- /dev/null
+> +++ b/drivers/soc/samsung/exynos5433-pmu.c
+> @@ -0,0 +1,286 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (c) 2018 Samsung Electronics Co., Ltd.
+> +// Copyright (c) Jonghwa Lee <jonghwa3.lee@samsung.com>
+> +// Copyright (c) Chanwoo Choi <cw00.choi@samsung.com>
+> +//
+> +// EXYNOS5433 - CPU PMU (Power Management Unit) support
 > +
-> +                       smp-sysram@5b000 {
-> +                               compatible = "samsung,exynos4210-sysram-ns";
-> +                               reg = <0x5b000 0x1000>;
-> +                       };
-> +               };
+> +#include <linux/soc/samsung/exynos-regs-pmu.h>
+> +#include <linux/soc/samsung/exynos-pmu.h>
 > +
->                 chipid@10000000 {
->                         compatible = "samsung,exynos4210-chipid";
->                         reg = <0x10000000 0x100>;
-> --
-> 1.9.1
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +#include "exynos-pmu.h"
+> +
+> +static struct exynos_pmu_conf exynos5433_pmu_config[] = {
+> +	/* { .offset = address,	.val = { AFTR, LPA, SLEEP } } */
+> +	{ EXYNOS5433_ATLAS_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+> +	{ EXYNOS5433_ATLAS_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+> +	{ EXYNOS5433_ATLAS_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+> +	{ EXYNOS5433_ATLAS_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+> +	{ EXYNOS5433_APOLLO_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+> +	{ EXYNOS5433_APOLLO_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+> +	{ EXYNOS5433_APOLLO_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+> +	{ EXYNOS5433_APOLLO_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+> +	{ EXYNOS5433_ATLAS_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> +	{ EXYNOS5433_APOLLO_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+
+
+1. First of all why do you need any of these CPU related PMU config
+   registers in kernel ? From the information I gathered this is ARM64
+   SoC using PSCI. These are needed just in PSCI implementation and not
+   in kernel. So can you elaborate on why there are present here ?
+
+2. Are there any public documents that these names map to ?
+   If there is none, please replace these codenames(ATLAS, APOLLO) with
+   appropriately.
+
+Sorry if these are already answered, just point me to those threads.
+
+-- 
+Regards,
+Sudeep
