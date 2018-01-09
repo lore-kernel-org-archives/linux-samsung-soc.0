@@ -1,63 +1,98 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] crypto: s5p-sss - Add SPDX license identifier
-Date: Tue,  9 Jan 2018 18:57:36 +0100
-Message-ID: <20180109175736.6885-2-krzk@kernel.org>
-References: <20180109175736.6885-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180109175736.6885-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] ARM: EXYNOS: Add SPDX license identifiers
+Date: Tue,  9 Jan 2018 19:29:54 +0100
+Message-ID: <20180109182956.2456-1-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:40812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934860AbeAISaI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 9 Jan 2018 13:30:08 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Replace GPL license statement with SPDX GPL-2.0 license identifier.
+Replace GPL license statements with SPDX GPL-2.0 and GPL-2.0+ license
+identifiers.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/crypto/s5p-sss.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ arch/arm/include/debug/exynos.S  |  7 ++-----
+ arch/arm/include/debug/samsung.S | 10 +++-------
+ include/linux/serial_s3c.h       | 17 ++---------------
+ 3 files changed, 7 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 62830a43d959..188f44b7eb27 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -1,17 +1,13 @@
--/*
-- * Cryptographic API.
-- *
-- * Support for Samsung S5PV210 and Exynos HW acceleration.
-- *
-- * Copyright (C) 2011 NetUP Inc. All rights reserved.
-- * Copyright (c) 2017 Samsung Electronics Co., Ltd. All rights reserved.
+diff --git a/arch/arm/include/debug/exynos.S b/arch/arm/include/debug/exynos.S
+index 60bf3c23200d..74b56769f9cb 100644
+--- a/arch/arm/include/debug/exynos.S
++++ b/arch/arm/include/debug/exynos.S
+@@ -1,11 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
 - *
 - * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as published
-- * by the Free Software Foundation.
-- *
-- * Hash part based on omap-sham.c driver.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Cryptographic API.
-+//
-+// Support for Samsung S5PV210 and Exynos HW acceleration.
-+//
-+// Copyright (C) 2011 NetUP Inc. All rights reserved.
-+// Copyright (c) 2017 Samsung Electronics Co., Ltd. All rights reserved.
-+//
-+// Hash part based on omap-sham.c driver.
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
++ */
  
- #include <linux/clk.h>
- #include <linux/crypto.h>
+ /* pull in the relevant register and map files. */
+ 
+diff --git a/arch/arm/include/debug/samsung.S b/arch/arm/include/debug/samsung.S
+index f4eeed2a1981..69201d7fb48f 100644
+--- a/arch/arm/include/debug/samsung.S
++++ b/arch/arm/include/debug/samsung.S
+@@ -1,13 +1,9 @@
+-/* arch/arm/plat-samsung/include/plat/debug-macro.S
+- *
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
+  * Copyright 2005, 2007 Simtec Electronics
+  *	http://armlinux.simtec.co.uk/
+  *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
++ */
+ 
+ #include <linux/serial_s3c.h>
+ 
+diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
+index a7f004a3c177..463ed28d2b27 100644
+--- a/include/linux/serial_s3c.h
++++ b/include/linux/serial_s3c.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  *  Internal header file for Samsung S3C2410 serial ports (UART0-2)
+  *
+@@ -10,21 +11,7 @@
+  *  Internal header file for MX1ADS serial ports (UART1 & 2)
+  *
+  *  Copyright (C) 2002 Shane Nay (shane@minirl.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-*/
++ */
+ 
+ #ifndef __ASM_ARM_REGS_SERIAL_H
+ #define __ASM_ARM_REGS_SERIAL_H
 -- 
 2.11.0
