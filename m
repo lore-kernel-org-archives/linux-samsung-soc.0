@@ -1,98 +1,60 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/3] ARM: EXYNOS: Add SPDX license identifiers
-Date: Tue,  9 Jan 2018 19:29:54 +0100
-Message-ID: <20180109182956.2456-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:40812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934860AbeAISaI (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 13:30:08 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 3/3] soc: samsung: Add SPDX license identifiers to headers
+Date: Tue,  9 Jan 2018 19:29:56 +0100
+Message-ID: <20180109182956.2456-3-krzk@kernel.org>
+References: <20180109182956.2456-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180109182956.2456-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Replace GPL license statements with SPDX GPL-2.0 and GPL-2.0+ license
-identifiers.
+Replace GPL license statements with SPDX GPL-2.0 license identifiers.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/include/debug/exynos.S  |  7 ++-----
- arch/arm/include/debug/samsung.S | 10 +++-------
- include/linux/serial_s3c.h       | 17 ++---------------
- 3 files changed, 7 insertions(+), 27 deletions(-)
+ include/linux/soc/samsung/exynos-pmu.h      | 5 +----
+ include/linux/soc/samsung/exynos-regs-pmu.h | 6 +-----
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/include/debug/exynos.S b/arch/arm/include/debug/exynos.S
-index 60bf3c23200d..74b56769f9cb 100644
---- a/arch/arm/include/debug/exynos.S
-+++ b/arch/arm/include/debug/exynos.S
-@@ -1,11 +1,8 @@
+diff --git a/include/linux/soc/samsung/exynos-pmu.h b/include/linux/soc/samsung/exynos-pmu.h
+index e57eb4b6cc5a..fc0b445bb36b 100644
+--- a/include/linux/soc/samsung/exynos-pmu.h
++++ b/include/linux/soc/samsung/exynos-pmu.h
+@@ -1,12 +1,9 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
   *		http://www.samsung.com
+  *
+  * Header for EXYNOS PMU Driver support
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
--*/
-+ */
+  */
  
- /* pull in the relevant register and map files. */
- 
-diff --git a/arch/arm/include/debug/samsung.S b/arch/arm/include/debug/samsung.S
-index f4eeed2a1981..69201d7fb48f 100644
---- a/arch/arm/include/debug/samsung.S
-+++ b/arch/arm/include/debug/samsung.S
-@@ -1,13 +1,9 @@
--/* arch/arm/plat-samsung/include/plat/debug-macro.S
-- *
+ #ifndef __LINUX_SOC_EXYNOS_PMU_H
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index bebdde5dccd6..66dcb9ec273a 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -1,14 +1,10 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-  * Copyright 2005, 2007 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-- *
+ /*
+  * Copyright (c) 2010-2015 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+  * EXYNOS - Power management unit definition
+  *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
--*/
-+ */
- 
- #include <linux/serial_s3c.h>
- 
-diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
-index a7f004a3c177..463ed28d2b27 100644
---- a/include/linux/serial_s3c.h
-+++ b/include/linux/serial_s3c.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  *  Internal header file for Samsung S3C2410 serial ports (UART0-2)
-  *
-@@ -10,21 +11,7 @@
-  *  Internal header file for MX1ADS serial ports (UART1 & 2)
-  *
-  *  Copyright (C) 2002 Shane Nay (shane@minirl.com)
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
 - *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
--*/
-+ */
- 
- #ifndef __ASM_ARM_REGS_SERIAL_H
- #define __ASM_ARM_REGS_SERIAL_H
+  * Notice:
+  * This is not a list of all Exynos Power Management Unit SFRs.
+  * There are too many of them, not mentioning subtle differences
 -- 
 2.11.0
