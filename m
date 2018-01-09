@@ -1,91 +1,88 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/3] memory: samsung: Add SPDX license identifiers
-Date: Tue,  9 Jan 2018 19:29:55 +0100
-Message-ID: <20180109182956.2456-2-krzk@kernel.org>
-References: <20180109182956.2456-1-krzk@kernel.org>
+Subject: [PATCH] mfd: syscon: Remove unused Exynos PMU headers
+Date: Tue,  9 Jan 2018 19:59:21 +0100
+Message-ID: <20180109185921.28260-1-krzk@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:40836 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:42910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934860AbeAISaK (ORCPT
+        id S932310AbeAIS7a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 13:30:10 -0500
-In-Reply-To: <20180109182956.2456-1-krzk@kernel.org>
+        Tue, 9 Jan 2018 13:59:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Replace GPL license statements with SPDX GPL-2.0 license identifiers.
+Since commit 5812f0106c44 ("phy: exynos4: Remove duplicated defines of
+PHY register defines") and commit 7a66647b25b6 ("phy: exynos: Use one
+define for enable bit") all users of syscon Exynos PMU headers (for PHY
+drivers) are converted to use different headers so these can be removed.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/memory/samsung/Kconfig       |  1 +
- drivers/memory/samsung/Makefile      |  1 +
- drivers/memory/samsung/exynos-srom.c | 18 +++++++-----------
- drivers/memory/samsung/exynos-srom.h |  7 ++-----
- 4 files changed, 11 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/memory/samsung/Kconfig b/drivers/memory/samsung/Kconfig
-index 9de12222061c..79ce7ea58903 100644
---- a/drivers/memory/samsung/Kconfig
-+++ b/drivers/memory/samsung/Kconfig
-@@ -1,3 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
- config SAMSUNG_MC
- 	bool "Samsung Exynos Memory Controller support" if COMPILE_TEST
- 	help
-diff --git a/drivers/memory/samsung/Makefile b/drivers/memory/samsung/Makefile
-index 9c554d5522ad..00587be66211 100644
---- a/drivers/memory/samsung/Makefile
-+++ b/drivers/memory/samsung/Makefile
-@@ -1 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_EXYNOS_SROM)	+= exynos-srom.o
-diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
-index bf827a666694..7edd7fb540f2 100644
---- a/drivers/memory/samsung/exynos-srom.c
-+++ b/drivers/memory/samsung/exynos-srom.c
-@@ -1,14 +1,10 @@
+---
+
+Actually I removed these headers in mentioned commits:
+ - https://www.spinics.net/lists/arm-kernel/msg568612.html
+ - https://www.spinics.net/lists/arm-kernel/msg568608.html
+however this part of patch disappeared when applying...
+---
+ include/linux/mfd/syscon/exynos4-pmu.h | 21 ---------------------
+ include/linux/mfd/syscon/exynos5-pmu.h | 19 -------------------
+ 2 files changed, 40 deletions(-)
+ delete mode 100644 include/linux/mfd/syscon/exynos4-pmu.h
+ delete mode 100644 include/linux/mfd/syscon/exynos5-pmu.h
+
+diff --git a/include/linux/mfd/syscon/exynos4-pmu.h b/include/linux/mfd/syscon/exynos4-pmu.h
+deleted file mode 100644
+index 278b1b1549e9..000000000000
+--- a/include/linux/mfd/syscon/exynos4-pmu.h
++++ /dev/null
+@@ -1,21 +0,0 @@
 -/*
-- * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-- *	      http://www.samsung.com/
-- *
-- * EXYNOS - SROM Controller support
-- * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
+- * Copyright (C) 2015 Samsung Electronics Co., Ltd.
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 - */
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2015 Samsung Electronics Co., Ltd.
-+//	      http://www.samsung.com/
-+//
-+// EXYNOS - SROM Controller support
-+// Author: Pankaj Dubey <pankaj.dubey@samsung.com>
- 
- #include <linux/io.h>
- #include <linux/init.h>
-diff --git a/drivers/memory/samsung/exynos-srom.h b/drivers/memory/samsung/exynos-srom.h
-index 34660c6a57a9..da612797f522 100644
---- a/drivers/memory/samsung/exynos-srom.h
-+++ b/drivers/memory/samsung/exynos-srom.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-  *
-  * Exynos SROMC register definitions
+-
+-#ifndef _LINUX_MFD_SYSCON_PMU_EXYNOS4_H_
+-#define _LINUX_MFD_SYSCON_PMU_EXYNOS4_H_
+-
+-/* Exynos4 PMU register definitions */
+-
+-/* MIPI_PHYn_CONTROL register offset: n = 0..1 */
+-#define EXYNOS4_MIPI_PHY_CONTROL(n)	(0x710 + (n) * 4)
+-#define EXYNOS4_MIPI_PHY_ENABLE		(1 << 0)
+-#define EXYNOS4_MIPI_PHY_SRESETN	(1 << 1)
+-#define EXYNOS4_MIPI_PHY_MRESETN	(1 << 2)
+-#define EXYNOS4_MIPI_PHY_RESET_MASK	(3 << 1)
+-
+-#endif /* _LINUX_MFD_SYSCON_PMU_EXYNOS4_H_ */
+diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
+deleted file mode 100644
+index b4942a32b81d..000000000000
+--- a/include/linux/mfd/syscon/exynos5-pmu.h
++++ /dev/null
+@@ -1,19 +0,0 @@
+-/*
+- * Exynos5 SoC series Power Management Unit (PMU) register offsets
+- * and bit definitions.
+- *
+- * Copyright (C) 2014 Samsung Electronics Co., Ltd.
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
--*/
-+ */
- 
- #ifndef __EXYNOS_SROM_H
- #define __EXYNOS_SROM_H __FILE__
+- */
+-
+-#ifndef _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_
+-#define _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_
+-
+-#define EXYNOS5_PHY_ENABLE			BIT(0)
+-#define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
+-#define EXYNOS5_MIPI_PHY_M_RESETN		BIT(2)
+-
+-#endif /* _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_ */
 -- 
 2.11.0
