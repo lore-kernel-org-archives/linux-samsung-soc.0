@@ -1,169 +1,89 @@
-From: Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH v4 19/19] fs: handle inode->i_version more efficiently
-Date: Mon, 08 Jan 2018 16:39:53 -0500
-Message-ID: <1515447593.3486.54.camel@kernel.org>
-References: <20171222120556.7435-1-jlayton@kernel.org>
-         <20171222120556.7435-20-jlayton@kernel.org>
-         <CAJKOXPd8ojTjiGF3nKQKWtVrEsjWfjvg6rLL+RGnbu_SZMDu7g@mail.gmail.com>
-         <1515416208.3486.14.camel@kernel.org>
-         <CAJKOXPfv4eSERDiUuZuJ7KdpyGU0=Eqt_A+J6knp-FEW9BZoSw@mail.gmail.com>
-         <1515418164.3486.18.camel@kernel.org>
-         <20180108172928.aqndozcpljb73uj6@kozik-lap>
-         <1515434419.3486.41.camel@kernel.org>
-         <20180108183353.emiwsd4aic4gmytr@kozik-lap>
-         <1515438929.3486.48.camel@kernel.org>
-         <20180108201713.rdfjn7j65cuqmwuo@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757806AbeAHVj6 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Jan 2018 16:39:58 -0500
-In-Reply-To: <20180108201713.rdfjn7j65cuqmwuo@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [RFC PATCH 0/9] soc: samsung: Add support of suspend-to-RAM on
+ Exynos5433
+Date: Tue, 09 Jan 2018 16:58:57 +0900
+Message-ID: <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
+References: <CGME20180109075904epcas2p302d58aacfbb2195e455a25c90a1c610b@epcas2p3.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org, bfields@fieldses.org, neilb@suse.de, jack@suse.de, linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org, darrick.wong@oracle.com, david@fromorbit.com, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com, dsterba@suse.com, linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com, linux-afs@lists.infradead.org, dhowells@redhat.com, jaltman@auristor.com, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?Q?Bart=C5=82omiej_?= =?UTF-8?Q?=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Mon, 2018-01-08 at 21:17 +0100, Krzysztof Kozlowski wrote:
-> On Mon, Jan 08, 2018 at 02:15:29PM -0500, Jeff Layton wrote:
-> > On Mon, 2018-01-08 at 19:33 +0100, Krzysztof Kozlowski wrote:
-> > > On Mon, Jan 08, 2018 at 01:00:19PM -0500, Jeff Layton wrote:
-> > > > On Mon, 2018-01-08 at 18:29 +0100, Krzysztof Kozlowski wrote:
-> > > 
-> > > (...)
-> > > 
-> > > > > > Ok, thanks. If you're seeing hangs then that might imply that we have
-> > > > > > some sort of excessive looping going on in the cmpxchg loops.
-> > > > > > 
-> > > > > > Could you apply the patch below and let me know if it causes either of
-> > > > > > the warnings to pop? That might at least point us in the right
-> > > > > > direction:
-> > > > > 
-> > > > > No new warnings with attached patch (except existing already lockdep:
-> > > > > "INFO: trying to register non-static key.").
-> > > > > 
-> > > > 
-> > > > Yeah, I saw that in the original logs and it looks unrelated (and
-> > > > harmless).
-> > > > 
-> > > > > Systemd timeouts on mounting /home but after entering rescue shell there
-> > > > > is no problem running mount /home:
-> > > > > 	Give root password for maintenance
-> > > > > 	(or press Control-D to continue): 
-> > > > > 	root@odroidxu3:~# mount /home
-> > > > > 	[  220.659331] EXT4-fs (mmcblk1p2): mounted filesystem with ordered data mode. Opts: (null)
-> > > > > 
-> > > > 
-> > > > Ok, thanks for testing it. So I guess we can probably rule out excessive
-> > > > looping in those functions as the issue.
-> > > > 
-> > > > To make sure I understand the problem: When systemd tries to do the
-> > > > initial mount of /home (which is an ext4 filesystem), it hangs. But once
-> > > > it drops to the shell, it works, if you do the mount by hand.
-> > > > 
-> > > > Is that correct?
-> > > 
-> > > Yes, although it also timeouts on setting up /dev/ttySAC2 (serial
-> > > console).
-> > > 
-> > > > If so, then is it possible to trigger sysrq commands during the hanging
-> > > > mount attempt? Maybe you could use e.g. sysrq-l, sysrq-w, etc. to
-> > > > determine what it's blocking on?
-> > 
-> > (trimming the output)
-> > 
-> > Thanks. I don't really see anything obvious in that info,
-> > unfortunately. What we really need to do is find the systemd task
-> > performing the mount, and see what it's doing.
-> 
-> It's systemd 236.0-2 coming from Arch Linux for ARM. All packages are
-> updated.
-> 
-> > We do have one questionable bug in the NFS changes though. Does this
-> > patch help at all?
-> 
-> Patches do not change anything (I tried "SQUASH: nfs: fix i_version
-> increment when adding a request" and "SQUASH: ext4: use raw API for
-> xattr inode refcounts").
-> 
-> I tried again regular SDcard-root boot and it succeeded. Only nfsroot
-> fails.
-> 
-> Best regards,
-> Krzysztof
-> 
+In the mainline, there is no case to support the suspend-to-RAM for Samsung
+Exynos SoC. This patchset support the suspend-to-RAM for 64bit Exynos SoC.
 
-Got it, that's helpful. Does this patch help (on top of the others) ?
+For 32bit, arch/arm/mach-exynos/* directoy contains the suspend-related
+codes such as suspend.c/exynos.c. But, 64bit Exynos should contain
+the suspend-related codes in the drivers/soc/samsung/*. So, this patchset
+develop the patch4/5 for drivers/soc/samsung/exynos-pm.c. to support suspend
+64bit Exynos SoC.
 
-------------------------8<--------------------------
+But, I'm not sure what is proper approach for both 32/64bit Exynos.
+- Approach1 : Split out the supend-related codes between 32/64bit.
+  : arch/arm/mach-exynos/* contains the suspend-related codes for 32bit.
+  : drivers/soc/samsung/* contains the suspend-related codes for 64bit.
+- Approach2 : Consolidate the all suspend-related codes to drivers/soc/samsung/.
 
-SQUASH: nfs: compare raw iversion counter since that's what's
- being stored
+Please let us know your opinion.
 
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
----
- fs/nfs/inode.c           |  6 +++---
- include/linux/iversion.h | 13 +++++++++++++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+The patch1/2/3 and 6/7/8/9 is just general patch. So, I add 'RFC' prefix to
+only cover-letter, patch4/5. If you want to add the 'RFC' prefix to all
+patches, I'll add 'RFC' prefix on v2.
 
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index 0b85cca1184b..93552c482992 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -1289,7 +1289,7 @@ static unsigned long nfs_wcc_update_inode(struct inode *inode, struct nfs_fattr
- 
- 	if ((fattr->valid & NFS_ATTR_FATTR_PRECHANGE)
- 			&& (fattr->valid & NFS_ATTR_FATTR_CHANGE)
--			&& !inode_cmp_iversion(inode, fattr->pre_change_attr)) {
-+			&& !inode_cmp_iversion_raw(inode, fattr->pre_change_attr)) {
- 		inode_set_iversion_raw(inode, fattr->change_attr);
- 		if (S_ISDIR(inode->i_mode))
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_DATA);
-@@ -1348,7 +1348,7 @@ static int nfs_check_inode_attributes(struct inode *inode, struct nfs_fattr *fat
- 
- 	if (!nfs_file_has_buffered_writers(nfsi)) {
- 		/* Verify a few of the more important attributes */
--		if ((fattr->valid & NFS_ATTR_FATTR_CHANGE) != 0 && inode_cmp_iversion(inode, fattr->change_attr))
-+		if ((fattr->valid & NFS_ATTR_FATTR_CHANGE) != 0 && inode_cmp_iversion_raw(inode, fattr->change_attr))
- 			invalid |= NFS_INO_INVALID_ATTR | NFS_INO_REVAL_PAGECACHE;
- 
- 		if ((fattr->valid & NFS_ATTR_FATTR_MTIME) && !timespec_equal(&inode->i_mtime, &fattr->mtime))
-@@ -1778,7 +1778,7 @@ static int nfs_update_inode(struct inode *inode, struct nfs_fattr *fattr)
- 
- 	/* More cache consistency checks */
- 	if (fattr->valid & NFS_ATTR_FATTR_CHANGE) {
--		if (inode_cmp_iversion(inode, fattr->change_attr)) {
-+		if (inode_cmp_iversion_raw(inode, fattr->change_attr)) {
- 			dprintk("NFS: change_attr change on server for file %s/%ld\n",
- 					inode->i_sb->s_id, inode->i_ino);
- 			/* Could it be a race with writeback? */
-diff --git a/include/linux/iversion.h b/include/linux/iversion.h
-index 107fcb3ec809..8c97f67ffbbc 100644
---- a/include/linux/iversion.h
-+++ b/include/linux/iversion.h
-@@ -190,6 +190,19 @@ inode_query_iversion(struct inode *inode)
- 	return inode_peek_iversion(inode);
- }
- 
-+/**
-+ * inode_cmp_iversion_raw - check whether the raw i_version counter has changed
-+ * @inode: inode to check
-+ * @old: old value to check against its i_version
-+ *
-+ * Compare the current raw i_version counter with a previous one. Returns 0 if
-+ * they are the same or non-zero if they are different.
-+ */
-+static inline s64
-+inode_cmp_iversion_raw(const struct inode *inode, u64 old)
-+{
-+	return (s64)inode_peek_iversion(inode) - (s64)old;
-+}
- /**
-  * inode_cmp_iversion - check whether the i_version counter has changed
-  * @inode: inode to check
--- 
-2.14.3
+Based on:
+- git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git (branch: for-next)
+
+Need to discuss patch4/5:
+- patch4: soc: samsung: Add generic power-management driver for Exynos
+- patch5: soc: samsung: pm: Add support for suspend-to-ram of Exynos5433
+
+[Remaining Issues]
+- The hang-out happen when disabling the MMC clocks on dw_mmc.c.
+  I reported to Jaehoon Chung. He is checking this issue. To test the
+  suspend-to-ram temporarily, you need to add CLK_IS_CRITICAL flag to
+  'aclk_mmc2/aclk_mmc0/sclk_mmc2/sclk_mmc0'.
+- I enabled the at least kernel configuration in order to test
+  the suspend-to-RAM. So, I need to test it more time with DRM/Multimedia
+  and other. But, the suspend-to-RAM of cpu is successful.
+- Exynos5433 SoC has two EXYNOS5433_EINT_WAKEUP_MASKx registers. The
+  pinctr-exynos.c need to handle the extra EINT_WAKEUP_MASKx for Exynos5433.
+  The suspend-to-ram test is failed on first time and then next tryout is ok.
+  I'm developing it.
+
+Chanwoo Choi (9):
+  clk: samsung: exynos5433: Add clock flag to support suspend-to-ram
+  soc: samsung: pmu: Add powerup_conf callback
+  soc: samsung: pmu: Add the PMU data of exynos5433 to support low-power state
+  soc: samsung: Add generic power-management driver for Exynos
+  soc: samsung: pm: Add support for suspend-to-ram of Exynos5433
+  arm64: dts: exynos: Add iRAM device-tree node for Exynos5433
+  arm64: dts: exynos: Use power key as a wakeup source on TM2/TM2E board
+  arm64: dts: exynos: Add cpu_suspend property of PSCI for exynos5433
+  arm64: dts: exynos: Add cpu topology information for Exynos5433 SoC
+
+ arch/arm/mach-exynos/common.h                      |   3 -
+ arch/arm/mach-exynos/exynos.c                      |  23 +-
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     |   1 +
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  47 ++++
+ drivers/clk/samsung/clk-exynos5433.c               |  22 +-
+ drivers/soc/samsung/Makefile                       |   5 +-
+ drivers/soc/samsung/exynos-pm.c                    | 214 +++++++++++++++
+ drivers/soc/samsung/exynos-pmu.c                   |   9 +
+ drivers/soc/samsung/exynos-pmu.h                   |   3 +
+ drivers/soc/samsung/exynos5433-pmu.c               | 286 +++++++++++++++++++++
+ include/linux/soc/samsung/exynos-pm.h              |  21 ++
+ include/linux/soc/samsung/exynos-pmu.h             |   1 +
+ include/linux/soc/samsung/exynos-regs-pmu.h        | 148 +++++++++++
+ 13 files changed, 745 insertions(+), 38 deletions(-)
+ create mode 100644 drivers/soc/samsung/exynos-pm.c
+ create mode 100644 drivers/soc/samsung/exynos5433-pmu.c
+ create mode 100644 include/linux/soc/samsung/exynos-pm.h
+
+--
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
