@@ -1,109 +1,55 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] ARM: dts: samsung: Remove unused samsung_k3pe0e000b
-Date: Tue,  9 Jan 2018 18:42:23 +0100
-Message-ID: <20180109174223.6303-1-krzk@kernel.org>
+Subject: [PATCH 1/2] crypto: exynos-rng - Add SPDX license identifier and correct module license
+Date: Tue,  9 Jan 2018 18:57:35 +0100
+Message-ID: <20180109175736.6885-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sricharan R <r.sricharan@ti.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The only user of DTSI for Samsung K3PE0E000B memory was removed in
-commit fa63d037283a ("ARM: dts: omap5: Make uevm as the official board
-and deprecate sevm support") so get rid of this DTSI as well.
+Replace GPL license statement with SPDX GPL-2.0 license identifier and
+correct the module license to GPLv2.
+
+The license itself was a generic GPL because of copy-and-paste from old
+drivers/char/hw_random/exynos-rng.c driver (on which this was based on).
+However the module license indicated GPL-2.0 or later.  GPL-2.0 was
+intended by author so fix up this mess.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- MAINTAINERS                               |  1 -
- arch/arm/boot/dts/samsung_k3pe0e000b.dtsi | 68 -------------------------------
- 2 files changed, 69 deletions(-)
- delete mode 100644 arch/arm/boot/dts/samsung_k3pe0e000b.dtsi
+ drivers/crypto/exynos-rng.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2842ce504fe3..36a5a13a1af4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1849,7 +1849,6 @@ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
- S:	Maintained
- F:	arch/arm/boot/dts/s3c*
- F:	arch/arm/boot/dts/s5p*
--F:	arch/arm/boot/dts/samsung*
- F:	arch/arm/boot/dts/exynos*
- F:	arch/arm64/boot/dts/exynos/
- F:	arch/arm/plat-samsung/
-diff --git a/arch/arm/boot/dts/samsung_k3pe0e000b.dtsi b/arch/arm/boot/dts/samsung_k3pe0e000b.dtsi
-deleted file mode 100644
-index dbdda36179ee..000000000000
---- a/arch/arm/boot/dts/samsung_k3pe0e000b.dtsi
-+++ /dev/null
-@@ -1,68 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Timings and Geometry for Samsung K3PE0E000B memory part
-- */
--
--/ {
--	samsung_K3PE0E000B: lpddr2 {
--		compatible	= "Samsung,K3PE0E000B","jedec,lpddr2-s4";
--		density		= <4096>;
--		io-width	= <32>;
--
--		tRPab-min-tck	= <3>;
--		tRCD-min-tck	= <3>;
--		tWR-min-tck	= <3>;
--		tRASmin-min-tck	= <3>;
--		tRRD-min-tck	= <2>;
--		tWTR-min-tck	= <2>;
--		tXP-min-tck	= <2>;
--		tRTP-min-tck	= <2>;
--		tCKE-min-tck	= <3>;
--		tCKESR-min-tck	= <3>;
--		tFAW-min-tck	= <8>;
--
--		timings_samsung_K3PE0E000B_533MHz: lpddr2-timings@0 {
--			compatible	= "jedec,lpddr2-timings";
--			min-freq	= <10000000>;
--			max-freq	= <533333333>;
--			tRPab		= <21000>;
--			tRCD		= <18000>;
--			tWR		= <15000>;
--			tRAS-min	= <42000>;
--			tRRD		= <10000>;
--			tWTR		= <7500>;
--			tXP		= <7500>;
--			tRTP		= <7500>;
--			tCKESR		= <15000>;
--			tDQSCK-max	= <5500>;
--			tFAW		= <50000>;
--			tZQCS		= <90000>;
--			tZQCL		= <360000>;
--			tZQinit		= <1000000>;
--			tRAS-max-ns	= <70000>;
--			tDQSCK-max-derated = <6000>;
--		};
--
--		timings_samsung_K3PE0E000B_266MHz: lpddr2-timings@1 {
--			compatible	= "jedec,lpddr2-timings";
--			min-freq	= <10000000>;
--			max-freq	= <266666666>;
--			tRPab		= <21000>;
--			tRCD		= <18000>;
--			tWR		= <15000>;
--			tRAS-min	= <42000>;
--			tRRD		= <10000>;
--			tWTR		= <7500>;
--			tXP		= <7500>;
--			tRTP		= <7500>;
--			tCKESR		= <15000>;
--			tDQSCK-max	= <5500>;
--			tFAW		= <50000>;
--			tZQCS		= <90000>;
--			tZQCL		= <360000>;
--			tZQinit		= <1000000>;
--			tRAS-max-ns	= <70000>;
--			tDQSCK-max-derated = <6000>;
--		};
--	};
--};
+diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
+index 451620b475a0..a2e91f94096f 100644
+--- a/drivers/crypto/exynos-rng.c
++++ b/drivers/crypto/exynos-rng.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * exynos-rng.c - Random Number Generator driver for the Exynos
+  *
+@@ -6,15 +7,6 @@
+  * Loosely based on old driver from drivers/char/hw_random/exynos-rng.c:
+  * Copyright (C) 2012 Samsung Electronics
+  * Jonghwa Lee <jonghwa3.lee@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation;
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/clk.h>
+@@ -386,4 +378,4 @@ module_platform_driver(exynos_rng_driver);
+ 
+ MODULE_DESCRIPTION("Exynos H/W Random Number Generator driver");
+ MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
 -- 
 2.11.0
