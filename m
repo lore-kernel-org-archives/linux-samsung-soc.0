@@ -1,127 +1,49 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 3/9] soc: samsung: pmu: Add the PMU data of exynos5433
- to support low-power state
-Date: Wed, 10 Jan 2018 10:46:32 +0900
-Message-ID: <5A557078.50101@samsung.com>
-References: <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
-        <CGME20180109075905epcas1p321b8898a0d45287d63364e1aa768fdab@epcas1p3.samsung.com>
-        <1515484746-10656-4-git-send-email-cw00.choi@samsung.com>
-        <b639da18-a069-aeb7-ceca-30c79b1c25c8@arm.com>
+Subject: Re: [RFC PATCH 0/9] soc: samsung: Add support of suspend-to-RAM on
+ Exynos5433
+Date: Wed, 10 Jan 2018 18:19:50 +0900
+Message-ID: <5A55DAB6.2020808@samsung.com>
+References: <CGME20180109075904epcas2p302d58aacfbb2195e455a25c90a1c610b@epcas2p3.samsung.com>
+        <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
+        <CAJKOXPcJPbVR+WqAzhM8Tuud1Pd9W2p_23iTUveXc5aJtgTJCg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:33061 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932122AbeAJBqe (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:55668 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbeAJJTy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 20:46:34 -0500
-In-reply-to: <b639da18-a069-aeb7-ceca-30c79b1c25c8@arm.com>
+        Wed, 10 Jan 2018 04:19:54 -0500
+In-reply-to: <CAJKOXPcJPbVR+WqAzhM8Tuud1Pd9W2p_23iTUveXc5aJtgTJCg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>, krzk@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
-Cc: tomasz.figa@gmail.com, chanwoo@kernel.org, jh80.chung@samsung.com, inki.dae@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, kgene@kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, chanwoo@kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On 2018년 01월 09일 23:11, Sudeep Holla wrote:
-> 
-> 
-> On 09/01/18 07:59, Chanwoo Choi wrote:
->> This patch adds the PMU (Power Management Unit) data of exynos5433 SoC
->> in order to support the various power modes. Each power mode has
->> the different value for reducing the power-consumption.
+On 2018년 01월 09일 20:56, Krzysztof Kozlowski wrote:
+> On Tue, Jan 9, 2018 at 8:58 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> In the mainline, there is no case to support the suspend-to-RAM for Samsung
+>> Exynos SoC. This patchset support the suspend-to-RAM for 64bit Exynos SoC.
 >>
->> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  arch/arm/mach-exynos/common.h               |   2 -
->>  drivers/soc/samsung/Makefile                |   3 +-
->>  drivers/soc/samsung/exynos-pmu.c            |   1 +
->>  drivers/soc/samsung/exynos-pmu.h            |   2 +
->>  drivers/soc/samsung/exynos5433-pmu.c        | 286 ++++++++++++++++++++++++++++
->>  include/linux/soc/samsung/exynos-regs-pmu.h | 148 ++++++++++++++
->>  6 files changed, 439 insertions(+), 3 deletions(-)
->>  create mode 100644 drivers/soc/samsung/exynos5433-pmu.c
+>> For 32bit, arch/arm/mach-exynos/* directoy contains the suspend-related
+>> codes such as suspend.c/exynos.c. But, 64bit Exynos should contain
+>> the suspend-related codes in the drivers/soc/samsung/*. So, this patchset
+>> develop the patch4/5 for drivers/soc/samsung/exynos-pm.c. to support suspend
+>> 64bit Exynos SoC.
 >>
+>> But, I'm not sure what is proper approach for both 32/64bit Exynos.
+>> - Approach1 : Split out the supend-related codes between 32/64bit.
+>>   : arch/arm/mach-exynos/* contains the suspend-related codes for 32bit.
+>>   : drivers/soc/samsung/* contains the suspend-related codes for 64bit.
+>> - Approach2 : Consolidate the all suspend-related codes to drivers/soc/samsung/.
 > 
->> diff --git a/drivers/soc/samsung/exynos5433-pmu.c b/drivers/soc/samsung/exynos5433-pmu.c
->> new file mode 100644
->> index 000000000000..2571e61522f0
->> --- /dev/null
->> +++ b/drivers/soc/samsung/exynos5433-pmu.c
->> @@ -0,0 +1,286 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +//
->> +// Copyright (c) 2018 Samsung Electronics Co., Ltd.
->> +// Copyright (c) Jonghwa Lee <jonghwa3.lee@samsung.com>
->> +// Copyright (c) Chanwoo Choi <cw00.choi@samsung.com>
->> +//
->> +// EXYNOS5433 - CPU PMU (Power Management Unit) support
->> +
->> +#include <linux/soc/samsung/exynos-regs-pmu.h>
->> +#include <linux/soc/samsung/exynos-pmu.h>
->> +
->> +#include "exynos-pmu.h"
->> +
->> +static struct exynos_pmu_conf exynos5433_pmu_config[] = {
->> +	/* { .offset = address,	.val = { AFTR, LPA, SLEEP } } */
->> +	{ EXYNOS5433_ATLAS_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
->> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
->> +	{ EXYNOS5433_ATLAS_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
->> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
->> +	{ EXYNOS5433_ATLAS_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
->> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
->> +	{ EXYNOS5433_ATLAS_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
->> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
->> +	{ EXYNOS5433_APOLLO_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
->> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
->> +	{ EXYNOS5433_APOLLO_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
->> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
->> +	{ EXYNOS5433_APOLLO_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
->> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
->> +	{ EXYNOS5433_APOLLO_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
->> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
->> +	{ EXYNOS5433_ATLAS_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
->> +	{ EXYNOS5433_APOLLO_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
-> 
-> 
-> 1. First of all why do you need any of these CPU related PMU config
->    registers in kernel ? From the information I gathered this is ARM64
->    SoC using PSCI. These are needed just in PSCI implementation and not
->    in kernel. So can you elaborate on why there are present here ?
+> I prefer approach #2 - consolidate the code... unless this creates
+> some unmaintainable monster :)
 
-The 32bit Exynos used the 'smc' call to enter the suspend mode
-and need to handle the PMU registers.
+I'll try to consolidate code.
 
-Even if PSCI replaces the 'smc' call on the Exynos5433,
-the Exynos5433's document requires the handling of PMU config
-related to CPU for the suspend mode.
-
-IMHO, If the secure OS implemented the all something related to CPU,
-it might be unnecessary to handle the PMU registers. I think that
-it depend on how to design the SoC by H/W Architect. This is just my opinion.
-
-> 
-> 2. Are there any public documents that these names map to ?
-
-There is no public document. It is confidential.
-
->    If there is none, please replace these codenames(ATLAS, APOLLO) with
->    appropriately.
-
-In the Exynos5433, 'apollo' indicates the LITTLE cores (cpu0-3, cortex-a53)
-and 'atlas' indicates the big cores (cpu4-7, cortex-a57)
-
-Exynos5433 already used the 'apollo' and 'atlas' on clk-exynos5433.c driver
-and thermal device-tree node. It is better to use the original register name
-in the document in order to reduce the confusion of the change of register name
-even if document is not public.
-
-Also, exynos7 used the 'atlas' word for big cores.
-
-> 
-> Sorry if these are already answered, just point me to those threads.
-> 
-
+[snip]
 
 -- 
 Best Regards,
