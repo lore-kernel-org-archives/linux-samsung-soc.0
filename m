@@ -1,88 +1,129 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] mfd: syscon: Remove unused Exynos PMU headers
-Date: Tue,  9 Jan 2018 19:59:21 +0100
-Message-ID: <20180109185921.28260-1-krzk@kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 3/9] soc: samsung: pmu: Add the PMU data of exynos5433
+ to support low-power state
+Date: Wed, 10 Jan 2018 10:46:32 +0900
+Message-ID: <5A557078.50101@samsung.com>
+References: <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
+        <CGME20180109075905epcas1p321b8898a0d45287d63364e1aa768fdab@epcas1p3.samsung.com>
+        <1515484746-10656-4-git-send-email-cw00.choi@samsung.com>
+        <b639da18-a069-aeb7-ceca-30c79b1c25c8@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932310AbeAIS7a (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:33061 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932122AbeAJBqe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 13:59:30 -0500
+        Tue, 9 Jan 2018 20:46:34 -0500
+In-reply-to: <b639da18-a069-aeb7-ceca-30c79b1c25c8@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>, krzk@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
+Cc: tomasz.figa@gmail.com, chanwoo@kernel.org, jh80.chung@samsung.com, inki.dae@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>
 
-Since commit 5812f0106c44 ("phy: exynos4: Remove duplicated defines of
-PHY register defines") and commit 7a66647b25b6 ("phy: exynos: Use one
-define for enable bit") all users of syscon Exynos PMU headers (for PHY
-drivers) are converted to use different headers so these can be removed.
+On 2018년 01월 09일 23:11, Sudeep Holla wrote:
+> 
+> 
+> On 09/01/18 07:59, Chanwoo Choi wrote:
+>> This patch adds the PMU (Power Management Unit) data of exynos5433 SoC
+>> in order to support the various power modes. Each power mode has
+>> the different value for reducing the power-consumption.
+>>
+>> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/common.h               |   2 -
+>>  drivers/soc/samsung/Makefile                |   3 +-
+>>  drivers/soc/samsung/exynos-pmu.c            |   1 +
+>>  drivers/soc/samsung/exynos-pmu.h            |   2 +
+>>  drivers/soc/samsung/exynos5433-pmu.c        | 286 ++++++++++++++++++++++++++++
+>>  include/linux/soc/samsung/exynos-regs-pmu.h | 148 ++++++++++++++
+>>  6 files changed, 439 insertions(+), 3 deletions(-)
+>>  create mode 100644 drivers/soc/samsung/exynos5433-pmu.c
+>>
+> 
+>> diff --git a/drivers/soc/samsung/exynos5433-pmu.c b/drivers/soc/samsung/exynos5433-pmu.c
+>> new file mode 100644
+>> index 000000000000..2571e61522f0
+>> --- /dev/null
+>> +++ b/drivers/soc/samsung/exynos5433-pmu.c
+>> @@ -0,0 +1,286 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +//
+>> +// Copyright (c) 2018 Samsung Electronics Co., Ltd.
+>> +// Copyright (c) Jonghwa Lee <jonghwa3.lee@samsung.com>
+>> +// Copyright (c) Chanwoo Choi <cw00.choi@samsung.com>
+>> +//
+>> +// EXYNOS5433 - CPU PMU (Power Management Unit) support
+>> +
+>> +#include <linux/soc/samsung/exynos-regs-pmu.h>
+>> +#include <linux/soc/samsung/exynos-pmu.h>
+>> +
+>> +#include "exynos-pmu.h"
+>> +
+>> +static struct exynos_pmu_conf exynos5433_pmu_config[] = {
+>> +	/* { .offset = address,	.val = { AFTR, LPA, SLEEP } } */
+>> +	{ EXYNOS5433_ATLAS_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>> +	{ EXYNOS5433_ATLAS_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>> +	{ EXYNOS5433_ATLAS_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>> +	{ EXYNOS5433_ATLAS_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>> +	{ EXYNOS5433_APOLLO_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>> +	{ EXYNOS5433_APOLLO_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>> +	{ EXYNOS5433_APOLLO_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>> +	{ EXYNOS5433_APOLLO_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>> +	{ EXYNOS5433_ATLAS_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>> +	{ EXYNOS5433_APOLLO_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+> 
+> 
+> 1. First of all why do you need any of these CPU related PMU config
+>    registers in kernel ? From the information I gathered this is ARM64
+>    SoC using PSCI. These are needed just in PSCI implementation and not
+>    in kernel. So can you elaborate on why there are present here ?
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+The 32bit Exynos used the 'smc' call to enter the suspend mode
+and need to handle the PMU registers.
 
----
+Even if PSCI replaces the 'smc' call on the Exynos5433,
+the Exynos5433's document requires the handling of PMU config
+related to CPU for the suspend mode.
 
-Actually I removed these headers in mentioned commits:
- - https://www.spinics.net/lists/arm-kernel/msg568612.html
- - https://www.spinics.net/lists/arm-kernel/msg568608.html
-however this part of patch disappeared when applying...
----
- include/linux/mfd/syscon/exynos4-pmu.h | 21 ---------------------
- include/linux/mfd/syscon/exynos5-pmu.h | 19 -------------------
- 2 files changed, 40 deletions(-)
- delete mode 100644 include/linux/mfd/syscon/exynos4-pmu.h
- delete mode 100644 include/linux/mfd/syscon/exynos5-pmu.h
+IMHO, If the secure OS implemented the all something related to CPU,
+it might be unnecessary to handle the PMU registers. I think that
+it depend on how to design the SoC by H/W Architect. This is just my opinion.
 
-diff --git a/include/linux/mfd/syscon/exynos4-pmu.h b/include/linux/mfd/syscon/exynos4-pmu.h
-deleted file mode 100644
-index 278b1b1549e9..000000000000
---- a/include/linux/mfd/syscon/exynos4-pmu.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/*
-- * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#ifndef _LINUX_MFD_SYSCON_PMU_EXYNOS4_H_
--#define _LINUX_MFD_SYSCON_PMU_EXYNOS4_H_
--
--/* Exynos4 PMU register definitions */
--
--/* MIPI_PHYn_CONTROL register offset: n = 0..1 */
--#define EXYNOS4_MIPI_PHY_CONTROL(n)	(0x710 + (n) * 4)
--#define EXYNOS4_MIPI_PHY_ENABLE		(1 << 0)
--#define EXYNOS4_MIPI_PHY_SRESETN	(1 << 1)
--#define EXYNOS4_MIPI_PHY_MRESETN	(1 << 2)
--#define EXYNOS4_MIPI_PHY_RESET_MASK	(3 << 1)
--
--#endif /* _LINUX_MFD_SYSCON_PMU_EXYNOS4_H_ */
-diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
-deleted file mode 100644
-index b4942a32b81d..000000000000
---- a/include/linux/mfd/syscon/exynos5-pmu.h
-+++ /dev/null
-@@ -1,19 +0,0 @@
--/*
-- * Exynos5 SoC series Power Management Unit (PMU) register offsets
-- * and bit definitions.
-- *
-- * Copyright (C) 2014 Samsung Electronics Co., Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#ifndef _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_
--#define _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_
--
--#define EXYNOS5_PHY_ENABLE			BIT(0)
--#define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
--#define EXYNOS5_MIPI_PHY_M_RESETN		BIT(2)
--
--#endif /* _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_ */
+> 
+> 2. Are there any public documents that these names map to ?
+
+There is no public document. It is confidential.
+
+>    If there is none, please replace these codenames(ATLAS, APOLLO) with
+>    appropriately.
+
+In the Exynos5433, 'apollo' indicates the LITTLE cores (cpu0-3, cortex-a53)
+and 'atlas' indicates the big cores (cpu4-7, cortex-a57)
+
+Exynos5433 already used the 'apollo' and 'atlas' on clk-exynos5433.c driver
+and thermal device-tree node. It is better to use the original register name
+in the document in order to reduce the confusion of the change of register name
+even if document is not public.
+
+Also, exynos7 used the 'atlas' word for big cores.
+
+> 
+> Sorry if these are already answered, just point me to those threads.
+> 
+
+
 -- 
-2.11.0
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
