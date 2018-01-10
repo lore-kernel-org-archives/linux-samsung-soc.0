@@ -1,54 +1,155 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ARM: dts: s5pv210: add interrupt-parent for ohci
-Date: Wed, 10 Jan 2018 17:10:11 +0100
-Message-ID: <20180110161045.4052684-1-arnd@arndb.de>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 3/9] soc: samsung: pmu: Add the PMU data of exynos5433
+ to support low-power state
+Date: Thu, 11 Jan 2018 08:51:38 +0900
+Message-ID: <5A56A70A.2020104@samsung.com>
+References: <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
+        <CGME20180109075905epcas1p321b8898a0d45287d63364e1aa768fdab@epcas1p3.samsung.com>
+        <1515484746-10656-4-git-send-email-cw00.choi@samsung.com>
+        <b639da18-a069-aeb7-ceca-30c79b1c25c8@arm.com> <5A557078.50101@samsung.com>
+        <0adffb4c-019f-a637-881c-d919c67cdbcf@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Guenter Roeck <linux@roeck-us.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:50742 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752880AbeAJXvl (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 10 Jan 2018 18:51:41 -0500
+In-reply-to: <0adffb4c-019f-a637-881c-d919c67cdbcf@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: krzk@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org, tomasz.figa@gmail.com, chanwoo@kernel.org, jh80.chung@samsung.com, inki.dae@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>
 
-The ohci-hcd node has an interrupt number but no interrupt-parent,
-leading to a warning with current dtc versions:
+On 2018년 01월 10일 19:53, Sudeep Holla wrote:
+> 
+> 
+> On 10/01/18 01:46, Chanwoo Choi wrote:
+>> On 2018년 01월 09일 23:11, Sudeep Holla wrote:
+>>>
+>>>
+>>> On 09/01/18 07:59, Chanwoo Choi wrote:
+>>>> This patch adds the PMU (Power Management Unit) data of exynos5433 SoC
+>>>> in order to support the various power modes. Each power mode has
+>>>> the different value for reducing the power-consumption.
+>>>>
+>>>> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> ---
+>>>>  arch/arm/mach-exynos/common.h               |   2 -
+>>>>  drivers/soc/samsung/Makefile                |   3 +-
+>>>>  drivers/soc/samsung/exynos-pmu.c            |   1 +
+>>>>  drivers/soc/samsung/exynos-pmu.h            |   2 +
+>>>>  drivers/soc/samsung/exynos5433-pmu.c        | 286 ++++++++++++++++++++++++++++
+>>>>  include/linux/soc/samsung/exynos-regs-pmu.h | 148 ++++++++++++++
+>>>>  6 files changed, 439 insertions(+), 3 deletions(-)
+>>>>  create mode 100644 drivers/soc/samsung/exynos5433-pmu.c
+>>>>
+>>>
+>>>> diff --git a/drivers/soc/samsung/exynos5433-pmu.c b/drivers/soc/samsung/exynos5433-pmu.c
+>>>> new file mode 100644
+>>>> index 000000000000..2571e61522f0
+>>>> --- /dev/null
+>>>> +++ b/drivers/soc/samsung/exynos5433-pmu.c
+>>>> @@ -0,0 +1,286 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +//
+>>>> +// Copyright (c) 2018 Samsung Electronics Co., Ltd.
+>>>> +// Copyright (c) Jonghwa Lee <jonghwa3.lee@samsung.com>
+>>>> +// Copyright (c) Chanwoo Choi <cw00.choi@samsung.com>
+>>>> +//
+>>>> +// EXYNOS5433 - CPU PMU (Power Management Unit) support
+>>>> +
+>>>> +#include <linux/soc/samsung/exynos-regs-pmu.h>
+>>>> +#include <linux/soc/samsung/exynos-pmu.h>
+>>>> +
+>>>> +#include "exynos-pmu.h"
+>>>> +
+>>>> +static struct exynos_pmu_conf exynos5433_pmu_config[] = {
+>>>> +	/* { .offset = address,	.val = { AFTR, LPA, SLEEP } } */
+>>>> +	{ EXYNOS5433_ATLAS_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>>>> +	{ EXYNOS5433_ATLAS_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>>>> +	{ EXYNOS5433_ATLAS_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>>>> +	{ EXYNOS5433_ATLAS_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>> +	{ EXYNOS5433_DIS_IRQ_ATLAS_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>>>> +	{ EXYNOS5433_APOLLO_CPU0_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU0_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>>>> +	{ EXYNOS5433_APOLLO_CPU1_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU1_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>>>> +	{ EXYNOS5433_APOLLO_CPU2_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU2_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>>>> +	{ EXYNOS5433_APOLLO_CPU3_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>> +	{ EXYNOS5433_DIS_IRQ_APOLLO_CPU3_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0 } },
+>>>> +	{ EXYNOS5433_ATLAS_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>> +	{ EXYNOS5433_APOLLO_NONCPU_SYS_PWR_REG,			{ 0x0, 0x0, 0x8 } },
+>>>
+>>>
+>>> 1. First of all why do you need any of these CPU related PMU config
+>>>    registers in kernel ? From the information I gathered this is ARM64
+>>>    SoC using PSCI. These are needed just in PSCI implementation and not
+>>>    in kernel. So can you elaborate on why there are present here ?
+>>
+>> The 32bit Exynos used the 'smc' call to enter the suspend mode
+>> and need to handle the PMU registers.
+>>
+> 
+> OK
+> 
+>> Even if PSCI replaces the 'smc' call on the Exynos5433,
+>> the Exynos5433's document requires the handling of PMU config
+>> related to CPU for the suspend mode.
+>>
+> 
+> OK but does it state it needs to be in kernel ?(i.e. in EL1 NS)
+> 
+>> IMHO, If the secure OS implemented the all something related to CPU,
+>> it might be unnecessary to handle the PMU registers. I think that
+>> it depend on how to design the SoC by H/W Architect. This is just my opinion.
+>>
+> 
+> Even if it can be accessed in kernel, better to keep all these in PSCI
+> implementation that does the actual power state management. Mixing them
+> in both kernel and PSCI implementation is just a mess TBH and not easy
+> to maintain the platform if some issues pop up.
+> 
+>>>
+>>> 2. Are there any public documents that these names map to ?
+>>
+>> There is no public document. It is confidential.
+>>
+> 
+> I guessed so and hence raised to remove it.
+> 
+>>>    If there is none, please replace these codenames(ATLAS, APOLLO) with
+>>>    appropriately.
+>>
+>> In the Exynos5433, 'apollo' indicates the LITTLE cores (cpu0-3, cortex-a53)
+>> and 'atlas' indicates the big cores (cpu4-7, cortex-a57)
+>>
+>> Exynos5433 already used the 'apollo' and 'atlas' on clk-exynos5433.c driver
+>> and thermal device-tree node. It is better to use the original register name
+>> in the document in order to reduce the confusion of the change of register name
+>> even if document is not public.
+>>
+>> Also, exynos7 used the 'atlas' word for big cores.
+>>
+> 
+> I disagree. If you don't have any public documents, then better use
+> names other developers are used to and not some code names which
+> otherwise is not seen in any other part of the code base. Grepping
+> just shows Exynos using these code names which are generally restricted
 
-arch/arm/boot/dts/s5pv210-aquila.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
-arch/arm/boot/dts/s5pv210-goni.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
-arch/arm/boot/dts/s5pv210-smdkc110.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
-arch/arm/boot/dts/s5pv210-smdkv210.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
-arch/arm/boot/dts/s5pv210-torbreck.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+I mentioned, these words were already used on other device drivers.
+Exynos5433 used them to indicate the big.LITTLE cores consistently.
+They are an alias for big.LITTLE. Latest Exynos SoC must use these words continuously.
+I think that each vendor SoC could define the alias or expression for their SoC.
 
-As seen from the related exynos dts files, the ohci and ehci controllers
-always share one interrupt number, and the number is the same here as
-well, so setting the same interrupt-parent is the reasonable solution
-here.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/boot/dts/s5pv210.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index 247c0029659c..67358562a6ea 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -460,6 +460,7 @@
- 			compatible = "samsung,exynos4210-ohci";
- 			reg = <0xec300000 0x100>;
- 			interrupts = <23>;
-+			interrupt-parent = <&vic1>;
- 			clocks = <&clocks CLK_USB_HOST>;
- 			clock-names = "usbhost";
- 			#address-cells = <1>;
 -- 
-2.9.0
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
