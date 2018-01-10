@@ -1,124 +1,38 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 3/9] soc: samsung: pmu: Add the PMU data of exynos5433 to
- support low-power state
-Date: Wed, 10 Jan 2018 10:53:56 +0000
-Message-ID: <0adffb4c-019f-a637-881c-d919c67cdbcf@arm.com>
-References: <1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
- <CGME20180109075905epcas1p321b8898a0d45287d63364e1aa768fdab@epcas1p3.samsung.com>
- <1515484746-10656-4-git-send-email-cw00.choi@samsung.com>
- <b639da18-a069-aeb7-ceca-30c79b1c25c8@arm.com> <5A557078.50101@samsung.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Subject: [PATCH -next] hwrng: exynos - remove redundant dev_err call in exynos_trng_probe()
+Date: Wed, 10 Jan 2018 13:30:59 +0000
+Message-ID: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5A557078.50101@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: inki.dae@samsung.com, Jonghwa Lee <jonghwa3.lee@samsung.com>, linux-samsung-soc@vger.kernel.org, chanwoo@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jh80.chung@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Sender: linux-crypto-owner@vger.kernel.org
+To: l.stelmach@samsung.com, mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgpPbiAxMC8wMS8xOCAwMTo0NiwgQ2hhbndvbyBDaG9pIHdyb3RlOgo+IE9uIDIwMTjrhYQgMDHs
-m5QgMDnsnbwgMjM6MTEsIFN1ZGVlcCBIb2xsYSB3cm90ZToKPj4KPj4KPj4gT24gMDkvMDEvMTgg
-MDc6NTksIENoYW53b28gQ2hvaSB3cm90ZToKPj4+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgUE1VIChQ
-b3dlciBNYW5hZ2VtZW50IFVuaXQpIGRhdGEgb2YgZXh5bm9zNTQzMyBTb0MKPj4+IGluIG9yZGVy
-IHRvIHN1cHBvcnQgdGhlIHZhcmlvdXMgcG93ZXIgbW9kZXMuIEVhY2ggcG93ZXIgbW9kZSBoYXMK
-Pj4+IHRoZSBkaWZmZXJlbnQgdmFsdWUgZm9yIHJlZHVjaW5nIHRoZSBwb3dlci1jb25zdW1wdGlv
-bi4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBKb25naHdhIExlZSA8am9uZ2h3YTMubGVlQHNhbXN1
-bmcuY29tPgo+Pj4gU2lnbmVkLW9mZi1ieTogQ2hhbndvbyBDaG9pIDxjdzAwLmNob2lAc2Ftc3Vu
-Zy5jb20+Cj4+PiAtLS0KPj4+ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9jb21tb24uaCAgICAgICAg
-ICAgICAgIHwgICAyIC0KPj4+ICBkcml2ZXJzL3NvYy9zYW1zdW5nL01ha2VmaWxlICAgICAgICAg
-ICAgICAgIHwgICAzICstCj4+PiAgZHJpdmVycy9zb2Mvc2Ftc3VuZy9leHlub3MtcG11LmMgICAg
-ICAgICAgICB8ICAgMSArCj4+PiAgZHJpdmVycy9zb2Mvc2Ftc3VuZy9leHlub3MtcG11LmggICAg
-ICAgICAgICB8ICAgMiArCj4+PiAgZHJpdmVycy9zb2Mvc2Ftc3VuZy9leHlub3M1NDMzLXBtdS5j
-ICAgICAgICB8IDI4NiArKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4+PiAgaW5jbHVkZS9s
-aW51eC9zb2Mvc2Ftc3VuZy9leHlub3MtcmVncy1wbXUuaCB8IDE0OCArKysrKysrKysrKysrKwo+
-Pj4gIDYgZmlsZXMgY2hhbmdlZCwgNDM5IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4+
-PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc29jL3NhbXN1bmcvZXh5bm9zNTQzMy1wbXUu
-Ywo+Pj4KPj4KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3NvYy9zYW1zdW5nL2V4eW5vczU0MzMt
-cG11LmMgYi9kcml2ZXJzL3NvYy9zYW1zdW5nL2V4eW5vczU0MzMtcG11LmMKPj4+IG5ldyBmaWxl
-IG1vZGUgMTAwNjQ0Cj4+PiBpbmRleCAwMDAwMDAwMDAwMDAuLjI1NzFlNjE1MjJmMAo+Pj4gLS0t
-IC9kZXYvbnVsbAo+Pj4gKysrIGIvZHJpdmVycy9zb2Mvc2Ftc3VuZy9leHlub3M1NDMzLXBtdS5j
-Cj4+PiBAQCAtMCwwICsxLDI4NiBAQAo+Pj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBH
-UEwtMi4wCj4+PiArLy8KPj4+ICsvLyBDb3B5cmlnaHQgKGMpIDIwMTggU2Ftc3VuZyBFbGVjdHJv
-bmljcyBDby4sIEx0ZC4KPj4+ICsvLyBDb3B5cmlnaHQgKGMpIEpvbmdod2EgTGVlIDxqb25naHdh
-My5sZWVAc2Ftc3VuZy5jb20+Cj4+PiArLy8gQ29weXJpZ2h0IChjKSBDaGFud29vIENob2kgPGN3
-MDAuY2hvaUBzYW1zdW5nLmNvbT4KPj4+ICsvLwo+Pj4gKy8vIEVYWU5PUzU0MzMgLSBDUFUgUE1V
-IChQb3dlciBNYW5hZ2VtZW50IFVuaXQpIHN1cHBvcnQKPj4+ICsKPj4+ICsjaW5jbHVkZSA8bGlu
-dXgvc29jL3NhbXN1bmcvZXh5bm9zLXJlZ3MtcG11Lmg+Cj4+PiArI2luY2x1ZGUgPGxpbnV4L3Nv
-Yy9zYW1zdW5nL2V4eW5vcy1wbXUuaD4KPj4+ICsKPj4+ICsjaW5jbHVkZSAiZXh5bm9zLXBtdS5o
-Igo+Pj4gKwo+Pj4gK3N0YXRpYyBzdHJ1Y3QgZXh5bm9zX3BtdV9jb25mIGV4eW5vczU0MzNfcG11
-X2NvbmZpZ1tdID0gewo+Pj4gKwkvKiB7IC5vZmZzZXQgPSBhZGRyZXNzLAkudmFsID0geyBBRlRS
-LCBMUEEsIFNMRUVQIH0gfSAqLwo+Pj4gKwl7IEVYWU5PUzU0MzNfQVRMQVNfQ1BVMF9TWVNfUFdS
-X1JFRywJCQl7IDB4MCwgMHgwLCAweDggfSB9LAo+Pj4gKwl7IEVYWU5PUzU0MzNfRElTX0lSUV9B
-VExBU19DUFUwX0NFTlRSQUxfU1lTX1BXUl9SRUcsCXsgMHgwLCAweDAsIDB4MCB9IH0sCj4+PiAr
-CXsgRVhZTk9TNTQzM19BVExBU19DUFUxX1NZU19QV1JfUkVHLAkJCXsgMHgwLCAweDAsIDB4OCB9
-IH0sCj4+PiArCXsgRVhZTk9TNTQzM19ESVNfSVJRX0FUTEFTX0NQVTFfQ0VOVFJBTF9TWVNfUFdS
-X1JFRywJeyAweDAsIDB4MCwgMHgwIH0gfSwKPj4+ICsJeyBFWFlOT1M1NDMzX0FUTEFTX0NQVTJf
-U1lTX1BXUl9SRUcsCQkJeyAweDAsIDB4MCwgMHg4IH0gfSwKPj4+ICsJeyBFWFlOT1M1NDMzX0RJ
-U19JUlFfQVRMQVNfQ1BVMl9DRU5UUkFMX1NZU19QV1JfUkVHLAl7IDB4MCwgMHgwLCAweDAgfSB9
-LAo+Pj4gKwl7IEVYWU5PUzU0MzNfQVRMQVNfQ1BVM19TWVNfUFdSX1JFRywJCQl7IDB4MCwgMHgw
-LCAweDggfSB9LAo+Pj4gKwl7IEVYWU5PUzU0MzNfRElTX0lSUV9BVExBU19DUFUzX0NFTlRSQUxf
-U1lTX1BXUl9SRUcsCXsgMHgwLCAweDAsIDB4MCB9IH0sCj4+PiArCXsgRVhZTk9TNTQzM19BUE9M
-TE9fQ1BVMF9TWVNfUFdSX1JFRywJCQl7IDB4MCwgMHgwLCAweDggfSB9LAo+Pj4gKwl7IEVYWU5P
-UzU0MzNfRElTX0lSUV9BUE9MTE9fQ1BVMF9DRU5UUkFMX1NZU19QV1JfUkVHLAl7IDB4MCwgMHgw
-LCAweDAgfSB9LAo+Pj4gKwl7IEVYWU5PUzU0MzNfQVBPTExPX0NQVTFfU1lTX1BXUl9SRUcsCQkJ
-eyAweDAsIDB4MCwgMHg4IH0gfSwKPj4+ICsJeyBFWFlOT1M1NDMzX0RJU19JUlFfQVBPTExPX0NQ
-VTFfQ0VOVFJBTF9TWVNfUFdSX1JFRywJeyAweDAsIDB4MCwgMHgwIH0gfSwKPj4+ICsJeyBFWFlO
-T1M1NDMzX0FQT0xMT19DUFUyX1NZU19QV1JfUkVHLAkJCXsgMHgwLCAweDAsIDB4OCB9IH0sCj4+
-PiArCXsgRVhZTk9TNTQzM19ESVNfSVJRX0FQT0xMT19DUFUyX0NFTlRSQUxfU1lTX1BXUl9SRUcs
-CXsgMHgwLCAweDAsIDB4MCB9IH0sCj4+PiArCXsgRVhZTk9TNTQzM19BUE9MTE9fQ1BVM19TWVNf
-UFdSX1JFRywJCQl7IDB4MCwgMHgwLCAweDggfSB9LAo+Pj4gKwl7IEVYWU5PUzU0MzNfRElTX0lS
-UV9BUE9MTE9fQ1BVM19DRU5UUkFMX1NZU19QV1JfUkVHLAl7IDB4MCwgMHgwLCAweDAgfSB9LAo+
-Pj4gKwl7IEVYWU5PUzU0MzNfQVRMQVNfTk9OQ1BVX1NZU19QV1JfUkVHLAkJCXsgMHgwLCAweDAs
-IDB4OCB9IH0sCj4+PiArCXsgRVhZTk9TNTQzM19BUE9MTE9fTk9OQ1BVX1NZU19QV1JfUkVHLAkJ
-CXsgMHgwLCAweDAsIDB4OCB9IH0sCj4+Cj4+Cj4+IDEuIEZpcnN0IG9mIGFsbCB3aHkgZG8geW91
-IG5lZWQgYW55IG9mIHRoZXNlIENQVSByZWxhdGVkIFBNVSBjb25maWcKPj4gICAgcmVnaXN0ZXJz
-IGluIGtlcm5lbCA/IEZyb20gdGhlIGluZm9ybWF0aW9uIEkgZ2F0aGVyZWQgdGhpcyBpcyBBUk02
-NAo+PiAgICBTb0MgdXNpbmcgUFNDSS4gVGhlc2UgYXJlIG5lZWRlZCBqdXN0IGluIFBTQ0kgaW1w
-bGVtZW50YXRpb24gYW5kIG5vdAo+PiAgICBpbiBrZXJuZWwuIFNvIGNhbiB5b3UgZWxhYm9yYXRl
-IG9uIHdoeSB0aGVyZSBhcmUgcHJlc2VudCBoZXJlID8KPiAKPiBUaGUgMzJiaXQgRXh5bm9zIHVz
-ZWQgdGhlICdzbWMnIGNhbGwgdG8gZW50ZXIgdGhlIHN1c3BlbmQgbW9kZQo+IGFuZCBuZWVkIHRv
-IGhhbmRsZSB0aGUgUE1VIHJlZ2lzdGVycy4KPiAKCk9LCgo+IEV2ZW4gaWYgUFNDSSByZXBsYWNl
-cyB0aGUgJ3NtYycgY2FsbCBvbiB0aGUgRXh5bm9zNTQzMywKPiB0aGUgRXh5bm9zNTQzMydzIGRv
-Y3VtZW50IHJlcXVpcmVzIHRoZSBoYW5kbGluZyBvZiBQTVUgY29uZmlnCj4gcmVsYXRlZCB0byBD
-UFUgZm9yIHRoZSBzdXNwZW5kIG1vZGUuCj4KCk9LIGJ1dCBkb2VzIGl0IHN0YXRlIGl0IG5lZWRz
-IHRvIGJlIGluIGtlcm5lbCA/KGkuZS4gaW4gRUwxIE5TKQoKPiBJTUhPLCBJZiB0aGUgc2VjdXJl
-IE9TIGltcGxlbWVudGVkIHRoZSBhbGwgc29tZXRoaW5nIHJlbGF0ZWQgdG8gQ1BVLAo+IGl0IG1p
-Z2h0IGJlIHVubmVjZXNzYXJ5IHRvIGhhbmRsZSB0aGUgUE1VIHJlZ2lzdGVycy4gSSB0aGluayB0
-aGF0Cj4gaXQgZGVwZW5kIG9uIGhvdyB0byBkZXNpZ24gdGhlIFNvQyBieSBIL1cgQXJjaGl0ZWN0
-LiBUaGlzIGlzIGp1c3QgbXkgb3Bpbmlvbi4KPiAKCkV2ZW4gaWYgaXQgY2FuIGJlIGFjY2Vzc2Vk
-IGluIGtlcm5lbCwgYmV0dGVyIHRvIGtlZXAgYWxsIHRoZXNlIGluIFBTQ0kKaW1wbGVtZW50YXRp
-b24gdGhhdCBkb2VzIHRoZSBhY3R1YWwgcG93ZXIgc3RhdGUgbWFuYWdlbWVudC4gTWl4aW5nIHRo
-ZW0KaW4gYm90aCBrZXJuZWwgYW5kIFBTQ0kgaW1wbGVtZW50YXRpb24gaXMganVzdCBhIG1lc3Mg
-VEJIIGFuZCBub3QgZWFzeQp0byBtYWludGFpbiB0aGUgcGxhdGZvcm0gaWYgc29tZSBpc3N1ZXMg
-cG9wIHVwLgoKPj4KPj4gMi4gQXJlIHRoZXJlIGFueSBwdWJsaWMgZG9jdW1lbnRzIHRoYXQgdGhl
-c2UgbmFtZXMgbWFwIHRvID8KPiAKPiBUaGVyZSBpcyBubyBwdWJsaWMgZG9jdW1lbnQuIEl0IGlz
-IGNvbmZpZGVudGlhbC4KPiAKCkkgZ3Vlc3NlZCBzbyBhbmQgaGVuY2UgcmFpc2VkIHRvIHJlbW92
-ZSBpdC4KCj4+ICAgIElmIHRoZXJlIGlzIG5vbmUsIHBsZWFzZSByZXBsYWNlIHRoZXNlIGNvZGVu
-YW1lcyhBVExBUywgQVBPTExPKSB3aXRoCj4+ICAgIGFwcHJvcHJpYXRlbHkuCj4gCj4gSW4gdGhl
-IEV4eW5vczU0MzMsICdhcG9sbG8nIGluZGljYXRlcyB0aGUgTElUVExFIGNvcmVzIChjcHUwLTMs
-IGNvcnRleC1hNTMpCj4gYW5kICdhdGxhcycgaW5kaWNhdGVzIHRoZSBiaWcgY29yZXMgKGNwdTQt
-NywgY29ydGV4LWE1NykKPiAKPiBFeHlub3M1NDMzIGFscmVhZHkgdXNlZCB0aGUgJ2Fwb2xsbycg
-YW5kICdhdGxhcycgb24gY2xrLWV4eW5vczU0MzMuYyBkcml2ZXIKPiBhbmQgdGhlcm1hbCBkZXZp
-Y2UtdHJlZSBub2RlLiBJdCBpcyBiZXR0ZXIgdG8gdXNlIHRoZSBvcmlnaW5hbCByZWdpc3RlciBu
-YW1lCj4gaW4gdGhlIGRvY3VtZW50IGluIG9yZGVyIHRvIHJlZHVjZSB0aGUgY29uZnVzaW9uIG9m
-IHRoZSBjaGFuZ2Ugb2YgcmVnaXN0ZXIgbmFtZQo+IGV2ZW4gaWYgZG9jdW1lbnQgaXMgbm90IHB1
-YmxpYy4KPiAKPiBBbHNvLCBleHlub3M3IHVzZWQgdGhlICdhdGxhcycgd29yZCBmb3IgYmlnIGNv
-cmVzLgo+IAoKSSBkaXNhZ3JlZS4gSWYgeW91IGRvbid0IGhhdmUgYW55IHB1YmxpYyBkb2N1bWVu
-dHMsIHRoZW4gYmV0dGVyIHVzZQpuYW1lcyBvdGhlciBkZXZlbG9wZXJzIGFyZSB1c2VkIHRvIGFu
-ZCBub3Qgc29tZSBjb2RlIG5hbWVzIHdoaWNoCm90aGVyd2lzZSBpcyBub3Qgc2VlbiBpbiBhbnkg
-b3RoZXIgcGFydCBvZiB0aGUgY29kZSBiYXNlLiBHcmVwcGluZwpqdXN0IHNob3dzIEV4eW5vcyB1
-c2luZyB0aGVzZSBjb2RlIG5hbWVzIHdoaWNoIGFyZSBnZW5lcmFsbHkgcmVzdHJpY3RlZApmb3Ig
-aW50ZXJuYWwgdXNlLgoKLS0gClJlZ2FyZHMsClN1ZGVlcAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QK
-bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
-YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/char/hw_random/exynos-trng.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
+index 34d6f51..4c8a2be 100644
+--- a/drivers/char/hw_random/exynos-trng.c
++++ b/drivers/char/hw_random/exynos-trng.c
+@@ -129,10 +129,8 @@ static int exynos_trng_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	trng->mem = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(trng->mem)) {
+-		dev_err(&pdev->dev, "Could not map IO resources.\n");
++	if (IS_ERR(trng->mem))
+ 		return PTR_ERR(trng->mem);
+-	}
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 	ret = pm_runtime_get_sync(&pdev->dev);
