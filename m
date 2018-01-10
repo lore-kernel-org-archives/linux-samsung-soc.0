@@ -1,33 +1,54 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH -next] hwrng: exynos - remove redundant dev_err call in exynos_trng_probe()
-Date: Wed, 10 Jan 2018 15:24:19 +0100
-Message-ID: <CAJKOXPfQKHNxNe-3kOTpp9rUSoh3nLVhBxtZiyDJSoBgKLR4vg@mail.gmail.com>
-References: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: dts: s5pv210: add interrupt-parent for ohci
+Date: Wed, 10 Jan 2018 17:10:11 +0100
+Message-ID: <20180110161045.4052684-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:55904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965159AbeAJOYW (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Jan 2018 09:24:22 -0500
-In-Reply-To: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Guenter Roeck <linux@roeck-us.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: l.stelmach@samsung.com, mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de, gregkh@linuxfoundation.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 2:30 PM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/char/hw_random/exynos-trng.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+The ohci-hcd node has an interrupt number but no interrupt-parent,
+leading to a warning with current dtc versions:
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+arch/arm/boot/dts/s5pv210-aquila.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+arch/arm/boot/dts/s5pv210-goni.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+arch/arm/boot/dts/s5pv210-smdkc110.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+arch/arm/boot/dts/s5pv210-smdkv210.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+arch/arm/boot/dts/s5pv210-torbreck.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
 
-Best regards,
-Krzysztof
+As seen from the related exynos dts files, the ohci and ehci controllers
+always share one interrupt number, and the number is the same here as
+well, so setting the same interrupt-parent is the reasonable solution
+here.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/boot/dts/s5pv210.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
+index 247c0029659c..67358562a6ea 100644
+--- a/arch/arm/boot/dts/s5pv210.dtsi
++++ b/arch/arm/boot/dts/s5pv210.dtsi
+@@ -460,6 +460,7 @@
+ 			compatible = "samsung,exynos4210-ohci";
+ 			reg = <0xec300000 0x100>;
+ 			interrupts = <23>;
++			interrupt-parent = <&vic1>;
+ 			clocks = <&clocks CLK_USB_HOST>;
+ 			clock-names = "usbhost";
+ 			#address-cells = <1>;
+-- 
+2.9.0
