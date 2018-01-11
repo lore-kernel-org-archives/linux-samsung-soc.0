@@ -1,75 +1,54 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/9] iommu/of: Drop early initialisation hooks
-Date: Thu, 11 Jan 2018 13:26:26 +0100
-Message-ID: <ad520247-8342-97c2-4448-5f5e87394aa1@samsung.com>
-References: <20180111082229.24011-1-jeffy.chen@rock-chips.com>
-        <CGME20180111082537epcas3p274f6bfeb31f10742e8129dc0c877745e@epcas3p2.samsung.com>
-        <20180111082229.24011-2-jeffy.chen@rock-chips.com>
-        <60fdd375-ca74-0fea-c598-39a68b9e7735@samsung.com>
-        <5A57471E.7020304@rock-chips.com>
+From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Subject: Re: [PATCH] hwrng: exynos - Signedness bug in exynos_trng_do_read()
+Date: Thu, 11 Jan 2018 13:38:29 +0100
+Message-ID: <87373czi2i.fsf%l.stelmach@samsung.com>
+References: <20180110093658.kxnmhqkoow7o2xab@mwanda>
+        <CGME20180111123843eucas1p1d074063cbd2fc3b408caeeb7ec3cedcc@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5A57471E.7020304@rock-chips.com>
-Content-language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: JeffyChen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org
-Cc: jcliang@chromium.org, robin.murphy@arm.com, tfiga@chromium.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org, Frank Rowand <frowand.list@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>, Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50201 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933184AbeAKMir (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 11 Jan 2018 07:38:47 -0500
+In-reply-to: <20180110093658.kxnmhqkoow7o2xab@mwanda>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Jeffy,
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2018-01-11 12:14, JeffyChen wrote:
-> Hi Marek,
+It was <2018-01-10 =C5=9Bro 10:36>, when Dan Carpenter wrote:
+> "val" needs to be signed for the error handling to work.
 >
-> Thanks for your reply.
+> Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 >
-> On 01/11/2018 05:40 PM, Marek Szyprowski wrote:
->> Hi Jeffy,
->>
->> On 2018-01-11 09:22, Jeffy Chen wrote:
->>> With the probe-deferral mechanism, early initialisation hooks are no
->>> longer needed.
->>>
->>> Suggested-by: Robin Murphy <robin.murphy@arm.com>
->>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
->>> ---
->>>
->>>   drivers/iommu/arm-smmu-v3.c  |  2 +-
->>>   drivers/iommu/arm-smmu.c     | 12 ++++++------
->>>   drivers/iommu/exynos-iommu.c |  2 +-
->>
->> For Exynos IOMMU:
->> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>
->> IPMMU and MSM IOMMU are no longer multi-platform safe after this patch.
->> It breaks them in the same way as my commit 928055a01b3f ("iommu/exynos:
->> Remove custom platform device registration code") broke Exynos IOMMU.
->>
->> You need a similar fix for them:
->> https://www.spinics.net/lists/arm-kernel/msg627648.html
->
-> hmmm, right, i did saw this fix in the rockchip iommu driver too.
->
-> and there're also some other iommu drivers put bus_set_iommu in their 
-> probe() to avoid that.
->
-> maybe we can do it in the iommu framework?
->
-> for example:
-> 1/ add a bus type member to struct iommu_device
-> 2/ and a iommu_device_set_bus()
-> 3/ do the bus_set_iommu stuff in iommu_device_register()
-> 4/ undo bus_set_iommu in iommu_device_unregister()
 
-Frankly, in case the device-tree based systems bus_set_iommu()
-should not be needed at all. However for some legacy reasons it
-is still required by a few bits of code (at least it was needed
-some time ago). Probably it would be best if this is finally
-resolved.
+Acked-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
 
-Best regards
--- 
-Marek Szyprowski, PhD
+=2D-=20
+=C5=81ukasz Stelmach
 Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBCAAGBQJaV1rFAAoJELCuHpyYpYAQUK4H/jaPr27lLBudkUq4jzviACaD
+rKRfP6hlOfKSY3XRGmas2w+3uY0uN78c9ddqSU/pyXNaTI+/QSRFis8dBI036vKv
+hj/6OGirFyqpFEGWE3wWF5zoTTt3vtLIPQHSQtuajQoG5T0zuhPkvVeo9klxLCL+
+l7F2l/ckhoZBcveoU0Z2rY7pcJfTOemPZVvsU8Lprw1jbEwvf7lLIYjbMWM+1YVW
+b/gxZgZDczJXukj+5iFLEEf1phjugE1TvuxGsRUQhKUxpes7NEVFo5RSYCw7y1NP
+wUTly1nZOsYSygDhiuYjmpCBNw7hvan43PGWva4TfchiwKiKrVM3bDZqlRVRD5o=
+=MQNj
+-----END PGP SIGNATURE-----
+--=-=-=--
