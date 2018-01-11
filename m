@@ -1,77 +1,67 @@
-From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Subject: Re: [PATCH -next] hwrng: exynos - remove redundant dev_err call in
- exynos_trng_probe()
-Date: Thu, 11 Jan 2018 12:13:35 +0100
-Message-ID: <87d12gzm00.fsf%l.stelmach@samsung.com>
-References: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
-        <CGME20180111111347eucas1p1207cc5450f132c7579e9bd7ebc9c31df@eucas1p1.samsung.com>
+From: JeffyChen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: [PATCH 1/9] iommu/of: Drop early initialisation hooks
+Date: Thu, 11 Jan 2018 19:14:38 +0800
+Message-ID: <5A57471E.7020304@rock-chips.com>
+References: <20180111082229.24011-1-jeffy.chen@rock-chips.com>
+	<CGME20180111082537epcas3p274f6bfeb31f10742e8129dc0c877745e@epcas3p2.samsung.com>
+	<20180111082229.24011-2-jeffy.chen@rock-chips.com>
+	<60fdd375-ca74-0fea-c598-39a68b9e7735@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-reply-to: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <60fdd375-ca74-0fea-c598-39a68b9e7735-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, jcliang-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Marek,
 
-It was <2018-01-10 =C5=9Bro 14:30>, when Wei Yongjun wrote:
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
+Thanks for your reply.
+
+On 01/11/2018 05:40 PM, Marek Szyprowski wrote:
+> Hi Jeffy,
 >
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-
-Acked-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
-
-> ---
->  drivers/char/hw_random/exynos-trng.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> On 2018-01-11 09:22, Jeffy Chen wrote:
+>> With the probe-deferral mechanism, early initialisation hooks are no
+>> longer needed.
+>>
+>> Suggested-by: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+>> Signed-off-by: Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+>> ---
+>>
+>>   drivers/iommu/arm-smmu-v3.c  |  2 +-
+>>   drivers/iommu/arm-smmu.c     | 12 ++++++------
+>>   drivers/iommu/exynos-iommu.c |  2 +-
 >
-> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_rando=
-m/exynos-trng.c
-> index 34d6f51..4c8a2be 100644
-> --- a/drivers/char/hw_random/exynos-trng.c
-> +++ b/drivers/char/hw_random/exynos-trng.c
-> @@ -129,10 +129,8 @@ static int exynos_trng_probe(struct platform_device =
-*pdev)
->=20=20
->  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	trng->mem =3D devm_ioremap_resource(&pdev->dev, res);
-> -	if (IS_ERR(trng->mem)) {
-> -		dev_err(&pdev->dev, "Could not map IO resources.\n");
-> +	if (IS_ERR(trng->mem))
->  		return PTR_ERR(trng->mem);
-> -	}
->=20=20
->  	pm_runtime_enable(&pdev->dev);
->  	ret =3D pm_runtime_get_sync(&pdev->dev);
+> For Exynos IOMMU:
+> Acked-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >
+> IPMMU and MSM IOMMU are no longer multi-platform safe after this patch.
+> It breaks them in the same way as my commit 928055a01b3f ("iommu/exynos:
+> Remove custom platform device registration code") broke Exynos IOMMU.
 >
->
->
+> You need a similar fix for them:
+> https://www.spinics.net/lists/arm-kernel/msg627648.html
 
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+hmmm, right, i did saw this fix in the rockchip iommu driver too.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+and there're also some other iommu drivers put bus_set_iommu in their 
+probe() to avoid that.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+maybe we can do it in the iommu framework?
 
-iQEcBAEBCAAGBQJaV0bgAAoJELCuHpyYpYAQ24oH/0R7nTNQ5m7SbblU1pUqhMnF
-XfNvLKlgi3RBCkc6qpHtKrpYbWcckBL6uplB69uBVq+WhHFttZqPf+5nFQuOj+Xr
-0K+nq+KC/kLMWqdqmN/seIsTWJAp0jhha2E6NuJskkJK2PGs0bzqJpkdRV7jskkF
-AMPMLpjtc9R6vNpODMvdga1A8kCscTOdRrjfu7qmpUPiEgHhe446fyu5wccf9QfS
-c/Wrd9VdpxsdK+yjq2KDZ+ID4im2ANnNApNnF9a7EMjlcFjO6IEtFiWC56d5j2de
-iM5/TwE28Ss7PgDvy86bXZ5J9PNBGLzeB6eC5vO+vW8g6q1halKVYIHd1ZkHqKI=
-=JZS8
------END PGP SIGNATURE-----
---=-=-=--
+for example:
+1/ add a bus type member to struct iommu_device
+2/ and a iommu_device_set_bus()
+3/ do the bus_set_iommu stuff in iommu_device_register()
+4/ undo bus_set_iommu in iommu_device_unregister()
