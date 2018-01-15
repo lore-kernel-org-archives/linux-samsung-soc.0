@@ -1,36 +1,38 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH][next] hwrng: exynos: check for -ve error return from readl_poll_timeout
-Date: Mon, 15 Jan 2018 09:55:43 +0100
-Message-ID: <CAJKOXPeBJi2eLROVXhPWPpVHvCgAzhhbkmE2yR8fP+oMCUT5Ow@mail.gmail.com>
-References: <20180112163048.26960-1-colin.king@canonical.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: dts: s5pv210: add interrupt-parent for ohci
+Date: Mon, 15 Jan 2018 14:00:40 +0100
+Message-ID: <CAK8P3a2Q070P8y9a2_GmBz4dnHv=OF=OvcaojkGnhRvuWAjcsw@mail.gmail.com>
+References: <20180110161045.4052684-1-arnd@arndb.de> <CAJKOXPfhQOBg5z3rXHqH7-rA+S_ggTeu=OxHEYm7NG=NDy-8qQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180112163048.26960-1-colin.king@canonical.com>
+In-Reply-To: <CAJKOXPfhQOBg5z3rXHqH7-rA+S_ggTeu=OxHEYm7NG=NDy-8qQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Guenter Roeck <linux@roeck-us.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 12, 2018 at 5:30 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Thu, Jan 11, 2018 at 9:09 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Wed, Jan 10, 2018 at 5:10 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> The ohci-hcd node has an interrupt number but no interrupt-parent,
+>> leading to a warning with current dtc versions:
+>>
+>> arch/arm/boot/dts/s5pv210-aquila.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+>> arch/arm/boot/dts/s5pv210-goni.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+>> arch/arm/boot/dts/s5pv210-smdkc110.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+>> arch/arm/boot/dts/s5pv210-smdkv210.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+>> arch/arm/boot/dts/s5pv210-torbreck.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+>>
+>> As seen from the related exynos dts files, the ohci and ehci controllers
+>> always share one interrupt number, and the number is the same here as
+>> well, so setting the same interrupt-parent is the reasonable solution
+>> here.
 >
-> Currently, the return from readl_poll_timeout is being assigned to
-> a u32 and this is being checked for a -ve return which is always
-> false since a u32 cannot be less than zero.  Fix this by changing
-> val to an int so that error returns can be correctly detected.
->
-> Detected by CoverityScan, CID#1463776 ("Logically dead code")
->
-> Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/char/hw_random/exynos-trng.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+> Your patch is correct. However my last pull request still waits and it
+> is quite late in this release cycle so I will apply it for v4.17 after
+> this merge window. On the other hand you can take it directly (in that
+> case: Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>).
 
-Thanks for the patch! Dan already fixed this few days before:
-https://www.spinics.net/lists/linux-samsung-soc/msg61724.html
+Applied to next/dt, thanks!
 
-Best regards,
-Krzysztof
+      Arnd
