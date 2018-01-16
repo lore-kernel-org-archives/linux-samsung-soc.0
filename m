@@ -1,98 +1,104 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 3/3] arm64: dts: exynos: Fix missing missing reg warning for syscon restart nodes
-Date: Tue, 16 Jan 2018 22:31:29 +0100
-Message-ID: <20180116213129.16209-3-krzk@kernel.org>
-References: <20180116213129.16209-1-krzk@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] [v3] media: s3c-camif: fix out-of-bounds array access
+Date: Tue, 16 Jan 2018 22:46:03 +0100
+Message-ID: <CAK8P3a3mBGtMbCuC73Jos33_9-MTXXhKC6jsCe1jb963H5gxZw@mail.gmail.com>
+References: <20180116164740.2097257-1-arnd@arndb.de> <3536229.Z78lxBGCHq@avalon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180116213129.16209-1-krzk@kernel.org>
+In-Reply-To: <3536229.Z78lxBGCHq@avalon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Fix DTC warnings like:
+On Tue, Jan 16, 2018 at 9:17 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Arnd,
+>
+> Thank you for the patch.
+>
+> On Tuesday, 16 January 2018 18:47:24 EET Arnd Bergmann wrote:
+>> While experimenting with older compiler versions, I ran
+>> into a warning that no longer shows up on gcc-4.8 or newer:
+>>
+>> drivers/media/platform/s3c-camif/camif-capture.c: In function
+>> '__camif_subdev_try_format':
+>> drivers/media/platform/s3c-camif/camif-capture.c:1265:25: error: array
+>> subscript is below array bounds
+>>
+>> This is an off-by-one bug, leading to an access before the start of the
+>> array, while newer compilers silently assume this undefined behavior
+>> cannot happen and leave the loop at index 0 if no other entry matches.
+>>
+>> As Sylvester explains, we actually need to ensure that the
+>> value is within the range, so this reworks the loop to be
+>> easier to parse correctly, and an additional check to fall
+>> back on the first format value for any unexpected input.
+>>
+>> I found an existing gcc bug for it and added a reduced version
+>> of the function there.
+>>
+>> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69249#c3
+>> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series
+>> camera interface") Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>> v3: fix newly introduced off-by-one bug.
+>> v2: rework logic rather than removing it.
+>> ---
+>>  drivers/media/platform/s3c-camif/camif-capture.c | 9 ++++++---
+>>  1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/s3c-camif/camif-capture.c
+>> b/drivers/media/platform/s3c-camif/camif-capture.c index
+>> 437395a61065..f51b92e94a32 100644
+>> --- a/drivers/media/platform/s3c-camif/camif-capture.c
+>> +++ b/drivers/media/platform/s3c-camif/camif-capture.c
+>> @@ -1256,16 +1256,19 @@ static void __camif_subdev_try_format(struct
+>> camif_dev *camif, {
+>>       const struct s3c_camif_variant *variant = camif->variant;
+>>       const struct vp_pix_limits *pix_lim;
+>> -     int i = ARRAY_SIZE(camif_mbus_formats);
+>> +     int i;
+>>
+>>       /* FIXME: constraints against codec or preview path ? */
+>>       pix_lim = &variant->vp_pix_limits[VP_CODEC];
+>>
+>> -     while (i-- >= 0)
+>> +     for (i = 0; i < ARRAY_SIZE(camif_mbus_formats); i++)
+>>               if (camif_mbus_formats[i] == mf->code)
+>>                       break;
+>>
+>> -     mf->code = camif_mbus_formats[i];
+>> +     if (i == ARRAY_SIZE(camif_mbus_formats))
+>> +             mf->code = camif_mbus_formats[0];
+>> +     else
+>> +             mf->code = camif_mbus_formats[i];
+>
+> I might be missing something very obvious, but isn't mf->code already ==
+> camif_mbus_formats[i] in the else branch ?
 
-    arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning (simple_bus_reg):
-        Node /soc/syscon-reboot missing or empty reg/ranges property
+Ah, that must be what I was thinking back when I first
+discussed it with Sylvester in
+https://patchwork.kernel.org/patch/9950041/
 
-by moving the syscon restart node into the PMU (Power Management Unit)
-node.  The PMU node is the actual block responsible for power
-management, including typical Exynos on/off/restart procedures.
-Therefore the syscon restart node logically belongs to it.
+Unfortunately, I hadn't given it as much thought today when
+I tried to reconstruct the result to send a new version
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> How about simply
 
----
+>         unsigned int i;
+>
+>         /* FIXME: constraints against codec or preview path ? */
+>         pix_lim = &variant->vp_pix_limits[VP_CODEC];
+>
+>         for (i = 0; i < ARRAY_SIZE(camif_mbus_formats); i++)
+>                 if (camif_mbus_formats[i] == mf->code)
+>                         break;
+>
+>         if (i == ARRAY_SIZE(camif_mbus_formats))
+>                 mf->code = camif_mbus_formats[0];
 
-Not tested.  All tests are welcomed.
----
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 16 ++++++++--------
- arch/arm64/boot/dts/exynos/exynos7.dtsi    | 14 +++++++-------
- 2 files changed, 15 insertions(+), 15 deletions(-)
+Yes, makes sense. I'll send a v4.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 62f276970174..34c3648182d9 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -231,13 +231,6 @@
- 		cpu_on = <0xC4000003>;
- 	};
- 
--	reboot: syscon-reboot {
--		compatible = "syscon-reboot";
--		regmap = <&pmu_system_controller>;
--		offset = <0x400>; /* SWRESET */
--		mask = <0x1>;
--	};
--
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -794,11 +787,18 @@
- 		};
- 
- 		pmu_system_controller: system-controller@105c0000 {
--			compatible = "samsung,exynos5433-pmu", "syscon";
-+			compatible = "samsung,exynos5433-pmu", "syscon", "simple-mfd";
- 			reg = <0x105c0000 0x5008>;
- 			#clock-cells = <1>;
- 			clock-names = "clkout16";
- 			clocks = <&xxti>;
-+
-+			reboot: syscon-reboot {
-+				compatible = "syscon-reboot";
-+				regmap = <&pmu_system_controller>;
-+				offset = <0x400>; /* SWRESET */
-+				mask = <0x1>;
-+			};
- 		};
- 
- 		gic: interrupt-controller@11001000 {
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index ad9dce6894ce..aa99d49af356 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -492,15 +492,15 @@
- 		};
- 
- 		pmu_system_controller: system-controller@105c0000 {
--			compatible = "samsung,exynos7-pmu", "syscon";
-+			compatible = "samsung,exynos7-pmu", "syscon", "simple-mfd";
- 			reg = <0x105c0000 0x5000>;
--		};
- 
--		reboot: syscon-reboot {
--			compatible = "syscon-reboot";
--			regmap = <&pmu_system_controller>;
--			offset = <0x0400>;
--			mask = <0x1>;
-+			reboot: syscon-reboot {
-+				compatible = "syscon-reboot";
-+				regmap = <&pmu_system_controller>;
-+				offset = <0x0400>;
-+				mask = <0x1>;
-+			};
- 		};
- 
- 		rtc: rtc@10590000 {
--- 
-2.11.0
+          Arnd
