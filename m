@@ -1,31 +1,45 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] [v2] media: s3c-camif: fix out-of-bounds array access
-Date: Tue, 16 Jan 2018 17:49:13 +0100
-Message-ID: <CAK8P3a2vhH+ApKi+S+cN20+N_umY5aJysbxzWpvF=Tvao33CSw@mail.gmail.com>
-References: <20180116153105.3523235-1-arnd@arndb.de> <20180116154403.muqorw74ggyhz7ze@paasikivi.fi.intel.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH] [v3] media: s3c-camif: fix out-of-bounds array access
+Date: Tue, 16 Jan 2018 18:52:43 +0200
+Message-ID: <20180116165243.ll4llily5rtctddt@paasikivi.fi.intel.com>
+References: <20180116164740.2097257-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180116154403.muqorw74ggyhz7ze@paasikivi.fi.intel.com>
+Content-Disposition: inline
+In-Reply-To: <20180116164740.2097257-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 16, 2018 at 4:44 PM, Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
+On Tue, Jan 16, 2018 at 05:47:24PM +0100, Arnd Bergmann wrote:
+> While experimenting with older compiler versions, I ran
+> into a warning that no longer shows up on gcc-4.8 or newer:
+> 
+> drivers/media/platform/s3c-camif/camif-capture.c: In function '__camif_subdev_try_format':
+> drivers/media/platform/s3c-camif/camif-capture.c:1265:25: error: array subscript is below array bounds
+> 
+> This is an off-by-one bug, leading to an access before the start of the
+> array, while newer compilers silently assume this undefined behavior
+> cannot happen and leave the loop at index 0 if no other entry matches.
+> 
+> As Sylvester explains, we actually need to ensure that the
+> value is within the range, so this reworks the loop to be
+> easier to parse correctly, and an additional check to fall
+> back on the first format value for any unexpected input.
+> 
+> I found an existing gcc bug for it and added a reduced version
+> of the function there.
+> 
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69249#c3
+> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
->>               if (camif_mbus_formats[i] == mf->code)
->>                       break;
->>
->> +     if (i == ARRAY_SIZE(camif_mbus_formats))
->> +             mf->code = camif_mbus_formats[0];
->> +
->
-> Either else here so that the line below is executed only if the condition
-> is false, or assign i = 0 above. Otherwise you'll end up with a different
-> off-by-one bug. :-)
+Thanks!
 
-Oops. Sent v3 now, thanks for the review.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-      Arnd
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
