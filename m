@@ -1,75 +1,184 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] [v2] drm/exynos: g2d: use monotonic timestamps
-Date: Wed, 17 Jan 2018 19:16:14 +0100
-Message-ID: <8b3c5b1a-c630-30d6-a261-2ee12d71fcc5@math.uni-bielefeld.de>
-References: <20180117170131.2677586-1-arnd@arndb.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 2/4] ARM: dts: split trats2 DTS in preparation for
+ midas boards
+Date: Wed, 17 Jan 2018 20:27:21 +0100
+Message-ID: <20180117192721.nxr3463gj2qyyrwr@kozik-lap>
+References: <20180117125845.3954-1-simon@lineageos.org>
+ <20180117125845.3954-3-simon@lineageos.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180117170131.2677586-1-arnd@arndb.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:45397 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750816AbeAQT1Z (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 17 Jan 2018 14:27:25 -0500
+Content-Disposition: inline
+In-Reply-To: <20180117125845.3954-3-simon@lineageos.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Simon Shields <simon@lineageos.org>
+Cc: linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
 
-SGV5IEFybmQsCgpsb29rcyBnb29kIHRvIG1lIQoKUmV2aWV3ZWQtYnk6IFRvYmlhcyBKYWtvYmkg
-PHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgoKLSBUb2JpYXMKCgpBcm5kIEJlcmdtYW5u
-IHdyb3RlOgo+IFRoZSBleHlub3MgRFJNIGRyaXZlciB1c2VzIHJlYWwtdGltZSAnc3RydWN0IHRp
-bWV2YWwnIHZhbHVlcwo+IGZvciBleHBvcnRpbmcgaXRzIHRpbWVzdGFtcHMgdG8gdXNlciBzcGFj
-ZS4gVGhpcyBoYXMgbXVsdGlwbGUKPiBwcm9ibGVtczoKPiAKPiAxLiBzaWduZWQgc2Vjb25kcyBv
-dmVyZmxvdyBpbiB5MjAzOAo+IDIuIHRoZSAnc3RydWN0IHRpbWV2YWwnIGRlZmluaXRpb24gaXMg
-ZGVwcmVjYXRlZCBpbiB0aGUga2VybmVsCj4gMy4gdGltZSBtYXkganVtcCBvciBnbyBiYWNrd2Fy
-ZHMgYWZ0ZXIgYSAnc2V0dGltZW9mZGF5KCknIHN5c2NhbGwKPiA0LiBvdGhlciBEUk0gdGltZXN0
-YW1wcyBhcmUgaW4gQ0xPQ0tfTU9OT1RPTklDIGRvbWFpbiwgc28gdGhleQo+ICAgIGNhbid0IGJl
-IGNvbXBhcmVkCj4gNS4gZXhwb3J0aW5nIG1pY3Jvc2Vjb25kcyByZXF1aXJlcyBhIGRpdmlzaW9u
-IGJ5IDEwMDAsIHdoaWNoIG1heQo+ICAgIGJlIHNsb3cgb24gc29tZSBhcmNoaXRlY3R1cmVzLgo+
-IAo+IFRoZSBjb2RlIGV4aXN0ZWQgaW4gdHdvIHBsYWNlcyBiZWZvcmUsIGJ1dCB0aGUgSVBQIHBv
-cnRpb24gd2FzCj4gcmVtb3ZlZCBpbiA4ZGVkNTk0MTNjY2MgKCJkcm0vZXh5bm9zOiBpcHA6IFJl
-bW92ZSBFeHlub3MgRFJNCj4gSVBQIHN1YnN5c3RlbSIpLCBzbyB3ZSBubyBsb25nZXIgbmVlZCB0
-byB3b3JyeSBhYm91dCBpdC4KPiAKPiBJZGVhbGx5IHRpbWVzdGFtcHMgc2hvdWxkIGp1c3QgdXNl
-IDY0LWJpdCBuYW5vc2Vjb25kcyBpbnN0ZWFkLCBidXQKPiBvZiBjb3Vyc2Ugd2UgY2FuJ3QgY2hh
-bmdlIHRoYXQgbm93LiBJbnN0ZWFkLCB0aGlzIHRyaWVzIHRvIGFkZHJlc3MKPiB0aGUgZmlyc3Qg
-Zm91ciBwb2ludHMgYWJvdmUgYnkgdXNpbmcgbW9ub3RvbmljICd0aW1lc3BlYycgdmFsdWVzLgo+
-IAo+IEFjY29yZGluZyB0byBUb2JpYXMgSmFrb2JpLCB1c2VyIHNwYWNlIGRvZXNuJ3QgY2FyZSBh
-Ym91dCB0aGUKPiB0aW1lc3RhbXAgYXQgdGhlIG1vbWVudCwgc28gd2UgY2FuIGNoYW5nZSB0aGUg
-Zm9ybWF0LiBFdmVuIGlmCj4gdGhlcmUgaXMgc29tZXRoaW5nIGxvb2tpbmcgYXQgdGhlbSwgaXQg
-d2lsbCB3b3JrIGp1c3QgZmluZSB3aXRoCj4gbW9ub3RvbmljIHRpbWVzIGFzIGxvbmcgYXMgdGhl
-IGFwcGxpY2F0aW9uIG9ubHkgbG9va3MgYXQgdGhlCj4gcmVsYXRpdmUgdmFsdWVzIGJldHdlZW4g
-dHdvIGV2ZW50cy4KPiAKPiBMaW5rOiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNo
-LzEwMDM4NTkzLwo+IENjOiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVs
-ZC5kZT4KPiBTaWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgo+IC0t
-LQo+IHYyOiByZWJhc2VkIHRvIHdoYXQgd2lsbCBiZSBpbiA0LjE1LCBub3cgdGhhdCBpcHAgaXMg
-Z29uZSwKPiAgICAgdXBkYXRlZCBjaGFuZ2Vsb2cgdGV4dCBiYXNlZCBvbiBpbnB1dCBmcm9tIFRv
-Ymlhcy4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIHwg
-NiArKystLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMo
-LSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cy
-ZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCj4gaW5kZXggMmI4
-YmYyZGQ2Mzg3Li45ZWZmZTQwZjVmYTUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2cyZC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2cyZC5jCj4gQEAgLTkyNiw3ICs5MjYsNyBAQCBzdGF0aWMgdm9pZCBnMmRfZmluaXNo
-X2V2ZW50KHN0cnVjdCBnMmRfZGF0YSAqZzJkLCB1MzIgY21kbGlzdF9ubykKPiAgCXN0cnVjdCBk
-cm1fZGV2aWNlICpkcm1fZGV2ID0gZzJkLT5zdWJkcnYuZHJtX2RldjsKPiAgCXN0cnVjdCBnMmRf
-cnVucXVldWVfbm9kZSAqcnVucXVldWVfbm9kZSA9IGcyZC0+cnVucXVldWVfbm9kZTsKPiAgCXN0
-cnVjdCBkcm1fZXh5bm9zX3BlbmRpbmdfZzJkX2V2ZW50ICplOwo+IC0Jc3RydWN0IHRpbWV2YWwg
-bm93Owo+ICsJc3RydWN0IHRpbWVzcGVjNjQgbm93Owo+ICAKPiAgCWlmIChsaXN0X2VtcHR5KCZy
-dW5xdWV1ZV9ub2RlLT5ldmVudF9saXN0KSkKPiAgCQlyZXR1cm47Cj4gQEAgLTkzNCw5ICs5MzQs
-OSBAQCBzdGF0aWMgdm9pZCBnMmRfZmluaXNoX2V2ZW50KHN0cnVjdCBnMmRfZGF0YSAqZzJkLCB1
-MzIgY21kbGlzdF9ubykKPiAgCWUgPSBsaXN0X2ZpcnN0X2VudHJ5KCZydW5xdWV1ZV9ub2RlLT5l
-dmVudF9saXN0LAo+ICAJCQkgICAgIHN0cnVjdCBkcm1fZXh5bm9zX3BlbmRpbmdfZzJkX2V2ZW50
-LCBiYXNlLmxpbmspOwo+ICAKPiAtCWRvX2dldHRpbWVvZmRheSgmbm93KTsKPiArCWt0aW1lX2dl
-dF90czY0KCZub3cpOwo+ICAJZS0+ZXZlbnQudHZfc2VjID0gbm93LnR2X3NlYzsKPiAtCWUtPmV2
-ZW50LnR2X3VzZWMgPSBub3cudHZfdXNlYzsKPiArCWUtPmV2ZW50LnR2X3VzZWMgPSBub3cudHZf
-bnNlYyAvIE5TRUNfUEVSX1VTRUM7Cj4gIAllLT5ldmVudC5jbWRsaXN0X25vID0gY21kbGlzdF9u
-bzsKPiAgCj4gIAlkcm1fc2VuZF9ldmVudChkcm1fZGV2LCAmZS0+YmFzZSk7Cj4gCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Wed, Jan 17, 2018 at 11:58:43PM +1100, Simon Shields wrote:
+> The midas boards share a lot with trats2. Split the common parts
+> out of trats2 into a common midas dtsi and a common "galaxy s3" dts.
+> 
+> Signed-off-by: Simon Shields <simon@lineageos.org>
+> ---
+>  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi        |  141 ++
+>  ...exynos4412-trats2.dts => exynos4412-midas.dtsi} |  119 +-
+>  arch/arm/boot/dts/exynos4412-trats2.dts            | 1441 +-------------------
+>  3 files changed, 174 insertions(+), 1527 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+>  copy arch/arm/boot/dts/{exynos4412-trats2.dts => exynos4412-midas.dtsi} (91%)
+>  rewrite arch/arm/boot/dts/exynos4412-trats2.dts (98%)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> new file mode 100644
+> index 000000000000..b87ea2176978
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> @@ -0,0 +1,141 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Samsung's Exynos4412 based Galaxy S3 board device tree source
+> + *
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + */
+> +
+> +/dts-v1/;
+> +#include "exynos4412-midas.dtsi"
+> +
+> +/ {
+> +	aliases {
+> +		i2c9 = &i2c_ak8975;
+> +		i2c10 = &i2c_cm36651;
+> +	};
+> +
+> +	regulators {
+> +		lcd_vdd3_reg: voltage-regulator-2 {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "LCD_VDD_2.2V";
+> +			regulator-min-microvolt = <2200000>;
+> +			regulator-max-microvolt = <2200000>;
+> +			gpio = <&gpc0 1 GPIO_ACTIVE_HIGH>;
+> +			enable-active-high;
+> +		};
+> +
+> +		ps_als_reg: voltage-regulator-5 {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "LED_A_3.0V";
+> +			regulator-min-microvolt = <3000000>;
+> +			regulator-max-microvolt = <3000000>;
+> +			gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
+> +			enable-active-high;
+> +		};
+> +	};
+> +
+> +	i2c_ak8975: i2c-gpio-0 {
+> +		compatible = "i2c-gpio";
+> +		gpios = <&gpy2 4 GPIO_ACTIVE_HIGH>, <&gpy2 5 GPIO_ACTIVE_HIGH>;
+> +		i2c-gpio,delay-us = <2>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		status = "okay";
+> +
+> +		ak8975@c {
+> +			compatible = "asahi-kasei,ak8975";
+> +			reg = <0x0c>;
+> +			gpios = <&gpj0 7 GPIO_ACTIVE_HIGH>;
+> +		};
+> +	};
+> +
+> +	i2c_cm36651: i2c-gpio-2 {
+> +		compatible = "i2c-gpio";
+> +		gpios = <&gpf0 0 GPIO_ACTIVE_LOW>, <&gpf0 1 GPIO_ACTIVE_LOW>;
+> +		i2c-gpio,delay-us = <2>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cm36651@18 {
+> +			compatible = "capella,cm36651";
+> +			reg = <0x18>;
+> +			interrupt-parent = <&gpx0>;
+> +			interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
+> +			vled-supply = <&ps_als_reg>;
+> +		};
+> +	};
+> +};
+> +
+> +&buck9_reg {
+> +	maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
+> +};
+> +
+> +&cam_af_reg {
+> +	gpio = <&gpm0 4 GPIO_ACTIVE_HIGH>;
+> +	status = "okay";
+> +};
+> +
+> +&cam_io_reg {
+> +	gpio = <&gpm0 2 GPIO_ACTIVE_HIGH>;
+> +	status = "okay";
+> +};
+> +
+> +&dsi_0 {
+> +	status = "okay";
+> +
+> +	panel@0 {
+> +		compatible = "samsung,s6e8aa0";
+> +		reg = <0>;
+> +		vdd3-supply = <&lcd_vdd3_reg>;
+> +		vci-supply = <&ldo25_reg>;
+> +		reset-gpios = <&gpf2 1 GPIO_ACTIVE_HIGH>;
+> +		power-on-delay= <50>;
+> +		reset-delay = <100>;
+> +		init-delay = <100>;
+> +		flip-horizontal;
+> +		flip-vertical;
+> +		panel-width-mm = <58>;
+> +		panel-height-mm = <103>;
+> +
+> +		display-timings {
+> +			timing-0 {
+> +				clock-frequency = <57153600>;
+> +				hactive = <720>;
+> +				vactive = <1280>;
+> +				hfront-porch = <5>;
+> +				hback-porch = <5>;
+> +				hsync-len = <5>;
+> +				vfront-porch = <13>;
+> +				vback-porch = <1>;
+> +				vsync-len = <2>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&i2c_3 {
+> +	mms114-touchscreen@48 {
+> +		compatible = "melfas,mms114";
+> +		reg = <0x48>;
+> +		interrupt-parent = <&gpm2>;
+> +		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
+> +		x-size = <720>;
+> +		y-size = <1280>;
+> +		avdd-supply = <&ldo23_reg>;
+> +		vdd-supply = <&ldo24_reg>;
+> +	};
+> +};
+> +
+> +&ldo25_reg {
+> +	regulator-name = "LCD_VCC_3.3V";
+> +	regulator-min-microvolt = <2800000>;
+> +	regulator-max-microvolt = <2800000>;
+> +	status = "okay";
+
+The pmic regulator should not have status okay. It is not disabled.
+
+Rest looks good, thanks for resubmit!
+
+
+Best regards,
+Krzysztof
