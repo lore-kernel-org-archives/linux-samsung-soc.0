@@ -1,43 +1,69 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] exynos: drm: use monotonic timestamps
-Date: Wed, 17 Jan 2018 17:54:32 +0100
-Message-ID: <CAK8P3a0881PmcN4vga-oMWvHkWytvvu96Psr3PR2thNti5KQ5w@mail.gmail.com>
-References: <20171102114415.1811842-1-arnd@arndb.de> <f6a26bf4-e3b6-97c1-3a92-00ffe97ae293@math.uni-bielefeld.de>
+Subject: [PATCH] [v2] drm/exynos: g2d: use monotonic timestamps
+Date: Wed, 17 Jan 2018 18:01:21 +0100
+Message-ID: <20180117170131.2677586-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:39544 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753572AbeAQQye (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:54:34 -0500
-In-Reply-To: <f6a26bf4-e3b6-97c1-3a92-00ffe97ae293@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Fri, Nov 3, 2017 at 3:04 PM, Tobias Jakobi
-<tjakobi@math.uni-bielefeld.de> wrote:
-> Hello Arnd,
->
-> I guess you could coordinate the IPP changes with Marek, who is rewriting the
-> IPP subsystem anyway (added Marek to Cc).
->
-> Here is the most recent IPPv2 series:
-> https://www.spinics.net/lists/linux-samsung-soc/msg61066.html
->
-> Concerning the G2D changes, I don't think anything in userspace uses the
-> timestamps (e.g. for synchronisation).
-
-I'm cleaning out older patches that didn't make it in yet now, and got to this
-one. I looked at the current state and found that the ipp specific half of my
-patch is obsolete now, and we won't need to patch anything there with
-Marek's new version.
-
-For the G2D half, I'll just resubmit the patch I had here, let's discuss
-further from there, if you think we should just drop the timestamp.
-
-Thanks!
-
-       Arnd
+VGhlIGV4eW5vcyBEUk0gZHJpdmVyIHVzZXMgcmVhbC10aW1lICdzdHJ1Y3QgdGltZXZhbCcgdmFs
+dWVzCmZvciBleHBvcnRpbmcgaXRzIHRpbWVzdGFtcHMgdG8gdXNlciBzcGFjZS4gVGhpcyBoYXMg
+bXVsdGlwbGUKcHJvYmxlbXM6CgoxLiBzaWduZWQgc2Vjb25kcyBvdmVyZmxvdyBpbiB5MjAzOAoy
+LiB0aGUgJ3N0cnVjdCB0aW1ldmFsJyBkZWZpbml0aW9uIGlzIGRlcHJlY2F0ZWQgaW4gdGhlIGtl
+cm5lbAozLiB0aW1lIG1heSBqdW1wIG9yIGdvIGJhY2t3YXJkcyBhZnRlciBhICdzZXR0aW1lb2Zk
+YXkoKScgc3lzY2FsbAo0LiBvdGhlciBEUk0gdGltZXN0YW1wcyBhcmUgaW4gQ0xPQ0tfTU9OT1RP
+TklDIGRvbWFpbiwgc28gdGhleQogICBjYW4ndCBiZSBjb21wYXJlZAo1LiBleHBvcnRpbmcgbWlj
+cm9zZWNvbmRzIHJlcXVpcmVzIGEgZGl2aXNpb24gYnkgMTAwMCwgd2hpY2ggbWF5CiAgIGJlIHNs
+b3cgb24gc29tZSBhcmNoaXRlY3R1cmVzLgoKVGhlIGNvZGUgZXhpc3RlZCBpbiB0d28gcGxhY2Vz
+IGJlZm9yZSwgYnV0IHRoZSBJUFAgcG9ydGlvbiB3YXMKcmVtb3ZlZCBpbiA4ZGVkNTk0MTNjY2Mg
+KCJkcm0vZXh5bm9zOiBpcHA6IFJlbW92ZSBFeHlub3MgRFJNCklQUCBzdWJzeXN0ZW0iKSwgc28g
+d2Ugbm8gbG9uZ2VyIG5lZWQgdG8gd29ycnkgYWJvdXQgaXQuCgpJZGVhbGx5IHRpbWVzdGFtcHMg
+c2hvdWxkIGp1c3QgdXNlIDY0LWJpdCBuYW5vc2Vjb25kcyBpbnN0ZWFkLCBidXQKb2YgY291cnNl
+IHdlIGNhbid0IGNoYW5nZSB0aGF0IG5vdy4gSW5zdGVhZCwgdGhpcyB0cmllcyB0byBhZGRyZXNz
+CnRoZSBmaXJzdCBmb3VyIHBvaW50cyBhYm92ZSBieSB1c2luZyBtb25vdG9uaWMgJ3RpbWVzcGVj
+JyB2YWx1ZXMuCgpBY2NvcmRpbmcgdG8gVG9iaWFzIEpha29iaSwgdXNlciBzcGFjZSBkb2Vzbid0
+IGNhcmUgYWJvdXQgdGhlCnRpbWVzdGFtcCBhdCB0aGUgbW9tZW50LCBzbyB3ZSBjYW4gY2hhbmdl
+IHRoZSBmb3JtYXQuIEV2ZW4gaWYKdGhlcmUgaXMgc29tZXRoaW5nIGxvb2tpbmcgYXQgdGhlbSwg
+aXQgd2lsbCB3b3JrIGp1c3QgZmluZSB3aXRoCm1vbm90b25pYyB0aW1lcyBhcyBsb25nIGFzIHRo
+ZSBhcHBsaWNhdGlvbiBvbmx5IGxvb2tzIGF0IHRoZQpyZWxhdGl2ZSB2YWx1ZXMgYmV0d2VlbiB0
+d28gZXZlbnRzLgoKTGluazogaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDAz
+ODU5My8KQ2M6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgpT
+aWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgotLS0KdjI6IHJlYmFz
+ZWQgdG8gd2hhdCB3aWxsIGJlIGluIDQuMTUsIG5vdyB0aGF0IGlwcCBpcyBnb25lLAogICAgdXBk
+YXRlZCBjaGFuZ2Vsb2cgdGV4dCBiYXNlZCBvbiBpbnB1dCBmcm9tIFRvYmlhcy4KLS0tCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgfCA2ICsrKy0tLQogMSBmaWxlIGNo
+YW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZzJkLmMKaW5kZXggMmI4YmYyZGQ2Mzg3Li45ZWZmZTQwZjVmYTUgMTAw
+NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYworKysgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMKQEAgLTkyNiw3ICs5MjYsNyBA
+QCBzdGF0aWMgdm9pZCBnMmRfZmluaXNoX2V2ZW50KHN0cnVjdCBnMmRfZGF0YSAqZzJkLCB1MzIg
+Y21kbGlzdF9ubykKIAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiA9IGcyZC0+c3ViZHJ2LmRy
+bV9kZXY7CiAJc3RydWN0IGcyZF9ydW5xdWV1ZV9ub2RlICpydW5xdWV1ZV9ub2RlID0gZzJkLT5y
+dW5xdWV1ZV9ub2RlOwogCXN0cnVjdCBkcm1fZXh5bm9zX3BlbmRpbmdfZzJkX2V2ZW50ICplOwot
+CXN0cnVjdCB0aW1ldmFsIG5vdzsKKwlzdHJ1Y3QgdGltZXNwZWM2NCBub3c7CiAKIAlpZiAobGlz
+dF9lbXB0eSgmcnVucXVldWVfbm9kZS0+ZXZlbnRfbGlzdCkpCiAJCXJldHVybjsKQEAgLTkzNCw5
+ICs5MzQsOSBAQCBzdGF0aWMgdm9pZCBnMmRfZmluaXNoX2V2ZW50KHN0cnVjdCBnMmRfZGF0YSAq
+ZzJkLCB1MzIgY21kbGlzdF9ubykKIAllID0gbGlzdF9maXJzdF9lbnRyeSgmcnVucXVldWVfbm9k
+ZS0+ZXZlbnRfbGlzdCwKIAkJCSAgICAgc3RydWN0IGRybV9leHlub3NfcGVuZGluZ19nMmRfZXZl
+bnQsIGJhc2UubGluayk7CiAKLQlkb19nZXR0aW1lb2ZkYXkoJm5vdyk7CisJa3RpbWVfZ2V0X3Rz
+NjQoJm5vdyk7CiAJZS0+ZXZlbnQudHZfc2VjID0gbm93LnR2X3NlYzsKLQllLT5ldmVudC50dl91
+c2VjID0gbm93LnR2X3VzZWM7CisJZS0+ZXZlbnQudHZfdXNlYyA9IG5vdy50dl9uc2VjIC8gTlNF
+Q19QRVJfVVNFQzsKIAllLT5ldmVudC5jbWRsaXN0X25vID0gY21kbGlzdF9ubzsKIAogCWRybV9z
+ZW5kX2V2ZW50KGRybV9kZXYsICZlLT5iYXNlKTsKLS0gCjIuOS4wCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
