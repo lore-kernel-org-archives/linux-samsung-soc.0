@@ -1,60 +1,63 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH] PCI: exynos: fix the potential null pointer dereference
-Date: Mon, 22 Jan 2018 11:52:46 -0500
-Message-ID: <000201d393a1$6e7c8b70$4b75a250$@gmail.com>
-References: <CGME20180122022856epcas1p494a9efeae478b299e3e8006adad71e6a@epcas1p4.samsung.com> <20180122022854.3634-1-jh80.chung@samsung.com>
+From: Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: [PATCH] [media] s3c-camif: array underflow in
+ __camif_subdev_try_format()
+Date: Mon, 22 Jan 2018 21:50:04 +0100
+Message-ID: <5b3b7195-930c-58c3-d52f-b2738c3fde1e@kernel.org>
+References: <20180122103714.GA25044@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34735 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751085AbeAVQwt (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Jan 2018 11:52:49 -0500
-In-Reply-To: <20180122022854.3634-1-jh80.chung@samsung.com>
-Content-Language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <20180122103714.GA25044@mwanda>
+Content-Language: en-US
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lorenzo.pieralisi@arm.com, kgene@kernel.org, krzk@kernel.org
 
-On Sunday, January 21, 2018 6:29 PM, Jaehoon Chung wrote:
+On 01/22/2018 11:37 AM, Dan Carpenter wrote:
+> The while loop is a post op, "while (i-- >= 0)" so the last iteration
+> will read camif_mbus_formats[-1] and then the loop will exit with "i"
+> set to -2 and so we do: "mf->code = camif_mbus_formats[-2];".
 > 
-> Before calling the callback function, it needs to check whether
-> init_clk_resources is assigned or not.
-> Otherwise, it can be occurred the NULL pointer dereference when
-> init_clk_resources is not assigned.
+> I've changed it to a pre-op, I've added a check to ensure we found the
+> right format and I've removed the "mf->code = camif_mbus_formats[i];"
+> because that is a no-op anyway.
 > 
-> Even though init_clk_resources is assigned now, it needs to prevent the
-> potential NULL pointer dereference in future.
+> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+> index 437395a61065..012f4b389c55 100644
+> --- a/drivers/media/platform/s3c-camif/camif-capture.c
+> +++ b/drivers/media/platform/s3c-camif/camif-capture.c
+> @@ -1261,11 +1261,11 @@ static void __camif_subdev_try_format(struct camif_dev *camif,
+>   	/* FIXME: constraints against codec or preview path ? */
+>   	pix_lim = &variant->vp_pix_limits[VP_CODEC];
+>   
+> -	while (i-- >= 0)
+> +	while (--i >= 0)
+>   		if (camif_mbus_formats[i] == mf->code)
+>   			break;
+> -
+> -	mf->code = camif_mbus_formats[i];
+> +	if (i < 0)
+> +		return;
 
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
+Thanks for the patch Dan. mf->width needs to be aligned by this try_format
+function so we shouldn't return here. Also it needs to be ensured mf->code 
+is set to one of the supported values when this function returns. Sorry,
+the current code really doesn't give a clue what was intended.
 
-Best regards,
-Jingoo Han
+There is already queued a patch from Arnd [1] addressing the issues you 
+have found.
+ 
+>   	if (pad == CAMIF_SD_PAD_SINK) {
+>   		v4l_bound_align_image(&mf->width, 8, CAMIF_MAX_PIX_WIDTH,
+> 
 
-> ---
->  drivers/pci/dwc/pci-exynos.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
-> index 56f32aeebd0a..39f08881f9a4 100644
-> --- a/drivers/pci/dwc/pci-exynos.c
-> +++ b/drivers/pci/dwc/pci-exynos.c
-> @@ -499,7 +499,8 @@ static int __init exynos_pcie_probe(struct
-> platform_device *pdev)
->  			return ret;
->  	}
-> 
-> -	if (ep->ops && ep->ops->get_clk_resources) {
-> +	if (ep->ops && ep->ops->get_clk_resources &&
-> +			ep->ops->init_clk_resources) {
->  		ret = ep->ops->get_clk_resources(ep);
->  		if (ret)
->  			return ret;
-> --
-> 2.15.1
+[1] https://patchwork.linuxtv.org/patch/46508
+
+--
+Regards,
+Sylwester
