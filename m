@@ -1,44 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] [media] s3c-camif: array underflow in
- __camif_subdev_try_format()
-Date: Mon, 22 Jan 2018 13:37:14 +0300
-Message-ID: <20180122103714.GA25044@mwanda>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] mfd: syscon: Remove unused Exynos PMU headers
+Date: Mon, 22 Jan 2018 13:44:52 +0000
+Message-ID: <20180122134452.kx4fst5dxi4wllmr@dell>
+References: <20180109185921.28260-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20180109185921.28260-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The while loop is a post op, "while (i-- >= 0)" so the last iteration
-will read camif_mbus_formats[-1] and then the loop will exit with "i"
-set to -2 and so we do: "mf->code = camif_mbus_formats[-2];".
+On Tue, 09 Jan 2018, Krzysztof Kozlowski wrote:
 
-I've changed it to a pre-op, I've added a check to ensure we found the
-right format and I've removed the "mf->code = camif_mbus_formats[i];"
-because that is a no-op anyway.
+> Since commit 5812f0106c44 ("phy: exynos4: Remove duplicated defines of
+> PHY register defines") and commit 7a66647b25b6 ("phy: exynos: Use one
+> define for enable bit") all users of syscon Exynos PMU headers (for PHY
+> drivers) are converted to use different headers so these can be removed.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Actually I removed these headers in mentioned commits:
+>  - https://www.spinics.net/lists/arm-kernel/msg568612.html
+>  - https://www.spinics.net/lists/arm-kernel/msg568608.html
+> however this part of patch disappeared when applying...
+> ---
+>  include/linux/mfd/syscon/exynos4-pmu.h | 21 ---------------------
+>  include/linux/mfd/syscon/exynos5-pmu.h | 19 -------------------
+>  2 files changed, 40 deletions(-)
+>  delete mode 100644 include/linux/mfd/syscon/exynos4-pmu.h
+>  delete mode 100644 include/linux/mfd/syscon/exynos5-pmu.h
 
-Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied, thanks.
 
-diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
-index 437395a61065..012f4b389c55 100644
---- a/drivers/media/platform/s3c-camif/camif-capture.c
-+++ b/drivers/media/platform/s3c-camif/camif-capture.c
-@@ -1261,11 +1261,11 @@ static void __camif_subdev_try_format(struct camif_dev *camif,
- 	/* FIXME: constraints against codec or preview path ? */
- 	pix_lim = &variant->vp_pix_limits[VP_CODEC];
- 
--	while (i-- >= 0)
-+	while (--i >= 0)
- 		if (camif_mbus_formats[i] == mf->code)
- 			break;
--
--	mf->code = camif_mbus_formats[i];
-+	if (i < 0)
-+		return;
- 
- 	if (pad == CAMIF_SD_PAD_SINK) {
- 		v4l_bound_align_image(&mf->width, 8, CAMIF_MAX_PIX_WIDTH,
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
