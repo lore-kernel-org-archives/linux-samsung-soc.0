@@ -1,50 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] Exynos-IOMMU: Delete an error message for a failed memory
- allocation in exynos_iommu_init()
-Date: Sat, 20 Jan 2018 14:34:57 +0100
-Message-ID: <1cdc825c-66d2-03ec-f7e5-935ca8d01f7e@users.sourceforge.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH] PCI: exynos: fix the potential null pointer dereference
+Date: Mon, 22 Jan 2018 11:28:54 +0900
+Message-ID: <20180122022854.3634-1-jh80.chung@samsung.com>
+References: <CGME20180122022856epcas1p494a9efeae478b299e3e8006adad71e6a@epcas1p4.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:41424 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750969AbeAVC26 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 21 Jan 2018 21:28:58 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, jingoohan1@gmail.com, lorenzo.pieralisi@arm.com, kgene@kernel.org, krzk@kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 14:28:13 +0100
+Before calling the callback function, it needs to check whether
+init_clk_resources is assigned or not.
+Otherwise, it can be occurred the NULL pointer dereference when
+init_clk_resources is not assigned.
 
-Omit an extra message for a memory allocation failure in this function.
+Even though init_clk_resources is assigned now, it needs to prevent the
+potential NULL pointer dereference in future.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 ---
- drivers/iommu/exynos-iommu.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pci/dwc/pci-exynos.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 79c45650f8de..456a88483089 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1370,8 +1370,6 @@ static int __init exynos_iommu_init(void)
- 
- 	zero_lv2_table = kmem_cache_zalloc(lv2table_kmem_cache, GFP_KERNEL);
- 	if (zero_lv2_table == NULL) {
--		pr_err("%s: Failed to allocate zero level2 page table\n",
--			__func__);
- 		ret = -ENOMEM;
- 		goto err_zero_lv2;
+diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
+index 56f32aeebd0a..39f08881f9a4 100644
+--- a/drivers/pci/dwc/pci-exynos.c
++++ b/drivers/pci/dwc/pci-exynos.c
+@@ -499,7 +499,8 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+ 			return ret;
  	}
+ 
+-	if (ep->ops && ep->ops->get_clk_resources) {
++	if (ep->ops && ep->ops->get_clk_resources &&
++			ep->ops->init_clk_resources) {
+ 		ret = ep->ops->get_clk_resources(ep);
+ 		if (ret)
+ 			return ret;
 -- 
 2.15.1
