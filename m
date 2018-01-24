@@ -1,60 +1,96 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] [media] s3c-camif: array underflow in
- __camif_subdev_try_format()
-Date: Wed, 24 Jan 2018 11:13:16 +0300
-Message-ID: <20180124081316.r75cr7yrcg3xhpw3@mwanda>
-References: <20180122103714.GA25044@mwanda>
- <5b3b7195-930c-58c3-d52f-b2738c3fde1e@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] [media] s3c-camif: array underflow in __camif_subdev_try_format()
+Date: Wed, 24 Jan 2018 09:43:52 +0100
+Message-ID: <CAK8P3a2Jms5tEaYi7=z2cg=AA__ftEott7_kRPtSE9YztAB3yQ@mail.gmail.com>
+References: <20180122103714.GA25044@mwanda> <5b3b7195-930c-58c3-d52f-b2738c3fde1e@kernel.org>
+ <20180124081316.r75cr7yrcg3xhpw3@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5b3b7195-930c-58c3-d52f-b2738c3fde1e@kernel.org>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Sylwester Nawrocki <snawrocki@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:38182 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752450AbeAXIny (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 24 Jan 2018 03:43:54 -0500
+In-Reply-To: <20180124081316.r75cr7yrcg3xhpw3@mwanda>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Jan 22, 2018 at 09:50:04PM +0100, Sylwester Nawrocki wrote:
-> On 01/22/2018 11:37 AM, Dan Carpenter wrote:
-> > --- a/drivers/media/platform/s3c-camif/camif-capture.c
-> > +++ b/drivers/media/platform/s3c-camif/camif-capture.c
-> > @@ -1261,11 +1261,11 @@ static void __camif_subdev_try_format(struct camif_dev *camif,
-> >   	/* FIXME: constraints against codec or preview path ? */
-> >   	pix_lim = &variant->vp_pix_limits[VP_CODEC];
-> >   
-> > -	while (i-- >= 0)
-> > +	while (--i >= 0)
-> >   		if (camif_mbus_formats[i] == mf->code)
-> >   			break;
-> > -
-> > -	mf->code = camif_mbus_formats[i];
-> > +	if (i < 0)
-> > +		return;
-> 
-> Thanks for the patch Dan. mf->width needs to be aligned by this try_format
-> function so we shouldn't return here. Also it needs to be ensured mf->code 
-> is set to one of the supported values when this function returns. Sorry,
-> the current code really doesn't give a clue what was intended.
-> 
-> There is already queued a patch from Arnd [1] addressing the issues you 
-> have found.
->  
-> >   	if (pad == CAMIF_SD_PAD_SINK) {
-> >   		v4l_bound_align_image(&mf->width, 8, CAMIF_MAX_PIX_WIDTH,
-> > 
-> 
-> [1] https://patchwork.linuxtv.org/patch/46508
-> 
+On Wed, Jan 24, 2018 at 9:13 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> On Mon, Jan 22, 2018 at 09:50:04PM +0100, Sylwester Nawrocki wrote:
+>> On 01/22/2018 11:37 AM, Dan Carpenter wrote:
 
-Hey Arnd,
+> I happened to be looking at the same bugs but using Smatch.  Did you get
+> these two bugs as well?
+>
+> drivers/scsi/sym53c8xx_2/sym_hipd.c:549 sym_getsync() error: iterator underflow 'div_10M' (-1)-255
+> drivers/media/i2c/sr030pc30.c:522 try_fmt() error: iterator underflow 'sr030pc30_formats' (-1)-4
 
-I happened to be looking at the same bugs but using Smatch.  Did you get
-these two bugs as well?
+I don't recall seeing those two, here is a list of array-bounds
+warnings I had in the past
+months, mostly while building with gcc-7.2:
 
-drivers/scsi/sym53c8xx_2/sym_hipd.c:549 sym_getsync() error: iterator underflow 'div_10M' (-1)-255
-drivers/media/i2c/sr030pc30.c:522 try_fmt() error: iterator underflow 'sr030pc30_formats' (-1)-4
+/git/arm-soc/arch/arm/mach-vexpress/spc.c:431:38: warning: array
+subscript is below array bounds [-Warray-bounds]
+/git/arm-soc/arch/x86/include/asm/string_32.h:70:16: error: array
+subscript is above array bounds [-Werror=array-bounds]
+/git/arm-soc/arch/x86/include/asm/uaccess_64.h:143:20: error: array
+subscript is above array bounds [-Werror=array-bounds]
+/git/arm-soc/drivers/cpufreq/arm_big_little.c:201:24: warning: array
+subscript is above array bounds [-Warray-bounds]
+/git/arm-soc/drivers/cpufreq/arm_big_little.c:325:16: warning: array
+subscript is above array bounds [-Warray-bounds]
+/git/arm-soc/drivers/cpufreq/arm_big_little.c:440:39: warning: array
+subscript is above array bounds [-Warray-bounds]
+/git/arm-soc/drivers/dma/sh/rcar-dmac.c:876:29: error: array subscript
+is above array bounds [-Werror=array-bounds]
+/git/arm-soc/drivers/isdn/hardware/eicon/message.c:11302:54: error:
+array subscript is above array bounds [-Werror=array-bounds]
+/git/arm-soc/drivers/net/ethernet/intel/igb/igb_ptp.c:367: error:
+array subscript is below array bounds
+/git/arm-soc/drivers/net/ethernet/intel/igb/igb_ptp.c:455: error:
+array subscript is below array bounds
+/git/arm-soc/drivers/scsi/qla2xxx/qla_gs.c:1398:7: error: array
+subscript is above array bounds [-Werror=array-bounds]
+/git/arm-soc/drivers/scsi/qla2xxx/qla_gs.c:2279:7: error: array
+subscript is above array bounds [-Werror=array-bounds]
+/git/arm-soc/drivers/scsi/sym53c416.c:565:58: error: array subscript
+is above array bounds [-Werror=array-bounds]
+/git/arm-soc/drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c:492:14:
+error: array subscript -1 is below array bounds of 'struct
+ptlrpcd_ctl[]' [-Werror=array-bounds]
+/git/arm-soc/fs/f2fs/segment.c:3044:5: error: array subscript is below
+array bounds [-Werror=array-bounds]
+/git/arm-soc/include/linux/compiler.h:253:20: error: array subscript
+is above array bounds [-Werror=array-bounds]
+/git/arm-soc/include/linux/dynamic_debug.h:86:20: warning: array
+subscript is above array bounds [-Warray-bounds]
+/git/arm-soc/include/sound/pcm.h:919:9: error: array subscript is
+above array bounds [-Werror=array-bounds]
+/git/arm-soc/kernel/bpf/verifier.c:4320:29: error: array subscript is
+above array bounds [-Werror=array-bounds]
+/git/arm-soc/kernel/rcu/tree.c:3332:13: warning: array subscript is
+above array bounds [-Warray-bounds]
+/git/arm-soc/net/ipv4/tcp_output.c:2129:40: error: array subscript is
+below array bounds [-Werror=array-bounds]
+/git/arm-soc/net/ipv4/tcp_output.c:2207:40: error: array subscript is
+below array bounds [-Werror=array-bounds]
+/git/arm-soc/net/rxrpc/ar-connection.c:589:16: warning: array
+subscript is above array bounds [-Warray-bounds]
+/git/arm-soc/sound/soc/sh/rcar/cmd.c:88:14: error: array subscript is
+below array bounds [-Werror=array-bounds]
+/git/arm-soc/sound/soc/sh/rcar/cmd.c:88: error: array subscript is
+below array bounds
 
-regards,
-dan carpenter
+I've also opened two gcc bugs for warnings that appeared to be issued in error:
 
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83312
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81601
+
+I haven't built with gcc-8 in a while, should try that again now that
+PR83312 has been
+marked 'fixed'.
+
+       Arnd
