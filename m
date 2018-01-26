@@ -1,145 +1,67 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] i2c: exynos5: rework HSI2C_MASTER_ST_LOSE state handling
-Date: Fri, 26 Jan 2018 13:09:50 +0100
-Message-ID: <20180126120950.9934-1-a.hajda@samsung.com>
-References: <CGME20180126121001eucas1p2931738af133ad3e5bf1cd824058ba8d0@eucas1p2.samsung.com>
+Subject: Re: [PATCH 1/3] drm/bridge/sii8620: perform I2C bus recovery after
+ reset
+Date: Fri, 26 Jan 2018 15:05:15 +0100
+Message-ID: <2ae62c14-5182-7837-f446-f6ac5c6ce90f@samsung.com>
+References: <20180115173357.31067-1-a.hajda@samsung.com>
+        <CGME20180115173404eucas1p11cd93514b1c6cefedca81b4d06de860e@eucas1p1.samsung.com>
+        <20180115173357.31067-2-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45099 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45073 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751814AbeAZMKF (ORCPT
+        with ESMTP id S1751795AbeAZOFY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Jan 2018 07:10:05 -0500
+        Fri, 26 Jan 2018 09:05:24 -0500
+In-reply-to: <20180115173357.31067-2-a.hajda@samsung.com>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>, Andi Shyti <andi.shyti@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS
-        ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
+To: Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-HSI2C_MASTER_ST_LOSE state is not documented properly, extensive tests
-show that hardware is usually able to recover from this state without
-interrupting the transfer. Moreover documentation says that
-such state can be caused by slave clock stretching, and should not be
-treated as an error during transaction. The only place it indicates
-an error is just before starting transaction. In such case bus recovery
-procedure should be performed - master should pulse SCL line nine times
-and then send STOP condition, it can be repeated until SDA goes high.
-The procedure can be performed using manual commands HSI2C_CMD_READ_DATA
-and HSI2C_CMD_SEND_STOP.
+On 15.01.2018 18:33, Andrzej Hajda wrote:
+> Chip has known bug which causes I2C client state machine to frequently
+> enter non-idle mode after chip reset. Let's ask I2C adapter to perform
+> bus recovery to mitigate this bug.
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/bridge/sil-sii8620.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
+> index 86789f8918a4..db93e5e0497c 100644
+> --- a/drivers/gpu/drm/bridge/sil-sii8620.c
+> +++ b/drivers/gpu/drm/bridge/sil-sii8620.c
+> @@ -978,6 +978,8 @@ static int sii8620_hw_off(struct sii8620 *ctx)
+>  
+>  static void sii8620_hw_reset(struct sii8620 *ctx)
+>  {
+> +	struct i2c_client *i2c = to_i2c_client(ctx->dev);
+> +
+>  	usleep_range(10000, 20000);
+>  	gpiod_set_value(ctx->gpio_reset, 0);
+>  	usleep_range(5000, 20000);
+> @@ -985,6 +987,9 @@ static void sii8620_hw_reset(struct sii8620 *ctx)
+>  	usleep_range(10000, 20000);
+>  	gpiod_set_value(ctx->gpio_reset, 0);
+>  	msleep(300);
+> +
+> +	/* I2C bus recovery prevents I2C errors due to known bug in the chip */
+> +	i2c_recover_bus(i2c->adapter);
+>  }
+>  
+>  static void sii8620_cbus_reset(struct sii8620 *ctx)
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-Hi Wolfram,
+I have just posted patch which deals with the problem directly in i2c
+adapter, so this patch can be dropped[1].
 
-This patch integrates and invalidates my previous patches [1][2].
-I hope inline comments are sufficient.
+[1]: https://marc.info/?l=linux-i2c&m=151696860906805
 
-[1]: i2c: exynos5: implement bus recovery functionality
-[2]: i2c: exynos5: do not check TRANS_STATUS in case of Exynos7 variant
 
 Regards
+
 Andrzej
-
- drivers/i2c/busses/i2c-exynos5.c | 67 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 61 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index b02428498f6d..8dcc36835a1a 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -128,6 +128,10 @@
- #define HSI2C_TIMEOUT_EN			(1u << 31)
- #define HSI2C_TIMEOUT_MASK			0xff
- 
-+/* I2C_MANUAL_CMD register bits */
-+#define HSI2C_CMD_READ_DATA			(1u << 4)
-+#define HSI2C_CMD_SEND_STOP			(1u << 2)
-+
- /* I2C_TRANS_STATUS register bits */
- #define HSI2C_MASTER_BUSY			(1u << 17)
- #define HSI2C_SLAVE_BUSY			(1u << 16)
-@@ -441,12 +445,6 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
- 			i2c->state = -ETIMEDOUT;
- 			goto stop;
- 		}
--
--		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
--		if ((trans_status & HSI2C_MASTER_ST_MASK) == HSI2C_MASTER_ST_LOSE) {
--			i2c->state = -EAGAIN;
--			goto stop;
--		}
- 	} else if (int_status & HSI2C_INT_I2C) {
- 		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
- 		if (trans_status & HSI2C_NO_DEV_ACK) {
-@@ -544,6 +542,61 @@ static int exynos5_i2c_wait_bus_idle(struct exynos5_i2c *i2c)
- 	return -EBUSY;
- }
- 
-+static void exynos5_i2c_bus_recover(struct exynos5_i2c *i2c)
-+{
-+	u32 val;
-+
-+	dev_dbg(i2c->dev, "%s: start\n", __func__);
-+
-+	val = readl(i2c->regs + HSI2C_CTL) | HSI2C_RXCHON;
-+	writel(val, i2c->regs + HSI2C_CTL);
-+	val = readl(i2c->regs + HSI2C_CONF) & ~HSI2C_AUTO_MODE;
-+	writel(val, i2c->regs + HSI2C_CONF);
-+
-+	/*
-+	 * Specification says master should send nine clock pulses. It can be
-+	 * emulated by sending manual read command (nine pulses for read eight
-+	 * bits + one pulse for NACK).
-+	 */
-+	writel(HSI2C_CMD_READ_DATA, i2c->regs + HSI2C_MANUAL_CMD);
-+	exynos5_i2c_wait_bus_idle(i2c);
-+	writel(HSI2C_CMD_SEND_STOP, i2c->regs + HSI2C_MANUAL_CMD);
-+	exynos5_i2c_wait_bus_idle(i2c);
-+
-+	val = readl(i2c->regs + HSI2C_CTL) & ~HSI2C_RXCHON;
-+	writel(val, i2c->regs + HSI2C_CTL);
-+	val = readl(i2c->regs + HSI2C_CONF) | HSI2C_AUTO_MODE;
-+	writel(val, i2c->regs + HSI2C_CONF);
-+
-+	dev_dbg(i2c->dev, "%s: end\n", __func__);
-+}
-+
-+static void exynos5_i2c_bus_check(struct exynos5_i2c *i2c)
-+{
-+	unsigned long timeout;
-+
-+	if (i2c->variant->hw != HSI2C_EXYNOS7)
-+		return;
-+
-+	/*
-+	 * HSI2C_MASTER_ST_LOSE state in EXYNOS7 variant before transaction
-+	 * indicates that bus is stuck (SDA is low). In such case bus recovery
-+	 * can be performed.
-+	 */
-+	timeout = jiffies + msecs_to_jiffies(100);
-+	for (;;) {
-+		u32 st = readl(i2c->regs + HSI2C_TRANS_STATUS);
-+
-+		if ((st & HSI2C_MASTER_ST_MASK) != HSI2C_MASTER_ST_LOSE)
-+			return;
-+
-+		if (time_is_before_jiffies(timeout))
-+			return;
-+
-+		exynos5_i2c_bus_recover(i2c);
-+	}
-+}
-+
- /*
-  * exynos5_i2c_message_start: Configures the bus and starts the xfer
-  * i2c: struct exynos5_i2c pointer for the current bus
-@@ -598,6 +651,8 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
- 	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
- 
-+	exynos5_i2c_bus_check(i2c);
-+
- 	/*
- 	 * Enable interrupts before starting the transfer so that we don't
- 	 * miss any INT_I2C interrupts.
--- 
-2.15.1
