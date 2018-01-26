@@ -1,45 +1,44 @@
-From: Peter Schuster <femi.ageuh@gmail.com>
-Subject: =?UTF-8?Q?Darlehen_Geld_f=C3=BCr_Einzelpersonen_und_Fachleute_in_w?=
-        =?UTF-8?Q?eniger_als_72_Stunden?=
-Date: Fri, 26 Jan 2018 08:22:47 +0100
-Message-ID: <CACKcKZ-YTVoO8xO=VcRR-F_91T=fQ=MZa2wBTk_EaRT7GRz52Q__37582.1302448914$1516951303$gmane$org@mail.gmail.com>
-Reply-To: klaus.peterschuster@outlook.de
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Update x and y properties for mms114 touchscreen
+Date: Fri, 26 Jan 2018 09:10:01 +0100
+Message-ID: <CAJKOXPcSZ7XM0On6Qs1yhy0zNEWXp4hvq43Hh+tk9Mx7w1SXLg@mail.gmail.com>
+References: <CGME20180126060503epcas2p4befe2d3d43f4a2158b1e1a123bf7906f@epcas2p4.samsung.com>
+ <20180126060454.18082-1-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f175.google.com ([74.125.82.175]:34061 "EHLO
-        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751841AbeAZHWx (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Jan 2018 02:22:53 -0500
-Received: by mail-ot0-f175.google.com with SMTP id x15so9372513ote.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2018 23:22:53 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180126060454.18082-1-andi.shyti@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hallo,
+On Fri, Jan 26, 2018 at 7:04 AM, Andi Shyti <andi.shyti@samsung.com> wrote:
+> The mms114 binding [1] specifies that the 'x' and 'y' should be
+> called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
+> in coherence with the touchscreen [2] binding.
+>
+> Update the mms114 node for trats2 and trats dts according to the
+> binding.
+>
+> [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+> [2] Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+> Hi Krzysztof,
+>
+> this patch depends on Simon's patchset [1] and must be applied after
+> that. If you want I can ping you when the patch gets or you can take
+> it in the next cycle.
+>
+> Andi
 
-Sind Sie in einer schwierigen Situation, f=C3=BCr die Sie sich f=C3=BCr ein
-Darlehen suchen? Ben=C3=B6tigen Sie eine Finanzierung, um eine Schuld zu
-begleichen oder eine Aktivit=C3=A4t zu finanzieren? Haben Sie einen
-Verbraucherkredit, eine Hypothek, einen pers=C3=B6nlichen Kredit, eine
-Hypothek, Investition Darlehen, Schuldenkonsolidierung Darlehen oder
-andere braucht?
+Thanks, looks good. Indeed I would appreciate if you gave me a ping
+once dependency gets into Linus's tree.
 
-Ich bin ein einzelner Investor. I zur Verf=C3=BCgung stellen die Kredit
-kurz-, mittel- und langfristige. Ihr Finanzierungsbedingungen sind
-sehr einfach und meine Zinssatz betr=C3=A4gt 3% pro Jahr.
+Best regards,
+Krzysztof
 
-F=C3=BCr alle Anfragen, bleibe ich zur Verf=C3=BCgung, um Ihre Fragen zu be=
-antworten.
-
-Danke, dass Sie mir per E-Mail an Sie von  :   klaus.peterschuster@outlook.=
-de
-
-Mit freundlichen Gr=C3=BC=C3=9Fen.
-
-Peter Schuster
-
-Financial Bank
-https://firstfinancialsa.com/de
+>
+> [1] https://marc.info/?l=linux-kernel&m=151682273403098&w=2
