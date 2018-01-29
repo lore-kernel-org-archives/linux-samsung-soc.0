@@ -1,68 +1,56 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: dts: exynos: Fix missing missing reg warning
- for syscon restart nodes
-Date: Mon, 29 Jan 2018 10:27:14 -0600
-Message-ID: <20180129162714.2xrqrkfd2xo4jn2g@rob-hp-laptop>
-References: <20180116213129.16209-1-krzk@kernel.org>
- <20180116213129.16209-2-krzk@kernel.org>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] PCI: exynos: fix the potential null pointer dereference
+Date: Mon, 29 Jan 2018 17:10:10 +0000
+Message-ID: <20180129171010.GA23955@e107981-ln.cambridge.arm.com>
+References: <CGME20180122022856epcas1p494a9efeae478b299e3e8006adad71e6a@epcas1p4.samsung.com>
+ <20180122022854.3634-1-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:42942 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751281AbeA2RKR (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 29 Jan 2018 12:10:17 -0500
 Content-Disposition: inline
-In-Reply-To: <20180116213129.16209-2-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20180122022854.3634-1-jh80.chung@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, jingoohan1@gmail.com, kgene@kernel.org, krzk@kernel.org
 
-On Tue, Jan 16, 2018 at 10:31:28PM +0100, Krzysztof Kozlowski wrote:
-> Fix DTC warnings like:
+On Mon, Jan 22, 2018 at 11:28:54AM +0900, Jaehoon Chung wrote:
+> Before calling the callback function, it needs to check whether
+> init_clk_resources is assigned or not.
+> Otherwise, it can be occurred the NULL pointer dereference when
+> init_clk_resources is not assigned.
 > 
->     arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
->         Node /soc/syscon-poweroff missing or empty reg/ranges property
->     arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
->         Node /soc/syscon-reboot missing or empty reg/ranges property
+> Even though init_clk_resources is assigned now, it needs to prevent the
+> potential NULL pointer dereference in future.
 > 
-> by moving the syscon poweroff and restart nodes into the PMU (Power
-> Management Unit) node.  The PMU node is the actual block responsible for
-> power management, including typical Exynos on/off/restart procedures.
-> Therefore the syscon poweroff and restart nodes logically belong to it.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> 
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 > ---
+>  drivers/pci/dwc/pci-exynos.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Tested on Exynos5420 and Exynos4412. Other tests are welcomed.
-> ---
->  .../devicetree/bindings/arm/samsung/pmu.txt        |  4 +++-
->  arch/arm/boot/dts/exynos-syscon-restart.dtsi       | 28 ++++++++++------------
->  arch/arm/boot/dts/exynos3250.dtsi                  |  4 ++--
->  arch/arm/boot/dts/exynos4.dtsi                     |  5 ++--
->  arch/arm/boot/dts/exynos4412.dtsi                  |  2 +-
->  arch/arm/boot/dts/exynos5.dtsi                     |  1 -
->  arch/arm/boot/dts/exynos5250.dtsi                  |  3 ++-
->  arch/arm/boot/dts/exynos5410.dtsi                  |  3 ++-
->  arch/arm/boot/dts/exynos5420.dtsi                  |  3 ++-
->  9 files changed, 27 insertions(+), 26 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> index 779f5614bcee..405646655ec7 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> @@ -12,6 +12,8 @@ Properties:
->  		   - "samsung,exynos5433-pmu" - for Exynos5433 SoC.
->  		   - "samsung,exynos7-pmu" - for Exynos7 SoC.
->  		second value must be always "syscon".
-> +		If PMU contains optional syscon-poweroff or syscon-restart nodes,
-> +		then third value must be "simple-mfd".
+> diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
+> index 56f32aeebd0a..39f08881f9a4 100644
+> --- a/drivers/pci/dwc/pci-exynos.c
+> +++ b/drivers/pci/dwc/pci-exynos.c
+> @@ -499,7 +499,8 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+>  			return ret;
+>  	}
+>  
+> -	if (ep->ops && ep->ops->get_clk_resources) {
+> +	if (ep->ops && ep->ops->get_clk_resources &&
+> +			ep->ops->init_clk_resources) {
+>  		ret = ep->ops->get_clk_resources(ep);
+>  		if (ret)
+>  			return ret;
+> -- 
+> 2.15.1
 
-I don't think this is right. simple-mfd is only for cases where the 
-parent has no setup that the child nodes are dependent on. You need the 
-regmap setup by the parent before the child can be enumerated. The 
-correct thing to do here is add an of_platform_default_populate() call.
+I applied it to pci/dwc for 4.16.
 
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Lorenzo
