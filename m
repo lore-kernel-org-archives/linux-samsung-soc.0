@@ -1,110 +1,67 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: exynos-artik5: add support for wlan
-Date: Mon, 29 Jan 2018 16:16:38 +0100
-Message-ID: <CAJKOXPfRWUN3t43SqwxFtda8T=3Hn4oUh0HBit3b97eFj+6T4g@mail.gmail.com>
-References: <20180129031640.17939-1-mlyle@lyle.org>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/3] ARM: dts: exynos: Fix missing missing reg warning
+ for syscon restart nodes
+Date: Mon, 29 Jan 2018 10:27:14 -0600
+Message-ID: <20180129162714.2xrqrkfd2xo4jn2g@rob-hp-laptop>
+References: <20180116213129.16209-1-krzk@kernel.org>
+ <20180116213129.16209-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180129031640.17939-1-mlyle-dTEscH1tG2Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20180116213129.16209-2-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, CHANHO PARK <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 4:16 AM, Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org> wrote:
-> On the Artik520 module, there's a bcm4354 attached to mshc_1.  Enable
-> it, and turn on the regulator used for it, so that both wifi & bluetooth
-> work.
->
-> Verified to work on the Artik 520 evaluation board.
->
-> Signed-off-by: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
-
-Hi,
-
-Thanks for the patch. Few notes below.
-
+On Tue, Jan 16, 2018 at 10:31:28PM +0100, Krzysztof Kozlowski wrote:
+> Fix DTC warnings like:
+> 
+>     arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
+>         Node /soc/syscon-poweroff missing or empty reg/ranges property
+>     arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
+>         Node /soc/syscon-reboot missing or empty reg/ranges property
+> 
+> by moving the syscon poweroff and restart nodes into the PMU (Power
+> Management Unit) node.  The PMU node is the actual block responsible for
+> power management, including typical Exynos on/off/restart procedures.
+> Therefore the syscon poweroff and restart nodes logically belong to it.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> 
 > ---
->  arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-> index 0aa577fe9f95..b2d441b1a7e3 100644
-> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-> @@ -245,6 +245,7 @@
->                                 regulator-name = "VLDO23_1.8V";
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
-> +                               regulator-always-on;
->                         };
->
->                         ldo24_reg: LDO24 {
-> @@ -316,6 +317,41 @@
->         status = "okay";
->  };
->
-> +&pinctrl_1 {
+> 
+> Tested on Exynos5420 and Exynos4412. Other tests are welcomed.
+> ---
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |  4 +++-
+>  arch/arm/boot/dts/exynos-syscon-restart.dtsi       | 28 ++++++++++------------
+>  arch/arm/boot/dts/exynos3250.dtsi                  |  4 ++--
+>  arch/arm/boot/dts/exynos4.dtsi                     |  5 ++--
+>  arch/arm/boot/dts/exynos4412.dtsi                  |  2 +-
+>  arch/arm/boot/dts/exynos5.dtsi                     |  1 -
+>  arch/arm/boot/dts/exynos5250.dtsi                  |  3 ++-
+>  arch/arm/boot/dts/exynos5410.dtsi                  |  3 ++-
+>  arch/arm/boot/dts/exynos5420.dtsi                  |  3 ++-
+>  9 files changed, 27 insertions(+), 26 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> index 779f5614bcee..405646655ec7 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> @@ -12,6 +12,8 @@ Properties:
+>  		   - "samsung,exynos5433-pmu" - for Exynos5433 SoC.
+>  		   - "samsung,exynos7-pmu" - for Exynos7 SoC.
+>  		second value must be always "syscon".
+> +		If PMU contains optional syscon-poweroff or syscon-restart nodes,
+> +		then third value must be "simple-mfd".
 
-Please order the nodes alphabetically.
+I don't think this is right. simple-mfd is only for cases where the 
+parent has no setup that the child nodes are dependent on. You need the 
+regmap setup by the parent before the child can be enumerated. The 
+correct thing to do here is add an of_platform_default_populate() call.
 
-> +       wlanen: wlanen {
-> +               samsung,pins = "gpx2-3";
-> +               samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
-> +               samsung,pin-val = <1>;
-> +       };
-
-Are you sure you do not need a power sequence? It works fine during
-warm resets or after u-boot initialization?
-
-> +};
-> +
-> +&mshc_1 {
-> +       cap-sd-highspeed;
-> +       cap-sdio-irq;
-> +       disable-wp;
-> +       broken-cd;
-
-Is this really broken-cd or non-removable card?
-
-> +       bypass-smu;
-> +       keep-power-in-suspend;
-> +       fifo-depth = <0x40>;
-> +       vqmmc-supply = <&ldo11_reg>;
-> +       /* Voltage negotiation is broken for the SDIO periph so we
-> +        * can't actually set the voltage here.
-> +        * vmmc-supply = <&ldo23_reg>;
-> +        */
-
-Did you try using properties for respective voltage? For example mmc-hs200-1_8v?
-
-> +       card-detect-delay = <500>;
-> +       clock-frequency = <100000000>;
-> +       max-frequency = <100000000>;
-> +       samsung,dw-mshc-ciu-div = <3>;
-> +       samsung,dw-mshc-sdr-timing = <0 1>;
-> +       samsung,dw-mshc-ddr-timing = <1 2>;
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&sd1_cmd &sd1_clk &sd1_bus1 &sd1_bus4 &wlanen>;
-> +       bus-width = <4>;
-> +       status = "okay";
-
-There is no brcm/wifi node here?
-
-Best regards,
-Krzysztof
-
-> +};
-> +
->  &rtc {
->         clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
->         clock-names = "rtc", "rtc_src";
-> --
-> 2.14.1
->
+Rob
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
