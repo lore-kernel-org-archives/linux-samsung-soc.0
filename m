@@ -1,84 +1,77 @@
-From: Michael Lyle <mlyle@lyle.org>
-Subject: [PATCH] ARM: dts: exynos-artik5: add support for wlan
-Date: Sun, 28 Jan 2018 19:16:40 -0800
-Message-ID: <20180129031640.17939-1-mlyle@lyle.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42896 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750730AbeA2DRA (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 28 Jan 2018 22:17:00 -0500
-Received: by mail-pg0-f68.google.com with SMTP id j16so1947107pgn.9
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Jan 2018 19:17:00 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Subject: Re: [PATCH][next] hwrng: exynos: check for -ve error return from
+ readl_poll_timeout
+Date: Mon, 29 Jan 2018 14:24:00 +0100
+Message-ID: <87fu6oyf0v.fsf%l.stelmach@samsung.com>
+References: <20180112163048.26960-1-colin.king@canonical.com>
+        <CGME20180129132405eucas1p244f341793274cd1c11aa09e0b1d2c4bd@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-reply-to: <20180112163048.26960-1-colin.king@canonical.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-arm-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, krzk@kernel.org, CHANHO PARK <chanho61.park@samsung.com>, Michael Lyle <mlyle@lyle.org>
 
-On the Artik520 module, there's a bcm4354 attached to mshc_1.  Enable
-it, and turn on the regulator used for it, so that both wifi & bluetooth
-work.
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Verified to work on the Artik 520 evaluation board.
+It was <2018-01-12 pi=C4=85 17:30>, when Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently, the return from readl_poll_timeout is being assigned to
+> a u32 and this is being checked for a -ve return which is always
+> false since a u32 cannot be less than zero.  Fix this by changing
+> val to an int so that error returns can be correctly detected.
+>
+> Detected by CoverityScan, CID#1463776 ("Logically dead code")
+>
+> Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/char/hw_random/exynos-trng.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_rando=
+m/exynos-trng.c
+> index 34d6f51ecbee..f4643e3ec346 100644
+> --- a/drivers/char/hw_random/exynos-trng.c
+> +++ b/drivers/char/hw_random/exynos-trng.c
+> @@ -55,7 +55,7 @@ static int exynos_trng_do_read(struct hwrng *rng, void =
+*data, size_t max,
+>  			       bool wait)
+>  {
+>  	struct exynos_trng_dev *trng;
+> -	u32 val;
+> +	int val;
+>=20=20
+>  	max =3D min_t(size_t, max, (EXYNOS_TRNG_FIFO_LEN * 4));
 
-Signed-off-by: Michael Lyle <mlyle@lyle.org>
----
- arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Fixed.
 
-diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index 0aa577fe9f95..b2d441b1a7e3 100644
---- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -245,6 +245,7 @@
- 				regulator-name = "VLDO23_1.8V";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
- 			};
- 
- 			ldo24_reg: LDO24 {
-@@ -316,6 +317,41 @@
- 	status = "okay";
- };
- 
-+&pinctrl_1 {
-+	wlanen: wlanen {
-+		samsung,pins = "gpx2-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
-+		samsung,pin-val = <1>;
-+	};
-+};
-+
-+&mshc_1 {
-+	cap-sd-highspeed;
-+	cap-sdio-irq;
-+	disable-wp;
-+	broken-cd;
-+	bypass-smu;
-+	keep-power-in-suspend;
-+	fifo-depth = <0x40>;
-+	vqmmc-supply = <&ldo11_reg>;
-+	/* Voltage negotiation is broken for the SDIO periph so we
-+	 * can't actually set the voltage here.
-+	 * vmmc-supply = <&ldo23_reg>;
-+	 */
-+	card-detect-delay = <500>;
-+	clock-frequency = <100000000>;
-+	max-frequency = <100000000>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 1>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd1_cmd &sd1_clk &sd1_bus1 &sd1_bus4 &wlanen>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
- &rtc {
- 	clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
- 	clock-names = "rtc", "rtc_src";
--- 
-2.14.1
+https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/c=
+ommit/?id=3Da8bc71d4960391f732ec0307ebd69e4a25aaf4d3
+
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBCAAGBQJabyBwAAoJELCuHpyYpYAQZwYH/RlxAx/YurLQ/T+cRM8BRMoE
+t5RVRMByVZKd0J6ReIPtgKUeO8QF+HJYvgbXdKGFZ1GcQWBzY/57Zix5lryC9lZR
+2kWKXrW0Ji3G6XEPjnvknCTVK24uZ9tO84sh34yuXd6b0JnESraORsoT6ryq32jv
+LVNlXH2fsoEixNbQHsBwyRCwa+Ov9PuMHRS1yU/m8+MkucIy4kNX4tcdlOTVN8l7
+pI2Jxz4pUFCju6lySUTT4Nh7GzU3M8oIC/s8tVQkpTOF0q81AYCg55666gnGtwSr
+19Ynrr9CikelpWhtqoPHusunbRuLrQBrm4Pexd+U88PkkbszCw4mE7+TsOsmxCA=
+=i0mm
+-----END PGP SIGNATURE-----
+--=-=-=--
