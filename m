@@ -1,32 +1,135 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 1/4] dt-bindings: samsung: document bindings for Midas
- family boards
-Date: Mon, 29 Jan 2018 11:16:57 -0600
-Message-ID: <20180129171657.73dfrlx5ffkgz76w@rob-hp-laptop>
-References: <20180117125845.3954-1-simon@lineageos.org>
- <20180117125845.3954-2-simon@lineageos.org>
+From: Michael Lyle <mlyle@lyle.org>
+Subject: Re: [PATCH] ARM: dts: exynos-artik5: add support for wlan
+Date: Mon, 29 Jan 2018 10:54:29 -0800
+Message-ID: <CAJ+L6qeyf9L9jUyhGL2yPwVb0=SOJqXXi0tvqnpvkoo-09BQ0g@mail.gmail.com>
+References: <20180129031640.17939-1-mlyle@lyle.org> <CAJKOXPfRWUN3t43SqwxFtda8T=3Hn4oUh0HBit3b97eFj+6T4g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20180117125845.3954-2-simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:45611 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeA2Syb (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 29 Jan 2018 13:54:31 -0500
+Received: by mail-qk0-f171.google.com with SMTP id z12so6886138qkf.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2018 10:54:31 -0800 (PST)
+In-Reply-To: <CAJKOXPfRWUN3t43SqwxFtda8T=3Hn4oUh0HBit3b97eFj+6T4g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, CHANHO PARK <chanho61.park@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Jan 17, 2018 at 11:58:42PM +1100, Simon Shields wrote:
-> Document GT-I9300, GT-I9305, GT-N7100, and GT-N7105 bindings, along
-> with the shared "midas" binding.
-> 
-> Signed-off-by: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+[note: earlier on this thread I assumed linux-arm-kernel was on
+vger.kernel.org, so the patch was initially sent to the wrong address.
+When I resend, I will be sure to use the correct list address]
 
-Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Krzystztof--
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thank you for your review.  I appreciate your patience as I've not
+worked on devicetree files before.
+
+On Mon, Jan 29, 2018 at 7:16 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Hi,
+>
+> Thanks for the patch. Few notes below.
+>
+>> ---
+>>  arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
+>>  1 file changed, 36 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+>> index 0aa577fe9f95..b2d441b1a7e3 100644
+>> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
+>> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+>> @@ -245,6 +245,7 @@
+>>                                 regulator-name = "VLDO23_1.8V";
+>>                                 regulator-min-microvolt = <1800000>;
+>>                                 regulator-max-microvolt = <1800000>;
+>> +                               regulator-always-on;
+>>                         };
+>>
+>>                         ldo24_reg: LDO24 {
+>> @@ -316,6 +317,41 @@
+>>         status = "okay";
+>>  };
+>>
+>> +&pinctrl_1 {
+>
+> Please order the nodes alphabetically.
+
+OK, I will in an V2.
+
+>> +       wlanen: wlanen {
+>> +               samsung,pins = "gpx2-3";
+>> +               samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+>> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+>> +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
+>> +               samsung,pin-val = <1>;
+>> +       };
+>
+> Are you sure you do not need a power sequence? It works fine during
+> warm resets or after u-boot initialization?
+
+Yes, it seems to (I have about 20 or so cycles on it in informal test).
+
+I have no idea what the actual hardware is-- this pin is not mentioned
+in the module datasheet and there is no schematic.  I found it through
+exploring an upstream vendor kernel.  It's altogether possible this is
+"naughty" but it seems to work OK.
+
+>> +};
+>> +
+>> +&mshc_1 {
+>> +       cap-sd-highspeed;
+>> +       cap-sdio-irq;
+>> +       disable-wp;
+>> +       broken-cd;
+>
+> Is this really broken-cd or non-removable card?
+
+I'll check if non-removable works.  I remember it not working once,
+but I had other problems in my testing.
+
+>> +       bypass-smu;
+>> +       keep-power-in-suspend;
+>> +       fifo-depth = <0x40>;
+>> +       vqmmc-supply = <&ldo11_reg>;
+>> +       /* Voltage negotiation is broken for the SDIO periph so we
+>> +        * can't actually set the voltage here.
+>> +        * vmmc-supply = <&ldo23_reg>;
+>> +        */
+>
+> Did you try using properties for respective voltage? For example mmc-hs200-1_8v?
+
+This is the vmmc supply, not vqmmc-- that would be for vqmmc, right
+(and signalling speed).  The card says it wants a range of vmmc
+voltages, but the actual regulator is forced to 1.8V, and 1.8V is not
+one of those voltages.  So absent a new quirk, I think I need to nail
+the regulator on.
+
+>
+>> +       card-detect-delay = <500>;
+>> +       clock-frequency = <100000000>;
+>> +       max-frequency = <100000000>;
+>> +       samsung,dw-mshc-ciu-div = <3>;
+>> +       samsung,dw-mshc-sdr-timing = <0 1>;
+>> +       samsung,dw-mshc-ddr-timing = <1 2>;
+>> +       pinctrl-names = "default";
+>> +       pinctrl-0 = <&sd1_cmd &sd1_clk &sd1_bus1 &sd1_bus4 &wlanen>;
+>> +       bus-width = <4>;
+>> +       status = "okay";
+>
+> There is no brcm/wifi node here?
+
+It enumerates the card currently and then uses the card product
+information to load brcmfmac.  Is there a reason to put a description
+of the actual card in?
+
+>
+> Best regards,
+> Krzysztof
+>
+
+Thanks,
+
+Mike
