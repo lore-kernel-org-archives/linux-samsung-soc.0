@@ -1,147 +1,64 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos-artik5: add support for wlan
-Date: Tue, 30 Jan 2018 09:48:09 +0100
-Message-ID: <CAJKOXPeA3VTjs=HB1jF8dzre9vzX6jgZG_QPfg8642WBQki92g@mail.gmail.com>
-References: <20180129031640.17939-1-mlyle@lyle.org> <CAJKOXPfRWUN3t43SqwxFtda8T=3Hn4oUh0HBit3b97eFj+6T4g@mail.gmail.com>
- <CAJ+L6qeyf9L9jUyhGL2yPwVb0=SOJqXXi0tvqnpvkoo-09BQ0g@mail.gmail.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: Re: Odroid HC1 cryptsetup:encrypt sata driver
+Date: Tue, 30 Jan 2018 16:32:15 +0100
+Message-ID: <f1966769-106e-a95e-8068-642e93c390b4@partner.samsung.com>
+References: <CGME20180124130437epcas2p251156941d5fd0dab2c24807a26a156be@epcas2p2.samsung.com>
+        <CANAwSgQ3WE9XmjmzHxJstDz52fj_SFvmBKnMjY3MVjhxJuoFmg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:52224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751219AbeA3IsM (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45898 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752640AbeA3PcV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 03:48:12 -0500
-In-Reply-To: <CAJ+L6qeyf9L9jUyhGL2yPwVb0=SOJqXXi0tvqnpvkoo-09BQ0g@mail.gmail.com>
+        Tue, 30 Jan 2018 10:32:21 -0500
+In-reply-to: <CANAwSgQ3WE9XmjmzHxJstDz52fj_SFvmBKnMjY3MVjhxJuoFmg@mail.gmail.com>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Michael Lyle <mlyle@lyle.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, CHANHO PARK <chanho61.park@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Jan 29, 2018 at 7:54 PM, Michael Lyle <mlyle@lyle.org> wrote:
-> [note: earlier on this thread I assumed linux-arm-kernel was on
-> vger.kernel.org, so the patch was initially sent to the wrong address.
-> When I resend, I will be sure to use the correct list address]
->
-> Krzystztof--
->
-> Thank you for your review.  I appreciate your patience as I've not
-> worked on devicetree files before.
->
-> On Mon, Jan 29, 2018 at 7:16 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> Hi,
->>
->> Thanks for the patch. Few notes below.
->>
->>> ---
->>>  arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
->>>  1 file changed, 36 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
->>> index 0aa577fe9f95..b2d441b1a7e3 100644
->>> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
->>> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
->>> @@ -245,6 +245,7 @@
->>>                                 regulator-name = "VLDO23_1.8V";
->>>                                 regulator-min-microvolt = <1800000>;
->>>                                 regulator-max-microvolt = <1800000>;
->>> +                               regulator-always-on;
->>>                         };
->>>
->>>                         ldo24_reg: LDO24 {
->>> @@ -316,6 +317,41 @@
->>>         status = "okay";
->>>  };
->>>
->>> +&pinctrl_1 {
->>
->> Please order the nodes alphabetically.
->
-> OK, I will in an V2.
->
->>> +       wlanen: wlanen {
->>> +               samsung,pins = "gpx2-3";
->>> +               samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
->>> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
->>> +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
->>> +               samsung,pin-val = <1>;
->>> +       };
->>
->> Are you sure you do not need a power sequence? It works fine during
->> warm resets or after u-boot initialization?
->
-> Yes, it seems to (I have about 20 or so cycles on it in informal test).
->
-> I have no idea what the actual hardware is-- this pin is not mentioned
-> in the module datasheet and there is no schematic.  I found it through
-> exploring an upstream vendor kernel.  It's altogether possible this is
-> "naughty" but it seems to work OK.
+Hi Anand,
 
-The pin is WL_REG_ON so your configuration is correct. Although other
-DTSes add usually a power sequence which forces a hard-reset before
-initialization of device. If it works fine like this, then I am okay
-with it.
+On 24.01.2018 14:04, Anand Moon wrote:
+> Hi Kamil Konieczny,
+> 
+> I am looking in setup of encrypted sata hard-disk on Odroid XU4/HC1 device.
+> using following encryption method.
+> 
+> aes-cbc-essiv:sha256 128
+> aes-cbc-essiv:sha256 256
+> 
+> Here is my defconfig I am using. https://pastebin.com/gF5T2stp
+> 
+> Following crypt benchmark we use to test : https://pastebin.com/WiexsJA2
+> 
+> When I am trying to format the the hard drive I am getting kernel panic.
+> I have tired different option like below.
+> 
+> *Please guide me in how to fix this bug*
+> [...]
 
->
->>> +};
->>> +
->>> +&mshc_1 {
->>> +       cap-sd-highspeed;
->>> +       cap-sdio-irq;
->>> +       disable-wp;
->>> +       broken-cd;
->>
->> Is this really broken-cd or non-removable card?
->
-> I'll check if non-removable works.  I remember it not working once,
-> but I had other problems in my testing.
->
->>> +       bypass-smu;
->>> +       keep-power-in-suspend;
->>> +       fifo-depth = <0x40>;
->>> +       vqmmc-supply = <&ldo11_reg>;
->>> +       /* Voltage negotiation is broken for the SDIO periph so we
->>> +        * can't actually set the voltage here.
->>> +        * vmmc-supply = <&ldo23_reg>;
->>> +        */
->>
->> Did you try using properties for respective voltage? For example mmc-hs200-1_8v?
->
-> This is the vmmc supply, not vqmmc-- that would be for vqmmc, right
-> (and signalling speed).  The card says it wants a range of vmmc
-> voltages, but the actual regulator is forced to 1.8V, and 1.8V is not
-> one of those voltages.  So absent a new quirk, I think I need to nail
-> the regulator on.
+Sorry for late response, I was on holidays. Try latest kernel 4.15
+and turn off option:
 
-Having vmmc and vqmmc at 1.8V should be possible, for example all
-other Exynos54xx Odroids use such configuration (although for eMMC).
-However you mentioned that the card asks for different voltage?
+CONFIG_CRYPTO_DEV_EXYNOS_HASH=n
 
->
->>
->>> +       card-detect-delay = <500>;
->>> +       clock-frequency = <100000000>;
->>> +       max-frequency = <100000000>;
->>> +       samsung,dw-mshc-ciu-div = <3>;
->>> +       samsung,dw-mshc-sdr-timing = <0 1>;
->>> +       samsung,dw-mshc-ddr-timing = <1 2>;
->>> +       pinctrl-names = "default";
->>> +       pinctrl-0 = <&sd1_cmd &sd1_clk &sd1_bus1 &sd1_bus4 &wlanen>;
->>> +       bus-width = <4>;
->>> +       status = "okay";
->>
->> There is no brcm/wifi node here?
->
-> It enumerates the card currently and then uses the card product
-> information to load brcmfmac.  Is there a reason to put a description
-> of the actual card in?
+in 
 
-This is probably non-pluggable card so adding simple brcm node would
-be good for full description of device... although it is not
-necessary, I think. The node might be needed to specify waking up
-interrupts (WL_DEV_WAKE which probably is GPX3-2. See the
-Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
-and example in: Documentation/devicetree/bindings/mmc/mmc.txt
+Cryptographic API: 
+Hardware crypto devices:
+Support for Samsung Exynos HASH accelerator --> turn off
 
+You should also turn on option for software SHA256 (and maybe SHA1)
+
+This is last change in this driver,
+so maybe there is some problem with concurrent access to hardware
+by AES and HASH driver parts.
+
+-- 
 Best regards,
-Krzysztof
+Kamil Konieczny
+Samsung R&D Institute Poland
