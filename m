@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 1/4] soc: samsung: pmu: Populate children syscon nodes
-Date: Tue, 30 Jan 2018 22:18:16 +0100
-Message-ID: <20180130211819.17139-2-krzk@kernel.org>
+Subject: [PATCH v2 3/4] ARM: dts: exynos: Fix missing missing reg warning for syscon restart nodes
+Date: Tue, 30 Jan 2018 22:18:18 +0100
+Message-ID: <20180130211819.17139-4-krzk@kernel.org>
 References: <20180130211819.17139-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180130211819.17139-1-krzk@kernel.org>
@@ -10,65 +10,145 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob He
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The syscon poweroff and restart nodes logically belong to the Power
-Management Unit so populate possible children.
+Fix DTC warnings like:
 
-This also requires providing compatibles for Exynos5410 and Exynos7 so
-the PMU device and its children will be instantiated for them as well.
-Just like Exynos5433, these chipsets are not yet supported by the PMU
-driver.
+    arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
+        Node /soc/syscon-poweroff missing or empty reg/ranges property
+    arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
+        Node /soc/syscon-reboot missing or empty reg/ranges property
+
+by moving the syscon poweroff and restart nodes into the PMU (Power
+Management Unit) node.  The PMU node is the actual block responsible for
+power management, including typical Exynos on/off/restart procedures.
+Therefore the syscon poweroff and restart nodes logically belong to it.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- Documentation/devicetree/bindings/arm/samsung/pmu.txt | 6 ++++++
- drivers/soc/samsung/exynos-pmu.c                      | 7 +++++++
- 2 files changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-index 779f5614bcee..16685787d2bd 100644
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-@@ -43,6 +43,12 @@ following properties:
- - interrupt-parent: a phandle indicating which interrupt controller
-   this PMU signals interrupts to.
+---
+
+Tested on Exynos5410, Exynos5420 and Exynos4412. Other tests are welcomed.
+---
+ arch/arm/boot/dts/exynos-syscon-restart.dtsi | 28 ++++++++++++----------------
+ arch/arm/boot/dts/exynos3250.dtsi            |  2 +-
+ arch/arm/boot/dts/exynos4.dtsi               |  3 ++-
+ arch/arm/boot/dts/exynos5.dtsi               |  1 -
+ arch/arm/boot/dts/exynos5250.dtsi            |  1 +
+ arch/arm/boot/dts/exynos5410.dtsi            |  1 +
+ arch/arm/boot/dts/exynos5420.dtsi            |  1 +
+ 7 files changed, 18 insertions(+), 19 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+index 09a2040054ed..279ea09f4fe2 100644
+--- a/arch/arm/boot/dts/exynos-syscon-restart.dtsi
++++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+@@ -6,22 +6,18 @@
+  * published by the Free Software Foundation.
+  */
  
-+
-+Optional nodes:
-+
-+- nodes defining the restart and poweroff syscon children
-+
-+
- Example :
- pmu_system_controller: system-controller@10040000 {
- 	compatible = "samsung,exynos5250-pmu", "syscon";
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index f56adbd9fb8b..d34ca201b8b7 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -85,10 +85,14 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
- 		.compatible = "samsung,exynos5250-pmu",
- 		.data = exynos_pmu_data_arm_ptr(exynos5250_pmu_data),
- 	}, {
-+		.compatible = "samsung,exynos5410-pmu",
-+	}, {
- 		.compatible = "samsung,exynos5420-pmu",
- 		.data = exynos_pmu_data_arm_ptr(exynos5420_pmu_data),
- 	}, {
- 		.compatible = "samsung,exynos5433-pmu",
-+	}, {
-+		.compatible = "samsung,exynos7-pmu",
- 	},
- 	{ /*sentinel*/ },
+-/ {
+-	soc {
+-		compatible = "simple-bus";
+-
+-		poweroff: syscon-poweroff {
+-			compatible = "syscon-poweroff";
+-			regmap = <&pmu_system_controller>;
+-			offset = <0x330C>; /* PS_HOLD_CONTROL */
+-			mask = <0x5200>; /* reset value */
+-		};
++&pmu_system_controller {
++	poweroff: syscon-poweroff {
++		compatible = "syscon-poweroff";
++		regmap = <&pmu_system_controller>;
++		offset = <0x330C>; /* PS_HOLD_CONTROL */
++		mask = <0x5200>; /* reset value */
++	};
+ 
+-		reboot: syscon-reboot {
+-			compatible = "syscon-reboot";
+-			regmap = <&pmu_system_controller>;
+-			offset = <0x0400>; /* SWRESET */
+-			mask = <0x1>;
+-		};
++	reboot: syscon-reboot {
++		compatible = "syscon-reboot";
++		regmap = <&pmu_system_controller>;
++		offset = <0x0400>; /* SWRESET */
++		mask = <0x1>;
+ 	};
  };
-@@ -126,6 +130,9 @@ static int exynos_pmu_probe(struct platform_device *pdev)
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index b8fb94f5daa8..df76624fd382 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -15,7 +15,6 @@
+  */
  
- 	platform_set_drvdata(pdev, pmu_context);
+ #include "exynos4-cpu-thermal.dtsi"
+-#include "exynos-syscon-restart.dtsi"
+ #include <dt-bindings/clock/exynos3250.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+@@ -914,3 +913,4 @@
+ };
  
-+	if (devm_of_platform_populate(dev))
-+		dev_err(dev, "Error populating children, reboot and poweroff might not work properly\n");
+ #include "exynos3250-pinctrl.dtsi"
++#include "exynos-syscon-restart.dtsi"
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 6d59cc827649..98af5592cc6d 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -20,7 +20,6 @@
+ #include <dt-bindings/clock/exynos-audss-clk.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+-#include "exynos-syscon-restart.dtsi"
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -1010,3 +1009,5 @@
+ 		clock-names = "secss";
+ 	};
+ };
 +
- 	dev_dbg(dev, "Exynos PMU Driver probe done\n");
- 	return 0;
- }
++#include "exynos-syscon-restart.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index f8d7de1144f1..359f49bdd4e2 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -12,7 +12,6 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+-#include "exynos-syscon-restart.dtsi"
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 56626d1a4235..037aceee5959 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -1114,3 +1114,4 @@
+ };
+ 
+ #include "exynos5250-pinctrl.dtsi"
++#include "exynos-syscon-restart.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 1e6b57d013c4..fb7fa217a05b 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -439,3 +439,4 @@
+ };
+ 
+ #include "exynos5410-pinctrl.dtsi"
++#include "exynos-syscon-restart.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 2f3cb2a97f71..71e2b154a244 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -1531,3 +1531,4 @@
+ };
+ 
+ #include "exynos5420-pinctrl.dtsi"
++#include "exynos-syscon-restart.dtsi"
 -- 
 2.11.0
