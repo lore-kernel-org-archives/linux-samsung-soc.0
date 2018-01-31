@@ -1,70 +1,84 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: Odroid HC1 cryptsetup:encrypt sata driver
-Date: Wed, 31 Jan 2018 11:21:58 +0530
-Message-ID: <CANAwSgT5buQ2ROmt-Bk0sh8=cSU5hp3GiHRuKwSagn0s57Nevw@mail.gmail.com>
-References: <CGME20180124130437epcas2p251156941d5fd0dab2c24807a26a156be@epcas2p2.samsung.com>
- <CANAwSgQ3WE9XmjmzHxJstDz52fj_SFvmBKnMjY3MVjhxJuoFmg@mail.gmail.com> <f1966769-106e-a95e-8068-642e93c390b4@partner.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <f1966769-106e-a95e-8068-642e93c390b4@partner.samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Michael Lyle <mlyle@lyle.org>
+Subject: [PATCH v2] ARM: dts: exynos-artik5: add support for wlan
+Date: Tue, 30 Jan 2018 23:40:27 -0800
+Message-ID: <20180131074027.387-1-mlyle@lyle.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:43804 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752166AbeAaHkq (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 31 Jan 2018 02:40:46 -0500
+Received: by mail-pg0-f65.google.com with SMTP id n17so9381914pgf.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2018 23:40:46 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, kgene@kernel.org, CHANHO PARK <chanho61.park@samsung.com>, Michael Lyle <mlyle@lyle.org>
 
-Hi Kamil,
+On the Artik520 module, there's a bcm4354 attached to mshc_1.  Enable
+it, and turn on the regulator used for it, so that both wifi & bluetooth
+work.
 
-On 30 January 2018 at 21:02, Kamil Konieczny
-<k.konieczny@partner.samsung.com> wrote:
-> Hi Anand,
->
-> On 24.01.2018 14:04, Anand Moon wrote:
->> Hi Kamil Konieczny,
->>
->> I am looking in setup of encrypted sata hard-disk on Odroid XU4/HC1 device.
->> using following encryption method.
->>
->> aes-cbc-essiv:sha256 128
->> aes-cbc-essiv:sha256 256
->>
->> Here is my defconfig I am using. https://pastebin.com/gF5T2stp
->>
->> Following crypt benchmark we use to test : https://pastebin.com/WiexsJA2
->>
->> When I am trying to format the the hard drive I am getting kernel panic.
->> I have tired different option like below.
->>
->> *Please guide me in how to fix this bug*
->> [...]
->
-> Sorry for late response, I was on holidays. Try latest kernel 4.15
-> and turn off option:
->
-> CONFIG_CRYPTO_DEV_EXYNOS_HASH=n
->
-> in
->
-> Cryptographic API:
-> Hardware crypto devices:
-> Support for Samsung Exynos HASH accelerator --> turn off
->
-> You should also turn on option for software SHA256 (and maybe SHA1)
->
-> This is last change in this driver,
-> so maybe there is some problem with concurrent access to hardware
-> by AES and HASH driver parts.
->
+Verified to work on the Artik 520 evaluation board.
 
-Thanks for your input, but I tried your suggestion on latest kernel.
-but the result is the same.
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+---
+ arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-How can I help trace this bug. please guide me.
-
-Best Regards
--Anand
-> --
-> Best regards,
-> Kamil Konieczny
-> Samsung R&D Institute Poland
->
+diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+index 0aa577fe9f95..b2d441b1a7e3 100644
+--- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
++++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+@@ -245,6 +245,7 @@
+ 				regulator-name = "VLDO23_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
+ 			};
+ 
+ 			ldo24_reg: LDO24 {
+@@ -316,6 +317,41 @@
+ 	status = "okay";
+ };
+ 
++&pinctrl_1 {
++	wlanen: wlanen {
++		samsung,pins = "gpx2-3";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
++		samsung,pin-val = <1>;
++	};
++};
++
++&mshc_1 {
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	disable-wp;
++	broken-cd;
++	bypass-smu;
++	keep-power-in-suspend;
++	fifo-depth = <0x40>;
++	vqmmc-supply = <&ldo11_reg>;
++	/* Voltage negotiation is broken for the SDIO periph so we
++	 * can't actually set the voltage here.
++	 * vmmc-supply = <&ldo23_reg>;
++	 */
++	card-detect-delay = <500>;
++	clock-frequency = <100000000>;
++	max-frequency = <100000000>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 1>;
++	samsung,dw-mshc-ddr-timing = <1 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd1_cmd &sd1_clk &sd1_bus1 &sd1_bus4 &wlanen>;
++	bus-width = <4>;
++	status = "okay";
++};
++
+ &rtc {
+ 	clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
+ 	clock-names = "rtc", "rtc_src";
+-- 
+2.14.1
