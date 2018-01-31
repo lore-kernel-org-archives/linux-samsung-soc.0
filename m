@@ -1,154 +1,70 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 3/4] ARM: dts: exynos: Fix missing missing reg warning for syscon restart nodes
-Date: Tue, 30 Jan 2018 22:18:18 +0100
-Message-ID: <20180130211819.17139-4-krzk@kernel.org>
-References: <20180130211819.17139-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180130211819.17139-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: Odroid HC1 cryptsetup:encrypt sata driver
+Date: Wed, 31 Jan 2018 11:21:58 +0530
+Message-ID: <CANAwSgT5buQ2ROmt-Bk0sh8=cSU5hp3GiHRuKwSagn0s57Nevw@mail.gmail.com>
+References: <CGME20180124130437epcas2p251156941d5fd0dab2c24807a26a156be@epcas2p2.samsung.com>
+ <CANAwSgQ3WE9XmjmzHxJstDz52fj_SFvmBKnMjY3MVjhxJuoFmg@mail.gmail.com> <f1966769-106e-a95e-8068-642e93c390b4@partner.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <f1966769-106e-a95e-8068-642e93c390b4@partner.samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Fix DTC warnings like:
+Hi Kamil,
 
-    arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
-        Node /soc/syscon-poweroff missing or empty reg/ranges property
-    arch/arm/boot/dts/exynos4412-trats2.dtb: Warning (simple_bus_reg):
-        Node /soc/syscon-reboot missing or empty reg/ranges property
+On 30 January 2018 at 21:02, Kamil Konieczny
+<k.konieczny@partner.samsung.com> wrote:
+> Hi Anand,
+>
+> On 24.01.2018 14:04, Anand Moon wrote:
+>> Hi Kamil Konieczny,
+>>
+>> I am looking in setup of encrypted sata hard-disk on Odroid XU4/HC1 device.
+>> using following encryption method.
+>>
+>> aes-cbc-essiv:sha256 128
+>> aes-cbc-essiv:sha256 256
+>>
+>> Here is my defconfig I am using. https://pastebin.com/gF5T2stp
+>>
+>> Following crypt benchmark we use to test : https://pastebin.com/WiexsJA2
+>>
+>> When I am trying to format the the hard drive I am getting kernel panic.
+>> I have tired different option like below.
+>>
+>> *Please guide me in how to fix this bug*
+>> [...]
+>
+> Sorry for late response, I was on holidays. Try latest kernel 4.15
+> and turn off option:
+>
+> CONFIG_CRYPTO_DEV_EXYNOS_HASH=n
+>
+> in
+>
+> Cryptographic API:
+> Hardware crypto devices:
+> Support for Samsung Exynos HASH accelerator --> turn off
+>
+> You should also turn on option for software SHA256 (and maybe SHA1)
+>
+> This is last change in this driver,
+> so maybe there is some problem with concurrent access to hardware
+> by AES and HASH driver parts.
+>
 
-by moving the syscon poweroff and restart nodes into the PMU (Power
-Management Unit) node.  The PMU node is the actual block responsible for
-power management, including typical Exynos on/off/restart procedures.
-Therefore the syscon poweroff and restart nodes logically belong to it.
+Thanks for your input, but I tried your suggestion on latest kernel.
+but the result is the same.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+How can I help trace this bug. please guide me.
 
----
-
-Tested on Exynos5410, Exynos5420 and Exynos4412. Other tests are welcomed.
----
- arch/arm/boot/dts/exynos-syscon-restart.dtsi | 28 ++++++++++++----------------
- arch/arm/boot/dts/exynos3250.dtsi            |  2 +-
- arch/arm/boot/dts/exynos4.dtsi               |  3 ++-
- arch/arm/boot/dts/exynos5.dtsi               |  1 -
- arch/arm/boot/dts/exynos5250.dtsi            |  1 +
- arch/arm/boot/dts/exynos5410.dtsi            |  1 +
- arch/arm/boot/dts/exynos5420.dtsi            |  1 +
- 7 files changed, 18 insertions(+), 19 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-index 09a2040054ed..279ea09f4fe2 100644
---- a/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-+++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-@@ -6,22 +6,18 @@
-  * published by the Free Software Foundation.
-  */
- 
--/ {
--	soc {
--		compatible = "simple-bus";
--
--		poweroff: syscon-poweroff {
--			compatible = "syscon-poweroff";
--			regmap = <&pmu_system_controller>;
--			offset = <0x330C>; /* PS_HOLD_CONTROL */
--			mask = <0x5200>; /* reset value */
--		};
-+&pmu_system_controller {
-+	poweroff: syscon-poweroff {
-+		compatible = "syscon-poweroff";
-+		regmap = <&pmu_system_controller>;
-+		offset = <0x330C>; /* PS_HOLD_CONTROL */
-+		mask = <0x5200>; /* reset value */
-+	};
- 
--		reboot: syscon-reboot {
--			compatible = "syscon-reboot";
--			regmap = <&pmu_system_controller>;
--			offset = <0x0400>; /* SWRESET */
--			mask = <0x1>;
--		};
-+	reboot: syscon-reboot {
-+		compatible = "syscon-reboot";
-+		regmap = <&pmu_system_controller>;
-+		offset = <0x0400>; /* SWRESET */
-+		mask = <0x1>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index b8fb94f5daa8..df76624fd382 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -15,7 +15,6 @@
-  */
- 
- #include "exynos4-cpu-thermal.dtsi"
--#include "exynos-syscon-restart.dtsi"
- #include <dt-bindings/clock/exynos3250.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-@@ -914,3 +913,4 @@
- };
- 
- #include "exynos3250-pinctrl.dtsi"
-+#include "exynos-syscon-restart.dtsi"
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 6d59cc827649..98af5592cc6d 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -20,7 +20,6 @@
- #include <dt-bindings/clock/exynos-audss-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
--#include "exynos-syscon-restart.dtsi"
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -1010,3 +1009,5 @@
- 		clock-names = "secss";
- 	};
- };
-+
-+#include "exynos-syscon-restart.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index f8d7de1144f1..359f49bdd4e2 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -12,7 +12,6 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
--#include "exynos-syscon-restart.dtsi"
- 
- / {
- 	interrupt-parent = <&gic>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 56626d1a4235..037aceee5959 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -1114,3 +1114,4 @@
- };
- 
- #include "exynos5250-pinctrl.dtsi"
-+#include "exynos-syscon-restart.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 1e6b57d013c4..fb7fa217a05b 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -439,3 +439,4 @@
- };
- 
- #include "exynos5410-pinctrl.dtsi"
-+#include "exynos-syscon-restart.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 2f3cb2a97f71..71e2b154a244 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1531,3 +1531,4 @@
- };
- 
- #include "exynos5420-pinctrl.dtsi"
-+#include "exynos-syscon-restart.dtsi"
--- 
-2.11.0
+Best Regards
+-Anand
+> --
+> Best regards,
+> Kamil Konieczny
+> Samsung R&D Institute Poland
+>
