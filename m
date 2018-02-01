@@ -1,29 +1,85 @@
-From: Michael Lyle <mlyle@lyle.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos-artik5: add support for wlan
-Date: Thu, 1 Feb 2018 13:14:09 -0800
-Message-ID: <CAJ+L6qejuphMmgX-zid03FoBoP69NLj9ukJ+GKmxD8SBZXx--Q@mail.gmail.com>
-References: <20180131074027.387-1-mlyle@lyle.org> <CAJKOXPex=joAvYZem9ROft4aYi8z5Mb4oDce=US182waHtuXew@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:43288 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751698AbeBAVOK (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Feb 2018 16:14:10 -0500
-Received: by mail-qt0-f180.google.com with SMTP id m11so797324qtn.10
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Feb 2018 13:14:10 -0800 (PST)
-In-Reply-To: <CAJKOXPex=joAvYZem9ROft4aYi8z5Mb4oDce=US182waHtuXew@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
+Subject: [PATCH v3] ARM: dts: exynos-artik5: add support for wlan
+Date: Thu,  1 Feb 2018 13:16:56 -0800
+Message-ID: <20180201211656.11829-1-mlyle@lyle.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, CHANHO PARK <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, CHANHO PARK <chanho61.park@samsung.com>
 
-Hey, I'm really sorry-- I forgot to commit before diffing the patch
-and had sent the v1 patch again.  :(
+On the Artik520 module, there's a bcm4354 attached to mshc_1.  Enable
+it, and turn on the regulator used for it, so that both wifi & bluetooth
+work.
 
-Couldn't make it work any way except with ldo23 nailed on-- your other
-comments I'd already taken care of (except pinctrl should go before
-rtc, not after).  Will send out v3 imminently.
+Verified to work on the Artik 520 evaluation board.
 
-Mike
+v2: accidentally sent out v1
+v3: non-removable instead of broken-cd, alphabetical order, formatting
+
+Signed-off-by: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+index 0aa577fe9f95..620b50c19ead 100644
+--- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
++++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+@@ -245,6 +245,7 @@
+ 				regulator-name = "VLDO23_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
+ 			};
+ 
+ 			ldo24_reg: LDO24 {
+@@ -316,6 +317,41 @@
+ 	status = "okay";
+ };
+ 
++&mshc_1 {
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	disable-wp;
++	non-removable;
++	keep-power-in-suspend;
++	fifo-depth = <0x40>;
++	vqmmc-supply = <&ldo11_reg>;
++	/*
++	 * Voltage negotiation is broken for the SDIO periph so we
++	 * can't actually set the voltage here.
++	 * vmmc-supply = <&ldo23_reg>;
++	 */
++	card-detect-delay = <500>;
++	clock-frequency = <100000000>;
++	max-frequency = <100000000>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 1>;
++	samsung,dw-mshc-ddr-timing = <1 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd1_cmd &sd1_clk &sd1_bus1 &sd1_bus4 &wlanen>;
++	bus-width = <4>;
++	status = "okay";
++};
++
++&pinctrl_1 {
++	wlanen: wlanen {
++		samsung,pins = "gpx2-3";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
++		samsung,pin-val = <1>;
++	};
++};
++
+ &rtc {
+ 	clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
+ 	clock-names = "rtc", "rtc_src";
+-- 
+2.14.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
