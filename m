@@ -1,38 +1,62 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 0/2] drm/exynos/mixer: fixes for interlaced mode
-Date: Fri, 02 Feb 2018 16:11:21 +0100
-Message-ID: <20180202151123.31082-1-a.hajda@samsung.com>
-References: <CGME20180202151126eucas1p2142bfb4a4376aea7763f40ce2630e349@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:56971 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751567AbeBBPLa (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 10:11:30 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/2] drm/exynos/mixer: fix synchronization check in
+ interlaced mode
+Date: Fri, 02 Feb 2018 16:11:22 +0100
+Message-ID: <20180202151123.31082-2-a.hajda@samsung.com>
+References: <20180202151123.31082-1-a.hajda@samsung.com>
+ <CGME20180202151126eucas1p2c17ce18d0e235660ba3e3244521fe051@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20180202151123.31082-1-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Inki, Tobias,
-
-This is reviewed/updated/tested Tobias's patch addressing page-faults
-in Video Processor in interlaced mode. Plus preliminary patch fixing Mixer
-interlaced mode.
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (1):
-  drm/exynos/mixer: fix synchronization check in interlaced mode
-
-Tobias Jakobi (1):
-  drm/exynos: mixer: avoid Oops in vp_video_buffer()
-
- drivers/gpu/drm/exynos/exynos_mixer.c | 22 +++++++++++++++++-----
- drivers/gpu/drm/exynos/regs-mixer.h   |  1 +
- 2 files changed, 18 insertions(+), 5 deletions(-)
-
--- 
-2.16.1
+SW4gY2FzZSBvZiBpbnRlcmxhY2UgbW9kZSB2aWRlbyBwcm9jZXNzb3IgcmVnaXN0ZXJzIGFuZCBt
+aXhlciBjb25maWcKcmVnaXN0ZXIgbXVzdCBiZSBjaGVjayB0byBlbnN1cmUgaW50ZXJuYWwgc3Rh
+dGUgaXMgaW4gc3luYyB3aXRoIHNoYWRvdwpyZWdpc3RlcnMuClRoaXMgcGF0Y2ggZml4ZXMgcGFn
+ZS1mYXVsdHMgaW4gaW50ZXJsYWNlZCBtb2RlLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpk
+YSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jIHwgMTAgKysrKysrKysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1p
+eGVyLmggICB8ICAxICsKIDIgZmlsZXMgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKQoKZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IGRjNWQ3OTQ2NWY5Yi4uZmY3ZDA4OGM5
+MjJhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCisr
+KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAgLTQ5NCw2ICs0OTQs
+NyBAQCBzdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0
+eCwKIAogCXNwaW5fbG9ja19pcnFzYXZlKCZjdHgtPnJlZ19zbG9jaywgZmxhZ3MpOwogCisJdnBf
+cmVnX3dyaXRlKGN0eCwgVlBfU0hBRE9XX1VQREFURSwgMSk7CiAJLyogaW50ZXJsYWNlIG9yIHBy
+b2dyZXNzaXZlIHNjYW4gbW9kZSAqLwogCXZhbCA9ICh0ZXN0X2JpdChNWFJfQklUX0lOVEVSTEFD
+RSwgJmN0eC0+ZmxhZ3MpID8gfjAgOiAwKTsKIAl2cF9yZWdfd3JpdGVtYXNrKGN0eCwgVlBfTU9E
+RSwgdmFsLCBWUF9NT0RFX0xJTkVfU0tJUCk7CkBAIC03MTEsNiArNzEyLDE1IEBAIHN0YXRpYyBp
+cnFyZXR1cm5fdCBtaXhlcl9pcnFfaGFuZGxlcihpbnQgaXJxLCB2b2lkICphcmcpCiAKIAkJLyog
+aW50ZXJsYWNlIHNjYW4gbmVlZCB0byBjaGVjayBzaGFkb3cgcmVnaXN0ZXIgKi8KIAkJaWYgKHRl
+c3RfYml0KE1YUl9CSVRfSU5URVJMQUNFLCAmY3R4LT5mbGFncykpIHsKKwkJCWlmICh0ZXN0X2Jp
+dChNWFJfQklUX1ZQX0VOQUJMRUQsICZjdHgtPmZsYWdzKSAmJgorCQkJICAgIHZwX3JlZ19yZWFk
+KGN0eCwgVlBfU0hBRE9XX1VQREFURSkpCisJCQkJZ290byBvdXQ7CisKKwkJCWJhc2UgPSBtaXhl
+cl9yZWdfcmVhZChjdHgsIE1YUl9DRkcpOworCQkJc2hhZG93ID0gbWl4ZXJfcmVnX3JlYWQoY3R4
+LCBNWFJfQ0ZHX1MpOworCQkJaWYgKGJhc2UgIT0gc2hhZG93KQorCQkJCWdvdG8gb3V0OworCiAJ
+CQliYXNlID0gbWl4ZXJfcmVnX3JlYWQoY3R4LCBNWFJfR1JBUEhJQ19CQVNFKDApKTsKIAkJCXNo
+YWRvdyA9IG1peGVyX3JlZ19yZWFkKGN0eCwgTVhSX0dSQVBISUNfQkFTRV9TKDApKTsKIAkJCWlm
+IChiYXNlICE9IHNoYWRvdykKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVn
+cy1taXhlci5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmgKaW5kZXggYzMx
+MWY1NzFiZGY5Li4xODljZmEyNDcwYTggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvcmVncy1taXhlci5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5o
+CkBAIC00Nyw2ICs0Nyw3IEBACiAjZGVmaW5lIE1YUl9NTwkJCQkweDAzMDQKICNkZWZpbmUgTVhS
+X1JFU09MVVRJT04JCQkweDAzMTAKIAorI2RlZmluZSBNWFJfQ0ZHX1MJCQkweDIwMDQKICNkZWZp
+bmUgTVhSX0dSQVBISUMwX0JBU0VfUwkJMHgyMDI0CiAjZGVmaW5lIE1YUl9HUkFQSElDMV9CQVNF
+X1MJCTB4MjA0NAogCi0tIAoyLjE2LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
