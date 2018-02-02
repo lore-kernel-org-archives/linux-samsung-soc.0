@@ -1,68 +1,69 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: Re: Odroid HC1 cryptsetup:encrypt sata driver
-Date: Fri, 02 Feb 2018 12:27:04 +0100
-Message-ID: <fc3accfc-0dc1-d37b-3345-56aa981bbdfd@partner.samsung.com>
-References: <CGME20180124130437epcas2p251156941d5fd0dab2c24807a26a156be@epcas2p2.samsung.com>
-        <CANAwSgQ3WE9XmjmzHxJstDz52fj_SFvmBKnMjY3MVjhxJuoFmg@mail.gmail.com>
-        <f1966769-106e-a95e-8068-642e93c390b4@partner.samsung.com>
-        <CANAwSgT5buQ2ROmt-Bk0sh8=cSU5hp3GiHRuKwSagn0s57Nevw@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 2/2] drm/exynos: mixer: avoid Oops in vp_video_buffer()
+Date: Fri, 02 Feb 2018 16:11:23 +0100
+Message-ID: <20180202151123.31082-3-a.hajda@samsung.com>
+References: <20180202151123.31082-1-a.hajda@samsung.com>
+ <CGME20180202151126eucas1p2ef500d65f723cff9e6a4ebb2cb2a08d9@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57951 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeBBL1L (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 06:27:11 -0500
-In-reply-to: <CANAwSgT5buQ2ROmt-Bk0sh8=cSU5hp3GiHRuKwSagn0s57Nevw@mail.gmail.com>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20180202151123.31082-1-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-
-On 31.01.2018 06:51, Anand Moon wrote:
-> Hi Kamil,
-> 
-> On 30 January 2018 at 21:02, Kamil Konieczny
-> <k.konieczny@partner.samsung.com> wrote:
->> Hi Anand,
->>
->> On 24.01.2018 14:04, Anand Moon wrote:
->>> Hi Kamil Konieczny,
->>>
->>> I am looking in setup of encrypted sata hard-disk on Odroid XU4/HC1 device.
->>> using following encryption method.
->>>
->>> aes-cbc-essiv:sha256 128
->>> aes-cbc-essiv:sha256 256
->>>
->>> Here is my defconfig I am using. https://pastebin.com/gF5T2stp
->>>
->>> Following crypt benchmark we use to test : https://pastebin.com/WiexsJA2
->>>
->>> When I am trying to format the the hard drive I am getting kernel panic.
->>> I have tired different option like below.
->>>
->>> *Please guide me in how to fix this bug*
->>> [...]
->>
->> Sorry for late response, I was on holidays. Try latest kernel 4.15
->> and turn off option:
->> [...]
-> 
-> Thanks for your input, but I tried your suggestion on latest kernel.
-> but the result is the same.
-> 
-> How can I help trace this bug. please guide me.
-
-I was able to reproduce this bug with latest kernel 4.15 on Odroid HC1,
-I am debugging it now.
-Thank you for reporting it.
-
--- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
+RnJvbTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+CgpJZiBh
+biBpbnRlcmxhY2VkIHZpZGVvIG1vZGUgaXMgc2VsZWN0ZWQsIGEgSU9NTVUgcGFnZWZhdWx0IGlz
+CnRyaWdnZXJlZCBieSB2cF92aWRlb19idWZmZXIoKS4KCkZpeCB0aGUgbW9zdCBhcHBhcmVudCBi
+dWdzOgotIHBpdGNoIHZhbHVlIGZvciBjaHJvbWEgcGxhbmUKLSBkaXZpZGUgYnkgdHdvIG9mIGhl
+aWdodCBhbmQgdnBvcyBvZiBzb3VyY2UgYW5kIGRlc3RpbmF0aW9uCgpTaWduZWQtb2ZmLWJ5OiBU
+b2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KWyBhLmhhamRhOiBI
+YWx2ZWQgYWxzbyBkZXN0aW5hdGlvbiBoZWlnaHQgYW5kIHZwb3MsIHVwZGF0ZWQgY29tbWl0IG1l
+c3NhZ2UgXQpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29t
+PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAxMiArKysrKysr
+LS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCgpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXggZmY3ZDA4OGM5MjJhLi42NmI3
+Y2MyMTI4ZTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVy
+LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtNDg1LDcg
+KzQ4NSw3IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4
+dCAqY3R4LAogCQkJY2hyb21hX2FkZHJbMV0gPSBjaHJvbWFfYWRkclswXSArIDB4NDA7CiAJCX0g
+ZWxzZSB7CiAJCQlsdW1hX2FkZHJbMV0gPSBsdW1hX2FkZHJbMF0gKyBmYi0+cGl0Y2hlc1swXTsK
+LQkJCWNocm9tYV9hZGRyWzFdID0gY2hyb21hX2FkZHJbMF0gKyBmYi0+cGl0Y2hlc1swXTsKKwkJ
+CWNocm9tYV9hZGRyWzFdID0gY2hyb21hX2FkZHJbMF0gKyBmYi0+cGl0Y2hlc1sxXTsKIAkJfQog
+CX0gZWxzZSB7CiAJCWx1bWFfYWRkclsxXSA9IDA7CkBAIC01MDgsMjEgKzUwOCwyMyBAQCBzdGF0
+aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKIAl2cF9y
+ZWdfd3JpdGUoY3R4LCBWUF9JTUdfU0laRV9ZLCBWUF9JTUdfSFNJWkUoZmItPnBpdGNoZXNbMF0p
+IHwKIAkJVlBfSU1HX1ZTSVpFKGZiLT5oZWlnaHQpKTsKIAkvKiBjaHJvbWEgcGxhbmUgZm9yIE5W
+MTIvTlYyMSBpcyBoYWxmIHRoZSBoZWlnaHQgb2YgdGhlIGx1bWEgcGxhbmUgKi8KLQl2cF9yZWdf
+d3JpdGUoY3R4LCBWUF9JTUdfU0laRV9DLCBWUF9JTUdfSFNJWkUoZmItPnBpdGNoZXNbMF0pIHwK
+Kwl2cF9yZWdfd3JpdGUoY3R4LCBWUF9JTUdfU0laRV9DLCBWUF9JTUdfSFNJWkUoZmItPnBpdGNo
+ZXNbMV0pIHwKIAkJVlBfSU1HX1ZTSVpFKGZiLT5oZWlnaHQgLyAyKSk7CiAKIAl2cF9yZWdfd3Jp
+dGUoY3R4LCBWUF9TUkNfV0lEVEgsIHN0YXRlLT5zcmMudyk7Ci0JdnBfcmVnX3dyaXRlKGN0eCwg
+VlBfU1JDX0hFSUdIVCwgc3RhdGUtPnNyYy5oKTsKIAl2cF9yZWdfd3JpdGUoY3R4LCBWUF9TUkNf
+SF9QT1NJVElPTiwKIAkJCVZQX1NSQ19IX1BPU0lUSU9OX1ZBTChzdGF0ZS0+c3JjLngpKTsKLQl2
+cF9yZWdfd3JpdGUoY3R4LCBWUF9TUkNfVl9QT1NJVElPTiwgc3RhdGUtPnNyYy55KTsKLQogCXZw
+X3JlZ193cml0ZShjdHgsIFZQX0RTVF9XSURUSCwgc3RhdGUtPmNydGMudyk7CiAJdnBfcmVnX3dy
+aXRlKGN0eCwgVlBfRFNUX0hfUE9TSVRJT04sIHN0YXRlLT5jcnRjLngpOworCiAJaWYgKHRlc3Rf
+Yml0KE1YUl9CSVRfSU5URVJMQUNFLCAmY3R4LT5mbGFncykpIHsKKwkJdnBfcmVnX3dyaXRlKGN0
+eCwgVlBfU1JDX0hFSUdIVCwgc3RhdGUtPnNyYy5oIC8gMik7CisJCXZwX3JlZ193cml0ZShjdHgs
+IFZQX1NSQ19WX1BPU0lUSU9OLCBzdGF0ZS0+c3JjLnkgLyAyKTsKIAkJdnBfcmVnX3dyaXRlKGN0
+eCwgVlBfRFNUX0hFSUdIVCwgc3RhdGUtPmNydGMuaCAvIDIpOwogCQl2cF9yZWdfd3JpdGUoY3R4
+LCBWUF9EU1RfVl9QT1NJVElPTiwgc3RhdGUtPmNydGMueSAvIDIpOwogCX0gZWxzZSB7CisJCXZw
+X3JlZ193cml0ZShjdHgsIFZQX1NSQ19IRUlHSFQsIHN0YXRlLT5zcmMuaCk7CisJCXZwX3JlZ193
+cml0ZShjdHgsIFZQX1NSQ19WX1BPU0lUSU9OLCBzdGF0ZS0+c3JjLnkpOwogCQl2cF9yZWdfd3Jp
+dGUoY3R4LCBWUF9EU1RfSEVJR0hULCBzdGF0ZS0+Y3J0Yy5oKTsKIAkJdnBfcmVnX3dyaXRlKGN0
+eCwgVlBfRFNUX1ZfUE9TSVRJT04sIHN0YXRlLT5jcnRjLnkpOwogCX0KLS0gCjIuMTYuMQoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
