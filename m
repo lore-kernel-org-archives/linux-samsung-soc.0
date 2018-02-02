@@ -1,9 +1,10 @@
 From: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 05/10] ARM: dts: exynos: Use fimc labels in exynos4210-trats
-Date: Fri, 02 Feb 2018 16:43:50 +0100
-Message-ID: <1517586235-16603-6-git-send-email-m.purski@samsung.com>
+Subject: [PATCH 09/10] ARM: dts: exynos: Use labels instead of full names in
+ exynos4412-trats2
+Date: Fri, 02 Feb 2018 16:43:54 +0100
+Message-ID: <1517586235-16603-10-git-send-email-m.purski@samsung.com>
 References: <1517586235-16603-1-git-send-email-m.purski@samsung.com>
-        <CGME20180202154409eucas1p2e0957f6731155f56afbb8152269f8560@eucas1p2.samsung.com>
+        <CGME20180202154410eucas1p253a471a4532ba80e1b0a4d4bce7bdeca@eucas1p2.samsung.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1517586235-16603-1-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -11,106 +12,119 @@ To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Camera and fimc labels have been defined in exynos4.dtsi Use them
-in exynos4210-trats instead of full names.
+Camera and i2c1_isp labels are defined in exynos4.dtsi and
+exynos4412.dtsi. Use them exynos4412-trats2.
 
 Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos4210-trats.dts | 73 +++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 36 deletions(-)
+ arch/arm/boot/dts/exynos4412-trats2.dts | 73 ++++++++++++++++-----------------
+ 1 file changed, 36 insertions(+), 37 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index aaade17..268bd38 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -148,43 +148,12 @@
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index f285790..b8abc21 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -288,17 +288,6 @@
  		};
  	};
  
--	camera {
+-	camera: camera {
+-		pinctrl-0 = <&cam_port_a_clk_active &cam_port_b_clk_active>;
 -		pinctrl-names = "default";
--		pinctrl-0 = <>;
 -		status = "okay";
+-		assigned-clocks = <&clock CLK_MOUT_CAM0>,
+-				  <&clock CLK_MOUT_CAM1>;
+-		assigned-clock-parents = <&clock CLK_XUSBXTI>,
+-					 <&clock CLK_XUSBXTI>;
 -
--		fimc_0: fimc@11800000 {
--			status = "okay";
--			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
--					<&clock CLK_SCLK_FIMC0>;
--			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
--			assigned-clock-rates = <0>, <160000000>;
--		};
 -
--		fimc_1: fimc@11810000 {
--			status = "okay";
--			assigned-clocks = <&clock CLK_MOUT_FIMC1>,
--					<&clock CLK_SCLK_FIMC1>;
--			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
--			assigned-clock-rates = <0>, <160000000>;
--		};
--
--		fimc_2: fimc@11820000 {
--			status = "okay";
--			assigned-clocks = <&clock CLK_MOUT_FIMC2>,
--					<&clock CLK_SCLK_FIMC2>;
--			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
--			assigned-clock-rates = <0>, <160000000>;
--		};
-+};
- 
--		fimc_3: fimc@11830000 {
--			status = "okay";
--			assigned-clocks = <&clock CLK_MOUT_FIMC3>,
--					<&clock CLK_SCLK_FIMC3>;
--			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
--			assigned-clock-rates = <0>, <160000000>;
--		};
 -	};
-+&camera {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <>;
-+	status = "okay";
- };
  
- &cpu0 {
-@@ -234,6 +203,38 @@
- 	vbus-supply = <&safe1_sreg>;
- };
- 
-+&fimc_0 {
-+	status = "okay";
-+	assigned-clocks = <&clock CLK_MOUT_FIMC0>,
-+			  <&clock CLK_SCLK_FIMC0>;
-+	assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
-+	assigned-clock-rates = <0>, <160000000>;
-+};
-+
-+&fimc_1 {
-+	status = "okay";
-+	assigned-clocks = <&clock CLK_MOUT_FIMC1>,
-+			  <&clock CLK_SCLK_FIMC1>;
-+	assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
-+	assigned-clock-rates = <0>, <160000000>;
-+};
-+
-+&fimc_2 {
-+	status = "okay";
-+	assigned-clocks = <&clock CLK_MOUT_FIMC2>,
-+			  <&clock CLK_SCLK_FIMC2>;
-+	assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
-+		assigned-clock-rates = <0>, <160000000>;
-+};
-+
-+&fimc_3 {
-+	status = "okay";
-+	assigned-clocks = <&clock CLK_MOUT_FIMC3>,
-+			  <&clock CLK_SCLK_FIMC3>;
-+	assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
-+	assigned-clock-rates = <0>, <160000000>;
-+};
-+
- &fimd {
+ 	wlan_pwrseq: sdhci3-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+@@ -403,6 +392,16 @@
  	status = "okay";
  };
+ 
++&camera {
++	pinctrl-0 = <&cam_port_a_clk_active &cam_port_b_clk_active>;
++	pinctrl-names = "default";
++	status = "okay";
++	assigned-clocks = <&clock CLK_MOUT_CAM0>,
++			  <&clock CLK_MOUT_CAM1>;
++	assigned-clock-parents = <&clock CLK_XUSBXTI>,
++				 <&clock CLK_XUSBXTI>;
++};
++
+ &cpu0 {
+ 	cpu0-supply = <&buck2_reg>;
+ };
+@@ -527,32 +526,6 @@
+ 	pinctrl-0 = <&fimc_is_uart>;
+ 	pinctrl-names = "default";
+ 	status = "okay";
+-
+-	i2c1_isp: i2c-isp@12140000 {
+-		pinctrl-0 = <&fimc_is_i2c1>;
+-		pinctrl-names = "default";
+-
+-		s5k6a3@10 {
+-			compatible = "samsung,s5k6a3";
+-			reg = <0x10>;
+-			svdda-supply = <&cam_io_reg>;
+-			svddio-supply = <&ldo19_reg>;
+-			afvdd-supply = <&ldo19_reg>;
+-			clock-frequency = <24000000>;
+-			/* CAM_B_CLKOUT */
+-			clocks = <&camera 1>;
+-			clock-names = "extclk";
+-			samsung,camclk-out = <1>;
+-			gpios = <&gpm1 6 GPIO_ACTIVE_HIGH>;
+-
+-			port {
+-				is_s5k6a3_ep: endpoint {
+-					remote-endpoint = <&csis1_ep>;
+-					data-lanes = <1>;
+-				};
+-			};
+-		};
+-	};
+ };
+ 
+ &fimc_lite_0 {
+@@ -629,6 +602,32 @@
+ 	};
+ };
+ 
++&i2c1_isp {
++	pinctrl-0 = <&fimc_is_i2c1>;
++	pinctrl-names = "default";
++
++	s5k6a3@10 {
++		compatible = "samsung,s5k6a3";
++		reg = <0x10>;
++		svdda-supply = <&cam_io_reg>;
++		svddio-supply = <&ldo19_reg>;
++		afvdd-supply = <&ldo19_reg>;
++		clock-frequency = <24000000>;
++		/* CAM_B_CLKOUT */
++		clocks = <&camera 1>;
++		clock-names = "extclk";
++		samsung,camclk-out = <1>;
++		gpios = <&gpm1 6 GPIO_ACTIVE_HIGH>;
++
++		port {
++			is_s5k6a3_ep: endpoint {
++				remote-endpoint = <&csis1_ep>;
++				data-lanes = <1>;
++			};
++		};
++	};
++};
++
+ &i2c_3 {
+ 	samsung,i2c-sda-delay = <100>;
+ 	samsung,i2c-slave-addr = <0x10>;
 -- 
 2.7.4
 
