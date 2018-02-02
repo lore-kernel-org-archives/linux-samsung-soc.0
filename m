@@ -1,63 +1,69 @@
-From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 10/10] ARM: dts: exynos: Use camera label in
- exynos4412-itop-elite
-Date: Fri, 02 Feb 2018 16:43:55 +0100
-Message-ID: <1517586235-16603-11-git-send-email-m.purski@samsung.com>
-References: <1517586235-16603-1-git-send-email-m.purski@samsung.com>
-        <CGME20180202154411eucas1p2198a79e7b5b21fd61fe050ee216d2c2f@eucas1p2.samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: Re: Odroid HC1 cryptsetup:encrypt sata driver
+Date: Fri, 02 Feb 2018 18:35:13 +0100
+Message-ID: <c9a4ea55-4ab1-3f9a-6381-af1ce7d56590@partner.samsung.com>
+References: <CANAwSgQ3WE9XmjmzHxJstDz52fj_SFvmBKnMjY3MVjhxJuoFmg@mail.gmail.com>
+        <CGME20180124140134epcas1p1e219c8e4e75e52a512220dc5788ac70b@epcas1p1.samsung.com>
+        <CAJKOXPeudajDX9EouSz=eB7r+OG1vcJD8Yg139CDpWGs-7bSOw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42715 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60593 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751651AbeBBPoQ (ORCPT
+        with ESMTP id S1753595AbeBBRfU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 10:44:16 -0500
-In-reply-to: <1517586235-16603-1-git-send-email-m.purski@samsung.com>
+        Fri, 2 Feb 2018 12:35:20 -0500
+In-reply-to: <CAJKOXPeudajDX9EouSz=eB7r+OG1vcJD8Yg139CDpWGs-7bSOw@mail.gmail.com>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Maciej Purski <m.purski@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Anand Moon <linux.amoon@gmail.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Camera label has been defined in exynos4.dtsi. Use it in
-exynos4412-itop-elite instead of defining a new node.
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
----
- arch/arm/boot/dts/exynos4412-itop-elite.dts | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-index a4cd493..0dedeba 100644
---- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
-+++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-@@ -116,14 +116,6 @@
- 		compatible = "pwm-beeper";
- 		pwms = <&pwm 0 4000000 PWM_POLARITY_INVERTED>;
- 	};
--
--	camera: camera {
--		pinctrl-0 = <&cam_port_a_clk_active>;
--		pinctrl-names = "default";
--		status = "okay";
--		assigned-clocks = <&clock CLK_MOUT_CAM0>;
--		assigned-clock-parents = <&clock CLK_XUSBXTI>;
--	};
- };
- 
- &adc {
-@@ -131,6 +123,14 @@
- 	status = "okay";
- };
- 
-+&camera {
-+	pinctrl-0 = <&cam_port_a_clk_active>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	assigned-clocks = <&clock CLK_MOUT_CAM0>;
-+	assigned-clock-parents = <&clock CLK_XUSBXTI>;
-+};
-+
- &clock_audss {
- 	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
- 			<&clock_audss EXYNOS_MOUT_I2S>,
+On 24.01.2018 15:01, Krzysztof Kozlowski wrote:
+> On Wed, Jan 24, 2018 at 2:04 PM, Anand Moon <linux.amoon@gmail.com> wrote:
+>> Hi Kamil Konieczny,
+>>
+>> I am looking in setup of encrypted sata hard-disk on Odroid XU4/HC1 device.
+>> using following encryption method.
+>>
+>> aes-cbc-essiv:sha256 128
+>> aes-cbc-essiv:sha256 256
+>>
+>> Here is my defconfig I am using. https://pastebin.com/gF5T2stp
+>>
+>> Following crypt benchmark we use to test : https://pastebin.com/WiexsJA2
+> 
+> No problems on my side with a 128 MB file (not a device):
+> # cryptsetup -v luksFormat /tmp/testcrypt /dev/urandom
+> --keyfile-size=32 --cipher aes-cbc-essiv:sha256
+> # Command successful.
+> # cryptsetup -v luksFormat ~/testcrypt /dev/urandom --keyfile-size=32
+> --cipher aes-cbc-essiv:sha256
+> # Command successful.
+
+What version is cryptsetup ?
+
+> 
+> Linux 4.15.0-rc9-00023-g1f07476ec143.
+> 
+> Some time ago you were building from not usual source code and your
+> kernel version from WARN is not unambiguous.
+> 
+> What is necessary to reproduce it?
+>>[...]
+
+I get OOPS with cryptsetup 2.0.0, kernel 4.15
+
+If you have older cryptsetup, please keep it for reference.
+
+For now, I found that crypto-api or dm-crypt try to use aes-ecb
+instead of aes-cbc, and sets req->info (pointer used for passing IV) to 0x10
+
 -- 
-2.7.4
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
