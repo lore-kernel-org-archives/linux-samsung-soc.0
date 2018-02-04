@@ -1,41 +1,105 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/10] Exynos 4210, 4412 DTS cleanup
-Date: Sun, 4 Feb 2018 18:10:14 +0100
-Message-ID: <20180204171014.twkorfgz5kkab2zn@kozik-lap>
-References: <CGME20180202154402eucas1p2d9e49565542aeaa5ac08ba121cfa4496@eucas1p2.samsung.com>
- <1517586235-16603-1-git-send-email-m.purski@samsung.com>
+From: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
+Subject: Re: [PATCH v3] ARM: dts: exynos-artik5: add support for wlan
+Date: Sun, 4 Feb 2018 10:18:52 -0800
+Message-ID: <CAJ+L6qdR4i_VAOY_uchoODrZyH5reRzDGQoGPN2HGH2hGyKDdw@mail.gmail.com>
+References: <20180201211656.11829-1-mlyle@lyle.org> <20180204162655.xjv2m6f6vo7bu2lq@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1517586235-16603-1-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <20180204162655.xjv2m6f6vo7bu2lq@kozik-lap>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, CHANHO PARK <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 04:43:45PM +0100, Maciej Purski wrote:
-> Hi all,
-> 
-> this patchset performs cleanup of exynos4 series DTS. The main goal
-> is to prepare them to add "soc" node just like it is done in other
-> exynos DTS. Basically those patches use labels wherever possible
-> instead of redefining nodes, which have been defined in
-> exynos4.dtsi, exynos4210.dtsi or exynos4412.dtsi.
-> 
-> Best Regards,
-> 
-> Maciej Purski 
+Hi Krzysztof ---
 
-In general, everything looks okay. I had few minor comments to some of
-the patches. The ones without my replies look okay.
+Excellent, thank you for all your help.
 
-Please send v2 for everything but no need to hurry as I will be taking
-patches after merge window.
+Mike
 
-Best regards,
-Krzysztof
-
+On Sun, Feb 4, 2018 at 8:26 AM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Thu, Feb 01, 2018 at 01:16:56PM -0800, Michael Lyle wrote:
+>> On the Artik520 module, there's a bcm4354 attached to mshc_1.  Enable
+>> it, and turn on the regulator used for it, so that both wifi & bluetooth
+>> work.
+>>
+>> Verified to work on the Artik 520 evaluation board.
+>>
+>> v2: accidentally sent out v1
+>> v3: non-removable instead of broken-cd, alphabetical order, formatting
+>
+> Changelog should go after --- separator so it would not end in commit.
+>
+> I'll fix it during applying. Looks good to me. I'll take it after merge
+> window.
+>
+> Best regards,
+> Krzysztof
+>
+>>
+>> Signed-off-by: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
+>> ---
+>>  arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
+>>  1 file changed, 36 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+>> index 0aa577fe9f95..620b50c19ead 100644
+>> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
+>> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+>> @@ -245,6 +245,7 @@
+>>                               regulator-name = "VLDO23_1.8V";
+>>                               regulator-min-microvolt = <1800000>;
+>>                               regulator-max-microvolt = <1800000>;
+>> +                             regulator-always-on;
+>>                       };
+>>
+>>                       ldo24_reg: LDO24 {
+>> @@ -316,6 +317,41 @@
+>>       status = "okay";
+>>  };
+>>
+>> +&mshc_1 {
+>> +     cap-sd-highspeed;
+>> +     cap-sdio-irq;
+>> +     disable-wp;
+>> +     non-removable;
+>> +     keep-power-in-suspend;
+>> +     fifo-depth = <0x40>;
+>> +     vqmmc-supply = <&ldo11_reg>;
+>> +     /*
+>> +      * Voltage negotiation is broken for the SDIO periph so we
+>> +      * can't actually set the voltage here.
+>> +      * vmmc-supply = <&ldo23_reg>;
+>> +      */
+>> +     card-detect-delay = <500>;
+>> +     clock-frequency = <100000000>;
+>> +     max-frequency = <100000000>;
+>> +     samsung,dw-mshc-ciu-div = <3>;
+>> +     samsung,dw-mshc-sdr-timing = <0 1>;
+>> +     samsung,dw-mshc-ddr-timing = <1 2>;
+>> +     pinctrl-names = "default";
+>> +     pinctrl-0 = <&sd1_cmd &sd1_clk &sd1_bus1 &sd1_bus4 &wlanen>;
+>> +     bus-width = <4>;
+>> +     status = "okay";
+>> +};
+>> +
+>> +&pinctrl_1 {
+>> +     wlanen: wlanen {
+>> +             samsung,pins = "gpx2-3";
+>> +             samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+>> +             samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+>> +             samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
+>> +             samsung,pin-val = <1>;
+>> +     };
+>> +};
+>> +
+>>  &rtc {
+>>       clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
+>>       clock-names = "rtc", "rtc_src";
+>> --
+>> 2.14.1
+>>
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
