@@ -1,80 +1,100 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: Odroid HC1 cryptsetup:encrypt sata driver
-Date: Sat, 3 Feb 2018 12:10:54 +0530
-Message-ID: <CANAwSgQqCfD243x8F-boToqMT0K3qgQ=aVyvQXi1=ux0aV+Rqg@mail.gmail.com>
-References: <CANAwSgQ3WE9XmjmzHxJstDz52fj_SFvmBKnMjY3MVjhxJuoFmg@mail.gmail.com>
- <CGME20180124140134epcas1p1e219c8e4e75e52a512220dc5788ac70b@epcas1p1.samsung.com>
- <CAJKOXPeudajDX9EouSz=eB7r+OG1vcJD8Yg139CDpWGs-7bSOw@mail.gmail.com> <c9a4ea55-4ab1-3f9a-6381-af1ce7d56590@partner.samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3] ARM: dts: exynos-artik5: add support for wlan
+Date: Sun, 4 Feb 2018 17:26:55 +0100
+Message-ID: <20180204162655.xjv2m6f6vo7bu2lq@kozik-lap>
+References: <20180201211656.11829-1-mlyle@lyle.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <c9a4ea55-4ab1-3f9a-6381-af1ce7d56590@partner.samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20180201211656.11829-1-mlyle-dTEscH1tG2Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, CHANHO PARK <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kamil,
+On Thu, Feb 01, 2018 at 01:16:56PM -0800, Michael Lyle wrote:
+> On the Artik520 module, there's a bcm4354 attached to mshc_1.  Enable
+> it, and turn on the regulator used for it, so that both wifi & bluetooth
+> work.
+> 
+> Verified to work on the Artik 520 evaluation board.
+> 
+> v2: accidentally sent out v1
+> v3: non-removable instead of broken-cd, alphabetical order, formatting
 
-On 2 February 2018 at 23:05, Kamil Konieczny
-<k.konieczny@partner.samsung.com> wrote:
->
->
-> On 24.01.2018 15:01, Krzysztof Kozlowski wrote:
->> On Wed, Jan 24, 2018 at 2:04 PM, Anand Moon <linux.amoon@gmail.com> wrote:
->>> Hi Kamil Konieczny,
->>>
->>> I am looking in setup of encrypted sata hard-disk on Odroid XU4/HC1 device.
->>> using following encryption method.
->>>
->>> aes-cbc-essiv:sha256 128
->>> aes-cbc-essiv:sha256 256
->>>
->>> Here is my defconfig I am using. https://pastebin.com/gF5T2stp
->>>
->>> Following crypt benchmark we use to test : https://pastebin.com/WiexsJA2
->>
->> No problems on my side with a 128 MB file (not a device):
->> # cryptsetup -v luksFormat /tmp/testcrypt /dev/urandom
->> --keyfile-size=32 --cipher aes-cbc-essiv:sha256
->> # Command successful.
->> # cryptsetup -v luksFormat ~/testcrypt /dev/urandom --keyfile-size=32
->> --cipher aes-cbc-essiv:sha256
->> # Command successful.
->
-> What version is cryptsetup ?
->
-At my end I am using below version.
+Changelog should go after --- separator so it would not end in commit.
 
-root@odroid:~# cryptsetup --version
-cryptsetup 1.6.6
+I'll fix it during applying. Looks good to me. I'll take it after merge
+window.
 
->>
->> Linux 4.15.0-rc9-00023-g1f07476ec143.
->>
->> Some time ago you were building from not usual source code and your
->> kernel version from WARN is not unambiguous.
->>
->> What is necessary to reproduce it?
->>>[...]
->
-> I get OOPS with cryptsetup 2.0.0, kernel 4.15
->
+Best regards,
+Krzysztof
 
-I will try to get test with new version of cryptsetup 2.0.0.
-
-> If you have older cryptsetup, please keep it for reference.
->
-> For now, I found that crypto-api or dm-crypt try to use aes-ecb
-> instead of aes-cbc, and sets req->info (pointer used for passing IV) to 0x10
->
-Ok.
-
-Best Regards
--Anand
-
-> --
-> Best regards,
-> Kamil Konieczny
-> Samsung R&D Institute Poland
->
+> 
+> Signed-off-by: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+> index 0aa577fe9f95..620b50c19ead 100644
+> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+> @@ -245,6 +245,7 @@
+>  				regulator-name = "VLDO23_1.8V";
+>  				regulator-min-microvolt = <1800000>;
+>  				regulator-max-microvolt = <1800000>;
+> +				regulator-always-on;
+>  			};
+>  
+>  			ldo24_reg: LDO24 {
+> @@ -316,6 +317,41 @@
+>  	status = "okay";
+>  };
+>  
+> +&mshc_1 {
+> +	cap-sd-highspeed;
+> +	cap-sdio-irq;
+> +	disable-wp;
+> +	non-removable;
+> +	keep-power-in-suspend;
+> +	fifo-depth = <0x40>;
+> +	vqmmc-supply = <&ldo11_reg>;
+> +	/*
+> +	 * Voltage negotiation is broken for the SDIO periph so we
+> +	 * can't actually set the voltage here.
+> +	 * vmmc-supply = <&ldo23_reg>;
+> +	 */
+> +	card-detect-delay = <500>;
+> +	clock-frequency = <100000000>;
+> +	max-frequency = <100000000>;
+> +	samsung,dw-mshc-ciu-div = <3>;
+> +	samsung,dw-mshc-sdr-timing = <0 1>;
+> +	samsung,dw-mshc-ddr-timing = <1 2>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sd1_cmd &sd1_clk &sd1_bus1 &sd1_bus4 &wlanen>;
+> +	bus-width = <4>;
+> +	status = "okay";
+> +};
+> +
+> +&pinctrl_1 {
+> +	wlanen: wlanen {
+> +		samsung,pins = "gpx2-3";
+> +		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
+> +		samsung,pin-val = <1>;
+> +	};
+> +};
+> +
+>  &rtc {
+>  	clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
+>  	clock-names = "rtc", "rtc_src";
+> -- 
+> 2.14.1
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
