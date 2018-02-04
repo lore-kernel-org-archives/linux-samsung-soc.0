@@ -1,168 +1,183 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2] ARM: dts: exynos: Add SPDX license identifiers
-Date: Sun,  4 Feb 2018 17:46:45 +0100
-Message-ID: <20180204164645.27865-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751546AbeBDQrO (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Feb 2018 11:47:14 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 04/10] ARM: dts: exynos: Use labels instead of full names
+ in exynos4210
+Date: Sun, 4 Feb 2018 18:02:27 +0100
+Message-ID: <20180204170227.bl6alr45dy4x2dqo@kozik-lap>
+References: <1517586235-16603-1-git-send-email-m.purski@samsung.com>
+ <CGME20180202154407eucas1p2b8df9fd358d944e96651bf117b4b0408@eucas1p2.samsung.com>
+ <1517586235-16603-5-git-send-email-m.purski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1517586235-16603-5-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-Few files missed recent conversion of GPL v2.0 license statements to
-SPDX identifiers
+On Fri, Feb 02, 2018 at 04:43:49PM +0100, Maciej Purski wrote:
+> Camera, fimc, mixer and tmu labels has been defined in exynos4.dtsi.
+> Use them in exynos4210 instead of full names.
+> 
+> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos4210.dtsi | 102 +++++++++++++++++++-------------------
+>  1 file changed, 51 insertions(+), 51 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+> index 82c1a32..07b2197 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -152,18 +152,6 @@
+>  		reg = <0x03860000 0x1000>;
+>  	};
+>  
+> -	tmu: tmu@100c0000 {
+> -		compatible = "samsung,exynos4210-tmu";
+> -		interrupt-parent = <&combiner>;
+> -		reg = <0x100C0000 0x100>;
+> -		interrupts = <2 4>;
+> -		clocks = <&clock CLK_TMU_APBIF>;
+> -		clock-names = "tmu_apbif";
+> -		samsung,tmu_gain = <15>;
+> -		samsung,tmu_reference_voltage = <7>;
+> -		status = "disabled";
+> -	};
+> -
+>  	thermal-zones {
+>  		cpu_thermal: cpu-thermal {
+>  			polling-delay-passive = <0>;
+> @@ -194,45 +182,6 @@
+>  		iommus = <&sysmmu_g2d>;
+>  	};
+>  
+> -	camera {
+> -		clocks = <&clock CLK_SCLK_CAM0>, <&clock CLK_SCLK_CAM1>,
+> -			 <&clock CLK_PIXELASYNCM0>, <&clock CLK_PIXELASYNCM1>;
+> -		clock-names = "sclk_cam0", "sclk_cam1", "pxl_async0", "pxl_async1";
+> -
+> -		fimc_0: fimc@11800000 {
+> -			samsung,pix-limits = <4224 8192 1920 4224>;
+> -			samsung,mainscaler-ext;
+> -			samsung,cam-if;
+> -		};
+> -
+> -		fimc_1: fimc@11810000 {
+> -			samsung,pix-limits = <4224 8192 1920 4224>;
+> -			samsung,mainscaler-ext;
+> -			samsung,cam-if;
+> -		};
+> -
+> -		fimc_2: fimc@11820000 {
+> -			samsung,pix-limits = <4224 8192 1920 4224>;
+> -			samsung,mainscaler-ext;
+> -			samsung,lcd-wb;
+> -		};
+> -
+> -		fimc_3: fimc@11830000 {
+> -			samsung,pix-limits = <1920 8192 1366 1920>;
+> -			samsung,rotators = <0>;
+> -			samsung,mainscaler-ext;
+> -			samsung,lcd-wb;
+> -		};
+> -	};
+> -
+> -	mixer: mixer@12c10000 {
+> -		clock-names = "mixer", "hdmi", "sclk_hdmi", "vp", "mout_mixer",
+> -			"sclk_mixer";
+> -		clocks = <&clock CLK_MIXER>, <&clock CLK_HDMI>,
+> -			<&clock CLK_SCLK_HDMI>, <&clock CLK_VP>,
+> -			<&clock CLK_MOUT_MIXER>, <&clock CLK_SCLK_MIXER>;
+> -	};
+> -
+>  	ppmu_lcd1: ppmu_lcd1@12240000 {
+>  		compatible = "samsung,exynos-ppmu";
+>  		reg = <0x12240000 0x2000>;
+> @@ -427,6 +376,12 @@
+>  	cpu-offset = <0x8000>;
+>  };
+>  
+> +&camera {
+> +	clocks = <&clock CLK_SCLK_CAM0>, <&clock CLK_SCLK_CAM1>,
+> +		 <&clock CLK_PIXELASYNCM0>, <&clock CLK_PIXELASYNCM1>;
+> +	clock-names = "sclk_cam0", "sclk_cam1", "pxl_async0", "pxl_async1";
+> +};
+> +
+>  &combiner {
+>  	samsung,combiner-nr = <16>;
+>  	interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> @@ -447,10 +402,43 @@
+>  		     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+>  };
+>  
+> +&fimc_0 {
+> +	samsung,pix-limits = <4224 8192 1920 4224>;
+> +	samsung,mainscaler-ext;
+> +	samsung,cam-if;
+> +};
+> +
+> +&fimc_1 {
+> +	samsung,pix-limits = <4224 8192 1920 4224>;
+> +	samsung,mainscaler-ext;
+> +	samsung,cam-if;
+> +};
+> +
+> +&fimc_2 {
+> +	samsung,pix-limits = <4224 8192 1920 4224>;
+> +	samsung,mainscaler-ext;
+> +	samsung,lcd-wb;
+> +};
+> +
+> +&fimc_3 {
+> +	samsung,pix-limits = <1920 8192 1366 1920>;
+> +	samsung,rotators = <0>;
+> +	samsung,mainscaler-ext;
+> +	samsung,lcd-wb;
+> +};
+> +
+>  &mdma1 {
+>  	power-domains = <&pd_lcd0>;
+>  };
+>  
+> +&mixer {
+> +	clock-names = "mixer", "hdmi", "sclk_hdmi", "vp", "mout_mixer",
+> +		      "sclk_mixer";
+> +	clocks = <&clock CLK_MIXER>, <&clock CLK_HDMI>,
+> +		 <&clock CLK_SCLK_HDMI>, <&clock CLK_VP>,
+> +		 <&clock CLK_MOUT_MIXER>, <&clock CLK_SCLK_MIXER>;
+> +};
+> +
+>  &pmu_system_controller {
+>  	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
+>  			"clkout4", "clkout8", "clkout9";
+> @@ -468,4 +456,16 @@
+>  	power-domains = <&pd_lcd0>;
+>  };
+>  
+> +&tmu {
+> +	compatible = "samsung,exynos4210-tmu";
+> +	interrupt-parent = <&combiner>;
+> +	reg = <0x100C0000 0x100>;
+> +	interrupts = <2 4>;
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+interrupts, reg and status could be moved to exynos4.dtsi while at it.
 
----
+Best regards,
+Krzysztof
 
-Changes since v1:
-1. Update also exynos4412-tmu-sensor-conf.dtsi, exynos4412-tiny4412.dts
-   and exynos4412-trats2.dts.
----
- arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi | 5 +----
- arch/arm/boot/dts/exynos-syscon-restart.dtsi      | 5 +----
- arch/arm/boot/dts/exynos4412-tiny4412.dts         | 7 ++-----
- arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi | 6 +-----
- arch/arm/boot/dts/exynos4412-trats2.dts           | 7 ++-----
- arch/arm/boot/dts/exynos5800-peach-pi.dts         | 5 +----
- arch/arm/boot/dts/exynos5800.dtsi                 | 5 +----
- 7 files changed, 9 insertions(+), 31 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
-index 25186ac4188d..1dbf3bbff8d3 100644
---- a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
-+++ b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Samsung's Exynos SoC MFC (Video Codec) reserved memory common definition.
-  *
-  * Copyright (c) 2016 Samsung Electronics Co., Ltd
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- / {
-diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-index 09a2040054ed..4b3dd0549a54 100644
---- a/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-+++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-@@ -1,9 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Samsung's Exynos SoC syscon reboot/poweroff nodes common definition.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- / {
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index 5504398e6e37..01f37b5ac9c4 100644
---- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FriendlyARM's Exynos4412 based TINY4412 board device tree source
-  *
-@@ -5,11 +6,7 @@
-  *
-  * Device tree source file for FriendlyARM's TINY4412 board which is based on
-  * Samsung's Exynos4412 SoC.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
-+ */
- 
- /dts-v1/;
- #include "exynos4412.dtsi"
-diff --git a/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi b/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
-index e3f7934d19d0..489b58c619ee 100644
---- a/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
-@@ -1,12 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Device tree sources for Exynos4412 TMU sensor configuration
-  *
-  * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  */
- 
- #include <dt-bindings/thermal/thermal_exynos.h>
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index f285790e8e04..7da66003a3e3 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Samsung's Exynos4412 based Trats 2 board device tree source
-  *
-@@ -6,11 +7,7 @@
-  *
-  * Device tree source file for Samsung's Trats 2 board which is based on
-  * Samsung's Exynos4412 SoC.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
-+ */
- 
- /dts-v1/;
- #include "exynos4412.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 0029ec27819c..c8a66a12dbeb 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Google Peach Pi Rev 10+ board device tree source
-  *
-  * Copyright (c) 2014 Google, Inc
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-index 9ddb6bacac5a..57d3b319fd65 100644
---- a/arch/arm/boot/dts/exynos5800.dtsi
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SAMSUNG EXYNOS5800 SoC device tree source
-  *
-@@ -7,10 +8,6 @@
-  * SAMSUNG EXYNOS5800 SoC device nodes are listed in this file.
-  * EXYNOS5800 based board files can include this file and provide
-  * values for board specfic bindings.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include "exynos5420.dtsi"
--- 
-2.11.0
+> +	clocks = <&clock CLK_TMU_APBIF>;
+> +	clock-names = "tmu_apbif";
+> +	samsung,tmu_gain = <15>;
+> +	samsung,tmu_reference_voltage = <7>;
+> +	status = "disabled";
+> +};
+> +
+>  #include "exynos4210-pinctrl.dtsi"
+> -- 
+> 2.7.4
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
