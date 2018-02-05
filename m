@@ -1,35 +1,63 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 0/8] ASoC: samsung: Add HDMI sound support for tm2 board
-Date: Mon, 05 Feb 2018 16:43:55 +0100
-Message-ID: <20180205154403.13520-1-s.nawrocki@samsung.com>
-References: <CGME20180205154421epcas2p16072f713ea81f72b3f8230f6a9d412cf@epcas2p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org
-Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 1/8] ASoC: samsung: i2s: Ensure the RCLK rate is properly
+ determined
+Date: Mon, 05 Feb 2018 16:43:56 +0100
+Message-ID: <20180205154403.13520-2-s.nawrocki@samsung.com>
+References: <20180205154403.13520-1-s.nawrocki@samsung.com>
+        <CGME20180205154453epcas1p10046e1103497692c86c0899a5ef11781@epcas1p1.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20180205154403.13520-1-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jcsing.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This series adds support for HDMI audio on exynos5433 tm2 board, it
-includes a few fixes for the I2S driver and an extension of the existing
-card driver to support the I2S1<->HDMI transmitter path.
+If the RCLK mux clock configuration is specified in DT and no set_sysclk()
+callback is used in the sound card driver the sclk_srcrate field will remain
+set to 0, leading to an incorrect PSR divider setting.
+To fix this the frequency value is retrieved from the CLK_I2S_RCLK_SRC clock,
+so the actual RCLK mux selection is taken into account.
 
-Sylwester Nawrocki (8):
-  ASoC: samsung: i2s: Ensure the RCLK rate is properly determined
-  ASoC: samsung: i2s: Ensure names of supplied clocks are unique
-  ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access
-  ASoC: samsung: i2s: Define the parameters list for SAMSUNG_I2S_OPCLK
-  ASoC: samsung: Add support for HDMI audio on TM2 board
-  ASoC: samsung: i2s: Update clock-output-names property documentation
-  ASoC: samsung: Add missing #sound-dai-cells property documentation
-  ASoC: samsung,tm2-audio DT binding documentation update
+Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ sound/soc/samsung/i2s.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
- .../bindings/sound/samsung,tm2-audio.txt           |  14 +-
- .../devicetree/bindings/sound/samsung-i2s.txt      |  22 +--
- sound/soc/samsung/i2s-regs.h                       |  11 +-
- sound/soc/samsung/i2s.c                            |  50 ++++--
- sound/soc/samsung/i2s.h                            |  11 +-
- sound/soc/samsung/tm2_wm5110.c                     | 180 ++++++++++++++++++---
- 6 files changed, 229 insertions(+), 59 deletions(-)
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 233f1c9a4b6c..aeba0ae890ea 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -656,8 +656,12 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 		tmp |= mod_slave;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBS_CFS:
+-		/* Set default source clock in Master mode */
+-		if (i2s->rclk_srcrate == 0)
++		/*
++		 * Set default source clock in Master mode, only when the
++		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
++		 * clock configuration assigned in DT is not overwritten.
++		 */
++		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
+ 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
+ 							0, SND_SOC_CLOCK_IN);
+ 		break;
+@@ -881,6 +885,11 @@ static int config_setup(struct i2s_dai *i2s)
+ 		return 0;
+ 
+ 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
++		struct clk *rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
++
++		if (i2s->rclk_srcrate == 0 && rclksrc && !IS_ERR(rclksrc))
++			i2s->rclk_srcrate = clk_get_rate(rclksrc);
++
+ 		psr = i2s->rclk_srcrate / i2s->frmclk / rfs;
+ 		writel(((psr - 1) << 8) | PSR_PSREN, i2s->addr + I2SPSR);
+ 		dev_dbg(&i2s->pdev->dev,
+-- 
+2.14.2
 
 --
-2.14.2
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
