@@ -1,130 +1,38 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC PATCH v2 1/5] dt-bindings: add bindings for USB physical
- connector
-Date: Mon, 05 Feb 2018 10:06:35 +0100
-Message-ID: <a9745020-602b-8274-e2d6-63295f5b3caa@samsung.com>
-References: <20180131134435.12216-1-a.hajda@samsung.com>
- <CGME20180131134457eucas1p128394aef86e0d76cfc6ccb72ee22d4b1@eucas1p1.samsung.com>
- <20180131134435.12216-2-a.hajda@samsung.com>
- <20180205060836.pybxzt5e2kdu2wew@rob-hp-laptop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20180205060836.pybxzt5e2kdu2wew@rob-hp-laptop>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 0/3] Add soc nodes to exynos4 series DTS
+Date: Mon, 05 Feb 2018 12:25:33 +0100
+Message-ID: <1517829936-26311-1-git-send-email-m.purski@samsung.com>
+References: <CGME20180205112602eucas1p26be8f7ca95f7e14d5d62940cf29de7b4@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41662 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752253AbeBEL0G (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 5 Feb 2018 06:26:06 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Maciej Purski <m.purski@samsung.com>
 
-T24gMDUuMDIuMjAxOCAwNzowOCwgUm9iIEhlcnJpbmcgd3JvdGU6Cj4gT24gV2VkLCBKYW4gMzEs
-IDIwMTggYXQgMDI6NDQ6MzFQTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4gVGhlc2Ug
-YmluZGluZ3MgYWxsb3cgdG8gZGVzY3JpYmUgbW9zdCBrbm93biBzdGFuZGFyZCBVU0IgY29ubmVj
-dG9ycwo+PiBhbmQgaXQgc2hvdWxkIGJlIHBvc3NpYmxlIHRvIGV4dGVuZCBpdCBpZiBuZWNlc3Nh
-cnkuCj4+IFVTQiBjb25uZWN0b3JzLCBiZXNpZGUgVVNCIGNhbiBiZSB1c2VkIHRvIHJvdXRlIG90
-aGVyIHByb3RvY29scywKPj4gZm9yIGV4YW1wbGUgVUFSVCwgQXVkaW8sIE1ITC4gSW4gc3VjaCBj
-YXNlIGV2ZXJ5IGRldmljZSBwYXNzaW5nIGRhdGEKPj4gdGhyb3VnaCB0aGUgY29ubmVjdG9yIHNo
-b3VsZCBoYXZlIGFwcHJvcHJpYXRlIGdyYXBoIGJpbmRpbmdzLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5
-OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gdjI6Cj4+IC0g
-bW92ZWQgY29ubmVjdG9yIHR5cGUoQSxCLEMpIHRvIGNvbXBhdGlibGUgc3RyaW5nIChSb2IpLAo+
-PiAtIHJlbmFtZWQgc2l6ZSBwcm9wZXJ0eSB0byB0eXBlIChSb2IpLAo+PiAtIGNoYW5nZWQgdHlw
-ZSBkZXNjcmlwdGlvbiB0byBiZSBsZXNzIGNvbmZ1c2luZyAoTGF1cmVudCksCj4+IC0gcmVtb3Zl
-ZCB2ZW5kb3Igc3BlY2lmaWMgY29tcGF0aWJsZXMgKGltcGxpZWQgYnkgZ3JhcGggcG9ydCBudW1i
-ZXIpLAo+IEhvdyBzbz8gTW9yZSBiZWxvdy4uLgo+Cj4+IC0gYWRkZWQgcmVxdWlyZW1lbnQgb2Yg
-Y29ubmVjdG9yIGJlaW5nIGEgY2hpbGQgb2YgSUMgKFJvYiksCj4+IC0gcmVtb3ZlZCBtYXgtbW9k
-ZSAoc3VidGx5IHN1Z2dlc3RlZCBieSBSb2IsIGl0IHNob3VsZCBiZSBkZXRlY3RlZCBhbnl3YXkK
-Pj4gICBieSBVU0IgQ29udHJvbGxlciBpbiBydW50aW1lLCBkb3duc2lkZSBpcyB0aGF0IGRldmlj
-ZSBpcyBub3QgYWJsZSB0bwo+PiAgIHJlcG9ydCBpdHMgcmVhbCBjYXBhYmlsaXRpZXMsIG1heWJl
-IGJldHRlciB3b3VsZCBiZSB0byBtYWtlIGl0IG9wdGlvbmFsKD8pKSwKPj4gLSBhc3NpZ25lZCBw
-b3J0IG51bWJlcnMgdG8gZGF0YSBidXNlcyAoUm9iKS4KPj4KPj4gUmVnYXJkcwo+PiBBbmRyemVq
-Cj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+
-Cj4+IC0tLQo+PiAgLi4uL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dCAgICAg
-ICAgICAgfCA0OCArKysrKysrKysrKysrKysrKysrKysrCj4+ICAxIGZpbGUgY2hhbmdlZCwgNDgg
-aW5zZXJ0aW9ucygrKQo+PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci50eHQKPj4KPj4gZGlmZiAtLWdp
-dCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNvbm5l
-Y3Rvci50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY29ubmVjdG9yL3Vz
-Yi1jb25uZWN0b3IudHh0Cj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAw
-MDAwMC4uMDIwMjBmNWQ3NjBhCj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dAo+PiBAQCAt
-MCwwICsxLDQ4IEBACj4+ICtVU0IgQ29ubmVjdG9yCj4+ICs9PT09PT09PT09PT09Cj4+ICsKPj4g
-K1VTQiBjb25uZWN0b3Igbm9kZSByZXByZXNlbnRzIHBoeXNpY2FsIFVTQiBjb25uZWN0b3IuIEl0
-IHNob3VsZCBiZQo+PiArYSBjaGlsZCBvZiBVU0IgaW50ZXJmYWNlIGNvbnRyb2xsZXIuCj4+ICsK
-Pj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6Cj4+ICstIGNvbXBhdGlibGU6IGRlc2NyaWJlcyB0eXBl
-IG9mIHRoZSBjb25uZWN0b3IsIG11c3QgYmUgb25lIG9mOgo+PiArICAgICJ1c2ItYS1jb25uZWN0
-b3IiLCAidXNiLWItY29ubmVjdG9yIiwgInVzYi1jLWNvbm5lY3RvciIsCj4gTml0OiBvbmUgcGVy
-IGxpbmUuCj4KPj4gKwo+PiArT3B0aW9uYWwgcHJvcGVydGllczoKPj4gKy0gbGFiZWw6IHN5bWJv
-bGljIG5hbWUgZm9yIHRoZSBjb25uZWN0b3IKPj4gKy0gdHlwZTogc2l6ZSBvZiB0aGUgY29ubmVj
-dG9yLCBzaG91bGQgYmUgc3BlY2lmaWVkIGluIGNhc2Ugb2YgVVNCLUEsIFVTQi1CCj4+ICsgIG5v
-bi1zdGFuZGFyZCAobGFyZ2UpIGNvbm5lY3RvciBzaXplczogIm1pbmkiLCAibWljcm8iCj4+ICsK
-Pj4gK1JlcXVpcmVkIG5vZGVzOgo+PiArLSBhbnkgZGF0YSBidXMgdG8gdGhlIGNvbm5lY3RvciBz
-aG91bGQgYmUgbW9kZWxlZCB1c2luZyB0aGUgT0YgZ3JhcGggYmluZGluZ3MKPj4gKyAgc3BlY2lm
-aWVkIGluIGJpbmRpbmdzL2dyYXBoLnR4dCwgdW5sZXNzIHRoZSBidXMgaXMgYmV0d2VlbiBwYXJl
-bnQgbm9kZSBhbmQKPj4gKyAgdGhlIGNvbm5lY3Rvci4gU2luY2Ugc2luZ2xlIGNvbm5lY3RvciBj
-YW4gaGF2ZSBtdWx0cGlsZSBkYXRhIGJ1c2VzIGV2ZXJ5IGJ1cwo+PiArICBoYXMgYXNzaWduZWQg
-T0YgZ3JhcGggcG9ydCBudW1iZXIgYXMgZm9sbG93czoKPj4gKyAgICAwOiBIaWdoIFNwZWVkIChI
-UyksIHByZXNlbnQgaW4gYWxsIGNvbm5lY3RvcnMsCj4+ICsgICAgMTogU3VwZXIgU3BlZWQgKFNT
-KSwgcHJlc2VudCBpbiBTUyBjYXBhYmxlIGNvbm5lY3RvcnMsCj4+ICsgICAgMjogU2lkZWJhbmQg
-dXNlIChTQlUpLCBwcmVzZW50IGluIFVTQi1DLAo+PiArICAgIDM6IE1vYmlsZSBIaWdoLURlZmlu
-aXRpb24gTGluayAoTUhMKSwgcHJlc2VudCBpbiAxMS1waW4gU2Ftc3VuZyBtaWNyby1VU0IKPiBU
-aGlzIGlzIHVuLW11eGVkIHVubGlrZSBUeXBlLUMgd2hlcmUgdGhlIHNpZ25hbHMgYXJlIG11eGVk
-IHdpdGggVVNCIFNTLiAKPiBUaGF0IG1ha2VzIG1lIHRoaW5rIHRoZSBTYW1zdW5nIGNvbm5lY3Rv
-ciBzaG91bGQgaGF2ZSBpdHMgb3duIGNvbXBhdGlibGUgCj4gc3RyaW5nLgoKRG8geW91IG1lYW4s
-IHN0aCBsaWtlOgrCoMKgwqAgY29ubmVjdG9yIHsKwqDCoMKgIMKgwqDCoCDCoMKgwqAgY29tcGF0
-aWJsZSA9ICJzYW1zdW5nLHVzYi1jb25uZWN0b3ItMTFwaW4iOwrCoMKgwqAgwqDCoMKgIMKgwqDC
-oCBsYWJlbCA9ICJtaWNyby1VU0IiOwrCoMKgwqAgwqDCoMKgIMKgwqDCoCBwb3J0cyB7CsKgwqDC
-oCDCoMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgI2FkZHJlc3MtY2VsbHMgPSA8MT47CsKgwqDC
-oCDCoMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgI3NpemUtY2VsbHMgPSA8MD47CgrCoMKgwqAg
-wqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIHBvcnRAMyB7CsKgwqDCoCDCoMKgwqAgwqDCoMKg
-IMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqDCoCByZWcgPSA8Mz47CsKgwqDCoCDCoMKgwqAgwqDC
-oMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqDCoCBtdXNiX2Nvbl9taGxfaW46IGVuZHBvaW50
-IHsKwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqDC
-oCDCoMKgwqAgcmVtb3RlLWVuZHBvaW50ID0gPCZtaGxfb3V0PjsKwqDCoMKgIMKgwqDCoCDCoMKg
-wqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIH07CsKgwqDCoCDCoMKgwqAgwqDCoMKgIMKg
-wqDCoCDCoMKgwqAgfTsKwqDCoMKgIH07CgpPciBzaG91bGQgSSBhZGQgInVzYi1iLWNvbm5lY3Rv
-ciIgZXh0cmEgY29tcGF0aWJsZSBhbmQgInR5cGUiIHByb3BlcnR5PwpJIHNsaWdodGx5IHByZWZl
-ciBteSBhcHByb2FjaChsZXNzIGRpZmZlcmVudCBiaW5kaW5ncyksIGJ1dCBJIGFtIGFsc28gT0sK
-d2l0aCB0aGUgYWJvdmUuCgo+Cj4gQ2FuIHdlIGdvIGFoZWFkIGFuZCBkZWZpbmUgdGhlIHZpZGVv
-IG1vZGVzIG9mIFR5cGUtQz8gTm9ybWFsbHksIGlmIDIgCj4gZGF0YSBzdHJlYW1zIGFyZSBtdXR1
-YWxseSBleGNsdXNpdmUsIHRoZW4gdGhleSBhcmUgYSBzaW5nbGUgcG9ydCB3aXRoIDIgCj4gZW5k
-cG9pbnRzLiBTbyB3ZSdkIGVpdGhlciBoYXZlIDIgZW5kcG9pbnRzIG9uIHBvcnQgMSBvciB3ZSBz
-dGljayB3aXRoIAo+IHBvcnQgMyBpcyBhbHdheXMgdmlkZW8uIFdlIGNhbiBzdGlsbCBrbm93IHdo
-YXQgaXMgbXV0dWFsbHkgZXhjbHVzaXZlIAo+IGJhc2VkIG9uIHRoZSBjb21wYXRpYmxlLiAKCkkg
-YW0gc29ycnksIEkgZG8gbm90IHVuZGVyc3RhbmQgd2hhdCB5b3UgbWVhbi4gUG9ydCAzIGlzIHBy
-ZXNlbnQgb25seSBpbgoxMS1waW4gU2Ftc3VuZyBtaWNyby1VU0IsIFVTQiBUeXBlLUMgaGFzIG9u
-bHkgcG9ydHMgMCwgMSwgMi4KSGVyZSBpcyBsaXN0IG9mIHBvc3NpYmxlIHBvcnRzIGRlcGVuZGlu
-ZyBvbiBjb25uZWN0b3IgdHlwZToKLSBVU0IgMi4wOiBIUwotIDExLXBpbiBTYW1zdW5nIG1pY3Jv
-LVVTQjogSFMsTUhMCi0gVVNCIDMueCB0eXBlIEEsQjogSFMsU1MKLSBVU0ItQzogSFMsU1MsU0JV
-CgpBbGwgcG9ydHMgaGF2ZSBzZXBhcmF0ZSBsaW5lcywgc28gdGhleSBjYW4gd29yayBzaW11bHRh
-bmVvdXNseS4KCkFuZCByZWdhcmRpbmcgTUhMIG9uIHN0YW5kYXJkIG1pY3JvLVVTQiBjb25uZWN0
-b3IuIE1ITCBhbmQgTVVJQyB3aWxsCnNoYXJlIEhTIHBvcnQsIGJ1dCB0aGVyZSB3aWxsIGJlIG11
-eCBzb21ld2hlcmUgYmVmb3JlIGNvbm5lY3RvcjoKLSBpbiBNVUlDLCBpbiB0aGlzIGNhc2UgTVVJ
-QyB3aWxsIGJlIHRoZSBwYXJlbnQgb2YgdGhlIGNvbm5lY3RvciwgYW5kCnRoZXJlIHdpbGwgYmUg
-Z3JhcGggZnJvbSBNSEwgdG8gTVVJQyB0byBkZXNjcmliZSBNSEwgbGluaywKLSBpbiBNSEwsIGlu
-IHRoaXMgY2FzZSBNSEwgd2lsbCBiZSB0aGUgcGFyZW50IG9mIHRoZSBjb25uZWN0b3IsIGFuZApn
-cmFwaCBiZXR3ZWVuIE1VSUMgYW5kIE1ITCB0byBkZXNjcmliZSBIUyBsaW5rLAotIGRlZGljYXRl
-ZCBtdXggdG8gTVVJQyBhbmQgTUhMLCBjb250cm9sbGVkIGJ5IGdwaW8gcGluLCBpdCBjb3VsZCBi
-ZQpoYW5kbGVkIGJ5IE1VSUMncyBleHRlcm5hbC1tdXggZ3BpbyBwcm9wZXJ0eSBmb3IgZXhhbXBs
-ZSwgb3IgKHByb2JhYmx5KQpsZXNzIGhhY2t5IGJ5IHNlcGFyYXRlIG5vZGUgZm9yIG11eCwKb3Ig
-YXMgYWRkaXRpb25hbCBwcm9wZXJ0eSBpbiB0aGUgY29ubmVjdG9yICh3aG8gc2hvdWxkIGJlIHRo
-ZSBwYXJlbnQgb2YKdGhlIGNvbm5lY3RvciB0aGVuPyBQcm9iYWJseSBNVUlDPykuCgpSZWdhcmRz
-CkFuZHJ6ZWoKCgoKCgo+Cj4+ICsKPj4gK0V4YW1wbGUKPj4gKy0tLS0tLS0KPj4gKwo+PiArbXVp
-Y19tYXg3Nzg0M0A2NiB7Cj4+ICsJLi4uCj4+ICsJbXVzYl9jb246IGNvbm5lY3RvciB7Cj4+ICsJ
-CWNvbXBhdGlibGUgPSAidXNiLWItY29ubmVjdG9yIjsKPj4gKwkJbGFiZWwgPSAibWljcm8tVVNC
-IjsKPj4gKwkJdHlwZSA9ICJtaWNybyI7Cj4+ICsKPj4gKwkJcG9ydHMgewo+PiArCQkJI2FkZHJl
-c3MtY2VsbHMgPSA8MT47Cj4+ICsJCQkjc2l6ZS1jZWxscyA9IDwwPjsKPj4gKwo+PiArCQkJcG9y
-dEAzIHsKPj4gKwkJCQlyZWcgPSA8Mz47Cj4+ICsJCQkJbXVzYl9jb25fbWhsX2luOiBlbmRwb2lu
-dCB7Cj4+ICsJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmbWhsX291dD47Cj4+ICsJCQkJfTsKPj4g
-KwkJCX07Cj4+ICsJCX07Cj4+ICsJfTsKPj4gK307Cj4+IC0tIAo+PiAyLjE1LjEKPj4KPgo+Cgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi all,
+
+this patchset adds soc node to exynos4, exynos4210 and exynos4412
+DTS. The main goal for these changes is unification of all exynos
+DTS. Soc nodes are already present in for example exynos5 series.
+
+Best regards,
+
+Maciej Purski
+
+Maciej Purski (3):
+  ARM: dts: exynos: Add soc node to exynos4
+  ARM: dts: exynos: Add soc node to exynos4210
+  ARM: dts: exynos: Add soc node to exynos4412
+
+ arch/arm/boot/dts/exynos4.dtsi    | 1727 +++++++++++++++++++------------------
+ arch/arm/boot/dts/exynos4210.dtsi |  513 +++++------
+ arch/arm/boot/dts/exynos4412.dtsi |  954 ++++++++++----------
+ 3 files changed, 1609 insertions(+), 1585 deletions(-)
+
+-- 
+2.7.4
