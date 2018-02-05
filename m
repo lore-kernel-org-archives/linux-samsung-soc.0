@@ -1,55 +1,39 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 8/8] ASoC: samsung,tm2-audio DT binding documentation update
-Date: Mon, 05 Feb 2018 16:44:03 +0100
-Message-ID: <20180205154403.13520-9-s.nawrocki@samsung.com>
-References: <20180205154403.13520-1-s.nawrocki@samsung.com>
-        <CGME20180205154537epcas1p10a9a30a574e3f472358e7dacf3cb0489@epcas1p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180205154403.13520-1-s.nawrocki@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH] ASoC: samsung: Add the DT binding files entry to
+ MAINTAINERS
+Date: Mon, 05 Feb 2018 18:05:00 +0100
+Message-ID: <20180205170500.8992-1-s.nawrocki@samsung.com>
+References: <CGME20180205170523epcas1p31ebef69e5d5db0a1ef2f1c3b5ac544ae@epcas1p3.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:43141 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752712AbeBERF1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 5 Feb 2018 12:05:27 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org
 Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch documents additional entries of the audio-codec and
-i2s-controller properties required for the HDMI audio support.
+This patch adds missing DT binding files to the Samsung ASoC
+drivers entry.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- .../devicetree/bindings/sound/samsung,tm2-audio.txt        | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-index 94442e5673b3..f5ccc12ddc00 100644
---- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-+++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-@@ -4,9 +4,13 @@ Required properties:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5046003ea162..da2df3194d72 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11921,6 +11921,7 @@ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Supported
+ F:	sound/soc/samsung/
++F:	Documentation/devicetree/bindings/sound/samsung*
  
-  - compatible		 : "samsung,tm2-audio"
-  - model		 : the user-visible name of this sound complex
-- - audio-codec		 : the phandle of the wm5110 audio codec node,
--			   as described in ../mfd/arizona.txt
-- - i2s-controller	 : the phandle of the I2S controller
-+ - audio-codec		 : the first entry should be phandle of the wm5110 audio
-+			   codec node, as described in ../mfd/arizona.txt;
-+			   the second entry should be phandle of the HDMI
-+			   transmitter node
-+ - i2s-controller	 : the list of phandle and argument tuples pointing to
-+			   I2S controllers, the first entry should be I2S0 and
-+			   the second one I2S1
-  - audio-amplifier	 : the phandle of the MAX98504 amplifier
-  - samsung,audio-routing : a list of the connections between audio components;
- 			   each entry is a pair of strings, the first being the
-@@ -22,8 +26,8 @@ Example:
- 
- sound {
- 	compatible = "samsung,tm2-audio";
--	audio-codec = <&wm5110>;
--	i2s-controller = <&i2s0>;
-+	audio-codec = <&wm5110>, <&hdmi>;
-+	i2s-controller = <&i2s0 0>, <&i2s1 0>;
- 	audio-amplifier = <&max98504>;
- 	mic-bias-gpios = <&gpr3 2 0>;
- 	model = "wm5110";
+ SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
 -- 
 2.14.2
