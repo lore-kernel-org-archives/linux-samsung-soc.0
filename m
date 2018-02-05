@@ -1,105 +1,35 @@
-From: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
-Subject: Re: [PATCH v3] ARM: dts: exynos-artik5: add support for wlan
-Date: Sun, 4 Feb 2018 10:18:52 -0800
-Message-ID: <CAJ+L6qdR4i_VAOY_uchoODrZyH5reRzDGQoGPN2HGH2hGyKDdw@mail.gmail.com>
-References: <20180201211656.11829-1-mlyle@lyle.org> <20180204162655.xjv2m6f6vo7bu2lq@kozik-lap>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] soc: samsung: pmu: Populate children syscon nodes
+Date: Mon, 5 Feb 2018 00:08:27 -0600
+Message-ID: <20180205060827.vhftmdpucrkv2n5f@rob-hp-laptop>
+References: <20180130211819.17139-1-krzk@kernel.org>
+ <20180130211819.17139-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180204162655.xjv2m6f6vo7bu2lq@kozik-lap>
+Content-Disposition: inline
+In-Reply-To: <20180130211819.17139-2-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, CHANHO PARK <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof ---
+On Tue, Jan 30, 2018 at 10:18:16PM +0100, Krzysztof Kozlowski wrote:
+> The syscon poweroff and restart nodes logically belong to the Power
+> Management Unit so populate possible children.
+> 
+> This also requires providing compatibles for Exynos5410 and Exynos7 so
+> the PMU device and its children will be instantiated for them as well.
+> Just like Exynos5433, these chipsets are not yet supported by the PMU
+> driver.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/arm/samsung/pmu.txt | 6 ++++++
+>  drivers/soc/samsung/exynos-pmu.c                      | 7 +++++++
+>  2 files changed, 13 insertions(+)
 
-Excellent, thank you for all your help.
-
-Mike
-
-On Sun, Feb 4, 2018 at 8:26 AM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Thu, Feb 01, 2018 at 01:16:56PM -0800, Michael Lyle wrote:
->> On the Artik520 module, there's a bcm4354 attached to mshc_1.  Enable
->> it, and turn on the regulator used for it, so that both wifi & bluetooth
->> work.
->>
->> Verified to work on the Artik 520 evaluation board.
->>
->> v2: accidentally sent out v1
->> v3: non-removable instead of broken-cd, alphabetical order, formatting
->
-> Changelog should go after --- separator so it would not end in commit.
->
-> I'll fix it during applying. Looks good to me. I'll take it after merge
-> window.
->
-> Best regards,
-> Krzysztof
->
->>
->> Signed-off-by: Michael Lyle <mlyle-dTEscH1tG2Q@public.gmane.org>
->> ---
->>  arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
->>  1 file changed, 36 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
->> index 0aa577fe9f95..620b50c19ead 100644
->> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
->> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
->> @@ -245,6 +245,7 @@
->>                               regulator-name = "VLDO23_1.8V";
->>                               regulator-min-microvolt = <1800000>;
->>                               regulator-max-microvolt = <1800000>;
->> +                             regulator-always-on;
->>                       };
->>
->>                       ldo24_reg: LDO24 {
->> @@ -316,6 +317,41 @@
->>       status = "okay";
->>  };
->>
->> +&mshc_1 {
->> +     cap-sd-highspeed;
->> +     cap-sdio-irq;
->> +     disable-wp;
->> +     non-removable;
->> +     keep-power-in-suspend;
->> +     fifo-depth = <0x40>;
->> +     vqmmc-supply = <&ldo11_reg>;
->> +     /*
->> +      * Voltage negotiation is broken for the SDIO periph so we
->> +      * can't actually set the voltage here.
->> +      * vmmc-supply = <&ldo23_reg>;
->> +      */
->> +     card-detect-delay = <500>;
->> +     clock-frequency = <100000000>;
->> +     max-frequency = <100000000>;
->> +     samsung,dw-mshc-ciu-div = <3>;
->> +     samsung,dw-mshc-sdr-timing = <0 1>;
->> +     samsung,dw-mshc-ddr-timing = <1 2>;
->> +     pinctrl-names = "default";
->> +     pinctrl-0 = <&sd1_cmd &sd1_clk &sd1_bus1 &sd1_bus4 &wlanen>;
->> +     bus-width = <4>;
->> +     status = "okay";
->> +};
->> +
->> +&pinctrl_1 {
->> +     wlanen: wlanen {
->> +             samsung,pins = "gpx2-3";
->> +             samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
->> +             samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
->> +             samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
->> +             samsung,pin-val = <1>;
->> +     };
->> +};
->> +
->>  &rtc {
->>       clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
->>       clock-names = "rtc", "rtc_src";
->> --
->> 2.14.1
->>
+Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
