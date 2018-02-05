@@ -1,142 +1,97 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: exynos: Add support for HDMI audio on
- exynos5433-tm2
-Date: Mon, 05 Feb 2018 18:21:10 +0100
-Message-ID: <20180205172110.9897-2-s.nawrocki@samsung.com>
-References: <20180205172110.9897-1-s.nawrocki@samsung.com>
-        <CGME20180205172216epcas2p3be603e84df81b28ee4c04c9b1c1c551f@epcas2p3.samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
+Date: Mon, 05 Feb 2018 18:40:20 +0100
+Message-ID: <224788c7-426b-d3a9-d0a6-412d2b8afb75@partner.samsung.com>
+References: <CGME20180205174022eucas1p101e8339284c1f0ac8f40f70c24de1c1f@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29958 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753155AbeBERWU (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45430 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752738AbeBERk1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Feb 2018 12:22:20 -0500
-In-reply-to: <20180205172110.9897-1-s.nawrocki@samsung.com>
+        Mon, 5 Feb 2018 12:40:27 -0500
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: krzk@kernel.org
-Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-This patch updates the sound node of the exynos5433-tm2 board
-and adds clock tree configuration in order to support HDMI sound.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+In AES-ECB mode crypt is done with key only, so any use of IV
+can cause kernel Oops, as reported by Anand Moon.
+Fixed it by using IV only in AES-CBC and AES-CTR.
+
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Reported-by: Anand Moon <linux.amoon@gmail.com>
 ---
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 67 ++++++++++++++++++++--
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  1 +
- 2 files changed, 64 insertions(+), 4 deletions(-)
+Tested on Odroid XU4/HC1, kernel 4.15 with following command:
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index a77462da4a36..37fb477a2d23 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/sound/samsung-i2s.h>
+fallocate -l 128MiB /tmp/test.bin
+dd if=/dev/urandom of=/tmp/testkey.key bs=128 count=1
+sync
+cryptsetup luksFormat --debug -q -d /tmp/testkey.key \
+  --cipher aes-cbc-essiv:sha256 -h sha256 -s 128 /tmp/test.bin
+
+The original report by Anand Moon:
+https://www.spinics.net/lists/linux-crypto/msg31180.html
+
+Oops reproduced with cryptsetup 2.0.0, kernel 4.15,
+in .config in crypto API ECB support was turned off, and s5p-sss AES driver on.
+
+cryptsetup is using aes-ecb and has req->info in aes_ctx set to 0x10,
+which caused Oops:
+
+[ 2078.683779] Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+[ 2078.689148] Modules linked in: algif_skcipher af_alg sd_mod sg
+evdev uas usb_storage scsi_mod gpio_keys fbtft(C) spidev spi_s3c64xx
+ipv6
+[ 2078.701377] CPU: 1 PID: 15 Comm: ksoftirqd/1 Tainted: G         C
+    4.15.0-rc9-xu4krck #1
+[ 2078.709861] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[ 2078.715932] PC is at memcpy+0x80/0x330
+[ 2078.719652] LR is at s5p_tasklet_cb+0x19c/0x328
+
+ drivers/crypto/s5p-sss.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 142c6020cec7..5c0496d1ed41 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -1926,15 +1926,21 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
+ 	uint32_t aes_control;
+ 	unsigned long flags;
+ 	int err;
++	u8 *iv;
  
- / {
- 	aliases {
-@@ -112,8 +113,8 @@
+ 	aes_control = SSS_AES_KEY_CHANGE_MODE;
+ 	if (mode & FLAGS_AES_DECRYPT)
+ 		aes_control |= SSS_AES_MODE_DECRYPT;
  
- 	sound {
- 		compatible = "samsung,tm2-audio";
--		audio-codec = <&wm5110>;
--		i2s-controller = <&i2s0>;
-+		audio-codec = <&wm5110>, <&hdmi>;
-+		i2s-controller = <&i2s0 0>, <&i2s1 0>;
- 		audio-amplifier = <&max98504>;
- 		mic-bias-gpios = <&gpr3 2 GPIO_ACTIVE_HIGH>;
- 		model = "wm5110";
-@@ -216,9 +217,63 @@
- 	status = "okay";
- };
+-	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC)
++	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CBC;
+-	else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR)
++		iv = req->info;
++	} else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CTR;
++		iv = req->info;
++	} else {
++		iv = NULL; /* AES_ECB */
++	}
  
-+&cmu_top {
-+	assigned-clocks = <&cmu_top CLK_FOUT_AUD_PLL>;
-+	assigned-clock-rates = <(196608009 + 1)>;
-+};
-+
- &cmu_aud {
--	assigned-clocks = <&cmu_aud CLK_MOUT_AUD_PLL_USER>;
--	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
-+	assigned-clocks = <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
-+			  <&cmu_aud CLK_MOUT_SCLK_AUD_I2S>,
-+			  <&cmu_aud CLK_MOUT_SCLK_AUD_PCM>,
-+			  <&cmu_top CLK_MOUT_AUD_PLL>,
-+
-+			  <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
-+			  <&cmu_top CLK_MOUT_SCLK_AUDIO0>,
-+			  <&cmu_top CLK_MOUT_SCLK_AUDIO1>,
-+			  <&cmu_top CLK_MOUT_SCLK_SPDIF>,
-+
-+			  <&cmu_aud CLK_DIV_AUD_CA5>,
-+			  <&cmu_aud CLK_DIV_ACLK_AUD>,
-+			  <&cmu_aud CLK_DIV_PCLK_DBG_AUD>,
-+			  <&cmu_aud CLK_DIV_SCLK_AUD_I2S>,
-+			  <&cmu_aud CLK_DIV_SCLK_AUD_PCM>,
-+			  <&cmu_aud CLK_DIV_SCLK_AUD_SLIMBUS>,
-+			  <&cmu_aud CLK_DIV_SCLK_AUD_UART>,
-+
-+			  <&cmu_top CLK_DIV_SCLK_AUDIO0>,
-+			  <&cmu_top CLK_DIV_SCLK_AUDIO1>,
-+			  <&cmu_top CLK_DIV_SCLK_PCM1>,
-+			  <&cmu_top CLK_DIV_SCLK_I2S1>;
-+
-+	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>,
-+				<&cmu_aud CLK_MOUT_AUD_PLL_USER>,
-+				<&cmu_aud CLK_MOUT_AUD_PLL_USER>,
-+				<&cmu_top CLK_FOUT_AUD_PLL>,
-+
-+				<&cmu_top CLK_MOUT_AUD_PLL>,
-+				<&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
-+				<&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
-+				<&cmu_top CLK_SCLK_AUDIO0>;
-+
-+	assigned-clock-rates = <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
-+				<(196608009 + 1)>,
-+				<((196608009 / 3) + 1)>,
-+				<((196608009 / 6) + 1)>,
-+				<((196608009 / 4) + 1)>,
-+				<((196608009 / 96) + 1)>,
-+				<((196608009 / 8) + 1)>,
-+				<(196608010 + 1)>,
-+
-+				<((196608009 / 8) + 1)>,
-+				<((196608009 / 2) + 1)>,
-+				<((196608009 / 96) + 1)>,
-+				<((196608009 / 4) + 1)>;
-+};
-+
-+&i2s1 {
-+	assigned-clocks = <&i2s1 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&cmu_peric CLK_SCLK_I2S1>;
- };
+ 	if (dev->ctx->keylen == AES_KEYSIZE_192)
+ 		aes_control |= SSS_AES_KEY_SIZE_192;
+@@ -1965,7 +1971,7 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
+ 		goto outdata_error;
  
- &cmu_fsys {
-@@ -838,6 +893,10 @@
- 	status = "okay";
- };
+ 	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
+-	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
++	s5p_set_aes(dev, dev->ctx->aes_key, iv, dev->ctx->keylen);
  
-+&i2s1 {
-+	status = "okay";
-+};
-+
- &mshc_0 {
- 	status = "okay";
- 	mmc-hs200-1_8v;
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 2b73bd86bc56..c0231d077fa6 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -969,6 +969,7 @@
- 			ddc = <&hsi2c_11>;
- 			samsung,syscon-phandle = <&pmu_system_controller>;
- 			samsung,sysreg-phandle = <&syscon_disp>;
-+			#sound-dai-cells = <0>;
- 			status = "disabled";
- 		};
- 
+ 	s5p_set_dma_indata(dev,  dev->sg_src);
+ 	s5p_set_dma_outdata(dev, dev->sg_dst);
 -- 
-2.14.2
+2.16.0
