@@ -1,45 +1,28 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: Add soc node to exynos4412
-Date: Mon, 5 Feb 2018 16:16:28 +0100
-Message-ID: <CAJKOXPd5naKSBvvKQaG5wHGzHG=90Ao2TrHGO9m62NSeseLUwQ@mail.gmail.com>
-References: <CGME20180205112604eucas1p1a515fa6be4ba3149a036830920b51e9b@eucas1p1.samsung.com>
- <1517829936-26311-1-git-send-email-m.purski@samsung.com> <1517829936-26311-4-git-send-email-m.purski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] clk: samsung: Add git tree entry to MAINTAINERS
+Date: Mon, 5 Feb 2018 16:17:15 +0100
+Message-ID: <CAJKOXPe5ndc6CMG+5Sr6JjLJiF2xztH5rzWm1Xnr77sL8osrmQ@mail.gmail.com>
+References: <CGME20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4@epcas1p4.samsung.com>
+ <20180205144158.10500-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1517829936-26311-4-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20180205144158.10500-1-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 12:25 PM, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Soc nodes are used in other exynos DTS. Exynos4 boards should use them
-> as well.
+On Mon, Feb 5, 2018 at 3:41 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Add a missing git tree entry for drivers/clk/samsung.
 >
-> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos4412.dtsi | 954 +++++++++++++++++++-------------------
->  1 file changed, 479 insertions(+), 475 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index a6f3f59..22873a1 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -69,487 +69,491 @@
->                 };
->         };
->
-> -       cpu0_opp_table: opp_table0 {
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 
-This is associated with cpus node which stays outside of soc. Leave it
-outside as well.
-
-Please also look for possible new warnings.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
