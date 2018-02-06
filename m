@@ -1,44 +1,69 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] clk: samsung: Add git tree entry to MAINTAINERS
-Date: Tue, 06 Feb 2018 11:09:19 +0900
-Message-ID: <5A790E4F.7060701@samsung.com>
-References: <CGME20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4@epcas1p4.samsung.com>
-        <20180205144158.10500-1-s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
+ output frequencies
+Date: Tue, 06 Feb 2018 11:44:50 +0900
+Message-ID: <5A7916A2.7010307@samsung.com>
+References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
+        <20180205142230.9755-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <20180205144158.10500-1-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, tomasz.figa@gmail.com, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:21519 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752264AbeBFCoy (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 5 Feb 2018 21:44:54 -0500
+In-reply-to: <20180205142230.9755-1-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 
 Hi Sylwester,
 
-On 2018년 02월 05일 23:41, Sylwester Nawrocki wrote:
-> Add a missing git tree entry for drivers/clk/samsung.
+When I developed the clk-exynos5433.c I referred to the following description.
+TRM specified that "Samsung recommends only the values
+between 252MH ~ 400MHz in the PMS2460X PMS value" for aud_pll.
+
+It looks like that you refer to clk-exynos5420.c driver.
+But, I'm wondering exynos5433 might not guarantee the additional clock
+of this patch as the stable clock.
+
+On 2018년 02월 05일 23:22, Sylwester Nawrocki wrote:
+> Add more definitions to the exynos5433_aud_pll_rates table so the
+> AUD_PLL can be used as a root clock source for the I2S1 and the HDMI
+> interface.
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/samsung/clk-exynos5433.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index aa71ab52fd76..502442dc08eb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12001,6 +12001,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
->  M:	Chanwoo Choi <cw00.choi@samsung.com>
->  S:	Supported
->  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
->  F:	drivers/clk/samsung/
->  F:	include/dt-bindings/clock/exynos*.h
->  F:	Documentation/devicetree/bindings/clock/exynos*.txt
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index db270908037a..74b70ddab4d6 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -765,6 +765,14 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
+>  	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
+>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
+>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
+> +	PLL_36XX_RATE(200000000U, 200, 3, 3,      0),
+> +	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
+> +	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
+> +	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
+> +	PLL_36XX_RATE(100000000U, 200, 3, 4,      0),
+> +	PLL_36XX_RATE(65536003U,  131, 3, 4,   4719),
+> +	PLL_36XX_RATE(49152000U,  197, 3, 5, -25690),
+> +	PLL_36XX_RATE(32768001U,  131, 3, 5,   4719),
+>  	{ /* sentinel */ }
+>  };
 > 
-
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> --
+> 2.14.2
+> 
+> 
+> 
 
 -- 
 Best Regards,
