@@ -1,55 +1,122 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
- with a mask
-Date: Tue, 6 Feb 2018 16:10:44 +0300
-Message-ID: <20180206131044.oso33fvv553trrd7@mwanda>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Add support for HDMI audio on exynos5433-tm2
+Date: Tue, 6 Feb 2018 14:14:45 +0100
+Message-ID: <CAJKOXPef+8UvinoK-9j6tPMgNavMw1K1BhLuibD5FomjRC9Sbg@mail.gmail.com>
+References: <CGME20180205172216epcas2p3be603e84df81b28ee4c04c9b1c1c551f@epcas2p3.samsung.com>
+ <20180205172110.9897-1-s.nawrocki@samsung.com> <20180205172110.9897-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:33312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752403AbeBFNOx (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 6 Feb 2018 08:14:53 -0500
+In-Reply-To: <20180205172110.9897-2-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-T24gTW9uLCBGZWIgMDUsIDIwMTggYXQgMDk6MDk6NTdQTSArMDEwMCwgV29sZnJhbSBTYW5nIHdy
-b3RlOgo+IEluIG9uZSBSZW5lc2FzIGRyaXZlciwgSSBmb3VuZCBhIHR5cG8gd2hpY2ggdHVybmVk
-IGFuIGludGVuZGVkIGJpdCBzaGlmdCAoJzw8JykKPiBpbnRvIGEgY29tcGFyaXNvbiAoJzwnKS4g
-QmVjYXVzZSB0aGlzIGlzIGEgc3VidGxlIGlzc3VlLCBJIGxvb2tlZCB0cmVlIHdpZGUgZm9yCj4g
-c2ltaWxhciBwYXR0ZXJucy4gVGhpcyBzbWFsbCBwYXRjaCBzZXJpZXMgaXMgdGhlIG91dGNvbWUu
-Cj4gCj4gQnVpbGRib3QgYW5kIGNoZWNrcGF0Y2ggYXJlIGhhcHB5LiBPbmx5IGNvbXBpbGUtdGVz
-dGVkLiBUbyBiZSBhcHBsaWVkCj4gaW5kaXZpZHVhbGx5IHBlciBzdWItc3lzdGVtLCBJIHRoaW5r
-LiBJJ2QgdGhpbmsgb25seSB0aGUgbmV0OiBhbWQ6IHBhdGNoIG5lZWRzCj4gdG8gYmUgY29uaXNk
-ZXJlZCBmb3Igc3RhYmxlLCBidXQgSSBsZWF2ZSB0aGlzIHRvIHBlb3BsZSB3aG8gYWN0dWFsbHkg
-a25vdyB0aGlzCj4gZHJpdmVyLgo+IAo+IENDaW5nIERhbi4gTWF5YmUgaGUgaGFzIGFuIGlkZWEg
-aG93IHRvIGFkZCBhIHRlc3QgdG8gc21hdGNoPyBJbiBteSBzZXR1cCwgb25seQo+IGNwcGNoZWNr
-IHJlcG9ydGVkIGEgJ2NvZGluZyBzdHlsZScgaXNzdWUgd2l0aCBhIGxvdyBwcmlvLgo+IAoKTW9z
-dCBvZiB0aGVzZSBhcmUgaW5zaWRlIG1hY3JvcyBzbyBpdCBtYWtlcyBpdCBjb21wbGljYXRlZCBm
-b3IgU21hdGNoCnRvIHdhcm4gYWJvdXQgdGhlbS4gIEl0IG1pZ2h0IGJlIGVhc2llciBpbiBDb2Nj
-aW5lbGxlLiAgSnVsaWEgdGhlIGJ1Z3MKbG9vayBsaWtlIHRoaXM6CgotCQkJcmVpc3N1ZV9tYXNr
-IHw9IDB4ZmZmZiA8IDQ7CisJCQlyZWlzc3VlX21hc2sgfD0gMHhmZmZmIDw8IDQ7CgpyZWdhcmRz
-LApkYW4gY2FycGVudGVyCgo+IFdvbGZyYW0gU2FuZyAoNCk6Cj4gICB2NGw6IHZzcDE6IGZpeCBt
-YXNrIGNyZWF0aW9uIGZvciBNVUxUX0FMUEhBX1JBVElPCj4gICBkcm0vZXh5bm9zOiBmaXggY29t
-cGFyaXNvbiB0byBiaXRzaGlmdCB3aGVuIGRlYWxpbmcgd2l0aCBhIG1hc2sKPiAgIHY0bDogZHZi
-LWZyb250ZW5kczogc3RiMDg5OTogZml4IGNvbXBhcmlzb24gdG8gYml0c2hpZnQgd2hlbiBkZWFs
-aW5nCj4gICAgIHdpdGggYSBtYXNrCj4gICBuZXQ6IGFtZC14Z2JlOiBmaXggY29tcGFyaXNvbiB0
-byBiaXRzaGlmdCB3aGVuIGRlYWxpbmcgd2l0aCBhIG1hc2sKPiAKPiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9yZWdzLWZpbWMuaCAgICAgICAgfCAyICstCj4gIGRyaXZlcnMvbWVkaWEvZHZiLWZy
-b250ZW5kcy9zdGIwODk5X3JlZy5oIHwgOCArKysrLS0tLQo+ICBkcml2ZXJzL21lZGlhL3BsYXRm
-b3JtL3ZzcDEvdnNwMV9yZWdzLmggICB8IDIgKy0KPiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvYW1k
-L3hnYmUveGdiZS1kcnYuYyAgfCAyICstCj4gIDQgZmlsZXMgY2hhbmdlZCwgNyBpbnNlcnRpb25z
-KCspLCA3IGRlbGV0aW9ucygtKQo+IAo+IC0tIAo+IDIuMTEuMApfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Mon, Feb 5, 2018 at 6:21 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> This patch updates the sound node of the exynos5433-tm2 board
+> and adds clock tree configuration in order to support HDMI sound.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 67 ++++++++++++++++++++--
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  1 +
+>  2 files changed, 64 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> index a77462da4a36..37fb477a2d23 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> @@ -14,6 +14,7 @@
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/input/input.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/sound/samsung-i2s.h>
+>
+>  / {
+>         aliases {
+> @@ -112,8 +113,8 @@
+>
+>         sound {
+>                 compatible = "samsung,tm2-audio";
+> -               audio-codec = <&wm5110>;
+> -               i2s-controller = <&i2s0>;
+> +               audio-codec = <&wm5110>, <&hdmi>;
+> +               i2s-controller = <&i2s0 0>, <&i2s1 0>;
+>                 audio-amplifier = <&max98504>;
+>                 mic-bias-gpios = <&gpr3 2 GPIO_ACTIVE_HIGH>;
+>                 model = "wm5110";
+> @@ -216,9 +217,63 @@
+>         status = "okay";
+>  };
+>
+> +&cmu_top {
+> +       assigned-clocks = <&cmu_top CLK_FOUT_AUD_PLL>;
+> +       assigned-clock-rates = <(196608009 + 1)>;
+> +};
+> +
+>  &cmu_aud {
+> -       assigned-clocks = <&cmu_aud CLK_MOUT_AUD_PLL_USER>;
+> -       assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
+> +       assigned-clocks = <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
+> +                         <&cmu_aud CLK_MOUT_SCLK_AUD_I2S>,
+> +                         <&cmu_aud CLK_MOUT_SCLK_AUD_PCM>,
+> +                         <&cmu_top CLK_MOUT_AUD_PLL>,
+> +
+> +                         <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
+> +                         <&cmu_top CLK_MOUT_SCLK_AUDIO0>,
+> +                         <&cmu_top CLK_MOUT_SCLK_AUDIO1>,
+> +                         <&cmu_top CLK_MOUT_SCLK_SPDIF>,
+> +
+> +                         <&cmu_aud CLK_DIV_AUD_CA5>,
+> +                         <&cmu_aud CLK_DIV_ACLK_AUD>,
+> +                         <&cmu_aud CLK_DIV_PCLK_DBG_AUD>,
+> +                         <&cmu_aud CLK_DIV_SCLK_AUD_I2S>,
+> +                         <&cmu_aud CLK_DIV_SCLK_AUD_PCM>,
+> +                         <&cmu_aud CLK_DIV_SCLK_AUD_SLIMBUS>,
+> +                         <&cmu_aud CLK_DIV_SCLK_AUD_UART>,
+> +
+> +                         <&cmu_top CLK_DIV_SCLK_AUDIO0>,
+> +                         <&cmu_top CLK_DIV_SCLK_AUDIO1>,
+> +                         <&cmu_top CLK_DIV_SCLK_PCM1>,
+> +                         <&cmu_top CLK_DIV_SCLK_I2S1>;
+> +
+> +       assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>,
+> +                               <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
+> +                               <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
+> +                               <&cmu_top CLK_FOUT_AUD_PLL>,
+> +
+> +                               <&cmu_top CLK_MOUT_AUD_PLL>,
+> +                               <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
+> +                               <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
+> +                               <&cmu_top CLK_SCLK_AUDIO0>;
+> +
+> +       assigned-clock-rates = <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
+> +                               <(196608009 + 1)>,
+> +                               <((196608009 / 3) + 1)>,
+> +                               <((196608009 / 6) + 1)>,
+> +                               <((196608009 / 4) + 1)>,
+> +                               <((196608009 / 96) + 1)>,
+> +                               <((196608009 / 8) + 1)>,
+> +                               <(196608010 + 1)>,
+> +
+> +                               <((196608009 / 8) + 1)>,
+> +                               <((196608009 / 2) + 1)>,
+> +                               <((196608009 / 96) + 1)>,
+> +                               <((196608009 / 4) + 1)>;
+> +};
+> +
+> +&i2s1 {
+
+Please move it further to i2s1 so all the nodes/labels will be ordered
+alphabetically. As with #1 I understand that there is no explicit
+dependency so please correct me if I am wrong.
+
+Best regards,
+Krzysztof
