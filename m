@@ -1,48 +1,40 @@
-From: Guillaume Tucker <guillaume.tucker@collabora.com>
-Subject: [PATCH 3.18] ARM: exynos_defconfig: enable CONFIG_ROOT_NFS and dependencies
-Date: Tue,  6 Feb 2018 14:00:36 +0000
-Message-ID: <33565d824a8fde35618fdfaa2205f437874aec6c.1517925184.git.guillaume.tucker@collabora.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, Guillaume Tucker <guillaume.tucker@collabora.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
+ with a mask
+Date: Tue, 6 Feb 2018 15:08:21 +0100 (CET)
+Message-ID: <alpine.DEB.2.20.1802061506310.3306@hadrien>
+References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com> <20180206131044.oso33fvv553trrd7@mwanda> <alpine.DEB.2.20.1802061414340.3306@hadrien> <20180206132335.luut6em3kut7f7ej@mwanda> <alpine.DEB.2.20.1802061439110.3306@hadrien>
+ <20180206135923.3zthazmsapuzfxra@mwanda>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20180206135923.3zthazmsapuzfxra@mwanda>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Enable CONFIG_ROOT_NFS and dependencies (CONFIG_NFS_*, CONFIG_IP_PNP)
-in order to be able to boot the Exynos devices with NFS root.
 
-Tested on exynos4412-odroidx2.
 
-Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
----
- arch/arm/configs/exynos_defconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Tue, 6 Feb 2018, Dan Carpenter wrote:
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index e21ef830a483..999ea477be54 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -33,6 +33,10 @@ CONFIG_PACKET=y
- CONFIG_UNIX=y
- CONFIG_NET_KEY=y
- CONFIG_INET=y
-+CONFIG_IP_PNP=y
-+CONFIG_IP_PNP_DHCP=y
-+CONFIG_IP_PNP_BOOTP=y
-+CONFIG_IP_PNP_RARP=y
- CONFIG_RFKILL_REGULATOR=y
- CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_DEVTMPFS=y
-@@ -170,6 +174,10 @@ CONFIG_TMPFS=y
- CONFIG_TMPFS_POSIX_ACL=y
- CONFIG_CRAMFS=y
- CONFIG_ROMFS_FS=y
-+CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
-+CONFIG_NFS_V4=y
-+CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ASCII=y
- CONFIG_NLS_ISO8859_1=y
--- 
-2.11.0
+> That found 4 that I think Wolfram's grep missed.
+>
+>  arch/um/drivers/vector_user.h             |    2 --
+>  drivers/gpu/drm/mxsfb/mxsfb_regs.h        |    2 --
+>  drivers/video/fbdev/mxsfb.c               |    2 --
+>  include/drm/drm_scdc_helper.h             |    3 ---
+>
+> But it didn't find the two bugs that Geert found where the right side
+> wasn't a number literal.
+>
+> drivers/net/can/m_can/m_can.c:#define RXFC_FWM_MASK     (0x7f < RXFC_FWM_SHIFT)
+
+OK, I can easily add this in - I've got rules to protect against reporting
+it at the moment.  It may end up with false positives.
+
+> drivers/usb/gadget/udc/goku_udc.h:#define INT_EPnNAK(n) (0x00100 < (n))         /* 0 < n < 4 */
+
+This is indeed harder, because one has to look at the usage site.
+
+julia
