@@ -1,95 +1,55 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: Add I2S1 device node to exynos5433.dtsi
-Date: Tue, 6 Feb 2018 14:07:24 +0100
-Message-ID: <CAJKOXPdxND9Rf4p6stkdhBNY0AzdMqfDtopiBfYttex77+tjnA@mail.gmail.com>
-References: <CGME20180205172146epcas1p1cd7a5027e673fc17fb64d8841c47175a@epcas1p1.samsung.com>
- <20180205172110.9897-1-s.nawrocki@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
+ with a mask
+Date: Tue, 6 Feb 2018 16:10:44 +0300
+Message-ID: <20180206131044.oso33fvv553trrd7@mwanda>
+References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:60970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752488AbeBFNH1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:07:27 -0500
-In-Reply-To: <20180205172110.9897-1-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Mon, Feb 5, 2018 at 6:21 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> Add DT node for the second I2S controller available on Exynos 5433
-> SoC. While at it the i2s0 node name is changed to a more generic
-> "i2s" and missing properties are added to that node.
-
-Please split it - one patch for adding new I2S and second minor
-cleanup in i2s0 and adding of required properties.
-
-I think there are no dependencies on driver code changes... but let me
-know if I am wrong.
-
-Best regards,
-Krzysztof
-
-
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 23 ++++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index 62f276970174..2b73bd86bc56 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -1311,6 +1311,25 @@
->                         status = "disabled";
->                 };
->
-> +               i2s1: i2s@14d60000 {
-> +                       compatible = "samsung,exynos7-i2s";
-> +                       reg = <0x14d60000 0x100>;
-> +                       dmas = <&pdma0 31 &pdma0 30>;
-> +                       dma-names = "tx", "rx";
-> +                       interrupts = <GIC_SPI 435 IRQ_TYPE_NONE>;
-> +                       clocks = <&cmu_peric CLK_PCLK_I2S1>,
-> +                                <&cmu_peric CLK_PCLK_I2S1>,
-> +                                <&cmu_peric CLK_SCLK_I2S1>;
-> +                       clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
-> +                       #clock-cells = <1>;
-> +                       samsung,supports-6ch;
-> +                       samsung,supports-rstclr;
-> +                       samsung,supports-tdm;
-> +                       samsung,supports-low-rfs;
-> +                       #sound-dai-cells = <1>;
-> +                       status = "disabled";
-> +               };
-> +
->                 pwm: pwm@14dd0000 {
->                         compatible = "samsung,exynos4210-pwm";
->                         reg = <0x14dd0000 0x100>;
-> @@ -1639,7 +1658,7 @@
->                                 power-domains = <&pd_aud>;
->                         };
->
-> -                       i2s0: i2s0@11440000 {
-> +                       i2s0: i2s@11440000 {
->                                 compatible = "samsung,exynos7-i2s";
->                                 reg = <0x11440000 0x100>;
->                                 dmas = <&adma 0 &adma 2>;
-> @@ -1651,9 +1670,11 @@
->                                         <&cmu_aud CLK_SCLK_AUD_I2S>,
->                                         <&cmu_aud CLK_SCLK_I2S_BCLK>;
->                                 clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
-> +                               #clock-cells = <1>;
->                                 pinctrl-names = "default";
->                                 pinctrl-0 = <&i2s0_bus>;
->                                 power-domains = <&pd_aud>;
-> +                               #sound-dai-cells = <1>;
->                                 status = "disabled";
->                         };
->
-> --
-> 2.14.2
->
+T24gTW9uLCBGZWIgMDUsIDIwMTggYXQgMDk6MDk6NTdQTSArMDEwMCwgV29sZnJhbSBTYW5nIHdy
+b3RlOgo+IEluIG9uZSBSZW5lc2FzIGRyaXZlciwgSSBmb3VuZCBhIHR5cG8gd2hpY2ggdHVybmVk
+IGFuIGludGVuZGVkIGJpdCBzaGlmdCAoJzw8JykKPiBpbnRvIGEgY29tcGFyaXNvbiAoJzwnKS4g
+QmVjYXVzZSB0aGlzIGlzIGEgc3VidGxlIGlzc3VlLCBJIGxvb2tlZCB0cmVlIHdpZGUgZm9yCj4g
+c2ltaWxhciBwYXR0ZXJucy4gVGhpcyBzbWFsbCBwYXRjaCBzZXJpZXMgaXMgdGhlIG91dGNvbWUu
+Cj4gCj4gQnVpbGRib3QgYW5kIGNoZWNrcGF0Y2ggYXJlIGhhcHB5LiBPbmx5IGNvbXBpbGUtdGVz
+dGVkLiBUbyBiZSBhcHBsaWVkCj4gaW5kaXZpZHVhbGx5IHBlciBzdWItc3lzdGVtLCBJIHRoaW5r
+LiBJJ2QgdGhpbmsgb25seSB0aGUgbmV0OiBhbWQ6IHBhdGNoIG5lZWRzCj4gdG8gYmUgY29uaXNk
+ZXJlZCBmb3Igc3RhYmxlLCBidXQgSSBsZWF2ZSB0aGlzIHRvIHBlb3BsZSB3aG8gYWN0dWFsbHkg
+a25vdyB0aGlzCj4gZHJpdmVyLgo+IAo+IENDaW5nIERhbi4gTWF5YmUgaGUgaGFzIGFuIGlkZWEg
+aG93IHRvIGFkZCBhIHRlc3QgdG8gc21hdGNoPyBJbiBteSBzZXR1cCwgb25seQo+IGNwcGNoZWNr
+IHJlcG9ydGVkIGEgJ2NvZGluZyBzdHlsZScgaXNzdWUgd2l0aCBhIGxvdyBwcmlvLgo+IAoKTW9z
+dCBvZiB0aGVzZSBhcmUgaW5zaWRlIG1hY3JvcyBzbyBpdCBtYWtlcyBpdCBjb21wbGljYXRlZCBm
+b3IgU21hdGNoCnRvIHdhcm4gYWJvdXQgdGhlbS4gIEl0IG1pZ2h0IGJlIGVhc2llciBpbiBDb2Nj
+aW5lbGxlLiAgSnVsaWEgdGhlIGJ1Z3MKbG9vayBsaWtlIHRoaXM6CgotCQkJcmVpc3N1ZV9tYXNr
+IHw9IDB4ZmZmZiA8IDQ7CisJCQlyZWlzc3VlX21hc2sgfD0gMHhmZmZmIDw8IDQ7CgpyZWdhcmRz
+LApkYW4gY2FycGVudGVyCgo+IFdvbGZyYW0gU2FuZyAoNCk6Cj4gICB2NGw6IHZzcDE6IGZpeCBt
+YXNrIGNyZWF0aW9uIGZvciBNVUxUX0FMUEhBX1JBVElPCj4gICBkcm0vZXh5bm9zOiBmaXggY29t
+cGFyaXNvbiB0byBiaXRzaGlmdCB3aGVuIGRlYWxpbmcgd2l0aCBhIG1hc2sKPiAgIHY0bDogZHZi
+LWZyb250ZW5kczogc3RiMDg5OTogZml4IGNvbXBhcmlzb24gdG8gYml0c2hpZnQgd2hlbiBkZWFs
+aW5nCj4gICAgIHdpdGggYSBtYXNrCj4gICBuZXQ6IGFtZC14Z2JlOiBmaXggY29tcGFyaXNvbiB0
+byBiaXRzaGlmdCB3aGVuIGRlYWxpbmcgd2l0aCBhIG1hc2sKPiAKPiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9yZWdzLWZpbWMuaCAgICAgICAgfCAyICstCj4gIGRyaXZlcnMvbWVkaWEvZHZiLWZy
+b250ZW5kcy9zdGIwODk5X3JlZy5oIHwgOCArKysrLS0tLQo+ICBkcml2ZXJzL21lZGlhL3BsYXRm
+b3JtL3ZzcDEvdnNwMV9yZWdzLmggICB8IDIgKy0KPiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvYW1k
+L3hnYmUveGdiZS1kcnYuYyAgfCAyICstCj4gIDQgZmlsZXMgY2hhbmdlZCwgNyBpbnNlcnRpb25z
+KCspLCA3IGRlbGV0aW9ucygtKQo+IAo+IC0tIAo+IDIuMTEuMApfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
