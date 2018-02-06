@@ -1,61 +1,37 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
-Date: Tue, 6 Feb 2018 13:11:35 +0100
-Message-ID: <CAJKOXPcugCtU8OdK+vvT3SP49HFLCPuND2vLSomkENrOyVvYzQ@mail.gmail.com>
-References: <CGME20180205174022eucas1p101e8339284c1f0ac8f40f70c24de1c1f@eucas1p1.samsung.com>
- <224788c7-426b-d3a9-d0a6-412d2b8afb75@partner.samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/8] ASoC: samsung: i2s: Ensure the RCLK rate is properly determined
+Date: Tue, 6 Feb 2018 13:15:38 +0100
+Message-ID: <CAJKOXPcd_-kGyVvetUXdeKwv8em7sWW5TeRR0jqwHyTV+YQWzg@mail.gmail.com>
+References: <CGME20180205154453epcas1p10046e1103497692c86c0899a5ef11781@epcas1p1.samsung.com>
+ <20180205154403.13520-1-s.nawrocki@samsung.com> <20180205154403.13520-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <224788c7-426b-d3a9-d0a6-412d2b8afb75@partner.samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180205154403.13520-2-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jcsing.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 6:40 PM, Kamil Konieczny
-<k.konieczny@partner.samsung.com> wrote:
+On Mon, Feb 5, 2018 at 4:43 PM, Sylwester Nawrocki
+<s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> If the RCLK mux clock configuration is specified in DT and no set_sysclk()
+> callback is used in the sound card driver the sclk_srcrate field will remain
+> set to 0, leading to an incorrect PSR divider setting.
+> To fix this the frequency value is retrieved from the CLK_I2S_RCLK_SRC clock,
+> so the actual RCLK mux selection is taken into account.
 >
-> In AES-ECB mode crypt is done with key only, so any use of IV
-> can cause kernel Oops, as reported by Anand Moon.
-> Fixed it by using IV only in AES-CBC and AES-CTR.
->
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> Reported-by: Anand Moon <linux.amoon@gmail.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
-> Tested on Odroid XU4/HC1, kernel 4.15 with following command:
+>  sound/soc/samsung/i2s.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
 >
-> fallocate -l 128MiB /tmp/test.bin
-> dd if=/dev/urandom of=/tmp/testkey.key bs=128 count=1
-> sync
-> cryptsetup luksFormat --debug -q -d /tmp/testkey.key \
->   --cipher aes-cbc-essiv:sha256 -h sha256 -s 128 /tmp/test.bin
->
-> The original report by Anand Moon:
-> https://www.spinics.net/lists/linux-crypto/msg31180.html
->
-> Oops reproduced with cryptsetup 2.0.0, kernel 4.15,
-> in .config in crypto API ECB support was turned off, and s5p-sss AES driver on.
->
-> cryptsetup is using aes-ecb and has req->info in aes_ctx set to 0x10,
-> which caused Oops:
->
-> [ 2078.683779] Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-> [ 2078.689148] Modules linked in: algif_skcipher af_alg sd_mod sg
-> evdev uas usb_storage scsi_mod gpio_keys fbtft(C) spidev spi_s3c64xx
-> ipv6
-> [ 2078.701377] CPU: 1 PID: 15 Comm: ksoftirqd/1 Tainted: G         C
->     4.15.0-rc9-xu4krck #1
-> [ 2078.709861] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [ 2078.715932] PC is at memcpy+0x80/0x330
-> [ 2078.719652] LR is at s5p_tasklet_cb+0x19c/0x328
->
->  drivers/crypto/s5p-sss.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
 
-Fixes and cc-stable?
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
 Best regards,
 Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
