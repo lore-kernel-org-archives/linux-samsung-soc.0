@@ -1,16 +1,16 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/8] ASoC: samsung: i2s: Prevent external
- abort on exynos5433 I2S1 access
-Date: Tue, 6 Feb 2018 13:22:32 +0100
-Message-ID: <CAJKOXPcVMbrRyhAhRcB4sRkMnOTrqLDVy4uzt=VEqzEPmxAsPg@mail.gmail.com>
-References: <CGME20180205154516epcas1p39c5977145e7b32879b935087ee3865f8@epcas1p3.samsung.com>
+Subject: Re: [PATCH 4/8] ASoC: samsung: i2s: Define the
+	parameters list for SAMSUNG_I2S_OPCLK
+Date: Tue, 6 Feb 2018 13:26:41 +0100
+Message-ID: <CAJKOXPf-6wFDSPttdDbc34Y2hiuc=TG2j5bb+2uQeScxGuxjZg@mail.gmail.com>
+References: <CGME20180205154520epcas1p4132421a187a4d767a2f75badfef5eec4@epcas1p4.samsung.com>
  <20180205154403.13520-1-s.nawrocki@samsung.com>
- <20180205154403.13520-4-s.nawrocki@samsung.com>
+ <20180205154403.13520-5-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180205154403.13520-4-s.nawrocki@samsung.com>
+In-Reply-To: <20180205154403.13520-5-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -26,55 +26,79 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 On Mon, Feb 5, 2018 at 4:43 PM, Sylwester Nawrocki
 <s.nawrocki@samsung.com> wrote:
-> It seems both PCLK_I2S1 and SCLK_I2S1 clocks need to be enabled before
-> I2S1 control registers can be accessed on exynos5433, if SCLK clock
-
-Full stop before "if"?
-
-> is disabled an exception is triggered. To fix this parent clock of
-> the RCLK_SRC clock is assigned to pri_dai->op_clk so required gate
-> clock is handled by the runtime PM ops.
+> The SAMSUNG_I2S_OPCLK is not currently used by any card driver thus we can
+> safely change semantics of 'dir' argument of the I2S set_sysclk() callback.
+> Now an anumeration is exported instead of directly using register bitfield
+> values.
 >
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  sound/soc/samsung/i2s.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+>  sound/soc/samsung/i2s-regs.h | 11 ++++++-----
+>  sound/soc/samsung/i2s.c      |  2 +-
+>  sound/soc/samsung/i2s.h      | 11 ++++++++---
+>  3 files changed, 15 insertions(+), 9 deletions(-)
 >
+> diff --git a/sound/soc/samsung/i2s-regs.h b/sound/soc/samsung/i2s-regs.h
+> index fe6914005494..964985ea2e80 100644
+> --- a/sound/soc/samsung/i2s-regs.h
+> +++ b/sound/soc/samsung/i2s-regs.h
+> @@ -65,11 +65,12 @@
+>  #define CON_RXDMA_ACTIVE       (1 << 1)
+>  #define CON_ACTIVE             (1 << 0)
+>
+> -#define MOD_OPCLK_CDCLK_OUT    (0 << 30)
+> -#define MOD_OPCLK_CDCLK_IN     (1 << 30)
+> -#define MOD_OPCLK_BCLK_OUT     (2 << 30)
+> -#define MOD_OPCLK_PCLK         (3 << 30)
+> -#define MOD_OPCLK_MASK         (3 << 30)
+> +#define MOD_OPCLK_SHIFT                30
+> +#define MOD_OPCLK_CDCLK_OUT    (0 << MOD_OPCLK_SHIFT)
+> +#define MOD_OPCLK_CDCLK_IN     (1 << MOD_OPCLK_SHIFT)
+> +#define MOD_OPCLK_BCLK_OUT     (2 << MOD_OPCLK_SHIFT)
+> +#define MOD_OPCLK_PCLK         (3 << MOD_OPCLK_SHIFT)
+> +#define MOD_OPCLK_MASK         (3 << MOD_OPCLK_SHIFT)
+>  #define MOD_TXS_IDMA           (1 << 28) /* Sec_TXFIFO use I-DMA */
+>
+>  #define MOD_BLCS_SHIFT         26
 > diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index b7d25a63da8b..1c05170e4999 100644
+> index 1c05170e4999..6d768cdb4326 100644
 > --- a/sound/soc/samsung/i2s.c
 > +++ b/sound/soc/samsung/i2s.c
-> @@ -1328,6 +1328,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
->                 dev_err(&pdev->dev, "failed to enable clock: %d\n", ret);
->                 return ret;
->         }
-> +
+> @@ -489,7 +489,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+>         switch (clk_id) {
+>         case SAMSUNG_I2S_OPCLK:
+>                 mask = MOD_OPCLK_MASK;
+> -               val = dir;
+> +               val = (dir << MOD_OPCLK_SHIFT) & MOD_OPCLK_MASK;
+>                 break;
+>         case SAMSUNG_I2S_CDCLK:
+>                 mask = 1 << i2s_regs->cdclkcon_off;
+> diff --git a/sound/soc/samsung/i2s.h b/sound/soc/samsung/i2s.h
+> index 79781de2f247..a9832a9555cb 100644
+> --- a/sound/soc/samsung/i2s.h
+> +++ b/sound/soc/samsung/i2s.h
+> @@ -16,11 +16,16 @@
+>  #define SAMSUNG_I2S_DAI        "samsung-i2s"
+>  #define SAMSUNG_I2S_DAI_SEC    "samsung-i2s-sec"
+>
+> -#define SAMSUNG_I2S_DIV_BCLK   1
+> +#define SAMSUNG_I2S_DIV_BCLK           1
+>
+> -#define SAMSUNG_I2S_RCLKSRC_0  0
+> -#define SAMSUNG_I2S_RCLKSRC_1  1
+> +#define SAMSUNG_I2S_RCLKSRC_0          0
+> +#define SAMSUNG_I2S_RCLKSRC_1          1
+>  #define SAMSUNG_I2S_CDCLK              2
+> +/* Operation clock for IIS logic */
+>  #define SAMSUNG_I2S_OPCLK              3
+> +#define  SAMSUNG_I2S_OPCLK_CDCLK_OUT   0       /* CODEC clock out */
+> +#define  SAMSUNG_I2S_OPCLK_CDCLK_IN    1       /* CODEC clock in */
+> +#define  SAMSUNG_I2S_OPCLK_BCLK_OUT    2       /* Bit clock out */
+> +#define  SAMSUNG_I2S_OPCLK_PCLK                3       /* Audio bus clock */
+>
+>  #endif /* __SND_SOC_SAMSUNG_I2S_H */
 
-This should not be part of this patch. Beside that looks okay.
+This part of patch seems to be unrelated (and it includes some cleanups).
 
 Best regards,
 Krzysztof
-
->         pri_dai->dma_playback.addr = regs_base + I2STXD;
->         pri_dai->dma_capture.addr = regs_base + I2SRXD;
->         pri_dai->dma_playback.chan_name = "tx";
-> @@ -1401,9 +1402,14 @@ static int samsung_i2s_probe(struct platform_device *pdev)
->         pm_runtime_enable(&pdev->dev);
->
->         ret = i2s_register_clock_provider(pdev);
-> -       if (!ret)
-> -               return 0;
-> +       if (ret < 0)
-> +               goto err_disable_pm;
-> +
-> +       pri_dai->op_clk = clk_get_parent(pri_dai->clk_table[CLK_I2S_RCLK_SRC]);
-> +
-> +       return 0;
->
-> +err_disable_pm:
->         pm_runtime_disable(&pdev->dev);
->  err_disable_clk:
->         clk_disable_unprepare(pri_dai->clk);
-> --
-> 2.14.2
->
