@@ -1,62 +1,58 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
- with a mask
-Date: Tue, 6 Feb 2018 09:28:56 +0100
-Message-ID: <20180206082856.qx4pj7of36yytetc@ninjato>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdWnV17DCxr71k6n3w+5jPtQmeuPugr58xadq9U_qchJnQ@mail.gmail.com>
+From: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: dts: exynos: Add soc node to exynos4
+Date: Tue, 06 Feb 2018 12:24:24 +0100
+Message-ID: <17e8871f-71c9-7cd5-e57d-efb8fbc21f1f@samsung.com>
+References: <CGME20180205112603eucas1p17d1b5ef274e9541b785320a59f855c2a@eucas1p1.samsung.com>
+        <1517829936-26311-1-git-send-email-m.purski@samsung.com>
+        <1517829936-26311-2-git-send-email-m.purski@samsung.com>
+        <CAJKOXPec6=SiwgcRBixwt+DjhyKvoK+nPYOSpHuUGgWL8vDHbQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i7fjmlnpcylye3br"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:36726 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752155AbeBFI3A (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 03:29:00 -0500
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWnV17DCxr71k6n3w+5jPtQmeuPugr58xadq9U_qchJnQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAJKOXPec6=SiwgcRBixwt+DjhyKvoK+nPYOSpHuUGgWL8vDHbQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, netdev <netdev@vger.kernel.org>
 
 
---i7fjmlnpcylye3br
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
+On 02/05/2018 04:02 PM, Krzysztof Kozlowski wrote:
+> On Mon, Feb 5, 2018 at 12:25 PM, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> Soc nodes are used in other exynos DTS. Exynos4 boards should use them
+>> as well.
+>>
+>> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>   arch/arm/boot/dts/exynos4.dtsi | 1727 ++++++++++++++++++++--------------------
+>>   1 file changed, 872 insertions(+), 855 deletions(-)
+>>
+> 
+> This brings some new DTC warnings:
+> arch/arm/boot/dts/exynos4210-origen.dtb: Warning (simple_bus_reg):
+> Node /soc/video-phy missing or empty reg/ranges property
+> arch/arm/boot/dts/exynos4210-origen.dtb: Warning (simple_bus_reg):
+> Node /soc/pmu missing or empty reg/ranges property
+> 
 
-> I found two more using "git grep 'define.*0x[0-9a-f]* < '":
+The above warnings seem to be old. We just don't have "reg" property in video-phy.
 
-I added '[0-9]\+' at the end of the regex to reduce the number of false
-positives...
+> arch/arm/boot/dts/exynos4412-itop-elite.dtb: Warning
+> (interrupts_property): interrupts size is (32), expected multiple of
+> 12 in /pmu
+>
 
-> drivers/net/can/m_can/m_can.c:#define RXFC_FWM_MASK     (0x7f < RXFC_FWM_SHIFT)
-> drivers/usb/gadget/udc/goku_udc.h:#define INT_EPnNAK(n)
-> (0x00100 < (n))         /* 0 < n < 4 */
+These warnings occured, because "pmu" node was redefined in exynos4412.dtsi. I 
+have missed it in the previous patchset. I'll fix this in a new patch.
 
-... but you found those two true positives in there. Nice, thanks!
-
-
---i7fjmlnpcylye3br
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp5Z0QACgkQFA3kzBSg
-KbbYSA//brJm3Wk+jt6LxTyCknABbUX/AufrL2WXLokJ0ZmBYFIXcLww7cpJsl87
-xpIkpfJmefWYgLTI3pqDWKZmAFKSV3r4auXeGTfGcZs+TceknU4GubxM75Swq0v9
-1hXwREddK/RO5nnpfIER8oubrmZgCmHF6Z9ZrLOAOvXDaIbsxkLDnVXtxi3Xkii3
-JvQ6tEer53ghJsLUj+PFN28yxgcBbQScisgr0Help/yEld++jf9nyAf02Ktccn9D
-HPpXfqOrIgE9XYplI4dl0dDUYM6wV7yOPvj4cQSTDRLX2Qf1iZ9sNVdkAAXFRSia
-9YlmKE9+Zc0rcCrIjkbmFz+RDwYiT1/2UmxjPUvvPJskXqbdw6DBYEkcEqs/Xy7G
-Api/nktPfnbyT2f17k7kTWKh5YK5ZQfuf4WGTC/Nf54a2k8lASZrFyMqigxq1YXA
-DW5ypA/mqS+jZTi9R8FaZNz+oVn5HCMts2aDrATJ7+u2RaqzlN+rHk2qoa7AVEQW
-4pRelcKxktnxIQWr1N/KH7EX4ktREprBRPAQH6O6CG/pIO+t9uILs0+ba21tt/Uf
-fFgoM+xBO/SO9R43kcYKq5uNs57KYI/Y9qyMln4ae4MmsDDRx3XM/6EoSJa5Q+Yu
-bpSI8U7C1v1elUOudk8RqPy7eWn2x7ufHBApRBkFZNvsqb/4CzY=
-=7Gs7
------END PGP SIGNATURE-----
-
---i7fjmlnpcylye3br--
+> Best regards,
+> Krzysztof
+> 
+> 
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
