@@ -1,65 +1,62 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
- with a mask
-Date: Tue, 6 Feb 2018 14:15:51 +0100 (CET)
-Message-ID: <alpine.DEB.2.20.1802061414340.3306@hadrien>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com> <20180206131044.oso33fvv553trrd7@mwanda>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/3] ARM: dts: exynos: Add soc node to exynos4
+Date: Tue, 6 Feb 2018 14:22:11 +0100
+Message-ID: <CAJKOXPeeG2SN-ePmPQ3SOS=6_G2iBitCwU9CY0ArGf-Y6tdkcQ@mail.gmail.com>
+References: <CGME20180205112603eucas1p17d1b5ef274e9541b785320a59f855c2a@eucas1p1.samsung.com>
+ <1517829936-26311-1-git-send-email-m.purski@samsung.com> <1517829936-26311-2-git-send-email-m.purski@samsung.com>
+ <CAJKOXPec6=SiwgcRBixwt+DjhyKvoK+nPYOSpHuUGgWL8vDHbQ@mail.gmail.com> <17e8871f-71c9-7cd5-e57d-efb8fbc21f1f@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180206131044.oso33fvv553trrd7@mwanda>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:34044 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751913AbeBFNWO (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 6 Feb 2018 08:22:14 -0500
+In-Reply-To: <17e8871f-71c9-7cd5-e57d-efb8fbc21f1f@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Maciej Purski <m.purski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
 
-
-
-On Tue, 6 Feb 2018, Dan Carpenter wrote:
-
-> On Mon, Feb 05, 2018 at 09:09:57PM +0100, Wolfram Sang wrote:
-> > In one Renesas driver, I found a typo which turned an intended bit shift ('<<')
-> > into a comparison ('<'). Because this is a subtle issue, I looked tree wide for
-> > similar patterns. This small patch series is the outcome.
-> >
-> > Buildbot and checkpatch are happy. Only compile-tested. To be applied
-> > individually per sub-system, I think. I'd think only the net: amd: patch needs
-> > to be conisdered for stable, but I leave this to people who actually know this
-> > driver.
-> >
-> > CCing Dan. Maybe he has an idea how to add a test to smatch? In my setup, only
-> > cppcheck reported a 'coding style' issue with a low prio.
-> >
+On Tue, Feb 6, 2018 at 12:24 PM, Maciej Purski <m.purski@samsung.com> wrote:
 >
-> Most of these are inside macros so it makes it complicated for Smatch
-> to warn about them.  It might be easier in Coccinelle.  Julia the bugs
-> look like this:
 >
-> -			reissue_mask |= 0xffff < 4;
-> +			reissue_mask |= 0xffff << 4;
+> On 02/05/2018 04:02 PM, Krzysztof Kozlowski wrote:
+>>
+>> On Mon, Feb 5, 2018 at 12:25 PM, Maciej Purski <m.purski@samsung.com>
+>> wrote:
+>>>
+>>> Soc nodes are used in other exynos DTS. Exynos4 boards should use them
+>>> as well.
+>>>
+>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+>>> ---
+>>>   arch/arm/boot/dts/exynos4.dtsi | 1727
+>>> ++++++++++++++++++++--------------------
+>>>   1 file changed, 872 insertions(+), 855 deletions(-)
+>>>
+>>
+>> This brings some new DTC warnings:
+>> arch/arm/boot/dts/exynos4210-origen.dtb: Warning (simple_bus_reg):
+>> Node /soc/video-phy missing or empty reg/ranges property
+>> arch/arm/boot/dts/exynos4210-origen.dtb: Warning (simple_bus_reg):
+>> Node /soc/pmu missing or empty reg/ranges property
+>>
+>
+> The above warnings seem to be old. We just don't have "reg" property in
+> video-phy.
+>
+>> arch/arm/boot/dts/exynos4412-itop-elite.dtb: Warning
+>> (interrupts_property): interrupts size is (32), expected multiple of
+>> 12 in /pmu
+>>
+>
+> These warnings occured, because "pmu" node was redefined in exynos4412.dtsi.
+> I have missed it in the previous patchset. I'll fix this in a new patch.
 
-Thanks.  I'll take a look.  Do you have an example of the macro issue
-handy?
+Missed in previous patchset? You mean the label of camera nodes? How
+did you touched it there?
 
-julia
-
->
-> regards,
-> dan carpenter
->
-> > Wolfram Sang (4):
-> >   v4l: vsp1: fix mask creation for MULT_ALPHA_RATIO
-> >   drm/exynos: fix comparison to bitshift when dealing with a mask
-> >   v4l: dvb-frontends: stb0899: fix comparison to bitshift when dealing
-> >     with a mask
-> >   net: amd-xgbe: fix comparison to bitshift when dealing with a mask
-> >
-> >  drivers/gpu/drm/exynos/regs-fimc.h        | 2 +-
-> >  drivers/media/dvb-frontends/stb0899_reg.h | 8 ++++----
-> >  drivers/media/platform/vsp1/vsp1_regs.h   | 2 +-
-> >  drivers/net/ethernet/amd/xgbe/xgbe-drv.c  | 2 +-
-> >  4 files changed, 7 insertions(+), 7 deletions(-)
-> >
-> > --
-> > 2.11.0
->
+Best regards,
+Krzysztof
