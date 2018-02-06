@@ -1,51 +1,46 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/4] drm/exynos: fix comparison to bitshift when dealing
- with a mask
-Date: Tue, 06 Feb 2018 09:06:21 +0900
-Message-ID: <5A78F17D.1010400@samsung.com>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
-        <CGME20180205201026epcas5p214598aead48b3d8118b8f1fe114da8ec@epcas5p2.samsung.com>
-        <20180205201002.23621-3-wsa+renesas@sang-engineering.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] clk: samsung: Add git tree entry to MAINTAINERS
+Date: Tue, 06 Feb 2018 11:09:19 +0900
+Message-ID: <5A790E4F.7060701@samsung.com>
+References: <CGME20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4@epcas1p4.samsung.com>
+        <20180205144158.10500-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-reply-to: <20180205201002.23621-3-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-renesas-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20180205144158.10500-1-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, tomasz.figa@gmail.com, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Sylwester,
 
-
-2018년 02월 06일 05:09에 Wolfram Sang 이(가) 쓴 글:
-> Due to a typo, the mask was destroyed by a comparison instead of a bit
-> shift.
+On 2018년 02월 05일 23:41, Sylwester Nawrocki wrote:
+> Add a missing git tree entry for drivers/clk/samsung.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
-> Only build tested. To be applied individually per subsystem.
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 > 
->  drivers/gpu/drm/exynos/regs-fimc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index aa71ab52fd76..502442dc08eb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12001,6 +12001,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
+>  M:	Chanwoo Choi <cw00.choi@samsung.com>
+>  S:	Supported
+>  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
+>  F:	drivers/clk/samsung/
+>  F:	include/dt-bindings/clock/exynos*.h
+>  F:	Documentation/devicetree/bindings/clock/exynos*.txt
 > 
-> diff --git a/drivers/gpu/drm/exynos/regs-fimc.h b/drivers/gpu/drm/exynos/regs-fimc.h
-> index 30496134a3d072..d7cbe53c4c01f4 100644
-> --- a/drivers/gpu/drm/exynos/regs-fimc.h
-> +++ b/drivers/gpu/drm/exynos/regs-fimc.h
-> @@ -569,7 +569,7 @@
->  #define EXYNOS_CIIMGEFF_FIN_EMBOSSING		(4 << 26)
->  #define EXYNOS_CIIMGEFF_FIN_SILHOUETTE		(5 << 26)
->  #define EXYNOS_CIIMGEFF_FIN_MASK			(7 << 26)
-> -#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff < 13) | (0xff < 0))
-> +#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff << 13) | (0xff << 0))
->  
 
-Oops. Picked it up.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thanks,
-Inki Dae
-
->  /* Real input DMA size register */
->  #define EXYNOS_CIREAL_ISIZE_AUTOLOAD_ENABLE	(1 << 31)
-> 
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
