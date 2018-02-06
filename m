@@ -1,57 +1,81 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
- with a mask
-Date: Tue, 6 Feb 2018 16:23:35 +0300
-Message-ID: <20180206132335.luut6em3kut7f7ej@mwanda>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
- <20180206131044.oso33fvv553trrd7@mwanda>
- <alpine.DEB.2.20.1802061414340.3306@hadrien>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Use pmu label in exynos4412
+Date: Tue, 6 Feb 2018 14:25:23 +0100
+Message-ID: <CAJKOXPerVf-HY5sQRF0fBHp=xmeMHmP8PAVh+ddwK18W6-ekUg@mail.gmail.com>
+References: <CGME20180206112602eucas1p28e3a797fe752adc65dbe7571aa02a8aa@eucas1p2.samsung.com>
+ <1517916352-13614-1-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1802061414340.3306@hadrien>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1517916352-13614-1-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 02:15:51PM +0100, Julia Lawall wrote:
-> 
-> 
-> On Tue, 6 Feb 2018, Dan Carpenter wrote:
-> 
-> > On Mon, Feb 05, 2018 at 09:09:57PM +0100, Wolfram Sang wrote:
-> > > In one Renesas driver, I found a typo which turned an intended bit shift ('<<')
-> > > into a comparison ('<'). Because this is a subtle issue, I looked tree wide for
-> > > similar patterns. This small patch series is the outcome.
-> > >
-> > > Buildbot and checkpatch are happy. Only compile-tested. To be applied
-> > > individually per sub-system, I think. I'd think only the net: amd: patch needs
-> > > to be conisdered for stable, but I leave this to people who actually know this
-> > > driver.
-> > >
-> > > CCing Dan. Maybe he has an idea how to add a test to smatch? In my setup, only
-> > > cppcheck reported a 'coding style' issue with a low prio.
-> > >
-> >
-> > Most of these are inside macros so it makes it complicated for Smatch
-> > to warn about them.  It might be easier in Coccinelle.  Julia the bugs
-> > look like this:
-> >
-> > -			reissue_mask |= 0xffff < 4;
-> > +			reissue_mask |= 0xffff << 4;
-> 
-> Thanks.  I'll take a look.  Do you have an example of the macro issue
-> handy?
-> 
+On Tue, Feb 6, 2018 at 12:25 PM, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> In order to use soc node, we need to reference soc child nodes by label
+> in exynos4412. Define pmu label in exynos4.dtsi. Use it in exynos4412
+> instead of redefining the node.
+>
+> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi    | 2 +-
+>  arch/arm/boot/dts/exynos4412.dtsi | 7 +++----
+>  2 files changed, 4 insertions(+), 5 deletions(-)
 
-It's the same:
+Looks correct but I am really going to loose the track of your dependencies.
 
-#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK          ((0xff < 13) | (0xff < 0)) 
+You sent this as a separate patch but your v2 base on this. Unless you
+fix an error here (but then describe the error) this should be
+probably part of your series. It is okay if series grow with review.
 
-Smatch only sees the outside of the macro (where it is used in the code)
-and the pre-processed code.
+Best regards,
+Krzysztof
 
-regards,
-dan carpenter
+
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index 6d4775a..da284f3 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -162,7 +162,7 @@
+>                 reg = <0x10440000 0x1000>;
+>         };
+>
+> -       pmu {
+> +       pmu: pmu {
+>                 compatible = "arm,cortex-a9-pmu";
+>                 interrupt-parent = <&combiner>;
+>                 interrupts = <2 2>, <3 2>;
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> index a6f3f59..e012cda 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -546,10 +546,6 @@
+>                         opp-hz = /bits/ 64 <100000000>;
+>                 };
+>         };
+> -
+> -       pmu {
+> -               interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
+> -       };
+>  };
+>
+>  &combiner {
+> @@ -724,6 +720,9 @@
+>                  <&clock CLK_SCLK_HDMI>, <&clock CLK_VP>;
+>  };
+>
+> +&pmu {
+> +       interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
+> +};
+>
+>  &pmu_system_controller {
+>         compatible = "samsung,exynos4412-pmu", "syscon";
+> --
+> 2.7.4
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
