@@ -1,58 +1,62 @@
-From: Guillaume Tucker <guillaume.tucker@collabora.com>
-Subject: [PATCH 3.18 1/2] ARM: exynos_defconfig: Enable options to mount a rootfs via NFS
-Date: Wed,  7 Feb 2018 10:21:33 +0000
-Message-ID: <7cb705ff603f159efe60c5c43e65e4648fca5113.1517997302.git.guillaume.tucker@collabora.com>
-References: <CAJKOXPfsvXfONa8gT1-Vfa1qme3kC2DQBhHHLtkmTdSA+-zRKQ@mail.gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40180 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753744AbeBGKVv (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:21:51 -0500
-In-Reply-To: <CAJKOXPfsvXfONa8gT1-Vfa1qme3kC2DQBhHHLtkmTdSA+-zRKQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
+ output frequencies
+Date: Wed, 07 Feb 2018 11:29:40 +0100
+Message-ID: <75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
+References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
+        <20180205142230.9755-1-s.nawrocki@samsung.com>
+        <5A7916A2.7010307@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <5A7916A2.7010307@samsung.com>
+Content-language: en-GB
+Sender: linux-clk-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>
 
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+On 02/06/2018 03:44 AM, Chanwoo Choi wrote:
+> When I developed the clk-exynos5433.c I referred to the following description.
+> TRM specified that "Samsung recommends only the values
+> between 252MH ~ 400MHz in the PMS2460X PMS value" for aud_pll.
 
-commit 19f79ccf6d77409cd138bce8db206cdac7fd5ea7 upstream.
+Thanks, I somehow missed it. There is also another sentence pointing to
+a contact person if other values are needed.
 
-This patch enables the options to mount a rootfs over NFS and also
-support for automatic configuration of IP addresses during boot as
-needed by NFS.
+> It looks like that you refer to clk-exynos5420.c driver.
+> But, I'm wondering exynos5433 might not guarantee the additional clock
+> of this patch as the stable clock.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Signed-off-by: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
----
- arch/arm/configs/exynos_defconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+I took the values from downstream SM-N910C_LL kernel, I would say they
+are well tested and reliable. How about adding just these 3 entries:
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index e21ef830a483..e94402c05975 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -33,6 +33,10 @@ CONFIG_PACKET=y
- CONFIG_UNIX=y
- CONFIG_NET_KEY=y
- CONFIG_INET=y
-+CONFIG_IP_PNP=y
-+CONFIG_IP_PNP_DHCP=y
-+CONFIG_IP_PNP_BOOTP=y
-+CONFIG_IP_PNP_RARP=y
- CONFIG_RFKILL_REGULATOR=y
- CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_DEVTMPFS=y
-@@ -170,6 +174,8 @@ CONFIG_TMPFS=y
- CONFIG_TMPFS_POSIX_ACL=y
- CONFIG_CRAMFS=y
- CONFIG_ROMFS_FS=y
-+CONFIG_NFS_FS=y
-+CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ASCII=y
- CONFIG_NLS_ISO8859_1=y
--- 
-2.11.0
++	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
++	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
++	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
+?
+ 
+They are needed for audio sample rates that are multiple of 32000, 44100
+or 48000 Hz. The AUD PLL frequency values which are currently defined
+are not useful for anything except fs 48000 (fpll = 393216000 Hz).
+
+We could add new PLL rates: 361267218, 262144000, but I'm not convinced
+these would be any better than values used in a shipped product. We would 
+need to confirm below values with the HW team, and I'm not sure what 
+would be the P, M, S, K set for 262144000 frequency.
+
+	PLL_36XX_RATE(361267218U, 301, 5, 2,   3671),
+
+As it turns out, the 393216000 Hz entry needs correction, the actual 
+frequency value from the P, M, S, K equation is 393216003:
+
+-	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
++	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
+
+Hmm, I have tested with the PLL frequency set to 393216003 Hz and there
+are some glitches during audio playback, I can't get it to work properly.
+
+--
+Regards,
+Sylwester
