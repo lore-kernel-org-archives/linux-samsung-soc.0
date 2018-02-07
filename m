@@ -1,45 +1,47 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 0/3] Add soc nodes to exynos4 series DTS
-Date: Wed, 7 Feb 2018 10:37:27 +0100
-Message-ID: <CAJKOXPesCyrc5ALunOgNhjFV-bWQDN8NP0p9EO2f0-okXQ2v2A@mail.gmail.com>
-References: <CGME20180206113006eucas1p148766268255c129223e32f221afc1b94@eucas1p1.samsung.com>
- <1517916582-13814-1-git-send-email-m.purski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1517916582-13814-1-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Guillaume Tucker <guillaume.tucker@collabora.com>
+Subject: [PATCH 3.18 2/2] ARM: exynos_defconfig: Enable NFSv4 client
+Date: Wed,  7 Feb 2018 10:21:34 +0000
+Message-ID: <84b3f560051df582f2927805775893477b44f6c7.1517997302.git.guillaume.tucker@collabora.com>
+References: <CAJKOXPfsvXfONa8gT1-Vfa1qme3kC2DQBhHHLtkmTdSA+-zRKQ@mail.gmail.com>
+ <7cb705ff603f159efe60c5c43e65e4648fca5113.1517997302.git.guillaume.tucker@collabora.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <7cb705ff603f159efe60c5c43e65e4648fca5113.1517997302.git.guillaume.tucker@collabora.com>
+In-Reply-To: <7cb705ff603f159efe60c5c43e65e4648fca5113.1517997302.git.guillaume.tucker@collabora.com>
+References: <7cb705ff603f159efe60c5c43e65e4648fca5113.1517997302.git.guillaume.tucker@collabora.com>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 12:29 PM, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Hi all,
->
-> this patchset adds soc node to exynos4, exynos4210 and exynos4412
-> DTS. The main goal for these changes is unification of all exynos
-> DTS. Soc nodes are already present in for example exynos5 series.
->
-> Best regards,
->
-> Maciej Purski
->
-> ---
-> Changes in v2:
-> - rebased onto "ARM: dts: exynos: Use pmu label in exynos4412"
->   in order to fix pmu warning
-> - move "cpu0_opp_table" outside the "soc" node
->
-> Maciej Purski (3):
->   ARM: dts: exynos: Add soc node to exynos4
->   ARM: dts: exynos: Add soc node to exynos4210
->   ARM: dts: exynos: Add soc node to exynos4412
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-All look OK, thanks. I'll take them after merge window.
+commit 1c1fb9b0c89a2506e556114c813a606bc1508d49 upstream.
 
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+NFS client is already enabled (NFS_FS) and by default it enables clients
+for version 2 and 3. Enable explicitly the version 4 client to utilize
+the newer protocol.
+
+The NFS client is especially useful for testing kernel in automated
+environments (network boot with network file system).
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index e94402c05975..8cd6eae4e89b 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -175,6 +175,7 @@ CONFIG_TMPFS_POSIX_ACL=y
+ CONFIG_CRAMFS=y
+ CONFIG_ROMFS_FS=y
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V4=y
+ CONFIG_ROOT_NFS=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ASCII=y
+-- 
+2.11.0
