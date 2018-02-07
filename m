@@ -1,62 +1,99 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-Date: Wed, 07 Feb 2018 11:29:40 +0100
-Message-ID: <75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
-References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
-        <20180205142230.9755-1-s.nawrocki@samsung.com>
-        <5A7916A2.7010307@samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v2] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
+Date: Wed, 07 Feb 2018 11:38:57 +0100
+Message-ID: <64a5e903-c6c1-28f4-8af4-dbbd7bef17ef@partner.samsung.com>
+References: <CGME20180207103859eucas1p13385c140fe1874645ee3ae5127d0e232@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <5A7916A2.7010307@samsung.com>
-Content-language: en-GB
-Sender: linux-clk-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/06/2018 03:44 AM, Chanwoo Choi wrote:
-> When I developed the clk-exynos5433.c I referred to the following description.
-> TRM specified that "Samsung recommends only the values
-> between 252MH ~ 400MHz in the PMS2460X PMS value" for aud_pll.
+In AES-ECB mode crypt is done with key only, so any use of IV
+can cause kernel Oops. Use IV only in AES-CBC and AES-CTR.
 
-Thanks, I somehow missed it. There is also another sentence pointing to
-a contact person if other values are needed.
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Reported-by: Anand Moon <linux.amoon@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+Cc: stable@vger.kernel.org
+Fixes: 8f9702aad138 ("crypto: s5p-sss - validate iv before memcpy")
 
-> It looks like that you refer to clk-exynos5420.c driver.
-> But, I'm wondering exynos5433 might not guarantee the additional clock
-> of this patch as the stable clock.
+---
+version 2:
+Change commit message.
 
-I took the values from downstream SM-N910C_LL kernel, I would say they
-are well tested and reliable. How about adding just these 3 entries:
+Tested on Odroid XU4/HC1, kernel 4.15 with following command:
 
-+	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
-+	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
-+	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
-?
+fallocate -l 128MiB /tmp/test.bin
+dd if=/dev/urandom of=/tmp/testkey.key bs=128 count=1
+sync
+cryptsetup luksFormat --debug -q -d /tmp/testkey.key \
+  --cipher aes-cbc-essiv:sha256 -h sha256 -s 128 /tmp/test.bin
+
+The original report by Anand Moon:
+https://www.spinics.net/lists/linux-crypto/msg31180.html
+
+Oops reproduced with cryptsetup 2.0.0, kernel 4.15,
+in .config in crypto API ECB support was turned off, and s5p-sss AES driver on.
+
+cryptsetup is using aes-ecb and has req->info in aes_ctx set to 0x10,
+which caused Oops:
+
+[ 2078.683779] Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+[ 2078.689148] Modules linked in: algif_skcipher af_alg sd_mod sg
+evdev uas usb_storage scsi_mod gpio_keys fbtft(C) spidev spi_s3c64xx
+ipv6
+[ 2078.701377] CPU: 1 PID: 15 Comm: ksoftirqd/1 Tainted: G         C
+    4.15.0-rc9-xu4krck #1
+[ 2078.709861] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[ 2078.715932] PC is at memcpy+0x80/0x330
+[ 2078.719652] LR is at s5p_tasklet_cb+0x19c/0x328
+
+
+ drivers/crypto/s5p-sss.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 142c6020cec7..5c0496d1ed41 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -1926,15 +1926,21 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
+ 	uint32_t aes_control;
+ 	unsigned long flags;
+ 	int err;
++	u8 *iv;
  
-They are needed for audio sample rates that are multiple of 32000, 44100
-or 48000 Hz. The AUD PLL frequency values which are currently defined
-are not useful for anything except fs 48000 (fpll = 393216000 Hz).
-
-We could add new PLL rates: 361267218, 262144000, but I'm not convinced
-these would be any better than values used in a shipped product. We would 
-need to confirm below values with the HW team, and I'm not sure what 
-would be the P, M, S, K set for 262144000 frequency.
-
-	PLL_36XX_RATE(361267218U, 301, 5, 2,   3671),
-
-As it turns out, the 393216000 Hz entry needs correction, the actual 
-frequency value from the P, M, S, K equation is 393216003:
-
--	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
-+	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
-
-Hmm, I have tested with the PLL frequency set to 393216003 Hz and there
-are some glitches during audio playback, I can't get it to work properly.
-
---
-Regards,
-Sylwester
+ 	aes_control = SSS_AES_KEY_CHANGE_MODE;
+ 	if (mode & FLAGS_AES_DECRYPT)
+ 		aes_control |= SSS_AES_MODE_DECRYPT;
+ 
+-	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC)
++	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CBC;
+-	else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR)
++		iv = req->info;
++	} else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CTR;
++		iv = req->info;
++	} else {
++		iv = NULL; /* AES_ECB */
++	}
+ 
+ 	if (dev->ctx->keylen == AES_KEYSIZE_192)
+ 		aes_control |= SSS_AES_KEY_SIZE_192;
+@@ -1965,7 +1971,7 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
+ 		goto outdata_error;
+ 
+ 	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
+-	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
++	s5p_set_aes(dev, dev->ctx->aes_key, iv, dev->ctx->keylen);
+ 
+ 	s5p_set_dma_indata(dev,  dev->sg_src);
+ 	s5p_set_dma_outdata(dev, dev->sg_dst);
+-- 
+2.16.0
