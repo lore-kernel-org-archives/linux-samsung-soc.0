@@ -1,33 +1,41 @@
 From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add soc node to exynos5440
-Date: Wed, 7 Feb 2018 10:35:11 +0100
-Message-ID: <CAJKOXPd8RNe9sa4br6hKTr5-9WCy+xEhiDDqT1_KmK9oajJUxw@mail.gmail.com>
-References: <CGME20180206113158eucas1p1c5cb146fb80116232d0d79634a48d210@eucas1p1.samsung.com>
- <1517916710-13970-1-git-send-email-m.purski@samsung.com>
+Subject: Re: [PATCH v2 0/3] Add soc nodes to exynos4 series DTS
+Date: Wed, 7 Feb 2018 10:37:27 +0100
+Message-ID: <CAJKOXPesCyrc5ALunOgNhjFV-bWQDN8NP0p9EO2f0-okXQ2v2A@mail.gmail.com>
+References: <CGME20180206113006eucas1p148766268255c129223e32f221afc1b94@eucas1p1.samsung.com>
+ <1517916582-13814-1-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1517916710-13970-1-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1517916582-13814-1-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 12:31 PM, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> The exynos5440 device tree is the only one left, which does not use
-> "soc" node. Add a "soc" node to exynos5440.dtsi in order to make it
-> compatible with other exynos DTS.
+On Tue, Feb 6, 2018 at 12:29 PM, Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Hi all,
 >
-> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> this patchset adds soc node to exynos4, exynos4210 and exynos4412
+> DTS. The main goal for these changes is unification of all exynos
+> DTS. Soc nodes are already present in for example exynos5 series.
+>
+> Best regards,
+>
+> Maciej Purski
 >
 > ---
 > Changes in v2:
-> - move the "thermal-zones" node outside the "soc" node
-> ---
->  arch/arm/boot/dts/exynos5440.dtsi | 514 +++++++++++++++++++-------------------
->  1 file changed, 261 insertions(+), 253 deletions(-)
+> - rebased onto "ARM: dts: exynos: Use pmu label in exynos4412"
+>   in order to fix pmu warning
+> - move "cpu0_opp_table" outside the "soc" node
+>
+> Maciej Purski (3):
+>   ARM: dts: exynos: Add soc node to exynos4
+>   ARM: dts: exynos: Add soc node to exynos4210
+>   ARM: dts: exynos: Add soc node to exynos4412
 
-Looks OK, thanks. I'll take it after merge window.
+All look OK, thanks. I'll take them after merge window.
 
 Best regards,
 Krzysztof
