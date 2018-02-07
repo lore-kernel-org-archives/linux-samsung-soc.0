@@ -1,99 +1,42 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH v2] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
-Date: Wed, 07 Feb 2018 11:38:57 +0100
-Message-ID: <64a5e903-c6c1-28f4-8af4-dbbd7bef17ef@partner.samsung.com>
-References: <CGME20180207103859eucas1p13385c140fe1874645ee3ae5127d0e232@eucas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 3.18 1/2] ARM: exynos_defconfig: Enable options to mount a
+ rootfs via NFS
+Date: Wed, 7 Feb 2018 11:45:33 +0100
+Message-ID: <CAJKOXPd-tftXW6DGthCbzXxaHWpVyVhe-45vBLpxha+T26zNwA@mail.gmail.com>
+References: <CAJKOXPfsvXfONa8gT1-Vfa1qme3kC2DQBhHHLtkmTdSA+-zRKQ@mail.gmail.com>
+ <7cb705ff603f159efe60c5c43e65e4648fca5113.1517997302.git.guillaume.tucker@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:57836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753454AbeBGKpg (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 7 Feb 2018 05:45:36 -0500
+In-Reply-To: <7cb705ff603f159efe60c5c43e65e4648fca5113.1517997302.git.guillaume.tucker@collabora.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>
 
-In AES-ECB mode crypt is done with key only, so any use of IV
-can cause kernel Oops. Use IV only in AES-CBC and AES-CTR.
+On Wed, Feb 7, 2018 at 11:21 AM, Guillaume Tucker
+<guillaume.tucker@collabora.com> wrote:
+> From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>
+> commit 19f79ccf6d77409cd138bce8db206cdac7fd5ea7 upstream.
+>
+> This patch enables the options to mount a rootfs over NFS and also
+> support for automatic configuration of IP addresses during boot as
+> needed by NFS.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Signed-off-by: Kukjin Kim <kgene@kernel.org>
+> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+> ---
+>  arch/arm/configs/exynos_defconfig | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Reported-by: Anand Moon <linux.amoon@gmail.com>
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-Cc: stable@vger.kernel.org
-Fixes: 8f9702aad138 ("crypto: s5p-sss - validate iv before memcpy")
 
----
-version 2:
-Change commit message.
-
-Tested on Odroid XU4/HC1, kernel 4.15 with following command:
-
-fallocate -l 128MiB /tmp/test.bin
-dd if=/dev/urandom of=/tmp/testkey.key bs=128 count=1
-sync
-cryptsetup luksFormat --debug -q -d /tmp/testkey.key \
-  --cipher aes-cbc-essiv:sha256 -h sha256 -s 128 /tmp/test.bin
-
-The original report by Anand Moon:
-https://www.spinics.net/lists/linux-crypto/msg31180.html
-
-Oops reproduced with cryptsetup 2.0.0, kernel 4.15,
-in .config in crypto API ECB support was turned off, and s5p-sss AES driver on.
-
-cryptsetup is using aes-ecb and has req->info in aes_ctx set to 0x10,
-which caused Oops:
-
-[ 2078.683779] Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-[ 2078.689148] Modules linked in: algif_skcipher af_alg sd_mod sg
-evdev uas usb_storage scsi_mod gpio_keys fbtft(C) spidev spi_s3c64xx
-ipv6
-[ 2078.701377] CPU: 1 PID: 15 Comm: ksoftirqd/1 Tainted: G         C
-    4.15.0-rc9-xu4krck #1
-[ 2078.709861] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[ 2078.715932] PC is at memcpy+0x80/0x330
-[ 2078.719652] LR is at s5p_tasklet_cb+0x19c/0x328
-
-
- drivers/crypto/s5p-sss.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 142c6020cec7..5c0496d1ed41 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -1926,15 +1926,21 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
- 	uint32_t aes_control;
- 	unsigned long flags;
- 	int err;
-+	u8 *iv;
- 
- 	aes_control = SSS_AES_KEY_CHANGE_MODE;
- 	if (mode & FLAGS_AES_DECRYPT)
- 		aes_control |= SSS_AES_MODE_DECRYPT;
- 
--	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC)
-+	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC) {
- 		aes_control |= SSS_AES_CHAIN_MODE_CBC;
--	else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR)
-+		iv = req->info;
-+	} else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR) {
- 		aes_control |= SSS_AES_CHAIN_MODE_CTR;
-+		iv = req->info;
-+	} else {
-+		iv = NULL; /* AES_ECB */
-+	}
- 
- 	if (dev->ctx->keylen == AES_KEYSIZE_192)
- 		aes_control |= SSS_AES_KEY_SIZE_192;
-@@ -1965,7 +1971,7 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
- 		goto outdata_error;
- 
- 	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
--	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
-+	s5p_set_aes(dev, dev->ctx->aes_key, iv, dev->ctx->keylen);
- 
- 	s5p_set_dma_indata(dev,  dev->sg_src);
- 	s5p_set_dma_outdata(dev, dev->sg_dst);
--- 
-2.16.0
+Best regards,
+Krzysztof
