@@ -1,107 +1,58 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH v3] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
-Date: Wed, 07 Feb 2018 16:52:09 +0100
-Message-ID: <77384548-9870-40b8-46fc-4bd62747efd6@partner.samsung.com>
-References: <CGME20180207155211eucas1p2d8d04871aaeb49efc30909d46e47e028@eucas1p2.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 4/8] ASoC: samsung: i2s: Define the parameters list for
+ SAMSUNG_I2S_OPCLK
+Date: Wed, 07 Feb 2018 17:23:54 +0100
+Message-ID: <7f86ec02-2235-7622-9298-f6edd367edb2@samsung.com>
+References: <CGME20180205154520epcas1p4132421a187a4d767a2f75badfef5eec4@epcas1p4.samsung.com>
+        <20180205154403.13520-1-s.nawrocki@samsung.com>
+        <20180205154403.13520-5-s.nawrocki@samsung.com>
+        <CAJKOXPf-6wFDSPttdDbc34Y2hiuc=TG2j5bb+2uQeScxGuxjZg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36793 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754138AbeBGPwP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 10:52:15 -0500
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAJKOXPf-6wFDSPttdDbc34Y2hiuc=TG2j5bb+2uQeScxGuxjZg@mail.gmail.com>
+Content-language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com, linux-kernel@vger.kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In AES-ECB mode crypt is done with key only, so any use of IV
-can cause kernel Oops. Use IV only in AES-CBC and AES-CTR.
+On 02/06/2018 01:26 PM, Krzysztof Kozlowski wrote:
+> On Mon, Feb 5, 2018 at 4:43 PM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Reported-by: Anand Moon <linux.amoon@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-Cc: stable@vger.kernel.org # can be applied after commit 8f9702aad138
+>> diff --git a/sound/soc/samsung/i2s.h b/sound/soc/samsung/i2s.h
+>> index 79781de2f247..a9832a9555cb 100644
+>> --- a/sound/soc/samsung/i2s.h
+>> +++ b/sound/soc/samsung/i2s.h
+>> @@ -16,11 +16,16 @@
+>>  #define SAMSUNG_I2S_DAI        "samsung-i2s"
+>>  #define SAMSUNG_I2S_DAI_SEC    "samsung-i2s-sec"
+>>
+>> -#define SAMSUNG_I2S_DIV_BCLK   1
+>> +#define SAMSUNG_I2S_DIV_BCLK           1
+>>
+>> -#define SAMSUNG_I2S_RCLKSRC_0  0
+>> -#define SAMSUNG_I2S_RCLKSRC_1  1
+>> +#define SAMSUNG_I2S_RCLKSRC_0          0
+>> +#define SAMSUNG_I2S_RCLKSRC_1          1
+>>  #define SAMSUNG_I2S_CDCLK              2
+>> +/* Operation clock for IIS logic */
+>>  #define SAMSUNG_I2S_OPCLK              3
+>> +#define  SAMSUNG_I2S_OPCLK_CDCLK_OUT   0       /* CODEC clock out */
+>> +#define  SAMSUNG_I2S_OPCLK_CDCLK_IN    1       /* CODEC clock in */
+>> +#define  SAMSUNG_I2S_OPCLK_BCLK_OUT    2       /* Bit clock out */
+>> +#define  SAMSUNG_I2S_OPCLK_PCLK                3       /* Audio bus clock */
+>>
+>>  #endif /* __SND_SOC_SAMSUNG_I2S_H */
+> 
+> This part of patch seems to be unrelated (and it includes some cleanups).
 
----
-version 3:
-Change commit message: drop 'Fixes: 8f9702aad138' as the error was
-introduced earlier.
+This is actually the main part of the patch, an API exported to other
+drivers.  The whitespace changes are for keeping the alignment uniform,
+I could just drop them.
 
-version 2:
-Change commit message.
-
-Tested on Odroid XU4/HC1, kernel 4.15 with following command:
-
-fallocate -l 128MiB /tmp/test.bin
-dd if=/dev/urandom of=/tmp/testkey.key bs=128 count=1
-sync
-cryptsetup luksFormat --debug -q -d /tmp/testkey.key \
-  --cipher aes-cbc-essiv:sha256 -h sha256 -s 128 /tmp/test.bin
-
-The original report by Anand Moon:
-https://www.spinics.net/lists/linux-crypto/msg31180.html
-
-Oops reproduced with cryptsetup 2.0.0, kernel 4.15,
-in .config in crypto API ECB support was turned off, and s5p-sss AES driver on.
-
-cryptsetup is using aes-ecb and has req->info in aes_ctx set to 0x10,
-which caused Oops:
-
-[ 2078.683779] Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-[ 2078.689148] Modules linked in: algif_skcipher af_alg sd_mod sg
-evdev uas usb_storage scsi_mod gpio_keys fbtft(C) spidev spi_s3c64xx
-ipv6
-[ 2078.701377] CPU: 1 PID: 15 Comm: ksoftirqd/1 Tainted: G         C
-    4.15.0-rc9-xu4krck #1
-[ 2078.709861] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[ 2078.715932] PC is at memcpy+0x80/0x330
-[ 2078.719652] LR is at s5p_tasklet_cb+0x19c/0x328
-
-
- drivers/crypto/s5p-sss.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 142c6020cec7..5c0496d1ed41 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -1926,15 +1926,21 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
- 	uint32_t aes_control;
- 	unsigned long flags;
- 	int err;
-+	u8 *iv;
- 
- 	aes_control = SSS_AES_KEY_CHANGE_MODE;
- 	if (mode & FLAGS_AES_DECRYPT)
- 		aes_control |= SSS_AES_MODE_DECRYPT;
- 
--	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC)
-+	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC) {
- 		aes_control |= SSS_AES_CHAIN_MODE_CBC;
--	else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR)
-+		iv = req->info;
-+	} else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR) {
- 		aes_control |= SSS_AES_CHAIN_MODE_CTR;
-+		iv = req->info;
-+	} else {
-+		iv = NULL; /* AES_ECB */
-+	}
- 
- 	if (dev->ctx->keylen == AES_KEYSIZE_192)
- 		aes_control |= SSS_AES_KEY_SIZE_192;
-@@ -1965,7 +1971,7 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
- 		goto outdata_error;
- 
- 	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
--	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
-+	s5p_set_aes(dev, dev->ctx->aes_key, iv, dev->ctx->keylen);
- 
- 	s5p_set_dma_indata(dev,  dev->sg_src);
- 	s5p_set_dma_outdata(dev, dev->sg_dst);
 -- 
-2.16.0
+Regards,
+Sylwester
