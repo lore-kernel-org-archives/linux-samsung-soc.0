@@ -1,49 +1,57 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] drm/exynos: g2d: Delete an error message for a failed memory
- allocation in two functions
-Date: Thu, 8 Feb 2018 18:52:07 +0100
-Message-ID: <f1a7c103-fd17-3a61-61f7-570436e3c452@users.sourceforge.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 1/3] ARM: dts: exynos: Add I2S1 device node to
+ exynos5433.dtsi
+Date: Thu, 08 Feb 2018 19:44:06 +0100
+Message-ID: <20180208184408.24185-1-s.nawrocki@samsung.com>
+References: <CGME20180208184418epcas2p33540f1624c15227e9c4fccb60413eb59@epcas2p3.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:10589 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751094AbeBHSoV (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 8 Feb 2018 13:44:21 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: krzk@kernel.org
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpEYXRl
-OiBUaHUsIDggRmViIDIwMTggMTg6NDI6NTEgKzAxMDAKCk9taXQgYW4gZXh0cmEgbWVzc2FnZSBm
-b3IgYSBtZW1vcnkgYWxsb2NhdGlvbiBmYWlsdXJlIGluIHRoZXNlIGZ1bmN0aW9ucy4KClRoaXMg
-aXNzdWUgd2FzIGRldGVjdGVkIGJ5IHVzaW5nIHRoZSBDb2NjaW5lbGxlIHNvZnR3YXJlLgoKU2ln
-bmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0
-PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyB8IDYgKystLS0t
-CiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwppbmRleCAyYjhiZjJkZDYzODcuLjVlYjBk
-MzI5MjUyNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cy
-ZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwpAQCAtMjg2
-LDcgKzI4Niw2IEBAIHN0YXRpYyBpbnQgZzJkX2luaXRfY21kbGlzdChzdHJ1Y3QgZzJkX2RhdGEg
-KmcyZCkKIAogCW5vZGUgPSBrY2FsbG9jKEcyRF9DTURMSVNUX05VTSwgc2l6ZW9mKCpub2RlKSwg
-R0ZQX0tFUk5FTCk7CiAJaWYgKCFub2RlKSB7Ci0JCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGFs
-bG9jYXRlIG1lbW9yeVxuIik7CiAJCXJldCA9IC1FTk9NRU07CiAJCWdvdG8gZXJyOwogCX0KQEAg
-LTEzNTgsMTAgKzEzNTcsOSBAQCBpbnQgZXh5bm9zX2cyZF9leGVjX2lvY3RsKHN0cnVjdCBkcm1f
-ZGV2aWNlICpkcm1fZGV2LCB2b2lkICpkYXRhLAogCQlyZXR1cm4gLUVGQVVMVDsKIAogCXJ1bnF1
-ZXVlX25vZGUgPSBrbWVtX2NhY2hlX2FsbG9jKGcyZC0+cnVucXVldWVfc2xhYiwgR0ZQX0tFUk5F
-TCk7Ci0JaWYgKCFydW5xdWV1ZV9ub2RlKSB7Ci0JCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGFs
-bG9jYXRlIG1lbW9yeVxuIik7CisJaWYgKCFydW5xdWV1ZV9ub2RlKQogCQlyZXR1cm4gLUVOT01F
-TTsKLQl9CisKIAlydW5fY21kbGlzdCA9ICZydW5xdWV1ZV9ub2RlLT5ydW5fY21kbGlzdDsKIAll
-dmVudF9saXN0ID0gJnJ1bnF1ZXVlX25vZGUtPmV2ZW50X2xpc3Q7CiAJSU5JVF9MSVNUX0hFQUQo
-cnVuX2NtZGxpc3QpOwotLSAKMi4xNi4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+Add DT node for the second I2S controller available
+on Exynos 5433 SoC.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 62f276970174..3845a8de7a42 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1311,6 +1311,25 @@
+ 			status = "disabled";
+ 		};
+ 
++		i2s1: i2s@14d60000 {
++			compatible = "samsung,exynos7-i2s";
++			reg = <0x14d60000 0x100>;
++			dmas = <&pdma0 31 &pdma0 30>;
++			dma-names = "tx", "rx";
++			interrupts = <GIC_SPI 435 IRQ_TYPE_NONE>;
++			clocks = <&cmu_peric CLK_PCLK_I2S1>,
++				 <&cmu_peric CLK_PCLK_I2S1>,
++				 <&cmu_peric CLK_SCLK_I2S1>;
++			clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
++			#clock-cells = <1>;
++			samsung,supports-6ch;
++			samsung,supports-rstclr;
++			samsung,supports-tdm;
++			samsung,supports-low-rfs;
++			#sound-dai-cells = <1>;
++			status = "disabled";
++		};
++
+ 		pwm: pwm@14dd0000 {
+ 			compatible = "samsung,exynos4210-pwm";
+ 			reg = <0x14dd0000 0x100>;
+-- 
+2.14.2
