@@ -1,164 +1,86 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH v2 1/5] dt-bindings: add bindings for USB physical
- connector
-Date: Wed, 7 Feb 2018 15:43:38 -0600
-Message-ID: <20180207214338.7n2somaul2msgf2a@rob-hp-laptop>
-References: <20180131134435.12216-1-a.hajda@samsung.com>
- <CGME20180131134457eucas1p128394aef86e0d76cfc6ccb72ee22d4b1@eucas1p1.samsung.com>
- <20180131134435.12216-2-a.hajda@samsung.com>
- <20180205060836.pybxzt5e2kdu2wew@rob-hp-laptop>
- <a9745020-602b-8274-e2d6-63295f5b3caa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <a9745020-602b-8274-e2d6-63295f5b3caa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Simon Shields <simon@lineageos.org>
+Subject: [PATCH v5 0/4] Add Exynos4412-based midas boards support
+Date: Thu,  8 Feb 2018 11:01:33 +1100
+Message-ID: <20180208000137.11264-1-simon@lineageos.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:44891 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750767AbeBHACH (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 7 Feb 2018 19:02:07 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?q?Bart=C5=82omiej=20=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Simon Shields <simon@lineageos.org>
 
-On Mon, Feb 05, 2018 at 10:06:35AM +0100, Andrzej Hajda wrote:
-> On 05.02.2018 07:08, Rob Herring wrote:
-> > On Wed, Jan 31, 2018 at 02:44:31PM +0100, Andrzej Hajda wrote:
-> >> These bindings allow to describe most known standard USB connectors
-> >> and it should be possible to extend it if necessary.
-> >> USB connectors, beside USB can be used to route other protocols,
-> >> for example UART, Audio, MHL. In such case every device passing data
-> >> through the connector should have appropriate graph bindings.
-> >>
-> >> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> ---
-> >> v2:
-> >> - moved connector type(A,B,C) to compatible string (Rob),
-> >> - renamed size property to type (Rob),
-> >> - changed type description to be less confusing (Laurent),
-> >> - removed vendor specific compatibles (implied by graph port number),
-> > How so? More below...
-> >
-> >> - added requirement of connector being a child of IC (Rob),
-> >> - removed max-mode (subtly suggested by Rob, it should be detected anyway
-> >>   by USB Controller in runtime, downside is that device is not able to
-> >>   report its real capabilities, maybe better would be to make it optional(?)),
-> >> - assigned port numbers to data buses (Rob).
-> >>
-> >> Regards
-> >> Andrzej
-> >>
-> >> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> ---
-> >>  .../bindings/connector/usb-connector.txt           | 48 ++++++++++++++++++++++
-> >>  1 file changed, 48 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> >> new file mode 100644
-> >> index 000000000000..02020f5d760a
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> >> @@ -0,0 +1,48 @@
-> >> +USB Connector
-> >> +=============
-> >> +
-> >> +USB connector node represents physical USB connector. It should be
-> >> +a child of USB interface controller.
-> >> +
-> >> +Required properties:
-> >> +- compatible: describes type of the connector, must be one of:
-> >> +    "usb-a-connector", "usb-b-connector", "usb-c-connector",
-> > Nit: one per line.
-> >
-> >> +
-> >> +Optional properties:
-> >> +- label: symbolic name for the connector
-> >> +- type: size of the connector, should be specified in case of USB-A, USB-B
-> >> +  non-standard (large) connector sizes: "mini", "micro"
-> >> +
-> >> +Required nodes:
-> >> +- any data bus to the connector should be modeled using the OF graph bindings
-> >> +  specified in bindings/graph.txt, unless the bus is between parent node and
-> >> +  the connector. Since single connector can have multpile data buses every bus
-> >> +  has assigned OF graph port number as follows:
-> >> +    0: High Speed (HS), present in all connectors,
-> >> +    1: Super Speed (SS), present in SS capable connectors,
-> >> +    2: Sideband use (SBU), present in USB-C,
-> >> +    3: Mobile High-Definition Link (MHL), present in 11-pin Samsung micro-USB
-> > This is un-muxed unlike Type-C where the signals are muxed with USB SS. 
-> > That makes me think the Samsung connector should have its own compatible 
-> > string.
-> 
-> Do you mean, sth like:
->     connector {
->             compatible = "samsung,usb-connector-11pin";
->             label = "micro-USB";
->             ports {
->                     #address-cells = <1>;
->                     #size-cells = <0>;
-> 
->                     port@3 {
->                             reg = <3>;
->                             musb_con_mhl_in: endpoint {
->                                     remote-endpoint = <&mhl_out>;
->                             };
->                     };
->     };
+Hi,
 
-Yes, basically.
+This patch series adds support for a new set of boards, codenamed
+"midas". These are the Galaxy S3 (GT-I9300/GT-I9305)
+and the Galaxy Note 2 (GT-N7100/GT-N7105).
 
-> 
-> Or should I add "usb-b-connector" extra compatible and "type" property?
+These boards are closely related to trats2 - i9300 is a trats2 but with a
+bootloader geared towards booting Android rather than a traditional Linux
+distribution - and because of this, the dts files are largely based off
+what is already in-place for trats2. Trats2 is modified to use
+the dts files added by this series.
 
-type would be micro? I think type and "usb-b-connector" are fine if this 
-is a superset like a USB3 SS micro connector.
+Patch #1 adds documentation for the bindings used by the boards.
+Patch #2 splits the existing trats2 DTS into the common midas,
+i9300/i9305/trats2-specific, and trats2-specific parts.
+Patch #3 adds the device-tree files for the other boards.
+Patch #4 enables cpuidle support for all added boards.
 
-> I slightly prefer my approach(less different bindings), but I am also OK
-> with the above.
+Changes since v1:
+* Include trats2 in inheritance
+* Add the new dtbs to the makefile
+* Cleanup style per Krzysztof's comments
 
-How do you know it is a Samsung connector then? Just because you have 
-port 3? I think it is better to be explicit.
+Changes since v2:
+* Rebase on linux-next 20171218 (adds some fixes yet to land in mainline)
+* Leave any changes to the DTS out of patch #2
+* Minimise diff of exynos4412-midas.dtsi, using format-patch -B30%
+  (thanks for the suggestion, Krzysztof)
+* Leave original trats2 copyrights on midas and galaxy-s3 DTS files
+* Preserve ABI for the cpuidle compatibility check
+* Explain the m0/m3/t0 -> GT-I9300/GT-I9305/GT-N7100/GT-N7105 relationship
+ in the DT binding docs.
 
-> 
-> >
-> > Can we go ahead and define the video modes of Type-C? Normally, if 2 
-> > data streams are mutually exclusive, then they are a single port with 2 
-> > endpoints. So we'd either have 2 endpoints on port 1 or we stick with 
-> > port 3 is always video. We can still know what is mutually exclusive 
-> > based on the compatible. 
-> 
-> I am sorry, I do not understand what you mean. Port 3 is present only in
-> 11-pin Samsung micro-USB, USB Type-C has only ports 0, 1, 2.
+Changes since v3:
+* Abandon the m0/m3/t0 terminology in favour of model numbers (m0 =>
+ i9300, m3 => i9305, t0 => n710x)
+* Use SPDX on all files, and keep Samsung copyrights where needed
+* Clean up unnecessary disables of devicetree nodes
+* Correct s5c73m3 vdda regulator for n710x
 
-So video on Type C would be on port 1 (SS), endpoint ? ? That's not 
-defined in the binding and I want to define it.
+Changes since v4:
+* Remove unneeded status = "okay" lines in regulator definitions
 
-> Here is list of possible ports depending on connector type:
-> - USB 2.0: HS
-> - 11-pin Samsung micro-USB: HS,MHL
-> - USB 3.x type A,B: HS,SS
-> - USB-C: HS,SS,SBU
-> 
-> All ports have separate lines, so they can work simultaneously.
-> 
-> And regarding MHL on standard micro-USB connector. MHL and MUIC will
-> share HS port, but there will be mux somewhere before connector:
+Cheers,
+Simon
 
-That's another case I hadn't considered. I was mainly thinking just how 
-to handle Type C.
+Simon Shields (4):
+  dt-bindings: samsung: document bindings for Midas family boards
+  ARM: dts: split trats2 DTS in preparation for midas boards
+  ARM: dts: add Samsung's exynos4412-based midas boards
+  ARM: exynos: extend cpuidle support to midas boards
 
-> - in MUIC, in this case MUIC will be the parent of the connector, and
-> there will be graph from MHL to MUIC to describe MHL link,
-> - in MHL, in this case MHL will be the parent of the connector, and
-> graph between MUIC and MHL to describe HS link,
-> - dedicated mux to MUIC and MHL, controlled by gpio pin, it could be
-> handled by MUIC's external-mux gpio property for example, or (probably)
-> less hacky by separate node for mux,
-> or as additional property in the connector (who should be the parent of
-> the connector then? Probably MUIC?).
-> 
-> Regards
-> Andrzej
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ .../bindings/arm/samsung/samsung-boards.txt        |    4 +
+ arch/arm/boot/dts/Makefile                         |    3 +
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi        |  140 ++
+ arch/arm/boot/dts/exynos4412-i9300.dts             |   22 +
+ arch/arm/boot/dts/exynos4412-i9305.dts             |   20 +
+ ...exynos4412-trats2.dts => exynos4412-midas.dtsi} |  119 +-
+ arch/arm/boot/dts/exynos4412-n710x.dts             |   57 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            | 1441 +-------------------
+ arch/arm/mach-exynos/exynos.c                      |    3 +-
+ 9 files changed, 281 insertions(+), 1528 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4412-i9300.dts
+ create mode 100644 arch/arm/boot/dts/exynos4412-i9305.dts
+ copy arch/arm/boot/dts/{exynos4412-trats2.dts => exynos4412-midas.dtsi} (91%)
+ create mode 100644 arch/arm/boot/dts/exynos4412-n710x.dts
+ rewrite arch/arm/boot/dts/exynos4412-trats2.dts (98%)
+
+-- 
+2.16.0
