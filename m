@@ -1,141 +1,159 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 3/3] ARM: dts: exynos: Add support for HDMI audio on
- exynos5433-tm2
-Date: Thu, 08 Feb 2018 19:44:08 +0100
-Message-ID: <20180208184408.24185-3-s.nawrocki@samsung.com>
-References: <20180208184408.24185-1-s.nawrocki@samsung.com>
-        <CGME20180208184446epcas2p2a5a59112f29b97dad9deb820699eb741@epcas2p2.samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH v2 1/5] dt-bindings: add bindings for USB physical
+ connector
+Date: Thu, 8 Feb 2018 14:04:15 -0600
+Message-ID: <20180208200415.fargr6l33ge7ap22@rob-hp-laptop>
+References: <20180131134435.12216-1-a.hajda@samsung.com>
+ <CGME20180131134457eucas1p128394aef86e0d76cfc6ccb72ee22d4b1@eucas1p1.samsung.com>
+ <20180131134435.12216-2-a.hajda@samsung.com>
+ <20180205060836.pybxzt5e2kdu2wew@rob-hp-laptop>
+ <a9745020-602b-8274-e2d6-63295f5b3caa@samsung.com>
+ <20180207214338.7n2somaul2msgf2a@rob-hp-laptop>
+ <0810d6fc-dd82-dda8-8c35-d37e8a346599@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30043 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeBHSos (ORCPT
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42860 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752056AbeBHUES (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:44:48 -0500
-In-reply-to: <20180208184408.24185-1-s.nawrocki@samsung.com>
+        Thu, 8 Feb 2018 15:04:18 -0500
+Content-Disposition: inline
+In-Reply-To: <0810d6fc-dd82-dda8-8c35-d37e8a346599@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: krzk@kernel.org
-Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 
-This patch updates the sound node of the exynos5433-tm2 board
-and adds clock tree configuration in order to support HDMI sound.
+On Thu, Feb 08, 2018 at 10:27:54AM +0100, Andrzej Hajda wrote:
+> On 07.02.2018 22:43, Rob Herring wrote:
+> > On Mon, Feb 05, 2018 at 10:06:35AM +0100, Andrzej Hajda wrote:
+> >> On 05.02.2018 07:08, Rob Herring wrote:
+> >>> On Wed, Jan 31, 2018 at 02:44:31PM +0100, Andrzej Hajda wrote:
+> >>>> These bindings allow to describe most known standard USB connectors
+> >>>> and it should be possible to extend it if necessary.
+> >>>> USB connectors, beside USB can be used to route other protocols,
+> >>>> for example UART, Audio, MHL. In such case every device passing data
+> >>>> through the connector should have appropriate graph bindings.
+> >>>>
+> >>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> >>>> ---
+> >>>> v2:
+> >>>> - moved connector type(A,B,C) to compatible string (Rob),
+> >>>> - renamed size property to type (Rob),
+> >>>> - changed type description to be less confusing (Laurent),
+> >>>> - removed vendor specific compatibles (implied by graph port number),
+> >>> How so? More below...
+> >>>
+> >>>> - added requirement of connector being a child of IC (Rob),
+> >>>> - removed max-mode (subtly suggested by Rob, it should be detected anyway
+> >>>>   by USB Controller in runtime, downside is that device is not able to
+> >>>>   report its real capabilities, maybe better would be to make it optional(?)),
+> >>>> - assigned port numbers to data buses (Rob).
+> >>>>
+> >>>> Regards
+> >>>> Andrzej
+> >>>>
+> >>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> >>>> ---
+> >>>>  .../bindings/connector/usb-connector.txt           | 48 ++++++++++++++++++++++
+> >>>>  1 file changed, 48 insertions(+)
+> >>>>  create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
+> >>>> new file mode 100644
+> >>>> index 000000000000..02020f5d760a
+> >>>> --- /dev/null
+> >>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
+> >>>> @@ -0,0 +1,48 @@
+> >>>> +USB Connector
+> >>>> +=============
+> >>>> +
+> >>>> +USB connector node represents physical USB connector. It should be
+> >>>> +a child of USB interface controller.
+> >>>> +
+> >>>> +Required properties:
+> >>>> +- compatible: describes type of the connector, must be one of:
+> >>>> +    "usb-a-connector", "usb-b-connector", "usb-c-connector",
+> >>> Nit: one per line.
+> >>>
+> >>>> +
+> >>>> +Optional properties:
+> >>>> +- label: symbolic name for the connector
+> >>>> +- type: size of the connector, should be specified in case of USB-A, USB-B
+> >>>> +  non-standard (large) connector sizes: "mini", "micro"
+> >>>> +
+> >>>> +Required nodes:
+> >>>> +- any data bus to the connector should be modeled using the OF graph bindings
+> >>>> +  specified in bindings/graph.txt, unless the bus is between parent node and
+> >>>> +  the connector. Since single connector can have multpile data buses every bus
+> >>>> +  has assigned OF graph port number as follows:
+> >>>> +    0: High Speed (HS), present in all connectors,
+> >>>> +    1: Super Speed (SS), present in SS capable connectors,
+> >>>> +    2: Sideband use (SBU), present in USB-C,
+> >>>> +    3: Mobile High-Definition Link (MHL), present in 11-pin Samsung micro-USB
+> >>> This is un-muxed unlike Type-C where the signals are muxed with USB SS. 
+> >>> That makes me think the Samsung connector should have its own compatible 
+> >>> string.
+> >> Do you mean, sth like:
+> >>     connector {
+> >>             compatible = "samsung,usb-connector-11pin";
+> >>             label = "micro-USB";
+> >>             ports {
+> >>                     #address-cells = <1>;
+> >>                     #size-cells = <0>;
+> >>
+> >>                     port@3 {
+> >>                             reg = <3>;
+> >>                             musb_con_mhl_in: endpoint {
+> >>                                     remote-endpoint = <&mhl_out>;
+> >>                             };
+> >>                     };
+> >>     };
+> > Yes, basically.
+> >
+> >> Or should I add "usb-b-connector" extra compatible and "type" property?
+> > type would be micro? I think type and "usb-b-connector" are fine if this 
+> > is a superset like a USB3 SS micro connector.
+> >
+> >> I slightly prefer my approach(less different bindings), but I am also OK
+> >> with the above.
+> > How do you know it is a Samsung connector then? Just because you have 
+> > port 3? I think it is better to be explicit.
+> 
+> OK.
+> 
+> >
+> >>> Can we go ahead and define the video modes of Type-C? Normally, if 2 
+> >>> data streams are mutually exclusive, then they are a single port with 2 
+> >>> endpoints. So we'd either have 2 endpoints on port 1 or we stick with 
+> >>> port 3 is always video. We can still know what is mutually exclusive 
+> >>> based on the compatible. 
+> >> I am sorry, I do not understand what you mean. Port 3 is present only in
+> >> 11-pin Samsung micro-USB, USB Type-C has only ports 0, 1, 2.
+> > So video on Type C would be on port 1 (SS), endpoint ? ? That's not 
+> > defined in the binding and I want to define it.
+> 
+> USB type C does not have dedicated video lines, it has only: HS, SS, SBU
+> (and optionally CC) data lines[1] and in my RFC I have modeled data
+> lines as graph ports. If USB-C interface controller supports alternate
+> mode (currently there are specs for DisplayPort, HDMI, MHL alternate
+> modes, but there can be more), SS lines can be used to transmit video
+> data (or any other type of data defined by alternate mode), but it means
+> there will be SS mux somewhere before connector, for muxing USB-SS and
+> alternate lines. So yes, video will be at port 1, but this is still port
+> for SS lines:
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since v1:
- - dropped unnecessary assigned-clock* properties for AUD PLL
-   in cmu_top node,
- - changed default AUD PLL frequency so it is withing recommended
-   252...400 MHz range.
----
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 60 ++++++++++++++++++++--
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  1 +
- 2 files changed, 57 insertions(+), 4 deletions(-)
+Yes, I know all this.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index a77462da4a36..5599f1941c64 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/sound/samsung-i2s.h>
- 
- / {
- 	aliases {
-@@ -112,8 +113,8 @@
- 
- 	sound {
- 		compatible = "samsung,tm2-audio";
--		audio-codec = <&wm5110>;
--		i2s-controller = <&i2s0>;
-+		audio-codec = <&wm5110>, <&hdmi>;
-+		i2s-controller = <&i2s0 0>, <&i2s1 0>;
- 		audio-amplifier = <&max98504>;
- 		mic-bias-gpios = <&gpr3 2 GPIO_ACTIVE_HIGH>;
- 		model = "wm5110";
-@@ -216,9 +217,56 @@
- 	status = "okay";
- };
- 
-+#define TM2_DEF_AUD_PLL_RATE	393216003U
-+
- &cmu_aud {
--	assigned-clocks = <&cmu_aud CLK_MOUT_AUD_PLL_USER>;
--	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
-+	assigned-clocks = <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
-+		<&cmu_aud CLK_MOUT_SCLK_AUD_I2S>,
-+		<&cmu_aud CLK_MOUT_SCLK_AUD_PCM>,
-+		<&cmu_top CLK_MOUT_AUD_PLL>,
-+		<&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
-+		<&cmu_top CLK_MOUT_SCLK_AUDIO0>,
-+		<&cmu_top CLK_MOUT_SCLK_AUDIO1>,
-+		<&cmu_top CLK_MOUT_SCLK_SPDIF>,
-+
-+		<&cmu_aud CLK_DIV_AUD_CA5>,
-+		<&cmu_aud CLK_DIV_ACLK_AUD>,
-+		<&cmu_aud CLK_DIV_PCLK_DBG_AUD>,
-+		<&cmu_aud CLK_DIV_SCLK_AUD_I2S>,
-+		<&cmu_aud CLK_DIV_SCLK_AUD_PCM>,
-+		<&cmu_aud CLK_DIV_SCLK_AUD_SLIMBUS>,
-+		<&cmu_aud CLK_DIV_SCLK_AUD_UART>,
-+		<&cmu_top CLK_DIV_SCLK_AUDIO0>,
-+		<&cmu_top CLK_DIV_SCLK_AUDIO1>,
-+		<&cmu_top CLK_DIV_SCLK_PCM1>,
-+		<&cmu_top CLK_DIV_SCLK_I2S1>;
-+
-+	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>,
-+		<&cmu_aud CLK_MOUT_AUD_PLL_USER>,
-+		<&cmu_aud CLK_MOUT_AUD_PLL_USER>,
-+		<&cmu_top CLK_FOUT_AUD_PLL>,
-+		<&cmu_top CLK_MOUT_AUD_PLL>,
-+		<&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
-+		<&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
-+		<&cmu_top CLK_SCLK_AUDIO0>;
-+
-+	assigned-clock-rates = <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
-+		<((TM2_DEF_AUD_PLL_RATE / 2) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 6) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 12) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 8) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 192) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 16) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 2) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 16) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 4) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 192) + 1)>,
-+		<((TM2_DEF_AUD_PLL_RATE / 8) + 1)>;
-+};
-+
-+&i2s1 {
-+	assigned-clocks = <&i2s1 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&cmu_peric CLK_SCLK_I2S1>;
- };
- 
- &cmu_fsys {
-@@ -838,6 +886,10 @@
- 	status = "okay";
- };
- 
-+&i2s1 {
-+	status = "okay";
-+};
-+
- &mshc_0 {
- 	status = "okay";
- 	mmc-hs200-1_8v;
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 2b73bd86bc56..c0231d077fa6 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -969,6 +969,7 @@
- 			ddc = <&hsi2c_11>;
- 			samsung,syscon-phandle = <&pmu_system_controller>;
- 			samsung,sysreg-phandle = <&syscon_disp>;
-+			#sound-dai-cells = <0>;
- 			status = "disabled";
- 		};
- 
--- 
-2.14.2
+> 
+> USB3 --> MUX --> CONNECTOR
+> DP -------^
+> 
+> I do not see why we would need separate video port.
+
+Yes, agreed. I just want to define how we are supporting it. Otherwise, 
+someone may just think video is on port 3 for Type C too. 
+
+Rob
