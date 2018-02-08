@@ -1,165 +1,185 @@
-From: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
-Subject: [PATCH v5 3/4] ARM: dts: add Samsung's exynos4412-based midas boards
-Date: Thu,  8 Feb 2018 11:01:36 +1100
-Message-ID: <20180208000137.11264-4-simon@lineageos.org>
-References: <20180208000137.11264-1-simon@lineageos.org>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC PATCH v2 1/5] dt-bindings: add bindings for USB physical
+ connector
+Date: Thu, 08 Feb 2018 10:27:54 +0100
+Message-ID: <0810d6fc-dd82-dda8-8c35-d37e8a346599@samsung.com>
+References: <20180131134435.12216-1-a.hajda@samsung.com>
+        <CGME20180131134457eucas1p128394aef86e0d76cfc6ccb72ee22d4b1@eucas1p1.samsung.com>
+        <20180131134435.12216-2-a.hajda@samsung.com>
+        <20180205060836.pybxzt5e2kdu2wew@rob-hp-laptop>
+        <a9745020-602b-8274-e2d6-63295f5b3caa@samsung.com>
+        <20180207214338.7n2somaul2msgf2a@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180208000137.11264-1-simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
+In-reply-to: <20180207214338.7n2somaul2msgf2a@rob-hp-laptop>
+Content-language: en-US
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?q?Bart=C5=82omiej=20=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-"midas" is the codename for a family of smartphones released by Samsung
-Mobile. It includes the Galaxy S3 (GT-I9300/I9305) and the Galaxy
-Note 2 (GT-N7100/N7105). The boards largely have the same peripherals:
-the main differences are touchscreen, display panel and cellular modem.
+On 07.02.2018 22:43, Rob Herring wrote:
+> On Mon, Feb 05, 2018 at 10:06:35AM +0100, Andrzej Hajda wrote:
+>> On 05.02.2018 07:08, Rob Herring wrote:
+>>> On Wed, Jan 31, 2018 at 02:44:31PM +0100, Andrzej Hajda wrote:
+>>>> These bindings allow to describe most known standard USB connectors
+>>>> and it should be possible to extend it if necessary.
+>>>> USB connectors, beside USB can be used to route other protocols,
+>>>> for example UART, Audio, MHL. In such case every device passing data
+>>>> through the connector should have appropriate graph bindings.
+>>>>
+>>>> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>> ---
+>>>> v2:
+>>>> - moved connector type(A,B,C) to compatible string (Rob),
+>>>> - renamed size property to type (Rob),
+>>>> - changed type description to be less confusing (Laurent),
+>>>> - removed vendor specific compatibles (implied by graph port number),
+>>> How so? More below...
+>>>
+>>>> - added requirement of connector being a child of IC (Rob),
+>>>> - removed max-mode (subtly suggested by Rob, it should be detected anyway
+>>>>   by USB Controller in runtime, downside is that device is not able to
+>>>>   report its real capabilities, maybe better would be to make it optional(?)),
+>>>> - assigned port numbers to data buses (Rob).
+>>>>
+>>>> Regards
+>>>> Andrzej
+>>>>
+>>>> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>> ---
+>>>>  .../bindings/connector/usb-connector.txt           | 48 ++++++++++++++++++++++
+>>>>  1 file changed, 48 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
+>>>> new file mode 100644
+>>>> index 000000000000..02020f5d760a
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
+>>>> @@ -0,0 +1,48 @@
+>>>> +USB Connector
+>>>> +=============
+>>>> +
+>>>> +USB connector node represents physical USB connector. It should be
+>>>> +a child of USB interface controller.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible: describes type of the connector, must be one of:
+>>>> +    "usb-a-connector", "usb-b-connector", "usb-c-connector",
+>>> Nit: one per line.
+>>>
+>>>> +
+>>>> +Optional properties:
+>>>> +- label: symbolic name for the connector
+>>>> +- type: size of the connector, should be specified in case of USB-A, USB-B
+>>>> +  non-standard (large) connector sizes: "mini", "micro"
+>>>> +
+>>>> +Required nodes:
+>>>> +- any data bus to the connector should be modeled using the OF graph bindings
+>>>> +  specified in bindings/graph.txt, unless the bus is between parent node and
+>>>> +  the connector. Since single connector can have multpile data buses every bus
+>>>> +  has assigned OF graph port number as follows:
+>>>> +    0: High Speed (HS), present in all connectors,
+>>>> +    1: Super Speed (SS), present in SS capable connectors,
+>>>> +    2: Sideband use (SBU), present in USB-C,
+>>>> +    3: Mobile High-Definition Link (MHL), present in 11-pin Samsung micro-USB
+>>> This is un-muxed unlike Type-C where the signals are muxed with USB SS. 
+>>> That makes me think the Samsung connector should have its own compatible 
+>>> string.
+>> Do you mean, sth like:
+>>     connector {
+>>             compatible = "samsung,usb-connector-11pin";
+>>             label = "micro-USB";
+>>             ports {
+>>                     #address-cells = <1>;
+>>                     #size-cells = <0>;
+>>
+>>                     port@3 {
+>>                             reg = <3>;
+>>                             musb_con_mhl_in: endpoint {
+>>                                     remote-endpoint = <&mhl_out>;
+>>                             };
+>>                     };
+>>     };
+> Yes, basically.
+>
+>> Or should I add "usb-b-connector" extra compatible and "type" property?
+> type would be micro? I think type and "usb-b-connector" are fine if this 
+> is a superset like a USB3 SS micro connector.
+>
+>> I slightly prefer my approach(less different bindings), but I am also OK
+>> with the above.
+> How do you know it is a Samsung connector then? Just because you have 
+> port 3? I think it is better to be explicit.
 
-Signed-off-by: Simon Shields <simon-WP75azK+jQYgsBAKwltoeQ@public.gmane.org>
----
- arch/arm/boot/dts/Makefile             |  3 ++
- arch/arm/boot/dts/exynos4412-i9300.dts | 22 +++++++++++++
- arch/arm/boot/dts/exynos4412-i9305.dts | 20 ++++++++++++
- arch/arm/boot/dts/exynos4412-n710x.dts | 57 ++++++++++++++++++++++++++++++++++
- 4 files changed, 102 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos4412-i9300.dts
- create mode 100644 arch/arm/boot/dts/exynos4412-i9305.dts
- create mode 100644 arch/arm/boot/dts/exynos4412-n710x.dts
+OK.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 66e28af289da..955ef9df1b6b 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -163,7 +163,10 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
- 	exynos4210-smdkv310.dtb \
- 	exynos4210-trats.dtb \
- 	exynos4210-universal_c210.dtb \
-+	exynos4412-i9300.dtb \
-+	exynos4412-i9305.dtb \
- 	exynos4412-itop-elite.dtb \
-+	exynos4412-n710x.dtb \
- 	exynos4412-odroidu3.dtb \
- 	exynos4412-odroidx.dtb \
- 	exynos4412-odroidx2.dtb \
-diff --git a/arch/arm/boot/dts/exynos4412-i9300.dts b/arch/arm/boot/dts/exynos4412-i9300.dts
-new file mode 100644
-index 000000000000..f8125a945f8d
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4412-i9300.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Samsung's Exynos4412 based M0 (GT-I9300) board device tree source
-+ *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ */
-+
-+/dts-v1/;
-+#include "exynos4412-galaxy-s3.dtsi"
-+
-+/ {
-+	model = "Samsung Galaxy S3 (GT-I9300) based on Exynos4412";
-+	compatible = "samsung,i9300", "samsung,midas", "samsung,exynos4412", "samsung,exynos4";
-+
-+	/* bootargs are passed in by bootloader */
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg =  <0x40000000 0x40000000>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/exynos4412-i9305.dts b/arch/arm/boot/dts/exynos4412-i9305.dts
-new file mode 100644
-index 000000000000..54a2a55dbf70
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4412-i9305.dts
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+#include "exynos4412-galaxy-s3.dtsi"
-+
-+/ {
-+	model = "Samsung Galaxy S3 (GT-I9305) based on Exynos4412";
-+	compatible = "samsung,i9305", "samsung,midas", "samsung,exynos4412", "samsung,exynos4";
-+
-+	/* bootargs are passed in by bootloader */
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg =  <0x40000000 0x80000000>;
-+	};
-+};
-+
-+&i2c0_bus {
-+	/* SCL and SDA pins are swapped */
-+	samsung,pins = "gpd1-1", "gpd1-0";
-+};
-diff --git a/arch/arm/boot/dts/exynos4412-n710x.dts b/arch/arm/boot/dts/exynos4412-n710x.dts
-new file mode 100644
-index 000000000000..7d289c257920
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4412-n710x.dts
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+#include "exynos4412-midas.dtsi"
-+
-+/ {
-+	compatible = "samsung,n710x", "samsung,midas", "samsung,exynos4412", "samsung,exynos4";
-+	model = "Samsung Galaxy Note 2 (GT-N7100, GT-N7105) based on Exynos4412";
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg =  <0x40000000 0x80000000>;
-+	};
-+
-+	/* bootargs are passed in by bootloader */
-+
-+	regulators {
-+		cam_vdda_reg: voltage-regulator-9 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "CAM_SENSOR_CORE_1.2V";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			gpio = <&gpm4 1 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+		};
-+	};
-+};
-+
-+&buck9_reg {
-+	maxim,ena-gpios = <&gpm1 0 GPIO_ACTIVE_HIGH>;
-+};
-+
-+&cam_af_reg {
-+	gpio = <&gpm1 1 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
-+
-+&cam_io_reg {
-+	gpio = <&gpm0 7 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
-+
-+&ldo13_reg {
-+	regulator-name = "VCC_1.8V_LCD";
-+	regulator-always-on;
-+};
-+
-+&ldo25_reg {
-+	regulator-name = "VCI_3.0V_LCD";
-+	regulator-min-microvolt = <3000000>;
-+	regulator-max-microvolt = <3000000>;
-+};
-+
-+&s5c73m3 {
-+	standby-gpios = <&gpm0 6 GPIO_ACTIVE_LOW>;   /* ISP_STANDBY */
-+	vdda-supply = <&cam_vdda_reg>;
-+	status = "okay";
-+};
--- 
-2.16.0
+>
+>>> Can we go ahead and define the video modes of Type-C? Normally, if 2 
+>>> data streams are mutually exclusive, then they are a single port with 2 
+>>> endpoints. So we'd either have 2 endpoints on port 1 or we stick with 
+>>> port 3 is always video. We can still know what is mutually exclusive 
+>>> based on the compatible. 
+>> I am sorry, I do not understand what you mean. Port 3 is present only in
+>> 11-pin Samsung micro-USB, USB Type-C has only ports 0, 1, 2.
+> So video on Type C would be on port 1 (SS), endpoint ? ? That's not 
+> defined in the binding and I want to define it.
+
+USB type C does not have dedicated video lines, it has only: HS, SS, SBU
+(and optionally CC) data lines[1] and in my RFC I have modeled data
+lines as graph ports. If USB-C interface controller supports alternate
+mode (currently there are specs for DisplayPort, HDMI, MHL alternate
+modes, but there can be more), SS lines can be used to transmit video
+data (or any other type of data defined by alternate mode), but it means
+there will be SS mux somewhere before connector, for muxing USB-SS and
+alternate lines. So yes, video will be at port 1, but this is still port
+for SS lines:
+
+USB3 --> MUX --> CONNECTOR
+DP -------^
+
+I do not see why we would need separate video port.
+
+[1]: https://en.wikipedia.org/wiki/USB-C#Cable_wiring
+
+Regards
+Andrzej
+
+>> Here is list of possible ports depending on connector type:
+>> - USB 2.0: HS
+>> - 11-pin Samsung micro-USB: HS,MHL
+>> - USB 3.x type A,B: HS,SS
+>> - USB-C: HS,SS,SBU
+>>
+>> All ports have separate lines, so they can work simultaneously.
+>>
+>> And regarding MHL on standard micro-USB connector. MHL and MUIC will
+>> share HS port, but there will be mux somewhere before connector:
+> That's another case I hadn't considered. I was mainly thinking just how 
+> to handle Type C.
+>
+>> - in MUIC, in this case MUIC will be the parent of the connector, and
+>> there will be graph from MHL to MUIC to describe MHL link,
+>> - in MHL, in this case MHL will be the parent of the connector, and
+>> graph between MUIC and MHL to describe HS link,
+>> - dedicated mux to MUIC and MHL, controlled by gpio pin, it could be
+>> handled by MUIC's external-mux gpio property for example, or (probably)
+>> less hacky by separate node for mux,
+>> or as additional property in the connector (who should be the parent of
+>> the connector then? Probably MUIC?).
+>>
+>> Regards
+>> Andrzej
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
