@@ -1,74 +1,73 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 0/4] ARM/arm64: exynos: Fix missing missing reg
- warning for syscon restart nodes
-Date: Thu, 08 Feb 2018 14:46:32 +0100
-Message-ID: <4642d2d0-61c9-33b6-0289-76f487aa45ab@samsung.com>
-References: <CGME20180130211855epcas1p25cce42a195d8b407f4267309f9b5ccb9@epcas1p2.samsung.com>
-        <20180130211819.17139-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20180130211819.17139-1-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Content-language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: samsung: Add the DT binding files entry to MAINTAINERS" to the asoc tree
+Date: Thu, 08 Feb 2018 15:41:33 +0000
+Message-ID: <E1ejoKL-0008Sx-2L@debutante>
+References: <20180205170500.8992-1-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34968 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeBHPlg (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:41:36 -0500
+In-Reply-To: <20180205170500.8992-1-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com, lgirdwood@gmail.comkrzk@kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
 
-Hi Krzysztof,
+The patch
 
-On 2018-01-30 22:18, Krzysztof Kozlowski wrote:
-> Hi,
->
-> Changes since v1:
-> 1. New patch (1/4) calling devm_of_platform_populate() in PMU driver,
->     following Rob's advice.
-> 2. The DTS patches moving reboot/poweroff nodes (3/4 and 4/4) now depend
->     on this.
+   ASoC: samsung: Add the DT binding files entry to MAINTAINERS
 
-Tested-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+has been applied to the asoc tree at
 
-Tested following boards and reboot works fine:
-Exynos3250 (artik5-eval)
-Exynos4412 (trats2)
-Exynos5410 (odroid xu)
-Exynos5422 (odroid xu3/xu4)
-Exynos5433 (tm2)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> Best regards,
-> Krzysztof
->
->
-> Krzysztof Kozlowski (4):
->    soc: samsung: pmu: Populate children syscon nodes
->    ARM: dts: exynos: Remove duplicated inclusion of syscon restart nodes
->      on Exynos5410
->    ARM: dts: exynos: Fix missing missing reg warning for syscon restart
->      nodes
->    arm64: dts: exynos: Fix missing missing reg warning for syscon restart
->      nodes
->
->   .../devicetree/bindings/arm/samsung/pmu.txt        |  6 +++++
->   arch/arm/boot/dts/exynos-syscon-restart.dtsi       | 28 ++++++++++------------
->   arch/arm/boot/dts/exynos3250.dtsi                  |  2 +-
->   arch/arm/boot/dts/exynos4.dtsi                     |  3 ++-
->   arch/arm/boot/dts/exynos5.dtsi                     |  1 -
->   arch/arm/boot/dts/exynos5250.dtsi                  |  1 +
->   arch/arm/boot/dts/exynos5410.dtsi                  |  2 +-
->   arch/arm/boot/dts/exynos5420.dtsi                  |  1 +
->   arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 14 +++++------
->   arch/arm64/boot/dts/exynos/exynos7.dtsi            | 12 +++++-----
->   drivers/soc/samsung/exynos-pmu.c                   |  3 +++
->   11 files changed, 40 insertions(+), 33 deletions(-)
->
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Best regards
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 4b20f44e41b421be608756c395ccf4fcb1305824 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Mon, 5 Feb 2018 18:05:00 +0100
+Subject: [PATCH] ASoC: samsung: Add the DT binding files entry to MAINTAINERS
+
+This patch adds missing DT binding files to the Samsung ASoC
+drivers entry.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 87a5120d5d47..930fd1e32f12 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11923,6 +11923,7 @@ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Supported
+ F:	sound/soc/samsung/
++F:	Documentation/devicetree/bindings/sound/samsung*
+ 
+ SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.15.1
