@@ -1,185 +1,72 @@
-From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC PATCH v2 1/5] dt-bindings: add bindings for USB physical
- connector
-Date: Thu, 08 Feb 2018 10:27:54 +0100
-Message-ID: <0810d6fc-dd82-dda8-8c35-d37e8a346599@samsung.com>
-References: <20180131134435.12216-1-a.hajda@samsung.com>
-        <CGME20180131134457eucas1p128394aef86e0d76cfc6ccb72ee22d4b1@eucas1p1.samsung.com>
-        <20180131134435.12216-2-a.hajda@samsung.com>
-        <20180205060836.pybxzt5e2kdu2wew@rob-hp-laptop>
-        <a9745020-602b-8274-e2d6-63295f5b3caa@samsung.com>
-        <20180207214338.7n2somaul2msgf2a@rob-hp-laptop>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 0/4] ARM/arm64: exynos: Fix missing missing reg
+ warning for syscon restart nodes
+Date: Thu, 08 Feb 2018 14:46:32 +0100
+Message-ID: <4642d2d0-61c9-33b6-0289-76f487aa45ab@samsung.com>
+References: <CGME20180130211855epcas1p25cce42a195d8b407f4267309f9b5ccb9@epcas1p2.samsung.com>
+        <20180130211819.17139-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20180207214338.7n2somaul2msgf2a@rob-hp-laptop>
+In-reply-to: <20180130211819.17139-1-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Content-language: en-US
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07.02.2018 22:43, Rob Herring wrote:
-> On Mon, Feb 05, 2018 at 10:06:35AM +0100, Andrzej Hajda wrote:
->> On 05.02.2018 07:08, Rob Herring wrote:
->>> On Wed, Jan 31, 2018 at 02:44:31PM +0100, Andrzej Hajda wrote:
->>>> These bindings allow to describe most known standard USB connectors
->>>> and it should be possible to extend it if necessary.
->>>> USB connectors, beside USB can be used to route other protocols,
->>>> for example UART, Audio, MHL. In such case every device passing data
->>>> through the connector should have appropriate graph bindings.
->>>>
->>>> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>> ---
->>>> v2:
->>>> - moved connector type(A,B,C) to compatible string (Rob),
->>>> - renamed size property to type (Rob),
->>>> - changed type description to be less confusing (Laurent),
->>>> - removed vendor specific compatibles (implied by graph port number),
->>> How so? More below...
->>>
->>>> - added requirement of connector being a child of IC (Rob),
->>>> - removed max-mode (subtly suggested by Rob, it should be detected anyway
->>>>   by USB Controller in runtime, downside is that device is not able to
->>>>   report its real capabilities, maybe better would be to make it optional(?)),
->>>> - assigned port numbers to data buses (Rob).
->>>>
->>>> Regards
->>>> Andrzej
->>>>
->>>> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>> ---
->>>>  .../bindings/connector/usb-connector.txt           | 48 ++++++++++++++++++++++
->>>>  1 file changed, 48 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
->>>> new file mode 100644
->>>> index 000000000000..02020f5d760a
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
->>>> @@ -0,0 +1,48 @@
->>>> +USB Connector
->>>> +=============
->>>> +
->>>> +USB connector node represents physical USB connector. It should be
->>>> +a child of USB interface controller.
->>>> +
->>>> +Required properties:
->>>> +- compatible: describes type of the connector, must be one of:
->>>> +    "usb-a-connector", "usb-b-connector", "usb-c-connector",
->>> Nit: one per line.
->>>
->>>> +
->>>> +Optional properties:
->>>> +- label: symbolic name for the connector
->>>> +- type: size of the connector, should be specified in case of USB-A, USB-B
->>>> +  non-standard (large) connector sizes: "mini", "micro"
->>>> +
->>>> +Required nodes:
->>>> +- any data bus to the connector should be modeled using the OF graph bindings
->>>> +  specified in bindings/graph.txt, unless the bus is between parent node and
->>>> +  the connector. Since single connector can have multpile data buses every bus
->>>> +  has assigned OF graph port number as follows:
->>>> +    0: High Speed (HS), present in all connectors,
->>>> +    1: Super Speed (SS), present in SS capable connectors,
->>>> +    2: Sideband use (SBU), present in USB-C,
->>>> +    3: Mobile High-Definition Link (MHL), present in 11-pin Samsung micro-USB
->>> This is un-muxed unlike Type-C where the signals are muxed with USB SS. 
->>> That makes me think the Samsung connector should have its own compatible 
->>> string.
->> Do you mean, sth like:
->>     connector {
->>             compatible = "samsung,usb-connector-11pin";
->>             label = "micro-USB";
->>             ports {
->>                     #address-cells = <1>;
->>                     #size-cells = <0>;
->>
->>                     port@3 {
->>                             reg = <3>;
->>                             musb_con_mhl_in: endpoint {
->>                                     remote-endpoint = <&mhl_out>;
->>                             };
->>                     };
->>     };
-> Yes, basically.
+Hi Krzysztof,
+
+On 2018-01-30 22:18, Krzysztof Kozlowski wrote:
+> Hi,
 >
->> Or should I add "usb-b-connector" extra compatible and "type" property?
-> type would be micro? I think type and "usb-b-connector" are fine if this 
-> is a superset like a USB3 SS micro connector.
->
->> I slightly prefer my approach(less different bindings), but I am also OK
->> with the above.
-> How do you know it is a Samsung connector then? Just because you have 
-> port 3? I think it is better to be explicit.
+> Changes since v1:
+> 1. New patch (1/4) calling devm_of_platform_populate() in PMU driver,
+>     following Rob's advice.
+> 2. The DTS patches moving reboot/poweroff nodes (3/4 and 4/4) now depend
+>     on this.
 
-OK.
+Tested-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
->
->>> Can we go ahead and define the video modes of Type-C? Normally, if 2 
->>> data streams are mutually exclusive, then they are a single port with 2 
->>> endpoints. So we'd either have 2 endpoints on port 1 or we stick with 
->>> port 3 is always video. We can still know what is mutually exclusive 
->>> based on the compatible. 
->> I am sorry, I do not understand what you mean. Port 3 is present only in
->> 11-pin Samsung micro-USB, USB Type-C has only ports 0, 1, 2.
-> So video on Type C would be on port 1 (SS), endpoint ? ? That's not 
-> defined in the binding and I want to define it.
+Tested following boards and reboot works fine:
+Exynos3250 (artik5-eval)
+Exynos4412 (trats2)
+Exynos5410 (odroid xu)
+Exynos5422 (odroid xu3/xu4)
+Exynos5433 (tm2)
 
-USB type C does not have dedicated video lines, it has only: HS, SS, SBU
-(and optionally CC) data lines[1] and in my RFC I have modeled data
-lines as graph ports. If USB-C interface controller supports alternate
-mode (currently there are specs for DisplayPort, HDMI, MHL alternate
-modes, but there can be more), SS lines can be used to transmit video
-data (or any other type of data defined by alternate mode), but it means
-there will be SS mux somewhere before connector, for muxing USB-SS and
-alternate lines. So yes, video will be at port 1, but this is still port
-for SS lines:
-
-USB3 --> MUX --> CONNECTOR
-DP -------^
-
-I do not see why we would need separate video port.
-
-[1]: https://en.wikipedia.org/wiki/USB-C#Cable_wiring
-
-Regards
-Andrzej
-
->> Here is list of possible ports depending on connector type:
->> - USB 2.0: HS
->> - 11-pin Samsung micro-USB: HS,MHL
->> - USB 3.x type A,B: HS,SS
->> - USB-C: HS,SS,SBU
->>
->> All ports have separate lines, so they can work simultaneously.
->>
->> And regarding MHL on standard micro-USB connector. MHL and MUIC will
->> share HS port, but there will be mux somewhere before connector:
-> That's another case I hadn't considered. I was mainly thinking just how 
-> to handle Type C.
->
->> - in MUIC, in this case MUIC will be the parent of the connector, and
->> there will be graph from MHL to MUIC to describe MHL link,
->> - in MHL, in this case MHL will be the parent of the connector, and
->> graph between MUIC and MHL to describe HS link,
->> - dedicated mux to MUIC and MHL, controlled by gpio pin, it could be
->> handled by MUIC's external-mux gpio property for example, or (probably)
->> less hacky by separate node for mux,
->> or as additional property in the connector (who should be the parent of
->> the connector then? Probably MUIC?).
->>
->> Regards
->> Andrzej
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Best regards,
+> Krzysztof
 >
 >
+> Krzysztof Kozlowski (4):
+>    soc: samsung: pmu: Populate children syscon nodes
+>    ARM: dts: exynos: Remove duplicated inclusion of syscon restart nodes
+>      on Exynos5410
+>    ARM: dts: exynos: Fix missing missing reg warning for syscon restart
+>      nodes
+>    arm64: dts: exynos: Fix missing missing reg warning for syscon restart
+>      nodes
 >
+>   .../devicetree/bindings/arm/samsung/pmu.txt        |  6 +++++
+>   arch/arm/boot/dts/exynos-syscon-restart.dtsi       | 28 ++++++++++------------
+>   arch/arm/boot/dts/exynos3250.dtsi                  |  2 +-
+>   arch/arm/boot/dts/exynos4.dtsi                     |  3 ++-
+>   arch/arm/boot/dts/exynos5.dtsi                     |  1 -
+>   arch/arm/boot/dts/exynos5250.dtsi                  |  1 +
+>   arch/arm/boot/dts/exynos5410.dtsi                  |  2 +-
+>   arch/arm/boot/dts/exynos5420.dtsi                  |  1 +
+>   arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 14 +++++------
+>   arch/arm64/boot/dts/exynos/exynos7.dtsi            | 12 +++++-----
+>   drivers/soc/samsung/exynos-pmu.c                   |  3 +++
+>   11 files changed, 40 insertions(+), 33 deletions(-)
+>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
