@@ -1,73 +1,49 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: Add the DT binding files entry to MAINTAINERS" to the asoc tree
-Date: Thu, 08 Feb 2018 15:41:33 +0000
-Message-ID: <E1ejoKL-0008Sx-2L@debutante>
-References: <20180205170500.8992-1-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34968 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeBHPlg (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:41:36 -0500
-In-Reply-To: <20180205170500.8992-1-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] drm/exynos: g2d: Delete an error message for a failed memory
+ allocation in two functions
+Date: Thu, 8 Feb 2018 18:52:07 +0100
+Message-ID: <f1a7c103-fd17-3a61-61f7-570436e3c452@users.sourceforge.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com, lgirdwood@gmail.comkrzk@kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
 
-The patch
-
-   ASoC: samsung: Add the DT binding files entry to MAINTAINERS
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 4b20f44e41b421be608756c395ccf4fcb1305824 Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 5 Feb 2018 18:05:00 +0100
-Subject: [PATCH] ASoC: samsung: Add the DT binding files entry to MAINTAINERS
-
-This patch adds missing DT binding files to the Samsung ASoC
-drivers entry.
-
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87a5120d5d47..930fd1e32f12 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11923,6 +11923,7 @@ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
- S:	Supported
- F:	sound/soc/samsung/
-+F:	Documentation/devicetree/bindings/sound/samsung*
- 
- SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
- M:	Krzysztof Kozlowski <krzk@kernel.org>
--- 
-2.15.1
+RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpEYXRl
+OiBUaHUsIDggRmViIDIwMTggMTg6NDI6NTEgKzAxMDAKCk9taXQgYW4gZXh0cmEgbWVzc2FnZSBm
+b3IgYSBtZW1vcnkgYWxsb2NhdGlvbiBmYWlsdXJlIGluIHRoZXNlIGZ1bmN0aW9ucy4KClRoaXMg
+aXNzdWUgd2FzIGRldGVjdGVkIGJ5IHVzaW5nIHRoZSBDb2NjaW5lbGxlIHNvZnR3YXJlLgoKU2ln
+bmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0
+PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyB8IDYgKystLS0t
+CiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwppbmRleCAyYjhiZjJkZDYzODcuLjVlYjBk
+MzI5MjUyNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cy
+ZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwpAQCAtMjg2
+LDcgKzI4Niw2IEBAIHN0YXRpYyBpbnQgZzJkX2luaXRfY21kbGlzdChzdHJ1Y3QgZzJkX2RhdGEg
+KmcyZCkKIAogCW5vZGUgPSBrY2FsbG9jKEcyRF9DTURMSVNUX05VTSwgc2l6ZW9mKCpub2RlKSwg
+R0ZQX0tFUk5FTCk7CiAJaWYgKCFub2RlKSB7Ci0JCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGFs
+bG9jYXRlIG1lbW9yeVxuIik7CiAJCXJldCA9IC1FTk9NRU07CiAJCWdvdG8gZXJyOwogCX0KQEAg
+LTEzNTgsMTAgKzEzNTcsOSBAQCBpbnQgZXh5bm9zX2cyZF9leGVjX2lvY3RsKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkcm1fZGV2LCB2b2lkICpkYXRhLAogCQlyZXR1cm4gLUVGQVVMVDsKIAogCXJ1bnF1
+ZXVlX25vZGUgPSBrbWVtX2NhY2hlX2FsbG9jKGcyZC0+cnVucXVldWVfc2xhYiwgR0ZQX0tFUk5F
+TCk7Ci0JaWYgKCFydW5xdWV1ZV9ub2RlKSB7Ci0JCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGFs
+bG9jYXRlIG1lbW9yeVxuIik7CisJaWYgKCFydW5xdWV1ZV9ub2RlKQogCQlyZXR1cm4gLUVOT01F
+TTsKLQl9CisKIAlydW5fY21kbGlzdCA9ICZydW5xdWV1ZV9ub2RlLT5ydW5fY21kbGlzdDsKIAll
+dmVudF9saXN0ID0gJnJ1bnF1ZXVlX25vZGUtPmV2ZW50X2xpc3Q7CiAJSU5JVF9MSVNUX0hFQUQo
+cnVuX2NtZGxpc3QpOwotLSAKMi4xNi4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
