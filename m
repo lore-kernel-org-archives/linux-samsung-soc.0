@@ -1,33 +1,44 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 8/8] ASoC: samsung,tm2-audio DT binding documentation
- update
-Date: Thu, 8 Feb 2018 20:39:15 -0600
-Message-ID: <20180209023915.puuuzou5gdwrxzcq@rob-hp-laptop>
-References: <20180205154403.13520-1-s.nawrocki@samsung.com>
- <CGME20180205154537epcas1p10a9a30a574e3f472358e7dacf3cb0489@epcas1p1.samsung.com>
- <20180205154403.13520-9-s.nawrocki@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
+ output frequencies
+Date: Fri, 09 Feb 2018 16:25:29 +0900
+Message-ID: <5A7D4CE9.6070900@samsung.com>
+References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
+        <20180205142230.9755-1-s.nawrocki@samsung.com>
+        <5A7916A2.7010307@samsung.com>
+        <75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
+        <5A7AE1E0.8000509@samsung.com>
+        <086b44d2-6556-fa7c-1a5b-01c243bf0682@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40851 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752111AbeBICjR (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 21:39:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20180205154403.13520-9-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <086b44d2-6556-fa7c-1a5b-01c243bf0682@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 04:44:03PM +0100, Sylwester Nawrocki wrote:
-> This patch documents additional entries of the audio-codec and
-> i2s-controller properties required for the HDMI audio support.
+On 2018년 02월 07일 22:04, Sylwester Nawrocki wrote:
+> On 02/07/2018 12:24 PM, Chanwoo Choi wrote:
+>> Could you share your equation?
+>> because your result is a little bit different of my result.
+>> - my equation : ((mdiv + kdiv/65535) x 24MHz) / (pdiv x POWER(2,sdiv))
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../devicetree/bindings/sound/samsung,tm2-audio.txt        | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+> It resembles the code from samsung_pll36xx_recalc_rate():
+> 
+> (24 * 10^6 * (M * 2^16 + K)) / (P * 2^S) / 2^16
+> 
+> and a more accurate one
+> 
+> ROUNDDOWN(ROUNDDOWN(24 * 10^6 * (M * 2^16 + K), 0) / ROUNDDOWN(P * 2^S, 0) / 2^16, 0)
+> 
+> Shouldn't you substitute 65535 with 65536?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+65536 is right. It is my mistake using 65535.
+Thanks for your share.
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
