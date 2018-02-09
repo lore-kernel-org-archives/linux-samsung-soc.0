@@ -1,222 +1,76 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 01/10] ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
-Date: Fri,  9 Feb 2018 14:28:01 +0530
-Message-ID: <f808613a9c7a4f23d3a0c64b6f3d4df1b905b16b.1518166039.git.viresh.kumar@linaro.org>
-References: <cover.1518166039.git.viresh.kumar@linaro.org>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <cover.1518166039.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1518166039.git.viresh.kumar@linaro.org>
-References: <cover.1518166039.git.viresh.kumar@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Rafael Wysocki <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, daniel.lezcano@linaro.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/10] thermal: Remove "cooling-{min|max}-level" properties
+Date: Fri,  9 Feb 2018 14:28:00 +0530
+Message-ID: <cover.1518166039.git.viresh.kumar@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rafael Wysocki <rjw@rjwysocki.net>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Carlo Caione <carlo@caione.org>, Chen-Yu Tsai <wens@csie.org>, Eduardo Valentin <edubezval@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, Wei Xu <xuwei5@hisilicon.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 The "cooling-min-level" and "cooling-max-level" properties are not
 parsed by any part of the kernel currently and the max cooling state of
-a CPU cooling device is found by referring to the cpufreq table instead.
+a cooling devices is found by cooling-device's driver itself.
 
-Remove the unused properties from the CPU nodes.
+Also note that a very small number of platforms that support cooling
+devices currently contain these properties in their dts files. Most of
+them don't specify them (as no one is going to use them anyway).
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/boot/dts/exynos4210.dtsi      |  2 --
- arch/arm/boot/dts/exynos4412.dtsi      |  2 --
- arch/arm/boot/dts/exynos5250.dtsi      |  2 --
- arch/arm/boot/dts/exynos5420-cpus.dtsi | 16 ----------------
- arch/arm/boot/dts/exynos5422-cpus.dtsi | 16 ----------------
- 5 files changed, 38 deletions(-)
+Only two type of cooling devices are using these properties currently:
+cpu-cooling and gpio-fan. This series first updates all the dts files to
+not specify the min/max cooling states and then removes the bindings.
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index cc978cf28267..58ab34a233da 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -49,8 +49,6 @@
- 				400000	975000
- 				200000	950000
- 			>;
--			cooling-min-level = <4>;
--			cooling-max-level = <2>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index e4ad2fc0329e..5f5cc12f2075 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -42,8 +42,6 @@
- 			clocks = <&clock CLK_ARM_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
--			cooling-min-level = <13>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 56626d1a4235..bb4180ef7885 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -77,8 +77,6 @@
- 				 300000  937500
- 				 200000  925000
- 			>;
--			cooling-min-level = <15>;
--			cooling-max-level = <9>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 		cpu@1 {
-diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-index 123f0cef658d..a8e449471304 100644
---- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-@@ -30,8 +30,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <1024>;
- 		};
-@@ -43,8 +41,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <1024>;
- 		};
-@@ -56,8 +52,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <1024>;
- 		};
-@@ -69,8 +63,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <1024>;
- 		};
-@@ -83,8 +75,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <539>;
- 		};
-@@ -96,8 +86,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <539>;
- 		};
-@@ -109,8 +97,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <539>;
- 		};
-@@ -122,8 +108,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <539>;
- 		};
-diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-index c593809c7f08..7c130a00d1a8 100644
---- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-@@ -29,8 +29,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <539>;
- 		};
-@@ -42,8 +40,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <539>;
- 		};
-@@ -55,8 +51,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <539>;
- 		};
-@@ -68,8 +62,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <539>;
- 		};
-@@ -82,8 +74,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <1024>;
- 		};
-@@ -95,8 +85,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <1024>;
- 		};
-@@ -108,8 +96,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <1024>;
- 		};
-@@ -121,8 +107,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			capacity-dmips-mhz = <1024>;
- 		};
+The maintainers are requested to apply the relevant patches to their
+trees directly as there is no dependency between the patches.
+
+--
+viresh
+
+Viresh Kumar (10):
+  ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
+  ARM: dts: omap: Remove "cooling-{min|max}-level" for CPU nodes
+  ARM: dts: mt7623: Remove "cooling-{min|max}-level" for CPU nodes
+  ARM: dts: sun[4-7]i: Remove "cooling-{min|max}-level" for CPU nodes
+  ARM64: dts: hi6220: Remove "cooling-{min|max}-level" for CPU nodes
+  ARM64: dts: meson: Remove "cooling-{min|max}-level" for CPU nodes
+  ARM: dts: gemini: Remove "cooling-{min|max}-level" for gpio-fan node
+  ARM64: dts: meson: Remove "cooling-{min|max}-level" for gpio-fan node
+  dt-bindings: cpufreq-dt: Remove "cooling-{min|max}-level" properties
+  dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
+
+ Documentation/devicetree/bindings/cpufreq/cpufreq-dt.txt |  4 ----
+ .../devicetree/bindings/cpufreq/cpufreq-mediatek.txt     |  4 ----
+ Documentation/devicetree/bindings/thermal/thermal.txt    | 16 +---------------
+ arch/arm/boot/dts/dra7.dtsi                              |  2 --
+ arch/arm/boot/dts/exynos4210.dtsi                        |  2 --
+ arch/arm/boot/dts/exynos4412.dtsi                        |  2 --
+ arch/arm/boot/dts/exynos5250.dtsi                        |  2 --
+ arch/arm/boot/dts/exynos5420-cpus.dtsi                   | 16 ----------------
+ arch/arm/boot/dts/exynos5422-cpus.dtsi                   | 16 ----------------
+ arch/arm/boot/dts/gemini-dlink-dns-313.dts               |  2 --
+ arch/arm/boot/dts/mt7623.dtsi                            |  2 --
+ arch/arm/boot/dts/omap443x.dtsi                          |  2 --
+ arch/arm/boot/dts/omap4460.dtsi                          |  2 --
+ arch/arm/boot/dts/omap5.dtsi                             |  2 --
+ arch/arm/boot/dts/sun4i-a10-olinuxino-lime.dts           |  1 -
+ arch/arm/boot/dts/sun4i-a10.dtsi                         |  2 --
+ arch/arm/boot/dts/sun5i-a13.dtsi                         |  2 --
+ arch/arm/boot/dts/sun6i-a31.dtsi                         |  2 --
+ arch/arm/boot/dts/sun7i-a20.dtsi                         |  2 --
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts    |  6 ------
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi                |  2 --
+ 21 files changed, 1 insertion(+), 90 deletions(-)
+
 -- 
 2.15.0.194.g9af6a3dea062
