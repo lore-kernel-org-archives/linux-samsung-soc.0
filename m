@@ -1,159 +1,34 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC PATCH v2 1/5] dt-bindings: add bindings for USB physical
- connector
-Date: Thu, 8 Feb 2018 14:04:15 -0600
-Message-ID: <20180208200415.fargr6l33ge7ap22@rob-hp-laptop>
-References: <20180131134435.12216-1-a.hajda@samsung.com>
- <CGME20180131134457eucas1p128394aef86e0d76cfc6ccb72ee22d4b1@eucas1p1.samsung.com>
- <20180131134435.12216-2-a.hajda@samsung.com>
- <20180205060836.pybxzt5e2kdu2wew@rob-hp-laptop>
- <a9745020-602b-8274-e2d6-63295f5b3caa@samsung.com>
- <20180207214338.7n2somaul2msgf2a@rob-hp-laptop>
- <0810d6fc-dd82-dda8-8c35-d37e8a346599@samsung.com>
+Subject: Re: [PATCH 6/8] ASoC: samsung: i2s: Update clock-output-names
+ property documentation
+Date: Thu, 8 Feb 2018 20:36:17 -0600
+Message-ID: <20180209023617.ifjdibfe4xgdj27w@rob-hp-laptop>
+References: <20180205154403.13520-1-s.nawrocki@samsung.com>
+ <CGME20180205154529epcas2p3478546ef61294ac06cd9d8ed3d7e12c9@epcas2p3.samsung.com>
+ <20180205154403.13520-7-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42860 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752056AbeBHUES (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41181 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752111AbeBICgU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 15:04:18 -0500
+        Thu, 8 Feb 2018 21:36:20 -0500
 Content-Disposition: inline
-In-Reply-To: <0810d6fc-dd82-dda8-8c35-d37e8a346599@samsung.com>
+In-Reply-To: <20180205154403.13520-7-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 
-On Thu, Feb 08, 2018 at 10:27:54AM +0100, Andrzej Hajda wrote:
-> On 07.02.2018 22:43, Rob Herring wrote:
-> > On Mon, Feb 05, 2018 at 10:06:35AM +0100, Andrzej Hajda wrote:
-> >> On 05.02.2018 07:08, Rob Herring wrote:
-> >>> On Wed, Jan 31, 2018 at 02:44:31PM +0100, Andrzej Hajda wrote:
-> >>>> These bindings allow to describe most known standard USB connectors
-> >>>> and it should be possible to extend it if necessary.
-> >>>> USB connectors, beside USB can be used to route other protocols,
-> >>>> for example UART, Audio, MHL. In such case every device passing data
-> >>>> through the connector should have appropriate graph bindings.
-> >>>>
-> >>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> >>>> ---
-> >>>> v2:
-> >>>> - moved connector type(A,B,C) to compatible string (Rob),
-> >>>> - renamed size property to type (Rob),
-> >>>> - changed type description to be less confusing (Laurent),
-> >>>> - removed vendor specific compatibles (implied by graph port number),
-> >>> How so? More below...
-> >>>
-> >>>> - added requirement of connector being a child of IC (Rob),
-> >>>> - removed max-mode (subtly suggested by Rob, it should be detected anyway
-> >>>>   by USB Controller in runtime, downside is that device is not able to
-> >>>>   report its real capabilities, maybe better would be to make it optional(?)),
-> >>>> - assigned port numbers to data buses (Rob).
-> >>>>
-> >>>> Regards
-> >>>> Andrzej
-> >>>>
-> >>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> >>>> ---
-> >>>>  .../bindings/connector/usb-connector.txt           | 48 ++++++++++++++++++++++
-> >>>>  1 file changed, 48 insertions(+)
-> >>>>  create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> >>>> new file mode 100644
-> >>>> index 000000000000..02020f5d760a
-> >>>> --- /dev/null
-> >>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> >>>> @@ -0,0 +1,48 @@
-> >>>> +USB Connector
-> >>>> +=============
-> >>>> +
-> >>>> +USB connector node represents physical USB connector. It should be
-> >>>> +a child of USB interface controller.
-> >>>> +
-> >>>> +Required properties:
-> >>>> +- compatible: describes type of the connector, must be one of:
-> >>>> +    "usb-a-connector", "usb-b-connector", "usb-c-connector",
-> >>> Nit: one per line.
-> >>>
-> >>>> +
-> >>>> +Optional properties:
-> >>>> +- label: symbolic name for the connector
-> >>>> +- type: size of the connector, should be specified in case of USB-A, USB-B
-> >>>> +  non-standard (large) connector sizes: "mini", "micro"
-> >>>> +
-> >>>> +Required nodes:
-> >>>> +- any data bus to the connector should be modeled using the OF graph bindings
-> >>>> +  specified in bindings/graph.txt, unless the bus is between parent node and
-> >>>> +  the connector. Since single connector can have multpile data buses every bus
-> >>>> +  has assigned OF graph port number as follows:
-> >>>> +    0: High Speed (HS), present in all connectors,
-> >>>> +    1: Super Speed (SS), present in SS capable connectors,
-> >>>> +    2: Sideband use (SBU), present in USB-C,
-> >>>> +    3: Mobile High-Definition Link (MHL), present in 11-pin Samsung micro-USB
-> >>> This is un-muxed unlike Type-C where the signals are muxed with USB SS. 
-> >>> That makes me think the Samsung connector should have its own compatible 
-> >>> string.
-> >> Do you mean, sth like:
-> >>     connector {
-> >>             compatible = "samsung,usb-connector-11pin";
-> >>             label = "micro-USB";
-> >>             ports {
-> >>                     #address-cells = <1>;
-> >>                     #size-cells = <0>;
-> >>
-> >>                     port@3 {
-> >>                             reg = <3>;
-> >>                             musb_con_mhl_in: endpoint {
-> >>                                     remote-endpoint = <&mhl_out>;
-> >>                             };
-> >>                     };
-> >>     };
-> > Yes, basically.
-> >
-> >> Or should I add "usb-b-connector" extra compatible and "type" property?
-> > type would be micro? I think type and "usb-b-connector" are fine if this 
-> > is a superset like a USB3 SS micro connector.
-> >
-> >> I slightly prefer my approach(less different bindings), but I am also OK
-> >> with the above.
-> > How do you know it is a Samsung connector then? Just because you have 
-> > port 3? I think it is better to be explicit.
+On Mon, Feb 05, 2018 at 04:44:01PM +0100, Sylwester Nawrocki wrote:
+> The clock-output-names property is marked as deprecated. While at it,
+> #clock-cells property's value is corrected in the example snippet
+> and few typos are fixed.
 > 
-> OK.
-> 
-> >
-> >>> Can we go ahead and define the video modes of Type-C? Normally, if 2 
-> >>> data streams are mutually exclusive, then they are a single port with 2 
-> >>> endpoints. So we'd either have 2 endpoints on port 1 or we stick with 
-> >>> port 3 is always video. We can still know what is mutually exclusive 
-> >>> based on the compatible. 
-> >> I am sorry, I do not understand what you mean. Port 3 is present only in
-> >> 11-pin Samsung micro-USB, USB Type-C has only ports 0, 1, 2.
-> > So video on Type C would be on port 1 (SS), endpoint ? ? That's not 
-> > defined in the binding and I want to define it.
-> 
-> USB type C does not have dedicated video lines, it has only: HS, SS, SBU
-> (and optionally CC) data lines[1] and in my RFC I have modeled data
-> lines as graph ports. If USB-C interface controller supports alternate
-> mode (currently there are specs for DisplayPort, HDMI, MHL alternate
-> modes, but there can be more), SS lines can be used to transmit video
-> data (or any other type of data defined by alternate mode), but it means
-> there will be SS mux somewhere before connector, for muxing USB-SS and
-> alternate lines. So yes, video will be at port 1, but this is still port
-> for SS lines:
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../devicetree/bindings/sound/samsung-i2s.txt          | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 
-Yes, I know all this.
-
-> 
-> USB3 --> MUX --> CONNECTOR
-> DP -------^
-> 
-> I do not see why we would need separate video port.
-
-Yes, agreed. I just want to define how we are supporting it. Otherwise, 
-someone may just think video is on port 3 for Type C too. 
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
