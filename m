@@ -1,69 +1,76 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 4/8] ASoC: samsung: i2s: Define the parameters list for SAMSUNG_I2S_OPCLK
-Date: Mon, 12 Feb 2018 11:00:50 +0100
-Message-ID: <CAJKOXPeHDHbt8e+aVd6RCv3M+AW7qPVep=Cb7nBJeZn3k+u5Bg@mail.gmail.com>
-References: <CGME20180205154520epcas1p4132421a187a4d767a2f75badfef5eec4@epcas1p4.samsung.com>
- <20180205154403.13520-1-s.nawrocki@samsung.com> <20180205154403.13520-5-s.nawrocki@samsung.com>
- <CAJKOXPf-6wFDSPttdDbc34Y2hiuc=TG2j5bb+2uQeScxGuxjZg@mail.gmail.com> <7f86ec02-2235-7622-9298-f6edd367edb2@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/3] clk: exynos5433: Allow audio subsystem clock rate
+ propagation
+Date: Mon, 12 Feb 2018 12:45:53 +0100
+Message-ID: <e0d88ac2-439b-8e6e-af32-310b53ca0693@samsung.com>
+References: <20180205142230.9755-1-s.nawrocki@samsung.com>
+        <CGME20180205142308epcas2p376f8656f7e421f8474938de788cea8db@epcas2p3.samsung.com>
+        <20180205142230.9755-2-s.nawrocki@samsung.com>
+        <5A7929C1.8040706@samsung.com>
+        <3fcfad37-4c8f-7375-b2c2-5154607aa47a@samsung.com>
+        <5A7D4F92.100@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:45798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932505AbeBLKAx (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:36779 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934152AbeBLLqB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:00:53 -0500
-In-Reply-To: <7f86ec02-2235-7622-9298-f6edd367edb2@samsung.com>
+        Mon, 12 Feb 2018 06:46:01 -0500
+In-reply-to: <5A7D4F92.100@samsung.com>
+Content-language: en-GB
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com, linux-kernel@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 
-On Wed, Feb 7, 2018 at 5:23 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 02/06/2018 01:26 PM, Krzysztof Kozlowski wrote:
->> On Mon, Feb 5, 2018 at 4:43 PM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
+Hi Chanwoo,
+
+On 02/09/2018 08:36 AM, Chanwoo Choi wrote:
+> On 2018년 02월 08일 00:18, Sylwester Nawrocki wrote:
+>> On 02/06/2018 05:06 AM, Chanwoo Choi wrote:
+>>>>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
+>>>>  1 file changed, 11 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>>>> index 74b70ddab4d6..d74361736e64 100644
+>>>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>>>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>>>> @@ -246,14 +246,14 @@ static const struct samsung_fixed_rate_clock top_fixed_clks[] __initconst = {
+>>>>  
+>>>>  static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+>>>>  	/* MUX_SEL_TOP0 */
+>>>> -	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
+>>>> -			4, 1),
+>>>> +	MUX_F(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
+>>>> +	      4, 1, CLK_SET_RATE_PARENT, 0),
+>>> If you add CLK_SET_RATE_PARENT to 'mout_aud_pll' and mout_aud_pll changes the rate,
+>>> fout_aud_pll's rate will be changed. But, fout_aud_pll is also the parent
+>>> of 'mout_aud_pll_user'. It might change the rate of children of mout_aud_pll_user.
+>>> mout_aud_pll_user would not want to change the parent's clock.
+>>>
+>>>     fout_aud_pll                          2            2   196608009          0 0  
+>>>        mout_aud_pll_user                  1            1   196608009          0 0  
+>>>        mout_aud_pll                       0            0   196608009          0 0  
+>> I'd say the range of changes is such that the consumers of the affected child 
+>> clocks can cope and could adjust to the changed frequencies. Those consumer 
+>> devices are all components/peripherals of the audio subsystem (LPASS) and, 
 >
->>> diff --git a/sound/soc/samsung/i2s.h b/sound/soc/samsung/i2s.h
->>> index 79781de2f247..a9832a9555cb 100644
->>> --- a/sound/soc/samsung/i2s.h
->>> +++ b/sound/soc/samsung/i2s.h
->>> @@ -16,11 +16,16 @@
->>>  #define SAMSUNG_I2S_DAI        "samsung-i2s"
->>>  #define SAMSUNG_I2S_DAI_SEC    "samsung-i2s-sec"
->>>
->>> -#define SAMSUNG_I2S_DIV_BCLK   1
->>> +#define SAMSUNG_I2S_DIV_BCLK           1
->>>
->>> -#define SAMSUNG_I2S_RCLKSRC_0  0
->>> -#define SAMSUNG_I2S_RCLKSRC_1  1
->>> +#define SAMSUNG_I2S_RCLKSRC_0          0
->>> +#define SAMSUNG_I2S_RCLKSRC_1          1
->>>  #define SAMSUNG_I2S_CDCLK              2
->>> +/* Operation clock for IIS logic */
->>>  #define SAMSUNG_I2S_OPCLK              3
->>> +#define  SAMSUNG_I2S_OPCLK_CDCLK_OUT   0       /* CODEC clock out */
->>> +#define  SAMSUNG_I2S_OPCLK_CDCLK_IN    1       /* CODEC clock in */
->>> +#define  SAMSUNG_I2S_OPCLK_BCLK_OUT    2       /* Bit clock out */
->>> +#define  SAMSUNG_I2S_OPCLK_PCLK                3       /* Audio bus clock */
->>>
->>>  #endif /* __SND_SOC_SAMSUNG_I2S_H */
->>
->> This part of patch seems to be unrelated (and it includes some cleanups).
->
-> This is actually the main part of the patch, an API exported to other
-> drivers.
+> The mout_aud_pll_user has the child clock of serial_3.
+> serial_3 was used for bluetooth on TM2. If you change the aud_pll
+> with CLK_SET_RATE_PARENT, it might affect the bluetooth operation.
+> The bluetooth is only used for transfering the data.
+> 
+> Actually, I'm not sure that this patch might affect bluetooth operation or not.
 
-You are right, I looked at it without the context of 5/8 and I assumed
-you are changing existing user of the defines...
+You are right, the AUD PLL frequency adjustments would break the bluetooth's 
+operation. I double checked and in the downstream kernel only one AUD PLL 
+frequency can be set - 196608009. So I will drop this patch and add just
+a single PLL_36XX_RATE() entry for that frequency, the PMS values have been
+confirmed by the HW team. Only 48000/9600/192000 sample rates will then be 
+supported natively and others could be through software rate conversion.
 
-> The whitespace changes are for keeping the alignment uniform,
-> I could just drop them.
-
-Let it be then.
-
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+-- 
+Regards,
+Sylwester
