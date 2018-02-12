@@ -1,63 +1,152 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 0/4] ARM/arm64: exynos: Fix missing missing reg
- warning for syscon restart nodes
-Date: Fri, 09 Feb 2018 12:17:49 +0100
-Message-ID: <06515e72-d7b3-9799-698e-d8b2dd39e22a@samsung.com>
-References: <CGME20180130211855epcas1p25cce42a195d8b407f4267309f9b5ccb9@epcas1p2.samsung.com>
-        <20180130211819.17139-1-krzk@kernel.org>
-        <4642d2d0-61c9-33b6-0289-76f487aa45ab@samsung.com>
-        <20180209104806.vcrrtpq6izcnwvy2@angband.pl>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] i2c: exynos5: rework HSI2C_MASTER_ST_LOSE state
+ handling
+Date: Mon, 12 Feb 2018 09:04:46 +0100
+Message-ID: <f1921b61-136e-4b43-4b2f-1cc27b1710ff@samsung.com>
+References: <CGME20180126121001eucas1p2931738af133ad3e5bf1cd824058ba8d0@eucas1p2.samsung.com>
+        <20180126120950.9934-1-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20180209104806.vcrrtpq6izcnwvy2-b9QjgO8OEXPVItvQsEIGlw@public.gmane.org>
-Content-language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Adam Borowski <kilobyte-b9QjgO8OEXPVItvQsEIGlw@public.gmane.org>
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <20180126120950.9934-1-a.hajda@samsung.com>
+Content-Language: en-US
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Andi Shyti <andi.shyti@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Adam,
+On 26.01.2018 13:09, Andrzej Hajda wrote:
+> HSI2C_MASTER_ST_LOSE state is not documented properly, extensive tests
+> show that hardware is usually able to recover from this state without
+> interrupting the transfer. Moreover documentation says that
+> such state can be caused by slave clock stretching, and should not be
+> treated as an error during transaction. The only place it indicates
+> an error is just before starting transaction. In such case bus recovery
+> procedure should be performed - master should pulse SCL line nine times
+> and then send STOP condition, it can be repeated until SDA goes high.
+> The procedure can be performed using manual commands HSI2C_CMD_READ_DATA
+> and HSI2C_CMD_SEND_STOP.
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+> Hi Wolfram,
+>
+> This patch integrates and invalidates my previous patches [1][2].
+> I hope inline comments are sufficient.
 
-On 2018-02-09 11:48, Adam Borowski wrote:
-> On Thu, Feb 08, 2018 at 02:46:32PM +0100, Marek Szyprowski wrote:
->> On 2018-01-30 22:18, Krzysztof Kozlowski wrote:
->>> Changes since v1:
->>> 1. New patch (1/4) calling devm_of_platform_populate() in PMU driver,
->>>      following Rob's advice.
->>> 2. The DTS patches moving reboot/poweroff nodes (3/4 and 4/4) now depend
->>>      on this.
->> Tested-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>
->> Tested following boards and reboot works fine:
->> Exynos3250 (artik5-eval)
->> Exynos4412 (trats2)
->> Exynos5410 (odroid xu)
->> Exynos5422 (odroid xu3/xu4)
->> Exynos5433 (tm2)
-> Doesn't seem to work on mine:
-> Exynos4412 (odroid u2)
->
-> Rebooting worked correctly with 3.8 + gazillion non-mainlined patches (as
-> shipped with providen images), never did with mainline.
->
-> Tested on current mid-of-the-merge-window, plus these four patches.
->
->
-> It's possible that I'm doing something wrong; might need an updated u-boot,
-> etc.  Log of a boot-till-reboot+hang session attached.
-
-Reboot on Odroid X2/U2/U3 doesn't work now. It is broken by devfreq since
-a few kernel releases. Please disable devfreq in your .config and reboot
-should also work. That's why I didn't put Odroid U3 on the above list.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Gentle ping.
 
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards
+Andrzej
+
+>
+> [1]: i2c: exynos5: implement bus recovery functionality
+> [2]: i2c: exynos5: do not check TRANS_STATUS in case of Exynos7 variant
+>
+> Regards
+> Andrzej
+>
+>  drivers/i2c/busses/i2c-exynos5.c | 67 ++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 61 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index b02428498f6d..8dcc36835a1a 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -128,6 +128,10 @@
+>  #define HSI2C_TIMEOUT_EN			(1u << 31)
+>  #define HSI2C_TIMEOUT_MASK			0xff
+>  
+> +/* I2C_MANUAL_CMD register bits */
+> +#define HSI2C_CMD_READ_DATA			(1u << 4)
+> +#define HSI2C_CMD_SEND_STOP			(1u << 2)
+> +
+>  /* I2C_TRANS_STATUS register bits */
+>  #define HSI2C_MASTER_BUSY			(1u << 17)
+>  #define HSI2C_SLAVE_BUSY			(1u << 16)
+> @@ -441,12 +445,6 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+>  			i2c->state = -ETIMEDOUT;
+>  			goto stop;
+>  		}
+> -
+> -		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
+> -		if ((trans_status & HSI2C_MASTER_ST_MASK) == HSI2C_MASTER_ST_LOSE) {
+> -			i2c->state = -EAGAIN;
+> -			goto stop;
+> -		}
+>  	} else if (int_status & HSI2C_INT_I2C) {
+>  		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
+>  		if (trans_status & HSI2C_NO_DEV_ACK) {
+> @@ -544,6 +542,61 @@ static int exynos5_i2c_wait_bus_idle(struct exynos5_i2c *i2c)
+>  	return -EBUSY;
+>  }
+>  
+> +static void exynos5_i2c_bus_recover(struct exynos5_i2c *i2c)
+> +{
+> +	u32 val;
+> +
+> +	dev_dbg(i2c->dev, "%s: start\n", __func__);
+> +
+> +	val = readl(i2c->regs + HSI2C_CTL) | HSI2C_RXCHON;
+> +	writel(val, i2c->regs + HSI2C_CTL);
+> +	val = readl(i2c->regs + HSI2C_CONF) & ~HSI2C_AUTO_MODE;
+> +	writel(val, i2c->regs + HSI2C_CONF);
+> +
+> +	/*
+> +	 * Specification says master should send nine clock pulses. It can be
+> +	 * emulated by sending manual read command (nine pulses for read eight
+> +	 * bits + one pulse for NACK).
+> +	 */
+> +	writel(HSI2C_CMD_READ_DATA, i2c->regs + HSI2C_MANUAL_CMD);
+> +	exynos5_i2c_wait_bus_idle(i2c);
+> +	writel(HSI2C_CMD_SEND_STOP, i2c->regs + HSI2C_MANUAL_CMD);
+> +	exynos5_i2c_wait_bus_idle(i2c);
+> +
+> +	val = readl(i2c->regs + HSI2C_CTL) & ~HSI2C_RXCHON;
+> +	writel(val, i2c->regs + HSI2C_CTL);
+> +	val = readl(i2c->regs + HSI2C_CONF) | HSI2C_AUTO_MODE;
+> +	writel(val, i2c->regs + HSI2C_CONF);
+> +
+> +	dev_dbg(i2c->dev, "%s: end\n", __func__);
+> +}
+> +
+> +static void exynos5_i2c_bus_check(struct exynos5_i2c *i2c)
+> +{
+> +	unsigned long timeout;
+> +
+> +	if (i2c->variant->hw != HSI2C_EXYNOS7)
+> +		return;
+> +
+> +	/*
+> +	 * HSI2C_MASTER_ST_LOSE state in EXYNOS7 variant before transaction
+> +	 * indicates that bus is stuck (SDA is low). In such case bus recovery
+> +	 * can be performed.
+> +	 */
+> +	timeout = jiffies + msecs_to_jiffies(100);
+> +	for (;;) {
+> +		u32 st = readl(i2c->regs + HSI2C_TRANS_STATUS);
+> +
+> +		if ((st & HSI2C_MASTER_ST_MASK) != HSI2C_MASTER_ST_LOSE)
+> +			return;
+> +
+> +		if (time_is_before_jiffies(timeout))
+> +			return;
+> +
+> +		exynos5_i2c_bus_recover(i2c);
+> +	}
+> +}
+> +
+>  /*
+>   * exynos5_i2c_message_start: Configures the bus and starts the xfer
+>   * i2c: struct exynos5_i2c pointer for the current bus
+> @@ -598,6 +651,8 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+>  	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
+>  	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
+>  
+> +	exynos5_i2c_bus_check(i2c);
+> +
+>  	/*
+>  	 * Enable interrupts before starting the transfer so that we don't
+>  	 * miss any INT_I2C interrupts.
