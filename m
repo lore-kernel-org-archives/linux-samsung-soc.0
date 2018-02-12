@@ -1,62 +1,58 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 3/7] ASoC: samsung: i2s: Prevent external
- abort on exynos5433 I2S1 access
-Date: Mon, 12 Feb 2018 17:15:34 +0100
-Message-ID: <20180212161538.22669-4-s.nawrocki@samsung.com>
+Subject: [PATCH v2 5/7] ASoC: samsung,tm2-audio DT binding documentation
+ update
+Date: Mon, 12 Feb 2018 17:15:36 +0100
+Message-ID: <20180212161538.22669-6-s.nawrocki@samsung.com>
 References: <20180212161538.22669-1-s.nawrocki@samsung.com>
- <CGME20180212161646epcas1p2dabca4c8d98d3e66b7a78133d926bccb@epcas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+        <CGME20180212161700epcas2p3f810196ade27315587602b16707755c6@epcas2p3.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20180212161538.22669-1-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: broonie@kernel.org
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
+Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-It seems both PCLK_I2S1 and SCLK_I2S1 clocks need to be enabled before
-I2S1 control registers can be accessed on exynos5433. If SCLK clock
-is disabled an exception is triggered. To fix this parent clock of
-the RCLK_SRC clock is assigned to pri_dai->op_clk so required gate
-clock is handled by the runtime PM ops.
+This patch documents additional entries of the audio-codec and
+i2s-controller properties required for the HDMI audio support.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
-Changes since v1:
- - removed stray whitespace change.
----
- sound/soc/samsung/i2s.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/sound/samsung,tm2-audio.txt        | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 5088d12faeda..7b57ad11ca15 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1404,9 +1404,14 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	pm_runtime_enable(&pdev->dev);
+diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+index 94442e5673b3..f5ccc12ddc00 100644
+--- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
++++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+@@ -4,9 +4,13 @@ Required properties:
  
- 	ret = i2s_register_clock_provider(pdev);
--	if (!ret)
--		return 0;
-+	if (ret < 0)
-+		goto err_disable_pm;
-+
-+	pri_dai->op_clk = clk_get_parent(pri_dai->clk_table[CLK_I2S_RCLK_SRC]);
-+
-+	return 0;
+  - compatible		 : "samsung,tm2-audio"
+  - model		 : the user-visible name of this sound complex
+- - audio-codec		 : the phandle of the wm5110 audio codec node,
+-			   as described in ../mfd/arizona.txt
+- - i2s-controller	 : the phandle of the I2S controller
++ - audio-codec		 : the first entry should be phandle of the wm5110 audio
++			   codec node, as described in ../mfd/arizona.txt;
++			   the second entry should be phandle of the HDMI
++			   transmitter node
++ - i2s-controller	 : the list of phandle and argument tuples pointing to
++			   I2S controllers, the first entry should be I2S0 and
++			   the second one I2S1
+  - audio-amplifier	 : the phandle of the MAX98504 amplifier
+  - samsung,audio-routing : a list of the connections between audio components;
+ 			   each entry is a pair of strings, the first being the
+@@ -22,8 +26,8 @@ Example:
  
-+err_disable_pm:
- 	pm_runtime_disable(&pdev->dev);
- err_disable_clk:
- 	clk_disable_unprepare(pri_dai->clk);
+ sound {
+ 	compatible = "samsung,tm2-audio";
+-	audio-codec = <&wm5110>;
+-	i2s-controller = <&i2s0>;
++	audio-codec = <&wm5110>, <&hdmi>;
++	i2s-controller = <&i2s0 0>, <&i2s1 0>;
+ 	audio-amplifier = <&max98504>;
+ 	mic-bias-gpios = <&gpr3 2 0>;
+ 	model = "wm5110";
 -- 
 2.14.2
