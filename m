@@ -1,9 +1,9 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/7] clk: samsung: exynos3250: fix PLL rates
-Date: Tue, 13 Feb 2018 14:40:26 +0100
-Message-ID: <20180213134032.30235-2-a.hajda@samsung.com>
+Subject: [PATCH 6/7] clk: samsung: s3c2410: fix PLL rates
+Date: Tue, 13 Feb 2018 14:40:31 +0100
+Message-ID: <20180213134032.30235-7-a.hajda@samsung.com>
 References: <20180213134032.30235-1-a.hajda@samsung.com>
-        <CGME20180213134058eucas1p277d1ac59e24cadeea9638abe79f9da27@eucas1p2.samsung.com>
+        <CGME20180213134103eucas1p28ae04a7ddb7cc5dbd14ac21abec8f506@eucas1p2.samsung.com>
 Return-path: <linux-clk-owner@vger.kernel.org>
 In-reply-to: <20180213134032.30235-1-a.hajda@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
@@ -17,31 +17,48 @@ As a result driver behaved inconsitently.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos3250.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-s3c2410.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index 1b81e283f605..ed36728424a2 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -698,7 +698,7 @@ static const struct samsung_pll_rate_table exynos3250_epll_rates[] __initconst =
- 	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
- 	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
- 	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
--	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
-+	PLL_36XX_RATE( 80000003, 106, 2, 4, 43691),
- 	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
- 	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
- 	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
-@@ -734,7 +734,7 @@ static const struct samsung_pll_rate_table exynos3250_vpll_rates[] __initconst =
- 	PLL_36XX_RATE(148352005,  98, 2, 3, 59070),
- 	PLL_36XX_RATE(108000000, 144, 2, 4,     0),
- 	PLL_36XX_RATE( 74250000,  99, 2, 4,     0),
--	PLL_36XX_RATE( 74176002,  98, 3, 4, 59070),
-+	PLL_36XX_RATE( 74176002,  98, 2, 4, 59070),
- 	PLL_36XX_RATE( 54054000, 216, 3, 5, 14156),
- 	PLL_36XX_RATE( 54000000, 144, 2, 5,     0),
- 	{ /* sentinel */ }
+diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+index e0650c33863b..d8e58a659467 100644
+--- a/drivers/clk/samsung/clk-s3c2410.c
++++ b/drivers/clk/samsung/clk-s3c2410.c
+@@ -168,7 +168,7 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
+ 	PLL_35XX_RATE(226000000, 105, 1, 1),
+ 	PLL_35XX_RATE(210000000, 132, 2, 1),
+ 	/* 2410 common */
+-	PLL_35XX_RATE(203000000, 161, 3, 1),
++	PLL_35XX_RATE(202800000, 161, 3, 1),
+ 	PLL_35XX_RATE(192000000, 88, 1, 1),
+ 	PLL_35XX_RATE(186000000, 85, 1, 1),
+ 	PLL_35XX_RATE(180000000, 82, 1, 1),
+@@ -178,18 +178,18 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
+ 	PLL_35XX_RATE(147000000, 90, 2, 1),
+ 	PLL_35XX_RATE(135000000, 82, 2, 1),
+ 	PLL_35XX_RATE(124000000, 116, 1, 2),
+-	PLL_35XX_RATE(118000000, 150, 2, 2),
++	PLL_35XX_RATE(118500000, 150, 2, 2),
+ 	PLL_35XX_RATE(113000000, 105, 1, 2),
+-	PLL_35XX_RATE(101000000, 127, 2, 2),
++	PLL_35XX_RATE(101250000, 127, 2, 2),
+ 	PLL_35XX_RATE(90000000, 112, 2, 2),
+-	PLL_35XX_RATE(85000000, 105, 2, 2),
++	PLL_35XX_RATE(84750000, 105, 2, 2),
+ 	PLL_35XX_RATE(79000000, 71, 1, 2),
+-	PLL_35XX_RATE(68000000, 82, 2, 2),
+-	PLL_35XX_RATE(56000000, 142, 2, 3),
++	PLL_35XX_RATE(67500000, 82, 2, 2),
++	PLL_35XX_RATE(56250000, 142, 2, 3),
+ 	PLL_35XX_RATE(48000000, 120, 2, 3),
+-	PLL_35XX_RATE(51000000, 161, 3, 3),
++	PLL_35XX_RATE(50700000, 161, 3, 3),
+ 	PLL_35XX_RATE(45000000, 82, 1, 3),
+-	PLL_35XX_RATE(34000000, 82, 2, 3),
++	PLL_35XX_RATE(33750000, 82, 2, 3),
+ 	{ /* sentinel */ },
+ };
+ 
 -- 
 2.16.1
 
