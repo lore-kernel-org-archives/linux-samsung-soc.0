@@ -1,40 +1,48 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add soc node to exynos5440
-Date: Tue, 13 Feb 2018 19:04:06 +0100
-Message-ID: <20180213180406.m6hftq2mympok34y@kozik-lap>
-References: <CGME20180206113158eucas1p1c5cb146fb80116232d0d79634a48d210@eucas1p1.samsung.com>
- <1517916710-13970-1-git-send-email-m.purski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 0/3] Add soc nodes to exynos4 series DTS
+Date: Tue, 13 Feb 2018 19:05:46 +0100
+Message-ID: <20180213180546.3s76x4tnierehl5z@kozik-lap>
+References: <CGME20180206113006eucas1p148766268255c129223e32f221afc1b94@eucas1p1.samsung.com>
+ <1517916582-13814-1-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:38725 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965168AbeBMSFv (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 13 Feb 2018 13:05:51 -0500
 Content-Disposition: inline
-In-Reply-To: <1517916710-13970-1-git-send-email-m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+In-Reply-To: <1517916582-13814-1-git-send-email-m.purski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Maciej Purski <m.purski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 
-On Tue, Feb 06, 2018 at 12:31:50PM +0100, Maciej Purski wrote:
-> The exynos5440 device tree is the only one left, which does not use
-> "soc" node. Add a "soc" node to exynos5440.dtsi in order to make it
-> compatible with other exynos DTS.
+On Tue, Feb 06, 2018 at 12:29:39PM +0100, Maciej Purski wrote:
+> Hi all,
 > 
-> Signed-off-by: Maciej Purski <m.purski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> this patchset adds soc node to exynos4, exynos4210 and exynos4412
+> DTS. The main goal for these changes is unification of all exynos
+> DTS. Soc nodes are already present in for example exynos5 series.
+> 
+> Best regards,
+> 
+> Maciej Purski
 > 
 > ---
 > Changes in v2:
-> - move the "thermal-zones" node outside the "soc" node
-> ---
->  arch/arm/boot/dts/exynos5440.dtsi | 514 +++++++++++++++++++-------------------
->  1 file changed, 261 insertions(+), 253 deletions(-)
+> - rebased onto "ARM: dts: exynos: Use pmu label in exynos4412"
+>   in order to fix pmu warning
+> - move "cpu0_opp_table" outside the "soc" node
+> 
+> Maciej Purski (3):
+>   ARM: dts: exynos: Add soc node to exynos4
+>   ARM: dts: exynos: Add soc node to exynos4210
+>   ARM: dts: exynos: Add soc node to exynos4412
 > 
 
-Thanks, applied.
+Thanks, applied all three.
 
 Best regards,
 Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
