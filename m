@@ -1,44 +1,37 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 0/4] ARM/arm64: exynos: Fix missing missing reg
- warning for syscon restart nodes
-Date: Tue, 13 Feb 2018 18:56:43 +0100
-Message-ID: <20180213175643.4h5anubed4w4lclb@kozik-lap>
-References: <CGME20180130211855epcas1p25cce42a195d8b407f4267309f9b5ccb9@epcas1p2.samsung.com>
- <20180130211819.17139-1-krzk@kernel.org>
- <4642d2d0-61c9-33b6-0289-76f487aa45ab@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Use pmu label in exynos4412
+Date: Tue, 13 Feb 2018 19:03:43 +0100
+Message-ID: <20180213180343.ibncip7d6o55juhm@kozik-lap>
+References: <CGME20180206112602eucas1p28e3a797fe752adc65dbe7571aa02a8aa@eucas1p2.samsung.com>
+ <1517916352-13614-1-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51748 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965158AbeBMSDr (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 13 Feb 2018 13:03:47 -0500
 Content-Disposition: inline
-In-Reply-To: <4642d2d0-61c9-33b6-0289-76f487aa45ab@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+In-Reply-To: <1517916352-13614-1-git-send-email-m.purski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Maciej Purski <m.purski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 
-On Thu, Feb 08, 2018 at 02:46:32PM +0100, Marek Szyprowski wrote:
-> Hi Krzysztof,
+On Tue, Feb 06, 2018 at 12:25:52PM +0100, Maciej Purski wrote:
+> In order to use soc node, we need to reference soc child nodes by label
+> in exynos4412. Define pmu label in exynos4.dtsi. Use it in exynos4412
+> instead of redefining the node.
 > 
-> On 2018-01-30 22:18, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > Changes since v1:
-> > 1. New patch (1/4) calling devm_of_platform_populate() in PMU driver,
-> >     following Rob's advice.
-> > 2. The DTS patches moving reboot/poweroff nodes (3/4 and 4/4) now depend
-> >     on this.
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi    | 2 +-
+>  arch/arm/boot/dts/exynos4412.dtsi | 7 +++----
+>  2 files changed, 4 insertions(+), 5 deletions(-)
 > 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> Tested following boards and reboot works fine:
-> Exynos3250 (artik5-eval)
-> Exynos4412 (trats2)
-> Exynos5410 (odroid xu)
-> Exynos5422 (odroid xu3/xu4)
-> Exynos5433 (tm2)
 
-Thanks for testing. I applied 1/4 and 2/4. The remaining DTS patches
-depend on 1/4 so they will wait till next release.
+Thanks, applied.
 
 Best regards,
 Krzysztof
