@@ -1,48 +1,37 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 0/3] Add soc nodes to exynos4 series DTS
-Date: Tue, 13 Feb 2018 19:05:46 +0100
-Message-ID: <20180213180546.3s76x4tnierehl5z@kozik-lap>
-References: <CGME20180206113006eucas1p148766268255c129223e32f221afc1b94@eucas1p1.samsung.com>
- <1517916582-13814-1-git-send-email-m.purski@samsung.com>
+Subject: Re: [PATCH v5 1/4] dt-bindings: samsung: document bindings for Midas
+ family boards
+Date: Tue, 13 Feb 2018 19:07:17 +0100
+Message-ID: <20180213180717.cvfs6yx7crqyltyt@kozik-lap>
+References: <20180208000137.11264-1-simon@lineageos.org>
+ <20180208000137.11264-2-simon@lineageos.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:38725 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965168AbeBMSFv (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33302 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965168AbeBMSHV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:05:51 -0500
+        Tue, 13 Feb 2018 13:07:21 -0500
 Content-Disposition: inline
-In-Reply-To: <1517916582-13814-1-git-send-email-m.purski@samsung.com>
+In-Reply-To: <20180208000137.11264-2-simon@lineageos.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maciej Purski <m.purski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+To: Simon Shields <simon@lineageos.org>
+Cc: linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
 
-On Tue, Feb 06, 2018 at 12:29:39PM +0100, Maciej Purski wrote:
-> Hi all,
+On Thu, Feb 08, 2018 at 11:01:34AM +1100, Simon Shields wrote:
+> Document GT-I9300, GT-I9305, GT-N7100, and GT-N7105 bindings, along
+> with the shared "midas" binding.
 > 
-> this patchset adds soc node to exynos4, exynos4210 and exynos4412
-> DTS. The main goal for these changes is unification of all exynos
-> DTS. Soc nodes are already present in for example exynos5 series.
-> 
-> Best regards,
-> 
-> Maciej Purski
-> 
+> Signed-off-by: Simon Shields <simon@lineageos.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
-> Changes in v2:
-> - rebased onto "ARM: dts: exynos: Use pmu label in exynos4412"
->   in order to fix pmu warning
-> - move "cpu0_opp_table" outside the "soc" node
-> 
-> Maciej Purski (3):
->   ARM: dts: exynos: Add soc node to exynos4
->   ARM: dts: exynos: Add soc node to exynos4210
->   ARM: dts: exynos: Add soc node to exynos4412
+>  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 
-Thanks, applied all three.
+Thanks, applied.
 
 Best regards,
 Krzysztof
