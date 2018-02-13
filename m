@@ -1,9 +1,9 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 3/7] clk: samsung: exynos5260: fix PLL rates
-Date: Tue, 13 Feb 2018 14:40:28 +0100
-Message-ID: <20180213134032.30235-4-a.hajda@samsung.com>
+Subject: [PATCH 4/7] clk: samsung: exynos5433: fix PLL rates
+Date: Tue, 13 Feb 2018 14:40:29 +0100
+Message-ID: <20180213134032.30235-5-a.hajda@samsung.com>
 References: <20180213134032.30235-1-a.hajda@samsung.com>
-        <CGME20180213134100eucas1p1ade9f6022d991381db10fc9d2a3f3c37@eucas1p1.samsung.com>
+        <CGME20180213134101eucas1p1f9348abc0344594476bc8618c1006e31@eucas1p1.samsung.com>
 Return-path: <linux-clk-owner@vger.kernel.org>
 In-reply-to: <20180213134032.30235-1-a.hajda@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
@@ -17,22 +17,40 @@ As a result driver behaved inconsitently.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5260.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5433.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
-index fd1d9bfc151b..8eae1752d700 100644
---- a/drivers/clk/samsung/clk-exynos5260.c
-+++ b/drivers/clk/samsung/clk-exynos5260.c
-@@ -65,7 +65,7 @@ static const struct samsung_pll_rate_table pll2650_24mhz_tbl[] __initconst = {
- 	PLL_36XX_RATE(480000000, 160, 2, 2, 0),
- 	PLL_36XX_RATE(432000000, 144, 2, 2, 0),
- 	PLL_36XX_RATE(400000000, 200, 3, 2, 0),
--	PLL_36XX_RATE(394073130, 459, 7, 2, 49282),
-+	PLL_36XX_RATE(394073128, 459, 7, 2, 49282),
- 	PLL_36XX_RATE(333000000, 111, 2, 2, 0),
- 	PLL_36XX_RATE(300000000, 100, 2, 2, 0),
- 	PLL_36XX_RATE(266000000, 266, 3, 3, 0),
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index db270908037a..335bebfa21c0 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -729,7 +729,7 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
+ 	PLL_35XX_RATE(800000000U,  400, 6,  1),
+ 	PLL_35XX_RATE(733000000U,  733, 12, 1),
+ 	PLL_35XX_RATE(700000000U,  175, 3,  1),
+-	PLL_35XX_RATE(667000000U,  222, 4,  1),
++	PLL_35XX_RATE(666000000U,  222, 4,  1),
+ 	PLL_35XX_RATE(633000000U,  211, 4,  1),
+ 	PLL_35XX_RATE(600000000U,  500, 5,  2),
+ 	PLL_35XX_RATE(552000000U,  460, 5,  2),
+@@ -757,12 +757,12 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
+ /* AUD_PLL */
+ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
+ 	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
+-	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
++	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
+ 	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
+-	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
+-	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
+-	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
+-	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
++	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
++	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
++	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
++	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
+ 	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
+ 	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
+ 	{ /* sentinel */ }
 -- 
 2.16.1
 
