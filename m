@@ -1,15 +1,15 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 2/7] clk: samsung: exynos5250: fix PLL rates
-Date: Tue, 13 Feb 2018 14:40:27 +0100
-Message-ID: <20180213134032.30235-3-a.hajda@samsung.com>
+Subject: [PATCH 5/7] clk: samsung: exynos7: fix PLL rates
+Date: Tue, 13 Feb 2018 14:40:30 +0100
+Message-ID: <20180213134032.30235-6-a.hajda@samsung.com>
 References: <20180213134032.30235-1-a.hajda@samsung.com>
-        <CGME20180213134100eucas1p1a3dd9c27f8779390e77806bc4ecb40ee@eucas1p1.samsung.com>
+        <CGME20180213134101eucas1p1bd4db5d7bb3fb3cfd6c2a9adcd573758@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58339 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964778AbeBMNlE (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58142 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964917AbeBMNlG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:41:04 -0500
+        Tue, 13 Feb 2018 08:41:06 -0500
 In-reply-to: <20180213134032.30235-1-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -22,29 +22,20 @@ As a result driver behaved inconsitently.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5250.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 9b073c98a891..923c608b1b95 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -711,13 +711,13 @@ static const struct samsung_pll_rate_table epll_24mhz_tbl[] __initconst = {
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
- 	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
--	PLL_36XX_RATE(180633600, 90, 3, 2, 20762),
-+	PLL_36XX_RATE(180633605, 90, 3, 2, 20762),
- 	PLL_36XX_RATE(180000000, 90, 3, 2, 0),
- 	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
--	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
-+	PLL_36XX_RATE(67737602, 90, 2, 4, 20762),
- 	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
--	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
--	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
-+	PLL_36XX_RATE(45158401, 90, 3, 4, 20762),
-+	PLL_36XX_RATE(32768001, 131, 3, 5, 4719),
- 	{ },
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index 5931a4140c3d..bbfa57b4e017 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -140,7 +140,7 @@ static const struct samsung_div_clock topc_div_clks[] __initconst = {
+ };
+ 
+ static const struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initconst = {
+-	PLL_36XX_RATE(491520000, 20, 1, 0, 31457),
++	PLL_36XX_RATE(491519897, 20, 1, 0, 31457),
+ 	{},
  };
  
 -- 
