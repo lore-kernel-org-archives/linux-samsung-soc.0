@@ -1,45 +1,38 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 2/4] ARM: dts: split trats2 DTS in preparation for
- midas boards
-Date: Tue, 13 Feb 2018 19:14:47 +0100
-Message-ID: <20180213181447.cvfhzabnvzvov4ib@kozik-lap>
-References: <20180208000137.11264-1-simon@lineageos.org>
- <20180208000137.11264-3-simon@lineageos.org>
+Subject: Re: [PATCH 01/10] ARM: dts: exynos: Remove "cooling-{min|max}-level"
+ for CPU nodes
+Date: Tue, 13 Feb 2018 19:16:36 +0100
+Message-ID: <20180213181636.dwjyfqcunynonwrf@kozik-lap>
+References: <cover.1518166039.git.viresh.kumar@linaro.org>
+ <f808613a9c7a4f23d3a0c64b6f3d4df1b905b16b.1518166039.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36901 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965217AbeBMSOv (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:14:51 -0500
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180208000137.11264-3-simon@lineageos.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <f808613a9c7a4f23d3a0c64b6f3d4df1b905b16b.1518166039.git.viresh.kumar@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rafael Wysocki <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, daniel.lezcano@linaro.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Simon Shields <simon@lineageos.org>
-Cc: linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
 
-On Thu, Feb 08, 2018 at 11:01:35AM +1100, Simon Shields wrote:
-> The midas boards share a lot with trats2. Split the common parts
-> out of trats2 into a common midas dtsi and a common "galaxy s3" dts.
+On Fri, Feb 09, 2018 at 02:28:01PM +0530, Viresh Kumar wrote:
+> The "cooling-min-level" and "cooling-max-level" properties are not
+> parsed by any part of the kernel currently and the max cooling state of
+> a CPU cooling device is found by referring to the cpufreq table instead.
 > 
-> Signed-off-by: Simon Shields <simon@lineageos.org>
+> Remove the unused properties from the CPU nodes.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi        |  140 ++
->  ...exynos4412-trats2.dts => exynos4412-midas.dtsi} |  119 +-
->  arch/arm/boot/dts/exynos4412-trats2.dts            | 1441 +-------------------
->  3 files changed, 173 insertions(+), 1527 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
->  copy arch/arm/boot/dts/{exynos4412-trats2.dts => exynos4412-midas.dtsi} (91%)
->  rewrite arch/arm/boot/dts/exynos4412-trats2.dts (98%)
+>  arch/arm/boot/dts/exynos4210.dtsi      |  2 --
+>  arch/arm/boot/dts/exynos4412.dtsi      |  2 --
+>  arch/arm/boot/dts/exynos5250.dtsi      |  2 --
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 16 ----------------
+>  arch/arm/boot/dts/exynos5422-cpus.dtsi | 16 ----------------
+>  5 files changed, 38 deletions(-)
+> 
 
-Unfortunately this does not apply anymore. Probably because Maciej's
-patch touching camera and pmu nodes. I was hoping this was the last
-iteration of the series but apparently not... sorry!
-
-Please rebase on my latest next/dt or for-next branches (or linux-next
-in few days).
+Thanks, applied.
 
 Best regards,
 Krzysztof
