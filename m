@@ -1,19 +1,19 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/7] ASoC: samsung: i2s: Ensure names of supplied
- clocks are unique
-Date: Tue, 13 Feb 2018 08:25:27 +0100
-Message-ID: <CAJKOXPe5dFQYUQ+Fdn1NOynBT7Bp_256McYd=cYB2PFosqPbag@mail.gmail.com>
-References: <CGME20180212161641epcas1p2418c2323e5eb99a37a89b42c246f23dd@epcas1p2.samsung.com>
- <20180212161538.22669-1-s.nawrocki@samsung.com> <20180212161538.22669-3-s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 3/7] ASoC: samsung: i2s: Prevent external abort on
+ exynos5433 I2S1 access
+Date: Tue, 13 Feb 2018 08:25:59 +0100
+Message-ID: <CAJKOXPfktrQGJsHECCwJxw37eD_dpXYHXEXsA1W_sOFCwB5MPg@mail.gmail.com>
+References: <CGME20180212161646epcas1p2dabca4c8d98d3e66b7a78133d926bccb@epcas1p2.samsung.com>
+ <20180212161538.22669-1-s.nawrocki@samsung.com> <20180212161538.22669-4-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37294 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:37484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933426AbeBMHZ3 (ORCPT
+        id S933426AbeBMH0C (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 02:25:29 -0500
-In-Reply-To: <20180212161538.22669-3-s.nawrocki@samsung.com>
+        Tue, 13 Feb 2018 02:26:02 -0500
+In-Reply-To: <20180212161538.22669-4-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
@@ -21,23 +21,19 @@ Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+d
 
 On Mon, Feb 12, 2018 at 5:15 PM, Sylwester Nawrocki
 <s.nawrocki@samsung.com> wrote:
-> In order to support multiple instances of the I2S IP block the platform
-> device name is prepended to each clock registered by the driver.
-> The clock-output-names property is now not used, this should not cause
-> any issues as, for example, CDCLK clock is referenced through DT 'clocks'
-> property, not by name.
->
-> This change allows to have both I2S0 and I2S1 enabled simultaneously
-> on exynos5433 and working properly when #clock-cells property is specified
-> in respective DT nodes.
+> It seems both PCLK_I2S1 and SCLK_I2S1 clocks need to be enabled before
+> I2S1 control registers can be accessed on exynos5433. If SCLK clock
+> is disabled an exception is triggered. To fix this parent clock of
+> the RCLK_SRC clock is assigned to pri_dai->op_clk so required gate
+> clock is handled by the runtime PM ops.
 >
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
 > Changes since v1:
->  - added devm_kasprintf() error handling.
+>  - removed stray whitespace change.
 > ---
->  sound/soc/samsung/i2s.c | 28 +++++++++++++++++++---------
->  1 file changed, 19 insertions(+), 9 deletions(-)
+>  sound/soc/samsung/i2s.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
