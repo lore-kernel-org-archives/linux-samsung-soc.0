@@ -1,45 +1,64 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-Date: Wed, 14 Feb 2018 15:58:50 +0100
-Message-ID: <7fa753f3-dcea-2fec-de44-f7404851c7eb@samsung.com>
-References: <CGME20180212155239epcas2p34dad3d106036f65e5ee566a593a983e3@epcas2p3.samsung.com>
-        <20180212155227.20605-1-s.nawrocki@samsung.com>
-        <5A820B19.8080902@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5A820B19.8080902@samsung.com>
-Content-language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Subject: [PATCH v2] drm: exynos: Use proper macro definition for
+ HDMI_I2S_PIN_SEL_1
+Date: Wed, 14 Feb 2018 18:23:56 +0100
+Message-ID: <20180214172356.7013-1-s.nawrocki@samsung.com>
+References: <CGME20180214172410epcas1p25bc3b963d508a4d34666f25f325af54d@epcas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:45541 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033363AbeBNRYN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 14 Feb 2018 12:24:13 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com
+Cc: jy0922.shim@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 02/12/2018 10:46 PM, Chanwoo Choi wrote:
-> On 2018년 02월 13일 00:52, Sylwester Nawrocki wrote:
->> Add one more entry to the exynos5433_aud_pll_rates table, this allows
->> to support audio sample rates: 48000, 96000, 192000 Hz with minimum
->> error. The M, P, S, K values re confirmed by the HW team.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5433.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->> index ebd18586e325..b08a9028653f 100644
->> --- a/drivers/clk/samsung/clk-exynos5433.c
->> +++ b/drivers/clk/samsung/clk-exynos5433.c
->> @@ -765,6 +765,7 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
->>  	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
->>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
->>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
->> +	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
->>  	{ /* sentinel */ }
->>  };
-> Looks good to me.
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Bit field [2:0] of HDMI_I2S_PIN_SEL_1 corresponds to SDATA_0,
+not SDATA_2. This patch removes redefinition of HDMI_I2S_SEL_DATA2
+constant and adds missing HDMI_I2S_SEL_DATA0.
+The value of bit field selecting SDATA_1 (pin_sel_3) is also changed,
+so it is 3 as suggested in the Exynos TRMs.
 
-Thanks, patch applied to clk/samsung tree.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 7 +++++--
+ drivers/gpu/drm/exynos/regs-hdmi.h   | 2 +-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index a4b75a46f946..abd84cbcf1c2 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1068,10 +1068,13 @@ static void hdmi_audio_config(struct hdmi_context *hdata)
+ 	/* Configuration I2S input ports. Configure I2S_PIN_SEL_0~4 */
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_PIN_SEL_0, HDMI_I2S_SEL_SCLK(5)
+ 			| HDMI_I2S_SEL_LRCK(6));
+-	hdmi_reg_writeb(hdata, HDMI_I2S_PIN_SEL_1, HDMI_I2S_SEL_SDATA1(1)
+-			| HDMI_I2S_SEL_SDATA2(4));
++
++	hdmi_reg_writeb(hdata, HDMI_I2S_PIN_SEL_1, HDMI_I2S_SEL_SDATA1(3)
++			| HDMI_I2S_SEL_SDATA0(4));
++
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_PIN_SEL_2, HDMI_I2S_SEL_SDATA3(1)
+ 			| HDMI_I2S_SEL_SDATA2(2));
++
+ 	hdmi_reg_writeb(hdata, HDMI_I2S_PIN_SEL_3, HDMI_I2S_SEL_DSD(0));
+ 
+ 	/* I2S_CON_1 & 2 */
+diff --git a/drivers/gpu/drm/exynos/regs-hdmi.h b/drivers/gpu/drm/exynos/regs-hdmi.h
+index 04be0f7e8193..4420c203ac85 100644
+--- a/drivers/gpu/drm/exynos/regs-hdmi.h
++++ b/drivers/gpu/drm/exynos/regs-hdmi.h
+@@ -464,7 +464,7 @@
+ 
+ /* I2S_PIN_SEL_1 */
+ #define HDMI_I2S_SEL_SDATA1(x)		(((x) & 0x7) << 4)
+-#define HDMI_I2S_SEL_SDATA2(x)		((x) & 0x7)
++#define HDMI_I2S_SEL_SDATA0(x)		((x) & 0x7)
+ 
+ /* I2S_PIN_SEL_2 */
+ #define HDMI_I2S_SEL_SDATA3(x)		(((x) & 0x7) << 4)
+-- 
+2.14.2
