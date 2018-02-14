@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access" to the asoc tree
-Date: Wed, 14 Feb 2018 13:29:16 +0000
-Message-ID: <E1elx7c-0006xU-JW@debutante>
-References: <20180212161538.22669-4-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: i2s: Ensure names of supplied clocks are unique" to the asoc tree
+Date: Wed, 14 Feb 2018 13:29:19 +0000
+Message-ID: <E1elx7f-00070w-No@debutante>
+References: <20180212161538.22669-3-s.nawrocki@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180212161538.22669-4-s.nawrocki@samsung.com>
+In-Reply-To: <20180212161538.22669-3-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com, lgirdwood@gmail.comkrzk@kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
@@ -12,7 +12,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access
+   ASoC: samsung: i2s: Ensure names of supplied clocks are unique
 
 has been applied to the asoc tree at
 
@@ -37,45 +37,94 @@ to this mail.
 Thanks,
 Mark
 
->From 48279c53fd1d09dc0d1b6ebb9f21732c507cea0b Mon Sep 17 00:00:00 2001
+>From aa274c5cfd13381372d2dace32b7354ccba7d2ab Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 12 Feb 2018 17:15:34 +0100
-Subject: [PATCH] ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1
- access
+Date: Mon, 12 Feb 2018 17:15:33 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Ensure names of supplied clocks are
+ unique
 
-It seems both PCLK_I2S1 and SCLK_I2S1 clocks need to be enabled before
-I2S1 control registers can be accessed on exynos5433. If SCLK clock
-is disabled an exception is triggered. To fix this parent clock of
-the RCLK_SRC clock is assigned to pri_dai->op_clk so required gate
-clock is handled by the runtime PM ops.
+In order to support multiple instances of the I2S IP block the platform
+device name is prepended to each clock registered by the driver.
+The clock-output-names property is now not used, this should not cause
+any issues as, for example, CDCLK clock is referenced through DT 'clocks'
+property, not by name.
+
+This change allows to have both I2S0 and I2S1 enabled simultaneously
+on exynos5433 and working properly when #clock-cells property is specified
+in respective DT nodes.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/i2s.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ sound/soc/samsung/i2s.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 5088d12faeda..7b57ad11ca15 100644
+index aeba0ae890ea..5088d12faeda 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -1404,9 +1404,14 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	pm_runtime_enable(&pdev->dev);
+@@ -1193,11 +1193,13 @@ static void i2s_unregister_clock_provider(struct platform_device *pdev)
  
- 	ret = i2s_register_clock_provider(pdev);
--	if (!ret)
--		return 0;
-+	if (ret < 0)
-+		goto err_disable_pm;
-+
-+	pri_dai->op_clk = clk_get_parent(pri_dai->clk_table[CLK_I2S_RCLK_SRC]);
-+
-+	return 0;
+ static int i2s_register_clock_provider(struct platform_device *pdev)
+ {
+-	struct device *dev = &pdev->dev;
+-	struct i2s_dai *i2s = dev_get_drvdata(dev);
++	const char * const i2s_clk_desc[] = { "cdclk", "rclk_src", "prescaler" };
+ 	const char *clk_name[2] = { "i2s_opclk0", "i2s_opclk1" };
+ 	const char *p_names[2] = { NULL };
++	struct device *dev = &pdev->dev;
++	struct i2s_dai *i2s = dev_get_drvdata(dev);
+ 	const struct samsung_i2s_variant_regs *reg_info = i2s->variant_regs;
++	const char *i2s_clk_name[ARRAY_SIZE(i2s_clk_desc)];
+ 	struct clk *rclksrc;
+ 	int ret, i;
  
-+err_disable_pm:
- 	pm_runtime_disable(&pdev->dev);
- err_disable_clk:
- 	clk_disable_unprepare(pri_dai->clk);
+@@ -1214,30 +1216,38 @@ static int i2s_register_clock_provider(struct platform_device *pdev)
+ 		clk_put(rclksrc);
+ 	}
+ 
++	for (i = 0; i < ARRAY_SIZE(i2s_clk_desc); i++) {
++		i2s_clk_name[i] = devm_kasprintf(dev, GFP_KERNEL, "%s_%s",
++						dev_name(dev), i2s_clk_desc[i]);
++		if (!i2s_clk_name[i])
++			return -ENOMEM;
++	}
++
+ 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
+ 		/* Activate the prescaler */
+ 		u32 val = readl(i2s->addr + I2SPSR);
+ 		writel(val | PSR_PSREN, i2s->addr + I2SPSR);
+ 
+ 		i2s->clk_table[CLK_I2S_RCLK_SRC] = clk_register_mux(dev,
+-				"i2s_rclksrc", p_names, ARRAY_SIZE(p_names),
++				i2s_clk_name[CLK_I2S_RCLK_SRC], p_names,
++				ARRAY_SIZE(p_names),
+ 				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
+ 				i2s->addr + I2SMOD, reg_info->rclksrc_off,
+ 				1, 0, i2s->lock);
+ 
+ 		i2s->clk_table[CLK_I2S_RCLK_PSR] = clk_register_divider(dev,
+-				"i2s_presc", "i2s_rclksrc",
++				i2s_clk_name[CLK_I2S_RCLK_PSR],
++				i2s_clk_name[CLK_I2S_RCLK_SRC],
+ 				CLK_SET_RATE_PARENT,
+ 				i2s->addr + I2SPSR, 8, 6, 0, i2s->lock);
+ 
+-		p_names[0] = "i2s_presc";
++		p_names[0] = i2s_clk_name[CLK_I2S_RCLK_PSR];
+ 		i2s->clk_data.clk_num = 2;
+ 	}
+-	of_property_read_string_index(dev->of_node,
+-				"clock-output-names", 0, &clk_name[0]);
+ 
+-	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(dev, clk_name[0],
+-				p_names[0], CLK_SET_RATE_PARENT,
++	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(dev,
++				i2s_clk_name[CLK_I2S_CDCLK], p_names[0],
++				CLK_SET_RATE_PARENT,
+ 				i2s->addr + I2SMOD, reg_info->cdclkcon_off,
+ 				CLK_GATE_SET_TO_DISABLE, i2s->lock);
+ 
 -- 
 2.16.1
