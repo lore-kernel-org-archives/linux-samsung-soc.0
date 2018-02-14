@@ -1,18 +1,30 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: i2s: Update clock-output-names property documentation" to the asoc tree
-Date: Wed, 14 Feb 2018 13:29:22 +0000
-Message-ID: <E1elx7i-00072C-Rz@debutante>
-References: <20180212161538.22669-2-s.nawrocki@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180212161538.22669-2-s.nawrocki@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: Applied "ASoC: samsung: i2s: Define the parameters
+	list for SAMSUNG_I2S_OPCLK" to the asoc tree
+Date: Wed, 14 Feb 2018 13:29:13 +0000
+Message-ID: <E1elx7Z-0006uJ-Eu@debutante>
+References: <20180205154403.13520-5-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20180205154403.13520-5-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com, lgirdwood@gmail.comkrzk@kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, broonie@kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: i2s: Update clock-output-names property documentation
+   ASoC: samsung: i2s: Define the parameters list for SAMSUNG_I2S_OPCLK
 
 has been applied to the asoc tree at
 
@@ -37,81 +49,84 @@ to this mail.
 Thanks,
 Mark
 
->From e2ce852a7464fe3caaf72f9f3da87d2bfcf3eb84 Mon Sep 17 00:00:00 2001
+>From 45ae70e8b60e1d1bbc71eeccaef4026c5e6638a3 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 12 Feb 2018 17:15:32 +0100
-Subject: [PATCH] ASoC: samsung: i2s: Update clock-output-names property
- documentation
+Date: Mon, 12 Feb 2018 17:15:35 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Define the parameters list for
+ SAMSUNG_I2S_OPCLK
 
-The clock-output-names property is marked as deprecated. While at it,
-and few typos are fixed.
+The SAMSUNG_I2S_OPCLK is not currently used by any card driver thus we can
+safely change semantics of 'dir' argument of the I2S set_sysclk() callback.
+Now an enumeration is exported instead of directly using register bit field
+values.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/sound/samsung-i2s.txt        | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ sound/soc/samsung/i2s-regs.h | 11 ++++++-----
+ sound/soc/samsung/i2s.c      |  2 +-
+ sound/soc/samsung/i2s.h      | 11 ++++++++---
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-index bf100cd0d0f7..c1f508f18ac8 100644
---- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-+++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-@@ -7,7 +7,7 @@ Required SoC Specific Properties:
-    - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
-      secondary fifo, s/w reset control and internal mux for root clk src.
-    - samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
--     playback, sterio channel capture, secondary fifo using internal
-+     playback, stereo channel capture, secondary fifo using internal
-      or external dma, s/w reset control, internal mux for root clk src
-      and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
-      is to allow transfer of multiple channel audio data on single data line.
-@@ -25,7 +25,7 @@ Required SoC Specific Properties:
-   These strings correspond 1:1 with the ordered pairs in dmas.
- - clocks: Handle to iis clock and RCLK source clk.
- - clock-names:
--  i2s0 uses some base clks from CMU and some are from audio subsystem internal
-+  i2s0 uses some base clocks from CMU and some are from audio subsystem internal
-   clock controller. The clock names for i2s0 should be "iis", "i2s_opclk0" and
-   "i2s_opclk1" as shown in the example below.
-   i2s1 and i2s2 uses clocks from CMU. The clock names for i2s1 and i2s2 should
-@@ -36,9 +36,9 @@ Required SoC Specific Properties:
- - #clock-cells: should be 1, this property must be present if the I2S device
-   is a clock provider in terms of the common clock bindings, described in
-   ../clock/clock-bindings.txt.
--- clock-output-names: from the common clock bindings, names of the CDCLK
--  I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
--  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices recpectively.
-+- clock-output-names (deprecated): from the common clock bindings, names of
-+  the CDCLK I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
-+  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices respectively.
+diff --git a/sound/soc/samsung/i2s-regs.h b/sound/soc/samsung/i2s-regs.h
+index fe6914005494..964985ea2e80 100644
+--- a/sound/soc/samsung/i2s-regs.h
++++ b/sound/soc/samsung/i2s-regs.h
+@@ -65,11 +65,12 @@
+ #define CON_RXDMA_ACTIVE	(1 << 1)
+ #define CON_ACTIVE		(1 << 0)
  
- There are following clocks available at the I2S device nodes:
-  CLK_I2S_CDCLK    - the CDCLK (CODECLKO) gate clock,
-@@ -49,9 +49,10 @@ There are following clocks available at the I2S device nodes:
+-#define MOD_OPCLK_CDCLK_OUT	(0 << 30)
+-#define MOD_OPCLK_CDCLK_IN	(1 << 30)
+-#define MOD_OPCLK_BCLK_OUT	(2 << 30)
+-#define MOD_OPCLK_PCLK		(3 << 30)
+-#define MOD_OPCLK_MASK		(3 << 30)
++#define MOD_OPCLK_SHIFT		30
++#define MOD_OPCLK_CDCLK_OUT	(0 << MOD_OPCLK_SHIFT)
++#define MOD_OPCLK_CDCLK_IN	(1 << MOD_OPCLK_SHIFT)
++#define MOD_OPCLK_BCLK_OUT	(2 << MOD_OPCLK_SHIFT)
++#define MOD_OPCLK_PCLK		(3 << MOD_OPCLK_SHIFT)
++#define MOD_OPCLK_MASK		(3 << MOD_OPCLK_SHIFT)
+ #define MOD_TXS_IDMA		(1 << 28) /* Sec_TXFIFO use I-DMA */
  
- Refer to the SoC datasheet for availability of the above clocks.
- The CLK_I2S_RCLK_PSR and CLK_I2S_RCLK_SRC clocks are usually only available
--in the IIS Multi Audio Interface (I2S0).
--Note: Old DTs may not have the #clock-cells, clock-output-names properties
--and then not use the I2S node as a clock supplier.
-+in the IIS Multi Audio Interface.
-+
-+Note: Old DTs may not have the #clock-cells property and then not use the I2S
-+node as a clock supplier.
+ #define MOD_BLCS_SHIFT		26
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 7b57ad11ca15..b6407fbabdd1 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -489,7 +489,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 	switch (clk_id) {
+ 	case SAMSUNG_I2S_OPCLK:
+ 		mask = MOD_OPCLK_MASK;
+-		val = dir;
++		val = (dir << MOD_OPCLK_SHIFT) & MOD_OPCLK_MASK;
+ 		break;
+ 	case SAMSUNG_I2S_CDCLK:
+ 		mask = 1 << i2s_regs->cdclkcon_off;
+diff --git a/sound/soc/samsung/i2s.h b/sound/soc/samsung/i2s.h
+index 79781de2f247..a9832a9555cb 100644
+--- a/sound/soc/samsung/i2s.h
++++ b/sound/soc/samsung/i2s.h
+@@ -16,11 +16,16 @@
+ #define SAMSUNG_I2S_DAI        "samsung-i2s"
+ #define SAMSUNG_I2S_DAI_SEC    "samsung-i2s-sec"
  
- Optional SoC Specific Properties:
+-#define SAMSUNG_I2S_DIV_BCLK	1
++#define SAMSUNG_I2S_DIV_BCLK		1
  
-@@ -74,8 +75,7 @@ i2s0: i2s@3830000 {
- 		<&clock_audss EXYNOS_I2S_BUS>,
- 		<&clock_audss EXYNOS_SCLK_I2S>;
- 	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
--	#clock-cells;
--	clock-output-names = "i2s_cdclk0";
-+	#clock-cells = <1>;
- 	samsung,idma-addr = <0x03000000>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2s0_bus>;
+-#define SAMSUNG_I2S_RCLKSRC_0	0
+-#define SAMSUNG_I2S_RCLKSRC_1	1
++#define SAMSUNG_I2S_RCLKSRC_0		0
++#define SAMSUNG_I2S_RCLKSRC_1		1
+ #define SAMSUNG_I2S_CDCLK		2
++/* Operation clock for IIS logic */
+ #define SAMSUNG_I2S_OPCLK		3
++#define  SAMSUNG_I2S_OPCLK_CDCLK_OUT	0	/* CODEC clock out */
++#define  SAMSUNG_I2S_OPCLK_CDCLK_IN	1	/* CODEC clock in */
++#define  SAMSUNG_I2S_OPCLK_BCLK_OUT	2	/* Bit clock out */
++#define  SAMSUNG_I2S_OPCLK_PCLK		3	/* Audio bus clock */
+ 
+ #endif /* __SND_SOC_SAMSUNG_I2S_H */
 -- 
 2.16.1
