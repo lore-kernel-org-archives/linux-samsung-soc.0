@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: i2s: Ensure names of supplied clocks are unique" to the asoc tree
-Date: Wed, 14 Feb 2018 13:29:19 +0000
-Message-ID: <E1elx7f-00070w-No@debutante>
-References: <20180212161538.22669-3-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung,tm2-audio DT binding documentation update" to the asoc tree
+Date: Wed, 14 Feb 2018 13:29:08 +0000
+Message-ID: <E1elx7U-0006r6-Ss@debutante>
+References: <20180205154403.13520-9-s.nawrocki@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180212161538.22669-3-s.nawrocki@samsung.com>
+In-Reply-To: <20180205154403.13520-9-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com, lgirdwood@gmail.comkrzk@kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
@@ -12,7 +12,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: i2s: Ensure names of supplied clocks are unique
+   ASoC: samsung,tm2-audio DT binding documentation update
 
 has been applied to the asoc tree at
 
@@ -37,94 +37,53 @@ to this mail.
 Thanks,
 Mark
 
->From aa274c5cfd13381372d2dace32b7354ccba7d2ab Mon Sep 17 00:00:00 2001
+>From 3a3ac1ea898399f14748a358dd33262c97a9a86b Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 12 Feb 2018 17:15:33 +0100
-Subject: [PATCH] ASoC: samsung: i2s: Ensure names of supplied clocks are
- unique
+Date: Mon, 12 Feb 2018 17:15:36 +0100
+Subject: [PATCH] ASoC: samsung,tm2-audio DT binding documentation update
 
-In order to support multiple instances of the I2S IP block the platform
-device name is prepended to each clock registered by the driver.
-The clock-output-names property is now not used, this should not cause
-any issues as, for example, CDCLK clock is referenced through DT 'clocks'
-property, not by name.
-
-This change allows to have both I2S0 and I2S1 enabled simultaneously
-on exynos5433 and working properly when #clock-cells property is specified
-in respective DT nodes.
+This patch documents additional entries of the audio-codec and
+i2s-controller properties required for the HDMI audio support.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/i2s.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ .../devicetree/bindings/sound/samsung,tm2-audio.txt        | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index aeba0ae890ea..5088d12faeda 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1193,11 +1193,13 @@ static void i2s_unregister_clock_provider(struct platform_device *pdev)
+diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+index 94442e5673b3..f5ccc12ddc00 100644
+--- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
++++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+@@ -4,9 +4,13 @@ Required properties:
  
- static int i2s_register_clock_provider(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
--	struct i2s_dai *i2s = dev_get_drvdata(dev);
-+	const char * const i2s_clk_desc[] = { "cdclk", "rclk_src", "prescaler" };
- 	const char *clk_name[2] = { "i2s_opclk0", "i2s_opclk1" };
- 	const char *p_names[2] = { NULL };
-+	struct device *dev = &pdev->dev;
-+	struct i2s_dai *i2s = dev_get_drvdata(dev);
- 	const struct samsung_i2s_variant_regs *reg_info = i2s->variant_regs;
-+	const char *i2s_clk_name[ARRAY_SIZE(i2s_clk_desc)];
- 	struct clk *rclksrc;
- 	int ret, i;
+  - compatible		 : "samsung,tm2-audio"
+  - model		 : the user-visible name of this sound complex
+- - audio-codec		 : the phandle of the wm5110 audio codec node,
+-			   as described in ../mfd/arizona.txt
+- - i2s-controller	 : the phandle of the I2S controller
++ - audio-codec		 : the first entry should be phandle of the wm5110 audio
++			   codec node, as described in ../mfd/arizona.txt;
++			   the second entry should be phandle of the HDMI
++			   transmitter node
++ - i2s-controller	 : the list of phandle and argument tuples pointing to
++			   I2S controllers, the first entry should be I2S0 and
++			   the second one I2S1
+  - audio-amplifier	 : the phandle of the MAX98504 amplifier
+  - samsung,audio-routing : a list of the connections between audio components;
+ 			   each entry is a pair of strings, the first being the
+@@ -22,8 +26,8 @@ Example:
  
-@@ -1214,30 +1216,38 @@ static int i2s_register_clock_provider(struct platform_device *pdev)
- 		clk_put(rclksrc);
- 	}
- 
-+	for (i = 0; i < ARRAY_SIZE(i2s_clk_desc); i++) {
-+		i2s_clk_name[i] = devm_kasprintf(dev, GFP_KERNEL, "%s_%s",
-+						dev_name(dev), i2s_clk_desc[i]);
-+		if (!i2s_clk_name[i])
-+			return -ENOMEM;
-+	}
-+
- 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
- 		/* Activate the prescaler */
- 		u32 val = readl(i2s->addr + I2SPSR);
- 		writel(val | PSR_PSREN, i2s->addr + I2SPSR);
- 
- 		i2s->clk_table[CLK_I2S_RCLK_SRC] = clk_register_mux(dev,
--				"i2s_rclksrc", p_names, ARRAY_SIZE(p_names),
-+				i2s_clk_name[CLK_I2S_RCLK_SRC], p_names,
-+				ARRAY_SIZE(p_names),
- 				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
- 				i2s->addr + I2SMOD, reg_info->rclksrc_off,
- 				1, 0, i2s->lock);
- 
- 		i2s->clk_table[CLK_I2S_RCLK_PSR] = clk_register_divider(dev,
--				"i2s_presc", "i2s_rclksrc",
-+				i2s_clk_name[CLK_I2S_RCLK_PSR],
-+				i2s_clk_name[CLK_I2S_RCLK_SRC],
- 				CLK_SET_RATE_PARENT,
- 				i2s->addr + I2SPSR, 8, 6, 0, i2s->lock);
- 
--		p_names[0] = "i2s_presc";
-+		p_names[0] = i2s_clk_name[CLK_I2S_RCLK_PSR];
- 		i2s->clk_data.clk_num = 2;
- 	}
--	of_property_read_string_index(dev->of_node,
--				"clock-output-names", 0, &clk_name[0]);
- 
--	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(dev, clk_name[0],
--				p_names[0], CLK_SET_RATE_PARENT,
-+	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(dev,
-+				i2s_clk_name[CLK_I2S_CDCLK], p_names[0],
-+				CLK_SET_RATE_PARENT,
- 				i2s->addr + I2SMOD, reg_info->cdclkcon_off,
- 				CLK_GATE_SET_TO_DISABLE, i2s->lock);
- 
+ sound {
+ 	compatible = "samsung,tm2-audio";
+-	audio-codec = <&wm5110>;
+-	i2s-controller = <&i2s0>;
++	audio-codec = <&wm5110>, <&hdmi>;
++	i2s-controller = <&i2s0 0>, <&i2s1 0>;
+ 	audio-amplifier = <&max98504>;
+ 	mic-bias-gpios = <&gpr3 2 0>;
+ 	model = "wm5110";
 -- 
 2.16.1
