@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung,tm2-audio DT binding documentation update" to the asoc tree
-Date: Wed, 14 Feb 2018 13:29:08 +0000
-Message-ID: <E1elx7U-0006r6-Ss@debutante>
-References: <20180205154403.13520-9-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: i2s: Update clock-output-names property documentation" to the asoc tree
+Date: Wed, 14 Feb 2018 13:29:22 +0000
+Message-ID: <E1elx7i-00072C-Rz@debutante>
+References: <20180212161538.22669-2-s.nawrocki@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180205154403.13520-9-s.nawrocki@samsung.com>
+In-Reply-To: <20180212161538.22669-2-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com, lgirdwood@gmail.comkrzk@kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
@@ -12,7 +12,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung,tm2-audio DT binding documentation update
+   ASoC: samsung: i2s: Update clock-output-names property documentation
 
 has been applied to the asoc tree at
 
@@ -37,53 +37,81 @@ to this mail.
 Thanks,
 Mark
 
->From 3a3ac1ea898399f14748a358dd33262c97a9a86b Mon Sep 17 00:00:00 2001
+>From e2ce852a7464fe3caaf72f9f3da87d2bfcf3eb84 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 12 Feb 2018 17:15:36 +0100
-Subject: [PATCH] ASoC: samsung,tm2-audio DT binding documentation update
+Date: Mon, 12 Feb 2018 17:15:32 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Update clock-output-names property
+ documentation
 
-This patch documents additional entries of the audio-codec and
-i2s-controller properties required for the HDMI audio support.
+The clock-output-names property is marked as deprecated. While at it,
+and few typos are fixed.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/sound/samsung,tm2-audio.txt        | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ .../devicetree/bindings/sound/samsung-i2s.txt        | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-index 94442e5673b3..f5ccc12ddc00 100644
---- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-+++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-@@ -4,9 +4,13 @@ Required properties:
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+index bf100cd0d0f7..c1f508f18ac8 100644
+--- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+@@ -7,7 +7,7 @@ Required SoC Specific Properties:
+    - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+      secondary fifo, s/w reset control and internal mux for root clk src.
+    - samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
+-     playback, sterio channel capture, secondary fifo using internal
++     playback, stereo channel capture, secondary fifo using internal
+      or external dma, s/w reset control, internal mux for root clk src
+      and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
+      is to allow transfer of multiple channel audio data on single data line.
+@@ -25,7 +25,7 @@ Required SoC Specific Properties:
+   These strings correspond 1:1 with the ordered pairs in dmas.
+ - clocks: Handle to iis clock and RCLK source clk.
+ - clock-names:
+-  i2s0 uses some base clks from CMU and some are from audio subsystem internal
++  i2s0 uses some base clocks from CMU and some are from audio subsystem internal
+   clock controller. The clock names for i2s0 should be "iis", "i2s_opclk0" and
+   "i2s_opclk1" as shown in the example below.
+   i2s1 and i2s2 uses clocks from CMU. The clock names for i2s1 and i2s2 should
+@@ -36,9 +36,9 @@ Required SoC Specific Properties:
+ - #clock-cells: should be 1, this property must be present if the I2S device
+   is a clock provider in terms of the common clock bindings, described in
+   ../clock/clock-bindings.txt.
+-- clock-output-names: from the common clock bindings, names of the CDCLK
+-  I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
+-  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices recpectively.
++- clock-output-names (deprecated): from the common clock bindings, names of
++  the CDCLK I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
++  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices respectively.
  
-  - compatible		 : "samsung,tm2-audio"
-  - model		 : the user-visible name of this sound complex
-- - audio-codec		 : the phandle of the wm5110 audio codec node,
--			   as described in ../mfd/arizona.txt
-- - i2s-controller	 : the phandle of the I2S controller
-+ - audio-codec		 : the first entry should be phandle of the wm5110 audio
-+			   codec node, as described in ../mfd/arizona.txt;
-+			   the second entry should be phandle of the HDMI
-+			   transmitter node
-+ - i2s-controller	 : the list of phandle and argument tuples pointing to
-+			   I2S controllers, the first entry should be I2S0 and
-+			   the second one I2S1
-  - audio-amplifier	 : the phandle of the MAX98504 amplifier
-  - samsung,audio-routing : a list of the connections between audio components;
- 			   each entry is a pair of strings, the first being the
-@@ -22,8 +26,8 @@ Example:
+ There are following clocks available at the I2S device nodes:
+  CLK_I2S_CDCLK    - the CDCLK (CODECLKO) gate clock,
+@@ -49,9 +49,10 @@ There are following clocks available at the I2S device nodes:
  
- sound {
- 	compatible = "samsung,tm2-audio";
--	audio-codec = <&wm5110>;
--	i2s-controller = <&i2s0>;
-+	audio-codec = <&wm5110>, <&hdmi>;
-+	i2s-controller = <&i2s0 0>, <&i2s1 0>;
- 	audio-amplifier = <&max98504>;
- 	mic-bias-gpios = <&gpr3 2 0>;
- 	model = "wm5110";
+ Refer to the SoC datasheet for availability of the above clocks.
+ The CLK_I2S_RCLK_PSR and CLK_I2S_RCLK_SRC clocks are usually only available
+-in the IIS Multi Audio Interface (I2S0).
+-Note: Old DTs may not have the #clock-cells, clock-output-names properties
+-and then not use the I2S node as a clock supplier.
++in the IIS Multi Audio Interface.
++
++Note: Old DTs may not have the #clock-cells property and then not use the I2S
++node as a clock supplier.
+ 
+ Optional SoC Specific Properties:
+ 
+@@ -74,8 +75,7 @@ i2s0: i2s@3830000 {
+ 		<&clock_audss EXYNOS_I2S_BUS>,
+ 		<&clock_audss EXYNOS_SCLK_I2S>;
+ 	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+-	#clock-cells;
+-	clock-output-names = "i2s_cdclk0";
++	#clock-cells = <1>;
+ 	samsung,idma-addr = <0x03000000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2s0_bus>;
 -- 
 2.16.1
