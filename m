@@ -1,129 +1,81 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] video: fbdev: s3c-fb: remove dead platform code for Exynos
- and S5PV210 platforms
-Date: Wed, 14 Feb 2018 13:00:39 +0100
-Message-ID: <2621881.tniV7NOQqn@amdc3058>
-References: <CGME20180214120041epcas2p37afd51e693a9cad842e59128a77d45ac@epcas2p3.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Jingoo Han <jingoohan1@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Applied "ASoC: samsung: Add missing #sound-dai-cells property documentation" to the asoc tree
+Date: Wed, 14 Feb 2018 13:28:57 +0000
+Message-ID: <E1elx7J-0006lR-2g@debutante>
+References: <20180212161538.22669-8-s.nawrocki@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180212161538.22669-8-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jcsing.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.orgkrzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.orgalsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RXh5bm9zNSwgRXh5bm9zNCBhbmQgUzVQVjIxMCBwbGF0Zm9ybXMgaGF2ZSBiZWVuIGNvbnZlcnRl
-ZCB0bwp1c2UgRGV2aWNlIFRyZWUgYW5kIEV4eW5vcyBEUk0gZHJpdmVyIGxvbmcgdGltZSBhZ28u
-ICBSZW1vdmUKZGVhZCBwbGF0Zm9ybSBjb2RlIGZvciB0aGVzZSBwbGF0Zm9ybXMgYW5kIHVwZGF0
-ZSBLY29uZmlnCnMzYy1mYiBlbnRyeSBhY2NvcmRpbmdseS4KCkNjOiBKaW5nb28gSGFuIDxqaW5n
-b29oYW4xQGdtYWlsLmNvbT4KU2lnbmVkLW9mZi1ieTogQmFydGxvbWllaiBab2xuaWVya2lld2lj
-eiA8Yi56b2xuaWVya2llQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvdmlkZW8vZmJkZXYvS2Nv
-bmZpZyAgfCAgICAzIAogZHJpdmVycy92aWRlby9mYmRldi9zM2MtZmIuYyB8ICAxNjIgLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMiBmaWxlcyBjaGFuZ2VkLCAx
-IGluc2VydGlvbigrKSwgMTY0IGRlbGV0aW9ucygtKQoKSW5kZXg6IGIvZHJpdmVycy92aWRlby9m
-YmRldi9LY29uZmlnCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT0KLS0tIGEvZHJpdmVycy92aWRlby9mYmRldi9LY29uZmln
-CTIwMTgtMDItMTIgMTQ6Mjg6MzIuMzkyNjc3ODk2ICswMTAwCisrKyBiL2RyaXZlcnMvdmlkZW8v
-ZmJkZXYvS2NvbmZpZwkyMDE4LTAyLTE0IDEyOjU0OjA2LjM5OTA1NzU5MiArMDEwMApAQCAtMjAy
-MCw4ICsyMDIwLDcgQEAgY29uZmlnIEZCX1RNSU9fQUNDRUxMCiAKIGNvbmZpZyBGQl9TM0MKIAl0
-cmlzdGF0ZSAiU2Ftc3VuZyBTM0MgZnJhbWVidWZmZXIgc3VwcG9ydCIKLQlkZXBlbmRzIG9uIEZC
-ICYmIChDUFVfUzNDMjQxNiB8fCBBUkNIX1MzQzY0WFggfHwgXAotCQlBUkNIX1M1UFYyMTAgfHwg
-QVJDSF9FWFlOT1MpCisJZGVwZW5kcyBvbiBGQiAmJiAoQ1BVX1MzQzI0MTYgfHwgQVJDSF9TM0M2
-NFhYKQogCXNlbGVjdCBGQl9DRkJfRklMTFJFQ1QKIAlzZWxlY3QgRkJfQ0ZCX0NPUFlBUkVBCiAJ
-c2VsZWN0IEZCX0NGQl9JTUFHRUJMSVQKSW5kZXg6IGIvZHJpdmVycy92aWRlby9mYmRldi9zM2Mt
-ZmIuYwo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09Ci0tLSBhL2RyaXZlcnMvdmlkZW8vZmJkZXYvczNjLWZiLmMJMjAxNy0x
-MC0xOCAxNDozNToyMi4wNjM0NDgzMTAgKzAyMDAKKysrIGIvZHJpdmVycy92aWRlby9mYmRldi9z
-M2MtZmIuYwkyMDE4LTAyLTE0IDEyOjA0OjAwLjcxOTI2MjQ2MyArMDEwMApAQCAtMTcxNiw2MyAr
-MTcxNiw2IEBAIHN0YXRpYyBzdHJ1Y3QgczNjX2ZiX3dpbl92YXJpYW50IHMzY19mYl8KIAl9LAog
-fTsKIAotc3RhdGljIHN0cnVjdCBzM2NfZmJfd2luX3ZhcmlhbnQgczNjX2ZiX2RhdGFfczVwX3dp
-bnNbXSA9IHsKLQlbMF0gPSB7Ci0JCS5oYXNfb3NkX2MJPSAxLAotCQkub3NkX3NpemVfb2ZmCT0g
-MHg4LAotCQkucGFsZXR0ZV9zegk9IDI1NiwKLQkJLnZhbGlkX2JwcAk9IChWQUxJRF9CUFAxMjQ4
-IHwgVkFMSURfQlBQKDEzKSB8Ci0JCQkJICAgVkFMSURfQlBQKDE1KSB8IFZBTElEX0JQUCgxNikg
-fAotCQkJCSAgIFZBTElEX0JQUCgxOCkgfCBWQUxJRF9CUFAoMTkpIHwKLQkJCQkgICBWQUxJRF9C
-UFAoMjQpIHwgVkFMSURfQlBQKDI1KSB8Ci0JCQkJICAgVkFMSURfQlBQKDMyKSksCi0JfSwKLQlb
-MV0gPSB7Ci0JCS5oYXNfb3NkX2MJPSAxLAotCQkuaGFzX29zZF9kCT0gMSwKLQkJLm9zZF9zaXpl
-X29mZgk9IDB4YywKLQkJLmhhc19vc2RfYWxwaGEJPSAxLAotCQkucGFsZXR0ZV9zegk9IDI1NiwK
-LQkJLnZhbGlkX2JwcAk9IChWQUxJRF9CUFAxMjQ4IHwgVkFMSURfQlBQKDEzKSB8Ci0JCQkJICAg
-VkFMSURfQlBQKDE1KSB8IFZBTElEX0JQUCgxNikgfAotCQkJCSAgIFZBTElEX0JQUCgxOCkgfCBW
-QUxJRF9CUFAoMTkpIHwKLQkJCQkgICBWQUxJRF9CUFAoMjQpIHwgVkFMSURfQlBQKDI1KSB8Ci0J
-CQkJICAgVkFMSURfQlBQKDMyKSksCi0JfSwKLQlbMl0gPSB7Ci0JCS5oYXNfb3NkX2MJPSAxLAot
-CQkuaGFzX29zZF9kCT0gMSwKLQkJLm9zZF9zaXplX29mZgk9IDB4YywKLQkJLmhhc19vc2RfYWxw
-aGEJPSAxLAotCQkucGFsZXR0ZV9zegk9IDI1NiwKLQkJLnZhbGlkX2JwcAk9IChWQUxJRF9CUFAx
-MjQ4IHwgVkFMSURfQlBQKDEzKSB8Ci0JCQkJICAgVkFMSURfQlBQKDE1KSB8IFZBTElEX0JQUCgx
-NikgfAotCQkJCSAgIFZBTElEX0JQUCgxOCkgfCBWQUxJRF9CUFAoMTkpIHwKLQkJCQkgICBWQUxJ
-RF9CUFAoMjQpIHwgVkFMSURfQlBQKDI1KSB8Ci0JCQkJICAgVkFMSURfQlBQKDMyKSksCi0JfSwK
-LQlbM10gPSB7Ci0JCS5oYXNfb3NkX2MJPSAxLAotCQkuaGFzX29zZF9hbHBoYQk9IDEsCi0JCS5w
-YWxldHRlX3N6CT0gMjU2LAotCQkudmFsaWRfYnBwCT0gKFZBTElEX0JQUDEyNDggfCBWQUxJRF9C
-UFAoMTMpIHwKLQkJCQkgICBWQUxJRF9CUFAoMTUpIHwgVkFMSURfQlBQKDE2KSB8Ci0JCQkJICAg
-VkFMSURfQlBQKDE4KSB8IFZBTElEX0JQUCgxOSkgfAotCQkJCSAgIFZBTElEX0JQUCgyNCkgfCBW
-QUxJRF9CUFAoMjUpIHwKLQkJCQkgICBWQUxJRF9CUFAoMzIpKSwKLQl9LAotCVs0XSA9IHsKLQkJ
-Lmhhc19vc2RfYwk9IDEsCi0JCS5oYXNfb3NkX2FscGhhCT0gMSwKLQkJLnBhbGV0dGVfc3oJPSAy
-NTYsCi0JCS52YWxpZF9icHAJPSAoVkFMSURfQlBQMTI0OCB8IFZBTElEX0JQUCgxMykgfAotCQkJ
-CSAgIFZBTElEX0JQUCgxNSkgfCBWQUxJRF9CUFAoMTYpIHwKLQkJCQkgICBWQUxJRF9CUFAoMTgp
-IHwgVkFMSURfQlBQKDE5KSB8Ci0JCQkJICAgVkFMSURfQlBQKDI0KSB8IFZBTElEX0JQUCgyNSkg
-fAotCQkJCSAgIFZBTElEX0JQUCgzMikpLAotCX0sCi19OwotCiBzdGF0aWMgc3RydWN0IHMzY19m
-Yl9kcml2ZXJkYXRhIHMzY19mYl9kYXRhXzY0eHggPSB7CiAJLnZhcmlhbnQgPSB7CiAJCS5ucl93
-aW5kb3dzCT0gNSwKQEAgLTE4MDQsMTAyICsxNzQ3LDYgQEAgc3RhdGljIHN0cnVjdCBzM2NfZmJf
-ZHJpdmVyZGF0YSBzM2NfZmJfZAogCS53aW5bNF0JPSAmczNjX2ZiX2RhdGFfNjR4eF93aW5zWzRd
-LAogfTsKIAotc3RhdGljIHN0cnVjdCBzM2NfZmJfZHJpdmVyZGF0YSBzM2NfZmJfZGF0YV9zNXB2
-MjEwID0gewotCS52YXJpYW50ID0gewotCQkubnJfd2luZG93cwk9IDUsCi0JCS52aWR0Y29uCT0g
-VklEVENPTjAsCi0JCS53aW5jb24JCT0gV0lOQ09OKDApLAotCQkud2lubWFwCQk9IFdJTnhNQVAo
-MCksCi0JCS5rZXljb24JCT0gV0tFWUNPTiwKLQkJLm9zZAkJPSBWSURPU0RfQkFTRSwKLQkJLm9z
-ZF9zdHJpZGUJPSAxNiwKLQkJLmJ1Zl9zdGFydAk9IFZJRFdfQlVGX1NUQVJUKDApLAotCQkuYnVm
-X3NpemUJPSBWSURXX0JVRl9TSVpFKDApLAotCQkuYnVmX2VuZAk9IFZJRFdfQlVGX0VORCgwKSwK
-LQotCQkucGFsZXR0ZSA9IHsKLQkJCVswXSA9IDB4MjQwMCwKLQkJCVsxXSA9IDB4MjgwMCwKLQkJ
-CVsyXSA9IDB4MmMwMCwKLQkJCVszXSA9IDB4MzAwMCwKLQkJCVs0XSA9IDB4MzQwMCwKLQkJfSwK
-LQotCQkuaGFzX3NoYWRvd2Nvbgk9IDEsCi0JCS5oYXNfYmxlbmRjb24JPSAxLAotCQkuaGFzX2Ns
-a3NlbAk9IDEsCi0JCS5oYXNfZml4dmNsawk9IDEsCi0JfSwKLQkud2luWzBdCT0gJnMzY19mYl9k
-YXRhX3M1cF93aW5zWzBdLAotCS53aW5bMV0JPSAmczNjX2ZiX2RhdGFfczVwX3dpbnNbMV0sCi0J
-LndpblsyXQk9ICZzM2NfZmJfZGF0YV9zNXBfd2luc1syXSwKLQkud2luWzNdCT0gJnMzY19mYl9k
-YXRhX3M1cF93aW5zWzNdLAotCS53aW5bNF0JPSAmczNjX2ZiX2RhdGFfczVwX3dpbnNbNF0sCi19
-OwotCi1zdGF0aWMgc3RydWN0IHMzY19mYl9kcml2ZXJkYXRhIHMzY19mYl9kYXRhX2V4eW5vczQg
-PSB7Ci0JLnZhcmlhbnQgPSB7Ci0JCS5ucl93aW5kb3dzCT0gNSwKLQkJLnZpZHRjb24JPSBWSURU
-Q09OMCwKLQkJLndpbmNvbgkJPSBXSU5DT04oMCksCi0JCS53aW5tYXAJCT0gV0lOeE1BUCgwKSwK
-LQkJLmtleWNvbgkJPSBXS0VZQ09OLAotCQkub3NkCQk9IFZJRE9TRF9CQVNFLAotCQkub3NkX3N0
-cmlkZQk9IDE2LAotCQkuYnVmX3N0YXJ0CT0gVklEV19CVUZfU1RBUlQoMCksCi0JCS5idWZfc2l6
-ZQk9IFZJRFdfQlVGX1NJWkUoMCksCi0JCS5idWZfZW5kCT0gVklEV19CVUZfRU5EKDApLAotCi0J
-CS5wYWxldHRlID0gewotCQkJWzBdID0gMHgyNDAwLAotCQkJWzFdID0gMHgyODAwLAotCQkJWzJd
-ID0gMHgyYzAwLAotCQkJWzNdID0gMHgzMDAwLAotCQkJWzRdID0gMHgzNDAwLAotCQl9LAotCi0J
-CS5oYXNfc2hhZG93Y29uCT0gMSwKLQkJLmhhc19ibGVuZGNvbgk9IDEsCi0JCS5oYXNfZml4dmNs
-awk9IDEsCi0JfSwKLQkud2luWzBdCT0gJnMzY19mYl9kYXRhX3M1cF93aW5zWzBdLAotCS53aW5b
-MV0JPSAmczNjX2ZiX2RhdGFfczVwX3dpbnNbMV0sCi0JLndpblsyXQk9ICZzM2NfZmJfZGF0YV9z
-NXBfd2luc1syXSwKLQkud2luWzNdCT0gJnMzY19mYl9kYXRhX3M1cF93aW5zWzNdLAotCS53aW5b
-NF0JPSAmczNjX2ZiX2RhdGFfczVwX3dpbnNbNF0sCi19OwotCi1zdGF0aWMgc3RydWN0IHMzY19m
-Yl9kcml2ZXJkYXRhIHMzY19mYl9kYXRhX2V4eW5vczUgPSB7Ci0JLnZhcmlhbnQgPSB7Ci0JCS5u
-cl93aW5kb3dzCT0gNSwKLQkJLnZpZHRjb24JPSBGSU1EX1Y4X1ZJRFRDT04wLAotCQkud2luY29u
-CQk9IFdJTkNPTigwKSwKLQkJLndpbm1hcAkJPSBXSU54TUFQKDApLAotCQkua2V5Y29uCQk9IFdL
-RVlDT04sCi0JCS5vc2QJCT0gVklET1NEX0JBU0UsCi0JCS5vc2Rfc3RyaWRlCT0gMTYsCi0JCS5i
-dWZfc3RhcnQJPSBWSURXX0JVRl9TVEFSVCgwKSwKLQkJLmJ1Zl9zaXplCT0gVklEV19CVUZfU0la
-RSgwKSwKLQkJLmJ1Zl9lbmQJPSBWSURXX0JVRl9FTkQoMCksCi0KLQkJLnBhbGV0dGUgPSB7Ci0J
-CQlbMF0gPSAweDI0MDAsCi0JCQlbMV0gPSAweDI4MDAsCi0JCQlbMl0gPSAweDJjMDAsCi0JCQlb
-M10gPSAweDMwMDAsCi0JCQlbNF0gPSAweDM0MDAsCi0JCX0sCi0JCS5oYXNfc2hhZG93Y29uCT0g
-MSwKLQkJLmhhc19ibGVuZGNvbgk9IDEsCi0JCS5oYXNfZml4dmNsawk9IDEsCi0JfSwKLQkud2lu
-WzBdCT0gJnMzY19mYl9kYXRhX3M1cF93aW5zWzBdLAotCS53aW5bMV0JPSAmczNjX2ZiX2RhdGFf
-czVwX3dpbnNbMV0sCi0JLndpblsyXQk9ICZzM2NfZmJfZGF0YV9zNXBfd2luc1syXSwKLQkud2lu
-WzNdCT0gJnMzY19mYl9kYXRhX3M1cF93aW5zWzNdLAotCS53aW5bNF0JPSAmczNjX2ZiX2RhdGFf
-czVwX3dpbnNbNF0sCi19OwotCiAvKiBTM0MyNDQzL1MzQzI0MTYgc3R5bGUgaGFyZHdhcmUgKi8K
-IHN0YXRpYyBzdHJ1Y3QgczNjX2ZiX2RyaXZlcmRhdGEgczNjX2ZiX2RhdGFfczNjMjQ0MyA9IHsK
-IAkudmFyaWFudCA9IHsKQEAgLTE5NDIsMTUgKzE3ODksNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0
-IHBsYXRmb3JtX2RldmljZV9pZCBzCiAJCS5uYW1lCQk9ICJzM2MtZmIiLAogCQkuZHJpdmVyX2Rh
-dGEJPSAodW5zaWduZWQgbG9uZykmczNjX2ZiX2RhdGFfNjR4eCwKIAl9LCB7Ci0JCS5uYW1lCQk9
-ICJzNXB2MjEwLWZiIiwKLQkJLmRyaXZlcl9kYXRhCT0gKHVuc2lnbmVkIGxvbmcpJnMzY19mYl9k
-YXRhX3M1cHYyMTAsCi0JfSwgewotCQkubmFtZQkJPSAiZXh5bm9zNC1mYiIsCi0JCS5kcml2ZXJf
-ZGF0YQk9ICh1bnNpZ25lZCBsb25nKSZzM2NfZmJfZGF0YV9leHlub3M0LAotCX0sIHsKLQkJLm5h
-bWUJCT0gImV4eW5vczUtZmIiLAotCQkuZHJpdmVyX2RhdGEJPSAodW5zaWduZWQgbG9uZykmczNj
-X2ZiX2RhdGFfZXh5bm9zNSwKLQl9LCB7CiAJCS5uYW1lCQk9ICJzM2MyNDQzLWZiIiwKIAkJLmRy
-aXZlcl9kYXRhCT0gKHVuc2lnbmVkIGxvbmcpJnMzY19mYl9kYXRhX3MzYzI0NDMsCiAJfSwKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The patch
+
+   ASoC: samsung: Add missing #sound-dai-cells property documentation
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 3f0c43e60d19e1c126ddad47c77a5e1036e52378 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Date: Mon, 12 Feb 2018 17:15:38 +0100
+Subject: [PATCH] ASoC: samsung: Add missing #sound-dai-cells property
+ documentation
+
+The #sound-dai-cells property might be helpful in selecting primary
+or secondary CPU DAI and it's already present in i2s nodes for some
+exynos SoCs so let's add it to the DT binding documentation.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ Documentation/devicetree/bindings/sound/samsung-i2s.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+index c1f508f18ac8..a88cb00fa096 100644
+--- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+@@ -60,6 +60,7 @@ Optional SoC Specific Properties:
+   sub system(used in secondary sound source).
+ - pinctrl-0: Should specify pin control groups used for this controller.
+ - pinctrl-names: Should contain only one value - "default".
++- #sound-dai-cells: should be 1.
+ 
+ 
+ Example:
+@@ -79,4 +80,5 @@ i2s0: i2s@3830000 {
+ 	samsung,idma-addr = <0x03000000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2s0_bus>;
++	#sound-dai-cells = <1>;
+ };
+-- 
+2.16.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
