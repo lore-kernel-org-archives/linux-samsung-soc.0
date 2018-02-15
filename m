@@ -1,39 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 1/3] ARM: dts: exynos: Add I2S1 device node to
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 2/3] ARM: dts: exynos: Update I2S0 device node in
  exynos5433.dtsi
-Date: Thu, 15 Feb 2018 19:32:15 +0100
-Message-ID: <20180215183215.pbrvj7bkdb3g6e4w@kozik-lap>
-References: <CGME20180212163202epcas2p3acceac29dd61f37d80f50cf2640d4686@epcas2p3.samsung.com>
- <20180212163147.11561-1-s.nawrocki@samsung.com>
+Date: Thu, 15 Feb 2018 19:32:34 +0100
+Message-ID: <20180215183234.sbr5uvobjyynfpdj@kozik-lap>
+References: <20180212163147.11561-1-s.nawrocki@samsung.com>
+ <CGME20180212163207epcas1p19d0fd84633edda6f61a7b760b85e1c91@epcas1p1.samsung.com>
+ <20180212163147.11561-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39164 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030902AbeBOScU (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 13:32:20 -0500
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20180212163147.11561-1-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20180212163147.11561-2-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jcsing.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 
-On Mon, Feb 12, 2018 at 05:31:45PM +0100, Sylwester Nawrocki wrote:
-> Add DT node for the second I2S controller available
-> on Exynos 5433 SoC.
+On Mon, Feb 12, 2018 at 05:31:46PM +0100, Sylwester Nawrocki wrote:
+> The i2s0 node name is changed to a more generic "i2s" and missing
+> (optional) properties are added. The #sound-dai-cells property is
+> required for HDMI audio support on TM2 board.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
 > Changes since v2:
 >  - none.
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
 
 Thanks, applied.
 
 Best regards,
 Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
