@@ -1,27 +1,33 @@
 From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
-Date: Thu, 15 Feb 2018 23:51:59 +0800
-Message-ID: <20180215155158.GM7352@gondor.apana.org.au>
-References: <CGME20180205174022eucas1p101e8339284c1f0ac8f40f70c24de1c1f@eucas1p1.samsung.com>
- <224788c7-426b-d3a9-d0a6-412d2b8afb75@partner.samsung.com>
+Subject: Re: [PATCH v3] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
+Date: Thu, 15 Feb 2018 23:53:13 +0800
+Message-ID: <20180215155312.GR7352@gondor.apana.org.au>
+References: <CGME20180207155211eucas1p2d8d04871aaeb49efc30909d46e47e028@eucas1p2.samsung.com>
+ <77384548-9870-40b8-46fc-4bd62747efd6@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <224788c7-426b-d3a9-d0a6-412d2b8afb75@partner.samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
+In-Reply-To: <77384548-9870-40b8-46fc-4bd62747efd6@partner.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 06:40:20PM +0100, Kamil Konieczny wrote:
-> 
+On Wed, Feb 07, 2018 at 04:52:09PM +0100, Kamil Konieczny wrote:
 > In AES-ECB mode crypt is done with key only, so any use of IV
-> can cause kernel Oops, as reported by Anand Moon.
-> Fixed it by using IV only in AES-CBC and AES-CTR.
+> can cause kernel Oops. Use IV only in AES-CBC and AES-CTR.
 > 
 > Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 > Reported-by: Anand Moon <linux.amoon@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested-by: Anand Moon <linux.amoon@gmail.com>
+> Cc: stable@vger.kernel.org # can be applied after commit 8f9702aad138
+> 
+> ---
+> version 3:
+> Change commit message: drop 'Fixes: 8f9702aad138' as the error was
+> introduced earlier.
 
 Patch applied.  Thanks.
 -- 
