@@ -1,57 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] cpufreq: s3c24xx: Delete an error message for a failed memory
- allocation in two functions
-Date: Thu, 15 Feb 2018 17:40:12 +0100
-Message-ID: <201722ce-019d-a5b4-fc00-74679d82b64f@users.sourceforge.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/3] ARM: dts: exynos: Add I2S1 device node to
+ exynos5433.dtsi
+Date: Thu, 15 Feb 2018 19:32:15 +0100
+Message-ID: <20180215183215.pbrvj7bkdb3g6e4w@kozik-lap>
+References: <CGME20180212163202epcas2p3acceac29dd61f37d80f50cf2640d4686@epcas2p3.samsung.com>
+ <20180212163147.11561-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39164 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030902AbeBOScU (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 15 Feb 2018 13:32:20 -0500
+Content-Disposition: inline
+In-Reply-To: <20180212163147.11561-1-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Feb 2018 17:28:40 +0100
+On Mon, Feb 12, 2018 at 05:31:45PM +0100, Sylwester Nawrocki wrote:
+> Add DT node for the second I2S controller available
+> on Exynos 5433 SoC.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> Changes since v2:
+>  - none.
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
 
-Omit an extra message for a memory allocation failure in these functions.
+Thanks, applied.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/cpufreq/s3c24xx-cpufreq.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
-index 7b596fa38ad2..024afd0b9458 100644
---- a/drivers/cpufreq/s3c24xx-cpufreq.c
-+++ b/drivers/cpufreq/s3c24xx-cpufreq.c
-@@ -473,10 +473,8 @@ int __init s3c_cpufreq_setboard(struct s3c_cpufreq_board *board)
- 	 * initdata. */
- 
- 	ours = kzalloc(sizeof(*ours), GFP_KERNEL);
--	if (ours == NULL) {
--		pr_err("%s: no memory\n", __func__);
-+	if (!ours)
- 		return -ENOMEM;
--	}
- 
- 	*ours = *board;
- 	cpu_cur.board = ours;
-@@ -562,10 +560,8 @@ static int s3c_cpufreq_build_freq(void)
- 	size++;
- 
- 	ftab = kzalloc(sizeof(*ftab) * size, GFP_KERNEL);
--	if (!ftab) {
--		pr_err("%s: no memory for tables\n", __func__);
-+	if (!ftab)
- 		return -ENOMEM;
--	}
- 
- 	ftab_size = size;
- 
--- 
-2.16.1
+Best regards,
+Krzysztof
