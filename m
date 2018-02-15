@@ -1,50 +1,88 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH v2 0/6] dt-bindings: add bindings for USB physical
- connector
-Date: Thu, 15 Feb 2018 11:39:14 +0100
-Message-ID: <20180215103920.32017-1-a.hajda@samsung.com>
-References: <CGME20180215103925eucas1p1f2278a69a7d81b6ba1ae3583d11e1997@eucas1p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [RFC PATCH v2 5/6] extcon: add possibility to get extcon device by
+ OF node
+Date: Thu, 15 Feb 2018 11:39:19 +0100
+Message-ID: <20180215103920.32017-6-a.hajda@samsung.com>
+References: <20180215103920.32017-1-a.hajda@samsung.com>
+ <CGME20180215103928eucas1p1b2ef8630cf86f2799b4689d6786bdf4e@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20180215103920.32017-1-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-Thanks for reviews of previous iterations.
-
-This patchset introduces USB physical connector bindings, together with working example.
-
-v2: I have addressed comments by Rob and Laurent, thanks 
-v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C example.
-
-Changes are also described in patches.
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (5):
-  dt-bindings: add bindings for USB physical connector
-  dt-bindings: add bindings for Samsung micro-USB 11-pin connector
-  arm64: dts: exynos: add micro-USB connector node to TM2 platforms
-  arm64: dts: exynos: add OF graph between MHL and USB connector
-  extcon: add possibility to get extcon device by OF node
-
-Maciej Purski (1):
-  drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
-
- .../connector/samsung,usb-connector-11pin.txt      | 51 ++++++++++++
- .../bindings/connector/usb-connector.txt           | 74 +++++++++++++++++
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 38 ++++++++-
- drivers/extcon/extcon.c                            | 44 +++++++---
- drivers/gpu/drm/bridge/sil-sii8620.c               | 97 +++++++++++++++++++++-
- include/linux/extcon.h                             |  6 ++
- 6 files changed, 294 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
- create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
-
--- 
-2.16.1
+U2luY2UgZXh0Y29uIHByb3BlcnR5IGlzIG5vdCBhbGxvd2VkIGluIERULCBleHRjb24gc3Vic3lz
+dGVtIHJlcXVpcmVzCmFub3RoZXIgd2F5IHRvIGdldCBleHRjb24gZGV2aWNlLiBMZXRzIHRyeSB0
+aGUgc2ltcGxlc3QgYXBwcm9hY2ggLSBnZXQKZWRldiBieSBvZl9ub2RlLgoKU2lnbmVkLW9mZi1i
+eTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KQWNrZWQtYnk6IENoYW53b28g
+Q2hvaSA8Y3cwMC5jaG9pQHNhbXN1bmcuY29tPgotLS0KdjI6IGNoYW5nZWQgbGFiZWwgdG8gZm9s
+bG93IGxvY2FsIGNvbnZlbnRpb24gKENoYW53b28pCi0tLQogZHJpdmVycy9leHRjb24vZXh0Y29u
+LmMgfCA0NCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLQogaW5j
+bHVkZS9saW51eC9leHRjb24uaCAgfCAgNiArKysrKysKIDIgZmlsZXMgY2hhbmdlZCwgNDAgaW5z
+ZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9leHRjb24v
+ZXh0Y29uLmMgYi9kcml2ZXJzL2V4dGNvbi9leHRjb24uYwppbmRleCBjYjM4YzI3NDc2ODQuLmM0
+OTcyYzRjYjNiZCAxMDA2NDQKLS0tIGEvZHJpdmVycy9leHRjb24vZXh0Y29uLmMKKysrIGIvZHJp
+dmVycy9leHRjb24vZXh0Y29uLmMKQEAgLTEzMzYsNiArMTMzNiwyOCBAQCB2b2lkIGV4dGNvbl9k
+ZXZfdW5yZWdpc3RlcihzdHJ1Y3QgZXh0Y29uX2RldiAqZWRldikKIEVYUE9SVF9TWU1CT0xfR1BM
+KGV4dGNvbl9kZXZfdW5yZWdpc3Rlcik7CiAKICNpZmRlZiBDT05GSUdfT0YKKworLyoKKyAqIGV4
+dGNvbl9nZXRfZWRldl9ieV9vZl9ub2RlIC0gR2V0IHRoZSBleHRjb24gZGV2aWNlIGZyb20gZGV2
+aWNldHJlZS4KKyAqIEBub2RlCTogT0Ygbm9kZSBpZGVudHlmeWluZyBlZGV2CisgKgorICogUmV0
+dXJuIHRoZSBwb2ludGVyIG9mIGV4dGNvbiBkZXZpY2UgaWYgc3VjY2VzcyBvciBFUlJfUFRSKGVy
+cikgaWYgZmFpbC4KKyAqLworc3RydWN0IGV4dGNvbl9kZXYgKmV4dGNvbl9nZXRfZWRldl9ieV9v
+Zl9ub2RlKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSkKK3sKKwlzdHJ1Y3QgZXh0Y29uX2RldiAq
+ZWRldjsKKworCW11dGV4X2xvY2soJmV4dGNvbl9kZXZfbGlzdF9sb2NrKTsKKwlsaXN0X2Zvcl9l
+YWNoX2VudHJ5KGVkZXYsICZleHRjb25fZGV2X2xpc3QsIGVudHJ5KQorCQlpZiAoZWRldi0+ZGV2
+LnBhcmVudCAmJiBlZGV2LT5kZXYucGFyZW50LT5vZl9ub2RlID09IG5vZGUpCisJCQlnb3RvIG91
+dDsKKwllZGV2ID0gRVJSX1BUUigtRVBST0JFX0RFRkVSKTsKK291dDoKKwltdXRleF91bmxvY2so
+JmV4dGNvbl9kZXZfbGlzdF9sb2NrKTsKKworCXJldHVybiBlZGV2OworfQorCiAvKgogICogZXh0
+Y29uX2dldF9lZGV2X2J5X3BoYW5kbGUgLSBHZXQgdGhlIGV4dGNvbiBkZXZpY2UgZnJvbSBkZXZp
+Y2V0cmVlLgogICogQGRldgkJOiB0aGUgaW5zdGFuY2UgdG8gdGhlIGdpdmVuIGRldmljZQpAQCAt
+MTM2MywyNSArMTM4NSwyNyBAQCBzdHJ1Y3QgZXh0Y29uX2RldiAqZXh0Y29uX2dldF9lZGV2X2J5
+X3BoYW5kbGUoc3RydWN0IGRldmljZSAqZGV2LCBpbnQgaW5kZXgpCiAJCXJldHVybiBFUlJfUFRS
+KC1FTk9ERVYpOwogCX0KIAotCW11dGV4X2xvY2soJmV4dGNvbl9kZXZfbGlzdF9sb2NrKTsKLQls
+aXN0X2Zvcl9lYWNoX2VudHJ5KGVkZXYsICZleHRjb25fZGV2X2xpc3QsIGVudHJ5KSB7Ci0JCWlm
+IChlZGV2LT5kZXYucGFyZW50ICYmIGVkZXYtPmRldi5wYXJlbnQtPm9mX25vZGUgPT0gbm9kZSkg
+ewotCQkJbXV0ZXhfdW5sb2NrKCZleHRjb25fZGV2X2xpc3RfbG9jayk7Ci0JCQlvZl9ub2RlX3B1
+dChub2RlKTsKLQkJCXJldHVybiBlZGV2OwotCQl9Ci0JfQotCW11dGV4X3VubG9jaygmZXh0Y29u
+X2Rldl9saXN0X2xvY2spOworCWVkZXYgPSBleHRjb25fZ2V0X2VkZXZfYnlfb2Zfbm9kZShub2Rl
+KTsKIAlvZl9ub2RlX3B1dChub2RlKTsKIAotCXJldHVybiBFUlJfUFRSKC1FUFJPQkVfREVGRVIp
+OworCXJldHVybiBlZGV2OwogfQorCiAjZWxzZQorCitzdHJ1Y3QgZXh0Y29uX2RldiAqZXh0Y29u
+X2dldF9lZGV2X2J5X29mX25vZGUoc3RydWN0IGRldmljZV9ub2RlICpub2RlKQoreworCXJldHVy
+biBFUlJfUFRSKC1FTk9TWVMpOworfQorCiBzdHJ1Y3QgZXh0Y29uX2RldiAqZXh0Y29uX2dldF9l
+ZGV2X2J5X3BoYW5kbGUoc3RydWN0IGRldmljZSAqZGV2LCBpbnQgaW5kZXgpCiB7CiAJcmV0dXJu
+IEVSUl9QVFIoLUVOT1NZUyk7CiB9CisKICNlbmRpZiAvKiBDT05GSUdfT0YgKi8KKworRVhQT1JU
+X1NZTUJPTF9HUEwoZXh0Y29uX2dldF9lZGV2X2J5X29mX25vZGUpOwogRVhQT1JUX1NZTUJPTF9H
+UEwoZXh0Y29uX2dldF9lZGV2X2J5X3BoYW5kbGUpOwogCiAvKioKZGlmZiAtLWdpdCBhL2luY2x1
+ZGUvbGludXgvZXh0Y29uLmggYi9pbmNsdWRlL2xpbnV4L2V4dGNvbi5oCmluZGV4IDZkOTRlODJj
+OGFkOS4uYjQ3ZTBjN2YwMWZlIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2V4dGNvbi5oCisr
+KyBiL2luY2x1ZGUvbGludXgvZXh0Y29uLmgKQEAgLTIzMCw2ICsyMzAsNyBAQCBleHRlcm4gdm9p
+ZCBkZXZtX2V4dGNvbl91bnJlZ2lzdGVyX25vdGlmaWVyX2FsbChzdHJ1Y3QgZGV2aWNlICpkZXYs
+CiAgKiBGb2xsb3dpbmcgQVBJcyBnZXQgdGhlIGV4dGNvbl9kZXYgZnJvbSBkZXZpY2V0cmVlIG9y
+IGJ5IHRocm91Z2ggZXh0Y29uIG5hbWUuCiAgKi8KIGV4dGVybiBzdHJ1Y3QgZXh0Y29uX2RldiAq
+ZXh0Y29uX2dldF9leHRjb25fZGV2KGNvbnN0IGNoYXIgKmV4dGNvbl9uYW1lKTsKK2V4dGVybiBz
+dHJ1Y3QgZXh0Y29uX2RldiAqZXh0Y29uX2dldF9lZGV2X2J5X29mX25vZGUoc3RydWN0IGRldmlj
+ZV9ub2RlICpub2RlKTsKIGV4dGVybiBzdHJ1Y3QgZXh0Y29uX2RldiAqZXh0Y29uX2dldF9lZGV2
+X2J5X3BoYW5kbGUoc3RydWN0IGRldmljZSAqZGV2LAogCQkJCQkJICAgICBpbnQgaW5kZXgpOwog
+CkBAIC0yODMsNiArMjg0LDExIEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IGV4dGNvbl9kZXYgKmV4
+dGNvbl9nZXRfZXh0Y29uX2Rldihjb25zdCBjaGFyICpleHRjb25fbmFtZSkKIAlyZXR1cm4gRVJS
+X1BUUigtRU5PREVWKTsKIH0KIAorc3RhdGljIGlubGluZSBzdHJ1Y3QgZXh0Y29uX2RldiAqZXh0
+Y29uX2dldF9lZGV2X2J5X29mX25vZGUoc3RydWN0IGRldmljZV9ub2RlICpub2RlKQoreworCXJl
+dHVybiBFUlJfUFRSKC1FTk9ERVYpOworfQorCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBleHRjb25f
+ZGV2ICpleHRjb25fZ2V0X2VkZXZfYnlfcGhhbmRsZShzdHJ1Y3QgZGV2aWNlICpkZXYsCiAJCQkJ
+aW50IGluZGV4KQogewotLSAKMi4xNi4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
