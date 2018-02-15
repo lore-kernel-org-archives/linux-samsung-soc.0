@@ -1,67 +1,50 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH v2 2/6] dt-bindings: add bindings for Samsung micro-USB
- 11-pin connector
-Date: Thu, 15 Feb 2018 11:39:16 +0100
-Message-ID: <20180215103920.32017-3-a.hajda@samsung.com>
-References: <20180215103920.32017-1-a.hajda@samsung.com>
- <CGME20180215103926eucas1p2f13dcf5aa4e102e7f0145c976a60bc72@eucas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20180215103920.32017-1-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [RFC PATCH v2 0/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Thu, 15 Feb 2018 11:39:14 +0100
+Message-ID: <20180215103920.32017-1-a.hajda@samsung.com>
+References: <CGME20180215103925eucas1p1f2278a69a7d81b6ba1ae3583d11e1997@eucas1p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-U2Ftc3VuZyBtaWNyby1VU0IgMTEtcGluIGNvbm5lY3RvciBiZXNpZGUgc3RhbmRhcmQgbWljcm8t
-VVNCIHBpbnMsCmhhcyBwaW5zIGRlZGljYXRlZCB0byByb3V0ZSBNSEwgdHJhZmZpYy4KClNpZ25l
-ZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQogLi4uL2Nv
-bm5lY3Rvci9zYW1zdW5nLHVzYi1jb25uZWN0b3ItMTFwaW4udHh0ICAgICAgfCA1MSArKysrKysr
-KysrKysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgNTEgaW5zZXJ0aW9ucygrKQogY3JlYXRl
-IG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3Iv
-c2Ftc3VuZyx1c2ItY29ubmVjdG9yLTExcGluLnR4dAoKZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3Ivc2Ftc3VuZyx1c2ItY29ubmVjdG9yLTEx
-cGluLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3Ivc2Ft
-c3VuZyx1c2ItY29ubmVjdG9yLTExcGluLnR4dApuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRleCAw
-MDAwMDAwMDAwMDAuLmM4ZWYxYWQ2NzMyZgotLS0gL2Rldi9udWxsCisrKyBiL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3Ivc2Ftc3VuZyx1c2ItY29ubmVjdG9yLTEx
-cGluLnR4dApAQCAtMCwwICsxLDUxIEBACitTYW1zdW5nIG1pY3JvLVVTQiAxMS1waW4gY29ubmVj
-dG9yCis9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CisKK1NhbXN1bmcgbWljcm8t
-VVNCIDExLXBpbiBjb25uZWN0b3IgaXMgYW4gZXh0ZW5zaW9uIG9mIG1pY3JvLVVTQiBjb25uZWN0
-b3IuCitJdCBpcyBwcmVzZW50IGluIG11bHRpcGxlIFNhbXN1bmcgbW9iaWxlIGRldmljZXMuCitJ
-dCBoYXMgYWRkaXRpb25hbCBwaW5zIHRvIHJvdXRlIE1ITCB0cmFmZmljIHNpbXVsdGFub3VzbHkg
-d2l0aCBVU0IuCisKK1RoZSBiaW5kaW5ncyBhcmUgc3VwZXJzZXQgb2YgdXNiLWNvbm5lY3RvciBi
-aW5kaW5ncyBmb3IgbWljcm8tVVNCIGNvbm5lY3RvclsxXS4KKworUmVxdWlyZWQgcHJvcGVydGll
-czoKKy0gY29tcGF0aWJsZTogbXVzdCBiZTogInNhbXN1bmcsdXNiLWNvbm5lY3Rvci0xMXBpbiIs
-ICJ1c2ItYi1jb25uZWN0b3IiLAorLSB0eXBlOiBtdXN0IGJlICJtaWNybyIuCisKK09wdGlvbmFs
-IHByb3BlcnRpZXM6CistIGxhYmVsOiBzeW1ib2xpYyBuYW1lIGZvciB0aGUgY29ubmVjdG9yLgor
-CitSZXF1aXJlZCBub2RlczoKKy0gYW55IGRhdGEgYnVzIHRvIHRoZSBjb25uZWN0b3Igc2hvdWxk
-IGJlIG1vZGVsZWQgdXNpbmcgdGhlIE9GIGdyYXBoIGJpbmRpbmdzCisgIHNwZWNpZmllZCBpbiBi
-aW5kaW5ncy9ncmFwaC50eHQsIHVubGVzcyB0aGUgYnVzIGlzIGJldHdlZW4gcGFyZW50IG5vZGUg
-YW5kCisgIHRoZSBjb25uZWN0b3IuIFNpbmNlIHNpbmdsZSBjb25uZWN0b3IgY2FuIGhhdmUgbXVs
-dHBpbGUgZGF0YSBidXNlcyBldmVyeSBidXMKKyAgaGFzIGFzc2lnbmVkIE9GIGdyYXBoIHBvcnQg
-bnVtYmVyIGFzIGZvbGxvd3M6CisgICAgMDogSGlnaCBTcGVlZCAoSFMpLAorICAgIDM6IE1vYmls
-ZSBIaWdoLURlZmluaXRpb24gTGluayAoTUhMKSwgc3BlY2lmaWMgdG8gMTEtcGluIFNhbXN1bmcg
-bWljcm8tVVNCLgorCitbMV06IGJpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dAor
-CitFeGFtcGxlCistLS0tLS0tCisKK01pY3JvLVVTQiBjb25uZWN0b3Igd2l0aCBIUyBsaW5lcyBy
-b3V0ZWQgdmlhIGNvbnRyb2xsZXIgKE1VSUMpIGFuZCA6CisKK211aWMtbWF4Nzc4NDNANjYgewor
-CS4uLgorCXVzYl9jb246IGNvbm5lY3RvciB7CisJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyx1c2It
-Y29ubmVjdG9yLTExcGluIiwgInVzYi1iLWNvbm5lY3RvciI7CisJCWxhYmVsID0gIm1pY3JvLVVT
-QiI7CisJCXR5cGUgPSAibWljcm8iOworCisJCXBvcnRzIHsKKwkJCSNhZGRyZXNzLWNlbGxzID0g
-PDE+OworCQkJI3NpemUtY2VsbHMgPSA8MD47CisKKwkJCXBvcnRAMyB7CisJCQkJcmVnID0gPDM+
-OworCQkJCXVzYl9jb25fbWhsOiBlbmRwb2ludCB7CisJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwm
-c2lpODYyMF9taGw+OworCQkJCX07CisJCQl9OworCQl9OworCX07Cit9OwotLSAKMi4xNi4xCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi,
+
+Thanks for reviews of previous iterations.
+
+This patchset introduces USB physical connector bindings, together with working example.
+
+v2: I have addressed comments by Rob and Laurent, thanks 
+v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C example.
+
+Changes are also described in patches.
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (5):
+  dt-bindings: add bindings for USB physical connector
+  dt-bindings: add bindings for Samsung micro-USB 11-pin connector
+  arm64: dts: exynos: add micro-USB connector node to TM2 platforms
+  arm64: dts: exynos: add OF graph between MHL and USB connector
+  extcon: add possibility to get extcon device by OF node
+
+Maciej Purski (1):
+  drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
+
+ .../connector/samsung,usb-connector-11pin.txt      | 51 ++++++++++++
+ .../bindings/connector/usb-connector.txt           | 74 +++++++++++++++++
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 38 ++++++++-
+ drivers/extcon/extcon.c                            | 44 +++++++---
+ drivers/gpu/drm/bridge/sil-sii8620.c               | 97 +++++++++++++++++++++-
+ include/linux/extcon.h                             |  6 ++
+ 6 files changed, 294 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
+ create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
+
+-- 
+2.16.1
