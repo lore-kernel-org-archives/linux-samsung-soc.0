@@ -1,36 +1,57 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH v3] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
-Date: Thu, 15 Feb 2018 23:53:13 +0800
-Message-ID: <20180215155312.GR7352@gondor.apana.org.au>
-References: <CGME20180207155211eucas1p2d8d04871aaeb49efc30909d46e47e028@eucas1p2.samsung.com>
- <77384548-9870-40b8-46fc-4bd62747efd6@partner.samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] cpufreq: s3c24xx: Delete an error message for a failed memory
+ allocation in two functions
+Date: Thu, 15 Feb 2018 17:40:12 +0100
+Message-ID: <201722ce-019d-a5b4-fc00-74679d82b64f@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <77384548-9870-40b8-46fc-4bd62747efd6@partner.samsung.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 04:52:09PM +0100, Kamil Konieczny wrote:
-> In AES-ECB mode crypt is done with key only, so any use of IV
-> can cause kernel Oops. Use IV only in AES-CBC and AES-CTR.
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> Reported-by: Anand Moon <linux.amoon@gmail.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
-> Cc: stable@vger.kernel.org # can be applied after commit 8f9702aad138
-> 
-> ---
-> version 3:
-> Change commit message: drop 'Fixes: 8f9702aad138' as the error was
-> introduced earlier.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Feb 2018 17:28:40 +0100
 
-Patch applied.  Thanks.
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/cpufreq/s3c24xx-cpufreq.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
+index 7b596fa38ad2..024afd0b9458 100644
+--- a/drivers/cpufreq/s3c24xx-cpufreq.c
++++ b/drivers/cpufreq/s3c24xx-cpufreq.c
+@@ -473,10 +473,8 @@ int __init s3c_cpufreq_setboard(struct s3c_cpufreq_board *board)
+ 	 * initdata. */
+ 
+ 	ours = kzalloc(sizeof(*ours), GFP_KERNEL);
+-	if (ours == NULL) {
+-		pr_err("%s: no memory\n", __func__);
++	if (!ours)
+ 		return -ENOMEM;
+-	}
+ 
+ 	*ours = *board;
+ 	cpu_cur.board = ours;
+@@ -562,10 +560,8 @@ static int s3c_cpufreq_build_freq(void)
+ 	size++;
+ 
+ 	ftab = kzalloc(sizeof(*ftab) * size, GFP_KERNEL);
+-	if (!ftab) {
+-		pr_err("%s: no memory for tables\n", __func__);
++	if (!ftab)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ftab_size = size;
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.16.1
