@@ -1,111 +1,105 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 4/7] clk: samsung: exynos5433: fix PLL rates
-Date: Thu, 15 Feb 2018 15:23:03 +0100
-Message-ID: <ffb3d61f-0460-677a-ff57-7aabdf1e131f@samsung.com>
-References: <20180213134032.30235-1-a.hajda@samsung.com>
-        <CGME20180213134101eucas1p1f9348abc0344594476bc8618c1006e31@eucas1p1.samsung.com>
-        <20180213134032.30235-5-a.hajda@samsung.com> <5A83CD07.3060008@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC PATCH v2 4/6] arm64: dts: exynos: add OF graph between MHL
+ and USB connector
+Date: Thu, 15 Feb 2018 16:22:28 +0100
+Message-ID: <a8472ef5-16ea-7a18-3ec4-85ab7bf610a6@samsung.com>
+References: <CGME20180215103927eucas1p24785b56277ed6c9fa2fd70058096b944@eucas1p2.samsung.com>
+        <20180215103920.32017-1-a.hajda@samsung.com>
+        <20180215103920.32017-5-a.hajda@samsung.com>
+        <CAJKOXPdg81LPOFmxtJmL7hMXGgB2USAOhCz2yjU9obX1jWjEWw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <5A83CD07.3060008@samsung.com>
-Content-language: en-GB
-Sender: linux-clk-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, "Chanwoo Choi (gmail)" <cwchoi00@gmail.com>, =?UTF-8?B?7LWc7LCs7JqwIChzYW1zdW5nLmNvbSk=?= <chanwoo@kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAJKOXPdg81LPOFmxtJmL7hMXGgB2USAOhCz2yjU9obX1jWjEWw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
-
-On 02/14/2018 06:45 AM, Chanwoo Choi wrote:
-> Exynos5433 TRM shows different PLL frequency from the calculated value. 
-> Actually, I'm not sure which value is the correct value between TRM's> value and real calculated value.
-> 
-> If we only consider the equation, I agree that we have to replace them > with real calculated value with equation. But, TRM shows the diagram of 
-> clock domain which contains the multiple IPs. And each diagram specifies
-> the required source clock rate of each child IP. Maybe, this source clock 
-> rate might be calculated from the PLL rate provided by TRM. (even if it's 
-> different from real calculated value).
-> 
-> Although the real rate is a little bit incorrect, we might better to keep 
-> PLL rate provided by TRM in order to get the required source clock of child 
-> IPs as the TRM. If we modify the PLL rate provided by TRM, the source clock 
-> rate of child IP might be different from TRM.
-> 
-> Basically, I have no objection of this patch. Just I think that need to 
-> check it.
-
-In order to have the clk API behave properly we need to have in these tables
-frequency values matching the values returned by the recalc_rate callback 
-for given P, M, S, K coefficients.  Alternatively, we could decrease precision 
-of the PLL's recalc_rate() callbacks by rounding its return value, but I'm not 
-sure it's a good approach. It might be better to have clear indication which 
-P, M, S, K values yield higher frequency error, even though the differences at 
-those least significant digit positions might be meaningless, considering 
-frequency tolerance of the root oscillator itself. 
-
-For example, difference of 10 Hz where Fout = 400 MHz is only 0.025 ppm 
-(0.0000025 %), when the tolerance of the root oscillator itself will be 
-usually in range 10...100 ppm.
-
-In the TRMs the least significant digits are simply ignored AFAIU. I guess
-we could apply similar rounding in the recalc_rate callback of the fractional 
-PLLs and the problem would also be solved, e.g.
-
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 1c4c7a3039f1..d7a265827e65 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -300,6 +300,8 @@ static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
-        do_div(fvco, (pdiv << sdiv));
-        fvco >>= 16;
- 
-+       fvco = ((fvco + 50) / 100) * 100;
-+
-        return (unsigned long)fvco;
- }
-
-I think we need a bit more detailed commit message for this patch series, 
-so it's clear what are the issues with current values. 
-
-> On 2018년 02월 13일 22:40, Andrzej Hajda wrote:
->> Declared rates did not match rates generated by PLL.
->> As a result driver behaved inconsitently.
+On 15.02.2018 13:14, Krzysztof Kozlowski wrote:
+> On Thu, Feb 15, 2018 at 11:39 AM, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> OF graph describes MHL data lanes between MHL and respective USB
+>> connector.
 >>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >> ---
->>  drivers/clk/samsung/clk-exynos5433.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 31 +++++++++++++++++++---
+>>  1 file changed, 28 insertions(+), 3 deletions(-)
 >>
->> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->> index db270908037a..335bebfa21c0 100644
->> --- a/drivers/clk/samsung/clk-exynos5433.c
->> +++ b/drivers/clk/samsung/clk-exynos5433.c
->> @@ -729,7 +729,7 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
->>  	PLL_35XX_RATE(800000000U,  400, 6,  1),
->>  	PLL_35XX_RATE(733000000U,  733, 12, 1),
->>  	PLL_35XX_RATE(700000000U,  175, 3,  1),
->> -	PLL_35XX_RATE(667000000U,  222, 4,  1),
->> +	PLL_35XX_RATE(666000000U,  222, 4,  1),
->>  	PLL_35XX_RATE(633000000U,  211, 4,  1),
->>  	PLL_35XX_RATE(600000000U,  500, 5,  2),
->>  	PLL_35XX_RATE(552000000U,  460, 5,  2),
->> @@ -757,12 +757,12 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
->>  /* AUD_PLL */
->>  static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
->>  	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
->> -	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
->> +	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
->>  	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
->> -	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
->> -	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
->> -	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
->> -	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
->> +	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
->> +	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
->> +	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
->> +	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
->>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
->>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
->>  	{ /* sentinel */ }
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+>> index 7e49fadee412..ef758f7337e9 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+>> @@ -779,9 +779,22 @@
+>>                 clocks = <&pmu_system_controller 0>;
+>>                 clock-names = "xtal";
+>>
+>> -               port {
+>> -                       mhl_to_hdmi: endpoint {
+>> -                               remote-endpoint = <&hdmi_to_mhl>;
+>> +               ports {
+>> +                       #address-cells = <1>;
+>> +                       #size-cells = <0>;
+>> +
+>> +                       port@0 {
+>> +                               reg = <0>;
+>> +                               mhl_to_hdmi: endpoint {
+>> +                                       remote-endpoint = <&hdmi_to_mhl>;
+>> +                               };
+>> +                       };
+>> +
+>> +                       port@1 {
+>> +                               reg = <1>;
+>> +                               mhl_to_musb_con: endpoint {
+>> +                                       remote-endpoint = <&musb_con_to_mhl>;
+>> +                               };
+>>                         };
+>>                 };
+>>         };
+>> @@ -804,6 +817,18 @@
+>>                                              "usb-b-connector";
+>>                                 label = "micro-USB";
+>>                                 type = "micro";
+>> +
+>> +                               ports {
+>> +                                       #address-cells = <1>;
+>> +                                       #size-cells = <0>;
+>> +
+>> +                                       port@3 {
+> I think you might need here "reg = <3>". Doesn't it produce a warning now?
+
+You are right, I will fix it. Warning is produced only if compiled with W=1.
+
+Regards
+Andrzej
+
+>
+> BR,
+> Krzysztof
+>
+>> +                                               musb_con_to_mhl: endpoint {
+>> +                                                       remote-endpoint = <&mhl_to_musb_con>;
+>> +                                               };
+>> +                                       };
+>> +                               };
+>> +                       };
+>>                         };
+>>                 };
+>>
+>> --
+>> 2.16.1
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
