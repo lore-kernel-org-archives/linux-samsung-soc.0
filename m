@@ -1,15 +1,15 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 4/7] clk: samsung: exynos5433: fix PLL rates
-Date: Fri, 16 Feb 2018 15:57:51 +0100
-Message-ID: <20180216145754.14428-5-a.hajda@samsung.com>
+Subject: [PATCH v2 2/7] clk: samsung: exynos5250: fix PLL rates
+Date: Fri, 16 Feb 2018 15:57:49 +0100
+Message-ID: <20180216145754.14428-3-a.hajda@samsung.com>
 References: <20180216145754.14428-1-a.hajda@samsung.com>
-        <CGME20180216145805eucas1p28452227465bf275bb00dec65ab5b3978@eucas1p2.samsung.com>
+        <CGME20180216145804eucas1p20cc58695fce84f9acc03a16b6913fcb2@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38053 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38045 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758047AbeBPO6M (ORCPT
+        with ESMTP id S1752159AbeBPO6L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:58:12 -0500
+        Fri, 16 Feb 2018 09:58:11 -0500
 In-reply-to: <20180216145754.14428-1-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -31,41 +31,33 @@ To fix this issue declared rates are changed to exactly match rates generated
 by a PLL, as calculated from the P, M, S, K coefficients.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/samsung/clk-exynos5250.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 57a41824ee2e..7985352ceb2f 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -729,7 +729,7 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
- 	PLL_35XX_RATE(800000000U,  400, 6,  1),
- 	PLL_35XX_RATE(733000000U,  733, 12, 1),
- 	PLL_35XX_RATE(700000000U,  175, 3,  1),
--	PLL_35XX_RATE(667000000U,  222, 4,  1),
-+	PLL_35XX_RATE(666000000U,  222, 4,  1),
- 	PLL_35XX_RATE(633000000U,  211, 4,  1),
- 	PLL_35XX_RATE(600000000U,  500, 5,  2),
- 	PLL_35XX_RATE(552000000U,  460, 5,  2),
-@@ -757,12 +757,12 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
- /* AUD_PLL */
- static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
- 	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
--	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
-+	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
- 	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
--	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
--	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
--	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
--	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
-+	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
-+	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
-+	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
-+	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
- 	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
- 	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
- 	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 9b073c98a891..923c608b1b95 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -711,13 +711,13 @@ static const struct samsung_pll_rate_table epll_24mhz_tbl[] __initconst = {
+ 	/* sorted in descending order */
+ 	/* PLL_36XX_RATE(rate, m, p, s, k) */
+ 	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
+-	PLL_36XX_RATE(180633600, 90, 3, 2, 20762),
++	PLL_36XX_RATE(180633605, 90, 3, 2, 20762),
+ 	PLL_36XX_RATE(180000000, 90, 3, 2, 0),
+ 	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
+-	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
++	PLL_36XX_RATE(67737602, 90, 2, 4, 20762),
+ 	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
+-	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
+-	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
++	PLL_36XX_RATE(45158401, 90, 3, 4, 20762),
++	PLL_36XX_RATE(32768001, 131, 3, 5, 4719),
+ 	{ },
+ };
+ 
 -- 
 2.16.1
