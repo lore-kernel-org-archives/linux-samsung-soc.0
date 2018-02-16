@@ -1,15 +1,15 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 5/7] clk: samsung: exynos7: fix PLL rates
-Date: Fri, 16 Feb 2018 15:57:52 +0100
-Message-ID: <20180216145754.14428-6-a.hajda@samsung.com>
+Subject: [PATCH v2 6/7] clk: samsung: s3c2410: fix PLL rates
+Date: Fri, 16 Feb 2018 15:57:53 +0100
+Message-ID: <20180216145754.14428-7-a.hajda@samsung.com>
 References: <20180216145754.14428-1-a.hajda@samsung.com>
-        <CGME20180216145806eucas1p1e939d3138e29d3446df90e1a69ea9624@eucas1p1.samsung.com>
+        <CGME20180216145807eucas1p2260082a8178bc746dc8110982f2b0c2b@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38064 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758050AbeBPO6N (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34618 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758054AbeBPO6O (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:58:13 -0500
+        Fri, 16 Feb 2018 09:58:14 -0500
 In-reply-to: <20180216145754.14428-1-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -33,20 +33,46 @@ by a PLL, as calculated from the P, M, S, K coefficients.
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos7.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/samsung/clk-s3c2410.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 5931a4140c3d..bbfa57b4e017 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -140,7 +140,7 @@ static const struct samsung_div_clock topc_div_clks[] __initconst = {
- };
- 
- static const struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initconst = {
--	PLL_36XX_RATE(491520000, 20, 1, 0, 31457),
-+	PLL_36XX_RATE(491519897, 20, 1, 0, 31457),
- 	{},
+diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+index e0650c33863b..d8e58a659467 100644
+--- a/drivers/clk/samsung/clk-s3c2410.c
++++ b/drivers/clk/samsung/clk-s3c2410.c
+@@ -168,7 +168,7 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
+ 	PLL_35XX_RATE(226000000, 105, 1, 1),
+ 	PLL_35XX_RATE(210000000, 132, 2, 1),
+ 	/* 2410 common */
+-	PLL_35XX_RATE(203000000, 161, 3, 1),
++	PLL_35XX_RATE(202800000, 161, 3, 1),
+ 	PLL_35XX_RATE(192000000, 88, 1, 1),
+ 	PLL_35XX_RATE(186000000, 85, 1, 1),
+ 	PLL_35XX_RATE(180000000, 82, 1, 1),
+@@ -178,18 +178,18 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
+ 	PLL_35XX_RATE(147000000, 90, 2, 1),
+ 	PLL_35XX_RATE(135000000, 82, 2, 1),
+ 	PLL_35XX_RATE(124000000, 116, 1, 2),
+-	PLL_35XX_RATE(118000000, 150, 2, 2),
++	PLL_35XX_RATE(118500000, 150, 2, 2),
+ 	PLL_35XX_RATE(113000000, 105, 1, 2),
+-	PLL_35XX_RATE(101000000, 127, 2, 2),
++	PLL_35XX_RATE(101250000, 127, 2, 2),
+ 	PLL_35XX_RATE(90000000, 112, 2, 2),
+-	PLL_35XX_RATE(85000000, 105, 2, 2),
++	PLL_35XX_RATE(84750000, 105, 2, 2),
+ 	PLL_35XX_RATE(79000000, 71, 1, 2),
+-	PLL_35XX_RATE(68000000, 82, 2, 2),
+-	PLL_35XX_RATE(56000000, 142, 2, 3),
++	PLL_35XX_RATE(67500000, 82, 2, 2),
++	PLL_35XX_RATE(56250000, 142, 2, 3),
+ 	PLL_35XX_RATE(48000000, 120, 2, 3),
+-	PLL_35XX_RATE(51000000, 161, 3, 3),
++	PLL_35XX_RATE(50700000, 161, 3, 3),
+ 	PLL_35XX_RATE(45000000, 82, 1, 3),
+-	PLL_35XX_RATE(34000000, 82, 2, 3),
++	PLL_35XX_RATE(33750000, 82, 2, 3),
+ 	{ /* sentinel */ },
  };
  
 -- 
