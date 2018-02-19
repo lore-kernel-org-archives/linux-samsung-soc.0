@@ -1,71 +1,105 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq: s3c24xx: Delete an error message for a failed
- memory allocation in two functions
-Date: Mon, 19 Feb 2018 09:14:54 +0530
-Message-ID: <20180219034454.GM28462@vireshk-i7>
-References: <201722ce-019d-a5b4-fc00-74679d82b64f@users.sourceforge.net>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH v2 1/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Mon, 19 Feb 2018 08:28:47 -0600
+Message-ID: <20180219142847.3rnvtai6msjlyj5b@rob-hp-laptop>
+References: <20180215103920.32017-1-a.hajda@samsung.com>
+ <CGME20180215103925eucas1p1d82fd73ac6ea77c8b66de4ed26101a71@eucas1p1.samsung.com>
+ <20180215103920.32017-2-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <201722ce-019d-a5b4-fc00-74679d82b64f@users.sourceforge.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20180215103920.32017-2-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 15-02-18, 17:40, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 15 Feb 2018 17:28:40 +0100
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/cpufreq/s3c24xx-cpufreq.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
-> index 7b596fa38ad2..024afd0b9458 100644
-> --- a/drivers/cpufreq/s3c24xx-cpufreq.c
-> +++ b/drivers/cpufreq/s3c24xx-cpufreq.c
-> @@ -473,10 +473,8 @@ int __init s3c_cpufreq_setboard(struct s3c_cpufreq_board *board)
->  	 * initdata. */
->  
->  	ours = kzalloc(sizeof(*ours), GFP_KERNEL);
-> -	if (ours == NULL) {
-> -		pr_err("%s: no memory\n", __func__);
-> +	if (!ours)
->  		return -ENOMEM;
-> -	}
->  
->  	*ours = *board;
->  	cpu_cur.board = ours;
-> @@ -562,10 +560,8 @@ static int s3c_cpufreq_build_freq(void)
->  	size++;
->  
->  	ftab = kzalloc(sizeof(*ftab) * size, GFP_KERNEL);
-> -	if (!ftab) {
-> -		pr_err("%s: no memory for tables\n", __func__);
-> +	if (!ftab)
->  		return -ENOMEM;
-> -	}
->  
->  	ftab_size = size;
->  
-
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+T24gVGh1LCBGZWIgMTUsIDIwMTggYXQgMTE6Mzk6MTVBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPiBUaGVzZSBiaW5kaW5ncyBhbGxvdyB0byBkZXNjcmliZSBtb3N0IGtub3duIHN0YW5k
+YXJkIFVTQiBjb25uZWN0b3JzCj4gYW5kIGl0IHNob3VsZCBiZSBwb3NzaWJsZSB0byBleHRlbmQg
+aXQgaWYgbmVjZXNzYXJ5Lgo+IFVTQiBjb25uZWN0b3JzLCBiZXNpZGUgVVNCIGNhbiBiZSB1c2Vk
+IHRvIHJvdXRlIG90aGVyIHByb3RvY29scywKPiBmb3IgZXhhbXBsZSBVQVJULCBBdWRpbywgTUhM
+LiBJbiBzdWNoIGNhc2UgZXZlcnkgZGV2aWNlIHBhc3NpbmcgZGF0YQo+IHRocm91Z2ggdGhlIGNv
+bm5lY3RvciBzaG91bGQgaGF2ZSBhcHByb3ByaWF0ZSBncmFwaCBiaW5kaW5ncy4KPiAKPiBTaWdu
+ZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IC0tLQo+IHYz
+Ogo+IC0gcmVtb3ZlZCBNSEwgcG9ydCAoc2Ftc3VuZyBjb25uZWN0b3Igd2lsbCBoYXZlIHNlcGFy
+YXRlIGJpbmRpbmdzKSwKPiAtIGFkZGVkIDJuZCBleGFtcGxlIGZvciBVU0ItQywKPiAtIGltcHJv
+dmVkIGZvcm1hdHRpbmcKPiB2MjoKPiAtIG1vdmVkIGNvbm5lY3RvciB0eXBlKEEsQixDKSB0byBj
+b21wYXRpYmxlIHN0cmluZyAoUm9iKSwKPiAtIHJlbmFtZWQgc2l6ZSBwcm9wZXJ0eSB0byB0eXBl
+IChSb2IpLAo+IC0gY2hhbmdlZCB0eXBlIGRlc2NyaXB0aW9uIHRvIGJlIGxlc3MgY29uZnVzaW5n
+IChMYXVyZW50KSwKPiAtIHJlbW92ZWQgdmVuZG9yIHNwZWNpZmljIGNvbXBhdGlibGVzIChpbXBs
+aWVkIGJ5IGdyYXBoIHBvcnQgbnVtYmVyKSwKPiAtIGFkZGVkIHJlcXVpcmVtZW50IG9mIGNvbm5l
+Y3RvciBiZWluZyBhIGNoaWxkIG9mIElDIChSb2IpLAo+IC0gcmVtb3ZlZCBtYXgtbW9kZSAoc3Vi
+dGx5IHN1Z2dlc3RlZCBieSBSb2IsIGl0IHNob3VsZCBiZSBkZXRlY3RlZCBhbnl3YXkKPiAgIGJ5
+IFVTQiBDb250cm9sbGVyIGluIHJ1bnRpbWUsIGRvd25zaWRlIGlzIHRoYXQgZGV2aWNlIGlzIG5v
+dCBhYmxlIHRvCj4gICByZXBvcnQgaXRzIHJlYWwgY2FwYWJpbGl0aWVzLCBtYXliZSBiZXR0ZXIg
+d291bGQgYmUgdG8gbWFrZSBpdCBvcHRpb25hbCg/KSksCj4gLSBhc3NpZ25lZCBwb3J0IG51bWJl
+cnMgdG8gZGF0YSBidXNlcyAoUm9iKS4KPiAKPiBSZWdhcmRzCj4gQW5kcnplago+IAo+IFNpZ25l
+ZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gCj4gZHQtYmlu
+ZGluZ3M6IGFkZCBiaW5kaW5ncyBmb3IgVVNCIHBoeXNpY2FsIGNvbm5lY3RvciB2Mwo+IC0tLQo+
+ICAuLi4vYmluZGluZ3MvY29ubmVjdG9yL3VzYi1jb25uZWN0b3IudHh0ICAgICAgICAgICB8IDc0
+ICsrKysrKysrKysrKysrKysrKysrKysKPiAgMSBmaWxlIGNoYW5nZWQsIDc0IGluc2VydGlvbnMo
+KykKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci50eHQKPiAKPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dCBiL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci50
+eHQKPiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+IGluZGV4IDAwMDAwMDAwMDAwMC4uMWVmZGE5MjYz
+OWRhCj4gLS0tIC9kZXYvbnVsbAo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci50eHQKPiBAQCAtMCwwICsxLDc0IEBACj4gK1VT
+QiBDb25uZWN0b3IKPiArPT09PT09PT09PT09PQo+ICsKPiArVVNCIGNvbm5lY3RvciBub2RlIHJl
+cHJlc2VudHMgcGh5c2ljYWwgVVNCIGNvbm5lY3Rvci4gSXQgc2hvdWxkIGJlCj4gK2EgY2hpbGQg
+b2YgVVNCIGludGVyZmFjZSBjb250cm9sbGVyLgo+ICsKPiArUmVxdWlyZWQgcHJvcGVydGllczoK
+PiArLSBjb21wYXRpYmxlOiBkZXNjcmliZXMgdHlwZSBvZiB0aGUgY29ubmVjdG9yLCBtdXN0IGJl
+IG9uZSBvZjoKPiArICAgICJ1c2ItYS1jb25uZWN0b3IiLAo+ICsgICAgInVzYi1iLWNvbm5lY3Rv
+ciIsCj4gKyAgICAidXNiLWMtY29ubmVjdG9yIi4KPiArCj4gK09wdGlvbmFsIHByb3BlcnRpZXM6
+Cj4gKy0gbGFiZWw6IHN5bWJvbGljIG5hbWUgZm9yIHRoZSBjb25uZWN0b3IsCj4gKy0gdHlwZTog
+c2l6ZSBvZiB0aGUgY29ubmVjdG9yLCBzaG91bGQgYmUgc3BlY2lmaWVkIGluIGNhc2Ugb2YgVVNC
+LUEsIFVTQi1CCj4gKyAgbm9uLXN0YW5kYXJkIChsYXJnZSkgY29ubmVjdG9yIHNpemVzOiAibWlu
+aSIsICJtaWNybyIuCgpUaGUgc21hbGxlciBjb25uZWN0b3JzIGFyZSBzdGFuZGFyZCB0b28uIFBl
+cmhhcHMgIm5vbi1mdWxsc2l6ZSBjb25uZWN0b3IgCnNpemVzIi4KCldlJ3JlIG1pc3NpbmcgYSBt
+aWNyby1BQiBjb25uZWN0b3IsIGJ1dCBJIHRoaW5rIHRob3NlIGFyZSBhY3R1YWxseSAKcHJldHR5
+IHJhcmUuIE1vc3QgcGhvbmVzIGFyZSBtaWNyby1CIGNvbm5lY3RvcnMsIGJ1dCBkbyBib3RoIGhv
+c3QgYW5kIApkZXZpY2UuCgo+ICsKPiArUmVxdWlyZWQgbm9kZXM6Cj4gKy0gYW55IGRhdGEgYnVz
+IHRvIHRoZSBjb25uZWN0b3Igc2hvdWxkIGJlIG1vZGVsZWQgdXNpbmcgdGhlIE9GIGdyYXBoIGJp
+bmRpbmdzCj4gKyAgc3BlY2lmaWVkIGluIGJpbmRpbmdzL2dyYXBoLnR4dCwgdW5sZXNzIHRoZSBi
+dXMgaXMgYmV0d2VlbiBwYXJlbnQgbm9kZSBhbmQKPiArICB0aGUgY29ubmVjdG9yLiBTaW5jZSBz
+aW5nbGUgY29ubmVjdG9yIGNhbiBoYXZlIG11bHRwaWxlIGRhdGEgYnVzZXMgZXZlcnkgYnVzCj4g
+KyAgaGFzIGFzc2lnbmVkIE9GIGdyYXBoIHBvcnQgbnVtYmVyIGFzIGZvbGxvd3M6Cj4gKyAgICAw
+OiBIaWdoIFNwZWVkIChIUyksIHByZXNlbnQgaW4gYWxsIGNvbm5lY3RvcnMsCj4gKyAgICAxOiBT
+dXBlciBTcGVlZCAoU1MpLCBwcmVzZW50IGluIFNTIGNhcGFibGUgY29ubmVjdG9ycywKClRoaXMg
+c2hvdWxkIGFsc28gc2F5IGVuZHBvaW50IDAgaXMgVVNCLVNTLCBlbmRwb2ludCAxIChhbmQgaGln
+aGVyPykgaXMgCkFsdGVybmF0ZSBNb2RlLiBBbmQgc2hvdyBpbiB0aGUgZXhhbXBsZS4KCj4gKyAg
+ICAyOiBTaWRlYmFuZCB1c2UgKFNCVSksIHByZXNlbnQgaW4gVVNCLUMuCj4gKwo+ICtFeGFtcGxl
+cwo+ICstLS0tLS0tLQo+ICsKPiArMS4gTWljcm8tVVNCIGNvbm5lY3RvciB3aXRoIEhTIGxpbmVz
+IHJvdXRlZCB2aWEgY29udHJvbGxlciAoTVVJQyk6Cj4gKwo+ICttdWljLW1heDc3ODQzQDY2IHsK
+PiArCS4uLgo+ICsJdXNiX2NvbjogY29ubmVjdG9yIHsKPiArCQljb21wYXRpYmxlID0gInVzYi1i
+LWNvbm5lY3RvciI7Cj4gKwkJbGFiZWwgPSAibWljcm8tVVNCIjsKPiArCQl0eXBlID0gIm1pY3Jv
+IjsKPiArCX07Cj4gK307Cj4gKwo+ICsyLiBVU0ItQyBjb25uZWN0b3IgYXR0YWNoZWQgdG8gQ0Mg
+Y29udHJvbGxlciAoczJtbTAwNSksIEhTIGxpbmVzIHJvdXRlZAo+ICt0byBjb21wYW5pb24gUE1J
+QyAobWF4Nzc4NjUpLCBTUyBsaW5lcyB0byBVU0IzIFBIWSBhbmQgU0JVIHRvIERpc3BsYXlQb3J0
+OgoKSGF2aW5nIFNCVSB0byBEUCBidXQgbm8gRFAgdmlkZW8gcGF0aCBjb25uZWN0aW9uIGlzIHdy
+b25nLgoKPiArCj4gK2NjaWM6IHMybW0wMDVAMzMgewo+ICsJLi4uCj4gKwl1c2JfY29uOiBjb25u
+ZWN0b3Igewo+ICsJCWNvbXBhdGlibGUgPSAidXNiLWMtY29ubmVjdG9yIjsKPiArCQlsYWJlbCA9
+ICJVU0ItQyI7Cj4gKwo+ICsJCXBvcnRzIHsKPiArCQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47Cj4g
+KwkJCSNzaXplLWNlbGxzID0gPDA+Owo+ICsKPiArCQkJcG9ydEAwIHsKPiArCQkJCXJlZyA9IDww
+PjsKPiArCQkJCXVzYl9jb25faHM6IGVuZHBvaW50IHsKPiArCQkJCQlyZW1vdGUtZW5kcG9pbnQg
+PSA8Jm1heDc3ODY1X3VzYmNfaHM+Owo+ICsJCQkJfTsKPiArCQkJfTsKPiArCQkJcG9ydEAxIHsK
+PiArCQkJCXJlZyA9IDwxPjsKPiArCQkJCXVzYl9jb25fc3M6IGVuZHBvaW50IHsKPiArCQkJCQly
+ZW1vdGUtZW5kcG9pbnQgPSA8JnVzYmRyZF9waHlfc3M+Owo+ICsJCQkJfTsKPiArCQkJfTsKPiAr
+CQkJcG9ydEAyIHsKPiArCQkJCXJlZyA9IDwyPjsKPiArCQkJCXVzYl9jb25fc2J1OiBlbmRwb2lu
+dCB7Cj4gKwkJCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZkcF9hdXg+Owo+ICsJCQkJfTsKPiArCQkJ
+fTsKPiArCQl9Owo+ICsJfTsKPiArfTsKPiAtLSAKPiAyLjE2LjEKPiAKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
