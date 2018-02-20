@@ -1,128 +1,124 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH v2] watchdog: add SPDX identifiers for watchdog subsystem
-Date: Tue, 20 Feb 2018 07:13:43 -0800
-Message-ID: <48db897e-8a61-a5bc-5a61-56349cafaa10@roeck-us.net>
-References: <20180220104542.32286-1-marcus.folkesson@gmail.com>
- <20180220124955.GA17814@sophia> <20180220132103.GD24311@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH v2 1/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Tue, 20 Feb 2018 09:23:55 -0600
+Message-ID: <CAL_JsqKjZvRU56fdxArnmDVsAyim9zhU84BsxkUy-Yin19E7cQ@mail.gmail.com>
+References: <20180215103920.32017-1-a.hajda@samsung.com>
+ <CGME20180215103925eucas1p1d82fd73ac6ea77c8b66de4ed26101a71@eucas1p1.samsung.com>
+ <20180215103920.32017-2-a.hajda@samsung.com>
+ <20180219142847.3rnvtai6msjlyj5b@rob-hp-laptop>
+ <d5d38789-4d28-dce7-054f-f91bd82275cc@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20180220132103.GD24311-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Mans Rullgard <mans-2StjZFpD7GcAvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Baoyou Xie <baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Sylvain Lemieux <slemieux.tyco@gmail.>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <d5d38789-4d28-dce7-054f-f91bd82275cc@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux USB List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/20/2018 05:21 AM, Marcus Folkesson wrote:
-> Hello William,
-> 
-> On Tue, Feb 20, 2018 at 07:49:55AM -0500, William Breathitt Gray wrote:
->> On Tue, Feb 20, 2018 at 11:45:31AM +0100, Marcus Folkesson wrote:
->>> - Add SPDX identifier
->>> - Remove boiler plate license text
->>> - If MODULE_LICENSE and boiler plate does not match, go for boiler plate
->>>   license
->>>
->>> Signed-off-by: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> Acked-by: Adam Thomson <Adam.Thomson.Opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
->>> Acked-by: Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>
->>> Acked-by: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
->>> Acked-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>
->>> Notes:
->>>     v2:
->>>     	- Put back removed copyright texts for meson_gxbb_wdt and coh901327_wdt
->>>     	- Change to BSD-3-Clause for meson_gxbb_wdt
->>>     v1: Please have an extra look at meson_gxbb_wdt.c
->>
->> [...]
->>
->>> diff --git a/drivers/watchdog/ebc-c384_wdt.c b/drivers/watchdog/ebc-c384_wdt.c
->>> index 2170b275ea01..c173b6f5c866 100644
->>> --- a/drivers/watchdog/ebc-c384_wdt.c
->>> +++ b/drivers/watchdog/ebc-c384_wdt.c
->>> @@ -1,15 +1,8 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> /*
->>>   * Watchdog timer driver for the WinSystems EBC-C384
->>>   * Copyright (C) 2016 William Breathitt Gray
->>>   *
->>> - * This program is free software; you can redistribute it and/or modify
->>> - * it under the terms of the GNU General Public License, version 2, as
->>> - * published by the Free Software Foundation.
->>> - *
->>> - * This program is distributed in the hope that it will be useful, but
->>> - * WITHOUT ANY WARRANTY; without even the implied warranty of
->>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
->>> - * General Public License for more details.
->>>   */
->>> #include <linux/device.h>
->>> #include <linux/dmi.h>
-> 
-> Thank you for your feedback!
->>
->> I have no problem with adding a SPDX line to the top of this file, but
->> use "SPDX-License-Identifier: GPL-2.0-only" as I was very intentional
->> with the selection of GPL version 2 only when I published this code.
-> 
-> SPDX-License-Identifier: GPL-2.0
-> Is GPL-2.0 only [1], so it respects your choice of license.
-> 
->>
->> Furthermore, please do not remove the existing copyright text; although
-> 
-
-It is not a matter if you CAN keep a copyright. You MUST NOT remove a copyright.
-As long as you do, the series is
-
-Nacked-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-
-Guenter
-
-> The copyright text:
-> 
->   Copyright (C) 2016 William Breathitt Gray
-> 
-> Is still in the file.
-> 
-> 
->> it's just boilerplate for some, I was careful with the selection of
->> these words, and I worry the SPDX line only -- despite its useful
->> conciseness -- may lead to misunderstandings about my intentioned
->> license for this code.
-> 
-> I'm not sure I understand your concerns here, the SPDX identifier is
-> a shorthand for the GPL 2.0 only license. See [1] - Linux kernel licensing rules.
-> 
-> One of the biggest benefits with SPDX identifier is that it is hard to verify
-> boiler plate licenses due to formatting, types, different formulations and so on.
-> 
-> If still worrying, I think we could keep the license text as
-> well.
-> 
->>
->> For the time being, I can't Ack this patch with the changes it makes
->> currently:
->>
->>          Nacked-by: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>
->> William Breathitt Gray
-> 
-> Please let me know if I got you wrong at some point.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
-> 
-> Best regards
-> Marcus Folkesson
-> 
+T24gVHVlLCBGZWIgMjAsIDIwMTggYXQgMjoxMCBBTSwgQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBz
+YW1zdW5nLmNvbT4gd3JvdGU6Cj4gT24gMTkuMDIuMjAxOCAxNToyOCwgUm9iIEhlcnJpbmcgd3Jv
+dGU6Cj4+IE9uIFRodSwgRmViIDE1LCAyMDE4IGF0IDExOjM5OjE1QU0gKzAxMDAsIEFuZHJ6ZWog
+SGFqZGEgd3JvdGU6Cj4+PiBUaGVzZSBiaW5kaW5ncyBhbGxvdyB0byBkZXNjcmliZSBtb3N0IGtu
+b3duIHN0YW5kYXJkIFVTQiBjb25uZWN0b3JzCj4+PiBhbmQgaXQgc2hvdWxkIGJlIHBvc3NpYmxl
+IHRvIGV4dGVuZCBpdCBpZiBuZWNlc3NhcnkuCj4+PiBVU0IgY29ubmVjdG9ycywgYmVzaWRlIFVT
+QiBjYW4gYmUgdXNlZCB0byByb3V0ZSBvdGhlciBwcm90b2NvbHMsCj4+PiBmb3IgZXhhbXBsZSBV
+QVJULCBBdWRpbywgTUhMLiBJbiBzdWNoIGNhc2UgZXZlcnkgZGV2aWNlIHBhc3NpbmcgZGF0YQo+
+Pj4gdGhyb3VnaCB0aGUgY29ubmVjdG9yIHNob3VsZCBoYXZlIGFwcHJvcHJpYXRlIGdyYXBoIGJp
+bmRpbmdzLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ft
+c3VuZy5jb20+Cj4+PiAtLS0KPj4+IHYzOgo+Pj4gLSByZW1vdmVkIE1ITCBwb3J0IChzYW1zdW5n
+IGNvbm5lY3RvciB3aWxsIGhhdmUgc2VwYXJhdGUgYmluZGluZ3MpLAo+Pj4gLSBhZGRlZCAybmQg
+ZXhhbXBsZSBmb3IgVVNCLUMsCj4+PiAtIGltcHJvdmVkIGZvcm1hdHRpbmcKPj4+IHYyOgo+Pj4g
+LSBtb3ZlZCBjb25uZWN0b3IgdHlwZShBLEIsQykgdG8gY29tcGF0aWJsZSBzdHJpbmcgKFJvYiks
+Cj4+PiAtIHJlbmFtZWQgc2l6ZSBwcm9wZXJ0eSB0byB0eXBlIChSb2IpLAo+Pj4gLSBjaGFuZ2Vk
+IHR5cGUgZGVzY3JpcHRpb24gdG8gYmUgbGVzcyBjb25mdXNpbmcgKExhdXJlbnQpLAo+Pj4gLSBy
+ZW1vdmVkIHZlbmRvciBzcGVjaWZpYyBjb21wYXRpYmxlcyAoaW1wbGllZCBieSBncmFwaCBwb3J0
+IG51bWJlciksCj4+PiAtIGFkZGVkIHJlcXVpcmVtZW50IG9mIGNvbm5lY3RvciBiZWluZyBhIGNo
+aWxkIG9mIElDIChSb2IpLAo+Pj4gLSByZW1vdmVkIG1heC1tb2RlIChzdWJ0bHkgc3VnZ2VzdGVk
+IGJ5IFJvYiwgaXQgc2hvdWxkIGJlIGRldGVjdGVkIGFueXdheQo+Pj4gICBieSBVU0IgQ29udHJv
+bGxlciBpbiBydW50aW1lLCBkb3duc2lkZSBpcyB0aGF0IGRldmljZSBpcyBub3QgYWJsZSB0bwo+
+Pj4gICByZXBvcnQgaXRzIHJlYWwgY2FwYWJpbGl0aWVzLCBtYXliZSBiZXR0ZXIgd291bGQgYmUg
+dG8gbWFrZSBpdCBvcHRpb25hbCg/KSksCj4+PiAtIGFzc2lnbmVkIHBvcnQgbnVtYmVycyB0byBk
+YXRhIGJ1c2VzIChSb2IpLgo+Pj4KPj4+IFJlZ2FyZHMKPj4+IEFuZHJ6ZWoKPj4+Cj4+PiBTaWdu
+ZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+Pj4KPj4+IGR0
+LWJpbmRpbmdzOiBhZGQgYmluZGluZ3MgZm9yIFVTQiBwaHlzaWNhbCBjb25uZWN0b3IgdjMKPj4+
+IC0tLQo+Pj4gIC4uLi9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci50eHQgICAgICAg
+ICAgIHwgNzQgKysrKysrKysrKysrKysrKysrKysrKwo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCA3NCBp
+bnNlcnRpb25zKCspCj4+PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci50eHQKPj4+Cj4+PiBkaWZmIC0t
+Z2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29u
+bmVjdG9yLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3Iv
+dXNiLWNvbm5lY3Rvci50eHQKPj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+PiBpbmRleCAwMDAw
+MDAwMDAwMDAuLjFlZmRhOTI2MzlkYQo+Pj4gLS0tIC9kZXYvbnVsbAo+Pj4gKysrIGIvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dAo+
+Pj4gQEAgLTAsMCArMSw3NCBAQAo+Pj4gK1VTQiBDb25uZWN0b3IKPj4+ICs9PT09PT09PT09PT09
+Cj4+PiArCj4+PiArVVNCIGNvbm5lY3RvciBub2RlIHJlcHJlc2VudHMgcGh5c2ljYWwgVVNCIGNv
+bm5lY3Rvci4gSXQgc2hvdWxkIGJlCj4+PiArYSBjaGlsZCBvZiBVU0IgaW50ZXJmYWNlIGNvbnRy
+b2xsZXIuCj4+PiArCj4+PiArUmVxdWlyZWQgcHJvcGVydGllczoKPj4+ICstIGNvbXBhdGlibGU6
+IGRlc2NyaWJlcyB0eXBlIG9mIHRoZSBjb25uZWN0b3IsIG11c3QgYmUgb25lIG9mOgo+Pj4gKyAg
+ICAidXNiLWEtY29ubmVjdG9yIiwKPj4+ICsgICAgInVzYi1iLWNvbm5lY3RvciIsCj4+PiArICAg
+ICJ1c2ItYy1jb25uZWN0b3IiLgo+Pj4gKwo+Pj4gK09wdGlvbmFsIHByb3BlcnRpZXM6Cj4+PiAr
+LSBsYWJlbDogc3ltYm9saWMgbmFtZSBmb3IgdGhlIGNvbm5lY3RvciwKPj4+ICstIHR5cGU6IHNp
+emUgb2YgdGhlIGNvbm5lY3Rvciwgc2hvdWxkIGJlIHNwZWNpZmllZCBpbiBjYXNlIG9mIFVTQi1B
+LCBVU0ItQgo+Pj4gKyAgbm9uLXN0YW5kYXJkIChsYXJnZSkgY29ubmVjdG9yIHNpemVzOiAibWlu
+aSIsICJtaWNybyIuCj4+IFRoZSBzbWFsbGVyIGNvbm5lY3RvcnMgYXJlIHN0YW5kYXJkIHRvby4g
+UGVyaGFwcyAibm9uLWZ1bGxzaXplIGNvbm5lY3Rvcgo+PiBzaXplcyIuCj4KPiBUaGUgd29yZCAi
+c3RhbmRhcmQiIGlzIHVzZWQgaW4gc3BlY3MsIGJ1dCB5b3VyIGRlc2NyaXB0aW9uIGxvb2tzIGJl
+dHRlciwKPiBtYXliZSBldmVuIHNob3J0ZXIgdmVyc2lvbiB3b3VsZCB3b3JrOiAibm9uLWZ1bGxz
+aXplIGNvbm5lY3RvcnM6Ii4KClN1cmUuCgo+PiBXZSdyZSBtaXNzaW5nIGEgbWljcm8tQUIgY29u
+bmVjdG9yLCBidXQgSSB0aGluayB0aG9zZSBhcmUgYWN0dWFsbHkKPj4gcHJldHR5IHJhcmUuIE1v
+c3QgcGhvbmVzIGFyZSBtaWNyby1CIGNvbm5lY3RvcnMsIGJ1dCBkbyBib3RoIGhvc3QgYW5kCj4+
+IGRldmljZS4KPj4KPj4+ICsKPj4+ICtSZXF1aXJlZCBub2RlczoKPj4+ICstIGFueSBkYXRhIGJ1
+cyB0byB0aGUgY29ubmVjdG9yIHNob3VsZCBiZSBtb2RlbGVkIHVzaW5nIHRoZSBPRiBncmFwaCBi
+aW5kaW5ncwo+Pj4gKyAgc3BlY2lmaWVkIGluIGJpbmRpbmdzL2dyYXBoLnR4dCwgdW5sZXNzIHRo
+ZSBidXMgaXMgYmV0d2VlbiBwYXJlbnQgbm9kZSBhbmQKPj4+ICsgIHRoZSBjb25uZWN0b3IuIFNp
+bmNlIHNpbmdsZSBjb25uZWN0b3IgY2FuIGhhdmUgbXVsdHBpbGUgZGF0YSBidXNlcyBldmVyeSBi
+dXMKPj4+ICsgIGhhcyBhc3NpZ25lZCBPRiBncmFwaCBwb3J0IG51bWJlciBhcyBmb2xsb3dzOgo+
+Pj4gKyAgICAwOiBIaWdoIFNwZWVkIChIUyksIHByZXNlbnQgaW4gYWxsIGNvbm5lY3RvcnMsCj4+
+PiArICAgIDE6IFN1cGVyIFNwZWVkIChTUyksIHByZXNlbnQgaW4gU1MgY2FwYWJsZSBjb25uZWN0
+b3JzLAo+PiBUaGlzIHNob3VsZCBhbHNvIHNheSBlbmRwb2ludCAwIGlzIFVTQi1TUywgZW5kcG9p
+bnQgMSAoYW5kIGhpZ2hlcj8pIGlzCj4+IEFsdGVybmF0ZSBNb2RlLiBBbmQgc2hvdyBpbiB0aGUg
+ZXhhbXBsZS4KPgo+IFdoYXQgaWYgdGhlcmUgaXMgU1MgbXV4IGJlZm9yZSwgd2hpY2ggbXV4ZXMg
+VVNCLVNTIGFuZCBEUCBsaW5lcy4gSW4gbXkKPiBjYXNlIHRoZSBtdXggaXMgbG9jYXRlZCBpbiBV
+U0ItUEhZIChpdCBpcyAybmQgZXhhbXBsZSBiZWxvdykuCj4gSW4gc3VjaCBjYXNlIHRoZXJlIGlz
+IG9ubHkgb25lIGdyYXBoIGNvbm5lY3Rpb24gdG8gU1MgcG9ydCBhbmQgdGhpcwo+IGNvbm5lY3Rp
+b24gd2lsbCBoYW5kbGUgYm90aCBVU0ItU1MgYW5kIEFsdE1vZGUgdHJhZmZpYy4KCkFoIHllcywg
+Z29vZCBwb2ludC4KCj4gQW55d2F5IGZyb20gVVNCLUMgY29ubmVjdG9yJ3MgcG9pbnQgb2Ygdmll
+dywgdGhlcmUgaXMgbm8gZGlzdGluY3Rpb24KPiB3aGljaCBsaW5lcyBhcmUgVVNCLVNTLCB3aGlj
+aCBhcmUgQWx0TW9kZS4gSW4gZmFjdCBwbGF0Zm9ybSBkZWNpZGVzIGluCj4gcmVhbCB0aW1lIGFi
+b3V0IG11eGluZyBvZiBTUyBhbmQgQWx0TW9kZSBzaWduYWxzLCBhcyBpdCBkZXBlbmRzIG9uCj4g
+Y2FibGUvcGx1ZyBvcmllbnRhdGlvbnMuIE1heWJlIGluc3RlYWQgb2YgbWFwcGluZyBlbmRwb2lu
+dCBudW1iZXJzIHRvCj4gU1MvQWx0TW9kZSwgd2Ugc2hvdWxkIG1hcCB0aGVtIHRvIFNTMS9TUzIg
+bGluZXMgaWYgbmVjZXNzYXJ5KD8/PykuCj4KPiBUbyBiZSBzdXJlIG9mIHlvdXIgaW50ZW50aW9u
+cy4gRG8geW91IHdhbnQgdG8gbW9kZWwgc2ltcGxlIFNTIG11eGVzIGFzIGEKPiBwYXJ0IG9mIFVT
+Qi1DIGNvbm5lY3Rvcj8KClRoYXQgd2FzLCBidXQgeW91IGFyZSByaWdodC4gVGhhdCBzaG91bGQg
+YmUgcGFydCBvZiB3aGF0ZXZlciBkZXZpY2UKZG9lcyB0aGUgbXV4aW5nLgoKR2l2ZW4geW91IG5l
+ZWQgYSB1QyBqdXN0IHRvIG1hbmFnZSB0aGUgVVNCLUMgY29ubmVjdG9yLCBJJ2QgZ3Vlc3MKdGhl
+cmUgaXNuJ3QgYW55IHNpbXBsZSBjYXNlIGxpa2UganVzdCBhIEdQSU8gdG8gY29udHJvbCBhIG11
+eC4KCj4KPj4+ICsgICAgMjogU2lkZWJhbmQgdXNlIChTQlUpLCBwcmVzZW50IGluIFVTQi1DLgo+
+Pj4gKwo+Pj4gK0V4YW1wbGVzCj4+PiArLS0tLS0tLS0KPj4+ICsKPj4+ICsxLiBNaWNyby1VU0Ig
+Y29ubmVjdG9yIHdpdGggSFMgbGluZXMgcm91dGVkIHZpYSBjb250cm9sbGVyIChNVUlDKToKPj4+
+ICsKPj4+ICttdWljLW1heDc3ODQzQDY2IHsKPj4+ICsgICAgLi4uCj4+PiArICAgIHVzYl9jb246
+IGNvbm5lY3RvciB7Cj4+PiArICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJ1c2ItYi1jb25uZWN0
+b3IiOwo+Pj4gKyAgICAgICAgICAgIGxhYmVsID0gIm1pY3JvLVVTQiI7Cj4+PiArICAgICAgICAg
+ICAgdHlwZSA9ICJtaWNybyI7Cj4+PiArICAgIH07Cj4+PiArfTsKPj4+ICsKPj4+ICsyLiBVU0It
+QyBjb25uZWN0b3IgYXR0YWNoZWQgdG8gQ0MgY29udHJvbGxlciAoczJtbTAwNSksIEhTIGxpbmVz
+IHJvdXRlZAo+Pj4gK3RvIGNvbXBhbmlvbiBQTUlDIChtYXg3Nzg2NSksIFNTIGxpbmVzIHRvIFVT
+QjMgUEhZIGFuZCBTQlUgdG8gRGlzcGxheVBvcnQ6Cj4+IEhhdmluZyBTQlUgdG8gRFAgYnV0IG5v
+IERQIHZpZGVvIHBhdGggY29ubmVjdGlvbiBpcyB3cm9uZy4KPgo+IEJ1dCBpdCBpcyByZWFsIGhh
+cmR3YXJlIDopCj4gQXMgSSBzYWlkIGVhcmxpZXIsIERQIHZpZGVvIGxpbmVzIGFyZSBjb25uZWN0
+ZWQgdG8gbXV4IGluIFVTQjMtUEhZLgo+IEkgY2FuIGFkZCB0aGlzIGV4cGxhbmF0aW9uIHRvIHRo
+ZSBkZXNjcmlwdGlvbiB0byBtYWtlIGl0IGNsZWFyLgoKT2theS4KClJvYgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
