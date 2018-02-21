@@ -1,72 +1,72 @@
-From: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-Subject: Re: [PATCH v3] watchdog: add SPDX identifiers for watchdog subsystem
-Date: Wed, 21 Feb 2018 14:44:15 +0200
-Message-ID: <20180221124415.pnvpxa5lavn4vu6p@sapphire.tkos.co.il>
-References: <20180221122744.28300-1-marcus.folkesson@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] drm/bridge: analogix_dp: Keep PHY powered from between
+ driver bind/unbind
+Date: Wed, 21 Feb 2018 14:49:22 +0200
+Message-ID: <2791004.ZRT6x1hf9f@avalon>
+References: <CGME20180221100455eucas1p1613b6fa148d3e8a80f0053a3542aaa18@eucas1p1.samsung.com>
+ <20180221100443.13041-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20180221122744.28300-1-marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Mans Rullgard <mans-2StjZFpD7GcAvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Baoyou Xie <baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Sylvain Lemieux <slemieux.t>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180221100443.13041-1-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Yakir Yang <ykk@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marcus,
-
-On Wed, Feb 21, 2018 at 01:27:34PM +0100, Marcus Folkesson wrote:
-> - Add SPDX identifier
-> - Remove boiler plate license text
-> - If MODULE_LICENSE and boiler plate does not match, go for boiler plate
->   license
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Acked-by: Adam Thomson <Adam.Thomson.Opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>
-> Acked-by: Mans Rullgard <mans-2StjZFpD7GcAvxtiuMwx3w@public.gmane.org>
-> Acked-by: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Acked-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Acked-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-> Acked-by: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
-
-[...]
-
-> diff --git a/drivers/watchdog/digicolor_wdt.c b/drivers/watchdog/digicolor_wdt.c
-> index 5e4ef93caa02..a9e11df155b8 100644
-> --- a/drivers/watchdog/digicolor_wdt.c
-> +++ b/drivers/watchdog/digicolor_wdt.c
-> @@ -1,12 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   * Watchdog driver for Conexant Digicolor
->   *
->   * Copyright (C) 2015 Paradox Innovation Ltd.
->   *
-> - * This program is free software; you can redistribute it and/or modify it
-> - * under the terms of the GNU General Public License as published by the
-> - * Free Software Foundation; either version 2 of the License, or (at your
-> - * option) any later version.
->   */
-
-For digicolor_wdt.c:
-
-Acked-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-
-baruch
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org - tel: +972.2.679.5364, http://www.tkos.co.il -
+SGkgTWFyZWssCgpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KCk9uIFdlZG5lc2RheSwgMjEgRmVi
+cnVhcnkgMjAxOCAxMjowNDo0MyBFRVQgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBQYXRjaCBm
+MGE4YjQ5YzAzZDIgKCJkcm0vYnJpZGdlOiBhbmFsb2dpeCBkcDogRml4IHJ1bnRpbWUgUE0gc3Rh
+dGUgb24KPiBkcml2ZXIgYmluZCIpIGZpeGVkIHVuYmFsYW5jZWQgY2FsbCB0byBwaHlfcG93ZXJf
+b24oKSBpbiBhbmFsb2dpeF9kcF9iaW5kKCkKPiBmdW5jdGlvbiBieSBjYWxsaW5nIHBoeV9wb3dl
+cl9vZmYoKSBhdCB0aGUgZW5kIG9mIGJpbmQgb3BlcmF0aW9uLgo+IAo+IEhvd2V2ZXIgaXQgdHVy
+bmVkIG91dCB0aGF0IGhhdmluZyBQSFkgcG93ZXJlZCBpcyByZXF1aXJlZCBmb3IgcHJvcGVyIERS
+TQo+IGRpc3BsYXkgcGlwZWxpbmUgaW5pdGlhbGl6YXRpb24gb24gUGVhY2gtUGl0IENocm9tZWJv
+b2syIGJvYXJkLCBhcyB0aGlzCj4gYm9hcmQgZnJlZXplcyBvdGhlcndpc2Ugd2hlbiBQSFkgcG93
+ZXIgb2ZmIGlzIGNhbGxlZCBpbiBiaW5kLiBGaXggdGhpcyBieQo+IGtlZXBpbmcgUEhZIHBvd2Vy
+ZWQgZm9yIHRoZSB3aG9sZSBiaW5kL3VuYmluZCBkcml2ZXIgbGlmZSBjeWNsZS4gVGhlCj4gZnJl
+ZXplIGlzIHByb2JhYmx5IHJlbGF0ZWQgdG8gdGhlIGZhY3QgdGhhdCB0aGUgZGlzcGxheSBwaXBl
+bGluZSAoRXh5bm9zCj4gRklNRCBDVFJDIC0+IEV4eW5vcy9BbmFsb2dpeCBEUCBicmlkZ2UgLT4g
+UFM4NjI1IGRwMmx2ZHMgYnJpZGdlIC0+IEIxMTZYVzAzCj4gcGFuZWwpIGlzIGFscmVhZHkgY29u
+ZmlndXJlZCBhbmQgZW5hYmxlZCBieSB0aGUgYm9vdGxvYWRlciBhbmQgcmVxdWlyZQo+IHJlc2V0
+IG9mIGFsbCBjb21wb25lbnRzIGZvciBwcm9wZXIgc2h1dGRvd24uCgoiUHJvYmFibHkiIGFsd2F5
+cyBtYWtlcyBtZSBmZWVsIHVuY29tZm9ydGFibGUgaW4gc3VjaCBhIGNvbnRleHQgOi0pIExlYXZp
+bmcgCnRoZSBQSFkgcG93ZXJlZCBhdCBhbGwgdGltZXMgaXNuJ3QgdGhlIGJlc3QgaWRlYSBhcyBp
+dCB3aWxsIGluY3JlYXNlIHBvd2VyIApjb25zdW1wdGlvbiBldmVuIHdoZW4gdGhlIERQIG91dHB1
+dCBpc24ndCBpbiB1c2UuIEkgY2FuIGxpdmUgd2l0aCB0aGF0IGlmIAp0aGVyZSdzIG5vIG90aGVy
+IHdheSwgYnV0IGl0IGZlZWxzIHRvIG1lIGxpa2Ugd2Ugc2hvdWxkIGZpcnN0IGdldCB0byB0aGUg
+CmJvdHRvbSBvZiB0aGUgaXNzdWUuCgo+IEhhdmluZyBQSFkgcG93ZXJlZCBpcyBhbHNvIG5lZWRl
+ZCBmb3IgcHJvcGVyIEVESUQgaGFuZGxpbmcsIHdoaWNoIGluaXRpYWxseQo+IGZpeGVkIGJ5IGNv
+bW1pdCA1MTAzNTNhNjM3OTYgKCJkcm0vYnJpZGdlOiBhbmFsb2dpeCBkcDogRml4IHJ1bnRpbWUg
+UE0gc3RhdGUKPiBpbiBnZXRfbW9kZXMoKSBjYWxsYmFjayIpLgo+IAo+IEZpeGVzOiBmMGE4YjQ5
+YzAzZDIgKCJkcm0vYnJpZGdlOiBhbmFsb2dpeCBkcDogRml4IHJ1bnRpbWUgUE0gc3RhdGUgb24K
+PiBkcml2ZXIgYmluZCIpCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlw
+cm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxv
+Z2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyB8IDIgKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jCj4gYi9kcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyBpbmRleAo+IGIyNzU2YmM0MjI1YS4uNDI1
+OTU4NjNjYjAzIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgv
+YW5hbG9naXhfZHBfY29yZS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dp
+eC9hbmFsb2dpeF9kcF9jb3JlLmMKPiBAQCAtMTQxNSw3ICsxNDE1LDYgQEAgaW50IGFuYWxvZ2l4
+X2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QKPiBkcm1fZGV2aWNlICpkcm1fZGV2
+LCBnb3RvIGVycl9kaXNhYmxlX3BtX3J1bnRpbWU7Cj4gIAl9Cj4gCj4gLQlwaHlfcG93ZXJfb2Zm
+KGRwLT5waHkpOwo+ICAJcG1fcnVudGltZV9wdXQoZGV2KTsKPiAKPiAgCXJldHVybiAwOwo+IEBA
+IC0xNDQ4LDYgKzE0NDcsNyBAQCB2b2lkIGFuYWxvZ2l4X2RwX3VuYmluZChzdHJ1Y3QgZGV2aWNl
+ICpkZXYsIHN0cnVjdAo+IGRldmljZSAqbWFzdGVyLAo+IAo+ICAJZHJtX2RwX2F1eF91bnJlZ2lz
+dGVyKCZkcC0+YXV4KTsKPiAgCXBtX3J1bnRpbWVfZGlzYWJsZShkZXYpOwo+ICsJcGh5X3Bvd2Vy
+X29mZihkcC0+cGh5KTsKPiAgCWNsa19kaXNhYmxlX3VucHJlcGFyZShkcC0+Y2xvY2spOwo+ICB9
+Cj4gIEVYUE9SVF9TWU1CT0xfR1BMKGFuYWxvZ2l4X2RwX3VuYmluZCk7CgotLSAKUmVnYXJkcywK
+CkxhdXJlbnQgUGluY2hhcnQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
