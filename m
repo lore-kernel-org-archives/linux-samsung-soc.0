@@ -1,214 +1,91 @@
-From: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] watchdog: add SPDX identifiers for watchdog subsystem
-Date: Tue, 20 Feb 2018 19:45:22 +0100
-Message-ID: <20180220184522.GF24311@gmail.com>
-References: <20180220104542.32286-1-marcus.folkesson@gmail.com>
- <20180220124955.GA17814@sophia> <20180220132103.GD24311@gmail.com>
- <48db897e-8a61-a5bc-5a61-56349cafaa10@roeck-us.net>
- <20180220153326.GE24311@gmail.com> <20180220181427.GA25467@sophia>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v4 1/6] dt-bindings: add bindings for USB physical connector
+Date: Wed, 21 Feb 2018 09:55:36 +0100
+Message-ID: <20180221085541.14556-2-a.hajda@samsung.com>
+References: <20180221085541.14556-1-a.hajda@samsung.com>
+ <CGME20180221085604eucas1p11aa066a1e106d9f9850731a5171dce8b@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5431834804691408854=="
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20180220181427.GA25467@sophia>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Mans Rullgard <mans-2StjZFpD7GcAvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Baoyou Xie <baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Sylvain Lemieux <slemieux.tyco@gmail.>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20180221085541.14556-1-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---===============5431834804691408854==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OgApRN/oydYDdnYz"
-Content-Disposition: inline
-
-
---OgApRN/oydYDdnYz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 20, 2018 at 01:14:27PM -0500, William Breathitt Gray wrote:
-> On Tue, Feb 20, 2018 at 04:33:26PM +0100, Marcus Folkesson wrote:
-> >On Tue, Feb 20, 2018 at 07:13:43AM -0800, Guenter Roeck wrote:
-> >> On 02/20/2018 05:21 AM, Marcus Folkesson wrote:
-> >> > Hello William,
-> >> >=20
-> >> > On Tue, Feb 20, 2018 at 07:49:55AM -0500, William Breathitt Gray wro=
-te:
-> >> > > On Tue, Feb 20, 2018 at 11:45:31AM +0100, Marcus Folkesson wrote:
-> >> > > > - Add SPDX identifier
-> >> > > > - Remove boiler plate license text
-> >> > > > - If MODULE_LICENSE and boiler plate does not match, go for boil=
-er plate
-> >> > > >   license
-> >> > > >=20
-> >> > > > Signed-off-by: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> > > > Acked-by: Adam Thomson <Adam.Thomson.Opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-> >> > > > Acked-by: Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>
-> >> > > > Acked-by: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> >> > > > Acked-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> >> > > > ---
-> >> > > >=20
-> >> > > > Notes:
-> >> > > >     v2:
-> >> > > >     	- Put back removed copyright texts for meson_gxbb_wdt and c=
-oh901327_wdt
-> >> > > >     	- Change to BSD-3-Clause for meson_gxbb_wdt
-> >> > > >     v1: Please have an extra look at meson_gxbb_wdt.c
-> >> > >=20
-> >> > > [...]
-> >> > >=20
-> >> > > > diff --git a/drivers/watchdog/ebc-c384_wdt.c b/drivers/watchdog/=
-ebc-c384_wdt.c
-> >> > > > index 2170b275ea01..c173b6f5c866 100644
-> >> > > > --- a/drivers/watchdog/ebc-c384_wdt.c
-> >> > > > +++ b/drivers/watchdog/ebc-c384_wdt.c
-> >> > > > @@ -1,15 +1,8 @@
-> >> > > > +// SPDX-License-Identifier: GPL-2.0
-> >> > > > /*
-> >> > > >   * Watchdog timer driver for the WinSystems EBC-C384
-> >> > > >   * Copyright (C) 2016 William Breathitt Gray
-> >> > > >   *
-> >
-> >The copyright is untouched?
-> >
-> >> > > > - * This program is free software; you can redistribute it and/o=
-r modify
-> >> > > > - * it under the terms of the GNU General Public License, versio=
-n 2, as
-> >> > > > - * published by the Free Software Foundation.
-> >> > > > - *
-> >> > > > - * This program is distributed in the hope that it will be usef=
-ul, but
-> >> > > > - * WITHOUT ANY WARRANTY; without even the implied warranty of
-> >> > > > - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See th=
-e GNU
-> >> > > > - * General Public License for more details.
-> >> > > >   */
-> >> > > > #include <linux/device.h>
-> >> > > > #include <linux/dmi.h>
-> >> >=20
-> >> > Thank you for your feedback!
-> >> > >=20
-> >> > > I have no problem with adding a SPDX line to the top of this file,=
- but
-> >> > > use "SPDX-License-Identifier: GPL-2.0-only" as I was very intentio=
-nal
-> >> > > with the selection of GPL version 2 only when I published this cod=
-e.
-> >> >=20
-> >> > SPDX-License-Identifier: GPL-2.0
-> >> > Is GPL-2.0 only [1], so it respects your choice of license.
->=20
-> Ah, this should be fine then. :)
->=20
-
-Good!
-
-> >> >=20
-> >> > >=20
-> >> > > Furthermore, please do not remove the existing copyright text; alt=
-hough
-> >> >=20
-> >>=20
-> >> It is not a matter if you CAN keep a copyright. You MUST NOT remove a =
-copyright.
-> >> As long as you do, the series is
-> >>=20
-> >> Nacked-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-> >>=20
-> >> Guenter
-> >
-> >I'm sorry, I do not see where the copyright is removed unless you count
-> >the license text as part of the copyright.
-> >
-> >Can you please point it out?
-> >
-> >>=20
-> >> > The copyright text:
-> >> >=20
-> >> >   Copyright (C) 2016 William Breathitt Gray
-> >> >=20
-> >> > Is still in the file.
-> >
-> >^^^
-> >
-> >> >=20
-> >> >=20
-> >> > > it's just boilerplate for some, I was careful with the selection of
-> >> > > these words, and I worry the SPDX line only -- despite its useful
-> >> > > conciseness -- may lead to misunderstandings about my intentioned
-> >> > > license for this code.
-> >> >=20
-> >> > I'm not sure I understand your concerns here, the SPDX identifier is
-> >> > a shorthand for the GPL 2.0 only license. See [1] - Linux kernel lic=
-ensing rules.
-> >> >=20
-> >> > One of the biggest benefits with SPDX identifier is that it is hard =
-to verify
-> >> > boiler plate licenses due to formatting, types, different formulatio=
-ns and so on.
-> >> >=20
-> >> > If still worrying, I think we could keep the license text as
-> >> > well.
->=20
-> I'm sorry for the confusion, I should have wrote "license text" rather
-> than "copyright text" in my previous message. I agree with the benefits
-
-No problem at all.
-
-> of utilizing the SPDX identifier, and I see the addition of the SPDX
-> line as useful, but I would prefer the original license text remain as
-> well.
-
-Of course, I will keep the the original license intact for v3.
->=20
-> William Breathitt Gray
->=20
-
-Best regards
-Marcus Folkesson
-
---OgApRN/oydYDdnYz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlqMbL0ACgkQiIBOb1ld
-UjJFERAAhuwiBVxCWQs5NKL67h+hidriNHH3ALoXrhBhYQiVIzKyIiNPCHkpf/4C
-DmquQEuSbAWQoLN73scR5mBRF74ZTu2Oj+BFvu1KS/oj3xdMm0fWBSBkIhyPIFXp
-9pjItNmj3OBhODRP472IRlUxDh9LRnNYL20cpwYpUAVQIrM8HHWDl6W6RH5SKXIf
-CcU1L4Y1i7M5Ir+wuc9bhGPBcHtZopQT7MQh2I/gImWdLVfrPObTsk8KpByaZoCe
-oWAeZSxJRldTPjL+2X8N7lyabRV/Xvrvg4mJUUFXUfjUY1guIae3xbEMI2Ko/Avu
-W0zsXNuBy+37KmW4PTZpIEoK0aaN8vipUBcGmwHYXtTDFHATKxjTugw6+VK2Wpj7
-vjnLUXOVTcZFdt+wWJd7rpHaRfUGhG3aBu+fi73AoAzQSSQM8X9blHgk4yJ4VDiv
-dzS60EDoWoew3PprwJIo8ytO4SnMBIglBeuiaa+V9NORc5tczwkwUiH6aStr/KEa
-+L5OiKgiIVIUU1hAlClazpwF/O6I7KH2RHqIM8oSr7SXas0viPy4IXnwDmwr3wBD
-DPeBD79K+Txb+EnKC5D/Z9Wu769rwAZ2TYgMjTQWN8W5hgaXwkB6MJVcJKNmlaxQ
-8TRf6C+lhOCazPIbV18ltcQFWBT35DnO2mGWa6lnArJrfBN2zVg=
-=N61S
------END PGP SIGNATURE-----
-
---OgApRN/oydYDdnYz--
-
-
---===============5431834804691408854==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-mediatek mailing list
-Linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-http://lists.infradead.org/mailman/listinfo/linux-mediatek
-
---===============5431834804691408854==--
+VGhlc2UgYmluZGluZ3MgYWxsb3cgdG8gZGVzY3JpYmUgbW9zdCBrbm93biBzdGFuZGFyZCBVU0Ig
+Y29ubmVjdG9ycwphbmQgaXQgc2hvdWxkIGJlIHBvc3NpYmxlIHRvIGV4dGVuZCBpdCBpZiBuZWNl
+c3NhcnkuClVTQiBjb25uZWN0b3JzLCBiZXNpZGUgVVNCIGNhbiBiZSB1c2VkIHRvIHJvdXRlIG90
+aGVyIHByb3RvY29scywKZm9yIGV4YW1wbGUgVUFSVCwgQXVkaW8sIE1ITC4gSW4gc3VjaCBjYXNl
+IGV2ZXJ5IGRldmljZSBwYXNzaW5nIGRhdGEKdGhyb3VnaCB0aGUgY29ubmVjdG9yIHNob3VsZCBo
+YXZlIGFwcHJvcHJpYXRlIGdyYXBoIGJpbmRpbmdzLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBI
+YWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCnY0OgotIGltcHJvdmVkICd0eXBlJyBkZXNj
+cmlwdGlvbiAoUm9iKSwKLSBpbXByb3ZlZCBkZXNjcmlwdGlvbiBvZiAybmQgZXhhbXBsZSAoUm9i
+KS4KdjM6Ci0gcmVtb3ZlZCBNSEwgcG9ydCAoc2Ftc3VuZyBjb25uZWN0b3Igd2lsbCBoYXZlIHNl
+cGFyYXRlIGJpbmRpbmdzKSwKLSBhZGRlZCAybmQgZXhhbXBsZSBmb3IgVVNCLUMsCi0gaW1wcm92
+ZWQgZm9ybWF0dGluZy4KdjI6Ci0gbW92ZWQgY29ubmVjdG9yIHR5cGUoQSxCLEMpIHRvIGNvbXBh
+dGlibGUgc3RyaW5nIChSb2IpLAotIHJlbmFtZWQgc2l6ZSBwcm9wZXJ0eSB0byB0eXBlIChSb2Ip
+LAotIGNoYW5nZWQgdHlwZSBkZXNjcmlwdGlvbiB0byBiZSBsZXNzIGNvbmZ1c2luZyAoTGF1cmVu
+dCksCi0gcmVtb3ZlZCB2ZW5kb3Igc3BlY2lmaWMgY29tcGF0aWJsZXMgKGltcGxpZWQgYnkgZ3Jh
+cGggcG9ydCBudW1iZXIpLAotIGFkZGVkIHJlcXVpcmVtZW50IG9mIGNvbm5lY3RvciBiZWluZyBh
+IGNoaWxkIG9mIElDIChSb2IpLAotIHJlbW92ZWQgbWF4LW1vZGUgKHN1YnRseSBzdWdnZXN0ZWQg
+YnkgUm9iLCBpdCBzaG91bGQgYmUgZGV0ZWN0ZWQgYW55d2F5CiAgYnkgVVNCIENvbnRyb2xsZXIg
+aW4gcnVudGltZSwgZG93bnNpZGUgaXMgdGhhdCBkZXZpY2UgaXMgbm90IGFibGUgdG8KICByZXBv
+cnQgaXRzIHJlYWwgY2FwYWJpbGl0aWVzLCBtYXliZSBiZXR0ZXIgd291bGQgYmUgdG8gbWFrZSBp
+dCBvcHRpb25hbCg/KSksCi0gYXNzaWduZWQgcG9ydCBudW1iZXJzIHRvIGRhdGEgYnVzZXMgKFJv
+YikuCgpSZWdhcmRzCkFuZHJ6ZWoKLS0tCiAuLi4vYmluZGluZ3MvY29ubmVjdG9yL3VzYi1jb25u
+ZWN0b3IudHh0ICAgICAgICAgICB8IDc1ICsrKysrKysrKysrKysrKysrKysrKysKIDEgZmlsZSBj
+aGFuZ2VkLCA3NSBpbnNlcnRpb25zKCspCiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dAoKZGlmZiAt
+LWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNv
+bm5lY3Rvci50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY29ubmVjdG9y
+L3VzYi1jb25uZWN0b3IudHh0Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAw
+MC4uZTE0NjNmMTRhZjM4Ci0tLSAvZGV2L251bGwKKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dApAQCAtMCwwICsxLDc1IEBA
+CitVU0IgQ29ubmVjdG9yCis9PT09PT09PT09PT09CisKK1VTQiBjb25uZWN0b3Igbm9kZSByZXBy
+ZXNlbnRzIHBoeXNpY2FsIFVTQiBjb25uZWN0b3IuIEl0IHNob3VsZCBiZQorYSBjaGlsZCBvZiBV
+U0IgaW50ZXJmYWNlIGNvbnRyb2xsZXIuCisKK1JlcXVpcmVkIHByb3BlcnRpZXM6CistIGNvbXBh
+dGlibGU6IGRlc2NyaWJlcyB0eXBlIG9mIHRoZSBjb25uZWN0b3IsIG11c3QgYmUgb25lIG9mOgor
+ICAgICJ1c2ItYS1jb25uZWN0b3IiLAorICAgICJ1c2ItYi1jb25uZWN0b3IiLAorICAgICJ1c2It
+Yy1jb25uZWN0b3IiLgorCitPcHRpb25hbCBwcm9wZXJ0aWVzOgorLSBsYWJlbDogc3ltYm9saWMg
+bmFtZSBmb3IgdGhlIGNvbm5lY3RvciwKKy0gdHlwZTogc2l6ZSBvZiB0aGUgY29ubmVjdG9yLCBz
+aG91bGQgYmUgc3BlY2lmaWVkIGluIGNhc2Ugb2YgVVNCLUEsIFVTQi1CCisgIG5vbi1mdWxsc2l6
+ZSBjb25uZWN0b3JzOiAibWluaSIsICJtaWNybyIuCisKK1JlcXVpcmVkIG5vZGVzOgorLSBhbnkg
+ZGF0YSBidXMgdG8gdGhlIGNvbm5lY3RvciBzaG91bGQgYmUgbW9kZWxlZCB1c2luZyB0aGUgT0Yg
+Z3JhcGggYmluZGluZ3MKKyAgc3BlY2lmaWVkIGluIGJpbmRpbmdzL2dyYXBoLnR4dCwgdW5sZXNz
+IHRoZSBidXMgaXMgYmV0d2VlbiBwYXJlbnQgbm9kZSBhbmQKKyAgdGhlIGNvbm5lY3Rvci4gU2lu
+Y2Ugc2luZ2xlIGNvbm5lY3RvciBjYW4gaGF2ZSBtdWx0cGlsZSBkYXRhIGJ1c2VzIGV2ZXJ5IGJ1
+cworICBoYXMgYXNzaWduZWQgT0YgZ3JhcGggcG9ydCBudW1iZXIgYXMgZm9sbG93czoKKyAgICAw
+OiBIaWdoIFNwZWVkIChIUyksIHByZXNlbnQgaW4gYWxsIGNvbm5lY3RvcnMsCisgICAgMTogU3Vw
+ZXIgU3BlZWQgKFNTKSwgcHJlc2VudCBpbiBTUyBjYXBhYmxlIGNvbm5lY3RvcnMsCisgICAgMjog
+U2lkZWJhbmQgdXNlIChTQlUpLCBwcmVzZW50IGluIFVTQi1DLgorCitFeGFtcGxlcworLS0tLS0t
+LS0KKworMS4gTWljcm8tVVNCIGNvbm5lY3RvciB3aXRoIEhTIGxpbmVzIHJvdXRlZCB2aWEgY29u
+dHJvbGxlciAoTVVJQyk6CisKK211aWMtbWF4Nzc4NDNANjYgeworCS4uLgorCXVzYl9jb246IGNv
+bm5lY3RvciB7CisJCWNvbXBhdGlibGUgPSAidXNiLWItY29ubmVjdG9yIjsKKwkJbGFiZWwgPSAi
+bWljcm8tVVNCIjsKKwkJdHlwZSA9ICJtaWNybyI7CisJfTsKK307CisKKzIuIFVTQi1DIGNvbm5l
+Y3RvciBhdHRhY2hlZCB0byBDQyBjb250cm9sbGVyIChzMm1tMDA1KSwgSFMgbGluZXMgcm91dGVk
+Cit0byBjb21wYW5pb24gUE1JQyAobWF4Nzc4NjUpLCBTUyBsaW5lcyB0byBVU0IzIFBIWSBhbmQg
+U0JVIHRvIERpc3BsYXlQb3J0LgorRGlzcGxheVBvcnQgdmlkZW8gbGluZXMgYXJlIHJvdXRlZCB0
+byB0aGUgY29ubmVjdG9yIHZpYSBTUyBtdXggaW4gVVNCMyBQSFkuCisKK2NjaWM6IHMybW0wMDVA
+MzMgeworCS4uLgorCXVzYl9jb246IGNvbm5lY3RvciB7CisJCWNvbXBhdGlibGUgPSAidXNiLWMt
+Y29ubmVjdG9yIjsKKwkJbGFiZWwgPSAiVVNCLUMiOworCisJCXBvcnRzIHsKKwkJCSNhZGRyZXNz
+LWNlbGxzID0gPDE+OworCQkJI3NpemUtY2VsbHMgPSA8MD47CisKKwkJCXBvcnRAMCB7CisJCQkJ
+cmVnID0gPDA+OworCQkJCXVzYl9jb25faHM6IGVuZHBvaW50IHsKKwkJCQkJcmVtb3RlLWVuZHBv
+aW50ID0gPCZtYXg3Nzg2NV91c2JjX2hzPjsKKwkJCQl9OworCQkJfTsKKwkJCXBvcnRAMSB7CisJ
+CQkJcmVnID0gPDE+OworCQkJCXVzYl9jb25fc3M6IGVuZHBvaW50IHsKKwkJCQkJcmVtb3RlLWVu
+ZHBvaW50ID0gPCZ1c2JkcmRfcGh5X3NzPjsKKwkJCQl9OworCQkJfTsKKwkJCXBvcnRAMiB7CisJ
+CQkJcmVnID0gPDI+OworCQkJCXVzYl9jb25fc2J1OiBlbmRwb2ludCB7CisJCQkJCXJlbW90ZS1l
+bmRwb2ludCA9IDwmZHBfYXV4PjsKKwkJCQl9OworCQkJfTsKKwkJfTsKKwl9OworfTsKLS0gCjIu
+MTYuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
