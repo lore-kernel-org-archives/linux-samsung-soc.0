@@ -1,94 +1,51 @@
-From: "Winkler, Tomas" <tomas.winkler-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: RE: [PATCH v3] watchdog: add SPDX identifiers for watchdog subsystem
-Date: Wed, 21 Feb 2018 13:39:35 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422545A@hasmsx108.ger.corp.intel.com>
-References: <20180221122744.28300-1-marcus.folkesson@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v4 5/6] extcon: add possibility to get extcon device by OF
+ node
+Date: Wed, 21 Feb 2018 16:27:11 +0200
+Message-ID: <CAHp75VdxGDCGQBN05bL3_h8P62-v6+5oGW3M7CA+701o15ZXnQ@mail.gmail.com>
+References: <CGME20180221085608eucas1p162d2e579a1cc887672b722458edb98fe@eucas1p1.samsung.com>
+ <20180221085541.14556-1-a.hajda@samsung.com>
+ <20180221085541.14556-6-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20180221122744.28300-1-marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wim Van Sebroeck <wim-Q8PRGTgFL9WUCWQAtAn6Ix2eb7JE58TQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Alexandre
- Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Support Opensource <support.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, William
- Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jimmy Vance <jimmy.vance-ZPxbGqLxI0U@public.gmane.org>, Keguang Zhang <keguang.zhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Johannes Thumshirn <morbidrsa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>Andreas
- Werner <andre>
-Cc: "linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org" <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "patches-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org" <patches-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>, "adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180221085541.14556-6-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, USB <linux-usb@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-> 
-> - Add SPDX identifier
-> - Remove boiler plate license text
-> - If MODULE_LICENSE and boiler plate does not match, go for boiler plate
->   license
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Acked-by: Adam Thomson <Adam.Thomson.Opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>
-> Acked-by: Mans Rullgard <mans-2StjZFpD7GcAvxtiuMwx3w@public.gmane.org>
-> Acked-by: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Acked-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Acked-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-> Acked-by: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
-> ---
-> 
-> Notes:
->     v3:
->     	- Keep license text for ebc-c384_wdt
->     v2:
->     	- Put back removed copyright texts for meson_gxbb_wdt and
-> coh901327_wdt
->     	- Change to BSD-3-Clause for meson_gxbb_wdt
->     v1: Please have an extra look at meson_gxbb_wdt.c
-> 
->   *
-> - * This program is free software; you can redistribute it and/or modify it
-> - * under the terms of the GNU General Public License version 2 as published
-> - * by the Free Software Foundation.
->   *
-> 
-
->  #include <linux/err.h>
-> diff --git a/drivers/watchdog/mei_wdt.c b/drivers/watchdog/mei_wdt.c
-> index b8194b02abe0..8023cf28657a 100644
-> --- a/drivers/watchdog/mei_wdt.c
-> +++ b/drivers/watchdog/mei_wdt.c
-> @@ -1,15 +1,7 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Intel Management Engine Interface (Intel MEI) Linux driver
->   * Copyright (c) 2015, Intel Corporation.
-> - *
-> - * This program is free software; you can redistribute it and/or modify it
-> - * under the terms and conditions of the GNU General Public License,
-> - * version 2, as published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope it will be useful, but WITHOUT
-> - * ANY WARRANTY; without even the implied warranty of
-> MERCHANTABILITY or
-> - * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-> for
-> - * more details.
->   */
-> 
->  #include <linux/module.h>
-> @@ -687,5 +679,5 @@ static struct mei_cl_driver mei_wdt_driver = {
->  module_mei_cl_driver(mei_wdt_driver);
-> 
->  MODULE_AUTHOR("Intel Corporation");
-> -MODULE_LICENSE("GPL");
-> +MODULE_LICENSE("GPL v2");
->  MODULE_DESCRIPTION("Device driver for Intel MEI iAMT watchdog");
-
-Acked-by: Tomas Winkler <tomas.winkler-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+T24gV2VkLCBGZWIgMjEsIDIwMTggYXQgMTA6NTUgQU0sIEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFA
+c2Ftc3VuZy5jb20+IHdyb3RlOgo+IFNpbmNlIGV4dGNvbiBwcm9wZXJ0eSBpcyBub3QgYWxsb3dl
+ZCBpbiBEVCwgZXh0Y29uIHN1YnN5c3RlbSByZXF1aXJlcwo+IGFub3RoZXIgd2F5IHRvIGdldCBl
+eHRjb24gZGV2aWNlLiBMZXRzIHRyeSB0aGUgc2ltcGxlc3QgYXBwcm9hY2ggLSBnZXQKPiBlZGV2
+IGJ5IG9mX25vZGUuCgo+ICsvKgo+ICsgKiBleHRjb25fZ2V0X2VkZXZfYnlfb2Zfbm9kZSAtIEdl
+dCB0aGUgZXh0Y29uIGRldmljZSBmcm9tIGRldmljZXRyZWUuCj4gKyAqIEBub2RlICAgICAgIDog
+T0Ygbm9kZSBpZGVudHlmeWluZyBlZGV2Cj4gKyAqCj4gKyAqIFJldHVybiB0aGUgcG9pbnRlciBv
+ZiBleHRjb24gZGV2aWNlIGlmIHN1Y2Nlc3Mgb3IgRVJSX1BUUihlcnIpIGlmIGZhaWwuCj4gKyAq
+Lwo+ICtzdHJ1Y3QgZXh0Y29uX2RldiAqZXh0Y29uX2dldF9lZGV2X2J5X29mX25vZGUoc3RydWN0
+IGRldmljZV9ub2RlICpub2RlKQoKRmlyc3Qgb2YgYWxsLCB0aGUgYWxsIG90aGVyIHNpbWlsYXIg
+Y2FzZXMgdXNlICJfYnlfbm9kZSIgaW4gdGhlIG5hbWUuClNlY29uZCwgaXQncyBub3QgX2dldF8s
+IGl0J3MgX2ZpbmRfLgoKPiArewo+ICsgICAgICAgc3RydWN0IGV4dGNvbl9kZXYgKmVkZXY7Cj4g
+Kwo+ICsgICAgICAgbXV0ZXhfbG9jaygmZXh0Y29uX2Rldl9saXN0X2xvY2spOwo+ICsgICAgICAg
+bGlzdF9mb3JfZWFjaF9lbnRyeShlZGV2LCAmZXh0Y29uX2Rldl9saXN0LCBlbnRyeSkKPiArICAg
+ICAgICAgICAgICAgaWYgKGVkZXYtPmRldi5wYXJlbnQgJiYgZWRldi0+ZGV2LnBhcmVudC0+b2Zf
+bm9kZSA9PSBub2RlKQo+ICsgICAgICAgICAgICAgICAgICAgICAgIGdvdG8gb3V0Owo+ICsgICAg
+ICAgZWRldiA9IEVSUl9QVFIoLUVQUk9CRV9ERUZFUik7Cj4gK291dDoKPiArICAgICAgIG11dGV4
+X3VubG9jaygmZXh0Y29uX2Rldl9saXN0X2xvY2spOwo+ICsKPiArICAgICAgIHJldHVybiBlZGV2
+OwoKQ2FuJ3QgaXQgYmUgZG9uZSB1c2luZyBidXNfZmluZF9kZXZpY2UoKT8KCj4gK30KClNlZSBn
+b29kIGV4YW1wbGUgaW4gaTJjLWNvcmUtb2YuYwoKb2ZfZmluZF9pMmNfYWRhcHRlcl9ieV9ub2Rl
+KCkKb2ZfZ2V0X2kyY19hZGFwdGVyX2J5X25vZGUoKQoKLS0gCldpdGggQmVzdCBSZWdhcmRzLApB
+bmR5IFNoZXZjaGVua28KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
