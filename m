@@ -1,14 +1,13 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] thermal: exynos: Read soc_type from match data
-Date: Thu, 22 Feb 2018 15:41:45 +0100
-Message-ID: <2023948.K0BAVOQXYc@amdc3058>
-References: <CGME20180220121554eucas1p1e97fba2b784a024233d3537c33989f6a@eucas1p1.samsung.com>
- <1519128948-11818-1-git-send-email-m.purski@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: Validate alias coming from DT
+Date: Fri, 23 Feb 2018 00:18:15 +0900
+Message-ID: <CA+Ln22Hv=AawNquvGT=n4gxy7S=wOELPXX=c9NvzepmQjUVQqQ@mail.gmail.com>
+References: <20180220181751.20826-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1519128948-11818-1-git-send-email-m.purski@samsung.com>
+In-Reply-To: <20180220181751.20826-1-krzk@kernel.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,21 +17,48 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maciej Purski <m.purski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org, linux-gpio@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, February 20, 2018 01:15:48 PM Maciej Purski wrote:
-> Device context's field data->soc is currently obtained by comparing
-> of_compatible's. Provide soc_type as .data field in device's match
-> table, as it is done in most drivers.
-> 
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+2018-02-21 3:17 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> Driver uses alias from Device Tree as an index of pin controller data
+> array.  In case of a wrong DTB or an out-of-tree DTB, the alias could be
+> outside of this data array leading to out-of-bounds access.
+>
+> Depending on binary and memory layout, this could be handled properly
+> (showing error like "samsung-pinctrl 3860000.pinctrl: driver data not
+> available") or could lead to exceptions.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 30574f0db1b1 ("pinctrl: add samsung pinctrl and gpiolib driver")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> ---
+>
+> Issue is present since first version of this driver so this should be
+> backported as far as possible.
+>
+> Tested on Odroid HC1 (Exynos5422). Tests on S3C24xx, S3C64xx, Exynos
+> ARM64 and any other chips are highly appreciated.
+>
+> Linus,
+> I can take it through samsung/pinctrl tree and later send you again as
+> pull request... or you can apply it directly as I do not have any other
+> pinctrl patches queued so far.
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos-arm.c   | 56 +++++++++++++++++++----
+>  drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 14 +++++-
+>  drivers/pinctrl/samsung/pinctrl-s3c24xx.c      | 28 ++++++++++--
+>  drivers/pinctrl/samsung/pinctrl-s3c64xx.c      |  7 ++-
+>  drivers/pinctrl/samsung/pinctrl-samsung.c      | 61 ++++++++++++++++----------
+>  drivers/pinctrl/samsung/pinctrl-samsung.h      | 40 ++++++++++-------
+>  6 files changed, 154 insertions(+), 52 deletions(-)
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Thanks Geert for the report and Krzysztof for the patch.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Tomasz
