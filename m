@@ -1,16 +1,11 @@
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Subject: Re: [PATCH v3 06/10] pwm: add PWM modes
-Date: Thu, 22 Feb 2018 19:42:29 +0200
-Message-ID: <e5090740-520a-34c0-6b52-09cc8ada11b1@microchip.com>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-7-git-send-email-claudiu.beznea@microchip.com>
- <CAHp75Ver6GuKSDooAr2DW+eqt=B3p8O+X6+rOSWNgfhHxgVqNQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/2] ARM: dts: exynos: Fix address of PPMU ACP on Exynos4210
+Date: Thu, 22 Feb 2018 20:11:10 +0100
+Message-ID: <20180222191111.23747-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAHp75Ver6GuKSDooAr2DW+eqt=B3p8O+X6+rOSWNgfhHxgVqNQ@mail.gmail.com>
-Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,35 +15,58 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, milo.kim@ti.com, linux-fbdev@vger.kernel.org, Sean Young <sean@mess.org>, devicetree <devicetree@vger.kernel.org>, David Airlie <airlied@linux.ie>, Michael Turquette <mturquette@baylibre.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, kamil@wypas.org, dri-devel@lists.freedesktop.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org, Linux LED Subsystem <linux-leds@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, linux-samsung-soc@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Jonathan Corbet <corbet@lwn.net>, Linux Documentation List <linux-doc@vger.kernel.org>, Russell King - ARM Linux <linux@armlinux.org.>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Typo in unit address of PPMU ACP caused DTC warnings:
 
+    arch/arm/boot/dts/exynos4412-odroidu3.dtb:
+        Warning (simple_bus_reg): Node /soc/ppmu_acp@10ae0000 simple-bus unit address format error, expected "106e0000"
 
-On 22.02.2018 19:28, Andy Shevchenko wrote:
-> On Thu, Feb 22, 2018 at 2:01 PM, Claudiu Beznea
-> <claudiu.beznea@microchip.com> wrote:
->> Add PWM normal and complementary modes.
-> 
->> +- PWM_DTMODE_COMPLEMENTARY: PWM complementary working mode (for PWM
->> +channels two outputs); if not specified, the default for PWM channel will
->> +be used
-> 
-> What DT stands for?
-It stands for Device Tree. It remained this way from the previous version. In
-the previous version I had modes described in an enum, to be used by PWM core,
-as follows:
-enum pwm_mode {
-	PWM_MODE_NORMAL,
-	PWM_MODE_COMPLEMENTARY,
-};
+PPMU ACP (under 0x10ae0000 address) is present only in Exynos4210 so
+move this node to exynos4210.dtsi with fixing the reg address to proper
+one.
 
-and, to avoid conflict b/w these defines and the one from
-include/dt-bindings/pwm/pwm.h I introduced this DT in the define names from
-dt-bindings. But now the DT might be removed since I've changed the way the PWM
-mode is identified in PWM core. I will remove the DT in the next version, if not
-requested otherwise.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos4.dtsi    | 6 ------
+ arch/arm/boot/dts/exynos4210.dtsi | 6 ++++++
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-Thank you,
-Claudiu Benea
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 967cd02401c5..909a9f2bf5be 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -821,12 +821,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		ppmu_acp: ppmu_acp@10ae0000 {
+-			compatible = "samsung,exynos-ppmu";
+-			reg = <0x106e0000 0x2000>;
+-			status = "disabled";
+-		};
+-
+ 		ppmu_rightbus: ppmu_rightbus@112a0000 {
+ 			compatible = "samsung,exynos-ppmu";
+ 			reg = <0x112a0000 0x2000>;
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 853604d91158..88fb47cef9a8 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -162,6 +162,12 @@
+ 			iommus = <&sysmmu_g2d>;
+ 		};
+ 
++		ppmu_acp: ppmu_acp@10ae0000 {
++			compatible = "samsung,exynos-ppmu";
++			reg = <0x10ae0000 0x2000>;
++			status = "disabled";
++		};
++
+ 		ppmu_lcd1: ppmu_lcd1@12240000 {
+ 			compatible = "samsung,exynos-ppmu";
+ 			reg = <0x12240000 0x2000>;
+-- 
+2.14.1
