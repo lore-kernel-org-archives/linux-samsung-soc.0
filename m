@@ -1,16 +1,11 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: Fix unit addresses of PDMA nodes
- in Exynos5410
-Date: Fri, 23 Feb 2018 09:30:54 +0900
-Message-ID: <5A8F60BE.8060405@samsung.com>
-References: <20180222191111.23747-1-krzk@kernel.org>
- <CGME20180222191201epcas4p2e23264bce9d1d3b3cc3737c3d30b544d@epcas4p2.samsung.com>
- <20180222191111.23747-2-krzk@kernel.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH] cpufreq: s3c24xx: Fix broken s3c_cpufreq_init()
+Date: Fri, 23 Feb 2018 09:38:28 +0530
+Message-ID: <6b737a9c285840b4b2036fa51b692ee835664ec8.1519358505.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20180222191111.23747-2-krzk@kernel.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,38 +15,45 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Rafael Wysocki <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, =?UTF-8?q?Bart=C5=82omiej=20=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxOOuFhCAwMuyblCAyM+ydvCAwNDoxMSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiBGaXggdGhlIHVuaXQgYWRkcmVzc2VzIG9mIFBETUEgbm9kZXMgaW4gRXh5bm9zNTQxMCAodGhl
-IHJlZyBwcm9wZXJ0eSBpcwo+IGNvcnJlY3QpIHRvIGdldCByaWQgb2YgRFRDIHdhcm5pbmdzIGxp
-a2U6Cj4gCj4gICAgIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MTAtb2Ryb2lkeHUuZHRiOiBX
-YXJuaW5nIChzaW1wbGVfYnVzX3JlZyk6Cj4gICAgICAgICBOb2RlIC9zb2MvYW1iYS9wZG1hQDEy
-NjgwMDAwIHNpbXBsZS1idXMgdW5pdCBhZGRyZXNzIGZvcm1hdCBlcnJvciwgZXhwZWN0ZWQgIjEy
-MWEwMDAwIgo+IAo+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2Vy
-bmVsLm9yZz4KPiAtLS0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQxMC5kdHNpIHwgOCAr
-KysrLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygt
-KQo+IAo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDEwLmR0c2kgYi9h
-cmNoL2FybS9ib290L2R0cy9leHlub3M1NDEwLmR0c2kKPiBpbmRleCAxZTZiNTdkMDEzYzQuLjU1
-NTA5YzY5MDMyOCAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDEwLmR0
-c2kKPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDEwLmR0c2kKPiBAQCAtMTk2LDkg
-KzE5Niw5IEBACj4gIAkJCWludGVycnVwdC1wYXJlbnQgPSA8JmdpYz47Cj4gIAkJCXJhbmdlczsK
-PiAgCj4gLQkJCXBkbWEwOiBwZG1hQDEyNjgwMDAwIHsKPiArCQkJcGRtYTA6IHBkbWFAMTIxYTAw
-MDAgewo+ICAJCQkJY29tcGF0aWJsZSA9ICJhcm0scGwzMzAiLCAiYXJtLHByaW1lY2VsbCI7Cj4g
-LQkJCQlyZWcgPSA8MHgxMjFBMDAwMCAweDEwMDA+Owo+ICsJCQkJcmVnID0gPDB4MTIxYTAwMDAg
-MHgxMDAwPjsKPiAgCQkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAzNCBJUlFfVFlQRV9MRVZFTF9I
-SUdIPjsKPiAgCQkJCWNsb2NrcyA9IDwmY2xvY2sgQ0xLX1BETUEwPjsKPiAgCQkJCWNsb2NrLW5h
-bWVzID0gImFwYl9wY2xrIjsKPiBAQCAtMjA3LDkgKzIwNyw5IEBACj4gIAkJCQkjZG1hLXJlcXVl
-c3RzID0gPDMyPjsKPiAgCQkJfTsKPiAgCj4gLQkJCXBkbWExOiBwZG1hQDEyNjkwMDAwIHsKPiAr
-CQkJcGRtYTE6IHBkbWFAMTIxYjAwMDAgewo+ICAJCQkJY29tcGF0aWJsZSA9ICJhcm0scGwzMzAi
-LCAiYXJtLHByaW1lY2VsbCI7Cj4gLQkJCQlyZWcgPSA8MHgxMjFCMDAwMCAweDEwMDA+Owo+ICsJ
-CQkJcmVnID0gPDB4MTIxYjAwMDAgMHgxMDAwPjsKPiAgCQkJCWludGVycnVwdHMgPSA8R0lDX1NQ
-SSAzNSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPiAgCQkJCWNsb2NrcyA9IDwmY2xvY2sgQ0xLX1BE
-TUExPjsKPiAgCQkJCWNsb2NrLW5hbWVzID0gImFwYl9wY2xrIjsKPiAKClJldmlld2VkLWJ5OiBD
-aGFud29vIENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4KCi0tIApCZXN0IFJlZ2FyZHMsCkNo
-YW53b28gQ2hvaQpTYW1zdW5nIEVsZWN0cm9uaWNzCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+commit a307a1e6bc0d ("cpufreq: s3c: use cpufreq_generic_init()")
+accidentally broke cpufreq on s3c2410 and s3c2412. These two platforms
+don't have a CPU frequency table and used to skip calling
+cpufreq_table_validate_and_show() for them. But with the above commit,
+we started calling it unconditionally and that will eventually fail as
+the frequency table pointer is NULL.
+
+Fix this by calling cpufreq_table_validate_and_show() conditionally
+again.
+
+Cc: stable@vger.kernel.org # v3.13+
+Fixes: a307a1e6bc0d ("cpufreq: s3c: use cpufreq_generic_init()")
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/s3c24xx-cpufreq.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
+index 7b596fa38ad2..6bebc1f9f55a 100644
+--- a/drivers/cpufreq/s3c24xx-cpufreq.c
++++ b/drivers/cpufreq/s3c24xx-cpufreq.c
+@@ -351,7 +351,13 @@ struct clk *s3c_cpufreq_clk_get(struct device *dev, const char *name)
+ static int s3c_cpufreq_init(struct cpufreq_policy *policy)
+ {
+ 	policy->clk = clk_arm;
+-	return cpufreq_generic_init(policy, ftab, cpu_cur.info->latency);
++
++	policy->cpuinfo.transition_latency = cpu_cur.info->latency;
++
++	if (ftab)
++		return cpufreq_table_validate_and_show(policy, ftab);
++
++	return 0;
+ }
+ 
+ static int __init s3c_cpufreq_initclks(void)
+-- 
+2.15.0.194.g9af6a3dea062
