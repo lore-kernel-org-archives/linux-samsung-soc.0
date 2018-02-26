@@ -1,75 +1,70 @@
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Subject: Re: [PATCH v3 01/10] pwm: extend PWM framework with PWM modes
-Date: Mon, 26 Feb 2018 10:11:45 +0200
-Message-ID: <a26cdf7b-024e-957b-8691-c3c898d0d9d6@microchip.com>
-References: <1519300881-8136-2-git-send-email-claudiu.beznea@microchip.com>
- <201802250410.reI8wAy2%fengguang.wu@intel.com>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+Date: Mon, 26 Feb 2018 11:57:25 +0200
+Message-ID: <87po4s2hve.fsf@intel.com>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201802250410.reI8wAy2%fengguang.wu@intel.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, thierry.reding@gmail.com, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com, jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, mchehab@kernel.org, sean@mess.org, lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.orgl
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20180222123308.mypx2r7n6o63mj5z@oak.lan>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>, Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: mark.rutland@arm.com, milo.kim@ti.com, linux-fbdev@vger.kernel.org, sean@mess.org, devicetree@vger.kernel.org, airlied@linux.ie, mturquette@baylibre.com, kamil@wypas.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, alexandre.belloni@free-electrons.com, pavel@ucw.cz, lee.jones@linaro.org, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org, shc_work@mail.ru, corbet@lwn.net, linux-doc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, kgene@kernel.org, linux-input@vger.kernel.org, linux@roeck-us.net, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, jdelvare@suse.com, b.zolnierkie@samsung.com, intel-gfx@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, rodrigo.vivi@intel.com, mchehab@kernel.org, linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org, jingoohan1@gmail.com, dm
 List-Id: linux-samsung-soc@vger.kernel.org
 
-I'll rebase it on latest for-next in next version.
-
-Thank you,
-Claudiu Beznea
-
-On 24.02.2018 22:49, kbuild test robot wrote:
-> Hi Claudiu,
-> 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on pwm/for-next]
-> [also build test WARNING on v4.16-rc2 next-20180223]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Claudiu-Beznea/extend-PWM-framework-to-support-PWM-modes/20180225-024011
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git for-next
-> config: xtensa-allmodconfig (attached as .config)
-> compiler: xtensa-linux-gcc (GCC) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=xtensa 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->>> drivers//pwm/pwm-sun4i.c:36:0: warning: "PWM_MODE" redefined
->     #define PWM_MODE  BIT(7)
->     
->    In file included from drivers//pwm/pwm-sun4i.c:19:0:
->    include/linux/pwm.h:40:0: note: this is the location of the previous definition
->     #define PWM_MODE(name)  BIT(PWM_MODE_##name##_BIT)
->     
-> 
-> vim +/PWM_MODE +36 drivers//pwm/pwm-sun4i.c
-> 
-> 09853ce7 Alexandre Belloni 2014-12-17  29  
-> 09853ce7 Alexandre Belloni 2014-12-17  30  #define PWMCH_OFFSET		15
-> 09853ce7 Alexandre Belloni 2014-12-17  31  #define PWM_PRESCAL_MASK	GENMASK(3, 0)
-> 09853ce7 Alexandre Belloni 2014-12-17  32  #define PWM_PRESCAL_OFF		0
-> 09853ce7 Alexandre Belloni 2014-12-17  33  #define PWM_EN			BIT(4)
-> 09853ce7 Alexandre Belloni 2014-12-17  34  #define PWM_ACT_STATE		BIT(5)
-> 09853ce7 Alexandre Belloni 2014-12-17  35  #define PWM_CLK_GATING		BIT(6)
-> 09853ce7 Alexandre Belloni 2014-12-17 @36  #define PWM_MODE		BIT(7)
-> 09853ce7 Alexandre Belloni 2014-12-17  37  #define PWM_PULSE		BIT(8)
-> 09853ce7 Alexandre Belloni 2014-12-17  38  #define PWM_BYPASS		BIT(9)
-> 09853ce7 Alexandre Belloni 2014-12-17  39  
-> 
-> :::::: The code at line 36 was first introduced by commit
-> :::::: 09853ce7bc1003a490c7ee74a5705d7a7cf16b7d pwm: Add Allwinner SoC support
-> 
-> :::::: TO: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> :::::: CC: Thierry Reding <thierry.reding@gmail.com>
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+T24gVGh1LCAyMiBGZWIgMjAxOCwgRGFuaWVsIFRob21wc29uIDxkYW5pZWwudGhvbXBzb25AbGlu
+YXJvLm9yZz4gd3JvdGU6Cj4gT24gVGh1LCBGZWIgMjIsIDIwMTggYXQgMDI6MDE6MTZQTSArMDIw
+MCwgQ2xhdWRpdSBCZXpuZWEgd3JvdGU6Cj4+IEFkZCBQV00gbW9kZSB0byBwd21fY29uZmlnKCkg
+ZnVuY3Rpb24uIFRoZSBkcml2ZXJzIHdoaWNoIHVzZXMgcHdtX2NvbmZpZygpCj4+IHdlcmUgYWRh
+cHRlZCB0byB0aGlzIGNoYW5nZS4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IENsYXVkaXUgQmV6bmVh
+IDxjbGF1ZGl1LmJlem5lYUBtaWNyb2NoaXAuY29tPgo+PiAtLS0KPj4gIGFyY2gvYXJtL21hY2gt
+czNjMjR4eC9tYWNoLXJ4MTk1MC5jICB8IDExICsrKysrKysrKy0tCj4+ICBkcml2ZXJzL2J1cy90
+cy1uYnVzLmMgICAgICAgICAgICAgICAgfCAgMiArLQo+PiAgZHJpdmVycy9jbGsvY2xrLXB3bS5j
+ICAgICAgICAgICAgICAgIHwgIDMgKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9w
+YW5lbC5jICAgfCAxNyArKysrKysrKysrKysrKy0tLQo+PiAgZHJpdmVycy9od21vbi9wd20tZmFu
+LmMgICAgICAgICAgICAgIHwgIDIgKy0KPj4gIGRyaXZlcnMvaW5wdXQvbWlzYy9tYXg3NzY5My1o
+YXB0aWMuYyB8ICAyICstCj4+ICBkcml2ZXJzL2lucHV0L21pc2MvbWF4ODk5N19oYXB0aWMuYyAg
+fCAgNiArKysrKy0KPj4gIGRyaXZlcnMvbGVkcy9sZWRzLXB3bS5jICAgICAgICAgICAgICB8ICA1
+ICsrKystCj4+ICBkcml2ZXJzL21lZGlhL3JjL2lyLXJ4NTEuYyAgICAgICAgICAgfCAgNSArKysr
+LQo+PiAgZHJpdmVycy9tZWRpYS9yYy9wd20taXItdHguYyAgICAgICAgIHwgIDUgKysrKy0KPj4g
+IGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2xtMzYzMGFfYmwuYyB8ICA0ICsrKy0KPj4gIGRyaXZl
+cnMvdmlkZW8vYmFja2xpZ2h0L2xwODU1eF9ibC5jICB8ICA0ICsrKy0KPj4gIGRyaXZlcnMvdmlk
+ZW8vYmFja2xpZ2h0L2xwODc4OF9ibC5jICB8ICA1ICsrKystCj4+ICBkcml2ZXJzL3ZpZGVvL2Jh
+Y2tsaWdodC9wd21fYmwuYyAgICAgfCAxMSArKysrKysrKystLQo+PiAgZHJpdmVycy92aWRlby9m
+YmRldi9zc2QxMzA3ZmIuYyAgICAgIHwgIDMgKystCj4+ICBpbmNsdWRlL2xpbnV4L3B3bS5oICAg
+ICAgICAgICAgICAgICAgfCAgNiArKysrLS0KPj4gIDE2IGZpbGVzIGNoYW5nZWQsIDcwIGluc2Vy
+dGlvbnMoKyksIDIxIGRlbGV0aW9ucygtKQo+PiAKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlk
+ZW8vYmFja2xpZ2h0L2xtMzYzMGFfYmwuYyBiL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2xtMzYz
+MGFfYmwuYwo+PiBpbmRleCAyMDMwYTZiNzdhMDkuLjY5NmZhMjVkYWZkMiAxMDA2NDQKPj4gLS0t
+IGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbG0zNjMwYV9ibC5jCj4+ICsrKyBiL2RyaXZlcnMv
+dmlkZW8vYmFja2xpZ2h0L2xtMzYzMGFfYmwuYwo+PiBAQCAtMTY1LDggKzE2NSwxMCBAQCBzdGF0
+aWMgdm9pZCBsbTM2MzBhX3B3bV9jdHJsKHN0cnVjdCBsbTM2MzBhX2NoaXAgKnBjaGlwLCBpbnQg
+YnIsIGludCBicl9tYXgpCj4+ICB7Cj4+ICAJdW5zaWduZWQgaW50IHBlcmlvZCA9IHBjaGlwLT5w
+ZGF0YS0+cHdtX3BlcmlvZDsKPj4gIAl1bnNpZ25lZCBpbnQgZHV0eSA9IGJyICogcGVyaW9kIC8g
+YnJfbWF4Owo+PiArCXN0cnVjdCBwd21fY2FwcyBjYXBzID0geyB9Owo+PiAgCj4+IC0JcHdtX2Nv
+bmZpZyhwY2hpcC0+cHdtZCwgZHV0eSwgcGVyaW9kKTsKPj4gKwlwd21fZ2V0X2NhcHMocGNoaXAt
+PnB3bWQtPmNoaXAsIHBjaGlwLT5wd21kLCAmY2Fwcyk7Cj4+ICsJcHdtX2NvbmZpZyhwY2hpcC0+
+cHdtZCwgZHV0eSwgcGVyaW9kLCBCSVQoZmZzKGNhcHMubW9kZXMpIC0gMSkpOwo+Cj4gV2VsbC4u
+LiBJIGFkbWl0IEkndmUgb25seSByZWFsbHkgbG9va2VkIGF0IHRoZSBwYXRjaGVzIHRoYXQgaW1w
+YWN0IAo+IGJhY2tsaWdodCBidXQgZGlzcGVyc2luZyB0aGlzIHJlYWxseSBvZGQgbG9va2luZyBi
+aXQgdHdpZGRsaW5nIAo+IHRocm91Z2hvdXQgdGhlIGtlcm5lbCBkb2Vzbid0IHN0cmlrZSBtZSBh
+IGdyZWF0IEFQSSBkZXNpZ24uCj4KPiBJTUhPIGNhbGxlcnMgc2hvdWxkIG5vdCBiZSByZXF1aXJl
+ZCB0byBmaW5kIHRoZSBmaXJzdCBzZXQgYml0IGluCj4gc29tZSBzcGVjaWFsbHkgY3JhZnRlZCBz
+ZXQgb2YgY2FwYWJpbGl0eSBiaXRzIHNpbXBseSB0byBnZXQgc2FuZSAKPiBkZWZhdWx0IGJlaGF2
+aW91ci4KCkFncmVlZC4gSU1ITyB0aGUgcmVndWxhciB1c2UgY2FzZSBiZWNvbWVzIHJhdGhlciB0
+ZWRpb3VzLCB1Z2x5LCBhbmQKZXJyb3IgcHJvbmUuCgpCUiwKSmFuaS4KCgotLSAKSmFuaSBOaWt1
+bGEsIEludGVsIE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50
+ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
