@@ -1,108 +1,135 @@
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-Date: Tue, 27 Feb 2018 13:40:58 +0200
-Message-ID: <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
- <20180222123308.mypx2r7n6o63mj5z@oak.lan> <87po4s2hve.fsf@intel.com>
- <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
- <20180227105444.lo4pee7vh4we3foq@oak.lan>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v5 6/6] drm/bridge/sii8620: use micro-USB cable
+ detection logic to detect MHL
+Date: Tue, 27 Feb 2018 13:05:25 +0100
+Message-ID: <87dd3281-0471-ab2a-90c6-3f2d4bdf4750@samsung.com>
+References: <20180227071134.28063-1-a.hajda@samsung.com>
+ <CGME20180227071142eucas1p10203dac2558db034a4a3287220213601@eucas1p1.samsung.com>
+ <20180227071134.28063-7-a.hajda@samsung.com> <5A953C21.5020007@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180227105444.lo4pee7vh4we3foq@oak.lan>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5A953C21.5020007@samsung.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, thierry.reding@gmail.com, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com, jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, mchehab@kernel.org, sean@mess.org, lee.jones@linaro.org, jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ar
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, "open list:OPEN FIRMWARE AND
+ FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-On 27.02.2018 12:54, Daniel Thompson wrote:
-> On Mon, Feb 26, 2018 at 04:24:15PM +0200, Claudiu Beznea wrote:
->> On 26.02.2018 11:57, Jani Nikula wrote:
->>> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
->>>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
->>>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
->>>>> were adapted to this change.
->>>>>
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->>>>> ---
->>>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
->>>>>  drivers/bus/ts-nbus.c                |  2 +-
->>>>>  drivers/clk/clk-pwm.c                |  3 ++-
->>>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
->>>>>  drivers/hwmon/pwm-fan.c              |  2 +-
->>>>>  drivers/input/misc/max77693-haptic.c |  2 +-
->>>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
->>>>>  drivers/leds/leds-pwm.c              |  5 ++++-
->>>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
->>>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
->>>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
->>>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
->>>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
->>>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
->>>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
->>>>>  include/linux/pwm.h                  |  6 ++++--
->>>>>  16 files changed, 70 insertions(+), 21 deletions(-)
->>>>>
->>>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
->>>>> index 2030a6b77a09..696fa25dafd2 100644
->>>>> --- a/drivers/video/backlight/lm3630a_bl.c
->>>>> +++ b/drivers/video/backlight/lm3630a_bl.c
->>>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
->>>>>  {
->>>>>  	unsigned int period = pchip->pdata->pwm_period;
->>>>>  	unsigned int duty = br * period / br_max;
->>>>> +	struct pwm_caps caps = { };
->>>>>  
->>>>> -	pwm_config(pchip->pwmd, duty, period);
->>>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
->>>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
->>>>
->>>> Well... I admit I've only really looked at the patches that impact 
->>>> backlight but dispersing this really odd looking bit twiddling 
->>>> throughout the kernel doesn't strike me a great API design.
->>>>
->>>> IMHO callers should not be required to find the first set bit in
->>>> some specially crafted set of capability bits simply to get sane 
->>>> default behaviour.
->>>
->>> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
->>> error prone.
->>
->> Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
->> from your side?
->>
->> Or, what about using a function like pwm_mode_first() to get the first supported
->> mode by PWM channel?
->>
->> Or, would you prefer to solve this inside pwm_config() function, let's say, in
->> case an invalid mode is passed as argument, to let pwm_config() to choose the
->> first available PWM mode for PWM channel passed as argument?
-> 
-> What is it that actually needs solving?
-> 
-> If a driver requests normal mode and the PWM driver cannot support it
-> why not just return an error an move on.
-Because, simply, I wasn't aware of what these PWM client drivers needs for.
-
-> 
-> Put another way, what is the use case for secretly adopting a mode the
-> caller didn't want? Under what circumstances is this a good thing?
-No one... But I wasn't aware of what the PWM clients needs for from their PWM
-controllers. At this moment having BIT(ffs(caps.modes)) instead of
-PWM_MODE(NORMAL) is mostly the same since all the driver that has not explicitly
-registered PWM caps will use PWM normal mode.
-
-I will use PWM_MODE(NORMAL) instead of this in all the cases if this is OK from
-your side.
-
-Thank you,
-Claudiu Beznea
-> 
-> 
-> Daniel.
-> 
+T24gMjcuMDIuMjAxOCAxMjowOCwgQ2hhbndvbyBDaG9pIHdyb3RlOgo+IEhpLAo+Cj4gT24gMjAx
+OOuFhCAwMuyblCAyN+ydvCAxNjoxMSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4gRnJvbTogTWFj
+aWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+Cj4+Cj4+IEN1cnJlbnRseSBNSEwgY2hp
+cCBtdXN0IGJlIHR1cm5lZCBvbiBwZXJtYW5lbnRseSB0byBkZXRlY3QgTUhMIGNhYmxlLiBJdAo+
+PiBkdXBsaWNhdGVzIG1pY3JvLVVTQiBjb250cm9sbGVyJ3MgKE1VSUMpIGZ1bmN0aW9uYWxpdHkg
+YW5kIGNvbnN1bWVzCj4+IHVubmVjZXNzYXJ5IHBvd2VyLiBMZXRzIHVzZSBleHRjb24gYXR0YWNo
+ZWQgdG8gTVVJQyB0byBlbmFibGUgTUhMIGNoaXAKPj4gb25seSBpZiBpdCBkZXRlY3RzIE1ITCBj
+YWJsZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3Vu
+Zy5jb20+Cj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5j
+b20+Cj4+IC0tLQo+PiB2NTogdXBkYXRlZCBleHRjb24gQVBJCj4+Cj4+IFRoaXMgaXMgcmV3b3Jr
+IG9mIHRoZSBwYXRjaCBieSBNYWNpZWogd2l0aCBmb2xsb3dpbmcgY2hhbmdlczoKPj4gLSB1c2Ug
+bWljcm8tVVNCIHBvcnQgYmluZGluZ3MgdG8gZ2V0IGV4dGNvbiwgaW5zdGVhZCBvZiBleHRjb24g
+cHJvcGVydHksCj4+IC0gZml4ZWQgcmVtb3ZlIHNlcXVlbmNlLAo+PiAtIGZpeGVkIGV4dGNvbiBn
+ZXQgc3RhdGUgbG9naWMuCj4+Cj4+IENvZGUgZmluZGluZyBleHRjb24gbm9kZSBpcyBoYWNreSBJ
+TU8sIEkgZ3Vlc3MgdWx0aW1hdGVseSBpdCBzaG91bGQgYmUgZG9uZQo+PiB2aWEgc29tZSBmcmFt
+ZXdvcmsgKG1heWJlIGV2ZW4gZXh0Y29uKSwgb3IgYXQgbGVhc3QgdmlhIGhlbHBlciwgSSBob3Bl
+IGl0Cj4+IGNhbiBzdGF5IGFzIGlzIHVudGlsIHRoZSBwcm9wZXIgc29sdXRpb24gd2lsbCBiZSBt
+ZXJnZWQuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3Vu
+Zy5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jIHwg
+OTcgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tCj4+ICAxIGZpbGUgY2hhbmdl
+ZCwgOTQgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlk
+Z2Uvc2lsLXNpaTg2MjAuYwo+PiBpbmRleCA5ZTc4NWI4ZTBlYTIuLjYyYjBhZGFiY2FjMiAxMDA2
+NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jCj4+ICsrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYwo+PiBAQCAtMTcsNiArMTcsNyBA
+QAo+PiAgCj4+ICAjaW5jbHVkZSA8bGludXgvY2xrLmg+Cj4+ICAjaW5jbHVkZSA8bGludXgvZGVs
+YXkuaD4KPj4gKyNpbmNsdWRlIDxsaW51eC9leHRjb24uaD4KPj4gICNpbmNsdWRlIDxsaW51eC9n
+cGlvL2NvbnN1bWVyLmg+Cj4+ICAjaW5jbHVkZSA8bGludXgvaTJjLmg+Cj4+ICAjaW5jbHVkZSA8
+bGludXgvaW50ZXJydXB0Lmg+Cj4+IEBAIC0yNSw2ICsyNiw3IEBACj4+ICAjaW5jbHVkZSA8bGlu
+dXgvbGlzdC5oPgo+PiAgI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgo+PiAgI2luY2x1ZGUgPGxp
+bnV4L211dGV4Lmg+Cj4+ICsjaW5jbHVkZSA8bGludXgvb2ZfZ3JhcGguaD4KPj4gICNpbmNsdWRl
+IDxsaW51eC9yZWd1bGF0b3IvY29uc3VtZXIuaD4KPj4gICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+
+Cj4+ICAKPj4gQEAgLTgxLDYgKzgzLDEwIEBAIHN0cnVjdCBzaWk4NjIwIHsKPj4gIAlzdHJ1Y3Qg
+ZWRpZCAqZWRpZDsKPj4gIAl1bnNpZ25lZCBpbnQgZ2VuMl93cml0ZV9idXJzdDoxOwo+PiAgCWVu
+dW0gc2lpODYyMF9tdF9zdGF0ZSBtdF9zdGF0ZTsKPj4gKwlzdHJ1Y3QgZXh0Y29uX2RldiAqZXh0
+Y29uOwo+PiArCXN0cnVjdCBub3RpZmllcl9ibG9jayBleHRjb25fbmI7Cj4+ICsJc3RydWN0IHdv
+cmtfc3RydWN0IGV4dGNvbl93cTsKPj4gKwlpbnQgY2FibGVfc3RhdGU7Cj4+ICAJc3RydWN0IGxp
+c3RfaGVhZCBtdF9xdWV1ZTsKPj4gIAlzdHJ1Y3Qgewo+PiAgCQlpbnQgcl9zaXplOwo+PiBAQCAt
+MjE3NSw2ICsyMTgxLDc3IEBAIHN0YXRpYyB2b2lkIHNpaTg2MjBfaW5pdF9yY3BfaW5wdXRfZGV2
+KHN0cnVjdCBzaWk4NjIwICpjdHgpCj4+ICAJY3R4LT5yY19kZXYgPSByY19kZXY7Cj4+ICB9Cj4+
+ICAKPj4gK3N0YXRpYyB2b2lkIHNpaTg2MjBfY2FibGVfb3V0KHN0cnVjdCBzaWk4NjIwICpjdHgp
+Cj4+ICt7Cj4+ICsJZGlzYWJsZV9pcnEodG9faTJjX2NsaWVudChjdHgtPmRldiktPmlycSk7Cj4+
+ICsJc2lpODYyMF9od19vZmYoY3R4KTsKPj4gK30KPj4gKwo+PiArc3RhdGljIHZvaWQgc2lpODYy
+MF9leHRjb25fd29yayhzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspCj4+ICt7Cj4+ICsJc3RydWN0
+IHNpaTg2MjAgKmN0eCA9Cj4+ICsJCWNvbnRhaW5lcl9vZih3b3JrLCBzdHJ1Y3Qgc2lpODYyMCwg
+ZXh0Y29uX3dxKTsKPj4gKwlpbnQgc3RhdGUgPSBleHRjb25fZ2V0X3N0YXRlKGN0eC0+ZXh0Y29u
+LCBFWFRDT05fRElTUF9NSEwpOwo+PiArCj4+ICsJaWYgKHN0YXRlID09IGN0eC0+Y2FibGVfc3Rh
+dGUpCj4+ICsJCXJldHVybjsKPj4gKwo+PiArCWN0eC0+Y2FibGVfc3RhdGUgPSBzdGF0ZTsKPj4g
+Kwo+PiArCWlmIChzdGF0ZSA+IDApCj4+ICsJCXNpaTg2MjBfY2FibGVfaW4oY3R4KTsKPj4gKwll
+bHNlCj4+ICsJCXNpaTg2MjBfY2FibGVfb3V0KGN0eCk7Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyBp
+bnQgc2lpODYyMF9leHRjb25fbm90aWZpZXIoc3RydWN0IG5vdGlmaWVyX2Jsb2NrICpzZWxmLAo+
+PiArCQkJdW5zaWduZWQgbG9uZyBldmVudCwgdm9pZCAqcHRyKQo+PiArewo+PiArCXN0cnVjdCBz
+aWk4NjIwICpjdHggPQo+PiArCQljb250YWluZXJfb2Yoc2VsZiwgc3RydWN0IHNpaTg2MjAsIGV4
+dGNvbl9uYik7Cj4+ICsKPj4gKwlzY2hlZHVsZV93b3JrKCZjdHgtPmV4dGNvbl93cSk7Cj4+ICsK
+Pj4gKwlyZXR1cm4gTk9USUZZX0RPTkU7Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyBpbnQgc2lpODYy
+MF9leHRjb25faW5pdChzdHJ1Y3Qgc2lpODYyMCAqY3R4KQo+PiArewo+PiArCXN0cnVjdCBleHRj
+b25fZGV2ICplZGV2Owo+PiArCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbXVzYiwgKm11aWM7Cj4+ICsJ
+aW50IHJldDsKPj4gKwo+PiArCS8qIGdldCBtaWNyby1VU0IgY29ubmVjdG9yIG5vZGUgKi8KPj4g
+KwltdXNiID0gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9ub2RlKGN0eC0+ZGV2LT5vZl9ub2RlLCAxLCAt
+MSk7Cj4+ICsJLyogbmV4dCBnZXQgbWljcm8tVVNCIEludGVyZmFjZSBDb250cm9sbGVyIG5vZGUg
+Ki8KPj4gKwltdWljID0gb2ZfZ2V0X25leHRfcGFyZW50KG11c2IpOwo+PiArCj4+ICsJaWYgKCFt
+dWljKSB7Cj4+ICsJCWRldl9pbmZvKGN0eC0+ZGV2LCAibm8gZXh0Y29uIGZvdW5kLCBzd2l0Y2hp
+bmcgdG8gJ2Fsd2F5cyBvbicgbW9kZVxuIik7Cj4+ICsJCXJldHVybiAwOwo+PiArCX0KPj4gKwo+
+PiArCWVkZXYgPSBleHRjb25fZmluZF9lZGV2X2J5X25vZGUobXVpYyk7Cj4+ICsJb2Zfbm9kZV9w
+dXQobXVpYyk7Cj4+ICsJaWYgKElTX0VSUihlZGV2KSkgewo+PiArCQlpZiAoUFRSX0VSUihlZGV2
+KSA9PSAtRVBST0JFX0RFRkVSKQo+PiArCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7Cj4+ICsJCWRl
+dl9lcnIoY3R4LT5kZXYsICJJbnZhbGlkIG9yIG1pc3NpbmcgZXh0Y29uXG4iKTsKPj4gKwkJcmV0
+dXJuIFBUUl9FUlIoZWRldik7Cj4+ICsJfQo+PiArCj4+ICsJY3R4LT5leHRjb24gPSBlZGV2Owo+
+PiArCWN0eC0+ZXh0Y29uX25iLm5vdGlmaWVyX2NhbGwgPSBzaWk4NjIwX2V4dGNvbl9ub3RpZmll
+cjsKPj4gKwlJTklUX1dPUksoJmN0eC0+ZXh0Y29uX3dxLCBzaWk4NjIwX2V4dGNvbl93b3JrKTsK
+Pj4gKwlyZXQgPSBleHRjb25fcmVnaXN0ZXJfbm90aWZpZXIoZWRldiwgRVhUQ09OX0RJU1BfTUhM
+LCAmY3R4LT5leHRjb25fbmIpOwo+IFlvdSBiZXR0ZXIgdG8gdXNlIGRldm1fZXh0Y29uX3JlZ2lz
+dGVyX25vdGlmaWVyKCkuCgpXaXRoIGRldm0gdmVyc2lvbiBJIHJpc2sgdGhhdCBpbiBjYXNlIG9m
+IGRldmljZSB1bmJpbmQgbm90aWZpY2F0aW9uIHdpbGwKYmUgY2FsbGVkIGFmdGVyIC5yZW1vdmUg
+Y2FsbGJhY2ssIGl0IHNlZW1zIHRvIG1lIHF1aXRlIGRhbmdlcm91cy4gT3IgYW0KSSBtaXNzaW5n
+IHNvbWV0aGluZz8KClJlZ2FyZHMKQW5kcnplagoKPgo+PiArCWlmIChyZXQpIHsKPj4gKwkJZGV2
+X2VycihjdHgtPmRldiwgImZhaWxlZCB0byByZWdpc3RlciBub3RpZmllciBmb3IgTUhMXG4iKTsK
+Pj4gKwkJcmV0dXJuIHJldDsKPj4gKwl9Cj4+ICsKPj4gKwlyZXR1cm4gMDsKPj4gK30KPj4gKwo+
+PiAgc3RhdGljIGlubGluZSBzdHJ1Y3Qgc2lpODYyMCAqYnJpZGdlX3RvX3NpaTg2MjAoc3RydWN0
+IGRybV9icmlkZ2UgKmJyaWRnZSkKPj4gIHsKPj4gIAlyZXR1cm4gY29udGFpbmVyX29mKGJyaWRn
+ZSwgc3RydWN0IHNpaTg2MjAsIGJyaWRnZSk7Cj4+IEBAIC0yMzA3LDEzICsyMzg0LDIwIEBAIHN0
+YXRpYyBpbnQgc2lpODYyMF9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LAo+PiAgCWlm
+IChyZXQpCj4+ICAJCXJldHVybiByZXQ7Cj4+ICAKPj4gKwlyZXQgPSBzaWk4NjIwX2V4dGNvbl9p
+bml0KGN0eCk7Cj4+ICsJaWYgKHJldCA8IDApIHsKPj4gKwkJZGV2X2VycihjdHgtPmRldiwgImZh
+aWxlZCB0byBpbml0aWFsaXplIEVYVENPTlxuIik7Cj4+ICsJCXJldHVybiByZXQ7Cj4+ICsJfQo+
+PiArCj4+ICAJaTJjX3NldF9jbGllbnRkYXRhKGNsaWVudCwgY3R4KTsKPj4gIAo+PiAgCWN0eC0+
+YnJpZGdlLmZ1bmNzID0gJnNpaTg2MjBfYnJpZGdlX2Z1bmNzOwo+PiAgCWN0eC0+YnJpZGdlLm9m
+X25vZGUgPSBkZXYtPm9mX25vZGU7Cj4+ICAJZHJtX2JyaWRnZV9hZGQoJmN0eC0+YnJpZGdlKTsK
+Pj4gIAo+PiAtCXNpaTg2MjBfY2FibGVfaW4oY3R4KTsKPj4gKwlpZiAoIWN0eC0+ZXh0Y29uKQo+
+PiArCQlzaWk4NjIwX2NhYmxlX2luKGN0eCk7Cj4+ICAKPj4gIAlyZXR1cm4gMDsKPj4gIH0KPj4g
+QEAgLTIzMjIsOCArMjQwNiwxNSBAQCBzdGF0aWMgaW50IHNpaTg2MjBfcmVtb3ZlKHN0cnVjdCBp
+MmNfY2xpZW50ICpjbGllbnQpCj4+ICB7Cj4+ICAJc3RydWN0IHNpaTg2MjAgKmN0eCA9IGkyY19n
+ZXRfY2xpZW50ZGF0YShjbGllbnQpOwo+PiAgCj4+IC0JZGlzYWJsZV9pcnEodG9faTJjX2NsaWVu
+dChjdHgtPmRldiktPmlycSk7Cj4+IC0Jc2lpODYyMF9od19vZmYoY3R4KTsKPj4gKwlpZiAoY3R4
+LT5leHRjb24pIHsKPj4gKwkJZXh0Y29uX3VucmVnaXN0ZXJfbm90aWZpZXIoY3R4LT5leHRjb24s
+IEVYVENPTl9ESVNQX01ITCwKPj4gKwkJCQkJICAgJmN0eC0+ZXh0Y29uX25iKTsKPiBEb24ndCBu
+ZWVkIHRvIHVucmVnaXN0ZXIgdGhlIG5vdGlmaWVyIGlmIHVzaW5nIGRldm1fZXh0Y29uX3JlZ2lz
+dGVyX25vdGlmaWVyKCkuCj4KPj4gKwkJZmx1c2hfd29yaygmY3R4LT5leHRjb25fd3EpOwo+PiAr
+CQlpZiAoY3R4LT5jYWJsZV9zdGF0ZSA+IDApCj4+ICsJCQlzaWk4NjIwX2NhYmxlX291dChjdHgp
+Owo+PiArCX0gZWxzZSB7Cj4+ICsJCXNpaTg2MjBfY2FibGVfb3V0KGN0eCk7Cj4+ICsJfQo+PiAg
+CWRybV9icmlkZ2VfcmVtb3ZlKCZjdHgtPmJyaWRnZSk7Cj4+ICAKPj4gIAlyZXR1cm4gMDsKPj4K
+PiBJZiB5b3UgdXNlIHRoZSByZXNvdXJjZSBtYW5hZ2VkIGZ1bmN0aW9uIChkZXZtX2V4dGNvbl9y
+ZWdpc3Rlcl9ub3RpZmllciksIExvb2tzIGdvb2QgdG8gbWUuCj4gUmV2aWV3ZWQtYnk6IENoYW53
+b28gQ2hvaSA8Y3cwMC5jaG9pQHNhbXN1bmcuY29tPgo+CgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
