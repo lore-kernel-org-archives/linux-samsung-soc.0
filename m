@@ -1,55 +1,42 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v5 4/6] arm64: dts: exynos: add OF graph between MHL and USB
- connector
-Date: Tue, 27 Feb 2018 08:11:32 +0100
-Message-ID: <20180227071134.28063-5-a.hajda@samsung.com>
+Subject: [PATCH v5 3/6] arm64: dts: exynos: add micro-USB connector node to
+ TM2 platforms
+Date: Tue, 27 Feb 2018 08:11:31 +0100
+Message-ID: <20180227071134.28063-4-a.hajda@samsung.com>
 References: <20180227071134.28063-1-a.hajda@samsung.com>
- <CGME20180227071140eucas1p15a8b8443c6d52c5fab79cc82c37dce09@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+        <CGME20180227071139eucas1p1d28b39a6636a7e6625aeb3a16091f81a@eucas1p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20180227071134.28063-1-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T0YgZ3JhcGggZGVzY3JpYmVzIE1ITCBkYXRhIGxhbmVzIGJldHdlZW4gTUhMIGFuZCByZXNwZWN0
-aXZlIFVTQgpjb25uZWN0b3IuCgpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRh
-QHNhbXN1bmcuY29tPgotLS0KdjU6IHJlbW92ZWQgZXh0cmEgcGFyZW50aGVzaXMgKGtidWlsZCB0
-ZXN0IHJvYm90KQp2NDogYWRkZWQgbWlzc2luZyByZWcgcHJvcGVydHkgaW4gY29ubmVjdG9yJ3Mg
-cG9ydCBub2RlIChLcnp5c3p0b2YpCi0tLQogLi4uL2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMz
-LXRtMi1jb21tb24uZHRzaSAgICAgfCAzMSArKysrKysrKysrKysrKysrKysrLS0tCiAxIGZpbGUg
-Y2hhbmdlZCwgMjggaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9h
-cmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi1jb21tb24uZHRzaSBiL2Fy
-Y2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLWNvbW1vbi5kdHNpCmluZGV4
-IGY2MDRmNmIxYTljMi4uMDM0NTNiODIyMDkzIDEwMDY0NAotLS0gYS9hcmNoL2FybTY0L2Jvb3Qv
-ZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi1jb21tb24uZHRzaQorKysgYi9hcmNoL2FybTY0L2Jv
-b3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi1jb21tb24uZHRzaQpAQCAtODE3LDkgKzgxNywy
-MiBAQAogCQljbG9ja3MgPSA8JnBtdV9zeXN0ZW1fY29udHJvbGxlciAwPjsKIAkJY2xvY2stbmFt
-ZXMgPSAieHRhbCI7CiAKLQkJcG9ydCB7Ci0JCQltaGxfdG9faGRtaTogZW5kcG9pbnQgewotCQkJ
-CXJlbW90ZS1lbmRwb2ludCA9IDwmaGRtaV90b19taGw+OworCQlwb3J0cyB7CisJCQkjYWRkcmVz
-cy1jZWxscyA9IDwxPjsKKwkJCSNzaXplLWNlbGxzID0gPDA+OworCisJCQlwb3J0QDAgeworCQkJ
-CXJlZyA9IDwwPjsKKwkJCQltaGxfdG9faGRtaTogZW5kcG9pbnQgeworCQkJCQlyZW1vdGUtZW5k
-cG9pbnQgPSA8JmhkbWlfdG9fbWhsPjsKKwkJCQl9OworCQkJfTsKKworCQkJcG9ydEAxIHsKKwkJ
-CQlyZWcgPSA8MT47CisJCQkJbWhsX3RvX211c2JfY29uOiBlbmRwb2ludCB7CisJCQkJCXJlbW90
-ZS1lbmRwb2ludCA9IDwmbXVzYl9jb25fdG9fbWhsPjsKKwkJCQl9OwogCQkJfTsKIAkJfTsKIAl9
-OwpAQCAtODQyLDYgKzg1NSwxOCBAQAogCQkJCQkgICAgICJ1c2ItYi1jb25uZWN0b3IiOwogCQkJ
-CWxhYmVsID0gIm1pY3JvLVVTQiI7CiAJCQkJdHlwZSA9ICJtaWNybyI7CisKKwkJCQlwb3J0cyB7
-CisJCQkJCSNhZGRyZXNzLWNlbGxzID0gPDE+OworCQkJCQkjc2l6ZS1jZWxscyA9IDwwPjsKKwor
-CQkJCQlwb3J0QDMgeworCQkJCQkJcmVnID0gPDM+OworCQkJCQkJbXVzYl9jb25fdG9fbWhsOiBl
-bmRwb2ludCB7CisJCQkJCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZtaGxfdG9fbXVzYl9jb24+Owor
-CQkJCQkJfTsKKwkJCQkJfTsKKwkJCQl9OwogCQkJfTsKIAkJfTsKIAotLSAKMi4xNi4yCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Since USB connector bindings are available we can describe it on TM2(e).
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 0b61dda99569..f604f6b1a9c2 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -836,6 +836,13 @@
+ 
+ 		muic: max77843-muic {
+ 			compatible = "maxim,max77843-muic";
++
++			musb_con: musb_connector {
++				compatible = "samsung,usb-connector-11pin",
++					     "usb-b-connector";
++				label = "micro-USB";
++				type = "micro";
++			};
+ 		};
+ 
+ 		regulators {
+-- 
+2.16.2
