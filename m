@@ -1,59 +1,89 @@
-From: Oliver Neukum <oneukum@suse.com>
-Subject: Re: inconsistent lock state with usbnet/asix usb ethernet and xhci
-Date: Tue, 27 Feb 2018 11:37:50 +0100
-Message-ID: <1519727870.18525.4.camel@suse.com>
-References: <CGME20180227072602eucas1p28dcdba711b3153820bd409d838cc63bd@eucas1p2.samsung.com>
-         <c15c90ef-ce1b-4dd7-1d9f-673deb01b6d2@samsung.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+Date: Tue, 27 Feb 2018 10:54:44 +0000
+Message-ID: <20180227105444.lo4pee7vh4we3foq@oak.lan>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan>
+ <87po4s2hve.fsf@intel.com>
+ <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c15c90ef-ce1b-4dd7-1d9f-673deb01b6d2@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, LKML <linux-kernel@vger.kernel.org>, 'LinuxSamsung SOC' <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, netdev@vger.kernel.org
-Cc: Dean Jenkins <Dean_Jenkins@mentor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Cc: mark.rutland@arm.com, milo.kim@ti.com, linux-fbdev@vger.kernel.org, sean@mess.org, devicetree@vger.kernel.org, airlied@linux.ie, mturquette@baylibre.com, kamil@wypas.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, alexandre.belloni@free-electrons.com, pavel@ucw.cz, lee.jones@linaro.org, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org, shc_work@mail.ru, corbet@lwn.net, linux-doc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, kgene@kernel.org, linux-input@vger.kernel.org, linux@roeck-us.net, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, jdelvare@suse.com, b.zolnierkie@samsung.com, intel-gfx@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, rodrigo.vivi@intel.com, mchehab@kernel.org, linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am Dienstag, den 27.02.2018, 08:26 +0100 schrieb Marek Szyprowski:
-
-Hi,
-
-> I've noticed that USBnet/ASIX AX88772B USB driver produces deplock kernel
-> warning ("inconsistent lock state") on Chromebook2 Peach-PIT board. No
-
-Is that 32 bit?
-
-> special activity is needed to reproduce this issue, it happens almost
-> on every boot. ASIX USB ethernet is connected to XHCI USB host controller
-> on that board. Is it a known issue? Frankly I have no idea where to look
-
-No, it is not known.
-
-> to fix it. The same adapter connected to EHCI ports on other boards based
-> on the same SoC works fine without any warnings.
-
-Odd.
-
-> And the log with mentioned warning:
-> 
-> [   17.768040] ================================
-> [   17.772239] WARNING: inconsistent lock state
-> [   17.776511] 4.16.0-rc3-next-20180227-00007-g876c53a7493c #453 Not tainted
-> [   17.783329] --------------------------------
-> [   17.787580] inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
-> [   17.793607] swapper/0/0 [HC0[0]:SC1[1]:HE1:SE0] takes:
-> [   17.798751]  (&syncp->seq#5){?.-.}, at: [<9b22e5f0>] 
-> asix_rx_fixup_internal+0x188/0x288
-
-Looks like this triggers (in usbnet):
-
-        u64_stats_update_begin(&stats64->syncp);
-        stats64->rx_packets++;
-        stats64->rx_bytes += skb->len;
-        u64_stats_update_end(&stats64->syncp);
-
-That I considered to be called under lock.
-Could you comment this out for testing?
-
-	Regards
-		Oliver
+T24gTW9uLCBGZWIgMjYsIDIwMTggYXQgMDQ6MjQ6MTVQTSArMDIwMCwgQ2xhdWRpdSBCZXpuZWEg
+d3JvdGU6Cj4gT24gMjYuMDIuMjAxOCAxMTo1NywgSmFuaSBOaWt1bGEgd3JvdGU6Cj4gPiBPbiBU
+aHUsIDIyIEZlYiAyMDE4LCBEYW5pZWwgVGhvbXBzb24gPGRhbmllbC50aG9tcHNvbkBsaW5hcm8u
+b3JnPiB3cm90ZToKPiA+PiBPbiBUaHUsIEZlYiAyMiwgMjAxOCBhdCAwMjowMToxNlBNICswMjAw
+LCBDbGF1ZGl1IEJlem5lYSB3cm90ZToKPiA+Pj4gQWRkIFBXTSBtb2RlIHRvIHB3bV9jb25maWco
+KSBmdW5jdGlvbi4gVGhlIGRyaXZlcnMgd2hpY2ggdXNlcyBwd21fY29uZmlnKCkKPiA+Pj4gd2Vy
+ZSBhZGFwdGVkIHRvIHRoaXMgY2hhbmdlLgo+ID4+Pgo+ID4+PiBTaWduZWQtb2ZmLWJ5OiBDbGF1
+ZGl1IEJlem5lYSA8Y2xhdWRpdS5iZXpuZWFAbWljcm9jaGlwLmNvbT4KPiA+Pj4gLS0tCj4gPj4+
+ICBhcmNoL2FybS9tYWNoLXMzYzI0eHgvbWFjaC1yeDE5NTAuYyAgfCAxMSArKysrKysrKystLQo+
+ID4+PiAgZHJpdmVycy9idXMvdHMtbmJ1cy5jICAgICAgICAgICAgICAgIHwgIDIgKy0KPiA+Pj4g
+IGRyaXZlcnMvY2xrL2Nsay1wd20uYyAgICAgICAgICAgICAgICB8ICAzICsrLQo+ID4+PiAgZHJp
+dmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfcGFuZWwuYyAgIHwgMTcgKysrKysrKysrKysrKystLS0K
+PiA+Pj4gIGRyaXZlcnMvaHdtb24vcHdtLWZhbi5jICAgICAgICAgICAgICB8ICAyICstCj4gPj4+
+ICBkcml2ZXJzL2lucHV0L21pc2MvbWF4Nzc2OTMtaGFwdGljLmMgfCAgMiArLQo+ID4+PiAgZHJp
+dmVycy9pbnB1dC9taXNjL21heDg5OTdfaGFwdGljLmMgIHwgIDYgKysrKystCj4gPj4+ICBkcml2
+ZXJzL2xlZHMvbGVkcy1wd20uYyAgICAgICAgICAgICAgfCAgNSArKysrLQo+ID4+PiAgZHJpdmVy
+cy9tZWRpYS9yYy9pci1yeDUxLmMgICAgICAgICAgIHwgIDUgKysrKy0KPiA+Pj4gIGRyaXZlcnMv
+bWVkaWEvcmMvcHdtLWlyLXR4LmMgICAgICAgICB8ICA1ICsrKystCj4gPj4+ICBkcml2ZXJzL3Zp
+ZGVvL2JhY2tsaWdodC9sbTM2MzBhX2JsLmMgfCAgNCArKystCj4gPj4+ICBkcml2ZXJzL3ZpZGVv
+L2JhY2tsaWdodC9scDg1NXhfYmwuYyAgfCAgNCArKystCj4gPj4+ICBkcml2ZXJzL3ZpZGVvL2Jh
+Y2tsaWdodC9scDg3ODhfYmwuYyAgfCAgNSArKysrLQo+ID4+PiAgZHJpdmVycy92aWRlby9iYWNr
+bGlnaHQvcHdtX2JsLmMgICAgIHwgMTEgKysrKysrKysrLS0KPiA+Pj4gIGRyaXZlcnMvdmlkZW8v
+ZmJkZXYvc3NkMTMwN2ZiLmMgICAgICB8ICAzICsrLQo+ID4+PiAgaW5jbHVkZS9saW51eC9wd20u
+aCAgICAgICAgICAgICAgICAgIHwgIDYgKysrKy0tCj4gPj4+ICAxNiBmaWxlcyBjaGFuZ2VkLCA3
+MCBpbnNlcnRpb25zKCspLCAyMSBkZWxldGlvbnMoLSkKPiA+Pj4KPiA+Pj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2xtMzYzMGFfYmwuYyBiL2RyaXZlcnMvdmlkZW8vYmFj
+a2xpZ2h0L2xtMzYzMGFfYmwuYwo+ID4+PiBpbmRleCAyMDMwYTZiNzdhMDkuLjY5NmZhMjVkYWZk
+MiAxMDA2NDQKPiA+Pj4gLS0tIGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbG0zNjMwYV9ibC5j
+Cj4gPj4+ICsrKyBiL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2xtMzYzMGFfYmwuYwo+ID4+PiBA
+QCAtMTY1LDggKzE2NSwxMCBAQCBzdGF0aWMgdm9pZCBsbTM2MzBhX3B3bV9jdHJsKHN0cnVjdCBs
+bTM2MzBhX2NoaXAgKnBjaGlwLCBpbnQgYnIsIGludCBicl9tYXgpCj4gPj4+ICB7Cj4gPj4+ICAJ
+dW5zaWduZWQgaW50IHBlcmlvZCA9IHBjaGlwLT5wZGF0YS0+cHdtX3BlcmlvZDsKPiA+Pj4gIAl1
+bnNpZ25lZCBpbnQgZHV0eSA9IGJyICogcGVyaW9kIC8gYnJfbWF4Owo+ID4+PiArCXN0cnVjdCBw
+d21fY2FwcyBjYXBzID0geyB9Owo+ID4+PiAgCj4gPj4+IC0JcHdtX2NvbmZpZyhwY2hpcC0+cHdt
+ZCwgZHV0eSwgcGVyaW9kKTsKPiA+Pj4gKwlwd21fZ2V0X2NhcHMocGNoaXAtPnB3bWQtPmNoaXAs
+IHBjaGlwLT5wd21kLCAmY2Fwcyk7Cj4gPj4+ICsJcHdtX2NvbmZpZyhwY2hpcC0+cHdtZCwgZHV0
+eSwgcGVyaW9kLCBCSVQoZmZzKGNhcHMubW9kZXMpIC0gMSkpOwo+ID4+Cj4gPj4gV2VsbC4uLiBJ
+IGFkbWl0IEkndmUgb25seSByZWFsbHkgbG9va2VkIGF0IHRoZSBwYXRjaGVzIHRoYXQgaW1wYWN0
+IAo+ID4+IGJhY2tsaWdodCBidXQgZGlzcGVyc2luZyB0aGlzIHJlYWxseSBvZGQgbG9va2luZyBi
+aXQgdHdpZGRsaW5nIAo+ID4+IHRocm91Z2hvdXQgdGhlIGtlcm5lbCBkb2Vzbid0IHN0cmlrZSBt
+ZSBhIGdyZWF0IEFQSSBkZXNpZ24uCj4gPj4KPiA+PiBJTUhPIGNhbGxlcnMgc2hvdWxkIG5vdCBi
+ZSByZXF1aXJlZCB0byBmaW5kIHRoZSBmaXJzdCBzZXQgYml0IGluCj4gPj4gc29tZSBzcGVjaWFs
+bHkgY3JhZnRlZCBzZXQgb2YgY2FwYWJpbGl0eSBiaXRzIHNpbXBseSB0byBnZXQgc2FuZSAKPiA+
+PiBkZWZhdWx0IGJlaGF2aW91ci4KPiA+IAo+ID4gQWdyZWVkLiBJTUhPIHRoZSByZWd1bGFyIHVz
+ZSBjYXNlIGJlY29tZXMgcmF0aGVyIHRlZGlvdXMsIHVnbHksIGFuZAo+ID4gZXJyb3IgcHJvbmUu
+Cj4gCj4gVXNpbmcgc2ltcGx5IFBXTV9NT0RFKE5PUk1BTCkgaW5zdGVhZCBvZiBCSVQoZmZzKGNh
+cHMubW9kZXMpIC0gMSkgd291bGQgYmUgT0sKPiBmcm9tIHlvdXIgc2lkZT8KPgo+IE9yLCB3aGF0
+IGFib3V0IHVzaW5nIGEgZnVuY3Rpb24gbGlrZSBwd21fbW9kZV9maXJzdCgpIHRvIGdldCB0aGUg
+Zmlyc3Qgc3VwcG9ydGVkCj4gbW9kZSBieSBQV00gY2hhbm5lbD8KPiAKPiBPciwgd291bGQgeW91
+IHByZWZlciB0byBzb2x2ZSB0aGlzIGluc2lkZSBwd21fY29uZmlnKCkgZnVuY3Rpb24sIGxldCdz
+IHNheSwgaW4KPiBjYXNlIGFuIGludmFsaWQgbW9kZSBpcyBwYXNzZWQgYXMgYXJndW1lbnQsIHRv
+IGxldCBwd21fY29uZmlnKCkgdG8gY2hvb3NlIHRoZQo+IGZpcnN0IGF2YWlsYWJsZSBQV00gbW9k
+ZSBmb3IgUFdNIGNoYW5uZWwgcGFzc2VkIGFzIGFyZ3VtZW50PwoKV2hhdCBpcyBpdCB0aGF0IGFj
+dHVhbGx5IG5lZWRzIHNvbHZpbmc/CgpJZiBhIGRyaXZlciByZXF1ZXN0cyBub3JtYWwgbW9kZSBh
+bmQgdGhlIFBXTSBkcml2ZXIgY2Fubm90IHN1cHBvcnQgaXQKd2h5IG5vdCBqdXN0IHJldHVybiBh
+biBlcnJvciBhbiBtb3ZlIG9uLgoKUHV0IGFub3RoZXIgd2F5LCB3aGF0IGlzIHRoZSB1c2UgY2Fz
+ZSBmb3Igc2VjcmV0bHkgYWRvcHRpbmcgYSBtb2RlIHRoZQpjYWxsZXIgZGlkbid0IHdhbnQ/IFVu
+ZGVyIHdoYXQgY2lyY3Vtc3RhbmNlcyBpcyB0aGlzIGEgZ29vZCB0aGluZz8KCgpEYW5pZWwuCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
