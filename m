@@ -1,211 +1,108 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v5 6/6] drm/bridge/sii8620: use micro-USB cable
- detection logic to detect MHL
-Date: Tue, 27 Feb 2018 20:08:17 +0900
-Message-ID: <5A953C21.5020007@samsung.com>
-References: <20180227071134.28063-1-a.hajda@samsung.com>
-        <CGME20180227071142eucas1p10203dac2558db034a4a3287220213601@eucas1p1.samsung.com>
-        <20180227071134.28063-7-a.hajda@samsung.com>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+Date: Tue, 27 Feb 2018 13:40:58 +0200
+Message-ID: <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan> <87po4s2hve.fsf@intel.com>
+ <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
+ <20180227105444.lo4pee7vh4we3foq@oak.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180227071134.28063-7-a.hajda@samsung.com>
+In-Reply-To: <20180227105444.lo4pee7vh4we3foq@oak.lan>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: Maciej Purski <m.purski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, thierry.reding@gmail.com, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com, jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, mchehab@kernel.org, sean@mess.org, lee.jones@linaro.org, jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ar
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-On 2018년 02월 27일 16:11, Andrzej Hajda wrote:
-> From: Maciej Purski <m.purski@samsung.com>
-> 
-> Currently MHL chip must be turned on permanently to detect MHL cable. It
-> duplicates micro-USB controller's (MUIC) functionality and consumes
-> unnecessary power. Lets use extcon attached to MUIC to enable MHL chip
-> only if it detects MHL cable.
-> 
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> v5: updated extcon API
-> 
-> This is rework of the patch by Maciej with following changes:
-> - use micro-USB port bindings to get extcon, instead of extcon property,
-> - fixed remove sequence,
-> - fixed extcon get state logic.
-> 
-> Code finding extcon node is hacky IMO, I guess ultimately it should be done
-> via some framework (maybe even extcon), or at least via helper, I hope it
-> can stay as is until the proper solution will be merged.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/bridge/sil-sii8620.c | 97 ++++++++++++++++++++++++++++++++++--
->  1 file changed, 94 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
-> index 9e785b8e0ea2..62b0adabcac2 100644
-> --- a/drivers/gpu/drm/bridge/sil-sii8620.c
-> +++ b/drivers/gpu/drm/bridge/sil-sii8620.c
-> @@ -17,6 +17,7 @@
->  
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> +#include <linux/extcon.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/i2c.h>
->  #include <linux/interrupt.h>
-> @@ -25,6 +26,7 @@
->  #include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
-> +#include <linux/of_graph.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  
-> @@ -81,6 +83,10 @@ struct sii8620 {
->  	struct edid *edid;
->  	unsigned int gen2_write_burst:1;
->  	enum sii8620_mt_state mt_state;
-> +	struct extcon_dev *extcon;
-> +	struct notifier_block extcon_nb;
-> +	struct work_struct extcon_wq;
-> +	int cable_state;
->  	struct list_head mt_queue;
->  	struct {
->  		int r_size;
-> @@ -2175,6 +2181,77 @@ static void sii8620_init_rcp_input_dev(struct sii8620 *ctx)
->  	ctx->rc_dev = rc_dev;
->  }
->  
-> +static void sii8620_cable_out(struct sii8620 *ctx)
-> +{
-> +	disable_irq(to_i2c_client(ctx->dev)->irq);
-> +	sii8620_hw_off(ctx);
-> +}
-> +
-> +static void sii8620_extcon_work(struct work_struct *work)
-> +{
-> +	struct sii8620 *ctx =
-> +		container_of(work, struct sii8620, extcon_wq);
-> +	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-> +
-> +	if (state == ctx->cable_state)
-> +		return;
-> +
-> +	ctx->cable_state = state;
-> +
-> +	if (state > 0)
-> +		sii8620_cable_in(ctx);
-> +	else
-> +		sii8620_cable_out(ctx);
-> +}
-> +
-> +static int sii8620_extcon_notifier(struct notifier_block *self,
-> +			unsigned long event, void *ptr)
-> +{
-> +	struct sii8620 *ctx =
-> +		container_of(self, struct sii8620, extcon_nb);
-> +
-> +	schedule_work(&ctx->extcon_wq);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static int sii8620_extcon_init(struct sii8620 *ctx)
-> +{
-> +	struct extcon_dev *edev;
-> +	struct device_node *musb, *muic;
-> +	int ret;
-> +
-> +	/* get micro-USB connector node */
-> +	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-> +	/* next get micro-USB Interface Controller node */
-> +	muic = of_get_next_parent(musb);
-> +
-> +	if (!muic) {
-> +		dev_info(ctx->dev, "no extcon found, switching to 'always on' mode\n");
-> +		return 0;
-> +	}
-> +
-> +	edev = extcon_find_edev_by_node(muic);
-> +	of_node_put(muic);
-> +	if (IS_ERR(edev)) {
-> +		if (PTR_ERR(edev) == -EPROBE_DEFER)
-> +			return -EPROBE_DEFER;
-> +		dev_err(ctx->dev, "Invalid or missing extcon\n");
-> +		return PTR_ERR(edev);
-> +	}
-> +
-> +	ctx->extcon = edev;
-> +	ctx->extcon_nb.notifier_call = sii8620_extcon_notifier;
-> +	INIT_WORK(&ctx->extcon_wq, sii8620_extcon_work);
-> +	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
 
-You better to use devm_extcon_register_notifier().
-
-> +	if (ret) {
-> +		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static inline struct sii8620 *bridge_to_sii8620(struct drm_bridge *bridge)
->  {
->  	return container_of(bridge, struct sii8620, bridge);
-> @@ -2307,13 +2384,20 @@ static int sii8620_probe(struct i2c_client *client,
->  	if (ret)
->  		return ret;
->  
-> +	ret = sii8620_extcon_init(ctx);
-> +	if (ret < 0) {
-> +		dev_err(ctx->dev, "failed to initialize EXTCON\n");
-> +		return ret;
-> +	}
-> +
->  	i2c_set_clientdata(client, ctx);
->  
->  	ctx->bridge.funcs = &sii8620_bridge_funcs;
->  	ctx->bridge.of_node = dev->of_node;
->  	drm_bridge_add(&ctx->bridge);
->  
-> -	sii8620_cable_in(ctx);
-> +	if (!ctx->extcon)
-> +		sii8620_cable_in(ctx);
->  
->  	return 0;
->  }
-> @@ -2322,8 +2406,15 @@ static int sii8620_remove(struct i2c_client *client)
->  {
->  	struct sii8620 *ctx = i2c_get_clientdata(client);
->  
-> -	disable_irq(to_i2c_client(ctx->dev)->irq);
-> -	sii8620_hw_off(ctx);
-> +	if (ctx->extcon) {
-> +		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-> +					   &ctx->extcon_nb);
-
-Don't need to unregister the notifier if using devm_extcon_register_notifier().
-
-> +		flush_work(&ctx->extcon_wq);
-> +		if (ctx->cable_state > 0)
-> +			sii8620_cable_out(ctx);
-> +	} else {
-> +		sii8620_cable_out(ctx);
-> +	}
->  	drm_bridge_remove(&ctx->bridge);
->  
->  	return 0;
+On 27.02.2018 12:54, Daniel Thompson wrote:
+> On Mon, Feb 26, 2018 at 04:24:15PM +0200, Claudiu Beznea wrote:
+>> On 26.02.2018 11:57, Jani Nikula wrote:
+>>> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+>>>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+>>>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+>>>>> were adapted to this change.
+>>>>>
+>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>>>>> ---
+>>>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+>>>>>  drivers/bus/ts-nbus.c                |  2 +-
+>>>>>  drivers/clk/clk-pwm.c                |  3 ++-
+>>>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+>>>>>  drivers/hwmon/pwm-fan.c              |  2 +-
+>>>>>  drivers/input/misc/max77693-haptic.c |  2 +-
+>>>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+>>>>>  drivers/leds/leds-pwm.c              |  5 ++++-
+>>>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+>>>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+>>>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+>>>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+>>>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+>>>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+>>>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+>>>>>  include/linux/pwm.h                  |  6 ++++--
+>>>>>  16 files changed, 70 insertions(+), 21 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+>>>>> index 2030a6b77a09..696fa25dafd2 100644
+>>>>> --- a/drivers/video/backlight/lm3630a_bl.c
+>>>>> +++ b/drivers/video/backlight/lm3630a_bl.c
+>>>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+>>>>>  {
+>>>>>  	unsigned int period = pchip->pdata->pwm_period;
+>>>>>  	unsigned int duty = br * period / br_max;
+>>>>> +	struct pwm_caps caps = { };
+>>>>>  
+>>>>> -	pwm_config(pchip->pwmd, duty, period);
+>>>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+>>>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
+>>>>
+>>>> Well... I admit I've only really looked at the patches that impact 
+>>>> backlight but dispersing this really odd looking bit twiddling 
+>>>> throughout the kernel doesn't strike me a great API design.
+>>>>
+>>>> IMHO callers should not be required to find the first set bit in
+>>>> some specially crafted set of capability bits simply to get sane 
+>>>> default behaviour.
+>>>
+>>> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
+>>> error prone.
+>>
+>> Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
+>> from your side?
+>>
+>> Or, what about using a function like pwm_mode_first() to get the first supported
+>> mode by PWM channel?
+>>
+>> Or, would you prefer to solve this inside pwm_config() function, let's say, in
+>> case an invalid mode is passed as argument, to let pwm_config() to choose the
+>> first available PWM mode for PWM channel passed as argument?
 > 
+> What is it that actually needs solving?
+> 
+> If a driver requests normal mode and the PWM driver cannot support it
+> why not just return an error an move on.
+Because, simply, I wasn't aware of what these PWM client drivers needs for.
 
-If you use the resource managed function (devm_extcon_register_notifier), Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+> Put another way, what is the use case for secretly adopting a mode the
+> caller didn't want? Under what circumstances is this a good thing?
+No one... But I wasn't aware of what the PWM clients needs for from their PWM
+controllers. At this moment having BIT(ffs(caps.modes)) instead of
+PWM_MODE(NORMAL) is mostly the same since all the driver that has not explicitly
+registered PWM caps will use PWM normal mode.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+I will use PWM_MODE(NORMAL) instead of this in all the cases if this is OK from
+your side.
+
+Thank you,
+Claudiu Beznea
+> 
+> 
+> Daniel.
+> 
