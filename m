@@ -1,39 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/4] crypto: omap-sham - Fix misleading indentation
-Date: Thu,  1 Mar 2018 21:50:11 +0100
-Message-ID: <1519937413-24468-2-git-send-email-krzk@kernel.org>
-References: <1519937413-24468-1-git-send-email-krzk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: samsung: Validate alias coming from DT
+Date: Thu, 1 Mar 2018 23:33:01 +0100
+Message-ID: <CACRpkdbAhPdpRTx0P3yvazGgRvtUMmJ-qese1LFoCqNSPuR+sw@mail.gmail.com>
+References: <20180220181751.20826-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1519937413-24468-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <20180220181751.20826-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, Tero Kristo <t-kristo@ti.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, stable <stable@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit 8043bb1ae03c ("crypto: omap-sham - convert driver logic to use
-sgs for data xmit") removed the if() clause leaving the statement as is.
-The intention was in that case to finish the request always so the goto
-instruction seems sensible.
+On Tue, Feb 20, 2018 at 7:17 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Remove the indentation to fix Smatch warning:
-    drivers/crypto/omap-sham.c:1761 omap_sham_done_task() warn: inconsistent indenting
+> Driver uses alias from Device Tree as an index of pin controller data
+> array.  In case of a wrong DTB or an out-of-tree DTB, the alias could be
+> outside of this data array leading to out-of-bounds access.
+>
+> Depending on binary and memory layout, this could be handled properly
+> (showing error like "samsung-pinctrl 3860000.pinctrl: driver data not
+> available") or could lead to exceptions.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 30574f0db1b1 ("pinctrl: add samsung pinctrl and gpiolib driver")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> ---
+>
+> Issue is present since first version of this driver so this should be
+> backported as far as possible.
+>
+> Tested on Odroid HC1 (Exynos5422). Tests on S3C24xx, S3C64xx, Exynos
+> ARM64 and any other chips are highly appreciated.
+>
+> Linus,
+> I can take it through samsung/pinctrl tree and later send you again as
+> pull request... or you can apply it directly as I do not have any other
+> pinctrl patches queued so far.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/crypto/omap-sham.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied for fixes with all the tags.
 
-diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
-index 7650b1b449bb..6cb6ab6f52c0 100644
---- a/drivers/crypto/omap-sham.c
-+++ b/drivers/crypto/omap-sham.c
-@@ -1758,7 +1758,7 @@ static void omap_sham_done_task(unsigned long data)
- 		if (test_and_clear_bit(FLAGS_OUTPUT_READY, &dd->flags)) {
- 			/* hash or semi-hash ready */
- 			clear_bit(FLAGS_DMA_READY, &dd->flags);
--				goto finish;
-+			goto finish;
- 		}
- 	}
- 
--- 
-2.7.4
+Yours,
+Linus Walleij
