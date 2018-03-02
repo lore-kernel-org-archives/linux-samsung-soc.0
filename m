@@ -1,69 +1,56 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Fix IOMMU support for GScaler devices on
- Exynos5250
-Date: Fri, 02 Mar 2018 17:07:42 +0100
-Message-ID: <20180302160742.16947-1-m.szyprowski@samsung.com>
-References: <CGME20180302160746eucas1p2274e7b1cba7f90acc9beec511c09e279@eucas1p2.samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] i2c: s3c2410: Properly handle interrupts of number 0
+Date: Fri, 2 Mar 2018 16:28:21 +0000
+Message-ID: <20180302162821.bmsxgrqqaginjooo@lakrids.cambridge.arm.com>
+References: <1519936484-23132-1-git-send-email-krzk@kernel.org>
+ <20180302111931.GX9418@n2100.armlinux.org.uk>
+ <20180302124647.sfhnto77wgdh5sv6@katana>
+ <20180302125907.GA9418@n2100.armlinux.org.uk>
+ <20180302135854.76ue5jzsg7lvxjxw@katana>
+ <20180302140901.lrjqiaa2k4nxkqco@mwanda>
+ <20180302153221.GB9418@n2100.armlinux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180302153221.GB9418@n2100.armlinux.org.uk>
 Sender: stable-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: stable@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The proper name for the property, which assign given device to IOMMU is
-'iommus', not 'iommu'. Fix incorrect name and let all GScaler devices
-to be properly handled when IOMMU support is enabled.
+On Fri, Mar 02, 2018 at 03:32:22PM +0000, Russell King - ARM Linux wrote:
+> How do we break this status quo and finally solve the IRQ 0 and
+> NO_IRQ issue?
 
-Reported-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: 6cbfdd73a94f ("ARM: dts: add sysmmu nodes for exynos5250")
-CC: stable@vger.kernel.org # v4.8+
----
-This issue has been introduced in kernel v4.2-rc1, but this patch applies
-cleanly only on v4.8+ kernels.
----
- arch/arm/boot/dts/exynos5250.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> Another possibility would be to change platform_get_irq() and
+> suffer the regressions that will cause, telling people that fixing
+> their platform IRQ numbering is the only solution (but this
+> requires breaking our ideals about regressions.)
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 56626d1a4235..cf89385e7888 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -655,7 +655,7 @@
- 			power-domains = <&pd_gsc>;
- 			clocks = <&clock CLK_GSCL0>;
- 			clock-names = "gscl";
--			iommu = <&sysmmu_gsc0>;
-+			iommus = <&sysmmu_gsc0>;
- 		};
+How about we start with a warning? That'll be visible, but shouldn't
+result in broken systems while we wait for people to fix things up.
+
+e.g. something like the below.
+
+Mark.
+
+---->8----
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index f1bf7b38d91c..bd42eeffd2aa 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -126,7 +126,12 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+                irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
+        }
  
- 		gsc_1:  gsc@13e10000 {
-@@ -665,7 +665,7 @@
- 			power-domains = <&pd_gsc>;
- 			clocks = <&clock CLK_GSCL1>;
- 			clock-names = "gscl";
--			iommu = <&sysmmu_gsc1>;
-+			iommus = <&sysmmu_gsc1>;
- 		};
- 
- 		gsc_2:  gsc@13e20000 {
-@@ -675,7 +675,7 @@
- 			power-domains = <&pd_gsc>;
- 			clocks = <&clock CLK_GSCL2>;
- 			clock-names = "gscl";
--			iommu = <&sysmmu_gsc2>;
-+			iommus = <&sysmmu_gsc2>;
- 		};
- 
- 		gsc_3:  gsc@13e30000 {
-@@ -685,7 +685,7 @@
- 			power-domains = <&pd_gsc>;
- 			clocks = <&clock CLK_GSCL3>;
- 			clock-names = "gscl";
--			iommu = <&sysmmu_gsc3>;
-+			iommus = <&sysmmu_gsc3>;
- 		};
- 
- 		hdmi: hdmi@14530000 {
--- 
-2.15.0
+-       return r ? r->start : -ENXIO;
++       if (!r)
++               return -ENXIO;
++
++       WARN_ONCE(!r->start, "Platform uses zero as a valid IRQ.");
++
++       return r->start;
+ #endif
+ }
+ EXPORT_SYMBOL_GPL(platform_get_irq);
