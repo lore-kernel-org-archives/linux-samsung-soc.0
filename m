@@ -1,46 +1,70 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH] i2c: s3c2410: Properly handle interrupts of number 0
-Date: Fri, 2 Mar 2018 12:59:07 +0000
-Message-ID: <20180302125907.GA9418@n2100.armlinux.org.uk>
-References: <1519936484-23132-1-git-send-email-krzk@kernel.org>
- <20180302111931.GX9418@n2100.armlinux.org.uk>
- <20180302124647.sfhnto77wgdh5sv6@katana>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH v5 1/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Fri, 2 Mar 2018 15:13:15 +0200
+Message-ID: <20180302131315.GA10598@kuha.fi.intel.com>
+References: <20180227071134.28063-1-a.hajda@samsung.com>
+ <CGME20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f@eucas1p1.samsung.com>
+ <20180227071134.28063-2-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180302124647.sfhnto77wgdh5sv6@katana>
-Sender: stable-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Dan Carpenter <dan.carpenter@oracle.com>
+In-Reply-To: <20180227071134.28063-2-a.hajda@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 01:46:47PM +0100, Wolfram Sang wrote:
-> 
-> So, maybe some words why I accepted this patch.
-> 
-> On Fri, Mar 02, 2018 at 11:19:31AM +0000, Russell King - ARM Linux wrote:
-> > Note that there have been patches proposed to make platform_get_irq()
-> > return an error rather than returning a value of zero, so changing
-> > the driver in this way is not a good idea.
-> 
-> I'd much agree to such an approach, yet I didn't see it coming along so
-> far for years(?) now.
+Hi,
 
-It needs platform maintainers to be motivated to fix it, and one way to
-provide that motivation is for subsystem maintainers to say no to patches
-like this.  If patches like this get accepted, then the "problem" gets
-solved, and there is very little motivation to fix the platform itself.
+On Tue, Feb 27, 2018 at 08:11:29AM +0100, Andrzej Hajda wrote:
+> +2. USB-C connector attached to CC controller (s2mm005), HS lines routed
+> +to companion PMIC (max77865), SS lines to USB3 PHY and SBU to DisplayPort.
+> +DisplayPort video lines are routed to the connector via SS mux in USB3 PHY.
+> +
+> +ccic: s2mm005@33 {
+> +	...
+> +	usb_con: connector {
+> +		compatible = "usb-c-connector";
+> +		label = "USB-C";
 
-If you look back at the history of this, the times when platforms have
-been fixed is when they have a problem exactly like this, and they're
-told to fix their platforms IRQ numbering instead of the patch to "fix"
-the driver being accepted.
+Is this child node really necessary? There will never be more then
+one connector per CC line.
 
-Why fix the interrupt numbering if patches to "fix" drivers get
-accepted?
+We should prefer device_graph* functions over of_graph* and
+acpi_graph* functions in the drivers so we don't have to handle the
+same thing multiple times with separate APIs. Is it still possible if
+there is that connector child node?
+
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				usb_con_hs: endpoint {
+> +					remote-endpoint = <&max77865_usbc_hs>;
+> +				};
+> +			};
+> +			port@1 {
+> +				reg = <1>;
+> +				usb_con_ss: endpoint {
+> +					remote-endpoint = <&usbdrd_phy_ss>;
+> +				};
+> +			};
+> +			port@2 {
+> +				reg = <2>;
+> +				usb_con_sbu: endpoint {
+> +					remote-endpoint = <&dp_aux>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +};
+
+
+Thanks,
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+heikki
