@@ -1,80 +1,69 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH] i2c: s3c2410: Properly handle interrupts of number 0
-Date: Fri, 2 Mar 2018 15:32:22 +0000
-Message-ID: <20180302153221.GB9418@n2100.armlinux.org.uk>
-References: <1519936484-23132-1-git-send-email-krzk@kernel.org>
- <20180302111931.GX9418@n2100.armlinux.org.uk>
- <20180302124647.sfhnto77wgdh5sv6@katana>
- <20180302125907.GA9418@n2100.armlinux.org.uk>
- <20180302135854.76ue5jzsg7lvxjxw@katana>
- <20180302140901.lrjqiaa2k4nxkqco@mwanda>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos: Fix IOMMU support for GScaler devices on
+ Exynos5250
+Date: Fri, 02 Mar 2018 17:07:42 +0100
+Message-ID: <20180302160742.16947-1-m.szyprowski@samsung.com>
+References: <CGME20180302160746eucas1p2274e7b1cba7f90acc9beec511c09e279@eucas1p2.samsung.com>
 Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180302140901.lrjqiaa2k4nxkqco@mwanda>
 Sender: stable-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: stable@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 05:09:01PM +0300, Dan Carpenter wrote:
-> On Fri, Mar 02, 2018 at 02:58:54PM +0100, Wolfram Sang wrote:
-> > 
-> > > It needs platform maintainers to be motivated to fix it, and one way to
-> > > provide that motivation is for subsystem maintainers to say no to patches
-> > > like this.  If patches like this get accepted, then the "problem" gets
-> > > solved, and there is very little motivation to fix the platform itself.
-> > 
-> > Yes, I can see this. I will drop / revert the patch.
-> > 
-> 
-> TBH, I can't find the threads from November so I feel a bit lost and
-> there is no documentation for platform_get_irq().
+The proper name for the property, which assign given device to IOMMU is
+'iommus', not 'iommu'. Fix incorrect name and let all GScaler devices
+to be properly handled when IOMMU support is enabled.
 
-Start from here:
+Reported-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 6cbfdd73a94f ("ARM: dts: add sysmmu nodes for exynos5250")
+CC: stable@vger.kernel.org # v4.8+
+---
+This issue has been introduced in kernel v4.2-rc1, but this patch applies
+cleanly only on v4.8+ kernels.
+---
+ arch/arm/boot/dts/exynos5250.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-http://archive.armlinux.org.uk/lurker/search/20380101.000000.00000000@ml:linux-arm-kernel,sb:platform%5Fget%5Firq.en.html
-
-With the right list archiving software with a built-in search facility,
-it becomes much easier to find stuff!  There's quite a number of messages
-there though, as there were multiple patch series posted.
-
-Some specific messages:
-
-http://archive.armlinux.org.uk/lurker/message/20171204.182556.775e16ab.en.html
-http://archive.armlinux.org.uk/lurker/message/20171120.164840.87002f9c.en.html
-http://archive.armlinux.org.uk/lurker/message/20171118.182704.3e1a5553.en.html
-
-The reason it hasn't be trivially done (just by changing
-platform_get_irq() now) is that doing so will cause a bunch of
-regressions, precisely because people _are_ using IRQ 0 with some
-platform drivers.
-
-The patch series above has died a death, so yet again the IRQ0/NO_IRQ
-issue has disappeared off people's radars and there's no reason to
-fix the situation.  So, we're yet again back to the status quo of
-almost nothing happening.
-
-How do we break this status quo and finally solve the IRQ 0 and
-NO_IRQ issue?
-
-I believe that we have to bite the bullet and start by saying no to
-these trivial patches which try to preserve the current situation.
-That at least provides some motivation for things to get fixed in
-the right way.
-
-Another possibility would be to change platform_get_irq() and
-suffer the regressions that will cause, telling people that fixing
-their platform IRQ numbering is the only solution (but this
-requires breaking our ideals about regressions.)
-
-The alternative is everyone (including Linus) stops whinging about
-NO_IRQ and IRQ0 and put up with the fact that some platforms treat
-IRQ0 as a valid interrupt - which, I think we can all agree, isn't
-going to happen.
-
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 56626d1a4235..cf89385e7888 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -655,7 +655,7 @@
+ 			power-domains = <&pd_gsc>;
+ 			clocks = <&clock CLK_GSCL0>;
+ 			clock-names = "gscl";
+-			iommu = <&sysmmu_gsc0>;
++			iommus = <&sysmmu_gsc0>;
+ 		};
+ 
+ 		gsc_1:  gsc@13e10000 {
+@@ -665,7 +665,7 @@
+ 			power-domains = <&pd_gsc>;
+ 			clocks = <&clock CLK_GSCL1>;
+ 			clock-names = "gscl";
+-			iommu = <&sysmmu_gsc1>;
++			iommus = <&sysmmu_gsc1>;
+ 		};
+ 
+ 		gsc_2:  gsc@13e20000 {
+@@ -675,7 +675,7 @@
+ 			power-domains = <&pd_gsc>;
+ 			clocks = <&clock CLK_GSCL2>;
+ 			clock-names = "gscl";
+-			iommu = <&sysmmu_gsc2>;
++			iommus = <&sysmmu_gsc2>;
+ 		};
+ 
+ 		gsc_3:  gsc@13e30000 {
+@@ -685,7 +685,7 @@
+ 			power-domains = <&pd_gsc>;
+ 			clocks = <&clock CLK_GSCL3>;
+ 			clock-names = "gscl";
+-			iommu = <&sysmmu_gsc3>;
++			iommus = <&sysmmu_gsc3>;
+ 		};
+ 
+ 		hdmi: hdmi@14530000 {
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+2.15.0
