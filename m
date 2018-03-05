@@ -1,71 +1,46 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH v5 1/6] dt-bindings: add bindings for USB physical
- connector
-Date: Mon, 5 Mar 2018 12:27:53 +0200
-Message-ID: <20180305102753.GC10598@kuha.fi.intel.com>
-References: <20180227071134.28063-1-a.hajda@samsung.com>
- <CGME20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f@eucas1p1.samsung.com>
- <20180227071134.28063-2-a.hajda@samsung.com>
- <20180302131315.GA10598@kuha.fi.intel.com>
- <8434f820-5016-1e5a-c3cb-5d7789dd69c1@samsung.com>
+From: Oliver Neukum <oneukum@suse.com>
+Subject: Re: inconsistent lock state with usbnet/asix usb ethernet and xhci
+Date: Mon, 05 Mar 2018 12:46:07 +0100
+Message-ID: <1520250367.3990.9.camel@suse.com>
+References: <CGME20180227072602eucas1p28dcdba711b3153820bd409d838cc63bd@eucas1p2.samsung.com>
+         <c15c90ef-ce1b-4dd7-1d9f-673deb01b6d2@samsung.com>
+         <1519740421.7296.6.camel@gmail.com>
+         <bac44c1b-d701-2f6b-5e1e-738befc25c9d@samsung.com>
+         <1519744167.7296.8.camel@gmail.com> <1519744400.7296.10.camel@gmail.com>
+         <1519747675.2649.3.camel@suse.com>
+         <02679502-cf6e-8714-e879-50a922c5d976@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <8434f820-5016-1e5a-c3cb-5d7789dd69c1@samsung.com>
+In-Reply-To: <02679502-cf6e-8714-e879-50a922c5d976@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, netdev@vger.kernel.org, Dean Jenkins <Dean_Jenkins@mentor.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 09:18:10AM +0100, Andrzej Hajda wrote:
-> On 02.03.2018 14:13, Heikki Krogerus wrote:
-> > Hi,
-> >
-> > On Tue, Feb 27, 2018 at 08:11:29AM +0100, Andrzej Hajda wrote:
-> >> +2. USB-C connector attached to CC controller (s2mm005), HS lines routed
-> >> +to companion PMIC (max77865), SS lines to USB3 PHY and SBU to DisplayPort.
-> >> +DisplayPort video lines are routed to the connector via SS mux in USB3 PHY.
-> >> +
-> >> +ccic: s2mm005@33 {
-> >> +	...
-> >> +	usb_con: connector {
-> >> +		compatible = "usb-c-connector";
-> >> +		label = "USB-C";
-> > Is this child node really necessary? There will never be more then
-> > one connector per CC line.
+On Mon, 2018-03-05 at 08:45 +0100, Marek Szyprowski wrote:
+> Hi Oliver,
 > 
-> But there can be more connectors/cc-lines per IC, for example EZ-PD CCG5[1].
-
-OK, in that case the child node is of course needed.
-
-> [1]:
-> http://www.cypress.com/products/ez-pd-ccg5-two-port-usb-type-c-and-power-delivery
+> On 2018-02-27 17:07, Oliver Neukum wrote:
+> > Am Dienstag, den 27.02.2018, 07:13 -0800 schrieb Eric Dumazet:
+> >> On Tue, 2018-02-27 at 07:09 -0800, Eric Dumazet wrote:
+> >>>
+> >>> Note that for this one, it seems we also could perform stats updates in
+> >>> BH context, since skb is queued via defer_bh()
+> >>>
+> >>> But simplicity wins I guess.
+> >> Thinking more about this, I am not sure we have any guarantee that TX
+> >> and RX can not run on multiple cpus.
+> >>
+> >> Using an unique syncp is not going to be safe, even if we make lockdep
+> >> happy enough with the local_irq save/restore.
+> > Unfortunately you are right. It is not guaranteed for some hardware.
 > 
-> >
-> > We should prefer device_graph* functions over of_graph* and
-> I guess you mean fwnode_graph* functions.
+> Does it mean that the fix proposed by Eric is not the proper solution?
 
-Yes.
+For asix it should work, but asix is unlikely to be the only driver
+with that issue. 32 bit recieves less testing nowadays.
 
-> > acpi_graph* functions in the drivers so we don't have to handle the
-> > same thing multiple times with separate APIs. Is it still possible if
-> > there is that connector child node?
-> 
-> Bindings proposed here are OF bindings, I suppose the most important is
-> to follow OF specification and guidelines and these bindings tries to
-> follow it.
-> It looks like it should not be a problem for fwnode framework to handle
-> such bindings, but it is just my guess. I have not seen any fwnode*
-> specification I am not sure what is the real purpose of this framework,
-> but it seems to be just in-kernel abstraction for different firmware
-> standards (OF, ACPI), so even if it lacks at the moment some
-> functionality it should not be a barrier for OF bindings.
-
-Sure thing.
-
-
-Thanks,
-
--- 
-heikki
+	Regards
+		Oliver
