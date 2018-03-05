@@ -1,58 +1,50 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/3] drm/bridge: analogix_dp: Don't power bridge in
- analogix_dp_bind
-Date: Mon, 05 Mar 2018 09:57:39 +0100
-Message-ID: <20180305085741.18896-2-m.szyprowski@samsung.com>
-References: <20180305085741.18896-1-m.szyprowski@samsung.com>
- <CGME20180305085804eucas1p10709830a36b02a28a6cb74827968f64d@eucas1p1.samsung.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: Re: [PATCH 1/4] crypto: omap-sham: Remove useless check for non-null
+ request
+Date: Mon, 5 Mar 2018 10:58:57 +0200
+Message-ID: <4062df04-e605-60c1-0cab-2d519efdc4b1@ti.com>
+References: <1519937413-24468-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20180305085741.18896-1-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: Douglas Anderson <dianders@chromium.org>, Thierry Escande <thierry.escande@collabora.com>, Lin Huang <hl@rock-chips.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tfiga@chromium.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Caesar Wang <wxt@rock-chips.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Haixia Shi <hshi@chromium.org>, Zain Wang <wzz@rock-chips.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1519937413-24468-1-git-send-email-krzk@kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogemFpbiB3YW5nIDx3enpAcm9jay1jaGlwcy5jb20+CgpUaGUgYnJpZGdlIGRvZXMgbm90
-IG5lZWQgdG8gYmUgcG93ZXJlZCBpbiBhbmFsb2dpeF9kcF9iaW5kKCksIHNvCnJlbW92ZSB0aGUg
-Y2FsbHMgdG8gcG1fcnVudGltZV9nZXQoKS9waHlfcG93ZXJfb24oKS9hbmFsb2dpeF9kcF9pbml0
-X2RwKCkKYXMgd2VsbCBhcyB0aGVpciBwb3dlci1vZmYgY291bnRlcnBhcnRzLgoKQ2M6IFN0w6lw
-aGFuZSBNYXJjaGVzaW4gPG1hcmNoZXVAY2hyb21pdW0ub3JnPgpTaWduZWQtb2ZmLWJ5OiB6YWlu
-IHdhbmcgPHd6ekByb2NrLWNoaXBzLmNvbT4KU2lnbmVkLW9mZi1ieTogQ2Flc2FyIFdhbmcgPHd4
-dEByb2NrLWNoaXBzLmNvbT4KW3RoZSBwYXRjaCBvcmlnaW5hbGx5IGp1c3QgcmVtb3ZlZCB0aGUg
-cG93ZXJfb24gcG9ydGlvbiwgc2VhbnBhdWwgcmVtb3ZlZAp0aGUgcG93ZXIgb2ZmIGNvZGUgYXMg
-d2VsbCBhcyBpbXByb3ZlZCB0aGUgY29tbWl0IG1lc3NhZ2VdClNpZ25lZC1vZmYtYnk6IFNlYW4g
-UGF1bCA8c2VhbnBhdWxAY2hyb21pdW0ub3JnPgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IEVzY2Fu
-ZGUgPHRoaWVycnkuZXNjYW5kZUBjb2xsYWJvcmEuY29tPgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBT
-enlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgfCAxMCAtLS0tLS0tLS0tCiAxIGZp
-bGUgY2hhbmdlZCwgMTAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwppbmRleCAzZjdhNzk2YjI3ZTQuLjg0NzU3
-NDliYWFlNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFs
-b2dpeF9kcF9jb3JlLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFs
-b2dpeF9kcF9jb3JlLmMKQEAgLTEzNzgsMTEgKzEzNzgsNiBAQCBhbmFsb2dpeF9kcF9iaW5kKHN0
-cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCiAKIAlwbV9ydW50
-aW1lX2VuYWJsZShkZXYpOwogCi0JcG1fcnVudGltZV9nZXRfc3luYyhkZXYpOwotCXBoeV9wb3dl
-cl9vbihkcC0+cGh5KTsKLQotCWFuYWxvZ2l4X2RwX2luaXRfZHAoZHApOwotCiAJcmV0ID0gZGV2
-bV9yZXF1ZXN0X3RocmVhZGVkX2lycSgmcGRldi0+ZGV2LCBkcC0+aXJxLAogCQkJCQlhbmFsb2dp
-eF9kcF9oYXJkaXJxLAogCQkJCQlhbmFsb2dpeF9kcF9pcnFfdGhyZWFkLApAQCAtMTQxMCwxNSAr
-MTQwNSwxMCBAQCBhbmFsb2dpeF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRy
-bV9kZXZpY2UgKmRybV9kZXYsCiAJCWdvdG8gZXJyX2Rpc2FibGVfcG1fcnVudGltZTsKIAl9CiAK
-LQlwaHlfcG93ZXJfb2ZmKGRwLT5waHkpOwotCXBtX3J1bnRpbWVfcHV0KGRldik7Ci0KIAlyZXR1
-cm4gZHA7CiAKIGVycl9kaXNhYmxlX3BtX3J1bnRpbWU6CiAKLQlwaHlfcG93ZXJfb2ZmKGRwLT5w
-aHkpOwotCXBtX3J1bnRpbWVfcHV0KGRldik7CiAJcG1fcnVudGltZV9kaXNhYmxlKGRldik7CiAK
-IAlyZXR1cm4gRVJSX1BUUihyZXQpOwotLSAKMi4xNS4wCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 01/03/18 22:50, Krzysztof Kozlowski wrote:
+> ahash_request 'req' argument passed by the caller
+> omap_sham_handle_queue() cannot be NULL here because it is obtained from
+> non-NULL pointer via container_of().
+> 
+> This fixes smatch warning:
+>      drivers/crypto/omap-sham.c:812 omap_sham_prepare_request() warn: variable dereferenced before check 'req' (see line 805)
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Acked-by: Tero Kristo <t-kristo@ti.com>
+
+> ---
+>   drivers/crypto/omap-sham.c | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
+> index 86b89ace836f..7650b1b449bb 100644
+> --- a/drivers/crypto/omap-sham.c
+> +++ b/drivers/crypto/omap-sham.c
+> @@ -809,9 +809,6 @@ static int omap_sham_prepare_request(struct ahash_request *req, bool update)
+>   	bool final = rctx->flags & BIT(FLAGS_FINUP);
+>   	int xmit_len, hash_later;
+>   
+> -	if (!req)
+> -		return 0;
+> -
+>   	bs = get_block_size(rctx);
+>   
+>   	if (update)
+> 
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
