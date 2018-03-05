@@ -1,46 +1,46 @@
-From: Oliver Neukum <oneukum@suse.com>
-Subject: Re: inconsistent lock state with usbnet/asix usb ethernet and xhci
-Date: Mon, 05 Mar 2018 12:46:07 +0100
-Message-ID: <1520250367.3990.9.camel@suse.com>
-References: <CGME20180227072602eucas1p28dcdba711b3153820bd409d838cc63bd@eucas1p2.samsung.com>
-         <c15c90ef-ce1b-4dd7-1d9f-673deb01b6d2@samsung.com>
-         <1519740421.7296.6.camel@gmail.com>
-         <bac44c1b-d701-2f6b-5e1e-738befc25c9d@samsung.com>
-         <1519744167.7296.8.camel@gmail.com> <1519744400.7296.10.camel@gmail.com>
-         <1519747675.2649.3.camel@suse.com>
-         <02679502-cf6e-8714-e879-50a922c5d976@samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 1/3] drm/bridge: analogix_dp: Don't power bridge in
+ analogix_dp_bind
+Date: Mon, 05 Mar 2018 13:39:29 +0100
+Message-ID: <8401762.TthTLs8B3o@diego>
+References: <20180305085741.18896-1-m.szyprowski@samsung.com>
+ <CGME20180305085804eucas1p10709830a36b02a28a6cb74827968f64d@eucas1p1.samsung.com>
+ <20180305085741.18896-2-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <02679502-cf6e-8714-e879-50a922c5d976@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180305085741.18896-2-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, netdev@vger.kernel.org, Dean Jenkins <Dean_Jenkins@mentor.com>
+Cc: Douglas Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Lin Huang <hl@rock-chips.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, linux-rockchip@lists.infradead.org, Thierry Escande <thierry.escande@collabora.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, Caesar Wang <wxt@rock-chips.com>, Zain Wang <wzz@rock-chips.com>, Haixia Shi <hshi@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 2018-03-05 at 08:45 +0100, Marek Szyprowski wrote:
-> Hi Oliver,
-> 
-> On 2018-02-27 17:07, Oliver Neukum wrote:
-> > Am Dienstag, den 27.02.2018, 07:13 -0800 schrieb Eric Dumazet:
-> >> On Tue, 2018-02-27 at 07:09 -0800, Eric Dumazet wrote:
-> >>>
-> >>> Note that for this one, it seems we also could perform stats updates in
-> >>> BH context, since skb is queued via defer_bh()
-> >>>
-> >>> But simplicity wins I guess.
-> >> Thinking more about this, I am not sure we have any guarantee that TX
-> >> and RX can not run on multiple cpus.
-> >>
-> >> Using an unique syncp is not going to be safe, even if we make lockdep
-> >> happy enough with the local_irq save/restore.
-> > Unfortunately you are right. It is not guaranteed for some hardware.
-> 
-> Does it mean that the fix proposed by Eric is not the proper solution?
-
-For asix it should work, but asix is unlikely to be the only driver
-with that issue. 32 bit recieves less testing nowadays.
-
-	Regards
-		Oliver
+QW0gTW9udGFnLCA1LiBNw6RyeiAyMDE4LCAwOTo1NzozOSBDRVQgc2NocmllYiBNYXJlayBTenlw
+cm93c2tpOgo+IEZyb206IHphaW4gd2FuZyA8d3p6QHJvY2stY2hpcHMuY29tPgo+IAo+IFRoZSBi
+cmlkZ2UgZG9lcyBub3QgbmVlZCB0byBiZSBwb3dlcmVkIGluIGFuYWxvZ2l4X2RwX2JpbmQoKSwg
+c28KPiByZW1vdmUgdGhlIGNhbGxzIHRvIHBtX3J1bnRpbWVfZ2V0KCkvcGh5X3Bvd2VyX29uKCkv
+YW5hbG9naXhfZHBfaW5pdF9kcCgpCj4gYXMgd2VsbCBhcyB0aGVpciBwb3dlci1vZmYgY291bnRl
+cnBhcnRzLgo+IAo+IENjOiBTdMOpcGhhbmUgTWFyY2hlc2luIDxtYXJjaGV1QGNocm9taXVtLm9y
+Zz4KPiBTaWduZWQtb2ZmLWJ5OiB6YWluIHdhbmcgPHd6ekByb2NrLWNoaXBzLmNvbT4KPiBTaWdu
+ZWQtb2ZmLWJ5OiBDYWVzYXIgV2FuZyA8d3h0QHJvY2stY2hpcHMuY29tPgo+IFt0aGUgcGF0Y2gg
+b3JpZ2luYWxseSBqdXN0IHJlbW92ZWQgdGhlIHBvd2VyX29uIHBvcnRpb24sIHNlYW5wYXVsIHJl
+bW92ZWQKPiB0aGUgcG93ZXIgb2ZmIGNvZGUgYXMgd2VsbCBhcyBpbXByb3ZlZCB0aGUgY29tbWl0
+IG1lc3NhZ2VdCj4gU2lnbmVkLW9mZi1ieTogU2VhbiBQYXVsIDxzZWFucGF1bEBjaHJvbWl1bS5v
+cmc+Cj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBFc2NhbmRlIDx0aGllcnJ5LmVzY2FuZGVAY29s
+bGFib3JhLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dz
+a2lAc2Ftc3VuZy5jb20+CgpvbiB0b3Agb2YgY3VycmVudCBkcm0tbWlzYy1uZXh0IG9uIHJrMzI4
+OCBhbmQgcmszMzk5ClRlc3RlZC1ieTogSGVpa28gU3R1ZWJuZXIgPGhlaWtvQHNudGVjaC5kZT4K
+CmFuZCB0aGUgYWN0dWFsIGNoYW5nZSBhbHNvIGxvb2tzIHNhbmUgb2YgY291cnNlLCBzbwpSZXZp
+ZXdlZC1ieTogSGVpa28gU3R1ZWJuZXIgPGhlaWtvQHNudGVjaC5kZT4KX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
