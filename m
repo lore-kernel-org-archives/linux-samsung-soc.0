@@ -1,128 +1,57 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v4 00/38] DRM Rockchip rk3399 (Kevin)
-Date: Mon,  5 Mar 2018 23:12:35 +0100
-Message-ID: <20180305221313.3751-1-enric.balletbo@collabora.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 1/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Mon, 5 Mar 2018 16:14:58 -0600
+Message-ID: <20180305221458.lw5a4wznwjkbubox@rob-hp-laptop>
+References: <20180227071134.28063-1-a.hajda@samsung.com>
+ <CGME20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f@eucas1p1.samsung.com>
+ <20180227071134.28063-2-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
-Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dianders@chromium.org, linux-rockchip@lists.infradead.org, ykk@rock-chips.com, orjan.eide@arm.com, mark.yao@rock-chips.com, m.szyprowski@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Yakir Yang <kuankuan.y@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-input@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>, Kukjin Kim <kgene@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Henrik Rydberg <rydberg@bitmath.org>, Joonyoung Shim <jy0922.shim@samsung.c>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180227071134.28063-2-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chanwoo Choi <cw00.choi@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-This patchset includes cleanups, improvements, and bug fixes for
-Rockchip DRM driver and PSR support.
-
-This new version is the same as before but rebased on top of
-drm-misc-next plus the Marek patches that fixes Chromebook2 Peach-Pit [1]
-and the latest series of Rockchip rk3399 eDP support [2].
-
-[1] https://www.spinics.net/lists/dri-devel/msg167804.html
-[2] https://www.spinics.net/lists/dri-devel/msg167770.html
-
-Regards,
- Enric
-
-Changes in v4:
-- Rebased all on top of drm-misc-next
-- Removed the following patches as are already applied.
-  [PATCH v3 01/43] drm/rockchip: Get rid of unnecessary struct fields
-  [PATCH v3 02/43] drm/rockchip: support prime import sg table
-  [PATCH v3 03/43] drm/rockchip: Respect page offset for PRIME mmap
-  calls
-- Removed the following patches as now are part of another patchset
-  [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in
-  analogix_dp_bind
-  [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
-
-Changes in v3:
-- Addressed some of the comments from Sean on the v2
-
-Changes in v2:
-- A few patches have been replaced by newer and cleaner versions from
-  the ChromeOS kernel gerrit, especially about disallowing PSR for the
-  whole atomic commit.
-
-
-Douglas Anderson (4):
-  drm/bridge: analogix_dp: Reorder plat_data->power_off to happen sooner
-  drm/bridge: analogix_dp: Properly log AUX CH errors
-  drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
-  drm/bridge: analogix_dp: Split the platform-specific poweron in two
-    parts
-
-Kristian H. Kristensen (1):
-  drm/rockchip: Disable PSR on input events
-
-Lin Huang (6):
-  drm/bridge: analogix_dp: Move enable video into config_video()
-  drm/bridge: analogix_dp: Check AUX_EN status when doing AUX transfer
-  drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the
-    panel
-  drm/bridge: analogix_dp: Extend hpd check time to 100ms
-  drm/bridge: analogix_dp: Check dpcd write/read status
-  drm/bridge: analogix_dp: Reset aux channel if an error occurred
-
-Mark Yao (1):
-  drm/rockchip: pre dither down when output bpc is 8bit
-
-Sean Paul (2):
-  drm/rockchip: Don't use atomic constructs for psr
-  drm/rockchip: Remove analogix psr worker
-
-Tomasz Figa (7):
-  drm/rockchip: analogix_dp: Do not call Analogix code before bind
-  drm/rockchip: Cancel PSR enable work before changing the state
-  drm/rockchip: psr: Avoid redundant calls to .set() callback
-  drm/rockchip: psr: Sanitize semantics of allow/disallow API
-  drm/rockchip: Disable PSR from reboot notifier
-  drm/rockchip: Disallow PSR for the whole atomic commit
-  drm/rockchip: psr: Remove flush by CRTC
-
-Yakir Yang (1):
-  drm/bridge: analogix_dp: detect Sink PSR state after configuring the
-    PSR
-
-zain wang (16):
-  drm/bridge: analogix_dp: set psr activate/deactivate when
-    enable/disable bridge
-  drm/bridge: analogix_dp: Don't change psr while bridge is disabled
-  drm/rockchip: add mutex vop lock
-  drm/bridge: analogix_dp: add fast link train for eDP
-  drm/rockchip: Only wait for panel ACK on PSR entry
-  drm/bridge: analogix_dp: Don't use fast link training when panel just
-    powered up
-  drm/bridge: analogix_dp: Retry bridge enable when it failed
-  drm/bridge: analogix_dp: Wait for HPD signal before configuring link
-  drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
-  drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
-  drm/bridge: analogix_dp: Fix AUX_PD bit for Rockchip
-  drm/rockchip: Restore psr->state when enable/disable psr failed
-  drm/bridge: analogix_dp: Don't use ANALOGIX_DP_PLL_CTL to control pll
-  drm/bridge: analogix_dp: Fix timeout of video streamclk config
-  drm/bridge: analogix_dp: Fix incorrect operations with register
-    ANALOGIX_DP_FUNC_EN_1
-  drm/bridge: analogix_dp: Move fast link training detect to set_bridge
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 452 ++++++++++++++++-----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  14 +-
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 274 ++++++++-----
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  |   7 +
- drivers/gpu/drm/exynos/exynos_dp.c                 |   2 +-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  73 ++--
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |   2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   3 +-
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c         |  61 ++-
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c        | 361 ++++++++++------
- drivers/gpu/drm/rockchip/rockchip_drm_psr.h        |   7 +-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  47 ++-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.h        |   1 +
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c        |   1 +
- include/drm/bridge/analogix_dp.h                   |   5 +-
- 15 files changed, 915 insertions(+), 395 deletions(-)
-
--- 
-2.16.1
+T24gVHVlLCBGZWIgMjcsIDIwMTggYXQgMDg6MTE6MjlBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPiBUaGVzZSBiaW5kaW5ncyBhbGxvdyB0byBkZXNjcmliZSBtb3N0IGtub3duIHN0YW5k
+YXJkIFVTQiBjb25uZWN0b3JzCj4gYW5kIGl0IHNob3VsZCBiZSBwb3NzaWJsZSB0byBleHRlbmQg
+aXQgaWYgbmVjZXNzYXJ5Lgo+IFVTQiBjb25uZWN0b3JzLCBiZXNpZGUgVVNCIGNhbiBiZSB1c2Vk
+IHRvIHJvdXRlIG90aGVyIHByb3RvY29scywKPiBmb3IgZXhhbXBsZSBVQVJULCBBdWRpbywgTUhM
+LiBJbiBzdWNoIGNhc2UgZXZlcnkgZGV2aWNlIHBhc3NpbmcgZGF0YQo+IHRocm91Z2ggdGhlIGNv
+bm5lY3RvciBzaG91bGQgaGF2ZSBhcHByb3ByaWF0ZSBncmFwaCBiaW5kaW5ncy4KPiAKPiBTaWdu
+ZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IC0tLQo+IHY0
+Ogo+IC0gaW1wcm92ZWQgJ3R5cGUnIGRlc2NyaXB0aW9uIChSb2IpLAo+IC0gaW1wcm92ZWQgZGVz
+Y3JpcHRpb24gb2YgMm5kIGV4YW1wbGUgKFJvYikuCj4gdjM6Cj4gLSByZW1vdmVkIE1ITCBwb3J0
+IChzYW1zdW5nIGNvbm5lY3RvciB3aWxsIGhhdmUgc2VwYXJhdGUgYmluZGluZ3MpLAo+IC0gYWRk
+ZWQgMm5kIGV4YW1wbGUgZm9yIFVTQi1DLAo+IC0gaW1wcm92ZWQgZm9ybWF0dGluZy4KPiB2MjoK
+PiAtIG1vdmVkIGNvbm5lY3RvciB0eXBlKEEsQixDKSB0byBjb21wYXRpYmxlIHN0cmluZyAoUm9i
+KSwKPiAtIHJlbmFtZWQgc2l6ZSBwcm9wZXJ0eSB0byB0eXBlIChSb2IpLAo+IC0gY2hhbmdlZCB0
+eXBlIGRlc2NyaXB0aW9uIHRvIGJlIGxlc3MgY29uZnVzaW5nIChMYXVyZW50KSwKPiAtIHJlbW92
+ZWQgdmVuZG9yIHNwZWNpZmljIGNvbXBhdGlibGVzIChpbXBsaWVkIGJ5IGdyYXBoIHBvcnQgbnVt
+YmVyKSwKPiAtIGFkZGVkIHJlcXVpcmVtZW50IG9mIGNvbm5lY3RvciBiZWluZyBhIGNoaWxkIG9m
+IElDIChSb2IpLAo+IC0gcmVtb3ZlZCBtYXgtbW9kZSAoc3VidGx5IHN1Z2dlc3RlZCBieSBSb2Is
+IGl0IHNob3VsZCBiZSBkZXRlY3RlZCBhbnl3YXkKPiAgIGJ5IFVTQiBDb250cm9sbGVyIGluIHJ1
+bnRpbWUsIGRvd25zaWRlIGlzIHRoYXQgZGV2aWNlIGlzIG5vdCBhYmxlIHRvCj4gICByZXBvcnQg
+aXRzIHJlYWwgY2FwYWJpbGl0aWVzLCBtYXliZSBiZXR0ZXIgd291bGQgYmUgdG8gbWFrZSBpdCBv
+cHRpb25hbCg/KSksCj4gLSBhc3NpZ25lZCBwb3J0IG51bWJlcnMgdG8gZGF0YSBidXNlcyAoUm9i
+KS4KPiAKPiBSZWdhcmRzCj4gQW5kcnplago+IC0tLQo+ICAuLi4vYmluZGluZ3MvY29ubmVjdG9y
+L3VzYi1jb25uZWN0b3IudHh0ICAgICAgICAgICB8IDc1ICsrKysrKysrKysrKysrKysrKysrKysK
+PiAgMSBmaWxlIGNoYW5nZWQsIDc1IGluc2VydGlvbnMoKykKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0
+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rv
+ci50eHQKClJldmlld2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
