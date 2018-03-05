@@ -1,52 +1,44 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH] i2c: s3c2410: Properly handle interrupts of number 0
-Date: Sat, 3 Mar 2018 18:36:14 +0000
-Message-ID: <20180303183613.GE9418@n2100.armlinux.org.uk>
-References: <1519936484-23132-1-git-send-email-krzk@kernel.org>
- <20180302111931.GX9418@n2100.armlinux.org.uk>
- <20180302124647.sfhnto77wgdh5sv6@katana>
- <20180302125907.GA9418@n2100.armlinux.org.uk>
- <20180302135854.76ue5jzsg7lvxjxw@katana>
- <20180302140901.lrjqiaa2k4nxkqco@mwanda>
- <20180302153221.GB9418@n2100.armlinux.org.uk>
- <20180302162821.bmsxgrqqaginjooo@lakrids.cambridge.arm.com>
- <CAHp75VcPMmATbCCczm3NqNDGCda6J5vga-FDW4SFABaqBKe4iw@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: inconsistent lock state with usbnet/asix usb ethernet and xhci
+Date: Mon, 05 Mar 2018 08:45:00 +0100
+Message-ID: <02679502-cf6e-8714-e879-50a922c5d976@samsung.com>
+References: <CGME20180227072602eucas1p28dcdba711b3153820bd409d838cc63bd@eucas1p2.samsung.com>
+        <c15c90ef-ce1b-4dd7-1d9f-673deb01b6d2@samsung.com>
+        <1519740421.7296.6.camel@gmail.com>
+        <bac44c1b-d701-2f6b-5e1e-738befc25c9d@samsung.com>
+        <1519744167.7296.8.camel@gmail.com> <1519744400.7296.10.camel@gmail.com>
+        <1519747675.2649.3.camel@suse.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcPMmATbCCczm3NqNDGCda6J5vga-FDW4SFABaqBKe4iw@mail.gmail.com>
+In-reply-to: <1519747675.2649.3.camel@suse.com>
+Content-language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Stable <stable@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+To: Oliver Neukum <oneukum@suse.com>, Eric Dumazet <eric.dumazet@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, netdev@vger.kernel.org
+Cc: Dean Jenkins <Dean_Jenkins@mentor.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Mar 03, 2018 at 06:25:17PM +0200, Andy Shevchenko wrote:
-> On Fri, Mar 2, 2018 at 6:28 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Fri, Mar 02, 2018 at 03:32:22PM +0000, Russell King - ARM Linux wrote:
-> >> How do we break this status quo and finally solve the IRQ 0 and
-> >> NO_IRQ issue?
-> 
-> Guys, the question: Wouldn't be request_irq() failed when it gets a
-> wrong number on input?
+Hi Oliver,
 
-Unfortunately not - IRQ 0 is kind of valid on x86 (it's the i8253 PIT)
-and an exception is made for x86 arch code with regard to this.  It
-gets setup using setup_irq() rather than request_irq() (see
-arch/x86/kernel/time.c::setup_default_timer_irq()).
+On 2018-02-27 17:07, Oliver Neukum wrote:
+> Am Dienstag, den 27.02.2018, 07:13 -0800 schrieb Eric Dumazet:
+>> On Tue, 2018-02-27 at 07:09 -0800, Eric Dumazet wrote:
+>>>
+>>> Note that for this one, it seems we also could perform stats updates in
+>>> BH context, since skb is queued via defer_bh()
+>>>
+>>> But simplicity wins I guess.
+>> Thinking more about this, I am not sure we have any guarantee that TX
+>> and RX can not run on multiple cpus.
+>>
+>> Using an unique syncp is not going to be safe, even if we make lockdep
+>> happy enough with the local_irq save/restore.
+> Unfortunately you are right. It is not guaranteed for some hardware.
 
-request_irq() doesn't deny IRQ 0 - it denies IRQ_NOTCONNECTED and
-anything that irq_to_desc() returns NULL for, which can be a radix
-tree lookup or simply any unsigned IRQ number less than NR_IRQS for
-legacy platforms.
+Does it mean that the fix proposed by Eric is not the proper solution?
 
-If you're on a DT platform, then the IRQ subsystem avoids allocating
-IRQ0 for any DT IRQ controller, so DT platforms should be fine.  It's
-just the legacy platforms that continue to be an ongoing issue wrt
-the IRQ 0 / NO_IRQ business, and those will generally be using the
-non-radix tree version of irq_to_desc().
-
+Best regards
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
