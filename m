@@ -1,66 +1,84 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical connector
-Date: Tue, 6 Mar 2018 14:08:24 +0100
-Message-ID: <CAJKOXPdne8ETZWg2Grv81E19Hsxt3bCHLpbsTdfKafwy0XNsyw@mail.gmail.com>
-References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
- <20180227071134.28063-1-a.hajda@samsung.com> <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 00/12] thermal: exynos: sanitize DeviceTree support
+Date: Tue, 06 Mar 2018 15:43:43 +0100
+Message-ID: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
+References: <CGME20180306144427epcas1p3bd260e382c61ab5176a50aa95084b542@epcas1p3.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 1:53 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> Hi Rob, Chanwoo, Krzysztof,
->
->
-> On 27.02.2018 08:11, Andrzej Hajda wrote:
->> Hi,
->>
->> Thanks for reviews of previous iterations.
->>
->> This patchset introduces USB physical connector bindings, together with
->> working example.
->> I have removed RFC prefix - the patchset seems to be heading
->> to a happy end :)
->>
->> v5: fixed extra parenthesis in dts, renamed extcon function.
->> v4: improved binding descriptions, added missing reg in dts.
->> v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
->>     example.
->> v2: I have addressed comments by Rob and Laurent, thanks
->>
->> Changes in datail are described in the patches.
->>
->> Regards
->> Andrzej
->>
->>
->> Andrzej Hajda (5):
->>   dt-bindings: add bindings for USB physical connector
->>   dt-bindings: add bindings for Samsung micro-USB 11-pin connector
->>   arm64: dts: exynos: add micro-USB connector node to TM2 platforms
->>   arm64: dts: exynos: add OF graph between MHL and USB connector
->>   extcon: add possibility to get extcon device by OF node
->>
->> Maciej Purski (1):
->>   drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
->
-> It looks like all patches received R-B or acks (I forgot add Krzysztof's
-> acks for dts part).
-> Now I have a question how to merge them.
-> The only functional dependency is between bridge and extcon, and from
-> the formal PoV bindings should be merged 1st.
-> I can merge it:
-> 1. All patches via drm-misc tree.
-> 2. All patches except dts via drm-misc, and Krzysztof will merge dts via
-> samsung-soc tree.
+Hi,
 
-2) option please. The DTS should always go through arm-soc because it
-is independent of driver code. I'll take the DTS today.
+Values passed through DT properties specific to Exynos thermal
+driver ("samsung,*") are SoC (not platform) specific so just
+define them in struct exynos_tmu_data instance (or just use
+constants where values are identical for all SoCs) and remove
+"samsung," DT properties altogether.
+
+The patchset should not cause any functionality changes.  This
+means that unless there are some bugs in the patches itself there
+should be no behavior changes for the driver (this also includes
+lack of changes in the way hardware is accessed by the driver).
+
+Tested on Exynos5422 based Odroid-XU3 Lite board.
 
 Best regards,
-Krzysztof
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (12):
+  thermal: exynos: remove unused type field from struct
+    exynos_tmu_platform_data
+  thermal: exynos: remove parsing of samsung,tmu_default_temp_offset
+    property
+  thermal: exynos: remove parsing of
+    samsung,tmu_[first,second]_point_trim properties
+  thermal: exynos: remove parsing of samsung,tmu_noise_cancel_mode
+    property
+  thermal: exynos: remove parsing of samsung,tmu[_min,_max]_efuse_value
+    properties
+  thermal: exynos: remove parsing of samsung,tmu_reference_voltage
+    property
+  thermal: exynos: remove parsing of samsung,tmu_gain property
+  thermal: exynos: remove parsing of samsung,tmu_cal_type property
+  thermal: exynos: remove separate exynos_tmu.h header file
+  ARM: dts: remove no longer needed samsung thermal properties
+  dt-bindings: thermal: remove no longer needed samsung thermal
+    properties
+  thermal: exynos: remove separate thermal_exynos.h header file
+
+ .../devicetree/bindings/thermal/exynos-thermal.txt |  23 +--
+ arch/arm/boot/dts/exynos3250.dtsi                  |   2 +-
+ arch/arm/boot/dts/exynos4.dtsi                     |   2 +-
+ arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  20 ---
+ arch/arm/boot/dts/exynos5250.dtsi                  |   2 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |   8 +-
+ arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi  |  21 ---
+ arch/arm/boot/dts/exynos5420.dtsi                  |  10 +-
+ arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  20 ---
+ arch/arm/boot/dts/exynos5440.dtsi                  |   6 +-
+ .../dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi |  20 ---
+ .../dts/exynos/exynos5433-tmu-sensor-conf.dtsi     |  19 ---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  10 +-
+ .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi   |  21 ---
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |   2 +-
+ drivers/thermal/samsung/exynos_tmu.c               | 181 +++++++++++----------
+ drivers/thermal/samsung/exynos_tmu.h               |  75 ---------
+ include/dt-bindings/thermal/thermal_exynos.h       |  28 ----
+ 18 files changed, 124 insertions(+), 346 deletions(-)
+ delete mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+ delete mode 100644 arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
+ delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+ delete mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi
+ delete mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
+ delete mode 100644 arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+ delete mode 100644 drivers/thermal/samsung/exynos_tmu.h
+ delete mode 100644 include/dt-bindings/thermal/thermal_exynos.h
+
+-- 
+1.9.1
