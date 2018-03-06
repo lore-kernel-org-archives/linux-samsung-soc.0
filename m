@@ -1,16 +1,44 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 0/4] ARM: exynos: Pull for v4.17
-Date: Tue,  6 Mar 2018 19:01:20 +0100
-Message-ID: <20180306180124.8987-1-krzk@kernel.org>
+Subject: [GIT PULL 2/4] ARM: exynos: mach for v4.17
+Date: Tue,  6 Mar 2018 19:01:24 +0100
+Message-ID: <20180306180124.8987-5-krzk@kernel.org>
+References: <20180306180124.8987-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180306180124.8987-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-Nothing special, no specific order, no dependency, no conflicts expected.
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Best regards,
-Krzysztof
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.17
+
+for you to fetch changes up to cc14b2b1f0b98926b6640bdd66861188ded850eb:
+
+  ARM: EXYNOS: Extend cpuidle support to Midas boards (2018-02-19 17:55:49 +0100)
+
+----------------------------------------------------------------
+Samsung mach/soc changes for v4.17
+
+1. Add few remaining SPDX license identifiers.
+2. Add cpuidle support to all Midas-based boards (including new
+   GT-I9300/GT-I9305/GT-N7100/GT-N7105).
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      ARM: EXYNOS: Add SPDX license identifiers
+
+Simon Shields (1):
+      ARM: EXYNOS: Extend cpuidle support to Midas boards
+
+ arch/arm/include/debug/exynos.S  |  7 ++-----
+ arch/arm/include/debug/samsung.S | 10 +++-------
+ arch/arm/mach-exynos/exynos.c    |  3 ++-
+ include/linux/serial_s3c.h       | 17 ++---------------
+ 4 files changed, 9 insertions(+), 28 deletions(-)
