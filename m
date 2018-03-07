@@ -1,45 +1,40 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/4] ARM: dts: exynos5250: Add #sound-dai-cells property to
- hdmi device node
-Date: Wed, 07 Mar 2018 18:27:08 +0100
-Message-ID: <20180307172711.15697-1-s.nawrocki@samsung.com>
-References: <CGME20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56@epcas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Subject: [PATCH 3/4] ARM: dts: exynos5250-snow MAX98095 CODEC node update
+Date: Wed, 07 Mar 2018 18:27:10 +0100
+Message-ID: <20180307172711.15697-3-s.nawrocki@samsung.com>
+References: <20180307172711.15697-1-s.nawrocki@samsung.com>
+        <CGME20180307172738epcas2p20b57ae0b00fc1a422cd3e9b1b297753c@epcas2p2.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20180307172711.15697-1-s.nawrocki@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, kgene@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This property is required for specifying link between the HDMI IP block
-and the SoC's audio subsystem.
+This patch adds missing clocks, clock-names properties so the CODEC can
+properly handle its master clock. Without this change sound on exynos5250-snow
+doesn't work.
+Missing #sound-dai-cells property is also added so it is possible to specify
+the DAI links properly for HDMI audio support.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/exynos5250-snow.dts | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 56626d1a4235..71d2ede118e3 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -700,6 +700,7 @@
- 					"sclk_hdmiphy", "mout_hdmi";
- 			samsung,syscon-phandle = <&pmu_system_controller>;
- 			phy = <&hdmiphy>;
-+			#sound-dai-cells = <0>;
- 			status = "disabled";
- 		};
- 
--- 
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 4827cb506fa3..16e37c337a3f 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -27,6 +27,9 @@
+ 		reg = <0x11>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&max98095_en>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "mclk";
++		#sound-dai-cells = <1>;
+ 	};
+ };
+
+--
 2.14.2
