@@ -1,38 +1,48 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/4] soc: samsung: Driver changes for v4.17
-Date: Wed, 7 Mar 2018 16:53:06 +0100
-Message-ID: <CAK8P3a3_izoJZi87y0hk+MD_6HL1EyR=acJtDGh3LDEYvDHaHg@mail.gmail.com>
-References: <20180306180124.8987-1-krzk@kernel.org> <20180306180124.8987-2-krzk@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: samsung: exynos5420: Add CLK_SET_RATE_PARENT flag to
+ mout_mau_epll_clk
+Date: Wed, 07 Mar 2018 17:46:55 +0100
+Message-ID: <20180307164656.12194-1-s.nawrocki@samsung.com>
+References: <CGME20180307164708epcas1p27e6599e85617f559c5c4c8eb92a70a47@epcas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180306180124.8987-2-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-clk@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com, cw00.choi@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 7:01 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
->
->   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.17
->
-> for you to fetch changes up to 7353c54620732797dcc3b4b1fc6f3cc0c0d9b6ef:
->
->   soc: samsung: pmu: Populate children syscon nodes (2018-02-13 18:47:25 +0100)
->
-> ----------------------------------------------------------------
-> Samsung soc drivers changes for v4.17
->
-> 1. Add SPDX license identifiers.
-> 2. Populate children syscon nodes in PMU driver to properly model HW in
->    DeviceTree.
+This allows changing the EPLL output frequency through the audio subsystem
+clock tree leaf clocks. This change is needed to support audio on the HDMI
+interface on Peach-Pi(t) Chromebook.
 
-Pulled into next/drivers, thanks!
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-          Arnd
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 8c050ff63536..1f204ba37f0f 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -621,7 +621,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+ 
+ 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+ 			mout_group5_5800_p, SRC_TOP7, 16, 2),
+-	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2),
++	MUX_F(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2,
++	      CLK_SET_RATE_PARENT, 0),
+ 
+ 	MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
+ };
+-- 
+2.14.2
