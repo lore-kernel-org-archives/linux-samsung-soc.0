@@ -1,38 +1,63 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 2/4] ARM: exynos: mach for v4.17
-Date: Wed, 7 Mar 2018 16:30:48 +0100
-Message-ID: <CAK8P3a14jEtA2uDLOWgA_+WEpinU1kUo2nxqRO6aNQb7zxNu0w@mail.gmail.com>
-References: <20180306180124.8987-1-krzk@kernel.org> <20180306180124.8987-5-krzk@kernel.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 0/3] Analogix DP fixes for Chromebook2 Peach-Pit
+ (Exynos5420)
+Date: Wed, 7 Mar 2018 16:31:57 +0100
+Message-ID: <de15031b-6508-fda8-13bf-adeede92b806@samsung.com>
+References: <CGME20180305085803eucas1p2ff8ab6037f5158ab338bfe5e6d7d8ccd@eucas1p2.samsung.com>
+ <20180305085741.18896-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180306180124.8987-5-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180305085741.18896-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: Douglas Anderson <dianders@chromium.org>, Thierry Escande <thierry.escande@collabora.com>, Lin Huang <hl@rock-chips.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tfiga@chromium.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Zain Wang <wzz@rock-chips.com>, Haixia Shi <hshi@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 7:01 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
->
->   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.17
->
-> for you to fetch changes up to cc14b2b1f0b98926b6640bdd66861188ded850eb:
->
->   ARM: EXYNOS: Extend cpuidle support to Midas boards (2018-02-19 17:55:49 +0100)
->
-> ----------------------------------------------------------------
-> Samsung mach/soc changes for v4.17
->
-> 1. Add few remaining SPDX license identifiers.
-> 2. Add cpuidle support to all Midas-based boards (including new
->    GT-I9300/GT-I9305/GT-N7100/GT-N7105).
-
-Pulled into next/soc, thanks!
-
-         Arnd
+T24gMDUuMDMuMjAxOCAwOTo1NywgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBIaSEKPgo+IExh
+c3Qgd2VlayBJIHdhcyBhc2tlZCB0byBjb21tZW50IGEgcGF0Y2ggIltQQVRDSCB2MyAwNS80M10g
+ZHJtL2JyaWRnZToKPiBhbmFsb2dpeF9kcDogRG9uJ3QgcG93ZXIgYnJpZGdlIGluIGFuYWxvZ2l4
+X2RwX2JpbmQiOgo+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTAxOTM0OTMv
+Cj4KPiBUaGF0IHBhdGNoIGRvZXMgYWxtb3N0IHRoZSBvcHBvc2l0ZSB0byBteSBpbml0aWFsIGZp
+eCAiW1BBVENIIHYyXQo+IGRybS9icmlkZ2U6IGFuYWxvZ2l4X2RwOiBLZWVwIFBIWSBwb3dlcmVk
+IGJldHdlZW4gZHJpdmVyIGJpbmQvdW5iaW5kIjoKPiBodHRwczovL3BhdGNod29yay5rZXJuZWwu
+b3JnL3BhdGNoLzEwMjQyNDkzLwo+Cj4gSSBkaWQgc29tZSBmdXJ0aGVyIGludmVzdGlnYXRpb24g
+YmFzZWQgb24gdGhlIHByb3Bvc2VkICJbUEFUQ0ggdjMgMDAvNDNdIERSTQo+IFJvY2tjaGlwIHJr
+MzM5OSAoS2V2aW4pIiBwYXRjaHNldDoKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9h
+cmNoaXZlcy9kcmktZGV2ZWwvMjAxOC1NYXJjaC8xNjc3NzUuaHRtbAo+Cj4gVGhvc2UgcGF0Y2hl
+cyBzZWVtcyB0byBzb2x2ZSBhbHNvIHNvbWUgaXNzdWVzIHdpdGggYW5hbG9naXhfZHAgZHJpdmVy
+IG9uCj4gRXh5bm9zNTQyMCBiYXNlZCBDaHJvbWVib29rMiBQZWFjaC1QSVQgYm9hcmQuCj4KPiBJ
+IGRpZG4ndCBnZXQgYW55IHJlcGx5IGZvciBteSBjb21tZW50cyBhbmQgdW5mb3J0dW5hdGVseSB0
+aGUgbWFpbCBvZgo+IFRoaWVycnkgRXNjYW5kZSwgd2hvIHN1Ym1pdHRlZCB0aGF0IHBhdGNoc2V0
+IGlzIG5vIGxvbmdlciB2YWxpZCwgc28gSQo+IGRlY2lkZWQgdG8gcmVzZW5kIHRoZSBtaW5pbWFs
+IHBhdGNoc2V0IHRoYXQgZml4ZXMgdGhlIGlzc3VlIHdpdGgKPiBDaHJvbWVib29rMiBQZWFjaC1Q
+aXQgYm9hcmQsIHdoaWNoIHdhcyBicm9rZW4gc2luY2UgdjQuMTAga2VybmVsIHJlbGVhc2UuCj4K
+PiBJZiBwb3NzaWJsZSwgcGxlYXNlIGFwcGx5IHRoZW0gYXMgZml4ZXMgZm9yIHY0LjE2LXJjLgo+
+Cj4gVGhpcyBwYXRjaHNldCByZXBsYWNlcyBteSBwcmV2aW91cyBmaXg6Cj4gaHR0cHM6Ly9wYXRj
+aHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDI0MjQ5My8KPgo+IEJlc3QgcmVnYXJkcwo+IE1hcmVr
+IFN6eXByb3dza2kKPiBTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9sYW5kCj4KPgo+IFBhdGNoIHN1
+bW1hcnk6Cj4KPiBNYXJlayBTenlwcm93c2tpICgyKToKPiAgIGRybS9icmlkZ2U6IGFuYWxvZ2l4
+X2RwOiBQb3N0cG9uZSBlbmFibGluZyBydW50aW1lIHBvd2VyIG1hbmFnZW1lbnQKPiAgIGRybS9i
+cmlkZ2U6IGFuYWxvZ2l4X2RwOiBEb24ndCBjcmVhdGUgdXNlbGVzcyBjb25uZWN0b3JzCj4KPiB6
+YWluIHdhbmcgKDEpOgo+ICAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IERvbid0IHBvd2VyIGJy
+aWRnZSBpbiBhbmFsb2dpeF9kcF9iaW5kCgpBcHBsaWVkIHRvIGRybS1taXNjLW5leHQuCgpDb3Vs
+ZCBub3QgYXBwbHkgdG8gZHJtLW1pc2MtZml4ZXMgc2luY2UgcGF0Y2hzZXQgZGVwZW5kcyBvbiBw
+YXRjaGVzIGZyb20KZHJtLW1pc2MtbmV4dC4KClJlZ2FyZHMKQW5kcnplagoKCj4gIGRyaXZlcnMv
+Z3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgNDUgKysrKysrKysr
+LS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcC5jICAgICAg
+ICAgICAgICAgICB8ICAxICsKPiAgaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmggICAg
+ICAgICAgICAgICAgICAgfCAgMSArCj4gIDMgZmlsZXMgY2hhbmdlZCwgMjEgaW5zZXJ0aW9ucygr
+KSwgMjYgZGVsZXRpb25zKC0pCj4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
