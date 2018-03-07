@@ -1,47 +1,76 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/4] soc: samsung: Driver changes for v4.17
-Date: Tue,  6 Mar 2018 19:01:21 +0100
-Message-ID: <20180306180124.8987-2-krzk@kernel.org>
-References: <20180306180124.8987-1-krzk@kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Wed, 07 Mar 2018 11:12:13 +0900
+Message-ID: <5A9F4A7D.9020409@samsung.com>
+References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
+        <20180227071134.28063-1-a.hajda@samsung.com>
+        <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180306180124.8987-1-krzk@kernel.org>
+In-reply-to: <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Rob and Andrzej,
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+On 2018년 03월 06일 21:53, Andrzej Hajda wrote:
+> Hi Rob, Chanwoo, Krzysztof,
+> 
+> 
+> On 27.02.2018 08:11, Andrzej Hajda wrote:
+>> Hi,
+>>
+>> Thanks for reviews of previous iterations.
+>>
+>> This patchset introduces USB physical connector bindings, together with
+>> working example.
+>> I have removed RFC prefix - the patchset seems to be heading
+>> to a happy end :)
+>>
+>> v5: fixed extra parenthesis in dts, renamed extcon function.
+>> v4: improved binding descriptions, added missing reg in dts.
+>> v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
+>>     example.
+>> v2: I have addressed comments by Rob and Laurent, thanks 
+>>
+>> Changes in datail are described in the patches.
+>>
+>> Regards
+>> Andrzej
+>>
+>>
+>> Andrzej Hajda (5):
+>>   dt-bindings: add bindings for USB physical connector
+>>   dt-bindings: add bindings for Samsung micro-USB 11-pin connector
+>>   arm64: dts: exynos: add micro-USB connector node to TM2 platforms
+>>   arm64: dts: exynos: add OF graph between MHL and USB connector
+>>   extcon: add possibility to get extcon device by OF node
+>>
+>> Maciej Purski (1):
+>>   drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
+> 
+> It looks like all patches received R-B or acks (I forgot add Krzysztof's
+> acks for dts part).
+> Now I have a question how to merge them.
+> The only functional dependency is between bridge and extcon, and from
+> the formal PoV bindings should be merged 1st.
+> I can merge it:
+> 1. All patches via drm-misc tree.
+> 2. All patches except dts via drm-misc, and Krzysztof will merge dts via
+> samsung-soc tree.
+> 
+> Is it OK, for all? Better ideas?
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+Krzysztof picked the dts patches. I'll make the immutable branch based on v4.16-rc1
+and apply them except for dts patchs. And I'll send the immutable branch to Rob and Andrzej.
 
-are available in the git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.17
-
-for you to fetch changes up to 7353c54620732797dcc3b4b1fc6f3cc0c0d9b6ef:
-
-  soc: samsung: pmu: Populate children syscon nodes (2018-02-13 18:47:25 +0100)
-
-----------------------------------------------------------------
-Samsung soc drivers changes for v4.17
-
-1. Add SPDX license identifiers.
-2. Populate children syscon nodes in PMU driver to properly model HW in
-   DeviceTree.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (3):
-      memory: samsung: Add SPDX license identifiers
-      soc: samsung: Add SPDX license identifiers to headers
-      soc: samsung: pmu: Populate children syscon nodes
-
- Documentation/devicetree/bindings/arm/samsung/pmu.txt |  6 ++++++
- drivers/memory/samsung/Kconfig                        |  1 +
- drivers/memory/samsung/Makefile                       |  1 +
- drivers/memory/samsung/exynos-srom.c                  | 18 +++++++-----------
- drivers/memory/samsung/exynos-srom.h                  |  7 ++-----
- drivers/soc/samsung/exynos-pmu.c                      |  7 +++++++
- include/linux/soc/samsung/exynos-pmu.h                |  5 +----
- include/linux/soc/samsung/exynos-regs-pmu.h           |  6 +-----
- 8 files changed, 26 insertions(+), 25 deletions(-)
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
