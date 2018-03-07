@@ -1,12 +1,12 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: DTS for v4.17
-Date: Wed, 7 Mar 2018 16:38:25 +0100
-Message-ID: <CAK8P3a32AsvfdLubV-_B=1DKYFjVfVRR6TuwRcE8cH3o1S_H1Q@mail.gmail.com>
-References: <20180306180124.8987-1-krzk@kernel.org> <20180306180124.8987-4-krzk@kernel.org>
+Subject: Re: [GIT PULL 1/4] soc: samsung: Driver changes for v4.17
+Date: Wed, 7 Mar 2018 16:53:06 +0100
+Message-ID: <CAK8P3a3_izoJZi87y0hk+MD_6HL1EyR=acJtDGh3LDEYvDHaHg@mail.gmail.com>
+References: <20180306180124.8987-1-krzk@kernel.org> <20180306180124.8987-2-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180306180124.8987-4-krzk@kernel.org>
+In-Reply-To: <20180306180124.8987-2-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
@@ -20,18 +20,19 @@ On Tue, Mar 6, 2018 at 7:01 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
 > are available in the git repository at:
 >
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.17
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.17
 >
-> for you to fetch changes up to 6ca620371ab2dab89a7645fc363453d2e26c992e:
+> for you to fetch changes up to 7353c54620732797dcc3b4b1fc6f3cc0c0d9b6ef:
 >
->   arm64: dts: exynos: add OF graph between MHL and USB connector (2018-03-06 17:48:07 +0100)
+>   soc: samsung: pmu: Populate children syscon nodes (2018-02-13 18:47:25 +0100)
 >
 > ----------------------------------------------------------------
-> Samsung DTS ARM64 changes for v4.17
+> Samsung soc drivers changes for v4.17
 >
-> 1. Add support for HDMI audio on Exynos 5433 TM2/TM2E boards.
-> 2. Add support for USB-MHL connector on Exynos 5433 TM2/TM2E boards.
+> 1. Add SPDX license identifiers.
+> 2. Populate children syscon nodes in PMU driver to properly model HW in
+>    DeviceTree.
 
-Pulled into next/dt, thanks!
+Pulled into next/drivers, thanks!
 
-       Arnd
+          Arnd
