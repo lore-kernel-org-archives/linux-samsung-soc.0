@@ -1,9 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 4/4] ARM: dts: Enable HDMI audio on Snow Chromebook
-Date: Wed, 07 Mar 2018 18:27:11 +0100
-Message-ID: <20180307172711.15697-4-s.nawrocki@samsung.com>
+Subject: [PATCH 2/4] ARM: dts: Add audio clocks configuration for
+ exynos5250-snow
+Date: Wed, 07 Mar 2018 18:27:09 +0100
+Message-ID: <20180307172711.15697-2-s.nawrocki@samsung.com>
 References: <20180307172711.15697-1-s.nawrocki@samsung.com>
-        <CGME20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420@epcas2p2.samsung.com>
+        <CGME20180307172734epcas1p49c88df114f4e3b32999fbfb6159773ed@epcas1p4.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20180307172711.15697-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -11,56 +12,48 @@ To: krzk@kernel.org
 Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds new cpu, codec subnodes according to the updated
-"google,snow-audio-max98095" bindings and the I2S clock tree
-configuration so sound on the HDMI interface can also be supported.
+Currently the audio subsystem clocks are not configured properly on Snow
+and sound is not working. The MAX98095 CODEC is not getting its master clock
+on the MCLK pin connected to the SOC's CLKOUT GPIO. This patch adds CLKOUT
+and other clocks configuration so HDMI audio can also be supported.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 4 ++++
- arch/arm/boot/dts/exynos5250-snow.dts         | 8 ++++++++
- 2 files changed, 12 insertions(+)
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index bdf59dd3654b..932a00cfd716 100644
+index 59cf1b202849..bdf59dd3654b 100644
 --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
 +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/clock/maxim,max77686.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5250.dtsi"
-
- / {
-@@ -523,6 +524,9 @@
- };
-
- &i2s0 {
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
-+	#clock-cells = <1>;
- 	status = "okay";
- };
-
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 16e37c337a3f..8c3f1573a994 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -18,6 +18,14 @@
-
- 		samsung,model = "Snow-I2S-MAX98095";
- 		samsung,audio-codec = <&max98095>;
-+
-+		cpu {
-+			sound-dai = <&i2s0 0>;
-+		};
-+
-+		codec {
-+			sound-dai = <&hdmi>, <&max98095 0>;
-+		};
+@@ -225,6 +225,16 @@
  	};
  };
-
---
+ 
++&clock {
++	assigned-clocks = <&clock CLK_FOUT_EPLL>;
++	assigned-clock-rates = <49152000>;
++};
++
++&clock_audss {
++	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
++	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
++};
++
+ &cpu0 {
+ 	cpu0-supply = <&buck2_reg>;
+ };
+@@ -649,6 +659,11 @@
+ 	};
+ };
+ 
++&pmu_system_controller {
++	assigned-clocks = <&pmu_system_controller 0>;
++	assigned-clock-parents = <&clock CLK_FIN_PLL>;
++};
++
+ &rtc {
+ 	status = "okay";
+ 	clocks = <&clock CLK_RTC>, <&max77686 MAX77686_CLK_AP>;
+-- 
 2.14.2
