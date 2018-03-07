@@ -1,43 +1,66 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] dt-bindings: exynos: Document #sound-dai-cells property of
- the HDMI node
-Date: Wed, 07 Mar 2018 18:11:11 +0100
-Message-ID: <20180307171111.14551-1-s.nawrocki@samsung.com>
-References: <CGME20180307171131epcas1p4687ef394d1a0a6d0eb2de2691c977c3f@epcas1p4.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Subject: [PATCH 4/4] ARM: dts: Enable HDMI audio on Snow Chromebook
+Date: Wed, 07 Mar 2018 18:27:11 +0100
+Message-ID: <20180307172711.15697-4-s.nawrocki@samsung.com>
+References: <20180307172711.15697-1-s.nawrocki@samsung.com>
+        <CGME20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420@epcas2p2.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20180307172711.15697-1-s.nawrocki@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: krzk@kernel.org
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlICNzb3VuZC1kYWktY2VsbHMgRFQgcHJvcGVydHkgaXMgcmVxdWlyZWQgdG8gZGVzY3JpYmUg
-bGluayBiZXR3ZWVuCnRoZSBIRE1JIElQIGJsb2NrIGFuZCB0aGUgU29DJ3MgYXVkaW8gc3Vic3lz
-dGVtLgoKU2lnbmVkLW9mZi1ieTogU3lsd2VzdGVyIE5hd3JvY2tpIDxzLm5hd3JvY2tpQHNhbXN1
-bmcuY29tPgotLS0KIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4
-eW5vcy9leHlub3NfaGRtaS50eHQgfCAzICsrKwogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9u
-cygrKQoKZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNw
-bGF5L2V4eW5vcy9leHlub3NfaGRtaS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0CmluZGV4IDg3MTVmZjA2YzQ1Ny4u
-NmIyYTUyNmVjNTg2IDEwMDY0NAotLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0CisrKyBiL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfaGRtaS50eHQKQEAgLTUwLDYg
-KzUwLDkgQEAgUmVxdWlyZWQgcHJvcGVydGllcyBmb3IgRXh5bm9zIDU0MzM6CiAtIGNsb2NrLW5h
-bWVzOiBhbGlhc2VzIGZvciBhYm92ZSBjbG9jayBzcGVjZmllcnMuCiAtIHNhbXN1bmcsc3lzcmVn
-OiBoYW5kbGUgdG8gc3lzY29uIHVzZWQgdG8gY29udHJvbCB0aGUgc3lzdGVtIHJlZ2lzdGVycy4K
-IAorT3B0aW9uYWwgcHJvcGVydGllcyBmb3IgRXh5bm9zIDQyMTAsIDQyMTIsIDU0MjAgYW5kIDU0
-MzM6CisgLSAjc291bmQtZGFpLWNlbGxzOiBzaG91bGQgYmUgMC4KKwogRXhhbXBsZToKIAogCWhk
-bWkgewotLSAKMi4xNC4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+This patch adds new cpu, codec subnodes according to the updated
+"google,snow-audio-max98095" bindings and the I2S clock tree
+configuration so sound on the HDMI interface can also be supported.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi | 4 ++++
+ arch/arm/boot/dts/exynos5250-snow.dts         | 8 ++++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+index bdf59dd3654b..932a00cfd716 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
++++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/clock/maxim,max77686.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos5250.dtsi"
+
+ / {
+@@ -523,6 +524,9 @@
+ };
+
+ &i2s0 {
++	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
++	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
++	#clock-cells = <1>;
+ 	status = "okay";
+ };
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 16e37c337a3f..8c3f1573a994 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -18,6 +18,14 @@
+
+ 		samsung,model = "Snow-I2S-MAX98095";
+ 		samsung,audio-codec = <&max98095>;
++
++		cpu {
++			sound-dai = <&i2s0 0>;
++		};
++
++		codec {
++			sound-dai = <&hdmi>, <&max98095 0>;
++		};
+ 	};
+ };
+
+--
+2.14.2
