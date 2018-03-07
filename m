@@ -1,84 +1,91 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical
  connector
-Date: Wed, 07 Mar 2018 13:48:41 +0900
-Message-ID: <5A9F6F29.5020501@samsung.com>
+Date: Wed, 7 Mar 2018 12:13:42 +0100
+Message-ID: <b64d77c1-c80f-1bd9-a599-3027424ec667@samsung.com>
 References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
         <20180227071134.28063-1-a.hajda@samsung.com>
         <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
-        <5A9F4A7D.9020409@samsung.com>
+        <5A9F4A7D.9020409@samsung.com> <5A9F6F29.5020501@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5A9F4A7D.9020409@samsung.com>
+In-Reply-To: <5A9F6F29.5020501@samsung.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2018년 03월 07일 11:12, Chanwoo Choi wrote:
-> Hi Rob and Andrzej,
-> 
-> On 2018년 03월 06일 21:53, Andrzej Hajda wrote:
->> Hi Rob, Chanwoo, Krzysztof,
->>
->>
->> On 27.02.2018 08:11, Andrzej Hajda wrote:
->>> Hi,
->>>
->>> Thanks for reviews of previous iterations.
->>>
->>> This patchset introduces USB physical connector bindings, together with
->>> working example.
->>> I have removed RFC prefix - the patchset seems to be heading
->>> to a happy end :)
->>>
->>> v5: fixed extra parenthesis in dts, renamed extcon function.
->>> v4: improved binding descriptions, added missing reg in dts.
->>> v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
->>>     example.
->>> v2: I have addressed comments by Rob and Laurent, thanks 
->>>
->>> Changes in datail are described in the patches.
->>>
->>> Regards
->>> Andrzej
->>>
->>>
->>> Andrzej Hajda (5):
->>>   dt-bindings: add bindings for USB physical connector
->>>   dt-bindings: add bindings for Samsung micro-USB 11-pin connector
->>>   arm64: dts: exynos: add micro-USB connector node to TM2 platforms
->>>   arm64: dts: exynos: add OF graph between MHL and USB connector
->>>   extcon: add possibility to get extcon device by OF node
->>>
->>> Maciej Purski (1):
->>>   drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
->>
->> It looks like all patches received R-B or acks (I forgot add Krzysztof's
->> acks for dts part).
->> Now I have a question how to merge them.
->> The only functional dependency is between bridge and extcon, and from
->> the formal PoV bindings should be merged 1st.
->> I can merge it:
->> 1. All patches via drm-misc tree.
->> 2. All patches except dts via drm-misc, and Krzysztof will merge dts via
->> samsung-soc tree.
->>
->> Is it OK, for all? Better ideas?
-> 
-> Krzysztof picked the dts patches. I'll make the immutable branch based on v4.16-rc1
-> and apply them except for dts patchs. And I'll send the immutable branch to Rob and Andrzej.
-> 
-> 
+Hi Chanwoo, Archit,
 
-I made the immutable branch[1] as following: If you agree, I'll send pull request.
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git/log/?h=ib-extcon-drm-dt-v4.17
+On 07.03.2018 05:48, Chanwoo Choi wrote:
+> On 2018년 03월 07일 11:12, Chanwoo Choi wrote:
+>> Hi Rob and Andrzej,
+>>
+>> On 2018년 03월 06일 21:53, Andrzej Hajda wrote:
+>>> Hi Rob, Chanwoo, Krzysztof,
+>>>
+>>>
+>>> On 27.02.2018 08:11, Andrzej Hajda wrote:
+>>>> Hi,
+>>>>
+>>>> Thanks for reviews of previous iterations.
+>>>>
+>>>> This patchset introduces USB physical connector bindings, together with
+>>>> working example.
+>>>> I have removed RFC prefix - the patchset seems to be heading
+>>>> to a happy end :)
+>>>>
+>>>> v5: fixed extra parenthesis in dts, renamed extcon function.
+>>>> v4: improved binding descriptions, added missing reg in dts.
+>>>> v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
+>>>>     example.
+>>>> v2: I have addressed comments by Rob and Laurent, thanks 
+>>>>
+>>>> Changes in datail are described in the patches.
+>>>>
+>>>> Regards
+>>>> Andrzej
+>>>>
+>>>>
+>>>> Andrzej Hajda (5):
+>>>>   dt-bindings: add bindings for USB physical connector
+>>>>   dt-bindings: add bindings for Samsung micro-USB 11-pin connector
+>>>>   arm64: dts: exynos: add micro-USB connector node to TM2 platforms
+>>>>   arm64: dts: exynos: add OF graph between MHL and USB connector
+>>>>   extcon: add possibility to get extcon device by OF node
+>>>>
+>>>> Maciej Purski (1):
+>>>>   drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
+>>> It looks like all patches received R-B or acks (I forgot add Krzysztof's
+>>> acks for dts part).
+>>> Now I have a question how to merge them.
+>>> The only functional dependency is between bridge and extcon, and from
+>>> the formal PoV bindings should be merged 1st.
+>>> I can merge it:
+>>> 1. All patches via drm-misc tree.
+>>> 2. All patches except dts via drm-misc, and Krzysztof will merge dts via
+>>> samsung-soc tree.
+>>>
+>>> Is it OK, for all? Better ideas?
+>> Krzysztof picked the dts patches. I'll make the immutable branch based on v4.16-rc1
+>> and apply them except for dts patchs. And I'll send the immutable branch to Rob and Andrzej.
+>>
+>>
+> I made the immutable branch[1] as following: If you agree, I'll send pull request.
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git/log/?h=ib-extcon-drm-dt-v4.17
+>
+> Or you can make the immutable branch and send pull request to Rob and me.
+>
 
-Or you can make the immutable branch and send pull request to Rob and me.
+It seems you took v5 instead of v6 version of extcon patch.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Beside it I am OK with your immutable branch, Archit is it OK to do it
+this way in drm-misc?
+
+
+Regards
+
+Andrzej
