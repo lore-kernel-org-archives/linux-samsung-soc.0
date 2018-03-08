@@ -1,69 +1,36 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] dt-bindings: exynos: Document #sound-dai-cells property
- of the HDMI node
-Date: Thu, 08 Mar 2018 15:50:33 +0900
-Message-ID: <5AA0DD39.3040108@samsung.com>
-References: <CGME20180307171131epcas1p4687ef394d1a0a6d0eb2de2691c977c3f@epcas1p4.samsung.com>
- <20180307171111.14551-1-s.nawrocki@samsung.com>
- <5AA0B59F.3070402@samsung.com>
- <3c68c3da-a0c3-4e4e-da6b-3e4b1af6d19d@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/6] ASoC: max98095: Add #sound-dai-cells
+ property documentation
+Date: Wed, 7 Mar 2018 20:39:09 -0600
+Message-ID: <20180308023909.yxcogcxwxkao5cc4@rob-hp-laptop>
+References: <CGME20180307170216epcas1p353aa2716b06b350231332681fff0c92c@epcas1p3.samsung.com>
+ <20180307170203.13998-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <3c68c3da-a0c3-4e4e-da6b-3e4b1af6d19d@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <20180307170203.13998-1-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgTWFyZWssCgoyMDE464WEIDAz7JuUIDA47J28IDE1OjI57JeQIE1hcmVrIFN6eXByb3dza2kg
-7J20KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IE9uIDIwMTgtMDMtMDggMDU6MDEsIElu
-a2kgRGFlIHdyb3RlOgo+PiBIaSBTeWx3ZXN0ZXIsCj4+Cj4+IDIwMTjrhYQgMDPsm5QgMDjsnbwg
-MDI6MTHsl5AgU3lsd2VzdGVyIE5hd3JvY2tpIOydtCjqsIApIOyTtCDquIA6Cj4+PiBUaGUgI3Nv
-dW5kLWRhaS1jZWxscyBEVCBwcm9wZXJ0eSBpcyByZXF1aXJlZCB0byBkZXNjcmliZSBsaW5rIGJl
-dHdlZW4KPj4+IHRoZSBIRE1JIElQIGJsb2NrIGFuZCB0aGUgU29DJ3MgYXVkaW8gc3Vic3lzdGVt
-Lgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IFN5bHdlc3RlciBOYXdyb2NraSA8cy5uYXdyb2NraUBz
-YW1zdW5nLmNvbT4KPj4+IC0tLQo+Pj4gICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0IHwgMyArKysKPj4+ICAgMSBmaWxlIGNo
-YW5nZWQsIDMgaW5zZXJ0aW9ucygrKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0IGIvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19oZG1p
-LnR4dAo+Pj4gaW5kZXggODcxNWZmMDZjNDU3Li42YjJhNTI2ZWM1ODYgMTAwNjQ0Cj4+PiAtLS0g
-YS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9z
-X2hkbWkudHh0Cj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
-cGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0Cj4+PiBAQCAtNTAsNiArNTAsOSBAQCBSZXF1aXJl
-ZCBwcm9wZXJ0aWVzIGZvciBFeHlub3MgNTQzMzoKPj4+ICAgLSBjbG9jay1uYW1lczogYWxpYXNl
-cyBmb3IgYWJvdmUgY2xvY2sgc3BlY2ZpZXJzLgo+Pj4gICAtIHNhbXN1bmcsc3lzcmVnOiBoYW5k
-bGUgdG8gc3lzY29uIHVzZWQgdG8gY29udHJvbCB0aGUgc3lzdGVtIHJlZ2lzdGVycy4KPj4+ICAg
-K09wdGlvbmFsIHByb3BlcnRpZXMgZm9yIEV4eW5vcyA0MjEwLCA0MjEyLCA1NDIwIGFuZCA1NDMz
-Ogo+Pj4gKyAtICNzb3VuZC1kYWktY2VsbHM6IHNob3VsZCBiZSAwLgo+Pj4gKwo+PiBKdXN0IHRy
-aXZpYWwgcXVlc3Rpb24uICdzb3VuZC1kYWktY2VsbHMnIHByb3BlcnR5IGNvdWxkIGFmZmVjdCBo
-ZG1pIGRyaXZlcj8gSSBsb29rZWQgaW50byBIRE1JIGNvZGVjIGRyaXZlciBidXQgSSBkaWRuJ3Qg
-ZmluZCByZWxldmF0IGNvZGUuCj4+IEkgbWVhbiB0aGF0IGlmIHRoaXMgcHJvcGVydHkgbmV2ZXIg
-YWZmZWN0IEhETUkgZHJpdmVyIHRoZW4gdGhpcyBwcm9wZXJ0eSB3b3VsZCBiZSBhIGRlYWQgdGhp
-bmcgZXZlbiB0aHJvdWdoIHRoaXMgY2FuIGJlIGRlY2xhcmVkIG9wdGlvbmFsbHkuCj4gCj4gVGhp
-cyBwcm9wZXJ0eSBpcyB1c2VkIGJ5IEFTb0MgZnJhbWV3b3JrIHdoZW4gaXQgaXMgYnVpbGRpbmcg
-Y29ubmVjdGlvbnMKPiBiZXR3ZWVuIGFsbCBlbGVtZW50cyBvZiB0aGUgdmlydHVhbCAnc291bmQg
-Y2FyZCcuIEl0IGFsbG93cyBnZW5lcmljCj4gY29kZSB0byBmaW5kIHByb3BlciBkcml2ZXIgZm9y
-IHRoZSBkaWdpdGFsIGF1ZGlvIGludGVyZmFjZSAoREFJKSBvYmplY3QuCgpJIGFsc28gYXNzdW1l
-ZCB0aGF0IHNvbWUgcGxhY2Ugb2YgQVNvQyBmcmFtZXdvcmsgY2hlY2tzIHRoaXMgcHJvcGVydHku
-IEZvciB0aGlzIEkgbG9va2VkIGludG8gSERNSSBjb2RlYyBkcml2ZXIoc291bmQvc29jL2NvZGVj
-cy9oZG1pLWNvZGVjLmMpIGFuZCByZWxldmFudCBpbnRlcmZhY2VzIG9mIEFTb0MgZnJhbWV3b3Jr
-LgpCdXQgSSBjb3VsZG4ndCBmaW5kIGl0LiA6KCBDb3VsZCB5b3UgbGV0IG1lIGtub3cgd2hpY2gg
-Y29kZSBvZiBBU29DIGZyYW1ld29yayBjaGVja3MgdGhpcz8gSSBzYXcgdGhpcyBwcm9wZXJ0eSBv
-bmx5IGluICdzbmRfc29jX29mX2dldF9kYWlfbmFtZScgYW5kICdzbmRfc29jX29mX2dldF9kYWlf
-bGlua19jb2RlY3MnIGZ1bmN0aW9ucyBidXQgc2VlbXMgdGhlc2UgZnVuY3Rpb25zIGFyZW4ndCBj
-YWxsZWQgYnkgdGhlIEhETUkgY29kZWMgZHJpdmVyLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBC
-ZXN0IHJlZ2FyZHMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+On Wed, Mar 07, 2018 at 06:02:03PM +0100, Sylwester Nawrocki wrote:
+> MAX98095 CODEC supports 3 input DAIs, adding the #sound-dai-cells property
+> allows to reference selected DAI in DT.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/sound/max98095.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+
+Reviewed-by: Rob Herring <robh@kernel.org>
