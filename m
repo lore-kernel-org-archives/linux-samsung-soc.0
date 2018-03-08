@@ -1,77 +1,114 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] dt-bindings: exynos: Document #sound-dai-cells property
- of the HDMI node
-Date: Thu, 08 Mar 2018 08:36:22 +0100
-Message-ID: <9f1e8619-974d-cd07-79c3-c6d9a4dc0f97@samsung.com>
-References: <CGME20180307171131epcas1p4687ef394d1a0a6d0eb2de2691c977c3f@epcas1p4.samsung.com>
- <20180307171111.14551-1-s.nawrocki@samsung.com>
- <5AA0B59F.3070402@samsung.com>
- <3c68c3da-a0c3-4e4e-da6b-3e4b1af6d19d@samsung.com>
- <5AA0DD39.3040108@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Thu, 08 Mar 2018 10:52:19 +0900
+Message-ID: <5AA09753.7060308@samsung.com>
+References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
+        <20180227071134.28063-1-a.hajda@samsung.com>
+        <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
+        <5A9F4A7D.9020409@samsung.com> <5A9F6F29.5020501@samsung.com>
+        <b64d77c1-c80f-1bd9-a599-3027424ec667@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5AA0DD39.3040108@samsung.com>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <b64d77c1-c80f-1bd9-a599-3027424ec667@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSW5raSwKCk9uIDIwMTgtMDMtMDggMDc6NTAsIElua2kgRGFlIHdyb3RlOgo+IDIwMTjrhYQg
-MDPsm5QgMDjsnbwgMTU6Mjnsl5AgTWFyZWsgU3p5cHJvd3NraSDsnbQo6rCAKSDsk7Qg6riAOgo+
-PiBPbiAyMDE4LTAzLTA4IDA1OjAxLCBJbmtpIERhZSB3cm90ZToKPj4+IDIwMTjrhYQgMDPsm5Qg
-MDjsnbwgMDI6MTHsl5AgU3lsd2VzdGVyIE5hd3JvY2tpIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4g
-VGhlICNzb3VuZC1kYWktY2VsbHMgRFQgcHJvcGVydHkgaXMgcmVxdWlyZWQgdG8gZGVzY3JpYmUg
-bGluayBiZXR3ZWVuCj4+Pj4gdGhlIEhETUkgSVAgYmxvY2sgYW5kIHRoZSBTb0MncyBhdWRpbyBz
-dWJzeXN0ZW0uCj4+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5OiBTeWx3ZXN0ZXIgTmF3cm9ja2kgPHMu
-bmF3cm9ja2lAc2Ftc3VuZy5jb20+Cj4+Pj4gLS0tCj4+Pj4gICAgRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19oZG1pLnR4dCB8IDMgKysrCj4+
-Pj4gICAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdp
-dCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlu
-b3NfaGRtaS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9l
-eHlub3MvZXh5bm9zX2hkbWkudHh0Cj4+Pj4gaW5kZXggODcxNWZmMDZjNDU3Li42YjJhNTI2ZWM1
-ODYgMTAwNjQ0Cj4+Pj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rp
-c3BsYXkvZXh5bm9zL2V4eW5vc19oZG1pLnR4dAo+Pj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfaGRtaS50eHQKPj4+PiBAQCAt
-NTAsNiArNTAsOSBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzIGZvciBFeHlub3MgNTQzMzoKPj4+PiAg
-ICAtIGNsb2NrLW5hbWVzOiBhbGlhc2VzIGZvciBhYm92ZSBjbG9jayBzcGVjZmllcnMuCj4+Pj4g
-ICAgLSBzYW1zdW5nLHN5c3JlZzogaGFuZGxlIHRvIHN5c2NvbiB1c2VkIHRvIGNvbnRyb2wgdGhl
-IHN5c3RlbSByZWdpc3RlcnMuCj4+Pj4gICAgK09wdGlvbmFsIHByb3BlcnRpZXMgZm9yIEV4eW5v
-cyA0MjEwLCA0MjEyLCA1NDIwIGFuZCA1NDMzOgo+Pj4+ICsgLSAjc291bmQtZGFpLWNlbGxzOiBz
-aG91bGQgYmUgMC4KPj4+PiArCj4+PiBKdXN0IHRyaXZpYWwgcXVlc3Rpb24uICdzb3VuZC1kYWkt
-Y2VsbHMnIHByb3BlcnR5IGNvdWxkIGFmZmVjdCBoZG1pIGRyaXZlcj8gSSBsb29rZWQgaW50byBI
-RE1JIGNvZGVjIGRyaXZlciBidXQgSSBkaWRuJ3QgZmluZCByZWxldmF0IGNvZGUuCj4+PiBJIG1l
-YW4gdGhhdCBpZiB0aGlzIHByb3BlcnR5IG5ldmVyIGFmZmVjdCBIRE1JIGRyaXZlciB0aGVuIHRo
-aXMgcHJvcGVydHkgd291bGQgYmUgYSBkZWFkIHRoaW5nIGV2ZW4gdGhyb3VnaCB0aGlzIGNhbiBi
-ZSBkZWNsYXJlZCBvcHRpb25hbGx5Lgo+PiBUaGlzIHByb3BlcnR5IGlzIHVzZWQgYnkgQVNvQyBm
-cmFtZXdvcmsgd2hlbiBpdCBpcyBidWlsZGluZyBjb25uZWN0aW9ucwo+PiBiZXR3ZWVuIGFsbCBl
-bGVtZW50cyBvZiB0aGUgdmlydHVhbCAnc291bmQgY2FyZCcuIEl0IGFsbG93cyBnZW5lcmljCj4+
-IGNvZGUgdG8gZmluZCBwcm9wZXIgZHJpdmVyIGZvciB0aGUgZGlnaXRhbCBhdWRpbyBpbnRlcmZh
-Y2UgKERBSSkgb2JqZWN0Lgo+IEkgYWxzbyBhc3N1bWVkIHRoYXQgc29tZSBwbGFjZSBvZiBBU29D
-IGZyYW1ld29yayBjaGVja3MgdGhpcyBwcm9wZXJ0eS4gRm9yIHRoaXMgSSBsb29rZWQgaW50byBI
-RE1JIGNvZGVjIGRyaXZlcihzb3VuZC9zb2MvY29kZWNzL2hkbWktY29kZWMuYykgYW5kIHJlbGV2
-YW50IGludGVyZmFjZXMgb2YgQVNvQyBmcmFtZXdvcmsuCj4gQnV0IEkgY291bGRuJ3QgZmluZCBp
-dC4gOiggQ291bGQgeW91IGxldCBtZSBrbm93IHdoaWNoIGNvZGUgb2YgQVNvQyBmcmFtZXdvcmsg
-Y2hlY2tzIHRoaXM/IEkgc2F3IHRoaXMgcHJvcGVydHkgb25seSBpbiAnc25kX3NvY19vZl9nZXRf
-ZGFpX25hbWUnIGFuZCAnc25kX3NvY19vZl9nZXRfZGFpX2xpbmtfY29kZWNzJyBmdW5jdGlvbnMg
-YnV0IHNlZW1zIHRoZXNlIGZ1bmN0aW9ucyBhcmVuJ3QgY2FsbGVkIGJ5IHRoZSBIRE1JIGNvZGVj
-IGRyaXZlci4KCkl0IGlzIHVzZWQgYnkgc25kX3NvY19vZl9nZXRfZGFpX2xpbmtfY29kZWNzKCkg
-ZnVuY3Rpb24sIHdoaWNoIGlzIGNhbGxlZApmcm9tIHJlc3BlY3RpdmUgYm9hcmQvbWFjaGluZSBk
-cml2ZXIuIFNlZSBzb3VuZC9zb2Mvc2Ftc3VuZy9vZHJvaWQuYyBmb3IKZ29vZCBleGFtcGxlLiBJ
-dCBhbGxvd3MgdG8gYXV0b21hdGljYWxseSBjcmVhdGUgY29ubmVjdGlvbiB0byBtYXg5ODA5MCBh
-bmQKaGRtaSBjb2RlYyBkZXZpY2VzLCB3aGljaCBhcmUgc3BlY2lmaWVkIGluICdzb3VuZC9jb2Rl
-Yycgbm9kZSAoc2VlCmV4eW5vczU0MjItb2Ryb2lkeHUzLWF1ZGlvLmR0c2kpLgoKQmVzdCByZWdh
-cmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBSJkQgSW5zdGl0dXRlIFBvbGFu
-ZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Andrzej, Archit,
+
+On 2018년 03월 07일 20:13, Andrzej Hajda wrote:
+> Hi Chanwoo, Archit,
+> 
+> On 07.03.2018 05:48, Chanwoo Choi wrote:
+>> On 2018년 03월 07일 11:12, Chanwoo Choi wrote:
+>>> Hi Rob and Andrzej,
+>>>
+>>> On 2018년 03월 06일 21:53, Andrzej Hajda wrote:
+>>>> Hi Rob, Chanwoo, Krzysztof,
+>>>>
+>>>>
+>>>> On 27.02.2018 08:11, Andrzej Hajda wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Thanks for reviews of previous iterations.
+>>>>>
+>>>>> This patchset introduces USB physical connector bindings, together with
+>>>>> working example.
+>>>>> I have removed RFC prefix - the patchset seems to be heading
+>>>>> to a happy end :)
+>>>>>
+>>>>> v5: fixed extra parenthesis in dts, renamed extcon function.
+>>>>> v4: improved binding descriptions, added missing reg in dts.
+>>>>> v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
+>>>>>     example.
+>>>>> v2: I have addressed comments by Rob and Laurent, thanks 
+>>>>>
+>>>>> Changes in datail are described in the patches.
+>>>>>
+>>>>> Regards
+>>>>> Andrzej
+>>>>>
+>>>>>
+>>>>> Andrzej Hajda (5):
+>>>>>   dt-bindings: add bindings for USB physical connector
+>>>>>   dt-bindings: add bindings for Samsung micro-USB 11-pin connector
+>>>>>   arm64: dts: exynos: add micro-USB connector node to TM2 platforms
+>>>>>   arm64: dts: exynos: add OF graph between MHL and USB connector
+>>>>>   extcon: add possibility to get extcon device by OF node
+>>>>>
+>>>>> Maciej Purski (1):
+>>>>>   drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
+>>>> It looks like all patches received R-B or acks (I forgot add Krzysztof's
+>>>> acks for dts part).
+>>>> Now I have a question how to merge them.
+>>>> The only functional dependency is between bridge and extcon, and from
+>>>> the formal PoV bindings should be merged 1st.
+>>>> I can merge it:
+>>>> 1. All patches via drm-misc tree.
+>>>> 2. All patches except dts via drm-misc, and Krzysztof will merge dts via
+>>>> samsung-soc tree.
+>>>>
+>>>> Is it OK, for all? Better ideas?
+>>> Krzysztof picked the dts patches. I'll make the immutable branch based on v4.16-rc1
+>>> and apply them except for dts patchs. And I'll send the immutable branch to Rob and Andrzej.
+>>>
+>>>
+>> I made the immutable branch[1] as following: If you agree, I'll send pull request.
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git/log/?h=ib-extcon-drm-dt-v4.17
+>>
+>> Or you can make the immutable branch and send pull request to Rob and me.
+>>
+> 
+> It seems you took v5 instead of v6 version of extcon patch.
+
+My mistake. I picked v6 and made the new immutable branch.
+After Archit confirm it, I'll send pull request.
+
+> 
+> Beside it I am OK with your immutable branch, Archit is it OK to do it
+> this way in drm-misc?
+> 
+> 
+> Regards
+> 
+> Andrzej
+> 
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
