@@ -1,42 +1,36 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ASoC: Use proper DT compatible string for
- Hardkernel Odroid boards
-Date: Thu, 8 Mar 2018 12:24:34 +0100
-Message-ID: <CAJKOXPf0KwotgJ=6SeoX9dXSqe6cpX1ajsYpjTjkTmWyLq8djg@mail.gmail.com>
-References: <CGME20180307174638epcas2p33f071928807ccaa40ad07922c15be31c@epcas2p3.samsung.com>
- <20180307174625.16597-1-s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 4/4] ARM: dts: Enable HDMI audio on Snow Chromebook
+Date: Thu, 08 Mar 2018 12:39:43 +0100
+Message-ID: <00f84b39-3272-72ca-5991-bc0f839a0324@samsung.com>
+References: <20180307172711.15697-1-s.nawrocki@samsung.com>
+        <CGME20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420@epcas2p2.samsung.com>
+        <20180307172711.15697-4-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180307174625.16597-1-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, lgirdwood@gmail.com, robh+dt@kernel.org, broonie@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20180307172711.15697-4-s.nawrocki@samsung.com>
+Content-language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: krzk@kernel.org
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 6:46 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> The Odroid boards are manufactured by Hardkernel, not Samsung. New compatible
-> string entries are added, with "hardkernel," instead of "samsung," vendor
-> prefix. Support for the old compatible strings is going to be removed after
-> some time.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  Documentation/devicetree/bindings/sound/samsung,odroid.txt | 6 +++---
->  sound/soc/samsung/odroid.c                                 | 4 +++-
->  2 files changed, 6 insertions(+), 4 deletions(-)
+On 03/07/2018 06:27 PM, Sylwester Nawrocki wrote:
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -18,6 +18,14 @@
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> +		cpu {
+> +			sound-dai = <&i2s0 0>;
+> +		};
+> +
+> +		codec {
+> +			sound-dai = <&hdmi>, <&max98095 0>;
 
-Best regards,
-Krzysztof
+Oops, I need to change order of codecs on the list, so it matches
+documentation. Will post v2 shortly.
+
+-- 
+Thanks,
+Sylwester
