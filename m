@@ -1,42 +1,81 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ASoC: Use proper DT compatible string for
- Hardkernel Odroid boards
-Date: Thu, 08 Mar 2018 16:29:46 +0100
-Message-ID: <8e54b22b-623b-d19f-7b05-b4718391d56d@samsung.com>
-References: <CGME20180307174638epcas2p33f071928807ccaa40ad07922c15be31c@epcas2p3.samsung.com>
- <20180307174625.16597-1-s.nawrocki@samsung.com>
- <20180308104054.GA6019@sirena.org.uk>
+Subject: [PATCH v2 4/4] ARM: dts: Enable HDMI audio on Snow Chromebook
+Date: Thu, 08 Mar 2018 17:25:59 +0100
+Message-ID: <20180308162559.391-1-s.nawrocki@samsung.com>
+References: <20180307172711.15697-4-s.nawrocki@samsung.com>
+ <CGME20180308162609epcas1p45458c1671c38b389e047f17804690eb9@epcas1p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-reply-to: <20180308104054.GA6019@sirena.org.uk>
-Content-language: en-GB
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, lgirdwood@gmail.com, Krzysztof Kozlowski <krzk@kernel.org>, robh+dt@kernel.org, m.szyprowski@samsung.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20180307172711.15697-4-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, kgene@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/08/2018 11:40 AM, Mark Brown wrote:
-> On Wed, Mar 07, 2018 at 06:46:25PM +0100, Sylwester Nawrocki wrote:
->> The Odroid boards are manufactured by Hardkernel, not Samsung. New compatible
->> string entries are added, with "hardkernel," instead of "samsung," vendor
->> prefix. Support for the old compatible strings is going to be removed after
->> some time.
-> 
-> Acked-by: Mark Brown <broonie@kernel.org>
+This patch adds new cpu, codec subnodes according to the updated
+"google,snow-audio-max98095" DT bindings and the I2S clock tree
+configuration so sound on the HDMI interface can also be supported.
 
-Mark, I thought this can be applied through ASoC tree for 4.17-rc1 and then 
-I would post related dts patch for subsequent kernel release.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes since v2:
+ - changed order of codec phandles in codec/cpu-dai property
+   to match the DT bindings documentation.
+---
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi | 4 ++++
+ arch/arm/boot/dts/exynos5250-snow.dts         | 8 ++++++++
+ 2 files changed, 12 insertions(+)
 
--- 
-Thanks,
-Sylwester
+diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+index bdf59dd3654b..932a00cfd716 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
++++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/clock/maxim,max77686.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos5250.dtsi"
+
+ / {
+@@ -523,6 +524,9 @@
+ };
+
+ &i2s0 {
++	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
++	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
++	#clock-cells = <1>;
+ 	status = "okay";
+ };
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 16e37c337a3f..75fdc5e6d423 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -18,6 +18,14 @@
+
+ 		samsung,model = "Snow-I2S-MAX98095";
+ 		samsung,audio-codec = <&max98095>;
++
++		cpu {
++			sound-dai = <&i2s0 0>;
++		};
++
++		codec {
++			sound-dai = <&max98095 0>, <&hdmi>;
++		};
+ 	};
+ };
+
+--
+2.14.2
