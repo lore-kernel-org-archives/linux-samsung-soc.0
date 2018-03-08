@@ -1,50 +1,36 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos5420: Add CLK_SET_RATE_PARENT flag
- to mout_mau_epll_clk
-Date: Thu, 08 Mar 2018 11:25:38 +0900
-Message-ID: <5AA09F22.2070903@samsung.com>
-References: <CGME20180307164708epcas1p27e6599e85617f559c5c4c8eb92a70a47@epcas1p2.samsung.com>
- <20180307164656.12194-1-s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 6/6] ASoC: samsung: Add HDMI audio support
+ for Chromebook Snow
+Date: Thu, 08 Mar 2018 12:52:31 +0100
+Message-ID: <fe2fe1cd-b1a7-9f16-5c68-110c0f375dca@samsung.com>
+References: <CGME20180307170502epcas1p187b4623a868daa6045465836903e591f@epcas1p1.samsung.com>
+ <20180307170450.14182-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20180307164656.12194-1-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-reply-to: <20180307170450.14182-1-s.nawrocki@samsung.com>
+Content-language: en-GB
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: broonie@kernel.org
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, lgirdwood@gmail.com, robh+dt@kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgU3lsd2VzdGVyLAoKT24gMjAxOOuFhCAwM+yblCAwOOydvCAwMTo0NiwgU3lsd2VzdGVyIE5h
-d3JvY2tpIHdyb3RlOgo+IFRoaXMgYWxsb3dzIGNoYW5naW5nIHRoZSBFUExMIG91dHB1dCBmcmVx
-dWVuY3kgdGhyb3VnaCB0aGUgYXVkaW8gc3Vic3lzdGVtCj4gY2xvY2sgdHJlZSBsZWFmIGNsb2Nr
-cy4gVGhpcyBjaGFuZ2UgaXMgbmVlZGVkIHRvIHN1cHBvcnQgYXVkaW8gb24gdGhlIEhETUkKPiBp
-bnRlcmZhY2Ugb24gUGVhY2gtUGkodCkgQ2hyb21lYm9vay4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBT
-eWx3ZXN0ZXIgTmF3cm9ja2kgPHMubmF3cm9ja2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZl
-cnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczU0MjAuYyB8IDMgKystCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQyMC5jIGIvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGst
-ZXh5bm9zNTQyMC5jCj4gaW5kZXggOGMwNTBmZjYzNTM2Li4xZjIwNGJhMzdmMGYgMTAwNjQ0Cj4g
-LS0tIGEvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQyMC5jCj4gKysrIGIvZHJpdmVy
-cy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQyMC5jCj4gQEAgLTYyMSw3ICs2MjEsOCBAQCBzdGF0
-aWMgY29uc3Qgc3RydWN0IHNhbXN1bmdfbXV4X2Nsb2NrIGV4eW5vczU0MjBfbXV4X2Nsa3NbXSBf
-X2luaXRjb25zdCA9IHsKPiAgCj4gIAlNVVgoQ0xLX01PVVRfTVhfTVNQTExfQ0NPUkUsICJtb3V0
-X214X21zcGxsX2Njb3JlIiwKPiAgCQkJbW91dF9ncm91cDVfNTgwMF9wLCBTUkNfVE9QNywgMTYs
-IDIpLAo+IC0JTVVYKDAsICJtb3V0X21hdV9lcGxsX2NsayIsIG1vdXRfbWF1X2VwbGxfY2xrX3As
-IFNSQ19UT1A3LCAyMCwgMiksCj4gKwlNVVhfRigwLCAibW91dF9tYXVfZXBsbF9jbGsiLCBtb3V0
-X21hdV9lcGxsX2Nsa19wLCBTUkNfVE9QNywgMjAsIDIsCj4gKwkgICAgICBDTEtfU0VUX1JBVEVf
-UEFSRU5ULCAwKSwKPiAgCj4gIAlNVVgoMCwgIm1vdXRfZmltZDEiLCBtb3V0X2dyb3VwM19wLCBT
-UkNfRElTUDEwLCA0LCAxKSwKPiAgfTsKPiAKCkxvb2tzIGdvb2QgdG8gbWUuCkFja2VkLWJ5OiBD
-aGFud29vIENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4KCi0tIApCZXN0IFJlZ2FyZHMsCkNo
-YW53b28gQ2hvaQpTYW1zdW5nIEVsZWN0cm9uaWNzCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On 03/07/2018 06:04 PM, Sylwester Nawrocki wrote:
+> +	/* In the multi-codec case codec_dai 0 is HDMI and 1 is MAX98095. */
+
+Oops, it should be the other way around, now it contradicts the DT binding
+documentation. I'm going to post v2.
+
+> +	if (rtd->num_codecs > 1)
+> +		codec_dai = rtd->codec_dais[1];
+> +	else
+> +		codec_dai = rtd->codec_dai;
