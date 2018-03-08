@@ -1,36 +1,50 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 4/4] ARM: dts: Enable HDMI audio on Snow Chromebook
-Date: Thu, 08 Mar 2018 12:39:43 +0100
-Message-ID: <00f84b39-3272-72ca-5991-bc0f839a0324@samsung.com>
-References: <20180307172711.15697-1-s.nawrocki@samsung.com>
-        <CGME20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420@epcas2p2.samsung.com>
-        <20180307172711.15697-4-s.nawrocki@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5420: Add CLK_SET_RATE_PARENT flag
+ to mout_mau_epll_clk
+Date: Thu, 08 Mar 2018 11:25:38 +0900
+Message-ID: <5AA09F22.2070903@samsung.com>
+References: <CGME20180307164708epcas1p27e6599e85617f559c5c4c8eb92a70a47@epcas1p2.samsung.com>
+ <20180307164656.12194-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180307172711.15697-4-s.nawrocki@samsung.com>
-Content-language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: krzk@kernel.org
-Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20180307164656.12194-1-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/07/2018 06:27 PM, Sylwester Nawrocki wrote:
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -18,6 +18,14 @@
-
-> +		cpu {
-> +			sound-dai = <&i2s0 0>;
-> +		};
-> +
-> +		codec {
-> +			sound-dai = <&hdmi>, <&max98095 0>;
-
-Oops, I need to change order of codecs on the list, so it matches
-documentation. Will post v2 shortly.
-
--- 
-Thanks,
-Sylwester
+SGkgU3lsd2VzdGVyLAoKT24gMjAxOOuFhCAwM+yblCAwOOydvCAwMTo0NiwgU3lsd2VzdGVyIE5h
+d3JvY2tpIHdyb3RlOgo+IFRoaXMgYWxsb3dzIGNoYW5naW5nIHRoZSBFUExMIG91dHB1dCBmcmVx
+dWVuY3kgdGhyb3VnaCB0aGUgYXVkaW8gc3Vic3lzdGVtCj4gY2xvY2sgdHJlZSBsZWFmIGNsb2Nr
+cy4gVGhpcyBjaGFuZ2UgaXMgbmVlZGVkIHRvIHN1cHBvcnQgYXVkaW8gb24gdGhlIEhETUkKPiBp
+bnRlcmZhY2Ugb24gUGVhY2gtUGkodCkgQ2hyb21lYm9vay4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBT
+eWx3ZXN0ZXIgTmF3cm9ja2kgPHMubmF3cm9ja2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZl
+cnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczU0MjAuYyB8IDMgKystCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQyMC5jIGIvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGst
+ZXh5bm9zNTQyMC5jCj4gaW5kZXggOGMwNTBmZjYzNTM2Li4xZjIwNGJhMzdmMGYgMTAwNjQ0Cj4g
+LS0tIGEvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQyMC5jCj4gKysrIGIvZHJpdmVy
+cy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQyMC5jCj4gQEAgLTYyMSw3ICs2MjEsOCBAQCBzdGF0
+aWMgY29uc3Qgc3RydWN0IHNhbXN1bmdfbXV4X2Nsb2NrIGV4eW5vczU0MjBfbXV4X2Nsa3NbXSBf
+X2luaXRjb25zdCA9IHsKPiAgCj4gIAlNVVgoQ0xLX01PVVRfTVhfTVNQTExfQ0NPUkUsICJtb3V0
+X214X21zcGxsX2Njb3JlIiwKPiAgCQkJbW91dF9ncm91cDVfNTgwMF9wLCBTUkNfVE9QNywgMTYs
+IDIpLAo+IC0JTVVYKDAsICJtb3V0X21hdV9lcGxsX2NsayIsIG1vdXRfbWF1X2VwbGxfY2xrX3As
+IFNSQ19UT1A3LCAyMCwgMiksCj4gKwlNVVhfRigwLCAibW91dF9tYXVfZXBsbF9jbGsiLCBtb3V0
+X21hdV9lcGxsX2Nsa19wLCBTUkNfVE9QNywgMjAsIDIsCj4gKwkgICAgICBDTEtfU0VUX1JBVEVf
+UEFSRU5ULCAwKSwKPiAgCj4gIAlNVVgoMCwgIm1vdXRfZmltZDEiLCBtb3V0X2dyb3VwM19wLCBT
+UkNfRElTUDEwLCA0LCAxKSwKPiAgfTsKPiAKCkxvb2tzIGdvb2QgdG8gbWUuCkFja2VkLWJ5OiBD
+aGFud29vIENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4KCi0tIApCZXN0IFJlZ2FyZHMsCkNo
+YW53b28gQ2hvaQpTYW1zdW5nIEVsZWN0cm9uaWNzCgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
