@@ -1,60 +1,36 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] dt-bindings: exynos: Document #sound-dai-cells property
- of the HDMI node
-Date: Thu, 08 Mar 2018 07:29:11 +0100
-Message-ID: <3c68c3da-a0c3-4e4e-da6b-3e4b1af6d19d@samsung.com>
-References: <CGME20180307171131epcas1p4687ef394d1a0a6d0eb2de2691c977c3f@epcas1p4.samsung.com>
- <20180307171111.14551-1-s.nawrocki@samsung.com>
- <5AA0B59F.3070402@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 4/6] ASoC: Snow Chromebook DT bindings
+	update
+Date: Wed, 7 Mar 2018 20:40:19 -0600
+Message-ID: <20180308024019.72hy3ffidk4dsyx6@rob-hp-laptop>
+References: <CGME20180307170309epcas1p40ae0381dbd69168307cf23f0d993e8b3@epcas1p4.samsung.com>
+ <20180307170249.14057-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <5AA0B59F.3070402@samsung.com>
-Content-language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <20180307170249.14057-1-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSW5raSwKCk9uIDIwMTgtMDMtMDggMDU6MDEsIElua2kgRGFlIHdyb3RlOgo+IEhpIFN5bHdl
-c3RlciwKPgo+IDIwMTjrhYQgMDPsm5QgMDjsnbwgMDI6MTHsl5AgU3lsd2VzdGVyIE5hd3JvY2tp
-IOydtCjqsIApIOyTtCDquIA6Cj4+IFRoZSAjc291bmQtZGFpLWNlbGxzIERUIHByb3BlcnR5IGlz
-IHJlcXVpcmVkIHRvIGRlc2NyaWJlIGxpbmsgYmV0d2Vlbgo+PiB0aGUgSERNSSBJUCBibG9jayBh
-bmQgdGhlIFNvQydzIGF1ZGlvIHN1YnN5c3RlbS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogU3lsd2Vz
-dGVyIE5hd3JvY2tpIDxzLm5hd3JvY2tpQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gICBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0
-IHwgMyArKysKPj4gICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspCj4+Cj4+IGRpZmYg
-LS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3Mv
-ZXh5bm9zX2hkbWkudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3Bs
-YXkvZXh5bm9zL2V4eW5vc19oZG1pLnR4dAo+PiBpbmRleCA4NzE1ZmYwNmM0NTcuLjZiMmE1MjZl
-YzU4NiAxMDA2NDQKPj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rp
-c3BsYXkvZXh5bm9zL2V4eW5vc19oZG1pLnR4dAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0Cj4+IEBAIC01MCw2
-ICs1MCw5IEBAIFJlcXVpcmVkIHByb3BlcnRpZXMgZm9yIEV4eW5vcyA1NDMzOgo+PiAgIC0gY2xv
-Y2stbmFtZXM6IGFsaWFzZXMgZm9yIGFib3ZlIGNsb2NrIHNwZWNmaWVycy4KPj4gICAtIHNhbXN1
-bmcsc3lzcmVnOiBoYW5kbGUgdG8gc3lzY29uIHVzZWQgdG8gY29udHJvbCB0aGUgc3lzdGVtIHJl
-Z2lzdGVycy4KPj4gICAKPj4gK09wdGlvbmFsIHByb3BlcnRpZXMgZm9yIEV4eW5vcyA0MjEwLCA0
-MjEyLCA1NDIwIGFuZCA1NDMzOgo+PiArIC0gI3NvdW5kLWRhaS1jZWxsczogc2hvdWxkIGJlIDAu
-Cj4+ICsKPiBKdXN0IHRyaXZpYWwgcXVlc3Rpb24uICdzb3VuZC1kYWktY2VsbHMnIHByb3BlcnR5
-IGNvdWxkIGFmZmVjdCBoZG1pIGRyaXZlcj8gSSBsb29rZWQgaW50byBIRE1JIGNvZGVjIGRyaXZl
-ciBidXQgSSBkaWRuJ3QgZmluZCByZWxldmF0IGNvZGUuCj4gSSBtZWFuIHRoYXQgaWYgdGhpcyBw
-cm9wZXJ0eSBuZXZlciBhZmZlY3QgSERNSSBkcml2ZXIgdGhlbiB0aGlzIHByb3BlcnR5IHdvdWxk
-IGJlIGEgZGVhZCB0aGluZyBldmVuIHRocm91Z2ggdGhpcyBjYW4gYmUgZGVjbGFyZWQgb3B0aW9u
-YWxseS4KClRoaXMgcHJvcGVydHkgaXMgdXNlZCBieSBBU29DIGZyYW1ld29yayB3aGVuIGl0IGlz
-IGJ1aWxkaW5nIGNvbm5lY3Rpb25zCmJldHdlZW4gYWxsIGVsZW1lbnRzIG9mIHRoZSB2aXJ0dWFs
-ICdzb3VuZCBjYXJkJy4gSXQgYWxsb3dzIGdlbmVyaWMKY29kZSB0byBmaW5kIHByb3BlciBkcml2
-ZXIgZm9yIHRoZSBkaWdpdGFsIGF1ZGlvIGludGVyZmFjZSAoREFJKSBvYmplY3QuCgpCZXN0IHJl
-Z2FyZHMKLS0gCk1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9s
-YW5kCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGlu
-dXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
-YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
-YXJtLWtlcm5lbAo=
+On Wed, Mar 07, 2018 at 06:02:49PM +0100, Sylwester Nawrocki wrote:
+> The new DT bindings are introduced so sound on the HDMI interface
+> is also supported.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/sound/snow.txt | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+
+Reviewed-by: Rob Herring <robh@kernel.org>
