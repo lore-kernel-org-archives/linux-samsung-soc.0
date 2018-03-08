@@ -1,39 +1,52 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] ASoC: Use proper DT compatible string for
- Hardkernel Odroid boards
-Date: Wed, 7 Mar 2018 20:42:46 -0600
-Message-ID: <20180308024246.iwaecyxek56xhr5d@rob-hp-laptop>
-References: <CGME20180307174638epcas2p33f071928807ccaa40ad07922c15be31c@epcas2p3.samsung.com>
- <20180307174625.16597-1-s.nawrocki@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] dt-bindings: exynos: Document #sound-dai-cells property
+ of the HDMI node
+Date: Thu, 08 Mar 2018 13:01:35 +0900
+Message-ID: <5AA0B59F.3070402@samsung.com>
+References: <CGME20180307171131epcas1p4687ef394d1a0a6d0eb2de2691c977c3f@epcas1p4.samsung.com>
+ <20180307171111.14551-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <20180307174625.16597-1-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20180307171111.14551-1-s.nawrocki@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, m.szyprowski@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 06:46:25PM +0100, Sylwester Nawrocki wrote:
-> The Odroid boards are manufactured by Hardkernel, not Samsung. New compatible
-> string entries are added, with "hardkernel," instead of "samsung," vendor
-> prefix. Support for the old compatible strings is going to be removed after
-> some time.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  Documentation/devicetree/bindings/sound/samsung,odroid.txt | 6 +++---
->  sound/soc/samsung/odroid.c                                 | 4 +++-
->  2 files changed, 6 insertions(+), 4 deletions(-)
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+SGkgU3lsd2VzdGVyLAoKMjAxOOuFhCAwM+yblCAwOOydvCAwMjoxMeyXkCBTeWx3ZXN0ZXIgTmF3
+cm9ja2kg7J20KOqwgCkg7JO0IOq4gDoKPiBUaGUgI3NvdW5kLWRhaS1jZWxscyBEVCBwcm9wZXJ0
+eSBpcyByZXF1aXJlZCB0byBkZXNjcmliZSBsaW5rIGJldHdlZW4KPiB0aGUgSERNSSBJUCBibG9j
+ayBhbmQgdGhlIFNvQydzIGF1ZGlvIHN1YnN5c3RlbS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTeWx3
+ZXN0ZXIgTmF3cm9ja2kgPHMubmF3cm9ja2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIERvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfaGRtaS50eHQg
+fCAzICsrKwo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdp
+dCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlu
+b3NfaGRtaS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9l
+eHlub3MvZXh5bm9zX2hkbWkudHh0Cj4gaW5kZXggODcxNWZmMDZjNDU3Li42YjJhNTI2ZWM1ODYg
+MTAwNjQ0Cj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
+ZXh5bm9zL2V4eW5vc19oZG1pLnR4dAo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfaGRtaS50eHQKPiBAQCAtNTAsNiArNTAsOSBA
+QCBSZXF1aXJlZCBwcm9wZXJ0aWVzIGZvciBFeHlub3MgNTQzMzoKPiAgLSBjbG9jay1uYW1lczog
+YWxpYXNlcyBmb3IgYWJvdmUgY2xvY2sgc3BlY2ZpZXJzLgo+ICAtIHNhbXN1bmcsc3lzcmVnOiBo
+YW5kbGUgdG8gc3lzY29uIHVzZWQgdG8gY29udHJvbCB0aGUgc3lzdGVtIHJlZ2lzdGVycy4KPiAg
+Cj4gK09wdGlvbmFsIHByb3BlcnRpZXMgZm9yIEV4eW5vcyA0MjEwLCA0MjEyLCA1NDIwIGFuZCA1
+NDMzOgo+ICsgLSAjc291bmQtZGFpLWNlbGxzOiBzaG91bGQgYmUgMC4KPiArCgpKdXN0IHRyaXZp
+YWwgcXVlc3Rpb24uICdzb3VuZC1kYWktY2VsbHMnIHByb3BlcnR5IGNvdWxkIGFmZmVjdCBoZG1p
+IGRyaXZlcj8gSSBsb29rZWQgaW50byBIRE1JIGNvZGVjIGRyaXZlciBidXQgSSBkaWRuJ3QgZmlu
+ZCByZWxldmF0IGNvZGUuCkkgbWVhbiB0aGF0IGlmIHRoaXMgcHJvcGVydHkgbmV2ZXIgYWZmZWN0
+IEhETUkgZHJpdmVyIHRoZW4gdGhpcyBwcm9wZXJ0eSB3b3VsZCBiZSBhIGRlYWQgdGhpbmcgZXZl
+biB0aHJvdWdoIHRoaXMgY2FuIGJlIGRlY2xhcmVkIG9wdGlvbmFsbHkuCgpUaGFua3MsCklua2kg
+RGFlCgo+ICBFeGFtcGxlOgo+ICAKPiAgCWhkbWkgewo+IApfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
