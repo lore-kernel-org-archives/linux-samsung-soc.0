@@ -1,83 +1,99 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: Enable HDMI audio support on exynos5800-peach-pi
-Date: Thu, 08 Mar 2018 17:42:52 +0100
-Message-ID: <20180308164252.1252-1-s.nawrocki@samsung.com>
-References: <CGME20180308164308epcas1p2ca9ecc14b6dd68492456d41f2215267c@epcas1p2.samsung.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] rtc: s5m: Remove VLA usage
+Date: Thu, 8 Mar 2018 11:20:31 -0600
+Message-ID: <20180308172031.GA14541@embeddedgus>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: krzk@kernel.org
-Cc: javierm@redhat.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, kernel-hardening@lists.openwall.com, Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds new cpu, codec subnodes according to the updated
-"google,snow-audio-max98091" DT bindings and the I2S clock tree
-configuration so sound on the HDMI interface can be also supported.
+In preparation to enabling -Wvla, remove VLAs and replace them
+with fixed-length arrays instead.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>From a security viewpoint, the use of Variable Length Arrays can be
+a vector for stack overflow attacks. Also, in general, as the code
+evolves it is easy to lose track of how big a VLA can get. Thus, we
+can end up having segfaults that are hard to debug.
+
+Also, fixed as part of the directive to remove all VLAs from
+the kernel: https://lkml.org/lkml/2018/3/7/621
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
+ drivers/rtc/rtc-s5m.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-NOTE:
-I couldn't test this patch as I have no access to Peach-pi Chromebook.
-I think it shoudn't be applied unless some acutally tests it.
-
- arch/arm/boot/dts/exynos5800-peach-pi.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 0029ec27819c..0a4766e0484e 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -14,6 +14,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/clock/maxim,max77802.h>
- #include <dt-bindings/regulator/maxim,max77802.h>
-+#include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5800.dtsi"
- #include "exynos5420-cpus.dtsi"
-
-@@ -89,6 +90,14 @@
- 		samsung,model = "Peach-Pi-I2S-MAX98091";
- 		samsung,i2s-controller = <&i2s0>;
- 		samsung,audio-codec = <&max98091>;
+diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+index 6deae10..2b5f4f7 100644
+--- a/drivers/rtc/rtc-s5m.c
++++ b/drivers/rtc/rtc-s5m.c
+@@ -38,6 +38,9 @@
+  */
+ #define UDR_READ_RETRY_CNT	5
+ 
++/* Maximum number of registers for setting time/alarm0/alarm1 */
++#define MAX_NUM_TIME_REGS	8
 +
-+		cpu {
-+			sound-dai = <&i2s0 0>;
-+		};
-+
-+		codec {
-+			sound-dai = <&max98091>, <&hdmi>;
-+		};
- 	};
-
- 	usb300_vbus_reg: regulator-usb300 {
-@@ -145,6 +154,11 @@
- 	vdd-supply = <&ldo9_reg>;
- };
-
-+&clock_audss {
-+	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
-+	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
-+};
-+
- &cpu0 {
- 	cpu-supply = <&buck2_reg>;
- };
-@@ -609,6 +623,7 @@
- 		pinctrl-0 = <&max98091_irq>;
- 		clocks = <&pmu_system_controller 0>;
- 		clock-names = "mclk";
-+		#sound-dai-cells = <0>;
- 	};
-
- 	light-sensor@44 {
-@@ -661,6 +676,8 @@
- };
-
- &i2s0 {
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
- 	status = "okay";
- };
-
---
-2.14.2
+ /*
+  * Registers used by the driver which are different between chipsets.
+  *
+@@ -367,7 +370,7 @@ static void s5m8763_tm_to_data(struct rtc_time *tm, u8 *data)
+ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ {
+ 	struct s5m_rtc_info *info = dev_get_drvdata(dev);
+-	u8 data[info->regs->regs_count];
++	u8 data[MAX_NUM_TIME_REGS];
+ 	int ret;
+ 
+ 	if (info->regs->read_time_udr_mask) {
+@@ -413,7 +416,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ {
+ 	struct s5m_rtc_info *info = dev_get_drvdata(dev);
+-	u8 data[info->regs->regs_count];
++	u8 data[MAX_NUM_TIME_REGS];
+ 	int ret = 0;
+ 
+ 	switch (info->device_type) {
+@@ -450,7 +453,7 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ {
+ 	struct s5m_rtc_info *info = dev_get_drvdata(dev);
+-	u8 data[info->regs->regs_count];
++	u8 data[MAX_NUM_TIME_REGS];
+ 	unsigned int val;
+ 	int ret, i;
+ 
+@@ -500,7 +503,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 
+ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
+ {
+-	u8 data[info->regs->regs_count];
++	u8 data[MAX_NUM_TIME_REGS];
+ 	int ret, i;
+ 	struct rtc_time tm;
+ 
+@@ -545,7 +548,7 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
+ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+ {
+ 	int ret;
+-	u8 data[info->regs->regs_count];
++	u8 data[MAX_NUM_TIME_REGS];
+ 	u8 alarm0_conf;
+ 	struct rtc_time tm;
+ 
+@@ -598,7 +601,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+ static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ {
+ 	struct s5m_rtc_info *info = dev_get_drvdata(dev);
+-	u8 data[info->regs->regs_count];
++	u8 data[MAX_NUM_TIME_REGS];
+ 	int ret;
+ 
+ 	switch (info->device_type) {
+-- 
+2.7.4
