@@ -1,17 +1,19 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 11/12] dt-bindings: thermal: remove no longer needed
- samsung thermal properties
-Date: Wed, 7 Mar 2018 20:00:38 -0600
-Message-ID: <20180308020038.3yhihjqa5m4pugjx@rob-hp-laptop>
-References: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20180306144516epcas1p3e951e15e666779c870ad091d65041409@epcas1p3.samsung.com>
- <1520347435-22970-12-git-send-email-b.zolnierkie@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] dt-bindings: exynos: Document #sound-dai-cells property
+ of the HDMI node
+Date: Thu, 08 Mar 2018 17:15:09 +0900
+Message-ID: <5AA0F10D.9010602@samsung.com>
+References: <CGME20180307171131epcas1p4687ef394d1a0a6d0eb2de2691c977c3f@epcas1p4.samsung.com>
+ <20180307171111.14551-1-s.nawrocki@samsung.com>
+ <5AA0B59F.3070402@samsung.com>
+ <3c68c3da-a0c3-4e4e-da6b-3e4b1af6d19d@samsung.com>
+ <5AA0DD39.3040108@samsung.com>
+ <9f1e8619-974d-cd07-79c3-c6d9a4dc0f97@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1520347435-22970-12-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <9f1e8619-974d-cd07-79c3-c6d9a4dc0f97@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,16 +23,66 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 03:43:54PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> Remove documentation for longer needed samsung thermal properties.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  .../devicetree/bindings/thermal/exynos-thermal.txt | 23 +++++-----------------
->  1 file changed, 5 insertions(+), 18 deletions(-)
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+SGkgTWFyZWssCgoyMDE464WEIDAz7JuUIDA47J28IDE2OjM27JeQIE1hcmVrIFN6eXByb3dza2kg
+7J20KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IE9uIDIwMTgtMDMtMDggMDc6NTAsIElu
+a2kgRGFlIHdyb3RlOgo+PiAyMDE464WEIDAz7JuUIDA47J28IDE1OjI57JeQIE1hcmVrIFN6eXBy
+b3dza2kg7J20KOqwgCkg7JO0IOq4gDoKPj4+IE9uIDIwMTgtMDMtMDggMDU6MDEsIElua2kgRGFl
+IHdyb3RlOgo+Pj4+IDIwMTjrhYQgMDPsm5QgMDjsnbwgMDI6MTHsl5AgU3lsd2VzdGVyIE5hd3Jv
+Y2tpIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4+IFRoZSAjc291bmQtZGFpLWNlbGxzIERUIHByb3Bl
+cnR5IGlzIHJlcXVpcmVkIHRvIGRlc2NyaWJlIGxpbmsgYmV0d2Vlbgo+Pj4+PiB0aGUgSERNSSBJ
+UCBibG9jayBhbmQgdGhlIFNvQydzIGF1ZGlvIHN1YnN5c3RlbS4KPj4+Pj4KPj4+Pj4gU2lnbmVk
+LW9mZi1ieTogU3lsd2VzdGVyIE5hd3JvY2tpIDxzLm5hd3JvY2tpQHNhbXN1bmcuY29tPgo+Pj4+
+PiAtLS0KPj4+Pj4gICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
+ZXh5bm9zL2V4eW5vc19oZG1pLnR4dCB8IDMgKysrCj4+Pj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAz
+IGluc2VydGlvbnMoKykKPj4+Pj4KPj4+Pj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfaGRtaS50eHQgYi9Eb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0
+Cj4+Pj4+IGluZGV4IDg3MTVmZjA2YzQ1Ny4uNmIyYTUyNmVjNTg2IDEwMDY0NAo+Pj4+PiAtLS0g
+YS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9z
+X2hkbWkudHh0Cj4+Pj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9k
+aXNwbGF5L2V4eW5vcy9leHlub3NfaGRtaS50eHQKPj4+Pj4gQEAgLTUwLDYgKzUwLDkgQEAgUmVx
+dWlyZWQgcHJvcGVydGllcyBmb3IgRXh5bm9zIDU0MzM6Cj4+Pj4+ICAgIC0gY2xvY2stbmFtZXM6
+IGFsaWFzZXMgZm9yIGFib3ZlIGNsb2NrIHNwZWNmaWVycy4KPj4+Pj4gICAgLSBzYW1zdW5nLHN5
+c3JlZzogaGFuZGxlIHRvIHN5c2NvbiB1c2VkIHRvIGNvbnRyb2wgdGhlIHN5c3RlbSByZWdpc3Rl
+cnMuCj4+Pj4+ICAgICtPcHRpb25hbCBwcm9wZXJ0aWVzIGZvciBFeHlub3MgNDIxMCwgNDIxMiwg
+NTQyMCBhbmQgNTQzMzoKPj4+Pj4gKyAtICNzb3VuZC1kYWktY2VsbHM6IHNob3VsZCBiZSAwLgo+
+Pj4+PiArCj4+Pj4gSnVzdCB0cml2aWFsIHF1ZXN0aW9uLiAnc291bmQtZGFpLWNlbGxzJyBwcm9w
+ZXJ0eSBjb3VsZCBhZmZlY3QgaGRtaSBkcml2ZXI/IEkgbG9va2VkIGludG8gSERNSSBjb2RlYyBk
+cml2ZXIgYnV0IEkgZGlkbid0IGZpbmQgcmVsZXZhdCBjb2RlLgo+Pj4+IEkgbWVhbiB0aGF0IGlm
+IHRoaXMgcHJvcGVydHkgbmV2ZXIgYWZmZWN0IEhETUkgZHJpdmVyIHRoZW4gdGhpcyBwcm9wZXJ0
+eSB3b3VsZCBiZSBhIGRlYWQgdGhpbmcgZXZlbiB0aHJvdWdoIHRoaXMgY2FuIGJlIGRlY2xhcmVk
+IG9wdGlvbmFsbHkuCj4+PiBUaGlzIHByb3BlcnR5IGlzIHVzZWQgYnkgQVNvQyBmcmFtZXdvcmsg
+d2hlbiBpdCBpcyBidWlsZGluZyBjb25uZWN0aW9ucwo+Pj4gYmV0d2VlbiBhbGwgZWxlbWVudHMg
+b2YgdGhlIHZpcnR1YWwgJ3NvdW5kIGNhcmQnLiBJdCBhbGxvd3MgZ2VuZXJpYwo+Pj4gY29kZSB0
+byBmaW5kIHByb3BlciBkcml2ZXIgZm9yIHRoZSBkaWdpdGFsIGF1ZGlvIGludGVyZmFjZSAoREFJ
+KSBvYmplY3QuCj4+IEkgYWxzbyBhc3N1bWVkIHRoYXQgc29tZSBwbGFjZSBvZiBBU29DIGZyYW1l
+d29yayBjaGVja3MgdGhpcyBwcm9wZXJ0eS4gRm9yIHRoaXMgSSBsb29rZWQgaW50byBIRE1JIGNv
+ZGVjIGRyaXZlcihzb3VuZC9zb2MvY29kZWNzL2hkbWktY29kZWMuYykgYW5kIHJlbGV2YW50IGlu
+dGVyZmFjZXMgb2YgQVNvQyBmcmFtZXdvcmsuCj4+IEJ1dCBJIGNvdWxkbid0IGZpbmQgaXQuIDoo
+IENvdWxkIHlvdSBsZXQgbWUga25vdyB3aGljaCBjb2RlIG9mIEFTb0MgZnJhbWV3b3JrIGNoZWNr
+cyB0aGlzPyBJIHNhdyB0aGlzIHByb3BlcnR5IG9ubHkgaW4gJ3NuZF9zb2Nfb2ZfZ2V0X2RhaV9u
+YW1lJyBhbmQgJ3NuZF9zb2Nfb2ZfZ2V0X2RhaV9saW5rX2NvZGVjcycgZnVuY3Rpb25zIGJ1dCBz
+ZWVtcyB0aGVzZSBmdW5jdGlvbnMgYXJlbid0IGNhbGxlZCBieSB0aGUgSERNSSBjb2RlYyBkcml2
+ZXIuCj4gCj4gSXQgaXMgdXNlZCBieSBzbmRfc29jX29mX2dldF9kYWlfbGlua19jb2RlY3MoKSBm
+dW5jdGlvbiwgd2hpY2ggaXMgY2FsbGVkCj4gZnJvbSByZXNwZWN0aXZlIGJvYXJkL21hY2hpbmUg
+ZHJpdmVyLiBTZWUgc291bmQvc29jL3NhbXN1bmcvb2Ryb2lkLmMgZm9yCj4gZ29vZCBleGFtcGxl
+LiBJdCBhbGxvd3MgdG8gYXV0b21hdGljYWxseSBjcmVhdGUgY29ubmVjdGlvbiB0byBtYXg5ODA5
+MCBhbmQKPiBoZG1pIGNvZGVjIGRldmljZXMsIHdoaWNoIGFyZSBzcGVjaWZpZWQgaW4gJ3NvdW5k
+L2NvZGVjJyBub2RlIChzZWUKPiBleHlub3M1NDIyLW9kcm9pZHh1My1hdWRpby5kdHNpKS4KCkFo
+LCBzb3JyeSwgSSBtaXNzZWQgdG8gY2hlY2sgdGhhdCBkcml2ZXIgYW5kIGNoZWNrZWQgb25seSBE
+Uk0gZHJpdmVycy4gOikKQnkgdGhlIHdheSwgaXQgc2VlbXMgJ3NvdW5kLWRhaS1jZWxscycgcHJv
+cGVydHkgbmV2ZXIgYWZmZWN0IEV4eW5vczQyMTAvNDIxMi81NDIwLzU0MzMuIEl0IHNlZW1zIHRo
+YXQgZXZlbiB0aHJvdWdoIEFMU0EgVE0yIGF1ZGlvIGRyaXZlcih0bTJfd201MTEwLmMpIGV4aXN0
+cyB0aGUgZHJpdmVyIG5ldmVyIGNoZWNrIHRoZSBwcm9wZXJ0eS4KSG93ZXZlciwgdGhpcyBwYXRj
+aCBhZGRzIGJlbG93IGRlc2NyaXB0aW9uLgoiT3B0aW9uYWwgcHJvcGVydGllcyBmb3IgRXh5bm9z
+IDQyMTAsIDQyMTIsIDU0MjAgYW5kIDU0MzMiCgpJcyB0aGVyZSBhIHBvc3NpYmlsaXR5IGZvciBv
+dGhlciBib2FyZHMgYmFzZWQgb24gRXh5bm9zNDIxMC80MjEyLzU0MjAvNTQzMyBTb0MgdG8gdXNl
+IHRoaXMgcHJvcGVydHkgbGF0ZXI/CgpUaGFua3MsCklua2kgRGFlCgo+IAo+IEJlc3QgcmVnYXJk
+cwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
+YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
+LWtlcm5lbAo=
