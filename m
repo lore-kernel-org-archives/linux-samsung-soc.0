@@ -1,329 +1,131 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 7/7] ASoC: samsung: Add HDMI audio support
- for Chromebook Snow
-Date: Fri, 09 Mar 2018 18:48:58 +0100
-Message-ID: <20180309174858.24017-7-s.nawrocki@samsung.com>
-References: <20180309174858.24017-1-s.nawrocki@samsung.com>
- <CGME20180309175019epcas2p34a7fd706117cb18d31109dbc9c8cf60b@epcas2p3.samsung.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH v5 00/36] DRM Rockchip rk3399 (Kevin)
+Date: Fri,  9 Mar 2018 23:22:51 +0100
+Message-ID: <20180309222327.18689-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-reply-to: <20180309174858.24017-1-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: broonie@kernel.org
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, javierm@redhat.com, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com, hshi@chromium.org, Enric Balletbo i Serra <enric.balletbo@collabora.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch updates the driver so, in addition to current DT bindings,
-the new DT bindings with cpu, codec subnodes can be used, in order to
-support sound on the HDMI interface.
+Hi,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since v1:
- - adjustments to changed order of codecs in codec/cpu-dai property,
- - fixed errors in snow_remove().
----
- sound/soc/samsung/snow.c | 226 +++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 178 insertions(+), 48 deletions(-)
+This patchset includes cleanups, improvements, and bug fixes for
+Rockchip DRM driver and PSR support.
 
-diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
-index fc62110f500f..f00ca1ca0171 100644
---- a/sound/soc/samsung/snow.c
-+++ b/sound/soc/samsung/snow.c
-@@ -11,92 +11,207 @@
-  * General Public License for more details.
-  */
+This new version is the same as before removing some of the patches
+already applied and fixing the Exynos issue due patch '[v4 15/38]
+drm/bridge: analogix_dp: Ensure edp is disabled when shutting down
+the panel' reported by Marek.
 
-+#include <linux/clk.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--
-+#include <sound/pcm_params.h>
- #include <sound/soc.h>
+Regards,
+ Enric
 
- #include "i2s.h"
+Changes in v5:
+- Removed the following patches as are already applied.
+  [PATCH v4 01/38] drm/bridge: analogix_dp: set psr activate/deactivate
+                   when enable/disable bridge
+  [PATCH v4 02/38] drm/rockchip: Don't use atomic constructs for psr
+- Add Mareks tested-tag and including the missing people.
+  - [PATCH v4 15/38] move analogix_dp_set_analog_power_down() before
+    phy_power_off() to fix Exynos issue.
 
--#define FIN_PLL_RATE		24000000
-+#define FIN_PLL_RATE		24000000UL
+Changes in v4:
+- Rebased all on top of drm-misc-next
+- Removed the following patches as are already applied.
+  [PATCH v3 01/43] drm/rockchip: Get rid of unnecessary struct fields
+  [PATCH v3 02/43] drm/rockchip: support prime import sg table
+  [PATCH v3 03/43] drm/rockchip: Respect page offset for PRIME mmap
+  calls
+- Removed the following patches as now are part of another patchset
+  [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in
+  analogix_dp_bind
+  [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
 
--static struct snd_soc_dai_link snow_dai[] = {
--	{
--		.name = "Primary",
--		.stream_name = "Primary",
--		.codec_dai_name = "HiFi",
--		.dai_fmt = SND_SOC_DAIFMT_I2S |
--				SND_SOC_DAIFMT_NB_NF |
--				SND_SOC_DAIFMT_CBS_CFS,
--	},
-+struct snow_priv {
-+	struct snd_soc_dai_link dai_link;
-+	struct clk *clk_i2s_bus;
-+};
-+
-+static int snow_card_hw_params(struct snd_pcm_substream *substream,
-+				      struct snd_pcm_hw_params *params)
-+{
-+	static const unsigned int pll_rate[] = {
-+		73728000U, 67737602U, 49152000U, 45158401U, 32768001U
-+	};
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snow_priv *priv = snd_soc_card_get_drvdata(rtd->card);
-+	int bfs, psr, rfs, bitwidth;
-+	unsigned long int rclk;
-+	long int freq = -EINVAL;
-+	int ret, i;
-+
-+	bitwidth = snd_pcm_format_width(params_format(params));
-+	if (bitwidth < 0) {
-+		dev_err(rtd->card->dev, "Invalid bit-width: %d\n", bitwidth);
-+		return bitwidth;
-+	}
-+
-+	if (bitwidth != 16 && bitwidth != 24) {
-+		dev_err(rtd->card->dev, "Unsupported bit-width: %d\n", bitwidth);
-+		return -EINVAL;
-+	}
-+
-+	bfs = 2 * bitwidth;
-+
-+	switch (params_rate(params)) {
-+	case 16000:
-+	case 22050:
-+	case 24000:
-+	case 32000:
-+	case 44100:
-+	case 48000:
-+	case 88200:
-+	case 96000:
-+		rfs = 8 * bfs;
-+		break;
-+	case 64000:
-+		rfs = 384;
-+		break;
-+	case 8000:
-+	case 11025:
-+	case 12000:
-+		rfs = 16 * bfs;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	rclk = params_rate(params) * rfs;
-+
-+	for (psr = 8; psr > 0; psr /= 2) {
-+		for (i = 0; i < ARRAY_SIZE(pll_rate); i++) {
-+			if ((pll_rate[i] - rclk * psr) <= 2) {
-+				freq = pll_rate[i];
-+				break;
-+			}
-+		}
-+	}
-+	if (freq < 0) {
-+		dev_err(rtd->card->dev, "Unsupported RCLK rate: %lu\n", rclk);
-+		return -EINVAL;
-+	}
-+
-+	ret = clk_set_rate(priv->clk_i2s_bus, freq);
-+	if (ret < 0) {
-+		dev_err(rtd->card->dev, "I2S bus clock rate set failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_ops snow_card_ops = {
-+	.hw_params = snow_card_hw_params,
- };
+Changes in v3:
+- Addressed some of the comments from Sean on the v2
 
- static int snow_late_probe(struct snd_soc_card *card)
- {
- 	struct snd_soc_pcm_runtime *rtd;
- 	struct snd_soc_dai *codec_dai;
--	struct snd_soc_dai *cpu_dai;
--	int ret;
+Changes in v2:
+- A few patches have been replaced by newer and cleaner versions from
+  the ChromeOS kernel gerrit, especially about disallowing PSR for the
+  whole atomic commit.
 
- 	rtd = snd_soc_get_pcm_runtime(card, card->dai_link[0].name);
--	codec_dai = rtd->codec_dai;
--	cpu_dai = rtd->cpu_dai;
--
--	/* Set the MCLK rate for the codec */
--	ret = snd_soc_dai_set_sysclk(codec_dai, 0,
--					FIN_PLL_RATE, SND_SOC_CLOCK_IN);
--	if (ret < 0)
--		return ret;
 
-+	/* In the multi-codec case codec_dais 0 is MAX98095 and 1 is HDMI. */
-+	if (rtd->num_codecs > 1)
-+		codec_dai = rtd->codec_dais[0];
-+	else
-+		codec_dai = rtd->codec_dai;
+Douglas Anderson (4):
+  drm/bridge: analogix_dp: Reorder plat_data->power_off to happen sooner
+  drm/bridge: analogix_dp: Properly log AUX CH errors
+  drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
+  drm/bridge: analogix_dp: Split the platform-specific poweron in two
+    parts
 
--	return 0;
-+	/* Set the MCLK rate for the codec */
-+	return snd_soc_dai_set_sysclk(codec_dai, 0,
-+				FIN_PLL_RATE, SND_SOC_CLOCK_IN);
- }
+Kristian H. Kristensen (1):
+  drm/rockchip: Disable PSR on input events
 
- static struct snd_soc_card snow_snd = {
- 	.name = "Snow-I2S",
- 	.owner = THIS_MODULE,
--	.dai_link = snow_dai,
--	.num_links = ARRAY_SIZE(snow_dai),
--
- 	.late_probe = snow_late_probe,
- };
+Lin Huang (6):
+  drm/bridge: analogix_dp: Move enable video into config_video()
+  drm/bridge: analogix_dp: Check AUX_EN status when doing AUX transfer
+  drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the
+    panel
+  drm/bridge: analogix_dp: Extend hpd check time to 100ms
+  drm/bridge: analogix_dp: Check dpcd write/read status
+  drm/bridge: analogix_dp: Reset aux channel if an error occurred
 
- static int snow_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct snd_soc_card *card = &snow_snd;
--	struct device_node *i2s_node, *codec_node;
--	int i, ret;
--
--	i2s_node = of_parse_phandle(pdev->dev.of_node,
--				    "samsung,i2s-controller", 0);
--	if (!i2s_node) {
--		dev_err(&pdev->dev,
--			"Property 'i2s-controller' missing or invalid\n");
--		return -EINVAL;
--	}
-+	struct device_node *cpu, *codec;
-+	struct snd_soc_dai_link *link;
-+	struct snow_priv *priv;
-+	int ret;
+Mark Yao (1):
+  drm/rockchip: pre dither down when output bpc is 8bit
 
--	codec_node = of_parse_phandle(pdev->dev.of_node,
--				      "samsung,audio-codec", 0);
--	if (!codec_node) {
--		dev_err(&pdev->dev,
--			"Property 'audio-codec' missing or invalid\n");
--		return -EINVAL;
--	}
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	link = &priv->dai_link;
-+
-+	link->dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
-+			SND_SOC_DAIFMT_CBS_CFS;
-+
-+	link->name = "Primary";
-+	link->stream_name = link->name;
-+
-+	card->dai_link = link;
-+	card->num_links = 1;
-+	card->dev = dev;
-+
-+	/* Try new DT bindings with HDMI support first. */
-+	cpu = of_get_child_by_name(dev->of_node, "cpu");
-+
-+	if (cpu) {
-+		link->ops = &snow_card_ops;
+Sean Paul (1):
+  drm/rockchip: Remove analogix psr worker
 
--	for (i = 0; i < ARRAY_SIZE(snow_dai); i++) {
--		snow_dai[i].codec_of_node = codec_node;
--		snow_dai[i].cpu_of_node = i2s_node;
--		snow_dai[i].platform_of_node = i2s_node;
-+		link->cpu_of_node = of_parse_phandle(cpu, "sound-dai", 0);
-+		of_node_put(cpu);
-+
-+		if (!link->cpu_of_node) {
-+			dev_err(dev, "Failed parsing cpu/sound-dai property\n");
-+			return -EINVAL;
-+		}
-+
-+		codec = of_get_child_by_name(dev->of_node, "codec");
-+		ret = snd_soc_of_get_dai_link_codecs(dev, codec, link);
-+		of_node_put(codec);
-+
-+		if (ret < 0) {
-+			of_node_put(link->cpu_of_node);
-+			dev_err(dev, "Failed parsing codec node\n");
-+			return ret;
-+		}
-+
-+		priv->clk_i2s_bus = of_clk_get_by_name(link->cpu_of_node,
-+						       "i2s_opclk0");
-+		if (IS_ERR(priv->clk_i2s_bus)) {
-+			snd_soc_of_put_dai_link_codecs(link);
-+			of_node_put(link->cpu_of_node);
-+			return PTR_ERR(priv->clk_i2s_bus);
-+		}
-+	} else {
-+		link->codec_dai_name = "HiFi",
-+
-+		link->cpu_of_node = of_parse_phandle(dev->of_node,
-+						"samsung,i2s-controller", 0);
-+		if (!link->cpu_of_node) {
-+			dev_err(dev, "i2s-controller property parse error\n");
-+			return -EINVAL;
-+		}
-+
-+		link->codec_of_node = of_parse_phandle(dev->of_node,
-+						"samsung,audio-codec", 0);
-+		if (!link->codec_of_node) {
-+			of_node_put(link->cpu_of_node);
-+			dev_err(dev, "audio-codec property parse error\n");
-+			return -EINVAL;
-+		}
- 	}
+Tomasz Figa (7):
+  drm/rockchip: analogix_dp: Do not call Analogix code before bind
+  drm/rockchip: Cancel PSR enable work before changing the state
+  drm/rockchip: psr: Avoid redundant calls to .set() callback
+  drm/rockchip: psr: Sanitize semantics of allow/disallow API
+  drm/rockchip: Disable PSR from reboot notifier
+  drm/rockchip: Disallow PSR for the whole atomic commit
+  drm/rockchip: psr: Remove flush by CRTC
 
--	card->dev = &pdev->dev;
-+	link->platform_of_node = link->cpu_of_node;
+Yakir Yang (1):
+  drm/bridge: analogix_dp: detect Sink PSR state after configuring the
+    PSR
 
- 	/* Update card-name if provided through DT, else use default name */
- 	snd_soc_of_parse_card_name(card, "samsung,model");
+zain wang (15):
+  drm/bridge: analogix_dp: Don't change psr while bridge is disabled
+  drm/rockchip: add mutex vop lock
+  drm/bridge: analogix_dp: add fast link train for eDP
+  drm/rockchip: Only wait for panel ACK on PSR entry
+  drm/bridge: analogix_dp: Don't use fast link training when panel just
+    powered up
+  drm/bridge: analogix_dp: Retry bridge enable when it failed
+  drm/bridge: analogix_dp: Wait for HPD signal before configuring link
+  drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
+  drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
+  drm/bridge: analogix_dp: Fix AUX_PD bit for Rockchip
+  drm/rockchip: Restore psr->state when enable/disable psr failed
+  drm/bridge: analogix_dp: Don't use ANALOGIX_DP_PLL_CTL to control pll
+  drm/bridge: analogix_dp: Fix timeout of video streamclk config
+  drm/bridge: analogix_dp: Fix incorrect operations with register
+    ANALOGIX_DP_FUNC_EN_1
+  drm/bridge: analogix_dp: Move fast link training detect to set_bridge
 
--	ret = devm_snd_soc_register_card(&pdev->dev, card);
-+	snd_soc_card_set_drvdata(card, priv);
-+
-+	ret = devm_snd_soc_register_card(dev, card);
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", ret);
- 		return ret;
-@@ -105,6 +220,20 @@ static int snow_probe(struct platform_device *pdev)
- 	return ret;
- }
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 452 ++++++++++++++++-----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  14 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 274 ++++++++-----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  |   7 +
+ drivers/gpu/drm/exynos/exynos_dp.c                 |   2 +-
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  70 ++--
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   1 +
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c         |  61 ++-
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c        | 309 +++++++++-----
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.h        |   7 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  43 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.h        |   1 +
+ drivers/gpu/drm/rockchip/rockchip_vop_reg.c        |   1 +
+ include/drm/bridge/analogix_dp.h                   |   5 +-
+ 14 files changed, 879 insertions(+), 368 deletions(-)
 
-+static int snow_remove(struct platform_device *pdev)
-+{
-+	struct snow_priv *priv = platform_get_drvdata(pdev);
-+	struct snd_soc_dai_link *link = &priv->dai_link;
-+
-+	of_node_put(link->cpu_of_node);
-+	of_node_put(link->codec_of_node);
-+	snd_soc_of_put_dai_link_codecs(link);
-+
-+	clk_put(priv->clk_i2s_bus);
-+
-+	return 0;
-+}
-+
- static const struct of_device_id snow_of_match[] = {
- 	{ .compatible = "google,snow-audio-max98090", },
- 	{ .compatible = "google,snow-audio-max98091", },
-@@ -120,6 +249,7 @@ static struct platform_driver snow_driver = {
- 		.of_match_table = snow_of_match,
- 	},
- 	.probe = snow_probe,
-+	.remove = snow_remove,
- };
-
- module_platform_driver(snow_driver);
---
-2.14.2
+-- 
+2.16.1
