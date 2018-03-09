@@ -1,175 +1,68 @@
-From: Roger Quadros <rogerq@ti.com>
-Subject: Re: [PATCH v5 1/6] dt-bindings: add bindings for USB physical
- connector
-Date: Fri, 9 Mar 2018 12:24:44 +0200
-Message-ID: <ed0ce43c-3c81-b027-2eb1-30e49156c3ac@ti.com>
-References: <20180227071134.28063-1-a.hajda@samsung.com>
- <CGME20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f@eucas1p1.samsung.com>
- <20180227071134.28063-2-a.hajda@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] dt-bindings: exynos: Document #sound-dai-cells property
+ of the HDMI node
+Date: Fri, 09 Mar 2018 12:10:45 +0100
+Message-ID: <6e9a0ba4-2997-b7c5-f5c3-461870b7d3e5@samsung.com>
+References: <CGME20180307171131epcas1p4687ef394d1a0a6d0eb2de2691c977c3f@epcas1p4.samsung.com>
+ <20180307171111.14551-1-s.nawrocki@samsung.com>
+ <5AA0B59F.3070402@samsung.com>
+ <3c68c3da-a0c3-4e4e-da6b-3e4b1af6d19d@samsung.com>
+ <5AA0DD39.3040108@samsung.com>
+ <9f1e8619-974d-cd07-79c3-c6d9a4dc0f97@samsung.com>
+ <5AA0F10D.9010602@samsung.com>
+ <e3e1c628-d88f-6fb4-171e-a49c7ee38135@samsung.com>
+ <5AA1F30B.8010607@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180227071134.28063-2-a.hajda@samsung.com>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <5AA1F30B.8010607@samsung.com>
+Content-language: en-GB
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 27/02/18 09:11, Andrzej Hajda wrote:
-> These bindings allow to describe most known standard USB connectors
-> and it should be possible to extend it if necessary.
-> USB connectors, beside USB can be used to route other protocols,
-> for example UART, Audio, MHL. In such case every device passing data
-> through the connector should have appropriate graph bindings.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> v4:
-> - improved 'type' description (Rob),
-> - improved description of 2nd example (Rob).
-> v3:
-> - removed MHL port (samsung connector will have separate bindings),
-> - added 2nd example for USB-C,
-> - improved formatting.
-> v2:
-> - moved connector type(A,B,C) to compatible string (Rob),
-> - renamed size property to type (Rob),
-> - changed type description to be less confusing (Laurent),
-> - removed vendor specific compatibles (implied by graph port number),
-> - added requirement of connector being a child of IC (Rob),
-> - removed max-mode (subtly suggested by Rob, it should be detected anyway
->   by USB Controller in runtime, downside is that device is not able to
->   report its real capabilities, maybe better would be to make it optional(?)),
-> - assigned port numbers to data buses (Rob).
-> 
-> Regards
-> Andrzej
-> ---
->  .../bindings/connector/usb-connector.txt           | 75 ++++++++++++++++++++++
->  1 file changed, 75 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> new file mode 100644
-> index 000000000000..e1463f14af38
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> @@ -0,0 +1,75 @@
-> +USB Connector
-> +=============
-> +
-> +USB connector node represents physical USB connector. It should be
-> +a child of USB interface controller.
-> +
-> +Required properties:
-> +- compatible: describes type of the connector, must be one of:
-> +    "usb-a-connector",
-> +    "usb-b-connector",
-> +    "usb-c-connector".
-
-compatible should be just "usb-connector"
-
-Type should be a property
-
-type: type of usb connector "A", "B", "AB", "C"
-AB is for dual-role connectors.
-
-micro super-speed and high-speed connectors are different. How do you differentiate that?
-
-> +
-> +Optional properties:
-> +- label: symbolic name for the connector,
-
-Why do you need label? We can't maintain consistency as people will put creative names there.
-Device/bus driver could generate a valid label.
-
-> +- type: size of the connector, should be specified in case of USB-A, USB-B
-> +  non-fullsize connectors: "mini", "micro".
-
-type is misleading. Type is usually A/B/C. It should be size here instead.
-
-size: size of the connector if not standard size. "mini", "micro"
-
-If not specified it is treated as standard sized connector.
-e.g. for Type-C there is no mini/micro. so size doesn't have to be specificed
-
-What about Type-C connector?
-> +
-> +Required nodes:
-> +- any data bus to the connector should be modeled using the OF graph bindings
-
-s/modeled/modelled
-
-> +  specified in bindings/graph.txt, unless the bus is between parent node and
-> +  the connector. Since single connector can have multpile data buses every bus
-
-s/multpile/multiple
-
-> +  has assigned OF graph port number as follows:
-> +    0: High Speed (HS), present in all connectors,
-> +    1: Super Speed (SS), present in SS capable connectors,
-> +    2: Sideband use (SBU), present in USB-C.
-> +
-> +Examples
-> +--------
-> +
-> +1. Micro-USB connector with HS lines routed via controller (MUIC):
-> +
-> +muic-max77843@66 {
-> +	...
-> +	usb_con: connector {
-> +		compatible = "usb-b-connector";
-> +		label = "micro-USB";
-> +		type = "micro";
-> +	};
-> +};
-> +
-> +2. USB-C connector attached to CC controller (s2mm005), HS lines routed
-> +to companion PMIC (max77865), SS lines to USB3 PHY and SBU to DisplayPort.
-> +DisplayPort video lines are routed to the connector via SS mux in USB3 PHY.
-> +
-> +ccic: s2mm005@33 {
-> +	...
-> +	usb_con: connector {
-> +		compatible = "usb-c-connector";
-> +		label = "USB-C";
-
-The label is not consistent with the earlier example.
-
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				usb_con_hs: endpoint {
-> +					remote-endpoint = <&max77865_usbc_hs>;
-> +				};
-> +			};
-> +			port@1 {
-> +				reg = <1>;
-> +				usb_con_ss: endpoint {
-> +					remote-endpoint = <&usbdrd_phy_ss>;
-> +				};
-> +			};
-> +			port@2 {
-> +				reg = <2>;
-> +				usb_con_sbu: endpoint {
-> +					remote-endpoint = <&dp_aux>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> 
-
--- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+T24gMDMvMDkvMjAxOCAwMzozNSBBTSwgSW5raSBEYWUgd3JvdGU6Cj4gMjAxOOuFhCAwM+yblCAw
+OOydvCAyMDoyMuyXkCBTeWx3ZXN0ZXIgTmF3cm9ja2kg7J20KOqwgCkg7JO0IOq4gDoKPj4gT24g
+MDMvMDgvMjAxOCAwOToxNSBBTSwgSW5raSBEYWUgd3JvdGU6ClsuLi5dCj4+PiBJcyB0aGVyZSBh
+IHBvc3NpYmlsaXR5IGZvciBvdGhlciBib2FyZHMgYmFzZWQgb24gRXh5bm9zNDIxMC80MjEyLzU0
+MjAvNTQzMyAKPj4+IFNvQyB0byB1c2UgdGhpcyBwcm9wZXJ0eSBsYXRlcj8KPj4KPj4gQWxsIHRo
+ZXNlIFNvQ3MgaGF2ZSB0aGUgSERNSSBJUCBibG9jayB3aGljaCBoYXMgb25lIGlucHV0IERBSSwg
+Y29ubmVjdGVkIAo+PiBpbnRlcm5hbGx5IG92ZXIgSTJTIGJ1cyB3aXRoIHRoZSBJMlMgY29udHJv
+bGxlci4KPj4KPj4gSSB0aGluayB0aGVyZSBpcyBubyBhZHZhbnRhZ2UgaW4gbGltaXRpbmcgb3Vy
+c2VsdmVzIG5vdyBvbmx5IHRvIFNvQydzIAo+PiBmb3Igd2hpY2ggd2UgY3VycmVudGx5IHJlbHkg
+b24gdGhhdCBEVCBwcm9wZXJ0eSBpbiBjdXJyZW50IGtlcm5lbCBjb2RlLCAKPj4ganVzdCB0byB1
+cGRhdGUgdGhpcyBkb2N1bWVudGF0aW9uIGxhdGVyIHdoZW4gd2UgYWN0dWFsbHkgcHV0IHRoZSBw
+cm9wZXJ0eSAKPj4gaW4gZHRzIGZpbGVzLgo+Pgo+PiBJbiBjYXNlIG9mIGV4eW5vczU0MjAgd2Ug
+YWxyZWFkeSByZXF1aXJlICNzb3VuZC1kYWktY2VsbHMgZm9yIE9kcm9pZCBhbmQKPiAKPiBNYXli
+ZSBleHlub3M1NDIyPyBPZHJvaWQgWFUzLzQgdXNlIEV4eW5vczU0MjIuCgpZZXMsIG15IG1pc3Rh
+a2UsIEV4eW5vczU0MjIgZm9yIE9kcm9pZCBhbmQgRXh5bm9zNTQyMCBmb3IgUGVhY2gtUGl0LgpJ
+dCBqdXN0IGhhcHBlbnMgd2UgdXNlICJzYW1zdW5nLGV4eW5vczU0MjAtaGRtaSIgY29tcGF0aWJs
+ZSBmb3IgdGhhdCBib3RoClNvQ3MuCiAKCj4gU2VlbXMgdGhhdCAnI3NvdW5kLWRhaS1jZWxscycg
+aXMgcmVxdWlyZWQgbWFuZGF0b3JpbHkgaW4gY2FzZSBvZiBFeHlub3M1NDIyIAo+IGJlY2F1c2Ug
+T2Ryb2lkIFhVMy80IEF1ZGlvIGRyaXZlciBjaGVja3MgdGhpcyBwcm9wZXJ0eSwgYW5kIHRoZSBk
+cml2ZXIgCj4gcmV0dXJucyBlcnJvciBpZiB0aGUgcHJvcGVydHkgZG9lc24ndCBleGlzdCBpbiBp
+dHMgZGV2aWNlIHRyZWUuCj4gQW5kIGlmIG90aGVyIFNvQ3MgLSBFeHlub3M0MjEwLzQyMTIvNTI1
+MC81NDIwLzU0MzMgLSByZXF1aXJlIHRoaXMgcHJvcGVydHkgCj4gd2l0aCBhZGRpdGlvbmFsIGRy
+aXZlciB3b3JrcyBsYXRlciB0aGVuIHRoaXMgcHJvcGVydHkgd291bGQgYWxzbyBiZSByZXF1aXJl
+ZCAKPiBtYW5kYXRvcmlseSBmb3IgdGhlbSBub3Qgb3B0aW9uYWxseS4gSW4gdGhpcyBjYXNlIHdl
+IG1heSBuZWVkIHRvIG1vZGlmeSB0aGUgCj4gZGVzY3JpcHRpb24gYWdhaW4uCj4gCj4gU28gbXkg
+b3BpbmlvbiBpcyB0byBhZGQgb25seSB0aGUgZGVzY3JpcHRpb24gcmVxdWlyZWQgbWFuZGF0b3Jp
+bHkgaWYgSSAKPiB1bmRlcnN0b29kIGNvcnJlY3RseS4KCllvdSBhcmUgcmlnaHQsIGl0IHdvdWxk
+IGJlIGJldHRlciB0byBtYWtlIHRoaXMgYSBtYW5kYXRvcnkgcHJvcGVydHksIEkgb25seQptYWRl
+IGl0IG9wdGlvbmFsIGJlY2F1c2Ugbm93IHRoaXMgcHJvcGVydHkgaXMgbWlzc2luZyBpbiBtYW55
+IGR0cyBmaWxlcy4KTGV0IG1lIHJlc2VuZCB3aXRoICNzb3VuZC1kYWktY2VsbHMgZGVzY3JpcHRp
+b24gbW92ZWQgdG8gdGhlICJSZXF1aXJlZCAKcHJvcGVydGllcyIgcGFyYWdyYXBoLgoKLS0KVGhh
+bmtzLApTeWx3ZXN0ZXIKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
