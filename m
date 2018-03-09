@@ -1,81 +1,73 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 4/4] ARM: dts: Enable HDMI audio on Snow Chromebook
-Date: Fri, 9 Mar 2018 14:01:12 +0100
-Message-ID: <CAJKOXPemC09mmjt9AKa9Qfhy14=CdUampi3=x957=NNEzq7LqQ@mail.gmail.com>
-References: <CGME20180308162609epcas1p45458c1671c38b389e047f17804690eb9@epcas1p4.samsung.com>
- <20180307172711.15697-4-s.nawrocki@samsung.com> <20180308162559.391-1-s.nawrocki@samsung.com>
+Subject: Re: [PATCH] rtc: s5m: Remove VLA usage
+Date: Fri, 9 Mar 2018 14:04:44 +0100
+Message-ID: <CAJKOXPf+4tF4oq5ePsgcpUAQS_M2Vi6b1+J-8D9CVemO-6ve5g@mail.gmail.com>
+References: <20180308172031.GA14541@embeddedgus> <CAGXu5jLjKcYOPxQOV6GO1oaLj1M_K=cFu-kHLLEzP=ZOXaAtfA@mail.gmail.com>
+ <23757731-bfa5-cb4c-ddc0-04103f9a72e0@embeddedor.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180308162559.391-1-s.nawrocki@samsung.com>
+In-Reply-To: <23757731-bfa5-cb4c-ddc0-04103f9a72e0@embeddedor.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: kgene@kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, Kernel Hardening <kernel-hardening@lists.openwall.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 5:25 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> This patch adds new cpu, codec subnodes according to the updated
-> "google,snow-audio-max98095" DT bindings and the I2S clock tree
-> configuration so sound on the HDMI interface can also be supported.
+On Thu, Mar 8, 2018 at 7:03 PM, Gustavo A. R. Silva
+<garsilva@embeddedor.com> wrote:
 >
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since v2:
->  - changed order of codec phandles in codec/cpu-dai property
->    to match the DT bindings documentation.
-> ---
->  arch/arm/boot/dts/exynos5250-snow-common.dtsi | 4 ++++
->  arch/arm/boot/dts/exynos5250-snow.dts         | 8 ++++++++
->  2 files changed, 12 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> index bdf59dd3654b..932a00cfd716 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> @@ -9,6 +9,7 @@
->  #include <dt-bindings/clock/maxim,max77686.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/input/input.h>
-> +#include <dt-bindings/sound/samsung-i2s.h>
->  #include "exynos5250.dtsi"
+> On 03/08/2018 11:58 AM, Kees Cook wrote:
+>>
+>> On Thu, Mar 8, 2018 at 9:20 AM, Gustavo A. R. Silva
+>> <gustavo@embeddedor.com> wrote:
+>>>
+>>> In preparation to enabling -Wvla, remove VLAs and replace them
+>>> with fixed-length arrays instead.
+>>>
+>>>  From a security viewpoint, the use of Variable Length Arrays can be
+>>> a vector for stack overflow attacks. Also, in general, as the code
+>>> evolves it is easy to lose track of how big a VLA can get. Thus, we
+>>> can end up having segfaults that are hard to debug.
+>>>
+>>> Also, fixed as part of the directive to remove all VLAs from
+>>> the kernel: https://lkml.org/lkml/2018/3/7/621
+>>>
+>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>> ---
+>>>   drivers/rtc/rtc-s5m.c | 15 +++++++++------
+>>>   1 file changed, 9 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+>>> index 6deae10..2b5f4f7 100644
+>>> --- a/drivers/rtc/rtc-s5m.c
+>>> +++ b/drivers/rtc/rtc-s5m.c
+>>> @@ -38,6 +38,9 @@
+>>>    */
+>>>   #define UDR_READ_RETRY_CNT     5
+>>>
+>>> +/* Maximum number of registers for setting time/alarm0/alarm1 */
+>>> +#define MAX_NUM_TIME_REGS      8
+>>
+>>
+>> I would adjust the various const struct s5m_rtc_reg_config's
+>> .regs_count to be represented by this new define, so the stack and the
+>> structures stay in sync. Something like:
+>>
+>> static const struct s5m_rtc_reg_config s2mps13_rtc_regs = {
+>>          .regs_count             = MAX_NUM_TIME_REGS - 1,
+>>
+>> ?
+>>
 >
->  / {
-> @@ -523,6 +524,9 @@
->  };
->
->  &i2s0 {
-> +       assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-> +       assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
-> +       #clock-cells = <1>;
+> Yep. I thought about that and decided to wait for some feedback first. But
+> yeah, I think is that'd be a good change.
 
-Shouldn't this be property of exynos5250.dtsi? Along with clock-output-names?
+Define and these assignments should be somehow connected with enum
+defining the offsets for data[] (from
+include/linux/mfd/samsung/rtc.h). Otherwise we define the same in two
+places. The enum could be itself (in separate patch) moved to the
+driver because it is meaningless for others.
 
-BR,
+Best regards,
 Krzysztof
-
->         status = "okay";
->  };
->
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> index 16e37c337a3f..75fdc5e6d423 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -18,6 +18,14 @@
->
->                 samsung,model = "Snow-I2S-MAX98095";
->                 samsung,audio-codec = <&max98095>;
-> +
-> +               cpu {
-> +                       sound-dai = <&i2s0 0>;
-> +               };
-> +
-> +               codec {
-> +                       sound-dai = <&max98095 0>, <&hdmi>;
-> +               };
->         };
->  };
->
-> --
-> 2.14.2
->
