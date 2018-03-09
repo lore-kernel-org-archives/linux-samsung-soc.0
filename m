@@ -1,48 +1,87 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/4] ARM: dts: exynos5250: Add #sound-dai-cells property
- to hdmi device node
-Date: Fri, 09 Mar 2018 11:40:27 +0900
-Message-ID: <5AA1F41B.5080104@samsung.com>
-References: <CGME20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56@epcas1p1.samsung.com>
-        <20180307172711.15697-1-s.nawrocki@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Fri, 9 Mar 2018 10:20:20 +0100
+Message-ID: <984d5c86-f647-5228-7494-63faf4dec3d3@samsung.com>
+References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
+ <20180227071134.28063-1-a.hajda@samsung.com>
+ <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
+ <5A9F4A7D.9020409@samsung.com> <5A9F6F29.5020501@samsung.com>
+ <b64d77c1-c80f-1bd9-a599-3027424ec667@samsung.com>
+ <5AA09753.7060308@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180307172711.15697-1-s.nawrocki@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, krzk@kernel.org
-Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5AA09753.7060308@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
-
-2018년 03월 08일 02:27에 Sylwester Nawrocki 이(가) 쓴 글:
-> This property is required for specifying link between the HDMI IP block
-> and the SoC's audio subsystem.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 56626d1a4235..71d2ede118e3 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -700,6 +700,7 @@
->  					"sclk_hdmiphy", "mout_hdmi";
->  			samsung,syscon-phandle = <&pmu_system_controller>;
->  			phy = <&hdmiphy>;
-> +			#sound-dai-cells = <0>;
-
-This patch adds this property to hdmi device node which is bound by HDMI driver of Exynos DRM. As we talked about this at other email thread, seems this property is required mandatorily for Odroid XU3/4 board which uses Exynos5422.
-There may be something I'm missing so could you let me know how this property is required?
-
-Thanks,
-Inki Dae
-
->  			status = "disabled";
->  		};
->  
-> 
+SGkgQ2hhbndvbywKCk9uIDA4LjAzLjIwMTggMDI6NTIsIENoYW53b28gQ2hvaSB3cm90ZToKPiBI
+aSBBbmRyemVqLCBBcmNoaXQsCj4KPiBPbiAyMDE464WEIDAz7JuUIDA37J28IDIwOjEzLCBBbmRy
+emVqIEhhamRhIHdyb3RlOgo+PiBIaSBDaGFud29vLCBBcmNoaXQsCj4+Cj4+IE9uIDA3LjAzLjIw
+MTggMDU6NDgsIENoYW53b28gQ2hvaSB3cm90ZToKPj4+IE9uIDIwMTjrhYQgMDPsm5QgMDfsnbwg
+MTE6MTIsIENoYW53b28gQ2hvaSB3cm90ZToKPj4+PiBIaSBSb2IgYW5kIEFuZHJ6ZWosCj4+Pj4K
+Pj4+PiBPbiAyMDE464WEIDAz7JuUIDA27J28IDIxOjUzLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+
+Pj4+PiBIaSBSb2IsIENoYW53b28sIEtyenlzenRvZiwKPj4+Pj4KPj4+Pj4KPj4+Pj4gT24gMjcu
+MDIuMjAxOCAwODoxMSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4+Pj4+IEhpLAo+Pj4+Pj4KPj4+
+Pj4+IFRoYW5rcyBmb3IgcmV2aWV3cyBvZiBwcmV2aW91cyBpdGVyYXRpb25zLgo+Pj4+Pj4KPj4+
+Pj4+IFRoaXMgcGF0Y2hzZXQgaW50cm9kdWNlcyBVU0IgcGh5c2ljYWwgY29ubmVjdG9yIGJpbmRp
+bmdzLCB0b2dldGhlciB3aXRoCj4+Pj4+PiB3b3JraW5nIGV4YW1wbGUuCj4+Pj4+PiBJIGhhdmUg
+cmVtb3ZlZCBSRkMgcHJlZml4IC0gdGhlIHBhdGNoc2V0IHNlZW1zIHRvIGJlIGhlYWRpbmcKPj4+
+Pj4+IHRvIGEgaGFwcHkgZW5kIDopCj4+Pj4+Pgo+Pj4+Pj4gdjU6IGZpeGVkIGV4dHJhIHBhcmVu
+dGhlc2lzIGluIGR0cywgcmVuYW1lZCBleHRjb24gZnVuY3Rpb24uCj4+Pj4+PiB2NDogaW1wcm92
+ZWQgYmluZGluZyBkZXNjcmlwdGlvbnMsIGFkZGVkIG1pc3NpbmcgcmVnIGluIGR0cy4KPj4+Pj4+
+IHYzOiBTZXBhcmF0ZSBiaW5kaW5nIGZvciBTYW1zdW5nIDExLXBpbiBjb25uZWN0b3IsIGFkZGVk
+IGZ1bGwtYmxvd24gVVNCLUMKPj4+Pj4+ICAgICBleGFtcGxlLgo+Pj4+Pj4gdjI6IEkgaGF2ZSBh
+ZGRyZXNzZWQgY29tbWVudHMgYnkgUm9iIGFuZCBMYXVyZW50LCB0aGFua3MgCj4+Pj4+Pgo+Pj4+
+Pj4gQ2hhbmdlcyBpbiBkYXRhaWwgYXJlIGRlc2NyaWJlZCBpbiB0aGUgcGF0Y2hlcy4KPj4+Pj4+
+Cj4+Pj4+PiBSZWdhcmRzCj4+Pj4+PiBBbmRyemVqCj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+IEFuZHJ6
+ZWogSGFqZGEgKDUpOgo+Pj4+Pj4gICBkdC1iaW5kaW5nczogYWRkIGJpbmRpbmdzIGZvciBVU0Ig
+cGh5c2ljYWwgY29ubmVjdG9yCj4+Pj4+PiAgIGR0LWJpbmRpbmdzOiBhZGQgYmluZGluZ3MgZm9y
+IFNhbXN1bmcgbWljcm8tVVNCIDExLXBpbiBjb25uZWN0b3IKPj4+Pj4+ICAgYXJtNjQ6IGR0czog
+ZXh5bm9zOiBhZGQgbWljcm8tVVNCIGNvbm5lY3RvciBub2RlIHRvIFRNMiBwbGF0Zm9ybXMKPj4+
+Pj4+ICAgYXJtNjQ6IGR0czogZXh5bm9zOiBhZGQgT0YgZ3JhcGggYmV0d2VlbiBNSEwgYW5kIFVT
+QiBjb25uZWN0b3IKPj4+Pj4+ICAgZXh0Y29uOiBhZGQgcG9zc2liaWxpdHkgdG8gZ2V0IGV4dGNv
+biBkZXZpY2UgYnkgT0Ygbm9kZQo+Pj4+Pj4KPj4+Pj4+IE1hY2llaiBQdXJza2kgKDEpOgo+Pj4+
+Pj4gICBkcm0vYnJpZGdlL3NpaTg2MjA6IHVzZSBtaWNyby1VU0IgY2FibGUgZGV0ZWN0aW9uIGxv
+Z2ljIHRvIGRldGVjdCBNSEwKPj4+Pj4gSXQgbG9va3MgbGlrZSBhbGwgcGF0Y2hlcyByZWNlaXZl
+ZCBSLUIgb3IgYWNrcyAoSSBmb3Jnb3QgYWRkIEtyenlzenRvZidzCj4+Pj4+IGFja3MgZm9yIGR0
+cyBwYXJ0KS4KPj4+Pj4gTm93IEkgaGF2ZSBhIHF1ZXN0aW9uIGhvdyB0byBtZXJnZSB0aGVtLgo+
+Pj4+PiBUaGUgb25seSBmdW5jdGlvbmFsIGRlcGVuZGVuY3kgaXMgYmV0d2VlbiBicmlkZ2UgYW5k
+IGV4dGNvbiwgYW5kIGZyb20KPj4+Pj4gdGhlIGZvcm1hbCBQb1YgYmluZGluZ3Mgc2hvdWxkIGJl
+IG1lcmdlZCAxc3QuCj4+Pj4+IEkgY2FuIG1lcmdlIGl0Ogo+Pj4+PiAxLiBBbGwgcGF0Y2hlcyB2
+aWEgZHJtLW1pc2MgdHJlZS4KPj4+Pj4gMi4gQWxsIHBhdGNoZXMgZXhjZXB0IGR0cyB2aWEgZHJt
+LW1pc2MsIGFuZCBLcnp5c3p0b2Ygd2lsbCBtZXJnZSBkdHMgdmlhCj4+Pj4+IHNhbXN1bmctc29j
+IHRyZWUuCj4+Pj4+Cj4+Pj4+IElzIGl0IE9LLCBmb3IgYWxsPyBCZXR0ZXIgaWRlYXM/Cj4+Pj4g
+S3J6eXN6dG9mIHBpY2tlZCB0aGUgZHRzIHBhdGNoZXMuIEknbGwgbWFrZSB0aGUgaW1tdXRhYmxl
+IGJyYW5jaCBiYXNlZCBvbiB2NC4xNi1yYzEKPj4+PiBhbmQgYXBwbHkgdGhlbSBleGNlcHQgZm9y
+IGR0cyBwYXRjaHMuIEFuZCBJJ2xsIHNlbmQgdGhlIGltbXV0YWJsZSBicmFuY2ggdG8gUm9iIGFu
+ZCBBbmRyemVqLgo+Pj4+Cj4+Pj4KPj4+IEkgbWFkZSB0aGUgaW1tdXRhYmxlIGJyYW5jaFsxXSBh
+cyBmb2xsb3dpbmc6IElmIHlvdSBhZ3JlZSwgSSdsbCBzZW5kIHB1bGwgcmVxdWVzdC4KPj4+IFsx
+XSBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFud29v
+L2V4dGNvbi5naXQvbG9nLz9oPWliLWV4dGNvbi1kcm0tZHQtdjQuMTcKPj4+Cj4+PiBPciB5b3Ug
+Y2FuIG1ha2UgdGhlIGltbXV0YWJsZSBicmFuY2ggYW5kIHNlbmQgcHVsbCByZXF1ZXN0IHRvIFJv
+YiBhbmQgbWUuCj4+Pgo+PiBJdCBzZWVtcyB5b3UgdG9vayB2NSBpbnN0ZWFkIG9mIHY2IHZlcnNp
+b24gb2YgZXh0Y29uIHBhdGNoLgo+IE15IG1pc3Rha2UuIEkgcGlja2VkIHY2IGFuZCBtYWRlIHRo
+ZSBuZXcgaW1tdXRhYmxlIGJyYW5jaC4KPiBBZnRlciBBcmNoaXQgY29uZmlybSBpdCwgSSdsbCBz
+ZW5kIHB1bGwgcmVxdWVzdC4KPgoKCkxldHMganVzdCBxdWV1ZSBhbGwgcGF0Y2hlcyAoZXhjZXB0
+IGR0cykgdmlhIGV4dGNvbiBicmFuY2ggKHRoYW5rcwpEYW5pZWwgZm9yIGFkdmljZSksIHdpdGhv
+dXQgbWFraW5nIGltbXV0YWJsZSBicmFuY2guCkl0IHNlZW1zIHRvIGJlIGEgc2ltcGxlc3QgYWNj
+ZXB0YWJsZSBhcHByb2FjaC4KCllvdSBjYW4gYWRkIG15IGFjayB0byBzaWk4NjIwIGJyaWRnZSBw
+YXRjaCAoYXMgYnJpZGdlIG1haW50YWluZXIpLCB0bwpmdWxmaWxsIHByb2Nlc3MgcmVxdWlyZW1l
+bnRzLgoKUmVnYXJkcwpBbmRyemVqCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
