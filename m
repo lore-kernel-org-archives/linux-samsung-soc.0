@@ -1,87 +1,48 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical
- connector
-Date: Fri, 9 Mar 2018 10:20:20 +0100
-Message-ID: <984d5c86-f647-5228-7494-63faf4dec3d3@samsung.com>
-References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
- <20180227071134.28063-1-a.hajda@samsung.com>
- <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
- <5A9F4A7D.9020409@samsung.com> <5A9F6F29.5020501@samsung.com>
- <b64d77c1-c80f-1bd9-a599-3027424ec667@samsung.com>
- <5AA09753.7060308@samsung.com>
+From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 00/27] cpufreq: Stop validating cpufreq table in drivers
+Date: Fri, 9 Mar 2018 15:30:26 +0530
+Message-ID: <20180309100026.GQ6842@vireshk-i7>
+References: <cover.1519620578.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5AA09753.7060308@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1519620578.git.viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Markus Mayer <mmayer-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Guittot <vincent.guittot-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQ2hhbndvbywKCk9uIDA4LjAzLjIwMTggMDI6NTIsIENoYW53b28gQ2hvaSB3cm90ZToKPiBI
-aSBBbmRyemVqLCBBcmNoaXQsCj4KPiBPbiAyMDE464WEIDAz7JuUIDA37J28IDIwOjEzLCBBbmRy
-emVqIEhhamRhIHdyb3RlOgo+PiBIaSBDaGFud29vLCBBcmNoaXQsCj4+Cj4+IE9uIDA3LjAzLjIw
-MTggMDU6NDgsIENoYW53b28gQ2hvaSB3cm90ZToKPj4+IE9uIDIwMTjrhYQgMDPsm5QgMDfsnbwg
-MTE6MTIsIENoYW53b28gQ2hvaSB3cm90ZToKPj4+PiBIaSBSb2IgYW5kIEFuZHJ6ZWosCj4+Pj4K
-Pj4+PiBPbiAyMDE464WEIDAz7JuUIDA27J28IDIxOjUzLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+
-Pj4+PiBIaSBSb2IsIENoYW53b28sIEtyenlzenRvZiwKPj4+Pj4KPj4+Pj4KPj4+Pj4gT24gMjcu
-MDIuMjAxOCAwODoxMSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4+Pj4+IEhpLAo+Pj4+Pj4KPj4+
-Pj4+IFRoYW5rcyBmb3IgcmV2aWV3cyBvZiBwcmV2aW91cyBpdGVyYXRpb25zLgo+Pj4+Pj4KPj4+
-Pj4+IFRoaXMgcGF0Y2hzZXQgaW50cm9kdWNlcyBVU0IgcGh5c2ljYWwgY29ubmVjdG9yIGJpbmRp
-bmdzLCB0b2dldGhlciB3aXRoCj4+Pj4+PiB3b3JraW5nIGV4YW1wbGUuCj4+Pj4+PiBJIGhhdmUg
-cmVtb3ZlZCBSRkMgcHJlZml4IC0gdGhlIHBhdGNoc2V0IHNlZW1zIHRvIGJlIGhlYWRpbmcKPj4+
-Pj4+IHRvIGEgaGFwcHkgZW5kIDopCj4+Pj4+Pgo+Pj4+Pj4gdjU6IGZpeGVkIGV4dHJhIHBhcmVu
-dGhlc2lzIGluIGR0cywgcmVuYW1lZCBleHRjb24gZnVuY3Rpb24uCj4+Pj4+PiB2NDogaW1wcm92
-ZWQgYmluZGluZyBkZXNjcmlwdGlvbnMsIGFkZGVkIG1pc3NpbmcgcmVnIGluIGR0cy4KPj4+Pj4+
-IHYzOiBTZXBhcmF0ZSBiaW5kaW5nIGZvciBTYW1zdW5nIDExLXBpbiBjb25uZWN0b3IsIGFkZGVk
-IGZ1bGwtYmxvd24gVVNCLUMKPj4+Pj4+ICAgICBleGFtcGxlLgo+Pj4+Pj4gdjI6IEkgaGF2ZSBh
-ZGRyZXNzZWQgY29tbWVudHMgYnkgUm9iIGFuZCBMYXVyZW50LCB0aGFua3MgCj4+Pj4+Pgo+Pj4+
-Pj4gQ2hhbmdlcyBpbiBkYXRhaWwgYXJlIGRlc2NyaWJlZCBpbiB0aGUgcGF0Y2hlcy4KPj4+Pj4+
-Cj4+Pj4+PiBSZWdhcmRzCj4+Pj4+PiBBbmRyemVqCj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+IEFuZHJ6
-ZWogSGFqZGEgKDUpOgo+Pj4+Pj4gICBkdC1iaW5kaW5nczogYWRkIGJpbmRpbmdzIGZvciBVU0Ig
-cGh5c2ljYWwgY29ubmVjdG9yCj4+Pj4+PiAgIGR0LWJpbmRpbmdzOiBhZGQgYmluZGluZ3MgZm9y
-IFNhbXN1bmcgbWljcm8tVVNCIDExLXBpbiBjb25uZWN0b3IKPj4+Pj4+ICAgYXJtNjQ6IGR0czog
-ZXh5bm9zOiBhZGQgbWljcm8tVVNCIGNvbm5lY3RvciBub2RlIHRvIFRNMiBwbGF0Zm9ybXMKPj4+
-Pj4+ICAgYXJtNjQ6IGR0czogZXh5bm9zOiBhZGQgT0YgZ3JhcGggYmV0d2VlbiBNSEwgYW5kIFVT
-QiBjb25uZWN0b3IKPj4+Pj4+ICAgZXh0Y29uOiBhZGQgcG9zc2liaWxpdHkgdG8gZ2V0IGV4dGNv
-biBkZXZpY2UgYnkgT0Ygbm9kZQo+Pj4+Pj4KPj4+Pj4+IE1hY2llaiBQdXJza2kgKDEpOgo+Pj4+
-Pj4gICBkcm0vYnJpZGdlL3NpaTg2MjA6IHVzZSBtaWNyby1VU0IgY2FibGUgZGV0ZWN0aW9uIGxv
-Z2ljIHRvIGRldGVjdCBNSEwKPj4+Pj4gSXQgbG9va3MgbGlrZSBhbGwgcGF0Y2hlcyByZWNlaXZl
-ZCBSLUIgb3IgYWNrcyAoSSBmb3Jnb3QgYWRkIEtyenlzenRvZidzCj4+Pj4+IGFja3MgZm9yIGR0
-cyBwYXJ0KS4KPj4+Pj4gTm93IEkgaGF2ZSBhIHF1ZXN0aW9uIGhvdyB0byBtZXJnZSB0aGVtLgo+
-Pj4+PiBUaGUgb25seSBmdW5jdGlvbmFsIGRlcGVuZGVuY3kgaXMgYmV0d2VlbiBicmlkZ2UgYW5k
-IGV4dGNvbiwgYW5kIGZyb20KPj4+Pj4gdGhlIGZvcm1hbCBQb1YgYmluZGluZ3Mgc2hvdWxkIGJl
-IG1lcmdlZCAxc3QuCj4+Pj4+IEkgY2FuIG1lcmdlIGl0Ogo+Pj4+PiAxLiBBbGwgcGF0Y2hlcyB2
-aWEgZHJtLW1pc2MgdHJlZS4KPj4+Pj4gMi4gQWxsIHBhdGNoZXMgZXhjZXB0IGR0cyB2aWEgZHJt
-LW1pc2MsIGFuZCBLcnp5c3p0b2Ygd2lsbCBtZXJnZSBkdHMgdmlhCj4+Pj4+IHNhbXN1bmctc29j
-IHRyZWUuCj4+Pj4+Cj4+Pj4+IElzIGl0IE9LLCBmb3IgYWxsPyBCZXR0ZXIgaWRlYXM/Cj4+Pj4g
-S3J6eXN6dG9mIHBpY2tlZCB0aGUgZHRzIHBhdGNoZXMuIEknbGwgbWFrZSB0aGUgaW1tdXRhYmxl
-IGJyYW5jaCBiYXNlZCBvbiB2NC4xNi1yYzEKPj4+PiBhbmQgYXBwbHkgdGhlbSBleGNlcHQgZm9y
-IGR0cyBwYXRjaHMuIEFuZCBJJ2xsIHNlbmQgdGhlIGltbXV0YWJsZSBicmFuY2ggdG8gUm9iIGFu
-ZCBBbmRyemVqLgo+Pj4+Cj4+Pj4KPj4+IEkgbWFkZSB0aGUgaW1tdXRhYmxlIGJyYW5jaFsxXSBh
-cyBmb2xsb3dpbmc6IElmIHlvdSBhZ3JlZSwgSSdsbCBzZW5kIHB1bGwgcmVxdWVzdC4KPj4+IFsx
-XSBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFud29v
-L2V4dGNvbi5naXQvbG9nLz9oPWliLWV4dGNvbi1kcm0tZHQtdjQuMTcKPj4+Cj4+PiBPciB5b3Ug
-Y2FuIG1ha2UgdGhlIGltbXV0YWJsZSBicmFuY2ggYW5kIHNlbmQgcHVsbCByZXF1ZXN0IHRvIFJv
-YiBhbmQgbWUuCj4+Pgo+PiBJdCBzZWVtcyB5b3UgdG9vayB2NSBpbnN0ZWFkIG9mIHY2IHZlcnNp
-b24gb2YgZXh0Y29uIHBhdGNoLgo+IE15IG1pc3Rha2UuIEkgcGlja2VkIHY2IGFuZCBtYWRlIHRo
-ZSBuZXcgaW1tdXRhYmxlIGJyYW5jaC4KPiBBZnRlciBBcmNoaXQgY29uZmlybSBpdCwgSSdsbCBz
-ZW5kIHB1bGwgcmVxdWVzdC4KPgoKCkxldHMganVzdCBxdWV1ZSBhbGwgcGF0Y2hlcyAoZXhjZXB0
-IGR0cykgdmlhIGV4dGNvbiBicmFuY2ggKHRoYW5rcwpEYW5pZWwgZm9yIGFkdmljZSksIHdpdGhv
-dXQgbWFraW5nIGltbXV0YWJsZSBicmFuY2guCkl0IHNlZW1zIHRvIGJlIGEgc2ltcGxlc3QgYWNj
-ZXB0YWJsZSBhcHByb2FjaC4KCllvdSBjYW4gYWRkIG15IGFjayB0byBzaWk4NjIwIGJyaWRnZSBw
-YXRjaCAoYXMgYnJpZGdlIG1haW50YWluZXIpLCB0bwpmdWxmaWxsIHByb2Nlc3MgcmVxdWlyZW1l
-bnRzLgoKUmVnYXJkcwpBbmRyemVqCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+On 26-02-18, 10:38, Viresh Kumar wrote:
+> Hi,
+> 
+> A patchset [1] sent last week already updated the cpufreq core to start
+> validating cpufreq table if the policy contains a valid
+> "policy->freq_table" pointer.
+> 
+> This series updates all such drivers to stop validating the cpufreq
+> table directly and let only the core handle it.
+> 
+> It depends on the previous series [1] and two cleanup patches [2][3] and
+> is rebased over 4.16-rc3.
+> 
+> It is already tested by the 0-day testing infrastructure and no issues
+> were reported.
+
+We will assume no objections or concerns if you (cc'd here and on the individual
+commits) don't respond and the series will then get merged into linux-next next
+week.
+
+Thanks.
+
+--
+viresh
