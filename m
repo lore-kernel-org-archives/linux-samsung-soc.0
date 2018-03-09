@@ -1,134 +1,78 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH] rtc: s5m: Remove VLA usage
-Date: Thu, 8 Mar 2018 12:03:29 -0600
-Message-ID: <23757731-bfa5-cb4c-ddc0-04103f9a72e0@embeddedor.com>
-References: <20180308172031.GA14541@embeddedgus>
- <CAGXu5jLjKcYOPxQOV6GO1oaLj1M_K=cFu-kHLLEzP=ZOXaAtfA@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] dt-bindings: exynos: Document #sound-dai-cells property
+ of the HDMI node
+Date: Fri, 09 Mar 2018 11:35:55 +0900
+Message-ID: <5AA1F30B.8010607@samsung.com>
+References: <CGME20180307171131epcas1p4687ef394d1a0a6d0eb2de2691c977c3f@epcas1p4.samsung.com>
+ <20180307171111.14551-1-s.nawrocki@samsung.com>
+ <5AA0B59F.3070402@samsung.com>
+ <3c68c3da-a0c3-4e4e-da6b-3e4b1af6d19d@samsung.com>
+ <5AA0DD39.3040108@samsung.com>
+ <9f1e8619-974d-cd07-79c3-c6d9a4dc0f97@samsung.com>
+ <5AA0F10D.9010602@samsung.com>
+ <e3e1c628-d88f-6fb4-171e-a49c7ee38135@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-hardening-return-12247-glkh-kernel-hardening=m.gmane.org@lists.openwall.com>
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-In-Reply-To: <CAGXu5jLjKcYOPxQOV6GO1oaLj1M_K=cFu-kHLLEzP=ZOXaAtfA@mail.gmail.com>
-Content-Language: en-US
-To: Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <e3e1c628-d88f-6fb4-171e-a49c7ee38135@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-On 03/08/2018 11:58 AM, Kees Cook wrote:
-> On Thu, Mar 8, 2018 at 9:20 AM, Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->> In preparation to enabling -Wvla, remove VLAs and replace them
->> with fixed-length arrays instead.
->>
->>  From a security viewpoint, the use of Variable Length Arrays can be
->> a vector for stack overflow attacks. Also, in general, as the code
->> evolves it is easy to lose track of how big a VLA can get. Thus, we
->> can end up having segfaults that are hard to debug.
->>
->> Also, fixed as part of the directive to remove all VLAs from
->> the kernel: https://lkml.org/lkml/2018/3/7/621
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>   drivers/rtc/rtc-s5m.c | 15 +++++++++------
->>   1 file changed, 9 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
->> index 6deae10..2b5f4f7 100644
->> --- a/drivers/rtc/rtc-s5m.c
->> +++ b/drivers/rtc/rtc-s5m.c
->> @@ -38,6 +38,9 @@
->>    */
->>   #define UDR_READ_RETRY_CNT     5
->>
->> +/* Maximum number of registers for setting time/alarm0/alarm1 */
->> +#define MAX_NUM_TIME_REGS      8
-> 
-> I would adjust the various const struct s5m_rtc_reg_config's
-> .regs_count to be represented by this new define, so the stack and the
-> structures stay in sync. Something like:
-> 
-> static const struct s5m_rtc_reg_config s2mps13_rtc_regs = {
->          .regs_count             = MAX_NUM_TIME_REGS - 1,
-> 
-> ?
-> 
-
-Yep. I thought about that and decided to wait for some feedback first. 
-But yeah, I think is that'd be a good change.
-
---
-Gustavo
-
-> -Kees
-> 
->> +
->>   /*
->>    * Registers used by the driver which are different between chipsets.
->>    *
->> @@ -367,7 +370,7 @@ static void s5m8763_tm_to_data(struct rtc_time *tm, u8 *data)
->>   static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
->>   {
->>          struct s5m_rtc_info *info = dev_get_drvdata(dev);
->> -       u8 data[info->regs->regs_count];
->> +       u8 data[MAX_NUM_TIME_REGS];
->>          int ret;
->>
->>          if (info->regs->read_time_udr_mask) {
->> @@ -413,7 +416,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
->>   static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
->>   {
->>          struct s5m_rtc_info *info = dev_get_drvdata(dev);
->> -       u8 data[info->regs->regs_count];
->> +       u8 data[MAX_NUM_TIME_REGS];
->>          int ret = 0;
->>
->>          switch (info->device_type) {
->> @@ -450,7 +453,7 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
->>   static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->>   {
->>          struct s5m_rtc_info *info = dev_get_drvdata(dev);
->> -       u8 data[info->regs->regs_count];
->> +       u8 data[MAX_NUM_TIME_REGS];
->>          unsigned int val;
->>          int ret, i;
->>
->> @@ -500,7 +503,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->>
->>   static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
->>   {
->> -       u8 data[info->regs->regs_count];
->> +       u8 data[MAX_NUM_TIME_REGS];
->>          int ret, i;
->>          struct rtc_time tm;
->>
->> @@ -545,7 +548,7 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
->>   static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
->>   {
->>          int ret;
->> -       u8 data[info->regs->regs_count];
->> +       u8 data[MAX_NUM_TIME_REGS];
->>          u8 alarm0_conf;
->>          struct rtc_time tm;
->>
->> @@ -598,7 +601,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
->>   static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->>   {
->>          struct s5m_rtc_info *info = dev_get_drvdata(dev);
->> -       u8 data[info->regs->regs_count];
->> +       u8 data[MAX_NUM_TIME_REGS];
->>          int ret;
->>
->>          switch (info->device_type) {
->> --
->> 2.7.4
->>
-> 
-> 
-> 
+SGkgU3lsd2VzdGVyLAoKMjAxOOuFhCAwM+yblCAwOOydvCAyMDoyMuyXkCBTeWx3ZXN0ZXIgTmF3
+cm9ja2kg7J20KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IENjOiBhbHNhLWRldmVsQGFs
+c2EtcHJvamVjdC5vcmcKPiAKPiBPbiAwMy8wOC8yMDE4IDA5OjE1IEFNLCBJbmtpIERhZSB3cm90
+ZToKPj4gQnkgdGhlIHdheSwgaXQgc2VlbXMgJ3NvdW5kLWRhaS1jZWxscycgcHJvcGVydHkgbmV2
+ZXIgYWZmZWN0IEV4eW5vczQyMTAvNDIxMj4gNTQyMC81NDMzLiBJdCBzZWVtcyB0aGF0IGV2ZW4g
+dGhyb3VnaCBBTFNBIFRNMiBhdWRpbyBkcml2ZXIodG0yX3dtNTExMC5jKSAKPj4gZXhpc3RzIHRo
+ZSBkcml2ZXIgbmV2ZXIgY2hlY2sgdGhlIHByb3BlcnR5Lgo+Pgo+PiBIb3dldmVyLCB0aGlzIHBh
+dGNoIGFkZHMgYmVsb3cgZGVzY3JpcHRpb24uCj4+Cj4+ICJPcHRpb25hbCBwcm9wZXJ0aWVzIGZv
+ciBFeHlub3MgNDIxMCwgNDIxMiwgNTQyMCBhbmQgNTQzMyIKPj4KPj4gSXMgdGhlcmUgYSBwb3Nz
+aWJpbGl0eSBmb3Igb3RoZXIgYm9hcmRzIGJhc2VkIG9uIEV4eW5vczQyMTAvNDIxMi81NDIwLzU0
+MzMgCj4+IFNvQyB0byB1c2UgdGhpcyBwcm9wZXJ0eSBsYXRlcj8KPiAKPiBBbGwgdGhlc2UgU29D
+cyBoYXZlIHRoZSBIRE1JIElQIGJsb2NrIHdoaWNoIGhhcyBvbmUgaW5wdXQgREFJLCBjb25uZWN0
+ZWQgCj4gaW50ZXJuYWxseSBvdmVyIEkyUyBidXMgd2l0aCB0aGUgSVMyIGNvbnRyb2xsZXIuCj4g
+Cj4gSSB0aGluayB0aGVyZSBpcyBubyBhZHZhbnRhZ2UgaW4gbGltaXRpbmcgb3Vyc2VsdmVzIG5v
+dyBvbmx5IHRvIFNvQydzIAo+IGZvciB3aGljaCB3ZSBjdXJyZW50bHkgcmVseSBvbiB0aGF0IERU
+IHByb3BlcnR5IGluIGN1cnJlbnQga2VybmVsIGNvZGUsIAo+IGp1c3QgdG8gdXBkYXRlIHRoaXMg
+ZG9jdW1lbnRhdGlvbiBsYXRlciB3aGVuIHdlIGFjdHVhbGx5IHB1dCB0aGUgcHJvcGVydHkgCj4g
+aW4gZHRzIGZpbGVzLgo+IAo+IEluIGNhc2Ugb2YgZXh5bm9zNTQyMCB3ZSBhbHJlYWR5IHJlcXVp
+cmUgI3NvdW5kLWRhaS1jZWxscyBmb3IgT2Ryb2lkIGFuZAoKTWF5YmUgZXh5bm9zNTQyMj8gT2Ry
+b2lkIFhVMy80IHVzZSBFeHlub3M1NDIyLgogCj4gSSBoYXZlIGFsc28gYSBwYXRjaCBmb3IgZXh5
+bm9zNTQyMC1wZWFjaC1waXQgYm9hcmQgd2hpY2ggd2lsbCBuZWVkIGl0IGFzIAo+IHdlbGwuCj4g
+Cj4gQXMgZmFyIGFzIGV4eW5vczQyMTAgYW5kIGV4eW5vczQyMTIgYXJlIGNvbmNlcm5lZCBpdCdz
+IGEgbWF0dGVyIG9mIGFkZGluZwo+IHN1cHBvcnQgZm9yIE9kcm9pZC1VMywgdGhlbiB3ZSB3aWxs
+IGFsc28gbmVlZCB0aGlzIHByb3BlcnR5IGJlY2F1c2UKPiB3ZSBhcmUgZ29pbmcgdG8gdXNlICJt
+dWx0aS1jb2RlYyIgKEhETUkgYW5kIGV4dGVybmFsIEkyUzAgcGlucyBmb3IgQ09ERUMKPiBhcmUg
+d2lyZWQgaW4gcGFyYWxsZWwpLgo+IAo+IEluIGNhc2Ugb2YgZXh5bm9zNTQzMyBpdCBqdXN0IGhh
+cHBlbnMgdGhhdCB0aGUgY29kZSBpbiBjdXJyZW50IGRyaXZlciAKPiBkb2Vzbid0IHJlcXVpcmUg
+I3NvdW5kLWRhaS1jZWxscyBwcm9wZXJ0eSAtIG9uZSBvZiB0aGUgcmVhc29ucyBJIG1hZGUgaXQK
+PiB0aGlzIHdheSB3YXMgdG8gYXZvaWQgZGVwZW5kZW5jeSBvbiBkdHMsIGJ1dCBpdCBkb2Vzbid0
+IGltcGx5IHdlIHNob3VsZCAKPiBkZXNjcmliZSB0aGUgSFcgaW4gRFQgaW5jb21wbGV0ZWx5LiBP
+bmNlIHRoZSBwcm9wZXJ0eSBpcyBpbiBkdGJzIHdlIGNhbiAKPiB1cGRhdGUgdGhlIGRyaXZlciB0
+byB1c2UgbW9yZSBnZW5lcmljIGNvZGUsIGluc3RlYWQgb2Ygb3BlbiBjb2RpbmcgdGhpbmdzLgo+
+IAoKR29vZCBpZGVhLgoKPiBBY3R1YWxseSBJIGhhdmUgZm9yZ290dGVuIHRvIGFkZCBhbHNvIGV4
+eW5vczUyNTAgdG8gdGhlIGxpc3QuCgpTZWVtcyB0aGF0ICcjc291bmQtZGFpLWNlbGxzJyBpcyBy
+ZXF1aXJlZCBtYW5kYXRvcmlseSBpbiBjYXNlIG9mIEV4eW5vczU0MjIgYmVjYXVzZSBPZHJvaWQg
+WFUzLzQgQXVkaW8gZHJpdmVyIGNoZWNrcyB0aGlzIHByb3BlcnR5LCBhbmQgdGhlIGRyaXZlciBy
+ZXR1cm5zIGVycm9yIGlmIHRoZSBwcm9wZXJ0eSBkb2Vzbid0IGV4aXN0IGluIGl0cyBkZXZpY2Ug
+dHJlZS4KQW5kIGlmIG90aGVyIFNvQ3MgLSBFeHlub3M0MjEwLzQyMTIvNTI1MC81NDIwLzU0MzMg
+LSByZXF1aXJlIHRoaXMgcHJvcGVydHkgd2l0aCBhZGRpdGlvbmFsIGRyaXZlciB3b3JrcyBsYXRl
+ciB0aGVuIHRoaXMgcHJvcGVydHkgd291bGQgYWxzbyBiZSByZXF1aXJlZCBtYW5kYXRvcmlseSBm
+b3IgdGhlbSBub3Qgb3B0aW9uYWxseS4gSW4gdGhpcyBjYXNlIHdlIG1heSBuZWVkIHRvIG1vZGlm
+eSB0aGUgZGVzY3JpcHRpb24gYWdhaW4uCgpTbyBteSBvcGluaW9uIGlzIHRvIGFkZCBvbmx5IHRo
+ZSBkZXNjcmlwdGlvbiByZXF1aXJlZCBtYW5kYXRvcmlseSBpZiBJIHVuZGVyc3Rvb2QgY29ycmVj
+dGx5LgoKVGhhbmtzLApJbmtpIERhZQoKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
