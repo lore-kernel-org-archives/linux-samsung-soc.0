@@ -1,46 +1,37 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2] dt-bindings: exynos: Document #sound-dai-cells property
- of the HDMI node
-Date: Fri, 09 Mar 2018 16:40:16 +0100
-Message-ID: <20180309154016.15562-1-s.nawrocki@samsung.com>
-References: <CGME20180309154029epcas1p280472548d1aa86daafceb405b10f1589@epcas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Subject: [PATCH v3 1/6] ARM: dts: exynos: Add #sound-dai-cells property to
+ hdmi node in exynos5250.dtsi
+Date: Fri, 09 Mar 2018 18:22:45 +0100
+Message-ID: <20180309172250.23019-1-s.nawrocki@samsung.com>
+References: <CGME20180309172349epcas2p120eb4533e672b52eb13ddba97f3e6833@epcas2p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: krzk@kernel.org
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, javierm@redhat.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlICNzb3VuZC1kYWktY2VsbHMgRFQgcHJvcGVydHkgaXMgcmVxdWlyZWQgdG8gZGVzY3JpYmUg
-bGluayBiZXR3ZWVuCnRoZSBIRE1JIElQIGJsb2NrIGFuZCB0aGUgU29DJ3MgYXVkaW8gc3Vic3lz
-dGVtLgoKU2lnbmVkLW9mZi1ieTogU3lsd2VzdGVyIE5hd3JvY2tpIDxzLm5hd3JvY2tpQHNhbXN1
-bmcuY29tPgotLS0KQ2hhbmdlcyBzaW5jZSB2MjoKIC0gdGhlIHByb3BlcnR5IGhhcyBiZWVuIG1v
-dmVkIHRvICJSZXF1aXJlZCBwcm9wZXJ0aWVzIiBwYXJhZ3JhcGgsCiAgIEkgZGlkbid0IGFkZCBS
-b2IncyBSZXZpZXdlZC1ieSBkdWUgdG8gdGhpcyBjaGFuZ2UKLS0tCiBEb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0IHwgMSArCiAx
-IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0IGIvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19oZG1p
-LnR4dAppbmRleCA4NzE1ZmYwNmM0NTcuLmVjYjI4OTlmNDQ1MSAxMDA2NDQKLS0tIGEvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19oZG1pLnR4
-dAorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3Mv
-ZXh5bm9zX2hkbWkudHh0CkBAIC0xNiw2ICsxNiw3IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6CiAt
-IGRkYzogcGhhbmRsZSB0byB0aGUgaGRtaSBkZGMgbm9kZQogLSBwaHk6IHBoYW5kbGUgdG8gdGhl
-IGhkbWkgcGh5IG5vZGUKIC0gc2Ftc3VuZyxzeXNjb24tcGhhbmRsZTogcGhhbmRsZSBmb3Igc3lz
-dGVtIGNvbnRyb2xsZXIgbm9kZSBmb3IgUE1VLgorLSAjc291bmQtZGFpLWNlbGxzOiBzaG91bGQg
-YmUgMC4KCiBSZXF1aXJlZCBwcm9wZXJ0aWVzIGZvciBFeHlub3MgNDIxMCwgNDIxMiwgNTQyMCBh
-bmQgNTQzMzoKIC0gY2xvY2tzOiBsaXN0IG9mIGNsb2NrIElEcyBmcm9tIFNvQyBjbG9jayBkcml2
-ZXIuCi0tCjIuMTQuMgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+This property is required for specifying link between the HDMI IP block
+and the SoC's audio subsystem.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes since v1:
+ - edited commit summary line.
+---
+ arch/arm/boot/dts/exynos5250.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 56626d1a4235..71d2ede118e3 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -700,6 +700,7 @@
+ 					"sclk_hdmiphy", "mout_hdmi";
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			phy = <&hdmiphy>;
++			#sound-dai-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.14.2
