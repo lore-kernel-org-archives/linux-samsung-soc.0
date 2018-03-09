@@ -1,88 +1,49 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 6/6] ARM: dts: exynos: Enable HDMI audio support on
- exynos5800-peach-pi
-Date: Fri, 09 Mar 2018 18:22:50 +0100
-Message-ID: <20180309172250.23019-6-s.nawrocki@samsung.com>
-References: <20180309172250.23019-1-s.nawrocki@samsung.com>
-        <CGME20180309172450epcas1p2b845a521afbadc81da991330bdbc588c@epcas1p2.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180309172250.23019-1-s.nawrocki@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: krzk@kernel.org
-Cc: kgene@kernel.org, devicetree@vger.kernel.org, javierm@redhat.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 1/7] ASoC: max98090: Add #sound-dai-cells
+ property documentation
+Date: Fri, 09 Mar 2018 18:48:52 +0100
+Message-ID: <20180309174858.24017-1-s.nawrocki@samsung.com>
+References: <CGME20180309174916epcas2p4e147dc398038a938b130549f47fe2b85@epcas2p4.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: broonie@kernel.org
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, javierm@redhat.com, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds new cpu, codec subnodes according to the updated
-"google,snow-audio-max98091" DT bindings and the I2S clock tree
-configuration so sound on the HDMI interface can be also supported.
+MAX98090 CODEC supports 1 input DAI, adding the #sound-dai-cells property
+helps to reference the DAI in DT in a standard way.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
-NOTE:
-I couldn't test this patch as I have no access to Peach-pi Chromebook.
-I think it shouldn't be applied unless someone actually tests it.
-
 Changes since v1:
- - edited commit summary line.
----
- arch/arm/boot/dts/exynos5800-peach-pi.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ - new patch.
 
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 0029ec27819c..0a4766e0484e 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -14,6 +14,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/clock/maxim,max77802.h>
- #include <dt-bindings/regulator/maxim,max77802.h>
-+#include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5800.dtsi"
- #include "exynos5420-cpus.dtsi"
- 
-@@ -89,6 +90,14 @@
- 		samsung,model = "Peach-Pi-I2S-MAX98091";
- 		samsung,i2s-controller = <&i2s0>;
- 		samsung,audio-codec = <&max98091>;
+ Documentation/devicetree/bindings/sound/max98090.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/sound/max98090.txt b/Documentation/devicetree/bindings/sound/max98090.txt
+index 4e3be6682c98..7e1bbd5c27fd 100644
+--- a/Documentation/devicetree/bindings/sound/max98090.txt
++++ b/Documentation/devicetree/bindings/sound/max98090.txt
+@@ -16,6 +16,8 @@ Optional properties:
+
+ - clock-names: Should be "mclk"
+
++- #sound-dai-cells : should be 0.
 +
-+		cpu {
-+			sound-dai = <&i2s0 0>;
-+		};
-+
-+		codec {
-+			sound-dai = <&max98091>, <&hdmi>;
-+		};
- 	};
- 
- 	usb300_vbus_reg: regulator-usb300 {
-@@ -145,6 +154,11 @@
- 	vdd-supply = <&ldo9_reg>;
- };
- 
-+&clock_audss {
-+	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
-+	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
-+};
-+
- &cpu0 {
- 	cpu-supply = <&buck2_reg>;
- };
-@@ -609,6 +623,7 @@
- 		pinctrl-0 = <&max98091_irq>;
- 		clocks = <&pmu_system_controller 0>;
- 		clock-names = "mclk";
-+		#sound-dai-cells = <0>;
- 	};
- 
- 	light-sensor@44 {
-@@ -661,6 +676,8 @@
- };
- 
- &i2s0 {
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
- 	status = "okay";
- };
- 
--- 
+ - maxim,dmic-freq: Frequency at which to clock DMIC
+
+ - maxim,micbias: Micbias voltage applies to the analog mic, valid voltages value are:
+--
 2.14.2
