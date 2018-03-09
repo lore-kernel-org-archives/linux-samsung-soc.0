@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 3/6] ARM: dts: exynos: Update of the max98095 node in
- exynos5250-snow.dts
-Date: Fri, 09 Mar 2018 18:22:47 +0100
-Message-ID: <20180309172250.23019-3-s.nawrocki@samsung.com>
+Subject: [PATCH v3 4/6] ARM: dts: exynos: Enable HDMI audio on Snow
+ Chromebook
+Date: Fri, 09 Mar 2018 18:22:48 +0100
+Message-ID: <20180309172250.23019-4-s.nawrocki@samsung.com>
 References: <20180309172250.23019-1-s.nawrocki@samsung.com>
-        <CGME20180309172414epcas1p36b0c39ad993afcad7f8cf8941cc6bf68@epcas1p3.samsung.com>
+        <CGME20180309172436epcas2p20e1da46084c1dcc67d6dd6cd1bf24368@epcas2p2.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20180309172250.23019-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -12,33 +12,76 @@ To: krzk@kernel.org
 Cc: kgene@kernel.org, devicetree@vger.kernel.org, javierm@redhat.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds missing clocks, clock-names properties so the CODEC can
-properly handle its master clock. Without this change sound on exynos5250-snow
-doesn't work.
-Missing #sound-dai-cells property is also added so it is possible to specify
-the DAI links properly for HDMI audio support.
+This patch adds new cpu, codec subnodes according to the updated
+"google,snow-audio-max98095" DT bindings and the I2S clock tree
+configuration so sound on the HDMI interface can also be supported.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
-Changes since v1:
+Changes since v2:
+ - i2s0/#clock-cells property moved to exynos5250.dtsi
  - edited commit summary line.
----
- arch/arm/boot/dts/exynos5250-snow.dts | 3 +++
- 1 file changed, 3 insertions(+)
 
+Changes since v1:
+ - changed order of codec in codec/cpu-dai property
+   to match the DT bindings documentation.
+---
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi | 3 +++
+ arch/arm/boot/dts/exynos5250-snow.dts         | 8 ++++++++
+ arch/arm/boot/dts/exynos5250.dtsi             | 1 +
+ 3 files changed, 12 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+index bdf59dd3654b..fd9226d3b207 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
++++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/clock/maxim,max77686.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos5250.dtsi"
+ 
+ / {
+@@ -523,6 +524,8 @@
+ };
+ 
+ &i2s0 {
++	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
++	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
+ 	status = "okay";
+ };
+ 
 diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 4827cb506fa3..16e37c337a3f 100644
+index 16e37c337a3f..75fdc5e6d423 100644
 --- a/arch/arm/boot/dts/exynos5250-snow.dts
 +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -27,6 +27,9 @@
- 		reg = <0x11>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98095_en>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "mclk";
-+		#sound-dai-cells = <1>;
+@@ -18,6 +18,14 @@
+ 
+ 		samsung,model = "Snow-I2S-MAX98095";
+ 		samsung,audio-codec = <&max98095>;
++
++		cpu {
++			sound-dai = <&i2s0 0>;
++		};
++
++		codec {
++			sound-dai = <&max98095 0>, <&hdmi>;
++		};
  	};
  };
  
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 71d2ede118e3..f6c6c94d3d7d 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -500,6 +500,7 @@
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&i2s0_bus>;
+ 			power-domains = <&pd_mau>;
++			#clock-cells = <1>;
+ 		};
+ 
+ 		i2s1: i2s@12d60000 {
 -- 
 2.14.2
