@@ -1,28 +1,34 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] rtc: s5m: Move enum from rtc.h to rtc-s5m.c
-Date: Sun, 11 Mar 2018 17:39:24 +0100
-Message-ID: <CAJKOXPdTgYRGvj99dYroY_6AvZD0KOV5yj+LUVNHWs7XUw8QsA@mail.gmail.com>
-References: <cover.1520660422.git.gustavo@embeddedor.com> <44ee5bd5053d579dc6c46b21e2ef8f6acf70e4ce.1520660422.git.gustavo@embeddedor.com>
+Subject: Re: [PATCH v3 1/6] ARM: dts: exynos: Add #sound-dai-cells property
+ to hdmi node in exynos5250.dtsi
+Date: Sun, 11 Mar 2018 18:43:17 +0100
+Message-ID: <20180311174317.5cj5dnx64aylvgn6@kozik-lap>
+References: <CGME20180309172349epcas2p120eb4533e672b52eb13ddba97f3e6833@epcas2p1.samsung.com>
+ <20180309172250.23019-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <44ee5bd5053d579dc6c46b21e2ef8f6acf70e4ce.1520660422.git.gustavo@embeddedor.com>
+Content-Disposition: inline
+In-Reply-To: <20180309172250.23019-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Lee Jones <lee.jones@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, Kernel Hardening <kernel-hardening@lists.openwall.com>, Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, javierm@redhat.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 7:27 AM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> Move this enum to rtc-s5m.c once it is meaningless to others drivers [1].
->
-> [1] https://marc.info/?l=linux-rtc&m=152060068925948&w=2
+On Fri, Mar 09, 2018 at 06:22:45PM +0100, Sylwester Nawrocki wrote:
+> This property is required for specifying link between the HDMI IP block
+> and the SoC's audio subsystem.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> Changes since v1:
+>  - edited commit summary line.
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Instead of external link (which might or might not work soon) you can
-just put "Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>".
-
-Anyway:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks, applied.
 
 Best regards,
 Krzysztof
