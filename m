@@ -1,43 +1,46 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v5 00/36] DRM Rockchip rk3399 (Kevin)
-Date: Mon, 12 Mar 2018 18:27:03 +0100
-Message-ID: <2145089.N3HHEgGPyY@diego>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 7/7] ASoC: samsung: Add HDMI audio
+ support for Chromebook Snow
+Date: Mon, 12 Mar 2018 19:04:10 +0100
+Message-ID: <20180312180410.ehbbrdu4gvkgx4zi@kozik-lap>
+References: <CGME20180309175019epcas2p34a7fd706117cb18d31109dbc9c8cf60b@epcas2p3.samsung.com>
+ <20180309174858.24017-1-s.nawrocki@samsung.com>
+ <20180309174858.24017-7-s.nawrocki@samsung.com>
+ <CAJKOXPddtARqmHAfYYp80pfnz8t_2ctT5bnf89bQw95LDUKQOw@mail.gmail.com>
+ <a9f9a02c-128c-0414-cd90-6ecaf731cb8d@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180309222327.18689-1-enric.balletbo@collabora.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, thierry.reding@gmail.com, Laurent.pinchart@ideasonboard.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, linux-kernel@vger.kernel.org, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, tfiga@chromium.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <a9f9a02c-128c-0414-cd90-6ecaf731cb8d@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, broonie@kernel.org, lgirdwood@gmail.com, javierm@redhat.com, robh+dt@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QW0gRnJlaXRhZywgOS4gTcOkcnogMjAxOCwgMjM6MjI6NTEgQ0VUIHNjaHJpZWIgRW5yaWMgQmFs
-bGV0Ym8gaSBTZXJyYToKPiBIaSwKPiAKPiBUaGlzIHBhdGNoc2V0IGluY2x1ZGVzIGNsZWFudXBz
-LCBpbXByb3ZlbWVudHMsIGFuZCBidWcgZml4ZXMgZm9yCj4gUm9ja2NoaXAgRFJNIGRyaXZlciBh
-bmQgUFNSIHN1cHBvcnQuCj4gCj4gVGhpcyBuZXcgdmVyc2lvbiBpcyB0aGUgc2FtZSBhcyBiZWZv
-cmUgcmVtb3Zpbmcgc29tZSBvZiB0aGUgcGF0Y2hlcwo+IGFscmVhZHkgYXBwbGllZCBhbmQgZml4
-aW5nIHRoZSBFeHlub3MgaXNzdWUgZHVlIHBhdGNoICdbdjQgMTUvMzhdCj4gZHJtL2JyaWRnZTog
-YW5hbG9naXhfZHA6IEVuc3VyZSBlZHAgaXMgZGlzYWJsZWQgd2hlbiBzaHV0dGluZyBkb3duCj4g
-dGhlIHBhbmVsJyByZXBvcnRlZCBieSBNYXJlay4KClRoZSBzZXJpZXMgb24gYm90aCByazMyODgg
-KHdpdGhvdXQgcHNyKSBhbmQgcmszMzk5ICh3aXRoIHBzcikKVGVzdGVkLWJ5OiBIZWlrbyBTdHVl
-Ym5lciA8aGVpa29Ac250ZWNoLmRlPgoKCkkndmUgdHJpZWQgcmV2aWV3aW5nIGF0IGxlYXN0IHRo
-ZSBSb2NrY2hpcCBwYXJ0cywgc28gaWYgIGJyaWRnZS0KbWFpbnRhaW5lcnMgYXJlIGdvaW5nIHRv
-IGFwcGx5IHBhdGNoZXMgdG8gZHJtLW1pc2MgdGhleSBjb3VsZApwaWNrIHVwIHRoZSBpbnRlcmxp
-bmtlZCBSb2NrY2hpcCBwYXRjaGVzIGFzIHdlbGwuCgpJIGRvbid0IHRoaW5rIGl0J3MgbmVjZXNz
-YXJ5IHRvIHdhaXQgZm9yIHRoZSBmdWxsIHNlcmllcyB0byBiZSBtZXJnZWFibGUKYW5kIGJlZm9y
-ZSBJIGp1c3QgcGlja2VkIHRoaW5ncyBmcm9tIHRoZSBiZWdpbm5pbmcgdGhhdCBsb29rZWQgcmVh
-ZHkKYW5kIHdvcmtlZCwgc28gSSBndWVzcyBjb250aW51aW5nIHRoaXMgd2F5IGNvdWxkIGhlbHAg
-bWFraW5nIHRoYXQKY2h1bmsgb2YgcGF0Y2hlcyBzbWFsbGVyIDotKSAuCgoKSGVpa28KX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Mon, Mar 12, 2018 at 05:21:03PM +0100, Sylwester Nawrocki wrote:
+> On 03/12/2018 08:39 AM, Krzysztof Kozlowski wrote:
+> >> -#define FIN_PLL_RATE           24000000
+> >> +#define FIN_PLL_RATE           24000000UL
+> >
+> > This change looks unrelated so how about making it separate patch?
+> 
+> I knew you will find this! ;P I don't want to be making this kind
+> of funny patches :), I can repost v3 in a few days with this bit removed.
+
+Ah, you know, after working with crappy code and crappy history, I find
+very useful to have strict approach around changes.  This one might be
+harmless... or you might be fixing some warning caught by your
+compiler thus it looks like nice candidate for seaprate patch.
+
+Best regards,
+Krzysztof
