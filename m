@@ -1,144 +1,130 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v5 1/6] dt-bindings: add bindings for USB physical
  connector
-Date: Mon, 12 Mar 2018 10:29:49 +0900
-Message-ID: <5AA5D80D.3050104@samsung.com>
-References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
-        <20180227071134.28063-1-a.hajda@samsung.com>
-        <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
-        <5A9F4A7D.9020409@samsung.com> <5A9F6F29.5020501@samsung.com>
-        <b64d77c1-c80f-1bd9-a599-3027424ec667@samsung.com>
-        <5AA09753.7060308@samsung.com>
-        <984d5c86-f647-5228-7494-63faf4dec3d3@samsung.com>
+Date: Mon, 12 Mar 2018 08:02:54 +0100
+Message-ID: <b588527d-2ca2-9e88-9e27-e09e5b52f8d6@samsung.com>
+References: <20180227071134.28063-1-a.hajda@samsung.com>
+ <CGME20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f@eucas1p1.samsung.com>
+ <20180227071134.28063-2-a.hajda@samsung.com>
+ <ed0ce43c-3c81-b027-2eb1-30e49156c3ac@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <984d5c86-f647-5228-7494-63faf4dec3d3@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, Sean Paul <seanpaul@chromium.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <ed0ce43c-3c81-b027-2eb1-30e49156c3ac@ti.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Roger Quadros <rogerq@ti.com>, "open list:OPEN FIRMWARE AND FLATTENED
+ DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej and Rob,
-
-On 2018년 03월 09일 18:20, Andrzej Hajda wrote:
-> Hi Chanwoo,
-> 
-> On 08.03.2018 02:52, Chanwoo Choi wrote:
->> Hi Andrzej, Archit,
->>
->> On 2018년 03월 07일 20:13, Andrzej Hajda wrote:
->>> Hi Chanwoo, Archit,
->>>
->>> On 07.03.2018 05:48, Chanwoo Choi wrote:
->>>> On 2018년 03월 07일 11:12, Chanwoo Choi wrote:
->>>>> Hi Rob and Andrzej,
->>>>>
->>>>> On 2018년 03월 06일 21:53, Andrzej Hajda wrote:
->>>>>> Hi Rob, Chanwoo, Krzysztof,
->>>>>>
->>>>>>
->>>>>> On 27.02.2018 08:11, Andrzej Hajda wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> Thanks for reviews of previous iterations.
->>>>>>>
->>>>>>> This patchset introduces USB physical connector bindings, together with
->>>>>>> working example.
->>>>>>> I have removed RFC prefix - the patchset seems to be heading
->>>>>>> to a happy end :)
->>>>>>>
->>>>>>> v5: fixed extra parenthesis in dts, renamed extcon function.
->>>>>>> v4: improved binding descriptions, added missing reg in dts.
->>>>>>> v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
->>>>>>>     example.
->>>>>>> v2: I have addressed comments by Rob and Laurent, thanks 
->>>>>>>
->>>>>>> Changes in datail are described in the patches.
->>>>>>>
->>>>>>> Regards
->>>>>>> Andrzej
->>>>>>>
->>>>>>>
->>>>>>> Andrzej Hajda (5):
->>>>>>>   dt-bindings: add bindings for USB physical connector
->>>>>>>   dt-bindings: add bindings for Samsung micro-USB 11-pin connector
->>>>>>>   arm64: dts: exynos: add micro-USB connector node to TM2 platforms
->>>>>>>   arm64: dts: exynos: add OF graph between MHL and USB connector
->>>>>>>   extcon: add possibility to get extcon device by OF node
->>>>>>>
->>>>>>> Maciej Purski (1):
->>>>>>>   drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
->>>>>> It looks like all patches received R-B or acks (I forgot add Krzysztof's
->>>>>> acks for dts part).
->>>>>> Now I have a question how to merge them.
->>>>>> The only functional dependency is between bridge and extcon, and from
->>>>>> the formal PoV bindings should be merged 1st.
->>>>>> I can merge it:
->>>>>> 1. All patches via drm-misc tree.
->>>>>> 2. All patches except dts via drm-misc, and Krzysztof will merge dts via
->>>>>> samsung-soc tree.
->>>>>>
->>>>>> Is it OK, for all? Better ideas?
->>>>> Krzysztof picked the dts patches. I'll make the immutable branch based on v4.16-rc1
->>>>> and apply them except for dts patchs. And I'll send the immutable branch to Rob and Andrzej.
->>>>>
->>>>>
->>>> I made the immutable branch[1] as following: If you agree, I'll send pull request.
->>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git/log/?h=ib-extcon-drm-dt-v4.17
->>>>
->>>> Or you can make the immutable branch and send pull request to Rob and me.
->>>>
->>> It seems you took v5 instead of v6 version of extcon patch.
->> My mistake. I picked v6 and made the new immutable branch.
->> After Archit confirm it, I'll send pull request.
->>
-> 
-> 
-> Lets just queue all patches (except dts) via extcon branch (thanks
-> Daniel for advice), without making immutable branch.
-> It seems to be a simplest acceptable approach.
-> 
-> You can add my ack to sii8620 bridge patch (as bridge maintainer), to
-> fulfill process requirements.
-
-I added your ack to sii8620 bridge patch and
-send pull request for extcon, drm bridge and device-tree.
-
------------------------
-
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git ib-extcon-drm-dt-v4.17
-
-for you to fetch changes up to 688838442147d9dd94c2ef7c2c31a35cf150c5fa:
-
-  drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL (2018-03-12 10:18:26 +0900)
-
-----------------------------------------------------------------
-Andrzej Hajda (3):
-      dt-bindings: add bindings for USB physical connector
-      dt-bindings: add bindings for Samsung micro-USB 11-pin connector
-      extcon: add possibility to get extcon device by OF node
-
-Maciej Purski (1):
-      drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
-
- .../connector/samsung,usb-connector-11pin.txt      | 49 +++++++++++
- .../bindings/connector/usb-connector.txt           | 75 +++++++++++++++++
- drivers/extcon/extcon.c                            | 44 +++++++---
- drivers/gpu/drm/bridge/sil-sii8620.c               | 97 +++++++++++++++++++++-
- include/linux/extcon.h                             |  6 ++
- 5 files changed, 258 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
- create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+T24gMDkuMDMuMjAxOCAxMToyNCwgUm9nZXIgUXVhZHJvcyB3cm90ZToKPiBIaSwKPgo+IE9uIDI3
+LzAyLzE4IDA5OjExLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+PiBUaGVzZSBiaW5kaW5ncyBhbGxv
+dyB0byBkZXNjcmliZSBtb3N0IGtub3duIHN0YW5kYXJkIFVTQiBjb25uZWN0b3JzCj4+IGFuZCBp
+dCBzaG91bGQgYmUgcG9zc2libGUgdG8gZXh0ZW5kIGl0IGlmIG5lY2Vzc2FyeS4KPj4gVVNCIGNv
+bm5lY3RvcnMsIGJlc2lkZSBVU0IgY2FuIGJlIHVzZWQgdG8gcm91dGUgb3RoZXIgcHJvdG9jb2xz
+LAo+PiBmb3IgZXhhbXBsZSBVQVJULCBBdWRpbywgTUhMLiBJbiBzdWNoIGNhc2UgZXZlcnkgZGV2
+aWNlIHBhc3NpbmcgZGF0YQo+PiB0aHJvdWdoIHRoZSBjb25uZWN0b3Igc2hvdWxkIGhhdmUgYXBw
+cm9wcmlhdGUgZ3JhcGggYmluZGluZ3MuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFq
+ZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiB2NDoKPj4gLSBpbXByb3ZlZCAndHlw
+ZScgZGVzY3JpcHRpb24gKFJvYiksCj4+IC0gaW1wcm92ZWQgZGVzY3JpcHRpb24gb2YgMm5kIGV4
+YW1wbGUgKFJvYikuCj4+IHYzOgo+PiAtIHJlbW92ZWQgTUhMIHBvcnQgKHNhbXN1bmcgY29ubmVj
+dG9yIHdpbGwgaGF2ZSBzZXBhcmF0ZSBiaW5kaW5ncyksCj4+IC0gYWRkZWQgMm5kIGV4YW1wbGUg
+Zm9yIFVTQi1DLAo+PiAtIGltcHJvdmVkIGZvcm1hdHRpbmcuCj4+IHYyOgo+PiAtIG1vdmVkIGNv
+bm5lY3RvciB0eXBlKEEsQixDKSB0byBjb21wYXRpYmxlIHN0cmluZyAoUm9iKSwKPj4gLSByZW5h
+bWVkIHNpemUgcHJvcGVydHkgdG8gdHlwZSAoUm9iKSwKPj4gLSBjaGFuZ2VkIHR5cGUgZGVzY3Jp
+cHRpb24gdG8gYmUgbGVzcyBjb25mdXNpbmcgKExhdXJlbnQpLAo+PiAtIHJlbW92ZWQgdmVuZG9y
+IHNwZWNpZmljIGNvbXBhdGlibGVzIChpbXBsaWVkIGJ5IGdyYXBoIHBvcnQgbnVtYmVyKSwKPj4g
+LSBhZGRlZCByZXF1aXJlbWVudCBvZiBjb25uZWN0b3IgYmVpbmcgYSBjaGlsZCBvZiBJQyAoUm9i
+KSwKPj4gLSByZW1vdmVkIG1heC1tb2RlIChzdWJ0bHkgc3VnZ2VzdGVkIGJ5IFJvYiwgaXQgc2hv
+dWxkIGJlIGRldGVjdGVkIGFueXdheQo+PiAgIGJ5IFVTQiBDb250cm9sbGVyIGluIHJ1bnRpbWUs
+IGRvd25zaWRlIGlzIHRoYXQgZGV2aWNlIGlzIG5vdCBhYmxlIHRvCj4+ICAgcmVwb3J0IGl0cyBy
+ZWFsIGNhcGFiaWxpdGllcywgbWF5YmUgYmV0dGVyIHdvdWxkIGJlIHRvIG1ha2UgaXQgb3B0aW9u
+YWwoPykpLAo+PiAtIGFzc2lnbmVkIHBvcnQgbnVtYmVycyB0byBkYXRhIGJ1c2VzIChSb2IpLgo+
+Pgo+PiBSZWdhcmRzCj4+IEFuZHJ6ZWoKPj4gLS0tCj4+ICAuLi4vYmluZGluZ3MvY29ubmVjdG9y
+L3VzYi1jb25uZWN0b3IudHh0ICAgICAgICAgICB8IDc1ICsrKysrKysrKysrKysrKysrKysrKysK
+Pj4gIDEgZmlsZSBjaGFuZ2VkLCA3NSBpbnNlcnRpb25zKCspCj4+ICBjcmVhdGUgbW9kZSAxMDA2
+NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nvbm5lY3Rvci91c2ItY29ubmVj
+dG9yLnR4dAo+Pgo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2Nvbm5lY3Rvci91c2ItY29ubmVjdG9yLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci50eHQKPj4gbmV3IGZpbGUgbW9kZSAx
+MDA2NDQKPj4gaW5kZXggMDAwMDAwMDAwMDAwLi5lMTQ2M2YxNGFmMzgKPj4gLS0tIC9kZXYvbnVs
+bAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY29ubmVjdG9yL3Vz
+Yi1jb25uZWN0b3IudHh0Cj4+IEBAIC0wLDAgKzEsNzUgQEAKPj4gK1VTQiBDb25uZWN0b3IKPj4g
+Kz09PT09PT09PT09PT0KPj4gKwo+PiArVVNCIGNvbm5lY3RvciBub2RlIHJlcHJlc2VudHMgcGh5
+c2ljYWwgVVNCIGNvbm5lY3Rvci4gSXQgc2hvdWxkIGJlCj4+ICthIGNoaWxkIG9mIFVTQiBpbnRl
+cmZhY2UgY29udHJvbGxlci4KPj4gKwo+PiArUmVxdWlyZWQgcHJvcGVydGllczoKPj4gKy0gY29t
+cGF0aWJsZTogZGVzY3JpYmVzIHR5cGUgb2YgdGhlIGNvbm5lY3RvciwgbXVzdCBiZSBvbmUgb2Y6
+Cj4+ICsgICAgInVzYi1hLWNvbm5lY3RvciIsCj4+ICsgICAgInVzYi1iLWNvbm5lY3RvciIsCj4+
+ICsgICAgInVzYi1jLWNvbm5lY3RvciIuCj4gY29tcGF0aWJsZSBzaG91bGQgYmUganVzdCAidXNi
+LWNvbm5lY3RvciIKPgo+IFR5cGUgc2hvdWxkIGJlIGEgcHJvcGVydHkKPgo+IHR5cGU6IHR5cGUg
+b2YgdXNiIGNvbm5lY3RvciAiQSIsICJCIiwgIkFCIiwgIkMiCj4gQUIgaXMgZm9yIGR1YWwtcm9s
+ZSBjb25uZWN0b3JzLgoKSSBoYXZlIHByb3Bvc2VkIHN1Y2ggcHJvcGVydHkgKGFuZCBzaXplIGFs
+c28pIGluIG15IGZpcnN0IFJGQyBbMV0uIFJvZApkaWQgbm90IGxpa2UgaXQgOikKClsxXTogaHR0
+cHM6Ly9tYXJjLmluZm8vP2w9ZGV2aWNldHJlZSZtPTE1MDY2MDQxMTUxNTIzMyZ3PTIKCgo+Cj4g
+bWljcm8gc3VwZXItc3BlZWQgYW5kIGhpZ2gtc3BlZWQgY29ubmVjdG9ycyBhcmUgZGlmZmVyZW50
+LiBIb3cgZG8geW91IGRpZmZlcmVudGlhdGUgdGhhdD8KCkkgYW0gYXdhcmUgb2YgaXQsIGFuZCBw
+cm9wZXJ0eSBkaWZmZXJlbnRpYXRpbmcgaXQgd2FzIGFsc28gaW4gbXkgZWFybGllcgppdGVyYXRp
+b25zLgpJZiB0aGVyZSB3aWxsIGJlIG5lZWQgdG8gZGlmZmVyZW50aWF0ZSBzdWNoIGNvbm5lY3Rv
+cnMsIGFkZGluZyBwcm9wZXJ0eQptYXgtc3BlZWQgb3IgbWF4LW1vZGUgd291bGQgZG8gdGhlIHRo
+aW5nLgoKPgo+PiArCj4+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOgo+PiArLSBsYWJlbDogc3ltYm9s
+aWMgbmFtZSBmb3IgdGhlIGNvbm5lY3RvciwKPiBXaHkgZG8geW91IG5lZWQgbGFiZWw/IFdlIGNh
+bid0IG1haW50YWluIGNvbnNpc3RlbmN5IGFzIHBlb3BsZSB3aWxsIHB1dCBjcmVhdGl2ZSBuYW1l
+cyB0aGVyZS4KPiBEZXZpY2UvYnVzIGRyaXZlciBjb3VsZCBnZW5lcmF0ZSBhIHZhbGlkIGxhYmVs
+LgoKSXQgZm9sbG93cyBjb252ZW50aW9uIGZvciBvdGhlciBjb25uZWN0b3JzOiBIRE1JLCBEVkks
+IC4uLi4KCj4KPj4gKy0gdHlwZTogc2l6ZSBvZiB0aGUgY29ubmVjdG9yLCBzaG91bGQgYmUgc3Bl
+Y2lmaWVkIGluIGNhc2Ugb2YgVVNCLUEsIFVTQi1CCj4+ICsgIG5vbi1mdWxsc2l6ZSBjb25uZWN0
+b3JzOiAibWluaSIsICJtaWNybyIuCj4gdHlwZSBpcyBtaXNsZWFkaW5nLiBUeXBlIGlzIHVzdWFs
+bHkgQS9CL0MuIEl0IHNob3VsZCBiZSBzaXplIGhlcmUgaW5zdGVhZC4KCkFzIHlvdSBjYW4gc2Vl
+IGluIGRpc2N1c3Npb24gZm9yIHByZXZpb3VzIGl0ZXJhdGlvbnMgaXQgZm9sbG93cwpjb252ZW50
+aW9uIGFscmVhZHkgZXN0YWJsaXNoZWQgZm9yIG90aGVyIGNvbm5lY3RvcnMuCgo+Cj4gc2l6ZTog
+c2l6ZSBvZiB0aGUgY29ubmVjdG9yIGlmIG5vdCBzdGFuZGFyZCBzaXplLiAibWluaSIsICJtaWNy
+byIKPgo+IElmIG5vdCBzcGVjaWZpZWQgaXQgaXMgdHJlYXRlZCBhcyBzdGFuZGFyZCBzaXplZCBj
+b25uZWN0b3IuCj4gZS5nLiBmb3IgVHlwZS1DIHRoZXJlIGlzIG5vIG1pbmkvbWljcm8uIHNvIHNp
+emUgZG9lc24ndCBoYXZlIHRvIGJlIHNwZWNpZmljZWQKRmV3IGxpbmVzIGFib3ZlIGl0IGlzIGRl
+c2NyaWJlZDogc2hvdWxkIGJlIHNwZWNpZmllZCBpbiBjYXNlIG9mIFVTQi1BLApVU0ItQiBub24t
+ZnVsbHNpemUgY29ubmVjdG9ycy4KCj4KPiBXaGF0IGFib3V0IFR5cGUtQyBjb25uZWN0b3I/Cj4+
+ICsKPj4gK1JlcXVpcmVkIG5vZGVzOgo+PiArLSBhbnkgZGF0YSBidXMgdG8gdGhlIGNvbm5lY3Rv
+ciBzaG91bGQgYmUgbW9kZWxlZCB1c2luZyB0aGUgT0YgZ3JhcGggYmluZGluZ3MKPiBzL21vZGVs
+ZWQvbW9kZWxsZWQKCj4+ICsgIHNwZWNpZmllZCBpbiBiaW5kaW5ncy9ncmFwaC50eHQsIHVubGVz
+cyB0aGUgYnVzIGlzIGJldHdlZW4gcGFyZW50IG5vZGUgYW5kCj4+ICsgIHRoZSBjb25uZWN0b3Iu
+IFNpbmNlIHNpbmdsZSBjb25uZWN0b3IgY2FuIGhhdmUgbXVsdHBpbGUgZGF0YSBidXNlcyBldmVy
+eSBidXMKPiBzL211bHRwaWxlL211bHRpcGxlCgpPSywgSSB3aWxsIGZpeCBib3RoIHR5cG9zLgoK
+Pgo+PiArICBoYXMgYXNzaWduZWQgT0YgZ3JhcGggcG9ydCBudW1iZXIgYXMgZm9sbG93czoKPj4g
+KyAgICAwOiBIaWdoIFNwZWVkIChIUyksIHByZXNlbnQgaW4gYWxsIGNvbm5lY3RvcnMsCj4+ICsg
+ICAgMTogU3VwZXIgU3BlZWQgKFNTKSwgcHJlc2VudCBpbiBTUyBjYXBhYmxlIGNvbm5lY3RvcnMs
+Cj4+ICsgICAgMjogU2lkZWJhbmQgdXNlIChTQlUpLCBwcmVzZW50IGluIFVTQi1DLgo+PiArCj4+
+ICtFeGFtcGxlcwo+PiArLS0tLS0tLS0KPj4gKwo+PiArMS4gTWljcm8tVVNCIGNvbm5lY3RvciB3
+aXRoIEhTIGxpbmVzIHJvdXRlZCB2aWEgY29udHJvbGxlciAoTVVJQyk6Cj4+ICsKPj4gK211aWMt
+bWF4Nzc4NDNANjYgewo+PiArCS4uLgo+PiArCXVzYl9jb246IGNvbm5lY3RvciB7Cj4+ICsJCWNv
+bXBhdGlibGUgPSAidXNiLWItY29ubmVjdG9yIjsKPj4gKwkJbGFiZWwgPSAibWljcm8tVVNCIjsK
+Pj4gKwkJdHlwZSA9ICJtaWNybyI7Cj4+ICsJfTsKPj4gK307Cj4+ICsKPj4gKzIuIFVTQi1DIGNv
+bm5lY3RvciBhdHRhY2hlZCB0byBDQyBjb250cm9sbGVyIChzMm1tMDA1KSwgSFMgbGluZXMgcm91
+dGVkCj4+ICt0byBjb21wYW5pb24gUE1JQyAobWF4Nzc4NjUpLCBTUyBsaW5lcyB0byBVU0IzIFBI
+WSBhbmQgU0JVIHRvIERpc3BsYXlQb3J0Lgo+PiArRGlzcGxheVBvcnQgdmlkZW8gbGluZXMgYXJl
+IHJvdXRlZCB0byB0aGUgY29ubmVjdG9yIHZpYSBTUyBtdXggaW4gVVNCMyBQSFkuCj4+ICsKPj4g
+K2NjaWM6IHMybW0wMDVAMzMgewo+PiArCS4uLgo+PiArCXVzYl9jb246IGNvbm5lY3RvciB7Cj4+
+ICsJCWNvbXBhdGlibGUgPSAidXNiLWMtY29ubmVjdG9yIjsKPj4gKwkJbGFiZWwgPSAiVVNCLUMi
+Owo+IFRoZSBsYWJlbCBpcyBub3QgY29uc2lzdGVudCB3aXRoIHRoZSBlYXJsaWVyIGV4YW1wbGUu
+CgpXaHk/CgpSZWdhcmRzCkFuZHJ6ZWoKCj4KPj4gKwo+PiArCQlwb3J0cyB7Cj4+ICsJCQkjYWRk
+cmVzcy1jZWxscyA9IDwxPjsKPj4gKwkJCSNzaXplLWNlbGxzID0gPDA+Owo+PiArCj4+ICsJCQlw
+b3J0QDAgewo+PiArCQkJCXJlZyA9IDwwPjsKPj4gKwkJCQl1c2JfY29uX2hzOiBlbmRwb2ludCB7
+Cj4+ICsJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmbWF4Nzc4NjVfdXNiY19ocz47Cj4+ICsJCQkJ
+fTsKPj4gKwkJCX07Cj4+ICsJCQlwb3J0QDEgewo+PiArCQkJCXJlZyA9IDwxPjsKPj4gKwkJCQl1
+c2JfY29uX3NzOiBlbmRwb2ludCB7Cj4+ICsJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmdXNiZHJk
+X3BoeV9zcz47Cj4+ICsJCQkJfTsKPj4gKwkJCX07Cj4+ICsJCQlwb3J0QDIgewo+PiArCQkJCXJl
+ZyA9IDwyPjsKPj4gKwkJCQl1c2JfY29uX3NidTogZW5kcG9pbnQgewo+PiArCQkJCQlyZW1vdGUt
+ZW5kcG9pbnQgPSA8JmRwX2F1eD47Cj4+ICsJCQkJfTsKPj4gKwkJCX07Cj4+ICsJCX07Cj4+ICsJ
+fTsKPj4gK307Cj4+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
