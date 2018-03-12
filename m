@@ -1,41 +1,144 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2] dt-bindings: exynos: Document #sound-dai-cells
- property of the HDMI node
-Date: Mon, 12 Mar 2018 10:23:29 +0900
-Message-ID: <5AA5D691.2070007@samsung.com>
-References: <CGME20180309154029epcas1p280472548d1aa86daafceb405b10f1589@epcas1p2.samsung.com>
- <20180309154016.15562-1-s.nawrocki@samsung.com>
- <20180309230225.i2ytunejt2sotsrc@rob-hp-laptop>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Mon, 12 Mar 2018 10:29:49 +0900
+Message-ID: <5AA5D80D.3050104@samsung.com>
+References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
+        <20180227071134.28063-1-a.hajda@samsung.com>
+        <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
+        <5A9F4A7D.9020409@samsung.com> <5A9F6F29.5020501@samsung.com>
+        <b64d77c1-c80f-1bd9-a599-3027424ec667@samsung.com>
+        <5AA09753.7060308@samsung.com>
+        <984d5c86-f647-5228-7494-63faf4dec3d3@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20180309230225.i2ytunejt2sotsrc@rob-hp-laptop>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Herring <robh@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <984d5c86-f647-5228-7494-63faf4dec3d3@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, Sean Paul <seanpaul@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE464WEIDAz7JuUIDEw7J28IDA4OjAy7JeQIFJvYiBIZXJyaW5nIOydtCjqsIApIOyTtCDq
-uIA6Cj4gT24gRnJpLCBNYXIgMDksIDIwMTggYXQgMDQ6NDA6MTZQTSArMDEwMCwgU3lsd2VzdGVy
-IE5hd3JvY2tpIHdyb3RlOgo+PiBUaGUgI3NvdW5kLWRhaS1jZWxscyBEVCBwcm9wZXJ0eSBpcyBy
-ZXF1aXJlZCB0byBkZXNjcmliZSBsaW5rIGJldHdlZW4KPj4gdGhlIEhETUkgSVAgYmxvY2sgYW5k
-IHRoZSBTb0MncyBhdWRpbyBzdWJzeXN0ZW0uCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IFN5bHdlc3Rl
-ciBOYXdyb2NraSA8cy5uYXdyb2NraUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+IENoYW5nZXMgc2lu
-Y2UgdjI6Cj4+ICAtIHRoZSBwcm9wZXJ0eSBoYXMgYmVlbiBtb3ZlZCB0byAiUmVxdWlyZWQgcHJv
-cGVydGllcyIgcGFyYWdyYXBoLAo+PiAgICBJIGRpZG4ndCBhZGQgUm9iJ3MgUmV2aWV3ZWQtYnkg
-ZHVlIHRvIHRoaXMgY2hhbmdlCj4+IC0tLQo+PiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19oZG1pLnR4dCB8IDEgKwo+PiAgMSBmaWxlIGNo
-YW5nZWQsIDEgaW5zZXJ0aW9uKCspCj4gCj4gUmV2aWV3ZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2Jo
-QGtlcm5lbC5vcmc+CgpBcHBsaWVkLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiAKPiAKPiAKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Andrzej and Rob,
+
+On 2018년 03월 09일 18:20, Andrzej Hajda wrote:
+> Hi Chanwoo,
+> 
+> On 08.03.2018 02:52, Chanwoo Choi wrote:
+>> Hi Andrzej, Archit,
+>>
+>> On 2018년 03월 07일 20:13, Andrzej Hajda wrote:
+>>> Hi Chanwoo, Archit,
+>>>
+>>> On 07.03.2018 05:48, Chanwoo Choi wrote:
+>>>> On 2018년 03월 07일 11:12, Chanwoo Choi wrote:
+>>>>> Hi Rob and Andrzej,
+>>>>>
+>>>>> On 2018년 03월 06일 21:53, Andrzej Hajda wrote:
+>>>>>> Hi Rob, Chanwoo, Krzysztof,
+>>>>>>
+>>>>>>
+>>>>>> On 27.02.2018 08:11, Andrzej Hajda wrote:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> Thanks for reviews of previous iterations.
+>>>>>>>
+>>>>>>> This patchset introduces USB physical connector bindings, together with
+>>>>>>> working example.
+>>>>>>> I have removed RFC prefix - the patchset seems to be heading
+>>>>>>> to a happy end :)
+>>>>>>>
+>>>>>>> v5: fixed extra parenthesis in dts, renamed extcon function.
+>>>>>>> v4: improved binding descriptions, added missing reg in dts.
+>>>>>>> v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
+>>>>>>>     example.
+>>>>>>> v2: I have addressed comments by Rob and Laurent, thanks 
+>>>>>>>
+>>>>>>> Changes in datail are described in the patches.
+>>>>>>>
+>>>>>>> Regards
+>>>>>>> Andrzej
+>>>>>>>
+>>>>>>>
+>>>>>>> Andrzej Hajda (5):
+>>>>>>>   dt-bindings: add bindings for USB physical connector
+>>>>>>>   dt-bindings: add bindings for Samsung micro-USB 11-pin connector
+>>>>>>>   arm64: dts: exynos: add micro-USB connector node to TM2 platforms
+>>>>>>>   arm64: dts: exynos: add OF graph between MHL and USB connector
+>>>>>>>   extcon: add possibility to get extcon device by OF node
+>>>>>>>
+>>>>>>> Maciej Purski (1):
+>>>>>>>   drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
+>>>>>> It looks like all patches received R-B or acks (I forgot add Krzysztof's
+>>>>>> acks for dts part).
+>>>>>> Now I have a question how to merge them.
+>>>>>> The only functional dependency is between bridge and extcon, and from
+>>>>>> the formal PoV bindings should be merged 1st.
+>>>>>> I can merge it:
+>>>>>> 1. All patches via drm-misc tree.
+>>>>>> 2. All patches except dts via drm-misc, and Krzysztof will merge dts via
+>>>>>> samsung-soc tree.
+>>>>>>
+>>>>>> Is it OK, for all? Better ideas?
+>>>>> Krzysztof picked the dts patches. I'll make the immutable branch based on v4.16-rc1
+>>>>> and apply them except for dts patchs. And I'll send the immutable branch to Rob and Andrzej.
+>>>>>
+>>>>>
+>>>> I made the immutable branch[1] as following: If you agree, I'll send pull request.
+>>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git/log/?h=ib-extcon-drm-dt-v4.17
+>>>>
+>>>> Or you can make the immutable branch and send pull request to Rob and me.
+>>>>
+>>> It seems you took v5 instead of v6 version of extcon patch.
+>> My mistake. I picked v6 and made the new immutable branch.
+>> After Archit confirm it, I'll send pull request.
+>>
+> 
+> 
+> Lets just queue all patches (except dts) via extcon branch (thanks
+> Daniel for advice), without making immutable branch.
+> It seems to be a simplest acceptable approach.
+> 
+> You can add my ack to sii8620 bridge patch (as bridge maintainer), to
+> fulfill process requirements.
+
+I added your ack to sii8620 bridge patch and
+send pull request for extcon, drm bridge and device-tree.
+
+-----------------------
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git ib-extcon-drm-dt-v4.17
+
+for you to fetch changes up to 688838442147d9dd94c2ef7c2c31a35cf150c5fa:
+
+  drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL (2018-03-12 10:18:26 +0900)
+
+----------------------------------------------------------------
+Andrzej Hajda (3):
+      dt-bindings: add bindings for USB physical connector
+      dt-bindings: add bindings for Samsung micro-USB 11-pin connector
+      extcon: add possibility to get extcon device by OF node
+
+Maciej Purski (1):
+      drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
+
+ .../connector/samsung,usb-connector-11pin.txt      | 49 +++++++++++
+ .../bindings/connector/usb-connector.txt           | 75 +++++++++++++++++
+ drivers/extcon/extcon.c                            | 44 +++++++---
+ drivers/gpu/drm/bridge/sil-sii8620.c               | 97 +++++++++++++++++++++-
+ include/linux/extcon.h                             |  6 ++
+ 5 files changed, 258 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
+ create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
