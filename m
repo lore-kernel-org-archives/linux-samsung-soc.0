@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: Drop uneeded RCLKSRC setting
-	in the Snow driver" to the asoc tree
+Subject: Applied "ASoC: samsung: i2s: Fix rclk_srcrate
+	handling" to the asoc tree
 Date: Mon, 12 Mar 2018 18:07:41 +0000 (GMT)
-Message-ID: <20180312180741.46D55440079@finisterre.ee.mobilebroadband>
-References: <20180307170417.14126-1-s.nawrocki@samsung.com>
+Message-ID: <20180312180741.D40BF44007A@finisterre.ee.mobilebroadband>
+References: <20180307170120.13943-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180307170417.14126-1-s.nawrocki@samsung.com>
+In-Reply-To: <20180307170120.13943-1-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -19,12 +19,12 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, lgirdwood@gmail.com, Krzysztof Kozlowski <krzk@kernel.org>, broonie@kernel.org, m.szyprowski@samsung.com
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: Drop uneeded RCLKSRC setting in the Snow driver
+   ASoC: samsung: i2s: Fix rclk_srcrate handling
 
 has been applied to the asoc tree at
 
@@ -49,38 +49,36 @@ to this mail.
 Thanks,
 Mark
 
->From ca7796683ff63fb1917d205d4e0173c5dadfb37d Mon Sep 17 00:00:00 2001
+>From 995e73e55f46dcfae863d72de674447008a85887 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 9 Mar 2018 18:48:57 +0100
-Subject: [PATCH] ASoC: samsung: Drop uneeded RCLKSRC setting in the Snow
- driver
+Date: Fri, 9 Mar 2018 18:48:55 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Fix rclk_srcrate handling
 
-The RCLKSRC mux input 0 is a default configuration after reset, so
-there is no need for this explicit snd_soc_dai_set_sysclk() call.
-Also, this static mux clock configuration can be specified in DT.
+As the RCLK clock may be updated through the common clk API before each
+snd_soc_dai_ops::trigger call, it is not enough to update i2s->rclk_srcrate
+only once after it has been initially set to 0. To avoid wrong PSR values
+we always get RCLK frequency from the CLK_I2S_RCLK_SRC clock, when that
+clock is available.
 
+Fixes: e1417fdf3011 "ASoC: samsung: i2s: Ensure the RCLK rate is properly determined"
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/snow.c | 5 -----
- 1 file changed, 5 deletions(-)
+ sound/soc/samsung/i2s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
-index d8ac907bbb0d..fc62110f500f 100644
---- a/sound/soc/samsung/snow.c
-+++ b/sound/soc/samsung/snow.c
-@@ -50,11 +50,6 @@ static int snow_late_probe(struct snd_soc_card *card)
- 	if (ret < 0)
- 		return ret;
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index b6407fbabdd1..f914ed45db7d 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -887,7 +887,7 @@ static int config_setup(struct i2s_dai *i2s)
+ 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
+ 		struct clk *rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
  
--	/* Select I2S Bus clock to set RCLK and BCLK */
--	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_RCLKSRC_0,
--					0, SND_SOC_CLOCK_IN);
--	if (ret < 0)
--		return ret;
+-		if (i2s->rclk_srcrate == 0 && rclksrc && !IS_ERR(rclksrc))
++		if (rclksrc && !IS_ERR(rclksrc))
+ 			i2s->rclk_srcrate = clk_get_rate(rclksrc);
  
- 	return 0;
- }
+ 		psr = i2s->rclk_srcrate / i2s->frmclk / rfs;
 -- 
 2.16.2
