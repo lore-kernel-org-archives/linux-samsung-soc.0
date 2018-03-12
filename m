@@ -1,40 +1,40 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 7/7] ASoC: samsung: Add HDMI audio
- support for Chromebook Snow
-Date: Mon, 12 Mar 2018 17:21:03 +0100
-Message-ID: <a9f9a02c-128c-0414-cd90-6ecaf731cb8d@samsung.com>
-References: <CGME20180309175019epcas2p34a7fd706117cb18d31109dbc9c8cf60b@epcas2p3.samsung.com>
- <20180309174858.24017-1-s.nawrocki@samsung.com>
- <20180309174858.24017-7-s.nawrocki@samsung.com>
- <CAJKOXPddtARqmHAfYYp80pfnz8t_2ctT5bnf89bQw95LDUKQOw@mail.gmail.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v5 02/36] drm/rockchip: Remove analogix psr worker
+Date: Mon, 12 Mar 2018 17:26:57 +0100
+Message-ID: <1801622.08tyU2oQ7V@diego>
+References: <20180309222327.18689-1-enric.balletbo@collabora.com>
+ <20180309222327.18689-3-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-reply-to: <CAJKOXPddtARqmHAfYYp80pfnz8t_2ctT5bnf89bQw95LDUKQOw@mail.gmail.com>
-Content-language: en-GB
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, broonie@kernel.org, lgirdwood@gmail.com, javierm@redhat.com, robh+dt@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180309222327.18689-3-enric.balletbo@collabora.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, thierry.reding@gmail.com, Laurent.pinchart@ideasonboard.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, linux-kernel@vger.kernel.org, jeffy.chen@rock-chips.com, =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, tfiga@chromium.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/12/2018 08:39 AM, Krzysztof Kozlowski wrote:
->> -#define FIN_PLL_RATE           24000000
->> +#define FIN_PLL_RATE           24000000UL
->
-> This change looks unrelated so how about making it separate patch?
-
-I knew you will find this! ;P I don't want to be making this kind
-of funny patches :), I can repost v3 in a few days with this bit removed.
-
--- 
-Regards,
-Sylwester
+QW0gRnJlaXRhZywgOS4gTcOkcnogMjAxOCwgMjM6MjI6NTMgQ0VUIHNjaHJpZWIgRW5yaWMgQmFs
+bGV0Ym8gaSBTZXJyYToKPiBGcm9tOiBTZWFuIFBhdWwgPHNlYW5wYXVsQGNocm9taXVtLm9yZz4K
+PiAKPiBOb3cgdGhhdCB0aGUgc3BpbmxvY2tzIGFuZCB0aW1lcnMgYXJlIGdvbmUsIHdlIGNhbiBy
+ZW1vdmUgdGhlIHBzcgo+IHdvcmtlciBsb2NhdGVkIGluIHJvY2tjaGlwJ3MgYW5hbG9naXggZHJp
+dmVyIGFuZCBkbyB0aGUgZW5hYmxlL2Rpc2FibGUKPiBkaXJlY3RseS4gVGhpcyBzaG91bGQgc2lt
+cGxpZnkgdGhlIGNvZGUgYW5kIHJlbW92ZSByYWNlcyBvbiBkaXNhYmxlLgo+IAo+IENjOiDlvoHl
+op4g546LIDx3enpAcm9jay1jaGlwcy5jb20+Cj4gQ2M6IFN0w6lwaGFuZSBNYXJjaGVzaW4gPG1h
+cmNoZXVAY2hyb21pdW0ub3JnPgo+IFNpZ25lZC1vZmYtYnk6IFNlYW4gUGF1bCA8c2VhbnBhdWxA
+Y2hyb21pdW0ub3JnPgo+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgRXNjYW5kZSA8dGhpZXJyeS5l
+c2NhbmRlQGNvbGxhYm9yYS5jb20+Cj4gU2lnbmVkLW9mZi1ieTogRW5yaWMgQmFsbGV0Ym8gaSBT
+ZXJyYSA8ZW5yaWMuYmFsbGV0Ym9AY29sbGFib3JhLmNvbT4KPiBUZXN0ZWQtYnk6IE1hcmVrIFN6
+eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KClJldmlld2VkLWJ5OiBIZWlrbyBT
+dHVlYm5lciA8aGVpa29Ac250ZWNoLmRlPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
