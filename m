@@ -1,18 +1,19 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos5420: Add more entries to EPLL rate
- table
-Date: Mon, 12 Mar 2018 11:31:23 +0100
-Message-ID: <848fd858-ab59-a54a-41dd-37ce606a52f5@samsung.com>
-References: <20180307164656.12194-1-s.nawrocki@samsung.com>
- <CGME20180307164733epcas1p3695c022315be8d2839ac9e88016e3a76@epcas1p3.samsung.com>
- <20180307164656.12194-2-s.nawrocki@samsung.com>
- <5AA097FA.5070704@samsung.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: Re: [PATCH v5 1/6] dt-bindings: add bindings for USB physical
+ connector
+Date: Mon, 12 Mar 2018 12:41:04 +0200
+Message-ID: <12da0d00-9ab3-3752-793b-e487666f35a3@ti.com>
+References: <20180227071134.28063-1-a.hajda@samsung.com>
+ <CGME20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f@eucas1p1.samsung.com>
+ <20180227071134.28063-2-a.hajda@samsung.com>
+ <ed0ce43c-3c81-b027-2eb1-30e49156c3ac@ti.com>
+ <b588527d-2ca2-9e88-9e27-e09e5b52f8d6@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <5AA097FA.5070704@samsung.com>
-Content-language: en-GB
+In-Reply-To: <b588527d-2ca2-9e88-9e27-e09e5b52f8d6@samsung.com>
+Content-Language: en-GB
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,35 +23,230 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: Andrzej Hajda <a.hajda@samsung.com>, "open list:OPEN FIRMWARE AND
+ FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Felipe Balbi <balbi@kernel.org>, Archit Taneja <architt@codeaurora.org>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDMvMDgvMjAxOCAwMjo1NSBBTSwgQ2hhbndvbyBDaG9pIHdyb3RlOgo+IE9uIDIwMTjrhYQg
-MDPsm5QgMDjsnbwgMDE6NDYsIFN5bHdlc3RlciBOYXdyb2NraSB3cm90ZToKPj4gQWRkaW5nIHRo
-ZXNlIEVQTEwgb3V0cHV0IGZyZXF1ZW5jeSBlbnRyaWVzIGFsbG93cyB0byBzdXBwb3J0IGFsbCBy
-ZXF1aXJlZAo+PiBhdWRpbyBzYW1wbGUgcmF0ZXMgb24gdGhlIENPREVDIGFuZCB0aGUgSERNSSBp
-bnRlcmZhY2Ugb24gUGVhY2gtUGl0Cj4+IENocm9tZWJvb2suCj4+Cj4+IFNpZ25lZC1vZmYtYnk6
-IFN5bHdlc3RlciBOYXdyb2NraSA8cy5uYXdyb2NraUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBk
-cml2ZXJzL2Nsay9zYW1zdW5nL2Nsay1leHlub3M1NDIwLmMgfCAzICsrKwo+PiAgMSBmaWxlIGNo
-YW5nZWQsIDMgaW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvc2Ft
-c3VuZy9jbGstZXh5bm9zNTQyMC5jIGIvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQy
-MC5jCj4+IGluZGV4IDFmMjA0YmEzN2YwZi4uZjI2MDdjYjk3YTk3IDEwMDY0NAo+PiAtLS0gYS9k
-cml2ZXJzL2Nsay9zYW1zdW5nL2Nsay1leHlub3M1NDIwLmMKPj4gKysrIGIvZHJpdmVycy9jbGsv
-c2Ftc3VuZy9jbGstZXh5bm9zNTQyMC5jCj4+IEBAIC0xMzYwLDggKzEzNjAsMTEgQEAgc3RhdGlj
-IGNvbnN0IHN0cnVjdCBzYW1zdW5nX3BsbF9yYXRlX3RhYmxlIGV4eW5vczU0MjBfZXBsbF8yNG1o
-el90YmxbXSA9IHsKPj4gIAlQTExfMzZYWF9SQVRFKDE4MDYzMzYwOVUsIDMwMSwgNSwgMywgMzY3
-MSksCj4+ICAJUExMXzM2WFhfUkFURSgxMzEwNzIwMDZVLCAxMzEsIDMsIDMsIDQ3MTkpLAo+PiAg
-CVBMTF8zNlhYX1JBVEUoMTAwMDAwMDAwVSwgMjAwLCAzLCA0LCAwKSwKPj4gKwlQTExfMzZYWF9S
-QVRFKCA3MzcyODAwMFUsIDk4LCAyLCA0LCAxOTkyMyksCj4+ICsJUExMXzM2WFhfUkFURSggNjc3
-Mzc2MDJVLCA5MCwgMiwgNCwgMjA3NjIpLAo+PiAgCVBMTF8zNlhYX1JBVEUoIDY1NTM2MDAzVSwg
-MTMxLCAzLCA0LCA0NzE5KSwKPj4gIAlQTExfMzZYWF9SQVRFKCA0OTE1MjAwMFUsIDE5NywgMywg
-NSwgLTI1NjkwKSwKPj4gKwlQTExfMzZYWF9SQVRFKCA0NTE1ODQwMVUsIDkwLCAzLCA0LCAyMDc2
-MiksCj4+ICAJUExMXzM2WFhfUkFURSggMzI3NjgwMDFVLCAxMzEsIDMsIDUsIDQ3MTkpLAo+PiAg
-fTsKPj4gIAo+Pgo+IExvb2tzIGdvb2QgdG8gbWUuCj4gQWNrZWQtYnk6IENoYW53b28gQ2hvaSA8
-Y3cwMC5jaG9pQHNhbXN1bmcuY29tPgoKVGhhbmtzIGZvciB5b3VyIHJldmlldywgcGF0Y2ggYXBw
-bGllZCB0byB0aGUgY2xrL3NhbXN1bmcgdHJlZS4KCi0tIApSZWdhcmRzLApTeWx3ZXN0ZXIKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1r
-ZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpo
-dHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJu
-ZWwK
+Andrezej,
+
+Why don't you have any of the USB maintainers in to/cc?
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:USB SUBSYSTEM)
+Felipe Balbi <balbi@kernel.org> (maintainer:USB GADGET/PERIPHERAL SUBSYSTEM)
+
+On 12/03/18 09:02, Andrzej Hajda wrote:
+> On 09.03.2018 11:24, Roger Quadros wrote:
+>> Hi,
+>>
+>> On 27/02/18 09:11, Andrzej Hajda wrote:
+>>> These bindings allow to describe most known standard USB connectors
+>>> and it should be possible to extend it if necessary.
+>>> USB connectors, beside USB can be used to route other protocols,
+>>> for example UART, Audio, MHL. In such case every device passing data
+>>> through the connector should have appropriate graph bindings.
+>>>
+>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> ---
+>>> v4:
+>>> - improved 'type' description (Rob),
+>>> - improved description of 2nd example (Rob).
+>>> v3:
+>>> - removed MHL port (samsung connector will have separate bindings),
+>>> - added 2nd example for USB-C,
+>>> - improved formatting.
+>>> v2:
+>>> - moved connector type(A,B,C) to compatible string (Rob),
+>>> - renamed size property to type (Rob),
+>>> - changed type description to be less confusing (Laurent),
+>>> - removed vendor specific compatibles (implied by graph port number),
+>>> - added requirement of connector being a child of IC (Rob),
+>>> - removed max-mode (subtly suggested by Rob, it should be detected anyway
+>>>   by USB Controller in runtime, downside is that device is not able to
+>>>   report its real capabilities, maybe better would be to make it optional(?)),
+>>> - assigned port numbers to data buses (Rob).
+>>>
+>>> Regards
+>>> Andrzej
+>>> ---
+>>>  .../bindings/connector/usb-connector.txt           | 75 ++++++++++++++++++++++
+>>>  1 file changed, 75 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
+>>> new file mode 100644
+>>> index 000000000000..e1463f14af38
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
+
+Should this lie in  bindings/usb/connector?
+
+>>> @@ -0,0 +1,75 @@
+>>> +USB Connector
+>>> +=============
+>>> +
+>>> +USB connector node represents physical USB connector. It should be
+>>> +a child of USB interface controller.
+>>> +
+>>> +Required properties:
+>>> +- compatible: describes type of the connector, must be one of:
+>>> +    "usb-a-connector",
+>>> +    "usb-b-connector",
+>>> +    "usb-c-connector".
+>> compatible should be just "usb-connector"
+>>
+>> Type should be a property
+>>
+>> type: type of usb connector "A", "B", "AB", "C"
+>> AB is for dual-role connectors.
+> 
+> I have proposed such property (and size also) in my first RFC [1]. Rod
+> did not like it :)
+> 
+> [1]: https://marc.info/?l=devicetree&m=150660411515233&w=2
+> 
+
+This is what Rob says here https://patchwork.kernel.org/patch/9976043/
+"We did "type" for hdmi-connector, but I think I'd really prefer 
+compatible be used to distinguish as least where it may matter to s/w. 
+In the HDMI case, they all are pretty much the same, just different 
+physical size."
+
+So the question is. Does it matter to this particular software implementation
+if it is type A,B,C connector?
+If yes, how?
+
+Type A will never have any alternate function. It is always dedicated to USB.
+
+Also does the size "full", "micro", "mini" matter to software?
+
+> 
+>>
+>> micro super-speed and high-speed connectors are different. How do you differentiate that?
+> 
+> I am aware of it, and property differentiating it was also in my earlier
+> iterations.
+> If there will be need to differentiate such connectors, adding property
+> max-speed or max-mode would do the thing.
+
+USB controller binding (bindings/usb/generic.txt) has the speed.
+I don't think there is any value for replicating it for the connector. Maybe it could
+be added later if needed.
+
+> 
+>>
+>>> +
+>>> +Optional properties:
+>>> +- label: symbolic name for the connector,
+>> Why do you need label? We can't maintain consistency as people will put creative names there.
+>> Device/bus driver could generate a valid label.
+> 
+> It follows convention for other connectors: HDMI, DVI, ....
+> 
+>>
+>>> +- type: size of the connector, should be specified in case of USB-A, USB-B
+>>> +  non-fullsize connectors: "mini", "micro".
+>> type is misleading. Type is usually A/B/C. It should be size here instead.
+> 
+> As you can see in discussion for previous iterations it follows
+> convention already established for other connectors.
+> 
+>>
+>> size: size of the connector if not standard size. "mini", "micro"
+>>
+>> If not specified it is treated as standard sized connector.
+>> e.g. for Type-C there is no mini/micro. so size doesn't have to be specificed
+> Few lines above it is described: should be specified in case of USB-A,
+> USB-B non-fullsize connectors.
+> 
+>>
+>> What about Type-C connector?
+>>> +
+>>> +Required nodes:
+>>> +- any data bus to the connector should be modeled using the OF graph bindings
+>> s/modeled/modelled
+> 
+>>> +  specified in bindings/graph.txt, unless the bus is between parent node and
+>>> +  the connector. Since single connector can have multpile data buses every bus
+>> s/multpile/multiple
+> 
+> OK, I will fix both typos.
+> 
+>>
+>>> +  has assigned OF graph port number as follows:
+>>> +    0: High Speed (HS), present in all connectors,
+>>> +    1: Super Speed (SS), present in SS capable connectors,
+>>> +    2: Sideband use (SBU), present in USB-C.
+>>> +
+>>> +Examples
+>>> +--------
+>>> +
+>>> +1. Micro-USB connector with HS lines routed via controller (MUIC):
+>>> +
+>>> +muic-max77843@66 {
+>>> +	...
+>>> +	usb_con: connector {
+>>> +		compatible = "usb-b-connector";
+>>> +		label = "micro-USB";
+>>> +		type = "micro";
+>>> +	};
+>>> +};
+>>> +
+>>> +2. USB-C connector attached to CC controller (s2mm005), HS lines routed
+>>> +to companion PMIC (max77865), SS lines to USB3 PHY and SBU to DisplayPort.
+>>> +DisplayPort video lines are routed to the connector via SS mux in USB3 PHY.
+>>> +
+>>> +ccic: s2mm005@33 {
+>>> +	...
+>>> +	usb_con: connector {
+>>> +		compatible = "usb-c-connector";
+>>> +		label = "USB-C";
+>> The label is not consistent with the earlier example.
+> 
+> Why?
+
+Because 1st example is "<size>-USB" and second one is "USB-<type>".
+
+How is label going to be used? Is it being presented to end user?
+If yes it should indicate what's important to the user. i.e. its function. e.g. "USB-MHL"
+or "USB-DisplayPort"
+
+> 
+> Regards
+> Andrzej
+> 
+>>
+>>> +
+>>> +		ports {
+>>> +			#address-cells = <1>;
+>>> +			#size-cells = <0>;
+>>> +
+>>> +			port@0 {
+>>> +				reg = <0>;
+>>> +				usb_con_hs: endpoint {
+>>> +					remote-endpoint = <&max77865_usbc_hs>;
+>>> +				};
+>>> +			};
+>>> +			port@1 {
+>>> +				reg = <1>;
+>>> +				usb_con_ss: endpoint {
+>>> +					remote-endpoint = <&usbdrd_phy_ss>;
+>>> +				};
+>>> +			};
+>>> +			port@2 {
+>>> +				reg = <2>;
+>>> +				usb_con_sbu: endpoint {
+>>> +					remote-endpoint = <&dp_aux>;
+>>> +				};
+>>> +			};
+>>> +		};
+>>> +	};
+>>> +};
+>>>
+> 
+
+-- 
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
