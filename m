@@ -1,16 +1,16 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 6/7] ASoC: samsung: Drop uneeded RCLKSRC
- setting in the Snow driver
-Date: Mon, 12 Mar 2018 08:35:19 +0100
-Message-ID: <CAJKOXPeckmMestwPyChw=Cjj8TLGXSuCtV47G=T-xULwv=wpig@mail.gmail.com>
-References: <CGME20180309175015epcas1p2ef43a122b650a7a420320ca619124dc6@epcas1p2.samsung.com>
+Subject: Re: [PATCH v2 7/7] ASoC: samsung: Add HDMI audio
+ support for Chromebook Snow
+Date: Mon, 12 Mar 2018 08:39:11 +0100
+Message-ID: <CAJKOXPddtARqmHAfYYp80pfnz8t_2ctT5bnf89bQw95LDUKQOw@mail.gmail.com>
+References: <CGME20180309175019epcas2p34a7fd706117cb18d31109dbc9c8cf60b@epcas2p3.samsung.com>
  <20180309174858.24017-1-s.nawrocki@samsung.com>
- <20180309174858.24017-6-s.nawrocki@samsung.com>
+ <20180309174858.24017-7-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180309174858.24017-6-s.nawrocki@samsung.com>
+In-Reply-To: <20180309174858.24017-7-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -26,18 +26,44 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 On Fri, Mar 9, 2018 at 6:48 PM, Sylwester Nawrocki
 <s.nawrocki@samsung.com> wrote:
-> The RCLKSRC mux input 0 is a default configuration after reset, so
-> there is no need for this explicit snd_soc_dai_set_sysclk() call.
-> Also, this static mux clock configuration can be specified in DT.
+> This patch updates the driver so, in addition to current DT bindings,
+> the new DT bindings with cpu, codec subnodes can be used, in order to
+> support sound on the HDMI interface.
 >
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
 > Changes since v1:
->  - none.
+>  - adjustments to changed order of codecs in codec/cpu-dai property,
+>  - fixed errors in snow_remove().
 > ---
->  sound/soc/samsung/snow.c | 5 -----
->  1 file changed, 5 deletions(-)
+>  sound/soc/samsung/snow.c | 226 +++++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 178 insertions(+), 48 deletions(-)
+>
+> diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
+> index fc62110f500f..f00ca1ca0171 100644
+> --- a/sound/soc/samsung/snow.c
+> +++ b/sound/soc/samsung/snow.c
+> @@ -11,92 +11,207 @@
+>   * General Public License for more details.
+>   */
+>
+> +#include <linux/clk.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> -
+> +#include <sound/pcm_params.h>
+>  #include <sound/soc.h>
+>
+>  #include "i2s.h"
+>
+> -#define FIN_PLL_RATE           24000000
+> +#define FIN_PLL_RATE           24000000UL
 
+This change looks unrelated so how about making it separate patch?
+
+For the rest:
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
