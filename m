@@ -1,70 +1,39 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 7/7] ASoC: samsung: Add HDMI audio
- support for Chromebook Snow
-Date: Mon, 12 Mar 2018 08:39:11 +0100
-Message-ID: <CAJKOXPddtARqmHAfYYp80pfnz8t_2ctT5bnf89bQw95LDUKQOw@mail.gmail.com>
-References: <CGME20180309175019epcas2p34a7fd706117cb18d31109dbc9c8cf60b@epcas2p3.samsung.com>
- <20180309174858.24017-1-s.nawrocki@samsung.com>
- <20180309174858.24017-7-s.nawrocki@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/2] rtc: s5m: Move enum from rtc.h to rtc-s5m.c
+Date: Mon, 12 Mar 2018 08:54:08 +0000
+Message-ID: <20180312085408.juqhh5pvgno5zag6@dell>
+References: <cover.1520660422.git.gustavo@embeddedor.com>
+ <44ee5bd5053d579dc6c46b21e2ef8f6acf70e4ce.1520660422.git.gustavo@embeddedor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180309174858.24017-7-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, lgirdwood@gmail.com, robh+dt@kernel.org, javierm@redhat.com, broonie@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <44ee5bd5053d579dc6c46b21e2ef8f6acf70e4ce.1520660422.git.gustavo@embeddedor.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, Kernel Hardening <kernel-hardening@lists.openwall.com>, Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 6:48 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> This patch updates the driver so, in addition to current DT bindings,
-> the new DT bindings with cpu, codec subnodes can be used, in order to
-> support sound on the HDMI interface.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On Sat, 10 Mar 2018, Gustavo A. R. Silva wrote:
+
+> Move this enum to rtc-s5m.c once it is meaningless to others drivers [1].
+> 
+> [1] https://marc.info/?l=linux-rtc&m=152060068925948&w=2
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
-> Changes since v1:
->  - adjustments to changed order of codecs in codec/cpu-dai property,
->  - fixed errors in snow_remove().
-> ---
->  sound/soc/samsung/snow.c | 226 +++++++++++++++++++++++++++++++++++++----------
->  1 file changed, 178 insertions(+), 48 deletions(-)
->
-> diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
-> index fc62110f500f..f00ca1ca0171 100644
-> --- a/sound/soc/samsung/snow.c
-> +++ b/sound/soc/samsung/snow.c
-> @@ -11,92 +11,207 @@
->   * General Public License for more details.
->   */
->
-> +#include <linux/clk.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> -
-> +#include <sound/pcm_params.h>
->  #include <sound/soc.h>
->
->  #include "i2s.h"
->
-> -#define FIN_PLL_RATE           24000000
-> +#define FIN_PLL_RATE           24000000UL
+>  drivers/rtc/rtc-s5m.c           | 11 +++++++++++
+>  include/linux/mfd/samsung/rtc.h | 11 -----------
 
-This change looks unrelated so how about making it separate patch?
+I don't think this will conflict with anything (unless some major
+works are carried out within the next few weeks - in which case I'll
+need a pull-request, but for now ...)
 
-For the rest:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Best regards,
-Krzysztof
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
