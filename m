@@ -1,59 +1,42 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: Re: [PATCH v5 06/36] drm/rockchip: Only wait for panel ACK on PSR
- entry
-Date: Tue, 13 Mar 2018 01:26:41 +0100
-Message-ID: <804ab508-40b8-71fa-c40b-b54f70fcc453@collabora.com>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-7-enric.balletbo@collabora.com>
- <1909495.WV5cT3kS9W@diego>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH 0/2] Remove VLA usage in rtc-s5m
+Date: Tue, 13 Mar 2018 01:35:40 +0100
+Message-ID: <20180313003540.GF3795@piout.net>
+References: <cover.1520660422.git.gustavo@embeddedor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1909495.WV5cT3kS9W@diego>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <cover.1520660422.git.gustavo@embeddedor.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-Cc: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Lee Jones <lee.jones@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, Kernel Hardening <kernel-hardening@lists.openwall.com>, Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
-
-On 12/03/18 17:58, Heiko Stübner wrote:
-> Hi,
+On 10/03/2018 at 00:27:02 -0600, Gustavo A. R. Silva wrote:
+> This patchset aims to remove VLA usage from rtc-s5m.
 > 
-> the subject is misleading I think, as this is touching only the generic
-> bridge code and not anything Rockchip-related, so should probably
-> be "drm/bridge"?
+> The first patch moves an enum from rtc.h to rtc-s5m.c, as this is the
+> only driver in which such enum is actually being used [1].
+> 
+> The second patch adds the enum name RTC_MAX_NUM_TIME_REGS, which will
+> be used as a maximum length to the current VLAs, hence turning them
+> into fixed-length arrays instead.
+> 
+> [1] https://marc.info/?l=linux-rtc&m=152060068925948&w=2
+> 
+> Thanks
+> 
+> Gustavo A. R. Silva (2):
+>   rtc: s5m: move enum from rtc.h to rtc-s5m.c
+>   rtc: s5m: Remove VLA usage
 > 
 
-Right, I'll fix this when I need to send another version, I'll wait, for now, a
-bit more for reviews on the other patches.
+Both applied, thanks.
 
-Thanks
-  Enric
-
-> Am Freitag, 9. März 2018, 23:22:57 CET schrieb Enric Balletbo i Serra:
->> From: zain wang <wzz@rock-chips.com>
->>
->> We currently wait for the panel to mirror our intended PSR state
->> before continuing on both PSR enter and PSR exit. This is really
->> only important to do when we're entering PSR, since we want to
->> be sure the last frame we pushed is being served from the panel's
->> internal fb before shutting down the soc blocks (vop/analogix).
->>
->> This patch changes the behavior such that we only wait for the
->> panel to complete the PSR transition when we're entering PSR, and
->> to skip verification when we're exiting.
->>
->> Cc: Stéphane Marchesin <marcheu@chromium.org>
->> Cc: Sonny Rao <sonnyrao@chromium.org>
->> Signed-off-by: zain wang <wzz@rock-chips.com>
->> Signed-off-by: Sean Paul <seanpaul@chromium.org>
->> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> change itself looks good, so
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
