@@ -1,76 +1,76 @@
-From: Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v5 26/36] drm/bridge: analogix_dp: Properly disable aux
- chan retries on rockchip
-Date: Wed, 14 Mar 2018 12:23:49 +0530
-Message-ID: <4044e328-09e4-a0d1-61d4-164fed221c8f@codeaurora.org>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-27-enric.balletbo@collabora.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Add #sound-dai-cells property to
+ exynos5250 i2s nodes
+Date: Wed, 14 Mar 2018 11:10:48 +0100
+Message-ID: <4258f14d-ee0e-48b5-9674-e8e93d2aff69@samsung.com>
+References: <CGME20180313171232epcas1p4425993ba6042b06051cc7590d3dbeab4@epcas1p4.samsung.com>
+ <20180313171220.26333-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180309222327.18689-27-enric.balletbo@collabora.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com, hshi@chromium.org, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20180313171220.26333-1-s.nawrocki@samsung.com>
+Content-language: en-GB
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-On Saturday 10 March 2018 03:53 AM, Enric Balletbo i Serra wrote:
-> From: Douglas Anderson <dianders@chromium.org>
+On 03/13/2018 06:12 PM, Sylwester Nawrocki wrote:
+> The #sound-dai-cells property may be required to reference the CPU DAI
+> properly. This change is required for Snow HDMI audio.
 > 
-> The comments in analogix_dp_init_aux() claim that we're disabling aux
-> channel retries, but then right below it for Rockchip it sets them to
-> 3.  If we actually need 3 retries for Rockchip then we could adjust
-> the comment, but it seems more likely that we want the same retry
-> behavior across all platforms.
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
+There is
 
-Thanks,
-Archit
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-> 
-> Cc: Stéphane Marchesin <marcheu@chromium.org>
-> Cc: 征增 王 <wzz@rock-chips.com>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+tag missing here.
+
 > ---
+>  arch/arm/boot/dts/exynos5250.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
->   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 15 ++++++++-------
->   1 file changed, 8 insertions(+), 7 deletions(-)
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index ebc79114b0ce..45283a6c5eee 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -499,6 +499,7 @@
+>  			pinctrl-0 = <&i2s0_bus>;
+>  			power-domains = <&pd_mau>;
+>  			#clock-cells = <1>;
+> +			#sound-dai-cells = <1>;
+>  		};
+>  
+>  		i2s1: i2s@12d60000 {
+> @@ -513,6 +514,7 @@
+>  			pinctrl-names = "default";
+>  			pinctrl-0 = <&i2s1_bus>;
+>  			power-domains = <&pd_mau>;
+> +			#sound-dai-cells = <1>;
+>  		};
+>  
+>  		i2s2: i2s@12d70000 {
+> @@ -527,6 +529,7 @@
+>  			pinctrl-names = "default";
+>  			pinctrl-0 = <&i2s2_bus>;
+>  			power-domains = <&pd_mau>;
+> +			#sound-dai-cells = <1>;
+>  		};
+>  
+>  		usb_dwc3 {
 > 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> index 58e8a28e99aa..a5f2763d72e4 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> @@ -481,15 +481,16 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
->   
->   	analogix_dp_reset_aux(dp);
->   
-> -	/* Disable AUX transaction H/W retry */
-> +	/* AUX_BIT_PERIOD_EXPECTED_DELAY doesn't apply to Rockchip IP */
->   	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
-> -		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(0) |
-> -		      AUX_HW_RETRY_COUNT_SEL(3) |
-> -		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-> +		reg = 0;
->   	else
-> -		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) |
-> -		      AUX_HW_RETRY_COUNT_SEL(0) |
-> -		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-> +		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3);
-> +
-> +	/* Disable AUX transaction H/W retry */
-> +	reg |= AUX_HW_RETRY_COUNT_SEL(0) |
-> +	       AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-> +
->   	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_HW_RETRY_CTL);
->   
->   	/* Receive AUX Channel DEFER commands equal to DEFFER_COUNT*64 */
-> 
+
+
+-- 
+Sylwester Nawrocki
+Samsung R&D Institute Poland
