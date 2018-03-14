@@ -1,76 +1,42 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add #sound-dai-cells property to
- exynos5250 i2s nodes
-Date: Wed, 14 Mar 2018 11:10:48 +0100
-Message-ID: <4258f14d-ee0e-48b5-9674-e8e93d2aff69@samsung.com>
-References: <CGME20180313171232epcas1p4425993ba6042b06051cc7590d3dbeab4@epcas1p4.samsung.com>
- <20180313171220.26333-1-s.nawrocki@samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v5 01/36] drm/bridge: analogix_dp: detect Sink PSR state
+ after configuring the PSR
+Date: Wed, 14 Mar 2018 11:32:31 +0100
+Message-ID: <3256074.V8N7sWxg0l@diego>
+References: <20180309222327.18689-1-enric.balletbo@collabora.com>
+ <20180309222327.18689-2-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20180313171220.26333-1-s.nawrocki@samsung.com>
-Content-language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180309222327.18689-2-enric.balletbo@collabora.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, thierry.reding@gmail.com, Laurent.pinchart@ideasonboard.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, linux-kernel@vger.kernel.org, jeffy.chen@rock-chips.com, =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, tfiga@chromium.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/13/2018 06:12 PM, Sylwester Nawrocki wrote:
-> The #sound-dai-cells property may be required to reference the CPU DAI
-> properly. This change is required for Snow HDMI audio.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-There is
-
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-tag missing here.
-
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index ebc79114b0ce..45283a6c5eee 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -499,6 +499,7 @@
->  			pinctrl-0 = <&i2s0_bus>;
->  			power-domains = <&pd_mau>;
->  			#clock-cells = <1>;
-> +			#sound-dai-cells = <1>;
->  		};
->  
->  		i2s1: i2s@12d60000 {
-> @@ -513,6 +514,7 @@
->  			pinctrl-names = "default";
->  			pinctrl-0 = <&i2s1_bus>;
->  			power-domains = <&pd_mau>;
-> +			#sound-dai-cells = <1>;
->  		};
->  
->  		i2s2: i2s@12d70000 {
-> @@ -527,6 +529,7 @@
->  			pinctrl-names = "default";
->  			pinctrl-0 = <&i2s2_bus>;
->  			power-domains = <&pd_mau>;
-> +			#sound-dai-cells = <1>;
->  		};
->  
->  		usb_dwc3 {
-> 
-
-
--- 
-Sylwester Nawrocki
-Samsung R&D Institute Poland
+QW0gRnJlaXRhZywgOS4gTcOkcnogMjAxOCwgMjM6MjI6NTIgQ0VUIHNjaHJpZWIgRW5yaWMgQmFs
+bGV0Ym8gaSBTZXJyYToKPiBGcm9tOiBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Cj4g
+Cj4gTWFrZSBzdXJlIHRoZSByZXF1ZXN0IFBTUiBzdGF0ZSB0YWtlcyBlZmZlY3QgaW4gYW5hbG9n
+aXhfZHBfc2VuZF9wc3Jfc3BkKCkKPiBmdW5jdGlvbiwgb3IgcHJpbnQgdGhlIHNpbmsgUFNSIGVy
+cm9yIHN0YXRlIGlmIHdlIGZhaWxlZCB0byBhcHBseSB0aGUKPiByZXF1ZXN0ZWQgUFNSIHNldHRp
+bmcuCj4gCj4gQ2M6IOW+geWiniDnjosgPHd6ekByb2NrLWNoaXBzLmNvbT4KPiBDYzogU3TDqXBo
+YW5lIE1hcmNoZXNpbiA8bWFyY2hldUBjaHJvbWl1bS5vcmc+Cj4gU2lnbmVkLW9mZi1ieTogWWFr
+aXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPgo+IFtzZWFucGF1bCBjaGFuZ2VkIHRpbWVvdXQg
+bG9vcCB0byBhIHJlYWR4IHBvbGxdCj4gU2lnbmVkLW9mZi1ieTogU2VhbiBQYXVsIDxzZWFucGF1
+bEBjaHJvbWl1bS5vcmc+Cj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBFc2NhbmRlIDx0aGllcnJ5
+LmVzY2FuZGVAY29sbGFib3JhLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBFbnJpYyBCYWxsZXRibyBp
+IFNlcnJhIDxlbnJpYy5iYWxsZXRib0Bjb2xsYWJvcmEuY29tPgo+IFRlc3RlZC1ieTogTWFyZWsg
+U3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgoKYXBwbGllZCB0byBkcm0tbWlz
+Yy1uZXh0CgpUaGFua3MKSGVpa28KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
