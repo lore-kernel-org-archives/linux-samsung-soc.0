@@ -1,47 +1,92 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v5 06/36] drm/rockchip: Only wait for panel ACK on PSR
- entry
-Date: Wed, 14 Mar 2018 13:51:20 +0100
-Message-ID: <217296292.AN06WKDqZv@diego>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-7-enric.balletbo@collabora.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 1/5] ASoC: samsung: odroid: Fix 32000 sample
+	rate handling
+Date: Wed, 14 Mar 2018 17:41:13 +0100
+Message-ID: <20180314164115.22736-1-s.nawrocki@samsung.com>
+References: <CGME20180314164131epcas2p426aa34f4503ff12fa041a817cdd3eed9@epcas2p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180309222327.18689-7-enric.balletbo@collabora.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, thierry.reding@gmail.com, Laurent.pinchart@ideasonboard.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, linux-kernel@vger.kernel.org, jeffy.chen@rock-chips.com, =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, tfiga@chromium.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: broonie@kernel.org
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QW0gRnJlaXRhZywgOS4gTcOkcnogMjAxOCwgMjM6MjI6NTcgQ0VUIHNjaHJpZWIgRW5yaWMgQmFs
-bGV0Ym8gaSBTZXJyYToKPiBGcm9tOiB6YWluIHdhbmcgPHd6ekByb2NrLWNoaXBzLmNvbT4KPiAK
-PiBXZSBjdXJyZW50bHkgd2FpdCBmb3IgdGhlIHBhbmVsIHRvIG1pcnJvciBvdXIgaW50ZW5kZWQg
-UFNSIHN0YXRlCj4gYmVmb3JlIGNvbnRpbnVpbmcgb24gYm90aCBQU1IgZW50ZXIgYW5kIFBTUiBl
-eGl0LiBUaGlzIGlzIHJlYWxseQo+IG9ubHkgaW1wb3J0YW50IHRvIGRvIHdoZW4gd2UncmUgZW50
-ZXJpbmcgUFNSLCBzaW5jZSB3ZSB3YW50IHRvCj4gYmUgc3VyZSB0aGUgbGFzdCBmcmFtZSB3ZSBw
-dXNoZWQgaXMgYmVpbmcgc2VydmVkIGZyb20gdGhlIHBhbmVsJ3MKPiBpbnRlcm5hbCBmYiBiZWZv
-cmUgc2h1dHRpbmcgZG93biB0aGUgc29jIGJsb2NrcyAodm9wL2FuYWxvZ2l4KS4KPiAKPiBUaGlz
-IHBhdGNoIGNoYW5nZXMgdGhlIGJlaGF2aW9yIHN1Y2ggdGhhdCB3ZSBvbmx5IHdhaXQgZm9yIHRo
-ZQo+IHBhbmVsIHRvIGNvbXBsZXRlIHRoZSBQU1IgdHJhbnNpdGlvbiB3aGVuIHdlJ3JlIGVudGVy
-aW5nIFBTUiwgYW5kCj4gdG8gc2tpcCB2ZXJpZmljYXRpb24gd2hlbiB3ZSdyZSBleGl0aW5nLgo+
-IAo+IENjOiBTdMOpcGhhbmUgTWFyY2hlc2luIDxtYXJjaGV1QGNocm9taXVtLm9yZz4KPiBDYzog
-U29ubnkgUmFvIDxzb25ueXJhb0BjaHJvbWl1bS5vcmc+Cj4gU2lnbmVkLW9mZi1ieTogemFpbiB3
-YW5nIDx3enpAcm9jay1jaGlwcy5jb20+Cj4gU2lnbmVkLW9mZi1ieTogU2VhbiBQYXVsIDxzZWFu
-cGF1bEBjaHJvbWl1bS5vcmc+Cj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBFc2NhbmRlIDx0aGll
-cnJ5LmVzY2FuZGVAY29sbGFib3JhLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBFbnJpYyBCYWxsZXRi
-byBpIFNlcnJhIDxlbnJpYy5iYWxsZXRib0Bjb2xsYWJvcmEuY29tPgo+IFRlc3RlZC1ieTogTWFy
-ZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgoKYXBwbGllZCB0byBkcm0t
-bWlzYy1uZXh0IHdpdGggdGhlIHN1YmplY3QgZml4ZWQuCgoKVGhhbmtzCkhlaWtvCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+In case of sample rates lower than 44100 currently there is too low MCLK
+frequency set for the CODEC. Playback fails with following errors:
+
+$ speaker-test -c2 -t sine -f 1500 -l2 -r 32000
+
+Sine wave rate is 1500.0000Hz
+Rate set to 32000Hz (requested 32000Hz)
+Buffer size range from 128 to 131072
+Period size range from 64 to 65536
+Using max buffer size 131072
+Periods = 4
+Unable to set hw params for playback: Invalid argument
+Setting of hwparams failed: Invalid argument
+
+[  497.883700] max98090 1-0010: Invalid master clock frequency
+
+To fix this the I2S root clock's frequency is increased, depending
+on sampling rate.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/samsung/odroid.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index 92d750806d1d..e698e67f5f84 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -36,23 +36,26 @@ static int odroid_card_hw_params(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct odroid_priv *priv = snd_soc_card_get_drvdata(rtd->card);
+-	unsigned int pll_freq, rclk_freq;
++	unsigned int pll_freq, rclk_freq, rfs;
+ 	int ret;
+ 
+ 	switch (params_rate(params)) {
+-	case 32000:
+ 	case 64000:
+-		pll_freq = 131072006U;
++		pll_freq = 196608001U;
++		rfs = 384;
+ 		break;
+ 	case 44100:
+ 	case 88200:
+ 	case 176400:
+ 		pll_freq = 180633609U;
++		rfs = 512;
+ 		break;
++	case 32000:
+ 	case 48000:
+ 	case 96000:
+ 	case 192000:
+ 		pll_freq = 196608001U;
++		rfs = 512;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -67,7 +70,7 @@ static int odroid_card_hw_params(struct snd_pcm_substream *substream,
+ 	 *  frequency values due to the EPLL output frequency not being exact
+ 	 *  multiple of the audio sampling rate.
+ 	 */
+-	rclk_freq = params_rate(params) * 256 + 1;
++	rclk_freq = params_rate(params) * rfs + 1;
+ 
+ 	ret = clk_set_rate(priv->sclk_i2s, rclk_freq);
+ 	if (ret < 0)
+-- 
+2.14.2
