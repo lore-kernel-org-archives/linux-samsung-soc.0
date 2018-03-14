@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/5] ASoC: samsung: odroid: Drop sample rates
- that cannot be supported from hw_params()
-Date: Wed, 14 Mar 2018 17:41:14 +0100
-Message-ID: <20180314164115.22736-2-s.nawrocki@samsung.com>
+Subject: [PATCH 3/5] ASoC: samsung: Use
+ snd_soc_of_put_dai_link_codecs() in odroid.c
+Date: Wed, 14 Mar 2018 17:41:15 +0100
+Message-ID: <20180314164115.22736-3-s.nawrocki@samsung.com>
 References: <20180314164115.22736-1-s.nawrocki@samsung.com>
- <CGME20180314164137epcas2p336d64724b044d14aa920d611b6483593@epcas2p3.samsung.com>
+ <CGME20180314164141epcas1p43edb2d21ad8818f744b2e11009322996@epcas1p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,33 +23,54 @@ To: broonie@kernel.org
 Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The I2S controller can handle sample rates only up to 96000 and the CPU DAI
-has already related constraint set so drop the impossible 176400, 192000
-switch cases.
+Now when a helper for unreferencing device nodes is available
+we can get rid of the local implementation.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/odroid.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/soc/samsung/odroid.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
 diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
-index e698e67f5f84..e1b59457a327 100644
+index e1b59457a327..e7b371b07230 100644
 --- a/sound/soc/samsung/odroid.c
 +++ b/sound/soc/samsung/odroid.c
-@@ -46,14 +46,12 @@ static int odroid_card_hw_params(struct snd_pcm_substream *substream,
- 		break;
- 	case 44100:
- 	case 88200:
--	case 176400:
- 		pll_freq = 180633609U;
- 		rfs = 512;
- 		break;
- 	case 32000:
- 	case 48000:
- 	case 96000:
--	case 192000:
- 		pll_freq = 196608001U;
- 		rfs = 512;
- 		break;
+@@ -91,18 +91,6 @@ static const struct snd_soc_ops odroid_card_ops = {
+ 	.hw_params = odroid_card_hw_params,
+ };
+ 
+-static void odroid_put_codec_of_nodes(struct snd_soc_dai_link *link)
+-{
+-	struct snd_soc_dai_link_component *component = link->codecs;
+-	int i;
+-
+-	for (i = 0; i < link->num_codecs; i++, component++) {
+-		if (!component->of_node)
+-			break;
+-		of_node_put(component->of_node);
+-	}
+-}
+-
+ static int odroid_audio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -197,7 +185,7 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ err_put_i2s_n:
+ 	of_node_put(link->cpu_of_node);
+ err_put_codec_n:
+-	odroid_put_codec_of_nodes(link);
++	snd_soc_of_put_dai_link_codecs(link);
+ 	return ret;
+ }
+ 
+@@ -206,7 +194,7 @@ static int odroid_audio_remove(struct platform_device *pdev)
+ 	struct odroid_priv *priv = platform_get_drvdata(pdev);
+ 
+ 	of_node_put(priv->dai_link.cpu_of_node);
+-	odroid_put_codec_of_nodes(&priv->dai_link);
++	snd_soc_of_put_dai_link_codecs(&priv->dai_link);
+ 	clk_put(priv->sclk_i2s);
+ 	clk_put(priv->clk_i2s_bus);
+ 
 -- 
 2.14.2
