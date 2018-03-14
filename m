@@ -1,45 +1,44 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/4] ARM: dts: exynos5250: Add #sound-dai-cells property
- to hdmi device node
-Date: Wed, 14 Mar 2018 11:33:37 +0100
-Message-ID: <21459bbe-befc-da77-5c34-c821db74ae8d@samsung.com>
-References: <CGME20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56@epcas1p1.samsung.com>
-        <20180307172711.15697-1-s.nawrocki@samsung.com>
-        <5AA1F41B.5080104@samsung.com>
-        <39965bce-a6f2-6202-5c3f-97e4446e97eb@samsung.com>
-        <5AA5CE4F.6050807@samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v5 05/36] drm/bridge: analogix_dp: add fast link train for
+ eDP
+Date: Wed, 14 Mar 2018 11:39:11 +0100
+Message-ID: <6139185.TexXAUNAzh@diego>
+References: <20180309222327.18689-1-enric.balletbo@collabora.com>
+ <20180309222327.18689-6-enric.balletbo@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5AA5CE4F.6050807@samsung.com>
-Content-language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: krzk@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180309222327.18689-6-enric.balletbo@collabora.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, thierry.reding@gmail.com, Laurent.pinchart@ideasonboard.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, linux-kernel@vger.kernel.org, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, tfiga@chromium.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Inki,
-
-On 03/12/2018 01:48 AM, Inki Dae wrote:
-> Thanks for explanation. By the way, who binds '#sound-dai-cells' property?.
-> This patch adds this property to hdmi device node which will be bound by 
-> HDMI driver fo Exynos DRM but I don't see any place to bind '#sound-dai-cells' 
-> property in this driver.
-> So I think some driver like Odroid XU3/4 audio driver(sound/soc/samsung/odroid.c) 
-> or ASoC simple audio card driver(sound/soc/generic/simple-card.c) should exist 
-> and this property should be placed to such device node.
-
-The *-cells property is supposed to be in a node that a phandle points to,
-and in this case the phandle entry in 'sound-dai' points to the hdmi node.
->From the DT bindings perspective it not that important how Linux parses
-the bindings, it's more a matter of describing the HW configuration.
-
-There is even a related check in dtc:
-
-$ grep -n sound scripts/dtc/checks.c
-1208:WARNING_PROPERTY_PHANDLE_CELLS(sound_dai, "sound-dai", "#sound-dai-cells");
-
--- 
-Regards,
-Sylwester
+QW0gRnJlaXRhZywgOS4gTcOkcnogMjAxOCwgMjM6MjI6NTYgQ0VUIHNjaHJpZWIgRW5yaWMgQmFs
+bGV0Ym8gaSBTZXJyYToKPiBGcm9tOiB6YWluIHdhbmcgPHd6ekByb2NrLWNoaXBzLmNvbT4KPiAK
+PiBXZSB3b3VsZCBtZWV0IGEgc2hvcnQgYmxhY2sgc2NyZWVuIHdoZW4gZXhpdCBQU1Igd2l0aCB0
+aGUgZnVsbCBsaW5rCj4gdHJhaW5pbmcsIEluIHRoaXMgY2FzZSwgd2Ugc2hvdWxkIHVzZSBmYXN0
+IGxpbmsgdHJhaW4gaW5zdGVhZCBvZiBmdWxsCj4gbGluayB0cmFpbmluZy4KPiAKPiBTaWduZWQt
+b2ZmLWJ5OiB6YWluIHdhbmcgPHd6ekByb2NrLWNoaXBzLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBT
+ZWFuIFBhdWwgPHNlYW5wYXVsQGNocm9taXVtLm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5
+IEVzY2FuZGUgPHRoaWVycnkuZXNjYW5kZUBjb2xsYWJvcmEuY29tPgo+IFNpZ25lZC1vZmYtYnk6
+IEVucmljIEJhbGxldGJvIGkgU2VycmEgPGVucmljLmJhbGxldGJvQGNvbGxhYm9yYS5jb20+Cj4g
+VGVzdGVkLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cgph
+cHBsaWVkIHRvIGRybS1taXNjLW5leHQKCkNoZWNraW5nIHRoZSB3aG9sZSBzZXJpZXMsIHRoZXJl
+IGlzIG5vdGhpbmcgZWxzZSB0aGF0IHRvdWNoZXMgdGhlCnJlb3JkZXJlZCBoZWFkZXJzLCBzbyBJ
+J3ZlIGRyb3BwZWQgdGhhdCBjaGFuZ2UsIGxlYXZpbmcgb25seSB0aGUKbmV3bHkgYWRkZWQgaW9w
+b2xsLmggaW5jbHVzaW9uIGluIFswXS4KClRoYW5rcwpIZWlrbwoKClswXSBodHRwczovL2NnaXQu
+ZnJlZWRlc2t0b3Aub3JnL2RybS9kcm0tbWlzYy9jb21taXQvP2lkPWY5ZDU2ODA1OTZmMmRhYzM5
+MDkxOGU2YWVjM2UxNzRkYjAzNjMzYTMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
