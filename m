@@ -1,39 +1,45 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v5 04/36] drm/rockchip: add mutex vop lock
-Date: Wed, 14 Mar 2018 11:33:10 +0100
-Message-ID: <108650566.lvmJh4lmP0@diego>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-5-enric.balletbo@collabora.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: dts: exynos5250: Add #sound-dai-cells property
+ to hdmi device node
+Date: Wed, 14 Mar 2018 11:33:37 +0100
+Message-ID: <21459bbe-befc-da77-5c34-c821db74ae8d@samsung.com>
+References: <CGME20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56@epcas1p1.samsung.com>
+        <20180307172711.15697-1-s.nawrocki@samsung.com>
+        <5AA1F41B.5080104@samsung.com>
+        <39965bce-a6f2-6202-5c3f-97e4446e97eb@samsung.com>
+        <5AA5CE4F.6050807@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180309222327.18689-5-enric.balletbo@collabora.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, thierry.reding@gmail.com, Laurent.pinchart@ideasonboard.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, linux-kernel@vger.kernel.org, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, tfiga@chromium.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <5AA5CE4F.6050807@samsung.com>
+Content-language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: krzk@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QW0gRnJlaXRhZywgOS4gTcOkcnogMjAxOCwgMjM6MjI6NTUgQ0VUIHNjaHJpZWIgRW5yaWMgQmFs
-bGV0Ym8gaSBTZXJyYToKPiBGcm9tOiB6YWluIHdhbmcgPHd6ekByb2NrLWNoaXBzLmNvbT4KPiAK
-PiBBZGQgYSBsb2NrIHRvIHZvcCB0byBhdm9pZCBkaXNhYmxpbmcgdGhlIGNydGMgd2hpbGUgd2Fp
-dGluZyBmb3IgYSBsaW5lCj4gZmxhZyB3aGlsZSBlbmFibGluZyBwc3IuIElmIHdlIGRpc2FibGUg
-aW4gdGhlIG1pZGRsZSBvZiB3YWl0aW5nIGZvciB0aGUKPiBsaW5lIGZsYWcsIHdlJ2xsIGVuZCB1
-cCB0aW1pbmcgb3V0IG9yIHdvcnNlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IHphaW4gd2FuZyA8d3p6
-QHJvY2stY2hpcHMuY29tPgo+IFNpZ25lZC1vZmYtYnk6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hy
-b21pdW0ub3JnPgo+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgRXNjYW5kZSA8dGhpZXJyeS5lc2Nh
-bmRlQGNvbGxhYm9yYS5jb20+Cj4gU2lnbmVkLW9mZi1ieTogRW5yaWMgQmFsbGV0Ym8gaSBTZXJy
-YSA8ZW5yaWMuYmFsbGV0Ym9AY29sbGFib3JhLmNvbT4KPiBUZXN0ZWQtYnk6IE1hcmVrIFN6eXBy
-b3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KCmFwcGxpZWQgdG8gZHJtLW1pc2MtbmV4
-dAoKVGhhbmtzCkhlaWtvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+Hi Inki,
+
+On 03/12/2018 01:48 AM, Inki Dae wrote:
+> Thanks for explanation. By the way, who binds '#sound-dai-cells' property?.
+> This patch adds this property to hdmi device node which will be bound by 
+> HDMI driver fo Exynos DRM but I don't see any place to bind '#sound-dai-cells' 
+> property in this driver.
+> So I think some driver like Odroid XU3/4 audio driver(sound/soc/samsung/odroid.c) 
+> or ASoC simple audio card driver(sound/soc/generic/simple-card.c) should exist 
+> and this property should be placed to such device node.
+
+The *-cells property is supposed to be in a node that a phandle points to,
+and in this case the phandle entry in 'sound-dai' points to the hdmi node.
+>From the DT bindings perspective it not that important how Linux parses
+the bindings, it's more a matter of describing the HW configuration.
+
+There is even a related check in dtc:
+
+$ grep -n sound scripts/dtc/checks.c
+1208:WARNING_PROPERTY_PHANDLE_CELLS(sound_dai, "sound-dai", "#sound-dai-cells");
+
+-- 
+Regards,
+Sylwester
