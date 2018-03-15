@@ -1,80 +1,71 @@
-From: Roger Quadros <rogerq@ti.com>
-Subject: Re: [PATCH v5 1/6] dt-bindings: add bindings for USB physical
- connector
-Date: Thu, 15 Mar 2018 19:08:32 +0200
-Message-ID: <a470c2e0-09ea-fc3a-2eef-bba2af18b33f@ti.com>
-References: <20180227071134.28063-1-a.hajda@samsung.com>
- <CGME20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f@eucas1p1.samsung.com>
- <20180227071134.28063-2-a.hajda@samsung.com>
- <ed0ce43c-3c81-b027-2eb1-30e49156c3ac@ti.com>
- <b588527d-2ca2-9e88-9e27-e09e5b52f8d6@samsung.com>
- <12da0d00-9ab3-3752-793b-e487666f35a3@ti.com>
- <1c3f8cde-4f9a-306f-b4f9-c0bdc76caf1f@arm.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
+Date: Thu, 15 Mar 2018 15:55:09 -0700
+Message-ID: <152115450981.111154.2342657732967302796@swboyd.mtv.corp.google.com>
+References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+ <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
+ <1519055046-2399-2-git-send-email-m.purski@samsung.com>
+ <b67b5043-f5e5-826a-f0b8-f7cf722c61e6@arm.com>
+ <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1c3f8cde-4f9a-306f-b4f9-c0bdc76caf1f@arm.com>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Robin Murphy <robin.murphy@arm.com>, Andrzej Hajda <a.hajda@samsung.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Felipe Balbi <balbi@kernel.org>, Archit Taneja <architt@codeaurora.org>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Maciej Purski <m.purski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Hans Verkuil <hansverk@cisco.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, David Airlie <airlied@linux.ie>, Michael Turquette <mturquette@baylibre.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kamil Debski <kamil@wypas.org>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jeongtae Park <jtp.park@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 15/03/18 13:46, Robin Murphy wrote:
-> On 12/03/18 10:41, Roger Quadros wrote:
-> [...]
->>>>> @@ -0,0 +1,75 @@
->>>>> +USB Connector
->>>>> +=============
->>>>> +
->>>>> +USB connector node represents physical USB connector. It should be
->>>>> +a child of USB interface controller.
->>>>> +
->>>>> +Required properties:
->>>>> +- compatible: describes type of the connector, must be one of:
->>>>> +    "usb-a-connector",
->>>>> +    "usb-b-connector",
->>>>> +    "usb-c-connector".
->>>> compatible should be just "usb-connector"
->>>>
->>>> Type should be a property
->>>>
->>>> type: type of usb connector "A", "B", "AB", "C"
->>>> AB is for dual-role connectors.
->>>
->>> I have proposed such property (and size also) in my first RFC [1]. Rod
->>> did not like it :)
->>>
->>> [1]: https://marc.info/?l=devicetree&m=150660411515233&w=2
->>>
->>
->> This is what Rob says here https://patchwork.kernel.org/patch/9976043/
->> "We did "type" for hdmi-connector, but I think I'd really prefer
->> compatible be used to distinguish as least where it may matter to s/w.
->> In the HDMI case, they all are pretty much the same, just different
->> physical size."
->>
->> So the question is. Does it matter to this particular software implementation
->> if it is type A,B,C connector?
->> If yes, how?
->>
->> Type A will never have any alternate function. It is always dedicated to USB.
-> 
-> In USB spec terms, at least. In reality there are things like the cool trick Rockchip SoCs do whereby they can expose the debug UART Rx/Tx through the OTG port's D+/D- pins, and that is on a type A connector in many products. I'm guessing that's probably beyond the scope of this binding, though.
-> 
->> Also does the size "full", "micro", "mini" matter to software?
-> 
-> If it means the user can look in sysfs to easily correlate logical ports with physical connectors that's certainly handy (e.g. on something like Odroid-XU where the two USB3 ports are brought out to an A and a micro-AB connector respectively).
-
-But this logic fails if both connectors are the same type/size.
-This is where the label comes in handy. The labels can be unique and end user can identify the port using that.
-
-> 
-> Robin.
-
--- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+UXVvdGluZyBNYXJlayBTenlwcm93c2tpICgyMDE4LTAyLTIwIDAxOjM2OjAzKQo+IEhpIFJvYmlu
+LAo+IAo+IE9uIDIwMTgtMDItMTkgMTc6MjksIFJvYmluIE11cnBoeSB3cm90ZToKPiA+Cj4gPiBT
+ZWVpbmcgaG93IGV2ZXJ5IHN1YnNlcXVlbnQgcGF0Y2ggZW5kcyB1cCB3aXRoIHRoZSByb3VnaGx5
+IHRoaXMgc2FtZSAKPiA+IHN0YW56YToKPiA+Cj4gPiDCoMKgwqDCoHggPSBkZXZtX2Nsa19idWxr
+X2FsbG9jKGRldiwgbnVtLCBuYW1lcyk7Cj4gPiDCoMKgwqDCoGlmIChJU19FUlIoeCkKPiA+IMKg
+wqDCoMKgwqDCoMKgIHJldHVybiBQVFJfRVJSKHgpOwo+ID4gwqDCoMKgwqByZXQgPSBkZXZtX2Ns
+a19idWxrX2dldChkZXYsIHgsIG51bSk7Cj4gPgo+ID4gSSB3b25kZXIgaWYgaXQgbWlnaHQgYmUg
+YmV0dGVyIHRvIHNpbXBseSBpbXBsZW1lbnQ6Cj4gPgo+ID4gwqDCoMKgwqBpbnQgZGV2bV9jbGtf
+YnVsa19hbGxvY19nZXQoZGV2LCAmeCwgbnVtLCBuYW1lcykKPiA+Cj4gPiB0aGF0IGRvZXMgdGhl
+IHdob2xlIGxvdCBpbiBvbmUgZ28sIGFuZCBsZXQgZHJpdmVycyB0aGF0IHdhbnQgdG8gZG8gCj4g
+PiBtb3JlIGZpZGRseSB0aGluZ3MgY29udGludWUgdG8gb3Blbi1jb2RlIHRoZSBhbGxvY2F0aW9u
+Lgo+ID4KPiA+IEJ1dCBwZXJoYXBzIHRoYXQncyBhbiBhYnN0cmFjdGlvbiB0b28gZmFyLi4uIEkn
+bSBub3QgYWxsIHRoYXQgZmFtaWxpYXIgCj4gPiB3aXRoIHRoZSBsaWUgb2YgdGhlIGxhbmQgaGVy
+ZS4KPiAKPiBIbW1tLiBUaGlzIHBhdGNoc2V0IGNsZWFybHkgc2hvd3MsIHRoYXQgaXQgd291bGQg
+YmUgbXVjaCBzaW1wbGVyIGlmIHdlCj4gZ2V0IHJpZCBvZiBjbGtfYnVsa19kYXRhIHN0cnVjdHVy
+ZSBhdCBhbGwgYW5kIGxldCBjbGtfYnVsa18qIGZ1bmN0aW9ucwo+IHRvIG9wZXJhdGUgb24gc3Ry
+dWN0IGNsayAqYXJyYXlbXS4gVHlwaWNhbGx5IHRoZSBsaXN0IG9mIGNsb2NrIG5hbWVzCj4gaXMg
+YWxyZWFkeSBpbiBzb21lIGtpbmQgb2YgYXJyYXkgKHRha2VuIGZyb20gZHJpdmVyIGRhdGEgb3Ig
+c3RhdGljYWxseQo+IGVtYmVkZGVkIGludG8gZHJpdmVyKSwgc28gdGhlcmUgaXMgbGl0dGxlIGJl
+bmVmaXQgZnJvbSBkdXBsaWNhdGluZyBpdAo+IGluIGNsa19idWxrX2RhdGEuIFNhZGx5LCBJIG1p
+c3NlZCBjbGtfYnVsa18qIGFwaSBkaXNjdXNzaW9uIGFuZCBtYXliZQo+IHRoZXJlIGFyZSBvdGhl
+ciBiZW5lZml0cyBmcm9tIHRoaXMgYXBwcm9hY2guCj4gCj4gSWYgbm90LCBJIHN1Z2dlc3Qgc2lt
+cGxpZnlpbmcgY2xrX2J1bGtfKiBhcGkgYnkgZHJvcHBpbmcgY2xrX2J1bGtfZGF0YQo+IHN0cnVj
+dHVyZSBhbmQgc3dpdGNoaW5nIHRvIGNsb2NrIHB0ciBhcnJheToKPiAKPiBpbnQgY2xrX2J1bGtf
+Z2V0KHN0cnVjdCBkZXZpY2UgKmRldiwgaW50IG51bV9jbG9jaywgc3RydWN0IGNsayAqY2xvY2tz
+W10sCj4gIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqDCoMKgIGNvbnN0IGNoYXIgKmNsa19uYW1l
+c1tdKTsKPiBpbnQgY2xrX2J1bGtfcHJlcGFyZShpbnQgbnVtX2Nsa3MsIHN0cnVjdCBjbGsgKmNs
+a3NbXSk7Cj4gaW50IGNsa19idWxrX2VuYWJsZShpbnQgbnVtX2Nsa3MsIHN0cnVjdCBjbGsgKmNs
+a3NbXSk7Cj4gLi4uCj4gCgpJZiB5b3UgaGF2ZSBhbiBhcnJheSBvZiBwb2ludGVycyB0byBuYW1l
+cyBvZiBjbGtzIHRoZW4gd2UgY2FuIHB1dCB0aGUKc3RydWN0IGNsayBwb2ludGVycyBhZGphY2Vu
+dCB0byB0aGVtIGF0IHRoZSBzYW1lIHRpbWUuIEkgc3VwcG9zZSB0aGUKcHJvYmxlbSB0aGVyZSBp
+cyB0aGF0IHNvbWUgZHJpdmVycyB3YW50IHRvIG1hcmsgdGhhdCBhcnJheSBvZiBwb2ludGVycwp0
+byBuYW1lcyBhcyBjb25zdC4gQW5kIHRoZW4gd2UgY2FuJ3QgdXBkYXRlIHRoZSBjbGsgcG9pbnRl
+cnMgbmV4dCB0bwp0aGVtLgoKVGhpcyBpcyB0aGUgc2FtZSBkZXNpZ24gdGhhdCByZWd1bGF0b3Jz
+IGhhcyBkb25lIHNvIHRoYXQncyB3aHkgaXQncwp3cml0dGVuIGxpa2UgdGhpcyBmb3IgY2xrcy4g
+SG9uZXN0bHksIHdlJ3JlIHRhbGtpbmcgYWJvdXQgYSBoYW5kZnVsIG9mCnBvaW50ZXJzIGhlcmUg
+c28gSSdtIG5vdCBzdXJlIGl0IHJlYWxseSBtYXR0ZXJzIG11Y2guIEp1c3QgZHVwbGljYXRlIHRo
+ZQpwb2ludGVyIGFuZCBiZSBkb25lIGlmIHlvdSB3YW50IHRvIG1hcmsgdGhlIGFycmF5IG9mIG5h
+bWVzIGFzIGNvbnN0IG9yCmhhdmUgeW91ciBjb25zdCAnc2V0dXAnIHN0cnVjdHVyZSBwb2ludCB0
+byB0aGUgYnVsa19kYXRhIGFycmF5IHRoYXQgeW91CmRlZmluZSBzdGF0aWNhbGx5IG5vbi1jb25z
+dCBzb21ld2hlcmUgZ2xvYmFsbHkuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
