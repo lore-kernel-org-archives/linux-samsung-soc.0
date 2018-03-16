@@ -1,71 +1,55 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
-Date: Thu, 15 Mar 2018 15:55:09 -0700
-Message-ID: <152115450981.111154.2342657732967302796@swboyd.mtv.corp.google.com>
-References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
- <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
- <1519055046-2399-2-git-send-email-m.purski@samsung.com>
- <b67b5043-f5e5-826a-f0b8-f7cf722c61e6@arm.com>
- <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/5] ASoC: samsung: odroid: Fix 32000
+	sample rate handling
+Date: Fri, 16 Mar 2018 08:29:35 +0100
+Message-ID: <CAJKOXPem69c9L1pYqpV-WsYrHRMSp4=q=6KJQ3O12=xuO6+cvQ@mail.gmail.com>
+References: <CGME20180314164131epcas2p426aa34f4503ff12fa041a817cdd3eed9@epcas2p4.samsung.com>
+ <20180314164115.22736-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Maciej Purski <m.purski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Hans Verkuil <hansverk@cisco.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, David Airlie <airlied@linux.ie>, Michael Turquette <mturquette@baylibre.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kamil Debski <kamil@wypas.org>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jeongtae Park <jtp.park@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20180314164115.22736-1-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, lgirdwood@gmail.com, robh+dt@kernel.org, broonie@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-UXVvdGluZyBNYXJlayBTenlwcm93c2tpICgyMDE4LTAyLTIwIDAxOjM2OjAzKQo+IEhpIFJvYmlu
-LAo+IAo+IE9uIDIwMTgtMDItMTkgMTc6MjksIFJvYmluIE11cnBoeSB3cm90ZToKPiA+Cj4gPiBT
-ZWVpbmcgaG93IGV2ZXJ5IHN1YnNlcXVlbnQgcGF0Y2ggZW5kcyB1cCB3aXRoIHRoZSByb3VnaGx5
-IHRoaXMgc2FtZSAKPiA+IHN0YW56YToKPiA+Cj4gPiDCoMKgwqDCoHggPSBkZXZtX2Nsa19idWxr
-X2FsbG9jKGRldiwgbnVtLCBuYW1lcyk7Cj4gPiDCoMKgwqDCoGlmIChJU19FUlIoeCkKPiA+IMKg
-wqDCoMKgwqDCoMKgIHJldHVybiBQVFJfRVJSKHgpOwo+ID4gwqDCoMKgwqByZXQgPSBkZXZtX2Ns
-a19idWxrX2dldChkZXYsIHgsIG51bSk7Cj4gPgo+ID4gSSB3b25kZXIgaWYgaXQgbWlnaHQgYmUg
-YmV0dGVyIHRvIHNpbXBseSBpbXBsZW1lbnQ6Cj4gPgo+ID4gwqDCoMKgwqBpbnQgZGV2bV9jbGtf
-YnVsa19hbGxvY19nZXQoZGV2LCAmeCwgbnVtLCBuYW1lcykKPiA+Cj4gPiB0aGF0IGRvZXMgdGhl
-IHdob2xlIGxvdCBpbiBvbmUgZ28sIGFuZCBsZXQgZHJpdmVycyB0aGF0IHdhbnQgdG8gZG8gCj4g
-PiBtb3JlIGZpZGRseSB0aGluZ3MgY29udGludWUgdG8gb3Blbi1jb2RlIHRoZSBhbGxvY2F0aW9u
-Lgo+ID4KPiA+IEJ1dCBwZXJoYXBzIHRoYXQncyBhbiBhYnN0cmFjdGlvbiB0b28gZmFyLi4uIEkn
-bSBub3QgYWxsIHRoYXQgZmFtaWxpYXIgCj4gPiB3aXRoIHRoZSBsaWUgb2YgdGhlIGxhbmQgaGVy
-ZS4KPiAKPiBIbW1tLiBUaGlzIHBhdGNoc2V0IGNsZWFybHkgc2hvd3MsIHRoYXQgaXQgd291bGQg
-YmUgbXVjaCBzaW1wbGVyIGlmIHdlCj4gZ2V0IHJpZCBvZiBjbGtfYnVsa19kYXRhIHN0cnVjdHVy
-ZSBhdCBhbGwgYW5kIGxldCBjbGtfYnVsa18qIGZ1bmN0aW9ucwo+IHRvIG9wZXJhdGUgb24gc3Ry
-dWN0IGNsayAqYXJyYXlbXS4gVHlwaWNhbGx5IHRoZSBsaXN0IG9mIGNsb2NrIG5hbWVzCj4gaXMg
-YWxyZWFkeSBpbiBzb21lIGtpbmQgb2YgYXJyYXkgKHRha2VuIGZyb20gZHJpdmVyIGRhdGEgb3Ig
-c3RhdGljYWxseQo+IGVtYmVkZGVkIGludG8gZHJpdmVyKSwgc28gdGhlcmUgaXMgbGl0dGxlIGJl
-bmVmaXQgZnJvbSBkdXBsaWNhdGluZyBpdAo+IGluIGNsa19idWxrX2RhdGEuIFNhZGx5LCBJIG1p
-c3NlZCBjbGtfYnVsa18qIGFwaSBkaXNjdXNzaW9uIGFuZCBtYXliZQo+IHRoZXJlIGFyZSBvdGhl
-ciBiZW5lZml0cyBmcm9tIHRoaXMgYXBwcm9hY2guCj4gCj4gSWYgbm90LCBJIHN1Z2dlc3Qgc2lt
-cGxpZnlpbmcgY2xrX2J1bGtfKiBhcGkgYnkgZHJvcHBpbmcgY2xrX2J1bGtfZGF0YQo+IHN0cnVj
-dHVyZSBhbmQgc3dpdGNoaW5nIHRvIGNsb2NrIHB0ciBhcnJheToKPiAKPiBpbnQgY2xrX2J1bGtf
-Z2V0KHN0cnVjdCBkZXZpY2UgKmRldiwgaW50IG51bV9jbG9jaywgc3RydWN0IGNsayAqY2xvY2tz
-W10sCj4gIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqDCoMKgIGNvbnN0IGNoYXIgKmNsa19uYW1l
-c1tdKTsKPiBpbnQgY2xrX2J1bGtfcHJlcGFyZShpbnQgbnVtX2Nsa3MsIHN0cnVjdCBjbGsgKmNs
-a3NbXSk7Cj4gaW50IGNsa19idWxrX2VuYWJsZShpbnQgbnVtX2Nsa3MsIHN0cnVjdCBjbGsgKmNs
-a3NbXSk7Cj4gLi4uCj4gCgpJZiB5b3UgaGF2ZSBhbiBhcnJheSBvZiBwb2ludGVycyB0byBuYW1l
-cyBvZiBjbGtzIHRoZW4gd2UgY2FuIHB1dCB0aGUKc3RydWN0IGNsayBwb2ludGVycyBhZGphY2Vu
-dCB0byB0aGVtIGF0IHRoZSBzYW1lIHRpbWUuIEkgc3VwcG9zZSB0aGUKcHJvYmxlbSB0aGVyZSBp
-cyB0aGF0IHNvbWUgZHJpdmVycyB3YW50IHRvIG1hcmsgdGhhdCBhcnJheSBvZiBwb2ludGVycwp0
-byBuYW1lcyBhcyBjb25zdC4gQW5kIHRoZW4gd2UgY2FuJ3QgdXBkYXRlIHRoZSBjbGsgcG9pbnRl
-cnMgbmV4dCB0bwp0aGVtLgoKVGhpcyBpcyB0aGUgc2FtZSBkZXNpZ24gdGhhdCByZWd1bGF0b3Jz
-IGhhcyBkb25lIHNvIHRoYXQncyB3aHkgaXQncwp3cml0dGVuIGxpa2UgdGhpcyBmb3IgY2xrcy4g
-SG9uZXN0bHksIHdlJ3JlIHRhbGtpbmcgYWJvdXQgYSBoYW5kZnVsIG9mCnBvaW50ZXJzIGhlcmUg
-c28gSSdtIG5vdCBzdXJlIGl0IHJlYWxseSBtYXR0ZXJzIG11Y2guIEp1c3QgZHVwbGljYXRlIHRo
-ZQpwb2ludGVyIGFuZCBiZSBkb25lIGlmIHlvdSB3YW50IHRvIG1hcmsgdGhlIGFycmF5IG9mIG5h
-bWVzIGFzIGNvbnN0IG9yCmhhdmUgeW91ciBjb25zdCAnc2V0dXAnIHN0cnVjdHVyZSBwb2ludCB0
-byB0aGUgYnVsa19kYXRhIGFycmF5IHRoYXQgeW91CmRlZmluZSBzdGF0aWNhbGx5IG5vbi1jb25z
-dCBzb21ld2hlcmUgZ2xvYmFsbHkuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+On Wed, Mar 14, 2018 at 5:41 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> In case of sample rates lower than 44100 currently there is too low MCLK
+> frequency set for the CODEC. Playback fails with following errors:
+>
+> $ speaker-test -c2 -t sine -f 1500 -l2 -r 32000
+>
+> Sine wave rate is 1500.0000Hz
+> Rate set to 32000Hz (requested 32000Hz)
+> Buffer size range from 128 to 131072
+> Period size range from 64 to 65536
+> Using max buffer size 131072
+> Periods = 4
+> Unable to set hw params for playback: Invalid argument
+> Setting of hwparams failed: Invalid argument
+>
+> [  497.883700] max98090 1-0010: Invalid master clock frequency
+>
+> To fix this the I2S root clock's frequency is increased, depending
+> on sampling rate.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  sound/soc/samsung/odroid.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
