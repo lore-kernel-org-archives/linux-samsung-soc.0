@@ -1,68 +1,57 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v5 07/36] drm/bridge: analogix_dp: Move enable video into
- config_video()
-Date: Sat, 17 Mar 2018 17:00:21 +0100
-Message-ID: <1685480.Fci6377Q9J@phil>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-8-enric.balletbo@collabora.com>
- <79009f48-d677-ccc0-4d61-3b379d8448a8@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <79009f48-d677-ccc0-4d61-3b379d8448a8@codeaurora.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Archit Taneja <architt@codeaurora.org>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, thierry.reding@gmail.com, Laurent.pinchart@ideasonboard.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, linux-kernel@vger.kernel.org, jeffy.chen@rock-chips.com, =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, tfiga@chromium.org, kyungmin.park@samsung.com, Enric Balletbo i Serra <enric.balletbo@collabora.com>, kuankuan.y@gmail.com, hshi@chromium.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] ARM: dts: exynos: Second pull for v4.17
+Date: Sun, 18 Mar 2018 16:34:15 +0100
+Message-ID: <20180318153415.8229-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQXJjaGl0LAoKQW0gTWl0dHdvY2gsIDE0LiBNw6RyeiAyMDE4LCAwNjo1OTo1OSBDRVQgc2No
-cmllYiBBcmNoaXQgVGFuZWphOgo+IE9uIFNhdHVyZGF5IDEwIE1hcmNoIDIwMTggMDM6NTIgQU0s
-IEVucmljIEJhbGxldGJvIGkgU2VycmEgd3JvdGU6Cj4gPiBGcm9tOiBMaW4gSHVhbmcgPGhsQHJv
-Y2stY2hpcHMuY29tPgo+ID4gCj4gPiBXZSBuZWVkIHRvIGVuYWJsZSB2aWRlbyBiZWZvcmUgYW5h
-bG9naXhfZHBfaXNfdmlkZW9fc3RyZWFtX29uKCksIHNvCj4gPiB3ZSBjYW4gZ2V0IHRoZSByaWdo
-dCB2aWRlbyBzdHJlYW0gc3RhdHVzLgo+ID4gCj4gPiBDYzog5b6B5aKeIOeOiyA8d3p6QHJvY2st
-Y2hpcHMuY29tPgo+ID4gQ2M6IFN0w6lwaGFuZSBNYXJjaGVzaW4gPG1hcmNoZXVAY2hyb21pdW0u
-b3JnPgo+ID4gU2lnbmVkLW9mZi1ieTogTGluIEh1YW5nIDxobEByb2NrLWNoaXBzLmNvbT4KPiA+
-IFNpZ25lZC1vZmYtYnk6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hyb21pdW0ub3JnPgo+ID4gU2ln
-bmVkLW9mZi1ieTogVGhpZXJyeSBFc2NhbmRlIDx0aGllcnJ5LmVzY2FuZGVAY29sbGFib3JhLmNv
-bT4KPiA+IFJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+
-ID4gU2lnbmVkLW9mZi1ieTogRW5yaWMgQmFsbGV0Ym8gaSBTZXJyYSA8ZW5yaWMuYmFsbGV0Ym9A
-Y29sbGFib3JhLmNvbT4KPiA+IFRlc3RlZC1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93
-c2tpQHNhbXN1bmcuY29tPgo+ID4gLS0tCj4gPiAKPiA+ICAgZHJpdmVycy9ncHUvZHJtL2JyaWRn
-ZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgfCAxMSArKysrKy0tLS0tLQo+ID4gICAxIGZp
-bGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQo+ID4gCj4gPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3Jl
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+
-ID4gaW5kZXggNWEyZTM1ZGM0MWUzLi5mOTY2MWI0MTBjYjkgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+ID4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKPiA+IEBA
-IC04MTksMTEgKzgxOSwxMCBAQCBzdGF0aWMgaW50IGFuYWxvZ2l4X2RwX2NvbmZpZ192aWRlbyhz
-dHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKPiA+ICAgCQlpZiAoYW5hbG9naXhfZHBfaXNf
-c2xhdmVfdmlkZW9fc3RyZWFtX2Nsb2NrX29uKGRwKSA9PSAwKQo+ID4gICAJCQlicmVhazsKPiA+
-ICAgCQlpZiAodGltZW91dF9sb29wID4gRFBfVElNRU9VVF9MT09QX0NPVU5UKSB7Cj4gPiAtCQkJ
-ZGV2X2VycihkcC0+ZGV2LCAiVGltZW91dCBvZiB2aWRlbyBzdHJlYW1jbGsgb2tcbiIpOwo+ID4g
-KwkJCWRldl9lcnIoZHAtPmRldiwgIlRpbWVvdXQgb2Ygc2xhdmUgdmlkZW8gc3RyZWFtY2xrIG9r
-XG4iKTsKPiA+ICAgCQkJcmV0dXJuIC1FVElNRURPVVQ7Cj4gPiAgIAkJfQo+ID4gLQo+ID4gLQkJ
-dXNsZWVwX3JhbmdlKDEsIDIpOwo+ID4gKwkJdXNsZWVwX3JhbmdlKDEwMDAsIDEwMDEpOwo+IAo+
-IENvdWxkIHdlIGJyaWVmbHkgZXhwbGFpbiBpbiB0aGUgY29tbWl0IG1lc3NhZ2Ugd2h5IHdlIG5l
-ZWQgdG8gaW5jcmVhc2UKPiB0aGUgZGVsYXkgaW4gdGhlIHRpbWVvdXQgbG9vcD8gSXMgaXQgYSBj
-b25zZXF1ZW5jZSBvZiBjYWxsaW5nCj4gYW5hbG9naXhfZHBfc3RhcnRfdmlkZW8oKSBlYXJsaWVy
-LCBvciBpcyB0aGlzIHRoZSBwcmVmZXJyZWQgdGltZQo+IG1lbnRpb25lZCBpbiB0aGUgc3BlY3M/
-CgpJIGFza2VkIExpbiwgdGhlIG9yaWdpbmFsIGF1dGhvciBvZiB0aGlzIHBhdGNoLCByZXNwb25z
-ZSBxdW90ZWQgYmVsb3c6CgoiVGhlcmUgaXMgcmFuZG9tICJUaW1lb3V0IG9mIHZpZGVvIHN0cmVh
-bWNsayBvayIgbWVzc2FnZSBoYXBwZW4gd2hlbiAKZGVidWcgZWRwIHBhbmVsLApTbyB3ZSBleHRl
-bmQgdGhpcyB0aW1lLCAgdGhpcyB0aW1lIGRvIG5vdCBkZWZpbmUgaW4gdGhlIHNwZWMuIgoKU28g
-aXQgbG9va3MgbGlrZSBpdCB3YXMgd29ya2luZyBieSBjaGFuY2UgYmVmb3JlIGFuZCB0aGlzIG1v
-dmUgdHJpZ2dlcmVkCnNvbWUgc29ydCBvZiB0aW1pbmcgaXNzdWUuCgoKSGVpa28KX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi,
+
+On top of previous DT pull.
+
+Best regards,
+Krzysztof
+
+
+The following changes since commit 6f4870753f29edf7dc39444246f9e39987b8b158:
+
+  ARM: dts: exynos: Fix IOMMU support for GScaler devices on Exynos5250 (2018-03-05 19:11:40 +0100)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.17-2
+
+for you to fetch changes up to 720b5fc3ca0f72b30452089d0510cd1e81a3df6d:
+
+  ARM: dts: exynos: Add #sound-dai-cells property to exynos5250 i2s nodes (2018-03-14 20:14:24 +0100)
+
+----------------------------------------------------------------
+Samsung DTS ARM changes for v4.17, part two
+
+1. Fix audio on Exynos5250 Chromebook Snow.
+2. Enable HDMI audio Chromebook Snow, Peach Pit and Peach Pi.
+3. Fix debounce of "OK" key on Midas (Trats2, Galaxy S3) boards.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      ARM: dts: exynos: Fix "debounce-interval" property misspelling in Midas
+
+Sylwester Nawrocki (7):
+      ARM: dts: exynos: Add #sound-dai-cells property to hdmi node in exynos5250.dtsi
+      ARM: dts: exynos: Add audio clocks configuration for Snow Chromebook
+      ARM: dts: exynos: Add missing clock and DAI properties to the max98095 node in Snow Chromebook
+      ARM: dts: exynos: Enable HDMI audio on Snow Chromebook
+      ARM: dts: exynos: Enable HDMI audio support on Peach Pit
+      ARM: dts: exynos: Enable HDMI audio support on Peach Pi
+      ARM: dts: exynos: Add #sound-dai-cells property to exynos5250 i2s nodes
+
+ arch/arm/boot/dts/exynos4412-midas.dtsi       |  2 +-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi | 18 ++++++++++++++++++
+ arch/arm/boot/dts/exynos5250-snow.dts         | 11 +++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi             |  5 +++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    | 17 +++++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     | 17 +++++++++++++++++
+ 6 files changed, 69 insertions(+), 1 deletion(-)
