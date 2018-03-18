@@ -1,57 +1,50 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] ARM: dts: exynos: Second pull for v4.17
-Date: Sun, 18 Mar 2018 16:34:15 +0100
-Message-ID: <20180318153415.8229-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-fixes
+Date: Mon, 19 Mar 2018 08:58:04 +0900
+Message-ID: <1521417484-4248-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20180318235804epcas1p1b99ccfde868cb05157ad768117ea704c@epcas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On top of previous DT pull.
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit 6f4870753f29edf7dc39444246f9e39987b8b158:
-
-  ARM: dts: exynos: Fix IOMMU support for GScaler devices on Exynos5250 (2018-03-05 19:11:40 +0100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.17-2
-
-for you to fetch changes up to 720b5fc3ca0f72b30452089d0510cd1e81a3df6d:
-
-  ARM: dts: exynos: Add #sound-dai-cells property to exynos5250 i2s nodes (2018-03-14 20:14:24 +0100)
-
-----------------------------------------------------------------
-Samsung DTS ARM changes for v4.17, part two
-
-1. Fix audio on Exynos5250 Chromebook Snow.
-2. Enable HDMI audio Chromebook Snow, Peach Pit and Peach Pi.
-3. Fix debounce of "OK" key on Midas (Trats2, Galaxy S3) boards.
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      ARM: dts: exynos: Fix "debounce-interval" property misspelling in Midas
-
-Sylwester Nawrocki (7):
-      ARM: dts: exynos: Add #sound-dai-cells property to hdmi node in exynos5250.dtsi
-      ARM: dts: exynos: Add audio clocks configuration for Snow Chromebook
-      ARM: dts: exynos: Add missing clock and DAI properties to the max98095 node in Snow Chromebook
-      ARM: dts: exynos: Enable HDMI audio on Snow Chromebook
-      ARM: dts: exynos: Enable HDMI audio support on Peach Pit
-      ARM: dts: exynos: Enable HDMI audio support on Peach Pi
-      ARM: dts: exynos: Add #sound-dai-cells property to exynos5250 i2s nodes
-
- arch/arm/boot/dts/exynos4412-midas.dtsi       |  2 +-
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 18 ++++++++++++++++++
- arch/arm/boot/dts/exynos5250-snow.dts         | 11 +++++++++++
- arch/arm/boot/dts/exynos5250.dtsi             |  5 +++++
- arch/arm/boot/dts/exynos5420-peach-pit.dts    | 17 +++++++++++++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts     | 17 +++++++++++++++++
- 6 files changed, 69 insertions(+), 1 deletion(-)
+SGkgRGF2ZSwKCiAgIEp1c3QgYWRkaW5nIGEgbWlzc2VkIGRlc2NyaXB0aW9uLCAnI3NvdW5kLWRh
+aS1jZWxscycsIHdoaWNoIGlzIGEKICAgZGV2aWNlIHRyZWUgcHJvcGVyeSBvZiBoZG1pIGRldmlj
+ZSBub2RlIHRoYXQgRXh5bm9zIFNvQyBkZXZpY2UKICAgdHJlZSBmaWxlcyBoYXZlIGFscmVhZHku
+CgogICBQbGVhc2Uga2luZGx5IGxldCBtZSBrbm93IGlmIHRoZXJlIGlzIGFueSBwcm9ibGVtLgoK
+VGhhbmtzLApJbmtpIERhZQoKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgM2Ex
+YjVkZTM2ZmRmNDAzZDFiMDA0ZTUzN2RjMTM5OTc2MzNkNjVkZjoKCiAgTWVyZ2UgdGFnICdkcm0t
+aW50ZWwtZml4ZXMtMjAxOC0wMy0xNScgb2YgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcv
+ZHJtL2RybS1pbnRlbCBpbnRvIGRybS1maXhlcyAoMjAxOC0wMy0xNiAxMjo1MTozNSArMTAwMCkK
+CmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKCiAgZ2l0Oi8vZ2l0Lmtl
+cm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcyB0YWdz
+L2V4eW5vcy1kcm0tZml4ZXMtZm9yLXY0LjE2LXJjNgoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2Vz
+IHVwIHRvIGMxNTYxOWE4OGFkNDNmMjE1YmJmYjZlZTE2M2FhMjZiYTljYzI1NzM6CgogIGR0LWJp
+bmRpbmdzOiBleHlub3M6IERvY3VtZW50ICNzb3VuZC1kYWktY2VsbHMgcHJvcGVydHkgb2YgdGhl
+IEhETUkgbm9kZSAoMjAxOC0wMy0xOSAwODo0Mjo1MyArMDkwMCkKCi0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQWRkIGEgZGV2
+aWNlIHRyZWUgcHJvcGVydHkgZGVzY3JpcHRpb24gZm9yIGhkbWkgZGV2aWNlIG5vZGUKLiAnI3Nv
+dW5kLWRhaS1jZWxscycgcHJvcGVydHkgaXMgcmVxdWlyZWQgdG8gZGVzY3JpYmUgbGluayBiZXR3
+ZWVuCnRoZSBIRE1JIElQIGJsb2NrIGFuZCB0aGUgU29DJ3MgYXVkaW8gc3Vic3lzdGVtIGFuZCBF
+eHlub3MgU29DIGRldmljZQp0cmVlIGZpbGVzIGFscmVhZHkgaGF2ZSB0aGlzIHByb3BlcnR5IGJ1
+dCB3ZSBtaXNzZWQgaXRzIGRlc2NyaXB0aW9uLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTeWx3ZXN0ZXIgTmF3cm9ja2kg
+KDEpOgogICAgICBkdC1iaW5kaW5nczogZXh5bm9zOiBEb2N1bWVudCAjc291bmQtZGFpLWNlbGxz
+IHByb3BlcnR5IG9mIHRoZSBIRE1JIG5vZGUKCiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0IHwgMSArCiAxIGZpbGUgY2hhbmdl
+ZCwgMSBpbnNlcnRpb24oKykKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
