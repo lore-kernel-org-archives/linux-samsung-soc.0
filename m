@@ -1,15 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 4/5] ASoC: samsung: Document compatible
- strings for Odroid X/X2, Odroid XU3
-Date: Mon, 19 Mar 2018 09:45:12 +0800
-Message-ID: <20180319014512.GB2186@sirena.org.uk>
-References: <CGME20180314164301epcas1p105f42730914735774284892b71839572@epcas1p1.samsung.com>
- <20180314164242.22927-1-s.nawrocki@samsung.com>
- <CAJKOXPdxSULHestFBc2YmtVzEpu422VdqtKMmy9FoCOjGV3wgw@mail.gmail.com>
+Subject: Applied "ASoC: samsung: Use
+	snd_soc_of_put_dai_link_codecs() in odroid.c" to the asoc tree
+Date: Mon, 19 Mar 2018 01:47:12 +0000 (GMT)
+Message-ID: <20180319014712.9BFB9440079@finisterre.ee.mobilebroadband>
+References: <20180314164115.22736-3-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8864332222568641391=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAJKOXPdxSULHestFBc2YmtVzEpu422VdqtKMmy9FoCOjGV3wgw@mail.gmail.com>
+In-Reply-To: <20180314164115.22736-3-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -19,67 +18,93 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, lgirdwood@gmail.com, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, robh+dt@kernel.org, broonie@kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+The patch
 
---===============8864332222568641391==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wDIVdgWPGyZzZswh"
-Content-Disposition: inline
+   ASoC: samsung: Use snd_soc_of_put_dai_link_codecs() in odroid.c
 
+has been applied to the asoc tree at
 
---wDIVdgWPGyZzZswh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-On Fri, Mar 16, 2018 at 08:37:28AM +0100, Krzysztof Kozlowski wrote:
-> On Wed, Mar 14, 2018 at 5:42 PM, Sylwester Nawrocki
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> > - - compatible - "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
-> > + - compatible - "hardkernel,odroid-u3-audio" - for Odroid U3 board,
-> > +               "hardkernel,odroid-x-audio" - for Odroid X, Odroid X2 boards,
-> > +               "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
-> >                 "hardkernel,odroid-xu4-audio" - for Odroid XU4 board
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> These are the same so I think they should not get separate
-> compatibles. By definition [2] the compatible expresses the
-> compatibility with family of devices. In this case - these belong to
-> the same family.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> The same applies to patch 5/5 (implementation of this).
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-I don't see a problem with adding the compatibles - the software
-handling might be identical but it's not really causing a problem to
-explicit document which board it is if people want.  It may end up
-coming in useful at some point if there's some mechanical/plastics
-difference which ends up being useful to handle (though that's much less
-likely for dev boards like this than for finished products).  But
-equally it's not essential, whatever you two decide.
+Thanks,
+Mark
 
---wDIVdgWPGyZzZswh
-Content-Type: application/pgp-signature; name="signature.asc"
+>From 4718840e76f74e5868d2001f0ca3a0e5c4292ea0 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Wed, 14 Mar 2018 17:41:15 +0100
+Subject: [PATCH] ASoC: samsung: Use snd_soc_of_put_dai_link_codecs() in
+ odroid.c
 
------BEGIN PGP SIGNATURE-----
+Now when a helper for unreferencing device nodes is available
+we can get rid of the local implementation.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqvFicACgkQJNaLcl1U
-h9BpdQf+PTSYmQtGxBX8xXq8mXk+c58fcg+uQJM23M7mKv/O02VPqufeYzb1PIYA
-YzlZLsg9HVwi9J4VrhMAOxnqn6W7PfSoZ0AApYJeNSeBI11dTpV5PyntzgyxqIIx
-BoG3VD8noHGPKbJvNsi7yWJHkaXsikbUSPNAX7cMReD0XyVQi85b8Bm2dChseZ4q
-g2Zs1Pk4ryuRl/K4cU5FmBfMtGV1kmvoPLUySLVzmkhBKwhVnKZKS+0MXxFsO3Ck
-nn78g5O8iKdxGxQWxezjcKGWn1nJgKmsBwm3Z0AxNyIfTQ7e8sGnMUTFAdC7vcyJ
-iASbUVfQUaYyMhVziu6QePAFiK88Ew==
-=fmOW
------END PGP SIGNATURE-----
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/samsung/odroid.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
---wDIVdgWPGyZzZswh--
-
---===============8864332222568641391==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============8864332222568641391==--
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index e1b59457a327..e7b371b07230 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -91,18 +91,6 @@ static const struct snd_soc_ops odroid_card_ops = {
+ 	.hw_params = odroid_card_hw_params,
+ };
+ 
+-static void odroid_put_codec_of_nodes(struct snd_soc_dai_link *link)
+-{
+-	struct snd_soc_dai_link_component *component = link->codecs;
+-	int i;
+-
+-	for (i = 0; i < link->num_codecs; i++, component++) {
+-		if (!component->of_node)
+-			break;
+-		of_node_put(component->of_node);
+-	}
+-}
+-
+ static int odroid_audio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -197,7 +185,7 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ err_put_i2s_n:
+ 	of_node_put(link->cpu_of_node);
+ err_put_codec_n:
+-	odroid_put_codec_of_nodes(link);
++	snd_soc_of_put_dai_link_codecs(link);
+ 	return ret;
+ }
+ 
+@@ -206,7 +194,7 @@ static int odroid_audio_remove(struct platform_device *pdev)
+ 	struct odroid_priv *priv = platform_get_drvdata(pdev);
+ 
+ 	of_node_put(priv->dai_link.cpu_of_node);
+-	odroid_put_codec_of_nodes(&priv->dai_link);
++	snd_soc_of_put_dai_link_codecs(&priv->dai_link);
+ 	clk_put(priv->sclk_i2s);
+ 	clk_put(priv->clk_i2s_bus);
+ 
+-- 
+2.16.2
