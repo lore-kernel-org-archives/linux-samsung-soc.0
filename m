@@ -1,50 +1,85 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Mon, 19 Mar 2018 08:58:04 +0900
-Message-ID: <1521417484-4248-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20180318235804epcas1p1b99ccfde868cb05157ad768117ea704c@epcas1p1.samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 4/5] ASoC: samsung: Document compatible
+ strings for Odroid X/X2, Odroid XU3
+Date: Mon, 19 Mar 2018 09:45:12 +0800
+Message-ID: <20180319014512.GB2186@sirena.org.uk>
+References: <CGME20180314164301epcas1p105f42730914735774284892b71839572@epcas1p1.samsung.com>
+ <20180314164242.22927-1-s.nawrocki@samsung.com>
+ <CAJKOXPdxSULHestFBc2YmtVzEpu422VdqtKMmy9FoCOjGV3wgw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: multipart/mixed; boundary="===============8864332222568641391=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CAJKOXPdxSULHestFBc2YmtVzEpu422VdqtKMmy9FoCOjGV3wgw@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, lgirdwood@gmail.com, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3QgYWRkaW5nIGEgbWlzc2VkIGRlc2NyaXB0aW9uLCAnI3NvdW5kLWRh
-aS1jZWxscycsIHdoaWNoIGlzIGEKICAgZGV2aWNlIHRyZWUgcHJvcGVyeSBvZiBoZG1pIGRldmlj
-ZSBub2RlIHRoYXQgRXh5bm9zIFNvQyBkZXZpY2UKICAgdHJlZSBmaWxlcyBoYXZlIGFscmVhZHku
-CgogICBQbGVhc2Uga2luZGx5IGxldCBtZSBrbm93IGlmIHRoZXJlIGlzIGFueSBwcm9ibGVtLgoK
-VGhhbmtzLApJbmtpIERhZQoKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgM2Ex
-YjVkZTM2ZmRmNDAzZDFiMDA0ZTUzN2RjMTM5OTc2MzNkNjVkZjoKCiAgTWVyZ2UgdGFnICdkcm0t
-aW50ZWwtZml4ZXMtMjAxOC0wMy0xNScgb2YgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcv
-ZHJtL2RybS1pbnRlbCBpbnRvIGRybS1maXhlcyAoMjAxOC0wMy0xNiAxMjo1MTozNSArMTAwMCkK
-CmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKCiAgZ2l0Oi8vZ2l0Lmtl
-cm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcyB0YWdz
-L2V4eW5vcy1kcm0tZml4ZXMtZm9yLXY0LjE2LXJjNgoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2Vz
-IHVwIHRvIGMxNTYxOWE4OGFkNDNmMjE1YmJmYjZlZTE2M2FhMjZiYTljYzI1NzM6CgogIGR0LWJp
-bmRpbmdzOiBleHlub3M6IERvY3VtZW50ICNzb3VuZC1kYWktY2VsbHMgcHJvcGVydHkgb2YgdGhl
-IEhETUkgbm9kZSAoMjAxOC0wMy0xOSAwODo0Mjo1MyArMDkwMCkKCi0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQWRkIGEgZGV2
-aWNlIHRyZWUgcHJvcGVydHkgZGVzY3JpcHRpb24gZm9yIGhkbWkgZGV2aWNlIG5vZGUKLiAnI3Nv
-dW5kLWRhaS1jZWxscycgcHJvcGVydHkgaXMgcmVxdWlyZWQgdG8gZGVzY3JpYmUgbGluayBiZXR3
-ZWVuCnRoZSBIRE1JIElQIGJsb2NrIGFuZCB0aGUgU29DJ3MgYXVkaW8gc3Vic3lzdGVtIGFuZCBF
-eHlub3MgU29DIGRldmljZQp0cmVlIGZpbGVzIGFscmVhZHkgaGF2ZSB0aGlzIHByb3BlcnR5IGJ1
-dCB3ZSBtaXNzZWQgaXRzIGRlc2NyaXB0aW9uLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTeWx3ZXN0ZXIgTmF3cm9ja2kg
-KDEpOgogICAgICBkdC1iaW5kaW5nczogZXh5bm9zOiBEb2N1bWVudCAjc291bmQtZGFpLWNlbGxz
-IHByb3BlcnR5IG9mIHRoZSBIRE1JIG5vZGUKCiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2hkbWkudHh0IHwgMSArCiAxIGZpbGUgY2hhbmdl
-ZCwgMSBpbnNlcnRpb24oKykKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+
+--===============8864332222568641391==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wDIVdgWPGyZzZswh"
+Content-Disposition: inline
+
+
+--wDIVdgWPGyZzZswh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Mar 16, 2018 at 08:37:28AM +0100, Krzysztof Kozlowski wrote:
+> On Wed, Mar 14, 2018 at 5:42 PM, Sylwester Nawrocki
+
+> > - - compatible - "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
+> > + - compatible - "hardkernel,odroid-u3-audio" - for Odroid U3 board,
+> > +               "hardkernel,odroid-x-audio" - for Odroid X, Odroid X2 boards,
+> > +               "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
+> >                 "hardkernel,odroid-xu4-audio" - for Odroid XU4 board
+
+> These are the same so I think they should not get separate
+> compatibles. By definition [2] the compatible expresses the
+> compatibility with family of devices. In this case - these belong to
+> the same family.
+
+> The same applies to patch 5/5 (implementation of this).
+
+I don't see a problem with adding the compatibles - the software
+handling might be identical but it's not really causing a problem to
+explicit document which board it is if people want.  It may end up
+coming in useful at some point if there's some mechanical/plastics
+difference which ends up being useful to handle (though that's much less
+likely for dev boards like this than for finished products).  But
+equally it's not essential, whatever you two decide.
+
+--wDIVdgWPGyZzZswh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqvFicACgkQJNaLcl1U
+h9BpdQf+PTSYmQtGxBX8xXq8mXk+c58fcg+uQJM23M7mKv/O02VPqufeYzb1PIYA
+YzlZLsg9HVwi9J4VrhMAOxnqn6W7PfSoZ0AApYJeNSeBI11dTpV5PyntzgyxqIIx
+BoG3VD8noHGPKbJvNsi7yWJHkaXsikbUSPNAX7cMReD0XyVQi85b8Bm2dChseZ4q
+g2Zs1Pk4ryuRl/K4cU5FmBfMtGV1kmvoPLUySLVzmkhBKwhVnKZKS+0MXxFsO3Ck
+nn78g5O8iKdxGxQWxezjcKGWn1nJgKmsBwm3Z0AxNyIfTQ7e8sGnMUTFAdC7vcyJ
+iASbUVfQUaYyMhVziu6QePAFiK88Ew==
+=fmOW
+-----END PGP SIGNATURE-----
+
+--wDIVdgWPGyZzZswh--
+
+--===============8864332222568641391==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============8864332222568641391==--
