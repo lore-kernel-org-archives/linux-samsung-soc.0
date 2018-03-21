@@ -1,72 +1,51 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 4/5] ASoC: samsung: Document compatible
- strings for Odroid X/X2, Odroid XU3
-Date: Mon, 19 Mar 2018 11:57:40 +0100
-Message-ID: <CAJKOXPecksw8Y_XRVCR3rsDVHPHYbiwWDrMcxeCnx1bDDV6nyg@mail.gmail.com>
-References: <CGME20180314164301epcas1p105f42730914735774284892b71839572@epcas1p1.samsung.com>
- <20180314164242.22927-1-s.nawrocki@samsung.com>
- <CAJKOXPdxSULHestFBc2YmtVzEpu422VdqtKMmy9FoCOjGV3wgw@mail.gmail.com>
- <dad52dab-d6e3-0283-0a19-b42d6632df29@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <dad52dab-d6e3-0283-0a19-b42d6632df29@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Fix coupled CPU idle freeze on Exynos4210
+Date: Wed, 21 Mar 2018 10:45:05 +0100
+Message-ID: <20180321094505.25494-1-m.szyprowski@samsung.com>
+References: <CGME20180321094523eucas1p1a87d146d65d4191ccdb37f1723977011@eucas1p1.samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Marc Zyngier <marc.zyngier@arm.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 11:17 AM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 03/16/2018 08:37 AM, Krzysztof Kozlowski wrote:
->>> diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
->>> index f35a2694eb04..a50a0c6a354b 100644
->>> --- a/Documentation/devicetree/bindings/sound/samsung,odroid.txt
->>> +++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
->>> @@ -1,8 +1,10 @@
->>> -Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
->>> +Hardkernel Odroid X/X2/U3/XU3/XU4 audio complex with MAX98090 codec
->>>
->>>  Required properties:
->>>
->>> - - compatible - "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
->>> + - compatible - "hardkernel,odroid-u3-audio" - for Odroid U3 board,
->>> +               "hardkernel,odroid-x-audio" - for Odroid X, Odroid X2 boards,
->>> +               "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
->>>                 "hardkernel,odroid-xu4-audio" - for Odroid XU4 board
->>
->> These are the same so I think they should not get separate
->> compatibles. By definition [2] the compatible expresses the
->> compatibility with family of devices. In this case - these belong to
->> the same family.
->>
->> The same applies to patch 5/5 (implementation of this).
->
-> Given that everything except XU4 is already obsoleted, are we going to use
-> "hardkernel,odroid-xu3-audio" for Odroid X and Odroid U3?
->
-> We could also make it:
-> "hardkernel,odroid-xu3-audio", "hardkernel,odroid-x-audio" - for Odroid X, Odroid X2
-> "hardkernel,odroid-xu3-audio", "hardkernel,odroid-u3-audio" - for Odroid U3
->
-> And in the driver wee would only have "hardkernel,odroid-xu3-audio", while dts
-> would contain detailed compatible.
+Since commit 04c8b0f82c7d ("irqchip/gic: Make locking a BL_SWITCHER only
+feature") coupled CPU idle freezes from time to time on Exynos4210. Later
+commit 313c8c16ee62 ("PM / CPU: replace raw_notifier with atomic_notifier")
+changed the context in which the CPU idle code is executed, what results
+in fully reproducible freeze all the time. However, almost the same coupled
+CPU idle code works fine on Exynos3250 regarless of the changes made in
+the mentioned commits.
 
-Add only these compatibles which are different. If the binding is the
-same, then there is no point of adding new compatible.
+It turned out that the IPI call used on Exynos4210 is conflicting with the
+change done in the first mentioned commit in GIC. Fix this by using the
+same code path as for Exynos3250, instead of the IPI call for
+synchronization with second CPU core, call dsb_sev() directly.
 
-If such difference in binding appears, then it is not a problem to add
-new compatible. It is however more difficult to remove or change
-existing binding...
+Tested on Exynos4210-based Trats and Origen boards.
 
-Best regards,
-Krzysztof
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+CC: stable@vger.kernel.org # v4.13+
+---
+ arch/arm/mach-exynos/pm.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index dc4346ecf16d..a1055a2b8d54 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -271,11 +271,7 @@ static int exynos_cpu0_enter_aftr(void)
+ 				goto fail;
+ 
+ 			call_firmware_op(cpu_boot, 1);
+-
+-			if (soc_is_exynos3250())
+-				dsb_sev();
+-			else
+-				arch_send_wakeup_ipi_mask(cpumask_of(1));
++			dsb_sev();
+ 		}
+ 	}
+ fail:
+-- 
+2.15.0
