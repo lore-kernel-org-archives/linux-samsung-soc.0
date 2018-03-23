@@ -1,69 +1,202 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix coupled CPU idle freeze on Exynos4210
-Date: Wed, 21 Mar 2018 18:55:09 +0100
-Message-ID: <20180321175509.jkemst242vv7d4qv@kozik-lap>
-References: <CGME20180321094523eucas1p1a87d146d65d4191ccdb37f1723977011@eucas1p1.samsung.com>
- <20180321094505.25494-1-m.szyprowski@samsung.com>
- <3225655.FLAaRANmer@aspire.rjw.lan>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH V3] ZBOOT: fix stack protector in compressed boot phase
+Date: Fri, 23 Mar 2018 09:14:23 +0100
+Message-ID: <e117a68e-69d6-2f9d-b6bb-7a8b0025e2b4@samsung.com>
+References: <CGME20180316075352epcas5p3d95b13f9382ff7bbce83b8177e8e3ad6@epcas5p3.samsung.com>
+        <1521186916-13745-1-git-send-email-chenhc@lemote.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3225655.FLAaRANmer@aspire.rjw.lan>
+In-reply-to: <1521186916-13745-1-git-send-email-chenhc@lemote.com>
+Content-language: en-US
 Sender: stable-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, stable@vger.kernel.org
+To: Huacai Chen <chenhc@lemote.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mips@linux-mips.org, Rich Felker <dalias@libc.org>, Russell King <linux@arm.linux.org.uk>, Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-mm@kvack.org, stable@vger.kernel.org, James Hogan <james.hogan@mips.com>, linux-arm-kernel@lists.infradead.org, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 02:49:52PM +0100, Rafael J. Wysocki wrote:
-> On Wednesday, March 21, 2018 10:45:05 AM CET Marek Szyprowski wrote:
-> > Since commit 04c8b0f82c7d ("irqchip/gic: Make locking a BL_SWITCHER only
-> > feature") coupled CPU idle freezes from time to time on Exynos4210. Later
-> > commit 313c8c16ee62 ("PM / CPU: replace raw_notifier with atomic_notifier")
-> > changed the context in which the CPU idle code is executed, what results
-> > in fully reproducible freeze all the time. However, almost the same coupled
-> > CPU idle code works fine on Exynos3250 regarless of the changes made in
-> > the mentioned commits.
-> > 
-> > It turned out that the IPI call used on Exynos4210 is conflicting with the
-> > change done in the first mentioned commit in GIC. Fix this by using the
-> > same code path as for Exynos3250, instead of the IPI call for
-> > synchronization with second CPU core, call dsb_sev() directly.
-> > 
-> > Tested on Exynos4210-based Trats and Origen boards.
-> > 
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > CC: stable@vger.kernel.org # v4.13+
-> > ---
-> >  arch/arm/mach-exynos/pm.c | 6 +-----
-> >  1 file changed, 1 insertion(+), 5 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> > index dc4346ecf16d..a1055a2b8d54 100644
-> > --- a/arch/arm/mach-exynos/pm.c
-> > +++ b/arch/arm/mach-exynos/pm.c
-> > @@ -271,11 +271,7 @@ static int exynos_cpu0_enter_aftr(void)
-> >  				goto fail;
-> >  
-> >  			call_firmware_op(cpu_boot, 1);
-> > -
-> > -			if (soc_is_exynos3250())
-> > -				dsb_sev();
-> > -			else
-> > -				arch_send_wakeup_ipi_mask(cpumask_of(1));
-> > +			dsb_sev();
-> >  		}
-> >  	}
-> >  fail:
-> > 
-> 
-> That will be -stable material I believe?
+Hi Huacai,
 
-Yes, it is CC-stable.
+On 2018-03-16 08:55, Huacai Chen wrote:
+> Call __stack_chk_guard_setup() in decompress_kernel() is too late that
+> stack checking always fails for decompress_kernel() itself. So remove
+> __stack_chk_guard_setup() and initialize __stack_chk_guard before we
+> call decompress_kernel().
+>
+> Original code comes from ARM but also used for MIPS and SH, so fix them
+> together. If without this fix, compressed booting of these archs will
+> fail because stack checking is enabled by default (>=4.16).
+>
+> V2: Fix build on ARM.
+> V3: Fix build on SuperH.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Huacai Chen <chenhc@lemote.com>
 
-Marek,
-Thanks, applied (with adjustment of stable address - I believe if some
-text follows it, it makes more readable to put <>).
+This patch breaks booting on ARM Exynos4210 based boards (tested with
+next-20180323, exynos_defconfig, both Trats and Origen fails to boot).
+That's a bit strange, because all other Exynos SoC works fine (I've
+checked 3250, 4412, 5250, 5410 and 542x). I really have no idea what
+is so specific inc case of Exynos4210, that causes this failure.
 
-Best regards,
-Krzysztof
+> ---
+>   arch/arm/boot/compressed/head.S        | 4 ++++
+>   arch/arm/boot/compressed/misc.c        | 7 -------
+>   arch/mips/boot/compressed/decompress.c | 7 -------
+>   arch/mips/boot/compressed/head.S       | 4 ++++
+>   arch/sh/boot/compressed/head_32.S      | 8 ++++++++
+>   arch/sh/boot/compressed/head_64.S      | 4 ++++
+>   arch/sh/boot/compressed/misc.c         | 7 -------
+>   7 files changed, 20 insertions(+), 21 deletions(-)
+>
+> diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
+> index 45c8823..bae1fc6 100644
+> --- a/arch/arm/boot/compressed/head.S
+> +++ b/arch/arm/boot/compressed/head.S
+> @@ -547,6 +547,10 @@ not_relocated:	mov	r0, #0
+>   		bic	r4, r4, #1
+>   		blne	cache_on
+>   
+> +		ldr	r0, =__stack_chk_guard
+> +		ldr	r1, =0x000a0dff
+> +		str	r1, [r0]
+> +
+>   /*
+>    * The C runtime environment should now be setup sufficiently.
+>    * Set up some pointers, and start decompressing.
+> diff --git a/arch/arm/boot/compressed/misc.c b/arch/arm/boot/compressed/misc.c
+> index 16a8a80..e518ef5 100644
+> --- a/arch/arm/boot/compressed/misc.c
+> +++ b/arch/arm/boot/compressed/misc.c
+> @@ -130,11 +130,6 @@ asmlinkage void __div0(void)
+>   
+>   unsigned long __stack_chk_guard;
+>   
+> -void __stack_chk_guard_setup(void)
+> -{
+> -	__stack_chk_guard = 0x000a0dff;
+> -}
+> -
+>   void __stack_chk_fail(void)
+>   {
+>   	error("stack-protector: Kernel stack is corrupted\n");
+> @@ -150,8 +145,6 @@ decompress_kernel(unsigned long output_start, unsigned long free_mem_ptr_p,
+>   {
+>   	int ret;
+>   
+> -	__stack_chk_guard_setup();
+> -
+>   	output_data		= (unsigned char *)output_start;
+>   	free_mem_ptr		= free_mem_ptr_p;
+>   	free_mem_end_ptr	= free_mem_ptr_end_p;
+> diff --git a/arch/mips/boot/compressed/decompress.c b/arch/mips/boot/compressed/decompress.c
+> index fdf99e9..5ba431c 100644
+> --- a/arch/mips/boot/compressed/decompress.c
+> +++ b/arch/mips/boot/compressed/decompress.c
+> @@ -78,11 +78,6 @@ void error(char *x)
+>   
+>   unsigned long __stack_chk_guard;
+>   
+> -void __stack_chk_guard_setup(void)
+> -{
+> -	__stack_chk_guard = 0x000a0dff;
+> -}
+> -
+>   void __stack_chk_fail(void)
+>   {
+>   	error("stack-protector: Kernel stack is corrupted\n");
+> @@ -92,8 +87,6 @@ void decompress_kernel(unsigned long boot_heap_start)
+>   {
+>   	unsigned long zimage_start, zimage_size;
+>   
+> -	__stack_chk_guard_setup();
+> -
+>   	zimage_start = (unsigned long)(&__image_begin);
+>   	zimage_size = (unsigned long)(&__image_end) -
+>   	    (unsigned long)(&__image_begin);
+> diff --git a/arch/mips/boot/compressed/head.S b/arch/mips/boot/compressed/head.S
+> index 409cb48..00d0ee0 100644
+> --- a/arch/mips/boot/compressed/head.S
+> +++ b/arch/mips/boot/compressed/head.S
+> @@ -32,6 +32,10 @@ start:
+>   	bne	a2, a0, 1b
+>   	 addiu	a0, a0, 4
+>   
+> +	PTR_LA	a0, __stack_chk_guard
+> +	PTR_LI	a1, 0x000a0dff
+> +	sw	a1, 0(a0)
+> +
+>   	PTR_LA	a0, (.heap)	     /* heap address */
+>   	PTR_LA	sp, (.stack + 8192)  /* stack address */
+>   
+> diff --git a/arch/sh/boot/compressed/head_32.S b/arch/sh/boot/compressed/head_32.S
+> index 7bb1681..e84237d 100644
+> --- a/arch/sh/boot/compressed/head_32.S
+> +++ b/arch/sh/boot/compressed/head_32.S
+> @@ -76,6 +76,10 @@ l1:
+>   	mov.l	init_stack_addr, r0
+>   	mov.l	@r0, r15
+>   
+> +	mov.l	__stack_chk_guard_addr, r0
+> +	mov.l	__stack_chk_guard_val, r1
+> +	mov.l	r1, @r0
+> +
+>   	/* Decompress the kernel */
+>   	mov.l	decompress_kernel_addr, r0
+>   	jsr	@r0
+> @@ -97,6 +101,10 @@ kexec_magic:
+>   	.long	0x400000F0	/* magic used by kexec to parse zImage format */
+>   init_stack_addr:
+>   	.long	stack_start
+> +__stack_chk_guard_val:
+> +	.long	0x000A0DFF
+> +__stack_chk_guard_addr:
+> +	.long	__stack_chk_guard
+>   decompress_kernel_addr:
+>   	.long	decompress_kernel
+>   kernel_start_addr:
+> diff --git a/arch/sh/boot/compressed/head_64.S b/arch/sh/boot/compressed/head_64.S
+> index 9993113..8b4d540 100644
+> --- a/arch/sh/boot/compressed/head_64.S
+> +++ b/arch/sh/boot/compressed/head_64.S
+> @@ -132,6 +132,10 @@ startup:
+>   	addi	r22, 4, r22
+>   	bne	r22, r23, tr1
+>   
+> +	movi	datalabel __stack_chk_guard, r0
+> +	movi	0x000a0dff, r1
+> +	st.l	r0, 0, r1
+> +
+>   	/*
+>   	 * Decompress the kernel.
+>   	 */
+> diff --git a/arch/sh/boot/compressed/misc.c b/arch/sh/boot/compressed/misc.c
+> index 627ce8e..fe4c079 100644
+> --- a/arch/sh/boot/compressed/misc.c
+> +++ b/arch/sh/boot/compressed/misc.c
+> @@ -106,11 +106,6 @@ static void error(char *x)
+>   
+>   unsigned long __stack_chk_guard;
+>   
+> -void __stack_chk_guard_setup(void)
+> -{
+> -	__stack_chk_guard = 0x000a0dff;
+> -}
+> -
+>   void __stack_chk_fail(void)
+>   {
+>   	error("stack-protector: Kernel stack is corrupted\n");
+> @@ -130,8 +125,6 @@ void decompress_kernel(void)
+>   {
+>   	unsigned long output_addr;
+>   
+> -	__stack_chk_guard_setup();
+> -
+>   #ifdef CONFIG_SUPERH64
+>   	output_addr = (CONFIG_MEMORY_START + 0x2000);
+>   #else
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
