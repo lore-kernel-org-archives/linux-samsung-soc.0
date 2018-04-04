@@ -1,38 +1,42 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] video: fbdev: s3c-fb: remove dead platform code for
- Exynos and S5PV210 platforms
-Date: Wed, 28 Mar 2018 16:31:33 +0200
-Message-ID: <1635191.86fAONqsAU@amdc3058>
-References: <CGME20180214120041epcas2p37afd51e693a9cad842e59128a77d45ac@epcas2p3.samsung.com>
- <2621881.tniV7NOQqn@amdc3058> <000001d3a5de$b9d2d080$2d787180$@gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
+Date: Tue, 3 Apr 2018 20:09:31 -0500
+Message-ID: <20180404010931.GA30291@embeddedor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <000001d3a5de$b9d2d080$2d787180$@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jingoo Han <jingoohan1@gmail.com>
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkbmVzZGF5LCBGZWJydWFyeSAxNCwgMjAxOCAwNDo1Njo1MyBQTSBKaW5nb28gSGFuIHdy
-b3RlOgo+IE9uIFdlZG5lc2RheSwgRmVicnVhcnkgMTQsIDIwMTggNzowMSBBTSB3cm90ZToKPiA+
-IAo+ID4gRXh5bm9zNSwgRXh5bm9zNCBhbmQgUzVQVjIxMCBwbGF0Zm9ybXMgaGF2ZSBiZWVuIGNv
-bnZlcnRlZCB0bwo+ID4gdXNlIERldmljZSBUcmVlIGFuZCBFeHlub3MgRFJNIGRyaXZlciBsb25n
-IHRpbWUgYWdvLiAgUmVtb3ZlCj4gPiBkZWFkIHBsYXRmb3JtIGNvZGUgZm9yIHRoZXNlIHBsYXRm
-b3JtcyBhbmQgdXBkYXRlIEtjb25maWcKPiA+IHMzYy1mYiBlbnRyeSBhY2NvcmRpbmdseS4KPiA+
-IAo+ID4gQ2M6IEppbmdvbyBIYW4gPGppbmdvb2hhbjFAZ21haWwuY29tPgo+IAo+IEFja2VkLWJ5
-OiBKaW5nb28gSGFuIDxqaW5nb29oYW4xQGdtYWlsLmNvbT4KClRoYW5rcy4KClBhdGNoIHF1ZXVl
-ZCBmb3IgNC4xNy4KCkJlc3QgcmVnYXJkcywKLS0KQmFydGxvbWllaiBab2xuaWVya2lld2ljegpT
-YW1zdW5nIFImRCBJbnN0aXR1dGUgUG9sYW5kClNhbXN1bmcgRWxlY3Ryb25pY3MKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
+
+Notice that in this particular case I replaced the comma wiht a dash,
+which is what GCC is expecting to find when there are other comments
+in the same line in which "fall through" appears.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+This code was compiled with GCC 7.3.0
+
+ drivers/clk/samsung/clk-s3c2443.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index c46e6d5..7ebb87f 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -429,7 +429,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 				ARRAY_SIZE(s3c2450_gates));
+ 		samsung_clk_register_alias(ctx, s3c2450_aliases,
+ 				ARRAY_SIZE(s3c2450_aliases));
+-		/* fall through, as s3c2450 extends the s3c2416 clocks */
++		/* fall through - as s3c2450 extends the s3c2416 clocks */
+ 	case S3C2416:
+ 		samsung_clk_register_div(ctx, s3c2416_dividers,
+ 				ARRAY_SIZE(s3c2416_dividers));
+-- 
+2.7.4
