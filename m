@@ -1,42 +1,59 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
-Date: Tue, 3 Apr 2018 20:09:31 -0500
-Message-ID: <20180404010931.GA30291@embeddedor.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] ARM: s3c24xx: mini2440: use device properties for at24 eeprom
+Date: Wed,  4 Apr 2018 13:51:47 +0200
+Message-ID: <20180404115147.16448-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+We want to work towards phasing out the at24_platform_data structure.
+There are few users and its contents can be represented using generic
+device properties. Using device properties only will allow us to
+significantly simplify the at24 configuration code.
 
-Notice that in this particular case I replaced the comma wiht a dash,
-which is what GCC is expecting to find when there are other comments
-in the same line in which "fall through" appears.
+Remove the at24_platform_data structure and replace it with an array
+of property entries. Drop the byte_len/size property, as the model name
+already implies the EEPROM's size.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
-This code was compiled with GCC 7.3.0
+ arch/arm/mach-s3c24xx/mach-mini2440.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- drivers/clk/samsung/clk-s3c2443.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index c46e6d5..7ebb87f 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -429,7 +429,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
- 				ARRAY_SIZE(s3c2450_gates));
- 		samsung_clk_register_alias(ctx, s3c2450_aliases,
- 				ARRAY_SIZE(s3c2450_aliases));
--		/* fall through, as s3c2450 extends the s3c2416 clocks */
-+		/* fall through - as s3c2450 extends the s3c2416 clocks */
- 	case S3C2416:
- 		samsung_clk_register_div(ctx, s3c2416_dividers,
- 				ARRAY_SIZE(s3c2416_dividers));
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index 95753e0bc073..f9fc1f8d2b28 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -20,7 +20,7 @@
+ #include <linux/serial_core.h>
+ #include <linux/serial_s3c.h>
+ #include <linux/dm9000.h>
+-#include <linux/platform_data/at24.h>
++#include <linux/property.h>
+ #include <linux/platform_device.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/i2c.h>
+@@ -481,15 +481,15 @@ static struct platform_device mini2440_audio = {
+ /*
+  * I2C devices
+  */
+-static struct at24_platform_data at24c08 = {
+-	.byte_len	= SZ_8K / 8,
+-	.page_size	= 16,
++static const struct property_entry mini2440_at24_properties[] = {
++	PROPERTY_ENTRY_U32("pagesize", 16),
++	{ }
+ };
+ 
+ static struct i2c_board_info mini2440_i2c_devs[] __initdata = {
+ 	{
+ 		I2C_BOARD_INFO("24c08", 0x50),
+-		.platform_data = &at24c08,
++		.properties = mini2440_at24_properties,
+ 	},
+ };
+ 
 -- 
-2.7.4
+2.16.3
