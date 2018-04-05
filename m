@@ -1,63 +1,68 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH v2 07/19] media: exymos4-is: allow compile test for EXYNOS
- FIMC-LITE
-Date: Thu,  5 Apr 2018 16:29:34 -0400
-Message-ID: <fb51c9ebb76438c554855cc6543651a8c1cb7aa6.1522959716.git.mchehab@s-opensource.com>
-References: <cover.1522959716.git.mchehab@s-opensource.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
+Date: Thu, 5 Apr 2018 18:11:25 -0500
+Message-ID: <4d52473e-019a-58da-c475-49bcd16c2ed4@embeddedor.com>
+References: <20180404010931.GA30291@embeddedor.com>
+ <152295987121.91052.16578276622043986934@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1522959716.git.mchehab@s-opensource.com>
-In-Reply-To: <cover.1522959716.git.mchehab@s-opensource.com>
-References: <cover.1522959716.git.mchehab@s-opensource.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <152295987121.91052.16578276622043986934@swboyd.mtv.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There's nothing that prevents building this driver with
-COMPILE_TEST. So, enable it.
 
-While here, make the Kconfig dependency cleaner by removing
-the unneeded if block.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
----
- drivers/media/platform/exynos4-is/Kconfig | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On 04/05/2018 03:24 PM, Stephen Boyd wrote:
+> Quoting Gustavo A. R. Silva (2018-04-03 18:09:31)
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Notice that in this particular case I replaced the comma wiht a dash,
+> 
+> s/wiht/with/
+> 
 
-diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
-index 7b2c49e5a592..c8e5ad8f8294 100644
---- a/drivers/media/platform/exynos4-is/Kconfig
-+++ b/drivers/media/platform/exynos4-is/Kconfig
-@@ -41,11 +41,10 @@ config VIDEO_S5P_MIPI_CSIS
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called s5p-csis.
- 
--if SOC_EXYNOS4412 || SOC_EXYNOS5250
--
- config VIDEO_EXYNOS_FIMC_LITE
- 	tristate "EXYNOS FIMC-LITE camera interface driver"
- 	depends on I2C
-+	depends on SOC_EXYNOS4412 || SOC_EXYNOS5250 || COMPILE_TEST
- 	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select VIDEO_EXYNOS4_IS_COMMON
-@@ -55,7 +54,6 @@ config VIDEO_EXYNOS_FIMC_LITE
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called exynos-fimc-lite.
--endif
- 
- config VIDEO_EXYNOS4_FIMC_IS
- 	tristate "EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver"
--- 
-2.14.3
+Thanks for this.
+
+>> which is what GCC is expecting to find when there are other comments
+>> in the same line in which "fall through" appears.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>> This code was compiled with GCC 7.3.0
+> 
+> What's the GCC warning? Please include in the commit text.
+> 
+
+drivers/clk/samsung/clk-s3c2443.c:430:3: warning: this statement may 
+fall through [-Wimplicit-fallthrough=]
+    samsung_clk_register_alias(ctx, s3c2450_aliases,
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ARRAY_SIZE(s3c2450_aliases));
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/clk/samsung/clk-s3c2443.c:433:2: note: here
+   case S3C2416:
+   ^~~~
+
+
+> Also what's the implicit-fallthrough level you're using? 3? Can you file
+> a bug so GCC can update their regex to accept a comma in addition to
+> whitespace characters?
+> 
+
+Yeah, I can talk to the GCC guys about that.
+
+> And maybe we can change the level to 2 or 1 in the kernel's makefile so
+> we don't need to patch comments for this.
+> 
+
+Yeah, with level 2 I don't get that warning.
+
+Thanks
+--
+Gustavo
