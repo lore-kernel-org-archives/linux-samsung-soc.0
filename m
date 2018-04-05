@@ -1,59 +1,137 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH] ARM: s3c24xx: mini2440: use device properties for at24 eeprom
-Date: Wed,  4 Apr 2018 13:51:47 +0200
-Message-ID: <20180404115147.16448-1-brgl@bgdev.pl>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH v6 00/30] DRM Rockchip rk3399 (Kevin)
+Date: Thu,  5 Apr 2018 11:49:30 +0200
+Message-ID: <20180405095000.9756-1-enric.balletbo@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com, hshi@chromium.org, Enric Balletbo i Serra <enric.balletbo@collabora.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-We want to work towards phasing out the at24_platform_data structure.
-There are few users and its contents can be represented using generic
-device properties. Using device properties only will allow us to
-significantly simplify the at24 configuration code.
+Hi,
 
-Remove the at24_platform_data structure and replace it with an array
-of property entries. Drop the byte_len/size property, as the model name
-already implies the EEPROM's size.
+This patchset includes cleanups, improvements, and bug fixes for
+Rockchip DRM driver and PSR support.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- arch/arm/mach-s3c24xx/mach-mini2440.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+This new version is the same as before removing some of the patches
+already applied and fixing the Exynos issue due patch '[v4 15/38]
+drm/bridge: analogix_dp: Ensure edp is disabled when shutting down
+the panel' reported by Marek.
 
-diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-index 95753e0bc073..f9fc1f8d2b28 100644
---- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-@@ -20,7 +20,7 @@
- #include <linux/serial_core.h>
- #include <linux/serial_s3c.h>
- #include <linux/dm9000.h>
--#include <linux/platform_data/at24.h>
-+#include <linux/property.h>
- #include <linux/platform_device.h>
- #include <linux/gpio_keys.h>
- #include <linux/i2c.h>
-@@ -481,15 +481,15 @@ static struct platform_device mini2440_audio = {
- /*
-  * I2C devices
-  */
--static struct at24_platform_data at24c08 = {
--	.byte_len	= SZ_8K / 8,
--	.page_size	= 16,
-+static const struct property_entry mini2440_at24_properties[] = {
-+	PROPERTY_ENTRY_U32("pagesize", 16),
-+	{ }
- };
- 
- static struct i2c_board_info mini2440_i2c_devs[] __initdata = {
- 	{
- 		I2C_BOARD_INFO("24c08", 0x50),
--		.platform_data = &at24c08,
-+		.properties = mini2440_at24_properties,
- 	},
- };
- 
+Regards,
+Enric
+
+Changes in v6:
+- Removed the following patches as are already applied.
+  [PATCH v5 01/36] drm/bridge: analogix_dp: detect Sink PSR state after
+  configuring the PSR
+  [PATCH v5 02/36] drm/rockchip: Remove analogix psr worker
+  [PATCH v5 03/36] drm/bridge: analogix_dp: Don't change psr while
+  bridge is disabled
+- Explain in the commit message why we need to increase
+  the delay in the timeout loop in
+  [PATCH v5 07/36] drm/bridge: analogix_dp: Move enable video into
+  config_video()
+- Add Reviewed-by: Archit Taneja <architt@codeaurora.org> for the
+  drm/bridge parts
+- Add Reviewed-by: Heiko Stuebner <heiko@sntech.de> for
+  [PATCH v5 19/36] drm/rockchip: Restore psr->state when enable/disable
+  psr failed
+
+Changes in v5:
+- Removed the following patches as are already applied.
+  [PATCH v4 01/38] drm/bridge: analogix_dp: set psr activate/deactivate
+  when enable/disable bridge
+  [PATCH v4 02/38] drm/rockchip: Don't use atomic constructs for psr
+- Add Mareks tested-tag and including the missing people.
+- [PATCH v4 15/38] move analogix_dp_set_analog_power_down() before
+  phy_power_off() to fix Exynos issue.
+
+Changes in v4:
+- Rebased all on top of drm-misc-next
+- Removed the following patches as are already applied.
+  [PATCH v3 01/43] drm/rockchip: Get rid of unnecessary struct fields
+  [PATCH v3 02/43] drm/rockchip: support prime import sg table
+  [PATCH v3 03/43] drm/rockchip: Respect page offset for PRIME mmap
+  calls
+- Removed the following patches as now are part of another patchset
+  [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in
+  analogix_dp_bind
+  [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
+
+Changes in v3:
+- Addressed some of the comments from Sean on the v2
+
+Changes in v2:
+- A few patches have been replaced by newer and cleaner versions from
+  the ChromeOS kernel gerrit, especially about disallowing PSR for the
+  whole atomic commit.
+
+
+Douglas Anderson (4):
+  drm/bridge: analogix_dp: Reorder plat_data->power_off to happen sooner
+  drm/bridge: analogix_dp: Properly log AUX CH errors
+  drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
+  drm/bridge: analogix_dp: Split the platform-specific poweron in two
+    parts
+
+Kristian H. Kristensen (1):
+  drm/rockchip: Disable PSR on input events
+
+Lin Huang (6):
+  drm/bridge: analogix_dp: Move enable video into config_video()
+  drm/bridge: analogix_dp: Check AUX_EN status when doing AUX transfer
+  drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the
+    panel
+  drm/bridge: analogix_dp: Extend hpd check time to 100ms
+  drm/bridge: analogix_dp: Check dpcd write/read status
+  drm/bridge: analogix_dp: Reset aux channel if an error occurred
+
+Mark Yao (1):
+  drm/rockchip: pre dither down when output bpc is 8bit
+
+Tomasz Figa (7):
+  drm/rockchip: analogix_dp: Do not call Analogix code before bind
+  drm/rockchip: Cancel PSR enable work before changing the state
+  drm/rockchip: psr: Avoid redundant calls to .set() callback
+  drm/rockchip: psr: Sanitize semantics of allow/disallow API
+  drm/rockchip: Disable PSR from reboot notifier
+  drm/rockchip: Disallow PSR for the whole atomic commit
+  drm/rockchip: psr: Remove flush by CRTC
+
+zain wang (11):
+  drm/bridge: analogix_dp: Don't use fast link training when panel just
+    powered up
+  drm/bridge: analogix_dp: Retry bridge enable when it failed
+  drm/bridge: analogix_dp: Wait for HPD signal before configuring link
+  drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
+  drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
+  drm/bridge: analogix_dp: Fix AUX_PD bit for Rockchip
+  drm/rockchip: Restore psr->state when enable/disable psr failed
+  drm/bridge: analogix_dp: Don't use ANALOGIX_DP_PLL_CTL to control pll
+  drm/bridge: analogix_dp: Fix timeout of video streamclk config
+  drm/bridge: analogix_dp: Fix incorrect operations with register
+    ANALOGIX_DP_FUNC_EN_1
+  drm/bridge: analogix_dp: Move fast link training detect to set_bridge
+
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 331 +++++++++++++++------
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |   5 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 236 +++++++++------
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  |   7 +
+ drivers/gpu/drm/exynos/exynos_dp.c                 |   2 +-
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  37 ++-
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   1 +
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c         |  61 +++-
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c        | 309 +++++++++++++------
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.h        |   7 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  13 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.h        |   1 +
+ drivers/gpu/drm/rockchip/rockchip_vop_reg.c        |   1 +
+ include/drm/bridge/analogix_dp.h                   |   3 +-
+ 14 files changed, 710 insertions(+), 304 deletions(-)
+
 -- 
 2.16.3
