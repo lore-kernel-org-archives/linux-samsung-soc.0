@@ -1,99 +1,30 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 12/30] drm/bridge: analogix_dp: Reset aux channel if an error occurred
-Date: Thu,  5 Apr 2018 11:49:42 +0200
-Message-ID: <20180405095000.9756-13-enric.balletbo@collabora.com>
-References: <20180405095000.9756-1-enric.balletbo@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: s3c24xx: mini2440: use device properties for at24 eeprom
+Date: Thu, 5 Apr 2018 13:16:56 +0200
+Message-ID: <CAJKOXPf5hhDp8igbCJhFbOxTkbFgCwrJum0nuV1yNF0seZUeTA@mail.gmail.com>
+References: <20180404115147.16448-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
+In-Reply-To: <20180404115147.16448-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com, hshi@chromium.org, Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Lin Huang <hl@rock-chips.com>
+On Wed, Apr 4, 2018 at 1:51 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> We want to work towards phasing out the at24_platform_data structure.
+> There are few users and its contents can be represented using generic
+> device properties. Using device properties only will allow us to
+> significantly simplify the at24 configuration code.
+>
+> Remove the at24_platform_data structure and replace it with an array
+> of property entries. Drop the byte_len/size property, as the model name
+> already implies the EEPROM's size.
+>
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 
-AUX errors are caused by many different reasons. We may not know what
-happened in aux channel on failure, so let's reset aux channel if some
-errors occurred.
+Looks ok, I will take it after merge window.
 
-Cc: 征增 王 <wzz@rock-chips.com>
-Cc: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index dee1ba109b5f..7b7fd227e1f9 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -466,6 +466,10 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
- 	reg = RPLY_RECEIV | AUX_ERR;
- 	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA);
- 
-+	analogix_dp_set_analog_power_down(dp, AUX_BLOCK, true);
-+	usleep_range(10, 11);
-+	analogix_dp_set_analog_power_down(dp, AUX_BLOCK, false);
-+
- 	analogix_dp_reset_aux(dp);
- 
- 	/* Disable AUX transaction H/W retry */
-@@ -1159,7 +1163,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 				 reg, !(reg & AUX_EN), 25, 500 * 1000);
- 	if (ret) {
- 		dev_err(dp->dev, "AUX CH enable timeout!\n");
--		return -ETIMEDOUT;
-+		goto aux_error;
- 	}
- 
- 	/* TODO: Wait for an interrupt instead of looping? */
-@@ -1168,7 +1172,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 				 reg, reg & RPLY_RECEIV, 10, 20 * 1000);
- 	if (ret) {
- 		dev_err(dp->dev, "AUX CH cmd reply timeout!\n");
--		return -ETIMEDOUT;
-+		goto aux_error;
- 	}
- 
- 	/* Clear interrupt source for AUX CH command reply */
-@@ -1178,7 +1182,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 	reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
- 	if (reg & AUX_ERR) {
- 		writel(AUX_ERR, dp->reg_base + ANALOGIX_DP_INT_STA);
--		return -EREMOTEIO;
-+		goto aux_error;
- 	}
- 
- 	/* Check AUX CH error access status */
-@@ -1186,7 +1190,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 	if ((reg & AUX_STATUS_MASK)) {
- 		dev_err(dp->dev, "AUX CH error happened: %d\n\n",
- 			reg & AUX_STATUS_MASK);
--		return -EREMOTEIO;
-+		goto aux_error;
- 	}
- 
- 	if (msg->request & DP_AUX_I2C_READ) {
-@@ -1212,4 +1216,10 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
- 
- 	return num_transferred > 0 ? num_transferred : -EBUSY;
-+
-+aux_error:
-+	/* if aux err happen, reset aux */
-+	analogix_dp_init_aux(dp);
-+
-+	return -EREMOTEIO;
- }
--- 
-2.16.3
+Best regards,
+Krzysztof
