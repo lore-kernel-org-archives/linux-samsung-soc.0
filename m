@@ -1,68 +1,83 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
-Date: Thu, 5 Apr 2018 18:11:25 -0500
-Message-ID: <4d52473e-019a-58da-c475-49bcd16c2ed4@embeddedor.com>
-References: <20180404010931.GA30291@embeddedor.com>
- <152295987121.91052.16578276622043986934@swboyd.mtv.corp.google.com>
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH] pinctrl/samsung: Correct EINTG banks order
+Date: Sun,  8 Apr 2018 20:07:47 +0200
+Message-ID: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <152295987121.91052.16578276622043986934@swboyd.mtv.corp.google.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: tomasz.figa@gmail.com, krzk@kernel.org, s.nawrocki@samsung.com
+Cc: linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+All banks with GPIO interrupts should be at beginning
+of bank array and without any other types of banks between them.
+This order is expected by exynos_eint_gpio_irq, when doing
+interrupt group to bank translation.
+Otherwise, kernel NULL pointer dereference would happen
+when trying to handle interrupt, due to wrong bank being looked up.
+Observed on s5pv210, when trying to handle gpj0 interrupt,
+where kernel was mapping it to gpi bank.
 
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-On 04/05/2018 03:24 PM, Stephen Boyd wrote:
-> Quoting Gustavo A. R. Silva (2018-04-03 18:09:31)
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
->>
->> Notice that in this particular case I replaced the comma wiht a dash,
-> 
-> s/wiht/with/
-> 
-
-Thanks for this.
-
->> which is what GCC is expecting to find when there are other comments
->> in the same line in which "fall through" appears.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->> This code was compiled with GCC 7.3.0
-> 
-> What's the GCC warning? Please include in the commit text.
-> 
-
-drivers/clk/samsung/clk-s3c2443.c:430:3: warning: this statement may 
-fall through [-Wimplicit-fallthrough=]
-    samsung_clk_register_alias(ctx, s3c2450_aliases,
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      ARRAY_SIZE(s3c2450_aliases));
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/clk/samsung/clk-s3c2443.c:433:2: note: here
-   case S3C2416:
-   ^~~~
-
-
-> Also what's the implicit-fallthrough level you're using? 3? Can you file
-> a bug so GCC can update their regex to accept a comma in addition to
-> whitespace characters?
-> 
-
-Yeah, I can talk to the GCC guys about that.
-
-> And maybe we can change the level to 2 or 1 in the kernel's makefile so
-> we don't need to patch comments for this.
-> 
-
-Yeah, with level 2 I don't get that warning.
-
-Thanks
---
-Gustavo
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+index 90c2744..de4ab07 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+@@ -105,12 +105,12 @@ static const struct samsung_pin_bank_data s5pv210_pin_bank[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x1c0, "gpg1", 0x38),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x1e0, "gpg2", 0x3c),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x200, "gpg3", 0x40),
+-	EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x240, "gpj0", 0x44),
+ 	EXYNOS_PIN_BANK_EINTG(6, 0x260, "gpj1", 0x48),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x280, "gpj2", 0x4c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2a0, "gpj3", 0x50),
+ 	EXYNOS_PIN_BANK_EINTG(5, 0x2c0, "gpj4", 0x54),
++	EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
+ 	EXYNOS_PIN_BANK_EINTN(8, 0x2e0, "mp01"),
+ 	EXYNOS_PIN_BANK_EINTN(4, 0x300, "mp02"),
+ 	EXYNOS_PIN_BANK_EINTN(8, 0x320, "mp03"),
+@@ -158,9 +158,6 @@ static const struct samsung_pin_bank_data exynos3250_pin_banks0[] __initconst =
+ 
+ /* pin banks of exynos3250 pin-controller 1 */
+ static const struct samsung_pin_bank_data exynos3250_pin_banks1[] __initconst = {
+-	EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
+-	EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
+-	EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
+@@ -170,6 +167,9 @@ static const struct samsung_pin_bank_data exynos3250_pin_banks1[] __initconst =
+ 	EXYNOS_PIN_BANK_EINTG(5, 0x2a0, "gpm2", 0x2c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2c0, "gpm3", 0x30),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2e0, "gpm4", 0x34),
++	EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
++	EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
+ 	EXYNOS_PIN_BANK_EINTW(8, 0xc00, "gpx0", 0x00),
+ 	EXYNOS_PIN_BANK_EINTW(8, 0xc20, "gpx1", 0x04),
+ 	EXYNOS_PIN_BANK_EINTW(8, 0xc40, "gpx2", 0x08),
+@@ -630,7 +630,6 @@ static const struct samsung_pin_bank_data exynos5410_pin_banks0[] __initconst =
+ 	EXYNOS_PIN_BANK_EINTG(4, 0x100, "gpc3", 0x20),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x120, "gpc1", 0x24),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x140, "gpc2", 0x28),
+-	EXYNOS_PIN_BANK_EINTN(2, 0x160, "gpm5"),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpd1", 0x2c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x1A0, "gpe0", 0x30),
+ 	EXYNOS_PIN_BANK_EINTG(2, 0x1C0, "gpe1", 0x34),
+@@ -641,6 +640,7 @@ static const struct samsung_pin_bank_data exynos5410_pin_banks0[] __initconst =
+ 	EXYNOS_PIN_BANK_EINTG(2, 0x260, "gpg2", 0x48),
+ 	EXYNOS_PIN_BANK_EINTG(4, 0x280, "gph0", 0x4c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2A0, "gph1", 0x50),
++	EXYNOS_PIN_BANK_EINTN(2, 0x160, "gpm5"),
+ 	EXYNOS_PIN_BANK_EINTN(8, 0x2C0, "gpm7"),
+ 	EXYNOS_PIN_BANK_EINTN(6, 0x2E0, "gpy0"),
+ 	EXYNOS_PIN_BANK_EINTN(4, 0x300, "gpy1"),
+-- 
+2.7.4
