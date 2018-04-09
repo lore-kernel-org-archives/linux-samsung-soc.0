@@ -1,82 +1,43 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
-Date: Mon, 9 Apr 2018 12:20:49 +0900
-Message-ID: <CA+Ln22HAkE55HDEQD2H2ixTzDOhjmZ6=vT0+SKZDyDUq2c35zA@mail.gmail.com>
-References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 07/16] media: exymos4-is: allow compile test for EXYNOS
+ FIMC-LITE
+Date: Mon, 09 Apr 2018 11:49:41 +0200
+Message-ID: <132c72ed-1211-682a-1926-79b10eae42c1@samsung.com>
+References: <cover.1522949748.git.mchehab@s-opensource.com>
+ <3cf43e723f17b55d99d817efa535ded43561b1f6.1522949748.git.mchehab@s-opensource.com>
+ <CGME20180409094946epcas1p1db108f4fcd018081c90787478004d907@epcas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <3cf43e723f17b55d99d817efa535ded43561b1f6.1522949748.git.mchehab@s-opensource.com>
+Content-language: en-GB
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Pawel,
+On 04/05/2018 07:54 PM, Mauro Carvalho Chehab wrote:
+> There's nothing that prevents building this driver with
+> COMPILE_TEST. So, enable it.
+> 
+> While here, make the Kconfig dependency cleaner by removing
+> the unneeded if block.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-2018-04-09 3:07 GMT+09:00 Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com=
->:
-> All banks with GPIO interrupts should be at beginning
-> of bank array and without any other types of banks between them.
-> This order is expected by exynos_eint_gpio_irq, when doing
-> interrupt group to bank translation.
-> Otherwise, kernel NULL pointer dereference would happen
-> when trying to handle interrupt, due to wrong bank being looked up.
-> Observed on s5pv210, when trying to handle gpj0 interrupt,
-> where kernel was mapping it to gpi bank.
+With s/exymos4-is/exynos4-is in the subject
 
-Thanks for the patch! Looks like it might be fixing quite an ugly bug indee=
-d.
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Just one comment for exynos3250 change below.
-
->
-> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinct=
-rl/samsung/pinctrl-exynos-arm.c
-> index 90c2744..de4ab07 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> @@ -105,12 +105,12 @@ static const struct samsung_pin_bank_data s5pv210_p=
-in_bank[] __initconst =3D {
->         EXYNOS_PIN_BANK_EINTG(7, 0x1c0, "gpg1", 0x38),
->         EXYNOS_PIN_BANK_EINTG(7, 0x1e0, "gpg2", 0x3c),
->         EXYNOS_PIN_BANK_EINTG(7, 0x200, "gpg3", 0x40),
-> -       EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
->         EXYNOS_PIN_BANK_EINTG(8, 0x240, "gpj0", 0x44),
->         EXYNOS_PIN_BANK_EINTG(6, 0x260, "gpj1", 0x48),
->         EXYNOS_PIN_BANK_EINTG(8, 0x280, "gpj2", 0x4c),
->         EXYNOS_PIN_BANK_EINTG(8, 0x2a0, "gpj3", 0x50),
->         EXYNOS_PIN_BANK_EINTG(5, 0x2c0, "gpj4", 0x54),
-> +       EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
->         EXYNOS_PIN_BANK_EINTN(8, 0x2e0, "mp01"),
->         EXYNOS_PIN_BANK_EINTN(4, 0x300, "mp02"),
->         EXYNOS_PIN_BANK_EINTN(8, 0x320, "mp03"),
-> @@ -158,9 +158,6 @@ static const struct samsung_pin_bank_data exynos3250_=
-pin_banks0[] __initconst =3D
->
->  /* pin banks of exynos3250 pin-controller 1 */
->  static const struct samsung_pin_bank_data exynos3250_pin_banks1[] __init=
-const =3D {
-> -       EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
-> -       EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
-> -       EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
->         EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
-
-It looks like gpk0 starts with eint_offset =3D 0x08. Depending on what
-the SVC register returns on this SoC, it might be group 0, which would
-be fine, but also group 2, which would require this bank to be at
-exynos3250_pin_banks1[2]... (or changing the way group is translated
-to bank pointer, e.g. by subtracting (eint_offset / 4) from the group
-number.
-
-Sylwester, would you be able to check which group number is returned
-for GPK0 bank in SVC register on Exynos 3250?
-
-Best regards,
-Tomasz
+-- 
+Regards,
+Sylwester
