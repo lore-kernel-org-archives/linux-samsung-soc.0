@@ -1,43 +1,46 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 07/16] media: exymos4-is: allow compile test for EXYNOS
- FIMC-LITE
-Date: Mon, 09 Apr 2018 11:49:41 +0200
-Message-ID: <132c72ed-1211-682a-1926-79b10eae42c1@samsung.com>
-References: <cover.1522949748.git.mchehab@s-opensource.com>
- <3cf43e723f17b55d99d817efa535ded43561b1f6.1522949748.git.mchehab@s-opensource.com>
- <CGME20180409094946epcas1p1db108f4fcd018081c90787478004d907@epcas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
+Date: Tue, 10 Apr 2018 09:06:26 +0200
+Message-ID: <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
+References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <3cf43e723f17b55d99d817efa535ded43561b1f6.1522949748.git.mchehab@s-opensource.com>
-Content-language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/05/2018 07:54 PM, Mauro Carvalho Chehab wrote:
-> There's nothing that prevents building this driver with
-> COMPILE_TEST. So, enable it.
-> 
-> While here, make the Kconfig dependency cleaner by removing
-> the unneeded if block.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
+<pawel.mikolaj.chmiel@gmail.com> wrote:
+> All banks with GPIO interrupts should be at beginning
+> of bank array and without any other types of banks between them.
+> This order is expected by exynos_eint_gpio_irq, when doing
+> interrupt group to bank translation.
+> Otherwise, kernel NULL pointer dereference would happen
+> when trying to handle interrupt, due to wrong bank being looked up.
+> Observed on s5pv210, when trying to handle gpj0 interrupt,
+> where kernel was mapping it to gpi bank.
 
-With s/exymos4-is/exynos4-is in the subject
+Thanks for the patch. The issue looks real although one thing was
+missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
+Marek Szyprowski):
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+0x0 - EINT_23 - gpk0
+0x1 - EINT_24 - gpk1
+0x2 - EINT_25 - gpk2
+0x4 - EINT_27 - gpl0
+0x7 - EINT_8 - gpm0
 
--- 
-Regards,
-Sylwester
+Maybe this should be done differently - to remove such hidden
+requirement entirely in favor of another parameter of
+EXYNOS_PIN_BANK_EINTG argument? Anyway if such hidden requirement
+stays, then please document it in the source code (it maybe next to
+PIN order... or next macro... or also in exynos_eint_gpio_irq()).
+
+Beside that please add cc-stable and appropriate fixes tag,
+
+Best regards,
+Krzysztof
