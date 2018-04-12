@@ -1,61 +1,45 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
-Date: Wed, 11 Apr 2018 11:52:44 +0200
-Message-ID: <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
-References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
- <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com> <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCHv2] pinctrl: samsung: add pin_dbg_show callback for debugfs
+Date: Thu, 12 Apr 2018 10:14:38 +0200
+Message-ID: <CACRpkdaudDZ4H_t-bWzuFOLU6bxCrV=DOLisO1Jw=ufg9e2Bkw@mail.gmail.com>
+References: <20180327135801.9556-1-parkch98@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180327135801.9556-1-parkch98@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chanho Park <parkch98@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 10:36 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> 2018-04-10 17:38 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
->> 2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
->>> On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
->>> <pawel.mikolaj.chmiel@gmail.com> wrote:
->>>> All banks with GPIO interrupts should be at beginning
->>>> of bank array and without any other types of banks between them.
->>>> This order is expected by exynos_eint_gpio_irq, when doing
->>>> interrupt group to bank translation.
->>>> Otherwise, kernel NULL pointer dereference would happen
->>>> when trying to handle interrupt, due to wrong bank being looked up.
->>>> Observed on s5pv210, when trying to handle gpj0 interrupt,
->>>> where kernel was mapping it to gpi bank.
->>>
->>> Thanks for the patch. The issue looks real although one thing was
->>> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
->>> Marek Szyprowski):
->>>
->>> 0x0 - EINT_23 - gpk0
->>> 0x1 - EINT_24 - gpk1
->>> 0x2 - EINT_25 - gpk2
->>> 0x4 - EINT_27 - gpl0
->>> 0x7 - EINT_8 - gpm0
->>>
->>> Maybe this should be done differently - to remove such hidden
->>> requirement entirely in favor of another parameter of
->>> EXYNOS_PIN_BANK_EINTG argument?
->>
->> Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
->> a simple swap of bank order in the arrays should be okay.
->>
->> We might also need to have some fixes on 4x12, because I noticed that
->> in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
->> gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
->> eint_offset equal to 0x08 (not 0).
+On Tue, Mar 27, 2018 at 3:58 PM, Chanho Park <parkch98@gmail.com> wrote:
+
+> This patch adds a samsung_pin_dbg_show function to implement the
+> pin_dbg_show callback function which can be used to show pin
+> confuration values. Basically, it can show pin setting values by
+> accessing the "pins" node like below:
 >
-> To close the loop, after talking offline and checking the
-> documentation, Exynos4x12 is fine, because the group numbers in SVC
-> register actually match what is defined in bank arrays.
+> $ cat pins
+> pin 0 (gpy7-0)  CON(0x0) DAT(0x1) PUD(0x1) DRV(0x0) CON_PDN(0x0) PUD_PDN(0x0)
+>
+> Signed-off-by: Chanho Park <parkch98@gmail.com>
+> ---
+> Changes from v1:
+> - use samsung_pinconf_get instead of samsung_pinconf_rw
+> - use "static const char * const" type declaration of reg_names
+> - skip condition change
 
-Great! Thanks for checking.
+Patch applied directly to my tree for v4.18 with the
+ACKs!
 
-Best regards,
-Krzysztof
+Yours,
+Linus Walleij
