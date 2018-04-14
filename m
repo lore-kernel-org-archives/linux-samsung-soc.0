@@ -1,144 +1,68 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] thermal/drivers/exynos_tmu: Fix warnings in
- temp_to_code / code_to_temp
-Date: Fri, 13 Apr 2018 13:08:35 +0200
-Message-ID: <11044079.DdDvlFD91s@amdc3058>
-References: <10298074.ogKH1ypqfx@amdc3058>
-        <CGME20180413110032epcas4p3e0ef781eecb771b1294b7992d2ee6e6d@epcas4p3.samsung.com>
-        <1523617209-1730-1-git-send-email-daniel.lezcano@linaro.org>
+From: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
+Date: Sat, 14 Apr 2018 18:27:09 +0200
+Message-ID: <2132977.nF3rHrDWU5@acerlaptop>
+References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com> <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1523617209-1730-1-git-send-email-daniel.lezcano@linaro.org>
+In-Reply-To: <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, rui.zhang@intel.com, philip.li@intel.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday, April 13, 2018 01:00:09 PM Daniel Lezcano wrote:
-> The latest driver cleanup introduced a compilation warning
+On Wednesday, April 11, 2018 11:52:44 AM CEST Krzysztof Kozlowski wrote:
+> On Wed, Apr 11, 2018 at 10:36 AM, Tomasz Figa <tomasz.figa@gmail.com> wro=
+te:
+> > 2018-04-10 17:38 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
+> >> 2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> >>> On Sun, Apr 8, 2018 at 8:07 PM, Pawe=C5=82 Chmiel
+> >>> <pawel.mikolaj.chmiel@gmail.com> wrote:
+> >>>> All banks with GPIO interrupts should be at beginning
+> >>>> of bank array and without any other types of banks between them.
+> >>>> This order is expected by exynos_eint_gpio_irq, when doing
+> >>>> interrupt group to bank translation.
+> >>>> Otherwise, kernel NULL pointer dereference would happen
+> >>>> when trying to handle interrupt, due to wrong bank being looked up.
+> >>>> Observed on s5pv210, when trying to handle gpj0 interrupt,
+> >>>> where kernel was mapping it to gpi bank.
+> >>>
+> >>> Thanks for the patch. The issue looks real although one thing was
+> >>> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
+> >>> Marek Szyprowski):
+> >>>
+> >>> 0x0 - EINT_23 - gpk0
+> >>> 0x1 - EINT_24 - gpk1
+> >>> 0x2 - EINT_25 - gpk2
+> >>> 0x4 - EINT_27 - gpl0
+> >>> 0x7 - EINT_8 - gpm0
+> >>>
+> >>> Maybe this should be done differently - to remove such hidden
+> >>> requirement entirely in favor of another parameter of
+> >>> EXYNOS_PIN_BANK_EINTG argument?
+> >>
+> >> Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
+> >> a simple swap of bank order in the arrays should be okay.
+> >>
+> >> We might also need to have some fixes on 4x12, because I noticed that
+> >> in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
+> >> gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
+> >> eint_offset equal to 0x08 (not 0).
+> >
+> > To close the loop, after talking offline and checking the
+> > documentation, Exynos4x12 is fine, because the group numbers in SVC
+> > register actually match what is defined in bank arrays.
 >=20
->  drivers/thermal/samsung/exynos_tmu.c: In function =E2=80=98exynos_ge=
-t_temp=E2=80=99:
->  drivers/thermal/samsung/exynos_tmu.c:931:37: warning: =E2=80=98temp=E2=
-=80=99 may be used uninitialized in this function [-Wmaybe-uninitialize=
-d]
->    *temp =3D code_to_temp(data, value) * MCELSIUS;
->                                         ^
+> Great! Thanks for checking.
 >=20
->  drivers/thermal/samsung/exynos_tmu.c: In function =E2=80=98temp_to_c=
-ode=E2=80=99
->  drivers/thermal/samsung/exynos_tmu.c:304:9: warning: =E2=80=98temp_c=
-ode=E2=80=99 may be used uninitialized in this function [-Wmaybe-uninit=
-ialized]
-> =09=09=09=09=09  return temp_code;
-> =09=09=09=09=09           ^~~~~~~~~
+> Best regards,
+> Krzysztof
 >=20
-> The compiler gives a warning because semantically speaking the
-> function has no default value. However the code path, were the
-> variable is never initialized is a dead branch because the switch
-> statement always choose one of the two cases as the data->cal_type is=
 
-> initialized in the init function to one of both values.
->=20
-> This is unclear as it adds a dependency on the initialization functio=
-n
-> and it is prone to error. Make things clearer by converting the
-> functions with if ... return statements, thus showing we are expectin=
-g
-> the values to be correctly filled before calling this function.
->=20
-> This change fixes the couple of function warnings.
->=20
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Thanks for all comments. I'll prepare new version of patches, with all fixe=
+s and documentation.
 
-Thanks Daniel, this is much better fix.
-
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 46 ++++++++++----------------=
-----------
->  1 file changed, 12 insertions(+), 34 deletions(-)
->=20
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/s=
-amsung/exynos_tmu.c
-> index 2ec8548..197f267 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -284,24 +284,13 @@ static void exynos_report_trigger(struct exynos=
-_tmu_data *p)
->   */
->  static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
->  {
-> -=09int temp_code;
-> -
-> -=09switch (data->cal_type) {
-> -=09case TYPE_TWO_POINT_TRIMMING:
-> -=09=09temp_code =3D (temp - EXYNOS_FIRST_POINT_TRIM) *
-> -=09=09=09(data->temp_error2 - data->temp_error1) /
-> -=09=09=09(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
-> -=09=09=09data->temp_error1;
-> -=09=09break;
-> -=09case TYPE_ONE_POINT_TRIMMING:
-> -=09=09temp_code =3D temp + data->temp_error1 - EXYNOS_FIRST_POINT_TR=
-IM;
-> -=09=09break;
-> -=09default:
-> -=09=09WARN_ON(1);
-> -=09=09break;
-> -=09}
-> +=09if (data->cal_type =3D=3D TYPE_ONE_POINT_TRIMMING)
-> +=09=09return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
-> =20
-> -=09return temp_code;
-> +=09return (temp - EXYNOS_FIRST_POINT_TRIM) *
-> +=09=09(data->temp_error2 - data->temp_error1) /
-> +=09=09(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
-> +=09=09data->temp_error1;
->  }
-> =20
->  /*
-> @@ -310,24 +299,13 @@ static int temp_to_code(struct exynos_tmu_data =
-*data, u8 temp)
->   */
->  static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)=
-
->  {
-> -=09int temp;
-> -
-> -=09switch (data->cal_type) {
-> -=09case TYPE_TWO_POINT_TRIMMING:
-> -=09=09temp =3D (temp_code - data->temp_error1) *
-> -=09=09=09(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
-> -=09=09=09(data->temp_error2 - data->temp_error1) +
-> -=09=09=09EXYNOS_FIRST_POINT_TRIM;
-> -=09=09break;
-> -=09case TYPE_ONE_POINT_TRIMMING:
-> -=09=09temp =3D temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TR=
-IM;
-> -=09=09break;
-> -=09default:
-> -=09=09WARN_ON(1);
-> -=09=09break;
-> -=09}
-> +=09if (data->cal_type =3D=3D TYPE_ONE_POINT_TRIMMING)
-> +=09=09return temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM=
-;
-> =20
-> -=09return temp;
-> +=09return (temp_code - data->temp_error1) *
-> +=09=09(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
-> +=09=09(data->temp_error2 - data->temp_error1) +
-> +=09=09EXYNOS_FIRST_POINT_TRIM;
->  }
-> =20
->  static void sanitize_temp_error(struct exynos_tmu_data *data, u32 tr=
-im_info)
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Best regards
+Pawe=C5=82
