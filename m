@@ -1,86 +1,106 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v6 28/30] drm/rockchip: Disable PSR from reboot notifier
-Date: Mon, 16 Apr 2018 11:57:15 +0200
-Message-ID: <a9e436f8-34ec-123a-9c69-efabb4576bea@samsung.com>
-References: <20180405095000.9756-1-enric.balletbo@collabora.com>
- <CGME20180405095117epcas2p2093448b49aab2abd6684bf689f8888d5@epcas2p2.samsung.com>
- <20180405095000.9756-29-enric.balletbo@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180405095000.9756-29-enric.balletbo@collabora.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, Laurent.pinchart@ideasonboard.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 00/14] thermal: exynos: pending fixes and cleanups
+Date: Mon, 16 Apr 2018 12:11:51 +0200
+Message-ID: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
+References: <CGME20180416101225epcas2p42e345645d822cd869dbdb449becf1c7a@epcas2p4.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDUuMDQuMjAxOCAxMTo0OSwgRW5yaWMgQmFsbGV0Ym8gaSBTZXJyYSB3cm90ZToKPiBGcm9t
-OiBUb21hc3ogRmlnYSA8dGZpZ2FAY2hyb21pdW0ub3JnPgo+Cj4gSXQgbG9va3MgbGlrZSB0aGUg
-ZHJpdmVyIHN1YnN5c3RlbSBkZXRhY2hlcyBkZXZpY2VzIGZyb20gcG93ZXIgZG9tYWlucwo+IGF0
-IHNodXRkb3duIHdpdGhvdXQgY29uc2VudCBvZiB0aGUgZHJpdmVycy4KCkl0IGxvb2tzIGJpdCBz
-dHJhbmdlLiBDb3VsZCB5b3UgZWxhYm9yYXRlIG1vcmUgb24gaXQuIENvdWxkIHlvdSBzaG93IHRo
-ZQpjb2RlIHBlcmZvcm1pbmcgdGhlIGRldGFjaD8KCgpSZWdhcmRzCkFuZHJ6ZWoKCgo+ICBUaGlz
-IG1lYW5zIHRoYXQgd2UgbWlnaHQgaGF2ZQo+IG91ciBwb3dlciBkb21haW4gdHVybmVkIG9mZiBi
-ZWhpbmQgb3VyIGJhY2sgYW5kIHRoZSBvbmx5IHdheSB0byBhdm9pZAo+IHByb2JsZW1zIGlzIHRv
-IHN0b3AgZG9pbmcgYW55IGhhcmR3YXJlIHByb2dyYW1taW5nIGF0IHNvbWUgcG9pbnQgYmVmb3Jl
-Cj4gdGhlIHBvd2VyIGlzIGN1dC4gQSByZWJvb3Qgbm90aWZpZXIsIGRlc3BpdGUgYmVpbmcgYSBt
-aXNub21lciBhbmQKPiBoYW5kbGluZyBzaHV0ZG93bnMgYXMgd2VsbCwgaXMgYSBnb29kIHBsYWNl
-IHRvIGRvIGl0Lgo+IFNpZ25lZC1vZmYtYnk6IFRvbWFzeiBGaWdhIDx0ZmlnYUBjaHJvbWl1bS5v
-cmc+Cj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBFc2NhbmRlIDx0aGllcnJ5LmVzY2FuZGVAY29s
-bGFib3JhLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBFbnJpYyBCYWxsZXRibyBpIFNlcnJhIDxlbnJp
-Yy5iYWxsZXRib0Bjb2xsYWJvcmEuY29tPgo+IFRlc3RlZC1ieTogTWFyZWsgU3p5cHJvd3NraSA8
-bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+Cj4gIGRyaXZlcnMvZ3B1L2RybS9yb2Nr
-Y2hpcC9yb2NrY2hpcF9kcm1fcHNyLmMgfCAyNCArKysrKysrKysrKysrKysrKysrKysrKysKPiAg
-MSBmaWxlIGNoYW5nZWQsIDI0IGluc2VydGlvbnMoKykKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3Bzci5jIGIvZHJpdmVycy9ncHUvZHJtL3Jv
-Y2tjaGlwL3JvY2tjaGlwX2RybV9wc3IuYwo+IGluZGV4IGU3ZTE2ZDkyZDVhMS4uMWJmNWNiYTlh
-NjRkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1f
-cHNyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3Bzci5j
-Cj4gQEAgLTEzLDYgKzEzLDcgQEAKPiAgICovCj4gIAo+ICAjaW5jbHVkZSA8bGludXgvaW5wdXQu
-aD4KPiArI2luY2x1ZGUgPGxpbnV4L3JlYm9vdC5oPgo+ICAKPiAgI2luY2x1ZGUgPGRybS9kcm1Q
-Lmg+Cj4gICNpbmNsdWRlIDxkcm0vZHJtX2NydGNfaGVscGVyLmg+Cj4gQEAgLTMzLDYgKzM0LDcg
-QEAgc3RydWN0IHBzcl9kcnYgewo+ICAJc3RydWN0IGRlbGF5ZWRfd29yawlmbHVzaF93b3JrOwo+
-ICAJc3RydWN0IHdvcmtfc3RydWN0CWRpc2FibGVfd29yazsKPiAgCj4gKwlzdHJ1Y3Qgbm90aWZp
-ZXJfYmxvY2sJcmVib290X25iOwo+ICAJc3RydWN0IGlucHV0X2hhbmRsZXIgICAgaW5wdXRfaGFu
-ZGxlcjsKPiAgCj4gIAlpbnQgKCpzZXQpKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciwgYm9v
-bCBlbmFibGUpOwo+IEBAIC0zMDksNiArMzExLDI0IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaW5w
-dXRfZGV2aWNlX2lkIHBzcl9pZHNbXSA9IHsKPiAgCXsgfSwKPiAgfTsKPiAgCj4gK3N0YXRpYyBp
-bnQgcm9ja2NoaXBfZHJtX3Bzcl9yZWJvb3Rfbm90aWZpZXIoc3RydWN0IG5vdGlmaWVyX2Jsb2Nr
-ICpuYiwKPiArCQkJCQkgICAgdW5zaWduZWQgbG9uZyBhY3Rpb24sIHZvaWQgKmRhdGEpCj4gK3sK
-PiArCXN0cnVjdCBwc3JfZHJ2ICpwc3IgPSBjb250YWluZXJfb2YobmIsIHN0cnVjdCBwc3JfZHJ2
-LCByZWJvb3RfbmIpOwo+ICsKPiArCS8qCj4gKwkgKiBJdCBsb29rcyBsaWtlIHRoZSBkcml2ZXIg
-c3Vic3lzdGVtIGRldGFjaGVzIGRldmljZXMgZnJvbSBwb3dlcgo+ICsJICogZG9tYWlucyBhdCBz
-aHV0ZG93biB3aXRob3V0IGNvbnNlbnQgb2YgdGhlIGRyaXZlcnMuIFRoaXMgbWVhbnMKPiArCSAq
-IHRoYXQgd2UgbWlnaHQgaGF2ZSBvdXIgcG93ZXIgZG9tYWluIHR1cm5lZCBvZmYgYmVoaW5kIG91
-ciBiYWNrCj4gKwkgKiBhbmQgdGhlIG9ubHkgd2F5IHRvIGF2b2lkIHByb2JsZW1zIGlzIHRvIHN0
-b3AgZG9pbmcgYW55IGhhcmR3YXJlCj4gKwkgKiBwcm9ncmFtbWluZyBhZnRlciB0aGlzIHBvaW50
-LCB3aGljaCBpcyBhY2hpZXZlZCBieSB0aGUgdW5iYWxhbmNlZAo+ICsJICogY2FsbCBiZWxvdy4K
-PiArCSAqLwo+ICsJcm9ja2NoaXBfZHJtX3Bzcl9pbmhpYml0X2dldChwc3ItPmVuY29kZXIpOwo+
-ICsKPiArCXJldHVybiAwOwo+ICt9Cj4gKwo+ICAvKioKPiAgICogcm9ja2NoaXBfZHJtX3Bzcl9y
-ZWdpc3RlciAtIHJlZ2lzdGVyIGVuY29kZXIgdG8gcHNyIGRyaXZlcgo+ICAgKiBAZW5jb2Rlcjog
-ZW5jb2RlciB0aGF0IG9idGFpbiB0aGUgUFNSIGZ1bmN0aW9uCj4gQEAgLTM2MSw2ICszODEsOSBA
-QCBpbnQgcm9ja2NoaXBfZHJtX3Bzcl9yZWdpc3RlcihzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29k
-ZXIsCj4gIAlpZiAoZXJyb3IpCj4gIAkJZ290byBlcnIxOwo+ICAKPiArCXBzci0+cmVib290X25i
-Lm5vdGlmaWVyX2NhbGwgPSByb2NrY2hpcF9kcm1fcHNyX3JlYm9vdF9ub3RpZmllcjsKPiArCXJl
-Z2lzdGVyX3JlYm9vdF9ub3RpZmllcigmcHNyLT5yZWJvb3RfbmIpOwo+ICsKPiAgCW11dGV4X2xv
-Y2soJmRybV9kcnYtPnBzcl9saXN0X2xvY2spOwo+ICAJbGlzdF9hZGRfdGFpbCgmcHNyLT5saXN0
-LCAmZHJtX2Rydi0+cHNyX2xpc3QpOwo+ICAJbXV0ZXhfdW5sb2NrKCZkcm1fZHJ2LT5wc3JfbGlz
-dF9sb2NrKTsKPiBAQCAtNDAzLDYgKzQyNiw3IEBAIHZvaWQgcm9ja2NoaXBfZHJtX3Bzcl91bnJl
-Z2lzdGVyKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKPiAgCQkJV0FSTl9PTihwc3ItPmlu
-aGliaXRfY291bnQgIT0gMSk7Cj4gIAo+ICAJCQlsaXN0X2RlbCgmcHNyLT5saXN0KTsKPiArCQkJ
-dW5yZWdpc3Rlcl9yZWJvb3Rfbm90aWZpZXIoJnBzci0+cmVib290X25iKTsKPiAgCQkJaW5wdXRf
-dW5yZWdpc3Rlcl9oYW5kbGVyKCZwc3ItPmlucHV0X2hhbmRsZXIpOwo+ICAJCQlrZnJlZShwc3It
-PmlucHV0X2hhbmRsZXIubmFtZSk7Cj4gIAkJCWtmcmVlKHBzcik7CgoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Eduardo,
+
+Per your request (https://marc.info/?l=linux-pm&m=152378232213070&w=2)
+this patchset contains pending Exynos thermal driver fixes and cleanups.
+
+It is based on:
+- "[PATCH v3] thermal: exynos: Reading temperature makes sense only
+  when TMU is turned on" from Marek Szyprowski
+  (https://www.spinics.net/lists/linux-samsung-soc/msg62248.html)
+- "[PATCH] thermal: exynos: Propagate error value from tmu_read()"
+  from Marek Szyprowski
+  (https://www.spinics.net/lists/linux-samsung-soc/msg62252.html)
+- "[PATCH] thermal: exynos: Read soc_type from match data" from
+  Maciej Purski
+  (https://www.spinics.net/lists/linux-samsung-soc/msg62138.html)
+- "[PATCH 00/12] thermal: exynos: sanitize DeviceTree support"
+  (https://www.spinics.net/lists/linux-samsung-soc/msg62335.html)
+
+Changes:
+- fix warnings in "thermal: exynos: remove parsing of
+  samsung,tmu_default_temp_offset property" patch
+  (in a way suggested by Daniel Lezcano)
+- split dts changes on ARM & ARM64 parts
+  (as requested by Krzysztof Kozlowski)
+- drop "dt-bindings: thermal: remove no longer needed samsung
+  thermal properties" patch
+  (the patch is already present in linux-soc-thermal-tree)
+- drop "thermal: exynos: remove separate thermal_exynos.h header
+  file" patch
+  (to be resend once dts changes are merged)
+
+Tested on Exynos4210 based Trats board and Exynos5422 based Odroid-XU3
+Lite board.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (11):
+  thermal: exynos: remove unused "type" field from struct
+    exynos_tmu_platform_data
+  thermal: exynos: remove parsing of samsung,tmu_default_temp_offset
+    property
+  thermal: exynos: remove parsing of
+    samsung,tmu_[first,second]_point_trim properties
+  thermal: exynos: remove parsing of samsung,tmu_noise_cancel_mode
+    property
+  thermal: exynos: remove parsing of samsung,tmu[_min,_max]_efuse_value
+    properties
+  thermal: exynos: remove parsing of samsung,tmu_reference_voltage
+    property
+  thermal: exynos: remove parsing of samsung,tmu_gain property
+  thermal: exynos: remove parsing of samsung,tmu_cal_type property
+  thermal: exynos: remove separate exynos_tmu.h header file
+  ARM: dts: exynos: remove no longer needed samsung thermal properties
+  arm64: dts: exynos: remove no longer needed samsung thermal properties
+
+Maciej Purski (1):
+  thermal: exynos: Read soc_type from match data
+
+Marek Szyprowski (2):
+  thermal: exynos: Reading temperature makes sense only when TMU is
+    turned on
+  thermal: exynos: Propagate error value from tmu_read()
+
+ arch/arm/boot/dts/exynos3250.dtsi                  |   2 +-
+ arch/arm/boot/dts/exynos4.dtsi                     |   2 +-
+ arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  20 --
+ arch/arm/boot/dts/exynos5250.dtsi                  |   2 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |   8 +-
+ arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi  |  21 --
+ arch/arm/boot/dts/exynos5420.dtsi                  |  10 +-
+ arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  20 --
+ arch/arm/boot/dts/exynos5440.dtsi                  |   6 +-
+ .../dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi |  20 --
+ .../dts/exynos/exynos5433-tmu-sensor-conf.dtsi     |  19 --
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  10 +-
+ .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi   |  21 --
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |   2 +-
+ drivers/thermal/samsung/exynos_tmu.c               | 294 ++++++++++-----------
+ drivers/thermal/samsung/exynos_tmu.h               |  75 ------
+ 16 files changed, 165 insertions(+), 367 deletions(-)
+ delete mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+ delete mode 100644 arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
+ delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+ delete mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi
+ delete mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
+ delete mode 100644 arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+ delete mode 100644 drivers/thermal/samsung/exynos_tmu.h
+
+-- 
+1.9.1
