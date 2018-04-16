@@ -1,60 +1,35 @@
-From: andi@etezian.org
-Subject: Re: [PATCH 6/6] spi: spi-s3c64xx: Allow higher transfer lengths in
- polling IO mode
-Date: Tue, 17 Apr 2018 04:19:42 +0900
-Message-ID: <93a6b80d599a40a39ae396f5dcd7c5b7@etezian.org>
-References: <20180416154021.25626-1-s.nawrocki@samsung.com>
- <CGME20180416154208epcas1p1774dd679e3564be916901a180315943b@epcas1p1.samsung.com>
- <20180416154021.25626-6-s.nawrocki@samsung.com>
+From: Ezequiel Garcia <ezequiel@collabora.com>
+Subject: Re: [PATCH v6 24/30] drm/rockchip: Disable PSR on input events
+Date: Mon, 16 Apr 2018 16:42:29 -0300
+Message-ID: <aec7e2d36b4599f77bc419b8fe7c415815529c2f.camel@collabora.com>
+References: <20180405095000.9756-1-enric.balletbo@collabora.com>
+         <20180405095000.9756-25-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180416154021.25626-6-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, linux-spi@vger.kernel.org, broonie@kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180405095000.9756-25-enric.balletbo@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com, hshi@chromium.org, "Kristian H. Kristensen" <hoegsberg@google.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+On Thu, 2018-04-05 at 11:49 +0200, Enric Balletbo i Serra wrote:
+> From: "Kristian H. Kristensen" <hoegsberg@google.com>
+> 
+> To improve PSR exit latency, we speculatively start exiting when we
+> receive input events. Occasionally, this may lead to false positives,
+> but most of the time we get a head start on coming out of PSR.
+> Depending
+> on how userspace takes to produce a new frame in response to the
+> event,
+> this can completely hide the exit latency. In case of Chrome OS, we
+> typically get the input notifier 50ms or more before the dirty_fb
+> triggered exit.
+> 
 
-On 17.04.2018 00:40, Sylwester Nawrocki wrote:
-> Some variants of the SPI controller have no DMA support, in such case
-> SPI transfers longer than the FIFO length are not currently properly
-> handled by the driver. Fix it by doing multiple transfers in the
-> s3c64xx_spi_transfer_one() function if the SPI transfer length exceeds
-> the FIFO size.
+Why is this rockchip-specific? It sounds more like something
+we'd want to integrate generically for drivers to leverage.
 
-this patch is a mix of cosmetics and what you are actually describing
-in the commit log...
-
-> @@ -634,11 +634,15 @@ static int s3c64xx_spi_transfer_one(struct
-> spi_master *master,
->  				    struct spi_transfer *xfer)
->  {
->  	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
-> +	const unsigned int fifo_len = (FIFO_LVL_MASK(sdd) >> 1) + 1;
-> +	const void *tx_buf = NULL;
-> +	void *rx_buf = NULL;
-> +	int target_len = 0, origin_len = 0;
-> +	bool use_dma = false;
->  	int status;
->  	u32 speed;
->  	u8 bpw;
->  	unsigned long flags;
-> -	int use_dma;
-
-... for example 'use_dma' bool instead of int or the 'fifo_len'. I agree
-with these changes and, even though they are trivial, I would prefer
-having them in separate patches.
-
-Thanks,
-Andi
+Regards,
+Eze
