@@ -1,68 +1,162 @@
-From: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
-Date: Sat, 14 Apr 2018 18:27:09 +0200
-Message-ID: <2132977.nF3rHrDWU5@acerlaptop>
-References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com> <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v6 24/30] drm/rockchip: Disable PSR on input events
+Date: Mon, 16 Apr 2018 09:19:21 +0200
+Message-ID: <20d2aa03-63e3-0072-5ca7-5f3ca42c3c9e@samsung.com>
+References: <20180405095000.9756-1-enric.balletbo@collabora.com>
+ <CGME20180405095330epcas1p33487d73838f08a65ce7935f0d3e8b9e4@epcas1p3.samsung.com>
+ <20180405095000.9756-25-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180405095000.9756-25-enric.balletbo@collabora.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, Laurent.pinchart@ideasonboard.com, ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, "Kristian H. Kristensen" <hoegsberg@google.com>, kuankuan.y@gmail.com, hshi@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, April 11, 2018 11:52:44 AM CEST Krzysztof Kozlowski wrote:
-> On Wed, Apr 11, 2018 at 10:36 AM, Tomasz Figa <tomasz.figa@gmail.com> wro=
-te:
-> > 2018-04-10 17:38 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
-> >> 2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> >>> On Sun, Apr 8, 2018 at 8:07 PM, Pawe=C5=82 Chmiel
-> >>> <pawel.mikolaj.chmiel@gmail.com> wrote:
-> >>>> All banks with GPIO interrupts should be at beginning
-> >>>> of bank array and without any other types of banks between them.
-> >>>> This order is expected by exynos_eint_gpio_irq, when doing
-> >>>> interrupt group to bank translation.
-> >>>> Otherwise, kernel NULL pointer dereference would happen
-> >>>> when trying to handle interrupt, due to wrong bank being looked up.
-> >>>> Observed on s5pv210, when trying to handle gpj0 interrupt,
-> >>>> where kernel was mapping it to gpi bank.
-> >>>
-> >>> Thanks for the patch. The issue looks real although one thing was
-> >>> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
-> >>> Marek Szyprowski):
-> >>>
-> >>> 0x0 - EINT_23 - gpk0
-> >>> 0x1 - EINT_24 - gpk1
-> >>> 0x2 - EINT_25 - gpk2
-> >>> 0x4 - EINT_27 - gpl0
-> >>> 0x7 - EINT_8 - gpm0
-> >>>
-> >>> Maybe this should be done differently - to remove such hidden
-> >>> requirement entirely in favor of another parameter of
-> >>> EXYNOS_PIN_BANK_EINTG argument?
-> >>
-> >> Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
-> >> a simple swap of bank order in the arrays should be okay.
-> >>
-> >> We might also need to have some fixes on 4x12, because I noticed that
-> >> in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
-> >> gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
-> >> eint_offset equal to 0x08 (not 0).
-> >
-> > To close the loop, after talking offline and checking the
-> > documentation, Exynos4x12 is fine, because the group numbers in SVC
-> > register actually match what is defined in bank arrays.
->=20
-> Great! Thanks for checking.
->=20
-> Best regards,
-> Krzysztof
->=20
-
-Thanks for all comments. I'll prepare new version of patches, with all fixe=
-s and documentation.
-
-Best regards
-Pawe=C5=82
+CitDQzogbGludXgtaW5wdXQgbGlzdCBhbmQgbWFpbnRhaW5lcgoKCk9uIDA1LjA0LjIwMTggMTE6
+NDksIEVucmljIEJhbGxldGJvIGkgU2VycmEgd3JvdGU6Cj4gRnJvbTogIktyaXN0aWFuIEguIEty
+aXN0ZW5zZW4iIDxob2Vnc2JlcmdAZ29vZ2xlLmNvbT4KPgo+IFRvIGltcHJvdmUgUFNSIGV4aXQg
+bGF0ZW5jeSwgd2Ugc3BlY3VsYXRpdmVseSBzdGFydCBleGl0aW5nIHdoZW4gd2UKPiByZWNlaXZl
+IGlucHV0IGV2ZW50cy4gT2NjYXNpb25hbGx5LCB0aGlzIG1heSBsZWFkIHRvIGZhbHNlIHBvc2l0
+aXZlcywKPiBidXQgbW9zdCBvZiB0aGUgdGltZSB3ZSBnZXQgYSBoZWFkIHN0YXJ0IG9uIGNvbWlu
+ZyBvdXQgb2YgUFNSLiBEZXBlbmRpbmcKPiBvbiBob3cgdXNlcnNwYWNlIHRha2VzIHRvIHByb2R1
+Y2UgYSBuZXcgZnJhbWUgaW4gcmVzcG9uc2UgdG8gdGhlIGV2ZW50LAo+IHRoaXMgY2FuIGNvbXBs
+ZXRlbHkgaGlkZSB0aGUgZXhpdCBsYXRlbmN5LiBJbiBjYXNlIG9mIENocm9tZSBPUywgd2UKPiB0
+eXBpY2FsbHkgZ2V0IHRoZSBpbnB1dCBub3RpZmllciA1MG1zIG9yIG1vcmUgYmVmb3JlIHRoZSBk
+aXJ0eV9mYgo+IHRyaWdnZXJlZCBleGl0LgoKQXMgSSBzZWUgZnJvbSB0aGUgY29kZSBiZWxvdywg
+eW91IGp1c3QgbmVlZCBub3RpZmljYXRpb24gZnJvbSBpbnB1dApzdWJzeXN0ZW0gb24gdXNlciBh
+Y3Rpdml0eS4KTWF5YmUgdGhlcmUgaXMgc29tZSBzaW1wbGVyIG5vdGlmaWNhdGlvbiBtZWNoYW5p
+c20gZm9yIHN1Y2ggdGhpbmdzPwpJZiBub3QsIG1heWJlIHN1Y2ggaGVscGVyIHNob3VsZCBiZSBj
+cmVhdGVkIGluIGlucHV0IHN1YnN5c3RlbSwgSQpzdXBwb3NlIGl0IGNvdWxkIGJlIHJldXNlZCBp
+biBvdGhlciBwbGFjZXMgYXMgd2VsbC4KClJlZ2FyZHMKQW5kcnplagoKPgo+IFNpZ25lZC1vZmYt
+Ynk6IEtyaXN0aWFuIEguIEtyaXN0ZW5zZW4gPGhvZWdzYmVyZ0Bnb29nbGUuY29tPgo+IFNpZ25l
+ZC1vZmYtYnk6IFRoaWVycnkgRXNjYW5kZSA8dGhpZXJyeS5lc2NhbmRlQGNvbGxhYm9yYS5jb20+
+Cj4gU2lnbmVkLW9mZi1ieTogRW5yaWMgQmFsbGV0Ym8gaSBTZXJyYSA8ZW5yaWMuYmFsbGV0Ym9A
+Y29sbGFib3JhLmNvbT4KPiBUZXN0ZWQtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3Nr
+aUBzYW1zdW5nLmNvbT4KPiAtLS0KPgo+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2No
+aXBfZHJtX3Bzci5jIHwgMTM0ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgMSBmaWxl
+IGNoYW5nZWQsIDEzNCBpbnNlcnRpb25zKCspCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9wc3IuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
+cC9yb2NrY2hpcF9kcm1fcHNyLmMKPiBpbmRleCA5Mzc2ZjQzOTZiNmIuLmExMDc4NDViYTk3YyAx
+MDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3Bzci5j
+Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9wc3IuYwo+IEBA
+IC0xMiw2ICsxMiw4IEBACj4gICAqIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGZvciBtb3Jl
+IGRldGFpbHMuCj4gICAqLwo+ICAKPiArI2luY2x1ZGUgPGxpbnV4L2lucHV0Lmg+Cj4gKwo+ICAj
+aW5jbHVkZSA8ZHJtL2RybVAuaD4KPiAgI2luY2x1ZGUgPGRybS9kcm1fY3J0Y19oZWxwZXIuaD4K
+PiAgCj4gQEAgLTM1LDYgKzM3LDkgQEAgc3RydWN0IHBzcl9kcnYgewo+ICAJZW51bSBwc3Jfc3Rh
+dGUJCXN0YXRlOwo+ICAKPiAgCXN0cnVjdCBkZWxheWVkX3dvcmsJZmx1c2hfd29yazsKPiArCXN0
+cnVjdCB3b3JrX3N0cnVjdAlkaXNhYmxlX3dvcms7Cj4gKwo+ICsJc3RydWN0IGlucHV0X2hhbmRs
+ZXIgICAgaW5wdXRfaGFuZGxlcjsKPiAgCj4gIAlpbnQgKCpzZXQpKHN0cnVjdCBkcm1fZW5jb2Rl
+ciAqZW5jb2RlciwgYm9vbCBlbmFibGUpOwo+ICB9Owo+IEBAIC0xMzMsNiArMTM4LDE4IEBAIHN0
+YXRpYyB2b2lkIHBzcl9mbHVzaF9oYW5kbGVyKHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yaykKPiAg
+CW11dGV4X3VubG9jaygmcHNyLT5sb2NrKTsKPiAgfQo+ICAKPiArc3RhdGljIHZvaWQgcHNyX2Rp
+c2FibGVfaGFuZGxlcihzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspCj4gK3sKPiArCXN0cnVjdCBw
+c3JfZHJ2ICpwc3IgPSBjb250YWluZXJfb2Yod29yaywgc3RydWN0IHBzcl9kcnYsIGRpc2FibGVf
+d29yayk7Cj4gKwo+ICsJLyogSWYgdGhlIHN0YXRlIGhhcyBjaGFuZ2VkIHNpbmNlIHdlIGluaXRp
+YXRlZCB0aGUgZmx1c2gsIGRvIG5vdGhpbmcgKi8KPiArCW11dGV4X2xvY2soJnBzci0+bG9jayk7
+Cj4gKwlpZiAocHNyLT5zdGF0ZSA9PSBQU1JfRU5BQkxFKQo+ICsJCXBzcl9zZXRfc3RhdGVfbG9j
+a2VkKHBzciwgUFNSX0ZMVVNIKTsKPiArCW11dGV4X3VubG9jaygmcHNyLT5sb2NrKTsKPiArCW1v
+ZF9kZWxheWVkX3dvcmsoc3lzdGVtX3dxLCAmcHNyLT5mbHVzaF93b3JrLCBQU1JfRkxVU0hfVElN
+RU9VVF9NUyk7Cj4gK30KPiArCj4gIC8qKgo+ICAgKiByb2NrY2hpcF9kcm1fcHNyX2FjdGl2YXRl
+IC0gYWN0aXZhdGUgUFNSIG9uIHRoZSBnaXZlbiBwaXBlCj4gICAqIEBlbmNvZGVyOiBlbmNvZGVy
+IHRvIG9idGFpbiB0aGUgUFNSIGVuY29kZXIKPiBAQCAtMTczLDYgKzE5MCw3IEBAIGludCByb2Nr
+Y2hpcF9kcm1fcHNyX2RlYWN0aXZhdGUoc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyKQo+ICAJ
+cHNyLT5hY3RpdmUgPSBmYWxzZTsKPiAgCW11dGV4X3VubG9jaygmcHNyLT5sb2NrKTsKPiAgCWNh
+bmNlbF9kZWxheWVkX3dvcmtfc3luYygmcHNyLT5mbHVzaF93b3JrKTsKPiArCWNhbmNlbF93b3Jr
+X3N5bmMoJnBzci0+ZGlzYWJsZV93b3JrKTsKPiAgCj4gIAlyZXR1cm4gMDsKPiAgfQo+IEBAIC0y
+MjYsNiArMjQ0LDk1IEBAIHZvaWQgcm9ja2NoaXBfZHJtX3Bzcl9mbHVzaF9hbGwoc3RydWN0IGRy
+bV9kZXZpY2UgKmRldikKPiAgfQo+ICBFWFBPUlRfU1lNQk9MKHJvY2tjaGlwX2RybV9wc3JfZmx1
+c2hfYWxsKTsKPiAgCj4gK3N0YXRpYyB2b2lkIHBzcl9pbnB1dF9ldmVudChzdHJ1Y3QgaW5wdXRf
+aGFuZGxlICpoYW5kbGUsCj4gKwkJCSAgICB1bnNpZ25lZCBpbnQgdHlwZSwgdW5zaWduZWQgaW50
+IGNvZGUsCj4gKwkJCSAgICBpbnQgdmFsdWUpCj4gK3sKPiArCXN0cnVjdCBwc3JfZHJ2ICpwc3Ig
+PSBoYW5kbGUtPmhhbmRsZXItPnByaXZhdGU7Cj4gKwo+ICsJc2NoZWR1bGVfd29yaygmcHNyLT5k
+aXNhYmxlX3dvcmspOwo+ICt9Cj4gKwo+ICtzdGF0aWMgaW50IHBzcl9pbnB1dF9jb25uZWN0KHN0
+cnVjdCBpbnB1dF9oYW5kbGVyICpoYW5kbGVyLAo+ICsJCQkgICAgIHN0cnVjdCBpbnB1dF9kZXYg
+KmRldiwKPiArCQkJICAgICBjb25zdCBzdHJ1Y3QgaW5wdXRfZGV2aWNlX2lkICppZCkKPiArewo+
+ICsJc3RydWN0IGlucHV0X2hhbmRsZSAqaGFuZGxlOwo+ICsJaW50IGVycm9yOwo+ICsKPiArCWhh
+bmRsZSA9IGt6YWxsb2Moc2l6ZW9mKHN0cnVjdCBpbnB1dF9oYW5kbGUpLCBHRlBfS0VSTkVMKTsK
+PiArCWlmICghaGFuZGxlKQo+ICsJCXJldHVybiAtRU5PTUVNOwo+ICsKPiArCWhhbmRsZS0+ZGV2
+ID0gZGV2Owo+ICsJaGFuZGxlLT5oYW5kbGVyID0gaGFuZGxlcjsKPiArCWhhbmRsZS0+bmFtZSA9
+ICJyb2NrY2hpcC1wc3IiOwo+ICsKPiArCWVycm9yID0gaW5wdXRfcmVnaXN0ZXJfaGFuZGxlKGhh
+bmRsZSk7Cj4gKwlpZiAoZXJyb3IpCj4gKwkJZ290byBlcnIyOwo+ICsKPiArCWVycm9yID0gaW5w
+dXRfb3Blbl9kZXZpY2UoaGFuZGxlKTsKPiArCWlmIChlcnJvcikKPiArCQlnb3RvIGVycjE7Cj4g
+Kwo+ICsJcmV0dXJuIDA7Cj4gKwo+ICtlcnIxOgo+ICsJaW5wdXRfdW5yZWdpc3Rlcl9oYW5kbGUo
+aGFuZGxlKTsKPiArZXJyMjoKPiArCWtmcmVlKGhhbmRsZSk7Cj4gKwlyZXR1cm4gZXJyb3I7Cj4g
+K30KPiArCj4gK3N0YXRpYyB2b2lkIHBzcl9pbnB1dF9kaXNjb25uZWN0KHN0cnVjdCBpbnB1dF9o
+YW5kbGUgKmhhbmRsZSkKPiArewo+ICsJaW5wdXRfY2xvc2VfZGV2aWNlKGhhbmRsZSk7Cj4gKwlp
+bnB1dF91bnJlZ2lzdGVyX2hhbmRsZShoYW5kbGUpOwo+ICsJa2ZyZWUoaGFuZGxlKTsKPiArfQo+
+ICsKPiArLyogU2FtZSBkZXZpY2UgaWRzIGFzIGNwdS1ib29zdCAqLwo+ICtzdGF0aWMgY29uc3Qg
+c3RydWN0IGlucHV0X2RldmljZV9pZCBwc3JfaWRzW10gPSB7Cj4gKwl7Cj4gKwkJLmZsYWdzID0g
+SU5QVVRfREVWSUNFX0lEX01BVENIX0VWQklUIHwKPiArCQkJIElOUFVUX0RFVklDRV9JRF9NQVRD
+SF9BQlNCSVQsCj4gKwkJLmV2Yml0ID0geyBCSVRfTUFTSyhFVl9BQlMpIH0sCj4gKwkJLmFic2Jp
+dCA9IHsgW0JJVF9XT1JEKEFCU19NVF9QT1NJVElPTl9YKV0gPQo+ICsJCQkgICAgQklUX01BU0so
+QUJTX01UX1BPU0lUSU9OX1gpIHwKPiArCQkJICAgIEJJVF9NQVNLKEFCU19NVF9QT1NJVElPTl9Z
+KSB9LAo+ICsJfSwgLyogbXVsdGktdG91Y2ggdG91Y2hzY3JlZW4gKi8KPiArCXsKPiArCQkuZmxh
+Z3MgPSBJTlBVVF9ERVZJQ0VfSURfTUFUQ0hfRVZCSVQsCj4gKwkJLmV2Yml0ID0geyBCSVRfTUFT
+SyhFVl9BQlMpIH0sCj4gKwkJLmFic2JpdCA9IHsgW0JJVF9XT1JEKEFCU19YKV0gPSBCSVRfTUFT
+SyhBQlNfWCkgfQo+ICsKPiArCX0sIC8qIHN0eWx1cyBvciBqb3lzdGljayBkZXZpY2UgKi8KPiAr
+CXsKPiArCQkuZmxhZ3MgPSBJTlBVVF9ERVZJQ0VfSURfTUFUQ0hfRVZCSVQsCj4gKwkJLmV2Yml0
+ID0geyBCSVRfTUFTSyhFVl9LRVkpIH0sCj4gKwkJLmtleWJpdCA9IHsgW0JJVF9XT1JEKEJUTl9M
+RUZUKV0gPSBCSVRfTUFTSyhCVE5fTEVGVCkgfSwKPiArCX0sIC8qIHBvaW50ZXIgKGUuZy4gdHJh
+Y2twYWQsIG1vdXNlKSAqLwo+ICsJewo+ICsJCS5mbGFncyA9IElOUFVUX0RFVklDRV9JRF9NQVRD
+SF9FVkJJVCwKPiArCQkuZXZiaXQgPSB7IEJJVF9NQVNLKEVWX0tFWSkgfSwKPiArCQkua2V5Yml0
+ID0geyBbQklUX1dPUkQoS0VZX0VTQyldID0gQklUX01BU0soS0VZX0VTQykgfSwKPiArCX0sIC8q
+IGtleWJvYXJkICovCj4gKwl7Cj4gKwkJLmZsYWdzID0gSU5QVVRfREVWSUNFX0lEX01BVENIX0VW
+QklUIHwKPiArCQkJCUlOUFVUX0RFVklDRV9JRF9NQVRDSF9LRVlCSVQsCj4gKwkJLmV2Yml0ID0g
+eyBCSVRfTUFTSyhFVl9LRVkpIH0sCj4gKwkJLmtleWJpdCA9IHtbQklUX1dPUkQoQlROX0pPWVNU
+SUNLKV0gPSBCSVRfTUFTSyhCVE5fSk9ZU1RJQ0spIH0sCj4gKwl9LCAvKiBqb3lzdGlja3Mgbm90
+IGNhdWdodCBieSBBQlNfWCBhYm92ZSAqLwo+ICsJewo+ICsJCS5mbGFncyA9IElOUFVUX0RFVklD
+RV9JRF9NQVRDSF9FVkJJVCB8Cj4gKwkJCQlJTlBVVF9ERVZJQ0VfSURfTUFUQ0hfS0VZQklULAo+
+ICsJCS5ldmJpdCA9IHsgQklUX01BU0soRVZfS0VZKSB9LAo+ICsJCS5rZXliaXQgPSB7IFtCSVRf
+V09SRChCVE5fR0FNRVBBRCldID0gQklUX01BU0soQlROX0dBTUVQQUQpIH0sCj4gKwl9LCAvKiBn
+YW1lcGFkICovCj4gKwl7IH0sCj4gK307Cj4gKwo+ICAvKioKPiAgICogcm9ja2NoaXBfZHJtX3Bz
+cl9yZWdpc3RlciAtIHJlZ2lzdGVyIGVuY29kZXIgdG8gcHNyIGRyaXZlcgo+ICAgKiBAZW5jb2Rl
+cjogZW5jb2RlciB0aGF0IG9idGFpbiB0aGUgUFNSIGZ1bmN0aW9uCj4gQEAgLTIzOSw2ICszNDYs
+NyBAQCBpbnQgcm9ja2NoaXBfZHJtX3Bzcl9yZWdpc3RlcihzdHJ1Y3QgZHJtX2VuY29kZXIgKmVu
+Y29kZXIsCj4gIHsKPiAgCXN0cnVjdCByb2NrY2hpcF9kcm1fcHJpdmF0ZSAqZHJtX2RydiA9IGVu
+Y29kZXItPmRldi0+ZGV2X3ByaXZhdGU7Cj4gIAlzdHJ1Y3QgcHNyX2RydiAqcHNyOwo+ICsJaW50
+IGVycm9yOwo+ICAKPiAgCWlmICghZW5jb2RlciB8fCAhcHNyX3NldCkKPiAgCQlyZXR1cm4gLUVJ
+TlZBTDsKPiBAQCAtMjQ4LDYgKzM1Niw3IEBAIGludCByb2NrY2hpcF9kcm1fcHNyX3JlZ2lzdGVy
+KHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciwKPiAgCQlyZXR1cm4gLUVOT01FTTsKPiAgCj4g
+IAlJTklUX0RFTEFZRURfV09SSygmcHNyLT5mbHVzaF93b3JrLCBwc3JfZmx1c2hfaGFuZGxlcik7
+Cj4gKwlJTklUX1dPUksoJnBzci0+ZGlzYWJsZV93b3JrLCBwc3JfZGlzYWJsZV9oYW5kbGVyKTsK
+PiAgCW11dGV4X2luaXQoJnBzci0+bG9jayk7Cj4gIAo+ICAJcHNyLT5hY3RpdmUgPSB0cnVlOwo+
+IEBAIC0yNTUsMTEgKzM2NCwzMyBAQCBpbnQgcm9ja2NoaXBfZHJtX3Bzcl9yZWdpc3RlcihzdHJ1
+Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsCj4gIAlwc3ItPmVuY29kZXIgPSBlbmNvZGVyOwo+ICAJ
+cHNyLT5zZXQgPSBwc3Jfc2V0Owo+ICAKPiArCXBzci0+aW5wdXRfaGFuZGxlci5ldmVudCA9IHBz
+cl9pbnB1dF9ldmVudDsKPiArCXBzci0+aW5wdXRfaGFuZGxlci5jb25uZWN0ID0gcHNyX2lucHV0
+X2Nvbm5lY3Q7Cj4gKwlwc3ItPmlucHV0X2hhbmRsZXIuZGlzY29ubmVjdCA9IHBzcl9pbnB1dF9k
+aXNjb25uZWN0Owo+ICsJcHNyLT5pbnB1dF9oYW5kbGVyLm5hbWUgPQo+ICsJCWthc3ByaW50ZihH
+RlBfS0VSTkVMLCAicm9ja2NoaXAtcHNyLSVzIiwgZW5jb2Rlci0+bmFtZSk7Cj4gKwlpZiAoIXBz
+ci0+aW5wdXRfaGFuZGxlci5uYW1lKSB7Cj4gKwkJZXJyb3IgPSAtRU5PTUVNOwo+ICsJCWdvdG8g
+ZXJyMjsKPiArCX0KPiArCXBzci0+aW5wdXRfaGFuZGxlci5pZF90YWJsZSA9IHBzcl9pZHM7Cj4g
+Kwlwc3ItPmlucHV0X2hhbmRsZXIucHJpdmF0ZSA9IHBzcjsKPiArCj4gKwllcnJvciA9IGlucHV0
+X3JlZ2lzdGVyX2hhbmRsZXIoJnBzci0+aW5wdXRfaGFuZGxlcik7Cj4gKwlpZiAoZXJyb3IpCj4g
+KwkJZ290byBlcnIxOwo+ICsKPiAgCW11dGV4X2xvY2soJmRybV9kcnYtPnBzcl9saXN0X2xvY2sp
+Owo+ICAJbGlzdF9hZGRfdGFpbCgmcHNyLT5saXN0LCAmZHJtX2Rydi0+cHNyX2xpc3QpOwo+ICAJ
+bXV0ZXhfdW5sb2NrKCZkcm1fZHJ2LT5wc3JfbGlzdF9sb2NrKTsKPiAgCj4gIAlyZXR1cm4gMDsK
+PiArCj4gKyBlcnIxOgo+ICsJa2ZyZWUocHNyLT5pbnB1dF9oYW5kbGVyLm5hbWUpOwo+ICsgZXJy
+MjoKPiArCWtmcmVlKHBzcik7Cj4gKwlyZXR1cm4gZXJyb3I7Cj4gIH0KPiAgRVhQT1JUX1NZTUJP
+TChyb2NrY2hpcF9kcm1fcHNyX3JlZ2lzdGVyKTsKPiAgCj4gQEAgLTI3OSw4ICs0MTAsMTEgQEAg
+dm9pZCByb2NrY2hpcF9kcm1fcHNyX3VucmVnaXN0ZXIoc3RydWN0IGRybV9lbmNvZGVyICplbmNv
+ZGVyKQo+ICAJbXV0ZXhfbG9jaygmZHJtX2Rydi0+cHNyX2xpc3RfbG9jayk7Cj4gIAlsaXN0X2Zv
+cl9lYWNoX2VudHJ5X3NhZmUocHNyLCBuLCAmZHJtX2Rydi0+cHNyX2xpc3QsIGxpc3QpIHsKPiAg
+CQlpZiAocHNyLT5lbmNvZGVyID09IGVuY29kZXIpIHsKPiArCQkJaW5wdXRfdW5yZWdpc3Rlcl9o
+YW5kbGVyKCZwc3ItPmlucHV0X2hhbmRsZXIpOwo+ICAJCQljYW5jZWxfZGVsYXllZF93b3JrX3N5
+bmMoJnBzci0+Zmx1c2hfd29yayk7Cj4gKwkJCWNhbmNlbF93b3JrX3N5bmMoJnBzci0+ZGlzYWJs
+ZV93b3JrKTsKPiAgCQkJbGlzdF9kZWwoJnBzci0+bGlzdCk7Cj4gKwkJCWtmcmVlKHBzci0+aW5w
+dXRfaGFuZGxlci5uYW1lKTsKPiAgCQkJa2ZyZWUocHNyKTsKPiAgCQl9Cj4gIAl9CgoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
