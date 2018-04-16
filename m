@@ -1,49 +1,103 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/3] ARM: exynos_defconfig: enable S6E63J0X03 panel driver
-Date: Mon, 16 Apr 2018 14:10:16 +0200
-Message-ID: <CAJKOXPek-AEk39QNN9iw2AK9qPJdE1HWe+-6ocQGT1WTWUvjig@mail.gmail.com>
-References: <CGME20180416103544eucas1p232a511004fcda0ee20c94153caa1bff7@eucas1p2.samsung.com>
- <20180416103537.29518-1-m.szyprowski@samsung.com>
- <20180416103537.29518-2-m.szyprowski@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 02/14] thermal: exynos: Propagate error value from
+ tmu_read()
+Date: Mon, 16 Apr 2018 14:35:01 +0200
+Message-ID: <6993557.YT37RIp4lG@amdc3058>
+References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
+        <1523873525-23718-3-git-send-email-b.zolnierkie@samsung.com>
+        <39e461aa-2a60-f3cf-d116-fc7e97f9da2e@linaro.org>
+        <CGME20180416123502eucas1p1113fb99938a09a6f425e0ed6bfa6be60@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180416103537.29518-2-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <39e461aa-2a60-f3cf-d116-fc7e97f9da2e@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 12:35 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Add Samsung S6E63J0X03 DSI panel driver to enable support for display
-> panel on Exynos3250-based Samsung Rinato board.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/configs/exynos_defconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 629189c62fd1..85b2369d6b20 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -208,6 +208,7 @@ CONFIG_DRM_EXYNOS_DSI=y
->  CONFIG_DRM_EXYNOS_HDMI=y
->  CONFIG_DRM_PANEL_SIMPLE=y
->  CONFIG_DRM_PANEL_SAMSUNG_LD9040=y
-> +CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03=y
+On Monday, April 16, 2018 02:16:56 PM Daniel Lezcano wrote:
+> On 16/04/2018 12:11, Bartlomiej Zolnierkiewicz wrote:
+> > From: Marek Szyprowski <m.szyprowski@samsung.com>
+> > 
+> > tmu_read() in case of Exynos4210 might return error for out of bound
+> > values. Current code ignores such value, what leads to reporting critical
+> > temperature value. Add proper error code propagation to exynos_get_temp()
+> > function.
+> 
+> For me the comment in the function exynos4210_tmu_read
+> 
+> /* "temp_code" should range between 75 and 175 */
+> 
+> ... is strange. I would double check this assertion before dealing with
+> the error value.
 
-How about similar (with =m) for multi_v7?
+static int exynos4210_tmu_read(struct exynos_tmu_data *data)
+{
+	int ret = readb(data->base + EXYNOS_TMU_REG_CURRENT_TEMP);
+
+	/* "temp_code" should range between 75 and 175 */
+	return (ret < 75 || ret > 175) ? -ENODATA : ret;
+}
+
+The value returned by Exynos4210 hardware should be > 75 && < 175 and
+it is later used as the "temp_code" parameter for code_to_temp():
+
+static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+{
+	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
+		return temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM;
+
+	return (temp_code - data->temp_error1) *
+		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
+		(data->temp_error2 - data->temp_error1) +
+		EXYNOS_FIRST_POINT_TRIM;
+}
+
+so after the current fix the code finally matches the comment.
+
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > CC: stable@vger.kernel.org # v4.6+
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/thermal/samsung/exynos_tmu.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index 986cbd0..ac83f72 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -892,6 +892,7 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+> >  static int exynos_get_temp(void *p, int *temp)
+> >  {
+> >  	struct exynos_tmu_data *data = p;
+> > +	int value, ret = 0;
+> >  
+> >  	if (!data || !data->tmu_read || !data->enabled)
+> >  		return -EINVAL;
+> > @@ -899,12 +900,16 @@ static int exynos_get_temp(void *p, int *temp)
+> >  	mutex_lock(&data->lock);
+> >  	clk_enable(data->clk);
+> >  
+> > -	*temp = code_to_temp(data, data->tmu_read(data)) * MCELSIUS;
+> > +	value = data->tmu_read(data);
+> > +	if (value < 0)
+> > +		ret = value;
+> > +	else
+> > +		*temp = code_to_temp(data, value) * MCELSIUS;
+> >  
+> >  	clk_disable(data->clk);
+> >  	mutex_unlock(&data->lock);
+> >  
+> > -	return 0;
+> > +	return ret;
+> >  }
+> >  
+> >  #ifdef CONFIG_THERMAL_EMULATION
 
 Best regards,
-Krzysztof
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
