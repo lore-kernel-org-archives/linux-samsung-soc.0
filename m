@@ -1,36 +1,38 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 07/14] thermal: exynos: remove parsing of
- samsung,tmu_noise_cancel_mode property
-Date: Mon, 16 Apr 2018 15:03:39 +0200
-Message-ID: <bb3f5efc-a53b-52cc-c863-9c29d356feef@linaro.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 14/14] arm64: dts: exynos: remove no longer needed
+ samsung thermal properties
+Date: Mon, 16 Apr 2018 15:09:13 +0200
+Message-ID: <3588882.B9zsMSkHUz@amdc3058>
 References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20180416101406epcas2p267a664bb26a00bdca6c4c176f9ce08ed@epcas2p2.samsung.com>
- <1523873525-23718-8-git-send-email-b.zolnierkie@samsung.com>
+        <1523873525-23718-15-git-send-email-b.zolnierkie@samsung.com>
+        <3af07b96-dd74-336e-1261-dda2cde9abaa@linaro.org>
+        <CGME20180416130917eucas1p10012e5d79bf59adc677e7e2364bae589@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1523873525-23718-8-git-send-email-b.zolnierkie@samsung.com>
-Content-Language: en-US
+In-Reply-To: <3af07b96-dd74-336e-1261-dda2cde9abaa@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16/04/2018 12:11, Bartlomiej Zolnierkiewicz wrote:
-> All SoCs use the same value (4) for the noise cancel mode so just
-> make it explicit and remove parsing of samsung,tmu_noise_cancel_mode
-> property.
-> 
-> There should be no functional changes caused by this patch.
->
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+On Monday, April 16, 2018 03:02:45 PM Daniel Lezcano wrote:
+> On 16/04/2018 12:12, Bartlomiej Zolnierkiewicz wrote:
+> > Remove no longer needed samsung thermal properties.
+> > 
+> > There should be no functional changes caused by this patch.
+> > 
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> Can you add an additional patch to remove the Documentation ?
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+"dt-bindings: thermal: remove no longer needed samsung thermal properties"
+(https://www.spinics.net/lists/linux-samsung-soc/msg62324.html)
+is already present in linux-soc-thermal-tree (Eduardo has not dropped it)
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
