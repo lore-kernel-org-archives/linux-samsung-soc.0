@@ -1,16 +1,16 @@
 From: andi@etezian.org
-Subject: Re: [PATCH v2 7/8] spi: spi-s3c64xx: Use local variable for FIFO
- length
-Date: Wed, 18 Apr 2018 03:14:35 +0900
-Message-ID: <7eddeec03e4bb1eedaa2e068361e2c65@etezian.org>
+Subject: Re: [PATCH v2 8/8] spi: spi-s3c64xx: Allow higher transfer lengths in
+ polling IO mode
+Date: Wed, 18 Apr 2018 03:27:16 +0900
+Message-ID: <0401102d3363dae0cf2a19c3546428f2@etezian.org>
 References: <20180417142954.5507-1-s.nawrocki@samsung.com>
- <CGME20180417143053epcas1p2a1bf34ea178d1f20fee3c6ade18bf17d@epcas1p2.samsung.com>
- <20180417142954.5507-7-s.nawrocki@samsung.com>
+ <CGME20180417143100epcas2p228d05e4de4ce06621635a523241d9824@epcas2p2.samsung.com>
+ <20180417142954.5507-8-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180417142954.5507-7-s.nawrocki@samsung.com>
+In-Reply-To: <20180417142954.5507-8-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -27,13 +27,20 @@ List-Id: linux-samsung-soc@vger.kernel.org
 Hi Sylwester,
 
 On 17.04.2018 23:29, Sylwester Nawrocki wrote:
-> More references to fifo_len are added in subsequent patch.
+> Some variants of the SPI controller have no DMA support, in such case
+> SPI transfers longer than the FIFO length are not currently properly
+> handled by the driver. Fix it by doing multiple transfers in the
+> s3c64xx_spi_transfer_one() function if the SPI transfer length exceeds
+> the FIFO size.
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-thanks also for this! It's trivial, but I like it better
-on a separate patch.
+thank you! it looks good.
+
+Unfortunately I don't have right now the device with me
+to test it, in any case you can add
 
 Reviewed-by: Andi Shyti <andi@etezian.org>
 
+Thanks,
 Andi
