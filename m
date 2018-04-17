@@ -1,46 +1,62 @@
-From: andi@etezian.org
-Subject: Re: [PATCH v2 8/8] spi: spi-s3c64xx: Allow higher transfer lengths in
- polling IO mode
-Date: Wed, 18 Apr 2018 03:27:16 +0900
-Message-ID: <0401102d3363dae0cf2a19c3546428f2@etezian.org>
-References: <20180417142954.5507-1-s.nawrocki@samsung.com>
- <CGME20180417143100epcas2p228d05e4de4ce06621635a523241d9824@epcas2p2.samsung.com>
- <20180417142954.5507-8-s.nawrocki@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Update x and y properties for mms114
+ touchscreen
+Date: Tue, 17 Apr 2018 21:46:19 +0200
+Message-ID: <20180417194619.djrggjqogfwtxrwp@kozik-lap>
+References: <CGME20180126060503epcas2p4befe2d3d43f4a2158b1e1a123bf7906f@epcas2p4.samsung.com>
+ <20180126060454.18082-1-andi.shyti@samsung.com>
+ <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
+ <f75382b5953a9f4f9f80bb0db5b2f249@etezian.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180417142954.5507-8-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, linux-spi@vger.kernel.org, broonie@kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <f75382b5953a9f4f9f80bb0db5b2f249@etezian.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: andi@etezian.org
+Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
-
-On 17.04.2018 23:29, Sylwester Nawrocki wrote:
-> Some variants of the SPI controller have no DMA support, in such case
-> SPI transfers longer than the FIFO length are not currently properly
-> handled by the driver. Fix it by doing multiple transfers in the
-> s3c64xx_spi_transfer_one() function if the SPI transfer length exceeds
-> the FIFO size.
+On Wed, Apr 18, 2018 at 03:06:39AM +0900, andi@etezian.org wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> On 18.04.2018 00:32, Krzysztof Kozlowski wrote:
+> > On Fri, Jan 26, 2018 at 03:04:54PM +0900, Andi Shyti wrote:
+> > > The mms114 binding [1] specifies that the 'x' and 'y' should be
+> > > called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
+> > > in coherence with the touchscreen [2] binding.
+> > > 
+> > > Update the mms114 node for trats2 and trats dts according to the
+> > > binding.
+> > > 
+> > > [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+> > > [2]
+> > > Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+> > > 
+> > > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> > > ---
+> > > Hi Krzysztof,
+> > > 
+> > > this patch depends on Simon's patchset [1] and must be applied after
+> > > that. If you want I can ping you when the patch gets or you can take
+> > > it in the next cycle.
+> > > 
+> > > Andi
+> > > 
+> > > [1] https://marc.info/?l=linux-kernel&m=151682273403098&w=2
+> > > 
+> > 
+> > Hi Andi,
+> > 
+> > As I understand, the dependencies are in and I can take this?
+> 
+> Thanks a lot, somehow I missed it,
+> 
+> Please take it.
 
-thank you! it looks good.
+Unfortunately it does not apply anymore. Probably because the Trats2 DTS
+was renamed.  Also another board was added so please rebase on v4.17-rc1
+or linux-next.
 
-Unfortunately I don't have right now the device with me
-to test it, in any case you can add
-
-Reviewed-by: Andi Shyti <andi@etezian.org>
-
-Thanks,
-Andi
+Best regards,
+Krzysztof
