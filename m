@@ -1,47 +1,38 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Update x and y properties for mms114
- touchscreen
-Date: Tue, 17 Apr 2018 17:32:07 +0200
-Message-ID: <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
-References: <CGME20180126060503epcas2p4befe2d3d43f4a2158b1e1a123bf7906f@epcas2p4.samsung.com>
- <20180126060454.18082-1-andi.shyti@samsung.com>
+From: andi@etezian.org
+Subject: Re: [PATCH v2 4/8] spi: spi-s3c64xx: Drop unused enable_datapath()
+ function argument
+Date: Wed, 18 Apr 2018 03:09:39 +0900
+Message-ID: <749a25fcaf0ccaed931244dc8d381b98@etezian.org>
+References: <20180417142954.5507-1-s.nawrocki@samsung.com>
+ <CGME20180417143039epcas2p39e2c730d107c94e5f9bf104d3a938f90@epcas2p3.samsung.com>
+ <20180417142954.5507-4-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180126060454.18082-1-andi.shyti@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andi Shyti <andi@etezian.org>
-Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180417142954.5507-4-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, linux-spi@vger.kernel.org, broonie@kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 03:04:54PM +0900, Andi Shyti wrote:
-> The mms114 binding [1] specifies that the 'x' and 'y' should be
-> called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
-> in coherence with the touchscreen [2] binding.
-> 
-> Update the mms114 node for trats2 and trats dts according to the
-> binding.
-> 
-> [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
-> [2] Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
-> Hi Krzysztof,
-> 
-> this patch depends on Simon's patchset [1] and must be applied after
-> that. If you want I can ping you when the patch gets or you can take
-> it in the next cycle.
-> 
-> Andi
-> 
-> [1] https://marc.info/?l=linux-kernel&m=151682273403098&w=2
->
+Hi Sylwester,
 
-Hi Andi,
+On 17.04.2018 23:29, Sylwester Nawrocki wrote:
+> The spi pointer argument is not used now so remove it.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-As I understand, the dependencies are in and I can take this?
+Thanks for splitting it!
 
-Best regards,
-Krzysztof
+Reviewed-by: Andi Shyti <andi@etezian.org>
+
+Andi
