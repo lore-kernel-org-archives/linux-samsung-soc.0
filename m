@@ -1,56 +1,60 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/6] spi: spi-s3c64xx: Drop unused enable_datapath()
- function argument
-Date: Tue, 17 Apr 2018 12:51:21 +0200
-Message-ID: <CAJKOXPexpELGMGPh_=U7LqBTuEyoMByJ3KF+cd9SkOwuA9W_Og@mail.gmail.com>
-References: <20180416154021.25626-1-s.nawrocki@samsung.com>
- <CGME20180416154122epcas1p1ae714af12f8da08783c47fcd820c40e7@epcas1p1.samsung.com>
- <20180416154021.25626-3-s.nawrocki@samsung.com>
- <167c0f1a1a9de44574523c7f4a9d137d@etezian.org>
- <71b98ebb-550e-60af-36cb-0196cf738e54@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <71b98ebb-550e-60af-36cb-0196cf738e54@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, linux-spi@vger.kernel.org, broonie@kernel.org, kgene@kernel.org, Andi Shyti <andi@etezian.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [RFC 0/2] dw_mmc: add multislot support
+Date: Tue, 17 Apr 2018 15:11:28 +0300
+Message-ID: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, shawn.lin@rock-chips.com, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 12:02 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> Hi Andi,
->
-> On 04/16/2018 09:09 PM, andi@etezian.org wrote:
->> On 17.04.2018 00:40, Sylwester Nawrocki wrote:
->>> The spi pointer argument is not used now so remove it. While at it
->>> s3c64xx_ prefix is added to the function name.
->>
->> These for me are two different patches, but in any case it's trivial
->> so that I don't mind it too much.
->
-> I am going to drop renaming from this patch. There are 2 more functions
-> (wait_for_pio(), wait_for_dma()) without prefix, should we rename them
-> too or rather leave all 3 as they are now?
+This series consists of two patches:
+1. revert removal of previously existed "pseudo-multislot" support.
+ * Revert "mmc: dw_mmc: remove the deprecated "num-slots""
+ * Revert "mmc: dw_mmc: fix the wrong condition check of getting num-slots from DT"
+ * Revert "mmc: dw_mmc: remove the unnecessary slot variable"
+ * Revert "mmc: dw_mmc: update kernel-doc comments for dw_mci"
+ * Revert "mmc: dw_mmc: use the 'slot' instead of 'cur_slot'"
+ * Revert "mmc: dw_mmc: remove the 'id' arguments about functions relevant to slot"
+ * Revert "mmc: dw_mmc: change the array of slots"
+ * Revert "mmc: dw_mmc: remove the loop about finding slots"
+ * Revert "mmc: dw_mmc: deprecated the "num-slots" property"
 
-Indeed it is kind of mixed up - some purely local functions (not even
-passed through pointer to some ops) have prefix, some do not. If you
-ask me, I would prefer to have the prefix on all of them because:
-1. If they appear in call trace (where backtrace pointers are not
-telling anything) it is easy to understand their location,
-2. having generic name like "wait_for_dma" sounds for me like generic,
-Linux-wide macro (but it is not).
+2. Add missing stuff to support multislot mode in DesignWare MMC driver.
+ * Add missing slot switch to __dw_mci_start_request() function.
+ * Refactor set_ios function:
+   a) Calculate common clock which is
+      suitable for all slots instead of directly use clock value
+      provided by mmc core. We calculate common clock as the minimum
+      among each used slot clocks. This clock is calculated in
+      dw_mci_calc_common_clock() function which is called
+      from set_ios()
+   b) Disable clock only if no other slots are ON.
+   c) Setup clock directly in set_ios() only if no other slots
+      are ON. Otherwise adjust clock in __dw_mci_start_request()
+      function before slot switch.
+   d) Move timings and bus_width setup to separate funcions.
+ * Use timing field in each slot structure instead of common field in
+   host structure.
+ * Add locks to serialize access to registers.
 
-However I do not insist on that.
+NOTE: this patch is based off of v4.17-rc1
 
-Best regards,
-Krzysztof
+NOTE: as of today I tested this changes (in singleslot and multislot
+   modes) only on Synopsys HSDK board. But I will get ODROID-XU4 board
+   (with Exynos5422 which has DW MMC controller) the next week
+   so I will test it on this board too to catch any regressions.
+
+Eugeniy Paltsev (2):
+  dw_mmc: revert removal multislot support
+  dw_mmc: add multislot support
+
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   5 +
+ drivers/mmc/host/dw_mmc-exynos.c                   |   4 +-
+ drivers/mmc/host/dw_mmc-pci.c                      |   1 +
+ drivers/mmc/host/dw_mmc.c                          | 486 +++++++++++++++------
+ drivers/mmc/host/dw_mmc.h                          |  35 +-
+ 5 files changed, 387 insertions(+), 144 deletions(-)
+
+-- 
+2.14.3
