@@ -1,168 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 8/8] spi: spi-s3c64xx: Allow higher transfer lengths in
- polling IO mode
-Date: Tue, 17 Apr 2018 16:29:54 +0200
-Message-ID: <20180417142954.5507-8-s.nawrocki@samsung.com>
-References: <20180417142954.5507-1-s.nawrocki@samsung.com>
- <CGME20180417143100epcas2p228d05e4de4ce06621635a523241d9824@epcas2p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Update x and y properties for mms114
+ touchscreen
+Date: Tue, 17 Apr 2018 17:32:07 +0200
+Message-ID: <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
+References: <CGME20180126060503epcas2p4befe2d3d43f4a2158b1e1a123bf7906f@epcas2p4.samsung.com>
+ <20180126060454.18082-1-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20180417142954.5507-1-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: broonie@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, b.zolnierkie@samsung.com, krzk@kernel.org, linux-spi@vger.kernel.org, kgene@kernel.org, andi@etezian.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180126060454.18082-1-andi.shyti@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andi Shyti <andi@etezian.org>
+Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some variants of the SPI controller have no DMA support, in such case
-SPI transfers longer than the FIFO length are not currently properly
-handled by the driver. Fix it by doing multiple transfers in the
-s3c64xx_spi_transfer_one() function if the SPI transfer length exceeds
-the FIFO size.
+On Fri, Jan 26, 2018 at 03:04:54PM +0900, Andi Shyti wrote:
+> The mms114 binding [1] specifies that the 'x' and 'y' should be
+> called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
+> in coherence with the touchscreen [2] binding.
+> 
+> Update the mms114 node for trats2 and trats dts according to the
+> binding.
+> 
+> [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+> [2] Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+> Hi Krzysztof,
+> 
+> this patch depends on Simon's patchset [1] and must be applied after
+> that. If you want I can ping you when the patch gets or you can take
+> it in the next cycle.
+> 
+> Andi
+> 
+> [1] https://marc.info/?l=linux-kernel&m=151682273403098&w=2
+>
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/spi/spi-s3c64xx.c | 99 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 66 insertions(+), 33 deletions(-)
+Hi Andi,
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 27cd8c59eabf..755ab2dc6969 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -635,11 +635,14 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
- {
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
- 	const unsigned int fifo_len = (FIFO_LVL_MASK(sdd) >> 1) + 1;
-+	const void *tx_buf = NULL;
-+	void *rx_buf = NULL;
-+	int target_len = 0, origin_len = 0;
-+	int use_dma = 0;
- 	int status;
- 	u32 speed;
- 	u8 bpw;
- 	unsigned long flags;
--	int use_dma;
- 
- 	reinit_completion(&sdd->xfer_completion);
- 
-@@ -654,47 +657,77 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
- 		s3c64xx_spi_config(sdd);
- 	}
- 
--	/* Polling method for xfers not bigger than FIFO capacity */
--	use_dma = 0;
- 	if (!is_polling(sdd) && (xfer->len > fifo_len) &&
--	    sdd->rx_dma.ch && sdd->tx_dma.ch)
-+	    sdd->rx_dma.ch && sdd->tx_dma.ch) {
- 		use_dma = 1;
- 
--	spin_lock_irqsave(&sdd->lock, flags);
-+	} else if (is_polling(sdd) && xfer->len > fifo_len) {
-+		tx_buf = xfer->tx_buf;
-+		rx_buf = xfer->rx_buf;
-+		origin_len = xfer->len;
- 
--	/* Pending only which is to be done */
--	sdd->state &= ~RXBUSY;
--	sdd->state &= ~TXBUSY;
-+		target_len = xfer->len;
-+		if (xfer->len > fifo_len)
-+			xfer->len = fifo_len;
-+	}
-+
-+	do {
-+		spin_lock_irqsave(&sdd->lock, flags);
- 
--	s3c64xx_enable_datapath(sdd, xfer, use_dma);
-+		/* Pending only which is to be done */
-+		sdd->state &= ~RXBUSY;
-+		sdd->state &= ~TXBUSY;
- 
--	/* Start the signals */
--	s3c64xx_spi_set_cs(spi, true);
-+		s3c64xx_enable_datapath(sdd, xfer, use_dma);
- 
--	spin_unlock_irqrestore(&sdd->lock, flags);
-+		/* Start the signals */
-+		s3c64xx_spi_set_cs(spi, true);
- 
--	if (use_dma)
--		status = s3c64xx_wait_for_dma(sdd, xfer);
--	else
--		status = s3c64xx_wait_for_pio(sdd, xfer);
--
--	if (status) {
--		dev_err(&spi->dev, "I/O Error: rx-%d tx-%d res:rx-%c tx-%c len-%d\n",
--			xfer->rx_buf ? 1 : 0, xfer->tx_buf ? 1 : 0,
--			(sdd->state & RXBUSY) ? 'f' : 'p',
--			(sdd->state & TXBUSY) ? 'f' : 'p',
--			xfer->len);
--
--		if (use_dma) {
--			if (xfer->tx_buf != NULL
--			    && (sdd->state & TXBUSY))
--				dmaengine_terminate_all(sdd->tx_dma.ch);
--			if (xfer->rx_buf != NULL
--			    && (sdd->state & RXBUSY))
--				dmaengine_terminate_all(sdd->rx_dma.ch);
-+		spin_unlock_irqrestore(&sdd->lock, flags);
-+
-+		if (use_dma)
-+			status = s3c64xx_wait_for_dma(sdd, xfer);
-+		else
-+			status = s3c64xx_wait_for_pio(sdd, xfer);
-+
-+		if (status) {
-+			dev_err(&spi->dev,
-+				"I/O Error: rx-%d tx-%d res:rx-%c tx-%c len-%d\n",
-+				xfer->rx_buf ? 1 : 0, xfer->tx_buf ? 1 : 0,
-+				(sdd->state & RXBUSY) ? 'f' : 'p',
-+				(sdd->state & TXBUSY) ? 'f' : 'p',
-+				xfer->len);
-+
-+			if (use_dma) {
-+				if (xfer->tx_buf && (sdd->state & TXBUSY))
-+					dmaengine_terminate_all(sdd->tx_dma.ch);
-+				if (xfer->rx_buf && (sdd->state & RXBUSY))
-+					dmaengine_terminate_all(sdd->rx_dma.ch);
-+			}
-+		} else {
-+			s3c64xx_flush_fifo(sdd);
- 		}
--	} else {
--		s3c64xx_flush_fifo(sdd);
-+		if (target_len > 0) {
-+			target_len -= xfer->len;
-+
-+			if (xfer->tx_buf)
-+				xfer->tx_buf += xfer->len;
-+
-+			if (xfer->rx_buf)
-+				xfer->rx_buf += xfer->len;
-+
-+			if (target_len > fifo_len)
-+				xfer->len = fifo_len;
-+			else
-+				xfer->len = target_len;
-+		}
-+	} while (target_len > 0);
-+
-+	if (origin_len) {
-+		/* Restore original xfer buffers and length */
-+		xfer->tx_buf = tx_buf;
-+		xfer->rx_buf = rx_buf;
-+		xfer->len = origin_len;
- 	}
- 
- 	return status;
--- 
-2.14.2
+As I understand, the dependencies are in and I can take this?
+
+Best regards,
+Krzysztof
