@@ -1,42 +1,25 @@
-From: Colin Ian King <colin.king@canonical.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: [PATCH] [media] include/media: fix missing | operator when
  setting cfg
-Date: Wed, 18 Apr 2018 16:24:11 +0100
-Message-ID: <c554a771-e9a9-fe1f-6792-e73f33b08838@canonical.com>
+Date: Wed, 18 Apr 2018 17:27:13 +0200
+Message-ID: <83b18f98-3a78-5264-25fb-9048f9a9bed2@samsung.com>
 References: <CGME20180418150622epcas4p4be934b89937c0e50a2f236116c02d7cb@epcas4p4.samsung.com>
- <20180418150617.22489-1-colin.king@canonical.com>
- <ebce8e36-9125-aecb-b0d1-87f068646e67@samsung.com>
- <bafbcf6c-a08d-11ba-af25-655b7cc44e1c@samsung.com>
+        <20180418150617.22489-1-colin.king@canonical.com>
+        <ebce8e36-9125-aecb-b0d1-87f068646e67@samsung.com>
+        <bafbcf6c-a08d-11ba-af25-655b7cc44e1c@samsung.com>
+        <c554a771-e9a9-fe1f-6792-e73f33b08838@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <bafbcf6c-a08d-11ba-af25-655b7cc44e1c@samsung.com>
-Content-Language: en-US
+In-reply-to: <c554a771-e9a9-fe1f-6792-e73f33b08838@canonical.com>
+Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Colin Ian King <colin.king@canonical.com>
 Cc: Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 18/04/18 16:23, Sylwester Nawrocki wrote:
-> On 04/18/2018 05:20 PM, Sylwester Nawrocki wrote:
->> On 04/18/2018 05:06 PM, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The value from a readl is being masked with ITE_REG_CIOCAN_MASK however
->>> this is not being used and cfg is being re-assigned.  I believe the
->>> assignment operator should actually be instead the |= operator.
->>>
->>> Detected by CoverityScan, CID#1467987 ("Unused value")
->>>
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> Thanks for the patch.
->>
->> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> I forgot to mention that the subject should rather looks something
-> like:
-> 
-> "exynos4-is: fimc-lite: : fix missing | operator when setting cfg"
-> 
-Oops, shall I re-send?
+On 04/18/2018 05:24 PM, Colin Ian King wrote:
+> Oops, shall I re-send?
+
+There is no need to, thanks.
