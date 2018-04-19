@@ -1,13 +1,13 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 26/61] media: platform: exynos4-is: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:56 +0200
-Message-ID: <20180419140641.27926-27-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 05/61] clk: samsung: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:35 +0200
+Message-ID: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 We should get drvdata from struct device directly. Going via
@@ -18,57 +18,32 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/media/platform/exynos4-is/media-dev.c | 6 ++----
- drivers/media/platform/exynos4-is/mipi-csis.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 78b48a1fa26c..deb499f76412 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -1201,8 +1201,7 @@ static const struct media_device_ops fimc_md_ops = {
- static ssize_t fimc_md_sysfs_show(struct device *dev,
- 				  struct device_attribute *attr, char *buf)
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+index 077df3e539a7..f41d89cef0f1 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
+ #ifdef CONFIG_PM_SLEEP
+ static int s3c24xx_dclk_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct fimc_md *fmd = platform_get_drvdata(pdev);
-+	struct fimc_md *fmd = dev_get_drvdata(dev);
+-	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
++	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
  
- 	if (fmd->user_subdev_api)
- 		return strlcpy(buf, "Sub-device API (sub-dev)\n", PAGE_SIZE);
-@@ -1214,8 +1213,7 @@ static ssize_t fimc_md_sysfs_store(struct device *dev,
- 				   struct device_attribute *attr,
- 				   const char *buf, size_t count)
+ 	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
+ 	return 0;
+@@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
+ 
+ static int s3c24xx_dclk_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct fimc_md *fmd = platform_get_drvdata(pdev);
-+	struct fimc_md *fmd = dev_get_drvdata(dev);
- 	bool subdev_api;
- 	int i;
+-	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
++	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
  
-diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-index cba46a656338..b4e28a299e26 100644
---- a/drivers/media/platform/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-@@ -891,8 +891,7 @@ static int s5pcsis_probe(struct platform_device *pdev)
- 
- static int s5pcsis_pm_suspend(struct device *dev, bool runtime)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
- 	struct csis_state *state = sd_to_csis_state(sd);
- 	int ret = 0;
- 
-@@ -921,8 +920,7 @@ static int s5pcsis_pm_suspend(struct device *dev, bool runtime)
- 
- static int s5pcsis_pm_resume(struct device *dev, bool runtime)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
- 	struct csis_state *state = sd_to_csis_state(sd);
- 	int ret = 0;
- 
+ 	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
+ 	return 0;
 -- 
 2.11.0
