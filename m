@@ -1,32 +1,54 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 06/61] crypto: simplify getting .drvdata
-Date: Fri, 20 Apr 2018 08:07:43 +0200
-Message-ID: <CAJKOXPcpOHF6a_XtvKD-PUw_CRsXXrb-fHSm+HOug9YX=zj68w@mail.gmail.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [RFC 0/2] dw_mmc: add multislot support
+Date: Fri, 20 Apr 2018 09:35:28 +0200
+Message-ID: <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com>
+References: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, Jamie Iles <jamie@jamieiles.com>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-snps-arc@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Shawn Lin <shawn.lin@rock-chips.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 4:05 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Build tested only. buildbot is happy. Please apply individually.
->
->  drivers/crypto/exynos-rng.c       | 6 ++----
->  drivers/crypto/picoxcell_crypto.c | 6 ++----
->  2 files changed, 4 insertions(+), 8 deletions(-)
+[...]
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> 2. Add missing stuff to support multislot mode in DesignWare MMC driver.
+>  * Add missing slot switch to __dw_mci_start_request() function.
+>  * Refactor set_ios function:
+>    a) Calculate common clock which is
+>       suitable for all slots instead of directly use clock value
+>       provided by mmc core. We calculate common clock as the minimum
+>       among each used slot clocks. This clock is calculated in
+>       dw_mci_calc_common_clock() function which is called
+>       from set_ios()
+>    b) Disable clock only if no other slots are ON.
+>    c) Setup clock directly in set_ios() only if no other slots
+>       are ON. Otherwise adjust clock in __dw_mci_start_request()
+>       function before slot switch.
+>    d) Move timings and bus_width setup to separate funcions.
+>  * Use timing field in each slot structure instead of common field in
+>    host structure.
+>  * Add locks to serialize access to registers.
 
-Best regards,
-Krzysztof
+Sorry, but this is a hack to *try* to make multi-slot work and this
+isn't sufficient. There were good reasons to why the earlier
+non-working multi slot support was removed from dw_mmc.
+
+Let me elaborate a bit for your understanding. The core uses a host
+lock (mmc_claim|release_host()) to serialize operations and commands,
+as to confirm to the SD/SDIO/(e)MMC specs. The above changes gives no
+guarantees for this. To make that work, we would need a "mmc bus lock"
+to be managed by the core.
+
+However, inventing a "mmc bus lock" would lead to other problems
+related to I/O scheduling for upper layers - it simply breaks. For
+example, I/O requests for one card/slot can then starve I/O requests
+reaching another card/slot.
+
+[...]
+
+Kind regards
+Uffe
