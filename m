@@ -1,51 +1,32 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Fri, 20 Apr 2018 15:01:56 +0900
-Message-ID: <1524204116-5649-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20180420060157epcas2p1ba05f61666f38579990553940336b6ff@epcas2p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 06/61] crypto: simplify getting .drvdata
+Date: Fri, 20 Apr 2018 08:07:43 +0200
+Message-ID: <CAJKOXPcpOHF6a_XtvKD-PUw_CRsXXrb-fHSm+HOug9YX=zj68w@mail.gmail.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Kukjin Kim <kgene@kernel.org>, Jamie Iles <jamie@jamieiles.com>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3QgY2xlYW51cCBieSByZW1vdmluZyBFeHlub3Mgc3BlY2lmaWMgZnJh
-bWVidWZmZXIgc3RydWN0dXJlCiAgIGFuZCByZWxldmFudCB0d28gY2FsbGJhY2sgZnVuY3Rpb25z
-LgoKICAgUGxlYXNlIGtpbmRseSBsZXQgbWUga25vdyBpZiB0aGVyZSBpcyBhbnkgcHJvYmxlbS4K
-ClRoYW5rcywKSW5raSBEYWUKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgOTcx
-MzA5Njg4MzlhMjkyODg2OWEyZDI1NTAwYjU4NTUwMTdhYWM3ZDoKCiAgTWVyZ2UgdGFnICdkcm0t
-YW1ka2ZkLWZpeGVzLTIwMTgtMDMtMjUnIG9mIGdpdDovL3Blb3BsZS5mcmVlZGVza3RvcC5vcmcv
-fmdhYmJheW8vbGludXggaW50byBkcm0tZml4ZXMgKDIwMTgtMDMtMjcgMTc6Mzk6NTAgKzEwMDAp
-CgphcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoKCgogIGdpdDovL2dpdC5r
-ZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFn
-cy9leHlub3MtZHJtLWZpeGVzLWZvci12NC4xNy1yYzIKCmZvciB5b3UgdG8gZmV0Y2ggY2hhbmdl
-cyB1cCB0byBmZjA1OWZjYmVlZDljYmVkNzQyMWY4MmQxNDYzZGQ3NGM0NzI2MzZlOgoKICBkcm0v
-ZXh5bm9zOiBleHlub3NfZHJtX2ZiIC0+IGRybV9mcmFtZWJ1ZmZlciAoMjAxOC0wNC0xNyAxNDo1
-NTo0MSArMDkwMCkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0KUmVtb3ZlIEV4eW5vcyBzcGVjaWZpYyBmcmFtZWJ1ZmZlciBz
-dHJ1Y3R1cmUgYW5kCnJlbGV2YW50IGZ1bmN0aW9ucy4KLSBpdCByZW1vdmVzIGV4eW5vc19kcm1f
-ZmIgc3RydWN0dXJlIHdoaWNoIGlzIGEgd3JhcHBlciBvZgogIGRybV9mcmFtZWJ1ZmZlciBhbmQg
-dW5uZWNlc3NhcnkgdHdvIGV4eW5vcyBzcGVjaWZpYyBjYWxsYmFjawogIGZ1bmN0aW9ucywgZXh5
-bm9zX2RybV9kZXN0b3J5KCkgYW5kIGV4eW5vc19kcm1fZmJfY3JlYXRlX2hhbmRsZSgpCiAgYmVj
-YXVzZSB3ZSBjYW4gcmV1c2UgZXhpc3RpbmcgZHJtIGNvbW1vbiBjYWxsYmFjayBvbmVzIGluc3Rl
-YWQuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tCkRhbmllbCBTdG9uZSAoMyk6CiAgICAgIGRybS9leHlub3M6IE1vdmUgR0VN
-IEJPcyB0byBkcm1fZnJhbWVidWZmZXIKICAgICAgZHJtL2V4eW5vczogTW92ZSBkbWFfYWRkciBv
-dXQgb2YgZXh5bm9zX2RybV9mYgogICAgICBkcm0vZXh5bm9zOiBleHlub3NfZHJtX2ZiIC0+IGRy
-bV9mcmFtZWJ1ZmZlcgoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jIHwg
-NzMgKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDE0
-IGluc2VydGlvbnMoKyksIDU5IGRlbGV0aW9ucygtKQpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+On Thu, Apr 19, 2018 at 4:05 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Build tested only. buildbot is happy. Please apply individually.
+>
+>  drivers/crypto/exynos-rng.c       | 6 ++----
+>  drivers/crypto/picoxcell_crypto.c | 6 ++----
+>  2 files changed, 4 insertions(+), 8 deletions(-)
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
