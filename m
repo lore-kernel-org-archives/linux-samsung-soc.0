@@ -1,33 +1,39 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 01/61] ARM: plat-samsung: simplify getting .drvdata
-Date: Sat, 21 Apr 2018 19:05:14 +0200
-Message-ID: <20180421170514.qmklysbjrnkatns5@kozik-lap>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-2-wsa+renesas@sang-engineering.com>
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 0/2] drm/exynos: fimd: Add support for S5PV210
+Date: Sat, 21 Apr 2018 19:26:09 +0200
+Message-ID: <1524331571-7420-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180419140641.27926-2-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com
+Cc: airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 04:05:31PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  arch/arm/plat-samsung/adc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
+This patch series compose of 2 patches.
 
-Thanks, applied.
+First patch, adding support for S5PV210 FIMD variant to Exynos driver.
+Compatible for this soc was already existing in documentation.
 
-Best regards,
-Krzysztof
+Second patch, brings back possibility to use drivers depending on
+DRM_EXYNOS, on Samsung S5PV210/S5PC110 series based systems.
+
+Both patches has been tested on (not yet mainlined), an S5PV210 based
+Samsung Galaxy S (i9000) phone.
+
+Changes from v1:
+  - Added missing signed-off-by to one of patches
+
+Paweł Chmiel (1):
+  drm/exynos: Allow DRM_EXYNOS on s5pv210.
+
+Tomasz Figa (1):
+  drm/exynos: fimd: Add support for S5PV210 FIMD variant
+
+ drivers/gpu/drm/exynos/Kconfig           | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 8 ++++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+-- 
+2.7.4
