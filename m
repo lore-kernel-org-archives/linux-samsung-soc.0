@@ -1,59 +1,64 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] media: s5p-jpeg: don't return a value on a void function
-Date: Fri, 20 Apr 2018 21:10:17 +0200
-Message-ID: <4376a97a-bb22-056b-4a63-8838c0c2d3f8@gmail.com>
-References: <180af45d9964a4d9855066b8f74a8629625acfa2.1524250913.git.mchehab@s-opensource.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] drm/exynos: fimd: Add support for S5PV210 FIMD variant
+Date: Sat, 21 Apr 2018 18:55:17 +0200
+Message-ID: <CAJKOXPcv2A8po8-8ZVic8KX2xURPZsRBkS6My3qMhefRQk-fRQ@mail.gmail.com>
+References: <1524241936-10295-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <1524241936-10295-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <180af45d9964a4d9855066b8f74a8629625acfa2.1524250913.git.mchehab@s-opensource.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kukjin Kim <kgene@kernel.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1524241936-10295-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, Seung Woo Kim <sw0312.kim@samsung.com>, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mauro,
+On Fri, Apr 20, 2018 at 6:32 PM, Paweł Chmiel
+<pawel.mikolaj.chmiel@gmail.com> wrote:
+> From: Tomasz Figa <tomasz.figa@gmail.com>
+>
+> This patch adds support for FIMD variant found on S5PV210 SoC.
+> Except CLKSEL bit availability, it is identical to Exynos4210.
+>
+> Tested-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Thank you for the patch.
+You need to add your Signed-off-by here as well. It is necessary every
+time you touch a patch (and sending it is also a "touch" action).
 
-On 04/20/2018 09:01 PM, Mauro Carvalho Chehab wrote:
-> Building this driver on arm64 gives this warning:
-> 	drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c:430:16: error: return expression in void function
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> ---
->  drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
-> index 0974b9a7a584..0861842b2dfc 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
-> +++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
-> @@ -425,9 +425,9 @@ unsigned int exynos3250_jpeg_get_int_status(void __iomem *regs)
->  }
->  
->  void exynos3250_jpeg_clear_int_status(void __iomem *regs,
-> -						unsigned int value)
-> +				      unsigned int value)
->  {
-> -	return writel(value, regs + EXYNOS3250_JPGINTST);
-> +	writel(value, regs + EXYNOS3250_JPGINTST);
->  }
->  
->  unsigned int exynos3250_jpeg_operating(void __iomem *regs)
-> 
-
-Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-
--- 
 Best regards,
-Jacek Anaszewski
+Krzysztof
+
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index d42ae2bc3e56..01b1570d0c3a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -121,6 +121,12 @@ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+>         .has_limited_fmt = 1,
+>  };
+>
+> +static struct fimd_driver_data s5pv210_fimd_driver_data = {
+> +       .timing_base = 0x0,
+> +       .has_shadowcon = 1,
+> +       .has_clksel = 1,
+> +};
+> +
+>  static struct fimd_driver_data exynos3_fimd_driver_data = {
+>         .timing_base = 0x20000,
+>         .lcdblk_offset = 0x210,
+> @@ -193,6 +199,8 @@ struct fimd_context {
+>  static const struct of_device_id fimd_driver_dt_match[] = {
+>         { .compatible = "samsung,s3c6400-fimd",
+>           .data = &s3c64xx_fimd_driver_data },
+> +       { .compatible = "samsung,s5pv210-fimd",
+> +         .data = &s5pv210_fimd_driver_data },
+>         { .compatible = "samsung,exynos3250-fimd",
+>           .data = &exynos3_fimd_driver_data },
+>         { .compatible = "samsung,exynos4210-fimd",
+> --
+> 2.7.4
+>
