@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 2/2] drm/exynos: Allow DRM_EXYNOS on s5pv210.
-Date: Sat, 21 Apr 2018 19:26:11 +0200
-Message-ID: <1524331571-7420-3-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 1/2] drm/exynos: fimd: Add support for S5PV210 FIMD variant
+Date: Sat, 21 Apr 2018 19:26:10 +0200
+Message-ID: <1524331571-7420-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 References: <1524331571-7420-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -10,29 +10,50 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1524331571-7420-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com
-Cc: airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc: airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch brings back possibility to use drivers depending on
-DRM_EXYNOS, on Samsung S5PV210/S5PC110 series based systems.
+From: Tomasz Figa <tomasz.figa@gmail.com>
 
-Fixes: dbbc925bb83a ("drm/exynos: depend on ARCH_EXYNOS for DRM_EXYNOS")
+This patch adds support for FIMD variant found on S5PV210 SoC.
+Except CLKSEL bit availability, it is identical to Exynos4210.
+
+Tested-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- drivers/gpu/drm/exynos/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 735ce47688f9..1548a784ef71 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -1,6 +1,6 @@
- config DRM_EXYNOS
- 	tristate "DRM Support for Samsung SoC EXYNOS Series"
--	depends on OF && DRM && (ARCH_S3C64XX || ARCH_EXYNOS || ARCH_MULTIPLATFORM)
-+	depends on OF && DRM && (ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MULTIPLATFORM)
- 	select DRM_KMS_HELPER
- 	select VIDEOMODE_HELPERS
- 	select SND_SOC_HDMI_CODEC if SND_SOC
+Changes from v1:
+  - Added missing signed-off-by
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index d42ae2bc3e56..01b1570d0c3a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -121,6 +121,12 @@ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+ 	.has_limited_fmt = 1,
+ };
+ 
++static struct fimd_driver_data s5pv210_fimd_driver_data = {
++	.timing_base = 0x0,
++	.has_shadowcon = 1,
++	.has_clksel = 1,
++};
++
+ static struct fimd_driver_data exynos3_fimd_driver_data = {
+ 	.timing_base = 0x20000,
+ 	.lcdblk_offset = 0x210,
+@@ -193,6 +199,8 @@ struct fimd_context {
+ static const struct of_device_id fimd_driver_dt_match[] = {
+ 	{ .compatible = "samsung,s3c6400-fimd",
+ 	  .data = &s3c64xx_fimd_driver_data },
++	{ .compatible = "samsung,s5pv210-fimd",
++	  .data = &s5pv210_fimd_driver_data },
+ 	{ .compatible = "samsung,exynos3250-fimd",
+ 	  .data = &exynos3_fimd_driver_data },
+ 	{ .compatible = "samsung,exynos4210-fimd",
 -- 
 2.7.4
