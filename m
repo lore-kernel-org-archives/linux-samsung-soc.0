@@ -1,225 +1,78 @@
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH v6 25/27] drm/rockchip: psr: Sanitize semantics of allow/inhibit API
-Date: Mon, 23 Apr 2018 12:50:01 +0200
-Message-ID: <20180423105003.9004-26-enric.balletbo@collabora.com>
+Subject: [RESEND PATCH v6 03/27] drm/bridge: analogix_dp: Don't use fast link
+ training when panel just powered up
+Date: Mon, 23 Apr 2018 12:49:39 +0200
+Message-ID: <20180423105003.9004-4-enric.balletbo@collabora.com>
 References: <20180423105003.9004-1-enric.balletbo@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com, hshi@chromium.org, Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, kyungmin.park@samsung.com, Enric Balletbo i Serra <enric.balletbo@collabora.com>, kuankuan.y@gmail.com, hshi@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Tomasz Figa <tfiga@chromium.org>
-
-Currently both rockchip_drm_psr_activate() and _deactivate() only set the
-boolean "active" flag without actually making sure that hardware state
-complies with it.
-
-Since we are going to extend the usage of this API to properly lock PSR
-for the duration of atomic commits, we change the semantics in following
-way:
- - a counter is used to track the number of inhibit requests,
- - PSR is actually disabled in hardware on first inhibit request,
- - PSR enable work is scheduled on last allow request.
-
-The above allows using the API as a way to deterministically synchronize
-PSR state changes with other DRM events, i.e. atomic commits and cursor
-updates. As a nice side effect, the naming is sorted out and we have
-"inhibit" for stopping the software logic and "enable" for hardware
-state.
-
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
----
-
- .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  4 +-
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c   | 55 ++++++++++++++-----
- drivers/gpu/drm/rockchip/rockchip_drm_psr.h   |  4 +-
- 3 files changed, 46 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 6d45d62466b3..080f05352195 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -134,7 +134,7 @@ static int rockchip_dp_poweron_end(struct analogix_dp_plat_data *plat_data)
- {
- 	struct rockchip_dp_device *dp = to_dp(plat_data);
- 
--	return rockchip_drm_psr_activate(&dp->encoder);
-+	return rockchip_drm_psr_inhibit_put(&dp->encoder);
- }
- 
- static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
-@@ -142,7 +142,7 @@ static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
- 	struct rockchip_dp_device *dp = to_dp(plat_data);
- 	int ret;
- 
--	ret = rockchip_drm_psr_deactivate(&dp->encoder);
-+	ret = rockchip_drm_psr_inhibit_get(&dp->encoder);
- 	if (ret != 0)
- 		return ret;
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-index 1a6157ffecec..74f6a6a887dd 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-@@ -25,7 +25,7 @@ struct psr_drv {
- 	struct drm_encoder	*encoder;
- 
- 	struct mutex		lock;
--	bool			active;
-+	int			inhibit_count;
- 	bool			enabled;
- 
- 	struct delayed_work	flush_work;
-@@ -71,7 +71,7 @@ static int psr_set_state_locked(struct psr_drv *psr, bool enable)
- {
- 	int ret;
- 
--	if (!psr->active)
-+	if (psr->inhibit_count > 0)
- 		return -EINVAL;
- 
- 	if (enable == psr->enabled)
-@@ -96,13 +96,18 @@ static void psr_flush_handler(struct work_struct *work)
- }
- 
- /**
-- * rockchip_drm_psr_activate - activate PSR on the given pipe
-+ * rockchip_drm_psr_inhibit_put - release PSR inhibit on given encoder
-  * @encoder: encoder to obtain the PSR encoder
-  *
-+ * Decrements PSR inhibit count on given encoder. Should be called only
-+ * for a PSR inhibit count increment done before. If PSR inhibit counter
-+ * reaches zero, PSR flush work is scheduled to make the hardware enter
-+ * PSR mode in PSR_FLUSH_TIMEOUT_MS.
-+ *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
--int rockchip_drm_psr_activate(struct drm_encoder *encoder)
-+int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder)
- {
- 	struct psr_drv *psr = find_psr_by_encoder(encoder);
- 
-@@ -110,21 +115,30 @@ int rockchip_drm_psr_activate(struct drm_encoder *encoder)
- 		return PTR_ERR(psr);
- 
- 	mutex_lock(&psr->lock);
--	psr->active = true;
-+	--psr->inhibit_count;
-+	WARN_ON(psr->inhibit_count < 0);
-+	if (!psr->inhibit_count)
-+		mod_delayed_work(system_wq, &psr->flush_work,
-+				 PSR_FLUSH_TIMEOUT_MS);
- 	mutex_unlock(&psr->lock);
- 
- 	return 0;
- }
--EXPORT_SYMBOL(rockchip_drm_psr_activate);
-+EXPORT_SYMBOL(rockchip_drm_psr_inhibit_put);
- 
- /**
-- * rockchip_drm_psr_deactivate - deactivate PSR on the given pipe
-+ * rockchip_drm_psr_inhibit_get - acquire PSR inhibit on given encoder
-  * @encoder: encoder to obtain the PSR encoder
-  *
-+ * Increments PSR inhibit count on given encoder. This function guarantees
-+ * that after it returns PSR is turned off on given encoder and no PSR-related
-+ * hardware state change occurs at least until a matching call to
-+ * rockchip_drm_psr_inhibit_put() is done.
-+ *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
--int rockchip_drm_psr_deactivate(struct drm_encoder *encoder)
-+int rockchip_drm_psr_inhibit_get(struct drm_encoder *encoder)
- {
- 	struct psr_drv *psr = find_psr_by_encoder(encoder);
- 
-@@ -132,14 +146,14 @@ int rockchip_drm_psr_deactivate(struct drm_encoder *encoder)
- 		return PTR_ERR(psr);
- 
- 	mutex_lock(&psr->lock);
--	psr->active = false;
--	psr->enabled = false;
-+	psr_set_state_locked(psr, false);
-+	++psr->inhibit_count;
- 	mutex_unlock(&psr->lock);
- 	cancel_delayed_work_sync(&psr->flush_work);
- 
- 	return 0;
- }
--EXPORT_SYMBOL(rockchip_drm_psr_deactivate);
-+EXPORT_SYMBOL(rockchip_drm_psr_inhibit_get);
- 
- static void rockchip_drm_do_flush(struct psr_drv *psr)
- {
-@@ -199,6 +213,11 @@ EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
-  * @encoder: encoder that obtain the PSR function
-  * @psr_set: call back to set PSR state
-  *
-+ * The function returns with PSR inhibit counter initialized with one
-+ * and the caller (typically encoder driver) needs to call
-+ * rockchip_drm_psr_inhibit_put() when it becomes ready to accept PSR
-+ * enable request.
-+ *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
-@@ -218,7 +237,7 @@ int rockchip_drm_psr_register(struct drm_encoder *encoder,
- 	INIT_DELAYED_WORK(&psr->flush_work, psr_flush_handler);
- 	mutex_init(&psr->lock);
- 
--	psr->active = false;
-+	psr->inhibit_count = 1;
- 	psr->enabled = false;
- 	psr->encoder = encoder;
- 	psr->set = psr_set;
-@@ -236,6 +255,11 @@ EXPORT_SYMBOL(rockchip_drm_psr_register);
-  * @encoder: encoder that obtain the PSR function
-  * @psr_set: call back to set PSR state
-  *
-+ * It is expected that the PSR inhibit counter is 1 when this function is
-+ * called, which corresponds to a state when related encoder has been
-+ * disconnected from any CRTCs and its driver called
-+ * rockchip_drm_psr_inhibit_get() to stop the PSR logic.
-+ *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
-@@ -247,7 +271,12 @@ void rockchip_drm_psr_unregister(struct drm_encoder *encoder)
- 	mutex_lock(&drm_drv->psr_list_lock);
- 	list_for_each_entry_safe(psr, n, &drm_drv->psr_list, list) {
- 		if (psr->encoder == encoder) {
--			cancel_delayed_work_sync(&psr->flush_work);
-+			/*
-+			 * Any other value would mean that the encoder
-+			 * is still in use.
-+			 */
-+			WARN_ON(psr->inhibit_count != 1);
-+
- 			list_del(&psr->list);
- 			kfree(psr);
- 		}
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-index 06537ee27565..40e026c14168 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-@@ -18,8 +18,8 @@
- void rockchip_drm_psr_flush_all(struct drm_device *dev);
- int rockchip_drm_psr_flush(struct drm_crtc *crtc);
- 
--int rockchip_drm_psr_activate(struct drm_encoder *encoder);
--int rockchip_drm_psr_deactivate(struct drm_encoder *encoder);
-+int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder);
-+int rockchip_drm_psr_inhibit_get(struct drm_encoder *encoder);
- 
- int rockchip_drm_psr_register(struct drm_encoder *encoder,
- 			int (*psr_set)(struct drm_encoder *, bool enable));
--- 
-2.17.0
+RnJvbTogemFpbiB3YW5nIDx3enpAcm9jay1jaGlwcy5jb20+CgpQYW5lbCB3b3VsZCByZXNldCBp
+dHMgc2V0dGluZyB3aGVuIGl0IHBvd2VycyBkb3duLiBJdCB3b3VsZCBmb3JnZXQgdGhlIGxhc3QK
+c3VjY2VlZGVkIGxpbmsgdHJhaW5pbmcgc2V0dGluZy4gU28gd2UgY2FuJ3QgdXNlIHRoZSBsYXN0
+IHN1Y2Nlc3NmdWwgbGluawp0cmFpbmluZyBzZXR0aW5nIHRvIGRvIGZhc3QgbGluayB0cmFpbmlu
+Zy4gTGV0J3MgcmVzZXQgZmFzdF90cmFpbl9lbmFibGUgaW4KYW5hbG9naXhfZHBfYnJpZGdlX2Rp
+c2FibGUoKTsKCkNjOiBTdMOpcGhhbmUgTWFyY2hlc2luIDxtYXJjaGV1QGNocm9taXVtLm9yZz4K
+U2lnbmVkLW9mZi1ieTogemFpbiB3YW5nIDx3enpAcm9jay1jaGlwcy5jb20+ClNpZ25lZC1vZmYt
+Ynk6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hyb21pdW0ub3JnPgpTaWduZWQtb2ZmLWJ5OiBUaGll
+cnJ5IEVzY2FuZGUgPHRoaWVycnkuZXNjYW5kZUBjb2xsYWJvcmEuY29tPgpTaWduZWQtb2ZmLWJ5
+OiBFbnJpYyBCYWxsZXRibyBpIFNlcnJhIDxlbnJpYy5iYWxsZXRib0Bjb2xsYWJvcmEuY29tPgpU
+ZXN0ZWQtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KUmV2
+aWV3ZWQtYnk6IEFyY2hpdCBUYW5lamEgPGFyY2hpdHRAY29kZWF1cm9yYS5vcmc+Ci0tLQoKIGRy
+aXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgOSArKysr
+Ky0tLS0KIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5o
+IHwgMiArLQogMiBmaWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0p
+CgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
+cF9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2Nv
+cmUuYwppbmRleCAwNWEwY2E0YWYwNTcuLjg1ZGJiMWNhOTg4NiAxMDA2NDQKLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKQEAgLTU3OSwxNCAr
+NTc5LDE0IEBAIHN0YXRpYyBpbnQgYW5hbG9naXhfZHBfcHJvY2Vzc19lcXVhbGl6ZXJfdHJhaW5p
+bmcoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCiAJCWlmIChyZXR2YWwgIT0gMSkgewog
+CQkJZGV2X2VycihkcC0+ZGV2LCAiZmFpbGVkIHRvIHJlYWQgZG93bnNwcmVhZCAlZFxuIiwKIAkJ
+CQlyZXR2YWwpOwotCQkJZHAtPmZhc3RfdHJhaW5fc3VwcG9ydCA9IGZhbHNlOworCQkJZHAtPmZh
+c3RfdHJhaW5fZW5hYmxlID0gZmFsc2U7CiAJCX0gZWxzZSB7Ci0JCQlkcC0+ZmFzdF90cmFpbl9z
+dXBwb3J0ID0KKwkJCWRwLT5mYXN0X3RyYWluX2VuYWJsZSA9CiAJCQkJKHNwcmVhZCAmIERQX05P
+X0FVWF9IQU5EU0hBS0VfTElOS19UUkFJTklORykgPwogCQkJCQl0cnVlIDogZmFsc2U7CiAJCX0K
+IAkJZGV2X2RiZyhkcC0+ZGV2LCAiZmFzdCBsaW5rIHRyYWluaW5nICVzXG4iLAotCQkJZHAtPmZh
+c3RfdHJhaW5fc3VwcG9ydCA/ICJzdXBwb3J0ZWQiIDogInVuc3VwcG9ydGVkIik7CisJCQlkcC0+
+ZmFzdF90cmFpbl9lbmFibGUgPyAic3VwcG9ydGVkIiA6ICJ1bnN1cHBvcnRlZCIpOwogCiAJCS8q
+IHNldCBlbmhhbmNlZCBtb2RlIGlmIGF2YWlsYWJsZSAqLwogCQlhbmFsb2dpeF9kcF9zZXRfZW5o
+YW5jZWRfbW9kZShkcCk7CkBAIC03OTMsNyArNzkzLDcgQEAgc3RhdGljIGludCBhbmFsb2dpeF9k
+cF9mYXN0X2xpbmtfdHJhaW4oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCiAKIHN0YXRp
+YyBpbnQgYW5hbG9naXhfZHBfdHJhaW5fbGluayhzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpk
+cCkKIHsKLQlpZiAoZHAtPmZhc3RfdHJhaW5fc3VwcG9ydCkKKwlpZiAoZHAtPmZhc3RfdHJhaW5f
+ZW5hYmxlKQogCQlyZXR1cm4gYW5hbG9naXhfZHBfZmFzdF9saW5rX3RyYWluKGRwKTsKIAogCXJl
+dHVybiBhbmFsb2dpeF9kcF9mdWxsX2xpbmtfdHJhaW4oZHAsIGRwLT52aWRlb19pbmZvLm1heF9s
+YW5lX2NvdW50LApAQCAtMTE5Nyw2ICsxMTk3LDcgQEAgc3RhdGljIHZvaWQgYW5hbG9naXhfZHBf
+YnJpZGdlX2Rpc2FibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKIAkJRFJNX0VSUk9SKCJm
+YWlsZWQgdG8gc2V0dXAgdGhlIHBhbmVsIHJldCA9ICVkXG4iLCByZXQpOwogCiAJZHAtPnBzcl9l
+bmFibGUgPSBmYWxzZTsKKwlkcC0+ZmFzdF90cmFpbl9lbmFibGUgPSBmYWxzZTsKIAlkcC0+ZHBt
+c19tb2RlID0gRFJNX01PREVfRFBNU19PRkY7CiB9CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oIGIvZHJpdmVycy9ncHUvZHJt
+L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKaW5kZXggNmE5NmVmN2U2OTM0Li40
+MDNmZjg1MzQ2NGIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgv
+YW5hbG9naXhfZHBfY29yZS5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgv
+YW5hbG9naXhfZHBfY29yZS5oCkBAIC0xNzMsNyArMTczLDcgQEAgc3RydWN0IGFuYWxvZ2l4X2Rw
+X2RldmljZSB7CiAJaW50CQkJaHBkX2dwaW87CiAJYm9vbCAgICAgICAgICAgICAgICAgICAgZm9y
+Y2VfaHBkOwogCWJvb2wJCQlwc3JfZW5hYmxlOwotCWJvb2wJCQlmYXN0X3RyYWluX3N1cHBvcnQ7
+CisJYm9vbAkJCWZhc3RfdHJhaW5fZW5hYmxlOwogCiAJc3RydWN0IG11dGV4CQlwYW5lbF9sb2Nr
+OwogCWJvb2wJCQlwYW5lbF9pc19tb2Rlc2V0OwotLSAKMi4xNy4wCgoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5n
+IGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5p
+bmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
