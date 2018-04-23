@@ -1,38 +1,54 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [patch 3/9] ARM: S3C24XX: Fix invalid SPDX identifier
-Date: Mon, 23 Apr 2018 17:26:59 +0200
-Message-ID: <20180423152659.xrvk73z3mj3j66mq@kozik-lap>
-References: <20180422220208.772527041@linutronix.de>
- <20180422220832.982315239@linutronix.de>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH 00/11] fix potential Spectre variant 1 issues
+Date: Mon, 23 Apr 2018 12:37:41 -0500
+Message-ID: <cover.1524499368.git.gustavo@embeddedor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180422220832.982315239@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Philippe Ombredanne <pombredanne@nexb.com>, Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>, Arnaud Patard <arnaud.patard@rtp-net.org>, Ben Dooks <ben-linux@fluff.org>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>, Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>, Jonathan Corbet <corbet@lwn.net>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 12:02:11AM +0200, Thomas Gleixner wrote:
-> GPL-1.0 is not part of the valid identifier list and as its meaning is GPL
-> version 1.0 only this would be incompatible with the kernel license.
-> 
-> As this code was included into the kernel, assume its GPL-1.0+
-> 
-> Fixes: 84b2170109e4 ("ARM: S3C24XX: Add SPDX license identifiers")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Arnaud Patard <arnaud.patard@rtp-net.org>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
->  arch/arm/mach-s3c24xx/h1940-bluetooth.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This patchset aims to fix various media platform and media usb
+cases where we have user controlled array dereferences that could
+be exploited due to the Spectre variant 1 vulnerability. All were
+reported by Dan Carpenter.
 
-+Cc samsung-soc
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-Thanks, applied.
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
-Best regards,
-Krzysztof
+Thanks
+
+Gustavo A. R. Silva (11):
+  media: tm6000: fix potential Spectre variant 1
+  exynos4-is: mipi-csis: fix potential Spectre variant 1
+  fsl-viu: fix potential Spectre variant 1
+  marvell-ccic: mcam-core: fix potential Spectre variant 1
+  omap_vout: fix potential Spectre variant 1
+  rcar-v4l2: fix potential Spectre variant 1
+  rcar_drif: fix potential Spectre variant 1
+  sh_vou: fix potential Spectre variant 1
+  vimc-debayer: fix potential Spectre variant 1
+  vivid-sdr-cap: fix potential Spectre variant 1
+  vsp1_rwpf: fix potential Spectre variant 1
+
+ drivers/media/platform/exynos4-is/mipi-csis.c   | 5 ++++-
+ drivers/media/platform/fsl-viu.c                | 8 ++++----
+ drivers/media/platform/marvell-ccic/mcam-core.c | 3 +++
+ drivers/media/platform/omap/omap_vout.c         | 3 +++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c     | 4 +++-
+ drivers/media/platform/rcar_drif.c              | 4 +++-
+ drivers/media/platform/sh_vou.c                 | 3 +++
+ drivers/media/platform/vimc/vimc-debayer.c      | 5 ++++-
+ drivers/media/platform/vivid/vivid-sdr-cap.c    | 6 ++++++
+ drivers/media/platform/vsp1/vsp1_rwpf.c         | 3 +++
+ drivers/media/usb/tm6000/tm6000-video.c         | 2 ++
+ 11 files changed, 38 insertions(+), 8 deletions(-)
+
+-- 
+2.7.4
