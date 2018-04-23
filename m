@@ -1,73 +1,86 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: Re: [PATCH] media: s5p-jpeg: don't return a value on a void function
-Date: Mon, 23 Apr 2018 08:23:33 +0200
-Message-ID: <732007af-de97-084d-8e3f-2c9b7de700f4@samsung.com>
-References: <180af45d9964a4d9855066b8f74a8629625acfa2.1524250913.git.mchehab@s-opensource.com>
- <CGME20180420191157epcas1p2daac97ef3159bea632c90da23da8063f@epcas1p2.samsung.com>
- <4376a97a-bb22-056b-4a63-8838c0c2d3f8@gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] phy: exynos-mipi-video: Simplify code by using
+ regmap_update_bits()
+Date: Mon, 23 Apr 2018 12:13:26 +0530
+Message-ID: <b4eb154e-8acf-1eae-de27-ce3f6a93a47f@ti.com>
+References: <CGME20180416161949epcas1p11b738f30a12bd2f62ad9422f7c4e7ed6@epcas1p1.samsung.com>
+ <20180416161938.26958-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; Format="flowed"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <4376a97a-bb22-056b-4a63-8838c0c2d3f8@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180416161938.26958-1-s.nawrocki@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: krzk@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-W dniu 20.04.2018 o=A021:10, Jacek Anaszewski pisze:
-> Hi Mauro,
-> =
-
-> Thank you for the patch.
-> =
-
-> On 04/20/2018 09:01 PM, Mauro Carvalho Chehab wrote:
->> Building this driver on arm64 gives this warning:
->> 	drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c:430:16: error: ret=
-urn expression in void function
->>
->> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
->> ---
->>   drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c b/driv=
-ers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
->> index 0974b9a7a584..0861842b2dfc 100644
->> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
->> +++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
->> @@ -425,9 +425,9 @@ unsigned int exynos3250_jpeg_get_int_status(void __i=
-omem *regs)
->>   }
->>   =
-
->>   void exynos3250_jpeg_clear_int_status(void __iomem *regs,
->> -						unsigned int value)
->> +				      unsigned int value)
->>   {
->> -	return writel(value, regs + EXYNOS3250_JPGINTST);
->> +	writel(value, regs + EXYNOS3250_JPGINTST);
->>   }
->>   =
-
->>   unsigned int exynos3250_jpeg_operating(void __iomem *regs)
->>
-> =
-
-> Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> =
 
 
-Acked-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+On Monday 16 April 2018 09:49 PM, Sylwester Nawrocki wrote:
+> There is no functional change, just replacing regmap_read()/modify/
+> regmap_write() with regmap_update_bits() function calls.
+
+merged, thanks!
+
+-Kishon
+
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/phy/samsung/phy-exynos-mipi-video.c | 34 ++++++++++++-----------------
+>  1 file changed, 14 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/phy/samsung/phy-exynos-mipi-video.c b/drivers/phy/samsung/phy-exynos-mipi-video.c
+> index c198886f80a3..00d89599c67d 100644
+> --- a/drivers/phy/samsung/phy-exynos-mipi-video.c
+> +++ b/drivers/phy/samsung/phy-exynos-mipi-video.c
+> @@ -231,33 +231,27 @@ struct exynos_mipi_video_phy {
+>  static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
+>  			   struct exynos_mipi_video_phy *state, unsigned int on)
+>  {
+> -	u32 val;
+> +	struct regmap *enable_map = state->regmaps[data->enable_map];
+> +	struct regmap *resetn_map = state->regmaps[data->resetn_map];
+>  
+>  	spin_lock(&state->slock);
+>  
+>  	/* disable in PMU sysreg */
+>  	if (!on && data->coupled_phy_id >= 0 &&
+> -	    state->phys[data->coupled_phy_id].phy->power_count == 0) {
+> -		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
+> -			    &val);
+> -		val &= ~data->enable_val;
+> -		regmap_write(state->regmaps[data->enable_map], data->enable_reg,
+> -			     val);
+> -	}
+> -
+> +	    state->phys[data->coupled_phy_id].phy->power_count == 0)
+> +		regmap_update_bits(enable_map, data->enable_reg,
+> +				   data->enable_val, 0);
+>  	/* PHY reset */
+> -	regmap_read(state->regmaps[data->resetn_map], data->resetn_reg, &val);
+> -	val = on ? (val | data->resetn_val) : (val & ~data->resetn_val);
+> -	regmap_write(state->regmaps[data->resetn_map], data->resetn_reg, val);
+> -
+> +	if (on)
+> +		regmap_update_bits(resetn_map, data->resetn_reg,
+> +				   data->resetn_val, data->resetn_val);
+> +	else
+> +		regmap_update_bits(resetn_map, data->resetn_reg,
+> +				   data->resetn_val, 0);
+>  	/* enable in PMU sysreg */
+> -	if (on) {
+> -		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
+> -			    &val);
+> -		val |= data->enable_val;
+> -		regmap_write(state->regmaps[data->enable_map], data->enable_reg,
+> -			     val);
+> -	}
+> +	if (on)
+> +		regmap_update_bits(enable_map, data->enable_reg,
+> +				   data->enable_val, data->enable_val);
+>  
+>  	spin_unlock(&state->slock);
+>  
+> 
