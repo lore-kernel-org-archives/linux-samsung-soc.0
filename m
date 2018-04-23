@@ -1,59 +1,73 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 0/2] drm/exynos/mixer: fixes for interlaced mode
-Date: Mon, 23 Apr 2018 08:29:55 +0900
-Message-ID: <5ADD1AF3.7000800@samsung.com>
-References: <CGME20180202151126eucas1p2142bfb4a4376aea7763f40ce2630e349@eucas1p2.samsung.com>
- <20180202151123.31082-1-a.hajda@samsung.com>
- <e8e5530d-9b6e-ff9b-3f9e-cf3a5b5b138a@samsung.com>
- <cdd233c8-d800-db1a-d3c5-6444a46cc1d3@samsung.com>
- <f709ca8c-19e4-e93a-bd78-40bf70b6b6e5@samsung.com>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: Re: [PATCH] media: s5p-jpeg: don't return a value on a void function
+Date: Mon, 23 Apr 2018 08:23:33 +0200
+Message-ID: <732007af-de97-084d-8e3f-2c9b7de700f4@samsung.com>
+References: <180af45d9964a4d9855066b8f74a8629625acfa2.1524250913.git.mchehab@s-opensource.com>
+ <CGME20180420191157epcas1p2daac97ef3159bea632c90da23da8063f@epcas1p2.samsung.com>
+ <4376a97a-bb22-056b-4a63-8838c0c2d3f8@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <f709ca8c-19e4-e93a-bd78-40bf70b6b6e5@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="windows-1252"; Format="flowed"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4376a97a-bb22-056b-4a63-8838c0c2d3f8@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE464WEIDA07JuUIDIw7J28IDIxOjQ07JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBPbiAxMi4wMy4yMDE4IDA4OjEyLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+PiBPbiAy
-MC4wMi4yMDE4IDA3OjQ1LCBBbmRyemVqIEhhamRhIHdyb3RlOgo+Pj4gSGkgSW5raSwKPj4+Cj4+
-PiBPbiAwMi4wMi4yMDE4IDE2OjExLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+Pj4+IEhpIElua2ks
-IFRvYmlhcywKPj4+Pgo+Pj4+IFRoaXMgaXMgcmV2aWV3ZWQvdXBkYXRlZC90ZXN0ZWQgVG9iaWFz
-J3MgcGF0Y2ggYWRkcmVzc2luZyBwYWdlLWZhdWx0cwo+Pj4+IGluIFZpZGVvIFByb2Nlc3NvciBp
-biBpbnRlcmxhY2VkIG1vZGUuIFBsdXMgcHJlbGltaW5hcnkgcGF0Y2ggZml4aW5nIE1peGVyCj4+
-Pj4gaW50ZXJsYWNlZCBtb2RlLgo+Pj4+Cj4+Pj4gUmVnYXJkcwo+Pj4+IEFuZHJ6ZWoKPj4+IEdl
-bnRsZSBwaW5nLgo+PiBQaW5nLgo+IAo+IFBpbmcsIGFsbW9zdCB0aHJlZSBtb250aHMgcGFzc2Vk
-Lgo+CgpPb3BzLCByZWFsbHkgc29ycnkuIEkgZm9yZ290IHRoaXMuIE1lcmdlZC4KClRoYW5rcywK
-SW5raSBEYWUKIAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+Cj4+IC0tCj4+IFJlZ2FyZHMKPj4g
-QW5kcnplago+Pgo+Pj4gUmVnYXJkcwo+Pj4gQW5kcnplago+Pj4KPj4+PiBBbmRyemVqIEhhamRh
-ICgxKToKPj4+PiAgIGRybS9leHlub3MvbWl4ZXI6IGZpeCBzeW5jaHJvbml6YXRpb24gY2hlY2sg
-aW4gaW50ZXJsYWNlZCBtb2RlCj4+Pj4KPj4+PiBUb2JpYXMgSmFrb2JpICgxKToKPj4+PiAgIGRy
-bS9leHlub3M6IG1peGVyOiBhdm9pZCBPb3BzIGluIHZwX3ZpZGVvX2J1ZmZlcigpCj4+Pj4KPj4+
-PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDIyICsrKysrKysrKysr
-KysrKysrLS0tLS0KPj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmggICB8
-ICAxICsKPj4+PiAgMiBmaWxlcyBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9u
-cygtKQo+Pj4+Cj4+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwo+Pj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+Pj4gZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwo+Pj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwKPj4KPj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KPj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+PiBkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCj4+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCj4gCj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMg
-bGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4g
-dGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3Jl
-IG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
-Lmh0bWwKPiAKPiAKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+Hi,
+
+W dniu 20.04.2018 o=A021:10, Jacek Anaszewski pisze:
+> Hi Mauro,
+> =
+
+> Thank you for the patch.
+> =
+
+> On 04/20/2018 09:01 PM, Mauro Carvalho Chehab wrote:
+>> Building this driver on arm64 gives this warning:
+>> 	drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c:430:16: error: ret=
+urn expression in void function
+>>
+>> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+>> ---
+>>   drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c b/driv=
+ers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
+>> index 0974b9a7a584..0861842b2dfc 100644
+>> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
+>> +++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
+>> @@ -425,9 +425,9 @@ unsigned int exynos3250_jpeg_get_int_status(void __i=
+omem *regs)
+>>   }
+>>   =
+
+>>   void exynos3250_jpeg_clear_int_status(void __iomem *regs,
+>> -						unsigned int value)
+>> +				      unsigned int value)
+>>   {
+>> -	return writel(value, regs + EXYNOS3250_JPGINTST);
+>> +	writel(value, regs + EXYNOS3250_JPGINTST);
+>>   }
+>>   =
+
+>>   unsigned int exynos3250_jpeg_operating(void __iomem *regs)
+>>
+> =
+
+> Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> =
+
+
+Acked-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
