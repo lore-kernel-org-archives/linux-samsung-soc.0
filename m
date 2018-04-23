@@ -1,49 +1,38 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH v6 08/27] drm/bridge: analogix_dp: Extend hpd check time to 100ms
-Date: Mon, 23 Apr 2018 12:49:44 +0200
-Message-ID: <20180423105003.9004-9-enric.balletbo@collabora.com>
-References: <20180423105003.9004-1-enric.balletbo@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [patch 3/9] ARM: S3C24XX: Fix invalid SPDX identifier
+Date: Mon, 23 Apr 2018 17:26:59 +0200
+Message-ID: <20180423152659.xrvk73z3mj3j66mq@kozik-lap>
+References: <20180422220208.772527041@linutronix.de>
+ <20180422220832.982315239@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
+Content-Disposition: inline
+In-Reply-To: <20180422220832.982315239@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com, hshi@chromium.org, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Philippe Ombredanne <pombredanne@nexb.com>, Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>, Arnaud Patard <arnaud.patard@rtp-net.org>, Ben Dooks <ben-linux@fluff.org>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Lin Huang <hl@rock-chips.com>
+On Mon, Apr 23, 2018 at 12:02:11AM +0200, Thomas Gleixner wrote:
+> GPL-1.0 is not part of the valid identifier list and as its meaning is GPL
+> version 1.0 only this would be incompatible with the kernel license.
+> 
+> As this code was included into the kernel, assume its GPL-1.0+
+> 
+> Fixes: 84b2170109e4 ("ARM: S3C24XX: Add SPDX license identifiers")
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Arnaud Patard <arnaud.patard@rtp-net.org>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  arch/arm/mach-s3c24xx/h1940-bluetooth.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-There was a 1ms delay to detect the hpd signal, which is too short to
-detect a short pulse. This patch extends this delay to 100ms.
++Cc samsung-soc
 
-Cc: Stéphane Marchesin <marcheu@chromium.org>
-Cc: 征增 王 <wzz@rock-chips.com>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
----
+Thanks, applied.
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 5957e2338071..1f4f34149019 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -76,7 +76,7 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
- 			return 0;
- 
- 		timeout_loop++;
--		usleep_range(10, 11);
-+		usleep_range(1000, 1100);
- 	}
- 
- 	/*
--- 
-2.17.0
+Best regards,
+Krzysztof
