@@ -1,78 +1,66 @@
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH v6 06/27] drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
-Date: Mon, 23 Apr 2018 12:49:42 +0200
-Message-ID: <20180423105003.9004-7-enric.balletbo@collabora.com>
+Subject: [RESEND PATCH v6 01/27] drm/bridge: analogix_dp: Move enable video
+ into config_video()
+Date: Mon, 23 Apr 2018 12:49:37 +0200
+Message-ID: <20180423105003.9004-2-enric.balletbo@collabora.com>
 References: <20180423105003.9004-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com, hshi@chromium.org, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, kyungmin.park@samsung.com, Enric Balletbo i Serra <enric.balletbo@collabora.com>, kuankuan.y@gmail.com, hshi@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: zain wang <wzz@rock-chips.com>
-
-Following the correct power up sequence:
-dp_pd=ff => dp_pd=7f => wait 10us => dp_pd=00
-
-Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: zain wang <wzz@rock-chips.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
----
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 10 ++++++++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |  3 +++
- 2 files changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index b47c5af43560..bb72f8b0e603 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -321,10 +321,16 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- 		break;
- 	case POWER_ALL:
- 		if (enable) {
--			reg = DP_PHY_PD | AUX_PD | CH3_PD | CH2_PD |
--				CH1_PD | CH0_PD;
-+			reg = DP_ALL_PD;
- 			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
-+			reg = DP_ALL_PD;
-+			writel(reg, dp->reg_base + phy_pd_addr);
-+			usleep_range(10, 15);
-+			reg &= ~DP_INC_BG;
-+			writel(reg, dp->reg_base + phy_pd_addr);
-+			usleep_range(10, 15);
-+
- 			writel(0x00, dp->reg_base + phy_pd_addr);
- 		}
- 		break;
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-index 40200c652533..9602668669f4 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-@@ -342,12 +342,15 @@
- #define DP_PLL_REF_BIT_1_2500V			(0x7 << 0)
- 
- /* ANALOGIX_DP_PHY_PD */
-+#define DP_INC_BG				(0x1 << 7)
-+#define DP_EXP_BG				(0x1 << 6)
- #define DP_PHY_PD				(0x1 << 5)
- #define AUX_PD					(0x1 << 4)
- #define CH3_PD					(0x1 << 3)
- #define CH2_PD					(0x1 << 2)
- #define CH1_PD					(0x1 << 1)
- #define CH0_PD					(0x1 << 0)
-+#define DP_ALL_PD				(0xff)
- 
- /* ANALOGIX_DP_PHY_TEST */
- #define MACRO_RST				(0x1 << 5)
--- 
-2.17.0
+RnJvbTogTGluIEh1YW5nIDxobEByb2NrLWNoaXBzLmNvbT4KCldlIG5lZWQgdG8gZW5hYmxlIHZp
+ZGVvIGJlZm9yZSBhbmFsb2dpeF9kcF9pc192aWRlb19zdHJlYW1fb24oKSwgc28Kd2UgY2FuIGdl
+dCB0aGUgcmlnaHQgdmlkZW8gc3RyZWFtIHN0YXR1cy4KCldlIG5lZWRlZCB0byBpbmNyZWFzZSB0
+aGUgZGVsYXkgaW4gdGhlIHRpbWVvdXQgbG9vcCBiZWNhdXNlIHRoZXJlIGlzCnJhbmRvbSAiVGlt
+ZW91dCBvZiB2aWRlbyBzdHJlYW1jbGsgb2siIG1lc3NhZ2UgaGFwcGVuIHdoZW4gZGVidWcgZWRw
+CnBhbmVsLCB0aGlzIHRpbWUgZG8gbm90IGRlZmluZSBpbiB0aGUgc3BlYy4KCkNjOiDlvoHlop4g
+546LIDx3enpAcm9jay1jaGlwcy5jb20+CkNjOiBTdMOpcGhhbmUgTWFyY2hlc2luIDxtYXJjaGV1
+QGNocm9taXVtLm9yZz4KU2lnbmVkLW9mZi1ieTogTGluIEh1YW5nIDxobEByb2NrLWNoaXBzLmNv
+bT4KU2lnbmVkLW9mZi1ieTogU2VhbiBQYXVsIDxzZWFucGF1bEBjaHJvbWl1bS5vcmc+ClNpZ25l
+ZC1vZmYtYnk6IFRoaWVycnkgRXNjYW5kZSA8dGhpZXJyeS5lc2NhbmRlQGNvbGxhYm9yYS5jb20+
+ClJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgpTaWduZWQt
+b2ZmLWJ5OiBFbnJpYyBCYWxsZXRibyBpIFNlcnJhIDxlbnJpYy5iYWxsZXRib0Bjb2xsYWJvcmEu
+Y29tPgpUZXN0ZWQtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNv
+bT4KLS0tCgogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3Jl
+LmMgfCAxMSArKysrKy0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgNiBk
+ZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4
+L2FuYWxvZ2l4X2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5h
+bG9naXhfZHBfY29yZS5jCmluZGV4IDVjNTIzMDcxNDZjNy4uMDVhMGNhNGFmMDU3IDEwMDY0NAot
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwor
+KysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwpA
+QCAtODE5LDExICs4MTksMTAgQEAgc3RhdGljIGludCBhbmFsb2dpeF9kcF9jb25maWdfdmlkZW8o
+c3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCiAJCWlmIChhbmFsb2dpeF9kcF9pc19zbGF2
+ZV92aWRlb19zdHJlYW1fY2xvY2tfb24oZHApID09IDApCiAJCQlicmVhazsKIAkJaWYgKHRpbWVv
+dXRfbG9vcCA+IERQX1RJTUVPVVRfTE9PUF9DT1VOVCkgewotCQkJZGV2X2VycihkcC0+ZGV2LCAi
+VGltZW91dCBvZiB2aWRlbyBzdHJlYW1jbGsgb2tcbiIpOworCQkJZGV2X2VycihkcC0+ZGV2LCAi
+VGltZW91dCBvZiBzbGF2ZSB2aWRlbyBzdHJlYW1jbGsgb2tcbiIpOwogCQkJcmV0dXJuIC1FVElN
+RURPVVQ7CiAJCX0KLQotCQl1c2xlZXBfcmFuZ2UoMSwgMik7CisJCXVzbGVlcF9yYW5nZSgxMDAw
+LCAxMDAxKTsKIAl9CiAKIAkvKiBTZXQgdG8gdXNlIHRoZSByZWdpc3RlciBjYWxjdWxhdGVkIE0v
+TiB2aWRlbyAqLwpAQCAtODM4LDYgKzgzNyw5IEBAIHN0YXRpYyBpbnQgYW5hbG9naXhfZHBfY29u
+ZmlnX3ZpZGVvKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQogCS8qIENvbmZpZ3VyZSB2
+aWRlbyBzbGF2ZSBtb2RlICovCiAJYW5hbG9naXhfZHBfZW5hYmxlX3ZpZGVvX21hc3RlcihkcCwg
+MCk7CiAKKwkvKiBFbmFibGUgdmlkZW8gKi8KKwlhbmFsb2dpeF9kcF9zdGFydF92aWRlbyhkcCk7
+CisKIAl0aW1lb3V0X2xvb3AgPSAwOwogCiAJZm9yICg7OykgewpAQCAtOTQ4LDkgKzk1MCw2IEBA
+IHN0YXRpYyB2b2lkIGFuYWxvZ2l4X2RwX2NvbW1pdChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNl
+ICpkcCkKIAkJCURSTV9FUlJPUigiZmFpbGVkIHRvIGVuYWJsZSB0aGUgcGFuZWxcbiIpOwogCX0K
+IAotCS8qIEVuYWJsZSB2aWRlbyAqLwotCWFuYWxvZ2l4X2RwX3N0YXJ0X3ZpZGVvKGRwKTsKLQog
+CWRwLT5wc3JfZW5hYmxlID0gYW5hbG9naXhfZHBfZGV0ZWN0X3NpbmtfcHNyKGRwKTsKIAlpZiAo
+ZHAtPnBzcl9lbmFibGUpCiAJCWFuYWxvZ2l4X2RwX2VuYWJsZV9zaW5rX3BzcihkcCk7Ci0tIAoy
+LjE3LjAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwps
+aW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
+ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51
+eC1hcm0ta2VybmVsCg==
