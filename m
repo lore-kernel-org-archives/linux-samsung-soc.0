@@ -1,116 +1,142 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [RFC 0/2] dw_mmc: add multislot support
-Date: Mon, 23 Apr 2018 08:47:09 +0200
-Message-ID: <CAPDyKFpY7JsQukY=E2PRg=iVfmis4i1kvST+b2wtshNc5Jn+jw@mail.gmail.com>
-References: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
- <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com> <1524239609.10138.47.camel@synopsys.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [RESEND PATCH v6 00/27] DRM Rockchip rk3399 (Kevin)
+Date: Mon, 23 Apr 2018 12:49:36 +0200
+Message-ID: <20180423105003.9004-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1524239609.10138.47.camel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>, "kgene@kernel.org" <kgene@kernel.org>, "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org, a.hajda@samsung.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com, hshi@chromium.org, Enric Balletbo i Serra <enric.balletbo@collabora.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 20 April 2018 at 17:53, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com> wrote:
-> Hi Ulf,
->
-> On Fri, 2018-04-20 at 09:35 +0200, Ulf Hansson wrote:
->> [...]
->>
->> >
->> > 2. Add missing stuff to support multislot mode in DesignWare MMC driver.
->> >  * Add missing slot switch to __dw_mci_start_request() function.
->> >  * Refactor set_ios function:
->> >    a) Calculate common clock which is
->> >       suitable for all slots instead of directly use clock value
->> >       provided by mmc core. We calculate common clock as the minimum
->> >       among each used slot clocks. This clock is calculated in
->> >       dw_mci_calc_common_clock() function which is called
->> >       from set_ios()
->> >    b) Disable clock only if no other slots are ON.
->> >    c) Setup clock directly in set_ios() only if no other slots
->> >       are ON. Otherwise adjust clock in __dw_mci_start_request()
->> >       function before slot switch.
->> >    d) Move timings and bus_width setup to separate funcions.
->> >  * Use timing field in each slot structure instead of common field in
->> >    host structure.
->> >  * Add locks to serialize access to registers.
->>
->> Sorry, but this is a hack to *try* to make multi-slot work and this
->> isn't sufficient. There were good reasons to why the earlier
->> non-working multi slot support was removed from dw_mmc.
->
-> Previous multi slot implementation was removed as nobody used it and
-> nobody tested it. There are lots of mistakes in previous implementation
-> which are not related to request serialization
-> like lack of slot switch / lack of adding slot id to CIU commands / ets...
-> So obviously it was never tested and never used at real multi slot hardware.
->
->> Let me elaborate a bit for your understanding. The core uses a host
->> lock (mmc_claim|release_host()) to serialize operations and commands,
->> as to confirm to the SD/SDIO/(e)MMC specs. The above changes gives no
->> guarantees for this. To make that work, we would need a "mmc bus lock"
->> to be managed by the core.
->
-> In current implementation data transfers and commands to different
-> hosts (slots) are serialized internally in the dw_mmc driver. We have
-> request queue and when .request() is called we add new request to the
-> queue. We take new request from the queue only if the previous one
-> has already finished.
+Hi Andrzej,
 
-That isn't sufficient. The core expects all calls to *any* of the host
-ops to be serialized for one host. It does so to conform to the specs.
+This is the rebased version of v6 series. This patchset includes cleanups,
+improvements, and bug fixes for Rockchip DRM driver and PSR support.
 
-For example it may call:
- ->set_ios()
-->request()
-->set_ios()
-->request()
-->request()
+This version is a RESEND of v6 with few changes. The following two
+patches are not included and will be send in a separate patchset for
+further discussion.
 
->
-> So although hosts (slots) have separate locks (mmc_claim|release_host())
-> the requests to different slots are serialized by driver.
->
-> Isn't that enough?
+- [PATCH v6 24/30] drm/rockchip: Disable PSR on input events
+- [PATCH v6 25/30] drm/rockchip: Cancel PSR enable work before changing
+                   the state
 
-Sorry, but no.
+The following patch was remove as is not needed.
 
-> I'm not very familiar with SD/SDIO/(e)MMC specs so my assumptions might be wrong
-> in that case please correct me.
+- [PATCH v6 28/30] drm/rockchip: Disable PSR from reboot notifier
 
-Well, that kind of explains your simplistic approach.
+I think that the other patches have the required tags and are ready to
+be merged.
 
-I would suggest you to study the specs and the behavior of the mmc
-core a bit more carefully, that should give you a better understanding
-of the problems.
+Regards,
+  Enric
 
->
->> However, inventing a "mmc bus lock" would lead to other problems
->> related to I/O scheduling for upper layers - it simply breaks. For
->> example, I/O requests for one card/slot can then starve I/O requests
->> reaching another card/slot.
->>
->
-> Nevertheless we had to deal somehow with existing hardware which
-> has multislot dw mmc controller and both slots are used...
->
-> This patch at least shouldn't break anything for current users (which use
-> it in single slot mode)
->
-> Moreover we tested this dual-slot implementation and don't catch any problems
-> (probably yet) except bus performance decrease in dual-slot mode (which is
-> quite expected).
+Changes in v6:
+- Removed the following patches as are already applied.
+  [PATCH v5 01/36] drm/bridge: analogix_dp: detect Sink PSR state after
+  configuring the PSR
+  [PATCH v5 02/36] drm/rockchip: Remove analogix psr worker
+  [PATCH v5 03/36] drm/bridge: analogix_dp: Don't change psr while
+  bridge is disabled
+- Explain in the commit message why we need to increase
+  the delay in the timeout loop in
+  [PATCH v5 07/36] drm/bridge: analogix_dp: Move enable video into
+  config_video()
+- Add Reviewed-by: Archit Taneja <architt@codeaurora.org> for the
+  drm/bridge parts
+- Add Reviewed-by: Heiko Stuebner <heiko@sntech.de> for
+  [PATCH v5 19/36] drm/rockchip: Restore psr->state when enable/disable
+  psr failed
 
-Honestly, I don't think efforts of implementing this is worth it!
+Changes in v5:
+- Removed the following patches as are already applied.
+  [PATCH v4 01/38] drm/bridge: analogix_dp: set psr activate/deactivate
+  when enable/disable bridge
+  [PATCH v4 02/38] drm/rockchip: Don't use atomic constructs for psr
+- Add Mareks tested-tag and including the missing people.
+- [PATCH v4 15/38] move analogix_dp_set_analog_power_down() before
+  phy_power_off() to fix Exynos issue.
 
-Even if we would be able to solve the problem from an mmc subsystem
-point of view, we would still have the I/O scheduling problem to
-address. To solve that, we would need to be able to configure upper
-block layer code to run one scheduling instance over multiple block
-devices...
+Changes in v4:
+- Rebased all on top of drm-misc-next
+- Removed the following patches as are already applied.
+  [PATCH v3 01/43] drm/rockchip: Get rid of unnecessary struct fields
+  [PATCH v3 02/43] drm/rockchip: support prime import sg table
+  [PATCH v3 03/43] drm/rockchip: Respect page offset for PRIME mmap
+  calls
+- Removed the following patches as now are part of another patchset
+  [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in
+  analogix_dp_bind
+  [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
 
-Kind regards
-Uffe
+Changes in v3:
+- Addressed some of the comments from Sean on the v2
+
+Changes in v2:
+- A few patches have been replaced by newer and cleaner versions from
+  the ChromeOS kernel gerrit, especially about disallowing PSR for the
+  whole atomic commit.
+
+
+Douglas Anderson (4):
+  drm/bridge: analogix_dp: Reorder plat_data->power_off to happen sooner
+  drm/bridge: analogix_dp: Properly log AUX CH errors
+  drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
+  drm/bridge: analogix_dp: Split the platform-specific poweron in two
+    parts
+
+Lin Huang (6):
+  drm/bridge: analogix_dp: Move enable video into config_video()
+  drm/bridge: analogix_dp: Check AUX_EN status when doing AUX transfer
+  drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the
+    panel
+  drm/bridge: analogix_dp: Extend hpd check time to 100ms
+  drm/bridge: analogix_dp: Check dpcd write/read status
+  drm/bridge: analogix_dp: Reset aux channel if an error occurred
+
+Mark Yao (1):
+  drm/rockchip: pre dither down when output bpc is 8bit
+
+Tomasz Figa (5):
+  drm/rockchip: analogix_dp: Do not call Analogix code before bind
+  drm/rockchip: psr: Avoid redundant calls to .set() callback
+  drm/rockchip: psr: Sanitize semantics of allow/inhibit API
+  drm/rockchip: Disallow PSR for the whole atomic commit
+  drm/rockchip: psr: Remove flush by CRTC
+
+zain wang (11):
+  drm/bridge: analogix_dp: Don't use fast link training when panel just
+    powered up
+  drm/bridge: analogix_dp: Retry bridge enable when it failed
+  drm/bridge: analogix_dp: Wait for HPD signal before configuring link
+  drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
+  drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
+  drm/bridge: analogix_dp: Fix AUX_PD bit for Rockchip
+  drm/rockchip: Restore psr->state when enable/disable psr failed
+  drm/bridge: analogix_dp: Don't use ANALOGIX_DP_PLL_CTL to control pll
+  drm/bridge: analogix_dp: Fix timeout of video streamclk config
+  drm/bridge: analogix_dp: Fix incorrect operations with register
+    ANALOGIX_DP_FUNC_EN_1
+  drm/bridge: analogix_dp: Move fast link training detect to set_bridge
+
+ .../drm/bridge/analogix/analogix_dp_core.c    | 331 +++++++++++++-----
+ .../drm/bridge/analogix/analogix_dp_core.h    |   5 +-
+ .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 236 +++++++------
+ .../gpu/drm/bridge/analogix/analogix_dp_reg.h |   7 +
+ drivers/gpu/drm/exynos/exynos_dp.c            |   2 +-
+ .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  37 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h   |   1 +
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c    |  61 +++-
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c   | 158 ++++-----
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.h   |   7 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c   |  13 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.h   |   1 +
+ drivers/gpu/drm/rockchip/rockchip_vop_reg.c   |   1 +
+ include/drm/bridge/analogix_dp.h              |   3 +-
+ 14 files changed, 559 insertions(+), 304 deletions(-)
+
+-- 
+2.17.0
