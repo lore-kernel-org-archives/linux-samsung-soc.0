@@ -1,128 +1,63 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RESEND PATCH v6 00/27] DRM Rockchip rk3399 (Kevin)
-Date: Tue, 24 Apr 2018 08:43:01 +0200
-Message-ID: <cc4955f0-961b-f852-fc0d-1e1c9e8b5708@samsung.com>
-References: <CGME20180423105022epcas3p442289343ea272f0722802b4746871fba@epcas3p4.samsung.com>
- <20180423105003.9004-1-enric.balletbo@collabora.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
+Date: Tue, 24 Apr 2018 16:30:47 +0900
+Message-ID: <5ADEDD27.3070207@samsung.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <CGME20180419140651epcas5p22119a061c760dd54c0c3e630b053ec1b@epcas5p2.samsung.com>
+        <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Laurent.pinchart@ideasonboard.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com, dianders@chromium.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjMuMDQuMjAxOCAxMjo0OSwgRW5yaWMgQmFsbGV0Ym8gaSBTZXJyYSB3cm90ZToKPiBIaSBB
-bmRyemVqLAo+Cj4gVGhpcyBpcyB0aGUgcmViYXNlZCB2ZXJzaW9uIG9mIHY2IHNlcmllcy4gVGhp
-cyBwYXRjaHNldCBpbmNsdWRlcyBjbGVhbnVwcywKPiBpbXByb3ZlbWVudHMsIGFuZCBidWcgZml4
-ZXMgZm9yIFJvY2tjaGlwIERSTSBkcml2ZXIgYW5kIFBTUiBzdXBwb3J0Lgo+Cj4gVGhpcyB2ZXJz
-aW9uIGlzIGEgUkVTRU5EIG9mIHY2IHdpdGggZmV3IGNoYW5nZXMuIFRoZSBmb2xsb3dpbmcgdHdv
-Cj4gcGF0Y2hlcyBhcmUgbm90IGluY2x1ZGVkIGFuZCB3aWxsIGJlIHNlbmQgaW4gYSBzZXBhcmF0
-ZSBwYXRjaHNldCBmb3IKPiBmdXJ0aGVyIGRpc2N1c3Npb24uCj4KPiAtIFtQQVRDSCB2NiAyNC8z
-MF0gZHJtL3JvY2tjaGlwOiBEaXNhYmxlIFBTUiBvbiBpbnB1dCBldmVudHMKPiAtIFtQQVRDSCB2
-NiAyNS8zMF0gZHJtL3JvY2tjaGlwOiBDYW5jZWwgUFNSIGVuYWJsZSB3b3JrIGJlZm9yZSBjaGFu
-Z2luZwo+ICAgICAgICAgICAgICAgICAgICB0aGUgc3RhdGUKPgo+IFRoZSBmb2xsb3dpbmcgcGF0
-Y2ggd2FzIHJlbW92ZSBhcyBpcyBub3QgbmVlZGVkLgo+Cj4gLSBbUEFUQ0ggdjYgMjgvMzBdIGRy
-bS9yb2NrY2hpcDogRGlzYWJsZSBQU1IgZnJvbSByZWJvb3Qgbm90aWZpZXIKPgo+IEkgdGhpbmsg
-dGhhdCB0aGUgb3RoZXIgcGF0Y2hlcyBoYXZlIHRoZSByZXF1aXJlZCB0YWdzIGFuZCBhcmUgcmVh
-ZHkgdG8KPiBiZSBtZXJnZWQuCgpRdWV1ZWQgdG8gZHJtLW1pc2MtbmV4dC4KClJlZ2FyZHMKQW5k
-cnplagoKCj4KPiBSZWdhcmRzLAo+ICAgRW5yaWMKPgo+IENoYW5nZXMgaW4gdjY6Cj4gLSBSZW1v
-dmVkIHRoZSBmb2xsb3dpbmcgcGF0Y2hlcyBhcyBhcmUgYWxyZWFkeSBhcHBsaWVkLgo+ICAgW1BB
-VENIIHY1IDAxLzM2XSBkcm0vYnJpZGdlOiBhbmFsb2dpeF9kcDogZGV0ZWN0IFNpbmsgUFNSIHN0
-YXRlIGFmdGVyCj4gICBjb25maWd1cmluZyB0aGUgUFNSCj4gICBbUEFUQ0ggdjUgMDIvMzZdIGRy
-bS9yb2NrY2hpcDogUmVtb3ZlIGFuYWxvZ2l4IHBzciB3b3JrZXIKPiAgIFtQQVRDSCB2NSAwMy8z
-Nl0gZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IERvbid0IGNoYW5nZSBwc3Igd2hpbGUKPiAgIGJy
-aWRnZSBpcyBkaXNhYmxlZAo+IC0gRXhwbGFpbiBpbiB0aGUgY29tbWl0IG1lc3NhZ2Ugd2h5IHdl
-IG5lZWQgdG8gaW5jcmVhc2UKPiAgIHRoZSBkZWxheSBpbiB0aGUgdGltZW91dCBsb29wIGluCj4g
-ICBbUEFUQ0ggdjUgMDcvMzZdIGRybS9icmlkZ2U6IGFuYWxvZ2l4X2RwOiBNb3ZlIGVuYWJsZSB2
-aWRlbyBpbnRvCj4gICBjb25maWdfdmlkZW8oKQo+IC0gQWRkIFJldmlld2VkLWJ5OiBBcmNoaXQg
-VGFuZWphIDxhcmNoaXR0QGNvZGVhdXJvcmEub3JnPiBmb3IgdGhlCj4gICBkcm0vYnJpZGdlIHBh
-cnRzCj4gLSBBZGQgUmV2aWV3ZWQtYnk6IEhlaWtvIFN0dWVibmVyIDxoZWlrb0BzbnRlY2guZGU+
-IGZvcgo+ICAgW1BBVENIIHY1IDE5LzM2XSBkcm0vcm9ja2NoaXA6IFJlc3RvcmUgcHNyLT5zdGF0
-ZSB3aGVuIGVuYWJsZS9kaXNhYmxlCj4gICBwc3IgZmFpbGVkCj4KPiBDaGFuZ2VzIGluIHY1Ogo+
-IC0gUmVtb3ZlZCB0aGUgZm9sbG93aW5nIHBhdGNoZXMgYXMgYXJlIGFscmVhZHkgYXBwbGllZC4K
-PiAgIFtQQVRDSCB2NCAwMS8zOF0gZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IHNldCBwc3IgYWN0
-aXZhdGUvZGVhY3RpdmF0ZQo+ICAgd2hlbiBlbmFibGUvZGlzYWJsZSBicmlkZ2UKPiAgIFtQQVRD
-SCB2NCAwMi8zOF0gZHJtL3JvY2tjaGlwOiBEb24ndCB1c2UgYXRvbWljIGNvbnN0cnVjdHMgZm9y
-IHBzcgo+IC0gQWRkIE1hcmVrcyB0ZXN0ZWQtdGFnIGFuZCBpbmNsdWRpbmcgdGhlIG1pc3Npbmcg
-cGVvcGxlLgo+IC0gW1BBVENIIHY0IDE1LzM4XSBtb3ZlIGFuYWxvZ2l4X2RwX3NldF9hbmFsb2df
-cG93ZXJfZG93bigpIGJlZm9yZQo+ICAgcGh5X3Bvd2VyX29mZigpIHRvIGZpeCBFeHlub3MgaXNz
-dWUuCj4KPiBDaGFuZ2VzIGluIHY0Ogo+IC0gUmViYXNlZCBhbGwgb24gdG9wIG9mIGRybS1taXNj
-LW5leHQKPiAtIFJlbW92ZWQgdGhlIGZvbGxvd2luZyBwYXRjaGVzIGFzIGFyZSBhbHJlYWR5IGFw
-cGxpZWQuCj4gICBbUEFUQ0ggdjMgMDEvNDNdIGRybS9yb2NrY2hpcDogR2V0IHJpZCBvZiB1bm5l
-Y2Vzc2FyeSBzdHJ1Y3QgZmllbGRzCj4gICBbUEFUQ0ggdjMgMDIvNDNdIGRybS9yb2NrY2hpcDog
-c3VwcG9ydCBwcmltZSBpbXBvcnQgc2cgdGFibGUKPiAgIFtQQVRDSCB2MyAwMy80M10gZHJtL3Jv
-Y2tjaGlwOiBSZXNwZWN0IHBhZ2Ugb2Zmc2V0IGZvciBQUklNRSBtbWFwCj4gICBjYWxscwo+IC0g
-UmVtb3ZlZCB0aGUgZm9sbG93aW5nIHBhdGNoZXMgYXMgbm93IGFyZSBwYXJ0IG9mIGFub3RoZXIg
-cGF0Y2hzZXQKPiAgIFtQQVRDSCB2MyAwNS80M10gZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IERv
-bid0IHBvd2VyIGJyaWRnZSBpbgo+ICAgYW5hbG9naXhfZHBfYmluZAo+ICAgW1BBVENIIHYzIDMz
-LzQzXSBkcm0vcGFuZWw6IHNpbXBsZTogQ2hhbmdlIG1vZGUgZm9yIFNoYXJwIGxxMTIzcDFqeDMx
-Cj4KPiBDaGFuZ2VzIGluIHYzOgo+IC0gQWRkcmVzc2VkIHNvbWUgb2YgdGhlIGNvbW1lbnRzIGZy
-b20gU2VhbiBvbiB0aGUgdjIKPgo+IENoYW5nZXMgaW4gdjI6Cj4gLSBBIGZldyBwYXRjaGVzIGhh
-dmUgYmVlbiByZXBsYWNlZCBieSBuZXdlciBhbmQgY2xlYW5lciB2ZXJzaW9ucyBmcm9tCj4gICB0
-aGUgQ2hyb21lT1Mga2VybmVsIGdlcnJpdCwgZXNwZWNpYWxseSBhYm91dCBkaXNhbGxvd2luZyBQ
-U1IgZm9yIHRoZQo+ICAgd2hvbGUgYXRvbWljIGNvbW1pdC4KPgo+Cj4gRG91Z2xhcyBBbmRlcnNv
-biAoNCk6Cj4gICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9kcDogUmVvcmRlciBwbGF0X2RhdGEtPnBv
-d2VyX29mZiB0byBoYXBwZW4gc29vbmVyCj4gICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9kcDogUHJv
-cGVybHkgbG9nIEFVWCBDSCBlcnJvcnMKPiAgIGRybS9icmlkZ2U6IGFuYWxvZ2l4X2RwOiBQcm9w
-ZXJseSBkaXNhYmxlIGF1eCBjaGFuIHJldHJpZXMgb24gcm9ja2NoaXAKPiAgIGRybS9icmlkZ2U6
-IGFuYWxvZ2l4X2RwOiBTcGxpdCB0aGUgcGxhdGZvcm0tc3BlY2lmaWMgcG93ZXJvbiBpbiB0d28K
-PiAgICAgcGFydHMKPgo+IExpbiBIdWFuZyAoNik6Cj4gICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9k
-cDogTW92ZSBlbmFibGUgdmlkZW8gaW50byBjb25maWdfdmlkZW8oKQo+ICAgZHJtL2JyaWRnZTog
-YW5hbG9naXhfZHA6IENoZWNrIEFVWF9FTiBzdGF0dXMgd2hlbiBkb2luZyBBVVggdHJhbnNmZXIK
-PiAgIGRybS9icmlkZ2U6IGFuYWxvZ2l4X2RwOiBFbnN1cmUgZWRwIGlzIGRpc2FibGVkIHdoZW4g
-c2h1dHRpbmcgZG93biB0aGUKPiAgICAgcGFuZWwKPiAgIGRybS9icmlkZ2U6IGFuYWxvZ2l4X2Rw
-OiBFeHRlbmQgaHBkIGNoZWNrIHRpbWUgdG8gMTAwbXMKPiAgIGRybS9icmlkZ2U6IGFuYWxvZ2l4
-X2RwOiBDaGVjayBkcGNkIHdyaXRlL3JlYWQgc3RhdHVzCj4gICBkcm0vYnJpZGdlOiBhbmFsb2dp
-eF9kcDogUmVzZXQgYXV4IGNoYW5uZWwgaWYgYW4gZXJyb3Igb2NjdXJyZWQKPgo+IE1hcmsgWWFv
-ICgxKToKPiAgIGRybS9yb2NrY2hpcDogcHJlIGRpdGhlciBkb3duIHdoZW4gb3V0cHV0IGJwYyBp
-cyA4Yml0Cj4KPiBUb21hc3ogRmlnYSAoNSk6Cj4gICBkcm0vcm9ja2NoaXA6IGFuYWxvZ2l4X2Rw
-OiBEbyBub3QgY2FsbCBBbmFsb2dpeCBjb2RlIGJlZm9yZSBiaW5kCj4gICBkcm0vcm9ja2NoaXA6
-IHBzcjogQXZvaWQgcmVkdW5kYW50IGNhbGxzIHRvIC5zZXQoKSBjYWxsYmFjawo+ICAgZHJtL3Jv
-Y2tjaGlwOiBwc3I6IFNhbml0aXplIHNlbWFudGljcyBvZiBhbGxvdy9pbmhpYml0IEFQSQo+ICAg
-ZHJtL3JvY2tjaGlwOiBEaXNhbGxvdyBQU1IgZm9yIHRoZSB3aG9sZSBhdG9taWMgY29tbWl0Cj4g
-ICBkcm0vcm9ja2NoaXA6IHBzcjogUmVtb3ZlIGZsdXNoIGJ5IENSVEMKPgo+IHphaW4gd2FuZyAo
-MTEpOgo+ICAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IERvbid0IHVzZSBmYXN0IGxpbmsgdHJh
-aW5pbmcgd2hlbiBwYW5lbCBqdXN0Cj4gICAgIHBvd2VyZWQgdXAKPiAgIGRybS9icmlkZ2U6IGFu
-YWxvZ2l4X2RwOiBSZXRyeSBicmlkZ2UgZW5hYmxlIHdoZW4gaXQgZmFpbGVkCj4gICBkcm0vYnJp
-ZGdlOiBhbmFsb2dpeF9kcDogV2FpdCBmb3IgSFBEIHNpZ25hbCBiZWZvcmUgY29uZmlndXJpbmcg
-bGluawo+ICAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IFNldCBQRF9JTkNfQkcgZmlyc3Qgd2hl
-biBwb3dlcmluZyB1cCBlZHAgcGh5Cj4gICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9kcDogRml4IGlu
-Y29ycmVjdCB1c2FnZSBvZiBlbmhhbmNlZCBtb2RlCj4gICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9k
-cDogRml4IEFVWF9QRCBiaXQgZm9yIFJvY2tjaGlwCj4gICBkcm0vcm9ja2NoaXA6IFJlc3RvcmUg
-cHNyLT5zdGF0ZSB3aGVuIGVuYWJsZS9kaXNhYmxlIHBzciBmYWlsZWQKPiAgIGRybS9icmlkZ2U6
-IGFuYWxvZ2l4X2RwOiBEb24ndCB1c2UgQU5BTE9HSVhfRFBfUExMX0NUTCB0byBjb250cm9sIHBs
-bAo+ICAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IEZpeCB0aW1lb3V0IG9mIHZpZGVvIHN0cmVh
-bWNsayBjb25maWcKPiAgIGRybS9icmlkZ2U6IGFuYWxvZ2l4X2RwOiBGaXggaW5jb3JyZWN0IG9w
-ZXJhdGlvbnMgd2l0aCByZWdpc3Rlcgo+ICAgICBBTkFMT0dJWF9EUF9GVU5DX0VOXzEKPiAgIGRy
-bS9icmlkZ2U6IGFuYWxvZ2l4X2RwOiBNb3ZlIGZhc3QgbGluayB0cmFpbmluZyBkZXRlY3QgdG8g
-c2V0X2JyaWRnZQo+Cj4gIC4uLi9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUu
-YyAgICB8IDMzMSArKysrKysrKysrKysrLS0tLS0KPiAgLi4uL2RybS9icmlkZ2UvYW5hbG9naXgv
-YW5hbG9naXhfZHBfY29yZS5oICAgIHwgICA1ICstCj4gIC4uLi9ncHUvZHJtL2JyaWRnZS9hbmFs
-b2dpeC9hbmFsb2dpeF9kcF9yZWcuYyB8IDIzNiArKysrKysrLS0tLS0tCj4gIC4uLi9ncHUvZHJt
-L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuaCB8ICAgNyArCj4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RwLmMgICAgICAgICAgICB8ICAgMiArLQo+ICAuLi4vZ3B1L2Ry
-bS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jICAgfCAgMzcgKy0KPiAgZHJpdmVycy9n
-cHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuaCAgIHwgICAxICsKPiAgZHJpdmVycy9n
-cHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9mYi5jICAgIHwgIDYxICsrKy0KPiAgZHJpdmVy
-cy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9wc3IuYyAgIHwgMTU4ICsrKystLS0tLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3Bzci5oICAgfCAgIDcgKy0K
-PiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AuYyAgIHwgIDEzICst
-Cj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wLmggICB8ICAgMSAr
-Cj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF92b3BfcmVnLmMgICB8ICAgMSAr
-Cj4gIGluY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICB8ICAgMyAr
-LQo+ICAxNCBmaWxlcyBjaGFuZ2VkLCA1NTkgaW5zZXJ0aW9ucygrKSwgMzA0IGRlbGV0aW9ucygt
-KQo+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi,
+
+On 2018년 04월 19일 23:05, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> index 077df3e539a7..f41d89cef0f1 100644
+> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
+> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> @@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
+>  #ifdef CONFIG_PM_SLEEP
+>  static int s3c24xx_dclk_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
+>  	return 0;
+> @@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
+>  
+>  static int s3c24xx_dclk_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
+>  	return 0;
+> 
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
