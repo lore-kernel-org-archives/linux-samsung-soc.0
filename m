@@ -1,116 +1,76 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [RESEND PATCH v6 22/27] drm/bridge: analogix_dp: Split the
- platform-specific poweron in two parts
-Date: Tue, 24 Apr 2018 10:02:33 -0400
-Message-ID: <000501d3dbd4$e6f238e0$b4d6aaa0$@gmail.com>
-References: <20180423105003.9004-1-enric.balletbo@collabora.com>
- <20180423105003.9004-23-enric.balletbo@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180423105003.9004-23-enric.balletbo@collabora.com>
-Content-Language: en-us
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: 'Enric Balletbo i Serra' <enric.balletbo@collabora.com>, architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Laurent.pinchart@ideasonboard.com, "'Kristian H . Kristensen'" <hoegsberg@chromium.org>, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com, hl@rock-chips.com, sw0312.kim@samsung.com, dianders@chromium.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [RFT][PATCH] arm64: dts: exynos: Remove unneeded address space mapping for soc node
+Date: Tue, 24 Apr 2018 19:36:52 +0200
+Message-ID: <20180424173652.14735-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gTW9uZGF5LCBBcHJpbCAyMywgMjAxOCA2OjUwIEFNLCBFbnJpYyBCYWxsZXRibyBpIFNlcnJh
-IHdyb3RlOgo+IAo+IEZyb206IERvdWdsYXMgQW5kZXJzb24gPGRpYW5kZXJzQGNocm9taXVtLm9y
-Zz4KPiAKPiBTb21lIG9mIHRoZSBwbGF0Zm9ybS1zcGVjaWZpYyBzdHVmZiBpbiByb2NrY2hpcF9k
-cF9wb3dlcm9uKCkgbmVlZHMgdG8KPiBoYXBwZW4gYmVmb3JlIHRoZSBnZW5lcmljIGNvZGUuICBT
-b21lIG5lZWRzIHRvIGhhcHBlbiBhZnRlci4gIExldCdzCj4gc3BsaXQgdGhlIGNhbGxiYWNrIGlu
-IHR3by4KPiAKPiBTcGVjaWZpY2FsbHkgd2UgY2FuJ3Qgc3RhcnQgZG9pbmcgUFNSIHdvcmsgdW50
-aWwgX2FmdGVyXyB0aGUgd2hvbGUKPiBjb250cm9sbGVyIGlzIHVwLCBzbyBkb24ndCBzZXQgdGhl
-IGVuYWJsZSB1bnRpbCB0aGUgZW5kLgo+IAo+IENjOiBLcmlzdGlhbiBILiBLcmlzdGVuc2VuIDxo
-b2Vnc2JlcmdAY2hyb21pdW0ub3JnPgo+IFNpZ25lZC1vZmYtYnk6IERvdWdsYXMgQW5kZXJzb24g
-PGRpYW5kZXJzQGNocm9taXVtLm9yZz4KPiBbc2VhbnBhdWwgYWRkZWQgZXh5bm9zIGNoYW5nZV0K
-PiBTaWduZWQtb2ZmLWJ5OiBTZWFuIFBhdWwgPHNlYW5wYXVsQGNocm9taXVtLm9yZz4KPiBTaWdu
-ZWQtb2ZmLWJ5OiBUaGllcnJ5IEVzY2FuZGUgPHRoaWVycnkuZXNjYW5kZUBjb2xsYWJvcmEuY29t
-Pgo+IFJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IFNp
-Z25lZC1vZmYtYnk6IEVucmljIEJhbGxldGJvIGkgU2VycmEgPGVucmljLmJhbGxldGJvQGNvbGxh
-Ym9yYS5jb20+Cj4gVGVzdGVkLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ft
-c3VuZy5jb20+Cj4gUmV2aWV3ZWQtYnk6IEFyY2hpdCBUYW5lamEgPGFyY2hpdHRAY29kZWF1cm9y
-YS5vcmc+CgpBY2tlZC1ieTogSmluZ29vIEhhbiA8amluZ29vaGFuMUBnbWFpbC5jb20+CgpCZXN0
-IHJlZ2FyZHMsCkppbmdvbyBIYW4KCj4gLS0tCj4gCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uv
-YW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgIDcgKysrKystLQo+ICBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcC5jICAgICAgICAgICAgICAgICB8ICAyICstCj4gIGRyaXZlcnMv
-Z3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jICAgIHwgMTIgKysrKysrKysr
-Ky0tCj4gIGluY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICAgICAg
-IHwgIDMgKystCj4gIDQgZmlsZXMgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlv
-bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9h
-bmFsb2dpeF9kcF9jb3JlLmMKPiBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5h
-bG9naXhfZHBfY29yZS5jCj4gaW5kZXggYTI2MGRlNGYwYmQ4Li4yYmNiZmFkYjZhYzUgMTAwNjQ0
-Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3Jl
-LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2Nv
-cmUuYwo+IEBAIC0xMjYwLDggKzEyNjAsOCBAQCBzdGF0aWMgaW50IGFuYWxvZ2l4X2RwX3NldF9i
-cmlkZ2Uoc3RydWN0Cj4gYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKPiAgCQlnb3RvIG91dF9kcF9j
-bGtfcHJlOwo+ICAJfQo+IAo+IC0JaWYgKGRwLT5wbGF0X2RhdGEtPnBvd2VyX29uKQo+IC0JCWRw
-LT5wbGF0X2RhdGEtPnBvd2VyX29uKGRwLT5wbGF0X2RhdGEpOwo+ICsJaWYgKGRwLT5wbGF0X2Rh
-dGEtPnBvd2VyX29uX3N0YXJ0KQo+ICsJCWRwLT5wbGF0X2RhdGEtPnBvd2VyX29uX3N0YXJ0KGRw
-LT5wbGF0X2RhdGEpOwo+IAo+ICAJcGh5X3Bvd2VyX29uKGRwLT5waHkpOwo+IAo+IEBAIC0xMjg2
-LDYgKzEyODYsOSBAQCBzdGF0aWMgaW50IGFuYWxvZ2l4X2RwX3NldF9icmlkZ2Uoc3RydWN0Cj4g
-YW5hbG9naXhfZHBfZGV2aWNlICpkcCkKPiAgCQlnb3RvIG91dF9kcF9pbml0Owo+ICAJfQo+IAo+
-ICsJaWYgKGRwLT5wbGF0X2RhdGEtPnBvd2VyX29uX2VuZCkKPiArCQlkcC0+cGxhdF9kYXRhLT5w
-b3dlcl9vbl9lbmQoZHAtPnBsYXRfZGF0YSk7Cj4gKwo+ICAJZW5hYmxlX2lycShkcC0+aXJxKTsK
-PiAgCXJldHVybiAwOwo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcC5jCj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcC5jCj4gaW5kZXgg
-OTY0ODMxZGFiMTAyLi44NjMzMGYzOTY3ODQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHAuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RwLmMKPiBAQCAtMTYyLDcgKzE2Miw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RwX2JpbmQoc3Ry
-dWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QKPiBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKPiAg
-CWRwLT5kcm1fZGV2ID0gZHJtX2RldjsKPiAKPiAgCWRwLT5wbGF0X2RhdGEuZGV2X3R5cGUgPSBF
-WFlOT1NfRFA7Cj4gLQlkcC0+cGxhdF9kYXRhLnBvd2VyX29uID0gZXh5bm9zX2RwX3Bvd2Vyb247
-Cj4gKwlkcC0+cGxhdF9kYXRhLnBvd2VyX29uX3N0YXJ0ID0gZXh5bm9zX2RwX3Bvd2Vyb247Cj4g
-IAlkcC0+cGxhdF9kYXRhLnBvd2VyX29mZiA9IGV4eW5vc19kcF9wb3dlcm9mZjsKPiAgCWRwLT5w
-bGF0X2RhdGEuYXR0YWNoID0gZXh5bm9zX2RwX2JyaWRnZV9hdHRhY2g7Cj4gIAlkcC0+cGxhdF9k
-YXRhLmdldF9tb2RlcyA9IGV4eW5vc19kcF9nZXRfbW9kZXM7Cj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCj4gYi9kcml2ZXJzL2dw
-dS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwo+IGluZGV4IGIzZjQ2ZWQyNGNk
-Yy4uMjMzMTdhMjI2OWUxIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9h
-bmFsb2dpeF9kcC1yb2NrY2hpcC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2Fu
-YWxvZ2l4X2RwLXJvY2tjaGlwLmMKPiBAQCAtMTA5LDcgKzEwOSw3IEBAIHN0YXRpYyBpbnQgcm9j
-a2NoaXBfZHBfcHJlX2luaXQoc3RydWN0Cj4gcm9ja2NoaXBfZHBfZGV2aWNlICpkcCkKPiAgCXJl
-dHVybiAwOwo+ICB9Cj4gCj4gLXN0YXRpYyBpbnQgcm9ja2NoaXBfZHBfcG93ZXJvbihzdHJ1Y3Qg
-YW5hbG9naXhfZHBfcGxhdF9kYXRhICpwbGF0X2RhdGEpCj4gK3N0YXRpYyBpbnQgcm9ja2NoaXBf
-ZHBfcG93ZXJvbl9zdGFydChzdHJ1Y3QgYW5hbG9naXhfZHBfcGxhdF9kYXRhCj4gKnBsYXRfZGF0
-YSkKPiAgewo+ICAJc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHAgPSB0b19kcChwbGF0X2Rh
-dGEpOwo+ICAJaW50IHJldDsKPiBAQCAtMTI3LDYgKzEyNywxMyBAQCBzdGF0aWMgaW50IHJvY2tj
-aGlwX2RwX3Bvd2Vyb24oc3RydWN0Cj4gYW5hbG9naXhfZHBfcGxhdF9kYXRhICpwbGF0X2RhdGEp
-Cj4gIAkJcmV0dXJuIHJldDsKPiAgCX0KPiAKPiArCXJldHVybiByZXQ7Cj4gK30KPiArCj4gK3N0
-YXRpYyBpbnQgcm9ja2NoaXBfZHBfcG93ZXJvbl9lbmQoc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRf
-ZGF0YQo+ICpwbGF0X2RhdGEpCj4gK3sKPiArCXN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRw
-ID0gdG9fZHAocGxhdF9kYXRhKTsKPiArCj4gIAlyZXR1cm4gcm9ja2NoaXBfZHJtX3Bzcl9hY3Rp
-dmF0ZSgmZHAtPmVuY29kZXIpOwo+ICB9Cj4gCj4gQEAgLTMzMCw3ICszMzcsOCBAQCBzdGF0aWMg
-aW50IHJvY2tjaGlwX2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QKPiBkZXZpY2Ug
-Km1hc3RlciwKPiAgCWRwLT5wbGF0X2RhdGEuZW5jb2RlciA9ICZkcC0+ZW5jb2RlcjsKPiAKPiAg
-CWRwLT5wbGF0X2RhdGEuZGV2X3R5cGUgPSBkcC0+ZGF0YS0+Y2hpcF90eXBlOwo+IC0JZHAtPnBs
-YXRfZGF0YS5wb3dlcl9vbiA9IHJvY2tjaGlwX2RwX3Bvd2Vyb247Cj4gKwlkcC0+cGxhdF9kYXRh
-LnBvd2VyX29uX3N0YXJ0ID0gcm9ja2NoaXBfZHBfcG93ZXJvbl9zdGFydDsKPiArCWRwLT5wbGF0
-X2RhdGEucG93ZXJfb25fZW5kID0gcm9ja2NoaXBfZHBfcG93ZXJvbl9lbmQ7Cj4gIAlkcC0+cGxh
-dF9kYXRhLnBvd2VyX29mZiA9IHJvY2tjaGlwX2RwX3Bvd2VyZG93bjsKPiAgCWRwLT5wbGF0X2Rh
-dGEuZ2V0X21vZGVzID0gcm9ja2NoaXBfZHBfZ2V0X21vZGVzOwo+IAo+IGRpZmYgLS1naXQgYS9p
-bmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaAo+IGIvaW5jbHVkZS9kcm0vYnJpZGdlL2Fu
-YWxvZ2l4X2RwLmgKPiBpbmRleCBlOWExMTE2ZDJmOGUuLjQ3NWI3MDZiNDlkZSAxMDA2NDQKPiAt
-LS0gYS9pbmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaAo+ICsrKyBiL2luY2x1ZGUvZHJt
-L2JyaWRnZS9hbmFsb2dpeF9kcC5oCj4gQEAgLTMzLDcgKzMzLDggQEAgc3RydWN0IGFuYWxvZ2l4
-X2RwX3BsYXRfZGF0YSB7Cj4gIAlzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yOwo+ICAJ
-Ym9vbCBza2lwX2Nvbm5lY3RvcjsKPiAKPiAtCWludCAoKnBvd2VyX29uKShzdHJ1Y3QgYW5hbG9n
-aXhfZHBfcGxhdF9kYXRhICopOwo+ICsJaW50ICgqcG93ZXJfb25fc3RhcnQpKHN0cnVjdCBhbmFs
-b2dpeF9kcF9wbGF0X2RhdGEgKik7Cj4gKwlpbnQgKCpwb3dlcl9vbl9lbmQpKHN0cnVjdCBhbmFs
-b2dpeF9kcF9wbGF0X2RhdGEgKik7Cj4gIAlpbnQgKCpwb3dlcl9vZmYpKHN0cnVjdCBhbmFsb2dp
-eF9kcF9wbGF0X2RhdGEgKik7Cj4gIAlpbnQgKCphdHRhY2gpKHN0cnVjdCBhbmFsb2dpeF9kcF9w
-bGF0X2RhdGEgKiwgc3RydWN0IGRybV9icmlkZ2UgKiwKPiAgCQkgICAgICBzdHJ1Y3QgZHJtX2Nv
-bm5lY3RvciAqKTsKPiAtLQo+IDIuMTcuMAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+Remove the address space mapping between root and soc nodes to fix
+DTC warnings in Exynos5433 and Exynos7 like:
+
+    arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb:
+        Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Not tested.
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 6 +++---
+ arch/arm64/boot/dts/exynos/exynos7.dtsi    | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 828996a06610..ba8157ceaa56 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -18,8 +18,8 @@
+ 
+ / {
+ 	compatible = "samsung,exynos5433";
+-	#address-cells = <2>;
+-	#size-cells = <2>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	interrupt-parent = <&gic>;
+ 
+@@ -235,7 +235,7 @@
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-		ranges = <0x0 0x0 0x0 0x18000000>;
++		ranges;
+ 
+ 		arm_a53_pmu {
+ 			compatible = "arm,cortex-a53-pmu", "arm,armv8-pmuv3";
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index 0b98d2334cad..93a84338938a 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -12,8 +12,8 @@
+ / {
+ 	compatible = "samsung,exynos7";
+ 	interrupt-parent = <&gic>;
+-	#address-cells = <2>;
+-	#size-cells = <2>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	aliases {
+ 		pinctrl0 = &pinctrl_alive;
+@@ -70,7 +70,7 @@
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-		ranges = <0 0 0 0x18000000>;
++		ranges;
+ 
+ 		chipid@10000000 {
+ 			compatible = "samsung,exynos4210-chipid";
+-- 
+2.14.1
