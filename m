@@ -1,67 +1,67 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: [PATCH 00/11] fix potential Spectre variant 1 issues
-Date: Mon, 23 Apr 2018 14:13:58 -0500
-Message-ID: <96bd3e25-9503-d23d-4e3c-091e68b6bf8f@embeddedor.com>
-References: <cover.1524499368.git.gustavo@embeddedor.com>
+From: "Jingoo Han" <jingoohan1@gmail.com>
+Subject: Re: [RESEND PATCH v6 14/27] drm/bridge: analogix_dp: Don't use
+ ANALOGIX_DP_PLL_CTL to control pll
+Date: Mon, 23 Apr 2018 21:25:56 -0400
+Message-ID: <000001d3db6b$32a87200$97f95600$@gmail.com>
+References: <20180423105003.9004-1-enric.balletbo@collabora.com>
+ <20180423105003.9004-15-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1524499368.git.gustavo@embeddedor.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>, Jonathan Corbet <corbet@lwn.net>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180423105003.9004-15-enric.balletbo@collabora.com>
+Content-Language: en-us
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: 'Enric Balletbo i Serra' <enric.balletbo@collabora.com>, architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Laurent.pinchart@ideasonboard.com, kernel@collabora.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, rydberg@bitmath.org, krzk@kernel.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com, hl@rock-chips.com, sw0312.kim@samsung.com, dianders@chromium.org, kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-Please, drop this series. Further analysis is required as it seems all 
-these are False Positives.
-
-Sorry for the noise.
-
-Thanks
---
-Gustavo
-
-On 04/23/2018 12:37 PM, Gustavo A. R. Silva wrote:
-> This patchset aims to fix various media platform and media usb
-> cases where we have user controlled array dereferences that could
-> be exploited due to the Spectre variant 1 vulnerability. All were
-> reported by Dan Carpenter.
-> 
-> Notice that given that speculation windows are large, the policy is
-> to kill the speculation on the first load and not worry if it can be
-> completed with a dependent load/store [1].
-> 
-> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-> 
-> Thanks
-> 
-> Gustavo A. R. Silva (11):
->    media: tm6000: fix potential Spectre variant 1
->    exynos4-is: mipi-csis: fix potential Spectre variant 1
->    fsl-viu: fix potential Spectre variant 1
->    marvell-ccic: mcam-core: fix potential Spectre variant 1
->    omap_vout: fix potential Spectre variant 1
->    rcar-v4l2: fix potential Spectre variant 1
->    rcar_drif: fix potential Spectre variant 1
->    sh_vou: fix potential Spectre variant 1
->    vimc-debayer: fix potential Spectre variant 1
->    vivid-sdr-cap: fix potential Spectre variant 1
->    vsp1_rwpf: fix potential Spectre variant 1
-> 
->   drivers/media/platform/exynos4-is/mipi-csis.c   | 5 ++++-
->   drivers/media/platform/fsl-viu.c                | 8 ++++----
->   drivers/media/platform/marvell-ccic/mcam-core.c | 3 +++
->   drivers/media/platform/omap/omap_vout.c         | 3 +++
->   drivers/media/platform/rcar-vin/rcar-v4l2.c     | 4 +++-
->   drivers/media/platform/rcar_drif.c              | 4 +++-
->   drivers/media/platform/sh_vou.c                 | 3 +++
->   drivers/media/platform/vimc/vimc-debayer.c      | 5 ++++-
->   drivers/media/platform/vivid/vivid-sdr-cap.c    | 6 ++++++
->   drivers/media/platform/vsp1/vsp1_rwpf.c         | 3 +++
->   drivers/media/usb/tm6000/tm6000-video.c         | 2 ++
->   11 files changed, 38 insertions(+), 8 deletions(-)
-> 
+T24gTW9uZGF5LCBBcHJpbCAyMywgMjAxOCA2OjUwIEFNLCBFbnJpYyBCYWxsZXRibyBpIFNlcnJh
+IHdyb3RlOgo+IAo+IEZyb206IHphaW4gd2FuZyA8d3p6QHJvY2stY2hpcHMuY29tPgo+IAo+IFRo
+ZXJlIGlzIG5vIHJlZ2lzdGVyIG5hbWVkIEFOQUxPR0lYX0RQX1BMTF9DVEwgaW4gUm9ja2NoaXAg
+ZWRwIHBoeSByZWcKPiBsaXN0LiAgV2Ugc2hvdWxkIHVzZSBCSVRfNCBpbiBBTkFMT0dJWF9EUF9Q
+RCB0byBjb250cm9sIHRoZSBwbGwgcG93ZXIKPiBpbnN0ZWFkIG9mIEFOQUxPR0lYX0RQX1BMTF9D
+VEwuCj4gCj4gQ2M6IERvdWdsYXMgQW5kZXJzb24gPGRpYW5kZXJzQGNocm9taXVtLm9yZz4KPiBT
+aWduZWQtb2ZmLWJ5OiB6YWluIHdhbmcgPHd6ekByb2NrLWNoaXBzLmNvbT4KPiBTaWduZWQtb2Zm
+LWJ5OiBTZWFuIFBhdWwgPHNlYW5wYXVsQGNocm9taXVtLm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBU
+aGllcnJ5IEVzY2FuZGUgPHRoaWVycnkuZXNjYW5kZUBjb2xsYWJvcmEuY29tPgo+IFJldmlld2Vk
+LWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IFNpZ25lZC1vZmYtYnk6
+IEVucmljIEJhbGxldGJvIGkgU2VycmEgPGVucmljLmJhbGxldGJvQGNvbGxhYm9yYS5jb20+Cj4g
+VGVzdGVkLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4g
+UmV2aWV3ZWQtYnk6IEFyY2hpdCBUYW5lamEgPGFyY2hpdHRAY29kZWF1cm9yYS5vcmc+CgpBY2tl
+ZC1ieTogSmluZ29vIEhhbiA8amluZ29vaGFuMUBnbWFpbC5jb20+CgpCZXN0IHJlZ2FyZHMsCkpp
+bmdvbyBIYW4KCj4gLS0tCj4gCj4gIC4uLi9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dp
+eF9kcF9yZWcuYyB8IDIwICsrKysrKysrKysrLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEy
+IGluc2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPiBiL2RyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPiBpbmRleCA3YjdmZDIyN2Ux
+ZjkuLjAyYWIxYWFhOTk5MyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
+YWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9h
+bmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYwo+IEBAIC0yMzAsMTYgKzIzMCwyMCBAQCBlbnVtIHBs
+bF9zdGF0dXMKPiBhbmFsb2dpeF9kcF9nZXRfcGxsX2xvY2tfc3RhdHVzKHN0cnVjdCBhbmFsb2dp
+eF9kcF9kZXZpY2UgKmRwKQo+ICB2b2lkIGFuYWxvZ2l4X2RwX3NldF9wbGxfcG93ZXJfZG93bihz
+dHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwgYm9vbAo+IGVuYWJsZSkKPiAgewo+ICAJdTMy
+IHJlZzsKPiArCXUzMiBtYXNrID0gRFBfUExMX1BEOwo+ICsJdTMyIHBkX2FkZHIgPSBBTkFMT0dJ
+WF9EUF9QTExfQ1RMOwo+IAo+IC0JaWYgKGVuYWJsZSkgewo+IC0JCXJlZyA9IHJlYWRsKGRwLT5y
+ZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BMTF9DVEwpOwo+IC0JCXJlZyB8PSBEUF9QTExfUEQ7Cj4g
+LQkJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUExMX0NUTCk7Cj4gLQl9
+IGVsc2Ugewo+IC0JCXJlZyA9IHJlYWRsKGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BMTF9D
+VEwpOwo+IC0JCXJlZyAmPSB+RFBfUExMX1BEOwo+IC0JCXdyaXRlbChyZWcsIGRwLT5yZWdfYmFz
+ZSArIEFOQUxPR0lYX0RQX1BMTF9DVEwpOwo+ICsJaWYgKGRwLT5wbGF0X2RhdGEgJiYgaXNfcm9j
+a2NoaXAoZHAtPnBsYXRfZGF0YS0+ZGV2X3R5cGUpKSB7Cj4gKwkJcGRfYWRkciA9IEFOQUxPR0lY
+X0RQX1BEOwo+ICsJCW1hc2sgPSBSS19QTExfUEQ7Cj4gIAl9Cj4gKwo+ICsJcmVnID0gcmVhZGwo
+ZHAtPnJlZ19iYXNlICsgcGRfYWRkcik7Cj4gKwlpZiAoZW5hYmxlKQo+ICsJCXJlZyB8PSBtYXNr
+Owo+ICsJZWxzZQo+ICsJCXJlZyAmPSB+bWFzazsKPiArCXdyaXRlbChyZWcsIGRwLT5yZWdfYmFz
+ZSArIHBkX2FkZHIpOwo+ICB9Cj4gCj4gIHZvaWQgYW5hbG9naXhfZHBfc2V0X2FuYWxvZ19wb3dl
+cl9kb3duKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwLAo+IC0tCj4gMi4xNy4wCgoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
