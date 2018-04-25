@@ -1,25 +1,34 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
-Date: Wed, 25 Apr 2018 14:49:52 +0200
-Message-ID: <215c52b1-3044-8dd9-c021-dc2b8ff78afe@samsung.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-        <CGME20180419140651epcas5p22119a061c760dd54c0c3e630b053ec1b@epcas5p2.samsung.com>
-        <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC 08/10] spi: s3c64xx: samsung: Remove support for Exynos5440
+Date: Wed, 25 Apr 2018 14:55:03 +0200
+Message-ID: <CAJKOXPcOCSKbRMEn738MwvS6f2DhxNPDb0BcNn0FY2Jqx1MtbQ@mail.gmail.com>
+References: <20180424203239.21885-1-krzk@kernel.org> <CGME20180424203409epcas2p45f55e5a5d211e78d4cadc3c4ffa5a9c0@epcas2p4.samsung.com>
+ <20180424203239.21885-9-krzk@kernel.org> <066e917b-7207-9c10-4d6c-07273c6f49d9@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
-Content-language: en-GB
+In-Reply-To: <066e917b-7207-9c10-4d6c-07273c6f49d9@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/19/2018 04:05 PM, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Wed, Apr 25, 2018 at 2:49 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 04/24/2018 10:32 PM, Krzysztof Kozlowski wrote:
+>> The Exynos5440 is not actively developed, there are no development
+>> boards available and probably there are no real products with it.
+>> Remove wide-tree support for Exynos5440.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> It's good you didn't remove S3C64XX_SPI_QUIRK_POLL entirely as it will
+> be needed for Exynos5433 ISP SPI controllers.
 
-Patch applied, thanks!
+Ah, actually I did not plan to skip it... I just missed it :).
+I should check affected drivers if this removal left any unused
+symbols (except the one mentioned).
+
+Thanks for hint!
+
+Krzysztof
