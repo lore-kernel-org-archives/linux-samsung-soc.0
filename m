@@ -1,116 +1,56 @@
-From: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Intel-gfx] [PATCH] drm/core: Remove drm_dev_unref() and it's uses
-Date: Thu, 26 Apr 2018 18:27:18 +0530
-Message-ID: <CAK-LDbKxTS-13yC4CQH+fQxTM6_Dw85ftyj7sLHf3yooJwPXOA@mail.gmail.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [Intel-gfx] [PATCH] drm/core: Remove drm_dev_unref() and it's
+ uses
+Date: Thu, 26 Apr 2018 15:14:53 +0200
+Message-ID: <20180426131404.GP4813@piout.net>
 References: <20180426102819.6985-1-vthakkar1994@gmail.com>
  <20180426123615.GA12521@phenom.ffwll.local>
  <1556510.Xu6NnhyFGZ@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <1556510.Xu6NnhyFGZ@avalon>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, airlied-cv59FeDIM0c@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, stefan-XLVq0VzYD2Y@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marex-ynQEQJNshbs@public.gmane.org>, David1.Zhou-5C7GfCeVMHo@public.gmane.org, maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, z.liuxinliang-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kong.kongxinwei-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, puck.chen-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, CK HU <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nicolas.ferre@microch
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Vaishali Thakkar <vthakkar1994@gmail.com>, alexander.deucher@amd.com, linux-renesas-soc@vger.kernel.org, heiko@sntech.de, airlied@linux.ie, linus.walleij@linaro.org, stefan@agner.ch, hjc@rock-chips.com, kraxel@redhat.com, benjamin.gaignard@linaro.org, nouveau@lists.freedesktop.org, marex@denx.de, David1.Zhou@amd.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, linux-rockchip@lists.infradead.org, tomi.valkeinen@ti.com, linux@armlinux.org.uk, krzk@kernel.org, jonathanh@nvidia.com, z.liuxinliang@hisilicon.com, maxime.ripard@bootlin.com, kong.kongxinwei@hisilicon.com, kgene@kernel.org, bskeggs@redhat.com, linux-arm-msm@vger.kernel.org, ck.hu@mediatek.com, airlied@redhat.com, virtualization@lists.linux-foundation.orglinu
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCBBcHIgMjYsIDIwMTggYXQgNjoxNSBQTSwgTGF1cmVudCBQaW5jaGFydAo8bGF1cmVu
-dC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPiB3cm90ZToKPiBIaSBEYW5pZWwsCj4KPiBPbiBU
-aHVyc2RheSwgMjYgQXByaWwgMjAxOCAxNTozNjoxNSBFRVNUIERhbmllbCBWZXR0ZXIgd3JvdGU6
-Cj4+IE9uIFRodSwgQXByIDI2LCAyMDE4IGF0IDAzOjU4OjE5UE0gKzA1MzAsIFZhaXNoYWxpIFRo
-YWtrYXIgd3JvdGU6Cj4+ID4gSXQncyBiZWVuIGEgd2hpbGUgc2luY2Ugd2UgaW50cm9kdWNlZCBk
-cm1fZGV2e2dldC9wdXR9IGZ1bmN0aW9ucwo+PiA+IHRvIHJlcGxhY2UgcmVmZXJlbmNlL3VucmVm
-ZXJlbmNlIGluIGRybSBzdWJzeXN0ZW0gZm9yIHRoZQo+PiA+IGNvbnNpc3RlbmN5IHB1cnBvc2Uu
-IFNvLCB3aXRoIHRoaXMgcGF0Y2gsIGxldCdzIGp1c3QgcmVwbGFjZQo+PiA+IGFsbCBjdXJyZW50
-IHVzZSBjYXNlcyBvZiBkcm1fZGV2X3VucmVmKCkgd2l0aCBkcm1fZGV2X3B1dCBhbmQgcmVtb3Zl
-Cj4+ID4gdGhlIGZ1bmN0aW9uIGl0c2VsZi4KPj4gPgo+PiA+IENvY2NpbmVsbGUgd2FzIHVzZWQg
-Zm9yIG1hc3MtcGF0Y2hpbmcuCj4+ID4KPj4gPiBTaWduZWQtb2ZmLWJ5OiBWYWlzaGFsaSBUaGFr
-a2FyIDx2dGhha2thcjE5OTRAZ21haWwuY29tPgo+Pgo+PiBUaGFua3MgZm9yIGRvaW5nIHRoaXMu
-IFVuZm9ydHVuYXRlbHkgZHJtIG1vdmVzIHByZXR0eSBmYXN0LCBzbyBhbHJlYWR5IGEKPj4gY29u
-ZmxpY3Qgd2hlbiBJIHRyaWVkIHRvIGFwcGx5IHRoaXMuIFNvbWUgZHJpdmVycyBhcmUgYWxzbyBp
-biB0aGVpciBvd24KPj4gdHJlZXMsIHNvIHRoaXMgbWlnaHQgbGVhZCB0byBtb3JlIGZ1biA6LS8K
-Pj4KPj4gQ2FuIHlvdSBwbHMgc3BsaXQgaXQgdXAgcGVyLWRyaXZlciAoanVzdCB0aGUgZGlyZWN0
-b3JpZXMgdW5kZXIKPj4gZHJpdmVycy9ncHUvZHJtLyBpcyBlbm91Z2gpPyBGaW5hbCBwYXRjaCB0
-byByZW1vdmUgdGhlIGZ1bmN0aW9uIG1pZ2h0IHRoZW4KPj4gZ2V0IHN0YWxsZWQgYSBiaXQgb2Zj
-Lgo+Cj4gSSByZXF1ZXN0ZWQgYSBzaW5nbGUgcGF0Y2ggaW5zdGVhZCBvZiBzcGxpdHRpbmcgaXQg
-cGVyIGRyaXZlciwgeW91IG1pZ2h0IHdhbnQKPiB0byBibGFtZSBtZSBmb3IgdGhhdC4KPgo+PiBB
-bHNvIGNhbiB5b3UgcGxzIHVwZGF0ZSAuL3NjcmlwdHMvY29jY2luZWxsZS9hcGkvZHJtLWdldC1w
-dXQuY29jY2kgYW5kCj4+IHJlbW92ZSB0aGF0IHNwYXRjaCBodW5rIGluIHRoZSBmaW5hbCBwYXRj
-aCwgc2luY2Ugd2Ugbm8gbG9uZ2VyIG5lZWQgaXQ/Cj4KPiBIb3cgYWJvdXQganVzdCByZXJ1bm5p
-bmcgdGhlIGNvY2NpbmVsbGUgcGF0Y2ggd2hlbiBpdCdzIHRpbWUgdG8gYXBwbHkgdGhpcyA/Cj4g
-VGhlcmUncyBwcmVjZWRlbnQgZm9yIHBlcmZvcm1pbmcgc3VjaCBhdXRvbWF0ZWQgY2hhbmdlcywg
-YW5kIGl0IHdvdWxkIGVuc3VyZQo+IHRoYXQgbm8gZHJpdmVyIGlzIGxlZnQgb3V0LgoKSSB3YXMg
-cGxhbm5pbmcgdG8gc2VuZCBwYXRjaGVzIHRvIHJlbW92ZSBhbGwgcmVtYWluaW5nIHJlZmVyZW5j
-ZS91bnJlZmVyZW5jZQpmdW5jdGlvbnMgYnkgdGhlIHdlZWtlbmQgW2FzIHRoZXJlIGFyZW4ndCBt
-dWNoIHJlbWFpbmluZyBub3cgYW5kIEkgc2VlIHRoYXQKbmV3IGRyaXZlcnMga2VlcHMgYWRkaW5n
-IHRoZW0gaW5zdGVhZCBvZiBuZXcgQVBJXS4gU28sIHdhbnRlZCB0byBkZWxldGUgd2hvbGUKY29j
-Y2kgZmlsZSBhZnRlciB0aGF0LiBJIHRob3VnaHQgb2YgZGl2aWRpbmcgYSBwYXRjaCBwZXIgZnVu
-Y3Rpb24gYmVjYXVzZQpMYXVyZW50IHJlcXVlc3RlZCB0byBzZW5kIGEgc2luZ2xlIHBhdGNoIGZv
-ciBhbGwgZmlsZXMuCgpCdXQgaWYgd2UgYXJlIGdvaW5nIHRvIHNwbGl0IGl0IHBlciBkcml2ZXIg
-dW5kZXIgZ3B1L2RybSwgd291bGQgaXQgd29yayBpZiBwZXIKZHJpdmVyIHBhdGNoIGNvbnRhaW5z
-IGFsbCBmdW5jdGlvbiBjYXNlcz8gQWxzbywgd291bGQgeW91IGJlIGZpbmUgd2l0aCB0YWtpbmcg
-YQpwYXRjaCBmb3IgcmVtb3ZhbCBvZiBjb2NjaW5lbGxlIGZpbGUgdmlhIHlvdXIgdHJlZT8gVGhl
-biBJIGNhbiBpbmNsdWRlIHRoYXQgaW4KdGhlIHNhbWUgcGF0Y2hzZXQgYXMgd2VsbC4KClRoYW5r
-cyEKCj4+ID4gLS0tCj4+ID4KPj4gPiAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1
-X2Rydi5jICAgICAgICAgICAgfCAgNCArKy0tCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS9hcmMvYXJj
-cGd1X2Rydi5jICAgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+PiA+ICBkcml2ZXJzL2dwdS9k
-cm0vYXJtYWRhL2FybWFkYV9kcnYuYyAgICAgICAgICAgICAgICB8ICA2ICsrKy0tLQo+PiA+ICBk
-cml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYyAgICAgICB8ICA0ICsr
-LS0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL2RybV9kcnYuYyAgICAgICAgICAgICAgICAgICAgICAg
-ICAgfCAxMyAtLS0tLS0tLS0tLS0tCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2
-aXZfZHJ2LmMgICAgICAgICAgICAgIHwgIDQgKystLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHJ2LmMgICAgICAgICAgICB8ICA0ICsrLS0KPj4gPiAgZHJpdmVycy9n
-cHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMgICAgICAgICAgfCAgNCArKy0tCj4+ID4g
-IGRyaXZlcnMvZ3B1L2RybS9oaXNpbGljb24vaGlibWMvaGlibWNfZHJtX2Rydi5jICAgIHwgIDQg
-KystLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2tpcmluL2tpcmluX2RybV9kcnYu
-YyAgICB8ICA4ICsrKystLS0tCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9o
-dWdlX3BhZ2VzLmMgICAgICAgIHwgIDIgKy0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvc2Vs
-ZnRlc3RzL2k5MTVfZ2VtX2RtYWJ1Zi5jICAgfCAgMiArLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0v
-aTkxNS9zZWxmdGVzdHMvaTkxNV9nZW1fZXZpY3QuYyAgICB8ICAyICstCj4+ID4gIGRyaXZlcnMv
-Z3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9pOTE1X2dlbV9ndHQuYyAgICAgIHwgIDIgKy0KPj4gPiAg
-ZHJpdmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3RzL2k5MTVfZ2VtX29iamVjdC5jICAgfCAgMiAr
-LQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvaTkxNV9yZXF1ZXN0LmMgICAg
-ICB8ICAyICstCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9pOTE1X3ZtYS5j
-ICAgICAgICAgIHwgIDIgKy0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3RzL2lu
-dGVsX2JyZWFkY3J1bWJzLmMgfCAgMiArLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vaW14L2lteC1k
-cm0tY29yZS5jICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPj4gPiAgZHJpdmVycy9ncHUvZHJt
-L21lZGlhdGVrL210a19kcm1fZHJ2LmMgICAgICAgICAgICAgfCAgNiArKystLS0KPj4gPiAgZHJp
-dmVycy9ncHUvZHJtL21zbS9tc21fZHJ2LmMgICAgICAgICAgICAgICAgICAgICAgfCAgOCArKysr
-LS0tLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vbXhzZmIvbXhzZmJfZHJ2LmMgICAgICAgICAgICAg
-ICAgICB8ICA0ICsrLS0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9wbGF0
-Zm9ybS5jICAgICAgICAgfCAgMiArLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFw
-X2Rydi5jICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL3Bs
-MTExL3BsMTExX2Rydi5jICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4+ID4gIGRyaXZlcnMv
-Z3B1L2RybS9xeGwvcXhsX2Rydi5jICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPj4gPiAg
-ZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuYyAgICAgICAgICAgICAgfCAgMiAr
-LQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5jICAgICAg
-ICB8ICA0ICsrLS0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL3NobW9iaWxlL3NobW9iX2RybV9kcnYu
-YyAgICAgICAgICAgfCAgNCArKy0tCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2Rydi5j
-ICAgICAgICAgICAgICAgICAgICAgIHwgIDggKysrKy0tLS0KPj4gPiAgZHJpdmVycy9ncHUvZHJt
-L3N0bS9kcnYuYyAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4+ID4gIGRyaXZl
-cnMvZ3B1L2RybS9zdW40aS9zdW40aV9kcnYuYyAgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+
-PiA+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAgICAgICAgICAgICAgICAgICB8
-ICA0ICsrLS0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL3Rpbnlkcm0vY29yZS90aW55ZHJtLWNvcmUu
-YyAgICAgICAgfCAgNiArKystLS0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL3R2ZTIwMC90dmUyMDBf
-ZHJ2LmMgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS91ZGwv
-dWRsX2Rydi5jICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPj4gPiAgZHJpdmVycy9ncHUv
-ZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4+ID4gIGRy
-aXZlcnMvZ3B1L2RybS92Z2VtL3ZnZW1fZHJ2LmMgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0K
-Pj4gPiAgZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2RybV9idXMuYyAgICAgICAgICAg
-fCAgMiArLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0venRlL3p4X2RybV9kcnYuYyAgICAgICAgICAg
-ICAgICAgICB8ICA0ICsrLS0KPj4gPiAgaW5jbHVkZS9kcm0vZHJtX2Rydi5oICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgfCAgMSAtCj4+ID4gIDQxIGZpbGVzIGNoYW5nZWQsIDczIGluc2Vy
-dGlvbnMoKyksIDg3IGRlbGV0aW9ucygtKQo+Cj4gLS0KPiBSZWdhcmRzLAo+Cj4gTGF1cmVudCBQ
-aW5jaGFydAo+Cj4KPgoKCgotLSAKVmFpc2hhbGkKaHR0cDovL3ZhaXNoYWxpdGhha2thci5pbi8K
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYW1kLWdmeCBt
-YWlsaW5nIGxpc3QKYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbWQtZ2Z4Cg==
+Hi,
+
+On 26/04/2018 15:45:44+0300, Laurent Pinchart wrote:
+> Hi Daniel,
+> 
+> On Thursday, 26 April 2018 15:36:15 EEST Daniel Vetter wrote:
+> > On Thu, Apr 26, 2018 at 03:58:19PM +0530, Vaishali Thakkar wrote:
+> > > It's been a while since we introduced drm_dev{get/put} functions
+> > > to replace reference/unreference in drm subsystem for the
+> > > consistency purpose. So, with this patch, let's just replace
+> > > all current use cases of drm_dev_unref() with drm_dev_put and remove
+> > > the function itself.
+> > > 
+> > > Coccinelle was used for mass-patching.
+> > > 
+> > > Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+> > 
+> > Thanks for doing this. Unfortunately drm moves pretty fast, so already a
+> > conflict when I tried to apply this. Some drivers are also in their own
+> > trees, so this might lead to more fun :-/
+> > 
+> > Can you pls split it up per-driver (just the directories under
+> > drivers/gpu/drm/ is enough)? Final patch to remove the function might then
+> > get stalled a bit ofc.
+> 
+> I requested a single patch instead of splitting it per driver, you might want 
+> to blame me for that.
+> 
+
+Doesn't splitting the change per driver break bisectability unless there
+is a guarantee that the change in include/drm/drm_drv.h is applied after
+all the driver trees have been merged?
+
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
