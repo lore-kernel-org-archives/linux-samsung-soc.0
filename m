@@ -1,85 +1,333 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] drm/core: Remove drm_dev_unref() and it's uses
-Date: Thu, 26 Apr 2018 13:43:09 +0300
-Message-ID: <2767328.18DNhHKilX@avalon>
-References: <20180426102819.6985-1-vthakkar1994@gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] thermal: samsung: Remove support for Exynos5440
+Date: Thu, 26 Apr 2018 13:21:12 +0200
+Message-ID: <2734003.UHSMxVLybj@amdc3058>
+References: <20180424203239.21885-1-krzk@kernel.org>
+        <20180424203239.21885-7-krzk@kernel.org> <1951102.VLysaozMLK@amdc3058>
+        <CGME20180426112113eucas1p1b5bf6f093442154e29f5541b4aba6b00@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180426102819.6985-1-vthakkar1994@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Vaishali Thakkar <vthakkar1994@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, alexandre.belloni@bootlin.com, airlied@linux.ie, thierry.reding@gmail.com, kraxel@redhat.com, nouveau@lists.freedesktop.org, marex@denx.de, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, tomi.valkeinen@ti.com, linux@armlinux.org.uk, krzk@kernel.org, jonathanh@nvidia.com, z.liuxinliang@hisilicon.com, maxime.ripard@bootlin.com, kong.kongxinwei@hisilicon.com, kgene@kernel.org, bskeggs@redhat.com, linux-arm-msm@vger.kernel.org, airlied@redhat.com, virtualization@lists.linux-foundation.org, freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, puck.chen@hisilicon.com, intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, brodkin@synopsys.com, boris.brezillon@bootlin.com, zourongrong@gmail.com, rodrigo.vivi@intel.com, matthias.bgg@gmail.com, org@freedesktop.org, wens@csie.org, vincent.abriou@st.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1951102.VLysaozMLK@amdc3058>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Eduardo Valentin <edubezval@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org, linux-samsu
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgVmFpc2hhbGksCgpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KCk9uIFRodXJzZGF5LCAyNiBB
-cHJpbCAyMDE4IDEzOjI4OjE5IEVFU1QgVmFpc2hhbGkgVGhha2thciB3cm90ZToKPiBJdCdzIGJl
-ZW4gYSB3aGlsZSBzaW5jZSB3ZSBpbnRyb2R1Y2VkIGRybV9kZXZ7Z2V0L3B1dH0gZnVuY3Rpb25z
-Cj4gdG8gcmVwbGFjZSByZWZlcmVuY2UvdW5yZWZlcmVuY2UgaW4gZHJtIHN1YnN5c3RlbSBmb3Ig
-dGhlCj4gY29uc2lzdGVuY3kgcHVycG9zZS4gU28sIHdpdGggdGhpcyBwYXRjaCwgbGV0J3MganVz
-dCByZXBsYWNlCj4gYWxsIGN1cnJlbnQgdXNlIGNhc2VzIG9mIGRybV9kZXZfdW5yZWYoKSB3aXRo
-IGRybV9kZXZfcHV0IGFuZCByZW1vdmUKPiB0aGUgZnVuY3Rpb24gaXRzZWxmLgo+IAo+IENvY2Np
-bmVsbGUgd2FzIHVzZWQgZm9yIG1hc3MtcGF0Y2hpbmcuCj4gCj4gU2lnbmVkLW9mZi1ieTogVmFp
-c2hhbGkgVGhha2thciA8dnRoYWtrYXIxOTk0QGdtYWlsLmNvbT4KCkkgbG92ZSBzZWVpbmcgZGVw
-cmVjYXRlZCBmdW5jdGlvbnMgZ28uCgpSZXZpZXdlZC1ieTogTGF1cmVudCBQaW5jaGFydCA8bGF1
-cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgoKPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJt
-L2FtZC9hbWRncHUvYW1kZ3B1X2Rydi5jICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMv
-Z3B1L2RybS9hcmMvYXJjcGd1X2Rydi5jICAgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9kcnYuYyAgICAgICAgICAgICAgICB8ICA2ICsr
-Ky0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYyAgICAg
-ICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9kcnYuYyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgfCAxMyAtLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0
-bmF2aXZfZHJ2LmMgICAgICAgICAgICAgIHwgIDQgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHJ2LmMgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZl
-cnMvZ3B1L2RybS9oaXNpbGljb24vaGlibWMvaGlibWNfZHJtX2Rydi5jICAgIHwgIDQgKystLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2tpcmluL2tpcmluX2RybV9kcnYuYyAgICB8ICA4
-ICsrKystLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9odWdlX3BhZ2VzLmMg
-ICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3RzL2k5MTVfZ2Vt
-X2RtYWJ1Zi5jICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvaTkx
-NV9nZW1fZXZpY3QuYyAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0
-cy9pOTE1X2dlbV9ndHQuYyAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvc2Vs
-ZnRlc3RzL2k5MTVfZ2VtX29iamVjdC5jICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkx
-NS9zZWxmdGVzdHMvaTkxNV9yZXF1ZXN0LmMgICAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9pOTE1L3NlbGZ0ZXN0cy9pOTE1X3ZtYS5jICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9n
-cHUvZHJtL2k5MTUvc2VsZnRlc3RzL2ludGVsX2JyZWFkY3J1bWJzLmMgfCAgMiArLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vaW14L2lteC1kcm0tY29yZS5jICAgICAgICAgICAgICAgICB8ICA0ICsrLS0K
-PiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmMgICAgICAgICAgICAgfCAg
-NiArKystLS0KPiAgZHJpdmVycy9ncHUvZHJtL21zbS9tc21fZHJ2LmMgICAgICAgICAgICAgICAg
-ICAgICAgfCAgOCArKysrLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbXhzZmIvbXhzZmJfZHJ2LmMg
-ICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91
-dmVhdV9wbGF0Zm9ybS5jICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRy
-bS9vbWFwX2Rydi5jICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJt
-L3BsMTExL3BsMTExX2Rydi5jICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMv
-Z3B1L2RybS9xeGwvcXhsX2Rydi5jICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJp
-dmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuYyAgICAgICAgICAgICAgfCAgMiArLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5jICAgICAgICB8ICA0
-ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL3NobW9iaWxlL3NobW9iX2RybV9kcnYuYyAgICAgICAg
-ICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2Rydi5jICAgICAgICAgICAg
-ICAgICAgICAgIHwgIDggKysrKy0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3N0bS9kcnYuYyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9z
-dW40aV9kcnYuYyAgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHJtLmMgICAgICAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9n
-cHUvZHJtL3Rpbnlkcm0vY29yZS90aW55ZHJtLWNvcmUuYyAgICAgICAgfCAgNiArKystLS0KPiAg
-ZHJpdmVycy9ncHUvZHJtL3R2ZTIwMC90dmUyMDBfZHJ2LmMgICAgICAgICAgICAgICAgfCAgNCAr
-Ky0tCj4gIGRyaXZlcnMvZ3B1L2RybS91ZGwvdWRsX2Rydi5jICAgICAgICAgICAgICAgICAgICAg
-IHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICAgICAg
-ICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS92Z2VtL3ZnZW1fZHJ2LmMgICAgICAg
-ICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2Ry
-bV9idXMuYyAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0venRlL3p4X2RybV9k
-cnYuYyAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgaW5jbHVkZS9kcm0vZHJtX2Rydi5o
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIDQxIGZpbGVzIGNoYW5nZWQs
-IDczIGluc2VydGlvbnMoKyksIDg3IGRlbGV0aW9ucygtKQoKLS0gClJlZ2FyZHMsCgpMYXVyZW50
-IFBpbmNoYXJ0CgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] thermal: samsung: Remove support for Exynos5440
+
+The Exynos5440 is not actively developed, there are no development
+boards available and probably there are no real products with it.
+Remove wide-tree support for Exynos5440.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+[b.zolnierkie: ported over driver changes]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+Eduardo, here is a version which applies on top of pending Exynos
+thermal changes (https://lkml.org/lkml/2018/4/16/256).
+
+ Documentation/devicetree/bindings/thermal/exynos-thermal.txt |   14 
+ drivers/thermal/samsung/exynos_tmu.c                         |  161 -----------
+ 2 files changed, 4 insertions(+), 171 deletions(-)
+
+Index: b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+===================================================================
+--- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt	2018-04-26 12:29:42.716294204 +0200
++++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt	2018-04-26 12:29:42.716294204 +0200
+@@ -12,7 +12,6 @@
+ 	       "samsung,exynos5420-tmu-ext-triminfo" for TMU channels 2, 3 and 4
+ 			Exynos5420 (Must pass triminfo base and triminfo clock)
+                "samsung,exynos5433-tmu"
+-	       "samsung,exynos5440-tmu"
+ 	       "samsung,exynos7-tmu"
+ - interrupt-parent : The phandle for the interrupt controller
+ - reg : Address range of the thermal registers. For soc's which has multiple
+@@ -68,18 +67,7 @@ Example 1):
+ 		#thermal-sensor-cells = <0>;
+ 	};
+ 
+-Example 2):
+-
+-	tmuctrl_0: tmuctrl@160118 {
+-		compatible = "samsung,exynos5440-tmu";
+-		reg = <0x160118 0x230>, <0x160368 0x10>;
+-		interrupts = <0 58 0>;
+-		clocks = <&clock 21>;
+-		clock-names = "tmu_apbif";
+-		#thermal-sensor-cells = <0>;
+-	};
+-
+-Example 3): (In case of Exynos5420 "with misplaced TRIMINFO register")
++Example 2): (In case of Exynos5420 "with misplaced TRIMINFO register")
+ 	tmu_cpu2: tmu@10068000 {
+ 		compatible = "samsung,exynos5420-tmu-ext-triminfo";
+ 		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
+Index: b/drivers/thermal/samsung/exynos_tmu.c
+===================================================================
+--- a/drivers/thermal/samsung/exynos_tmu.c	2018-04-26 12:29:42.716294204 +0200
++++ b/drivers/thermal/samsung/exynos_tmu.c	2018-04-26 12:30:52.648295965 +0200
+@@ -126,28 +126,6 @@
+ 
+ #define EXYNOS5433_G3D_BASE			0x10070000
+ 
+-/*exynos5440 specific registers*/
+-#define EXYNOS5440_TMU_S0_7_TRIM		0x000
+-#define EXYNOS5440_TMU_S0_7_CTRL		0x020
+-#define EXYNOS5440_TMU_S0_7_DEBUG		0x040
+-#define EXYNOS5440_TMU_S0_7_TEMP		0x0f0
+-#define EXYNOS5440_TMU_S0_7_TH0			0x110
+-#define EXYNOS5440_TMU_S0_7_TH1			0x130
+-#define EXYNOS5440_TMU_S0_7_TH2			0x150
+-#define EXYNOS5440_TMU_S0_7_IRQEN		0x210
+-#define EXYNOS5440_TMU_S0_7_IRQ			0x230
+-/* exynos5440 common registers */
+-#define EXYNOS5440_TMU_IRQ_STATUS		0x000
+-#define EXYNOS5440_TMU_PMIN			0x004
+-
+-#define EXYNOS5440_TMU_INTEN_RISE0_SHIFT	0
+-#define EXYNOS5440_TMU_INTEN_RISE1_SHIFT	1
+-#define EXYNOS5440_TMU_INTEN_RISE2_SHIFT	2
+-#define EXYNOS5440_TMU_INTEN_RISE3_SHIFT	3
+-#define EXYNOS5440_TMU_INTEN_FALL0_SHIFT	4
+-#define EXYNOS5440_TMU_TH_RISE4_SHIFT		24
+-#define EXYNOS5440_EFUSE_SWAP_OFFSET		8
+-
+ /* Exynos7 specific registers */
+ #define EXYNOS7_THD_TEMP_RISE7_6		0x50
+ #define EXYNOS7_THD_TEMP_FALL7_6		0x60
+@@ -184,7 +162,6 @@ enum soc_type {
+ 	SOC_ARCH_EXYNOS5420,
+ 	SOC_ARCH_EXYNOS5420_TRIMINFO,
+ 	SOC_ARCH_EXYNOS5433,
+-	SOC_ARCH_EXYNOS5440,
+ 	SOC_ARCH_EXYNOS7,
+ };
+ 
+@@ -619,57 +596,6 @@ out:
+ 	return ret;
+ }
+ 
+-static int exynos5440_tmu_initialize(struct platform_device *pdev)
+-{
+-	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+-	unsigned int trim_info = 0, con, rising_threshold;
+-	int threshold_code;
+-	int crit_temp = 0;
+-
+-	/*
+-	 * For exynos5440 soc triminfo value is swapped between TMU0 and
+-	 * TMU2, so the below logic is needed.
+-	 */
+-	switch (data->id) {
+-	case 0:
+-		trim_info = readl(data->base + EXYNOS5440_EFUSE_SWAP_OFFSET +
+-				 EXYNOS5440_TMU_S0_7_TRIM);
+-		break;
+-	case 1:
+-		trim_info = readl(data->base + EXYNOS5440_TMU_S0_7_TRIM);
+-		break;
+-	case 2:
+-		trim_info = readl(data->base - EXYNOS5440_EFUSE_SWAP_OFFSET +
+-				  EXYNOS5440_TMU_S0_7_TRIM);
+-	}
+-	sanitize_temp_error(data, trim_info);
+-
+-	/* Write temperature code for rising and falling threshold */
+-	rising_threshold = readl(data->base + EXYNOS5440_TMU_S0_7_TH0);
+-	rising_threshold = get_th_reg(data, rising_threshold, false);
+-	writel(rising_threshold, data->base + EXYNOS5440_TMU_S0_7_TH0);
+-	writel(0, data->base + EXYNOS5440_TMU_S0_7_TH1);
+-
+-	data->tmu_clear_irqs(data);
+-
+-	/* if last threshold limit is also present */
+-	if (!data->tzd->ops->get_crit_temp(data->tzd, &crit_temp)) {
+-		threshold_code = temp_to_code(data, crit_temp / MCELSIUS);
+-		/* 5th level to be assigned in th2 reg */
+-		rising_threshold =
+-			threshold_code << EXYNOS5440_TMU_TH_RISE4_SHIFT;
+-		writel(rising_threshold, data->base + EXYNOS5440_TMU_S0_7_TH2);
+-		con = readl(data->base + EXYNOS5440_TMU_S0_7_CTRL);
+-		con |= (1 << EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
+-		writel(con, data->base + EXYNOS5440_TMU_S0_7_CTRL);
+-	}
+-	/* Clear the PMIN in the common TMU register */
+-	if (!data->id)
+-		writel(0, data->base_second + EXYNOS5440_TMU_PMIN);
+-
+-	return 0;
+-}
+-
+ static int exynos7_tmu_initialize(struct platform_device *pdev)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+@@ -820,35 +746,6 @@ static void exynos5433_tmu_control(struc
+ 	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
+ }
+ 
+-static void exynos5440_tmu_control(struct platform_device *pdev, bool on)
+-{
+-	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+-	struct thermal_zone_device *tz = data->tzd;
+-	unsigned int con, interrupt_en;
+-
+-	con = get_con_reg(data, readl(data->base + EXYNOS5440_TMU_S0_7_CTRL));
+-
+-	if (on) {
+-		con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
+-		interrupt_en =
+-			(of_thermal_is_trip_valid(tz, 3)
+-			 << EXYNOS5440_TMU_INTEN_RISE3_SHIFT) |
+-			(of_thermal_is_trip_valid(tz, 2)
+-			 << EXYNOS5440_TMU_INTEN_RISE2_SHIFT) |
+-			(of_thermal_is_trip_valid(tz, 1)
+-			 << EXYNOS5440_TMU_INTEN_RISE1_SHIFT) |
+-			(of_thermal_is_trip_valid(tz, 0)
+-			 << EXYNOS5440_TMU_INTEN_RISE0_SHIFT);
+-		interrupt_en |=
+-			interrupt_en << EXYNOS5440_TMU_INTEN_FALL0_SHIFT;
+-	} else {
+-		con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
+-		interrupt_en = 0; /* Disable all interrupts */
+-	}
+-	writel(interrupt_en, data->base + EXYNOS5440_TMU_S0_7_IRQEN);
+-	writel(con, data->base + EXYNOS5440_TMU_S0_7_CTRL);
+-}
+-
+ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+@@ -920,10 +817,8 @@ static u32 get_emul_con_reg(struct exyno
+ 	if (temp) {
+ 		temp /= MCELSIUS;
+ 
+-		if (data->soc != SOC_ARCH_EXYNOS5440) {
+-			val &= ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIFT);
+-			val |= (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
+-		}
++		val &= ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIFT);
++		val |= (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
+ 		if (data->soc == SOC_ARCH_EXYNOS7) {
+ 			val &= ~(EXYNOS7_EMUL_DATA_MASK <<
+ 				EXYNOS7_EMUL_DATA_SHIFT);
+@@ -964,16 +859,6 @@ static void exynos4412_tmu_set_emulation
+ 	writel(val, data->base + emul_con);
+ }
+ 
+-static void exynos5440_tmu_set_emulation(struct exynos_tmu_data *data,
+-					 int temp)
+-{
+-	unsigned int val;
+-
+-	val = readl(data->base + EXYNOS5440_TMU_S0_7_DEBUG);
+-	val = get_emul_con_reg(data, val, temp);
+-	writel(val, data->base + EXYNOS5440_TMU_S0_7_DEBUG);
+-}
+-
+ static int exynos_tmu_set_emulation(void *drv_data, int temp)
+ {
+ 	struct exynos_tmu_data *data = drv_data;
+@@ -996,7 +881,6 @@ out:
+ }
+ #else
+ #define exynos4412_tmu_set_emulation NULL
+-#define exynos5440_tmu_set_emulation NULL
+ static int exynos_tmu_set_emulation(void *drv_data, int temp)
+ 	{ return -EINVAL; }
+ #endif /* CONFIG_THERMAL_EMULATION */
+@@ -1014,11 +898,6 @@ static int exynos4412_tmu_read(struct ex
+ 	return readb(data->base + EXYNOS_TMU_REG_CURRENT_TEMP);
+ }
+ 
+-static int exynos5440_tmu_read(struct exynos_tmu_data *data)
+-{
+-	return readb(data->base + EXYNOS5440_TMU_S0_7_TEMP);
+-}
+-
+ static int exynos7_tmu_read(struct exynos_tmu_data *data)
+ {
+ 	return readw(data->base + EXYNOS_TMU_REG_CURRENT_TEMP) &
+@@ -1029,16 +908,9 @@ static void exynos_tmu_work(struct work_
+ {
+ 	struct exynos_tmu_data *data = container_of(work,
+ 			struct exynos_tmu_data, irq_work);
+-	unsigned int val_type;
+ 
+ 	if (!IS_ERR(data->clk_sec))
+ 		clk_enable(data->clk_sec);
+-	/* Find which sensor generated this interrupt */
+-	if (data->soc == SOC_ARCH_EXYNOS5440) {
+-		val_type = readl(data->base_second + EXYNOS5440_TMU_IRQ_STATUS);
+-		if (!((val_type >> data->id) & 0x1))
+-			goto out;
+-	}
+ 	if (!IS_ERR(data->clk_sec))
+ 		clk_disable(data->clk_sec);
+ 
+@@ -1051,7 +923,6 @@ static void exynos_tmu_work(struct work_
+ 
+ 	clk_disable(data->clk);
+ 	mutex_unlock(&data->lock);
+-out:
+ 	enable_irq(data->irq);
+ }
+ 
+@@ -1086,15 +957,6 @@ static void exynos4210_tmu_clear_irqs(st
+ 	writel(val_irq, data->base + tmu_intclear);
+ }
+ 
+-static void exynos5440_tmu_clear_irqs(struct exynos_tmu_data *data)
+-{
+-	unsigned int val_irq;
+-
+-	val_irq = readl(data->base + EXYNOS5440_TMU_S0_7_IRQ);
+-	/* clear the interrupts */
+-	writel(val_irq, data->base + EXYNOS5440_TMU_S0_7_IRQ);
+-}
+-
+ static irqreturn_t exynos_tmu_irq(int irq, void *id)
+ {
+ 	struct exynos_tmu_data *data = id;
+@@ -1131,9 +993,6 @@ static const struct of_device_id exynos_
+ 		.compatible = "samsung,exynos5433-tmu",
+ 		.data = (const void *)SOC_ARCH_EXYNOS5433,
+ 	}, {
+-		.compatible = "samsung,exynos5440-tmu",
+-		.data = (const void *)SOC_ARCH_EXYNOS5440,
+-	}, {
+ 		.compatible = "samsung,exynos7-tmu",
+ 		.data = (const void *)SOC_ARCH_EXYNOS7,
+ 	},
+@@ -1223,19 +1082,6 @@ static int exynos_map_dt_data(struct pla
+ 		data->min_efuse_value = 40;
+ 		data->max_efuse_value = 150;
+ 		break;
+-	case SOC_ARCH_EXYNOS5440:
+-		data->tmu_initialize = exynos5440_tmu_initialize;
+-		data->tmu_control = exynos5440_tmu_control;
+-		data->tmu_read = exynos5440_tmu_read;
+-		data->tmu_set_emulation = exynos5440_tmu_set_emulation;
+-		data->tmu_clear_irqs = exynos5440_tmu_clear_irqs;
+-		data->ntrip = 4;
+-		data->gain = 5;
+-		data->reference_voltage = 16;
+-		data->efuse_value = 0x5d2d;
+-		data->min_efuse_value = 16;
+-		data->max_efuse_value = 76;
+-		break;
+ 	case SOC_ARCH_EXYNOS7:
+ 		data->tmu_initialize = exynos7_tmu_initialize;
+ 		data->tmu_control = exynos7_tmu_control;
+@@ -1260,8 +1106,7 @@ static int exynos_map_dt_data(struct pla
+ 	 * Check if the TMU shares some registers and then try to map the
+ 	 * memory of common registers.
+ 	 */
+-	if (data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO &&
+-	    data->soc != SOC_ARCH_EXYNOS5440)
++	if (data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
+ 		return 0;
+ 
+ 	if (of_address_to_resource(pdev->dev.of_node, 1, &res)) {
