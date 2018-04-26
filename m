@@ -1,30 +1,68 @@
-From: andi@etezian.org
-Subject: Re: [RFC 08/10] spi: s3c64xx: samsung: Remove support for Exynos5440
-Date: Thu, 26 Apr 2018 13:35:03 +0900
-Message-ID: <f47ea49afb9301d33383143056ed11a7@etezian.org>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-9-krzk@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [RFC 0/2] dw_mmc: add multislot support
+Date: Thu, 26 Apr 2018 08:28:04 +0200
+Message-ID: <CAPDyKFr4WXgFEDLGztRoSrAFMrHC7ASJxaxCTKMeGN8i-Ns86w@mail.gmail.com>
+References: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
+ <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com>
+ <1524239609.10138.47.camel@synopsys.com> <CAPDyKFpY7JsQukY=E2PRg=iVfmis4i1kvST+b2wtshNc5Jn+jw@mail.gmail.com>
+ <1524664417.18209.16.camel@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180424203239.21885-9-krzk@kernel.org>
+In-Reply-To: <1524664417.18209.16.camel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfou>
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>, "kgene@kernel.org" <kgene@kernel.org>, "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+[...]
 
-On 25.04.2018 05:32, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> A bit remark for better understanding:
+>
+> All card settings change are serialized too. These settings are applied
+> after slot switch before execution of new request for this slot.
+>
+> So situations like calling any host_0 ops while another host (host_1) is active
+> are handled by current code.
+>
+> This is example of simultaneous ops calls for both slots:
+>
+> host (slot) 0    | host (slot) 1
+> -----------------------------------
+> h0->set_ios()    |    h1->set_ios()
+> h0->request()    |    h1->request()
+> h0->set_ios()    |    h1->set_ios()
+> h0->request()    |    h1->request()
+> h0->request()    |
+> h0->request()    |
+> h0->request()    |
+>
+> How it will be serialized in the mmc driver:
+>
+> h0->set_ios()   // h0 settings save
+> h1->set_ios()   // h1 settings save
+> h0->request()   // apply settings for h0 and do request
 
-Reviewed-by: Andi Shyti <andi@etezian.org>
+This doesn't work as it would mean violation of the specs in some
+scenarios. Particular during the card initialization and card power
+off.
 
-Thanks,
-Andi
+> ------ slot switch to h1 ------
+> h1->request()   // apply settings for h1 and do request
+
+Ditto. Etc...
+
+> h0->set_ios()   // h0 settings save
+> h1->set_ios()   // h1 settings save
+> ------ slot switch to h0 ------
+> h0->request()   // apply settings for h0 and do request
+> ------ slot switch to h1 ------
+> h1->request()   // apply settings for h1 and do request
+> ------ slot switch to h0 ------
+> h0->request()   // do request (no new settings to apply)
+> h0->request()   // do request (no new settings to apply)
+> h0->request()   // do request (no new settings to apply)
+>
+
+Kind regards
+Uffe
