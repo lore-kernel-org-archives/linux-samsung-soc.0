@@ -1,68 +1,45 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [RFC 0/2] dw_mmc: add multislot support
-Date: Thu, 26 Apr 2018 08:28:04 +0200
-Message-ID: <CAPDyKFr4WXgFEDLGztRoSrAFMrHC7ASJxaxCTKMeGN8i-Ns86w@mail.gmail.com>
-References: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
- <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com>
- <1524239609.10138.47.camel@synopsys.com> <CAPDyKFpY7JsQukY=E2PRg=iVfmis4i1kvST+b2wtshNc5Jn+jw@mail.gmail.com>
- <1524664417.18209.16.camel@synopsys.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: linux-next: build failure after merge of the clk-samsung tree
+Date: Thu, 26 Apr 2018 09:29:14 +0200
+Message-ID: <CAJKOXPexiwOyPwmAV8KQj4JAnWHYYP4o8eVYodhvRYfKFGVbNw@mail.gmail.com>
+References: <20180426091940.16bb1faf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1524664417.18209.16.camel@synopsys.com>
+In-Reply-To: <20180426091940.16bb1faf@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>, "kgene@kernel.org" <kgene@kernel.org>, "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-[...]
+On Thu, Apr 26, 2018 at 1:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Sylwester,
+>
+> After merging the clk-samsung tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>
+> In file included from arch/arm/boot/dts/exynos5440-sd5v1.dts:10:0:
+> arch/arm/boot/dts/exynos5440.dtsi:9:10: fatal error: dt-bindings/clock/exynos5440.h: No such file or directory
+>  #include <dt-bindings/clock/exynos5440.h>
+>           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> scripts/Makefile.lib:291: recipe for target 'arch/arm/boot/dts/exynos5440-sd5v1.dtb' failed
+> In file included from arch/arm/boot/dts/exynos5440-ssdk5440.dts:10:0:
+> arch/arm/boot/dts/exynos5440.dtsi:9:10: fatal error: dt-bindings/clock/exynos5440.h: No such file or directory
+>  #include <dt-bindings/clock/exynos5440.h>
+>           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Caused by commit
+>
+>   f986c0e40ff5 ("clk: samsung: Remove support for Exynos5440")
+>
+> I used the version of the clk-samsung tree from next-20180424 for today.
 
-> A bit remark for better understanding:
->
-> All card settings change are serialized too. These settings are applied
-> after slot switch before execution of new request for this slot.
->
-> So situations like calling any host_0 ops while another host (host_1) is active
-> are handled by current code.
->
-> This is example of simultaneous ops calls for both slots:
->
-> host (slot) 0    | host (slot) 1
-> -----------------------------------
-> h0->set_ios()    |    h1->set_ios()
-> h0->request()    |    h1->request()
-> h0->set_ios()    |    h1->set_ios()
-> h0->request()    |    h1->request()
-> h0->request()    |
-> h0->request()    |
-> h0->request()    |
->
-> How it will be serialized in the mmc driver:
->
-> h0->set_ios()   // h0 settings save
-> h1->set_ios()   // h1 settings save
-> h0->request()   // apply settings for h0 and do request
+Thanks for the report, kbuild also mentioned this. The DTS which are
+using this header are removed in first patch of patchset... which was
+not applied yet and anyway would end in different tree. I think the
+patch removing clk header should wait till DTS change get merged into
+mainline.
 
-This doesn't work as it would mean violation of the specs in some
-scenarios. Particular during the card initialization and card power
-off.
-
-> ------ slot switch to h1 ------
-> h1->request()   // apply settings for h1 and do request
-
-Ditto. Etc...
-
-> h0->set_ios()   // h0 settings save
-> h1->set_ios()   // h1 settings save
-> ------ slot switch to h0 ------
-> h0->request()   // apply settings for h0 and do request
-> ------ slot switch to h1 ------
-> h1->request()   // apply settings for h1 and do request
-> ------ slot switch to h0 ------
-> h0->request()   // do request (no new settings to apply)
-> h0->request()   // do request (no new settings to apply)
-> h0->request()   // do request (no new settings to apply)
->
-
-Kind regards
-Uffe
+Best regards,
+Krzysztof
