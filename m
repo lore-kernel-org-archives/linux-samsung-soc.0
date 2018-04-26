@@ -1,42 +1,85 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: linux-next: build failure after merge of the clk-samsung tree
-Date: Thu, 26 Apr 2018 12:32:06 +0200
-Message-ID: <c5139744-ca32-cfaf-c79a-f718ddd3c3f9@samsung.com>
-References: <20180426091940.16bb1faf@canb.auug.org.au>
-        <CAJKOXPexiwOyPwmAV8KQj4JAnWHYYP4o8eVYodhvRYfKFGVbNw@mail.gmail.com>
-        <CGME20180426103215epcas2p32c60d927d618a82075b051b1f0624216@epcas2p3.samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] drm/core: Remove drm_dev_unref() and it's uses
+Date: Thu, 26 Apr 2018 13:43:09 +0300
+Message-ID: <2767328.18DNhHKilX@avalon>
+References: <20180426102819.6985-1-vthakkar1994@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAJKOXPexiwOyPwmAV8KQj4JAnWHYYP4o8eVYodhvRYfKFGVbNw@mail.gmail.com>
-Content-language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180426102819.6985-1-vthakkar1994@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Vaishali Thakkar <vthakkar1994@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, alexandre.belloni@bootlin.com, airlied@linux.ie, thierry.reding@gmail.com, kraxel@redhat.com, nouveau@lists.freedesktop.org, marex@denx.de, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, tomi.valkeinen@ti.com, linux@armlinux.org.uk, krzk@kernel.org, jonathanh@nvidia.com, z.liuxinliang@hisilicon.com, maxime.ripard@bootlin.com, kong.kongxinwei@hisilicon.com, kgene@kernel.org, bskeggs@redhat.com, linux-arm-msm@vger.kernel.org, airlied@redhat.com, virtualization@lists.linux-foundation.org, freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, puck.chen@hisilicon.com, intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, brodkin@synopsys.com, boris.brezillon@bootlin.com, zourongrong@gmail.com, rodrigo.vivi@intel.com, matthias.bgg@gmail.com, org@freedesktop.org, wens@csie.org, vincent.abriou@st.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/26/2018 09:29 AM, Krzysztof Kozlowski wrote:
-> On Thu, Apr 26, 2018 at 1:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
->> After merging the clk-samsung tree, today's linux-next build (arm
->> multi_v7_defconfig) failed like this:
-[...]
->> Caused by commit
->>
->>   f986c0e40ff5 ("clk: samsung: Remove support for Exynos5440")
->>
->> I used the version of the clk-samsung tree from next-20180424 for today.
-> 
-> Thanks for the report, kbuild also mentioned this. The DTS which are
-> using this header are removed in first patch of patchset... which was
-> not applied yet and anyway would end in different tree. I think the
-> patch removing clk header should wait till DTS change get merged into
-> mainline.
-
-Yes, let's remove all related dts parts first and then drivers in
-subsequent release.
-
---
-Regards,
-Sylwester
+SGkgVmFpc2hhbGksCgpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KCk9uIFRodXJzZGF5LCAyNiBB
+cHJpbCAyMDE4IDEzOjI4OjE5IEVFU1QgVmFpc2hhbGkgVGhha2thciB3cm90ZToKPiBJdCdzIGJl
+ZW4gYSB3aGlsZSBzaW5jZSB3ZSBpbnRyb2R1Y2VkIGRybV9kZXZ7Z2V0L3B1dH0gZnVuY3Rpb25z
+Cj4gdG8gcmVwbGFjZSByZWZlcmVuY2UvdW5yZWZlcmVuY2UgaW4gZHJtIHN1YnN5c3RlbSBmb3Ig
+dGhlCj4gY29uc2lzdGVuY3kgcHVycG9zZS4gU28sIHdpdGggdGhpcyBwYXRjaCwgbGV0J3MganVz
+dCByZXBsYWNlCj4gYWxsIGN1cnJlbnQgdXNlIGNhc2VzIG9mIGRybV9kZXZfdW5yZWYoKSB3aXRo
+IGRybV9kZXZfcHV0IGFuZCByZW1vdmUKPiB0aGUgZnVuY3Rpb24gaXRzZWxmLgo+IAo+IENvY2Np
+bmVsbGUgd2FzIHVzZWQgZm9yIG1hc3MtcGF0Y2hpbmcuCj4gCj4gU2lnbmVkLW9mZi1ieTogVmFp
+c2hhbGkgVGhha2thciA8dnRoYWtrYXIxOTk0QGdtYWlsLmNvbT4KCkkgbG92ZSBzZWVpbmcgZGVw
+cmVjYXRlZCBmdW5jdGlvbnMgZ28uCgpSZXZpZXdlZC1ieTogTGF1cmVudCBQaW5jaGFydCA8bGF1
+cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgoKPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJt
+L2FtZC9hbWRncHUvYW1kZ3B1X2Rydi5jICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMv
+Z3B1L2RybS9hcmMvYXJjcGd1X2Rydi5jICAgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9kcnYuYyAgICAgICAgICAgICAgICB8ICA2ICsr
+Ky0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYyAgICAg
+ICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9kcnYuYyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgfCAxMyAtLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0
+bmF2aXZfZHJ2LmMgICAgICAgICAgICAgIHwgIDQgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHJ2LmMgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUv
+ZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZl
+cnMvZ3B1L2RybS9oaXNpbGljb24vaGlibWMvaGlibWNfZHJtX2Rydi5jICAgIHwgIDQgKystLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2tpcmluL2tpcmluX2RybV9kcnYuYyAgICB8ICA4
+ICsrKystLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9odWdlX3BhZ2VzLmMg
+ICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3RzL2k5MTVfZ2Vt
+X2RtYWJ1Zi5jICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvaTkx
+NV9nZW1fZXZpY3QuYyAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0
+cy9pOTE1X2dlbV9ndHQuYyAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvc2Vs
+ZnRlc3RzL2k5MTVfZ2VtX29iamVjdC5jICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkx
+NS9zZWxmdGVzdHMvaTkxNV9yZXF1ZXN0LmMgICAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9pOTE1L3NlbGZ0ZXN0cy9pOTE1X3ZtYS5jICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9n
+cHUvZHJtL2k5MTUvc2VsZnRlc3RzL2ludGVsX2JyZWFkY3J1bWJzLmMgfCAgMiArLQo+ICBkcml2
+ZXJzL2dwdS9kcm0vaW14L2lteC1kcm0tY29yZS5jICAgICAgICAgICAgICAgICB8ICA0ICsrLS0K
+PiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmMgICAgICAgICAgICAgfCAg
+NiArKystLS0KPiAgZHJpdmVycy9ncHUvZHJtL21zbS9tc21fZHJ2LmMgICAgICAgICAgICAgICAg
+ICAgICAgfCAgOCArKysrLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbXhzZmIvbXhzZmJfZHJ2LmMg
+ICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91
+dmVhdV9wbGF0Zm9ybS5jICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRy
+bS9vbWFwX2Rydi5jICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJt
+L3BsMTExL3BsMTExX2Rydi5jICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMv
+Z3B1L2RybS9xeGwvcXhsX2Rydi5jICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJp
+dmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuYyAgICAgICAgICAgICAgfCAgMiArLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5jICAgICAgICB8ICA0
+ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL3NobW9iaWxlL3NobW9iX2RybV9kcnYuYyAgICAgICAg
+ICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2Rydi5jICAgICAgICAgICAg
+ICAgICAgICAgIHwgIDggKysrKy0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3N0bS9kcnYuYyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9z
+dW40aV9kcnYuYyAgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZHJtLmMgICAgICAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9n
+cHUvZHJtL3Rpbnlkcm0vY29yZS90aW55ZHJtLWNvcmUuYyAgICAgICAgfCAgNiArKystLS0KPiAg
+ZHJpdmVycy9ncHUvZHJtL3R2ZTIwMC90dmUyMDBfZHJ2LmMgICAgICAgICAgICAgICAgfCAgNCAr
+Ky0tCj4gIGRyaXZlcnMvZ3B1L2RybS91ZGwvdWRsX2Rydi5jICAgICAgICAgICAgICAgICAgICAg
+IHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICAgICAg
+ICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS92Z2VtL3ZnZW1fZHJ2LmMgICAgICAg
+ICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2Ry
+bV9idXMuYyAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0venRlL3p4X2RybV9k
+cnYuYyAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgaW5jbHVkZS9kcm0vZHJtX2Rydi5o
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIDQxIGZpbGVzIGNoYW5nZWQs
+IDczIGluc2VydGlvbnMoKyksIDg3IGRlbGV0aW9ucygtKQoKLS0gClJlZ2FyZHMsCgpMYXVyZW50
+IFBpbmNoYXJ0CgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
