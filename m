@@ -1,60 +1,27 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: [PATCH 22/24] drm/bridge: remove the .of_node member
-Date: Fri, 27 Apr 2018 00:31:37 +0200
-Message-ID: <20180426223139.16740-23-peda@axentia.se>
-References: <20180426223139.16740-1-peda@axentia.se>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/2] pinctrl/samsung: Correct EINTG banks order
+Date: Fri, 27 Apr 2018 01:04:14 +0200
+Message-ID: <CACRpkdabT-rZ19=5JjbzzchB5eBQL7jCOBHAJ0QH0PkpRUEqBQ@mail.gmail.com>
+References: <1523893966-8884-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <1523893966-8884-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <CA+Ln22E17WK2GA_6-AXZu9Z+Q_Nb86xO6npZvrCc21ciYwHt8w@mail.gmail.com> <CAJKOXPdoJV_3BucTjJ0xxd6cc6PYy3W0L8e_emmDmwZnhgXqvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426223139.16740-1-peda@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, David Airlie <airlied@linux.ie>, Peter Senna Tschudin <peter.senna@collabora.com>, Martin Donnelly <martin.donnelly@ge.com>, Martyn Welch <martyn.welch@collabora.co.uk>, Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPdoJV_3BucTjJ0xxd6cc6PYy3W0L8e_emmDmwZnhgXqvA@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-It is unused.
+On Wed, Apr 18, 2018 at 5:47 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/gpu/drm/drm_bridge.c | 3 +--
- include/drm/drm_bridge.h     | 4 ----
- 2 files changed, 1 insertion(+), 6 deletions(-)
+> I fixed this, re-wrapped commit for 72-column and applied to my tree.
+>
+> Linus,
+> I'll send them to you in pull request for next release cycle.
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 67147673fdeb..9f023bd84d56 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -365,8 +365,7 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
- 	mutex_lock(&bridge_lock);
- 
- 	list_for_each_entry(bridge, &bridge_list, list) {
--		if ((bridge->owner && bridge->owner->of_node == np) ||
--		    bridge->of_node == np) {
-+		if (bridge->owner->of_node == np) {
- 			mutex_unlock(&bridge_lock);
- 			return bridge;
- 		}
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index c28a75ad0ae2..3bc659f3e7d2 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -258,7 +258,6 @@ struct drm_bridge_timings {
-  * @dev: DRM device this bridge belongs to
-  * @encoder: encoder to which this bridge is connected
-  * @next: the next bridge in the encoder chain
-- * @of_node: device node pointer to the bridge
-  * @list: to keep track of all added bridges
-  * @timings: the timing specification for the bridge, if any (may
-  * be NULL)
-@@ -270,9 +269,6 @@ struct drm_bridge {
- 	struct drm_device *dev;
- 	struct drm_encoder *encoder;
- 	struct drm_bridge *next;
--#ifdef CONFIG_OF
--	struct device_node *of_node;
--#endif
- 	struct list_head list;
- 	const struct drm_bridge_timings *timings;
- 
--- 
-2.11.0
+OK waiting for that.
+
+Yours,
+Linus Walleij
