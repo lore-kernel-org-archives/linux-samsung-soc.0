@@ -1,59 +1,111 @@
-From: Peter Rosin <peda@axentia.se>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH 00/24] device link, bridge supplier <-> drm device
-Date: Fri, 27 Apr 2018 01:09:14 +0200
-Message-ID: <8a9fcd8c-962d-1acc-c2ba-74a3d8f59590@axentia.se>
-References: <20180426223139.16740-1-peda@axentia.se>
- <1881012.XPHlTWYXH6@avalon>
+Date: Fri, 27 Apr 2018 09:11:10 +0200
+Message-ID: <25d8e621-b3f8-094f-32a2-d22efc2163a4@samsung.com>
+References: <CGME20180426223215epcas2p38fe3b0b7b1ea1c8190805f9e2a89e11e@epcas2p3.samsung.com>
+ <20180426223139.16740-1-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1881012.XPHlTWYXH6@avalon>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180426223139.16740-1-peda@axentia.se>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>, Peter Senna Tschudin <peter.senna@collabora.com>, Martin Donnelly <martin.donnelly@ge.com>, Martyn Welch <martyn.welch@collabora.co.uk>, Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Martyn Welch <martyn.welch@collabora.co.uk>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Senna Tschudin <peter.senna@collabora.com>, Martin Donnelly <martin.donnelly@ge.com>, linux-arm-msm@vger.kernel.org, Jyri Sarha <jsarha@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-renesas-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2018-04-27 00:40, Laurent Pinchart wrote:
-> Hi Peter,
-> 
-> Thank you for the patches.
-> 
-> On Friday, 27 April 2018 01:31:15 EEST Peter Rosin wrote:
->> Hi!
->>
->> It was noted by Russel King [1] that bridges (not using components)
->> might disappear unexpectedly if the owner of the bridge was unbound.
->> Jyri Sarha had previously noted the same thing with panels [2]. Jyri
->> came up with using device links to resolve the panel issue, which
->> was also my (independent) reaction to the note from Russel.
->>
->> This series builds up to the addition of that link in the last
->> patch, but in my opinion the other 23 patches do have merit on their
->> own.
->>
->> The last patch needs testing, while the others look trivial. That
->> said, I might have missed some subtlety.
-> 
-> I don't think this is the way to go. We have a real lifetime management 
-> problem with bridges, and device links are just trying to hide the problem 
-> under the carpet. They will further corner us by making a real fix much more 
-> difficult to implement. I'll try to comment further in the next few days on 
-> what I think a better solution would be, but in a nutshell I believe that 
-> drm_bridge objects need to be refcounted, with a .release() operation to free 
-> the bridge resources when the reference count drops to zero. This shouldn't be 
-> difficult to implement and I'm willing to help.
-
-Ok, sp 24/24 is dead, and maybe 23/24 too. But how do you feel about dropping
-.of_node in favour of .owner? That gets rid of ugly #ifdefs...
-
-I also have the nagging feeling that .driver_private serves very little real
-purpose if there is a .owner so that you can do
-
-	dev_get_drvdata(bridge->owner)
-
-for the cases where the container_of macro is not appropriate.
-
-Cheers,
-Peter
+SGkgUGV0ZXIsCgpPbiAyNy4wNC4yMDE4IDAwOjMxLCBQZXRlciBSb3NpbiB3cm90ZToKPiBIaSEK
+Pgo+IEl0IHdhcyBub3RlZCBieSBSdXNzZWwgS2luZyBbMV0gdGhhdCBicmlkZ2VzIChub3QgdXNp
+bmcgY29tcG9uZW50cykKPiBtaWdodCBkaXNhcHBlYXIgdW5leHBlY3RlZGx5IGlmIHRoZSBvd25l
+ciBvZiB0aGUgYnJpZGdlIHdhcyB1bmJvdW5kLgo+IEp5cmkgU2FyaGEgaGFkIHByZXZpb3VzbHkg
+bm90ZWQgdGhlIHNhbWUgdGhpbmcgd2l0aCBwYW5lbHMgWzJdLiBKeXJpCj4gY2FtZSB1cCB3aXRo
+IHVzaW5nIGRldmljZSBsaW5rcyB0byByZXNvbHZlIHRoZSBwYW5lbCBpc3N1ZSwgd2hpY2gKPiB3
+YXMgYWxzbyBteSAoaW5kZXBlbmRlbnQpIHJlYWN0aW9uIHRvIHRoZSBub3RlIGZyb20gUnVzc2Vs
+Lgo+Cj4gVGhpcyBzZXJpZXMgYnVpbGRzIHVwIHRvIHRoZSBhZGRpdGlvbiBvZiB0aGF0IGxpbmsg
+aW4gdGhlIGxhc3QKPiBwYXRjaCwgYnV0IGluIG15IG9waW5pb24gdGhlIG90aGVyIDIzIHBhdGNo
+ZXMgZG8gaGF2ZSBtZXJpdCBvbiB0aGVpcgo+IG93bi4KPgo+IFRoZSBsYXN0IHBhdGNoIG5lZWRz
+IHRlc3RpbmcsIHdoaWxlIHRoZSBvdGhlcnMgbG9vayB0cml2aWFsLiBUaGF0Cj4gc2FpZCwgSSBt
+aWdodCBoYXZlIG1pc3NlZCBzb21lIHN1YnRsZXR5LgoKb2Zfbm9kZSBpcyB1c2VkIGFzIGFuIGlk
+ZW50aWZpZXIgb2YgdGhlIGJyaWRnZSBpbiB0aGUga2VybmVsLiBJZiB5b3UKcmVwbGFjZSBpdCB3
+aXRoIGRldmljZSBwb2ludGVyIHRoZXJlIHdpbGwgYmUgcG90ZW50aWFsIHByb2JsZW0gd2l0aApk
+ZXZpY2VzIGhhdmluZyB0d28gb3IgbW9yZSBicmlkZ2VzLCBob3cgZG8geW91IGRpZmZlcmVudGlh
+dGUgYnJpZGdlcyBpZgp0aGUgb3duZXIgaXMgdGhlIHNhbWU/IElmIEkgcmVtZW1iZXIgY29ycmVj
+dGx5IGN1cnJlbnQgYnJpZGdlIGNvZGUgZG9lcwpub3QgYWxsb3cgdG8gaGF2ZSBtdWx0aXBsZSBi
+cmlkZ2VzIGluIG9uZSBkZXZpY2UsIGJ1dCB0aGF0IHNob3VsZCBiZQpxdWl0ZSBlYXN5IHRvIGZp
+eCBpZiBuZWNlc3NhcnkuIEFmdGVyIHRoaXMgY2hhbmdlIGl0IHdpbGwgYmVjb21lIG1vcmUKZGlm
+ZmljdWx0LgoKQW55d2F5IEkgcmVtZW1iZXIgZGlzY3Vzc2lvbiB0aGF0IGluIERUIHdvcmxkIGJy
+aWRnZSBzaG91bGQgYmUKaWRlbnRpZmllZCByYXRoZXIgYnkgb2ZfZ3JhcGggcG9ydCBub2RlLCBu
+b3QgYnkgcGFyZW50IG5vZGUgYXMgaXQgaXMKbm93LiBJZiB5b3Ugd2FudCB0byB0cmFuc2xhdGUg
+dGhpcyByZWxhdGlvbiB0byBkZXZpY2Ugb3duZXIsIHlvdSBzaG91bGQKYWRkIGFsc28gcG9ydCBu
+dW1iZXIgdG8gaGF2ZSBmdWxsIGlkZW50aWZpY2F0aW9uIG9mIHRoZSBicmlkZ2UsIGllIHBhaXIK
+KG93bmVyLCBwb3J0X251bWJlcikgd291bGQgYmUgZXF1aXZhbGVudCBvZiBwb3J0IG5vZGUuCgpS
+ZWdhcmRzCkFuZHJ6ZWoKCgo+Cj4gQ2hlZXJzLAo+IFBldGVyCj4KPiBbMV0gaHR0cHM6Ly9sa21s
+Lm9yZy9sa21sLzIwMTgvNC8yMy83NjkKPiBbMl0gaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlz
+dHMvZHJpLWRldmVsL21zZzE3NDI3NS5odG1sCj4KPiBQZXRlciBSb3NpbiAoMjQpOgo+ICAgZHJt
+L2JyaWRnZTogYWxsb3cgb3B0aW9uYWxseSBzcGVjaWZ5aW5nIGFuIC5vd25lciBkZXZpY2UKPiAg
+IGRybS9icmlkZ2U6IGFkdjc1MTE6IHByb3ZpZGUgYW4gLm93bmVyIGRldmljZQo+ICAgZHJtL2Jy
+aWRnZS9hbmFsb2dpeDogY29yZTogc3BlY2lmeSB0aGUgLm93bmVyIG9mIHRoZSBicmlkZ2UKPiAg
+IGRybS9icmlkZ2U6IGFuYWxvZ2l4LWFueDc4eHg6IHByb3ZpZGUgYW4gLm93bmVyIGRldmljZQo+
+ICAgZHJtL2JyaWRnZTogdmdhLWRhYzogcHJvdmlkZSBhbiAub3duZXIgZGV2aWNlCj4gICBkcm0v
+YnJpZGdlOiBsdmRzLWVuY29kZXI6IHByb3ZpZGUgYW4gLm93bmVyIGRldmljZQo+ICAgZHJtL2Jy
+aWRnZTogbWVnYWNoaXBzLXN0ZHB4eHh4LWdlLWI4NTB2My1mdzogcHJvdmlkZSBhbiAub3duZXIg
+ZGV2aWNlCj4gICBkcm0vYnJpZGdlOiBueHAtcHRuMzQ2MDogcHJvdmlkZSBhbiAub3duZXIgZGV2
+aWNlCj4gICBkcm0vYnJpZGdlOiBwYW5lbDogcHJvdmlkZSBhbiAub3duZXIgZGV2aWNlCj4gICBk
+cm0vYnJpZGdlOiBwczg2MjI6IHByb3ZpZGUgYW4gLm93bmVyIGRldmljZQo+ICAgZHJtL2JyaWRn
+ZTogc2lpOTAyeDogcHJvdmlkZSBhbiAub3duZXIgZGV2aWNlCj4gICBkcm0vYnJpZGdlOiBzaWk5
+MjM0OiBwcm92aWRlIGFuIC5vd25lciBkZXZpY2UKPiAgIGRybS9icmlkZ2U6IHNpaTg2MjA6IHBy
+b3ZpZGUgYW4gLm93bmVyIGRldmljZQo+ICAgZHJtL2JyaWRnZTogc3lub3BzeXM6IHByb3ZpZGUg
+YW4gLm93bmVyIGRldmljZSBmb3IgdGhlIGJyaWRnZXMKPiAgIGRybS9icmlkZ2U6IHRjMzU4NzY3
+OiBwcm92aWRlIGFuIC5vd25lciBkZXZpY2UKPiAgIGRybS9icmlkZ2U6IHRpLXRmcDQxMDogcHJv
+dmlkZSBhbiAub3duZXIgZGV2aWNlCj4gICBkcm0vZXh5bm9zOiBtaWM6IHByb3ZpZGUgYW4gLm93
+bmVyIGRldmljZSBmb3IgdGhlIGJyaWRnZQo+ICAgZHJtL21lZGlhdGVrOiBoZG1pOiBwcm92aWRl
+IGFuIC5vd25lciBkZXZpY2UgZm9yIHRoZSBicmlkZ2UKPiAgIGRybS9tc206IHNwZWNpZnkgdGhl
+IC5vd25lciBvZiB0aGUgYnJpZGdlcwo+ICAgZHJtL3JjYXItZHU6IGx2ZHM6IHByb3ZpZGUgYW4g
+Lm93bmVyIGRldmljZSBmb3IgdGhlIGJyaWRnZQo+ICAgZHJtL3N0aTogcHJvdmlkZSBhbiAub3du
+ZXIgZGV2aWNlIGZvciB0aGUgYnJpZGdlcwo+ICAgZHJtL2JyaWRnZTogcmVtb3ZlIHRoZSAub2Zf
+bm9kZSBtZW1iZXIKPiAgIGRybS9icmlkZ2U6IHJlcXVpcmUgdGhlIC5vd25lciB0byBiZSBmaWxs
+ZWQgaW4gb24gZHJtX2JyaWRnZV9hdHRhY2gKPiAgIGRybS9icmlkZ2U6IGVzdGFibGlzaCBhIGxp
+bmsgYmV0d2VlbiB0aGUgYnJpZGdlIHN1cHBsaWVyIGFuZCBjb25zdW1lcgo+Cj4gIGRyaXZlcnMv
+Z3B1L2RybS9icmlkZ2UvYWR2NzUxMS9hZHY3NTExX2Rydi5jICAgICAgIHwgIDIgKy0KPiAgZHJp
+dmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC1hbng3OHh4LmMgICAgICAgICAgfCAgNSArLS0t
+LQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyB8
+ICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9kdW1iLXZnYS1kYWMuYyAgICAgICAgICAg
+ICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2x2ZHMtZW5jb2Rlci5jICAgICAg
+ICAgICAgICB8ICAyICstCj4gIC4uLi9kcm0vYnJpZGdlL21lZ2FjaGlwcy1zdGRweHh4eC1nZS1i
+ODUwdjMtZncuYyAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9ueHAtcHRuMzQ2
+MC5jICAgICAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BhbmVs
+LmMgICAgICAgICAgICAgICAgICAgICB8ICA0ICstLS0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRn
+ZS9wYXJhZGUtcHM4NjIyLmMgICAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0v
+YnJpZGdlL3NpaTkwMnguYyAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1
+L2RybS9icmlkZ2Uvc2lpOTIzNC5jICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jICAgICAgICAgICAgICAgfCAgMiArLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWkuYyAgICAgICAgICB8ICA0ICst
+LS0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1taXBpLWRzaS5jICAgICAg
+fCAgNCArLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvdGMzNTg3NjcuYyAgICAgICAgICAg
+ICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS90aS10ZnA0MTAuYyAgICAg
+ICAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5jICAgICAg
+ICAgICAgICAgICAgICAgICB8IDIzICsrKysrKysrKysrKysrKysrKysrKy0KPiAgZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jICAgICAgICAgICAgfCAgMiArLQo+ICBkcml2
+ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2hkbWkuYyAgICAgICAgICAgICAgICB8ICAyICstCj4g
+IGRyaXZlcnMvZ3B1L2RybS9tc20vZHNpL2RzaV9tYW5hZ2VyLmMgICAgICAgICAgICAgIHwgIDEg
+Kwo+ICBkcml2ZXJzL2dwdS9kcm0vbXNtL2VkcC9lZHBfYnJpZGdlLmMgICAgICAgICAgICAgICB8
+ICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfYnJpZGdlLmMgICAgICAgICAg
+ICAgfCAgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfbHZkcy5jICAgICAgICAg
+ICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfZHZvLmMgICAgICAgICAg
+ICAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZGEuYyAgICAg
+ICAgICAgICAgICAgICAgICB8ICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5j
+ICAgICAgICAgICAgICAgICAgICAgfCAgMSArCj4gIGluY2x1ZGUvZHJtL2RybV9icmlkZ2UuaCAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDggKysrKy0tLS0KPiAgMjcgZmlsZXMgY2hhbmdl
+ZCwgNTEgaW5zZXJ0aW9ucygrKSwgMzMgZGVsZXRpb25zKC0pCj4KCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
