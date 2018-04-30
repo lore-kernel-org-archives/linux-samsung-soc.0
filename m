@@ -1,34 +1,60 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 03/18] thermal: exynos: always check for critical trip
- points existence
-Date: Mon, 30 Apr 2018 17:24:15 +0200
-Message-ID: <5229331.iYYXeBBCxK@amdc3058>
-References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
-        <1524743493-28113-4-git-send-email-b.zolnierkie@samsung.com>
-        <20180430144450.GI11457@mai>
-        <CGME20180430152416eucas1p10bde2c1501e7f5f4b284caca3b630ea3@eucas1p1.samsung.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 23/24] drm/bridge: require the .owner to be
+ filled in on drm_bridge_attach
+Date: Mon, 30 Apr 2018 17:24:38 +0200
+Message-ID: <20180430152438.GO12521@phenom.ffwll.local>
+References: <20180426223139.16740-1-peda@axentia.se>
+ <20180426223139.16740-24-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180430144450.GI11457@mai>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20180426223139.16740-24-peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Cc: freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Martin Donnelly <martin.donnelly-JJi787mZWgc@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, April 30, 2018 04:44:50 PM Daniel Lezcano wrote:
-> On Thu, Apr 26, 2018 at 01:51:18PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > * Check for critical trip point existence in exynos_tmu_initialize()
-> >   so it is checked on all SoCs (except Exynos5433 for now).
-> 
-> Why "except Exynos5433" ?
-
-I was a bit vague here - Exynos5433 DTS needs to be fixed first to define
-critical trip points.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+T24gRnJpLCBBcHIgMjcsIDIwMTggYXQgMTI6MzE6MzhBTSArMDIwMCwgUGV0ZXIgUm9zaW4gd3Jv
+dGU6Cj4gVGhlIC5vd25lciB3aWxsIGJlIGhhbmR5IHRvIGhhdmUgYXJvdW5kLgo+IAo+IFNpZ25l
+ZC1vZmYtYnk6IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEuc2U+Cj4gLS0tCj4gIGRyaXZlcnMv
+Z3B1L2RybS9kcm1fYnJpZGdlLmMgfCAzICsrKwo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRp
+b25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5jCj4gaW5kZXggOWYwMjNiZDg0ZDU2Li5hMDM4ZGE2
+OTY4MDIgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9icmlkZ2UuYwo+ICsrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMKPiBAQCAtMTE1LDYgKzExNSw5IEBAIGludCBk
+cm1fYnJpZGdlX2F0dGFjaChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsIHN0cnVjdCBkcm1f
+YnJpZGdlICpicmlkZ2UsCj4gIAlpZiAoIWVuY29kZXIgfHwgIWJyaWRnZSkKPiAgCQlyZXR1cm4g
+LUVJTlZBTDsKPiAgCj4gKwlpZiAoV0FSTl9PTighYnJpZGdlLT5vd25lcikpCj4gKwkJcmV0dXJu
+IC1FSU5WQUw7CgpJIHRoaW5rIGNvbmNlcHR1YWxseSB0aGlzIGlzIGNoZWNrZWQgYXQgdGhlIHdy
+b25nIHBsYWNlLCBhbmQgSSB0aGluayBhbHNvIG1pc25hbWVkCmEgYml0LiBUaGUgLT5vd25lciBp
+cyBlc3NlbnRpYWxseSB0aGUgc3RydWN0IGRldmljZSAoYW5kIGl0cyBhc3NvY2lhdGVkCmRyaXZl
+cikgdGhhdCBwcm92aWRlcyB0aGUgZHJtX2JyaWRnZS4gQXMgc3VjaCBpdCBzaG91bGQgYmUgZmls
+bGVkIG91dAphbHJlYWR5IGF0IGRybV9icmlkZ2VfYWRkKCkgdGltZSwgYW5kIEkgdGhpbmsgdGhl
+IGNoZWNrIHNob3VsZCBiZSBpbgp0aGVyZS4gRm9yIGRyaXZlci1pbnRlcm5hbCBicmlkZ2VzIGl0
+IG1pZ2h0IG1ha2Ugc2Vuc2UgdG8gYWxzbyBjaGVjayB0aGlzCmhlcmUsIG5vdCBzdXJlLiBPciBq
+dXN0IHJlcXVpcmUgYWxsIGJyaWRnZXMgZ2V0IGFkZGVkLgoKV3J0IHRoZSBuYW1lLCBJIHRoaW5r
+IHdlIHNob3VsZCBjYWxsIHRoaXMgcGRldiBvciBzb21ldGhpbmcuIC0+b3duZXIKdXN1YWxseSBt
+ZWFucyB0aGUgbW9kdWxlIG93bmVyLiBJIHRoaW5rIGluIG90aGVyIHN1YnN5c3RlbXMgLT5kZXYg
+aXMgdXNlZCwKYnV0IGluIGRybSB3ZSB1c2UgLT5kZXYgZm9yIHRoZSBkcm1fZGV2aWNlIHBvaW50
+ZXIsIHNvIHRvdGFsbHkgZGlmZmVyZW50CnRoaW5nLiBwZGV2ID0gcGh5c2ljYWwgZGV2aWNlIGlz
+IHRoZSBiZXN0IEkgY2FtZSB1cCB3aXRoLiBCZXR0ZXIKc3VnZ2VzdGlvbnMgdmVyeSBtdWNoIHdl
+bGNvbWUuCi1EYW5pZWwKCj4gKwo+ICAJaWYgKHByZXZpb3VzICYmICghcHJldmlvdXMtPmRldiB8
+fCBwcmV2aW91cy0+ZW5jb2RlciAhPSBlbmNvZGVyKSkKPiAgCQlyZXR1cm4gLUVJTlZBTDsKPiAg
+Cj4gLS0gCj4gMi4xMS4wCj4gCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwo+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50
+ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5vIG1haWxpbmcgbGlzdApGcmVlZHJl
+bm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZnJlZWRyZW5vCg==
