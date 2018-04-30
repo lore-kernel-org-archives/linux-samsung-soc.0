@@ -1,39 +1,79 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/5] ARM: dts: exynos: Remove unnecessary address/size
- properties in Midas boards
-Date: Sun, 29 Apr 2018 19:28:28 +0200
-Message-ID: <20180429172828.2j2qjuwl6z2oipup@kozik-lap>
-References: <20180424174602.3915-1-krzk@kernel.org>
+From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Subject: Re: [PATCH 22/24] drm/bridge: remove the .of_node member
+Date: Mon, 30 Apr 2018 13:14:08 +0200
+Message-ID: <f5f99e99-1174-6ee0-c097-e1a9d4d5a62a@axentia.se>
+References: <20180426223139.16740-23-peda@axentia.se>
+ <201804281608.Iji1Keed%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180424174602.3915-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <201804281608.Iji1Keed%fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Martin Donnelly <martin.donnelly-JJi787mZWgc@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 07:45:58PM +0200, Krzysztof Kozlowski wrote:
-> The children of regulators node do not have reg/ranges properties.  Move the
-> children up one level, get rid of regulators node and remove
-> address-cells and size-cells properties.  This fixes warnings for
-> Exynos4412 Midas family boards:
-> 
->     arch/arm/boot/dts/exynos4412-i9300.dtb: Warning (avoid_unnecessary_addr_size):
->         /regulators: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
->     arch/arm/boot/dts/exynos4412-i9305.dtb: Warning (avoid_unnecessary_addr_size):
->         /regulators: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
->     arch/arm/boot/dts/exynos4412-n710x.dtb: Warning (avoid_unnecessary_addr_size):
->         /regulators: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 32 +++++------
->  arch/arm/boot/dts/exynos4412-midas.dtsi     | 86 ++++++++++++++---------------
->  2 files changed, 55 insertions(+), 63 deletions(-)
-
-Applied entire series.
-
-
-Best regards,
-Krzysztof
+T24gMjAxOC0wNC0yOCAxMDowOSwga2J1aWxkIHRlc3Qgcm9ib3Qgd3JvdGU6Cj4gSGkgUGV0ZXIs
+Cj4gCj4gSSBsb3ZlIHlvdXIgcGF0Y2ghIFlldCBzb21ldGhpbmcgdG8gaW1wcm92ZToKPiAKPiBb
+YXV0byBidWlsZCB0ZXN0IEVSUk9SIG9uIHY0LjE3LXJjMl0KPiBbYWxzbyBidWlsZCB0ZXN0IEVS
+Uk9SIG9uIG5leHQtMjAxODA0MjZdCj4gW2Nhbm5vdCBhcHBseSB0byBkcm0vZHJtLW5leHQgcm9i
+Y2xhcmsvbXNtLW5leHQgZHJtLWV4eW5vcy9leHlub3MtZHJtL2Zvci1uZXh0XQo+IFtpZiB5b3Vy
+IHBhdGNoIGlzIGFwcGxpZWQgdG8gdGhlIHdyb25nIGdpdCB0cmVlLCBwbGVhc2UgZHJvcCB1cyBh
+IG5vdGUgdG8gaGVscCBpbXByb3ZlIHRoZSBzeXN0ZW1dCj4gCj4gdXJsOiAgICBodHRwczovL2dp
+dGh1Yi5jb20vMGRheS1jaS9saW51eC9jb21taXRzL1BldGVyLVJvc2luL2RldmljZS1saW5rLWJy
+aWRnZS1zdXBwbGllci1kcm0tZGV2aWNlLzIwMTgwNDI4LTEzNTIyOQo+IGNvbmZpZzogYXJtLWFs
+bG1vZGNvbmZpZyAoYXR0YWNoZWQgYXMgLmNvbmZpZykKPiBjb21waWxlcjogYXJtLWxpbnV4LWdu
+dWVhYmktZ2NjIChEZWJpYW4gNy4yLjAtMTEpIDcuMi4wCj4gcmVwcm9kdWNlOgo+ICAgICAgICAg
+d2dldCBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vaW50ZWwvbGtwLXRlc3RzL21h
+c3Rlci9zYmluL21ha2UuY3Jvc3MgLU8gfi9iaW4vbWFrZS5jcm9zcwo+ICAgICAgICAgY2htb2Qg
+K3ggfi9iaW4vbWFrZS5jcm9zcwo+ICAgICAgICAgIyBzYXZlIHRoZSBhdHRhY2hlZCAuY29uZmln
+IHRvIGxpbnV4IGJ1aWxkIHRyZWUKPiAgICAgICAgIG1ha2UuY3Jvc3MgQVJDSD1hcm0gCj4gCj4g
+QWxsIGVycm9ycyAobmV3IG9uZXMgcHJlZml4ZWQgYnkgPj4pOgo+IAo+ICAgIGRyaXZlcnMvZ3B1
+Ly9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfbHZkcy5jOiBJbiBmdW5jdGlvbiAncm9ja2NoaXBfbHZk
+c19iaW5kJzoKPj4+IGRyaXZlcnMvZ3B1Ly9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfbHZkcy5jOjM4
+MToyNDogZXJyb3I6ICdzdHJ1Y3QgZHJtX2JyaWRnZScgaGFzIG5vIG1lbWJlciBuYW1lZCAnb2Zf
+bm9kZScKPiAgICAgICByZW1vdGUgPSBsdmRzLT5icmlkZ2UtPm9mX25vZGU7Cj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgXn4KPiAKPiB2aW0gKzM4MSBkcml2ZXJzL2dwdS8vZHJtL3JvY2tj
+aGlwL3JvY2tjaGlwX2x2ZHMuYwoKVWdoLgoKU28sIHBhdGNoIDEvMjQgbmVlZHMgdG8gYmUgYW1l
+bmRlZCB3aXRoIHRoaXMKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9j
+a2NoaXBfbHZkcy5jIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2x2ZHMuYwpp
+bmRleCBlNjdmNGVhMjhjMGUuLjNmMzMwMzRiM2Y1OCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2x2ZHMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2No
+aXAvcm9ja2NoaXBfbHZkcy5jCkBAIC0zNzcsOCArMzc3LDEwIEBAIHN0YXRpYyBpbnQgcm9ja2No
+aXBfbHZkc19iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAog
+ICAgICAgIH0KICAgICAgICBpZiAobHZkcy0+cGFuZWwpCiAgICAgICAgICAgICAgICByZW1vdGUg
+PSBsdmRzLT5wYW5lbC0+ZGV2LT5vZl9ub2RlOwotICAgICAgIGVsc2UKKyAgICAgICBlbHNlIGlm
+IChsdmRzLT5icmlkZ2UtPm9mX25vZGUpCiAgICAgICAgICAgICAgICByZW1vdGUgPSBsdmRzLT5i
+cmlkZ2UtPm9mX25vZGU7CisgICAgICAgZWxzZQorICAgICAgICAgICAgICAgcmVtb3RlID0gbHZk
+cy0+YnJpZGdlLT5vd25lci0+b2Zfbm9kZTsKICAgICAgICBpZiAob2ZfcHJvcGVydHlfcmVhZF9z
+dHJpbmcoZGV2LT5vZl9ub2RlLCAicm9ja2NoaXAsb3V0cHV0IiwgJm5hbWUpKQogICAgICAgICAg
+ICAgICAgLyogZGVmYXVsdCBzZXQgaXQgYXMgb3V0cHV0IHJnYiAqLwogICAgICAgICAgICAgICAg
+bHZkcy0+b3V0cHV0ID0gRElTUExBWV9PVVRQVVRfUkdCOwoKCmFuZCBwYXRjaCAyMi8yNCB3aXRo
+IHRoaXMKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfbHZk
+cy5jIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2x2ZHMuYwppbmRleCAzZjMz
+MDM0YjNmNTguLjhjODJmYTY0NzUzNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tj
+aGlwL3JvY2tjaGlwX2x2ZHMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2No
+aXBfbHZkcy5jCkBAIC0zNzcsOCArMzc3LDYgQEAgc3RhdGljIGludCByb2NrY2hpcF9sdmRzX2Jp
+bmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCiAgICAgICAgfQog
+ICAgICAgIGlmIChsdmRzLT5wYW5lbCkKICAgICAgICAgICAgICAgIHJlbW90ZSA9IGx2ZHMtPnBh
+bmVsLT5kZXYtPm9mX25vZGU7Ci0gICAgICAgZWxzZSBpZiAobHZkcy0+YnJpZGdlLT5vZl9ub2Rl
+KQotICAgICAgICAgICAgICAgcmVtb3RlID0gbHZkcy0+YnJpZGdlLT5vZl9ub2RlOwogICAgICAg
+IGVsc2UKICAgICAgICAgICAgICAgIHJlbW90ZSA9IGx2ZHMtPmJyaWRnZS0+b3duZXItPm9mX25v
+ZGU7CiAgICAgICAgaWYgKG9mX3Byb3BlcnR5X3JlYWRfc3RyaW5nKGRldi0+b2Zfbm9kZSwgInJv
+Y2tjaGlwLG91dHB1dCIsICZuYW1lKSkKCgpCdXQgdGhhdCBpcyBvZiBjb3Vyc2UganVzdCBhIHN0
+b3AtZ2FwLiBUaGUgcmVhbCBmaXggaXMgdG8gYWRhcHQgdG8gdGhlCiJkcm06IGJyaWRnZTogQWRk
+IHN1cHBvcnQgZm9yIHN0YXRpYyBpbWFnZSBmb3JtYXRz4oCLIiBzZXJpZXMgZnJvbSBKYWNvcG8u
+CkJ1dCB0aGF0J3Mgb3J0aG9nb25hbC4KCkNoZWVycywKUGV0ZXIKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5vIG1haWxpbmcgbGlzdApGcmVl
+ZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZnJlZWRyZW5vCg==
