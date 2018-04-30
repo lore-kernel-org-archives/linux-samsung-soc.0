@@ -1,68 +1,78 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 06/18] thermal: exynos: fix trips limit checking in
- get_th_reg()
-Date: Mon, 30 Apr 2018 17:48:29 +0200
-Message-ID: <26762578.lZtk787caq@amdc3058>
-References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
-        <1524743493-28113-7-git-send-email-b.zolnierkie@samsung.com>
-        <20180430153431.GB27619@mai>
-        <CGME20180430154830eucas1p20a5d8e1d4d50c60f8072ce022b6afb1d@eucas1p2.samsung.com>
+From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Subject: Re: [PATCH 23/24] drm/bridge: require the .owner to be
+ filled in on drm_bridge_attach
+Date: Mon, 30 Apr 2018 22:32:48 +0200
+Message-ID: <dabd40ac-408d-22d7-25c8-370c50663989@axentia.se>
+References: <20180426223139.16740-1-peda@axentia.se>
+ <20180426223139.16740-24-peda@axentia.se>
+ <20180430152438.GO12521@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180430153431.GB27619@mai>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20180430152438.GO12521-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Martin Donnelly <martin.donnelly-JJi787mZWgc@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, April 30, 2018 05:34:31 PM Daniel Lezcano wrote:
-> On Thu, Apr 26, 2018 at 01:51:21PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > of_thermal_get_ntrips() may return value bigger than supported
-> > by a given SoC (i.e. on Exynos5422/5800) 
-> 
-> Can you elaborate a bit ?
-
-Odroid-XU3 DTS file [1] define 6 thermal trip points (2 passive ones)
-while data->ntrip is 4, the current code works fine by accident as
-the threshold values for trip points 5 & 6 don't fit into 32-bits
-threshold value (however since they are passive ones this is okay).
-
-Of course the code for handling passive trip points still needs to
-be fixed to properly handle all odd cases (which are not present in
-current DTS files).
-
-[1] arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-
-> > so fix the code to not
-> > iterate the loop for i values >= data->ntrip.
-> > 
-> > There should be no functional changes caused by this patch.
-> > 
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> > index 5a64879..58cd68e 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -311,9 +311,9 @@ static u32 get_th_reg(struct exynos_tmu_data *data, u32 threshold, bool falling)
-> >  	const struct thermal_trip * const trips =
-> >  		of_thermal_get_trip_points(tz);
-> >  	unsigned long temp;
-> > -	int i;
-> > +	int i, ntrips = min_t(int, of_thermal_get_ntrips(tz), data->ntrip);
-> >  
-> > -	for (i = 0; i < of_thermal_get_ntrips(tz); i++) {
-> > +	for (i = 0; i < ntrips; i++) {
-> >  		if (trips[i].type == THERMAL_TRIP_CRITICAL)
-> >  			continue;
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+T24gMjAxOC0wNC0zMCAxNzoyNCwgRGFuaWVsIFZldHRlciB3cm90ZToKPiBPbiBGcmksIEFwciAy
+NywgMjAxOCBhdCAxMjozMTozOEFNICswMjAwLCBQZXRlciBSb3NpbiB3cm90ZToKPj4gVGhlIC5v
+d25lciB3aWxsIGJlIGhhbmR5IHRvIGhhdmUgYXJvdW5kLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBQ
+ZXRlciBSb3NpbiA8cGVkYUBheGVudGlhLnNlPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9k
+cm1fYnJpZGdlLmMgfCAzICsrKwo+PiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQo+
+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9icmlkZ2UuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9kcm1fYnJpZGdlLmMKPj4gaW5kZXggOWYwMjNiZDg0ZDU2Li5hMDM4ZGE2OTY4MDIg
+MTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMKPj4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL2RybV9icmlkZ2UuYwo+PiBAQCAtMTE1LDYgKzExNSw5IEBAIGludCBkcm1f
+YnJpZGdlX2F0dGFjaChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsIHN0cnVjdCBkcm1fYnJp
+ZGdlICpicmlkZ2UsCj4+ICAJaWYgKCFlbmNvZGVyIHx8ICFicmlkZ2UpCj4+ICAJCXJldHVybiAt
+RUlOVkFMOwo+PiAgCj4+ICsJaWYgKFdBUk5fT04oIWJyaWRnZS0+b3duZXIpKQo+PiArCQlyZXR1
+cm4gLUVJTlZBTDsKPiAKPiBJIHRoaW5rIGNvbmNlcHR1YWxseSB0aGlzIGlzIGNoZWNrZWQgYXQg
+dGhlIHdyb25nIHBsYWNlLCBhbmQgSSB0aGluayBhbHNvIG1pc25hbWVkCj4gYSBiaXQuIFRoZSAt
+Pm93bmVyIGlzIGVzc2VudGlhbGx5IHRoZSBzdHJ1Y3QgZGV2aWNlIChhbmQgaXRzIGFzc29jaWF0
+ZWQKPiBkcml2ZXIpIHRoYXQgcHJvdmlkZXMgdGhlIGRybV9icmlkZ2UuIEFzIHN1Y2ggaXQgc2hv
+dWxkIGJlIGZpbGxlZCBvdXQKPiBhbHJlYWR5IGF0IGRybV9icmlkZ2VfYWRkKCkgdGltZSwgYW5k
+IEkgdGhpbmsgdGhlIGNoZWNrIHNob3VsZCBiZSBpbgo+IHRoZXJlLiBGb3IgZHJpdmVyLWludGVy
+bmFsIGJyaWRnZXMgaXQgbWlnaHQgbWFrZSBzZW5zZSB0byBhbHNvIGNoZWNrIHRoaXMKPiBoZXJl
+LCBub3Qgc3VyZS4gT3IganVzdCByZXF1aXJlIGFsbCBicmlkZ2VzIGdldCBhZGRlZC4KClRoZSBy
+ZWFzb24gZm9yIHRoZSBwb3NpdGlvbiBpcyB0aGF0IHdoaWxlIEkgb3JpZ2luYWxseSBoYWQgdGhl
+IFdBUk4gaW4KZHJtX2JyaWRnZV9hZGQsIEkgZm91bmQgdGhhdCBxdWl0ZSBhIGZldyBicmlkZ2Vz
+IG5ldmVyIGNhbGwgZHJtX2JyaWRnZV9hZGQuClNvIEkgbW92ZWQgaXQuIE90aGVyIG9wdGlvbnMg
+YXJlIHRvIHN0YXJ0IHJlcXVpcmluZyBhbGwgYnJpZGdlIHN1cHBsaWVycyB0bwpjYWxsIGRybV9i
+cmlkZ2VfYWRkIG9yIHRvIGhhdmUgdGhlIFdBUk4gaW4gYm90aCBmdW5jdGlvbi4gVG9vIG1lLCBp
+dCB3b3VsZAptYWtlIHNlbnNlIHRvIHJlcXVpcmUgYWxsIGJyaWRnZSBzdXBwbGllcnMgdG8gY2Fs
+bCBkcm1fYnJpZGdlX2FkZCwgYXMgdGhhdAplbmFibGVzIG90aGVyIGluaXQgc3R1ZmYgbGF0ZXIs
+IHdoZW4gbmVlZGVkLiBCdXQgdGhhdCBpcyBhIGhhaXJ5IHBhdGNoIHRvCmdldCByaWdodCwgYW5k
+IGlzIHByb2JhYmx5IGJlc3QgbGVmdCBhcyBhIHNlcGFyYXRlIHNlcmllcy4KCj4gV3J0IHRoZSBu
+YW1lLCBJIHRoaW5rIHdlIHNob3VsZCBjYWxsIHRoaXMgcGRldiBvciBzb21ldGhpbmcuIC0+b3du
+ZXIKPiB1c3VhbGx5IG1lYW5zIHRoZSBtb2R1bGUgb3duZXIuIEkgdGhpbmsgaW4gb3RoZXIgc3Vi
+c3lzdGVtcyAtPmRldiBpcyB1c2VkLAo+IGJ1dCBpbiBkcm0gd2UgdXNlIC0+ZGV2IGZvciB0aGUg
+ZHJtX2RldmljZSBwb2ludGVyLCBzbyB0b3RhbGx5IGRpZmZlcmVudAo+IHRoaW5nLiBwZGV2ID0g
+cGh5c2ljYWwgZGV2aWNlIGlzIHRoZSBiZXN0IEkgY2FtZSB1cCB3aXRoLiBCZXR0ZXIKPiBzdWdn
+ZXN0aW9ucyB2ZXJ5IG11Y2ggd2VsY29tZS4KCnBkZXYgaXMgYWJvdXQgYXMgcHJvYmxlbWF0aWMg
+YXMgb3duZXIuIFRvIG1lIGl0IHJlYWRzICJwbGF0Zm9ybSBkZXZpY2UiLgpBbmQgZGV2IGZvciBh
+IGRybV9kZXZpY2UgaXMgYWxzbyBzb21ld2hhdCBwcm9ibGVtYXRpYywgYW5kIEkgdGhpbmsgdGhh
+dApkcm0gd291bGQgaGF2ZSBiZWVuIGJldHRlciwgYnV0IGRldiBmb3IgZHJtX2RldmljZSBpcyBw
+cm9iYWJseSBxdWl0ZQpjb21tb24uIEJ1dCBvbmUgd2F5IHRvIGdvIGlzIHRvIHJlbmFtZSB0aGUg
+Y3VycmVudCBkZXYgdG8gZHJtLCBzbyB0aGF0CmRldiBpcyBmcmVlZCB1cCBmb3IgdGhlIG93bmVy
+L3N1cHBsaWVyIGRldmljZS4gQnV0IHRoYXQgaXMgYSB0ZWRpb3VzCnBhdGNoIHRvIHdyaXRlIChJ
+IGRvbid0IGRvIHRoZSBjb2NjaSB0aGluZykuCgpPdGhlciBzdWdnZXN0aW9ucyBJIGNhbiB0aGlu
+ayBvZjogb2RldiBmb3Igb3duZXIgZGV2aWNlLCBzZGV2IGZvciBzdXBwbGllcgpkZXZpY2Ugb3Ig
+anVzdCBwbGFpbiBzdXBwbGllci4KCkNoZWVycywKUGV0ZXIKCj4gLURhbmllbAo+IAo+PiArCj4+
+ICAJaWYgKHByZXZpb3VzICYmICghcHJldmlvdXMtPmRldiB8fCBwcmV2aW91cy0+ZW5jb2RlciAh
+PSBlbmNvZGVyKSkKPj4gIAkJcmV0dXJuIC1FSU5WQUw7Cj4+ICAKPj4gLS0gCj4+IDIuMTEuMAo+
+Pgo+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+PiBk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+Pj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkZy
+ZWVkcmVubyBtYWlsaW5nIGxpc3QKRnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ZyZWVkcmVubwo=
