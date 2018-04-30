@@ -1,37 +1,95 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] cpufreq: s3c2440: fix spelling mistake: "divsiors" -> "divisors"
-Date: Mon, 30 Apr 2018 15:48:01 +0100
-Message-ID: <20180430144801.6727-1-colin.king@canonical.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 01/18] thermal: exynos: fix setting rising_threshold for
+ Exynos5433
+Date: Mon, 30 Apr 2018 17:21:40 +0200
+Message-ID: <1562606.5jxUSbM0dm@amdc3058>
+References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
+        <1524743493-28113-2-git-send-email-b.zolnierkie@samsung.com>
+        <20180430143656.GH11457@mai>
+        <CGME20180430152141eucas1p2f39d7e8ee83a1fa66ccd19f74442357f@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20180430143656.GH11457@mai>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Monday, April 30, 2018 04:36:56 PM Daniel Lezcano wrote:
+> On Thu, Apr 26, 2018 at 01:51:16PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > Add missing clearing of the previous value when setting rising
+> > temperature threshold.
+> > 
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/thermal/samsung/exynos_tmu.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index cda716c..523d26e 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -577,6 +577,7 @@ static int exynos5433_tmu_initialize(struct platform_device *pdev)
+> >  		threshold_code = temp_to_code(data, temp);
+> >  
+> >  		rising_threshold = readl(data->base + rising_reg_offset);
+> > +		rising_threshold &= ~(0xff << j * 8);
+> >  		rising_threshold |= (threshold_code << j * 8);
+> 
+> Bartlomiej,
+> 
+> I see this code is duplicated all around the driver, so I can't blame you to
+> fix it in the same way it is written today but this is not how to deal with
 
-Trivial fix to spelling mistake in s3c_freq_dbg debug message text.
+This patch is a bugfix (which may be backported later) and it shouldn't be
+mixed with cleanups.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/cpufreq/s3c2440-cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> fields in a register mapping. Can you fix it by adding correct macros with
+> masks?
 
-diff --git a/drivers/cpufreq/s3c2440-cpufreq.c b/drivers/cpufreq/s3c2440-cpufreq.c
-index d0d75b65ddd6..d2f67b7a20dd 100644
---- a/drivers/cpufreq/s3c2440-cpufreq.c
-+++ b/drivers/cpufreq/s3c2440-cpufreq.c
-@@ -143,7 +143,7 @@ static void s3c2440_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
- {
- 	unsigned long clkdiv, camdiv;
- 
--	s3c_freq_dbg("%s: divsiors: h=%d, p=%d\n", __func__,
-+	s3c_freq_dbg("%s: divisors: h=%d, p=%d\n", __func__,
- 		     cfg->divs.h_divisor, cfg->divs.p_divisor);
- 
- 	clkdiv = __raw_readl(S3C2410_CLKDIVN);
--- 
-2.17.0
+After my patch series we still have following occurrences of "RMW" code:
+
+        th = readl(data->base + EXYNOS_THD_TEMP_RISE);
+        th &= ~(0xff << 8 * trip);
+        th |= temp_to_code(data, temp) << 8 * trip;
+        writel(th, data->base + EXYNOS_THD_TEMP_RISE);
+
+        th = readl(data->base + EXYNOS_THD_TEMP_FALL);
+        th &= ~(0xff << 8 * trip);
+        if (hyst)
+                th |= temp_to_code(data, temp - hyst) << 8 * trip;
+        writel(th, data->base + EXYNOS_THD_TEMP_FALL);
+
+        th = readl(data->base + reg_off);
+        th &= ~(0xff << j * 8);
+        th |= (temp_to_code(data, temp) << j * 8);
+        writel(th, data->base + reg_off);
+
+        th = readl(data->base + reg_off);
+        th &= ~(0xff << j * 8);
+        th |= (temp_to_code(data, temp - hyst) << j * 8);
+        writel(th, data->base + reg_off);
+
+        th = readl(data->base + EXYNOS7_THD_TEMP_RISE7_6 + reg_off);
+        th &= ~(EXYNOS7_TMU_TEMP_MASK << (16 * bit_off));
+        th |= temp_to_code(data, temp) << (16 * bit_off);
+        writel(th, data->base + EXYNOS7_THD_TEMP_RISE7_6 + reg_off);
+
+        th = readl(data->base + EXYNOS7_THD_TEMP_FALL7_6 + reg_off);
+        th &= ~(EXYNOS7_TMU_TEMP_MASK << (16 * bit_off));
+        th |= temp_to_code(data, temp - hyst) << (16 * bit_off);
+        writel(th, data->base + EXYNOS7_THD_TEMP_FALL7_6 + reg_off);
+
+My personal opinion is that adding new macro for the code above will
+only obfuscate it and make it harder to understand,
+
+Anyway how would you like this new macro to look like (how generic or
+specific it should be etc.)?
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
