@@ -1,38 +1,90 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 05/18] thermal: exynos: use sanitize_temp_error() in
- exynos7_tmu_initialize()
-Date: Mon, 30 Apr 2018 17:30:53 +0200
-Message-ID: <20180430153053.GA27619@mai>
-References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20180426115211epcas1p3db7cbe215a3dfb49567a771931574a2f@epcas1p3.samsung.com>
- <1524743493-28113-6-git-send-email-b.zolnierkie@samsung.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 24/24] drm/bridge: establish a link between
+ the bridge supplier and consumer
+Date: Mon, 30 Apr 2018 17:32:36 +0200
+Message-ID: <20180430153236.GP12521@phenom.ffwll.local>
+References: <20180426223139.16740-1-peda@axentia.se>
+ <20180426223139.16740-25-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1524743493-28113-6-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180426223139.16740-25-peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Cc: freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Martin Donnelly <martin.donnelly-JJi787mZWgc@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 01:51:20PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> Fix sanitize_temp_error() to handle Exynos7 SoCs and then use it in
-> exynos7_tmu_initialize().
-> 
-> There should be no functional changes caused by this patch.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-
-
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
--- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+T24gRnJpLCBBcHIgMjcsIDIwMTggYXQgMTI6MzE6MzlBTSArMDIwMCwgUGV0ZXIgUm9zaW4gd3Jv
+dGU6Cj4gSWYgdGhlIGJyaWRnZSBzdXBwbGllciBpcyB1bmJvdW5kLCB0aGlzIHdpbGwgYnJpbmcg
+dGhlIGJyaWRnZSBjb25zdW1lcgo+IGRvd24gYWxvbmcgd2l0aCB0aGUgYnJpZGdlLiBUaHVzLCB0
+aGVyZSB3aWxsIG5vIGxvbmdlciBsaW5nZXIgYW55Cj4gZGFuZ2xpbmcgcG9pbnRlcnMgZnJvbSB0
+aGUgYnJpZGdlIGNvbnN1bWVyICh0aGUgZHJtX2RldmljZSkgdG8gc29tZQo+IG5vbi1leGlzdGVu
+dCBicmlkZ2Ugc3VwcGxpZXIuCj4gCj4gU2lnbmVkLW9mZi1ieTogUGV0ZXIgUm9zaW4gPHBlZGFA
+YXhlbnRpYS5zZT4KCk1pbnVzIHRoZSAtPm93bmVyIGJpa2VzaGVkIEkgYnJvdWdodCB1cCBpbiB0
+aGUgcHJldmlvdXMgcGF0Y2ggSSBhZ3JlZSB3aXRoCnRoaXMgYXBwcm9hY2ggYXMgdGhlIGJlc3Qg
+d2F5IHRvIG1vdmUgZm9yd2FyZCBmb3Igbm93LgoKQWNrZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRh
+bmllbC52ZXR0ZXJAZmZ3bGwuY2g+CgpPbmUgc21hbGwgc3VnZ2VzdGlvbiBiZWxvdywgZm9yIG1l
+cmdpbmcgSSdkIHNheSBwbHMgZ2V0IEp5cmkncwpyZXZpZXcvdGVzdGVkLWJ5IHRvbywgc2luY2Ug
+eW91J3JlIGJvdGggd29ya2luZyBvbiB0aGUgc2FtZSBwcm9ibGVtIGl0CnNlZW1zLgoKQXNpZGU6
+IERvIHlvdSB3YW50IGNvbW1pdCByaWdodHMgdG8gZHJtLW1pc2MgdG8gYmUgYWJsZSB0byBwdXNo
+IHdvcmsgbGlrZQp0aGlzPwoKQ2hlZXJzLCBEYW5pZWwKCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9kcm1fYnJpZGdlLmMgfCAxOCArKysrKysrKysrKysrKysrKysKPiAgaW5jbHVkZS9kcm0vZHJt
+X2JyaWRnZS5oICAgICB8ICAyICsrCj4gIDIgZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygr
+KQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5jIGIvZHJpdmVy
+cy9ncHUvZHJtL2RybV9icmlkZ2UuYwo+IGluZGV4IGEwMzhkYTY5NjgwMi4uZjBjNzkwNDNlYzQz
+IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMKPiArKysgYi9kcml2
+ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5jCj4gQEAgLTI2LDYgKzI2LDcgQEAKPiAgI2luY2x1ZGUg
+PGxpbnV4L211dGV4Lmg+Cj4gIAo+ICAjaW5jbHVkZSA8ZHJtL2RybV9icmlkZ2UuaD4KPiArI2lu
+Y2x1ZGUgPGRybS9kcm1fZGV2aWNlLmg+Cj4gICNpbmNsdWRlIDxkcm0vZHJtX2VuY29kZXIuaD4K
+PiAgCj4gICNpbmNsdWRlICJkcm1fY3J0Y19pbnRlcm5hbC5oIgo+IEBAIC0xMjQsMTIgKzEyNSwy
+NSBAQCBpbnQgZHJtX2JyaWRnZV9hdHRhY2goc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyLCBz
+dHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlLAo+ICAJaWYgKGJyaWRnZS0+ZGV2KQo+ICAJCXJldHVy
+biAtRUJVU1k7Cj4gIAo+ICsJaWYgKGVuY29kZXItPmRldi0+ZGV2ICE9IGJyaWRnZS0+b3duZXIp
+IHsKCllvdSBtaWdodCBlbmQgdXAgd2l0aCBhIE5VTEwgZW5jb2Rlci0+ZGV2LT5kZXYuIFBlcmhh
+cHMgY2hlY2sgdGhhdCBhbmQKYmFpbCB3aXRoIGEgV0FSTl9PTj8KCj4gKwkJYnJpZGdlLT5saW5r
+ID0gZGV2aWNlX2xpbmtfYWRkKGVuY29kZXItPmRldi0+ZGV2LAo+ICsJCQkJCSAgICAgICBicmlk
+Z2UtPm93bmVyLCAwKTsKPiArCQlpZiAoIWJyaWRnZS0+bGluaykgewo+ICsJCQlkZXZfZXJyKGJy
+aWRnZS0+b3duZXIsICJmYWlsZWQgdG8gbGluayBicmlkZ2UgdG8gJXNcbiIsCj4gKwkJCQlkZXZf
+bmFtZShlbmNvZGVyLT5kZXYtPmRldikpOwo+ICsJCQlyZXR1cm4gLUVJTlZBTDsKPiArCQl9Cj4g
+Kwl9Cj4gKwo+ICAJYnJpZGdlLT5kZXYgPSBlbmNvZGVyLT5kZXY7Cj4gIAlicmlkZ2UtPmVuY29k
+ZXIgPSBlbmNvZGVyOwo+ICAKPiAgCWlmIChicmlkZ2UtPmZ1bmNzLT5hdHRhY2gpIHsKPiAgCQly
+ZXQgPSBicmlkZ2UtPmZ1bmNzLT5hdHRhY2goYnJpZGdlKTsKPiAgCQlpZiAocmV0IDwgMCkgewo+
+ICsJCQlpZiAoYnJpZGdlLT5saW5rKQo+ICsJCQkJZGV2aWNlX2xpbmtfZGVsKGJyaWRnZS0+bGlu
+ayk7Cj4gKwkJCWJyaWRnZS0+bGluayA9IE5VTEw7Cj4gIAkJCWJyaWRnZS0+ZGV2ID0gTlVMTDsK
+PiAgCQkJYnJpZGdlLT5lbmNvZGVyID0gTlVMTDsKPiAgCQkJcmV0dXJuIHJldDsKPiBAQCAtMTU2
+LDYgKzE3MCwxMCBAQCB2b2lkIGRybV9icmlkZ2VfZGV0YWNoKHN0cnVjdCBkcm1fYnJpZGdlICpi
+cmlkZ2UpCj4gIAlpZiAoYnJpZGdlLT5mdW5jcy0+ZGV0YWNoKQo+ICAJCWJyaWRnZS0+ZnVuY3Mt
+PmRldGFjaChicmlkZ2UpOwo+ICAKPiArCWlmIChicmlkZ2UtPmxpbmspCj4gKwkJZGV2aWNlX2xp
+bmtfZGVsKGJyaWRnZS0+bGluayk7Cj4gKwlicmlkZ2UtPmxpbmsgPSBOVUxMOwo+ICsKPiAgCWJy
+aWRnZS0+ZGV2ID0gTlVMTDsKPiAgfQo+ICAKPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJt
+X2JyaWRnZS5oIGIvaW5jbHVkZS9kcm0vZHJtX2JyaWRnZS5oCj4gaW5kZXggM2JjNjU5ZjNlN2Qy
+Li45YTM4NjU1OWE0MWEgMTAwNjQ0Cj4gLS0tIGEvaW5jbHVkZS9kcm0vZHJtX2JyaWRnZS5oCj4g
+KysrIGIvaW5jbHVkZS9kcm0vZHJtX2JyaWRnZS5oCj4gQEAgLTI2MSw2ICsyNjEsNyBAQCBzdHJ1
+Y3QgZHJtX2JyaWRnZV90aW1pbmdzIHsKPiAgICogQGxpc3Q6IHRvIGtlZXAgdHJhY2sgb2YgYWxs
+IGFkZGVkIGJyaWRnZXMKPiAgICogQHRpbWluZ3M6IHRoZSB0aW1pbmcgc3BlY2lmaWNhdGlvbiBm
+b3IgdGhlIGJyaWRnZSwgaWYgYW55IChtYXkKPiAgICogYmUgTlVMTCkKPiArICogQGxpbms6IGRy
+bSBjb25zdW1lciA8LT4gYnJpZGdlIHN1cHBsaWVyCj4gICAqIEBmdW5jczogY29udHJvbCBmdW5j
+dGlvbnMKPiAgICogQGRyaXZlcl9wcml2YXRlOiBwb2ludGVyIHRvIHRoZSBicmlkZ2UgZHJpdmVy
+J3MgaW50ZXJuYWwgY29udGV4dAo+ICAgKi8KPiBAQCAtMjcxLDYgKzI3Miw3IEBAIHN0cnVjdCBk
+cm1fYnJpZGdlIHsKPiAgCXN0cnVjdCBkcm1fYnJpZGdlICpuZXh0Owo+ICAJc3RydWN0IGxpc3Rf
+aGVhZCBsaXN0Owo+ICAJY29uc3Qgc3RydWN0IGRybV9icmlkZ2VfdGltaW5ncyAqdGltaW5nczsK
+PiArCXN0cnVjdCBkZXZpY2VfbGluayAqbGluazsKPiAgCj4gIAljb25zdCBzdHJ1Y3QgZHJtX2Jy
+aWRnZV9mdW5jcyAqZnVuY3M7Cj4gIAl2b2lkICpkcml2ZXJfcHJpdmF0ZTsKPiAtLSAKPiAyLjEx
+LjAKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+
+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlv
+bgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9mcmVlZHJlbm8K
