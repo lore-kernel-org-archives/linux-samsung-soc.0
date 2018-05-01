@@ -1,36 +1,43 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 18/18] thermal: exynos: remove trip reporting to
- user-space
-Date: Tue, 1 May 2018 13:12:49 +0200
-Message-ID: <20180501111249.GO27619@mai>
-References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20180426115244epcas2p36d0d44d1a0b2c3c4edff33187046caac@epcas2p3.samsung.com>
- <1524743493-28113-19-git-send-email-b.zolnierkie@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC 01/10] ARM: dts: exynos: Remove Exynos5440
+Date: Tue, 1 May 2018 09:07:25 -0500
+Message-ID: <20180501140725.GA25487@rob-hp-laptop>
+References: <20180424203239.21885-1-krzk@kernel.org>
+ <20180424203239.21885-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1524743493-28113-19-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <20180424203239.21885-2-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfounda>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 01:51:33PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> Remove trip reporting to user-space - I'm not aware of any user-space
-> program which relies on it and there is a thermal user-space governor
-> which does it in proper way nowadays.
+On Tue, Apr 24, 2018 at 10:32:30PM +0200, Krzysztof Kozlowski wrote:
+> The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+> server platforms but it did not make it to the market really.  There are
+> no development boards with it and probably there are no real products
+> neither.  The development for Exynos5440 ended in 2013 and since then
+> the platform is in maintenance mode.
 > 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Remove all Device Tree sources for Exynos5440, as first step of removal
+> of the platform to simplify the code and drivers.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
+>  .../bindings/arm/samsung/samsung-boards.txt        |   2 -
+>  arch/arm/boot/dts/Makefile                         |   2 -
+>  arch/arm/boot/dts/exynos5440-sd5v1.dts             |  42 ---
+>  arch/arm/boot/dts/exynos5440-ssdk5440.dts          |  81 -----
+>  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  20 --
+>  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  21 --
+>  arch/arm/boot/dts/exynos5440.dtsi                  | 355 ---------------------
+>  7 files changed, 523 deletions(-)
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-sd5v1.dts
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-ssdk5440.dts
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
+>  delete mode 100644 arch/arm/boot/dts/exynos5440.dtsi
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
--- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Reviewed-by: Rob Herring <robh@kernel.org>
