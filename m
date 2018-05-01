@@ -1,39 +1,108 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] thermal: samsung: Remove support for Exynos5440
-Date: Tue, 1 May 2018 09:45:16 -0500
-Message-ID: <20180501144516.GA519@rob-hp-laptop>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-7-krzk@kernel.org>
- <1951102.VLysaozMLK@amdc3058>
- <CGME20180426112113eucas1p1b5bf6f093442154e29f5541b4aba6b00@eucas1p1.samsung.com>
- <2734003.UHSMxVLybj@amdc3058>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 04/25] arm: exynos/s3c: dts: Remove leading 0x and 0s
+ from bindings notation
+Date: Tue, 1 May 2018 18:15:46 +0200
+Message-ID: <20180501161546.6w3fkenk7q6s4kqe@kozik-lap>
+References: <20171215124630.30082-1-malat@debian.org>
+ <CAJKOXPdkYLisej5965rh2SbOjbFms-RK2VnXt=L==MW_JcA+OA@mail.gmail.com>
+ <CA+7wUsxp_n6V--PE9PQSsT1xu3b0HJn5gWBhnp=ngRNqBSVvFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <2734003.UHSMxVLybj@amdc3058>
+In-Reply-To: <CA+7wUsxp_n6V--PE9PQSsT1xu3b0HJn5gWBhnp=ngRNqBSVvFg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 01:21:12PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Subject: [PATCH] thermal: samsung: Remove support for Exynos5440
+On Mon, Dec 18, 2017 at 11:17:24AM +0100, Mathieu Malaterre wrote:
+> On Mon, Dec 18, 2017 at 10:40 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > On Fri, Dec 15, 2017 at 1:46 PM, Mathieu Malaterre <malat@debian.org> wrote:
+> >> Improve the DTS files by removing all the leading "0x" and zeros to fix the
+> >> following dtc warnings:
+> >>
+> >> Warning (unit_address_format): Node /XXX unit name should not have leading "0x"
+> >>
+> >> and
+> >>
+> >> Warning (unit_address_format): Node /XXX unit name should not have leading 0s
+> >>
+> >> Converted using the following command:
+> >>
+> >> find . -type f \( -iname *.dts -o -iname *.dtsi \) -exec sed -i -e "s/@\([0-9a-fA-FxX\.;:#]+\)\s*{/@\L\1 {/g" -e "s/@0x\(.*\) {/@\1 {/g" -e "s/@0+\(.*\) {/@\1 {/g" {} +^C
+> >>
+> >> For simplicity, two sed expressions were used to solve each warnings separately.
+> >>
+> >> To make the regex expression more robust a few other issues were resolved,
+> >> namely setting unit-address to lower case, and adding a whitespace before the
+> >> the opening curly brace:
+> >>
+> >> https://elinux.org/Device_Tree_Linux#Linux_conventions
+> >>
+> >> This will solve as a side effect warning:
+> >>
+> >> Warning (simple_bus_reg): Node /XXX@<UPPER> simple-bus unit address format error, expected "<lower>"
+> >>
+> >> This is a follow up to commit 4c9847b7375a ("dt-bindings: Remove leading 0x from bindings notation")
+> >>
+> >> Reported-by: David Daney <ddaney@caviumnetworks.com>
+> >> Suggested-by: Rob Herring <robh@kernel.org>
+> >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >
+> > Ack was for different patchset, touching only three files...
 > 
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
+> So sorry, when I read your email:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> [b.zolnierkie: ported over driver changes]
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-> Eduardo, here is a version which applies on top of pending Exynos
-> thermal changes (https://lkml.org/lkml/2018/4/16/256).
+> https://lkml.org/lkml/2017/12/15/152
 > 
->  Documentation/devicetree/bindings/thermal/exynos-thermal.txt |   14 
->  drivers/thermal/samsung/exynos_tmu.c                         |  161 -----------
->  2 files changed, 4 insertions(+), 171 deletions(-)
+> I assumed you meant for all the Exynos* and S3C* DTS files, but I did
+> not check carefully which files were touched originally.
+> 
+> >> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> >> ---
+> >>  arch/arm/boot/dts/exynos3250.dtsi             | 34 ++++++------
+> >>  arch/arm/boot/dts/exynos4.dtsi                | 56 +++++++++----------
+> >>  arch/arm/boot/dts/exynos4210.dtsi             |  8 +--
+> >>  arch/arm/boot/dts/exynos4412-pinctrl.dtsi     |  2 +-
+> >>  arch/arm/boot/dts/exynos4412.dtsi             | 22 ++++----
+> >>  arch/arm/boot/dts/exynos5.dtsi                | 22 ++++----
+> >>  arch/arm/boot/dts/exynos5250.dtsi             | 64 +++++++++++-----------
+> >>  arch/arm/boot/dts/exynos5260.dtsi             | 26 ++++-----
+> >>  arch/arm/boot/dts/exynos5420.dtsi             | 78 +++++++++++++--------------
+> >>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  2 +-
+> >>  arch/arm/boot/dts/exynos5440.dtsi             | 14 ++---
+> >>  arch/arm/boot/dts/s3c2416.dtsi                |  8 +--
+> >>  12 files changed, 168 insertions(+), 168 deletions(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> >> index 2bd3872221a1..8d47571b3984 100644
+> >> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> >> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> >> @@ -164,31 +164,31 @@
+> >>                         syscon = <&pmu_system_controller>;
+> >>                 };
+> >>
+> >> -               pd_cam: cam-power-domain@10023C00 {
+> >> +               pd_cam: cam-power-domain@10023c00 {
+> >
+> > This is not related to this patch and it was not present in the
+> > version I acked. I also already fixed this here:
+> > https://patchwork.kernel.org/patch/10113323/
+> >
+> > There is no changelog explaining the difference in patches. Original
+> > patch was okay, why changing it?
+> 
+> Accept my sincere apologizes I really messed this series. I discover
+> my original ARM patch did not apply lower case to all unit-address
+> equally, so I added at last minute a sed expression to make all
+> unit-address lower case.
+> 
+> I guess you can just drop this one for now.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi Mathieu,
+
+Do you plan to resend this in its original form (removing 0)?
+
+Best regards,
+Krzysztof
