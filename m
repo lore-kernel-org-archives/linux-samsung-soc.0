@@ -1,44 +1,33 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq: s3c2440: fix spelling mistake: "divsiors" ->
- "divisors"
-Date: Wed, 2 May 2018 11:07:21 +0530
-Message-ID: <20180502053721.5h6jhicjsjss2ixe@vireshk-i7>
-References: <20180430144801.6727-1-colin.king@canonical.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: [PATCH 0/3] drm: fix some bridge api misunderstandings
+Date: Wed,  2 May 2018 09:40:22 +0200
+Message-ID: <20180502074025.12421-1-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180430144801.6727-1-colin.king@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sandy Huang <hjc@rock-chips.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent Abriou <vincent.abriou@st.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 30-04-18, 15:48, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in s3c_freq_dbg debug message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/cpufreq/s3c2440-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/s3c2440-cpufreq.c b/drivers/cpufreq/s3c2440-cpufreq.c
-> index d0d75b65ddd6..d2f67b7a20dd 100644
-> --- a/drivers/cpufreq/s3c2440-cpufreq.c
-> +++ b/drivers/cpufreq/s3c2440-cpufreq.c
-> @@ -143,7 +143,7 @@ static void s3c2440_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
->  {
->  	unsigned long clkdiv, camdiv;
->  
-> -	s3c_freq_dbg("%s: divsiors: h=%d, p=%d\n", __func__,
-> +	s3c_freq_dbg("%s: divisors: h=%d, p=%d\n", __func__,
->  		     cfg->divs.h_divisor, cfg->divs.p_divisor);
->  
->  	clkdiv = __raw_readl(S3C2410_CLKDIVN);
+Hi!
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+While looking at various drm bridge users, I came across these
+issues.
+
+Cheers,
+Peter
+
+Peter Rosin (3):
+  drm/sti: do not remove the drm_bridge that was never added
+  drm/rockchip: lvds: avoid duplicating drm_bridge_attach
+  drm/exynos: hdmi: avoid duplicating drm_bridge_attach
+
+ drivers/gpu/drm/exynos/exynos_hdmi.c     | 2 --
+ drivers/gpu/drm/rockchip/rockchip_lvds.c | 2 --
+ drivers/gpu/drm/sti/sti_hda.c            | 1 -
+ drivers/gpu/drm/sti/sti_hdmi.c           | 1 -
+ 4 files changed, 6 deletions(-)
 
 -- 
-viresh
+2.11.0
