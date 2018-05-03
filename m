@@ -1,46 +1,65 @@
-From: Satendra Singh Thakur <satendra.t@samsung.com>
-Subject: [PATCH 03/13] drm/kms/mode/exynos-dsi: using helper func
- drm_display_mode_to_videomode for calculating timing parameters
-Date: Thu,  3 May 2018 14:09:38 +0530
-Message-ID: <e21d94cdd60e8c83140c5a917c255baf88f0e90a.1525087679.git.satendra.t@samsung.com>
-References: <cover.1525087679.git.satendra.t@samsung.com>
-        <CGME20180503083956epcas5p1eb97f7bd534e58e7154f5f11733e7aa0@epcas5p1.samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 1/3] drm/sti: do not remove the drm_bridge that was never
+ added
+Date: Thu, 3 May 2018 11:06:48 +0200
+Message-ID: <20180503090648.GG12521@phenom.ffwll.local>
+References: <20180502074025.12421-1-peda@axentia.se>
+ <20180502074025.12421-2-peda@axentia.se>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1525087679.git.satendra.t@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Satendra Singh Thakur <satendra.t@samsung.com>, Madhur Verma <madhur.verma@samsung.com>, Hemanshu Srivastava <hemanshu.s@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180502074025.12421-2-peda@axentia.se>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To avoid duplicate logic for the same
-
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-Cc: Madhur Verma <madhur.verma@samsung.com>
-Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 7904ffa..9397e5c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1493,14 +1493,7 @@ static void exynos_dsi_mode_set(struct drm_encoder *encoder,
- 	struct videomode *vm = &dsi->vm;
- 	struct drm_display_mode *m = adjusted_mode;
- 
--	vm->hactive = m->hdisplay;
--	vm->vactive = m->vdisplay;
--	vm->vfront_porch = m->vsync_start - m->vdisplay;
--	vm->vback_porch = m->vtotal - m->vsync_end;
--	vm->vsync_len = m->vsync_end - m->vsync_start;
--	vm->hfront_porch = m->hsync_start - m->hdisplay;
--	vm->hback_porch = m->htotal - m->hsync_end;
--	vm->hsync_len = m->hsync_end - m->hsync_start;
-+	drm_display_mode_to_videomode(m, vm);
- }
- 
- static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
--- 
-2.7.4
+T24gV2VkLCBNYXkgMDIsIDIwMTggYXQgMDk6NDA6MjNBTSArMDIwMCwgUGV0ZXIgUm9zaW4gd3Jv
+dGU6Cj4gVGhlIG1vcmUgbmF0dXJhbCBhcHByb2FjaCB3b3VsZCBwZXJoYXBzIGJlIHRvIGFkZCBh
+biBkcm1fYnJpZGdlX2FkZCwKPiBidXQgdGhlcmUgYXJlIHNldmVyYWwgb3RoZXIgYnJpZGdlcyB0
+aGF0IG5ldmVyIGNhbGwgZHJtX2JyaWRnZV9hZGQuCj4gSnVzdCByZW1vdmluZyB0aGUgZHJtX2Jy
+aWRnZV9yZW1vdmUgaXMgdGhlIGVhc2llciBmaXguCj4gCj4gU2lnbmVkLW9mZi1ieTogUGV0ZXIg
+Um9zaW4gPHBlZGFAYXhlbnRpYS5zZT4KClRoaXMgbWVzcyBpcyBtdWNoIGJpZ2dlci4gVGhlcmUn
+cyAyIHBhaXJzIG9mIGJyaWRnZSBmdW5jdGlvbnM6CgotIGRybV9icmlkZ2VfYXR0YWNoL2RldGFj
+aC4gVGhvc2UgYXJlIG1lYW50IHRvIGJlIGNhbGxlZCBieSB0aGUgb3ZlcmFsbAogIGRybSBkcml2
+ZXIgdG8gY29ubmVjdC9kaXNjb25uZWN0IGEgZHJtX2JyaWRnZS4KCi0gZHJtX2JyaWRnZV9hZGQv
+cmVtb3ZlLiBUaGVzZSBhcmUgc3VwcG9zZWQgdG8gYmUgY2FsbGVkIGJ5IHRoZSBicmlkZ2UKICBk
+cml2ZXIgaXRzZWxmIHRvIHJlZ2lzdGVyL3VucmVnaXN0ZXIgaXRzZWxmLiBNYXliZSB3ZSBzaG91
+bGQgcmVuYW1lCiAgdGhlbSwgc2luY2UgdGhlIHNhbWUgaXNzdWUgaGFwcGVucyB3aXRoIGRybV9w
+YW5lbCwgd2l0aCB0aGUgc2FtZQogIGNvbmZ1c2lvbi4KCkkgdGhvdWdodCBzb21lb25lIHdhcyB3
+b3JraW5nIG9uIGEgY2xlYW51cCBzZXJpZXMgdG8gZml4IHRoaXMgbWVzcywgYnV0IEkKZGlkbid0
+IGZpbmQgYW55dGhpbmcuCi1EYW5pZWwKCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3Rp
+X2hkYS5jICB8IDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMgfCAxIC0KPiAg
+MiBmaWxlcyBjaGFuZ2VkLCAyIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2dwdS9kcm0vc3RpL3N0aV9oZGEuYyBiL2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkYS5jCj4g
+aW5kZXggNjdiYmRiNDlmZmZjLi4xOTlkYjEzZjU2NWMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL3N0aS9zdGlfaGRhLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZGEu
+Ywo+IEBAIC03MjEsNyArNzIxLDYgQEAgc3RhdGljIGludCBzdGlfaGRhX2JpbmQoc3RydWN0IGRl
+dmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4gIAlyZXR1cm4g
+MDsKPiAgCj4gIGVycl9zeXNmczoKPiAtCWRybV9icmlkZ2VfcmVtb3ZlKGJyaWRnZSk7Cj4gIAly
+ZXR1cm4gLUVJTlZBTDsKPiAgfQo+ICAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N0
+aS9zdGlfaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jCj4gaW5kZXggNThm
+NDMxMTAyNTEyLi45MzI3MjQ3ODQ5NDIgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3N0
+aS9zdGlfaGRtaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jCj4gQEAg
+LTEzMTUsNyArMTMxNSw2IEBAIHN0YXRpYyBpbnQgc3RpX2hkbWlfYmluZChzdHJ1Y3QgZGV2aWNl
+ICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKPiAgCXJldHVybiAwOwo+
+ICAKPiAgZXJyX3N5c2ZzOgo+IC0JZHJtX2JyaWRnZV9yZW1vdmUoYnJpZGdlKTsKPiAgCWhkbWkt
+PmRybV9jb25uZWN0b3IgPSBOVUxMOwo+ICAJcmV0dXJuIC1FSU5WQUw7Cj4gIH0KPiAtLSAKPiAy
+LjExLjAKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+Xwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3Jh
+dGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
