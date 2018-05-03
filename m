@@ -1,72 +1,99 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] arm: exynos/s3c: dts: Remove leading 0x and 0s from
- bindings notation
-Date: Thu, 3 May 2018 21:13:56 +0200
-Message-ID: <20180503191356.n6xo5qe7jnmr2krf@kozik-lap>
-References: <20180502201153.7459-1-malat@debian.org>
- <20180503184454.19131-1-malat@debian.org>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 1/3] drm/sti: do not remove the drm_bridge that was never
+ added
+Date: Thu, 3 May 2018 23:12:21 +0200
+Message-ID: <bd8d12f7-0c71-c96b-80fa-54de7de39511@axentia.se>
+References: <20180502074025.12421-1-peda@axentia.se>
+ <20180502074025.12421-2-peda@axentia.se>
+ <20180503090648.GG12521@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180503184454.19131-1-malat@debian.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180503090648.GG12521@phenom.ffwll.local>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 03, 2018 at 08:44:53PM +0200, Mathieu Malaterre wrote:
-> Improve the DTS files by removing all the leading "0x" and zeros to fix the
-> following dtc warnings:
+On 2018-05-03 11:06, Daniel Vetter wrote:
+> On Wed, May 02, 2018 at 09:40:23AM +0200, Peter Rosin wrote:
+>> The more natural approach would perhaps be to add an drm_bridge_add,
+>> but there are several other bridges that never call drm_bridge_add.
+>> Just removing the drm_bridge_remove is the easier fix.
+>>
+>> Signed-off-by: Peter Rosin <peda@axentia.se>
 > 
-> Warning (unit_address_format): Node /XXX unit name should not have leading "0x"
+> This mess is much bigger. There's 2 pairs of bridge functions:
 > 
-> and
+> - drm_bridge_attach/detach. Those are meant to be called by the overall
+>   drm driver to connect/disconnect a drm_bridge.
 > 
-> Warning (unit_address_format): Node /XXX unit name should not have leading 0s
+> - drm_bridge_add/remove. These are supposed to be called by the bridge
+>   driver itself to register/unregister itself. Maybe we should rename
+>   them, since the same issue happens with drm_panel, with the same
+>   confusion.
 > 
-> Converted using the following command:
-> 
-> find . -type f \( -iname *.dts -o -iname *.dtsi \) -exec sed  -i -e "s/@\([0-9a-fA-FxX\.;:#]\+\)\s*{/@\L\1 {/g" -e "s/@0x\(.*\) {/@\1 {/g" -e "s/@0\+\(.*\) {/@\1 {/g" {} +
-> 
-> For simplicity, two sed expressions were used to solve each warnings separately.
-> 
-> To make the regex expression more robust a few other issues were resolved,
-> namely setting unit-address to lower case, and adding a whitespace before the
-> the opening curly brace:
-> 
-> https://elinux.org/Device_Tree_Linux#Linux_conventions
-> 
-> This will solve as a side effect warning:
-> 
-> Warning (simple_bus_reg): Node /XXX@<UPPER> simple-bus unit address format error, expected "<lower>"
-> 
-> This is a follow up to commit 4c9847b7375a ("dt-bindings: Remove leading 0x from bindings notation")
-> 
-> Reported-by: David Daney <ddaney@caviumnetworks.com>
-> Suggested-by: Rob Herring <robh@kernel.org>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
-> v3: remove extra 0 preventing correct fixup
-> v2: intermediate patch contained unrelated changes. restrict to S3 and Exynos*
-> 
->  arch/arm/boot/dts/exynos5420.dtsi             | 36 +++++++++++++--------------
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  2 +-
->  arch/arm/boot/dts/s3c2416.dtsi                |  8 +++---
->  3 files changed, 23 insertions(+), 23 deletions(-)
-> 
+> I thought someone was working on a cleanup series to fix this mess, but I
+> didn't find anything.
 
-Thanks, applied after running the command to include few more changes.
+Ok, I just spotted the imbalance and didn't really dig into what
+actually happens in these error paths. Now that I have done so I
+believe that the removed drm_bridge_remove calls causes NULL
+dereferences if/when the error paths are triggered.
 
-Best regards,
-Krzysztof
+So, I don't think this can wait for some bigger cleanup.
+
+drm_bridge_remove calls list_del_init calls __list_del_entry calls
+__list_del with NULL in both prev and next since the list member
+is never initialized. prev and next are dereferenced by __list_del
+and you have *boom*
+
+I recommend adding the tag
+
+Fixes: 84601dbdea36 ("drm: sti: rework init sequence")
+
+so that stable picks this one up.
+
+Cheers,
+Peter
+
+> -Daniel
+> 
+>> ---
+>>  drivers/gpu/drm/sti/sti_hda.c  | 1 -
+>>  drivers/gpu/drm/sti/sti_hdmi.c | 1 -
+>>  2 files changed, 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+>> index 67bbdb49fffc..199db13f565c 100644
+>> --- a/drivers/gpu/drm/sti/sti_hda.c
+>> +++ b/drivers/gpu/drm/sti/sti_hda.c
+>> @@ -721,7 +721,6 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
+>>  	return 0;
+>>  
+>>  err_sysfs:
+>> -	drm_bridge_remove(bridge);
+>>  	return -EINVAL;
+>>  }
+>>  
+>> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+>> index 58f431102512..932724784942 100644
+>> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+>> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+>> @@ -1315,7 +1315,6 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
+>>  	return 0;
+>>  
+>>  err_sysfs:
+>> -	drm_bridge_remove(bridge);
+>>  	hdmi->drm_connector = NULL;
+>>  	return -EINVAL;
+>>  }
+>> -- 
+>> 2.11.0
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
