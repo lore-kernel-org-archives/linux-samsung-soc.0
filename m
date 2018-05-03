@@ -1,258 +1,283 @@
-From: Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH v2] arm: exynos/s3c: dts: Remove leading 0x and 0s from bindings notation
-Date: Wed,  2 May 2018 22:11:52 +0200
-Message-ID: <20180502201153.7459-1-malat@debian.org>
-References: <20171215124630.30082-1-malat@debian.org>
+From: Satendra Singh Thakur <satendra.t@samsung.com>
+Subject: [PATCH] drm/kms/mode: added a new helper for calculating videomode
+ from crtc's display mode
+Date: Thu,  3 May 2018 11:28:37 +0530
+Message-ID: <1525327118-26078-1-git-send-email-satendra.t@samsung.com>
+References: <CGME20180503055902epcas5p2eea7b9f58dc630e60fb28c8fc2ffad7b@epcas5p2.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171215124630.30082-1-malat@debian.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: malat@debian.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liviu Dudau <liviu.dudau@arm.com>, Brian Starkey <brian.starkey@arm.com>, Mali DP Maintainers <malidp@foss.arm.com>, David Airlie <airlied@linux.ie>, Boris Brezillon <boris.brezillon@bootlin.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.orgl
+Cc: Satendra Singh Thakur <satendra.t@samsung.com>, Madhur Verma <madhur.verma@samsung.com>, Hemanshu Srivastava <hemanshu.s@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Improve the DTS files by removing all the leading "0x" and zeros to fix the
-following dtc warnings:
+1.
+-Added a new helper drm_display_mode_crtc_to_videomode
+-This helper calculates mode parameters like
+  horizontal front_porch, back_porch, sync length
+  vertical front_porch, back_porch, sync length
+  using crtc_* fields of struct drm_display_mode
+-It uses following fields of crtc mode
+ horizontal sync start/end, active and total length
+ vertical sync start/end, active and total length
+2.
+-Most of the driver use user-supplied mode for calculating videomode
+-However, few drivers use HW (crtc) mode for calculating videomode
+-This helper will be useful for such drivers
+3.
+-Currently following drivers will be using this new helper
+-arm hdlcd
+-atmel hlcdc
+-exynos 5433 decon
+-exynos7 decon
+-exynos fimd
+4.
+-This patch removes related duplicate code from above mentioned drivers
 
-Warning (unit_address_format): Node /XXX unit name should not have leading "0x"
-
-and
-
-Warning (unit_address_format): Node /XXX unit name should not have leading 0s
-
-Converted using the following command:
-
-find . -type f \( -iname *.dts -o -iname *.dtsi \) -exec sed  -i -e "s/@\([0-9a-fA-FxX\.;:#]\+\)\s*{/@\L\1 {/g" -e "s/@0x\(.*\) {/@\1 {/g" -e "s/@0\+\(.*\) {/@0\1 {/g" {} +
-
-For simplicity, two sed expressions were used to solve each warnings separately.
-
-To make the regex expression more robust a few other issues were resolved,
-namely setting unit-address to lower case, and adding a whitespace before the
-the opening curly brace:
-
-https://elinux.org/Device_Tree_Linux#Linux_conventions
-
-This will solve as a side effect warning:
-
-Warning (simple_bus_reg): Node /XXX@<UPPER> simple-bus unit address format error, expected "<lower>"
-
-This is a follow up to commit 4c9847b7375a ("dt-bindings: Remove leading 0x from bindings notation")
-
-Reported-by: David Daney <ddaney@caviumnetworks.com>
-Suggested-by: Rob Herring <robh@kernel.org>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+Cc: Madhur Verma <madhur.verma@samsung.com>
+Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
 ---
-v2: intermediate patch contained unrelated changes. restrict to S3 and Exynos*
+ drivers/gpu/drm/arm/hdlcd_crtc.c               |  8 +-------
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c |  7 +------
+ drivers/gpu/drm/drm_modes.c                    | 20 ++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c  | 22 ++++++++++------------
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c     | 23 ++++++++++-------------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c       | 22 +++++++++-------------
+ include/drm/drm_modes.h                        |  2 ++
+ 7 files changed, 53 insertions(+), 51 deletions(-)
 
- arch/arm/boot/dts/exynos5420.dtsi | 36 ++++++++++++++++++------------------
- arch/arm/boot/dts/s3c2416.dtsi    |  8 ++++----
- 2 files changed, 22 insertions(+), 22 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 2f3cb2a97f71..633952a96427 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -761,7 +761,7 @@
- 			#include "exynos5420-tmu-sensor-conf.dtsi"
- 		};
+diff --git a/drivers/gpu/drm/arm/hdlcd_crtc.c b/drivers/gpu/drm/arm/hdlcd_crtc.c
+index cf5cbd6..d20e471 100644
+--- a/drivers/gpu/drm/arm/hdlcd_crtc.c
++++ b/drivers/gpu/drm/arm/hdlcd_crtc.c
+@@ -130,13 +130,7 @@ static void hdlcd_crtc_mode_set_nofb(struct drm_crtc *crtc)
+ 	struct videomode vm;
+ 	unsigned int polarities, err;
  
--		sysmmu_g2dr: sysmmu@0x10A60000 {
-+		sysmmu_g2dr: sysmmu@10a60000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x10A60000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -771,7 +771,7 @@
- 			#iommu-cells = <0>;
- 		};
+-	vm.vfront_porch = m->crtc_vsync_start - m->crtc_vdisplay;
+-	vm.vback_porch = m->crtc_vtotal - m->crtc_vsync_end;
+-	vm.vsync_len = m->crtc_vsync_end - m->crtc_vsync_start;
+-	vm.hfront_porch = m->crtc_hsync_start - m->crtc_hdisplay;
+-	vm.hback_porch = m->crtc_htotal - m->crtc_hsync_end;
+-	vm.hsync_len = m->crtc_hsync_end - m->crtc_hsync_start;
+-
++	drm_display_mode_crtc_to_videomode(m, &vm);
+ 	polarities = HDLCD_POLARITY_DATAEN | HDLCD_POLARITY_DATA;
  
--		sysmmu_g2dw: sysmmu@0x10A70000 {
-+		sysmmu_g2dw: sysmmu@10a70000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x10A70000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -781,7 +781,7 @@
- 			#iommu-cells = <0>;
- 		};
+ 	if (m->flags & DRM_MODE_FLAG_PHSYNC)
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+index d732810..bafcef6 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+@@ -81,12 +81,7 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
+ 	unsigned int cfg;
+ 	int div;
  
--		sysmmu_tv: sysmmu@0x14650000 {
-+		sysmmu_tv: sysmmu@14650000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x14650000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -792,7 +792,7 @@
- 			#iommu-cells = <0>;
- 		};
+-	vm.vfront_porch = adj->crtc_vsync_start - adj->crtc_vdisplay;
+-	vm.vback_porch = adj->crtc_vtotal - adj->crtc_vsync_end;
+-	vm.vsync_len = adj->crtc_vsync_end - adj->crtc_vsync_start;
+-	vm.hfront_porch = adj->crtc_hsync_start - adj->crtc_hdisplay;
+-	vm.hback_porch = adj->crtc_htotal - adj->crtc_hsync_end;
+-	vm.hsync_len = adj->crtc_hsync_end - adj->crtc_hsync_start;
++	drm_display_mode_crtc_to_videomode(adj, &vm);
  
--		sysmmu_gscl0: sysmmu@0x13E80000 {
-+		sysmmu_gscl0: sysmmu@13e80000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13E80000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -803,7 +803,7 @@
- 			#iommu-cells = <0>;
- 		};
+ 	regmap_write(regmap, ATMEL_HLCDC_CFG(1),
+ 		     (vm.hsync_len - 1) | ((vm.vsync_len - 1) << 16));
+diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+index e82b61e..a406749 100644
+--- a/drivers/gpu/drm/drm_modes.c
++++ b/drivers/gpu/drm/drm_modes.c
+@@ -654,6 +654,26 @@ void drm_display_mode_to_videomode(const struct drm_display_mode *dmode,
+ 		vm->flags |= DISPLAY_FLAGS_DOUBLECLK;
+ }
+ EXPORT_SYMBOL_GPL(drm_display_mode_to_videomode);
++/**
++ * drm_display_mode_crtc_to_videomode - fill in @vm using crtc fields of@dmode,
++ * @dmode: drm_display_mode structure to use as source
++ * @vm: videomode structure to use as destination
++ *
++ * Fills out @vm using the crtc display mode specified in @dmode.
++ */
++void drm_display_mode_crtc_to_videomode(const struct drm_display_mode *dmode,
++				   struct videomode *vm)
++{
++	vm->hfront_porch = dmode->crtc_hsync_start - dmode->crtc_hdisplay;
++	vm->hsync_len = dmode->crtc_hsync_end - dmode->crtc_hsync_start;
++	vm->hback_porch = dmode->crtc_htotal - dmode->crtc_hsync_end;
++
++	vm->vfront_porch = dmode->crtc_vsync_start - dmode->crtc_vdisplay;
++	vm->vsync_len = dmode->crtc_vsync_end - dmode->crtc_vsync_start;
++	vm->vback_porch = dmode->crtc_vtotal - dmode->crtc_vsync_end;
++
++}
++EXPORT_SYMBOL_GPL(drm_display_mode_crtc_to_videomode);
  
--		sysmmu_gscl1: sysmmu@0x13E90000 {
-+		sysmmu_gscl1: sysmmu@13e90000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13E90000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -814,7 +814,7 @@
- 			#iommu-cells = <0>;
- 		};
+ /**
+  * drm_bus_flags_from_videomode - extract information about pixelclk and
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 1c330f2..1ba73a8 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -20,6 +20,7 @@
+ #include <linux/of_gpio.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
++#include <video/videomode.h>
  
--		sysmmu_scaler0r: sysmmu@0x12880000 {
-+		sysmmu_scaler0r: sysmmu@12880000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x12880000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -824,7 +824,7 @@
- 			#iommu-cells = <0>;
- 		};
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+@@ -225,26 +226,23 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+ 	writel(val, ctx->addr + DECON_VIDTCON2);
  
--		sysmmu_scaler1r: sysmmu@0x12890000 {
-+		sysmmu_scaler1r: sysmmu@12890000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x12890000 0x1000>;
- 			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-@@ -833,7 +833,7 @@
- 			#iommu-cells = <0>;
- 		};
+ 	if (!crtc->i80_mode) {
+-		int vbp = m->crtc_vtotal - m->crtc_vsync_end;
+-		int vfp = m->crtc_vsync_start - m->crtc_vdisplay;
++		struct videomode vm;
  
--		sysmmu_scaler2r: sysmmu@0x128A0000 {
-+		sysmmu_scaler2r: sysmmu@128a0000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x128A0000 0x1000>;
- 			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-@@ -842,7 +842,7 @@
- 			#iommu-cells = <0>;
- 		};
++		drm_display_mode_crtc_to_videomode(m, &vm);
+ 		if (interlaced)
+-			vbp = vbp / 2 - 1;
+-		val = VIDTCON00_VBPD_F(vbp - 1) | VIDTCON00_VFPD_F(vfp - 1);
++			vm.vback_porch = (vm.vback_porch >> 1) - 1;
++		val = VIDTCON00_VBPD_F(vm.vback_porch - 1) |
++			VIDTCON00_VFPD_F(vm.vfront_porch - 1);
+ 		writel(val, ctx->addr + DECON_VIDTCON00);
  
--		sysmmu_scaler0w: sysmmu@0x128C0000 {
-+		sysmmu_scaler0w: sysmmu@128c0000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x128C0000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -852,7 +852,7 @@
- 			#iommu-cells = <0>;
- 		};
+-		val = VIDTCON01_VSPW_F(
+-				m->crtc_vsync_end - m->crtc_vsync_start - 1);
++		val = VIDTCON01_VSPW_F(vm.vsync_len - 1);
+ 		writel(val, ctx->addr + DECON_VIDTCON01);
  
--		sysmmu_scaler1w: sysmmu@0x128D0000 {
-+		sysmmu_scaler1w: sysmmu@128d0000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x128D0000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -862,7 +862,7 @@
- 			#iommu-cells = <0>;
- 		};
+-		val = VIDTCON10_HBPD_F(
+-				m->crtc_htotal - m->crtc_hsync_end - 1) |
+-			VIDTCON10_HFPD_F(
+-				m->crtc_hsync_start - m->crtc_hdisplay - 1);
++		val = VIDTCON10_HBPD_F(vm.hback_porch - 1) |
++			VIDTCON10_HFPD_F(vm.hfront_porch - 1);
+ 		writel(val, ctx->addr + DECON_VIDTCON10);
  
--		sysmmu_scaler2w: sysmmu@0x128E0000 {
-+		sysmmu_scaler2w: sysmmu@128e0000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x128E0000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -872,7 +872,7 @@
- 			#iommu-cells = <0>;
- 		};
+-		val = VIDTCON11_HSPW_F(
+-				m->crtc_hsync_end - m->crtc_hsync_start - 1);
++		val = VIDTCON11_HSPW_F(vm.hsync_len - 1);
+ 		writel(val, ctx->addr + DECON_VIDTCON11);
+ 	}
  
--		sysmmu_rotator: sysmmu@0x11D40000 {
-+		sysmmu_rotator: sysmmu@11d40000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x11D40000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -882,7 +882,7 @@
- 			#iommu-cells = <0>;
- 		};
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 3931d5e..148daae 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -25,6 +25,7 @@
  
--		sysmmu_jpeg0: sysmmu@0x11F10000 {
-+		sysmmu_jpeg0: sysmmu@11f10000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x11F10000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -892,7 +892,7 @@
- 			#iommu-cells = <0>;
- 		};
+ #include <video/of_display_timing.h>
+ #include <video/of_videomode.h>
++#include <video/videomode.h>
  
--		sysmmu_jpeg1: sysmmu@0x11F20000 {
-+		sysmmu_jpeg1: sysmmu@11f20000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x11F20000 0x1000>;
- 			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-@@ -901,7 +901,7 @@
- 			#iommu-cells = <0>;
- 		};
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_plane.h"
+@@ -168,28 +169,24 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+ 		return;
  
--		sysmmu_mfc_l: sysmmu@0x11200000 {
-+		sysmmu_mfc_l: sysmmu@11200000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x11200000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -912,7 +912,7 @@
- 			#iommu-cells = <0>;
- 		};
+ 	if (!ctx->i80_if) {
+-		int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
++		struct videomode vm;
++
++		drm_display_mode_crtc_to_videomode(mode, &vm);
+ 	      /* setup vertical timing values. */
+-		vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
+-		vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
+-		vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
  
--		sysmmu_mfc_r: sysmmu@0x11210000 {
-+		sysmmu_mfc_r: sysmmu@11210000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x11210000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -923,7 +923,7 @@
- 			#iommu-cells = <0>;
- 		};
+-		val = VIDTCON0_VBPD(vbpd - 1) | VIDTCON0_VFPD(vfpd - 1);
++		val = VIDTCON0_VBPD(vm.vback_porch - 1) |
++			VIDTCON0_VFPD(vm.vfront_porch - 1);
+ 		writel(val, ctx->regs + VIDTCON0);
  
--		sysmmu_fimd1_0: sysmmu@0x14640000 {
-+		sysmmu_fimd1_0: sysmmu@14640000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x14640000 0x1000>;
- 			interrupt-parent = <&combiner>;
-@@ -934,7 +934,7 @@
- 			#iommu-cells = <0>;
- 		};
+-		val = VIDTCON1_VSPW(vsync_len - 1);
++		val = VIDTCON1_VSPW(vm.vsync_len - 1);
+ 		writel(val, ctx->regs + VIDTCON1);
  
--		sysmmu_fimd1_1: sysmmu@0x14680000 {
-+		sysmmu_fimd1_1: sysmmu@14680000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x14680000 0x1000>;
- 			interrupt-parent = <&combiner>;
-diff --git a/arch/arm/boot/dts/s3c2416.dtsi b/arch/arm/boot/dts/s3c2416.dtsi
-index 3c7385cab248..46cf85f3c18b 100644
---- a/arch/arm/boot/dts/s3c2416.dtsi
-+++ b/arch/arm/boot/dts/s3c2416.dtsi
-@@ -30,7 +30,7 @@
- 		compatible = "samsung,s3c2416-irq";
- 	};
+ 		/* setup horizontal timing values.  */
+-		hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
+-		hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
+-		hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
+-
+-		/* setup horizontal timing values.  */
+-		val = VIDTCON2_HBPD(hbpd - 1) | VIDTCON2_HFPD(hfpd - 1);
++		val = VIDTCON2_HBPD(vm.hback_porch - 1) |
++			VIDTCON2_HFPD(vm.hfront_porch - 1);
+ 		writel(val, ctx->regs + VIDTCON2);
  
--	clocks: clock-controller@0x4c000000 {
-+	clocks: clock-controller@4c000000 {
- 		compatible = "samsung,s3c2416-clock";
- 		reg = <0x4c000000 0x40>;
- 		#clock-cells = <1>;
-@@ -69,7 +69,7 @@
- 				<&clocks SCLK_UART>;
- 	};
+-		val = VIDTCON3_HSPW(hsync_len - 1);
++		val = VIDTCON3_HSPW(vm.hsync_len - 1);
+ 		writel(val, ctx->regs + VIDTCON3);
+ 	}
  
--	uart_3: serial@5000C000 {
-+	uart_3: serial@5000c000 {
- 		compatible = "samsung,s3c2440-uart";
- 		reg = <0x5000C000 0x4000>;
- 		interrupts = <1 18 24 4>, <1 18 25 4>;
-@@ -80,7 +80,7 @@
- 		status = "disabled";
- 	};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index d42ae2b..b3ab89d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -25,6 +25,7 @@
  
--	sdhci_1: sdhci@4AC00000 {
-+	sdhci_1: sdhci@4ac00000 {
- 		compatible = "samsung,s3c6410-sdhci";
- 		reg = <0x4AC00000 0x100>;
- 		interrupts = <0 0 21 3>;
-@@ -91,7 +91,7 @@
- 		status = "disabled";
- 	};
+ #include <video/of_display_timing.h>
+ #include <video/of_videomode.h>
++#include <video/videomode.h>
+ #include <video/samsung_fimd.h>
+ #include <drm/exynos_drm.h>
  
--	sdhci_0: sdhci@4A800000 {
-+	sdhci_0: sdhci@4a800000 {
- 		compatible = "samsung,s3c6410-sdhci";
- 		reg = <0x4A800000 0x100>;
- 		interrupts = <0 0 20 3>;
+@@ -463,7 +464,7 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
+ 			return;
+ 		}
+ 	} else {
+-		int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
++		struct videomode vm;
+ 		u32 vidcon1;
+ 
+ 		/* setup polarity values */
+@@ -474,24 +475,19 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
+ 			vidcon1 |= VIDCON1_INV_HSYNC;
+ 		writel(vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
+ 
++		drm_display_mode_crtc_to_videomode(mode, &vm);
+ 		/* setup vertical timing values. */
+-		vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
+-		vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
+-		vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
+ 
+-		val = VIDTCON0_VBPD(vbpd - 1) |
+-			VIDTCON0_VFPD(vfpd - 1) |
+-			VIDTCON0_VSPW(vsync_len - 1);
++		val = VIDTCON0_VBPD(vm.vback_porch - 1) |
++			VIDTCON0_VFPD(vm.vfront_porch - 1) |
++			VIDTCON0_VSPW(vm.vsync_len - 1);
+ 		writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
+ 
+ 		/* setup horizontal timing values.  */
+-		hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
+-		hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
+-		hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
+ 
+-		val = VIDTCON1_HBPD(hbpd - 1) |
+-			VIDTCON1_HFPD(hfpd - 1) |
+-			VIDTCON1_HSPW(hsync_len - 1);
++		val = VIDTCON1_HBPD(vm.hback_porch - 1) |
++			VIDTCON1_HFPD(vm.hfront_porch - 1) |
++			VIDTCON1_HSPW(vm.hsync_len - 1);
+ 		writel(val, ctx->regs + driver_data->timing_base + VIDTCON1);
+ 	}
+ 
+diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
+index 0d310be..9ac764b 100644
+--- a/include/drm/drm_modes.h
++++ b/include/drm/drm_modes.h
+@@ -473,6 +473,8 @@ void drm_display_mode_from_videomode(const struct videomode *vm,
+ 				     struct drm_display_mode *dmode);
+ void drm_display_mode_to_videomode(const struct drm_display_mode *dmode,
+ 				   struct videomode *vm);
++void drm_display_mode_crtc_to_videomode(const struct drm_display_mode *dmode,
++				   struct videomode *vm);
+ void drm_bus_flags_from_videomode(const struct videomode *vm, u32 *bus_flags);
+ int of_get_drm_display_mode(struct device_node *np,
+ 			    struct drm_display_mode *dmode, u32 *bus_flags,
 -- 
-2.11.0
+2.7.4
