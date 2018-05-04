@@ -1,51 +1,25 @@
-From: Satendra Singh Thakur <satendra.t@samsung.com>
-Subject: [PATCH v1 03/13] drm/kms/mode/exynos-dsi: using helper func
- drm_display_mode_to_videomode for calculating timing parameters
-Date: Fri,  4 May 2018 13:45:26 +0530
-Message-ID: <1525421726-2817-1-git-send-email-satendra.t@samsung.com>
-References: <00b4a624-d2b6-dc6a-71c0-9c7642480a44@arm.com>
-        <CGME20180504081613epcas5p405d342fe333975048175c4a360067f52@epcas5p4.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH v1] drm/kms/mode: added a new helper for calculating videomode from crtc's display mode
+Date: Fri, 04 May 2018 12:41:56 +0300
+Message-ID: <87sh777o63.fsf@intel.com>
+References: <20180503103639.GH1027@e110455-lin.cambridge.arm.com> <CGME20180504074013epcas5p4564cb7043e1875154469052d097848db@epcas5p4.samsung.com> <1525419600-1774-1-git-send-email-satendra.t@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <00b4a624-d2b6-dc6a-71c0-9c7642480a44@arm.com>
+In-Reply-To: <1525419600-1774-1-git-send-email-satendra.t@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robin.murphy@arm.com, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: liviu.dudau@arm.com, Brian Starkey <brian.starkey@arm.com>, Mali DP Maintainers <malidp@foss.arm.com>, David Airlie <airlied@linux.ie>, Boris Brezillon <boris.brezillon@bootlin.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-ker
 Cc: madhur.verma@samsung.com, sst2005@gmail.com, Satendra Singh Thakur <satendra.t@samsung.com>, Hemanshu Srivastava <hemanshu.s@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To avoid duplicate logic for the same
+On Fri, 04 May 2018, Satendra Singh Thakur <satendra.t@samsung.com> wrote:
+> Reviewed-by: Jani Nikula <jani.nikula@linux.intel.com>
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-Acked-by: Madhur Verma <madhur.verma@samsung.com>
-Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+No. I commented on the patch, but I never said Reviewed-by. Never assume
+Reviewed-by based on random comments on patches.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 7904ffa..7fe84fd 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1490,17 +1490,8 @@ static void exynos_dsi_mode_set(struct drm_encoder *encoder,
- 				struct drm_display_mode *adjusted_mode)
- {
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
--	struct videomode *vm = &dsi->vm;
--	struct drm_display_mode *m = adjusted_mode;
--
--	vm->hactive = m->hdisplay;
--	vm->vactive = m->vdisplay;
--	vm->vfront_porch = m->vsync_start - m->vdisplay;
--	vm->vback_porch = m->vtotal - m->vsync_end;
--	vm->vsync_len = m->vsync_end - m->vsync_start;
--	vm->hfront_porch = m->hsync_start - m->hdisplay;
--	vm->hback_porch = m->htotal - m->hsync_end;
--	vm->hsync_len = m->hsync_end - m->hsync_start;
-+
-+	drm_display_mode_to_videomode(adjusted_mode, &dsi->vm);
- }
- 
- static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
+BR,
+Jani.
+
 -- 
-2.7.4
+Jani Nikula, Intel Open Source Technology Center
