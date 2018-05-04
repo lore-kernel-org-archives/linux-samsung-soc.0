@@ -1,14 +1,14 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: [PATCH v2 19/26] drm/exynos: mic: provide an owner .odev device for
- the bridge
-Date: Fri,  4 May 2018 15:52:05 +0200
-Message-ID: <20180504135212.26977-20-peda@axentia.se>
-References: <20180504135212.26977-1-peda@axentia.se>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] arm: Convert arm boot_lock to raw
+Date: Fri, 4 May 2018 08:21:37 -0700
+Message-ID: <20180504152137.GC98604@atomide.com>
+References: <20180504105600.20613-1-bigeasy@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180504135212.26977-1-peda@axentia.se>
+Content-Disposition: inline
+In-Reply-To: <20180504105600.20613-1-bigeasy@linutronix.de>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,30 +18,26 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Jyri Sarha <jsarha@ti.com>, Peter Rosin <peda@axentia.se>, linux-arm-kernel@lists.infradead.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Barry Song <baohua@kernel.org>, linux-samsung-soc@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>, Frank Rowand <frank.rowand@am.sony.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, David Brown <david.brown@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Wei Xu <xuwei5@hisilicon.com>, Viresh Kumar <vireshk@kernel.org>, Andy Gross <andy.gross@linaro.org>, tglx@linutronix.de, linux-omap@vger.kernel.org, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The .of_node member is going away.
+* Sebastian Andrzej Siewior <bigeasy@linutronix.de> [180504 10:58]:
+> From: Frank Rowand <frank.rowand@am.sony.com>
+> 
+> The arm boot_lock is used by the secondary processor startup code.  The locking
+> task is the idle thread, which has idle->sched_class == &idle_sched_class.
+> idle_sched_class->enqueue_task == NULL, so if the idle task blocks on the
+> lock, the attempt to wake it when the lock becomes available will fail:
+> 
+> try_to_wake_up()
+>    ...
+>       activate_task()
+>          enqueue_task()
+>             p->sched_class->enqueue_task(rq, p, flags)
+> 
+> Fix by converting boot_lock to a raw spin lock.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/gpu/drm/exynos/exynos_drm_mic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Still works for me:
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index 2174814273e2..f9ff8d3ec937 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -417,8 +417,8 @@ static int exynos_mic_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, mic);
- 
-+	mic->bridge.odev = dev;
- 	mic->bridge.funcs = &mic_bridge_funcs;
--	mic->bridge.of_node = dev->of_node;
- 
- 	drm_bridge_add(&mic->bridge);
- 
--- 
-2.11.0
+Tested-by: Tony Lindgren <tony@atomide.com>
