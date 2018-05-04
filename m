@@ -1,70 +1,47 @@
-From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
-Subject: [PATCH v2 26/26] drm/bridge: establish a link between
- the bridge supplier and consumer
-Date: Fri,  4 May 2018 15:52:12 +0200
-Message-ID: <20180504135212.26977-27-peda@axentia.se>
+From: Peter Rosin <peda@axentia.se>
+Subject: [PATCH v2 19/26] drm/exynos: mic: provide an owner .odev device for
+ the bridge
+Date: Fri,  4 May 2018 15:52:05 +0200
+Message-ID: <20180504135212.26977-20-peda@axentia.se>
 References: <20180504135212.26977-1-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20180504135212.26977-1-peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Martin Donnelly <martin.donnelly-JJi787mZWgc@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Inki
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180504135212.26977-1-peda@axentia.se>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Jyri Sarha <jsarha@ti.com>, Peter Rosin <peda@axentia.se>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SWYgdGhlIGJyaWRnZSBzdXBwbGllciBpcyB1bmJvdW5kLCB0aGlzIHdpbGwgYnJpbmcgdGhlIGJy
-aWRnZSBjb25zdW1lcgpkb3duIGFsb25nIHdpdGggdGhlIGJyaWRnZS4gVGh1cywgdGhlcmUgd2ls
-bCBubyBsb25nZXIgbGluZ2VyIGFueQpkYW5nbGluZyBwb2ludGVycyBmcm9tIHRoZSBicmlkZ2Ug
-Y29uc3VtZXIgKHRoZSBkcm1fZGV2aWNlKSB0byBzb21lCm5vbi1leGlzdGVudCBicmlkZ2Ugc3Vw
-cGxpZXIuCgpTaWduZWQtb2ZmLWJ5OiBQZXRlciBSb3NpbiA8cGVkYUBheGVudGlhLnNlPgotLS0K
-IGRyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMgfCAxOCArKysrKysrKysrKysrKysrKysKIGlu
-Y2x1ZGUvZHJtL2RybV9icmlkZ2UuaCAgICAgfCAgMiArKwogMiBmaWxlcyBjaGFuZ2VkLCAyMCBp
-bnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9icmlkZ2UuYyBi
-L2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMKaW5kZXggNzhkMTg2YjY4MzFiLi4wMjU5ZjBh
-M2ZmMjcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMKKysrIGIvZHJp
-dmVycy9ncHUvZHJtL2RybV9icmlkZ2UuYwpAQCAtMjYsNiArMjYsNyBAQAogI2luY2x1ZGUgPGxp
-bnV4L211dGV4Lmg+CiAKICNpbmNsdWRlIDxkcm0vZHJtX2JyaWRnZS5oPgorI2luY2x1ZGUgPGRy
-bS9kcm1fZGV2aWNlLmg+CiAjaW5jbHVkZSA8ZHJtL2RybV9lbmNvZGVyLmg+CiAKICNpbmNsdWRl
-ICJkcm1fY3J0Y19pbnRlcm5hbC5oIgpAQCAtMTI3LDEyICsxMjgsMjUgQEAgaW50IGRybV9icmlk
-Z2VfYXR0YWNoKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2Rlciwgc3RydWN0IGRybV9icmlkZ2Ug
-KmJyaWRnZSwKIAlpZiAoYnJpZGdlLT5kZXYpCiAJCXJldHVybiAtRUJVU1k7CiAKKwlpZiAoZW5j
-b2Rlci0+ZGV2LT5kZXYgIT0gYnJpZGdlLT5vZGV2KSB7CisJCWJyaWRnZS0+bGluayA9IGRldmlj
-ZV9saW5rX2FkZChlbmNvZGVyLT5kZXYtPmRldiwKKwkJCQkJICAgICAgIGJyaWRnZS0+b2Rldiwg
-MCk7CisJCWlmICghYnJpZGdlLT5saW5rKSB7CisJCQlkZXZfZXJyKGJyaWRnZS0+b2RldiwgImZh
-aWxlZCB0byBsaW5rIGJyaWRnZSB0byAlc1xuIiwKKwkJCQlkZXZfbmFtZShlbmNvZGVyLT5kZXYt
-PmRldikpOworCQkJcmV0dXJuIC1FSU5WQUw7CisJCX0KKwl9CisKIAlicmlkZ2UtPmRldiA9IGVu
-Y29kZXItPmRldjsKIAlicmlkZ2UtPmVuY29kZXIgPSBlbmNvZGVyOwogCiAJaWYgKGJyaWRnZS0+
-ZnVuY3MtPmF0dGFjaCkgewogCQlyZXQgPSBicmlkZ2UtPmZ1bmNzLT5hdHRhY2goYnJpZGdlKTsK
-IAkJaWYgKHJldCA8IDApIHsKKwkJCWlmIChicmlkZ2UtPmxpbmspCisJCQkJZGV2aWNlX2xpbmtf
-ZGVsKGJyaWRnZS0+bGluayk7CisJCQlicmlkZ2UtPmxpbmsgPSBOVUxMOwogCQkJYnJpZGdlLT5k
-ZXYgPSBOVUxMOwogCQkJYnJpZGdlLT5lbmNvZGVyID0gTlVMTDsKIAkJCXJldHVybiByZXQ7CkBA
-IC0xNTksNiArMTczLDEwIEBAIHZvaWQgZHJtX2JyaWRnZV9kZXRhY2goc3RydWN0IGRybV9icmlk
-Z2UgKmJyaWRnZSkKIAlpZiAoYnJpZGdlLT5mdW5jcy0+ZGV0YWNoKQogCQlicmlkZ2UtPmZ1bmNz
-LT5kZXRhY2goYnJpZGdlKTsKIAorCWlmIChicmlkZ2UtPmxpbmspCisJCWRldmljZV9saW5rX2Rl
-bChicmlkZ2UtPmxpbmspOworCWJyaWRnZS0+bGluayA9IE5VTEw7CisKIAlicmlkZ2UtPmRldiA9
-IE5VTEw7CiB9CiAKZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9icmlkZ2UuaCBiL2luY2x1
-ZGUvZHJtL2RybV9icmlkZ2UuaAppbmRleCBiNjU2ZTUwNWQxMWUuLjgwNDE4OWM2M2E0YyAxMDA2
-NDQKLS0tIGEvaW5jbHVkZS9kcm0vZHJtX2JyaWRnZS5oCisrKyBiL2luY2x1ZGUvZHJtL2RybV9i
-cmlkZ2UuaApAQCAtMjYxLDYgKzI2MSw3IEBAIHN0cnVjdCBkcm1fYnJpZGdlX3RpbWluZ3Mgewog
-ICogQGxpc3Q6IHRvIGtlZXAgdHJhY2sgb2YgYWxsIGFkZGVkIGJyaWRnZXMKICAqIEB0aW1pbmdz
-OiB0aGUgdGltaW5nIHNwZWNpZmljYXRpb24gZm9yIHRoZSBicmlkZ2UsIGlmIGFueSAobWF5CiAg
-KiBiZSBOVUxMKQorICogQGxpbms6IGRybSBjb25zdW1lciA8LT4gYnJpZGdlIHN1cHBsaWVyCiAg
-KiBAZnVuY3M6IGNvbnRyb2wgZnVuY3Rpb25zCiAgKiBAZHJpdmVyX3ByaXZhdGU6IHBvaW50ZXIg
-dG8gdGhlIGJyaWRnZSBkcml2ZXIncyBpbnRlcm5hbCBjb250ZXh0CiAgKi8KQEAgLTI3MSw2ICsy
-NzIsNyBAQCBzdHJ1Y3QgZHJtX2JyaWRnZSB7CiAJc3RydWN0IGRybV9icmlkZ2UgKm5leHQ7CiAJ
-c3RydWN0IGxpc3RfaGVhZCBsaXN0OwogCWNvbnN0IHN0cnVjdCBkcm1fYnJpZGdlX3RpbWluZ3Mg
-KnRpbWluZ3M7CisJc3RydWN0IGRldmljZV9saW5rICpsaW5rOwogCiAJY29uc3Qgc3RydWN0IGRy
-bV9icmlkZ2VfZnVuY3MgKmZ1bmNzOwogCXZvaWQgKmRyaXZlcl9wcml2YXRlOwotLSAKMi4xMS4w
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVlZHJl
-bm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8K
+The .of_node member is going away.
+
+Signed-off-by: Peter Rosin <peda@axentia.se>
+---
+ drivers/gpu/drm/exynos/exynos_drm_mic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+index 2174814273e2..f9ff8d3ec937 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+@@ -417,8 +417,8 @@ static int exynos_mic_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, mic);
+ 
++	mic->bridge.odev = dev;
+ 	mic->bridge.funcs = &mic_bridge_funcs;
+-	mic->bridge.of_node = dev->of_node;
+ 
+ 	drm_bridge_add(&mic->bridge);
+ 
+-- 
+2.11.0
