@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/3] ARM: dts: s3c24xx: Fix unnecessary address/size cells DTC warnings
-Date: Sun,  6 May 2018 18:10:24 +0200
-Message-ID: <20180506161025.26937-2-krzk@kernel.org>
+Subject: [PATCH 3/3] ARM: dts: s3c64xx: Remove skeleton.dtsi and fix DTC warnings for /memory
+Date: Sun,  6 May 2018 18:10:25 +0200
+Message-ID: <20180506161025.26937-3-krzk@kernel.org>
 References: <20180506161025.26937-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180506161025.26937-1-krzk@kernel.org>
@@ -10,45 +10,65 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob He
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Fix DTC warnings:
+Remove the usage of skeleton.dtsi to fix the DTC warnings:
 
-    arch/arm/boot/dts/s3c2416-smdk2416.dtb: Warning (avoid_unnecessary_addr_size):
-        /cpus: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-    arch/arm/boot/dts/s3c2416-smdk2416.dtb: Warning (avoid_unnecessary_addr_size):
-        /clocks: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+    arch/arm/boot/dts/s3c6410-mini6410.dtb: Warning (unit_address_vs_reg):
+        /memory: node has a reg or ranges property, but no unit name
+    arch/arm/boot/dts/s3c6410-smdk6410.dtb: Warning (unit_address_vs_reg):
+        /memory: node has a reg or ranges property, but no unit name
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s3c2416-smdk2416.dts | 2 --
- arch/arm/boot/dts/s3c2416.dtsi         | 3 ---
- 2 files changed, 5 deletions(-)
+ arch/arm/boot/dts/s3c6410-mini6410.dts | 3 ++-
+ arch/arm/boot/dts/s3c6410-smdk6410.dts | 3 ++-
+ arch/arm/boot/dts/s3c64xx.dtsi         | 4 +++-
+ 3 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s3c2416-smdk2416.dts b/arch/arm/boot/dts/s3c2416-smdk2416.dts
-index 5ef1144afceb..5164386aff3a 100644
---- a/arch/arm/boot/dts/s3c2416-smdk2416.dts
-+++ b/arch/arm/boot/dts/s3c2416-smdk2416.dts
-@@ -19,8 +19,6 @@
+diff --git a/arch/arm/boot/dts/s3c6410-mini6410.dts b/arch/arm/boot/dts/s3c6410-mini6410.dts
+index f68601bd9c91..0e159c884f97 100644
+--- a/arch/arm/boot/dts/s3c6410-mini6410.dts
++++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
+@@ -19,7 +19,8 @@
+ 	model = "FriendlyARM Mini6410 board based on S3C6410";
+ 	compatible = "friendlyarm,mini6410", "samsung,s3c6410";
  
- 	clocks {
- 		compatible = "simple-bus";
--		#address-cells = <1>;
--		#size-cells = <1>;
- 
- 		xti: xti {
- 			compatible = "fixed-clock";
-diff --git a/arch/arm/boot/dts/s3c2416.dtsi b/arch/arm/boot/dts/s3c2416.dtsi
-index 46cf85f3c18b..6adf64ea3ff2 100644
---- a/arch/arm/boot/dts/s3c2416.dtsi
-+++ b/arch/arm/boot/dts/s3c2416.dtsi
-@@ -18,9 +18,6 @@
+-	memory {
++	memory@50000000 {
++		device_type = "memory";
+ 		reg = <0x50000000 0x10000000>;
  	};
  
- 	cpus {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
- 		cpu {
- 			compatible = "arm,arm926ej-s";
- 		};
+diff --git a/arch/arm/boot/dts/s3c6410-smdk6410.dts b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+index b6b5afcd7602..a9a5689dc462 100644
+--- a/arch/arm/boot/dts/s3c6410-smdk6410.dts
++++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+@@ -19,7 +19,8 @@
+ 	model = "SAMSUNG SMDK6410 board based on S3C6410";
+ 	compatible = "samsung,mini6410", "samsung,s3c6410";
+ 
+-	memory {
++	memory@50000000 {
++		device_type = "memory";
+ 		reg = <0x50000000 0x8000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
+index e2be3fbdd3f3..2e611df37911 100644
+--- a/arch/arm/boot/dts/s3c64xx.dtsi
++++ b/arch/arm/boot/dts/s3c64xx.dtsi
+@@ -13,10 +13,12 @@
+  * nodes can be added to this file.
+  */
+ 
+-#include "skeleton.dtsi"
+ #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
+ 
+ / {
++	#address-cells = <1>;
++	#size-cells = <1>;
++
+ 	aliases {
+ 		i2c0 = &i2c0;
+ 		pinctrl0 = &pinctrl0;
 -- 
 2.14.1
