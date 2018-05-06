@@ -1,74 +1,63 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/3] ARM: dts: s3c64xx: Remove skeleton.dtsi and fix DTC warnings for /memory
-Date: Sun,  6 May 2018 18:10:25 +0200
-Message-ID: <20180506161025.26937-3-krzk@kernel.org>
-References: <20180506161025.26937-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180506161025.26937-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] arm: Convert arm boot_lock to raw
+Date: Sun, 6 May 2018 20:23:25 +0200
+Message-ID: <20180506182325.w7yvrpp3hcii54pj@kozik-lap>
+References: <20180504105600.20613-1-bigeasy@linutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180504105600.20613-1-bigeasy@linutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Barry Song <baohua@kernel.org>, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Frank Rowand <frank.rowand@am.sony.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Wei Xu <xuwei5@hisilicon.com>, Patrice Chotard <patrice.chotard@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, David Brown <david.brown@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Andy Gross <andy.gross@linaro.org>, tglx@linutronix.de, linux-omap@vger.kernel.org, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Remove the usage of skeleton.dtsi to fix the DTC warnings:
-
-    arch/arm/boot/dts/s3c6410-mini6410.dtb: Warning (unit_address_vs_reg):
-        /memory: node has a reg or ranges property, but no unit name
-    arch/arm/boot/dts/s3c6410-smdk6410.dtb: Warning (unit_address_vs_reg):
-        /memory: node has a reg or ranges property, but no unit name
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/s3c6410-mini6410.dts | 3 ++-
- arch/arm/boot/dts/s3c6410-smdk6410.dts | 3 ++-
- arch/arm/boot/dts/s3c64xx.dtsi         | 4 +++-
- 3 files changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/s3c6410-mini6410.dts b/arch/arm/boot/dts/s3c6410-mini6410.dts
-index f68601bd9c91..0e159c884f97 100644
---- a/arch/arm/boot/dts/s3c6410-mini6410.dts
-+++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
-@@ -19,7 +19,8 @@
- 	model = "FriendlyARM Mini6410 board based on S3C6410";
- 	compatible = "friendlyarm,mini6410", "samsung,s3c6410";
- 
--	memory {
-+	memory@50000000 {
-+		device_type = "memory";
- 		reg = <0x50000000 0x10000000>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/s3c6410-smdk6410.dts b/arch/arm/boot/dts/s3c6410-smdk6410.dts
-index b6b5afcd7602..a9a5689dc462 100644
---- a/arch/arm/boot/dts/s3c6410-smdk6410.dts
-+++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
-@@ -19,7 +19,8 @@
- 	model = "SAMSUNG SMDK6410 board based on S3C6410";
- 	compatible = "samsung,mini6410", "samsung,s3c6410";
- 
--	memory {
-+	memory@50000000 {
-+		device_type = "memory";
- 		reg = <0x50000000 0x8000000>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
-index e2be3fbdd3f3..2e611df37911 100644
---- a/arch/arm/boot/dts/s3c64xx.dtsi
-+++ b/arch/arm/boot/dts/s3c64xx.dtsi
-@@ -13,10 +13,12 @@
-  * nodes can be added to this file.
-  */
- 
--#include "skeleton.dtsi"
- #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
- 
- / {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
- 	aliases {
- 		i2c0 = &i2c0;
- 		pinctrl0 = &pinctrl0;
--- 
-2.14.1
+T24gRnJpLCBNYXkgMDQsIDIwMTggYXQgMTI6NTU6NThQTSArMDIwMCwgU2ViYXN0aWFuIEFuZHJ6
+ZWogU2lld2lvciB3cm90ZToKPiBGcm9tOiBGcmFuayBSb3dhbmQgPGZyYW5rLnJvd2FuZEBhbS5z
+b255LmNvbT4KPiAKPiBUaGUgYXJtIGJvb3RfbG9jayBpcyB1c2VkIGJ5IHRoZSBzZWNvbmRhcnkg
+cHJvY2Vzc29yIHN0YXJ0dXAgY29kZS4gIFRoZSBsb2NraW5nCj4gdGFzayBpcyB0aGUgaWRsZSB0
+aHJlYWQsIHdoaWNoIGhhcyBpZGxlLT5zY2hlZF9jbGFzcyA9PSAmaWRsZV9zY2hlZF9jbGFzcy4K
+PiBpZGxlX3NjaGVkX2NsYXNzLT5lbnF1ZXVlX3Rhc2sgPT0gTlVMTCwgc28gaWYgdGhlIGlkbGUg
+dGFzayBibG9ja3Mgb24gdGhlCj4gbG9jaywgdGhlIGF0dGVtcHQgdG8gd2FrZSBpdCB3aGVuIHRo
+ZSBsb2NrIGJlY29tZXMgYXZhaWxhYmxlIHdpbGwgZmFpbDoKPiAKPiB0cnlfdG9fd2FrZV91cCgp
+Cj4gICAgLi4uCj4gICAgICAgYWN0aXZhdGVfdGFzaygpCj4gICAgICAgICAgZW5xdWV1ZV90YXNr
+KCkKPiAgICAgICAgICAgICBwLT5zY2hlZF9jbGFzcy0+ZW5xdWV1ZV90YXNrKHJxLCBwLCBmbGFn
+cykKPiAKPiBGaXggYnkgY29udmVydGluZyBib290X2xvY2sgdG8gYSByYXcgc3BpbiBsb2NrLgo+
+IAo+IENjOiAiQW5kcmVhcyBGw6RyYmVyIiA8YWZhZXJiZXJAc3VzZS5kZT4KPiBDYzogUnVzc2Vs
+bCBLaW5nIDxsaW51eEBhcm1saW51eC5vcmcudWs+Cj4gQ2M6IEt1a2ppbiBLaW0gPGtnZW5lQGtl
+cm5lbC5vcmc+Cj4gQ2M6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4KPiBD
+YzogV2VpIFh1IDx4dXdlaTVAaGlzaWxpY29uLmNvbT4KPiBDYzogVG9ueSBMaW5kZ3JlbiA8dG9u
+eUBhdG9taWRlLmNvbT4KPiBDYzogQmFycnkgU29uZyA8YmFvaHVhQGtlcm5lbC5vcmc+Cj4gQ2M6
+IEFuZHkgR3Jvc3MgPGFuZHkuZ3Jvc3NAbGluYXJvLm9yZz4KPiBDYzogRGF2aWQgQnJvd24gPGRh
+dmlkLmJyb3duQGxpbmFyby5vcmc+Cj4gQ2M6IFZpcmVzaCBLdW1hciA8dmlyZXNoa0BrZXJuZWwu
+b3JnPgo+IENjOiBTaGlyYXogSGFzaGltIDxzaGlyYXoubGludXgua2VybmVsQGdtYWlsLmNvbT4K
+PiBDYzogUGF0cmljZSBDaG90YXJkIDxwYXRyaWNlLmNob3RhcmRAc3QuY29tPgo+IENjOiBNYXhp
+bWUgUmlwYXJkIDxtYXhpbWUucmlwYXJkQGJvb3RsaW4uY29tPgo+IENjOiBDaGVuLVl1IFRzYWkg
+PHdlbnNAY3NpZS5vcmc+Cj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
+Zwo+IENjOiBsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmcKPiBDYzogbGludXgtb21h
+cEB2Z2VyLmtlcm5lbC5vcmcKPiBDYzogbGludXgtYXJtLW1zbUB2Z2VyLmtlcm5lbC5vcmcKPiBD
+YzogbGludXgtc29jQHZnZXIua2VybmVsLm9yZwo+IFNpZ25lZC1vZmYtYnk6IEZyYW5rIFJvd2Fu
+ZCA8ZnJhbmsucm93YW5kQGFtLnNvbnkuY29tPgo+IExpbms6IGh0dHA6Ly9sa21sLmtlcm5lbC5v
+cmcvci80RTc3Qjk1Mi4zMDEwNjA2QGFtLnNvbnkuY29tCj4gU2lnbmVkLW9mZi1ieTogVGhvbWFz
+IEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+Cj4gW2JpZ2Vhc3k6IGFkZGVkIG5ldyBib290
+X2xvY2sgdXNlcl0KPiBTaWduZWQtb2ZmLWJ5OiBTZWJhc3RpYW4gQW5kcnplaiBTaWV3aW9yIDxi
+aWdlYXN5QGxpbnV0cm9uaXguZGU+Cj4gLS0tCj4gIGFyY2gvYXJtL21hY2gtYWN0aW9ucy9wbGF0
+c21wLmMgICB8ICAgIDYgKysrLS0tCj4gIGFyY2gvYXJtL21hY2gtZXh5bm9zL3BsYXRzbXAuYyAg
+ICB8ICAgMTIgKysrKysrLS0tLS0tCgpJIGFzc3VtZSB0aGlzIGlzIG5lZWRlZCBmb3IgLXJ0IHBh
+dGNoZXM/CgpGb3IgRXh5bm9zOgpBY2tlZC1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0Br
+ZXJuZWwub3JnPgpUZXN0ZWQgb24gRXh5bm9zNTQyMiAoT2Ryb2lkIEhDMSkgd2l0aCBMaW5hcm8g
+UE0tUUE6ClRlc3RlZC1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgoK
+QmVzdCByZWdhcmRzLApLcnp5c3p0b2YKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1r
+ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
