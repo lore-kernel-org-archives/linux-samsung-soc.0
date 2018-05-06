@@ -1,75 +1,55 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH fixes-for-current] arm64: dts: exynos: Fix interrupt type for I2S1 device on Exynos5433
-Date: Sun,  6 May 2018 16:55:24 +0200
-Message-ID: <20180506145524.14570-1-krzk@kernel.org>
+Subject: [PATCH 1/3] ARM: dts: s3c24xx: Remove skeleton.dtsi and fix DTC warning for /memory
+Date: Sun,  6 May 2018 18:10:23 +0200
+Message-ID: <20180506161025.26937-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+Remove the usage of skeleton.dtsi to fix the DTC warning:
 
-All interrupts from SoC internal modules are level triggered, so fix
-incorrect trigger type for I2S1 device on Exynos5433 SoCs.
+    arch/arm/boot/dts/s3c2416-smdk2416.dtb: Warning (unit_address_vs_reg):
+        /memory: node has a reg or ranges property, but no unit name
 
-This fixes following kernel warning:
-
-WARNING: CPU: 2 PID: 1 at drivers/irqchip/irq-gic.c:1016 gic_irq_domain_translate+0xb0/0xb8
-Modules linked in:
-CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc7-next-20180329 #646
-Hardware name: Samsung TM2 board (DT)
-pstate: 20000005 (nzCv daif -PAN -UAO)
-pc : gic_irq_domain_translate+0xb0/0xb8
-lr : irq_create_fwspec_mapping+0x64/0x328
-sp : ffff0000098b38d0
-...
-Call trace:
- gic_irq_domain_translate+0xb0/0xb8
- irq_create_of_mapping+0x78/0xa0
- of_irq_get+0x6c/0xa0
- of_irq_to_resource+0x38/0x108
- of_irq_to_resource_table+0x50/0x78
- of_device_alloc+0x118/0x1b8
- of_platform_device_create_pdata+0x54/0xe0
- of_platform_bus_create+0x118/0x340
- of_platform_bus_create+0x17c/0x340
- of_platform_populate+0x74/0xd8
- of_platform_default_populate_init+0xb0/0xcc
- do_one_initcall+0x50/0x158
- kernel_init_freeable+0x184/0x22c
- kernel_init+0x10/0x108
- ret_from_fork+0x10/0x18
----[ end trace 6decb2b3078d73f0 ]---
-
-Fixes: d8d579c316e8 ("ARM: dts: exynos: Add I2S1 device node to exynos5433")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
+ arch/arm/boot/dts/s3c2416-smdk2416.dts | 3 ++-
+ arch/arm/boot/dts/s3c24xx.dtsi         | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-Hi Arnd and Olof,
-
-That's one fix for current release cycle (issue introduced in merge window).
-
-Best regards,
-Krzysztof
-
-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index c0231d077fa6..1ad8677f6a0a 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -1317,7 +1317,7 @@
- 			reg = <0x14d60000 0x100>;
- 			dmas = <&pdma0 31 &pdma0 30>;
- 			dma-names = "tx", "rx";
--			interrupts = <GIC_SPI 435 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cmu_peric CLK_PCLK_I2S1>,
- 				 <&cmu_peric CLK_PCLK_I2S1>,
- 				 <&cmu_peric CLK_SCLK_I2S1>;
+diff --git a/arch/arm/boot/dts/s3c2416-smdk2416.dts b/arch/arm/boot/dts/s3c2416-smdk2416.dts
+index a1c9d8c695cc..5ef1144afceb 100644
+--- a/arch/arm/boot/dts/s3c2416-smdk2416.dts
++++ b/arch/arm/boot/dts/s3c2416-smdk2416.dts
+@@ -12,7 +12,8 @@
+ 	model = "SMDK2416";
+ 	compatible = "samsung,s3c2416";
+ 
+-	memory {
++	memory@30000000 {
++		device_type = "memory";
+ 		reg =  <0x30000000 0x4000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/s3c24xx.dtsi b/arch/arm/boot/dts/s3c24xx.dtsi
+index 34c7fe6751cf..6d8dd3cdd3c0 100644
+--- a/arch/arm/boot/dts/s3c24xx.dtsi
++++ b/arch/arm/boot/dts/s3c24xx.dtsi
+@@ -5,11 +5,11 @@
+  * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
+  */
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "samsung,s3c24xx";
+ 	interrupt-parent = <&intc>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	aliases {
+ 		pinctrl0 = &pinctrl_0;
 -- 
 2.14.1
