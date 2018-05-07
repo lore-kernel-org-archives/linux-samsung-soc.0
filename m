@@ -1,43 +1,82 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] arm: Convert arm boot_lock to raw
-Date: Mon, 7 May 2018 09:33:07 +0200
-Message-ID: <20180507073307.uuumknm4fx3wbq3u@linutronix.de>
-References: <20180504105600.20613-1-bigeasy@linutronix.de>
- <20180506182325.w7yvrpp3hcii54pj@kozik-lap>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos/dsi: remove mode_set callback
+Date: Mon, 07 May 2018 11:29:28 +0200
+Message-ID: <20180507092928.4096-1-a.hajda@samsung.com>
+References: <CGME20180507092935eucas1p2f7e72c96fc3951ca8b645a574b62f11c@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180506182325.w7yvrpp3hcii54pj@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Barry Song <baohua@kernel.org>, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Frank Rowand <frank.rowand@am.sony.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Wei Xu <xuwei5@hisilicon.com>, Patrice Chotard <patrice.chotard@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, David Brown <david.brown@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Andy Gross <andy.gross@linaro.org>, tglx@linutronix.de, linux-omap@vger.kernel.org, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Hemanshu Srivastava <hemanshu.s@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2018-05-06 20:23:25 [+0200], Krzysztof Kozlowski wrote:
-> >  arch/arm/mach-actions/platsmp.c   |    6 +++---
-> >  arch/arm/mach-exynos/platsmp.c    |   12 ++++++------
-> 
-> I assume this is needed for -rt patches?
-correct.
-
-> For Exynos:
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Tested on Exynos5422 (Odroid HC1) with Linaro PM-QA:
-> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-thank you.
-
-> Best regards,
-> Krzysztof
-
-Sebastian
+VGhlIGNhbGxiYWNrIHdhcyB1c2VkIG9ubHkgdG8gY29weSBwcm92aWRlZCBtb2RlIHRvIGNvbnRl
+eHQgZm9yIGxhdGVyCnVzYWdlLiBTaW5jZSB0aGUgbW9kZSBpcyBhbHdheXMgYXZhaWxhYmxlIGZy
+b20gY3J0YyBhdG9taWMgc3RhdGUgdGhpcyBjb2RlCmNhbiBiZSByZW1vdmVkLgoKU2lnbmVkLW9m
+Zi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgfCA0MCArKysrKysrLS0tLS0tLS0tLS0tLS0t
+LS0tCiAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMzAgZGVsZXRpb25zKC0pCgpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCmluZGV4IDc5MDRmZmE5YWJmYi4u
+ZWFlNDRmZDcxNGYwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHNpLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCkBA
+IC0yNzAsNyArMjcwLDYgQEAgc3RydWN0IGV4eW5vc19kc2kgewogCXUzMiBsYW5lczsKIAl1MzIg
+bW9kZV9mbGFnczsKIAl1MzIgZm9ybWF0OwotCXN0cnVjdCB2aWRlb21vZGUgdm07CiAKIAlpbnQg
+c3RhdGU7CiAJc3RydWN0IGRybV9wcm9wZXJ0eSAqYnJpZ2h0bmVzczsKQEAgLTg4MSwzMCArODgw
+LDMwIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9pbml0X2xpbmsoc3RydWN0IGV4eW5vc19kc2kg
+KmRzaSkKIAogc3RhdGljIHZvaWQgZXh5bm9zX2RzaV9zZXRfZGlzcGxheV9tb2RlKHN0cnVjdCBl
+eHlub3NfZHNpICpkc2kpCiB7Ci0Jc3RydWN0IHZpZGVvbW9kZSAqdm0gPSAmZHNpLT52bTsKKwlz
+dHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbSA9ICZkc2ktPmVuY29kZXIuY3J0Yy0+c3RhdGUtPmFk
+anVzdGVkX21vZGU7CiAJdW5zaWduZWQgaW50IG51bV9iaXRzX3Jlc29sID0gZHNpLT5kcml2ZXJf
+ZGF0YS0+bnVtX2JpdHNfcmVzb2w7CiAJdTMyIHJlZzsKIAogCWlmIChkc2ktPm1vZGVfZmxhZ3Mg
+JiBNSVBJX0RTSV9NT0RFX1ZJREVPKSB7CiAJCXJlZyA9IERTSU1fQ01EX0FMTE9XKDB4ZikKLQkJ
+CXwgRFNJTV9TVEFCTEVfVkZQKHZtLT52ZnJvbnRfcG9yY2gpCi0JCQl8IERTSU1fTUFJTl9WQlAo
+dm0tPnZiYWNrX3BvcmNoKTsKKwkJCXwgRFNJTV9TVEFCTEVfVkZQKG0tPnZzeW5jX3N0YXJ0IC0g
+bS0+dmRpc3BsYXkpCisJCQl8IERTSU1fTUFJTl9WQlAobS0+dnRvdGFsIC0gbS0+dnN5bmNfZW5k
+KTsKIAkJZXh5bm9zX2RzaV93cml0ZShkc2ksIERTSU1fTVZQT1JDSF9SRUcsIHJlZyk7CiAKLQkJ
+cmVnID0gRFNJTV9NQUlOX0hGUCh2bS0+aGZyb250X3BvcmNoKQotCQkJfCBEU0lNX01BSU5fSEJQ
+KHZtLT5oYmFja19wb3JjaCk7CisJCXJlZyA9IERTSU1fTUFJTl9IRlAobS0+aHN5bmNfc3RhcnQg
+LSBtLT5oZGlzcGxheSkKKwkJCXwgRFNJTV9NQUlOX0hCUChtLT5odG90YWwgLSBtLT5oc3luY19l
+bmQpOwogCQlleHlub3NfZHNpX3dyaXRlKGRzaSwgRFNJTV9NSFBPUkNIX1JFRywgcmVnKTsKIAot
+CQlyZWcgPSBEU0lNX01BSU5fVlNBKHZtLT52c3luY19sZW4pCi0JCQl8IERTSU1fTUFJTl9IU0Eo
+dm0tPmhzeW5jX2xlbik7CisJCXJlZyA9IERTSU1fTUFJTl9WU0EobS0+dnN5bmNfZW5kIC0gbS0+
+dnN5bmNfc3RhcnQpCisJCQl8IERTSU1fTUFJTl9IU0EobS0+aHN5bmNfZW5kIC0gbS0+aHN5bmNf
+c3RhcnQpOwogCQlleHlub3NfZHNpX3dyaXRlKGRzaSwgRFNJTV9NU1lOQ19SRUcsIHJlZyk7CiAJ
+fQotCXJlZyA9ICBEU0lNX01BSU5fSFJFU09MKHZtLT5oYWN0aXZlLCBudW1fYml0c19yZXNvbCkg
+fAotCQlEU0lNX01BSU5fVlJFU09MKHZtLT52YWN0aXZlLCBudW1fYml0c19yZXNvbCk7CisJcmVn
+ID0gIERTSU1fTUFJTl9IUkVTT0wobS0+aGRpc3BsYXksIG51bV9iaXRzX3Jlc29sKSB8CisJCURT
+SU1fTUFJTl9WUkVTT0wobS0+dmRpc3BsYXksIG51bV9iaXRzX3Jlc29sKTsKIAogCWV4eW5vc19k
+c2lfd3JpdGUoZHNpLCBEU0lNX01EUkVTT0xfUkVHLCByZWcpOwogCi0JZGV2X2RiZyhkc2ktPmRl
+diwgIkxDRCBzaXplID0gJWR4JWRcbiIsIHZtLT5oYWN0aXZlLCB2bS0+dmFjdGl2ZSk7CisJZGV2
+X2RiZyhkc2ktPmRldiwgIkxDRCBzaXplID0gJWR4JWRcbiIsIG0tPmhkaXNwbGF5LCBtLT52ZGlz
+cGxheSk7CiB9CiAKIHN0YXRpYyB2b2lkIGV4eW5vc19kc2lfc2V0X2Rpc3BsYXlfZW5hYmxlKHN0
+cnVjdCBleHlub3NfZHNpICpkc2ksIGJvb2wgZW5hYmxlKQpAQCAtMTQ4NSwyNiArMTQ4NCw3IEBA
+IHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9jcmVhdGVfY29ubmVjdG9yKHN0cnVjdCBkcm1fZW5jb2Rl
+ciAqZW5jb2RlcikKIAlyZXR1cm4gMDsKIH0KIAotc3RhdGljIHZvaWQgZXh5bm9zX2RzaV9tb2Rl
+X3NldChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsCi0JCQkJc3RydWN0IGRybV9kaXNwbGF5
+X21vZGUgKm1vZGUsCi0JCQkJc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKmFkanVzdGVkX21vZGUp
+Ci17Ci0Jc3RydWN0IGV4eW5vc19kc2kgKmRzaSA9IGVuY29kZXJfdG9fZHNpKGVuY29kZXIpOwot
+CXN0cnVjdCB2aWRlb21vZGUgKnZtID0gJmRzaS0+dm07Ci0Jc3RydWN0IGRybV9kaXNwbGF5X21v
+ZGUgKm0gPSBhZGp1c3RlZF9tb2RlOwotCi0Jdm0tPmhhY3RpdmUgPSBtLT5oZGlzcGxheTsKLQl2
+bS0+dmFjdGl2ZSA9IG0tPnZkaXNwbGF5OwotCXZtLT52ZnJvbnRfcG9yY2ggPSBtLT52c3luY19z
+dGFydCAtIG0tPnZkaXNwbGF5OwotCXZtLT52YmFja19wb3JjaCA9IG0tPnZ0b3RhbCAtIG0tPnZz
+eW5jX2VuZDsKLQl2bS0+dnN5bmNfbGVuID0gbS0+dnN5bmNfZW5kIC0gbS0+dnN5bmNfc3RhcnQ7
+Ci0Jdm0tPmhmcm9udF9wb3JjaCA9IG0tPmhzeW5jX3N0YXJ0IC0gbS0+aGRpc3BsYXk7Ci0Jdm0t
+PmhiYWNrX3BvcmNoID0gbS0+aHRvdGFsIC0gbS0+aHN5bmNfZW5kOwotCXZtLT5oc3luY19sZW4g
+PSBtLT5oc3luY19lbmQgLSBtLT5oc3luY19zdGFydDsKLX0KLQogc3RhdGljIGNvbnN0IHN0cnVj
+dCBkcm1fZW5jb2Rlcl9oZWxwZXJfZnVuY3MgZXh5bm9zX2RzaV9lbmNvZGVyX2hlbHBlcl9mdW5j
+cyA9IHsKLQkubW9kZV9zZXQgPSBleHlub3NfZHNpX21vZGVfc2V0LAogCS5lbmFibGUgPSBleHlu
+b3NfZHNpX2VuYWJsZSwKIAkuZGlzYWJsZSA9IGV4eW5vc19kc2lfZGlzYWJsZSwKIH07Ci0tIAoy
+LjE3LjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
