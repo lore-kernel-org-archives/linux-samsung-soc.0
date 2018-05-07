@@ -1,118 +1,92 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 26/26] drm/bridge: establish a link between the
- bridge supplier and consumer
-Date: Mon, 7 May 2018 14:59:45 +0200
-Message-ID: <4cdcd215-8caf-e045-a478-f438f128c9f2@samsung.com>
-References: <20180504135212.26977-1-peda@axentia.se>
-        <CGME20180504135358epcas3p2bd9c2f5c9a8295152f2c96fdbb2ea8b1@epcas3p2.samsung.com>
-        <20180504135212.26977-27-peda@axentia.se>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 1/3] drm/sti: do not remove the drm_bridge that was never
+ added
+Date: Mon, 7 May 2018 15:39:29 +0200
+Message-ID: <20180507133929.GG12521@phenom.ffwll.local>
+References: <20180502074025.12421-1-peda@axentia.se>
+ <20180502074025.12421-2-peda@axentia.se>
+ <20180503090648.GG12521@phenom.ffwll.local>
+ <bd8d12f7-0c71-c96b-80fa-54de7de39511@axentia.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180504135212.26977-27-peda@axentia.se>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Cc: Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, David Airlie <airlied@linux.ie>, Peter Senna Tschudin <peter.senna@collabora.com>, Martin Donnelly <martin.donnelly@ge.com>, Martyn Welch <martyn.welch@collabora.co.uk>, Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <bd8d12f7-0c71-c96b-80fa-54de7de39511@axentia.se>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04.05.2018 15:52, Peter Rosin wrote:
-> If the bridge supplier is unbound, this will bring the bridge consumer
-> down along with the bridge. Thus, there will no longer linger any
-> dangling pointers from the bridge consumer (the drm_device) to some
-> non-existent bridge supplier.
-
-I understand rationales behind this patch, but it is another step into
-making drm_dev one big driver with subcomponents, where drm will work
-only if every subcomponent is working/loaded. Do we need to go this way?
-In case of many platforms such approach results in display turned on
-very late on boot for example due to late initialization of some
-regulator exposed by some i2c device, which is used by hdmi bridge. And
-this hdmi bridge is just to provide alternative(rarely used) display
-path, the main display path would work anyway.
-
-So the main question to drm maintainers is about evolution of bridges,
-if drm_bridges should become mandatory components of drm device or they
-could be added/removed dynamically?
-
-Regards
-Andrzej
-
-
->
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  drivers/gpu/drm/drm_bridge.c | 18 ++++++++++++++++++
->  include/drm/drm_bridge.h     |  2 ++
->  2 files changed, 20 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index 78d186b6831b..0259f0a3ff27 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -26,6 +26,7 @@
->  #include <linux/mutex.h>
->  
->  #include <drm/drm_bridge.h>
-> +#include <drm/drm_device.h>
->  #include <drm/drm_encoder.h>
->  
->  #include "drm_crtc_internal.h"
-> @@ -127,12 +128,25 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
->  	if (bridge->dev)
->  		return -EBUSY;
->  
-> +	if (encoder->dev->dev != bridge->odev) {
-> +		bridge->link = device_link_add(encoder->dev->dev,
-> +					       bridge->odev, 0);
-> +		if (!bridge->link) {
-> +			dev_err(bridge->odev, "failed to link bridge to %s\n",
-> +				dev_name(encoder->dev->dev));
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
->  	bridge->dev = encoder->dev;
->  	bridge->encoder = encoder;
->  
->  	if (bridge->funcs->attach) {
->  		ret = bridge->funcs->attach(bridge);
->  		if (ret < 0) {
-> +			if (bridge->link)
-> +				device_link_del(bridge->link);
-> +			bridge->link = NULL;
->  			bridge->dev = NULL;
->  			bridge->encoder = NULL;
->  			return ret;
-> @@ -159,6 +173,10 @@ void drm_bridge_detach(struct drm_bridge *bridge)
->  	if (bridge->funcs->detach)
->  		bridge->funcs->detach(bridge);
->  
-> +	if (bridge->link)
-> +		device_link_del(bridge->link);
-> +	bridge->link = NULL;
-> +
->  	bridge->dev = NULL;
->  }
->  
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index b656e505d11e..804189c63a4c 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -261,6 +261,7 @@ struct drm_bridge_timings {
->   * @list: to keep track of all added bridges
->   * @timings: the timing specification for the bridge, if any (may
->   * be NULL)
-> + * @link: drm consumer <-> bridge supplier
->   * @funcs: control functions
->   * @driver_private: pointer to the bridge driver's internal context
->   */
-> @@ -271,6 +272,7 @@ struct drm_bridge {
->  	struct drm_bridge *next;
->  	struct list_head list;
->  	const struct drm_bridge_timings *timings;
-> +	struct device_link *link;
->  
->  	const struct drm_bridge_funcs *funcs;
->  	void *driver_private;
+T24gVGh1LCBNYXkgMDMsIDIwMTggYXQgMTE6MTI6MjFQTSArMDIwMCwgUGV0ZXIgUm9zaW4gd3Jv
+dGU6Cj4gT24gMjAxOC0wNS0wMyAxMTowNiwgRGFuaWVsIFZldHRlciB3cm90ZToKPiA+IE9uIFdl
+ZCwgTWF5IDAyLCAyMDE4IGF0IDA5OjQwOjIzQU0gKzAyMDAsIFBldGVyIFJvc2luIHdyb3RlOgo+
+ID4+IFRoZSBtb3JlIG5hdHVyYWwgYXBwcm9hY2ggd291bGQgcGVyaGFwcyBiZSB0byBhZGQgYW4g
+ZHJtX2JyaWRnZV9hZGQsCj4gPj4gYnV0IHRoZXJlIGFyZSBzZXZlcmFsIG90aGVyIGJyaWRnZXMg
+dGhhdCBuZXZlciBjYWxsIGRybV9icmlkZ2VfYWRkLgo+ID4+IEp1c3QgcmVtb3ZpbmcgdGhlIGRy
+bV9icmlkZ2VfcmVtb3ZlIGlzIHRoZSBlYXNpZXIgZml4Lgo+ID4+Cj4gPj4gU2lnbmVkLW9mZi1i
+eTogUGV0ZXIgUm9zaW4gPHBlZGFAYXhlbnRpYS5zZT4KPiA+IAo+ID4gVGhpcyBtZXNzIGlzIG11
+Y2ggYmlnZ2VyLiBUaGVyZSdzIDIgcGFpcnMgb2YgYnJpZGdlIGZ1bmN0aW9uczoKPiA+IAo+ID4g
+LSBkcm1fYnJpZGdlX2F0dGFjaC9kZXRhY2guIFRob3NlIGFyZSBtZWFudCB0byBiZSBjYWxsZWQg
+YnkgdGhlIG92ZXJhbGwKPiA+ICAgZHJtIGRyaXZlciB0byBjb25uZWN0L2Rpc2Nvbm5lY3QgYSBk
+cm1fYnJpZGdlLgo+ID4gCj4gPiAtIGRybV9icmlkZ2VfYWRkL3JlbW92ZS4gVGhlc2UgYXJlIHN1
+cHBvc2VkIHRvIGJlIGNhbGxlZCBieSB0aGUgYnJpZGdlCj4gPiAgIGRyaXZlciBpdHNlbGYgdG8g
+cmVnaXN0ZXIvdW5yZWdpc3RlciBpdHNlbGYuIE1heWJlIHdlIHNob3VsZCByZW5hbWUKPiA+ICAg
+dGhlbSwgc2luY2UgdGhlIHNhbWUgaXNzdWUgaGFwcGVucyB3aXRoIGRybV9wYW5lbCwgd2l0aCB0
+aGUgc2FtZQo+ID4gICBjb25mdXNpb24uCj4gPiAKPiA+IEkgdGhvdWdodCBzb21lb25lIHdhcyB3
+b3JraW5nIG9uIGEgY2xlYW51cCBzZXJpZXMgdG8gZml4IHRoaXMgbWVzcywgYnV0IEkKPiA+IGRp
+ZG4ndCBmaW5kIGFueXRoaW5nLgo+IAo+IE9rLCBJIGp1c3Qgc3BvdHRlZCB0aGUgaW1iYWxhbmNl
+IGFuZCBkaWRuJ3QgcmVhbGx5IGRpZyBpbnRvIHdoYXQKPiBhY3R1YWxseSBoYXBwZW5zIGluIHRo
+ZXNlIGVycm9yIHBhdGhzLiBOb3cgdGhhdCBJIGhhdmUgZG9uZSBzbyBJCj4gYmVsaWV2ZSB0aGF0
+IHRoZSByZW1vdmVkIGRybV9icmlkZ2VfcmVtb3ZlIGNhbGxzIGNhdXNlcyBOVUxMCj4gZGVyZWZl
+cmVuY2VzIGlmL3doZW4gdGhlIGVycm9yIHBhdGhzIGFyZSB0cmlnZ2VyZWQuCj4gCj4gU28sIEkg
+ZG9uJ3QgdGhpbmsgdGhpcyBjYW4gd2FpdCBmb3Igc29tZSBiaWdnZXIgY2xlYW51cC4KPiAKPiBk
+cm1fYnJpZGdlX3JlbW92ZSBjYWxscyBsaXN0X2RlbF9pbml0IGNhbGxzIF9fbGlzdF9kZWxfZW50
+cnkgY2FsbHMKPiBfX2xpc3RfZGVsIHdpdGggTlVMTCBpbiBib3RoIHByZXYgYW5kIG5leHQgc2lu
+Y2UgdGhlIGxpc3QgbWVtYmVyCj4gaXMgbmV2ZXIgaW5pdGlhbGl6ZWQuIHByZXYgYW5kIG5leHQg
+YXJlIGRlcmVmZXJlbmNlZCBieSBfX2xpc3RfZGVsCj4gYW5kIHlvdSBoYXZlICpib29tKgo+IAo+
+IEkgcmVjb21tZW5kIGFkZGluZyB0aGUgdGFnCj4gCj4gRml4ZXM6IDg0NjAxZGJkZWEzNiAoImRy
+bTogc3RpOiByZXdvcmsgaW5pdCBzZXF1ZW5jZSIpCj4gCj4gc28gdGhhdCBzdGFibGUgcGlja3Mg
+dGhpcyBvbmUgdXAuCgpJIGp1c3Qgd2FudGVkIHRvIGNvcnJlY3QgeW91ciBjb21taXQgbWVzc2Fn
+ZSB0ZXh0IC0gdGhlIGNvcnJlY3Qgc29sdXRpb24KaXMgZGVmaW5pdGVseSBfbm90XyBmb3Igc3Rp
+IGhlcmUgdG8gY2FsbCBkcm1fYnJpZGdlX2FkZC4gSXQgc2hvdWxkIGNhbGwKZHJtX2JyaWRnZV9h
+dHRhY2gvZGV0YWNoIG9ubHksIGFzIGEgcGFpci4KCkkgZGlkbid0IGNoZWNrIHdoZXRoZXIgeW91
+IGluc3RlYWQgaGF2ZSBhIF9kZXRhY2ggY2FsbCBtaXNzaW5nIG9yIHdoYXQncwpnb2luZyBvbiBo
+ZXJlLgotRGFuaWVsCj4gCj4gQ2hlZXJzLAo+IFBldGVyCj4gCj4gPiAtRGFuaWVsCj4gPiAKPiA+
+PiAtLS0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRhLmMgIHwgMSAtCj4gPj4gIGRy
+aXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkbWkuYyB8IDEgLQo+ID4+ICAyIGZpbGVzIGNoYW5nZWQs
+IDIgZGVsZXRpb25zKC0pCj4gPj4KPiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N0
+aS9zdGlfaGRhLmMgYi9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZGEuYwo+ID4+IGluZGV4IDY3
+YmJkYjQ5ZmZmYy4uMTk5ZGIxM2Y1NjVjIDEwMDY0NAo+ID4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9zdGkvc3RpX2hkYS5jCj4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRhLmMK
+PiA+PiBAQCAtNzIxLDcgKzcyMSw2IEBAIHN0YXRpYyBpbnQgc3RpX2hkYV9iaW5kKHN0cnVjdCBk
+ZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQo+ID4+ICAJcmV0
+dXJuIDA7Cj4gPj4gIAo+ID4+ICBlcnJfc3lzZnM6Cj4gPj4gLQlkcm1fYnJpZGdlX3JlbW92ZShi
+cmlkZ2UpOwo+ID4+ICAJcmV0dXJuIC1FSU5WQUw7Cj4gPj4gIH0KPiA+PiAgCj4gPj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9z
+dGkvc3RpX2hkbWkuYwo+ID4+IGluZGV4IDU4ZjQzMTEwMjUxMi4uOTMyNzI0Nzg0OTQyIDEwMDY0
+NAo+ID4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkbWkuYwo+ID4+ICsrKyBiL2Ry
+aXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkbWkuYwo+ID4+IEBAIC0xMzE1LDcgKzEzMTUsNiBAQCBz
+dGF0aWMgaW50IHN0aV9oZG1pX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNl
+ICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4gPj4gIAlyZXR1cm4gMDsKPiA+PiAgCj4gPj4gIGVycl9z
+eXNmczoKPiA+PiAtCWRybV9icmlkZ2VfcmVtb3ZlKGJyaWRnZSk7Cj4gPj4gIAloZG1pLT5kcm1f
+Y29ubmVjdG9yID0gTlVMTDsKPiA+PiAgCXJldHVybiAtRUlOVkFMOwo+ID4+ICB9Cj4gPj4gLS0g
+Cj4gPj4gMi4xMS4wCj4gPj4KPiA+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwo+ID4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiA+PiBkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gPj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKPiA+IAo+IAo+IF9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdh
+cmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
