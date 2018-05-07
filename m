@@ -1,129 +1,133 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 00/26] device link, bridge supplier <-> drm device
-Date: Mon, 7 May 2018 15:56:01 +0200
-Message-ID: <20180507135601.GJ12521@phenom.ffwll.local>
-References: <20180504135212.26977-1-peda@axentia.se>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 1/3] drm/sti: do not remove the drm_bridge that was never
+ added
+Date: Mon, 7 May 2018 15:59:04 +0200
+Message-ID: <d378241f-7420-bbaf-c447-18cdfd4f9dd3@axentia.se>
+References: <20180502074025.12421-1-peda@axentia.se>
+ <20180502074025.12421-2-peda@axentia.se>
+ <20180503090648.GG12521@phenom.ffwll.local>
+ <bd8d12f7-0c71-c96b-80fa-54de7de39511@axentia.se>
+ <20180507133929.GG12521@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20180504135212.26977-1-peda@axentia.se>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: Martyn Welch <martyn.welch@collabora.co.uk>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Peter Senna Tschudin <peter.senna@collabora.com>, Martin Donnelly <martin.donnelly@ge.com>, linux-arm-msm@vger.kernel.org, Jyri Sarha <jsarha@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180507133929.GG12521@phenom.ffwll.local>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBNYXkgMDQsIDIwMTggYXQgMDM6NTE6NDZQTSArMDIwMCwgUGV0ZXIgUm9zaW4gd3Jv
-dGU6Cj4gSGkhCj4gCj4gSXQgd2FzIG5vdGVkIGJ5IFJ1c3NlbCBLaW5nIFsxXSB0aGF0IGJyaWRn
-ZXMgKG5vdCB1c2luZyBjb21wb25lbnRzKQo+IG1pZ2h0IGRpc2FwcGVhciB1bmV4cGVjdGVkbHkg
-aWYgdGhlIG93bmVyIG9mIHRoZSBicmlkZ2Ugd2FzIHVuYm91bmQuCj4gSnlyaSBTYXJoYSBoYWQg
-cHJldmlvdXNseSBub3RlZCB0aGUgc2FtZSB0aGluZyB3aXRoIHBhbmVscyBbMl0uIEp5cmkKPiBj
-YW1lIHVwIHdpdGggdXNpbmcgZGV2aWNlIGxpbmtzIHRvIHJlc29sdmUgdGhlIHBhbmVsIGlzc3Vl
-LCB3aGljaAo+IHdhcyBhbHNvIG15IChpbmRlcGVuZGVudCkgcmVhY3Rpb24gdG8gdGhlIG5vdGUg
-ZnJvbSBSdXNzZWwuCj4gCj4gVGhpcyBzZXJpZXMgYnVpbGRzIHVwIHRvIHRoZSBhZGRpdGlvbiBv
-ZiB0aGF0IGxpbmsgaW4gdGhlIGxhc3QKPiBwYXRjaCwgYnV0IGluIG15IG9waW5pb24gdGhlIG90
-aGVyIDI1IHBhdGNoZXMgZG8gaGF2ZSBtZXJpdCBvbiB0aGVpcgo+IG93bi4KPiAKPiBUaGUgbGFz
-dCBwYXRjaCBuZWVkcyB0ZXN0aW5nLCB3aGlsZSB0aGUgb3RoZXJzIGxvb2sgdHJpdmlhbC4gSnly
-aSwgYXJlCj4geW91IGFibGUgdG8gdGVzdD8gVGhhdCBzYWlkLCBJIG1pZ2h0IGhhdmUgbWlzc2Vk
-IHNvbWUgc3VidGxldHkuCj4gCj4gT2ggYW5kIHRoZSByZWFzb24gSSdtIHB1c2hpbmcgdGhpcyBp
-cyBvZiBjb3Vyc2Ugc28gdGhhdCB0aGUgaXNzdWUKPiBub3RlZCBieSBSdXNzZWwgaW4gWzFdIGlz
-IGFkZHJlc3NlZCB3aGljaCBpbiB0dXJuIG1lYW5zIHRoYXQgdGhlCj4gdGRhOTk4eCBicmlkZ2Ug
-ZHJpdmVyIGNhbiBiZSBwYXRjaGVkIGFjY29yZGluZyB0byB0aGF0IHNlcmllcyB3aXRob3V0Cj4g
-b2JqZWN0aW9uIChob3BlZnVsbHkpIGFuZCB0aGVuIHVzZWQgZnJvbSB0aGUgYXRtZWwtaGxjZGMg
-ZHJpdmVyIChhbmQKPiBvdGhlciBkcml2ZXJzIHRoYXQgYXJlIG5vdCBjb21wb25lbnRpemVkKS4K
-PiAKPiBDaGFuZ2VzIHNpbmNlIHYxICAgIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE4LzQvMjYv
-MTAxOAo+IAo+IC0gcmVuYW1lIC5vd25lciB0byAub2RldiB0byBub3QgZ2V0IG1peGVkIHVwIHdp
-dGggdGhlIG1vZHVsZSBvd25lci4KPiAtIGFkZGVkIHBhdGNoZXMgZm9yIG5ldyByZWNlbnQgZHJp
-dmVycyB0aGM2M2x2ZDEwMjQgYW5kIGNkbnMtZHNpCj4gLSBmaXggZm9yIHByb2JsZW0gaW4gdGhl
-IHJvY2tjaGlwX2x2ZHMgZHJpdmVyIHJlcG9ydGVkIGJ5IDBkYXkKPiAtIGFkZGVkIGEgV0FSTiBp
-biBkcm1fYnJpZGdlX2FkZCBpZiB0aGVyZSBpcyBubyAub2RldiBvd25lciBkZXZpY2UKPiAKPiBJ
-IGRpZCAqbm90KjoKPiAtIGFkZCBhbnkgYWNrIGZyb20gRGFuaWVsIHNpbmNlIGhlIHN1Z2dlc3Rl
-ZCAicGRldiIsIGFuZCBJIGVuZGVkIHVwCj4gICB3aXRoICJvZGV2IiBpbiB0aGUgcmVuYW1lIHNp
-bmNlIEkgZGlzbGlrZWQgInBkZXYiIGFib3V0IGFzIG11Y2gKPiAgIGFzICJvd25lciIuCgpBcyBs
-b25nIGFzIGl0J3Mgbm90IG93bmVyLCBJJ20gZmluZSA6LSkgQWNrIG9uIHRoZSBpZGVhIHN0aWxs
-IGhvbGRzLgoKPiAtIGFkZCBhbnkgcG9ydCBpZC4gVGhlIGN1cnJlbnQgLm9mX25vZGUgKHRoYXQg
-dGhpcyBzZXJpZXMgcmVtb3ZlcykKPiAgIGRvZXMgbm90IGlkZW50aWZ5IHRoZSBwb3J0LCBzbyB0
-aGF0IHByb2JsZW0gc2VlbXMgb3J0aG9nb25hbAo+ICAgdG8gbWUuCgpIbSwgZnJvbSBteSBjdXJz
-b3J5IERUL29mIGNvZGUgcmVhZGluZyBsYXN0IHdlZWsgSSB0aG91Z2h0IHRoZSBwb3J0IGlzCnVz
-ZWQgdG8gbG9va3VwIHRoZSByaWdodCBub2RlLCBidXQgdGhlcmUncyBubyBwb3J0IHRoaW5nIG9u
-IHRoZSB0YXJnZXQgZm9yCmEgcGhhbmRsZT8gQXQgbGVhc3QgdGhhdCdzIGhvdyBjdXJyZW50IGRy
-bV9vZl9maW5kX3BhbmVsX29yX2JyaWRnZSBzZWVtcwp0byB3b3JrIC4uLgotRGFuaWVsCj4gCj4g
-Q2hlZXJzLAo+IFBldGVyCj4gCj4gWzFdIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE4LzQvMjMv
-NzY5Cj4gWzJdIGh0dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2RyaS1kZXZlbC9tc2cxNzQy
-NzUuaHRtbAo+IAo+IFBldGVyIFJvc2luICgyNik6Cj4gICBkcm0vYnJpZGdlOiBhbGxvdyBvcHRp
-b25hbGx5IHNwZWNpZnlpbmcgYW4gb3duZXIgLm9kZXYgZGV2aWNlCj4gICBkcm0vYnJpZGdlOiBh
-ZHY3NTExOiBwcm92aWRlIGFuIG93bmVyIC5vZGV2IGRldmljZQo+ICAgZHJtL2JyaWRnZS9hbmFs
-b2dpeDogY29yZTogc3BlY2lmeSB0aGUgb3duZXIgLm9kZXYgb2YgdGhlIGJyaWRnZQo+ICAgZHJt
-L2JyaWRnZTogYW5hbG9naXgtYW54Nzh4eDogcHJvdmlkZSBhbiBvd25lciAub2RldiBkZXZpY2UK
-PiAgIGRybS9icmlkZ2U6IGNkbnMtZHNpOiBwcm92aWRlIGFuIG93bmVyIC5vZGV2IGRldmljZQo+
-ICAgZHJtL2JyaWRnZTogdmdhLWRhYzogcHJvdmlkZSBhbiBvd25lciAub2RldiBkZXZpY2UKPiAg
-IGRybS9icmlkZ2U6IGx2ZHMtZW5jb2RlcjogcHJvdmlkZSBhbiBvd25lciAub2RldiBkZXZpY2UK
-PiAgIGRybS9icmlkZ2U6IG1lZ2FjaGlwcy1zdGRweHh4eC1nZS1iODUwdjMtZnc6IHByb3ZpZGUg
-YW4gb3duZXIgLm9kZXYKPiAgICAgZGV2aWNlCj4gICBkcm0vYnJpZGdlOiBueHAtcHRuMzQ2MDog
-cHJvdmlkZSBhbiBvd25lciAub2RldiBkZXZpY2UKPiAgIGRybS9icmlkZ2U6IHBhbmVsOiBwcm92
-aWRlIGFuIG93bmVyIC5vZGV2IGRldmljZQo+ICAgZHJtL2JyaWRnZTogcHM4NjIyOiBwcm92aWRl
-IGFuIG93bmVyIC5vZGV2IGRldmljZQo+ICAgZHJtL2JyaWRnZTogc2lpOTAyeDogcHJvdmlkZSBh
-biBvd25lciAub2RldiBkZXZpY2UKPiAgIGRybS9icmlkZ2U6IHNpaTkyMzQ6IHByb3ZpZGUgYW4g
-b3duZXIgLm9kZXYgZGV2aWNlCj4gICBkcm0vYnJpZGdlOiBzaWk4NjIwOiBwcm92aWRlIGFuIG93
-bmVyIC5vZGV2IGRldmljZQo+ICAgZHJtL2JyaWRnZTogc3lub3BzeXM6IHByb3ZpZGUgYW4gb3du
-ZXIgLm9kZXYgZGV2aWNlIGZvciB0aGUgYnJpZGdlcwo+ICAgZHJtL2JyaWRnZTogdGMzNTg3Njc6
-IHByb3ZpZGUgYW4gb3duZXIgLm9kZXYgZGV2aWNlCj4gICBkcm0vYnJpZGdlOiB0aGM2M2x2ZDEw
-MjQ6IHByb3ZpZGUgYW4gb3duZXIgLm9kZXYgZGV2aWNlCj4gICBkcm0vYnJpZGdlOiB0aS10ZnA0
-MTA6IHByb3ZpZGUgYW4gb3duZXIgLm9kZXYgZGV2aWNlCj4gICBkcm0vZXh5bm9zOiBtaWM6IHBy
-b3ZpZGUgYW4gb3duZXIgLm9kZXYgZGV2aWNlIGZvciB0aGUgYnJpZGdlCj4gICBkcm0vbWVkaWF0
-ZWs6IGhkbWk6IHByb3ZpZGUgYW4gb3duZXIgLm9kZXYgZGV2aWNlIGZvciB0aGUgYnJpZGdlCj4g
-ICBkcm0vbXNtOiBzcGVjaWZ5IHRoZSBvd25lciAub2RldiBvZiB0aGUgYnJpZGdlcwo+ICAgZHJt
-L3JjYXItZHU6IGx2ZHM6IHByb3ZpZGUgYW4gb3duZXIgLm9kZXYgZGV2aWNlIGZvciB0aGUgYnJp
-ZGdlCj4gICBkcm0vc3RpOiBwcm92aWRlIGFuIG93bmVyIC5vZGV2IGRldmljZSBmb3IgdGhlIGJy
-aWRnZXMKPiAgIGRybS9icmlkZ2U6IHJlbW92ZSB0aGUgLm9mX25vZGUgbWVtYmVyCj4gICBkcm0v
-YnJpZGdlOiByZXF1aXJlIHRoZSBvd25lciAub2RldiB0byBiZSBmaWxsZWQgaW4gb24KPiAgICAg
-ZHJtX2JyaWRnZV9hZGQvYXR0YWNoCj4gICBkcm0vYnJpZGdlOiBlc3RhYmxpc2ggYSBsaW5rIGJl
-dHdlZW4gdGhlIGJyaWRnZSBzdXBwbGllciBhbmQgY29uc3VtZXIKPiAKPiAgZHJpdmVycy9ncHUv
-ZHJtL2JyaWRnZS9hZHY3NTExL2Fkdjc1MTFfZHJ2LmMgICAgICAgfCAgMiArLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4LWFueDc4eHguYyAgICAgICAgICB8ICA1ICstLS0tCj4g
-IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgIDEg
-Kwo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2NkbnMtZHNpLmMgICAgICAgICAgICAgICAgICB8
-ICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvZHVtYi12Z2EtZGFjLmMgICAgICAgICAg
-ICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9sdmRzLWVuY29kZXIuYyAgICAg
-ICAgICAgICAgfCAgMiArLQo+ICAuLi4vZHJtL2JyaWRnZS9tZWdhY2hpcHMtc3RkcHh4eHgtZ2Ut
-Yjg1MHYzLWZ3LmMgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvbnhwLXB0bjM0
-NjAuYyAgICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wYW5l
-bC5jICAgICAgICAgICAgICAgICAgICAgfCAgNCArLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlk
-Z2UvcGFyYWRlLXBzODYyMi5jICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9zaWk5MDJ4LmMgICAgICAgICAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vYnJpZGdlL3NpaTkyMzQuYyAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gIGRyaXZl
-cnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYyAgICAgICAgICAgICAgIHwgIDIgKy0KPiAg
-ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMgICAgICAgICAgfCAgNCAr
-LS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctbWlwaS1kc2kuYyAgICAg
-IHwgIDQgKy0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4NzY3LmMgICAgICAgICAg
-ICAgICAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvdGhjNjNsdmQxMDI0LmMg
-ICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS90aS10ZnA0MTAu
-YyAgICAgICAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5j
-ICAgICAgICAgICAgICAgICAgICAgICB8IDI2ICsrKysrKysrKysrKysrKysrKysrKy0KPiAgZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jICAgICAgICAgICAgfCAgMiArLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2hkbWkuYyAgICAgICAgICAgICAgICB8ICAy
-ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9tc20vZHNpL2RzaV9tYW5hZ2VyLmMgICAgICAgICAgICAg
-IHwgIDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vbXNtL2VkcC9lZHBfYnJpZGdlLmMgICAgICAgICAg
-ICAgICB8ICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfYnJpZGdlLmMgICAg
-ICAgICAgICAgfCAgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfbHZkcy5jICAg
-ICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlw
-X2x2ZHMuYyAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9kdm8u
-YyAgICAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3Rp
-X2hkYS5jICAgICAgICAgICAgICAgICAgICAgIHwgIDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vc3Rp
-L3N0aV9oZG1pLmMgICAgICAgICAgICAgICAgICAgICB8ICAxICsKPiAgaW5jbHVkZS9kcm0vZHJt
-X2JyaWRnZS5oICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgOCArKystLS0tCj4gIDMwIGZp
-bGVzIGNoYW5nZWQsIDU3IGluc2VydGlvbnMoKyksIDM2IGRlbGV0aW9ucygtKQo+IAo+IC0tIAo+
-IDIuMTEuMAo+IAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENv
-cnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 2018-05-07 15:39, Daniel Vetter wrote:
+> On Thu, May 03, 2018 at 11:12:21PM +0200, Peter Rosin wrote:
+>> On 2018-05-03 11:06, Daniel Vetter wrote:
+>>> On Wed, May 02, 2018 at 09:40:23AM +0200, Peter Rosin wrote:
+>>>> The more natural approach would perhaps be to add an drm_bridge_add,
+>>>> but there are several other bridges that never call drm_bridge_add.
+>>>> Just removing the drm_bridge_remove is the easier fix.
+>>>>
+>>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+>>>
+>>> This mess is much bigger. There's 2 pairs of bridge functions:
+>>>
+>>> - drm_bridge_attach/detach. Those are meant to be called by the overall
+>>>   drm driver to connect/disconnect a drm_bridge.
+>>>
+>>> - drm_bridge_add/remove. These are supposed to be called by the bridge
+>>>   driver itself to register/unregister itself. Maybe we should rename
+>>>   them, since the same issue happens with drm_panel, with the same
+>>>   confusion.
+>>>
+>>> I thought someone was working on a cleanup series to fix this mess, but I
+>>> didn't find anything.
+>>
+>> Ok, I just spotted the imbalance and didn't really dig into what
+>> actually happens in these error paths. Now that I have done so I
+>> believe that the removed drm_bridge_remove calls causes NULL
+>> dereferences if/when the error paths are triggered.
+>>
+>> So, I don't think this can wait for some bigger cleanup.
+>>
+>> drm_bridge_remove calls list_del_init calls __list_del_entry calls
+>> __list_del with NULL in both prev and next since the list member
+>> is never initialized. prev and next are dereferenced by __list_del
+>> and you have *boom*
+>>
+>> I recommend adding the tag
+>>
+>> Fixes: 84601dbdea36 ("drm: sti: rework init sequence")
+>>
+>> so that stable picks this one up.
+> 
+> I just wanted to correct your commit message text - the correct solution
+> is definitely _not_ for sti here to call drm_bridge_add.
+
+Ah, I see what you mean. Do you want me to respin?
+
+>                                                          It should call
+> drm_bridge_attach/detach only, as a pair.
+
+Alas, the attach/detach functions are generally not called from the same
+level. After the bridge has been attached to an encoder, it is detached
+in the generic code shutting down the encoder, i.e. the bridge consumer
+is not explicitly involved with bridge detaching.
+
+> I didn't check whether you instead have a _detach call missing or what's
+> going on here.
+
+So, even though there is no _detach call, it is still not "missing" as
+it is not supposed to be there...
+
+Cheers,
+Peter
+
+> -Daniel
+>>
+>> Cheers,
+>> Peter
+>>
+>>> -Daniel
+>>>
+>>>> ---
+>>>>  drivers/gpu/drm/sti/sti_hda.c  | 1 -
+>>>>  drivers/gpu/drm/sti/sti_hdmi.c | 1 -
+>>>>  2 files changed, 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+>>>> index 67bbdb49fffc..199db13f565c 100644
+>>>> --- a/drivers/gpu/drm/sti/sti_hda.c
+>>>> +++ b/drivers/gpu/drm/sti/sti_hda.c
+>>>> @@ -721,7 +721,6 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
+>>>>  	return 0;
+>>>>  
+>>>>  err_sysfs:
+>>>> -	drm_bridge_remove(bridge);
+>>>>  	return -EINVAL;
+>>>>  }
+>>>>  
+>>>> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+>>>> index 58f431102512..932724784942 100644
+>>>> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+>>>> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+>>>> @@ -1315,7 +1315,6 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
+>>>>  	return 0;
+>>>>  
+>>>>  err_sysfs:
+>>>> -	drm_bridge_remove(bridge);
+>>>>  	hdmi->drm_connector = NULL;
+>>>>  	return -EINVAL;
+>>>>  }
+>>>> -- 
+>>>> 2.11.0
+>>>>
+>>>> _______________________________________________
+>>>> dri-devel mailing list
+>>>> dri-devel@lists.freedesktop.org
+>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
