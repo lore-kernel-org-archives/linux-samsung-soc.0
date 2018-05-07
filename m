@@ -1,53 +1,43 @@
-From: Satendra Singh Thakur <satendra.t@samsung.com>
-Subject: [PATCH v2 03/13] drm/kms/mode/exynos-dsi: using helper func
- drm_display_mode_to_videomode for calculating timing parameters
-Date: Mon,  7 May 2018 09:02:17 +0530
-Message-ID: <1525663938-4172-1-git-send-email-satendra.t@samsung.com>
-References: <920ac8d1-8d2d-1332-256d-21472f69fca5@arm.com>
-        <CGME20180507033238epcas5p2601b5ccbba8fa02cdde4f1375e90abe9@epcas5p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <920ac8d1-8d2d-1332-256d-21472f69fca5@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: robin.murphy@arm.com, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: sst2005@gmail.com, madhur.verma@samsung.com, Satendra Singh Thakur <satendra.t@samsung.com>, Hemanshu Srivastava <hemanshu.s@samsung.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH] arm: Convert arm boot_lock to raw
+Date: Mon, 7 May 2018 09:33:07 +0200
+Message-ID: <20180507073307.uuumknm4fx3wbq3u@linutronix.de>
+References: <20180504105600.20613-1-bigeasy@linutronix.de>
+ <20180506182325.w7yvrpp3hcii54pj@kozik-lap>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180506182325.w7yvrpp3hcii54pj@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Barry Song <baohua@kernel.org>, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Frank Rowand <frank.rowand@am.sony.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Wei Xu <xuwei5@hisilicon.com>, Patrice Chotard <patrice.chotard@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, David Brown <david.brown@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Andy Gross <andy.gross@linaro.org>, tglx@linutronix.de, linux-omap@vger.kernel.org, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To avoid duplicate logic for the same
+On 2018-05-06 20:23:25 [+0200], Krzysztof Kozlowski wrote:
+> >  arch/arm/mach-actions/platsmp.c   |    6 +++---
+> >  arch/arm/mach-exynos/platsmp.c    |   12 ++++++------
+> 
+> I assume this is needed for -rt patches?
+correct.
 
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-Acked-by: Madhur Verma <madhur.verma@samsung.com>
-Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
----
+> For Exynos:
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested on Exynos5422 (Odroid HC1) with Linaro PM-QA:
+> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
 
- v2: Removed Mr Robin from reviewed-by field	
+thank you.
 
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+> Best regards,
+> Krzysztof
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 7904ffa..7fe84fd 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1490,17 +1490,8 @@ static void exynos_dsi_mode_set(struct drm_encoder *encoder,
- 				struct drm_display_mode *adjusted_mode)
- {
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
--	struct videomode *vm = &dsi->vm;
--	struct drm_display_mode *m = adjusted_mode;
--
--	vm->hactive = m->hdisplay;
--	vm->vactive = m->vdisplay;
--	vm->vfront_porch = m->vsync_start - m->vdisplay;
--	vm->vback_porch = m->vtotal - m->vsync_end;
--	vm->vsync_len = m->vsync_end - m->vsync_start;
--	vm->hfront_porch = m->hsync_start - m->hdisplay;
--	vm->hback_porch = m->htotal - m->hsync_end;
--	vm->hsync_len = m->hsync_end - m->hsync_start;
-+
-+	drm_display_mode_to_videomode(adjusted_mode, &dsi->vm);
- }
- 
- static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
--- 
-2.7.4
+Sebastian
