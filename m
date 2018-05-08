@@ -1,8 +1,8 @@
-From: Peter Rosin <peda@axentia.se>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: [PATCH 1/3] drm/sti: do not remove the drm_bridge that was never
  added
-Date: Mon, 7 May 2018 16:24:43 +0200
-Message-ID: <7f79c109-6b0f-000e-569b-1f702e0006d3@axentia.se>
+Date: Tue, 8 May 2018 09:41:09 +0200
+Message-ID: <20180508074109.GL28661@phenom.ffwll.local>
 References: <20180502074025.12421-1-peda@axentia.se>
  <20180502074025.12421-2-peda@axentia.se>
  <20180503090648.GG12521@phenom.ffwll.local>
@@ -10,75 +10,114 @@ References: <20180502074025.12421-1-peda@axentia.se>
  <20180507133929.GG12521@phenom.ffwll.local>
  <d378241f-7420-bbaf-c447-18cdfd4f9dd3@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
 In-Reply-To: <d378241f-7420-bbaf-c447-18cdfd4f9dd3@axentia.se>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2018-05-07 15:59, Peter Rosin wrote:
-> On 2018-05-07 15:39, Daniel Vetter wrote:
->> On Thu, May 03, 2018 at 11:12:21PM +0200, Peter Rosin wrote:
->>> On 2018-05-03 11:06, Daniel Vetter wrote:
->>>> On Wed, May 02, 2018 at 09:40:23AM +0200, Peter Rosin wrote:
->>>>> The more natural approach would perhaps be to add an drm_bridge_add,
->>>>> but there are several other bridges that never call drm_bridge_add.
->>>>> Just removing the drm_bridge_remove is the easier fix.
->>>>>
->>>>> Signed-off-by: Peter Rosin <peda@axentia.se>
->>>>
->>>> This mess is much bigger. There's 2 pairs of bridge functions:
->>>>
->>>> - drm_bridge_attach/detach. Those are meant to be called by the overall
->>>>   drm driver to connect/disconnect a drm_bridge.
->>>>
->>>> - drm_bridge_add/remove. These are supposed to be called by the bridge
->>>>   driver itself to register/unregister itself. Maybe we should rename
->>>>   them, since the same issue happens with drm_panel, with the same
->>>>   confusion.
->>>>
->>>> I thought someone was working on a cleanup series to fix this mess, but I
->>>> didn't find anything.
->>>
->>> Ok, I just spotted the imbalance and didn't really dig into what
->>> actually happens in these error paths. Now that I have done so I
->>> believe that the removed drm_bridge_remove calls causes NULL
->>> dereferences if/when the error paths are triggered.
->>>
->>> So, I don't think this can wait for some bigger cleanup.
->>>
->>> drm_bridge_remove calls list_del_init calls __list_del_entry calls
->>> __list_del with NULL in both prev and next since the list member
->>> is never initialized. prev and next are dereferenced by __list_del
->>> and you have *boom*
->>>
->>> I recommend adding the tag
->>>
->>> Fixes: 84601dbdea36 ("drm: sti: rework init sequence")
->>>
->>> so that stable picks this one up.
->>
->> I just wanted to correct your commit message text - the correct solution
->> is definitely _not_ for sti here to call drm_bridge_add.
-> 
-> Ah, I see what you mean. Do you want me to respin?
-
-Hold on, no I don't agree. sti_hda.c does create a bridge for it's own
-internal use. It does not drm_bridge_add it, because all that ever does
-is adding the bridge to the global lost of bridges. But since this is
-a bridge for internal use, there is little point in calling drm_bridge_add,
-the driver currently gains nothing by doing so.
-
-But, drm_bridge_add might be a good place to put common stuff for every
-bridge in the system, so it might be worthwhile to start requiring all
-bridges to be drm_bridge_add-ed. And IMHO, it would not be wrong to have
-the sti-hda driver call drm_bridge_add on the bridge it creates.
-
-Do you really think it is actively wrong to call drm_bridge_add for
-internal bridges such as this?
-
-Cheers,
-Peter
+T24gTW9uLCBNYXkgMDcsIDIwMTggYXQgMDM6NTk6MDRQTSArMDIwMCwgUGV0ZXIgUm9zaW4gd3Jv
+dGU6Cj4gT24gMjAxOC0wNS0wNyAxNTozOSwgRGFuaWVsIFZldHRlciB3cm90ZToKPiA+IE9uIFRo
+dSwgTWF5IDAzLCAyMDE4IGF0IDExOjEyOjIxUE0gKzAyMDAsIFBldGVyIFJvc2luIHdyb3RlOgo+
+ID4+IE9uIDIwMTgtMDUtMDMgMTE6MDYsIERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4gPj4+IE9uIFdl
+ZCwgTWF5IDAyLCAyMDE4IGF0IDA5OjQwOjIzQU0gKzAyMDAsIFBldGVyIFJvc2luIHdyb3RlOgo+
+ID4+Pj4gVGhlIG1vcmUgbmF0dXJhbCBhcHByb2FjaCB3b3VsZCBwZXJoYXBzIGJlIHRvIGFkZCBh
+biBkcm1fYnJpZGdlX2FkZCwKPiA+Pj4+IGJ1dCB0aGVyZSBhcmUgc2V2ZXJhbCBvdGhlciBicmlk
+Z2VzIHRoYXQgbmV2ZXIgY2FsbCBkcm1fYnJpZGdlX2FkZC4KPiA+Pj4+IEp1c3QgcmVtb3Zpbmcg
+dGhlIGRybV9icmlkZ2VfcmVtb3ZlIGlzIHRoZSBlYXNpZXIgZml4Lgo+ID4+Pj4KPiA+Pj4+IFNp
+Z25lZC1vZmYtYnk6IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEuc2U+Cj4gPj4+Cj4gPj4+IFRo
+aXMgbWVzcyBpcyBtdWNoIGJpZ2dlci4gVGhlcmUncyAyIHBhaXJzIG9mIGJyaWRnZSBmdW5jdGlv
+bnM6Cj4gPj4+Cj4gPj4+IC0gZHJtX2JyaWRnZV9hdHRhY2gvZGV0YWNoLiBUaG9zZSBhcmUgbWVh
+bnQgdG8gYmUgY2FsbGVkIGJ5IHRoZSBvdmVyYWxsCj4gPj4+ICAgZHJtIGRyaXZlciB0byBjb25u
+ZWN0L2Rpc2Nvbm5lY3QgYSBkcm1fYnJpZGdlLgo+ID4+Pgo+ID4+PiAtIGRybV9icmlkZ2VfYWRk
+L3JlbW92ZS4gVGhlc2UgYXJlIHN1cHBvc2VkIHRvIGJlIGNhbGxlZCBieSB0aGUgYnJpZGdlCj4g
+Pj4+ICAgZHJpdmVyIGl0c2VsZiB0byByZWdpc3Rlci91bnJlZ2lzdGVyIGl0c2VsZi4gTWF5YmUg
+d2Ugc2hvdWxkIHJlbmFtZQo+ID4+PiAgIHRoZW0sIHNpbmNlIHRoZSBzYW1lIGlzc3VlIGhhcHBl
+bnMgd2l0aCBkcm1fcGFuZWwsIHdpdGggdGhlIHNhbWUKPiA+Pj4gICBjb25mdXNpb24uCj4gPj4+
+Cj4gPj4+IEkgdGhvdWdodCBzb21lb25lIHdhcyB3b3JraW5nIG9uIGEgY2xlYW51cCBzZXJpZXMg
+dG8gZml4IHRoaXMgbWVzcywgYnV0IEkKPiA+Pj4gZGlkbid0IGZpbmQgYW55dGhpbmcuCj4gPj4K
+PiA+PiBPaywgSSBqdXN0IHNwb3R0ZWQgdGhlIGltYmFsYW5jZSBhbmQgZGlkbid0IHJlYWxseSBk
+aWcgaW50byB3aGF0Cj4gPj4gYWN0dWFsbHkgaGFwcGVucyBpbiB0aGVzZSBlcnJvciBwYXRocy4g
+Tm93IHRoYXQgSSBoYXZlIGRvbmUgc28gSQo+ID4+IGJlbGlldmUgdGhhdCB0aGUgcmVtb3ZlZCBk
+cm1fYnJpZGdlX3JlbW92ZSBjYWxscyBjYXVzZXMgTlVMTAo+ID4+IGRlcmVmZXJlbmNlcyBpZi93
+aGVuIHRoZSBlcnJvciBwYXRocyBhcmUgdHJpZ2dlcmVkLgo+ID4+Cj4gPj4gU28sIEkgZG9uJ3Qg
+dGhpbmsgdGhpcyBjYW4gd2FpdCBmb3Igc29tZSBiaWdnZXIgY2xlYW51cC4KPiA+Pgo+ID4+IGRy
+bV9icmlkZ2VfcmVtb3ZlIGNhbGxzIGxpc3RfZGVsX2luaXQgY2FsbHMgX19saXN0X2RlbF9lbnRy
+eSBjYWxscwo+ID4+IF9fbGlzdF9kZWwgd2l0aCBOVUxMIGluIGJvdGggcHJldiBhbmQgbmV4dCBz
+aW5jZSB0aGUgbGlzdCBtZW1iZXIKPiA+PiBpcyBuZXZlciBpbml0aWFsaXplZC4gcHJldiBhbmQg
+bmV4dCBhcmUgZGVyZWZlcmVuY2VkIGJ5IF9fbGlzdF9kZWwKPiA+PiBhbmQgeW91IGhhdmUgKmJv
+b20qCj4gPj4KPiA+PiBJIHJlY29tbWVuZCBhZGRpbmcgdGhlIHRhZwo+ID4+Cj4gPj4gRml4ZXM6
+IDg0NjAxZGJkZWEzNiAoImRybTogc3RpOiByZXdvcmsgaW5pdCBzZXF1ZW5jZSIpCj4gPj4KPiA+
+PiBzbyB0aGF0IHN0YWJsZSBwaWNrcyB0aGlzIG9uZSB1cC4KPiA+IAo+ID4gSSBqdXN0IHdhbnRl
+ZCB0byBjb3JyZWN0IHlvdXIgY29tbWl0IG1lc3NhZ2UgdGV4dCAtIHRoZSBjb3JyZWN0IHNvbHV0
+aW9uCj4gPiBpcyBkZWZpbml0ZWx5IF9ub3RfIGZvciBzdGkgaGVyZSB0byBjYWxsIGRybV9icmlk
+Z2VfYWRkLgo+IAo+IEFoLCBJIHNlZSB3aGF0IHlvdSBtZWFuLiBEbyB5b3Ugd2FudCBtZSB0byBy
+ZXNwaW4/Cj4gCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBJdCBzaG91bGQgY2FsbAo+ID4gZHJtX2JyaWRnZV9hdHRhY2gvZGV0YWNo
+IG9ubHksIGFzIGEgcGFpci4KPiAKPiBBbGFzLCB0aGUgYXR0YWNoL2RldGFjaCBmdW5jdGlvbnMg
+YXJlIGdlbmVyYWxseSBub3QgY2FsbGVkIGZyb20gdGhlIHNhbWUKPiBsZXZlbC4gQWZ0ZXIgdGhl
+IGJyaWRnZSBoYXMgYmVlbiBhdHRhY2hlZCB0byBhbiBlbmNvZGVyLCBpdCBpcyBkZXRhY2hlZAo+
+IGluIHRoZSBnZW5lcmljIGNvZGUgc2h1dHRpbmcgZG93biB0aGUgZW5jb2RlciwgaS5lLiB0aGUg
+YnJpZGdlIGNvbnN1bWVyCj4gaXMgbm90IGV4cGxpY2l0bHkgaW52b2x2ZWQgd2l0aCBicmlkZ2Ug
+ZGV0YWNoaW5nLgo+IAo+ID4gSSBkaWRuJ3QgY2hlY2sgd2hldGhlciB5b3UgaW5zdGVhZCBoYXZl
+IGEgX2RldGFjaCBjYWxsIG1pc3Npbmcgb3Igd2hhdCdzCj4gPiBnb2luZyBvbiBoZXJlLgo+IAo+
+IFNvLCBldmVuIHRob3VnaCB0aGVyZSBpcyBubyBfZGV0YWNoIGNhbGwsIGl0IGlzIHN0aWxsIG5v
+dCAibWlzc2luZyIgYXMKPiBpdCBpcyBub3Qgc3VwcG9zZWQgdG8gYmUgdGhlcmUuLi4KCk9oLCBU
+SUwuIFRvdGFsbHkgbWlzc2VkIHRoYXQgd2UndmUgaW1wcm92ZWQgdGhpcyB0byBiZSBjbG9zZXIg
+dG8gZHdpbSgpCnNlbWFudGljcy4gSSB0aGluayB5b3VyIHBhdGNoIGlzIGNvcnJlY3QgYXMtaXMg
+YW5kIGhhcyBteQoKQWNrZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwu
+Y2g+CgpJdCdkIGJlIGdyZWF0IHRvIGltcHJvdmUgdGhlIGtlcm5lbGRvYyBmb3IgZHJtX2JyaWRn
+ZV9hdHRhY2ggdGhvdWdoIHRvCm1lbnRpb24gdGhhdCBicmlkZ2VzIGdldCBhdXRvLWRldGFjaGVk
+IG9uIGVuY29kZXIgY2xlYW51cCBhcyBkb24gaW4KZHJtX2VuY29kZXJfY2xlYW51cCgpLiBDYXJl
+IHRvIGRvIHRoYXQ/CgpBbmQgb24gdGhhdCBub3RlIEkndmUgYWdhaW4gcmVhbGl6ZWQgdGhhdCBt
+b3N0IGRyaXZlcnMgdG90YWxseSBnZXQgdGhpcwp3cm9uZyB3aGVuIHRoZXkgc2V0IHRoZWlyIC0+
+ZGVzdHJveSBjYWxsYmFjayB0byBkcm1fZW5jb2Rlcl9jbGVhbnVwCihzaW1pbGFyIGZvciBvdGhl
+ciBrbXMgb2JqZWN0cyksIGJlY2F1c2UgdGhhdCBvbmUgZG9lcyBfbm90XyBkbyB0aGUgZmluYWwK
+a2ZyZWUuIE9oIHdlbGwuCi1EYW5pZWwKCj4gCj4gQ2hlZXJzLAo+IFBldGVyCj4gCj4gPiAtRGFu
+aWVsCj4gPj4KPiA+PiBDaGVlcnMsCj4gPj4gUGV0ZXIKPiA+Pgo+ID4+PiAtRGFuaWVsCj4gPj4+
+Cj4gPj4+PiAtLS0KPiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZGEuYyAgfCAxIC0K
+PiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMgfCAxIC0KPiA+Pj4+ICAyIGZp
+bGVzIGNoYW5nZWQsIDIgZGVsZXRpb25zKC0pCj4gPj4+Pgo+ID4+Pj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkYS5jIGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRh
+LmMKPiA+Pj4+IGluZGV4IDY3YmJkYjQ5ZmZmYy4uMTk5ZGIxM2Y1NjVjIDEwMDY0NAo+ID4+Pj4g
+LS0tIGEvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRhLmMKPiA+Pj4+ICsrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9zdGkvc3RpX2hkYS5jCj4gPj4+PiBAQCAtNzIxLDcgKzcyMSw2IEBAIHN0YXRpYyBp
+bnQgc3RpX2hkYV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVy
+LCB2b2lkICpkYXRhKQo+ID4+Pj4gIAlyZXR1cm4gMDsKPiA+Pj4+ICAKPiA+Pj4+ICBlcnJfc3lz
+ZnM6Cj4gPj4+PiAtCWRybV9icmlkZ2VfcmVtb3ZlKGJyaWRnZSk7Cj4gPj4+PiAgCXJldHVybiAt
+RUlOVkFMOwo+ID4+Pj4gIH0KPiA+Pj4+ICAKPiA+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vc3RpL3N0aV9oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMKPiA+
+Pj4+IGluZGV4IDU4ZjQzMTEwMjUxMi4uOTMyNzI0Nzg0OTQyIDEwMDY0NAo+ID4+Pj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jCj4gPj4+PiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vc3RpL3N0aV9oZG1pLmMKPiA+Pj4+IEBAIC0xMzE1LDcgKzEzMTUsNiBAQCBzdGF0aWMgaW50
+IHN0aV9oZG1pX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIs
+IHZvaWQgKmRhdGEpCj4gPj4+PiAgCXJldHVybiAwOwo+ID4+Pj4gIAo+ID4+Pj4gIGVycl9zeXNm
+czoKPiA+Pj4+IC0JZHJtX2JyaWRnZV9yZW1vdmUoYnJpZGdlKTsKPiA+Pj4+ICAJaGRtaS0+ZHJt
+X2Nvbm5lY3RvciA9IE5VTEw7Cj4gPj4+PiAgCXJldHVybiAtRUlOVkFMOwo+ID4+Pj4gIH0KPiA+
+Pj4+IC0tIAo+ID4+Pj4gMi4xMS4wCj4gPj4+Pgo+ID4+Pj4gX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KPiA+Pj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+PiA+Pj4+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiA+Pj4+IGh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCj4gPj4+Cj4gPj4K
+PiA+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+ID4+
+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiA+PiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCj4gPj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwKPiA+IAo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVs
+IENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
