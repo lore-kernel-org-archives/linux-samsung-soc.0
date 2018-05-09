@@ -1,67 +1,52 @@
-From: Satendra Singh Thakur <satendra.t@samsung.com>
-Subject: Re: [PATCH 00/13] drm/kms/mode: using helper func
- drm_display_mode_to/from_videomode for calculating timing parameters
-Date: Tue,  8 May 2018 16:28:30 +0530
-Message-ID: <1525777110-11378-1-git-send-email-satendra.t@samsung.com>
-References: <20180507134602.GH12521@phenom.ffwll.local>
-        <CGME20180508105900epcas5p25ffe94a214e5ad0848d834d6c3562ad6@epcas5p2.samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-fixes
+Date: Wed, 09 May 2018 09:26:44 +0900
+Message-ID: <1525825604-4306-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20180509002644epcas1p109a7cedee1657e6bb4e3bd00c7e14f1d@epcas1p1.samsung.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180507134602.GH12521@phenom.ffwll.local>
-Sender: linux-kernel-owner@vger.kernel.org
-To: daniel@ffwll.ch, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org
-Cc: sst2005@gmail.com, Satendra Singh Thakur <satendra.t@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 07, 2018 at 15:46:02 +0200, Daniel Vetter wrote:
-> On Thu, May 03, 2018 at 01:53:55PM +0530, Satendra Singh Thakur wrote:
-> > 1.There is a function in drm-core to calculate display timing parameters:
-> > horizontal front porch, back porch, sync length,
-> > vertical front porch, back porch, sync length and
-> > clock in Hz.
-> > However, some drivers are still calculating these parameters themselves.
-> > Therefore, there is a duplication of the code.
-> > This patch series replaces this redundant code with the function
-> > drm_display_mode_to_videomode.
-> > This removes nearly 100 redundant lines from the related drivers.
-> > 2.For some drivers (sun4i) the reverse helper
-> > drm_display_mode_from_videomode is used.
-> > 3.For some drivers it replaces arithmatic operators (*, /) with shifting
-> > operators (>>, <<).
-> > 4.For some drivers DRM_MODE_FLAG_* are replaced with DISPLAY_FLAGS_* flags.
-> > 5.These changes apply to following crtc and encoder drivers:
-> > atmel-hlcdc
-> > bridge-tc358767
-> > exynos-dsi
-> > fsl-dcu
-> > gma500-mdfld_dsi_dpi
-> > hisilicon-kirin_dsi, ade
-> > meson-encoder
-> > pl111-display
-> > sun4i-tv
-> > ti lcdc
-> > tegra dc
-> > mediatek dpi dsi
-> > bridge-adv7533
-> 
-> The drm_mode_to_videomode helper is meant for interop between drm and v4l,
-> which have different internal structures to represent modes.
-> 
-> For drivers that only use drm I think the better option would be to add
-> these fields to struct drm_display_mode as another set of crtc_* values
-> (the computed values are stored in crtc_ prefixed members). And compute
-> front/back porch in drm_mode_set_crtcinfo.
-> 
-> Then we can use these new drm_display_mode->crtc_h|vfront|back_porch
-> fields in all the drivers you're changing. This way you avoid having to
-> change all the drm drivers to use v4l #defines.
-> 
-> Thanks,
-> Daniel
-
-Hi Daniel,
-Thanks for the comments.
-I will look into it.
-
-Thanks
--Satendra
+SGkgRGF2ZSwKCiAgIEp1c3QgZml4dXAgdG8gcGFnZWZhdWx0IGlzc3VlIG9mIG1peGVyIGRyaXZl
+ciBJIG1pc3NlZCBhbmQKICAgYSB0cml2aWFsIGNsZWFudXAgdG8gYXZvaWQgZHVwbGljYXRlZCBk
+cm1fYnJpZGdlX2F0dGFjaC4KCiAgIFBsZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUg
+aXMgYW55IHByb2JsZW0KClRoYW5rcywKSW5raSBEYWUKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBz
+aW5jZSBjb21taXQgYTAyY2JlMmUzNGM1NzZjZGM1ZTc4NDZhM2NkNTUyNDVhYjgxZGI0NzoKCiAg
+TWVyZ2UgYnJhbmNoICd2bXdnZngtZml4ZXMtNC4xNycgb2YgZ2l0Oi8vcGVvcGxlLmZyZWVkZXNr
+dG9wLm9yZy9+dGhvbWFzaC9saW51eCBpbnRvIGRybS1maXhlcyAoMjAxOC0wNS0wNCAxMDowMzoy
+NyArMTAwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKCiAgZ2l0
+Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4
+eW5vcyB0YWdzL2V4eW5vcy1kcm0tZml4ZXMtZm9yLXY0LjE3LXJjNQoKZm9yIHlvdSB0byBmZXRj
+aCBjaGFuZ2VzIHVwIHRvIDZmMmRiN2RjOTAxYTFiODlmYmM1MGY3YjM4ZjBmN2VlMTcyMDU3MDM6
+CgogIGRybS9leHlub3M6IGhkbWk6IGF2b2lkIGR1cGxpY2F0aW5nIGRybV9icmlkZ2VfYXR0YWNo
+ICgyMDE4LTA1LTA5IDA5OjA0OjU3ICswOTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpGaXh1cCBwYWdlZmF1bHQgaXNz
+dWUgb2YgbWl4ZXIgZHJpdmVyCi0gaXQgbWFrZXMgc3VyZSB0byBjaGVjayBzaGFkb3cgcmVnaXN0
+ZXIgZm9yIGludGVybGFjZSBzY2FuLgotIGl0IGNvcnJlY3RzIGNocm9tYV9hZGRyWzFdLCBoZWln
+aHQgYW5kIHZlcnRpY2FsIHBvc2l0aW9uIHZhbHVlcy4KQW5kIHRyaXZpYWwgY2xlYW51cAotIGl0
+IGp1c3QgcmVtb3ZlcyBkdXBsaWNhdGVkIGRybV9icmlkZ2VfYXR0YWNoLgoKLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpBbmRy
+emVqIEhhamRhICgxKToKICAgICAgZHJtL2V4eW5vcy9taXhlcjogZml4IHN5bmNocm9uaXphdGlv
+biBjaGVjayBpbiBpbnRlcmxhY2VkIG1vZGUKClBldGVyIFJvc2luICgxKToKICAgICAgZHJtL2V4
+eW5vczogaGRtaTogYXZvaWQgZHVwbGljYXRpbmcgZHJtX2JyaWRnZV9hdHRhY2gKClRvYmlhcyBK
+YWtvYmkgKDEpOgogICAgICBkcm0vZXh5bm9zOiBtaXhlcjogYXZvaWQgT29wcyBpbiB2cF92aWRl
+b19idWZmZXIoKQoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgfCAgMiAt
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDIyICsrKysrKysrKysr
+KysrKysrLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oICAgfCAgMSAr
+CiAzIGZpbGVzIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
