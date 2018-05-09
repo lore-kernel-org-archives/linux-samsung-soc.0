@@ -1,71 +1,150 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v7 7/7] ARM64: dts: exynos: Add mem-2-mem Scaler devices
-Date: Wed, 09 May 2018 10:59:28 +0200
-Message-ID: <20180509085928.2023-8-m.szyprowski@samsung.com>
-References: <20180509085928.2023-1-m.szyprowski@samsung.com>
- <CGME20180509085944eucas1p1c85c0f02eefe719520ec1b1cede0eb3f@eucas1p1.samsung.com>
-Mime-Version: 1.0
+From: Satendra Singh Thakur <satendra.t@samsung.com>
+Subject: Re: [PATCH 00/13] drm/kms/mode: using helper func
+ drm_display_mode_to/from_videomode for calculating timing parameters
+Date: Wed,  9 May 2018 17:22:05 +0530
+Message-ID: <1525866725-16685-1-git-send-email-satendra.t@samsung.com>
+References: <1525777110-11378-1-git-send-email-satendra.t@samsung.com>
+        <CGME20180509115224epcas5p1c958418bc36fd224e8d36b9511c5beea@epcas5p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20180509085928.2023-1-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1525777110-11378-1-git-send-email-satendra.t@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel@ffwll.ch, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org
+Cc: sst2005@gmail.com, Satendra Singh Thakur <satendra.t@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogQW5kcnplaiBQaWV0cmFzaWV3aWN6IDxhbmRyemVqLnBAc2Ftc3VuZy5jb20+CgpUaGVy
-ZSBhcmUgdHdvIFNjYWxlciBkZXZpY2VzIGluIEV4eW5vczU0MzMgU29Dcy4gQWRkIG5vZGVzIGZv
-ciB0aGVtIGFuZAp0aGVpciBTWVNNTVUgY29udHJvbGxlcnMuCgpTaWduZWQtb2ZmLWJ5OiBBbmRy
-emVqIFBpZXRyYXNpZXdpY3ogPGFuZHJ6ZWoucEBzYW1zdW5nLmNvbT4KU2lnbmVkLW9mZi1ieTog
-TWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIGFyY2gvYXJt
-NjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMuZHRzaSB8IDQ2ICsrKysrKysrKysrKysrKysr
-KysrKysKIDEgZmlsZSBjaGFuZ2VkLCA0NiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvYXJj
-aC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy5kdHNpIGIvYXJjaC9hcm02NC9ib290
-L2R0cy9leHlub3MvZXh5bm9zNTQzMy5kdHNpCmluZGV4IGJhODE1N2NlYWE1Ni4uMGVjNDQxODBk
-MWI3IDEwMDY0NAotLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLmR0
-c2kKKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy5kdHNpCkBAIC0x
-MDM0LDYgKzEwMzQsMzAgQEAKIAkJCXBvd2VyLWRvbWFpbnMgPSA8JnBkX2dzY2w+OwogCQl9Owog
-CisJCXNjYWxlcl8wOiBzY2FsZXJAMTUwMDAwMDAgeworCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5n
-LGV4eW5vczU0MzMtc2NhbGVyIjsKKwkJCXJlZyA9IDwweDE1MDAwMDAwIDB4MTI5ND47CisJCQlp
-bnRlcnJ1cHRzID0gPDAgNDAyIElSUV9UWVBFX0xFVkVMX0hJR0g+OworCQkJY2xvY2stbmFtZXMg
-PSAicGNsayIsICJhY2xrIiwgImFjbGtfeGl1IjsKKwkJCWNsb2NrcyA9IDwmY211X21zY2wgQ0xL
-X1BDTEtfTTJNU0NBTEVSMD4sCisJCQkJIDwmY211X21zY2wgQ0xLX0FDTEtfTTJNU0NBTEVSMD4s
-CisJCQkJIDwmY211X21zY2wgQ0xLX0FDTEtfWElVX01TQ0xYPjsKKwkJCWlvbW11cyA9IDwmc3lz
-bW11X3NjYWxlcl8wPjsKKwkJCXBvd2VyLWRvbWFpbnMgPSA8JnBkX21zY2w+OworCQl9OworCisJ
-CXNjYWxlcl8xOiBzY2FsZXJAMTUwMTAwMDAgeworCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4
-eW5vczU0MzMtc2NhbGVyIjsKKwkJCXJlZyA9IDwweDE1MDEwMDAwIDB4MTI5ND47CisJCQlpbnRl
-cnJ1cHRzID0gPDAgNDAzIElSUV9UWVBFX0xFVkVMX0hJR0g+OworCQkJY2xvY2stbmFtZXMgPSAi
-cGNsayIsICJhY2xrIiwgImFjbGtfeGl1IjsKKwkJCWNsb2NrcyA9IDwmY211X21zY2wgQ0xLX1BD
-TEtfTTJNU0NBTEVSMT4sCisJCQkJIDwmY211X21zY2wgQ0xLX0FDTEtfTTJNU0NBTEVSMT4sCisJ
-CQkJIDwmY211X21zY2wgQ0xLX0FDTEtfWElVX01TQ0xYPjsKKwkJCWlvbW11cyA9IDwmc3lzbW11
-X3NjYWxlcl8xPjsKKwkJCXBvd2VyLWRvbWFpbnMgPSA8JnBkX21zY2w+OworCQl9OworCiAJCWpw
-ZWc6IGNvZGVjQDE1MDIwMDAwIHsKIAkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1NDMz
-LWpwZWciOwogCQkJcmVnID0gPDB4MTUwMjAwMDAgMHgxMDAwMD47CkBAIC0xMTM3LDYgKzExNjEs
-MjggQEAKIAkJCXBvd2VyLWRvbWFpbnMgPSA8JnBkX2dzY2w+OwogCQl9OwogCisJCXN5c21tdV9z
-Y2FsZXJfMDogc3lzbW11QDB4MTUwNDAwMDAgeworCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4
-eW5vcy1zeXNtbXUiOworCQkJcmVnID0gPDB4MTUwNDAwMDAgMHgxMDAwPjsKKwkJCWludGVycnVw
-dHMgPSA8R0lDX1NQSSA0MDQgSVJRX1RZUEVfTEVWRUxfSElHSD47CisJCQljbG9jay1uYW1lcyA9
-ICJwY2xrIiwgImFjbGsiOworCQkJY2xvY2tzID0gPCZjbXVfbXNjbCBDTEtfUENMS19TTU1VX00y
-TVNDQUxFUjA+LAorCQkJCSA8JmNtdV9tc2NsIENMS19BQ0xLX1NNTVVfTTJNU0NBTEVSMD47CisJ
-CQkjaW9tbXUtY2VsbHMgPSA8MD47CisJCQlwb3dlci1kb21haW5zID0gPCZwZF9tc2NsPjsKKwkJ
-fTsKKworCQlzeXNtbXVfc2NhbGVyXzE6IHN5c21tdUAweDE1MDUwMDAwIHsKKwkJCWNvbXBhdGli
-bGUgPSAic2Ftc3VuZyxleHlub3Mtc3lzbW11IjsKKwkJCXJlZyA9IDwweDE1MDUwMDAwIDB4MTAw
-MD47CisJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgNDA2IElSUV9UWVBFX0xFVkVMX0hJR0g+Owor
-CQkJY2xvY2stbmFtZXMgPSAicGNsayIsICJhY2xrIjsKKwkJCWNsb2NrcyA9IDwmY211X21zY2wg
-Q0xLX1BDTEtfU01NVV9NMk1TQ0FMRVIxPiwKKwkJCQkgPCZjbXVfbXNjbCBDTEtfQUNMS19TTU1V
-X00yTVNDQUxFUjE+OworCQkJI2lvbW11LWNlbGxzID0gPDA+OworCQkJcG93ZXItZG9tYWlucyA9
-IDwmcGRfbXNjbD47CisJCX07CisKIAkJc3lzbW11X2pwZWc6IHN5c21tdUAxNTA2MDAwMCB7CiAJ
-CQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zLXN5c21tdSI7CiAJCQlyZWcgPSA8MHgxNTA2
-MDAwMCAweDEwMDA+OwotLSAKMi4xNy4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+On Thu, May 08, 2018 at 16:28:30 +0530, Satendra Singh Thakur wrote:
+> On Thu, May 07, 2018 at 15:46:02 +0200, Daniel Vetter wrote:
+> > On Thu, May 03, 2018 at 01:53:55PM +0530, Satendra Singh Thakur wrote:
+> > > 1.There is a function in drm-core to calculate display timing parameters:
+> > > horizontal front porch, back porch, sync length,
+> > > vertical front porch, back porch, sync length and
+> > > clock in Hz.
+> > > However, some drivers are still calculating these parameters themselves.
+> > > Therefore, there is a duplication of the code.
+> > > This patch series replaces this redundant code with the function
+> > > drm_display_mode_to_videomode.
+> > > This removes nearly 100 redundant lines from the related drivers.
+> > > 2.For some drivers (sun4i) the reverse helper
+> > > drm_display_mode_from_videomode is used.
+> > > 3.For some drivers it replaces arithmatic operators (*, /) with shifting
+> > > operators (>>, <<).
+> > > 4.For some drivers DRM_MODE_FLAG_* are replaced with DISPLAY_FLAGS_* flags.
+> > > 5.These changes apply to following crtc and encoder drivers:
+> > > atmel-hlcdc
+> > > bridge-tc358767
+> > > exynos-dsi
+> > > fsl-dcu
+> > > gma500-mdfld_dsi_dpi
+> > > hisilicon-kirin_dsi, ade
+> > > meson-encoder
+> > > pl111-display
+> > > sun4i-tv
+> > > ti lcdc
+> > > tegra dc
+> > > mediatek dpi dsi
+> > > bridge-adv7533
+> > 
+> > The drm_mode_to_videomode helper is meant for interop between drm and v4l,
+> > which have different internal structures to represent modes.
+> > 
+> > For drivers that only use drm I think the better option would be to add
+> > these fields to struct drm_display_mode as another set of crtc_* values
+> > (the computed values are stored in crtc_ prefixed members). And compute
+> > front/back porch in drm_mode_set_crtcinfo.
+> > 
+> > Then we can use these new drm_display_mode->crtc_h|vfront|back_porch
+> > fields in all the drivers you're changing. This way you avoid having to
+> > change all the drm drivers to use v4l #defines.
+> > 
+> > Thanks,
+> > Daniel
+>
+> Hi Daniel,
+> Thanks for the comments.
+> I will look into it.
+> 
+> Thanks
+> -Satendra
+
+Hi Daniel,
+Thanks for the comments.
+Please find below my understanding in this direction.
+
+1. Currently struct videomode is being used in 50 drm drivers and 14 fbdev drivers.
+   Since, it's already being used by so many drm drivers, that is the reason 
+   these fbdev objects (struct videmode and func drm_display_mode_to_videomode) were used in this patch series.
+
+2. Anyway, if fbdev related objects (struct/func) are not encouraged in drm drivers, then we may add 
+   h/v front/back porches in struct drm_display_mode as adviced by you.
+
+3. We can calculate these params in func drm_mode_set_crtcinfo at the end of it.
+   int drm_mode_set_crtcinfo ()
+   {
+   .
+   .
+   crtc_hfront_porch = crtc_hsync_start - crtc_hdisplay;
+   crtc_vfront_porch = crtc_vsync_start - crtc_vdisplay; 
+   .
+   .
+   crtc_clock_hz = crtc_clock*1000;
+   };
+
+4. Normally mode is programmed in HW in following callbacks of crtc and encoder drivers
+   -mode_set
+   -mode_set_nofb
+   -atomic_enable
+
+   
+   Normally drm_mode_set_crtcinfo is used in
+   -mode_fixup callbacks (CBs) 
+   of encoder and crtc drivers.
+
+   if mode_fixup CBs are called before mode_set CBs then
+   drm_mode_set_crtcinfo is right place to calculate sync/porch params. 
+   We can use crtc_hfront/back_porches directly and program them to HW
+   in above mentioned callbacks.
+   
+   int my_mode_set () 
+   {
+   	REG_WRITE(crtc_hfront_porch);
+        REG_WRITE(crtc_hback_porch);
+        .
+        .
+   } 	
+
+ 6.  However, if these params are being modified after calling drm_set_crtcinfo as mentioned below:
+
+   bool amdgpu_atombios_encoder_mode_fixup(struct drm_encoder *encoder,
+				 const struct drm_display_mode *mode,
+				 struct drm_display_mode *adjusted_mode)
+   {
+	struct amdgpu_encoder *amdgpu_encoder = to_amdgpu_encoder(encoder);
+
+	/* set the active encoder to connector routing */
+	amdgpu_encoder_set_active_device(encoder);
+	***drm_mode_set_crtcinfo(adjusted_mode, 0);****
+
+	/* hw bug */
+	if ((mode->flags & DRM_MODE_FLAG_INTERLACE)
+	    && (mode->crtc_vsync_start < (mode->crtc_vdisplay + 2)))
+		adjusted_mode->crtc_vsync_start = adjusted_mode->crtc_vdisplay + 2;
+
+  Then we may need to define new func like
+
+  void drm_calc_hv_porches_sync()
+  {
+   crtc_hfront_porch = crtc_hsync_start - crtc_hdisplay;
+   crtc_vfront_porch = crtc_vsync_start - crtc_vdisplay; 
+   .
+   . 
+   crtc_clock_hz = crtc_clock*1000;
+  }  and call this func in mode_set*, atomic_enable CBS before programming the HW with this mode.
+
+  
+  Should I create patches around this idea ?
+  Please let me know your comments. 
+
+
+Thanks
+-Satendra
