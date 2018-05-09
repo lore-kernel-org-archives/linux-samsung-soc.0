@@ -1,109 +1,71 @@
-From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
-Subject: Re: [PATCH v2 01/26] drm/bridge: allow optionally
- specifying an owner .odev device
-Date: Wed, 9 May 2018 17:53:26 +0200
-Message-ID: <4be4448e-763c-4832-f194-6b79afe87d08@axentia.se>
-References: <20180504135212.26977-1-peda@axentia.se>
- <CGME20180504135245epcas4p1d0463b6b3c73d1dd2550c6ed5a4e3986@epcas4p1.samsung.com>
- <20180504135212.26977-2-peda@axentia.se>
- <4e92fdea-0609-0fff-0e3f-d9f78f596eb7@samsung.com>
+From: Frank Mori Hess <fmh6jj@gmail.com>
+Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
+Date: Wed, 9 May 2018 13:48:10 -0400
+Message-ID: <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
+References: <CGME20180508090407eucas1p13713284c2d3f5aa5c66f8d136be683c1@eucas1p1.samsung.com>
+ <2484918.HKVQc3yJkt@bear> <53b13d76-16a1-0e0a-09e1-c917e5d49326@samsung.com>
+ <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com> <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <4e92fdea-0609-0fff-0e3f-d9f78f596eb7-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Martin Donnelly <martin.donnelly-JJi787mZWgc@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sean
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxOC0wNS0wOSAxNzowOCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBPbiAwNC4wNS4yMDE4
-IDE1OjUxLCBQZXRlciBSb3NpbiB3cm90ZToKPj4gQnJpZGdlIGRyaXZlcnMgY2FuIG5vdyAodGVt
-cG9yYXJpbHksIGluIGEgdHJhbnNpdGlvbiBwaGFzZSkgc2VsZWN0IGlmCj4+IHRoZXkgd2FudCB0
-byBwcm92aWRlIGEgZnVsbCBvd25lciBkZXZpY2Ugb3Iga2VlcCBqdXN0IHByb3ZpZGluZyBhbgo+
-PiBvZl9ub2RlLgo+Pgo+PiBCeSBwcm92aWRpbmcgYSBmdWxsIG93bmVyIGRldmljZSwgdGhlIGJy
-aWRnZSBkcml2ZXJzIG5vIGxvbmdlciBuZWVkCj4+IHRvIHByb3ZpZGUgYW4gb2Zfbm9kZSBzaW5j
-ZSB0aGF0IG5vZGUgaXMgYXZhaWxhYmxlIHZpYSB0aGUgb3duZXIKPj4gZGV2aWNlLgo+Pgo+PiBX
-aGVuIGFsbCBicmlkZ2UgZHJpdmVycyBwcm92aWRlIGFuIG93bmVyIGRldmljZSwgdGhhdCB3aWxs
-IGJlY29tZQo+PiBtYW5kYXRvcnkgYW5kIHRoZSAub2Zfbm9kZSBtZW1iZXIgd2lsbCBiZSByZW1v
-dmVkLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBQZXRlciBSb3NpbiA8cGVkYUBheGVudGlhLnNlPgo+
-PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMgICAgICAgICAgICAgfCAzICsr
-LQo+PiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2x2ZHMuYyB8IDQgKysrLQo+
-IAo+IFdoYXQgaXMgdGhlIHJlYXNvbiB0byBwdXQgcm9ja2NoaXAgaGVyZT8gU2hvdWxkbid0IGJl
-IGluIHNlcGFyYXRlIHBhdGNoPwoKQmVjYXVzZSB0aGUgcm9ja2NoaXAgZHJpdmVyIHBlZWtzIGlu
-dG8gdGhlIGJyaWRnZSBzdHJ1Y3QgYW5kIGFsbCB0aGUKY2hhbmdlcyBpbiB0aGlzIHBhdGNoIHJl
-bGF0ZSB0byBtYWtpbmcgdGhlIG5ldyAub2RldiBtZW1iZXIgb3B0aW9uYWwgaW4KdGhlIHRyYW5z
-aXRpb24gcGhhc2UsIHdoZW4gdGhlIGJyaWRnZSBjYW4gaGF2ZSBlaXRoZXIgYSBuZXctc3R5bGUg
-b2RldgpvciBhbiBvbGQgc3R5bGUgb2Zfbm9kZS4KCkkgZ3Vlc3MgdGhpcyByb2NrY2hpcCBjaGFu
-Z2UgY291bGQgYmUgcGF0Y2ggMiwgYnV0IGl0IGhhcyB0byBjb21lIGZpcnN0CmFmdGVyIHRoaXMg
-cGF0Y2ggYW5kIGl0IG1ha2VzIG5vIHNlbnNlIG9uIGl0cyBvd24uIEhlbmNlLCBvbmUgcGF0Y2gu
-CgpUaGlzIHJvY2tjaGlwX2x2ZHMgaW50ZXJhY3Rpb24gaXMgYWxzbyBwcmVzZW50IGluIHBhdGNo
-IDI0LzI2CmRybS9icmlkZ2U6IHJlbW92ZSB0aGUgLm9mX25vZGUgbWVtYmVyCgpJIGNhbiBzcGxp
-dCB0aGVtIGlmIHlvdSB3YW50LCBidXQgSSBwZXJzb25hbGx5IGRvbid0IHNlZSB0aGUgcG9pbnQu
-Cgo+PiAgaW5jbHVkZS9kcm0vZHJtX2JyaWRnZS5oICAgICAgICAgICAgICAgICB8IDIgKysKPj4g
-IDMgZmlsZXMgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+Pgo+PiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9icmlkZ2UuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9kcm1fYnJpZGdlLmMKPj4gaW5kZXggMTYzOGJmZTk2MjdjLi4zODcyZjUzNzk5OTggMTAwNjQ0
-Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMKPj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2RybV9icmlkZ2UuYwo+PiBAQCAtMzY1LDcgKzM2NSw4IEBAIHN0cnVjdCBkcm1fYnJp
-ZGdlICpvZl9kcm1fZmluZF9icmlkZ2Uoc3RydWN0IGRldmljZV9ub2RlICpucCkKPj4gIAltdXRl
-eF9sb2NrKCZicmlkZ2VfbG9jayk7Cj4+ICAKPj4gIAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGJyaWRn
-ZSwgJmJyaWRnZV9saXN0LCBsaXN0KSB7Cj4+IC0JCWlmIChicmlkZ2UtPm9mX25vZGUgPT0gbnAp
-IHsKPj4gKwkJaWYgKChicmlkZ2UtPm9kZXYgJiYgYnJpZGdlLT5vZGV2LT5vZl9ub2RlID09IG5w
-KSB8fAo+PiArCQkgICAgYnJpZGdlLT5vZl9ub2RlID09IG5wKSB7Cj4+ICAJCQltdXRleF91bmxv
-Y2soJmJyaWRnZV9sb2NrKTsKPj4gIAkJCXJldHVybiBicmlkZ2U7Cj4+ICAJCX0KPj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9sdmRzLmMgYi9kcml2ZXJz
-L2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfbHZkcy5jCj4+IGluZGV4IDRiZDk0YjE2N2QyYy4u
-NTU3ZTAwNzljOThkIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9j
-a2NoaXBfbHZkcy5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9s
-dmRzLmMKPj4gQEAgLTM3Nyw4ICszNzcsMTAgQEAgc3RhdGljIGludCByb2NrY2hpcF9sdmRzX2Jp
-bmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4+ICAJfQo+PiAg
-CWlmIChsdmRzLT5wYW5lbCkKPj4gIAkJcmVtb3RlID0gbHZkcy0+cGFuZWwtPmRldi0+b2Zfbm9k
-ZTsKPj4gLQllbHNlCj4+ICsJZWxzZSBpZiAobHZkcy0+YnJpZGdlLT5vZl9ub2RlKQo+PiAgCQly
-ZW1vdGUgPSBsdmRzLT5icmlkZ2UtPm9mX25vZGU7Cj4+ICsJZWxzZQo+PiArCQlyZW1vdGUgPSBs
-dmRzLT5icmlkZ2UtPm9kZXYtPm9mX25vZGU7Cj4gCj4gSSBndWVzcyBvZGV2IHNob3VsZCBiZSBO
-VUxMIGhlcmUsIG9yIGhhdmUgSSBtaXNzZWQgc29tZXRoaW5nLgoKcy9zaG91bGQvY291bGQvID8/
-PwoKQXNzdW1pbmcgdGhhdCB3YXMgd2hhdCB5b3UgbWVhbnQgYW5kIGFuc3dlcmluZyBhY2NvcmRp
-bmdseS4uLgoKTm8sIC5vZGV2IGNhbm5vdCBiZSBOVUxMIGluIHRoYXQgZWxzZSBicmFuY2guIGRy
-bV9vZl9maW5kX3BhbmVsX29yX2JyaWRnZQplaXRoZXIgZm91bmQgYSBwYW5lbCBvciBhIGJyaWRn
-ZSAob3IgaXQgZmFpbGVkKS4gSWYgaXQgZm91bmQgYSBicmlkZ2UKKHdoaWNoIGlzIHRoZSByZWxl
-dmFudCBicmFuY2ggZm9yIHRoaXMgcXVlc3Rpb24pIHRoYXQgYnJpZGdlIHdvdWxkIGhhdmUKdG8g
-aGF2ZSBlaXRoZXIgYW4gb2Zfbm9kZSAoaW4gdGhlIHRyYW5zaXRpb24gcGhhc2UpIG9yIGEgdmFs
-aWQgLm9kZXYuCk90aGVyd2lzZSB0aGUgYnJpZGdlIGNvdWxkIG5vdCBoYXZlIGJlZW4gZm91bmQg
-YnkKZHJtX29mX2ZpbmRfcGFuZWxfb3JfYnJpZGdlLgoKKnRpbWUgcGFzc2VzKgoKQWhoLCB5ZXMs
-IC5vZGV2IGlzIGFsd2F5cyBOVUxMIGhlcmUgc28geW91IHByb2JhYmx5IGRpZCBtZWFuICJzaG91
-bGQiLgpCdXQgYWZ0ZXIgcGF0Y2hlcyAyLTIzIHdoZW4gYnJpZGdlcyBzdGFydCBwb3B1bGF0aW5n
-IC5vZGV2ICppbnN0ZWFkKgpvZiAub2Zfbm9kZSwgLm9kZXYgd2lsbCBub3QgcmVtYWluIE5VTEwu
-IEJ1dCBhcyBJIHNhaWQgYWJvdmUsIHdoaWxlCi5vZGV2IGlzIE5VTEwsIC5vZl9ub2RlIHdpbGwg
-bmV2ZXIgYmUgTlVMTCBhbmQgdmljZSB2ZXJzYSAob3IKZHJtX29mX2ZpbmRfcGFuZWxfb3JfYnJp
-ZGdlIGNvdWxkIG5vdCBoYXZlIGZvdW5kIHRoZSBicmlkZ2UpIHNvIHRoZXJlCmlzIG5vIHJpc2sg
-b2YgYSBOVUxMIGRlcmVmZXJlbmNlLgoKQ2hlZXJzLApQZXRlcgoKPiAKPiBSZWdhcmRzCj4gQW5k
-cnplago+IAo+PiAgCWlmIChvZl9wcm9wZXJ0eV9yZWFkX3N0cmluZyhkZXYtPm9mX25vZGUsICJy
-b2NrY2hpcCxvdXRwdXQiLCAmbmFtZSkpCj4+ICAJCS8qIGRlZmF1bHQgc2V0IGl0IGFzIG91dHB1
-dCByZ2IgKi8KPj4gIAkJbHZkcy0+b3V0cHV0ID0gRElTUExBWV9PVVRQVVRfUkdCOwo+PiBkaWZm
-IC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJtX2JyaWRnZS5oIGIvaW5jbHVkZS9kcm0vZHJtX2JyaWRn
-ZS5oCj4+IGluZGV4IDMyNzBmZWM0Njk3OS4uN2MxNzk3N2MzNTM3IDEwMDY0NAo+PiAtLS0gYS9p
-bmNsdWRlL2RybS9kcm1fYnJpZGdlLmgKPj4gKysrIGIvaW5jbHVkZS9kcm0vZHJtX2JyaWRnZS5o
-Cj4+IEBAIC0yNTQsNiArMjU0LDcgQEAgc3RydWN0IGRybV9icmlkZ2VfdGltaW5ncyB7Cj4+ICAK
-Pj4gIC8qKgo+PiAgICogc3RydWN0IGRybV9icmlkZ2UgLSBjZW50cmFsIERSTSBicmlkZ2UgY29u
-dHJvbCBzdHJ1Y3R1cmUKPj4gKyAqIEBvZGV2OiBkZXZpY2UgdGhhdCBvd25zIHRoZSBicmlkZ2UK
-Pj4gICAqIEBkZXY6IERSTSBkZXZpY2UgdGhpcyBicmlkZ2UgYmVsb25ncyB0bwo+PiAgICogQGVu
-Y29kZXI6IGVuY29kZXIgdG8gd2hpY2ggdGhpcyBicmlkZ2UgaXMgY29ubmVjdGVkCj4+ICAgKiBA
-bmV4dDogdGhlIG5leHQgYnJpZGdlIGluIHRoZSBlbmNvZGVyIGNoYWluCj4+IEBAIC0yNjUsNiAr
-MjY2LDcgQEAgc3RydWN0IGRybV9icmlkZ2VfdGltaW5ncyB7Cj4+ICAgKiBAZHJpdmVyX3ByaXZh
-dGU6IHBvaW50ZXIgdG8gdGhlIGJyaWRnZSBkcml2ZXIncyBpbnRlcm5hbCBjb250ZXh0Cj4+ICAg
-Ki8KPj4gIHN0cnVjdCBkcm1fYnJpZGdlIHsKPj4gKwlzdHJ1Y3QgZGV2aWNlICpvZGV2Owo+PiAg
-CXN0cnVjdCBkcm1fZGV2aWNlICpkZXY7Cj4+ICAJc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVy
-Owo+PiAgCXN0cnVjdCBkcm1fYnJpZGdlICpuZXh0Owo+IAo+IAoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5vIG1haWxpbmcgbGlzdApGcmVl
-ZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZnJlZWRyZW5vCg==
+On Wed, May 9, 2018 at 9:19 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> I understand that pl330 doesn't support real PAUSE, but as it has been
+> implemented since 2015 the limited support is perfectly possible - just
+> to let serial driver to read the amount of data transferred.
+>
+> Please note that DMA engine documentation clearly states that the best
+> residue granularity the driver might expect is BURST granularity. There
+> is no way to get the information about the data which still sits in the
+> DMA engine fifo when transfer is paused/terminated. This means that
+> the serial driver should set maxburst = 1 if it is interested in
+> getting exact number of bytes received/sent. With maxburst = 1 there
+> is no such thing as data loose in the DMA engine fifo.
+
+That is not my understanding of the dmaengine pause requirements, but
+of course Vinod can speak authoritatively on this.  I also don't agree
+that data loss cannot happen for single transfers.  It only becomes
+less likely since there are fewer bytes in the dma controller fifo and
+they stay there for a shorter period of time.  But even so, there is
+nothing stopping the DMAKILL from killing the transfer thread after it
+does a single byte load but before it does the associated single byte
+store, as they are performed by separate instructions.  As far as your
+serial port goes, the byte has been read by the host, even though it
+never made it to memory, so it is gone forever.  The dma-330 does have
+a load lock which prevents some operations from interrupting a
+load/store combination, but in my observations DMAKILL does not
+respect the load lock.
+
+
+> 3. Samsung driver doesn't check if DMA engine supports PAUSE feature and
+>     proper residue reporting granularity, so your revert simply breaks its
+>     operation.
+
+Oh, I was wrongly assuming you were talking about an 8250 based serial driver.
+
+> I've checked other device drivers, which use pl330 DMA on Samsung SoCs and
+> besides serial, none of them configure maxburst > 1. When I forced such
+> configuration, none worked fine. I'm a bit confused what does it mean.
+> Either none of the Samsung SoC integrated peripherals support real burst
+> DMA transfers, or the PL330 in Samsung SoCs are somehow limited or
+> dysfunctional. There is already a quirk in pl330 for broken FLUSHP, but I
+> have no idea how to diagnose if this is the case or the problem is in the
+> SoC peripherals. I can live with maxburst set to 1 in those drivers as the
+> proper fix.
+
+When the DMA-330 is instructed to do a peripheral burst transfer, it
+ignores single transfer requests from the peripheral.  When it is
+instructed to do a single transfer, it will do a single transfer in
+response to either a burst request or a single request.  So unless the
+peripheral actually supports burst requests, the transfer will just
+wait forever for a burst request which never comes.
+
+-- 
+Frank
