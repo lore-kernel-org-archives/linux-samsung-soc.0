@@ -1,36 +1,93 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: [PATCH 2/2] i2c: exynos5: remove pointless initializers
-Date: Wed,  9 May 2018 21:45:32 +0200
-Message-ID: <20180509194532.28929-2-peda@axentia.se>
-References: <20180509194532.28929-1-peda@axentia.se>
+From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Subject: Re: [PATCH v2 01/26] drm/bridge: allow optionally
+ specifying an owner .odev device
+Date: Thu, 10 May 2018 00:21:24 +0200
+Message-ID: <5abcab35-8a78-a02a-9f22-321da55d9858@axentia.se>
+References: <20180504135212.26977-1-peda@axentia.se>
+ <CGME20180504135245epcas4p1d0463b6b3c73d1dd2550c6ed5a4e3986@epcas4p1.samsung.com>
+ <20180504135212.26977-2-peda@axentia.se>
+ <4e92fdea-0609-0fff-0e3f-d9f78f596eb7@samsung.com>
+ <4be4448e-763c-4832-f194-6b79afe87d08@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180509194532.28929-1-peda@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Andrzej Hajda <a.hajda@samsung.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <4be4448e-763c-4832-f194-6b79afe87d08-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Martin Donnelly <martin.donnelly-JJi787mZWgc@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sean
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The variables are always assigned before use anyway.
-
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/i2c/busses/i2c-exynos5.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index a2cbc779c33a..185fba37e830 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -707,7 +707,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
- 			struct i2c_msg *msgs, int num)
- {
- 	struct exynos5_i2c *i2c = adap->algo_data;
--	int i = 0, ret = 0, stop = 0;
-+	int i, ret, stop;
- 
- 	if (i2c->suspended) {
- 		dev_err(i2c->dev, "HS-I2C is not initialized.\n");
--- 
-2.11.0
+T24gMjAxOC0wNS0wOSAxNzo1MywgUGV0ZXIgUm9zaW4gd3JvdGU6Cj4gT24gMjAxOC0wNS0wOSAx
+NzowOCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4gT24gMDQuMDUuMjAxOCAxNTo1MSwgUGV0ZXIg
+Um9zaW4gd3JvdGU6Cj4+PiBCcmlkZ2UgZHJpdmVycyBjYW4gbm93ICh0ZW1wb3JhcmlseSwgaW4g
+YSB0cmFuc2l0aW9uIHBoYXNlKSBzZWxlY3QgaWYKPj4+IHRoZXkgd2FudCB0byBwcm92aWRlIGEg
+ZnVsbCBvd25lciBkZXZpY2Ugb3Iga2VlcCBqdXN0IHByb3ZpZGluZyBhbgo+Pj4gb2Zfbm9kZS4K
+Pj4+Cj4+PiBCeSBwcm92aWRpbmcgYSBmdWxsIG93bmVyIGRldmljZSwgdGhlIGJyaWRnZSBkcml2
+ZXJzIG5vIGxvbmdlciBuZWVkCj4+PiB0byBwcm92aWRlIGFuIG9mX25vZGUgc2luY2UgdGhhdCBu
+b2RlIGlzIGF2YWlsYWJsZSB2aWEgdGhlIG93bmVyCj4+PiBkZXZpY2UuCj4+Pgo+Pj4gV2hlbiBh
+bGwgYnJpZGdlIGRyaXZlcnMgcHJvdmlkZSBhbiBvd25lciBkZXZpY2UsIHRoYXQgd2lsbCBiZWNv
+bWUKPj4+IG1hbmRhdG9yeSBhbmQgdGhlIC5vZl9ub2RlIG1lbWJlciB3aWxsIGJlIHJlbW92ZWQu
+Cj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogUGV0ZXIgUm9zaW4gPHBlZGFAYXhlbnRpYS5zZT4KPj4+
+IC0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMgICAgICAgICAgICAgfCAzICsr
+LQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9sdmRzLmMgfCA0ICsrKy0K
+Pj4KPj4gV2hhdCBpcyB0aGUgcmVhc29uIHRvIHB1dCByb2NrY2hpcCBoZXJlPyBTaG91bGRuJ3Qg
+YmUgaW4gc2VwYXJhdGUgcGF0Y2g/Cj4gCj4gQmVjYXVzZSB0aGUgcm9ja2NoaXAgZHJpdmVyIHBl
+ZWtzIGludG8gdGhlIGJyaWRnZSBzdHJ1Y3QgYW5kIGFsbCB0aGUKPiBjaGFuZ2VzIGluIHRoaXMg
+cGF0Y2ggcmVsYXRlIHRvIG1ha2luZyB0aGUgbmV3IC5vZGV2IG1lbWJlciBvcHRpb25hbCBpbgo+
+IHRoZSB0cmFuc2l0aW9uIHBoYXNlLCB3aGVuIHRoZSBicmlkZ2UgY2FuIGhhdmUgZWl0aGVyIGEg
+bmV3LXN0eWxlIG9kZXYKPiBvciBhbiBvbGQgc3R5bGUgb2Zfbm9kZS4KPiAKPiBJIGd1ZXNzIHRo
+aXMgcm9ja2NoaXAgY2hhbmdlIGNvdWxkIGJlIHBhdGNoIDIsIGJ1dCBpdCBoYXMgdG8gY29tZSBm
+aXJzdAo+IGFmdGVyIHRoaXMgcGF0Y2ggYW5kIGl0IG1ha2VzIG5vIHNlbnNlIG9uIGl0cyBvd24u
+IEhlbmNlLCBvbmUgcGF0Y2guCj4gCj4gVGhpcyByb2NrY2hpcF9sdmRzIGludGVyYWN0aW9uIGlz
+IGFsc28gcHJlc2VudCBpbiBwYXRjaCAyNC8yNgo+IGRybS9icmlkZ2U6IHJlbW92ZSB0aGUgLm9m
+X25vZGUgbWVtYmVyCj4gCj4gSSBjYW4gc3BsaXQgdGhlbSBpZiB5b3Ugd2FudCwgYnV0IEkgcGVy
+c29uYWxseSBkb24ndCBzZWUgdGhlIHBvaW50LgoKSSBoYWQgYSBzZWNvbmQgbG9vaywgYW5kIG1h
+eWJlIHRoZSBzZXJpZXMgc2hvdWxkIHN0YXJ0IHdpdGggYSBwYXRjaCBsaWtlCnRoaXMgaW5zdGVh
+ZCwgc28gdGhhdCB0aGUgcm9ja2NoaXBfbHZkcy5jIGh1bmtzIGNhbiBiZSByZW1vdmVkIGZyb20K
+cGF0Y2ggMS8yNiBhbmQgMjQvMjYuIFRoYXQgd291bGQgcGVyaGFwcyBiZSBzbGlnaHRseSBjbGVh
+bmVyPwoKT24gdGhlIG90aGVyIGhhbmQsIGl0J3Mgb3J0aG9nb25hbCBhbmQgdGhpcyBzZXJpZXMg
+Y2FuIGJlIGxlZnQgYXMgaXMKKHdpdGggdGhlIGJlbmVmaXQgb2YgbWUgbm90IGhhdmluZyB0byBk
+byBhbm90aGVyIGl0ZXJhdGlvbiBhbmQgeW91IGFsbApub3QgaGF2aW5nIGFub3RoZXIgYnVuY2gg
+b2YgbWVzc2FnZXMgdG8gc2lmdCB0aHJvdWdoKS4gVGhlIGJlbG93CnBhdGNoIGNvdWxkIGVhc2ls
+eSBiZSAoYWRqdXN0ZWQgYW5kKSBhcHBsaWVkIGxhdGVyIGluc3RlYWQuIE9yIG5vdCwKc2luY2Ug
+dGhlIHJpZ2h0IGZpeCBpcyB0byBkbyB0aGlzIHdpdGggdGhlIG5ld2ZhbmdsZWQgc3RhdGljIGlt
+YWdlCmZvcm1hdCBtZWNoYW5pc20gZnJvbSBKYWNvcG8gTW9uZGksIGFuZCBpdCBtaWdodCBiZSBl
+YXNpZXIgdG8ganVzdCBkbwppdCByaWdodC4KClN0YXRlIHlvdXIgcHJlZmVyZW5jZS4KCkNoZWVy
+cywKUGV0ZXIKCkZyb20gZGVlMjdiMzZhMzZhY2QyNzE0NTlkMTQ4OTMzNmI1NjEzMjA5NzQyNSBN
+b24gU2VwIDE3IDAwOjAwOjAwIDIwMDEKRnJvbTogUGV0ZXIgUm9zaW4gPHBlZGFAYXhlbnRpYS5z
+ZT4KRGF0ZTogV2VkLCA5IE1heSAyMDE4IDIzOjU4OjI0ICswMjAwClN1YmplY3Q6IFtQQVRDSF0g
+ZHJtL3JvY2tjaGlwOiBsdmRzOiBkbyBub3QgZGlnIGludG8gdGhlIERUIG9mIHJlbW90ZSBicmlk
+Z2VzCgpUaGUgZHJpdmVyIGlzIHRyeWluZyB0byBmaW5kIHRoZSBuZWVkZWQgImRhdGEtbWFwcGlu
+ZyIgZm9yCmludGVyYWN0aW5nIHdpdGggdGhlIGZvbGxvd2luZyBicmlkZ2UgaW4gdGhlIGdyYXBo
+aWNzIGNoYWluLgpCdXQsIGRvaW5nIHNvIGlzIGJhZCBzaW5jZSBpdCBpcyBkb25lIHcvbyByZWdh
+cmQgb2YgdGhlCmNvbXBhdGlibGUgb2YgdGhlIHJlbW90ZSBicmlkZ2UsIHNvIHRoZSB2YWx1ZSBv
+ZiAiZGF0YS1tYXBwaW5nIgptaWdodCBub3QgbWVhbiB3aGF0IHRoaXMgZHJpdmVyIGFzc3VtZXMu
+IEl0IGlzIGFsc28gcG9pbnRsZXNzCnNpbmNlIG5vIGJyaWRnZSBoYXMgYW55IGRvY3VtZW50ZWQg
+ImRhdGEtbWFwcGluZyIgRFQgcHJvcGVydHkKYW5kIG5vIGR0cyBmaWxlIHNob3cgYW55IHVuZG9j
+dW1lbnRlZCB1c2UuCgpKdXN0IHJlbW92ZSB0aGUgaW5hcHByb3ByaWF0ZSBjb2RlLgoKU2lnbmVk
+LW9mZi1ieTogUGV0ZXIgUm9zaW4gPHBlZGFAYXhlbnRpYS5zZT4KLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vcm9ja2NoaXAvcm9ja2NoaXBfbHZkcy5jIHwgMiAtLQogMSBmaWxlIGNoYW5nZWQsIDIgZGVs
+ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlw
+X2x2ZHMuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9sdmRzLmMKaW5kZXgg
+NGJkOTRiMTY3ZDJjLi5mYTNmNGJmOTcxMmYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9y
+b2NrY2hpcC9yb2NrY2hpcF9sdmRzLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3Jv
+Y2tjaGlwX2x2ZHMuYwpAQCAtMzc3LDggKzM3Nyw2IEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBfbHZk
+c19iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAogCX0KIAlp
+ZiAobHZkcy0+cGFuZWwpCiAJCXJlbW90ZSA9IGx2ZHMtPnBhbmVsLT5kZXYtPm9mX25vZGU7Ci0J
+ZWxzZQotCQlyZW1vdGUgPSBsdmRzLT5icmlkZ2UtPm9mX25vZGU7CiAJaWYgKG9mX3Byb3BlcnR5
+X3JlYWRfc3RyaW5nKGRldi0+b2Zfbm9kZSwgInJvY2tjaGlwLG91dHB1dCIsICZuYW1lKSkKIAkJ
+LyogZGVmYXVsdCBzZXQgaXQgYXMgb3V0cHV0IHJnYiAqLwogCQlsdmRzLT5vdXRwdXQgPSBESVNQ
+TEFZX09VVFBVVF9SR0I7Ci0tIAoyLjExLjAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9mcmVlZHJlbm8K
