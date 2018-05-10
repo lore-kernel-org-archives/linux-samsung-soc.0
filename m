@@ -1,82 +1,99 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 26/26] drm/bridge: establish a link between the
- bridge supplier and consumer
-Date: Thu, 10 May 2018 10:10:27 +0200
-Message-ID: <a723ad4a-8caa-4ff5-d39d-52db98a56d7b@samsung.com>
-References: <20180504135212.26977-1-peda@axentia.se>
- <CGME20180504135432epcas3p368bb7541ca52bc8bc301dec794851214@epcas3p3.samsung.com>
- <20180504135212.26977-27-peda@axentia.se>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
+Date: Thu, 10 May 2018 10:31:53 +0200
+Message-ID: <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com>
+References: <CGME20180508090407eucas1p13713284c2d3f5aa5c66f8d136be683c1@eucas1p1.samsung.com>
+        <2484918.HKVQc3yJkt@bear> <53b13d76-16a1-0e0a-09e1-c917e5d49326@samsung.com>
+        <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com>
+        <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com>
+        <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180504135212.26977-27-peda@axentia.se>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Cc: Martyn Welch <martyn.welch@collabora.co.uk>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Peter Senna Tschudin <peter.senna@collabora.com>, Martin Donnelly <martin.donnelly@ge.com>, linux-arm-msm@vger.kernel.org, Jyri Sarha <jsarha@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-renesas-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Frank Mori Hess <fmh6jj@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDQuMDUuMjAxOCAxNTo1MiwgUGV0ZXIgUm9zaW4gd3JvdGU6Cj4gSWYgdGhlIGJyaWRnZSBz
-dXBwbGllciBpcyB1bmJvdW5kLCB0aGlzIHdpbGwgYnJpbmcgdGhlIGJyaWRnZSBjb25zdW1lcgo+
-IGRvd24gYWxvbmcgd2l0aCB0aGUgYnJpZGdlLiBUaHVzLCB0aGVyZSB3aWxsIG5vIGxvbmdlciBs
-aW5nZXIgYW55Cj4gZGFuZ2xpbmcgcG9pbnRlcnMgZnJvbSB0aGUgYnJpZGdlIGNvbnN1bWVyICh0
-aGUgZHJtX2RldmljZSkgdG8gc29tZQo+IG5vbi1leGlzdGVudCBicmlkZ2Ugc3VwcGxpZXIuCj4K
-PiBTaWduZWQtb2ZmLWJ5OiBQZXRlciBSb3NpbiA8cGVkYUBheGVudGlhLnNlPgo+IC0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5jIHwgMTggKysrKysrKysrKysrKysrKysrCj4gIGlu
-Y2x1ZGUvZHJtL2RybV9icmlkZ2UuaCAgICAgfCAgMiArKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDIw
-IGluc2VydGlvbnMoKykKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRn
-ZS5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9icmlkZ2UuYwo+IGluZGV4IDc4ZDE4NmI2ODMxYi4u
-MDI1OWYwYTNmZjI3IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMK
-PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5jCj4gQEAgLTI2LDYgKzI2LDcgQEAK
-PiAgI2luY2x1ZGUgPGxpbnV4L211dGV4Lmg+Cj4gIAo+ICAjaW5jbHVkZSA8ZHJtL2RybV9icmlk
-Z2UuaD4KPiArI2luY2x1ZGUgPGRybS9kcm1fZGV2aWNlLmg+Cj4gICNpbmNsdWRlIDxkcm0vZHJt
-X2VuY29kZXIuaD4KPiAgCj4gICNpbmNsdWRlICJkcm1fY3J0Y19pbnRlcm5hbC5oIgo+IEBAIC0x
-MjcsMTIgKzEyOCwyNSBAQCBpbnQgZHJtX2JyaWRnZV9hdHRhY2goc3RydWN0IGRybV9lbmNvZGVy
-ICplbmNvZGVyLCBzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlLAo+ICAJaWYgKGJyaWRnZS0+ZGV2
-KQo+ICAJCXJldHVybiAtRUJVU1k7Cj4gIAo+ICsJaWYgKGVuY29kZXItPmRldi0+ZGV2ICE9IGJy
-aWRnZS0+b2RldikgewoKSSB3b25kZXIgd2h5IGRldmljZV9saW5rX2FkZCBkb2VzIG5vdCBoYW5k
-bGUgdGhpcyBjYXNlIChzZWxmIGRlcGVuZGVuY3kpCnNpbGVudGx5IGFzIG5vb3AsIGFzIGl0IHNl
-ZW1zIHRvIGJlIGEgY29ycmVjdCBiZWhhdmlvci4KCj4gKwkJYnJpZGdlLT5saW5rID0gZGV2aWNl
-X2xpbmtfYWRkKGVuY29kZXItPmRldi0+ZGV2LAo+ICsJCQkJCSAgICAgICBicmlkZ2UtPm9kZXYs
-IDApOwo+ICsJCWlmICghYnJpZGdlLT5saW5rKSB7Cj4gKwkJCWRldl9lcnIoYnJpZGdlLT5vZGV2
-LCAiZmFpbGVkIHRvIGxpbmsgYnJpZGdlIHRvICVzXG4iLAo+ICsJCQkJZGV2X25hbWUoZW5jb2Rl
-ci0+ZGV2LT5kZXYpKTsKPiArCQkJcmV0dXJuIC1FSU5WQUw7Cj4gKwkJfQo+ICsJfQo+ICsKPiAg
-CWJyaWRnZS0+ZGV2ID0gZW5jb2Rlci0+ZGV2Owo+ICAJYnJpZGdlLT5lbmNvZGVyID0gZW5jb2Rl
-cjsKPiAgCj4gIAlpZiAoYnJpZGdlLT5mdW5jcy0+YXR0YWNoKSB7Cj4gIAkJcmV0ID0gYnJpZGdl
-LT5mdW5jcy0+YXR0YWNoKGJyaWRnZSk7Cj4gIAkJaWYgKHJldCA8IDApIHsKPiArCQkJaWYgKGJy
-aWRnZS0+bGluaykKPiArCQkJCWRldmljZV9saW5rX2RlbChicmlkZ2UtPmxpbmspOwo+ICsJCQli
-cmlkZ2UtPmxpbmsgPSBOVUxMOwo+ICAJCQlicmlkZ2UtPmRldiA9IE5VTEw7Cj4gIAkJCWJyaWRn
-ZS0+ZW5jb2RlciA9IE5VTEw7Cj4gIAkJCXJldHVybiByZXQ7Cj4gQEAgLTE1OSw2ICsxNzMsMTAg
-QEAgdm9pZCBkcm1fYnJpZGdlX2RldGFjaChzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQo+ICAJ
-aWYgKGJyaWRnZS0+ZnVuY3MtPmRldGFjaCkKPiAgCQlicmlkZ2UtPmZ1bmNzLT5kZXRhY2goYnJp
-ZGdlKTsKPiAgCj4gKwlpZiAoYnJpZGdlLT5saW5rKQo+ICsJCWRldmljZV9saW5rX2RlbChicmlk
-Z2UtPmxpbmspOwo+ICsJYnJpZGdlLT5saW5rID0gTlVMTDsKPiArCj4gIAlicmlkZ2UtPmRldiA9
-IE5VTEw7Cj4gIH0KPiAgCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9icmlkZ2UuaCBi
-L2luY2x1ZGUvZHJtL2RybV9icmlkZ2UuaAo+IGluZGV4IGI2NTZlNTA1ZDExZS4uODA0MTg5YzYz
-YTRjIDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvZHJtL2RybV9icmlkZ2UuaAo+ICsrKyBiL2luY2x1
-ZGUvZHJtL2RybV9icmlkZ2UuaAo+IEBAIC0yNjEsNiArMjYxLDcgQEAgc3RydWN0IGRybV9icmlk
-Z2VfdGltaW5ncyB7Cj4gICAqIEBsaXN0OiB0byBrZWVwIHRyYWNrIG9mIGFsbCBhZGRlZCBicmlk
-Z2VzCj4gICAqIEB0aW1pbmdzOiB0aGUgdGltaW5nIHNwZWNpZmljYXRpb24gZm9yIHRoZSBicmlk
-Z2UsIGlmIGFueSAobWF5Cj4gICAqIGJlIE5VTEwpCj4gKyAqIEBsaW5rOiBkcm0gY29uc3VtZXIg
-PC0+IGJyaWRnZSBzdXBwbGllcgoKTml0cGljazogIjwtPiIgc3VnZ2VzdHMgc3ltbWV0cnksIG1h
-eWJlICJkZXZpY2UgbGluayBmcm9tIGRybSBjb25zdW1lcgp0byB0aGUgYnJpZGdlIiB3b3VsZCBi
-ZSBiZXR0ZXIuCgpBbnl3YXk6ClJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNh
-bXN1bmcuY29tPgoKwqAtLQpSZWdhcmRzCkFuZHJ6ZWoKCj4gICAqIEBmdW5jczogY29udHJvbCBm
-dW5jdGlvbnMKPiAgICogQGRyaXZlcl9wcml2YXRlOiBwb2ludGVyIHRvIHRoZSBicmlkZ2UgZHJp
-dmVyJ3MgaW50ZXJuYWwgY29udGV4dAo+ICAgKi8KPiBAQCAtMjcxLDYgKzI3Miw3IEBAIHN0cnVj
-dCBkcm1fYnJpZGdlIHsKPiAgCXN0cnVjdCBkcm1fYnJpZGdlICpuZXh0Owo+ICAJc3RydWN0IGxp
-c3RfaGVhZCBsaXN0Owo+ICAJY29uc3Qgc3RydWN0IGRybV9icmlkZ2VfdGltaW5ncyAqdGltaW5n
-czsKPiArCXN0cnVjdCBkZXZpY2VfbGluayAqbGluazsKPiAgCj4gIAljb25zdCBzdHJ1Y3QgZHJt
-X2JyaWRnZV9mdW5jcyAqZnVuY3M7Cj4gIAl2b2lkICpkcml2ZXJfcHJpdmF0ZTsKCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Frank,
+
+On 2018-05-09 19:48, Frank Mori Hess wrote:
+> On Wed, May 9, 2018 at 9:19 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> I understand that pl330 doesn't support real PAUSE, but as it has been
+>> implemented since 2015 the limited support is perfectly possible - just
+>> to let serial driver to read the amount of data transferred.
+>>
+>> Please note that DMA engine documentation clearly states that the best
+>> residue granularity the driver might expect is BURST granularity. There
+>> is no way to get the information about the data which still sits in the
+>> DMA engine fifo when transfer is paused/terminated. This means that
+>> the serial driver should set maxburst = 1 if it is interested in
+>> getting exact number of bytes received/sent. With maxburst = 1 there
+>> is no such thing as data loose in the DMA engine fifo.
+> That is not my understanding of the dmaengine pause requirements, but
+> of course Vinod can speak authoritatively on this.
+
+Basing on the comments in dma_residue_granularity enum documentation (see
+include/linux/dmaengine.h) there is no better granularity of residue
+reporting than BURST units. If driver needs byte accuracy, then it should
+use MAXBURST=1 and DMA_SLAVE_BUSWIDTH_1_BYTE configuration.
+
+> I also don't agree
+> that data loss cannot happen for single transfers.  It only becomes
+> less likely since there are fewer bytes in the dma controller fifo and
+> they stay there for a shorter period of time.  But even so, there is
+> nothing stopping the DMAKILL from killing the transfer thread after it
+> does a single byte load but before it does the associated single byte
+> store, as they are performed by separate instructions.  As far as your
+> serial port goes, the byte has been read by the host, even though it
+> never made it to memory, so it is gone forever.  The dma-330 does have
+> a load lock which prevents some operations from interrupting a
+> load/store combination, but in my observations DMAKILL does not
+> respect the load lock.
+
+For the last 3 years no one observed any issue with the current design
+(single transfers with DMA_SLAVE_BUSWIDTH_1_BYTE). By removing this
+feature we will loose ability to use DMA in the serial drivers, what is
+mainly useful for low-power bluetooth operation (serial console is really
+negligible case).
+
+I agree that PL330 driver should not advertise PAUSE support, because
+HW doesn't have such ability, but for now this is the only way to get
+the number of bytes transferred after terminating a transfer. One would
+need to change DMA engine framework API to fix this.
+
+>> 3. Samsung driver doesn't check if DMA engine supports PAUSE feature and
+>>      proper residue reporting granularity, so your revert simply breaks its
+>>      operation.
+> Oh, I was wrongly assuming you were talking about an 8250 based serial driver.
+
+Nope, Samsung SoCs have a custom UART ip block.
+
+>> I've checked other device drivers, which use pl330 DMA on Samsung SoCs and
+>> besides serial, none of them configure maxburst > 1. When I forced such
+>> configuration, none worked fine. I'm a bit confused what does it mean.
+>> Either none of the Samsung SoC integrated peripherals support real burst
+>> DMA transfers, or the PL330 in Samsung SoCs are somehow limited or
+>> dysfunctional. There is already a quirk in pl330 for broken FLUSHP, but I
+>> have no idea how to diagnose if this is the case or the problem is in the
+>> SoC peripherals. I can live with maxburst set to 1 in those drivers as the
+>> proper fix.
+> When the DMA-330 is instructed to do a peripheral burst transfer, it
+> ignores single transfer requests from the peripheral.  When it is
+> instructed to do a single transfer, it will do a single transfer in
+> response to either a burst request or a single request.  So unless the
+> peripheral actually supports burst requests, the transfer will just
+> wait forever for a burst request which never comes.
+
+Okay, so if I get broken transfers when I forced BURST mode, then I can
+assume that peripherals doesn't really support it.
+
+Best regards
+
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
