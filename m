@@ -1,131 +1,148 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Use dedicated DT bindings for Odroid
- X/X2, U3
-Date: Fri, 11 May 2018 10:09:47 +0200
-Message-ID: <20180511080947.3057-1-s.nawrocki@samsung.com>
-References: <CGME20180511081032epcas2p30f381cf699cb7524d9a143390e9c74b5@epcas2p3.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
+Date: Fri, 11 May 2018 14:57:43 +0200
+Message-ID: <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com>
+References: <CGME20180508090407eucas1p13713284c2d3f5aa5c66f8d136be683c1@eucas1p1.samsung.com>
+        <2484918.HKVQc3yJkt@bear> <53b13d76-16a1-0e0a-09e1-c917e5d49326@samsung.com>
+        <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com>
+        <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com>
+        <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
+        <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com>
+        <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: krzk@kernel.org
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Frank Mori Hess <fmh6jj@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use dedicated Odroid audio subsystem DT bindings instead of the simple-card.
-This adds support for audio on the HDMI interface.
+Hi Frank,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 33 ++++++++++++++-----------
- arch/arm/boot/dts/exynos4412-odroidu3.dts       |  7 +++---
- arch/arm/boot/dts/exynos4412-odroidx.dts        |  7 +++---
- 3 files changed, 27 insertions(+), 20 deletions(-)
+On 2018-05-10 18:04, Frank Mori Hess wrote:
+> On Thu, May 10, 2018 at 4:31 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> On 2018-05-09 19:48, Frank Mori Hess wrote:
+>>> On Wed, May 9, 2018 at 9:19 AM, Marek Szyprowski
+>>> <m.szyprowski@samsung.com> wrote:
+>>>> I understand that pl330 doesn't support real PAUSE, but as it has been
+>>>> implemented since 2015 the limited support is perfectly possible - just
+>>>> to let serial driver to read the amount of data transferred.
+>>>>
+>>>> Please note that DMA engine documentation clearly states that the best
+>>>> residue granularity the driver might expect is BURST granularity. There
+>>>> is no way to get the information about the data which still sits in the
+>>>> DMA engine fifo when transfer is paused/terminated. This means that
+>>>> the serial driver should set maxburst = 1 if it is interested in
+>>>> getting exact number of bytes received/sent. With maxburst = 1 there
+>>>> is no such thing as data loose in the DMA engine fifo.
+>>> That is not my understanding of the dmaengine pause requirements, but
+>>> of course Vinod can speak authoritatively on this.
+>> Basing on the comments in dma_residue_granularity enum documentation (see
+>> include/linux/dmaengine.h) there is no better granularity of residue
+>> reporting than BURST units. If driver needs byte accuracy, then it should
+>> use MAXBURST=1 and DMA_SLAVE_BUSWIDTH_1_BYTE configuration.
+> That's an interesting line of thought.  The 8250 serial driver clearly
+> assumes it can do the sequence
+>
+> dma pause
+> read residue
+> dma terminate
+>
+> without data loss.
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index d7ad07fd48f9..bad08e70358a 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -37,20 +37,12 @@
- 	};
- 
- 	sound: sound {
--		compatible = "simple-audio-card";
--
--		simple-audio-card,format = "i2s";
--		simple-audio-card,bitclock-master = <&link0_codec>;
--		simple-audio-card,frame-master = <&link0_codec>;
--
--		simple-audio-card,cpu {
-+		cpu {
- 			sound-dai = <&i2s0 0>;
--			system-clock-frequency = <19200000>;
- 		};
- 
--		link0_codec: simple-audio-card,codec {
--			sound-dai = <&max98090>;
--			clocks = <&i2s0 CLK_I2S_CDCLK>;
-+		codec {
-+			sound-dai = <&hdmi>, <&max98090>;
- 		};
- 	};
- 
-@@ -142,14 +134,25 @@
- 	pinctrl-0 = <>;
- };
- 
-+&clock {
-+	assigned-clocks = <&clock CLK_FOUT_EPLL>;
-+	assigned-clock-rates = <45158401>;
-+};
-+
- &clock_audss {
- 	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
- 			<&clock_audss EXYNOS_MOUT_I2S>,
- 			<&clock_audss EXYNOS_DOUT_SRP>,
--			<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-+			<&clock_audss EXYNOS_DOUT_AUD_BUS>,
-+			<&clock_audss EXYNOS_DOUT_I2S>;
-+
- 	assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
--			<&clock_audss EXYNOS_MOUT_AUDSS>;
--	assigned-clock-rates = <0>, <0>, <192000000>, <19200000>;
-+			  <&clock_audss EXYNOS_MOUT_AUDSS>;
-+
-+	assigned-clock-rates = <0>, <0>,
-+			<196608001>,
-+			<(196608001 / 2)>,
-+			<(196608001 / 8)>;
- };
- 
- &cpu0 {
-@@ -498,6 +501,8 @@
- 	pinctrl-0 = <&i2s0_bus>;
- 	pinctrl-names = "default";
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
- 
- &mixer {
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index bdcd4523cc1c..7a94a423097d 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -113,11 +113,12 @@
- };
- 
- &sound {
--	simple-audio-card,name = "Odroid-U3";
--	simple-audio-card,widgets =
-+	compatible = "hardkernel,odroid-xu4-audio";
-+	model = "Odroid-U3";
-+	samsung,audio-widgets =
- 		"Headphone", "Headphone Jack",
- 		"Speakers", "Speakers";
--	simple-audio-card,routing =
-+	samsung,audio-routing =
- 		"Headphone Jack", "HPL",
- 		"Headphone Jack", "HPR",
- 		"Headphone Jack", "MICBIAS",
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 2dff129bc2ad..f0d5037f3a5d 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -97,12 +97,13 @@
- };
- 
- &sound {
--	simple-audio-card,name = "Odroid-X";
--	simple-audio-card,widgets =
-+	compatible = "hardkernel,odroid-xu4-audio";
-+	model = "Odroid-X";
-+	samsung,audio-widgets =
- 		"Headphone", "Headphone Jack",
- 		"Microphone", "Mic Jack",
- 		"Microphone", "DMIC";
--	simple-audio-card,routing =
-+	samsung,audio-routing =
- 		"Headphone Jack", "HPL",
- 		"Headphone Jack", "HPR",
- 		"IN1", "Mic Jack",
+Right. From DMA engine API perspective this is the only valid way to 
+read the
+residue when you terminate the transfer.
+
+>    It checks for the capabilities
+>
+> cmd_pause
+> cmd_terminate
+> residue_granularity != DMA_RESIDUE_GRANULARITY_DESCRIPTOR
+
+Checking for cmd_pause is a bit too strict, because cmd_pause means 'driver
+supports both pause and resume', but the serial driver doesn't use resume at
+all. A check for residue_granularity != DMA_RESIDUE_GRANULARITY_DESCRIPTOR
+is on the other hand a bit too loose.
+
+> and some of the 8250 drivers like 8250_dw.c set a maxburst > 1.  If it
+> can't count on the pause/residue/terminate working without data loss
+> then it is just broken.  As is the 8250_omap.c driver.  Is the
+> description of dmaengine_pause in the documentation of "This pauses
+> activity on the DMA channel without data loss" to be interpreted as
+> "as long as you resume afterwards"?
+
+I assume that this requirement is for both - resuming and terminating.
+
+>>> I also don't agree
+>>> that data loss cannot happen for single transfers.  It only becomes
+>>> less likely since there are fewer bytes in the dma controller fifo and
+>>> they stay there for a shorter period of time.  But even so, there is
+>>> nothing stopping the DMAKILL from killing the transfer thread after it
+>>> does a single byte load but before it does the associated single byte
+>>> store, as they are performed by separate instructions.  As far as your
+>>> serial port goes, the byte has been read by the host, even though it
+>>> never made it to memory, so it is gone forever.  The dma-330 does have
+>>> a load lock which prevents some operations from interrupting a
+>>> load/store combination, but in my observations DMAKILL does not
+>>> respect the load lock.
+>> For the last 3 years no one observed any issue with the current design
+>> (single transfers with DMA_SLAVE_BUSWIDTH_1_BYTE). By removing this
+>> feature we will loose ability to use DMA in the serial drivers, what is
+>> mainly useful for low-power bluetooth operation (serial console is really
+>> negligible case).
+> It's not surprising it hasn't been reported.  It is a race that
+> requires a DMAKILL to be issued just as a byte is in-flight through
+> the dma controller.  The only reason a driver would pause the
+> un-resumeable pl330 would be because the driver either knows or
+> suspects no more data will be arriving and it gives up on the
+> transfer.  The only reason I noticed is we had a test which sent data
+> to a serial port, waited just long enough for the serial port rx to
+> timeout, then sent more data just as the pause was issuing DMAKILL.
+> And then the test did this a few hundred thousand times until it
+> noticed bad data.  Also, given the way 8250 rx timeouts work, a person
+> typing into a serial console wouldn't type fast enough to trigger the
+> bug unless the baud rate was set extremely low.  And if someone lost a
+> keystroke every 10^5 bytes, who would blame the dma controller?
+
+Like I already said, console is not a proper use case for serial dma.
+The more appropriate is bluetooth and still, I'm not aware of the issue
+with the current code.
+
+> I do admit I didn't do this test using single transfers, because our
+> goal was getting bursts to work.  Unfortunately, the test program
+> relies on some custom hardware I no longer have access to so I can't
+> easily re-run the test now.  However, since the DMA-330 manual
+> documents the DMAKILL instruction to:
+>
+> "Remove all entries in the MFIFO for the DMA channel."
+> "Remove all entries in the read buffer queue and write buffer queue
+> for the DMA channel."
+>
+> Relying on it to work as a safe pause for single transfers seems like
+> wishful thinking.  I sure didn't want to believe the DMA-330 couldn't
+> be safely paused, but I eventually had to resign myself to it.
+
+Okay, so you don't have any evidence that DMA transfers done in single
+reads/writes is broken with the current cmd_pause implementation.
+
+This revert in fact at best disables DMA mode in the serial drivers (or
+in worse case, i.e. Exynos, causes current drivers to do trashed
+transfers due to lack of checking for the needed dma engine
+capabilities).
+
+Maybe instead of reverting support for it, there should be a check for
+BURST vs. SINGLE mode and we would keep the current implementation for
+SINGLE transfers?
+
+Vinod, could you comment a bit this discussion from the DMA engine
+maintainer perspective?
+
+Best regards
 -- 
-2.14.2
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
