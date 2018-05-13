@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/5] soc: samsung: Stuff for v4.18
-Date: Sun, 13 May 2018 17:42:35 +0200
-Message-ID: <20180513154238.22508-3-krzk@kernel.org>
+Subject: [GIT PULL 4/5] arm64: dts: exynos: Stuff for v4.18
+Date: Sun, 13 May 2018 17:42:37 +0200
+Message-ID: <20180513154238.22508-5-krzk@kernel.org>
 References: <20180513154238.22508-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180513154238.22508-1-krzk@kernel.org>
@@ -16,22 +16,26 @@ The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
 are available in the git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.18
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.18
 
-for you to fetch changes up to b2b568c591ddbb20d597e256212579d70dbf3000:
+for you to fetch changes up to 8dd6203f32f20cb83469eb859efded9e403b3e9f:
 
-  soc: samsung: pm_domains: Deprecate support for clocks (2018-04-17 17:25:42 +0200)
-
-----------------------------------------------------------------
-Samsung soc drivers changes for v4.18
-
-1. Clock operations during power domain on/off were moved to respective
-   clock driver so clean up obsolete code from power domain driver.
+  arm64: dts: exynos: Add mem-2-mem Scaler devices (2018-05-13 11:26:13 +0200)
 
 ----------------------------------------------------------------
-Marek Szyprowski (1):
-      soc: samsung: pm_domains: Deprecate support for clocks
+Samsung DTS ARM64 changes for v4.18
 
- .../devicetree/bindings/power/pd-samsung.txt       | 20 +----
- drivers/soc/samsung/pm_domains.c                   | 90 +---------------------
- 2 files changed, 5 insertions(+), 105 deletions(-)
+1. Fix DTC warnings.
+2. Add mem-2-mem Scaler devices.
+
+----------------------------------------------------------------
+Andrzej Pietrasiewicz (1):
+      arm64: dts: exynos: Add mem-2-mem Scaler devices
+
+Krzysztof Kozlowski (2):
+      arm64: dts: exynos: Move syscon poweroff and restart nodes under the PMU
+      arm64: dts: exynos: Remove unneeded address space mapping for soc node
+
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 66 +++++++++++++++++++++++++-----
+ arch/arm64/boot/dts/exynos/exynos7.dtsi    | 18 ++++----
+ 2 files changed, 65 insertions(+), 19 deletions(-)
