@@ -1,45 +1,41 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] cpufreq: s3c2440: fix spelling mistake: "divsiors" -> "divisors"
-Date: Sun, 13 May 2018 10:45:40 +0200
-Message-ID: <3819884.ugggRtP9TD@aspire.rjw.lan>
-References: <20180430144801.6727-1-colin.king@canonical.com> <20180502053721.5h6jhicjsjss2ixe@vireshk-i7>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v7 6/7] ARM: dts: exynos: Add mem-2-mem Scaler devices
+Date: Sun, 13 May 2018 14:09:08 +0200
+Message-ID: <20180513120908.dnlbtjbqem4cwlqw@kozik-lap>
+References: <20180509085928.2023-1-m.szyprowski@samsung.com>
+ <CGME20180509085943eucas1p141b824e4fa961e24d44808a560e64bc7@eucas1p1.samsung.com>
+ <20180509085928.2023-7-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180502053721.5h6jhicjsjss2ixe@vireshk-i7>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Colin King <colin.king@canonical.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180509085928.2023-7-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, May 2, 2018 7:37:21 AM CEST Viresh Kumar wrote:
-> On 30-04-18, 15:48, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Trivial fix to spelling mistake in s3c_freq_dbg debug message text.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/cpufreq/s3c2440-cpufreq.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/cpufreq/s3c2440-cpufreq.c b/drivers/cpufreq/s3c2440-cpufreq.c
-> > index d0d75b65ddd6..d2f67b7a20dd 100644
-> > --- a/drivers/cpufreq/s3c2440-cpufreq.c
-> > +++ b/drivers/cpufreq/s3c2440-cpufreq.c
-> > @@ -143,7 +143,7 @@ static void s3c2440_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
-> >  {
-> >  	unsigned long clkdiv, camdiv;
-> >  
-> > -	s3c_freq_dbg("%s: divsiors: h=%d, p=%d\n", __func__,
-> > +	s3c_freq_dbg("%s: divisors: h=%d, p=%d\n", __func__,
-> >  		     cfg->divs.h_divisor, cfg->divs.p_divisor);
-> >  
-> >  	clkdiv = __raw_readl(S3C2410_CLKDIVN);
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> 
-
-Applied, thanks!
+T24gV2VkLCBNYXkgMDksIDIwMTggYXQgMTA6NTk6MjdBTSArMDIwMCwgTWFyZWsgU3p5cHJvd3Nr
+aSB3cm90ZToKPiBGcm9tOiBBbmRyemVqIFBpZXRyYXNpZXdpY3ogPGFuZHJ6ZWoucEBzYW1zdW5n
+LmNvbT4KPiAKPiBUaGVyZSBhcmUgMyBzY2FsZXIgZGV2aWNlcyBpbiBFeHlub3M1NDIwIFNvQ3Ms
+IGFsbCBhcmUgYSBwYXJ0IG9mIE1TQ0wKPiBwb3dlciBkb21haW4uIE1TQ0wgcG93ZXIgZG9tYWlu
+IGFuZCBTWVNNTVUgY29udHJvbGxlcnMgKHR3byBwZXIgZWFjaAo+IHNjYWxlciBkZXZpY2UpIGhh
+dmUgYmVlbiBhbHJlYWR5IGFkZGVkIHRvIGV4eW5vczU0MjAuZHRzaSBlYXJsaWVyLAo+IHNvIGJp
+bmQgdGhlbSB0byBuZXdseSBhZGRlZCBkZXZpY2VzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6
+ZWogUGlldHJhc2lld2ljeiA8YW5kcnplai5wQHNhbXN1bmcuY29tPgo+IFNpZ25lZC1vZmYtYnk6
+IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgYXJj
+aC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC5kdHNpIHwgMzYgKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKQo+IAoKVGhhbmtz
+LCBhcHBsaWVkLgoKQmVzdCByZWdhcmRzLApLcnp5c3p0b2YKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
