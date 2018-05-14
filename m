@@ -1,7 +1,7 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: [FAIL bisect] Sound card probe error
-Date: Mon, 14 May 2018 14:36:21 +0200
-Message-ID: <27b46bcd-a146-7f89-3682-3407ccc8643d@samsung.com>
+Date: Mon, 14 May 2018 14:40:35 +0200
+Message-ID: <4c61c422-a036-8fec-1153-d612fe5df878@samsung.com>
 References: <CGME20180514101728epcas4p3108760546a415b36252df93dfe38e0fb@epcas4p3.samsung.com>
         <CAJKOXPfD8gZR8nZkmAr=Ldt3xESuFocQLnMtrDsNZu=ba55jcw@mail.gmail.com>
         <b193b8a0-ad25-1895-8f8d-ffab97261dc1@samsung.com>
@@ -10,62 +10,23 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPc+kLA+BPBmaP14zMLbbxxCmWF1eZnKoa_PcO2z9jG9JQ@mail.gmail.com>
-Content-Language: en-US
+In-reply-to: <CAJKOXPc+kLA+BPBmaP14zMLbbxxCmWF1eZnKoa_PcO2z9jG9JQ@mail.gmail.com>
+Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mark Brown <broonie@kernel.org>, Inki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Inki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On 2018-05-14 14:29, Krzysztof Kozlowski wrote:
-> On Mon, May 14, 2018 at 2:22 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> Hi,
->>
->> On 05/14/2018 12:17 PM, Krzysztof Kozlowski wrote:
->>
->>> Bisected to:
->>> 8c123c14bbba4add148536b6d47a9226deda2f7a is the first bad commit
->>> commit 8c123c14bbba4add148536b6d47a9226deda2f7a
->>> Author: Ulf Hansson <ulf.hansson@linaro.org>
->>> Date:   Thu Apr 26 10:53:06 2018 +0200
->>>
->>>      driver core: Respect all error codes from dev_pm_domain_attach()
->>>
->>>      The limitation of being able to check only for -EPROBE_DEFER from
->>>      dev_pm_domain_attach() has been removed. Hence let's respect all error
->>>      codes and bail out accordingly.
->>>
->>>      Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->>>      Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>      Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> The DRM driver creates the HDMI codec but its registration fails, due
->> to some missing clocks. The clock are missing because the exynos5-subcmu
->> driver probing fails.
->>
->> [    0.678578] exynos5-subcmu: probe of GSC failed with error -17
->> [    0.679250] exynos5-subcmu: probe of MFC failed with error -17
->> [    0.679992] exynos5-subcmu: probe of DISP failed with error -17
->>
->> The exynos5-subcmu driver before registering platform device makes
->> of_genpd_add_device() call, so in platform_drv_probe() dev_pm_domain_attach()
->> call will fail, as dev->pm_domain is already set. Previously the error
->> was masked by code removed in the above commit and platform_drv_probe()
->> was could complete successfully.
-> Thanks Sylwester!
->
+On 05/14/2018 02:29 PM, Krzysztof Kozlowski wrote:
 > Ah, I missed these messages because I was looking at err dmesg level
 > (and for some reason these are warn). Anyway do you have any thoughts
 > how is it connected with missing Odroid XU3 sound card and max98090
 > codec?
 
-Odroid XU3 sound card driver is waiting for HDMI codec, which is being 
-created
-by Exynos DRM HDMI driver, which was deferred by lack of clocks.
+One reason is that the DRM driver registers an ASoC codec object which
+is required for the sound card registration to complete. But I wonder
+why there is no any error messages related to this.
 
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Regards,
+Sylwester
