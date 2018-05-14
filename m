@@ -1,131 +1,64 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2] ARM: dts: exynos: Add support for audio over HDMI for
- Odroid X/X2/U3
-Date: Mon, 14 May 2018 10:01:48 +0200
-Message-ID: <20180514080148.10150-1-s.nawrocki@samsung.com>
-References: <CGME20180514080220epcas2p110497f1deca1e9c10db9b9edb890d76b@epcas2p1.samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH fixes-for-current] arm64: dts: exynos: Fix interrupt type
+ for I2S1 device on Exynos5433
+Date: Mon, 14 May 2018 01:01:51 -0700
+Message-ID: <20180514080151.hykqjt5232nsb5ti@localhost>
+References: <20180506145524.14570-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180506145524.14570-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: krzk@kernel.org
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch switches Odroid X/X2/U3 to use dedicated Odroid audio subsystem
-DT bindings instead of the simple-card in order to add support for audio
-over HDMI.
+On Sun, May 06, 2018 at 04:55:24PM +0200, Krzysztof Kozlowski wrote:
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> All interrupts from SoC internal modules are level triggered, so fix
+> incorrect trigger type for I2S1 device on Exynos5433 SoCs.
+> 
+> This fixes following kernel warning:
+> 
+> WARNING: CPU: 2 PID: 1 at drivers/irqchip/irq-gic.c:1016 gic_irq_domain_translate+0xb0/0xb8
+> Modules linked in:
+> CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc7-next-20180329 #646
+> Hardware name: Samsung TM2 board (DT)
+> pstate: 20000005 (nzCv daif -PAN -UAO)
+> pc : gic_irq_domain_translate+0xb0/0xb8
+> lr : irq_create_fwspec_mapping+0x64/0x328
+> sp : ffff0000098b38d0
+> ...
+> Call trace:
+>  gic_irq_domain_translate+0xb0/0xb8
+>  irq_create_of_mapping+0x78/0xa0
+>  of_irq_get+0x6c/0xa0
+>  of_irq_to_resource+0x38/0x108
+>  of_irq_to_resource_table+0x50/0x78
+>  of_device_alloc+0x118/0x1b8
+>  of_platform_device_create_pdata+0x54/0xe0
+>  of_platform_bus_create+0x118/0x340
+>  of_platform_bus_create+0x17c/0x340
+>  of_platform_populate+0x74/0xd8
+>  of_platform_default_populate_init+0xb0/0xcc
+>  do_one_initcall+0x50/0x158
+>  kernel_init_freeable+0x184/0x22c
+>  kernel_init+0x10/0x108
+>  ret_from_fork+0x10/0x18
+> ---[ end trace 6decb2b3078d73f0 ]---
+> 
+> Fixes: d8d579c316e8 ("ARM: dts: exynos: Add I2S1 device node to exynos5433")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+> 
+> Hi Arnd and Olof,
+> 
+> That's one fix for current release cycle (issue introduced in merge window).
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 33 +++++++++++++++----------
- arch/arm/boot/dts/exynos4412-odroidu3.dts       |  6 ++---
- arch/arm/boot/dts/exynos4412-odroidx.dts        |  6 ++---
- 3 files changed, 26 insertions(+), 19 deletions(-)
+Applied to fixes. Thanks!
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index d7ad07fd48f9..a09e46c9dbc0 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -37,20 +37,14 @@
- 	};
- 
- 	sound: sound {
--		compatible = "simple-audio-card";
-+		compatible = "hardkernel,odroid-xu4-audio";
- 
--		simple-audio-card,format = "i2s";
--		simple-audio-card,bitclock-master = <&link0_codec>;
--		simple-audio-card,frame-master = <&link0_codec>;
--
--		simple-audio-card,cpu {
-+		cpu {
- 			sound-dai = <&i2s0 0>;
--			system-clock-frequency = <19200000>;
- 		};
- 
--		link0_codec: simple-audio-card,codec {
--			sound-dai = <&max98090>;
--			clocks = <&i2s0 CLK_I2S_CDCLK>;
-+		codec {
-+			sound-dai = <&hdmi>, <&max98090>;
- 		};
- 	};
- 
-@@ -142,14 +136,25 @@
- 	pinctrl-0 = <>;
- };
- 
-+&clock {
-+	assigned-clocks = <&clock CLK_FOUT_EPLL>;
-+	assigned-clock-rates = <45158401>;
-+};
-+
- &clock_audss {
- 	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
- 			<&clock_audss EXYNOS_MOUT_I2S>,
- 			<&clock_audss EXYNOS_DOUT_SRP>,
--			<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-+			<&clock_audss EXYNOS_DOUT_AUD_BUS>,
-+			<&clock_audss EXYNOS_DOUT_I2S>;
-+
- 	assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
--			<&clock_audss EXYNOS_MOUT_AUDSS>;
--	assigned-clock-rates = <0>, <0>, <192000000>, <19200000>;
-+			  <&clock_audss EXYNOS_MOUT_AUDSS>;
-+
-+	assigned-clock-rates = <0>, <0>,
-+			<196608001>,
-+			<(196608001 / 2)>,
-+			<(196608001 / 8)>;
- };
- 
- &cpu0 {
-@@ -498,6 +503,8 @@
- 	pinctrl-0 = <&i2s0_bus>;
- 	pinctrl-names = "default";
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
- 
- &mixer {
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index bdcd4523cc1c..459919b65df8 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -113,11 +113,11 @@
- };
- 
- &sound {
--	simple-audio-card,name = "Odroid-U3";
--	simple-audio-card,widgets =
-+	model = "Odroid-U3";
-+	samsung,audio-widgets =
- 		"Headphone", "Headphone Jack",
- 		"Speakers", "Speakers";
--	simple-audio-card,routing =
-+	samsung,audio-routing =
- 		"Headphone Jack", "HPL",
- 		"Headphone Jack", "HPR",
- 		"Headphone Jack", "MICBIAS",
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 2dff129bc2ad..348556fcdd9d 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -97,12 +97,12 @@
- };
- 
- &sound {
--	simple-audio-card,name = "Odroid-X";
--	simple-audio-card,widgets =
-+	model = "Odroid-X";
-+	samsung,audio-widgets =
- 		"Headphone", "Headphone Jack",
- 		"Microphone", "Mic Jack",
- 		"Microphone", "DMIC";
--	simple-audio-card,routing =
-+	samsung,audio-routing =
- 		"Headphone Jack", "HPL",
- 		"Headphone Jack", "HPR",
- 		"IN1", "Mic Jack",
--- 
-2.14.2
+
+-Olof
