@@ -1,118 +1,135 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 1/2] USB: dwc3: get extcon device by OF graph bindings
-Date: Mon, 14 May 2018 10:38:55 +0200
-Message-ID: <1080506a-adaa-193b-24d5-a779486dacc8@samsung.com>
-References: <20180131155718.5237-1-a.hajda@samsung.com>
-        <CGME20180131155734eucas1p2b55ad1aab1d5086566dad7a79b25ccf3@eucas1p2.samsung.com>
-        <20180131155718.5237-2-a.hajda@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [FAIL bisect] Sound card probe error
+Date: Mon, 14 May 2018 12:17:21 +0200
+Message-ID: <CAJKOXPfD8gZR8nZkmAr=Ldt3xESuFocQLnMtrDsNZu=ba55jcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180131155718.5237-2-a.hajda@samsung.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "open list:DESIGNWARE USB3 DRD IP DRIVER" <linux-usb@vger.kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mark Brown <broonie@kernel.org>, Inki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 31.01.2018 16:57, Andrzej Hajda wrote:
-> extcon device is used to detect host/device connection. Since extcon
-> OF property is deprecated, alternative method should be added.
-> This method uses OF graph bindings to locate extcon.
->
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Hi All,
 
-Ping, 3.5 months passed.
+I experienced an issue on today's next 20180514. Found on Odroid XU3
+board (Exynos5422, ARMv7, octa-core) with exynos_defconfig.
 
-Regards
-Andrzej
+1. No sound card is probed:
+[    6.717698] ALSA device list:
+[    6.719303]   No soundcards found.
+(expected: #0: Odroid-XU3)
 
-> ---
-> Hi all,
->
-> This patch implements alternative method to get extcon from DWC3.
-> The code works but is hacky, as DWC3 must traverse different DT nodes
-> to get extcon, in case of TM2 it is USB-PHY and MUIC, but other
-> platforms can have different paths.
-> I would be glad if it can be merged as is for now, but additional work
-> must be done to make it generic.
-> I guess on DT binding side it is OK. So the problem should be addressed
-> in the code.
-> My rough idea is to implement kind of extcon aliases/forwarder mechanism,
-> ie. USB-PHY will expect on its output remote port extcon, and it should register
-> extcon-forwarder pointing to this extcon. This way DWC3 can look for the extcon
-> on its PHY phandle, and it will receive via forwarding mechanism extcon
-> exposed by MUIC.
-> As I said this is rough idea for discussion, other propositions are welcome.
->
-> Regards
-> Andrzej
-> ---
->  drivers/usb/dwc3/drd.c | 41 ++++++++++++++++++++++++++++-------------
->  1 file changed, 28 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
-> index cc8ab9a8e9d2..eee2eca3d513 100644
-> --- a/drivers/usb/dwc3/drd.c
-> +++ b/drivers/usb/dwc3/drd.c
-> @@ -8,6 +8,7 @@
->   */
->  
->  #include <linux/extcon.h>
-> +#include <linux/of_graph.h>
->  
->  #include "debug.h"
->  #include "core.h"
-> @@ -38,24 +39,38 @@ static int dwc3_drd_notifier(struct notifier_block *nb,
->  	return NOTIFY_DONE;
->  }
->  
-> +struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
-> +{
-> +	struct device *dev = dwc->dev;
-> +	struct device_node *np_phy, *np_conn;
-> +	struct extcon_dev *edev;
-> +
-> +	if (of_property_read_bool(dev->of_node, "extcon"))
-> +		return extcon_get_edev_by_phandle(dwc->dev, 0);
-> +
-> +	np_phy = of_parse_phandle(dev->of_node, "phys", 0);
-> +	np_conn = of_graph_get_remote_node(np_phy, -1, -1);
-> +	edev = extcon_get_edev_by_of_node(np_conn);
-> +	of_node_put(np_conn);
-> +	of_node_put(np_phy);
-> +
-> +	return edev;
-> +}
-> +
->  int dwc3_drd_init(struct dwc3 *dwc)
->  {
->  	int ret;
->  
-> -	if (dwc->dev->of_node) {
-> -		if (of_property_read_bool(dwc->dev->of_node, "extcon"))
-> -			dwc->edev = extcon_get_edev_by_phandle(dwc->dev, 0);
-> -
-> -		if (IS_ERR(dwc->edev))
-> -			return PTR_ERR(dwc->edev);
-> +	dwc->edev = dwc3_get_extcon(dwc);
-> +	if (IS_ERR(dwc->edev))
-> +		return PTR_ERR(dwc->edev);
->  
-> -		dwc->edev_nb.notifier_call = dwc3_drd_notifier;
-> -		ret = extcon_register_notifier(dwc->edev, EXTCON_USB_HOST,
-> -					       &dwc->edev_nb);
-> -		if (ret < 0) {
-> -			dev_err(dwc->dev, "couldn't register cable notifier\n");
-> -			return ret;
-> -		}
-> +	dwc->edev_nb.notifier_call = dwc3_drd_notifier;
-> +	ret = extcon_register_notifier(dwc->edev, EXTCON_USB_HOST,
-> +				       &dwc->edev_nb);
-> +	if (ret < 0) {
-> +		dev_err(dwc->dev, "couldn't register cable notifier\n");
-> +		return ret;
->  	}
->  
->  	dwc3_drd_update(dwc);
+
+2. Oops happens:
+[  OK  ] Started udev Kernel Device Manager.
+Unable to handle kernel paging request at virtual address c0f324ac
+[   36.229430] [<c05764ac>] (platform_drv_probe) from [<c0573fd8>]
+(driver_probe_device+0x2e0/0x4b4)
+[   36.238258] [<c0573fd8>] (driver_probe_device) from [<c0571fb8>]
+(bus_for_each_drv+0x74/0xb8)
+[   36.246746] [<c0571fb8>] (bus_for_each_drv) from [<c0573bb0>]
+(__device_attach+0xd4/0x168)
+[   36.254974] [<c0573bb0>] (__device_attach) from [<c0572e78>]
+(bus_probe_device+0x88/0x90)
+[   36.263121] [<c0572e78>] (bus_probe_device) from [<c0573434>]
+(deferred_probe_work_func+0x64/0x184)
+[   36.272144] [<c0573434>] (deferred_probe_work_func) from
+[<c0146950>] (process_one_work+0x220/0x8e8)
+[   36.281236] [<c0146950>] (process_one_work) from [<c0147050>]
+(worker_thread+0x38/0x584)
+[   36.289293] [<c0147050>] (worker_thread) from [<c014d96c>]
+(kthread+0x138/0x168)
+[   36.296652] [<c014d96c>] (kthread) from [<c01010b4>]
+(ret_from_fork+0x14/0x20)
+
+
+3. No DRM device is probed/found.
+
+I could not find any specific reasons of this failure (like earlier
+failures... except some probe deferrals which are happening almost
+alwats).
+
+Full kernel log of issue:
+http://www.krzk.eu/#/builders/1/builds/1978/steps/10/logs/serial0
+Example of good boot:
+http://www.krzk.eu/#/builders/1/builds/1953/steps/10/logs/serial0
+\
+Bisected to:
+8c123c14bbba4add148536b6d47a9226deda2f7a is the first bad commit
+commit 8c123c14bbba4add148536b6d47a9226deda2f7a
+Author: Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu Apr 26 10:53:06 2018 +0200
+
+    driver core: Respect all error codes from dev_pm_domain_attach()
+
+    The limitation of being able to check only for -EPROBE_DEFER from
+    dev_pm_domain_attach() has been removed. Hence let's respect all error
+    codes and bail out accordingly.
+
+    Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+    Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+:040000 040000 26c27c583ac4557a3982b4a6bf6b3b4ff8386449
+997a872ddca1c876024cf49c3e7fc68d15cd8fed M drivers
+
+
+bisect log:
+git bisect start
+# good: [66e1c94db3cd4e094de66a6be68c3ab6d17e0c52] Merge branch
+'x86-pti-for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect good 66e1c94db3cd4e094de66a6be68c3ab6d17e0c52
+# bad: [af37b24ae6b3e7eac272417c9af591c58baa8f93] Add linux-next
+specific files for 20180514
+git bisect bad af37b24ae6b3e7eac272417c9af591c58baa8f93
+# bad: [0e9cda8f772f6c66693629b383d33a63a8333b48] Merge
+remote-tracking branch 'bluetooth/master'
+git bisect bad 0e9cda8f772f6c66693629b383d33a63a8333b48
+# good: [a458037d65ab42098252b52889543fb836226d33] Merge
+remote-tracking branch 'jc_docs/docs-next'
+git bisect good a458037d65ab42098252b52889543fb836226d33
+# good: [a37fb855f6e8e9eafac046721393f68f48eb5f91] net: dsa: fix
+added_by_user switchdev notification
+git bisect good a37fb855f6e8e9eafac046721393f68f48eb5f91
+# bad: [3ee48ebb5dfef1a167b15ab9a4168134837b6e7c] Merge
+remote-tracking branch 'pm/linux-next'
+git bisect bad 3ee48ebb5dfef1a167b15ab9a4168134837b6e7c
+# good: [89eaaf2d19a6cfff0a16014405c2a65b5257b8a1] media: lgdt330x:
+don't use an uninitialized state
+git bisect good 89eaaf2d19a6cfff0a16014405c2a65b5257b8a1
+# good: [89eaaf2d19a6cfff0a16014405c2a65b5257b8a1] media: lgdt330x:
+don't use an uninitialized state
+git bisect good 89eaaf2d19a6cfff0a16014405c2a65b5257b8a1
+# good: [6d2eaece20ffe783cdbcedd7ef2d6ae51d846d33] media: xilinx:
+regroup caps on querycap
+git bisect good 6d2eaece20ffe783cdbcedd7ef2d6ae51d846d33
+# bad: [91965db07c20058e207e8ea14a47fe0ec891896d] Merge branch
+'pm-core' into linux-next
+git bisect bad 91965db07c20058e207e8ea14a47fe0ec891896d
+# bad: [e298050322459ccd8aaa0f7edd422f630ce4e9b4] Merge branch
+'pm-domains' into linux-next
+git bisect bad e298050322459ccd8aaa0f7edd422f630ce4e9b4
+# good: [097b29f3e6f5ec6781e5e3048e4a285edd79c357] Merge branch
+'pm-cpufreq-sched' into linux-next
+git bisect good 097b29f3e6f5ec6781e5e3048e4a285edd79c357
+# good: [4d73e6885c07847488201e8df4da9ed56c25e21b] amba: Respect all
+error codes from dev_pm_domain_attach()
+git bisect good 4d73e6885c07847488201e8df4da9ed56c25e21b
+# bad: [ecbc0460e7f16aca23f6dd34527fbf751eaf1453] mmc: sdio: Respect
+all error codes from dev_pm_domain_attach()
+git bisect bad ecbc0460e7f16aca23f6dd34527fbf751eaf1453
+# bad: [f24b7891ddbf4f1d509253d6e0bcfdcfbdadf4fd] i2c: Respect all
+error codes from dev_pm_domain_attach()
+git bisect bad f24b7891ddbf4f1d509253d6e0bcfdcfbdadf4fd
+# bad: [8c123c14bbba4add148536b6d47a9226deda2f7a] driver core: Respect
+all error codes from dev_pm_domain_attach()
+git bisect bad 8c123c14bbba4add148536b6d47a9226deda2f7a
+# first bad commit: [8c123c14bbba4add148536b6d47a9226deda2f7a] driver
+core: Respect all error codes from dev_pm_domain_attach()
+
+Let me know if you need any more data.
+
+Best regards,
+Krzysztof
