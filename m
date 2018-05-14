@@ -1,42 +1,54 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: [FAIL bisect] Sound card probe error
-Date: Mon, 14 May 2018 14:50:52 +0200
-Message-ID: <CAJKOXPeNJtmU2+8CdMRwXignMTetn=LScdcMspfkP3MVmTSHrg@mail.gmail.com>
+Date: Mon, 14 May 2018 15:34:29 +0200
+Message-ID: <c62a6f86-4c6f-f7ed-f615-93d6db7412ec@samsung.com>
 References: <CGME20180514101728epcas4p3108760546a415b36252df93dfe38e0fb@epcas4p3.samsung.com>
- <CAJKOXPfD8gZR8nZkmAr=Ldt3xESuFocQLnMtrDsNZu=ba55jcw@mail.gmail.com>
- <b193b8a0-ad25-1895-8f8d-ffab97261dc1@samsung.com> <CAJKOXPc+kLA+BPBmaP14zMLbbxxCmWF1eZnKoa_PcO2z9jG9JQ@mail.gmail.com>
- <4c61c422-a036-8fec-1153-d612fe5df878@samsung.com> <CAJKOXPc6Yj0+Z6zd-Gm-fYvfQB4rPPn0k6ED8bWScJ-tdZ=Ysw@mail.gmail.com>
+        <CAJKOXPfD8gZR8nZkmAr=Ldt3xESuFocQLnMtrDsNZu=ba55jcw@mail.gmail.com>
+        <b193b8a0-ad25-1895-8f8d-ffab97261dc1@samsung.com>
+        <CAJKOXPc+kLA+BPBmaP14zMLbbxxCmWF1eZnKoa_PcO2z9jG9JQ@mail.gmail.com>
+        <4c61c422-a036-8fec-1153-d612fe5df878@samsung.com>
+        <CAJKOXPc6Yj0+Z6zd-Gm-fYvfQB4rPPn0k6ED8bWScJ-tdZ=Ysw@mail.gmail.com>
+        <CAJKOXPeNJtmU2+8CdMRwXignMTetn=LScdcMspfkP3MVmTSHrg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPc6Yj0+Z6zd-Gm-fYvfQB4rPPn0k6ED8bWScJ-tdZ=Ysw@mail.gmail.com>
+In-reply-to: <CAJKOXPeNJtmU2+8CdMRwXignMTetn=LScdcMspfkP3MVmTSHrg@mail.gmail.com>
+Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Inki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 14, 2018 at 2:45 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Mon, May 14, 2018 at 2:40 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> On 05/14/2018 02:29 PM, Krzysztof Kozlowski wrote:
->>> Ah, I missed these messages because I was looking at err dmesg level
->>> (and for some reason these are warn). Anyway do you have any thoughts
->>> how is it connected with missing Odroid XU3 sound card and max98090
->>> codec?
->>
->> One reason is that the DRM driver registers an ASoC codec object which
->> is required for the sound card registration to complete. But I wonder
->> why there is no any error messages related to this.
->
-> Thanks Marek and Sylwester. Another point is that probably OOPS later
-> should not happen...
+On 05/14/2018 02:50 PM, Krzysztof Kozlowski wrote:
+> On Mon, May 14, 2018 at 2:45 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On Mon, May 14, 2018 at 2:40 PM, Sylwester Nawrocki
+>> <s.nawrocki@samsung.com> wrote:
+>>> On 05/14/2018 02:29 PM, Krzysztof Kozlowski wrote:
+>>>> Ah, I missed these messages because I was looking at err dmesg level
+>>>> (and for some reason these are warn). Anyway do you have any thoughts
+>>>> how is it connected with missing Odroid XU3 sound card and max98090
+>>>> codec?
+>>> One reason is that the DRM driver registers an ASoC codec object which
+>>> is required for the sound card registration to complete. But I wonder
+>>> why there is no any error messages related to this.
+>> Thanks Marek and Sylwester. Another point is that probably OOPS later
+>> should not happen...
 
-Separate topic (trim Cc list):
+> Separate topic (trim Cc list):
+> 
+> ... and this means that disabling Exynos DRM causes lack of Audio. I
+> tried it now and indeed without DRM there is no audio again. I think
+> it is not nice... There are not many such use cases but there are
+> (playing audio from console/ssh with a headless board).\
 
-... and this means that disabling Exynos DRM causes lack of Audio. I
-tried it now and indeed without DRM there is no audio again. I think
-it is not nice... There are not many such use cases but there are
-(playing audio from console/ssh with a headless board).\
+As we discussed off the mailing list, what we could probably do now
+is to add a compile time dependency on CONFIG_DRM_EXYNOS_HDMI, a fallback
+to the max98098 codec only when the HDMI driver is disabled. 
 
-Best regards,
-Krzysztof
+That might require modifying snd_soc_of_get_dai_link_codecs() so it can 
+skip optional codecs.
+
+-- 
+Regards,
+Sylwester
