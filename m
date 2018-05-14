@@ -1,39 +1,31 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 4/5] arm64: dts: exynos: Stuff for v4.18
-Date: Mon, 14 May 2018 13:51:52 -0700
-Message-ID: <20180514205152.q7luql3st5bzqddz@localhost>
+Subject: Re: [GIT PULL 0/5] ARM: samsung/exynos: Stuff for v4.18
+Date: Mon, 14 May 2018 13:55:02 -0700
+Message-ID: <20180514205502.u25kugxkym4tz34e@localhost>
 References: <20180513154238.22508-1-krzk@kernel.org>
- <20180513154238.22508-5-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180513154238.22508-5-krzk@kernel.org>
+In-Reply-To: <20180513154238.22508-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, May 13, 2018 at 05:42:37PM +0200, Krzysztof Kozlowski wrote:
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+On Sun, May 13, 2018 at 05:42:33PM +0200, Krzysztof Kozlowski wrote:
+> Hi,
 > 
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> Changes for v4.18. No dependencies, no specific order of pulls.
 > 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.18
-> 
-> for you to fetch changes up to 8dd6203f32f20cb83469eb859efded9e403b3e9f:
-> 
->   arm64: dts: exynos: Add mem-2-mem Scaler devices (2018-05-13 11:26:13 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung DTS ARM64 changes for v4.18
-> 
-> 1. Fix DTC warnings.
-> 2. Add mem-2-mem Scaler devices.
+> Support for Exynos5440 is removed step by step through different trees.
 
-Merged, thanks!
+5440 was always a bit of a weird fit, it clearly was never an exynos5-family
+platform. I take it there are no substantial users left that would need
+mainline kernel support for it?
+
+Also, I noticed your PGP key has expired, so you should probably start
+collecting signatures on a fresh subkey.
 
 
 -Olof
