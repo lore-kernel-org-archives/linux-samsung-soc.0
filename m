@@ -1,42 +1,30 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 5/5] ARM: exynos: mach/soc for v4.18
-Date: Mon, 14 May 2018 13:52:41 -0700
-Message-ID: <20180514205241.al6v4ejxwy26j4ue@localhost>
-References: <20180513154238.22508-1-krzk@kernel.org>
- <20180513154238.22508-6-krzk@kernel.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] PM / Domains: Don't return -EEXIST at attach when PM
+ domain exists
+Date: Mon, 14 May 2018 17:53:42 -0700
+Message-ID: <20180515005342.GM98604@atomide.com>
+References: <1526309557-7995-1-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180513154238.22508-6-krzk@kernel.org>
+In-Reply-To: <1526309557-7995-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, "linux-samsung-soc @ vger . kernel . org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, May 13, 2018 at 05:42:38PM +0200, Krzysztof Kozlowski wrote:
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+* Ulf Hansson <ulf.hansson@linaro.org> [180514 14:55]:
+> As dev_pm_domain_attach() isn't the only way to assign PM domain pointers
+> to devices, clearly we must allow a device to have the pointer already
+> being assigned. For this reason, return 0 instead of -EEXIST.
 > 
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.18
-> 
-> for you to fetch changes up to 9ad9a2183bf51da7f8840f2e7087816c0fc8c91d:
-> 
->   ARM: exynos: Remove unused soc_is_exynos{4,5} (2018-05-13 14:07:03 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung mach/soc changes for v4.18
-> 
-> 1. Remove at24_platform_data in S3C2440.
-> 2. Fix invalid SPDX identifier.
-> 3. Remove Exynos5440 entirely.
-> 4. Cleanups.
-> 5. Remove static mapping of SCU SFR and rely on DTS.
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Tested-by: Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Merged, thanks!
+Fixes the issue for me too:
 
-
--Olof
+Tested-by: Tony Lindgren <tony@atomide.com>
