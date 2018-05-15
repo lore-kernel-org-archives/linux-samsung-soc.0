@@ -1,32 +1,64 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] PM / Domains: Don't return -EEXIST at attach when PM
- domain exists
-Date: Tue, 15 May 2018 10:06:48 +0200
-Message-ID: <CAJZ5v0iaF9NfajAUT_m8E_AKySnjV-A6xpiXXz=_8LGe8oD1qg@mail.gmail.com>
-References: <1526309557-7995-1-git-send-email-ulf.hansson@linaro.org> <20180515005342.GM98604@atomide.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
+Date: Tue, 15 May 2018 11:32:12 +0200
+Message-ID: <93ee0d94-81aa-db81-2bff-87f5f91bc9d3@samsung.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+        <CGME20180515093219epcas1p28a5fa4be53b9ea0fd85e4726cf92f804@epcas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180515005342.GM98604@atomide.com>
+In-reply-to: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, "linux-samsung-soc @ vger . kernel . org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, May 15, 2018 at 2:53 AM, Tony Lindgren <tony@atomide.com> wrote:
-> * Ulf Hansson <ulf.hansson@linaro.org> [180514 14:55]:
->> As dev_pm_domain_attach() isn't the only way to assign PM domain pointers
->> to devices, clearly we must allow a device to have the pointer already
->> being assigned. For this reason, return 0 instead of -EEXIST.
->>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> Tested-by: Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> Fixes the issue for me too:
->
-> Tested-by: Tony Lindgren <tony@atomide.com>
+On 04/19/2018 04:05 PM, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-I've applied the patch with the tag above, thanks!
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+It seems to be the only clk/samsung patch in the v4.18 queue, please
+feel free to apply it directly.
+
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> index 077df3e539a7..f41d89cef0f1 100644
+> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
+> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> @@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
+>  #ifdef CONFIG_PM_SLEEP
+>  static int s3c24xx_dclk_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
+>  	return 0;
+> @@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
+>  
+>  static int s3c24xx_dclk_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
+>  	return 0;
+
+-- 
+Regards,
+Sylwester
