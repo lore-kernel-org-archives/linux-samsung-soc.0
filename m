@@ -1,19 +1,20 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
-Date: Tue, 15 May 2018 11:32:12 +0200
-Message-ID: <93ee0d94-81aa-db81-2bff-87f5f91bc9d3@samsung.com>
+Subject: Re: [PATCH 26/61] media: platform: exynos4-is: simplify getting
+ .drvdata
+Date: Tue, 15 May 2018 11:47:49 +0200
+Message-ID: <613c3648-1d2e-e008-60a8-d9f21eca9fae@samsung.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-        <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
-        <CGME20180515093219epcas1p28a5fa4be53b9ea0fd85e4726cf92f804@epcas1p2.samsung.com>
+        <20180419140641.27926-27-wsa+renesas@sang-engineering.com>
+        <CGME20180515094754epcas2p2715cc9c6376ddbb5f400830ef41b514b@epcas2p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+In-reply-to: <20180419140641.27926-27-wsa+renesas@sang-engineering.com>
 Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 04/19/2018 04:05 PM, Wolfram Sang wrote:
@@ -23,42 +24,3 @@ On 04/19/2018 04:05 PM, Wolfram Sang wrote:
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-It seems to be the only clk/samsung patch in the v4.18 queue, please
-feel free to apply it directly.
-
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> index 077df3e539a7..f41d89cef0f1 100644
-> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> @@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
->  #ifdef CONFIG_PM_SLEEP
->  static int s3c24xx_dclk_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
-> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
->  
->  	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
->  	return 0;
-> @@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
->  
->  static int s3c24xx_dclk_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
-> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
->  
->  	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
->  	return 0;
-
--- 
-Regards,
-Sylwester
