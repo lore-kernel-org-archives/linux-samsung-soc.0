@@ -1,35 +1,34 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] arm64: dts: exynos: fix type of thermal trip points for
- Exynos7
-Date: Tue, 15 May 2018 18:02:02 +0200
-Message-ID: <66371602.d1UHUK4g0h@amdc3058>
-References: <CGME20180515123755eucas1p278a9c1e9cb0101e406e3839e27f8b3b1@eucas1p2.samsung.com>
-        <1702366.qL959G52Hi@amdc3058>
-        <CAJKOXPdW7Ovo9GW=29tqa3rEAkSFgrEzbxm_wdGmRpamgk2-ig@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Add support for audio over HDMI for
+ Odroid X/X2/U3
+Date: Tue, 15 May 2018 19:39:24 +0200
+Message-ID: <20180515173924.goxxl4wic7tlhzyw@kozik-lap>
+References: <CGME20180514080220epcas2p110497f1deca1e9c10db9b9edb890d76b@epcas2p1.samsung.com>
+ <20180514080148.10150-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAJKOXPdW7Ovo9GW=29tqa3rEAkSFgrEzbxm_wdGmRpamgk2-ig@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20180514080148.10150-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, May 15, 2018 02:59:33 PM Krzysztof Kozlowski wrote:
-> On Tue, May 15, 2018 at 2:37 PM, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
-> > Currently Exynos thermal driver treats as "active" all specified
-> > trip points before reaching maximum number of hardware supported
-> > trip points.
+On Mon, May 14, 2018 at 10:01:48AM +0200, Sylwester Nawrocki wrote:
+> This patch switches Odroid X/X2/U3 to use dedicated Odroid audio subsystem
+> DT bindings instead of the simple-card in order to add support for audio
+> over HDMI.
 > 
-> The trip point type describe the way how system should act - use
-> active or passive cooling. It is independent of thermal driver. I do
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 33 +++++++++++++++----------
+>  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  6 ++---
+>  arch/arm/boot/dts/exynos4412-odroidx.dts        |  6 ++---
+>  3 files changed, 26 insertions(+), 19 deletions(-)
+> 
 
-OK, I see it now. Please disregard this patch.
+Thanks, applied.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Krzysztof
