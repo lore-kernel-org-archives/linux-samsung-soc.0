@@ -1,142 +1,46 @@
-From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
-Subject: Re: [PATCH v2 26/26] drm/bridge: establish a link
- between the bridge supplier and consumer
-Date: Tue, 15 May 2018 13:09:59 +0200
-Message-ID: <f8215ba1-4cdb-69b9-39ff-68feca3ec502@axentia.se>
-References: <20180504135212.26977-1-peda@axentia.se>
- <CGME20180504135432epcas3p368bb7541ca52bc8bc301dec794851214@epcas3p3.samsung.com>
- <20180504135212.26977-27-peda@axentia.se>
- <a723ad4a-8caa-4ff5-d39d-52db98a56d7b@samsung.com>
- <c25f81e0-5b7b-c605-5b58-0ecc88830124@axentia.se>
- <20180514162828.GE28661@phenom.ffwll.local>
- <73fa1ca3-28e4-96c5-1fc6-23e9c0cebb49@axentia.se>
- <CAKMK7uECSUo5k6uG3-y+yKQTGxB3FfGcwzMT+ZP5uux2SbpfUg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAKMK7uECSUo5k6uG3-y+yKQTGxB3FfGcwzMT+ZP5uux2SbpfUg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Sandy Huang <hjc-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Martin Donnelly <martin.donnelly-JJi787mZWgc@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maart
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 0/2] USB: dwc3: get extcon device by OF graph bindings
+Date: Tue, 15 May 2018 14:12:37 +0200
+Message-ID: <20180515121239.18192-1-a.hajda@samsung.com>
+References: <CGME20180515121250eucas1p115e0ee3cefb47faacbd4e4583b11f6e8@eucas1p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "open list:DESIGNWARE USB3 DRD IP DRIVER" <linux-usb@vger.kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxOC0wNS0xNSAxMjoyMiwgRGFuaWVsIFZldHRlciB3cm90ZToKPiBPbiBNb24sIE1heSAx
-NCwgMjAxOCBhdCAxMDo0MCBQTSwgUGV0ZXIgUm9zaW4gPHBlZGFAYXhlbnRpYS5zZT4gd3JvdGU6
-Cj4+IE9uIDIwMTgtMDUtMTQgMTg6MjgsIERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4+PiBPbiBGcmks
-IE1heSAxMSwgMjAxOCBhdCAwOTozNzo0N0FNICswMjAwLCBQZXRlciBSb3NpbiB3cm90ZToKPj4+
-PiBPbiAyMDE4LTA1LTEwIDEwOjEwLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+Pj4+PiBPbiAwNC4w
-NS4yMDE4IDE1OjUyLCBQZXRlciBSb3NpbiB3cm90ZToKPj4+Pj4+IElmIHRoZSBicmlkZ2Ugc3Vw
-cGxpZXIgaXMgdW5ib3VuZCwgdGhpcyB3aWxsIGJyaW5nIHRoZSBicmlkZ2UgY29uc3VtZXIKPj4+
-Pj4+IGRvd24gYWxvbmcgd2l0aCB0aGUgYnJpZGdlLiBUaHVzLCB0aGVyZSB3aWxsIG5vIGxvbmdl
-ciBsaW5nZXIgYW55Cj4+Pj4+PiBkYW5nbGluZyBwb2ludGVycyBmcm9tIHRoZSBicmlkZ2UgY29u
-c3VtZXIgKHRoZSBkcm1fZGV2aWNlKSB0byBzb21lCj4+Pj4+PiBub24tZXhpc3RlbnQgYnJpZGdl
-IHN1cHBsaWVyLgo+Pj4+Pj4KPj4+Pj4+IFNpZ25lZC1vZmYtYnk6IFBldGVyIFJvc2luIDxwZWRh
-QGF4ZW50aWEuc2U+Cj4+Pj4+PiAtLS0KPj4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRn
-ZS5jIHwgMTggKysrKysrKysrKysrKysrKysrCj4+Pj4+PiAgaW5jbHVkZS9kcm0vZHJtX2JyaWRn
-ZS5oICAgICB8ICAyICsrCj4+Pj4+PiAgMiBmaWxlcyBjaGFuZ2VkLCAyMCBpbnNlcnRpb25zKCsp
-Cj4+Pj4+Pgo+Pj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5jCj4+Pj4+PiBpbmRleCA3OGQxODZiNjgzMWIu
-LjAyNTlmMGEzZmYyNyAxMDA2NDQKPj4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJp
-ZGdlLmMKPj4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmMKPj4+Pj4+IEBA
-IC0yNiw2ICsyNiw3IEBACj4+Pj4+PiAgI2luY2x1ZGUgPGxpbnV4L211dGV4Lmg+Cj4+Pj4+Pgo+
-Pj4+Pj4gICNpbmNsdWRlIDxkcm0vZHJtX2JyaWRnZS5oPgo+Pj4+Pj4gKyNpbmNsdWRlIDxkcm0v
-ZHJtX2RldmljZS5oPgo+Pj4+Pj4gICNpbmNsdWRlIDxkcm0vZHJtX2VuY29kZXIuaD4KPj4+Pj4+
-Cj4+Pj4+PiAgI2luY2x1ZGUgImRybV9jcnRjX2ludGVybmFsLmgiCj4+Pj4+PiBAQCAtMTI3LDEy
-ICsxMjgsMjUgQEAgaW50IGRybV9icmlkZ2VfYXR0YWNoKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5j
-b2Rlciwgc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSwKPj4+Pj4+ICAgIGlmIChicmlkZ2UtPmRl
-dikKPj4+Pj4+ICAgICAgICAgICAgcmV0dXJuIC1FQlVTWTsKPj4+Pj4+Cj4+Pj4+PiArICBpZiAo
-ZW5jb2Rlci0+ZGV2LT5kZXYgIT0gYnJpZGdlLT5vZGV2KSB7Cj4+Pj4+Cj4+Pj4+IEkgd29uZGVy
-IHdoeSBkZXZpY2VfbGlua19hZGQgZG9lcyBub3QgaGFuZGxlIHRoaXMgY2FzZSAoc2VsZiBkZXBl
-bmRlbmN5KQo+Pj4+PiBzaWxlbnRseSBhcyBub29wLCBhcyBpdCBzZWVtcyB0byBiZSBhIGNvcnJl
-Y3QgYmVoYXZpb3IuCj4+Pj4KPj4+PiBJdCdzIGtpbmQtb2YgYSBzaWxseSBjb3JuZXItY2FzZSB0
-aG91Z2gsIHNvIHBlcmZlY3RseSB1bmRlcnN0YW5kYWJsZQo+Pj4+IHRoYXQgaXQgaXNuJ3QgaGFu
-ZGxlZC4KPj4+Pgo+Pj4+Pj4gKyAgICAgICAgICBicmlkZ2UtPmxpbmsgPSBkZXZpY2VfbGlua19h
-ZGQoZW5jb2Rlci0+ZGV2LT5kZXYsCj4+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBicmlkZ2UtPm9kZXYsIDApOwo+Pj4+Pj4gKyAgICAgICAgICBpZiAoIWJy
-aWRnZS0+bGluaykgewo+Pj4+Pj4gKyAgICAgICAgICAgICAgICAgIGRldl9lcnIoYnJpZGdlLT5v
-ZGV2LCAiZmFpbGVkIHRvIGxpbmsgYnJpZGdlIHRvICVzXG4iLAo+Pj4+Pj4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgZGV2X25hbWUoZW5jb2Rlci0+ZGV2LT5kZXYpKTsKPj4+Pj4+ICsgICAg
-ICAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsKPj4+Pj4+ICsgICAgICAgICAgfQo+Pj4+Pj4g
-KyAgfQo+Pj4+Pj4gKwo+Pj4+Pj4gICAgYnJpZGdlLT5kZXYgPSBlbmNvZGVyLT5kZXY7Cj4+Pj4+
-PiAgICBicmlkZ2UtPmVuY29kZXIgPSBlbmNvZGVyOwo+Pj4+Pj4KPj4+Pj4+ICAgIGlmIChicmlk
-Z2UtPmZ1bmNzLT5hdHRhY2gpIHsKPj4+Pj4+ICAgICAgICAgICAgcmV0ID0gYnJpZGdlLT5mdW5j
-cy0+YXR0YWNoKGJyaWRnZSk7Cj4+Pj4+PiAgICAgICAgICAgIGlmIChyZXQgPCAwKSB7Cj4+Pj4+
-PiArICAgICAgICAgICAgICAgICAgaWYgKGJyaWRnZS0+bGluaykKPj4+Pj4+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgIGRldmljZV9saW5rX2RlbChicmlkZ2UtPmxpbmspOwo+Pj4+Pj4gKyAg
-ICAgICAgICAgICAgICAgIGJyaWRnZS0+bGluayA9IE5VTEw7Cj4+Pj4+PiAgICAgICAgICAgICAg
-ICAgICAgYnJpZGdlLT5kZXYgPSBOVUxMOwo+Pj4+Pj4gICAgICAgICAgICAgICAgICAgIGJyaWRn
-ZS0+ZW5jb2RlciA9IE5VTEw7Cj4+Pj4+PiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsK
-Pj4+Pj4+IEBAIC0xNTksNiArMTczLDEwIEBAIHZvaWQgZHJtX2JyaWRnZV9kZXRhY2goc3RydWN0
-IGRybV9icmlkZ2UgKmJyaWRnZSkKPj4+Pj4+ICAgIGlmIChicmlkZ2UtPmZ1bmNzLT5kZXRhY2gp
-Cj4+Pj4+PiAgICAgICAgICAgIGJyaWRnZS0+ZnVuY3MtPmRldGFjaChicmlkZ2UpOwo+Pj4+Pj4K
-Pj4+Pj4+ICsgIGlmIChicmlkZ2UtPmxpbmspCj4+Pj4+PiArICAgICAgICAgIGRldmljZV9saW5r
-X2RlbChicmlkZ2UtPmxpbmspOwo+Pj4+Pj4gKyAgYnJpZGdlLT5saW5rID0gTlVMTDsKPj4+Pj4+
-ICsKPj4+Pj4+ICAgIGJyaWRnZS0+ZGV2ID0gTlVMTDsKPj4+Pj4+ICB9Cj4+Pj4+Pgo+Pj4+Pj4g
-ZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9icmlkZ2UuaCBiL2luY2x1ZGUvZHJtL2RybV9i
-cmlkZ2UuaAo+Pj4+Pj4gaW5kZXggYjY1NmU1MDVkMTFlLi44MDQxODljNjNhNGMgMTAwNjQ0Cj4+
-Pj4+PiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fYnJpZGdlLmgKPj4+Pj4+ICsrKyBiL2luY2x1ZGUv
-ZHJtL2RybV9icmlkZ2UuaAo+Pj4+Pj4gQEAgLTI2MSw2ICsyNjEsNyBAQCBzdHJ1Y3QgZHJtX2Jy
-aWRnZV90aW1pbmdzIHsKPj4+Pj4+ICAgKiBAbGlzdDogdG8ga2VlcCB0cmFjayBvZiBhbGwgYWRk
-ZWQgYnJpZGdlcwo+Pj4+Pj4gICAqIEB0aW1pbmdzOiB0aGUgdGltaW5nIHNwZWNpZmljYXRpb24g
-Zm9yIHRoZSBicmlkZ2UsIGlmIGFueSAobWF5Cj4+Pj4+PiAgICogYmUgTlVMTCkKPj4+Pj4+ICsg
-KiBAbGluazogZHJtIGNvbnN1bWVyIDwtPiBicmlkZ2Ugc3VwcGxpZXIKPj4+Pj4KPj4+Pj4gTml0
-cGljazogIjwtPiIgc3VnZ2VzdHMgc3ltbWV0cnksIG1heWJlICJkZXZpY2UgbGluayBmcm9tIGRy
-bSBjb25zdW1lcgo+Pj4+PiB0byB0aGUgYnJpZGdlIiB3b3VsZCBiZSBiZXR0ZXIuCj4+Pj4KPj4+
-PiBJIG1lYW50ICI8LT4iIHRvIGluZGljYXRlIHRoYXQgdGhlIGxpbmsgaXMgYmlkaXJlY3Rpb25h
-bCwgbm90IHRoYXQgdGhlCj4+Pj4gcmVsYXRpb25zaGlwIGlzIGluIGFueSB3YXkgc3ltbWV0cmlj
-LiBJIHdhc24ndCBhd2FyZSBvZiBhbnkgaW1wbGljYXRpb24KPj4+PiBvZiBhIHN5bW1ldHJpYyBy
-ZWxhdGlvbnNoaXAgd2hlbiB1c2luZyAiPC0+IiwgZG8geW91IGhhdmUgYSByZWZlcmVuY2U/Cj4+
-Pj4gQnV0IEkgZ3Vlc3MgdGhlIGRpZmZlcmVudCBhcnJvdyBub3RhdGlvbnMgaW4gbWF0aCBhcmUg
-c29tZXdoYXQgb3ZlcmxvYWRlZAo+Pj4+IGFuZCB0aGF0IHNvbWVvbmUgYXQgc29tZSBwb2ludCBt
-dXN0IGhhdmUgdXNlZCAiPC0+IiB0byBpbmRpY2F0ZSBhCj4+Pj4gc3ltbWV0cmljIHJlbGF0aW9u
-c2hpcC4uLgo+Pj4KPj4+IFllYWggSSBhZ3JlZSB3aXRoIEFuZHJ6ZWogaGVyZSwgZm9yIG1lIDwt
-PiBpbXBsaWVzIGEgc3ltbWV0cmljCj4+PiByZWxhdGlvbnNoaXAuIFNwZWxsaW5nIGl0IG91dCBs
-aWtlIEFuZHJ6ZWogc3VnZ2VzdGVkIHNvdW5kcyBsaWtlIHRoZQo+Pj4gYmV0dGVyIGlkZWEuCj4+
-PiAtRGFuaWVsCj4+Cj4+IE9rLCBJIGd1ZXNzIHRoYXQgbWVhbnMgSSBoYXZlIHRvIGRvIGEgdjMg
-YWZ0ZXIgYWxsLiBPciBjYW4gdGhpcwo+PiB0cml2aWFsIGRvY3VtZW50YXRpb24gdXBkYXRlIGJl
-IGRvbmUgYnkgdGhlIGNvbW1pdHRlcj8gSSBoYXRlIHRvCj4+IHNwYW0gZXZlcnlvbmUgd2l0aCBh
-bm90aGVyIHZvbGxleS4uLgo+Pgo+PiBPciBwZXJoYXBzIEkgc2hvdWxkIHNxdWFzaCBwYXRjaGVz
-IDItMjMgdGhhdCBhcmUgYWxsIHJhdGhlciBzaW1pbGFyCj4+IGFuZCBtZWNoYW5pYz8gSSBzZXBh
-cmF0ZWQgdGhlbSB0byBhbGxvdyBmb3IgZWFzaWVyIHJldmlldyBmcm9tCj4+IGluZGl2aWR1YWwg
-ZHJpdmVyIG1haW50YWluZXJzLCBidXQgdGhhdCBkaWRuJ3Qgc2VlbSB0byBoYXBwZW4KPj4gYW55
-d2F5Li4uCj4gCj4gRG8gYW5vdGhlciB2b2xsZXkgb2YgdGhlIGZ1bGwgc2V0LCBvciBpbi1yZXBs
-eS10byB0byBqdXN0IHJlcGxhY2UgdGhlCj4gcGF0Y2ggdGhhdCBuZWVkcyB0byBiZSByZXNwdW4g
-KGJ1dCBzb21lIHBlb3BsZSBkb24ndCBsaWtlIHRoYXQpLgo+IAo+IFdoZW4gcmVzZW5kaW5nIGp1
-c3QgbWFrZSBzdXJlIHlvdSdyZSBwaWNraW5nIHVwIGFsbCB0aGUgYWNrcy9yLWJzIHlvdQo+IGhh
-dmUgYWxyZWFkeS4KClJpZ2h0LCBJIGFsd2F5cyB0cnkgdG8gZG8gdGhhdC4gT25lIEFjayB0aGF0
-IEkgZGlkIG5vdCBpbmNsdWRlIGluIHYyCndhcyB0aGUgb25lIHlvdSBoYWQgb24gdjEgMjQvMjQg
-KGkuZS4gdGhpcyBwYXRjaCkuIFRoZSByZWFzb24gSSBkaWQKbm90IGFkZCB5b3VyIEFjayBmb3Ig
-djIgZXZlbiBvbiB0aGUgcGF0Y2ggd2hlcmUgaXQgb2J2aW91c2x5IGFwcGxpZWQKd2FzIHRoYXQg
-SSBkaWRuJ3Qga25vdyBpZiB5b3UnZCBiYXJmIG9uIHRoZSBvZGV2IG5hbWUuCgpCdXQgaXQgd2Fz
-IChhbmQgc3RpbGwgaXMpIGEgYml0IHVuY2xlYXIgaWYgdGhhdCB3YXMgb24gQWNrIG9uIHRoZQps
-YXN0IHBhdGNoIG9ubHksIG9yIGlmIGl0IHdhcyBmb3IgdGhlIHdob2xlIHNlcmllcz8gSSB0aGlu
-ayBpdCBtaWdodApoYXZlIGJlZW4gZm9yIHRoZSB3aG9sZSBzZXJpZXMsIGJ1dCBJJ20gbm90IHN1
-cmUgYW5kIEkgaGF0ZSB0byBiZSBhCnByZXN1bXB0dW91cyBpZGlvdC4uLgoKQ2hlZXJzLApQZXRl
-cgoKPiAtRGFuaWVsCj4+IENoZWVycywKPj4gUGV0ZXIKPj4KPj4+Cj4+Pj4KPj4+Pj4gQW55d2F5
-Ogo+Pj4+PiBSZXZpZXdlZC1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4K
-Pj4+Pgo+Pj4+IFRoYW5rcyEKPj4+Pgo+Pj4+IENoZWVycywKPj4+PiBQZXRlcgo+Pj4+Cj4+Pj4+
-ICAtLQo+Pj4+PiBSZWdhcmRzCj4+Pj4+IEFuZHJ6ZWoKPj4+Pj4KPj4+Pj4+ICAgKiBAZnVuY3M6
-IGNvbnRyb2wgZnVuY3Rpb25zCj4+Pj4+PiAgICogQGRyaXZlcl9wcml2YXRlOiBwb2ludGVyIHRv
-IHRoZSBicmlkZ2UgZHJpdmVyJ3MgaW50ZXJuYWwgY29udGV4dAo+Pj4+Pj4gICAqLwo+Pj4+Pj4g
-QEAgLTI3MSw2ICsyNzIsNyBAQCBzdHJ1Y3QgZHJtX2JyaWRnZSB7Cj4+Pj4+PiAgICBzdHJ1Y3Qg
-ZHJtX2JyaWRnZSAqbmV4dDsKPj4+Pj4+ICAgIHN0cnVjdCBsaXN0X2hlYWQgbGlzdDsKPj4+Pj4+
-ICAgIGNvbnN0IHN0cnVjdCBkcm1fYnJpZGdlX3RpbWluZ3MgKnRpbWluZ3M7Cj4+Pj4+PiArICBz
-dHJ1Y3QgZGV2aWNlX2xpbmsgKmxpbms7Cj4+Pj4+Pgo+Pj4+Pj4gICAgY29uc3Qgc3RydWN0IGRy
-bV9icmlkZ2VfZnVuY3MgKmZ1bmNzOwo+Pj4+Pj4gICAgdm9pZCAqZHJpdmVyX3ByaXZhdGU7Cj4+
-Pj4+Cj4+Pj4+Cj4+Pj4KPj4+Cj4+Cj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+IAo+IAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5vIG1haWxpbmcgbGlzdApGcmVlZHJlbm9A
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZnJlZWRyZW5vCg==
+Hi,
+
+This small patchset tries to address issue with broken DT extcon property
+in case of USB controller - DWC3. It exposes similar problem as in proposed
+USB connector bindings[1] - extcon device is required by devices not always
+connected directly to extcon device. Here we have:
+DWC3 -> USB-PHY -> MUIC -> USB-connector
+                               ^
+MHL-bridge---------------------^
+
+More details and proposition of generic solution in first patch 
+
+v2:
+- rebased on latest linux-next,
+- since recently dwc3 fallbacks to ID detection using internal OTG block if
+  extcon property is not present, added code allowing to fallback to OTG
+  block also in case of graph is not present
+
+[1]: https://marc.info/?i=20180131134435.12216-1-a.hajda%40samsung.com
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (2):
+  USB: dwc3: get extcon device by OF graph bindings
+  arm64: dts: exynos: add OF graph between USB-PHY and MUIC
+
+ .../dts/exynos/exynos5433-tm2-common.dtsi     | 19 ++++++++++-
+ drivers/usb/dwc3/drd.c                        | 34 +++++++++++++++----
+ 2 files changed, 46 insertions(+), 7 deletions(-)
+
+-- 
+2.17.0
