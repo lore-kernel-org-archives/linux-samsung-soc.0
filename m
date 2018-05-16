@@ -1,37 +1,65 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: [PATCH v3 19/26] drm/exynos: mic: provide an owner .odev device for the bridge
-Date: Wed, 16 May 2018 12:15:03 +0200
-Message-ID: <20180516101510.13215-20-peda@axentia.se>
+From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Subject: [PATCH v3 24/26] drm/bridge: remove the .of_node member
+Date: Wed, 16 May 2018 12:15:08 +0200
+Message-ID: <20180516101510.13215-25-peda@axentia.se>
 References: <20180516101510.13215-1-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180516101510.13215-1-peda@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20180516101510.13215-1-peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Martin Donnelly <martin.donnelly-JJi787mZWgc@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpaul@ch>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The .of_node member is going away.
-
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/gpu/drm/exynos/exynos_drm_mic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index 2174814273e2..f9ff8d3ec937 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -417,8 +417,8 @@ static int exynos_mic_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, mic);
- 
-+	mic->bridge.odev = dev;
- 	mic->bridge.funcs = &mic_bridge_funcs;
--	mic->bridge.of_node = dev->of_node;
- 
- 	drm_bridge_add(&mic->bridge);
- 
--- 
-2.11.0
+SXQgaXMgdW51c2VkLgoKQWNrZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3
+bGwuY2g+ClNpZ25lZC1vZmYtYnk6IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEuc2U+Ci0tLQog
+ZHJpdmVycy9ncHUvZHJtL2RybV9icmlkZ2UuYyAgICAgICAgICAgICB8IDMgKy0tCiBkcml2ZXJz
+L2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfbHZkcy5jIHwgMiAtLQogaW5jbHVkZS9kcm0vZHJt
+X2JyaWRnZS5oICAgICAgICAgICAgICAgICB8IDQgLS0tLQogMyBmaWxlcyBjaGFuZ2VkLCAxIGlu
+c2VydGlvbigrKSwgOCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+ZHJtX2JyaWRnZS5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9icmlkZ2UuYwppbmRleCAzODcyZjUz
+Nzk5OTguLmRmMDg0ZGIzMzQ5NCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9icmlk
+Z2UuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5jCkBAIC0zNjUsOCArMzY1LDcg
+QEAgc3RydWN0IGRybV9icmlkZ2UgKm9mX2RybV9maW5kX2JyaWRnZShzdHJ1Y3QgZGV2aWNlX25v
+ZGUgKm5wKQogCW11dGV4X2xvY2soJmJyaWRnZV9sb2NrKTsKIAogCWxpc3RfZm9yX2VhY2hfZW50
+cnkoYnJpZGdlLCAmYnJpZGdlX2xpc3QsIGxpc3QpIHsKLQkJaWYgKChicmlkZ2UtPm9kZXYgJiYg
+YnJpZGdlLT5vZGV2LT5vZl9ub2RlID09IG5wKSB8fAotCQkgICAgYnJpZGdlLT5vZl9ub2RlID09
+IG5wKSB7CisJCWlmIChicmlkZ2UtPm9kZXYtPm9mX25vZGUgPT0gbnApIHsKIAkJCW11dGV4X3Vu
+bG9jaygmYnJpZGdlX2xvY2spOwogCQkJcmV0dXJuIGJyaWRnZTsKIAkJfQpkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2x2ZHMuYyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9yb2NrY2hpcC9yb2NrY2hpcF9sdmRzLmMKaW5kZXggNTU3ZTAwNzljOThkLi5lNzdkNGM5MDk1
+ODIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9sdmRzLmMK
+KysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2x2ZHMuYwpAQCAtMzc3LDgg
+KzM3Nyw2IEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBfbHZkc19iaW5kKHN0cnVjdCBkZXZpY2UgKmRl
+diwgc3RydWN0IGRldmljZSAqbWFzdGVyLAogCX0KIAlpZiAobHZkcy0+cGFuZWwpCiAJCXJlbW90
+ZSA9IGx2ZHMtPnBhbmVsLT5kZXYtPm9mX25vZGU7Ci0JZWxzZSBpZiAobHZkcy0+YnJpZGdlLT5v
+Zl9ub2RlKQotCQlyZW1vdGUgPSBsdmRzLT5icmlkZ2UtPm9mX25vZGU7CiAJZWxzZQogCQlyZW1v
+dGUgPSBsdmRzLT5icmlkZ2UtPm9kZXYtPm9mX25vZGU7CiAJaWYgKG9mX3Byb3BlcnR5X3JlYWRf
+c3RyaW5nKGRldi0+b2Zfbm9kZSwgInJvY2tjaGlwLG91dHB1dCIsICZuYW1lKSkKZGlmZiAtLWdp
+dCBhL2luY2x1ZGUvZHJtL2RybV9icmlkZ2UuaCBiL2luY2x1ZGUvZHJtL2RybV9icmlkZ2UuaApp
+bmRleCA3YzE3OTc3YzM1MzcuLmI2NTZlNTA1ZDExZSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9kcm0v
+ZHJtX2JyaWRnZS5oCisrKyBiL2luY2x1ZGUvZHJtL2RybV9icmlkZ2UuaApAQCAtMjU4LDcgKzI1
+OCw2IEBAIHN0cnVjdCBkcm1fYnJpZGdlX3RpbWluZ3MgewogICogQGRldjogRFJNIGRldmljZSB0
+aGlzIGJyaWRnZSBiZWxvbmdzIHRvCiAgKiBAZW5jb2RlcjogZW5jb2RlciB0byB3aGljaCB0aGlz
+IGJyaWRnZSBpcyBjb25uZWN0ZWQKICAqIEBuZXh0OiB0aGUgbmV4dCBicmlkZ2UgaW4gdGhlIGVu
+Y29kZXIgY2hhaW4KLSAqIEBvZl9ub2RlOiBkZXZpY2Ugbm9kZSBwb2ludGVyIHRvIHRoZSBicmlk
+Z2UKICAqIEBsaXN0OiB0byBrZWVwIHRyYWNrIG9mIGFsbCBhZGRlZCBicmlkZ2VzCiAgKiBAdGlt
+aW5nczogdGhlIHRpbWluZyBzcGVjaWZpY2F0aW9uIGZvciB0aGUgYnJpZGdlLCBpZiBhbnkgKG1h
+eQogICogYmUgTlVMTCkKQEAgLTI3MCw5ICsyNjksNiBAQCBzdHJ1Y3QgZHJtX2JyaWRnZSB7CiAJ
+c3RydWN0IGRybV9kZXZpY2UgKmRldjsKIAlzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXI7CiAJ
+c3RydWN0IGRybV9icmlkZ2UgKm5leHQ7Ci0jaWZkZWYgQ09ORklHX09GCi0Jc3RydWN0IGRldmlj
+ZV9ub2RlICpvZl9ub2RlOwotI2VuZGlmCiAJc3RydWN0IGxpc3RfaGVhZCBsaXN0OwogCWNvbnN0
+IHN0cnVjdCBkcm1fYnJpZGdlX3RpbWluZ3MgKnRpbWluZ3M7CiAKLS0gCjIuMTEuMAoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5vIG1haWxp
+bmcgbGlzdApGcmVlZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZnJlZWRyZW5vCg==
