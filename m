@@ -1,62 +1,45 @@
-From: Frank Mori Hess <fmh6jj@gmail.com>
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-Date: Thu, 17 May 2018 12:20:07 -0400
-Message-ID: <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
-References: <2484918.HKVQc3yJkt@bear> <53b13d76-16a1-0e0a-09e1-c917e5d49326@samsung.com>
- <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com>
- <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com> <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
- <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com> <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
- <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com> <20180515062144.GC13271@vkoul-mobl>
- <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com> <20180517041946.GQ13271@vkoul-mobl>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] spi: spi-s3c64xx: Fix system resume support
+Date: Fri, 18 May 2018 01:41:02 +0900
+Message-ID: <20180517164102.GT20254@sirena.org.uk>
+References: <CGME20180517102518eucas1p10e55ae3c884f6fe29b37c01eff0fe7a4@eucas1p1.samsung.com>
+ <20180517101508.25867-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180517041946.GQ13271@vkoul-mobl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="skzcsJvRJWOW8YcK"
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180517101508.25867-1-m.szyprowski@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Sorry to keep coming back to this, but I'm experiencing a bit of
-incredulity that you are saying what you seem to be saying.  You seem
-to be saying dmaengine provides no way to permanently stop a transfer
-safely other than transferring the full number of bytes initially
-requested.  So the proper resolution is the 8250 serial driver needs
-to remove rx dma support, because they are just trying to do something
-that is not supported.
 
-On Thu, May 17, 2018 at 12:19 AM, Vinod Koul <vinod.koul@linaro.org> wrote:
->> > Terminate is abort, data loss may happen here.
->>
->> Wait, are you saying if you do
->>
->> dma pause
->
-> no data loss
->> read residue
->
-> here as well
->> dma terminate
->
-> Oh yes, we aborted...
->>
+--skzcsJvRJWOW8YcK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I see two ways of interpreting what you are saying. First, from the
-point of view of the user of the dmaengine api.  From this point of
-view it is impossible for data loss to occur during pause or reading
-the residue, so saying they cause no data loss during
-pause/residue/terminate is meaningless.  This is because the user
-can't confirm any data loss until after they have read the residue and
-the transfer is terminated, since optimistically the data may still be
-available if only the user would resume and allow the transfer to
-continue.
+On Thu, May 17, 2018 at 12:15:08PM +0200, Marek Szyprowski wrote:
 
-Second there is the interpretation I want to believe.  This is "no
-data loss on pause" means that after the pause, no data has been
-discarded by the dma controller hardware, in fact all the data it has
-read before being paused has been fully transferred to its
-destination.  Reading the residue while paused gives you an accurate,
-up-to-date state of the paused transfer.  Then finally, although in
-general dma terminate causes data loss, it does not in this case since
-we terminated while we were paused and read the up-to-date residue.
-This is the interpretation implicit in the 8250 serial driver.
+> Resend reason: added cc: stable, reviewed and acked tags
+
+Please don't resend so quickly for stuff like this, it just makes noise
+- stable doesn't need to be CCed on e-mails.
+
+--skzcsJvRJWOW8YcK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlr9sJ0ACgkQJNaLcl1U
+h9Do5Qf9FqwgOoloVXaMVivjPH/A0KOWak2J69G/2tg2UmJvABtAuSePNDkn22xa
+ZRc9HDhLSugECxR/Rba5gmFmMXis5Fr8HugjAQr94SX+ZdvbxPJE0HjkNZfct4lQ
+tGLYPRLiDnUUuGAikUcwR0Q/KxEaSaiaAjPfLq+qWQkEQB94q8XKukp/4EuB4OpX
+BAGrnYeSon8qc2g7eXnxG5Z3Xk19Os6I8M1yjW05ZoT9Ykcwh3077tQpa5c5Fo4n
+QNxGPm0B+Vbaw22fCFJrkbZ8st77tEDVDrOG7ZXqbmYu4AxbOFu0naiUsN9V0GvM
+yRTP64ljzST/5ASpoDk+1sxyGSnZJw==
+=kAlR
+-----END PGP SIGNATURE-----
+
+--skzcsJvRJWOW8YcK--
