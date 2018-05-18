@@ -1,55 +1,65 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] spi: spi-s3c64xx: Fix system resume support
-Date: Fri, 18 May 2018 09:34:11 +0100
-Message-ID: <20180518083411.GB24209@sirena.org.uk>
-References: <CGME20180517102518eucas1p10e55ae3c884f6fe29b37c01eff0fe7a4@eucas1p1.samsung.com>
- <20180517101508.25867-1-m.szyprowski@samsung.com>
- <20180517164102.GT20254@sirena.org.uk>
- <CAJKOXPegbcXzy7QYpt09pXKcHaLji0Xyy+nmYz+wj+_awqAG4A@mail.gmail.com>
+From: Frank Mori Hess <fmh6jj@gmail.com>
+Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
+Date: Fri, 18 May 2018 14:56:39 -0400
+Message-ID: <CAJz5OpfSanwNS7Z=3FapR97XZzjWF_J23HqVouxVnPn2HwkKLw@mail.gmail.com>
+References: <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com>
+ <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com> <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
+ <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com> <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
+ <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com> <20180515062144.GC13271@vkoul-mobl>
+ <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
+ <20180517041946.GQ13271@vkoul-mobl> <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
+ <20180518040349.GB2932@vkoul-mobl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPegbcXzy7QYpt09pXKcHaLji0Xyy+nmYz+wj+_awqAG4A@mail.gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-spi@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Andi Shyti <andi@etezian.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180518040349.GB2932@vkoul-mobl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vinod <vkoul@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Fri, May 18, 2018 at 12:03 AM, Vinod <vkoul@kernel.org> wrote:
+>
+> You are simply mixing things up!
 
---hHWLQfXTYDoKhP50
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It certainly feels like I'm mixed up.  If I have to resolve this, I'd
+like to be a little less mixed up before I submit more patches which
+are going to inevitably result in subtly broken code suddenly becoming
+prominently and unignorably broken code.  Unfortunately I get the
+impression I'm exhausting your patience to answer my questions, and
+I've failed to fully communicate what the question is.
 
-On Fri, May 18, 2018 at 07:33:03AM +0200, Krzysztof Kozlowski wrote:
 
-> The point of resend was to add the specific cc-stable tags with a
-> prerequisite for backporting:
->     CC: <stable@vger.kernel.org> # 4.10.x: 1c75862d8e5a spi:
-> spi-s3c64xx: Remove unused s3c64xx_spi_hwinit()
->     CC: <stable@vger.kernel.org> # 4.10.x
+> On Pause we don't expect data loss, as user can
+> resume the transfer. This means as you rightly guessed, the DMA HW should not drop
+> any data, nor should SW.
+>
+> Now if you want to read residue at this point it is perfectly valid. But if you
+> decide to terminate the channel (yes it is terminate_all API), we abort and don't
+> have context to report back!
 
-> Unfortunately I saw that these did not end up in patch you committed.
-> Mentioning required commit is, I think, quite helpful for stable guys.
+I understand the residue can't be read after terminate, that's why
+reading the residue is step 2 in pause/residue/terminate.  My question
+was whether the entire sequence pause/residue/terminate taken as a
+whole can or cannot lose data.  Saying that individual steps can or
+can't lose data is not enough, context is required.  The key point is
+whether pause flushes in-flight data to its destination or not.  If it
+does, and our residue is accurate, the terminate cannot cause data
+loss.  If pause doesn't flush, an additional step of flush_sync as
+Lars suggested is required.  So pause/flush_sync/residue/terminate
+would be the safe sequence that cannot lose data.
 
-If you want to mention the commit being fixed then use a Fixes: tag.  I
-was complaining because I'd already applied the commit before that got
-resent so I had to try to figure out what was going on with it.
 
---hHWLQfXTYDoKhP50
-Content-Type: application/pgp-signature; name="signature.asc"
+> As Lars rightly pointed out, residue calculation are very tricky, DMA fifo may
+> have data, some data may be in device FIFO, so residue is always from DMA point
+> of view and may differ from device view (more or less depending upon direction)
+>
+> Now if you require to add more features for your usecase, please do feel free to
+> send a patch. The framework can always be improved, we haven't solved world
+> hunger yet!
 
------BEGIN PGP SIGNATURE-----
+World hunger?  I don't see how asking questions about a dma engine's
+data integrity guarantees is either unreasonable or out of scope.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlr+kAIACgkQJNaLcl1U
-h9D/fwf+MUZi/FPGYEwovQWGxYt5EiE2yl15583FjuWsiT8ZPNn+PgyeCA+aUuss
-JQrW6llC5B4GX4nz1Ac67lkzmoGkdz5nohRO0cmgwPmKCjTPzC/K0ejRUnrpY98u
-2qDvHACQmH3MlYkpWCXOcH7gJfHRMlFcrSGaZZHpqn9SXkQZYVHb0MrriDoo2Dnj
-Tco4BYphkWFUwODEEUYiixQOS0T2sALzAG6q1oNgZvHrSOfLuaP8vYFoXYYXO8HI
-yH73FOIwUx/nCcLkiEMyfy9YW3l6OBaEPZ+jB2y33vlGJGzp/9QTFjhUywkXx7iY
-iMGbgEjwohUThKzLFMf4S74Y4cH1rA==
-=u4A0
------END PGP SIGNATURE-----
-
---hHWLQfXTYDoKhP50--
+-- 
+Frank
