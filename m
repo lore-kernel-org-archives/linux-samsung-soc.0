@@ -1,44 +1,37 @@
-From: Vinod <vkoul@kernel.org>
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-Date: Fri, 18 May 2018 12:51:12 +0530
-Message-ID: <20180518072112.GG2932@vkoul-mobl>
-References: <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com>
- <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
- <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com>
- <20180515062144.GC13271@vkoul-mobl>
- <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
- <20180517041946.GQ13271@vkoul-mobl>
- <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
- <CGME20180518040358epcas2p353b0096d33116ca78a03b16d24569813@epcas2p3.samsung.com>
- <20180518040349.GB2932@vkoul-mobl>
- <7f0b7404-ee12-977f-02a4-a463d1873aee@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] drm/exynos: fimc: signedness bug in fimc_setup_clocks()
+Date: Fri, 18 May 2018 01:04:45 -0700 (PDT)
+Message-ID: <20180518080445.GB28335@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7f0b7404-ee12-977f-02a4-a463d1873aee@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Frank Mori Hess <fmh6jj@gmail.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 18-05-18, 08:28, Marek Szyprowski wrote:
-> Hi Vinod,
-> 
-> Okay, I see that in theory, there are some tricky bits in implementing DMA
-> support in UART drivers. On the other hand there are already drivers 
-> with seems
-> to be working fine. This discussion is about revert of the feature 
-> present in
-> pl330 driver, which is required by other in-kernel driver without proper 
-> fix to
-> them.
-> 
-> Can we drop it for now and discuss what and how should be implemented to 
-> make
-> everyone happy, without any regressions?
-
-Sure am dropping the revert, we can always bring it back if it is required
-
--- 
-~Vinod
+ImlkIiBuZWVkcyB0byBiZSBzaWduZWQgZm9yIHRoZSBlcnJvciBoYW5kbGluZyB0byB3b3JrLgoK
+Rml4ZXM6IDdhMmQ1Yzc3YzU1OCAoImRybS9leHlub3M6IGZpbWM6IENvbnZlcnQgZHJpdmVyIHRv
+IElQUCB2MiBjb3JlIEFQSSIpClNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJw
+ZW50ZXJAb3JhY2xlLmNvbT4KCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZmltYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMu
+YwppbmRleCA0ZGZiZmM3ZjNiODQuLjVjZTg0MDI1ZDFjYiAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZmltYy5jCkBAIC0xMjAwLDcgKzEyMDAsNyBAQCBzdGF0aWMgaW50IGZp
+bWNfc2V0dXBfY2xvY2tzKHN0cnVjdCBmaW1jX2NvbnRleHQgKmN0eCkKIAogaW50IGV4eW5vc19k
+cm1fY2hlY2tfZmltY19kZXZpY2Uoc3RydWN0IGRldmljZSAqZGV2KQogewotCXVuc2lnbmVkIGlu
+dCBpZCA9IG9mX2FsaWFzX2dldF9pZChkZXYtPm9mX25vZGUsICJmaW1jIik7CisJaW50IGlkID0g
+b2ZfYWxpYXNfZ2V0X2lkKGRldi0+b2Zfbm9kZSwgImZpbWMiKTsKIAogCWlmIChpZCA+PSAwICYm
+IChCSVQoaWQpICYgZmltY19tYXNrKSkKIAkJcmV0dXJuIDA7Cl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
