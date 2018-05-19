@@ -1,57 +1,61 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: Stuff for v4.18
-Date: Sat, 19 May 2018 17:55:47 +0200
-Message-ID: <20180519155547.6678-1-krzk@kernel.org>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v3 01/26] drm/bridge: allow optionally specifying an owner
+ .odev device
+Date: Sat, 19 May 2018 18:07:33 +0200
+Message-ID: <21812146.Dm3JJO5T5a@phil>
+References: <20180516101510.13215-1-peda@axentia.se>
+ <20180516101510.13215-2-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180516101510.13215-2-peda@axentia.se>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: Martyn Welch <martyn.welch@collabora.co.uk>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Martin Donnelly <martin.donnelly@ge.com>, linux-arm-msm@vger.kernel.org, Jyri Sarha <jsarha@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>, Vincent Abriou <vincent.abriou@st.com>, linux-arm-kernel@lists.infradead.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Linus,
-
-Few patches for next cycle.
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.18
-
-for you to fetch changes up to 0ca0557e3727951bdc44ea47bc6135b37f90338c:
-
-  pinctrl: samsung: Remove support for Exynos5440 (2018-05-02 19:08:55 +0200)
-
-----------------------------------------------------------------
-Samsung pinctrl drivers changes for v4.18
-
-1. Driver expects specific order of GPIO interrupt banks.  For S5Pv220
-   and Exynos5410 this order was not preserved so fix and document it.
-2. Remove support for Exynos5440 (tree-wide, support is dropped because
-   there are no real users of this platform, it also did not get testing
-   since long time).
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      pinctrl: samsung: Remove support for Exynos5440
-
-Paweł Chmiel (2):
-      pinctrl: samsung: Correct EINTG banks order
-      pinctrl: samsung: Document required order of banks
-
- drivers/pinctrl/samsung/Kconfig                |   10 +-
- drivers/pinctrl/samsung/Makefile               |    1 -
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |   30 +-
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |   20 +
- drivers/pinctrl/samsung/pinctrl-exynos5440.c   | 1005 ------------------------
- 5 files changed, 50 insertions(+), 1016 deletions(-)
- delete mode 100644 drivers/pinctrl/samsung/pinctrl-exynos5440.c
+SGkgUGV0ZXIsCgpBbSBNaXR0d29jaCwgMTYuIE1haSAyMDE4LCAxMjoxNDo0NSBDRVNUIHNjaHJp
+ZWIgUGV0ZXIgUm9zaW46Cj4gQnJpZGdlIGRyaXZlcnMgY2FuIG5vdyAodGVtcG9yYXJpbHksIGlu
+IGEgdHJhbnNpdGlvbiBwaGFzZSkgc2VsZWN0IGlmCj4gdGhleSB3YW50IHRvIHByb3ZpZGUgYSBm
+dWxsIG93bmVyIGRldmljZSBvciBrZWVwIGp1c3QgcHJvdmlkaW5nIGFuCj4gb2Zfbm9kZS4KPiAK
+PiBCeSBwcm92aWRpbmcgYSBmdWxsIG93bmVyIGRldmljZSwgdGhlIGJyaWRnZSBkcml2ZXJzIG5v
+IGxvbmdlciBuZWVkCj4gdG8gcHJvdmlkZSBhbiBvZl9ub2RlIHNpbmNlIHRoYXQgbm9kZSBpcyBh
+dmFpbGFibGUgdmlhIHRoZSBvd25lcgo+IGRldmljZS4KPiAKPiBXaGVuIGFsbCBicmlkZ2UgZHJp
+dmVycyBwcm92aWRlIGFuIG93bmVyIGRldmljZSwgdGhhdCB3aWxsIGJlY29tZQo+IG1hbmRhdG9y
+eSBhbmQgdGhlIC5vZl9ub2RlIG1lbWJlciB3aWxsIGJlIHJlbW92ZWQuCj4gCj4gVGhlcmUgaXMg
+YW4gaW50ZXJhY3Rpb24gd2l0aCB0aGUgcm9ja2NoaXAgbHZkcyBkcml2ZXIsIHNpbmNlIHRoYXQK
+PiBkcml2ZXIgcGVla3MgaW50byBzb21ld2hhdCBwcml2YXRlIHBhcnRzIG9mIHRoZSBicmlkZ2Ug
+c3RydWN0IGluCj4gb3JkZXIgdG8gZmluZCBvdXQgdGhpbmdzIGFib3V0IHRoZSByZW1vdGUgYnJp
+ZGdlLiBXaGVuIHRoZXJlIGFyZQo+IG5vdyB0d28gd2F5cyB0byBnZXQgdG8gdGhlIHJlbW90ZSBi
+cmlkZ2UsIHRoZSByb2NrY2hpcCBsdmRzIGRyaXZlcgo+IGhhcyB0byBhZGFwdC4gVGhhdCBzYWlk
+LCB0aGUgY29ycmVjdCB0aGluZyB0byBkbyBmb3IgdGhlIHJvY2tjaGlwCj4gbHZkcyBkcml2ZXIg
+aXMgdG8gdXNlIHNvbWUgb3RoZXIgd2F5IHRoYW4gRFQgdG8gZmluZCB0aGluZ3Mgb3V0Cj4gYWJv
+dXQgdGhlIHJlbW90ZSBicmlkZ2UsIGJ1dCB0aGF0IGlzIG9ydGhvZ29uYWwgdG8gdGhpcyBwYXRj
+aC4KPiAKPiBSZXZpZXdlZC1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4K
+PiBBY2tlZC1ieTogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBmZndsbC5jaD4KPiBTaWdu
+ZWQtb2ZmLWJ5OiBQZXRlciBSb3NpbiA8cGVkYUBheGVudGlhLnNlPgoKPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2x2ZHMuYyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9yb2NrY2hpcC9yb2NrY2hpcF9sdmRzLmMKPiBpbmRleCA0YmQ5NGIxNjdkMmMuLjU1N2UwMDc5
+Yzk4ZCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfbHZk
+cy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2x2ZHMuYwo+IEBA
+IC0zNzcsOCArMzc3LDEwIEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBfbHZkc19iaW5kKHN0cnVjdCBk
+ZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAo+ICAJfQo+ICAJaWYgKGx2ZHMtPnBh
+bmVsKQo+ICAJCXJlbW90ZSA9IGx2ZHMtPnBhbmVsLT5kZXYtPm9mX25vZGU7Cj4gLQllbHNlCj4g
+KwllbHNlIGlmIChsdmRzLT5icmlkZ2UtPm9mX25vZGUpCj4gIAkJcmVtb3RlID0gbHZkcy0+YnJp
+ZGdlLT5vZl9ub2RlOwo+ICsJZWxzZQo+ICsJCXJlbW90ZSA9IGx2ZHMtPmJyaWRnZS0+b2Rldi0+
+b2Zfbm9kZTsKPiAgCWlmIChvZl9wcm9wZXJ0eV9yZWFkX3N0cmluZyhkZXYtPm9mX25vZGUsICJy
+b2NrY2hpcCxvdXRwdXQiLCAmbmFtZSkpCj4gIAkJLyogZGVmYXVsdCBzZXQgaXQgYXMgb3V0cHV0
+IHJnYiAqLwo+ICAJCWx2ZHMtPm91dHB1dCA9IERJU1BMQVlfT1VUUFVUX1JHQjsKCmZvciB0aGUg
+Um9ja2NoaXAtcGFydApBY2tlZC1ieTogSGVpa28gU3R1ZWJuZXIgPGhlaWtvQHNudGVjaC5kZT4K
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
