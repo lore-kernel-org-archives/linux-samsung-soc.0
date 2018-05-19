@@ -1,37 +1,57 @@
-From: Frank Mori Hess <fmh6jj@gmail.com>
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-Date: Fri, 18 May 2018 15:01:41 -0400
-Message-ID: <CAJz5OpcnK22PqaRNERL79kQ6y8ffmpkUSTbcq8HLaexNZfwxdQ@mail.gmail.com>
-References: <2484918.HKVQc3yJkt@bear> <53b13d76-16a1-0e0a-09e1-c917e5d49326@samsung.com>
- <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com>
- <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com> <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
- <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com> <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
- <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com> <20180515062144.GC13271@vkoul-mobl>
- <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
- <20180517041946.GQ13271@vkoul-mobl> <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
- <b232b906-9359-bea1-447f-2c1341cc19d5@metafoo.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] pinctrl: samsung: Stuff for v4.18
+Date: Sat, 19 May 2018 17:55:47 +0200
+Message-ID: <20180519155547.6678-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b232b906-9359-bea1-447f-2c1341cc19d5@metafoo.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Vinod Koul <vinod.koul@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 17, 2018 at 1:22 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
-> On 05/17/2018 06:20 PM, Frank Mori Hess wrote:
-> The problem is not so much on the software side but even more so on the
-> hardware side. Not all hardware even supports aborting a transfer with no
-> data loss because there is no precise measurement of how much data has been
-> transferred. The residue that is reported is always the lower bound, this
-> much has been transferred but it might actually have been more.
+Hi Linus,
 
-I'd just like to point out, if the pl330 driver actually did report a
-upper bound on the residue (lower bound on bytes transferred) that
-would also blow up Marek's samsung serial driver use case.  Instead of
-being in a situation where data loss might occur rarely due to a race
-condition, they would be in a situation where data loss occurs every
-time they stop a transfer.  Not that such a residue reporting would be
-incorrect though, the pl330 driver doesn't even advertise burst level
-granularity with its residue reporting.
+Few patches for next cycle.
+
+Best regards,
+Krzysztof
+
+
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.18
+
+for you to fetch changes up to 0ca0557e3727951bdc44ea47bc6135b37f90338c:
+
+  pinctrl: samsung: Remove support for Exynos5440 (2018-05-02 19:08:55 +0200)
+
+----------------------------------------------------------------
+Samsung pinctrl drivers changes for v4.18
+
+1. Driver expects specific order of GPIO interrupt banks.  For S5Pv220
+   and Exynos5410 this order was not preserved so fix and document it.
+2. Remove support for Exynos5440 (tree-wide, support is dropped because
+   there are no real users of this platform, it also did not get testing
+   since long time).
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      pinctrl: samsung: Remove support for Exynos5440
+
+Paweł Chmiel (2):
+      pinctrl: samsung: Correct EINTG banks order
+      pinctrl: samsung: Document required order of banks
+
+ drivers/pinctrl/samsung/Kconfig                |   10 +-
+ drivers/pinctrl/samsung/Makefile               |    1 -
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |   30 +-
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |   20 +
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c   | 1005 ------------------------
+ 5 files changed, 50 insertions(+), 1016 deletions(-)
+ delete mode 100644 drivers/pinctrl/samsung/pinctrl-exynos5440.c
