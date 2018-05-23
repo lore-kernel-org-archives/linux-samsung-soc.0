@@ -1,42 +1,47 @@
-From: Frank Mori Hess <fmh6jj@gmail.com>
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-Date: Tue, 22 May 2018 10:27:18 -0400
-Message-ID: <CAJz5OpckWsRwBK5ZtrF11QG_C-W+qBJDroEWXN0de5Cc0XA=1Q@mail.gmail.com>
-References: <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
- <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com> <20180515062144.GC13271@vkoul-mobl>
- <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
- <20180517041946.GQ13271@vkoul-mobl> <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
- <20180518040349.GB2932@vkoul-mobl> <CAJz5OpfSanwNS7Z=3FapR97XZzjWF_J23HqVouxVnPn2HwkKLw@mail.gmail.com>
- <20180521091626.GB14654@vkoul-mobl> <CAJz5OpdW7ZgX_K-+6H_mkHhzRf1_km8Usf306_HrnD7qCztdpw@mail.gmail.com>
- <20180522033751.GB18351@vkoul-mobl>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fimc: signedness bug in fimc_setup_clocks()
+Date: Wed, 23 May 2018 09:33:18 +0900
+Message-ID: <5B04B6CE.2010004@samsung.com>
+References: <CGME20180518080527epcas1p293dfaa13795c92f9239e8c9bd95af9ad@epcas1p2.samsung.com>
+ <20180518080445.GB28335@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180522033751.GB18351@vkoul-mobl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180518080445.GB28335@mwanda>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 21, 2018 at 11:37 PM, Vinod Koul <vinod.koul@linaro.org> wrote:
->
-> Well looks like even adding support for sync_pause doesn't solve your issue on
-> pl330. Do you want to move this to PIO mode then..?
->
-
-I'm not sure what you think my issue is with the pl330, are you
-confusing me with Marek?  My position is that pause is unsupported by
-the pl330 at the hardware level.  Nothing the pl330.c driver or
-dmaengine api or 8250 serial driver does will change that.  That is
-why I sent a patch to remove pause support from pl330.c.  The rest is
-just trying to fix some bugs in mainline Linux I hit when I was a
-naive youngster who thought Linux support for the computer world's
-canonical serial uart could be counted on to move data from point A to
-point B.  In truth though, I've already concluded it's not worth it to
-slog though the linux kernel development process just to clean up
-other people's messes.  I've already fixed my issues out-of-tree.  I
-don't mind answering questions if anyone else cares about the issue
-though.  Other than that, I think I'll just be ghosting out now.
-
--- 
-Frank
+CgoyMDE464WEIDA17JuUIDE47J28IDE3OjA07JeQIERhbiBDYXJwZW50ZXIg7J20KOqwgCkg7JO0
+IOq4gDoKPiAiaWQiIG5lZWRzIHRvIGJlIHNpZ25lZCBmb3IgdGhlIGVycm9yIGhhbmRsaW5nIHRv
+IHdvcmsuCgpBcHBsaWVkIHRvIGV4eW5vcy1kcm0tZml4ZXMtdjQuMTgtcmMxLgoKVGhhbmtzLApJ
+bmtpIERhZQoKPiAKPiBGaXhlczogN2EyZDVjNzdjNTU4ICgiZHJtL2V4eW5vczogZmltYzogQ29u
+dmVydCBkcml2ZXIgdG8gSVBQIHYyIGNvcmUgQVBJIikKPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2Fy
+cGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZmltYy5jCj4gaW5kZXggNGRmYmZjN2YzYjg0Li41Y2U4NDAyNWQxY2Ig
+MTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYwo+
+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMKPiBAQCAtMTIw
+MCw3ICsxMjAwLDcgQEAgc3RhdGljIGludCBmaW1jX3NldHVwX2Nsb2NrcyhzdHJ1Y3QgZmltY19j
+b250ZXh0ICpjdHgpCj4gIAo+ICBpbnQgZXh5bm9zX2RybV9jaGVja19maW1jX2RldmljZShzdHJ1
+Y3QgZGV2aWNlICpkZXYpCj4gIHsKPiAtCXVuc2lnbmVkIGludCBpZCA9IG9mX2FsaWFzX2dldF9p
+ZChkZXYtPm9mX25vZGUsICJmaW1jIik7Cj4gKwlpbnQgaWQgPSBvZl9hbGlhc19nZXRfaWQoZGV2
+LT5vZl9ub2RlLCAiZmltYyIpOwo+ICAKPiAgCWlmIChpZCA+PSAwICYmIChCSVQoaWQpICYgZmlt
+Y19tYXNrKSkKPiAgCQlyZXR1cm4gMDsKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBs
+aXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0
+aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUg
+bWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8u
+aHRtbAo+IAo+IAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
