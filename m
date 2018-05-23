@@ -1,47 +1,54 @@
-From: Vinod <vkoul@kernel.org>
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-Date: Wed, 23 May 2018 11:09:43 +0530
-Message-ID: <20180523053943.GB20991@vkoul-mobl>
-References: <20180515062144.GC13271@vkoul-mobl>
- <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
- <20180517041946.GQ13271@vkoul-mobl>
- <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
- <20180518040349.GB2932@vkoul-mobl>
- <CAJz5OpfSanwNS7Z=3FapR97XZzjWF_J23HqVouxVnPn2HwkKLw@mail.gmail.com>
- <20180521091626.GB14654@vkoul-mobl>
- <CAJz5OpdW7ZgX_K-+6H_mkHhzRf1_km8Usf306_HrnD7qCztdpw@mail.gmail.com>
- <20180522033751.GB18351@vkoul-mobl>
- <CAJz5OpckWsRwBK5ZtrF11QG_C-W+qBJDroEWXN0de5Cc0XA=1Q@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: Fix default value for zpos plane property
+Date: Wed, 23 May 2018 12:15:50 +0200
+Message-ID: <20180523101550.1448-1-m.szyprowski@samsung.com>
+References: <CGME20180523101605eucas1p1674542a34da0a42bc319299262d5d596@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJz5OpckWsRwBK5ZtrF11QG_C-W+qBJDroEWXN0de5Cc0XA=1Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Frank Mori Hess <fmh6jj@gmail.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 22-05-18, 10:27, Frank Mori Hess wrote:
-> On Mon, May 21, 2018 at 11:37 PM, Vinod Koul <vinod.koul@linaro.org> wrote:
-> >
-> > Well looks like even adding support for sync_pause doesn't solve your issue on
-> > pl330. Do you want to move this to PIO mode then..?
-
-The issue for which you requested the revert of pl330 pause
-
-> I'm not sure what you think my issue is with the pl330, are you
-> confusing me with Marek?  My position is that pause is unsupported by
-> the pl330 at the hardware level.  Nothing the pl330.c driver or
-> dmaengine api or 8250 serial driver does will change that.  That is
-> why I sent a patch to remove pause support from pl330.c.  The rest is
-> just trying to fix some bugs in mainline Linux I hit when I was a
-> naive youngster who thought Linux support for the computer world's
-> canonical serial uart could be counted on to move data from point A to
-> point B.  In truth though, I've already concluded it's not worth it to
-> slog though the linux kernel development process just to clean up
-> other people's messes.  I've already fixed my issues out-of-tree.  I
-> don't mind answering questions if anyone else cares about the issue
-> though.  Other than that, I think I'll just be ghosting out now.
-
-~Vinod
+VGhlIGRlZmF1bHQgenBvcyBwcm9wZXJ0eSBmb3IgYWxsIHBsYW5lcyBpbiBFeHlub3MgRFJNIHdh
+cyBmaXhlZCBhcyB6ZXJvLgpGaXggdGhpcyBieSBwcm92aWRpbmcgcHJvcGVyIHZhbHVlIHByb3Zp
+ZGVkIGJ5IGhhcmR3YXJlIGRyaXZlcnMsIHdoaWNoCnR5cGljYWxseSBtYXRjaGVzIGhhcmR3YXJl
+IHdpbmRvdyBudW1iZXIuCgpSZXBvcnRlZC1ieTogU2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBz
+YW1zdW5nLmNvbT4KRml4ZXM6IGU0NzcyNmExMWUxMSAoImRybS9leHlub3M6IHVzZSBnZW5lcmlj
+IGNvZGUgZm9yIG1hbmFnaW5nIHpwb3MgcGxhbmUgcHJvcGVydHkiKQpTaWduZWQtb2ZmLWJ5OiBN
+YXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCA5ICsrKystLS0tLQogMSBmaWxlIGNo
+YW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCmluZGV4IGQyYTkwZGFlNWM3MS4uMzhhMmE3ZjEyMDRi
+IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwor
+KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMjg5LDEz
+ICsyODksMTIgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fcGxhbmVfaGVscGVyX2Z1bmNzIHBs
+YW5lX2hlbHBlcl9mdW5jcyA9IHsKIH07CiAKIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9hdHRh
+Y2hfenBvc19wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKLQkJCQkJICAgICAgYm9v
+bCBpbW11dGFibGUpCisJCQkJCSAgICAgIGludCB6cG9zLCBib29sIGltbXV0YWJsZSkKIHsKLQkv
+KiBGSVhNRSAqLwogCWlmIChpbW11dGFibGUpCi0JCWRybV9wbGFuZV9jcmVhdGVfenBvc19pbW11
+dGFibGVfcHJvcGVydHkocGxhbmUsIDApOworCQlkcm1fcGxhbmVfY3JlYXRlX3pwb3NfaW1tdXRh
+YmxlX3Byb3BlcnR5KHBsYW5lLCB6cG9zKTsKIAllbHNlCi0JCWRybV9wbGFuZV9jcmVhdGVfenBv
+c19wcm9wZXJ0eShwbGFuZSwgMCwgMCwgTUFYX1BMQU5FIC0gMSk7CisJCWRybV9wbGFuZV9jcmVh
+dGVfenBvc19wcm9wZXJ0eShwbGFuZSwgenBvcywgMCwgTUFYX1BMQU5FIC0gMSk7CiB9CiAKIGlu
+dCBleHlub3NfcGxhbmVfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LApAQCAtMzIwLDcgKzMx
+OSw3IEBAIGludCBleHlub3NfcGxhbmVfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCWV4
+eW5vc19wbGFuZS0+aW5kZXggPSBpbmRleDsKIAlleHlub3NfcGxhbmUtPmNvbmZpZyA9IGNvbmZp
+ZzsKIAotCWV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eSgmZXh5bm9zX3BsYW5lLT5i
+YXNlLAorCWV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eSgmZXh5bm9zX3BsYW5lLT5i
+YXNlLCBjb25maWctPnpwb3MsCiAJCQkgICAhKGNvbmZpZy0+Y2FwYWJpbGl0aWVzICYgRVhZTk9T
+X0RSTV9QTEFORV9DQVBfWlBPUykpOwogCiAJcmV0dXJuIDA7Ci0tIAoyLjE3LjAKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
