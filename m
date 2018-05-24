@@ -1,16 +1,13 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2] drm/bridge: sil_sii8620: do not have a dependency of
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH v2] drm/bridge: sil_sii8620: do not have a dependency of
  RC_CORE
-Date: Thu, 24 May 2018 12:32:02 +0200
-Message-ID: <72b3baf5-16a9-acc7-ac72-d2cce09ddb88@samsung.com>
+Date: Thu, 24 May 2018 18:32:59 +0900
+Message-ID: <1527154379-31886-1-git-send-email-inki.dae@samsung.com>
 References: <CGME20180524093300epcas2p1730f70b281babcefa171b11fe3d6661d@epcas2p1.samsung.com>
- <1527154379-31886-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1527154379-31886-1-git-send-email-inki.dae@samsung.com>
-Content-Language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -20,20 +17,28 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+To: dri-devel@lists.freedesktop.org
 Cc: m.purski@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjQuMDUuMjAxOCAxMTozMiwgSW5raSBEYWUgd3JvdGU6Cj4gVGhpcyBwYXRjaCBtYWtlcyBS
-Q19DT1JFIHRvIGJlIHNlbGVjdGVkIHdpdGggdGhpcyBkcml2ZXIuCj4KPiBzaWxfc2lpODYyMCBk
-cml2ZXIgY2FsbHMgcmVtb3RlIGNvbnRyb2xsZXIgaW50ZXJmYWNlcyBkaXJlY3RseQo+IHNvIFJD
-X0NPUkUgc2hvdWxkIGJlIGVuYWJsZWQgbWFuZGF0b3JpbHkuCj4KPiBBbmQgc29tZSBib2FyZHMg
-bm90IHVzaW5nIHJlbW90ZSBjb250cm9sbGVyIGRldmljZSBkb24ndCByZWFsbHkKPiBuZWVkIHRv
-IGtub3cgdGhhdCBSQ19DT1JFIGNvbmZpZyBzaG91bGQgYmUgZW5hYmxlZCB0byB1c2Ugc2lsX3Np
-aTg2MjAKPiBkcml2ZXIgb25seSBmb3IgSERNSS4KPgo+IENoYW5nZWxvZyB2MjoKPiAtIHNlbGVj
-dCBJTlBVVCBiZWNhdXNlIGNvbXBpbGluZyB3aWxsIGZhaWwgd2l0aG91dCBJTlBVVC4KPgo+IFNp
-Z25lZC1vZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KClJldmlld2VkLWJ5
-OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgoKwqAtLQpSZWdhcmRzCkFuZHJ6
-ZWoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+VGhpcyBwYXRjaCBtYWtlcyBSQ19DT1JFIHRvIGJlIHNlbGVjdGVkIHdpdGggdGhpcyBkcml2ZXIu
+CgpzaWxfc2lpODYyMCBkcml2ZXIgY2FsbHMgcmVtb3RlIGNvbnRyb2xsZXIgaW50ZXJmYWNlcyBk
+aXJlY3RseQpzbyBSQ19DT1JFIHNob3VsZCBiZSBlbmFibGVkIG1hbmRhdG9yaWx5LgoKQW5kIHNv
+bWUgYm9hcmRzIG5vdCB1c2luZyByZW1vdGUgY29udHJvbGxlciBkZXZpY2UgZG9uJ3QgcmVhbGx5
+Cm5lZWQgdG8ga25vdyB0aGF0IFJDX0NPUkUgY29uZmlnIHNob3VsZCBiZSBlbmFibGVkIHRvIHVz
+ZSBzaWxfc2lpODYyMApkcml2ZXIgb25seSBmb3IgSERNSS4KCkNoYW5nZWxvZyB2MjoKLSBzZWxl
+Y3QgSU5QVVQgYmVjYXVzZSBjb21waWxpbmcgd2lsbCBmYWlsIHdpdGhvdXQgSU5QVVQuCgpTaWdu
+ZWQtb2ZmLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9LY29uZmlnIHwgNCArKystCiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRp
+b25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRn
+ZS9LY29uZmlnIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9LY29uZmlnCmluZGV4IDNhYTY1YmQu
+LjNjNTU4ZWUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvS2NvbmZpZworKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tjb25maWcKQEAgLTcyLDggKzcyLDEwIEBAIGNvbmZp
+ZyBEUk1fUEFSQURFX1BTODYyMgogCiBjb25maWcgRFJNX1NJTF9TSUk4NjIwCiAJdHJpc3RhdGUg
+IlNpbGljb24gSW1hZ2UgU0lJODYyMCBIRE1JL01ITCBicmlkZ2UiCi0JZGVwZW5kcyBvbiBPRiAm
+JiBSQ19DT1JFCisJZGVwZW5kcyBvbiBPRgogCXNlbGVjdCBEUk1fS01TX0hFTFBFUgorCXNlbGVj
+dCBJTlBVVAorCXNlbGVjdCBSQ19DT1JFCiAJaGVscAogCSAgU2lsaWNvbiBJbWFnZSBTSUk4NjIw
+IEhETUkvTUhMIGJyaWRnZSBjaGlwIGRyaXZlci4KIAotLSAKMS45LjEKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
