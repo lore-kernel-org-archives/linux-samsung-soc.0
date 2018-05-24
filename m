@@ -1,28 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] pinctrl: samsung: Stuff for v4.18 (second version)
-Date: Thu, 24 May 2018 09:07:22 +0200
-Message-ID: <CACRpkdZ_ZwVdxr-ge1JuN4=7--daXMjR595nR=qCMNsfsEnV_A@mail.gmail.com>
-References: <20180523192704.25370-1-krzk@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] drm/bridge: sil_sii8620: do not have a dependency of RC_CORE
+Date: Thu, 24 May 2018 16:07:14 +0900
+Message-ID: <1527145634-13812-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20180524070715epcas1p4615ac319be293fd3b456446434f629ed@epcas1p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180523192704.25370-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: m.purski@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, May 23, 2018 at 9:27 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
-> This is updated pull request with one additional patch from Marek.
-> I saw you did not pull my previous pull request for v4.18 so I hope
-> this update should not be a problem.
-
-Thanks Krzysztof, pulled this into "devel" for v4.18.
-
-Sorry for not pulling earlier, was a bit behind on emails.
-
-Thanks for helping out stacking up Samsung patches!
-
-Yours,
-Linus Walleij
+VGhpcyBwYXRjaCBtYWtlcyBSQ19DT1JFIHRvIGJlIHNlbGVjdGVkIHdpdGggdGhpcyBkcml2ZXIu
+CgpzaWxfc2lpODYyMCBkcml2ZXIgY2FsbHMgcmVtb3RlIGNvbnRyb2xsZXIgaW50ZXJmYWNlcyBk
+aXJlY3RseQpzbyBSQ19DT1JFIHNob3VsZCBiZSBlbmFibGVkIG1hbmRhdG9yaWx5LgoKQW5kIHNv
+bWUgYm9hcmRzIG5vdCB1c2luZyByZW1vdGUgY29udHJvbGxlciBkZXZpY2UgZG9uJ3QgcmVhbGx5
+Cm5lZWQgdG8ga25vdyB0aGF0IFJDX0NPUkUgY29uZmlnIHNob3VsZCBiZSBlbmFibGVkIHRvIHVz
+ZSBzaWxfc2lpODYyMApkcml2ZXIgb25seSBmb3IgSERNSS4KClNpZ25lZC1vZmYtYnk6IElua2kg
+RGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tj
+b25maWcgfCAzICsrLQogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlv
+bigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvS2NvbmZpZyBiL2RyaXZl
+cnMvZ3B1L2RybS9icmlkZ2UvS2NvbmZpZwppbmRleCAzYWE2NWJkLi4wMjkwZmMzIDEwMDY0NAot
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tjb25maWcKKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2JyaWRnZS9LY29uZmlnCkBAIC03Miw4ICs3Miw5IEBAIGNvbmZpZyBEUk1fUEFSQURFX1BTODYy
+MgogCiBjb25maWcgRFJNX1NJTF9TSUk4NjIwCiAJdHJpc3RhdGUgIlNpbGljb24gSW1hZ2UgU0lJ
+ODYyMCBIRE1JL01ITCBicmlkZ2UiCi0JZGVwZW5kcyBvbiBPRiAmJiBSQ19DT1JFCisJZGVwZW5k
+cyBvbiBPRgogCXNlbGVjdCBEUk1fS01TX0hFTFBFUgorCXNlbGVjdCBSQ19DT1JFCiAJaGVscAog
+CSAgU2lsaWNvbiBJbWFnZSBTSUk4NjIwIEhETUkvTUhMIGJyaWRnZSBjaGlwIGRyaXZlci4KIAot
+LSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
