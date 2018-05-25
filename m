@@ -1,157 +1,100 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 07/15] arm: dts: exynos: Add missing cooling device properties for CPUs
-Date: Fri, 25 May 2018 16:01:53 +0530
-Message-ID: <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1527244200.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1527244200.git.viresh.kumar@linaro.org>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: arm@kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com, Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2 7/8] iommu: Remove IOMMU_OF_DECLARE
+Date: Fri, 25 May 2018 12:31:05 +0100
+Message-ID: <20180525113104.GA3255@arm.com>
+References: <20180524175024.19874-1-robh@kernel.org>
+	<20180524175024.19874-8-robh@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20180524175024.19874-8-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, boot-architecture-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The cooling device properties, like "#cooling-cells" and
-"dynamic-power-coefficient", should either be present for all the CPUs
-of a cluster or none. If these are present only for a subset of CPUs of
-a cluster then things will start falling apart as soon as the CPUs are
-brought online in a different order. For example, this will happen
-because the operating system looks for such properties in the CPU node
-it is trying to bring up, so that it can register a cooling device.
+On Thu, May 24, 2018 at 12:50:23PM -0500, Rob Herring wrote:
+> Now that we use the driver core to stop deferred probe for missing
+> drivers, IOMMU_OF_DECLARE can be removed.
+> 
+> This is slightly less optimal than having a list of built-in drivers in
+> that we'll now defer probe twice before giving up. This shouldn't have a
+> significant impact on boot times as past discussions about deferred
+> probe have given no evidence of deferred probe having a substantial
+> impact.
+> 
+> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> Cc: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+> Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+> Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+> Cc: Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+> Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> ---
+>  drivers/iommu/arm-smmu-v3.c    |  2 --
+>  drivers/iommu/arm-smmu.c       |  7 -------
+>  drivers/iommu/exynos-iommu.c   |  2 --
+>  drivers/iommu/ipmmu-vmsa.c     |  3 ---
+>  drivers/iommu/msm_iommu.c      |  2 --
+>  drivers/iommu/of_iommu.c       | 19 +------------------
+>  drivers/iommu/qcom_iommu.c     |  2 --
+>  drivers/iommu/rockchip-iommu.c |  2 --
+>  include/linux/of_iommu.h       |  4 ----
+>  9 files changed, 1 insertion(+), 42 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 1d647104bccc..22bdabd3d8e0 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -2915,8 +2915,6 @@ static struct platform_driver arm_smmu_driver = {
+>  };
+>  module_platform_driver(arm_smmu_driver);
+>  
+> -IOMMU_OF_DECLARE(arm_smmuv3, "arm,smmu-v3");
+> -
+>  MODULE_DESCRIPTION("IOMMU API for ARM architected SMMUv3 implementations");
+>  MODULE_AUTHOR("Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 69e7c60792a8..9dd7cbaa3b0c 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -2211,13 +2211,6 @@ static struct platform_driver arm_smmu_driver = {
+>  };
+>  module_platform_driver(arm_smmu_driver);
+>  
+> -IOMMU_OF_DECLARE(arm_smmuv1, "arm,smmu-v1");
+> -IOMMU_OF_DECLARE(arm_smmuv2, "arm,smmu-v2");
+> -IOMMU_OF_DECLARE(arm_mmu400, "arm,mmu-400");
+> -IOMMU_OF_DECLARE(arm_mmu401, "arm,mmu-401");
+> -IOMMU_OF_DECLARE(arm_mmu500, "arm,mmu-500");
+> -IOMMU_OF_DECLARE(cavium_smmuv2, "cavium,smmu-v2");
+> -
+>  MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
+>  MODULE_AUTHOR("Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>");
+>  MODULE_LICENSE("GPL v2");
 
-Add such missing properties.
+For the SMMU drivers:
 
-Fix other missing properties (clocks, OPP, clock latency) as well to
-make it all work.
+Acked-by: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/boot/dts/exynos3250.dtsi | 16 ++++++++++++++++
- arch/arm/boot/dts/exynos4210.dtsi | 13 +++++++++++++
- arch/arm/boot/dts/exynos4412.dtsi |  9 +++++++++
- arch/arm/boot/dts/exynos5250.dtsi | 23 +++++++++++++++++++++++
- 4 files changed, 61 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 962af97c1883..aff5d66ae058 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -78,6 +78,22 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cmu CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			#cooling-cells = <2>;
-+
-+			operating-points = <
-+				1000000 1150000
-+				900000  1112500
-+				800000  1075000
-+				700000  1037500
-+				600000  1000000
-+				500000  962500
-+				400000  925000
-+				300000  887500
-+				200000  850000
-+				100000  850000
-+			>;
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 88fb47cef9a8..b6091c27f155 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -55,6 +55,19 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0x901>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			clock-latency = <160000>;
-+
-+			operating-points = <
-+				1200000 1250000
-+				1000000 1150000
-+				800000	1075000
-+				500000	975000
-+				400000	975000
-+				200000	950000
-+			>;
-+			#cooling-cells = <2>; /* min followed by max */
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 7b43c10c510b..51f72f0327e5 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -49,21 +49,30 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0xA01>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
- 		cpu@a02 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0xA02>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
- 		cpu@a03 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0xA03>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>; /* min followed by max */
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 2daf505b3d08..69648f83b8b4 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -84,6 +84,29 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1700000000>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			clock-latency = <140000>;
-+
-+			operating-points = <
-+				1700000 1300000
-+				1600000 1250000
-+				1500000 1225000
-+				1400000 1200000
-+				1300000 1150000
-+				1200000 1125000
-+				1100000 1100000
-+				1000000 1075000
-+				 900000 1050000
-+				 800000 1025000
-+				 700000 1012500
-+				 600000 1000000
-+				 500000  975000
-+				 400000  950000
-+				 300000  937500
-+				 200000  925000
-+			>;
-+			#cooling-cells = <2>; /* min followed by max */
- 		};
- 	};
- 
--- 
-2.15.0.194.g9af6a3dea062
+Will
