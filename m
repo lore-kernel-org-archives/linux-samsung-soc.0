@@ -1,66 +1,157 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 00/15] arm: dts: Fix OPP and cooling device properties
-Date: Fri, 25 May 2018 16:01:46 +0530
-Message-ID: <cover.1527244200.git.viresh.kumar@linaro.org>
+Subject: [PATCH 07/15] arm: dts: exynos: Add missing cooling device properties for CPUs
+Date: Fri, 25 May 2018 16:01:53 +0530
+Message-ID: <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1527244200.git.viresh.kumar@linaro.org>
+In-Reply-To: <cover.1527244200.git.viresh.kumar@linaro.org>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: arm@kernel.org, Andrew Lunn <andrew@lunn.ch>, Andy Gross <andy.gross@linaro.org>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Chen-Yu Tsai <wens@csie.org>, David Brown <david.brown@linaro.org>, Fabio Estevam <fabio.estevam@nxp.com>, Gregory Clement <gregory.clement@bootlin.com>, Heiko Stuebner <heiko@sntech.de>, Jason Cooper <jason@lakedaemon.net>, Jisheng Zhang <Jisheng.Zhang@synaptics.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com, Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-soc@vger.kernel.org
+To: arm@kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com, Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This fixes missing OPP and cooling device properties for CPUs for the
-ARM 32 bit platforms. This is build tested by the zero day testing
-infrastructure as well.
+The cooling device properties, like "#cooling-cells" and
+"dynamic-power-coefficient", should either be present for all the CPUs
+of a cluster or none. If these are present only for a subset of CPUs of
+a cluster then things will start falling apart as soon as the CPUs are
+brought online in a different order. For example, this will happen
+because the operating system looks for such properties in the CPU node
+it is trying to bring up, so that it can register a cooling device.
 
-Individual maintainers can pick the patches to their SoC trees or I will
-ask ARM SoC maintainers to pick them up later.
+Add such missing properties.
 
---
-viresh
+Fix other missing properties (clocks, OPP, clock latency) as well to
+make it all work.
 
-Viresh Kumar (15):
-  arm: dts: armada: Fix "#cooling-cells" property's name
-  arm: dts: ls1021a: Add missing cooling device properties for CPUs
-  arm: dts: mediatek: Add missing cooling device properties for CPUs
-  arm: dts: rk322x: Add missing cooling device properties for CPUs
-  arm: dts: uniphier: Add missing cooling device properties for CPUs
-  arm: dts: sun: Add missing cooling device properties for CPUs
-  arm: dts: exynos: Add missing cooling device properties for CPUs
-  arm: dts: dra74x: Add missing cooling device properties for CPUs
-  arm: dts: omap: Add missing cooling device properties for CPUs
-  arm: dts: rk3288: Add missing cooling device properties for CPUs
-  arm: dts: berlin: Add missing OPP properties for CPUs
-  arm: dts: highbank: Add missing OPP properties for CPUs
-  arm: dts: r8a7743: Add missing OPP properties for CPUs
-  arm: dts: qcom: Add missing OPP properties for CPUs
-  arm: dts: imx: Add missing OPP properties for CPUs
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm/boot/dts/exynos3250.dtsi | 16 ++++++++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi | 13 +++++++++++++
+ arch/arm/boot/dts/exynos4412.dtsi |  9 +++++++++
+ arch/arm/boot/dts/exynos5250.dtsi | 23 +++++++++++++++++++++++
+ 4 files changed, 61 insertions(+)
 
- arch/arm/boot/dts/armada-385-synology-ds116.dts |  2 +-
- arch/arm/boot/dts/berlin2.dtsi                  | 10 +++
- arch/arm/boot/dts/berlin2q.dtsi                 | 33 ++++++++++
- arch/arm/boot/dts/dra74x.dtsi                   | 10 +++
- arch/arm/boot/dts/exynos3250.dtsi               | 16 +++++
- arch/arm/boot/dts/exynos4210.dtsi               | 13 ++++
- arch/arm/boot/dts/exynos4412.dtsi               |  9 +++
- arch/arm/boot/dts/exynos5250.dtsi               | 23 +++++++
- arch/arm/boot/dts/highbank.dts                  | 30 +++++++++
- arch/arm/boot/dts/imx6dl.dtsi                   | 23 +++++++
- arch/arm/boot/dts/imx6q-cm-fx6.dts              | 66 +++++++++++++++++++
- arch/arm/boot/dts/imx6q.dtsi                    | 87 ++++++++++++++++++++++++-
- arch/arm/boot/dts/imx7d.dtsi                    |  5 ++
- arch/arm/boot/dts/ls1021a.dtsi                  |  1 +
- arch/arm/boot/dts/mt7623.dtsi                   |  3 +
- arch/arm/boot/dts/omap5.dtsi                    | 14 ++++
- arch/arm/boot/dts/qcom-ipq4019.dtsi             | 24 +++++++
- arch/arm/boot/dts/r8a7743.dtsi                  |  9 +++
- arch/arm/boot/dts/rk322x.dtsi                   |  3 +
- arch/arm/boot/dts/rk3288.dtsi                   | 54 +++++++++++++++
- arch/arm/boot/dts/sun6i-a31.dtsi                | 30 +++++++++
- arch/arm/boot/dts/sun7i-a20.dtsi                | 13 ++++
- arch/arm/boot/dts/sun8i-a33.dtsi                |  9 +++
- arch/arm/boot/dts/sun8i-h3.dtsi                 |  9 +++
- arch/arm/boot/dts/uniphier-pxs2.dtsi            |  3 +
- 25 files changed, 495 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 962af97c1883..aff5d66ae058 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -78,6 +78,22 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <1>;
+ 			clock-frequency = <1000000000>;
++			clocks = <&cmu CLK_ARM_CLK>;
++			clock-names = "cpu";
++			#cooling-cells = <2>;
++
++			operating-points = <
++				1000000 1150000
++				900000  1112500
++				800000  1075000
++				700000  1037500
++				600000  1000000
++				500000  962500
++				400000  925000
++				300000  887500
++				200000  850000
++				100000  850000
++			>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 88fb47cef9a8..b6091c27f155 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -55,6 +55,19 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0x901>;
++			clocks = <&clock CLK_ARM_CLK>;
++			clock-names = "cpu";
++			clock-latency = <160000>;
++
++			operating-points = <
++				1200000 1250000
++				1000000 1150000
++				800000	1075000
++				500000	975000
++				400000	975000
++				200000	950000
++			>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 7b43c10c510b..51f72f0327e5 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -49,21 +49,30 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA01>;
++			clocks = <&clock CLK_ARM_CLK>;
++			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+ 		cpu@a02 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA02>;
++			clocks = <&clock CLK_ARM_CLK>;
++			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+ 		cpu@a03 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA03>;
++			clocks = <&clock CLK_ARM_CLK>;
++			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 2daf505b3d08..69648f83b8b4 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -84,6 +84,29 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1700000000>;
++			clocks = <&clock CLK_ARM_CLK>;
++			clock-names = "cpu";
++			clock-latency = <140000>;
++
++			operating-points = <
++				1700000 1300000
++				1600000 1250000
++				1500000 1225000
++				1400000 1200000
++				1300000 1150000
++				1200000 1125000
++				1100000 1100000
++				1000000 1075000
++				 900000 1050000
++				 800000 1025000
++				 700000 1012500
++				 600000 1000000
++				 500000  975000
++				 400000  950000
++				 300000  937500
++				 200000  925000
++			>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 	};
+ 
 -- 
 2.15.0.194.g9af6a3dea062
