@@ -1,77 +1,36 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 12/12] ARM: dts: exynos5250-arndale: add dsi and panel
- nodes
-Date: Mon, 28 May 2018 18:41:45 +0200
-Message-ID: <CAJKOXPc6Wxcs2XYKGRXT7_G8ENzgJT1ocWAqviNs1D-mGBoF7w@mail.gmail.com>
-References: <CGME20180528095555eucas1p2fb61f362a3aa2d0082b8c4001b17f176@eucas1p2.samsung.com>
- <1527500833-16005-1-git-send-email-m.purski@samsung.com>
- <1527501347-16521-1-git-send-email-m.purski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1527501347-16521-1-git-send-email-m.purski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Maciej Purski <m.purski@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Subject: [PATCH] dt-bindings: arm: Remove obsolete insignal-boards.txt
+Date: Mon, 28 May 2018 20:53:10 +0200
+Message-ID: <20180528185310.21971-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gTW9uLCBNYXkgMjgsIDIwMTggYXQgMTE6NTUgQU0sIE1hY2llaiBQdXJza2kgPG0ucHVyc2tp
-QHNhbXN1bmcuY29tPiB3cm90ZToKPiBUaGUgcGF0Y2ggYWRkcyBicmlkZ2UgYW5kIHBhbmVsIG5v
-ZGVzLgo+IEl0IGFkZHMgYWxzbyBEU0kgcHJvcGVydGllcyBzcGVjaWZpYyBmb3IgYXJuZGFsZSBi
-b2FyZC4KPgo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5j
-b20+Cj4gU2lnbmVkLW9mZi1ieTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+
-Cj4gLS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtYXJuZGFsZS5kdHMgfCAzOSAr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgMzkgaW5z
-ZXJ0aW9ucygrKQo+Cj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAt
-YXJuZGFsZS5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLWFybmRhbGUuZHRzCj4g
-aW5kZXggODAyMjFmYS4uNmYwYjFjNCAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9l
-eHlub3M1MjUwLWFybmRhbGUuZHRzCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1
-MC1hcm5kYWxlLmR0cwo+IEBAIC03MSw2ICs3MSwxNyBAQAo+ICAgICAgICAgICAgICAgICB9Owo+
-ICAgICAgICAgfTsKPgo+ICsgICAgICAgcGFuZWw6IHBhbmVsIHsKPiArICAgICAgICAgICAgICAg
-Y29tcGF0aWJsZSA9ICJib2UsaHYwNzB3c2EtMTAwIjsKPiArICAgICAgICAgICAgICAgcG93ZXIt
-c3VwcGx5ID0gPCZ2Y2NfM3YzX3JlZz47Cj4gKyAgICAgICAgICAgICAgIGVuYWJsZS1ncGlvcyA9
-IDwmZ3BkMSAzIEdQSU9fQUNUSVZFX0hJR0g+Owo+ICsgICAgICAgICAgICAgICBwb3J0IHsKPiAr
-ICAgICAgICAgICAgICAgICAgICAgICBwYW5lbF9lcDogZW5kcG9pbnQgewo+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZicmlkZ2Vfb3V0X2VwPjsK
-PiArICAgICAgICAgICAgICAgICAgICAgICB9Owo+ICsgICAgICAgICAgICAgICB9Owo+ICsgICAg
-ICAgfTsKPiArCj4gICAgICAgICByZWd1bGF0b3JzIHsKPiAgICAgICAgICAgICAgICAgY29tcGF0
-aWJsZSA9ICJzaW1wbGUtYnVzIjsKPiAgICAgICAgICAgICAgICAgI2FkZHJlc3MtY2VsbHMgPSA8
-MT47Cj4gQEAgLTQ3Niw2ICs0ODcsMzQgQEAKPiAgICAgICAgIH07Cj4gIH07Cj4KPiArJmRzaV8w
-IHsKClBsZWFzZSBwdXQgdGhlIG5vZGUgYWxwaGFiZXRpY2FsbHksIHNvIGJlZm9yZSAmZHAuCgpB
-bHNvIHRoaXMgcGF0Y2ggc2hvdWxkIGJlIHNxdWFzaGVkIHdpdGggcHJldmlvdXMgb25lIChyZWd1
-bGF0b3JzKSwKYmVjYXVzZSBhZGRpbmcgbm9uLWNvbnRyb2xsYWJsZSBmaXhlZCByZWd1bGF0b3Jz
-IG9uIGl0cyBvd24gZG9lcyBub3QKYnJpbmcgYmVuZWZpdHMuIExpbnV4IHdpbGwgbm90IGRpc2Fi
-bGUgdGhlbS4gWW91IGFkZGVkIHRoZXNlCnJlZ3VsYXRvcnMgZm9yIHRoZSBicmlkZ2UgYmVsb3cu
-IFdpdGhvdXQgdGhlIGJyaWRnZSwgdGhlaXIgZXhpc3RlbmNlCmRvZXMgbm90IGhhdmUgbXVjaCBz
-ZW5zZS4KCkJlc3QgcmVnYXJkcywKS3J6eXN6dG9mCgo+ICsgICAgICAgdmRkY29yZS1zdXBwbHkg
-PSA8JmxkbzhfcmVnPjsKPiArICAgICAgIHZkZGlvLXN1cHBseSA9IDwmbGRvMTBfcmVnPjsKPiAr
-ICAgICAgIHNhbXN1bmcscGxsLWNsb2NrLWZyZXF1ZW5jeSA9IDwyNDAwMDAwMD47Cj4gKyAgICAg
-ICBzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5jeSA9IDwzMjAwMDAwMDA+Owo+ICsgICAgICAg
-c2Ftc3VuZyxlc2MtY2xvY2stZnJlcXVlbmN5ID0gPDEwMDAwMDAwPjsKPiArICAgICAgIHN0YXR1
-cyA9ICJva2F5IjsKPiArCj4gKyAgICAgICBicmlkZ2VAMCB7Cj4gKyAgICAgICAgICAgICAgIHJl
-ZyA9IDwwPjsKPiArICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJ0b3NoaWJhLHRjMzU4NzY0
-IjsKPiArICAgICAgICAgICAgICAgdmRkYy1zdXBwbHkgPSA8JnZjY18xdjJfcmVnPjsKPiArICAg
-ICAgICAgICAgICAgdmRkaW8tc3VwcGx5ID0gPCZ2Y2NfMXY4X3JlZz47Cj4gKyAgICAgICAgICAg
-ICAgIHZkZG1pcGktc3VwcGx5ID0gPCZ2Y2NfMXYyX3JlZz47Cj4gKyAgICAgICAgICAgICAgIHZk
-ZGx2ZHMxMzMtc3VwcGx5ID0gPCZ2Y2NfM3YzX3JlZz47Cj4gKyAgICAgICAgICAgICAgIHZkZGx2
-ZHMxMTItc3VwcGx5ID0gPCZ2Y2NfMXYyX3JlZz47Cj4gKyAgICAgICAgICAgICAgIHJlc2V0LWdw
-aW9zID0gPCZncGQxIDYgR1BJT19BQ1RJVkVfTE9XPjsKPiArICAgICAgICAgICAgICAgI2FkZHJl
-c3MtY2VsbHMgPSA8MT47Cj4gKyAgICAgICAgICAgICAgICNzaXplLWNlbGxzID0gPDA+Owo+ICsg
-ICAgICAgICAgICAgICBwb3J0QDEgewo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwx
-PjsKPiArICAgICAgICAgICAgICAgICAgICAgICBicmlkZ2Vfb3V0X2VwOiBlbmRwb2ludCB7Cj4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZW1vdGUtZW5kcG9pbnQgPSA8JnBhbmVs
-X2VwPjsKPiArICAgICAgICAgICAgICAgICAgICAgICB9Owo+ICsgICAgICAgICAgICAgICB9Owo+
-ICsgICAgICAgfTsKPiArfTsKPiArCj4gICZpMmNfMiB7Cj4gICAgICAgICBzdGF0dXMgPSAib2th
-eSI7Cj4gICAgICAgICAvKiB1c2VkIGJ5IEhETUkgRERDICovCj4gLS0KPiAyLjcuNAo+Cl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The compatibles mentioned in insignal-boards.txt are already documented
+under devicetree/bindings/arm/samsung/samsung-boards.txt.  Also the
+contents of insignal-boards.txt is not accurate, e.g. does not mention
+Arndale boards.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ Documentation/devicetree/bindings/arm/insignal-boards.txt | 8 --------
+ 1 file changed, 8 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/insignal-boards.txt
+
+diff --git a/Documentation/devicetree/bindings/arm/insignal-boards.txt b/Documentation/devicetree/bindings/arm/insignal-boards.txt
+deleted file mode 100644
+index 524c3dc5d808..000000000000
+--- a/Documentation/devicetree/bindings/arm/insignal-boards.txt
++++ /dev/null
+@@ -1,8 +0,0 @@
+-* Insignal's Exynos4210 based Origen evaluation board
+-
+-Origen low-cost evaluation board is based on Samsung's Exynos4210 SoC.
+-
+-Required root node properties:
+-    - compatible = should be one or more of the following.
+-        (a) "samsung,smdkv310" - for Samsung's SMDKV310 eval board.
+-        (b) "samsung,exynos4210"  - for boards based on Exynos4210 SoC.
+-- 
+2.14.1
