@@ -1,50 +1,38 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 08/12] drm/bridge: tc358764: Add DSI to LVDS bridge driver
-Date: Mon, 28 May 2018 09:24:55 -0700
-Message-ID: <153d1f8c-a0b4-b189-34b5-42a81d15f66b@infradead.org>
-References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
- <CGME20180528094728eucas1p128e8a44fa6c3bcb29d056a8191c039af@eucas1p1.samsung.com>
- <1527500833-16005-9-git-send-email-m.purski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 10/12] ARM: dts: exynos5250: add DSI node
+Date: Mon, 28 May 2018 18:36:47 +0200
+Message-ID: <CAJKOXPdO1aTSvtHthyaMEjwURKn-FXUzhAr-N7ta0+DmUUr1vg@mail.gmail.com>
+References: <CGME20180528095444eucas1p222e4054b8fb8997258182e501f37a10b@eucas1p2.samsung.com>
+ <1527500833-16005-1-git-send-email-m.purski@samsung.com>
+ <1527501272-16365-1-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1527500833-16005-9-git-send-email-m.purski@samsung.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1527501272-16365-1-git-send-email-m.purski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Maciej Purski <m.purski@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/28/2018 02:47 AM, Maciej Purski wrote:
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index fa2c799..58e19af 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -110,6 +110,13 @@ config DRM_THINE_THC63LVD1024
->  	---help---
->  	  Thine THC63LVD1024 LVDS/parallel converter driver.
->  
-> +config DRM_TOSHIBA_TC358764
-> +	tristate "TC358764 DSI/LVDS bridge"
-> +	depends on DRM && DRM_PANEL
-> +	depends on OF
-> +	select DRM_MIPI_DSI
-> +	select VIDEOMODE_HELPERS
-> +
-
-Kconfig symbols with "prompt strings" should also have help text.
-
-I expected checkpatch to catch that, but I tested it and there was no warning
-from checkpatch about help text.  OTOH, there was a warning that there are
-2 lines in this patch that end with whitespace, so that should be fixed.
-
-Did you use checkpatch (scripts/checkpatch.pl)?
-
->  config DRM_TOSHIBA_TC358767
->  	tristate "Toshiba TC358767 eDP bridge"
->  	depends on OF
-
-thanks,
--- 
-~Randy
+T24gTW9uLCBNYXkgMjgsIDIwMTggYXQgMTE6NTQgQU0sIE1hY2llaiBQdXJza2kgPG0ucHVyc2tp
+QHNhbXN1bmcuY29tPiB3cm90ZToKPiBUaGUgcGF0Y2ggYWRkcyBjb21tb24gcGFydCBvZiBEU0kg
+bm9kZSBmb3IgRXh5bm9zNTI1MCBwbGF0Zm9ybXMuCj4KPiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVq
+IEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IFNpZ25lZC1vZmYtYnk6IE1hY2llaiBQdXJz
+a2kgPG0ucHVyc2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBhcmNoL2FybS9ib290L2R0cy9leHlu
+b3M1MjUwLmR0c2kgfCAxNCArKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgMTQgaW5z
+ZXJ0aW9ucygrKQoKClRoaXMgc2hvdWxkIGJlIHNxdWFzaGVkIHdpdGggcHJldmlvdXMgcGF0Y2gg
+YmVjYXVzZSBpdCBpcyBsb2dpY2FsbHkKdGhlIHNhbWUgZmVhdHVyZS4gVGhlIHB1cnBvc2Ugb2Yg
+UEhZIGlzIHRoaXMgRFNJIG5vZGUgc28gc3BsaXR0aW5nIGl0CmlzIHNsaWdodGx5IHRvbyBtdWNo
+LgoKQmVzdCByZWdhcmRzLApLcnp5c3p0b2YKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
