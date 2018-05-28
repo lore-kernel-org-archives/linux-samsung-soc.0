@@ -1,10 +1,9 @@
 From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 06/12] drm/panel: add support for BOE HV070WSA-100 panel to
- simple-panel
-Date: Mon, 28 May 2018 11:47:10 +0200
-Message-ID: <1527500833-16005-7-git-send-email-m.purski@samsung.com>
+Subject: [PATCH 04/12] drm/exynos: add non-panel path to exynos_dsi_enable()
+Date: Mon, 28 May 2018 11:47:08 +0200
+Message-ID: <1527500833-16005-5-git-send-email-m.purski@samsung.com>
 References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
-        <CGME20180528094727eucas1p272478562b72a95dac2fc1b03be57c514@eucas1p2.samsung.com>
+        <CGME20180528094725eucas1p2e80e551edb29dd4ab437246f4896d108@eucas1p2.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -12,57 +11,59 @@ To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sa
 Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Purski <m.purski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds support for BOE HV070WSA-100 WSVGA 7.01 inch panel
-in panel-simple driver. The panel is used in Exynos5250-arndale boards.
+As DSIM can now have a bridge connected as a peripheral, it should be
+possible to successfully enable exynos_dsi, when there is no panel
+provided.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index cbf1ab4..d5da58d 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -745,6 +745,28 @@ static const struct panel_desc avic_tm070ddh03 = {
- 	},
- };
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 8957faf..7d92e50 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1382,27 +1382,26 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ 	if (dsi->state & DSIM_STATE_ENABLED)
+ 		return;
  
-+static const struct drm_display_mode boe_hv070wsa_mode = {
-+	.clock = 40800,
-+	.hdisplay = 1024,
-+	.hsync_start = 1024 + 90,
-+	.hsync_end = 1024 + 90 + 90,
-+	.htotal = 1024 + 90 + 90 + 90,
-+	.vdisplay = 600,
-+	.vsync_start = 600 + 3,
-+	.vsync_end = 600 + 3 + 4,
-+	.vtotal = 600 + 3 + 4 + 3,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_desc boe_hv070wsa = {
-+	.modes = &boe_hv070wsa_mode,
-+	.num_modes = 1,
-+	.size = {
-+		.width = 154,
-+		.height = 90,
-+	},
-+};
-+
- static const struct drm_display_mode boe_nv101wxmn51_modes[] = {
- 	{
- 		.clock = 71900,
-@@ -2113,6 +2135,9 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "avic,tm070ddh03",
- 		.data = &avic_tm070ddh03,
- 	}, {
-+		.compatible = "boe,hv070wsa-100",
-+		.data = &boe_hv070wsa
-+	}, {
- 		.compatible = "boe,nv101wxmn51",
- 		.data = &boe_nv101wxmn51,
- 	}, {
+-	pm_runtime_get_sync(dsi->dev);
+-
+-	dsi->state |= DSIM_STATE_ENABLED;
+-
+-	ret = drm_panel_prepare(dsi->panel);
+-	if (ret < 0) {
+-		dsi->state &= ~DSIM_STATE_ENABLED;
+-		return;
++	if (dsi->panel) {
++		ret = drm_panel_prepare(dsi->panel);
++		if (ret < 0) {
++			return;
++		}
+ 	}
+ 
+ 	exynos_dsi_set_display_mode(dsi);
+ 	exynos_dsi_set_display_enable(dsi, true);
+ 
+-	ret = drm_panel_enable(dsi->panel);
+-	if (ret < 0) {
+-		dsi->state &= ~DSIM_STATE_ENABLED;
+-		exynos_dsi_set_display_enable(dsi, false);
+-		drm_panel_unprepare(dsi->panel);
+-		return;
++	if (dsi->panel) {
++		ret = drm_panel_enable(dsi->panel);
++		if (ret < 0) {
++			exynos_dsi_set_display_enable(dsi, false);
++			drm_panel_unprepare(dsi->panel);
++			return;
++		}
+ 	}
+ 
++	dsi->state |= DSIM_STATE_ENABLED;
+ 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
+ }
+ 
 -- 
 2.7.4
