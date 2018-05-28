@@ -1,10 +1,9 @@
 From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 03/12] drm/exynos: move connector creation to attach
- callback
-Date: Mon, 28 May 2018 11:47:07 +0200
-Message-ID: <1527500833-16005-4-git-send-email-m.purski@samsung.com>
+Subject: [PATCH 07/12] dt-bindings: tc358754: add DT bindings
+Date: Mon, 28 May 2018 11:47:11 +0200
+Message-ID: <1527500833-16005-8-git-send-email-m.purski@samsung.com>
 References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
-        <CGME20180528094724eucas1p17a37e06002ed96d97aaca87231f13bbb@eucas1p1.samsung.com>
+        <CGME20180528094727eucas1p153b8116120cd2195b15b74776f171cbe@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -12,77 +11,63 @@ To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sa
 Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Purski <m.purski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The current implementation assumes that the only possible peripheral
-device for DSIM is a panel. Using an output bridge should also be
-possible.
+The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
+Bindings describe power supplies, reset gpio and video interfaces.
 
-If an output bridge in available, don't create a new connector.
-Instead add bridge to DSIM encdoer in dsi_host_attach().
-
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 35 +++++++++++++++++++++------------
- 1 file changed, 22 insertions(+), 13 deletions(-)
+ .../bindings/display/bridge/toshiba,tc358764.txt   | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 94460b0..8957faf 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1498,7 +1498,28 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 				  struct mipi_dsi_device *device)
- {
- 	struct exynos_dsi *dsi = host_to_dsi(host);
--	struct drm_device *drm = dsi->connector.dev;
-+	struct drm_encoder *encoder = &dsi->encoder;
-+	struct drm_device *drm = encoder->dev;
-+	struct drm_bridge *out_bridge;
+diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+new file mode 100644
+index 0000000..d09bdc2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+@@ -0,0 +1,42 @@
++TC358764 MIPI-DSI to LVDS panel bridge
 +
-+	out_bridge  = of_drm_find_bridge(device->dev.of_node);
-+	if (out_bridge) {
-+		drm_bridge_attach(encoder, out_bridge, NULL);
-+	} else {
-+		int ret = exynos_dsi_create_connector(encoder);
++Required properties:
++  - compatible: "toshiba,tc358764"
++  - reg: the virtual channel number of a DSI peripheral
++  - vddc-supply: core voltage supply
++  - vddio-supply: I/O voltage supply
++  - vddmipi-supply: MIPI voltage supply
++  - vddlvds133-supply: LVDS1 3.3V voltage supply
++  - vddlvds112-supply: LVDS1 1.2V voltage supply
++  - reset-gpios: a GPIO spec for the reset pin
 +
-+		if (ret) {
-+			DRM_ERROR("failed to create connector ret = %d\n", ret);
-+			drm_encoder_cleanup(encoder);
-+			return ret;
-+		}
++The device node can contain zero to two 'port' child nodes, each with one
++child
++'endpoint' node, according to the bindings defined in [1].
++The following are properties specific to those nodes.
 +
-+		dsi->panel = of_drm_find_panel(device->dev.of_node);
-+		if (dsi->panel) {
-+			drm_panel_attach(dsi->panel, &dsi->connector);
-+			dsi->connector.status = connector_status_connected;
-+		}
-+	}
- 
- 	/*
- 	 * This is a temporary solution and should be made by more generic way.
-@@ -1517,11 +1538,6 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 	dsi->lanes = device->lanes;
- 	dsi->format = device->format;
- 	dsi->mode_flags = device->mode_flags;
--	dsi->panel = of_drm_find_panel(device->dev.of_node);
--	if (dsi->panel) {
--		drm_panel_attach(dsi->panel, &dsi->connector);
--		dsi->connector.status = connector_status_connected;
--	}
- 	exynos_drm_crtc_get_by_type(drm, EXYNOS_DISPLAY_TYPE_LCD)->i80_mode =
- 			!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO);
- 
-@@ -1650,13 +1666,6 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- 	if (ret < 0)
- 		return ret;
- 
--	ret = exynos_dsi_create_connector(encoder);
--	if (ret) {
--		DRM_ERROR("failed to create connector ret = %d\n", ret);
--		drm_encoder_cleanup(encoder);
--		return ret;
--	}
--
- 	if (dsi->mic_bridge_node) {
- 		mic_bridge = of_drm_find_bridge(dsi->mic_bridge_node);
- 		if (mic_bridge)
++port:
++  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
++
++[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
++
++Example:
++
++	bridge@0 {
++		reg = <0>;
++		compatible = "toshiba,tc358764";
++		vddc-supply = <&vcc_1v2_reg>;
++		vddio-supply = <&vcc_1v8_reg>;
++		vddmipi-supply = <&vcc_1v2_reg>;
++		vddlvds133-supply = <&vcc_3v3_reg>;
++		vddlvds112-supply = <&vcc_1v2_reg>;
++		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		port@1 {
++			reg = <1>;
++			lvds_ep: endpoint {
++				remote-endpoint = <&panel_ep>;
++			};
++		};
++	};
 -- 
 2.7.4
