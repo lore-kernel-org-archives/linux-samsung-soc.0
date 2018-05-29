@@ -1,45 +1,52 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v2] Documentation: dt-bindings: Explicitly mark Samsung
- Exynos SoC bindings as unstable
-Date: Tue, 29 May 2018 09:06:42 +0200
-Message-ID: <CABxcv=mMEa9Y77CvMsrLXGnfF60L84rthhrR3ZWEfeTSosw2Qg@mail.gmail.com>
-References: <20180528191327.23772-1-krzk@kernel.org>
+From: Vinod <vkoul@kernel.org>
+Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
+Date: Tue, 29 May 2018 12:39:15 +0530
+Message-ID: <20180529070915.GF5666@vkoul-mobl>
+References: <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com>
+ <20180515062144.GC13271@vkoul-mobl>
+ <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
+ <20180517041946.GQ13271@vkoul-mobl>
+ <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
+ <CGME20180518040358epcas2p353b0096d33116ca78a03b16d24569813@epcas2p3.samsung.com>
+ <20180518040349.GB2932@vkoul-mobl>
+ <7f0b7404-ee12-977f-02a4-a463d1873aee@samsung.com>
+ <20180518072112.GG2932@vkoul-mobl>
+ <20180529051745eucas1p2ee6ec3e34f075d255c87f8f54a626784~zBcpaqmAb1928519285eucas1p2H@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180528191327.23772-1-krzk@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180529051745eucas1p2ee6ec3e34f075d255c87f8f54a626784~zBcpaqmAb1928519285eucas1p2H@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Frank Mori Hess <fmh6jj@gmail.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 28, 2018 at 9:13 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> Samsung Exynos SoCs and boards related bindings evolved since the initial
-> introduction, but initially the bindings were minimal and a bit incomplete
-> (they never described all the hardware modules available in the SoCs).
-> Since then some significant (not fully compatible) changes have been
-> already committed a few times (like gpio replaced by pinctrl, display ddc,
-> mfc reserved memory, some core clocks added to various hardware modules,
-> added more required nodes).
->
-> On the other side there are no boards which have device tree embedded in
-> the bootloader. Device tree blob is always compiled from the kernel tree
-> and updated together with the kernel image.
->
-> Thus to avoid further adding a bunch of workarounds for old/missing
-> bindings, make development of new platforms easier and allow to make
-> cleanup of the existing code and device tree files, lets mark some
-> Samsung Exynos SoC platform bindings as unstable. This means that
-> bindings can may change at any time and users should use the dtb file
-> compiled from the same kernel source tree as the kernel image.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
+On 29-05-18, 07:17, Marek Szyprowski wrote:
+> Hi Vinod,
+> 
+> On 2018-05-18 09:21, Vinod wrote:
+> > On 18-05-18, 08:28, Marek Szyprowski wrote:
+> >> Hi Vinod,
+> >>
+> >> Okay, I see that in theory, there are some tricky bits in implementing DMA
+> >> support in UART drivers. On the other hand there are already drivers
+> >> with seems
+> >> to be working fine. This discussion is about revert of the feature
+> >> present in
+> >> pl330 driver, which is required by other in-kernel driver without proper
+> >> fix to
+> >> them.
+> >>
+> >> Can we drop it for now and discuss what and how should be implemented to
+> >> make
+> >> everyone happy, without any regressions?
+> > Sure am dropping the revert, we can always bring it back if it is required
+> 
+> This revert is still in your -next branch. Do you plan to update it as well?
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+I dont send it to linus and merge topic/* into for-linus and send. It gets
+updated on rebase on -rc1.
 
-Best regards,
-Javier
+-- 
+~Vinod
