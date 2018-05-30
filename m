@@ -1,71 +1,80 @@
 From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v2 00/10] Add TOSHIBA TC358764 DSI/LVDS bridge driver
-Date: Wed, 30 May 2018 14:15:51 +0200
-Message-ID: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
-References: <CGME20180530121622eucas1p1015b65cd12a544b1ea72fe6bfd1a3ccc@eucas1p1.samsung.com>
+Subject: [PATCH v2 01/10] drm/exynos: rename "bridge_node" to
+ "mic_bridge_node"
+Date: Wed, 30 May 2018 14:15:52 +0200
+Message-ID: <1527682561-1386-2-git-send-email-m.purski@samsung.com>
+References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
+        <CGME20180530121623eucas1p27e08223bc5b04dbb0b0253c18a9f83d5@eucas1p2.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Purski <m.purski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi all,
+When adding support for peripheral out bridges, the "bridge" name
+becomes imprecise as it refers to a different device than the
+"out_bridge".
 
-this patchset is a next attempt to add the tc358764 driver.
-The previous one can be found here:
-
-https://lists.freedesktop.org/archives/dri-devel/2014-February/053705.html
-
-Back then, TC358764 was added as a panel driver.
-
-The bridge is supposed to be a DSI peripheral. Currently exynos_dsi accepts only panels
-as its peripherals. Therefore, some logic in exynos_dsi had to be ammended. That is implemented
-in first 4 patches.
-
-Apart from the driver this patchset adds support for BOE HV070WSA-100 panel, which is used by
-TC358764 and dts nodes to exynos5250.dtsi and exynos5250-arndale.dtsi.
-
-Best regards,
-
-Maciej Purski
-
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Changes in v2:
-- fix commits authorship
-- don't call pm_runtime_put_sync() in exyons_dsi_disable(), if pm_runtime_get_sync()
-  has not been called
-- squash dts commits
-- merge some redundant regulators in tc358764 bindings and in DTS
-- fix kbuild robot errors
-
-Andrzej Hajda (6):
-  panel/hv070wsa-100: add DT bindings
-  drm/panel: add support for BOE HV070WSA-100 panel to simple-panel
-  dt-bindings: tc358754: add DT bindings
-  drm/bridge: tc358764: Add DSI to LVDS bridge driver
-  ARM: dts: exynos5250: add DSI node
-  ARM: dts: exynos5250-arndale: add DSI and panel nodes
-
-Maciej Purski (4):
-  drm/exynos: rename "bridge_node" to "mic_bridge_node"
-  drm/exynos: move pm_runtime_get_sync() to exynos_dsi_init()
-  drm/exynos: move connector creation to attach callback
-  drm/exynos: add non-panel path to exynos_dsi_enable()
-
- .../bindings/display/bridge/toshiba,tc358764.txt   |  37 ++
- .../bindings/display/panel/boe,hv070wsa-100.txt    |   7 +
- arch/arm/boot/dts/exynos5250-arndale.dts           |  61 +++
- arch/arm/boot/dts/exynos5250.dtsi                  |  21 +
- drivers/gpu/drm/bridge/Kconfig                     |   9 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/tc358764.c                  | 547 +++++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  88 ++--
- drivers/gpu/drm/panel/panel-simple.c               |  25 +
- 9 files changed, 755 insertions(+), 41 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
- create mode 100644 Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
- create mode 100644 drivers/gpu/drm/bridge/tc358764.c
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index eae44fd..9599e6b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -279,7 +279,7 @@ struct exynos_dsi {
+ 	struct list_head transfer_list;
+ 
+ 	const struct exynos_dsi_driver_data *driver_data;
+-	struct device_node *bridge_node;
++	struct device_node *mic_bridge_node;
+ };
+ 
+ #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
+@@ -1631,7 +1631,7 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
++	dsi->mic_bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
+ 
+ 	return 0;
+ }
+@@ -1642,7 +1642,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+ 	struct drm_encoder *encoder = dev_get_drvdata(dev);
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 	struct drm_device *drm_dev = data;
+-	struct drm_bridge *bridge;
++	struct drm_bridge *mic_bridge;
+ 	int ret;
+ 
+ 	drm_encoder_init(drm_dev, encoder, &exynos_dsi_encoder_funcs,
+@@ -1661,10 +1661,10 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+ 		return ret;
+ 	}
+ 
+-	if (dsi->bridge_node) {
+-		bridge = of_drm_find_bridge(dsi->bridge_node);
+-		if (bridge)
+-			drm_bridge_attach(encoder, bridge, NULL);
++	if (dsi->mic_bridge_node) {
++		mic_bridge = of_drm_find_bridge(dsi->mic_bridge_node);
++		if (mic_bridge)
++			drm_bridge_attach(encoder, mic_bridge, NULL);
+ 	}
+ 
+ 	return mipi_dsi_host_register(&dsi->dsi_host);
+@@ -1783,7 +1783,7 @@ static int exynos_dsi_remove(struct platform_device *pdev)
+ {
+ 	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
+ 
+-	of_node_put(dsi->bridge_node);
++	of_node_put(dsi->mic_bridge_node);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
 -- 
 2.7.4
