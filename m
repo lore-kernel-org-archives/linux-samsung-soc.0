@@ -1,132 +1,134 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 08/12] drm/bridge: tc358764: Add DSI to LVDS bridge
- driver
-Date: Wed, 30 May 2018 10:27:46 +0200
-Message-ID: <20180530082748eucas1p1eede54cce4a257bf2795ac8474f9a9d3~zXr4CtkHD0946509465eucas1p1J@eucas1p1.samsung.com>
-References: <1527500833-16005-9-git-send-email-m.purski@samsung.com>
-        <CGME20180530074642epcas1p31772422454439c0a4ed636f620a3c4bc@epcas1p3.samsung.com>
-        <201805301553.AcTypuC4%fengguang.wu@intel.com>
+Subject: Re: [PATCH 07/12] dt-bindings: tc358754: add DT bindings
+Date: Wed, 30 May 2018 11:59:12 +0200
+Message-ID: <20180530095915eucas1p27f09c8424d0c3c0619d134c5e7319fa3~zY7uP6Y6R1391213912eucas1p23@eucas1p2.samsung.com>
+References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
+        <CGME20180528094727eucas1p153b8116120cd2195b15b74776f171cbe@eucas1p1.samsung.com>
+        <1527500833-16005-8-git-send-email-m.purski@samsung.com>
+        <2275901.CJI6BsfBlP@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201805301553.AcTypuC4%fengguang.wu@intel.com>
+In-Reply-To: <2275901.CJI6BsfBlP@avalon>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>, Maciej Purski <m.purski@samsung.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maciej Purski <m.purski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Maciej,
-
-
-On 30.05.2018 09:45, kbuild test robot wrote:
+On 28.05.2018 12:18, Laurent Pinchart wrote:
 > Hi Maciej,
 >
-> Thank you for the patch! Perhaps something to improve:
+> Thank you for the patch.
 >
-> [auto build test WARNING on next-20180517]
-> [cannot apply to drm-exynos/exynos-drm/for-next robh/for-next drm/drm-next v4.17-rc6 v4.17-rc5 v4.17-rc4 v4.17-rc7]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> On Monday, 28 May 2018 12:47:11 EEST Maciej Purski wrote:
+>> The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
+>> Bindings describe power supplies, reset gpio and video interfaces.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+>> ---
+>>  .../bindings/display/bridge/toshiba,tc358764.txt   | 42 +++++++++++++++++++
+>>  1 file changed, 42 insertions(+)
+>>  create mode 100644
+>> Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+>>
+>> diff --git
+>> a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+>> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt new
+>> file mode 100644
+>> index 0000000..d09bdc2
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+>> @@ -0,0 +1,42 @@
+>> +TC358764 MIPI-DSI to LVDS panel bridge
+>> +
+>> +Required properties:
+>> +  - compatible: "toshiba,tc358764"
+>> +  - reg: the virtual channel number of a DSI peripheral
+>> +  - vddc-supply: core voltage supply
+>> +  - vddio-supply: I/O voltage supply
+>> +  - vddmipi-supply: MIPI voltage supply
+>> +  - vddlvds133-supply: LVDS1 3.3V voltage supply
+>> +  - vddlvds112-supply: LVDS1 1.2V voltage supply
+> That's a lot of power supplies. Could some of them be merged together ? See 
+> https://patchwork.freedesktop.org/patch/216058/ for an earlier discussion on 
+> the same subject.
+
+Specs says about 3 supply voltage values:
+- 1.2V - digital core, DSI-RX PHY
+- 1.8-3.3V - digital I/O
+- 3.3V - LVDS-TX PHY
+
+So I guess it should be minimal number of supplies. Natural candidates:
+
+- vddc-supply: core voltage supply, 1.2V
+- vddio-supply: I/O voltage supply, 1.8V or 3.3V
+- vddlvds-supply: LVDS1/2 voltage supply, 3.3V
+
+I have changed name of the latest supply to be more consistent with
+other supplies, and changed 1.8-3.3 (which incorrectly suggest voltage
+range), to more precise voltage alternative.
+
+
 >
-> url:    https://github.com/0day-ci/linux/commits/Maciej-Purski/Add-TOSHIBA-TC358764-DSI-LVDS-bridge-driver/20180530-011258
-> reproduce:
->         # apt-get install sparse
->         make ARCH=x86_64 allmodconfig
->         make C=1 CF=-D__CHECK_ENDIAN__
+>> +  - reset-gpios: a GPIO spec for the reset pin
+>> +
+>> +The device node can contain zero to two 'port' child nodes, each with one
+>> +child
+>> +'endpoint' node, according to the bindings defined in [1].
+>> +The following are properties specific to those nodes.
+>> +
+>> +port:
+>> +  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
+> This seems pretty vague to me. It could be read as meaning that ports are 
+> completely optional, and that the port number you list can be used, but that 
+> something else could be used to.
 >
+> Let's make the port nodes mandatory. I propose the following.
 >
-> sparse warnings: (new ones prefixed by >>)
+> Required nodes:
 >
->>> drivers/gpu/drm/bridge/tc358764.c:193:14: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [addressable] [usertype] addr @@    got ed] [addressable] [usertype] addr @@
->    drivers/gpu/drm/bridge/tc358764.c:193:14:    expected unsigned short [unsigned] [addressable] [usertype] addr
->    drivers/gpu/drm/bridge/tc358764.c:193:14:    got restricted __le16 [usertype] <noident>
->>> drivers/gpu/drm/bridge/tc358764.c:197:24: sparse: cast to restricted __le32
->>> drivers/gpu/drm/bridge/tc358764.c:175:5: sparse: symbol 'tc358764_read' was not declared. Should it be static?
->>> drivers/gpu/drm/bridge/tc358764.c:204:5: sparse: symbol 'tc358764_write' was not declared. Should it be static?
-> vim +193 drivers/gpu/drm/bridge/tc358764.c
+> The TC358764 has DSI and LVDS ports whose connections are described using the 
+> OF graph bindings defined in Documentation/devicetree/bindings/graph.txt. The 
+> device node must contain one 'port' child node per DSI and LVDS port. The port 
+> nodes are numbered as follows.
 >
->    174	
->  > 175	int tc358764_read(struct tc358764 *ctx, u16 addr, u32 *val)
+>   Port                  Number
+> -------------------------------------------------------------------
+>   DSI Input             0
+>   LVDS Output           1
+>
+> Each port node must contain endpoint nodes describing the hardware 
+> connections.
 
-add static
-
->    176	{
->    177		struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
->    178		const struct mipi_dsi_host_ops *ops = dsi->host->ops;
->    179		struct mipi_dsi_msg msg = {
->    180			.type = MIPI_DSI_GENERIC_READ_REQUEST_2_PARAM,
->    181			.channel = dsi->channel,
->    182			.flags = MIPI_DSI_MSG_USE_LPM,
->    183			.tx_buf = &addr,
->    184			.tx_len = 2,
->    185			.rx_buf = val,
->    186			.rx_len = 4
->    187		};
->    188		ssize_t ret;
->    189	
->    190		if (!ops || !ops->transfer)
->    191			return -EINVAL;
->    192	
->  > 193		addr = cpu_to_le16(addr);
-
-It should be changed to:
-
-cpu_to_le16s(&addr);
-
->    194	
->    195		ret = ops->transfer(dsi->host, &msg);
->    196		if (ret >= 0)
->  > 197			*val = le32_to_cpu(*val);
-
-le32_to_cpus(val);
-
->    198	
->    199		dev_dbg(ctx->dev, "read: %d, addr: %d\n", addr, *val);
->    200	
->    201		return ret;
->    202	}
->    203	
->  > 204	int tc358764_write(struct tc358764 *ctx, u16 addr, u32 val)
-
-add static
-
+Since the bridge is controlled via DSI bus, DSI input port is not necessary.
 
 Regards
 Andrzej
 
->    205	{
->    206		struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
->    207		const struct mipi_dsi_host_ops *ops = dsi->host->ops;
->    208		u8 data[6];
->    209		int ret;
->    210		struct mipi_dsi_msg msg = {
->    211			.type = MIPI_DSI_GENERIC_LONG_WRITE,
->    212			.channel = dsi->channel,
->    213			.flags = MIPI_DSI_MSG_USE_LPM | MIPI_DSI_MSG_REQ_ACK,
->    214			.tx_buf = data,
->    215			.tx_len = 6
->    216		};
->    217	
->    218		if (!ops || !ops->transfer)
->    219			return -EINVAL;
->    220	
->    221		data[0] = addr;
->    222		data[1] = addr >> 8;
->    223		data[2] = val;
->    224		data[3] = val >> 8;
->    225		data[4] = val >> 16;
->    226		data[5] = val >> 24;
->    227	
->    228		ret = ops->transfer(dsi->host, &msg);
->    229	
->    230		return ret;
->    231	}
->    232	
+
 >
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
->
->
->
+>> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+>> +
+>> +Example:
+>> +
+>> +	bridge@0 {
+>> +		reg = <0>;
+>> +		compatible = "toshiba,tc358764";
+>> +		vddc-supply = <&vcc_1v2_reg>;
+>> +		vddio-supply = <&vcc_1v8_reg>;
+>> +		vddmipi-supply = <&vcc_1v2_reg>;
+>> +		vddlvds133-supply = <&vcc_3v3_reg>;
+>> +		vddlvds112-supply = <&vcc_1v2_reg>;
+>> +		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		port@1 {
+>> +			reg = <1>;
+>> +			lvds_ep: endpoint {
+>> +				remote-endpoint = <&panel_ep>;
+>> +			};
+>> +		};
+>> +	};
