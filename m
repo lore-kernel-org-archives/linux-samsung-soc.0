@@ -1,134 +1,71 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 07/12] dt-bindings: tc358754: add DT bindings
-Date: Wed, 30 May 2018 11:59:12 +0200
-Message-ID: <20180530095915eucas1p27f09c8424d0c3c0619d134c5e7319fa3~zY7uP6Y6R1391213912eucas1p23@eucas1p2.samsung.com>
-References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
-        <CGME20180528094727eucas1p153b8116120cd2195b15b74776f171cbe@eucas1p1.samsung.com>
-        <1527500833-16005-8-git-send-email-m.purski@samsung.com>
-        <2275901.CJI6BsfBlP@avalon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH v2 00/10] Add TOSHIBA TC358764 DSI/LVDS bridge driver
+Date: Wed, 30 May 2018 14:15:51 +0200
+Message-ID: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
+References: <CGME20180530121622eucas1p1015b65cd12a544b1ea72fe6bfd1a3ccc@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2275901.CJI6BsfBlP@avalon>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maciej Purski <m.purski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Purski <m.purski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 28.05.2018 12:18, Laurent Pinchart wrote:
-> Hi Maciej,
->
-> Thank you for the patch.
->
-> On Monday, 28 May 2018 12:47:11 EEST Maciej Purski wrote:
->> The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
->> Bindings describe power supplies, reset gpio and video interfaces.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> Signed-off-by: Maciej Purski <m.purski@samsung.com>
->> ---
->>  .../bindings/display/bridge/toshiba,tc358764.txt   | 42 +++++++++++++++++++
->>  1 file changed, 42 insertions(+)
->>  create mode 100644
->> Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
->>
->> diff --git
->> a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
->> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt new
->> file mode 100644
->> index 0000000..d09bdc2
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
->> @@ -0,0 +1,42 @@
->> +TC358764 MIPI-DSI to LVDS panel bridge
->> +
->> +Required properties:
->> +  - compatible: "toshiba,tc358764"
->> +  - reg: the virtual channel number of a DSI peripheral
->> +  - vddc-supply: core voltage supply
->> +  - vddio-supply: I/O voltage supply
->> +  - vddmipi-supply: MIPI voltage supply
->> +  - vddlvds133-supply: LVDS1 3.3V voltage supply
->> +  - vddlvds112-supply: LVDS1 1.2V voltage supply
-> That's a lot of power supplies. Could some of them be merged together ? See 
-> https://patchwork.freedesktop.org/patch/216058/ for an earlier discussion on 
-> the same subject.
+Hi all,
 
-Specs says about 3 supply voltage values:
-- 1.2V - digital core, DSI-RX PHY
-- 1.8-3.3V - digital I/O
-- 3.3V - LVDS-TX PHY
+this patchset is a next attempt to add the tc358764 driver.
+The previous one can be found here:
 
-So I guess it should be minimal number of supplies. Natural candidates:
+https://lists.freedesktop.org/archives/dri-devel/2014-February/053705.html
 
-- vddc-supply: core voltage supply, 1.2V
-- vddio-supply: I/O voltage supply, 1.8V or 3.3V
-- vddlvds-supply: LVDS1/2 voltage supply, 3.3V
+Back then, TC358764 was added as a panel driver.
 
-I have changed name of the latest supply to be more consistent with
-other supplies, and changed 1.8-3.3 (which incorrectly suggest voltage
-range), to more precise voltage alternative.
+The bridge is supposed to be a DSI peripheral. Currently exynos_dsi accepts only panels
+as its peripherals. Therefore, some logic in exynos_dsi had to be ammended. That is implemented
+in first 4 patches.
 
+Apart from the driver this patchset adds support for BOE HV070WSA-100 panel, which is used by
+TC358764 and dts nodes to exynos5250.dtsi and exynos5250-arndale.dtsi.
 
->
->> +  - reset-gpios: a GPIO spec for the reset pin
->> +
->> +The device node can contain zero to two 'port' child nodes, each with one
->> +child
->> +'endpoint' node, according to the bindings defined in [1].
->> +The following are properties specific to those nodes.
->> +
->> +port:
->> +  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
-> This seems pretty vague to me. It could be read as meaning that ports are 
-> completely optional, and that the port number you list can be used, but that 
-> something else could be used to.
->
-> Let's make the port nodes mandatory. I propose the following.
->
-> Required nodes:
->
-> The TC358764 has DSI and LVDS ports whose connections are described using the 
-> OF graph bindings defined in Documentation/devicetree/bindings/graph.txt. The 
-> device node must contain one 'port' child node per DSI and LVDS port. The port 
-> nodes are numbered as follows.
->
->   Port                  Number
-> -------------------------------------------------------------------
->   DSI Input             0
->   LVDS Output           1
->
-> Each port node must contain endpoint nodes describing the hardware 
-> connections.
+Best regards,
 
-Since the bridge is controlled via DSI bus, DSI input port is not necessary.
+Maciej Purski
 
-Regards
-Andrzej
+---
 
+Changes in v2:
+- fix commits authorship
+- don't call pm_runtime_put_sync() in exyons_dsi_disable(), if pm_runtime_get_sync()
+  has not been called
+- squash dts commits
+- merge some redundant regulators in tc358764 bindings and in DTS
+- fix kbuild robot errors
 
->
->> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
->> +
->> +Example:
->> +
->> +	bridge@0 {
->> +		reg = <0>;
->> +		compatible = "toshiba,tc358764";
->> +		vddc-supply = <&vcc_1v2_reg>;
->> +		vddio-supply = <&vcc_1v8_reg>;
->> +		vddmipi-supply = <&vcc_1v2_reg>;
->> +		vddlvds133-supply = <&vcc_3v3_reg>;
->> +		vddlvds112-supply = <&vcc_1v2_reg>;
->> +		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		port@1 {
->> +			reg = <1>;
->> +			lvds_ep: endpoint {
->> +				remote-endpoint = <&panel_ep>;
->> +			};
->> +		};
->> +	};
+Andrzej Hajda (6):
+  panel/hv070wsa-100: add DT bindings
+  drm/panel: add support for BOE HV070WSA-100 panel to simple-panel
+  dt-bindings: tc358754: add DT bindings
+  drm/bridge: tc358764: Add DSI to LVDS bridge driver
+  ARM: dts: exynos5250: add DSI node
+  ARM: dts: exynos5250-arndale: add DSI and panel nodes
+
+Maciej Purski (4):
+  drm/exynos: rename "bridge_node" to "mic_bridge_node"
+  drm/exynos: move pm_runtime_get_sync() to exynos_dsi_init()
+  drm/exynos: move connector creation to attach callback
+  drm/exynos: add non-panel path to exynos_dsi_enable()
+
+ .../bindings/display/bridge/toshiba,tc358764.txt   |  37 ++
+ .../bindings/display/panel/boe,hv070wsa-100.txt    |   7 +
+ arch/arm/boot/dts/exynos5250-arndale.dts           |  61 +++
+ arch/arm/boot/dts/exynos5250.dtsi                  |  21 +
+ drivers/gpu/drm/bridge/Kconfig                     |   9 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/tc358764.c                  | 547 +++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  88 ++--
+ drivers/gpu/drm/panel/panel-simple.c               |  25 +
+ 9 files changed, 755 insertions(+), 41 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
+ create mode 100644 drivers/gpu/drm/bridge/tc358764.c
+
+-- 
+2.7.4
