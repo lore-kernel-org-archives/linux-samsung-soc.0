@@ -1,114 +1,79 @@
 From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v2 10/10] ARM: dts: exynos5250-arndale: add DSI and panel
- nodes
-Date: Wed, 30 May 2018 14:16:01 +0200
-Message-ID: <1527682561-1386-11-git-send-email-m.purski@samsung.com>
+Subject: [PATCH v2 04/10] drm/exynos: add non-panel path to exynos_dsi_enable()
+Date: Wed, 30 May 2018 14:15:55 +0200
+Message-ID: <1527682561-1386-5-git-send-email-m.purski@samsung.com>
 References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
-        <CGME20180530121630eucas1p1584c59b67815a65d0747afab214979ef@eucas1p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+ <CGME20180530121625eucas1p239693227eda97d090f3bfe530ded0c52@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Purski <m.purski@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Maciej Purski <m.purski@samsung.com>, Archit Taneja <architt@codeaurora.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+As DSIM can now have a bridge connected as a peripheral, it should be
+possible to successfully enable exynos_dsi, when there is no panel
+provided.
 
-The patch adds bridge and panel nodes.
-It adds also DSI properties specific for arndale board and
-regulators required by the bridge.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts | 61 ++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 7a8a5c5..816d89d 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -71,6 +71,17 @@
- 		};
- 	};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 7b50bad..7f6a0b1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1382,27 +1382,25 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ 	if (dsi->state & DSIM_STATE_ENABLED)
+ 		return;
  
-+	panel: panel {
-+		compatible = "boe,hv070wsa-100";
-+		power-supply = <&vcc_3v3_reg>;
-+		enable-gpios = <&gpd1 3 GPIO_ACTIVE_HIGH>;
-+		port {
-+			panel_ep: endpoint {
-+				remote-endpoint = <&bridge_out_ep>;
-+			};
-+		};
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -97,6 +108,30 @@
- 			reg = <2>;
- 			regulator-name = "hdmi-en";
- 		};
-+
-+		vcc_1v2_reg: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "VCC_1V2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+
-+		vcc_1v8_reg: regulator@4 {
-+			compatible = "regulator-fixed";
-+			reg = <4>;
-+			regulator-name = "VCC_1V8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		vcc_3v3_reg: regulator@5 {
-+			compatible = "regulator-fixed";
-+			reg = <5>;
-+			regulator-name = "VCC_3V3";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
- 	};
+-	pm_runtime_get_sync(dsi->dev);
+-
+-	dsi->state |= DSIM_STATE_ENABLED;
+-
+-	ret = drm_panel_prepare(dsi->panel);
+-	if (ret < 0) {
+-		dsi->state &= ~DSIM_STATE_ENABLED;
+-		return;
++	if (dsi->panel) {
++		ret = drm_panel_prepare(dsi->panel);
++		if (ret < 0)
++			return;
+ 	}
  
- 	fixed-rate-clocks {
-@@ -119,6 +154,32 @@
- 	cpu0-supply = <&buck2_reg>;
- };
+ 	exynos_dsi_set_display_mode(dsi);
+ 	exynos_dsi_set_display_enable(dsi, true);
  
-+&dsi_0 {
-+	vddcore-supply = <&ldo8_reg>;
-+	vddio-supply = <&ldo10_reg>;
-+	samsung,pll-clock-frequency = <24000000>;
-+	samsung,burst-clock-frequency = <320000000>;
-+	samsung,esc-clock-frequency = <10000000>;
-+	status = "okay";
-+
-+	bridge@0 {
-+		reg = <0>;
-+		compatible = "toshiba,tc358764";
-+		vddc-supply = <&vcc_1v2_reg>;
-+		vddio-supply = <&vcc_1v8_reg>;
-+		vddlvds-supply = <&vcc_3v3_reg>;
-+		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@1 {
-+			reg = <1>;
-+			bridge_out_ep: endpoint {
-+				remote-endpoint = <&panel_ep>;
-+			};
-+		};
-+	};
-+};
-+
- &dp {
- 	status = "okay";
- 	samsung,color-space = <0>;
+-	ret = drm_panel_enable(dsi->panel);
+-	if (ret < 0) {
+-		dsi->state &= ~DSIM_STATE_ENABLED;
+-		exynos_dsi_set_display_enable(dsi, false);
+-		drm_panel_unprepare(dsi->panel);
+-		return;
++	if (dsi->panel) {
++		ret = drm_panel_enable(dsi->panel);
++		if (ret < 0) {
++			exynos_dsi_set_display_enable(dsi, false);
++			drm_panel_unprepare(dsi->panel);
++			return;
++		}
+ 	}
+ 
++	dsi->state |= DSIM_STATE_ENABLED;
+ 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
+ }
+ 
 -- 
 2.7.4
