@@ -1,54 +1,43 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 Subject: Re: [PATCH 07/15] arm: dts: exynos: Add missing cooling device
  properties for CPUs
-Date: Tue, 29 May 2018 15:18:45 +0200
-Message-ID: <CAJKOXPcyV=fdRu7oLXHMimSFR9ktJ23uBriswTStkEkAMbTaNw@mail.gmail.com>
-References: <cover.1527244200.git.viresh.kumar@linaro.org> <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
+Date: Wed, 30 May 2018 10:08:06 +0530
+Message-ID: <20180530043806.ksen4xyh3x3x4fqn@vireshk-i7>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
+ <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
+ <CAJKOXPcyV=fdRu7oLXHMimSFR9ktJ23uBriswTStkEkAMbTaNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPcyV=fdRu7oLXHMimSFR9ktJ23uBriswTStkEkAMbTaNw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: arm@kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com, Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, May 25, 2018 at 12:31 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> The cooling device properties, like "#cooling-cells" and
-> "dynamic-power-coefficient", should either be present for all the CPUs
-> of a cluster or none. If these are present only for a subset of CPUs of
-> a cluster then things will start falling apart as soon as the CPUs are
-> brought online in a different order.
+On 29-05-18, 15:18, Krzysztof Kozlowski wrote:
+> Thanks for the patch.
+> 
+> In case of Exynos, the booting CPU always has these information in DT
+> and the booting CPU cannot be changed (chosen by firmware/hardware
+> configuration).
 
-Thanks for the patch.
+But can the booting CPU be offlined ?
 
-In case of Exynos, the booting CPU always has these information in DT
-and the booting CPU cannot be changed (chosen by firmware/hardware
-configuration). Therefore there is no real risk of falling although
-for correctness of DT your change makes sense.
+If yes, then this is how things are broken right now.
 
-It is too late for this cycle for me so I'll pick it up after merge window.
-Alternatively, arm-soc guys can pick it up directly with my tag:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Build cpufreq driver as module, boot kernel, hotplug out CPU0, insert
+cpufreq driver and that will try to find these properties in CPU1.
 
-Best regards,
-Krzysztof
+> Therefore there is no real risk of falling although
+> for correctness of DT your change makes sense.
+> 
+> It is too late for this cycle for me so I'll pick it up after merge window.
+> Alternatively, arm-soc guys can pick it up directly with my tag:
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
+No worries, you can pick it up later on.
 
-> For example, this will happen
-> because the operating system looks for such properties in the CPU node
-> it is trying to bring up, so that it can register a cooling device.
->
-> Add such missing properties.
->
-> Fix other missing properties (clocks, OPP, clock latency) as well to
-> make it all work.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos3250.dtsi | 16 ++++++++++++++++
->  arch/arm/boot/dts/exynos4210.dtsi | 13 +++++++++++++
->  arch/arm/boot/dts/exynos4412.dtsi |  9 +++++++++
->  arch/arm/boot/dts/exynos5250.dtsi | 23 +++++++++++++++++++++++
->  4 files changed, 61 insertions(+)
->
+-- 
+viresh
