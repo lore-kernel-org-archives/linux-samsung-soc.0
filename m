@@ -1,76 +1,69 @@
 From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v2 02/10] drm/exynos: move pm_runtime_get_sync() to
- exynos_dsi_init()
-Date: Wed, 30 May 2018 14:15:53 +0200
-Message-ID: <1527682561-1386-3-git-send-email-m.purski@samsung.com>
+Subject: [PATCH v2 09/10] ARM: dts: exynos5250: add DSI node
+Date: Wed, 30 May 2018 14:16:00 +0200
+Message-ID: <1527682561-1386-10-git-send-email-m.purski@samsung.com>
 References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
-        <CGME20180530121623eucas1p1309b2c054ccd7a52a611b46346709af9@eucas1p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+ <CGME20180530121629eucas1p2cc1a8c3f5a8e704f4d6f3cf75834cf00@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Purski <m.purski@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Maciej Purski <m.purski@samsung.com>, Archit Taneja <architt@codeaurora.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In order to allow bridge drivers to use DSI transfers in their
-pre_enable callbacks, pm_runtime_get_sync() should be performed before
-exynos_dsi_enable(). DSIM_STATE_ENABLED flag now should not guard
-from calling dsi_host_transfer() before enabling.
+From: Andrzej Hajda <a.hajda@samsung.com>
 
+The patch adds common part of DSI node for Exynos5250 platforms
+and a required mipi-phy node.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/exynos5250.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 9599e6b..85eb2262 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1312,6 +1312,7 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
- {
- 	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 2daf505..9965eca 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -733,6 +733,27 @@
+ 			#phy-cells = <0>;
+ 		};
  
-+	pm_runtime_get_sync(dsi->dev);
- 	exynos_dsi_reset(dsi);
- 	exynos_dsi_enable_irq(dsi);
- 
-@@ -1388,7 +1389,6 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
- 	ret = drm_panel_prepare(dsi->panel);
- 	if (ret < 0) {
- 		dsi->state &= ~DSIM_STATE_ENABLED;
--		pm_runtime_put_sync(dsi->dev);
- 		return;
- 	}
- 
-@@ -1400,7 +1400,6 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
- 		dsi->state &= ~DSIM_STATE_ENABLED;
- 		exynos_dsi_set_display_enable(dsi, false);
- 		drm_panel_unprepare(dsi->panel);
--		pm_runtime_put_sync(dsi->dev);
- 		return;
- 	}
- 
-@@ -1422,7 +1421,10 @@ static void exynos_dsi_disable(struct drm_encoder *encoder)
- 
- 	dsi->state &= ~DSIM_STATE_ENABLED;
- 
--	pm_runtime_put_sync(dsi->dev);
-+	if (dsi->state & DSIM_STATE_INITIALIZED) {
-+		pm_runtime_put_sync(dsi->dev);
-+		dsi->state &= ~DSIM_STATE_INITIALIZED;
-+	}
- }
- 
- static enum drm_connector_status
-@@ -1566,9 +1568,6 @@ static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
- 	struct exynos_dsi_transfer xfer;
- 	int ret;
- 
--	if (!(dsi->state & DSIM_STATE_ENABLED))
--		return -EINVAL;
--
- 	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
- 		ret = exynos_dsi_init(dsi);
- 		if (ret)
++		mipi_phy: video-phy@10040710 {
++			compatible = "samsung,s5pv210-mipi-video-phy";
++			reg = <0x10040710 0x100>;
++			#phy-cells = <1>;
++			syscon = <&pmu_system_controller>;
++		};
++
++		dsi_0: dsi@14500000 {
++			compatible = "samsung,exynos4210-mipi-dsi";
++			reg = <0x14500000 0x10000>;
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++			samsung,power-domain = <&pd_disp1>;
++			phys = <&mipi_phy 3>;
++			phy-names = "dsim";
++			clocks = <&clock CLK_DSIM0>, <&clock CLK_SCLK_MIPI1>;
++			clock-names = "bus_clk", "sclk_mipi";
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		adc: adc@12d10000 {
+ 			compatible = "samsung,exynos-adc-v1";
+ 			reg = <0x12D10000 0x100>;
 -- 
 2.7.4
