@@ -1,146 +1,170 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Subject: Re: [PATCH 07/12] dt-bindings: tc358754: add DT bindings
-Date: Wed, 30 May 2018 15:07:29 +0200
-Message-ID: <20180530130731eucas1p160d53c3f8500bcecd000bd8895843817~zbgGgQw3b1079710797eucas1p1H@eucas1p1.samsung.com>
-References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
-        <2275901.CJI6BsfBlP@avalon>
-        <20180530095915eucas1p27f09c8424d0c3c0619d134c5e7319fa3~zY7uP6Y6R1391213912eucas1p23@eucas1p2.samsung.com>
-        <CGME20180530123603epcas2p24f25097881c56b00ec9f81693924c38b@epcas2p2.samsung.com>
-        <1928297.lKUBOH9NhR@avalon>
+Date: Wed, 30 May 2018 16:20:15 +0300
+Message-ID: <2964003.icRy2MNiaL@avalon>
+References: <1527500833-16005-1-git-send-email-m.purski@samsung.com> <1928297.lKUBOH9NhR@avalon> <20180530130731eucas1p160d53c3f8500bcecd000bd8895843817~zbgGgQw3b1079710797eucas1p1H@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1928297.lKUBOH9NhR@avalon>
-Content-Language: en-US
+In-Reply-To: <20180530130731eucas1p160d53c3f8500bcecd000bd8895843817~zbgGgQw3b1079710797eucas1p1H@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
 Cc: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 30.05.2018 14:35, Laurent Pinchart wrote:
-> Hi Andrzej,
->
-> On Wednesday, 30 May 2018 12:59:12 EEST Andrzej Hajda wrote:
->> On 28.05.2018 12:18, Laurent Pinchart wrote:
->>> On Monday, 28 May 2018 12:47:11 EEST Maciej Purski wrote:
->>>> The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
->>>> Bindings describe power supplies, reset gpio and video interfaces.
->>>>
->>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
->>>> ---
->>>>
->>>>  .../bindings/display/bridge/toshiba,tc358764.txt   | 42 ++++++++++++++++
->>>>  1 file changed, 42 insertions(+)
->>>>  create mode 100644
->>>>
->>>> Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
->>>>
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
->>>> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
->>>> new
->>>> file mode 100644
->>>> index 0000000..d09bdc2
->>>> --- /dev/null
->>>> +++
->>>> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
->>>> @@ -0,0 +1,42 @@
->>>> +TC358764 MIPI-DSI to LVDS panel bridge
->>>> +
->>>> +Required properties:
->>>> +  - compatible: "toshiba,tc358764"
->>>> +  - reg: the virtual channel number of a DSI peripheral
->>>> +  - vddc-supply: core voltage supply
->>>> +  - vddio-supply: I/O voltage supply
->>>> +  - vddmipi-supply: MIPI voltage supply
->>>> +  - vddlvds133-supply: LVDS1 3.3V voltage supply
->>>> +  - vddlvds112-supply: LVDS1 1.2V voltage supply
->>> That's a lot of power supplies. Could some of them be merged together ?
->>> See https://patchwork.freedesktop.org/patch/216058/ for an earlier
->>> discussion on the same subject.
->> Specs says about 3 supply voltage values:
->> - 1.2V - digital core, DSI-RX PHY
->> - 1.8-3.3V - digital I/O
->> - 3.3V - LVDS-TX PHY
->>
->> So I guess it should be minimal number of supplies. Natural candidates:
->>
->> - vddc-supply: core voltage supply, 1.2V
->> - vddio-supply: I/O voltage supply, 1.8V or 3.3V
->> - vddlvds-supply: LVDS1/2 voltage supply, 3.3V
->>
->> I have changed name of the latest supply to be more consistent with
->> other supplies, and changed 1.8-3.3 (which incorrectly suggest voltage
->> range), to more precise voltage alternative.
-> This looks fine to me.
->
->>>> +  - reset-gpios: a GPIO spec for the reset pin
->>>> +
->>>> +The device node can contain zero to two 'port' child nodes, each with
->>>> one
->>>> +child
->>>> +'endpoint' node, according to the bindings defined in [1].
->>>> +The following are properties specific to those nodes.
->>>> +
->>>> +port:
->>>> +  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
->>> This seems pretty vague to me. It could be read as meaning that ports are
->>> completely optional, and that the port number you list can be used, but
->>> that something else could be used to.
->>>
->>> Let's make the port nodes mandatory. I propose the following.
->>>
->>> Required nodes:
->>>
->>> The TC358764 has DSI and LVDS ports whose connections are described using
->>> the OF graph bindings defined in
->>> Documentation/devicetree/bindings/graph.txt. The device node must contain
->>> one 'port' child node per DSI and LVDS port. The port nodes are numbered
->>> as follows.
->>>
->>>   Port                  Number
->>> -------------------------------------------------------------------
->>>   DSI Input             0
->>>   LVDS Output           1
->>>
->>> Each port node must contain endpoint nodes describing the hardware
->>> connections.
->> Since the bridge is controlled via DSI bus, DSI input port is not necessary.
-> I don't agree with this. Regardless of how the bridge is controlled, I think 
-> we should always use ports to describe the data connections. Otherwise it 
-> would get more complicated for display controller drivers to use different 
-> types of bridges.
+Hi Andrzej,
 
+On Wednesday, 30 May 2018 16:07:29 EEST Andrzej Hajda wrote:
+> On 30.05.2018 14:35, Laurent Pinchart wrote:
+> > On Wednesday, 30 May 2018 12:59:12 EEST Andrzej Hajda wrote:
+> >> On 28.05.2018 12:18, Laurent Pinchart wrote:
+> >>> On Monday, 28 May 2018 12:47:11 EEST Maciej Purski wrote:
+> >>>> The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
+> >>>> Bindings describe power supplies, reset gpio and video interfaces.
+> >>>> 
+> >>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> >>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> >>>> ---
+> >>>> 
+> >>>>  .../bindings/display/bridge/toshiba,tc358764.txt   | 42
+> >>>>  ++++++++++++++++
+> >>>>  1 file changed, 42 insertions(+)
+> >>>>  create mode 100644
+> >>>> 
+> >>>> Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+> >>>> 
+> >>>> diff --git
+> >>>> a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+> >>>> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+> >>>> new
+> >>>> file mode 100644
+> >>>> index 0000000..d09bdc2
+> >>>> --- /dev/null
+> >>>> +++
+> >>>> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+> >>>> @@ -0,0 +1,42 @@
+> >>>> +TC358764 MIPI-DSI to LVDS panel bridge
+> >>>> +
+> >>>> +Required properties:
+> >>>> +  - compatible: "toshiba,tc358764"
+> >>>> +  - reg: the virtual channel number of a DSI peripheral
+> >>>> +  - vddc-supply: core voltage supply
+> >>>> +  - vddio-supply: I/O voltage supply
+> >>>> +  - vddmipi-supply: MIPI voltage supply
+> >>>> +  - vddlvds133-supply: LVDS1 3.3V voltage supply
+> >>>> +  - vddlvds112-supply: LVDS1 1.2V voltage supply
+> >>> 
+> >>> That's a lot of power supplies. Could some of them be merged together ?
+> >>> See https://patchwork.freedesktop.org/patch/216058/ for an earlier
+> >>> discussion on the same subject.
+> >> 
+> >> Specs says about 3 supply voltage values:
+> >> - 1.2V - digital core, DSI-RX PHY
+> >> - 1.8-3.3V - digital I/O
+> >> - 3.3V - LVDS-TX PHY
+> >> 
+> >> So I guess it should be minimal number of supplies. Natural candidates:
+> >> 
+> >> - vddc-supply: core voltage supply, 1.2V
+> >> - vddio-supply: I/O voltage supply, 1.8V or 3.3V
+> >> - vddlvds-supply: LVDS1/2 voltage supply, 3.3V
+> >> 
+> >> I have changed name of the latest supply to be more consistent with
+> >> other supplies, and changed 1.8-3.3 (which incorrectly suggest voltage
+> >> range), to more precise voltage alternative.
+> > 
+> > This looks fine to me.
+> > 
+> >>>> +  - reset-gpios: a GPIO spec for the reset pin
+> >>>> +
+> >>>> +The device node can contain zero to two 'port' child nodes, each with
+> >>>> one
+> >>>> +child
+> >>>> +'endpoint' node, according to the bindings defined in [1].
+> >>>> +The following are properties specific to those nodes.
+> >>>> +
+> >>>> +port:
+> >>>> +  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
+> >>> 
+> >>> This seems pretty vague to me. It could be read as meaning that ports
+> >>> are
+> >>> completely optional, and that the port number you list can be used, but
+> >>> that something else could be used to.
+> >>> 
+> >>> Let's make the port nodes mandatory. I propose the following.
+> >>> 
+> >>> Required nodes:
+> >>> 
+> >>> The TC358764 has DSI and LVDS ports whose connections are described
+> >>> using
+> >>> the OF graph bindings defined in
+> >>> Documentation/devicetree/bindings/graph.txt. The device node must
+> >>> contain
+> >>> one 'port' child node per DSI and LVDS port. The port nodes are numbered
+> >>> as follows.
+> >>> 
+> >>>   Port                  Number
+> >>> 
+> >>> -------------------------------------------------------------------
+> >>> 
+> >>>   DSI Input             0
+> >>>   LVDS Output           1
+> >>> 
+> >>> Each port node must contain endpoint nodes describing the hardware
+> >>> connections.
+> >> 
+> >> Since the bridge is controlled via DSI bus, DSI input port is not
+> >> necessary.
+> > 
+> > I don't agree with this. Regardless of how the bridge is controlled, I
+> > think we should always use ports to describe the data connections.
+> > Otherwise it would get more complicated for display controller drivers to
+> > use different types of bridges.
+> 
+> It was discussed already, and DT guideline is to skip graphs in simple
+> case of parent/child nodes, see for example [1].
+> 
+> [1]: https://marc.info/?l=dri-devel&m=148354108702517&w=2
 
-It was discussed already, and DT guideline is to skip graphs in simple
-case of parent/child nodes, see for example [1].
+That's when the child as no other connection at all. I don't think it makes 
+sense to mix description of connections through parent/child relationships and 
+through ports for a single device.
 
-[1]: https://marc.info/?l=dri-devel&m=148354108702517&w=2
+And that being said, I don't agree with Rob's comment there. Having two 
+different methods to describe connections means that you have to implement 
+them both in all display controller drivers (and even all bridge drivers in 
+the case of chained bridges). That's an extra complexity that can easily be 
+avoided by standardizing DT bindings.
 
-Regards
-Andrzej
+I also wonder whether Rob's position hasn't been reconsidered since then; I 
+vaguely recalled another more recent discussion on this topic. I'm a bit too 
+busy now to try and dig it up now I'm afraid :-/
 
->>>> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
->>>> +
->>>> +Example:
->>>> +
->>>> +	bridge@0 {
->>>> +		reg = <0>;
->>>> +		compatible = "toshiba,tc358764";
->>>> +		vddc-supply = <&vcc_1v2_reg>;
->>>> +		vddio-supply = <&vcc_1v8_reg>;
->>>> +		vddmipi-supply = <&vcc_1v2_reg>;
->>>> +		vddlvds133-supply = <&vcc_3v3_reg>;
->>>> +		vddlvds112-supply = <&vcc_1v2_reg>;
->>>> +		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
->>>> +		#address-cells = <1>;
->>>> +		#size-cells = <0>;
->>>> +		port@1 {
->>>> +			reg = <1>;
->>>> +			lvds_ep: endpoint {
->>>> +				remote-endpoint = <&panel_ep>;
->>>> +			};
->>>> +		};
->>>> +	};
+> >>>> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+> >>>> +
+> >>>> +Example:
+> >>>> +
+> >>>> +	bridge@0 {
+> >>>> +		reg = <0>;
+> >>>> +		compatible = "toshiba,tc358764";
+> >>>> +		vddc-supply = <&vcc_1v2_reg>;
+> >>>> +		vddio-supply = <&vcc_1v8_reg>;
+> >>>> +		vddmipi-supply = <&vcc_1v2_reg>;
+> >>>> +		vddlvds133-supply = <&vcc_3v3_reg>;
+> >>>> +		vddlvds112-supply = <&vcc_1v2_reg>;
+> >>>> +		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
+> >>>> +		#address-cells = <1>;
+> >>>> +		#size-cells = <0>;
+> >>>> +		port@1 {
+> >>>> +			reg = <1>;
+> >>>> +			lvds_ep: endpoint {
+> >>>> +				remote-endpoint = <&panel_ep>;
+> >>>> +			};
+> >>>> +		};
+> >>>> +	};
+
+-- 
+Regards,
+
+Laurent Pinchart
