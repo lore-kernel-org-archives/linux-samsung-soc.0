@@ -1,40 +1,38 @@
-From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v2 05/10] panel/hv070wsa-100: add DT bindings
-Date: Wed, 30 May 2018 14:15:56 +0200
-Message-ID: <1527682561-1386-6-git-send-email-m.purski@samsung.com>
-References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
-        <CGME20180530121626eucas1p288656bbbace0c333decadff418e13c34@eucas1p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 07/15] arm: dts: exynos: Add missing cooling device
+ properties for CPUs
+Date: Wed, 30 May 2018 14:32:12 +0200
+Message-ID: <CAJKOXPftrzwLMSDeTBBxG-nvpsriBuPEwQAViTcE3DYRYsnzmg@mail.gmail.com>
+References: <cover.1527244200.git.viresh.kumar@linaro.org> <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
+ <CAJKOXPcyV=fdRu7oLXHMimSFR9ktJ23uBriswTStkEkAMbTaNw@mail.gmail.com> <20180530043806.ksen4xyh3x3x4fqn@vireshk-i7>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
+In-Reply-To: <20180530043806.ksen4xyh3x3x4fqn@vireshk-i7>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Purski <m.purski@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: arm@kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com, Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+On Wed, May 30, 2018 at 6:38 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 29-05-18, 15:18, Krzysztof Kozlowski wrote:
+>> Thanks for the patch.
+>>
+>> In case of Exynos, the booting CPU always has these information in DT
+>> and the booting CPU cannot be changed (chosen by firmware/hardware
+>> configuration).
+>
+> But can the booting CPU be offlined ?
+>
+> If yes, then this is how things are broken right now.
+>
+> Build cpufreq driver as module, boot kernel, hotplug out CPU0, insert
+> cpufreq driver and that will try to find these properties in CPU1.
 
-The patch adds bindings to BOE HV070-WSA WSVGA panel.
-Bindings are compatible with simple panel bindings.
+OK, I see the possibility although it is still far away from use
+cases. You cannot hotplug booting CPU (CPU0) on Exynos kernels. It
+never worked. Strictly speaking - offlining will work. But bringing it
+online will likely hang the system.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
----
- .../devicetree/bindings/display/panel/boe,hv070wsa-100.txt         | 7 +++++++
- 1 file changed, 7 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
-
-diff --git a/Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt b/Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
-new file mode 100644
-index 0000000..bfc20ac
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
-@@ -0,0 +1,7 @@
-+BOE HV070WSA-100 7.01" WSVGA TFT LCD panel
-+
-+Required properties:
-+- compatible: should be "boe,hv070wsa-100"
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
--- 
-2.7.4
+Best regards,
+Krzysztof
