@@ -1,66 +1,34 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 07/10] dt-bindings: tc358754: add DT bindings
-Date: Wed, 30 May 2018 23:02:11 -0500
-Message-ID: <20180531040211.GA23051@rob-hp-laptop>
-References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
- <CGME20180530121627eucas1p1c8daf24d7c95e9e8b04a523d4662dfd9@eucas1p1.samsung.com>
- <1527682561-1386-8-git-send-email-m.purski@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Add missing CPU clocks to secondary
+ CPUs on Exynos542x
+Date: Thu, 31 May 2018 10:51:09 +0530
+Message-ID: <20180531052109.f43trnba7ux6tno2@vireshk-i7>
+References: <20180530164922.31851-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1527682561-1386-8-git-send-email-m.purski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Maciej Purski <m.purski@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+In-Reply-To: <20180530164922.31851-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCBNYXkgMzAsIDIwMTggYXQgMDI6MTU6NThQTSArMDIwMCwgTWFjaWVqIFB1cnNraSB3
-cm90ZToKPiBGcm9tOiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IAo+IFRo
-ZSBwYXRjaCBhZGRzIGJpbmRpbmdzIHRvIFRvc2hpYmEgRFNJL0xWRFMgYnJpZGdlIFRDMzU4NzY0
-Lgo+IEJpbmRpbmdzIGRlc2NyaWJlIHBvd2VyIHN1cHBsaWVzLCByZXNldCBncGlvIGFuZCB2aWRl
-byBpbnRlcmZhY2VzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFA
-c2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9mZi1ieTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ft
-c3VuZy5jb20+Cj4gLS0tCj4gIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2JyaWRnZS90b3NoaWJhLHRj
-MzU4NzY0LnR4dCAgIHwgMzcgKysrKysrKysrKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdl
-ZCwgMzcgaW5zZXJ0aW9ucygrKQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3Rvc2hpYmEsdGMzNTg3NjQudHh0Cj4g
-Cj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5
-L2JyaWRnZS90b3NoaWJhLHRjMzU4NzY0LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9kaXNwbGF5L2JyaWRnZS90b3NoaWJhLHRjMzU4NzY0LnR4dAo+IG5ldyBmaWxlIG1v
-ZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMC4uNmVkYTE0Zgo+IC0tLSAvZGV2L251bGwKPiArKysg
-Yi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2UvdG9zaGli
-YSx0YzM1ODc2NC50eHQKPiBAQCAtMCwwICsxLDM3IEBACj4gK1RDMzU4NzY0IE1JUEktRFNJIHRv
-IExWRFMgcGFuZWwgYnJpZGdlCj4gKwo+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+ICsgIC0gY29t
-cGF0aWJsZTogInRvc2hpYmEsdGMzNTg3NjQiCj4gKyAgLSByZWc6IHRoZSB2aXJ0dWFsIGNoYW5u
-ZWwgbnVtYmVyIG9mIGEgRFNJIHBlcmlwaGVyYWwKPiArICAtIHZkZGMtc3VwcGx5OiBjb3JlIHZv
-bHRhZ2Ugc3VwcGx5LCAxLjJWCj4gKyAgLSB2ZGRpby1zdXBwbHk6IEkvTyB2b2x0YWdlIHN1cHBs
-eSwgMS44ViBvciAzLjNWCj4gKyAgLSB2ZGRsdmRzLXN1cHBseTogTFZEUzEvMiB2b2x0YWdlIHN1
-cHBseSwgMy4zVgo+ICsgIC0gcmVzZXQtZ3Bpb3M6IGEgR1BJTyBzcGVjIGZvciB0aGUgcmVzZXQg
-cGluCj4gKwo+ICtUaGUgZGV2aWNlIG5vZGUgY2FuIGNvbnRhaW4gemVybyB0byB0d28gJ3BvcnQn
-IGNoaWxkIG5vZGVzLCBlYWNoIHdpdGggb25lCgpIb3cgd291bGQgMCBwb3J0cyBiZSB2YWxpZD8K
-Cj4gK2NoaWxkICdlbmRwb2ludCcgbm9kZSwgYWNjb3JkaW5nIHRvIHRoZSBiaW5kaW5ncyBkZWZp
-bmVkIGluIFsxXS4KPiArVGhlIGZvbGxvd2luZyBhcmUgcHJvcGVydGllcyBzcGVjaWZpYyB0byB0
-aG9zZSBub2Rlcy4KPiArCj4gK3BvcnQ6Cj4gKyAgLSByZWc6IChyZXF1aXJlZCkgY2FuIGJlIDAg
-Zm9yIERTSSBwb3J0IG9yIDEgZm9yIExWRFMgcG9ydDsKPiArCj4gK1sxXTogRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3ZpZGVvLWludGVyZmFjZXMudHh0Cj4gKwo+ICtF
-eGFtcGxlOgo+ICsKPiArCWJyaWRnZUAwIHsKPiArCQlyZWcgPSA8MD47Cj4gKwkJY29tcGF0aWJs
-ZSA9ICJ0b3NoaWJhLHRjMzU4NzY0IjsKPiArCQl2ZGRjLXN1cHBseSA9IDwmdmNjXzF2Ml9yZWc+
-Owo+ICsJCXZkZGlvLXN1cHBseSA9IDwmdmNjXzF2OF9yZWc+Owo+ICsJCXZkZGx2ZHMtc3VwcGx5
-ID0gPCZ2Y2NfM3YzX3JlZz47Cj4gKwkJcmVzZXQtZ3Bpb3MgPSA8JmdwZDEgNiBHUElPX0FDVElW
-RV9MT1c+Owo+ICsJCSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ICsJCSNzaXplLWNlbGxzID0gPDA+
-Owo+ICsJCXBvcnRAMSB7Cj4gKwkJCXJlZyA9IDwxPjsKPiArCQkJbHZkc19lcDogZW5kcG9pbnQg
-ewo+ICsJCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZwYW5lbF9lcD47Cj4gKwkJCX07Cj4gKwkJfTsK
-PiArCX07Cj4gLS0gCj4gMi43LjQKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+On 30-05-18, 18:49, Krzysztof Kozlowski wrote:
+> Secondary CPUs should have the same information in DeviceTree as booting
+> CPU from both correctness point of view and for possible hotplug
+> scenarios.
+> 
+> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 6 ++++++
+>  arch/arm/boot/dts/exynos5422-cpus.dtsi | 8 +++++++-
+>  2 files changed, 13 insertions(+), 1 deletion(-)
+
+Nice.
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
