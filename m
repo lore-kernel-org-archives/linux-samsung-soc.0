@@ -1,163 +1,45 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add missing CPU clocks to secondary
- CPUs on Exynos542x
-Date: Sat, 2 Jun 2018 21:09:58 +0530
-Message-ID: <CAGOxZ506T5swFOoBB0RcbHKa45nJvFRnAZETM505-mi03o6cjg@mail.gmail.com>
-References: <20180530164922.31851-1-krzk@kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 2/9] drm/exynos: rotator: Fix DRM_MODE_REFLECT_{X,Y}
+ interpretation
+Date: Thu, 07 Jun 2018 13:06:07 +0200
+Message-ID: <20180607110614.335-3-m.szyprowski@samsung.com>
+References: <20180607110614.335-1-m.szyprowski@samsung.com>
+ <CGME20180607110620eucas1p1b43ac889bab07152bc20b97116b7ade4@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180530164922.31851-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20180607110614.335-1-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On Wed, May 30, 2018 at 10:19 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Secondary CPUs should have the same information in DeviceTree as booting
-> CPU from both correctness point of view and for possible hotplug
-> scenarios.
->
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/exynos5420-cpus.dtsi | 6 ++++++
->  arch/arm/boot/dts/exynos5422-cpus.dtsi | 8 +++++++-
->  2 files changed, 13 insertions(+), 1 deletion(-)
-
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-Tested on exynos5800 peach-pi, so feel free to add
-
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-
->
-> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-> index a8e449471304..0ee6e92a3c29 100644
-> --- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-> @@ -38,6 +38,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x1>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -49,6 +50,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x2>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -60,6 +62,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x3>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -83,6 +86,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x101>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -94,6 +98,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x102>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -105,6 +110,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x103>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> index 7c130a00d1a8..e4a5857c135f 100644
-> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> @@ -37,6 +37,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x101>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -48,6 +49,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x102>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -59,6 +61,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x103>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -69,8 +72,8 @@
->                 cpu4: cpu@0 {
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
-> -                       clocks = <&clock CLK_ARM_CLK>;
->                         reg = <0x0>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -82,6 +85,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x1>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -93,6 +97,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x2>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -104,6 +109,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x3>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> --
-> 2.14.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Regards,
-Alim
+SG9yaXpvbnRhbCAoRFJNX01PREVfUkVGTEVDVF9ZKSBhbmQgdmVydGljYWwgKERNUl9NT0RFX1JF
+RkxFQ1RfWSkgZmxpcAp3ZXJlIHN3YXBwZWQgaW4gUm90YXRvciBkcml2ZXIuIEZpeCB0aGlzIGJ5
+IHN3YXBwaW5nIGNvZGUgZm9yIGludGVycHJldGluZwp0aGVtLgoKU2lnbmVkLW9mZi1ieTogTWFy
+ZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMgfCA0ICsrLS0KIDEgZmlsZSBjaGFuZ2Vk
+LCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9yb3RhdG9yLmMKaW5kZXggMWE3NmRkM2Q1MmUxLi5hODIwYTY4NDI5Yjkg
+MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMK
+KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuYwpAQCAtMTY4
+LDkgKzE2OCw5IEBAIHN0YXRpYyB2b2lkIHJvdGF0b3JfZHN0X3NldF90cmFuc2Yoc3RydWN0IHJv
+dF9jb250ZXh0ICpyb3QsCiAJdmFsICY9IH5ST1RfQ09OVFJPTF9GTElQX01BU0s7CiAKIAlpZiAo
+cm90YXRpb24gJiBEUk1fTU9ERV9SRUZMRUNUX1gpCi0JCXZhbCB8PSBST1RfQ09OVFJPTF9GTElQ
+X0hPUklaT05UQUw7Ci0JaWYgKHJvdGF0aW9uICYgRFJNX01PREVfUkVGTEVDVF9ZKQogCQl2YWwg
+fD0gUk9UX0NPTlRST0xfRkxJUF9WRVJUSUNBTDsKKwlpZiAocm90YXRpb24gJiBEUk1fTU9ERV9S
+RUZMRUNUX1kpCisJCXZhbCB8PSBST1RfQ09OVFJPTF9GTElQX0hPUklaT05UQUw7CiAKIAl2YWwg
+Jj0gflJPVF9DT05UUk9MX1JPVF9NQVNLOwogCi0tIAoyLjE3LjEKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
