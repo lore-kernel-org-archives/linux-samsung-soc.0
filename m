@@ -1,62 +1,48 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent Storage
-Date: Thu, 7 Jun 2018 13:22:11 +0200
-Message-ID: <CAJKOXPcD3NecVq7yhpJb3whUZe28yq9OrwUpAyEt103KcSNtJA@mail.gmail.com>
-References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/4] [PATCH 0/4] Exynos DRM cleanup
+Date: Thu, 07 Jun 2018 15:36:05 +0200
+Message-ID: <20180607133609.28397-1-m.szyprowski@samsung.com>
+References: <CGME20180607133615eucas1p14f02d066997583aeb621da0255da52a0@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 1:19 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote=
-:
-> Hi,
->
-> When booting my boards under recent linux-next, I see failures of systemd=
-:
->
-> [FAILED] Failed to start Flush Journal to Persistent Storage.
-> See 'systemctl status systemd-journal-flush.service' for details.
->          Starting Create Volatile Files and Directories...
-> [**    ] A start job is running for Create V=E2=80=A6 [  223.209289] nfs:
-> server 192.168.1.10 not responding, still trying
-> [  223.209377] nfs: server 192.168.1.10 not responding, still trying
->
-> Effectively the boards fails to boot. Example is here:
-> https://krzk.eu/#/builders/1/builds/2157
->
-> This was bisected to:
-> commit 37ac86c3a76c113619b7d9afe0251bbfc04cb80a
-> Author: Chuck Lever <chuck.lever@oracle.com>
-> Date:   Fri May 4 15:34:53 2018 -0400
->
->     SUNRPC: Initialize rpc_rqst outside of xprt->reserve_lock
->
->     alloc_slot is a transport-specific op, but initializing an rpc_rqst
->     is common to all transports. In addition, the only part of initial-
->     izing an rpc_rqst that needs serialization is getting a fresh XID.
->
->     Move rpc_rqst initialization to common code in preparation for
->     adding a transport-specific alloc_slot to xprtrdma.
->
->     Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
->     Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
->
->
-> Bisect log attached. Full configuration:
-> 1. exynos_defconfig
-> 2. ARMv7, octa-core, Exynos5422 and Exynos4412 (Odroid XU3, U3 and others=
-)
-> 3. NFSv4 client (from Raspberry Pi)
->
-> Let me know if you need any more information.
-
-Ah, I forgot maybe the most important information in reproducment -
-client uses NFS root (NFSv4).
-
-Best regards,
-Krzysztof
+RGVhciBhbGwsCgpUaGlzIHBhdGNoc2V0IHBlcmZvcm1zIGEgc2lnbmlmaWNhbnQgY2xlYW51cCBv
+ZiBFeHlub3MgRFJNIGNvZGUuIFRoaXMKaW5jbHVkZXMgdGhlIGZvbGxvd2luZyAyIGJpZyBpdGVt
+czoKLSB0aGUgY3VzdG9tICdzdWItZHJpdmVyJyBmcmFtZXdvcmsgaGFzIGJlZW4gZmluYWxseSBy
+ZXBsYWNlZCBieSBnZW5lcmljCiAgZGV2aWNlIGNvbXBvbmVudCBjb2RlOwotIGFjY2VzcyB0byBl
+eHlub3MgR0VNIG9iamVjdCBoYXMgYmVlbiBzaW1wbGlmaWVkIGFuZCB1bmlmaWVkLgoKQmVzdCBy
+ZWdhcmRzCk1hcmVrIFN6eXByb3dza2kKU2Ftc3VuZyBSJkQgSW5zdGl0dXRlIFBvbGFuZAoKClBh
+dGNoIHN1bW1hcnk6CgpNYXJlayBTenlwcm93c2tpICg0KToKICBkcm0vZXh5bm9zOiBnMmQ6IENv
+bnZlcnQgdG8gZHJpdmVyIGNvbXBvbmVudCBBUEkKICBkcm0vZXh5bm9zOiBnZW06IFNpbXBsaWZ5
+IGFjY2VzcyB0byBleHlub3MgR0VNIG9iamVjdHMKICBkcm0vZXh5bm9zOiBVc2UgY29tbW9uIGV4
+eW5vc19kcm1fZ2VtX2dldCgpL3B1dCgpIGZ1bmN0aW9ucyBmb3IgR0VNCiAgICBsb29rdXAKICBk
+cm0vZXh5bm9zOiBnZW06IFN3aXRjaCB0byBkcm1fZ2VtX29iamVjdF9wdXRfdW5sb2NrZWQoKSBo
+ZWxwZXIKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL01ha2VmaWxlICAgICAgICAgIHwgICAyICst
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY29yZS5jIHwgMTE5IC0tLS0tLS0t
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICB8ICAxNCArLQogZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICB8ICA0NyArLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgIHwgIDEwICstCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgIHwgMzAwICsrKysrKysrKy0tLS0tLS0tLS0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmggIHwgIDExICsKIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyAgfCAgNjIgKy0tLS0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uaCAgfCAgMjQgKy0KIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyAgfCAgMTAgKy0KIDEwIGZpbGVzIGNoYW5nZWQsIDE1
+OCBpbnNlcnRpb25zKCspLCA0NDEgZGVsZXRpb25zKC0pCiBkZWxldGUgbW9kZSAxMDA2NDQgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYwoKLS0gCjIuMTcuMQoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
