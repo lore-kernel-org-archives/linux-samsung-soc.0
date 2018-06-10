@@ -1,68 +1,40 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 3/3] drm/bridge/sii8620: fix loops in EDID fetch logic
-Date: Fri, 8 Jun 2018 09:19:11 +0200
-Message-ID: <20180608071912eucas1p14a6c927b38976b6ed958de41e496db5a~2Hji4Da631668116681eucas1p1l@eucas1p1.samsung.com>
-References: <20180115173357.31067-1-a.hajda@samsung.com>
- <CGME20180115173409eucas1p14248e60263dabb683ccd457fd89d4e69@eucas1p1.samsung.com>
- <20180115173357.31067-4-a.hajda@samsung.com>
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 1/1] ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
+Date: Sun, 10 Jun 2018 16:15:49 +0200
+Message-ID: <1528640149-2195-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180115173357.31067-4-a.hajda@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQW5kcnplaiwKCk9uIDIwMTgtMDEtMTUgMTg6MzMsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4g
-RnVuY3Rpb24gc2hvdWxkIGNvbnN0YW50bHkgY2hlY2sgaWYgY2FibGUgaXMgY29ubmVjdGVkIGFu
-ZCBmaW5pc2gKPiBpbiBmaW5pdGUgdGltZS4KPgo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFq
-ZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+CgpUZXN0ZWQtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0u
-c3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KCj4gLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdl
-L3NpbC1zaWk4NjIwLmMgfCAzMSArKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tCj4gICAx
-IGZpbGUgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pCj4KPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jIGIvZHJpdmVycy9n
-cHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jCj4gaW5kZXggN2M0Njg0N2ZlZjE4Li5mNjVlMTQ4
-MzZjMGUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5j
-Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jCj4gQEAgLTgwMSw2
-ICs4MDEsNyBAQCBzdGF0aWMgdm9pZCBzaWk4NjIwX2J1cnN0X3J4X2FsbChzdHJ1Y3Qgc2lpODYy
-MCAqY3R4KQo+ICAgc3RhdGljIHZvaWQgc2lpODYyMF9mZXRjaF9lZGlkKHN0cnVjdCBzaWk4NjIw
-ICpjdHgpCj4gICB7Cj4gICAJdTggbG1fZGRjLCBkZGNfY21kLCBpbnQzLCBjYnVzOwo+ICsJdW5z
-aWduZWQgbG9uZyB0aW1lb3V0Owo+ICAgCWludCBmZXRjaGVkLCBpOwo+ICAgCWludCBlZGlkX2xl
-biA9IEVESURfTEVOR1RIOwo+ICAgCXU4ICplZGlkOwo+IEBAIC04NTAsMjMgKzg1MSwzMSBAQCBz
-dGF0aWMgdm9pZCBzaWk4NjIwX2ZldGNoX2VkaWQoc3RydWN0IHNpaTg2MjAgKmN0eCkKPiAgIAkJ
-CVJFR19ERENfQ01ELCBkZGNfY21kIHwgVkFMX0REQ19DTURfRU5IX0REQ19SRUFEX05PX0FDSwo+
-ICAgCQkpOwo+ICAgCj4gLQkJZG8gewo+IC0JCQlpbnQzID0gc2lpODYyMF9yZWFkYihjdHgsIFJF
-R19JTlRSMyk7Cj4gKwkJaW50MyA9IDA7Cj4gKwkJdGltZW91dCA9IGppZmZpZXMgKyBtc2Vjc190
-b19qaWZmaWVzKDIwMCk7Cj4gKwkJZm9yICg7Oykgewo+ICAgCQkJY2J1cyA9IHNpaTg2MjBfcmVh
-ZGIoY3R4LCBSRUdfQ0JVU19TVEFUVVMpOwo+IC0KPiAtCQkJaWYgKGludDMgJiBCSVRfRERDX0NN
-RF9ET05FKQo+IC0JCQkJYnJlYWs7Cj4gLQo+IC0JCQlpZiAoIShjYnVzICYgQklUX0NCVVNfU1RB
-VFVTX0NCVVNfQ09OTkVDVEVEKSkgewo+ICsJCQlpZiAofmNidXMgJiBCSVRfQ0JVU19TVEFUVVNf
-Q0JVU19DT05ORUNURUQpIHsKPiArCQkJCWtmcmVlKGVkaWQpOwo+ICsJCQkJZWRpZCA9IE5VTEw7
-Cj4gKwkJCQlnb3RvIGVuZDsKPiArCQkJfQo+ICsJCQlpZiAoaW50MyAmIEJJVF9ERENfQ01EX0RP
-TkUpIHsKPiArCQkJCWlmIChzaWk4NjIwX3JlYWRiKGN0eCwgUkVHX0REQ19ET1VUX0NOVCkKPiAr
-CQkJCSAgICA+PSBGRVRDSF9TSVpFKQo+ICsJCQkJCWJyZWFrOwo+ICsJCQl9IGVsc2Ugewo+ICsJ
-CQkJaW50MyA9IHNpaTg2MjBfcmVhZGIoY3R4LCBSRUdfSU5UUjMpOwo+ICsJCQl9Cj4gKwkJCWlm
-ICh0aW1lX2lzX2JlZm9yZV9qaWZmaWVzKHRpbWVvdXQpKSB7Cj4gKwkJCQljdHgtPmVycm9yID0g
-LUVUSU1FRE9VVDsKPiArCQkJCWRldl9lcnIoY3R4LT5kZXYsICJ0aW1lb3V0IGR1cmluZyBFRElE
-IHJlYWRcbiIpOwo+ICAgCQkJCWtmcmVlKGVkaWQpOwo+ICAgCQkJCWVkaWQgPSBOVUxMOwo+ICAg
-CQkJCWdvdG8gZW5kOwo+ICAgCQkJfQo+IC0JCX0gd2hpbGUgKDEpOwo+IC0KPiAtCQlzaWk4NjIw
-X3JlYWRiKGN0eCwgUkVHX0REQ19TVEFUVVMpOwo+IC0JCXdoaWxlIChzaWk4NjIwX3JlYWRiKGN0
-eCwgUkVHX0REQ19ET1VUX0NOVCkgPCBGRVRDSF9TSVpFKQo+ICAgCQkJdXNsZWVwX3JhbmdlKDEw
-LCAyMCk7Cj4gKwkJfQo+ICAgCj4gICAJCXNpaTg2MjBfcmVhZF9idWYoY3R4LCBSRUdfRERDX0RB
-VEEsIGVkaWQgKyBmZXRjaGVkLCBGRVRDSF9TSVpFKTsKPiAgIAkJaWYgKGZldGNoZWQgKyBGRVRD
-SF9TSVpFID09IEVESURfTEVOR1RIKSB7CgpCZXN0IHJlZ2FyZHMKLS0gCk1hcmVrIFN6eXByb3dz
-a2ksIFBoRApTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9sYW5kCgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+This commit adds missing interrupt-controller property to gph2 block,
+to silence following warnings during build
+  /soc/pinctrl@e0200000/gph2: Missing interrupt-controller or interrupt-map property
+
+Observed on not yet mainlined, an S5PV210 based
+Samsung Galaxy S (i9000) phone.
+
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+index 3a79feab11c3..7f0c9d447871 100644
+--- a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
++++ b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+@@ -258,6 +258,8 @@
+ 	gph2: gph2 {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
++
++		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-- 
+2.7.4
