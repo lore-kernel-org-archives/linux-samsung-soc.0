@@ -1,40 +1,46 @@
-From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 1/1] ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
-Date: Sun, 10 Jun 2018 16:15:49 +0200
-Message-ID: <1528640149-2195-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/3] Exynos DRM: cleanup of suspend/resume code
+Date: Mon, 11 Jun 2018 14:24:57 +0200
+Message-ID: <20180611122500.11587-1-m.szyprowski@samsung.com>
+References: <CGME20180611122508eucas1p1cb0222fe0dd91741de8458fe050beb74@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This commit adds missing interrupt-controller property to gph2 block,
-to silence following warnings during build
-  /soc/pinctrl@e0200000/gph2: Missing interrupt-controller or interrupt-map property
-
-Observed on not yet mainlined, an S5PV210 based
-Samsung Galaxy S (i9000) phone.
-
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- arch/arm/boot/dts/s5pv210-pinctrl.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-index 3a79feab11c3..7f0c9d447871 100644
---- a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-@@ -258,6 +258,8 @@
- 	gph2: gph2 {
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+
-+		interrupt-controller;
- 		#interrupt-cells = <2>;
- 	};
- 
--- 
-2.7.4
+RGVhciBhbGwsCgpUaGlzIHBhdGNoc2V0IHBlcmZvcm1zIGEgc2lnbmlmaWNhbnQgY2xlYW51cCBv
+ZiBFeHlub3MgRFJNIHN1c3BlbmQvcmVzdW1lCmNvZGUuIEEgc2lkZSBlZmZlY3Qgb2YgdGhpcyBj
+bGVhbnVwIGlzIHdvcmtpbmcgc3lzdGVtIHN1c3BlbmQvcmVzdW1lIG9uCkV4eW5vczU0MzMgU29D
+cywgd2hlcmUgdGhlcmUgYXJlIG1vcmUgZGVwZW5kZW5jaWVzIGJldHdlZW4gaGFyZHdhcmUKZGV2
+aWNlIGRyaXZlcnMsIGNsb2NrIGNvbnRyb2xsZXJzIGFuZCBwb3dlciBkb21haW5zIHRoYW4gaW4g
+Y2FzZSBvZiB0aGUKcHJldmlvdXMgU29Dcy4KCkJlc3QgcmVnYXJkcwpNYXJlayBTenlwcm93c2tp
+ClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCgpQYXRjaCBzdW1tYXJ5OgoKTWFyZWsgU3p5
+cHJvd3NraSAoMyk6CiAgZHJtL2V4eW5vczogRHJvcCB1c2VsZXNzIGNoZWNrIGZyb20gZXh5bm9z
+X2RybV97c3VzcGVuZCxyZXN1bWV9CiAgZHJtL2V4eW5vczogU3VzcGVuZC9yZXN1bWUgZGlzcGxh
+eSBwaXBlbGluZSBhcyBlYXJseS9sYXRlIGFzIHBvc3NpYmxlCiAgZHJtL2V4eW5vczogRW5zdXJl
+IHN1c3BlbmRlZCBydW50aW1lIFBNIHN0YXRlIGR1cmluZyBzeXN0ZW0gc3VzcGVuZAoKIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8ICAyICsrCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgfCAgMiArKwogZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHAuYyAgICAgICAgICAgIHwgIDMgKysrCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgICAgICAgfCAxNSArKysrKystLS0tLS0tLS0K
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyAgICAgICB8ICAyICsrCiBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCAgMiArKwogZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jICAgICAgIHwgIDIgKysKIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAgICB8ICAyICsrCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAgMiArKwogOSBmaWxlcyBj
+aGFuZ2VkLCAyMyBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQoKLS0gCjIuMTcuMQoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
