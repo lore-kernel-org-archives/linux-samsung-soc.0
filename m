@@ -1,44 +1,80 @@
-From: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
-Date: Mon, 11 Jun 2018 20:57:39 +0200
-Message-ID: <4072275.4u7YMACK2s@acerlaptop>
-References: <1528640149-2195-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <CAJKOXPcVqaeYoU=tht5GSyEunnboG-+Mxo96LCDewbqDjCfy-A@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v2] drm/bridge/sii8620: simplify hardware reset procedure
+Date: Wed, 13 Jun 2018 16:43:14 +0200
+Message-ID: <20180613144318eucas1p29ef258ac32faba2819dee47a2c265f3b~3v1uCVdPw0825208252eucas1p2f@eucas1p2.samsung.com>
+References: <CGME20180608060501eucas1p18f8382f01e3addf659ff56f260cbb577@eucas1p1.samsung.com>
+ <20180608060457.18357-1-a.hajda@samsung.com>
+ <20180613130858eucas1p1613537ed7e97a60e5b19dac095268c78~3ujW8xKi-2306023060eucas1p1G@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPcVqaeYoU=tht5GSyEunnboG-+Mxo96LCDewbqDjCfy-A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180613130858eucas1p1613537ed7e97a60e5b19dac095268c78~3ujW8xKi-2306023060eucas1p1G@eucas1p1.samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Maciej Purski <m.purski@samsung.com>, Archit Taneja <architt@codeaurora.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, June 11, 2018 2:43:59 PM CEST Krzysztof Kozlowski wrote:
-> On Sun, Jun 10, 2018 at 4:15 PM, Pawe=C5=82 Chmiel
-> <pawel.mikolaj.chmiel@gmail.com> wrote:
-> > This commit adds missing interrupt-controller property to gph2 block,
->=20
-> Just "Add missing". See:
-> https://elixir.bootlin.com/linux/latest/source/Documentation/process/subm=
-itting-patches.rst#L151
->=20
-> > to silence following warnings during build
-> >   /soc/pinctrl@e0200000/gph2: Missing interrupt-controller or interrupt=
-=2Dmap property
-> >
-> > Observed on not yet mainlined, an S5PV210 based
-> > Samsung Galaxy S (i9000) phone.
->=20
-> The warning is not reproduceable (as you mentioned board is not
-> present in mainline) thus please skip it. Instead, either describe
-> existing reason for this change (e.g. because bindings require it for
-> node of every bank of pins supporting GPIO interrupts) or include this
-> in series mainlining new board (where the reason will be - it will be
-> used by new board etc).
->=20
-> Best regards,
-> Krzysztof
->=20
-Ok, I'll send this patch (fixed) with other patches adding new board.
-
-Thanks
+T24gMTMuMDYuMjAxOCAxNTowOCwgTWFjaWVqIFB1cnNraSB3cm90ZToKPiBIaSBBbmRyemVqLAo+
+Cj4gT24gMDYvMDgvMjAxOCAwODowNCBBTSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4gVGhlcmUg
+aXMgbm8gbmVlZCB0byBmbGlwIHJlc2V0IHBpbiB0d2ljZS4gQWxzbyBkZWxheXMgY2FuIGJlIGNo
+YW5nZWQgdG8KPj4gdmFsdWVzIHByZXNlbnQgaW4gdmVuZG9yJ3MgY29kZS4KPj4KPj4gU2lnbmVk
+LW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiBSZXZpZXdlZC1i
+eTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+CgpGaW5hbGx5LCB0aGFua3Mg
+Zm9yIHRoZSByZXZpZXcuCk1lcmdlZCB0byBkcm0tbWlzYy1maXhlcyB0aGlzIGFuZCBvdGhlciBk
+ZXBlbmRhbmQgZml4ZXM6Cgpkcm0vYnJpZGdlL3NpaTg2MjA6IHNpbXBsaWZ5IGhhcmR3YXJlIHJl
+c2V0IHByb2NlZHVyZQpkcm0vYnJpZGdlL3NpaTg2MjA6IGZpeCBsb29wcyBpbiBFRElEIGZldGNo
+IGxvZ2ljCmRybS9icmlkZ2Uvc2lpODYyMDogZml4IGRpc3BsYXkgbW9kZXMgdmFsaWRhdGlvbgpk
+cm0vYnJpZGdlL3NpaTg2MjA6IGZpeCBwb3RlbnRpYWwgYnVmZmVyIG92ZXJmbG93CmRybS9icmlk
+Z2Uvc2lpODYyMDogc3RhcnQgTUhMIHRyYW5zbWlzc2lvbiBhZnRlciBIRE1JIHNpZ25hbCBkZXRl
+Y3Rpb24KZHJtL2JyaWRnZS9zaWk4NjIwOiByZW1vdmUgSFNJQyBpbml0aWFsaXphdGlvbgpkcm0v
+YnJpZGdlL3NpaTg2MjA6IGZpeCBIRE1JIGNhYmxlIGNvbm5lY3Rpb24gdG8gZG9uZ2xlCgpSZWdh
+cmRzCkFuZHJ6ZWoKCgo+Cj4+IC0tLQo+PiBIaSwKPj4KPj4gVGhpcyBpcyB2MiBvZiBmb3Jnb3R0
+ZW4gcGF0Y2gsIGF3YWl0aW5nIHJldmlld2VycywgYW55IHZvbHVudGVlcnMuCj4+IEFsc28gImRy
+bS9icmlkZ2Uvc2lpODYyMDogZml4IGxvb3BzIGluIEVESUQgZmV0Y2ggbG9naWMiIHdhaXRzIGZv
+ciByZXZpZXdlcnMuCj4+Cj4+IEluIHRoaXMgdmVyc2lvbiBJIGhhdmUgY29tcGxldGVseSByZW1v
+dmVkIHJlc2V0IGZ1bmN0aW9uLCBhbmQgbW92ZWQgaXRzIGJvZHkKPj4gdG8gc2lpODYyMF9od19v
+bi4KPj4KPj4gUmVnYXJkcwo+PiBBbmRyemVqCj4+IC0tLQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2Uvc2lsLXNpaTg2MjAuYyB8IDIzICsrKysrKysrKystLS0tLS0tLS0tLS0tCj4+ICAgMSBm
+aWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDEzIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jIGIvZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jCj4+IGluZGV4IDdhYjM2MDQyYTgyMi4uZDFlNzgw
+ZmJhNGI2IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4NjIw
+LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jCj4+IEBAIC05
+NzEsOCArOTcxLDE3IEBAIHN0YXRpYyBpbnQgc2lpODYyMF9od19vbihzdHJ1Y3Qgc2lpODYyMCAq
+Y3R4KQo+PiAgIAlyZXQgPSByZWd1bGF0b3JfYnVsa19lbmFibGUoQVJSQVlfU0laRShjdHgtPnN1
+cHBsaWVzKSwgY3R4LT5zdXBwbGllcyk7Cj4+ICAgCWlmIChyZXQpCj4+ICAgCQlyZXR1cm4gcmV0
+Owo+PiArCj4+ICAgCXVzbGVlcF9yYW5nZSgxMDAwMCwgMjAwMDApOwo+PiAtCXJldHVybiBjbGtf
+cHJlcGFyZV9lbmFibGUoY3R4LT5jbGtfeHRhbCk7Cj4+ICsJcmV0ID0gY2xrX3ByZXBhcmVfZW5h
+YmxlKGN0eC0+Y2xrX3h0YWwpOwo+PiArCWlmIChyZXQpCj4+ICsJCXJldHVybiByZXQ7Cj4+ICsK
+Pj4gKwltc2xlZXAoMTAwKTsKPj4gKwlncGlvZF9zZXRfdmFsdWUoY3R4LT5ncGlvX3Jlc2V0LCAw
+KTsKPj4gKwltc2xlZXAoMTAwKTsKPj4gKwo+PiArCXJldHVybiAwOwo+PiAgIH0KPj4gICAKPj4g
+ICBzdGF0aWMgaW50IHNpaTg2MjBfaHdfb2ZmKHN0cnVjdCBzaWk4NjIwICpjdHgpCj4+IEBAIC05
+ODIsMTcgKzk5MSw2IEBAIHN0YXRpYyBpbnQgc2lpODYyMF9od19vZmYoc3RydWN0IHNpaTg2MjAg
+KmN0eCkKPj4gICAJcmV0dXJuIHJlZ3VsYXRvcl9idWxrX2Rpc2FibGUoQVJSQVlfU0laRShjdHgt
+PnN1cHBsaWVzKSwgY3R4LT5zdXBwbGllcyk7Cj4+ICAgfQo+PiAgIAo+PiAtc3RhdGljIHZvaWQg
+c2lpODYyMF9od19yZXNldChzdHJ1Y3Qgc2lpODYyMCAqY3R4KQo+PiAtewo+PiAtCXVzbGVlcF9y
+YW5nZSgxMDAwMCwgMjAwMDApOwo+PiAtCWdwaW9kX3NldF92YWx1ZShjdHgtPmdwaW9fcmVzZXQs
+IDApOwo+PiAtCXVzbGVlcF9yYW5nZSg1MDAwLCAyMDAwMCk7Cj4+IC0JZ3Bpb2Rfc2V0X3ZhbHVl
+KGN0eC0+Z3Bpb19yZXNldCwgMSk7Cj4+IC0JdXNsZWVwX3JhbmdlKDEwMDAwLCAyMDAwMCk7Cj4+
+IC0JZ3Bpb2Rfc2V0X3ZhbHVlKGN0eC0+Z3Bpb19yZXNldCwgMCk7Cj4+IC0JbXNsZWVwKDMwMCk7
+Cj4+IC19Cj4+IC0KPj4gICBzdGF0aWMgdm9pZCBzaWk4NjIwX2NidXNfcmVzZXQoc3RydWN0IHNp
+aTg2MjAgKmN0eCkKPj4gICB7Cj4+ICAgCXNpaTg2MjBfd3JpdGUoY3R4LCBSRUdfUFdEX1NSU1Qs
+IEJJVF9QV0RfU1JTVF9DQlVTX1JTVAo+PiBAQCAtMjExMiw3ICsyMTEwLDYgQEAgc3RhdGljIHZv
+aWQgc2lpODYyMF9jYWJsZV9pbihzdHJ1Y3Qgc2lpODYyMCAqY3R4KQo+PiAgIAkJZGV2X2Vycihk
+ZXYsICJFcnJvciBwb3dlcmluZyBvbiwgJWQuXG4iLCByZXQpOwo+PiAgIAkJcmV0dXJuOwo+PiAg
+IAl9Cj4+IC0Jc2lpODYyMF9od19yZXNldChjdHgpOwo+PiAgIAo+PiAgIAlzaWk4NjIwX3JlYWRf
+YnVmKGN0eCwgUkVHX1ZORF9JREwsIHZlciwgQVJSQVlfU0laRSh2ZXIpKTsKPj4gICAJcmV0ID0g
+c2lpODYyMF9jbGVhcl9lcnJvcihjdHgpOwo+Pgo+CgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
