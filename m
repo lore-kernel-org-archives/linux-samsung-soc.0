@@ -1,66 +1,45 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: [PATCH 02/11] tpm/tpm_i2c_infineon: switch to i2c_lock_segment
-Date: Fri, 15 Jun 2018 12:14:57 +0200
-Message-ID: <20180615101506.8012-3-peda@axentia.se>
-References: <20180615101506.8012-1-peda@axentia.se>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: gsc: Get device id from OF alias
+Date: Fri, 15 Jun 2018 14:26:43 +0200
+Message-ID: <20180615122653eucas1p2254aad8e6497ab1bcf11eb5c7fa6b063~4VRMRscw30433304333eucas1p2B@eucas1p2.samsung.com>
+References: <CGME20180615122653eucas1p2254aad8e6497ab1bcf11eb5c7fa6b063@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180615101506.8012-1-peda@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Locking the root adapter for __i2c_transfer will deadlock if the
-device sits behind a mux-locked I2C mux. Switch to the finer-grained
-i2c_lock_segment. If the device does not sit behind a mux-locked mux,
-the two locking variants are equivalent.
-
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/char/tpm/tpm_i2c_infineon.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-index 6116cd05e228..b2889405b4fa 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -117,7 +117,7 @@ static int iic_tpm_read(u8 addr, u8 *buffer, size_t len)
- 	/* Lock the adapter for the duration of the whole sequence. */
- 	if (!tpm_dev.client->adapter->algo->master_xfer)
- 		return -EOPNOTSUPP;
--	i2c_lock_adapter(tpm_dev.client->adapter);
-+	i2c_lock_segment(tpm_dev.client->adapter);
- 
- 	if (tpm_dev.chip_type == SLB9645) {
- 		/* use a combined read for newer chips
-@@ -192,7 +192,7 @@ static int iic_tpm_read(u8 addr, u8 *buffer, size_t len)
- 	}
- 
- out:
--	i2c_unlock_adapter(tpm_dev.client->adapter);
-+	i2c_unlock_segment(tpm_dev.client->adapter);
- 	/* take care of 'guard time' */
- 	usleep_range(SLEEP_DURATION_LOW, SLEEP_DURATION_HI);
- 
-@@ -224,7 +224,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, size_t len,
- 
- 	if (!tpm_dev.client->adapter->algo->master_xfer)
- 		return -EOPNOTSUPP;
--	i2c_lock_adapter(tpm_dev.client->adapter);
-+	i2c_lock_segment(tpm_dev.client->adapter);
- 
- 	/* prepend the 'register address' to the buffer */
- 	tpm_dev.buf[0] = addr;
-@@ -243,7 +243,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, size_t len,
- 		usleep_range(sleep_low, sleep_hi);
- 	}
- 
--	i2c_unlock_adapter(tpm_dev.client->adapter);
-+	i2c_unlock_segment(tpm_dev.client->adapter);
- 	/* take care of 'guard time' */
- 	usleep_range(SLEEP_DURATION_LOW, SLEEP_DURATION_HI);
- 
--- 
-2.11.0
+UGxhdGZvcm0gZGV2aWNlcyBpbnN0YW50aWF0ZWQgZnJvbSBkZXZpY2UtdHJlZSBhbHdheXMgaGF2
+ZSBwZGV2LT5pZCBzZXQgdG8KLTEsIHNvIHVzZSBvZl9nZXRfYWxpYXNfaWQoKSBoZWxwZXIgdG8g
+cmV0cmlldmUgcHJvcGVyIGRldmljZSBpZC4KClNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dz
+a2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZ3NjLmMgfCA5ICsrKysrKystLQogMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0
+aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZ3NjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+Z3NjLmMKaW5kZXggZTk5ZGQxZTRiYTY1Li5hNjMyODc1OTc5ODUgMTAwNjQ0Ci0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMKQEAgLTExOTYsNyArMTE5NiwxMiBAQCBzdGF0aWMgaW50
+IGdzY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCXN0cnVjdCBleHlub3Nf
+ZHJtX2lwcF9mb3JtYXRzICpmb3JtYXRzOwogCXN0cnVjdCBnc2NfY29udGV4dCAqY3R4OwogCXN0
+cnVjdCByZXNvdXJjZSAqcmVzOwotCWludCByZXQsIGk7CisJaW50IHJldCwgaSwgaWQ7CisKKwly
+ZXQgPSBvZl9hbGlhc19nZXRfaWQocGRldi0+ZGV2Lm9mX25vZGUsICJnc2MiKTsKKwlpZiAocmV0
+IDwgMCkKKwkJcmV0dXJuIHJldDsKKwlpZCA9IHJldDsKIAogCWN0eCA9IGRldm1fa3phbGxvYyhk
+ZXYsIHNpemVvZigqY3R4KSwgR0ZQX0tFUk5FTCk7CiAJaWYgKCFjdHgpCkBAIC0xMjU0LDcgKzEy
+NTksNyBAQCBzdGF0aWMgaW50IGdzY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
+KQogCX0KIAogCS8qIGNvbnRleHQgaW5pdGFpbGl6YXRpb24gKi8KLQljdHgtPmlkID0gcGRldi0+
+aWQ7CisJY3R4LT5pZCA9IGlkOwogCiAJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgY3R4KTsK
+IAotLSAKMi4xNy4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
