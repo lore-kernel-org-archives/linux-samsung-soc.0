@@ -1,36 +1,60 @@
-From: efremov@linux.com
-Subject: [PATCH] ARM: S3C24XX: fix typo in guard macro for s3c2412.h
-Date: Sun, 17 Jun 2018 22:46:17 +0300
-Message-ID: <20180617194617.15145-1-efremov@linux.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
+Date: Mon, 18 Jun 2018 09:06:53 +0200
+Message-ID: <CAJKOXPcAVovxU2mHSbkAG0axutFbd=_92bNdd2P_CnQGmhAfCg@mail.gmail.com>
+References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org, Denis Efremov <efremov@linux.com>
+To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The guard macro __ARCH_ARM_REGS_S3C24XX_S3C2412_H in header s3c2412.h
-doesn't match the #ifndef macro __ARCH_ARM_MACH_S3C24XX_S3C2412_H.
-This patch defines the guard correctly.
+On Sun, Jun 17, 2018 at 4:31 PM, Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
+> Multiple binding documents have various forms of unbalanced quotation
+> marks. Fix them.
+>
+> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> ---
+>
+> Should I split this patch so that different parts can go through differen=
+t trees?
+> ---
+>  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
+>  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
+>  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
+>  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
+>  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
+>  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
+>  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
+>  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
+>  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
+>  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
+>  12 files changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards=
+.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> index bdadc3da9556..6970f30a3770 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> @@ -66,7 +66,7 @@ Required root node properties:
+>         - "insignal,arndale-octa" - for Exynos5420-based Insignal Arndale
+>                                     Octa board.
+>         - "insignal,origen"       - for Exynos4210-based Insignal Origen =
+board.
+> -       - "insignal,origen4412    - for Exynos4412-based Insignal Origen =
+board.
+> +       - "insignal,origen4412"   - for Exynos4412-based Insignal Origen =
+board.
+>
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
- arch/arm/mach-s3c24xx/include/mach/s3c2412.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-s3c24xx/include/mach/s3c2412.h b/arch/arm/mach-s3c24xx/include/mach/s3c2412.h
-index b6b32724ace8..4ff83f956cfb 100644
---- a/arch/arm/mach-s3c24xx/include/mach/s3c2412.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/s3c2412.h
-@@ -6,7 +6,7 @@
-  */
- 
- #ifndef __ARCH_ARM_MACH_S3C24XX_S3C2412_H
--#define __ARCH_ARM_REGS_S3C24XX_S3C2412_H __FILE__
-+#define __ARCH_ARM_MACH_S3C24XX_S3C2412_H __FILE__
- 
- #define S3C2412_MEMREG(x)		(S3C24XX_VA_MEMCTRL + (x))
- #define S3C2412_EBIREG(x)		(S3C2412_VA_EBI + (x))
--- 
-2.17.1
+Best regards,
+Krzysztof
