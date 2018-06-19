@@ -1,9 +1,9 @@
 From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v3 8/9] ARM: dts: exynos5250: add DSI node
-Date: Tue, 19 Jun 2018 10:19:29 +0200
-Message-ID: <1529396370-18761-9-git-send-email-m.purski@samsung.com>
+Subject: [PATCH v3 6/9] dt-bindings: tc358754: add DT bindings
+Date: Tue, 19 Jun 2018 10:19:27 +0200
+Message-ID: <1529396370-18761-7-git-send-email-m.purski@samsung.com>
 References: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
-        <CGME20180619082003eucas1p1ee69166282872a3c031caf08cb550269@eucas1p1.samsung.com>
+        <CGME20180619082001eucas1p1df565ba7d1eaa320c2703e7dc019792b@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -13,46 +13,56 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Andrzej Hajda <a.hajda@samsung.com>
 
-The patch adds common part of DSI node for Exynos5250 platforms
-and a required mipi-phy node.
+The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
+Bindings describe power supplies, reset gpio and video interfaces.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ .../bindings/display/bridge/toshiba,tc358764.txt   | 35 ++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 2daf505..9965eca 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -733,6 +733,27 @@
- 			#phy-cells = <0>;
- 		};
- 
-+		mipi_phy: video-phy@10040710 {
-+			compatible = "samsung,s5pv210-mipi-video-phy";
-+			reg = <0x10040710 0x100>;
-+			#phy-cells = <1>;
-+			syscon = <&pmu_system_controller>;
-+		};
+diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+new file mode 100644
+index 0000000..8f9abf2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+@@ -0,0 +1,35 @@
++TC358764 MIPI-DSI to LVDS panel bridge
 +
-+		dsi_0: dsi@14500000 {
-+			compatible = "samsung,exynos4210-mipi-dsi";
-+			reg = <0x14500000 0x10000>;
-+			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-+			samsung,power-domain = <&pd_disp1>;
-+			phys = <&mipi_phy 3>;
-+			phy-names = "dsim";
-+			clocks = <&clock CLK_DSIM0>, <&clock CLK_SCLK_MIPI1>;
-+			clock-names = "bus_clk", "sclk_mipi";
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
++Required properties:
++  - compatible: "toshiba,tc358764"
++  - reg: the virtual channel number of a DSI peripheral
++  - vddc-supply: core voltage supply, 1.2V
++  - vddio-supply: I/O voltage supply, 1.8V or 3.3V
++  - vddlvds-supply: LVDS1/2 voltage supply, 3.3V
++  - reset-gpios: a GPIO spec for the reset pin
 +
- 		adc: adc@12d10000 {
- 			compatible = "samsung,exynos-adc-v1";
- 			reg = <0x12D10000 0x100>;
++The device node can contain following 'port' child nodes,
++according to the OF graph bindings defined in [1]:
++  0: DSI Input, not required, if the bridge is DSI controlled
++  1: LVDS Output, mandatory
++
++[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
++
++Example:
++
++	bridge@0 {
++		reg = <0>;
++		compatible = "toshiba,tc358764";
++		vddc-supply = <&vcc_1v2_reg>;
++		vddio-supply = <&vcc_1v8_reg>;
++		vddlvds-supply = <&vcc_3v3_reg>;
++		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		port@1 {
++			reg = <1>;
++			lvds_ep: endpoint {
++				remote-endpoint = <&panel_ep>;
++			};
++		};
++	};
 -- 
 2.7.4
