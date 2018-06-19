@@ -1,66 +1,40 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Tue, 19 Jun 2018 11:10:48 +0100
-Message-ID: <819db945-1f89-93d3-b213-365a9704e100@nvidia.com>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 7/9] drm/bridge: tc358764: Add DSI to LVDS bridge driver
+Date: Tue, 19 Jun 2018 19:05:06 +0800
+Message-ID: <201806191813.jof7uloL%fengguang.wu@intel.com>
+References: <1529396370-18761-8-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>, devicetree@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, "David S. Miller" <davem@davemloft.net>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1529396370-18761-8-git-send-email-m.purski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Maciej Purski <m.purski@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, kbuild-all@01.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-On 17/06/18 15:31, Jonathan Neuschäfer wrote:
-> Multiple binding documents have various forms of unbalanced quotation
-> marks. Fix them.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
-> 
-> Should I split this patch so that different parts can go through different trees?
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
->  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
->  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
->  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
->  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
->  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
->  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
->  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
->  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
->  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
-
-...
-
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> index 1099fe0788fa..f246ccbf8838 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> @@ -15,7 +15,7 @@ Required properties:
->    include "nvidia,tegra30-ictlr".	
->  - reg : Specifies base physical address and size of the registers.
->    Each controller must be described separately (Tegra20 has 4 of them,
-> -  whereas Tegra30 and later have 5"  
-> +  whereas Tegra30 and later have 5).
->  - interrupt-controller : Identifies the node as an interrupt controller.
->  - #interrupt-cells : Specifies the number of cells needed to encode an
->    interrupt source. The value must be 3.
-
-For the above Tegra portion ...
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+SGkgQW5kcnplaiwKCkkgbG92ZSB5b3VyIHBhdGNoISBQZXJoYXBzIHNvbWV0aGluZyB0byBpbXBy
+b3ZlOgoKW2F1dG8gYnVpbGQgdGVzdCBXQVJOSU5HIG9uIHY0LjE4LXJjMV0KW2Fsc28gYnVpbGQg
+dGVzdCBXQVJOSU5HIG9uIG5leHQtMjAxODA2MTldCltjYW5ub3QgYXBwbHkgdG8gZHJtLWV4eW5v
+cy9leHlub3MtZHJtL2Zvci1uZXh0IHJvYmgvZm9yLW5leHQgZHJtL2RybS1uZXh0XQpbaWYgeW91
+ciBwYXRjaCBpcyBhcHBsaWVkIHRvIHRoZSB3cm9uZyBnaXQgdHJlZSwgcGxlYXNlIGRyb3AgdXMg
+YSBub3RlIHRvIGhlbHAgaW1wcm92ZSB0aGUgc3lzdGVtXQoKdXJsOiAgICBodHRwczovL2dpdGh1
+Yi5jb20vMGRheS1jaS9saW51eC9jb21taXRzL01hY2llai1QdXJza2kvZHJtLWV4eW5vcy1yZW5h
+bWUtYnJpZGdlX25vZGUtdG8tbWljX2JyaWRnZV9ub2RlLzIwMTgwNjE5LTE3NTEzNgoKCmNvY2Np
+bmVsbGUgd2FybmluZ3M6IChuZXcgb25lcyBwcmVmaXhlZCBieSA+PikKCj4+IGRyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvdGMzNTg3NjQuYzoxNzk6NjAtNjY6IEVSUk9SOiBhcHBsaWNhdGlvbiBvZiBz
+aXplb2YgdG8gcG9pbnRlcgoKUGxlYXNlIHJldmlldyBhbmQgcG9zc2libHkgZm9sZCB0aGUgZm9s
+bG93dXAgcGF0Y2guCgotLS0KMC1EQVkga2VybmVsIHRlc3QgaW5mcmFzdHJ1Y3R1cmUgICAgICAg
+ICAgICAgICAgT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50ZXIKaHR0cHM6Ly9saXN0cy4wMS5v
+cmcvcGlwZXJtYWlsL2tidWlsZC1hbGwgICAgICAgICAgICAgICAgICAgSW50ZWwgQ29ycG9yYXRp
+b24KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
