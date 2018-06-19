@@ -1,50 +1,80 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Tue, 19 Jun 2018 12:15:08 +0100
-Message-ID: <1d775530-e250-6397-8e60-4dac8d580f7d@linaro.org>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: dynamic reservation and allocation of physically contiguous
+ memory using CMA
+Date: Tue, 19 Jun 2018 13:45:26 +0200
+Message-ID: <20180619114527eucas1p154dc59055086a514a0423fc4cfb0b8c8~5jSJigH_r0719907199eucas1p1N@eucas1p1.samsung.com>
+References: <CGME20180618182314epcas1p37a2b1ba6db9a829c07abf55ca0d3d50d@epcas1p3.samsung.com>
+        <DF0025E0-5C00-4566-82D2-F3599F206210@cisco.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <DF0025E0-5C00-4566-82D2-F3599F206210@cisco.com>
 Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-mips@linux-mips.org, Ulf Hansson <ulf.hansson@linaro.org>, Madalin Bucur <madalin.bucur@nxp.com>, James Hogan <jhogan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, linux-input@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-pm@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Amit Chandra (amichand)" <amichand@cisco.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Amit,
 
+On 2018-06-18 20:23, Amit Chandra (amichand) wrote:
+>
+> Hi experts,
+>
+> I had a question related to CMA. I have been trying to use the CMA 
+> infra to reserve and allocate physically contiguous memory dynamically 
+> at runtime.
+>
+> I built a custom kernel based on linux-4.14.47 to invoke the cma 
+> initialization apis at runtime from kernel loadable module.
+>
+> I invoke cma_declare_contiguous() followed by cma_init_reserved_areas().
+>
+> cma_declare_contiguous throws no surprises and succeeds. The issue 
+> happens when cma_init_reserved_areas() is invoked post that.
+>
+> Here is the kernel log snippet post that call:
+>
+> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.593218] cma: 
+> cma_declare_contiguous(size 0x0000000200000000, base 
+> 0x0000000000000000, limit 0x0000000000000000 alignment 0x0000000000000000)
+>
+> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.593228] cma: Reserved 
+> 8192 MiB at 0x0000001d4d000000
+>
+> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.593345] BUG: Bad page 
+> state in process insmod  pfn:1d4d000
+>
+> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.595758] 
+> page:ffffefc335340000 count:0 mapcount:-127 mapping:          (null) 
+> index:0x0
+>
+> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.599193] flags: 
+> 0x57fffc000000000()
+>
+> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.600751] raw: 
+> 057fffc000000000 0000000000000000 0000000000000000 00000000ffffff80
+>
+> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.603946] raw: 
+> ffffefc335330020 ffffefc335350020 000000000000000a 0000000000000000
+>
+> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.607152] page dumped 
+> because: nonzero mapcount
+>
+> I am having a hard time trying to understand why the mapcount is less 
+> than 0 here. I figured this is happening in the call to __free_pages() 
+> from init_cma_reserved_pageblock().
+>
+> Any pointers here would be really helpful. If I am missing any step 
+> for cma reservation, please do let me know.
+>
+> Thanks in advance.
+>
 
-On 17/06/18 15:31, Jonathan Neuschäfer wrote:
->   example:
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt
-> index 6a4aadc4ce06..84b28dbe9f15 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt
-> +++ b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt
-> @@ -30,7 +30,7 @@ Required properties:
->   
->   			  Board connectors:
->   			  * Headset Mic
-> -			  * Secondary Mic",
-> +			  * Secondary Mic
->   			  * DMIC
->   			  * Ext Spk
->   
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8096.txt b/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
-> index aa54e49fc8a2..c7600a93ab39 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
-> +++ b/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
-> @@ -35,7 +35,7 @@ This binding describes the APQ8096 sound card, which uses qdsp for audio.
->   			"Digital Mic3"
->   
->   		Audio pins and MicBias on WCD9335 Codec:
-> -			"MIC_BIAS1
-> +			"MIC_BIAS1"
->   			"MIC_BIAS2"
->   			"MIC_BIAS3"
->   			"MIC_BIAS4"
+CMA initialization is possible only on very early boot stage. CMA will 
+not work as dynamic module.
 
-for apq8016 and apq8096 parts:
-
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
