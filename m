@@ -1,36 +1,35 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] dmaengine: pl330: report BURST residue granularity
-Date: Tue, 19 Jun 2018 15:20:50 +0200
-Message-ID: <20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4~5klprrrtK1347113471eucas1p2M@eucas1p2.samsung.com>
-References: <CGME20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4@eucas1p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
+Date: Tue, 19 Jun 2018 11:23:07 -0700
+Message-ID: <20180619182307.GG71788@dtor-ws>
+References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>
+To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, "David S. Miller" <davem@>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The reported residue is already calculated in BURST unit granularity, so
-advertise this capability properly to other devices in the system.
+On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neuschäfer wrote:
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/hideep.txt b/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
+> index 121d9b7c79a2..1063c30d53f7 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
+> @@ -32,7 +32,7 @@ i2c@00000000 {
+>  		reg = <0x6c>;
+>  		interrupt-parent = <&gpx1>;
+>  		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+> -		vdd-supply = <&ldo15_reg>";
+> +		vdd-supply = <&ldo15_reg>;
+>  		vid-supply = <&ldo18_reg>;
+>  		reset-gpios = <&gpx1 5 0>;
+>  		touchscreen-size-x = <1080>;
 
-Fixes: aee4d1fac887 ("dmaengine: pl330: improve pl330_tx_status() function")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/dma/pl330.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index defcdde4d358..de0957fe9668 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -3033,7 +3033,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- 	pd->src_addr_widths = PL330_DMA_BUSWIDTHS;
- 	pd->dst_addr_widths = PL330_DMA_BUSWIDTHS;
- 	pd->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
--	pd->residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
-+	pd->residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
- 	pd->max_burst = ((pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP) ?
- 			 1 : PL330_MAX_BURST);
- 
 -- 
-2.17.1
+Dmitry
