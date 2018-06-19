@@ -1,36 +1,36 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH 02/11] tpm/tpm_i2c_infineon: switch to i2c_lock_segment
-Date: Tue, 19 Jun 2018 15:05:50 +0200
-Message-ID: <eb583028-dfcb-7f1b-c2a1-236ad4c5c2b5@axentia.se>
-References: <20180615101506.8012-1-peda@axentia.se>
- <20180615101506.8012-3-peda@axentia.se>
- <20180619125618.GB5609@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] dmaengine: pl330: report BURST residue granularity
+Date: Tue, 19 Jun 2018 15:20:50 +0200
+Message-ID: <20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4~5klprrrtK1347113471eucas1p2M@eucas1p2.samsung.com>
+References: <CGME20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4@eucas1p2.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180619125618.GB5609@linux.intel.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Wo
+To: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2018-06-19 14:56, Jarkko Sakkinen wrote:
-> On Fri, Jun 15, 2018 at 12:14:57PM +0200, Peter Rosin wrote:
->> Locking the root adapter for __i2c_transfer will deadlock if the
->> device sits behind a mux-locked I2C mux. Switch to the finer-grained
->> i2c_lock_segment. If the device does not sit behind a mux-locked mux,
->> the two locking variants are equivalent.
->>
->> Signed-off-by: Peter Rosin <peda@axentia.se>
-> 
-> Can you quickly explain (or give a reference) the difference with these
-> functions? Not an expert in this area. Thanks.
+The reported residue is already calculated in BURST unit granularity, so
+advertise this capability properly to other devices in the system.
 
-There are some words in the cover letter. If you need more, there's
-always Documentation/i2c/i2c-topology. Hope that helps, otherwise I'll
-try to explain better...
+Fixes: aee4d1fac887 ("dmaengine: pl330: improve pl330_tx_status() function")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/dma/pl330.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Peter
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index defcdde4d358..de0957fe9668 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -3033,7 +3033,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	pd->src_addr_widths = PL330_DMA_BUSWIDTHS;
+ 	pd->dst_addr_widths = PL330_DMA_BUSWIDTHS;
+ 	pd->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+-	pd->residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
++	pd->residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+ 	pd->max_burst = ((pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP) ?
+ 			 1 : PL330_MAX_BURST);
+ 
+-- 
+2.17.1
