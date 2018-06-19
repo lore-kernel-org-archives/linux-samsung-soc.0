@@ -1,80 +1,96 @@
 From: Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v3 1/9] drm/exynos: rename "bridge_node" to
- "mic_bridge_node"
-Date: Tue, 19 Jun 2018 10:19:22 +0200
-Message-ID: <1529396370-18761-2-git-send-email-m.purski@samsung.com>
+Subject: [PATCH v3 3/9] drm/exynos: enable out_bridge in exynos_dsi_enable()
+Date: Tue, 19 Jun 2018 10:19:24 +0200
+Message-ID: <1529396370-18761-4-git-send-email-m.purski@samsung.com>
 References: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
-        <CGME20180619081957eucas1p2d2b9075a9b7a90837b40e4529ab31888@eucas1p2.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+ <CGME20180619081959eucas1p14aee2dfc0231d2f645e3c9071b92341e@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Purski <m.purski@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Maciej Purski <m.purski@samsung.com>, Archit Taneja <architt@codeaurora.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When adding support for peripheral out bridges, the "bridge" name
-becomes imprecise as it refers to a different device than the
-"out_bridge".
+As the out bridge will not be enabled directly by the framework,
+it should be enabled by DSI. Exynos_dsi_enable() should handle a case,
+when there is an out_bridge connected as a DSI peripheral.
 
 Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 34 +++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index eae44fd..9599e6b 100644
+index c0408c0..8aa7ace 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -279,7 +279,7 @@ struct exynos_dsi {
- 	struct list_head transfer_list;
+@@ -1386,25 +1386,33 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
  
- 	const struct exynos_dsi_driver_data *driver_data;
--	struct device_node *bridge_node;
-+	struct device_node *mic_bridge_node;
- };
+ 	dsi->state |= DSIM_STATE_ENABLED;
  
- #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
-@@ -1631,7 +1631,7 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
- 	if (ret < 0)
- 		return ret;
+-	ret = drm_panel_prepare(dsi->panel);
+-	if (ret < 0) {
+-		dsi->state &= ~DSIM_STATE_ENABLED;
+-		pm_runtime_put_sync(dsi->dev);
+-		return;
++	if (dsi->panel) {
++		ret = drm_panel_prepare(dsi->panel);
++		if (ret < 0) {
++			dsi->state &= ~DSIM_STATE_ENABLED;
++			return;
++		}
+ 	}
  
--	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
-+	dsi->mic_bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
++	if (dsi->out_bridge)
++		drm_bridge_pre_enable(dsi->out_bridge);
++
+ 	exynos_dsi_set_display_mode(dsi);
+ 	exynos_dsi_set_display_enable(dsi, true);
  
- 	return 0;
+-	ret = drm_panel_enable(dsi->panel);
+-	if (ret < 0) {
+-		dsi->state &= ~DSIM_STATE_ENABLED;
+-		exynos_dsi_set_display_enable(dsi, false);
+-		drm_panel_unprepare(dsi->panel);
+-		pm_runtime_put_sync(dsi->dev);
+-		return;
++	if (dsi->panel) {
++		ret = drm_panel_enable(dsi->panel);
++		if (ret < 0) {
++			dsi->state &= ~DSIM_STATE_ENABLED;
++			exynos_dsi_set_display_enable(dsi, false);
++			drm_panel_unprepare(dsi->panel);
++			return;
++		}
+ 	}
+ 
++	if (dsi->out_bridge)
++		drm_bridge_enable(dsi->out_bridge);
++
+ 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
  }
-@@ -1642,7 +1642,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- 	struct drm_encoder *encoder = dev_get_drvdata(dev);
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
- 	struct drm_device *drm_dev = data;
--	struct drm_bridge *bridge;
-+	struct drm_bridge *mic_bridge;
- 	int ret;
  
- 	drm_encoder_init(drm_dev, encoder, &exynos_dsi_encoder_funcs,
-@@ -1661,10 +1661,10 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- 		return ret;
- 	}
+@@ -1418,8 +1426,10 @@ static void exynos_dsi_disable(struct drm_encoder *encoder)
+ 	dsi->state &= ~DSIM_STATE_VIDOUT_AVAILABLE;
  
--	if (dsi->bridge_node) {
--		bridge = of_drm_find_bridge(dsi->bridge_node);
--		if (bridge)
--			drm_bridge_attach(encoder, bridge, NULL);
-+	if (dsi->mic_bridge_node) {
-+		mic_bridge = of_drm_find_bridge(dsi->mic_bridge_node);
-+		if (mic_bridge)
-+			drm_bridge_attach(encoder, mic_bridge, NULL);
- 	}
+ 	drm_panel_disable(dsi->panel);
++	drm_bridge_disable(dsi->out_bridge);
+ 	exynos_dsi_set_display_enable(dsi, false);
+ 	drm_panel_unprepare(dsi->panel);
++	drm_bridge_post_disable(dsi->out_bridge);
  
- 	return mipi_dsi_host_register(&dsi->dsi_host);
-@@ -1783,7 +1783,7 @@ static int exynos_dsi_remove(struct platform_device *pdev)
- {
- 	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
- 
--	of_node_put(dsi->bridge_node);
-+	of_node_put(dsi->mic_bridge_node);
- 
- 	pm_runtime_disable(&pdev->dev);
+ 	dsi->state &= ~DSIM_STATE_ENABLED;
  
 -- 
 2.7.4
