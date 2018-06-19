@@ -1,36 +1,82 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] arm64: dts: exynos: Remove unneeded DSI and DECON
- address/size cells in Exynos5433
-Date: Tue, 19 Jun 2018 09:59:04 +0200
-Message-ID: <CAJKOXPeCT3CkqqNowEZaeTw7goJd6=Nbd2S61QzTFW-nGr5AKg@mail.gmail.com>
-References: <20180618174216.24801-1-krzk@kernel.org> <CGME20180618174316epcas1p397b66c8e4e8479fce8655941a4d4279f@epcas1p3.samsung.com>
- <20180618174216.24801-2-krzk@kernel.org> <20180619072652eucas1p1943deb1b158eda52980448e41f83e5e9~5fwX6lI2o2633926339eucas1p1Q@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH v3 0/9] Add TOSHIBA TC358764 DSI/LVDS bridge driver
+Date: Tue, 19 Jun 2018 10:19:21 +0200
+Message-ID: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
+References: <CGME20180619081956eucas1p1de0ce0c89abdbf021c9942a2af39fe52@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180619072652eucas1p1943deb1b158eda52980448e41f83e5e9~5fwX6lI2o2633926339eucas1p1Q@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Purski <m.purski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 19 June 2018 at 09:26, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> Hi Krzysztof,
->
-> On 2018-06-18 19:42, Krzysztof Kozlowski wrote:
->> The decon, decon_tv and dsi nodes have only one child port so
->> address/size mappings are not necessary.  This fixes DTC warnings like:
->>
->>      Warning (graph_child_address): /soc/decon@13800000/ports:
->>          graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> Works fine with current Exynos DRM Decon/MIC/DSI drivers.
->
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi all,
 
-Thanks for review and testing!
+this patchset is a next attempt to add the tc358764 driver.
+The previous one can be found here:
+
+https://lists.freedesktop.org/archives/dri-devel/2014-February/053705.html
+
+Back then, TC358764 was added as a panel driver.
+
+The bridge is supposed to be a DSI peripheral. Currently exynos_dsi accepts only panels
+as its peripherals. Therefore, some logic in exynos_dsi had to be ammended. That is implemented
+in first 3 patches.
+
+Apart from the driver this patchset adds support for BOE HV070WSA-100 panel, which is used by
+TC358764 and dts nodes to exynos5250.dtsi and exynos5250-arndale.dtsi.
 
 Best regards,
-Krzysztof
+
+Maciej Purski
+
+---
+
+Changes in v3:
+- call drm_bridge_enable() and drm_bridge_pre_enable() in exynos_drm_dsi_enable()
+  and make the bridge invisible for the framework in order to prevent it from
+  being enabled by the framework
+- expand panel binding description
+- fix tc358744 binding, make port 1 mandatory and port 0 optional
+- get rid of useless select VIDEOMODE_HELPERS in bridge Kconfig
+- add missing SPDX license to drm/bridge/tc358764.c
+- use mipi_dsi_generic_read() and mipi_dsi_generic_write() helpers
+  in toshiba driver's read, write functions
+- fix commit messages
+
+Changes in v2:
+- fix commits authorship
+- don't call pm_runtime_put_sync() in exyons_dsi_disable(), if pm_runtime_get_sync()
+  has not been called
+- squash dts commits
+- merge some redundant regulators in tc358764 bindings and in DTS
+- fix kbuild robot errors
+
+Andrzej Hajda (6):
+  dt-bindings: display: add DT bindings for BOE HV070WSA-100 panel
+  drm/panel: add support for BOE HV070WSA-100 panel to simple-panel
+  dt-bindings: tc358754: add DT bindings
+  drm/bridge: tc358764: Add DSI to LVDS bridge driver
+  ARM: dts: exynos5250: add DSI node
+  ARM: dts: exynos5250-arndale: add DSI and panel nodes
+
+Maciej Purski (3):
+  drm/exynos: rename "bridge_node" to "mic_bridge_node"
+  drm/exynos: move connector creation to attach callback
+  drm/exynos: enable out_bridge in exynos_dsi_enable()
+
+ .../bindings/display/bridge/toshiba,tc358764.txt   |  35 ++
+ .../bindings/display/panel/boe,hv070wsa-100.txt    |  28 ++
+ arch/arm/boot/dts/exynos5250-arndale.dts           |  61 +++
+ arch/arm/boot/dts/exynos5250.dtsi                  |  21 +
+ drivers/gpu/drm/bridge/Kconfig                     |   8 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/tc358764.c                  | 521 +++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  88 ++--
+ drivers/gpu/drm/panel/panel-simple.c               |  25 +
+ 9 files changed, 755 insertions(+), 33 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
+ create mode 100644 drivers/gpu/drm/bridge/tc358764.c
+
+-- 
+2.7.4
