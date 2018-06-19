@@ -1,80 +1,28 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: dynamic reservation and allocation of physically contiguous
- memory using CMA
-Date: Tue, 19 Jun 2018 13:45:26 +0200
-Message-ID: <20180619114527eucas1p154dc59055086a514a0423fc4cfb0b8c8~5jSJigH_r0719907199eucas1p1N@eucas1p1.samsung.com>
-References: <CGME20180618182314epcas1p37a2b1ba6db9a829c07abf55ca0d3d50d@epcas1p3.samsung.com>
-        <DF0025E0-5C00-4566-82D2-F3599F206210@cisco.com>
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: Re: [PATCH 02/11] tpm/tpm_i2c_infineon: switch to i2c_lock_segment
+Date: Tue, 19 Jun 2018 15:56:18 +0300
+Message-ID: <20180619125618.GB5609@linux.intel.com>
+References: <20180615101506.8012-1-peda@axentia.se>
+ <20180615101506.8012-3-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <DF0025E0-5C00-4566-82D2-F3599F206210@cisco.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180615101506.8012-3-peda@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Amit Chandra (amichand)" <amichand@cisco.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Wo
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Amit,
+On Fri, Jun 15, 2018 at 12:14:57PM +0200, Peter Rosin wrote:
+> Locking the root adapter for __i2c_transfer will deadlock if the
+> device sits behind a mux-locked I2C mux. Switch to the finer-grained
+> i2c_lock_segment. If the device does not sit behind a mux-locked mux,
+> the two locking variants are equivalent.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-On 2018-06-18 20:23, Amit Chandra (amichand) wrote:
->
-> Hi experts,
->
-> I had a question related to CMA. I have been trying to use the CMA 
-> infra to reserve and allocate physically contiguous memory dynamically 
-> at runtime.
->
-> I built a custom kernel based on linux-4.14.47 to invoke the cma 
-> initialization apis at runtime from kernel loadable module.
->
-> I invoke cma_declare_contiguous() followed by cma_init_reserved_areas().
->
-> cma_declare_contiguous throws no surprises and succeeds. The issue 
-> happens when cma_init_reserved_areas() is invoked post that.
->
-> Here is the kernel log snippet post that call:
->
-> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.593218] cma: 
-> cma_declare_contiguous(size 0x0000000200000000, base 
-> 0x0000000000000000, limit 0x0000000000000000 alignment 0x0000000000000000)
->
-> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.593228] cma: Reserved 
-> 8192 MiB at 0x0000001d4d000000
->
-> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.593345] BUG: Bad page 
-> state in process insmod  pfn:1d4d000
->
-> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.595758] 
-> page:ffffefc335340000 count:0 mapcount:-127 mapping:          (null) 
-> index:0x0
->
-> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.599193] flags: 
-> 0x57fffc000000000()
->
-> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.600751] raw: 
-> 057fffc000000000 0000000000000000 0000000000000000 00000000ffffff80
->
-> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.603946] raw: 
-> ffffefc335330020 ffffefc335350020 000000000000000a 0000000000000000
->
-> Jun 15 03:30:31 ubuntu-quickstart kernel: [  384.607152] page dumped 
-> because: nonzero mapcount
->
-> I am having a hard time trying to understand why the mapcount is less 
-> than 0 here. I figured this is happening in the call to __free_pages() 
-> from init_cma_reserved_pageblock().
->
-> Any pointers here would be really helpful. If I am missing any step 
-> for cma reservation, please do let me know.
->
-> Thanks in advance.
->
+Can you quickly explain (or give a reference) the difference with these
+functions? Not an expert in this area. Thanks.
 
-CMA initialization is possible only on very early boot stage. CMA will 
-not work as dynamic module.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+/Jarkko
