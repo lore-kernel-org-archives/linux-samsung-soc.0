@@ -1,66 +1,53 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: [PATCH v2 01/10] tpm/tpm_i2c_infineon: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Date: Wed, 20 Jun 2018 07:17:54 +0200
-Message-ID: <20180620051803.12206-2-peda@axentia.se>
-References: <20180620051803.12206-1-peda@axentia.se>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] drm/exynos: gsc: Get device id from OF alias
+Date: Wed, 20 Jun 2018 12:40:55 +0200
+Message-ID: <CAJKOXPfPv4ZksH5m4+h_NR9_koLZYBQvKvfkSdpF7PeyE+oGAw@mail.gmail.com>
+References: <CGME20180615122653eucas1p2254aad8e6497ab1bcf11eb5c7fa6b063@eucas1p2.samsung.com>
+ <20180615122653eucas1p2254aad8e6497ab1bcf11eb5c7fa6b063~4VRMRscw30433304333eucas1p2B@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180620051803.12206-1-peda@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Guenter Roeck <linux@roeck-us.net>Crt Mori <c>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180615122653eucas1p2254aad8e6497ab1bcf11eb5c7fa6b063~4VRMRscw30433304333eucas1p2B@eucas1p2.samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Locking the root adapter for __i2c_transfer will deadlock if the
-device sits behind a mux-locked I2C mux. Switch to the finer-grained
-i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
-sit behind a mux-locked mux, the two locking variants are equivalent.
-
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/char/tpm/tpm_i2c_infineon.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-index 6116cd05e228..9086edc9066b 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -117,7 +117,7 @@ static int iic_tpm_read(u8 addr, u8 *buffer, size_t len)
- 	/* Lock the adapter for the duration of the whole sequence. */
- 	if (!tpm_dev.client->adapter->algo->master_xfer)
- 		return -EOPNOTSUPP;
--	i2c_lock_adapter(tpm_dev.client->adapter);
-+	i2c_lock_bus(tpm_dev.client->adapter, I2C_LOCK_SEGMENT);
- 
- 	if (tpm_dev.chip_type == SLB9645) {
- 		/* use a combined read for newer chips
-@@ -192,7 +192,7 @@ static int iic_tpm_read(u8 addr, u8 *buffer, size_t len)
- 	}
- 
- out:
--	i2c_unlock_adapter(tpm_dev.client->adapter);
-+	i2c_unlock_bus(tpm_dev.client->adapter, I2C_LOCK_SEGMENT);
- 	/* take care of 'guard time' */
- 	usleep_range(SLEEP_DURATION_LOW, SLEEP_DURATION_HI);
- 
-@@ -224,7 +224,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, size_t len,
- 
- 	if (!tpm_dev.client->adapter->algo->master_xfer)
- 		return -EOPNOTSUPP;
--	i2c_lock_adapter(tpm_dev.client->adapter);
-+	i2c_lock_bus(tpm_dev.client->adapter, I2C_LOCK_SEGMENT);
- 
- 	/* prepend the 'register address' to the buffer */
- 	tpm_dev.buf[0] = addr;
-@@ -243,7 +243,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, size_t len,
- 		usleep_range(sleep_low, sleep_hi);
- 	}
- 
--	i2c_unlock_adapter(tpm_dev.client->adapter);
-+	i2c_unlock_bus(tpm_dev.client->adapter, I2C_LOCK_SEGMENT);
- 	/* take care of 'guard time' */
- 	usleep_range(SLEEP_DURATION_LOW, SLEEP_DURATION_HI);
- 
--- 
-2.11.0
+T24gMTUgSnVuZSAyMDE4IGF0IDE0OjI2LCBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lA
+c2Ftc3VuZy5jb20+IHdyb3RlOgo+IFBsYXRmb3JtIGRldmljZXMgaW5zdGFudGlhdGVkIGZyb20g
+ZGV2aWNlLXRyZWUgYWx3YXlzIGhhdmUgcGRldi0+aWQgc2V0IHRvCj4gLTEsIHNvIHVzZSBvZl9n
+ZXRfYWxpYXNfaWQoKSBoZWxwZXIgdG8gcmV0cmlldmUgcHJvcGVyIGRldmljZSBpZC4KPgo+IFNp
+Z25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4K
+PiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jIHwgOSArKysr
+KysrLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkK
+Pgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMg
+Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMKPiBpbmRleCBlOTlkZDFl
+NGJhNjUuLmE2MzI4NzU5Nzk4NSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZ3NjLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZ3NjLmMKPiBAQCAtMTE5Niw3ICsxMTk2LDEyIEBAIHN0YXRpYyBpbnQgZ3NjX3Byb2JlKHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gICAgICAgICBzdHJ1Y3QgZXh5bm9zX2RybV9p
+cHBfZm9ybWF0cyAqZm9ybWF0czsKPiAgICAgICAgIHN0cnVjdCBnc2NfY29udGV4dCAqY3R4Owo+
+ICAgICAgICAgc3RydWN0IHJlc291cmNlICpyZXM7Cj4gLSAgICAgICBpbnQgcmV0LCBpOwo+ICsg
+ICAgICAgaW50IHJldCwgaSwgaWQ7Cj4gKwo+ICsgICAgICAgcmV0ID0gb2ZfYWxpYXNfZ2V0X2lk
+KHBkZXYtPmRldi5vZl9ub2RlLCAiZ3NjIik7Cj4gKyAgICAgICBpZiAocmV0IDwgMCkKPiArICAg
+ICAgICAgICAgICAgcmV0dXJuIHJldDsKPiArICAgICAgIGlkID0gcmV0Owo+Cj4gICAgICAgICBj
+dHggPSBkZXZtX2t6YWxsb2MoZGV2LCBzaXplb2YoKmN0eCksIEdGUF9LRVJORUwpOwo+ICAgICAg
+ICAgaWYgKCFjdHgpCj4gQEAgLTEyNTQsNyArMTI1OSw3IEBAIHN0YXRpYyBpbnQgZ3NjX3Byb2Jl
+KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gICAgICAgICB9Cj4KPiAgICAgICAgIC8q
+IGNvbnRleHQgaW5pdGFpbGl6YXRpb24gKi8KPiAtICAgICAgIGN0eC0+aWQgPSBwZGV2LT5pZDsK
+PiArICAgICAgIGN0eC0+aWQgPSBpZDsKCldoeSBkbyB5b3UgbmVlZCBjdHgtPmlkIGF0IGFsbD8g
+SSBzZWUgaXQgaXMgdXNlZCBvbmx5IGluIGRldl9kYmcgYW5kCmRldl9lcnIgbWVzc2FnZXMgYnV0
+IHRoZXNlIHNob3VsZCBiZSBlYXNpbHkgaWRlbnRpZmlhYmxlIGJ5IGRldmljZQpuYW1lK2FkZHJl
+c3MuIE1heWJlIGdldCByaWQgb2YgY3R4LT5pZCBlbnRpcmVseT8KCkJlc3QgcmVnYXJkcywKS3J6
+eXN6dG9mCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
