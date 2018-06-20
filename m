@@ -1,84 +1,44 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/2] arm64: dts: exynos: add OF graph between USB-PHY
- and MUIC
-Date: Wed, 20 Jun 2018 20:28:44 +0200
-Message-ID: <20180620182844.5nmlj5djbjgwy3wn@kozik-lap>
-References: <20180515121239.18192-1-a.hajda@samsung.com>
- <CGME20180515121251eucas1p160dd3dcff49f0dad845ed6be98f33bbe@eucas1p1.samsung.com>
- <20180515121239.18192-3-a.hajda@samsung.com>
+Subject: Re: [PATCH 07/15] arm: dts: exynos: Add missing cooling device
+ properties for CPUs
+Date: Wed, 20 Jun 2018 20:44:03 +0200
+Message-ID: <20180620184403.u6tdqc2zvyslospe@kozik-lap>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
+ <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180515121239.18192-3-a.hajda@samsung.com>
+In-Reply-To: <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "open list:DESIGNWARE USB3 DRD IP DRIVER" <linux-usb@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: arm@kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com, Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, May 15, 2018 at 02:12:39PM +0200, Andrzej Hajda wrote:
-> OF graph describes USB data lanes between USB-PHY and respective MUIC.
-> Since graph is present and DWC driver can use it to get extcon, obsolete
-> extcon property can be removed.
+On Fri, May 25, 2018 at 04:01:53PM +0530, Viresh Kumar wrote:
+> The cooling device properties, like "#cooling-cells" and
+> "dynamic-power-coefficient", should either be present for all the CPUs
+> of a cluster or none. If these are present only for a subset of CPUs of
+> a cluster then things will start falling apart as soon as the CPUs are
+> brought online in a different order. For example, this will happen
+> because the operating system looks for such properties in the CPU node
+> it is trying to bring up, so that it can register a cooling device.
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Add such missing properties.
+> 
+> Fix other missing properties (clocks, OPP, clock latency) as well to
+> make it all work.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  .../dts/exynos/exynos5433-tm2-common.dtsi     | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
+>  arch/arm/boot/dts/exynos3250.dtsi | 16 ++++++++++++++++
+>  arch/arm/boot/dts/exynos4210.dtsi | 13 +++++++++++++
+>  arch/arm/boot/dts/exynos4412.dtsi |  9 +++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi | 23 +++++++++++++++++++++++
+>  4 files changed, 61 insertions(+)
+> 
 
-dtc W=1 now complains with:
-===
-Warning (graph_child_address):
-/soc/hsi2c@14d90000/max77843@66/max77843-muic/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
-===
-
-Do you plan to add more ports soon?
+Thanks, applied.
 
 Best regards,
 Krzysztof
-
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> index 03453b822093..042e5894a138 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> @@ -868,6 +868,18 @@
->  					};
->  				};
->  			};
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					muic_to_usb: endpoint {
-> +						remote-endpoint = <&usb_to_muic>;
-> +					};
-> +				};
-> +			};
->  		};
->  
->  		regulators {
-> @@ -1287,12 +1299,17 @@
->  
->  &usbdrd_dwc3 {
->  	dr_mode = "otg";
-> -	extcon = <&muic>;
->  };
->  
->  &usbdrd30_phy {
->  	vbus-supply = <&safeout1_reg>;
->  	status = "okay";
-> +
-> +	port {
-> +		usb_to_muic: endpoint {
-> +			remote-endpoint = <&muic_to_usb>;
-> +		};
-> +	};
->  };
->  
->  &xxti {
-> -- 
-> 2.17.0
-> 
