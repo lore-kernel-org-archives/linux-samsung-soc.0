@@ -1,32 +1,45 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: S3C24XX: fix typo in guard macro for s3c2412.h
-Date: Wed, 20 Jun 2018 20:59:53 +0200
-Message-ID: <20180620185953.cty5esnbfhawnbau@kozik-lap>
-References: <20180617194617.15145-1-efremov@linux.com>
+Subject: Re: [PATCH 13/14] ARM: dts: exynos: remove no longer needed samsung
+ thermal properties
+Date: Wed, 20 Jun 2018 21:17:20 +0200
+Message-ID: <20180620191720.kywnok5ahod3zmmk@kozik-lap>
+References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180416101425epcas1p46ab4d827e3a64c5c16b32a17f63dd9d0@epcas1p4.samsung.com>
+ <1523873525-23718-14-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180617194617.15145-1-efremov@linux.com>
+In-Reply-To: <1523873525-23718-14-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: efremov@linux.com
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 10:46:17PM +0300, efremov@linux.com wrote:
-> The guard macro __ARCH_ARM_REGS_S3C24XX_S3C2412_H in header s3c2412.h
-> doesn't match the #ifndef macro __ARCH_ARM_MACH_S3C24XX_S3C2412_H.
-> This patch defines the guard correctly.
+On Mon, Apr 16, 2018 at 12:12:04PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Remove no longer needed samsung thermal properties.
 > 
-> Found by Linux Driver Verification project (linuxtesting.org).
+> There should be no functional changes caused by this patch.
 > 
-> Signed-off-by: Denis Efremov <efremov@linux.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->  arch/arm/mach-s3c24xx/include/mach/s3c2412.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+>  arch/arm/boot/dts/exynos3250.dtsi                 |  2 +-
+>  arch/arm/boot/dts/exynos4.dtsi                    |  2 +-
+>  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi | 20 --------------------
+>  arch/arm/boot/dts/exynos5250.dtsi                 |  2 +-
+>  arch/arm/boot/dts/exynos5410.dtsi                 |  8 ++++----
+>  arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi | 21 ---------------------
+>  arch/arm/boot/dts/exynos5420.dtsi                 | 10 +++++-----
+>  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi | 20 --------------------
+>  arch/arm/boot/dts/exynos5440.dtsi                 |  6 +++---
+>  9 files changed, 15 insertions(+), 76 deletions(-)
+>  delete mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+>  delete mode 100644 arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+>
 
-Thanks, applied.
+A lot of changes came in recently so this does not apply anymore. Could
+you rebase on my for-next branch?
 
 Best regards,
 Krzysztof
