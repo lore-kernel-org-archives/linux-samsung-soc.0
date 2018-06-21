@@ -1,79 +1,212 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] arm64: dts: exynos: Remove unneeded DSI and DECON
- address/size cells in Exynos5433
-Date: Thu, 21 Jun 2018 09:21:06 +0200
-Message-ID: <CAJKOXPeCnRCR6q_QPAxxEA7Ej7qPfEm+n-SD6+81okhomj4MuA@mail.gmail.com>
-References: <20180618174216.24801-1-krzk@kernel.org> <CGME20180618174316epcas1p397b66c8e4e8479fce8655941a4d4279f@epcas1p3.samsung.com>
- <20180618174216.24801-2-krzk@kernel.org> <20180619072652eucas1p1943deb1b158eda52980448e41f83e5e9~5fwX6lI2o2633926339eucas1p1Q@eucas1p1.samsung.com>
- <CAJKOXPeCT3CkqqNowEZaeTw7goJd6=Nbd2S61QzTFW-nGr5AKg@mail.gmail.com>
- <20180620193407.gk5e5ecolo5bel3c@kozik-lap> <20180621055923eucas1p190f716475dcd44f72b24abfa4d948c82~6F2j2EPNk0295402954eucas1p1v@eucas1p1.samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2] ARM: dts: exynos: remove no longer needed samsung
+ thermal properties
+Date: Thu, 21 Jun 2018 12:35:30 +0200
+Message-ID: <8551504.8D13YNfR1X@amdc3058>
+References: <CGME20180621103531eucas1p15ccaf3a2069fe5a188daaeb8e2a29a93@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180621055923eucas1p190f716475dcd44f72b24abfa4d948c82~6F2j2EPNk0295402954eucas1p1v@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 21 June 2018 at 07:59, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> On 20.06.2018 21:34, Krzysztof Kozlowski wrote:
->> On Tue, Jun 19, 2018 at 09:59:04AM +0200, Krzysztof Kozlowski wrote:
->>> On 19 June 2018 at 09:26, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>>> Hi Krzysztof,
->>>>
->>>> On 2018-06-18 19:42, Krzysztof Kozlowski wrote:
->>>>> The decon, decon_tv and dsi nodes have only one child port so
->>>>> address/size mappings are not necessary.  This fixes DTC warnings like:
->>>>>
->>>>>      Warning (graph_child_address): /soc/decon@13800000/ports:
->>>>>          graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
->>>>>
->>>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>> Works fine with current Exynos DRM Decon/MIC/DSI drivers.
->>>>
->>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Thanks for review and testing!
->> I have second thoughs whether this patch is correct. AFAIU, the drivers
->> get the remote endpoints by reg==0 (for example the
->> of_graph_get_remote_node() in exynos_dsi_parse_dt()). If the port shall
->> be ignored, then reg==-1 should be passed.
->
-> All this is about purity, DECON bindings says explicitly that there
-> should be a port with reg=0.
+Remove no longer needed samsung thermal properties.
 
-The warnings themself are indeed about purity.... but not having
-warnings is quite useful. When you have already warnings either in C
-code or in DTC, it is quite easy to skip new ones.
+There should be no functional changes caused by this patch.
 
-We successfully get rid of all DTC warnings from ARM part. It would be
-nice to have the same for ARM64... but not with a cost of making bogus
-changes.
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+v2:
+- rebased against current -next kernel
 
-> So your patch and DTC warnings are incorrect from bindings PoV.
+ arch/arm/boot/dts/exynos3250.dtsi                 |    2 +-
+ arch/arm/boot/dts/exynos4.dtsi                    |    2 +-
+ arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi |   20 --------------------
+ arch/arm/boot/dts/exynos5250.dtsi                 |    2 +-
+ arch/arm/boot/dts/exynos5410.dtsi                 |    8 ++++----
+ arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi |   21 ---------------------
+ arch/arm/boot/dts/exynos5420.dtsi                 |   10 +++++-----
+ 7 files changed, 12 insertions(+), 53 deletions(-)
 
-Good point so this patch should come along with changing of bindings
-(and maybe the code as well to use -1 as port/reg).
-
-> On the other side graph bindings are too bloated ( so many lines to
-> describe one connection ) so I am happy if there are shrinking attempts :)
-> Functionally nothing changes, of graph helpers assume reg=0 if it is not
-> present in port/endpoint node.
->
-> And regarding real issues, DECON could have more ports, possible candidates:
-> - GSCALER0/1/2,
-> - GSD/DSD - interconnect between GSCALERs and DECONs,
-> - SMIES - image enhancer (not implemented),
-> - MIC0/1 - image enhancers,
-> - DSIM0/1 - DSI encoders,
-> - HDMI - HDMI encoder.
->
-> But since all these connections can be configured dynamically, and more
-> importantly are inside specific SoC I dont think they need of_graphs. In
-> fact I think current of graph is also not necessary, but this is
-> different story, removal is on my long TODO list :)
-
-I keep my fingers crossed for this :)
-
-Best regards,
-Krzysztof
+Index: b/arch/arm/boot/dts/exynos3250.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos3250.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos3250.dtsi	2018-06-21 12:17:32.091322153 +0200
+@@ -242,7 +242,7 @@
+ 			interrupts = <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cmu CLK_TMU_APBIF>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+Index: b/arch/arm/boot/dts/exynos4.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos4.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos4.dtsi	2018-06-21 12:17:32.091322153 +0200
+@@ -735,7 +735,7 @@
+ 			reg = <0x100C0000 0x100>;
+ 			interrupts = <2 4>;
+ 			status = "disabled";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		jpeg_codec: jpeg-codec@11840000 {
+Index: b/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,20 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Device tree sources for Exynos4412 TMU sensor configuration
+- *
+- * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
+- */
+-
+-#include <dt-bindings/thermal/thermal_exynos.h>
+-
+-#thermal-sensor-cells = <0>;
+-samsung,tmu_gain = <8>;
+-samsung,tmu_reference_voltage = <16>;
+-samsung,tmu_noise_cancel_mode = <4>;
+-samsung,tmu_efuse_value = <55>;
+-samsung,tmu_min_efuse_value = <40>;
+-samsung,tmu_max_efuse_value = <100>;
+-samsung,tmu_first_point_trim = <25>;
+-samsung,tmu_second_point_trim = <85>;
+-samsung,tmu_default_temp_offset = <50>;
+-samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
+Index: b/arch/arm/boot/dts/exynos5250.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos5250.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos5250.dtsi	2018-06-21 12:17:32.091322153 +0200
+@@ -301,7 +301,7 @@
+ 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		sata: sata@122f0000 {
+Index: b/arch/arm/boot/dts/exynos5410.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos5410.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos5410.dtsi	2018-06-21 12:17:32.091322153 +0200
+@@ -93,7 +93,7 @@
+ 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu1: tmu@10064000 {
+@@ -102,7 +102,7 @@
+ 			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu2: tmu@10068000 {
+@@ -111,7 +111,7 @@
+ 			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu3: tmu@1006c000 {
+@@ -120,7 +120,7 @@
+ 			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		mmc_0: mmc@12200000 {
+Index: b/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,21 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Device tree sources for Exynos5420 TMU sensor configuration
+- *
+- * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
+- * Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
+- */
+-
+-#include <dt-bindings/thermal/thermal_exynos.h>
+-
+-#thermal-sensor-cells = <0>;
+-samsung,tmu_gain = <8>;
+-samsung,tmu_reference_voltage = <16>;
+-samsung,tmu_noise_cancel_mode = <4>;
+-samsung,tmu_efuse_value = <55>;
+-samsung,tmu_min_efuse_value = <0>;
+-samsung,tmu_max_efuse_value = <100>;
+-samsung,tmu_first_point_trim = <25>;
+-samsung,tmu_second_point_trim = <85>;
+-samsung,tmu_default_temp_offset = <50>;
+-samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
+Index: b/arch/arm/boot/dts/exynos5420.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos5420.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos5420.dtsi	2018-06-21 12:17:32.095322153 +0200
+@@ -738,7 +738,7 @@
+ 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu1: tmu@10064000 {
+@@ -747,7 +747,7 @@
+ 			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu2: tmu@10068000 {
+@@ -756,7 +756,7 @@
+ 			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>, <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu3: tmu@1006c000 {
+@@ -765,7 +765,7 @@
+ 			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>, <&clock CLK_TMU_GPU>;
+ 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_gpu: tmu@100a0000 {
+@@ -774,7 +774,7 @@
+ 			interrupts = <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU_GPU>, <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		sysmmu_g2dr: sysmmu@10a60000 {
