@@ -1,42 +1,114 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 1/7] ARM: dts: s5pv210: Add missing interrupt-controller
- property to gph2
-Date: Thu, 21 Jun 2018 21:09:53 +0200
-Message-ID: <1529608199-5583-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 3/7] ARM: dts: s5pv210: Add initial DTS for Samsung Galaxy S phone.
+Date: Thu, 21 Jun 2018 21:09:55 +0200
+Message-ID: <1529608199-5583-4-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 References: <1529608199-5583-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1529608199-5583-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, xc-racer2@live.ca, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, pawel.mikolaj.chmiel@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QWRkcyBtaXNzaW5nIGludGVycnVwdC1jb250cm9sbGVyIHByb3BlcnR5IHRvIGdwaDIgYmxvY2ss
-CnRvIHNpbGVuY2UgZm9sbG93aW5nIHdhcm5pbmdzIGR1cmluZyBidWlsZAogIC9zb2MvcGluY3Ry
-bEBlMDIwMDAwMC9ncGgyOiBNaXNzaW5nIGludGVycnVwdC1jb250cm9sbGVyIG9yIGludGVycnVw
-dC1tYXAgcHJvcGVydHkKCkl0J3MgcmVndWlyZWQgYnkgU2Ftc3VuZyBhcmllcyBib2FyZHMsIGFu
-IFM1UFYyMTAgYmFzZWQKU2Ftc3VuZyBHYWxheHkgUyAoaTkwMDApIGFuZCBHYWxheHkgUyA0RyBw
-aG9uZXMsIHdoaWNoIGFyZSBhZGRlZCBpbiBuZXh0IHBhdGNoZXMuCgpTaWduZWQtb2ZmLWJ5OiBQ
-YXdlxYIgQ2htaWVsIDxwYXdlbC5taWtvbGFqLmNobWllbEBnbWFpbC5jb20+Ci0tLQogYXJjaC9h
-cm0vYm9vdC9kdHMvczVwdjIxMC1waW5jdHJsLmR0c2kgfCAyICsrCiAxIGZpbGUgY2hhbmdlZCwg
-MiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvczVwdjIxMC1w
-aW5jdHJsLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy9zNXB2MjEwLXBpbmN0cmwuZHRzaQppbmRl
-eCAzYTc5ZmVhYjExYzMuLjdmMGM5ZDQ0Nzg3MSAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9k
-dHMvczVwdjIxMC1waW5jdHJsLmR0c2kKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvczVwdjIxMC1w
-aW5jdHJsLmR0c2kKQEAgLTI1OCw2ICsyNTgsOCBAQAogCWdwaDI6IGdwaDIgewogCQlncGlvLWNv
-bnRyb2xsZXI7CiAJCSNncGlvLWNlbGxzID0gPDI+OworCisJCWludGVycnVwdC1jb250cm9sbGVy
-OwogCQkjaW50ZXJydXB0LWNlbGxzID0gPDI+OwogCX07CiAKLS0gCjIuNy40CgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBt
-YWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9s
-aXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+ arch/arm/boot/dts/Makefile            |  1 +
+ arch/arm/boot/dts/s5pv210-galaxys.dts | 72 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 73 insertions(+)
+ create mode 100644 arch/arm/boot/dts/s5pv210-galaxys.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 7e2424957809..522ebdca1d3d 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -846,6 +846,7 @@ dtb-$(CONFIG_ARCH_S3C64XX) += \
+ 	s3c6410-smdk6410.dtb
+ dtb-$(CONFIG_ARCH_S5PV210) += \
+ 	s5pv210-aquila.dtb \
++	s5pv210-galaxys.dtb \
+ 	s5pv210-goni.dtb \
+ 	s5pv210-smdkc110.dtb \
+ 	s5pv210-smdkv210.dtb \
+diff --git a/arch/arm/boot/dts/s5pv210-galaxys.dts b/arch/arm/boot/dts/s5pv210-galaxys.dts
+new file mode 100644
+index 000000000000..d435032541a9
+--- /dev/null
++++ b/arch/arm/boot/dts/s5pv210-galaxys.dts
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/dts-v1/;
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include "s5pv210-aries.dtsi"
++
++/ {
++	model = "Samsung Galaxy S1 (GT-I9000) based on S5PV210";
++	compatible = "samsung,galaxys", "samsung,aries", "samsung,s5pv210";
++
++	chosen {
++		bootargs = "console=ttySAC2,115200n8 root=/dev/mmcblk2p1 rw rootwait ignore_loglevel earlyprintk";
++	};
++
++	nand_pwrseq: nand-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&gpj2 7 GPIO_ACTIVE_LOW>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&massmemory_en>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		power {
++			label = "power";
++			gpios = <&gph2 6 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_POWER>;
++			wakeup-source;
++		};
++
++		vol-down {
++			label = "volume_down";
++			gpios = <&gph3 1 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEDOWN>;
++		};
++
++		vol-up {
++			label = "volume_up";
++			gpios = <&gph3 2 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEUP>;
++		};
++
++		home {
++			label = "home";
++			gpios = <&gph3 5 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_HOME>;
++			wakeup-source;
++		};
++	};
++};
++
++&pinctrl0 {
++	massmemory_en: massmemory-en {
++		samsung,pins = "gpj2-7";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++};
++
++&sdhci0 {
++	bus-width = <4>;
++	non-removable;
++	mmc-pwrseq = <&nand_pwrseq>;
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
++	pinctrl-names = "default";
++	status = "okay";
++};
+-- 
+2.7.4
