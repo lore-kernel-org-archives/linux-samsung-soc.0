@@ -1,89 +1,52 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 4/7] ARM: s5pv210_defconfig: Enable drivers for Samsung
- Aries based phones
-Date: Fri, 22 Jun 2018 09:54:20 +0200
-Message-ID: <CAJKOXPe3D5Qp_idZY57UJi2c10D7wEfTZ=W=PkzanK4NPf-WWg@mail.gmail.com>
-References: <1529608199-5583-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <1529608199-5583-5-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: Re: [PATCH 5/7] dt-bindings: samsung: Document bindings for Samsung
+ aries boards
+Date: Fri, 22 Jun 2018 09:56:41 +0200
+Message-ID: <CAJKOXPdV+UKKnntcrXQ15aOB5eCehyxqVEJfvZp5faTw434rPw@mail.gmail.com>
+References: <1529608199-5583-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <1529608199-5583-6-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1529608199-5583-5-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1529608199-5583-6-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, xc-racer2@live.ca, linux@armlinux.org.uk, robh+dt@kernel.org, linux-kernel@vger.kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjEgSnVuZSAyMDE4IGF0IDIxOjA5LCBQYXdlxYIgQ2htaWVsIDxwYXdlbC5taWtvbGFqLmNo
-bWllbEBnbWFpbC5jb20+IHdyb3RlOgo+IEVuYWJsZSBjb25maWcgb3B0aW9ucyByZXF1aXJlZCBm
-b3IgU2Ftc3VuZyBBcmllcyBiYXNlZCBwaG9uZXMuLgoKVHdvIGRvdHMuCgo+IFdoaWxlIHdlJ3Jl
-IGhlcmUsIGFsc28gZW5hYmxlIG90aGVyIHVzZWZ1bCBvcHRpb25zIGxpa2U6CgpQbGVhc2Ugc3Bs
-aXQgaXQuIE9uZSBzZXQgb2YgY2hhbmdlcyBuZWVkZWQgZm9yIEFyaWVzIGFuZCBzZWNvbmQgc2V0
-IG9mCm90aGVyIHVzZWZ1bCBjaGFuZ2VzIHdpdGggc2hvcnQgZXhwbGFuYXRpb24gd2h5IHRoZXkg
-YXJlIG5lZWRlZC4gVGhpcwpleHBsYW5hdGlvbiBtaWdodCBiZSBmb3IgZXhhbXBsZToKMS4gYmVj
-YXVzZSB0eXBpY2FsIExpbnV4IGRpc3RybyBvciBzeXN0ZW1kIHJlcXVpcmVzIHRoZW0sCjIuIHRo
-ZXkgYXJlIHVzZWZ1bCBmb3IgZGVidWdnaW5nLgoKPiAtIFNZU1ZJUEMKPiAtIENHUk9VUFMKPiAt
-IERFVlRNUEZTCj4gLSBuZXR3b3JraW5nIHN1cHBvcnQKPiAtIGV4dDQgYW5kIGF1dG9mcwo+Cj4g
-U2lnbmVkLW9mZi1ieTogUGF3ZcWCIENobWllbCA8cGF3ZWwubWlrb2xhai5jaG1pZWxAZ21haWwu
-Y29tPgo+IC0tLQo+ICBhcmNoL2FybS9jb25maWdzL3M1cHYyMTBfZGVmY29uZmlnIHwgNDkgKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDQ2
-IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0v
-Y29uZmlncy9zNXB2MjEwX2RlZmNvbmZpZyBiL2FyY2gvYXJtL2NvbmZpZ3MvczVwdjIxMF9kZWZj
-b25maWcKPiBpbmRleCAwOWI1YTczODY0MTQuLmEwNzc1OTczNjlmMSAxMDA2NDQKPiAtLS0gYS9h
-cmNoL2FybS9jb25maWdzL3M1cHYyMTBfZGVmY29uZmlnCj4gKysrIGIvYXJjaC9hcm0vY29uZmln
-cy9zNXB2MjEwX2RlZmNvbmZpZwo+IEBAIC0xLDUgKzEsNyBAQAo+ICtDT05GSUdfU1lTVklQQz15
-Cj4gIENPTkZJR19OT19IWj15Cj4gIENPTkZJR19ISUdIX1JFU19USU1FUlM9eQo+ICtDT05GSUdf
-Q0dST1VQUz15Cj4gIENPTkZJR19TWVNGU19ERVBSRUNBVEVEPXkKPiAgQ09ORklHX1NZU0ZTX0RF
-UFJFQ0FURURfVjI9eQo+ICBDT05GSUdfQkxLX0RFVl9JTklUUkQ9eQo+IEBAIC0xMywyOCArMTUs
-NjggQEAgQ09ORklHX1NPTEFSSVNfWDg2X1BBUlRJVElPTj15Cj4gIENPTkZJR19BUkNIX1M1UFYy
-MTA9eQo+ICBDT05GSUdfVk1TUExJVF8yRz15Cj4gIENPTkZJR19QUkVFTVBUPXkKPiAtQ09ORklH
-X0FFQUJJPXkKCkkgYmVsaWV2ZSB0aGlzIGNvbWVzIGZyb20gc2F2ZWRlZmNvbmZpZy4gSW4gc3Vj
-aCBjYXNlIHBsZWFzZSBtYWtlIGl0IGEKc2VwYXJhdGUgY29tbWl0LCBiZWZvcmUgYWxsIG90aGVy
-cywgYmVjYXVzZSBpdCBzaG91bGQgbm90IGJyaW5nIGFueQpmdW5jdGlvbmFsIGRpZmZlcmVuY2Vz
-LgoKQmVzdCByZWdhcmRzLApLcnp5c3p0b2YKCj4gK0NPTkZJR19BUk1fQVBQRU5ERURfRFRCPXkK
-PiAgQ09ORklHX0NNRExJTkU9InJvb3Q9L2Rldi9yYW0wIHJ3IHJhbWRpc2s9ODE5MiBpbml0cmQ9
-MHgyMDgwMDAwMCw4TSBjb25zb2xlPXR0eVNBQzEsMTE1MjAwIGluaXQ9L2xpbnV4cmMiCj4gIENP
-TkZJR19WRlA9eQo+ICBDT05GSUdfTkVPTj15Cj4gK0NPTkZJR19ORVQ9eQo+ICtDT05GSUdfUEFD
-S0VUPXkKPiArQ09ORklHX1VOSVg9eQo+ICtDT05GSUdfSU5FVD15Cj4gK0NPTkZJR19JUF9QTlA9
-eQo+ICtDT05GSUdfSVBfUE5QX0RIQ1A9eQo+ICtDT05GSUdfSVBfUE5QX0JPT1RQPXkKPiArQ09O
-RklHX0lQX1BOUF9SQVJQPXkKPiArQ09ORklHX0NGRzgwMjExPW0KPiArQ09ORklHX01BQzgwMjEx
-PW0KPiAgQ09ORklHX1VFVkVOVF9IRUxQRVJfUEFUSD0iL3NiaW4vaG90cGx1ZyIKPiArQ09ORklH
-X0RFVlRNUEZTPXkKPiArQ09ORklHX0RFVlRNUEZTX01PVU5UPXkKPiAgQ09ORklHX0JMS19ERVZf
-TE9PUD15Cj4gIENPTkZJR19CTEtfREVWX1JBTT15Cj4gIENPTkZJR19CTEtfREVWX1JBTV9TSVpF
-PTgxOTIKPiAgQ09ORklHX1NDU0k9eQo+ICBDT05GSUdfQkxLX0RFVl9TRD15Cj4gIENPTkZJR19D
-SFJfREVWX1NHPXkKPiArQ09ORklHX05FVERFVklDRVM9eQo+ICtDT05GSUdfQlJDTUZNQUM9bQo+
-ICBDT05GSUdfSU5QVVRfRVZERVY9eQo+IC0jIENPTkZJR19JTlBVVF9LRVlCT0FSRCBpcyBub3Qg
-c2V0Cj4gK0NPTkZJR19LRVlCT0FSRF9HUElPPXkKPiAgIyBDT05GSUdfSU5QVVRfTU9VU0UgaXMg
-bm90IHNldAo+ICBDT05GSUdfSU5QVVRfVE9VQ0hTQ1JFRU49eQo+ICBDT05GSUdfU0VSSUFMXzgy
-NTA9eQo+ICBDT05GSUdfU0VSSUFMX1NBTVNVTkc9eQo+ICBDT05GSUdfU0VSSUFMX1NBTVNVTkdf
-Q09OU09MRT15Cj4gIENPTkZJR19IV19SQU5ET009eQo+ICtDT05GSUdfSTJDX0dQSU89eQo+ICtD
-T05GSUdfUE9XRVJfU1VQUExZPXkKPiArQ09ORklHX0JBVFRFUllfTUFYMTcwNDA9eQo+ICAjIENP
-TkZJR19IV01PTiBpcyBub3Qgc2V0Cj4gLSMgQ09ORklHX1VTQl9TVVBQT1JUIGlzIG5vdCBzZXQK
-PiArQ09ORklHX01GRF9NQVg4OTk4PXkKPiArQ09ORklHX1JFR1VMQVRPUj15Cj4gK0NPTkZJR19S
-RUdVTEFUT1JfTUFYODk5OD15Cj4gK0NPTkZJR19EUk09eQo+ICtDT05GSUdfRFJNX0VYWU5PUz15
-Cj4gK0NPTkZJR19EUk1fRVhZTk9TX0ZJTUQ9eQo+ICtDT05GSUdfRFJNX0VYWU5PU19EUEk9eQo+
-ICtDT05GSUdfVVNCPXkKPiArQ09ORklHX1VTQl9PVEc9eQo+ICtDT05GSUdfVVNCX0VIQ0lfSENE
-PXkKPiArQ09ORklHX1VTQl9FSENJX0VYWU5PUz15Cj4gK0NPTkZJR19VU0JfT0hDSV9IQ0Q9eQo+
-ICtDT05GSUdfVVNCX09IQ0lfRVhZTk9TPXkKPiArQ09ORklHX1VTQl9EV0MyPXkKPiArQ09ORklH
-X01NQz15Cj4gK0NPTkZJR19NTUNfU0RIQ0k9eQo+ICtDT05GSUdfTU1DX1NESENJX1MzQz15Cj4g
-K0NPTkZJR19NTUNfU0RIQ0lfUzNDX0RNQT15Cj4gK0NPTkZJR19SVENfQ0xBU1M9eQo+ICtDT05G
-SUdfUlRDX0RSVl9NQVg4OTk4PW0KPiArQ09ORklHX1BIWV9TQU1TVU5HX1VTQjI9bQo+ICtDT05G
-SUdfUEhZX1M1UFYyMTBfVVNCMj15Cj4gIENPTkZJR19FWFQyX0ZTPXkKPiArQ09ORklHX0VYVDRf
-RlM9eQo+ICtDT05GSUdfQVVUT0ZTNF9GUz15Cj4gIENPTkZJR19NU0RPU19GUz15Cj4gIENPTkZJ
-R19WRkFUX0ZTPXkKPiAgQ09ORklHX1RNUEZTPXkKPiBAQCAtNDQsNiArODYsNyBAQCBDT05GSUdf
-Uk9NRlNfRlM9eQo+ICBDT05GSUdfTkxTX0NPREVQQUdFXzQzNz15Cj4gIENPTkZJR19OTFNfQVND
-SUk9eQo+ICBDT05GSUdfTkxTX0lTTzg4NTlfMT15Cj4gK0NPTkZJR19OTFNfVVRGOD15Cj4gIENP
-TkZJR19ERUJVR19JTkZPPXkKPiAgQ09ORklHX01BR0lDX1NZU1JRPXkKPiAgQ09ORklHX0RFQlVH
-X0tFUk5FTD15Cj4gLS0KPiAyLjcuNAo+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0t
-a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On 21 June 2018 at 21:09, Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com=
+> wrote:
+> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards=
+.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> index 14510b215480..edce6602de50 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> @@ -2,6 +2,8 @@
+>
+>  Required root node properties:
+>      - compatible =3D should be one or more of the following.
+> +       - "samsung,aries"       - for S5PV210-based Samsung Aries board.
+> +       - "samsung,galaxys"     - for S5PV210-based Samsung Galaxy S (i90=
+00)  board.
+
+It is not strictly speaking Exynos-based board (as mentioned in the
+header at beginning of file) so maybe change it to "Samsung's Exynos
+and S5P SoC based boards"?
+
+Best regards,
+Krzysztof
+
+>         - "samsung,artik5"      - for Exynos3250-based Samsung ARTIK5 mod=
+ule.
+>         - "samsung,artik5-eval" - for Exynos3250-based Samsung ARTIK5 eva=
+l board.
+>         - "samsung,monk"        - for Exynos3250-based Samsung Simband bo=
+ard.
+> --
+> 2.7.4
+>
