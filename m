@@ -1,41 +1,73 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos: remove no longer needed samsung
- thermal properties
-Date: Fri, 22 Jun 2018 20:27:07 +0200
-Message-ID: <20180622182707.i52l3z4yq2ozmqkw@kozik-lap>
-References: <CGME20180621103531eucas1p15ccaf3a2069fe5a188daaeb8e2a29a93@eucas1p1.samsung.com>
- <8551504.8D13YNfR1X@amdc3058>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 01/10] drm/exynos: rename "bridge_node" to
+ "mic_bridge_node"
+Date: Mon, 25 Jun 2018 11:37:56 +0900
+Message-ID: <20180625023757epcas1p215ceb8660829c6ce1bd60c572a4e61c0~7Rr1bz4G52864028640epcas1p24@epcas1p2.samsung.com>
+References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
+ <CGME20180530121623eucas1p27e08223bc5b04dbb0b0253c18a9f83d5@eucas1p2.samsung.com>
+ <1527682561-1386-2-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <8551504.8D13YNfR1X@amdc3058>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1527682561-1386-2-git-send-email-m.purski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 12:35:30PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> Remove no longer needed samsung thermal properties.
-> 
-> There should be no functional changes caused by this patch.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-> v2:
-> - rebased against current -next kernel
-> 
->  arch/arm/boot/dts/exynos3250.dtsi                 |    2 +-
->  arch/arm/boot/dts/exynos4.dtsi                    |    2 +-
->  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi |   20 --------------------
->  arch/arm/boot/dts/exynos5250.dtsi                 |    2 +-
->  arch/arm/boot/dts/exynos5410.dtsi                 |    8 ++++----
->  arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi |   21 ---------------------
->  arch/arm/boot/dts/exynos5420.dtsi                 |   10 +++++-----
->  7 files changed, 12 insertions(+), 53 deletions(-)
-> 
-
-Thanks, applied.
-
-Best regards,
-Krzysztof
+SGksCgpJIHdpbGwgc3RhcnQgdG8gcmV2aWV3IHBhdGNoIHNldHMgZm9yIC1maXhlcyBmaXJzdCBz
+byBJIHF1ZXVlZCB5b3VyIGZvdXIgcGF0Y2hlcyBhbmQgeW91IGNhbiBjaGVjayBleHlub3MtZHJt
+LW5leHQtdG9kbyBicmFuY2ggZm9yIGl0LgoKVGhhbmtzLApJbmtpIERhZQoKMjAxOOuFhCAwNeyb
+lCAzMOydvCAyMToxNeyXkCBNYWNpZWogUHVyc2tpIOydtCjqsIApIOyTtCDquIA6Cj4gV2hlbiBh
+ZGRpbmcgc3VwcG9ydCBmb3IgcGVyaXBoZXJhbCBvdXQgYnJpZGdlcywgdGhlICJicmlkZ2UiIG5h
+bWUKPiBiZWNvbWVzIGltcHJlY2lzZSBhcyBpdCByZWZlcnMgdG8gYSBkaWZmZXJlbnQgZGV2aWNl
+IHRoYW4gdGhlCj4gIm91dF9icmlkZ2UiLgo+IAo+IFNpZ25lZC1vZmYtYnk6IE1hY2llaiBQdXJz
+a2kgPG0ucHVyc2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZHNpLmMgfCAxNiArKysrKysrKy0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCA4IGluc2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kc2kuYwo+IGluZGV4IGVhZTQ0ZmQuLjk1OTllNmIgMTAwNjQ0Cj4gLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4gQEAgLTI3OSw3ICsyNzksNyBAQCBz
+dHJ1Y3QgZXh5bm9zX2RzaSB7Cj4gIAlzdHJ1Y3QgbGlzdF9oZWFkIHRyYW5zZmVyX2xpc3Q7Cj4g
+IAo+ICAJY29uc3Qgc3RydWN0IGV4eW5vc19kc2lfZHJpdmVyX2RhdGEgKmRyaXZlcl9kYXRhOwo+
+IC0Jc3RydWN0IGRldmljZV9ub2RlICpicmlkZ2Vfbm9kZTsKPiArCXN0cnVjdCBkZXZpY2Vfbm9k
+ZSAqbWljX2JyaWRnZV9ub2RlOwo+ICB9Owo+ICAKPiAgI2RlZmluZSBob3N0X3RvX2RzaShob3N0
+KSBjb250YWluZXJfb2YoaG9zdCwgc3RydWN0IGV4eW5vc19kc2ksIGRzaV9ob3N0KQo+IEBAIC0x
+NjMxLDcgKzE2MzEsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfcGFyc2VfZHQoc3RydWN0IGV4
+eW5vc19kc2kgKmRzaSkKPiAgCWlmIChyZXQgPCAwKQo+ICAJCXJldHVybiByZXQ7Cj4gIAo+IC0J
+ZHNpLT5icmlkZ2Vfbm9kZSA9IG9mX2dyYXBoX2dldF9yZW1vdGVfbm9kZShub2RlLCBEU0lfUE9S
+VF9JTiwgMCk7Cj4gKwlkc2ktPm1pY19icmlkZ2Vfbm9kZSA9IG9mX2dyYXBoX2dldF9yZW1vdGVf
+bm9kZShub2RlLCBEU0lfUE9SVF9JTiwgMCk7Cj4gIAo+ICAJcmV0dXJuIDA7Cj4gIH0KPiBAQCAt
+MTY0Miw3ICsxNjQyLDcgQEAgc3RhdGljIGludCBleHlub3NfZHNpX2JpbmQoc3RydWN0IGRldmlj
+ZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4gIAlzdHJ1Y3QgZHJtX2VuY29kZXIgKmVu
+Y29kZXIgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiAgCXN0cnVjdCBleHlub3NfZHNpICpkc2kg
+PSBlbmNvZGVyX3RvX2RzaShlbmNvZGVyKTsKPiAgCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2
+ID0gZGF0YTsKPiAtCXN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2U7Cj4gKwlzdHJ1Y3QgZHJtX2Jy
+aWRnZSAqbWljX2JyaWRnZTsKPiAgCWludCByZXQ7Cj4gIAo+ICAJZHJtX2VuY29kZXJfaW5pdChk
+cm1fZGV2LCBlbmNvZGVyLCAmZXh5bm9zX2RzaV9lbmNvZGVyX2Z1bmNzLAo+IEBAIC0xNjYxLDEw
+ICsxNjYxLDEwIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRl
+diwgc3RydWN0IGRldmljZSAqbWFzdGVyLAo+ICAJCXJldHVybiByZXQ7Cj4gIAl9Cj4gIAo+IC0J
+aWYgKGRzaS0+YnJpZGdlX25vZGUpIHsKPiAtCQlicmlkZ2UgPSBvZl9kcm1fZmluZF9icmlkZ2Uo
+ZHNpLT5icmlkZ2Vfbm9kZSk7Cj4gLQkJaWYgKGJyaWRnZSkKPiAtCQkJZHJtX2JyaWRnZV9hdHRh
+Y2goZW5jb2RlciwgYnJpZGdlLCBOVUxMKTsKPiArCWlmIChkc2ktPm1pY19icmlkZ2Vfbm9kZSkg
+ewo+ICsJCW1pY19icmlkZ2UgPSBvZl9kcm1fZmluZF9icmlkZ2UoZHNpLT5taWNfYnJpZGdlX25v
+ZGUpOwo+ICsJCWlmIChtaWNfYnJpZGdlKQo+ICsJCQlkcm1fYnJpZGdlX2F0dGFjaChlbmNvZGVy
+LCBtaWNfYnJpZGdlLCBOVUxMKTsKPiAgCX0KPiAgCj4gIAlyZXR1cm4gbWlwaV9kc2lfaG9zdF9y
+ZWdpc3RlcigmZHNpLT5kc2lfaG9zdCk7Cj4gQEAgLTE3ODMsNyArMTc4Myw3IEBAIHN0YXRpYyBp
+bnQgZXh5bm9zX2RzaV9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgewo+
+ICAJc3RydWN0IGV4eW5vc19kc2kgKmRzaSA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBkZXYpOwo+
+ICAKPiAtCW9mX25vZGVfcHV0KGRzaS0+YnJpZGdlX25vZGUpOwo+ICsJb2Zfbm9kZV9wdXQoZHNp
+LT5taWNfYnJpZGdlX25vZGUpOwo+ICAKPiAgCXBtX3J1bnRpbWVfZGlzYWJsZSgmcGRldi0+ZGV2
+KTsKPiAgCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
