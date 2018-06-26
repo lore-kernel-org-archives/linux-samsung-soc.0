@@ -1,55 +1,41 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH v2 10/10] i2c: remove i2c_lock_adapter and use
- i2c_lock_bus directly
-Date: Tue, 26 Jun 2018 19:39:43 +0530
-Message-ID: <4e0545e3-fee9-cf29-bae1-e442347e3cb8@ti.com>
-References: <20180620051803.12206-1-peda@axentia.se>
- <20180620051803.12206-11-peda@axentia.se>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
+Date: Tue, 26 Jun 2018 14:19:44 -0600
+Message-ID: <20180626201944.GA24678@rob-hp-laptop>
+References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180620051803.12206-11-peda@axentia.se>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Cc: Crt Mori <cmo@melexis.com>, Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Peter Huewe <peterhuewe@gmx.de>, Michael Krufky <mkrufky@linuxtv.org>, Lee Jones <lee.jones@linaro.org>, Antti Palosaari <crope@iki.fi>, linux-samsung-soc@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@kernel.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-input@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Grego
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, David S. Mill
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday 20 June 2018 10:48 AM, Peter Rosin wrote:
-> The i2c_lock_adapter name is ambiguous since it is unclear if it
-> refers to the root adapter or the adapter you name in the argument.
-> The natural interpretation is the adapter you name in the argument,
-> but there are historical reasons for that not being the case; it
-> in fact locks the root adapter. Just remove the function and force
-> users to spell out the I2C_LOCK_ROOT_ADAPTER name to indicate what
-> is really going on. Also remove i2c_unlock_adapter, of course.
+On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neuschäfer wrote:
+> Multiple binding documents have various forms of unbalanced quotation
+> marks. Fix them.
 > 
-> This patch was generated with
-> 
-> git grep -l 'i2c_\(un\)\?lock_adapter' \
-> | xargs sed -i 's/i2c_\(un\)\?lock_adapter(\([^)]*\))/'\
-> 'i2c_\1lock_bus(\2, I2C_LOCK_ROOT_ADAPTER)/g'
-> 
-> followed by white-space touch-up.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 > ---
->  drivers/i2c/busses/i2c-brcmstb.c   |  8 ++++----
->  drivers/i2c/busses/i2c-davinci.c   |  4 ++--
+> 
+> Should I split this patch so that different parts can go through different trees?
 
-On DM644x and DA850 EVMs applying this series does not seem to break I2C
-functionality. So:
+No, I applied it. Thanks.
 
-Tested-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+> ---
+>  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
+>  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
+>  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
+>  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
+>  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
+>  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
+>  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
+>  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
+>  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
+>  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
+>  12 files changed, 12 insertions(+), 12 deletions(-)
