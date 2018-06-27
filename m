@@ -1,88 +1,42 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 09/10] ARM: s5pv210_defconfig: Enable drivers for Samsung Aries based phones
-Date: Wed, 27 Jun 2018 19:12:23 +0200
-Message-ID: <1530119544-30023-10-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 01/10] ARM: dts: s5pv210: Add missing interrupt-controller
+ property to gph2
+Date: Wed, 27 Jun 2018 19:12:15 +0200
+Message-ID: <1530119544-30023-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 References: <1530119544-30023-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1530119544-30023-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca, pawel.mikolaj.chmiel@gmail.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, xc-racer2@live.ca, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Enable config options required for Samsung Aries based phones.
-ARM_APPENDED_DTB is also needed, because stock bootloader
-does not support loading dtb files.
-
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- arch/arm/configs/s5pv210_defconfig | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
-index 9c862d366fb3..f719e7f9a655 100644
---- a/arch/arm/configs/s5pv210_defconfig
-+++ b/arch/arm/configs/s5pv210_defconfig
-@@ -13,9 +13,12 @@ CONFIG_SOLARIS_X86_PARTITION=y
- CONFIG_ARCH_S5PV210=y
- CONFIG_VMSPLIT_2G=y
- CONFIG_PREEMPT=y
-+CONFIG_ARM_APPENDED_DTB=y
- CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
- CONFIG_VFP=y
- CONFIG_NEON=y
-+CONFIG_NET=y
-+CONFIG_CFG80211=m
- CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_BLK_DEV_LOOP=y
- CONFIG_BLK_DEV_RAM=y
-@@ -23,16 +26,42 @@ CONFIG_BLK_DEV_RAM_SIZE=8192
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_CHR_DEV_SG=y
-+CONFIG_NETDEVICES=y
-+CONFIG_BRCMFMAC=m
- CONFIG_INPUT_EVDEV=y
--# CONFIG_INPUT_KEYBOARD is not set
-+CONFIG_KEYBOARD_GPIO=y
- # CONFIG_INPUT_MOUSE is not set
- CONFIG_INPUT_TOUCHSCREEN=y
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_SAMSUNG=y
- CONFIG_SERIAL_SAMSUNG_CONSOLE=y
- CONFIG_HW_RANDOM=y
-+CONFIG_I2C_GPIO=y
-+CONFIG_POWER_SUPPLY=y
-+CONFIG_BATTERY_MAX17040=y
- # CONFIG_HWMON is not set
--# CONFIG_USB_SUPPORT is not set
-+CONFIG_MFD_MAX8998=y
-+CONFIG_REGULATOR=y
-+CONFIG_REGULATOR_MAX8998=y
-+CONFIG_DRM=y
-+CONFIG_DRM_EXYNOS=y
-+CONFIG_DRM_EXYNOS_FIMD=y
-+CONFIG_DRM_EXYNOS_DPI=y
-+CONFIG_USB=y
-+CONFIG_USB_OTG=y
-+CONFIG_USB_EHCI_HCD=y
-+CONFIG_USB_EHCI_EXYNOS=y
-+CONFIG_USB_OHCI_HCD=y
-+CONFIG_USB_OHCI_EXYNOS=y
-+CONFIG_USB_DWC2=y
-+CONFIG_MMC=y
-+CONFIG_MMC_SDHCI=y
-+CONFIG_MMC_SDHCI_S3C=y
-+CONFIG_MMC_SDHCI_S3C_DMA=y
-+CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_MAX8998=m
-+CONFIG_PHY_SAMSUNG_USB2=m
-+CONFIG_PHY_S5PV210_USB2=y
- CONFIG_EXT2_FS=y
- CONFIG_MSDOS_FS=y
- CONFIG_VFAT_FS=y
--- 
-2.7.4
+QWRkcyBtaXNzaW5nIGludGVycnVwdC1jb250cm9sbGVyIHByb3BlcnR5IHRvIGdwaDIgYmxvY2ss
+CnRvIHNpbGVuY2UgZm9sbG93aW5nIHdhcm5pbmdzIGR1cmluZyBidWlsZAogIC9zb2MvcGluY3Ry
+bEBlMDIwMDAwMC9ncGgyOiBNaXNzaW5nIGludGVycnVwdC1jb250cm9sbGVyIG9yIGludGVycnVw
+dC1tYXAgcHJvcGVydHkKCkl0J3MgcmVndWlyZWQgYnkgU2Ftc3VuZyBhcmllcyBib2FyZHMsIGFu
+IFM1UFYyMTAgYmFzZWQKU2Ftc3VuZyBHYWxheHkgUyAoaTkwMDApIGFuZCBHYWxheHkgUyA0RyBw
+aG9uZXMsIHdoaWNoIGFyZSBhZGRlZCBpbiBuZXh0IHBhdGNoZXMuCgpTaWduZWQtb2ZmLWJ5OiBQ
+YXdlxYIgQ2htaWVsIDxwYXdlbC5taWtvbGFqLmNobWllbEBnbWFpbC5jb20+Ci0tLQogYXJjaC9h
+cm0vYm9vdC9kdHMvczVwdjIxMC1waW5jdHJsLmR0c2kgfCAyICsrCiAxIGZpbGUgY2hhbmdlZCwg
+MiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvczVwdjIxMC1w
+aW5jdHJsLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy9zNXB2MjEwLXBpbmN0cmwuZHRzaQppbmRl
+eCAzYTc5ZmVhYjExYzMuLjdmMGM5ZDQ0Nzg3MSAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9k
+dHMvczVwdjIxMC1waW5jdHJsLmR0c2kKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvczVwdjIxMC1w
+aW5jdHJsLmR0c2kKQEAgLTI1OCw2ICsyNTgsOCBAQAogCWdwaDI6IGdwaDIgewogCQlncGlvLWNv
+bnRyb2xsZXI7CiAJCSNncGlvLWNlbGxzID0gPDI+OworCisJCWludGVycnVwdC1jb250cm9sbGVy
+OwogCQkjaW50ZXJydXB0LWNlbGxzID0gPDI+OwogCX07CiAKLS0gCjIuNy40CgoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBt
+YWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9s
+aXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
