@@ -1,41 +1,62 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Tue, 26 Jun 2018 14:19:44 -0600
-Message-ID: <20180626201944.GA24678@rob-hp-laptop>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 00/10] Initial support for Samsung Galaxy S and Galaxy S 4G
+Date: Wed, 27 Jun 2018 19:12:14 +0200
+Message-ID: <1530119544-30023-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, David S. Mill
+To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neusch‰fer wrote:
-> Multiple binding documents have various forms of unbalanced quotation
-> marks. Fix them.
-> 
-> Signed-off-by: Jonathan Neusch‰fer <j.neuschaefer@gmx.net>
-> ---
-> 
-> Should I split this patch so that different parts can go through different trees?
+This patch series adds support for Samsung Galaxy S and Galaxy S 4G.
+Both are commercial phone based on Aries family.
 
-No, I applied it. Thanks.
+Changes from v1:
+  - Removed duplicated and unneeded headers
+  - Corrected node names
+  - Formatting fixes
+  - Removed unneeded pinctrl and sorted entries
+  - Set correct interrupt type for max8998 pmic
+  - Add missing regulators
+  - Added missing commit msg
+  - Added stdout-path
+  - Added information why we hardcode bootargs
+  - Added new patch which adds information, that there are samsung boards,
+    not using exynos bases soc.
+  - Split patch updating s5pv210_defconfig into three parts.
+    First is result of make savedefconfig, second adds drivers required
+    by both devices and last adds some options, which are usefull in booting
+    typical Linux distribution.
 
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
->  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
->  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
->  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
->  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
->  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
->  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
->  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
->  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
->  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
+Jonathan Bakker (2):
+  ARM: dts: s5pv210: Add initial DTS for SGH-T959P phone
+  dt-bindings: samsung: Document bindings for SGH-T959P board
+
+Pawe≈Ç Chmiel (8):
+  ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
+  ARM: dts: s5pv210: Add initial DTS for Samsung Aries based phones
+  ARM: dts: s5pv210: Add initial DTS for Samsung Galaxy S phone
+  dt-bindings: samsung: Add S5PV210 as possible soc in Samsung boards
+  dt-bindings: samsung: Document bindings for Samsung aries boards
+  ARM: s5pv210_defconfig: Run make savedefconfig
+  ARM: s5pv210_defconfig: Enable drivers for Samsung Aries based phones
+  ARM: s5pv210_defconfig: Enable options needed to boot typical Linux
+    distro
+
+ .../bindings/arm/samsung/samsung-boards.txt        |   5 +-
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/s5pv210-aries.dtsi               | 413 +++++++++++++++++++++
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts          |  45 +++
+ arch/arm/boot/dts/s5pv210-galaxys.dts              |  77 ++++
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi             |   2 +
+ arch/arm/configs/s5pv210_defconfig                 |  49 ++-
+ 7 files changed, 589 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/boot/dts/s5pv210-aries.dtsi
+ create mode 100644 arch/arm/boot/dts/s5pv210-fascinate4g.dts
+ create mode 100644 arch/arm/boot/dts/s5pv210-galaxys.dts
+
+-- 
+2.7.4
