@@ -1,25 +1,24 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 5/7] dt-bindings: samsung: Document bindings for Samsung
- aries boards
-Date: Wed, 27 Jun 2018 11:21:42 -0600
-Message-ID: <20180627172142.GA14919@rob-hp-laptop>
-References: <1529608199-5583-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <1529608199-5583-6-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+From: Vinod <vkoul@kernel.org>
+Subject: Re: [PATCH] dmaengine: pl330: report BURST residue granularity
+Date: Thu, 28 Jun 2018 11:24:28 +0530
+Message-ID: <20180628055428.GM22377@vkoul-mobl>
+References: <CGME20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4@eucas1p2.samsung.com>
+ <20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4~5klprrrtK1347113471eucas1p2M@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1529608199-5583-6-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4~5klprrrtK1347113471eucas1p2M@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: kgene@kernel.org, krzk@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 09:09:57PM +0200, Paweł Chmiel wrote:
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 2 ++
->  1 file changed, 2 insertions(+)
+On 19-06-18, 15:20, Marek Szyprowski wrote:
+> The reported residue is already calculated in BURST unit granularity, so
+> advertise this capability properly to other devices in the system.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied, thanks
+
+-- 
+~Vinod
