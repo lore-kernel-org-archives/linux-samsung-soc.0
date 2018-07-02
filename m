@@ -1,38 +1,138 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/3] arm/arm64: configs: Remove the MFD_ prefix for
- MFD_CROS_EC_I2C/SPI symbols.
-Date: Mon, 2 Jul 2018 13:05:40 +0200
-Message-ID: <CAJKOXPd51yU8-zObXszc4zJpHsGtMNFTsbQsQdKBFg=k22xZLA@mail.gmail.com>
-References: <20180702102201.13461-1-enric.balletbo@collabora.com> <20180702102201.13461-3-enric.balletbo@collabora.com>
+From: Guenter Roeck <groeck@google.com>
+Subject: Re: [PATCH 1/3] platform/chrome: Move cros-ec transport drivers to drivers/platform.
+Date: Mon, 2 Jul 2018 07:39:45 -0700
+Message-ID: <CABXOdTcWnCTbn4NTmyZY53asOVXB47Uc2PNV4WC-kwbXU5tj3A@mail.gmail.com>
+References: <20180702102201.13461-1-enric.balletbo@collabora.com> <20180702102201.13461-2-enric.balletbo@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180702102201.13461-3-enric.balletbo@collabora.com>
+In-Reply-To: <20180702102201.13461-2-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>, Gwendal Grignou <gwendal@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, kernel@collabora.com, Guenter Roeck <groeck@google.com>, linux-arm-kernel@lists.infradead.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Gregory CLEMENT <gregory.clement@bootlin.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Geert
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, kgene@kernel.org, krzk@kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>, Gwendal Grignou <gwendal@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, kernel@collabora.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2 July 2018 at 12:22, Enric Balletbo i Serra
+On Mon, Jul 2, 2018 at 3:22 AM Enric Balletbo i Serra
 <enric.balletbo@collabora.com> wrote:
-> The cros-ec I2C and SPI transport drivers have been moved from MFD
-> subsystem to platform/chrome, at the same time, the config symbol has
-> been renamed and lost the MFD_ prefix, so update all configs to the new
-> config symbol name.
+>
+> There are some cros-ec transport drivers (I2C, SPI) living in MFD, while
+> others (LPC) living in drivers/platform. The transport drivers are more
+> platform specific. So, move the I2C and SPI transport drivers to the
+> platform/chrome directory. The patch also removes the MFD_ prefix of
+> their Kconfig symbols.
 >
 > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+
 > ---
 >
->  arch/arm/configs/exynos_defconfig   | 4 ++--
->  arch/arm/configs/multi_v7_defconfig | 4 ++--
->  arch/arm/configs/pxa_defconfig      | 4 ++--
->  arch/arm64/configs/defconfig        | 4 ++--
->  4 files changed, 8 insertions(+), 8 deletions(-)
-
-Since you put in one patch multiple defconfigs belonging to multiple
-maintainers, I assume you are pushing this through arm-soc or Russell.
-In such case, for Exynos boards:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+>  drivers/mfd/Kconfig                           | 20 -------------------
+>  drivers/mfd/Makefile                          |  2 --
+>  drivers/platform/chrome/Kconfig               | 20 +++++++++++++++++++
+>  drivers/platform/chrome/Makefile              |  2 ++
+>  .../{mfd => platform/chrome}/cros_ec_i2c.c    |  0
+>  .../{mfd => platform/chrome}/cros_ec_spi.c    |  0
+>  6 files changed, 22 insertions(+), 22 deletions(-)
+>  rename drivers/{mfd => platform/chrome}/cros_ec_i2c.c (100%)
+>  rename drivers/{mfd => platform/chrome}/cros_ec_spi.c (100%)
+>
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index b860eb5aa194..013458e728dc 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -202,26 +202,6 @@ config MFD_CROS_EC
+>           You also need to enable the driver for the bus you are using. The
+>           protocol for talking to the EC is defined by the bus driver.
+>
+> -config MFD_CROS_EC_I2C
+> -       tristate "ChromeOS Embedded Controller (I2C)"
+> -       depends on MFD_CROS_EC && I2C
+> -
+> -       help
+> -         If you say Y here, you get support for talking to the ChromeOS
+> -         EC through an I2C bus. This uses a simple byte-level protocol with
+> -         a checksum. Failing accesses will be retried three times to
+> -         improve reliability.
+> -
+> -config MFD_CROS_EC_SPI
+> -       tristate "ChromeOS Embedded Controller (SPI)"
+> -       depends on MFD_CROS_EC && SPI
+> -
+> -       ---help---
+> -         If you say Y here, you get support for talking to the ChromeOS EC
+> -         through a SPI bus, using a byte-level protocol. Since the EC's
+> -         response time cannot be guaranteed, we support ignoring
+> -         'pre-amble' bytes before the response actually starts.
+> -
+>  config MFD_CROS_EC_CHARDEV
+>          tristate "Chrome OS Embedded Controller userspace device interface"
+>          depends on MFD_CROS_EC
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index e9fd20dba18d..d13e859d7c1e 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -14,8 +14,6 @@ obj-$(CONFIG_MFD_BCM590XX)    += bcm590xx.o
+>  obj-$(CONFIG_MFD_BD9571MWV)    += bd9571mwv.o
+>  cros_ec_core-objs              := cros_ec.o
+>  obj-$(CONFIG_MFD_CROS_EC)      += cros_ec_core.o
+> -obj-$(CONFIG_MFD_CROS_EC_I2C)  += cros_ec_i2c.o
+> -obj-$(CONFIG_MFD_CROS_EC_SPI)  += cros_ec_spi.o
+>  obj-$(CONFIG_MFD_CROS_EC_CHARDEV) += cros_ec_dev.o
+>  obj-$(CONFIG_MFD_EXYNOS_LPASS) += exynos-lpass.o
+>
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index cb0df9eb3e0f..16b1615958aa 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -52,6 +52,26 @@ config CHROMEOS_TBMC
+>  config CROS_EC_CTL
+>          tristate
+>
+> +config CROS_EC_I2C
+> +       tristate "ChromeOS Embedded Controller (I2C)"
+> +       depends on MFD_CROS_EC && I2C
+> +
+> +       help
+> +         If you say Y here, you get support for talking to the ChromeOS
+> +         EC through an I2C bus. This uses a simple byte-level protocol with
+> +         a checksum. Failing accesses will be retried three times to
+> +         improve reliability.
+> +
+> +config CROS_EC_SPI
+> +       tristate "ChromeOS Embedded Controller (SPI)"
+> +       depends on MFD_CROS_EC && SPI
+> +
+> +       ---help---
+> +         If you say Y here, you get support for talking to the ChromeOS EC
+> +         through a SPI bus, using a byte-level protocol. Since the EC's
+> +         response time cannot be guaranteed, we support ignoring
+> +         'pre-amble' bytes before the response actually starts.
+> +
+>  config CROS_EC_LPC
+>          tristate "ChromeOS Embedded Controller (LPC)"
+>          depends on MFD_CROS_EC && ACPI && (X86 || COMPILE_TEST)
+> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+> index e44c37a63fa9..cd591bf872bb 100644
+> --- a/drivers/platform/chrome/Makefile
+> +++ b/drivers/platform/chrome/Makefile
+> @@ -6,6 +6,8 @@ obj-$(CONFIG_CHROMEOS_TBMC)             += chromeos_tbmc.o
+>  cros_ec_ctl-objs                       := cros_ec_sysfs.o cros_ec_lightbar.o \
+>                                            cros_ec_vbc.o cros_ec_debugfs.o
+>  obj-$(CONFIG_CROS_EC_CTL)              += cros_ec_ctl.o
+> +obj-$(CONFIG_CROS_EC_I2C)              += cros_ec_i2c.o
+> +obj-$(CONFIG_CROS_EC_SPI)              += cros_ec_spi.o
+>  cros_ec_lpcs-objs                      := cros_ec_lpc.o cros_ec_lpc_reg.o
+>  cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC) += cros_ec_lpc_mec.o
+>  obj-$(CONFIG_CROS_EC_LPC)              += cros_ec_lpcs.o
+> diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
+> similarity index 100%
+> rename from drivers/mfd/cros_ec_i2c.c
+> rename to drivers/platform/chrome/cros_ec_i2c.c
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
+> similarity index 100%
+> rename from drivers/mfd/cros_ec_spi.c
+> rename to drivers/platform/chrome/cros_ec_spi.c
+> --
+> 2.18.0
+>
