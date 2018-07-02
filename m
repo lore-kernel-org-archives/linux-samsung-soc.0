@@ -1,85 +1,129 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL]: exynos-drm-fixes
-Date: Mon, 02 Jul 2018 15:14:01 +0900
-Message-ID: <1530512041-21392-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20180702061402epcas2p4d7270720b0176845133c41e21f784896@epcas2p4.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH 1/3] platform/chrome: Move cros-ec transport drivers to drivers/platform.
+Date: Mon,  2 Jul 2018 12:21:59 +0200
+Message-ID: <20180702102201.13461-2-enric.balletbo@collabora.com>
+References: <20180702102201.13461-1-enric.balletbo@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180702102201.13461-1-enric.balletbo@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>
+Cc: Gwendal Grignou <gwendal@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, kernel@collabora.com, Guenter Roeck <groeck@google.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIFNldmVyYWwgZml4dXBzIHRvIEV4eW5vcyBEUk0gSVBQIHYyIGZyYW1ld29y
-ayBhbmQgcmVsZXZhbnQgZHJpdmVycwogICBtZXJnZWQgdG8gbWFpbmxpbmUgcmVjZW50bHksIGFu
-ZCBzb21lIGNsZW5hdXBzLgoKICAgUGxlYXNlIGtpbmRlbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUg
-aXMgYW55IHByb2JsZW0uCgpUaGFua3MsCklua2kgRGFlCgpUaGUgZm9sbG93aW5nIGNoYW5nZXMg
-c2luY2UgY29tbWl0IDJkOGFhNGVmNmFhYzU2NjYxNzA1MjY0MGU5YmIwN2VjYjljNDUxODM6Cgog
-IE1lcmdlIHRhZyAnZHJtLW1pc2MtZml4ZXMtMjAxOC0wNi0yOCcgb2YgZ2l0Oi8vYW5vbmdpdC5m
-cmVlZGVza3RvcC5vcmcvZHJtL2RybS1taXNjIGludG8gZHJtLWZpeGVzICgyMDE4LTA2LTI5IDA2
-OjI1OjA4ICsxMDAwKQoKYXJlIGF2YWlsYWJsZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgoK
-ICBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9k
-cm0tZXh5bm9zIHRhZ3MvZXh5bm9zLWRybS1maXhlcy1mb3ItdjQuMTgtcmM0Cgpmb3IgeW91IHRv
-IGZldGNoIGNoYW5nZXMgdXAgdG8gYWFiMTA5YjM0MGVhZjM5NjgzMzdlMWQxOWQ3MWZmMDU1MWM1
-NzM2NToKCiAgZHJtL2V4eW5vczogUmVwbGFjZSBkcm1fZGV2X3VucmVmIHdpdGggZHJtX2Rldl9w
-dXQgKDIwMTgtMDctMDIgMTE6NDA6NDkgKzA5MDApCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkZpeHVwcwotIEZpeCBzZXZl
-cmFsIHByb2JsZW1zIHRvIElQUHYyIG1lcmdlZCB0byBtYWlubGluZSByZWNlbnRlbHkuCiAgLiBB
-biBhbGlnbiBwcm9ibGVtIG9mIHdpZHRoIHNpemUgdGhhdCBJUFAgZHJpdmVyIGluY29ycmVjdGx5
-CiAgICBjYWxjdWxhdGVkIHRoZSByZWFsIGJ1ZmZlciBzaXplLgogIC4gSG9yaXpvbnRhbCBhbmQg
-dmVydGljYWwgZmxpcCBwcm9ibGVtLgogIC4gUGVyLXBsYW5lIGdsb2JhbCBhbHBoYSBmb3IgWFJH
-QiBtb2Rlcy4KICAuIEluY29ycmVjdCB2YXJpYW50IG9mIHRoZSBZVVYgbW9kZXMuCi0gRml4IHBs
-YW5lIG92ZXJsYXBwaW5nIHByb2JsZW0uCiAgLiBUaGUgc3RhbmdlIG9yZGVyIG9mIG92ZXJsYXBw
-aW5nIHBsYW5lcyBvbiBYUkdCIG1vZGVzCiAgICBieSBzZXR0aW5nIGdsb2JhbCBhbHBoYSB2YWx1
-ZSB0byBtYXhpbXVtIHZhbHVlLgoKQ2xlYW51cAotIFJlbmFtZSBhIGVudW0gdHlwZSwgZHJtX2lw
-cF9zaXplX2lkLCB0byBvbmUgc3BlY2lmaWMgdG8gRXh5bm9zLAogIGRybV9leHlub3NfaXBwX2xp
-bWl0X3R5cGUuCi0gUmVwbGFjZSB7dW4vcmVmZXJlbmNlfSB3aXRoIHtwdXQsZ2V0fSBmdW5jdGlv
-bnMuCiAgLiBpdCByZXBsYWNlcyBzZXZlcmFsIHJlZmVyZW5jZS91bnJlZmVyZW5jZSBmdW5jdGlv
-bnMgd2l0aCBMaW51eAogICAga2VybmVsIG5hbWVpbmcgc3RhbmRhcmQuCgotLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkFuZHJ6
-ZWogUGlldHJhc2lld2ljeiAoMSk6CiAgICAgIGRybS9leHlub3M6IHNjYWxlcjogUmVzZXQgaGFy
-ZHdhcmUgYmVmb3JlIHN0YXJ0aW5nIHRoZSBvcGVyYXRpb24KCk1hcmVrIFN6eXByb3dza2kgKDEw
-KToKICAgICAgZHJtL2V4eW5vczogaXBwOiBSZXdvcmsgY2hlY2tpbmcgZm9yIHRoZSBjb3JyZWN0
-IGJ1ZmZlciBmb3JtYXRzCiAgICAgIGRybS9leHlub3M6IHJvdGF0b3I6IEZpeCBEUk1fTU9ERV9S
-RUZMRUNUX3tYLFl9IGludGVycHJldGF0aW9uCiAgICAgIGRybS9leHlub3M6IHNjYWxlcjogRml4
-IHN1cHBvcnQgZm9yIFlVVjQyMCwgWVVWNDIyIGFuZCBZVVY0NDQgbW9kZXMKICAgICAgZHJtL2V4
-eW5vczogZ3NjOiBVc2UgcmVhbCBidWZmZXIgd2lkdGggZm9yIGNvbmZpZ3VyaW5nIHRoZSBoYXJk
-d2FyZQogICAgICBkcm0vZXh5bm9zOiBnc2M6IEluY3JlYXNlIEV4eW5vczU0MzMgYnVmZmVyIHdp
-ZHRoIGFsaWdubWVudCB0byAxNiBwaXhlbHMKICAgICAgZHJtL2V4eW5vczogZ3NjOiBGaXggRFJN
-X01PREVfUkVGTEVDVF97WCxZfSBpbnRlcnByZXRhdGlvbgogICAgICBkcm0vZXh5bm9zOiBnc2M6
-IEZpeCBzdXBwb3J0IGZvciBOVjE2LzYxLCBZVVY0MjAvWVZVNDIwIGFuZCBZVVY0MjIgbW9kZXMK
-ICAgICAgZHJtL2V4eW5vczogZmltYzogVXNlIHJlYWwgYnVmZmVyIHdpZHRoIGZvciBjb25maWd1
-cmluZyB0aGUgaGFyZHdhcmUKICAgICAgZHJtL2V4eW5vczogZGVjb241NDMzOiBGaXggcGVyLXBs
-YW5lIGdsb2JhbCBhbHBoYSBmb3IgWFJHQiBtb2RlcwogICAgICBkcm0vZXh5bm9zOiBkZWNvbjU0
-MzM6IEZpeCBXSU5DT054IHJlc2V0IHZhbHVlCgpTdGVmYW4gQWduZXIgKDEpOgogICAgICBkcm0v
-ZXh5bm9zOiBpcHA6IHVzZSBjb3JyZWN0IGVudW0gdHlwZQoKVGhvbWFzIFppbW1lcm1hbm4gKDMp
-OgogICAgICBkcm0vZXh5bm9zOiBSZXBsYWNlIGRybV9mcmFtZWJ1ZmZlcl97dW4vcmVmZXJlbmNl
-fSB3aXRoIHB1dCxnZXQgZnVuY3Rpb25zCiAgICAgIGRybS9leHlub3M6IFJlcGxhY2UgZHJtX2dl
-bV9vYmplY3RfdW5yZWZlcmVuY2VfdW5sb2NrZWQgd2l0aCBwdXQgZnVuY3Rpb24KICAgICAgZHJt
-L2V4eW5vczogUmVwbGFjZSBkcm1fZGV2X3VucmVmIHdpdGggZHJtX2Rldl9wdXQKCiBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAgIDYgKy0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgICAgICB8ICAgNCArLQogZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgICAgICAgIHwgICAyICstCiBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jICAgICAgfCAgMTcgKystLQogZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jICAgICAgIHwgIDEwICstLQogZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICAgICAgIHwgIDUxICsrKysrKystLS0tLQog
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5jICAgICAgIHwgMTEwICsrKysr
-KysrKysrKysrLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-cGxhbmUuYyAgICAgfCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9y
-b3RhdG9yLmMgICB8ICAgNCArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Nj
-YWxlci5jICAgIHwgIDQ0ICsrKysrKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3Mt
-Z3NjLmggICAgICAgICAgICAgfCAgIDEgKwogMTEgZmlsZXMgY2hhbmdlZCwgMTQ5IGluc2VydGlv
-bnMoKyksIDEwMiBkZWxldGlvbnMoLSkKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+There are some cros-ec transport drivers (I2C, SPI) living in MFD, while
+others (LPC) living in drivers/platform. The transport drivers are more
+platform specific. So, move the I2C and SPI transport drivers to the
+platform/chrome directory. The patch also removes the MFD_ prefix of
+their Kconfig symbols.
+
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+
+ drivers/mfd/Kconfig                           | 20 -------------------
+ drivers/mfd/Makefile                          |  2 --
+ drivers/platform/chrome/Kconfig               | 20 +++++++++++++++++++
+ drivers/platform/chrome/Makefile              |  2 ++
+ .../{mfd => platform/chrome}/cros_ec_i2c.c    |  0
+ .../{mfd => platform/chrome}/cros_ec_spi.c    |  0
+ 6 files changed, 22 insertions(+), 22 deletions(-)
+ rename drivers/{mfd => platform/chrome}/cros_ec_i2c.c (100%)
+ rename drivers/{mfd => platform/chrome}/cros_ec_spi.c (100%)
+
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5aa194..013458e728dc 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -202,26 +202,6 @@ config MFD_CROS_EC
+ 	  You also need to enable the driver for the bus you are using. The
+ 	  protocol for talking to the EC is defined by the bus driver.
+ 
+-config MFD_CROS_EC_I2C
+-	tristate "ChromeOS Embedded Controller (I2C)"
+-	depends on MFD_CROS_EC && I2C
+-
+-	help
+-	  If you say Y here, you get support for talking to the ChromeOS
+-	  EC through an I2C bus. This uses a simple byte-level protocol with
+-	  a checksum. Failing accesses will be retried three times to
+-	  improve reliability.
+-
+-config MFD_CROS_EC_SPI
+-	tristate "ChromeOS Embedded Controller (SPI)"
+-	depends on MFD_CROS_EC && SPI
+-
+-	---help---
+-	  If you say Y here, you get support for talking to the ChromeOS EC
+-	  through a SPI bus, using a byte-level protocol. Since the EC's
+-	  response time cannot be guaranteed, we support ignoring
+-	  'pre-amble' bytes before the response actually starts.
+-
+ config MFD_CROS_EC_CHARDEV
+         tristate "Chrome OS Embedded Controller userspace device interface"
+         depends on MFD_CROS_EC
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index e9fd20dba18d..d13e859d7c1e 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -14,8 +14,6 @@ obj-$(CONFIG_MFD_BCM590XX)	+= bcm590xx.o
+ obj-$(CONFIG_MFD_BD9571MWV)	+= bd9571mwv.o
+ cros_ec_core-objs		:= cros_ec.o
+ obj-$(CONFIG_MFD_CROS_EC)	+= cros_ec_core.o
+-obj-$(CONFIG_MFD_CROS_EC_I2C)	+= cros_ec_i2c.o
+-obj-$(CONFIG_MFD_CROS_EC_SPI)	+= cros_ec_spi.o
+ obj-$(CONFIG_MFD_CROS_EC_CHARDEV) += cros_ec_dev.o
+ obj-$(CONFIG_MFD_EXYNOS_LPASS)	+= exynos-lpass.o
+ 
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index cb0df9eb3e0f..16b1615958aa 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -52,6 +52,26 @@ config CHROMEOS_TBMC
+ config CROS_EC_CTL
+         tristate
+ 
++config CROS_EC_I2C
++	tristate "ChromeOS Embedded Controller (I2C)"
++	depends on MFD_CROS_EC && I2C
++
++	help
++	  If you say Y here, you get support for talking to the ChromeOS
++	  EC through an I2C bus. This uses a simple byte-level protocol with
++	  a checksum. Failing accesses will be retried three times to
++	  improve reliability.
++
++config CROS_EC_SPI
++	tristate "ChromeOS Embedded Controller (SPI)"
++	depends on MFD_CROS_EC && SPI
++
++	---help---
++	  If you say Y here, you get support for talking to the ChromeOS EC
++	  through a SPI bus, using a byte-level protocol. Since the EC's
++	  response time cannot be guaranteed, we support ignoring
++	  'pre-amble' bytes before the response actually starts.
++
+ config CROS_EC_LPC
+         tristate "ChromeOS Embedded Controller (LPC)"
+         depends on MFD_CROS_EC && ACPI && (X86 || COMPILE_TEST)
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+index e44c37a63fa9..cd591bf872bb 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -6,6 +6,8 @@ obj-$(CONFIG_CHROMEOS_TBMC)		+= chromeos_tbmc.o
+ cros_ec_ctl-objs			:= cros_ec_sysfs.o cros_ec_lightbar.o \
+ 					   cros_ec_vbc.o cros_ec_debugfs.o
+ obj-$(CONFIG_CROS_EC_CTL)		+= cros_ec_ctl.o
++obj-$(CONFIG_CROS_EC_I2C)		+= cros_ec_i2c.o
++obj-$(CONFIG_CROS_EC_SPI)		+= cros_ec_spi.o
+ cros_ec_lpcs-objs			:= cros_ec_lpc.o cros_ec_lpc_reg.o
+ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
+ obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
+diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
+similarity index 100%
+rename from drivers/mfd/cros_ec_i2c.c
+rename to drivers/platform/chrome/cros_ec_i2c.c
+diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
+similarity index 100%
+rename from drivers/mfd/cros_ec_spi.c
+rename to drivers/platform/chrome/cros_ec_spi.c
+-- 
+2.18.0
