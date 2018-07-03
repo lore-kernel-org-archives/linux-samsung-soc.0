@@ -1,58 +1,35 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 2/3] arm/arm64: configs: Remove the MFD_ prefix for
- MFD_CROS_EC_I2C/SPI symbols.
-Date: Tue, 3 Jul 2018 07:33:20 +0100
-Message-ID: <20180703063320.GD4242@dell>
-References: <20180702102201.13461-1-enric.balletbo@collabora.com>
- <20180702102201.13461-3-enric.balletbo@collabora.com>
- <CAJKOXPd51yU8-zObXszc4zJpHsGtMNFTsbQsQdKBFg=k22xZLA@mail.gmail.com>
- <20180702230226.GA86110@decatoncale.mtv.corp.google.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 07/10] dt-bindings: samsung: Document bindings for
+ SGH-T959P board
+Date: Tue, 3 Jul 2018 17:00:50 -0600
+Message-ID: <20180703230050.GA20272@rob-hp-laptop>
+References: <1530119544-30023-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <1530119544-30023-8-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180702230226.GA86110@decatoncale.mtv.corp.google.com>
+In-Reply-To: <1530119544-30023-8-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Benson Leung <bleung@google.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>, Gwendal Grignou <gwendal@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel@collabora.com, Guenter Roeck <groeck@google.com>, linux-arm-kernel@lists.infradead.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Gregory CLEMENT <gregory.clement@bootlin.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc: kgene@kernel.org, krzk@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 02 Jul 2018, Benson Leung wrote:
-> On Mon, Jul 02, 2018 at 01:05:40PM +0200, Krzysztof Kozlowski wrote:
-> > On 2 July 2018 at 12:22, Enric Balletbo i Serra
-> > <enric.balletbo@collabora.com> wrote:
-> > > The cros-ec I2C and SPI transport drivers have been moved from MFD
-> > > subsystem to platform/chrome, at the same time, the config symbol has
-> > > been renamed and lost the MFD_ prefix, so update all configs to the new
-> > > config symbol name.
-> > >
-> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > > ---
-> > >
-> > >  arch/arm/configs/exynos_defconfig   | 4 ++--
-> > >  arch/arm/configs/multi_v7_defconfig | 4 ++--
-> > >  arch/arm/configs/pxa_defconfig      | 4 ++--
-> > >  arch/arm64/configs/defconfig        | 4 ++--
-> > >  4 files changed, 8 insertions(+), 8 deletions(-)
-> > 
-> > Since you put in one patch multiple defconfigs belonging to multiple
-> > maintainers, I assume you are pushing this through arm-soc or Russell.
-> > In such case, for Exynos boards:
-> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > Best regards,
-> > Krzysztof
+On Wed, Jun 27, 2018 at 07:12:21PM +0200, Paweł Chmiel wrote:
+> From: Jonathan Bakker <xc-racer2@live.ca>
 > 
-> I was planning on creating an immutable branch for this series and merging it
-> through platform/chrome.
+> Document the binding for Samsung Galaxy S Fascinate 4G (SGH-T959P).
 > 
-> Lee, Russell, Dmitry, what do you think?
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> --
+> 
+> Changes from v1:
+>   - Added missing commit msg.
+> --
+> ---
+>  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Fine by me.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Acked-by: Rob Herring <robh@kernel.org>
