@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v3 4/9] ARM: dts: s5pv210: Add initial DTS for SGH-T959P phone
-Date: Fri,  6 Jul 2018 20:32:45 +0200
-Message-ID: <1530901970-14972-5-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3 8/9] ARM: s5pv210_defconfig: Enable drivers for Samsung Aries based phones
+Date: Fri,  6 Jul 2018 20:32:49 +0200
+Message-ID: <1530901970-14972-9-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 References: <1530901970-14972-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -13,98 +13,76 @@ To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Jonathan Bakker <xc-racer2@live.ca>
+Enable config options required for Samsung Aries based phones.
+ARM_APPENDED_DTB is also needed, because stock bootloader
+does not support loading dtb files.
 
-This DTS file have initial support Samsung SGH-T959P phone,
-also known as Samsung Galaxy S 4G or fascinate4g.
-It belongs to Samsung Aries devices family.
-Initial version have support for:
-- sdcard
-- max8998 pmic and rtc
-- max17040 fuel gauge
-- gpio keys
-- fimd (no panel driver yet)
-- usb (peripherial mode)
-- wifi
-
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
+ arch/arm/configs/s5pv210_defconfig | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-Changes from v1:
-  - Added missing commit msg
-  - Removed duplicated and unneeded headers
-  - Added stdout-path
-  - Added information why we hardcode bootargs
----
----
- arch/arm/boot/dts/Makefile                |  1 +
- arch/arm/boot/dts/s5pv210-fascinate4g.dts | 45 +++++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 arch/arm/boot/dts/s5pv210-fascinate4g.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 522ebdca1d3d..d00e995875bb 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -846,6 +846,7 @@ dtb-$(CONFIG_ARCH_S3C64XX) += \
- 	s3c6410-smdk6410.dtb
- dtb-$(CONFIG_ARCH_S5PV210) += \
- 	s5pv210-aquila.dtb \
-+	s5pv210-fascinate4g.dtb \
- 	s5pv210-galaxys.dtb \
- 	s5pv210-goni.dtb \
- 	s5pv210-smdkc110.dtb \
-diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-new file mode 100644
-index 000000000000..ccf761b1babf
---- /dev/null
-+++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-@@ -0,0 +1,45 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include "s5pv210-aries.dtsi"
-+
-+/ {
-+	model = "Samsung Galaxy S Fascinate 4G (SGH-T959P) based on S5PV210";
-+	compatible = "samsung,fascinate4g", "samsung,aries", "samsung,s5pv210";
-+
-+	chosen {
-+		stdout-path = &uart2;
-+		/*
-+		 * It's hard to change those parameters in stock bootloader,
-+		 * since it requires special hardware/cable.
-+		 * Let's hardocde bootargs for now, till u-boot port is finished,
-+		 * with which it should be easier.
-+		 */
-+		bootargs = "root=/dev/mmcblk1p1 rw rootwait ignore_loglevel earlyprintk";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		power {
-+			label = "power";
-+			gpios = <&gph2 6 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			wakeup-source;
-+		};
-+
-+		vol-down {
-+			label = "volume_down";
-+			gpios = <&gph3 2 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+		};
-+
-+		vol-up {
-+			label = "volume_up";
-+			gpios = <&gph3 1 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+	};
-+};
+diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
+index 9c862d366fb3..f719e7f9a655 100644
+--- a/arch/arm/configs/s5pv210_defconfig
++++ b/arch/arm/configs/s5pv210_defconfig
+@@ -13,9 +13,12 @@ CONFIG_SOLARIS_X86_PARTITION=y
+ CONFIG_ARCH_S5PV210=y
+ CONFIG_VMSPLIT_2G=y
+ CONFIG_PREEMPT=y
++CONFIG_ARM_APPENDED_DTB=y
+ CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
+ CONFIG_VFP=y
+ CONFIG_NEON=y
++CONFIG_NET=y
++CONFIG_CFG80211=m
+ CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_RAM=y
+@@ -23,16 +26,42 @@ CONFIG_BLK_DEV_RAM_SIZE=8192
+ CONFIG_SCSI=y
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_SG=y
++CONFIG_NETDEVICES=y
++CONFIG_BRCMFMAC=m
+ CONFIG_INPUT_EVDEV=y
+-# CONFIG_INPUT_KEYBOARD is not set
++CONFIG_KEYBOARD_GPIO=y
+ # CONFIG_INPUT_MOUSE is not set
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_SAMSUNG=y
+ CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+ CONFIG_HW_RANDOM=y
++CONFIG_I2C_GPIO=y
++CONFIG_POWER_SUPPLY=y
++CONFIG_BATTERY_MAX17040=y
+ # CONFIG_HWMON is not set
+-# CONFIG_USB_SUPPORT is not set
++CONFIG_MFD_MAX8998=y
++CONFIG_REGULATOR=y
++CONFIG_REGULATOR_MAX8998=y
++CONFIG_DRM=y
++CONFIG_DRM_EXYNOS=y
++CONFIG_DRM_EXYNOS_FIMD=y
++CONFIG_DRM_EXYNOS_DPI=y
++CONFIG_USB=y
++CONFIG_USB_OTG=y
++CONFIG_USB_EHCI_HCD=y
++CONFIG_USB_EHCI_EXYNOS=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_USB_OHCI_EXYNOS=y
++CONFIG_USB_DWC2=y
++CONFIG_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_S3C=y
++CONFIG_MMC_SDHCI_S3C_DMA=y
++CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_MAX8998=m
++CONFIG_PHY_SAMSUNG_USB2=m
++CONFIG_PHY_S5PV210_USB2=y
+ CONFIG_EXT2_FS=y
+ CONFIG_MSDOS_FS=y
+ CONFIG_VFAT_FS=y
 -- 
 2.7.4
