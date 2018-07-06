@@ -1,68 +1,110 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v3 0/9] Initial support for Samsung Galaxy S and Galaxy S 4G
-Date: Fri,  6 Jul 2018 20:32:41 +0200
-Message-ID: <1530901970-14972-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3 4/9] ARM: dts: s5pv210: Add initial DTS for SGH-T959P phone
+Date: Fri,  6 Jul 2018 20:32:45 +0200
+Message-ID: <1530901970-14972-5-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+References: <1530901970-14972-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1530901970-14972-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series adds support for Samsung Galaxy S and Galaxy S 4G.
-Both are commercial phone based on Aries family.
+From: Jonathan Bakker <xc-racer2@live.ca>
 
-Changes from v2:
-  - Restored pinctrl nodes order
-  - Correct order of nodes in aries dtsi file
-  - Added Reviewed-by to one of patches
-  - Added Acked-by to one of patches
-  - Squashed two patches updating samsung-boards documentation 
+This DTS file have initial support Samsung SGH-T959P phone,
+also known as Samsung Galaxy S 4G or fascinate4g.
+It belongs to Samsung Aries devices family.
+Initial version have support for:
+- sdcard
+- max8998 pmic and rtc
+- max17040 fuel gauge
+- gpio keys
+- fimd (no panel driver yet)
+- usb (peripherial mode)
+- wifi
+
+Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
 
 Changes from v1:
-  - Removed duplicated and unneeded headers
-  - Corrected node names
-  - Formatting fixes
-  - Removed unneeded pinctrl and sorted entries
-  - Set correct interrupt type for max8998 pmic
-  - Add missing regulators
   - Added missing commit msg
+  - Removed duplicated and unneeded headers
   - Added stdout-path
   - Added information why we hardcode bootargs
-  - Added new patch which adds information, that there are samsung boards,
-    not using exynos bases soc.
-  - Split patch updating s5pv210_defconfig into three parts.
-    First is result of make savedefconfig, second adds drivers required
-    by both devices and last adds some options, which are usefull in booting
-    typical Linux distribution.
-
-Jonathan Bakker (2):
-  ARM: dts: s5pv210: Add initial DTS for SGH-T959P phone
-  dt-bindings: samsung: Document bindings for SGH-T959P board
-
-Paweł Chmiel (7):
-  ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
-  ARM: dts: s5pv210: Add initial DTS for Samsung Aries based phones
-  ARM: dts: s5pv210: Add initial DTS for Samsung Galaxy S phone
-  dt-bindings: samsung: Document bindings for Samsung aries boards
-  ARM: s5pv210_defconfig: Run make savedefconfig
-  ARM: s5pv210_defconfig: Enable drivers for Samsung Aries based phones
-  ARM: s5pv210_defconfig: Enable options needed to boot typical Linux
-    distro
-
- .../bindings/arm/samsung/samsung-boards.txt        |   5 +-
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/s5pv210-aries.dtsi               | 423 +++++++++++++++++++++
- arch/arm/boot/dts/s5pv210-fascinate4g.dts          |  45 +++
- arch/arm/boot/dts/s5pv210-galaxys.dts              |  77 ++++
- arch/arm/boot/dts/s5pv210-pinctrl.dtsi             |   2 +
- arch/arm/configs/s5pv210_defconfig                 |  49 ++-
- 7 files changed, 599 insertions(+), 4 deletions(-)
- create mode 100644 arch/arm/boot/dts/s5pv210-aries.dtsi
+---
+---
+ arch/arm/boot/dts/Makefile                |  1 +
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts | 45 +++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
  create mode 100644 arch/arm/boot/dts/s5pv210-fascinate4g.dts
- create mode 100644 arch/arm/boot/dts/s5pv210-galaxys.dts
 
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 522ebdca1d3d..d00e995875bb 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -846,6 +846,7 @@ dtb-$(CONFIG_ARCH_S3C64XX) += \
+ 	s3c6410-smdk6410.dtb
+ dtb-$(CONFIG_ARCH_S5PV210) += \
+ 	s5pv210-aquila.dtb \
++	s5pv210-fascinate4g.dtb \
+ 	s5pv210-galaxys.dtb \
+ 	s5pv210-goni.dtb \
+ 	s5pv210-smdkc110.dtb \
+diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+new file mode 100644
+index 000000000000..ccf761b1babf
+--- /dev/null
++++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/dts-v1/;
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include "s5pv210-aries.dtsi"
++
++/ {
++	model = "Samsung Galaxy S Fascinate 4G (SGH-T959P) based on S5PV210";
++	compatible = "samsung,fascinate4g", "samsung,aries", "samsung,s5pv210";
++
++	chosen {
++		stdout-path = &uart2;
++		/*
++		 * It's hard to change those parameters in stock bootloader,
++		 * since it requires special hardware/cable.
++		 * Let's hardocde bootargs for now, till u-boot port is finished,
++		 * with which it should be easier.
++		 */
++		bootargs = "root=/dev/mmcblk1p1 rw rootwait ignore_loglevel earlyprintk";
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		power {
++			label = "power";
++			gpios = <&gph2 6 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_POWER>;
++			wakeup-source;
++		};
++
++		vol-down {
++			label = "volume_down";
++			gpios = <&gph3 2 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEDOWN>;
++		};
++
++		vol-up {
++			label = "volume_up";
++			gpios = <&gph3 1 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEUP>;
++		};
++	};
++};
 -- 
 2.7.4
