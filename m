@@ -1,41 +1,68 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 09/10] mfd: 88pm860x-i2c: switch to i2c_lock_bus(...,
- I2C_LOCK_SEGMENT)
-Date: Wed, 4 Jul 2018 08:04:32 +0100
-Message-ID: <20180704070432.GF20176@dell>
-References: <20180620051803.12206-1-peda@axentia.se>
- <20180620051803.12206-10-peda@axentia.se>
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3 0/9] Initial support for Samsung Galaxy S and Galaxy S 4G
+Date: Fri,  6 Jul 2018 20:32:41 +0200
+Message-ID: <1530901970-14972-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180620051803.12206-10-peda@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Guenter Roeck <linux@roeck-us.net>Crt Mori <cm>
+To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 20 Jun 2018, Peter Rosin wrote:
+This patch series adds support for Samsung Galaxy S and Galaxy S 4G.
+Both are commercial phone based on Aries family.
 
-> Locking the root adapter for __i2c_transfer will deadlock if the
-> device sits behind a mux-locked I2C mux. Switch to the finer-grained
-> i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
-> sit behind a mux-locked mux, the two locking variants are equivalent.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  drivers/mfd/88pm860x-i2c.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+Changes from v2:
+  - Restored pinctrl nodes order
+  - Correct order of nodes in aries dtsi file
+  - Added Reviewed-by to one of patches
+  - Added Acked-by to one of patches
+  - Squashed two patches updating samsung-boards documentation 
 
-If Wolfram is happy with this, then I am.
+Changes from v1:
+  - Removed duplicated and unneeded headers
+  - Corrected node names
+  - Formatting fixes
+  - Removed unneeded pinctrl and sorted entries
+  - Set correct interrupt type for max8998 pmic
+  - Add missing regulators
+  - Added missing commit msg
+  - Added stdout-path
+  - Added information why we hardcode bootargs
+  - Added new patch which adds information, that there are samsung boards,
+    not using exynos bases soc.
+  - Split patch updating s5pv210_defconfig into three parts.
+    First is result of make savedefconfig, second adds drivers required
+    by both devices and last adds some options, which are usefull in booting
+    typical Linux distribution.
 
-Since this file sees few changes - please merge through the I2C tree.
+Jonathan Bakker (2):
+  ARM: dts: s5pv210: Add initial DTS for SGH-T959P phone
+  dt-bindings: samsung: Document bindings for SGH-T959P board
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Paweł Chmiel (7):
+  ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
+  ARM: dts: s5pv210: Add initial DTS for Samsung Aries based phones
+  ARM: dts: s5pv210: Add initial DTS for Samsung Galaxy S phone
+  dt-bindings: samsung: Document bindings for Samsung aries boards
+  ARM: s5pv210_defconfig: Run make savedefconfig
+  ARM: s5pv210_defconfig: Enable drivers for Samsung Aries based phones
+  ARM: s5pv210_defconfig: Enable options needed to boot typical Linux
+    distro
+
+ .../bindings/arm/samsung/samsung-boards.txt        |   5 +-
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/s5pv210-aries.dtsi               | 423 +++++++++++++++++++++
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts          |  45 +++
+ arch/arm/boot/dts/s5pv210-galaxys.dts              |  77 ++++
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi             |   2 +
+ arch/arm/configs/s5pv210_defconfig                 |  49 ++-
+ 7 files changed, 599 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/boot/dts/s5pv210-aries.dtsi
+ create mode 100644 arch/arm/boot/dts/s5pv210-fascinate4g.dts
+ create mode 100644 arch/arm/boot/dts/s5pv210-galaxys.dts
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.7.4
