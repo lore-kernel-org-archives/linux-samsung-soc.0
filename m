@@ -1,140 +1,54 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v3 3/9] ARM: dts: s5pv210: Add initial DTS for Samsung Galaxy S phone
-Date: Fri,  6 Jul 2018 20:32:44 +0200
-Message-ID: <1530901970-14972-4-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3 5/9] dt-bindings: samsung: Document bindings for Samsung
+ aries boards
+Date: Fri,  6 Jul 2018 20:32:46 +0200
+Message-ID: <1530901970-14972-6-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 References: <1530901970-14972-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1530901970-14972-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca, pawel.mikolaj.chmiel@gmail.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, xc-racer2@live.ca, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This DTS file have initial support Samsung Galaxy S phone,
-also known as i9000.
-It belongs to Samsung Aries devices family.
-Initial version have support for:
-- sdcard
-- internal memory
-- max8998 pmic and rtc
-- max17040 fuel gauge
-- gpio keys
-- fimd (no panel driver yet)
-- usb (peripherial mode)
-- wifi
-
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-
---
-Changes from v1:
-  - Added missing commit msg
-  - Removed duplicated and unneeded headers
-  - Added stdout-path
-  - Added information why we hardcode bootargs
----
----
- arch/arm/boot/dts/Makefile            |  1 +
- arch/arm/boot/dts/s5pv210-galaxys.dts | 77 +++++++++++++++++++++++++++++++++++
- 2 files changed, 78 insertions(+)
- create mode 100644 arch/arm/boot/dts/s5pv210-galaxys.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 7e2424957809..522ebdca1d3d 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -846,6 +846,7 @@ dtb-$(CONFIG_ARCH_S3C64XX) += \
- 	s3c6410-smdk6410.dtb
- dtb-$(CONFIG_ARCH_S5PV210) += \
- 	s5pv210-aquila.dtb \
-+	s5pv210-galaxys.dtb \
- 	s5pv210-goni.dtb \
- 	s5pv210-smdkc110.dtb \
- 	s5pv210-smdkv210.dtb \
-diff --git a/arch/arm/boot/dts/s5pv210-galaxys.dts b/arch/arm/boot/dts/s5pv210-galaxys.dts
-new file mode 100644
-index 000000000000..842276749717
---- /dev/null
-+++ b/arch/arm/boot/dts/s5pv210-galaxys.dts
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include "s5pv210-aries.dtsi"
-+
-+/ {
-+	model = "Samsung Galaxy S1 (GT-I9000) based on S5PV210";
-+	compatible = "samsung,galaxys", "samsung,aries", "samsung,s5pv210";
-+
-+	chosen {
-+		stdout-path = &uart2;
-+		/*
-+		 * It's hard to change those parameters in stock bootloader,
-+		 * since it requires special hardware/cable.
-+		 * Let's hardocde bootargs for now, till u-boot port is finished,
-+		 * with which it should be easier.
-+		 */
-+		bootargs = "root=/dev/mmcblk2p1 rw rootwait ignore_loglevel earlyprintk";
-+	};
-+
-+	nand_pwrseq: nand-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpj2 7 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&massmemory_en>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		power {
-+			label = "power";
-+			gpios = <&gph2 6 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			wakeup-source;
-+		};
-+
-+		vol-down {
-+			label = "volume_down";
-+			gpios = <&gph3 1 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+		};
-+
-+		vol-up {
-+			label = "volume_up";
-+			gpios = <&gph3 2 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+
-+		home {
-+			label = "home";
-+			gpios = <&gph3 5 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_HOME>;
-+			wakeup-source;
-+		};
-+	};
-+};
-+
-+&pinctrl0 {
-+	massmemory_en: massmemory-en {
-+		samsung,pins = "gpj2-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+};
-+
-+&sdhci0 {
-+	bus-width = <4>;
-+	non-removable;
-+	mmc-pwrseq = <&nand_pwrseq>;
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
--- 
-2.7.4
+RG9jdW1lbnQgdGhlIGJpbmRpbmcgZm9yIFNhbXN1bmcgR2FsYXh5IFMgKGk5MDAwKSBwaG9uZQph
+bmQgd2hvbGUgU2Ftc3VuZyBBcmllcyBkZXZpY2VzIGZhbWlseSAoYmFzZWQgb24gUzVQVjIxMCku
+CgpBbHNvIGJlY2F1c2UgdGhpcyBpcyBmaXJzdCBub3QgRXh5bm9zLWJhc2VkIGRldmljZXMsIGRv
+Y3VtZW50IHRoaXMgaW5mb3JtYXRpb24KYXQgYmVnaW5uaW5nIG9mIGZpbGUuCgpTaWduZWQtb2Zm
+LWJ5OiBQYXdlxYIgQ2htaWVsIDxwYXdlbC5taWtvbGFqLmNobWllbEBnbWFpbC5jb20+ClJldmll
+d2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPgotLQpDaGFuZ2VzIGZyb20gdjI6
+CiAgLSBTcXVhc2hlZCB3aXRoIHBhdGNoIHdoaWNoIHdhcyBkb2N1bWVudGluZyBleGlzdGVuY2UK
+ICAgIG9mIG5vbiBFeHlub3MtYmFzZWQgYm9hcmRzCiAgLSBBZGRlZCByZXZpZXdlZC1ieQoKQ2hh
+bmdlcyBmcm9tIHYxOgogIC0gQWRkZWQgbWlzc2luZyBjb21taXQgbXNnLgotLQotLS0KIERvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vc2Ftc3VuZy9zYW1zdW5nLWJvYXJkcy50
+eHQgfCA0ICsrKy0KIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24o
+LSkKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL3Nh
+bXN1bmcvc2Ftc3VuZy1ib2FyZHMudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2FybS9zYW1zdW5nL3NhbXN1bmctYm9hcmRzLnR4dAppbmRleCAxNDUxMGIyMTU0ODAuLjNm
+YTI4N2E4NjMwMCAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2FybS9zYW1zdW5nL3NhbXN1bmctYm9hcmRzLnR4dAorKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvYXJtL3NhbXN1bmcvc2Ftc3VuZy1ib2FyZHMudHh0CkBAIC0xLDcgKzEs
+OSBAQAotKiBTYW1zdW5nJ3MgRXh5bm9zIFNvQyBiYXNlZCBib2FyZHMKKyogU2Ftc3VuZydzIEV4
+eW5vcyBhbmQgUzVQIFNvQyBiYXNlZCBib2FyZHMKIAogUmVxdWlyZWQgcm9vdCBub2RlIHByb3Bl
+cnRpZXM6CiAgICAgLSBjb21wYXRpYmxlID0gc2hvdWxkIGJlIG9uZSBvciBtb3JlIG9mIHRoZSBm
+b2xsb3dpbmcuCisJLSAic2Ftc3VuZyxhcmllcyIJLSBmb3IgUzVQVjIxMC1iYXNlZCBTYW1zdW5n
+IEFyaWVzIGJvYXJkLgorCS0gInNhbXN1bmcsZ2FsYXh5cyIJLSBmb3IgUzVQVjIxMC1iYXNlZCBT
+YW1zdW5nIEdhbGF4eSBTIChpOTAwMCkgIGJvYXJkLgogCS0gInNhbXN1bmcsYXJ0aWs1IgktIGZv
+ciBFeHlub3MzMjUwLWJhc2VkIFNhbXN1bmcgQVJUSUs1IG1vZHVsZS4KIAktICJzYW1zdW5nLGFy
+dGlrNS1ldmFsIiAtIGZvciBFeHlub3MzMjUwLWJhc2VkIFNhbXN1bmcgQVJUSUs1IGV2YWwgYm9h
+cmQuCiAJLSAic2Ftc3VuZyxtb25rIgktIGZvciBFeHlub3MzMjUwLWJhc2VkIFNhbXN1bmcgU2lt
+YmFuZCBib2FyZC4KLS0gCjIuNy40CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtl
+cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
+YW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
