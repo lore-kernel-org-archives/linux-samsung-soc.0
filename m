@@ -1,42 +1,48 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 5/5] dt-bindings: samsung: Document bindings for
- SGH-T959P board
-Date: Sat, 7 Jul 2018 12:33:54 +0200
-Message-ID: <20180707103354.tyqenmmj2ry7l7ko@kozik-lap>
-References: <1530958183-10956-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <1530958183-10956-6-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+From: Simon Shields <simon@lineageos.org>
+Subject: [PATCH] ARM: dts: exynos: add max77693 irq configuration for midas
+Date: Sun,  8 Jul 2018 00:45:22 +1000
+Message-ID: <20180707144527.6662-1-simon@lineageos.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1530958183-10956-6-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca
+To: linux-samsung-soc@vger.kernel.org
+Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Jul 07, 2018 at 12:09:43PM +0200, Paweł Chmiel wrote:
-> From: Jonathan Bakker <xc-racer2@live.ca>
-> 
-> Document the binding for Samsung Galaxy S Fascinate 4G (SGH-T959P).
-> 
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> --
-> Changes from v2:
->   - Added Acked-by
-> 
-> Changes from v1:
->   - Added missing commit msg.
-> --
-> ---
->  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Currently, we assume that the bootloader has correctly configured
+the interrupt pin for max77693. This might not actually be the case -
+so it's better to configure it explicitly.
 
-Thanks, applied.
+Signed-off-by: Simon Shields <simon@lineageos.org>
+---
+ arch/arm/boot/dts/exynos4412-midas.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+index f35176a35a15..30760bf2eb71 100644
+--- a/arch/arm/boot/dts/exynos4412-midas.dtsi
++++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+@@ -156,6 +156,8 @@
+ 			compatible = "maxim,max77693";
+ 			interrupt-parent = <&gpx1>;
+ 			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&max77693_irq>;
+ 			reg = <0x66>;
+ 
+ 			regulators {
+@@ -1117,6 +1119,13 @@
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+ 	};
+ 
++	max77693_irq: max77693-irq {
++		samsung,pins = "gpx1-5";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++
+ 	sleep1: sleep-states {
+ 		PIN_SLP(gpk0-0, PREV, NONE);
+ 		PIN_SLP(gpk0-1, PREV, NONE);
+-- 
+2.18.0
