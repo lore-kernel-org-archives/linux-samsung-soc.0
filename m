@@ -1,62 +1,83 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: add max77693 irq configuration for midas
-Date: Sat, 7 Jul 2018 17:34:08 +0200
-Message-ID: <CAJKOXPfUav7URsCDHFzMbtBiw5id+szVj_VtGJ-iu5ymmgWoXw@mail.gmail.com>
+From: Simon Shields <simon@lineageos.org>
+Subject: Re: [PATCH] ARM: dts: exynos: add max77693 irq configuration for
+ midas
+Date: Sun, 8 Jul 2018 03:08:48 +1000
+Message-ID: <20180707170848.GA29870@lineageos.org>
 References: <20180707144527.6662-1-simon@lineageos.org>
+ <CAJKOXPfUav7URsCDHFzMbtBiw5id+szVj_VtGJ-iu5ymmgWoXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180707144527.6662-1-simon@lineageos.org>
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPfUav7URsCDHFzMbtBiw5id+szVj_VtGJ-iu5ymmgWoXw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Shields <simon@lineageos.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 7 July 2018 at 16:45, Simon Shields <simon@lineageos.org> wrote:
-> Currently, we assume that the bootloader has correctly configured
-> the interrupt pin for max77693. This might not actually be the case -
-> so it's better to configure it explicitly.
->
-> Signed-off-by: Simon Shields <simon@lineageos.org>
-> ---
->  arch/arm/boot/dts/exynos4412-midas.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-> index f35176a35a15..30760bf2eb71 100644
-> --- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-> @@ -156,6 +156,8 @@
->                         compatible = "maxim,max77693";
->                         interrupt-parent = <&gpx1>;
->                         interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +                       pinctrl-names = "default";
-> +                       pinctrl-0 = <&max77693_irq>;
->                         reg = <0x66>;
->
->                         regulators {
-> @@ -1117,6 +1119,13 @@
->                 samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
->         };
->
-> +       max77693_irq: max77693-irq {
-> +               samsung,pins = "gpx1-5";
-> +               samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> +       };
-> +
+On Sat, Jul 07, 2018 at 05:34:08PM +0200, Krzysztof Kozlowski wrote:
+> On 7 July 2018 at 16:45, Simon Shields <simon@lineageos.org> wrote:
+> > Currently, we assume that the bootloader has correctly configured
+> > the interrupt pin for max77693. This might not actually be the case -
+> > so it's better to configure it explicitly.
+> >
+> > Signed-off-by: Simon Shields <simon@lineageos.org>
+> > ---
+> >  arch/arm/boot/dts/exynos4412-midas.dtsi | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+> > index f35176a35a15..30760bf2eb71 100644
+> > --- a/arch/arm/boot/dts/exynos4412-midas.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+> > @@ -156,6 +156,8 @@
+> >                         compatible = "maxim,max77693";
+> >                         interrupt-parent = <&gpx1>;
+> >                         interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+> > +                       pinctrl-names = "default";
+> > +                       pinctrl-0 = <&max77693_irq>;
+> >                         reg = <0x66>;
+> >
+> >                         regulators {
+> > @@ -1117,6 +1119,13 @@
+> >                 samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+> >         };
+> >
+> > +       max77693_irq: max77693-irq {
+> > +               samsung,pins = "gpx1-5";
+> > +               samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+> > +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> > +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+> > +       };
+> > +
+> 
+> Please put it before hdmi-hpd (gpx3-7).
 
-Please put it before hdmi-hpd (gpx3-7). What about the interrupt for
-max77693 fuel gauge? Maybe another patch for it as well?
+OK.
 
-Best regards,
-Krzysztof
+> What about the interrupt for max77693 fuel gauge? 
+> Maybe another patch for it as well?
 
+Yes - in fact, it looks like most interrupt pins are configured by the
+vendor kernel to have PULL_NONE, something which (as far as i can tell)
+mainline doesn't do.
 
->         sleep1: sleep-states {
->                 PIN_SLP(gpk0-0, PREV, NONE);
->                 PIN_SLP(gpk0-1, PREV, NONE);
-> --
-> 2.18.0
->
+Maybe I should just prepare a series (or a single patch) which fixes all of them?
+Or would you prefer I added the (remaining) eint configurations to
+exynos4412-pinctrl.dtsi, and then used those?
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Cheers,
+Simon
+
+> 
+> >         sleep1: sleep-states {
+> >                 PIN_SLP(gpk0-0, PREV, NONE);
+> >                 PIN_SLP(gpk0-1, PREV, NONE);
+> > --
+> > 2.18.0
+> >
