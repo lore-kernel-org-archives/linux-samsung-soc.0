@@ -1,75 +1,50 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: add max77693 irq configuration for midas
-Date: Sat, 7 Jul 2018 20:33:12 +0200
-Message-ID: <CAJKOXPdYrBDuiZCpO06doxeAbcZthncgAKbBmNJazVCxTSx+iQ@mail.gmail.com>
-References: <20180707144527.6662-1-simon@lineageos.org> <CAJKOXPfUav7URsCDHFzMbtBiw5id+szVj_VtGJ-iu5ymmgWoXw@mail.gmail.com>
- <20180707170848.GA29870@lineageos.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 0/3] Exynos DRM cleanup
+Date: Mon,  9 Jul 2018 15:44:29 +0200
+Message-ID: <20180709134440eucas1p28780a30ed64a4495666a440a0979086c~-tz8hVeoh1414014140eucas1p2F@eucas1p2.samsung.com>
+References: <CGME20180709134440eucas1p28780a30ed64a4495666a440a0979086c@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180707170848.GA29870@lineageos.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Shields <simon@lineageos.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 7 July 2018 at 19:08, Simon Shields <simon@lineageos.org> wrote:
-> On Sat, Jul 07, 2018 at 05:34:08PM +0200, Krzysztof Kozlowski wrote:
->> On 7 July 2018 at 16:45, Simon Shields <simon@lineageos.org> wrote:
->> > Currently, we assume that the bootloader has correctly configured
->> > the interrupt pin for max77693. This might not actually be the case -
->> > so it's better to configure it explicitly.
->> >
->> > Signed-off-by: Simon Shields <simon@lineageos.org>
->> > ---
->> >  arch/arm/boot/dts/exynos4412-midas.dtsi | 9 +++++++++
->> >  1 file changed, 9 insertions(+)
->> >
->> > diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
->> > index f35176a35a15..30760bf2eb71 100644
->> > --- a/arch/arm/boot/dts/exynos4412-midas.dtsi
->> > +++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
->> > @@ -156,6 +156,8 @@
->> >                         compatible = "maxim,max77693";
->> >                         interrupt-parent = <&gpx1>;
->> >                         interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
->> > +                       pinctrl-names = "default";
->> > +                       pinctrl-0 = <&max77693_irq>;
->> >                         reg = <0x66>;
->> >
->> >                         regulators {
->> > @@ -1117,6 +1119,13 @@
->> >                 samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
->> >         };
->> >
->> > +       max77693_irq: max77693-irq {
->> > +               samsung,pins = "gpx1-5";
->> > +               samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
->> > +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
->> > +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
->> > +       };
->> > +
->>
->> Please put it before hdmi-hpd (gpx3-7).
->
-> OK.
->
->> What about the interrupt for max77693 fuel gauge?
->> Maybe another patch for it as well?
->
-> Yes - in fact, it looks like most interrupt pins are configured by the
-> vendor kernel to have PULL_NONE, something which (as far as i can tell)
-> mainline doesn't do.
-
-The interrupt line of max77693 is marked as open-drain and there is
-200k external pull up, so AFAIU such pin should have internal pull
-down disabled. Mostly it works with pull down so no one cares. :)
-
-> Maybe I should just prepare a series (or a single patch) which fixes all of them?
-> Or would you prefer I added the (remaining) eint configurations to
-> exynos4412-pinctrl.dtsi, and then used those?
-
-Series will be ok but leave them in midas.dtsi.
-
-Best regards,
-Krzysztof
+RGVhciBhbGwsCgpUaGlzIHBhdGNoc2V0IHBlcmZvcm1zIGEgc2lnbmlmaWNhbnQgY2xlYW51cCBv
+ZiBFeHlub3MgRFJNIGNvZGUuIFRoaXMKaW5jbHVkZXMgdGhlIGZvbGxvd2luZyAyIGJpZyBpdGVt
+czoKLSB0aGUgY3VzdG9tICdzdWItZHJpdmVyJyBmcmFtZXdvcmsgaGFzIGJlZW4gZmluYWxseSBy
+ZXBsYWNlZCBieSBnZW5lcmljCiAgZGV2aWNlIGNvbXBvbmVudCBjb2RlOwotIGFjY2VzcyB0byBl
+eHlub3MgR0VNIG9iamVjdCBoYXMgYmVlbiBzaW1wbGlmaWVkIGFuZCB1bmlmaWVkLgoKQmVzdCBy
+ZWdhcmRzCk1hcmVrIFN6eXByb3dza2kKU2Ftc3VuZyBSJkQgSW5zdGl0dXRlIFBvbGFuZAoKCkNo
+YW5nZWxvZzoKCnYyOgotIHJlYmFzZWQgb250byBsaW51eC1uZXh0IGZyb20gMjAxODA3MDkgYW5k
+IHJlc29sdmVkIGNvbmZsaWN0cyB3aXRoCiAgImRybS9leHlub3M6IFJlcGxhY2UgZHJtX2dlbV9v
+YmplY3RfdW5yZWZlcmVuY2VfdW5sb2NrZWQgd2l0aCBwdXQKICBmdW5jdGlvbiIgcGF0Y2gKCgpQ
+YXRjaCBzdW1tYXJ5OgoKTWFyZWsgU3p5cHJvd3NraSAoMyk6CiAgZHJtL2V4eW5vczogZzJkOiBD
+b252ZXJ0IHRvIGRyaXZlciBjb21wb25lbnQgQVBJCiAgZHJtL2V4eW5vczogZ2VtOiBTaW1wbGlm
+eSBhY2Nlc3MgdG8gZXh5bm9zIEdFTSBvYmplY3RzCiAgZHJtL2V4eW5vczogVXNlIGNvbW1vbiBl
+eHlub3NfZHJtX2dlbV9nZXQoKS9wdXQoKSBmdW5jdGlvbnMgZm9yIEdFTQogICAgbG9va3VwCgog
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9NYWtlZmlsZSAgICAgICAgICB8ICAgMiArLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYyB8IDExOSAtLS0tLS0tLS0KIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgfCAgMTQgKy0KIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgfCAgNDcgKy0tLQogZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgICB8ICAxMCArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2cyZC5jICB8IDMwMCArKysrKysrKystLS0tLS0tLS0tLS0tLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5oICB8ICAxMSArCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMgIHwgIDU4ICstLS0tCiBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmggIHwgIDI0ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1faXBwLmMgIHwgIDEwICstCiAxMCBmaWxlcyBjaGFuZ2VkLCAxNTYgaW5zZXJ0
+aW9ucygrKSwgNDM5IGRlbGV0aW9ucygtKQogZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMKCi0tIAoyLjE3LjEKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
