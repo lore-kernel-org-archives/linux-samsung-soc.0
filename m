@@ -1,15 +1,15 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 4/9] dt-bindings: display: add DT bindings for BOE
- HV070WSA-100 panel
-Date: Tue, 10 Jul 2018 11:56:56 +0200
-Message-ID: <20180710095656.GC1504@ulmo>
+Subject: Re: [PATCH v3 5/9] drm/panel: add support for BOE HV070WSA-100 panel
+ to simple-panel
+Date: Tue, 10 Jul 2018 11:57:23 +0200
+Message-ID: <20180710095723.GD1504@ulmo>
 References: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
- <CGME20180619082000eucas1p1c5cc2b526583c3fd5e9fc13656ed4858@eucas1p1.samsung.com>
- <1529396370-18761-5-git-send-email-m.purski@samsung.com>
+ <CGME20180619082000eucas1p1ed44d7aea857b12ce2c92c240be4dedd@eucas1p1.samsung.com>
+ <1529396370-18761-6-git-send-email-m.purski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0801863380=="
+Content-Type: multipart/mixed; boundary="===============0780996976=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1529396370-18761-5-git-send-email-m.purski@samsung.com>
+In-Reply-To: <1529396370-18761-6-git-send-email-m.purski@samsung.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -24,59 +24,56 @@ Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsu
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============0801863380==
+--===============0780996976==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OBd5C1Lgu00Gd/Tn"
+	protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
 Content-Disposition: inline
 
 
---OBd5C1Lgu00Gd/Tn
+--NklN7DEeGtkPCoo3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 19, 2018 at 10:19:25AM +0200, Maciej Purski wrote:
+On Tue, Jun 19, 2018 at 10:19:26AM +0200, Maciej Purski wrote:
 > From: Andrzej Hajda <a.hajda@samsung.com>
 >=20
-> The patch adds bindings to BOE HV070-WSA WSVGA panel.
-> Bindings are compatible with simple panel bindings.
+> The patch adds support for BOE HV070WSA-100 WSVGA 7.01 inch panel
+> in panel-simple driver. The panel is used in Exynos5250-arndale boards.
 >=20
 > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 > Signed-off-by: Maciej Purski <m.purski@samsung.com>
 > ---
->  .../bindings/display/panel/boe,hv070wsa-100.txt    | 28 ++++++++++++++++=
-++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/boe,h=
-v070wsa-100.txt
+>  drivers/gpu/drm/panel/panel-simple.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
 
-Applied with the fix as requested by Rob.
+Applied, thanks.
 
 Thierry
 
---OBd5C1Lgu00Gd/Tn
+--NklN7DEeGtkPCoo3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltEguYACgkQ3SOs138+
-s6HZrhAAwDrVJHDJbCjP2R/KXrA7cniY8jw6fAygWwoUlGECBeaWQu0VobHQ16ac
-0qSlmbqOLtJFFSvctj6mROz91fD0wL6TvDp1rIfz3LTOChI9JzRxJ6LBFnsXixZi
-t8g4FFZpBPwh1giklLHF1kUSoZJ/IYIm1mNYEPHUdYaTWVsF7GVpCmu6xCq1ob8a
-Ov2nO2B6BpNPAuMgfj3bJk8PjeUsnodTuid8LINc4ImC1SQXa8P/UZ3kypYs+cQo
-Pm31zMOGWK+vJDJ0pgSyXWLDyJWmUheozmqR7l+MipfosJ6n0sqWQrF4/kM0xMDr
-xfG17jdDMVUGLxn9sk4L4JSrQgvALe5AUFWsjHjxfcg8aaztvZr5tv7MJ5fQCMNK
-c9FuX1gNh3Bub8l55QnUxOjQLQac9A1FNHd5FaNHFkxRqn4or++e6+Z8DvYu/7xb
-OrJI/PG8l3CEoWt99Seq9VRz+pu6USWAf4TMGvO81qeEoeKOEa22VoS2Ydod6f3W
-A805C7y9kUpCjeuqsxOcgSoSntV+sSzealNMGK0Oqc932iIpi4SqXTla/XU8w24Z
-HafIlMzviFvi8MMssCEuJGFLIr8u4QjnVCDWZVkDT+NpT7Y/E/VmhQWbAZiroufC
-9g0Q5bVb06s1GQeuB6uoJu/U5xq+/gTSOyVrbXFmsNwhTSi2y9w=
-=FB6J
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltEgwMACgkQ3SOs138+
+s6FJ+A//R3kB2aIQR/0l2UYT1W9bP/NUjtwBs1aAT9jkyxzVI3XtGJOxEWWBue8w
+HH3lEbE1ybBOCQZPuuJ/RDou/NNJDFB/9ES1IkTse1CEC2bzvfgl7yl/hb/NOpZc
+UrL88wC048OxM5B/3MHlDt4KFFELOc9SQyiqTdTqDd+rLjdlrSELsWAkGrFfnUa5
+PMA5CTG27yMyYBIkZjw3M/C9VTfvXoLx2dtMmiwlGPuOlNHpZBSLK/1Dn6MRInAL
+OaNjYCuuPSbeCSEEOpeIZ6tCMdgA459vqVTowyxPYPKB+TC4HM5Y/efdoGKbcVFl
+lUwOk53X/1FHMsRq9AFYlTgoUzJJDgpJ7vN/tb8J4cy1NBw93Fs1ifof+N/tlx/E
+OhrhxsdiRLDU6/RLCrLAUcJXIlcscYEfZVXO1NfHewNN9o0kXRKQf8KMRUIyTqxd
+40V3TqLtkuScq/0sSZ/XsZsGAHRFtTemg015IfQPVabMgANKnVduOV+kEjQLAZos
+vFo8BiFoJ87euUco0My9WSgoP5S4Lr4P0fXxeL7VeO4uSgRh6s6sXk7RCAixDPeq
+hxoOQdrI55bZZ2ZvNpE9Avrn8Zaqj/izG46ahQ2/C0G0ai7w7vo1kb0HZqyUhYAs
+zO2nVxl5fVuySfQKkClAVSleorVfF4N5ZgN5Hp/PzSVHx4+4qAY=
+=uHWE
 -----END PGP SIGNATURE-----
 
---OBd5C1Lgu00Gd/Tn--
+--NklN7DEeGtkPCoo3--
 
---===============0801863380==
+--===============0780996976==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -86,4 +83,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============0801863380==--
+--===============0780996976==--
