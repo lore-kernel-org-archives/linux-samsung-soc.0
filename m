@@ -1,91 +1,18 @@
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH 1/3] arm: Convert arm boot_lock to raw
-Date: Wed, 11 Jul 2018 17:29:30 +0200
-Message-ID: <1266f6c9-8eda-c71f-2d07-90291281c6f8@suse.de>
-References: <20180711110037.12928-1-bigeasy@linutronix.de>
- <20180711110037.12928-2-bigeasy@linutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180711110037.12928-2-bigeasy@linutronix.de>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-arm-kernel@lists.infradead.org, Frank Rowand <frank.rowand@am.sony.com>
-Cc: Barry Song <baohua@kernel.org>, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Viresh Kumar <vireshk@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, David Brown <david.brown@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Wei Xu <xuwei5@hisilicon.com>, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, tglx@linutronix.de, linux-omap@vger.kernel.org, Shiraz Hashim <shiraz.linux.kernel@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 0/3] ARM: exynos: Pull for v4.19
+Date: Thu, 12 Jul 2018 18:46:38 +0200
+Message-ID: <20180712164641.19925-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QW0gMTEuMDcuMjAxOCB1bSAxMzowMCBzY2hyaWViIFNlYmFzdGlhbiBBbmRyemVqIFNpZXdpb3I6
-Cj4gRnJvbTogRnJhbmsgUm93YW5kIDxmcmFuay5yb3dhbmRAYW0uc29ueS5jb20+Cj4gCj4gVGhl
-IGFybSBib290X2xvY2sgaXMgdXNlZCBieSB0aGUgc2Vjb25kYXJ5IHByb2Nlc3NvciBzdGFydHVw
-IGNvZGUuICBUaGUgbG9ja2luZwo+IHRhc2sgaXMgdGhlIGlkbGUgdGhyZWFkLCB3aGljaCBoYXMg
-aWRsZS0+c2NoZWRfY2xhc3MgPT0gJmlkbGVfc2NoZWRfY2xhc3MuCj4gaWRsZV9zY2hlZF9jbGFz
-cy0+ZW5xdWV1ZV90YXNrID09IE5VTEwsIHNvIGlmIHRoZSBpZGxlIHRhc2sgYmxvY2tzIG9uIHRo
-ZQo+IGxvY2ssIHRoZSBhdHRlbXB0IHRvIHdha2UgaXQgd2hlbiB0aGUgbG9jayBiZWNvbWVzIGF2
-YWlsYWJsZSB3aWxsIGZhaWw6Cj4gCj4gdHJ5X3RvX3dha2VfdXAoKQo+ICAgIC4uLgo+ICAgICAg
-IGFjdGl2YXRlX3Rhc2soKQo+ICAgICAgICAgIGVucXVldWVfdGFzaygpCj4gICAgICAgICAgICAg
-cC0+c2NoZWRfY2xhc3MtPmVucXVldWVfdGFzayhycSwgcCwgZmxhZ3MpCj4gCj4gRml4IGJ5IGNv
-bnZlcnRpbmcgYm9vdF9sb2NrIHRvIGEgcmF3IHNwaW4gbG9jay4KPiAKPiBDYzogIkFuZHJlYXMg
-RsOkcmJlciIgPGFmYWVyYmVyQHN1c2UuZGU+Cj4gQ2M6IEt1a2ppbiBLaW0gPGtnZW5lQGtlcm5l
-bC5vcmc+Cj4gQ2M6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4KPiBDYzog
-V2VpIFh1IDx4dXdlaTVAaGlzaWxpY29uLmNvbT4KPiBDYzogVG9ueSBMaW5kZ3JlbiA8dG9ueUBh
-dG9taWRlLmNvbT4KPiBDYzogQmFycnkgU29uZyA8YmFvaHVhQGtlcm5lbC5vcmc+Cj4gQ2M6IEFu
-ZHkgR3Jvc3MgPGFuZHkuZ3Jvc3NAbGluYXJvLm9yZz4KPiBDYzogRGF2aWQgQnJvd24gPGRhdmlk
-LmJyb3duQGxpbmFyby5vcmc+Cj4gQ2M6IFZpcmVzaCBLdW1hciA8dmlyZXNoa0BrZXJuZWwub3Jn
-Pgo+IENjOiBTaGlyYXogSGFzaGltIDxzaGlyYXoubGludXgua2VybmVsQGdtYWlsLmNvbT4KPiBD
-YzogUGF0cmljZSBDaG90YXJkIDxwYXRyaWNlLmNob3RhcmRAc3QuY29tPgo+IENjOiBNYXhpbWUg
-UmlwYXJkIDxtYXhpbWUucmlwYXJkQGJvb3RsaW4uY29tPgo+IENjOiBDaGVuLVl1IFRzYWkgPHdl
-bnNAY3NpZS5vcmc+Cj4gQ2M6IGxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZwo+IENj
-OiBsaW51eC1vbWFwQHZnZXIua2VybmVsLm9yZwo+IENjOiBsaW51eC1hcm0tbXNtQHZnZXIua2Vy
-bmVsLm9yZwo+IENjOiBsaW51eC1zb2NAdmdlci5rZXJuZWwub3JnCj4gU2lnbmVkLW9mZi1ieTog
-RnJhbmsgUm93YW5kIDxmcmFuay5yb3dhbmRAYW0uc29ueS5jb20+Cj4gTGluazogaHR0cDovL2xr
-bWwua2VybmVsLm9yZy9yLzRFNzdCOTUyLjMwMTA2MDZAYW0uc29ueS5jb20KPiBTaWduZWQtb2Zm
-LWJ5OiBUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4KPiBUZXN0ZWQtYnk6IFRv
-bnkgTGluZGdyZW4gPHRvbnlAYXRvbWlkZS5jb20+Cj4gQWNrZWQtYnk6IEtyenlzenRvZiBLb3ps
-b3dza2kgPGtyemtAa2VybmVsLm9yZz4KPiBUZXN0ZWQtYnk6IEtyenlzenRvZiBLb3psb3dza2kg
-PGtyemtAa2VybmVsLm9yZz4gW0V4eW5vczU0MjIgTGluYXJvIFBNLVFBXQo+IFNpZ25lZC1vZmYt
-Ynk6IFNlYmFzdGlhbiBBbmRyemVqIFNpZXdpb3IgPGJpZ2Vhc3lAbGludXRyb25peC5kZT4KPiAt
-LS0KPiAgYXJjaC9hcm0vbWFjaC1hY3Rpb25zL3BsYXRzbXAuYyAgIHwgIDYgKysrLS0tCj4gIGFy
-Y2gvYXJtL21hY2gtZXh5bm9zL3BsYXRzbXAuYyAgICB8IDEyICsrKysrKy0tLS0tLQo+ICBhcmNo
-L2FybS9tYWNoLWhpc2kvcGxhdG1jcG0uYyAgICAgfCAyMiArKysrKysrKysrKy0tLS0tLS0tLS0t
-Cj4gIGFyY2gvYXJtL21hY2gtb21hcDIvb21hcC1zbXAuYyAgICB8IDEwICsrKysrLS0tLS0KPiAg
-YXJjaC9hcm0vbWFjaC1wcmltYTIvcGxhdHNtcC5jICAgIHwgMTAgKysrKystLS0tLQo+ICBhcmNo
-L2FybS9tYWNoLXFjb20vcGxhdHNtcC5jICAgICAgfCAxMCArKysrKy0tLS0tCj4gIGFyY2gvYXJt
-L21hY2gtc3BlYXIvcGxhdHNtcC5jICAgICB8IDEwICsrKysrLS0tLS0KPiAgYXJjaC9hcm0vbWFj
-aC1zdGkvcGxhdHNtcC5jICAgICAgIHwgMTAgKysrKystLS0tLQo+ICBhcmNoL2FybS9tYWNoLXN1
-bnhpL21jX3NtcC5jICAgICAgfCAyMCArKysrKysrKysrLS0tLS0tLS0tLQo+ICBhcmNoL2FybS9w
-bGF0LXZlcnNhdGlsZS9wbGF0c21wLmMgfCAxMCArKysrKy0tLS0tCj4gIDEwIGZpbGVzIGNoYW5n
-ZWQsIDYwIGluc2VydGlvbnMoKyksIDYwIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9h
-cmNoL2FybS9tYWNoLWFjdGlvbnMvcGxhdHNtcC5jIGIvYXJjaC9hcm0vbWFjaC1hY3Rpb25zL3Bs
-YXRzbXAuYwo+IGluZGV4IDNlZmFhMTBlZmM0My4uNzcwMDc5MjQ1ZDI3IDEwMDY0NAo+IC0tLSBh
-L2FyY2gvYXJtL21hY2gtYWN0aW9ucy9wbGF0c21wLmMKPiArKysgYi9hcmNoL2FybS9tYWNoLWFj
-dGlvbnMvcGxhdHNtcC5jCj4gQEAgLTM5LDcgKzM5LDcgQEAgc3RhdGljIHZvaWQgX19pb21lbSAq
-c3BzX2Jhc2VfYWRkcjsKPiAgc3RhdGljIHZvaWQgX19pb21lbSAqdGltZXJfYmFzZV9hZGRyOwo+
-ICBzdGF0aWMgaW50IG5jb3JlczsKPiAgCj4gLXN0YXRpYyBERUZJTkVfU1BJTkxPQ0soYm9vdF9s
-b2NrKTsKPiArc3RhdGljIERFRklORV9SQVdfU1BJTkxPQ0soYm9vdF9sb2NrKTsKPiAgCj4gIHZv
-aWQgb3dsX3NlY29uZGFyeV9zdGFydHVwKHZvaWQpOwo+ICAKPiBAQCAtOTMsNyArOTMsNyBAQCBz
-dGF0aWMgaW50IHM1MDBfc21wX2Jvb3Rfc2Vjb25kYXJ5KHVuc2lnbmVkIGludCBjcHUsIHN0cnVj
-dCB0YXNrX3N0cnVjdCAqaWRsZSkKPiAgCj4gIAl1ZGVsYXkoMTApOwo+ICAKPiAtCXNwaW5fbG9j
-aygmYm9vdF9sb2NrKTsKPiArCXJhd19zcGluX2xvY2soJmJvb3RfbG9jayk7Cj4gIAo+ICAJc21w
-X3NlbmRfcmVzY2hlZHVsZShjcHUpOwo+ICAKPiBAQCAtMTA2LDcgKzEwNiw3IEBAIHN0YXRpYyBp
-bnQgczUwMF9zbXBfYm9vdF9zZWNvbmRhcnkodW5zaWduZWQgaW50IGNwdSwgc3RydWN0IHRhc2tf
-c3RydWN0ICppZGxlKQo+ICAJd3JpdGVsKDAsIHRpbWVyX2Jhc2VfYWRkciArIE9XTF9DUFUxX0FE
-RFIgKyAoY3B1IC0gMSkgKiA0KTsKPiAgCXdyaXRlbCgwLCB0aW1lcl9iYXNlX2FkZHIgKyBPV0xf
-Q1BVMV9GTEFHICsgKGNwdSAtIDEpICogNCk7Cj4gIAo+IC0Jc3Bpbl91bmxvY2soJmJvb3RfbG9j
-ayk7Cj4gKwlyYXdfc3Bpbl91bmxvY2soJmJvb3RfbG9jayk7Cj4gIAo+ICAJcmV0dXJuIDA7Cj4g
-IH0KW3NuaXBdCgpMb29rcyBva2F5LCBzbwoKQWNrZWQtYnk6IEFuZHJlYXMgRsOkcmJlciA8YWZh
-ZXJiZXJAc3VzZS5kZT4gKGZvciBtYWNoLWFjdGlvbnMpCgpSZWdhcmRzLApBbmRyZWFzCgotLSAK
-U1VTRSBMaW51eCBHbWJILCBNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1hbnkK
-R0Y6IEZlbGl4IEltZW5kw7ZyZmZlciwgSmFuZSBTbWl0aGFyZCwgR3JhaGFtIE5vcnRvbgpIUkIg
-MjEyODQgKEFHIE7DvHJuYmVyZykKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
-ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+Hi,
+
+Only one unusual about this pull-request - it is based on v4.18-rc2
+because at v4.18-rc1 the NFS root boot, which I use at my testing
+setup (https://krzk.eu), was broken.
+
+Best regards,
+Krzysztof
