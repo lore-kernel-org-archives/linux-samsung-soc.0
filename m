@@ -1,47 +1,80 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 3/3] ARM: defconfig: Pull for v4.19
-Date: Sat, 14 Jul 2018 14:30:30 -0700
-Message-ID: <20180714213030.uxe2wwwulk6cvyop@localhost>
-References: <20180712164641.19925-1-krzk@kernel.org>
- <20180712164641.19925-2-krzk@kernel.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 1/3] arm: Convert arm boot_lock to raw
+Date: Mon, 16 Jul 2018 09:50:54 +0530
+Message-ID: <20180716042054.oniidhhpcx2kyetw@vireshk-i7>
+References: <20180711110037.12928-1-bigeasy@linutronix.de>
+ <20180711110037.12928-2-bigeasy@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20180712164641.19925-2-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180711110037.12928-2-bigeasy@linutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Barry Song <baohua@kernel.org>, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Frank Rowand <frank.rowand@am.sony.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, David Brown <david.brown@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Wei Xu <xuwei5@hisilicon.com>, Viresh Kumar <vireshk@kernel.org>, Andy Gross <andy.gross@linaro.org>, tglx@linutronix.de, linux-omap@vger.kernel.org, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 06:46:39PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Rebased on v4.18-rc2.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
-> 
->   Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.19
-> 
-> for you to fetch changes up to 24ede29d026a9f00aa3f4e7a5531803af4810734:
-> 
->   ARM: s5pv210_defconfig: Enable options needed to boot typical Linux distro (2018-07-07 10:49:16 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung defconfig changes for v4.19
-> 
-> Enable options needed for booting full system on S5Pv210-based Samsung
-> Galaxy S mobile phones.
+On 11-07-18, 13:00, Sebastian Andrzej Siewior wrote:
+> From: Frank Rowand <frank.rowand@am.sony.com>
+> =
 
-Thanks!
+> The arm boot_lock is used by the secondary processor startup code.  The l=
+ocking
+> task is the idle thread, which has idle->sched_class =3D=3D &idle_sched_c=
+lass.
+> idle_sched_class->enqueue_task =3D=3D NULL, so if the idle task blocks on=
+ the
+> lock, the attempt to wake it when the lock becomes available will fail:
+> =
 
+> try_to_wake_up()
+>    ...
+>       activate_task()
+>          enqueue_task()
+>             p->sched_class->enqueue_task(rq, p, flags)
+> =
 
--Olof
+> Fix by converting boot_lock to a raw spin lock.
+> =
+
+> Cc: "Andreas F=E4rber" <afaerber@suse.de>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Wei Xu <xuwei5@hisilicon.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Andy Gross <andy.gross@linaro.org>
+> Cc: David Brown <david.brown@linaro.org>
+> Cc: Viresh Kumar <vireshk@kernel.org>
+> Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
+> Cc: Patrice Chotard <patrice.chotard@st.com>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-soc@vger.kernel.org
+> Signed-off-by: Frank Rowand <frank.rowand@am.sony.com>
+> Link: http://lkml.kernel.org/r/4E77B952.3010606@am.sony.com
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Tested-by: Tony Lindgren <tony@atomide.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested-by: Krzysztof Kozlowski <krzk@kernel.org> [Exynos5422 Linaro PM-QA]
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  arch/arm/mach-spear/platsmp.c     | 10 +++++-----
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- =
+
+viresh
