@@ -1,38 +1,60 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] thermal: samsung: Remove Exynos5440 clock handling left-overs
-Date: Tue, 17 Jul 2018 17:46:17 +0200
-Message-ID: <20180717154617.29913-1-krzk@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 5/5] ARM: dts: exynos: add tmu aliases nodes
+Date: Wed, 18 Jul 2018 01:26:10 +0530
+Message-ID: <CANAwSgSUv9aY6bhMxdnj9yGS8Ds7Bevy09+k=74CwVqiOX2+gA@mail.gmail.com>
+References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com>
+ <1531822342-4293-5-git-send-email-linux.amoon@gmail.com> <CAJKOXPc256dCWWWaoJBOB9NUc=CUYtqgfeKh=LBOoFAfh_T8Ng@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPc256dCWWWaoJBOB9NUc=CUYtqgfeKh=LBOoFAfh_T8Ng@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit 8014220d48e7 ("thermal: samsung: Remove support for Exynos5440")
-removed the Exynos5440 specific part of code for accessing TMU interrupt
-registers but the surrounding clock handling was left.
+Hi
 
-Clean it up.
+On 17 July 2018 at 17:59, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
+>> add tmuctrl aliases node for exynos542x
+>
+> Please use full sentence, starting with capital letter and ending with
+> a dot. Also please explain why you need tmuctrl aliases.
+>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/thermal/samsung/exynos_tmu.c | 5 -----
- 1 file changed, 5 deletions(-)
+As per the [0] Documentation/devicetree/bindings/thermal/exynos-thermal.txt
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index a992e51ef065..48eef552cba4 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -789,11 +789,6 @@ static void exynos_tmu_work(struct work_struct *work)
- 	struct exynos_tmu_data *data = container_of(work,
- 			struct exynos_tmu_data, irq_work);
- 
--	if (!IS_ERR(data->clk_sec))
--		clk_enable(data->clk_sec);
--	if (!IS_ERR(data->clk_sec))
--		clk_disable(data->clk_sec);
--
- 	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
- 
- 	mutex_lock(&data->lock);
--- 
-2.14.1
+For multi-instance tmu each instance should have an alias correctly
+numbered in "aliases" node.
+
+>>
+>> CC: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5420-peach-pit.dts         |  8 ++++----
+>>  arch/arm/boot/dts/exynos5420.dtsi                  | 20 ++++++++++++--------
+>>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  8 ++++----
+>>  arch/arm/boot/dts/exynos5422-odroidhc1.dts         |  8 ++++----
+>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  8 ++++----
+>>  arch/arm/boot/dts/exynos5800-peach-pi.dts          |  8 ++++----
+>>  6 files changed, 32 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> index 57c2332..ff79f0b 100644
+>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> @@ -1061,19 +1061,19 @@
+>>         status = "okay";
+>>  };
+>>
+>> -&tmu_cpu0 {
+>> +&tmu_cpu_0 {
+>
+> This looks irrelevant to the topic of adding aliases.
+>
+
+correct, I gone through the binding documentation and hence update this patch.
+
+Best Regards
+-Anand
