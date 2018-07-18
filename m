@@ -1,80 +1,100 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos5: add missing interrupts for pwm node
-Date: Wed, 18 Jul 2018 16:20:28 +0530
-Message-ID: <CANAwSgSaU1kTW3j0OZGwmOWo=p2uHFP8toLUe9FHYEkCJsuLFg@mail.gmail.com>
-References: <1531906490-1739-1-git-send-email-linux.amoon@gmail.com>
- <CAJKOXPdeRvt4YG9Doziq-_oQ9DeUffvTB53OOaq-q2UpkBGpgQ@mail.gmail.com>
- <CANAwSgS8z-TQ=nK7dy5YeA8QJV+7cCctZKJT7qn8macQQkyKqg@mail.gmail.com> <CAJKOXPez6cuLyrxBkAKtyx2xiqG7VLWFCBYXkBX_537A=bDpsg@mail.gmail.com>
+From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Subject: [BUG BISECT] "Support fs_context" causes systemd issues (linux-next)
+Date: Wed, 18 Jul 2018 13:46:35 +0200
+Message-ID: <CAJKOXPftCn+qcJtG6bBjUMa2ZX=_YAoHkoYH69-+jSam4-z86Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPez6cuLyrxBkAKtyx2xiqG7VLWFCBYXkBX_537A=bDpsg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org, fenghua.yu@intel.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi,
 
-On 18 July 2018 at 16:03, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On 18 July 2018 at 12:30, Anand Moon <linux.amoon@gmail.com> wrote:
->> Hi
->>
->> On 18 July 2018 at 15:27, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> On 18 July 2018 at 11:34, Anand Moon <linux.amoon@gmail.com> wrote:
->>>> Add missing GIC interrupts property for pwm nodes.
->>>>
->>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>> ---
->>>>  arch/arm/boot/dts/exynos5.dtsi | 5 +++++
->>>>  1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
->>>> index 5d2f0a0..9406108 100644
->>>> --- a/arch/arm/boot/dts/exynos5.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos5.dtsi
->>>> @@ -169,6 +169,11 @@
->>>>                 pwm: pwm@12dd0000 {
->>>>                         compatible = "samsung,exynos4210-pwm";
->>>>                         reg = <0x12DD0000 0x100>;
->>>> +                       interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
->>>> +                                  <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
->>>
->>> Indentation here looks weird - spaces used after tabs but not aligned
->>> with first entry. Please indent it properly and align it.
->>>
->>> Best regards,
->>> Krzysztof
->>
->> I ram checkpatch before I submit this patch it shown no error.
->>
->> # scripts/checkpatch.pl --no-signoff -q
->> 0001-ARM-dts-exynos5-add-missing-interrupts-for-pwm-node.patch
->
-> That's good, thank you. Still when I look at it in patchwork the
-> indentation is wrong:
-> https://patchwork.kernel.org/patch/10531753/
-> However it can be patchwork's fault, so are you sure that this is
-> properly indented and aligned?
->
-> BR,
-> Krzysztof
+On recent linux-next, the commit f8076f3b0996 ("kernfs, sysfs, cgroup,
+intel_rdt: Support fs_context") causes weird behavior of two of
+systemd units: systemd-timesyncd.service and systemd-resolved.service
+fail to start.
 
-I prefer vim and I use following plugin
+Logs:
 
-https://github.com/vivien/vim-linux-coding-style
+Jul 18 09:51:33 odroidu3 systemd[376]: systemd-timesyncd.service:
+Failed to set up mount namespacing: Invalid argument
+Jul 18 09:51:33 odroidu3 systemd[376]: systemd-timesyncd.service:
+Failed at step NAMESPACE spawning /usr/lib/systemd/systemd-timesyncd:
+Invalid argument
+Jul 18 09:51:33 odroidu3 systemd[1]: systemd-timesyncd.service: Main
+process exited, code=exited, status=226/NAMESPACE
+Jul 18 09:51:33 odroidu3 systemd[1]: systemd-timesyncd.service: Failed
+with result 'exit-code'.
 
-root@odroidxu4:/usr/src/odroidxu4-4kr-devel# wget -nv
-https://patchwork.kernel.org/patch/10531753/mbox/ -O pwm.patch
-2018-07-18 10:48:09
-URL:https://patchwork.kernel.org/patch/10531753/mbox/ [1460] ->
-"pwm.patch" [1]
-root@odroidxu4:/usr/src/odroidxu4-4kr-devel#
-root@odroidxu4:/usr/src/odroidxu4-4kr-devel# scripts/checkpatch.pl
---no-signoff -q pwm.patch
-root@odroidxu4:/usr/src/odroidxu4-4kr-devel#
+The configuration:
 
-Is their any other way to test checkpatch please let me know.
+1. exynos_defconfig
+2. ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC, Odroid XU3 family
+3. ARMv7, quad-core, Exynos4412 SoC, Odroid U3
+4. The board boots from TFTP with NFS root (NFSv4)
+5. Arch ARM Linux
+6. Systemd: v236
 
-Best Regards
--Anand
+Example of boot (logs):
+https://krzk.eu/#/builders/21/builds/767/steps/10/logs/serial0
+
+
+Bisect log:
+git bisect start
+# good: [30b06abfb92bfd5f9b63ea6a2ffb0bd905d1a6da] Merge tag
+'pinctrl-v4.18-3' of
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+git bisect good 30b06abfb92bfd5f9b63ea6a2ffb0bd905d1a6da
+# bad: [1dcbe5f2c615337cb7d4e13fab198ab716180733] Add linux-next
+specific files for 20180717
+git bisect bad 1dcbe5f2c615337cb7d4e13fab198ab716180733
+# bad: [209dba6cb2664f6ac48282d666f2b4787286311a] Merge
+remote-tracking branch 'crypto/master'
+git bisect bad 209dba6cb2664f6ac48282d666f2b4787286311a
+# good: [5bd2314d41ad09c497bb72ad3cf94f65913a7da1] Merge
+remote-tracking branch 'overlayfs/overlayfs-next'
+git bisect good 5bd2314d41ad09c497bb72ad3cf94f65913a7da1
+# skip: [dc989d2ce2c2bc4b5cdc92a9d2c8a5c857448475] tools: bpftool:
+don't pass FEATURES_DUMP to libbpf
+git bisect skip dc989d2ce2c2bc4b5cdc92a9d2c8a5c857448475
+# good: [a1bf74dc6e66f91325cc8d35231e151a24a1f9ff] net/mlx5e: Add
+channel events counter
+git bisect good a1bf74dc6e66f91325cc8d35231e151a24a1f9ff
+# bad: [460b2b7ca7db36621315032f5fc4ca85e0b64589] Merge
+remote-tracking branch 'rdma/for-next'
+git bisect bad 460b2b7ca7db36621315032f5fc4ca85e0b64589
+# bad: [a9d11c1d00c560d86855b24f84457a191e70ca4a] Merge
+remote-tracking branch 'jc_docs/docs-next'
+git bisect bad a9d11c1d00c560d86855b24f84457a191e70ca4a
+# bad: [82ffa5de1706a23797d2409e09917bfd56222d32] Merge
+remote-tracking branch 'printk/for-next'
+git bisect bad 82ffa5de1706a23797d2409e09917bfd56222d32
+# good: [e339dd8d8b045399e918c6737b2cc435b21a451e] xfs: use sync
+buffer I/O for sync delwri queue submission
+git bisect good e339dd8d8b045399e918c6737b2cc435b21a451e
+# bad: [ee12a8e0dfcd34069fe1781f2e9d0d8c5fd4e1db] afs: Add fsinfo support
+git bisect bad ee12a8e0dfcd34069fe1781f2e9d0d8c5fd4e1db
+# good: [96e6c5ff548b9e18ef84b326b5c4c9e59a01e44b] proc: Add
+fs_context support to procfs
+git bisect good 96e6c5ff548b9e18ef84b326b5c4c9e59a01e44b
+# bad: [1ead04847d5b772c53b6d46f0670c83c8a081456] vfs: Implement
+fsopen() to prepare for a mount
+git bisect bad 1ead04847d5b772c53b6d46f0670c83c8a081456
+# bad: [a32434fa30a7f4390aa409726fa08ed4ac802078] hugetlbfs: Convert
+to fs_context
+git bisect bad a32434fa30a7f4390aa409726fa08ed4ac802078
+# good: [6e705c4c287ed7f7bf4fe04c7884e29dd5a9a33d] cpuset: Use fs_context
+git bisect good 6e705c4c287ed7f7bf4fe04c7884e29dd5a9a33d
+# bad: [f8076f3b0996b70f62b32d9c52649ea9bab2d6cd] kernfs, sysfs,
+cgroup, intel_rdt: Support fs_context
+git bisect bad f8076f3b0996b70f62b32d9c52649ea9bab2d6cd
+# first bad commit: [f8076f3b0996b70f62b32d9c52649ea9bab2d6cd] kernfs,
+sysfs, cgroup, intel_rdt: Support fs_context
+
+Any hints how to debug this issue?
+
+Best regards,
+Krzysztof
