@@ -1,36 +1,47 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [BUG BISECT] "Support fs_context" causes systemd issues
- (linux-next)
-Date: Wed, 18 Jul 2018 15:29:57 +0200
-Message-ID: <20180718132957.GA17254@kroah.com>
-References: <CAJKOXPftCn+qcJtG6bBjUMa2ZX=_YAoHkoYH69-+jSam4-z86Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCHv2] ARM: dts: exynos5: add missing interrupts for pwm node
+Date: Wed, 18 Jul 2018 15:55:57 +0200
+Message-ID: <CAJKOXPdAEp-7jw-AqPfmqq+ygY_p4BGt92voCNRc3z57KU_-ZA@mail.gmail.com>
+References: <1531918767-7177-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPftCn+qcJtG6bBjUMa2ZX=_YAoHkoYH69-+jSam4-z86Q@mail.gmail.com>
+In-Reply-To: <1531918767-7177-1-git-send-email-linux.amoon@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org, fenghua.yu@intel.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 01:46:35PM +0200, Krzysztof Kozłowski wrote:
-> Hi,
-> 
-> On recent linux-next, the commit f8076f3b0996 ("kernfs, sysfs, cgroup,
-> intel_rdt: Support fs_context") causes weird behavior of two of
-> systemd units: systemd-timesyncd.service and systemd-resolved.service
-> fail to start.
-> 
-> Logs:
-> 
-> Jul 18 09:51:33 odroidu3 systemd[376]: systemd-timesyncd.service:
-> Failed to set up mount namespacing: Invalid argument
+On 18 July 2018 at 14:59, Anand Moon <linux.amoon@gmail.com> wrote:
+> Add missing GIC interrupts property for pwm nodes.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> Fixed the patch indentation issue with all tabs.
+> sorry checkpatch could not figure out the error.
+> ---
+>  arch/arm/boot/dts/exynos5.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+> index 5d2f0a0..f48fb9b 100644
+> --- a/arch/arm/boot/dts/exynos5.dtsi
+> +++ b/arch/arm/boot/dts/exynos5.dtsi
+> @@ -169,6 +169,11 @@
+>                 pwm: pwm@12dd0000 {
+>                         compatible = "samsung,exynos4210-pwm";
+>                         reg = <0x12DD0000 0x100>;
+> +                       interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
+> +                                       <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
+> +                                       <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
+> +                                       <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+> +                                       <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
 
-Looks like the parsing for kernel mount options is broken somehow in the
-above patch :(
+OK, thanks for v2. Now only tabs are used but in previous mail I
+mentioned which example to use - the rtc node which nicely aligns
+continued lines. Why you did not follow this alignment?
 
-thanks,
+I'll fix it when applying, no need to resend.
 
-greg k-h
+Best regards,
+Krzysztof
