@@ -1,116 +1,39 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] i2c: exynos5: Describe the hardware variant for readability
-Date: Wed, 18 Jul 2018 21:54:04 +0200
-Message-ID: <20180718195404.5095-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Andrzej Hajda <a.hajda@samsung.com>, Andi Shyti <andi@etezian.org>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/exynos/mixer: Remove unused local variable priv
+Date: Wed, 18 Jul 2018 21:55:20 +0200
+Message-ID: <20180718195520.5226-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The driver supports multiple hardware variants of Exynos I2C controller
-which differ in FIFO depth, handling of interrupts and bus recovery in
-HSI2C_MASTER_ST_LOSE state.
-
-The difference in variant was a single bit set for Exynos7 variants and
-implicit lack of this bit for other variants.
-
-Make each variant explicit which also fixes the GCC warning about
-documentation:
-
-    drivers/i2c/busses/i2c-exynos5.c:223: warning: Function parameter or member 'hw' not described in 'exynos_hsi2c_variant'
-
-No change in functionality.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/i2c/busses/i2c-exynos5.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index de82ad8ff534..c1ce2299a76e 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -176,7 +176,10 @@
- 
- #define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(100))
- 
--#define HSI2C_EXYNOS7	BIT(0)
-+enum i2c_type_exynos {
-+	I2C_TYPE_EXYNOS5,
-+	I2C_TYPE_EXYNOS7,
-+};
- 
- struct exynos5_i2c {
- 	struct i2c_adapter	adap;
-@@ -212,27 +215,30 @@ struct exynos5_i2c {
- /**
-  * struct exynos_hsi2c_variant - platform specific HSI2C driver data
-  * @fifo_depth: the fifo depth supported by the HSI2C module
-+ * @hw: the hardware variant of Exynos I2C controller
-  *
-  * Specifies platform specific configuration of HSI2C module.
-  * Note: A structure for driver specific platform data is used for future
-  * expansion of its usage.
-  */
- struct exynos_hsi2c_variant {
--	unsigned int	fifo_depth;
--	unsigned int	hw;
-+	unsigned int		fifo_depth;
-+	enum i2c_type_exynos	hw;
- };
- 
- static const struct exynos_hsi2c_variant exynos5250_hsi2c_data = {
- 	.fifo_depth	= 64,
-+	.hw		= I2C_TYPE_EXYNOS5,
- };
- 
- static const struct exynos_hsi2c_variant exynos5260_hsi2c_data = {
- 	.fifo_depth	= 16,
-+	.hw		= I2C_TYPE_EXYNOS5,
- };
- 
- static const struct exynos_hsi2c_variant exynos7_hsi2c_data = {
- 	.fifo_depth	= 16,
--	.hw		= HSI2C_EXYNOS7,
-+	.hw		= I2C_TYPE_EXYNOS7,
- };
- 
- static const struct of_device_id exynos5_i2c_match[] = {
-@@ -300,7 +306,7 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
- 	 */
- 	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
- 	temp = clkin / op_clk - 8 - t_ftl_cycle;
--	if (i2c->variant->hw != HSI2C_EXYNOS7)
-+	if (i2c->variant->hw != I2C_TYPE_EXYNOS7)
- 		temp -= t_ftl_cycle;
- 	div = temp / 512;
- 	clk_cycle = temp / (div + 1) - 2;
-@@ -424,7 +430,7 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
- 	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
- 
- 	/* handle interrupt related to the transfer status */
--	if (i2c->variant->hw == HSI2C_EXYNOS7) {
-+	if (i2c->variant->hw == I2C_TYPE_EXYNOS7) {
- 		if (int_status & HSI2C_INT_TRANS_DONE) {
- 			i2c->trans_done = 1;
- 			i2c->state = 0;
-@@ -571,7 +577,7 @@ static void exynos5_i2c_bus_check(struct exynos5_i2c *i2c)
- {
- 	unsigned long timeout;
- 
--	if (i2c->variant->hw != HSI2C_EXYNOS7)
-+	if (i2c->variant->hw != I2C_TYPE_EXYNOS7)
- 		return;
- 
- 	/*
-@@ -612,7 +618,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 	unsigned long flags;
- 	unsigned short trig_lvl;
- 
--	if (i2c->variant->hw == HSI2C_EXYNOS7)
-+	if (i2c->variant->hw == I2C_TYPE_EXYNOS7)
- 		int_en |= HSI2C_INT_I2C_TRANS;
- 	else
- 		int_en |= HSI2C_INT_I2C;
--- 
-2.14.1
+UmVtb3ZlIGxvY2FsIHZhcmlhYmxlICdwcml2JyB0byBmaXggR0NDIHdhcm5pbmc6CgogICAgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYzogSW4gZnVuY3Rpb24gJ21peGVyX2lu
+aXRpYWxpemUnOgogICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYzo4NDA6
+Mjk6IHdhcm5pbmc6IHZhcmlhYmxlICdwcml2JyBzZXQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC1i
+dXQtc2V0LXZhcmlhYmxlXQoKU2lnbmVkLW9mZi1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6
+a0BrZXJuZWwub3JnPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMg
+fCAyIC0tCiAxIGZpbGUgY2hhbmdlZCwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfbWl4ZXIuYwppbmRleCAyNzJjNzlmNWY1YmYuLmI4NmFlMmFiOTU5MCAxMDA2NDQK
+LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCkBAIC04MzcsOCArODM3LDYgQEAgc3RhdGlj
+IGludCBtaXhlcl9pbml0aWFsaXplKHN0cnVjdCBtaXhlcl9jb250ZXh0ICptaXhlcl9jdHgsCiAJ
+CQlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldikKIHsKIAlpbnQgcmV0OwotCXN0cnVjdCBleHlu
+b3NfZHJtX3ByaXZhdGUgKnByaXY7Ci0JcHJpdiA9IGRybV9kZXYtPmRldl9wcml2YXRlOwogCiAJ
+bWl4ZXJfY3R4LT5kcm1fZGV2ID0gZHJtX2RldjsKIAotLSAKMi4xNC4xCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
