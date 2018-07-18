@@ -1,137 +1,49 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
-Date: Thu, 19 Jul 2018 02:19:57 +0530
-Message-ID: <20180718204957.GA14132@jordon-HP-15-Notebook-PC>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] dt-bindings: clock: samsung: Add SPDX license
+ identifiers
+Date: Thu, 19 Jul 2018 08:45:38 +0900
+Message-ID: <5B4FD122.3070403@samsung.com>
+References: <CGME20180718200247epcas1p33ff6e502031498802741a0dc37400ca9@epcas1p3.samsung.com>
+        <20180718200216.6389-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-reply-to: <20180718200216.6389-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, ajitn.linux@gmail.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-convert drm_atomic_helper_suspend/resume() to use
-drm_mode_config_helper_suspend/resume().
+Hi Krzysztof,
 
-exynos_drm_fbdev_suspend/resume can be removed
-as drm_mode_config_helper_suspend/resume has
-implement the same in generic way.
+On 2018년 07월 19일 05:02, Krzysztof Kozlowski wrote:
+> Replace GPL license statements with SPDX license identifiers (GPL-2.0).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  include/dt-bindings/clock/exynos3250.h            | 5 +----
+>  include/dt-bindings/clock/exynos4.h               | 7 ++-----
+>  include/dt-bindings/clock/exynos5250.h            | 7 ++-----
+>  include/dt-bindings/clock/exynos5260-clk.h        | 7 ++-----
+>  include/dt-bindings/clock/exynos5410.h            | 7 ++-----
+>  include/dt-bindings/clock/exynos5420.h            | 7 ++-----
+>  include/dt-bindings/clock/exynos5433.h            | 5 +----
+>  include/dt-bindings/clock/exynos7-clk.h           | 7 ++-----
+>  include/dt-bindings/clock/s3c2410.h               | 5 +----
+>  include/dt-bindings/clock/s3c2412.h               | 5 +----
+>  include/dt-bindings/clock/s3c2443.h               | 5 +----
+>  include/dt-bindings/clock/samsung,s2mps11.h       | 5 +----
+>  include/dt-bindings/clock/samsung,s3c64xx-clock.h | 7 ++-----
+>  13 files changed, 20 insertions(+), 59 deletions(-)
+> 
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.c   | 32 ++++++++++---------------------
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 ----------------
- drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
- 3 files changed, 10 insertions(+), 49 deletions(-)
+Looks good to me.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index a81b4a5..1996ff7 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -151,39 +151,27 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
- static int exynos_drm_suspend(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	struct exynos_drm_private *private;
-+	int ret = 0;
- 
--	if (pm_runtime_suspended(dev) || !drm_dev)
--		return 0;
-+	if (pm_runtime_suspended(dev))
-+		return ret;
- 
--	private = drm_dev->dev_private;
-+	ret = drm_mode_config_helper_suspend(drm_dev);
- 
--	drm_kms_helper_poll_disable(drm_dev);
--	exynos_drm_fbdev_suspend(drm_dev);
--	private->suspend_state = drm_atomic_helper_suspend(drm_dev);
--	if (IS_ERR(private->suspend_state)) {
--		exynos_drm_fbdev_resume(drm_dev);
--		drm_kms_helper_poll_enable(drm_dev);
--		return PTR_ERR(private->suspend_state);
--	}
--
--	return 0;
-+	return ret;
- }
- 
- static int exynos_drm_resume(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	struct exynos_drm_private *private;
-+	int ret = 0;
- 
--	if (pm_runtime_suspended(dev) || !drm_dev)
--		return 0;
-+	if (pm_runtime_suspended(dev))
-+		return ret;
- 
--	private = drm_dev->dev_private;
--	drm_atomic_helper_resume(drm_dev, private->suspend_state);
--	exynos_drm_fbdev_resume(drm_dev);
--	drm_kms_helper_poll_enable(drm_dev);
-+	ret = drm_mode_config_helper_resume(drm_dev);
- 
--	return 0;
-+	return ret;
- }
- #endif
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 132dd52..918dd2c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
- 	private->fb_helper = NULL;
- }
- 
--void exynos_drm_fbdev_suspend(struct drm_device *dev)
--{
--	struct exynos_drm_private *private = dev->dev_private;
--
--	console_lock();
--	drm_fb_helper_set_suspend(private->fb_helper, 1);
--	console_unlock();
--}
--
--void exynos_drm_fbdev_resume(struct drm_device *dev)
--{
--	struct exynos_drm_private *private = dev->dev_private;
--
--	console_lock();
--	drm_fb_helper_set_suspend(private->fb_helper, 0);
--	console_unlock();
--}
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-index b338472..6840b6a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-@@ -19,8 +19,6 @@
- 
- int exynos_drm_fbdev_init(struct drm_device *dev);
- void exynos_drm_fbdev_fini(struct drm_device *dev);
--void exynos_drm_fbdev_suspend(struct drm_device *drm);
--void exynos_drm_fbdev_resume(struct drm_device *drm);
- 
- #else
- 
-@@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
- 
- #define exynos_drm_output_poll_changed (NULL)
- 
--static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
--{
--}
--
--static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
--{
--}
--
- #endif
- 
- #endif
+(snip)
+
 -- 
-1.9.1
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
