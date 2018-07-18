@@ -1,118 +1,59 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/5] thermal: exynos: enable core tmu clk on exynos platform
-Date: Wed, 18 Jul 2018 12:06:55 +0200
-Message-ID: <CAJKOXPfRBPgmGc17XEzW5+MK80JcudCbhBfLeMFTQYjWLJ3JeA@mail.gmail.com>
-References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com>
- <CAJKOXPdP78VFQgSQ9z9WsgYY_YhEKPUt=0MOra6Pz6smQeiNGg@mail.gmail.com>
- <CANAwSgS=08fVsqn95WHzSF71WTTyD2-=K2C6-BEz0tY0t6A1-g@mail.gmail.com>
- <CAJKOXPdXYz77Bqyjr3HK+EA0HpEABPqmPOD0f5ew-yq2SFVpVQ@mail.gmail.com> <CANAwSgRFehdmYZvPL3yD1=Ng_w1Yhtij=nvZEOqkof7zj8fcwA@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] ARM: dts: exynos5: add missing interrupts for pwm node
+Date: Wed, 18 Jul 2018 16:00:04 +0530
+Message-ID: <CANAwSgS8z-TQ=nK7dy5YeA8QJV+7cCctZKJT7qn8macQQkyKqg@mail.gmail.com>
+References: <1531906490-1739-1-git-send-email-linux.amoon@gmail.com> <CAJKOXPdeRvt4YG9Doziq-_oQ9DeUffvTB53OOaq-q2UpkBGpgQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANAwSgRFehdmYZvPL3yD1=Ng_w1Yhtij=nvZEOqkof7zj8fcwA@mail.gmail.com>
+In-Reply-To: <CAJKOXPdeRvt4YG9Doziq-_oQ9DeUffvTB53OOaq-q2UpkBGpgQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 18 July 2018 at 11:24, Anand Moon <linux.amoon@gmail.com> wrote:
-> Hi Krzysztof
->
-> On 18 July 2018 at 11:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On 17 July 2018 at 22:23, Anand Moon <linux.amoon@gmail.com> wrote:
->>> Hi Krzysztof
->>>
->>> On 17 July 2018 at 17:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>> Hi Anand,
->>>>
->>>> Thanks for patch.
->>>>
->>>> On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
->>>>> clk_summary do not show tmu_apbif clk enable, so replace
->>>>> the clk_prepare with clk_prepare_enables to enable tmu clk.
->>>>
->>>> This is not valid reason to do a change. What is clk_summary does not
->>>> really matter. Your change has negative impact on power consumption as
->>>> the clock stays enabled all the time. This is not what we want... so
->>>> please explain it more - why you need the clock to be enabled all the
->>>> time? What is broken (clk_summary is not broken in this case)?
->>>>
->>>
->>> Opps I could not explain some more in my commit message.
->>>
->>> Actually TMU sensor for Exynos process are controlled by so external clk
->>>
->>> Exynos4412 have VDD18_TS sensor which controls the CLK_SENSE tmu.
->>> Exynos5422 have VDD18_TS01 / VDD18_TS23 / VDD18_TS4 sensor which
->>> control the CLK_SENSE tmu.
->>>
->>> So as per my understanding tmu is clk driver which control the flow  PMIC.
->>>
->>> clk_prepare_enable combine clk_prepare and clk_enable
->>> and clk_disable_unprepare combine clk_disable and clk_unprepare.
->>>
->>> most of the driver prefer clk_prepare_enable and clk_disable_unprepare.
->>>
->>> clk_summary is just a reference looking point where we could check the
->>> clk is enable/disable.
->>>
->>> what is broken ?
->>> I still few more parameter need to tuned to configure the tmu driver.
+Hi
+
+On 18 July 2018 at 15:27, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 18 July 2018 at 11:34, Anand Moon <linux.amoon@gmail.com> wrote:
+>> Add missing GIC interrupts property for pwm nodes.
 >>
->> I am sorry but I am still unable to see what is broken and what are
->> you trying to fix. I asked what is broken and you replied that there
->> is a sensor, there is a clock, drivers use clk_prepare_enable and some
->> more parameter need to be tuned... None of these are answers to
->> question - what is broken. How can I reproduce the problem?
+>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5.dtsi | 5 +++++
+>>  1 file changed, 5 insertions(+)
 >>
->> Best regards,
->> Krzysztof
+>> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+>> index 5d2f0a0..9406108 100644
+>> --- a/arch/arm/boot/dts/exynos5.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5.dtsi
+>> @@ -169,6 +169,11 @@
+>>                 pwm: pwm@12dd0000 {
+>>                         compatible = "samsung,exynos4210-pwm";
+>>                         reg = <0x12DD0000 0x100>;
+>> +                       interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
+>> +                                  <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
 >
-> Basically I use thermal testing.
+> Indentation here looks weird - spaces used after tabs but not aligned
+> with first entry. Please indent it properly and align it.
 >
-> # git clone https://git.linaro.org/power/pm-qa.git
-> # cd pm-qa
-> # make -C thermal check
+> Best regards,
+> Krzysztof
+
+I ram checkpatch before I submit this patch it shown no error.
+
+# scripts/checkpatch.pl --no-signoff -q
+0001-ARM-dts-exynos5-add-missing-interrupts-for-pwm-node.patch
+
+Best Regards
+-Anand
 >
-> most of the testcase failed on Exynos5422 but some pass on Exynos4412.
->
-> Attach is the software overview from Exynos5422 user manual.
->
-> I am not able to explain in deep technically, but I have studied other thermal
-> driver to draw into conclusion that tmu clk's need to be enabled.
-
-That is true in general - the clk has to be enabled in certain cases.
-However you did not say at all when you want this clock to be
-enabled... and the your patch enables it for entire lifetime of
-device.
-
-> If you feel the we should not enable these clk, them I will drop the
-> clk_prepare_enable check
-> and resubmit the changes with better commit message.
-
-I don't know. This was fifth email in this thread and it is the first
-time some real problem is mentioned. Still the issue is not described
-entirely so I really do not have a clue whether this patch fixes
-something or not.
-What is more, you mentioned falling pm-qa tests here (not in commit
-msg) but did not say whether this patch fixes anything or not.
-
-So let me summarize it:
-1. You did not describe the problem you want to fix.
-2. The patch looks incorrect because it enables the clock for entire
-lifetime of device which we do not want.
-3. The patch might or not might fix some problem. We even do not know what...
-4. The clock not being enabled when not needed... is obviously not a problem.
-
-Please start from beginning. Find the problem, tell us how it can be
-reproduced and deliver a single patch which fixes the problem.
-
-This pattern of your code - fixing something without describing the
-problem - happened many time before. I repeated this some times before
-as well. I would prefer not to repeat to many times. Therefore I would
-be happy if you follow the path mentioned in paragraph before always:
-find the problem, tell how it can be reproduced, deliver single patch
-which fixes the problem.
-
-Best regards,
-Krzysztof
+>> +                                  <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
+>> +                                  <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+>> +                                  <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+>>                         samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+>>                         #pwm-cells = <3>;
+>>                 };
+>> --
+>> 2.7.4
+>>
