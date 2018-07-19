@@ -1,157 +1,90 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 1/5] thermal: exynos: enable core tmu clk on exynos platform
-Date: Thu, 19 Jul 2018 15:22:21 +0530
-Message-ID: <CANAwSgSmUFYjE1VyqFM87M-6JZH140P9VpnXP2sG6Mw=_1J3Tg@mail.gmail.com>
-References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com>
- <CAJKOXPdP78VFQgSQ9z9WsgYY_YhEKPUt=0MOra6Pz6smQeiNGg@mail.gmail.com>
- <CANAwSgS=08fVsqn95WHzSF71WTTyD2-=K2C6-BEz0tY0t6A1-g@mail.gmail.com>
- <CAJKOXPdXYz77Bqyjr3HK+EA0HpEABPqmPOD0f5ew-yq2SFVpVQ@mail.gmail.com>
- <CANAwSgRFehdmYZvPL3yD1=Ng_w1Yhtij=nvZEOqkof7zj8fcwA@mail.gmail.com> <CAJKOXPfRBPgmGc17XEzW5+MK80JcudCbhBfLeMFTQYjWLJ3JeA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [RFT 00/10] pinctrl: samsung: Remove ugly hack for sharing eint_wakeup_mask
+Date: Thu, 19 Jul 2018 18:00:40 +0200
+Message-ID: <20180719160050.22566-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPfRBPgmGc17XEzW5+MK80JcudCbhBfLeMFTQYjWLJ3JeA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi All,
 
-On 18 July 2018 at 15:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On 18 July 2018 at 11:24, Anand Moon <linux.amoon@gmail.com> wrote:
->> Hi Krzysztof
->>
->> On 18 July 2018 at 11:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> On 17 July 2018 at 22:23, Anand Moon <linux.amoon@gmail.com> wrote:
->>>> Hi Krzysztof
->>>>
->>>> On 17 July 2018 at 17:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>> Hi Anand,
->>>>>
->>>>> Thanks for patch.
->>>>>
->>>>> On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
->>>>>> clk_summary do not show tmu_apbif clk enable, so replace
->>>>>> the clk_prepare with clk_prepare_enables to enable tmu clk.
->>>>>
->>>>> This is not valid reason to do a change. What is clk_summary does not
->>>>> really matter. Your change has negative impact on power consumption as
->>>>> the clock stays enabled all the time. This is not what we want... so
->>>>> please explain it more - why you need the clock to be enabled all the
->>>>> time? What is broken (clk_summary is not broken in this case)?
->>>>>
->>>>
->>>> Opps I could not explain some more in my commit message.
->>>>
->>>> Actually TMU sensor for Exynos process are controlled by so external clk
->>>>
->>>> Exynos4412 have VDD18_TS sensor which controls the CLK_SENSE tmu.
->>>> Exynos5422 have VDD18_TS01 / VDD18_TS23 / VDD18_TS4 sensor which
->>>> control the CLK_SENSE tmu.
->>>>
->>>> So as per my understanding tmu is clk driver which control the flow  PMIC.
->>>>
->>>> clk_prepare_enable combine clk_prepare and clk_enable
->>>> and clk_disable_unprepare combine clk_disable and clk_unprepare.
->>>>
->>>> most of the driver prefer clk_prepare_enable and clk_disable_unprepare.
->>>>
->>>> clk_summary is just a reference looking point where we could check the
->>>> clk is enable/disable.
->>>>
->>>> what is broken ?
->>>> I still few more parameter need to tuned to configure the tmu driver.
->>>
->>> I am sorry but I am still unable to see what is broken and what are
->>> you trying to fix. I asked what is broken and you replied that there
->>> is a sensor, there is a clock, drivers use clk_prepare_enable and some
->>> more parameter need to be tuned... None of these are answers to
->>> question - what is broken. How can I reproduce the problem?
->>>
->>> Best regards,
->>> Krzysztof
->>
->> Basically I use thermal testing.
->>
->> # git clone https://git.linaro.org/power/pm-qa.git
->> # cd pm-qa
->> # make -C thermal check
->>
->> most of the testcase failed on Exynos5422 but some pass on Exynos4412.
->>
->> Attach is the software overview from Exynos5422 user manual.
->>
->> I am not able to explain in deep technically, but I have studied other thermal
->> driver to draw into conclusion that tmu clk's need to be enabled.
->
-> That is true in general - the clk has to be enabled in certain cases.
-> However you did not say at all when you want this clock to be
-> enabled... and the your patch enables it for entire lifetime of
-> device.
->
->> If you feel the we should not enable these clk, them I will drop the
->> clk_prepare_enable check
->> and resubmit the changes with better commit message.
->
-> I don't know. This was fifth email in this thread and it is the first
-> time some real problem is mentioned. Still the issue is not described
-> entirely so I really do not have a clue whether this patch fixes
-> something or not.
-> What is more, you mentioned falling pm-qa tests here (not in commit
-> msg) but did not say whether this patch fixes anything or not.
->
-> So let me summarize it:
-> 1. You did not describe the problem you want to fix.
-> 2. The patch looks incorrect because it enables the clock for entire
-> lifetime of device which we do not want.
-> 3. The patch might or not might fix some problem. We even do not know what...
-> 4. The clock not being enabled when not needed... is obviously not a problem.
->
-> Please start from beginning. Find the problem, tell us how it can be
-> reproduced and deliver a single patch which fixes the problem.
->
-> This pattern of your code - fixing something without describing the
-> problem - happened many time before. I repeated this some times before
-> as well. I would prefer not to repeat to many times. Therefore I would
-> be happy if you follow the path mentioned in paragraph before always:
-> find the problem, tell how it can be reproduced, deliver single patch
-> which fixes the problem.
->
-> Best regards,
-> Krzysztof
+Tests
+=====
+This is both request for comments and requests for tests. Only basic
+tests were done, including suspend to RAM on Odroid U3 (Exynos4412)
+with max7768 RTC wakeup. Please kindly test it with devices capable of
+suspending and resuming. I am mostly thinking about S5Pv210-based (Aria),
+Trats, Trats2 and TM2 (Exynos5433). Existing platforms should not be
+broken however changing external interrupt wakeup mask was not done
+on Exynos5433.
 
-Yes I will try to improve my self to the point commit message
-and code as per the documentation.
 
-Let me clear my thoughts on clk's turned on for by driver.
-Please correct me If I am wrong.
+Description
+===========
+The Exynos/S5Pv210 machine suspend code needs to write the external
+interrupt mask during suspend.  The mask is controlled by pin controller
+driver: the exynos_wkup_irq_set_wake() in IRQ chip for these wakeup
+interrupts.
 
-Exynos support Power domain to control the dynamic power consumption via clk.
-Operating voltage
-Operating frequency
-Toggling ratios of the logic gate
+Therefore pinctrl driver code exposed an exynos_get_eint_wake_mask()
+function which was later used as an extern in machine code.
 
-PMU generates power control signal to regulator or PMIC.
+This is quite ugly way of combining driver and machine code,
+not portable triggering Sparse and GCC warnings.
 
-To reduce the dynamic power consumption, Exynos SCP uses clock gating
-and frequency scaling.
 
-Exynos process support tmu power domain
-Power Domain         Power Source         Internal Power Gating Method
-           Included Modules
+This might break suspend capability S5Pv210 on with older DTBs (thus
+breaks DTB compatibility), however:
+1. just "might" because in case of using older DTB, the wakeup mask
+   will not be changed during suspend and default reset value (all
+   interrupts non-masked) should work,
+2. mainline support for S5Pv210 with DTB is limited and suspend
+   to RAM already might be broken.
 
-TEMP                     VDD18_TEMP        None
-                       TEMP SENSOR
 
-Exynos TMU is directly co-related to CPU frequency scaling module.
-as their is increase in CPU clk speed with increase in temperature
-TMU will control the flow of cpu speed via clk freq scaling.
+Dependencies
+============
+1. The first seven patches should be taken through one tree,
+   preferably samsung-pinctrl,
+2. The DTS patch (7/10) for S5Pv210 should go into next cycle,
+3. The remaining patches (8-10) should go after all previous,
+   so probably another release cycle.
 
-It might be a good option to implement pm_runtime for tmu driver.
 
-If you are not satisfied with this series of change lets drop them.
-I will just re-submit err-clean up and e-Fuse changes.
+Best regards,
+Krzysztof
 
-Best Regards
--Anand
+
+Krzysztof Kozlowski (10):
+  pinctrl: samsung: Define suspend and resume callbacks for all banks
+    and SoCs
+  pinctrl: samsung: Document suspend and resume members
+  pinctrl: samsung: Document hidden requirement about one external
+    wakeup
+  pinctrl: samsung: Add dedicated compatible for S5Pv210 wakeup
+    interrupts
+  ARM: exynos: Define EINT_WAKEUP_MASK registers for S5Pv210 and
+    Exynos5433
+  pinctrl: samsung: Write external interrupt mask
+  ARM: dts: s5pv210: Switch to S5Pv210 specific pinctrl wakeup
+    compatible
+  ARM: s5pv210: Remove legacy setting of external wakeup interrupts
+  ARM: exynos: Remove legacy setting of external wakeup interrupts
+  pinctrl: samsung: Remove legacy API for handling external wakeup
+    interrupts mask
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           | 11 ++-
+ arch/arm/boot/dts/s5pv210.dtsi                     |  2 +-
+ arch/arm/mach-exynos/common.h                      |  2 -
+ arch/arm/mach-exynos/suspend.c                     | 16 +++--
+ arch/arm/mach-s5pv210/common.h                     |  1 -
+ arch/arm/mach-s5pv210/pm.c                         | 16 +++--
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c       | 16 +++++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 78 +++++++++++++++++++---
+ drivers/pinctrl/samsung/pinctrl-samsung.h          | 11 +++
+ include/linux/soc/samsung/exynos-regs-pmu.h        |  8 ++-
+ 10 files changed, 136 insertions(+), 25 deletions(-)
+
+-- 
+2.14.1
