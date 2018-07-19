@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 01/10] pinctrl: samsung: Define suspend and resume callbacks for all banks and SoCs
-Date: Thu, 19 Jul 2018 18:00:41 +0200
-Message-ID: <20180719160050.22566-2-krzk@kernel.org>
+Subject: [RFT 02/10] pinctrl: samsung: Document suspend and resume members
+Date: Thu, 19 Jul 2018 18:00:42 +0200
+Message-ID: <20180719160050.22566-3-krzk@kernel.org>
 References: <20180719160050.22566-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180719160050.22566-1-krzk@kernel.org>
@@ -9,87 +9,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Suspend and resume callbacks in Exynos/S5Pv210 pin controller drivers,
-save and restore state of registers.  This operations should be done for
-all banks which have external interrupts (as denoted by using
-EXYNOS_PIN_BANK_EINTG/EINTW macros).
-
-Add all banks of Exynos5260 and Exynos5420.
-
-This is necessary step for supporting suspend to RAM.
+Add missing documentation for suspend and resume members of struct
+samsung_pin_ctrl and samsung_pinctrl_drv_data.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/pinctrl/samsung/pinctrl-samsung.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-index d82820fc349a..44c6b753f692 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-@@ -616,16 +616,22 @@ static const struct samsung_pin_ctrl exynos5260_pin_ctrl[] __initconst = {
- 		.nr_banks	= ARRAY_SIZE(exynos5260_pin_banks0),
- 		.eint_gpio_init = exynos_eint_gpio_init,
- 		.eint_wkup_init = exynos_eint_wkup_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 	}, {
- 		/* pin-controller instance 1 data */
- 		.pin_banks	= exynos5260_pin_banks1,
- 		.nr_banks	= ARRAY_SIZE(exynos5260_pin_banks1),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 	}, {
- 		/* pin-controller instance 2 data */
- 		.pin_banks	= exynos5260_pin_banks2,
- 		.nr_banks	= ARRAY_SIZE(exynos5260_pin_banks2),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 	},
- };
- 
-@@ -842,30 +848,40 @@ static const struct samsung_pin_ctrl exynos5420_pin_ctrl[] __initconst = {
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks0),
- 		.eint_gpio_init = exynos_eint_gpio_init,
- 		.eint_wkup_init = exynos_eint_wkup_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos5420_retention_data,
- 	}, {
- 		/* pin-controller instance 1 data */
- 		.pin_banks	= exynos5420_pin_banks1,
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks1),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos5420_retention_data,
- 	}, {
- 		/* pin-controller instance 2 data */
- 		.pin_banks	= exynos5420_pin_banks2,
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks2),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos5420_retention_data,
- 	}, {
- 		/* pin-controller instance 3 data */
- 		.pin_banks	= exynos5420_pin_banks3,
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks3),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos5420_retention_data,
- 	}, {
- 		/* pin-controller instance 4 data */
- 		.pin_banks	= exynos5420_pin_banks4,
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks4),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos4_audio_retention_data,
- 	},
- };
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index f0cda9424dfe..aac16cc8362a 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -223,6 +223,10 @@ struct samsung_retention_data {
+  *	interrupts for the controller.
+  * @eint_wkup_init: platform specific callback to setup the external wakeup
+  *	interrupts for the controller.
++ * @suspend: platform specific suspend callback, executed during pin controller
++ *	device suspend, see samsung_pinctrl_suspend()
++ * @resume: platform specific resume callback, executed during pin controller
++ *	device suspend, see samsung_pinctrl_resume()
+  */
+ struct samsung_pin_ctrl {
+ 	const struct samsung_pin_bank_data *pin_banks;
+@@ -255,6 +259,10 @@ struct samsung_pin_ctrl {
+  * @pin_base: starting system wide pin number.
+  * @nr_pins: number of pins supported by the controller.
+  * @retention_ctrl: retention control runtime data.
++ * @suspend: platform specific suspend callback, executed during pin controller
++ *	device suspend, see samsung_pinctrl_suspend()
++ * @resume: platform specific resume callback, executed during pin controller
++ *	device suspend, see samsung_pinctrl_resume()
+  */
+ struct samsung_pinctrl_drv_data {
+ 	struct list_head		node;
 -- 
 2.14.1
