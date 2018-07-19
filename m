@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 09/10] ARM: exynos: Remove legacy setting of external wakeup interrupts
-Date: Thu, 19 Jul 2018 18:00:49 +0200
-Message-ID: <20180719160050.22566-10-krzk@kernel.org>
+Subject: [RFT 10/10] pinctrl: samsung: Remove legacy API for handling external wakeup interrupts mask
+Date: Thu, 19 Jul 2018 18:00:50 +0200
+Message-ID: <20180719160050.22566-11-krzk@kernel.org>
 References: <20180719160050.22566-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180719160050.22566-1-krzk@kernel.org>
@@ -9,77 +9,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Since Exynos/S5Pv210 pin-controller driver is taking care about setting
-the external wakeup interrupts mask, the legacy code can be removed.
+Remove the legacy, ugly API of exposing the static value of external
+wakeup interrupts mask, because all arch-machine users where converted
+to use generic implementation from pinctrl driver.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/mach-exynos/common.h  |  2 --
- arch/arm/mach-exynos/suspend.c | 16 ++++++++++++----
- 2 files changed, 12 insertions(+), 6 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index dcd21bb95e3b..035e51c5f0fc 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -113,8 +113,6 @@ void exynos_firmware_init(void);
- void exynos_set_boot_flag(unsigned int cpu, unsigned int mode);
- void exynos_clear_boot_flag(unsigned int cpu, unsigned int mode);
- 
--extern u32 exynos_get_eint_wake_mask(void);
--
- #ifdef CONFIG_PM_SLEEP
- extern void __init exynos_pm_init(void);
- #else
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 991938e19e17..554d6ea2cb3c 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -88,6 +88,11 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
- 	{ /* sentinel */ },
- };
- 
-+static u32 exynos_read_eint_wakeup_mask(void)
-+{
-+	return pmu_raw_readl(EXYNOS_EINT_WAKEUP_MASK);
-+}
-+
- static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
- {
- 	const struct exynos_wkup_irq *wkup_irq;
-@@ -271,8 +276,10 @@ static int exynos5420_cpu_suspend(unsigned long arg)
- 
- static void exynos_pm_set_wakeup_mask(void)
- {
--	/* Set wake-up mask registers */
--	pmu_raw_writel(exynos_get_eint_wake_mask(), EXYNOS_EINT_WAKEUP_MASK);
-+	/*
-+	 * Set wake-up mask registers
-+	 * EXYNOS_EINT_WAKEUP_MASK is set by pinctrl driver in late suspend.
-+	 */
- 	pmu_raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 40ef14956876..eec174a65c6f 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -325,13 +325,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
+ 	return ret;
  }
  
-@@ -482,6 +489,7 @@ static void exynos5420_pm_resume(void)
- 
- static int exynos_suspend_enter(suspend_state_t state)
+-static u32 exynos_eint_wake_mask = 0xffffffff;
+-
+-u32 exynos_get_eint_wake_mask(void)
+-{
+-	return exynos_eint_wake_mask;
+-}
+-
+ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
  {
-+	u32 eint_wakeup_mask = exynos_read_eint_wakeup_mask();
- 	int ret;
+ 	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
+@@ -342,10 +335,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
+ 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
  
- 	s3c_pm_debug_init();
-@@ -489,10 +497,10 @@ static int exynos_suspend_enter(suspend_state_t state)
- 	S3C_PMDBG("%s: suspending the system...\n", __func__);
+ 	if (!on)
+-		exynos_eint_wake_mask |= bit;
++		our_chip->eint_wake_mask_value |= bit;
+ 	else
+-		exynos_eint_wake_mask &= ~bit;
+-	our_chip->eint_wake_mask_value = exynos_eint_wake_mask;
++		our_chip->eint_wake_mask_value &= ~bit;
  
- 	S3C_PMDBG("%s: wakeup masks: %08x,%08x\n", __func__,
--			exynos_irqwake_intmask, exynos_get_eint_wake_mask());
-+		  exynos_irqwake_intmask, eint_wakeup_mask);
- 
- 	if (exynos_irqwake_intmask == -1U
--	    && exynos_get_eint_wake_mask() == -1U) {
-+	    && eint_wakeup_mask == EXYNOS_EINT_WAKEUP_MASK_DISABLED) {
- 		pr_err("%s: No wake-up sources!\n", __func__);
- 		pr_err("%s: Aborting sleep\n", __func__);
- 		return -EINVAL;
+ 	return 0;
+ }
 -- 
 2.14.1
