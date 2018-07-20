@@ -1,53 +1,65 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 10/10] pinctrl: samsung: Remove legacy API for handling external wakeup interrupts mask
-Date: Thu, 19 Jul 2018 18:00:50 +0200
-Message-ID: <20180719160050.22566-11-krzk@kernel.org>
-References: <20180719160050.22566-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180719160050.22566-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
+Subject: [PATCH 00/10] Add helper for plane reset
+Date: Fri, 20 Jul 2018 22:14:59 +0100
+Message-ID: <20180720211509.23605-1-alexandru-cosmin.gheorghe@arm.com>
+References: <20180713161407.GQ20303@art_vandelay>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180713161407.GQ20303@art_vandelay>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: seanpaul@chromium.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, liviu.dudau@arm.com, brian.starkey@arm.com, malidp@foss.arm.com, ville.syrjala@linux.intel.com, daniel@ffwll.ch, gustavo@padovan.org, maarten.lankhorst@linux.intel.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, harry.wentland@amd.com, andrey.grodzovsky@amd.com, Tony.Cheng@amd.com, sunpeng.li@amd.com, shirish.s@amd.com, boris.brezillon@bootlin.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, p.zabel@pengutronix.de, laurent.pinchart@ideasonboard.com, maxime.ripard@bootlin.com, wens@csie.org, eric@anholt.net, linux-graphics-maintainer@vmware.com, syeh@
+Cc: nd@arm.com, Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Remove the legacy, ugly API of exposing the static value of external
-wakeup interrupts mask, because all arch-machine users where converted
-to use generic implementation from pinctrl driver.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 40ef14956876..eec174a65c6f 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -325,13 +325,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 	return ret;
- }
- 
--static u32 exynos_eint_wake_mask = 0xffffffff;
--
--u32 exynos_get_eint_wake_mask(void)
--{
--	return exynos_eint_wake_mask;
--}
--
- static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- {
- 	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
-@@ -342,10 +335,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
- 
- 	if (!on)
--		exynos_eint_wake_mask |= bit;
-+		our_chip->eint_wake_mask_value |= bit;
- 	else
--		exynos_eint_wake_mask &= ~bit;
--	our_chip->eint_wake_mask_value = exynos_eint_wake_mask;
-+		our_chip->eint_wake_mask_value &= ~bit;
- 
- 	return 0;
- }
--- 
-2.14.1
+RHJpdmVycyB0aGF0IHN1YmNsYXNzIGRybV9wbGFuZSBuZWVkIHRvIGNvcHkgdGhlIGxvZ2ljIGZv
+ciBsaW5raW5nIHRoZQpkcm1fcGxhbmUgd2l0aCBpdHMgc3RhdGUgYW5kIHRvIGluaXRpYWxpemUg
+Y29yZSBwcm9wZXJ0aWVzIHRvIHRoZWlyCmRlZmF1bHQgdmFsdWVzLiBFLmcgKGFscGhhIGFuZCBy
+b3RhdGlvbikKCkhhdmluZyBhIGhlbHBlciB0byByZXNldCB0aGUgcGxhbmVfc3RhdGUgbWFrZXMg
+c2Vuc2UgYmVjYXVzZSBvZiBtdWx0aXBsZQpyZWFzb25zOgoxLiBFbGltaW5hdGUgY29kZSBkdXBs
+aWNhdGlvbi4KMi4gQWRkIGEgc2luZ2xlIHBsYWNlIGZvciBpbml0aWFsaXppbmcgY29yZSBwcm9w
+ZXJ0aWVzIHRvIHRoZWlyCmRlZmF1bHQgdmFsdWVzLCBubyBuZWVkIGZvciBkcml2ZXIgdG8gZG8g
+aXQgaWYgd2hhdCB0aGUgaGVscGVyIHNldHMKbWFrZXMgc2Vuc2UgZm9yIHRoZW0uCjMuIE5vIG5l
+ZWQgdG8gZGVidWcgdGhlIGRyaXZlciB3aGVuIHlvdSBlbmFibGUgYSBjb3JlIHByb3BlcnR5IGFu
+ZApvYnNlcnZlIGl0IGRvZXNuJ3QgaGF2ZSBhIHByb3BlciBkZWZhdWx0IHZhbHVlLgoKVGVzdGVk
+IHdpdGggbWFsaS1kcCB0aGUgb3RoZXIgZHJpdmVycyBhcmUganVzdCBidWlsdC10ZXN0ZWQuCgoK
+QWxleGFuZHJ1IEdoZW9yZ2hlICgxMCk6CiAgZHJtL2F0b21pYzogQWRkICBfX2RybV9hdG9taWNf
+aGVscGVyX3BsYW5lX3Jlc2V0CiAgZHJtL2FtZC9kaXNwbGF5OiBVc2UgX19kcm1fYXRvbWljX2hl
+bHBlcl9wbGFuZV9yZXNldCBpbnN0ZWFkIG9mCiAgICBjb3B5aW5nIHRoZSBsb2dpYwogIGRybTog
+bWFsaS1kcDogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQgaW5zdGVhZCBvZiBj
+b3B5aW5nCiAgICB0aGUgbG9naWMKICBkcm06IGF0bWVsLWhsY2RjOiBVc2UgX19kcm1fYXRvbWlj
+X2hlbHBlcl9wbGFuZV9yZXNldCBpbnN0ZWFkIG9mCiAgICBjb3B5aW5nIHRoZSBsb2dpYwogIGRy
+bS9leHlub3M6IFVzZSBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0IGluc3RlYWQgb2Yg
+Y29weWluZyB0aGUKICAgIGxvZ2ljCiAgZHJtL2lteDogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJf
+cGxhbmVfcmVzZXQgaW5zdGVhZCBvZiBjb3B5aW5nIHRoZQogICAgbG9naWMKICBkcm06IHJjYXIt
+ZHU6IFVzZSBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0IGluc3RlYWQgb2YgY29weWlu
+ZwogICAgdGhlIGxvZ2ljCiAgZHJtL3N1bjRpOiBVc2UgX19kcm1fYXRvbWljX2hlbHBlcl9wbGFu
+ZV9yZXNldCBpbnN0ZWFkIG9mIGNvcHlpbmcgdGhlCiAgICBsb2dpYwogIGRybS92YzQ6IFVzZSBf
+X2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0IGluc3RlYWQgb2YgY29weWluZyB0aGUKICAg
+IGxvZ2ljCiAgZHJtL3Ztd2dmeDogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQg
+aW5zdGVhZCBvZiBjb3B5aW5nIHRoZQogICAgbG9naWMKCiAuLi4vZ3B1L2RybS9hbWQvZGlzcGxh
+eS9hbWRncHVfZG0vYW1kZ3B1X2RtLmMgfCAgNyArKy0tCiBkcml2ZXJzL2dwdS9kcm0vYXJtL21h
+bGlkcF9wbGFuZXMuYyAgICAgICAgICAgfCAgNyArKy0tCiAuLi4vZ3B1L2RybS9hdG1lbC1obGNk
+Yy9hdG1lbF9obGNkY19wbGFuZS5jICAgfCAgNSArLS0KIGRyaXZlcnMvZ3B1L2RybS9kcm1fYXRv
+bWljX2hlbHBlci5jICAgICAgICAgICB8IDMyICsrKysrKysrKysrKystLS0tLS0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgICB8ICAzICstCiBkcml2ZXJzL2dw
+dS9kcm0vaW14L2lwdXYzLXBsYW5lLmMgICAgICAgICAgICAgfCAgOCArKy0tLQogZHJpdmVycy9n
+cHUvZHJtL3JjYXItZHUvcmNhcl9kdV9wbGFuZS5jICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dw
+dS9kcm0vcmNhci1kdS9yY2FyX2R1X3ZzcC5jICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1
+L2RybS9zdW40aS9zdW40aV9sYXllci5jICAgICAgICAgICB8ICA0ICstLQogZHJpdmVycy9ncHUv
+ZHJtL3ZjNC92YzRfcGxhbmUuYyAgICAgICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9k
+cm0vdm13Z2Z4L3Ztd2dmeF9rbXMuYyAgICAgICAgICAgfCAgNCArLS0KIGluY2x1ZGUvZHJtL2Ry
+bV9hdG9taWNfaGVscGVyLmggICAgICAgICAgICAgICB8ICAyICsrCiAxMiBmaWxlcyBjaGFuZ2Vk
+LCAzOSBpbnNlcnRpb25zKCspLCA0NSBkZWxldGlvbnMoLSkKCi0tIAoyLjE4LjAKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
