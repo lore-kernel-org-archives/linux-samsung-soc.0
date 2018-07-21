@@ -1,7 +1,7 @@
 From: Simon Shields <simon@lineageos.org>
-Subject: [PATCH 3/5] ARM: dts: exynos: add pinctrl for midas fuelgauge irq pin
-Date: Sat, 21 Jul 2018 22:50:51 +1000
-Message-ID: <20180721125128.31498-4-simon@lineageos.org>
+Subject: [PATCH 4/5] ARM: dts: exynos: configure max77686 IRQ pin on midas
+Date: Sat, 21 Jul 2018 22:50:52 +1000
+Message-ID: <20180721125128.31498-5-simon@lineageos.org>
 References: <20180721125128.31498-1-simon@lineageos.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180721125128.31498-1-simon@lineageos.org>
@@ -10,8 +10,8 @@ To: linux-samsung-soc@vger.kernel.org
 Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This pin is externally pulled up, so we should disable the SoC's
-pull down resistor in order for the interrupt to function properly.
+This pin is externally pulled up, so we need to disable the
+SoC's internal pull-down.
 
 Signed-off-by: Simon Shields <simon@lineageos.org>
 ---
@@ -19,29 +19,29 @@ Signed-off-by: Simon Shields <simon@lineageos.org>
  1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index 6f7b564905ab..6a6364a9debd 100644
+index 6a6364a9debd..d69bc3c2d0ff 100644
 --- a/arch/arm/boot/dts/exynos4412-midas.dtsi
 +++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -206,6 +206,8 @@
- 			compatible = "maxim,max17047";
- 			interrupt-parent = <&gpx2>;
- 			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&max77693_fuel_irq>;
- 			reg = <0x36>;
+@@ -685,6 +685,8 @@
+ 		compatible = "maxim,max77686";
+ 		interrupt-parent = <&gpx0>;
+ 		interrupts = <7 IRQ_TYPE_NONE>;
++		pinctrl-0 = <&max77686_irq>;
++		pinctrl-names = "default";
+ 		reg = <0x09>;
+ 		#clock-cells = <1>;
  
- 			maxim,over-heat-temp = <700>;
-@@ -1138,6 +1140,11 @@
+@@ -1135,6 +1137,11 @@
  		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
  	};
  
-+	max77693_fuel_irq: max77693-fuel-irq {
-+		samsung,pins = "gpx2-3";
++	max77686_irq: max77686-irq {
++		samsung,pins = "gpx0-7";
 +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
 +	};
 +
- 	hdmi_hpd: hdmi-hpd {
- 		samsung,pins = "gpx3-7";
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+ 	max77693_irq: max77693-irq {
+ 		samsung,pins = "gpx1-5";
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
 -- 
 2.18.0
