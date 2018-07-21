@@ -1,27 +1,48 @@
 From: Simon Shields <simon@lineageos.org>
-Subject: [PATCH 0/5] midas: fix IRQ pin configuration
-Date: Sat, 21 Jul 2018 22:50:48 +1000
-Message-ID: <20180721125128.31498-1-simon@lineageos.org>
+Subject: [PATCH 1/5] ARM: dts: exynos: add max77693 pinctrl config for midas
+Date: Sat, 21 Jul 2018 22:50:49 +1000
+Message-ID: <20180721125128.31498-2-simon@lineageos.org>
+References: <20180721125128.31498-1-simon@lineageos.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180721125128.31498-1-simon@lineageos.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series disables the internal pull-up/down resistors
-for IRQ lines which are pulled up externally. Without these patches the
-associated IRQs never fire if the bootloader hasn't configured the pins
-correctly.
+Currently, we assume that the bootloader has correctly configured
+the interrupt pin for max77693. This might not actually be the case -
+so it's better to configure it explicitly.
 
-Simon Shields (5):
-  ARM: dts: exynos: add max77693 pinctrl config for midas
-  ARM: dts: exynos: add pinctrl config for midas keys
-  ARM: dts: exynos: add pinctrl for midas fuelgauge irq pin
-  ARM: dts: exynos: configure max77686 IRQ pin on midas
-  ARM: dts: exynos: configure midas SD card CD pin
+Signed-off-by: Simon Shields <simon@lineageos.org>
+---
+ arch/arm/boot/dts/exynos4412-midas.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
- arch/arm/boot/dts/exynos4412-midas.dtsi | 35 ++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+index f12372509061..ee7cda1432f7 100644
+--- a/arch/arm/boot/dts/exynos4412-midas.dtsi
++++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+@@ -156,6 +156,8 @@
+ 			compatible = "maxim,max77693";
+ 			interrupt-parent = <&gpx1>;
+ 			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&max77693_irq>;
+ 			reg = <0x66>;
+ 
+ 			regulators {
+@@ -1124,6 +1126,11 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sleep1>;
+ 
++	max77693_irq: max77693-irq {
++		samsung,pins = "gpx1-5";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
++
+ 	hdmi_hpd: hdmi-hpd {
+ 		samsung,pins = "gpx3-7";
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
 -- 
 2.18.0
