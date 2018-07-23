@@ -1,90 +1,112 @@
-From: Ayan Halder <ayan.halder@arm.com>
-Subject: Re: [PATCH 01/10] drm/atomic: Add  __drm_atomic_helper_plane_reset
-Date: Mon, 23 Jul 2018 10:37:57 +0100
-Message-ID: <20180723093757.GB26447@arm.com>
-References: <20180713161407.GQ20303@art_vandelay>
- <20180720211509.23605-1-alexandru-cosmin.gheorghe@arm.com>
- <20180720211509.23605-2-alexandru-cosmin.gheorghe@arm.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [RFC] ARM: exynos: Fix imprecise abort during Exynos5422
+ suspend to RAM
+Date: Mon, 23 Jul 2018 16:24:53 +0200
+Message-ID: <20180723142503eucas1p24f8d96f8c4ec25dbdb80e27e2f1444c2~EBZNDRgPc2952429524eucas1p2C@eucas1p2.samsung.com>
+References: <CGME20180718200005epcas1p1cb2568c593276849c066b3a53f1e971b@epcas1p1.samsung.com>
+        <20180718195929.5852-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20180720211509.23605-2-alexandru-cosmin.gheorghe@arm.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com, thellstrom@vmware.com, krzk@kernel.org, maxime.ripard@bootlin.com, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, boris.brezillon@bootlin.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180718195929.5852-1-krzk@kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBKdWwgMjAsIDIwMTggYXQgMTA6MTU6MDBQTSArMDEwMCwgQWxleGFuZHJ1IEdoZW9y
-Z2hlIHdyb3RlOgo+IFRoZXJlIGFyZSBhIGxvdCBvZiBkcml2ZXJzIHRoYXQgc3ViY2xhc3MgZHJt
-X3BsYW5lX3N0YXRlLCBhbGwgb2YgdGhlbQo+IGR1cGxpY2F0ZSB0aGUgY29kZSB0aGF0IGxpbmtz
-IHRvZ2hldGhlciB0aGUgcGxhbmUgd2l0aCBwbGFuZV9zdGF0ZS4KPiAKPiBPbiB0b3Agb2YgdGhh
-dCwgZHJpdmVycyB0aGF0IGVuYWJsZSBjb3JlIHByb3BlcnRpZXMgYWxzbyBoYXZlIHRvCj4gZHVw
-bGljYXRlIHRoZSBjb2RlIGZvciBpbml0aWFsaXppbmcgdGhlIHByb3BlcnRpZXMgdG8gdGhlaXIg
-ZGVmYXVsdAo+IHZhbHVlcywgd2hpY2ggaW4gYWxsIGNhc2VzIGFyZSB0aGUgc2FtZSBhcyB0aGUg
-ZGVmYXVsdHMgZnJvbSBjb3JlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRydSBHaGVvcmdo
-ZSA8YWxleGFuZHJ1LWNvc21pbi5naGVvcmdoZUBhcm0uY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyB8IDMyICsrKysrKysrKysrKysrKysrKysrKy0tLS0t
-LS0tCj4gIGluY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmggICAgIHwgIDIgKysKPiAgMiBm
-aWxlcyBjaGFuZ2VkLCAyNSBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9kcm1fYXRvbWljX2hlbHBlci5jCj4gaW5kZXggODAwOGE3ZGUyZTEwLi5lMWM2ZjEwMTY1
-MmUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMKPiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYwo+IEBAIC0zNTA3LDYgKzM1
-MDcsMjggQEAgdm9pZCBkcm1fYXRvbWljX2hlbHBlcl9jcnRjX2Rlc3Ryb3lfc3RhdGUoc3RydWN0
-IGRybV9jcnRjICpjcnRjLAo+ICB9Cj4gIEVYUE9SVF9TWU1CT0woZHJtX2F0b21pY19oZWxwZXJf
-Y3J0Y19kZXN0cm95X3N0YXRlKTsKPiAgCj4gKy8qKgo+ICsgKiBfX2RybV9hdG9taWNfaGVscGVy
-X3BsYW5lX3Jlc2V0IC0gcmVzZXRzIHBsYW5lcyBzdGF0ZSB0byBkZWZhdWx0IHZhbHVlcwo+ICsg
-KiBAcGxhbmU6IHBsYW5lIG9iamVjdAo+ICsgKiBAbmV3X3N0YXRlOiBhdG9taWMgcGxhbmUgc3Rh
-dGUKPiArICoKPiArICogSW5pdGlhbGl6ZXMgcGxhbmUgc3RhdGUgdG8gZGVmYXVsdC4gVGhpcyBp
-cyB1c2VmdWwgZm9yIGRyaXZlcnMgdGhhdCBzdWJjbGFzcwo+ICsgKiB0aGUgcGxhbmUgc3RhdGUu
-Cj4gKyAqLwo+ICt2b2lkIF9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQoc3RydWN0IGRy
-bV9wbGFuZSAqcGxhbmUsCj4gKwkJCQkgICAgIHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnN0YXRl
-KQo+ICt7Cj4gKwlpZiAoc3RhdGUpIHsKPiArCQlzdGF0ZS0+cGxhbmUgPSBwbGFuZTsKPiArCQlz
-dGF0ZS0+cm90YXRpb24gPSBEUk1fTU9ERV9ST1RBVEVfMDsKPiArCQkvKiBSZXNldCB0aGUgYWxw
-aGEgdmFsdWUgdG8gZnVsbHkgb3BhcXVlIGlmIGl0IG1hdHRlcnMgKi8KPiArCQlpZiAocGxhbmUt
-PmFscGhhX3Byb3BlcnR5KQo+ICsJCQlzdGF0ZS0+YWxwaGEgPSBwbGFuZS0+YWxwaGFfcHJvcGVy
-dHktPnZhbHVlc1sxXTsKPiArCX0KPiArCXBsYW5lLT5zdGF0ZSA9IHN0YXRlOwo+ICt9Cj4gK0VY
-UE9SVF9TWU1CT0woX19kcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldCk7Cj4gKwo+ICAvKioK
-PiAgICogZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQgLSBkZWZhdWx0ICZkcm1fcGxhbmVf
-ZnVuY3MucmVzZXQgaG9vayBmb3IgcGxhbmVzCj4gICAqIEBwbGFuZTogZHJtIHBsYW5lCj4gQEAg
-LTM1MjEsMTUgKzM1NDMsNyBAQCB2b2lkIGRybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0KHN0
-cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQo+ICAKPiAgCWtmcmVlKHBsYW5lLT5zdGF0ZSk7Cj4gIAlw
-bGFuZS0+c3RhdGUgPSBremFsbG9jKHNpemVvZigqcGxhbmUtPnN0YXRlKSwgR0ZQX0tFUk5FTCk7
-Cj4gLQo+IC0JaWYgKHBsYW5lLT5zdGF0ZSkgewo+IC0JCXBsYW5lLT5zdGF0ZS0+cGxhbmUgPSBw
-bGFuZTsKPiAtCQlwbGFuZS0+c3RhdGUtPnJvdGF0aW9uID0gRFJNX01PREVfUk9UQVRFXzA7Cj4g
-LQo+IC0JCS8qIFJlc2V0IHRoZSBhbHBoYSB2YWx1ZSB0byBmdWxseSBvcGFxdWUgaWYgaXQgbWF0
-dGVycyAqLwo+IC0JCWlmIChwbGFuZS0+YWxwaGFfcHJvcGVydHkpCj4gLQkJCXBsYW5lLT5zdGF0
-ZS0+YWxwaGEgPSBwbGFuZS0+YWxwaGFfcHJvcGVydHktPnZhbHVlc1sxXTsKPiAtCX0KPiArCV9f
-ZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQocGxhbmUsIHBsYW5lLT5zdGF0ZSk7Cj4gIH0K
-PiAgRVhQT1JUX1NZTUJPTChkcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldCk7Cj4gIAo+IGRp
-ZmYgLS1naXQgYS9pbmNsdWRlL2RybS9kcm1fYXRvbWljX2hlbHBlci5oIGIvaW5jbHVkZS9kcm0v
-ZHJtX2F0b21pY19oZWxwZXIuaAo+IGluZGV4IDI2YWFiYTU4ZDZjZS4uMmRkNDBjNzYxZGZkIDEw
-MDY0NAo+IC0tLSBhL2luY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmgKPiArKysgYi9pbmNs
-dWRlL2RybS9kcm1fYXRvbWljX2hlbHBlci5oCj4gQEAgLTE1NSw2ICsxNTUsOCBAQCB2b2lkIF9f
-ZHJtX2F0b21pY19oZWxwZXJfY3J0Y19kZXN0cm95X3N0YXRlKHN0cnVjdCBkcm1fY3J0Y19zdGF0
-ZSAqc3RhdGUpOwo+ICB2b2lkIGRybV9hdG9taWNfaGVscGVyX2NydGNfZGVzdHJveV9zdGF0ZShz
-dHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gIAkJCQkJICBzdHJ1Y3QgZHJtX2NydGNfc3RhdGUgKnN0
-YXRlKTsKPiAgCj4gK3ZvaWQgX19kcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldChzdHJ1Y3Qg
-ZHJtX3BsYW5lICpwbGFuZSwKPiArCQkJCSAgICAgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqc3Rh
-dGUpOwo+ICB2b2lkIGRybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0KHN0cnVjdCBkcm1fcGxh
-bmUgKnBsYW5lKTsKPiAgdm9pZCBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX2R1cGxpY2F0ZV9z
-dGF0ZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKPiAgCQkJCQkgICAgICAgc3RydWN0IGRybV9w
-bGFuZV9zdGF0ZSAqc3RhdGUpOwo+IC0tIAo+IDIuMTguMAo+IApXaXRoIG15IGxpbWl0ZWQga25v
-d2xlZGdlIG9uIERSTSwgdGhpcyBsb29rcyBPSyB0byBtZTotClJldmlld2VkLWJ5IDotIEF5YW4g
-S3VtYXIgaGFsZGVyIDxheWFuLmhhbGRlckBhcm0uY29tPgo+IF9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbApfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Krzysztof,
+
+On 2018-07-18 21:59, Krzysztof Kozlowski wrote:
+> Suspend to RAM on Odroid XU3/XU4/HC1 family (Exynos5422) causes
+> imprecise abort:
+>
+> 	PM: Syncing filesystems ... done.
+> 	Freezing user space processes ... (elapsed 0.003 seconds) done.
+> 	OOM killer disabled.
+> 	Freezing remaining freezable tasks ... (elapsed 0.003 seconds) done.
+> 	wake enabled for irq 139
+> 	Disabling non-boot CPUs ...
+> 	IRQ51 no longer affine to CPU1
+> 	IRQ52 no longer affine to CPU2
+> 	IRQ53 no longer affine to CPU3
+> 	IRQ54 no longer affine to CPU4
+> 	IRQ55 no longer affine to CPU5
+> 	IRQ56 no longer affine to CPU6
+> 	cpu cpu4: Dropping the link to regulator.40
+> 	IRQ57 no longer affine to CPU7
+> 	Unhandled fault: external abort on non-linefetch (0x1008) at 0xf081a028
+> 	Internal error: : 1008 [#1] PREEMPT SMP ARM
+>
+> with last call trace in exynos_suspend_enter().
+>
+> The abort is caused by writing to register in secure part of sysram.
+> All Exynos5422 devices, including Hardkernel Odroid boards, boot with
+> TrustZone in non-secure mode therefore they should access non-secure
+> sysram.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> ---
+>
+> Comments, whether my understanding is correct, are welcomed!
+
+The decision, weather to use secure or non-secure sysram depends on the
+enabled TrustZone interface IMHO. Exynos5420 PeachPIT and Exynos5800 PeachPI
+don't use TrustZone and don't have 'firmware' node in dts, thus they should
+keep existing code.
+
+> ---
+>   Documentation/arm/Samsung/Bootloader-interface.txt | 1 +
+>   arch/arm/mach-exynos/suspend.c                     | 6 +++---
+>   2 files changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/arm/Samsung/Bootloader-interface.txt b/Documentation/arm/Samsung/Bootloader-interface.txt
+> index ed494ac0beb2..d17ed518a7ea 100644
+> --- a/Documentation/arm/Samsung/Bootloader-interface.txt
+> +++ b/Documentation/arm/Samsung/Bootloader-interface.txt
+> @@ -26,6 +26,7 @@ Offset        Value                                        Purpose
+>   0x20          0xfcba0d10 (Magic cookie)                    AFTR
+>   0x24          exynos_cpu_resume_ns                         AFTR
+>   0x28 + 4*cpu  0x8 (Magic cookie, Exynos3250)               AFTR
+> +0x28          0x0 or last value during resume (Exynos542x) System suspend
+>   
+>   
+>   2. Secure mode
+> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> index d3db306a5a70..0ec52f442b97 100644
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -256,7 +256,7 @@ static int exynos5420_cpu_suspend(unsigned long arg)
+>   	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>   	unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>   
+> -	writel_relaxed(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
+> +	writel_relaxed(0x0, sysram_ns_base_addr + EXYNOS5420_CPU_STATE);
+>   
+>   	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM)) {
+>   		mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
+> @@ -328,7 +328,7 @@ static void exynos5420_pm_prepare(void)
+>   	 * needs to restore it back in case, the primary cpu fails to
+>   	 * suspend for any reason.
+>   	 */
+> -	exynos5420_cpu_state = readl_relaxed(sysram_base_addr +
+> +	exynos5420_cpu_state = readl_relaxed(sysram_ns_base_addr +
+>   					     EXYNOS5420_CPU_STATE);
+>   
+>   	exynos_pm_enter_sleep_mode();
+> @@ -448,7 +448,7 @@ static void exynos5420_pm_resume(void)
+>   
+>   	/* Restore the sysram cpu state register */
+>   	writel_relaxed(exynos5420_cpu_state,
+> -		       sysram_base_addr + EXYNOS5420_CPU_STATE);
+> +		       sysram_ns_base_addr + EXYNOS5420_CPU_STATE);
+>   
+>   	pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
+>   			S5P_CENTRAL_SEQ_OPTION);
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
