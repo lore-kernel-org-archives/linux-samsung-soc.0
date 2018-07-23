@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT v2 03/10] pinctrl: samsung: Document hidden requirement about one external wakeup
-Date: Mon, 23 Jul 2018 19:52:55 +0200
-Message-ID: <20180723175302.22535-4-krzk@kernel.org>
+Subject: [RFT v2 04/10] pinctrl: samsung: Add dedicated compatible for S5Pv210 wakeup interrupts
+Date: Mon, 23 Jul 2018 19:52:56 +0200
+Message-ID: <20180723175302.22535-5-krzk@kernel.org>
 References: <20180723175302.22535-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180723175302.22535-1-krzk@kernel.org>
@@ -10,50 +10,69 @@ To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
 Cc: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hardware (S5Pv210 and all Exynos SoCs) provides only 32 external
-interrupts which can wakeup device from deep sleep modes.  On S5Pv210
-these are gph0-gph3.  On all Exynos designs these are gpx0-gpx3.
-There is only one 32-bit register for controlling the external wakeup
-interrupt mask (masking and unmasking waking capability of these
-interrupts).
-
-This lead to implementation in pinctrl driver and machine code which was
-using static memory for storing the mask value and not caring about
-multiple devices of pin controller... because only one pin controller
-device will be handling this.
-
-Since each pin controller node in Device Tree maps onto one device, this
-corresponds to hidden assumption in parsing the Device Tree: external
-wakeup interrupts can be defined only once.  Make this assumption an
-explicit requirement.
+The S5Pv210 external wakeup interrupts differ from Exynos therefore
+separate compatible is needed.  Duplicate existing flavor specific data
+from exynos4210_wkup_irq_chip and add new compatible for S5Pv210.
+At this point this new compatible does not bring anything new and works
+exactly as existing "samsung,exynos4210-wakeup-eint".
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Sylwester Nawrocki <snawrocki@kernel.org>
 Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/pinctrl/samsung-pinctrl.txt    |  2 ++
+ drivers/pinctrl/samsung/pinctrl-exynos.c               | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index 5e00a21de2bf..f7700c9e0d0b 100644
+index f7700c9e0d0b..843a6cbf4774 100644
 --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
 +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -145,8 +145,13 @@ A. External GPIO Interrupts: For supporting external gpio interrupts, the
- 
- B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
-    child node representing the external wakeup interrupt controller should be
--   included in the pin-controller device node. This child node should include
--   the following properties.
-+   included in the pin-controller device node.
+@@ -161,6 +161,8 @@ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
+        found on Samsung S3C2412 and S3C2413 SoCs,
+      - samsung,s3c64xx-wakeup-eint: represents wakeup interrupt controller
+        found on Samsung S3C64xx SoCs,
++     - samsung,s5pv210-wakeup-eint: represents wakeup interrupt controller
++       found on Samsung S5Pv210 SoCs,
+      - samsung,exynos4210-wakeup-eint: represents wakeup interrupt controller
+        found on Samsung Exynos4210 and S5PC110/S5PV210 SoCs.
+      - samsung,exynos7-wakeup-eint: represents wakeup interrupt controller
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index a263ddd94945..29d86d704b0c 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -346,6 +346,22 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
+ /*
+  * irq_chip for wakeup interrupts
+  */
++static const struct exynos_irq_chip s5pv210_wkup_irq_chip __initconst = {
++	.chip = {
++		.name = "s5pv210_wkup_irq_chip",
++		.irq_unmask = exynos_irq_unmask,
++		.irq_mask = exynos_irq_mask,
++		.irq_ack = exynos_irq_ack,
++		.irq_set_type = exynos_irq_set_type,
++		.irq_set_wake = exynos_wkup_irq_set_wake,
++		.irq_request_resources = exynos_irq_request_resources,
++		.irq_release_resources = exynos_irq_release_resources,
++	},
++	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
++	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
++	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
++};
 +
-+   Only one pin-controller device node can include external wakeup interrupts
-+   child node (in other words, only one External Wakeup Interrupts
-+   pin-controller is supported).
-+
-+   This child node should include following properties:
+ static const struct exynos_irq_chip exynos4210_wkup_irq_chip __initconst = {
+ 	.chip = {
+ 		.name = "exynos4210_wkup_irq_chip",
+@@ -380,6 +396,8 @@ static const struct exynos_irq_chip exynos7_wkup_irq_chip __initconst = {
  
-    - compatible: identifies the type of the external wakeup interrupt controller
-      The possible values are:
+ /* list of external wakeup controllers supported */
+ static const struct of_device_id exynos_wkup_irq_ids[] = {
++	{ .compatible = "samsung,s5pv210-wakeup-eint",
++			.data = &s5pv210_wkup_irq_chip },
+ 	{ .compatible = "samsung,exynos4210-wakeup-eint",
+ 			.data = &exynos4210_wkup_irq_chip },
+ 	{ .compatible = "samsung,exynos7-wakeup-eint",
 -- 
 2.14.1
