@@ -1,57 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT v2 10/10] pinctrl: samsung: Remove legacy API for handling external wakeup interrupts mask
-Date: Mon, 23 Jul 2018 19:53:02 +0200
-Message-ID: <20180723175302.22535-11-krzk@kernel.org>
-References: <20180723175302.22535-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180723175302.22535-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+From: Sinclair Yeh <syeh@vmware.com>
+Subject: Re: [PATCH 10/10] drm/vmwgfx: Use __drm_atomic_helper_plane_reset
+ instead of copying the logic
+Date: Mon, 23 Jul 2018 11:02:07 -0700
+Message-ID: <20180723180206.GA4877@promb-2n-dhcp82.eng.vmware.com>
+References: <20180713161407.GQ20303@art_vandelay>
+ <20180720211509.23605-1-alexandru-cosmin.gheorghe@arm.com>
+ <20180720211509.23605-11-alexandru-cosmin.gheorghe@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180720211509.23605-11-alexandru-cosmin.gheorghe@arm.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
+Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com, thellstrom@vmware.com, krzk@kernel.org, maxime.ripard@bootlin.com, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, boris.brezillon@bootlin.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Remove the legacy, ugly API of exposing the static value of external
-wakeup interrupts mask, because all arch-machine users where converted
-to use generic implementation from pinctrl driver.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 40ef14956876..eec174a65c6f 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -325,13 +325,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 	return ret;
- }
- 
--static u32 exynos_eint_wake_mask = 0xffffffff;
--
--u32 exynos_get_eint_wake_mask(void)
--{
--	return exynos_eint_wake_mask;
--}
--
- static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- {
- 	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
-@@ -342,10 +335,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
- 
- 	if (!on)
--		exynos_eint_wake_mask |= bit;
-+		our_chip->eint_wake_mask_value |= bit;
- 	else
--		exynos_eint_wake_mask &= ~bit;
--	our_chip->eint_wake_mask_value = exynos_eint_wake_mask;
-+		our_chip->eint_wake_mask_value &= ~bit;
- 
- 	return 0;
- }
--- 
-2.14.1
+SGVsbG8gQWxleCwKCm90aGVyIHRoYW4gYWRkaW5nIGEgYnJpZWYgY29tbWl0IG1lc3NhZ2UgdG8g
+dGhpcyBwYXRjaCwKClJldmlld2VkLWJ5OiBTaW5jbGFpciBZZWggPHN5ZWhAdm13YXJlLmNvbT4K
+Ck9uIEZyaSwgSnVsIDIwLCAyMDE4IGF0IDEwOjE1OjA5UE0gKzAxMDAsIEFsZXhhbmRydSBHaGVv
+cmdoZSB3cm90ZToKPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcnUgR2hlb3JnaGUgPGFsZXhhbmRy
+dS1jb3NtaW4uZ2hlb3JnaGVAYXJtLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3Ztd2dm
+eC92bXdnZnhfa21zLmMgfCA0ICstLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCsp
+LCAzIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4
+L3Ztd2dmeF9rbXMuYyBiL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2ttcy5jCj4gaW5k
+ZXggNDY2MzM2YjM0ZmZmLi4xZTBmYjNjNzliNTAgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL3Ztd2dmeC92bXdnZnhfa21zLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Zt
+d2dmeF9rbXMuYwo+IEBAIC03MjAsOSArNzIwLDcgQEAgdm9pZCB2bXdfZHVfcGxhbmVfcmVzZXQo
+c3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCj4gIAkJcmV0dXJuOwo+ICAJfQo+ICAKPiAtCXBsYW5l
+LT5zdGF0ZSA9ICZ2cHMtPmJhc2U7Cj4gLQlwbGFuZS0+c3RhdGUtPnBsYW5lID0gcGxhbmU7Cj4g
+LQlwbGFuZS0+c3RhdGUtPnJvdGF0aW9uID0gRFJNX01PREVfUk9UQVRFXzA7Cj4gKwlfX2RybV9h
+dG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0KHBsYW5lLCAmdnBzLT5iYXNlKTsKPiAgfQo+ICAKPiAg
+Cj4gLS0gCj4gMi4xOC4wCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
