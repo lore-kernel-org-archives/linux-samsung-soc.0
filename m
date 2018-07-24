@@ -1,46 +1,160 @@
-From: Sinclair Yeh <syeh@vmware.com>
-Subject: Re: [PATCH 10/10] drm/vmwgfx: Use __drm_atomic_helper_plane_reset
- instead of copying the logic
-Date: Mon, 23 Jul 2018 11:02:07 -0700
-Message-ID: <20180723180206.GA4877@promb-2n-dhcp82.eng.vmware.com>
-References: <20180713161407.GQ20303@art_vandelay>
- <20180720211509.23605-1-alexandru-cosmin.gheorghe@arm.com>
- <20180720211509.23605-11-alexandru-cosmin.gheorghe@arm.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] gpu/drm/exynos: Convert
+ drm_atomic_helper_suspend/resume()
+Date: Tue, 24 Jul 2018 15:24:58 +0900
+Message-ID: <20180724062459epcas1p1bf9f47eaccd54be8a8f9e18a18d23550~EOfVjI_Gy1414414144epcas1p1q@epcas1p1.samsung.com>
+References: <CGME20180718204725epcas3p1b98f118ad386fbb551ba1f4c10ac2531@epcas3p1.samsung.com>
+        <20180718204957.GA14132@jordon-HP-15-Notebook-PC>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20180720211509.23605-11-alexandru-cosmin.gheorghe@arm.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com, thellstrom@vmware.com, krzk@kernel.org, maxime.ripard@bootlin.com, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, boris.brezillon@bootlin.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180718204957.GA14132@jordon-HP-15-Notebook-PC>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Souptick Joarder <jrdr.linux@gmail.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, ajitn.linux@gmail.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gQWxleCwKCm90aGVyIHRoYW4gYWRkaW5nIGEgYnJpZWYgY29tbWl0IG1lc3NhZ2UgdG8g
-dGhpcyBwYXRjaCwKClJldmlld2VkLWJ5OiBTaW5jbGFpciBZZWggPHN5ZWhAdm13YXJlLmNvbT4K
-Ck9uIEZyaSwgSnVsIDIwLCAyMDE4IGF0IDEwOjE1OjA5UE0gKzAxMDAsIEFsZXhhbmRydSBHaGVv
-cmdoZSB3cm90ZToKPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcnUgR2hlb3JnaGUgPGFsZXhhbmRy
-dS1jb3NtaW4uZ2hlb3JnaGVAYXJtLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3Ztd2dm
-eC92bXdnZnhfa21zLmMgfCA0ICstLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCsp
-LCAzIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4
-L3Ztd2dmeF9rbXMuYyBiL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2ttcy5jCj4gaW5k
-ZXggNDY2MzM2YjM0ZmZmLi4xZTBmYjNjNzliNTAgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL3Ztd2dmeC92bXdnZnhfa21zLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Zt
-d2dmeF9rbXMuYwo+IEBAIC03MjAsOSArNzIwLDcgQEAgdm9pZCB2bXdfZHVfcGxhbmVfcmVzZXQo
-c3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCj4gIAkJcmV0dXJuOwo+ICAJfQo+ICAKPiAtCXBsYW5l
-LT5zdGF0ZSA9ICZ2cHMtPmJhc2U7Cj4gLQlwbGFuZS0+c3RhdGUtPnBsYW5lID0gcGxhbmU7Cj4g
-LQlwbGFuZS0+c3RhdGUtPnJvdGF0aW9uID0gRFJNX01PREVfUk9UQVRFXzA7Cj4gKwlfX2RybV9h
-dG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0KHBsYW5lLCAmdnBzLT5iYXNlKTsKPiAgfQo+ICAKPiAg
-Cj4gLS0gCj4gMi4xOC4wCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Hi,
+
+2018년 07월 19일 05:49에 Souptick Joarder 이(가) 쓴 글:
+> convert drm_atomic_helper_suspend/resume() to use
+> drm_mode_config_helper_suspend/resume().
+> 
+> exynos_drm_fbdev_suspend/resume can be removed
+> as drm_mode_config_helper_suspend/resume has
+> implement the same in generic way.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c   | 32 ++++++++++---------------------
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 ----------------
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
+>  3 files changed, 10 insertions(+), 49 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index a81b4a5..1996ff7 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -151,39 +151,27 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+>  static int exynos_drm_suspend(struct device *dev)
+>  {
+>  	struct drm_device *drm_dev = dev_get_drvdata(dev);
+> -	struct exynos_drm_private *private;
+> +	int ret = 0;
+>  
+> -	if (pm_runtime_suspended(dev) || !drm_dev)
+> -		return 0;
+
+You removes '!drm_dev' not related to this patch.
+
+> +	if (pm_runtime_suspended(dev))
+> +		return ret;
+>  
+> -	private = drm_dev->dev_private;
+> +	ret = drm_mode_config_helper_suspend(drm_dev);
+
+Just return drm_mode_config_helper_suspend(drm_dev);
+
+>  
+> -	drm_kms_helper_poll_disable(drm_dev);
+> -	exynos_drm_fbdev_suspend(drm_dev);
+> -	private->suspend_state = drm_atomic_helper_suspend(drm_dev);
+> -	if (IS_ERR(private->suspend_state)) {
+> -		exynos_drm_fbdev_resume(drm_dev);
+> -		drm_kms_helper_poll_enable(drm_dev);
+> -		return PTR_ERR(private->suspend_state);
+> -	}
+> -
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static int exynos_drm_resume(struct device *dev)
+>  {
+>  	struct drm_device *drm_dev = dev_get_drvdata(dev);
+> -	struct exynos_drm_private *private;
+> +	int ret = 0;
+>  
+> -	if (pm_runtime_suspended(dev) || !drm_dev)
+> -		return 0;
+> +	if (pm_runtime_suspended(dev))
+> +		return ret;
+
+Ditto. You removes '!drm_dev' not related to this patch.
+
+>  
+> -	private = drm_dev->dev_private;
+> -	drm_atomic_helper_resume(drm_dev, private->suspend_state);
+> -	exynos_drm_fbdev_resume(drm_dev);
+> -	drm_kms_helper_poll_enable(drm_dev);
+> +	ret = drm_mode_config_helper_resume(drm_dev);
+
+Ditto. return drm_mode_config_helper_resume(drm_dev);
+
+With this patch, you could remove 'int ret' declaration including one from exynos_drm_suspend.
+
+Thanks,
+Inki Dae
+
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  #endif
+>  
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index 132dd52..918dd2c 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+>  	private->fb_helper = NULL;
+>  }
+>  
+> -void exynos_drm_fbdev_suspend(struct drm_device *dev)
+> -{
+> -	struct exynos_drm_private *private = dev->dev_private;
+> -
+> -	console_lock();
+> -	drm_fb_helper_set_suspend(private->fb_helper, 1);
+> -	console_unlock();
+> -}
+> -
+> -void exynos_drm_fbdev_resume(struct drm_device *dev)
+> -{
+> -	struct exynos_drm_private *private = dev->dev_private;
+> -
+> -	console_lock();
+> -	drm_fb_helper_set_suspend(private->fb_helper, 0);
+> -	console_unlock();
+> -}
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> index b338472..6840b6a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> @@ -19,8 +19,6 @@
+>  
+>  int exynos_drm_fbdev_init(struct drm_device *dev);
+>  void exynos_drm_fbdev_fini(struct drm_device *dev);
+> -void exynos_drm_fbdev_suspend(struct drm_device *drm);
+> -void exynos_drm_fbdev_resume(struct drm_device *drm);
+>  
+>  #else
+>  
+> @@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
+>  
+>  #define exynos_drm_output_poll_changed (NULL)
+>  
+> -static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
+> -{
+> -}
+> -
+> -static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
+> -{
+> -}
+> -
+>  #endif
+>  
+>  #endif
+> 
