@@ -1,19 +1,17 @@
-From: Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>
-Subject: Re: [PATCH 01/10] drm/atomic: Add  __drm_atomic_helper_plane_reset
-Date: Tue, 24 Jul 2018 10:28:52 +0100
-Message-ID: <20180724092852.GA24518@e114479-lin.cambridge.arm.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH 09/10] drm/vc4: Use __drm_atomic_helper_plane_reset
+ instead of copying the logic
+Date: Tue, 24 Jul 2018 14:54:21 +0200
+Message-ID: <20180724125421.zde2qtbeie5zkvpw@flea>
 References: <20180713161407.GQ20303@art_vandelay>
  <20180720211509.23605-1-alexandru-cosmin.gheorghe@arm.com>
- <20180720211509.23605-2-alexandru-cosmin.gheorghe@arm.com>
- <1532418533.4078.2.camel@pengutronix.de>
- <20180724081402.GB22689@e114479-lin.cambridge.arm.com>
- <20180724101656.0f472b0a@bbrezillon>
+ <20180720211509.23605-10-alexandru-cosmin.gheorghe@arm.com>
+ <20180724065720.5bhepamdo57it7nl@flea>
+ <20180724081121.GA22689@e114479-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1285577391=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20180724101656.0f472b0a@bbrezillon>
+In-Reply-To: <20180724081121.GA22689@e114479-lin.cambridge.arm.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -23,63 +21,99 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com, thellstrom@vmware.com, krzk@kernel.org, maxime.ripard@bootlin.com, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
+To: Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>
+Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com, thellstrom@vmware.com, krzk@kernel.org, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, boris.brezillon@bootlin.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCBKdWwgMjQsIDIwMTggYXQgMTA6MTY6NTZBTSArMDIwMCwgQm9yaXMgQnJlemlsbG9u
-IHdyb3RlOgo+IE9uIFR1ZSwgMjQgSnVsIDIwMTggMDk6MTQ6MDIgKzAxMDAKPiBBbGV4YW5kcnUt
-Q29zbWluIEdoZW9yZ2hlIDxBbGV4YW5kcnUtQ29zbWluLkdoZW9yZ2hlQGFybS5jb20+IHdyb3Rl
-Ogo+IAo+ID4gT24gVHVlLCBKdWwgMjQsIDIwMTggYXQgMDk6NDg6NTNBTSArMDIwMCwgUGhpbGlw
-cCBaYWJlbCB3cm90ZToKPiA+ID4gSGkgQWxleGFuZHJ1LAo+ID4gPiAKPiA+ID4gT24gRnJpLCAy
-MDE4LTA3LTIwIGF0IDIyOjE1ICswMTAwLCBBbGV4YW5kcnUgR2hlb3JnaGUgd3JvdGU6ICAKPiA+
-ID4gPiBUaGVyZSBhcmUgYSBsb3Qgb2YgZHJpdmVycyB0aGF0IHN1YmNsYXNzIGRybV9wbGFuZV9z
-dGF0ZSwgYWxsIG9mIHRoZW0KPiA+ID4gPiBkdXBsaWNhdGUgdGhlIGNvZGUgdGhhdCBsaW5rcyB0
-b2doZXRoZXIgdGhlIHBsYW5lIHdpdGggcGxhbmVfc3RhdGUuCj4gPiA+ID4gCj4gPiA+ID4gT24g
-dG9wIG9mIHRoYXQsIGRyaXZlcnMgdGhhdCBlbmFibGUgY29yZSBwcm9wZXJ0aWVzIGFsc28gaGF2
-ZSB0bwo+ID4gPiA+IGR1cGxpY2F0ZSB0aGUgY29kZSBmb3IgaW5pdGlhbGl6aW5nIHRoZSBwcm9w
-ZXJ0aWVzIHRvIHRoZWlyIGRlZmF1bHQKPiA+ID4gPiB2YWx1ZXMsIHdoaWNoIGluIGFsbCBjYXNl
-cyBhcmUgdGhlIHNhbWUgYXMgdGhlIGRlZmF1bHRzIGZyb20gY29yZS4KPiA+ID4gPiAKPiA+ID4g
-PiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcnUgR2hlb3JnaGUgPGFsZXhhbmRydS1jb3NtaW4uZ2hl
-b3JnaGVAYXJtLmNvbT4KPiA+ID4gPiAtLS0KPiA+ID4gPiAgZHJpdmVycy9ncHUvZHJtL2RybV9h
-dG9taWNfaGVscGVyLmMgfCAzMiArKysrKysrKysrKysrKysrKysrKystLS0tLS0tLQo+ID4gPiA+
-ICBpbmNsdWRlL2RybS9kcm1fYXRvbWljX2hlbHBlci5oICAgICB8ICAyICsrCj4gPiA+ID4gIDIg
-ZmlsZXMgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkKPiA+ID4gPiAK
-PiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYwo+ID4gPiA+IGluZGV4IDgwMDhh
-N2RlMmUxMC4uZTFjNmYxMDE2NTJlIDEwMDY0NAo+ID4gPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9kcm1fYXRvbWljX2hlbHBlci5jCj4gPiA+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9h
-dG9taWNfaGVscGVyLmMKPiA+ID4gPiBAQCAtMzUwNyw2ICszNTA3LDI4IEBAIHZvaWQgZHJtX2F0
-b21pY19oZWxwZXJfY3J0Y19kZXN0cm95X3N0YXRlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiA+
-ID4gPiAgfQo+ID4gPiA+ICBFWFBPUlRfU1lNQk9MKGRybV9hdG9taWNfaGVscGVyX2NydGNfZGVz
-dHJveV9zdGF0ZSk7Cj4gPiA+ID4gIAo+ID4gPiA+ICsvKioKPiA+ID4gPiArICogX19kcm1fYXRv
-bWljX2hlbHBlcl9wbGFuZV9yZXNldCAtIHJlc2V0cyBwbGFuZXMgc3RhdGUgdG8gZGVmYXVsdCB2
-YWx1ZXMKPiA+ID4gPiArICogQHBsYW5lOiBwbGFuZSBvYmplY3QKPiA+ID4gPiArICogQG5ld19z
-dGF0ZTogYXRvbWljIHBsYW5lIHN0YXRlCj4gPiA+ID4gKyAqCj4gPiA+ID4gKyAqIEluaXRpYWxp
-emVzIHBsYW5lIHN0YXRlIHRvIGRlZmF1bHQuIFRoaXMgaXMgdXNlZnVsIGZvciBkcml2ZXJzIHRo
-YXQgc3ViY2xhc3MKPiA+ID4gPiArICogdGhlIHBsYW5lIHN0YXRlLgo+ID4gPiA+ICsgKi8KPiA+
-ID4gPiArdm9pZCBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0KHN0cnVjdCBkcm1fcGxh
-bmUgKnBsYW5lLAo+ID4gPiA+ICsJCQkJICAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0
-ZSkKPiA+ID4gPiArewo+ID4gPiA+ICsJaWYgKHN0YXRlKSB7Cj4gPiA+ID4gKwkJc3RhdGUtPnBs
-YW5lID0gcGxhbmU7Cj4gPiA+ID4gKwkJc3RhdGUtPnJvdGF0aW9uID0gRFJNX01PREVfUk9UQVRF
-XzA7Cj4gPiA+ID4gKwkJLyogUmVzZXQgdGhlIGFscGhhIHZhbHVlIHRvIGZ1bGx5IG9wYXF1ZSBp
-ZiBpdCBtYXR0ZXJzICovCj4gPiA+ID4gKwkJaWYgKHBsYW5lLT5hbHBoYV9wcm9wZXJ0eSkKPiA+
-ID4gPiArCQkJc3RhdGUtPmFscGhhID0gcGxhbmUtPmFscGhhX3Byb3BlcnR5LT52YWx1ZXNbMV07
-Cj4gPiA+ID4gKwl9ICAKPiA+ID4gCj4gPiA+IElzIHRoaXMgZnVuY3Rpb24gc3VwcG9zZWQgdG8g
-YmUgY2FsbGFibGUgd2l0aCBzdGF0ZSA9PSBOVUxMID8KPiA+ID4gICAKPiA+ID4gPiArCXBsYW5l
-LT5zdGF0ZSA9IHN0YXRlOyAgCj4gPiA+IAo+ID4gPiBJZiBzbywgdGhlIGNvbW1lbnQgY291bGQg
-bWVudGlvbiB0aGF0IHRoaXMgc2V0cyBwbGFuZS0+c3RhdGUgdG8gTlVMTCBpZgo+ID4gPiBzdGF0
-ZSA9PSBOVUxMLCBhbmQgYSBmZXcgb2YgdGhlIGNhbGwgc2l0ZXMgY291bGQgYmUgc2ltcGxpZmll
-ZC4KPiA+ID4gCj4gPiA+IElmIG5vdCwgSSB3b3VsZCByZW1vdmUgdGhlIGNvbmRpdGlvbmFsIGlm
-IChzdGF0ZSkge30gcGFydCBhbmQgYWxzbwo+ID4gPiBtZW50aW9uIHRoaXMgaW4gdGhlIGNvbW1l
-bnQuICAKPiA+IAo+ID4gWWVzLCBJdCdzIGludGVuZGVkIHRvIGJlIGNhbGxhYmxlIHdpdGggbnVs
-bC4KPiAKPiBNYXkgSSBhc2sgd2h5PyBJJ2QgYXNzdW1lIGRyaXZlcnMgdGhhdCBjYWxsIHRoaXMg
-ZnVuY3Rpb24gdG8gcGFzcyBhCj4gbm9uLU5VTEwgcGxhbmUgc3RhdGUuIFdoYXQncyB0aGUgdXNl
-IGNhc2UgZm9yIHBhc3NpbmcgYSBOVUxMIHN0YXRlIGhlcmU/CgpEcml2ZXJzIGNoZWNrIGl0LCBk
-cm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldCBkb2Vzbid0LgpMb29raW5nIGF0IHRoZSBleGlz
-dGluZyBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lXyogaXQgc2VlbXMgdGhleSBhbGwKYXNzdW1l
-IHN0YXRlIG5vdCBudWxsLCBzbyBJIHRoaW5rIGl0IHByb2JhYmx5IG1ha2VzIG1vcmUgc2Vuc2Ug
-dG8gZG8KdGhhdCBmb3IgdGhpcyBmdW5jdGlvbiBhcyB3ZWxsLgoKLS0gCkNoZWVycywKQWxleCBH
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--===============1285577391==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rceohzw64vwd2bjc"
+Content-Disposition: inline
+
+
+--rceohzw64vwd2bjc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 24, 2018 at 09:11:21AM +0100, Alexandru-Cosmin Gheorghe wrote:
+> Hi Maxime,
+>=20
+> On Tue, Jul 24, 2018 at 08:57:20AM +0200, Maxime Ripard wrote:
+> > On Fri, Jul 20, 2018 at 10:15:08PM +0100, Alexandru Gheorghe wrote:
+> > > Signed-off-by: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
+> > > ---
+> > >  drivers/gpu/drm/vc4/vc4_plane.c | 4 +---
+> > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc=
+4_plane.c
+> > > index 9d7a36f148cf..688ad9bb0f08 100644
+> > > --- a/drivers/gpu/drm/vc4/vc4_plane.c
+> > > +++ b/drivers/gpu/drm/vc4/vc4_plane.c
+> > > @@ -200,9 +200,7 @@ static void vc4_plane_reset(struct drm_plane *pla=
+ne)
+> > >  	if (!vc4_state)
+> > >  		return;
+> > > =20
+> > > -	plane->state =3D &vc4_state->base;
+> > > -	plane->state->alpha =3D DRM_BLEND_ALPHA_OPAQUE;
+> > > -	vc4_state->base.plane =3D plane;
+> > > +	__drm_atomic_helper_plane_reset(plane, &vc4_state->base);
+> >=20
+> > For vc4, rcar-du, atmel-hlcdc and sun4i, you're changing the reset
+> > value of alpha from DRM_BLEND_ALPHA_OPAQUE to
+> > plane->alpha_property->values[1].
+>=20
+> plane->alpha_property->values[1] holds the max value for alpha, and
+> it's initialized by the core to DRM_BLEND_ALPHA_OPAQUE.
+>=20
+> >=20
+> > This might or might not be a good idea, but you should definitely
+> > explain why.
+>=20
+> Would a commit message suffice? Or do you have other ideas?
+
+Yes, that would be enough.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rceohzw64vwd2bjc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltXIXwACgkQ0rTAlCFN
+r3RBlA/9Hcn1N8RLw4MfVjUK4Deew2hMWOsQfIcvH6MiSSb+eOK3De+ahBz+iggB
+6yPgRMhj9TN9iLItmVRNicqP9+OQSCc01c10F8G/KzHGhq44M2FGKc9kiOCJvCQ+
+JN4BReBrXpCBKftXRdgfDemSyhOBJOec8QsMqWoNseqh9iWcSsKlkN1aDQXc+C4B
+l2x1D9Ffi5Ge4xjXbAu6HrS7TR2jgGHlyPonKCIejxzbCIerldSiM0AQdByTzMNa
+rjwOEbxZnINf1d2+IYEYhcPP6RKpWB9YQRa6nPDVmx2i/eD8zxg7uhR6YqK6o/dN
+Vy+WU1pcMqCgoCITizPnjCn8sIyWMZi/YC4MMsNFSjnXfIWDZ2VIsRUR2qLLabJx
+IoSnZxRtwyL+MU0VszFpTXnTIVE3NW8TjcZ9wzdwT9aOIIRc/SHzHqzkpEIu4iO7
+StLAX+p0bcyvrL5SmfuEi/HHA3D6Q4BIjvfMuvILnXRoHwkWjbk58U3XHoJ/ZesH
+dLmfyHWz6+Q45PD+bCKfKrKK0gmLwJzVMqRVQblESpmVDgcElGsnp1/6enbeEC4y
+7HB6DCbXfmWhuiF2QeAqkEcEtZCnnB5wwTHNi6hTb0aybwcpE/W1NCgQX/1JGR7l
+xyBNEKE9CBA9Z8UxGuUxGvjcP41jpZCsVOwOvkaaq5H7Cio/XdI=
+=kUDu
+-----END PGP SIGNATURE-----
+
+--rceohzw64vwd2bjc--
+
+--===============1285577391==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1285577391==--
