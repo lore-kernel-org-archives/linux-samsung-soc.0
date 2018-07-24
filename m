@@ -1,65 +1,86 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] dt-bindings: thermal: samsung: Add SPDX license
- identifier
-Date: Tue, 24 Jul 2018 18:46:35 +0200
-Message-ID: <2442216.oppRSGRAaL@amdc3058>
-References: <CGME20180718200318epcas3p16aed6c1725d6c1e63ea6b1ad209c5756@epcas3p1.samsung.com>
-        <20180718200250.6478-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 2/4] ARM: exynos: Store Exynos5420 register state in one variable
+Date: Tue, 24 Jul 2018 18:49:44 +0200
+Message-ID: <20180724164946.6274-2-krzk@kernel.org>
+References: <20180724164946.6274-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180718200250.6478-1-krzk@kernel.org>
+In-Reply-To: <20180724164946.6274-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Alim Akhtar <alim.akhtar@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Instead of keeping two static variables put them into one struct which
+later can grow.  This will reduce number of file-scope symbols.
 
-Hi,
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On Wednesday, July 18, 2018 10:02:50 PM Krzysztof Kozlowski wrote:
-> Replace GPL license statement with SPDX license identifier (GPL-2.0+).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  include/dt-bindings/thermal/thermal_exynos.h | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
-> 
-> diff --git a/include/dt-bindings/thermal/thermal_exynos.h b/include/dt-bindings/thermal/thermal_exynos.h
-> index 0646500bca69..642e4e7f4084 100644
-> --- a/include/dt-bindings/thermal/thermal_exynos.h
-> +++ b/include/dt-bindings/thermal/thermal_exynos.h
-> @@ -1,19 +1,9 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
+---
 
-This code should be GPL-2.0 only, original license statement is most
-likely result of using wrong file as the source of copy-paste. So I
-would like to have the license fixed first before doing conversion to
-SPDX.
+Changes since v1:
+New patch.
+---
+ arch/arm/mach-exynos/suspend.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
->  /*
->   * thermal_exynos.h - Samsung EXYNOS TMU device tree definitions
->   *
->   *  Copyright (C) 2014 Samsung Electronics
->   *  Lukasz Majewski <l.majewski@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
->   */
->  
->  #ifndef _EXYNOS_THERMAL_TMU_DT_H
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index d3db306a5a70..5d4822e5d0ba 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -59,10 +59,14 @@ struct exynos_pm_data {
+ 	int (*cpu_suspend)(unsigned long);
+ };
+ 
+-static const struct exynos_pm_data *pm_data __ro_after_init;
++/* Used only on Exynos542x/5800 */
++struct exynos_pm_state {
++	int cpu_state;
++	unsigned int pmu_spare3;
++};
+ 
+-static int exynos5420_cpu_state;
+-static unsigned int exynos_pmu_spare3;
++static const struct exynos_pm_data *pm_data __ro_after_init;
++static struct exynos_pm_state pm_state;
+ 
+ /*
+  * GIC wake-up support
+@@ -320,7 +324,7 @@ static void exynos5420_pm_prepare(void)
+ 	/* Set wake-up mask registers */
+ 	exynos_pm_set_wakeup_mask();
+ 
+-	exynos_pmu_spare3 = pmu_raw_readl(S5P_PMU_SPARE3);
++	pm_state.pmu_spare3 = pmu_raw_readl(S5P_PMU_SPARE3);
+ 	/*
+ 	 * The cpu state needs to be saved and restored so that the
+ 	 * secondary CPUs will enter low power start. Though the U-Boot
+@@ -328,8 +332,8 @@ static void exynos5420_pm_prepare(void)
+ 	 * needs to restore it back in case, the primary cpu fails to
+ 	 * suspend for any reason.
+ 	 */
+-	exynos5420_cpu_state = readl_relaxed(sysram_base_addr +
+-					     EXYNOS5420_CPU_STATE);
++	pm_state.cpu_state = readl_relaxed(sysram_base_addr +
++					   EXYNOS5420_CPU_STATE);
+ 
+ 	exynos_pm_enter_sleep_mode();
+ 
+@@ -447,7 +451,7 @@ static void exynos5420_pm_resume(void)
+ 		       EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+ 
+ 	/* Restore the sysram cpu state register */
+-	writel_relaxed(exynos5420_cpu_state,
++	writel_relaxed(pm_state.cpu_state,
+ 		       sysram_base_addr + EXYNOS5420_CPU_STATE);
+ 
+ 	pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
+@@ -456,7 +460,7 @@ static void exynos5420_pm_resume(void)
+ 	if (exynos_pm_central_resume())
+ 		goto early_wakeup;
+ 
+-	pmu_raw_writel(exynos_pmu_spare3, S5P_PMU_SPARE3);
++	pmu_raw_writel(pm_state.pmu_spare3, S5P_PMU_SPARE3);
+ 
+ early_wakeup:
+ 
+-- 
+2.14.1
