@@ -1,181 +1,57 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: Re: [PATCH] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
-Date: Tue, 24 Jul 2018 13:40:31 +0530
-Message-ID: <CAFqt6zbd74zDwTn4ipSBjqsPyTZMMw7_EL_qbLkFohQWA1KVEQ@mail.gmail.com>
-References: <CGME20180718204725epcas3p1b98f118ad386fbb551ba1f4c10ac2531@epcas3p1.samsung.com>
- <20180718204957.GA14132@jordon-HP-15-Notebook-PC> <20180724062459epcas1p1bf9f47eaccd54be8a8f9e18a18d23550~EOfVjI_Gy1414414144epcas1p1q@epcas1p1.samsung.com>
+From: Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>
+Subject: Re: [PATCH 09/10] drm/vc4: Use __drm_atomic_helper_plane_reset
+ instead of copying the logic
+Date: Tue, 24 Jul 2018 09:11:21 +0100
+Message-ID: <20180724081121.GA22689@e114479-lin.cambridge.arm.com>
+References: <20180713161407.GQ20303@art_vandelay>
+ <20180720211509.23605-1-alexandru-cosmin.gheorghe@arm.com>
+ <20180720211509.23605-10-alexandru-cosmin.gheorghe@arm.com>
+ <20180724065720.5bhepamdo57it7nl@flea>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180724062459epcas1p1bf9f47eaccd54be8a8f9e18a18d23550~EOfVjI_Gy1414414144epcas1p1q@epcas1p1.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: jy0922.shim@samsung.com, sw0312.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, Ajit Linux <ajitn.linux@gmail.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180724065720.5bhepamdo57it7nl@flea>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com, thellstrom@vmware.com, krzk@kernel.org, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, boris.brezillon@bootlin.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 11:54 AM, Inki Dae <inki.dae@samsung.com> wrote:
-> Hi,
->
-> 2018=EB=85=84 07=EC=9B=94 19=EC=9D=BC 05:49=EC=97=90 Souptick Joarder =EC=
-=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->> convert drm_atomic_helper_suspend/resume() to use
->> drm_mode_config_helper_suspend/resume().
->>
->> exynos_drm_fbdev_suspend/resume can be removed
->> as drm_mode_config_helper_suspend/resume has
->> implement the same in generic way.
->>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_drv.c   | 32 ++++++++++--------------=
--------
->>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 ----------------
->>  drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
->>  3 files changed, 10 insertions(+), 49 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/e=
-xynos/exynos_drm_drv.c
->> index a81b4a5..1996ff7 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> @@ -151,39 +151,27 @@ static void exynos_drm_postclose(struct drm_device=
- *dev, struct drm_file *file)
->>  static int exynos_drm_suspend(struct device *dev)
->>  {
->>       struct drm_device *drm_dev =3D dev_get_drvdata(dev);
->> -     struct exynos_drm_private *private;
->> +     int ret =3D 0;
->>
->> -     if (pm_runtime_suspended(dev) || !drm_dev)
->> -             return 0;
->
-> You removes '!drm_dev' not related to this patch.
-
-The same has been checked inside drm_mode_config_helper_suspend(),
-so we should avoid double check.
-
->
->> +     if (pm_runtime_suspended(dev))
->> +             return ret;
->>
->> -     private =3D drm_dev->dev_private;
->> +     ret =3D drm_mode_config_helper_suspend(drm_dev);
->
-> Just return drm_mode_config_helper_suspend(drm_dev);
-
- Ok
-
->
->>
->> -     drm_kms_helper_poll_disable(drm_dev);
->> -     exynos_drm_fbdev_suspend(drm_dev);
->> -     private->suspend_state =3D drm_atomic_helper_suspend(drm_dev);
->> -     if (IS_ERR(private->suspend_state)) {
->> -             exynos_drm_fbdev_resume(drm_dev);
->> -             drm_kms_helper_poll_enable(drm_dev);
->> -             return PTR_ERR(private->suspend_state);
->> -     }
->> -
->> -     return 0;
->> +     return ret;
->>  }
->>
->>  static int exynos_drm_resume(struct device *dev)
->>  {
->>       struct drm_device *drm_dev =3D dev_get_drvdata(dev);
->> -     struct exynos_drm_private *private;
->> +     int ret =3D 0;
->>
->> -     if (pm_runtime_suspended(dev) || !drm_dev)
->> -             return 0;
->> +     if (pm_runtime_suspended(dev))
->> +             return ret;
->
-> Ditto. You removes '!drm_dev' not related to this patch.
-
-Same reason mentioned above to remove '!drm_dev'
-
->
->>
->> -     private =3D drm_dev->dev_private;
->> -     drm_atomic_helper_resume(drm_dev, private->suspend_state);
->> -     exynos_drm_fbdev_resume(drm_dev);
->> -     drm_kms_helper_poll_enable(drm_dev);
->> +     ret =3D drm_mode_config_helper_resume(drm_dev);
->
-> Ditto. return drm_mode_config_helper_resume(drm_dev);
->
-> With this patch, you could remove 'int ret' declaration including one fro=
-m exynos_drm_suspend.
-
-Ok, I will add this in v2.
-
->
-> Thanks,
-> Inki Dae
->
->>
->> -     return 0;
->> +     return ret;
->>  }
->>  #endif
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm=
-/exynos/exynos_drm_fbdev.c
->> index 132dd52..918dd2c 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> @@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
->>       private->fb_helper =3D NULL;
->>  }
->>
->> -void exynos_drm_fbdev_suspend(struct drm_device *dev)
->> -{
->> -     struct exynos_drm_private *private =3D dev->dev_private;
->> -
->> -     console_lock();
->> -     drm_fb_helper_set_suspend(private->fb_helper, 1);
->> -     console_unlock();
->> -}
->> -
->> -void exynos_drm_fbdev_resume(struct drm_device *dev)
->> -{
->> -     struct exynos_drm_private *private =3D dev->dev_private;
->> -
->> -     console_lock();
->> -     drm_fb_helper_set_suspend(private->fb_helper, 0);
->> -     console_unlock();
->> -}
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm=
-/exynos/exynos_drm_fbdev.h
->> index b338472..6840b6a 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
->> @@ -19,8 +19,6 @@
->>
->>  int exynos_drm_fbdev_init(struct drm_device *dev);
->>  void exynos_drm_fbdev_fini(struct drm_device *dev);
->> -void exynos_drm_fbdev_suspend(struct drm_device *drm);
->> -void exynos_drm_fbdev_resume(struct drm_device *drm);
->>
->>  #else
->>
->> @@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(stru=
-ct drm_device *dev)
->>
->>  #define exynos_drm_output_poll_changed (NULL)
->>
->> -static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
->> -{
->> -}
->> -
->> -static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
->> -{
->> -}
->> -
->>  #endif
->>
->>  #endif
->>
+SGkgTWF4aW1lLAoKT24gVHVlLCBKdWwgMjQsIDIwMTggYXQgMDg6NTc6MjBBTSArMDIwMCwgTWF4
+aW1lIFJpcGFyZCB3cm90ZToKPiBPbiBGcmksIEp1bCAyMCwgMjAxOCBhdCAxMDoxNTowOFBNICsw
+MTAwLCBBbGV4YW5kcnUgR2hlb3JnaGUgd3JvdGU6Cj4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5k
+cnUgR2hlb3JnaGUgPGFsZXhhbmRydS1jb3NtaW4uZ2hlb3JnaGVAYXJtLmNvbT4KPiA+IC0tLQo+
+ID4gIGRyaXZlcnMvZ3B1L2RybS92YzQvdmM0X3BsYW5lLmMgfCA0ICstLS0KPiA+ICAxIGZpbGUg
+Y2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDMgZGVsZXRpb25zKC0pCj4gPiAKPiA+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL3Zj
+NC92YzRfcGxhbmUuYwo+ID4gaW5kZXggOWQ3YTM2ZjE0OGNmLi42ODhhZDliYjBmMDggMTAwNjQ0
+Cj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9wbGFuZS5jCj4gPiArKysgYi9kcml2
+ZXJzL2dwdS9kcm0vdmM0L3ZjNF9wbGFuZS5jCj4gPiBAQCAtMjAwLDkgKzIwMCw3IEBAIHN0YXRp
+YyB2b2lkIHZjNF9wbGFuZV9yZXNldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSkKPiA+ICAJaWYg
+KCF2YzRfc3RhdGUpCj4gPiAgCQlyZXR1cm47Cj4gPiAgCj4gPiAtCXBsYW5lLT5zdGF0ZSA9ICZ2
+YzRfc3RhdGUtPmJhc2U7Cj4gPiAtCXBsYW5lLT5zdGF0ZS0+YWxwaGEgPSBEUk1fQkxFTkRfQUxQ
+SEFfT1BBUVVFOwo+ID4gLQl2YzRfc3RhdGUtPmJhc2UucGxhbmUgPSBwbGFuZTsKPiA+ICsJX19k
+cm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldChwbGFuZSwgJnZjNF9zdGF0ZS0+YmFzZSk7Cj4g
+Cj4gRm9yIHZjNCwgcmNhci1kdSwgYXRtZWwtaGxjZGMgYW5kIHN1bjRpLCB5b3UncmUgY2hhbmdp
+bmcgdGhlIHJlc2V0Cj4gdmFsdWUgb2YgYWxwaGEgZnJvbSBEUk1fQkxFTkRfQUxQSEFfT1BBUVVF
+IHRvCj4gcGxhbmUtPmFscGhhX3Byb3BlcnR5LT52YWx1ZXNbMV0uCgpwbGFuZS0+YWxwaGFfcHJv
+cGVydHktPnZhbHVlc1sxXSBob2xkcyB0aGUgbWF4IHZhbHVlIGZvciBhbHBoYSwgYW5kCml0J3Mg
+aW5pdGlhbGl6ZWQgYnkgdGhlIGNvcmUgdG8gRFJNX0JMRU5EX0FMUEhBX09QQVFVRS4KCj4gCj4g
+VGhpcyBtaWdodCBvciBtaWdodCBub3QgYmUgYSBnb29kIGlkZWEsIGJ1dCB5b3Ugc2hvdWxkIGRl
+ZmluaXRlbHkKPiBleHBsYWluIHdoeS4KCldvdWxkIGEgY29tbWl0IG1lc3NhZ2Ugc3VmZmljZT8g
+T3IgZG8geW91IGhhdmUgb3RoZXIgaWRlYXM/Cgo+IAo+IE1heGltZQo+IAo+IC0tIAo+IE1heGlt
+ZSBSaXBhcmQsIEJvb3RsaW4gKGZvcm1lcmx5IEZyZWUgRWxlY3Ryb25zKQo+IEVtYmVkZGVkIExp
+bnV4IGFuZCBLZXJuZWwgZW5naW5lZXJpbmcKPiBodHRwczovL2Jvb3RsaW4uY29tCgoKCi0tIApD
+aGVlcnMsCkFsZXggRwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
