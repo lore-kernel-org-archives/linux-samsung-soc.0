@@ -1,72 +1,33 @@
-From: Harry Wentland <harry.wentland@amd.com>
-Subject: Re: [PATCH 00/10] Add helper for plane reset
-Date: Tue, 24 Jul 2018 11:31:26 -0400
-Message-ID: <d4079345-8aee-bd00-d7f9-16c84ce3f4fd@amd.com>
-References: <20180713161407.GQ20303@art_vandelay>
- <20180720211509.23605-1-alexandru-cosmin.gheorghe@arm.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] thermal: samsung: Remove Exynos5440 clock handling
+ left-overs
+Date: Tue, 24 Jul 2018 17:46:59 +0200
+Message-ID: <3064664.tE3uuFXtKN@amdc3058>
+References: <CGME20180717154647epcas2p4285b46d932fbfd04eab2bdf05de8a5b1@epcas2p4.samsung.com>
+        <20180717154617.29913-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180720211509.23605-1-alexandru-cosmin.gheorghe@arm.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>, seanpaul@chromium.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, liviu.dudau@arm.com, brian.starkey@arm.com, malidp@foss.arm.com, ville.syrjala@linux.intel.com, daniel@ffwll.ch, gustavo@padovan.org, maarten.lankhorst@linux.intel.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, andrey.grodzovsky@amd.com, Tony.Cheng@amd.com, sunpeng.li@amd.com, shirish.s@amd.com, boris.brezillon@bootlin.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, p.zabel@pengutronix.de, laurent.pinchart@ideasonboard.com, maxime.ripard@bootlin.com, wens@csie.org, eric@anholt.net, linux-graph
-Cc: nd@arm.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20180717154617.29913-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxOC0wNy0yMCAwNToxNCBQTSwgQWxleGFuZHJ1IEdoZW9yZ2hlIHdyb3RlOgo+IERyaXZl
-cnMgdGhhdCBzdWJjbGFzcyBkcm1fcGxhbmUgbmVlZCB0byBjb3B5IHRoZSBsb2dpYyBmb3IgbGlu
-a2luZyB0aGUKPiBkcm1fcGxhbmUgd2l0aCBpdHMgc3RhdGUgYW5kIHRvIGluaXRpYWxpemUgY29y
-ZSBwcm9wZXJ0aWVzIHRvIHRoZWlyCj4gZGVmYXVsdCB2YWx1ZXMuIEUuZyAoYWxwaGEgYW5kIHJv
-dGF0aW9uKQo+IAo+IEhhdmluZyBhIGhlbHBlciB0byByZXNldCB0aGUgcGxhbmVfc3RhdGUgbWFr
-ZXMgc2Vuc2UgYmVjYXVzZSBvZiBtdWx0aXBsZQo+IHJlYXNvbnM6Cj4gMS4gRWxpbWluYXRlIGNv
-ZGUgZHVwbGljYXRpb24uCj4gMi4gQWRkIGEgc2luZ2xlIHBsYWNlIGZvciBpbml0aWFsaXppbmcg
-Y29yZSBwcm9wZXJ0aWVzIHRvIHRoZWlyCj4gZGVmYXVsdCB2YWx1ZXMsIG5vIG5lZWQgZm9yIGRy
-aXZlciB0byBkbyBpdCBpZiB3aGF0IHRoZSBoZWxwZXIgc2V0cwo+IG1ha2VzIHNlbnNlIGZvciB0
-aGVtLgo+IDMuIE5vIG5lZWQgdG8gZGVidWcgdGhlIGRyaXZlciB3aGVuIHlvdSBlbmFibGUgYSBj
-b3JlIHByb3BlcnR5IGFuZAo+IG9ic2VydmUgaXQgZG9lc24ndCBoYXZlIGEgcHJvcGVyIGRlZmF1
-bHQgdmFsdWUuCj4gCj4gVGVzdGVkIHdpdGggbWFsaS1kcCB0aGUgb3RoZXIgZHJpdmVycyBhcmUg
-anVzdCBidWlsdC10ZXN0ZWQuCj4gCgpGb3Igc29tZSByZWFzb24gSSBsb3N0IDAyLzEwIGhlbmNl
-IEknbSByZXBseWluZyB0byB0aGUgY292ZXIgbGV0dGVyLgoKUGF0Y2hlcyAxICYgMiBhcmUKClJl
-dmlld2VkLWJ5OiBIYXJyeSBXZW50bGFuZCA8aGFycnkud2VudGxhbmRAYW1kLmNvbT4KCkhhcnJ5
-Cgo+IAo+IEFsZXhhbmRydSBHaGVvcmdoZSAoMTApOgo+ICAgZHJtL2F0b21pYzogQWRkICBfX2Ry
-bV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0Cj4gICBkcm0vYW1kL2Rpc3BsYXk6IFVzZSBfX2Ry
-bV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0IGluc3RlYWQgb2YKPiAgICAgY29weWluZyB0aGUg
-bG9naWMKPiAgIGRybTogbWFsaS1kcDogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVz
-ZXQgaW5zdGVhZCBvZiBjb3B5aW5nCj4gICAgIHRoZSBsb2dpYwo+ICAgZHJtOiBhdG1lbC1obGNk
-YzogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQgaW5zdGVhZCBvZgo+ICAgICBj
-b3B5aW5nIHRoZSBsb2dpYwo+ICAgZHJtL2V4eW5vczogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJf
-cGxhbmVfcmVzZXQgaW5zdGVhZCBvZiBjb3B5aW5nIHRoZQo+ICAgICBsb2dpYwo+ICAgZHJtL2lt
-eDogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQgaW5zdGVhZCBvZiBjb3B5aW5n
-IHRoZQo+ICAgICBsb2dpYwo+ICAgZHJtOiByY2FyLWR1OiBVc2UgX19kcm1fYXRvbWljX2hlbHBl
-cl9wbGFuZV9yZXNldCBpbnN0ZWFkIG9mIGNvcHlpbmcKPiAgICAgdGhlIGxvZ2ljCj4gICBkcm0v
-c3VuNGk6IFVzZSBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0IGluc3RlYWQgb2YgY29w
-eWluZyB0aGUKPiAgICAgbG9naWMKPiAgIGRybS92YzQ6IFVzZSBfX2RybV9hdG9taWNfaGVscGVy
-X3BsYW5lX3Jlc2V0IGluc3RlYWQgb2YgY29weWluZyB0aGUKPiAgICAgbG9naWMKPiAgIGRybS92
-bXdnZng6IFVzZSBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0IGluc3RlYWQgb2YgY29w
-eWluZyB0aGUKPiAgICAgbG9naWMKPiAKPiAgLi4uL2dwdS9kcm0vYW1kL2Rpc3BsYXkvYW1kZ3B1
-X2RtL2FtZGdwdV9kbS5jIHwgIDcgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9w
-bGFuZXMuYyAgICAgICAgICAgfCAgNyArKy0tCj4gIC4uLi9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0
-bWVsX2hsY2RjX3BsYW5lLmMgICB8ICA1ICstLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21p
-Y19oZWxwZXIuYyAgICAgICAgICAgfCAzMiArKysrKysrKysrKysrLS0tLS0tCj4gIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgICB8ICAzICstCj4gIGRyaXZlcnMv
-Z3B1L2RybS9pbXgvaXB1djMtcGxhbmUuYyAgICAgICAgICAgICB8ICA4ICsrLS0tCj4gIGRyaXZl
-cnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuYyAgICAgICB8ICA0ICstLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3ZzcC5jICAgICAgICAgfCAgNCArLS0KPiAgZHJp
-dmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2xheWVyLmMgICAgICAgICAgIHwgIDQgKy0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS92YzQvdmM0X3BsYW5lLmMgICAgICAgICAgICAgICB8ICA0ICstLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9rbXMuYyAgICAgICAgICAgfCAgNCArLS0KPiAg
-aW5jbHVkZS9kcm0vZHJtX2F0b21pY19oZWxwZXIuaCAgICAgICAgICAgICAgIHwgIDIgKysKPiAg
-MTIgZmlsZXMgY2hhbmdlZCwgMzkgaW5zZXJ0aW9ucygrKSwgNDUgZGVsZXRpb25zKC0pCj4gCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Tuesday, July 17, 2018 05:46:17 PM Krzysztof Kozlowski wrote:
+> Commit 8014220d48e7 ("thermal: samsung: Remove support for Exynos5440")
+> removed the Exynos5440 specific part of code for accessing TMU interrupt
+> registers but the surrounding clock handling was left.
+> 
+> Clean it up.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
