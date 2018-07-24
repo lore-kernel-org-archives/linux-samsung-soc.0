@@ -1,15 +1,16 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 09/10] drm/vc4: Use __drm_atomic_helper_plane_reset
- instead of copying the logic
-Date: Tue, 24 Jul 2018 08:57:20 +0200
-Message-ID: <20180724065720.5bhepamdo57it7nl@flea>
-References: <20180713161407.GQ20303@art_vandelay>
- <20180720211509.23605-1-alexandru-cosmin.gheorghe@arm.com>
- <20180720211509.23605-10-alexandru-cosmin.gheorghe@arm.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/3] drm/exynos: Drop useless check from
+ exynos_drm_{suspend,resume}
+Date: Tue, 24 Jul 2018 16:12:16 +0900
+Message-ID: <20180724071218epcas1p1f2f578f764aa5c63591f4779ee1503ef~EPIphUPeY2034220342epcas1p1z@epcas1p1.samsung.com>
+References: <20180611122500.11587-1-m.szyprowski@samsung.com>
+ <CGME20180611122510eucas1p192066be0ac16e18e17522a40d1fe2d1d@eucas1p1.samsung.com>
+ <20180611122500.11587-2-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0963760892=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180720211509.23605-10-alexandru-cosmin.gheorghe@arm.com>
+In-Reply-To: <20180611122500.11587-2-m.szyprowski@samsung.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -19,86 +20,33 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com, thellstrom@vmware.com, krzk@kernel.org, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, boris.brezillon@bootlin.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---===============0963760892==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cvhirj2j5trp26z6"
-Content-Disposition: inline
-
-
---cvhirj2j5trp26z6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jul 20, 2018 at 10:15:08PM +0100, Alexandru Gheorghe wrote:
-> Signed-off-by: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-> ---
->  drivers/gpu/drm/vc4/vc4_plane.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_pl=
-ane.c
-> index 9d7a36f148cf..688ad9bb0f08 100644
-> --- a/drivers/gpu/drm/vc4/vc4_plane.c
-> +++ b/drivers/gpu/drm/vc4/vc4_plane.c
-> @@ -200,9 +200,7 @@ static void vc4_plane_reset(struct drm_plane *plane)
->  	if (!vc4_state)
->  		return;
-> =20
-> -	plane->state =3D &vc4_state->base;
-> -	plane->state->alpha =3D DRM_BLEND_ALPHA_OPAQUE;
-> -	vc4_state->base.plane =3D plane;
-> +	__drm_atomic_helper_plane_reset(plane, &vc4_state->base);
-
-For vc4, rcar-du, atmel-hlcdc and sun4i, you're changing the reset
-value of alpha from DRM_BLEND_ALPHA_OPAQUE to
-plane->alpha_property->values[1].
-
-This might or might not be a good idea, but you should definitely
-explain why.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---cvhirj2j5trp26z6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltWzc8ACgkQ0rTAlCFN
-r3QS4RAAiVkxB3H5zyJEG8yfdoboO1qjAaK1uHFKuDq2DyHi3LWOfZI5YpUiH+LQ
-6Q8PTuTCWwmToz1g8ioJHvpCmmOMXFMW/wKN4kB9k4Imi2Hr4FHVz97iupHApWFk
-+FY45s5KKSdrEizk8Re49VzK0W+DDznqDlOsBexhtNXR3canrScVHkRmBaf9s6jt
-B4VLXY+qXo0RRwfZEiEFR0lrlo8vTtTf7C1Gk2jsmfR34B9iSplO0RM8v+uCSicX
-PAp4ILmbsc/W7dhJ8LJb77bzWpSUipnf8JGqaRWigl4KxnFeIqklTF0aqudY7Ogz
-jDAfmKwbjxuIuQWxqTD+Wt4d/r6QLsbZ/sQi5L+ea0Nk3r7LDwat5vySYtwcs9TH
-JtIrnLu+hrF6ZNqsnAtz1ALd4nwZczXPv/glZCTDordBhjjKd6RsrmjDQ4ccv2jH
-Sz2UitFA/uZ4p6Bsfu8VjkAwbCPLSMaKkkPzA1W23bmrYgJnw/LtZORtk+LJzwmk
-S7I2xGJEXX93OkJoLgs/EPjFSFGnrzUZOgfMFTzLwQXuE4BBW79CJD3n2ejOfdaA
-DgoSMakDJpY/6nXfGQOFvDiGubYaC85ZJZKEWymInEdi3Lyoi7B3jNK7LzNFEMiC
-nuw/0IEtKX5rxvqUb9NS3WzTDR5DhBMMu+lqo0+EG9GeIbaNG18=
-=wvmf
------END PGP SIGNATURE-----
-
---cvhirj2j5trp26z6--
-
---===============0963760892==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0963760892==--
+CgoyMDE464WEIDA27JuUIDEx7J28IDIxOjI07JeQIE1hcmVrIFN6eXByb3dza2kg7J20KOqwgCkg
+7JO0IOq4gDoKPiBUaGUgdmlydHVhbCBFeHlub3MgRFJNIGRldmljZSBoYXMgbm8gcnVudGltZSBQ
+TSBlbmFibGVkLCBzbyBjaGVja2luZwo+IGZvciBpdHMgcnVudGltZSBzdXNwZW5kZWQgc3RhdGUg
+aXMgdXNlbGVzcy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXBy
+b3dza2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kcnYuYyB8IDYgKysrLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyks
+IDMgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+Ywo+IGluZGV4IGE4MWI0YTVlMjRhNy4uYzBiNGEwM2FlMWI2IDEwMDY0NAo+IC0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+IEBAIC0xNTMsNyArMTUzLDcgQEAgc3RhdGljIGlu
+dCBleHlub3NfZHJtX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQo+ICAJc3RydWN0IGRybV9k
+ZXZpY2UgKmRybV9kZXYgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiAgCXN0cnVjdCBleHlub3Nf
+ZHJtX3ByaXZhdGUgKnByaXZhdGU7Cj4gIAo+IC0JaWYgKHBtX3J1bnRpbWVfc3VzcGVuZGVkKGRl
+dikgfHwgIWRybV9kZXYpCj4gKwlpZiAoIWRybV9kZXYpCj4gIAkJcmV0dXJuIDA7Cj4gIAo+ICAJ
+cHJpdmF0ZSA9IGRybV9kZXYtPmRldl9wcml2YXRlOwo+IEBAIC0xNzUsOCArMTc1LDggQEAgc3Rh
+dGljIGludCBleHlub3NfZHJtX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCj4gIAlzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZHJtX2RldiA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+ICAJc3RydWN0IGV4
+eW5vc19kcm1fcHJpdmF0ZSAqcHJpdmF0ZTsKPiAgCj4gLQlpZiAocG1fcnVudGltZV9zdXNwZW5k
+ZWQoZGV2KSB8fCAhZHJtX2RldikKPiAtCQlyZXR1cm4gMDsKPiArCWlmICghZHJtX2RldikKPiAr
+CQlyZXR1cm47CgpyZXR1cm4gMC4gSSB3aWxsIGZpeCBpdC4KClRoYW5rcywKSW5raSBEYWUKCj4g
+IAo+ICAJcHJpdmF0ZSA9IGRybV9kZXYtPmRldl9wcml2YXRlOwo+ICAJZHJtX2F0b21pY19oZWxw
+ZXJfcmVzdW1lKGRybV9kZXYsIHByaXZhdGUtPnN1c3BlbmRfc3RhdGUpOwo+IApfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
