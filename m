@@ -1,62 +1,72 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: Stuff for v4.19
-Date: Wed, 25 Jul 2018 18:18:52 +0200
-Message-ID: <20180725161852.6963-1-krzk@kernel.org>
+Subject: [GIT PULL 1/3] drivers: samsung: Cleanup for v4.19
+Date: Wed, 25 Jul 2018 18:23:38 +0200
+Message-ID: <20180725162340.7488-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi,
+
+Rebased on v4.18-rc2, because at v4.18-rc1 the NFS root boot, which I use at my
+testing setup (https://krzk.eu), was broken.
+
+Best regards,
+Krzysztof
 
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
 
 are available in the git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.19
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-exynos5440-4.19
 
-for you to fetch changes up to b3793159249bb091efce4b1515ce18cdfc4c6e41:
+for you to fetch changes up to c708e462e90e04afb7634e1f27f60cd6869936db:
 
-  dt-bindings: pinctrl: samsung: Add SPDX license identifier (2018-07-24 21:59:17 +0200)
-
-----------------------------------------------------------------
-Samsung pinctrl drivers changes for v4.19
-
-1. Add handling of external wakeup interrupts mask inside the pin
-   controller driver.
-
-   Existing solution is spread between the driver and machine code.  The
-   machine code writes the mask but its value is taken from pin
-   controller driver.
-
-   This moves everything into pin controller driver allowing later to
-   remove the cross-subsystem interaction.  Also this is a necessary
-   step for implementing later Suspend to RAM on ARMv8 Exynos5433.
-
-2. Bring necessary suspend/resume callbacks for Exynos542x and
-   Exynos5260.
-3. Document hidden requirement about one external wakeup interrupts
-   device node.
-4. Minor documentation cleanups.
+  usb: host: exynos: Remove support for Exynos5440 (2018-07-24 18:44:00 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (7):
-      pinctrl: samsung: Define suspend and resume callbacks for all banks and SoCs
-      pinctrl: samsung: Document suspend and resume members
-      pinctrl: samsung: Document hidden requirement about one external wakeup
-      pinctrl: samsung: Add dedicated compatible for S5Pv210 wakeup interrupts
-      ARM: exynos: Define EINT_WAKEUP_MASK registers for S5Pv210 and Exynos5433
-      pinctrl: samsung: Write external wakeup interrupt mask
-      dt-bindings: pinctrl: samsung: Add SPDX license identifier
+Exynos5440 drivers removal
 
- .../bindings/pinctrl/samsung-pinctrl.txt           | 11 +++-
- arch/arm/mach-exynos/suspend.c                     |  2 +-
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c       | 16 +++++
- drivers/pinctrl/samsung/pinctrl-exynos.c           | 68 +++++++++++++++++++++-
- drivers/pinctrl/samsung/pinctrl-samsung.h          | 11 ++++
- include/dt-bindings/pinctrl/samsung.h              |  7 +--
- include/linux/soc/samsung/exynos-regs-pmu.h        |  8 ++-
- 7 files changed, 113 insertions(+), 10 deletions(-)
+The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+server platforms but it did not make it to the market really.  There are
+no development boards with it and probably there are no real products
+neither.  The development for Exynos5440 ended in 2013 and since then
+the platform is in maintenance mode.
+
+Removing Exynos5440 makes our life slightly easier: less maintenance,
+smaller code, reduced number of quirks, no need to preserve DTB
+backward-compatibility.
+
+The Device Tree sources and some of the drivers for Exynos5440 were
+already removed.  This removes remaining drivers.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (4):
+      ata: ahci-platform: Remove support for Exynos5440
+      cpufreq: exynos: Remove support for Exynos5440
+      clk: samsung: Remove support for Exynos5440
+      usb: host: exynos: Remove support for Exynos5440
+
+ .../devicetree/bindings/ata/ahci-platform.txt      |   1 -
+ .../devicetree/bindings/clock/exynos5440-clock.txt |  28 --
+ .../bindings/cpufreq/cpufreq-exynos5440.txt        |  28 --
+ drivers/ata/ahci_platform.c                        |   1 -
+ drivers/clk/samsung/Makefile                       |   1 -
+ drivers/clk/samsung/clk-exynos5440.c               | 167 --------
+ drivers/cpufreq/Kconfig.arm                        |  14 -
+ drivers/cpufreq/Makefile                           |   1 -
+ drivers/cpufreq/exynos5440-cpufreq.c               | 452 ---------------------
+ drivers/usb/host/ehci-exynos.c                     |   7 -
+ drivers/usb/host/ohci-exynos.c                     |   6 -
+ include/dt-bindings/clock/exynos5440.h             |  44 --
+ 12 files changed, 750 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos5440-clock.txt
+ delete mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
+ delete mode 100644 drivers/clk/samsung/clk-exynos5440.c
+ delete mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
+ delete mode 100644 include/dt-bindings/clock/exynos5440.h
