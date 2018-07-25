@@ -1,36 +1,32 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: samsung: Add SPDX license identifiers
-Date: Wed, 25 Jul 2018 13:13:07 -0600
-Message-ID: <20180725191307.GA32217@rob-hp-laptop>
-References: <20180718200216.6389-1-krzk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [GIT PULL] pinctrl: samsung: Stuff for v4.19
+Date: Wed, 25 Jul 2018 22:49:50 +0200
+Message-ID: <CACRpkdaDsVdQDZzZBdAznE96WRovOGu9pTio7Ez=fA-T1hvQTA@mail.gmail.com>
+References: <20180725161852.6963-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180718200216.6389-1-krzk@kernel.org>
+In-Reply-To: <20180725161852.6963-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, snawrocki@kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 10:02:16PM +0200, Krzysztof Kozlowski wrote:
-> Replace GPL license statements with SPDX license identifiers (GPL-2.0).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  include/dt-bindings/clock/exynos3250.h            | 5 +----
->  include/dt-bindings/clock/exynos4.h               | 7 ++-----
->  include/dt-bindings/clock/exynos5250.h            | 7 ++-----
->  include/dt-bindings/clock/exynos5260-clk.h        | 7 ++-----
->  include/dt-bindings/clock/exynos5410.h            | 7 ++-----
->  include/dt-bindings/clock/exynos5420.h            | 7 ++-----
->  include/dt-bindings/clock/exynos5433.h            | 5 +----
->  include/dt-bindings/clock/exynos7-clk.h           | 7 ++-----
->  include/dt-bindings/clock/s3c2410.h               | 5 +----
->  include/dt-bindings/clock/s3c2412.h               | 5 +----
->  include/dt-bindings/clock/s3c2443.h               | 5 +----
->  include/dt-bindings/clock/samsung,s2mps11.h       | 5 +----
->  include/dt-bindings/clock/samsung,s3c64xx-clock.h | 7 ++-----
->  13 files changed, 20 insertions(+), 59 deletions(-)
+On Wed, Jul 25, 2018 at 6:19 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+>
+>   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.19
+>
+> for you to fetch changes up to b3793159249bb091efce4b1515ce18cdfc4c6e41:
+>
+>   dt-bindings: pinctrl: samsung: Add SPDX license identifier (2018-07-24 21:59:17 +0200)
+
+Pulled to my devel branch for v4.19, thanks!
+
+Yours,
+Linus Walleij
