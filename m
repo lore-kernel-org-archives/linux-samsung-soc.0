@@ -1,48 +1,83 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] dt-bindings: thermal: samsung: Add SPDX license
- identifier
-Date: Tue, 24 Jul 2018 22:03:12 +0200
-Message-ID: <20180724200312.xs6u4nvhjckukkig@kozik-lap>
-References: <CGME20180718200318epcas3p16aed6c1725d6c1e63ea6b1ad209c5756@epcas3p1.samsung.com>
- <20180718200250.6478-1-krzk@kernel.org>
- <2442216.oppRSGRAaL@amdc3058>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Wed, 25 Jul 2018 17:02:28 +0900
+Message-ID: <1532505748-10025-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20180725080228epcas1p2cdab6ad94e69018ba6f30c5bc82191c3@epcas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2442216.oppRSGRAaL@amdc3058>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 06:46:35PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On Wednesday, July 18, 2018 10:02:50 PM Krzysztof Kozlowski wrote:
-> > Replace GPL license statement with SPDX license identifier (GPL-2.0+).
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  include/dt-bindings/thermal/thermal_exynos.h | 12 +-----------
-> >  1 file changed, 1 insertion(+), 11 deletions(-)
-> > 
-> > diff --git a/include/dt-bindings/thermal/thermal_exynos.h b/include/dt-bindings/thermal/thermal_exynos.h
-> > index 0646500bca69..642e4e7f4084 100644
-> > --- a/include/dt-bindings/thermal/thermal_exynos.h
-> > +++ b/include/dt-bindings/thermal/thermal_exynos.h
-> > @@ -1,19 +1,9 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> 
-> This code should be GPL-2.0 only, original license statement is most
-> likely result of using wrong file as the source of copy-paste. So I
-> would like to have the license fixed first before doing conversion to
-> SPDX.
-
-If you think that's the case, then it makes sense and please go ahead.
-As fair as I remember this required signed-off from all contributors...
-so probably just Lukasz and Eduardo?
-
-Best regards,
-Krzysztof
+SGkgRGF2ZSwKCiAgIFR3byBiaWcgY2xlYW51cHMgdG8gc3VzcGVuZC9yZXN1bWUgY29kZSBhbmQg
+ZzJkIGRyaXZlciBpbmNsdWRpbmcKICAgdHJpdmlhbCBvbmUuCgogICBQbGVhc2Uga2luZGx5IGxl
+dCBtZSBrbm93IGlmIHRoZXJlIGlzIGFueSBwcm9ibGVtLgoKVGhhbmtzLApJbmtpIERhZQoKClRo
+ZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgMmQzYmRhNzA3MWE3MTNmYTRlY2Y5ZDBh
+Y2I3ZmFlZGU2ZDU5MTAwYToKCiAgTWVyZ2UgdGFnICdleHlub3MtZHJtLWZpeGVzLWZvci12NC4x
+OC1yYzQnIG9mIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9k
+YWVpbmtpL2RybS1leHlub3MgaW50byBleHlub3MtZHJtLW5leHQgKDIwMTgtMDctMjQgMTU6Mjg6
+NDQgKzA5MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoKCgogIGdp
+dDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1l
+eHlub3MgdGFncy9leHlub3MtZHJtLW5leHQtZm9yLXY0LjE5Cgpmb3IgeW91IHRvIGZldGNoIGNo
+YW5nZXMgdXAgdG8gM2YyYjc4ZDYzMGI0NmM3OTIxY2I0MTViZTM1ZjY4NmU1MjkzYzNhNDoKCiAg
+ZHJtL2V4eW5vcy9taXhlcjogUmVtb3ZlIHVudXNlZCBsb2NhbCB2YXJpYWJsZSBwcml2ICgyMDE4
+LTA3LTI0IDE2OjI4OjUzICswOTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDbGVhbnVwcwotIENoYW5nZSBnMmQgZHJp
+dmVyIHRvIGNvbXBvbmVudCBiYXNlZCBkcml2ZXIKICAuIGcyZCBkcml2ZXIgd2FzIGxhc3QgY3Vz
+dG9tZWQgc3ViIGRyaXZlciBzbyB0aGlzIHBhdGNoIHNlcmllcwogICAgY2hhbmdlcyBpdCB0byBj
+b21wb25lbnQgYmFzZWQgZHJpdmVyLCB3aGljaCBhbHNvIG1ha2VzIGdlbSBoYW5kbGluZwogICAg
+dG8gYmUgbW9yZSBzaW1wbGlmeS4KLSBDbGVhbnVwIG9mIEV4eW5vcyBEUk0gc3VzcGVuZC9yZXN1
+bWUKICAuIFJlZ2lzdGVyIGV4eW5vcyBkcm0gY29yZSBzdXNwZW5kL3Jlc3VtZSBmdW5jdGlvbnMK
+ICAgIHRvIHByZXBhcmUvY29tcGxldGUgY2FsbGJhY2tzIG9mIGRldl9wbV9vcHMgaW5zdGVhZCBv
+ZiBzdXNwZW5kL3Jlc3VtZQogICAgY2FsbGJhY2tzIHRvIGVuc3VyZSBleHlub3NfZHJtX3N1c3Bl
+bmQoKSBpcyBjYWxsZWQgYmVmb3JlIGFueSBzdXNwZW5kCiAgICBjYWxsYmFjayBmcm9tIHRoZSBy
+ZWFsIGRldmljZXMgdG8gYXZvaWQgc29tZSBpc3N1ZXMgb24gYm9hcmRzIHdpdGgKICAgIGNvbXBs
+ZXggcGlwZWxpbmVzLgogIC4gQWxzbyBBZGQgcG1fcnVudGltZV9mdXJjZV9zdXNwZW5kL3Jlc3Vt
+ZSBhcyBTWVNURU1fU0xFRVBfUE1fT1BTCiAgICB0byBlbnN1cmUgdGhhdCByZXNvdXJjZXMgb2Yg
+ZWFjaCBkZXZpY2VzIHdpbGwgYmUgcmVsZWFzZWQKICAgIGZvciB0aGUgc3lzdGVtIFBNIHN1c3Bl
+bmQvcmVzdW1lIGN5Y2xlLgotIFJlbW92ZSBsb2NhbCB2YWx1ZSBub3QgdXNlZC4KCi0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+S3J6eXN6dG9mIEtvemxvd3NraSAoMSk6CiAgICAgIGRybS9leHlub3MvbWl4ZXI6IFJlbW92ZSB1
+bnVzZWQgbG9jYWwgdmFyaWFibGUgcHJpdgoKTWFyZWsgU3p5cHJvd3NraSAoNik6CiAgICAgIGRy
+bS9leHlub3M6IGcyZDogQ29udmVydCB0byBkcml2ZXIgY29tcG9uZW50IEFQSQogICAgICBkcm0v
+ZXh5bm9zOiBnZW06IFNpbXBsaWZ5IGFjY2VzcyB0byBleHlub3MgR0VNIG9iamVjdHMKICAgICAg
+ZHJtL2V4eW5vczogVXNlIGNvbW1vbiBleHlub3NfZHJtX2dlbV9nZXQoKS9wdXQoKSBmdW5jdGlv
+bnMgZm9yIEdFTSBsb29rdXAKICAgICAgZHJtL2V4eW5vczogRHJvcCB1c2VsZXNzIGNoZWNrIGZy
+b20gZXh5bm9zX2RybV97c3VzcGVuZCxyZXN1bWV9CiAgICAgIGRybS9leHlub3M6IFN1c3BlbmQv
+cmVzdW1lIGRpc3BsYXkgcGlwZWxpbmUgYXMgZWFybHkvbGF0ZSBhcyBwb3NzaWJsZQogICAgICBk
+cm0vZXh5bm9zOiBFbnN1cmUgc3VzcGVuZGVkIHJ1bnRpbWUgUE0gc3RhdGUgZHVyaW5nIHN5c3Rl
+bSBzdXNwZW5kCgogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9NYWtlZmlsZSAgICAgICAgICAgICAg
+IHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMg
+fCAgIDIgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jICAgIHwg
+ICAyICsKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwLmMgICAgICAgICAgICB8ICAg
+MyArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY29yZS5jICAgICAgfCAxMTkg
+LS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgICAg
+IHwgIDI5ICstLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICAgICAg
+IHwgIDQ3ICstLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyAgICAg
+ICB8ICAgMiArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgICAgICAg
+fCAgMTAgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICAgICB8
+ICAgMiArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgICAgICAgfCAz
+MDAgKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9nMmQuaCAgICAgICB8ICAxMSArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZ2VtLmMgICAgICAgfCAgNTggKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9nZW0uaCAgICAgICB8ICAyNCArLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9pcHAuYyAgICAgICB8ICAxMCArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX21pYy5jICAgICAgIHwgICAyICsKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2hkbWkuYyAgICAgICAgICB8ICAgMiArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19t
+aXhlci5jICAgICAgICAgfCAgIDQgKy0KIDE4IGZpbGVzIGNoYW5nZWQsIDE3OSBpbnNlcnRpb25z
+KCspLCA0NTAgZGVsZXRpb25zKC0pCiBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
