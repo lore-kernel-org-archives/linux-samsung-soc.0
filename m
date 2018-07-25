@@ -1,95 +1,43 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3 1/9] drm/exynos: rename "bridge_node" to
- "mic_bridge_node"
-Date: Wed, 25 Jul 2018 17:13:09 +0900
-Message-ID: <20180725081309epcas1p24823c07f661eacc35e59fdb483a2e2bb~EjnEtSsCZ0913609136epcas1p2M@epcas1p2.samsung.com>
-References: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
- <CGME20180619081957eucas1p2d2b9075a9b7a90837b40e4529ab31888@eucas1p2.samsung.com>
- <1529396370-18761-2-git-send-email-m.purski@samsung.com>
- <20180724074912epcas1p2e47dba6793b91a90b183e6cd809200bb~EPo3hWbma0369303693epcas1p2F@epcas1p2.samsung.com>
- <20180725081131eucas1p1a5a7f7e19d8ef3254dfe89049ea6d7c7~EjlpXj7zz1467114671eucas1p1f@eucas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent Storage
+Date: Wed, 25 Jul 2018 15:27:46 +0200
+Message-ID: <CAJKOXPfMiaGP9xqPcOQMs+a4RKvhK03v51e5r3GaUiFs0G=61Q@mail.gmail.com>
+References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
+ <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com>
+ <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
+ <BCD39D7E-EEEC-4EB9-824E-63323C333C88@oracle.com> <CAJKOXPcw-i99_U-Ltuuf6w-WRK7V4gNqVSYkCMGFEXQG2DL2XQ@mail.gmail.com>
+ <CAJKOXPf7V1z4pNZ2RsjkJmaVAgk34_rPOtQOc7J5KRMSRemrdg@mail.gmail.com>
+ <082848F5-6360-4523-BA95-601777E17CF2@oracle.com> <CAJKOXPe4uqOZGd_zb_Mqq4Fspu63LHZky86O4tPaD3BZNCBS6w@mail.gmail.com>
+ <6AAC5897-8762-4209-8718-67291B87AA00@oracle.com> <d617f8a85c3414230cd755fe0e4470c0f8bd17ff.camel@hammerspace.com>
+ <26995E49-E8DD-421D-BABF-9E672B9383BD@oracle.com> <30a1455b6817361f8228c022628aef5cdee70c3e.camel@hammerspace.com>
+ <784782B0-A387-4D3B-A517-E85D851162B8@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180725081131eucas1p1a5a7f7e19d8ef3254dfe89049ea6d7c7~EjlpXj7zz1467114671eucas1p1f@eucas1p1.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <784782B0-A387-4D3B-A517-E85D851162B8@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Trond Myklebust <trondmy@hammerspace.com>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE464WEIDA37JuUIDI17J28IDE3OjEx7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBPbiAyNC4wNy4yMDE4IDA5OjQ5LCBJbmtpIERhZSB3cm90ZToKPj4gSGksCj4+Cj4+
-IDIwMTjrhYQgMDbsm5QgMTnsnbwgMTc6MTnsl5AgTWFjaWVqIFB1cnNraSDsnbQo6rCAKSDsk7Qg
-6riAOgo+Pj4gV2hlbiBhZGRpbmcgc3VwcG9ydCBmb3IgcGVyaXBoZXJhbCBvdXQgYnJpZGdlcywg
-dGhlICJicmlkZ2UiIG5hbWUKPj4+IGJlY29tZXMgaW1wcmVjaXNlIGFzIGl0IHJlZmVycyB0byBh
-IGRpZmZlcmVudCBkZXZpY2UgdGhhbiB0aGUKPj4+ICJvdXRfYnJpZGdlIi4KPj4gQ291bGQgeW91
-IGdpdmUgbWUgbW9yZSBkZXRhaWxzPyBJJ20gYWZyaWFkIHRoYXQgSSBkb24ndCB1bmRlcnN0YW5k
-IHdoYXQgeW91IHNheS4KPiAKPiBUaGUgcHJvYmxlbSBpcyB0aGF0IE1JQyBpcyBhbiBpbnB1dCBi
-cmlkZ2UgYW5kIG5vdyB3ZSB3aWxsIGhhdmUgYWxzbwo+IG91dHB1dCBicmlkZ2UgKFRvc2hpYmEg
-RFNJL0xWRFMgY29udmVydGVyKS4KPiBTbyB3ZSB3aWxsIGhhdmUgdG8gZGlzdGluZ3Vpc2ggdGhl
-bS4KPiAKPj4KPj4gQW5kIGluIGNhc2Ugb2YgRXh5bm9zNTQzMyBTb0MsIFNNSUVTKFNhbXN1bmcg
-TW9iaWxlIEltYWdlIEVuaGFuY2VtZW50IFN5c3RlbSkgY2FuIGJlIGxvY2F0ZWQgYmV0d2VlbiBE
-RUNPTiBhbmQgTUlQSS1EU0kgZGV2aWNlcyBhbHNvLgo+PiBUaGVyZWZvcmUsIGhhdmluZyBzcGVj
-aWZpYyBuYW1lIGlzbid0IHJlYXNvbmFibGUuCj4gCj4gU28gcHJvYmFibHkgaW5fYnJpZGdlIHdv
-dWxkIGJlIGEgYmV0dGVyIG5hbWUuIEkgd2lsbCByZXBocmFzZSBtZXNzYWdlCj4gYW5kIGJyaWRn
-ZSBuYW1lLgoKR29vZCBpZGVhLiA6KQoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBSZWdhcnMKPiBB
-bmRyemVqCj4gCj4gCj4+Cj4+IFRoYW5rcywKPj4gSW5raSBEYWUKPj4KPj4+IFNpZ25lZC1vZmYt
-Ynk6IE1hY2llaiBQdXJza2kgPG0ucHVyc2tpQHNhbXN1bmcuY29tPgo+Pj4gLS0tCj4+PiAgZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIHwgMTYgKysrKysrKystLS0tLS0t
-LQo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pCj4+
-Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2ku
-YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4gaW5kZXggZWFl
-NDRmZC4uOTU5OWU2YiAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kc2kuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2RzaS5jCj4+PiBAQCAtMjc5LDcgKzI3OSw3IEBAIHN0cnVjdCBleHlub3NfZHNpIHsKPj4+ICAJ
-c3RydWN0IGxpc3RfaGVhZCB0cmFuc2Zlcl9saXN0Owo+Pj4gIAo+Pj4gIAljb25zdCBzdHJ1Y3Qg
-ZXh5bm9zX2RzaV9kcml2ZXJfZGF0YSAqZHJpdmVyX2RhdGE7Cj4+PiAtCXN0cnVjdCBkZXZpY2Vf
-bm9kZSAqYnJpZGdlX25vZGU7Cj4+PiArCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbWljX2JyaWRnZV9u
-b2RlOwo+Pj4gIH07Cj4+PiAgCj4+PiAgI2RlZmluZSBob3N0X3RvX2RzaShob3N0KSBjb250YWlu
-ZXJfb2YoaG9zdCwgc3RydWN0IGV4eW5vc19kc2ksIGRzaV9ob3N0KQo+Pj4gQEAgLTE2MzEsNyAr
-MTYzMSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9wYXJzZV9kdChzdHJ1Y3QgZXh5bm9zX2Rz
-aSAqZHNpKQo+Pj4gIAlpZiAocmV0IDwgMCkKPj4+ICAJCXJldHVybiByZXQ7Cj4+PiAgCj4+PiAt
-CWRzaS0+YnJpZGdlX25vZGUgPSBvZl9ncmFwaF9nZXRfcmVtb3RlX25vZGUobm9kZSwgRFNJX1BP
-UlRfSU4sIDApOwo+Pj4gKwlkc2ktPm1pY19icmlkZ2Vfbm9kZSA9IG9mX2dyYXBoX2dldF9yZW1v
-dGVfbm9kZShub2RlLCBEU0lfUE9SVF9JTiwgMCk7Cj4+PiAgCj4+PiAgCXJldHVybiAwOwo+Pj4g
-IH0KPj4+IEBAIC0xNjQyLDcgKzE2NDIsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfYmluZChz
-dHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKPj4+ICAJc3RydWN0IGRy
-bV9lbmNvZGVyICplbmNvZGVyID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4+PiAgCXN0cnVjdCBl
-eHlub3NfZHNpICpkc2kgPSBlbmNvZGVyX3RvX2RzaShlbmNvZGVyKTsKPj4+ICAJc3RydWN0IGRy
-bV9kZXZpY2UgKmRybV9kZXYgPSBkYXRhOwo+Pj4gLQlzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdl
-Owo+Pj4gKwlzdHJ1Y3QgZHJtX2JyaWRnZSAqbWljX2JyaWRnZTsKPj4+ICAJaW50IHJldDsKPj4+
-ICAKPj4+ICAJZHJtX2VuY29kZXJfaW5pdChkcm1fZGV2LCBlbmNvZGVyLCAmZXh5bm9zX2RzaV9l
-bmNvZGVyX2Z1bmNzLAo+Pj4gQEAgLTE2NjEsMTAgKzE2NjEsMTAgQEAgc3RhdGljIGludCBleHlu
-b3NfZHNpX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4+
-PiAgCQlyZXR1cm4gcmV0Owo+Pj4gIAl9Cj4+PiAgCj4+PiAtCWlmIChkc2ktPmJyaWRnZV9ub2Rl
-KSB7Cj4+PiAtCQlicmlkZ2UgPSBvZl9kcm1fZmluZF9icmlkZ2UoZHNpLT5icmlkZ2Vfbm9kZSk7
-Cj4+PiAtCQlpZiAoYnJpZGdlKQo+Pj4gLQkJCWRybV9icmlkZ2VfYXR0YWNoKGVuY29kZXIsIGJy
-aWRnZSwgTlVMTCk7Cj4+PiArCWlmIChkc2ktPm1pY19icmlkZ2Vfbm9kZSkgewo+Pj4gKwkJbWlj
-X2JyaWRnZSA9IG9mX2RybV9maW5kX2JyaWRnZShkc2ktPm1pY19icmlkZ2Vfbm9kZSk7Cj4+PiAr
-CQlpZiAobWljX2JyaWRnZSkKPj4+ICsJCQlkcm1fYnJpZGdlX2F0dGFjaChlbmNvZGVyLCBtaWNf
-YnJpZGdlLCBOVUxMKTsKPj4+ICAJfQo+Pj4gIAo+Pj4gIAlyZXR1cm4gbWlwaV9kc2lfaG9zdF9y
-ZWdpc3RlcigmZHNpLT5kc2lfaG9zdCk7Cj4+PiBAQCAtMTc4Myw3ICsxNzgzLDcgQEAgc3RhdGlj
-IGludCBleHlub3NfZHNpX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+Pj4g
-IHsKPj4+ICAJc3RydWN0IGV4eW5vc19kc2kgKmRzaSA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBk
-ZXYpOwo+Pj4gIAo+Pj4gLQlvZl9ub2RlX3B1dChkc2ktPmJyaWRnZV9ub2RlKTsKPj4+ICsJb2Zf
-bm9kZV9wdXQoZHNpLT5taWNfYnJpZGdlX25vZGUpOwo+Pj4gIAo+Pj4gIAlwbV9ydW50aW1lX2Rp
-c2FibGUoJnBkZXYtPmRldik7Cj4+PiAgCj4+Pgo+PiAtLQo+PiBUbyB1bnN1YnNjcmliZSBmcm9t
-IHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2Mi
-IGluCj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
-Cj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jk
-b21vLWluZm8uaHRtbAo+Pgo+Pgo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxp
-c3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRo
-ZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBt
-YWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
-dG1sCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 18 June 2018 at 18:20, Chuck Lever <chuck.lever@oracle.com> wrote:
+>
+> The extra serialization appears to have a reproducible performance
+> impact on RDMA, which no longer takes the reserve_lock when allocating
+> a slot.
+>
+> I could put an xprt_alloc_xid call in xprt_alloc_slot, but that would
+> only work for socket-based transports. Would it be OK if RDMA had its
+> own XID allocation mechanism?
+
+Hi,
+
+On recent next the issue appeared again. My boards with NFSv4 root
+timeout on 80% of boots. This time my NFS server is faster - Pi3 B+
+:).
+
+Is this know? Should I start long bisect or maybe you can point me to
+possible causes?
+
+Best regards,
+Krzysztof
