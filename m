@@ -1,37 +1,62 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/3] ARM: dts: exynos: Add compatible for s5m8767 clocks node on Itop Core
-Date: Wed, 25 Jul 2018 17:55:17 +0200
-Message-ID: <20180725155517.4872-4-krzk@kernel.org>
-References: <20180725155517.4872-1-krzk@kernel.org>
+Subject: [GIT PULL] pinctrl: samsung: Stuff for v4.19
+Date: Wed, 25 Jul 2018 18:18:52 +0200
+Message-ID: <20180725161852.6963-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180725155517.4872-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The bindings for s2mps11/s5m8767 clocks driver require a compatible for
-clocks node.  Parent MFD sec-core driver will also use it when
-instantiating children.
 
-The compatible is not needed for proper working because device will be
-anyway created by parent MFD device.  Add it for correctness.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-diff --git a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-index ab7affab7f1c..8fdfd80c3acc 100644
---- a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-@@ -446,6 +446,7 @@
- 		};
- 
- 		s5m8767_osc: clocks {
-+			compatible = "samsung,s5m8767-clk";
- 			#clock-cells = <1>;
- 			clock-output-names = "s5m8767_ap",
- 					"s5m8767_cp", "s5m8767_bt";
--- 
-2.14.1
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.19
+
+for you to fetch changes up to b3793159249bb091efce4b1515ce18cdfc4c6e41:
+
+  dt-bindings: pinctrl: samsung: Add SPDX license identifier (2018-07-24 21:59:17 +0200)
+
+----------------------------------------------------------------
+Samsung pinctrl drivers changes for v4.19
+
+1. Add handling of external wakeup interrupts mask inside the pin
+   controller driver.
+
+   Existing solution is spread between the driver and machine code.  The
+   machine code writes the mask but its value is taken from pin
+   controller driver.
+
+   This moves everything into pin controller driver allowing later to
+   remove the cross-subsystem interaction.  Also this is a necessary
+   step for implementing later Suspend to RAM on ARMv8 Exynos5433.
+
+2. Bring necessary suspend/resume callbacks for Exynos542x and
+   Exynos5260.
+3. Document hidden requirement about one external wakeup interrupts
+   device node.
+4. Minor documentation cleanups.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (7):
+      pinctrl: samsung: Define suspend and resume callbacks for all banks and SoCs
+      pinctrl: samsung: Document suspend and resume members
+      pinctrl: samsung: Document hidden requirement about one external wakeup
+      pinctrl: samsung: Add dedicated compatible for S5Pv210 wakeup interrupts
+      ARM: exynos: Define EINT_WAKEUP_MASK registers for S5Pv210 and Exynos5433
+      pinctrl: samsung: Write external wakeup interrupt mask
+      dt-bindings: pinctrl: samsung: Add SPDX license identifier
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           | 11 +++-
+ arch/arm/mach-exynos/suspend.c                     |  2 +-
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c       | 16 +++++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 68 +++++++++++++++++++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.h          | 11 ++++
+ include/dt-bindings/pinctrl/samsung.h              |  7 +--
+ include/linux/soc/samsung/exynos-regs-pmu.h        |  8 ++-
+ 7 files changed, 113 insertions(+), 10 deletions(-)
