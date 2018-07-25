@@ -1,98 +1,35 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v5 2/9] drm/exynos: move connector creation to attach callback
-Date: Wed, 25 Jul 2018 17:46:37 +0200
-Message-ID: <20180725154644.25412-3-a.hajda@samsung.com>
-References: <20180725154644.25412-1-a.hajda@samsung.com>
- <CGME20180725154659eucas1p116f3a5e735333b07bcf9808f00694f3c@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20180725154644.25412-1-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, Maciej Purski <m.purski@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] mfd: sec: Export OF module alias table
+Date: Wed, 25 Jul 2018 17:53:02 +0200
+Message-ID: <20180725155302.4718-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+CgpUaGUgY3VycmVudCBp
-bXBsZW1lbnRhdGlvbiBhc3N1bWVzIHRoYXQgdGhlIG9ubHkgcG9zc2libGUgcGVyaXBoZXJhbApk
-ZXZpY2UgZm9yIERTSU0gaXMgYSBwYW5lbC4gVXNpbmcgYW4gb3V0cHV0IGJyaWRnZSBjaGlsZCBk
-ZXZpY2UKc2hvdWxkIGFsc28gYmUgcG9zc2libGUuCgpJZiBhbiBvdXRwdXQgYnJpZGdlIGlzIGF2
-YWlsYWJsZSwgZG9uJ3QgY3JlYXRlIGEgbmV3IGNvbm5lY3Rvci4KSW5zdGVhZCwgY2FsbCBkcm1f
-YnJpZGdlX2F0dGFjaCgpIGFuZCBzZXQgZW5jb2RlcidzIGJyaWRnZSB0byBOVUxMCmluIG9yZGVy
-IHRvIGF2b2lkIGFuIG91dCBicmlkZ2UgZnJvbSBiZWluZyB2aXNpYmxlIGJ5IHRoZSBmcmFtZXdv
-cmssIGFzCnRoZSBEU0kgYnVzIG5lZWRzIGNvbnRyb2wgb24gZW5hYmxpbmcgaXRzIGNoaWxkIG91
-dHB1dCBicmlkZ2UuCgpTdWNoIHNlcXVlbmNlIGlzIHJlcXVpcmVkIGJ5IFRvc2hpYmEgVEMzNTg3
-NjQgYnJpZGdlLCB3aGljaCBpcyBhIERTSQpwZXJpcGhlcmFsIGJyaWRnZSBkZXZpY2UuCgpjaGFu
-Z2VkIGluIHY1OgotIGRldGFjaCBicmlkZ2UgaW4gbWlwaV9kc2kgZGV0YWNoIGNhbGxiYWNrCgpT
-aWduZWQtb2ZmLWJ5OiBNYWNpZWogUHVyc2tpIDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KWyBhLmhh
-amRhQHNhbXN1bmcuY29tOiB2NSBdClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFq
-ZGFAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
-aS5jIHwgNTAgKysrKysrKysrKysrKysrKy0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDMyIGlu
-c2VydGlvbnMoKyksIDE4IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kc2kuYwppbmRleCAzNTE0MDNmOWQyNDUuLmY1ZjUxZjU4NGZhMCAxMDA2NDQKLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwpAQCAtMjU1LDYgKzI1NSw3IEBAIHN0cnVjdCBl
-eHlub3NfZHNpIHsKIAlzdHJ1Y3QgbWlwaV9kc2lfaG9zdCBkc2lfaG9zdDsKIAlzdHJ1Y3QgZHJt
-X2Nvbm5lY3RvciBjb25uZWN0b3I7CiAJc3RydWN0IGRybV9wYW5lbCAqcGFuZWw7CisJc3RydWN0
-IGRybV9icmlkZ2UgKm91dF9icmlkZ2U7CiAJc3RydWN0IGRldmljZSAqZGV2OwogCiAJdm9pZCBf
-X2lvbWVtICpyZWdfYmFzZTsKQEAgLTE0OTksNyArMTUwMCwzMCBAQCBzdGF0aWMgaW50IGV4eW5v
-c19kc2lfaG9zdF9hdHRhY2goc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCiAJCQkJICBzdHJ1
-Y3QgbWlwaV9kc2lfZGV2aWNlICpkZXZpY2UpCiB7CiAJc3RydWN0IGV4eW5vc19kc2kgKmRzaSA9
-IGhvc3RfdG9fZHNpKGhvc3QpOwotCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBkc2ktPmNvbm5l
-Y3Rvci5kZXY7CisJc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyID0gJmRzaS0+ZW5jb2RlcjsK
-KwlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gZW5jb2Rlci0+ZGV2OworCXN0cnVjdCBkcm1fYnJp
-ZGdlICpvdXRfYnJpZGdlOworCisJb3V0X2JyaWRnZSAgPSBvZl9kcm1fZmluZF9icmlkZ2UoZGV2
-aWNlLT5kZXYub2Zfbm9kZSk7CisJaWYgKG91dF9icmlkZ2UpIHsKKwkJZHJtX2JyaWRnZV9hdHRh
-Y2goZW5jb2Rlciwgb3V0X2JyaWRnZSwgTlVMTCk7CisJCWRzaS0+b3V0X2JyaWRnZSA9IG91dF9i
-cmlkZ2U7CisJCWVuY29kZXItPmJyaWRnZSA9IE5VTEw7CisJfSBlbHNlIHsKKwkJaW50IHJldCA9
-IGV4eW5vc19kc2lfY3JlYXRlX2Nvbm5lY3RvcihlbmNvZGVyKTsKKworCQlpZiAocmV0KSB7CisJ
-CQlEUk1fRVJST1IoImZhaWxlZCB0byBjcmVhdGUgY29ubmVjdG9yIHJldCA9ICVkXG4iLCByZXQp
-OworCQkJZHJtX2VuY29kZXJfY2xlYW51cChlbmNvZGVyKTsKKwkJCXJldHVybiByZXQ7CisJCX0K
-KworCQlkc2ktPnBhbmVsID0gb2ZfZHJtX2ZpbmRfcGFuZWwoZGV2aWNlLT5kZXYub2Zfbm9kZSk7
-CisJCWlmIChkc2ktPnBhbmVsKSB7CisJCQlkcm1fcGFuZWxfYXR0YWNoKGRzaS0+cGFuZWwsICZk
-c2ktPmNvbm5lY3Rvcik7CisJCQlkc2ktPmNvbm5lY3Rvci5zdGF0dXMgPSBjb25uZWN0b3Jfc3Rh
-dHVzX2Nvbm5lY3RlZDsKKwkJfQorCX0KIAogCS8qCiAJICogVGhpcyBpcyBhIHRlbXBvcmFyeSBz
-b2x1dGlvbiBhbmQgc2hvdWxkIGJlIG1hZGUgYnkgbW9yZSBnZW5lcmljIHdheS4KQEAgLTE1MTgs
-MTEgKzE1NDIsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfaG9zdF9hdHRhY2goc3RydWN0IG1p
-cGlfZHNpX2hvc3QgKmhvc3QsCiAJZHNpLT5sYW5lcyA9IGRldmljZS0+bGFuZXM7CiAJZHNpLT5m
-b3JtYXQgPSBkZXZpY2UtPmZvcm1hdDsKIAlkc2ktPm1vZGVfZmxhZ3MgPSBkZXZpY2UtPm1vZGVf
-ZmxhZ3M7Ci0JZHNpLT5wYW5lbCA9IG9mX2RybV9maW5kX3BhbmVsKGRldmljZS0+ZGV2Lm9mX25v
-ZGUpOwotCWlmIChkc2ktPnBhbmVsKSB7Ci0JCWRybV9wYW5lbF9hdHRhY2goZHNpLT5wYW5lbCwg
-JmRzaS0+Y29ubmVjdG9yKTsKLQkJZHNpLT5jb25uZWN0b3Iuc3RhdHVzID0gY29ubmVjdG9yX3N0
-YXR1c19jb25uZWN0ZWQ7Ci0JfQogCWV4eW5vc19kcm1fY3J0Y19nZXRfYnlfdHlwZShkcm0sIEVY
-WU5PU19ESVNQTEFZX1RZUEVfTENEKS0+aTgwX21vZGUgPQogCQkJIShkc2ktPm1vZGVfZmxhZ3Mg
-JiBNSVBJX0RTSV9NT0RFX1ZJREVPKTsKIApAQCAtMTUzOCwxOSArMTU1NywyMSBAQCBzdGF0aWMg
-aW50IGV4eW5vc19kc2lfaG9zdF9kZXRhY2goc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCiAJ
-CQkJICBzdHJ1Y3QgbWlwaV9kc2lfZGV2aWNlICpkZXZpY2UpCiB7CiAJc3RydWN0IGV4eW5vc19k
-c2kgKmRzaSA9IGhvc3RfdG9fZHNpKGhvc3QpOwotCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBk
-c2ktPmNvbm5lY3Rvci5kZXY7Ci0KLQltdXRleF9sb2NrKCZkcm0tPm1vZGVfY29uZmlnLm11dGV4
-KTsKKwlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gZHNpLT5lbmNvZGVyLmRldjsKIAogCWlmIChk
-c2ktPnBhbmVsKSB7CisJCW11dGV4X2xvY2soJmRybS0+bW9kZV9jb25maWcubXV0ZXgpOwogCQll
-eHlub3NfZHNpX2Rpc2FibGUoJmRzaS0+ZW5jb2Rlcik7CiAJCWRybV9wYW5lbF9kZXRhY2goZHNp
-LT5wYW5lbCk7CiAJCWRzaS0+cGFuZWwgPSBOVUxMOwogCQlkc2ktPmNvbm5lY3Rvci5zdGF0dXMg
-PSBjb25uZWN0b3Jfc3RhdHVzX2Rpc2Nvbm5lY3RlZDsKKwkJbXV0ZXhfdW5sb2NrKCZkcm0tPm1v
-ZGVfY29uZmlnLm11dGV4KTsKKwl9IGVsc2UgeworCQlpZiAoZHNpLT5vdXRfYnJpZGdlLT5mdW5j
-cy0+ZGV0YWNoKQorCQkJZHNpLT5vdXRfYnJpZGdlLT5mdW5jcy0+ZGV0YWNoKGRzaS0+b3V0X2Jy
-aWRnZSk7CisJCWRzaS0+b3V0X2JyaWRnZSA9IE5VTEw7CiAJfQogCi0JbXV0ZXhfdW5sb2NrKCZk
-cm0tPm1vZGVfY29uZmlnLm11dGV4KTsKLQogCWlmIChkcm0tPm1vZGVfY29uZmlnLnBvbGxfZW5h
-YmxlZCkKIAkJZHJtX2ttc19oZWxwZXJfaG90cGx1Z19ldmVudChkcm0pOwogCkBAIC0xNjU0LDEz
-ICsxNjc1LDYgQEAgc3RhdGljIGludCBleHlub3NfZHNpX2JpbmQoc3RydWN0IGRldmljZSAqZGV2
-LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCiAJaWYgKHJldCA8IDApCiAJCXJldHVybiByZXQ7CiAK
-LQlyZXQgPSBleHlub3NfZHNpX2NyZWF0ZV9jb25uZWN0b3IoZW5jb2Rlcik7Ci0JaWYgKHJldCkg
-ewotCQlEUk1fRVJST1IoImZhaWxlZCB0byBjcmVhdGUgY29ubmVjdG9yIHJldCA9ICVkXG4iLCBy
-ZXQpOwotCQlkcm1fZW5jb2Rlcl9jbGVhbnVwKGVuY29kZXIpOwotCQlyZXR1cm4gcmV0OwotCX0K
-LQogCWlmIChkc2ktPmluX2JyaWRnZV9ub2RlKSB7CiAJCWluX2JyaWRnZSA9IG9mX2RybV9maW5k
-X2JyaWRnZShkc2ktPmluX2JyaWRnZV9ub2RlKTsKIAkJaWYgKGluX2JyaWRnZSkKLS0gCjIuMTgu
-MAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+In case of Device Tree platforms, even though the Samsung PMIC sec
+device is instantiated from DT, the driver is still matched through I2C
+module alias.  That is because I2C core always reports an I2C module
+alias instead of DT one.
+
+This could change in the future so export DT module alias.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/mfd/sec-core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index ca6b80d08ffc..9613b4257302 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -146,6 +146,7 @@ static const struct of_device_id sec_dt_match[] = {
+ 		/* Sentinel */
+ 	},
+ };
++MODULE_DEVICE_TABLE(of, sec_dt_match);
+ #endif
+ 
+ static bool s2mpa01_volatile(struct device *dev, unsigned int reg)
+-- 
+2.14.1
