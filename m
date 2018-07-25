@@ -1,35 +1,36 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFT v2 04/10] pinctrl: samsung: Add dedicated compatible for
- S5Pv210 wakeup interrupts
-Date: Wed, 25 Jul 2018 11:39:30 -0600
-Message-ID: <20180725173930.GA27860@rob-hp-laptop>
-References: <20180723175302.22535-1-krzk@kernel.org>
- <20180723175302.22535-5-krzk@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: samsung: Add SPDX license identifiers
+Date: Wed, 25 Jul 2018 13:13:07 -0600
+Message-ID: <20180725191307.GA32217@rob-hp-laptop>
+References: <20180718200216.6389-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180723175302.22535-5-krzk@kernel.org>
+In-Reply-To: <20180718200216.6389-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 07:52:56PM +0200, Krzysztof Kozlowski wrote:
-> The S5Pv210 external wakeup interrupts differ from Exynos therefore
-> separate compatible is needed.  Duplicate existing flavor specific data
-> from exynos4210_wkup_irq_chip and add new compatible for S5Pv210.
-> At this point this new compatible does not bring anything new and works
-> exactly as existing "samsung,exynos4210-wakeup-eint".
+On Wed, Jul 18, 2018 at 10:02:16PM +0200, Krzysztof Kozlowski wrote:
+> Replace GPL license statements with SPDX license identifiers (GPL-2.0).
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <snawrocki@kernel.org>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 > ---
->  .../devicetree/bindings/pinctrl/samsung-pinctrl.txt    |  2 ++
+>  include/dt-bindings/clock/exynos3250.h            | 5 +----
+>  include/dt-bindings/clock/exynos4.h               | 7 ++-----
+>  include/dt-bindings/clock/exynos5250.h            | 7 ++-----
+>  include/dt-bindings/clock/exynos5260-clk.h        | 7 ++-----
+>  include/dt-bindings/clock/exynos5410.h            | 7 ++-----
+>  include/dt-bindings/clock/exynos5420.h            | 7 ++-----
+>  include/dt-bindings/clock/exynos5433.h            | 5 +----
+>  include/dt-bindings/clock/exynos7-clk.h           | 7 ++-----
+>  include/dt-bindings/clock/s3c2410.h               | 5 +----
+>  include/dt-bindings/clock/s3c2412.h               | 5 +----
+>  include/dt-bindings/clock/s3c2443.h               | 5 +----
+>  include/dt-bindings/clock/samsung,s2mps11.h       | 5 +----
+>  include/dt-bindings/clock/samsung,s3c64xx-clock.h | 7 ++-----
+>  13 files changed, 20 insertions(+), 59 deletions(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
-
->  drivers/pinctrl/samsung/pinctrl-exynos.c               | 18 ++++++++++++++++++
->  2 files changed, 20 insertions(+)
+Reviewed-by: Rob Herring <robh@kernel.org>
