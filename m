@@ -1,60 +1,44 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] dt-bindings: thermal: samsung: Add SPDX license identifier
-Date: Wed, 25 Jul 2018 18:27:59 +0200
-Message-ID: <CAJKOXPfTBE-tW81tocCfObb-pAwNmDjjv-BY6kHNkEuazm0pAA@mail.gmail.com>
-References: <CGME20180718200318epcas3p16aed6c1725d6c1e63ea6b1ad209c5756@epcas3p1.samsung.com>
- <2442216.oppRSGRAaL@amdc3058> <20180724200312.xs6u4nvhjckukkig@kozik-lap> <2385592.z8yee4uxt4@amdc3058>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFT v2 03/10] pinctrl: samsung: Document hidden requirement
+ about one external wakeup
+Date: Wed, 25 Jul 2018 11:38:23 -0600
+Message-ID: <20180725173823.GA25530@rob-hp-laptop>
+References: <20180723175302.22535-1-krzk@kernel.org>
+ <20180723175302.22535-4-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2385592.z8yee4uxt4@amdc3058>
+Content-Disposition: inline
+In-Reply-To: <20180723175302.22535-4-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 25 July 2018 at 16:43, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> On Tuesday, July 24, 2018 10:03:12 PM Krzysztof Kozlowski wrote:
->> On Tue, Jul 24, 2018 at 06:46:35PM +0200, Bartlomiej Zolnierkiewicz wrote:
->> >
->> > Hi,
->> >
->> > On Wednesday, July 18, 2018 10:02:50 PM Krzysztof Kozlowski wrote:
->> > > Replace GPL license statement with SPDX license identifier (GPL-2.0+).
->> > >
->> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> > > ---
->> > >  include/dt-bindings/thermal/thermal_exynos.h | 12 +-----------
->> > >  1 file changed, 1 insertion(+), 11 deletions(-)
->> > >
->> > > diff --git a/include/dt-bindings/thermal/thermal_exynos.h b/include/dt-bindings/thermal/thermal_exynos.h
->> > > index 0646500bca69..642e4e7f4084 100644
->> > > --- a/include/dt-bindings/thermal/thermal_exynos.h
->> > > +++ b/include/dt-bindings/thermal/thermal_exynos.h
->> > > @@ -1,19 +1,9 @@
->> > > +/* SPDX-License-Identifier: GPL-2.0+ */
->> >
->> > This code should be GPL-2.0 only, original license statement is most
->> > likely result of using wrong file as the source of copy-paste. So I
->> > would like to have the license fixed first before doing conversion to
->> > SPDX.
->>
->> If you think that's the case, then it makes sense and please go ahead.
->> As fair as I remember this required signed-off from all contributors...
->> so probably just Lukasz and Eduardo?
->
-> git blame shows just Lukasz so his Ack should be enough.
->
-> I'm also fine with doing it in one patch like i.e. in commit a80ea4cb944e
-> ("pata_bk3710: clarify license version and use SPDX header"), if you are
-> also fine with it could you please re-spin the patch (+Cc: Lukasz)?
+On Mon, Jul 23, 2018 at 07:52:55PM +0200, Krzysztof Kozlowski wrote:
+> Hardware (S5Pv210 and all Exynos SoCs) provides only 32 external
+> interrupts which can wakeup device from deep sleep modes.  On S5Pv210
+> these are gph0-gph3.  On all Exynos designs these are gpx0-gpx3.
+> There is only one 32-bit register for controlling the external wakeup
+> interrupt mask (masking and unmasking waking capability of these
+> interrupts).
+> 
+> This lead to implementation in pinctrl driver and machine code which was
+> using static memory for storing the mask value and not caring about
+> multiple devices of pin controller... because only one pin controller
+> device will be handling this.
+> 
+> Since each pin controller node in Device Tree maps onto one device, this
+> corresponds to hidden assumption in parsing the Device Tree: external
+> wakeup interrupts can be defined only once.  Make this assumption an
+> explicit requirement.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Sylwester Nawrocki <snawrocki@kernel.org>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 
-I do not have interest in changing the license, I do not want to deal
-with possible legal issues so I'll skip it.
-
-I am fine however with abandoning this patch if you or someone else
-sends license change + SPDX.
-
-Best regards,
-Krzysztof
+Reviewed-by: Rob Herring <robh@kernel.org>
