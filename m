@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/3] ARM: dts: exynos: Second round for v4.19
-Date: Wed, 25 Jul 2018 18:23:39 +0200
-Message-ID: <20180725162340.7488-2-krzk@kernel.org>
+Subject: [GIT PULL 3/3] ARM: samsung: Mach/soc for v4.19
+Date: Wed, 25 Jul 2018 18:23:40 +0200
+Message-ID: <20180725162340.7488-3-krzk@kernel.org>
 References: <20180725162340.7488-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180725162340.7488-1-krzk@kernel.org>
@@ -12,44 +12,39 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On top of previous pull request.
-
+Rebased on v4.18-rc2, because at v4.18-rc1 the NFS root boot, which I use at my
+testing setup (https://krzk.eu), was broken.
 
 Best regards,
 Krzysztof
 
 
-The following changes since commit 57f4e8bc1c3ebbd06a278107edeb6af95b53e5bf:
+The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
 
-  dt-bindings: samsung: Document bindings for SGH-T959P board (2018-07-07 12:28:07 +0200)
+  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
 
 are available in the git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.19-2
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.19
 
-for you to fetch changes up to 965228d33cd2b47adb493bb1864761420c632e41:
+for you to fetch changes up to cd4806911cee3901bc2b5eb95603cf1958720b57:
 
-  ARM: dts: exynos: Configure Midas SD card CD pin (2018-07-23 19:12:01 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM changes for v4.19, part 2
-
-1. Add missing interrupts to PWM nodes on Exynos5.
-2. Add missing interrupt pin pull up/down configuration on Exynos4412
-   Midas boards.  The interrupts were mostly working thanks to initial
-   configuration by bootloader.
+  ARM: exynos: Clear global variable on init error path (2018-07-24 18:52:14 +0200)
 
 ----------------------------------------------------------------
-Anand Moon (1):
-      ARM: dts: exynos: Add missing interrupts for pwm node on Exynos5
+Samsung mach/soc changes for v4.19
 
-Simon Shields (5):
-      ARM: dts: exynos: Add max77693 pinctrl config for Midas
-      ARM: dts: exynos: Add pinctrl config for Midas keys
-      ARM: dts: exynos: Add pinctrl for Midas fuelgauge IRQ pin
-      ARM: dts: exynos: Configure max77686 IRQ pin on Midas
-      ARM: dts: exynos: Configure Midas SD card CD pin
+Minor cleanups and fixes.
 
- arch/arm/boot/dts/exynos4412-midas.dtsi | 35 ++++++++++++++++++++++++++++++++-
- arch/arm/boot/dts/exynos5.dtsi          |  5 +++++
- 2 files changed, 39 insertions(+), 1 deletion(-)
+----------------------------------------------------------------
+Denis Efremov (1):
+      ARM: s3c24xx: Fix typo in guard macro of s3c2412.h
+
+Krzysztof Kozlowski (2):
+      ARM: exynos: Remove outdated maintainer information
+      ARM: exynos: Clear global variable on init error path
+
+ arch/arm/mach-exynos/exynos.c                | 2 --
+ arch/arm/mach-exynos/suspend.c               | 1 +
+ arch/arm/mach-s3c24xx/include/mach/s3c2412.h | 2 +-
+ 3 files changed, 2 insertions(+), 3 deletions(-)
