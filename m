@@ -1,33 +1,80 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 0/3] clk/dts: s2mps11: Fix matching as module
-Date: Wed, 25 Jul 2018 17:55:14 +0200
-Message-ID: <20180725155517.4872-1-krzk@kernel.org>
+Subject: [PATCH 1/3] clk: s2mps11: Fix matching when built as module and DT node contains compatible
+Date: Wed, 25 Jul 2018 17:55:15 +0200
+Message-ID: <20180725155517.4872-2-krzk@kernel.org>
+References: <20180725155517.4872-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180725155517.4872-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+When driver is built as module and DT node contains clocks compatible
+(e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
+module aliases won't match.
 
-The DTS patches depend on 1st clock patch.  I will take them through
-samsung-soc tree in next release.
+The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
+The modalias from driver: platform:s2mps11-clk
 
-Best regards,
-Krzysztof
+The devices are instantiated by parent's MFD.  However both Device Tree
+bindings and parent define the compatible for clocks devices.  In case
+of module matching this DT compatible will be used.
 
+The issue will not happen if this is built-in (no need for module
+matching) or when clocks DT node does not contain compatible (not
+correct from bindings perspective but working for driver).
 
-Krzysztof Kozlowski (3):
-  clk: s2mps11: Fix matching when built as module and DT node contains
-    compatible
-  ARM: dts: exynos: Add compatible for s2mps11 clocks node on Exynos542x
-  ARM: dts: exynos: Add compatible for s5m8767 clocks node on Itop Core
+Note when backporting to stable kernels: adjust the list of device ID
+entries.
 
- arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi |  1 +
- arch/arm/boot/dts/exynos5420-arndale-octa.dts   |  1 +
- arch/arm/boot/dts/exynos5420-smdk5420.dts       |  1 +
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi   |  1 +
- drivers/clk/clk-s2mps11.c                       | 30 +++++++++++++++++++++++++
- 5 files changed, 34 insertions(+)
+Cc: <stable@vger.kernel.org>
+Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock MFD cells")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/clk-s2mps11.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index d44e0eea31ec..11a1e83ff805 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -245,6 +245,36 @@ static const struct platform_device_id s2mps11_clk_id[] = {
+ };
+ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+ 
++#ifdef CONFIG_OF
++/*
++ * Device is instantiated through parent MFD device and device matching is done
++ * through platform_device_id.
++ *
++ * However if device's DT node contains proper clock compatible and it is built
++ * as a module, then the module matching will be done trough DT aliases.  This
++ * requires of_device_id table.  In the same time this will not change the
++ * actual device matching so do not add .of_match_table.
++ */
++static const struct of_device_id s2mps11_dt_match[] = {
++	{
++		.compatible = "samsung,s2mps11-clk",
++		.data = (void *)S2MPS11X,
++	}, {
++		.compatible = "samsung,s2mps13-clk",
++		.data = (void *)S2MPS13X,
++	}, {
++		.compatible = "samsung,s2mps14-clk",
++		.data = (void *)S2MPS14X,
++	}, {
++		.compatible = "samsung,s5m8767-clk",
++		.data = (void *)S5M8767X,
++	}, {
++		/* Sentinel */
++	},
++};
++MODULE_DEVICE_TABLE(of, s2mps11_dt_match);
++#endif
++
+ static struct platform_driver s2mps11_clk_driver = {
+ 	.driver = {
+ 		.name  = "s2mps11-clk",
 -- 
 2.14.1
