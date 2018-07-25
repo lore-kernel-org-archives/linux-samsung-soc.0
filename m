@@ -1,57 +1,53 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] dt-bindings: thermal: samsung: Add SPDX license
- identifier
-Date: Wed, 25 Jul 2018 16:43:33 +0200
-Message-ID: <2385592.z8yee4uxt4@amdc3058>
-References: <CGME20180718200318epcas3p16aed6c1725d6c1e63ea6b1ad209c5756@epcas3p1.samsung.com>
-        <2442216.oppRSGRAaL@amdc3058> <20180724200312.xs6u4nvhjckukkig@kozik-lap>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v5 0/9] Add TOSHIBA TC358764 DSI/LVDS bridge driver
+Date: Wed, 25 Jul 2018 17:46:35 +0200
+Message-ID: <20180725154644.25412-1-a.hajda@samsung.com>
+References: <CGME20180725154658eucas1p14acd753797d90debffca5b6ff6576b33@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180724200312.xs6u4nvhjckukkig@kozik-lap>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, Maciej Purski <m.purski@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, July 24, 2018 10:03:12 PM Krzysztof Kozlowski wrote:
-> On Tue, Jul 24, 2018 at 06:46:35PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > On Wednesday, July 18, 2018 10:02:50 PM Krzysztof Kozlowski wrote:
-> > > Replace GPL license statement with SPDX license identifier (GPL-2.0+).
-> > > 
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > ---
-> > >  include/dt-bindings/thermal/thermal_exynos.h | 12 +-----------
-> > >  1 file changed, 1 insertion(+), 11 deletions(-)
-> > > 
-> > > diff --git a/include/dt-bindings/thermal/thermal_exynos.h b/include/dt-bindings/thermal/thermal_exynos.h
-> > > index 0646500bca69..642e4e7f4084 100644
-> > > --- a/include/dt-bindings/thermal/thermal_exynos.h
-> > > +++ b/include/dt-bindings/thermal/thermal_exynos.h
-> > > @@ -1,19 +1,9 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > 
-> > This code should be GPL-2.0 only, original license statement is most
-> > likely result of using wrong file as the source of copy-paste. So I
-> > would like to have the license fixed first before doing conversion to
-> > SPDX.
-> 
-> If you think that's the case, then it makes sense and please go ahead.
-> As fair as I remember this required signed-off from all contributors...
-> so probably just Lukasz and Eduardo?
-
-git blame shows just Lukasz so his Ack should be enough.
-
-I'm also fine with doing it in one patch like i.e. in commit a80ea4cb944e
-("pata_bk3710: clarify license version and use SPDX header"), if you are
-also fine with it could you please re-spin the patch (+Cc: Lukasz)?
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+SGksCgpUaGlzIGlzIGNvbnRpbnVhdGlvbiBvZiBNYWNpZWogcGF0Y2hzZXQuIEkgdG9vayBpdCBv
+dmVyIHNpbmNlIGhlIGNhbid0IHdvcmsKb24gaXQgaW4gbmVhciBmdXR1cmUuCgpJIGhhdmUgcmVt
+b3ZlZCBwYW5lbCBwYXRjaGVzIGFzIHRoZXkgYXJlIGFscmVhZHkgbWVyZ2VkICh0aGFua3MgVGhp
+ZXJyeSksCmJ1dCBJIGhhdmUgYWRkZWQgZml4IGZvciB0aW1pbmdzIHRvIGFsbG93IHJlZnJlc2gg
+cmF0ZSA2MEh6LgpJIGhhdmUgYWRkcmVzc2VkIGFsbCBjb21tZW50cyBmcm9tIHJldmlld2VycyAt
+IHRoYW5rcyBJbmtpLCB0aGFua3MgbWUgOikKCkFsbCBjaGFuZ2VzIGFyZSBkZXNjcmliZWQgaW4g
+dGhlIHBhdGNoZXMuCgpSZWdhcmRzCkFuZHJ6ZWoKCgpBbmRyemVqIEhhamRhICg2KToKICBkdC1i
+aW5kaW5nczogdGMzNTg3NTQ6IGFkZCBEVCBiaW5kaW5ncwogIGRybS9icmlkZ2U6IHRjMzU4NzY0
+OiBBZGQgRFNJIHRvIExWRFMgYnJpZGdlIGRyaXZlcgogIEFSTTogZHRzOiBleHlub3M1MjUwOiBh
+ZGQgRFNJIG5vZGUKICBBUk06IGR0czogZXh5bm9zNTI1MC1hcm5kYWxlOiBhZGQgRFNJIGFuZCBw
+YW5lbCBub2RlcwogIGRybS9wYW5lbDogc2ltcGxlOiBmaXggQk9FL0hWMDcwV1NBLTEwMCB0aW1p
+bmdzCiAgZHQtYmluZGluZ3M6IGV4eW5vc19kc2ltOiB1cGRhdGUgb2YgZ3JhcGggYmluZGluZ3MK
+Ck1hY2llaiBQdXJza2kgKDMpOgogIGRybS9leHlub3M6IHJlbmFtZSBicmlkZ2Vfbm9kZSB0byBp
+bl9icmlkZ2Vfbm9kZQogIGRybS9leHlub3M6IG1vdmUgY29ubmVjdG9yIGNyZWF0aW9uIHRvIGF0
+dGFjaCBjYWxsYmFjawogIGRybS9leHlub3M6IGVuYWJsZSBvdXRfYnJpZGdlIGluIGV4eW5vc19k
+c2lfZW5hYmxlCgogLi4uL2Rpc3BsYXkvYnJpZGdlL3Rvc2hpYmEsdGMzNTg3NjQudHh0ICAgICAg
+IHwgIDM1ICsrCiAuLi4vYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RzaW0udHh0ICAg
+fCAgMjUgKy0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtYXJuZGFsZS5kdHMgICAgICB8
+ICA2MSArKysKIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSAgICAgICAgICAgICB8
+ICAyMSArCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tjb25maWcgICAgICAgICAgICAgICAgfCAg
+IDggKwogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9NYWtlZmlsZSAgICAgICAgICAgICAgIHwgICAx
+ICsKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvdGMzNTg3NjQuYyAgICAgICAgICAgICB8IDQ5OSAr
+KysrKysrKysrKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2ku
+YyAgICAgICB8IDEwNCArKy0tCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2ltcGxlLmMg
+ICAgICAgICAgfCAgMTQgKy0KIDkgZmlsZXMgY2hhbmdlZCwgNzAxIGluc2VydGlvbnMoKyksIDY3
+IGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9kaXNwbGF5L2JyaWRnZS90b3NoaWJhLHRjMzU4NzY0LnR4dAogY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvdGMzNTg3NjQuYwoKLS0gCjIuMTguMAoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
