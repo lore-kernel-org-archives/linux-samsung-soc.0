@@ -1,32 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] pinctrl: samsung: Stuff for v4.19
-Date: Wed, 25 Jul 2018 22:49:50 +0200
-Message-ID: <CACRpkdaDsVdQDZzZBdAznE96WRovOGu9pTio7Ez=fA-T1hvQTA@mail.gmail.com>
-References: <20180725161852.6963-1-krzk@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/3] clk: s2mps11: Fix matching when built as module and DT node
+ contains compatible
+Date: Wed, 25 Jul 2018 16:48:32 -0700
+Message-ID: <153256251231.48062.2127272830110571402@swboyd.mtv.corp.google.com>
+References: <20180725155517.4872-1-krzk@kernel.org>
+ <20180725155517.4872-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180725161852.6963-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, snawrocki@kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20180725155517.4872-2-krzk@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 6:19 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Quoting Krzysztof Kozlowski (2018-07-25 08:55:15)
+> When driver is built as module and DT node contains clocks compatible
+> (e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
+> module aliases won't match.
+> =
 
-> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
->
->   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.19
->
-> for you to fetch changes up to b3793159249bb091efce4b1515ce18cdfc4c6e41:
->
->   dt-bindings: pinctrl: samsung: Add SPDX license identifier (2018-07-24 21:59:17 +0200)
+> The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
+> The modalias from driver: platform:s2mps11-clk
+> =
 
-Pulled to my devel branch for v4.19, thanks!
+> The devices are instantiated by parent's MFD.  However both Device Tree
+> bindings and parent define the compatible for clocks devices.  In case
+> of module matching this DT compatible will be used.
+> =
 
-Yours,
-Linus Walleij
+> The issue will not happen if this is built-in (no need for module
+> matching) or when clocks DT node does not contain compatible (not
+> correct from bindings perspective but working for driver).
+> =
+
+> Note when backporting to stable kernels: adjust the list of device ID
+> entries.
+> =
+
+> Cc: <stable@vger.kernel.org>
+> Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock =
+MFD cells")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
