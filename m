@@ -1,49 +1,60 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2] Documentation: dt-bindings: Explicitly mark Samsung
- Exynos SoC bindings as unstable
-Date: Thu, 26 Jul 2018 11:57:59 +0200
-Message-ID: <9466376.zSd3pI8yRi@amdc3058>
-References: <CGME20180528191404epcas3p241196d099756ea7e310cff70d298c4c9@epcas3p2.samsung.com>
-        <20180528191327.23772-1-krzk@kernel.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 1/2] ARM: dts: exynos: arndale: use i2c-gpio for HDMI-DDC
+Date: Thu, 26 Jul 2018 12:12:27 +0200
+Message-ID: <20180726101228.14956-1-a.hajda@samsung.com>
+References: <CGME20180726101245eucas1p16d84c77490d9eb81300f38c2f3fb34a5@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180528191327.23772-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, May 28, 2018 09:13:27 PM Krzysztof Kozlowski wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> Samsung Exynos SoCs and boards related bindings evolved since the initial
-> introduction, but initially the bindings were minimal and a bit incomplete
-> (they never described all the hardware modules available in the SoCs).
-> Since then some significant (not fully compatible) changes have been
-> already committed a few times (like gpio replaced by pinctrl, display ddc,
-> mfc reserved memory, some core clocks added to various hardware modules,
-> added more required nodes).
-> 
-> On the other side there are no boards which have device tree embedded in
-> the bootloader. Device tree blob is always compiled from the kernel tree
-> and updated together with the kernel image.
-> 
-> Thus to avoid further adding a bunch of workarounds for old/missing
-> bindings, make development of new platforms easier and allow to make
-> cleanup of the existing code and device tree files, lets mark some
-> Samsung Exynos SoC platform bindings as unstable. This means that
-> bindings can may change at any time and users should use the dtb file
-> compiled from the same kernel source tree as the kernel image.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+SERNSS1EREMgZm9yIHVua25vd24gcmVhc29ucyBkb2Vzbid0IHdvcmsgd2l0aCBFeHlub3MgSTJD
+CmNvbnRyb2xsZXJzLiBGb3J0dW5hdGVseSBpMmMtZ3BpbyBjb21lcyB0byB0aGUgcmVzY3VlLgoK
+U2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBh
+cmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLWFybmRhbGUuZHRzICB8IDI0ICsrKysrKysrKysr
+KysrKy0tLS0tLS0tCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXBpbmN0cmwuZHRzaSB8
+ICA2ICsrKysrKwogMiBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9u
+cygtKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtYXJuZGFsZS5k
+dHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLWFybmRhbGUuZHRzCmluZGV4IDgxNmQ4
+OWQ0Y2VmZC4uNTkxMDIzMzkxZjdkIDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlu
+b3M1MjUwLWFybmRhbGUuZHRzCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtYXJu
+ZGFsZS5kdHMKQEAgLTIxMSw3ICsyMTEsNyBAQAogCiAmaGRtaSB7CiAJc3RhdHVzID0gIm9rYXki
+OwotCWRkYyA9IDwmaTJjXzI+OworCWRkYyA9IDwmaTJjX2RkYz47CiAJaHBkLWdwaW9zID0gPCZn
+cHgzIDcgR1BJT19BQ1RJVkVfTE9XPjsKIAl2ZGRfb3NjLXN1cHBseSA9IDwmbGRvMTBfcmVnPjsK
+IAl2ZGRfcGxsLXN1cHBseSA9IDwmbGRvOF9yZWc+OwpAQCAtNTEzLDEzICs1MTMsNiBAQAogCX07
+CiB9OwogCi0maTJjXzIgewotCXN0YXR1cyA9ICJva2F5IjsKLQkvKiB1c2VkIGJ5IEhETUkgRERD
+ICovCi0Jc2Ftc3VuZyxpMmMtc2RhLWRlbGF5ID0gPDEwMD47Ci0Jc2Ftc3VuZyxpMmMtbWF4LWJ1
+cy1mcmVxID0gPDY2MDAwPjsKLX07Ci0KICZpMmNfMyB7CiAJc3RhdHVzID0gIm9rYXkiOwogCkBA
+IC02MDgsMyArNjAxLDE4IEBACiAJc3RhdHVzID0gIm9rYXkiOwogCXNhbXN1bmcsZXh5bm9zLXNh
+dGFwaHktaTJjLXBoYW5kbGUgPSA8JnNhdGFfcGh5X2kyYz47CiB9OworCismc29jIHsKKwlpMmNf
+ZGRjOiBpMmMtZ3BpbyB7CisJCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CisJCXBpbmN0cmwt
+MCA9IDwmaTJjMl9ncGlvX2J1cz47CisJCXN0YXR1cyA9ICJva2F5IjsKKwkJY29tcGF0aWJsZSA9
+ICJpMmMtZ3BpbyI7CisJCWdwaW9zID0gPCZncGEwIDYgMCAvKiBzZGEgKi8KKwkJCSAmZ3BhMCA3
+IDAgLyogc2NsICovCisJCQk+OworCQlpMmMtZ3BpbyxkZWxheS11cyA9IDwyPjsKKwkJI2FkZHJl
+c3MtY2VsbHMgPSA8MT47CisJCSNzaXplLWNlbGxzID0gPDA+OworCX07Cit9OwpkaWZmIC0tZ2l0
+IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1waW5jdHJsLmR0c2kgYi9hcmNoL2FybS9i
+b290L2R0cy9leHlub3M1MjUwLXBpbmN0cmwuZHRzaQppbmRleCA2ZmY2ZGVhMjlkNDQuLmIyNWQ1
+MjAzOTNiOCAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1waW5jdHJs
+LmR0c2kKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1waW5jdHJsLmR0c2kKQEAg
+LTIyNSw2ICsyMjUsMTIgQEAKIAkJc2Ftc3VuZyxwaW4tZHJ2ID0gPEVYWU5PUzRfUElOX0RSVl9M
+VjE+OwogCX07CiAKKwlpMmMyX2dwaW9fYnVzOiBpMmMyLWdwaW8tYnVzIHsKKwkJc2Ftc3VuZyxw
+aW5zID0gImdwYTAtNiIsICJncGEwLTciOworCQlzYW1zdW5nLHBpbi1wdWQgPSA8RVhZTk9TX1BJ
+Tl9QVUxMX05PTkU+OworCQlzYW1zdW5nLHBpbi1kcnYgPSA8RVhZTk9TNF9QSU5fRFJWX0xWMT47
+CisJfTsKKwogCXVhcnQyX2RhdGE6IHVhcnQyLWRhdGEgewogCQlzYW1zdW5nLHBpbnMgPSAiZ3Bh
+MS0wIiwgImdwYTEtMSI7CiAJCXNhbXN1bmcscGluLWZ1bmN0aW9uID0gPEVYWU5PU19QSU5fRlVO
+Q18yPjsKLS0gCjIuMTguMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
