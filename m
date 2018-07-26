@@ -1,38 +1,60 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 7/9] ARM: dts: exynos5250-arndale: add DSI and panel
- nodes
-Date: Thu, 26 Jul 2018 09:48:17 +0200
-Message-ID: <CAJKOXPc5QMaq1XB=3Y6hBVhd1_KzMd0v5wvgcT9+KCqKCQTAiA@mail.gmail.com>
-References: <CGME20180725154702eucas1p1312eaf0253ce9c67de7d9cf3bf43e5f4@eucas1p1.samsung.com>
- <20180725154644.25412-1-a.hajda@samsung.com>
- <20180725154644.25412-8-a.hajda@samsung.com>
+Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent Storage
+Date: Thu, 26 Jul 2018 10:46:28 +0200
+Message-ID: <CAJKOXPejStfaQdtUwh33v+aC7KpamoLkix3nitbHrDRx4QAR6g@mail.gmail.com>
+References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
+ <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com>
+ <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
+ <BCD39D7E-EEEC-4EB9-824E-63323C333C88@oracle.com> <CAJKOXPcw-i99_U-Ltuuf6w-WRK7V4gNqVSYkCMGFEXQG2DL2XQ@mail.gmail.com>
+ <CAJKOXPf7V1z4pNZ2RsjkJmaVAgk34_rPOtQOc7J5KRMSRemrdg@mail.gmail.com>
+ <082848F5-6360-4523-BA95-601777E17CF2@oracle.com> <CAJKOXPe4uqOZGd_zb_Mqq4Fspu63LHZky86O4tPaD3BZNCBS6w@mail.gmail.com>
+ <6AAC5897-8762-4209-8718-67291B87AA00@oracle.com> <d617f8a85c3414230cd755fe0e4470c0f8bd17ff.camel@hammerspace.com>
+ <26995E49-E8DD-421D-BABF-9E672B9383BD@oracle.com> <30a1455b6817361f8228c022628aef5cdee70c3e.camel@hammerspace.com>
+ <784782B0-A387-4D3B-A517-E85D851162B8@oracle.com> <CAJKOXPfMiaGP9xqPcOQMs+a4RKvhK03v51e5r3GaUiFs0G=61Q@mail.gmail.com>
+ <9B9E1627-AC2E-4A0C-AB6E-5815876A59AB@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180725154644.25412-8-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Maciej Purski <m.purski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <9B9E1627-AC2E-4A0C-AB6E-5815876A59AB@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Trond Myklebust <trondmy@hammerspace.com>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, Bruce Fields <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, "David S. Miller" <davem@davemloft.net>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjUgSnVseSAyMDE4IGF0IDE3OjQ2LCBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcu
-Y29tPiB3cm90ZToKPiBUaGUgcGF0Y2ggYWRkcyBicmlkZ2UgYW5kIHBhbmVsIG5vZGVzLgo+IEl0
-IGFkZHMgYWxzbyBEU0kgcHJvcGVydGllcyBzcGVjaWZpYyBmb3IgYXJuZGFsZSBib2FyZCBhbmQK
-PiByZWd1bGF0b3JzIHJlcXVpcmVkIGJ5IHRoZSBicmlkZ2UuCj4KPiBTaWduZWQtb2ZmLWJ5OiBB
-bmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IFNpZ25lZC1vZmYtYnk6IE1hY2ll
-aiBQdXJza2kgPG0ucHVyc2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBhcmNoL2FybS9ib290L2R0
-cy9leHlub3M1MjUwLWFybmRhbGUuZHRzIHwgNjEgKysrKysrKysrKysrKysrKysrKysrKysrCj4g
-IDEgZmlsZSBjaGFuZ2VkLCA2MSBpbnNlcnRpb25zKCspCgpJJ2xsIHRha2UgaXQgYWZ0ZXIgbWVy
-Z2Ugd2luZG93IHNvIGZvciB2NC4yMC4KCkJlc3QgcmVnYXJkcywKS3J6eXN6dG9mCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 25 July 2018 at 16:31, Chuck Lever <chuck.lever@oracle.com> wrote:
+>
+>
+>> On Jul 25, 2018, at 9:27 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 18 June 2018 at 18:20, Chuck Lever <chuck.lever@oracle.com> wrote:
+>>>
+>>> The extra serialization appears to have a reproducible performance
+>>> impact on RDMA, which no longer takes the reserve_lock when allocating
+>>> a slot.
+>>>
+>>> I could put an xprt_alloc_xid call in xprt_alloc_slot, but that would
+>>> only work for socket-based transports. Would it be OK if RDMA had its
+>>> own XID allocation mechanism?
+>>
+>> Hi,
+>>
+>> On recent next the issue appeared again. My boards with NFSv4 root
+>> timeout on 80% of boots. This time my NFS server is faster - Pi3 B+
+>> :).
+>>
+>> Is this know? Should I start long bisect or maybe you can point me to
+>> possible causes?
+>
+> Hi Krzysztof, I don't know of any recent changes. Bisecting would be
+> a good place to start.
+
+Hi,
+
+That was my mistake because of missing part of NFS server
+configuration on new board. I tested again recent releases and current
+linux-next and everything works fine.
+
+Sorry for the noise.
+
+Best regards,
+Krzysztof
