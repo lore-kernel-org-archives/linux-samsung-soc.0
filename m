@@ -1,135 +1,68 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH v2] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
-Date: Thu, 26 Jul 2018 21:24:59 +0530
-Message-ID: <20180726155459.GA30138@jordon-HP-15-Notebook-PC>
+From: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
+Subject: [PATCH v2 00/10] Add helper for plane reset
+Date: Thu, 26 Jul 2018 17:17:46 +0100
+Message-ID: <20180726161756.1794-1-alexandru-cosmin.gheorghe@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, ajitn.linux@gmail.com, sabyasachi.linux@gmail.com, brajeswar.linux@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: seanpaul@chromium.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, liviu.dudau@arm.com, brian.starkey@arm.com, malidp@foss.arm.com, ville.syrjala@linux.intel.com, daniel@ffwll.ch, gustavo@padovan.org, maarten.lankhorst@linux.intel.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, harry.wentland@amd.com, andrey.grodzovsky@amd.com, Tony.Cheng@amd.com, sunpeng.li@amd.com, shirish.s@amd.com, boris.brezillon@bootlin.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, p.zabel@pengutronix.de, laurent.pinchart@ideasonboard.com, maxime.ripard@bootlin.com, wens@csie.org, eric@anholt.net, linux-graphics-maintainer@vmware.com, syeh@
+Cc: nd@arm.com, Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-convert drm_atomic_helper_suspend/resume() to use
-drm_mode_config_helper_suspend/resume().
-
-exynos_drm_fbdev_suspend/resume can be removed
-as drm_mode_config_helper_suspend/resume has
-implement the same in generic way.
-
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
----
-v2: Address Inki Dae's comment. Remove
-    ret variable from both suspend/resume
-    function.
-
- drivers/gpu/drm/exynos/exynos_drm_drv.c   | 26 ++++----------------------
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 -----------------
- drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
- 3 files changed, 4 insertions(+), 49 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index a81b4a5..46d28cd 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -151,39 +151,21 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
- static int exynos_drm_suspend(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	struct exynos_drm_private *private;
- 
--	if (pm_runtime_suspended(dev) || !drm_dev)
-+	if (pm_runtime_suspended(dev))
- 		return 0;
- 
--	private = drm_dev->dev_private;
--
--	drm_kms_helper_poll_disable(drm_dev);
--	exynos_drm_fbdev_suspend(drm_dev);
--	private->suspend_state = drm_atomic_helper_suspend(drm_dev);
--	if (IS_ERR(private->suspend_state)) {
--		exynos_drm_fbdev_resume(drm_dev);
--		drm_kms_helper_poll_enable(drm_dev);
--		return PTR_ERR(private->suspend_state);
--	}
--
--	return 0;
-+	return drm_mode_config_helper_suspend(drm_dev);
- }
- 
- static int exynos_drm_resume(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	struct exynos_drm_private *private;
- 
--	if (pm_runtime_suspended(dev) || !drm_dev)
-+	if (pm_runtime_suspended(dev))
- 		return 0;
- 
--	private = drm_dev->dev_private;
--	drm_atomic_helper_resume(drm_dev, private->suspend_state);
--	exynos_drm_fbdev_resume(drm_dev);
--	drm_kms_helper_poll_enable(drm_dev);
--
--	return 0;
-+	return drm_mode_config_helper_resume(drm_dev);
- }
- #endif
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 132dd52..918dd2c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
- 	private->fb_helper = NULL;
- }
- 
--void exynos_drm_fbdev_suspend(struct drm_device *dev)
--{
--	struct exynos_drm_private *private = dev->dev_private;
--
--	console_lock();
--	drm_fb_helper_set_suspend(private->fb_helper, 1);
--	console_unlock();
--}
--
--void exynos_drm_fbdev_resume(struct drm_device *dev)
--{
--	struct exynos_drm_private *private = dev->dev_private;
--
--	console_lock();
--	drm_fb_helper_set_suspend(private->fb_helper, 0);
--	console_unlock();
--}
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-index b338472..6840b6a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-@@ -19,8 +19,6 @@
- 
- int exynos_drm_fbdev_init(struct drm_device *dev);
- void exynos_drm_fbdev_fini(struct drm_device *dev);
--void exynos_drm_fbdev_suspend(struct drm_device *drm);
--void exynos_drm_fbdev_resume(struct drm_device *drm);
- 
- #else
- 
-@@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
- 
- #define exynos_drm_output_poll_changed (NULL)
- 
--static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
--{
--}
--
--static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
--{
--}
--
- #endif
- 
- #endif
--- 
-1.9.1
+Q2hhbmdlcyBzaW5jZSB2MTogCiAtIE1ha2UgX19kcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNl
+dCBjb25zaXN0ZW50IHdpdGggdGhlIG90aGVyCiAgIGhlbHBlcnMgYW5kIHJlcXVpcmUgdGhhdCBi
+b3RoIHBsYW5lIGFuZCBzdGF0ZSBub3QgYmUgTlVMTCwKICAgc3VnZ2VzdGVkIGJ5IEJvcmlzIEJy
+ZXppbGxvbiBhbmQgUGhpbGlwcCBaYWJlbC4gRHJpdmVycyBhbHJlYWR5CiAgIGNoZWNrIGZvciB0
+aGF0LgogLSBBZGQgYSBwcm9wZXIgY29tbWl0IG1lc3NhZ2UgZm9yIGRyaXZlciBjaGFuZ2VzLgoK
+RHJpdmVycyB0aGF0IHN1YmNsYXNzIGRybV9wbGFuZSBuZWVkIHRvIGNvcHkgdGhlIGxvZ2ljIGZv
+ciBsaW5raW5nIHRoZQpkcm1fcGxhbmUgd2l0aCBpdHMgc3RhdGUgYW5kIHRvIGluaXRpYWxpemUg
+Y29yZSBwcm9wZXJ0aWVzIHRvIHRoZWlyCmRlZmF1bHQgdmFsdWVzLiBFLmcgKGFscGhhIGFuZCBy
+b3RhdGlvbikKCkhhdmluZyBhIGhlbHBlciB0byByZXNldCB0aGUgcGxhbmVfc3RhdGUgbWFrZXMg
+c2Vuc2UgYmVjYXVzZSBvZiBtdWx0aXBsZQpyZWFzb25zOgoxLiBFbGltaW5hdGUgY29kZSBkdXBs
+aWNhdGlvbi4KMi4gQWRkIGEgc2luZ2xlIHBsYWNlIGZvciBpbml0aWFsaXppbmcgY29yZSBwcm9w
+ZXJ0aWVzIHRvIHRoZWlyCmRlZmF1bHQgdmFsdWVzLCBubyBuZWVkIGZvciBkcml2ZXIgdG8gZG8g
+aXQgaWYgd2hhdCB0aGUgaGVscGVyIHNldHMKbWFrZXMgc2Vuc2UgZm9yIHRoZW0uCjMuIE5vIG5l
+ZWQgdG8gZGVidWcgdGhlIGRyaXZlciB3aGVuIHlvdSBlbmFibGUgYSBjb3JlIHByb3BlcnR5IGFu
+ZApvYnNlcnZlIGl0IGRvZXNuJ3QgaGF2ZSBhIHByb3BlciBkZWZhdWx0IHZhbHVlLgoKVGVzdGVk
+IHdpdGggbWFsaS1kcCB0aGUgb3RoZXIgZHJpdmVycyBhcmUganVzdCBidWlsdC10ZXN0ZWQuCgoK
+QWxleGFuZHJ1IEdoZW9yZ2hlICgxMCk6CiAgZHJtL2F0b21pYzogQWRkICBfX2RybV9hdG9taWNf
+aGVscGVyX3BsYW5lX3Jlc2V0CiAgZHJtL2FtZC9kaXNwbGF5OiBVc2UgX19kcm1fYXRvbWljX2hl
+bHBlcl9wbGFuZV9yZXNldCBpbnN0ZWFkIG9mCiAgICBjb3B5aW5nIHRoZSBsb2dpYwogIGRybTog
+bWFsaS1kcDogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQgaW5zdGVhZCBvZiBj
+b3B5aW5nCiAgICB0aGUgbG9naWMKICBkcm06IGF0bWVsLWhsY2RjOiBVc2UgX19kcm1fYXRvbWlj
+X2hlbHBlcl9wbGFuZV9yZXNldCBpbnN0ZWFkIG9mCiAgICBjb3B5aW5nIHRoZSBsb2dpYwogIGRy
+bS9leHlub3M6IFVzZSBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0IGluc3RlYWQgb2Yg
+Y29weWluZyB0aGUKICAgIGxvZ2ljCiAgZHJtL2lteDogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJf
+cGxhbmVfcmVzZXQgaW5zdGVhZCBvZiBjb3B5aW5nIHRoZQogICAgbG9naWMKICBkcm06IHJjYXIt
+ZHU6IFVzZSBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0IGluc3RlYWQgb2YgY29weWlu
+ZwogICAgdGhlIGxvZ2ljCiAgZHJtL3N1bjRpOiBVc2UgX19kcm1fYXRvbWljX2hlbHBlcl9wbGFu
+ZV9yZXNldCBpbnN0ZWFkIG9mIGNvcHlpbmcgdGhlCiAgICBsb2dpYwogIGRybS92YzQ6IFVzZSBf
+X2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0IGluc3RlYWQgb2YgY29weWluZyB0aGUKICAg
+IGxvZ2ljCiAgZHJtL3Ztd2dmeDogVXNlIF9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQg
+aW5zdGVhZCBvZiBjb3B5aW5nIHRoZQogICAgbG9naWMKCiAuLi4vZ3B1L2RybS9hbWQvZGlzcGxh
+eS9hbWRncHVfZG0vYW1kZ3B1X2RtLmMgfCAgNyArKy0tLQogZHJpdmVycy9ncHUvZHJtL2FybS9t
+YWxpZHBfcGxhbmVzLmMgICAgICAgICAgIHwgIDcgKystLS0KIC4uLi9ncHUvZHJtL2F0bWVsLWhs
+Y2RjL2F0bWVsX2hsY2RjX3BsYW5lLmMgICB8ICA1ICstLQogZHJpdmVycy9ncHUvZHJtL2RybV9h
+dG9taWNfaGVscGVyLmMgICAgICAgICAgIHwgMzEgKysrKysrKysrKysrKy0tLS0tLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgICAgIHwgIDMgKy0KIGRyaXZlcnMv
+Z3B1L2RybS9pbXgvaXB1djMtcGxhbmUuYyAgICAgICAgICAgICB8ICA4ICsrLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmMgICAgICAgfCAgNCArLS0KIGRyaXZlcnMv
+Z3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfdnNwLmMgICAgICAgICB8ICA0ICstLQogZHJpdmVycy9n
+cHUvZHJtL3N1bjRpL3N1bjRpX2xheWVyLmMgICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dw
+dS9kcm0vdmM0L3ZjNF9wbGFuZS5jICAgICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1
+L2RybS92bXdnZngvdm13Z2Z4X2ttcy5jICAgICAgICAgICB8ICA0ICstLQogaW5jbHVkZS9kcm0v
+ZHJtX2F0b21pY19oZWxwZXIuaCAgICAgICAgICAgICAgIHwgIDIgKysKIDEyIGZpbGVzIGNoYW5n
+ZWQsIDM4IGluc2VydGlvbnMoKyksIDQ1IGRlbGV0aW9ucygtKQoKLS0gCjIuMTguMAoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
