@@ -1,19 +1,20 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 1/3] drivers: samsung: Cleanup for v4.19
-Date: Thu, 26 Jul 2018 00:18:04 -0700
-Message-ID: <20180726071804.pqmz4467lekt73xl@localhost>
+Subject: Re: [GIT PULL 3/3] ARM: samsung: Mach/soc for v4.19
+Date: Thu, 26 Jul 2018 00:18:47 -0700
+Message-ID: <20180726071847.oamagjrd2mjvvqu5@localhost>
 References: <20180725162340.7488-1-krzk@kernel.org>
+ <20180725162340.7488-3-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180725162340.7488-1-krzk@kernel.org>
+In-Reply-To: <20180725162340.7488-3-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 06:23:38PM +0200, Krzysztof Kozlowski wrote:
+On Wed, Jul 25, 2018 at 06:23:40PM +0200, Krzysztof Kozlowski wrote:
 > Hi,
 > 
 > Rebased on v4.18-rc2, because at v4.18-rc1 the NFS root boot, which I use at my
@@ -29,27 +30,16 @@ On Wed, Jul 25, 2018 at 06:23:38PM +0200, Krzysztof Kozlowski wrote:
 > 
 > are available in the git repository at:
 > 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-exynos5440-4.19
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.19
 > 
-> for you to fetch changes up to c708e462e90e04afb7634e1f27f60cd6869936db:
+> for you to fetch changes up to cd4806911cee3901bc2b5eb95603cf1958720b57:
 > 
->   usb: host: exynos: Remove support for Exynos5440 (2018-07-24 18:44:00 +0200)
+>   ARM: exynos: Clear global variable on init error path (2018-07-24 18:52:14 +0200)
 > 
 > ----------------------------------------------------------------
-> Exynos5440 drivers removal
+> Samsung mach/soc changes for v4.19
 > 
-> The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
-> server platforms but it did not make it to the market really.  There are
-> no development boards with it and probably there are no real products
-> neither.  The development for Exynos5440 ended in 2013 and since then
-> the platform is in maintenance mode.
-> 
-> Removing Exynos5440 makes our life slightly easier: less maintenance,
-> smaller code, reduced number of quirks, no need to preserve DTB
-> backward-compatibility.
-> 
-> The Device Tree sources and some of the drivers for Exynos5440 were
-> already removed.  This removes remaining drivers.
+> Minor cleanups and fixes.
 
 Merged, thanks!
 
