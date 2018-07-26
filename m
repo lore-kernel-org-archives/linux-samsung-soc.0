@@ -1,15 +1,16 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 6/9] ARM: dts: exynos5250: add DSI node
-Date: Thu, 26 Jul 2018 09:48:05 +0200
-Message-ID: <CAJKOXPd=kU_f87cz0P60OmN_O4mGL69iqPhrDM3hFcFvGZLkag@mail.gmail.com>
-References: <CGME20180725154701eucas1p1396ca9e1b9e93868a688b51ec9ca443f@eucas1p1.samsung.com>
+Subject: Re: [PATCH v5 7/9] ARM: dts: exynos5250-arndale: add DSI and panel
+ nodes
+Date: Thu, 26 Jul 2018 09:48:17 +0200
+Message-ID: <CAJKOXPc5QMaq1XB=3Y6hBVhd1_KzMd0v5wvgcT9+KCqKCQTAiA@mail.gmail.com>
+References: <CGME20180725154702eucas1p1312eaf0253ce9c67de7d9cf3bf43e5f4@eucas1p1.samsung.com>
  <20180725154644.25412-1-a.hajda@samsung.com>
- <20180725154644.25412-7-a.hajda@samsung.com>
+ <20180725154644.25412-8-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180725154644.25412-7-a.hajda@samsung.com>
+In-Reply-To: <20180725154644.25412-8-a.hajda@samsung.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -24,13 +25,14 @@ Cc: Maciej Purski <m.purski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <l
 List-Id: linux-samsung-soc@vger.kernel.org
 
 T24gMjUgSnVseSAyMDE4IGF0IDE3OjQ2LCBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcu
-Y29tPiB3cm90ZToKPiBUaGUgcGF0Y2ggYWRkcyBjb21tb24gcGFydCBvZiBEU0kgbm9kZSBmb3Ig
-RXh5bm9zNTI1MCBwbGF0Zm9ybXMKPiBhbmQgYSByZXF1aXJlZCBtaXBpLXBoeSBub2RlLgo+Cj4g
-U2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiBTaWdu
-ZWQtb2ZmLWJ5OiBNYWNpZWogUHVyc2tpIDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAg
-YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpIHwgMjEgKysrKysrKysrKysrKysrKysr
-KysrCj4gIDEgZmlsZSBjaGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspCgpJJ2xsIHRha2UgaXQgYWZ0
-ZXIgbWVyZ2Ugd2luZG93IHNvIGZvciB2NC4yMC4KCkJlc3QgcmVnYXJkcywKS3J6eXN6dG9mCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Y29tPiB3cm90ZToKPiBUaGUgcGF0Y2ggYWRkcyBicmlkZ2UgYW5kIHBhbmVsIG5vZGVzLgo+IEl0
+IGFkZHMgYWxzbyBEU0kgcHJvcGVydGllcyBzcGVjaWZpYyBmb3IgYXJuZGFsZSBib2FyZCBhbmQK
+PiByZWd1bGF0b3JzIHJlcXVpcmVkIGJ5IHRoZSBicmlkZ2UuCj4KPiBTaWduZWQtb2ZmLWJ5OiBB
+bmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IFNpZ25lZC1vZmYtYnk6IE1hY2ll
+aiBQdXJza2kgPG0ucHVyc2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBhcmNoL2FybS9ib290L2R0
+cy9leHlub3M1MjUwLWFybmRhbGUuZHRzIHwgNjEgKysrKysrKysrKysrKysrKysrKysrKysrCj4g
+IDEgZmlsZSBjaGFuZ2VkLCA2MSBpbnNlcnRpb25zKCspCgpJJ2xsIHRha2UgaXQgYWZ0ZXIgbWVy
+Z2Ugd2luZG93IHNvIGZvciB2NC4yMC4KCkJlc3QgcmVnYXJkcywKS3J6eXN6dG9mCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
