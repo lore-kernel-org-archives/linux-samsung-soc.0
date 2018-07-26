@@ -1,48 +1,55 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/3] ARM: dts: exynos: Second round for v4.19
-Date: Wed, 25 Jul 2018 23:57:41 -0700
-Message-ID: <20180726065741.2j66wexoeehb3wcy@localhost>
+Subject: Re: [GIT PULL 1/3] drivers: samsung: Cleanup for v4.19
+Date: Thu, 26 Jul 2018 00:18:04 -0700
+Message-ID: <20180726071804.pqmz4467lekt73xl@localhost>
 References: <20180725162340.7488-1-krzk@kernel.org>
- <20180725162340.7488-2-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180725162340.7488-2-krzk@kernel.org>
+In-Reply-To: <20180725162340.7488-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 06:23:39PM +0200, Krzysztof Kozlowski wrote:
+On Wed, Jul 25, 2018 at 06:23:38PM +0200, Krzysztof Kozlowski wrote:
 > Hi,
 > 
-> On top of previous pull request.
-> 
+> Rebased on v4.18-rc2, because at v4.18-rc1 the NFS root boot, which I use at my
+> testing setup (https://krzk.eu), was broken.
 > 
 > Best regards,
 > Krzysztof
 > 
 > 
-> The following changes since commit 57f4e8bc1c3ebbd06a278107edeb6af95b53e5bf:
+> The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
 > 
->   dt-bindings: samsung: Document bindings for SGH-T959P board (2018-07-07 12:28:07 +0200)
+>   Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
 > 
 > are available in the git repository at:
 > 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.19-2
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-exynos5440-4.19
 > 
-> for you to fetch changes up to 965228d33cd2b47adb493bb1864761420c632e41:
+> for you to fetch changes up to c708e462e90e04afb7634e1f27f60cd6869936db:
 > 
->   ARM: dts: exynos: Configure Midas SD card CD pin (2018-07-23 19:12:01 +0200)
+>   usb: host: exynos: Remove support for Exynos5440 (2018-07-24 18:44:00 +0200)
 > 
 > ----------------------------------------------------------------
-> Samsung DTS ARM changes for v4.19, part 2
+> Exynos5440 drivers removal
 > 
-> 1. Add missing interrupts to PWM nodes on Exynos5.
-> 2. Add missing interrupt pin pull up/down configuration on Exynos4412
->    Midas boards.  The interrupts were mostly working thanks to initial
->    configuration by bootloader.
+> The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+> server platforms but it did not make it to the market really.  There are
+> no development boards with it and probably there are no real products
+> neither.  The development for Exynos5440 ended in 2013 and since then
+> the platform is in maintenance mode.
+> 
+> Removing Exynos5440 makes our life slightly easier: less maintenance,
+> smaller code, reduced number of quirks, no need to preserve DTB
+> backward-compatibility.
+> 
+> The Device Tree sources and some of the drivers for Exynos5440 were
+> already removed.  This removes remaining drivers.
 
 Merged, thanks!
 
