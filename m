@@ -1,91 +1,76 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 01/10] drm/atomic: Add __drm_atomic_helper_plane_reset
-Date: Thu, 26 Jul 2018 23:20:52 +0300
-Message-ID: <2271754.L0ZicdVV5V@avalon>
-References: <20180726161756.1794-1-alexandru-cosmin.gheorghe@arm.com>
- <20180726161756.1794-2-alexandru-cosmin.gheorghe@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180726161756.1794-2-alexandru-cosmin.gheorghe@arm.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, thellstrom@vmware.com, krzk@kernel.org, maxime.ripard@bootlin.com, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, boris.brezillon@bootlin.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
+From: Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent
+ Storage
+Date: Thu, 26 Jul 2018 21:48:06 -0400
+Message-ID: <63E567B6-ACC6-449F-95F6-1F17102221F1@oracle.com>
+References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
+ <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com>
+ <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
+ <BCD39D7E-EEEC-4EB9-824E-63323C333C88@oracle.com>
+ <CAJKOXPcw-i99_U-Ltuuf6w-WRK7V4gNqVSYkCMGFEXQG2DL2XQ@mail.gmail.com>
+ <CAJKOXPf7V1z4pNZ2RsjkJmaVAgk34_rPOtQOc7J5KRMSRemrdg@mail.gmail.com>
+ <082848F5-6360-4523-BA95-601777E17CF2@oracle.com>
+ <CAJKOXPe4uqOZGd_zb_Mqq4Fspu63LHZky86O4tPaD3BZNCBS6w@mail.gmail.com>
+ <6AAC5897-8762-4209-8718-67291B87AA00@oracle.com>
+ <d617f8a85c3414230cd755fe0e4470c0f8bd17ff.camel@hammerspace.com>
+ <26995E49-E8DD-421D-BABF-9E672B9383BD@oracle.com>
+ <30a1455b6817361f8228c022628aef5cdee70c3e.camel@hammerspace.com>
+ <784782B0-A387-4D3B-A517-E85D851162B8@oracle.com>
+ <CAJKOXPfMiaGP9xqPcOQMs+a4RKvhK03v51e5r3GaUiFs0G=61Q@mail.gmail.com>
+ <9B9E1627-AC2E-4A0C-AB6E-5815876A59AB@oracle.com>
+ <CAJKOXPejStfaQdtUwh33v+aC7KpamoLkix3nitbHrDRx4QAR6g@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPejStfaQdtUwh33v+aC7KpamoLkix3nitbHrDRx4QAR6g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Trond Myklebust <trondmy@hammerspace.com>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, Bruce Fields <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, "David S. Miller" <davem@davemloft.net>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQWxleGFuZHJ1LAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBUaHVyc2RheSwgMjYg
-SnVseSAyMDE4IDE5OjE3OjQ3IEVFU1QgQWxleGFuZHJ1IEdoZW9yZ2hlIHdyb3RlOgo+IFRoZXJl
-IGFyZSBhIGxvdCBvZiBkcml2ZXJzIHRoYXQgc3ViY2xhc3MgZHJtX3BsYW5lX3N0YXRlLCBhbGwg
-b2YgdGhlbQo+IGR1cGxpY2F0ZSB0aGUgY29kZSB0aGF0IGxpbmtzIHRvZ2hldGhlciB0aGUgcGxh
-bmUgd2l0aCBwbGFuZV9zdGF0ZS4KCnMvdG9naGV0aGVyL3RvZ2V0aGVyLwoKPiBPbiB0b3Agb2Yg
-dGhhdCwgZHJpdmVycyB0aGF0IGVuYWJsZSBjb3JlIHByb3BlcnRpZXMgYWxzbyBoYXZlIHRvCj4g
-ZHVwbGljYXRlIHRoZSBjb2RlIGZvciBpbml0aWFsaXppbmcgdGhlIHByb3BlcnRpZXMgdG8gdGhl
-aXIgZGVmYXVsdAo+IHZhbHVlcywgd2hpY2ggaW4gYWxsIGNhc2VzIGFyZSB0aGUgc2FtZSBhcyB0
-aGUgZGVmYXVsdHMgZnJvbSBjb3JlLgo+IAo+IENoYW5nZSBzaW5jZSB2MToKPiAtIE1ha2UgaXQg
-Y29uc2lzdGVudCB3aXRoIHRoZSBvdGhlciBoZWxwZXJzIGFuZCByZXF1aXJlIHRoYXQgYm90aAo+
-ICAgcGxhbmUgYW5kIHN0YXRlIG5vdCBiZSBOVUxMLCBzdWdnZXN0ZWQgYnkgQm9yaXMgQnJlemls
-bG9uIGFuZAo+ICAgUGhpbGlwcCBaYWJlbC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcnUg
-R2hlb3JnaGUgPGFsZXhhbmRydS1jb3NtaW4uZ2hlb3JnaGVAYXJtLmNvbT4KPiAtLS0KPiAgZHJp
-dmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMgfCAzMSArKysrKysrKysrKysrKysrKysr
-Ky0tLS0tLS0tLQo+ICBpbmNsdWRlL2RybS9kcm1fYXRvbWljX2hlbHBlci5oICAgICB8ICAyICsr
-Cj4gIDIgZmlsZXMgY2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkKPiAK
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMKPiBiL2Ry
-aXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jIGluZGV4IDg2NmEyY2M3MmVmNi4uN2Y1
-YWFmYzViMWEwCj4gMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVs
-cGVyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYwo+IEBAIC0z
-NTUyLDYgKzM1NTIsMjYgQEAgdm9pZCBkcm1fYXRvbWljX2hlbHBlcl9jcnRjX2Rlc3Ryb3lfc3Rh
-dGUoc3RydWN0Cj4gZHJtX2NydGMgKmNydGMsIH0KPiAgRVhQT1JUX1NZTUJPTChkcm1fYXRvbWlj
-X2hlbHBlcl9jcnRjX2Rlc3Ryb3lfc3RhdGUpOwo+IAo+ICsvKioKPiArICogX19kcm1fYXRvbWlj
-X2hlbHBlcl9wbGFuZV9yZXNldCAtIHJlc2V0cyBwbGFuZXMgc3RhdGUgdG8gZGVmYXVsdCB2YWx1
-ZXMKPiArICogQHBsYW5lOiBwbGFuZSBvYmplY3QsIG11c3Qgbm90IGJlIE5VTEwKPiArICogQHN0
-YXRlOiBhdG9taWMgcGxhbmUgc3RhdGUsIG11c3Qgbm90IGJlIE5VTEwKPiArICoKPiArICogSW5p
-dGlhbGl6ZXMgcGxhbmUgc3RhdGUgdG8gZGVmYXVsdC4gVGhpcyBpcyB1c2VmdWwgZm9yIGRyaXZl
-cnMgdGhhdAo+IHN1YmNsYXNzCj4gKyAqIHRoZSBwbGFuZSBzdGF0ZS4KPiArICovCj4gK3ZvaWQg
-X19kcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwK
-PiArCQkJCSAgICAgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqc3RhdGUpCj4gK3sKPiArCXN0YXRl
-LT5wbGFuZSA9IHBsYW5lOwo+ICsJc3RhdGUtPnJvdGF0aW9uID0gRFJNX01PREVfUk9UQVRFXzA7
-CgpOaXRwaWNraW5nLCBJJ2Qga2VlcCB0aGUgYmxhbmsgbGluZSBoZXJlIHRvIG1ha2UgdGhlIGNv
-ZGUgYSBiaXQgZWFzaWVyIHRvIHJlYWQKCj4gKwkvKiBSZXNldCB0aGUgYWxwaGEgdmFsdWUgdG8g
-ZnVsbHkgb3BhcXVlIGlmIGl0IG1hdHRlcnMgKi8KPiArCWlmIChwbGFuZS0+YWxwaGFfcHJvcGVy
-dHkpCj4gKwkJc3RhdGUtPmFscGhhID0gcGxhbmUtPmFscGhhX3Byb3BlcnR5LT52YWx1ZXNbMV07
-CgpBbmQgaGVyZSB0b28uCgpBcGFydCBmcm9tIHRoYXQsCgpSZXZpZXdlZC1ieTogTGF1cmVudCBQ
-aW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgoKPiArCXBsYW5lLT5z
-dGF0ZSA9IHN0YXRlOwo+ICt9Cj4gK0VYUE9SVF9TWU1CT0woX19kcm1fYXRvbWljX2hlbHBlcl9w
-bGFuZV9yZXNldCk7Cj4gKwo+ICAvKioKPiAgICogZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVz
-ZXQgLSBkZWZhdWx0ICZkcm1fcGxhbmVfZnVuY3MucmVzZXQgaG9vayBmb3IKPiBwbGFuZXMgKiBA
-cGxhbmU6IGRybSBwbGFuZQo+IEBAIC0zNTY2LDE1ICszNTg2LDggQEAgdm9pZCBkcm1fYXRvbWlj
-X2hlbHBlcl9wbGFuZV9yZXNldChzdHJ1Y3QgZHJtX3BsYW5lCj4gKnBsYW5lKQo+IAo+ICAJa2Zy
-ZWUocGxhbmUtPnN0YXRlKTsKPiAgCXBsYW5lLT5zdGF0ZSA9IGt6YWxsb2Moc2l6ZW9mKCpwbGFu
-ZS0+c3RhdGUpLCBHRlBfS0VSTkVMKTsKPiAtCj4gLQlpZiAocGxhbmUtPnN0YXRlKSB7Cj4gLQkJ
-cGxhbmUtPnN0YXRlLT5wbGFuZSA9IHBsYW5lOwo+IC0JCXBsYW5lLT5zdGF0ZS0+cm90YXRpb24g
-PSBEUk1fTU9ERV9ST1RBVEVfMDsKPiAtCj4gLQkJLyogUmVzZXQgdGhlIGFscGhhIHZhbHVlIHRv
-IGZ1bGx5IG9wYXF1ZSBpZiBpdCBtYXR0ZXJzICovCj4gLQkJaWYgKHBsYW5lLT5hbHBoYV9wcm9w
-ZXJ0eSkKPiAtCQkJcGxhbmUtPnN0YXRlLT5hbHBoYSA9IHBsYW5lLT5hbHBoYV9wcm9wZXJ0eS0+
-dmFsdWVzWzFdOwo+IC0JfQo+ICsJaWYgKHBsYW5lLT5zdGF0ZSkKPiArCQlfX2RybV9hdG9taWNf
-aGVscGVyX3BsYW5lX3Jlc2V0KHBsYW5lLCBwbGFuZS0+c3RhdGUpOwo+ICB9Cj4gIEVYUE9SVF9T
-WU1CT0woZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQpOwo+IAo+IGRpZmYgLS1naXQgYS9p
-bmNsdWRlL2RybS9kcm1fYXRvbWljX2hlbHBlci5oCj4gYi9pbmNsdWRlL2RybS9kcm1fYXRvbWlj
-X2hlbHBlci5oIGluZGV4IDk5ZTJhNTI5N2M2OS4uZjRjN2VkODc2Yzk3IDEwMDY0NAo+IC0tLSBh
-L2luY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmgKPiArKysgYi9pbmNsdWRlL2RybS9kcm1f
-YXRvbWljX2hlbHBlci5oCj4gQEAgLTE1Niw2ICsxNTYsOCBAQCB2b2lkIF9fZHJtX2F0b21pY19o
-ZWxwZXJfY3J0Y19kZXN0cm95X3N0YXRlKHN0cnVjdAo+IGRybV9jcnRjX3N0YXRlICpzdGF0ZSk7
-IHZvaWQgZHJtX2F0b21pY19oZWxwZXJfY3J0Y19kZXN0cm95X3N0YXRlKHN0cnVjdAo+IGRybV9j
-cnRjICpjcnRjLAo+ICAJCQkJCSAgc3RydWN0IGRybV9jcnRjX3N0YXRlICpzdGF0ZSk7Cj4gCj4g
-K3ZvaWQgX19kcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldChzdHJ1Y3QgZHJtX3BsYW5lICpw
-bGFuZSwKPiArCQkJCSAgICAgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqc3RhdGUpOwo+ICB2b2lk
-IGRybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKTsK
-PiAgdm9pZCBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX2R1cGxpY2F0ZV9zdGF0ZShzdHJ1Y3Qg
-ZHJtX3BsYW5lICpwbGFuZSwKPiAgCQkJCQkgICAgICAgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAq
-c3RhdGUpOwoKLS0gClJlZ2FyZHMsCgpMYXVyZW50IFBpbmNoYXJ0CgoKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+
+> On Jul 26, 2018, at 4:46 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> 
+> On 25 July 2018 at 16:31, Chuck Lever <chuck.lever@oracle.com> wrote:
+>> 
+>> 
+>>> On Jul 25, 2018, at 9:27 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>> 
+>>> On 18 June 2018 at 18:20, Chuck Lever <chuck.lever@oracle.com> wrote:
+>>>> 
+>>>> The extra serialization appears to have a reproducible performance
+>>>> impact on RDMA, which no longer takes the reserve_lock when allocating
+>>>> a slot.
+>>>> 
+>>>> I could put an xprt_alloc_xid call in xprt_alloc_slot, but that would
+>>>> only work for socket-based transports. Would it be OK if RDMA had its
+>>>> own XID allocation mechanism?
+>>> 
+>>> Hi,
+>>> 
+>>> On recent next the issue appeared again. My boards with NFSv4 root
+>>> timeout on 80% of boots. This time my NFS server is faster - Pi3 B+
+>>> :).
+>>> 
+>>> Is this know? Should I start long bisect or maybe you can point me to
+>>> possible causes?
+>> 
+>> Hi Krzysztof, I don't know of any recent changes. Bisecting would be
+>> a good place to start.
+> 
+> Hi,
+> 
+> That was my mistake because of missing part of NFS server
+> configuration on new board. I tested again recent releases and current
+> linux-next and everything works fine.
+> 
+> Sorry for the noise.
+
+Thanks for the update.
+
+
+--
+Chuck Lever
