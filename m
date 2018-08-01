@@ -1,64 +1,102 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v4 0/5] Initial support for Samsung Galaxy S and Galaxy S
- 4G
-Date: Wed, 1 Aug 2018 20:58:07 +0200
-Message-ID: <20180801185807.GB26087@amd>
-References: <1530958183-10956-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <20180710120504.GB6884@amd>
- <5549799.hqpipYcP1I@acerlaptop>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="XOIedfhf+7KOe/yw"
+From: snawrocki@kernel.org
+Subject: [PATCH] MAINTAINERS: Update my e-mail address
+Date: Wed,  1 Aug 2018 22:09:49 +0200
+Message-ID: <1533154189-23311-1-git-send-email-snawrocki@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5549799.hqpipYcP1I@acerlaptop>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, xc-racer2@live.ca
+To: broonie@kernel.org
+Cc: sboyd@kernel.org, mchehab@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, bzolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+From: Sylwester Nawrocki <snawrocki@kernel.org>
 
---XOIedfhf+7KOe/yw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I won't have access to my s.nawrocki@samsung.com account for some time
+so replace that address with the kernel.org one.
+Also a related entry to the .mailmap file is added.
 
-On Tue 2018-07-10 14:18:39, Pawe=C5=82 Chmiel wrote:
-> On Tuesday, July 10, 2018 2:05:04 PM CEST Pavel Machek wrote:
-> > Hi!
-> >=20
-> > > This patch series adds support for Samsung Galaxy S and Galaxy S 4G.
-> > > Both are commercial phone based on Aries family.
-> >=20
-> > Thanks for doing this. What kind of userspace are your running?
-> >=20
-> > (I do have N900 here running Debian and PostmarketOS, and Droid 4
-> > running Maemo Leste)
->=20
-> Currently i'm running arch linux arm (but wanted to try PostmarketOS also=
-).
->=20
+Signed-off-by: Sylwester Nawrocki <snawrocki@kernel.org>
+---
+ .mailmap    |  1 +
+ MAINTAINERS | 14 +++++++-------
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-Depending on your goals, Maemo Leste is worth looking at, too. (Unlike
-postmarketOS, their goal is useful phone).
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---XOIedfhf+7KOe/yw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltiAr8ACgkQMOfwapXb+vK/PQCePPUU7htshonWL95I58vGV6R8
-C1cAoKBInX5dH/IJGUMvawlAPdE+VWCj
-=VTyn
------END PGP SIGNATURE-----
-
---XOIedfhf+7KOe/yw--
+diff --git a/.mailmap b/.mailmap
+index 29ddeb1..b8d05a2 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -177,6 +177,7 @@ Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+ Subhash Jadavani <subhashj@codeaurora.org>
+ Sudeep Holla <sudeep.holla@arm.com> Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>
+ Sumit Semwal <sumit.semwal@ti.com>
++Sylwester Nawrocki <snawrocki@kernel.org> <s.nawrocki@samsung.com>
+ Tejun Heo <htejun@gmail.com>
+ Thomas Graf <tgraf@suug.ch>
+ Thomas Pedersen <twp@codeaurora.org>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 03ab73c..4ccab9d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10520,7 +10520,7 @@ F:	Documentation/devicetree/bindings/media/i2c/ov7740.txt
+ OMNIVISION OV9650 SENSOR DRIVER
+ M:	Sakari Ailus <sakari.ailus@linux.intel.com>
+ R:	Akinobu Mita <akinobu.mita@gmail.com>
+-R:	Sylwester Nawrocki <s.nawrocki@samsung.com>
++R:	Sylwester Nawrocki <snawrocki@kernel.org>
+ L:	linux-media@vger.kernel.org
+ T:	git git://linuxtv.org/media_tree.git
+ S:	Maintained
+@@ -11290,7 +11290,7 @@ F:	drivers/pinctrl/sh-pfc/
+ PIN CONTROLLER - SAMSUNG
+ M:	Tomasz Figa <tomasz.figa@gmail.com>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+-M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
++M:	Sylwester Nawrocki <snawrocki@kernel.org>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
+@@ -12460,7 +12460,7 @@ F:	include/media/saa7146*
+ SAMSUNG AUDIO (ASoC) DRIVERS
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Sangbeom Kim <sbkim73@samsung.com>
+-M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
++M:	Sylwester Nawrocki <snawrocki@kernel.org>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Supported
+ F:	sound/soc/samsung/
+@@ -12512,7 +12512,7 @@ F:	Documentation/devicetree/bindings/regulator/samsung,s5m*.txt
+ F:	Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+ 
+ SAMSUNG S3C24XX/S3C64XX SOC SERIES CAMIF DRIVER
+-M:	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
++M:	Sylwester Nawrocki <snawrocki@kernel.org>
+ L:	linux-media@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ S:	Maintained
+@@ -12551,14 +12551,14 @@ F:	drivers/crypto/s5p-sss.c
+ 
+ SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
+ M:	Kyungmin Park <kyungmin.park@samsung.com>
+-M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
++M:	Sylwester Nawrocki <snawrocki@kernel.org>
+ L:	linux-media@vger.kernel.org
+ Q:	https://patchwork.linuxtv.org/project/linux-media/list/
+ S:	Supported
+ F:	drivers/media/platform/exynos4-is/
+ 
+ SAMSUNG SOC CLOCK DRIVERS
+-M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
++M:	Sylwester Nawrocki <snawrocki@kernel.org>
+ M:	Tomasz Figa <tomasz.figa@gmail.com>
+ M:	Chanwoo Choi <cw00.choi@samsung.com>
+ S:	Supported
+@@ -12597,7 +12597,7 @@ F:	drivers/thermal/samsung/
+ 
+ SAMSUNG USB2 PHY DRIVER
+ M:	Kamil Debski <kamil@wypas.org>
+-M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
++M:	Sylwester Nawrocki <snawrocki@kernel.org>
+ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+ F:	Documentation/devicetree/bindings/phy/samsung-phy.txt
+-- 
+2.7.4
