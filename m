@@ -1,102 +1,141 @@
-From: snawrocki@kernel.org
-Subject: [PATCH] MAINTAINERS: Update my e-mail address
-Date: Wed,  1 Aug 2018 22:09:49 +0200
-Message-ID: <1533154189-23311-1-git-send-email-snawrocki@kernel.org>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Subject: Re: [PATCH v2] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
+Date: Thu, 2 Aug 2018 11:55:56 +0530
+Message-ID: <CAFqt6zY6vcqrmztcEf9QYMXoHr08oTirSTNA7X6+5YvvoHRR4A@mail.gmail.com>
+References: <20180726155459.GA30138@jordon-HP-15-Notebook-PC>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180726155459.GA30138@jordon-HP-15-Notebook-PC>
 Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org
-Cc: sboyd@kernel.org, mchehab@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, bzolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>
+To: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ajit Linux <ajitn.linux@gmail.com>, Sabyasachi Gupta <sabyasachi.linux@gmail.com>, Brajeswar Ghosh <brajeswar.linux@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Sylwester Nawrocki <snawrocki@kernel.org>
+On Thu, Jul 26, 2018 at 9:24 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> convert drm_atomic_helper_suspend/resume() to use
+> drm_mode_config_helper_suspend/resume().
+>
+> exynos_drm_fbdev_suspend/resume can be removed
+> as drm_mode_config_helper_suspend/resume has
+> implement the same in generic way.
+>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> ---
+> v2: Address Inki Dae's comment. Remove
+>     ret variable from both suspend/resume
+>     function.
+>
 
-I won't have access to my s.nawrocki@samsung.com account for some time
-so replace that address with the kernel.org one.
-Also a related entry to the .mailmap file is added.
+Any further comment on this patch ?
 
-Signed-off-by: Sylwester Nawrocki <snawrocki@kernel.org>
----
- .mailmap    |  1 +
- MAINTAINERS | 14 +++++++-------
- 2 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 29ddeb1..b8d05a2 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -177,6 +177,7 @@ Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
- Subhash Jadavani <subhashj@codeaurora.org>
- Sudeep Holla <sudeep.holla@arm.com> Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>
- Sumit Semwal <sumit.semwal@ti.com>
-+Sylwester Nawrocki <snawrocki@kernel.org> <s.nawrocki@samsung.com>
- Tejun Heo <htejun@gmail.com>
- Thomas Graf <tgraf@suug.ch>
- Thomas Pedersen <twp@codeaurora.org>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 03ab73c..4ccab9d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10520,7 +10520,7 @@ F:	Documentation/devicetree/bindings/media/i2c/ov7740.txt
- OMNIVISION OV9650 SENSOR DRIVER
- M:	Sakari Ailus <sakari.ailus@linux.intel.com>
- R:	Akinobu Mita <akinobu.mita@gmail.com>
--R:	Sylwester Nawrocki <s.nawrocki@samsung.com>
-+R:	Sylwester Nawrocki <snawrocki@kernel.org>
- L:	linux-media@vger.kernel.org
- T:	git git://linuxtv.org/media_tree.git
- S:	Maintained
-@@ -11290,7 +11290,7 @@ F:	drivers/pinctrl/sh-pfc/
- PIN CONTROLLER - SAMSUNG
- M:	Tomasz Figa <tomasz.figa@gmail.com>
- M:	Krzysztof Kozlowski <krzk@kernel.org>
--M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
-+M:	Sylwester Nawrocki <snawrocki@kernel.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
-@@ -12460,7 +12460,7 @@ F:	include/media/saa7146*
- SAMSUNG AUDIO (ASoC) DRIVERS
- M:	Krzysztof Kozlowski <krzk@kernel.org>
- M:	Sangbeom Kim <sbkim73@samsung.com>
--M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
-+M:	Sylwester Nawrocki <snawrocki@kernel.org>
- L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
- S:	Supported
- F:	sound/soc/samsung/
-@@ -12512,7 +12512,7 @@ F:	Documentation/devicetree/bindings/regulator/samsung,s5m*.txt
- F:	Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
- 
- SAMSUNG S3C24XX/S3C64XX SOC SERIES CAMIF DRIVER
--M:	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-+M:	Sylwester Nawrocki <snawrocki@kernel.org>
- L:	linux-media@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- S:	Maintained
-@@ -12551,14 +12551,14 @@ F:	drivers/crypto/s5p-sss.c
- 
- SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
- M:	Kyungmin Park <kyungmin.park@samsung.com>
--M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
-+M:	Sylwester Nawrocki <snawrocki@kernel.org>
- L:	linux-media@vger.kernel.org
- Q:	https://patchwork.linuxtv.org/project/linux-media/list/
- S:	Supported
- F:	drivers/media/platform/exynos4-is/
- 
- SAMSUNG SOC CLOCK DRIVERS
--M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
-+M:	Sylwester Nawrocki <snawrocki@kernel.org>
- M:	Tomasz Figa <tomasz.figa@gmail.com>
- M:	Chanwoo Choi <cw00.choi@samsung.com>
- S:	Supported
-@@ -12597,7 +12597,7 @@ F:	drivers/thermal/samsung/
- 
- SAMSUNG USB2 PHY DRIVER
- M:	Kamil Debski <kamil@wypas.org>
--M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
-+M:	Sylwester Nawrocki <snawrocki@kernel.org>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/phy/samsung-phy.txt
--- 
-2.7.4
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c   | 26 ++++----------------------
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 -----------------
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
+>  3 files changed, 4 insertions(+), 49 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index a81b4a5..46d28cd 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -151,39 +151,21 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+>  static int exynos_drm_suspend(struct device *dev)
+>  {
+>         struct drm_device *drm_dev = dev_get_drvdata(dev);
+> -       struct exynos_drm_private *private;
+>
+> -       if (pm_runtime_suspended(dev) || !drm_dev)
+> +       if (pm_runtime_suspended(dev))
+>                 return 0;
+>
+> -       private = drm_dev->dev_private;
+> -
+> -       drm_kms_helper_poll_disable(drm_dev);
+> -       exynos_drm_fbdev_suspend(drm_dev);
+> -       private->suspend_state = drm_atomic_helper_suspend(drm_dev);
+> -       if (IS_ERR(private->suspend_state)) {
+> -               exynos_drm_fbdev_resume(drm_dev);
+> -               drm_kms_helper_poll_enable(drm_dev);
+> -               return PTR_ERR(private->suspend_state);
+> -       }
+> -
+> -       return 0;
+> +       return drm_mode_config_helper_suspend(drm_dev);
+>  }
+>
+>  static int exynos_drm_resume(struct device *dev)
+>  {
+>         struct drm_device *drm_dev = dev_get_drvdata(dev);
+> -       struct exynos_drm_private *private;
+>
+> -       if (pm_runtime_suspended(dev) || !drm_dev)
+> +       if (pm_runtime_suspended(dev))
+>                 return 0;
+>
+> -       private = drm_dev->dev_private;
+> -       drm_atomic_helper_resume(drm_dev, private->suspend_state);
+> -       exynos_drm_fbdev_resume(drm_dev);
+> -       drm_kms_helper_poll_enable(drm_dev);
+> -
+> -       return 0;
+> +       return drm_mode_config_helper_resume(drm_dev);
+>  }
+>  #endif
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index 132dd52..918dd2c 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+>         private->fb_helper = NULL;
+>  }
+>
+> -void exynos_drm_fbdev_suspend(struct drm_device *dev)
+> -{
+> -       struct exynos_drm_private *private = dev->dev_private;
+> -
+> -       console_lock();
+> -       drm_fb_helper_set_suspend(private->fb_helper, 1);
+> -       console_unlock();
+> -}
+> -
+> -void exynos_drm_fbdev_resume(struct drm_device *dev)
+> -{
+> -       struct exynos_drm_private *private = dev->dev_private;
+> -
+> -       console_lock();
+> -       drm_fb_helper_set_suspend(private->fb_helper, 0);
+> -       console_unlock();
+> -}
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> index b338472..6840b6a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> @@ -19,8 +19,6 @@
+>
+>  int exynos_drm_fbdev_init(struct drm_device *dev);
+>  void exynos_drm_fbdev_fini(struct drm_device *dev);
+> -void exynos_drm_fbdev_suspend(struct drm_device *drm);
+> -void exynos_drm_fbdev_resume(struct drm_device *drm);
+>
+>  #else
+>
+> @@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
+>
+>  #define exynos_drm_output_poll_changed (NULL)
+>
+> -static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
+> -{
+> -}
+> -
+> -static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
+> -{
+> -}
+> -
+>  #endif
+>
+>  #endif
+> --
+> 1.9.1
+>
