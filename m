@@ -1,141 +1,121 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: Re: [PATCH v2] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
-Date: Thu, 2 Aug 2018 11:55:56 +0530
-Message-ID: <CAFqt6zY6vcqrmztcEf9QYMXoHr08oTirSTNA7X6+5YvvoHRR4A@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] gpu/drm/exynos: Convert
+ drm_atomic_helper_suspend/resume()
+Date: Thu, 2 Aug 2018 08:47:13 +0200
+Message-ID: <20180802064714eucas1p12f3c32c453a49dc4e0d2785ff7fa72ec~G-mV4kIr70116001160eucas1p1P@eucas1p1.samsung.com>
 References: <20180726155459.GA30138@jordon-HP-15-Notebook-PC>
+ <CGME20180802062607epcas1p339ff6aeb0cbdc3b6ece2617be4aadb41@epcas1p3.samsung.com>
+ <CAFqt6zY6vcqrmztcEf9QYMXoHr08oTirSTNA7X6+5YvvoHRR4A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180726155459.GA30138@jordon-HP-15-Notebook-PC>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ajit Linux <ajitn.linux@gmail.com>, Sabyasachi Gupta <sabyasachi.linux@gmail.com>, Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAFqt6zY6vcqrmztcEf9QYMXoHr08oTirSTNA7X6+5YvvoHRR4A@mail.gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Souptick Joarder <jrdr.linux@gmail.com>, Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, Daniel Vetter <daniel@ffwll.ch>
+Cc: Ajit Linux <ajitn.linux@gmail.com>, linux-samsung-soc@vger.kernel.org, Sabyasachi Gupta <sabyasachi.linux@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Brajeswar Ghosh <brajeswar.linux@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 9:24 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> convert drm_atomic_helper_suspend/resume() to use
-> drm_mode_config_helper_suspend/resume().
->
-> exynos_drm_fbdev_suspend/resume can be removed
-> as drm_mode_config_helper_suspend/resume has
-> implement the same in generic way.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-> ---
-> v2: Address Inki Dae's comment. Remove
->     ret variable from both suspend/resume
->     function.
->
-
-Any further comment on this patch ?
-
->  drivers/gpu/drm/exynos/exynos_drm_drv.c   | 26 ++++----------------------
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 -----------------
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
->  3 files changed, 4 insertions(+), 49 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index a81b4a5..46d28cd 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -151,39 +151,21 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
->  static int exynos_drm_suspend(struct device *dev)
->  {
->         struct drm_device *drm_dev = dev_get_drvdata(dev);
-> -       struct exynos_drm_private *private;
->
-> -       if (pm_runtime_suspended(dev) || !drm_dev)
-> +       if (pm_runtime_suspended(dev))
->                 return 0;
->
-> -       private = drm_dev->dev_private;
-> -
-> -       drm_kms_helper_poll_disable(drm_dev);
-> -       exynos_drm_fbdev_suspend(drm_dev);
-> -       private->suspend_state = drm_atomic_helper_suspend(drm_dev);
-> -       if (IS_ERR(private->suspend_state)) {
-> -               exynos_drm_fbdev_resume(drm_dev);
-> -               drm_kms_helper_poll_enable(drm_dev);
-> -               return PTR_ERR(private->suspend_state);
-> -       }
-> -
-> -       return 0;
-> +       return drm_mode_config_helper_suspend(drm_dev);
->  }
->
->  static int exynos_drm_resume(struct device *dev)
->  {
->         struct drm_device *drm_dev = dev_get_drvdata(dev);
-> -       struct exynos_drm_private *private;
->
-> -       if (pm_runtime_suspended(dev) || !drm_dev)
-> +       if (pm_runtime_suspended(dev))
->                 return 0;
->
-> -       private = drm_dev->dev_private;
-> -       drm_atomic_helper_resume(drm_dev, private->suspend_state);
-> -       exynos_drm_fbdev_resume(drm_dev);
-> -       drm_kms_helper_poll_enable(drm_dev);
-> -
-> -       return 0;
-> +       return drm_mode_config_helper_resume(drm_dev);
->  }
->  #endif
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 132dd52..918dd2c 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
->         private->fb_helper = NULL;
->  }
->
-> -void exynos_drm_fbdev_suspend(struct drm_device *dev)
-> -{
-> -       struct exynos_drm_private *private = dev->dev_private;
-> -
-> -       console_lock();
-> -       drm_fb_helper_set_suspend(private->fb_helper, 1);
-> -       console_unlock();
-> -}
-> -
-> -void exynos_drm_fbdev_resume(struct drm_device *dev)
-> -{
-> -       struct exynos_drm_private *private = dev->dev_private;
-> -
-> -       console_lock();
-> -       drm_fb_helper_set_suspend(private->fb_helper, 0);
-> -       console_unlock();
-> -}
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-> index b338472..6840b6a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-> @@ -19,8 +19,6 @@
->
->  int exynos_drm_fbdev_init(struct drm_device *dev);
->  void exynos_drm_fbdev_fini(struct drm_device *dev);
-> -void exynos_drm_fbdev_suspend(struct drm_device *drm);
-> -void exynos_drm_fbdev_resume(struct drm_device *drm);
->
->  #else
->
-> @@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
->
->  #define exynos_drm_output_poll_changed (NULL)
->
-> -static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
-> -{
-> -}
-> -
-> -static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
-> -{
-> -}
-> -
->  #endif
->
->  #endif
-> --
-> 1.9.1
->
+SGkgU291cHRpY2ssCgpPbiAyMDE4LTA4LTAyIDA4OjI1LCBTb3VwdGljayBKb2FyZGVyIHdyb3Rl
+Ogo+IE9uIFRodSwgSnVsIDI2LCAyMDE4IGF0IDk6MjQgUE0sIFNvdXB0aWNrIEpvYXJkZXIgPGpy
+ZHIubGludXhAZ21haWwuY29tPiB3cm90ZToKPj4gY29udmVydCBkcm1fYXRvbWljX2hlbHBlcl9z
+dXNwZW5kL3Jlc3VtZSgpIHRvIHVzZQo+PiBkcm1fbW9kZV9jb25maWdfaGVscGVyX3N1c3BlbmQv
+cmVzdW1lKCkuCj4+Cj4+IGV4eW5vc19kcm1fZmJkZXZfc3VzcGVuZC9yZXN1bWUgY2FuIGJlIHJl
+bW92ZWQKPj4gYXMgZHJtX21vZGVfY29uZmlnX2hlbHBlcl9zdXNwZW5kL3Jlc3VtZSBoYXMKPj4g
+aW1wbGVtZW50IHRoZSBzYW1lIGluIGdlbmVyaWMgd2F5Lgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBT
+b3VwdGljayBKb2FyZGVyIDxqcmRyLmxpbnV4QGdtYWlsLmNvbT4KPj4gU2lnbmVkLW9mZi1ieTog
+QWppdCBOZWdpIDxhaml0bi5saW51eEBnbWFpbC5jb20+Cj4+IC0tLQo+PiB2MjogQWRkcmVzcyBJ
+bmtpIERhZSdzIGNvbW1lbnQuIFJlbW92ZQo+PiAgICAgIHJldCB2YXJpYWJsZSBmcm9tIGJvdGgg
+c3VzcGVuZC9yZXN1bWUKPj4gICAgICBmdW5jdGlvbi4KPj4KPiBBbnkgZnVydGhlciBjb21tZW50
+IG9uIHRoaXMgcGF0Y2ggPwoKVGVzdGVkLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dz
+a2lAc2Ftc3VuZy5jb20+CgpIb3dldmVyIHlvdSBuZWVkIHRvIHJlYmFzZSBvbnRvIGN1cnJlbnQg
+ZHJtLW5leHQsIGJlY2F1c2UgdGhlcmUgaGF2ZQpiZWVuIHNvbWUgY2hhbmdlcywgd2hpY2ggcHJl
+dmVudCB0aGlzIHBhdGNoIGZyb20gYXBwbHlpbmcuCgpwbV9ydW50aW1lX3N1c3BlbmRlZChkZXYp
+IGNoZWNrcyB3ZXJlIHVzZWxlc3MgYW5kIGhhdmUgYmVlbiByZW1vdmVkLAp3aGF0IHNpbXBsaWZp
+ZXMgc3VzcGVuZC9yZXN1bWUgZnVuY3Rpb25zIGV2ZW4gbW9yZS4gTm93IGl0IGlzIHRvbwpsYXRl
+IGZvciB2NC4xOSBtZXJnZSB3aW5kb3csIHNvIHRoaXMgcGF0Y2ggd2lsbCBoYXZlIHRvIHdhaXQg
+Zm9yCnY0LjIwLgoKPj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMg
+ICB8IDI2ICsrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMgfCAxNyAtLS0tLS0tLS0tLS0tLS0tLQo+PiAgIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5oIHwgMTAgLS0tLS0tLS0tLQo+PiAg
+IDMgZmlsZXMgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA0OSBkZWxldGlvbnMoLSkKPj4KPj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+PiBpbmRleCBhODFiNGE1Li40
+NmQyOGNkIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHJ2LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4+
+IEBAIC0xNTEsMzkgKzE1MSwyMSBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX3Bvc3RjbG9zZShz
+dHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCj4+ICAgc3RhdGlj
+IGludCBleHlub3NfZHJtX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQo+PiAgIHsKPj4gICAg
+ICAgICAgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsK
+Pj4gLSAgICAgICBzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpwcml2YXRlOwo+Pgo+PiAtICAg
+ICAgIGlmIChwbV9ydW50aW1lX3N1c3BlbmRlZChkZXYpIHx8ICFkcm1fZGV2KQo+PiArICAgICAg
+IGlmIChwbV9ydW50aW1lX3N1c3BlbmRlZChkZXYpKQo+PiAgICAgICAgICAgICAgICAgIHJldHVy
+biAwOwo+Pgo+PiAtICAgICAgIHByaXZhdGUgPSBkcm1fZGV2LT5kZXZfcHJpdmF0ZTsKPj4gLQo+
+PiAtICAgICAgIGRybV9rbXNfaGVscGVyX3BvbGxfZGlzYWJsZShkcm1fZGV2KTsKPj4gLSAgICAg
+ICBleHlub3NfZHJtX2ZiZGV2X3N1c3BlbmQoZHJtX2Rldik7Cj4+IC0gICAgICAgcHJpdmF0ZS0+
+c3VzcGVuZF9zdGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX3N1c3BlbmQoZHJtX2Rldik7Cj4+IC0g
+ICAgICAgaWYgKElTX0VSUihwcml2YXRlLT5zdXNwZW5kX3N0YXRlKSkgewo+PiAtICAgICAgICAg
+ICAgICAgZXh5bm9zX2RybV9mYmRldl9yZXN1bWUoZHJtX2Rldik7Cj4+IC0gICAgICAgICAgICAg
+ICBkcm1fa21zX2hlbHBlcl9wb2xsX2VuYWJsZShkcm1fZGV2KTsKPj4gLSAgICAgICAgICAgICAg
+IHJldHVybiBQVFJfRVJSKHByaXZhdGUtPnN1c3BlbmRfc3RhdGUpOwo+PiAtICAgICAgIH0KPj4g
+LQo+PiAtICAgICAgIHJldHVybiAwOwo+PiArICAgICAgIHJldHVybiBkcm1fbW9kZV9jb25maWdf
+aGVscGVyX3N1c3BlbmQoZHJtX2Rldik7Cj4+ICAgfQo+Pgo+PiAgIHN0YXRpYyBpbnQgZXh5bm9z
+X2RybV9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQo+PiAgIHsKPj4gICAgICAgICAgc3RydWN0
+IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPj4gLSAgICAgICBz
+dHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpwcml2YXRlOwo+Pgo+PiAtICAgICAgIGlmIChwbV9y
+dW50aW1lX3N1c3BlbmRlZChkZXYpIHx8ICFkcm1fZGV2KQo+PiArICAgICAgIGlmIChwbV9ydW50
+aW1lX3N1c3BlbmRlZChkZXYpKQo+PiAgICAgICAgICAgICAgICAgIHJldHVybiAwOwo+Pgo+PiAt
+ICAgICAgIHByaXZhdGUgPSBkcm1fZGV2LT5kZXZfcHJpdmF0ZTsKPj4gLSAgICAgICBkcm1fYXRv
+bWljX2hlbHBlcl9yZXN1bWUoZHJtX2RldiwgcHJpdmF0ZS0+c3VzcGVuZF9zdGF0ZSk7Cj4+IC0g
+ICAgICAgZXh5bm9zX2RybV9mYmRldl9yZXN1bWUoZHJtX2Rldik7Cj4+IC0gICAgICAgZHJtX2tt
+c19oZWxwZXJfcG9sbF9lbmFibGUoZHJtX2Rldik7Cj4+IC0KPj4gLSAgICAgICByZXR1cm4gMDsK
+Pj4gKyAgICAgICByZXR1cm4gZHJtX21vZGVfY29uZmlnX2hlbHBlcl9yZXN1bWUoZHJtX2Rldik7
+Cj4+ICAgfQo+PiAgICNlbmRpZgo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmJkZXYuYwo+PiBpbmRleCAxMzJkZDUyLi45MThkZDJjIDEwMDY0NAo+PiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYwo+PiArKysgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYwo+PiBAQCAtMjcwLDIwICsyNzAsMyBAQCB2
+b2lkIGV4eW5vc19kcm1fZmJkZXZfZmluaShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQo+PiAgICAg
+ICAgICBwcml2YXRlLT5mYl9oZWxwZXIgPSBOVUxMOwo+PiAgIH0KPj4KPj4gLXZvaWQgZXh5bm9z
+X2RybV9mYmRldl9zdXNwZW5kKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCj4+IC17Cj4+IC0gICAg
+ICAgc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdmF0ZSA9IGRldi0+ZGV2X3ByaXZhdGU7
+Cj4+IC0KPj4gLSAgICAgICBjb25zb2xlX2xvY2soKTsKPj4gLSAgICAgICBkcm1fZmJfaGVscGVy
+X3NldF9zdXNwZW5kKHByaXZhdGUtPmZiX2hlbHBlciwgMSk7Cj4+IC0gICAgICAgY29uc29sZV91
+bmxvY2soKTsKPj4gLX0KPj4gLQo+PiAtdm9pZCBleHlub3NfZHJtX2ZiZGV2X3Jlc3VtZShzdHJ1
+Y3QgZHJtX2RldmljZSAqZGV2KQo+PiAtewo+PiAtICAgICAgIHN0cnVjdCBleHlub3NfZHJtX3By
+aXZhdGUgKnByaXZhdGUgPSBkZXYtPmRldl9wcml2YXRlOwo+PiAtCj4+IC0gICAgICAgY29uc29s
+ZV9sb2NrKCk7Cj4+IC0gICAgICAgZHJtX2ZiX2hlbHBlcl9zZXRfc3VzcGVuZChwcml2YXRlLT5m
+Yl9oZWxwZXIsIDApOwo+PiAtICAgICAgIGNvbnNvbGVfdW5sb2NrKCk7Cj4+IC19Cj4+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuaCBiL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5oCj4+IGluZGV4IGIzMzg0NzIuLjY4
+NDBiNmEgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
+YmRldi5oCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5o
+Cj4+IEBAIC0xOSw4ICsxOSw2IEBACj4+Cj4+ICAgaW50IGV4eW5vc19kcm1fZmJkZXZfaW5pdChz
+dHJ1Y3QgZHJtX2RldmljZSAqZGV2KTsKPj4gICB2b2lkIGV4eW5vc19kcm1fZmJkZXZfZmluaShz
+dHJ1Y3QgZHJtX2RldmljZSAqZGV2KTsKPj4gLXZvaWQgZXh5bm9zX2RybV9mYmRldl9zdXNwZW5k
+KHN0cnVjdCBkcm1fZGV2aWNlICpkcm0pOwo+PiAtdm9pZCBleHlub3NfZHJtX2ZiZGV2X3Jlc3Vt
+ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtKTsKPj4KPj4gICAjZWxzZQo+Pgo+PiBAQCAtMzksMTQg
+KzM3LDYgQEAgc3RhdGljIGlubGluZSB2b2lkIGV4eW5vc19kcm1fZmJkZXZfcmVzdG9yZV9tb2Rl
+KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCj4+Cj4+ICAgI2RlZmluZSBleHlub3NfZHJtX291dHB1
+dF9wb2xsX2NoYW5nZWQgKE5VTEwpCj4+Cj4+IC1zdGF0aWMgaW5saW5lIHZvaWQgZXh5bm9zX2Ry
+bV9mYmRldl9zdXNwZW5kKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0pCj4+IC17Cj4+IC19Cj4+IC0K
+Pj4gLXN0YXRpYyBpbmxpbmUgdm9pZCBleHlub3NfZHJtX2ZiZGV2X3Jlc3VtZShzdHJ1Y3QgZHJt
+X2RldmljZSAqZHJtKQo+PiAtewo+PiAtfQo+PiAtCj4+ICAgI2VuZGlmCj4+Cj4+ICAgI2VuZGlm
+Cj4+IC0tCj4+IDEuOS4xCj4+Cj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDog
+c2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJv
+ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9y
+ZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwK
+Pgo+CgpCZXN0IHJlZ2FyZHMKLS0gCk1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1zdW5nIFImRCBJ
+bnN0aXR1dGUgUG9sYW5kCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
