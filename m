@@ -1,83 +1,50 @@
-From: Ravi Chandra Sadineni <ravisadineni@chromium.org>
-Subject: Re: [PATCH] Input: cros_ec_keyb: Remove check before calling pm_wakeup_event.
-Date: Fri, 3 Aug 2018 09:53:27 -0700
-Message-ID: <CAEZbON4O0X8Fo6eAbmPOSiB1_Tw7x+Ox3ROoGfZQn72uQGQLkg@mail.gmail.com>
-References: <CGME20180803072628eucas1p26abe0cb121b974401759502f8807bb96@eucas1p2.samsung.com>
- <20180605224458.62692-1-ravisadineni@chromium.org> <20180803072628eucas1p26abe0cb121b974401759502f8807bb96~HTx4BGQjl1119311193eucas1p2U@eucas1p2.samsung.com>
- <CAEZbON7qLheHFuU6zwArCz=CG03JvnFjcehBGjE4RqROYrMLhQ@mail.gmail.com> <CAKdAkRQG08d_duPiKFi_=xUNO93c0Rcw9kpaYFFJahjJM-NdGw@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH] mfd: sec: Export OF module alias table
+Date: Sat, 4 Aug 2018 01:30:19 +0200
+Message-ID: <CABxcv=k-BS04gZKGQqE1=CLhNk79yOHC9_CcrB6=UJ9xYNqGMg@mail.gmail.com>
+References: <20180725155302.4718-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; boundary="000000000000f2463305728ac487"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKdAkRQG08d_duPiKFi_=xUNO93c0Rcw9kpaYFFJahjJM-NdGw@mail.gmail.com>
+In-Reply-To: <20180725155302.4718-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: m.szyprowski@samsung.com, Ravi Chandra Sadineni <ravisadineni@google.com>, Dmitry Torokhov <dtor@google.com>, Todd Broch <tbroch@google.com>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Linux Kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---000000000000f2463305728ac487
-Content-Type: text/plain; charset="UTF-8"
+Hi Krzysztof,
 
-Understood. I am trying to reproduce this issue locally. Wanted to know the
-version of the kernel so I can give a try.  Marek, can you please confirm
-the kernel version.
-
-Thanks,
-
-
-On Fri, Aug 3, 2018 at 9:08 AM Dmitry Torokhov <dmitry.torokhov@gmail.com>
-wrote:
-
-> On Fri, Aug 3, 2018 at 8:51 AM Ravi Chandra Sadineni
-> <ravisadineni@chromium.org> wrote:
-> >
-> > Hi Marek,
-> >
-> > Can you please give me little more context ? Snow is still on 3.8.11.
-> This patch is not backported to 3.8.11. Are you trying to flash a different
-> kernel  on snow?
-> >
->
-> Ravi, from upstream perspective what kernel Google uses when shipping
-> Snow is completely immaterial. Mainline is supposed to work equally
-> well on all devices.
->
-> Thanks.
->
-> --
-> Dmitry
+On Wed, Jul 25, 2018 at 5:53 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> In case of Device Tree platforms, even though the Samsung PMIC sec
+> device is instantiated from DT, the driver is still matched through I2C
+> module alias.  That is because I2C core always reports an I2C module
+> alias instead of DT one.
 >
 
---000000000000f2463305728ac487
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Just a heads up that this already changed in v4.17 since commit
+af503716ac1 ("i2c: core: report OF style module alias for devices
+registered via OF").
 
-<div dir=3D"ltr">Understood. I am trying to reproduce this issue locally. W=
-anted to know the version of the kernel so I can give a try.=C2=A0=C2=A0<sp=
-an style=3D"color:rgb(80,0,80)">Marek, can you please confirm the kernel ve=
-rsion.</span><br><br>Thanks,<div><br></div></div><br><div class=3D"gmail_qu=
-ote"><div dir=3D"ltr">On Fri, Aug 3, 2018 at 9:08 AM Dmitry Torokhov &lt;<a=
- href=3D"mailto:dmitry.torokhov@gmail.com">dmitry.torokhov@gmail.com</a>&gt=
-; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .=
-8ex;border-left:1px #ccc solid;padding-left:1ex">On Fri, Aug 3, 2018 at 8:5=
-1 AM Ravi Chandra Sadineni<br>
-&lt;<a href=3D"mailto:ravisadineni@chromium.org" target=3D"_blank">ravisadi=
-neni@chromium.org</a>&gt; wrote:<br>
-&gt;<br>
-&gt; Hi Marek,<br>
-&gt;<br>
-&gt; Can you please give me little more context ? Snow is still on 3.8.11. =
-This patch is not backported to 3.8.11. Are you trying to flash a different=
- kernel=C2=A0 on snow?<br>
-&gt;<br>
-<br>
-Ravi, from upstream perspective what kernel Google uses when shipping<br>
-Snow is completely immaterial. Mainline is supposed to work equally<br>
-well on all devices.<br>
-<br>
-Thanks.<br>
-<br>
--- <br>
-Dmitry<br>
-</blockquote></div>
+> This could change in the future so export DT module alias.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/mfd/sec-core.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> index ca6b80d08ffc..9613b4257302 100644
+> --- a/drivers/mfd/sec-core.c
+> +++ b/drivers/mfd/sec-core.c
+> @@ -146,6 +146,7 @@ static const struct of_device_id sec_dt_match[] = {
+>                 /* Sentinel */
+>         },
+>  };
+> +MODULE_DEVICE_TABLE(of, sec_dt_match);
 
---000000000000f2463305728ac487--
+This driver can't be built as a module since its config symbol is
+bool, so technically this macro isn't needed. But it's a no-op when
+the driver is built-in so it's harmless to have it.
+
+Best regards,
+Javier
