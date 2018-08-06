@@ -1,67 +1,31 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 4/4] ARM: dts: exynos: Add LDO28 regulator on Exynos5422 Odroid boards
-Date: Mon,  6 Aug 2018 18:09:33 +0200
-Message-ID: <20180806160933.6578-4-krzk@kernel.org>
-References: <20180806160933.6578-1-krzk@kernel.org>
+Subject: [PATCH] pinctrl: samsung: Remove duplicated "wakeup" in printk
+Date: Mon,  6 Aug 2018 18:33:40 +0200
+Message-ID: <20180806163340.27276-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180806160933.6578-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The LDO28 is used only on Odroid XU3 for Display Port.  Define it so DTS
-will describe entire hardware.
-
-Depending on bootloader behavior this might affect the Display Port
-because none of drivers are enabling it. By default it is off in S2MPS11
-PMIC reset values.  However it could be enabled by bootloader so in such
-case kernel will later disable it as unused regulator.
+Double "wakeup" appears in printed message.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Not tested on Odroid XU3 with Display Port.
----
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 7 +++++++
- arch/arm/boot/dts/exynos5422-odroidxu3.dts    | 6 ++++++
- 2 files changed, 13 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index b0dc9cc81b94..178e1064cfc7 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -331,6 +331,13 @@
- 				regulator-always-on;
- 			};
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 40ef14956876..f49ea3d92aa1 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -588,7 +588,7 @@ exynos_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
  
-+			ldo28_reg: LDO28 {
-+				/* Used on XU3 */
-+				regulator-name = "vdd_ldo26";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo29_reg: LDO29 {
- 				/* Unused */
- 				regulator-name = "vdd_ldo29";
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index 0322f281912c..db0bc17a667b 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -49,6 +49,12 @@
- 	};
- };
+ 	pmu_regs = drvdata->retention_ctrl->priv;
+ 	dev_info(drvdata->dev,
+-		 "Setting external wakeup interrupt wakeup mask: 0x%x\n",
++		 "Setting external wakeup interrupt mask: 0x%x\n",
+ 		 irq_chip->eint_wake_mask_value);
  
-+&ldo28_reg {
-+	regulator-name = "dp_p3v3";
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+};
-+
- &pwm {
- 	/*
- 	 * PWM 0 -- fan
+ 	regmap_write(pmu_regs, irq_chip->eint_wake_mask_reg,
 -- 
 2.14.1
