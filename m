@@ -1,54 +1,74 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v3 06/10] drm/imx: Use __drm_atomic_helper_plane_reset
- instead of copying the logic
-Date: Mon, 06 Aug 2018 08:29:13 +0200
-Message-ID: <1533536953.4204.3.camel@pengutronix.de>
-References: <20180804161530.12275-1-alexandru-cosmin.gheorghe@arm.com>
- <20180804161530.12275-7-alexandru-cosmin.gheorghe@arm.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] Input: cros_ec_keyb: Remove check before calling
+ pm_wakeup_event.
+Date: Mon, 6 Aug 2018 09:15:42 +0200
+Message-ID: <20180806071543eucas1p233ac5016e1a586594cf8ecd1fe3214b0~IOkV1Zt7j2129321293eucas1p20@eucas1p2.samsung.com>
+References: <CGME20180803072628eucas1p26abe0cb121b974401759502f8807bb96@eucas1p2.samsung.com>
+        <20180605224458.62692-1-ravisadineni@chromium.org>
+        <20180803072628eucas1p26abe0cb121b974401759502f8807bb96~HTx4BGQjl1119311193eucas1p2U@eucas1p2.samsung.com>
+        <CAEZbON7qLheHFuU6zwArCz=CG03JvnFjcehBGjE4RqROYrMLhQ@mail.gmail.com>
+        <CAKdAkRQG08d_duPiKFi_=xUNO93c0Rcw9kpaYFFJahjJM-NdGw@mail.gmail.com>
+        <CAEZbON4O0X8Fo6eAbmPOSiB1_Tw7x+Ox3ROoGfZQn72uQGQLkg@mail.gmail.com>
+        <20180806052949eucas1p2483800c02730febd03d4a661a25fa405~INH40XvCx2719627196eucas1p2X@eucas1p2.samsung.com>
+        <CAKdAkRSvLq-L3FrODUqxXqDs2FymM9k5dZRxnOpc44rFiHaWAQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180804161530.12275-7-alexandru-cosmin.gheorghe@arm.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>, seanpaul@chromium.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, liviu.dudau@arm.com, brian.starkey@arm.com, malidp@foss.arm.com, ville.syrjala@linux.intel.com, daniel@ffwll.ch, gustavo@padovan.org, maarten.lankhorst@linux.intel.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, harry.wentland@amd.com, andrey.grodzovsky@amd.com, Tony.Cheng@amd.com, sunpeng.li@amd.com, shirish.s@amd.com, boris.brezillon@bootlin.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, maxime.ripard@bootlin.com, wens@csie.org, eric@anholt.net
-Cc: nd@arm.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAKdAkRSvLq-L3FrODUqxXqDs2FymM9k5dZRxnOpc44rFiHaWAQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>, Ravi Chandra Sadineni <ravisadineni@google.com>, Todd Broch <tbroch@google.com>, lkml <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQWxleGFuZHJ1LAoKT24gU2F0LCAyMDE4LTA4LTA0IGF0IDE3OjE1ICswMTAwLCBBbGV4YW5k
-cnUgR2hlb3JnaGUgd3JvdGU6Cj4gQSBuZXcgaGVscGVyIGZ1bmN0aW9uKF9fZHJtX2F0b21pY19o
-ZWxwZXJfcGxhbmVfcmVzZXQpIGhhcyBiZWVuIGFkZGVkCj4gZm9yIGxpbmtpbmcgYSBwbGFuZSB3
-aXRoIGl0cyBzdGF0ZSBhbmQgcmVzZXR0aW5nIHRoZSBjb3JlCj4gcHJvcGVydGllcyhhbHBoYSwg
-cm90YXRpb24sIGV0Yy4pIHRvIHRoZWlyIGRlZmF1bHQgdmFsdWVzLgo+IFVzZSB0aGF0IGluc3Rl
-YWQgb2YgZHVwbGljYXRpbmcgdGhlIGxvZ2ljLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRy
-dSBHaGVvcmdoZSA8YWxleGFuZHJ1LWNvc21pbi5naGVvcmdoZUBhcm0uY29tPgo+IC0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vaW14L2lwdXYzLXBsYW5lLmMgfCA4ICsrKy0tLS0tCj4gIDEgZmlsZSBj
-aGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9pbXgvaXB1djMtcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9pbXgv
-aXB1djMtcGxhbmUuYwo+IGluZGV4IDIwM2YyNDdkNDg1NC4uMWJkNGRlMDNjZTllIDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pbXgvaXB1djMtcGxhbmUuYwo+ICsrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9pbXgvaXB1djMtcGxhbmUuYwo+IEBAIC0yODEsMTYgKzI4MSwxNCBAQCBzdGF0aWMg
-dm9pZCBpcHVfcGxhbmVfc3RhdGVfcmVzZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCj4gIAkJ
-aXB1X3N0YXRlID0gdG9faXB1X3BsYW5lX3N0YXRlKHBsYW5lLT5zdGF0ZSk7Cj4gIAkJX19kcm1f
-YXRvbWljX2hlbHBlcl9wbGFuZV9kZXN0cm95X3N0YXRlKHBsYW5lLT5zdGF0ZSk7Cj4gIAkJa2Zy
-ZWUoaXB1X3N0YXRlKTsKPiArCQlwbGFuZS0+c3RhdGUgPSBOVUxMOwo+ICAJfQo+ICAKPiAgCWlw
-dV9zdGF0ZSA9IGt6YWxsb2Moc2l6ZW9mKCppcHVfc3RhdGUpLCBHRlBfS0VSTkVMKTsKPiAgCj4g
-LQlpZiAoaXB1X3N0YXRlKSB7Cj4gLQkJaXB1X3N0YXRlLT5iYXNlLnBsYW5lID0gcGxhbmU7Cj4g
-LQkJaXB1X3N0YXRlLT5iYXNlLnJvdGF0aW9uID0gRFJNX01PREVfUk9UQVRFXzA7Cj4gLQl9Cj4g
-KwlpZiAoaXB1X3N0YXRlKQo+ICsJCV9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfcmVzZXQocGxh
-bmUsICZpcHVfc3RhdGUtPmJhc2UpOwo+ICAKCkNvdWxkIHlvdSByZW1vdmUgdGhpcyB3aGl0ZSBs
-aW5lIGFzIHdlbGw/Cgo+IC0JcGxhbmUtPnN0YXRlID0gJmlwdV9zdGF0ZS0+YmFzZTsKPiAgfQo+
-ICAKPiAgc3RhdGljIHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKgoKQWNrZWQtYnk6IFBoaWxpcHAg
-WmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+Cgp0byBiZSBtZXJnZWQgdGhyb3VnaCBkcm0t
-bWlzYyB0b2dldGhlciB3aXRoIHRoZSBvdGhlciBjaGFuZ2VzLgoKcmVnYXJkcwpQaGlsaXBwCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Dmitry
+
+On 2018-08-06 08:16, Dmitry Torokhov wrote:
+> On Sun, Aug 5, 2018 at 10:29 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> Hi Ravi,
+>>
+>> On 2018-08-03 18:53, Ravi Chandra Sadineni wrote:
+>>> Understood. I am trying to reproduce this issue locally. Wanted to
+>>> know the version of the kernel so I can give a try. Marek, can you
+>>> please confirm the kernel version.
+>>>
+>> Yes, sorry for the missing context, I was in hurry writing the report and
+>> I wanted to send it before leaving the office. I'm testing mainline on Snow
+>> with exynos_defconfig.
+>>
+>> Suspend/resume is partially broken already with mainline, but if you disable
+>> CPUfreq support, it works fine on Linux v4.17.
+>>
+>> I've posted CPUfreq related fixes here if you are interested:
+>> https://patchwork.kernel.org/patch/10554607/
+>> https://patchwork.kernel.org/patch/10554603/
+>>
+>> The issue with cros_ec_keyb patch appears first on Linux v4.18-rc1, which is
+>> the first release with that patch.
+> Marek, this patch should only be in -next, I do not believe I sent it
+> to Linus just yet. If mainline is broken for you it can't be caused by
+> this patch.
+
+Aaahh. My fault then. The suspend/resume issue is cause by commit
+38ba34a43dbc ("Input: cros_ec_keyb - mark cros_ec_keyb driver as wake
+enabled device."), which has been merged to v4.18-rc1.
+
+It looks that I've downloaded wrong patch from the patchwork to reply it
+with a a bug report. :( I'm really sorry for the noise in the wrong thread.
+
+Ravi: please let me know how can I help you to debug this issue.
+
+>
+>> Linux -next from 20180803, which has a few
+>> more patches for cros_ec_keyb suffers from the same issue.
+> Just to confirm, if you revert only this patch from -next you get
+> suspend/resume back?
+>
+> Thanks.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
