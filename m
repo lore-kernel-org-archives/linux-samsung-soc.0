@@ -1,69 +1,66 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v3 00/10] Add helper for plane reset
-Date: Mon, 6 Aug 2018 17:48:39 +0200
-Message-ID: <20180806154839.GR3008@phenom.ffwll.local>
-References: <20180804161530.12275-1-alexandru-cosmin.gheorghe@arm.com>
- <15977863.ZBGtPEODRU@avalon>
- <20180806122038.GA6755@e114479-lin.cambridge.arm.com>
- <7271371.hQdeefBnlA@avalon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <7271371.hQdeefBnlA@avalon>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, thellstrom@vmware.com, krzk@kernel.org, maxime.ripard@bootlin.com, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, boris.brezillon@bootlin.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/4] ARM: dts: exynos: Add missing used PMIC regulators on Exynos5422 Odroid boards
+Date: Mon,  6 Aug 2018 18:09:30 +0200
+Message-ID: <20180806160933.6578-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gTW9uLCBBdWcgMDYsIDIwMTggYXQgMDM6Mjg6MDZQTSArMDMwMCwgTGF1cmVudCBQaW5jaGFy
-dCB3cm90ZToKPiBIaSBBbGV4LAo+IAo+IE9uIE1vbmRheSwgNiBBdWd1c3QgMjAxOCAxNToyMDoz
-OCBFRVNUIEFsZXhhbmRydS1Db3NtaW4gR2hlb3JnaGUgd3JvdGU6Cj4gPiBPbiBNb24sIEF1ZyAw
-NiwgMjAxOCBhdCAwMjo0NTo0MlBNICswMzAwLCBMYXVyZW50IFBpbmNoYXJ0IHdyb3RlOgo+ID4g
-PiBPbiBNb25kYXksIDYgQXVndXN0IDIwMTggMTQ6MDc6MjcgRUVTVCBBbGV4YW5kcnUtQ29zbWlu
-IEdoZW9yZ2hlIHdyb3RlOgo+ID4gPj4gT24gU2F0LCBBdWcgMDQsIDIwMTggYXQgMDU6MTU6MjBQ
-TSArMDEwMCwgQWxleGFuZHJ1IEdoZW9yZ2hlIHdyb3RlOgo+ID4gPj4+IE5vIHNpZ25pZmljYW50
-IGNoYW5nZSBzaW5jZSB2MiwgZml4ZWQgYSBzcGVsbGluZyBtaXN0YWtlIGFuZAo+ID4gPj4+IGFk
-ZGVkL3JlbW92ZWQgc29tZSBuZXdsaW5lcyBpbiAwMSBhbmQgMDcgcGF0Y2hlcy4KPiA+ID4+PiAK
-PiA+ID4+PiBJIHBsYW4gdG8gYXBwbHkgdGhlIGZpcnN0IHBhdGNoIG9mIHRoZSBzZXJpZXMgYW5k
-IHRoZSBwYXRjaGVzIGZvcgo+ID4gPj4+IHRoZSBkcml2ZXJzIG1haW50YWluZWQgdGhyb3VnaCBk
-cm0tbWlzYyh0aGF0IGdvIFJldmlld2VkL0FjaykgaW4KPiA+ID4+PiBkcm0tbWlzYy1uZXh0IG9u
-IE1vbmRheS4KPiA+ID4+PiAKPiA+ID4+PiBGb3IgdGhlIG90aGVyIGRyaXZlcnMgcGxlYXNlIGxl
-dCBtZSBrbm93IGlmIHlvdSB3YW50IG1lIHRvIHB1c2ggdGhlbQo+ID4gPj4+IGluIGRybS1taXNj
-LW5leHQgYXMgd2VsbC4KPiA+ID4+IAo+ID4gPj4gUHVzaGVkIHRoZSBmb2xsb3dpbmcgcGF0Y2gg
-dG8gZHJtLW1pc2MtbmV4dDoKPiA+ID4+IAo+ID4gPj4gZHJtL2F0b21pYzogQWRkIF9fZHJtX2F0
-b21pY19oZWxwZXJfcGxhbmVfcmVzZXQKPiA+ID4+IGRybTogbWFsaS1kcDogVXNlIF9fZHJtX2F0
-b21pY19oZWxwZXJfcGxhbmVfcmVzZXQgaW5zdGVhZCBvZiBjb3B5aW5nIHRoZQo+ID4gPj4gbG9n
-aWMKPiA+ID4+IGRybTogYXRtZWwtaGxjZGM6IFVzZSBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5l
-X3Jlc2V0IGluc3RlYWQgb2YgY29weWluZwo+ID4gPj4gdGhlIGxvZ2ljCj4gPiA+PiBkcm0vaW14
-OiBVc2UgX19kcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldCBpbnN0ZWFkIG9mIGNvcHlpbmcg
-dGhlCj4gPiA+PiBsb2dpYwo+ID4gPj4gZHJtL3N1bjRpOiBVc2UgX19kcm1fYXRvbWljX2hlbHBl
-cl9wbGFuZV9yZXNldCBpbnN0ZWFkIG9mIGNvcHlpbmcgdGhlCj4gPiA+PiBsb2dpYwo+ID4gPiAK
-PiA+ID4gSSd2ZSBhY2tlZCB0aGUgcmNhci1kdSBwYXJ0LCBjb3VsZCBpdCBiZSBtZXJnZWQgd2l0
-aCB0aGUgcmVzdCBvZiB0aGUgY29kZQo+ID4gPiA/Cj4gPiAKPiA+IERvbmUsIGl0J3MgaW4gZHJt
-LW1pc2MtbmV4dCBub3cuIEkgZGlkbid0IGtub3cgaG93IHRvIGhhbmRsZSB0aGlzIGZvcgo+ID4g
-ZHJpdmVycyB0aGF0IGhhdmUgdGhlaXIgb3duIHRyZWUsIHNvIEkganVzdCBwdXNoZWQgdGhlIHBh
-dGNoZXMgd2hlcmUgSSB3YXMKPiA+IGV4cGxpY2l0bHkgYXNrZWQuCj4gCj4gTm8gd29ycmllcy4g
-SXQncyBhY3R1YWxseSBiZXR0ZXIgdG8gYXNrIHRoYW4gcHVzaGluZyBjaGFuZ2VzIGRpcmVjdGx5
-LCBhcyAKPiBtYWludGFpbmVycyBjb3VsZCBoYXZlIGNvbmZsaWN0aW5nIHBhdGNoZXMgcXVldWVk
-IHVwLiBJIHNob3VsZCBoYXZlIG1hZGUgdGhpcyAKPiBjbGVhciBpbiBteSByZXZpZXcsIHRoYW5r
-IHlvdSBmb3IgaGFuZGxpbmcgaXQuCgpQb2tlIHRoZW0gYSBmZXcgdGltZXMsIGlmIG5vIHJlc3Bv
-bnNlIHRoZW4ganVzdCBnZXQgc29tZW9uZSB0byByZXZpZXcgdGhlCnJlbWFpbmluZyBvbmVzIGFu
-ZCBwdXNoIHRoZW0gYWxsIGludG8gZHJtLW1pc2MtbmV4dC4gVGhpcyBpcyBuZWVkZWQgYWxsCnRo
-ZSB0aW1lIGJlY2F1c2UgbWFueSBkcml2ZXJzIGFyZW4ndCBncm91cCBtYWludGFpbmVkIGFuZCB0
-aGUgc2luZ2xlCm1haW50YWluZXIgc3dhbXBlZC9hYnNlbnQuIFdvcnN0IGNhc2UgdGhlcmUncyBh
-IGNvbmZsaWN0IG9yIGEKZG91YmxlLW1lcmdlLCB3aGljaCBpc24ndCByZWFsbHkgYWxsIHRoYXQg
-YmFkLgotRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBD
-b3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+Define LDO2, LDO23 and LDO27 critical board regulators to describe the
+hardware.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index 2f4f40882dab..d0218a82c93a 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -154,6 +154,13 @@
+ 				regulator-always-on;
+ 			};
+ 
++			ldo2_reg: LDO2 {
++				regulator-name = "vdd_ldo2";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
+ 			ldo3_reg: LDO3 {
+ 				regulator-name = "vddq_mmc0";
+ 				regulator-min-microvolt = <1800000>;
+@@ -261,6 +268,13 @@
+ 				regulator-max-microvolt = <2800000>;
+ 			};
+ 
++			ldo23_reg: LDO23 {
++				regulator-name = "vdd_mifs";
++				regulator-min-microvolt = <1100000>;
++				regulator-max-microvolt = <1100000>;
++				regulator-always-on;
++			};
++
+ 			ldo24_reg: LDO24 {
+ 				regulator-name = "tsp_io";
+ 				regulator-min-microvolt = <2800000>;
+@@ -275,6 +289,13 @@
+ 				regulator-always-on;
+ 			};
+ 
++			ldo27_reg: LDO27 {
++				regulator-name = "vdd_g3ds";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
+ 			buck1_reg: BUCK1 {
+ 				regulator-name = "vdd_mif";
+ 				regulator-min-microvolt = <800000>;
+-- 
+2.14.1
