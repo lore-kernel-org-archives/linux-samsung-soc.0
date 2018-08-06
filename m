@@ -1,74 +1,60 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] Input: cros_ec_keyb: Remove check before calling
- pm_wakeup_event.
-Date: Mon, 6 Aug 2018 09:15:42 +0200
-Message-ID: <20180806071543eucas1p233ac5016e1a586594cf8ecd1fe3214b0~IOkV1Zt7j2129321293eucas1p20@eucas1p2.samsung.com>
-References: <CGME20180803072628eucas1p26abe0cb121b974401759502f8807bb96@eucas1p2.samsung.com>
-        <20180605224458.62692-1-ravisadineni@chromium.org>
-        <20180803072628eucas1p26abe0cb121b974401759502f8807bb96~HTx4BGQjl1119311193eucas1p2U@eucas1p2.samsung.com>
-        <CAEZbON7qLheHFuU6zwArCz=CG03JvnFjcehBGjE4RqROYrMLhQ@mail.gmail.com>
-        <CAKdAkRQG08d_duPiKFi_=xUNO93c0Rcw9kpaYFFJahjJM-NdGw@mail.gmail.com>
-        <CAEZbON4O0X8Fo6eAbmPOSiB1_Tw7x+Ox3ROoGfZQn72uQGQLkg@mail.gmail.com>
-        <20180806052949eucas1p2483800c02730febd03d4a661a25fa405~INH40XvCx2719627196eucas1p2X@eucas1p2.samsung.com>
-        <CAKdAkRSvLq-L3FrODUqxXqDs2FymM9k5dZRxnOpc44rFiHaWAQ@mail.gmail.com>
+From: Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>
+Subject: Re: [PATCH v3 06/10] drm/imx: Use __drm_atomic_helper_plane_reset
+ instead of copying the logic
+Date: Mon, 6 Aug 2018 09:53:22 +0100
+Message-ID: <20180806085322.GA16672@e114479-lin.cambridge.arm.com>
+References: <20180804161530.12275-1-alexandru-cosmin.gheorghe@arm.com>
+ <20180804161530.12275-7-alexandru-cosmin.gheorghe@arm.com>
+ <1533536953.4204.3.camel@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKdAkRSvLq-L3FrODUqxXqDs2FymM9k5dZRxnOpc44rFiHaWAQ@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>, Ravi Chandra Sadineni <ravisadineni@google.com>, Todd Broch <tbroch@google.com>, lkml <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1533536953.4204.3.camel@pengutronix.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: alexandre.belloni@bootlin.com, airlied@linux.ie, liviu.dudau@arm.com, dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com, thellstrom@vmware.com, krzk@kernel.org, maxime.ripard@bootlin.com, wens@csie.org, kgene@kernel.org, malidp@foss.arm.com, linux-graphics-maintainer@vmware.com, sunpeng.li@amd.com, boris.brezillon@bootlin.com, linux-samsung-soc@vger.kernel.org, nd@arm.com, Tony.Cheng@amd.com, linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com, nicolas.ferre@microchip.com, shirish.s@amd.com, kyungmin.park@samsung.com, alexander.deucher@amd.com, christian.koenig@amd.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Dmitry
-
-On 2018-08-06 08:16, Dmitry Torokhov wrote:
-> On Sun, Aug 5, 2018 at 10:29 PM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> Hi Ravi,
->>
->> On 2018-08-03 18:53, Ravi Chandra Sadineni wrote:
->>> Understood. I am trying to reproduce this issue locally. Wanted to
->>> know the version of the kernel so I can give a try. Marek, can you
->>> please confirm the kernel version.
->>>
->> Yes, sorry for the missing context, I was in hurry writing the report and
->> I wanted to send it before leaving the office. I'm testing mainline on Snow
->> with exynos_defconfig.
->>
->> Suspend/resume is partially broken already with mainline, but if you disable
->> CPUfreq support, it works fine on Linux v4.17.
->>
->> I've posted CPUfreq related fixes here if you are interested:
->> https://patchwork.kernel.org/patch/10554607/
->> https://patchwork.kernel.org/patch/10554603/
->>
->> The issue with cros_ec_keyb patch appears first on Linux v4.18-rc1, which is
->> the first release with that patch.
-> Marek, this patch should only be in -next, I do not believe I sent it
-> to Linus just yet. If mainline is broken for you it can't be caused by
-> this patch.
-
-Aaahh. My fault then. The suspend/resume issue is cause by commit
-38ba34a43dbc ("Input: cros_ec_keyb - mark cros_ec_keyb driver as wake
-enabled device."), which has been merged to v4.18-rc1.
-
-It looks that I've downloaded wrong patch from the patchwork to reply it
-with a a bug report. :( I'm really sorry for the noise in the wrong thread.
-
-Ravi: please let me know how can I help you to debug this issue.
-
->
->> Linux -next from 20180803, which has a few
->> more patches for cros_ec_keyb suffers from the same issue.
-> Just to confirm, if you revert only this patch from -next you get
-> suspend/resume back?
->
-> Thanks.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+T24gTW9uLCBBdWcgMDYsIDIwMTggYXQgMDg6Mjk6MTNBTSArMDIwMCwgUGhpbGlwcCBaYWJlbCB3
+cm90ZToKCkhpLAoKPiBIaSBBbGV4YW5kcnUsCj4gCj4gT24gU2F0LCAyMDE4LTA4LTA0IGF0IDE3
+OjE1ICswMTAwLCBBbGV4YW5kcnUgR2hlb3JnaGUgd3JvdGU6Cj4gPiBBIG5ldyBoZWxwZXIgZnVu
+Y3Rpb24oX19kcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldCkgaGFzIGJlZW4gYWRkZWQKPiA+
+IGZvciBsaW5raW5nIGEgcGxhbmUgd2l0aCBpdHMgc3RhdGUgYW5kIHJlc2V0dGluZyB0aGUgY29y
+ZQo+ID4gcHJvcGVydGllcyhhbHBoYSwgcm90YXRpb24sIGV0Yy4pIHRvIHRoZWlyIGRlZmF1bHQg
+dmFsdWVzLgo+ID4gVXNlIHRoYXQgaW5zdGVhZCBvZiBkdXBsaWNhdGluZyB0aGUgbG9naWMuCj4g
+PiAKPiA+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRydSBHaGVvcmdoZSA8YWxleGFuZHJ1LWNvc21p
+bi5naGVvcmdoZUBhcm0uY29tPgo+ID4gLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL2lteC9pcHV2
+My1wbGFuZS5jIHwgOCArKystLS0tLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
+KyksIDUgZGVsZXRpb25zKC0pCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+aW14L2lwdXYzLXBsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vaW14L2lwdXYzLXBsYW5lLmMKPiA+
+IGluZGV4IDIwM2YyNDdkNDg1NC4uMWJkNGRlMDNjZTllIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2lteC9pcHV2My1wbGFuZS5jCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vaW14
+L2lwdXYzLXBsYW5lLmMKPiA+IEBAIC0yODEsMTYgKzI4MSwxNCBAQCBzdGF0aWMgdm9pZCBpcHVf
+cGxhbmVfc3RhdGVfcmVzZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCj4gPiAgCQlpcHVfc3Rh
+dGUgPSB0b19pcHVfcGxhbmVfc3RhdGUocGxhbmUtPnN0YXRlKTsKPiA+ICAJCV9fZHJtX2F0b21p
+Y19oZWxwZXJfcGxhbmVfZGVzdHJveV9zdGF0ZShwbGFuZS0+c3RhdGUpOwo+ID4gIAkJa2ZyZWUo
+aXB1X3N0YXRlKTsKPiA+ICsJCXBsYW5lLT5zdGF0ZSA9IE5VTEw7Cj4gPiAgCX0KPiA+ICAKPiA+
+ICAJaXB1X3N0YXRlID0ga3phbGxvYyhzaXplb2YoKmlwdV9zdGF0ZSksIEdGUF9LRVJORUwpOwo+
+ID4gIAo+ID4gLQlpZiAoaXB1X3N0YXRlKSB7Cj4gPiAtCQlpcHVfc3RhdGUtPmJhc2UucGxhbmUg
+PSBwbGFuZTsKPiA+IC0JCWlwdV9zdGF0ZS0+YmFzZS5yb3RhdGlvbiA9IERSTV9NT0RFX1JPVEFU
+RV8wOwo+ID4gLQl9Cj4gPiArCWlmIChpcHVfc3RhdGUpCj4gPiArCQlfX2RybV9hdG9taWNfaGVs
+cGVyX3BsYW5lX3Jlc2V0KHBsYW5lLCAmaXB1X3N0YXRlLT5iYXNlKTsKPiA+ICAKPiAKPiBDb3Vs
+ZCB5b3UgcmVtb3ZlIHRoaXMgd2hpdGUgbGluZSBhcyB3ZWxsPwoKWWVzLCB3aWxsIGRvIGJlZm9y
+ZSBhcHBseWluZy4KCgo+IAo+ID4gLQlwbGFuZS0+c3RhdGUgPSAmaXB1X3N0YXRlLT5iYXNlOwo+
+ID4gIH0KPiA+ICAKPiA+ICBzdGF0aWMgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqCj4gCj4gQWNr
+ZWQtYnk6IFBoaWxpcHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+Cj4gCj4gdG8gYmUg
+bWVyZ2VkIHRocm91Z2ggZHJtLW1pc2MgdG9nZXRoZXIgd2l0aCB0aGUgb3RoZXIgY2hhbmdlcy4K
+PiAKPiByZWdhcmRzCj4gUGhpbGlwcAoKLS0gCkNoZWVycywKQWxleCBHCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
