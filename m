@@ -1,57 +1,41 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] Input: cros_ec_keyb: Remove check before calling pm_wakeup_event.
-Date: Sun, 5 Aug 2018 23:16:54 -0700
-Message-ID: <CAKdAkRSvLq-L3FrODUqxXqDs2FymM9k5dZRxnOpc44rFiHaWAQ@mail.gmail.com>
-References: <CGME20180803072628eucas1p26abe0cb121b974401759502f8807bb96@eucas1p2.samsung.com>
- <20180605224458.62692-1-ravisadineni@chromium.org> <20180803072628eucas1p26abe0cb121b974401759502f8807bb96~HTx4BGQjl1119311193eucas1p2U@eucas1p2.samsung.com>
- <CAEZbON7qLheHFuU6zwArCz=CG03JvnFjcehBGjE4RqROYrMLhQ@mail.gmail.com>
- <CAKdAkRQG08d_duPiKFi_=xUNO93c0Rcw9kpaYFFJahjJM-NdGw@mail.gmail.com>
- <CAEZbON4O0X8Fo6eAbmPOSiB1_Tw7x+Ox3ROoGfZQn72uQGQLkg@mail.gmail.com> <20180806052949eucas1p2483800c02730febd03d4a661a25fa405~INH40XvCx2719627196eucas1p2X@eucas1p2.samsung.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v3 01/10] drm/atomic: Add __drm_atomic_helper_plane_reset
+Date: Mon, 06 Aug 2018 08:29:16 +0200
+Message-ID: <1533536956.4204.4.camel@pengutronix.de>
+References: <20180804161530.12275-1-alexandru-cosmin.gheorghe@arm.com>
+ <20180804161530.12275-2-alexandru-cosmin.gheorghe@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180806052949eucas1p2483800c02730febd03d4a661a25fa405~INH40XvCx2719627196eucas1p2X@eucas1p2.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>, Ravi Chandra Sadineni <ravisadineni@google.com>, Todd Broch <tbroch@google.com>, lkml <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180804161530.12275-2-alexandru-cosmin.gheorghe@arm.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>, seanpaul@chromium.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, liviu.dudau@arm.com, brian.starkey@arm.com, malidp@foss.arm.com, ville.syrjala@linux.intel.com, daniel@ffwll.ch, gustavo@padovan.org, maarten.lankhorst@linux.intel.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, harry.wentland@amd.com, andrey.grodzovsky@amd.com, Tony.Cheng@amd.com, sunpeng.li@amd.com, shirish.s@amd.com, boris.brezillon@bootlin.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, maxime.ripard@bootlin.com, wens@csie.org, eric@anholt.net
+Cc: nd@arm.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Aug 5, 2018 at 10:29 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Ravi,
->
-> On 2018-08-03 18:53, Ravi Chandra Sadineni wrote:
-> > Understood. I am trying to reproduce this issue locally. Wanted to
-> > know the version of the kernel so I can give a try. Marek, can you
-> > please confirm the kernel version.
-> >
->
-> Yes, sorry for the missing context, I was in hurry writing the report and
-> I wanted to send it before leaving the office. I'm testing mainline on Snow
-> with exynos_defconfig.
->
-> Suspend/resume is partially broken already with mainline, but if you disable
-> CPUfreq support, it works fine on Linux v4.17.
->
-> I've posted CPUfreq related fixes here if you are interested:
-> https://patchwork.kernel.org/patch/10554607/
-> https://patchwork.kernel.org/patch/10554603/
->
-> The issue with cros_ec_keyb patch appears first on Linux v4.18-rc1, which is
-> the first release with that patch.
-
-Marek, this patch should only be in -next, I do not believe I sent it
-to Linus just yet. If mainline is broken for you it can't be caused by
-this patch.
-
-> Linux -next from 20180803, which has a few
-> more patches for cros_ec_keyb suffers from the same issue.
-
-Just to confirm, if you revert only this patch from -next you get
-suspend/resume back?
-
-Thanks.
-
--- 
-Dmitry
+T24gU2F0LCAyMDE4LTA4LTA0IGF0IDE3OjE1ICswMTAwLCBBbGV4YW5kcnUgR2hlb3JnaGUgd3Jv
+dGU6Cj4gVGhlcmUgYXJlIGEgbG90IG9mIGRyaXZlcnMgdGhhdCBzdWJjbGFzcyBkcm1fcGxhbmVf
+c3RhdGUsIGFsbCBvZiB0aGVtCj4gZHVwbGljYXRlIHRoZSBjb2RlIHRoYXQgbGlua3MgdG9nZXRo
+ZXIgdGhlIHBsYW5lIHdpdGggcGxhbmVfc3RhdGUuCj4gCj4gT24gdG9wIG9mIHRoYXQsIGRyaXZl
+cnMgdGhhdCBlbmFibGUgY29yZSBwcm9wZXJ0aWVzIGFsc28gaGF2ZSB0bwo+IGR1cGxpY2F0ZSB0
+aGUgY29kZSBmb3IgaW5pdGlhbGl6aW5nIHRoZSBwcm9wZXJ0aWVzIHRvIHRoZWlyIGRlZmF1bHQK
+PiB2YWx1ZXMsIHdoaWNoIGluIGFsbCBjYXNlcyBhcmUgdGhlIHNhbWUgYXMgdGhlIGRlZmF1bHRz
+IGZyb20gY29yZS4KPiAKPiBDaGFuZ2Ugc2luY2UgdjE6Cj4gLSBNYWtlIGl0IGNvbnNpc3RlbnQg
+d2l0aCB0aGUgb3RoZXIgaGVscGVycyBhbmQgcmVxdWlyZSB0aGF0IGJvdGgKPiAgIHBsYW5lIGFu
+ZCBzdGF0ZSBub3QgYmUgTlVMTCwgc3VnZ2VzdGVkIGJ5IEJvcmlzIEJyZXppbGxvbiBhbmQKPiAg
+IFBoaWxpcHAgWmFiZWwuCj4gCj4gUmV2aWV3ZWQtYnk6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJl
+bnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcnUg
+R2hlb3JnaGUgPGFsZXhhbmRydS1jb3NtaW4uZ2hlb3JnaGVAYXJtLmNvbT4KClJldmlld2VkLWJ5
+OiBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBlbmd1dHJvbml4LmRlPgoKcmVnYXJkcwpQaGlsaXBw
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
