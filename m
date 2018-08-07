@@ -1,8 +1,10 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/3] clk: max77686: Add SPDX license identifiers
-Date: Tue,  7 Aug 2018 18:17:11 +0200
-Message-ID: <20180807161713.28073-1-krzk@kernel.org>
+Subject: [PATCH 2/3] clk: s2mps11,s3c64xx: Add SPDX license identifiers
+Date: Tue,  7 Aug 2018 18:17:12 +0200
+Message-ID: <20180807161713.28073-2-krzk@kernel.org>
+References: <20180807161713.28073-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180807161713.28073-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -12,21 +14,20 @@ identifiers.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/clk-max77686.c                 | 27 ++++++---------------------
- include/dt-bindings/clock/maxim,max77686.h |  5 +----
- include/dt-bindings/clock/maxim,max77802.h |  5 +----
- 3 files changed, 8 insertions(+), 29 deletions(-)
+ drivers/clk/clk-s2mps11.c                         | 21 +++++----------------
+ include/dt-bindings/clock/samsung,s2mps11.h       |  5 +----
+ include/dt-bindings/clock/samsung,s3c64xx-clock.h |  7 ++-----
+ 3 files changed, 8 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index eb953d3b0b69..02551fe4b87c 100644
---- a/drivers/clk/clk-max77686.c
-+++ b/drivers/clk/clk-max77686.c
-@@ -1,24 +1,9 @@
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index d44e0eea31ec..ebf9115dad1d 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -1,19 +1,8 @@
 -/*
-- * clk-max77686.c - Clock driver for Maxim 77686/MAX77802
+- * clk-s2mps11.c - Clock driver for S2MPS11.
 - *
-- * Copyright (C) 2012 Samsung Electornics
-- * Jonghwa Lee <jonghwa3.lee@samsung.com>
+- * Copyright (C) 2013,2014 Samsung Electornics
 - *
 - * This program is free software; you can redistribute  it and/or modify it
 - * under  the terms of  the GNU General  Public License as published by the
@@ -38,51 +39,49 @@ index eb953d3b0b69..02551fe4b87c 100644
 - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 - * GNU General Public License for more details.
 - *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// clk-max77686.c - Clock driver for Maxim 77686/MAX77802
++// clk-s2mps11.c - Clock driver for S2MPS11.
 +//
-+// Copyright (C) 2012 Samsung Electornics
-+// Jonghwa Lee <jonghwa3.lee@samsung.com>
++// Copyright (C) 2013,2014 Samsung Electornics
  
- #include <linux/kernel.h>
- #include <linux/slab.h>
-diff --git a/include/dt-bindings/clock/maxim,max77686.h b/include/dt-bindings/clock/maxim,max77686.h
-index 7b28b0905869..af8261dcace1 100644
---- a/include/dt-bindings/clock/maxim,max77686.h
-+++ b/include/dt-bindings/clock/maxim,max77686.h
+ #include <linux/module.h>
+ #include <linux/err.h>
+diff --git a/include/dt-bindings/clock/samsung,s2mps11.h b/include/dt-bindings/clock/samsung,s2mps11.h
+index b903d7de27c9..5ece35d429ff 100644
+--- a/include/dt-bindings/clock/samsung,s2mps11.h
++++ b/include/dt-bindings/clock/samsung,s2mps11.h
 @@ -1,10 +1,7 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * Copyright (C) 2014 Google, Inc
+  * Copyright (C) 2015 Markus Reichl
   *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 - *
-  * Device Tree binding constants clocks for the Maxim 77686 PMIC.
+  * Device Tree binding constants clocks for the Samsung S2MPS11 PMIC.
   */
  
-diff --git a/include/dt-bindings/clock/maxim,max77802.h b/include/dt-bindings/clock/maxim,max77802.h
-index 997312edcbb5..51adcbaed697 100644
---- a/include/dt-bindings/clock/maxim,max77802.h
-+++ b/include/dt-bindings/clock/maxim,max77802.h
-@@ -1,10 +1,7 @@
+diff --git a/include/dt-bindings/clock/samsung,s3c64xx-clock.h b/include/dt-bindings/clock/samsung,s3c64xx-clock.h
+index ad95c7f50090..19d233f37e2f 100644
+--- a/include/dt-bindings/clock/samsung,s3c64xx-clock.h
++++ b/include/dt-bindings/clock/samsung,s3c64xx-clock.h
+@@ -1,12 +1,9 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * Copyright (C) 2014 Google, Inc
+  * Copyright (c) 2013 Tomasz Figa <tomasz.figa at gmail.com>
   *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 - *
-  * Device Tree binding constants clocks for the Maxim 77802 PMIC.
-  */
+  * Device Tree binding constants for Samsung S3C64xx clock controller.
+-*/
++ */
  
+ #ifndef _DT_BINDINGS_CLOCK_SAMSUNG_S3C64XX_CLOCK_H
+ #define _DT_BINDINGS_CLOCK_SAMSUNG_S3C64XX_CLOCK_H
 -- 
 2.14.1
