@@ -1,111 +1,61 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v5 2/9] drm/exynos: move connector creation to attach
- callback
-Date: Tue, 07 Aug 2018 17:53:05 +0900
-Message-ID: <20180807085311epcas1p2fd5a7ed9986c212c6c5d0ade3d459769~IjiubTYO01603416034epcas1p2b@epcas1p2.samsung.com>
-References: <20180725154644.25412-1-a.hajda@samsung.com>
- <CGME20180725154659eucas1p116f3a5e735333b07bcf9808f00694f3c@eucas1p1.samsung.com>
- <20180725154644.25412-3-a.hajda@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] mfd: sec: Export OF module alias table
+Date: Tue, 7 Aug 2018 11:21:41 +0200
+Message-ID: <CAJKOXPfiM0dEOMmV0a9h+QYu8bEkYhT_Wozq24Fo_91ssxofUA@mail.gmail.com>
+References: <20180725155302.4718-1-krzk@kernel.org> <CABxcv=k-BS04gZKGQqE1=CLhNk79yOHC9_CcrB6=UJ9xYNqGMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180725154644.25412-3-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CABxcv=k-BS04gZKGQqE1=CLhNk79yOHC9_CcrB6=UJ9xYNqGMg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE464WEIDA37JuUIDI27J28IDAwOjQ27JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBGcm9tOiBNYWNpZWogUHVyc2tpIDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KPiAKPiBU
-aGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBhc3N1bWVzIHRoYXQgdGhlIG9ubHkgcG9zc2libGUg
-cGVyaXBoZXJhbAo+IGRldmljZSBmb3IgRFNJTSBpcyBhIHBhbmVsLiBVc2luZyBhbiBvdXRwdXQg
-YnJpZGdlIGNoaWxkIGRldmljZQo+IHNob3VsZCBhbHNvIGJlIHBvc3NpYmxlLgo+IAo+IElmIGFu
-IG91dHB1dCBicmlkZ2UgaXMgYXZhaWxhYmxlLCBkb24ndCBjcmVhdGUgYSBuZXcgY29ubmVjdG9y
-Lgo+IEluc3RlYWQsIGNhbGwgZHJtX2JyaWRnZV9hdHRhY2goKSBhbmQgc2V0IGVuY29kZXIncyBi
-cmlkZ2UgdG8gTlVMTAo+IGluIG9yZGVyIHRvIGF2b2lkIGFuIG91dCBicmlkZ2UgZnJvbSBiZWlu
-ZyB2aXNpYmxlIGJ5IHRoZSBmcmFtZXdvcmssIGFzCj4gdGhlIERTSSBidXMgbmVlZHMgY29udHJv
-bCBvbiBlbmFibGluZyBpdHMgY2hpbGQgb3V0cHV0IGJyaWRnZS4KPiAKPiBTdWNoIHNlcXVlbmNl
-IGlzIHJlcXVpcmVkIGJ5IFRvc2hpYmEgVEMzNTg3NjQgYnJpZGdlLCB3aGljaCBpcyBhIERTSQo+
-IHBlcmlwaGVyYWwgYnJpZGdlIGRldmljZS4KPiAKPiBjaGFuZ2VkIGluIHY1Ogo+IC0gZGV0YWNo
-IGJyaWRnZSBpbiBtaXBpX2RzaSBkZXRhY2ggY2FsbGJhY2sKPiAKPiBTaWduZWQtb2ZmLWJ5OiBN
-YWNpZWogUHVyc2tpIDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KPiBbIGEuaGFqZGFAc2Ftc3VuZy5j
-b206IHY1IF0KPiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcu
-Y29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgfCA1
-MCArKysrKysrKysrKysrKysrLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAzMiBpbnNlcnRp
-b25zKCspLCAxOCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2RzaS5jCj4gaW5kZXggMzUxNDAzZjlkMjQ1Li5mNWY1MWY1ODRmYTAgMTAwNjQ0Cj4gLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4gKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4gQEAgLTI1NSw2ICsyNTUsNyBAQCBz
-dHJ1Y3QgZXh5bm9zX2RzaSB7Cj4gIAlzdHJ1Y3QgbWlwaV9kc2lfaG9zdCBkc2lfaG9zdDsKPiAg
-CXN0cnVjdCBkcm1fY29ubmVjdG9yIGNvbm5lY3RvcjsKPiAgCXN0cnVjdCBkcm1fcGFuZWwgKnBh
-bmVsOwo+ICsJc3RydWN0IGRybV9icmlkZ2UgKm91dF9icmlkZ2U7Cj4gIAlzdHJ1Y3QgZGV2aWNl
-ICpkZXY7Cj4gIAo+ICAJdm9pZCBfX2lvbWVtICpyZWdfYmFzZTsKPiBAQCAtMTQ5OSw3ICsxNTAw
-LDMwIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9ob3N0X2F0dGFjaChzdHJ1Y3QgbWlwaV9kc2lf
-aG9zdCAqaG9zdCwKPiAgCQkJCSAgc3RydWN0IG1pcGlfZHNpX2RldmljZSAqZGV2aWNlKQo+ICB7
-Cj4gIAlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpID0gaG9zdF90b19kc2koaG9zdCk7Cj4gLQlzdHJ1
-Y3QgZHJtX2RldmljZSAqZHJtID0gZHNpLT5jb25uZWN0b3IuZGV2Owo+ICsJc3RydWN0IGRybV9l
-bmNvZGVyICplbmNvZGVyID0gJmRzaS0+ZW5jb2RlcjsKPiArCXN0cnVjdCBkcm1fZGV2aWNlICpk
-cm0gPSBlbmNvZGVyLT5kZXY7Cj4gKwlzdHJ1Y3QgZHJtX2JyaWRnZSAqb3V0X2JyaWRnZTsKPiAr
-Cj4gKwlvdXRfYnJpZGdlICA9IG9mX2RybV9maW5kX2JyaWRnZShkZXZpY2UtPmRldi5vZl9ub2Rl
-KTsKCklzIHRoZXJlIGFueSByZWFzb24gdG8gZmluZCBvdXRfYnJpZGdlIHdpdGhvdXQgY29uc2lk
-ZXJpbmcgZGV2aWNlIHRyZWUgZ3JhcGggYmluZGluZz8KClRoZW4sIHlvdSBlbWJlZGRlZCBicmlk
-Z2UgZGV2aWNlIG5vZGUgaW4gZHNpIGRldmljZSBub2RlWzFdIGJ1dCB0aGUgYmluZGluZyBkb2N1
-bWVudCBiZWxvdyBkb2Vzbid0IG1lbnRpb24gYWJvdXQgdGhpcywKRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19kc2ltLnR4dAoKWzFdIGh0dHBz
-Oi8vbGttbC5vcmcvbGttbC8yMDE4LzYvMTkvMjM3CgpUaGFua3MsCklua2kgRGFlCgo+ICsJaWYg
-KG91dF9icmlkZ2UpIHsKPiArCQlkcm1fYnJpZGdlX2F0dGFjaChlbmNvZGVyLCBvdXRfYnJpZGdl
-LCBOVUxMKTsKPiArCQlkc2ktPm91dF9icmlkZ2UgPSBvdXRfYnJpZGdlOwo+ICsJCWVuY29kZXIt
-PmJyaWRnZSA9IE5VTEw7Cj4gKwl9IGVsc2Ugewo+ICsJCWludCByZXQgPSBleHlub3NfZHNpX2Ny
-ZWF0ZV9jb25uZWN0b3IoZW5jb2Rlcik7Cj4gKwo+ICsJCWlmIChyZXQpIHsKPiArCQkJRFJNX0VS
-Uk9SKCJmYWlsZWQgdG8gY3JlYXRlIGNvbm5lY3RvciByZXQgPSAlZFxuIiwgcmV0KTsKPiArCQkJ
-ZHJtX2VuY29kZXJfY2xlYW51cChlbmNvZGVyKTsKPiArCQkJcmV0dXJuIHJldDsKPiArCQl9Cj4g
-Kwo+ICsJCWRzaS0+cGFuZWwgPSBvZl9kcm1fZmluZF9wYW5lbChkZXZpY2UtPmRldi5vZl9ub2Rl
-KTsKPiArCQlpZiAoZHNpLT5wYW5lbCkgewo+ICsJCQlkcm1fcGFuZWxfYXR0YWNoKGRzaS0+cGFu
-ZWwsICZkc2ktPmNvbm5lY3Rvcik7Cj4gKwkJCWRzaS0+Y29ubmVjdG9yLnN0YXR1cyA9IGNvbm5l
-Y3Rvcl9zdGF0dXNfY29ubmVjdGVkOwo+ICsJCX0KPiArCX0KPiAgCj4gIAkvKgo+ICAJICogVGhp
-cyBpcyBhIHRlbXBvcmFyeSBzb2x1dGlvbiBhbmQgc2hvdWxkIGJlIG1hZGUgYnkgbW9yZSBnZW5l
-cmljIHdheS4KPiBAQCAtMTUxOCwxMSArMTU0Miw2IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9o
-b3N0X2F0dGFjaChzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9zdCwKPiAgCWRzaS0+bGFuZXMgPSBk
-ZXZpY2UtPmxhbmVzOwo+ICAJZHNpLT5mb3JtYXQgPSBkZXZpY2UtPmZvcm1hdDsKPiAgCWRzaS0+
-bW9kZV9mbGFncyA9IGRldmljZS0+bW9kZV9mbGFnczsKPiAtCWRzaS0+cGFuZWwgPSBvZl9kcm1f
-ZmluZF9wYW5lbChkZXZpY2UtPmRldi5vZl9ub2RlKTsKPiAtCWlmIChkc2ktPnBhbmVsKSB7Cj4g
-LQkJZHJtX3BhbmVsX2F0dGFjaChkc2ktPnBhbmVsLCAmZHNpLT5jb25uZWN0b3IpOwo+IC0JCWRz
-aS0+Y29ubmVjdG9yLnN0YXR1cyA9IGNvbm5lY3Rvcl9zdGF0dXNfY29ubmVjdGVkOwo+IC0JfQo+
-ICAJZXh5bm9zX2RybV9jcnRjX2dldF9ieV90eXBlKGRybSwgRVhZTk9TX0RJU1BMQVlfVFlQRV9M
-Q0QpLT5pODBfbW9kZSA9Cj4gIAkJCSEoZHNpLT5tb2RlX2ZsYWdzICYgTUlQSV9EU0lfTU9ERV9W
-SURFTyk7Cj4gIAo+IEBAIC0xNTM4LDE5ICsxNTU3LDIxIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2Rz
-aV9ob3N0X2RldGFjaChzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9zdCwKPiAgCQkJCSAgc3RydWN0
-IG1pcGlfZHNpX2RldmljZSAqZGV2aWNlKQo+ICB7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNp
-ID0gaG9zdF90b19kc2koaG9zdCk7Cj4gLQlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gZHNpLT5j
-b25uZWN0b3IuZGV2Owo+IC0KPiAtCW11dGV4X2xvY2soJmRybS0+bW9kZV9jb25maWcubXV0ZXgp
-Owo+ICsJc3RydWN0IGRybV9kZXZpY2UgKmRybSA9IGRzaS0+ZW5jb2Rlci5kZXY7Cj4gIAo+ICAJ
-aWYgKGRzaS0+cGFuZWwpIHsKPiArCQltdXRleF9sb2NrKCZkcm0tPm1vZGVfY29uZmlnLm11dGV4
-KTsKPiAgCQlleHlub3NfZHNpX2Rpc2FibGUoJmRzaS0+ZW5jb2Rlcik7Cj4gIAkJZHJtX3BhbmVs
-X2RldGFjaChkc2ktPnBhbmVsKTsKPiAgCQlkc2ktPnBhbmVsID0gTlVMTDsKPiAgCQlkc2ktPmNv
-bm5lY3Rvci5zdGF0dXMgPSBjb25uZWN0b3Jfc3RhdHVzX2Rpc2Nvbm5lY3RlZDsKPiArCQltdXRl
-eF91bmxvY2soJmRybS0+bW9kZV9jb25maWcubXV0ZXgpOwo+ICsJfSBlbHNlIHsKPiArCQlpZiAo
-ZHNpLT5vdXRfYnJpZGdlLT5mdW5jcy0+ZGV0YWNoKQo+ICsJCQlkc2ktPm91dF9icmlkZ2UtPmZ1
-bmNzLT5kZXRhY2goZHNpLT5vdXRfYnJpZGdlKTsKPiArCQlkc2ktPm91dF9icmlkZ2UgPSBOVUxM
-Owo+ICAJfQo+ICAKPiAtCW11dGV4X3VubG9jaygmZHJtLT5tb2RlX2NvbmZpZy5tdXRleCk7Cj4g
-LQo+ICAJaWYgKGRybS0+bW9kZV9jb25maWcucG9sbF9lbmFibGVkKQo+ICAJCWRybV9rbXNfaGVs
-cGVyX2hvdHBsdWdfZXZlbnQoZHJtKTsKPiAgCj4gQEAgLTE2NTQsMTMgKzE2NzUsNiBAQCBzdGF0
-aWMgaW50IGV4eW5vc19kc2lfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2Ug
-Km1hc3RlciwKPiAgCWlmIChyZXQgPCAwKQo+ICAJCXJldHVybiByZXQ7Cj4gIAo+IC0JcmV0ID0g
-ZXh5bm9zX2RzaV9jcmVhdGVfY29ubmVjdG9yKGVuY29kZXIpOwo+IC0JaWYgKHJldCkgewo+IC0J
-CURSTV9FUlJPUigiZmFpbGVkIHRvIGNyZWF0ZSBjb25uZWN0b3IgcmV0ID0gJWRcbiIsIHJldCk7
-Cj4gLQkJZHJtX2VuY29kZXJfY2xlYW51cChlbmNvZGVyKTsKPiAtCQlyZXR1cm4gcmV0Owo+IC0J
-fQo+IC0KPiAgCWlmIChkc2ktPmluX2JyaWRnZV9ub2RlKSB7Cj4gIAkJaW5fYnJpZGdlID0gb2Zf
-ZHJtX2ZpbmRfYnJpZGdlKGRzaS0+aW5fYnJpZGdlX25vZGUpOwo+ICAJCWlmIChpbl9icmlkZ2Up
-Cj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 4 August 2018 at 01:30, Javier Martinez Canillas <javier@dowhile0.org> wrote:
+> Hi Krzysztof,
+>
+> On Wed, Jul 25, 2018 at 5:53 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> In case of Device Tree platforms, even though the Samsung PMIC sec
+>> device is instantiated from DT, the driver is still matched through I2C
+>> module alias.  That is because I2C core always reports an I2C module
+>> alias instead of DT one.
+>>
+>
+> Just a heads up that this already changed in v4.17 since commit
+> af503716ac1 ("i2c: core: report OF style module alias for devices
+> registered via OF").
+
+True, I missed that part and blindly followed the old principle.
+
+>
+>> This could change in the future so export DT module alias.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> ---
+>>  drivers/mfd/sec-core.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+>> index ca6b80d08ffc..9613b4257302 100644
+>> --- a/drivers/mfd/sec-core.c
+>> +++ b/drivers/mfd/sec-core.c
+>> @@ -146,6 +146,7 @@ static const struct of_device_id sec_dt_match[] = {
+>>                 /* Sentinel */
+>>         },
+>>  };
+>> +MODULE_DEVICE_TABLE(of, sec_dt_match);
+>
+> This driver can't be built as a module since its config symbol is
+> bool, so technically this macro isn't needed. But it's a no-op when
+> the driver is built-in so it's harmless to have it.
+
+Indeed. I tried converting it to module but that does not work in all
+configurations (regulators are needed early).
+
+Anyway my patch even though not that correct, it should not bring any issues.
+
+Thanks for valuable feedback!
+
+Best regards,
+Krzysztof
