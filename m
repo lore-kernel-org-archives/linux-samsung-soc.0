@@ -1,61 +1,44 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] mfd: sec: Export OF module alias table
-Date: Tue, 7 Aug 2018 11:21:41 +0200
-Message-ID: <CAJKOXPfiM0dEOMmV0a9h+QYu8bEkYhT_Wozq24Fo_91ssxofUA@mail.gmail.com>
-References: <20180725155302.4718-1-krzk@kernel.org> <CABxcv=k-BS04gZKGQqE1=CLhNk79yOHC9_CcrB6=UJ9xYNqGMg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CABxcv=k-BS04gZKGQqE1=CLhNk79yOHC9_CcrB6=UJ9xYNqGMg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 2/2] ARM: dts: exynos: Mark 1GHz CPU OPP as suspend OPP
+Date: Tue,  7 Aug 2018 12:48:49 +0200
+Message-ID: <20180807104908eucas1p13c3a771369e556e884c81f648d80ad44~IlH93f82B2008420084eucas1p1o@eucas1p1.samsung.com>
+References: <20180807104757eucas1p201bd787714f50a798ee7457bdaf2c2f9~IlG8LJVcj1319313193eucas1p2R@eucas1p2.samsung.com>
+        <20180807104849.15384-1-m.szyprowski@samsung.com>
+        <CGME20180807104908eucas1p13c3a771369e556e884c81f648d80ad44@eucas1p1.samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20180807104849.15384-1-m.szyprowski@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 4 August 2018 at 01:30, Javier Martinez Canillas <javier@dowhile0.org> wrote:
-> Hi Krzysztof,
->
-> On Wed, Jul 25, 2018 at 5:53 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> In case of Device Tree platforms, even though the Samsung PMIC sec
->> device is instantiated from DT, the driver is still matched through I2C
->> module alias.  That is because I2C core always reports an I2C module
->> alias instead of DT one.
->>
->
-> Just a heads up that this already changed in v4.17 since commit
-> af503716ac1 ("i2c: core: report OF style module alias for devices
-> registered via OF").
+1GHz CPU OPP is the default boot value for the Exynos5250 SOC, so mark it
+as suspend OPP. This fixes suspend/resume on Samsung Exynos5250 Snow
+Chomebook, which was broken since switching to generic cpufreq-dt driver
+in v4.3.
 
-True, I missed that part and blindly followed the old principle.
+CC: <stable@vger.kernel.org> # 4.3.x: cd6f55457eb4  ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
+CC: <stable@vger.kernel.org> # 4.3.x: 672f33198bee  arm: dts: exynos: Add missing cooling device properties for CPUs
+CC: <stable@vger.kernel.org> # 4.3.x
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
->
->> This could change in the future so export DT module alias.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
->>  drivers/mfd/sec-core.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
->> index ca6b80d08ffc..9613b4257302 100644
->> --- a/drivers/mfd/sec-core.c
->> +++ b/drivers/mfd/sec-core.c
->> @@ -146,6 +146,7 @@ static const struct of_device_id sec_dt_match[] = {
->>                 /* Sentinel */
->>         },
->>  };
->> +MODULE_DEVICE_TABLE(of, sec_dt_match);
->
-> This driver can't be built as a module since its config symbol is
-> bool, so technically this macro isn't needed. But it's a no-op when
-> the driver is built-in so it's harmless to have it.
-
-Indeed. I tried converting it to module but that does not work in all
-configurations (regulators are needed early).
-
-Anyway my patch even though not that correct, it should not bring any issues.
-
-Thanks for valuable feedback!
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 8746189990eb..b85527faa6ea 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -118,6 +118,7 @@
+ 			opp-hz = /bits/ 64 <1000000000>;
+ 			opp-microvolt = <1075000>;
+ 			clock-latency-ns = <140000>;
++			opp-suspend;
+ 		};
+ 		opp-1100000000 {
+ 			opp-hz = /bits/ 64 <1100000000>;
+-- 
+2.17.1
