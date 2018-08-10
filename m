@@ -1,50 +1,130 @@
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 1/6] media: exynos-gsc: fix return code if mutex was
- interrupted
-Date: Wed,  8 Aug 2018 10:52:51 -0400
-Message-ID: <577a6299b1881c011bb82adb8a321ce72599a33c.1533739965.git.mchehab+samsung@kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] Input: cros_ec_keyb: Remove check before calling
+ pm_wakeup_event.
+Date: Fri, 10 Aug 2018 10:23:43 +0200
+Message-ID: <20180810082344eucas1p2c525a61cb176b4ab1dab22347afd539b~JeE3uTBkU1731217312eucas1p2T@eucas1p2.samsung.com>
+References: <CGME20180803072628eucas1p26abe0cb121b974401759502f8807bb96@eucas1p2.samsung.com>
+        <20180605224458.62692-1-ravisadineni@chromium.org>
+        <20180803072628eucas1p26abe0cb121b974401759502f8807bb96~HTx4BGQjl1119311193eucas1p2U@eucas1p2.samsung.com>
+        <CAEZbON7qLheHFuU6zwArCz=CG03JvnFjcehBGjE4RqROYrMLhQ@mail.gmail.com>
+        <CAKdAkRQG08d_duPiKFi_=xUNO93c0Rcw9kpaYFFJahjJM-NdGw@mail.gmail.com>
+        <CAEZbON4O0X8Fo6eAbmPOSiB1_Tw7x+Ox3ROoGfZQn72uQGQLkg@mail.gmail.com>
+        <20180806052949eucas1p2483800c02730febd03d4a661a25fa405~INH40XvCx2719627196eucas1p2X@eucas1p2.samsung.com>
+        <CAKdAkRSvLq-L3FrODUqxXqDs2FymM9k5dZRxnOpc44rFiHaWAQ@mail.gmail.com>
+        <20180806071543eucas1p233ac5016e1a586594cf8ecd1fe3214b0~IOkV1Zt7j2129321293eucas1p20@eucas1p2.samsung.com>
+        <CAEZbON72eVUCNT3ePEZKrB5B6+6YYgO7=X0TY0eBqUb3ws0sLA@mail.gmail.com>
+        <CAEZbON5vMOiYRsnN1MyuSov3URByeAp-z3EEsEH6tqY23U32wQ@mail.gmail.com>
+        <85a59afc-9dc0-b9fb-7e8f-32731337884c@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Al Viro <viro@zeniv.linux.org.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <85a59afc-9dc0-b9fb-7e8f-32731337884c@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ravi Chandra Sadineni <ravisadineni@google.com>, Todd Broch <tbroch@google.com>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-All poll routines expect a poll flag, and not error codes. So,
-instead of returning -ERESTARTSYS if the mutex got interrupted,
-return EPOLERR, just like the V4L2 VB2 code.
+Hi Ravi,
 
-Solves this sparce warning:
-	drivers/media/platform/exynos-gsc/gsc-m2m.c:716:24: warning: incorrect type in return expression (different base types)
-	drivers/media/platform/exynos-gsc/gsc-m2m.c:716:24:    expected restricted __poll_t
-	drivers/media/platform/exynos-gsc/gsc-m2m.c:716:24:    got int
+Just to let you know - I hope I've finally bisected all the issues related
+to suspend/resume on Samsung Chromebooks with mainline kernel. I did my
+tests on Linux next-20180809. The mentioned commit 38ba34a43dbc ("Input:
+cros_ec_keyb - mark cros_ec_keyb driver as wake enabled device.") breaks
+suspend/resume operation also on Samsung Exynos5420-based Peach-Pit
+Chromebook. Here is some more information how to get suspend/resume
+working with mainline on that board:
+https://patchwork.kernel.org/patch/10562419/
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- drivers/media/platform/exynos-gsc/gsc-m2m.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-index e9ff27949a91..c9d2f6c5311a 100644
---- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-@@ -713,7 +713,7 @@ static __poll_t gsc_m2m_poll(struct file *file,
- 	__poll_t ret;
- 
- 	if (mutex_lock_interruptible(&gsc->lock))
--		return -ERESTARTSYS;
-+		return EPOLLERR;
- 
- 	ret = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
- 	mutex_unlock(&gsc->lock);
--- 
-2.17.1
+On 2018-08-08 07:03, Marek Szyprowski wrote:
+> Hi Ravi,
+>
+> On 2018-08-07 23:59, Ravi Chandra Sadineni wrote:
+>> hi Merek,
+>>
+>> I tried booting a snow device and could not get it to boot it to the
+>> console. I assume i don't have right kernel config. Can you share your
+>> config if possible.
+>
+> I use standard exynos_defconfig bundled with Linux kernel. I've followed
+> this instruction to boot in on Snow:
+>
+> https://s-opensource.org/2016/03/24/use-mainline-u-boot-non-signed-kernels-exynos-chromebooks/ 
+>
+>
+>>
+>> Thanks,
+>> RaviOn Mon, Aug 6, 2018 at 4:05 PM Ravi Chandra Sadineni
+>> <ravisadineni@chromium.org> wrote:
+>>> Hi Merek,
+>>>
+>>> Thanks for the info. Lemme understand what's going on. Will update the
+>>> thread once I have more info.
+>>>
+>>> Thanks,
+>>> Ravi
+>>> On Mon, Aug 6, 2018 at 12:15 AM Marek Szyprowski
+>>> <m.szyprowski@samsung.com> wrote:
+>>>> Hi Dmitry
+>>>>
+>>>> On 2018-08-06 08:16, Dmitry Torokhov wrote:
+>>>>> On Sun, Aug 5, 2018 at 10:29 PM Marek Szyprowski
+>>>>> <m.szyprowski@samsung.com> wrote:
+>>>>>> Hi Ravi,
+>>>>>>
+>>>>>> On 2018-08-03 18:53, Ravi Chandra Sadineni wrote:
+>>>>>>> Understood. I am trying to reproduce this issue locally. Wanted to
+>>>>>>> know the version of the kernel so I can give a try. Marek, can you
+>>>>>>> please confirm the kernel version.
+>>>>>>>
+>>>>>> Yes, sorry for the missing context, I was in hurry writing the 
+>>>>>> report and
+>>>>>> I wanted to send it before leaving the office. I'm testing 
+>>>>>> mainline on Snow
+>>>>>> with exynos_defconfig.
+>>>>>>
+>>>>>> Suspend/resume is partially broken already with mainline, but if 
+>>>>>> you disable
+>>>>>> CPUfreq support, it works fine on Linux v4.17.
+>>>>>>
+>>>>>> I've posted CPUfreq related fixes here if you are interested:
+>>>>>> https://patchwork.kernel.org/patch/10554607/
+>>>>>> https://patchwork.kernel.org/patch/10554603/
+>>>>>>
+>>>>>> The issue with cros_ec_keyb patch appears first on Linux 
+>>>>>> v4.18-rc1, which is
+>>>>>> the first release with that patch.
+>>>>> Marek, this patch should only be in -next, I do not believe I sent it
+>>>>> to Linus just yet. If mainline is broken for you it can't be 
+>>>>> caused by
+>>>>> this patch.
+>>>> Aaahh. My fault then. The suspend/resume issue is cause by commit
+>>>> 38ba34a43dbc ("Input: cros_ec_keyb - mark cros_ec_keyb driver as wake
+>>>> enabled device."), which has been merged to v4.18-rc1.
+>>>>
+>>>> It looks that I've downloaded wrong patch from the patchwork to 
+>>>> reply it
+>>>> with a a bug report. :( I'm really sorry for the noise in the wrong 
+>>>> thread.
+>>>>
+>>>> Ravi: please let me know how can I help you to debug this issue.
+>>>>
+>>>>>> Linux -next from 20180803, which has a few
+>>>>>> more patches for cros_ec_keyb suffers from the same issue.
+>>>>> Just to confirm, if you revert only this patch from -next you get
+>>>>> suspend/resume back?
+>>>>>
+>>>>> Thanks.
+>>>> Best regards
+>>>> -- 
+>>>> Marek Szyprowski, PhD
+>>>> Samsung R&D Institute Poland
+>>>>
+>>
+>
+> Best regards
