@@ -1,125 +1,36 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v5 2/9] drm/exynos: move connector creation to attach
- callback
-Date: Mon, 13 Aug 2018 13:17:36 +0200
-Message-ID: <20180813111739eucas1p2e88561c6d528a24d4686f47aad2ebbf1~KbYlfgyOH0189801898eucas1p2N@eucas1p2.samsung.com>
-References: <20180725154644.25412-1-a.hajda@samsung.com>
- <CGME20180725154659eucas1p116f3a5e735333b07bcf9808f00694f3c@eucas1p1.samsung.com>
- <20180725154644.25412-3-a.hajda@samsung.com>
- <20180807085311epcas1p2fd5a7ed9986c212c6c5d0ade3d459769~IjiubTYO01603416034epcas1p2b@epcas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180807085311epcas1p2fd5a7ed9986c212c6c5d0ade3d459769~IjiubTYO01603416034epcas1p2b@epcas1p2.samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] irqchip/s3c24xx: Remove unneeded comparison of unsigned long to 0
+Date: Mon, 13 Aug 2018 17:11:44 +0200
+Message-ID: <20180813151144.12407-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDcuMDguMjAxOCAxMDo1MywgSW5raSBEYWUgd3JvdGU6Cj4KPiAyMDE464WEIDA37JuUIDI2
-7J28IDAwOjQ27JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4gRnJvbTogTWFj
-aWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+Cj4+Cj4+IFRoZSBjdXJyZW50IGltcGxl
-bWVudGF0aW9uIGFzc3VtZXMgdGhhdCB0aGUgb25seSBwb3NzaWJsZSBwZXJpcGhlcmFsCj4+IGRl
-dmljZSBmb3IgRFNJTSBpcyBhIHBhbmVsLiBVc2luZyBhbiBvdXRwdXQgYnJpZGdlIGNoaWxkIGRl
-dmljZQo+PiBzaG91bGQgYWxzbyBiZSBwb3NzaWJsZS4KPj4KPj4gSWYgYW4gb3V0cHV0IGJyaWRn
-ZSBpcyBhdmFpbGFibGUsIGRvbid0IGNyZWF0ZSBhIG5ldyBjb25uZWN0b3IuCj4+IEluc3RlYWQs
-IGNhbGwgZHJtX2JyaWRnZV9hdHRhY2goKSBhbmQgc2V0IGVuY29kZXIncyBicmlkZ2UgdG8gTlVM
-TAo+PiBpbiBvcmRlciB0byBhdm9pZCBhbiBvdXQgYnJpZGdlIGZyb20gYmVpbmcgdmlzaWJsZSBi
-eSB0aGUgZnJhbWV3b3JrLCBhcwo+PiB0aGUgRFNJIGJ1cyBuZWVkcyBjb250cm9sIG9uIGVuYWJs
-aW5nIGl0cyBjaGlsZCBvdXRwdXQgYnJpZGdlLgo+Pgo+PiBTdWNoIHNlcXVlbmNlIGlzIHJlcXVp
-cmVkIGJ5IFRvc2hpYmEgVEMzNTg3NjQgYnJpZGdlLCB3aGljaCBpcyBhIERTSQo+PiBwZXJpcGhl
-cmFsIGJyaWRnZSBkZXZpY2UuCj4+Cj4+IGNoYW5nZWQgaW4gdjU6Cj4+IC0gZGV0YWNoIGJyaWRn
-ZSBpbiBtaXBpX2RzaSBkZXRhY2ggY2FsbGJhY2sKPj4KPj4gU2lnbmVkLW9mZi1ieTogTWFjaWVq
-IFB1cnNraSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+Cj4+IFsgYS5oYWpkYUBzYW1zdW5nLmNvbTog
-djUgXQo+PiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29t
-Pgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyB8IDUw
-ICsrKysrKysrKysrKysrKystLS0tLS0tLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAzMiBpbnNlcnRp
-b25zKCspLCAxOCBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kc2kuYwo+PiBpbmRleCAzNTE0MDNmOWQyNDUuLmY1ZjUxZjU4NGZhMCAxMDA2NDQKPj4g
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+PiBAQCAtMjU1LDYgKzI1NSw3
-IEBAIHN0cnVjdCBleHlub3NfZHNpIHsKPj4gIAlzdHJ1Y3QgbWlwaV9kc2lfaG9zdCBkc2lfaG9z
-dDsKPj4gIAlzdHJ1Y3QgZHJtX2Nvbm5lY3RvciBjb25uZWN0b3I7Cj4+ICAJc3RydWN0IGRybV9w
-YW5lbCAqcGFuZWw7Cj4+ICsJc3RydWN0IGRybV9icmlkZ2UgKm91dF9icmlkZ2U7Cj4+ICAJc3Ry
-dWN0IGRldmljZSAqZGV2Owo+PiAgCj4+ICAJdm9pZCBfX2lvbWVtICpyZWdfYmFzZTsKPj4gQEAg
-LTE0OTksNyArMTUwMCwzMCBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfaG9zdF9hdHRhY2goc3Ry
-dWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCj4+ICAJCQkJICBzdHJ1Y3QgbWlwaV9kc2lfZGV2aWNl
-ICpkZXZpY2UpCj4+ICB7Cj4+ICAJc3RydWN0IGV4eW5vc19kc2kgKmRzaSA9IGhvc3RfdG9fZHNp
-KGhvc3QpOwo+PiAtCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBkc2ktPmNvbm5lY3Rvci5kZXY7
-Cj4+ICsJc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyID0gJmRzaS0+ZW5jb2RlcjsKPj4gKwlz
-dHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gZW5jb2Rlci0+ZGV2Owo+PiArCXN0cnVjdCBkcm1fYnJp
-ZGdlICpvdXRfYnJpZGdlOwo+PiArCj4+ICsJb3V0X2JyaWRnZSAgPSBvZl9kcm1fZmluZF9icmlk
-Z2UoZGV2aWNlLT5kZXYub2Zfbm9kZSk7Cj4gSXMgdGhlcmUgYW55IHJlYXNvbiB0byBmaW5kIG91
-dF9icmlkZ2Ugd2l0aG91dCBjb25zaWRlcmluZyBkZXZpY2UgdHJlZSBncmFwaCBiaW5kaW5nPwoK
-SWYgdGhlIHNpbmsgaXMgYSBjaGlsZCBNSVBJLURTSSBkZXZpY2UsIHRoZSBiaW5kaW5ncyBjYW4g
-YmUgb21pdHRlZCwgYXMKaW4gY2FzZSBvZiBhbGwgRFNJIHBhbmVscyBpbiBFeHlub3MgcGxhdGZv
-cm1zLgpJbiBjYXNlIGJpbmRpbmdzIGFyZSBub3QgcHJlc2VudCB5b3UgY2Fubm90IHVzZSBncmFw
-aCBmdW5jdGlvbnMuCgo+Cj4gVGhlbiwgeW91IGVtYmVkZGVkIGJyaWRnZSBkZXZpY2Ugbm9kZSBp
-biBkc2kgZGV2aWNlIG5vZGVbMV0gYnV0IHRoZSBiaW5kaW5nIGRvY3VtZW50IGJlbG93IGRvZXNu
-J3QgbWVudGlvbiBhYm91dCB0aGlzLAo+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHNpbS50eHQKCkJ1dCB0aGlzIGRvY3VtZW50IHNheXMg
-YWJvdXQgY2hpbGQgbm9kZXMsIGFuZCBUb3NoaWJhIGJyaWRnZSBpcyBNSVBJLURTSQpjaGlsZCBb
-MV0uCgpSZWdhcmRzCkFuZHJ6ZWoKCj4KPiBbMV0gaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTgv
-Ni8xOS8yMzcKPgo+IFRoYW5rcywKPiBJbmtpIERhZQo+Cj4+ICsJaWYgKG91dF9icmlkZ2UpIHsK
-Pj4gKwkJZHJtX2JyaWRnZV9hdHRhY2goZW5jb2Rlciwgb3V0X2JyaWRnZSwgTlVMTCk7Cj4+ICsJ
-CWRzaS0+b3V0X2JyaWRnZSA9IG91dF9icmlkZ2U7Cj4+ICsJCWVuY29kZXItPmJyaWRnZSA9IE5V
-TEw7Cj4+ICsJfSBlbHNlIHsKPj4gKwkJaW50IHJldCA9IGV4eW5vc19kc2lfY3JlYXRlX2Nvbm5l
-Y3RvcihlbmNvZGVyKTsKPj4gKwo+PiArCQlpZiAocmV0KSB7Cj4+ICsJCQlEUk1fRVJST1IoImZh
-aWxlZCB0byBjcmVhdGUgY29ubmVjdG9yIHJldCA9ICVkXG4iLCByZXQpOwo+PiArCQkJZHJtX2Vu
-Y29kZXJfY2xlYW51cChlbmNvZGVyKTsKPj4gKwkJCXJldHVybiByZXQ7Cj4+ICsJCX0KPj4gKwo+
-PiArCQlkc2ktPnBhbmVsID0gb2ZfZHJtX2ZpbmRfcGFuZWwoZGV2aWNlLT5kZXYub2Zfbm9kZSk7
-Cj4+ICsJCWlmIChkc2ktPnBhbmVsKSB7Cj4+ICsJCQlkcm1fcGFuZWxfYXR0YWNoKGRzaS0+cGFu
-ZWwsICZkc2ktPmNvbm5lY3Rvcik7Cj4+ICsJCQlkc2ktPmNvbm5lY3Rvci5zdGF0dXMgPSBjb25u
-ZWN0b3Jfc3RhdHVzX2Nvbm5lY3RlZDsKPj4gKwkJfQo+PiArCX0KPj4gIAo+PiAgCS8qCj4+ICAJ
-ICogVGhpcyBpcyBhIHRlbXBvcmFyeSBzb2x1dGlvbiBhbmQgc2hvdWxkIGJlIG1hZGUgYnkgbW9y
-ZSBnZW5lcmljIHdheS4KPj4gQEAgLTE1MTgsMTEgKzE1NDIsNiBAQCBzdGF0aWMgaW50IGV4eW5v
-c19kc2lfaG9zdF9hdHRhY2goc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCj4+ICAJZHNpLT5s
-YW5lcyA9IGRldmljZS0+bGFuZXM7Cj4+ICAJZHNpLT5mb3JtYXQgPSBkZXZpY2UtPmZvcm1hdDsK
-Pj4gIAlkc2ktPm1vZGVfZmxhZ3MgPSBkZXZpY2UtPm1vZGVfZmxhZ3M7Cj4+IC0JZHNpLT5wYW5l
-bCA9IG9mX2RybV9maW5kX3BhbmVsKGRldmljZS0+ZGV2Lm9mX25vZGUpOwo+PiAtCWlmIChkc2kt
-PnBhbmVsKSB7Cj4+IC0JCWRybV9wYW5lbF9hdHRhY2goZHNpLT5wYW5lbCwgJmRzaS0+Y29ubmVj
-dG9yKTsKPj4gLQkJZHNpLT5jb25uZWN0b3Iuc3RhdHVzID0gY29ubmVjdG9yX3N0YXR1c19jb25u
-ZWN0ZWQ7Cj4+IC0JfQo+PiAgCWV4eW5vc19kcm1fY3J0Y19nZXRfYnlfdHlwZShkcm0sIEVYWU5P
-U19ESVNQTEFZX1RZUEVfTENEKS0+aTgwX21vZGUgPQo+PiAgCQkJIShkc2ktPm1vZGVfZmxhZ3Mg
-JiBNSVBJX0RTSV9NT0RFX1ZJREVPKTsKPj4gIAo+PiBAQCAtMTUzOCwxOSArMTU1NywyMSBAQCBz
-dGF0aWMgaW50IGV4eW5vc19kc2lfaG9zdF9kZXRhY2goc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhv
-c3QsCj4+ICAJCQkJICBzdHJ1Y3QgbWlwaV9kc2lfZGV2aWNlICpkZXZpY2UpCj4+ICB7Cj4+ICAJ
-c3RydWN0IGV4eW5vc19kc2kgKmRzaSA9IGhvc3RfdG9fZHNpKGhvc3QpOwo+PiAtCXN0cnVjdCBk
-cm1fZGV2aWNlICpkcm0gPSBkc2ktPmNvbm5lY3Rvci5kZXY7Cj4+IC0KPj4gLQltdXRleF9sb2Nr
-KCZkcm0tPm1vZGVfY29uZmlnLm11dGV4KTsKPj4gKwlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0g
-ZHNpLT5lbmNvZGVyLmRldjsKPj4gIAo+PiAgCWlmIChkc2ktPnBhbmVsKSB7Cj4+ICsJCW11dGV4
-X2xvY2soJmRybS0+bW9kZV9jb25maWcubXV0ZXgpOwo+PiAgCQlleHlub3NfZHNpX2Rpc2FibGUo
-JmRzaS0+ZW5jb2Rlcik7Cj4+ICAJCWRybV9wYW5lbF9kZXRhY2goZHNpLT5wYW5lbCk7Cj4+ICAJ
-CWRzaS0+cGFuZWwgPSBOVUxMOwo+PiAgCQlkc2ktPmNvbm5lY3Rvci5zdGF0dXMgPSBjb25uZWN0
-b3Jfc3RhdHVzX2Rpc2Nvbm5lY3RlZDsKPj4gKwkJbXV0ZXhfdW5sb2NrKCZkcm0tPm1vZGVfY29u
-ZmlnLm11dGV4KTsKPj4gKwl9IGVsc2Ugewo+PiArCQlpZiAoZHNpLT5vdXRfYnJpZGdlLT5mdW5j
-cy0+ZGV0YWNoKQo+PiArCQkJZHNpLT5vdXRfYnJpZGdlLT5mdW5jcy0+ZGV0YWNoKGRzaS0+b3V0
-X2JyaWRnZSk7Cj4+ICsJCWRzaS0+b3V0X2JyaWRnZSA9IE5VTEw7Cj4+ICAJfQo+PiAgCj4+IC0J
-bXV0ZXhfdW5sb2NrKCZkcm0tPm1vZGVfY29uZmlnLm11dGV4KTsKPj4gLQo+PiAgCWlmIChkcm0t
-Pm1vZGVfY29uZmlnLnBvbGxfZW5hYmxlZCkKPj4gIAkJZHJtX2ttc19oZWxwZXJfaG90cGx1Z19l
-dmVudChkcm0pOwo+PiAgCj4+IEBAIC0xNjU0LDEzICsxNjc1LDYgQEAgc3RhdGljIGludCBleHlu
-b3NfZHNpX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4+
-ICAJaWYgKHJldCA8IDApCj4+ICAJCXJldHVybiByZXQ7Cj4+ICAKPj4gLQlyZXQgPSBleHlub3Nf
-ZHNpX2NyZWF0ZV9jb25uZWN0b3IoZW5jb2Rlcik7Cj4+IC0JaWYgKHJldCkgewo+PiAtCQlEUk1f
-RVJST1IoImZhaWxlZCB0byBjcmVhdGUgY29ubmVjdG9yIHJldCA9ICVkXG4iLCByZXQpOwo+PiAt
-CQlkcm1fZW5jb2Rlcl9jbGVhbnVwKGVuY29kZXIpOwo+PiAtCQlyZXR1cm4gcmV0Owo+PiAtCX0K
-Pj4gLQo+PiAgCWlmIChkc2ktPmluX2JyaWRnZV9ub2RlKSB7Cj4+ICAJCWluX2JyaWRnZSA9IG9m
-X2RybV9maW5kX2JyaWRnZShkc2ktPmluX2JyaWRnZV9ub2RlKTsKPj4gIAkJaWYgKGluX2JyaWRn
-ZSkKPj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5l
-ICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3Nh
-Z2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
-IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Cj4KCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+irq_data->hwirq is unsigned long.  This fixes GCC warning:
+
+    drivers/irqchip/irq-s3c24xx.c: In function 's3c_irqext0_type':
+    drivers/irqchip/irq-s3c24xx.c:253:19: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
+      if ((data->hwirq >= 0) && (data->hwirq <= 3)) {
+                       ^~
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/irqchip/irq-s3c24xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
+index f6fd57ebe6e6..c19766fe8a1a 100644
+--- a/drivers/irqchip/irq-s3c24xx.c
++++ b/drivers/irqchip/irq-s3c24xx.c
+@@ -250,7 +250,7 @@ static int s3c_irqext0_type(struct irq_data *data, unsigned int type)
+ 	void __iomem *gpcon_reg;
+ 	unsigned long gpcon_offset, extint_offset;
+ 
+-	if ((data->hwirq >= 0) && (data->hwirq <= 3)) {
++	if (data->hwirq <= 3) {
+ 		gpcon_reg = S3C2410_GPFCON;
+ 		extint_reg = S3C24XX_EXTINT0;
+ 		gpcon_offset = (data->hwirq) * 2;
+-- 
+2.14.1
