@@ -1,49 +1,28 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH] irqchip/s3c24xx: Remove unneeded comparison of unsigned
- long to 0
-Date: Mon, 13 Aug 2018 16:21:08 +0100
-Message-ID: <35e59c4f-0f36-6a39-d075-dac32f75bce8@arm.com>
-References: <20180813151144.12407-1-krzk@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/3] clk: s2mps11: Use existing defines from bindings for
+ clock IDs
+Date: Tue, 14 Aug 2018 14:37:39 -0600
+Message-ID: <20180814203739.GA27965@rob-hp-laptop>
+References: <20180807161713.28073-1-krzk@kernel.org>
+ <20180807161713.28073-3-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180813151144.12407-1-krzk@kernel.org>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <20180807161713.28073-3-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 13/08/18 16:11, Krzysztof Kozlowski wrote:
-> irq_data->hwirq is unsigned long.  This fixes GCC warning:
-> 
->     drivers/irqchip/irq-s3c24xx.c: In function 's3c_irqext0_type':
->     drivers/irqchip/irq-s3c24xx.c:253:19: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
->       if ((data->hwirq >= 0) && (data->hwirq <= 3)) {
->                        ^~
+On Tue,  7 Aug 2018 18:17:13 +0200, Krzysztof Kozlowski wrote:
+> The clock IDs must match between DeviceTree bindings and the driver.
+> There is already a header file used by DeviceTree sources so include it
+> in the driver to remove duplicated symbols.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/irqchip/irq-s3c24xx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
-> index f6fd57ebe6e6..c19766fe8a1a 100644
-> --- a/drivers/irqchip/irq-s3c24xx.c
-> +++ b/drivers/irqchip/irq-s3c24xx.c
-> @@ -250,7 +250,7 @@ static int s3c_irqext0_type(struct irq_data *data, unsigned int type)
->  	void __iomem *gpcon_reg;
->  	unsigned long gpcon_offset, extint_offset;
->  
-> -	if ((data->hwirq >= 0) && (data->hwirq <= 3)) {
-> +	if (data->hwirq <= 3) {
->  		gpcon_reg = S3C2410_GPFCON;
->  		extint_reg = S3C24XX_EXTINT0;
->  		gpcon_offset = (data->hwirq) * 2;
+>  drivers/clk/clk-s2mps11.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
 > 
 
-Queued, thanks.
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Reviewed-by: Rob Herring <robh@kernel.org>
