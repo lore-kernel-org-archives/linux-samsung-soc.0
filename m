@@ -1,8 +1,8 @@
 From: Jeff Layton <jlayton@kernel.org>
 Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock
  request to block other requests."
-Date: Wed, 15 Aug 2018 08:44:03 -0400
-Message-ID: <1eccaca5ea2ae8e5d32ef44d92e893ad870e754d.camel@kernel.org>
+Date: Wed, 15 Aug 2018 10:19:18 -0400
+Message-ID: <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org>
 References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
@@ -48,11 +48,14 @@ On Wed, 2018-08-15 at 14:28 +0200, Krzysztof Kozlowski wrote:
 > Best regards,
 > Krzysztof
 
-Thanks Krzysztof,
+The BUG is due to a lock being freed when the fl_blocked list wasn't
+empty (implying that there were still blocked locks waiting on it).
 
-I or Neil will see if this is reproducible and see about coming up with
-a fix. For now, I'll take this out of -next.
+There are a number of calls to locks_delete_lock_ctx in posix_lock_inode
+and I don't think the fl_blocked list is being handled properly with all
+of them. It only transplants the blocked locks to a new lock when there
+are surviving locks on the list, and that may not be the case when the
+whole file is being unlocked.
 
-Thanks,
 -- 
 Jeff Layton <jlayton@kernel.org>
