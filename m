@@ -1,108 +1,141 @@
-From: NeilBrown <neilb@suse.com>
-Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock request to block other requests."
-Date: Thu, 16 Aug 2018 15:19:59 +1000
-Message-ID: <87o9e2anwg.fsf@notabene.neil.brown.name>
-References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com> <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v5 2/9] drm/exynos: move connector creation to attach
+ callback
+Date: Fri, 17 Aug 2018 10:56:40 +0900
+Message-ID: <20180817015642epcas1p1e33ed4f3b92e8939fa45237908f3407b~LiT8coN4a0108901089epcas1p1x@epcas1p1.samsung.com>
+References: <20180725154644.25412-1-a.hajda@samsung.com>
+ <CGME20180725154659eucas1p116f3a5e735333b07bcf9808f00694f3c@eucas1p1.samsung.com>
+ <20180725154644.25412-3-a.hajda@samsung.com>
+ <20180807085311epcas1p2fd5a7ed9986c212c6c5d0ade3d459769~IjiubTYO01603416034epcas1p2b@epcas1p2.samsung.com>
+ <20180813111739eucas1p2e88561c6d528a24d4686f47aad2ebbf1~KbYlfgyOH0189801898eucas1p2N@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jeff Layton <jlayton@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, "J. Bruce Fields" <bfields@fieldses.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180813111739eucas1p2e88561c6d528a24d4686f47aad2ebbf1~KbYlfgyOH0189801898eucas1p2N@eucas1p2.samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 15 2018, Jeff Layton wrote:
-
-> On Wed, 2018-08-15 at 14:28 +0200, Krzysztof Kozlowski wrote:
->> Hi,
->>=20
->> Bisect pointed commit ce3147990450a68b3f549088b30f087742a08b5d
->> ("fs/locks: allow a lock request to block other requests.") to failure
->> boot of NFSv4 with root on several boards.
->>=20
->> Log is here:
->> https://krzk.eu/#/builders/21/builds/836/steps/12/logs/serial0
->>=20
->> With several errors:
->> kernel BUG at ../fs/locks.c:336!
->> Unable to handle kernel NULL pointer dereference at virtual address 0000=
-0004
->>=20
->> Configuration:
->> 1. exynos_defconfig
->> 2. Arch ARM Linux
->> 3. Boards:
->> a. Odroid family (ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC)
->> b. Toradex Colibri VF50 (ARMv7, UP, Cortex-A5)
->> 4. Systemd: v236, 238
->> 5. All boards boot from TFTP with NFS root (NFSv4)
->>=20
->> On Colibri VF50 I got slightly different errors:
->> [   11.663204] Internal error: Oops - undefined instruction: 0 [#1] ARM
->> [   12.455273] Unable to handle kernel NULL pointer dereference at
->> virtual address 00000004
->> and only with some specific GCC (v6.3) or with other conditions which
->> I did not bisect yet. Maybe Colibri's failure is unrelated to that
->> commit.
->>=20
->> Best regards,
->> Krzysztof
-
-Thanks a lot for the report Krzysztof!!
-
->
-> The BUG is due to a lock being freed when the fl_blocked list wasn't
-> empty (implying that there were still blocked locks waiting on it).
->
-> There are a number of calls to locks_delete_lock_ctx in posix_lock_inode
-> and I don't think the fl_blocked list is being handled properly with all
-> of them. It only transplants the blocked locks to a new lock when there
-> are surviving locks on the list, and that may not be the case when the
-> whole file is being unlocked.
-
-locks_delete_lock_ctx() calls locks_unlink_lock_ctx() which calls
-locks_wake_up_block() which doesn't only wake_up the blocks, but also
-detached them. When that function completes, ->fl_blocked must be empty.
-
-The trace shows the locks_free_lock() call at the end of fcntl_setlk64()
-as the problematic call.
-This suggests that do_lock_file_wait() exited with ->fl_blocked
-non-empty, which it shouldn't.
-
-I think we need to insert a call to locks_wake_up_block() in
-do_lock_file_wait() before it returns.
-I cannot find a sequence that would make this necessary, but
-it isn't surprising that there might be one.
-
-I'll dig through the code a bit more later and make sure I understand
-what is happening.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlt1CX8ACgkQOeye3VZi
-gbmzlRAAk2m+Da7jlPd3bZsAFMEg/mNhyNH3ZKpOLv4kLuHIHf51bX0DqFNsJaro
-XzAuTbgpj8o1EycMhV2uwMAhUVk5GvqUebcQUZa0XTcRTyrwGMlc+2WgtJrPBU9y
-/Jgnnro68Zo+rYdvy+YFQKjXFvhKwNWEeqeqMH3v62eO2gIyjatL+Vpgyim+U5zn
-S0uxVLl31wWXU9YSLJW/8SKXbfJJnxKIJ1YmwChFsr5HaKPnIk3Nct+hAU43Qv2C
-1PmBNZjQOIzN3qqZJM5Crj5IDsFnNoIgxhOromgX2tUQ34iksWyKbg63lRuG4x79
-UKXbZMxon8JPyMfQpXq+lwrBbpfawTVNnYT0T+c6/ZA3avwI97CgVybgXRcFu8sw
-S5GdSh1ZfXMH8F3yFp13JD6pb7gqlxWjNwBXF1jQNPdJOflTNN+OyfjEyW87v6vG
-Jqbt3g5utzLmo8BvipaIJkoQ8eoHXyNn/13TTHIABQeLRYJ0aQpena4kvA6eo7SA
-ZxDlxt2o66qB6DzmxI7ez+uCBtKNeIg16WBn2i9pF4QgxOujHU/dEkUH/vg0qJjA
-CBADZOSTtOKkzp7t/3vrS21tpSvwhJ4Jb6M1PL+yDMP2OelNr2LV6Y4p75a8XOeB
-D+fw90Ug5nvZUaWoKWzsQbr/NvhQsDdXWnBc1iXhzmecFsR9gsE=
-=qiMl
------END PGP SIGNATURE-----
---=-=-=--
+CgoyMDE464WEIDA47JuUIDEz7J28IDIwOjE37JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
+IOq4gDoKPiBPbiAwNy4wOC4yMDE4IDEwOjUzLCBJbmtpIERhZSB3cm90ZToKPj4KPj4gMjAxOOuF
+hCAwN+yblCAyNuydvCAwMDo0NuyXkCBBbmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDquIA6Cj4+
+PiBGcm9tOiBNYWNpZWogUHVyc2tpIDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KPj4+Cj4+PiBUaGUg
+Y3VycmVudCBpbXBsZW1lbnRhdGlvbiBhc3N1bWVzIHRoYXQgdGhlIG9ubHkgcG9zc2libGUgcGVy
+aXBoZXJhbAo+Pj4gZGV2aWNlIGZvciBEU0lNIGlzIGEgcGFuZWwuIFVzaW5nIGFuIG91dHB1dCBi
+cmlkZ2UgY2hpbGQgZGV2aWNlCj4+PiBzaG91bGQgYWxzbyBiZSBwb3NzaWJsZS4KPj4+Cj4+PiBJ
+ZiBhbiBvdXRwdXQgYnJpZGdlIGlzIGF2YWlsYWJsZSwgZG9uJ3QgY3JlYXRlIGEgbmV3IGNvbm5l
+Y3Rvci4KPj4+IEluc3RlYWQsIGNhbGwgZHJtX2JyaWRnZV9hdHRhY2goKSBhbmQgc2V0IGVuY29k
+ZXIncyBicmlkZ2UgdG8gTlVMTAo+Pj4gaW4gb3JkZXIgdG8gYXZvaWQgYW4gb3V0IGJyaWRnZSBm
+cm9tIGJlaW5nIHZpc2libGUgYnkgdGhlIGZyYW1ld29yaywgYXMKPj4+IHRoZSBEU0kgYnVzIG5l
+ZWRzIGNvbnRyb2wgb24gZW5hYmxpbmcgaXRzIGNoaWxkIG91dHB1dCBicmlkZ2UuCj4+Pgo+Pj4g
+U3VjaCBzZXF1ZW5jZSBpcyByZXF1aXJlZCBieSBUb3NoaWJhIFRDMzU4NzY0IGJyaWRnZSwgd2hp
+Y2ggaXMgYSBEU0kKPj4+IHBlcmlwaGVyYWwgYnJpZGdlIGRldmljZS4KPj4+Cj4+PiBjaGFuZ2Vk
+IGluIHY1Ogo+Pj4gLSBkZXRhY2ggYnJpZGdlIGluIG1pcGlfZHNpIGRldGFjaCBjYWxsYmFjawo+
+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IE1hY2llaiBQdXJza2kgPG0ucHVyc2tpQHNhbXN1bmcuY29t
+Pgo+Pj4gWyBhLmhhamRhQHNhbXN1bmcuY29tOiB2NSBdCj4+PiBTaWduZWQtb2ZmLWJ5OiBBbmRy
+emVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+Pj4gLS0tCj4+PiAgZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIHwgNTAgKysrKysrKysrKysrKysrKy0tLS0tLS0t
+LQo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAzMiBpbnNlcnRpb25zKCspLCAxOCBkZWxldGlvbnMoLSkK
+Pj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+PiBpbmRleCAz
+NTE0MDNmOWQyNDUuLmY1ZjUxZjU4NGZhMCAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2RzaS5jCj4+PiBAQCAtMjU1LDYgKzI1NSw3IEBAIHN0cnVjdCBleHlub3Nf
+ZHNpIHsKPj4+ICAJc3RydWN0IG1pcGlfZHNpX2hvc3QgZHNpX2hvc3Q7Cj4+PiAgCXN0cnVjdCBk
+cm1fY29ubmVjdG9yIGNvbm5lY3RvcjsKPj4+ICAJc3RydWN0IGRybV9wYW5lbCAqcGFuZWw7Cj4+
+PiArCXN0cnVjdCBkcm1fYnJpZGdlICpvdXRfYnJpZGdlOwo+Pj4gIAlzdHJ1Y3QgZGV2aWNlICpk
+ZXY7Cj4+PiAgCj4+PiAgCXZvaWQgX19pb21lbSAqcmVnX2Jhc2U7Cj4+PiBAQCAtMTQ5OSw3ICsx
+NTAwLDMwIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9ob3N0X2F0dGFjaChzdHJ1Y3QgbWlwaV9k
+c2lfaG9zdCAqaG9zdCwKPj4+ICAJCQkJICBzdHJ1Y3QgbWlwaV9kc2lfZGV2aWNlICpkZXZpY2Up
+Cj4+PiAgewo+Pj4gIAlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpID0gaG9zdF90b19kc2koaG9zdCk7
+Cj4+PiAtCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBkc2ktPmNvbm5lY3Rvci5kZXY7Cj4+PiAr
+CXN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciA9ICZkc2ktPmVuY29kZXI7Cj4+PiArCXN0cnVj
+dCBkcm1fZGV2aWNlICpkcm0gPSBlbmNvZGVyLT5kZXY7Cj4+PiArCXN0cnVjdCBkcm1fYnJpZGdl
+ICpvdXRfYnJpZGdlOwo+Pj4gKwo+Pj4gKwlvdXRfYnJpZGdlICA9IG9mX2RybV9maW5kX2JyaWRn
+ZShkZXZpY2UtPmRldi5vZl9ub2RlKTsKPj4gSXMgdGhlcmUgYW55IHJlYXNvbiB0byBmaW5kIG91
+dF9icmlkZ2Ugd2l0aG91dCBjb25zaWRlcmluZyBkZXZpY2UgdHJlZSBncmFwaCBiaW5kaW5nPwo+
+IAo+IElmIHRoZSBzaW5rIGlzIGEgY2hpbGQgTUlQSS1EU0kgZGV2aWNlLCB0aGUgYmluZGluZ3Mg
+Y2FuIGJlIG9taXR0ZWQsIGFzCj4gaW4gY2FzZSBvZiBhbGwgRFNJIHBhbmVscyBpbiBFeHlub3Mg
+cGxhdGZvcm1zLgo+IEluIGNhc2UgYmluZGluZ3MgYXJlIG5vdCBwcmVzZW50IHlvdSBjYW5ub3Qg
+dXNlIGdyYXBoIGZ1bmN0aW9ucy4KCkluIG90aGVyIHdvcmRzLCB0aGlzIG1lYW5zIHRoYXQgdGhp
+cyBwYXRjaCBkb2Vzbid0IGFsbG93IHRvIHVzZSB0aGUgZGV2aWNlIHRyZWUgZ3JhcGggYmluZGlu
+Zy4KSS5lLiwgaWYgb3RoZXIgcGVvcGxlIHdyb3RlIHRoZSBncmFwaCB0aGluZ3MgaW4gaGlzIGJv
+YXJkIGR0cyBmaWxlIGZvciB0aGUgdXNlIG9mIGJyaWRnZSBkZXZpY2UgdGhlbiB3aXRoIHRoaXMg
+cGF0Y2ggaGUgY2Fubm90IHVzZSB0aGUgYnJpZGUgZGV2aWNlLgoKU28gSSB0aGluayBpdCB3b3Vs
+ZCBiZSBiZXR0ZXIgdG8gYWxsb3cgdG8gdXNlIGJvdGggb2YgdGhlbSwgYXMgYSBjaGlsZCBkZXZp
+Y2UgYW5kIGdyYXBoIGJpbmRpbmcuCgpIb3cgYWJvdXQgdHJ5aW5nIHRvIGJpbmQgdGhlIGdyYXBo
+IHRoaW5ncyB1c2luZyBkcm1fb2ZfZmluZF9wYW5lbF9vcl9icmlkZ2UgZnVudGlvbiBmaXJzdCBh
+bmQgdGhlbiBmb3IgY2hpbGQgZGV2aWNlIHdheT8KCkFuZCBJJ20gbm90IGNsZWFyIGFib3V0IHdo
+YXQga2luZHMgb2YgZGV2aWNlcyBjb3VsZCBiZSBhIGNoaWxkIGRldmljZSBvZiBEU0ksIHdoaWNo
+IGlzbid0IHJlcXVpcmVkIGZvciB0aGUgZ3JhcGggYmluZGluZy4KSXMgdGhlcmUgYW55IGRvY3Vt
+ZW50IEkgY2FuIHJlZmVyIHRvPwoKVGhhbmtzLApJbmtpIERhZQoKPiAKPj4KPj4gVGhlbiwgeW91
+IGVtYmVkZGVkIGJyaWRnZSBkZXZpY2Ugbm9kZSBpbiBkc2kgZGV2aWNlIG5vZGVbMV0gYnV0IHRo
+ZSBiaW5kaW5nIGRvY3VtZW50IGJlbG93IGRvZXNuJ3QgbWVudGlvbiBhYm91dCB0aGlzLAo+PiBE
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2Rz
+aW0udHh0Cj4gCj4gQnV0IHRoaXMgZG9jdW1lbnQgc2F5cyBhYm91dCBjaGlsZCBub2RlcywgYW5k
+IFRvc2hpYmEgYnJpZGdlIGlzIE1JUEktRFNJCj4gY2hpbGQgWzFdLgo+IAo+IFJlZ2FyZHMKPiBB
+bmRyemVqCj4gCj4+Cj4+IFsxXSBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxOC82LzE5LzIzNwo+
+Pgo+PiBUaGFua3MsCj4+IElua2kgRGFlCj4+Cj4+PiArCWlmIChvdXRfYnJpZGdlKSB7Cj4+PiAr
+CQlkcm1fYnJpZGdlX2F0dGFjaChlbmNvZGVyLCBvdXRfYnJpZGdlLCBOVUxMKTsKPj4+ICsJCWRz
+aS0+b3V0X2JyaWRnZSA9IG91dF9icmlkZ2U7Cj4+PiArCQllbmNvZGVyLT5icmlkZ2UgPSBOVUxM
+Owo+Pj4gKwl9IGVsc2Ugewo+Pj4gKwkJaW50IHJldCA9IGV4eW5vc19kc2lfY3JlYXRlX2Nvbm5l
+Y3RvcihlbmNvZGVyKTsKPj4+ICsKPj4+ICsJCWlmIChyZXQpIHsKPj4+ICsJCQlEUk1fRVJST1Io
+ImZhaWxlZCB0byBjcmVhdGUgY29ubmVjdG9yIHJldCA9ICVkXG4iLCByZXQpOwo+Pj4gKwkJCWRy
+bV9lbmNvZGVyX2NsZWFudXAoZW5jb2Rlcik7Cj4+PiArCQkJcmV0dXJuIHJldDsKPj4+ICsJCX0K
+Pj4+ICsKPj4+ICsJCWRzaS0+cGFuZWwgPSBvZl9kcm1fZmluZF9wYW5lbChkZXZpY2UtPmRldi5v
+Zl9ub2RlKTsKPj4+ICsJCWlmIChkc2ktPnBhbmVsKSB7Cj4+PiArCQkJZHJtX3BhbmVsX2F0dGFj
+aChkc2ktPnBhbmVsLCAmZHNpLT5jb25uZWN0b3IpOwo+Pj4gKwkJCWRzaS0+Y29ubmVjdG9yLnN0
+YXR1cyA9IGNvbm5lY3Rvcl9zdGF0dXNfY29ubmVjdGVkOwo+Pj4gKwkJfQo+Pj4gKwl9Cj4+PiAg
+Cj4+PiAgCS8qCj4+PiAgCSAqIFRoaXMgaXMgYSB0ZW1wb3Jhcnkgc29sdXRpb24gYW5kIHNob3Vs
+ZCBiZSBtYWRlIGJ5IG1vcmUgZ2VuZXJpYyB3YXkuCj4+PiBAQCAtMTUxOCwxMSArMTU0Miw2IEBA
+IHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9ob3N0X2F0dGFjaChzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAq
+aG9zdCwKPj4+ICAJZHNpLT5sYW5lcyA9IGRldmljZS0+bGFuZXM7Cj4+PiAgCWRzaS0+Zm9ybWF0
+ID0gZGV2aWNlLT5mb3JtYXQ7Cj4+PiAgCWRzaS0+bW9kZV9mbGFncyA9IGRldmljZS0+bW9kZV9m
+bGFnczsKPj4+IC0JZHNpLT5wYW5lbCA9IG9mX2RybV9maW5kX3BhbmVsKGRldmljZS0+ZGV2Lm9m
+X25vZGUpOwo+Pj4gLQlpZiAoZHNpLT5wYW5lbCkgewo+Pj4gLQkJZHJtX3BhbmVsX2F0dGFjaChk
+c2ktPnBhbmVsLCAmZHNpLT5jb25uZWN0b3IpOwo+Pj4gLQkJZHNpLT5jb25uZWN0b3Iuc3RhdHVz
+ID0gY29ubmVjdG9yX3N0YXR1c19jb25uZWN0ZWQ7Cj4+PiAtCX0KPj4+ICAJZXh5bm9zX2RybV9j
+cnRjX2dldF9ieV90eXBlKGRybSwgRVhZTk9TX0RJU1BMQVlfVFlQRV9MQ0QpLT5pODBfbW9kZSA9
+Cj4+PiAgCQkJIShkc2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPKTsKPj4+ICAK
+Pj4+IEBAIC0xNTM4LDE5ICsxNTU3LDIxIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9ob3N0X2Rl
+dGFjaChzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9zdCwKPj4+ICAJCQkJICBzdHJ1Y3QgbWlwaV9k
+c2lfZGV2aWNlICpkZXZpY2UpCj4+PiAgewo+Pj4gIAlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpID0g
+aG9zdF90b19kc2koaG9zdCk7Cj4+PiAtCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBkc2ktPmNv
+bm5lY3Rvci5kZXY7Cj4+PiAtCj4+PiAtCW11dGV4X2xvY2soJmRybS0+bW9kZV9jb25maWcubXV0
+ZXgpOwo+Pj4gKwlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gZHNpLT5lbmNvZGVyLmRldjsKPj4+
+ICAKPj4+ICAJaWYgKGRzaS0+cGFuZWwpIHsKPj4+ICsJCW11dGV4X2xvY2soJmRybS0+bW9kZV9j
+b25maWcubXV0ZXgpOwo+Pj4gIAkJZXh5bm9zX2RzaV9kaXNhYmxlKCZkc2ktPmVuY29kZXIpOwo+
+Pj4gIAkJZHJtX3BhbmVsX2RldGFjaChkc2ktPnBhbmVsKTsKPj4+ICAJCWRzaS0+cGFuZWwgPSBO
+VUxMOwo+Pj4gIAkJZHNpLT5jb25uZWN0b3Iuc3RhdHVzID0gY29ubmVjdG9yX3N0YXR1c19kaXNj
+b25uZWN0ZWQ7Cj4+PiArCQltdXRleF91bmxvY2soJmRybS0+bW9kZV9jb25maWcubXV0ZXgpOwo+
+Pj4gKwl9IGVsc2Ugewo+Pj4gKwkJaWYgKGRzaS0+b3V0X2JyaWRnZS0+ZnVuY3MtPmRldGFjaCkK
+Pj4+ICsJCQlkc2ktPm91dF9icmlkZ2UtPmZ1bmNzLT5kZXRhY2goZHNpLT5vdXRfYnJpZGdlKTsK
+Pj4+ICsJCWRzaS0+b3V0X2JyaWRnZSA9IE5VTEw7Cj4+PiAgCX0KPj4+ICAKPj4+IC0JbXV0ZXhf
+dW5sb2NrKCZkcm0tPm1vZGVfY29uZmlnLm11dGV4KTsKPj4+IC0KPj4+ICAJaWYgKGRybS0+bW9k
+ZV9jb25maWcucG9sbF9lbmFibGVkKQo+Pj4gIAkJZHJtX2ttc19oZWxwZXJfaG90cGx1Z19ldmVu
+dChkcm0pOwo+Pj4gIAo+Pj4gQEAgLTE2NTQsMTMgKzE2NzUsNiBAQCBzdGF0aWMgaW50IGV4eW5v
+c19kc2lfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKPj4+
+ICAJaWYgKHJldCA8IDApCj4+PiAgCQlyZXR1cm4gcmV0Owo+Pj4gIAo+Pj4gLQlyZXQgPSBleHlu
+b3NfZHNpX2NyZWF0ZV9jb25uZWN0b3IoZW5jb2Rlcik7Cj4+PiAtCWlmIChyZXQpIHsKPj4+IC0J
+CURSTV9FUlJPUigiZmFpbGVkIHRvIGNyZWF0ZSBjb25uZWN0b3IgcmV0ID0gJWRcbiIsIHJldCk7
+Cj4+PiAtCQlkcm1fZW5jb2Rlcl9jbGVhbnVwKGVuY29kZXIpOwo+Pj4gLQkJcmV0dXJuIHJldDsK
+Pj4+IC0JfQo+Pj4gLQo+Pj4gIAlpZiAoZHNpLT5pbl9icmlkZ2Vfbm9kZSkgewo+Pj4gIAkJaW5f
+YnJpZGdlID0gb2ZfZHJtX2ZpbmRfYnJpZGdlKGRzaS0+aW5fYnJpZGdlX25vZGUpOwo+Pj4gIAkJ
+aWYgKGluX2JyaWRnZSkKPj4+Cj4+IC0tCj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
+OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPj4gdGhl
+IGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4gTW9yZSBt
+YWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
+dG1sCj4+Cj4+Cj4gCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
