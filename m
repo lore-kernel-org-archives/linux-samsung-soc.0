@@ -1,47 +1,26 @@
-From: RaviChandra Sadineni <ravisadineni@chromium.org>
-Subject: Input: cros_ec_keyb: Remove check before calling pm_wakeup_event.
-Date: Fri, 17 Aug 2018 14:21:35 -0700
-Message-ID: <20180817212135.222689-1-ravisadineni@chromium.org>
-References: <20180810082344eucas1p2c525a61cb176b4ab1dab22347afd539b~JeE3uTBkU1731217312eucas1p2T@eucas1p2.samsung.com>
+From: Sylwester Nawrocki <sylwester.nawrocki@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Update my e-mail address
+Date: Mon, 20 Aug 2018 10:27:24 +0200
+Message-ID: <CAB_H8rvgAKLJ8fwMdHSsE7yivzLRrGdK-CaEAH+a7nVjDnD=eA@mail.gmail.com>
+References: <1533154189-23311-1-git-send-email-snawrocki@kernel.org> <CAJKOXPdW3TBCqZkTmoZ+gbtu+nFeS_RR_0Z92NHa0K450iqtgg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180810082344eucas1p2c525a61cb176b4ab1dab22347afd539b~JeE3uTBkU1731217312eucas1p2T@eucas1p2.samsung.com>
+In-Reply-To: <CAJKOXPdW3TBCqZkTmoZ+gbtu+nFeS_RR_0Z92NHa0K450iqtgg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dmitry.torokhov@gmail.com, ravisadineni@chromium.org, ravisadineni@google.com, dtor@google.com, linux-samsung-soc@vger.kernel.org, tbroch@google.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, tfiga@chromium.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <snawrocki@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, sboyd@kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, bzolnierkie@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: RaviChandra Sadineni <ravisadineni@google.com>
+On 08/08/2018 03:40 PM, Krzysztof Kozlowski wrote:
+> Sylwester,
+>
+> It still did not reach linux-next... do you expect someone to pick it up?
 
-hi Merek,
+No, please disregard this patch. I decided to drop it as it would
+really be needed
+for less than one release period.
 
-Unfortunately I could not get the device to boot even after using the exynos_defconfig. 
-Can you please try this patch and see if this fixes the issue. If not can you enable the
-debug logs and send me the logs.
-
-
-Currently on every resume we check for mkbp events and notify the
-clients. This helps in identifying the wakeup sources. But on devices
-that do not support mkbp protocol, we might end up getting key state of
-the keyboard in a loop and block the resume. Instead check for events only
-if  mkbp is supported.
-
-Signed-off-by: RaviChandra Sadineni <ravisadineni@chromium.org>
----
- drivers/mfd/cros_ec.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index 65a9757a6d21..fe6f83766144 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -218,7 +218,8 @@ EXPORT_SYMBOL(cros_ec_suspend);
- 
- static void cros_ec_report_events_during_suspend(struct cros_ec_device *ec_dev)
- {
--	while (cros_ec_get_next_event(ec_dev, NULL) > 0)
-+	while (ec_dev->mkbp_event_supported &&
-+	       cros_ec_get_next_event(ec_dev, NULL) > 0)
- 		blocking_notifier_call_chain(&ec_dev->event_notifier,
- 					     1, ec_dev);
- }
--- 
-2.16.4
+--
+Regards,
+Sylwester
