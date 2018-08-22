@@ -1,283 +1,143 @@
-From: NeilBrown <neilb@suse.com>
-Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock request to block other requests."
-Date: Wed, 22 Aug 2018 07:15:59 +1000
-Message-ID: <87eferpgj4.fsf@notabene.neil.brown.name>
-References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com> <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org> <87o9e2anwg.fsf@notabene.neil.brown.name> <87k1okpam2.fsf@notabene.neil.brown.name> <99fd03d3002d03f86b0d8a5b1ad4a2015383545e.camel@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v5 2/9] drm/exynos: move connector creation to attach
+ callback
+Date: Wed, 22 Aug 2018 11:59:22 +0900
+Message-ID: <20180822025923epcas1p47d0537cd2dc8d92ba3b7c8d338c2f9f1~NFZGwKoPt0276002760epcas1p45@epcas1p4.samsung.com>
+References: <20180725154644.25412-1-a.hajda@samsung.com>
+ <CGME20180725154659eucas1p116f3a5e735333b07bcf9808f00694f3c@eucas1p1.samsung.com>
+ <20180725154644.25412-3-a.hajda@samsung.com>
+ <20180807085311epcas1p2fd5a7ed9986c212c6c5d0ade3d459769~IjiubTYO01603416034epcas1p2b@epcas1p2.samsung.com>
+ <20180813111739eucas1p2e88561c6d528a24d4686f47aad2ebbf1~KbYlfgyOH0189801898eucas1p2N@eucas1p2.samsung.com>
+ <20180817015642epcas1p1e33ed4f3b92e8939fa45237908f3407b~LiT8coN4a0108901089epcas1p1x@epcas1p1.samsung.com>
+ <20180820090014eucas1p15ddaf306835593e508ea30872c5172f5~MjBma4tr-2246822468eucas1p1F@eucas1p1.samsung.com>
+ <20180821052722epcas1p1f2c5a7dc58d12960d44a93cde6d2d73c~MzxCLCCCN2134421344epcas1p1d@epcas1p1.samsung.com>
+ <20180821112106eucas1p284431eba18ad984c2477e694461d34cf~M4l38_wyw2865528655eucas1p2F@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <99fd03d3002d03f86b0d8a5b1ad4a2015383545e.camel@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jeff Layton <jlayton@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, "J. Bruce Fields" <bfields@fieldses.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180821112106eucas1p284431eba18ad984c2477e694461d34cf~M4l38_wyw2865528655eucas1p2F@eucas1p2.samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Aug 21 2018, Jeff Layton wrote:
-
-> On Tue, 2018-08-21 at 15:11 +1000, NeilBrown wrote:
->> On Thu, Aug 16 2018, NeilBrown wrote:
->>=20
->> > On Wed, Aug 15 2018, Jeff Layton wrote:
->> >=20
->> > > On Wed, 2018-08-15 at 14:28 +0200, Krzysztof Kozlowski wrote:
->> > > > Hi,
->> > > >=20
->> > > > Bisect pointed commit ce3147990450a68b3f549088b30f087742a08b5d
->> > > > ("fs/locks: allow a lock request to block other requests.") to fai=
-lure
->> > > > boot of NFSv4 with root on several boards.
->> > > >=20
->> > > > Log is here:
->> > > > https://krzk.eu/#/builders/21/builds/836/steps/12/logs/serial0
->> > > >=20
->> > > > With several errors:
->> > > > kernel BUG at ../fs/locks.c:336!
->> > > > Unable to handle kernel NULL pointer dereference at virtual addres=
-s 00000004
->> > > >=20
->> > > > Configuration:
->> > > > 1. exynos_defconfig
->> > > > 2. Arch ARM Linux
->> > > > 3. Boards:
->> > > > a. Odroid family (ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC)
->> > > > b. Toradex Colibri VF50 (ARMv7, UP, Cortex-A5)
->> > > > 4. Systemd: v236, 238
->> > > > 5. All boards boot from TFTP with NFS root (NFSv4)
->> > > >=20
->> > > > On Colibri VF50 I got slightly different errors:
->> > > > [   11.663204] Internal error: Oops - undefined instruction: 0 [#1=
-] ARM
->> > > > [   12.455273] Unable to handle kernel NULL pointer dereference at
->> > > > virtual address 00000004
->> > > > and only with some specific GCC (v6.3) or with other conditions wh=
-ich
->> > > > I did not bisect yet. Maybe Colibri's failure is unrelated to that
->> > > > commit.
->> > > >=20
->> > > > Best regards,
->> > > > Krzysztof
->> >=20
->> > Thanks a lot for the report Krzysztof!!
->> >=20
->> > >=20
->> > > The BUG is due to a lock being freed when the fl_blocked list wasn't
->> > > empty (implying that there were still blocked locks waiting on it).
->> > >=20
->> > > There are a number of calls to locks_delete_lock_ctx in posix_lock_i=
-node
->> > > and I don't think the fl_blocked list is being handled properly with=
- all
->> > > of them. It only transplants the blocked locks to a new lock when th=
-ere
->> > > are surviving locks on the list, and that may not be the case when t=
-he
->> > > whole file is being unlocked.
->> >=20
->> > locks_delete_lock_ctx() calls locks_unlink_lock_ctx() which calls
->> > locks_wake_up_block() which doesn't only wake_up the blocks, but also
->> > detached them. When that function completes, ->fl_blocked must be empt=
-y.
->> >=20
->> > The trace shows the locks_free_lock() call at the end of fcntl_setlk64=
-()
->> > as the problematic call.
->> > This suggests that do_lock_file_wait() exited with ->fl_blocked
->> > non-empty, which it shouldn't.
->> >=20
->> > I think we need to insert a call to locks_wake_up_block() in
->> > do_lock_file_wait() before it returns.
->> > I cannot find a sequence that would make this necessary, but
->> > it isn't surprising that there might be one.
->> >=20
->> > I'll dig through the code a bit more later and make sure I understand
->> > what is happening.
->> >=20
->>=20
->> I think this problem if fixed by the following.  It is probably
->> triggered when the owner already has a lock for part of the requested
->> range.  After waiting for some other lock, the pending request gets
->> merged with the existing lock, and blocked requests aren't moved across
->> in that case.
->>=20
->> I still haven't done more testing, so this is just FYI, not a
->> submission.
->>=20
->> Thanks,
->> NeilBrown
->>=20
->> From: NeilBrown <neilb@suse.com>
->> Date: Tue, 21 Aug 2018 15:09:06 +1000
->> Subject: [PATCH] fs/locks: always delete_block after waiting.
->>=20
->> Now that requests can block other requests, we
->> need to be careful to always clean up those blocked
->> requests.
->> Any time that we wait for a request, we might have
->> other requests attached, and when we stop waiting,
->> we much clean them up.
->> If the lock was granted, the requests might have been
->> moved to the new lock, though when merged with a
->> pre-exiting lock, this might not happen.
->> No all cases we don't want blocked locks to remain
->> attached, so we remove them to be safe.
->>=20
->> Signed-off-by: NeilBrown <neilb@suse.com>
->> ---
->>  fs/locks.c | 24 +++++++++---------------
->>  1 file changed, 9 insertions(+), 15 deletions(-)
->>=20
->> diff --git a/fs/locks.c b/fs/locks.c
->> index de38bafb7f7b..6b310112cf3b 100644
->> --- a/fs/locks.c
->> +++ b/fs/locks.c
->> @@ -1276,12 +1276,10 @@ static int posix_lock_inode_wait(struct inode *i=
-node, struct file_lock *fl)
->>  		if (error !=3D FILE_LOCK_DEFERRED)
->>  			break;
->>  		error =3D wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
->> -		if (!error)
->> -			continue;
->> -
->> -		locks_delete_block(fl);
->> -		break;
->> +		if (error)
->> +			break;
->>  	}
->> +	locks_delete_block(fl);
->>  	return error;
->>  }
->>=20=20
->> @@ -1971,12 +1969,10 @@ static int flock_lock_inode_wait(struct inode *i=
-node, struct file_lock *fl)
->>  		if (error !=3D FILE_LOCK_DEFERRED)
->>  			break;
->>  		error =3D wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
->> -		if (!error)
->> -			continue;
->> -
->> -		locks_delete_block(fl);
->> -		break;
->> +		if (error)
->> +			break;
->>  	}
->> +	locks_delete_block(fl);
->>  	return error;
->>  }
->>=20=20
->> @@ -2250,12 +2246,10 @@ static int do_lock_file_wait(struct file *filp, =
-unsigned int cmd,
->>  		if (error !=3D FILE_LOCK_DEFERRED)
->>  			break;
->>  		error =3D wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
->> -		if (!error)
->> -			continue;
->> -
->> -		locks_delete_block(fl);
->> -		break;
->> +		if (error)
->> +			break;
->>  	}
->> +	locks_delete_block(fl);
->>=20=20
->>  	return error;
->>  }
->
-> Thanks Neil.
->
-> FWIW, I was able to reproduce something that looked a lot like what
-> Krzysztof reported by running the cthon04 lock tests on a client running
-> the kernel with the original set.
->
-> I applied the above patch on top of that set, reran the test and got a
-> different BUG (list corruption):
->
-> [   85.117307] ------------[ cut here ]------------
-> [   85.118130] kernel BUG at lib/list_debug.c:53!
-> [   85.118684] invalid opcode: 0000 [#1] SMP NOPTI
-> [   85.119800] CPU: 5 PID: 92 Comm: kworker/u16:1 Not tainted 4.18.0+ #46
-> [   85.120845] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
-S ?-20180531_142017-buildhw-08.phx2.fedoraproject.org-1.fc28 04/01/2014
-> [   85.122350] Workqueue: rpciod rpc_async_schedule [sunrpc]
-> [   85.123242] RIP: 0010:__list_del_entry_valid.cold.1+0x34/0x4c
-> [   85.124116] Code: 03 10 9b e8 08 07 ca ff 0f 0b 48 c7 c7 c8 03 10 9b e=
-8 fa 06 ca ff 0f 0b 48 89 f2 48 89 fe 48 c7 c7 88 03 10 9b e8 e6 06 ca ff <=
-0f> 0b 48 89 fe 48 c7 c7 50 03 10 9b e8 d5 06 ca ff 0f 0b 90 90 90
-> [   85.126704] RSP: 0018:ffffa0fe0133bd90 EFLAGS: 00010246
-> [   85.127382] RAX: 0000000000000054 RBX: ffff92bcf3a46ad8 RCX: 000000000=
-0000000
-> [   85.128322] RDX: 0000000000000000 RSI: ffff92bcffd56828 RDI: ffff92bcf=
-fd56828
-> [   85.129251] RBP: ffff92bcf3a46b10 R08: 0000000000000000 R09: 000000000=
-0aaaaaa
-> [   85.130250] R10: 0000000000000000 R11: 0000000000000001 R12: ffff92bce=
-2588618
-> [   85.131230] R13: ffff92bcf3a45800 R14: ffffffffc06f9f60 R15: ffffffffc=
-06f9f60
-> [   85.132191] FS:  0000000000000000(0000) GS:ffff92bcffd40000(0000) knlG=
-S:0000000000000000
-> [   85.133296] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   85.134088] CR2: 00007f16c1292008 CR3: 0000000138588000 CR4: 000000000=
-00006e0
-> [   85.134926] Call Trace:
-> [   85.135251]  __locks_delete_block+0x3f/0x70
-> [   85.135751]  locks_delete_block+0x25/0x30
-> [   85.136259]  locks_lock_inode_wait+0x63/0x150
-> [   85.136841]  ? nfs41_release_slot+0x98/0xd0 [nfsv4]
-> [   85.137556]  nfs4_lock_done+0x1a2/0x1c0 [nfsv4]
-> [   85.138272]  rpc_exit_task+0x2d/0x80 [sunrpc]
-> [   85.138994]  __rpc_execute+0x7f/0x340 [sunrpc]
-> [   85.139953]  process_one_work+0x1a1/0x350
-> [   85.140678]  worker_thread+0x30/0x380
-> [   85.141800]  ? wq_update_unbound_numa+0x1a0/0x1a0
-> [   85.142904]  kthread+0x112/0x130
-> [   85.143445]  ? kthread_create_worker_on_cpu+0x70/0x70
-> [   85.144273]  ret_from_fork+0x22/0x40
-> [   85.144859] Modules linked in: rpcsec_gss_krb5 auth_rpcgss nfsv4 dns_r=
-esolver nfs lockd grace fscache xt_conntrack nf_conntrack ip_set nfnetlink =
-ebtable_nat ebtable_broute bridge stp llc ip6table_mangle ip6table_raw ip6t=
-able_security iptable_mangle iptable_raw iptable_security ebtable_filter eb=
-tables ip6table_filter ip6_tables sunrpc i2c_piix4 edac_mce_amd joydev pcsp=
-kr virtio_balloon xfs libcrc32c virtio_net net_failover virtio_console fail=
-over virtio_blk floppy qxl serio_raw drm_kms_helper ttm qemu_fw_cfg drm vir=
-tio_pci ata_generic pata_acpi virtio_rng virtio_ring virtio
-> [   85.153426] ---[ end trace 63df06139208ee23 ]---
->
-
-Oh dear.
-nfs4_alloc_lockdata contains:
-	memcpy(&p->fl, fl, sizeof(p->fl));
-
-so any list_heads that are valid in fl will be invalid in p->fl.
-
-Maybe I should initialize the relevant list_heads at the start of wait
-functions.
-I should look more closely at what filesystems do with locks though.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlt8gQ8ACgkQOeye3VZi
-gbkZ6Q/+JfmkJk4nS0rZ0XWoAb6jhlMgtSDyvN8z5oc9p6oEs30B62vjOUpx0Exx
-kko2AU85kYMCd4riJ6U1ZaxnethNastfZACokVFLynn9xlxzLHz+D6z5UXz2BtOI
-3EJoN3nJCQMaOTt7bhtM3a1TGkSMtfQXihxL3KENE4iICNeeac2Md/qTa/I+SjlL
-25zWSDUQaBnfdkN5UGeZrGnw7XjimLsmXCtC5ZHBIzIMBmEUQfxuc+q1+gqpeTqq
-vWX9aPJf04buufTCBe9AjFEPfAT6iwQsKP7lYD5cx73b6CEZufRaHCZVfcL3+GAB
-5KOe7ux5tkc/1XD8k/nOxzAICKu7DosRfpb3SnvSaPFPSQwycVrvVtfZq/8tks2V
-nfVwnhSmFRl0ke1OH1z75nUrpxWkq5HmwsviTsm+IjPdLziwUnhRCxe0s0CcXt5t
-mfRXwL0WSiSlLQFYKYSOMA9styzfNKvssKkYMq/AUWgejRSSzgywI7MEl3wGmqdl
-0hnIPEyzd6XdN6gdb/OVK4L4J3BKq7HABVQ18QI6bljSl2O7KQTpxx6QUCgC5nvl
-jnqm0B7MOC0S3E9aFg0Cx+KSbmo77ho5Z7gmw7eJStykFpgdEUTwII6rpYVbLHEy
-KGeeaOjWsm0vC0pb5q2RNd5U2axKZEpW9obtodSZuJcao8t/uik=
-=X50I
------END PGP SIGNATURE-----
---=-=-=--
+CgoyMDE464WEIDA47JuUIDIx7J28IDIwOjIx7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
+IOq4gDoKPiBPbiAyMS4wOC4yMDE4IDA3OjI3LCBJbmtpIERhZSB3cm90ZToKPj4KPj4gMjAxOOuF
+hCAwOOyblCAyMOydvCAxODowMOyXkCBBbmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDquIA6Cj4+
+PiBPbiAxNy4wOC4yMDE4IDAzOjU2LCBJbmtpIERhZSB3cm90ZToKPj4+PiAyMDE464WEIDA47JuU
+IDEz7J28IDIwOjE37JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4gT24g
+MDcuMDguMjAxOCAxMDo1MywgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+PiAyMDE464WEIDA37JuUIDI2
+7J28IDAwOjQ27JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4+PiBGcm9t
+OiBNYWNpZWogUHVyc2tpIDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KPj4+Pj4+Pgo+Pj4+Pj4+IFRo
+ZSBjdXJyZW50IGltcGxlbWVudGF0aW9uIGFzc3VtZXMgdGhhdCB0aGUgb25seSBwb3NzaWJsZSBw
+ZXJpcGhlcmFsCj4+Pj4+Pj4gZGV2aWNlIGZvciBEU0lNIGlzIGEgcGFuZWwuIFVzaW5nIGFuIG91
+dHB1dCBicmlkZ2UgY2hpbGQgZGV2aWNlCj4+Pj4+Pj4gc2hvdWxkIGFsc28gYmUgcG9zc2libGUu
+Cj4+Pj4+Pj4KPj4+Pj4+PiBJZiBhbiBvdXRwdXQgYnJpZGdlIGlzIGF2YWlsYWJsZSwgZG9uJ3Qg
+Y3JlYXRlIGEgbmV3IGNvbm5lY3Rvci4KPj4+Pj4+PiBJbnN0ZWFkLCBjYWxsIGRybV9icmlkZ2Vf
+YXR0YWNoKCkgYW5kIHNldCBlbmNvZGVyJ3MgYnJpZGdlIHRvIE5VTEwKPj4+Pj4+PiBpbiBvcmRl
+ciB0byBhdm9pZCBhbiBvdXQgYnJpZGdlIGZyb20gYmVpbmcgdmlzaWJsZSBieSB0aGUgZnJhbWV3
+b3JrLCBhcwo+Pj4+Pj4+IHRoZSBEU0kgYnVzIG5lZWRzIGNvbnRyb2wgb24gZW5hYmxpbmcgaXRz
+IGNoaWxkIG91dHB1dCBicmlkZ2UuCj4+Pj4+Pj4KPj4+Pj4+PiBTdWNoIHNlcXVlbmNlIGlzIHJl
+cXVpcmVkIGJ5IFRvc2hpYmEgVEMzNTg3NjQgYnJpZGdlLCB3aGljaCBpcyBhIERTSQo+Pj4+Pj4+
+IHBlcmlwaGVyYWwgYnJpZGdlIGRldmljZS4KPj4+Pj4+Pgo+Pj4+Pj4+IGNoYW5nZWQgaW4gdjU6
+Cj4+Pj4+Pj4gLSBkZXRhY2ggYnJpZGdlIGluIG1pcGlfZHNpIGRldGFjaCBjYWxsYmFjawo+Pj4+
+Pj4+Cj4+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3Vu
+Zy5jb20+Cj4+Pj4+Pj4gWyBhLmhhamRhQHNhbXN1bmcuY29tOiB2NSBdCj4+Pj4+Pj4gU2lnbmVk
+LW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPj4+Pj4+PiAtLS0K
+Pj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIHwgNTAgKysr
+KysrKysrKysrKysrKy0tLS0tLS0tLQo+Pj4+Pj4+ICAxIGZpbGUgY2hhbmdlZCwgMzIgaW5zZXJ0
+aW9ucygrKSwgMTggZGVsZXRpb25zKC0pCj4+Pj4+Pj4KPj4+Pj4+PiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+Pj4+Pj4gaW5kZXggMzUxNDAzZjlkMjQ1Li5mNWY1MWY1
+ODRmYTAgMTAwNjQ0Cj4+Pj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2RzaS5jCj4+Pj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2RzaS5jCj4+Pj4+Pj4gQEAgLTI1NSw2ICsyNTUsNyBAQCBzdHJ1Y3QgZXh5bm9zX2RzaSB7Cj4+
+Pj4+Pj4gIAlzdHJ1Y3QgbWlwaV9kc2lfaG9zdCBkc2lfaG9zdDsKPj4+Pj4+PiAgCXN0cnVjdCBk
+cm1fY29ubmVjdG9yIGNvbm5lY3RvcjsKPj4+Pj4+PiAgCXN0cnVjdCBkcm1fcGFuZWwgKnBhbmVs
+Owo+Pj4+Pj4+ICsJc3RydWN0IGRybV9icmlkZ2UgKm91dF9icmlkZ2U7Cj4+Pj4+Pj4gIAlzdHJ1
+Y3QgZGV2aWNlICpkZXY7Cj4+Pj4+Pj4gIAo+Pj4+Pj4+ICAJdm9pZCBfX2lvbWVtICpyZWdfYmFz
+ZTsKPj4+Pj4+PiBAQCAtMTQ5OSw3ICsxNTAwLDMwIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9o
+b3N0X2F0dGFjaChzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9zdCwKPj4+Pj4+PiAgCQkJCSAgc3Ry
+dWN0IG1pcGlfZHNpX2RldmljZSAqZGV2aWNlKQo+Pj4+Pj4+ICB7Cj4+Pj4+Pj4gIAlzdHJ1Y3Qg
+ZXh5bm9zX2RzaSAqZHNpID0gaG9zdF90b19kc2koaG9zdCk7Cj4+Pj4+Pj4gLQlzdHJ1Y3QgZHJt
+X2RldmljZSAqZHJtID0gZHNpLT5jb25uZWN0b3IuZGV2Owo+Pj4+Pj4+ICsJc3RydWN0IGRybV9l
+bmNvZGVyICplbmNvZGVyID0gJmRzaS0+ZW5jb2RlcjsKPj4+Pj4+PiArCXN0cnVjdCBkcm1fZGV2
+aWNlICpkcm0gPSBlbmNvZGVyLT5kZXY7Cj4+Pj4+Pj4gKwlzdHJ1Y3QgZHJtX2JyaWRnZSAqb3V0
+X2JyaWRnZTsKPj4+Pj4+PiArCj4+Pj4+Pj4gKwlvdXRfYnJpZGdlICA9IG9mX2RybV9maW5kX2Jy
+aWRnZShkZXZpY2UtPmRldi5vZl9ub2RlKTsKPj4+Pj4+IElzIHRoZXJlIGFueSByZWFzb24gdG8g
+ZmluZCBvdXRfYnJpZGdlIHdpdGhvdXQgY29uc2lkZXJpbmcgZGV2aWNlIHRyZWUgZ3JhcGggYmlu
+ZGluZz8KPj4+Pj4gSWYgdGhlIHNpbmsgaXMgYSBjaGlsZCBNSVBJLURTSSBkZXZpY2UsIHRoZSBi
+aW5kaW5ncyBjYW4gYmUgb21pdHRlZCwgYXMKPj4+Pj4gaW4gY2FzZSBvZiBhbGwgRFNJIHBhbmVs
+cyBpbiBFeHlub3MgcGxhdGZvcm1zLgo+Pj4+PiBJbiBjYXNlIGJpbmRpbmdzIGFyZSBub3QgcHJl
+c2VudCB5b3UgY2Fubm90IHVzZSBncmFwaCBmdW5jdGlvbnMuCj4+Pj4gSW4gb3RoZXIgd29yZHMs
+IHRoaXMgbWVhbnMgdGhhdCB0aGlzIHBhdGNoIGRvZXNuJ3QgYWxsb3cgdG8gdXNlIHRoZSBkZXZp
+Y2UgdHJlZSBncmFwaCBiaW5kaW5nLgo+Pj4+IEkuZS4sIGlmIG90aGVyIHBlb3BsZSB3cm90ZSB0
+aGUgZ3JhcGggdGhpbmdzIGluIGhpcyBib2FyZCBkdHMgZmlsZSBmb3IgdGhlIHVzZSBvZiBicmlk
+Z2UgZGV2aWNlIHRoZW4gd2l0aCB0aGlzIHBhdGNoIGhlIGNhbm5vdCB1c2UgdGhlIGJyaWRlIGRl
+dmljZS4KPj4+Pgo+Pj4+IFNvIEkgdGhpbmsgaXQgd291bGQgYmUgYmV0dGVyIHRvIGFsbG93IHRv
+IHVzZSBib3RoIG9mIHRoZW0sIGFzIGEgY2hpbGQgZGV2aWNlIGFuZCBncmFwaCBiaW5kaW5nLgo+
+Pj4+Cj4+Pj4gSG93IGFib3V0IHRyeWluZyB0byBiaW5kIHRoZSBncmFwaCB0aGluZ3MgdXNpbmcg
+ZHJtX29mX2ZpbmRfcGFuZWxfb3JfYnJpZGdlIGZ1bnRpb24gZmlyc3QgYW5kIHRoZW4gZm9yIGNo
+aWxkIGRldmljZSB3YXk/Cj4+PiBJdCBjb3VsZCBiZSBkb25lIHRoaXMgd2F5LCBidXQgaXQgc2hv
+dWxkIGJlIGRvbmUgZm9yIHBhbmVscyBhbmQgZm9yCj4+PiBicmlkZ2VzLCBhbmQgaXQgc2hvdWxk
+IGJlIHJhdGhlciBnZW5lcmljIGhlbHBlciwgbm90IEV4eW5vcyBzcGVjaWZpYy4gU28KPj4gQXMg
+dGhlIGZ1bmN0aW9uIG5hbWUgc2F5cywgZHJtX29mX2ZpbmRfcGFuZWxfb3JfYnJpZGdlIGZ1bmN0
+aW9uIHdpbGwgcmV0dXJuIHBhbmVsLCBicmlkZ2Ugb3IgYm90aCBvZiB0aGVtIGFjY29yZGluZyB0
+byBnaXZlbiBhcmd1bWVudHMuCj4+Cj4+Cj4+PiBpdCBpcyBzb21ldGhpbmcgd2hpY2ggcmVxdWly
+ZSBhZGRpdGlvbmFsIGludmVzdGlnYXRpb24sIGRpc2N1c3Npb24gYW5kCj4+PiBzZXBhcmF0ZSBw
+YXRjaHNldC4KPj4gU28gSSB0aGluayB3ZSB3b3VsZG4ndCBuZWVkIGFkZGl0aW9uYWwgZGlzY3Vz
+c2lvbiBhdCBhbGwgYmVjdWFzZSB3ZSBkb24ndCB0b3VjaCBwYW5lbCBidXQgYWRkIG9ubHkgYnJp
+ZGdlIGRldmljZSBhcyBvdXRwdXQsIGFuZCB0aGUgdXNlIG9mIHRoaXMgZnVuY3Rpb24gZm9yIGJy
+aWRnZSBsb29rcyBtb3JlIGdlbmVyaWMgd2F5Lgo+IAo+IEJ1dCBkcm1fb2ZfZmluZF9wYW5lbF9v
+cl9icmlkZ2UgaXMgb25seSBmb3IgbG9va2luZyBmb3Igbm9uLWRzaSBkZXZpY2VzLAo+IG9yIG1v
+cmUgc3BlY2lmaWNhbGx5IGZvciBsb29raW5nIGZvciBkZXZpY2VzIGNvbm5lY3RlZCBpbiBEVFMg
+dmlhCj4gRFQtZ3JhcGguIFRoaXMgaXMgbm90IGNhc2Ugb2YgcGFuZWxzIGFuZCBicmlkZ2VzIHVz
+ZWQgaW4gRXh5bm9zIGJvYXJkcy4KPiBTbyB0aGlzIGZ1bmN0aW9uIGlzIGN1cnJlbnRseSB1c2Vs
+ZXNzIHdpdGggb3VyIGJvYXJkcy4gTWF5YmUgc29tZSBkYXkgd2UKPiB3aWxsIGhhdmUgYnJpZGdl
+L3BhbmVsIGNvbnRyb2xsZWQgdmlhIEkyQyBhbmQgdGhlbiBpdCB3aWxsIGJlY29tZQo+IHVzZWZ1
+bCwgYnV0IGZvciBub3cgaXQgc2VydmVzIGZvciBub3RoaW5nLgo+IAo+PiBPZiBjb3Vyc2UsIGFz
+IGEgc2VwYXJhdGUgcGF0Y2gsIHdlIGNvdWxkIGNvbnNpZGVyIHVzaW5nIHRoaXMgZnVuY3Rpb24g
+Zm9yIHBhbmVsIGRldmljZSBsYXRlci4KPiAKPiBBcyB5b3Ugc2FpZCBkcm1fb2ZfZmluZF9wYW5l
+bF9vcl9icmlkZ2UgbG9va3MgZm9yIHBhbmVsIGFuZC9vciBicmlkZ2UsCj4gYW5kIGl0IHdhcyBj
+cmVhdGVkIHRvIG1lcmdlIHNpbWlsYXIgY29kZSBpbiBwYW5lbCBhbmQgYnJpZGdlIGxvb2t1cCwK
+PiB1c2luZyBpdCBvbmx5IGZvciBicmlkZ2VzIGFuZCBub3QgZm9yIHBhbmVscyBzZWVtcyBhZ2Fp
+bnN0IGl0J3MgcHVycG9zZS4KPiAKPj4KPj4+IE9uIHRoZSBvdGhlciBzaWRlIHRoaXMgcGF0Y2gg
+aXMgZW5vdWdoIHRvIGNvcnJlY3RseSBoYW5kbGUgYWxsIERTSQo+Pj4gYnJpZGdlcyBpbiBleGlz
+dGluZyBFeHlub3MgYm9hcmRzLgo+Pj4KPj4+PiBBbmQgSSdtIG5vdCBjbGVhciBhYm91dCB3aGF0
+IGtpbmRzIG9mIGRldmljZXMgY291bGQgYmUgYSBjaGlsZCBkZXZpY2Ugb2YgRFNJLCB3aGljaCBp
+c24ndCByZXF1aXJlZCBmb3IgdGhlIGdyYXBoIGJpbmRpbmcuCj4+Pj4gSXMgdGhlcmUgYW55IGRv
+Y3VtZW50IEkgY2FuIHJlZmVyIHRvPwo+Pj4gRFNJIGRldmljZXMgKHBlcmlwaGVyYWxzKSBzaG91
+bGQgYmUgZGVzY3JpYmVkIGFzIGNoaWxkIG5vZGVzIG9mIERTSSBob3N0Cj4+PiBub2RlIGluIERU
+IGJpbmRpbmdzLCBpdCBpcyBkZXNjcmliZWQgaW4gWzFdLiBBbmQgeW91IGNhbiBmaW5kIGFsbCBk
+c2kKPj4+IHBhbmVscyBpbiBleHlub3MgYmFzZWQgYm9hcmRzIGFyZSBtb2RlbGVkIHRoaXMgd2F5
+Lgo+Pj4gQW5kIHRoZSBncmFwaCBkb2N1bWVudGF0aW9uIFsyXSBzYXlzIHRoYXQgZ3JhcGhzIHNo
+b3VsZCBiZSB1c2VkIGZvcgo+Pj4gY29ubmVjdGlvbnMgdGhhdCAiY2FuIG5vdCBiZSBpbmZlcnJl
+ZCBmcm9tIGRldmljZSB0cmVlIHBhcmVudC1jaGlsZAo+Pj4gcmVsYXRpb25zaGlwcyIsIGl0IHdh
+cyBlbXBoYXNpc2VkIG11bHRpcGxlIHRpbWVzIGJ5IFJvYiBpbiBkaXNjdXNzaW9ucwo+Pj4gcmVn
+YXJkaW5nIGJpbmRpbmdzIG9mIERTSSBkZXZpY2VzLgo+PiBIbS4uLiBJIGRvbid0IHNlZSB3aHkg
+Um9iIGludHJvZHVjZWQgZHJtX29mX2ZpbmRfcGFuZWxfb3JfYnJpZGdlIGZ1Y250aW9uWzFdIGlm
+IERTSSBkZXZpY2VzIHNob3VsZCBiZSBkZXNjcmliZWQgYXMgY2hpbGQgbm9kZXMuCj4+IEFuZCBz
+b21lIERTSSBkcml2ZXJzIG9mIG90aGVyIEFSTSBEUk0gLSB2YzQsIG1lZGlhdGVrLCBhbmQga2ly
+aW4gLSB1c2Ugb25seSBkcm1fb2ZfZmluZF9wYW5lbF9vcl9icmlkZ2UgZnVudGlvbi4KPiAKPiBC
+ZWNhdXNlIHRoaXMgZnVuY3Rpb24gd2FzIGNyZWF0ZWQgZm9yIGkyYy9zcGkgY29udHJvbGxlZCBi
+cmlkZ2VzL3BhbmVscwo+IGFuZCBwcm9iYWJseSB0aGVzZSBib2FyZHMgdXNlIG9ubHkgc3VjaCBk
+ZXZpY2VzLgoKQ2xlYXIuIEkgd2lsbCBwaWNrIHRoZW0gdXAuCgpCVFcsIHRoZSBicmlkZ2UgYW5k
+IHBhbmVsSSBtZW50aW9uZWQgYWJvdmUgYXJlIGNoaWxkIGRldmljZXMgb2YgRFNJIGRyaXZlci4g
+U28gSSdtIG5vdCBzdXJlIGJ1dCB0aGUgY2hpbGQgZGV2aWNlcyB3b3VsZCBiZSBjb250cm9sbGVk
+IGJ5IE1JUEkgRFNJIHByb3RvY29sIG5vdCBieSBpMmMvc3BpLiAKSWYgeW91IGFyZSByaWdodCB0
+aGVuIHRoZSBkZXZpY2VzIC0gYnJpZGdlIG9yIHBhbmVsIC0gYXJlIGNvbnRyb2xsZWQgYnkgaTJj
+IG9yIHNwaSBhbmQgb25seSBpbWFnZSBkYXRhIGFyZSB0cmFuc2ZlcnJlZCBmcm9tIERTSSB0byBi
+cmlkZ2Ugb3IgcGFuZWwgYnkgTUlQSSBsYW5lcz8KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gUmVn
+YXJkcwo+IEFuZHJ6ZWoKPiAKPiAKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
