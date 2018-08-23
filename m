@@ -1,160 +1,157 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v5 2/9] drm/exynos: move connector creation to attach
- callback
-Date: Thu, 23 Aug 2018 11:50:34 +0200
-Message-ID: <20180823095036eucas1p1cd3dae45db3e8017cfdcae16c943e032~Nepb5YC1G2580725807eucas1p1m@eucas1p1.samsung.com>
-References: <20180725154644.25412-1-a.hajda@samsung.com>
- <CGME20180725154659eucas1p116f3a5e735333b07bcf9808f00694f3c@eucas1p1.samsung.com>
- <20180725154644.25412-3-a.hajda@samsung.com>
- <20180807085311epcas1p2fd5a7ed9986c212c6c5d0ade3d459769~IjiubTYO01603416034epcas1p2b@epcas1p2.samsung.com>
- <20180813111739eucas1p2e88561c6d528a24d4686f47aad2ebbf1~KbYlfgyOH0189801898eucas1p2N@eucas1p2.samsung.com>
- <20180817015642epcas1p1e33ed4f3b92e8939fa45237908f3407b~LiT8coN4a0108901089epcas1p1x@epcas1p1.samsung.com>
- <20180820090014eucas1p15ddaf306835593e508ea30872c5172f5~MjBma4tr-2246822468eucas1p1F@eucas1p1.samsung.com>
- <20180821052722epcas1p1f2c5a7dc58d12960d44a93cde6d2d73c~MzxCLCCCN2134421344epcas1p1d@epcas1p1.samsung.com>
- <20180821112106eucas1p284431eba18ad984c2477e694461d34cf~M4l38_wyw2865528655eucas1p2F@eucas1p2.samsung.com>
- <20180822025923epcas1p47d0537cd2dc8d92ba3b7c8d338c2f9f1~NFZGwKoPt0276002760epcas1p45@epcas1p4.samsung.com>
+From: NeilBrown <neilb@suse.com>
+Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock request to block other requests."
+Date: Fri, 24 Aug 2018 09:17:53 +1000
+Message-ID: <87ftz4oeou.fsf@notabene.neil.brown.name>
+References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com> <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org> <87o9e2anwg.fsf@notabene.neil.brown.name> <87k1okpam2.fsf@notabene.neil.brown.name> <99fd03d3002d03f86b0d8a5b1ad4a2015383545e.camel@kernel.org> <87eferpgj4.fsf@notabene.neil.brown.name>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180822025923epcas1p47d0537cd2dc8d92ba3b7c8d338c2f9f1~NFZGwKoPt0276002760epcas1p45@epcas1p4.samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <87eferpgj4.fsf@notabene.neil.brown.name>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeff Layton <jlayton@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, "J. Bruce Fields" <bfields@fieldses.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjIuMDguMjAxOCAwNDo1OSwgSW5raSBEYWUgd3JvdGU6Cj4KPiAyMDE464WEIDA47JuUIDIx
-7J28IDIwOjIx7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4gT24gMjEuMDgu
-MjAxOCAwNzoyNywgSW5raSBEYWUgd3JvdGU6Cj4+PiAyMDE464WEIDA47JuUIDIw7J28IDE4OjAw
-7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+PiBPbiAxNy4wOC4yMDE4IDAz
-OjU2LCBJbmtpIERhZSB3cm90ZToKPj4+Pj4gMjAxOOuFhCAwOOyblCAxM+ydvCAyMDoxN+yXkCBB
-bmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4+PiBPbiAwNy4wOC4yMDE4IDEwOjUz
-LCBJbmtpIERhZSB3cm90ZToKPj4+Pj4+PiAyMDE464WEIDA37JuUIDI27J28IDAwOjQ27JeQIEFu
-ZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4+Pj4gRnJvbTogTWFjaWVqIFB1cnNr
-aSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+Cj4+Pj4+Pj4+Cj4+Pj4+Pj4+IFRoZSBjdXJyZW50IGlt
-cGxlbWVudGF0aW9uIGFzc3VtZXMgdGhhdCB0aGUgb25seSBwb3NzaWJsZSBwZXJpcGhlcmFsCj4+
-Pj4+Pj4+IGRldmljZSBmb3IgRFNJTSBpcyBhIHBhbmVsLiBVc2luZyBhbiBvdXRwdXQgYnJpZGdl
-IGNoaWxkIGRldmljZQo+Pj4+Pj4+PiBzaG91bGQgYWxzbyBiZSBwb3NzaWJsZS4KPj4+Pj4+Pj4K
-Pj4+Pj4+Pj4gSWYgYW4gb3V0cHV0IGJyaWRnZSBpcyBhdmFpbGFibGUsIGRvbid0IGNyZWF0ZSBh
-IG5ldyBjb25uZWN0b3IuCj4+Pj4+Pj4+IEluc3RlYWQsIGNhbGwgZHJtX2JyaWRnZV9hdHRhY2go
-KSBhbmQgc2V0IGVuY29kZXIncyBicmlkZ2UgdG8gTlVMTAo+Pj4+Pj4+PiBpbiBvcmRlciB0byBh
-dm9pZCBhbiBvdXQgYnJpZGdlIGZyb20gYmVpbmcgdmlzaWJsZSBieSB0aGUgZnJhbWV3b3JrLCBh
-cwo+Pj4+Pj4+PiB0aGUgRFNJIGJ1cyBuZWVkcyBjb250cm9sIG9uIGVuYWJsaW5nIGl0cyBjaGls
-ZCBvdXRwdXQgYnJpZGdlLgo+Pj4+Pj4+Pgo+Pj4+Pj4+PiBTdWNoIHNlcXVlbmNlIGlzIHJlcXVp
-cmVkIGJ5IFRvc2hpYmEgVEMzNTg3NjQgYnJpZGdlLCB3aGljaCBpcyBhIERTSQo+Pj4+Pj4+PiBw
-ZXJpcGhlcmFsIGJyaWRnZSBkZXZpY2UuCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IGNoYW5nZWQgaW4gdjU6
-Cj4+Pj4+Pj4+IC0gZGV0YWNoIGJyaWRnZSBpbiBtaXBpX2RzaSBkZXRhY2ggY2FsbGJhY2sKPj4+
-Pj4+Pj4KPj4+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ft
-c3VuZy5jb20+Cj4+Pj4+Pj4+IFsgYS5oYWpkYUBzYW1zdW5nLmNvbTogdjUgXQo+Pj4+Pj4+PiBT
-aWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+Pj4+Pj4+
-PiAtLS0KPj4+Pj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyB8
-IDUwICsrKysrKysrKysrKysrKystLS0tLS0tLS0KPj4+Pj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAz
-MiBpbnNlcnRpb25zKCspLCAxOCBkZWxldGlvbnMoLSkKPj4+Pj4+Pj4KPj4+Pj4+Pj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4+Pj4+PiBpbmRleCAzNTE0MDNmOWQy
-NDUuLmY1ZjUxZjU4NGZhMCAxMDA2NDQKPj4+Pj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+Pj4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4+Pj4+PiBAQCAtMjU1LDYgKzI1NSw3IEBAIHN0cnVjdCBl
-eHlub3NfZHNpIHsKPj4+Pj4+Pj4gIAlzdHJ1Y3QgbWlwaV9kc2lfaG9zdCBkc2lfaG9zdDsKPj4+
-Pj4+Pj4gIAlzdHJ1Y3QgZHJtX2Nvbm5lY3RvciBjb25uZWN0b3I7Cj4+Pj4+Pj4+ICAJc3RydWN0
-IGRybV9wYW5lbCAqcGFuZWw7Cj4+Pj4+Pj4+ICsJc3RydWN0IGRybV9icmlkZ2UgKm91dF9icmlk
-Z2U7Cj4+Pj4+Pj4+ICAJc3RydWN0IGRldmljZSAqZGV2Owo+Pj4+Pj4+PiAgCj4+Pj4+Pj4+ICAJ
-dm9pZCBfX2lvbWVtICpyZWdfYmFzZTsKPj4+Pj4+Pj4gQEAgLTE0OTksNyArMTUwMCwzMCBAQCBz
-dGF0aWMgaW50IGV4eW5vc19kc2lfaG9zdF9hdHRhY2goc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhv
-c3QsCj4+Pj4+Pj4+ICAJCQkJICBzdHJ1Y3QgbWlwaV9kc2lfZGV2aWNlICpkZXZpY2UpCj4+Pj4+
-Pj4+ICB7Cj4+Pj4+Pj4+ICAJc3RydWN0IGV4eW5vc19kc2kgKmRzaSA9IGhvc3RfdG9fZHNpKGhv
-c3QpOwo+Pj4+Pj4+PiAtCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBkc2ktPmNvbm5lY3Rvci5k
-ZXY7Cj4+Pj4+Pj4+ICsJc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyID0gJmRzaS0+ZW5jb2Rl
-cjsKPj4+Pj4+Pj4gKwlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gZW5jb2Rlci0+ZGV2Owo+Pj4+
-Pj4+PiArCXN0cnVjdCBkcm1fYnJpZGdlICpvdXRfYnJpZGdlOwo+Pj4+Pj4+PiArCj4+Pj4+Pj4+
-ICsJb3V0X2JyaWRnZSAgPSBvZl9kcm1fZmluZF9icmlkZ2UoZGV2aWNlLT5kZXYub2Zfbm9kZSk7
-Cj4+Pj4+Pj4gSXMgdGhlcmUgYW55IHJlYXNvbiB0byBmaW5kIG91dF9icmlkZ2Ugd2l0aG91dCBj
-b25zaWRlcmluZyBkZXZpY2UgdHJlZSBncmFwaCBiaW5kaW5nPwo+Pj4+Pj4gSWYgdGhlIHNpbmsg
-aXMgYSBjaGlsZCBNSVBJLURTSSBkZXZpY2UsIHRoZSBiaW5kaW5ncyBjYW4gYmUgb21pdHRlZCwg
-YXMKPj4+Pj4+IGluIGNhc2Ugb2YgYWxsIERTSSBwYW5lbHMgaW4gRXh5bm9zIHBsYXRmb3Jtcy4K
-Pj4+Pj4+IEluIGNhc2UgYmluZGluZ3MgYXJlIG5vdCBwcmVzZW50IHlvdSBjYW5ub3QgdXNlIGdy
-YXBoIGZ1bmN0aW9ucy4KPj4+Pj4gSW4gb3RoZXIgd29yZHMsIHRoaXMgbWVhbnMgdGhhdCB0aGlz
-IHBhdGNoIGRvZXNuJ3QgYWxsb3cgdG8gdXNlIHRoZSBkZXZpY2UgdHJlZSBncmFwaCBiaW5kaW5n
-Lgo+Pj4+PiBJLmUuLCBpZiBvdGhlciBwZW9wbGUgd3JvdGUgdGhlIGdyYXBoIHRoaW5ncyBpbiBo
-aXMgYm9hcmQgZHRzIGZpbGUgZm9yIHRoZSB1c2Ugb2YgYnJpZGdlIGRldmljZSB0aGVuIHdpdGgg
-dGhpcyBwYXRjaCBoZSBjYW5ub3QgdXNlIHRoZSBicmlkZSBkZXZpY2UuCj4+Pj4+Cj4+Pj4+IFNv
-IEkgdGhpbmsgaXQgd291bGQgYmUgYmV0dGVyIHRvIGFsbG93IHRvIHVzZSBib3RoIG9mIHRoZW0s
-IGFzIGEgY2hpbGQgZGV2aWNlIGFuZCBncmFwaCBiaW5kaW5nLgo+Pj4+Pgo+Pj4+PiBIb3cgYWJv
-dXQgdHJ5aW5nIHRvIGJpbmQgdGhlIGdyYXBoIHRoaW5ncyB1c2luZyBkcm1fb2ZfZmluZF9wYW5l
-bF9vcl9icmlkZ2UgZnVudGlvbiBmaXJzdCBhbmQgdGhlbiBmb3IgY2hpbGQgZGV2aWNlIHdheT8K
-Pj4+PiBJdCBjb3VsZCBiZSBkb25lIHRoaXMgd2F5LCBidXQgaXQgc2hvdWxkIGJlIGRvbmUgZm9y
-IHBhbmVscyBhbmQgZm9yCj4+Pj4gYnJpZGdlcywgYW5kIGl0IHNob3VsZCBiZSByYXRoZXIgZ2Vu
-ZXJpYyBoZWxwZXIsIG5vdCBFeHlub3Mgc3BlY2lmaWMuIFNvCj4+PiBBcyB0aGUgZnVuY3Rpb24g
-bmFtZSBzYXlzLCBkcm1fb2ZfZmluZF9wYW5lbF9vcl9icmlkZ2UgZnVuY3Rpb24gd2lsbCByZXR1
-cm4gcGFuZWwsIGJyaWRnZSBvciBib3RoIG9mIHRoZW0gYWNjb3JkaW5nIHRvIGdpdmVuIGFyZ3Vt
-ZW50cy4KPj4+Cj4+Pgo+Pj4+IGl0IGlzIHNvbWV0aGluZyB3aGljaCByZXF1aXJlIGFkZGl0aW9u
-YWwgaW52ZXN0aWdhdGlvbiwgZGlzY3Vzc2lvbiBhbmQKPj4+PiBzZXBhcmF0ZSBwYXRjaHNldC4K
-Pj4+IFNvIEkgdGhpbmsgd2Ugd291bGRuJ3QgbmVlZCBhZGRpdGlvbmFsIGRpc2N1c3Npb24gYXQg
-YWxsIGJlY3Vhc2Ugd2UgZG9uJ3QgdG91Y2ggcGFuZWwgYnV0IGFkZCBvbmx5IGJyaWRnZSBkZXZp
-Y2UgYXMgb3V0cHV0LCBhbmQgdGhlIHVzZSBvZiB0aGlzIGZ1bmN0aW9uIGZvciBicmlkZ2UgbG9v
-a3MgbW9yZSBnZW5lcmljIHdheS4KPj4gQnV0IGRybV9vZl9maW5kX3BhbmVsX29yX2JyaWRnZSBp
-cyBvbmx5IGZvciBsb29raW5nIGZvciBub24tZHNpIGRldmljZXMsCj4+IG9yIG1vcmUgc3BlY2lm
-aWNhbGx5IGZvciBsb29raW5nIGZvciBkZXZpY2VzIGNvbm5lY3RlZCBpbiBEVFMgdmlhCj4+IERU
-LWdyYXBoLiBUaGlzIGlzIG5vdCBjYXNlIG9mIHBhbmVscyBhbmQgYnJpZGdlcyB1c2VkIGluIEV4
-eW5vcyBib2FyZHMuCj4+IFNvIHRoaXMgZnVuY3Rpb24gaXMgY3VycmVudGx5IHVzZWxlc3Mgd2l0
-aCBvdXIgYm9hcmRzLiBNYXliZSBzb21lIGRheSB3ZQo+PiB3aWxsIGhhdmUgYnJpZGdlL3BhbmVs
-IGNvbnRyb2xsZWQgdmlhIEkyQyBhbmQgdGhlbiBpdCB3aWxsIGJlY29tZQo+PiB1c2VmdWwsIGJ1
-dCBmb3Igbm93IGl0IHNlcnZlcyBmb3Igbm90aGluZy4KPj4KPj4+IE9mIGNvdXJzZSwgYXMgYSBz
-ZXBhcmF0ZSBwYXRjaCwgd2UgY291bGQgY29uc2lkZXIgdXNpbmcgdGhpcyBmdW5jdGlvbiBmb3Ig
-cGFuZWwgZGV2aWNlIGxhdGVyLgo+PiBBcyB5b3Ugc2FpZCBkcm1fb2ZfZmluZF9wYW5lbF9vcl9i
-cmlkZ2UgbG9va3MgZm9yIHBhbmVsIGFuZC9vciBicmlkZ2UsCj4+IGFuZCBpdCB3YXMgY3JlYXRl
-ZCB0byBtZXJnZSBzaW1pbGFyIGNvZGUgaW4gcGFuZWwgYW5kIGJyaWRnZSBsb29rdXAsCj4+IHVz
-aW5nIGl0IG9ubHkgZm9yIGJyaWRnZXMgYW5kIG5vdCBmb3IgcGFuZWxzIHNlZW1zIGFnYWluc3Qg
-aXQncyBwdXJwb3NlLgo+Pgo+Pj4+IE9uIHRoZSBvdGhlciBzaWRlIHRoaXMgcGF0Y2ggaXMgZW5v
-dWdoIHRvIGNvcnJlY3RseSBoYW5kbGUgYWxsIERTSQo+Pj4+IGJyaWRnZXMgaW4gZXhpc3Rpbmcg
-RXh5bm9zIGJvYXJkcy4KPj4+Pgo+Pj4+PiBBbmQgSSdtIG5vdCBjbGVhciBhYm91dCB3aGF0IGtp
-bmRzIG9mIGRldmljZXMgY291bGQgYmUgYSBjaGlsZCBkZXZpY2Ugb2YgRFNJLCB3aGljaCBpc24n
-dCByZXF1aXJlZCBmb3IgdGhlIGdyYXBoIGJpbmRpbmcuCj4+Pj4+IElzIHRoZXJlIGFueSBkb2N1
-bWVudCBJIGNhbiByZWZlciB0bz8KPj4+PiBEU0kgZGV2aWNlcyAocGVyaXBoZXJhbHMpIHNob3Vs
-ZCBiZSBkZXNjcmliZWQgYXMgY2hpbGQgbm9kZXMgb2YgRFNJIGhvc3QKPj4+PiBub2RlIGluIERU
-IGJpbmRpbmdzLCBpdCBpcyBkZXNjcmliZWQgaW4gWzFdLiBBbmQgeW91IGNhbiBmaW5kIGFsbCBk
-c2kKPj4+PiBwYW5lbHMgaW4gZXh5bm9zIGJhc2VkIGJvYXJkcyBhcmUgbW9kZWxlZCB0aGlzIHdh
-eS4KPj4+PiBBbmQgdGhlIGdyYXBoIGRvY3VtZW50YXRpb24gWzJdIHNheXMgdGhhdCBncmFwaHMg
-c2hvdWxkIGJlIHVzZWQgZm9yCj4+Pj4gY29ubmVjdGlvbnMgdGhhdCAiY2FuIG5vdCBiZSBpbmZl
-cnJlZCBmcm9tIGRldmljZSB0cmVlIHBhcmVudC1jaGlsZAo+Pj4+IHJlbGF0aW9uc2hpcHMiLCBp
-dCB3YXMgZW1waGFzaXNlZCBtdWx0aXBsZSB0aW1lcyBieSBSb2IgaW4gZGlzY3Vzc2lvbnMKPj4+
-PiByZWdhcmRpbmcgYmluZGluZ3Mgb2YgRFNJIGRldmljZXMuCj4+PiBIbS4uLiBJIGRvbid0IHNl
-ZSB3aHkgUm9iIGludHJvZHVjZWQgZHJtX29mX2ZpbmRfcGFuZWxfb3JfYnJpZGdlIGZ1Y250aW9u
-WzFdIGlmIERTSSBkZXZpY2VzIHNob3VsZCBiZSBkZXNjcmliZWQgYXMgY2hpbGQgbm9kZXMuCj4+
-PiBBbmQgc29tZSBEU0kgZHJpdmVycyBvZiBvdGhlciBBUk0gRFJNIC0gdmM0LCBtZWRpYXRlaywg
-YW5kIGtpcmluIC0gdXNlIG9ubHkgZHJtX29mX2ZpbmRfcGFuZWxfb3JfYnJpZGdlIGZ1bnRpb24u
-Cj4+IEJlY2F1c2UgdGhpcyBmdW5jdGlvbiB3YXMgY3JlYXRlZCBmb3IgaTJjL3NwaSBjb250cm9s
-bGVkIGJyaWRnZXMvcGFuZWxzCj4+IGFuZCBwcm9iYWJseSB0aGVzZSBib2FyZHMgdXNlIG9ubHkg
-c3VjaCBkZXZpY2VzLgo+IENsZWFyLiBJIHdpbGwgcGljayB0aGVtIHVwLgo+Cj4gQlRXLCB0aGUg
-YnJpZGdlIGFuZCBwYW5lbEkgbWVudGlvbmVkIGFib3ZlIGFyZSBjaGlsZCBkZXZpY2VzIG9mIERT
-SSBkcml2ZXIuIFNvIEknbSBub3Qgc3VyZSBidXQgdGhlIGNoaWxkIGRldmljZXMgd291bGQgYmUg
-Y29udHJvbGxlZCBieSBNSVBJIERTSSBwcm90b2NvbCBub3QgYnkgaTJjL3NwaS4gCgpDdXJyZW50
-bHkgdGhlIG9ubHkgcHVyZSBEU0kgYnJpZGdlIGlzIHRjMzU4NzY0LCBhZHY3NTExIHJlZ2lzdGVy
-cyBhcwpib3RoIGkyYyBhbmQgZHNpIGJyaWRnZSBkcml2ZXIsIGJ1dCBpbiBkdHMgZmlsZXMgaXQg
-aXMgYWx3YXlzIGFzIGkyYwpkZXZpY2UsIHNvIGl0IGlzIG5ldmVyIGEgY2hpbGQgb2YgRFNJIGhv
-c3QuCkluIGNhc2Ugb2YgRFNJIHBhbmVscyBJIGhhdmUgZm91bmQgMiB3aGljaCB1c2VzIG9ic29s
-ZXRlIGJpbmRpbmdzCihvcmlzZXRlY2gsb3RtODAwOWEsIGpkaSxsdDA3MG1lMDUwMDApIC0gaWUg
-dGhleSBhcmUgY2hpbGQgbm9kZXMgb2YgZHNpCmhvc3QgYW5kIGhhdmUgZ3JhcGggbGlua3MtIGlu
-IHRoZWlyIGNhc2UgZHJtX29mX2ZpbmRfcGFuZWxfb3JfYnJpZGdlCndpbGwgd29yay4KVGhlIHJl
-c3QgaXMgZWl0aGVyIG5vdCBwcmVzZW50IGluIGR0cywgZWl0aGVyIGZvbGxvd3MgY3VycmVudCBi
-aW5kaW5ncwpndWlkZWxpbmVzIChhbGwgc2Ftc3VuZyBwYW5lbHMpIC0gbm8gZ3JhcGggYmluZGlu
-Z3MgaWYgaXQgaXMgYSBjaGlsZCBvZgpkc2kgaG9zdC4KSSBnYXZlIHVwIHdpdGggY2hlY2tpbmcg
-cGFuZWwtc2ltcGxlLCBhcyBpdCBoYXMgdG9vIG1hbnkgY29tcGF0aWJsZXMuCgo+IElmIHlvdSBh
-cmUgcmlnaHQgdGhlbiB0aGUgZGV2aWNlcyAtIGJyaWRnZSBvciBwYW5lbCAtIGFyZSBjb250cm9s
-bGVkIGJ5IGkyYyBvciBzcGkgYW5kIG9ubHkgaW1hZ2UgZGF0YSBhcmUgdHJhbnNmZXJyZWQgZnJv
-bSBEU0kgdG8gYnJpZGdlIG9yIHBhbmVsIGJ5IE1JUEkgbGFuZXM/CgpZZXMsIG9yIHRoZSBjb250
-cm9sIGlzIG1peGVkOiBwb3dlci11cCBpbml0aWFsaXphdGlvbi9saW5rLXNldHVwIG9ubHkKdmlh
-IGkyYywgb3RoZXIgY29tbWFuZHMgYW5kIGRhdGEgdmlhIGRzaS4KClJlZ2FyZHMKQW5kcnplagoK
-Pgo+IFRoYW5rcywKPiBJbmtpIERhZQo+Cj4+IFJlZ2FyZHMKPj4gQW5kcnplago+Pgo+Pgo+Pgo+
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 22 2018, NeilBrown wrote:
+
+>
+> Oh dear.
+> nfs4_alloc_lockdata contains:
+> 	memcpy(&p->fl, fl, sizeof(p->fl));
+>
+> so any list_heads that are valid in fl will be invalid in p->fl.
+>
+> Maybe I should initialize the relevant list_heads at the start of wait
+> functions.
+> I should look more closely at what filesystems do with locks though.
+>
+
+I looked .... and .... it's complicated.
+
+Some call posix_lock_file() (which doesn't block, I think).
+Some call locks_lock_file_wait() (which can block, if FL_SLEEP is given).
+Some call both.
+
+Strangely, vfs_lock_file() either calls posix_lock_file(), which doesn't
+block, or filp->f_op->lock() which, I think, can.
+
+I'm confused.  However I think this version of the patch should be
+safer.
+When I make time to test this, this will be part of what I test.
+
+Thanks,
+NeilBrown
+
+From: NeilBrown <neilb@suse.com>
+Date: Tue, 21 Aug 2018 15:09:06 +1000
+Subject: [PATCH] fs/locks: always delete_block after waiting.
+
+Now that requests can block other requests, we
+need to be careful to always clean up those blocked
+requests.
+Any time that we wait for a request, we might have
+other requests attached, and when we stop waiting,
+we much clean them up.
+If the lock was granted, the requests might have been
+moved to the new lock, though when merged with a
+pre-exiting lock, this might not happen.
+No all cases we don't want blocked locks to remain
+attached, so we remove them to be safe.
+
+Note that when these locking routines are called without FL_SLEEP set,
+the list_head might not be properly initialize.
+In that case it is neither safe nor necessary to
+call locks_delete_block()
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+ fs/locks.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index de38bafb7f7b..2af9c657f81f 100644
+=2D-- a/fs/locks.c
++++ b/fs/locks.c
+@@ -1276,12 +1276,11 @@ static int posix_lock_inode_wait(struct inode *inod=
+e, struct file_lock *fl)
+ 		if (error !=3D FILE_LOCK_DEFERRED)
+ 			break;
+ 		error =3D wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+=2D		if (!error)
+=2D			continue;
+=2D
+=2D		locks_delete_block(fl);
+=2D		break;
++		if (error)
++			break;
+ 	}
++	if (fl->fl_flags & FL_SLEEP)
++		locks_delete_block(fl);
+ 	return error;
+ }
+=20
+@@ -1971,12 +1970,11 @@ static int flock_lock_inode_wait(struct inode *inod=
+e, struct file_lock *fl)
+ 		if (error !=3D FILE_LOCK_DEFERRED)
+ 			break;
+ 		error =3D wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+=2D		if (!error)
+=2D			continue;
+=2D
+=2D		locks_delete_block(fl);
+=2D		break;
++		if (error)
++			break;
+ 	}
++	if (fl->fl_flags & FL_SLEEP)
++		locks_delete_block(fl);
+ 	return error;
+ }
+=20
+@@ -2250,12 +2248,11 @@ static int do_lock_file_wait(struct file *filp, uns=
+igned int cmd,
+ 		if (error !=3D FILE_LOCK_DEFERRED)
+ 			break;
+ 		error =3D wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+=2D		if (!error)
+=2D			continue;
+=2D
+=2D		locks_delete_block(fl);
+=2D		break;
++		if (error)
++			break;
+ 	}
++	if (fl->fl_flags & FL_SLEEP)
++		locks_delete_block(fl);
+=20
+ 	return error;
+ }
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlt/QKEACgkQOeye3VZi
+gbkBGQ/+PKvN1XsblXZeKim2XOAaahH+RjZlrAAPc+KzpFytOxHvlrf+WtOR7Fok
+JRgeP5CUCMNnh67Rsr34NJhrhyOG8qAxTSogT83Y1XZcZM8e5tOsVtP60KqU3mtt
+CqwzAjCsdtUq+87ZPVDIRbpZ29RVP9HCC/kVjzOiL3pCDCDhX0wrRLaaNkZmJaGw
+Ycmf6s1pcSwo6KPAQQG+a9Z08Y7E5JjeiwCMnryE3y2x4mtrTyUvt5kvI/Vkkc0K
+y7Wb7TfOaah/1swQhlVrXWCDEhxofnkzTrVXprMxGfDHNZar19yRvsC/JNL4ZnvW
+vlWvEkNGgqlUM9DQg0xrGTta0j3uvlNOj79XsmuQGFTzHBIJ00Xhwc4njsRTFB6M
++YsMcykMvHhpJteWimT6Mi3w0dHyh9Iupt6TftR5GpWdB7obmQKm+fVKic1iXMpd
+g89t5x1WyYI+hKzXaPXlsZyJuoxvBWgCVmPSPUb3TOtoVgNnthUZW5NC+RfAaSjo
+6W/dnLqBw++qltdNB5eTuFjZYlGI6a9v0H2/Ybvb6M/BZKLzwsCydhFpFp9uglxB
+Rart+HbqyO3F5IkkANrqgoETGWejLVK63wNXd1KlvmvaplDPE093/ttYsT8ehPt1
+Th+uldfD/SFYGuWIT/PGPeQaHZxdURAkliQRuBNd1RkJIMNlvac=
+=wDui
+-----END PGP SIGNATURE-----
+--=-=-=--
