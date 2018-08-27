@@ -1,44 +1,51 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 4/4] mfd: sec-core: Allow building as module
-Date: Fri, 24 Aug 2018 10:20:47 +0100
-Message-ID: <20180824092047.GF28860@dell>
-References: <20180807161125.18155-1-krzk@kernel.org>
- <20180807161125.18155-4-krzk@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/3] drm: drm_fourcc: add Samsung 16x16 tile format
+Date: Mon, 27 Aug 2018 09:38:43 +0900
+Message-ID: <20180827003844epcas1p2de2d60cd4b31503045d509beaafefb2e~OlsudLypT3185431854epcas1p2Y@epcas1p2.samsung.com>
+References: <20180810132901.11844-1-m.szyprowski@samsung.com>
+ <CGME20180810132915eucas1p270d9df94b0aaaa17b0eddfb8682bd3bd@eucas1p2.samsung.com>
+ <20180810132915eucas1p270d9df94b0aaaa17b0eddfb8682bd3bd~JiPoK4ppk2592125921eucas1p2z@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180807161125.18155-4-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180810132915eucas1p270d9df94b0aaaa17b0eddfb8682bd3bd~JiPoK4ppk2592125921eucas1p2z@eucas1p2.samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 07 Aug 2018, Krzysztof Kozlowski wrote:
-
-> The main MFD driver for Samsung PMICs (S2MPSXX, S5M876X) used with
-> Exynos SoCs can be compiled and used as a module.  The dependent clock,
-> regulator and RTC drivers already can be built as a module.
-> 
-> Building entire set of drivers as modules might require using initial
-> ramdisk and can make booting process longer (due to probe deferrals).
-> However adding such option is useful for testing and for multi-platform
-> configurations.
-> 
-> This also add required module authors to sec-irq.c file based on recent
-> main contributors.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/mfd/Kconfig   | 11 +++++++++--
->  drivers/mfd/sec-irq.c |  8 ++++++++
->  2 files changed, 17 insertions(+), 2 deletions(-)
-
-Applied, thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+CgoyMDE464WEIDA47JuUIDEw7J28IDIyOjI47JeQIE1hcmVrIFN6eXByb3dza2kg7J20KOqwgCkg
+7JO0IOq4gDoKPiBGcm9tOiBBbmRyemVqIFBpZXRyYXNpZXdpY3ogPGFuZHJ6ZWoucEBzYW1zdW5n
+LmNvbT4KPiAKPiBBZGQgbW9kaWZpZXIgZm9yIHRpbGVkIGZvcm1hdHMgdXNlZCBieSBncmFwaGlj
+cyBtb2R1bGVzIGZvdW5kIGluIFNhbXN1bmcKPiBFeHlub3M1MjUwLzU0MngvNTQzMyBTb0NzLiBU
+aGlzIGlzIGEgc2ltcGxlIHRpbGVkIGxheW91dCB1c2luZyB0aWxlcwo+IG9mIDE2eDE2IHBpeGVs
+cyBpbiBhIHJvdy1tYWpvciBsYXlvdXQuCgpSZXZpZXdlZC1ieTogSW5raSBEYWUgPGlua2kuZGFl
+QHNhbXN1bmcuY29tPgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBTaWduZWQtb2ZmLWJ5OiBBbmRy
+emVqIFBpZXRyYXNpZXdpY3ogPGFuZHJ6ZWoucEBzYW1zdW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5
+OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGlu
+Y2x1ZGUvdWFwaS9kcm0vZHJtX2ZvdXJjYy5oIHwgOSArKysrKysrKysKPiAgMSBmaWxlIGNoYW5n
+ZWQsIDkgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvZHJtL2Ry
+bV9mb3VyY2MuaCBiL2luY2x1ZGUvdWFwaS9kcm0vZHJtX2ZvdXJjYy5oCj4gaW5kZXggNzIxYWI3
+ZTU0ZDk2Li41NjMxYjE5NmMwN2EgMTAwNjQ0Cj4gLS0tIGEvaW5jbHVkZS91YXBpL2RybS9kcm1f
+Zm91cmNjLmgKPiArKysgYi9pbmNsdWRlL3VhcGkvZHJtL2RybV9mb3VyY2MuaAo+IEBAIC0yOTks
+NiArMjk5LDE1IEBAIGV4dGVybiAiQyIgewo+ICAgKi8KPiAgI2RlZmluZSBEUk1fRk9STUFUX01P
+RF9TQU1TVU5HXzY0XzMyX1RJTEUJZm91cmNjX21vZF9jb2RlKFNBTVNVTkcsIDEpCj4gIAo+ICsv
+Kgo+ICsgKiBUaWxlZCwgMTYgKHBpeGVscykgeCAxNiAobGluZXMpIC0gc2l6ZWQgbWFjcm9ibG9j
+a3MKPiArICoKPiArICogVGhpcyBpcyBhIHNpbXBsZSB0aWxlZCBsYXlvdXQgdXNpbmcgdGlsZXMg
+b2YgMTZ4MTYgcGl4ZWxzIGluIGEgcm93LW1ham9yCj4gKyAqIGxheW91dC4gRm9yIFlDYkNyIGZv
+cm1hdHMgQ2IvQ3IgY29tcG9uZW50cyBhcmUgdGFrZW4gaW4gc3VjaCBhIHdheSB0aGF0Cj4gKyAq
+IHRoZXkgY29ycmVzcG9uZCB0byB0aGVpciAxNngxNiBsdW1hIGJsb2NrLgo+ICsgKi8KPiArI2Rl
+ZmluZSBEUk1fRk9STUFUX01PRF9TQU1TVU5HXzE2XzE2X1RJTEUJZm91cmNjX21vZF9jb2RlKFNB
+TVNVTkcsIDIpCj4gKwo+ICAvKgo+ICAgKiBRdWFsY29tbSBDb21wcmVzc2VkIEZvcm1hdAo+ICAg
+Kgo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
