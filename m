@@ -1,51 +1,23 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/3] drm: drm_fourcc: add Samsung 16x16 tile format
-Date: Mon, 27 Aug 2018 09:38:43 +0900
-Message-ID: <20180827003844epcas1p2de2d60cd4b31503045d509beaafefb2e~OlsudLypT3185431854epcas1p2Y@epcas1p2.samsung.com>
-References: <20180810132901.11844-1-m.szyprowski@samsung.com>
- <CGME20180810132915eucas1p270d9df94b0aaaa17b0eddfb8682bd3bd@eucas1p2.samsung.com>
- <20180810132915eucas1p270d9df94b0aaaa17b0eddfb8682bd3bd~JiPoK4ppk2592125921eucas1p2z@eucas1p2.samsung.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/3] clk: max77686: Add SPDX license identifiers
+Date: Mon, 27 Aug 2018 14:17:56 -0700
+Message-ID: <153540467625.129321.9618139836664773308@swboyd.mtv.corp.google.com>
+References: <20180807161713.28073-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180810132915eucas1p270d9df94b0aaaa17b0eddfb8682bd3bd~JiPoK4ppk2592125921eucas1p2z@eucas1p2.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180807161713.28073-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE464WEIDA47JuUIDEw7J28IDIyOjI47JeQIE1hcmVrIFN6eXByb3dza2kg7J20KOqwgCkg
-7JO0IOq4gDoKPiBGcm9tOiBBbmRyemVqIFBpZXRyYXNpZXdpY3ogPGFuZHJ6ZWoucEBzYW1zdW5n
-LmNvbT4KPiAKPiBBZGQgbW9kaWZpZXIgZm9yIHRpbGVkIGZvcm1hdHMgdXNlZCBieSBncmFwaGlj
-cyBtb2R1bGVzIGZvdW5kIGluIFNhbXN1bmcKPiBFeHlub3M1MjUwLzU0MngvNTQzMyBTb0NzLiBU
-aGlzIGlzIGEgc2ltcGxlIHRpbGVkIGxheW91dCB1c2luZyB0aWxlcwo+IG9mIDE2eDE2IHBpeGVs
-cyBpbiBhIHJvdy1tYWpvciBsYXlvdXQuCgpSZXZpZXdlZC1ieTogSW5raSBEYWUgPGlua2kuZGFl
-QHNhbXN1bmcuY29tPgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBTaWduZWQtb2ZmLWJ5OiBBbmRy
-emVqIFBpZXRyYXNpZXdpY3ogPGFuZHJ6ZWoucEBzYW1zdW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5
-OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGlu
-Y2x1ZGUvdWFwaS9kcm0vZHJtX2ZvdXJjYy5oIHwgOSArKysrKysrKysKPiAgMSBmaWxlIGNoYW5n
-ZWQsIDkgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvZHJtL2Ry
-bV9mb3VyY2MuaCBiL2luY2x1ZGUvdWFwaS9kcm0vZHJtX2ZvdXJjYy5oCj4gaW5kZXggNzIxYWI3
-ZTU0ZDk2Li41NjMxYjE5NmMwN2EgMTAwNjQ0Cj4gLS0tIGEvaW5jbHVkZS91YXBpL2RybS9kcm1f
-Zm91cmNjLmgKPiArKysgYi9pbmNsdWRlL3VhcGkvZHJtL2RybV9mb3VyY2MuaAo+IEBAIC0yOTks
-NiArMjk5LDE1IEBAIGV4dGVybiAiQyIgewo+ICAgKi8KPiAgI2RlZmluZSBEUk1fRk9STUFUX01P
-RF9TQU1TVU5HXzY0XzMyX1RJTEUJZm91cmNjX21vZF9jb2RlKFNBTVNVTkcsIDEpCj4gIAo+ICsv
-Kgo+ICsgKiBUaWxlZCwgMTYgKHBpeGVscykgeCAxNiAobGluZXMpIC0gc2l6ZWQgbWFjcm9ibG9j
-a3MKPiArICoKPiArICogVGhpcyBpcyBhIHNpbXBsZSB0aWxlZCBsYXlvdXQgdXNpbmcgdGlsZXMg
-b2YgMTZ4MTYgcGl4ZWxzIGluIGEgcm93LW1ham9yCj4gKyAqIGxheW91dC4gRm9yIFlDYkNyIGZv
-cm1hdHMgQ2IvQ3IgY29tcG9uZW50cyBhcmUgdGFrZW4gaW4gc3VjaCBhIHdheSB0aGF0Cj4gKyAq
-IHRoZXkgY29ycmVzcG9uZCB0byB0aGVpciAxNngxNiBsdW1hIGJsb2NrLgo+ICsgKi8KPiArI2Rl
-ZmluZSBEUk1fRk9STUFUX01PRF9TQU1TVU5HXzE2XzE2X1RJTEUJZm91cmNjX21vZF9jb2RlKFNB
-TVNVTkcsIDIpCj4gKwo+ICAvKgo+ICAgKiBRdWFsY29tbSBDb21wcmVzc2VkIEZvcm1hdAo+ICAg
-Kgo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Quoting Krzysztof Kozlowski (2018-08-07 09:17:11)
+> Replace GPL v2.0 and v2.0+ license statements with SPDX license
+> identifiers.
+> =
+
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+
+Applied to clk-next
