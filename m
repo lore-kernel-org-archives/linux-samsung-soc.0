@@ -1,26 +1,45 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 3/3] clk: s2mps11: Use existing defines from bindings for clock
- IDs
-Date: Mon, 27 Aug 2018 14:18:07 -0700
-Message-ID: <153540468738.129321.10833887031441726352@swboyd.mtv.corp.google.com>
-References: <20180807161713.28073-1-krzk@kernel.org>
- <20180807161713.28073-3-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH] devfreq: Convert to using %pOFn instead of device_node.name
+Date: Mon, 27 Aug 2018 20:52:16 -0500
+Message-ID: <20180828015252.28511-15-robh@kernel.org>
+References: <20180828015252.28511-1-robh@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180807161713.28073-3-krzk@kernel.org>
+In-Reply-To: <20180828015252.28511-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2018-08-07 09:17:13)
-> The clock IDs must match between DeviceTree bindings and the driver.
-> There is already a header file used by DeviceTree sources so include it
-> in the driver to remove duplicated symbols.
-> =
+In preparation to remove the node name pointer from struct device_node,
+convert printf users to use the %pOFn format specifier.
 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/devfreq/event/exynos-ppmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to clk-next
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index a9c64f0d3284..c61de0bdf053 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -535,8 +535,8 @@ static int of_get_devfreq_events(struct device_node *np,
+ 
+ 		if (i == ARRAY_SIZE(ppmu_events)) {
+ 			dev_warn(dev,
+-				"don't know how to configure events : %s\n",
+-				node->name);
++				"don't know how to configure events : %pOFn\n",
++				node);
+ 			continue;
+ 		}
+ 
+-- 
+2.17.1
