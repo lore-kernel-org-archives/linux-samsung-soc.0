@@ -1,162 +1,257 @@
 From: Rob Herring <robh@kernel.org>
-Subject: [PATCH] memory: Convert to using %pOFn instead of device_node.name
-Date: Mon, 27 Aug 2018 20:52:30 -0500
-Message-ID: <20180828015252.28511-29-robh@kernel.org>
+Subject: [PATCH] regulator: Convert to using %pOFn instead of device_node.name
+Date: Mon, 27 Aug 2018 20:52:42 -0500
+Message-ID: <20180828015252.28511-41-robh@kernel.org>
 References: <20180828015252.28511-1-robh@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180828015252.28511-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 In preparation to remove the node name pointer from struct device_node,
 convert printf users to use the %pOFn format specifier.
 
-Cc: Roger Quadros <rogerq@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-omap@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/memory/omap-gpmc.c           | 18 +++++++-----------
- drivers/memory/samsung/exynos-srom.c |  4 ++--
- drivers/memory/tegra/mc.c            |  6 +++---
- drivers/memory/tegra/tegra124-emc.c  | 12 ++++++------
- 4 files changed, 18 insertions(+), 22 deletions(-)
+ drivers/regulator/max8997-regulator.c      |  4 +-
+ drivers/regulator/mc13xxx-regulator-core.c |  2 +-
+ drivers/regulator/of_regulator.c           | 44 +++++++++++-----------
+ drivers/regulator/qcom-rpmh-regulator.c    | 14 +++----
+ drivers/regulator/s5m8767.c                | 12 +++---
+ 5 files changed, 38 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-index c215287e80cf..8abb9e94916a 100644
---- a/drivers/memory/omap-gpmc.c
-+++ b/drivers/memory/omap-gpmc.c
-@@ -2145,8 +2145,8 @@ static int gpmc_probe_generic_child(struct platform_device *pdev,
- 			gpmc_s.device_width = GPMC_DEVWIDTH_16BIT;
- 			break;
- 		default:
--			dev_err(&pdev->dev, "%s: invalid 'nand-bus-width'\n",
--				child->name);
-+			dev_err(&pdev->dev, "%pOFn: invalid 'nand-bus-width'\n",
-+				child);
- 			ret = -EINVAL;
- 			goto err;
- 		}
-@@ -2186,8 +2186,8 @@ static int gpmc_probe_generic_child(struct platform_device *pdev,
+diff --git a/drivers/regulator/max8997-regulator.c b/drivers/regulator/max8997-regulator.c
+index ad0c806b0737..3bf5ddfaaea8 100644
+--- a/drivers/regulator/max8997-regulator.c
++++ b/drivers/regulator/max8997-regulator.c
+@@ -929,8 +929,8 @@ static int max8997_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 				break;
  
- 	ret = gpmc_cs_set_timings(cs, &gpmc_t, &gpmc_s);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to set gpmc timings for: %s\n",
--			child->name);
-+		dev_err(&pdev->dev, "failed to set gpmc timings for: %pOFn\n",
-+			child);
- 		goto err_cs;
+ 		if (i == ARRAY_SIZE(regulators)) {
+-			dev_warn(&pdev->dev, "don't know how to configure regulator %s\n",
+-				 reg_np->name);
++			dev_warn(&pdev->dev, "don't know how to configure regulator %pOFn\n",
++				 reg_np);
+ 			continue;
+ 		}
+ 
+diff --git a/drivers/regulator/mc13xxx-regulator-core.c b/drivers/regulator/mc13xxx-regulator-core.c
+index da4fb9824757..65eb1e0350cf 100644
+--- a/drivers/regulator/mc13xxx-regulator-core.c
++++ b/drivers/regulator/mc13xxx-regulator-core.c
+@@ -203,7 +203,7 @@ struct mc13xxx_regulator_init_data *mc13xxx_parse_regulators_dt(
+ 
+ 		if (!found)
+ 			dev_warn(&pdev->dev,
+-				 "Unknown regulator: %s\n", child->name);
++				 "Unknown regulator: %pOFn\n", child);
+ 	}
+ 	of_node_put(parent);
+ 
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 638f17d4c848..92a516b959a7 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -95,8 +95,8 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 	if (!ret)
+ 		constraints->settling_time_up = pval;
+ 	if (constraints->settling_time_up && constraints->settling_time) {
+-		pr_warn("%s: ambiguous configuration for settling time, ignoring 'regulator-settling-time-up-us'\n",
+-			np->name);
++		pr_warn("%pOFn: ambiguous configuration for settling time, ignoring 'regulator-settling-time-up-us'\n",
++			np);
+ 		constraints->settling_time_up = 0;
  	}
  
-@@ -2215,7 +2215,7 @@ static int gpmc_probe_generic_child(struct platform_device *pdev,
+@@ -105,8 +105,8 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 	if (!ret)
+ 		constraints->settling_time_down = pval;
+ 	if (constraints->settling_time_down && constraints->settling_time) {
+-		pr_warn("%s: ambiguous configuration for settling time, ignoring 'regulator-settling-time-down-us'\n",
+-			np->name);
++		pr_warn("%pOFn: ambiguous configuration for settling time, ignoring 'regulator-settling-time-down-us'\n",
++			np);
+ 		constraints->settling_time_down = 0;
+ 	}
  
- err_child_fail:
- 
--	dev_err(&pdev->dev, "failed to create gpmc child %s\n", child->name);
-+	dev_err(&pdev->dev, "failed to create gpmc child %pOFn\n", child);
- 	ret = -ENODEV;
- 
- err_cs:
-@@ -2265,14 +2265,10 @@ static void gpmc_probe_dt_children(struct platform_device *pdev)
- 	struct device_node *child;
- 
- 	for_each_available_child_of_node(pdev->dev.of_node, child) {
--
--		if (!child->name)
--			continue;
--
- 		ret = gpmc_probe_generic_child(pdev, child);
- 		if (ret) {
--			dev_err(&pdev->dev, "failed to probe DT child '%s': %d\n",
--				child->name, ret);
-+			dev_err(&pdev->dev, "failed to probe DT child '%pOFn': %d\n",
-+				child, ret);
+@@ -127,12 +127,12 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 		if (desc && desc->of_map_mode) {
+ 			mode = desc->of_map_mode(pval);
+ 			if (mode == REGULATOR_MODE_INVALID)
+-				pr_err("%s: invalid mode %u\n", np->name, pval);
++				pr_err("%pOFn: invalid mode %u\n", np, pval);
+ 			else
+ 				constraints->initial_mode = mode;
+ 		} else {
+-			pr_warn("%s: mapping for mode %d not defined\n",
+-				np->name, pval);
++			pr_warn("%pOFn: mapping for mode %d not defined\n",
++				np, pval);
  		}
  	}
- }
-diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
-index 7edd7fb540f2..c27c6105c66d 100644
---- a/drivers/memory/samsung/exynos-srom.c
-+++ b/drivers/memory/samsung/exynos-srom.c
-@@ -139,8 +139,8 @@ static int exynos_srom_probe(struct platform_device *pdev)
- 	for_each_child_of_node(np, child) {
- 		if (exynos_srom_configure_bank(srom, child)) {
+ 
+@@ -144,14 +144,14 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 				ret = of_property_read_u32_index(np,
+ 					"regulator-allowed-modes", i, &pval);
+ 				if (ret) {
+-					pr_err("%s: couldn't read allowed modes index %d, ret=%d\n",
+-						np->name, i, ret);
++					pr_err("%pOFn: couldn't read allowed modes index %d, ret=%d\n",
++						np, i, ret);
+ 					break;
+ 				}
+ 				mode = desc->of_map_mode(pval);
+ 				if (mode == REGULATOR_MODE_INVALID)
+-					pr_err("%s: invalid regulator-allowed-modes element %u\n",
+-						np->name, pval);
++					pr_err("%pOFn: invalid regulator-allowed-modes element %u\n",
++						np, pval);
+ 				else
+ 					constraints->valid_modes_mask |= mode;
+ 			}
+@@ -159,7 +159,7 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 				constraints->valid_ops_mask
+ 					|= REGULATOR_CHANGE_MODE;
+ 		} else {
+-			pr_warn("%s: mode mapping not defined\n", np->name);
++			pr_warn("%pOFn: mode mapping not defined\n", np);
+ 		}
+ 	}
+ 
+@@ -197,13 +197,13 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 			if (desc && desc->of_map_mode) {
+ 				mode = desc->of_map_mode(pval);
+ 				if (mode == REGULATOR_MODE_INVALID)
+-					pr_err("%s: invalid mode %u\n",
+-					       np->name, pval);
++					pr_err("%pOFn: invalid mode %u\n",
++					       np, pval);
+ 				else
+ 					suspend_state->mode = mode;
+ 			} else {
+-				pr_warn("%s: mapping for mode %d not defined\n",
+-					np->name, pval);
++				pr_warn("%pOFn: mapping for mode %d not defined\n",
++					np, pval);
+ 			}
+ 		}
+ 
+@@ -351,8 +351,8 @@ int of_regulator_match(struct device *dev, struct device_node *node,
+ 							   match->desc);
+ 			if (!match->init_data) {
+ 				dev_err(dev,
+-					"failed to parse DT for regulator %s\n",
+-					child->name);
++					"failed to parse DT for regulator %pOFn\n",
++					child);
+ 				of_node_put(child);
+ 				return -EINVAL;
+ 			}
+@@ -401,16 +401,16 @@ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 		init_data = of_get_regulator_init_data(dev, child, desc);
+ 		if (!init_data) {
  			dev_err(dev,
--				"Could not decode bank configuration for %s\n",
+-				"failed to parse DT for regulator %s\n",
 -				child->name);
-+				"Could not decode bank configuration for %pOFn\n",
++				"failed to parse DT for regulator %pOFn\n",
 +				child);
- 			bad_bank_config = true;
+ 			break;
  		}
- 	}
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index bd25faf6d13d..24afc36833bf 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -345,7 +345,7 @@ static int load_one_timing(struct tegra_mc *mc,
- 	err = of_property_read_u32(node, "clock-frequency", &tmp);
- 	if (err) {
- 		dev_err(mc->dev,
--			"timing %s: failed to read rate\n", node->name);
-+			"timing %pOFn: failed to read rate\n", node);
- 		return err;
- 	}
  
-@@ -360,8 +360,8 @@ static int load_one_timing(struct tegra_mc *mc,
- 					 mc->soc->num_emem_regs);
- 	if (err) {
- 		dev_err(mc->dev,
--			"timing %s: failed to read EMEM configuration\n",
--			node->name);
-+			"timing %pOFn: failed to read EMEM configuration\n",
-+			node);
- 		return err;
- 	}
+ 		if (desc->of_parse_cb) {
+ 			if (desc->of_parse_cb(child, desc, config)) {
+ 				dev_err(dev,
+-					"driver callback failed to parse DT for regulator %s\n",
+-					child->name);
++					"driver callback failed to parse DT for regulator %pOFn\n",
++					child);
+ 				init_data = NULL;
+ 				break;
+ 			}
+diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
+index 9f27daebd8c8..301e7f695374 100644
+--- a/drivers/regulator/qcom-rpmh-regulator.c
++++ b/drivers/regulator/qcom-rpmh-regulator.c
+@@ -414,7 +414,7 @@ static int rpmh_regulator_init_vreg(struct rpmh_vreg *vreg, struct device *dev,
+ 			break;
  
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 392dc8dd481f..eedb7d48e2ea 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -888,8 +888,8 @@ static int load_one_timing_from_dt(struct tegra_emc *emc,
- 
- 	err = of_property_read_u32(node, "clock-frequency", &value);
- 	if (err) {
--		dev_err(emc->dev, "timing %s: failed to read rate: %d\n",
--			node->name, err);
-+		dev_err(emc->dev, "timing %pOFn: failed to read rate: %d\n",
-+			node, err);
- 		return err;
+ 	if (!rpmh_data->name) {
+-		dev_err(dev, "Unknown regulator %s\n", node->name);
++		dev_err(dev, "Unknown regulator %pOFn\n", node);
+ 		return -EINVAL;
  	}
  
-@@ -900,16 +900,16 @@ static int load_one_timing_from_dt(struct tegra_emc *emc,
- 					 ARRAY_SIZE(timing->emc_burst_data));
- 	if (err) {
- 		dev_err(emc->dev,
--			"timing %s: failed to read emc burst data: %d\n",
--			node->name, err);
-+			"timing %pOFn: failed to read emc burst data: %d\n",
-+			node, err);
- 		return err;
+@@ -423,8 +423,8 @@ static int rpmh_regulator_init_vreg(struct rpmh_vreg *vreg, struct device *dev,
+ 
+ 	vreg->addr = cmd_db_read_addr(rpmh_resource_name);
+ 	if (!vreg->addr) {
+-		dev_err(dev, "%s: could not find RPMh address for resource %s\n",
+-			node->name, rpmh_resource_name);
++		dev_err(dev, "%pOFn: could not find RPMh address for resource %s\n",
++			node, rpmh_resource_name);
+ 		return -ENODEV;
  	}
  
- #define EMC_READ_PROP(prop, dtprop) { \
- 	err = of_property_read_u32(node, dtprop, &timing->prop); \
- 	if (err) { \
--		dev_err(emc->dev, "timing %s: failed to read " #prop ": %d\n", \
--			node->name, err); \
-+		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
-+			node, err); \
- 		return err; \
- 	} \
+@@ -469,13 +469,13 @@ static int rpmh_regulator_init_vreg(struct rpmh_vreg *vreg, struct device *dev,
+ 	rdev = devm_regulator_register(dev, &vreg->rdesc, &reg_config);
+ 	if (IS_ERR(rdev)) {
+ 		ret = PTR_ERR(rdev);
+-		dev_err(dev, "%s: devm_regulator_register() failed, ret=%d\n",
+-			node->name, ret);
++		dev_err(dev, "%pOFn: devm_regulator_register() failed, ret=%d\n",
++			node, ret);
+ 		return ret;
+ 	}
+ 
+-	dev_dbg(dev, "%s regulator registered for RPMh resource %s @ 0x%05X\n",
+-		node->name, rpmh_resource_name, vreg->addr);
++	dev_dbg(dev, "%pOFn regulator registered for RPMh resource %s @ 0x%05X\n",
++		node, rpmh_resource_name, vreg->addr);
+ 
+ 	return 0;
  }
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 667d16dc83ce..09a97a7093e8 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -447,15 +447,15 @@ static void s5m8767_regulator_config_ext_control(struct s5m8767_info *s5m8767,
+ 	}
+ 	if (mode != S5M8767_ENCTRL_USE_GPIO) {
+ 		dev_warn(s5m8767->dev,
+-				"ext-control for %s: mismatched op_mode (%x), ignoring\n",
+-				rdata->reg_node->name, mode);
++				"ext-control for %pOFn: mismatched op_mode (%x), ignoring\n",
++				rdata->reg_node, mode);
+ 		return;
+ 	}
+ 
+ 	if (!rdata->ext_control_gpiod) {
+ 		dev_warn(s5m8767->dev,
+-				"ext-control for %s: GPIO not valid, ignoring\n",
+-			 rdata->reg_node->name);
++				"ext-control for %pOFn: GPIO not valid, ignoring\n",
++			 rdata->reg_node);
+ 		return;
+ 	}
+ 
+@@ -566,8 +566,8 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 
+ 		if (i == ARRAY_SIZE(regulators)) {
+ 			dev_warn(iodev->dev,
+-			"don't know how to configure regulator %s\n",
+-			reg_np->name);
++			"don't know how to configure regulator %pOFn\n",
++			reg_np);
+ 			continue;
+ 		}
+ 
 -- 
 2.17.1
