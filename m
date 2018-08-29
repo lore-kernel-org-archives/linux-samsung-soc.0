@@ -1,38 +1,90 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: arndale: fix HDMI-HPD line handling
-Date: Wed, 29 Aug 2018 20:58:42 +0200
-Message-ID: <20180829185842.kdnsy7zcjkswcjw2@kozik-lap>
-References: <20180726101228.14956-1-a.hajda@samsung.com>
- <CGME20180726101248eucas1p14ede2f90176b93f0bfde1808b494abbd@eucas1p1.samsung.com>
- <20180726101228.14956-2-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20180726101228.14956-2-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2] clk: s2mps11: Fix matching when built as module and DT node contains compatible
+Date: Wed, 29 Aug 2018 21:20:10 +0200
+Message-ID: <20180829192010.14182-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCBKdWwgMjYsIDIwMTggYXQgMTI6MTI6MjhQTSArMDIwMCwgQW5kcnplaiBIYWpkYSB3
-cm90ZToKPiBIRE1JLUhQRCB3YXMgc2V0IGFjdGl2ZSBsb3csIG1vcmVvdmVyIGJ5IGRlZmF1bHQg
-cGluY29udHJvbAo+IGNoaXAgc2V0cyBwdWxsLWRvd24gb24gdGhlIHBpbi4gQXMgYSByZXN1bHQg
-SERNSSBkcml2ZXIKPiBhc3N1bWVzIFRWIGlzIGFsd2F5cyBjb25uZWN0ZWQgcmVnYXJkbGVzcyBv
-ZiBhY3R1YWwgc3RhdGUuCj4gVGhlIHBhdGNoIGZpeGVzIGl0Lgo+IAo+IFNpZ25lZC1vZmYtYnk6
-IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGFyY2gvYXJtL2Jv
-b3QvZHRzL2V4eW5vczUyNTAtYXJuZGFsZS5kdHMgIHwgNCArKystCj4gIGFyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczUyNTAtcGluY3RybC5kdHNpIHwgNSArKysrKwoKVGhhbmtzLCBhcHBsaWVkLgoK
-QmVzdCByZWdhcmRzLApLcnp5c3p0b2YKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+When driver is built as module and DT node contains clocks compatible
+(e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
+module aliases won't match.
+
+The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
+The modalias from driver: platform:s2mps11-clk
+
+The devices are instantiated by parent's MFD.  However both Device Tree
+bindings and parent define the compatible for clocks devices.  In case
+of module matching this DT compatible will be used.
+
+The issue will not happen if this is a built-in (no need for module
+matching) or when clocks DT node does not contain compatible (not
+correct from bindings perspective but working for driver).
+
+Note when backporting to stable kernels: adjust the list of device ID
+entries.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock MFD cells")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+
+---
+
+Changes since v1:
+1. Add Stephen's ack.
+2. Minor language changes to comment.
+
+
+Stephen, can you apply it to clk tree? I think you acked it so I could take
+it... but anyway I cannot combine it with DT changes.
+
+---
+ drivers/clk/clk-s2mps11.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index d44e0eea31ec..0934d3724495 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -245,6 +245,36 @@ static const struct platform_device_id s2mps11_clk_id[] = {
+ };
+ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+ 
++#ifdef CONFIG_OF
++/*
++ * Device is instantiated through parent MFD device and device matching is done
++ * through platform_device_id.
++ *
++ * However if device's DT node contains proper clock compatible and driver is
++ * built as a module, then the *module* matching will be done trough DT aliases.
++ * This requires of_device_id table.  In the same time this will not change the
++ * actual *device* matching so do not add .of_match_table.
++ */
++static const struct of_device_id s2mps11_dt_match[] = {
++	{
++		.compatible = "samsung,s2mps11-clk",
++		.data = (void *)S2MPS11X,
++	}, {
++		.compatible = "samsung,s2mps13-clk",
++		.data = (void *)S2MPS13X,
++	}, {
++		.compatible = "samsung,s2mps14-clk",
++		.data = (void *)S2MPS14X,
++	}, {
++		.compatible = "samsung,s5m8767-clk",
++		.data = (void *)S5M8767X,
++	}, {
++		/* Sentinel */
++	},
++};
++MODULE_DEVICE_TABLE(of, s2mps11_dt_match);
++#endif
++
+ static struct platform_driver s2mps11_clk_driver = {
+ 	.driver = {
+ 		.name  = "s2mps11-clk",
+-- 
+2.14.1
