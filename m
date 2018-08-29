@@ -1,38 +1,37 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] regulator: Convert to using %pOFn instead of device_node.name
-Date: Wed, 29 Aug 2018 09:47:12 +0200
-Message-ID: <CAJKOXPdk9Y3N=_Umy1cpuoEAaMbpZU86tUD7_Qp1APfjitc6Fg@mail.gmail.com>
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-41-robh@kernel.org>
+Subject: Re: [PATCH v5 6/9] ARM: dts: exynos5250: add DSI node
+Date: Wed, 29 Aug 2018 20:51:26 +0200
+Message-ID: <20180829185126.i724zhjexe7ay7wt@kozik-lap>
+References: <20180725154644.25412-1-a.hajda@samsung.com>
+ <CGME20180725154701eucas1p1396ca9e1b9e93868a688b51ec9ca443f@eucas1p1.samsung.com>
+ <20180725154644.25412-7-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180828015252.28511-41-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, sbkim73@samsung.com, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180725154644.25412-7-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Maciej Purski <m.purski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 28 Aug 2018 at 03:55, Rob Herring <robh@kernel.org> wrote:
->
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
->
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Sangbeom Kim <sbkim73@samsung.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/regulator/max8997-regulator.c      |  4 +-
->  drivers/regulator/mc13xxx-regulator-core.c |  2 +-
->  drivers/regulator/of_regulator.c           | 44 +++++++++++-----------
->  drivers/regulator/qcom-rpmh-regulator.c    | 14 +++----
->  drivers/regulator/s5m8767.c                | 12 +++---
-
-For S5M8767:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+T24gV2VkLCBKdWwgMjUsIDIwMTggYXQgMDU6NDY6NDFQTSArMDIwMCwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPiBUaGUgcGF0Y2ggYWRkcyBjb21tb24gcGFydCBvZiBEU0kgbm9kZSBmb3IgRXh5bm9z
+NTI1MCBwbGF0Zm9ybXMKPiBhbmQgYSByZXF1aXJlZCBtaXBpLXBoeSBub2RlLgo+IAo+IFNpZ25l
+ZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9m
+Zi1ieTogTWFjaWVqIFB1cnNraSA8bS5wdXJza2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGFyY2gv
+YXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSB8IDIxICsrKysrKysrKysrKysrKysrKysrKwo+
+ICAxIGZpbGUgY2hhbmdlZCwgMjEgaW5zZXJ0aW9ucygrKQoKVGhhbmtzLCBhcHBsaWVkLgoKQmVz
+dCByZWdhcmRzLApLcnp5c3p0b2YKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
