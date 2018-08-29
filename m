@@ -1,17 +1,17 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 7/9] ARM: dts: exynos5250-arndale: add DSI and panel
- nodes
-Date: Wed, 29 Aug 2018 20:54:46 +0200
-Message-ID: <20180829185446.uhcj5gm3wbcozpbr@kozik-lap>
-References: <20180725154644.25412-1-a.hajda@samsung.com>
- <CGME20180725154702eucas1p1312eaf0253ce9c67de7d9cf3bf43e5f4@eucas1p1.samsung.com>
- <20180725154644.25412-8-a.hajda@samsung.com>
+Subject: Re: [PATCH v2 1/2] ARM: dts: exynos: arndale: use i2c-gpio for
+ HDMI-DDC
+Date: Wed, 29 Aug 2018 20:57:36 +0200
+Message-ID: <20180829185736.2mnag455irawgx35@kozik-lap>
+References: <CAJKOXPe_YKhgm_e0U3uu2PJ2Edg=Zcsjd0FOSFgew5WMMkoGMg@mail.gmail.com>
+ <CGME20180726132213eucas1p221b5ec5eb4a5e9c9d2ff1d76c7b26b2c@eucas1p2.samsung.com>
+ <20180726132209.18127-1-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20180725154644.25412-8-a.hajda@samsung.com>
+In-Reply-To: <20180726132209.18127-1-a.hajda@samsung.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -22,18 +22,18 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Maciej Purski <m.purski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCBKdWwgMjUsIDIwMTggYXQgMDU6NDY6NDJQTSArMDIwMCwgQW5kcnplaiBIYWpkYSB3
-cm90ZToKPiBUaGUgcGF0Y2ggYWRkcyBicmlkZ2UgYW5kIHBhbmVsIG5vZGVzLgo+IEl0IGFkZHMg
-YWxzbyBEU0kgcHJvcGVydGllcyBzcGVjaWZpYyBmb3IgYXJuZGFsZSBib2FyZCBhbmQKPiByZWd1
-bGF0b3JzIHJlcXVpcmVkIGJ5IHRoZSBicmlkZ2UuCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnpl
-aiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBNYWNpZWogUHVy
-c2tpIDxtLnB1cnNraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNTI1MC1hcm5kYWxlLmR0cyB8IDYxICsrKysrKysrKysrKysrKysrKysrKysrKwo+ICAxIGZp
-bGUgY2hhbmdlZCwgNjEgaW5zZXJ0aW9ucygrKQoKVGhhbmtzLCBhcHBsaWVkLgoKQmVzdCByZWdh
-cmRzLApLcnp5c3p0b2YKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+T24gVGh1LCBKdWwgMjYsIDIwMTggYXQgMDM6MjI6MDlQTSArMDIwMCwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPiBIRE1JLUREQyBmb3IgdW5rbm93biByZWFzb25zIGRvZXNuJ3Qgd29yayB3aXRoIEV4
+eW5vcyBJMkMKPiBjb250cm9sbGVycy4gRm9ydHVuYXRlbHkgaTJjLWdwaW8gY29tZXMgdG8gdGhl
+IHJlc2N1ZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1
+bmcuY29tPgo+IC0tLQo+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLWFybmRhbGUuZHRz
+ICB8IDI4ICsrKysrKysrKysrKysrKystLS0tLS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
+czUyNTAtcGluY3RybC5kdHNpIHwgIDYgKysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCAyNiBpbnNl
+cnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQoKVGhhbmtzLCBhcHBsaWVkLgoKQmVzdCByZWdhcmRz
+LApLcnp5c3p0b2YKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
