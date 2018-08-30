@@ -1,38 +1,89 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/2] ARM: dts: exynos: Mark 1GHz CPU OPP as suspend OPP
-Date: Wed, 29 Aug 2018 21:32:42 +0200
-Message-ID: <20180829193242.ddqaeyv4neeqfnw3@kozik-lap>
-References: <20180807104757eucas1p201bd787714f50a798ee7457bdaf2c2f9~IlG8LJVcj1319313193eucas1p2R@eucas1p2.samsung.com>
- <20180807104849.15384-1-m.szyprowski@samsung.com>
- <CGME20180807104908eucas1p13c3a771369e556e884c81f648d80ad44@eucas1p1.samsung.com>
- <20180807104908eucas1p13c3a771369e556e884c81f648d80ad44~IlH93f82B2008420084eucas1p1o@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180807104908eucas1p13c3a771369e556e884c81f648d80ad44~IlH93f82B2008420084eucas1p1o@eucas1p1.samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC as unstable
+Date: Thu, 30 Aug 2018 20:02:05 +0200
+Message-ID: <20180830180205.18121-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 12:48:49PM +0200, Marek Szyprowski wrote:
-> 1GHz CPU OPP is the default boot value for the Exynos5250 SOC, so mark it
-> as suspend OPP. This fixes suspend/resume on Samsung Exynos5250 Snow
-> Chomebook, which was broken since switching to generic cpufreq-dt driver
-> in v4.3.
-> 
-> CC: <stable@vger.kernel.org> # 4.3.x: cd6f55457eb4  ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
-> CC: <stable@vger.kernel.org> # 4.3.x: 672f33198bee  arm: dts: exynos: Add missing cooling device properties for CPUs
-> CC: <stable@vger.kernel.org> # 4.3.x
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+Samsung Exynos SoCs and boards related bindings evolved since the initial
+introduction, but initially the bindings were minimal and a bit incomplete
+(they never described all the hardware modules available in the SoCs).
+Since then some significant (not fully compatible) changes have been
+already committed a few times (like gpio replaced by pinctrl, display ddc,
+mfc reserved memory, some core clocks added to various hardware modules,
+added more required nodes).
 
-Thanks, applied.
+On the other side there are no boards which have device tree embedded in
+the bootloader. Device tree blob is always compiled from the kernel tree
+and updated together with the kernel image.
 
-Best regards,
-Krzysztof
+Thus to avoid further adding a bunch of workarounds for old/missing
+bindings, make development of new platforms easier and allow to make
+cleanup of the existing code and device tree files, lets mark some
+Samsung Exynos SoC platform bindings as unstable. This means that
+bindings can may change at any time and users should use the dtb file
+compiled from the same kernel source tree as the kernel image.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+[krzk: Explicitly list unstable bindings instead of marking entire
+Exynos]
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+---
+
+Changes since v2:
+1. Add tags.
+
+Changes since v1:
+1. Rebase
+2. Add specific compatibles to mark unstable.
+
+v1 is here:
+https://patchwork.kernel.org/patch/9477963/
+
+Previous tags (not applying due to change in contents):
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ .../devicetree/bindings/arm/samsung/exynos.txt     | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos.txt
+
+diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos.txt b/Documentation/devicetree/bindings/arm/samsung/exynos.txt
+new file mode 100644
+index 000000000000..7410cb79e4b2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/samsung/exynos.txt
+@@ -0,0 +1,26 @@
++Samsung Exynos SoC Family Device Tree Bindings
++---------------------------------------------------------------
++
++Work in progress statement:
++
++Following Device Tree files and bindings applying to Samsung Exynos SoCs and
++boards are considered "unstable":
++
++ - samsung,exynos5433* (all compatibles related to Exynos5433)
++ - samsung,exynos7* (all compatibles related to Exynos7)
++ - samsung,tm2-audio
++ - samsung,mfc-v10
++ - samsung,exynos*-mipi-dsi
++ - samsung,exynos5-dp
++ - samsung,exynos*-hdmi
++ - samsung,exynos*-hdmiddc
++ - samsung,exynos*-hdmiphy
++ - samsung,exynos*-mixer
++ - samsung,exynos*-fimd
++
++Any Samsung Exynos device tree binding mentioned may change at any time. Be
++sure to use a device tree binary and a kernel image generated from the same
++source tree.
++
++Please refer to Documentation/devicetree/bindings/ABI.txt for a definition of a
++stable binding/ABI.
+-- 
+2.14.1
