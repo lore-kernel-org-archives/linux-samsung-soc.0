@@ -1,45 +1,51 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC
- as unstable
-Date: Fri, 31 Aug 2018 16:02:00 +0200
-Message-ID: <CAJKOXPfi8_G9LcjVCJU+N6BNwQSvkVOrBuqeqxsx_EihzU+cpQ@mail.gmail.com>
-References: <20180830180205.18121-1-krzk@kernel.org> <20180831104048.GA6545@jack.zhora.eu>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: Convert to using %pOFn instead of
+ device_node.name
+Date: Mon, 3 Sep 2018 12:04:52 +0530
+Message-ID: <20180903063452.mmybo2f7izvqjhci@vireshk-i7>
+References: <20180828015252.28511-1-robh@kernel.org>
+ <20180828015252.28511-14-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180831104048.GA6545@jack.zhora.eu>
+Content-Disposition: inline
+In-Reply-To: <20180828015252.28511-14-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andi Shyti <andi@etezian.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, pankaj.dubey@samsung.com, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, s.nawrocki@samsung.com, alim.akhtar@samsung.com, arnd@arndb.de, olof@lixom.net
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 31 Aug 2018 at 13:18, Andi Shyti <andi@etezian.org> wrote:
->
-> Hi Krzysztof,
->
-> On Thu, Aug 30, 2018 at 08:02:05PM +0200, Krzysztof Kozlowski wrote:
-> > Samsung Exynos SoCs and boards related bindings evolved since the initial
-> > introduction, but initially the bindings were minimal and a bit incomplete
-> > (they never described all the hardware modules available in the SoCs).
-> > Since then some significant (not fully compatible) changes have been
-> > already committed a few times (like gpio replaced by pinctrl, display ddc,
-> > mfc reserved memory, some core clocks added to various hardware modules,
-> > added more required nodes).
-> >
-> > On the other side there are no boards which have device tree embedded in
-> > the bootloader. Device tree blob is always compiled from the kernel tree
-> > and updated together with the kernel image.
-> >
-> > Thus to avoid further adding a bunch of workarounds for old/missing
-> > bindings, make development of new platforms easier and allow to make
-> > cleanup of the existing code and device tree files, lets mark some
-> > Samsung Exynos SoC platform bindings as unstable. This means that
-> > bindings can may change at any time and users should use the dtb file
->            ^^^^^^^
-> you have a typo here, other than that I agree with the patch:
->
-> Acked-by: Andi Shyti <andi@etezian.org>
+On 27-08-18, 20:52, Rob Herring wrote:
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+> 
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index 5d31c2db12a3..dbecd7667db2 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -611,8 +611,8 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+>  	for_each_compatible_node(np, NULL, "samsung,s5pv210-dmc") {
+>  		id = of_alias_get_id(np, "dmc");
+>  		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
+> -			pr_err("%s: failed to get alias of dmc node '%s'\n",
+> -				__func__, np->name);
+> +			pr_err("%s: failed to get alias of dmc node '%pOFn'\n",
+> +				__func__, np);
+>  			of_node_put(np);
+>  			return id;
+>  		}
 
-Thanks for spotting this.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Krzysztof
+-- 
+viresh
