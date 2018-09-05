@@ -1,14 +1,15 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Cedric Roux <sed@free.fr>
 Subject: Re: [PATCH] mini2440 MMC correct write protect detection
-Date: Wed, 5 Sep 2018 19:45:13 +0200
-Message-ID: <20180905174513.6w7z5jsc2e6ndntv@kozik-lap>
+Date: Wed, 5 Sep 2018 21:45:15 +0200
+Message-ID: <204cf57b-a4f2-76b9-766c-20905596ca4e@free.fr>
 References: <85dac0df-2b75-9cc4-fde1-f62136974a1e@free.fr>
+ <20180905174513.6w7z5jsc2e6ndntv@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <85dac0df-2b75-9cc4-fde1-f62136974a1e@free.fr>
+In-Reply-To: <20180905174513.6w7z5jsc2e6ndntv@kozik-lap>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,40 +19,54 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Cedric Roux <sed@free.fr>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 10:36:35PM +0200, Cedric Roux wrote:
-> mini2440 MMC correct write protect detection
-> 
-> The mini2440 computer uses "active high" to signal that the "write protect"
-> of the inserted MMC is set. The current code uses the opposite, leading to
-> a wrong detection of write protection. The solution is simply to use
-> ".wprotect_invert = 1" in the description of the MMC.
-
-I looked at Mini2440 schematics found on the net and it looks like the
-pin (just like CD) is active low. However I might be looking at wrong
-schematics or missing some things.
-
-This is really an old code so I am just quite surprised that it was not
-reported before. Not able to write to SD card (for example if it is
-rootfs) should be spotted quite early.
-
-Best regards,
-Krzysztof
-
-
-> 
-> Signed-off-by: Cedric Roux <sed@free.fr>
-> 
-> --- arch/arm/mach-s3c24xx/mach-mini2440.c.orig	2018-09-04 22:15:20.696087528 +0200
-> +++ arch/arm/mach-s3c24xx/mach-mini2440.c	2018-09-04 22:15:32.708088023 +0200
-> @@ -232,6 +232,7 @@ static struct s3c2410fb_mach_info mini24
->  /* MMC/SD  */
->  
->  static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
-> +   .wprotect_invert = 1,
->     .gpio_detect   = S3C2410_GPG(8),
->     .gpio_wprotect = S3C2410_GPH(8),
->     .set_power     = NULL,
+T24gMDkvMDUvMjAxOCAwNzo0NSBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBJIGxv
+b2tlZCBhdCBNaW5pMjQ0MCBzY2hlbWF0aWNzIGZvdW5kIG9uIHRoZSBuZXQgYW5kIGl0IGxvb2tz
+IGxpa2UgdGhlCj4gcGluIChqdXN0IGxpa2UgQ0QpIGlzIGFjdGl2ZSBsb3cuIEhvd2V2ZXIgSSBt
+aWdodCBiZSBsb29raW5nIGF0IHdyb25nCj4gc2NoZW1hdGljcyBvciBtaXNzaW5nIHNvbWUgdGhp
+bmdzLgoKSSBoYXZlIHRoZSBzYW1lIHNjaGVtYXRpY3MgSSB0aGluay4KQnV0IEkgaGF2ZSBhIHJl
+YWwgbWluaTI0NDAgYW5kIEkgYW0gcG9zaXRpdmVseSBzdXJlIHRoYXQgV1AKaXMgYWN0aXZlIGhp
+Z2guIENEIGlzIGFjdGl2ZSBsb3csIHllcy4KCkRvIHlvdSBrbm93IHNvbWVvbmUgdGhhdCB5b3Ug
+dHJ1c3QgdGhhdCBjb3VsZCBjb25maXJtIHRoaXM/Cgo+IAo+IFRoaXMgaXMgcmVhbGx5IGFuIG9s
+ZCBjb2RlIHNvIEkgYW0ganVzdCBxdWl0ZSBzdXJwcmlzZWQgdGhhdCBpdCB3YXMgbm90Cj4gcmVw
+b3J0ZWQgYmVmb3JlLiBOb3QgYWJsZSB0byB3cml0ZSB0byBTRCBjYXJkIChmb3IgZXhhbXBsZSBp
+ZiBpdCBpcwo+IHJvb3Rmcykgc2hvdWxkIGJlIHNwb3R0ZWQgcXVpdGUgZWFybHkuCgpJIGRvbid0
+IHRoaW5rIGFueW9uZSB0cmllZCBhIHJlY2VudCBrZXJuZWwsIHRoYXQncyB3aHkuCkFuZCB0aGUg
+bWluaTI0NDAgaGFzIGJlZW4ga2luZCBvZiByZXBsYWNlZCBieSB0aGUgbWluaTY0MTAsCkknbSBu
+b3Qgc3VyZSBpdCdzIHN0aWxsIGluIHByb2R1Y3Rpb24uIEFwYXJ0IGZyb20gbWUsIEkKZG9uJ3Qg
+dGhpbmsgYW55b25lIHN0aWxsIHVzZXMgaXQuIElmIHNvbWVvbmUgZG9lcywgSQpoZWF2aWx5IGRv
+dWJ0IHRoYXQgcGVyc29uIHdpbGwgdHJ5IHRvIGJvb3QgYSA0LnNvbWV0aGluZwprZXJuZWwgb24g
+aXQuCgpJbiB0aGUgMi42LjMyLjYzIGtlcm5lbCBpdCdzIGFsbCBkaWZmZXJlbnQuCgpXZSBoYXZl
+IHMzY21jaV9nZXRfcm8gaW4gZHJpdmVycy9tbWMvaG9zdC9zM2NtY2kuYwp0aGF0IGNhbGxzIHMz
+YzI0MTBfZ3Bpb19nZXRwaW4gaW4gYXJjaC9hcm0vcGxhdC1zM2MyNHh4L2dwaW8uYwp0aGF0IHJl
+dHVybnMgdGhlIFdQIGJpdCBhcyBpcyByZWFkIGZyb20gdGhlIEdQSU8uCnMzY21jaV9nZXRfcm8g
+d2lsbCByZXR1cm4gPiAwIGlmIHRoZSBiaXQgaXMgc2V0IGFuZAp3cHJvdGVjdF9pbnZlcnQgaXMg
+bm90IHNldC4gRm9yIG1pbmkyNDQwLCB3cHJvdGVjdF9pbnZlcnQKaXMgbm90IHNldCAoYWN0dWFs
+bHkgaXQgZG9lcyBub3Qgc2VlbSB0byBiZSBzZXQgYW55d2hlcmUKaW4gdGhlIGtlcm5lbCB0cmVl
+LCBpcyBpdCB1c2VkIGF0IGFsbCBpbiAyLjYuMzIuNjM/KS4gU28KaXQncyByZXR1cm5lZCBhcyBp
+cy4gR2V0dGluZyAxIGZyb20gR1BJTyBtZWFucyBSZWFkIE9ubHkuCgpUaGVuIHdlIGhhdmUgczNj
+bWNpX2NhcmRfcHJlc2VudCwgYWxzbyBpbiBkcml2ZXJzL21tYy9ob3N0L3MzY21jaS5jLAp0aGF0
+IHJlYWRzIHRoZSBDRCBiaXQgZnJvbSB0aGUgR1BJTywgYnV0IHRha2UgdGhlIG9wcG9zaXRlIHZh
+bHVlCmFuZCB0aGVuIHJldHVybnMgdGhlIG9wcG9zaXRlIG9mIHRoZSByZXN1bHQgaWYgZGV0ZWN0
+X2ludmVydAppcyAxLiBGb3IgbWluaTI0NDAgaXQncyBub3QgMSwgYnV0IDAuIFNvIHdlIHJldHVy
+biB0aGUgb3Bwb3NpdGUKb2YgdGhlIENEIGJpdCByZWFkIGZyb20gdGhlIEdQSU8sIHdoaWNoIG1l
+YW5zIGFjdGl2ZSBsb3cuCgpJJ20gbm90IGFuIGVsZWN0cm9uaWMgcHJvZmVzc2lvbmFsIHNvIEkg
+ZG9uJ3Qga25vdyBob3cgdG8gaW50ZXJwcmV0CnRoZSBzY2hlbWF0aWNzLiBNeSBleHBlcmltZW50
+IHdpdGggbXkgbWluaTI0NDAgc2F5cyB0aGF0OgotIG5vIGNhcmQ6ICAgICAgICAgV1AgYml0ID0g
+MSwgQ0QgYml0ID0gMQotIGNhcmQgcmVhZC93cml0ZTogV1AgYml0ID0gMCwgQ0QgYml0ID0gMAot
+IGNhcmQgcmVhZCBvbmx5OiAgV1AgYml0ID0gMSwgQ0QgYml0ID0gMApCeSAiV1AgYml0IiBJIG1l
+YW4gdGhlIHZhbHVlIHJlYWQgZnJvbSBHUEg4LgpCeSAiQ0QgYml0IiBJIG1lYW4gdGhlIHZhbHVl
+IHJlYWQgZnJvbSBHUEc4LgoKU28gSSBkb24ndCBrbm93IHdoYXQgdG8gZG8uIElmIHlvdSBkb24n
+dCB0cnVzdCBtZSBhbmQgeW91IGtub3cKbm8gb25lIHRoYXQgeW91IHRydXN0IHRoYXQgd291bGQg
+Y29uZmlybSBteSBmaW5kaW5ncywgdGhlbiBpdCdzCmdhbWUgb3Zlci4KCkkgY2FuIGRvIHRoaW5n
+cyB0aGF0IHlvdSBhc2sgbWUgdG8gZG8gdG8gcHJvdmUgbXkgY2xhaW1zLgoKSSBjYW4gcHJvdmlk
+ZSBhIHNpbXBsZSB1c2VybGFuZCBwcm9ncmFtIHRvIGJlIHJ1biBvbiBhIG1pbmkyNDQwCnRoYXQg
+ZGVtb25zdHJhdGVzIHRoaXMgYXMgd2VsbCAob3BlbiAvZGV2L21lbSwgbW1hcCAweDU2MDAwMDAw
+LApyZWFkcyBHUEcgYW5kIEdQSCBhbmQgcHJpbnRzIHRoZSB2YWx1ZXMpLgoKUmVnYXJkcywKQ8Op
+ZHJpYy4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
+bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
+ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
+LWFybS1rZXJuZWwK
