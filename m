@@ -1,37 +1,68 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] mfd: max8997: Disable interrupt handling for
- suspend/resume cycle
-Date: Wed, 5 Sep 2018 18:29:42 +0200
-Message-ID: <20180905162942.huedb7grtqvp3xpr@kozik-lap>
-References: <CGME20180905143815eucas1p29cb4247cfef8180433d9b4627f5ff883@eucas1p2.samsung.com>
- <20180905143606.5916-1-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Subject: [RFT] ARM: dts: exynos: Remove double SD card detect pin inversion
+Date: Wed,  5 Sep 2018 19:40:24 +0200
+Message-ID: <20180905174024.28366-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180905143606.5916-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Maciej Purski <m.purski@samsung.com>, Simon Shields <simon@lineageos.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 04:36:06PM +0200, Marek Szyprowski wrote:
-> Disable IRQs during suspend/resume cycle to ensure handling of wakeup
-> interrupts (i.e. RTC wake alarm) after max8997_resume(). This way it can
-> be properly handled when I2C bus is finally available. This pattern is
-> also used in other MAX PMIC MFD drivers.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> changelog:
-> v2:
-> - reordered the sequence of operation as suggested by Krzysztof Kozlowski
-> ---
->  drivers/mfd/max8997.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+The SDHCI standard, MMC host controller bindings and MMC core defines
+card detect pin as active low.  Therefore there is no point to invert it
+twice.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Best regards,
-Krzysztof
+---
+
+Tested only on Odroid U3. Tests on other platforms would be appreciated.
+---
+ arch/arm/boot/dts/exynos4210-universal_c210.dts | 3 +--
+ arch/arm/boot/dts/exynos4412-midas.dtsi         | 3 +--
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 3 +--
+ 3 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index 4e6ff97e1ec4..249bfbff1e20 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -537,8 +537,7 @@
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
+ 	pinctrl-names = "default";
+ 	vmmc-supply = <&ldo5_reg>;
+-	cd-gpios = <&gpx3 4 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ };
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+index c0476c290977..aed2f2e2b0d1 100644
+--- a/arch/arm/boot/dts/exynos4412-midas.dtsi
++++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+@@ -1269,8 +1269,7 @@
+ 
+ &sdhci_2 {
+ 	bus-width = <4>;
+-	cd-gpios = <&gpx3 4 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>;
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sdhci2_cd>;
+ 	pinctrl-names = "default";
+ 	vmmc-supply = <&ldo21_reg>;
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index a09e46c9dbc0..2caa3132f34e 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -539,8 +539,7 @@
+ 	pinctrl-names = "default";
+ 	vmmc-supply = <&ldo21_reg>;
+ 	vqmmc-supply = <&ldo4_reg>;
+-	cd-gpios = <&gpk2 2 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpk2 2 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ };
+ 
+-- 
+2.14.1
