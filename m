@@ -1,40 +1,43 @@
-From: Cedric Roux <sed@free.fr>
-Subject: [PATCH] mini2440 MMC correct write protect detection
-Date: Tue, 4 Sep 2018 22:36:35 +0200
-Message-ID: <85dac0df-2b75-9cc4-fde1-f62136974a1e@free.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] mfd: max8997: Enale irq-wakeup unconditionally
+Date: Wed, 05 Sep 2018 11:32:43 +0200
+Message-ID: <20180905093243.3861-1-m.szyprowski@samsung.com>
+References: <CGME20180905093305eucas1p19cbdec510c32cedaf9a9de58fd2de9e1@eucas1p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-mini2440 MMC correct write protect detection
+IRQ wakeup support for MAX8997 driver was initially configured by
+respective property in pdata. However, after the driver conversion to
+device-tree, setting it was left as 'todo'. Nowadays most of other MAX PMIC
+MFD drivers initialized from device-tree simply assume unconditionally that
+they can be an irq wakeup source, so enable wakeup support also for
+MAX8997. This fixes support for wakeup from MAX8997 RTC alarm.
 
-The mini2440 computer uses "active high" to signal that the "write protect"
-of the inserted MMC is set. The current code uses the opposite, leading to
-a wrong detection of write protection. The solution is simply to use
-".wprotect_invert = 1" in the description of the MMC.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/mfd/max8997.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Signed-off-by: Cedric Roux <sed@free.fr>
-
---- arch/arm/mach-s3c24xx/mach-mini2440.c.orig	2018-09-04 22:15:20.696087528 +0200
-+++ arch/arm/mach-s3c24xx/mach-mini2440.c	2018-09-04 22:15:32.708088023 +0200
-@@ -232,6 +232,7 @@ static struct s3c2410fb_mach_info mini24
- /* MMC/SD  */
+diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
+index 3f554c447521..7155e991cb82 100644
+--- a/drivers/mfd/max8997.c
++++ b/drivers/mfd/max8997.c
+@@ -152,12 +152,7 @@ static struct max8997_platform_data *max8997_i2c_parse_dt_pdata(
+ 		return ERR_PTR(-ENOMEM);
  
- static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
-+   .wprotect_invert = 1,
-    .gpio_detect   = S3C2410_GPG(8),
-    .gpio_wprotect = S3C2410_GPH(8),
-    .set_power     = NULL,
+ 	pd->ono = irq_of_parse_and_map(dev->of_node, 1);
+-
+-	/*
+-	 * ToDo: the 'wakeup' member in the platform data is more of a linux
+-	 * specfic information. Hence, there is no binding for that yet and
+-	 * not parsed here.
+-	 */
++	pd->wakeup = true;
+ 
+ 	return pd;
+ }
+-- 
+2.17.1
