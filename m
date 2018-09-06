@@ -1,72 +1,91 @@
-From: Cedric Roux <sed@free.fr>
-Subject: Re: [PATCH] mini2440 MMC correct write protect detection
-Date: Wed, 5 Sep 2018 21:45:15 +0200
-Message-ID: <204cf57b-a4f2-76b9-766c-20905596ca4e@free.fr>
-References: <85dac0df-2b75-9cc4-fde1-f62136974a1e@free.fr>
- <20180905174513.6w7z5jsc2e6ndntv@kozik-lap>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [BUG BISECT] NFS root failure (NULL pointer)
+Date: Thu, 6 Sep 2018 09:10:31 +0200
+Message-ID: <CAJKOXPc49jh8RCDvn2Meci9iDcnnwGEHo6F7RuhkXpen=f_E8w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180905174513.6w7z5jsc2e6ndntv@kozik-lap>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Howells <dhowells@redhat.com>, Eric Biggers <ebiggers@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDkvMDUvMjAxOCAwNzo0NSBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBJIGxv
-b2tlZCBhdCBNaW5pMjQ0MCBzY2hlbWF0aWNzIGZvdW5kIG9uIHRoZSBuZXQgYW5kIGl0IGxvb2tz
-IGxpa2UgdGhlCj4gcGluIChqdXN0IGxpa2UgQ0QpIGlzIGFjdGl2ZSBsb3cuIEhvd2V2ZXIgSSBt
-aWdodCBiZSBsb29raW5nIGF0IHdyb25nCj4gc2NoZW1hdGljcyBvciBtaXNzaW5nIHNvbWUgdGhp
-bmdzLgoKSSBoYXZlIHRoZSBzYW1lIHNjaGVtYXRpY3MgSSB0aGluay4KQnV0IEkgaGF2ZSBhIHJl
-YWwgbWluaTI0NDAgYW5kIEkgYW0gcG9zaXRpdmVseSBzdXJlIHRoYXQgV1AKaXMgYWN0aXZlIGhp
-Z2guIENEIGlzIGFjdGl2ZSBsb3csIHllcy4KCkRvIHlvdSBrbm93IHNvbWVvbmUgdGhhdCB5b3Ug
-dHJ1c3QgdGhhdCBjb3VsZCBjb25maXJtIHRoaXM/Cgo+IAo+IFRoaXMgaXMgcmVhbGx5IGFuIG9s
-ZCBjb2RlIHNvIEkgYW0ganVzdCBxdWl0ZSBzdXJwcmlzZWQgdGhhdCBpdCB3YXMgbm90Cj4gcmVw
-b3J0ZWQgYmVmb3JlLiBOb3QgYWJsZSB0byB3cml0ZSB0byBTRCBjYXJkIChmb3IgZXhhbXBsZSBp
-ZiBpdCBpcwo+IHJvb3Rmcykgc2hvdWxkIGJlIHNwb3R0ZWQgcXVpdGUgZWFybHkuCgpJIGRvbid0
-IHRoaW5rIGFueW9uZSB0cmllZCBhIHJlY2VudCBrZXJuZWwsIHRoYXQncyB3aHkuCkFuZCB0aGUg
-bWluaTI0NDAgaGFzIGJlZW4ga2luZCBvZiByZXBsYWNlZCBieSB0aGUgbWluaTY0MTAsCkknbSBu
-b3Qgc3VyZSBpdCdzIHN0aWxsIGluIHByb2R1Y3Rpb24uIEFwYXJ0IGZyb20gbWUsIEkKZG9uJ3Qg
-dGhpbmsgYW55b25lIHN0aWxsIHVzZXMgaXQuIElmIHNvbWVvbmUgZG9lcywgSQpoZWF2aWx5IGRv
-dWJ0IHRoYXQgcGVyc29uIHdpbGwgdHJ5IHRvIGJvb3QgYSA0LnNvbWV0aGluZwprZXJuZWwgb24g
-aXQuCgpJbiB0aGUgMi42LjMyLjYzIGtlcm5lbCBpdCdzIGFsbCBkaWZmZXJlbnQuCgpXZSBoYXZl
-IHMzY21jaV9nZXRfcm8gaW4gZHJpdmVycy9tbWMvaG9zdC9zM2NtY2kuYwp0aGF0IGNhbGxzIHMz
-YzI0MTBfZ3Bpb19nZXRwaW4gaW4gYXJjaC9hcm0vcGxhdC1zM2MyNHh4L2dwaW8uYwp0aGF0IHJl
-dHVybnMgdGhlIFdQIGJpdCBhcyBpcyByZWFkIGZyb20gdGhlIEdQSU8uCnMzY21jaV9nZXRfcm8g
-d2lsbCByZXR1cm4gPiAwIGlmIHRoZSBiaXQgaXMgc2V0IGFuZAp3cHJvdGVjdF9pbnZlcnQgaXMg
-bm90IHNldC4gRm9yIG1pbmkyNDQwLCB3cHJvdGVjdF9pbnZlcnQKaXMgbm90IHNldCAoYWN0dWFs
-bHkgaXQgZG9lcyBub3Qgc2VlbSB0byBiZSBzZXQgYW55d2hlcmUKaW4gdGhlIGtlcm5lbCB0cmVl
-LCBpcyBpdCB1c2VkIGF0IGFsbCBpbiAyLjYuMzIuNjM/KS4gU28KaXQncyByZXR1cm5lZCBhcyBp
-cy4gR2V0dGluZyAxIGZyb20gR1BJTyBtZWFucyBSZWFkIE9ubHkuCgpUaGVuIHdlIGhhdmUgczNj
-bWNpX2NhcmRfcHJlc2VudCwgYWxzbyBpbiBkcml2ZXJzL21tYy9ob3N0L3MzY21jaS5jLAp0aGF0
-IHJlYWRzIHRoZSBDRCBiaXQgZnJvbSB0aGUgR1BJTywgYnV0IHRha2UgdGhlIG9wcG9zaXRlIHZh
-bHVlCmFuZCB0aGVuIHJldHVybnMgdGhlIG9wcG9zaXRlIG9mIHRoZSByZXN1bHQgaWYgZGV0ZWN0
-X2ludmVydAppcyAxLiBGb3IgbWluaTI0NDAgaXQncyBub3QgMSwgYnV0IDAuIFNvIHdlIHJldHVy
-biB0aGUgb3Bwb3NpdGUKb2YgdGhlIENEIGJpdCByZWFkIGZyb20gdGhlIEdQSU8sIHdoaWNoIG1l
-YW5zIGFjdGl2ZSBsb3cuCgpJJ20gbm90IGFuIGVsZWN0cm9uaWMgcHJvZmVzc2lvbmFsIHNvIEkg
-ZG9uJ3Qga25vdyBob3cgdG8gaW50ZXJwcmV0CnRoZSBzY2hlbWF0aWNzLiBNeSBleHBlcmltZW50
-IHdpdGggbXkgbWluaTI0NDAgc2F5cyB0aGF0OgotIG5vIGNhcmQ6ICAgICAgICAgV1AgYml0ID0g
-MSwgQ0QgYml0ID0gMQotIGNhcmQgcmVhZC93cml0ZTogV1AgYml0ID0gMCwgQ0QgYml0ID0gMAot
-IGNhcmQgcmVhZCBvbmx5OiAgV1AgYml0ID0gMSwgQ0QgYml0ID0gMApCeSAiV1AgYml0IiBJIG1l
-YW4gdGhlIHZhbHVlIHJlYWQgZnJvbSBHUEg4LgpCeSAiQ0QgYml0IiBJIG1lYW4gdGhlIHZhbHVl
-IHJlYWQgZnJvbSBHUEc4LgoKU28gSSBkb24ndCBrbm93IHdoYXQgdG8gZG8uIElmIHlvdSBkb24n
-dCB0cnVzdCBtZSBhbmQgeW91IGtub3cKbm8gb25lIHRoYXQgeW91IHRydXN0IHRoYXQgd291bGQg
-Y29uZmlybSBteSBmaW5kaW5ncywgdGhlbiBpdCdzCmdhbWUgb3Zlci4KCkkgY2FuIGRvIHRoaW5n
-cyB0aGF0IHlvdSBhc2sgbWUgdG8gZG8gdG8gcHJvdmUgbXkgY2xhaW1zLgoKSSBjYW4gcHJvdmlk
-ZSBhIHNpbXBsZSB1c2VybGFuZCBwcm9ncmFtIHRvIGJlIHJ1biBvbiBhIG1pbmkyNDQwCnRoYXQg
-ZGVtb25zdHJhdGVzIHRoaXMgYXMgd2VsbCAob3BlbiAvZGV2L21lbSwgbW1hcCAweDU2MDAwMDAw
-LApyZWFkcyBHUEcgYW5kIEdQSCBhbmQgcHJpbnRzIHRoZSB2YWx1ZXMpLgoKUmVnYXJkcywKQ8Op
-ZHJpYy4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
-bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
-LWFybS1rZXJuZWwK
+Hi,
+
+Today's next fails to mount NFS root under my ARM targets and fails to
+mount root from file image under QMU.
+
+[ 21.512866] Unable to handle kernel NULL pointer dereference at
+virtual address 00000000
+[ 21.695484] [<c03bcc04>] (nfs_fs_mount) from [<c02cf6a4>]
+(legacy_get_tree+0x34/0xec)
+[ 21.703225] [<c02cf6a4>] (legacy_get_tree) from [<c029442c>]
+(vfs_get_tree+0x64/0x180)
+[ 21.711119] [<c029442c>] (vfs_get_tree) from [<c02b9140>]
+(do_mount+0x21c/0x958)
+[ 21.718478] [<c02b9140>] (do_mount) from [<c02b9c38>] (ksys_mount+0x8c/0xbc)
+[ 21.725513] [<c02b9c38>] (ksys_mount) from [<c0101000>]
+(ret_fast_syscall+0x0/0x28)
+
+Full log from ARM (NFS root):
+https://krzk.eu/#/builders/25/builds/750/steps/12/logs/serial0
+
+The NFS root failure bisected to:
+bae551929c5433bd56ec4dcb97c7d4a50153d357 is the first bad commit
+commit bae551929c5433bd56ec4dcb97c7d4a50153d357
+Author: David Howells <dhowells@redhat.com>
+Date:   Tue Jul 10 21:43:37 2018 +0100
+
+    vfs: Separate changing mount flags full remount
+
+    Separate just the changing of mount flags (MS_REMOUNT|MS_BIND) from full
+    remount because the mount data will get parsed with the new fs_context
+    stuff prior to doing a remount - and this causes the syscall to fail under
+    some circumstances.
+
+The QEMU issue seems slightly different and I did not bisect it. The
+QEMU just cannot find rootfs:
+[    1.008052] Filesystem requires source device
+[    1.008513] VFS: Cannot open root device "mmcblk0" or
+unknown-block(179,0): error -2
+[    1.008790] Please append a correct "root=" boot option; here are
+the available partitions:
+[    1.009300] 0100           16384 ram0
+[    1.009337]  (driver?)
+[    1.009806] fe00            5120 vda
+[    1.009843]  driver: virtio_blk
+[    1.010296] b300          110592 mmcblk0
+[    1.010319]  driver: mmcblk
+[    1.010859] Kernel panic - not syncing: VFS: Unable to mount root
+fs on unknown-block(179,0)
+[    1.011580] ---[ end Kernel panic - not syncing: VFS: Unable to
+mount root fs on unknown-block(179,0) ]---
+
+
+
+Boards config:
+1. Arch ARM Linux
+2. exynos_defconfig
+  - Odroid HC1
+    ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC
+    Systemd: v239
+  - Odroid U3
+    ARMv7, quad-core, Exynos4412 SoC
+    Systemd: v238
+  - Odroid XU
+    ARMv7, octa-core (Cortex-A7+A15) but only A15 working, Exynos5410 SoC
+    Systemd: v236
+  - Odroid XU3
+    ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC
+    Systemd: v236
+3. Custom VF50 defconfig
+  - Toradex Colibri VF50 on Iris board
+    ARMv7, UP, Cortext-A5, NXP VF500
+    Systemd: v232
+4. All boards boot from TFTP with NFS root (NFSv4)
+5. QEMU
+    ARMv7, vexpress-v2p-ca9, 128 MB RAM
+
+
+
+Best regards,
+Krzysztof
