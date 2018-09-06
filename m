@@ -1,101 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] mini2440 MMC correct write protect detection
-Date: Thu, 6 Sep 2018 22:05:46 +0200
-Message-ID: <20180906200546.5wehnecd77s4wyco@kozik-lap>
-References: <85dac0df-2b75-9cc4-fde1-f62136974a1e@free.fr>
- <20180905174513.6w7z5jsc2e6ndntv@kozik-lap>
- <204cf57b-a4f2-76b9-766c-20905596ca4e@free.fr>
- <20180906155339.nep6gczzubeirbfs@kozik-lap>
+From: Cedric Roux <sed@free.fr>
+Subject: [PATCH v2] ARM: s3c24xx: Correct SD card write protect detection on
+ Mini2440
+Date: Thu, 6 Sep 2018 22:35:01 +0200
+Message-ID: <96fe9889-2649-7a1e-23bf-b4d16713d212@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180906155339.nep6gczzubeirbfs@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Cedric Roux <sed@free.fr>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 05:53:39PM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Sep 05, 2018 at 09:45:15PM +0200, Cedric Roux wrote:
-> > On 09/05/2018 07:45 PM, Krzysztof Kozlowski wrote:
-> > > I looked at Mini2440 schematics found on the net and it looks like the
-> > > pin (just like CD) is active low. However I might be looking at wrong
-> > > schematics or missing some things.
-> > 
-> > I have the same schematics I think.
-> > But I have a real mini2440 and I am positively sure that WP
-> > is active high. CD is active low, yes.
-> > 
-> > Do you know someone that you trust that could confirm this?
-> > 
-> > > 
-> > > This is really an old code so I am just quite surprised that it was not
-> > > reported before. Not able to write to SD card (for example if it is
-> > > rootfs) should be spotted quite early.
-> > 
-> > I don't think anyone tried a recent kernel, that's why.
-> > And the mini2440 has been kind of replaced by the mini6410,
-> > I'm not sure it's still in production. Apart from me, I
-> > don't think anyone still uses it. If someone does, I
-> > heavily doubt that person will try to boot a 4.something
-> > kernel on it.
-> > 
-> > In the 2.6.32.63 kernel it's all different.
-> > 
-> > We have s3cmci_get_ro in drivers/mmc/host/s3cmci.c
-> > that calls s3c2410_gpio_getpin in arch/arm/plat-s3c24xx/gpio.c
-> > that returns the WP bit as is read from the GPIO.
-> > s3cmci_get_ro will return > 0 if the bit is set and
-> > wprotect_invert is not set. For mini2440, wprotect_invert
-> > is not set (actually it does not seem to be set anywhere
-> > in the kernel tree, is it used at all in 2.6.32.63?). So
-> > it's returned as is. Getting 1 from GPIO means Read Only.
-> > 
-> > Then we have s3cmci_card_present, also in drivers/mmc/host/s3cmci.c,
-> > that reads the CD bit from the GPIO, but take the opposite value
-> > and then returns the opposite of the result if detect_invert
-> > is 1. For mini2440 it's not 1, but 0. So we return the opposite
-> > of the CD bit read from the GPIO, which means active low.
-> > 
-> > I'm not an electronic professional so I don't know how to interpret
-> > the schematics. My experiment with my mini2440 says that:
-> > - no card:         WP bit = 1, CD bit = 1
-> > - card read/write: WP bit = 0, CD bit = 0
-> > - card read only:  WP bit = 1, CD bit = 0
-> > By "WP bit" I mean the value read from GPH8.
-> > By "CD bit" I mean the value read from GPG8.
-> > 
-> > So I don't know what to do. If you don't trust me and you know
-> > no one that you trust that would confirm my findings, then it's
-> > game over.
-> > 
-> > I can do things that you ask me to do to prove my claims.
-> > 
-> > I can provide a simple userland program to be run on a mini2440
-> > that demonstrates this as well (open /dev/mem, mmap 0x56000000,
-> > reads GPG and GPH and prints the values).
-> 
-> You provided really good explanation so let's go with your patch.
-> 
-> Thanks, applied.
+The mini2440 computer uses "active high" to signal that the "write protect"
+of the inserted MMC is set. The current code uses the opposite, leading to
+a wrong detection of write protection. The solution is simply to use
+".wprotect_invert = 1" in the description of the MMC.
 
-... and dropped. Checkpatch fails:
-https://krzk.eu/#/builders/26/builds/121
+Signed-off-by: Cedric Roux <sed@free.fr>
+---
+ arch/arm/mach-s3c24xx/mach-mini2440.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Please fix checkpatch errors and resubmit with proper patch style and
-adjusted title: "ARM: s3c24xx: Correct SD card write protect detection
-on Mini2440".
-
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index 95753e0..4cd8d45 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -232,10 +232,11 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
+ /* MMC/SD  */
+ 
+ static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
+-   .gpio_detect   = S3C2410_GPG(8),
+-   .gpio_wprotect = S3C2410_GPH(8),
+-   .set_power     = NULL,
+-   .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
++	.wprotect_invert = 1,
++	.gpio_detect   = S3C2410_GPG(8),
++	.gpio_wprotect = S3C2410_GPH(8),
++	.set_power     = NULL,
++	.ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
+ };
+ 
+ /* NAND Flash on MINI2440 board */
+-- 
+2.18.0
