@@ -1,88 +1,91 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFT] ARM: dts: exynos: Remove double SD card detect pin
- inversion
-Date: Thu, 6 Sep 2018 11:21:51 +0200
-Message-ID: <20180906092151eucas1p1c7e7e187120468f0e99afce3dd2859b6~RxSVGQkCD1671916719eucas1p1C@eucas1p1.samsung.com>
-References: <CGME20180905174039epcas3p2091bb7ef6c51b2850ea774e6d76b7f5d@epcas3p2.samsung.com>
-        <20180905174024.28366-1-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] mini2440 MMC correct write protect detection
+Date: Thu, 6 Sep 2018 17:53:39 +0200
+Message-ID: <20180906155339.nep6gczzubeirbfs@kozik-lap>
+References: <85dac0df-2b75-9cc4-fde1-f62136974a1e@free.fr>
+ <20180905174513.6w7z5jsc2e6ndntv@kozik-lap>
+ <204cf57b-a4f2-76b9-766c-20905596ca4e@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180905174024.28366-1-krzk@kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Maciej Purski <m.purski@samsung.com>, Simon Shields <simon@lineageos.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <204cf57b-a4f2-76b9-766c-20905596ca4e@free.fr>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Cedric Roux <sed@free.fr>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+On Wed, Sep 05, 2018 at 09:45:15PM +0200, Cedric Roux wrote:
+> On 09/05/2018 07:45 PM, Krzysztof Kozlowski wrote:
+> > I looked at Mini2440 schematics found on the net and it looks like the
+> > pin (just like CD) is active low. However I might be looking at wrong
+> > schematics or missing some things.
+> 
+> I have the same schematics I think.
+> But I have a real mini2440 and I am positively sure that WP
+> is active high. CD is active low, yes.
+> 
+> Do you know someone that you trust that could confirm this?
+> 
+> > 
+> > This is really an old code so I am just quite surprised that it was not
+> > reported before. Not able to write to SD card (for example if it is
+> > rootfs) should be spotted quite early.
+> 
+> I don't think anyone tried a recent kernel, that's why.
+> And the mini2440 has been kind of replaced by the mini6410,
+> I'm not sure it's still in production. Apart from me, I
+> don't think anyone still uses it. If someone does, I
+> heavily doubt that person will try to boot a 4.something
+> kernel on it.
+> 
+> In the 2.6.32.63 kernel it's all different.
+> 
+> We have s3cmci_get_ro in drivers/mmc/host/s3cmci.c
+> that calls s3c2410_gpio_getpin in arch/arm/plat-s3c24xx/gpio.c
+> that returns the WP bit as is read from the GPIO.
+> s3cmci_get_ro will return > 0 if the bit is set and
+> wprotect_invert is not set. For mini2440, wprotect_invert
+> is not set (actually it does not seem to be set anywhere
+> in the kernel tree, is it used at all in 2.6.32.63?). So
+> it's returned as is. Getting 1 from GPIO means Read Only.
+> 
+> Then we have s3cmci_card_present, also in drivers/mmc/host/s3cmci.c,
+> that reads the CD bit from the GPIO, but take the opposite value
+> and then returns the opposite of the result if detect_invert
+> is 1. For mini2440 it's not 1, but 0. So we return the opposite
+> of the CD bit read from the GPIO, which means active low.
+> 
+> I'm not an electronic professional so I don't know how to interpret
+> the schematics. My experiment with my mini2440 says that:
+> - no card:         WP bit = 1, CD bit = 1
+> - card read/write: WP bit = 0, CD bit = 0
+> - card read only:  WP bit = 1, CD bit = 0
+> By "WP bit" I mean the value read from GPH8.
+> By "CD bit" I mean the value read from GPG8.
+> 
+> So I don't know what to do. If you don't trust me and you know
+> no one that you trust that would confirm my findings, then it's
+> game over.
+> 
+> I can do things that you ask me to do to prove my claims.
+> 
+> I can provide a simple userland program to be run on a mini2440
+> that demonstrates this as well (open /dev/mem, mmap 0x56000000,
+> reads GPG and GPH and prints the values).
 
-On 2018-09-05 19:40, Krzysztof Kozlowski wrote:
-> The SDHCI standard, MMC host controller bindings and MMC core defines
-> card detect pin as active low.  Therefore there is no point to invert it
-> twice.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> ---
->
-> Tested only on Odroid U3. Tests on other platforms would be appreciated.
+You provided really good explanation so let's go with your patch.
 
-SD card detection still works fine on UniversalC210, Trats2 and OdroidU3 
-with this patch.
+Thanks, applied.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> ---
->   arch/arm/boot/dts/exynos4210-universal_c210.dts | 3 +--
->   arch/arm/boot/dts/exynos4412-midas.dtsi         | 3 +--
->   arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 3 +--
->   3 files changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> index 4e6ff97e1ec4..249bfbff1e20 100644
-> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> @@ -537,8 +537,7 @@
->   	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
->   	pinctrl-names = "default";
->   	vmmc-supply = <&ldo5_reg>;
-> -	cd-gpios = <&gpx3 4 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>;
->   	status = "okay";
->   };
->   
-> diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-> index c0476c290977..aed2f2e2b0d1 100644
-> --- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-> @@ -1269,8 +1269,7 @@
->   
->   &sdhci_2 {
->   	bus-width = <4>;
-> -	cd-gpios = <&gpx3 4 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>;
->   	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sdhci2_cd>;
->   	pinctrl-names = "default";
->   	vmmc-supply = <&ldo21_reg>;
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index a09e46c9dbc0..2caa3132f34e 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -539,8 +539,7 @@
->   	pinctrl-names = "default";
->   	vmmc-supply = <&ldo21_reg>;
->   	vqmmc-supply = <&ldo4_reg>;
-> -	cd-gpios = <&gpk2 2 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpk2 2 GPIO_ACTIVE_LOW>;
->   	status = "okay";
->   };
->   
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best regards,
+Krzysztof
