@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH] mini2440 MMC correct write protect detection
-Date: Thu, 6 Sep 2018 17:53:39 +0200
-Message-ID: <20180906155339.nep6gczzubeirbfs@kozik-lap>
+Date: Thu, 6 Sep 2018 18:01:24 +0200
+Message-ID: <20180906160124.626l5fgn2cn4veyq@kozik-lap>
 References: <85dac0df-2b75-9cc4-fde1-f62136974a1e@free.fr>
  <20180905174513.6w7z5jsc2e6ndntv@kozik-lap>
  <204cf57b-a4f2-76b9-766c-20905596ca4e@free.fr>
@@ -83,9 +83,25 @@ On Wed, Sep 05, 2018 at 09:45:15PM +0200, Cedric Roux wrote:
 > that demonstrates this as well (open /dev/mem, mmap 0x56000000,
 > reads GPG and GPH and prints the values).
 
-You provided really good explanation so let's go with your patch.
+The patch was not patchwork compatible:
+    Applying patch #10587863 using 'git am -s'
+    Description: mini2440 MMC correct write protect detection
+    Applying: mini2440 MMC correct write protect detection
+    error: arm/mach-s3c24xx/mach-mini2440.c: does not exist in index
 
-Thanks, applied.
+git-am by default expects -p1.
+
+The preferred and easiest way to generate patches is to use git for your
+work and then just:
+    $ git format-patch -1
+    $ scripts/get_maintainer 000*
+    $ git send-email --to ........  000*
+
+(the last commands can be even squashed into one but that is just
+optimization).
+
+If you do not use git, please pay attention to generate proper
+applicable patches.
 
 Best regards,
 Krzysztof
