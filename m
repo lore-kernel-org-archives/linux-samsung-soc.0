@@ -1,44 +1,103 @@
-From: Cedric Roux <sed@free.fr>
-Subject: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect detection on Mini2440
-Date: Fri,  7 Sep 2018 23:54:46 +0200
-Message-ID: <20180907215446.15160-2-sed@free.fr>
-References: <20180907215446.15160-1-sed@free.fr>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [BUG BISECT] NFS root failure (NULL pointer)
+Date: Mon, 10 Sep 2018 08:44:15 +0200
+Message-ID: <CAJKOXPfc5O0c6HBtM=h2NUXwaiCWVgFC9eVeirLYynfUpU6d3Q@mail.gmail.com>
+References: <CAJKOXPc49jh8RCDvn2Meci9iDcnnwGEHo6F7RuhkXpen=f_E8w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180907215446.15160-1-sed@free.fr>
+In-Reply-To: <CAJKOXPc49jh8RCDvn2Meci9iDcnnwGEHo6F7RuhkXpen=f_E8w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Cedric Roux <sed@free.fr>
+To: dhowells@redhat.com, ebiggers@google.com, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The mini2440 computer uses "active high" to signal that the "write protect"
-of the inserted MMC is set. The current code uses the opposite, leading to
-a wrong detection of write protection. The solution is simply to use
-".wprotect_invert = 1" in the description of the MMC.
+On Thu, 6 Sep 2018 at 09:10, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Hi,
+>
+> Today's next fails to mount NFS root under my ARM targets and fails to
+> mount root from file image under QMU.
+>
+> [ 21.512866] Unable to handle kernel NULL pointer dereference at
+> virtual address 00000000
+> [ 21.695484] [<c03bcc04>] (nfs_fs_mount) from [<c02cf6a4>]
+> (legacy_get_tree+0x34/0xec)
+> [ 21.703225] [<c02cf6a4>] (legacy_get_tree) from [<c029442c>]
+> (vfs_get_tree+0x64/0x180)
+> [ 21.711119] [<c029442c>] (vfs_get_tree) from [<c02b9140>]
+> (do_mount+0x21c/0x958)
+> [ 21.718478] [<c02b9140>] (do_mount) from [<c02b9c38>] (ksys_mount+0x8c/0xbc)
+> [ 21.725513] [<c02b9c38>] (ksys_mount) from [<c0101000>]
+> (ret_fast_syscall+0x0/0x28)
+>
+> Full log from ARM (NFS root):
+> https://krzk.eu/#/builders/25/builds/750/steps/12/logs/serial0
+>
+> The NFS root failure bisected to:
+> bae551929c5433bd56ec4dcb97c7d4a50153d357 is the first bad commit
+> commit bae551929c5433bd56ec4dcb97c7d4a50153d357
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Tue Jul 10 21:43:37 2018 +0100
 
-Signed-off-by: Cedric Roux <sed@free.fr>
----
- arch/arm/mach-s3c24xx/mach-mini2440.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+FYI, the bug is still present in linux-next. All boards fail to boot up.
 
-diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-index 4a0bf6abba8c..bfce7971d741 100644
---- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-@@ -234,10 +234,11 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
- /* MMC/SD  */
- 
- static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
--	.gpio_detect   = S3C2410_GPG(8),
--	.gpio_wprotect = S3C2410_GPH(8),
--	.set_power     = NULL,
--	.ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
-+	.gpio_detect     = S3C2410_GPG(8),
-+	.gpio_wprotect   = S3C2410_GPH(8),
-+	.wprotect_invert = 1,
-+	.set_power       = NULL,
-+	.ocr_avail       = MMC_VDD_32_33|MMC_VDD_33_34,
- };
- 
- /* NAND Flash on MINI2440 board */
--- 
-2.18.0
+Let me know if I can help anymore in debugging this.
+
+Best regards,
+Krzysztof
+
+>
+>     vfs: Separate changing mount flags full remount
+>
+>     Separate just the changing of mount flags (MS_REMOUNT|MS_BIND) from full
+>     remount because the mount data will get parsed with the new fs_context
+>     stuff prior to doing a remount - and this causes the syscall to fail under
+>     some circumstances.
+>
+> The QEMU issue seems slightly different and I did not bisect it. The
+> QEMU just cannot find rootfs:
+> [    1.008052] Filesystem requires source device
+> [    1.008513] VFS: Cannot open root device "mmcblk0" or
+> unknown-block(179,0): error -2
+> [    1.008790] Please append a correct "root=" boot option; here are
+> the available partitions:
+> [    1.009300] 0100           16384 ram0
+> [    1.009337]  (driver?)
+> [    1.009806] fe00            5120 vda
+> [    1.009843]  driver: virtio_blk
+> [    1.010296] b300          110592 mmcblk0
+> [    1.010319]  driver: mmcblk
+> [    1.010859] Kernel panic - not syncing: VFS: Unable to mount root
+> fs on unknown-block(179,0)
+> [    1.011580] ---[ end Kernel panic - not syncing: VFS: Unable to
+> mount root fs on unknown-block(179,0) ]---
+>
+>
+>
+> Boards config:
+> 1. Arch ARM Linux
+> 2. exynos_defconfig
+>   - Odroid HC1
+>     ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC
+>     Systemd: v239
+>   - Odroid U3
+>     ARMv7, quad-core, Exynos4412 SoC
+>     Systemd: v238
+>   - Odroid XU
+>     ARMv7, octa-core (Cortex-A7+A15) but only A15 working, Exynos5410 SoC
+>     Systemd: v236
+>   - Odroid XU3
+>     ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC
+>     Systemd: v236
+> 3. Custom VF50 defconfig
+>   - Toradex Colibri VF50 on Iris board
+>     ARMv7, UP, Cortext-A5, NXP VF500
+>     Systemd: v232
+> 4. All boards boot from TFTP with NFS root (NFSv4)
+> 5. QEMU
+>     ARMv7, vexpress-v2p-ca9, 128 MB RAM
+>
+>
+>
+> Best regards,
+> Krzysztof
