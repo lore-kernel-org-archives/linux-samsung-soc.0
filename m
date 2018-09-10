@@ -1,41 +1,49 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: mfd: cros_ec: Check for mkbp events on resume only if supported.
-Date: Mon, 10 Sep 2018 15:37:44 +0100
-Message-ID: <20180910143744.GT28860@dell>
-References: <20180820153419.32098-1-ravisadineni@google.com>
+From: Cedric Roux <sed@free.fr>
+Subject: Re: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect
+ detection on Mini2440
+Date: Mon, 10 Sep 2018 18:55:09 +0200
+Message-ID: <ba9d81bf-f000-f6ae-30b1-3e922985f655@free.fr>
+References: <20180907215446.15160-1-sed@free.fr>
+ <20180907215446.15160-2-sed@free.fr>
+ <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180820153419.32098-1-ravisadineni@google.com>
+In-Reply-To: <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: RaviChandra Sadineni <ravisadineni@chromium.org>
-Cc: dmitry.torokhov@gmail.com, ravisadineni@google.com, dtor@google.com, linux-samsung-soc@vger.kernel.org, tbroch@google.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, tfiga@chromium.org, m.szyprowski@samsung.com
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 20 Aug 2018, RaviChandra Sadineni wrote:
-
-> Currently on every resume we check for mkbp events and notify the
-> clients. This helps in identifying the wakeup sources. But on devices
-> that do not support mkbp protocol, we might end up querying key state of
-> the keyboard in a loop which blocks the resume. Instead check for events
-> only if mkbp is supported.
+On 09/10/2018 12:23 PM, Krzysztof Kozlowski wrote:
+>>  static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
+>> -       .gpio_detect   = S3C2410_GPG(8),
+>> -       .gpio_wprotect = S3C2410_GPH(8),
+>> -       .set_power     = NULL,
+>> -       .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
+>> +       .gpio_detect     = S3C2410_GPG(8),
+>> +       .gpio_wprotect   = S3C2410_GPH(8),
+>> +       .wprotect_invert = 1,
+>> +       .set_power       = NULL,
+>> +       .ocr_avail       = MMC_VDD_32_33|MMC_VDD_33_34,
 > 
-> Signed-off-by: RaviChandra Sadineni <ravisadineni@chromium.org>
-> ---
-> 
->  Note: This patch fixes the suspend/resume issue on Snow and Peach-Pit
->  Chromebooks, both on vanilla v4.18 as well as linux-next from 20 August 
->  2018. Further info at: https://lkml.org/lkml/2018/6/5/1076
->  
->  drivers/mfd/cros_ec.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> This looks unexpected... after patch 1 there should be only one change
+> - one new line added. What happened here?
 
-Applied, thanks.
+This is to align all the '='.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+These were spaces before the '=' so I also used spaces.
+Should I put TABs instead? I looked in the coding style
+and didn't find anything about this specific thing
+(maybe I read too fast though).
+
+And if this ends up unaligned because 'wprotect_invert'
+requires a second TAB for the others, should I do a separate
+commit?
+
+Thanks.
+
+Regards,
+Cédric.
