@@ -1,52 +1,50 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [BUG BISECT] NFS root failure (NULL pointer)
-Date: Mon, 10 Sep 2018 08:46:40 +0200
-Message-ID: <CAJKOXPdTigJ7DZO3CiHM=zrWqb9MebNmbpbeJB5w0UDWS9FbqA@mail.gmail.com>
-References: <CAJKOXPc49jh8RCDvn2Meci9iDcnnwGEHo6F7RuhkXpen=f_E8w@mail.gmail.com>
- <CAJKOXPfc5O0c6HBtM=h2NUXwaiCWVgFC9eVeirLYynfUpU6d3Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect
+ detection on Mini2440
+Date: Mon, 10 Sep 2018 12:23:37 +0200
+Message-ID: <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
+References: <20180907215446.15160-1-sed@free.fr> <20180907215446.15160-2-sed@free.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPfc5O0c6HBtM=h2NUXwaiCWVgFC9eVeirLYynfUpU6d3Q@mail.gmail.com>
+In-Reply-To: <20180907215446.15160-2-sed@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dhowells@redhat.com, ebiggers@google.com, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: sed@free.fr
+Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 10 Sep 2018 at 08:44, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Fri, 7 Sep 2018 at 23:53, Cedric Roux <sed@free.fr> wrote:
 >
-> On Thu, 6 Sep 2018 at 09:10, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > Hi,
-> >
-> > Today's next fails to mount NFS root under my ARM targets and fails to
-> > mount root from file image under QMU.
-> >
-> > [ 21.512866] Unable to handle kernel NULL pointer dereference at
-> > virtual address 00000000
-> > [ 21.695484] [<c03bcc04>] (nfs_fs_mount) from [<c02cf6a4>]
-> > (legacy_get_tree+0x34/0xec)
-> > [ 21.703225] [<c02cf6a4>] (legacy_get_tree) from [<c029442c>]
-> > (vfs_get_tree+0x64/0x180)
-> > [ 21.711119] [<c029442c>] (vfs_get_tree) from [<c02b9140>]
-> > (do_mount+0x21c/0x958)
-> > [ 21.718478] [<c02b9140>] (do_mount) from [<c02b9c38>] (ksys_mount+0x8c/0xbc)
-> > [ 21.725513] [<c02b9c38>] (ksys_mount) from [<c0101000>]
-> > (ret_fast_syscall+0x0/0x28)
-> >
-> > Full log from ARM (NFS root):
-> > https://krzk.eu/#/builders/25/builds/750/steps/12/logs/serial0
-> >
-> > The NFS root failure bisected to:
-> > bae551929c5433bd56ec4dcb97c7d4a50153d357 is the first bad commit
-> > commit bae551929c5433bd56ec4dcb97c7d4a50153d357
-> > Author: David Howells <dhowells@redhat.com>
-> > Date:   Tue Jul 10 21:43:37 2018 +0100
+> The mini2440 computer uses "active high" to signal that the "write protect"
+> of the inserted MMC is set. The current code uses the opposite, leading to
+> a wrong detection of write protection. The solution is simply to use
+> ".wprotect_invert = 1" in the description of the MMC.
 >
-> FYI, the bug is still present in linux-next. All boards fail to boot up.
+> Signed-off-by: Cedric Roux <sed@free.fr>
+> ---
+>  arch/arm/mach-s3c24xx/mach-mini2440.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 >
-> Let me know if I can help anymore in debugging this.
+> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+> index 4a0bf6abba8c..bfce7971d741 100644
+> --- a/arch/arm/mach-s3c24xx/mach-mini2440.c
+> +++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+> @@ -234,10 +234,11 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
+>  /* MMC/SD  */
+>
+>  static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
+> -       .gpio_detect   = S3C2410_GPG(8),
+> -       .gpio_wprotect = S3C2410_GPH(8),
+> -       .set_power     = NULL,
+> -       .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
+> +       .gpio_detect     = S3C2410_GPG(8),
+> +       .gpio_wprotect   = S3C2410_GPH(8),
+> +       .wprotect_invert = 1,
+> +       .set_power       = NULL,
+> +       .ocr_avail       = MMC_VDD_32_33|MMC_VDD_33_34,
 
-Hm, my mistake. Today's next boots up fine. Seems fixed. Thanks!
+This looks unexpected... after patch 1 there should be only one change
+- one new line added. What happened here?
 
 Best regards,
 Krzysztof
