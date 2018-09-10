@@ -1,50 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect
- detection on Mini2440
-Date: Mon, 10 Sep 2018 12:23:37 +0200
-Message-ID: <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
-References: <20180907215446.15160-1-sed@free.fr> <20180907215446.15160-2-sed@free.fr>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: mfd: cros_ec: Check for mkbp events on resume only if supported.
+Date: Mon, 10 Sep 2018 15:37:44 +0100
+Message-ID: <20180910143744.GT28860@dell>
+References: <20180820153419.32098-1-ravisadineni@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180907215446.15160-2-sed@free.fr>
+Content-Disposition: inline
+In-Reply-To: <20180820153419.32098-1-ravisadineni@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sed@free.fr
-Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: RaviChandra Sadineni <ravisadineni@chromium.org>
+Cc: dmitry.torokhov@gmail.com, ravisadineni@google.com, dtor@google.com, linux-samsung-soc@vger.kernel.org, tbroch@google.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, tfiga@chromium.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 7 Sep 2018 at 23:53, Cedric Roux <sed@free.fr> wrote:
->
-> The mini2440 computer uses "active high" to signal that the "write protect"
-> of the inserted MMC is set. The current code uses the opposite, leading to
-> a wrong detection of write protection. The solution is simply to use
-> ".wprotect_invert = 1" in the description of the MMC.
->
-> Signed-off-by: Cedric Roux <sed@free.fr>
+On Mon, 20 Aug 2018, RaviChandra Sadineni wrote:
+
+> Currently on every resume we check for mkbp events and notify the
+> clients. This helps in identifying the wakeup sources. But on devices
+> that do not support mkbp protocol, we might end up querying key state of
+> the keyboard in a loop which blocks the resume. Instead check for events
+> only if mkbp is supported.
+> 
+> Signed-off-by: RaviChandra Sadineni <ravisadineni@chromium.org>
 > ---
->  arch/arm/mach-s3c24xx/mach-mini2440.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-> index 4a0bf6abba8c..bfce7971d741 100644
-> --- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-> +++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-> @@ -234,10 +234,11 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
->  /* MMC/SD  */
->
->  static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
-> -       .gpio_detect   = S3C2410_GPG(8),
-> -       .gpio_wprotect = S3C2410_GPH(8),
-> -       .set_power     = NULL,
-> -       .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
-> +       .gpio_detect     = S3C2410_GPG(8),
-> +       .gpio_wprotect   = S3C2410_GPH(8),
-> +       .wprotect_invert = 1,
-> +       .set_power       = NULL,
-> +       .ocr_avail       = MMC_VDD_32_33|MMC_VDD_33_34,
+> 
+>  Note: This patch fixes the suspend/resume issue on Snow and Peach-Pit
+>  Chromebooks, both on vanilla v4.18 as well as linux-next from 20 August 
+>  2018. Further info at: https://lkml.org/lkml/2018/6/5/1076
+>  
+>  drivers/mfd/cros_ec.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-This looks unexpected... after patch 1 there should be only one change
-- one new line added. What happened here?
+Applied, thanks.
 
-Best regards,
-Krzysztof
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
