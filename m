@@ -1,138 +1,70 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/3] drm/exynos: scaler: Add support for tiled formats
-Date: Thu, 13 Sep 2018 18:18:51 +0900
-Message-ID: <20180913091852epcas1p1bad693dc675f505e9b6c2fb6bb3b1bc6~T6wt8wiZx0672306723epcas1p1B@epcas1p1.samsung.com>
-References: <20180810132901.11844-1-m.szyprowski@samsung.com>
- <CGME20180810132915eucas1p18c60ec0bc72fb40b53d0f41a3d43c565@eucas1p1.samsung.com>
- <20180810132915eucas1p18c60ec0bc72fb40b53d0f41a3d43c565~JiPohZpxV1504615046eucas1p1-@eucas1p1.samsung.com>
- <20180911235453epcas1p3457fe80d777c2b67d87a9453eb0a90fc~TfbBBpmTs0067300673epcas1p3J@epcas1p3.samsung.com>
- <20180912065925eucas1p184de86d5cfbd6055d0744be38baa1cd1~TlNrGl6C32685826858eucas1p1S@eucas1p1.samsung.com>
- <20180913051449epcas1p4bfa8f35a9f974614768eb54559373ae8~T3boZWQuP2249322493epcas1p4M@epcas1p4.samsung.com>
- <20180913080323eucas1p2b5ce0677a9fa182f23a380d004c15279~T5uz3JPwj1429414294eucas1p2q@eucas1p2.samsung.com>
- <20180913082326epcas1p1904e0f7b642814b3b60b67ed204e9e58~T6AUMNGC11018310183epcas1p1S@epcas1p1.samsung.com>
- <20180913084925eucas1p11bd1958214ac041b39e1c8c5bf4544c5~T6XAVzRva2850528505eucas1p13@eucas1p1.samsung.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v3 1/2] ARM: s3c24xx: formatting cleanup in mach-mini2440.c
+Date: Wed, 12 Sep 2018 12:21:37 -0700
+Message-ID: <b97d7ccc921572ca5d783584eea1de04341ab02f.camel@perches.com>
+References: <20180907215446.15160-1-sed@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180913084925eucas1p11bd1958214ac041b39e1c8c5bf4544c5~T6XAVzRva2850528505eucas1p13@eucas1p1.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180907215446.15160-1-sed@free.fr>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Cedric Roux <sed@free.fr>, kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE464WEIDA57JuUIDEz7J28IDE3OjQ57JeQIE1hcmVrIFN6eXByb3dza2kg7J20KOqwgCkg
-7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IE9uIDIwMTgtMDktMTMgMTA6MjMsIElua2kgRGFlIHdy
-b3RlOgo+PiAyMDE464WEIDA57JuUIDEz7J28IDE3OjAz7JeQIE1hcmVrIFN6eXByb3dza2kg7J20
-KOqwgCkg7JO0IOq4gDoKPj4+IE9uIDIwMTgtMDktMTMgMDc6MTQsIElua2kgRGFlIHdyb3RlOgo+
-Pj4+IDIwMTjrhYQgMDnsm5QgMTLsnbwgMTU6NTnsl5AgQW5kcnplaiBQaWV0cmFzaWV3aWN6IOyd
-tCjqsIApIOyTtCDquIA6Cj4+Pj4+IFcgZG5pdSAxMi4wOS4yMDE4IG8gMDE6NTQsIElua2kgRGFl
-IHBpc3plOgo+Pj4+Pj4gSGkgTWFyZWsgYW5kIEFuZHJ6ZWosCj4+Pj4+Pgo+Pj4+Pj4gMjAxOOuF
-hCAwOOyblCAxMOydvCAyMjoyOeyXkCBNYXJlayBTenlwcm93c2tpIOydtCjqsIApIOyTtCDquIA6
-Cj4+Pj4+Pj4gRnJvbTogQW5kcnplaiBQaWV0cmFzaWV3aWN6IDxhbmRyemVqLnBAc2Ftc3VuZy5j
-b20+Cj4+Pj4+Pj4KPj4+Pj4+PiBBZGQgc3VwcG9ydCBmb3IgMTZ4MTYgdGlsZWQgZm9ybWF0czog
-TlYxMi9OVjIxLCBZVVlWIGFuZCBZVVY0MjAuCj4+Pj4+IDxzbmlwPgo+Pj4+Pgo+Pj4+Pj4+IC1z
-dGF0aWMgdTMyIHNjYWxlcl9nZXRfZm9ybWF0KHUzMiBkcm1fZm10KQo+Pj4+Pj4+ICtzdHJ1Y3Qg
-c2NhbGVyX2Zvcm1hdCB7Cj4+Pj4+Pj4gKwl1MzIJZHJtX2ZtdDsKPj4+Pj4+PiArCXUzMglpbnRl
-cm5hbF9mbXQ7Cj4+Pj4+Pj4gKwl1MzIJY2hyb21hX3RpbGVfdzsKPj4+Pj4+PiArCXUzMgljaHJv
-bWFfdGlsZV9oOwo+Pj4+Pj4+ICt9Owo+Pj4+Pj4+ICsKPj4+Pj4+PiArc3RhdGljIGNvbnN0IHN0
-cnVjdCBzY2FsZXJfZm9ybWF0IHNjYWxlcl9mb3JtYXRzW10gPSB7Cj4+Pj4+Pj4gKwl7IERSTV9G
-T1JNQVRfTlYxMiwgU0NBTEVSX1lVVjQyMF8yUF9VViwgOCwgOCB9LAo+Pj4+Pj4+ICsJeyBEUk1f
-Rk9STUFUX05WMjEsIFNDQUxFUl9ZVVY0MjBfMlBfVlUsIDgsIDggfSwKPj4+Pj4+PiArCXsgRFJN
-X0ZPUk1BVF9ZVVY0MjAsIFNDQUxFUl9ZVVY0MjBfM1AsIDgsIDggfSwKPj4+Pj4+PiArCXsgRFJN
-X0ZPUk1BVF9ZVVlWLCBTQ0FMRVJfWVVWNDIyXzFQX1lVWVYsIDE2LCAxNiB9LAo+Pj4+Pj4+ICsJ
-eyBEUk1fRk9STUFUX1VZVlksIFNDQUxFUl9ZVVY0MjJfMVBfVVlWWSwgMTYsIDE2IH0sCj4+Pj4+
-Pj4gKwl7IERSTV9GT1JNQVRfWVZZVSwgU0NBTEVSX1lVVjQyMl8xUF9ZVllVLCAxNiwgMTYgfSwK
-Pj4+Pj4+PiArCXsgRFJNX0ZPUk1BVF9OVjE2LCBTQ0FMRVJfWVVWNDIyXzJQX1VWLCA4LCAxNiB9
-LAo+Pj4+Pj4+ICsJeyBEUk1fRk9STUFUX05WNjEsIFNDQUxFUl9ZVVY0MjJfMlBfVlUsIDgsIDE2
-IH0sCj4+Pj4+Pj4gKwl7IERSTV9GT1JNQVRfWVVWNDIyLCBTQ0FMRVJfWVVWNDIyXzNQLCA4LCAx
-NiB9LAo+Pj4+Pj4+ICsJeyBEUk1fRk9STUFUX05WMjQsIFNDQUxFUl9ZVVY0NDRfMlBfVVYsIDE2
-LCAxNiB9LAo+Pj4+Pj4+ICsJeyBEUk1fRk9STUFUX05WNDIsIFNDQUxFUl9ZVVY0NDRfMlBfVlUs
-IDE2LCAxNiB9LAo+Pj4+Pj4+ICsJeyBEUk1fRk9STUFUX1lVVjQ0NCwgU0NBTEVSX1lVVjQ0NF8z
-UCwgMTYsIDE2IH0sCj4+Pj4+Pj4gKwl7IERSTV9GT1JNQVRfUkdCNTY1LCBTQ0FMRVJfUkdCXzU2
-NSwgMCwgMCB9LAo+Pj4+Pj4+ICsJeyBEUk1fRk9STUFUX1hSR0IxNTU1LCBTQ0FMRVJfQVJHQjE1
-NTUsIDAsIDAgfSwKPj4+Pj4+PiArCXsgRFJNX0ZPUk1BVF9BUkdCMTU1NSwgU0NBTEVSX0FSR0Ix
-NTU1LCAwLCAwIH0sCj4+Pj4+Pj4gKwl7IERSTV9GT1JNQVRfWFJHQjQ0NDQsIFNDQUxFUl9BUkdC
-NDQ0NCwgMCwgMCB9LAo+Pj4+Pj4+ICsJeyBEUk1fRk9STUFUX0FSR0I0NDQ0LCBTQ0FMRVJfQVJH
-QjQ0NDQsIDAsIDAgfSwKPj4+Pj4+PiArCXsgRFJNX0ZPUk1BVF9YUkdCODg4OCwgU0NBTEVSX0FS
-R0I4ODg4LCAwLCAwIH0sCj4+Pj4+Pj4gKwl7IERSTV9GT1JNQVRfQVJHQjg4ODgsIFNDQUxFUl9B
-UkdCODg4OCwgMCwgMCB9LAo+Pj4+Pj4+ICsJeyBEUk1fRk9STUFUX1JHQlg4ODg4LCBTQ0FMRVJf
-UkdCQTg4ODgsIDAsIDAgfSwKPj4+Pj4+PiArCXsgRFJNX0ZPUk1BVF9SR0JBODg4OCwgU0NBTEVS
-X1JHQkE4ODg4LCAwLCAwIH0sCj4+Pj4+PiBTZWVtcyB0aGUgdGlsZSBzaXplIG9mIGVhY2ggZm9y
-bWF0IHlvdSBkZWNsYXJlZCBhYm92ZSBpcyB3cm9uZy4KPj4+Pj4+IEFjY29yZGluZyB0byBkYXRh
-IHNoZWV0IGZvciBFeHlub3M1NDIwLzU0MjIvNTQzMywgZWFjaCBwbGFuZSBoYXMgZGlmZmVyZW50
-IHRpbGUgc2l6ZS4KPj4+Pj4+IEkuZS4sIFNBQ0xFX1lVVjQyMF8yUF9VVi9WVSBoYXMgdHdvIHBs
-YW5lcywgYW5kIFkgcGxhbmUgaGFzIDE2IHggMTYgdGlsZSBzaXplIGJ1dCBVIGFuZCBWIHBsYW5l
-IGhhdmUgOCB4IDggdGlsZSBzaXplIGVhY2ggb3RoZXIuCj4+Pj4+Pgo+Pj4+Pj4gSG93ZXZlciwg
-YWJvdmUgZGVjbGFyYXRpb24gaGFzIG9ubHkgb25lIHRpbGUgc2l6ZQo+Pj4+PiB0cnVlLCBidXQg
-dGhlIG1lbWJlcnMgb2Ygc3RydWN0IHNjYWxlcl9mb3JtYXQgYXJlIGNhbGxlZAo+Pj4+Pgo+Pj4+
-PiBfX19fX2Nocm9tYV9fX19fdGlsZV93L2gKPj4+Pj4KPj4+Pj4+IGFuZCBpdCBtZWFucyB0aGF0
-IGVhY2ggcGxhbmUgaGFzIGFsd2F5cyBzYW1lIHRpbGUgc2l6ZS4KPj4+Pj4gdGhpcyBjb25jbHVz
-aW9uIGlzIG5vdCBqdXN0aWZpZWQKPj4+Pj4KPj4+Pj4+IEFuZCBhbHNvIFJHQiBmb3JtYXRzIGhh
-dmUgMTYgeCAxNiB0aWxlIHNpemUgaW4gdGlsZSBtb2RlIGJ1dCB5b3UgZGVjbGFyZWQgaXQgYXMg
-MC4KPj4+Pj4gVGhlIGRhdGEgc2hlZXQgc2F5cywgdGhhdCBhbGwgZm9ybWF0cyBoYXZlIHRoZSBz
-YW1lIFkvUkdCIHRpbGUgc2l6ZQo+Pj4+PiBhbmQgaXQgaXMgYWx3YXlzIDE2eDE2LiBUaGF0IGlz
-IHdoeSBvbmx5IGNocm9tYSB0aWxlIHNpemUgaXMgcmVtZW1iZXJlZCwKPj4+Pj4gYmVjYXVzZSBv
-bmx5IGNocm9tYSB0aWxlIHNpemUgY2FuIGJlIGRpZmZlcmVudCBiZXR3ZWVuIGZvcm1hdHMuCj4+
-Pj4gT2ssIGNocm9tYV90aWxlX2gvdyBhcmUgdXNlZCB0byBjYWxjdWxhdGUgb25seSB0aGUgcG9z
-aXRpb24gb2YgdGhlIGNocm9tYSBidWZmZXIuCj4+Pj4KPj4+PiBCeSB0aGUgd2F5LCB1c2VyIHNw
-YWNlIHdvdWxkIHdhbnQgdG8ga25vdyB0aGUgc2l6ZSBsaW1pdCBpbiB0aWxlZCBtb2RlIHNvIHRo
-YXQgdGhleSBjYW4gYWxsb2NhdGUgZWFjaCBidWZmZXIgZm9yIFkobHVtYSkgYW5kIENiQ3IoY2hy
-b21hKS4KPj4+PiBIb3dldmVyLCBiZWxvdyBjb2RlIHdvdWxkIHByb3ZpZGUgWS9SR0IgdGlsZSBz
-aXplIGxpbWl0IC0gMTYgLSB0byB1c2VyIHNwYWNlLAo+Pj4+IHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
-ZHJtX2V4eW5vc19pcHBfbGltaXQgc2NhbGVyXzU0MjBfdGlsZV9saW1pdHNbXSA9IHsKPj4+PiAg
-ICAgICAgICAgIHsgSVBQX1NJWkVfTElNSVQoQlVGRkVSLCAuaCA9IHsgMTYsIFNaXzhLIH0sIC52
-ID0geyAxNiwgU1pfOEsgfSl9LAo+Pj4+ICAgICAgICAgICAgeyBJUFBfU0laRV9MSU1JVChBUkVB
-LCAuaC5hbGlnbiA9IDE2LCAudi5hbGlnbiA9IDE2KSB9LAo+Pj4+Cj4+Pj4gSXQgd291bGQgbWVh
-biB0aGF0IHVzZXIgc3BhY2Ugd2lsbCBhbGxvY2F0ZSAxNiBwaXhlbHMgYWxpZ25lZCBidWZmZXIg
-ZXZlbiBmb3IgY2hyb21hIGJ1dCB0aGUgYWN0dWFsIHNpemUgbGltaXQgb2YgaXQgd291bGQgYmUg
-OCBwaXhlbHMgaW4gY2FzZSBvZiBTQ0FMRV9ZVVY0MjBfV1BfVVYvVlUgZm9yYW10Lgo+Pj4+IElz
-IHRoZXJlIHNvbWUgY29kZSBJJ20gbWlzc2luZz8KPj4+IFVzZXJzcGFjZSBrbm93cyBldmVyeXRo
-aW5nIG5lZWRlZCB0byBhbGxvY2F0ZSBwcm9wZXIgYnVmZmVycy4gVGhvc2UKPj4gSG93IGRvZXMg
-dXNlciBzcGFjZSBrbm93IGV2ZXJ5dGhpbmc/IEFjdHVhbGx5LCB0aGUgc2l6ZSBvZiBlYWNoIHBs
-YW5lIGluIHRpbGVkIG1vZGUgd291bGQgZGVwZW5kIG9uIEhhcmR3YXJlLCBTY2FsZXIgZGV2aWNl
-IGluIG91ciBjYXNlLiBJcyB0aGVyZSBzb21ldGhpbmcgdXNlciBzcGFjZSBjYW4ga25vdyBpdCBl
-eHBsaWN0bHk/IE9yIHlvdSBtZWFuIHRoZXkgY2FuIGtub3cgaXQgaW1wbGljdGx5Pwo+IAo+IFRo
-ZSBzaXplIG9mIGVhY2ggcGxhbmUgZGVwZW5kcyBvbiB0aGUgc2VsZWN0ZWQgcGl4ZWwgZm9ybWF0
-IG9ubHkuIElmIHlvdSAKPiBzZWxlY3QgRFJNX0ZPUk1BVF9OVjEyICsgRFJNX0ZPUk1BVF9NT0Rf
-U0FNU1VOR18xNl8xNl9USUxFIG1vZGlmaWVyLCAKPiB0aGVuIHRoaXMgdW5hbWJpZ3VvdXNseSBk
-ZWZpbmVzIGJ1ZmZlciBzaXplIGZvciBlYWNoIHBsYW5lLiBIYXJkd2FyZSBoYXMgCj4gbm90aGlu
-ZyB0byBjaGFuZ2UgaGVyZS4gVXNlcnNwYWNlIGNhbiBldmVuIHF1ZXJ5IGlmIGdpdmVuIElQUCBt
-b2R1bGUgCj4gc3VwcG9ydHMgc3VjaCBwaXhlbCttb2RpZmllciBjb21ibyBhbmQgZ2V0IGFsaWdu
-bWVudCByZXF1aXJlbWVudHMgZm9yIGl0Lgo+IAo+Pj4gbGltaXRzIGRlc2NyaWJlcyBzaXplIG9m
-IHRoZSBpbWFnZSBidWZmZXJzIGluIHBpeGVscy4gVGhlIHNpemUgb2YgZWFjaAo+Pj4gcGxhbmUg
-KGx1bWEgb3IgY2hyb21hIGlmIGV4aXN0cyBmb3IgZ2l2ZW4gZm9ybWF0KSBpbiBieXRlcyBkaXJl
-Y3RseQo+Pj4gY29tZXMgb3V0IG9mIHRoZSBzZWxlY3RlZCBwaXhlbCBmb3JtYXQgKGZvdXJjYyku
-Cj4+IGZvdXJjYyB3b3VsZCBzYXkgdGhlIHNpemUgbm90IGNvbnNpZGVyZWQgZm9yIHRoZSBIYXJk
-d2FyZSBsaW1pdC4KPiAKPiBBbGlnbm1lbnQgY2FuIGJlIHF1ZXJpZWQgYnkgdXNlcnNwYWNlIHZp
-YSBnZXQgRVhZTk9TX0lQUF9HRVRfTElNSVRTIAo+IGlvY3RsLiBJdCBwcm92aWRlcyBsaW1pdHMg
-Zm9yIGdpdmVuIHBpeGVsIGZvcm1hdCArIHRpbGUgbW9kaWZpZXIgY29tYm8sIAo+IGFsdGhvdWdo
-IGluIGNhc2Ugb2YgRXh5bm9zIFNjYWxlciwgdGhlIGFsaWdubWVudCByZXF1aXJlbWVudHMgYXJl
-IHNpbXBsZSAKPiByZXN1bHQgb2YgdGhlIHRpbGVkIGZvcm1hdCBkZWZpbml0aW9uICh0aWxlZCBm
-b3JtYXRzIGFyZSB0eXBpY2FsbHkgCj4gZGVmaW5lZCBvbmx5IGZvciB3aWR0aC9oZWlnaHQgbWF0
-Y2hpbmcgbXVsdGlwbGVzIG9mIHNpbmdsZSB0aWxlIHNpemUpLgoKUmlnaHQsIHRoaXMgaXMgd2h5
-IEkgY29tbWVudGVkIGxpa2UgYmVsb3cgYmVmb3JlLAogIkhvd2V2ZXIsIGJlbG93IGNvZGUgd291
-bGQgcHJvdmlkZSBZL1JHQiB0aWxlIHNpemUgbGltaXQgLSAxNiAtIHRvIHVzZXIgc3BhY2UsCiAg
-c3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZXh5bm9zX2lwcF9saW1pdCBzY2FsZXJfNTQyMF90aWxl
-X2xpbWl0c1tdID0gewogICAgICAgICAgICB7IElQUF9TSVpFX0xJTUlUKEJVRkZFUiwgLmggPSB7
-IDE2LCBTWl84SyB9LCAudiA9IHsgMTYsIFNaXzhLIH0pfSwKICAgICAgICAgICAgeyBJUFBfU0la
-RV9MSU1JVChBUkVBLCAuaC5hbGlnbiA9IDE2LCAudi5hbGlnbiA9IDE2KSB9LAoKICBJdCB3b3Vs
-ZCBtZWFuIHRoYXQgdXNlciBzcGFjZSB3aWxsIGFsbG9jYXRlIDE2IHBpeGVscyBhbGlnbmVkIGJ1
-ZmZlciBldmVuIGZvciBjaHJvbWEgYnV0IHRoZSBhY3R1YWwgc2l6ZSBsaW1pdCBvZiBpdCB3b3Vs
-ZCBiZSA4IHBpeGVscyBpbiBjYXNlIG9mIFNDQUxFX1lVVjQyMF9XUF9VVi9WVSBmb3JhbXQuIgoK
-QXMgeW91IGNhbiBzZWUsIG9ubHkgWShsdW1hKSBzaXplIGxpbWl0IHdpbGwgYmUgcHJvdmlkZWQg
-dG8gdXNlciBzcGFjZSwgYW5kIEknbSBzYXlpbmcgYWJvdXQgQ2JDcihjaHJvbWEpIHNpemUgbGlt
-aXQuCkFueXdheSwgdGhpcyBpcyBhIHRyaXZpYWwgdGhpbmcuIDE2IHBpeGVscyBsaW1pdCBmb3Ig
-Q2JDciB3b3VsZCBiZSBubyBwcm9ibGVtIGFsdGhvdWdoIHJlYWxseSBhIGxpdHRsZSBiaXQgbWVt
-b3J5IGlzIHdhc3RlZC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gQmVzdCByZWdhcmRzCj4gCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Fri, 2018-09-07 at 23:54 +0200, Cedric Roux wrote:
+> Running:
+>     scripts/checkpatch.pl -f arch/arm/mach-s3c24xx/mach-mini2440.c
+> revealed several errors and warnings.
+> 
+> They were all removed, except one which is an #if 0 around the declaration
+> of a gpio pin. This needs some more investigation and I prefer to let it
+> here. This is not some dead code.
+[]
+> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+[]
+> @@ -674,17 +680,17 @@ static void __init mini2440_init(void)
+>  		mini2440_fb_info.displays =
+>  			&mini2440_lcd_cfg[features.lcd_index];
+>  
+> -		printk(KERN_INFO "MINI2440: LCD");
+> +		pr_info("MINI2440: LCD");
+
+OK
+
+>  		for (li = 0; li < ARRAY_SIZE(mini2440_lcd_cfg); li++)
+>  			if (li == features.lcd_index)
+> -				printk(" [%d:%dx%d]", li,
+> +				pr_info(" [%d:%dx%d]", li,
+>  					mini2440_lcd_cfg[li].width,
+>  					mini2440_lcd_cfg[li].height);
+
+pr_cont
+
+>  			else
+> -				printk(" %d:%dx%d", li,
+> +				pr_info(" %d:%dx%d", li,
+
+pr_cont
+
+>  					mini2440_lcd_cfg[li].width,
+>  					mini2440_lcd_cfg[li].height);
+> -		printk("\n");
+> +		pr_info("\n");
+
+pr_cont
+
+So only the first printk should use pr_info().
+The subsequent printk uses should use pr_cont()
+
+>  		s3c24xx_fb_set_platdata(&mini2440_fb_info);
+>  	}
+>  
