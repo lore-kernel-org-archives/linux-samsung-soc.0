@@ -1,91 +1,35 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/3] drm/exynos: scaler: Add support for tiled formats
-Date: Thu, 13 Sep 2018 14:14:48 +0900
-Message-ID: <20180913051449epcas1p4bfa8f35a9f974614768eb54559373ae8~T3boZWQuP2249322493epcas1p4M@epcas1p4.samsung.com>
-References: <20180810132901.11844-1-m.szyprowski@samsung.com>
- <CGME20180810132915eucas1p18c60ec0bc72fb40b53d0f41a3d43c565@eucas1p1.samsung.com>
- <20180810132915eucas1p18c60ec0bc72fb40b53d0f41a3d43c565~JiPohZpxV1504615046eucas1p1-@eucas1p1.samsung.com>
- <20180911235453epcas1p3457fe80d777c2b67d87a9453eb0a90fc~TfbBBpmTs0067300673epcas1p3J@epcas1p3.samsung.com>
- <20180912065925eucas1p184de86d5cfbd6055d0744be38baa1cd1~TlNrGl6C32685826858eucas1p1S@eucas1p1.samsung.com>
-Mime-Version: 1.0
+From: Christoph Manszewski <c.manszewski@samsung.com>
+Subject: [PATCH 0/4] crypto: s5p-sss: Fix and add aes-ctr support
+Date: Thu, 13 Sep 2018 09:58:38 +0200
+Message-ID: <20180913075854eucas1p1ab212d14a48f86dd94f8580dca4bc63c~T5q5vKjDE1335913359eucas1p1q@eucas1p1.samsung.com>
+References: <CGME20180913075854eucas1p1ab212d14a48f86dd94f8580dca4bc63c@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180912065925eucas1p184de86d5cfbd6055d0744be38baa1cd1~TlNrGl6C32685826858eucas1p1S@eucas1p1.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-crypto@vger.kernel.org
+Cc: Christoph Manszewski <c.manszewski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE464WEIDA57JuUIDEy7J28IDE1OjU57JeQIEFuZHJ6ZWogUGlldHJhc2lld2ljeiDsnbQo
-6rCAKSDsk7Qg6riAOgo+IEhpIElua2ksCj4gCj4gVyBkbml1IDEyLjA5LjIwMTggbyAwMTo1NCwg
-SW5raSBEYWUgcGlzemU6Cj4+IEhpIE1hcmVrIGFuZCBBbmRyemVqLAo+Pgo+PiAyMDE464WEIDA4
-7JuUIDEw7J28IDIyOjI57JeQIE1hcmVrIFN6eXByb3dza2kg7J20KOqwgCkg7JO0IOq4gDoKPj4+
-IEZyb206IEFuZHJ6ZWogUGlldHJhc2lld2ljeiA8YW5kcnplai5wQHNhbXN1bmcuY29tPgo+Pj4K
-Pj4+IEFkZCBzdXBwb3J0IGZvciAxNngxNiB0aWxlZCBmb3JtYXRzOiBOVjEyL05WMjEsIFlVWVYg
-YW5kIFlVVjQyMC4KPj4+Cj4gCj4gPHNuaXA+Cj4gCj4+PiAgIAo+Pj4gLXN0YXRpYyB1MzIgc2Nh
-bGVyX2dldF9mb3JtYXQodTMyIGRybV9mbXQpCj4+PiArc3RydWN0IHNjYWxlcl9mb3JtYXQgewo+
-Pj4gKwl1MzIJZHJtX2ZtdDsKPj4+ICsJdTMyCWludGVybmFsX2ZtdDsKPj4+ICsJdTMyCWNocm9t
-YV90aWxlX3c7Cj4+PiArCXUzMgljaHJvbWFfdGlsZV9oOwo+Pj4gK307Cj4+PiArCj4+PiArc3Rh
-dGljIGNvbnN0IHN0cnVjdCBzY2FsZXJfZm9ybWF0IHNjYWxlcl9mb3JtYXRzW10gPSB7Cj4+PiAr
-CXsgRFJNX0ZPUk1BVF9OVjEyLCBTQ0FMRVJfWVVWNDIwXzJQX1VWLCA4LCA4IH0sCj4+PiArCXsg
-RFJNX0ZPUk1BVF9OVjIxLCBTQ0FMRVJfWVVWNDIwXzJQX1ZVLCA4LCA4IH0sCj4+PiArCXsgRFJN
-X0ZPUk1BVF9ZVVY0MjAsIFNDQUxFUl9ZVVY0MjBfM1AsIDgsIDggfSwKPj4+ICsJeyBEUk1fRk9S
-TUFUX1lVWVYsIFNDQUxFUl9ZVVY0MjJfMVBfWVVZViwgMTYsIDE2IH0sCj4+PiArCXsgRFJNX0ZP
-Uk1BVF9VWVZZLCBTQ0FMRVJfWVVWNDIyXzFQX1VZVlksIDE2LCAxNiB9LAo+Pj4gKwl7IERSTV9G
-T1JNQVRfWVZZVSwgU0NBTEVSX1lVVjQyMl8xUF9ZVllVLCAxNiwgMTYgfSwKPj4+ICsJeyBEUk1f
-Rk9STUFUX05WMTYsIFNDQUxFUl9ZVVY0MjJfMlBfVVYsIDgsIDE2IH0sCj4+PiArCXsgRFJNX0ZP
-Uk1BVF9OVjYxLCBTQ0FMRVJfWVVWNDIyXzJQX1ZVLCA4LCAxNiB9LAo+Pj4gKwl7IERSTV9GT1JN
-QVRfWVVWNDIyLCBTQ0FMRVJfWVVWNDIyXzNQLCA4LCAxNiB9LAo+Pj4gKwl7IERSTV9GT1JNQVRf
-TlYyNCwgU0NBTEVSX1lVVjQ0NF8yUF9VViwgMTYsIDE2IH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9O
-VjQyLCBTQ0FMRVJfWVVWNDQ0XzJQX1ZVLCAxNiwgMTYgfSwKPj4+ICsJeyBEUk1fRk9STUFUX1lV
-VjQ0NCwgU0NBTEVSX1lVVjQ0NF8zUCwgMTYsIDE2IH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9SR0I1
-NjUsIFNDQUxFUl9SR0JfNTY1LCAwLCAwIH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9YUkdCMTU1NSwg
-U0NBTEVSX0FSR0IxNTU1LCAwLCAwIH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9BUkdCMTU1NSwgU0NB
-TEVSX0FSR0IxNTU1LCAwLCAwIH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9YUkdCNDQ0NCwgU0NBTEVS
-X0FSR0I0NDQ0LCAwLCAwIH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9BUkdCNDQ0NCwgU0NBTEVSX0FS
-R0I0NDQ0LCAwLCAwIH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9YUkdCODg4OCwgU0NBTEVSX0FSR0I4
-ODg4LCAwLCAwIH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9BUkdCODg4OCwgU0NBTEVSX0FSR0I4ODg4
-LCAwLCAwIH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9SR0JYODg4OCwgU0NBTEVSX1JHQkE4ODg4LCAw
-LCAwIH0sCj4+PiArCXsgRFJNX0ZPUk1BVF9SR0JBODg4OCwgU0NBTEVSX1JHQkE4ODg4LCAwLCAw
-IH0sCj4+Cj4+IFNlZW1zIHRoZSB0aWxlIHNpemUgb2YgZWFjaCBmb3JtYXQgeW91IGRlY2xhcmVk
-IGFib3ZlIGlzIHdyb25nLgo+PiBBY2NvcmRpbmcgdG8gZGF0YSBzaGVldCBmb3IgRXh5bm9zNTQy
-MC81NDIyLzU0MzMsIGVhY2ggcGxhbmUgaGFzIGRpZmZlcmVudCB0aWxlIHNpemUuCj4+IEkuZS4s
-IFNBQ0xFX1lVVjQyMF8yUF9VVi9WVSBoYXMgdHdvIHBsYW5lcywgYW5kIFkgcGxhbmUgaGFzIDE2
-IHggMTYgdGlsZSBzaXplIGJ1dCBVIGFuZCBWIHBsYW5lIGhhdmUgOCB4IDggdGlsZSBzaXplIGVh
-Y2ggb3RoZXIuCj4+Cj4+IEhvd2V2ZXIsIGFib3ZlIGRlY2xhcmF0aW9uIGhhcyBvbmx5IG9uZSB0
-aWxlIHNpemUKPiAKPiB0cnVlLCBidXQgdGhlIG1lbWJlcnMgb2Ygc3RydWN0IHNjYWxlcl9mb3Jt
-YXQgYXJlIGNhbGxlZAo+IAo+IF9fX19fY2hyb21hX19fX190aWxlX3cvaAo+IAo+PiBhbmQgaXQg
-bWVhbnMgdGhhdCBlYWNoIHBsYW5lIGhhcyBhbHdheXMgc2FtZSB0aWxlIHNpemUuCj4gCj4gdGhp
-cyBjb25jbHVzaW9uIGlzIG5vdCBqdXN0aWZpZWQKPiAKPj4gQW5kIGFsc28gUkdCIGZvcm1hdHMg
-aGF2ZSAxNiB4IDE2IHRpbGUgc2l6ZSBpbiB0aWxlIG1vZGUgYnV0IHlvdSBkZWNsYXJlZCBpdCBh
-cyAwLgo+IAo+IFRoZSBkYXRhIHNoZWV0IHNheXMsIHRoYXQgYWxsIGZvcm1hdHMgaGF2ZSB0aGUg
-c2FtZSBZL1JHQiB0aWxlIHNpemUKPiBhbmQgaXQgaXMgYWx3YXlzIDE2eDE2LiBUaGF0IGlzIHdo
-eSBvbmx5IGNocm9tYSB0aWxlIHNpemUgaXMgcmVtZW1iZXJlZCwKPiBiZWNhdXNlIG9ubHkgY2hy
-b21hIHRpbGUgc2l6ZSBjYW4gYmUgZGlmZmVyZW50IGJldHdlZW4gZm9ybWF0cy4KCk9rLCBjaHJv
-bWFfdGlsZV9oL3cgYXJlIHVzZWQgdG8gY2FsY3VsYXRlIG9ubHkgdGhlIHBvc2l0aW9uIG9mIHRo
-ZSBjaHJvbWEgYnVmZmVyLgoKQnkgdGhlIHdheSwgdXNlciBzcGFjZSB3b3VsZCB3YW50IHRvIGtu
-b3cgdGhlIHNpemUgbGltaXQgaW4gdGlsZWQgbW9kZSBzbyB0aGF0IHRoZXkgY2FuIGFsbG9jYXRl
-IGVhY2ggYnVmZmVyIGZvciBZKGx1bWEpIGFuZCBDYkNyKGNocm9tYSkuCkhvd2V2ZXIsIGJlbG93
-IGNvZGUgd291bGQgcHJvdmlkZSBZL1JHQiB0aWxlIHNpemUgbGltaXQgLSAxNiAtIHRvIHVzZXIg
-c3BhY2UsCnN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfbGltaXQgc2NhbGVyXzU0
-MjBfdGlsZV9saW1pdHNbXSA9IHsgICAgICAgICAgCiAgICAgICAgIHsgSVBQX1NJWkVfTElNSVQo
-QlVGRkVSLCAuaCA9IHsgMTYsIFNaXzhLIH0sIC52ID0geyAxNiwgU1pfOEsgfSl9LCAgICAgIAog
-ICAgICAgICB7IElQUF9TSVpFX0xJTUlUKEFSRUEsIC5oLmFsaWduID0gMTYsIC52LmFsaWduID0g
-MTYpIH0sICAgICAKCkl0IHdvdWxkIG1lYW4gdGhhdCB1c2VyIHNwYWNlIHdpbGwgYWxsb2NhdGUg
-MTYgcGl4ZWxzIGFsaWduZWQgYnVmZmVyIGV2ZW4gZm9yIGNocm9tYSBidXQgdGhlIGFjdHVhbCBz
-aXplIGxpbWl0IG9mIGl0IHdvdWxkIGJlIDggcGl4ZWxzIGluIGNhc2Ugb2YgU0NBTEVfWVVWNDIw
-X1dQX1VWL1ZVIGZvcmFtdC4gCklzIHRoZXJlIHNvbWUgY29kZSBJJ20gbWlzc2luZz8KClRoYW5r
-cywKSW5raSBEYWUKCj4gCj4gUkdCIGZvcm1hdHMgZG9uJ3QgaGF2ZSBhbnkgY2hyb21hIGNvbXBv
-bmVudCwgaGVuY2UgemVybyBjaHJvbWFfdGlsZV93L2guCj4gCj4gUmVnYXJkcywKPiAKPiBBbmRy
-emVqCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hello,
+
+This patch series adds aes-ctr support in s5p-sss.c driver. Additionally it
+it provides a fix, and a minor code cleanup.
+
+Patch 1 contains a simple fix, of a possible race condition.
+Patches 2-3 are code cleanup patches.
+Patch 4 adds support for aes-ctr block cipher mode of operation.
+
+Regards,
+Chris
+
+Christoph Manszewski (4):
+  crypto: s5p-sss: Fix race in error handling
+  crypto: s5p-sss: Fix whitespace issues
+  crypto: s5p-sss: Minor code cleanup
+  crypto: s5p-sss: Add aes-ctr support
+
+ drivers/crypto/s5p-sss.c | 114 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 66 insertions(+), 48 deletions(-)
+
+-- 
+2.7.4
