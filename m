@@ -1,81 +1,47 @@
-From: Cedric Roux <sed@free.fr>
-Subject: Re: [PATCH v3 1/2] ARM: s3c24xx: formatting cleanup in
- mach-mini2440.c
-Date: Thu, 13 Sep 2018 22:26:55 +0200
-Message-ID: <4cf38559-b00d-ede4-def5-7cd832d8a506@free.fr>
-References: <20180907215446.15160-1-sed@free.fr>
- <b97d7ccc921572ca5d783584eea1de04341ab02f.camel@perches.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] cpufreq: Convert to using %pOFn instead of device_node.name
+Date: Fri, 14 Sep 2018 10:27:03 +0200
+Message-ID: <2755190.UQhmFvc9f1@aspire.rjw.lan>
+References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-14-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b97d7ccc921572ca5d783584eea1de04341ab02f.camel@perches.com>
-Content-Language: en-US
+In-Reply-To: <20180828015252.28511-14-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>, kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Tuesday, August 28, 2018 3:52:15 AM CEST Rob Herring wrote:
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+> 
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index 5d31c2db12a3..dbecd7667db2 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -611,8 +611,8 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+>  	for_each_compatible_node(np, NULL, "samsung,s5pv210-dmc") {
+>  		id = of_alias_get_id(np, "dmc");
+>  		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
+> -			pr_err("%s: failed to get alias of dmc node '%s'\n",
+> -				__func__, np->name);
+> +			pr_err("%s: failed to get alias of dmc node '%pOFn'\n",
+> +				__func__, np);
+>  			of_node_put(np);
+>  			return id;
+>  		}
+> 
 
-On 09/12/2018 09:21 PM, Joe Perches wrote:
-> On Fri, 2018-09-07 at 23:54 +0200, Cedric Roux wrote:
->> Running:
->>     scripts/checkpatch.pl -f arch/arm/mach-s3c24xx/mach-mini2440.c
->> revealed several errors and warnings.
->>
->> They were all removed, except one which is an #if 0 around the declaration
->> of a gpio pin. This needs some more investigation and I prefer to let it
->> here. This is not some dead code.
-> []
->> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-> []
->> @@ -674,17 +680,17 @@ static void __init mini2440_init(void)
->>  		mini2440_fb_info.displays =
->>  			&mini2440_lcd_cfg[features.lcd_index];
->>  
->> -		printk(KERN_INFO "MINI2440: LCD");
->> +		pr_info("MINI2440: LCD");
-> 
-> OK
-> 
->>  		for (li = 0; li < ARRAY_SIZE(mini2440_lcd_cfg); li++)
->>  			if (li == features.lcd_index)
->> -				printk(" [%d:%dx%d]", li,
->> +				pr_info(" [%d:%dx%d]", li,
->>  					mini2440_lcd_cfg[li].width,
->>  					mini2440_lcd_cfg[li].height);
-> 
-> pr_cont
-> 
->>  			else
->> -				printk(" %d:%dx%d", li,
->> +				pr_info(" %d:%dx%d", li,
-> 
-> pr_cont
-> 
->>  					mini2440_lcd_cfg[li].width,
->>  					mini2440_lcd_cfg[li].height);
->> -		printk("\n");
->> +		pr_info("\n");
-> 
-> pr_cont
-> 
-> So only the first printk should use pr_info().
-> The subsequent printk uses should use pr_cont()
-
-at this point, I don't know what to do.
-
-Should I resubmit the patches? Or is it in the hands of
-Krzysztof (krzk@kernel.org)? I would say a git rebase -i
-is enough to edit the patch and this rebase is obviously
-not to be done by me, but I don't know the process.
-
-Regards,
-Cédric.
-
-
-
-> 
->>  		s3c24xx_fb_set_platdata(&mini2440_fb_info);
->>  	}
->>  
+Applied, thanks!
