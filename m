@@ -1,48 +1,50 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC
- as unstable
-Date: Mon, 17 Sep 2018 17:57:49 +0200
-Message-ID: <20180917155749.i6jx7k4vo32y56kd@kozik-lap>
-References: <20180830180205.18121-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Cedric Roux <sed@free.fr>
+Subject: [PATCH] ARM: s3c24xx: fix usage of pr_info/pr_cont
+Date: Mon, 17 Sep 2018 22:43:50 +0200
+Message-ID: <20180917204350.15192-1-sed@free.fr>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180830180205.18121-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+To: kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Cedric Roux <sed@free.fr>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 08:02:05PM +0200, Krzysztof Kozlowski wrote:
-> Samsung Exynos SoCs and boards related bindings evolved since the initial
-> introduction, but initially the bindings were minimal and a bit incomplete
-> (they never described all the hardware modules available in the SoCs).
-> Since then some significant (not fully compatible) changes have been
-> already committed a few times (like gpio replaced by pinctrl, display ddc,
-> mfc reserved memory, some core clocks added to various hardware modules,
-> added more required nodes).
-> 
-> On the other side there are no boards which have device tree embedded in
-> the bootloader. Device tree blob is always compiled from the kernel tree
-> and updated together with the kernel image.
-> 
-> Thus to avoid further adding a bunch of workarounds for old/missing
-> bindings, make development of new platforms easier and allow to make
-> cleanup of the existing code and device tree files, lets mark some
-> Samsung Exynos SoC platform bindings as unstable. This means that
-> bindings can may change at any time and users should use the dtb file
-> compiled from the same kernel source tree as the kernel image.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> [krzk: Explicitly list unstable bindings instead of marking entire
-> Exynos]
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> 
+This commit fixes the wrong usage of pr_info introduced by the
+commit e728e4f20100 ("ARM: s3c24xx: formatting cleanup in
+mach-mini2440.c").
 
-Applied.
+Since the idea is to print on a single line, pr_cont has to be used.
 
-Best regards,
-Krzysztof
+Signed-off-by: Cedric Roux <sed@free.fr>
+---
+ arch/arm/mach-s3c24xx/mach-mini2440.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index 9f830abe701c..50d67d760efd 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -684,14 +684,14 @@ static void __init mini2440_init(void)
+ 		pr_info("MINI2440: LCD");
+ 		for (li = 0; li < ARRAY_SIZE(mini2440_lcd_cfg); li++)
+ 			if (li == features.lcd_index)
+-				pr_info(" [%d:%dx%d]", li,
++				pr_cont(" [%d:%dx%d]", li,
+ 					mini2440_lcd_cfg[li].width,
+ 					mini2440_lcd_cfg[li].height);
+ 			else
+-				pr_info(" %d:%dx%d", li,
++				pr_cont(" %d:%dx%d", li,
+ 					mini2440_lcd_cfg[li].width,
+ 					mini2440_lcd_cfg[li].height);
+-		pr_info("\n");
++		pr_cont("\n");
+ 		s3c24xx_fb_set_platdata(&mini2440_fb_info);
+ 	}
+ 
+-- 
+2.18.0
+
+Note: running: scripts/checkpatch.pl 000*
+reports 3 warnings about the use of pr_cont.
+Since this modification was required by Joe Perches, I think this patch
+doest the correct thing.
