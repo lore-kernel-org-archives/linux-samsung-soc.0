@@ -1,50 +1,164 @@
-From: Cedric Roux <sed@free.fr>
-Subject: [PATCH] ARM: s3c24xx: fix usage of pr_info/pr_cont
-Date: Mon, 17 Sep 2018 22:43:50 +0200
-Message-ID: <20180917204350.15192-1-sed@free.fr>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Subject: Re: [PATCH v4] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
+Date: Tue, 18 Sep 2018 11:32:22 +0530
+Message-ID: <CAFqt6zbp+yFq-59o-J5dtB8Gfc3Ggd6Ff6tCy5vt0OTTSr41vQ@mail.gmail.com>
+References: <20180802154517.GA10593@jordon-HP-15-Notebook-PC> <CAFqt6zZDRaVp53RnEri+P4b8+GByE-UQwerJmuLBe6E=GK0kDQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFqt6zZDRaVp53RnEri+P4b8+GByE-UQwerJmuLBe6E=GK0kDQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Cedric Roux <sed@free.fr>
+To: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, Ajit Linux <ajitn.linux@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This commit fixes the wrong usage of pr_info introduced by the
-commit e728e4f20100 ("ARM: s3c24xx: formatting cleanup in
-mach-mini2440.c").
+Hi Inki,
+On Tue, Sep 11, 2018 at 2:06 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> On Thu, Aug 2, 2018 at 9:12 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >
+> > convert drm_atomic_helper_suspend/resume() to use
+> > drm_mode_config_helper_suspend/resume().
+> >
+> > exynos_drm_fbdev_suspend/resume can be removed
+> > as drm_mode_config_helper_suspend/resume has
+> > implement the same in generic way.
+> >
+> > Remove suspend_state from exynos_drm_private
+> > struct as it is no more useful.
+> >
+> > Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> Can we get this patch in queue for 4.20 ? Not yet available in linux-next.
 
-Since the idea is to print on a single line, pr_cont has to be used.
+Is this patch queued for 4.20 ?
 
-Signed-off-by: Cedric Roux <sed@free.fr>
----
- arch/arm/mach-s3c24xx/mach-mini2440.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-index 9f830abe701c..50d67d760efd 100644
---- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-@@ -684,14 +684,14 @@ static void __init mini2440_init(void)
- 		pr_info("MINI2440: LCD");
- 		for (li = 0; li < ARRAY_SIZE(mini2440_lcd_cfg); li++)
- 			if (li == features.lcd_index)
--				pr_info(" [%d:%dx%d]", li,
-+				pr_cont(" [%d:%dx%d]", li,
- 					mini2440_lcd_cfg[li].width,
- 					mini2440_lcd_cfg[li].height);
- 			else
--				pr_info(" %d:%dx%d", li,
-+				pr_cont(" %d:%dx%d", li,
- 					mini2440_lcd_cfg[li].width,
- 					mini2440_lcd_cfg[li].height);
--		pr_info("\n");
-+		pr_cont("\n");
- 		s3c24xx_fb_set_platdata(&mini2440_fb_info);
- 	}
- 
--- 
-2.18.0
-
-Note: running: scripts/checkpatch.pl 000*
-reports 3 warnings about the use of pr_cont.
-Since this modification was required by Joe Perches, I think this patch
-doest the correct thing.
+> > ---
+> > v2: Address Inki Dae's comment. Remove ret variable
+> >     from both suspend/resume function.
+> >
+> > v3: Tested by Marek. Updated the change log.
+> >
+> > v4: removing the return as exynos_drm_resume()
+> >     now returns void.
+> >
+> >  drivers/gpu/drm/exynos/exynos_drm_drv.c   | 26 ++------------------------
+> >  drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 -
+> >  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 -----------------
+> >  drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
+> >  4 files changed, 2 insertions(+), 52 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> > index b599f74..6f76baf 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> > @@ -149,37 +149,15 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+> >  static int exynos_drm_suspend(struct device *dev)
+> >  {
+> >         struct drm_device *drm_dev = dev_get_drvdata(dev);
+> > -       struct exynos_drm_private *private;
+> > -
+> > -       if (!drm_dev)
+> > -               return 0;
+> > -
+> > -       private = drm_dev->dev_private;
+> > -
+> > -       drm_kms_helper_poll_disable(drm_dev);
+> > -       exynos_drm_fbdev_suspend(drm_dev);
+> > -       private->suspend_state = drm_atomic_helper_suspend(drm_dev);
+> > -       if (IS_ERR(private->suspend_state)) {
+> > -               exynos_drm_fbdev_resume(drm_dev);
+> > -               drm_kms_helper_poll_enable(drm_dev);
+> > -               return PTR_ERR(private->suspend_state);
+> > -       }
+> >
+> > -       return 0;
+> > +       return  drm_mode_config_helper_suspend(drm_dev);
+> >  }
+> >
+> >  static void exynos_drm_resume(struct device *dev)
+> >  {
+> >         struct drm_device *drm_dev = dev_get_drvdata(dev);
+> > -       struct exynos_drm_private *private;
+> > -
+> > -       if (!drm_dev)
+> > -               return;
+> >
+> > -       private = drm_dev->dev_private;
+> > -       drm_atomic_helper_resume(drm_dev, private->suspend_state);
+> > -       exynos_drm_fbdev_resume(drm_dev);
+> > -       drm_kms_helper_poll_enable(drm_dev);
+> > +       drm_mode_config_helper_resume(drm_dev);
+> >  }
+> >
+> >  static const struct dev_pm_ops exynos_drm_pm_ops = {
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> > index c737c4b..7349e7c 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> > @@ -195,7 +195,6 @@ struct drm_exynos_file_private {
+> >   */
+> >  struct exynos_drm_private {
+> >         struct drm_fb_helper *fb_helper;
+> > -       struct drm_atomic_state *suspend_state;
+> >
+> >         struct device *g2d_dev;
+> >         struct device *dma_dev;
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > index 132dd52..918dd2c 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > @@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+> >         private->fb_helper = NULL;
+> >  }
+> >
+> > -void exynos_drm_fbdev_suspend(struct drm_device *dev)
+> > -{
+> > -       struct exynos_drm_private *private = dev->dev_private;
+> > -
+> > -       console_lock();
+> > -       drm_fb_helper_set_suspend(private->fb_helper, 1);
+> > -       console_unlock();
+> > -}
+> > -
+> > -void exynos_drm_fbdev_resume(struct drm_device *dev)
+> > -{
+> > -       struct exynos_drm_private *private = dev->dev_private;
+> > -
+> > -       console_lock();
+> > -       drm_fb_helper_set_suspend(private->fb_helper, 0);
+> > -       console_unlock();
+> > -}
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> > index b338472..6840b6a 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> > @@ -19,8 +19,6 @@
+> >
+> >  int exynos_drm_fbdev_init(struct drm_device *dev);
+> >  void exynos_drm_fbdev_fini(struct drm_device *dev);
+> > -void exynos_drm_fbdev_suspend(struct drm_device *drm);
+> > -void exynos_drm_fbdev_resume(struct drm_device *drm);
+> >
+> >  #else
+> >
+> > @@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
+> >
+> >  #define exynos_drm_output_poll_changed (NULL)
+> >
+> > -static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
+> > -{
+> > -}
+> > -
+> > -static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
+> > -{
+> > -}
+> > -
+> >  #endif
+> >
+> >  #endif
+> > --
+> > 1.9.1
+> >
