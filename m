@@ -1,111 +1,33 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH v7 4/4] gpiolib: Implement fast processing path in get/set
- array
-Date: Thu, 20 Sep 2018 18:21:09 +0200
-Message-ID: <15226900.TQMLYV7PZ0@z50>
-References: <20180831225616.29221-1-jmkrzyszt@gmail.com>
- <20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f~WE-_cEf4l0754207542eucas1p27@eucas1p2.samsung.com>
- <9860023.SlBYqtbjDV@z50>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <9860023.SlBYqtbjDV@z50>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, linux-doc@vger.kernel.org, linux-iio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Dominik Brodowski <linux@dominikbrodowski.net>, Peter Rosin <peda@axentia.se>, netdev@vger.kernel.org, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, devel@driverdev.osuosl.org, Florian Fainelli <f.fainelli@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Tony Lindgren <tony@atomide.com>, Lukas Wunner <lukas@wunner.de>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Russ
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCHv3 0/7] Add support for UHS-I on Exynos5422 odroid boards
+Date: Thu, 20 Sep 2018 17:58:19 +0000
+Message-ID: <20180920175826.1284-1-linux.amoon@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday, September 20, 2018 5:48:22 PM CEST Janusz Krzysztofik wrote:
-> On Thursday, September 20, 2018 12:11:48 PM CEST Marek Szyprowski wrote:
-> > Hi All,
-> > 
-> > On 2018-09-02 14:01, Janusz Krzysztofik wrote:
-> > > Certain GPIO descriptor arrays returned by gpio_get_array() may contain
-> > > information on direct mapping of array members to pins of a single GPIO
-> > > chip in hardware order.  In such cases, bitmaps of values can be passed
-> > > directly from/to the chip's .get/set_multiple() callbacks without
-> > > wasting time on iterations.
-> > >
-> > > Add respective code to gpiod_get/set_array_bitmap_complex() functions.
-> > > Pins not applicable for fast path are processed as before, skipping
-> > > over the 'fast' ones.
-> > >
-> > > Cc: Jonathan Corbet <corbet@lwn.net>
-> > > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> > 
-> > I've just noticed that this patch landed in today's linux-next. Sadly it
-> > breaks booting of Exynos5250-based Samsung Snow Chromebook (ARM 32bit,
-> > device-tree source arch/arm/boot/dts/exynos5250-snow.dts).
-> > 
-> > Booting hangs after detecting MMC cards. Reverting this patch fixes the
-> > boot. I will try later to add some debugs and investigate it further what
-> > really happens when booting hangs.
-> 
-> Hi Marek,
-> 
-> Thanks for reporting. Could you please try the following fix?
+This is series v3 since my previous patches we incomplete with driver
+changes missing.
 
-Hi again,
+These changes add UHS-I tuning for dw_mmc-exynos driver.
+Some new patches are added to enhance the performace.
 
-I realized the patch was not correct, j, not i, should be updated in second 
-hunk. Please try the following one.
+Anand Moon (7):
+  ARM: dts: exynos5422: Added UHS-I bus speed support
+  ARM: dts: exynos5422: fix regulator min values of LDO13 for Odroid
+    XU3/XU4
+  ARM: dts: exynos5422: update maximum frequency for sdcard to 200MHz
+  ARM: dts: exynos5422: use cd-gpio method to detect sd-card
+  ARM: dts: exynos5422: use wp-gpio method to detect sd-card
+  ARM: dts: exynos5422: update maximum frequency for emmc to 200MHz
+  mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
 
-Thanks,
-Janusz
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  8 +++++++-
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
+ drivers/mmc/host/dw_mmc-exynos.c                   | 11 +++++++++++
+ 3 files changed, 19 insertions(+), 1 deletion(-)
 
->From a919c504850f6cb40e8e81267a3a37537f7c4fd4 Mon Sep 17 00:00:00 2001
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Date: Thu, 20 Sep 2018 17:37:21 +0200
-Subject: [PATCH] gpiolib: Fix bitmap index not updated
-
-While skipping fast path bits, bitmap index is not updated with next
-found zero bit position. Fix it.
-
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
- drivers/gpio/gpiolib.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a53d17745d21..369bdd358fcc 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2880,7 +2880,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			__set_bit(hwgpio, mask);
- 
- 			if (array_info)
--				find_next_zero_bit(array_info->get_mask,
-+				i = find_next_zero_bit(array_info->get_mask,
- 						   array_size, i);
- 			else
- 				i++;
-@@ -2905,7 +2905,8 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			trace_gpio_value(desc_to_gpio(desc), 1, value);
- 
- 			if (array_info)
--				find_next_zero_bit(array_info->get_mask, i, j);
-+				j = find_next_zero_bit(array_info->get_mask, i,
-+						       j);
- 			else
- 				j++;
- 		}
-@@ -3192,7 +3193,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 			}
- 
- 			if (array_info)
--				find_next_zero_bit(array_info->set_mask,
-+				i = find_next_zero_bit(array_info->set_mask,
- 						   array_size, i);
- 			else
- 				i++;
 -- 
-2.16.4
+2.17.1
