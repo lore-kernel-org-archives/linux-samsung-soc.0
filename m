@@ -1,182 +1,120 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/3] drm/exynos: scaler: Add support for tiled formats
-Date: Fri, 21 Sep 2018 12:20:40 +0900
-Message-ID: <20180921032040epcas1p1dcd24f5a156ada37e4139c350654cbed~WTCQWQ6961925519255epcas1p1W@epcas1p1.samsung.com>
-References: <20180810132901.11844-1-m.szyprowski@samsung.com>
- <CGME20180810132915eucas1p18c60ec0bc72fb40b53d0f41a3d43c565@eucas1p1.samsung.com>
- <20180810132915eucas1p18c60ec0bc72fb40b53d0f41a3d43c565~JiPohZpxV1504615046eucas1p1-@eucas1p1.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v7 4/4] gpiolib: Implement fast processing path in
+ get/set array
+Date: Fri, 21 Sep 2018 10:18:03 +0200
+Message-ID: <20180921081806eucas1p182d4646e8510b5f0356214af7edba11e~WXF8Ptw4M0970709707eucas1p1p@eucas1p1.samsung.com>
+References: <20180831225616.29221-1-jmkrzyszt@gmail.com>
+ <20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f~WE-_cEf4l0754207542eucas1p27@eucas1p2.samsung.com>
+ <9860023.SlBYqtbjDV@z50>
+ <CGME20180920161947epcas3p491e6c136fe05d9672c81b7b4b8328f64@epcas3p4.samsung.com>
+ <15226900.TQMLYV7PZ0@z50>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180810132915eucas1p18c60ec0bc72fb40b53d0f41a3d43c565~JiPohZpxV1504615046eucas1p1-@eucas1p1.samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <15226900.TQMLYV7PZ0@z50>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, linux-doc@vger.kernel.org, linux-iio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Dominik Brodowski <linux@dominikbrodowski.net>, Peter Rosin <peda@axentia.se>, netdev@vger.kernel.org, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, devel@driverdev.osuosl.org, Florian Fainelli <f.fainelli@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Tony Lindgren <tony@atomide.com>, Lukas Wunner <lukas@wunner.de>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Lars-
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgpUaGVyZSBhcmUgc2V2ZXJhbCB3YXJuaW5ncywKV0FSTklORzogbGluZSBvdmVyIDgwIGNo
-YXJhY3RlcnMKIzI3NjogRklMRTogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Nj
-YWxlci5jOjE4MjoKKwlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfdGFza19yZWN0ICpzcmNfcG9zLCBj
-b25zdCBzdHJ1Y3Qgc2NhbGVyX2Zvcm1hdCAqZm10KQoKV0FSTklORzogbGluZSBvdmVyIDgwIGNo
-YXJhY3RlcnMKIzI5NzogRklMRTogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Nj
-YWxlci5jOjM2MzoKKwljb25zdCBzdHJ1Y3Qgc2NhbGVyX2Zvcm1hdCAqc3JjX2ZtdCA9IHNjYWxl
-cl9nZXRfZm9ybWF0KHRhc2stPnNyYy5idWYuZm91cmNjKTsKCldBUk5JTkc6IGxpbmUgb3ZlciA4
-MCBjaGFyYWN0ZXJzCiMzMDE6IEZJTEU6IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9zY2FsZXIuYzozNjY6CisJY29uc3Qgc3RydWN0IHNjYWxlcl9mb3JtYXQgKmRzdF9mbXQgPSBz
-Y2FsZXJfZ2V0X2Zvcm1hdCh0YXNrLT5kc3QuYnVmLmZvdXJjYyk7Cgp0b3RhbDogMCBlcnJvcnMs
-IDMgd2FybmluZ3MsIDE5MiBsaW5lcyBjaGVja2VkCgoKQW5kIGNvbW1lbnQgYmVsb3cuCgoKT24g
-MjAxOOuFhCAwOOyblCAxMOydvCAyMjoyOSwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBGcm9t
-OiBBbmRyemVqIFBpZXRyYXNpZXdpY3ogPGFuZHJ6ZWoucEBzYW1zdW5nLmNvbT4KPiAKPiBBZGQg
-c3VwcG9ydCBmb3IgMTZ4MTYgdGlsZWQgZm9ybWF0czogTlYxMi9OVjIxLCBZVVlWIGFuZCBZVVY0
-MjAuCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBQaWV0cmFzaWV3aWN6IDxhbmRyemVqLnBA
-c2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93
-c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fc2NhbGVyLmMgfCAxMzMgKysrKysrKysrKysrLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCA3NSBpbnNlcnRpb25zKCspLCA1OCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jCj4gaW5kZXggMGRkYjZlZWM3YjExLi44ZTc2MWVm
-NjNlYWMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Nj
-YWxlci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5j
-Cj4gQEAgLTQ5LDU2ICs0OSw0NiBAQCBzdHJ1Y3Qgc2NhbGVyX2NvbnRleHQgewo+ICAJY29uc3Qg
-c3RydWN0IHNjYWxlcl9kYXRhCSpzY2FsZXJfZGF0YTsKPiAgfTsKPiAgCj4gLXN0YXRpYyB1MzIg
-c2NhbGVyX2dldF9mb3JtYXQodTMyIGRybV9mbXQpCj4gK3N0cnVjdCBzY2FsZXJfZm9ybWF0IHsK
-PiArCXUzMglkcm1fZm10Owo+ICsJdTMyCWludGVybmFsX2ZtdDsKPiArCXUzMgljaHJvbWFfdGls
-ZV93Owo+ICsJdTMyCWNocm9tYV90aWxlX2g7Cj4gK307Cj4gKwo+ICtzdGF0aWMgY29uc3Qgc3Ry
-dWN0IHNjYWxlcl9mb3JtYXQgc2NhbGVyX2Zvcm1hdHNbXSA9IHsKPiArCXsgRFJNX0ZPUk1BVF9O
-VjEyLCBTQ0FMRVJfWVVWNDIwXzJQX1VWLCA4LCA4IH0sCj4gKwl7IERSTV9GT1JNQVRfTlYyMSwg
-U0NBTEVSX1lVVjQyMF8yUF9WVSwgOCwgOCB9LAo+ICsJeyBEUk1fRk9STUFUX1lVVjQyMCwgU0NB
-TEVSX1lVVjQyMF8zUCwgOCwgOCB9LAo+ICsJeyBEUk1fRk9STUFUX1lVWVYsIFNDQUxFUl9ZVVY0
-MjJfMVBfWVVZViwgMTYsIDE2IH0sCj4gKwl7IERSTV9GT1JNQVRfVVlWWSwgU0NBTEVSX1lVVjQy
-Ml8xUF9VWVZZLCAxNiwgMTYgfSwKPiArCXsgRFJNX0ZPUk1BVF9ZVllVLCBTQ0FMRVJfWVVWNDIy
-XzFQX1lWWVUsIDE2LCAxNiB9LAo+ICsJeyBEUk1fRk9STUFUX05WMTYsIFNDQUxFUl9ZVVY0MjJf
-MlBfVVYsIDgsIDE2IH0sCj4gKwl7IERSTV9GT1JNQVRfTlY2MSwgU0NBTEVSX1lVVjQyMl8yUF9W
-VSwgOCwgMTYgfSwKPiArCXsgRFJNX0ZPUk1BVF9ZVVY0MjIsIFNDQUxFUl9ZVVY0MjJfM1AsIDgs
-IDE2IH0sCj4gKwl7IERSTV9GT1JNQVRfTlYyNCwgU0NBTEVSX1lVVjQ0NF8yUF9VViwgMTYsIDE2
-IH0sCj4gKwl7IERSTV9GT1JNQVRfTlY0MiwgU0NBTEVSX1lVVjQ0NF8yUF9WVSwgMTYsIDE2IH0s
-Cj4gKwl7IERSTV9GT1JNQVRfWVVWNDQ0LCBTQ0FMRVJfWVVWNDQ0XzNQLCAxNiwgMTYgfSwKPiAr
-CXsgRFJNX0ZPUk1BVF9SR0I1NjUsIFNDQUxFUl9SR0JfNTY1LCAwLCAwIH0sCj4gKwl7IERSTV9G
-T1JNQVRfWFJHQjE1NTUsIFNDQUxFUl9BUkdCMTU1NSwgMCwgMCB9LAo+ICsJeyBEUk1fRk9STUFU
-X0FSR0IxNTU1LCBTQ0FMRVJfQVJHQjE1NTUsIDAsIDAgfSwKPiArCXsgRFJNX0ZPUk1BVF9YUkdC
-NDQ0NCwgU0NBTEVSX0FSR0I0NDQ0LCAwLCAwIH0sCj4gKwl7IERSTV9GT1JNQVRfQVJHQjQ0NDQs
-IFNDQUxFUl9BUkdCNDQ0NCwgMCwgMCB9LAo+ICsJeyBEUk1fRk9STUFUX1hSR0I4ODg4LCBTQ0FM
-RVJfQVJHQjg4ODgsIDAsIDAgfSwKPiArCXsgRFJNX0ZPUk1BVF9BUkdCODg4OCwgU0NBTEVSX0FS
-R0I4ODg4LCAwLCAwIH0sCj4gKwl7IERSTV9GT1JNQVRfUkdCWDg4ODgsIFNDQUxFUl9SR0JBODg4
-OCwgMCwgMCB9LAo+ICsJeyBEUk1fRk9STUFUX1JHQkE4ODg4LCBTQ0FMRVJfUkdCQTg4ODgsIDAs
-IDAgfSwKPiArfTsKPiArCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgc2NhbGVyX2Zvcm1hdCAqc2Nh
-bGVyX2dldF9mb3JtYXQodTMyIGRybV9mbXQpCj4gIHsKPiAtCXN3aXRjaCAoZHJtX2ZtdCkgewo+
-IC0JY2FzZSBEUk1fRk9STUFUX05WMTI6Cj4gLQkJcmV0dXJuIFNDQUxFUl9ZVVY0MjBfMlBfVVY7
-Cj4gLQljYXNlIERSTV9GT1JNQVRfTlYyMToKPiAtCQlyZXR1cm4gU0NBTEVSX1lVVjQyMF8yUF9W
-VTsKPiAtCWNhc2UgRFJNX0ZPUk1BVF9ZVVY0MjA6Cj4gLQkJcmV0dXJuIFNDQUxFUl9ZVVY0MjBf
-M1A7Cj4gLQljYXNlIERSTV9GT1JNQVRfWVVZVjoKPiAtCQlyZXR1cm4gU0NBTEVSX1lVVjQyMl8x
-UF9ZVVlWOwo+IC0JY2FzZSBEUk1fRk9STUFUX1VZVlk6Cj4gLQkJcmV0dXJuIFNDQUxFUl9ZVVY0
-MjJfMVBfVVlWWTsKPiAtCWNhc2UgRFJNX0ZPUk1BVF9ZVllVOgo+IC0JCXJldHVybiBTQ0FMRVJf
-WVVWNDIyXzFQX1lWWVU7Cj4gLQljYXNlIERSTV9GT1JNQVRfTlYxNjoKPiAtCQlyZXR1cm4gU0NB
-TEVSX1lVVjQyMl8yUF9VVjsKPiAtCWNhc2UgRFJNX0ZPUk1BVF9OVjYxOgo+IC0JCXJldHVybiBT
-Q0FMRVJfWVVWNDIyXzJQX1ZVOwo+IC0JY2FzZSBEUk1fRk9STUFUX1lVVjQyMjoKPiAtCQlyZXR1
-cm4gU0NBTEVSX1lVVjQyMl8zUDsKPiAtCWNhc2UgRFJNX0ZPUk1BVF9OVjI0Ogo+IC0JCXJldHVy
-biBTQ0FMRVJfWVVWNDQ0XzJQX1VWOwo+IC0JY2FzZSBEUk1fRk9STUFUX05WNDI6Cj4gLQkJcmV0
-dXJuIFNDQUxFUl9ZVVY0NDRfMlBfVlU7Cj4gLQljYXNlIERSTV9GT1JNQVRfWVVWNDQ0Ogo+IC0J
-CXJldHVybiBTQ0FMRVJfWVVWNDQ0XzNQOwo+IC0JY2FzZSBEUk1fRk9STUFUX1JHQjU2NToKPiAt
-CQlyZXR1cm4gU0NBTEVSX1JHQl81NjU7Cj4gLQljYXNlIERSTV9GT1JNQVRfWFJHQjE1NTU6Cj4g
-LQkJcmV0dXJuIFNDQUxFUl9BUkdCMTU1NTsKPiAtCWNhc2UgRFJNX0ZPUk1BVF9BUkdCMTU1NToK
-PiAtCQlyZXR1cm4gU0NBTEVSX0FSR0IxNTU1Owo+IC0JY2FzZSBEUk1fRk9STUFUX1hSR0I0NDQ0
-Ogo+IC0JCXJldHVybiBTQ0FMRVJfQVJHQjQ0NDQ7Cj4gLQljYXNlIERSTV9GT1JNQVRfQVJHQjQ0
-NDQ6Cj4gLQkJcmV0dXJuIFNDQUxFUl9BUkdCNDQ0NDsKPiAtCWNhc2UgRFJNX0ZPUk1BVF9YUkdC
-ODg4ODoKPiAtCQlyZXR1cm4gU0NBTEVSX0FSR0I4ODg4Owo+IC0JY2FzZSBEUk1fRk9STUFUX0FS
-R0I4ODg4Ogo+IC0JCXJldHVybiBTQ0FMRVJfQVJHQjg4ODg7Cj4gLQljYXNlIERSTV9GT1JNQVRf
-UkdCWDg4ODg6Cj4gLQkJcmV0dXJuIFNDQUxFUl9SR0JBODg4ODsKPiAtCWNhc2UgRFJNX0ZPUk1B
-VF9SR0JBODg4ODoKPiAtCQlyZXR1cm4gU0NBTEVSX1JHQkE4ODg4Owo+IC0JZGVmYXVsdDoKPiAt
-CQlicmVhazsKPiAtCX0KPiArCWludCBpOwo+ICAKPiAtCXJldHVybiAwOwo+ICsJZm9yIChpID0g
-MDsgaSA8IEFSUkFZX1NJWkUoc2NhbGVyX2Zvcm1hdHMpOyBpKyspCj4gKwkJaWYgKHNjYWxlcl9m
-b3JtYXRzW2ldLmRybV9mbXQgPT0gZHJtX2ZtdCkKPiArCQkJcmV0dXJuICZzY2FsZXJfZm9ybWF0
-c1tpXTsKPiArCj4gKwlyZXR1cm4gTlVMTDsKPiAgfQo+ICAKPiAgc3RhdGljIGlubGluZSBpbnQg
-c2NhbGVyX3Jlc2V0KHN0cnVjdCBzY2FsZXJfY29udGV4dCAqc2NhbGVyKQo+IEBAIC0xNTIsMTEg
-KzE0MiwxMSBAQCBzdGF0aWMgaW5saW5lIHZvaWQgc2NhbGVyX2VuYWJsZV9pbnQoc3RydWN0IHNj
-YWxlcl9jb250ZXh0ICpzY2FsZXIpCj4gIH0KPiAgCj4gIHN0YXRpYyBpbmxpbmUgdm9pZCBzY2Fs
-ZXJfc2V0X3NyY19mbXQoc3RydWN0IHNjYWxlcl9jb250ZXh0ICpzY2FsZXIsCj4gLQl1MzIgc3Jj
-X2ZtdCkKPiArCXUzMiBzcmNfZm10LCB1MzIgdGlsZSkKPiAgewo+ICAJdTMyIHZhbDsKPiAgCj4g
-LQl2YWwgPSBTQ0FMRVJfU1JDX0NGR19TRVRfQ09MT1JfRk9STUFUKHNyY19mbXQpOwo+ICsJdmFs
-ID0gU0NBTEVSX1NSQ19DRkdfU0VUX0NPTE9SX0ZPUk1BVChzcmNfZm10KSB8ICh0aWxlIDw8IDEw
-KTsKPiAgCXNjYWxlcl93cml0ZSh2YWwsIFNDQUxFUl9TUkNfQ0ZHKTsKPiAgfQo+ICAKPiBAQCAt
-MTg4LDE1ICsxNzgsMTkgQEAgc3RhdGljIGlubGluZSB2b2lkIHNjYWxlcl9zZXRfc3JjX3NwYW4o
-c3RydWN0IHNjYWxlcl9jb250ZXh0ICpzY2FsZXIsCj4gIAlzY2FsZXJfd3JpdGUodmFsLCBTQ0FM
-RVJfU1JDX1NQQU4pOwo+ICB9Cj4gIAo+IC1zdGF0aWMgaW5saW5lIHZvaWQgc2NhbGVyX3NldF9z
-cmNfbHVtYV9wb3Moc3RydWN0IHNjYWxlcl9jb250ZXh0ICpzY2FsZXIsCj4gLQlzdHJ1Y3QgZHJt
-X2V4eW5vc19pcHBfdGFza19yZWN0ICpzcmNfcG9zKQo+ICtzdGF0aWMgaW5saW5lIHZvaWQgc2Nh
-bGVyX3NldF9zcmNfbHVtYV9jaHJvbWFfcG9zKHN0cnVjdCBzY2FsZXJfY29udGV4dCAqc2NhbGVy
-LAo+ICsJc3RydWN0IGRybV9leHlub3NfaXBwX3Rhc2tfcmVjdCAqc3JjX3BvcywgY29uc3Qgc3Ry
-dWN0IHNjYWxlcl9mb3JtYXQgKmZtdCkKPiAgewo+ICAJdTMyIHZhbDsKPiAgCj4gIAl2YWwgPSBT
-Q0FMRVJfU1JDX1lfUE9TX1NFVF9ZSF9QT1Moc3JjX3Bvcy0+eCA8PCAyKTsKPiAgCXZhbCB8PSAg
-U0NBTEVSX1NSQ19ZX1BPU19TRVRfWVZfUE9TKHNyY19wb3MtPnkgPDwgMik7Cj4gIAlzY2FsZXJf
-d3JpdGUodmFsLCBTQ0FMRVJfU1JDX1lfUE9TKTsKPiAtCXNjYWxlcl93cml0ZSh2YWwsIFNDQUxF
-Ul9TUkNfQ19QT1MpOyAvKiBBVFRFTlRJT04hICovCj4gKwl2YWwgPSBTQ0FMRVJfU1JDX0NfUE9T
-X1NFVF9DSF9QT1MoCj4gKwkJKHNyY19wb3MtPnggKiBmbXQtPmNocm9tYV90aWxlX3cgLyAxNikg
-PDwgMik7Cj4gKwl2YWwgfD0gIFNDQUxFUl9TUkNfQ19QT1NfU0VUX0NWX1BPUygKPiArCQkoc3Jj
-X3Bvcy0+eSAqIGZtdC0+Y2hyb21hX3RpbGVfaCAvIDE2KSA8PCAyKTsKPiArCXNjYWxlcl93cml0
-ZSh2YWwsIFNDQUxFUl9TUkNfQ19QT1MpOwo+ICB9Cj4gIAo+ICBzdGF0aWMgaW5saW5lIHZvaWQg
-c2NhbGVyX3NldF9zcmNfd2goc3RydWN0IHNjYWxlcl9jb250ZXh0ICpzY2FsZXIsCj4gQEAgLTM2
-NiwxMCArMzYwLDEwIEBAIHN0YXRpYyBpbnQgc2NhbGVyX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2Ry
-bV9pcHAgKmlwcCwKPiAgCXN0cnVjdCBzY2FsZXJfY29udGV4dCAqc2NhbGVyID0KPiAgCQkJY29u
-dGFpbmVyX29mKGlwcCwgc3RydWN0IHNjYWxlcl9jb250ZXh0LCBpcHApOwo+ICAKPiAtCXUzMiBz
-cmNfZm10ID0gc2NhbGVyX2dldF9mb3JtYXQodGFzay0+c3JjLmJ1Zi5mb3VyY2MpOwo+ICsJY29u
-c3Qgc3RydWN0IHNjYWxlcl9mb3JtYXQgKnNyY19mbXQgPSBzY2FsZXJfZ2V0X2Zvcm1hdCh0YXNr
-LT5zcmMuYnVmLmZvdXJjYyk7Cj4gIAlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfdGFza19yZWN0ICpz
-cmNfcG9zID0gJnRhc2stPnNyYy5yZWN0Owo+ICAKPiAtCXUzMiBkc3RfZm10ID0gc2NhbGVyX2dl
-dF9mb3JtYXQodGFzay0+ZHN0LmJ1Zi5mb3VyY2MpOwo+ICsJY29uc3Qgc3RydWN0IHNjYWxlcl9m
-b3JtYXQgKmRzdF9mbXQgPSBzY2FsZXJfZ2V0X2Zvcm1hdCh0YXNrLT5kc3QuYnVmLmZvdXJjYyk7
-Cj4gIAlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfdGFza19yZWN0ICpkc3RfcG9zID0gJnRhc2stPmRz
-dC5yZWN0Owo+ICAKPiAgCXBtX3J1bnRpbWVfZ2V0X3N5bmMoc2NhbGVyLT5kZXYpOwo+IEBAIC0z
-ODAsMTMgKzM3NCwxNCBAQCBzdGF0aWMgaW50IHNjYWxlcl9jb21taXQoc3RydWN0IGV4eW5vc19k
-cm1faXBwICppcHAsCj4gIAo+ICAJc2NhbGVyLT50YXNrID0gdGFzazsKPiAgCj4gLQlzY2FsZXJf
-c2V0X3NyY19mbXQoc2NhbGVyLCBzcmNfZm10KTsKPiArCXNjYWxlcl9zZXRfc3JjX2ZtdCgKPiAr
-CQlzY2FsZXIsIHNyY19mbXQtPmludGVybmFsX2ZtdCwgdGFzay0+c3JjLmJ1Zi5tb2RpZmllciAh
-PSAwKTsKCllvdSBjaGFuZ2VkICd1MzIgc3JjX2ZtdC9kc3RfZm10JyB0byAnc3RydWN0IHNyY19m
-bXQvZHN0X2ZtdCcgYnV0IG5ldmVyIGNoZWNrIG51bGwgcG9pbnRlci4KU28gaWYgdGhlcmUgaXMg
-bm8gdmFsaWQgZm9ybWF0IHRoZW4gc3JjX2ZtdCBhbmQgZHN0X2ZtdCB3aWxsIGhhdmUgTlVMTCwg
-YW5kIHdoaWNoIGluIHR1cm4sIGFib3ZlIGNvZGUgd2lsbCBpbmN1ciBudWxsIHBvaW50ZXIgYWNj
-ZXNzLgoKVGhhbmtzLApJbmtpIERhZQoKPiAgCXNjYWxlcl9zZXRfc3JjX2Jhc2Uoc2NhbGVyLCAm
-dGFzay0+c3JjKTsKPiAgCXNjYWxlcl9zZXRfc3JjX3NwYW4oc2NhbGVyLCAmdGFzay0+c3JjKTsK
-PiAtCXNjYWxlcl9zZXRfc3JjX2x1bWFfcG9zKHNjYWxlciwgc3JjX3Bvcyk7Cj4gKwlzY2FsZXJf
-c2V0X3NyY19sdW1hX2Nocm9tYV9wb3Moc2NhbGVyLCBzcmNfcG9zLCBzcmNfZm10KTsKPiAgCXNj
-YWxlcl9zZXRfc3JjX3doKHNjYWxlciwgc3JjX3Bvcyk7Cj4gIAo+IC0Jc2NhbGVyX3NldF9kc3Rf
-Zm10KHNjYWxlciwgZHN0X2ZtdCk7Cj4gKwlzY2FsZXJfc2V0X2RzdF9mbXQoc2NhbGVyLCBkc3Rf
-Zm10LT5pbnRlcm5hbF9mbXQpOwo+ICAJc2NhbGVyX3NldF9kc3RfYmFzZShzY2FsZXIsICZ0YXNr
-LT5kc3QpOwo+ICAJc2NhbGVyX3NldF9kc3Rfc3BhbihzY2FsZXIsICZ0YXNrLT5kc3QpOwo+ICAJ
-c2NhbGVyX3NldF9kc3RfbHVtYV9wb3Moc2NhbGVyLCBkc3RfcG9zKTsKPiBAQCAtNjE3LDYgKzYx
-MiwxNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9leHlub3NfaXBwX2xpbWl0IHNjYWxlcl81
-NDIwX29uZV9waXhlbF9saW1pdHNbXSA9IHsKPiAgCQkJICAudiA9IHsgNjU1MzYgKiAxIC8gNCwg
-NjU1MzYgKiAxNiB9KSB9LAo+ICB9Owo+ICAKPiArc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZXh5
-bm9zX2lwcF9saW1pdCBzY2FsZXJfNTQyMF90aWxlX2xpbWl0c1tdID0gewo+ICsJeyBJUFBfU0la
-RV9MSU1JVChCVUZGRVIsIC5oID0geyAxNiwgU1pfOEsgfSwgLnYgPSB7IDE2LCBTWl84SyB9KX0s
-Cj4gKwl7IElQUF9TSVpFX0xJTUlUKEFSRUEsIC5oLmFsaWduID0gMTYsIC52LmFsaWduID0gMTYp
-IH0sCj4gKwl7IElQUF9TQ0FMRV9MSU1JVCguaCA9IHsxLCAxfSwgLnYgPSB7MSwgMX0pfSwKPiAr
-CXsgfQo+ICt9Owo+ICsKPiArI2RlZmluZSBJUFBfU1JDRFNUX1RJTEVfRk9STUFUKGYsIGwpCVwK
-PiArCUlQUF9TUkNEU1RfTUZPUk1BVChmLCBEUk1fRk9STUFUX01PRF9TQU1TVU5HXzE2XzE2X1RJ
-TEUsIChsKSkKPiArCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9pcHBfZm9ybWF0
-cyBleHlub3M1NDIwX2Zvcm1hdHNbXSA9IHsKPiAgCS8qIFNDQUxFUl9ZVVY0MjBfMlBfVVYgKi8K
-PiAgCXsgSVBQX1NSQ0RTVF9GT1JNQVQoTlYyMSwgc2NhbGVyXzU0MjBfdHdvX3BpeGVsX2h2X2xp
-bWl0cykgfSwKPiBAQCAtNjgwLDYgKzY4NSwxOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGV4eW5v
-c19kcm1faXBwX2Zvcm1hdHMgZXh5bm9zNTQyMF9mb3JtYXRzW10gPSB7Cj4gIAo+ICAJLyogU0NB
-TEVSX1JHQkE4ODg4ICovCj4gIAl7IElQUF9TUkNEU1RfRk9STUFUKFJHQkE4ODg4LCBzY2FsZXJf
-NTQyMF9vbmVfcGl4ZWxfbGltaXRzKSB9LAo+ICsKPiArCS8qIFNDQUxFUl9ZVVY0MjBfMlBfVVYg
-VElMRSAqLwo+ICsJeyBJUFBfU1JDRFNUX1RJTEVfRk9STUFUKE5WMjEsIHNjYWxlcl81NDIwX3Rp
-bGVfbGltaXRzKSB9LAo+ICsKPiArCS8qIFNDQUxFUl9ZVVY0MjBfMlBfVlUgVElMRSAqLwo+ICsJ
-eyBJUFBfU1JDRFNUX1RJTEVfRk9STUFUKE5WMTIsIHNjYWxlcl81NDIwX3RpbGVfbGltaXRzKSB9
-LAo+ICsKPiArCS8qIFNDQUxFUl9ZVVY0MjBfM1AgVElMRSAqLwo+ICsJeyBJUFBfU1JDRFNUX1RJ
-TEVfRk9STUFUKFlVVjQyMCwgc2NhbGVyXzU0MjBfdGlsZV9saW1pdHMpIH0sCj4gKwo+ICsJLyog
-U0NBTEVSX1lVVjQyMl8xUF9ZVVlWIFRJTEUgKi8KPiArCXsgSVBQX1NSQ0RTVF9USUxFX0ZPUk1B
-VChZVVlWLCBzY2FsZXJfNTQyMF90aWxlX2xpbWl0cykgfSwKPiAgfTsKPiAgCj4gIHN0YXRpYyBj
-b25zdCBzdHJ1Y3Qgc2NhbGVyX2RhdGEgZXh5bm9zNTQyMF9kYXRhID0gewo+IApfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Janusz,
+
+On 2018-09-20 18:21, Janusz Krzysztofik wrote:
+> On Thursday, September 20, 2018 5:48:22 PM CEST Janusz Krzysztofik wrote:
+>> On Thursday, September 20, 2018 12:11:48 PM CEST Marek Szyprowski wrote:
+>>> On 2018-09-02 14:01, Janusz Krzysztofik wrote:
+>>>> Certain GPIO descriptor arrays returned by gpio_get_array() may contain
+>>>> information on direct mapping of array members to pins of a single GPIO
+>>>> chip in hardware order.  In such cases, bitmaps of values can be passed
+>>>> directly from/to the chip's .get/set_multiple() callbacks without
+>>>> wasting time on iterations.
+>>>>
+>>>> Add respective code to gpiod_get/set_array_bitmap_complex() functions.
+>>>> Pins not applicable for fast path are processed as before, skipping
+>>>> over the 'fast' ones.
+>>>>
+>>>> Cc: Jonathan Corbet <corbet@lwn.net>
+>>>> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+>>> I've just noticed that this patch landed in today's linux-next. Sadly it
+>>> breaks booting of Exynos5250-based Samsung Snow Chromebook (ARM 32bit,
+>>> device-tree source arch/arm/boot/dts/exynos5250-snow.dts).
+>>>
+>>> Booting hangs after detecting MMC cards. Reverting this patch fixes the
+>>> boot. I will try later to add some debugs and investigate it further what
+>>> really happens when booting hangs.
+>> Hi Marek,
+>>
+>> Thanks for reporting. Could you please try the following fix?
+> Hi again,
+>
+> I realized the patch was not correct, j, not i, should be updated in second
+> hunk. Please try the following one.
+>
+> Thanks,
+> Janusz
+>
+> >From a919c504850f6cb40e8e81267a3a37537f7c4fd4 Mon Sep 17 00:00:00 2001
+> From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> Date: Thu, 20 Sep 2018 17:37:21 +0200
+> Subject: [PATCH] gpiolib: Fix bitmap index not updated
+> While skipping fast path bits, bitmap index is not updated with next
+> found zero bit position. Fix it.
+>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+
+This one also doesn't help. A quick compare of logs with this version and
+a working system shows, that with your patch (and fix) there are no calls to
+gpx0-2 pin (which are a part of mmc pwrseq), what causes mmc failure. If
+you need any more information (what kind of logs will help?), let me know.
+
+> ---
+>   drivers/gpio/gpiolib.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index a53d17745d21..369bdd358fcc 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2880,7 +2880,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   			__set_bit(hwgpio, mask);
+>   
+>   			if (array_info)
+> -				find_next_zero_bit(array_info->get_mask,
+> +				i = find_next_zero_bit(array_info->get_mask,
+>   						   array_size, i);
+>   			else
+>   				i++;
+> @@ -2905,7 +2905,8 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   			trace_gpio_value(desc_to_gpio(desc), 1, value);
+>   
+>   			if (array_info)
+> -				find_next_zero_bit(array_info->get_mask, i, j);
+> +				j = find_next_zero_bit(array_info->get_mask, i,
+> +						       j);
+>   			else
+>   				j++;
+>   		}
+> @@ -3192,7 +3193,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>   			}
+>   
+>   			if (array_info)
+> -				find_next_zero_bit(array_info->set_mask,
+> +				i = find_next_zero_bit(array_info->set_mask,
+>   						   array_size, i);
+>   			else
+>   				i++;
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
