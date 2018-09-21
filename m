@@ -1,35 +1,66 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT] arm64: ARM: dts: exynos: Remove double SD card detect pin inversion on TM2
-Date: Fri, 21 Sep 2018 20:30:14 +0200
-Message-ID: <20180921183014.20236-1-krzk@kernel.org>
+Subject: [PATCH] ARM: dts: exynos: Add CD and WP pins to Odroid XU SD card
+Date: Fri, 21 Sep 2018 23:03:21 +0200
+Message-ID: <20180921210321.12404-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The SDHCI standard, MMC host controller bindings and MMC core defines
-card detect pin as active low.  Therefore there is no point to invert it
-twice.
+Defining card-detect and write-protect GPIO pins in Odroid XU SD Card
+does not change anything from functional point of view - dw-mmc driver
+was reading the state from registers.  Adding cd-gpios and wp-gpios
+properties changes only internal driver behavior to access the pins
+directly.
+
+Add them to DTS only to comprehensively describe the hardware.  Minor
+benefit is that write-protect pin configuration makes sure that it will
+be properly pulled up to indicate write access.
+
+This also removes debug messages:
+    dwmmc_exynos 12220000.mmc: No GPIO consumer cd found
+    dwmmc_exynos 12220000.mmc: No GPIO consumer wp found
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5410-odroidxu.dts | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index a1e3194b7483..86d8ddc3288a 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -939,8 +939,7 @@
+diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+index a2046f5f998c..dae360f29a47 100644
+--- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
++++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+@@ -525,12 +525,14 @@
+ 
+ &mmc_2 {
  	status = "okay";
- 	cap-sd-highspeed;
- 	disable-wp;
--	cd-gpios = <&gpa2 4 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpm5 0 GPIO_ACTIVE_LOW>;
++	cd-gpios = <&gpc2 2 GPIO_ACTIVE_LOW>;
  	card-detect-delay = <200>;
  	samsung,dw-mshc-ciu-div = <3>;
  	samsung,dw-mshc-sdr-timing = <0 4>;
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4 &sd2_wp>;
+ 	bus-width = <4>;
+ 	cap-sd-highspeed;
+ 	vmmc-supply = <&ldo21_reg>;
+@@ -573,6 +575,14 @@
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+ 		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+ 	};
++
++	sd2_wp: sd2-wp {
++		samsung,pins = "gpm5-0";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		/* Pin is floating so pull it up to disable write-protect */
++		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
++	};
+ };
+ 
+ &pwm {
 -- 
 2.17.1
