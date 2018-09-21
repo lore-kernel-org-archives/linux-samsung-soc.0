@@ -1,75 +1,84 @@
-From: Willy Wolff <willy.mh.wolff.ml@gmail.com>
-Subject: [PATCH] ARM: dts: exynos: ordering wrong order tmu_cpu on
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: dts: exynos: ordering wrong order tmu_cpu on
  Odroid-XU3/4 thermal-zones definition
-Date: Fri, 21 Sep 2018 12:33:29 +0100
-Message-ID: <20180921113329.tha5tfrsvdf7dtws@inc028000032.lancs.ac.uk>
+Date: Fri, 21 Sep 2018 13:46:09 +0200
+Message-ID: <CAJKOXPdDFm=7wNLt5Nzf-y8TS4u6gmo51Y70bFv_pKdFK42VDQ@mail.gmail.com>
+References: <20180921113329.tha5tfrsvdf7dtws@inc028000032.lancs.ac.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20180921113329.tha5tfrsvdf7dtws@inc028000032.lancs.ac.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: willy.mh.wolff.ml@gmail.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch is to open a discussion about wrong order of tmu_cpu.
+On Fri, 21 Sep 2018 at 13:33, Willy Wolff <willy.mh.wolff.ml@gmail.com> wrote:
+>
+> This patch is to open a discussion about wrong order of tmu_cpu.
+>
+> It seems that tmu_cpu1 correspond to cpu3, and tmu_cpu3 match cpu1.
+> Note, cpu{0|3} in dtsi correspond to cpu{3|7} in linux and are the big
+> cores.
 
-It seems that tmu_cpu1 correspond to cpu3, and tmu_cpu3 match cpu1.
-Note, cpu{0|3} in dtsi correspond to cpu{3|7} in linux and are the big
-cores.
+Hi,
 
-By dependencis from exynos5422-odroidxu3-common.dtsi to
-exynos5800.dtsi -> exynos5420.dtsi, I guess definitions of tmu_cpuX are
-incorrect. However, changing the address, reg interrupts or clocks
-would breack other boards depending on it. As I can't test other boards,
-I've just overload the reference in the thermal-zones node.
+I do not understand this sentence. In DTSI, the CPU0-3 are the A7,
+little cores. Defined by exynos5422-cpus.dtsi. What did you mean here?
 
-To reproduce the problem, I provide two scripts:
-== script_stress:
+> By dependencis from exynos5422-odroidxu3-common.dtsi to
+> exynos5800.dtsi -> exynos5420.dtsi, I guess definitions of tmu_cpuX are
+> incorrect. However, changing the address, reg interrupts or clocks
+> would breack other boards depending on it. As I can't test other boards,
+> I've just overload the reference in the thermal-zones node.
 
-for i in 0 10 20 40 80; do
-    echo $i
-    taskset $i stress -t 10 -c 1
-done;
+There are 8 CPUs (4 little and 4 big) but only 4 thermal zones for
+CPUs. The mapping of names of CPU nodes and TMU nodes in DTS is not
+direct. These are just indices ... although more important is to map
+the cooling devices to proper TMU. This should be mentioned in DTS as
+this the real problem here.
 
-== script_read_temp:
+>
+> To reproduce the problem, I provide two scripts:
+> == script_stress:
+>
+> for i in 0 10 20 40 80; do
+>     echo $i
+>     taskset $i stress -t 10 -c 1
+> done;
+>
+> == script_read_temp:
+>
+> while true; do
+>     for i in 0 1 2 3 4; do
+>         echo $i
+>         cat /sys/devices/virtual/thermal/thermal_zone$i/temp
+>     done;
+>     sleep 1
+>     clear
+> done;
+>
+> Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index 96e281c0a118..4512ffad2785 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -135,7 +135,8 @@
+>                         };
+>                 };
+>                 cpu1_thermal: cpu1-thermal {
+> -                       thermal-sensors = <&tmu_cpu1 0>;
+> +                       // thermal-sensors = <&tmu_cpu1 0>;
 
-while true; do
-    for i in 0 1 2 3 4; do
-	echo $i
-	cat /sys/devices/virtual/thermal/thermal_zone$i/temp
-    done;
-    sleep 1
-    clear
-done;
+Do not leave commented lines, there are not needed.
 
-Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Also your email does not match signed-off-by. You must have something
+wrong with either git setup or mailer (git commit --si will use the
+same address for From and SoB so I guess the mailer...).
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 96e281c0a118..4512ffad2785 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -135,7 +135,8 @@
- 			};
- 		};
- 		cpu1_thermal: cpu1-thermal {
--			thermal-sensors = <&tmu_cpu1 0>;
-+			// thermal-sensors = <&tmu_cpu1 0>;
-+			thermal-sensors = <&tmu_cpu3 0>;
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
-@@ -269,7 +270,8 @@
- 			};
- 		};
- 		cpu3_thermal: cpu3-thermal {
--			thermal-sensors = <&tmu_cpu3 0>;
-+			// thermal-sensors = <&tmu_cpu3 0>;
-+			thermal-sensors = <&tmu_cpu1 0>;
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
--- 
-2.11.0
+Best regards,
+Krzysztof
