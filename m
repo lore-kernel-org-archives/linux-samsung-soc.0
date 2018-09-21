@@ -1,113 +1,104 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v7 4/4] gpiolib: Implement fast processing path in
- get/set array
-Date: Fri, 21 Sep 2018 16:14:06 +0200
-Message-ID: <20180921141409eucas1p190a47e2608429870d23516ee5e75c191~Wb8z_FmwI1466414664eucas1p1F@eucas1p1.samsung.com>
-References: <20180831225616.29221-1-jmkrzyszt@gmail.com>
-        <20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f~WE-_cEf4l0754207542eucas1p27@eucas1p2.samsung.com>
-        <9860023.SlBYqtbjDV@z50>
-        <CGME20180920161947epcas3p491e6c136fe05d9672c81b7b4b8328f64@epcas3p4.samsung.com>
-        <15226900.TQMLYV7PZ0@z50>
-        <20180921081806eucas1p182d4646e8510b5f0356214af7edba11e~WXF8Ptw4M0970709707eucas1p1p@eucas1p1.samsung.com>
-        <CAGfqbt7xJxGbq3oOJp9S0Sg7Z9=T6Dy52MDNWSDdsU==kPt1KQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <CAGfqbt7xJxGbq3oOJp9S0Sg7Z9=T6Dy52MDNWSDdsU==kPt1KQ@mail.gmail.com>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 2/2] ARM: dts: exynos: DT for v4.20 (or 5.0)
+Date: Fri, 21 Sep 2018 19:45:19 +0200
+Message-ID: <20180921174520.9126-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Janusz,
+Hi,
+
+Nothing special, description in tag.
+
+Best regards,
+Krzysztof
 
 
-On 2018-09-21 12:51, Janusz Krzysztofik wrote:
-> 2018-09-21 10:18 GMT+02:00, Marek Szyprowski <m.szyprowski@samsung.com>:
->> On 2018-09-20 18:21, Janusz Krzysztofik wrote:
->>> On Thursday, September 20, 2018 5:48:22 PM CEST Janusz Krzysztofik wrote:
->>>> On Thursday, September 20, 2018 12:11:48 PM CEST Marek Szyprowski wrote:
->>>>> On 2018-09-02 14:01, Janusz Krzysztofik wrote:
->>>>>> Certain GPIO descriptor arrays returned by gpio_get_array() may
->>>>>> contain
->>>>>> information on direct mapping of array members to pins of a single
->>>>>> GPIO
->>>>>> chip in hardware order.  In such cases, bitmaps of values can be
->>>>>> passed
->>>>>> directly from/to the chip's .get/set_multiple() callbacks without
->>>>>> wasting time on iterations.
->>>>>>
->>>>>> Add respective code to gpiod_get/set_array_bitmap_complex() functions.
->>>>>> Pins not applicable for fast path are processed as before, skipping
->>>>>> over the 'fast' ones.
->>>>>>
->>>>>> Cc: Jonathan Corbet <corbet@lwn.net>
->>>>>> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
->>>>> I've just noticed that this patch landed in today's linux-next. Sadly
->>>>> it
->>>>> breaks booting of Exynos5250-based Samsung Snow Chromebook (ARM 32bit,
->>>>> device-tree source arch/arm/boot/dts/exynos5250-snow.dts).
->>>>>
->>>>> Booting hangs after detecting MMC cards. Reverting this patch fixes the
->>>>> boot. I will try later to add some debugs and investigate it further
->>>>> what
->>>>> really happens when booting hangs.
->>>> Hi Marek,
->>>>
->>>> Thanks for reporting. Could you please try the following fix?
->>> Hi again,
->>>
->>> I realized the patch was not correct, j, not i, should be updated in
->>> second
->>> hunk. Please try the following one.
->>>
->>> Thanks,
->>> Janusz
->>>
->>> >From a919c504850f6cb40e8e81267a3a37537f7c4fd4 Mon Sep 17 00:00:00 2001
->>> From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
->>> Date: Thu, 20 Sep 2018 17:37:21 +0200
->>> Subject: [PATCH] gpiolib: Fix bitmap index not updated
->>> While skipping fast path bits, bitmap index is not updated with next
->>> found zero bit position. Fix it.
->>>
->>> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
->> This one also doesn't help. A quick compare of logs with this version and
->> a working system shows, that with your patch (and fix) there are no calls
->> to
->> gpx0-2 pin (which are a part of mmc pwrseq), what causes mmc failure. If
->> you need any more information (what kind of logs will help?), let me know.
-> There is a debug message on array_info content available at the end of
-> gpiod_get_array(), could you please activate it and post the message so
-> we can understand better what is going on?
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-With debug enabled on next-20180919:
-[    2.499153] pwrseq_simple mmc3_pwrseq: GPIO array info: chip=gpx0, 
-size=2, get_mask=2, set_mask=2, invert_mask=2
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
-On next-20180920 I get no this message and booting hangs.
+are available in the Git repository at:
 
-Same with next-20180920 + your second fix from this thread.
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.20
 
-I will try to debug this more on Monday.
+for you to fetch changes up to 7c92b9a8e0fc5eae460a33b7420af5cf60bd7b21:
 
-> On the other hand, I've had a look your device-tree configuration and
-> it looks like that specific setup won't benefit from the fast bitmap path.
-> You have pin 2 at position 0 and pin 1 at position 1 of the array.
-> Hence, the fast bitmap path covers only pin 1, and pin 2 is processed
-> by the old path with apparently buggy code for skipping over fast pins.
->
-> As a temporary workaround, you could try to revert the order of pins in
-> your dts file (pin 1 at position 0, pin 2 at 1) and the mmc pwrseq code
-> should work for you again by taking the original old path, not skipping
-> over fast pins.  Results of such check may also help us to better
-> understand and resolve the issue.
+  ARM: dts: exynos: Correct audio subsystem parent clock on Peach Chromebooks (2018-09-17 18:03:10 +0200)
 
-Changing the order of mmc pwrseq gpio pins fixes boot hang.
+----------------------------------------------------------------
+Samsung DTS ARM changes for v4.20
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1. Bring up DSI and HDMI on Exynos5250 Arndale.
+2. Use the new way of setting external wakeup interrupts on S5Pv210.
+3. Use proper cpufreq suspend OPP to fix suspend/wakeup from RAM on Snow
+   Chromebook (Exynos5250).
+4. Fully describe regualtors on Odroid XU3-family boards.
+5. Fix sound in Snow-rev5 Chromebook.
+6. Fix regulators configuration on Peach Pi/Pit Chromebooks (Exynos5420)
+   which should be always on.
+7. Fix pull control on PMIC interrupt lines on multiple boards which
+   essentially fixes waking up by RTC.
+8. Add PMIC interrupts on Exynos4210 UniversalC210 board.
+9. Add external SD card support for Trats board (Exynos4210).
+10. Correct audio subsystem parent clock on Peach Chromebooks.
+11. Minor cleanups.
+12. Explicitly mark Samsung Exynos SoC as unstable. When introduced, the
+    DT bindings were minimal and incomplete. Since then some significant
+    (not fully compatible) changes have been already merged and
+    workarounds have been added while working on drivers. Marking certain
+    bindings as unstable will point users attention to always use DTB
+    compiled from current kernel sources - which anyway happens now. In
+    case of fear of incompatible ABI changes, any out of tree Device
+    Tree sources should either be upstreamed or should be changed in the
+    same way as in-kernel DTS are modified.
+
+----------------------------------------------------------------
+Andrzej Hajda (4):
+      ARM: dts: exynos: Add DSI node on Exynos5250
+      ARM: dts: exynos: Add DSI and panel nodes on Arndale
+      ARM: dts: exynos: Use i2c-gpio for HDMI-DDC on Arndale
+      ARM: dts: exynos: Fix HDMI-HPD line handling on Arndale
+
+Krzysztof Kozlowski (7):
+      ARM: dts: s5pv210: Switch to S5Pv210 specific pinctrl wakeup compatible
+      ARM: dts: exynos: Add missing used PMIC regulators on Exynos5422 Odroid boards
+      ARM: dts: exynos: Add unused PMIC regulators on Exynos5422 Odroid boards
+      ARM: dts: exynos: Disable unused PMIC regulators on Exynos5422 Odroid boards
+      ARM: dts: exynos: Add LDO28 regulator on Exynos5422 Odroid boards
+      ARM: dts: exynos: Remove double SD card detect pin inversion
+      dt-bindings: arm: Explicitly mark Samsung Exynos SoC as unstable
+
+Marek Szyprowski (10):
+      ARM: dts: exynos: Convert exynos5250.dtsi to opp-v2 bindings
+      ARM: dts: exynos: Mark 1 GHz CPU OPP as suspend OPP on Exynos5250
+      ARM: dts: exynos: Fix sound in Snow-rev5 Chromebook
+      ARM: dts: exynos: Fix regulators configuration on Peach Pi/Pit Chromebooks
+      ARM: dts: exynos: Disable pull control for MAX8997 interrupts on Origen
+      ARM: dts: exynos: Add missing PMIC interrupts on UniversalC210 board
+      ARM: dts: exynos: Disable pull control for S5M8767 PMIC
+      ARM: dts: exynos: Disable pull control for PMIC IRQ line on Artik5 board
+      ARM: dts: exynos: Add external SD card support for Trats board
+      ARM: dts: exynos: Correct audio subsystem parent clock on Peach Chromebooks
+
+ .../devicetree/bindings/arm/samsung/exynos.txt     |  26 ++++
+ arch/arm/boot/dts/exynos3250-artik5.dtsi           |   7 +
+ arch/arm/boot/dts/exynos4210-origen.dts            |   9 ++
+ arch/arm/boot/dts/exynos4210-trats.dts             |  15 ++
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |  11 +-
+ arch/arm/boot/dts/exynos4412-midas.dtsi            |   3 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |   3 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           | 102 +++++++++++--
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi          |  11 ++
+ arch/arm/boot/dts/exynos5250-snow-rev5.dts         |  11 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  | 152 ++++++++++++++------
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   5 +-
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 157 +++++++++++++++++++--
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   6 +
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   6 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   5 +-
+ arch/arm/boot/dts/s5pv210.dtsi                     |   2 +-
+ 17 files changed, 459 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos.txt
