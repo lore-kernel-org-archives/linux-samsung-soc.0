@@ -1,120 +1,160 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v7 4/4] gpiolib: Implement fast processing path in
- get/set array
-Date: Fri, 21 Sep 2018 10:18:03 +0200
-Message-ID: <20180921081806eucas1p182d4646e8510b5f0356214af7edba11e~WXF8Ptw4M0970709707eucas1p1p@eucas1p1.samsung.com>
-References: <20180831225616.29221-1-jmkrzyszt@gmail.com>
- <20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f~WE-_cEf4l0754207542eucas1p27@eucas1p2.samsung.com>
- <9860023.SlBYqtbjDV@z50>
- <CGME20180920161947epcas3p491e6c136fe05d9672c81b7b4b8328f64@epcas3p4.samsung.com>
- <15226900.TQMLYV7PZ0@z50>
+Subject: Re: [PATCH 2/3] drm/exynos: scaler: Add support for tiled formats
+Date: Fri, 21 Sep 2018 10:22:04 +0200
+Message-ID: <20180921082205eucas1p14071eee64ac8b0695c964c41350bd550~WXJa4zJ092044520445eucas1p1E@eucas1p1.samsung.com>
+References: <20180810132901.11844-1-m.szyprowski@samsung.com>
+ <CGME20180810132915eucas1p18c60ec0bc72fb40b53d0f41a3d43c565@eucas1p1.samsung.com>
+ <20180810132915eucas1p18c60ec0bc72fb40b53d0f41a3d43c565~JiPohZpxV1504615046eucas1p1-@eucas1p1.samsung.com>
+ <20180921032040epcas1p1dcd24f5a156ada37e4139c350654cbed~WTCQWQ6961925519255epcas1p1W@epcas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <15226900.TQMLYV7PZ0@z50>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180921032040epcas1p1dcd24f5a156ada37e4139c350654cbed~WTCQWQ6961925519255epcas1p1W@epcas1p1.samsung.com>
 Content-Language: en-US
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, linux-doc@vger.kernel.org, linux-iio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Dominik Brodowski <linux@dominikbrodowski.net>, Peter Rosin <peda@axentia.se>, netdev@vger.kernel.org, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, devel@driverdev.osuosl.org, Florian Fainelli <f.fainelli@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Tony Lindgren <tony@atomide.com>, Lukas Wunner <lukas@wunner.de>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Lars-
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Janusz,
-
-On 2018-09-20 18:21, Janusz Krzysztofik wrote:
-> On Thursday, September 20, 2018 5:48:22 PM CEST Janusz Krzysztofik wrote:
->> On Thursday, September 20, 2018 12:11:48 PM CEST Marek Szyprowski wrote:
->>> On 2018-09-02 14:01, Janusz Krzysztofik wrote:
->>>> Certain GPIO descriptor arrays returned by gpio_get_array() may contain
->>>> information on direct mapping of array members to pins of a single GPIO
->>>> chip in hardware order.  In such cases, bitmaps of values can be passed
->>>> directly from/to the chip's .get/set_multiple() callbacks without
->>>> wasting time on iterations.
->>>>
->>>> Add respective code to gpiod_get/set_array_bitmap_complex() functions.
->>>> Pins not applicable for fast path are processed as before, skipping
->>>> over the 'fast' ones.
->>>>
->>>> Cc: Jonathan Corbet <corbet@lwn.net>
->>>> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
->>> I've just noticed that this patch landed in today's linux-next. Sadly it
->>> breaks booting of Exynos5250-based Samsung Snow Chromebook (ARM 32bit,
->>> device-tree source arch/arm/boot/dts/exynos5250-snow.dts).
->>>
->>> Booting hangs after detecting MMC cards. Reverting this patch fixes the
->>> boot. I will try later to add some debugs and investigate it further what
->>> really happens when booting hangs.
->> Hi Marek,
->>
->> Thanks for reporting. Could you please try the following fix?
-> Hi again,
->
-> I realized the patch was not correct, j, not i, should be updated in second
-> hunk. Please try the following one.
->
-> Thanks,
-> Janusz
->
-> >From a919c504850f6cb40e8e81267a3a37537f7c4fd4 Mon Sep 17 00:00:00 2001
-> From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> Date: Thu, 20 Sep 2018 17:37:21 +0200
-> Subject: [PATCH] gpiolib: Fix bitmap index not updated
-> While skipping fast path bits, bitmap index is not updated with next
-> found zero bit position. Fix it.
->
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-
-This one also doesn't help. A quick compare of logs with this version and
-a working system shows, that with your patch (and fix) there are no calls to
-gpx0-2 pin (which are a part of mmc pwrseq), what causes mmc failure. If
-you need any more information (what kind of logs will help?), let me know.
-
-> ---
->   drivers/gpio/gpiolib.c | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index a53d17745d21..369bdd358fcc 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2880,7 +2880,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->   			__set_bit(hwgpio, mask);
->   
->   			if (array_info)
-> -				find_next_zero_bit(array_info->get_mask,
-> +				i = find_next_zero_bit(array_info->get_mask,
->   						   array_size, i);
->   			else
->   				i++;
-> @@ -2905,7 +2905,8 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->   			trace_gpio_value(desc_to_gpio(desc), 1, value);
->   
->   			if (array_info)
-> -				find_next_zero_bit(array_info->get_mask, i, j);
-> +				j = find_next_zero_bit(array_info->get_mask, i,
-> +						       j);
->   			else
->   				j++;
->   		}
-> @@ -3192,7 +3193,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
->   			}
->   
->   			if (array_info)
-> -				find_next_zero_bit(array_info->set_mask,
-> +				i = find_next_zero_bit(array_info->set_mask,
->   						   array_size, i);
->   			else
->   				i++;
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGkgSW5raSwKCk9uIDIwMTgtMDktMjEgMDU6MjAsIElua2kgRGFlIHdyb3RlOgo+IFRoZXJlIGFy
+ZSBzZXZlcmFsIHdhcm5pbmdzLAo+IFdBUk5JTkc6IGxpbmUgb3ZlciA4MCBjaGFyYWN0ZXJzCj4g
+IzI3NjogRklMRTogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jOjE4
+MjoKPiArCXN0cnVjdCBkcm1fZXh5bm9zX2lwcF90YXNrX3JlY3QgKnNyY19wb3MsIGNvbnN0IHN0
+cnVjdCBzY2FsZXJfZm9ybWF0ICpmbXQpCj4KPiBXQVJOSU5HOiBsaW5lIG92ZXIgODAgY2hhcmFj
+dGVycwo+ICMyOTc6IEZJTEU6IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9zY2Fs
+ZXIuYzozNjM6Cj4gKwljb25zdCBzdHJ1Y3Qgc2NhbGVyX2Zvcm1hdCAqc3JjX2ZtdCA9IHNjYWxl
+cl9nZXRfZm9ybWF0KHRhc2stPnNyYy5idWYuZm91cmNjKTsKPgo+IFdBUk5JTkc6IGxpbmUgb3Zl
+ciA4MCBjaGFyYWN0ZXJzCj4gIzMwMTogRklMRTogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX3NjYWxlci5jOjM2NjoKPiArCWNvbnN0IHN0cnVjdCBzY2FsZXJfZm9ybWF0ICpkc3Rf
+Zm10ID0gc2NhbGVyX2dldF9mb3JtYXQodGFzay0+ZHN0LmJ1Zi5mb3VyY2MpOwo+Cj4gdG90YWw6
+IDAgZXJyb3JzLCAzIHdhcm5pbmdzLCAxOTIgbGluZXMgY2hlY2tlZAo+Cj4KPiBBbmQgY29tbWVu
+dCBiZWxvdy4KPgo+Cj4gT24gMjAxOOuFhCAwOOyblCAxMOydvCAyMjoyOSwgTWFyZWsgU3p5cHJv
+d3NraSB3cm90ZToKPj4gRnJvbTogQW5kcnplaiBQaWV0cmFzaWV3aWN6IDxhbmRyemVqLnBAc2Ft
+c3VuZy5jb20+Cj4+Cj4+IEFkZCBzdXBwb3J0IGZvciAxNngxNiB0aWxlZCBmb3JtYXRzOiBOVjEy
+L05WMjEsIFlVWVYgYW5kIFlVVjQyMC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBQaWV0
+cmFzaWV3aWN6IDxhbmRyemVqLnBAc2Ftc3VuZy5jb20+Cj4+IFNpZ25lZC1vZmYtYnk6IE1hcmVr
+IFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jIHwgMTMzICsrKysrKysrKysrKy0t
+LS0tLS0tLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA3NSBpbnNlcnRpb25zKCspLCA1OCBkZWxldGlv
+bnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9zY2FsZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9zY2FsZXIuYwo+
+PiBpbmRleCAwZGRiNmVlYzdiMTEuLjhlNzYxZWY2M2VhYyAxMDA2NDQKPj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9zY2FsZXIuYwo+PiBAQCAtNDksNTYgKzQ5LDQ2IEBAIHN0
+cnVjdCBzY2FsZXJfY29udGV4dCB7Cj4+ICAgCWNvbnN0IHN0cnVjdCBzY2FsZXJfZGF0YQkqc2Nh
+bGVyX2RhdGE7Cj4+ICAgfTsKPj4gICAKPj4gLXN0YXRpYyB1MzIgc2NhbGVyX2dldF9mb3JtYXQo
+dTMyIGRybV9mbXQpCj4+ICtzdHJ1Y3Qgc2NhbGVyX2Zvcm1hdCB7Cj4+ICsJdTMyCWRybV9mbXQ7
+Cj4+ICsJdTMyCWludGVybmFsX2ZtdDsKPj4gKwl1MzIJY2hyb21hX3RpbGVfdzsKPj4gKwl1MzIJ
+Y2hyb21hX3RpbGVfaDsKPj4gK307Cj4+ICsKPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgc2NhbGVy
+X2Zvcm1hdCBzY2FsZXJfZm9ybWF0c1tdID0gewo+PiArCXsgRFJNX0ZPUk1BVF9OVjEyLCBTQ0FM
+RVJfWVVWNDIwXzJQX1VWLCA4LCA4IH0sCj4+ICsJeyBEUk1fRk9STUFUX05WMjEsIFNDQUxFUl9Z
+VVY0MjBfMlBfVlUsIDgsIDggfSwKPj4gKwl7IERSTV9GT1JNQVRfWVVWNDIwLCBTQ0FMRVJfWVVW
+NDIwXzNQLCA4LCA4IH0sCj4+ICsJeyBEUk1fRk9STUFUX1lVWVYsIFNDQUxFUl9ZVVY0MjJfMVBf
+WVVZViwgMTYsIDE2IH0sCj4+ICsJeyBEUk1fRk9STUFUX1VZVlksIFNDQUxFUl9ZVVY0MjJfMVBf
+VVlWWSwgMTYsIDE2IH0sCj4+ICsJeyBEUk1fRk9STUFUX1lWWVUsIFNDQUxFUl9ZVVY0MjJfMVBf
+WVZZVSwgMTYsIDE2IH0sCj4+ICsJeyBEUk1fRk9STUFUX05WMTYsIFNDQUxFUl9ZVVY0MjJfMlBf
+VVYsIDgsIDE2IH0sCj4+ICsJeyBEUk1fRk9STUFUX05WNjEsIFNDQUxFUl9ZVVY0MjJfMlBfVlUs
+IDgsIDE2IH0sCj4+ICsJeyBEUk1fRk9STUFUX1lVVjQyMiwgU0NBTEVSX1lVVjQyMl8zUCwgOCwg
+MTYgfSwKPj4gKwl7IERSTV9GT1JNQVRfTlYyNCwgU0NBTEVSX1lVVjQ0NF8yUF9VViwgMTYsIDE2
+IH0sCj4+ICsJeyBEUk1fRk9STUFUX05WNDIsIFNDQUxFUl9ZVVY0NDRfMlBfVlUsIDE2LCAxNiB9
+LAo+PiArCXsgRFJNX0ZPUk1BVF9ZVVY0NDQsIFNDQUxFUl9ZVVY0NDRfM1AsIDE2LCAxNiB9LAo+
+PiArCXsgRFJNX0ZPUk1BVF9SR0I1NjUsIFNDQUxFUl9SR0JfNTY1LCAwLCAwIH0sCj4+ICsJeyBE
+Uk1fRk9STUFUX1hSR0IxNTU1LCBTQ0FMRVJfQVJHQjE1NTUsIDAsIDAgfSwKPj4gKwl7IERSTV9G
+T1JNQVRfQVJHQjE1NTUsIFNDQUxFUl9BUkdCMTU1NSwgMCwgMCB9LAo+PiArCXsgRFJNX0ZPUk1B
+VF9YUkdCNDQ0NCwgU0NBTEVSX0FSR0I0NDQ0LCAwLCAwIH0sCj4+ICsJeyBEUk1fRk9STUFUX0FS
+R0I0NDQ0LCBTQ0FMRVJfQVJHQjQ0NDQsIDAsIDAgfSwKPj4gKwl7IERSTV9GT1JNQVRfWFJHQjg4
+ODgsIFNDQUxFUl9BUkdCODg4OCwgMCwgMCB9LAo+PiArCXsgRFJNX0ZPUk1BVF9BUkdCODg4OCwg
+U0NBTEVSX0FSR0I4ODg4LCAwLCAwIH0sCj4+ICsJeyBEUk1fRk9STUFUX1JHQlg4ODg4LCBTQ0FM
+RVJfUkdCQTg4ODgsIDAsIDAgfSwKPj4gKwl7IERSTV9GT1JNQVRfUkdCQTg4ODgsIFNDQUxFUl9S
+R0JBODg4OCwgMCwgMCB9LAo+PiArfTsKPj4gKwo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBzY2Fs
+ZXJfZm9ybWF0ICpzY2FsZXJfZ2V0X2Zvcm1hdCh1MzIgZHJtX2ZtdCkKPj4gICB7Cj4+IC0Jc3dp
+dGNoIChkcm1fZm10KSB7Cj4+IC0JY2FzZSBEUk1fRk9STUFUX05WMTI6Cj4+IC0JCXJldHVybiBT
+Q0FMRVJfWVVWNDIwXzJQX1VWOwo+PiAtCWNhc2UgRFJNX0ZPUk1BVF9OVjIxOgo+PiAtCQlyZXR1
+cm4gU0NBTEVSX1lVVjQyMF8yUF9WVTsKPj4gLQljYXNlIERSTV9GT1JNQVRfWVVWNDIwOgo+PiAt
+CQlyZXR1cm4gU0NBTEVSX1lVVjQyMF8zUDsKPj4gLQljYXNlIERSTV9GT1JNQVRfWVVZVjoKPj4g
+LQkJcmV0dXJuIFNDQUxFUl9ZVVY0MjJfMVBfWVVZVjsKPj4gLQljYXNlIERSTV9GT1JNQVRfVVlW
+WToKPj4gLQkJcmV0dXJuIFNDQUxFUl9ZVVY0MjJfMVBfVVlWWTsKPj4gLQljYXNlIERSTV9GT1JN
+QVRfWVZZVToKPj4gLQkJcmV0dXJuIFNDQUxFUl9ZVVY0MjJfMVBfWVZZVTsKPj4gLQljYXNlIERS
+TV9GT1JNQVRfTlYxNjoKPj4gLQkJcmV0dXJuIFNDQUxFUl9ZVVY0MjJfMlBfVVY7Cj4+IC0JY2Fz
+ZSBEUk1fRk9STUFUX05WNjE6Cj4+IC0JCXJldHVybiBTQ0FMRVJfWVVWNDIyXzJQX1ZVOwo+PiAt
+CWNhc2UgRFJNX0ZPUk1BVF9ZVVY0MjI6Cj4+IC0JCXJldHVybiBTQ0FMRVJfWVVWNDIyXzNQOwo+
+PiAtCWNhc2UgRFJNX0ZPUk1BVF9OVjI0Ogo+PiAtCQlyZXR1cm4gU0NBTEVSX1lVVjQ0NF8yUF9V
+VjsKPj4gLQljYXNlIERSTV9GT1JNQVRfTlY0MjoKPj4gLQkJcmV0dXJuIFNDQUxFUl9ZVVY0NDRf
+MlBfVlU7Cj4+IC0JY2FzZSBEUk1fRk9STUFUX1lVVjQ0NDoKPj4gLQkJcmV0dXJuIFNDQUxFUl9Z
+VVY0NDRfM1A7Cj4+IC0JY2FzZSBEUk1fRk9STUFUX1JHQjU2NToKPj4gLQkJcmV0dXJuIFNDQUxF
+Ul9SR0JfNTY1Owo+PiAtCWNhc2UgRFJNX0ZPUk1BVF9YUkdCMTU1NToKPj4gLQkJcmV0dXJuIFND
+QUxFUl9BUkdCMTU1NTsKPj4gLQljYXNlIERSTV9GT1JNQVRfQVJHQjE1NTU6Cj4+IC0JCXJldHVy
+biBTQ0FMRVJfQVJHQjE1NTU7Cj4+IC0JY2FzZSBEUk1fRk9STUFUX1hSR0I0NDQ0Ogo+PiAtCQly
+ZXR1cm4gU0NBTEVSX0FSR0I0NDQ0Owo+PiAtCWNhc2UgRFJNX0ZPUk1BVF9BUkdCNDQ0NDoKPj4g
+LQkJcmV0dXJuIFNDQUxFUl9BUkdCNDQ0NDsKPj4gLQljYXNlIERSTV9GT1JNQVRfWFJHQjg4ODg6
+Cj4+IC0JCXJldHVybiBTQ0FMRVJfQVJHQjg4ODg7Cj4+IC0JY2FzZSBEUk1fRk9STUFUX0FSR0I4
+ODg4Ogo+PiAtCQlyZXR1cm4gU0NBTEVSX0FSR0I4ODg4Owo+PiAtCWNhc2UgRFJNX0ZPUk1BVF9S
+R0JYODg4ODoKPj4gLQkJcmV0dXJuIFNDQUxFUl9SR0JBODg4ODsKPj4gLQljYXNlIERSTV9GT1JN
+QVRfUkdCQTg4ODg6Cj4+IC0JCXJldHVybiBTQ0FMRVJfUkdCQTg4ODg7Cj4+IC0JZGVmYXVsdDoK
+Pj4gLQkJYnJlYWs7Cj4+IC0JfQo+PiArCWludCBpOwo+PiAgIAo+PiAtCXJldHVybiAwOwo+PiAr
+CWZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKHNjYWxlcl9mb3JtYXRzKTsgaSsrKQo+PiArCQlp
+ZiAoc2NhbGVyX2Zvcm1hdHNbaV0uZHJtX2ZtdCA9PSBkcm1fZm10KQo+PiArCQkJcmV0dXJuICZz
+Y2FsZXJfZm9ybWF0c1tpXTsKPj4gKwo+PiArCXJldHVybiBOVUxMOwo+PiAgIH0KPj4gICAKPj4g
+ICBzdGF0aWMgaW5saW5lIGludCBzY2FsZXJfcmVzZXQoc3RydWN0IHNjYWxlcl9jb250ZXh0ICpz
+Y2FsZXIpCj4+IEBAIC0xNTIsMTEgKzE0MiwxMSBAQCBzdGF0aWMgaW5saW5lIHZvaWQgc2NhbGVy
+X2VuYWJsZV9pbnQoc3RydWN0IHNjYWxlcl9jb250ZXh0ICpzY2FsZXIpCj4+ICAgfQo+PiAgIAo+
+PiAgIHN0YXRpYyBpbmxpbmUgdm9pZCBzY2FsZXJfc2V0X3NyY19mbXQoc3RydWN0IHNjYWxlcl9j
+b250ZXh0ICpzY2FsZXIsCj4+IC0JdTMyIHNyY19mbXQpCj4+ICsJdTMyIHNyY19mbXQsIHUzMiB0
+aWxlKQo+PiAgIHsKPj4gICAJdTMyIHZhbDsKPj4gICAKPj4gLQl2YWwgPSBTQ0FMRVJfU1JDX0NG
+R19TRVRfQ09MT1JfRk9STUFUKHNyY19mbXQpOwo+PiArCXZhbCA9IFNDQUxFUl9TUkNfQ0ZHX1NF
+VF9DT0xPUl9GT1JNQVQoc3JjX2ZtdCkgfCAodGlsZSA8PCAxMCk7Cj4+ICAgCXNjYWxlcl93cml0
+ZSh2YWwsIFNDQUxFUl9TUkNfQ0ZHKTsKPj4gICB9Cj4+ICAgCj4+IEBAIC0xODgsMTUgKzE3OCwx
+OSBAQCBzdGF0aWMgaW5saW5lIHZvaWQgc2NhbGVyX3NldF9zcmNfc3BhbihzdHJ1Y3Qgc2NhbGVy
+X2NvbnRleHQgKnNjYWxlciwKPj4gICAJc2NhbGVyX3dyaXRlKHZhbCwgU0NBTEVSX1NSQ19TUEFO
+KTsKPj4gICB9Cj4+ICAgCj4+IC1zdGF0aWMgaW5saW5lIHZvaWQgc2NhbGVyX3NldF9zcmNfbHVt
+YV9wb3Moc3RydWN0IHNjYWxlcl9jb250ZXh0ICpzY2FsZXIsCj4+IC0Jc3RydWN0IGRybV9leHlu
+b3NfaXBwX3Rhc2tfcmVjdCAqc3JjX3BvcykKPj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBzY2FsZXJf
+c2V0X3NyY19sdW1hX2Nocm9tYV9wb3Moc3RydWN0IHNjYWxlcl9jb250ZXh0ICpzY2FsZXIsCj4+
+ICsJc3RydWN0IGRybV9leHlub3NfaXBwX3Rhc2tfcmVjdCAqc3JjX3BvcywgY29uc3Qgc3RydWN0
+IHNjYWxlcl9mb3JtYXQgKmZtdCkKPj4gICB7Cj4+ICAgCXUzMiB2YWw7Cj4+ICAgCj4+ICAgCXZh
+bCA9IFNDQUxFUl9TUkNfWV9QT1NfU0VUX1lIX1BPUyhzcmNfcG9zLT54IDw8IDIpOwo+PiAgIAl2
+YWwgfD0gIFNDQUxFUl9TUkNfWV9QT1NfU0VUX1lWX1BPUyhzcmNfcG9zLT55IDw8IDIpOwo+PiAg
+IAlzY2FsZXJfd3JpdGUodmFsLCBTQ0FMRVJfU1JDX1lfUE9TKTsKPj4gLQlzY2FsZXJfd3JpdGUo
+dmFsLCBTQ0FMRVJfU1JDX0NfUE9TKTsgLyogQVRURU5USU9OISAqLwo+PiArCXZhbCA9IFNDQUxF
+Ul9TUkNfQ19QT1NfU0VUX0NIX1BPUygKPj4gKwkJKHNyY19wb3MtPnggKiBmbXQtPmNocm9tYV90
+aWxlX3cgLyAxNikgPDwgMik7Cj4+ICsJdmFsIHw9ICBTQ0FMRVJfU1JDX0NfUE9TX1NFVF9DVl9Q
+T1MoCj4+ICsJCShzcmNfcG9zLT55ICogZm10LT5jaHJvbWFfdGlsZV9oIC8gMTYpIDw8IDIpOwo+
+PiArCXNjYWxlcl93cml0ZSh2YWwsIFNDQUxFUl9TUkNfQ19QT1MpOwo+PiAgIH0KPj4gICAKPj4g
+ICBzdGF0aWMgaW5saW5lIHZvaWQgc2NhbGVyX3NldF9zcmNfd2goc3RydWN0IHNjYWxlcl9jb250
+ZXh0ICpzY2FsZXIsCj4+IEBAIC0zNjYsMTAgKzM2MCwxMCBAQCBzdGF0aWMgaW50IHNjYWxlcl9j
+b21taXQoc3RydWN0IGV4eW5vc19kcm1faXBwICppcHAsCj4+ICAgCXN0cnVjdCBzY2FsZXJfY29u
+dGV4dCAqc2NhbGVyID0KPj4gICAJCQljb250YWluZXJfb2YoaXBwLCBzdHJ1Y3Qgc2NhbGVyX2Nv
+bnRleHQsIGlwcCk7Cj4+ICAgCj4+IC0JdTMyIHNyY19mbXQgPSBzY2FsZXJfZ2V0X2Zvcm1hdCh0
+YXNrLT5zcmMuYnVmLmZvdXJjYyk7Cj4+ICsJY29uc3Qgc3RydWN0IHNjYWxlcl9mb3JtYXQgKnNy
+Y19mbXQgPSBzY2FsZXJfZ2V0X2Zvcm1hdCh0YXNrLT5zcmMuYnVmLmZvdXJjYyk7Cj4+ICAgCXN0
+cnVjdCBkcm1fZXh5bm9zX2lwcF90YXNrX3JlY3QgKnNyY19wb3MgPSAmdGFzay0+c3JjLnJlY3Q7
+Cj4+ICAgCj4+IC0JdTMyIGRzdF9mbXQgPSBzY2FsZXJfZ2V0X2Zvcm1hdCh0YXNrLT5kc3QuYnVm
+LmZvdXJjYyk7Cj4+ICsJY29uc3Qgc3RydWN0IHNjYWxlcl9mb3JtYXQgKmRzdF9mbXQgPSBzY2Fs
+ZXJfZ2V0X2Zvcm1hdCh0YXNrLT5kc3QuYnVmLmZvdXJjYyk7Cj4+ICAgCXN0cnVjdCBkcm1fZXh5
+bm9zX2lwcF90YXNrX3JlY3QgKmRzdF9wb3MgPSAmdGFzay0+ZHN0LnJlY3Q7Cj4+ICAgCj4+ICAg
+CXBtX3J1bnRpbWVfZ2V0X3N5bmMoc2NhbGVyLT5kZXYpOwo+PiBAQCAtMzgwLDEzICszNzQsMTQg
+QEAgc3RhdGljIGludCBzY2FsZXJfY29tbWl0KHN0cnVjdCBleHlub3NfZHJtX2lwcCAqaXBwLAo+
+PiAgIAo+PiAgIAlzY2FsZXItPnRhc2sgPSB0YXNrOwo+PiAgIAo+PiAtCXNjYWxlcl9zZXRfc3Jj
+X2ZtdChzY2FsZXIsIHNyY19mbXQpOwo+PiArCXNjYWxlcl9zZXRfc3JjX2ZtdCgKPj4gKwkJc2Nh
+bGVyLCBzcmNfZm10LT5pbnRlcm5hbF9mbXQsIHRhc2stPnNyYy5idWYubW9kaWZpZXIgIT0gMCk7
+Cj4gWW91IGNoYW5nZWQgJ3UzMiBzcmNfZm10L2RzdF9mbXQnIHRvICdzdHJ1Y3Qgc3JjX2ZtdC9k
+c3RfZm10JyBidXQgbmV2ZXIgY2hlY2sgbnVsbCBwb2ludGVyLgo+IFNvIGlmIHRoZXJlIGlzIG5v
+IHZhbGlkIGZvcm1hdCB0aGVuIHNyY19mbXQgYW5kIGRzdF9mbXQgd2lsbCBoYXZlIE5VTEwsIGFu
+ZCB3aGljaCBpbiB0dXJuLCBhYm92ZSBjb2RlIHdpbGwgaW5jdXIgbnVsbCBwb2ludGVyIGFjY2Vz
+cy4KCklQUHYyIGZyYW1ld29yayBjaGVja3MgZGF0YSBwcm92aWRlZCBieSB1c2Vyc3BhY2UgYmVm
+b3JlIGNhbGxpbmcgZHJpdmVyCmZ1bmN0aW9ucywgc28gdGhleSB3aWxsIGJlIG5ldmVyIGNhbGxl
+ZCB3aXRoIGEgZm9ybWF0LCB3aGljaCB3YXMgbm90CmFkdmVydGlzZWQgaW4gZHJpdmVyJ3MgY2Fw
+YWJpbGl0aWVzLCB0aHVzIE5VTEwgY2hlY2tzIGNhbiBiZSBhdm9pZGVkLgoKID4gLi4uCgpCZXN0
+IHJlZ2FyZHMKLS0gCk1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1zdW5nIFImRCBJbnN0aXR1dGUg
+UG9sYW5kCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
