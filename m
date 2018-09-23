@@ -1,58 +1,30 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC
- as unstable
-Date: Sun, 23 Sep 2018 14:46:20 +0100
-Message-ID: <CAOesGMgE6QaasvHi7E55Z4U1Pp0+8QYW2eRLMsExebZ999_UHA@mail.gmail.com>
-References: <20180830180205.18121-1-krzk@kernel.org>
+Subject: Re: [GIT PULL 2/2] ARM: dts: exynos: DT for v4.20 (or 5.0)
+Date: Sun, 23 Sep 2018 06:47:42 -0700
+Message-ID: <20180923134742.pugsdeozfp3lp56a@localhost>
+References: <20180921174520.9126-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830180205.18121-1-krzk@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180921174520.9126-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, DTML <devicetree@vger.kernel.org>, Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 7:02 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Samsung Exynos SoCs and boards related bindings evolved since the initial
-> introduction, but initially the bindings were minimal and a bit incomplete
-> (they never described all the hardware modules available in the SoCs).
-> Since then some significant (not fully compatible) changes have been
-> already committed a few times (like gpio replaced by pinctrl, display ddc,
-> mfc reserved memory, some core clocks added to various hardware modules,
-> added more required nodes).
->
-> On the other side there are no boards which have device tree embedded in
-> the bootloader. Device tree blob is always compiled from the kernel tree
-> and updated together with the kernel image.
->
-> Thus to avoid further adding a bunch of workarounds for old/missing
-> bindings, make development of new platforms easier and allow to make
-> cleanup of the existing code and device tree files, lets mark some
-> Samsung Exynos SoC platform bindings as unstable. This means that
-> bindings can may change at any time and users should use the dtb file
-> compiled from the same kernel source tree as the kernel image.
+Hi,
 
-I have to admit that I don't really like this approach, and I missed
-the patch when originally posted (I did notice it in the pull request
-it came in with though).
+On Fri, Sep 21, 2018 at 07:45:19PM +0200, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Nothing special, description in tag.
 
-The main concern for me is that with a blanket "everything is always
-unstable" we discard the notion that we should strive for bindings to
-be stable and backwards compatible.
+Hmm. Point 12 is special, I'd say.
 
-Questions that come to mind are:
-
- - When do they stop being unstable?
- - Is there a way to note in the binding itself that it's still
-unstable with an anticipation of when it will be settled in?
- - Is there a better way to version the bindings to avoid complete
-backwards compatibility?
-
-Pointing out a couple of cases where it has been painful to stay
-backwards compatible could also be useful for understanding (even
-though you run the risk of each case being explained away with
-suggestions of how it can be handled).
+I commented on the patch, and I don't want to hold everything else up so it
+might make sense to separate that out and send a fresh pull request with the
+base material while that part is discussed a bit more.
 
 
 -Olof
