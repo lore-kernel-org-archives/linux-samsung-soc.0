@@ -1,48 +1,64 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 1/2] ARM: exynos: mach/soc for v4.20 (or 5.0)
-Date: Sun, 23 Sep 2018 06:48:16 -0700
-Message-ID: <20180923134816.3oskgg3up5dgotdr@localhost>
-References: <20180921174520.9126-1-krzk@kernel.org>
- <20180921174520.9126-2-krzk@kernel.org>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH 0/2] gpiolib: Fix issues introduced by fast bitmap processing
+ path
+Date: Mon, 24 Sep 2018 01:53:34 +0200
+Message-ID: <20180923235336.22148-1-jmkrzyszt@gmail.com>
+References: <2785169.v6aIfS3K2k@z50>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180921174520.9126-2-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <2785169.v6aIfS3K2k@z50>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, linux-doc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Dominik Brodowski <linux@dominikbrodowski.net>, Peter Rosin <peda@axentia.se>, netdev@vger.kernel.org, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Marek Szyprowski <m.szyprowski@samsung.com>, devel@driverdev.osuosl.org, Florian Fainelli <f.fainelli@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-iio@vger.kernel.org, Peter Korsgaard <peter.korsgaard@barco.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 07:45:20PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Nothing special, description in tag.
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-> 
->   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.20
-> 
-> for you to fetch changes up to f30858439e7db9ce9847eaedf440635fc6349c6e:
-> 
->   ARM: s3c24xx: Restore proper usage of pr_info/pr_cont (2018-09-19 19:11:17 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung mach/soc changes for v4.20
-> 
-> 1. Fix imprecise abort during Odroid XU3-family suspend to RAM (but it
->    is not end of work needed for suspend).
-> 2. Cleanup and fix of SD card write protect on MINI2440.
 
-Merged, thanks!
+While investigating possible reasons of GPIO fast bitmap processing
+related boot hang on Samsung Snow Chromebook, reported by Marek
+Szyprowski (thanks!), I've discovered one coding bug, addressed by
+PATCH 1/2 of this series, and one potential regression introduced at
+design level of the solution, hopefully fixed by PATCH 2/2.  See
+commit messages for details.
 
--Olof
+Janusz Krzysztofik (2):
+      gpiolib: Fix missing updates of bitmap index
+      gpiolib: Fix array members of same chip processed separately
+
+The fixes should resolve the boot hang observed by Marek, however the
+second change excludes that particular case from fast bitmap processing
+and restores the old behaviour.  Hence, it is possible still another
+issue which have had an influence on that boot hang exists in the code.
+In order to fully verify the fix, it would have to be tested on a
+platform where an array of GPIO descriptors is used which starts from
+at least two consecutive pins of one GPIO chip in hardware order,
+starting ftom 0, followed by one or more pins belonging to other
+chip(s).
+
+In order to verify if separate calls to .set() chip callback for each
+pin instead of one call to .set_multiple() is actually the reason of
+boot hang on Samsung Snow Chromebook, the affected driver -
+drivers/mmc/core/pwrseq_simple.c - would have to be temporarily
+modified for testing purposes so it calls gpiod_set_value() for each
+pin instead of gpiod_set_array_value() for all of them.  If that would
+also result in boot hang, we could be sure the issue was really the
+one addressed by the second fix.  Marek, could you please try to
+perform such test?
+
+Thanks,
+Janusz
+
+
+diffstat:
+ Documentation/driver-api/gpio/board.rst |   19 +++++++++----
+ drivers/gpio/gpiolib.c                  |   46 +++++++++++++++++++++-----------
+ 2 files changed, 45 insertions(+), 20 deletions(-)
