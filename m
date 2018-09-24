@@ -1,55 +1,31 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFT] arm64: ARM: dts: exynos: Remove double SD card detect pin
- inversion on TM2
-Date: Mon, 24 Sep 2018 09:41:01 +0200
-Message-ID: <20180924074103eucas1p1eccd62abcdeca57a95ad406869884a97~XRhczWE3m1304413044eucas1p1F@eucas1p1.samsung.com>
-References: <CGME20180921183024epcas2p3bef08b81273524ec9d7afef4875bb746@epcas2p3.samsung.com>
-        <20180921183014.20236-1-krzk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpiolib: Fix missing updates of bitmap index
+Date: Mon, 24 Sep 2018 10:11:23 +0200
+Message-ID: <CACRpkdZ-pcy=pBKaLUPOZ5jf2bsp2X2u6QCLCWJ1H_XdNY9wtw@mail.gmail.com>
+References: <2785169.v6aIfS3K2k@z50> <20180923235336.22148-1-jmkrzyszt@gmail.com>
+ <20180923235336.22148-2-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180921183014.20236-1-krzk@kernel.org>
-Content-Language: en-US
+In-Reply-To: <20180923235336.22148-2-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>, Sebastien Bourdelin <sebastien.bourdelin@savoirf>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+On Mon, Sep 24, 2018 at 1:52 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-On 2018-09-21 20:30, Krzysztof Kozlowski wrote:
-> The SDHCI standard, MMC host controller bindings and MMC core defines
-> card detect pin as active low.  Therefore there is no point to invert it
-> twice.
+> In new code introduced by commit b17566a6b08b ("gpiolib: Implement fast
+> processing path in get/set array"), bitmap index is not updated with
+> next found zero bit position as it should while skipping over pins
+> already processed via fast bitmap path, possibly resulting in an
+> infinite loop.  Fix it.
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Works fine on TM2 and TM2e. However I'm not sure if it makes sense to
-refer to the SDHCI standard, as Exynos5433 has only DWMMC host controllers.
+Patch applied!
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Thanks for working on getting this into shape!
 
-> ---
->   arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> index a1e3194b7483..86d8ddc3288a 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> @@ -939,8 +939,7 @@
->   	status = "okay";
->   	cap-sd-highspeed;
->   	disable-wp;
-> -	cd-gpios = <&gpa2 4 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
->   	card-detect-delay = <200>;
->   	samsung,dw-mshc-ciu-div = <3>;
->   	samsung,dw-mshc-sdr-timing = <0 4>;
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Yours,
+Linus Walleij
