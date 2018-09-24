@@ -1,97 +1,87 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 0/2] gpiolib: Fix issues introduced by fast bitmap
- processing path
-Date: Mon, 24 Sep 2018 11:43:37 +0200
-Message-ID: <20180924094339eucas1p282f2f7cb627c183fe87da044edb90fa5~XTMgQ4GFs1339913399eucas1p2N@eucas1p2.samsung.com>
-References: <2785169.v6aIfS3K2k@z50>
-        <CGME20180923235237epcas3p3aa946da71a07da1bc3cd0e8cce3473b2@epcas3p3.samsung.com>
-        <20180923235336.22148-1-jmkrzyszt@gmail.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Add CD and WP pins to Odroid XU SD
+ card
+Date: Mon, 24 Sep 2018 12:04:52 +0200
+Message-ID: <20180924100453eucas1p2cc67bf2cae5c0d0a031c7ce8d1117529~XTfCSQ2rd1041310413eucas1p2S@eucas1p2.samsung.com>
+References: <CGME20180921210332epcas3p423aaeeb84ec3d8a44c5a898949f992e8@epcas3p4.samsung.com>
+        <20180921210321.12404-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180923235336.22148-1-jmkrzyszt@gmail.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180921210321.12404-1-krzk@kernel.org>
 Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Anand Moon <linux.amoon@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Janusz,
+Hi Krzysztof,
 
-On 2018-09-24 01:53, Janusz Krzysztofik wrote:
-> While investigating possible reasons of GPIO fast bitmap processing
-> related boot hang on Samsung Snow Chromebook, reported by Marek
-> Szyprowski (thanks!), I've discovered one coding bug, addressed by
-> PATCH 1/2 of this series, and one potential regression introduced at
-> design level of the solution, hopefully fixed by PATCH 2/2.  See
-> commit messages for details.
+On 2018-09-21 23:03, Krzysztof Kozlowski wrote:
+> Defining card-detect and write-protect GPIO pins in Odroid XU SD Card
+> does not change anything from functional point of view - dw-mmc driver
+> was reading the state from registers.  Adding cd-gpios and wp-gpios
+> properties changes only internal driver behavior to access the pins
+> directly.
 >
-> Janusz Krzysztofik (2):
->        gpiolib: Fix missing updates of bitmap index
->        gpiolib: Fix array members of same chip processed separately
+> Add them to DTS only to comprehensively describe the hardware.  Minor
+> benefit is that write-protect pin configuration makes sure that it will
+> be properly pulled up to indicate write access.
 >
-> The fixes should resolve the boot hang observed by Marek, however the
-> second change excludes that particular case from fast bitmap processing
-> and restores the old behaviour.
-
-I confirm, that the above 2 patches fixes boot issue on Samsung Snow
-Chromebook with next-20180920.
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> Hence, it is possible still another
-> issue which have had an influence on that boot hang exists in the code.
-> In order to fully verify the fix, it would have to be tested on a
-> platform where an array of GPIO descriptors is used which starts from
-> at least two consecutive pins of one GPIO chip in hardware order,
-> starting ftom 0, followed by one or more pins belonging to other
-> chip(s).
+> This also removes debug messages:
+>      dwmmc_exynos 12220000.mmc: No GPIO consumer cd found
+>      dwmmc_exynos 12220000.mmc: No GPIO consumer wp found
 >
-> In order to verify if separate calls to .set() chip callback for each
-> pin instead of one call to .set_multiple() is actually the reason of
-> boot hang on Samsung Snow Chromebook, the affected driver -
-> drivers/mmc/core/pwrseq_simple.c - would have to be temporarily
-> modified for testing purposes so it calls gpiod_set_value() for each
-> pin instead of gpiod_set_array_value() for all of them.  If that would
-> also result in boot hang, we could be sure the issue was really the
-> one addressed by the second fix.  Marek, could you please try to
-> perform such test?
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>   arch/arm/boot/dts/exynos5410-odroidxu.dts | 12 +++++++++++-
+>   1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+> index a2046f5f998c..dae360f29a47 100644
+> --- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
+> +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+> @@ -525,12 +525,14 @@
+>   
+>   &mmc_2 {
+>   	status = "okay";
+> +	wp-gpios = <&gpm5 0 GPIO_ACTIVE_LOW>;
+> +	cd-gpios = <&gpc2 2 GPIO_ACTIVE_LOW>;
+>   	card-detect-delay = <200>;
+>   	samsung,dw-mshc-ciu-div = <3>;
+>   	samsung,dw-mshc-sdr-timing = <0 4>;
+>   	samsung,dw-mshc-ddr-timing = <0 2>;
+>   	pinctrl-names = "default";
+> -	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+> +	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4 &sd2_wp>;
 
-Yes, I've just tested next-20180920 only with the first patch from this
-patchset and the mentioned change to drivers/mmc/core/pwrseq_simple.c.
-It boots fine, so indeed the issue is in handling of arrays of gpios.
+IMHO there is no point adding cd-gpios property if CD line is already 
+assigned to this device via respective pin ctrl entry (as special function).
 
-Just to be sure I did it right, this is my change to the mentioned file:
+Handling of WP line is even more controversial imho. Ideally the drivers 
+or mmc core should check somehow if WP line is available or not and act 
+respectively. WP line is not available on uSD card connector so there is 
+no point describing it.
 
-diff --git a/drivers/mmc/core/pwrseq_simple.c 
-b/drivers/mmc/core/pwrseq_simple.c
-index 7f882a2bb872..9397dc1f2e38 100644
---- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -38,16 +38,11 @@ static void mmc_pwrseq_simple_set_gpios_value(struct 
-mmc_pwrseq_simple *pwrseq,
-                                               int value)
-  {
-         struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
-+       int i;
-
--       if (!IS_ERR(reset_gpios)) {
--               DECLARE_BITMAP(values, BITS_PER_TYPE(value));
--               int nvalues = reset_gpios->ndescs;
--
--               values[0] = value;
--
--               gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
--                                              reset_gpios->info, values);
--       }
-+       if (!IS_ERR(reset_gpios))
-+               for (i = 0; i < reset_gpios->ndescs; i++)
-+ gpiod_set_value_cansleep(reset_gpios->desc[i], value);
-  }
-
-  static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
-
+>   	bus-width = <4>;
+>   	cap-sd-highspeed;
+>   	vmmc-supply = <&ldo21_reg>;
+> @@ -573,6 +575,14 @@
+>   		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+>   		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+>   	};
+> +
+> +	sd2_wp: sd2-wp {
+> +		samsung,pins = "gpm5-0";
+> +		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+> +		/* Pin is floating so pull it up to disable write-protect */
+> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
+> +	};
+>   };
+>   
+>   &pwm {
 
 Best regards
 -- 
