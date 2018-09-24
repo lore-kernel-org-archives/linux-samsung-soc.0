@@ -1,128 +1,96 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH 0/2] gpiolib: Fix issues introduced by fast bitmap
- processing path
-Date: Mon, 24 Sep 2018 16:18:15 +0200
-Message-ID: <CAGfqbt4n4g_24kWGPhXojooiQQOmVeq-TfYucFERXJGMci87Xw@mail.gmail.com>
-References: <2785169.v6aIfS3K2k@z50> <CGME20180923235237epcas3p3aa946da71a07da1bc3cd0e8cce3473b2@epcas3p3.samsung.com>
- <20180923235336.22148-1-jmkrzyszt@gmail.com> <20180924094339eucas1p282f2f7cb627c183fe87da044edb90fa5~XTMgQ4GFs1339913399eucas1p2N@eucas1p2.samsung.com>
- <CAGfqbt6H8u_dUokB-pg51kCj09G8Mh7wB0879nKMw5Dw83tcSg@mail.gmail.com> <20180924113859eucas1p160322f5844c771bc9c680d35de4877a3~XUxM0smXV0334103341eucas1p1s@eucas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC
+ as unstable
+Date: Mon, 24 Sep 2018 19:16:45 +0200
+Message-ID: <20180924171645.GA10910@kozik-lap>
+References: <20180830180205.18121-1-krzk@kernel.org>
+ <CAOesGMgE6QaasvHi7E55Z4U1Pp0+8QYW2eRLMsExebZ999_UHA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180924113859eucas1p160322f5844c771bc9c680d35de4877a3~XUxM0smXV0334103341eucas1p1s@eucas1p1.samsung.com>
-Sender: netdev-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAOesGMgE6QaasvHi7E55Z4U1Pp0+8QYW2eRLMsExebZ999_UHA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, DTML <devicetree@vger.kernel.org>, Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+On Sun, Sep 23, 2018 at 02:46:20PM +0100, Olof Johansson wrote:
+> On Thu, Aug 30, 2018 at 7:02 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > Samsung Exynos SoCs and boards related bindings evolved since the initial
+> > introduction, but initially the bindings were minimal and a bit incomplete
+> > (they never described all the hardware modules available in the SoCs).
+> > Since then some significant (not fully compatible) changes have been
+> > already committed a few times (like gpio replaced by pinctrl, display ddc,
+> > mfc reserved memory, some core clocks added to various hardware modules,
+> > added more required nodes).
+> >
+> > On the other side there are no boards which have device tree embedded in
+> > the bootloader. Device tree blob is always compiled from the kernel tree
+> > and updated together with the kernel image.
+> >
+> > Thus to avoid further adding a bunch of workarounds for old/missing
+> > bindings, make development of new platforms easier and allow to make
+> > cleanup of the existing code and device tree files, lets mark some
+> > Samsung Exynos SoC platform bindings as unstable. This means that
+> > bindings can may change at any time and users should use the dtb file
+> > compiled from the same kernel source tree as the kernel image.
+> 
+> I have to admit that I don't really like this approach, and I missed
+> the patch when originally posted (I did notice it in the pull request
+> it came in with though).
+> 
+> The main concern for me is that with a blanket "everything is always
+> unstable" we discard the notion that we should strive for bindings to
+> be stable and backwards compatible.
 
-2018-09-24 13:38 GMT+02:00, Marek Szyprowski <m.szyprowski@samsung.com>:
-> Hi Janusz,
->
-> On 2018-09-24 13:08, Janusz Krzysztofik wrote:
->> 2018-09-24 11:43 GMT+02:00, Marek Szyprowski <m.szyprowski@samsung.com>:
->>> On 2018-09-24 01:53, Janusz Krzysztofik wrote:
->>>> While investigating possible reasons of GPIO fast bitmap processing
->>>> related boot hang on Samsung Snow Chromebook, reported by Marek
->>>> Szyprowski (thanks!), I've discovered one coding bug, addressed by
->>>> PATCH 1/2 of this series, and one potential regression introduced at
->>>> design level of the solution, hopefully fixed by PATCH 2/2.  See
->>>> commit messages for details.
->>>>
->>>> Janusz Krzysztofik (2):
->>>>         gpiolib: Fix missing updates of bitmap index
->>>>         gpiolib: Fix array members of same chip processed separately
->>>>
->>>> The fixes should resolve the boot hang observed by Marek, however the
->>>> second change excludes that particular case from fast bitmap processing
->>>> and restores the old behaviour.
->>> I confirm, that the above 2 patches fixes boot issue on Samsung Snow
->>> Chromebook with next-20180920.
->>>
->>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>
->>>> Hence, it is possible still another
->>>> issue which have had an influence on that boot hang exists in the code.
->>>> In order to fully verify the fix, it would have to be tested on a
->>>> platform where an array of GPIO descriptors is used which starts from
->>>> at least two consecutive pins of one GPIO chip in hardware order,
->>>> starting ftom 0, followed by one or more pins belonging to other
->>>> chip(s).
->>>>
->>>> In order to verify if separate calls to .set() chip callback for each
->>>> pin instead of one call to .set_multiple() is actually the reason of
->>>> boot hang on Samsung Snow Chromebook, the affected driver -
->>>> drivers/mmc/core/pwrseq_simple.c - would have to be temporarily
->>>> modified for testing purposes so it calls gpiod_set_value() for each
->>>> pin instead of gpiod_set_array_value() for all of them.  If that would
->>>> also result in boot hang, we could be sure the issue was really the
->>>> one addressed by the second fix.  Marek, could you please try to
->>>> perform such test?
->>> Yes, I've just tested next-20180920 only with the first patch from this
->>> patchset and the mentioned change to drivers/mmc/core/pwrseq_simple.c.
->>> It boots fine, so indeed the issue is in handling of arrays of gpios.
->>>
->>> Just to be sure I did it right, this is my change to the mentioned file:
->> Yeah, that's what I had on mind.  However, I'd be more lucky if it didn't
->> work
->> for you.  Setting the pins sequentially, not simultaneously as before,
->> was
->> exactly what I hoped was the reason of the hang.
->>
->>> diff --git a/drivers/mmc/core/pwrseq_simple.c
->>> b/drivers/mmc/core/pwrseq_simple.c
->>> index 7f882a2bb872..9397dc1f2e38 100644
->>> --- a/drivers/mmc/core/pwrseq_simple.c
->>> +++ b/drivers/mmc/core/pwrseq_simple.c
->>> @@ -38,16 +38,11 @@ static void mmc_pwrseq_simple_set_gpios_value(struct
->>> mmc_pwrseq_simple *pwrseq,
->>>                                                 int value)
->>>    {
->>>           struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
->>> +       int i;
->>>
->>> -       if (!IS_ERR(reset_gpios)) {
->>> -               DECLARE_BITMAP(values, BITS_PER_TYPE(value));
->>> -               int nvalues = reset_gpios->ndescs;
->>> -
->>> -               values[0] = value;
->>> -
->>> -               gpiod_set_array_value_cansleep(nvalues,
->>> reset_gpios->desc,
->>> -                                              reset_gpios->info,
->>> values);
->>> -       }
->>> +       if (!IS_ERR(reset_gpios))
->>> +               for (i = 0; i < reset_gpios->ndescs; i++)
->> The only difference from the behaviour when the hang was occurring is now
->> the order the pins are manipulated.  Maybe that matters?
->> Could you please retry the same with the order of pins reversed, either
->> in
->> the .dts file or here inside this for loop?
->
-> I've switched the order of pins in dts and next-20180920 + first patch +
-> above
-> change also boots fine.
+The original idea from Marek was to mark everything unstable. After
+comments from Rob I made it weaker already by changing to specific group
+of compatibles. Accepting their instability does not mean that we will
+be doing this on whenever possible. It just opens the possibility of
+finding some balance in cleanups and development. Sometimes things have
+to be seriously changed (fixed) and implementing workarounds for
+existing ABI might be huge work by itself.
 
-Thanks for performing those tests.
+IOW, we want stability but not with the costs of huge development
+efforts... because no one else except us cares about the stability.
 
-Since we are not able to reproduce the issue by any means other than
-using the original code introduced by fast bitmap processing changes,
-regardless of the first fix being applied or not, and we are only able to
-resolve the hangup by excluding affected use case from the fast path,
-we have to assume one or more bugs which affect mixed arrays, i.e.,
-those which apply for fast bitmap processing only in part, may still exist
-in the code introduced by the fast bitmap processing series.  I hope we
-are able to resolve it soon, before the changes reach mainline.
+> 
+> Questions that come to mind are:
+> 
+>  - When do they stop being unstable?
 
-Thanks,
-Janusz
+They became unstable in a subjective way so I assume that reverse is the
+same, based on consensus and discussions.
+
+I am not sure if a hard time limit is good. There is no timeline for the
+Exynos development, no public roadmaps but rather community and
+partially volountary effort.  Therefore whatever number we set, it might
+be totally not matching reality.
+
+>  - Is there a way to note in the binding itself that it's still
+> unstable with an anticipation of when it will be settled in?
+
+Hmm, I see that some existing bindings are being added with "Unstable"
+warning:
+
+	git grep -i unstable Documentation/devicetree/
+
+so there should be no problem for putting there a timeframe.
+
+>  - Is there a better way to version the bindings to avoid complete
+> backwards compatibility?
+
+Some architectures are using overlays for handling backward
+compatibility. Anyway it might put additional effort on driver
+development.
+
+> Pointing out a couple of cases where it has been painful to stay
+> backwards compatible could also be useful for understanding (even
+> though you run the risk of each case being explained away with
+> suggestions of how it can be handled).
+> 
 
 
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
->
+Best regards,
+Krzysztof
