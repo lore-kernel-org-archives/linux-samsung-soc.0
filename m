@@ -1,150 +1,97 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC
- as unstable
-Date: Wed, 26 Sep 2018 09:04:36 -0500
-Message-ID: <CAL_JsqKvGRxY_BB+jEVZqevpCEj8cbebRubjjz4Svd+ef+J9Pg@mail.gmail.com>
-References: <20180830180205.18121-1-krzk@kernel.org> <CAOesGMgE6QaasvHi7E55Z4U1Pp0+8QYW2eRLMsExebZ999_UHA@mail.gmail.com>
- <20180924171645.GA10910@kozik-lap> <20180926035522.v5flr36nl5ftayi4@localhost>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Add CD and WP pins to Odroid XU SD card
+Date: Wed, 26 Sep 2018 18:13:02 +0200
+Message-ID: <20180926161302.GA10041@kozik-lap>
+References: <CGME20180921210332epcas3p423aaeeb84ec3d8a44c5a898949f992e8@epcas3p4.samsung.com>
+ <20180921210321.12404-1-krzk@kernel.org>
+ <20180924100453eucas1p2cc67bf2cae5c0d0a031c7ce8d1117529~XTfCSQ2rd1041310413eucas1p2S@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180926035522.v5flr36nl5ftayi4@localhost>
+Content-Disposition: inline
+In-Reply-To: <20180924100453eucas1p2cc67bf2cae5c0d0a031c7ce8d1117529~XTfCSQ2rd1041310413eucas1p2S@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 10:55 PM Olof Johansson <olof@lixom.net> wrote:
->
-> On Mon, Sep 24, 2018 at 07:16:45PM +0200, Krzysztof Kozlowski wrote:
-> > On Sun, Sep 23, 2018 at 02:46:20PM +0100, Olof Johansson wrote:
-> > > On Thu, Aug 30, 2018 at 7:02 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > > Samsung Exynos SoCs and boards related bindings evolved since the initial
-> > > > introduction, but initially the bindings were minimal and a bit incomplete
-> > > > (they never described all the hardware modules available in the SoCs).
-> > > > Since then some significant (not fully compatible) changes have been
-> > > > already committed a few times (like gpio replaced by pinctrl, display ddc,
-> > > > mfc reserved memory, some core clocks added to various hardware modules,
-> > > > added more required nodes).
-> > > >
-> > > > On the other side there are no boards which have device tree embedded in
-> > > > the bootloader. Device tree blob is always compiled from the kernel tree
-> > > > and updated together with the kernel image.
-> > > >
-> > > > Thus to avoid further adding a bunch of workarounds for old/missing
-> > > > bindings, make development of new platforms easier and allow to make
-> > > > cleanup of the existing code and device tree files, lets mark some
-> > > > Samsung Exynos SoC platform bindings as unstable. This means that
-> > > > bindings can may change at any time and users should use the dtb file
-> > > > compiled from the same kernel source tree as the kernel image.
-> > >
-> > > I have to admit that I don't really like this approach, and I missed
-> > > the patch when originally posted (I did notice it in the pull request
-> > > it came in with though).
-> > >
-> > > The main concern for me is that with a blanket "everything is always
-> > > unstable" we discard the notion that we should strive for bindings to
-> > > be stable and backwards compatible.
+On Mon, Sep 24, 2018 at 12:04:52PM +0200, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> On 2018-09-21 23:03, Krzysztof Kozlowski wrote:
+> > Defining card-detect and write-protect GPIO pins in Odroid XU SD Card
+> > does not change anything from functional point of view - dw-mmc driver
+> > was reading the state from registers.  Adding cd-gpios and wp-gpios
+> > properties changes only internal driver behavior to access the pins
+> > directly.
 > >
-> > The original idea from Marek was to mark everything unstable. After
-> > comments from Rob I made it weaker already by changing to specific group
-> > of compatibles. Accepting their instability does not mean that we will
-> > be doing this on whenever possible. It just opens the possibility of
-> > finding some balance in cleanups and development. Sometimes things have
-> > to be seriously changed (fixed) and implementing workarounds for
-> > existing ABI might be huge work by itself.
+> > Add them to DTS only to comprehensively describe the hardware.  Minor
+> > benefit is that write-protect pin configuration makes sure that it will
+> > be properly pulled up to indicate write access.
 > >
-> > IOW, we want stability but not with the costs of huge development
-> > efforts... because no one else except us cares about the stability.
->
-> I think it's really problematic to retroactively mark a binding as unstable.
-> The best way to do it is probably at the time of introduction if you anticipate
-> it needing adjustments down the road (i.e. if it's for a complex IP block).
->
-> For major overhauls, it might be worth updating to a new binding instead (by
-> appending a suffix to the name or similar, and documenting that).
->
-> > > Questions that come to mind are:
-> > >
-> > >  - When do they stop being unstable?
-
-That's my biggest issue with marking things unstable. They will never
-get promoted. There's no carrot and I don't want to be the stick.
-
-> > They became unstable in a subjective way so I assume that reverse is the
-> > same, based on consensus and discussions.
+> > This also removes debug messages:
+> >      dwmmc_exynos 12220000.mmc: No GPIO consumer cd found
+> >      dwmmc_exynos 12220000.mmc: No GPIO consumer wp found
 > >
-> > I am not sure if a hard time limit is good. There is no timeline for the
-> > Exynos development, no public roadmaps but rather community and
-> > partially volountary effort.  Therefore whatever number we set, it might
-> > be totally not matching reality.
->
-> I think that sets up for a pretty bad experience for some downstream users.
-
-Yes, but it's the platform maintainers that should get yelled at if users care.
-
-There's some discussion about stable/unstable DTs for EBBR[1]. The
-current thought is to have an EBBR property in the DT. That would
-serve as a tag that the platform DT is considered stable and something
-the distros can support and rely on us not breaking.
-
-> The main problem with unstable bindings is if you have a platform that you
-> haven't (yet) upstreamed the devicetrees for. Moving around base kernel
-> versions in those cases can be really awkward.
->
-> "Just upstream your devicetrees" is one counter-argument, but it's not always
-> that easy -- it might be unreleased products or just some experimental
-> platforms that might even be tracking fairly close to mainline during whatever
-> development is ongoing.
->
-> > >  - Is there a way to note in the binding itself that it's still
-> > > unstable with an anticipation of when it will be settled in?
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >   arch/arm/boot/dts/exynos5410-odroidxu.dts | 12 +++++++++++-
+> >   1 file changed, 11 insertions(+), 1 deletion(-)
 > >
-> > Hmm, I see that some existing bindings are being added with "Unstable"
-> > warning:
-> >
-> >       git grep -i unstable Documentation/devicetree/
-> >
-> > so there should be no problem for putting there a timeframe.
->
-> Yeah, adding them with unstable up front is a good way to do it (and then
-> remove that warning once things have settled down).
+> > diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+> > index a2046f5f998c..dae360f29a47 100644
+> > --- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
+> > +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+> > @@ -525,12 +525,14 @@
+> >   
+> >   &mmc_2 {
+> >   	status = "okay";
+> > +	wp-gpios = <&gpm5 0 GPIO_ACTIVE_LOW>;
+> > +	cd-gpios = <&gpc2 2 GPIO_ACTIVE_LOW>;
+> >   	card-detect-delay = <200>;
+> >   	samsung,dw-mshc-ciu-div = <3>;
+> >   	samsung,dw-mshc-sdr-timing = <0 4>;
+> >   	samsung,dw-mshc-ddr-timing = <0 2>;
+> >   	pinctrl-names = "default";
+> > -	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+> > +	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4 &sd2_wp>;
+> 
+> IMHO there is no point adding cd-gpios property if CD line is already 
+> assigned to this device via respective pin ctrl entry (as special function).
+> 
+> Handling of WP line is even more controversial imho. Ideally the drivers 
+> or mmc core should check somehow if WP line is available or not and act 
+> respectively. WP line is not available on uSD card connector so there is 
+> no point describing it.
 
-The real question is how many have gone from unstable to stable. My guess is 0.
+Thanks for comments. In that case I'll add only the pin configuration to
+be sure that pin stays pulled up.
 
-My preference is the default is stable (semi-stable?), but changes
-that break compatibility must be documented doing so and it is up to
-the platform maintainers. I don't want to see "unstable" as license to
-just put anything in and have a constant churn. Extending a binding
-one property at a time does not result in a good design. Then mark
-platforms stable meaning no compatibility breaks and distros can count
-on the stability. We could improve the documenting part as often
-submitters aren't aware of the issue. I'd like to see kernel-ci do
-boot tests with kernel N and DT N-1 (and perhaps N+1(-next)).
+Best regards,
+Krzysztof
 
-> > >  - Is there a better way to version the bindings to avoid complete
-> > > backwards compatibility?
-> >
-> > Some architectures are using overlays for handling backward
-> > compatibility. Anyway it might put additional effort on driver
-> > development.
->
-> In some cases it's pretty easy to stay backwards compatible by making sure
-> that things like missing properties have the same defaults as they used to
-> before the properties became mandatory.
->
-> For complex subsystems it might be a different story, but that's also where it
-> _might_ be worth looking at a new revision of the binding instead, this time
-> maybe closer to a permanent one.
-
-The distros (SUSE, at least) also care about forwards compatibility
-which is harder. A common example is a platform that changes from a
-bunch of fixed clocks to actual clock binding and driver. Older
-kernels will be missing the clock driver the newer dtb needs. And this
-case isn't even unstable bindings, it is moving from one stable
-binding to another. I have some ideas on how to handle that one, but
-there's probably other examples.
-
-Rob
-
-[1] https://github.com/ARM-software/ebbr
+> 
+> >   	bus-width = <4>;
+> >   	cap-sd-highspeed;
+> >   	vmmc-supply = <&ldo21_reg>;
+> > @@ -573,6 +575,14 @@
+> >   		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> >   		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+> >   	};
+> > +
+> > +	sd2_wp: sd2-wp {
+> > +		samsung,pins = "gpm5-0";
+> > +		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+> > +		/* Pin is floating so pull it up to disable write-protect */
+> > +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+> > +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
+> > +	};
+> >   };
+> >   
+> >   &pwm {
+> 
+> Best regards
+> -- 
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> 
