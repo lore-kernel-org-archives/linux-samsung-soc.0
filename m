@@ -1,69 +1,150 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] mmc: pwrseq_simple: Fix incorrect handling of GPIO
- bitmap
-Date: Wed, 26 Sep 2018 10:27:30 +0200
-Message-ID: <20180926082731eucas1p1fb936eedca21be0b8cd4dd281e422f27~X5cmfM67m0415004150eucas1p1b@eucas1p1.samsung.com>
-References: <CAGfqbt4n4g_24kWGPhXojooiQQOmVeq-TfYucFERXJGMci87Xw@mail.gmail.com>
-        <CGME20180925192325epcas1p41b5c57a1ff7c9bc00f9a6d3b2e601820@epcas1p4.samsung.com>
-        <20180925192433.1377-1-jmkrzyszt@gmail.com>
-        <7a4906d9-ffb1-f2af-07e7-d5815dcd0d8c@samsung.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC
+ as unstable
+Date: Wed, 26 Sep 2018 09:04:36 -0500
+Message-ID: <CAL_JsqKvGRxY_BB+jEVZqevpCEj8cbebRubjjz4Svd+ef+J9Pg@mail.gmail.com>
+References: <20180830180205.18121-1-krzk@kernel.org> <CAOesGMgE6QaasvHi7E55Z4U1Pp0+8QYW2eRLMsExebZ999_UHA@mail.gmail.com>
+ <20180924171645.GA10910@kozik-lap> <20180926035522.v5flr36nl5ftayi4@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7a4906d9-ffb1-f2af-07e7-d5815dcd0d8c@samsung.com>
-Content-Language: en-US
+In-Reply-To: <20180926035522.v5flr36nl5ftayi4@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi again,
-
-On 2018-09-26 10:14, Marek Szyprowski wrote:
-> On 2018-09-25 21:24, Janusz Krzysztofik wrote:
->> Commit b9762bebc633 ("gpiolib: Pass bitmaps, not integer arrays, to
->> get/set array") changed the way GPIO values are passed to
->> gpiod_get/set_array_value() and friends.  The updated code of
->> mmc_pwrseq_simple_set_gpios_value() incorrectly uses the 'value'
->> argument as a bitmap of GPIO values and assigns it directly to the
->> 'values' bitmap variable passed to gpiod_set_array_value_cansleep()
->> instead of filling that bitmap with bits equal to the 'value' argument.
->> As a result, boot hanging caused by incorrectly handled MMC device
->> has been observed.
->>
->> As a side effect of that incorrect interpreation of the 'value'
->> argument, wrong assumption is taken about the 'values' bitmap size
->> never exceding the number of bits of the 'value' argument type.
->>
->> Fix it.
->>
->> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
->> ---
->> Hi,
->>
->> I hope I've finally identified the root cause of the boot hang reported
->> by Marek Szyprowski.  I've reviewed the code of other divers updated for
->> the modified GPIO API and found no more issues of that kind.
->>
->> Marek, can you please test this fix on top of next-20180920 with the fix
->> "gpiolib: Fix missing updates of bitmap index" also applied?
+On Tue, Sep 25, 2018 at 10:55 PM Olof Johansson <olof@lixom.net> wrote:
 >
-> Yes, I've just did such test (next-20180920 + "gpiolib: Fix missing
-> updates of bitmap index" + "mmc: pwrseq_simple: Fix incorrect handling
-> of GPIO bitmap") and sadly it doesn't fix the boot hang.
+> On Mon, Sep 24, 2018 at 07:16:45PM +0200, Krzysztof Kozlowski wrote:
+> > On Sun, Sep 23, 2018 at 02:46:20PM +0100, Olof Johansson wrote:
+> > > On Thu, Aug 30, 2018 at 7:02 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > > Samsung Exynos SoCs and boards related bindings evolved since the initial
+> > > > introduction, but initially the bindings were minimal and a bit incomplete
+> > > > (they never described all the hardware modules available in the SoCs).
+> > > > Since then some significant (not fully compatible) changes have been
+> > > > already committed a few times (like gpio replaced by pinctrl, display ddc,
+> > > > mfc reserved memory, some core clocks added to various hardware modules,
+> > > > added more required nodes).
+> > > >
+> > > > On the other side there are no boards which have device tree embedded in
+> > > > the bootloader. Device tree blob is always compiled from the kernel tree
+> > > > and updated together with the kernel image.
+> > > >
+> > > > Thus to avoid further adding a bunch of workarounds for old/missing
+> > > > bindings, make development of new platforms easier and allow to make
+> > > > cleanup of the existing code and device tree files, lets mark some
+> > > > Samsung Exynos SoC platform bindings as unstable. This means that
+> > > > bindings can may change at any time and users should use the dtb file
+> > > > compiled from the same kernel source tree as the kernel image.
+> > >
+> > > I have to admit that I don't really like this approach, and I missed
+> > > the patch when originally posted (I did notice it in the pull request
+> > > it came in with though).
+> > >
+> > > The main concern for me is that with a blanket "everything is always
+> > > unstable" we discard the notion that we should strive for bindings to
+> > > be stable and backwards compatible.
+> >
+> > The original idea from Marek was to mark everything unstable. After
+> > comments from Rob I made it weaker already by changing to specific group
+> > of compatibles. Accepting their instability does not mean that we will
+> > be doing this on whenever possible. It just opens the possibility of
+> > finding some balance in cleanups and development. Sometimes things have
+> > to be seriously changed (fixed) and implementing workarounds for
+> > existing ABI might be huge work by itself.
+> >
+> > IOW, we want stability but not with the costs of huge development
+> > efforts... because no one else except us cares about the stability.
 >
-> With some more debugs in mmc_pwrseq_simple I've noticed that
-> gpiod_set_array_value_cansleep() never ends and busyloops somewhere.
-> I'm checking this now.
+> I think it's really problematic to retroactively mark a binding as unstable.
+> The best way to do it is probably at the time of introduction if you anticipate
+> it needing adjustments down the road (i.e. if it's for a complex IP block).
+>
+> For major overhauls, it might be worth updating to a new binding instead (by
+> appending a suffix to the name or similar, and documenting that).
+>
+> > > Questions that come to mind are:
+> > >
+> > >  - When do they stop being unstable?
 
-I busyloops inside the internal do { } while loop (lines 3163-3201) in
-gpiod_set_array_value_complex(). 'i' is never incremented.
+That's my biggest issue with marking things unstable. They will never
+get promoted. There's no carrot and I don't want to be the stick.
 
- > ...
+> > They became unstable in a subjective way so I assume that reverse is the
+> > same, based on consensus and discussions.
+> >
+> > I am not sure if a hard time limit is good. There is no timeline for the
+> > Exynos development, no public roadmaps but rather community and
+> > partially volountary effort.  Therefore whatever number we set, it might
+> > be totally not matching reality.
+>
+> I think that sets up for a pretty bad experience for some downstream users.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Yes, but it's the platform maintainers that should get yelled at if users care.
+
+There's some discussion about stable/unstable DTs for EBBR[1]. The
+current thought is to have an EBBR property in the DT. That would
+serve as a tag that the platform DT is considered stable and something
+the distros can support and rely on us not breaking.
+
+> The main problem with unstable bindings is if you have a platform that you
+> haven't (yet) upstreamed the devicetrees for. Moving around base kernel
+> versions in those cases can be really awkward.
+>
+> "Just upstream your devicetrees" is one counter-argument, but it's not always
+> that easy -- it might be unreleased products or just some experimental
+> platforms that might even be tracking fairly close to mainline during whatever
+> development is ongoing.
+>
+> > >  - Is there a way to note in the binding itself that it's still
+> > > unstable with an anticipation of when it will be settled in?
+> >
+> > Hmm, I see that some existing bindings are being added with "Unstable"
+> > warning:
+> >
+> >       git grep -i unstable Documentation/devicetree/
+> >
+> > so there should be no problem for putting there a timeframe.
+>
+> Yeah, adding them with unstable up front is a good way to do it (and then
+> remove that warning once things have settled down).
+
+The real question is how many have gone from unstable to stable. My guess is 0.
+
+My preference is the default is stable (semi-stable?), but changes
+that break compatibility must be documented doing so and it is up to
+the platform maintainers. I don't want to see "unstable" as license to
+just put anything in and have a constant churn. Extending a binding
+one property at a time does not result in a good design. Then mark
+platforms stable meaning no compatibility breaks and distros can count
+on the stability. We could improve the documenting part as often
+submitters aren't aware of the issue. I'd like to see kernel-ci do
+boot tests with kernel N and DT N-1 (and perhaps N+1(-next)).
+
+> > >  - Is there a better way to version the bindings to avoid complete
+> > > backwards compatibility?
+> >
+> > Some architectures are using overlays for handling backward
+> > compatibility. Anyway it might put additional effort on driver
+> > development.
+>
+> In some cases it's pretty easy to stay backwards compatible by making sure
+> that things like missing properties have the same defaults as they used to
+> before the properties became mandatory.
+>
+> For complex subsystems it might be a different story, but that's also where it
+> _might_ be worth looking at a new revision of the binding instead, this time
+> maybe closer to a permanent one.
+
+The distros (SUSE, at least) also care about forwards compatibility
+which is harder. A common example is a platform that changes from a
+bunch of fixed clocks to actual clock binding and driver. Older
+kernels will be missing the clock driver the newer dtb needs. And this
+case isn't even unstable bindings, it is moving from one stable
+binding to another. I have some ideas on how to handle that one, but
+there's probably other examples.
+
+Rob
+
+[1] https://github.com/ARM-software/ebbr
