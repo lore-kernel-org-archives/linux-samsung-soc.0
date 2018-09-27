@@ -1,55 +1,83 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCHv4 4/6] ARM: dts: exynos: Add CD and WP pins to Odroid
- XU3/XU4 SD card
-Date: Thu, 27 Sep 2018 08:28:22 +0200
-Message-ID: <CAJKOXPeRauojpS9kEbQK8k+BQLSGEHEVsAwi406tW3zN2RzPWQ@mail.gmail.com>
-References: <20180922075238.884-1-linux.amoon@gmail.com> <20180922075238.884-6-linux.amoon@gmail.com>
- <20180926190639.GA6461@kozik-lap> <CANAwSgSPkKL3jaHHSkEhgocKT_Sq4zg3Z=+7d5889ttpnNPHDA@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5 8/9] drm/panel: simple: fix BOE/HV070WSA-100 timings
+Date: Thu, 27 Sep 2018 13:51:58 +0200
+Message-ID: <20180927115158.GA29102@ulmo>
+References: <20180725154644.25412-1-a.hajda@samsung.com>
+ <CGME20180725154703eucas1p1e07c626c26a574ab19a8c0d73eacc1c3@eucas1p1.samsung.com>
+ <20180725154644.25412-9-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANAwSgSPkKL3jaHHSkEhgocKT_Sq4zg3Z=+7d5889ttpnNPHDA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux.amoon@gmail.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, ulf.hansson@linaro.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0959731856=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180725154644.25412-9-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Maciej Purski <m.purski@samsung.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 27 Sep 2018 at 05:45, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Hi Krzysztof,
-> On Thu, 27 Sep 2018 at 00:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Sat, Sep 22, 2018 at 07:52:36AM +0000, Anand Moon wrote:
-> > > Add the card-detect and write-protect GPIO pins for OdroidXU3/XU4
-> > > SD card by adding pinctrl setting for wp-gpio pin and set it to
-> > > active low.
-> > >
-> > > This also removes debug messages:
-> > >     dwmmc_exynos 12220000.mmc: No GPIO consumer cd found
-> > >     dwmmc_exynos 12220000.mmc: No GPIO consumer wp found
-> > >
-> > > Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > ---
-> > > Fix the commit message and squash it with cd-gpios and wp-gpio
-> > > patches into single patch as suggested by Krzysztof.
-> >
-> > As Marek pointed to my Odroid XU patch, there is no point of adding
-> > cd-gpios and wp-gpios properties.
-> >
-> > Adding pin configuration for wp pin is also not needed. Reset values are
-> > working properly. However there might be meaning of adding it just in
-> > case - if bootloader decided to touch it...
-> >
-> > Best regards,
-> > Krzysztof
-> >
->
-> Do I need to send the all the patches again or just resend this as per
-> your patch for Odroid XU.
-> with dropping the cd-gpios and wp-gpios changes.
 
-I am fine with both (resend all or only this).
+--===============0959731856==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+
+--cWoXeonUoKmBZSoM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jul 25, 2018 at 05:46:43PM +0200, Andrzej Hajda wrote:
+> Panel timings were taken from vendor code and are not fully correct - ref=
+resh
+> rate is about 50Hz instead of 60Hz. The patch fixes it.
+>=20
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/panel/panel-simple.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+
+Applied, thanks.
+
+Thierry
+
+--cWoXeonUoKmBZSoM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlusxFwACgkQ3SOs138+
+s6E0rQ//bKo38/rwPRLmDi94ugUsR8gPZzvx7LRG6eBkKQUnbLEM43+/J4r+HvMx
+RQ+MzFjOXaeakZPUXx7tsFE+LtGt6PewlgFpAPN8QbGoUmYiS4WEJOwNvSA4vGOp
+a3cCdhEYFRH1XUfiCBB/IRuOZcftpzUCMAOgmAyP9VjR5bjATEFDPOBMMNzHBvls
+hIhyROr3OEfPyC8EoH2yiBgsOzxvhc/P0SWeNfxOyZFmVTpRizOmZVQpKvhQJBe3
+08R0F9dOCgZ/eUYpXdP9i+hK2WhjT/O3sqTX3z7BdJDanj7BiUg1/sxOtb9yo3Sn
+/YlzsQN5C/f5O7QCzsqVXIU/+tm+oO9AxxDfDl9L56tFLNrACotrFG9MXvv9ZE3n
+zAPQtQw0GGa01Bmoi50Tip9Tf/2nHjh89iWO7sfzzER6Pl/a9LGtd2mpbnJrwhjj
+3F+mMoK2lO2nK7sFbZsjjZMxRgFuXhKrIxAMWEBwyQ4H1zj9jaTlITRJJWePNf7F
+4gI0B0P4FMmVjGwxEoEiYH4UY8qHX3lYCrz+ylX8garT+3DL98gaChp/L3vvwVBm
+PHgb64yW4jZFXo6nFUxVGrN44+tjfLLImzIADwmZfMWQL1xKYNoqh9VHxBX0qu/N
+qf9j5VZ4TmFd/jb4XiaxECysKYcGP0d8d7SVYp9n0o7zGGkoKos=
+=mCbr
+-----END PGP SIGNATURE-----
+
+--cWoXeonUoKmBZSoM--
+
+--===============0959731856==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0959731856==--
