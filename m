@@ -1,55 +1,51 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv5 6/6] mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
-Date: Thu, 27 Sep 2018 14:07:38 +0000
-Message-ID: <20180927140738.1006-7-linux.amoon@gmail.com>
-References: <20180927140738.1006-1-linux.amoon@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [RESEND] dt-bindings: thermal: samsung: Add SPDX license identifier
+Date: Thu, 27 Sep 2018 19:04:40 +0200
+Message-ID: <20180927170440.12985-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180927140738.1006-1-linux.amoon@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add tuning for sdr and ddr timing for USH-I mode sdr104/sdr50/ddr50
-for host controller.
+Replace GPL license statement with SPDX license identifier (GPL-2.0+).
 
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-No changes from previous patch
----
- drivers/mmc/host/dw_mmc-exynos.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index ab47b018716a..d46c3439b508 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -253,6 +253,8 @@ static void dw_mci_exynos_config_hs400(struct dw_mci *host, u32 timing)
- 	if (timing == MMC_TIMING_MMC_HS400) {
- 		dqs |= DATA_STROBE_EN;
- 		strobe = DQS_CTRL_RD_DELAY(strobe, priv->dqs_delay);
-+	} else if (timing == MMC_TIMING_UHS_SDR104) {
-+		dqs &= 0xffffff00;
- 	} else {
- 		dqs &= ~DATA_STROBE_EN;
- 	}
-@@ -312,6 +314,15 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- 		if (ios->bus_width == MMC_BUS_WIDTH_8)
- 			wanted <<= 1;
- 		break;
-+	case MMC_TIMING_UHS_SDR104:
-+	case MMC_TIMING_UHS_SDR50:
-+		clksel = (priv->sdr_timing & 0xfff8ffff) |
-+			(priv->ciu_div << 16);
-+		break;
-+	case MMC_TIMING_UHS_DDR50:
-+		clksel = (priv->ddr_timing & 0xfff8ffff) |
-+			(priv->ciu_div << 16);
-+		break;
- 	default:
- 		clksel = priv->sdr_timing;
- 	}
+---
+
+We postponed this patch because in previous discussion [1] Bartlomiej
+expressed willingness to change the license... which did not happen
+since July 2018.  In such case let's take this.
+
+[1] https://patchwork.kernel.org/patch/10533191/
+---
+ include/dt-bindings/thermal/thermal_exynos.h | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/include/dt-bindings/thermal/thermal_exynos.h b/include/dt-bindings/thermal/thermal_exynos.h
+index 0646500bca69..642e4e7f4084 100644
+--- a/include/dt-bindings/thermal/thermal_exynos.h
++++ b/include/dt-bindings/thermal/thermal_exynos.h
+@@ -1,19 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * thermal_exynos.h - Samsung EXYNOS TMU device tree definitions
+  *
+  *  Copyright (C) 2014 Samsung Electronics
+  *  Lukasz Majewski <l.majewski@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ #ifndef _EXYNOS_THERMAL_TMU_DT_H
 -- 
 2.17.1
