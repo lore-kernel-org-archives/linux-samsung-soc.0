@@ -1,53 +1,51 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCHv4 0/6] Add support for UHS-I on Exynos5422 odroid boards
-Date: Wed, 26 Sep 2018 21:07:30 +0200
-Message-ID: <20180926190730.GB6461@kozik-lap>
-References: <20180922075238.884-1-linux.amoon@gmail.com>
- <20180922075238.884-2-linux.amoon@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv4 4/6] ARM: dts: exynos: Add CD and WP pins to Odroid
+ XU3/XU4 SD card
+Date: Thu, 27 Sep 2018 09:15:11 +0530
+Message-ID: <CANAwSgSPkKL3jaHHSkEhgocKT_Sq4zg3Z=+7d5889ttpnNPHDA@mail.gmail.com>
+References: <20180922075238.884-1-linux.amoon@gmail.com> <20180922075238.884-6-linux.amoon@gmail.com>
+ <20180926190639.GA6461@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180922075238.884-2-linux.amoon@gmail.com>
+In-Reply-To: <20180926190639.GA6461@kozik-lap>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Sep 22, 2018 at 07:52:32AM +0000, Anand Moon wrote:
-> This is series v4 since my previous patches were incomplete with driver
-> changes missing.
-> 
-> v4 changes.
-> squash cd-gpios and wp-gpio changes into single patch.
-> change the subject prefix to "ARM: dts: exynos:"
-> 
-> These changes add UHS-I tuning for dw_mmc-exynos driver.
-> 
-> Rebased on Krzysztof branch next/dt
-> [0] git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git 
-> 
+Hi Krzysztof,
+On Thu, 27 Sep 2018 at 00:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Sat, Sep 22, 2018 at 07:52:36AM +0000, Anand Moon wrote:
+> > Add the card-detect and write-protect GPIO pins for OdroidXU3/XU4
+> > SD card by adding pinctrl setting for wp-gpio pin and set it to
+> > active low.
+> >
+> > This also removes debug messages:
+> >     dwmmc_exynos 12220000.mmc: No GPIO consumer cd found
+> >     dwmmc_exynos 12220000.mmc: No GPIO consumer wp found
+> >
+> > Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > Fix the commit message and squash it with cd-gpios and wp-gpio
+> > patches into single patch as suggested by Krzysztof.
+>
+> As Marek pointed to my Odroid XU patch, there is no point of adding
+> cd-gpios and wp-gpios properties.
+>
+> Adding pin configuration for wp pin is also not needed. Reset values are
+> working properly. However there might be meaning of adding it just in
+> case - if bootloader decided to touch it...
+>
+> Best regards,
+> Krzysztof
+>
 
-Except the one about CD and WP pins (where I replied), they look ok. It
-would be nice if you get tested-by tags for them.
+Do I need to send the all the patches again or just resend this as per
+your patch for Odroid XU.
+with dropping the cd-gpios and wp-gpios changes.
 
-Best regards,
-Krzysztof
-
-> Anand Moon (6):
->   ARM: dts: exynos: Added UHS-I bus speed support
->   ARM: dts: exynos: fix regulator min values of LDO13 for Odroid XU3/XU4
->   ARM: dts: exynos: update maximum frequency for sdcard to 200MHz
->   ARM: dts: exynos: Add CD and WP pins to Odroid XU3/XU4 SD card
->   ARM: dts: exynos: update maximum frequency for emmc to 200MHz
->   mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
-> 
->  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  8 ++++++++
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 10 ++++++++--
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
->  drivers/mmc/host/dw_mmc-exynos.c                   | 11 +++++++++++
->  4 files changed, 28 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+Best Regards
+-Anand
