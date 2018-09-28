@@ -1,51 +1,43 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH v2 0/4] crypto: s5p-sss: Fix and add aes-ctr support
-Date: Fri, 28 Sep 2018 13:07:43 +0800
-Message-ID: <20180928050743.7mqgbs2femmacq5o@gondor.apana.org.au>
-References: <CGME20180917151002eucas1p27689f043367e1bc64bf63bc402dffcdd@eucas1p2.samsung.com>
- <20180917151002eucas1p27689f043367e1bc64bf63bc402dffcdd~VOId3-CTL2961529615eucas1p2I@eucas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180917151002eucas1p27689f043367e1bc64bf63bc402dffcdd~VOId3-CTL2961529615eucas1p2I@eucas1p2.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Manszewski <c.manszewski@samsung.com>
-Cc: linux-crypto@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, "David S. Miller" <davem@davemloft.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] mmc: slot-gpio: Fix debounce time to use miliseconds again
+Date: Fri, 28 Sep 2018 14:20:40 +0200
+Message-ID: <20180928122040.2221-1-m.szyprowski@samsung.com>
+References: <CGME20180928122141eucas1p2feee237ecf064b6abddeda569f356c86@eucas1p2.samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Shawn Lin <shawn.lin@rock-chips.com>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 05:09:26PM +0200, Christoph Manszewski wrote:
-> Hello,
-> 
-> This patch series adds aes-ctr support in s5p-sss.c driver. Additionally it
-> it provides a fix, and a minor code cleanup.
-> 
-> Patch 1 contains a simple fix, of a possible race condition.
-> Patches 2-3 are code cleanup patches.
-> Patch 4 adds support for aes-ctr block cipher mode of operation.
-> 
-> Regards,
-> Chris
-> 
-> Changes in v2:
-> - pass dev->req directly to s5p_aes_complete in s5p_aes_interrupt
-> non-error path,
-> - move req asignment in s5p_aes_interrupt before if statement,
-> - change commit message and subject for patch 2/4,
-> - remove empty lines and add rationale in commit message for 
-> patch 3/4,
-> 
-> Christoph Manszewski (4):
->   crypto: s5p-sss: Fix race in error handling
->   crypto: s5p-sss: Fix Fix argument list alignment
->   crypto: s5p-sss: Minor code cleanup
->   crypto: s5p-sss: Add aes-ctr support
-> 
->  drivers/crypto/s5p-sss.c | 113 +++++++++++++++++++++++++++--------------------
->  1 file changed, 65 insertions(+), 48 deletions(-)
+The debounce value passed to mmc_gpiod_request_cd() function is in
+microseconds, but msecs_to_jiffies() requires the value to be in
+miliseconds to properly calculate the delay, so adjust the value stored
+in cd_debounce_delay_ms context entry.
 
-All applied.  Thanks.
+Fixes: 1d71926bbd59 ("mmc: core: Fix debounce time to use microseconds")
+Fixes: bfd694d5e21c ("mmc: core: Add tunable delay before detecting card
+after card is inserted")
+Cc: stable@vger.kernel.org # v4.18+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This patch fixes eMMC card detection on Exynos5410-based Odroid XU board,
+broken since Linux next-20180928.
+---
+ drivers/mmc/core/slot-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+index 2a833686784b..86803a3a04dc 100644
+--- a/drivers/mmc/core/slot-gpio.c
++++ b/drivers/mmc/core/slot-gpio.c
+@@ -271,7 +271,7 @@ int mmc_gpiod_request_cd(struct mmc_host *host, const char *con_id,
+ 	if (debounce) {
+ 		ret = gpiod_set_debounce(desc, debounce);
+ 		if (ret < 0)
+-			ctx->cd_debounce_delay_ms = debounce;
++			ctx->cd_debounce_delay_ms = debounce / 1000;
+ 	}
+ 
+ 	if (gpio_invert)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
