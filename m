@@ -1,45 +1,47 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
- non-Exynos platforms
-Date: Fri, 28 Sep 2018 18:34:55 +0200
-Message-ID: <20180928163457eucas1p10a18e67b832104c32e6148dcb1a67c52~YnYwPaOho0754307543eucas1p1L@eucas1p1.samsung.com>
-References: <CGME20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d@eucas1p1.samsung.com>
-        <20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d~Yk9kqY_Ga2124121241eucas1p1b@eucas1p1.samsung.com>
-        <CAJKOXPcfvpiO8NpRzDwNgEyJf21+jFt8r9E=OOs_6f7wSjC+Zw@mail.gmail.com>
+From: Joe Perches <joe@perches.com>
+Subject: Bad MAINTAINERS pattern in section 'SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER'
+Date: Fri, 28 Sep 2018 15:03:29 -0700
+Message-ID: <20180928220330.31325-1-joe@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPcfvpiO8NpRzDwNgEyJf21+jFt8r9E=OOs_6f7wSjC+Zw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Please fix this defect appropriately.
 
+linux-next MAINTAINERS section:
 
-On 09/28/2018 03:54 PM, Krzysztof Kozlowski wrote:
-> On Fri, 28 Sep 2018 at 15:37, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
->>
->> "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
->> config option) is not working properly (debug messages are not
->> displayed after resume) on Exynos platforms because GPIOs restore
->> code is not implemented.
-> 
-> AFAIR, it worked properly for the suspend part showing more logs.
-> Unless it changed, the feature looks still useful.
+	12851	SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
+	12852	M:	Łukasz Stelmach <l.stelmach@samsung.com>
+	12853	L:	linux-samsung-soc@vger.kernel.org
+	12854	S:	Maintained
+	12855	F:	drivers/char/hw_random/exynos-trng.c
+-->	12856	F:	Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
 
-Yes, it shows few additional messages from mach/plat specific suspend
-code but it breaks the assumption that features (even debug ones)
-work correctly and make you invest time in debugging known broken
-code.
+Commit that introduced this:
 
-In case it is needed/useful (which should be rather rare situation)
-one can always easily revert the commit locally.
+commit 6cd225cc5d8a6526b2bea41955882be55d4f109e
+ Author: Łukasz Stelmach <l.stelmach@samsung.com>
+ Date:   Fri Dec 22 17:48:35 2017 +0100
+ 
+     hwrng: exynos - add Samsung Exynos True RNG driver
+     
+     Add support for True Random Number Generator found in Samsung Exynos
+     5250+ SoCs.
+     
+     Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+     Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+     Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
+     Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+ 
+  MAINTAINERS                          |   7 ++
+  drivers/char/hw_random/Kconfig       |  12 ++
+  drivers/char/hw_random/Makefile      |   1 +
+  drivers/char/hw_random/exynos-trng.c | 237 +++++++++++++++++++++++++++++++++++
+  4 files changed, 257 insertions(+)
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+No commit with Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt found
