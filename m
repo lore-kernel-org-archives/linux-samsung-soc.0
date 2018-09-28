@@ -1,37 +1,45 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] mmc: slot-gpio: Fix debounce time to use miliseconds
- again
-Date: Fri, 28 Sep 2018 09:30:11 -0700
-Message-ID: <20180928163010.GR5659@atomide.com>
-References: <CGME20180928122141eucas1p2feee237ecf064b6abddeda569f356c86@eucas1p2.samsung.com>
- <20180928122040.2221-1-m.szyprowski@samsung.com>
- <CAPDyKFqbwGhLOZ+VrS07KDWY-j8RLC0mwJEKvhWVHbQQdZqUrw@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
+ non-Exynos platforms
+Date: Fri, 28 Sep 2018 18:34:55 +0200
+Message-ID: <20180928163457eucas1p10a18e67b832104c32e6148dcb1a67c52~YnYwPaOho0754307543eucas1p1L@eucas1p1.samsung.com>
+References: <CGME20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d@eucas1p1.samsung.com>
+        <20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d~Yk9kqY_Ga2124121241eucas1p1b@eucas1p1.samsung.com>
+        <CAJKOXPcfvpiO8NpRzDwNgEyJf21+jFt8r9E=OOs_6f7wSjC+Zw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqbwGhLOZ+VrS07KDWY-j8RLC0mwJEKvhWVHbQQdZqUrw@mail.gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Shawn Lin <shawn.lin@rock-chips.com>, Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "# 4.0+" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPcfvpiO8NpRzDwNgEyJf21+jFt8r9E=OOs_6f7wSjC+Zw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-* Ulf Hansson <ulf.hansson@linaro.org> [180928 15:50]:
-> On 28 September 2018 at 14:20, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> > The debounce value passed to mmc_gpiod_request_cd() function is in
-> > microseconds, but msecs_to_jiffies() requires the value to be in
-> > miliseconds to properly calculate the delay, so adjust the value stored
-> > in cd_debounce_delay_ms context entry.
-> >
-> > Fixes: 1d71926bbd59 ("mmc: core: Fix debounce time to use microseconds")
-> > Fixes: bfd694d5e21c ("mmc: core: Add tunable delay before detecting card
-> > after card is inserted")
-> > Cc: stable@vger.kernel.org # v4.18+
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+
+On 09/28/2018 03:54 PM, Krzysztof Kozlowski wrote:
+> On Fri, 28 Sep 2018 at 15:37, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+>>
+>> "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
+>> config option) is not working properly (debug messages are not
+>> displayed after resume) on Exynos platforms because GPIOs restore
+>> code is not implemented.
 > 
-> Applied for fixes!
+> AFAIR, it worked properly for the suspend part showing more logs.
+> Unless it changed, the feature looks still useful.
 
-Heh thanks for fixing it, looks like I totally missed that part :)
+Yes, it shows few additional messages from mach/plat specific suspend
+code but it breaks the assumption that features (even debug ones)
+work correctly and make you invest time in debugging known broken
+code.
 
-Tony
+In case it is needed/useful (which should be rather rare situation)
+one can always easily revert the commit locally.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
