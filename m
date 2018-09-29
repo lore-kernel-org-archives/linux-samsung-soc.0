@@ -1,47 +1,100 @@
-From: Joe Perches <joe@perches.com>
-Subject: Bad MAINTAINERS pattern in section 'SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER'
-Date: Fri, 28 Sep 2018 15:03:29 -0700
-Message-ID: <20180928220330.31325-1-joe@perches.com>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH] gpiolib: Fix incorrect use of find_next_zero_bit()
+Date: Sat, 29 Sep 2018 14:20:22 +0200
+Message-ID: <20180929122022.6825-1-jmkrzyszt@gmail.com>
+References: <20180923235336.22148-2-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180923235336.22148-2-jmkrzyszt@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>, Dominik Brodowski <linux@dominikbrodowski.net>, Yegor Yefremov <yegorslists@googlemail.com>, netdev@vger.kernel.org, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Marek Szyprowski <m.szyprowski@samsung.com>, devel@driverdev.osuosl.org, Florian Fainelli <f.fainelli@gmail.com>, Peter Rosin <peda@axentia.se>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-iio@vger.kernel.org, Peter Korsgaard <peter.korsgaard@barco.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Russ
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Please fix this defect appropriately.
+Commit b17566a6b08b ("gpiolib: Implement fast processing path in
+get/set array"), already fixed to some extent with commit 5d581d7e8cdc
+("gpiolib: Fix missing updates of bitmap index"), introduced a new mode
+of processing bitmaps where bits applicable for fast bitmap processing
+path are supposed to be skipped while iterating bits which don't apply.
+Unfortunately, find_next_zero_bit() function supposed to skip over
+those fast bits is always called with a 'start' argument equal to an
+index of last zero bit found and returns that index value again an
+again, causing an infinite loop.
 
-linux-next MAINTAINERS section:
+Fix it by incrementing the index uncoditionally before
+find_next_zero_bit() is optionally called.
 
-	12851	SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
-	12852	M:	Łukasz Stelmach <l.stelmach@samsung.com>
-	12853	L:	linux-samsung-soc@vger.kernel.org
-	12854	S:	Maintained
-	12855	F:	drivers/char/hw_random/exynos-trng.c
--->	12856	F:	Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+Marek,
 
-Commit that introduced this:
+Could you please test it on top of next-20180920 with "gpiolib: Fix
+missing updates of bitmap index" and optionally "mmc: pwrseq_simple:
+Fix incorrect handling of GPIO bitmap" also applied?
 
-commit 6cd225cc5d8a6526b2bea41955882be55d4f109e
- Author: Łukasz Stelmach <l.stelmach@samsung.com>
- Date:   Fri Dec 22 17:48:35 2017 +0100
+Thanks,
+Janusz
+
+
+ drivers/gpio/gpiolib.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 6ae13e3e05f1..940b543e966d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2878,12 +2878,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			int hwgpio = gpio_chip_hwgpio(desc);
  
-     hwrng: exynos - add Samsung Exynos True RNG driver
-     
-     Add support for True Random Number Generator found in Samsung Exynos
-     5250+ SoCs.
-     
-     Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-     Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-     Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
-     Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+ 			__set_bit(hwgpio, mask);
++			i++;
  
-  MAINTAINERS                          |   7 ++
-  drivers/char/hw_random/Kconfig       |  12 ++
-  drivers/char/hw_random/Makefile      |   1 +
-  drivers/char/hw_random/exynos-trng.c | 237 +++++++++++++++++++++++++++++++++++
-  4 files changed, 257 insertions(+)
-
-No commit with Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt found
+ 			if (array_info)
+ 				i = find_next_zero_bit(array_info->get_mask,
+ 						       array_size, i);
+-			else
+-				i++;
+ 		} while ((i < array_size) &&
+ 			 (desc_array[i]->gdev->chip == chip));
+ 
+@@ -2903,12 +2902,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 				value = !value;
+ 			__assign_bit(j, value_bitmap, value);
+ 			trace_gpio_value(desc_to_gpio(desc), 1, value);
++			j++;
+ 
+ 			if (array_info)
+ 				j = find_next_zero_bit(array_info->get_mask, i,
+ 						       j);
+-			else
+-				j++;
+ 		}
+ 
+ 		if (mask != fastpath)
+@@ -3191,12 +3189,11 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 					__clear_bit(hwgpio, bits);
+ 				count++;
+ 			}
++			i++;
+ 
+ 			if (array_info)
+ 				i = find_next_zero_bit(array_info->set_mask,
+ 						       array_size, i);
+-			else
+-				i++;
+ 		} while ((i < array_size) &&
+ 			 (desc_array[i]->gdev->chip == chip));
+ 		/* push collected bits to outputs */
+-- 
+2.16.4
