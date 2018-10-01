@@ -1,55 +1,54 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
- non-Exynos platforms
-Date: Sun, 30 Sep 2018 14:38:28 +0200
-Message-ID: <20180930123828.GA10619@kozik-lap>
-References: <CGME20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d@eucas1p1.samsung.com>
- <20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d~Yk9kqY_Ga2124121241eucas1p1b@eucas1p1.samsung.com>
- <CAJKOXPcfvpiO8NpRzDwNgEyJf21+jFt8r9E=OOs_6f7wSjC+Zw@mail.gmail.com>
- <20180928163457eucas1p10a18e67b832104c32e6148dcb1a67c52~YnYwPaOho0754307543eucas1p1L@eucas1p1.samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-fixes
+Date: Mon, 01 Oct 2018 11:24:56 +0900
+Message-ID: <1538360696-23579-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20181001022506epcas2p37545aaab29371eb75cacb56aca24fb72@epcas2p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180928163457eucas1p10a18e67b832104c32e6148dcb1a67c52~YnYwPaOho0754307543eucas1p1L@eucas1p1.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 06:34:55PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> 
-> 
-> On 09/28/2018 03:54 PM, Krzysztof Kozlowski wrote:
-> > On Fri, 28 Sep 2018 at 15:37, Bartlomiej Zolnierkiewicz
-> > <b.zolnierkie@samsung.com> wrote:
-> >>
-> >> "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
-> >> config option) is not working properly (debug messages are not
-> >> displayed after resume) on Exynos platforms because GPIOs restore
-> >> code is not implemented.
-> > 
-> > AFAIR, it worked properly for the suspend part showing more logs.
-> > Unless it changed, the feature looks still useful.
-> 
-> Yes, it shows few additional messages from mach/plat specific suspend
-> code but it breaks the assumption that features (even debug ones)
-> work correctly and make you invest time in debugging known broken
-> code.
-
-OK, let's remove it. However in such case this change leaves useless
-S3C_PMDBG and other s3c_pm_* in Exynos code. They should go away along
-with SAMSUNG_PM_DEBUG.
-
-Best regards,
-Krzysztof
-
-> 
-> In case it is needed/useful (which should be rather rare situation)
-> one can always easily revert the commit locally.
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
+SGkgRGF2ZSwKCiAgIEp1c3Qgb25lIGZpeHVwIHBhdGNoIHRvIGF2b2lkIEV4eW5vcyBEUk0gZHJp
+dmVyIGZyb20gYmVpbmcgYnJva2VuCiAgIHdpdGggZW5oYW5jZW1lbnQgcGF0Y2ggc2VyaWVzIG9m
+IElPTU1VIGZyYW1ld29ya1sxXS4KICAgVGhpcyBwYXRjaCBqdXN0IG1ha2VzIGl0IHJldXNlIGRl
+ZmF1bHQgSU9NTVUgZG9tYWluIGluc3RlYWQgb2YKICAgYWxsb2NhdGluZyBhIGZha2Ugb25lLgoK
+ICAgUHMuIFdlJ2QgbGlrZSB0byBwdXNoIHRoaXMgb25lIHRvIGhlbHAgZW5oYW5jaW5nIHRoZSBJ
+T01NVSBhbmQKICAgICAgIERNQS1JT01NVSBmcmFtZXdvcmtzIGluIHY0LjIwCgogICBQbGVhc2Ug
+a2luZGx5IGxldCBtZSBrbm93IGlmIHRoZXJlIGlzIGFueSBwcm9ibGVtLgoKWzFdIGh0dHBzOi8v
+d3d3LnNwaW5pY3MubmV0L2xpc3RzL2FybS1rZXJuZWwvbXNnNjc2MDk4Lmh0bWwKClRoYW5rcywK
+SW5raSBEYWUKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgZmNiMTM0OWEyYWY1
+YTNjNGExZDc4OWJiNWQxYTliM2U1ODI2NTJhMzoKCiAgTWVyZ2UgYnJhbmNoICdkcm0tZml4ZXMt
+NC4xOScgb2YgZ2l0Oi8vcGVvcGxlLmZyZWVkZXNrdG9wLm9yZy9+YWdkNWYvbGludXggaW50byBk
+cm0tZml4ZXMgKDIwMTgtMDktMjggMDk6MzA6MjIgKzEwMDApCgphcmUgYXZhaWxhYmxlIGluIHRo
+ZSBnaXQgcmVwb3NpdG9yeSBhdDoKCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51
+eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcyB0YWdzL2V4eW5vcy1kcm0tZml4ZXMtZm9y
+LXY0LjE5LXJjNwoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDFmZWRhNWViNzdmYzI3
+OWE0YzRlYjkzYjlhMGFjM2JmNzI1NGI1N2E6CgogIGRybS9leHlub3M6IFVzZSBzZWxlY3RlZCBk
+bWFfZGV2IGRlZmF1bHQgaW9tbXUgZG9tYWluIGluc3RlYWQgb2YgYSBmYWtlIG9uZSAoMjAxOC0x
+MC0wMSAwOToyNTozMSArMDkwMCkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVXNlIGRlZmF1bHQgaW9tbXUgZG9tYWluIGlu
+c3RlYWQgb2YgZmFrZSBvbmUKLSBUaGlzIHBhdGNoIG1ha2VzIGl0IHRvIHJldXNlIGRlZmF1bHQg
+SU9NTVUgZG9tYWluIGluc3RlYWQgb2YKICBhbGxvY2F0aW5nIGEgZmFrZSBJT01NVSBkb21haW4s
+IGFuZCBhbGxvd3Mgc29tZSBkZXNpZ24gY2hhbmdlcwogIGZvciBlbmhhbmNlbWVudCBvZiBJT01N
+VSBmcmFtZXdvcmtbMV0gd2l0aG91dCBicmVha2luZyBFeHlub3MgRFJNLgoKWzFdIGh0dHBzOi8v
+d3d3LnNwaW5pY3MubmV0L2xpc3RzL2FybS1rZXJuZWwvbXNnNjc2MDk4Lmh0bWwKCi0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+TWFyZWsgU3p5cHJvd3NraSAoMSk6CiAgICAgIGRybS9leHlub3M6IFVzZSBzZWxlY3RlZCBkbWFf
+ZGV2IGRlZmF1bHQgaW9tbXUgZG9tYWluIGluc3RlYWQgb2YgYSBmYWtlIG9uZQoKIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5oIHwgMzQgKysrKysrLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMjggZGVsZXRp
+b25zKC0pCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
