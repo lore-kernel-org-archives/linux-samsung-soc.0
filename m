@@ -1,84 +1,39 @@
-From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Subject: Re: Bad MAINTAINERS pattern in section 'SAMSUNG EXYNOS TRUE RANDOM
- NUMBER GENERATOR (TRNG) DRIVER'
-Date: Mon, 01 Oct 2018 10:07:37 +0200
-Message-ID: <875zym5bue.fsf%l.stelmach@samsung.com>
-References: <20180928220330.31325-1-joe@perches.com>
-        <CGME20181001080750epcas2p21b4c3e14be32859f31bede0656ffa09d@epcas2p2.samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: Fix incorrect use of find_next_zero_bit()
+Date: Mon, 1 Oct 2018 11:37:07 +0200
+Message-ID: <CACRpkdbxh3uoVbc1udouxKaN+sc+q_vB7oj_B8PEa4wi=wLedg@mail.gmail.com>
+References: <20180923235336.22148-2-jmkrzyszt@gmail.com> <20180929122022.6825-1-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20180928220330.31325-1-joe@perches.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20180929122022.6825-1-jmkrzyszt@gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>, Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>, Lukas Wunner <luka>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+On Sat, Sep 29, 2018 at 2:19 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-It was <2018-09-29 sob 00:03>, when Joe Perches wrote:
-> Please fix this defect appropriately.
+> Commit b17566a6b08b ("gpiolib: Implement fast processing path in
+> get/set array"), already fixed to some extent with commit 5d581d7e8cdc
+> ("gpiolib: Fix missing updates of bitmap index"), introduced a new mode
+> of processing bitmaps where bits applicable for fast bitmap processing
+> path are supposed to be skipped while iterating bits which don't apply.
+> Unfortunately, find_next_zero_bit() function supposed to skip over
+> those fast bits is always called with a 'start' argument equal to an
+> index of last zero bit found and returns that index value again an
+> again, causing an infinite loop.
 >
-> linux-next MAINTAINERS section:
+> Fix it by incrementing the index uncoditionally before
+> find_next_zero_bit() is optionally called.
 >
-> 	12851	SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
-> 	12852	M:	=C5=81ukasz Stelmach <l.stelmach@samsung.com>
-> 	12853	L:	linux-samsung-soc@vger.kernel.org
-> 	12854	S:	Maintained
-> 	12855	F:	drivers/char/hw_random/exynos-trng.c
-> -->	12856	F:	Documentation/devicetree/bindings/rng/samsung,exynos5250-trn=
-g.txt
->
-> Commit that introduced this:
->
-> commit 6cd225cc5d8a6526b2bea41955882be55d4f109e
->  Author: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
->  Date:   Fri Dec 22 17:48:35 2017 +0100
->=20=20
->      hwrng: exynos - add Samsung Exynos True RNG driver
->=20=20=20=20=20=20
->      Add support for True Random Number Generator found in Samsung Exynos
->      5250+ SoCs.
->=20=20=20=20=20=20
->      Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
->      Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->      Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
->      Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
->=20=20
->   MAINTAINERS                          |   7 ++
->   drivers/char/hw_random/Kconfig       |  12 ++
->   drivers/char/hw_random/Makefile      |   1 +
->   drivers/char/hw_random/exynos-trng.c | 237 ++++++++++++++++++++++++++++=
-+++++++
->   4 files changed, 257 insertions(+)
->
-> No commit with Documentation/devicetree/bindings/rng/samsung,exynos5250-t=
-rng.txt found
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Please merge the version 3[1] of the patch you've acked[2].
+Patch applied with Marek's Tested-by.
 
-[1] https://www.spinics.net/lists/linux-samsung-soc/msg61372.html
-[2] https://www.spinics.net/lists/linux-samsung-soc/msg61272.html
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+Thanks to both of you for digging in and fixing this up!
+Now we are in good shape for the v4.20 cycle :)
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAlux1coACgkQsK4enJil
-gBCoYAf/TRdfsYupR+hSviOt6F/mHduwMboNJ4TMl/4iZcg8PMueZSDj74tNMpI3
-kTNg7n5bCvNeFliYOu4RfxFUzPuwpxU2YUDgJ2AWmdB5545Ekj8Yq2va6P/sBq9L
-TyYogfT5FEBeDG0E2AlsdpB3oWw3I8u/mlvgsTjeRu17ptKGP3euh9bsXDlm/rTo
-sTemzSNB0QElUya1r2BO6gvZgO4F5Hvz9AyvWT6W4lM3TDwprqKR98p2IwnXUfvt
-KZxOvy9S9IfTtFOOj06APjuJqE4wZ7a8U8UOdMDIKvnN3woeJsCaviWAbS19Gbpw
-IObvC9+lYMY0SREXqsKfRdbG0bnOLg==
-=+ZAp
------END PGP SIGNATURE-----
---=-=-=--
+Yours,
+Linus Walleij
