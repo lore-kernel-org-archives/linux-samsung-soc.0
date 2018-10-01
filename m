@@ -1,116 +1,95 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] gpiolib: Fix incorrect use of find_next_zero_bit()
-Date: Mon, 1 Oct 2018 08:46:16 +0200
-Message-ID: <20181001064618eucas1p28ccab6242ec7f562912a83584a65e768~ZaSpX0FfS1643816438eucas1p2f@eucas1p2.samsung.com>
-References: <20180923235336.22148-2-jmkrzyszt@gmail.com>
- <CGME20180929121916epcas4p2eb8be6cdd6b11d675510f0a54b546bb5@epcas4p2.samsung.com>
- <20180929122022.6825-1-jmkrzyszt@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Mon, 01 Oct 2018 17:01:31 +0900
+Message-ID: <1538380891-24040-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20181001080136epcas2p25ea2774ba9a203331314084a2c1a342d@epcas2p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180929122022.6825-1-jmkrzyszt@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>, Dominik Brodowski <linux@dominikbrodowski.net>, Yegor Yefremov <yegorslists@googlemail.com>, netdev@vger.kernel.org, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, devel@driverdev.osuosl.org, Florian Fainelli <f.fainelli@gmail.com>, Peter Rosin <peda@axentia.se>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-iio@vger.kernel.org, Peter Korsgaard <peter.korsgaard@barco.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Lars-Peter Clausen <lars@metafoo.de>, Sebastien
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Janusz,
-
-On 2018-09-29 14:20, Janusz Krzysztofik wrote:
-> Commit b17566a6b08b ("gpiolib: Implement fast processing path in
-> get/set array"), already fixed to some extent with commit 5d581d7e8cdc
-> ("gpiolib: Fix missing updates of bitmap index"), introduced a new mode
-> of processing bitmaps where bits applicable for fast bitmap processing
-> path are supposed to be skipped while iterating bits which don't apply.
-> Unfortunately, find_next_zero_bit() function supposed to skip over
-> those fast bits is always called with a 'start' argument equal to an
-> index of last zero bit found and returns that index value again an
-> again, causing an infinite loop.
->
-> Fix it by incrementing the index uncoditionally before
-> find_next_zero_bit() is optionally called.
->
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> ---
-> Marek,
->
-> Could you please test it on top of next-20180920 with "gpiolib: Fix
-> missing updates of bitmap index" and optionally "mmc: pwrseq_simple:
-> Fix incorrect handling of GPIO bitmap" also applied?
-
-This patch finally fixes the boot issue on Samsung Chromebook Snow.
-Thanks!
-
->
-> Thanks,
-> Janusz
->
->
->  drivers/gpio/gpiolib.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 6ae13e3e05f1..940b543e966d 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2878,12 +2878,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->  			int hwgpio = gpio_chip_hwgpio(desc);
->  
->  			__set_bit(hwgpio, mask);
-> +			i++;
->  
->  			if (array_info)
->  				i = find_next_zero_bit(array_info->get_mask,
->  						       array_size, i);
-> -			else
-> -				i++;
->  		} while ((i < array_size) &&
->  			 (desc_array[i]->gdev->chip == chip));
->  
-> @@ -2903,12 +2902,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->  				value = !value;
->  			__assign_bit(j, value_bitmap, value);
->  			trace_gpio_value(desc_to_gpio(desc), 1, value);
-> +			j++;
->  
->  			if (array_info)
->  				j = find_next_zero_bit(array_info->get_mask, i,
->  						       j);
-> -			else
-> -				j++;
->  		}
->  
->  		if (mask != fastpath)
-> @@ -3191,12 +3189,11 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
->  					__clear_bit(hwgpio, bits);
->  				count++;
->  			}
-> +			i++;
->  
->  			if (array_info)
->  				i = find_next_zero_bit(array_info->set_mask,
->  						       array_size, i);
-> -			else
-> -				i++;
->  		} while ((i < array_size) &&
->  			 (desc_array[i]->gdev->chip == chip));
->  		/* push collected bits to outputs */
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGkgRGF2ZSwKCiAgIEFkZGluZyBvdXQtYnJpZGdlIHN1cHBvcnQgZm9yIHRoZSB1c2Ugb2YgTFZE
+UyBicmlkZ2UgZGV2aWNlCiAgIHRvIE1JUEktRFNJIGRyaXZlciwgU2Ftc3VuZyAxNngxNiB0aWxl
+ZCBmb3JtYXQgc3VwcG9ydCB0bwogICBzY2FsZGVyIGFuZCBnc2MgZHJpdmVycyBhbmQgY29uZmln
+dXJhYmxlIHBsYW5lIGFscGhhIGFuZCBwaXhlbAogICBibGVuZCBtb2RlIHN1cHBvcnRzIHRvIG1p
+eGVyIGRyaXZlciBpbmNsdWRpbmcgb25lIGNsZWFudXAgZm9yCiAgIHJlbW92aW5nIGV4eW5vcyBz
+cGVjaWZpYyBzdXNwZW5kX3N0YXRlLgoKICAgQXMgZm9yIFNhbXN1bmcgMTZ4MTYgdGlsZWQgZm9y
+bWF0IHN1cHBvcnQsIEkgcGlja2VkIG9uZSBwYXRjaCB1cCwKICAgd2hpY2ggYWRkcyBEUk1fRk9S
+TUFUX01PRF9TQU1TVU5HXzE2XzE2X1RJTEUgZGVmaW5pdGlvbiB0byBkcm1fZm9yY2MuaAogICBo
+ZWFkZXIgZmlsZS4gVGhlIG9ubHkgdXNlciBvZiB0aGlzIGZvcm1hdCBpcyBleHlub3Mgc28gSSBy
+ZXF1ZXN0ZWQKICAgYWNrLWJ5WzFdIHRvIHJlbGV2YW50IG1haW50YWluZXJzIG9uIDI3IEF1Zy4g
+YnV0IG5vIGFueSByZXNwb25zZS4KCiAgIFsxXSBodHRwczovL3BhdGNod29yay5mcmVlZGVza3Rv
+cC5vcmcvcGF0Y2gvMjQzOTIxLwoKICAgUGxlYXNlIGtpbmRseSBsZXQgbWUga25vdyBpZiB0aGVy
+ZSBpcyBhbnkgcHJvYmxlbS4KCgpUaGFua3MsCklua2kgRGFlCgpUaGUgZm9sbG93aW5nIGNoYW5n
+ZXMgc2luY2UgY29tbWl0IDAzMjBhYzUxODhlYWI1YzZlOGI5MmIxMTBkMWVhZTk2N2FjMjcyZDI6
+CgogIE1lcmdlIHRhZyAnZHUtbmV4dC0yMDE4MDkxNCcgb2YgZ2l0Oi8vbGludXh0di5vcmcvcGlu
+Y2hhcnRsL21lZGlhIGludG8gZHJtLW5leHQgKDIwMTgtMDktMjAgMTQ6MTI6MDcgKzEwMDApCgph
+cmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoKCiAgZ2l0Oi8vZ2l0Lmtlcm5l
+bC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcyB0YWdzL2V4
+eW5vcy1kcm0tbmV4dC1mb3ItdjQuMjAKCmZvciB5b3UgdG8gZmV0Y2ggY2hhbmdlcyB1cCB0byA2
+YWM5OWEzMjhlZTE2ZDNmOGNjMjUzZjFkZjYyNjIzY2VlM2U5ZWE1OgoKICBkcm0vZXh5bm9zOiBt
+aXhlcjogTWFrZSBwbGFuZSBhbHBoYSBjb25maWd1cmFibGUgKDIwMTgtMTAtMDEgMTE6NDk6NTkg
+KzA5MDApCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tCkFkZCBvdXQtYnJpZGdlIHN1cHBvcnQKLSBUaGlzIHBhdGNoIHNlcmll
+cyBlbmFibGVzIG91dC1icmlkZ2UgZm9yIExWRFMgYnJpZGdlIGRldmljZSBzdXBwb3J0LAogIGFu
+ZCBhbHNvIGluY2x1ZGVzIHR3byBjbGVhbnVwcyBhbmQgb25lIHJlbGV2YW50IGR0IGJpbmRpbmcg
+dXBkYXRlCiAgZm9yIHRoaXMuCgpBZGQgU2Ftc3VuZyAxNngxNiB0aWxlZCBmb3JtYXQgc3VwcG9y
+dAotIFRoaXMgcGF0Y2ggc2VyaWVzIGFkZHMgU2Ftc3VuZyAxNngxNiB0aWxlZCBmb3JtYXQgdG8g
+c2NhbGVyIGFuZAogIGdzYyBkcml2ZXJzLiBBcyBmb3IgdGhpcywgaXQgYWRkcyBTYW1zdW5nIHNw
+ZWNpZmljIGZvcm1hdCB0bwogIGRybV9mb3JjYy5oIGhlYWRlci4gRm9yIHRoZSBnaXQtcHVsbCBy
+ZXF1ZXN0IHdpdGggcmVsZXZhbnQgcGF0Y2hlcywKICBJIHJlcXVlc3RlZCBhY2stYnlbMV0gdG8g
+cmVsZXZhbnQgbWFpbnRhaW5lcnMgYnV0IHRoZXJlIHdhcyBubyBhbnkgcmVzcG9uc2UuCiAgSSdt
+IHByZXR0eSBzdXJlIG5vIHByb2JsZW0gdG8gZ28gdG8gbWFpbmxpbmUgdGhvdWdoIEV4eW5vcyB0
+cmVlCiAgYmVjYXVzZSB0aGUgb25seSB1c2VyIG9mIGl0IGlzIEV4eW5vcy4KClsxXSBodHRwczov
+L3BhdGNod29yay5mcmVlZGVza3RvcC5vcmcvcGF0Y2gvMjQzOTIxLwoKQWRkIGNvbmZpZ3VyYWJs
+ZSBwbGFuZSBhbHBoYSBhbmQgcGl4ZWwgYmxlbmQgbW9kZSBzdXBwb3J0Ci0gVGhpcyBwYXRjaCBz
+ZXJpZXMgbWFrZXMgbWl4ZXIgZHJpdmVyIHRvIGJlIGNvbmZpZ3VyYWdsZSBmb3IKICBwaXhlbCBi
+bGVuZCBtb2RlIGFuZCBwbGFuZSBhbHBoYSwgd2hpY2ggYWxzbyBpbmNsdWRlcyBvbmUgZml4dXAK
+ICB0byBzZXQgYWxsIGRlZmF1bHQgdmFsdWVzIGNvcnJlY3RseSBhZnRlciByZXNldC4KCk9uZSBj
+bGVhbnVwCi0gVGhpcyBwYXRjaCByZXBsYWNlcyBkcm1fYXRvbWljX2hlbHBlcl9zdXNwZW5kL3Jl
+c3VtZSgpIHdpdGgKICBkcm1fbW9kZV9jb25maWdfaGVscGVyX3N1c3BlbmQvcmVzdW1lKCkgdG8g
+cmVtb3ZlIGV4eW5vcyBzcGVjaWZpYwogIHN1c3BlbmRfc3RhdGUuCgotLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkFuZHJ6ZWog
+SGFqZGEgKDEpOgogICAgICBkdC1iaW5kaW5nczogZXh5bm9zX2RzaW06IHVwZGF0ZSBvZiBncmFw
+aCBiaW5kaW5ncwoKQW5kcnplaiBQaWV0cmFzaWV3aWN6ICgyKToKICAgICAgZHJtOiBkcm1fZm91
+cmNjOiBhZGQgU2Ftc3VuZyAxNngxNiB0aWxlIGZvcm1hdAogICAgICBkcm0vZXh5bm9zOiBzY2Fs
+ZXI6IEFkZCBzdXBwb3J0IGZvciB0aWxlZCBmb3JtYXRzCgpDaHJpc3RvcGggTWFuc3pld3NraSAo
+Myk6CiAgICAgIGRybS9leHlub3M6IGRybV9wbGFuZTogQ29ycmVjdCBleHlub3NfZHJtX3BsYW5l
+X3Jlc2V0CiAgICAgIGRybS9leHlub3M6IG1peGVyOiBNYWtlIHBpeGVsIGJsZW5kIG1vZGUgY29u
+ZmlndXJhYmxlCiAgICAgIGRybS9leHlub3M6IG1peGVyOiBNYWtlIHBsYW5lIGFscGhhIGNvbmZp
+Z3VyYWJsZQoKTWFjaWVqIFB1cnNraSAoMyk6CiAgICAgIGRybS9leHlub3M6IHJlbmFtZSBicmlk
+Z2Vfbm9kZSB0byBpbl9icmlkZ2Vfbm9kZQogICAgICBkcm0vZXh5bm9zOiBtb3ZlIGNvbm5lY3Rv
+ciBjcmVhdGlvbiB0byBhdHRhY2ggY2FsbGJhY2sKICAgICAgZHJtL2V4eW5vczogZW5hYmxlIG91
+dF9icmlkZ2UgaW4gZXh5bm9zX2RzaV9lbmFibGUKCk1hcmVrIFN6eXByb3dza2kgKDEpOgogICAg
+ICBkcm0vZXh5bm9zOiBnc2M6IEFkZCBzdXBwb3J0IGZvciB0aWxlZCBmb3JtYXRzCgpTb3VwdGlj
+ayBKb2FyZGVyICgxKToKICAgICAgZ3B1L2RybS9leHlub3M6IENvbnZlcnQgZHJtX2F0b21pY19o
+ZWxwZXJfc3VzcGVuZC9yZXN1bWUoKQoKIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlu
+b3NfZHNpbS50eHQgICAgICAgIHwgIDI1ICstLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9kcnYuYyAgICAgICAgICAgIHwgIDI2ICstLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kcnYuaCAgICAgICAgICAgIHwgICAzICstCiBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAgICAgICB8IDEwNyArKysrKysrKystLS0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYyAgICAgICAgICB8ICAx
+NyAtLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5oICAgICAgICAg
+IHwgIDEwIC0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMgICAgICAg
+ICAgICB8ICA0NiArKysrKy0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxh
+bmUuYyAgICAgICAgICB8ICAxNiArKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9zY2FsZXIuYyAgICAgICAgIHwgMTM3ICsrKysrKysrKysrKy0tLS0tLS0tLQogZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgICAgICAgICAgfCAgNTYgKysrKysrLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCAgICAgICAgICAgICAgICB8ICAg
+NSArLQogaW5jbHVkZS91YXBpL2RybS9kcm1fZm91cmNjLmggICAgICAgICAgICAgICAgICAgICAg
+fCAgIDkgKysKIDEyIGZpbGVzIGNoYW5nZWQsIDI0OSBpbnNlcnRpb25zKCspLCAyMDggZGVsZXRp
+b25zKC0pCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
