@@ -1,59 +1,38 @@
-From: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [PATCH v5.1] dt-bindings: hwrng: Add Samsung Exynos 5250+ True RNG
- bindings
-Date: Thu, 04 Oct 2018 09:45:57 +0200
-Message-ID: <20181004074557.10472-1-l.stelmach@samsung.com>
-References: <20181002075633.25658-1-l.stelmach@samsung.com>
-        <CGME20181004074641epcas1p287225c19a28c713327725d089068f960@epcas1p2.samsung.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] media: exynos4-is: make const array config_ids static
+Date: Thu,  4 Oct 2018 15:20:27 +0100
+Message-ID: <20181004142027.21009-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20181002075633.25658-1-l.stelmach@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Joe Perches <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add binding documentation for the True Random Number Generator
-found on Samsung Exynos 5250+ SoCs.
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+The const array config_ids can be made static, saves populating it on
+the stack and will make it read-only.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/media/platform/exynos4-is/fimc-is.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This time with proper tags, as requested.
-
-Kind regards,
-ŁS
-
- .../bindings/rng/samsung,exynos5250-trng.txt    | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
-
-diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
-new file mode 100644
-index 000000000000..5a613a4ec780
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
-@@ -0,0 +1,17 @@
-+Exynos True Random Number Generator
-+
-+Required properties:
-+
-+- compatible  : Should be "samsung,exynos5250-trng".
-+- reg         : Specifies base physical address and size of the registers map.
-+- clocks      : Phandle to clock-controller plus clock-specifier pair.
-+- clock-names : "secss" as a clock name.
-+
-+Example:
-+
-+	rng@10830600 {
-+		compatible = "samsung,exynos5250-trng";
-+		reg = <0x10830600 0x100>;
-+		clocks = <&clock CLK_SSS>;
-+		clock-names = "secss";
-+	};
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 5ddb2321e9e4..f5fc54de19da 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -656,7 +656,7 @@ static int fimc_is_hw_open_sensor(struct fimc_is *is,
+ 
+ int fimc_is_hw_initialize(struct fimc_is *is)
+ {
+-	const int config_ids[] = {
++	static const int config_ids[] = {
+ 		IS_SC_PREVIEW_STILL, IS_SC_PREVIEW_VIDEO,
+ 		IS_SC_CAPTURE_STILL, IS_SC_CAPTURE_VIDEO
+ 	};
 -- 
-2.19.0
+2.17.1
