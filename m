@@ -1,16 +1,17 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
 Subject: Re: [PATCH 5/5] ARM: spectre-v2: per-CPU vtables to work around
  big.Little systems
-Date: Fri, 5 Oct 2018 11:35:52 +0200
-Message-ID: <CAJKOXPfgSJxLFQpYAEs4Hz6b_cZ13gjUy6h1dUf9hJWz_Tv62Q@mail.gmail.com>
+Date: Fri, 5 Oct 2018 10:46:19 +0100
+Message-ID: <20181005094618.GG30658@n2100.armlinux.org.uk>
 References: <20180919094802.GH30658@n2100.armlinux.org.uk>
  <CGME20180919095028epcas3p3e1a927bb7e88c6891d43abfdc51603e7@epcas3p3.samsung.com>
  <E1g2Z6e-0003es-CI@rmk-PC.armlinux.org.uk>
  <20181005090941eucas1p14031cd38d78e9d561975925bf977727d~aq0-OFZeE1866318663eucas1p1b@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
 In-Reply-To: <20181005090941eucas1p14031cd38d78e9d561975925bf977727d~aq0-OFZeE1866318663eucas1p1b@eucas1p1.samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -22,35 +23,26 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: mark.rutland@arm.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, julien.thierry@arm.com, marc.zyngier@arm.com, will.deacon@arm.com, dietmar.eggemann@arm.com, rmk+kernel@armlinux.org.uk, Morten.Rasmussen@arm.com, linux-arm-kernel@lists.infradead.org, Qais.Yousef@arm.com
+Cc: Mark Rutland <mark.rutland@arm.com>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Julien Thierry <julien.thierry@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <Morten.Rasmussen@arm.com>, linux-arm-kernel@lists.infradead.org, Qais Yousef <Qais.Yousef@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 5 Oct 2018 at 11:09, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Hi All,
->
-> On 2018-09-19 11:49, Russell King wrote:
-> > In big.Little systems, some CPUs require the Spectre workarounds in
-> > paths such as the context switch, but other CPUs do not.  In order
-> > to handle these differences, we need per-CPU vtables.
-> >
-> > We are unable to use the kernel's per-CPU variables to support this
-> > as per-CPU is not initialised at times when we need access to the
-> > vtables, so we have to use an array indexed by logical CPU number.
-> >
-> > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
->
+On Fri, Oct 05, 2018 at 11:09:40AM +0200, Marek Szyprowski wrote:
 > This patch causes lots of kernel 'BUG' messages on all Samsung Exynos
-> boards.  It started to appear since it has been merged to linux-next
-> on 20181002.  I wonder if this issue is Exynos specific or there are
+> boards.=A0 It started to appear since it has been merged to linux-next
+> on 20181002.=A0 I wonder if this issue is Exynos specific or there are
 > some patches missing in linux-next, which should fix those 'BUGS'.
 > If this is Exynos specific, please let us know what should be changed
 > in Exynos platform code to avoid this issue.
 
-Thanks Marek for narrowing this down.
+Thanks for the report.
 
-I confirm. All my Exynos boards experience this. Full logs:
-https://krzk.eu/#/builders/1/builds/2811/steps/12/logs/serial0
+It looks like my solution for big.Little isn't possible... back to
+the drawing board, and big.Little will have to remain vulnerable to
+Spectre for another release cycle.
 
-Best regards,
-Krzysztof
+-- =
+
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps =
+up
+According to speedtest.net: 11.9Mbps down 500kbps up
