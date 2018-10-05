@@ -1,48 +1,93 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH 5/5] ARM: spectre-v2: per-CPU vtables to work around
- big.Little systems
-Date: Fri, 5 Oct 2018 10:46:19 +0100
-Message-ID: <20181005094618.GG30658@n2100.armlinux.org.uk>
-References: <20180919094802.GH30658@n2100.armlinux.org.uk>
- <CGME20180919095028epcas3p3e1a927bb7e88c6891d43abfdc51603e7@epcas3p3.samsung.com>
- <E1g2Z6e-0003es-CI@rmk-PC.armlinux.org.uk>
- <20181005090941eucas1p14031cd38d78e9d561975925bf977727d~aq0-OFZeE1866318663eucas1p1b@eucas1p1.samsung.com>
+From: Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: [GIT PULL] clk/samsung updates for 4.20-rc1
+Date: Fri, 5 Oct 2018 13:49:14 +0200
+Message-ID: <9cf68fe8-73cf-4ee9-6ad4-d6b7ba8f02f8@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20181005090941eucas1p14031cd38d78e9d561975925bf977727d~aq0-OFZeE1866318663eucas1p1b@eucas1p1.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Julien Thierry <julien.thierry@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <Morten.Rasmussen@arm.com>, linux-arm-kernel@lists.infradead.org, Qais Yousef <Qais.Yousef@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 11:09:40AM +0200, Marek Szyprowski wrote:
-> This patch causes lots of kernel 'BUG' messages on all Samsung Exynos
-> boards.=A0 It started to appear since it has been merged to linux-next
-> on 20181002.=A0 I wonder if this issue is Exynos specific or there are
-> some patches missing in linux-next, which should fix those 'BUGS'.
-> If this is Exynos specific, please let us know what should be changed
-> in Exynos platform code to avoid this issue.
+Hi Stephen, Mike,
 
-Thanks for the report.
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-It looks like my solution for big.Little isn't possible... back to
-the drawing board, and big.Little will have to remain vulnerable to
-Spectre for another release cycle.
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
--- =
+are available in the git repository at:
 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps =
-up
-According to speedtest.net: 11.9Mbps down 500kbps up
+  git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.20-samsung
+
+for you to fetch changes up to 9dbcfe1ace4e9c57b819df1054eaeceb9bfd34f5:
+
+  dt-bindings: clock: samsung: Add SPDX license identifiers (2018-10-05 13:36:40 +0200)
+
+----------------------------------------------------------------
+clk/samsung updates for 4.20
+
+- consolidation of system suspend related code in Exynos, S5P, S3C SoC clk drivers,
+- fixes of system suspend support on Exynos542x (Odroid boards) and Exynos5433 SoC,
+- removal of obsoleted Exynos4212 ISP clock definitions,
+- correction of Exynos CPU clock implementation,
+- addition of SPDX license identifiers.
+
+----------------------------------------------------------------
+Joonyoung Shim (1):
+      clk: samsung: exynos5420: Define CLK_SECKEY gate clock only or Exynos5420
+
+Krzysztof Kozlowski (1):
+      dt-bindings: clock: samsung: Add SPDX license identifiers
+
+Marek Szyprowski (16):
+      clk: samsung: Remove excessive include
+      clk: samsung: s3c2410: Use generic helper for handling suspend/resume
+      clk: samsung: s3c2412: Use generic helper for handling suspend/resume
+      clk: samsung: s3c2443: Use generic helper for handling suspend/resume
+      clk: samsung: s3c64xx: Use generic helper for handling suspend/resume
+      clk: samsung: s5pv210: Use generic helper for handling suspend/resume
+      clk: samsung: exynos5250: Use generic helper for handling suspend/resume
+      clk: samsung: Add support for setting registers state before suspend
+      clk: samsung: exynos4: Use generic helper for handling suspend/resume
+      clk: samsung: exynos5420: Use generic helper for handling suspend/resume
+      clk: samsung: Use NOIRQ stage for Exynos5433 clocks suspend/resume
+      clk: samsung: exynos5433: Add suspend state for TOP, CPIF & PERIC CMUs
+      clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
+      clk: samsung: exynos5433: Keep sclk_uart clocks enabled in suspend
+      clk: samsung: exynos5420: Enable PERIS clocks for suspend
+      clk: samsung: Use clk_hw API for calling clk framework from clk notifiers
+
+ drivers/clk/samsung/clk-cpu.c              |   6 +-
+ drivers/clk/samsung/clk-cpu.h              |   2 +-
+ drivers/clk/samsung/clk-exynos-audss.c     |   1 -
+ drivers/clk/samsung/clk-exynos3250.c       |   1 -
+ drivers/clk/samsung/clk-exynos4.c          | 226 +++-------------------------------
+ drivers/clk/samsung/clk-exynos5250.c       |  42 +------
+ drivers/clk/samsung/clk-exynos5420.c       |  76 ++----------
+ drivers/clk/samsung/clk-exynos5433.c       |  33 ++++-
+ drivers/clk/samsung/clk-s3c2410.c          |  43 +------
+ drivers/clk/samsung/clk-s3c2412.c          |  43 +------
+ drivers/clk/samsung/clk-s3c2443.c          |  43 +------
+ drivers/clk/samsung/clk-s3c64xx.c          |  66 +---------
+ drivers/clk/samsung/clk-s5pv210.c          |  41 +-----
+ drivers/clk/samsung/clk.c                  |  23 ++--
+ drivers/clk/samsung/clk.h                  |  18 ++-
+ include/dt-bindings/clock/exynos3250.h     |   5 +-
+ include/dt-bindings/clock/exynos4.h        |  37 +-----
+ include/dt-bindings/clock/exynos5250.h     |   7 +-
+ include/dt-bindings/clock/exynos5260-clk.h |   7 +-
+ include/dt-bindings/clock/exynos5410.h     |   7 +-
+ include/dt-bindings/clock/exynos5420.h     |   7 +-
+ include/dt-bindings/clock/exynos5433.h     |   5 +-
+ include/dt-bindings/clock/exynos7-clk.h    |   7 +-
+ include/dt-bindings/clock/s3c2410.h        |   5 +-
+ include/dt-bindings/clock/s3c2412.h        |   5 +-
+ include/dt-bindings/clock/s3c2443.h        |   5 +-
+ 26 files changed, 120 insertions(+), 641 deletions(-)
+
+--
+Regards,
+Sylwester
