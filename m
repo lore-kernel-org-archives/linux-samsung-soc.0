@@ -1,9 +1,10 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 5/7] arm64: dts: exynos: Move arch-timer node to right place
-Date: Mon, 08 Oct 2018 14:50:07 +0200
-Message-ID: <20181008125009.3721-6-m.szyprowski@samsung.com>
+Subject: [PATCH 6/7] arm64: dts: exynos: Mark arch_timer device as
+ not-fw-configured on TM2(e)
+Date: Mon, 08 Oct 2018 14:50:08 +0200
+Message-ID: <20181008125009.3721-7-m.szyprowski@samsung.com>
 References: <20181008125009.3721-1-m.szyprowski@samsung.com>
-        <CGME20181008125049eucas1p21a186cd652f968a3609987d4dee2427f@eucas1p2.samsung.com>
+        <CGME20181008125050eucas1p1caae30a4e791190e6c731816e36832ab@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20181008125009.3721-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -11,54 +12,26 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lin
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Move ARM architected timer device-tree node to the beginning of 'soc'
-node, to group it together with other ARM CPU core devices (like PMU).
+TM2(e) boards use old firmware, which some PCSI requirements and doesn't
+properly configure arch virtual timers, so add property indicating this
+state. This enables respective workarounds in the timer driver.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 23 +++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 77297d66642c..eee3d1d1b52f 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -290,6 +290,18 @@
- 			interrupt-affinity = <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
- 		};
- 
-+		timer: timer {
-+			compatible = "arm,armv8-timer";
-+			interrupts = <GIC_PPI 13
-+					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>,
-+				<GIC_PPI 14
-+					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>,
-+				<GIC_PPI 11
-+					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>,
-+				<GIC_PPI 10
-+					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+
- 		sysram@2020000 {
- 			compatible = "mmio-sram";
- 			reg = <0x02020000 0x5c000>;
-@@ -1811,17 +1823,6 @@
- 		};
- 	};
- 
--	timer: timer {
--		compatible = "arm,armv8-timer";
--		interrupts = <GIC_PPI 13
--				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>,
--			<GIC_PPI 14
--				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>,
--			<GIC_PPI 11
--				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>,
--			<GIC_PPI 10
--				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
--	};
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 2606c2ab6456..ded0fb6c5936 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -1265,6 +1265,7 @@
  };
  
- #include "exynos5433-bus.dtsi"
+ &timer {
++	arm,cpu-registers-not-fw-configured;
+ 	clock-frequency = <24000000>;
+ };
+ 
 -- 
 2.17.1
