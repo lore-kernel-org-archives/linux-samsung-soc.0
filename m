@@ -1,10 +1,9 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 7/7] arm64: platform: Add enable Exynos Multi-Core Timer
- driver
-Date: Mon, 08 Oct 2018 14:50:09 +0200
-Message-ID: <20181008125009.3721-8-m.szyprowski@samsung.com>
+Subject: [PATCH 1/7] clocksource: exynos_mct: Remove dead code
+Date: Mon, 08 Oct 2018 14:50:03 +0200
+Message-ID: <20181008125009.3721-2-m.szyprowski@samsung.com>
 References: <20181008125009.3721-1-m.szyprowski@samsung.com>
-        <CGME20181008125050eucas1p2da1c1ace904a331c149f5add71c72af2@eucas1p2.samsung.com>
+        <CGME20181008125046eucas1p1e0304c8c22a4ac128a8e507c86442a37@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20181008125009.3721-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -12,25 +11,29 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lin
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos MCT driver is required even if ARM Architected Timer driver
-is used to properly configure common timer hardware.
+Exynos Multi-Core Timer driver is used only on device-tree based
+systems, so remove non-dt related code.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clocksource/exynos_mct.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 51bc479334a4..7cc687580fad 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -62,6 +62,7 @@ config ARCH_BRCMSTB
- config ARCH_EXYNOS
- 	bool "ARMv8 based Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
-+	select CLKSRC_EXYNOS_MCT
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 7a244b681876..43b335ff4a96 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -581,11 +581,7 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 	 * timer irqs are specified after the four global timer
+ 	 * irqs are specified.
+ 	 */
+-#ifdef CONFIG_OF
+ 	nr_irqs = of_irq_count(np);
+-#else
+-	nr_irqs = 0;
+-#endif
+ 	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+ 		mct_irqs[i] = irq_of_parse_and_map(np, i);
+ 
 -- 
 2.17.1
