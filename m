@@ -1,110 +1,59 @@
-From: Christoph Manszewski <c.manszewski@samsung.com>
-Subject: [PATCH 2/2] drm/exynos: fimd: Make pixel blend mode configurable
-Date: Mon,  8 Oct 2018 11:33:02 +0200
-Message-ID: <20181008093330eucas1p15363b8acc502292b24a6f6803073accc~bmFojGGtF2363023630eucas1p1_@eucas1p1.samsung.com>
-References: <20181003094053eucas1p107c7a8a60c48dd68625fdaa223ef1996~aD9p3GwpI1866618666eucas1p1B@eucas1p1.samsung.com>
-        <1538991182-12961-1-git-send-email-c.manszewski@samsung.com>
-        <CGME20181008093330eucas1p15363b8acc502292b24a6f6803073accc@eucas1p1.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCHv5 0/6] Add support for UHS-I on Exynos5422 odroid boards
+Date: Mon, 8 Oct 2018 13:51:08 +0200
+Message-ID: <CAPDyKFp-gnxqknz1ic5jrQ2G0M3X9rMVgj9sWeOiWOX+S7VODw@mail.gmail.com>
+References: <20180927140738.1006-1-linux.amoon@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1538991182-12961-1-git-send-email-c.manszewski@samsung.com>
+In-Reply-To: <20180927140738.1006-1-linux.amoon@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: Christoph Manszewski <c.manszewski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, DTML <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Currently blend mode is set accordingly to pixel format.
-Add pixel blend mode property and make that configurable.
-Fimd hardware doesn't support premultiplied mode,
-choose coverage as default.
+On 27 September 2018 at 16:07, Anand Moon <linux.amoon@gmail.com> wrote:
+> This is series v4 since my previous patches were incomplete with driver
+> changes missing.
+>
+> v5 changes.
+> drop the cd-gpios wp-gpio gpio pin setting, just add the pinctrl
+> configration to support write protect.
+>
+> v4 changes.
+> squash cd-gpios and wp-gpio changes into single patch.
+> change the subject prefix to "ARM: dts: exynos:"
+>
+> These changes add UHS-I tuning for dw_mmc-exynos driver.
+>
+> Rebased on Krzysztof branch next/dt
+> [0] git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
+>
+> Anand Moon (6):
+>   ARM: dts: exynos: Added UHS-I bus speed support
+>   ARM: dts: exynos: fix regulator min values of LDO13 for Odroid XU3/XU4
+>   ARM: dts: exynos: update maximum frequency for sdcard to 200MHz
+>   ARM: dts: exynos: Add pin configuration for SD write protect on Odroid
+>     XU3/XU4
+>   ARM: dts: exynos: update maximum frequency for emmc to 200MHz
+>   mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
+>
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  7 +++++++
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  8 ++++++--
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
+>  drivers/mmc/host/dw_mmc-exynos.c                   | 11 +++++++++++
+>  4 files changed, 25 insertions(+), 2 deletions(-)
+>
+> --
+> 2.17.1
+>
 
-Tested on TRATS2 with Exynos 4412 CPU, on top of
-exynos-drm-next using modetest.
+Anand,
 
-Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
----
+I have applied the mmc patch for next, thanks!
 
-Similar to exynos5433_drm_decon, the driver exposes
-the "premultiplied" option for pixel blend mode property,
-although hardware doesn't support it, and it's hanlded
-by the driver as "coverage". Again, that's because the premultiplied
-mode is required and used as default.
+In regards to the DTS changes, I assume the soc maintainers will pick
+them up, but maybe you need to resend them separately.
 
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 28 ++++++++++++++++++++++------
- include/video/samsung_fimd.h             |  1 +
- 2 files changed, 23 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 06d5d2422246..c4b0fb05a19b 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -231,10 +231,10 @@ static const uint32_t fimd_formats[] = {
- 
- static const unsigned int capabilities[WINDOWS_NR] = {
- 	0,
--	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
--	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
--	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
--	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
-+	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
-+	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
-+	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
-+	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
- };
- 
- static inline void fimd_set_bits(struct fimd_context *ctx, u32 reg, u32 mask,
-@@ -576,6 +576,23 @@ static void fimd_win_set_bldmod(struct fimd_context *ctx, unsigned int win,
- 	unsigned int alpha = state->base.alpha;
- 	u32 win_alpha = alpha >> 8;
- 	u32 val = 0;
-+	unsigned int pixel_alpha;
-+
-+	if (fb->format->has_alpha)
-+		pixel_alpha = state->base.pixel_blend_mode;
-+	else
-+		pixel_alpha = DRM_MODE_BLEND_PIXEL_NONE;
-+
-+	switch (pixel_alpha) {
-+	case DRM_MODE_BLEND_PIXEL_NONE:
-+		break;
-+	case DRM_MODE_BLEND_COVERAGE:
-+	default:
-+		val |= WINCON1_ALPHA_SEL;
-+		val |= WINCON1_BLD_PIX;
-+		val |= WINCON1_ALPHA_MUL;
-+	}
-+	fimd_set_bits(ctx, WINCON(win), WINCONx_BLEND_MODE_MASK, val);
- 
- 	/* OSD alpha */
- 	val = VIDISD14C_ALPHA0_R(alpha >> 4) |
-@@ -639,7 +656,6 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
- 			| WINCON1_BLD_PIX | WINCON1_ALPHA_SEL;
- 		val |= WINCONx_WSWP;
- 		val |= WINCONx_BURSTLEN_16WORD;
--		val |= WINCON1_ALPHA_MUL;
- 		break;
- 	}
- 
-@@ -656,7 +672,7 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
- 		val |= WINCONx_BURSTLEN_4WORD;
- 	}
- 
--	writel(val, ctx->regs + WINCON(win));
-+	fimd_set_bits(ctx, WINCON(win), ~WINCONx_BLEND_MODE_MASK, val);
- 
- 	/* hardware window 0 doesn't support alpha channel. */
- 	if (win != 0)
-diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
-index f070b7c0d2cf..bb1d5baa74d6 100644
---- a/include/video/samsung_fimd.h
-+++ b/include/video/samsung_fimd.h
-@@ -198,6 +198,7 @@
- #define WINCONx_BURSTLEN_8WORD			(0x1 << 9)
- #define WINCONx_BURSTLEN_4WORD			(0x2 << 9)
- #define WINCONx_ENWIN				(1 << 0)
-+#define WINCONx_BLEND_MODE_MASK			(0xc2)
- 
- #define WINCON0_BPPMODE_MASK			(0xf << 2)
- #define WINCON0_BPPMODE_SHIFT			2
--- 
-2.7.4
+Kind regards
+Uffe
