@@ -1,32 +1,54 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 0/6] drm/exynos/iommu: refactoring
-Date: Fri, 12 Oct 2018 12:56:13 +0200
-Message-ID: <20181012105615eucas1p21def3e233919ab5ec9f9ada39ada96d1~c1zBnOM-42922029220eucas1p2Y@eucas1p2.samsung.com>
-References: <CGME20181012105351eucas1p15810c2ba3d38803d44e26a09f4a9e600@eucas1p1.samsung.com>
- <20181012105346.3754-1-a.hajda@samsung.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] [media] exynos4-is: fix spelling mistake ACTURATOR -> ACTUATOR
+Date: Fri, 12 Oct 2018 15:48:32 +0100
+Message-ID: <20181012144832.20722-1-colin.king@canonical.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20181012105346.3754-1-a.hajda@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMTIuMTAuMjAxOCAxMjo1MywgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBIaSBJbmtpLAo+Cj4g
-Q2hhbmdlczoKPiB2MjogcmVzZW5kIG9mIHYxIHJlYmFzZWQgb24gbmV4dCB3aXRoIEVYWU5PUyBE
-Uk0gSU9NTVUgY2hhbmdlcyBwb3N0ZWQgYnkgTWFyZWsuCgpVcHMsIEkgaGF2ZSBmb3Jnb3QgdG8g
-YWRkIHYyIHByZWZpeCBpbiB0aGUgc3ViamVjdC4KClJlZ2FyZHMKQW5kcnplagoKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+From: Colin Ian King <colin.king@canonical.com>
+
+Trivial fix to spelling mistake in macro name and text string
+ERROR_SENSOR_ACTURATOR_INIT_FAIL -> ERROR_SENSOR_ACTUATOR_INIT_FAIL
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/exynos4-is/fimc-is-errno.c | 4 ++--
+ drivers/media/platform/exynos4-is/fimc-is-errno.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-errno.c b/drivers/media/platform/exynos4-is/fimc-is-errno.c
+index e050e63fe358..bbb08576492e 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-errno.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-errno.c
+@@ -90,8 +90,8 @@ const char *fimc_is_param_strerr(unsigned int error)
+ 		return "ERROR_SENSOR_INVALID_SIZE";
+ 	case ERROR_SENSOR_INVALID_SETTING:
+ 		return "ERROR_SENSOR_INVALID_SETTING";
+-	case ERROR_SENSOR_ACTURATOR_INIT_FAIL:
+-		return "ERROR_SENSOR_ACTURATOR_INIT_FAIL";
++	case ERROR_SENSOR_ACTUATOR_INIT_FAIL:
++		return "ERROR_SENSOR_ACTUATOR_INIT_FAIL";
+ 	case ERROR_SENSOR_INVALID_AF_POS:
+ 		return "ERROR_SENSOR_INVALID_AF_POS";
+ 	case ERROR_SENSOR_UNSUPPORT_FUNC:
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-errno.h b/drivers/media/platform/exynos4-is/fimc-is-errno.h
+index ef981e74513a..77f4fc860be5 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-errno.h
++++ b/drivers/media/platform/exynos4-is/fimc-is-errno.h
+@@ -189,7 +189,7 @@ enum fimc_is_error {
+ 	ERROR_SENSOR_INVALID_EXPOSURETIME,
+ 	ERROR_SENSOR_INVALID_SIZE,
+ 	ERROR_SENSOR_INVALID_SETTING,
+-	ERROR_SENSOR_ACTURATOR_INIT_FAIL,
++	ERROR_SENSOR_ACTUATOR_INIT_FAIL,
+ 	ERROR_SENSOR_INVALID_AF_POS,
+ 	ERROR_SENSOR_UNSUPPORT_FUNC,
+ 	ERROR_SENSOR_UNSUPPORT_PERI,
+-- 
+2.17.1
