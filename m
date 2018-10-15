@@ -1,71 +1,121 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/6] clocksource: exynos_mct: Fix error path in timer
- resources initialization
-Date: Mon, 15 Oct 2018 17:26:18 +0200
-Message-ID: <CAJKOXPfUHOmMmwty0v-vSvr_110tGU5roo2DduJWPWu5q_to0A@mail.gmail.com>
-References: <CGME20181015123135eucas1p18df135504c9476cead8da6463226cdec@eucas1p1.samsung.com>
- <20181015123112.9379-1-m.szyprowski@samsung.com> <20181015123112.9379-3-m.szyprowski@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option
+ to non-Exynos platforms
+Date: Mon, 15 Oct 2018 17:39:34 +0200
+Message-ID: <20181015153936eucas1p10fc822d6161c3d95d5d0bdd98408e55f~d0mRowyUD3030630306eucas1p1K@eucas1p1.samsung.com>
+References: <CGME20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677@eucas1p2.samsung.com>
+        <20181015135055eucas1p2fdb917790b3690dd52ee7b9aa19ea677~dzHYfFW2j0676906769eucas1p2c@eucas1p2.samsung.com>
+        <CAJKOXPdR0q_2DGbMrroqNcVfCPSkh0=ry=yyb9qmSDFf+TWbFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181015123112.9379-3-m.szyprowski@samsung.com>
+In-Reply-To: <CAJKOXPdR0q_2DGbMrroqNcVfCPSkh0=ry=yyb9qmSDFf+TWbFg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will.deacon@arm.com, catalin.marinas@arm.com, marc.zyngier@arm.com, tglx@linutronix.de, daniel.lezcano@linaro.org, Chanwoo Choi <cw00.choi@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 15 Oct 2018 at 14:31, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> While freeing interrupt handlers in error path, don't assume that all
-> requested interrupts are per-processor interrupts and properly release
-> standard interrupts too.
 
-Thanks for fixing!
+On 10/15/2018 05:22 PM, Krzysztof Kozlowski wrote:
+> On Mon, 15 Oct 2018 at 15:50, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+>>
+>> "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
+>> config option) is not working properly (debug messages are not
+>> displayed after resume) on Exynos platforms because GPIOs restore
+>> code is not implemented.
+>>
+>> Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
+>> SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
+>> Then convert Exynos code to not require <plat/pm-common.h>
+>> header (use pr_debug() directly instead of S3C_PMDBG() macro and
+>> remove redundant s3c_pm_*() calls).
+>>
+>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> ---
+>> v2:
+>> - convert Exynos code to not require <plat/pm-common.h> header
+>>
+>> Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
+>> needed s3c_pm_check_*() calls".
+>>
+>>  arch/arm/mach-exynos/suspend.c |   14 ++++----------
+>>  arch/arm/plat-samsung/Kconfig  |    3 ++-
+>>  2 files changed, 6 insertions(+), 11 deletions(-)
+>>
+>> Index: b/arch/arm/mach-exynos/suspend.c
+>> ===================================================================
+>> --- a/arch/arm/mach-exynos/suspend.c    2018-10-15 15:11:15.296187842 +0200
+>> +++ b/arch/arm/mach-exynos/suspend.c    2018-10-15 15:22:54.656205454 +0200
+>> @@ -30,8 +30,6 @@
+>>  #include <asm/smp_scu.h>
+>>  #include <asm/suspend.h>
+>>
+>> -#include <plat/pm-common.h>
+>> -
+>>  #include "common.h"
+>>
+>>  #define REG_TABLE_END (-1U)
+>> @@ -490,11 +488,9 @@ static int exynos_suspend_enter(suspend_
+>>  {
+>>         int ret;
+>>
+>> -       s3c_pm_debug_init();
+>> -
+>> -       S3C_PMDBG("%s: suspending the system...\n", __func__);
+>> +       pr_debug("%s: suspending the system...\n", __func__);
+>>
+>> -       S3C_PMDBG("%s: wakeup masks: %08x,%08x\n", __func__,
+>> +       pr_debug("%s: wakeup masks: %08x,%08x\n", __func__,
+>>                         exynos_irqwake_intmask, exynos_get_eint_wake_mask());
+>>
+>>         if (exynos_irqwake_intmask == -1U
+>> @@ -504,7 +500,6 @@ static int exynos_suspend_enter(suspend_
+>>                 return -EINVAL;
+>>         }
+>>
+>> -       s3c_pm_save_uarts();
+>>         if (pm_data->pm_prepare)
+>>                 pm_data->pm_prepare();
+>>         flush_cache_all();
+>> @@ -517,12 +512,11 @@ static int exynos_suspend_enter(suspend_
+>>
+>>         if (pm_data->pm_resume_prepare)
+>>                 pm_data->pm_resume_prepare();
+>> -       s3c_pm_restore_uarts();
+>>
+>> -       S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
+>> +       pr_debug("%s: wakeup stat: %08x\n", __func__,
+>>                         pmu_raw_readl(S5P_WAKEUP_STAT));
+>>
+>> -       S3C_PMDBG("%s: resuming the system...\n", __func__);
+>> +       pr_debug("%s: resuming the system...\n", __func__);
+>>
+>>         return 0;
+>>  }
+>> Index: b/arch/arm/plat-samsung/Kconfig
+>> ===================================================================
+>> --- a/arch/arm/plat-samsung/Kconfig     2018-10-15 15:16:22.804195586 +0200
+>> +++ b/arch/arm/plat-samsung/Kconfig     2018-10-15 15:16:22.800195586 +0200
+>> @@ -238,7 +238,8 @@ comment "Power management"
+>>
+>>  config SAMSUNG_PM_DEBUG
+>>         bool "Samsung PM Suspend debug"
+>> -       depends on PM && DEBUG_KERNEL
+>> +       depends on DEBUG_KERNEL
+> 
+> I don't get this change - why moving PM to line below?
 
-> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+My mistake, I will correct it in v3.
 
-It is a bug so how about:
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-?
-
-> Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Anyway I am fine so:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+[ The idea was to make SAMSUNG_PM_DEBUG consistent with other options
+  depending on DEBUG_KERNEL. However after I've checked them it turned
+  out that there is no such consistency. I intended to revert this
+  change but ultimately I forgot about it.. ]
 
 Best regards,
-Krzysztof
-
-> ---
->  drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 43b335ff4a96..a379f11fad2d 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -562,7 +562,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
->         return 0;
->
->  out_irq:
-> -       free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-> +       if (mct_int_type == MCT_INT_PPI) {
-> +               free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-> +       } else {
-> +               for_each_possible_cpu(cpu) {
-> +                       struct mct_clock_event_device *pcpu_mevt =
-> +                               per_cpu_ptr(&percpu_mct_tick, cpu);
-> +
-> +                       if (pcpu_mevt->evt.irq != -1) {
-> +                               free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
-> +                               pcpu_mevt->evt.irq = -1;
-> +                       }
-> +               }
-> +       }
->         return err;
->  }
->
-> --
-> 2.17.1
->
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
