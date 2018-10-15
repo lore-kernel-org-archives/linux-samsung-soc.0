@@ -1,50 +1,110 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: checking for NULL instead of IS_ERR()
-Date: Mon, 15 Oct 2018 09:47:30 +0200
-Message-ID: <20181015074732eucas1p2b5da071e315bcfe1d9d97c9e885190f4~duKGtwV283138531385eucas1p2j@eucas1p2.samsung.com>
-References: <20181013102140.GB16086@mwanda>
- <CGME20181015074732eucas1p2b5da071e315bcfe1d9d97c9e885190f4@eucas1p2.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [RFT PATCH] mmc: pwrseq_simple: Fix incorrect handling of GPIO
+ bitmap
+Date: Mon, 15 Oct 2018 10:32:08 +0200
+Message-ID: <20181015083209eucas1p2fb3d1961745fdb3007dec317c6441142~duxEkRvmp2005320053eucas1p2D@eucas1p2.samsung.com>
+References: <20180925192433.1377-1-jmkrzyszt@gmail.com>
+        <CGME20181012190748epcas5p3dc41f6d0f9c69f22351209b2e7ea66f3@epcas5p3.samsung.com>
+        <20181012190901.1243-1-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20181013102140.GB16086@mwanda>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181012190901.1243-1-jmkrzyszt@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>, Inki Dae <inki.dae@samsung.com>, Maciej Purski <m.purski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, NXP Linux Team <linux-imx@nxp.com>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMTMuMTAuMjAxOCAxMjoyMSwgRGFuIENhcnBlbnRlciB3cm90ZToKPiBUaGUgb2ZfZHJtX2Zp
-bmRfcGFuZWwoKSBmdW5jdGlvbiByZXR1cm5zIGVycm9yIHBvaW50ZXJzIGFuZCBuZXZlciBOVUxM
-Cj4gYnV0IHdlIHRoZSBkcml2ZXIgYXNzdW1lcyB0aGF0IC0+cGFuZWwgaXMgTlVMTCB3aGVuIGl0
-J3Mgbm90IHByZXNlbnQuCj4gCj4gRml4ZXM6IDZhZmI3NzIxZTJhMCAoImRybS9leHlub3M6IG1v
-dmUgY29ubmVjdG9yIGNyZWF0aW9uIHRvIGF0dGFjaCBjYWxsYmFjayIpCj4gU2lnbmVkLW9mZi1i
-eTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPgoKVGhhbmtzIGZvciBz
-cG90dGluZyBpdCAoYW5kIHNvcnJ5IGZvciBwcmV2aW91cyByZXBseSBtaXN0YWtlKS4KClJldmll
-d2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgoKIC0tClJlZ2FyZHMK
-QW5kcnplagoKCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+IGlu
-ZGV4IDA3YWY3NzU4MDY2ZC4uMzJmMjU2NzQ5Nzg5IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9kc2kuYwo+IEBAIC0xNTI3LDcgKzE1MjcsOSBAQCBzdGF0aWMgaW50IGV4
-eW5vc19kc2lfaG9zdF9hdHRhY2goc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCj4gIAkJfQo+
-ICAKPiAgCQlkc2ktPnBhbmVsID0gb2ZfZHJtX2ZpbmRfcGFuZWwoZGV2aWNlLT5kZXYub2Zfbm9k
-ZSk7Cj4gLQkJaWYgKGRzaS0+cGFuZWwpIHsKPiArCQlpZiAoSVNfRVJSKGRzaS0+cGFuZWwpKSB7
-Cj4gKwkJCWRzaS0+cGFuZWwgPSBOVUxMOwo+ICsJCX0gZWxzZSB7Cj4gIAkJCWRybV9wYW5lbF9h
-dHRhY2goZHNpLT5wYW5lbCwgJmRzaS0+Y29ubmVjdG9yKTsKPiAgCQkJZHNpLT5jb25uZWN0b3Iu
-c3RhdHVzID0gY29ubmVjdG9yX3N0YXR1c19jb25uZWN0ZWQ7Cj4gIAkJfQo+IF9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcg
-bGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+IAoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Janusz,
+
+On 2018-10-12 21:09, Janusz Krzysztofik wrote:
+> Commit b9762bebc633 ("gpiolib: Pass bitmaps, not integer arrays, to
+> get/set array") changed the way GPIO values are passed to
+> gpiod_get/set_array_value() and friends.  The new code introduced into
+> mmc_pwrseq_simple_set_gpios_value() incorrectly interpretes the 'value'
+> argument as a bitmap of GPIO values and assigns it directly to the
+> 'values' bitmap variable passed to gpiod_set_array_value_cansleep()
+> instead of filling that bitmap with bits equal to the 'value' argument.
+> As a result, only member 0 of the array is handled correctly.
+>
+> Moreover, wrong assumption is taken about the 'values' bitmap size not
+> exceding the number of bits of the 'value' argument type.
+>
+> Fix it.
+>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> ---
+> Hi,
+>
+> I think that patch has been missed while we were resolving issues 
+> related to GPIO fast bitmap processing.  Since all issues other than the 
+> one addreessed by this patch have been been hopefully identified and 
+> fixed, GPIO tree seems now to be in good shape in regard to that. 
+> However, I believe pwrseq_simple is still broken.  Hence, I'm 
+> resubmitting this patch to Ulf for inclusion in MMC tree, Cc: many other 
+> people who are kindly requested to test it if possible.
+>
+> I've identified the following DT files representing devices which may be 
+> affected (have more than one GPIO assigned to pwrseq_simple):
+> - arch/arm/boot/dts/imx6qdl-sr-som-brcm.dtsi
+> - arch/arm/boot/dts/exynos5250-snow-common.dtsi
+
+On Samsung Snow Chromebook it doesn't change anything. Board boots and
+detects WiFi SDIO card before and after applying it on top on Linux
+next-20181012.
+
+Tested-by: Marek Szyprowski <m.szyprowski
+
+> - arch/arm/boot/dts/imx6sl-warp.dts
+> - arch/arm/boot/dts/omap3-igep0030.dts
+> - arch/arm/boot/dts/omap3-igep0020.dts
+> - arch/arm/boot/dts/rk3036-kylin.dts
+> - arch/arm64/boot/dts/rockchip/rk3368-r88.dts
+> - arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+>
+> Please start with checking if pwrseq_simple from linux-next works for 
+> you and if not, please test if this patch fixes the issue.
+>
+> Thanks,
+> Janusz
+>
+>
+>  drivers/mmc/core/pwrseq_simple.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+> index 7f882a2bb872..ece34c734693 100644
+> --- a/drivers/mmc/core/pwrseq_simple.c
+> +++ b/drivers/mmc/core/pwrseq_simple.c
+> @@ -40,13 +40,22 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
+>  	struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
+>  
+>  	if (!IS_ERR(reset_gpios)) {
+> -		DECLARE_BITMAP(values, BITS_PER_TYPE(value));
+> +		unsigned long *values;
+>  		int nvalues = reset_gpios->ndescs;
+>  
+> -		values[0] = value;
+> +		values = bitmap_alloc(nvalues, GFP_KERNEL);
+> +		if (!values)
+> +			return;
+> +
+> +		if (value)
+> +			bitmap_fill(values, nvalues);
+> +		else
+> +			bitmap_zero(values, nvalues);
+>  
+>  		gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
+>  					       reset_gpios->info, values);
+> +
+> +		kfree(values);
+>  	}
+>  }
+>  
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
