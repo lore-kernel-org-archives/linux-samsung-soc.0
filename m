@@ -1,100 +1,86 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [RFT PATCH] mmc: pwrseq_simple: Fix incorrect handling of GPIO bitmap
-Date: Mon, 15 Oct 2018 12:29:08 +0200
-Message-ID: <CAPDyKFo+wbVRAZuSvTTVQ1Poy8eLXO3yt_Ss30dC+Edab9L38Q@mail.gmail.com>
-References: <20180925192433.1377-1-jmkrzyszt@gmail.com> <20181012190901.1243-1-jmkrzyszt@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 4/7] clocksource: arch_timer: Add support for
+ not-fw-configured timer on ARM64
+Date: Mon, 15 Oct 2018 14:12:42 +0200
+Message-ID: <20181015121243eucas1p1dd6093945310db315fc28092e2c91b6e~dxxpPrR4A1710517105eucas1p1W@eucas1p1.samsung.com>
+References: <20181008125009.3721-1-m.szyprowski@samsung.com>
+        <CGME20181008125048eucas1p229a94c202596ddd0a65009c15d9e3001@eucas1p2.samsung.com>
+        <20181008125009.3721-5-m.szyprowski@samsung.com>
+        <e9624612-4a94-b9bc-f5ec-0f16d5b12323@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181012190901.1243-1-jmkrzyszt@gmail.com>
+In-Reply-To: <e9624612-4a94-b9bc-f5ec-0f16d5b12323@arm.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-gpio@vger.kernel.org, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, NXP Linux Team <linux-imx@nxp.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Javier
+To: Marc Zyngier <marc.zyngier@arm.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Mark Rutland <Mark.Rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12 October 2018 at 21:09, Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> Commit b9762bebc633 ("gpiolib: Pass bitmaps, not integer arrays, to
-> get/set array") changed the way GPIO values are passed to
-> gpiod_get/set_array_value() and friends.  The new code introduced into
-> mmc_pwrseq_simple_set_gpios_value() incorrectly interpretes the 'value'
-> argument as a bitmap of GPIO values and assigns it directly to the
-> 'values' bitmap variable passed to gpiod_set_array_value_cansleep()
-> instead of filling that bitmap with bits equal to the 'value' argument.
-> As a result, only member 0 of the array is handled correctly.
->
-> Moreover, wrong assumption is taken about the 'values' bitmap size not
-> exceding the number of bits of the 'value' argument type.
->
-> Fix it.
->
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Hi All,
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+On 2018-10-08 15:17, Marc Zyngier wrote:
+> + Mark Rutland
+>
+> Hi Marek,
+>
+> On 08/10/18 13:50, Marek Szyprowski wrote:
+>> Use common infrastructure for ARM Architected Timers erratum to enable
+>> support for systems with broken CPU firmware (timer registers not
+>> properly configured). This mode has been already availabled on ARM
+>> (32bits) architecture. This enables to run Linux kernel on ARM64 boards
+>> using physical architected timers instead of the virtual ones. Examples
+>> of such system with broken firmware are Samsung Exynos5433 SoC based
+>> TM2(e) boards, which is already deployed for years and updating firmware
+>> is not possible.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/clocksource/Kconfig          | 11 +++++++++++
+>>   drivers/clocksource/arm_arch_timer.c | 15 ++++++++++++---
+>>   2 files changed, 23 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>> index a11f4ba98b05..a30752579b03 100644
+>> --- a/drivers/clocksource/Kconfig
+>> +++ b/drivers/clocksource/Kconfig
+>> @@ -364,6 +364,17 @@ config ARM64_ERRATUM_858921
+>>         The workaround will be dynamically enabled when an affected
+>>         core is detected.
+>>   +config ARCH_TIMER_REGISTERS_NOT_FW_CONFIGURED
+>> +    bool "Workaround for arch timer registers not configured by
+>> firmware"
+>> +    default y
+>> +    select ARM_ARCH_TIMER_OOL_WORKAROUND
+>> +    depends on ARM_ARCH_TIMER && ARM64
+>> +    help
+>> +      This option enables a workaround for boards, on which arch timer
+>> +      registers are not properly configured by the board firmware.
+>> +      The workaround will be dynamically enabled when an affected
+>> +      board is detected.
+>> +
+>
+> I'm sorry, but I'm strongly pushing back on this.
+>
+> This horrible hack was accepted with the express condition that it
+> would be limited to ARMv7 platforms (on the ground that we never
+> really documented the arch timer boot requirements on that version of
+> the architecture), and would never proliferate on arm64. From day 1,
+> we established what the boot protocol was, and we mandated that either:
+>
+> - kernel is entered at EL2 on all CPUs
+> - cntvoff_el2 is zeroed on all CPUs
+>
+> and we've got most people to fix their firmware, or live with the
+> consequences. If these machines cannot receive a non-broken firmware,
+> what are the odds that they will receive a mainline kernel?
 
-Kind regards
-Uffe
+Well, I know that the firmware is broken, but I cannot do anything about it.
+On the other hand updating kernel is still possible and mainline runs fine
+on TM2(e) boards. I will send v2 without this patch then.
 
-> ---
-> Hi,
->
-> I think that patch has been missed while we were resolving issues
-> related to GPIO fast bitmap processing.  Since all issues other than the
-> one addreessed by this patch have been been hopefully identified and
-> fixed, GPIO tree seems now to be in good shape in regard to that.
-> However, I believe pwrseq_simple is still broken.  Hence, I'm
-> resubmitting this patch to Ulf for inclusion in MMC tree, Cc: many other
-> people who are kindly requested to test it if possible.
->
-> I've identified the following DT files representing devices which may be
-> affected (have more than one GPIO assigned to pwrseq_simple):
-> - arch/arm/boot/dts/imx6qdl-sr-som-brcm.dtsi
-> - arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> - arch/arm/boot/dts/imx6sl-warp.dts
-> - arch/arm/boot/dts/omap3-igep0030.dts
-> - arch/arm/boot/dts/omap3-igep0020.dts
-> - arch/arm/boot/dts/rk3036-kylin.dts
-> - arch/arm64/boot/dts/rockchip/rk3368-r88.dts
-> - arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
->
-> Please start with checking if pwrseq_simple from linux-next works for
-> you and if not, please test if this patch fixes the issue.
->
-> Thanks,
-> Janusz
->
->
->  drivers/mmc/core/pwrseq_simple.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
-> index 7f882a2bb872..ece34c734693 100644
-> --- a/drivers/mmc/core/pwrseq_simple.c
-> +++ b/drivers/mmc/core/pwrseq_simple.c
-> @@ -40,13 +40,22 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
->         struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
->
->         if (!IS_ERR(reset_gpios)) {
-> -               DECLARE_BITMAP(values, BITS_PER_TYPE(value));
-> +               unsigned long *values;
->                 int nvalues = reset_gpios->ndescs;
->
-> -               values[0] = value;
-> +               values = bitmap_alloc(nvalues, GFP_KERNEL);
-> +               if (!values)
-> +                       return;
-> +
-> +               if (value)
-> +                       bitmap_fill(values, nvalues);
-> +               else
-> +                       bitmap_zero(values, nvalues);
->
->                 gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
->                                                reset_gpios->info, values);
-> +
-> +               kfree(values);
->         }
->  }
->
-> --
-> 2.16.4
->
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
