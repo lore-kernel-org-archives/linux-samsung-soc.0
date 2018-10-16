@@ -1,65 +1,51 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 2/6] clocksource: exynos_mct: Fix error path in timer
- resources initialization
-Date: Tue, 16 Oct 2018 10:27:01 +0900
-Message-ID: <5BC53E65.7050500@samsung.com>
-References: <20181015123112.9379-1-m.szyprowski@samsung.com>
-        <CGME20181015123135eucas1p18df135504c9476cead8da6463226cdec@eucas1p1.samsung.com>
-        <20181015123112.9379-3-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
+ non-Exynos platforms
+Date: Tue, 16 Oct 2018 15:04:52 +0200
+Message-ID: <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
+References: <CGME20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37@eucas1p2.samsung.com>
+ <20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37~d0vYKtP7-2027420274eucas1p2g@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20181015123112.9379-3-m.szyprowski@samsung.com>
+In-Reply-To: <20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37~d0vYKtP7-2027420274eucas1p2g@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Marek,
-
-On 2018년 10월 15일 21:31, Marek Szyprowski wrote:
-> While freeing interrupt handlers in error path, don't assume that all
-> requested interrupts are per-processor interrupts and properly release
-> standard interrupts too.
-> 
-> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Mon, 15 Oct 2018 at 17:50, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+> "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
+> config option) is not working properly (debug messages are not
+> displayed after resume) on Exynos platforms because GPIOs restore
+> code is not implemented.
+>
+> Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
+> SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
+> Then convert Exynos code to not require <plat/pm-common.h>
+> header (use pr_debug() directly instead of S3C_PMDBG() macro and
+> remove redundant s3c_pm_*() calls).
+>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->  drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 43b335ff4a96..a379f11fad2d 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -562,7 +562,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
->  	return 0;
->  
->  out_irq:
-> -	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-> +	if (mct_int_type == MCT_INT_PPI) {
-> +		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-> +	} else {
-> +		for_each_possible_cpu(cpu) {
-> +			struct mct_clock_event_device *pcpu_mevt =
-> +				per_cpu_ptr(&percpu_mct_tick, cpu);
-> +
-> +			if (pcpu_mevt->evt.irq != -1) {
-> +				free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
-> +				pcpu_mevt->evt.irq = -1;
-> +			}
-> +		}
-> +	}
->  	return err;
->  }
->  
-> 
+> v3:
+> - don't move PM to the line below in Kconfig
+>
+> v2:
+> - convert Exynos code to not require <plat/pm-common.h> header
+>
+> Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
+> needed s3c_pm_check_*() calls".
+>
+>  arch/arm/mach-exynos/suspend.c |   14 ++++----------
+>  arch/arm/plat-samsung/Kconfig  |    1 +
+>  2 files changed, 5 insertions(+), 10 deletions(-)
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Thanks. This and the other one (removing s3c_pm_check_*()) look OK
+although it is too late for another pull so this will wait for next
+cycle.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Best regards,
+Krzysztof
