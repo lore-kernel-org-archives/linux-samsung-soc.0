@@ -1,51 +1,29 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
- non-Exynos platforms
-Date: Tue, 16 Oct 2018 15:04:52 +0200
-Message-ID: <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
-References: <CGME20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37@eucas1p2.samsung.com>
- <20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37~d0vYKtP7-2027420274eucas1p2g@eucas1p2.samsung.com>
+Subject: Re: [PATCH v2 5/6] arm64: dts: exynos: Move arch-timer node to right place
+Date: Tue, 16 Oct 2018 15:05:54 +0200
+Message-ID: <CAJKOXPct1-8g6hcfzwkMdyFDJPfj=5Y9-s0R9mtpTJu99in7Xg@mail.gmail.com>
+References: <CGME20181015123136eucas1p292c0d6662da5e6694e9f6773282ea017@eucas1p2.samsung.com>
+ <20181015123112.9379-1-m.szyprowski@samsung.com> <20181015123112.9379-6-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37~d0vYKtP7-2027420274eucas1p2g@eucas1p2.samsung.com>
+In-Reply-To: <20181015123112.9379-6-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
-Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will.deacon@arm.com, catalin.marinas@arm.com, marc.zyngier@arm.com, tglx@linutronix.de, daniel.lezcano@linaro.org, Chanwoo Choi <cw00.choi@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 15 Oct 2018 at 17:50, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
+On Mon, 15 Oct 2018 at 14:31, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 >
-> "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
-> config option) is not working properly (debug messages are not
-> displayed after resume) on Exynos platforms because GPIOs restore
-> code is not implemented.
+> Move ARM architected timer device-tree node to the beginning of 'soc'
+> node, to group it together with other ARM CPU core devices (like PMU).
 >
-> Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
-> SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
-> Then convert Exynos code to not require <plat/pm-common.h>
-> header (use pr_debug() directly instead of S3C_PMDBG() macro and
-> remove redundant s3c_pm_*() calls).
->
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
-> v3:
-> - don't move PM to the line below in Kconfig
->
-> v2:
-> - convert Exynos code to not require <plat/pm-common.h> header
->
-> Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
-> needed s3c_pm_check_*() calls".
->
->  arch/arm/mach-exynos/suspend.c |   14 ++++----------
->  arch/arm/plat-samsung/Kconfig  |    1 +
->  2 files changed, 5 insertions(+), 10 deletions(-)
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 23 +++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
 
-Thanks. This and the other one (removing s3c_pm_check_*()) look OK
-although it is too late for another pull so this will wait for next
-cycle.
+Looks okay, I'll take it after this merge window.
 
 Best regards,
 Krzysztof
