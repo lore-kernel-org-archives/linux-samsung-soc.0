@@ -1,36 +1,50 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 3/6] clocksource: exynos_mct: Add arch_timer
- cooperation mode for ARM64
-Date: Tue, 16 Oct 2018 15:11:52 +0200
-Message-ID: <CAJKOXPdPk-ATQd-3jzWariPek_WjG3TeLv-LJfzGWA9H7rY96Q@mail.gmail.com>
-References: <CGME20181015123135eucas1p16a10ed68040141a714ab2977e2ad5e2d@eucas1p1.samsung.com>
- <20181015123112.9379-1-m.szyprowski@samsung.com> <20181015123112.9379-4-m.szyprowski@samsung.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v2] clk: s2mps11: Fix matching when built as module and DT node
+ contains compatible
+Date: Tue, 16 Oct 2018 14:45:32 -0700
+Message-ID: <153972633244.5275.13938528417819448345@swboyd.mtv.corp.google.com>
+References: <20180829192010.14182-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181015123112.9379-4-m.szyprowski@samsung.com>
+In-Reply-To: <20180829192010.14182-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will.deacon@arm.com, catalin.marinas@arm.com, marc.zyngier@arm.com, tglx@linutronix.de, daniel.lezcano@linaro.org, Chanwoo Choi <cw00.choi@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 15 Oct 2018 at 14:31, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> To get ARM Architected Timers working on Samsung Exynos SoCs, one has to
-> first configure and enable Exynos Multi-Core Timer, because they both
-> share some common hardware blocks. This patch adds a mode of cooperation
-> with arch_timer driver, so kernel can use CP15 based timer interface via
-> arch_timer driver, which is mandatory on ARM64. In such mode driver only
-> configures MCT registers and starts the timer but don't register any
-> clocksource or events in the system. Those are left to be handled by
-> arch_timer driver.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Quoting Krzysztof Kozlowski (2018-08-29 12:20:10)
+> When driver is built as module and DT node contains clocks compatible
+> (e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
+> module aliases won't match.
+> =
+
+> The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
+> The modalias from driver: platform:s2mps11-clk
+> =
+
+> The devices are instantiated by parent's MFD.  However both Device Tree
+> bindings and parent define the compatible for clocks devices.  In case
+> of module matching this DT compatible will be used.
+> =
+
+> The issue will not happen if this is a built-in (no need for module
+> matching) or when clocks DT node does not contain compatible (not
+> correct from bindings perspective but working for driver).
+> =
+
+> Note when backporting to stable kernels: adjust the list of device ID
+> entries.
+> =
+
+> Cc: <stable@vger.kernel.org>
+> Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock =
+MFD cells")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> =
+
 > ---
->  drivers/clocksource/exynos_mct.c | 52 +++++++++++++++++++++-----------
->  1 file changed, 35 insertions(+), 17 deletions(-)
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+Applied to clk-next
