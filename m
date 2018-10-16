@@ -1,42 +1,54 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL] clk/samsung updates for 4.20-rc1
-Date: Mon, 15 Oct 2018 14:22:03 -0700
-Message-ID: <153963852324.5275.14467434252596945402@swboyd.mtv.corp.google.com>
-References: <9cf68fe8-73cf-4ee9-6ad4-d6b7ba8f02f8@kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 1/6] clocksource: exynos_mct: Remove dead code
+Date: Tue, 16 Oct 2018 09:44:58 +0900
+Message-ID: <5BC5348A.7010308@samsung.com>
+References: <20181015123112.9379-1-m.szyprowski@samsung.com>
+        <CGME20181015123134eucas1p2bca15d1e0f54c0a580c04d9af7411f68@eucas1p2.samsung.com>
+        <20181015123112.9379-2-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9cf68fe8-73cf-4ee9-6ad4-d6b7ba8f02f8@kernel.org>
+In-reply-to: <20181015123112.9379-2-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <snawrocki@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Sylwester Nawrocki (2018-10-05 04:49:14)
-> Hi Stephen, Mike,
-> =
+On 2018년 10월 15일 21:31, Marek Szyprowski wrote:
+> Exynos Multi-Core Timer driver is used only on device-tree based
+> systems, so remove non-dt related code. In case of !CONFIG_OF
+> the code is anyway equal because of_irq_count() has a stub
+> returning 0.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/clocksource/exynos_mct.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 7a244b681876..43b335ff4a96 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -581,11 +581,7 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+>  	 * timer irqs are specified after the four global timer
+>  	 * irqs are specified.
+>  	 */
+> -#ifdef CONFIG_OF
+>  	nr_irqs = of_irq_count(np);
+> -#else
+> -	nr_irqs = 0;
+> -#endif
+>  	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+>  		mct_irqs[i] = irq_of_parse_and_map(np, i);
+>  
+> 
 
-> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343f=
-f3:
-> =
+I agree that Exynos MCT timer is only used by device-tree.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
->   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-> =
-
-> are available in the git repository at:
-> =
-
->   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/cl=
-k-v4.20-samsung
-> =
-
-> for you to fetch changes up to 9dbcfe1ace4e9c57b819df1054eaeceb9bfd34f5:
-> =
-
->   dt-bindings: clock: samsung: Add SPDX license identifiers (2018-10-05 1=
-3:36:40 +0200)
-> =
-
-
-Thanks. Pulled into clk-next.
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
