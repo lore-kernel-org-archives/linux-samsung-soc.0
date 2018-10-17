@@ -1,73 +1,59 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 3/6] clocksource: exynos_mct: Add arch_timer
- cooperation mode for ARM64
-Date: Wed, 17 Oct 2018 14:36:21 +0200
-Message-ID: <20181017123622eucas1p14654c89a8590fd094d638b60ab9af8f0~eZY3j27rs0422004220eucas1p1M@eucas1p1.samsung.com>
-References: <20181015123112.9379-1-m.szyprowski@samsung.com>
-        <CGME20181015123135eucas1p16a10ed68040141a714ab2977e2ad5e2d@eucas1p1.samsung.com>
-        <20181015123112.9379-4-m.szyprowski@samsung.com>
-        <20181015132652.3vanslay7xomtzqh@lakrids.cambridge.arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 0/6] Proper arch timer support for Exynos5433-based
+ TM2(e) boards
+Date: Wed, 17 Oct 2018 15:41:53 +0200
+Message-ID: <20181017134159.9656-1-m.szyprowski@samsung.com>
+References: <CGME20181017134204eucas1p10d92a91f2b945afdc7b39ce6e7813a8e@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181015132652.3vanslay7xomtzqh@lakrids.cambridge.arm.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, nd@arm.com
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mark,
+Dear All,
 
-On 2018-10-15 15:26, Mark Rutland wrote:
-> On Mon, Oct 15, 2018 at 02:31:09PM +0200, Marek Szyprowski wrote:
->> To get ARM Architected Timers working on Samsung Exynos SoCs, one has to
->> first configure and enable Exynos Multi-Core Timer, because they both
->> share some common hardware blocks.
-> Could you please elaborate on what exactly is shared with the MCT?
->
-> Architecturally, the OS shouldn't have to do anything to put the timers
-> into a usable state. All instances should be fed (directly) from the
-> system counter, which FW is tasked with configuring and enabling, and
-> all other state is private to the instance.
->
-> If we have to poke things to make them usable, that means we can't
-> assume that it's always safe to use the timers or counters, as the
-> architecture lets us, and I'd like to understand what the impact is.
->
-> e.g. does this mean that there are windows where the counters don't
-> tick?
-
-Good question is always a helpful advice. I don't have such hardware
-details and I've did my patches basing on what I've observed while
-playing with the hardware.
-
-I've checked again and I found that the only things that need to be
-done to get ARM arch timer working are:
-
-1. enable multi core timer clock,
-2. set MCT_G_TCON_START (Timer enable) bit in MCT_G_TCON (Global timer
-control) register.
-
-Otherwise arch timer doesn't get any tick.
-
-Changing CPUHP priorities nor any other MCT register writes are not
-needed. It looks that they were leftovers from my older approaches
-and I've kept them without really checking if they are needed in the
-final version.
-
-I will send a new simplified version of this patchset then.
-
-> Are all the counters fed the same underlying counter value? ... or are
-> those independent?
-
-My summary above suggests that ARM architected timers are fed from the
-physical counter, which is controlled by MCT registers.
-
-> ...
+This patchset is an attempt to submit the last piece of missing code
+to have proper support for Exynos5433 SoCs based TM2(e) boards. It
+performs a cleanup of timer configuration, which so far needed various
+out-of-tree workarounds. The fixes provided by this patchset are also
+needed for add proper support for system suspend/resume.
 
 Best regards
--- 
-Marek Szyprowski, PhD
+Marek Szyprowski
 Samsung R&D Institute Poland
+
+
+Changelog:
+
+v3:
+- added patch, which splits resources and interrupts allocation
+- simplified arch timer cooperation mode
+- dropped CPU hotplug priority change patch, it is not really needed
+- removed more non-dt dead code
+
+v2:
+- dropped arch timer patch, it will be discussed separately
+- fixed issues pointed by Krzysztof Kozlowski
+
+v1: https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=27965&state=*&archive=both
+- initial version
+
+
+Patch summary:
+
+Marek Szyprowski (6):
+  clocksource: exynos_mct: Remove dead code
+  clocksource: exynos_mct: Fix error path in timer resources
+    initialization
+  clocksource: exynos_mct: Refactor resources allocation
+  clocksource: exynos_mct: Add arch_timer cooperation mode for ARM64
+  arm64: dts: exynos: Move arch-timer node to right place
+  arm64: platform: Add enable Exynos Multi-Core Timer driver
+
+ arch/arm64/Kconfig.platforms               |  1 +
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 23 +++---
+ drivers/clocksource/exynos_mct.c           | 81 ++++++++++++++--------
+ 3 files changed, 67 insertions(+), 38 deletions(-)
+
+-- 
+2.17.1
