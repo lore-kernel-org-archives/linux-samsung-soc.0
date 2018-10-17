@@ -1,10 +1,10 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 6/6] arm64: platform: Add enable Exynos Multi-Core Timer
- driver
-Date: Wed, 17 Oct 2018 15:41:59 +0200
-Message-ID: <20181017134159.9656-7-m.szyprowski@samsung.com>
+Subject: [PATCH v3 3/6] clocksource: exynos_mct: Refactor resources
+ allocation
+Date: Wed, 17 Oct 2018 15:41:56 +0200
+Message-ID: <20181017134159.9656-4-m.szyprowski@samsung.com>
 References: <20181017134159.9656-1-m.szyprowski@samsung.com>
-        <CGME20181017134208eucas1p19c81d1ce9050be1b78e386d8a349f441@eucas1p1.samsung.com>
+        <CGME20181017134206eucas1p1ebc76569f706675d41f2d2183349f1f3@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20181017134159.9656-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -12,29 +12,97 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lin
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Exynos SoCs enabling MCT driver is required even if ARM Architected
-Timer driver is used to for managing timer hardware and clock source
-events.
+Move interrupts allocation from exynos4_timer_resources() into separate
+function together with the interrupt number parsing code from
+mct_init_dt(), so the code for managing interrupts is kept together.
+While touching exynos4_timer_resources() function, move of_iomap() to it.
+No functional changes.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clocksource/exynos_mct.c | 49 +++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 51bc479334a4..7cc687580fad 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -62,6 +62,7 @@ config ARCH_BRCMSTB
- config ARCH_EXYNOS
- 	bool "ARMv8 based Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
-+	select CLKSRC_EXYNOS_MCT
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 49413900b24c..02ad55db390b 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -502,11 +502,14 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-static int __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
++static int __init exynos4_timer_resources(struct device_node *np)
+ {
+-	int err, cpu;
+ 	struct clk *mct_clk, *tick_clk;
+ 
++	reg_base = of_iomap(np, 0);
++	if (!reg_base)
++		panic("%s: unable to ioremap mct address space\n", __func__);
++
+ 	tick_clk = of_clk_get_by_name(np, "fin_pll");
+ 	if (IS_ERR(tick_clk))
+ 		panic("%s: unable to determine tick clock rate\n", __func__);
+@@ -517,9 +520,27 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+ 		panic("%s: unable to retrieve mct clock instance\n", __func__);
+ 	clk_prepare_enable(mct_clk);
+ 
+-	reg_base = base;
+-	if (!reg_base)
+-		panic("%s: unable to ioremap mct address space\n", __func__);
++	return 0;
++}
++
++static int __init exynos4_timer_interrupts(struct device_node *np,
++					   unsigned int int_type)
++{
++	int i, err, cpu;
++
++	mct_int_type = int_type;
++
++	/* This driver uses only one global timer interrupt */
++	mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
++
++	/*
++	 * Find out the number of local irqs specified. The local
++	 * timer irqs are specified after the four global timer
++	 * irqs are specified.
++	 */
++	nr_irqs = of_irq_count(np);
++	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
++		mct_irqs[i] = irq_of_parse_and_map(np, i);
+ 
+ 	if (mct_int_type == MCT_INT_PPI) {
+ 
+@@ -579,24 +600,14 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+ 
+ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ {
+-	u32 nr_irqs, i;
+ 	int ret;
+ 
+-	mct_int_type = int_type;
+-
+-	/* This driver uses only one global timer interrupt */
+-	mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
++	ret = exynos4_timer_resources(np);
++	if (ret)
++		return ret;
+ 
+-	/*
+-	 * Find out the number of local irqs specified. The local
+-	 * timer irqs are specified after the four global timer
+-	 * irqs are specified.
+-	 */
+-	nr_irqs = of_irq_count(np);
+-	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+-		mct_irqs[i] = irq_of_parse_and_map(np, i);
+ 
+-	ret = exynos4_timer_resources(np, of_iomap(np, 0));
++	ret = exynos4_timer_interrupts(np, int_type);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.17.1
