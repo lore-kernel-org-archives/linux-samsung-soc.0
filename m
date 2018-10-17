@@ -1,10 +1,10 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 4/6] clocksource: exynos_mct: Add arch_timer cooperation
- mode for ARM64
-Date: Wed, 17 Oct 2018 15:41:57 +0200
-Message-ID: <20181017134159.9656-5-m.szyprowski@samsung.com>
+Subject: [PATCH v3 6/6] arm64: platform: Add enable Exynos Multi-Core Timer
+ driver
+Date: Wed, 17 Oct 2018 15:41:59 +0200
+Message-ID: <20181017134159.9656-7-m.szyprowski@samsung.com>
 References: <20181017134159.9656-1-m.szyprowski@samsung.com>
-        <CGME20181017134207eucas1p1b938eefe31fc47baaf538c9ebafc1a7e@eucas1p1.samsung.com>
+        <CGME20181017134208eucas1p19c81d1ce9050be1b78e386d8a349f441@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20181017134159.9656-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -12,38 +12,29 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lin
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To get ARM Architected Timers working on Samsung Exynos SoCs, one has to
-first configure and enable Exynos Multi-Core Timer, because they both
-share some common hardware blocks (global system counter). This patch
-adds a mode of cooperation with arch_timer driver, so kernel can use
-CP15 based timer interface via arch_timer driver, which is mandatory
-on ARM64. In such mode MCT driver only enables its clocks and starts
-global timer. Everything else will be handled by arch_timer driver.
+On Exynos SoCs enabling MCT driver is required even if ARM Architected
+Timer driver is used to for managing timer hardware and clock source
+events.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 02ad55db390b..1b19a4f03929 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -606,6 +606,15 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
- 	if (ret)
- 		return ret;
- 
-+	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ARM_ARCH_TIMER)) {
-+		struct device_node *np = of_find_compatible_node(NULL, NULL,
-+							     "arm,armv8-timer");
-+		if (np) {
-+			of_node_put(np);
-+			exynos4_mct_frc_start();
-+			return 0;
-+		}
-+	}
- 
- 	ret = exynos4_timer_interrupts(np, int_type);
- 	if (ret)
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 51bc479334a4..7cc687580fad 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -62,6 +62,7 @@ config ARCH_BRCMSTB
+ config ARCH_EXYNOS
+ 	bool "ARMv8 based Samsung Exynos SoC family"
+ 	select COMMON_CLK_SAMSUNG
++	select CLKSRC_EXYNOS_MCT
+ 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+ 	select EXYNOS_PMU
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
 -- 
 2.17.1
