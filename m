@@ -1,59 +1,60 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 0/6] Proper arch timer support for Exynos5433-based
- TM2(e) boards
-Date: Wed, 17 Oct 2018 15:41:53 +0200
-Message-ID: <20181017134159.9656-1-m.szyprowski@samsung.com>
-References: <CGME20181017134204eucas1p10d92a91f2b945afdc7b39ce6e7813a8e@eucas1p1.samsung.com>
+Subject: [PATCH v3 1/6] clocksource: exynos_mct: Remove dead code
+Date: Wed, 17 Oct 2018 15:41:54 +0200
+Message-ID: <20181017134159.9656-2-m.szyprowski@samsung.com>
+References: <20181017134159.9656-1-m.szyprowski@samsung.com>
+        <CGME20181017134205eucas1p148faab76ac153e9afbb8a519e6d8d1e2@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20181017134159.9656-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear All,
+Exynos Multi-Core Timer driver is used only on device-tree based
+systems, so remove non-dt related code. In case of !CONFIG_OF
+the code is anyway equal because of_irq_count() has a stub
+returning 0. Device node pointer is always provided when driver
+has been probed from device tree.
 
-This patchset is an attempt to submit the last piece of missing code
-to have proper support for Exynos5433 SoCs based TM2(e) boards. It
-performs a cleanup of timer configuration, which so far needed various
-out-of-tree workarounds. The fixes provided by this patchset are also
-needed for add proper support for system suspend/resume.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/clocksource/exynos_mct.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changelog:
-
-v3:
-- added patch, which splits resources and interrupts allocation
-- simplified arch timer cooperation mode
-- dropped CPU hotplug priority change patch, it is not really needed
-- removed more non-dt dead code
-
-v2:
-- dropped arch timer patch, it will be discussed separately
-- fixed issues pointed by Krzysztof Kozlowski
-
-v1: https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=27965&state=*&archive=both
-- initial version
-
-
-Patch summary:
-
-Marek Szyprowski (6):
-  clocksource: exynos_mct: Remove dead code
-  clocksource: exynos_mct: Fix error path in timer resources
-    initialization
-  clocksource: exynos_mct: Refactor resources allocation
-  clocksource: exynos_mct: Add arch_timer cooperation mode for ARM64
-  arm64: dts: exynos: Move arch-timer node to right place
-  arm64: platform: Add enable Exynos Multi-Core Timer driver
-
- arch/arm64/Kconfig.platforms               |  1 +
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 23 +++---
- drivers/clocksource/exynos_mct.c           | 81 ++++++++++++++--------
- 3 files changed, 67 insertions(+), 38 deletions(-)
-
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 7a244b681876..ef18bbf8d20c 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -507,13 +507,12 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+ 	int err, cpu;
+ 	struct clk *mct_clk, *tick_clk;
+ 
+-	tick_clk = np ? of_clk_get_by_name(np, "fin_pll") :
+-				clk_get(NULL, "fin_pll");
++	tick_clk = of_clk_get_by_name(np, "fin_pll");
+ 	if (IS_ERR(tick_clk))
+ 		panic("%s: unable to determine tick clock rate\n", __func__);
+ 	clk_rate = clk_get_rate(tick_clk);
+ 
+-	mct_clk = np ? of_clk_get_by_name(np, "mct") : clk_get(NULL, "mct");
++	mct_clk = of_clk_get_by_name(np, "mct");
+ 	if (IS_ERR(mct_clk))
+ 		panic("%s: unable to retrieve mct clock instance\n", __func__);
+ 	clk_prepare_enable(mct_clk);
+@@ -581,11 +580,7 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 	 * timer irqs are specified after the four global timer
+ 	 * irqs are specified.
+ 	 */
+-#ifdef CONFIG_OF
+ 	nr_irqs = of_irq_count(np);
+-#else
+-	nr_irqs = 0;
+-#endif
+ 	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+ 		mct_irqs[i] = irq_of_parse_and_map(np, i);
+ 
 -- 
 2.17.1
