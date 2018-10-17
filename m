@@ -1,50 +1,170 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2] clk: s2mps11: Fix matching when built as module and DT node
- contains compatible
-Date: Tue, 16 Oct 2018 14:45:32 -0700
-Message-ID: <153972633244.5275.13938528417819448345@swboyd.mtv.corp.google.com>
-References: <20180829192010.14182-1-krzk@kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 3/6] clocksource: exynos_mct: Add arch_timer
+ cooperation mode for ARM64
+Date: Wed, 17 Oct 2018 14:00:49 +0900
+Message-ID: <5BC6C201.70508@samsung.com>
+References: <20181015123112.9379-1-m.szyprowski@samsung.com>
+        <CGME20181015123135eucas1p16a10ed68040141a714ab2977e2ad5e2d@eucas1p1.samsung.com>
+        <20181015123112.9379-4-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180829192010.14182-1-krzk@kernel.org>
+In-reply-to: <20181015123112.9379-4-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: stable@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2018-08-29 12:20:10)
-> When driver is built as module and DT node contains clocks compatible
-> (e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
-> module aliases won't match.
-> =
+Hi Marek,
 
-> The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
-> The modalias from driver: platform:s2mps11-clk
-> =
+I tested it about kernel booting and CPU hotplug through sysfs path 
+on ARM64 Exynos5433-based TM2 board. It is well working.
 
-> The devices are instantiated by parent's MFD.  However both Device Tree
-> bindings and parent define the compatible for clocks devices.  In case
-> of module matching this DT compatible will be used.
-> =
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-> The issue will not happen if this is a built-in (no need for module
-> matching) or when clocks DT node does not contain compatible (not
-> correct from bindings perspective but working for driver).
-> =
+But,
+I have a minor comment for code clean-up.
+On exynos4_mct_starting_cpu() function, the initialization of 'evt' instance
+are not mandatory because 'evt' instance is not registered
+by clockevents_config_and_register(). 
 
-> Note when backporting to stable kernels: adjust the list of device ID
-> entries.
-> =
 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock =
-MFD cells")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> =
-
+On 2018년 10월 15일 21:31, Marek Szyprowski wrote:
+> To get ARM Architected Timers working on Samsung Exynos SoCs, one has to
+> first configure and enable Exynos Multi-Core Timer, because they both
+> share some common hardware blocks. This patch adds a mode of cooperation
+> with arch_timer driver, so kernel can use CP15 based timer interface via
+> arch_timer driver, which is mandatory on ARM64. In such mode driver only
+> configures MCT registers and starts the timer but don't register any
+> clocksource or events in the system. Those are left to be handled by
+> arch_timer driver.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
+>  drivers/clocksource/exynos_mct.c | 52 +++++++++++++++++++++-----------
+>  1 file changed, 35 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index a379f11fad2d..06cd30a6d59a 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -57,6 +57,7 @@
+>  #define TICK_BASE_CNT	1
+>  
+>  enum {
+> +	MCT_INT_NONE = 0,
+>  	MCT_INT_SPI,
+>  	MCT_INT_PPI
+>  };
+> @@ -238,6 +239,9 @@ static int __init exynos4_clocksource_init(void)
+>  {
+>  	exynos4_mct_frc_start();
+>  
+> +	if (!mct_int_type)
+> +		return 0;
+> +
+>  #if defined(CONFIG_ARM)
+>  	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
+>  	exynos4_delay_timer.freq = clk_rate;
+> @@ -343,6 +347,9 @@ static struct irqaction mct_comp_event_irq = {
+>  
+>  static int exynos4_clockevent_init(void)
+>  {
+> +	if (!mct_int_type)
+> +		return 0;
+> +
+>  	mct_comp_device.cpumask = cpumask_of(0);
+>  	clockevents_config_and_register(&mct_comp_device, clk_rate,
+>  					0xf, 0xffffffff);
+> @@ -476,12 +483,12 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+>  
+>  		irq_force_affinity(evt->irq, cpumask_of(cpu));
+>  		enable_irq(evt->irq);
+> -	} else {
+> +	} else if (mct_int_type == MCT_INT_PPI) {
+>  		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+>  	}
+> -	clockevents_config_and_register(evt, clk_rate / (TICK_BASE_CNT + 1),
+> -					0xf, 0x7fffffff);
+> -
+> +	if (mct_int_type)
+> +		clockevents_config_and_register(evt,
+> +			       clk_rate / (TICK_BASE_CNT + 1), 0xf, 0x7fffffff);
+>  	return 0;
+>  }
+>  
+> @@ -496,7 +503,7 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
+>  		if (evt->irq != -1)
+>  			disable_irq_nosync(evt->irq);
+>  		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
+> -	} else {
+> +	} else if (mct_int_type == MCT_INT_PPI) {
+>  		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+>  	}
+>  	return 0;
+> @@ -529,7 +536,7 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+>  					 &percpu_mct_tick);
+>  		WARN(err, "MCT: can't request IRQ %d (%d)\n",
+>  		     mct_irqs[MCT_L0_IRQ], err);
+> -	} else {
+> +	} else if (mct_int_type == MCT_INT_SPI) {
+>  		for_each_possible_cpu(cpu) {
+>  			int mct_irq = mct_irqs[MCT_L0_IRQ + cpu];
+>  			struct mct_clock_event_device *pcpu_mevt =
+> @@ -564,7 +571,7 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+>  out_irq:
+>  	if (mct_int_type == MCT_INT_PPI) {
+>  		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
+> -	} else {
+> +	} else if (mct_int_type == MCT_INT_SPI) {
+>  		for_each_possible_cpu(cpu) {
+>  			struct mct_clock_event_device *pcpu_mevt =
+>  				per_cpu_ptr(&percpu_mct_tick, cpu);
+> @@ -585,17 +592,28 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+>  
+>  	mct_int_type = int_type;
+>  
+> -	/* This driver uses only one global timer interrupt */
+> -	mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
+> +	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ARM_ARCH_TIMER)) {
+> +		struct device_node *np = of_find_compatible_node(NULL, NULL,
+> +							     "arm,armv8-timer");
+> +		if (np) {
+> +			mct_int_type = MCT_INT_NONE;
+> +			of_node_put(np);
+> +		}
+> +	}
+>  
+> -	/*
+> -	 * Find out the number of local irqs specified. The local
+> -	 * timer irqs are specified after the four global timer
+> -	 * irqs are specified.
+> -	 */
+> -	nr_irqs = of_irq_count(np);
+> -	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+> -		mct_irqs[i] = irq_of_parse_and_map(np, i);
+> +	if (mct_int_type) {
+> +		/* This driver uses only one global timer interrupt */
+> +		mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
+> +
+> +		/*
+> +		 * Find out the number of local irqs specified. The local
+> +		 * timer irqs are specified after the four global timer
+> +		 * irqs are specified.
+> +		 */
+> +		nr_irqs = of_irq_count(np);
+> +		for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+> +			mct_irqs[i] = irq_of_parse_and_map(np, i);
+> +	}
+>  
+>  	ret = exynos4_timer_resources(np, of_iomap(np, 0));
+>  	if (ret)
+> 
 
-Applied to clk-next
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
