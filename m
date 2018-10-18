@@ -1,183 +1,63 @@
-From: Christoph Manszewski <c.manszewski@samsung.com>
-Subject: [PATCH v3 2/2] drm/exynos: decon: Make pixel blend mode
- configurable
-Date: Thu, 18 Oct 2018 14:51:47 +0200
-Message-ID: <20181018125209eucas1p199f2790a05546e2bbb306e97ee102b51~etP7nkA4R0072400724eucas1p1J@eucas1p1.samsung.com>
-References: <1539867107-3383-1-git-send-email-c.manszewski@samsung.com>
-        <CGME20181018125209eucas1p199f2790a05546e2bbb306e97ee102b51@eucas1p1.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] clk: s2mps11: Add used attribute to s2mps11_dt_match
+Date: Thu, 18 Oct 2018 12:13:40 -0700
+Message-ID: <20181018191340.30440-1-natechancellor@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1539867107-3383-1-git-send-email-c.manszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: Christoph Manszewski <c.manszewski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <sean@poorly.run>, Lowry Li <lowry.li@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Currently blend mode is set accordingly to pixel format.
-Add pixel blend mode property and make it configurable,
-by modifying the blend equation.
+Clang warns after commit 8985167ecf57 ("clk: s2mps11: Fix matching when
+built as module and DT node contains compatible"):
 
-Tested on TM2 with Exynos 5433 CPU, on top of exynos-drm-next,
-commit: c530174b90fa
+drivers/clk/clk-s2mps11.c:242:34: warning: variable 's2mps11_dt_match'
+is not needed and will not be emitted [-Wunneeded-internal-declaration]
+static const struct of_device_id s2mps11_dt_match[] = {
+                                 ^
+1 warning generated.
 
-Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
+This warning happens when a variable is used in some construct that
+doesn't require a reference to that variable to be emitted in the symbol
+table; in this case, it's MODULE_DEVICE_TABLE, which only needs to hold
+the data of the variable, not the variable itself.
+
+$ nm -S drivers/clk/clk-s2mps11.o | rg s2mps11_dt_match
+00000078 000003d4 R __mod_of__s2mps11_dt_match_device_table
+
+Normally, with device ID table variables, it means that the variable
+just needs to be tied to the device declaration at the bottom of the
+file, like s2mps11_clk_id:
+
+$ nm -S drivers/clk/clk-s2mps11.o | rg s2mps11_clk_id
+00000000 00000078 R __mod_platform__s2mps11_clk_id_device_table
+00000000 00000078 r s2mps11_clk_id
+
+However, because the comment above this deliberately doesn't want this
+variable added to .of_match_table, we need to mark s2mps11_dt_match as
+__used to silence this warning. This makes it clear to Clang that the
+variable is used for something, even if a reference to it isn't being
+emitted.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
-v3 changes:
- - fix compilation errors (previouslsy wrong patch was sent);
-v2 changes:
- - add premultiplied mode by setting blending equation accordingly,
- - remove no longer used blend mode settings from decon_win_set_pixfmt,
+ drivers/clk/clk-s2mps11.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 67 +++++++++++++++++++++++----
- drivers/gpu/drm/exynos/regs-decon5433.h       | 15 ++++++
- 2 files changed, 72 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 2578db16750d..bc080064b6b4 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -86,10 +86,10 @@ static const enum drm_plane_type decon_win_types[WINDOWS_NR] = {
- 
- static const unsigned int capabilities[WINDOWS_NR] = {
- 	0,
--	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
--	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
--	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
--	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
-+	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
-+	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
-+	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
-+	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
- };
- 
- static inline void decon_set_bits(struct decon_context *ctx, u32 reg, u32 mask,
-@@ -267,13 +267,53 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
- 	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
- }
- 
-+static void decon_win_set_bldeq(struct decon_context *ctx, unsigned int win,
-+				unsigned int alpha, unsigned int pixel_alpha)
-+{
-+	u32 mask = BLENDERQ_A_FUNC_F(0xf) | BLENDERQ_B_FUNC_F(0xf);
-+	u32 val = 0;
-+
-+	switch (pixel_alpha) {
-+	case DRM_MODE_BLEND_PIXEL_NONE:
-+		break;
-+	case DRM_MODE_BLEND_COVERAGE:
-+		val |= BLENDERQ_A_FUNC_F(BLENDERQ_ALPHA_A);
-+		val |= BLENDERQ_B_FUNC_F(BLENDERQ_ONE_MINUS_ALPHA_A);
-+		decon_set_bits(ctx, DECON_BLENDERQx(win), mask, val);
-+		break;
-+	case DRM_MODE_BLEND_PREMULTI:
-+	default:
-+		if (alpha != DRM_BLEND_ALPHA_OPAQUE) {
-+			val |= BLENDERQ_A_FUNC_F(BLENDERQ_ALPHA0);
-+			val |= BLENDERQ_B_FUNC_F(BLENDERQ_ONE_MINUS_ALPHA_A);
-+		} else {
-+			val |= BLENDERQ_A_FUNC_F(BLENDERQ_ONE);
-+			val |= BLENDERQ_B_FUNC_F(BLENDERQ_ONE_MINUS_ALPHA_A);
-+		}
-+		decon_set_bits(ctx, DECON_BLENDERQx(win), mask, val);
-+		break;
-+	}
-+}
- 
- static void decon_win_set_bldmod(struct decon_context *ctx, unsigned int win,
--				 unsigned int alpha)
-+				 unsigned int alpha, unsigned int pixel_alpha)
- {
- 	u32 win_alpha = alpha >> 8;
- 	u32 val = 0;
- 
-+	switch (pixel_alpha) {
-+	case DRM_MODE_BLEND_PIXEL_NONE:
-+		break;
-+	case DRM_MODE_BLEND_COVERAGE:
-+	case DRM_MODE_BLEND_PREMULTI:
-+	default:
-+		val |= WINCONx_ALPHA_SEL_F;
-+		val |= WINCONx_BLD_PIX_F;
-+		val |= WINCONx_ALPHA_MUL_F;
-+		break;
-+	}
-+	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_BLEND_MODE_MASK, val);
-+
- 	if (alpha != DRM_BLEND_ALPHA_OPAQUE) {
- 		val = VIDOSD_Wx_ALPHA_R_F(win_alpha) |
- 		      VIDOSD_Wx_ALPHA_G_F(win_alpha) |
-@@ -291,8 +331,14 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
- 	struct exynos_drm_plane_state *state =
- 		to_exynos_plane_state(plane.base.state);
- 	unsigned int alpha = state->base.alpha;
-+	unsigned int pixel_alpha;
- 	unsigned long val;
- 
-+	if (fb->format->has_alpha)
-+		pixel_alpha = state->base.pixel_blend_mode;
-+	else
-+		pixel_alpha = DRM_MODE_BLEND_PIXEL_NONE;
-+
- 	val = readl(ctx->addr + DECON_WINCONx(win));
- 	val &= WINCONx_ENWIN_F;
- 
-@@ -315,9 +361,8 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
- 	case DRM_FORMAT_ARGB8888:
- 	default:
- 		val |= WINCONx_BPPMODE_32BPP_A8888;
--		val |= WINCONx_WSWP_F | WINCONx_BLD_PIX_F | WINCONx_ALPHA_SEL_F;
-+		val |= WINCONx_WSWP_F;
- 		val |= WINCONx_BURSTLEN_16WORD;
--		val |= WINCONx_ALPHA_MUL_F;
- 		break;
- 	}
- 
-@@ -335,10 +380,12 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
- 		val &= ~WINCONx_BURSTLEN_MASK;
- 		val |= WINCONx_BURSTLEN_8WORD;
- 	}
-+	decon_set_bits(ctx, DECON_WINCONx(win), ~WINCONx_BLEND_MODE_MASK, val);
- 
--	writel(val, ctx->addr + DECON_WINCONx(win));
--	if (win > 0)
--		decon_win_set_bldmod(ctx, win, alpha);
-+	if (win > 0) {
-+		decon_win_set_bldmod(ctx, win, alpha, pixel_alpha);
-+		decon_win_set_bldeq(ctx, win, alpha, pixel_alpha);
-+	}
- }
- 
- static void decon_shadow_protect(struct decon_context *ctx, bool protect)
-diff --git a/drivers/gpu/drm/exynos/regs-decon5433.h b/drivers/gpu/drm/exynos/regs-decon5433.h
-index 72648bda3142..63db6974bf14 100644
---- a/drivers/gpu/drm/exynos/regs-decon5433.h
-+++ b/drivers/gpu/drm/exynos/regs-decon5433.h
-@@ -117,6 +117,7 @@
- #define WINCONx_BPPMODE_16BPP_A4444	(0xe << 2)
- #define WINCONx_ALPHA_SEL_F		(1 << 1)
- #define WINCONx_ENWIN_F			(1 << 0)
-+#define WINCONx_BLEND_MODE_MASK		(0xc2)
- 
- /* SHADOWCON */
- #define SHADOWCON_PROTECT_MASK		GENMASK(14, 10)
-@@ -213,4 +214,18 @@
- /* BLENDCON */
- #define BLEND_NEW			(1 << 0)
- 
-+/* BLENDERQx */
-+#define BLENDERQ_ZERO			0x0
-+#define BLENDERQ_ONE			0x1
-+#define BLENDERQ_ALPHA_A		0x2
-+#define BLENDERQ_ONE_MINUS_ALPHA_A	0x3
-+#define BLENDERQ_ALPHA0			0x6
-+#define BLENDERQ_Q_FUNC_F(n)		(n << 18)
-+#define BLENDERQ_P_FUNC_F(n)		(n << 12)
-+#define BLENDERQ_B_FUNC_F(n)		(n << 6)
-+#define BLENDERQ_A_FUNC_F(n)		(n << 0)
-+
-+/* BLENDCON */
-+#define BLEND_NEW			(1 << 0)
-+
- #endif /* EXYNOS_REGS_DECON5433_H */
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 9c2e6be392e3..5b419b82f7ca 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -239,7 +239,7 @@ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+  * This requires of_device_id table.  In the same time this will not change the
+  * actual *device* matching so do not add .of_match_table.
+  */
+-static const struct of_device_id s2mps11_dt_match[] = {
++static const struct of_device_id s2mps11_dt_match[] __used = {
+ 	{
+ 		.compatible = "samsung,s2mps11-clk",
+ 		.data = (void *)S2MPS11X,
 -- 
-2.7.4
+2.19.1
