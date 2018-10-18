@@ -1,10 +1,10 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 2/6] clocksource: exynos_mct: Fix error path in timer
- resources initialization
-Date: Thu, 18 Oct 2018 11:57:04 +0200
-Message-ID: <20181018095708.1527-3-m.szyprowski@samsung.com>
+Subject: [PATCH v4 4/6] clocksource: exynos_mct: Add arch_timer cooperation
+ mode for ARM64
+Date: Thu, 18 Oct 2018 11:57:06 +0200
+Message-ID: <20181018095708.1527-5-m.szyprowski@samsung.com>
 References: <20181018095708.1527-1-m.szyprowski@samsung.com>
-        <CGME20181018095716eucas1p103fb0d1a19c6122e885b15526c176967@eucas1p1.samsung.com>
+        <CGME20181018095717eucas1p20a7d2d2b1b18ae60a4893a8e3d8c19f9@eucas1p2.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20181018095708.1527-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -12,43 +12,41 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lin
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-While freeing interrupt handlers in error path, don't assume that all
-requested interrupts are per-processor interrupts and properly release
-standard interrupts too.
+To get ARM Architected Timers working on Samsung Exynos SoCs, one has to
+first configure and enable Exynos Multi-Core Timer, because they both
+share some common hardware blocks (global system counter). This patch
+adds a mode of cooperation with arch_timer driver, so kernel can use
+CP15 based timer interface via arch_timer driver, which is mandatory
+on ARM64. In such mode MCT driver only enables its clocks and starts
+global timer. Everything else will be handled by arch_timer driver.
 
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/clocksource/exynos_mct.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index ef18bbf8d20c..49413900b24c 100644
+index 4c886ff2941a..1f5249fb25fd 100644
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -561,7 +561,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
- 	return 0;
+@@ -606,6 +606,16 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 	if (ret)
+ 		return ret;
  
- out_irq:
--	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	if (mct_int_type == MCT_INT_PPI) {
-+		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	} else {
-+		for_each_possible_cpu(cpu) {
-+			struct mct_clock_event_device *pcpu_mevt =
-+				per_cpu_ptr(&percpu_mct_tick, cpu);
-+
-+			if (pcpu_mevt->evt.irq != -1) {
-+				free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
-+				pcpu_mevt->evt.irq = -1;
-+			}
++	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ARM_ARCH_TIMER)) {
++		struct device_node *np = of_find_compatible_node(NULL, NULL,
++							     "arm,armv8-timer");
++		if (np) {
++			of_node_put(np);
++			exynos4_mct_frc_start();
++			return 0;
 +		}
 +	}
- 	return err;
- }
- 
++
+ 	ret = exynos4_timer_interrupts(np, int_type);
+ 	if (ret)
+ 		return ret;
 -- 
 2.17.1
