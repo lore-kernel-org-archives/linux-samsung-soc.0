@@ -1,54 +1,80 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 6/8] clk: s2mps11: constify clk_ops structure
-Date: Mon, 29 Oct 2018 09:43:22 +0900
-Message-ID: <5BD657AA.1080108@samsung.com>
-References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
-        <CGME20181027062328epcas3p1aed374207b7d5da30147ceea33585b67@epcas3p1.samsung.com>
-        <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH 5/5] ARM: spectre-v2: per-CPU vtables to work around
+ big.Little systems
+Date: Tue, 30 Oct 2018 10:50:18 +0000
+Message-ID: <20181030105017.GK30658@n2100.armlinux.org.uk>
+References: <20180919094802.GH30658@n2100.armlinux.org.uk>
+ <CGME20180919095028epcas3p3e1a927bb7e88c6891d43abfdc51603e7@epcas3p3.samsung.com>
+ <E1g2Z6e-0003es-CI@rmk-PC.armlinux.org.uk>
+ <20181005090941eucas1p14031cd38d78e9d561975925bf977727d~aq0-OFZeE1866318663eucas1p1b@eucas1p1.samsung.com>
+ <20181005094618.GG30658@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Sangbeom Kim <sbkim73@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20181005094618.GG30658@n2100.armlinux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, info@kernelci.org
+Cc: Mark Rutland <mark.rutland@arm.com>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Julien Thierry <julien.thierry@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Morten Rasmussen <Morten.Rasmussen@arm.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-arm-kernel@lists.infradead.org, Qais Yousef <Qais.Yousef@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2018년 10월 27일 14:47, Julia Lawall wrote:
-> The clk_ops structure is only stored in the ops fields of
-> clk_init_data structures.  This field is const, so the clk_ops
-> structure can be const as well.
-> 
-> Identified and transformed using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/clk/clk-s2mps11.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index 5b419b82f7ca..2ce370c804aa 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -71,7 +71,7 @@ static unsigned long s2mps11_clk_recalc_rate(struct clk_hw *hw,
->  	return 32768;
->  }
->  
-> -static struct clk_ops s2mps11_clk_ops = {
-> +static const struct clk_ops s2mps11_clk_ops = {
->  	.prepare	= s2mps11_clk_prepare,
->  	.unprepare	= s2mps11_clk_unprepare,
->  	.is_prepared	= s2mps11_clk_is_prepared,
-> 
-> 
-> 
+On Fri, Oct 05, 2018 at 10:46:19AM +0100, Russell King - ARM Linux wrote:
+> On Fri, Oct 05, 2018 at 11:09:40AM +0200, Marek Szyprowski wrote:
+> > This patch causes lots of kernel 'BUG' messages on all Samsung Exynos
+> > boards.=A0 It started to appear since it has been merged to linux-next
+> > on 20181002.=A0 I wonder if this issue is Exynos specific or there are
+> > some patches missing in linux-next, which should fix those 'BUGS'.
+> > If this is Exynos specific, please let us know what should be changed
+> > in Exynos platform code to avoid this issue.
+> =
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Thanks for the report.
+> =
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> It looks like my solution for big.Little isn't possible... back to
+> the drawing board, and big.Little will have to remain vulnerable to
+> Spectre for another release cycle.
+
+I've pushed out a new version in my build branch for the autobuilders
+to chew on, but I've little confidence in validating that the problem
+is fixed because the boot results are completely unreliable.
+
+It really doesn't help that kernelci.org flags boot logs as "green"
+and "successful" when they contain such stuff as:
+
+01:08:40.181846  [    9.309984] Unable to handle kernel paging request at v=
+irtual address e7fddef0
+
+which is the kernel hitting a BUG() - for the full log, see:
+
+https://storage.kernelci.org/rmk/to-build/v4.16-38-g9fa10446d304/arm/multi_=
+v7_defconfig/lab-collabora/boot-exynos5800-peach-pi.html
+
+This means the only way to check is to _manually_ go through reading
+each and every boot log - to see if your reported BUG: messages are
+there - no thanks.
+
+If kernelci thinks that a boot which hits a kernel BUG(), but still
+manages to get to a shell prompt is successful, it's giving very
+misleading boot results.  What about a WARN_ON() or an oops that
+still allows it to reach a shell prompt.
+
+Yes, these may be "successful" in so far as reaching the shell prompt,
+but they should at least be flagged for further inspection, not
+effectively marked as "there is nothing wrong here".
+
+-- =
+
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps =
+up
+According to speedtest.net: 11.9Mbps down 500kbps up
