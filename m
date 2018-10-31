@@ -1,20 +1,21 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
 Subject: Re: [PATCH 5/5] ARM: spectre-v2: per-CPU vtables to work around
  big.Little systems
-Date: Wed, 31 Oct 2018 16:21:30 +0100
-Message-ID: <99a5f366-4d96-1069-0638-4e036e57afc8@samsung.com>
+Date: Wed, 31 Oct 2018 18:12:27 +0000
+Message-ID: <20181031181227.GM30658@n2100.armlinux.org.uk>
 References: <20180919094802.GH30658@n2100.armlinux.org.uk>
  <CGME20180919095028epcas3p3e1a927bb7e88c6891d43abfdc51603e7@epcas3p3.samsung.com>
  <E1g2Z6e-0003es-CI@rmk-PC.armlinux.org.uk>
  <20181005090941eucas1p14031cd38d78e9d561975925bf977727d~aq0-OFZeE1866318663eucas1p1b@eucas1p1.samsung.com>
  <20181005094618.GG30658@n2100.armlinux.org.uk>
  <20181030105017.GK30658@n2100.armlinux.org.uk>
+ <99a5f366-4d96-1069-0638-4e036e57afc8@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181030105017.GK30658@n2100.armlinux.org.uk>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <99a5f366-4d96-1069-0638-4e036e57afc8@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -24,51 +25,76 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>, info@kernelci.org
-Cc: Mark Rutland <mark.rutland@arm.com>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Julien Thierry <julien.thierry@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Morten Rasmussen <Morten.Rasmussen@arm.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-arm-kernel@lists.infradead.org, Qais Yousef <Qais.Yousef@arm.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Julien Thierry <julien.thierry@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, info@kernelci.org, Morten Rasmussen <Morten.Rasmussen@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-arm-kernel@lists.infradead.org, Qais Yousef <Qais.Yousef@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgUnVzc2VsbCwKCk9uIDIwMTgtMTAtMzAgMTE6NTAsIFJ1c3NlbGwgS2luZyAtIEFSTSBMaW51
-eCB3cm90ZToKPiBPbiBGcmksIE9jdCAwNSwgMjAxOCBhdCAxMDo0NjoxOUFNICswMTAwLCBSdXNz
-ZWxsIEtpbmcgLSBBUk0gTGludXggd3JvdGU6Cj4+IE9uIEZyaSwgT2N0IDA1LCAyMDE4IGF0IDEx
-OjA5OjQwQU0gKzAyMDAsIE1hcmVrIFN6eXByb3dza2kgd3JvdGU6Cj4+PiBUaGlzIHBhdGNoIGNh
-dXNlcyBsb3RzIG9mIGtlcm5lbCAnQlVHJyBtZXNzYWdlcyBvbiBhbGwgU2Ftc3VuZyBFeHlub3MK
-Pj4+IGJvYXJkcy7CoCBJdCBzdGFydGVkIHRvIGFwcGVhciBzaW5jZSBpdCBoYXMgYmVlbiBtZXJn
-ZWQgdG8gbGludXgtbmV4dAo+Pj4gb24gMjAxODEwMDIuwqAgSSB3b25kZXIgaWYgdGhpcyBpc3N1
-ZSBpcyBFeHlub3Mgc3BlY2lmaWMgb3IgdGhlcmUgYXJlCj4+PiBzb21lIHBhdGNoZXMgbWlzc2lu
-ZyBpbiBsaW51eC1uZXh0LCB3aGljaCBzaG91bGQgZml4IHRob3NlICdCVUdTJy4KPj4+IElmIHRo
-aXMgaXMgRXh5bm9zIHNwZWNpZmljLCBwbGVhc2UgbGV0IHVzIGtub3cgd2hhdCBzaG91bGQgYmUg
-Y2hhbmdlZAo+Pj4gaW4gRXh5bm9zIHBsYXRmb3JtIGNvZGUgdG8gYXZvaWQgdGhpcyBpc3N1ZS4K
-Pj4gVGhhbmtzIGZvciB0aGUgcmVwb3J0Lgo+Pgo+PiBJdCBsb29rcyBsaWtlIG15IHNvbHV0aW9u
-IGZvciBiaWcuTGl0dGxlIGlzbid0IHBvc3NpYmxlLi4uIGJhY2sgdG8KPj4gdGhlIGRyYXdpbmcg
-Ym9hcmQsIGFuZCBiaWcuTGl0dGxlIHdpbGwgaGF2ZSB0byByZW1haW4gdnVsbmVyYWJsZSB0bwo+
-PiBTcGVjdHJlIGZvciBhbm90aGVyIHJlbGVhc2UgY3ljbGUuCj4gSSd2ZSBwdXNoZWQgb3V0IGEg
-bmV3IHZlcnNpb24gaW4gbXkgYnVpbGQgYnJhbmNoIGZvciB0aGUgYXV0b2J1aWxkZXJzCj4gdG8g
-Y2hldyBvbiwgYnV0IEkndmUgbGl0dGxlIGNvbmZpZGVuY2UgaW4gdmFsaWRhdGluZyB0aGF0IHRo
-ZSBwcm9ibGVtCj4gaXMgZml4ZWQgYmVjYXVzZSB0aGUgYm9vdCByZXN1bHRzIGFyZSBjb21wbGV0
-ZWx5IHVucmVsaWFibGUuCj4KPiBJdCByZWFsbHkgZG9lc24ndCBoZWxwIHRoYXQga2VybmVsY2ku
-b3JnIGZsYWdzIGJvb3QgbG9ncyBhcyAiZ3JlZW4iCj4gYW5kICJzdWNjZXNzZnVsIiB3aGVuIHRo
-ZXkgY29udGFpbiBzdWNoIHN0dWZmIGFzOgo+Cj4gMDE6MDg6NDAuMTgxODQ2ICBbICAgIDkuMzA5
-OTg0XSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBwYWdpbmcgcmVxdWVzdCBhdCB2aXJ0dWFsIGFk
-ZHJlc3MgZTdmZGRlZjAKPgo+IHdoaWNoIGlzIHRoZSBrZXJuZWwgaGl0dGluZyBhIEJVRygpIC0g
-Zm9yIHRoZSBmdWxsIGxvZywgc2VlOgo+Cj4gaHR0cHM6Ly9zdG9yYWdlLmtlcm5lbGNpLm9yZy9y
-bWsvdG8tYnVpbGQvdjQuMTYtMzgtZzlmYTEwNDQ2ZDMwNC9hcm0vbXVsdGlfdjdfZGVmY29uZmln
-L2xhYi1jb2xsYWJvcmEvYm9vdC1leHlub3M1ODAwLXBlYWNoLXBpLmh0bWwKPgo+IFRoaXMgbWVh
-bnMgdGhlIG9ubHkgd2F5IHRvIGNoZWNrIGlzIHRvIF9tYW51YWxseV8gZ28gdGhyb3VnaCByZWFk
-aW5nCj4gZWFjaCBhbmQgZXZlcnkgYm9vdCBsb2cgLSB0byBzZWUgaWYgeW91ciByZXBvcnRlZCBC
-VUc6IG1lc3NhZ2VzIGFyZQo+IHRoZXJlIC0gbm8gdGhhbmtzLgo+Cj4gSWYga2VybmVsY2kgdGhp
-bmtzIHRoYXQgYSBib290IHdoaWNoIGhpdHMgYSBrZXJuZWwgQlVHKCksIGJ1dCBzdGlsbAo+IG1h
-bmFnZXMgdG8gZ2V0IHRvIGEgc2hlbGwgcHJvbXB0IGlzIHN1Y2Nlc3NmdWwsIGl0J3MgZ2l2aW5n
-IHZlcnkKPiBtaXNsZWFkaW5nIGJvb3QgcmVzdWx0cy4gIFdoYXQgYWJvdXQgYSBXQVJOX09OKCkg
-b3IgYW4gb29wcyB0aGF0Cj4gc3RpbGwgYWxsb3dzIGl0IHRvIHJlYWNoIGEgc2hlbGwgcHJvbXB0
-Lgo+Cj4gWWVzLCB0aGVzZSBtYXkgYmUgInN1Y2Nlc3NmdWwiIGluIHNvIGZhciBhcyByZWFjaGlu
-ZyB0aGUgc2hlbGwgcHJvbXB0LAo+IGJ1dCB0aGV5IHNob3VsZCBhdCBsZWFzdCBiZSBmbGFnZ2Vk
-IGZvciBmdXJ0aGVyIGluc3BlY3Rpb24sIG5vdAo+IGVmZmVjdGl2ZWx5IG1hcmtlZCBhcyAidGhl
-cmUgaXMgbm90aGluZyB3cm9uZyBoZXJlIi4KCkkndmUgcnVuIG15IG93biB0ZXN0cyBvbiB2YXJp
-b3VzIEV4eW5vcyBTb0MgYmFzZWQgYm9hcmRzIGFuZCB5b3VyCidmb3ItbmV4dCcgYnJhbmNoIHdv
-cmtzIGZpbmUgYW5kIGRvbid0IGNhdXNlIGFueSByZWdyZXNzaW9ucy4KCkJlc3QgcmVnYXJkcwot
-LSAKTWFyZWsgU3p5cHJvd3NraSwgUGhEClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
-a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
-aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
-bmVsCg==
+On Wed, Oct 31, 2018 at 04:21:30PM +0100, Marek Szyprowski wrote:
+> Hi Russell,
+> =
+
+> On 2018-10-30 11:50, Russell King - ARM Linux wrote:
+> > On Fri, Oct 05, 2018 at 10:46:19AM +0100, Russell King - ARM Linux wrot=
+e:
+> >> On Fri, Oct 05, 2018 at 11:09:40AM +0200, Marek Szyprowski wrote:
+> >>> This patch causes lots of kernel 'BUG' messages on all Samsung Exynos
+> >>> boards.=A0 It started to appear since it has been merged to linux-next
+> >>> on 20181002.=A0 I wonder if this issue is Exynos specific or there are
+> >>> some patches missing in linux-next, which should fix those 'BUGS'.
+> >>> If this is Exynos specific, please let us know what should be changed
+> >>> in Exynos platform code to avoid this issue.
+> >> Thanks for the report.
+> >>
+> >> It looks like my solution for big.Little isn't possible... back to
+> >> the drawing board, and big.Little will have to remain vulnerable to
+> >> Spectre for another release cycle.
+> > I've pushed out a new version in my build branch for the autobuilders
+> > to chew on, but I've little confidence in validating that the problem
+> > is fixed because the boot results are completely unreliable.
+> >
+> > It really doesn't help that kernelci.org flags boot logs as "green"
+> > and "successful" when they contain such stuff as:
+> >
+> > 01:08:40.181846  [    9.309984] Unable to handle kernel paging request =
+at virtual address e7fddef0
+> >
+> > which is the kernel hitting a BUG() - for the full log, see:
+> >
+> > https://storage.kernelci.org/rmk/to-build/v4.16-38-g9fa10446d304/arm/mu=
+lti_v7_defconfig/lab-collabora/boot-exynos5800-peach-pi.html
+> >
+> > This means the only way to check is to _manually_ go through reading
+> > each and every boot log - to see if your reported BUG: messages are
+> > there - no thanks.
+> >
+> > If kernelci thinks that a boot which hits a kernel BUG(), but still
+> > manages to get to a shell prompt is successful, it's giving very
+> > misleading boot results.  What about a WARN_ON() or an oops that
+> > still allows it to reach a shell prompt.
+> >
+> > Yes, these may be "successful" in so far as reaching the shell prompt,
+> > but they should at least be flagged for further inspection, not
+> > effectively marked as "there is nothing wrong here".
+> =
+
+> I've run my own tests on various Exynos SoC based boards and your
+> 'for-next' branch works fine and don't cause any regressions.
+
+The code isn't in for-next because we're in a merge window, and
+linux-next is supposed to be stable for the duration of that, only
+accepting bug fixes.
+
+It was added briefly to for-next (carefully timed and discussed
+with Stephen to ensure it didn't appear in linux-next), to try
+and get fuller builder coverage, which is when the above issue was
+found.
+
+If you want to test, please use its separate branch, 'spectre'.
+Thanks.
+
+-- =
+
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps =
+up
+According to speedtest.net: 11.9Mbps down 500kbps up
