@@ -1,80 +1,73 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH 5/5] ARM: spectre-v2: per-CPU vtables to work around
- big.Little systems
-Date: Tue, 30 Oct 2018 10:50:18 +0000
-Message-ID: <20181030105017.GK30658@n2100.armlinux.org.uk>
-References: <20180919094802.GH30658@n2100.armlinux.org.uk>
- <CGME20180919095028epcas3p3e1a927bb7e88c6891d43abfdc51603e7@epcas3p3.samsung.com>
- <E1g2Z6e-0003es-CI@rmk-PC.armlinux.org.uk>
- <20181005090941eucas1p14031cd38d78e9d561975925bf977727d~aq0-OFZeE1866318663eucas1p1b@eucas1p1.samsung.com>
- <20181005094618.GG30658@n2100.armlinux.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 1/2] drm/exynos/dsi: register connector if it is
+ created after drm bind
+Date: Wed, 31 Oct 2018 08:32:12 +0100
+Message-ID: <2721050a-5e1b-dacc-1e56-c7bfb8349d37@samsung.com>
+References: <20181026101328.26242-1-a.hajda@samsung.com>
+ <CGME20181026104009eucas1p106dab69d3da0a9fc3381f45fb8c02989@eucas1p1.samsung.com>
+ <20181026104003.30736-1-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20181005094618.GG30658@n2100.armlinux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, info@kernelci.org
-Cc: Mark Rutland <mark.rutland@arm.com>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Julien Thierry <julien.thierry@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Morten Rasmussen <Morten.Rasmussen@arm.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-arm-kernel@lists.infradead.org, Qais Yousef <Qais.Yousef@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20181026104003.30736-1-a.hajda@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 10:46:19AM +0100, Russell King - ARM Linux wrote:
-> On Fri, Oct 05, 2018 at 11:09:40AM +0200, Marek Szyprowski wrote:
-> > This patch causes lots of kernel 'BUG' messages on all Samsung Exynos
-> > boards.=A0 It started to appear since it has been merged to linux-next
-> > on 20181002.=A0 I wonder if this issue is Exynos specific or there are
-> > some patches missing in linux-next, which should fix those 'BUGS'.
-> > If this is Exynos specific, please let us know what should be changed
-> > in Exynos platform code to avoid this issue.
-> =
-
-> Thanks for the report.
-> =
-
-> It looks like my solution for big.Little isn't possible... back to
-> the drawing board, and big.Little will have to remain vulnerable to
-> Spectre for another release cycle.
-
-I've pushed out a new version in my build branch for the autobuilders
-to chew on, but I've little confidence in validating that the problem
-is fixed because the boot results are completely unreliable.
-
-It really doesn't help that kernelci.org flags boot logs as "green"
-and "successful" when they contain such stuff as:
-
-01:08:40.181846  [    9.309984] Unable to handle kernel paging request at v=
-irtual address e7fddef0
-
-which is the kernel hitting a BUG() - for the full log, see:
-
-https://storage.kernelci.org/rmk/to-build/v4.16-38-g9fa10446d304/arm/multi_=
-v7_defconfig/lab-collabora/boot-exynos5800-peach-pi.html
-
-This means the only way to check is to _manually_ go through reading
-each and every boot log - to see if your reported BUG: messages are
-there - no thanks.
-
-If kernelci thinks that a boot which hits a kernel BUG(), but still
-manages to get to a shell prompt is successful, it's giving very
-misleading boot results.  What about a WARN_ON() or an oops that
-still allows it to reach a shell prompt.
-
-Yes, these may be "successful" in so far as reaching the shell prompt,
-but they should at least be flagged for further inspection, not
-effectively marked as "there is nothing wrong here".
-
--- =
-
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps =
-up
-According to speedtest.net: 11.9Mbps down 500kbps up
+SGksCgpPbiAyMDE4LTEwLTI2IDEyOjQwLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+IERTSSBkZXZp
+Y2UgY2FuIGJlIGF0dGFjaGVkIGFmdGVyIERSTSBkZXZpY2UgaXMgcmVnaXN0ZXJlZC4gSW4gc3Vj
+aAo+IGNhc2UgbmV3bHkgY3JlYXRlZCBjb25uZWN0b3IgbXVzdCBiZSByZWdpc3RlcmVkIGJ5IGV4
+eW5vc19kc2kuCj4gVGhlIHBhdGNoIGZpeGVzIGV4eW5vc19kcm0gb24gcmluYXRvIGFuZCB0cmF0
+cyBib2FyZHMuCj4KPiBGaXhlczogNmFmYjc3MjFlMmEwICgiZHJtL2V4eW5vczogbW92ZSBjb25u
+ZWN0b3IgY3JlYXRpb24gdG8gYXR0YWNoIGNhbGxiYWNrIikKPiBSZXBvcnRlZC1ieTogTWFyZWsg
+U3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IFNpZ25lZC1vZmYtYnk6IEFu
+ZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cgp2MiBmaXhlcyB0aGUgY29ubmVjdG9y
+IHJlZ2lzdHJhdGlvbiBwcm9ibGVtIG9uIFJpbmF0byBhbmQgVHJhdHMgYm9hcmQuClRoYW5rcyEK
+ClRlc3RlZC1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgoK
+PiAtLS0KPiBIaSwKPgo+IER1cmluZyBqdXN0LWJlZm9yZS1zZW5kIGFkanVzdGVtZW50cyBJIGhh
+dmUgbWFkZSBob3JyaWJsZSB0eXBvIHNvIHRoZXJlIGlzIHYyLgo+Cj4gdjI6Cj4gIC0gZml4ZWQg
+aWYgY29uZGl0aW9uCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
+c2kuYyB8IDEwICsrKysrKysrLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwg
+MiBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHNpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMK
+PiBpbmRleCAwN2FmNzc1ODA2NmQuLmVmNWYxOWIwODRhNiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiBAQCAtMTQsNiArMTQsNyBAQAo+ICAKPiAgI2luY2x1
+ZGUgPGRybS9kcm1QLmg+Cj4gICNpbmNsdWRlIDxkcm0vZHJtX2NydGNfaGVscGVyLmg+Cj4gKyNp
+bmNsdWRlIDxkcm0vZHJtX2ZiX2hlbHBlci5oPgo+ICAjaW5jbHVkZSA8ZHJtL2RybV9taXBpX2Rz
+aS5oPgo+ICAjaW5jbHVkZSA8ZHJtL2RybV9wYW5lbC5oPgo+ICAjaW5jbHVkZSA8ZHJtL2RybV9h
+dG9taWNfaGVscGVyLmg+Cj4gQEAgLTE0NzQsMTIgKzE0NzUsMTIgQEAgc3RhdGljIGludCBleHlu
+b3NfZHNpX2NyZWF0ZV9jb25uZWN0b3Ioc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyKQo+ICB7
+Cj4gIAlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpID0gZW5jb2Rlcl90b19kc2koZW5jb2Rlcik7Cj4g
+IAlzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yID0gJmRzaS0+Y29ubmVjdG9yOwo+ICsJ
+c3RydWN0IGRybV9kZXZpY2UgKmRybSA9IGVuY29kZXItPmRldjsKPiAgCWludCByZXQ7Cj4gIAo+
+ICAJY29ubmVjdG9yLT5wb2xsZWQgPSBEUk1fQ09OTkVDVE9SX1BPTExfSFBEOwo+ICAKPiAtCXJl
+dCA9IGRybV9jb25uZWN0b3JfaW5pdChlbmNvZGVyLT5kZXYsIGNvbm5lY3RvciwKPiAtCQkJCSAm
+ZXh5bm9zX2RzaV9jb25uZWN0b3JfZnVuY3MsCj4gKwlyZXQgPSBkcm1fY29ubmVjdG9yX2luaXQo
+ZHJtLCBjb25uZWN0b3IsICZleHlub3NfZHNpX2Nvbm5lY3Rvcl9mdW5jcywKPiAgCQkJCSBEUk1f
+TU9ERV9DT05ORUNUT1JfRFNJKTsKPiAgCWlmIChyZXQpIHsKPiAgCQlEUk1fRVJST1IoIkZhaWxl
+ZCB0byBpbml0aWFsaXplIGNvbm5lY3RvciB3aXRoIGRybVxuIik7Cj4gQEAgLTE0ODksNyArMTQ5
+MCwxMiBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfY3JlYXRlX2Nvbm5lY3RvcihzdHJ1Y3QgZHJt
+X2VuY29kZXIgKmVuY29kZXIpCj4gIAljb25uZWN0b3ItPnN0YXR1cyA9IGNvbm5lY3Rvcl9zdGF0
+dXNfZGlzY29ubmVjdGVkOwo+ICAJZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKGNvbm5lY3Rvciwg
+JmV4eW5vc19kc2lfY29ubmVjdG9yX2hlbHBlcl9mdW5jcyk7Cj4gIAlkcm1fY29ubmVjdG9yX2F0
+dGFjaF9lbmNvZGVyKGNvbm5lY3RvciwgZW5jb2Rlcik7Cj4gKwlpZiAoIWRybS0+cmVnaXN0ZXJl
+ZCkKPiArCQlyZXR1cm4gMDsKPiAgCj4gKwljb25uZWN0b3ItPmZ1bmNzLT5yZXNldChjb25uZWN0
+b3IpOwo+ICsJZHJtX2ZiX2hlbHBlcl9hZGRfb25lX2Nvbm5lY3Rvcihkcm0tPmZiX2hlbHBlciwg
+Y29ubmVjdG9yKTsKPiArCWRybV9jb25uZWN0b3JfcmVnaXN0ZXIoY29ubmVjdG9yKTsKPiAgCXJl
+dHVybiAwOwo+ICB9Cj4gIAoKQmVzdCByZWdhcmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQK
+U2Ftc3VuZyBSJkQgSW5zdGl0dXRlIFBvbGFuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
