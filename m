@@ -1,100 +1,82 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH 5/5] ARM: spectre-v2: per-CPU vtables to work around
- big.Little systems
-Date: Wed, 31 Oct 2018 18:12:27 +0000
-Message-ID: <20181031181227.GM30658@n2100.armlinux.org.uk>
-References: <20180919094802.GH30658@n2100.armlinux.org.uk>
- <CGME20180919095028epcas3p3e1a927bb7e88c6891d43abfdc51603e7@epcas3p3.samsung.com>
- <E1g2Z6e-0003es-CI@rmk-PC.armlinux.org.uk>
- <20181005090941eucas1p14031cd38d78e9d561975925bf977727d~aq0-OFZeE1866318663eucas1p1b@eucas1p1.samsung.com>
- <20181005094618.GG30658@n2100.armlinux.org.uk>
- <20181030105017.GK30658@n2100.armlinux.org.uk>
- <99a5f366-4d96-1069-0638-4e036e57afc8@samsung.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v2 0/8] clk: clkdev: managed clk lookup and provider
+ registrations
+Date: Thu, 1 Nov 2018 09:17:25 +0200
+Message-ID: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <99a5f366-4d96-1069-0638-4e036e57afc8@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Julien Thierry <julien.thierry@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, info@kernelci.org, Morten Rasmussen <Morten.Rasmussen@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-arm-kernel@lists.infradead.org, Qais Yousef <Qais.Yousef@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Russell King <linux@armlinux.org.uk>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Andrey Smirnov <andrew.smirnov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Huang Shijie <sjhuang@iluvatar.ai>, Akshu Agrawal <Akshu.Agrawal@amd.com>R
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, matti.vaittinen@fi.rohmeurope.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 04:21:30PM +0100, Marek Szyprowski wrote:
-> Hi Russell,
-> =
+Patch series adding managed clkdev and of_provider registrations
 
-> On 2018-10-30 11:50, Russell King - ARM Linux wrote:
-> > On Fri, Oct 05, 2018 at 10:46:19AM +0100, Russell King - ARM Linux wrot=
-e:
-> >> On Fri, Oct 05, 2018 at 11:09:40AM +0200, Marek Szyprowski wrote:
-> >>> This patch causes lots of kernel 'BUG' messages on all Samsung Exynos
-> >>> boards.=A0 It started to appear since it has been merged to linux-next
-> >>> on 20181002.=A0 I wonder if this issue is Exynos specific or there are
-> >>> some patches missing in linux-next, which should fix those 'BUGS'.
-> >>> If this is Exynos specific, please let us know what should be changed
-> >>> in Exynos platform code to avoid this issue.
-> >> Thanks for the report.
-> >>
-> >> It looks like my solution for big.Little isn't possible... back to
-> >> the drawing board, and big.Little will have to remain vulnerable to
-> >> Spectre for another release cycle.
-> > I've pushed out a new version in my build branch for the autobuilders
-> > to chew on, but I've little confidence in validating that the problem
-> > is fixed because the boot results are completely unreliable.
-> >
-> > It really doesn't help that kernelci.org flags boot logs as "green"
-> > and "successful" when they contain such stuff as:
-> >
-> > 01:08:40.181846  [    9.309984] Unable to handle kernel paging request =
-at virtual address e7fddef0
-> >
-> > which is the kernel hitting a BUG() - for the full log, see:
-> >
-> > https://storage.kernelci.org/rmk/to-build/v4.16-38-g9fa10446d304/arm/mu=
-lti_v7_defconfig/lab-collabora/boot-exynos5800-peach-pi.html
-> >
-> > This means the only way to check is to _manually_ go through reading
-> > each and every boot log - to see if your reported BUG: messages are
-> > there - no thanks.
-> >
-> > If kernelci thinks that a boot which hits a kernel BUG(), but still
-> > manages to get to a shell prompt is successful, it's giving very
-> > misleading boot results.  What about a WARN_ON() or an oops that
-> > still allows it to reach a shell prompt.
-> >
-> > Yes, these may be "successful" in so far as reaching the shell prompt,
-> > but they should at least be flagged for further inspection, not
-> > effectively marked as "there is nothing wrong here".
-> =
+Few clk drivers appear to be leaking clkdev lookup registrations at
+driver remove. The patch series adds devm versions of lookup
+registrations and cleans up few drivers. Driver clean-up patches have
+not been tested as I lack the HW. All testing and comments if
+driver/device removal is even possible for changed drivers is highly
+appreciated. If removal is not possible I will gladly drop the patches
+from series - although leaking lookups may serve as bad example for new
+developers =)
 
-> I've run my own tests on various Exynos SoC based boards and your
-> 'for-next' branch works fine and don't cause any regressions.
+Changed drivers are:
+clk-max77686, clk-s3c2410-dclk, clk-st, clk-hi655x, rk808, clk-twl6040
+and apcs-msm8916.
 
-The code isn't in for-next because we're in a merge window, and
-linux-next is supposed to be stable for the duration of that, only
-accepting bug fixes.
+New devm registration variants have been tested on BeagleBoneBlack
+using ROHM BD71837 PMIC driver.
 
-It was added briefly to for-next (carefully timed and discussed
-with Stephen to ensure it didn't appear in linux-next), to try
-and get fuller builder coverage, which is when the above issue was
-found.
+Same devm variants were earlier proposed together with BD71837/BD71847
+PMIC clk driver in this series:
+https://lore.kernel.org/linux-clk/cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com/
 
-If you want to test, please use its separate branch, 'spectre'.
-Thanks.
+The BD71837/BD71847 work is currently pending for related MFD commits to
+get merged in clk-tree and the devm functions are now submitted in this
+series.
 
--- =
+Changelog v2
+Issue spotted by 0-Day test suite
+- Add a stub function 'devm_of_clk_add_parent_hw_provider' for no OF config.
+- patches 2-8 are unchanged.
 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps =
-up
-According to speedtest.net: 11.9Mbps down 500kbps up
+This patch series is based on clk-next
+
+---
+
+Matti Vaittinen (8):
+  clk: clkdev/of_clk - add managed lookup and provider registrations
+  clk: clk-max77686: Clean clkdev lookup leak and use devm
+  clk: clk-s3c2410-dclk: clean up clkdev lookup leak
+  clk: clk-st: avoid clkdev lookup leak at remove
+  clk: clk-hi655x: Free of_provider at remove
+  clk: rk808: use managed version of of_provider registration
+  clk: clk-twl6040: Free of_provider at remove
+  clk: apcs-msm8916: simplify probe cleanup by using devm
+
+ Documentation/driver-model/devres.txt  |   3 +
+ drivers/clk/clk-hi655x.c               |   4 +-
+ drivers/clk/clk-max77686.c             |  25 ++-----
+ drivers/clk/clk-rk808.c                |  15 +---
+ drivers/clk/clk-twl6040.c              |   5 +-
+ drivers/clk/clk.c                      |  28 ++++++--
+ drivers/clk/clkdev.c                   | 122 ++++++++++++++++++++++++++-------
+ drivers/clk/qcom/apcs-msm8916.c        |   5 +-
+ drivers/clk/samsung/clk-s3c2410-dclk.c |  15 ++--
+ drivers/clk/x86/clk-st.c               |   3 +-
+ include/linux/clk-provider.h           |  11 +++
+ include/linux/clkdev.h                 |   4 ++
+ 12 files changed, 158 insertions(+), 82 deletions(-)
+
+-- 
+2.14.3
+
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
