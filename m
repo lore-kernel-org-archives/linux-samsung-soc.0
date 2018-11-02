@@ -1,48 +1,60 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: [PATCH v2 8/8] clk: apcs-msm8916: simplify probe cleanup by using
- devm
-Date: Thu, 1 Nov 2018 09:21:51 +0200
-Message-ID: <2e6cd9f1afae4f9e1216a6178a6987b11614f9c7.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 2/8] clk: clk-max77686: Clean clkdev lookup leak and
+ use devm
+Date: Fri, 2 Nov 2018 09:15:17 +0100
+Message-ID: <CAJKOXPd=E+S3j3XnpCVRs3JdStY2z+pHe0bh_HNzQTmJW_dH=Q@mail.gmail.com>
+References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com> <83e985f2f60a68f89fac777aa29c55b1edb8769f.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <83e985f2f60a68f89fac777aa29c55b1edb8769f.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Russell King <linux@armlinux.org.uk>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Andrey Smirnov <andrew.smirnov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Huang Shijie <sjhuang@iluvatar.ai>, Akshu Agrawal <Akshu.Agrawal@amd.com>R
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, matti.vaittinen@fi.rohmeurope.com
+To: matti.vaittinen@fi.rohmeurope.com
+Cc: corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org, kgene@kernel.org, s.nawrocki@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, andrew.smirnov@gmail.com, sre@kernel.org, linux@roeck-us.net, robh@kernel.org, sjhuang@iluvatar.ai, Akshu.Agrawal@amd.com, rafael.j.wysocki@intel.com, djkurtz@chromium.org, mazziesaccount@gmail.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-use devm variant for of_provider registration.
+On Thu, 1 Nov 2018 at 08:19, Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
+>
+> clk-max77686 never clean clkdev lookup at remove. This can cause
+> oops if clk-max77686 is removed and inserted again. Fix leak by
+> using new devm clkdev lookup registration. Simplify also error
+> path by using new devm_of_clk_add_parent_hw_provider.
+>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/clk/clk-max77686.c | 25 ++++---------------------
+>  1 file changed, 4 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+> index 02551fe4b87c..b1920c1d9b76 100644
+> --- a/drivers/clk/clk-max77686.c
+> +++ b/drivers/clk/clk-max77686.c
+> @@ -235,7 +235,7 @@ static int max77686_clk_probe(struct platform_device *pdev)
+>                         return ret;
+>                 }
+>
+> -               ret = clk_hw_register_clkdev(&max_clk_data->hw,
+> +               ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
+>                                              max_clk_data->clk_idata.name, NULL);
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/qcom/apcs-msm8916.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+You need to re-align the next line.
 
-diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
-index b1cc8dbcd327..f4e0c136ab1a 100644
---- a/drivers/clk/qcom/apcs-msm8916.c
-+++ b/drivers/clk/qcom/apcs-msm8916.c
-@@ -96,8 +96,8 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
--	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
--				     &a53cc->clkr.hw);
-+	ret = devm_of_clk_add_parent_hw_provider(dev, of_clk_hw_simple_get,
-+						 &a53cc->clkr.hw);
- 	if (ret) {
- 		dev_err(dev, "failed to add clock provider: %d\n", ret);
- 		goto err;
-@@ -118,7 +118,6 @@ static int qcom_apcs_msm8916_clk_remove(struct platform_device *pdev)
- 	struct device *parent = pdev->dev.parent;
- 
- 	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
--	of_clk_del_provider(parent->of_node);
- 
- 	return 0;
- }
--- 
-2.14.3
+>                 if (ret < 0) {
+>                         dev_err(dev, "Failed to clkdev register: %d\n", ret);
+> @@ -244,8 +244,8 @@ static int max77686_clk_probe(struct platform_device *pdev)
+>         }
+>
+>         if (parent->of_node) {
+> -               ret = of_clk_add_hw_provider(parent->of_node, of_clk_max77686_get,
+> -                                            drv_data);
+> +               ret = devm_of_clk_add_parent_hw_provider(dev,
+> +                                               of_clk_max77686_get, drv_data);
+
+The same, please.
+
+Rest looks good, so with these changes:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
