@@ -1,7 +1,8 @@
 From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: [PATCH v3 6/7] clk: clk-twl6040: Free of_provider at remove
-Date: Fri, 2 Nov 2018 14:37:58 +0200
-Message-ID: <855d60c35f092de196b131838fe0b07e9d3080d3.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v3 7/7] clk: apcs-msm8916: simplify probe cleanup by using
+ devm
+Date: Fri, 2 Nov 2018 14:38:27 +0200
+Message-ID: <fa3bfb55703033b39dd7454cb49706fd3a3d43ee.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -13,29 +14,35 @@ To: Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, matti.vaittinen@fi.rohmeurope.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-use devm variant for of_provider registration so provider is freed
-at exit.
+use devm variant for of_provider registration.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/clk/clk-twl6040.c | 5 ++---
+ drivers/clk/qcom/apcs-msm8916.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
-index 25dfe050ae9f..e9da09453eb2 100644
---- a/drivers/clk/clk-twl6040.c
-+++ b/drivers/clk/clk-twl6040.c
-@@ -108,9 +108,8 @@ static int twl6040_pdmclk_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
+index b1cc8dbcd327..f4e0c136ab1a 100644
+--- a/drivers/clk/qcom/apcs-msm8916.c
++++ b/drivers/clk/qcom/apcs-msm8916.c
+@@ -96,8 +96,8 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
  
- 	platform_set_drvdata(pdev, clkdata);
+-	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
+-				     &a53cc->clkr.hw);
++	ret = devm_of_clk_add_parent_hw_provider(dev, of_clk_hw_simple_get,
++						 &a53cc->clkr.hw);
+ 	if (ret) {
+ 		dev_err(dev, "failed to add clock provider: %d\n", ret);
+ 		goto err;
+@@ -118,7 +118,6 @@ static int qcom_apcs_msm8916_clk_remove(struct platform_device *pdev)
+ 	struct device *parent = pdev->dev.parent;
  
--	return of_clk_add_hw_provider(pdev->dev.parent->of_node,
--				      of_clk_hw_simple_get,
--				      &clkdata->pdmclk_hw);
-+	return devm_of_clk_add_parent_hw_provider(&pdev->dev,
-+			of_clk_hw_simple_get, &clkdata->pdmclk_hw);
+ 	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
+-	of_clk_del_provider(parent->of_node);
+ 
+ 	return 0;
  }
- 
- static struct platform_driver twl6040_pdmclk_driver = {
 -- 
 2.14.3
