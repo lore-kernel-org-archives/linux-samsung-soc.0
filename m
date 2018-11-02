@@ -1,78 +1,83 @@
 From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [PATCH v2 2/8] clk: clk-max77686: Clean clkdev lookup leak and
- use devm
-Date: Fri, 2 Nov 2018 13:04:45 +0200
-Message-ID: <20181102110445.GC29664@localhost.localdomain>
-References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
- <83e985f2f60a68f89fac777aa29c55b1edb8769f.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
- <CAJKOXPd=E+S3j3XnpCVRs3JdStY2z+pHe0bh_HNzQTmJW_dH=Q@mail.gmail.com>
+Subject: [PATCH v3 0/7] clk: clkdev: managed clk lookup and provider
+ registrations
+Date: Fri, 2 Nov 2018 14:34:26 +0200
+Message-ID: <cover.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPd=E+S3j3XnpCVRs3JdStY2z+pHe0bh_HNzQTmJW_dH=Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org, kgene@kernel.org, s.nawrocki@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, andrew.smirnov@gmail.com, sre@kernel.org, linux@roeck-us.net, robh@kernel.org, sjhuang@iluvatar.ai, Akshu.Agrawal@amd.com, rafael.j.wysocki@intel.com, djkurtz@chromium.org, mazziesaccount@gmail.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Russell King <linux@armlinux.org.uk>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Andrey Smirnov <andrew.smirnov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Huang Shijie <sjhuang@iluvatar.ai>, Akshu Agrawal <Akshu.Agrawal@amd.com>R
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, matti.vaittinen@fi.rohmeurope.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Thanks for taking the time and reviewing this!
+Patch series adding managed clkdev and of_provider registrations
 
-On Fri, Nov 02, 2018 at 09:15:17AM +0100, Krzysztof Kozlowski wrote:
-> On Thu, 1 Nov 2018 at 08:19, Matti Vaittinen
-> <matti.vaittinen@fi.rohmeurope.com> wrote:
-> >
-> > clk-max77686 never clean clkdev lookup at remove. This can cause
-> > oops if clk-max77686 is removed and inserted again. Fix leak by
-> > using new devm clkdev lookup registration. Simplify also error
-> > path by using new devm_of_clk_add_parent_hw_provider.
-> >
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  drivers/clk/clk-max77686.c | 25 ++++---------------------
-> >  1 file changed, 4 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-> > index 02551fe4b87c..b1920c1d9b76 100644
-> > --- a/drivers/clk/clk-max77686.c
-> > +++ b/drivers/clk/clk-max77686.c
-> > @@ -235,7 +235,7 @@ static int max77686_clk_probe(struct platform_device *pdev)
-> >                         return ret;
-> >                 }
-> >
-> > -               ret = clk_hw_register_clkdev(&max_clk_data->hw,
-> > +               ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
-> >                                              max_clk_data->clk_idata.name, NULL);
-> 
-> You need to re-align the next line.
+Few clk drivers appear to be leaking clkdev lookup registrations at
+driver remove. The patch series adds devm versions of lookup
+registrations and cleans up few drivers. Driver clean-up patches have
+not been tested as I lack the HW. All testing and comments if
+driver/device removal is even possible for changed drivers is highly
+appreciated. If removal is not possible I will gladly drop the patches
+from series - although leaking lookups may serve as bad example for new
+developers =)
 
-I'll change this to
-		ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
-						  max_clk_data->clk_idata.name,
-						  NULL);
-> >                 if (ret < 0) {
-> >                         dev_err(dev, "Failed to clkdev register: %d\n", ret);
-> > @@ -244,8 +244,8 @@ static int max77686_clk_probe(struct platform_device *pdev)
-> >         }
-> >
-> >         if (parent->of_node) {
-> > -               ret = of_clk_add_hw_provider(parent->of_node, of_clk_max77686_get,
-> > -                                            drv_data);
-> > +               ret = devm_of_clk_add_parent_hw_provider(dev,
-> > +                                               of_clk_max77686_get, drv_data);
-> 
-> The same, please.
+Changed drivers are:
+clk-max77686, clk-st, clk-hi655x, rk808, clk-twl6040
+and apcs-msm8916.
 
-I will change this to 
-		ret = devm_of_clk_add_parent_hw_provider(dev,
-							 of_clk_max77686_get,
-							 drv_data);
-> 
-> Rest looks good, so with these changes:
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Best regards,
-> Krzysztof
+New devm registration variants have been tested on BeagleBoneBlack
+using ROHM BD71837 PMIC driver.
+
+Same devm variants were earlier proposed together with BD71837/BD71847
+PMIC clk driver in this series:
+https://lore.kernel.org/linux-clk/cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com/
+
+The BD71837/BD71847 work is currently pending for related MFD commits to
+get merged in clk-tree and the devm functions are now submitted in this
+series.
+
+Changelog v3
+Address issues spotted by Krzysztof Kozlowski
+- Drop patch 3 for clk-s3c2410-dclk as this device can never be removed
+- Fix indentiation for clk-max77686
+- Rest  of the patches are unchanged.
+
+Changelog v2
+Issue spotted by 0-Day test suite
+- Add a stub function 'devm_of_clk_add_parent_hw_provider' for no OF config.
+- patches 2-8 are unchanged.
+
+This patch series is based on clk-next
+
+---
+
+Matti Vaittinen (7):
+  clk: clkdev/of_clk - add managed lookup and provider registrations
+  clk: clk-max77686: Clean clkdev lookup leak and use devm
+  clk: clk-st: avoid clkdev lookup leak at remove
+  clk: clk-hi655x: Free of_provider at remove
+  clk: rk808: use managed version of of_provider registration
+  clk: clk-twl6040: Free of_provider at remove
+  clk: apcs-msm8916: simplify probe cleanup by using devm
+
+ Documentation/driver-model/devres.txt |   3 +
+ drivers/clk/clk-hi655x.c              |   4 +-
+ drivers/clk/clk-max77686.c            |  29 ++------
+ drivers/clk/clk-rk808.c               |  15 +----
+ drivers/clk/clk-twl6040.c             |   5 +-
+ drivers/clk/clk.c                     |  28 ++++++--
+ drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++++--------
+ drivers/clk/qcom/apcs-msm8916.c       |   5 +-
+ drivers/clk/x86/clk-st.c              |   3 +-
+ include/linux/clk-provider.h          |  11 +++
+ include/linux/clkdev.h                |   4 ++
+ 11 files changed, 153 insertions(+), 76 deletions(-)
+
+-- 
+2.14.3
+
 
 -- 
 Matti Vaittinen
