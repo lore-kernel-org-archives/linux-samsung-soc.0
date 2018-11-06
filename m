@@ -1,63 +1,31 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Mon, 05 Nov 2018 17:48:53 +0900
-Message-ID: <1541407733-7632-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20181105084853epcas2p4da21de0c2b4eea224eafa33ad2927322@epcas2p4.samsung.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 6/8] clk: s2mps11: constify clk_ops structure
+Date: Tue, 06 Nov 2018 09:43:44 -0800
+Message-ID: <154152622426.88331.17363838226504925494@swboyd.mtv.corp.google.com>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Sangbeom Kim <sbkim73@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3QgdGhyZWUgcmVncmVzc2lvbiBmaXh1cHMgLSBmaXggZXh0ZW5zaW9u
-IGFuZCBjbG9uZSBtb2RlIGlzc3VlLAogICBmaXggbGFjayBvZiBmYmRldiBvbiBSaW5hdG8gYW5k
-IHRyYXRzIGJvYXJkcywgYW5kIGNoZWNrIGZvciBkc2ktPnBhbmVsCiAgIG9iamVjdCBjb3JyZWN0
-bFkuCgogICBQbGVhc2Uga2luZGVseSBsZXQgbWUga25vdyBpZiB0aGVyZSBpcyBhbnkgcHJvYmxl
-bS4KClRoYW5rcywKSW5raSBEYWUKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQg
-NjUxMDIyMzgyYzdmOGRhNDZjYjQ4NzJhNTQ1ZWUxZGE2ZDA5N2QyYToKCiAgTGludXggNC4yMC1y
-YzEgKDIwMTgtMTEtMDQgMTU6Mzc6NTIgLTA4MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQg
-cmVwb3NpdG9yeSBhdDoKCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJu
-ZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcyB0YWdzL2V4eW5vcy1kcm0tZml4ZXMtZm9yLXY0LjIw
-LXJjMgoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDk4OTUzNGNmY2FjODlmOTI3ZmE0
-NmIxZTA4NjFkOTJmZmJkMmM3ZTQ6CgogIGRybS9leHlub3MvZmJkZXY6IGRvIG5vdCBza2lwIGZi
-ZGV2IGluaXQgaWYgdGhlcmUgYXJlIG5vIGNvbm5lY3RvcnMgKDIwMTgtMTEtMDUgMTY6Mzc6MjQg
-KzA5MDApCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tClRocmVlIHJlZ3Jlc3Npb25zCi0gUmV2ZXJ0IGZyYW1lIGNvdW50ZXIg
-c3VwcG9ydAogIC4gVGhpcyBwYXRjaCBmaXhlcyBhIGlzc3VlIHdoaWNoIGRvZXNuJ3Qgd29yayBl
-eHRlbnNpb24gYW5kIGNsb25lCiAgICBtb2RlIGJlY2F1c2Ugc29tZSBDUlRDIGRldmljZXMgZG9u
-J3QgcHJvdmlkZSBmcmFtZSBjb3VudGVyIHZhbHVlCiAgICBwcm9wZXJseS4KLSBGaXggbGFjayBv
-ZiBmYmRldiBvbiBSaW5hdG8gYW5kIHRyYXRzIGJvYXJkcy4KICAuIFRoaXMgcGF0Y2ggY29uc2lk
-ZXJzIGZvciBjb25uZWN0b3IgdG8gYmUgcmVnaXN0ZXJlZCBieSBEU0kgYWZ0ZXIKICAgIERSTSBk
-ZXZpY2UgaXMgcmVnaXN0ZXJlZCwgYW5kIGFsc28gaXQgbWFrZXMgZmJkZXYgaW5pdGlhbGl6YWlv
-bgogICAgdG8gYmUgZG9uZSBldmVuIGlmIG5vIGNvbm5lY3RvciBhdCB0aGUgbW9tZW50LgotIENo
-ZWNrIGZvciBkc2ktPnBhbmVsIG9iamVjdCBjb3JyZWN0bHkKICAuIFRoaXMgcGF0Y2ggZml4ZXMg
-Y2hlY2tpbmcgZm9yIGRzaS0+cGFuZWwuIG9mX2RybV9maW5kX3BhbmVsCiAgICBmdW5jdGlvbiBy
-ZXR1cm5zIHBhbmVsIG9iamVjdCBvciBlcnJvciB2YWx1ZSBzbyBlcnJvciB2YWx1ZQogICAgc2hv
-dWxkIGJlIGNoZWNrZWQgdXNpbmcgSVNfRVJSIG1hY3JvLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpBbmRyemVqIEhhamRh
-ICgyKToKICAgICAgZHJtL2V4eW5vcy9kc2k6IHJlZ2lzdGVyIGNvbm5lY3RvciBpZiBpdCBpcyBj
-cmVhdGVkIGFmdGVyIGRybSBiaW5kCiAgICAgIGRybS9leHlub3MvZmJkZXY6IGRvIG5vdCBza2lw
-IGZiZGV2IGluaXQgaWYgdGhlcmUgYXJlIG5vIGNvbm5lY3RvcnMKCkRhbiBDYXJwZW50ZXIgKDEp
-OgogICAgICBkcm0vZXh5bm9zOiBjaGVja2luZyBmb3IgTlVMTCBpbnN0ZWFkIG9mIElTX0VSUigp
-CgpJbmtpIERhZSAoMSk6CiAgICAgIFJldmVydCAiZHJtL2V4eW5vcy9kZWNvbjU0MzM6IGltcGxl
-bWVudCBmcmFtZSBjb3VudGVyIgoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19k
-cm1fZGVjb24uYyB8ICA5IC0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2NydGMuYyAgICAgIHwgMTEgLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9kcnYuaCAgICAgICB8ICAxIC0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kc2kuYyAgICAgICB8IDE0ICsrKysrKysrKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYyAgICAgfCAgMiArLQogNSBmaWxlcyBjaGFuZ2VkLCAx
-MiBpbnNlcnRpb25zKCspLCAyNSBkZWxldGlvbnMoLSkKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Quoting Julia Lawall (2018-10-26 22:47:40)
+> The clk_ops structure is only stored in the ops fields of
+> clk_init_data structures.  This field is const, so the clk_ops
+> structure can be const as well.
+> =
+
+> Identified and transformed using Coccinelle.
+> =
+
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> =
+
+> ---
+
+Applied to clk-next
