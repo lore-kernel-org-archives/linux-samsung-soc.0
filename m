@@ -1,101 +1,64 @@
-From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] cpufreq: s3c24xx: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date: Wed,  7 Nov 2018 11:13:46 -0500
-Message-ID: <20181107161346.9887-1-tiny.windzz@gmail.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH v2 09/11] arm: dts: exynos5420: add support for thermal trip
+ irq-mode
+Date: Wed,  7 Nov 2018 18:09:51 +0100
+Message-ID: <1541610593-28542-10-git-send-email-l.luba@partner.samsung.com>
+References: <1541610593-28542-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181107171044eucas1p198434e21cf21ee754302615a6a8f3c20@eucas1p1.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1541610593-28542-1-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: rui.zhang@intel.com, edubezval@gmail.com, daniel.lezcano@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net, b.zolnierkie@samsung.com, krzk@kernel.org, Lukasz Luba <l.luba@partner.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+This patch adds support for new flag which indicates
+that trip point triggers IRQ when temperature is met.
+Change existing trip points to be expicitly marked with the new flag.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- drivers/cpufreq/s3c24xx-cpufreq-debugfs.c | 46 +++--------------------
- 1 file changed, 6 insertions(+), 40 deletions(-)
+ arch/arm/boot/dts/exynos5420-trip-points.dtsi | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c b/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
-index 4d976e8dbb2f..0df87b6480fe 100644
---- a/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
-+++ b/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
-@@ -63,18 +63,7 @@ static int board_show(struct seq_file *seq, void *p)
- 	return 0;
- }
- 
--static int fops_board_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, board_show, NULL);
--}
--
--static const struct file_operations fops_board = {
--	.open		= fops_board_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--	.owner		= THIS_MODULE,
--};
-+DEFINE_SHOW_ATTRIBUTE(board);
- 
- static int info_show(struct seq_file *seq, void *p)
- {
-@@ -105,18 +94,7 @@ static int info_show(struct seq_file *seq, void *p)
- 	return 0;
- }
- 
--static int fops_info_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, info_show, NULL);
--}
--
--static const struct file_operations fops_info = {
--	.open		= fops_info_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--	.owner		= THIS_MODULE,
--};
-+DEFINE_SHOW_ATTRIBUTE(info);
- 
- static int io_show(struct seq_file *seq, void *p)
- {
-@@ -162,19 +140,7 @@ static int io_show(struct seq_file *seq, void *p)
- 	return 0;
- }
- 
--static int fops_io_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, io_show, NULL);
--}
--
--static const struct file_operations fops_io = {
--	.open		= fops_io_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--	.owner		= THIS_MODULE,
--};
--
-+DEFINE_SHOW_ATTRIBUTE(io);
- 
- static int __init s3c_freq_debugfs_init(void)
- {
-@@ -185,13 +151,13 @@ static int __init s3c_freq_debugfs_init(void)
- 	}
- 
- 	dbgfs_file_io = debugfs_create_file("io-timing", S_IRUGO, dbgfs_root,
--					    NULL, &fops_io);
-+					    NULL, &io_fops);
- 
- 	dbgfs_file_info = debugfs_create_file("info", S_IRUGO, dbgfs_root,
--					      NULL, &fops_info);
-+					      NULL, &info_fops);
- 
- 	dbgfs_file_board = debugfs_create_file("board", S_IRUGO, dbgfs_root,
--					       NULL, &fops_board);
-+					       NULL, &board_fops);
- 
- 	return 0;
- }
+diff --git a/arch/arm/boot/dts/exynos5420-trip-points.dtsi b/arch/arm/boot/dts/exynos5420-trip-points.dtsi
+index a67a3807..9e16970 100644
+--- a/arch/arm/boot/dts/exynos5420-trip-points.dtsi
++++ b/arch/arm/boot/dts/exynos5420-trip-points.dtsi
+@@ -11,21 +11,25 @@ trips {
+ 	cpu-alert-0 {
+ 		temperature = <85000>; /* millicelsius */
+ 		hysteresis = <10000>; /* millicelsius */
+-		type = "active";
++		type = "passive";
++		irq-mode;
+ 	};
+ 	cpu-alert-1 {
+ 		temperature = <103000>; /* millicelsius */
+ 		hysteresis = <10000>; /* millicelsius */
+-		type = "active";
++		type = "passive";
++		irq-mode;
+ 	};
+ 	cpu-alert-2 {
+ 		temperature = <110000>; /* millicelsius */
+ 		hysteresis = <10000>; /* millicelsius */
+-		type = "active";
++		type = "passive";
++		irq-mode;
+ 	};
+ 	cpu-crit-0 {
+ 		temperature = <120000>; /* millicelsius */
+ 		hysteresis = <0>; /* millicelsius */
+ 		type = "critical";
++		irq-mode;
+ 	};
+ };
 -- 
-2.17.0
+2.7.4
