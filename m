@@ -1,30 +1,59 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: EXYNOS: remove no longer needed s3c_pm_check_*()
- calls
-Date: Mon, 12 Nov 2018 21:23:01 +0100
-Message-ID: <20181112202301.GA25275@kozik-lap>
-References: <CGME20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11@eucas1p1.samsung.com>
- <20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11~dzFPt-ZL_1531815318eucas1p1t@eucas1p1.samsung.com>
+Subject: Re: [PATCH v3] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
+ non-Exynos platforms
+Date: Mon, 12 Nov 2018 21:25:43 +0100
+Message-ID: <20181112202543.GB25275@kozik-lap>
+References: <CGME20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37@eucas1p2.samsung.com>
+ <20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37~d0vYKtP7-2027420274eucas1p2g@eucas1p2.samsung.com>
+ <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11~dzFPt-ZL_1531815318eucas1p1t@eucas1p1.samsung.com>
+In-Reply-To: <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
+Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 03:48:27PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> Since commit 6862fdf2201a ("ARM: samsung: Limit SAMSUNG_PM_CHECK
-> config option to non-Exynos platforms") s3c_pm_check_*() calls
-> are redundant and can be removed.
+On Tue, Oct 16, 2018 at 03:04:52PM +0200, Krzysztof Kozlowski wrote:
+> On Mon, 15 Oct 2018 at 17:50, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
+> > config option) is not working properly (debug messages are not
+> > displayed after resume) on Exynos platforms because GPIOs restore
+> > code is not implemented.
+> >
+> > Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
+> > SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
+> > Then convert Exynos code to not require <plat/pm-common.h>
+> > header (use pr_debug() directly instead of S3C_PMDBG() macro and
+> > remove redundant s3c_pm_*() calls).
+> >
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> > v3:
+> > - don't move PM to the line below in Kconfig
+> >
+> > v2:
+> > - convert Exynos code to not require <plat/pm-common.h> header
+> >
+> > Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
+> > needed s3c_pm_check_*() calls".
+> >
+> >  arch/arm/mach-exynos/suspend.c |   14 ++++----------
+> >  arch/arm/plat-samsung/Kconfig  |    1 +
+> >  2 files changed, 5 insertions(+), 10 deletions(-)
 > 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  arch/arm/mach-exynos/suspend.c |    7 -------
+> Thanks. This and the other one (removing s3c_pm_check_*()) look OK
+> although it is too late for another pull so this will wait for next
+> cycle.
 
-Thanks, applied.
+Hi,
+
+This does not longer apply. Probably because of my changes around eint
+wakeup mask. Could you rebase?
 
 Best regards,
 Krzysztof
