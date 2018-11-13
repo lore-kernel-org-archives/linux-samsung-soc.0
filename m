@@ -1,59 +1,99 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
- non-Exynos platforms
-Date: Mon, 12 Nov 2018 21:25:43 +0100
-Message-ID: <20181112202543.GB25275@kozik-lap>
-References: <CGME20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37@eucas1p2.samsung.com>
- <20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37~d0vYKtP7-2027420274eucas1p2g@eucas1p2.samsung.com>
- <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v2 06/11] arm64: dts: exynos5433: add support for
+ thermal trip irq-mode
+Date: Tue, 13 Nov 2018 11:10:23 +0100
+Message-ID: <616778d8-387f-dbc9-6523-289058b22577@partner.samsung.com>
+References: <CGME20181107171041eucas1p1a3cf91435b9071fd6e6f84101ebbcd9f@eucas1p1.samsung.com>
+        <1541610593-28542-1-git-send-email-l.luba@partner.samsung.com>
+        <1541610593-28542-7-git-send-email-l.luba@partner.samsung.com>
+        <CAJKOXPcGOiVwVuaT+2RHGs0VxA2XRjOd6efsDQaGrWWCJS7vNg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
+In-Reply-To: <CAJKOXPcGOiVwVuaT+2RHGs0VxA2XRjOd6efsDQaGrWWCJS7vNg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
-Cc: kgene@kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, daniel.lezcano@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 03:04:52PM +0200, Krzysztof Kozlowski wrote:
-> On Mon, 15 Oct 2018 at 17:50, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
-> >
-> > "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
-> > config option) is not working properly (debug messages are not
-> > displayed after resume) on Exynos platforms because GPIOs restore
-> > code is not implemented.
-> >
-> > Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
-> > SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
-> > Then convert Exynos code to not require <plat/pm-common.h>
-> > header (use pr_debug() directly instead of S3C_PMDBG() macro and
-> > remove redundant s3c_pm_*() calls).
-> >
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> > v3:
-> > - don't move PM to the line below in Kconfig
-> >
-> > v2:
-> > - convert Exynos code to not require <plat/pm-common.h> header
-> >
-> > Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
-> > needed s3c_pm_check_*() calls".
-> >
-> >  arch/arm/mach-exynos/suspend.c |   14 ++++----------
-> >  arch/arm/plat-samsung/Kconfig  |    1 +
-> >  2 files changed, 5 insertions(+), 10 deletions(-)
+Hi Krzysztof,
+
+On 11/12/18 10:00 AM, Krzysztof Kozlowski wrote:
+> Thanks Lukasz for patches. I like your work!
 > 
-> Thanks. This and the other one (removing s3c_pm_check_*()) look OK
-> although it is too late for another pull so this will wait for next
-> cycle.
+> I have few more comments which will probably apply for all the DTS commits.
+> 
+> On Wed, 7 Nov 2018 at 18:10, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>>
+>> This patch adds support for new flag which indicates
+> 
+> This patch does not add support. Support for flag was added in your
+> first drivers/thermal patches in this set. This patch adds new flag.
+> (and does something more, so read on)
+Got it, will change the commit message.
+> 
+>> that trip point triggers IRQ when temperature is met.
+>> Exynos5433 supports 8 trip point which will trigger IRQ.
+> 
+> /8 trip point/8 trip points/
+> 
+>> Above that number other trip points should be registered
+>> without 'irq-mode' flag.
+> 
+> Please fix the line-wrap.
+OK
+> 
+>>
+>> Cc: Kukjin Kim <kgene@kernel.org>
+>> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+>> Cc: devicetree@vger.kernel.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-samsung-soc@vger.kernel.org
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 105 ++++++++++++++++---------
+>>   1 file changed, 70 insertions(+), 35 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+>> index fe3a0b1..c4330f6 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+>> @@ -17,37 +17,44 @@ thermal-zones {
+>>                          atlas0_alert_0: atlas0-alert-0 {
+>>                                  temperature = <65000>;  /* millicelsius */
+>>                                  hysteresis = <1000>;    /* millicelsius */
+>> -                               type = "active";
+>> +                               type = "passive";
+> 
+> This change is not explained in commit msg.
+> 
+> Basically you are doing here two things (related to each other). You
+> clearly define which trip points are IRQ-type and you correct the type
+> of trip point. Active is incorrect. This second thing is missing in
+> your commit msg and I believe it is main reason behind this patch. You
+> should focus then on this reason - start from it. Subject could be
+> like "Use proper passive type for thermal trip points".
+> 
+> Without this explanation I don't see the strong reason behind that
+> patch. IOW, everything was working fine before... so why adding this
+> new flag? Or maybe something was not fine... and then it is real
+> reason why you are sending the patch. Usually commit message should
+> answer to the most important question "WHY". Now, it explains
+> "WHAT"... but I can see it from the source code. However from the code
+> it is not easy to guess WHY.
 
-Hi,
+OK, I will add the explanation 'why' similar to description from the
+cover-letter to all the patches which add this flag in DT files.
 
-This does not longer apply. Probably because of my changes around eint
-wakeup mask. Could you rebase?
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
 
-Best regards,
-Krzysztof
+Thank you for the review.
+
+Regards,
+Lukasz
