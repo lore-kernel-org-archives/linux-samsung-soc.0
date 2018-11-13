@@ -1,49 +1,24 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] extcon: max8997: Fix lack of path setting in USB device
- mode
-Date: Tue, 13 Nov 2018 16:38:47 +0100
-Message-ID: <20181113153847.14732-1-m.szyprowski@samsung.com>
-References: <CGME20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8@eucas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCHv5 1/6] ARM: dts: exynos: Added UHS-I bus speed support
+Date: Tue, 13 Nov 2018 20:29:01 +0100
+Message-ID: <20181113192901.GB2418@kozik-lap>
+References: <20180927140738.1006-1-linux.amoon@gmail.com>
+ <20180927140738.1006-2-linux.amoon@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180927140738.1006-2-linux.amoon@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-MAX8997 driver disables automatic path selection from MicroUSB connector
-and manually sets path to either UART or USB lines. However the code for
-setting USB path worked only for USB host mode (when ID pin is set
-to ground). When standard USB cable (USB device mode) is connected, path
-registers are not touched. This means that once the non-USB accessory is
-connected to MAX8997-operated micro USB port, the path is no longer set
-to USB and USB device mode doesn't work. This patch fixes it by setting
-USB path both for USB and USB host modes.
+On Thu, Sep 27, 2018 at 02:07:33PM +0000, Anand Moon wrote:
+> Added support for UHS-I bus speed tuning for SDR50, DDR50 SDR104.
+> 
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/extcon/extcon-max8997.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Thanks, applied.
 
-diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
-index 632192d027bf..172e116ac1ce 100644
---- a/drivers/extcon/extcon-max8997.c
-+++ b/drivers/extcon/extcon-max8997.c
-@@ -311,12 +311,10 @@ static int max8997_muic_handle_usb(struct max8997_muic_info *info,
- {
- 	int ret = 0;
- 
--	if (usb_type == MAX8997_USB_HOST) {
--		ret = max8997_muic_set_path(info, info->path_usb, attached);
--		if (ret < 0) {
--			dev_err(info->dev, "failed to update muic register\n");
--			return ret;
--		}
-+	ret = max8997_muic_set_path(info, info->path_usb, attached);
-+	if (ret < 0) {
-+		dev_err(info->dev, "failed to update muic register\n");
-+		return ret;
- 	}
- 
- 	switch (usb_type) {
--- 
-2.17.1
+Best regards,
+Krzysztof
