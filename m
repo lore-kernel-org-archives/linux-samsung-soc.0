@@ -1,36 +1,61 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCHv5 4/6] ARM: dts: exynos: Add pin configuration for SD
- write protect on Odroid XU3/XU4
-Date: Tue, 13 Nov 2018 20:54:56 +0100
-Message-ID: <20181113195456.GF2418@kozik-lap>
-References: <20180927140738.1006-1-linux.amoon@gmail.com>
- <20180927140738.1006-5-linux.amoon@gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] extcon: max8997: Fix lack of path setting in USB device
+ mode
+Date: Wed, 14 Nov 2018 09:07:35 +0900
+Message-ID: <5BEB6747.7080604@samsung.com>
+References: <CGME20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8@eucas1p1.samsung.com>
+        <20181113153847.14732-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180927140738.1006-5-linux.amoon@gmail.com>
+In-reply-to: <20181113153847.14732-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 02:07:36PM +0000, Anand Moon wrote:
-> Add SD card write-protect pin configuration to be sure that it will be
-> properly pulled down to indicate write access.
+On 2018년 11월 14일 00:38, Marek Szyprowski wrote:
+> MAX8997 driver disables automatic path selection from MicroUSB connector
+> and manually sets path to either UART or USB lines. However the code for
+> setting USB path worked only for USB host mode (when ID pin is set
+> to ground). When standard USB cable (USB device mode) is connected, path
+> registers are not touched. This means that once the non-USB accessory is
+> connected to MAX8997-operated micro USB port, the path is no longer set
+> to USB and USB device mode doesn't work. This patch fixes it by setting
+> USB path both for USB and USB host modes.
 > 
-> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
-> Changes since v4:
-> 1. Remove cd-gpios and wp-gpios leaving only WP pin configuration (after
->    Marek Szyprowski feedback).
-> 2. Pull pin down.
-> 3. change the subject and commit message.
-> Sorry Krzysztof if I have copied your commit message to describe the
-> changes.
+>  drivers/extcon/extcon-max8997.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
+> index 632192d027bf..172e116ac1ce 100644
+> --- a/drivers/extcon/extcon-max8997.c
+> +++ b/drivers/extcon/extcon-max8997.c
+> @@ -311,12 +311,10 @@ static int max8997_muic_handle_usb(struct max8997_muic_info *info,
+>  {
+>  	int ret = 0;
+>  
+> -	if (usb_type == MAX8997_USB_HOST) {
+> -		ret = max8997_muic_set_path(info, info->path_usb, attached);
+> -		if (ret < 0) {
+> -			dev_err(info->dev, "failed to update muic register\n");
+> -			return ret;
+> -		}
+> +	ret = max8997_muic_set_path(info, info->path_usb, attached);
+> +	if (ret < 0) {
+> +		dev_err(info->dev, "failed to update muic register\n");
+> +		return ret;
+>  	}
+>  
+>  	switch (usb_type) {
+> 
 
-Thanks, applied.
+Applied it. Thanks.
 
-Best regards,
-Krzysztof
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
