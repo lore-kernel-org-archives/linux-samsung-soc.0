@@ -1,61 +1,103 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] extcon: max8997: Fix lack of path setting in USB device
- mode
-Date: Wed, 14 Nov 2018 09:07:35 +0900
-Message-ID: <5BEB6747.7080604@samsung.com>
-References: <CGME20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8@eucas1p1.samsung.com>
-        <20181113153847.14732-1-m.szyprowski@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v4] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
+ non-Exynos platforms
+Date: Wed, 14 Nov 2018 16:30:58 +0100
+Message-ID: <f38311a0-ed37-49e6-cae1-62dfb30c7325@samsung.com>
+References: <CGME20181114153100eucas1p1a48e0febdfacfe40dd08c91a6b0d045e@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20181113153847.14732-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2018년 11월 14일 00:38, Marek Szyprowski wrote:
-> MAX8997 driver disables automatic path selection from MicroUSB connector
-> and manually sets path to either UART or USB lines. However the code for
-> setting USB path worked only for USB host mode (when ID pin is set
-> to ground). When standard USB cable (USB device mode) is connected, path
-> registers are not touched. This means that once the non-USB accessory is
-> connected to MAX8997-operated micro USB port, the path is no longer set
-> to USB and USB device mode doesn't work. This patch fixes it by setting
-> USB path both for USB and USB host modes.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/extcon/extcon-max8997.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
-> index 632192d027bf..172e116ac1ce 100644
-> --- a/drivers/extcon/extcon-max8997.c
-> +++ b/drivers/extcon/extcon-max8997.c
-> @@ -311,12 +311,10 @@ static int max8997_muic_handle_usb(struct max8997_muic_info *info,
->  {
->  	int ret = 0;
->  
-> -	if (usb_type == MAX8997_USB_HOST) {
-> -		ret = max8997_muic_set_path(info, info->path_usb, attached);
-> -		if (ret < 0) {
-> -			dev_err(info->dev, "failed to update muic register\n");
-> -			return ret;
-> -		}
-> +	ret = max8997_muic_set_path(info, info->path_usb, attached);
-> +	if (ret < 0) {
-> +		dev_err(info->dev, "failed to update muic register\n");
-> +		return ret;
->  	}
->  
->  	switch (usb_type) {
-> 
+"Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
+config option) is not working properly (debug messages are not
+displayed after resume) on Exynos platforms because GPIOs restore
+code is not implemented.
 
-Applied it. Thanks.
+Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
+SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
+Then convert Exynos code to not require <plat/pm-common.h>
+header (use pr_debug() directly instead of S3C_PMDBG() macro and
+remove redundant s3c_pm_*() calls).
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+v4:
+- rebased on top of next-20181114
+
+v3:
+- don't move PM to the line below in Kconfig
+
+v2:
+- convert Exynos code to not require <plat/pm-common.h> header
+
+ arch/arm/mach-exynos/suspend.c |   14 ++++----------
+ arch/arm/plat-samsung/Kconfig  |    1 +
+ 2 files changed, 5 insertions(+), 10 deletions(-)
+
+Index: b/arch/arm/mach-exynos/suspend.c
+===================================================================
+--- a/arch/arm/mach-exynos/suspend.c	2018-11-14 16:01:05.095080862 +0100
++++ b/arch/arm/mach-exynos/suspend.c	2018-11-14 16:03:36.699084680 +0100
+@@ -30,8 +30,6 @@
+ #include <asm/smp_scu.h>
+ #include <asm/suspend.h>
+ 
+-#include <plat/pm-common.h>
+-
+ #include "common.h"
+ 
+ #define REG_TABLE_END (-1U)
+@@ -498,11 +496,9 @@ static int exynos_suspend_enter(suspend_
+ 	u32 eint_wakeup_mask = exynos_read_eint_wakeup_mask();
+ 	int ret;
+ 
+-	s3c_pm_debug_init();
+-
+-	S3C_PMDBG("%s: suspending the system...\n", __func__);
++	pr_debug("%s: suspending the system...\n", __func__);
+ 
+-	S3C_PMDBG("%s: wakeup masks: %08x,%08x\n", __func__,
++	pr_debug("%s: wakeup masks: %08x,%08x\n", __func__,
+ 		  exynos_irqwake_intmask, eint_wakeup_mask);
+ 
+ 	if (exynos_irqwake_intmask == -1U
+@@ -512,7 +508,6 @@ static int exynos_suspend_enter(suspend_
+ 		return -EINVAL;
+ 	}
+ 
+-	s3c_pm_save_uarts();
+ 	if (pm_data->pm_prepare)
+ 		pm_data->pm_prepare();
+ 	flush_cache_all();
+@@ -525,12 +520,11 @@ static int exynos_suspend_enter(suspend_
+ 
+ 	if (pm_data->pm_resume_prepare)
+ 		pm_data->pm_resume_prepare();
+-	s3c_pm_restore_uarts();
+ 
+-	S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
++	pr_debug("%s: wakeup stat: %08x\n", __func__,
+ 			pmu_raw_readl(S5P_WAKEUP_STAT));
+ 
+-	S3C_PMDBG("%s: resuming the system...\n", __func__);
++	pr_debug("%s: resuming the system...\n", __func__);
+ 
+ 	return 0;
+ }
+Index: b/arch/arm/plat-samsung/Kconfig
+===================================================================
+--- a/arch/arm/plat-samsung/Kconfig	2018-11-14 16:01:05.095080862 +0100
++++ b/arch/arm/plat-samsung/Kconfig	2018-11-14 16:01:05.055080861 +0100
+@@ -239,6 +239,7 @@ comment "Power management"
+ config SAMSUNG_PM_DEBUG
+ 	bool "Samsung PM Suspend debug"
+ 	depends on PM && DEBUG_KERNEL
++	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+ 	depends on DEBUG_EXYNOS_UART || DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
+ 	help
+ 	  Say Y here if you want verbose debugging from the PM Suspend and
