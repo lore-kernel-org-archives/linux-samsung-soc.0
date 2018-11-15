@@ -1,9 +1,9 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 8/9] ARM: SAMSUNG: remove s5p_init_cpu()
-Date: Thu, 15 Nov 2018 16:11:37 +0100
-Message-ID: <1542294698-17470-9-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 9/9] ARM: EXYNOS: remove <mach/map.h> include
+Date: Thu, 15 Nov 2018 16:11:38 +0100
+Message-ID: <1542294698-17470-10-git-send-email-b.zolnierkie@samsung.com>
 References: <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20181115151243epcas1p382a3d1704a8ee0d1b0e0b7d214d11ec4@epcas1p3.samsung.com>
+        <CGME20181115151247epcas2p4053da2cb28b2414156d2fd0530059c0d@epcas2p4.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -11,104 +11,65 @@ To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Markus Reichl <m.reichl@fivetechno.de>, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javierm@redhat.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Remove no longer needed s5p_init_cpu() & co.
+Remove no longer needed <mach/map.h> include.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm/mach-exynos/exynos.c                | 28 ----------------------------
- arch/arm/plat-samsung/cpu.c                  |  7 -------
- arch/arm/plat-samsung/include/plat/cpu.h     |  1 -
- arch/arm/plat-samsung/include/plat/map-s5p.h |  2 --
- 4 files changed, 38 deletions(-)
+ arch/arm/mach-exynos/exynos.c           |  2 --
+ arch/arm/mach-exynos/include/mach/map.h | 18 ------------------
+ arch/arm/mach-exynos/platsmp.c          |  2 --
+ 3 files changed, 22 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/include/mach/map.h
 
 diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index ca367b7..d98574c 100644
+index d98574c..d29f241 100644
 --- a/arch/arm/mach-exynos/exynos.c
 +++ b/arch/arm/mach-exynos/exynos.c
-@@ -20,7 +20,6 @@
+@@ -19,8 +19,6 @@
+ #include <asm/mach/arch.h>
  #include <asm/mach/map.h>
  
- #include <mach/map.h>
--#include <plat/cpu.h>
- 
+-#include <mach/map.h>
+-
  #include "common.h"
  
-@@ -99,36 +98,9 @@ void __init exynos_sysram_init(void)
- 	}
- }
+ static const struct soc_device_attribute exynos3250_soc_id[] = {
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+deleted file mode 100644
+index 22ebe36..0000000
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ /dev/null
+@@ -1,18 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/*
+- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com/
+- *
+- * EXYNOS - Memory map definitions
+- */
+-
+-#ifndef __ASM_ARCH_MAP_H
+-#define __ASM_ARCH_MAP_H __FILE__
+-
+-#include <plat/map-base.h>
+-
+-#include <plat/map-s5p.h>
+-
+-#define EXYNOS_PA_CHIPID		0x10000000
+-
+-#endif /* __ASM_ARCH_MAP_H */
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index e2ba70f..56e2554 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -22,8 +22,6 @@
+ #include <asm/smp_scu.h>
+ #include <asm/firmware.h>
  
--static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
--					int depth, void *data)
--{
--	struct map_desc iodesc;
--	const __be32 *reg;
--	int len;
+-#include <mach/map.h>
 -
--	if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipid"))
--		return 0;
--
--	reg = of_get_flat_dt_prop(node, "reg", &len);
--	if (reg == NULL || len != (sizeof(unsigned long) * 2))
--		return 0;
--
--	iodesc.pfn = __phys_to_pfn(be32_to_cpu(reg[0]));
--	iodesc.length = be32_to_cpu(reg[1]) - 1;
--	iodesc.virtual = (unsigned long)S5P_VA_CHIPID;
--	iodesc.type = MT_DEVICE;
--	iotable_init(&iodesc, 1);
--	return 1;
--}
--
- static void __init exynos_init_io(void)
- {
- 	debug_ll_io_init();
--
--	of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
--
--	/* detect cpu id and rev. */
--	s5p_init_cpu(S5P_VA_CHIPID);
- }
+ #include "common.h"
  
- /*
-diff --git a/arch/arm/plat-samsung/cpu.c b/arch/arm/plat-samsung/cpu.c
-index c633a24..8acba21 100644
---- a/arch/arm/plat-samsung/cpu.c
-+++ b/arch/arm/plat-samsung/cpu.c
-@@ -29,10 +29,3 @@ void __init s3c64xx_init_cpu(void)
- 
- 	pr_info("Samsung CPU ID: 0x%08lx\n", samsung_cpu_id);
- }
--
--void __init s5p_init_cpu(const void __iomem *cpuid_addr)
--{
--	samsung_cpu_id = readl_relaxed(cpuid_addr);
--
--	pr_info("Samsung CPU ID: 0x%08lx\n", samsung_cpu_id);
--}
-diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
-index 02d7f99..93ecd71 100644
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@ -109,7 +109,6 @@ extern void s3c_init_cpu(unsigned long idcode,
- extern void s3c24xx_init_io(struct map_desc *mach_desc, int size);
- 
- extern void s3c64xx_init_cpu(void);
--extern void s5p_init_cpu(const void __iomem *cpuid_addr);
- 
- extern void s3c24xx_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- 
-diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
-index d69a0ca..3812085 100644
---- a/arch/arm/plat-samsung/include/plat/map-s5p.h
-+++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
-@@ -9,8 +9,6 @@
- #ifndef __ASM_PLAT_MAP_S5P_H
- #define __ASM_PLAT_MAP_S5P_H __FILE__
- 
--#define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
--
- #define VA_VIC(x)		(S3C_VA_IRQ + ((x) * 0x10000))
- #define VA_VIC0			VA_VIC(0)
- #define VA_VIC1			VA_VIC(1)
+ extern void exynos4_secondary_startup(void);
 -- 
 1.9.1
