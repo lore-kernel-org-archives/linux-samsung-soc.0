@@ -1,103 +1,74 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v4] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
- non-Exynos platforms
-Date: Wed, 14 Nov 2018 16:30:58 +0100
-Message-ID: <f38311a0-ed37-49e6-cae1-62dfb30c7325@samsung.com>
-References: <CGME20181114153100eucas1p1a48e0febdfacfe40dd08c91a6b0d045e@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 0/9] ARM: SAMSUNG: add Exynos chipid driver
+Date: Thu, 15 Nov 2018 16:11:29 +0100
+Message-ID: <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com>
+References: <CGME20181115151207epcas1p45adfa96d5b52e10fbb5ace76ebae5e3e@epcas1p4.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Markus Reichl <m.reichl@fivetechno.de>, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javierm@redhat.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-"Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
-config option) is not working properly (debug messages are not
-displayed after resume) on Exynos platforms because GPIOs restore
-code is not implemented.
+Hi,
 
-Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
-SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
-Then convert Exynos code to not require <plat/pm-common.h>
-header (use pr_debug() directly instead of S3C_PMDBG() macro and
-remove redundant s3c_pm_*() calls).
+This patchset adds Exynos chipid driver and converts Exynos platform
+code to use it. It is heavily based on "[PATCH v9 00/12] Introducing
+Exynos ChipId driver" patchset [1] so most credits go to Pankaj Dubey.
+The main difference in the current patchset is in taking simpler
+approach to converting existing Exynos platform code to use the new
+chipid driver. This results in much less code duplication.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-v4:
-- rebased on top of next-20181114
+The diffstat for "[PATCH v9 00/12] Introducing Exynos ChipId driver":
 
-v3:
-- don't move PM to the line below in Kconfig
+ 14 files changed, 587 insertions(+), 255 deletions(-)
 
-v2:
-- convert Exynos code to not require <plat/pm-common.h> header
+for the current patchset it is:
 
- arch/arm/mach-exynos/suspend.c |   14 ++++----------
- arch/arm/plat-samsung/Kconfig  |    1 +
- 2 files changed, 5 insertions(+), 10 deletions(-)
+ 14 files changed, 193 insertions(+), 195 deletions(-)
 
-Index: b/arch/arm/mach-exynos/suspend.c
-===================================================================
---- a/arch/arm/mach-exynos/suspend.c	2018-11-14 16:01:05.095080862 +0100
-+++ b/arch/arm/mach-exynos/suspend.c	2018-11-14 16:03:36.699084680 +0100
-@@ -30,8 +30,6 @@
- #include <asm/smp_scu.h>
- #include <asm/suspend.h>
- 
--#include <plat/pm-common.h>
--
- #include "common.h"
- 
- #define REG_TABLE_END (-1U)
-@@ -498,11 +496,9 @@ static int exynos_suspend_enter(suspend_
- 	u32 eint_wakeup_mask = exynos_read_eint_wakeup_mask();
- 	int ret;
- 
--	s3c_pm_debug_init();
--
--	S3C_PMDBG("%s: suspending the system...\n", __func__);
-+	pr_debug("%s: suspending the system...\n", __func__);
- 
--	S3C_PMDBG("%s: wakeup masks: %08x,%08x\n", __func__,
-+	pr_debug("%s: wakeup masks: %08x,%08x\n", __func__,
- 		  exynos_irqwake_intmask, eint_wakeup_mask);
- 
- 	if (exynos_irqwake_intmask == -1U
-@@ -512,7 +508,6 @@ static int exynos_suspend_enter(suspend_
- 		return -EINVAL;
- 	}
- 
--	s3c_pm_save_uarts();
- 	if (pm_data->pm_prepare)
- 		pm_data->pm_prepare();
- 	flush_cache_all();
-@@ -525,12 +520,11 @@ static int exynos_suspend_enter(suspend_
- 
- 	if (pm_data->pm_resume_prepare)
- 		pm_data->pm_resume_prepare();
--	s3c_pm_restore_uarts();
- 
--	S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
-+	pr_debug("%s: wakeup stat: %08x\n", __func__,
- 			pmu_raw_readl(S5P_WAKEUP_STAT));
- 
--	S3C_PMDBG("%s: resuming the system...\n", __func__);
-+	pr_debug("%s: resuming the system...\n", __func__);
- 
- 	return 0;
- }
-Index: b/arch/arm/plat-samsung/Kconfig
-===================================================================
---- a/arch/arm/plat-samsung/Kconfig	2018-11-14 16:01:05.095080862 +0100
-+++ b/arch/arm/plat-samsung/Kconfig	2018-11-14 16:01:05.055080861 +0100
-@@ -239,6 +239,7 @@ comment "Power management"
- config SAMSUNG_PM_DEBUG
- 	bool "Samsung PM Suspend debug"
- 	depends on PM && DEBUG_KERNEL
-+	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
- 	depends on DEBUG_EXYNOS_UART || DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
- 	help
- 	  Say Y here if you want verbose debugging from the PM Suspend and
+This patchset has been tested on Exynos4210 (including rev0),
+Exynos3250, Exynos4412 & Exynos5422 SoCs.
+
+[1] https://marc.info/?l=linux-arm-kernel&m=149087972213359&w=2
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (5):
+  ARM: EXYNOS: use chipid driver
+  ARM: EXYNOS: remove soc_is_exynos*() macros
+  ARM: SAMSUNG: remove samsung_rev()
+  ARM: SAMSUNG: remove s5p_init_cpu()
+  ARM: EXYNOS: remove <mach/map.h> include
+
+Pankaj Dubey (4):
+  ARM: EXYNOS: remove secondary startup initialization from
+    smp_prepare_cpus
+  soc: samsung: add exynos chipid driver support
+  ARM: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
+  ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
+
+ arch/arm/mach-exynos/Kconfig                 |   1 +
+ arch/arm/mach-exynos/common.h                |  81 ++-----------------
+ arch/arm/mach-exynos/exynos.c                |  75 ++++++++++--------
+ arch/arm/mach-exynos/firmware.c              |   8 +-
+ arch/arm/mach-exynos/include/mach/map.h      |  18 -----
+ arch/arm/mach-exynos/platsmp.c               |  40 ++--------
+ arch/arm/mach-exynos/pm.c                    |  25 +++---
+ arch/arm/plat-samsung/cpu.c                  |  17 ----
+ arch/arm/plat-samsung/include/plat/cpu.h     |   3 -
+ arch/arm/plat-samsung/include/plat/map-s5p.h |   2 -
+ arch/arm64/Kconfig.platforms                 |   1 +
+ drivers/soc/samsung/Kconfig                  |   5 ++
+ drivers/soc/samsung/Makefile                 |   1 +
+ drivers/soc/samsung/exynos-chipid.c          | 111 +++++++++++++++++++++++++++
+ 14 files changed, 193 insertions(+), 195 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/include/mach/map.h
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
+
+-- 
+1.9.1
