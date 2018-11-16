@@ -1,129 +1,215 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 02/10] ARM64: dts: exynos: Add all CPUs in cooling maps
-Date: Fri, 16 Nov 2018 15:34:25 +0530
-Message-ID: <74e23257aece9ceef48b1c1cf6c9bafcce3c6fbd.1542362530.git.viresh.kumar@linaro.org>
-References: <cover.1542362530.git.viresh.kumar@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 5/9] ARM: EXYNOS: use chipid driver
+Date: Fri, 16 Nov 2018 13:24:15 +0100
+Message-ID: <CAJKOXPe_neF+nsvMC7owWufGKAbdCo9AicxE3BkNaj5ZtPUKDA@mail.gmail.com>
+References: <CGME20181115151230epcas1p35afa7ac09774a6e6256523b3a77453c3@epcas1p3.samsung.com>
+ <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com> <1542294698-17470-6-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1542362530.git.viresh.kumar@linaro.org>
+In-Reply-To: <1542294698-17470-6-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+Cc: arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, javierm@redhat.com, pankaj.dubey@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Each CPU can (and does) participate in cooling down the system but the
-DT only captures a handful of them, normally CPU0, in the cooling maps.
-Things work by chance currently as under normal circumstances its the
-first CPU of each cluster which is used by the operating systems to
-probe the cooling devices. But as soon as this CPU ordering changes and
-any other CPU is used to bring up the cooling device, we will start
-seeing failures.
+On Thu, 15 Nov 2018 at 16:12, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+> Add soc_dev_is_exynos*() helpers and use them instead of
+> soc_is_exynos*() ones.
+>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/mach-exynos/common.h   |  6 ++++++
+>  arch/arm/mach-exynos/exynos.c   | 39 +++++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/firmware.c |  8 ++++----
+>  arch/arm/mach-exynos/platsmp.c  | 12 ++++++------
+>  arch/arm/mach-exynos/pm.c       | 17 +++++++++--------
+>  5 files changed, 64 insertions(+), 18 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index 1b8699e..20d205e 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -9,8 +9,14 @@
+>  #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
+>  #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+>
+> +#include <linux/sys_soc.h>
+>  #include <linux/platform_data/cpuidle-exynos.h>
+>
+> +extern bool soc_dev_is_exynos3250(void);
+> +extern bool soc_dev_is_exynos4210_rev11(void);
+> +extern bool soc_dev_is_exynos4412(void);
+> +extern bool soc_dev_is_exynos542x(void);
+> +
+>  #define EXYNOS3250_SOC_ID      0xE3472000
+>  #define EXYNOS3_SOC_MASK       0xFFFFF000
+>
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 865dcc4..463e457 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -24,6 +24,45 @@
+>
+>  #include "common.h"
+>
+> +static const struct soc_device_attribute exynos3250_soc_id[] = {
+> +       { .soc_id = "EXYNOS3250" },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static const struct soc_device_attribute exynos4210_rev11_soc_id[] = {
+> +       { .soc_id = "EXYNOS4210", .revision = "11" },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static const struct soc_device_attribute exynos4412_soc_id[] = {
+> +       { .soc_id = "EXYNOS4412" },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static const struct soc_device_attribute exynos542x_soc_id[] = {
+> +       { .soc_id = "EXYNOS5420" },
+> +       { .soc_id = "EXYNOS5800" },
+> +       { /* sentinel */ }
+> +};
+> +
+> +#define SOC_DEV_IS_EXYNOS(ver)                                         \
+> +bool soc_dev_is_exynos##ver(void)                                      \
+> +{                                                                      \
+> +       static bool init_done, is_exynos##ver;                          \
+> +                                                                       \
+> +       if (!init_done) {                                               \
+> +               is_exynos##ver = !!soc_device_match(exynos##ver##_soc_id); \
+> +               init_done = true;                                       \
+> +       }                                                               \
+> +                                                                       \
+> +       return is_exynos##ver;                                          \
+> +}
+> +
+> +SOC_DEV_IS_EXYNOS(3250);
+> +SOC_DEV_IS_EXYNOS(4210_rev11);
+> +SOC_DEV_IS_EXYNOS(4412);
+> +SOC_DEV_IS_EXYNOS(542x);
 
-Also the DT is rather incomplete when we list only one CPU in the
-cooling maps, as the hardware doesn't have any such limitations.
+Nicely compacted definition but:
+1. You blow real code (4 functions doing exactly the same),
+2. You break jumping to definitions in IDE (searching/indexing symbols).
 
-Update cooling maps to include all devices affected by individual trip
-points.
+Currently this can be executed on only one, specific Exynos chip. This
+means that you can have only one static variable holding current soc
+revision and compare against it. This might require adding some enums
+and code would look like:
+enum soc_exynos {
+SOC_EXYNOS_3250,
+SOC_EXYNOS_542X,
+...
+};
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- .../arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 36 ++++++++++++-------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+bool soc_dev_is_exynos(soc) {
+  static bool init_done;
+  enum soc_exynos exynos_type;
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
-index fe3a0b14bee6..81b72393dd0d 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
-@@ -55,37 +55,44 @@ thermal-zones {
- 			map0 {
- 				/* Set maximum frequency as 1800MHz  */
- 				trip = <&atlas0_alert_0>;
--				cooling-device = <&cpu4 1 2>;
-+				cooling-device = <&cpu4 1 2>, <&cpu5 1 2>,
-+						 <&cpu6 1 2>, <&cpu7 1 2>;
- 			};
- 			map1 {
- 				/* Set maximum frequency as 1700MHz  */
- 				trip = <&atlas0_alert_1>;
--				cooling-device = <&cpu4 2 3>;
-+				cooling-device = <&cpu4 2 3>, <&cpu5 2 3>,
-+						 <&cpu6 2 3>, <&cpu7 2 3>;
- 			};
- 			map2 {
- 				/* Set maximum frequency as 1600MHz  */
- 				trip = <&atlas0_alert_2>;
--				cooling-device = <&cpu4 3 4>;
-+				cooling-device = <&cpu4 3 4>, <&cpu5 3 4>,
-+						 <&cpu6 3 4>, <&cpu7 3 4>;
- 			};
- 			map3 {
- 				/* Set maximum frequency as 1500MHz  */
- 				trip = <&atlas0_alert_3>;
--				cooling-device = <&cpu4 4 5>;
-+				cooling-device = <&cpu4 4 5>, <&cpu5 4 5>,
-+						 <&cpu6 4 5>, <&cpu7 4 5>;
- 			};
- 			map4 {
- 				/* Set maximum frequency as 1400MHz  */
- 				trip = <&atlas0_alert_4>;
--				cooling-device = <&cpu4 5 7>;
-+				cooling-device = <&cpu4 5 7>, <&cpu5 5 7>,
-+						 <&cpu6 5 7>, <&cpu7 5 7>;
- 			};
- 			map5 {
- 				/* Set maximum frequencyas 1200MHz  */
- 				trip = <&atlas0_alert_5>;
--				cooling-device = <&cpu4 7 9>;
-+				cooling-device = <&cpu4 7 9>, <&cpu5 7 9>,
-+						 <&cpu6 7 9>, <&cpu7 7 9>;
- 			};
- 			map6 {
- 				/* Set maximum frequency as 1000MHz  */
- 				trip = <&atlas0_alert_6>;
--				cooling-device = <&cpu4 9 14>;
-+				cooling-device = <&cpu4 9 14>, <&cpu5 9 14>,
-+						 <&cpu6 9 14>, <&cpu7 9 14>;
- 			};
- 		};
- 	};
-@@ -222,27 +229,32 @@ thermal-zones {
- 			map0 {
- 				/* Set maximum frequency as 1200MHz  */
- 				trip = <&apollo_alert_2>;
--				cooling-device = <&cpu0 1 2>;
-+				cooling-device = <&cpu0 1 2>, <&cpu1 1 2>,
-+						 <&cpu2 1 2>, <&cpu3 1 2>;
- 			};
- 			map1 {
- 				/* Set maximum frequency as 1100MHz  */
- 				trip = <&apollo_alert_3>;
--				cooling-device = <&cpu0 2 3>;
-+				cooling-device = <&cpu0 2 3>, <&cpu1 2 3>,
-+						 <&cpu2 2 3>, <&cpu3 2 3>;
- 			};
- 			map2 {
- 				/* Set maximum frequency as 1000MHz  */
- 				trip = <&apollo_alert_4>;
--				cooling-device = <&cpu0 3 4>;
-+				cooling-device = <&cpu0 3 4>, <&cpu1 3 4>,
-+						 <&cpu2 3 4>, <&cpu3 3 4>;
- 			};
- 			map3 {
- 				/* Set maximum frequency as 900MHz  */
- 				trip = <&apollo_alert_5>;
--				cooling-device = <&cpu0 4 5>;
-+				cooling-device = <&cpu0 4 5>, <&cpu1 4 5>,
-+						 <&cpu2 4 5>, <&cpu3 4 5>;
- 			};
- 			map4 {
- 				/* Set maximum frequency as 800MHz  */
- 				trip = <&apollo_alert_6>;
--				cooling-device = <&cpu0 5 9>;
-+				cooling-device = <&cpu0 5 9>, <&cpu1 5 9>,
-+						 <&cpu2 5 9>, <&cpu3 5 9>;
- 			};
- 		};
- 	};
--- 
-2.19.1.568.g152ad8e3369a
+  if (!init_done) {
+    match = soc_device_match(exynos_soc_id);
+    exynos_type = match.data;
+  }
+  return soc == exynos_type;
+}
+
+and the callers would be:
+if (soc_dev_is_exynos(EXYNOS_542x))
+
+Other point is comment in soc_device_match():
+"This function is meant as a helper in place of of_match_node() in
+cases where either no device tree is available or the information in a
+device node is insufficient..."
+and
+"For new devices, the DT binding .. that allow the use of
+of_match_node() instead."
+
+so of_match_node() is preferred instead.
+
+> +
+>  static struct platform_device exynos_cpuidle = {
+>         .name              = "exynos_cpuidle",
+>  #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
+> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+> index d602e3b..d526d5e 100644
+> --- a/arch/arm/mach-exynos/firmware.c
+> +++ b/arch/arm/mach-exynos/firmware.c
+> @@ -40,7 +40,7 @@ static int exynos_do_idle(unsigned long mode)
+>                 writel_relaxed(__pa_symbol(exynos_cpu_resume_ns),
+>                                sysram_ns_base_addr + 0x24);
+>                 writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
+> -               if (soc_is_exynos3250()) {
+> +               if (soc_dev_is_exynos3250()) {
+>                         flush_cache_all();
+>                         exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
+>                                    SMC_POWERSTATE_IDLE, 0);
+> @@ -61,7 +61,7 @@ static int exynos_cpu_boot(int cpu)
+>          * Exynos3250 doesn't need to send smc command for secondary CPU boot
+>          * because Exynos3250 removes WFE in secure mode.
+>          */
+> -       if (soc_is_exynos3250())
+> +       if (soc_dev_is_exynos3250())
+>                 return 0;
+>
+>         /*
+> @@ -85,7 +85,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+>          * additional offset for every CPU, with Exynos4412 being the only
+>          * exception.
+>          */
+> -       if (soc_is_exynos4412())
+> +       if (soc_dev_is_exynos4412())
+>                 boot_reg += 4 * cpu;
+>
+>         writel_relaxed(boot_addr, boot_reg);
+> @@ -101,7 +101,7 @@ static int exynos_get_cpu_boot_addr(int cpu, unsigned long *boot_addr)
+>
+>         boot_reg = sysram_ns_base_addr + 0x1c;
+>
+> -       if (soc_is_exynos4412())
+> +       if (soc_dev_is_exynos4412())
+>                 boot_reg += 4 * cpu;
+>
+>         *boot_addr = readl_relaxed(boot_reg);
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index c39ffd2..e2ba70f 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -88,7 +88,7 @@ void exynos_cpu_power_down(int cpu)
+>  {
+>         u32 core_conf;
+>
+> -       if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
+> +       if (cpu == 0 && soc_dev_is_exynos542x()) {
+
+With new implementation you might hit again LDREX and STREX here (see
+commit ca489c58ef0b ("ARM: EXYNOS: Don't use LDREX and STREX after
+disabling cache coherency")) because:
+soc_device_match -> bus_for_each_dev -> klist_iter_init_node ->
+kref_get_unless_zero -> refcount_inc_not_zero_checked
+According to previous comments and
+http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dht0008a/CJABEHDA.html
+this is not allowed with cache coherency disabled.
+
+I think calling here soc_device_match() is unlikely because it should
+be initialized before. However please check if this is really the case
+and comment it in the code in both places:
+1. the first place which effectively initializes
+soc_dev_is_exynos542x():init_done (to be sure that no one removes this
+first call)
+2. here that it depends on previous call of soc_dev_is_exynos542x().
+
+It is getting slightly error prone - usage of one function is safe
+here only if it was called somewhere else before... so I am not sure
+if it is worth to remove soc_is_exynos() here.
+
+Please also check other places without cache coherency where
+soc_is_exynos() is being replaced to new method.
+
+Best regards,
+Krzysztof
