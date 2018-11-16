@@ -1,215 +1,204 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 5/9] ARM: EXYNOS: use chipid driver
-Date: Fri, 16 Nov 2018 13:24:15 +0100
-Message-ID: <CAJKOXPe_neF+nsvMC7owWufGKAbdCo9AicxE3BkNaj5ZtPUKDA@mail.gmail.com>
-References: <CGME20181115151230epcas1p35afa7ac09774a6e6256523b3a77453c3@epcas1p3.samsung.com>
- <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com> <1542294698-17470-6-git-send-email-b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 2/9] soc: samsung: add exynos chipid driver support
+Date: Fri, 16 Nov 2018 13:40:56 +0100
+Message-ID: <CAJKOXPf4DC9NaAHOcM2iW8mf622uucJ7OBjQsrR6P0rtqgJ7rA@mail.gmail.com>
+References: <CGME20181115151216epcas1p3413d9586bf941aa086bfc5cd620d45d9@epcas1p3.samsung.com>
+ <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com> <1542294698-17470-3-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1542294698-17470-6-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <1542294698-17470-3-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
-Cc: arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, javierm@redhat.com, pankaj.dubey@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, m.reichl@fivetechno.de, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, javierm@redhat.com, pankaj.dubey@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca, robh+dt@kernel.org, linus.walleij@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On Thu, 15 Nov 2018 at 16:12, Bartlomiej Zolnierkiewicz
 <b.zolnierkie@samsung.com> wrote:
 >
-> Add soc_dev_is_exynos*() helpers and use them instead of
-> soc_is_exynos*() ones.
+> From: Pankaj Dubey <pankaj.dubey@samsung.com>
 >
+> Exynos SoCs have Chipid, for identification of product IDs and SoC
+> revisions. This patch intends to provide initialization code for all
+> these functionalities, at the same time it provides some sysfs entries
+> for accessing these information to user-space.
+>
+> This driver uses existing binding for exynos-chipid.
+>
+> Changes by Bartlomiej:
+> - fixed return values on errors
+> - removed bogus kfree_const()
+> - added missing Exynos4210 EVT0 id
+> - converted code to use EXYNOS_MASK define
+> - fixed np use after of_node_put()
+> - fixed too early use of dev_info()
+> - made driver fail for unknown SoC-s
+> - added SPDX tag
+> - updated Copyrights
+>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> [m.szyprowski: for suggestion and code snippet of product_id_to_soc_id]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->  arch/arm/mach-exynos/common.h   |  6 ++++++
->  arch/arm/mach-exynos/exynos.c   | 39 +++++++++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/firmware.c |  8 ++++----
->  arch/arm/mach-exynos/platsmp.c  | 12 ++++++------
->  arch/arm/mach-exynos/pm.c       | 17 +++++++++--------
->  5 files changed, 64 insertions(+), 18 deletions(-)
+>  drivers/soc/samsung/Kconfig         |   5 ++
+>  drivers/soc/samsung/Makefile        |   1 +
+>  drivers/soc/samsung/exynos-chipid.c | 111 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 117 insertions(+)
+>  create mode 100644 drivers/soc/samsung/exynos-chipid.c
 >
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index 1b8699e..20d205e 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -9,8 +9,14 @@
->  #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
->  #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index 2186285..2905f52 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -7,6 +7,11 @@ menuconfig SOC_SAMSUNG
 >
-> +#include <linux/sys_soc.h>
->  #include <linux/platform_data/cpuidle-exynos.h>
+>  if SOC_SAMSUNG
 >
-> +extern bool soc_dev_is_exynos3250(void);
-> +extern bool soc_dev_is_exynos4210_rev11(void);
-> +extern bool soc_dev_is_exynos4412(void);
-> +extern bool soc_dev_is_exynos542x(void);
+> +config EXYNOS_CHIPID
+> +       bool "Exynos Chipid controller driver" if COMPILE_TEST
+> +       depends on ARCH_EXYNOS || COMPILE_TEST
+> +       select SOC_BUS
 > +
->  #define EXYNOS3250_SOC_ID      0xE3472000
->  #define EXYNOS3_SOC_MASK       0xFFFFF000
+>  config EXYNOS_PMU
+>         bool "Exynos PMU controller driver" if COMPILE_TEST
+>         depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> index 29f294b..c2a8fbc 100644
+> --- a/drivers/soc/samsung/Makefile
+> +++ b/drivers/soc/samsung/Makefile
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +obj-$(CONFIG_EXYNOS_CHIPID)    += exynos-chipid.o
+>  obj-$(CONFIG_EXYNOS_PMU)       += exynos-pmu.o
 >
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 865dcc4..463e457 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -24,6 +24,45 @@
->
->  #include "common.h"
->
-> +static const struct soc_device_attribute exynos3250_soc_id[] = {
-> +       { .soc_id = "EXYNOS3250" },
-> +       { /* sentinel */ }
-> +};
+>  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)   += exynos3250-pmu.o exynos4-pmu.o \
+> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> new file mode 100644
+> index 0000000..5cb0188
+> --- /dev/null
+> +++ b/drivers/soc/samsung/exynos-chipid.c
+> @@ -0,0 +1,111 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 Samsung Electronics Co., Ltd.
+> + *           http://www.samsung.com/
+> + *
+> + * EXYNOS - CHIP ID support
+> + * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
+> + * Author: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> + */
 > +
-> +static const struct soc_device_attribute exynos4210_rev11_soc_id[] = {
-> +       { .soc_id = "EXYNOS4210", .revision = "11" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +static const struct soc_device_attribute exynos4412_soc_id[] = {
-> +       { .soc_id = "EXYNOS4412" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +static const struct soc_device_attribute exynos542x_soc_id[] = {
-> +       { .soc_id = "EXYNOS5420" },
-> +       { .soc_id = "EXYNOS5800" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +#define SOC_DEV_IS_EXYNOS(ver)                                         \
-> +bool soc_dev_is_exynos##ver(void)                                      \
-> +{                                                                      \
-> +       static bool init_done, is_exynos##ver;                          \
-> +                                                                       \
-> +       if (!init_done) {                                               \
-> +               is_exynos##ver = !!soc_device_match(exynos##ver##_soc_id); \
-> +               init_done = true;                                       \
-> +       }                                                               \
-> +                                                                       \
-> +       return is_exynos##ver;                                          \
-> +}
-> +
-> +SOC_DEV_IS_EXYNOS(3250);
-> +SOC_DEV_IS_EXYNOS(4210_rev11);
-> +SOC_DEV_IS_EXYNOS(4412);
-> +SOC_DEV_IS_EXYNOS(542x);
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
 
-Nicely compacted definition but:
-1. You blow real code (4 functions doing exactly the same),
-2. You break jumping to definitions in IDE (searching/indexing symbols).
-
-Currently this can be executed on only one, specific Exynos chip. This
-means that you can have only one static variable holding current soc
-revision and compare against it. This might require adding some enums
-and code would look like:
-enum soc_exynos {
-SOC_EXYNOS_3250,
-SOC_EXYNOS_542X,
-...
-};
-
-bool soc_dev_is_exynos(soc) {
-  static bool init_done;
-  enum soc_exynos exynos_type;
-
-  if (!init_done) {
-    match = soc_device_match(exynos_soc_id);
-    exynos_type = match.data;
-  }
-  return soc == exynos_type;
-}
-
-and the callers would be:
-if (soc_dev_is_exynos(EXYNOS_542x))
-
-Other point is comment in soc_device_match():
-"This function is meant as a helper in place of of_match_node() in
-cases where either no device tree is available or the information in a
-device node is insufficient..."
-and
-"For new devices, the DT binding .. that allow the use of
-of_match_node() instead."
-
-so of_match_node() is preferred instead.
-
-> +
->  static struct platform_device exynos_cpuidle = {
->         .name              = "exynos_cpuidle",
->  #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-> index d602e3b..d526d5e 100644
-> --- a/arch/arm/mach-exynos/firmware.c
-> +++ b/arch/arm/mach-exynos/firmware.c
-> @@ -40,7 +40,7 @@ static int exynos_do_idle(unsigned long mode)
->                 writel_relaxed(__pa_symbol(exynos_cpu_resume_ns),
->                                sysram_ns_base_addr + 0x24);
->                 writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
-> -               if (soc_is_exynos3250()) {
-> +               if (soc_dev_is_exynos3250()) {
->                         flush_cache_all();
->                         exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
->                                    SMC_POWERSTATE_IDLE, 0);
-> @@ -61,7 +61,7 @@ static int exynos_cpu_boot(int cpu)
->          * Exynos3250 doesn't need to send smc command for secondary CPU boot
->          * because Exynos3250 removes WFE in secure mode.
->          */
-> -       if (soc_is_exynos3250())
-> +       if (soc_dev_is_exynos3250())
->                 return 0;
->
->         /*
-> @@ -85,7 +85,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
->          * additional offset for every CPU, with Exynos4412 being the only
->          * exception.
->          */
-> -       if (soc_is_exynos4412())
-> +       if (soc_dev_is_exynos4412())
->                 boot_reg += 4 * cpu;
->
->         writel_relaxed(boot_addr, boot_reg);
-> @@ -101,7 +101,7 @@ static int exynos_get_cpu_boot_addr(int cpu, unsigned long *boot_addr)
->
->         boot_reg = sysram_ns_base_addr + 0x1c;
->
-> -       if (soc_is_exynos4412())
-> +       if (soc_dev_is_exynos4412())
->                 boot_reg += 4 * cpu;
->
->         *boot_addr = readl_relaxed(boot_reg);
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index c39ffd2..e2ba70f 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -88,7 +88,7 @@ void exynos_cpu_power_down(int cpu)
->  {
->         u32 core_conf;
->
-> -       if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
-> +       if (cpu == 0 && soc_dev_is_exynos542x()) {
-
-With new implementation you might hit again LDREX and STREX here (see
-commit ca489c58ef0b ("ARM: EXYNOS: Don't use LDREX and STREX after
-disabling cache coherency")) because:
-soc_device_match -> bus_for_each_dev -> klist_iter_init_node ->
-kref_get_unless_zero -> refcount_inc_not_zero_checked
-According to previous comments and
-http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dht0008a/CJABEHDA.html
-this is not allowed with cache coherency disabled.
-
-I think calling here soc_device_match() is unlikely because it should
-be initialized before. However please check if this is really the case
-and comment it in the code in both places:
-1. the first place which effectively initializes
-soc_dev_is_exynos542x():init_done (to be sure that no one removes this
-first call)
-2. here that it depends on previous call of soc_dev_is_exynos542x().
-
-It is getting slightly error prone - usage of one function is safe
-here only if it was called somewhere else before... so I am not sure
-if it is worth to remove soc_is_exynos() here.
-
-Please also check other places without cache coherency where
-soc_is_exynos() is being replaced to new method.
+I think both platform headers are not used here.
 
 Best regards,
 Krzysztof
+
+> +#include <linux/slab.h>
+> +#include <linux/sys_soc.h>
+> +
+> +#define EXYNOS_SUBREV_MASK     (0xF << 4)
+> +#define EXYNOS_MAINREV_MASK    (0xF << 0)
+> +#define EXYNOS_REV_MASK                (EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
+> +#define EXYNOS_MASK            0xFFFFF000
+> +
+> +static const struct exynos_soc_id {
+> +       const char *name;
+> +       unsigned int id;
+> +} soc_ids[] = {
+> +       { "EXYNOS3250", 0xE3472000 },
+> +       { "EXYNOS4210", 0x43200000 },   /* EVT0 revision */
+> +       { "EXYNOS4210", 0x43210000 },
+> +       { "EXYNOS4212", 0x43220000 },
+> +       { "EXYNOS4412", 0xE4412000 },
+> +       { "EXYNOS5250", 0x43520000 },
+> +       { "EXYNOS5260", 0xE5260000 },
+> +       { "EXYNOS5410", 0xE5410000 },
+> +       { "EXYNOS5420", 0xE5420000 },
+> +       { "EXYNOS5440", 0xE5440000 },
+> +       { "EXYNOS5800", 0xE5422000 },
+> +       { "EXYNOS7420", 0xE7420000 },
+> +       { "EXYNOS5433", 0xE5433000 },
+> +};
+> +
+> +static const char * __init product_id_to_soc_id(unsigned int product_id)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
+> +               if ((product_id & EXYNOS_MASK) == soc_ids[i].id)
+> +                       return soc_ids[i].name;
+> +       return NULL;
+> +}
+> +
+> +int __init exynos_chipid_early_init(void)
+> +{
+> +       struct soc_device_attribute *soc_dev_attr;
+> +       void __iomem *exynos_chipid_base;
+> +       struct soc_device *soc_dev;
+> +       struct device_node *root;
+> +       struct device_node *np;
+> +       u32 product_id;
+> +       u32 revision;
+> +
+> +       /* look up for chipid node */
+> +       np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
+> +       if (!np)
+> +               return -ENODEV;
+> +
+> +       exynos_chipid_base = of_iomap(np, 0);
+> +       of_node_put(np);
+> +
+> +       if (!exynos_chipid_base) {
+> +               pr_err("Failed to map SoC chipid\n");
+> +               return -ENXIO;
+> +       }
+> +
+> +       product_id = readl_relaxed(exynos_chipid_base);
+> +       revision = product_id & EXYNOS_REV_MASK;
+> +       iounmap(exynos_chipid_base);
+> +
+> +       soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+> +       if (!soc_dev_attr)
+> +               return -ENOMEM;
+> +
+> +       soc_dev_attr->family = "Samsung Exynos";
+> +
+> +       root = of_find_node_by_path("/");
+> +       of_property_read_string(root, "model", &soc_dev_attr->machine);
+> +       of_node_put(root);
+> +
+> +       soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
+> +       soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
+> +       if (!soc_dev_attr->soc_id) {
+> +               pr_err("Unknown SoC\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       /* please note that the actual registration will be deferred */
+> +       soc_dev = soc_device_register(soc_dev_attr);
+> +       if (IS_ERR(soc_dev)) {
+> +               kfree(soc_dev_attr->revision);
+> +               kfree(soc_dev_attr);
+> +               return PTR_ERR(soc_dev);
+> +       }
+> +
+> +       /* it is too early to use dev_info() here (soc_dev is NULL) */
+> +       pr_info("soc soc0: Exynos: CPU[%s] PRO_ID[0x%x] REV[0x%x] Detected\n",
+> +               soc_dev_attr->soc_id, product_id, revision);
+> +
+> +       return 0;
+> +}
+> +early_initcall(exynos_chipid_early_init);
+> --
+> 1.9.1
+>
