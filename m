@@ -1,39 +1,103 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 02/10] ARM64: dts: exynos: Add all CPUs in cooling maps
-Date: Sun, 18 Nov 2018 15:20:17 +0100
-Message-ID: <20181118142017.GB11419@kozik-lap>
-References: <cover.1542362530.git.viresh.kumar@linaro.org>
- <74e23257aece9ceef48b1c1cf6c9bafcce3c6fbd.1542362530.git.viresh.kumar@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] usb: gadget: u_ether: fix unsafe list iteration
+Date: Mon, 19 Nov 2018 16:49:05 +0100
+Message-ID: <20181119154905.17685-1-m.szyprowski@samsung.com>
+References: <CGME20181119154910eucas1p2ff5c6609b22365b20ef6e57fe599ec33@eucas1p2.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <74e23257aece9ceef48b1c1cf6c9bafcce3c6fbd.1542362530.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 03:34:25PM +0530, Viresh Kumar wrote:
-> Each CPU can (and does) participate in cooling down the system but the
-> DT only captures a handful of them, normally CPU0, in the cooling maps.
-> Things work by chance currently as under normal circumstances its the
-> first CPU of each cluster which is used by the operating systems to
-> probe the cooling devices. But as soon as this CPU ordering changes and
-> any other CPU is used to bring up the cooling device, we will start
-> seeing failures.
-> 
-> Also the DT is rather incomplete when we list only one CPU in the
-> cooling maps, as the hardware doesn't have any such limitations.
-> 
-> Update cooling maps to include all devices affected by individual trip
-> points.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  .../arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 36 ++++++++++++-------
+list_for_each_entry_safe() is not safe for deleting entries from the
+list if the spin lock, which protects it, is released and reacquired during
+the list iteration. Fix this issue by replacing this construction with
+a simple check if list is empty and removing the first entry in each
+iteration. This is almost equivalent to a revert of the commit mentioned in
+the Fixes: tag.
 
-Thanks, applied.
+This patch fixes following issue:
+--->8---
+Unable to handle kernel NULL pointer dereference at virtual address 00000104
+pgd = (ptrval)
+[00000104] *pgd=00000000
+Internal error: Oops: 817 [#1] PREEMPT SMP ARM
+Modules linked in:
+CPU: 1 PID: 84 Comm: kworker/1:1 Not tainted 4.20.0-rc2-next-20181114-00009-g8266b35ec404 #1061
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+Workqueue: events eth_work
+PC is at rx_fill+0x60/0xac
+LR is at _raw_spin_lock_irqsave+0x50/0x5c
+pc : [<c065fee0>]    lr : [<c0a056b8>]    psr: 80000093
+sp : ee7fbee8  ip : 00000100  fp : 00000000
+r10: 006000c0  r9 : c10b0ab0  r8 : ee7eb5c0
+r7 : ee7eb614  r6 : ee7eb5ec  r5 : 000000dc  r4 : ee12ac00
+r3 : ee12ac24  r2 : 00000200  r1 : 60000013  r0 : ee7eb5ec
+Flags: Nzcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 6d5dc04a  DAC: 00000051
+Process kworker/1:1 (pid: 84, stack limit = 0x(ptrval))
+Stack: (0xee7fbee8 to 0xee7fc000)
+...
+[<c065fee0>] (rx_fill) from [<c0143b7c>] (process_one_work+0x200/0x738)
+[<c0143b7c>] (process_one_work) from [<c0144118>] (worker_thread+0x2c/0x4c8)
+[<c0144118>] (worker_thread) from [<c014a8a4>] (kthread+0x128/0x164)
+[<c014a8a4>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+Exception stack(0xee7fbfb0 to 0xee7fbff8)
+...
+---[ end trace 64480bc835eba7d6 ]---
 
-Best regards,
-Krzysztof
+Fixes: fea14e68ff5e ("usb: gadget: u_ether: use better list accessors")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/usb/gadget/function/u_ether.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
+index 1000d864929c..0f026d445e31 100644
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -401,12 +401,12 @@ static int alloc_requests(struct eth_dev *dev, struct gether *link, unsigned n)
+ static void rx_fill(struct eth_dev *dev, gfp_t gfp_flags)
+ {
+ 	struct usb_request	*req;
+-	struct usb_request	*tmp;
+ 	unsigned long		flags;
+ 
+ 	/* fill unused rxq slots with some skb */
+ 	spin_lock_irqsave(&dev->req_lock, flags);
+-	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
++	while (!list_empty(&dev->rx_reqs)) {
++		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
+ 		list_del_init(&req->list);
+ 		spin_unlock_irqrestore(&dev->req_lock, flags);
+ 
+@@ -1125,7 +1125,6 @@ void gether_disconnect(struct gether *link)
+ {
+ 	struct eth_dev		*dev = link->ioport;
+ 	struct usb_request	*req;
+-	struct usb_request	*tmp;
+ 
+ 	WARN_ON(!dev);
+ 	if (!dev)
+@@ -1142,7 +1141,8 @@ void gether_disconnect(struct gether *link)
+ 	 */
+ 	usb_ep_disable(link->in_ep);
+ 	spin_lock(&dev->req_lock);
+-	list_for_each_entry_safe(req, tmp, &dev->tx_reqs, list) {
++	while (!list_empty(&dev->tx_reqs)) {
++		req = list_first_entry(&dev->tx_reqs, struct usb_request, list);
+ 		list_del(&req->list);
+ 
+ 		spin_unlock(&dev->req_lock);
+@@ -1154,7 +1154,8 @@ void gether_disconnect(struct gether *link)
+ 
+ 	usb_ep_disable(link->out_ep);
+ 	spin_lock(&dev->req_lock);
+-	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
++	while (!list_empty(&dev->rx_reqs)) {
++		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
+ 		list_del(&req->list);
+ 
+ 		spin_unlock(&dev->req_lock);
+-- 
+2.17.1
