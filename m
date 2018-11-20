@@ -1,103 +1,41 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] usb: gadget: u_ether: fix unsafe list iteration
-Date: Mon, 19 Nov 2018 16:49:05 +0100
-Message-ID: <20181119154905.17685-1-m.szyprowski@samsung.com>
-References: <CGME20181119154910eucas1p2ff5c6609b22365b20ef6e57fe599ec33@eucas1p2.samsung.com>
+Subject: [PATCH] regulator: s2mps11: Fix GPIO descriptor initialization
+Date: Tue, 20 Nov 2018 13:38:44 +0100
+Message-ID: <20181120123844.3003-1-m.szyprowski@samsung.com>
+References: <CGME20181120123855eucas1p1a969fba923e9243e576cae0b632504af@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-list_for_each_entry_safe() is not safe for deleting entries from the
-list if the spin lock, which protects it, is released and reacquired during
-the list iteration. Fix this issue by replacing this construction with
-a simple check if list is empty and removing the first entry in each
-iteration. This is almost equivalent to a revert of the commit mentioned in
-the Fixes: tag.
+GPIO descriptor array must be zero initialized to ensure that core will
+properly handle also the case when no external GPIO pin is defined.
 
-This patch fixes following issue:
---->8---
-Unable to handle kernel NULL pointer dereference at virtual address 00000104
-pgd = (ptrval)
-[00000104] *pgd=00000000
-Internal error: Oops: 817 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 1 PID: 84 Comm: kworker/1:1 Not tainted 4.20.0-rc2-next-20181114-00009-g8266b35ec404 #1061
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-Workqueue: events eth_work
-PC is at rx_fill+0x60/0xac
-LR is at _raw_spin_lock_irqsave+0x50/0x5c
-pc : [<c065fee0>]    lr : [<c0a056b8>]    psr: 80000093
-sp : ee7fbee8  ip : 00000100  fp : 00000000
-r10: 006000c0  r9 : c10b0ab0  r8 : ee7eb5c0
-r7 : ee7eb614  r6 : ee7eb5ec  r5 : 000000dc  r4 : ee12ac00
-r3 : ee12ac24  r2 : 00000200  r1 : 60000013  r0 : ee7eb5ec
-Flags: Nzcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: 6d5dc04a  DAC: 00000051
-Process kworker/1:1 (pid: 84, stack limit = 0x(ptrval))
-Stack: (0xee7fbee8 to 0xee7fc000)
-...
-[<c065fee0>] (rx_fill) from [<c0143b7c>] (process_one_work+0x200/0x738)
-[<c0143b7c>] (process_one_work) from [<c0144118>] (worker_thread+0x2c/0x4c8)
-[<c0144118>] (worker_thread) from [<c014a8a4>] (kthread+0x128/0x164)
-[<c014a8a4>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-Exception stack(0xee7fbfb0 to 0xee7fbff8)
-...
----[ end trace 64480bc835eba7d6 ]---
-
-Fixes: fea14e68ff5e ("usb: gadget: u_ether: use better list accessors")
+Fixes: 1c984942f0a4 ("regulator: s2mps11: Pass descriptor instead of GPIO number")
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/usb/gadget/function/u_ether.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+This fixes broken eMMC boot on Artik, Rinato and Odroid XU3/XU4/HC1
+boards.
+---
+ drivers/regulator/s2mps11.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-index 1000d864929c..0f026d445e31 100644
---- a/drivers/usb/gadget/function/u_ether.c
-+++ b/drivers/usb/gadget/function/u_ether.c
-@@ -401,12 +401,12 @@ static int alloc_requests(struct eth_dev *dev, struct gether *link, unsigned n)
- static void rx_fill(struct eth_dev *dev, gfp_t gfp_flags)
- {
- 	struct usb_request	*req;
--	struct usb_request	*tmp;
- 	unsigned long		flags;
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 6fec45897194..63e66f485cc0 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -1134,9 +1134,8 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
- 	/* fill unused rxq slots with some skb */
- 	spin_lock_irqsave(&dev->req_lock, flags);
--	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
-+	while (!list_empty(&dev->rx_reqs)) {
-+		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
- 		list_del_init(&req->list);
- 		spin_unlock_irqrestore(&dev->req_lock, flags);
+-	s2mps11->ext_control_gpiod = devm_kmalloc_array(&pdev->dev,
+-			rdev_num, sizeof(*s2mps11->ext_control_gpiod),
+-			GFP_KERNEL);
++	s2mps11->ext_control_gpiod = devm_kcalloc(&pdev->dev, rdev_num,
++			       sizeof(*s2mps11->ext_control_gpiod), GFP_KERNEL);
+ 	if (!s2mps11->ext_control_gpiod)
+ 		return -ENOMEM;
  
-@@ -1125,7 +1125,6 @@ void gether_disconnect(struct gether *link)
- {
- 	struct eth_dev		*dev = link->ioport;
- 	struct usb_request	*req;
--	struct usb_request	*tmp;
- 
- 	WARN_ON(!dev);
- 	if (!dev)
-@@ -1142,7 +1141,8 @@ void gether_disconnect(struct gether *link)
- 	 */
- 	usb_ep_disable(link->in_ep);
- 	spin_lock(&dev->req_lock);
--	list_for_each_entry_safe(req, tmp, &dev->tx_reqs, list) {
-+	while (!list_empty(&dev->tx_reqs)) {
-+		req = list_first_entry(&dev->tx_reqs, struct usb_request, list);
- 		list_del(&req->list);
- 
- 		spin_unlock(&dev->req_lock);
-@@ -1154,7 +1154,8 @@ void gether_disconnect(struct gether *link)
- 
- 	usb_ep_disable(link->out_ep);
- 	spin_lock(&dev->req_lock);
--	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
-+	while (!list_empty(&dev->rx_reqs)) {
-+		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
- 		list_del(&req->list);
- 
- 		spin_unlock(&dev->req_lock);
 -- 
 2.17.1
