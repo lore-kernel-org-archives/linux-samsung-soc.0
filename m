@@ -1,88 +1,98 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 6/6] arm: dts: exynos4: set opp-suspend for DMC and
- leftbus
-Date: Thu, 22 Nov 2018 12:09:31 +0900
-Message-ID: <5BF61DEB.5010403@samsung.com>
-References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181121180208eucas1p11482a783ab1b1bceb8c9f6a1f50682c3@eucas1p1.samsung.com>
-        <1542823301-23563-7-git-send-email-l.luba@partner.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCHv2] ARM: dts: exynos: update the usbdrd_phy suspend clk
+Date: Thu, 22 Nov 2018 08:54:18 +0100
+Message-ID: <CAJKOXPcphirR=+25evzVxHGv1g_4xNfPv3gazXWOes1G6iBt5g@mail.gmail.com>
+References: <20181120185536.1159-1-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1542823301-23563-7-git-send-email-l.luba@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181120185536.1159-1-linux.amoon@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux.amoon@gmail.com
+Cc: devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 2018년 11월 22일 03:01, Lukasz Luba wrote:
-> Mark the state for devfreq device while entring suspend/resume process.
-> 
-> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
-> solve issue with devfreq device's frequency during suspend/resume.
-> During the discussion on LKML some corner cases and comments appeared
-> related to the design. This patch address them keeping in mind suggestions
-> from Chanwoo Choi.
-> 
-> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+On Tue, 20 Nov 2018 at 19:55, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> As per FSYS usbdrd_phy clk setting CLK_SCLK_USBD300/1 binds
+> to SUSPEND_CLK so correct update the suspend clk.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > ---
->  arch/arm/boot/dts/exynos4210.dtsi | 2 ++
->  arch/arm/boot/dts/exynos4412.dtsi | 2 ++
->  2 files changed, 4 insertions(+)
+> [0] https://lkml.org/lkml/2017/10/6/12
+> changes from previous patch
+> fix the order of clk and update the commit message
+>
+> FSYS block show in user manual
+>
+> CLKMUX_USBDRD300/1----CLKDIV_USBDRD300/1----SCLK_USBDRD300/1-----SUSPEND_CLK
+>                    |
+>                    |--CLKDIV_USBPHY300/1----SCLK_USBPHY300/1-----USBDRD30_PHY_0/1
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Your new clock - SCLK_USBD301 - is not mentioned here. I don't get the
+reason behind this change.
 
-> 
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index b6091c2..4429b72 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -298,6 +298,7 @@
->  			opp-400000000 {
->  				opp-hz = /bits/ 64 <400000000>;
->  				opp-microvolt = <1150000>;
-> +				opp-suspend;
->  			};
->  		};
->  
-> @@ -367,6 +368,7 @@
->  			};
->  			opp-200000000 {
->  				opp-hz = /bits/ 64 <200000000>;
-> +				opp-suspend;
->  			};
->  		};
->  	};
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index 51f72f0..908c0c4 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -432,6 +432,7 @@
->  			opp-400000000 {
->  				opp-hz = /bits/ 64 <400000000>;
->  				opp-microvolt = <1050000>;
-> +				opp-suspend;
->  			};
->  		};
->  
-> @@ -520,6 +521,7 @@
->  			opp-200000000 {
->  				opp-hz = /bits/ 64 <200000000>;
->  				opp-microvolt = <1000000>;
-> +				opp-suspend;
->  			};
->  		};
->  
-> 
+Best regards,
+Krzysztof
 
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> ---
+>  arch/arm/boot/dts/exynos5410.dtsi | 4 ++--
+>  arch/arm/boot/dts/exynos5420.dtsi | 4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index 57fc9c949e54..a92c765a7a84 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -395,7 +395,7 @@
+>  };
+>
+>  &usbdrd_phy0 {
+> -       clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
+> +       clocks = <&clock CLK_SCLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
+>         clock-names = "phy", "ref";
+>         samsung,pmu-syscon = <&pmu_system_controller>;
+>  };
+> @@ -410,7 +410,7 @@
+>  };
+>
+>  &usbdrd_phy1 {
+> -       clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+> +       clocks = <&clock CLK_SCLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+>         clock-names = "phy", "ref";
+>         samsung,pmu-syscon = <&pmu_system_controller>;
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index aaff15880761..b84b44556efc 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -1509,7 +1509,7 @@
+>  };
+>
+>  &usbdrd_phy0 {
+> -       clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
+> +       clocks = <&clock CLK_SCLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
+>         clock-names = "phy", "ref";
+>         samsung,pmu-syscon = <&pmu_system_controller>;
+>  };
+> @@ -1524,7 +1524,7 @@
+>  };
+>
+>  &usbdrd_phy1 {
+> -       clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+> +       clocks = <&clock CLK_SCLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+>         clock-names = "phy", "ref";
+>         samsung,pmu-syscon = <&pmu_system_controller>;
+>  };
+> --
+> 2.17.1
+>
