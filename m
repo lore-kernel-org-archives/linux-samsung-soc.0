@@ -1,181 +1,56 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 3/6] devfreq: add support for suspend/resume of a
- devfreq device
-Date: Fri, 23 Nov 2018 08:54:06 +0900
-Message-ID: <5BF7419E.90006@samsung.com>
-References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382@eucas1p1.samsung.com>
-        <1542823301-23563-4-git-send-email-l.luba@partner.samsung.com>
-        <5BF61B3A.9050402@samsung.com>
-        <cce4f194-b574-a12c-e876-f11a6f245940@partner.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH 1/3] clk: samsung: exynos5420: add VPLL rate table for g3d clock
+Date: Fri, 23 Nov 2018 09:44:11 +0000
+Message-ID: <20181123094413.1108-1-linux.amoon@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <cce4f194-b574-a12c-e876-f11a6f245940@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+To: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Lukasz,
+From: Marian Mihailescu <mihailescu2m@gmail.com>
 
-I add one more comment about devfreq_resume_device().
+A specific clock rate table is added for VPLL so it is possible
+to set frequency of the VPLL output clock that used by the g3d clock.
 
-On 2018년 11월 22일 20:00, Lukasz Luba wrote:
-> 
-> 
-> On 11/22/18 3:58 AM, Chanwoo Choi wrote:
->> On 2018년 11월 22일 03:01, Lukasz Luba wrote:
->>> The patch adds support for handling suspend/resume process.
->>> It uses atomic variables to make sure no race condition
->>> affects the process.
->>>
->>> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
->>> solve issue with devfreq device's frequency during suspend/resume.
->>> During the discussion on LKML some corner cases and comments appeared
->>> related to the design. This patch address them keeping in mind suggestions
->>> from Chanwoo Choi.
->>
->> Please remove the duplicate information about patch history.
->>
->>>
->>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>> ---
->>>   drivers/devfreq/devfreq.c | 45 +++++++++++++++++++++++++++++++++++++++------
->>>   1 file changed, 39 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>> index cf9c643..7e09de8 100644
->>> --- a/drivers/devfreq/devfreq.c
->>> +++ b/drivers/devfreq/devfreq.c
->>> @@ -872,14 +872,33 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
->>>    */
->>>   int devfreq_suspend_device(struct devfreq *devfreq)
->>>   {
->>> -	if (!devfreq)
->>> -		return -EINVAL;
->>> +        int ret;
->>
->> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
->> because 'ret' is used if suspend_freq isn't zero.
-> Not only there, 6 lines above 'ret' is used for 
-> devfreq->governor->event_handler().
+Cc: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-OK.
-
->>
->>> +        unsigned long prev_freq;
->>> +        u32 flags = 0;
->>> +
->>> +        if (!devfreq)
->>> +                return -EINVAL;
->>> +
->>> +        if (devfreq->governor) {
->>> +		ret = devfreq->governor->event_handler(devfreq,
->>> +					DEVFREQ_GOV_SUSPEND, NULL);
->>> +		if (ret)
->>> +			return ret;
->>> +	}
->>>   
->>> -	if (!devfreq->governor)
->>> -		return 0;
->>> +	if (devfreq->suspend_freq) {
->>> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
->>> +			return 0;
->>>   
->>> -	return devfreq->governor->event_handler(devfreq,
->>> -				DEVFREQ_GOV_SUSPEND, NULL);
->>> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq,
->>> +					 &prev_freq, flags);
->>
->> Remove the 'prev_freq' parameter.
-> OK
->>
->>> +		if (ret)
->>> +			return ret;
->>> +
->>> +		devfreq->resume_freq = prev_freq;
->>
->> As I commented on patch2, if devfreq_set_taget save the current frequency
->> to 'devfreq->resume_freq', this line is not needed.
-> OK
->>
->>
->>> +	}
->>> +
->>> +        return 0;
->>>   }
->>>   EXPORT_SYMBOL(devfreq_suspend_device);
->>>   
->>> @@ -893,9 +912,23 @@ EXPORT_SYMBOL(devfreq_suspend_device);
->>>    */
->>>   int devfreq_resume_device(struct devfreq *devfreq)
->>>   {
->>> +        int ret;
->>
->> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
->> because 'ret' is used if suspend_freq isn't zero.
-> OK
-
-If you change the devfreq_resume_device() according to my new comment,
-please ignore it.
-
->>
->>> +        unsigned long prev_freq;
->>
->> Remove prev_freq variable which is not used on this function.
->> After calling devfreq_set_target, prev_freq is not used.
-> OK
->>
->>> +        u32 flags = 0;
->>> +
->>>   	if (!devfreq)
->>>   		return -EINVAL;
->>>   
->>> +	if (devfreq->suspend_freq) {
->>> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
->>> +			return 0;
->>> +
->>> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq,
->>> +					 &prev_freq, flags);
->>
->> Remove the 'prev_freq' parameter.
-> OK
->>
->>> +		if (ret)
->>> +			return ret;
->>> +	}
->>> +
->>>   	if (!devfreq->governor)
->>>   		return 0;
-
-Please change the code as following because you uses the following type
-in the devfreq_suspend_device(). If there is any special issue, please
-keep the same format in order to improve the readability. 
-
-	if (devfreq->governor) {                                                
-		ret = devfreq->governor->event_handler(devfreq,                 
-				DEVFREQ_GOV_RESUME, NULL);             
-		if (ret)                                                        
-			return ret;                                             
-	}        
-
-
->>>   
->>>
->>
->>
-> 
-> Regards,
-> Lukasz Luba
-> 
-> 
-
-
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 34cce3c5898f..34156bdfd0d2 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1303,6 +1303,18 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+ 	PLL_36XX_RATE(24 * MHZ,  32768001U, 131, 3, 5, 4719),
+ };
+ 
++static const struct samsung_pll_rate_table exynos5420_vpll_24mhz_tbl[] __initconst = {
++	PLL_35XX_RATE(24 * MHZ, 600000000U, 200, 2, 2),
++	PLL_35XX_RATE(24 * MHZ, 543000000U, 181, 2, 2),
++	PLL_35XX_RATE(24 * MHZ, 533000000U, 533, 6, 2),
++	PLL_35XX_RATE(24 * MHZ, 480000000U, 320, 4, 2),
++	PLL_35XX_RATE(24 * MHZ, 420000000U, 140, 2, 2),
++	PLL_35XX_RATE(24 * MHZ, 350000000U, 175, 3, 2),
++	PLL_35XX_RATE(24 * MHZ, 266000000U, 266, 3, 3),
++	PLL_35XX_RATE(24 * MHZ, 177000000U, 118, 2, 3),
++	PLL_35XX_RATE(24 * MHZ, 100000000U, 200, 3, 4),
++};
++
+ static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
+ 	[apll] = PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+ 		APLL_CON0, NULL),
+@@ -1428,6 +1440,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+ 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+ 		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
++		exynos5x_plls[vpll].rate_table = exynos5420_vpll_24mhz_tbl;
+ 	}
+ 
+ 	samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.1
