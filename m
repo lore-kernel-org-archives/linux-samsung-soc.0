@@ -1,152 +1,192 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH 3/3] ARM: dts: Add g3d bus nodes using VDD_INT for Exynos542x SoC
-Date: Fri, 23 Nov 2018 09:44:13 +0000
-Message-ID: <20181123094413.1108-3-linux.amoon@gmail.com>
-References: <20181123094413.1108-1-linux.amoon@gmail.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH 2/6] devfreq: refactor set_target frequency function
+Date: Fri, 23 Nov 2018 10:58:35 +0100
+Message-ID: <1c3a4aad-99cb-9295-3a5e-ff7a3c5245a3@partner.samsung.com>
+References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181121180202eucas1p27d3aa58411abeae03181c38b91fc67de@eucas1p2.samsung.com>
+        <1542823301-23563-3-git-send-email-l.luba@partner.samsung.com>
+        <5BF619EE.8090006@samsung.com>
+        <9eef3348-e86f-1113-3691-39ba3a620fb8@partner.samsung.com>
+        <5BF73FA9.7010402@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181123094413.1108-1-linux.amoon@gmail.com>
+In-Reply-To: <5BF73FA9.7010402@samsung.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add missing Netwwork on chip for g3d bus node using VDD_INI
-for Exynos542x SoC.
+Hi Chanwoo Choi,
 
-- CLK_DOUT_ACLK_G3D for G3D's AXI
+On 11/23/18 12:45 AM, Chanwoo Choi wrote:
+> Hi Lukasz,
+> 
+> On 2018년 11월 22일 19:40, Lukasz Luba wrote:
+>> Hi Chanwoo Choi
+>>
+>> On 11/22/18 3:52 AM, Chanwoo Choi wrote:
+>>> On 2018년 11월 22일 03:01, Lukasz Luba wrote:
+>>>> The refactoring is needed for the new client in devfreq: suspend.
+>>>> To avoid code duplication, move it to the new local function
+>>>> devfreq_set_target.
+>>>>
+>>>> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
+>>>> solve issue with devfreq device's frequency during suspend/resume.
+>>>> During the discussion on LKML some corner cases and comments appeared
+>>>> related to the design. This patch address them keeping in mind suggestions
+>>>> from Chanwoo Choi.
+>>>
+>>> As I commented on patch1, please remove it.
+>> OK
+>>>
+>>>>
+>>>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>>>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>>>> ---
+>>>>    drivers/devfreq/devfreq.c | 62 ++++++++++++++++++++++++++++-------------------
+>>>>    1 file changed, 37 insertions(+), 25 deletions(-)
+>>>>
+>>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>>>> index e20e7e4..cf9c643 100644
+>>>> --- a/drivers/devfreq/devfreq.c
+>>>> +++ b/drivers/devfreq/devfreq.c
+>>>> @@ -285,6 +285,42 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
+>>>>    	return 0;
+>>>>    }
+>>>>    
+>>>> +static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+>>>> +			      unsigned long *prev_freq, u32 flags)
+>>>
+>>> Please remove the unused space in front of 'unsigned long *prev_freq'.
+>>> Use tab only for indentation.
+>> OK
+>>>
+>>>> +{
+>>>> +	struct devfreq_freqs freqs;
+>>>> +	unsigned long cur_freq;
+>>>> +	int err = 0;
+>>>> +
+>>>> +	if (devfreq->profile->get_cur_freq)
+>>>> +		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
+>>>> +	else
+>>>> +		cur_freq = devfreq->previous_freq;
+>>>> +
+>>>> +	freqs.old = cur_freq;
+>>>> +	freqs.new = new_freq;
+>>>> +	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
+>>>> +
+>>>> +	err = devfreq->profile->target(devfreq->dev.parent, &new_freq, flags);
+>>>> +	if (err) {
+>>>> +		freqs.new = cur_freq;
+>>>> +		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>>>> +		return err;
+>>>> +	}
+>>>> +
+>>>> +	freqs.new = new_freq;
+>>>> +	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>>>> +
+>>>> +	if (devfreq_update_status(devfreq, new_freq))
+>>>> +		dev_err(&devfreq->dev,
+>>>> +			"Couldn't update frequency transition information.\n");
+>>>> +
+>>>> +	devfreq->previous_freq = new_freq;
+>>>> +	*prev_freq = cur_freq;
+>>>> +
+>>>> +	return err;
+>>>> +}
+>>>> +
+>>>>    /* Load monitoring helper functions for governors use */
+>>>>    
+>>>>    /**
+>>>> @@ -296,7 +332,6 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
+>>>>     */
+>>>>    int update_devfreq(struct devfreq *devfreq)
+>>>>    {
+>>>> -	struct devfreq_freqs freqs;
+>>>>    	unsigned long freq, cur_freq, min_freq, max_freq;
+>>>
+>>>
+>>> cur_freq is not used after modification. Remove it.
+>>>
+>>>>    	int err = 0;
+>>>>    	u32 flags = 0;
+>>>> @@ -333,31 +368,8 @@ int update_devfreq(struct devfreq *devfreq)
+>>>>    		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
+>>>>    	}
+>>>>    
+>>>> -	if (devfreq->profile->get_cur_freq)
+>>>> -		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
+>>>> -	else
+>>>> -		cur_freq = devfreq->previous_freq;
+>>>> -
+>>>> -	freqs.old = cur_freq;
+>>>> -	freqs.new = freq;
+>>>> -	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
+>>>> +	return devfreq_set_target(devfreq, freq, &cur_freq, flags);
+>>>
+>>> You get the 'cur_freq' from devfreq_set_taget() for devfreq_suspend_device() on patch3.
+>>> But, update_devfreq() and devfreq_resume_device() don't use the 'cur_freq' value
+>>> from devfreq_set_target().
+>>>
+>>> Instead, getting 'cur_freq' for 'devfreq->resume_freq' in the devfreq_set_target().
+>>> Please remove the 'cur_freq' parameter from devfreq_set_target.
+>>
+>> I can remove the 3rd parameter from devfreq_set_target(),
+>> but it implies that patch 1 and 3 cannot be merged. The function
+>> devfreq_set_target will use 'devfreq->resume_freq' so it must be in
+>> devfreq struct.
+>> So, in v2 version there will be still 6 patches, with the 1st patch
+>> defining needed fields in devfreq struct.
+>> Do you agree for that?
+> 
+> So, I replied again as following on my other reply[1] of patch2:
+> [1] https://lkml.org/lkml/2018/11/22/507
+> 
+> But, you have to add following new code on patch3 instead of patch2.
+> patch2 doesn't contain the following codes and then
+> patch3 adds 'resume_freq' variable and adds the following code on patch3.
+> 
+> +
+> +       if (devfreq->suspend_freq)
+> +               devfreq->resume_freq = cur_freq;
+> 
+OK, I will add that change to patch 3.
 
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- arch/arm/boot/dts/exynos5420.dtsi             | 57 +++++++++++++++++--
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  5 ++
- 2 files changed, 56 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index aaff15880761..bc7203bb1282 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1047,6 +1047,14 @@
- 			status = "disabled";
- 		};
- 
-+		bus_g3d: bus_g3d {
-+			compatible = "samsung,exynos-bus";
-+			clocks = <&clock CLK_DOUT_ACLK_G3D>;
-+			clock-names = "bus";
-+			operating-points-v2 = <&bus_g3d_opp_table>;
-+			status = "disabled";
-+		};
-+
- 		bus_jpeg: bus_jpeg {
- 			compatible = "samsung,exynos-bus";
- 			clocks = <&clock CLK_DOUT_ACLK300_JPEG>;
-@@ -1245,7 +1253,44 @@
- 			};
- 		};
- 
--		bus_jpeg_opp_table: opp_table11 {
-+		bus_g3d_opp_table: opp_table11 {
-+			compatible = "operating-points-v2";
-+
-+			opp@600000000 {
-+				opp-hz = /bits/ 64 <600000000>;
-+				opp-microvolt = <1025000>;
-+			};
-+			opp@543000000 {
-+				opp-hz = /bits/ 64 <543000000>;
-+				opp-microvolt = <987500>;
-+			};
-+			opp@480000000 {
-+				opp-hz = /bits/ 64 <480000000>;
-+				opp-microvolt = <950000>;
-+			};
-+			opp@420000000 {
-+				opp-hz = /bits/ 64 <420000000>;
-+				opp-microvolt = <937500>;
-+			};
-+			opp@350000000 {
-+				opp-hz = /bits/ 64 <350000000>;
-+				opp-microvolt = <900000>;
-+			};
-+			opp@266000000 {
-+				opp-hz = /bits/ 64 <266000000>;
-+				opp-microvolt = <862500>;
-+			};
-+			opp@177000000 {
-+				opp-hz = /bits/ 64 <177000000>;
-+				opp-microvolt = <862500>;
-+			};
-+			opp@100000000 {
-+				opp-hz = /bits/ 64 <100000000>;
-+				opp-microvolt = <862500>;
-+			};
-+		};
-+
-+		bus_jpeg_opp_table: opp_table12 {
- 			compatible = "operating-points-v2";
- 
- 			opp00 {
-@@ -1262,7 +1307,7 @@
- 			};
- 		};
- 
--		bus_jpeg_apb_opp_table: opp_table12 {
-+		bus_jpeg_apb_opp_table: opp_table13 {
- 			compatible = "operating-points-v2";
- 
- 			opp00 {
-@@ -1279,7 +1324,7 @@
- 			};
- 		};
- 
--		bus_disp1_fimd_opp_table: opp_table13 {
-+		bus_disp1_fimd_opp_table: opp_table14 {
- 			compatible = "operating-points-v2";
- 
- 			opp00 {
-@@ -1290,7 +1335,7 @@
- 			};
- 		};
- 
--		bus_disp1_opp_table: opp_table14 {
-+		bus_disp1_opp_table: opp_table15 {
- 			compatible = "operating-points-v2";
- 
- 			opp00 {
-@@ -1304,7 +1349,7 @@
- 			};
- 		};
- 
--		bus_gscl_opp_table: opp_table15 {
-+		bus_gscl_opp_table: opp_table16 {
- 			compatible = "operating-points-v2";
- 
- 			opp00 {
-@@ -1318,7 +1363,7 @@
- 			};
- 		};
- 
--		bus_mscl_opp_table: opp_table16 {
-+		bus_mscl_opp_table: opp_table17 {
- 			compatible = "operating-points-v2";
- 
- 			opp00 {
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 2fac4baf1eb4..6e39e4594502 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -89,6 +89,11 @@
- 	status = "okay";
- };
- 
-+&bus_g3d {
-+	devfreq = <&bus_wcore>;
-+	status = "okay";
-+};
-+
- &bus_jpeg {
- 	devfreq = <&bus_wcore>;
- 	status = "okay";
--- 
-2.17.1
+Regards,
+Lukasz
+>>
+>>>
+>>>>    
+>>>> -	err = devfreq->profile->target(devfreq->dev.parent, &freq, flags);
+>>>> -	if (err) {
+>>>> -		freqs.new = cur_freq;
+>>>> -		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>>>> -		return err;
+>>>> -	}
+>>>> -
+>>>> -	freqs.new = freq;
+>>>> -	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>>>> -
+>>>> -	if (devfreq_update_status(devfreq, freq))
+>>>> -		dev_err(&devfreq->dev,
+>>>> -			"Couldn't update frequency transition information.\n");
+>>>> -
+>>>> -	devfreq->previous_freq = freq;
+>>>> -	return err;
+>>>>    }
+>>>>    EXPORT_SYMBOL(update_devfreq);
+>>>>    
+>>>>
+>>>
+>>>
+>>
+>> Regards,
+>> Lukasz Luba
+>>
+>>
+> 
+> 
