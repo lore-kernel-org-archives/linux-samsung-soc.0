@@ -1,40 +1,68 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: Re: [PATCH 4/4] clk: samsung: exynos5433: add imem clock
-Date: Mon, 26 Nov 2018 16:16:37 +0100
-Message-ID: <d4dd53a5-fb87-34db-e3b6-2d8d05feb261@partner.samsung.com>
-References: <20181121120509.18892-1-k.konieczny@partner.samsung.com>
-        <CGME20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4@eucas1p1.samsung.com>
-        <20181121120509.18892-5-k.konieczny@partner.samsung.com>
-        <5BF5520A.5050500@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 0/6] drm/exynos/iommu: refactoring
+Date: Tue, 27 Nov 2018 15:36:58 +0100
+Message-ID: <595bb359-2ea3-9324-0777-2fa788f5d6da@samsung.com>
+References: <CGME20181012105351eucas1p15810c2ba3d38803d44e26a09f4a9e600@eucas1p1.samsung.com>
+ <20181012105346.3754-1-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5BF5520A.5050500@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20181012105346.3754-1-a.hajda@samsung.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-> On 2018년 11월 21일 21:05, Kamil Konieczny wrote:
->> Add imem clock for exynos5433.
-> 
-> It is diffcult to understand the meaning of 'imem' without the description.
-> Please add more detailed description as the patch2 description.
-> [...]
-
-Thank you for review, will this be enough for description:
-
-Add imem clock for exynos5433. This will enable to use crypto Security
-SubSystem (in short SSS) and SlimSSS IP blocks.
-
-In documentation there is no description of "imem" name origin. I can guess
-"mem" stand for "memory", and 'i' ? internal ?
-
--- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
+T24gMTIuMTAuMjAxOCAxMjo1MywgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBIaSBJbmtpLAo+Cj4g
+Q2hhbmdlczoKPiB2MjogcmVzZW5kIG9mIHYxIHJlYmFzZWQgb24gbmV4dCB3aXRoIEVYWU5PUyBE
+Uk0gSU9NTVUgY2hhbmdlcyBwb3N0ZWQgYnkgTWFyZWsuCj4KPiBUaGlzIHBhdGNoc2V0IHJlZmFj
+dG9ycyBJT01NVS9ETUEgY29kZSBpbiBFeHlub3NEUk0gZHJpdmVyLgo+IEl0IHBlcmZvcm1zIHNl
+dmVyYWwgY2hhbmdlczoKPiAtIHByb3ZpZGVzIHNpbXBsZS9jbGVhbiBBUEkgZm9yIEV4eW5vc0RS
+TSBkcml2ZXJzLAo+IC0gbW92ZXMgSU9NTVUgcmVsYXRlZCBjb2RlIGZyb20gZHJpdmVycyB0byBz
+aW5nbGUgZmlsZSwKPiAtIG1pbmltaXplcyBwcmVwcm9jZXNzb3IgbWFnaWMsCj4gLSBkZWNyZWFz
+ZXMgbGluZSBjb3VudCBieSAxMzYuCgoKUGluZwoKUmVnYXJkcwoKQW5kcnplagoKCgo+Cj4gUmVn
+YXJkcwo+IEFuZHJ6ZWoKPgo+Cj4gQW5kcnplaiBIYWpkYSAoNik6Cj4gICBkcm0vZXh5bm9zOiBz
+aW1wbGlmeSBETUEgbWFwcGluZwo+ICAgZHJtL2V4eW5vcy9pb21tdTogcmVtb3ZlIERSTV9FWFlO
+T1NfSU9NTVUgS2NvbmZpZyBzeW1ib2wKPiAgIGRybS9leHlub3MvaW9tbXU6IGludGVncmF0ZSBJ
+T01NVS9ETUEgaW50ZXJuYWwgQVBJCj4gICBkcm0vZXh5bm9zL2lvbW11OiBtb3ZlIElPTU1VIHNw
+ZWNpZmljIHN0dWZmIGludG8gZXh5bm9zX2RybV9pb21tdS5jCj4gICBkcm0vZXh5bm9zL2lvbW11
+OiByZXBsYWNlIHByZXByb2Nlc3NvciBjb25kaXRpb25hbHMgd2l0aCBDCj4gICAgIGNvbmRpdGlv
+bmFscwo+ICAgZHJtL2V4eW5vcy9pb21tdTogbWVyZ2UgSU9NTVUgYW5kIERNQSBjb2RlCj4KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnICAgICAgICAgICAgICAgIHwgICA1IC0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9NYWtlZmlsZSAgICAgICAgICAgICAgIHwgICAzICstCj4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8ICAgNSArLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgfCAgIDUgKy0K
+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RtYS5jICAgICAgIHwgMTU3ICsr
+KysrKysrKysrKysrKysrKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
+LmMgICAgICAgfCAgNTUgKy0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kcnYuaCAgICAgICB8ICAxMSArKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmIuYyAgICAgICAgfCAgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmJkZXYuYyAgICAgfCAgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmltYy5jICAgICAgfCAgIDUgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2ZpbWQuYyAgICAgIHwgICA1ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9nMmQuYyAgICAgICB8ICAgNSArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZ2VtLmMgICAgICAgfCAgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZ3NjLmMgICAgICAgfCAgIDUgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2lvbW11LmMgICAgIHwgMTExIC0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmggICAgIHwgMTM0IC0tLS0tLS0tLS0tLS0tLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcm90YXRvci5jICAgfCAgIDUgKy0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jICAgIHwgICA1ICstCj4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgICAgICAgICB8ICAgNSArLQo+
+ICAxOSBmaWxlcyBjaGFuZ2VkLCAxOTQgaW5zZXJ0aW9ucygrKSwgMzMwIGRlbGV0aW9ucygtKQo+
+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rt
+YS5jCj4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1faW9tbXUuYwo+ICBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2lvbW11LmgKPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
