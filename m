@@ -1,74 +1,127 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 0/6] drm/exynos/iommu: refactoring
-Date: Wed, 28 Nov 2018 10:41:27 +0900
-Message-ID: <a8c0845c-20a3-8778-0f73-7e6d39cc0825@samsung.com>
-References: <CGME20181012105351eucas1p15810c2ba3d38803d44e26a09f4a9e600@eucas1p1.samsung.com>
- <20181012105346.3754-1-a.hajda@samsung.com>
- <595bb359-2ea3-9324-0777-2fa788f5d6da@samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: Re: [PATCH 4/4] clk: samsung: exynos5433: add imem clock
+Date: Wed, 28 Nov 2018 14:31:12 +0100
+Message-ID: <29a0412e-1209-b633-8a10-f6db8eb8af09@partner.samsung.com>
+References: <20181121120509.18892-1-k.konieczny@partner.samsung.com>
+        <CGME20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4@eucas1p1.samsung.com>
+        <20181121120509.18892-5-k.konieczny@partner.samsung.com>
+        <5BF5520A.5050500@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <595bb359-2ea3-9324-0777-2fa788f5d6da@samsung.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5BF5520A.5050500@samsung.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoxOC4gMTEuIDI3LiDsmKTtm4QgMTE6Mzbsl5AgQW5kcnplaiBIYWpkYSDsnbQo6rCAKSDsk7Qg
-6riAOgo+IE9uIDEyLjEwLjIwMTggMTI6NTMsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+IEhpIElu
-a2ksCj4+Cj4+IENoYW5nZXM6Cj4+IHYyOiByZXNlbmQgb2YgdjEgcmViYXNlZCBvbiBuZXh0IHdp
-dGggRVhZTk9TIERSTSBJT01NVSBjaGFuZ2VzIHBvc3RlZCBieSBNYXJlay4KPj4KPj4gVGhpcyBw
-YXRjaHNldCByZWZhY3RvcnMgSU9NTVUvRE1BIGNvZGUgaW4gRXh5bm9zRFJNIGRyaXZlci4KPj4g
-SXQgcGVyZm9ybXMgc2V2ZXJhbCBjaGFuZ2VzOgo+PiAtIHByb3ZpZGVzIHNpbXBsZS9jbGVhbiBB
-UEkgZm9yIEV4eW5vc0RSTSBkcml2ZXJzLAo+PiAtIG1vdmVzIElPTU1VIHJlbGF0ZWQgY29kZSBm
-cm9tIGRyaXZlcnMgdG8gc2luZ2xlIGZpbGUsCj4+IC0gbWluaW1pemVzIHByZXByb2Nlc3NvciBt
-YWdpYywKPj4gLSBkZWNyZWFzZXMgbGluZSBjb3VudCBieSAxMzYuCj4gCj4gCj4gUGluZwoKTWVy
-Z2VkIHRvIGV4eW5vcy1kcm0tbmV4dC10b2RvIGZvciBtb3JlIHRlc3RzIGxhc3Qgd2Vlay4gSSBo
-YWQgYSByZXZpZXcgZm9yIHlvdXIgcGF0Y2ggc2VyaWVzIGFuZCBMb29rZWQgZ29vZCBidXQgSSdk
-IGxpa2UgdG8gaGF2ZSBtb3JlIHRlc3RzLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBSZWdhcmRz
-Cj4gCj4gQW5kcnplago+IAo+IAo+IAo+Pgo+PiBSZWdhcmRzCj4+IEFuZHJ6ZWoKPj4KPj4KPj4g
-QW5kcnplaiBIYWpkYSAoNik6Cj4+ICAgZHJtL2V4eW5vczogc2ltcGxpZnkgRE1BIG1hcHBpbmcK
-Pj4gICBkcm0vZXh5bm9zL2lvbW11OiByZW1vdmUgRFJNX0VYWU5PU19JT01NVSBLY29uZmlnIHN5
-bWJvbAo+PiAgIGRybS9leHlub3MvaW9tbXU6IGludGVncmF0ZSBJT01NVS9ETUEgaW50ZXJuYWwg
-QVBJCj4+ICAgZHJtL2V4eW5vcy9pb21tdTogbW92ZSBJT01NVSBzcGVjaWZpYyBzdHVmZiBpbnRv
-IGV4eW5vc19kcm1faW9tbXUuYwo+PiAgIGRybS9leHlub3MvaW9tbXU6IHJlcGxhY2UgcHJlcHJv
-Y2Vzc29yIGNvbmRpdGlvbmFscyB3aXRoIEMKPj4gICAgIGNvbmRpdGlvbmFscwo+PiAgIGRybS9l
-eHlub3MvaW9tbXU6IG1lcmdlIElPTU1VIGFuZCBETUEgY29kZQo+Pgo+PiAgZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9LY29uZmlnICAgICAgICAgICAgICAgIHwgICA1IC0KPj4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvTWFrZWZpbGUgICAgICAgICAgICAgICB8ICAgMyArLQo+PiAgZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgICA1ICstCj4+ICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgfCAgIDUgKy0KPj4gIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kbWEuYyAgICAgICB8IDE1NyArKysrKysrKysr
-KysrKysrKysKPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgICAg
-ICB8ICA1NSArLS0tLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
-aCAgICAgICB8ICAxMSArKwo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zi
-LmMgICAgICAgIHwgICAxIC0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
-YmRldi5jICAgICB8ICAgMSAtCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmltYy5jICAgICAgfCAgIDUgKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9maW1kLmMgICAgICB8ICAgNSArLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2cyZC5jICAgICAgIHwgICA1ICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZ2VtLmMgICAgICAgfCAgIDEgLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2dzYy5jICAgICAgIHwgICA1ICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1faW9tbXUuYyAgICAgfCAxMTEgLS0tLS0tLS0tLS0tLQo+PiAgZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmggICAgIHwgMTM0IC0tLS0tLS0tLS0tLS0tLQo+
-PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuYyAgIHwgICA1ICst
-Cj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fc2NhbGVyLmMgICAgfCAgIDUg
-Ky0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgICAgICAgICB8ICAg
-NSArLQo+PiAgMTkgZmlsZXMgY2hhbmdlZCwgMTk0IGluc2VydGlvbnMoKyksIDMzMCBkZWxldGlv
-bnMoLSkKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZG1hLmMKPj4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1faW9tbXUuYwo+PiAgZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5oCj4+Cj4gCj4gCj4gCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi,
+
+Thank you for your review, see below for answers and questions.
+
+On 21.11.2018 13:39, Chanwoo Choi wrote:
+> Hi,
+> 
+> On 2018년 11월 21일 21:05, Kamil Konieczny wrote:
+>> Add imem clock for exynos5433.
+> 
+> It is diffcult to understand the meaning of 'imem' without the description.
+> Please add more detailed description as the patch2 description.
+> 
+
+Will this be enough for description:
+
+Add imem clock for exynos5433. This will enable to use crypto Security
+SubSystem (in short SSS) and SlimSSS IP blocks.
+
+What do you think ?
+
+>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5433.c   | 123 +++++++++++++++++++++++++
+>>  include/dt-bindings/clock/exynos5433.h |  55 +++++++++++
+>>  2 files changed, 178 insertions(+)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>> index 24c3360db65b..db29cbd1fbdc 100644
+>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>> @@ -2345,6 +2345,129 @@ static const struct samsung_cmu_info fsys_cmu_info __initconst = {
+>>  	.clk_name		= "aclk_fsys_200",
+>>  };
+>>  
+>> +/*
+>> + * Register offset definitions for CMU_IMEM
+>> + *
+>> + */
+>> +
+> 
+> Remove unneeded blank line.
+
+ok
+
+> 
+>> +#define ENABLE_ACLK_IMEM			0x0800
+>> +#define ENABLE_ACLK_IMEM_SSS			0x0808
+>> +#define ENABLE_ACLK_IMEM_SLIMSSS		0x080c
+>> +#define ENABLE_PCLK_IMEM			0x0900
+>> +#define ENABLE_PCLK_IMEM_SSS			0x0904
+>> +#define ENABLE_PCLK_IMEM_SLIMSSS		0x0908
+> 
+> When I checked the registers of IMEM block, there are more registers as following:
+> Why do you implement the clocks for only six registers?
+
+I added only those that will be used by crypto block (aes and hash block).
+I can add all of them in version 2.
+
+> CLK_ENABLE_ACLK_IMEM			0x0800
+> 
+> CLK_ENABLE_ACLK_IMEM_SECURE_INT_MEM	0x0804
+> 
+> CLK_ENABLE_ACLK_IMEM_SECURE_SSS		0x0808
+> 
+> CLK_ENABLE_ACLK_IMEM_SECURE_SLIMSSS	0x080C
+> 
+> CLK_ENABLE_ACLK_IMEM_SECURE_RTIC	0x0810
+> 
+> CLK_ENABLE_ACLK_IMEM_SECURE_SMMU_SSS	0x0814
+> [...]
+> 
+>> +
+>> +static const unsigned long imem_clk_regs[] __initconst = {
+>> +ENABLE_ACLK_IMEM,
+>> +ENABLE_ACLK_IMEM_SSS,
+>> +ENABLE_ACLK_IMEM_SLIMSSS,
+>> +ENABLE_PCLK_IMEM,
+>> +ENABLE_PCLK_IMEM_SSS,
+>> +ENABLE_PCLK_IMEM_SLIMSSS,
+> 
+> Add a tab in front of registers.
+> 
+
+ok
+
+>> [...]
+>> +static void __init exynos5433_cmu_imem_init(struct device_node *np)
+>> +{
+>> +	samsung_cmu_register_one(np, &imem_cmu_info);
+>> +}
+>> +
+>> +CLK_OF_DECLARE(exynos5433_cmu_imem, "samsung,exynos5433-cmu-imem",
+>> +		exynos5433_cmu_imem_init);
+> 
+> Except for "samsmung,exynos5433-cmu-atlas/apollo", the remained clock blocks
+> were added to exynos5433_cmu_of_match[] table for power management.
+> 
+> If there is no any h/w issue, add the new entry to exynos5433_cmu_of_match for imem block.
+
+ok, I will add this.
+
+>> [...]
+
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
