@@ -1,201 +1,117 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH 3/6] devfreq: add support for suspend/resume of a
- devfreq device
-Date: Mon, 3 Dec 2018 15:05:10 +0100
-Message-ID: <1aaf315b-f262-dad1-0e82-548410d10b5e@partner.samsung.com>
-References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382@eucas1p1.samsung.com>
-        <1542823301-23563-4-git-send-email-l.luba@partner.samsung.com>
-        <5BF61B3A.9050402@samsung.com>
-        <cce4f194-b574-a12c-e876-f11a6f245940@partner.samsung.com>
-        <5BF7419E.90006@samsung.com>
-        <734d0941-c885-4d36-274b-23843d6626c1@partner.samsung.com>
-        <5BFB3C17.40502@samsung.com>
-Mime-Version: 1.0
+Subject: [PATCH v2 1/5] devfreq: refactor set_target frequency function
+Date: Mon,  3 Dec 2018 15:31:11 +0100
+Message-ID: <1543847475-7600-2-git-send-email-l.luba@partner.samsung.com>
+References: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181203143129eucas1p2955b6becc60ee57110cbc52f6e4f60c5@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5BFB3C17.40502@samsung.com>
-Content-Language: en-US
+In-Reply-To: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo Choi,
+The refactoring is needed for the new client in devfreq: suspend.
+To avoid code duplication, move it to the new local function
+devfreq_set_target.
 
-On 11/26/18 1:19 AM, Chanwoo Choi wrote:
-> Hi Lukasz,
-> 
-> I add the one more comment for devfreq_resume_device()
-> 
-> On 2018년 11월 23일 19:01, Lukasz Luba wrote:
->> Hi Chanwoo Choi,
->>
->> On 11/23/18 12:54 AM, Chanwoo Choi wrote:
->>> Hi Lukasz,
->>>
->>> I add one more comment about devfreq_resume_device().
->>>
->>> On 2018년 11월 22일 20:00, Lukasz Luba wrote:
->>>>
->>>>
->>>> On 11/22/18 3:58 AM, Chanwoo Choi wrote:
->>>>> On 2018년 11월 22일 03:01, Lukasz Luba wrote:
->>>>>> The patch adds support for handling suspend/resume process.
->>>>>> It uses atomic variables to make sure no race condition
->>>>>> affects the process.
->>>>>>
->>>>>> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
->>>>>> solve issue with devfreq device's frequency during suspend/resume.
->>>>>> During the discussion on LKML some corner cases and comments appeared
->>>>>> related to the design. This patch address them keeping in mind suggestions
->>>>>> from Chanwoo Choi.
->>>>>
->>>>> Please remove the duplicate information about patch history.
->>>>>
->>>>>>
->>>>>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>>>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>>>>> ---
->>>>>>     drivers/devfreq/devfreq.c | 45 +++++++++++++++++++++++++++++++++++++++------
->>>>>>     1 file changed, 39 insertions(+), 6 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>>>>> index cf9c643..7e09de8 100644
->>>>>> --- a/drivers/devfreq/devfreq.c
->>>>>> +++ b/drivers/devfreq/devfreq.c
->>>>>> @@ -872,14 +872,33 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
->>>>>>      */
->>>>>>     int devfreq_suspend_device(struct devfreq *devfreq)
->>>>>>     {
->>>>>> -	if (!devfreq)
->>>>>> -		return -EINVAL;
->>>>>> +        int ret;
->>>>>
->>>>> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
->>>>> because 'ret' is used if suspend_freq isn't zero.
->>>> Not only there, 6 lines above 'ret' is used for
->>>> devfreq->governor->event_handler().
->>>
->>> OK.
->>>
->>>>>
->>>>>> +        unsigned long prev_freq;
->>>>>> +        u32 flags = 0;
->>>>>> +
->>>>>> +        if (!devfreq)
->>>>>> +                return -EINVAL;
->>>>>> +
->>>>>> +        if (devfreq->governor) {
->>>>>> +		ret = devfreq->governor->event_handler(devfreq,
->>>>>> +					DEVFREQ_GOV_SUSPEND, NULL);
->>>>>> +		if (ret)
->>>>>> +			return ret;
->>>>>> +	}
->>>>>>     
->>>>>> -	if (!devfreq->governor)
->>>>>> -		return 0;
->>>>>> +	if (devfreq->suspend_freq) {
->>>>>> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
->>>>>> +			return 0;
->>>>>>     
->>>>>> -	return devfreq->governor->event_handler(devfreq,
->>>>>> -				DEVFREQ_GOV_SUSPEND, NULL);
->>>>>> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq,
->>>>>> +					 &prev_freq, flags);
->>>>>
->>>>> Remove the 'prev_freq' parameter.
->>>> OK
->>>>>
->>>>>> +		if (ret)
->>>>>> +			return ret;
->>>>>> +
->>>>>> +		devfreq->resume_freq = prev_freq;
->>>>>
->>>>> As I commented on patch2, if devfreq_set_taget save the current frequency
->>>>> to 'devfreq->resume_freq', this line is not needed.
->>>> OK
->>>>>
->>>>>
->>>>>> +	}
->>>>>> +
->>>>>> +        return 0;
->>>>>>     }
->>>>>>     EXPORT_SYMBOL(devfreq_suspend_device);
->>>>>>     
->>>>>> @@ -893,9 +912,23 @@ EXPORT_SYMBOL(devfreq_suspend_device);
->>>>>>      */
->>>>>>     int devfreq_resume_device(struct devfreq *devfreq)
->>>>>>     {
->>>>>> +        int ret;
->>>>>
->>>>> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
->>>>> because 'ret' is used if suspend_freq isn't zero.
->>>> OK
->>>
->>> If you change the devfreq_resume_device() according to my new comment,
->>> please ignore it.
->>>
->>>>>
->>>>>> +        unsigned long prev_freq;
->>>>>
->>>>> Remove prev_freq variable which is not used on this function.
->>>>> After calling devfreq_set_target, prev_freq is not used.
->>>> OK
->>>>>
->>>>>> +        u32 flags = 0;
->>>>>> +
->>>>>>     	if (!devfreq)
->>>>>>     		return -EINVAL;
->>>>>>     
->>>>>> +	if (devfreq->suspend_freq) {
-> 
-> In devfreq_resume_device(), it should check the 'devfreq->resume_freq'
-> instead of 'devfreq->suspend_freq'.
-OK, I will fix it.
+The patch is based on earlier work by Tobias Jakobi.
 
-Regards,
-Lukasz
+Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+---
+ drivers/devfreq/devfreq.c | 62 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 36 insertions(+), 26 deletions(-)
 
-> 
-> 
->>>>>> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
->>>>>> +			return 0;
->>>>>> +
->>>>>> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq,
->>>>>> +					 &prev_freq, flags);
->>>>>
->>>>> Remove the 'prev_freq' parameter.
->>>> OK
->>>>>
->>>>>> +		if (ret)
->>>>>> +			return ret;
->>>>>> +	}
->>>>>> +
->>>>>>     	if (!devfreq->governor)
->>>>>>     		return 0;
->>>
->>> Please change the code as following because you uses the following type
->>> in the devfreq_suspend_device(). If there is any special issue, please
->>> keep the same format in order to improve the readability.
->>>
->>> 	if (devfreq->governor) {
->>> 		ret = devfreq->governor->event_handler(devfreq,
->>> 				DEVFREQ_GOV_RESUME, NULL);
->>> 		if (ret)
->>> 			return ret;
->>> 	}
->>>
->>>
->> OK, I will change the code to keep the same format.
->> Thank you for the review.
->>
->> Regards,
->> Lukasz
->>
->>
->>
-> 
-> 
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 1414130..a9fd61b 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -285,6 +285,40 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
+ 	return 0;
+ }
+ 
++static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
++			      u32 flags)
++{
++	struct devfreq_freqs freqs;
++	unsigned long cur_freq;
++	int err = 0;
++
++	if (devfreq->profile->get_cur_freq)
++		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
++	else
++		cur_freq = devfreq->previous_freq;
++
++	freqs.old = cur_freq;
++	freqs.new = new_freq;
++	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
++
++	err = devfreq->profile->target(devfreq->dev.parent, &new_freq, flags);
++	if (err) {
++		freqs.new = cur_freq;
++		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
++		return err;
++	}
++
++	freqs.new = new_freq;
++	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
++
++	if (devfreq_update_status(devfreq, new_freq))
++		dev_err(&devfreq->dev,
++			"Couldn't update frequency transition information.\n");
++
++	devfreq->previous_freq = new_freq;
++	return err;
++}
++
+ /* Load monitoring helper functions for governors use */
+ 
+ /**
+@@ -296,8 +330,7 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
+  */
+ int update_devfreq(struct devfreq *devfreq)
+ {
+-	struct devfreq_freqs freqs;
+-	unsigned long freq, cur_freq, min_freq, max_freq;
++	unsigned long freq, min_freq, max_freq;
+ 	int err = 0;
+ 	u32 flags = 0;
+ 
+@@ -333,31 +366,8 @@ int update_devfreq(struct devfreq *devfreq)
+ 		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
+ 	}
+ 
+-	if (devfreq->profile->get_cur_freq)
+-		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
+-	else
+-		cur_freq = devfreq->previous_freq;
+-
+-	freqs.old = cur_freq;
+-	freqs.new = freq;
+-	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
++	return devfreq_set_target(devfreq, freq, flags);
+ 
+-	err = devfreq->profile->target(devfreq->dev.parent, &freq, flags);
+-	if (err) {
+-		freqs.new = cur_freq;
+-		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+-		return err;
+-	}
+-
+-	freqs.new = freq;
+-	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+-
+-	if (devfreq_update_status(devfreq, freq))
+-		dev_err(&devfreq->dev,
+-			"Couldn't update frequency transition information.\n");
+-
+-	devfreq->previous_freq = freq;
+-	return err;
+ }
+ EXPORT_SYMBOL(update_devfreq);
+ 
+-- 
+2.7.4
