@@ -1,249 +1,57 @@
-From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH v2] media: remove bdisp_dbg_declare() and hva_dbg_declare()
-Date: Sat,  1 Dec 2018 21:04:25 -0500
-Message-ID: <20181202020425.9189-1-tiny.windzz@gmail.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH 1/6] devfreq: add basic fileds supporting suspend
+ functionality
+Date: Mon, 3 Dec 2018 15:03:33 +0100
+Message-ID: <9af62c00-0bf5-4dfd-f7fb-f6de1ce42717@partner.samsung.com>
+References: <1542823301-23563-2-git-send-email-l.luba@partner.samsung.com>
+        <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181121180201eucas1p1f1f96941c3d16a96722e65d5c21bfe80@epcms1p8>
+        <20181126081427epcms1p8801d251017da40b59d7e8391ee247fdb@epcms1p8>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181126081427epcms1p8801d251017da40b59d7e8391ee247fdb@epcms1p8>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org, fabien.dessenne@st.com, jean-christophe.trotin@st.com
-Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+To: myungjoo.ham@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "len.brown@intel.com" <len.brown@intel.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "keescook@chromium.org" <keescook@chromium.org>, "anton@enomsg.org" <anton@enomsg.org>, "ccross@android.com" <ccross@android.com>, "tony.luck@intel.com" <tony.luck@intel.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-We already have the DEFINE_SHOW_ATTRIBUTE.There is no need to define
-bdisp_dbg_declare and hva_dbg_declare,so remove them.Also use
-DEFINE_SHOW_ATTRIBUTE to simplify some code.
+Hi MyungJoo,
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
-Changes in v2:
--delete fimc_is_debugfs_open
----
- drivers/media/platform/exynos4-is/fimc-is.c   | 16 ++-------
- .../media/platform/sti/bdisp/bdisp-debug.c    | 34 ++++++------------
- drivers/media/platform/sti/hva/hva-debugfs.c  | 36 +++++++------------
- 3 files changed, 26 insertions(+), 60 deletions(-)
+On 11/26/18 9:14 AM, MyungJoo Ham wrote:
+>> The patch prepares devfreq device for handling suspend/resume functionality.
+>> The new fields will store needed information during this process.
+>> Devfreq framework handles opp-suspend DT entry and there is no need of
+>> modyfications in the drivers code.
+>>
+>> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
+>> solve issue with devfreq device's frequency during suspend/resume.
+>> During the discussion on LKML some corner cases and comments appeared
+>> related to the design. This patch address them keeping in mind suggestions
+>>from Chanwoo Choi.
+>>
+>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> 
+> When you add new elements in a common struct (i.e., struct devfreq),
+> please describe kindly in the doxygen entries so that developers
+> may understand before reading all places where the new elements are
+> used.
+> 
+> You have added three new elements and there is no explanations on them.
+You are right, thank you for the review.
+I will fix it in the next patch set version.
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index f5fc54de19da..02da0b06e56a 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -738,7 +738,7 @@ int fimc_is_hw_initialize(struct fimc_is *is)
- 	return 0;
- }
- 
--static int fimc_is_log_show(struct seq_file *s, void *data)
-+static int fimc_is_show(struct seq_file *s, void *data)
- {
- 	struct fimc_is *is = s->private;
- 	const u8 *buf = is->memory.vaddr + FIMC_IS_DEBUG_REGION_OFFSET;
-@@ -752,17 +752,7 @@ static int fimc_is_log_show(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--static int fimc_is_debugfs_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, fimc_is_log_show, inode->i_private);
--}
--
--static const struct file_operations fimc_is_debugfs_fops = {
--	.open		= fimc_is_debugfs_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(fimc_is);
- 
- static void fimc_is_debugfs_remove(struct fimc_is *is)
- {
-@@ -777,7 +767,7 @@ static int fimc_is_debugfs_create(struct fimc_is *is)
- 	is->debugfs_entry = debugfs_create_dir("fimc_is", NULL);
- 
- 	dentry = debugfs_create_file("fw_log", S_IRUGO, is->debugfs_entry,
--				     is, &fimc_is_debugfs_fops);
-+				     is, &fimc_is_fops);
- 	if (!dentry)
- 		fimc_is_debugfs_remove(is);
- 
-diff --git a/drivers/media/platform/sti/bdisp/bdisp-debug.c b/drivers/media/platform/sti/bdisp/bdisp-debug.c
-index c6a4e2de5c0c..77ca7517fa3e 100644
---- a/drivers/media/platform/sti/bdisp/bdisp-debug.c
-+++ b/drivers/media/platform/sti/bdisp/bdisp-debug.c
-@@ -315,7 +315,7 @@ static void bdisp_dbg_dump_ivmx(struct seq_file *s,
- 	seq_puts(s, "Unknown conversion\n");
- }
- 
--static int bdisp_dbg_last_nodes(struct seq_file *s, void *data)
-+static int last_nodes_show(struct seq_file *s, void *data)
- {
- 	/* Not dumping all fields, focusing on significant ones */
- 	struct bdisp_dev *bdisp = s->private;
-@@ -388,7 +388,7 @@ static int bdisp_dbg_last_nodes(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--static int bdisp_dbg_last_nodes_raw(struct seq_file *s, void *data)
-+static int last_nodes_raw_show(struct seq_file *s, void *data)
- {
- 	struct bdisp_dev *bdisp = s->private;
- 	struct bdisp_node *node;
-@@ -437,7 +437,7 @@ static const char *bdisp_fmt_to_str(struct bdisp_frame frame)
- 	}
- }
- 
--static int bdisp_dbg_last_request(struct seq_file *s, void *data)
-+static int last_request_show(struct seq_file *s, void *data)
- {
- 	struct bdisp_dev *bdisp = s->private;
- 	struct bdisp_request *request = &bdisp->dbg.copy_request;
-@@ -474,7 +474,7 @@ static int bdisp_dbg_last_request(struct seq_file *s, void *data)
- 
- #define DUMP(reg) seq_printf(s, #reg " \t0x%08X\n", readl(bdisp->regs + reg))
- 
--static int bdisp_dbg_regs(struct seq_file *s, void *data)
-+static int regs_show(struct seq_file *s, void *data)
- {
- 	struct bdisp_dev *bdisp = s->private;
- 	int ret;
-@@ -582,7 +582,7 @@ static int bdisp_dbg_regs(struct seq_file *s, void *data)
- 
- #define SECOND 1000000
- 
--static int bdisp_dbg_perf(struct seq_file *s, void *data)
-+static int perf_show(struct seq_file *s, void *data)
- {
- 	struct bdisp_dev *bdisp = s->private;
- 	struct bdisp_request *request = &bdisp->dbg.copy_request;
-@@ -627,27 +627,15 @@ static int bdisp_dbg_perf(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--#define bdisp_dbg_declare(name) \
--	static int bdisp_dbg_##name##_open(struct inode *i, struct file *f) \
--	{ \
--		return single_open(f, bdisp_dbg_##name, i->i_private); \
--	} \
--	static const struct file_operations bdisp_dbg_##name##_fops = { \
--		.open           = bdisp_dbg_##name##_open, \
--		.read           = seq_read, \
--		.llseek         = seq_lseek, \
--		.release        = single_release, \
--	}
--
- #define bdisp_dbg_create_entry(name) \
- 	debugfs_create_file(#name, S_IRUGO, bdisp->dbg.debugfs_entry, bdisp, \
--			    &bdisp_dbg_##name##_fops)
-+			    &name##_fops)
- 
--bdisp_dbg_declare(regs);
--bdisp_dbg_declare(last_nodes);
--bdisp_dbg_declare(last_nodes_raw);
--bdisp_dbg_declare(last_request);
--bdisp_dbg_declare(perf);
-+DEFINE_SHOW_ATTRIBUTE(regs);
-+DEFINE_SHOW_ATTRIBUTE(last_nodes);
-+DEFINE_SHOW_ATTRIBUTE(last_nodes_raw);
-+DEFINE_SHOW_ATTRIBUTE(last_request);
-+DEFINE_SHOW_ATTRIBUTE(perf);
- 
- int bdisp_debugfs_create(struct bdisp_dev *bdisp)
- {
-diff --git a/drivers/media/platform/sti/hva/hva-debugfs.c b/drivers/media/platform/sti/hva/hva-debugfs.c
-index 9f7e8ac875d1..7d12a5b5d914 100644
---- a/drivers/media/platform/sti/hva/hva-debugfs.c
-+++ b/drivers/media/platform/sti/hva/hva-debugfs.c
-@@ -271,7 +271,7 @@ static void hva_dbg_perf_compute(struct hva_ctx *ctx)
-  * device debug info
-  */
- 
--static int hva_dbg_device(struct seq_file *s, void *data)
-+static int device_show(struct seq_file *s, void *data)
- {
- 	struct hva_dev *hva = s->private;
- 
-@@ -281,7 +281,7 @@ static int hva_dbg_device(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--static int hva_dbg_encoders(struct seq_file *s, void *data)
-+static int encoders_show(struct seq_file *s, void *data)
- {
- 	struct hva_dev *hva = s->private;
- 	unsigned int i = 0;
-@@ -299,7 +299,7 @@ static int hva_dbg_encoders(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--static int hva_dbg_last(struct seq_file *s, void *data)
-+static int last_show(struct seq_file *s, void *data)
- {
- 	struct hva_dev *hva = s->private;
- 	struct hva_ctx *last_ctx = &hva->dbg.last_ctx;
-@@ -316,7 +316,7 @@ static int hva_dbg_last(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--static int hva_dbg_regs(struct seq_file *s, void *data)
-+static int regs_show(struct seq_file *s, void *data)
- {
- 	struct hva_dev *hva = s->private;
- 
-@@ -325,26 +325,14 @@ static int hva_dbg_regs(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--#define hva_dbg_declare(name)						  \
--	static int hva_dbg_##name##_open(struct inode *i, struct file *f) \
--	{								  \
--		return single_open(f, hva_dbg_##name, i->i_private);	  \
--	}								  \
--	static const struct file_operations hva_dbg_##name##_fops = {	  \
--		.open		= hva_dbg_##name##_open,		  \
--		.read		= seq_read,				  \
--		.llseek		= seq_lseek,				  \
--		.release	= single_release,			  \
--	}
--
- #define hva_dbg_create_entry(name)					 \
- 	debugfs_create_file(#name, 0444, hva->dbg.debugfs_entry, hva, \
--			    &hva_dbg_##name##_fops)
-+			    &name##_fops)
- 
--hva_dbg_declare(device);
--hva_dbg_declare(encoders);
--hva_dbg_declare(last);
--hva_dbg_declare(regs);
-+DEFINE_SHOW_ATTRIBUTE(device);
-+DEFINE_SHOW_ATTRIBUTE(encoders);
-+DEFINE_SHOW_ATTRIBUTE(last);
-+DEFINE_SHOW_ATTRIBUTE(regs);
- 
- void hva_debugfs_create(struct hva_dev *hva)
- {
-@@ -380,7 +368,7 @@ void hva_debugfs_remove(struct hva_dev *hva)
-  * context (instance) debug info
-  */
- 
--static int hva_dbg_ctx(struct seq_file *s, void *data)
-+static int ctx_show(struct seq_file *s, void *data)
- {
- 	struct hva_ctx *ctx = s->private;
- 
-@@ -392,7 +380,7 @@ static int hva_dbg_ctx(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--hva_dbg_declare(ctx);
-+DEFINE_SHOW_ATTRIBUTE(ctx);
- 
- void hva_dbg_ctx_create(struct hva_ctx *ctx)
- {
-@@ -407,7 +395,7 @@ void hva_dbg_ctx_create(struct hva_ctx *ctx)
- 
- 	ctx->dbg.debugfs_entry = debugfs_create_file(name, 0444,
- 						     hva->dbg.debugfs_entry,
--						     ctx, &hva_dbg_ctx_fops);
-+						     ctx, &ctx_fops);
- }
- 
- void hva_dbg_ctx_remove(struct hva_ctx *ctx)
--- 
-2.17.0
+Regards,
+Lukasz
+
+> 
+> 
+> Cheers,
+> MyungJoo
+> 
+> 
+> 
