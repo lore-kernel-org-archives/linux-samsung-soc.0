@@ -1,75 +1,302 @@
-From: Artur Petrosyan <arthur.petrosyan@synopsys.com>
-Subject: Re: [PATCH] usb: dwc2: Disable power down feature on Samsung SoCs
-Date: Tue, 4 Dec 2018 14:28:44 +0000
-Message-ID: <3AD91E696667BF4BA728303C178E8A63532C68EA@am04wembxb.internal.synopsys.com>
-References: <CGME20181120153828eucas1p206d442b12c16588662c0e3f731ba58c3@eucas1p2.samsung.com>
- <20181120153815.31897-1-m.szyprowski@samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v3 5/5] clk: samsung: exynos5433: add imem clocks
+Date: Tue,  4 Dec 2018 17:52:48 +0100
+Message-ID: <20181204165248.17572-6-k.konieczny@partner.samsung.com>
+References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
+        <CGME20181204165318eucas1p2dccd5382ee8b9f4da8c3076fb56607ee@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
+In-Reply-To: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Minas Harutyunyan <minas.harutyunyan@synopsys.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+To: k.konieczny@partner.samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,=0A=
-=0A=
-On 11/20/2018 19:38, Marek Szyprowski wrote:=0A=
-> Power down feature of DWC2 module integrated in Samsung SoCs doesn't work=
-=0A=
-> properly or needs some additional handling in PHY or SoC glue layer, so=
-=0A=
-> disable it for now. Without disabling power down, DWC2 causes random memo=
-ry=0A=
-> trashes and fails enumeration if there is no USB link to host on driver=
-=0A=
-> probe.=0A=
-> =0A=
-> Fixes: 03ea6d6e9e1ff1 ("usb: dwc2: Enable power down")=0A=
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>=0A=
-> ---=0A=
->   drivers/usb/dwc2/params.c | 10 +++++++++-=0A=
->   1 file changed, 9 insertions(+), 1 deletion(-)=0A=
-> =0A=
-> diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c=0A=
-> index 7c1b6938f212..266157ae179a 100644=0A=
-> --- a/drivers/usb/dwc2/params.c=0A=
-> +++ b/drivers/usb/dwc2/params.c=0A=
-> @@ -71,6 +71,13 @@ static void dwc2_set_his_params(struct dwc2_hsotg *hso=
-tg)=0A=
->   	p->power_down =3D false;=0A=
->   }=0A=
->   =0A=
-> +static void dwc2_set_s3c6400_params(struct dwc2_hsotg *hsotg)=0A=
-> +{=0A=
-> +	struct dwc2_core_params *p =3D &hsotg->params;=0A=
-> +=0A=
-> +	p->power_down =3D 0;=0A=
-> +}=0A=
-> +=0A=
->   static void dwc2_set_rk_params(struct dwc2_hsotg *hsotg)=0A=
->   {=0A=
->   	struct dwc2_core_params *p =3D &hsotg->params;=0A=
-> @@ -151,7 +158,8 @@ const struct of_device_id dwc2_of_match_table[] =3D {=
-=0A=
->   	{ .compatible =3D "lantiq,arx100-usb", .data =3D dwc2_set_ltq_params }=
-,=0A=
->   	{ .compatible =3D "lantiq,xrx200-usb", .data =3D dwc2_set_ltq_params }=
-,=0A=
->   	{ .compatible =3D "snps,dwc2" },=0A=
-> -	{ .compatible =3D "samsung,s3c6400-hsotg" },=0A=
-> +	{ .compatible =3D "samsung,s3c6400-hsotg",=0A=
-> +	  .data =3D dwc2_set_s3c6400_params },=0A=
->   	{ .compatible =3D "amlogic,meson8-usb",=0A=
->   	  .data =3D dwc2_set_amlogic_params },=0A=
->   	{ .compatible =3D "amlogic,meson8b-usb",=0A=
-> =0A=
-=0A=
-Could you please provide dmesg logs with verbose Debug enabled =0A=
-configuration and the register dump.=0A=
-So that we can see what the issue is related to.=0A=
-=0A=
-Regards,=0A=
-Artur=0A=
+Add imem clocks for exynos5433. This will enable to use crypto Security
+SubSystem (in short SSS) and SlimSSS IP blocks.
+
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c   | 193 +++++++++++++++++++++++++
+ include/dt-bindings/clock/exynos5433.h |  55 +++++++
+ 2 files changed, 248 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 24c3360db65b..7f557d6f41f0 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -5467,6 +5467,196 @@ static const struct samsung_cmu_info cam1_cmu_info __initconst = {
+ 	.clk_name		= "aclk_cam1_400",
+ };
+ 
++/*
++ * Register offset definitions for CMU_IMEM
++ */
++#define ENABLE_ACLK_IMEM			0x0800
++#define ENABLE_ACLK_IMEM_INT_MEM		0x0804
++#define ENABLE_ACLK_IMEM_SSS			0x0808
++#define ENABLE_ACLK_IMEM_SLIMSSS		0x080c
++#define ENABLE_ACLK_IMEM_RTIC			0x0810
++#define ENABLE_ACLK_IMEM_SMMU_SSS		0x0814
++#define ENABLE_ACLK_IMEM_SMMU_SLIMSSS		0x0818
++#define ENABLE_ACLK_IMEM_SMMU_RTIC		0x081c
++#define ENABLE_ACLK_IMEM_ARBG_TX		0x0820
++#define ENABLE_ACLK_IMEM_SMMU_ARBG_TX		0x0824
++#define ENABLE_PCLK_IMEM			0x0900
++#define ENABLE_PCLK_IMEM_SSS			0x0904
++#define ENABLE_PCLK_IMEM_SLIMSSS		0x0908
++#define ENABLE_PCLK_IMEM_RTIC			0x090c
++#define ENABLE_PCLK_IMEM_SMMU_SSS		0x0910
++#define ENABLE_PCLK_IMEM_SMMU_SLIMSSS		0x0914
++#define ENABLE_PCLK_IMEM_SMMU_RTIC		0x0918
++#define ENABLE_PCLK_IMEM_SMMU_ARGB_TX		0x091c
++
++static const unsigned long imem_clk_regs[] __initconst = {
++	ENABLE_ACLK_IMEM,
++	ENABLE_ACLK_IMEM_INT_MEM,
++	ENABLE_ACLK_IMEM_SSS,
++	ENABLE_ACLK_IMEM_SLIMSSS,
++	ENABLE_ACLK_IMEM_RTIC,
++	ENABLE_ACLK_IMEM_SMMU_SSS,
++	ENABLE_ACLK_IMEM_SMMU_SLIMSSS,
++	ENABLE_ACLK_IMEM_SMMU_RTIC,
++	ENABLE_ACLK_IMEM_ARBG_TX,
++	ENABLE_ACLK_IMEM_SMMU_ARBG_TX,
++	ENABLE_PCLK_IMEM,
++	ENABLE_PCLK_IMEM_SSS,
++	ENABLE_PCLK_IMEM_SLIMSSS,
++	ENABLE_PCLK_IMEM_RTIC,
++	ENABLE_PCLK_IMEM_SMMU_SSS,
++	ENABLE_PCLK_IMEM_SMMU_SLIMSSS,
++	ENABLE_PCLK_IMEM_SMMU_RTIC,
++	ENABLE_PCLK_IMEM_SMMU_ARGB_TX,
++};
++
++static const struct samsung_gate_clock imem_gate_clks[] __initconst = {
++	/* ENABLE_ACLK_IMEM */
++	GATE(CLK_ACLK_AXI2AHB_IMEMH, "aclk_axi2ahb_imemh", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 24, 0, 0),
++	GATE(CLK_ACLK_AXIDS_SROMC, "aclk_axids_sromc", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 23, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_SROMC, "aclk_sromc", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 22, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_ARBG_TX, "aclk_bts_arbg_tx", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXI_IMEMX, "aclk_asyncaxi_imemx", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 20, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXIUS_IMEMX, "aclk_axius_imemx", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 19, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_XIU_IMEMX, "aclk_xiu_imemx", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXI_SSSX, "aclk_asyncaxi_sssx", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_SLIMSSS, "aclk_bts_slimsss", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_SSS_DRAM, "aclk_bts_sss_dram", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 14, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_SSS_CCI, "aclk_bts_sss_cci", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ALB_IMEM, "aclk_alb_imem", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 12, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXIDS_PIMEMX_IMEM1P, "aclk_axids_pimemx_imem1p", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 11, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXIDS_PIMEMX_IMEM0P, "aclk_axids_pimemx_imem0p", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 10, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXIDS_PIMEMX_GIC, "aclk_axids_pimemx_gic", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 9, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAHBM_SSS_ATLAS, "aclk_asyncahbm_sss_atlas", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIS_MIF_PIMEMX, "aclk_asyncaxis_mif_pimemx", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXI2APB_IMEM1P, "aclk_axi2apb_imem1p", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXI2APB_IMEM0P, "aclk_axi2apb_imem0p", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_XIU_SSSX, "aclk_xiu_sssx", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_XIU_PIMEMX, "aclk_xiu_pimemx", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_IMEMND_266, "aclk_imemnd_266", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_GIC, "aclk_gic", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_ACLK_IMEM_INT_MEM */
++	GATE(CLK_ACLK_INT_MEM, "aclk_int_mem", "aclk_imem_200",
++			ENABLE_ACLK_IMEM_INT_MEM, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_ACLK_IMEM_SSS */
++	GATE(CLK_ACLK_SSS, "aclk_sss", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM_SSS, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_ACLK_IMEM_SLIMSSS */
++	GATE(CLK_ACLK_SLIMSSS, "aclk_slimsss", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM_SLIMSSS, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_ACLK_IMEM_RTIC */
++	GATE(CLK_ACLK_RTIC, "aclk_rtic", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM_RTIC, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_ACLK_SMMU_SSS */
++	GATE(CLK_ACLK_SMMU_SSS_DRAM, "aclk_smmu_sss_dram", "aclk_imem_sssx_266",
++		ENABLE_ACLK_IMEM_SMMU_SSS, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_SMMU_SSS_CCI, "aclk_smmu_sss_cci", "aclk_imem_sssx_266",
++		ENABLE_ACLK_IMEM_SMMU_SSS, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_ACLK_SMMU_SLIMSSS */
++	GATE(CLK_ACLK_SMMU_SLIMSSS, "aclk_smmu_slimsss", "aclk_imem_sssx_266",
++		ENABLE_ACLK_IMEM_SMMU_SLIMSSS, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_ACLK_SMMU_RTIC */
++	GATE(CLK_ACLK_SMMU_RTIC, "aclk_smmu_rtic", "aclk_imem_sssx_266",
++		ENABLE_ACLK_IMEM_SMMU_RTIC, 0, CLK_IGNORE_UNUSED, 0),
++	
++	/* ENABLE_ACLK_IMEM_ARBG_TX */
++	GATE(CLK_ACLK_ARBG_TX, "aclk_arbg_tx", "aclk_imem_266",
++		ENABLE_ACLK_IMEM_ARBG_TX, 0, CLK_IGNORE_UNUSED, 0),
++	
++	/* ENABLE_ACLK_IMEM_SMMU_ARBG_TX */
++	GATE(CLK_ACLK_SMMU_ARBG_TX, "aclk_smmu_arbg_tx", "aclk_imem_266",
++		ENABLE_ACLK_IMEM_SMMU_ARBG_TX, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_PCLK_IMEM */
++	GATE(CLK_PCLK_GPIO_IMEM, "pclk_gpio_imem", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAXI_IMEMX, "pclk_asyncaxi_imemx", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 16, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_ARBG_TX, "pclk_bts_arbg_tx", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAPB_ARBG_TX, "pclk_asyncapb_arbg_tx", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 14, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_SLIMSSS, "pclk_bts_slimsss", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 8, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_SSS_DRAM, "pclk_bts_sss_dram", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_SSS_CCI, "pclk_bts_sss_cci", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ALB_IMEM, "pclk_alb_imem", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PMU_IMEM, "pclk_pmu_imem", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SYSREG_IMEM, "pclk_sysreg_imem", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 3, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_PCLK_IMEM_SSS */
++	GATE(CLK_PCLK_SSS, "pclk_sss", "aclk_imem_200",
++			ENABLE_PCLK_IMEM_SSS, 0, CLK_IGNORE_UNUSED, 0),
++	
++	/* ENABLE_PCLK_IMEM_SLIMSSS */
++	GATE(CLK_PCLK_SLIMSSS, "pclk_slimsss", "aclk_imem_200",
++			ENABLE_PCLK_IMEM_SLIMSSS, 0, CLK_IGNORE_UNUSED, 0),
++	
++	/* ENABLE_PCLK_IMEM_RTIC */
++	GATE(CLK_PCLK_RTIC, "pclk_rtic", "aclk_imem_200",
++		ENABLE_PCLK_IMEM_RTIC, 0, CLK_IGNORE_UNUSED, 0),
++	
++	/* ENABLE_PCLK_IMEM_SMMU_SSS */
++	GATE(CLK_PCLK_SMMU_SSS_DRAM, "pclk_smmu_sss_dram", "aclk_imem_200",
++		ENABLE_PCLK_IMEM_SMMU_SSS, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SMMU_SSS_CCI, "pclk_smmu_sss_cci", "aclk_imem_200",
++		ENABLE_PCLK_IMEM_SMMU_SSS, 0, CLK_IGNORE_UNUSED, 0),
++	
++	/* ENABLE_PCLK_IMEM_SMMU_SLIMSSS */
++	GATE(CLK_PCLK_SMMU_SLIMSSS, "pclk_smmu_slimsss", "aclk_imem_200",
++		ENABLE_PCLK_IMEM_SMMU_SLIMSSS, 0, CLK_IGNORE_UNUSED, 0),
++	
++	/* ENABLE_PCLK_IMEM_SMMU_RTIC */
++	GATE(CLK_PCLK_SMMU_RTIC, "pclk_sss", "aclk_imem_200",
++		ENABLE_PCLK_IMEM_SMMU_RTIC, 0, CLK_IGNORE_UNUSED, 0),
++	
++	/* ENABLE_PCLK_IMEM_SMMU_ARGB_TX */
++	GATE(CLK_PCLK_SMMU_ARBG_TX, "pclk_smmu_arbg_tx", "aclk_imem_200",
++		ENABLE_PCLK_IMEM_SMMU_ARGB_TX, 0, CLK_IGNORE_UNUSED, 0),
++};
++
++static const struct samsung_cmu_info imem_cmu_info __initconst = {
++	.gate_clks		= imem_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(imem_gate_clks),
++	.nr_clk_ids		= IMEM_NR_CLK,
++	.clk_regs		= imem_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(imem_clk_regs),
++};
+ 
+ struct exynos5433_cmu_data {
+ 	struct samsung_clk_reg_dump *clk_save;
+@@ -5654,6 +5844,9 @@ static const struct of_device_id exynos5433_cmu_of_match[] = {
+ 	}, {
+ 		.compatible = "samsung,exynos5433-cmu-mscl",
+ 		.data = &mscl_cmu_info,
++	}, {
++		.compatible = "samsung,exynos5433-cmu-imem",
++		.data = &imem_cmu_info,
+ 	}, {
+ 	},
+ };
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index 87bb2b017143..cc6153a0b5f7 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -1406,4 +1406,59 @@
+ 
+ #define CAM1_NR_CLK					113
+ 
++/* CMU_IMEM */
++#define CLK_ACLK_SSS			1
++#define CLK_ACLK_SLIMSSS		2
++#define CLK_ACLK_RTIC			3
++#define CLK_ACLK_XIU_SSSX		4
++#define CLK_ACLK_ASYNCAHBM_SSS_ATLAS	5
++#define CLK_ACLK_ASYNCAXI_SSSX		6
++#define CLK_ACLK_BTS_SSS_CCI		7
++#define CLK_ACLK_BTS_SSS_DRAM		8
++#define CLK_ACLK_BTS_SLIMSSS		9
++#define CLK_ACLK_SMMU_SSS_CCI		10
++#define CLK_ACLK_SMMU_SSS_DRAM		11
++#define CLK_ACLK_SMMU_SLIMSSS		12
++#define CLK_ACLK_SMMU_RTIC		13
++#define CLK_ACLK_IMEMND_266		14
++#define CLK_ACLK_ALB_IMEM		15
++#define CLK_ACLK_XIU_IMEMX		16
++#define CLK_ACLK_AXIUS_IMEMX		17
++#define CLK_ACLK_ASYNCAXI_IMEMX		18
++#define CLK_ACLK_ARBG_TX		19
++#define CLK_ACLK_BTS_ARBG_TX		20
++#define CLK_ACLK_SMMU_ARBG_TX		21
++#define CLK_ACLK_GIC			22
++#define CLK_ACLK_INT_MEM		23
++#define CLK_ACLK_XIU_PIMEMX		24
++#define CLK_ACLK_AXI2APB_IMEM0P		25
++#define CLK_ACLK_AXI2APB_IMEM1P		26
++#define CLK_ACLK_ASYNCAXIS_MIF_PIMEMX	27
++#define CLK_ACLK_AXIDS_PIMEMX_GIC	28
++#define CLK_ACLK_AXIDS_PIMEMX_IMEM0P	29
++#define CLK_ACLK_AXIDS_PIMEMX_IMEM1P	30
++#define CLK_ACLK_SROMC			31
++#define CLK_ACLK_AXIDS_SROMC		32
++#define CLK_ACLK_AXI2AHB_IMEMH		33
++#define CLK_PCLK_SSS			34
++#define CLK_PCLK_SLIMSSS		35
++#define CLK_PCLK_RTIC			36
++#define CLK_PCLK_SYSREG_IMEM		37
++#define CLK_PCLK_PMU_IMEM		38
++#define CLK_PCLK_ALB_IMEM		39
++#define CLK_PCLK_BTS_SSS_CCI		40
++#define CLK_PCLK_BTS_SSS_DRAM		41
++#define CLK_PCLK_BTS_SLIMSSS		42
++#define CLK_PCLK_SMMU_SSS_CCI		43
++#define CLK_PCLK_SMMU_SSS_DRAM		44
++#define CLK_PCLK_SMMU_SLIMSSS		45
++#define CLK_PCLK_SMMU_RTIC		46
++#define CLK_PCLK_ASYNCAPB_ARBG_TX	47
++#define CLK_PCLK_BTS_ARBG_TX		48
++#define CLK_PCLK_SMMU_ARBG_TX		49
++#define CLK_PCLK_ASYNCAXI_IMEMX		50
++#define CLK_PCLK_GPIO_IMEM		51
++
++#define IMEM_NR_CLK			52
++
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS5433_H */
+-- 
+2.19.1
