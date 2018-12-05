@@ -1,251 +1,86 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 2/5] devfreq: add support for suspend/resume of a
- devfreq device
-Date: Wed, 05 Dec 2018 09:09:36 +0900
-Message-ID: <5C071740.7090000@samsung.com>
-References: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181203143131eucas1p217f22ac6d19682a54a57658a06980914@eucas1p2.samsung.com>
-        <1543847475-7600-3-git-send-email-l.luba@partner.samsung.com>
-        <5C06124B.5030409@samsung.com> <5C06140E.7010603@samsung.com>
-        <5C061A57.7040002@samsung.com>
-        <7662d626-5c3e-aec5-05e4-c6cd2e56ef49@partner.samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Wed, 05 Dec 2018 18:40:53 +0900
+Message-ID: <1544002853-11661-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20181205094053epcas1p118ccbb4387ce9bbc78e6d0988af94ff3@epcas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <7662d626-5c3e-aec5-05e4-c6cd2e56ef49@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Lukasz,
-
-On 2018년 12월 04일 18:53, Lukasz Luba wrote:
-> Hi Chanwoo,
-> 
-> On 12/4/18 7:10 AM, Chanwoo Choi wrote:
->> Hi Lukasz,
->>
->> I add the comment about 'suspend_count'.
->>
->> On 2018년 12월 04일 14:43, Chanwoo Choi wrote:
->>> Hi,
->>>
->>> On 2018년 12월 04일 14:36, Chanwoo Choi wrote:
->>>> Hi Lukasz,
->>>>
->>>> Looks good to me. But, I add the some comments.
->>>> If you will fix it, feel free to add my tag:
->>>> Reviewed-by: Chanwoo choi <cw00.choi@samsung.com>
->>>
->>> Sorry. Fix typo 'choi' to 'Choi' as following.
->>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>
->>>>
->>>> On 2018년 12월 03일 23:31, Lukasz Luba wrote:
->>>>> The patch prepares devfreq device for handling suspend/resume
->>>>> functionality.  The new fields will store needed information during this
->>>>
->>>> nitpick. Remove unneeded space. There are two spaces between '.' and 'The new'.
->>>>
->>>>> process.  Devfreq framework handles opp-suspend DT entry and there is no
->>>>
->>>> ditto.
->>>>
->>>>> need of modyfications in the drivers code.  It uses atomic variables to
->>>>
->>>> ditto.
->>>>
->>>>> make sure no race condition affects the process.
->>>>>
->>>>> The patch is based on earlier work by Tobias Jakobi.
->>>>
->>>> Please remove it from each patch description.
->>>>
->>>>>
->>>>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>>>> ---
->>>>>   drivers/devfreq/devfreq.c | 51 +++++++++++++++++++++++++++++++++++++++--------
->>>>>   include/linux/devfreq.h   |  7 +++++++
->>>>>   2 files changed, 50 insertions(+), 8 deletions(-)
->>>>>
->>>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>>>> index a9fd61b..36bed24 100644
->>>>> --- a/drivers/devfreq/devfreq.c
->>>>> +++ b/drivers/devfreq/devfreq.c
->>>>> @@ -316,6 +316,10 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
->>>>>   			"Couldn't update frequency transition information.\n");
->>>>>   
->>>>>   	devfreq->previous_freq = new_freq;
->>>>> +
->>>>> +	if (devfreq->suspend_freq)
->>>>> +		devfreq->resume_freq = cur_freq;
->>>>> +
->>>>>   	return err;
->>>>>   }
->>>>>   
->>>>> @@ -667,6 +671,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
->>>>>   	}
->>>>>   	devfreq->max_freq = devfreq->scaling_max_freq;
->>>>>   
->>>>> +	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
->>>>> +	atomic_set(&devfreq->suspend_count, 0);
->>>>> +
->>>>>   	dev_set_name(&devfreq->dev, "devfreq%d",
->>>>>   				atomic_inc_return(&devfreq_no));
->>>>>   	err = device_register(&devfreq->dev);
->>>>> @@ -867,14 +874,28 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
->>>>>    */
->>>>>   int devfreq_suspend_device(struct devfreq *devfreq)
->>>>>   {
->>>>> +	int ret;
->>>>> +
->>>>>   	if (!devfreq)
->>>>>   		return -EINVAL;
->>>>>   
->>>>> -	if (!devfreq->governor)
->>>>> -		return 0;
->>>>> +	if (devfreq->governor) {
->>>>> +		ret = devfreq->governor->event_handler(devfreq,
->>>>> +					DEVFREQ_GOV_SUSPEND, NULL);
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +	}
->>>>> +
->>>>> +	if (devfreq->suspend_freq) {
->>>>> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
->>>>> +			return 0;
->>>>> +
->>>>> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +	}
->>
->> In this patch, if some users call 'devfreq_suspend_device' twice,
->> 'devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_SUSPEND, NULL)'
->> is called twice but devfreq_set_target() is called only one.
->> I knew that it is no problem for operation.
->>
->> But,
->> I think that you better to use 'suspend_count' as the reference count
->> of devfreq_suspend/resume_device(). But, if you use 'suspend_count'
->> in order to check whether this devfreq is suspended or not,
->> we can reduce the unneeded redundant call when calling it twice.
->>
->> clock and regulator used the 'reference count' method in order to
->> remove the redundant call.
-> 
-> I think I've got the point. I will move the atomic check just
-> after the !devfreq check. Something like the code bellow is what you
-> would like to see?
-> ---8<-----
-> if (!devfreq)
-> 	return -EINVAL;
-> if (atomic_inc_return(&devfreq->suspend_count) > 1)
-> 	return0;
-
-Looks good to me. I agree.
-
-> 
-> ---->8-------
->>
->>
->>>>>   
->>>>> -	return devfreq->governor->event_handler(devfreq,
->>>>> -				DEVFREQ_GOV_SUSPEND, NULL);
->>>>> +	return 0;
->>>>>   }
->>>>>   EXPORT_SYMBOL(devfreq_suspend_device);
->>>>>   
->>>>> @@ -888,14 +909,28 @@ EXPORT_SYMBOL(devfreq_suspend_device);
->>>>>    */
->>>>>   int devfreq_resume_device(struct devfreq *devfreq)
->>>>>   {
->>>>> +	int ret;
->>>>> +
->>>>>   	if (!devfreq)
->>>>>   		return -EINVAL;
->>>>>   
->>>>> -	if (!devfreq->governor)
->>>>> -		return 0;
->>>>> +	if (devfreq->resume_freq) {
->>>>> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
->>>>> +			return 0;
->>
->> ditto.
-> Same approach here:
-> ---8<-----
-> if (!devfreq)
-> 	return -EINVAL;
-> if (atomic_dec_return(&devfreq->suspend_count) >= 1)
-> 	return 0;
-
-Looks good to me.
-
-> ---->8-------
-> 
-> Regards,
-> Lukasz
->>
->>>>>   
->>>>> -	return devfreq->governor->event_handler(devfreq,
->>>>> -				DEVFREQ_GOV_RESUME, NULL);
->>>>> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq, 0);
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +	}
->>>>> +
->>>>> +	if (devfreq->governor) {
->>>>> +		ret = devfreq->governor->event_handler(devfreq,
->>>>> +					DEVFREQ_GOV_RESUME, NULL);
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +	}
->>>>> +
->>>>> +	return 0;
->>>>>   }
->>>>>   EXPORT_SYMBOL(devfreq_resume_device);
->>>>>   
->>>>> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
->>>>> index e4963b0..d985199 100644
->>>>> --- a/include/linux/devfreq.h
->>>>> +++ b/include/linux/devfreq.h
->>>>> @@ -131,6 +131,9 @@ struct devfreq_dev_profile {
->>>>>    * @scaling_min_freq:	Limit minimum frequency requested by OPP interface
->>>>>    * @scaling_max_freq:	Limit maximum frequency requested by OPP interface
->>>>>    * @stop_polling:	 devfreq polling status of a device.
->>>>> + * @suspend_freq:	 frequency of a device set during suspend phase.
->>>>> + * @resume_freq:	 frequency of a device set in resume phase.
->>>>> + * @suspend_count:	 suspend requests counter for a device.
->>>>>    * @total_trans:	Number of devfreq transitions
->>>>>    * @trans_table:	Statistics of devfreq transitions
->>>>>    * @time_in_state:	Statistics of devfreq states
->>>>> @@ -167,6 +170,10 @@ struct devfreq {
->>>>>   	unsigned long scaling_max_freq;
->>>>>   	bool stop_polling;
->>>>>   
->>>>> +	unsigned long suspend_freq;
->>>>> +	unsigned long resume_freq;
->>>>> +	atomic_t suspend_count;
->>>>> +
->>>>>   	/* information for device frequency transition */
->>>>>   	unsigned int total_trans;
->>>>>   	unsigned int *trans_table;
->>>>>
->>>>
->>>>
->>>
->>>
->>
->>
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+SGkgRGF2ZSwKCiAgIFRocmVlIHBhdGNoIHNlcmllcyAtIGNvZGUgcmVmYWN0b3JpbmcgZm9yIHNp
+bXBsaWZ5aW5nIERNQSBtYXBwaW5nLAogICBlbmhhbmNpbmcgcGxhbmUgYWxwaGEgYW5kIGJsZW5k
+IG1vZGUgc3VwcG9ydCBmb3IgRXh5bm9zNTQzMyBEZWNvbiBkZXZpY2UsCiAgIGFuZCBmaXhpbmcg
+Y29sb3IgZm9ybWF0IHNldHRpbmcgb2YgTWl4ZXIgZHJpdmVyLgoKICAgUGxlYXNlIGtpbmRseSBs
+ZXQgbWUga25vdyBpZiB0aGVyZSBpcyBhbnkgcHJvYmxlbS4KClRoYW5rcywKSW5raSBEYWUKClRo
+ZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgMTY3YmZlNTM0ZGMyZGU2ODBlZjcwNmRi
+YjkwM2M5YTdiZmNiMmRkODoKCiAgRG9jdW1lbnRhdGlvbjogZHJtOiBSZW1vdmUgZGFuZ2xpbmcg
+cG9pbnRlciBmcm9tIGRybS1tbS5yc3QgKDIwMTgtMTEtMzAgMDg6NTU6MzcgKzEwMDApCgphcmUg
+YXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoKCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5v
+cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcyB0YWdzL2V4eW5v
+cy1kcm0tbmV4dC1mb3ItdjQuMjEKCmZvciB5b3UgdG8gZmV0Y2ggY2hhbmdlcyB1cCB0byAxM2U4
+MTBmMTk5YjQ4MzgzNTIzNzA3YWE2OWZiOTY3M2Q2ODgwNTVhOgoKICBkcm0vZXh5bm9zOiBtaXhl
+cjogRml4IGNvbG9yIHJhbmdlIHNldHRpbmcgKDIwMTgtMTItMDUgMTc6MzU6MjEgKzA5MDApCgot
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tCi0gUmVmYWN0b3Jpbmcgb2YgRE1BIGFuZCBJT01NVSBjb2RlCiAgLiBUaGlzIHBhdGNo
+IHNlcmllcyBzaW1wbGlmaWVzIERNQSBtYXBwaW5nIGNyZWF0aW9uIGJ5IGF2b2lkaW5nIGxvb3Bp
+bmcKICAgIGFsbCBjb21wb25lbnRzIHRvIGdldCBkbWEgZGV2aWNlIG9iamVjdCwgcmVkdWNlcyBj
+b2RlIHNpemUgYnkgbWVyZ2luZwogICAgSU9NTVUgYW5kIERNQSBjb2RlLgotIEVuaGFuY2UgcGxh
+bmUgYWxwaGEgYW5kIGJsZW5kIG1vZGUgc3VwcG9ydAogIC4gVGhpcyBwYXRjaCBzZXJpZXMgYWRk
+cyBjb25maWd1cmFibGUgcGxhbmUgYW5kIHBpeGVsIGJsZW5kIG1vZGUgc3VwcG9ydAogICAgZm9y
+IEV4eW5vczU0MzMgREVDT04gZGV2aWNlLgotIEZpeCBjb2xvciBmb3JtYXQgc2V0dGluZyBvZiBN
+aXhlciBkcml2ZXIKICAuIFRoaXMgcGF0Y2ggc2VyaWVzIGZpeGVzIGNvbG9yIGZvcm1hdCBhbmQg
+cmFuZ2Ugc2V0dGluZyBieSBzcGxpdHRpbmcKICAgIHJhbmdlIGFuZCBmb3JtYXQuCgotLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+CkFuZHJ6ZWogSGFqZGEgKDYpOgogICAgICBkcm0vZXh5bm9zOiBzaW1wbGlmeSBETUEgbWFwcGlu
+ZwogICAgICBkcm0vZXh5bm9zL2lvbW11OiByZW1vdmUgRFJNX0VYWU5PU19JT01NVSBLY29uZmln
+IHN5bWJvbAogICAgICBkcm0vZXh5bm9zL2lvbW11OiBpbnRlZ3JhdGUgSU9NTVUvRE1BIGludGVy
+bmFsIEFQSQogICAgICBkcm0vZXh5bm9zL2lvbW11OiBtb3ZlIElPTU1VIHNwZWNpZmljIHN0dWZm
+IGludG8gZXh5bm9zX2RybV9pb21tdS5jCiAgICAgIGRybS9leHlub3MvaW9tbXU6IHJlcGxhY2Ug
+cHJlcHJvY2Vzc29yIGNvbmRpdGlvbmFscyB3aXRoIEMgY29uZGl0aW9uYWxzCiAgICAgIGRybS9l
+eHlub3MvaW9tbXU6IG1lcmdlIElPTU1VIGFuZCBETUEgY29kZQoKQ2hyaXN0b3BoIE1hbnN6ZXdz
+a2kgKDQpOgogICAgICBkcm0vZXh5bm9zOiBkZWNvbjogTWFrZSBwbGFuZSBhbHBoYSBjb25maWd1
+cmFibGUKICAgICAgZHJtL2V4eW5vczogZGVjb246IE1ha2UgcGl4ZWwgYmxlbmQgbW9kZSBjb25m
+aWd1cmFibGUKICAgICAgZHJtL2V4eW5vczogbWl4ZXI6IEZpeCBjb2xvciBmb3JtYXQgc2V0dGlu
+ZwogICAgICBkcm0vZXh5bm9zOiBtaXhlcjogRml4IGNvbG9yIHJhbmdlIHNldHRpbmcKCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgICAgICAgfCAgIDUgLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9NYWtlZmlsZSAgICAgICAgICAgICAgIHwgICAzICstCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAgODcgKysrKysrKysrKysr
+Ky0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyAgICB8ICAgNSAr
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RtYS5jICAgICAgIHwgMTU3ICsr
+KysrKysrKysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHJ2LmMgICAgICAgfCAgNTUgKystLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHJ2LmggICAgICAgfCAgMTEgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9mYi5jICAgICAgICB8ICAgMSAtCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZmJkZXYuYyAgICAgfCAgIDEgLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2ZpbWMuYyAgICAgIHwgICA1ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmltZC5jICAgICAgfCAgIDUgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9nMmQuYyAgICAgICB8ICAgNSArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2dlbS5jICAgICAgIHwgICAxIC0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9n
+c2MuYyAgICAgICB8ICAgNSArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lv
+bW11LmMgICAgIHwgMTExIC0tLS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2lvbW11LmggICAgIHwgMTM0IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMgICB8ICAgNSArLQogZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jICAgIHwgICA1ICstCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAgMzAgKystLS0KIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1kZWNvbjU0MzMuaCAgICAgICB8ICAyMiArKysrCiBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCAgICAgICAgICAgfCAgIDkgKy0KIDIx
+IGZpbGVzIGNoYW5nZWQsIDMxNCBpbnNlcnRpb25zKCspLCAzNDggZGVsZXRpb25zKC0pCiBjcmVh
+dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RtYS5jCiBk
+ZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11
+LmMKIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+aW9tbXUuaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
