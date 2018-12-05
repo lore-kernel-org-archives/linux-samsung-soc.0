@@ -1,76 +1,65 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 5/5] clk: samsung: exynos5433: add imem clocks
-Date: Wed, 05 Dec 2018 11:57:32 +0100
-Message-ID: <3bb9f4b5-e069-79fe-6ab3-2750c6191e57@samsung.com>
-References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
-        <CGME20181204165318eucas1p2dccd5382ee8b9f4da8c3076fb56607ee@eucas1p2.samsung.com>
-        <20181204165248.17572-6-k.konieczny@partner.samsung.com>
-        <154394884525.88331.3007383362383800806@swboyd.mtv.corp.google.com>
-Mime-Version: 1.0
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH v3 0/5] devfreq: handle suspend/resume
+Date: Wed,  5 Dec 2018 12:05:51 +0100
+Message-ID: <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
+References: <CGME20181205110616eucas1p1e0e17b0c6a96c3b6d77516d4b02de8b1@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <154394884525.88331.3007383362383800806@swboyd.mtv.corp.google.com>
-Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Stephen Boyd <sboyd@kernel.org>, k.konieczny@partner.samsung.com, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12/4/18 19:40, Stephen Boyd wrote:
-> Quoting Kamil Konieczny (2018-12-04 08:52:48)
->> +
->> +static const unsigned long imem_clk_regs[] __initconst = {
->> +       ENABLE_ACLK_IMEM,
->> +       ENABLE_ACLK_IMEM_INT_MEM,
->> +       ENABLE_ACLK_IMEM_SSS,
->> +       ENABLE_ACLK_IMEM_SLIMSSS,
->> +       ENABLE_ACLK_IMEM_RTIC,
->> +       ENABLE_ACLK_IMEM_SMMU_SSS,
->> +       ENABLE_ACLK_IMEM_SMMU_SLIMSSS,
->> +       ENABLE_ACLK_IMEM_SMMU_RTIC,
->> +       ENABLE_ACLK_IMEM_ARBG_TX,
->> +       ENABLE_ACLK_IMEM_SMMU_ARBG_TX,
->> +       ENABLE_PCLK_IMEM,
->> +       ENABLE_PCLK_IMEM_SSS,
->> +       ENABLE_PCLK_IMEM_SLIMSSS,
->> +       ENABLE_PCLK_IMEM_RTIC,
->> +       ENABLE_PCLK_IMEM_SMMU_SSS,
->> +       ENABLE_PCLK_IMEM_SMMU_SLIMSSS,
->> +       ENABLE_PCLK_IMEM_SMMU_RTIC,
->> +       ENABLE_PCLK_IMEM_SMMU_ARGB_TX,
->> +};
->> +
->> +static const struct samsung_gate_clock imem_gate_clks[] __initconst = {
->> +       /* ENABLE_ACLK_IMEM */
->> +       GATE(CLK_ACLK_AXI2AHB_IMEMH, "aclk_axi2ahb_imemh", "aclk_imem_200",
->> +                       ENABLE_ACLK_IMEM, 24, 0, 0),
+Hi all,
 
-I don't think that clock will ever need to be disabled/enabled, so I would
-drop this definition. The clock will remain in its default state after reset
-(enabled).
+This v3 patch set aims to address the issue with devfreq devices' frequency
+during suspend/resume. It extends suspend/resume by calls to Devfreq
+framework. In the devfreq framework there is a small refactoring to avoid
+code duplication in changging frequency (patch 1) and there are extensions
+for suspending devices. The suspending device has now chance to set proper
+state when the system is going for suspend. This phase is the right place
+to set needed frequences for the next resume process.
 
->> +       GATE(CLK_ACLK_AXIDS_SROMC, "aclk_axids_sromc", "aclk_imem_200",
->> +                       ENABLE_ACLK_IMEM, 23, CLK_IGNORE_UNUSED, 0),
-> 
-> Why is there so much use of CLK_IGNORE_UNUSED in this file?
+It has been tested on Odroid u3 with Exynos 4412.
 
-I suppose CLK_IGNORE_UNUSED is needed because there is no drivers that
-would enable required clocks. For some clocks the flag could probably
-indeed just be omitted, e.g. SLIMSSS clocks. 
+The patch set draws on Tobias Jakobi's work posted ~2 years ago, who tried
+to solve issue with devfreq device's frequency during suspend/resume.
+During the discussion on LKML some corner cases and comments appeared
+related to the design. This patch set address them keeping in mind
+suggestions from Chanwoo Choi.
+Tobias's paches:
+https://www.spinics.net/lists/linux-samsung-soc/msg56602.html 
 
-I'm inclined to just define clocks that we are confident about and which
-are needed now. i.e. the SSS IP block clocks. So in include/dt-bindings/
-clock/exynos5433.h we would have something like:
- 
-+/* CMU_IMEM */
-+#define CLK_ACLK_SSS			1
-+#define CLK_PCLK_SSS			40
+Changes:
+v3:
+- cleaned commit messages according to Chanwoo's comments
+- moved atomic operation to beggining of function in
+  devfreq_{suspend|resume}_device()
+- changed dev_warn() to dev_err() with also new error message,
+  when devfreq_{suspend|resume}() failed
+v2:
+- refactored patchset and merget patch 1 and 3 as suggested by Chanwoo Choi,
+- changed devfreq_{susped|resume}_device functions,
+- added doxygen information for new entres in 'struct devfreq',
+- devfreq_set_target skipped one argument, now resume_freq is set inside,
+- minor changes addresing comments from maintainers regarding the style,
 
-+#define IMEM_NR_CLK			41
+Regards,
+Lukasz Luba
 
-The other clocks could be added later as needed by someone who has 
-detailed knowledge about respective peripheral blocks.
+Lukasz Luba (5):
+  devfreq: refactor set_target frequency function
+  devfreq: add support for suspend/resume of a devfreq device
+  devfreq: add devfreq_suspend/resume() functions
+  drivers: power: suspend: call devfreq suspend/resume
+  arm: dts: exynos4: opp-suspend in DMC and leftbus
+
+ arch/arm/boot/dts/exynos4210.dtsi |   2 +
+ arch/arm/boot/dts/exynos4412.dtsi |   2 +
+ drivers/base/power/main.c         |   3 +
+ drivers/devfreq/devfreq.c         | 153 ++++++++++++++++++++++++++++++--------
+ include/linux/devfreq.h           |  13 ++++
+ 5 files changed, 141 insertions(+), 32 deletions(-)
 
 -- 
-Regards,
-Sylwester
+2.7.4
