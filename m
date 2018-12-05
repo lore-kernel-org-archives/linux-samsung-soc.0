@@ -1,86 +1,76 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-next
-Date: Wed, 05 Dec 2018 18:40:53 +0900
-Message-ID: <1544002853-11661-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20181205094053epcas1p118ccbb4387ce9bbc78e6d0988af94ff3@epcas1p1.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3 5/5] clk: samsung: exynos5433: add imem clocks
+Date: Wed, 05 Dec 2018 11:57:32 +0100
+Message-ID: <3bb9f4b5-e069-79fe-6ab3-2750c6191e57@samsung.com>
+References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
+        <CGME20181204165318eucas1p2dccd5382ee8b9f4da8c3076fb56607ee@eucas1p2.samsung.com>
+        <20181204165248.17572-6-k.konieczny@partner.samsung.com>
+        <154394884525.88331.3007383362383800806@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <154394884525.88331.3007383362383800806@swboyd.mtv.corp.google.com>
+Content-language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, k.konieczny@partner.samsung.com, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIFRocmVlIHBhdGNoIHNlcmllcyAtIGNvZGUgcmVmYWN0b3JpbmcgZm9yIHNp
-bXBsaWZ5aW5nIERNQSBtYXBwaW5nLAogICBlbmhhbmNpbmcgcGxhbmUgYWxwaGEgYW5kIGJsZW5k
-IG1vZGUgc3VwcG9ydCBmb3IgRXh5bm9zNTQzMyBEZWNvbiBkZXZpY2UsCiAgIGFuZCBmaXhpbmcg
-Y29sb3IgZm9ybWF0IHNldHRpbmcgb2YgTWl4ZXIgZHJpdmVyLgoKICAgUGxlYXNlIGtpbmRseSBs
-ZXQgbWUga25vdyBpZiB0aGVyZSBpcyBhbnkgcHJvYmxlbS4KClRoYW5rcywKSW5raSBEYWUKClRo
-ZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgMTY3YmZlNTM0ZGMyZGU2ODBlZjcwNmRi
-YjkwM2M5YTdiZmNiMmRkODoKCiAgRG9jdW1lbnRhdGlvbjogZHJtOiBSZW1vdmUgZGFuZ2xpbmcg
-cG9pbnRlciBmcm9tIGRybS1tbS5yc3QgKDIwMTgtMTEtMzAgMDg6NTU6MzcgKzEwMDApCgphcmUg
-YXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoKCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5v
-cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcyB0YWdzL2V4eW5v
-cy1kcm0tbmV4dC1mb3ItdjQuMjEKCmZvciB5b3UgdG8gZmV0Y2ggY2hhbmdlcyB1cCB0byAxM2U4
-MTBmMTk5YjQ4MzgzNTIzNzA3YWE2OWZiOTY3M2Q2ODgwNTVhOgoKICBkcm0vZXh5bm9zOiBtaXhl
-cjogRml4IGNvbG9yIHJhbmdlIHNldHRpbmcgKDIwMTgtMTItMDUgMTc6MzU6MjEgKzA5MDApCgot
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tCi0gUmVmYWN0b3Jpbmcgb2YgRE1BIGFuZCBJT01NVSBjb2RlCiAgLiBUaGlzIHBhdGNo
-IHNlcmllcyBzaW1wbGlmaWVzIERNQSBtYXBwaW5nIGNyZWF0aW9uIGJ5IGF2b2lkaW5nIGxvb3Bp
-bmcKICAgIGFsbCBjb21wb25lbnRzIHRvIGdldCBkbWEgZGV2aWNlIG9iamVjdCwgcmVkdWNlcyBj
-b2RlIHNpemUgYnkgbWVyZ2luZwogICAgSU9NTVUgYW5kIERNQSBjb2RlLgotIEVuaGFuY2UgcGxh
-bmUgYWxwaGEgYW5kIGJsZW5kIG1vZGUgc3VwcG9ydAogIC4gVGhpcyBwYXRjaCBzZXJpZXMgYWRk
-cyBjb25maWd1cmFibGUgcGxhbmUgYW5kIHBpeGVsIGJsZW5kIG1vZGUgc3VwcG9ydAogICAgZm9y
-IEV4eW5vczU0MzMgREVDT04gZGV2aWNlLgotIEZpeCBjb2xvciBmb3JtYXQgc2V0dGluZyBvZiBN
-aXhlciBkcml2ZXIKICAuIFRoaXMgcGF0Y2ggc2VyaWVzIGZpeGVzIGNvbG9yIGZvcm1hdCBhbmQg
-cmFuZ2Ugc2V0dGluZyBieSBzcGxpdHRpbmcKICAgIHJhbmdlIGFuZCBmb3JtYXQuCgotLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-CkFuZHJ6ZWogSGFqZGEgKDYpOgogICAgICBkcm0vZXh5bm9zOiBzaW1wbGlmeSBETUEgbWFwcGlu
-ZwogICAgICBkcm0vZXh5bm9zL2lvbW11OiByZW1vdmUgRFJNX0VYWU5PU19JT01NVSBLY29uZmln
-IHN5bWJvbAogICAgICBkcm0vZXh5bm9zL2lvbW11OiBpbnRlZ3JhdGUgSU9NTVUvRE1BIGludGVy
-bmFsIEFQSQogICAgICBkcm0vZXh5bm9zL2lvbW11OiBtb3ZlIElPTU1VIHNwZWNpZmljIHN0dWZm
-IGludG8gZXh5bm9zX2RybV9pb21tdS5jCiAgICAgIGRybS9leHlub3MvaW9tbXU6IHJlcGxhY2Ug
-cHJlcHJvY2Vzc29yIGNvbmRpdGlvbmFscyB3aXRoIEMgY29uZGl0aW9uYWxzCiAgICAgIGRybS9l
-eHlub3MvaW9tbXU6IG1lcmdlIElPTU1VIGFuZCBETUEgY29kZQoKQ2hyaXN0b3BoIE1hbnN6ZXdz
-a2kgKDQpOgogICAgICBkcm0vZXh5bm9zOiBkZWNvbjogTWFrZSBwbGFuZSBhbHBoYSBjb25maWd1
-cmFibGUKICAgICAgZHJtL2V4eW5vczogZGVjb246IE1ha2UgcGl4ZWwgYmxlbmQgbW9kZSBjb25m
-aWd1cmFibGUKICAgICAgZHJtL2V4eW5vczogbWl4ZXI6IEZpeCBjb2xvciBmb3JtYXQgc2V0dGlu
-ZwogICAgICBkcm0vZXh5bm9zOiBtaXhlcjogRml4IGNvbG9yIHJhbmdlIHNldHRpbmcKCiBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgICAgICAgfCAgIDUgLQogZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9NYWtlZmlsZSAgICAgICAgICAgICAgIHwgICAzICstCiBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAgODcgKysrKysrKysrKysr
-Ky0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyAgICB8ICAgNSAr
-LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RtYS5jICAgICAgIHwgMTU3ICsr
-KysrKysrKysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZHJ2LmMgICAgICAgfCAgNTUgKystLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHJ2LmggICAgICAgfCAgMTEgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9mYi5jICAgICAgICB8ICAgMSAtCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZmJkZXYuYyAgICAgfCAgIDEgLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2ZpbWMuYyAgICAgIHwgICA1ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZmltZC5jICAgICAgfCAgIDUgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9nMmQuYyAgICAgICB8ICAgNSArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2dlbS5jICAgICAgIHwgICAxIC0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9n
-c2MuYyAgICAgICB8ICAgNSArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lv
-bW11LmMgICAgIHwgMTExIC0tLS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2lvbW11LmggICAgIHwgMTM0IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMgICB8ICAgNSArLQogZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jICAgIHwgICA1ICstCiBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAgMzAgKystLS0KIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1kZWNvbjU0MzMuaCAgICAgICB8ICAyMiArKysrCiBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCAgICAgICAgICAgfCAgIDkgKy0KIDIx
-IGZpbGVzIGNoYW5nZWQsIDMxNCBpbnNlcnRpb25zKCspLCAzNDggZGVsZXRpb25zKC0pCiBjcmVh
-dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RtYS5jCiBk
-ZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11
-LmMKIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-aW9tbXUuaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 12/4/18 19:40, Stephen Boyd wrote:
+> Quoting Kamil Konieczny (2018-12-04 08:52:48)
+>> +
+>> +static const unsigned long imem_clk_regs[] __initconst = {
+>> +       ENABLE_ACLK_IMEM,
+>> +       ENABLE_ACLK_IMEM_INT_MEM,
+>> +       ENABLE_ACLK_IMEM_SSS,
+>> +       ENABLE_ACLK_IMEM_SLIMSSS,
+>> +       ENABLE_ACLK_IMEM_RTIC,
+>> +       ENABLE_ACLK_IMEM_SMMU_SSS,
+>> +       ENABLE_ACLK_IMEM_SMMU_SLIMSSS,
+>> +       ENABLE_ACLK_IMEM_SMMU_RTIC,
+>> +       ENABLE_ACLK_IMEM_ARBG_TX,
+>> +       ENABLE_ACLK_IMEM_SMMU_ARBG_TX,
+>> +       ENABLE_PCLK_IMEM,
+>> +       ENABLE_PCLK_IMEM_SSS,
+>> +       ENABLE_PCLK_IMEM_SLIMSSS,
+>> +       ENABLE_PCLK_IMEM_RTIC,
+>> +       ENABLE_PCLK_IMEM_SMMU_SSS,
+>> +       ENABLE_PCLK_IMEM_SMMU_SLIMSSS,
+>> +       ENABLE_PCLK_IMEM_SMMU_RTIC,
+>> +       ENABLE_PCLK_IMEM_SMMU_ARGB_TX,
+>> +};
+>> +
+>> +static const struct samsung_gate_clock imem_gate_clks[] __initconst = {
+>> +       /* ENABLE_ACLK_IMEM */
+>> +       GATE(CLK_ACLK_AXI2AHB_IMEMH, "aclk_axi2ahb_imemh", "aclk_imem_200",
+>> +                       ENABLE_ACLK_IMEM, 24, 0, 0),
+
+I don't think that clock will ever need to be disabled/enabled, so I would
+drop this definition. The clock will remain in its default state after reset
+(enabled).
+
+>> +       GATE(CLK_ACLK_AXIDS_SROMC, "aclk_axids_sromc", "aclk_imem_200",
+>> +                       ENABLE_ACLK_IMEM, 23, CLK_IGNORE_UNUSED, 0),
+> 
+> Why is there so much use of CLK_IGNORE_UNUSED in this file?
+
+I suppose CLK_IGNORE_UNUSED is needed because there is no drivers that
+would enable required clocks. For some clocks the flag could probably
+indeed just be omitted, e.g. SLIMSSS clocks. 
+
+I'm inclined to just define clocks that we are confident about and which
+are needed now. i.e. the SSS IP block clocks. So in include/dt-bindings/
+clock/exynos5433.h we would have something like:
+ 
++/* CMU_IMEM */
++#define CLK_ACLK_SSS			1
++#define CLK_PCLK_SSS			40
+
++#define IMEM_NR_CLK			41
+
+The other clocks could be added later as needed by someone who has 
+detailed knowledge about respective peripheral blocks.
+
+-- 
+Regards,
+Sylwester
