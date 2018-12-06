@@ -1,80 +1,165 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/3] drm/exynos/decon5433: add dynamic zpos support
-Date: Thu, 06 Dec 2018 10:38:55 +0100
-Message-ID: <20181206093857.22324-2-a.hajda@samsung.com>
-References: <20181206093857.22324-1-a.hajda@samsung.com>
- <CGME20181206093906eucas1p212ab2e090927466e001dcec001a441c5@eucas1p2.samsung.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v3 2/5] devfreq: add support for suspend/resume of a
+ devfreq device
+Date: Thu, 6 Dec 2018 11:13:58 +0100
+Message-ID: <d64d50db-375d-5fd5-5938-dcd0341ef2d7@partner.samsung.com>
+References: <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181205110620eucas1p14de70dc092580b684a0304b5ce771605@eucas1p1.samsung.com>
+        <1544007956-28889-3-git-send-email-l.luba@partner.samsung.com>
+        <5C0878C0.4060500@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20181206093857.22324-1-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5C0878C0.4060500@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-REVDT04gaGFzIGZpeGVkIGhhcmR3YXJlIHdpbmRvdyBvcmRlci4gVG8gaW1wbGVtZW50IGR5bmFt
-aWMgenBvcwpub3JtYWxpemVkX3pwb3Mgb2YgYWN0aXZlIHBsYW5lIGhhcyB0byBiZSBjb25uZWN0
-ZWQgdG8gd2luZG93IG51bWJlciwgYW5kCnJlbWFpbmluZyB3aW5kb3dzIGhhdmUgdG8gYmUgZGlz
-YWJsZWQuCgpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29t
-PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8IDIz
-ICsrKysrKysrKy0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCAx
-MiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-czU0MzNfZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJt
-X2RlY29uLmMKaW5kZXggYWVmNDg3ZGQ4NzMxLi42ZTNlNmU5NzA2OTAgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYworKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKQEAgLTMyNiw3ICszMjYsNyBA
-QCBzdGF0aWMgdm9pZCBkZWNvbl91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAq
-Y3J0YywKIAkJCQl0b19leHlub3NfcGxhbmVfc3RhdGUocGxhbmUtPmJhc2Uuc3RhdGUpOwogCXN0
-cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7CiAJc3RydWN0IGRybV9mcmFtZWJ1
-ZmZlciAqZmIgPSBzdGF0ZS0+YmFzZS5mYjsKLQl1bnNpZ25lZCBpbnQgd2luID0gcGxhbmUtPmlu
-ZGV4OworCXVuc2lnbmVkIGludCB3aW4gPSBzdGF0ZS0+YmFzZS5ub3JtYWxpemVkX3pwb3MgKyBj
-dHgtPmZpcnN0X3dpbjsKIAl1bnNpZ25lZCBpbnQgY3BwID0gZmItPmZvcm1hdC0+Y3BwWzBdOwog
-CXVuc2lnbmVkIGludCBwaXRjaCA9IGZiLT5waXRjaGVzWzBdOwogCWRtYV9hZGRyX3QgZG1hX2Fk
-ZHIgPSBleHlub3NfZHJtX2ZiX2RtYV9hZGRyKGZiLCAwKTsKQEAgLTM3NiwxOSArMzc2LDE4IEBA
-IHN0YXRpYyB2b2lkIGRlY29uX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpj
-cnRjLAogCWRlY29uX3NldF9iaXRzKGN0eCwgREVDT05fV0lOQ09OeCh3aW4pLCBXSU5DT054X0VO
-V0lOX0YsIH4wKTsKIH0KIAotc3RhdGljIHZvaWQgZGVjb25fZGlzYWJsZV9wbGFuZShzdHJ1Y3Qg
-ZXh5bm9zX2RybV9jcnRjICpjcnRjLAotCQkJCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpwbGFu
-ZSkKLXsKLQlzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwotCXVuc2lnbmVk
-IGludCB3aW4gPSBwbGFuZS0+aW5kZXg7Ci0KLQlkZWNvbl9zZXRfYml0cyhjdHgsIERFQ09OX1dJ
-TkNPTngod2luKSwgV0lOQ09OeF9FTldJTl9GLCAwKTsKLX0KLQogc3RhdGljIHZvaWQgZGVjb25f
-YXRvbWljX2ZsdXNoKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0IGRl
-Y29uX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKIAl1bnNpZ25lZCBsb25nIGZsYWdzOworCWlu
-dCB3aW4gPSBod2VpZ2h0MzIoY3J0Yy0+YmFzZS5zdGF0ZS0+cGxhbmVfbWFzaykgKyBjdHgtPmZp
-cnN0X3dpbjsKKworCS8qIGRpc2FibGUgd2luZG93cyBjb3JyZXNwb25kaW5nIHRvIGRpc2FibGVk
-IHBsYW5lcyAqLworCWZvciAoOyB3aW4gPCBXSU5ET1dTX05SOyArK3dpbikgeworCQlpZiAoIXJl
-YWRsKGN0eC0+YWRkciArIERFQ09OX1dJTkNPTngod2luKSkgJiBXSU5DT054X0VOV0lOX0YpCisJ
-CQlicmVhazsKKwkJZGVjb25fc2V0X2JpdHMoY3R4LCBERUNPTl9XSU5DT054KHdpbiksIFdJTkNP
-TnhfRU5XSU5fRiwgMCk7CisJfQogCiAJc3Bpbl9sb2NrX2lycXNhdmUoJmN0eC0+dmJsYW5rX2xv
-Y2ssIGZsYWdzKTsKIApAQCAtNDYyLDcgKzQ2MSw3IEBAIHN0YXRpYyB2b2lkIGRlY29uX2Rpc2Fi
-bGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIAkgKiBhIGRlc3Ryb3llZCBidWZmZXIg
-bGF0ZXIuCiAJICovCiAJZm9yIChpID0gY3R4LT5maXJzdF93aW47IGkgPCBXSU5ET1dTX05SOyBp
-KyspCi0JCWRlY29uX2Rpc2FibGVfcGxhbmUoY3J0YywgJmN0eC0+cGxhbmVzW2ldKTsKKwkJZGVj
-b25fc2V0X2JpdHMoY3R4LCBERUNPTl9XSU5DT054KGkpLCBXSU5DT054X0VOV0lOX0YsIDApOwog
-CiAJZGVjb25fc3dyZXNldChjdHgpOwogCkBAIC01MzEsNyArNTMwLDYgQEAgc3RhdGljIGNvbnN0
-IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzIGRlY29uX2NydGNfb3BzID0gewogCS5kaXNhYmxl
-X3ZibGFuawkJPSBkZWNvbl9kaXNhYmxlX3ZibGFuaywKIAkuYXRvbWljX2JlZ2luCQk9IGRlY29u
-X2F0b21pY19iZWdpbiwKIAkudXBkYXRlX3BsYW5lCQk9IGRlY29uX3VwZGF0ZV9wbGFuZSwKLQku
-ZGlzYWJsZV9wbGFuZQkJPSBkZWNvbl9kaXNhYmxlX3BsYW5lLAogCS5tb2RlX3ZhbGlkCQk9IGRl
-Y29uX21vZGVfdmFsaWQsCiAJLmF0b21pY19mbHVzaAkJPSBkZWNvbl9hdG9taWNfZmx1c2gsCiB9
-OwpAQCAtNTUyLDYgKzU1MCw3IEBAIHN0YXRpYyBpbnQgZGVjb25fYmluZChzdHJ1Y3QgZGV2aWNl
-ICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKIAkJY3R4LT5jb25maWdz
-W3dpbl0ubnVtX3BpeGVsX2Zvcm1hdHMgPSBBUlJBWV9TSVpFKGRlY29uX2Zvcm1hdHMpOwogCQlj
-dHgtPmNvbmZpZ3Nbd2luXS56cG9zID0gd2luIC0gY3R4LT5maXJzdF93aW47CiAJCWN0eC0+Y29u
-Zmlnc1t3aW5dLnR5cGUgPSBkZWNvbl93aW5fdHlwZXNbd2luXTsKKwkJY3R4LT5jb25maWdzW3dp
-bl0uY2FwYWJpbGl0aWVzID0gRVhZTk9TX0RSTV9QTEFORV9DQVBfWlBPUzsKIAogCQlyZXQgPSBl
-eHlub3NfcGxhbmVfaW5pdChkcm1fZGV2LCAmY3R4LT5wbGFuZXNbd2luXSwgd2luLAogCQkJCQkm
-Y3R4LT5jb25maWdzW3dpbl0pOwotLSAKMi4xNy4xCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Chanwoo,
+
+On 12/6/18 2:17 AM, Chanwoo Choi wrote:
+> Hi Lukasz,
+> 
+> On 2018년 12월 05일 20:05, Lukasz Luba wrote:
+>> The patch prepares devfreq device for handling suspend/resume
+>> functionality. The new fields will store needed information during this
+>> process. Devfreq framework handles opp-suspend DT entry and there is no
+>> need of modyfications in the drivers code. It uses atomic variables to
+>> make sure no race condition affects the process.
+>>
+>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   drivers/devfreq/devfreq.c | 47 +++++++++++++++++++++++++++++++++++++++++------
+>>   include/linux/devfreq.h   |  7 +++++++
+>>   2 files changed, 48 insertions(+), 6 deletions(-)
+> 
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Thank you for the review and comments for the whole patch series.
+
+Regards,
+Lukasz
+
+> 
+>>
+>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>> index a9fd61b..46517b6 100644
+>> --- a/drivers/devfreq/devfreq.c
+>> +++ b/drivers/devfreq/devfreq.c
+>> @@ -316,6 +316,10 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+>>   			"Couldn't update frequency transition information.\n");
+>>   
+>>   	devfreq->previous_freq = new_freq;
+>> +
+>> +	if (devfreq->suspend_freq)
+>> +		devfreq->resume_freq = cur_freq;
+>> +
+>>   	return err;
+>>   }
+>>   
+>> @@ -667,6 +671,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>   	}
+>>   	devfreq->max_freq = devfreq->scaling_max_freq;
+>>   
+>> +	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
+>> +	atomic_set(&devfreq->suspend_count, 0);
+>> +
+>>   	dev_set_name(&devfreq->dev, "devfreq%d",
+>>   				atomic_inc_return(&devfreq_no));
+>>   	err = device_register(&devfreq->dev);
+>> @@ -867,14 +874,28 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
+>>    */
+>>   int devfreq_suspend_device(struct devfreq *devfreq)
+>>   {
+>> +	int ret;
+>> +
+>>   	if (!devfreq)
+>>   		return -EINVAL;
+>>   
+>> -	if (!devfreq->governor)
+>> +	if (atomic_inc_return(&devfreq->suspend_count) > 1)
+>>   		return 0;
+>>   
+>> -	return devfreq->governor->event_handler(devfreq,
+>> -				DEVFREQ_GOV_SUSPEND, NULL);
+>> +	if (devfreq->governor) {
+>> +		ret = devfreq->governor->event_handler(devfreq,
+>> +					DEVFREQ_GOV_SUSPEND, NULL);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	if (devfreq->suspend_freq) {
+>> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	return 0;
+>>   }
+>>   EXPORT_SYMBOL(devfreq_suspend_device);
+>>   
+>> @@ -888,14 +909,28 @@ EXPORT_SYMBOL(devfreq_suspend_device);
+>>    */
+>>   int devfreq_resume_device(struct devfreq *devfreq)
+>>   {
+>> +	int ret;
+>> +
+>>   	if (!devfreq)
+>>   		return -EINVAL;
+>>   
+>> -	if (!devfreq->governor)
+>> +	if (atomic_dec_return(&devfreq->suspend_count) >= 1)
+>>   		return 0;
+>>   
+>> -	return devfreq->governor->event_handler(devfreq,
+>> -				DEVFREQ_GOV_RESUME, NULL);
+>> +	if (devfreq->resume_freq) {
+>> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq, 0);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	if (devfreq->governor) {
+>> +		ret = devfreq->governor->event_handler(devfreq,
+>> +					DEVFREQ_GOV_RESUME, NULL);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	return 0;
+>>   }
+>>   EXPORT_SYMBOL(devfreq_resume_device);
+>>   
+>> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+>> index e4963b0..d985199 100644
+>> --- a/include/linux/devfreq.h
+>> +++ b/include/linux/devfreq.h
+>> @@ -131,6 +131,9 @@ struct devfreq_dev_profile {
+>>    * @scaling_min_freq:	Limit minimum frequency requested by OPP interface
+>>    * @scaling_max_freq:	Limit maximum frequency requested by OPP interface
+>>    * @stop_polling:	 devfreq polling status of a device.
+>> + * @suspend_freq:	 frequency of a device set during suspend phase.
+>> + * @resume_freq:	 frequency of a device set in resume phase.
+>> + * @suspend_count:	 suspend requests counter for a device.
+>>    * @total_trans:	Number of devfreq transitions
+>>    * @trans_table:	Statistics of devfreq transitions
+>>    * @time_in_state:	Statistics of devfreq states
+>> @@ -167,6 +170,10 @@ struct devfreq {
+>>   	unsigned long scaling_max_freq;
+>>   	bool stop_polling;
+>>   
+>> +	unsigned long suspend_freq;
+>> +	unsigned long resume_freq;
+>> +	atomic_t suspend_count;
+>> +
+>>   	/* information for device frequency transition */
+>>   	unsigned int total_trans;
+>>   	unsigned int *trans_table;
+>>
+> 
+> 
