@@ -1,46 +1,273 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 0/3] drm/exynos: add support for dynamic zpos in DECON
- and FIMD
-Date: Thu, 6 Dec 2018 12:06:19 +0100
-Message-ID: <ad1512ce-2f95-d411-8d2c-1c7fe10e96a3@samsung.com>
-References: <CGME20181206093905eucas1p133ead84adfb9dd7a9756ce91b6b35895@eucas1p1.samsung.com>
- <20181206093857.22324-1-a.hajda@samsung.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
+Subject: Re: [PATCH v2] media: remove bdisp_dbg_declare() and hva_dbg_declare()
+Date: Thu, 6 Dec 2018 11:49:12 +0000
+Message-ID: <aa26931d-c4f0-32d2-30d8-65fd4376d3d9@st.com>
+References: <20181202020425.9189-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20181206093857.22324-1-a.hajda@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181202020425.9189-1-tiny.windzz@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-ID: <5564D1E2BE98B944B64A9343E59EACB0@st.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Yangtao Li <tiny.windzz@gmail.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "mchehab@kernel.org" <mchehab@kernel.org>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, Jean Christophe TROTIN <jean-christophe.trotin@st.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSW5raSwKCk9uIDA2LjEyLjIwMTggMTA6MzgsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4gSGkg
-SW5raSwKPgo+IFRoaXMgc21hbGwgcGF0Y2hzZXQgYWRkcyBkeW5hbWljIHpwb3Mgc3VwcG9ydCBm
-b3IgREVDT04gYW5kIEZJTUQuCj4gSXQgd2FzIHRlc3RlZCBvbiB0bTIgYW5kIHRyYXRzMi4KCgpJ
-IGhhdmUgcmVhbGl6ZWQgdGhhdCB0aGlzIHBhdGNoc2V0IGludGVyZmVyZXMgd2l0aCBDaHJpc3Rv
-cGgncyBleHlub3MKcGxhbmUgcGF0Y2hlcyBmb3IgZmltZCBhbmQgZGVjb24sIGJ1dCBpbiBkcm0t
-ZXh5bm9zL2V4eW5vc19kcm1fbmV4dCBJCmhhdmUgZm91bmQgb25seSBwYXRjaGVzIGZvciBkZWNv
-bi4gRG8geW91IHBsYW4gdG8gZ2V0IENocmlzdHBvcGgncwphbHBoYS9ibGVuZGluZyBwYXRjaGVz
-IGZvciBmaW1kPwoKU2hvdWxkIEkgcmViYXNlIG15IHBhdGNoZXMgb24gY3VycmVudCBleHlub3Mt
-ZHJtLW5leHQsIG9yIG9uIGFsbApDaHJpc3RvcGgncyBwYXRjaGVzPwoKClJlZ2FyZHMKCkFuZHJ6
-ZWoKCgo+Cj4gUmVnYXJkcwo+IEFuZHJ6ZWoKPgo+Cj4gQW5kcnplaiBIYWpkYSAoMyk6Cj4gICBk
-cm0vZXh5bm9zL2RlY29uNTQzMzogYWRkIGR5bmFtaWMgenBvcyBzdXBwb3J0Cj4gICBkcm0vZXh5
-bm9zL2ZpbWQ6IGNyZWF0ZSBsb2NhbCBoZWxwZXIgZm9yIGRpc2FibGluZyBoYXJkd2FyZSB3aW5k
-b3cKPiAgIGRybS9leHlub3MvZmltZDogYWRkIGR5bmFtaWMgenBvcyBzdXBwb3J0Cj4KPiAgZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgMjMgKysrKystLS0t
-LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCA0MiAr
-KysrKysrKy0tLS0tLS0tLS0tCj4gIDIgZmlsZXMgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKSwg
-MzYgZGVsZXRpb25zKC0pCj4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Hi,
+
+The patch itself is OK, but the commit talks about bdisp & hva while the 
+patch is also for fimc-is.
+Could you please update the commit header & messages?
+
+BR
+
+Fabien
+
+On 02/12/2018 3:04 AM, Yangtao Li wrote:
+> We already have the DEFINE_SHOW_ATTRIBUTE.There is no need to define
+> bdisp_dbg_declare and hva_dbg_declare,so remove them.Also use
+> DEFINE_SHOW_ATTRIBUTE to simplify some code.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+> Changes in v2:
+> -delete fimc_is_debugfs_open
+> ---
+>   drivers/media/platform/exynos4-is/fimc-is.c   | 16 ++-------
+>   .../media/platform/sti/bdisp/bdisp-debug.c    | 34 ++++++------------
+>   drivers/media/platform/sti/hva/hva-debugfs.c  | 36 +++++++------------
+>   3 files changed, 26 insertions(+), 60 deletions(-)
+>
+> diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+> index f5fc54de19da..02da0b06e56a 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-is.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-is.c
+> @@ -738,7 +738,7 @@ int fimc_is_hw_initialize(struct fimc_is *is)
+>   	return 0;
+>   }
+>   
+> -static int fimc_is_log_show(struct seq_file *s, void *data)
+> +static int fimc_is_show(struct seq_file *s, void *data)
+>   {
+>   	struct fimc_is *is = s->private;
+>   	const u8 *buf = is->memory.vaddr + FIMC_IS_DEBUG_REGION_OFFSET;
+> @@ -752,17 +752,7 @@ static int fimc_is_log_show(struct seq_file *s, void *data)
+>   	return 0;
+>   }
+>   
+> -static int fimc_is_debugfs_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, fimc_is_log_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations fimc_is_debugfs_fops = {
+> -	.open		= fimc_is_debugfs_open,
+> -	.read		= seq_read,
+> -	.llseek		= seq_lseek,
+> -	.release	= single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(fimc_is);
+>   
+>   static void fimc_is_debugfs_remove(struct fimc_is *is)
+>   {
+> @@ -777,7 +767,7 @@ static int fimc_is_debugfs_create(struct fimc_is *is)
+>   	is->debugfs_entry = debugfs_create_dir("fimc_is", NULL);
+>   
+>   	dentry = debugfs_create_file("fw_log", S_IRUGO, is->debugfs_entry,
+> -				     is, &fimc_is_debugfs_fops);
+> +				     is, &fimc_is_fops);
+>   	if (!dentry)
+>   		fimc_is_debugfs_remove(is);
+>   
+> diff --git a/drivers/media/platform/sti/bdisp/bdisp-debug.c b/drivers/media/platform/sti/bdisp/bdisp-debug.c
+> index c6a4e2de5c0c..77ca7517fa3e 100644
+> --- a/drivers/media/platform/sti/bdisp/bdisp-debug.c
+> +++ b/drivers/media/platform/sti/bdisp/bdisp-debug.c
+> @@ -315,7 +315,7 @@ static void bdisp_dbg_dump_ivmx(struct seq_file *s,
+>   	seq_puts(s, "Unknown conversion\n");
+>   }
+>   
+> -static int bdisp_dbg_last_nodes(struct seq_file *s, void *data)
+> +static int last_nodes_show(struct seq_file *s, void *data)
+>   {
+>   	/* Not dumping all fields, focusing on significant ones */
+>   	struct bdisp_dev *bdisp = s->private;
+> @@ -388,7 +388,7 @@ static int bdisp_dbg_last_nodes(struct seq_file *s, void *data)
+>   	return 0;
+>   }
+>   
+> -static int bdisp_dbg_last_nodes_raw(struct seq_file *s, void *data)
+> +static int last_nodes_raw_show(struct seq_file *s, void *data)
+>   {
+>   	struct bdisp_dev *bdisp = s->private;
+>   	struct bdisp_node *node;
+> @@ -437,7 +437,7 @@ static const char *bdisp_fmt_to_str(struct bdisp_frame frame)
+>   	}
+>   }
+>   
+> -static int bdisp_dbg_last_request(struct seq_file *s, void *data)
+> +static int last_request_show(struct seq_file *s, void *data)
+>   {
+>   	struct bdisp_dev *bdisp = s->private;
+>   	struct bdisp_request *request = &bdisp->dbg.copy_request;
+> @@ -474,7 +474,7 @@ static int bdisp_dbg_last_request(struct seq_file *s, void *data)
+>   
+>   #define DUMP(reg) seq_printf(s, #reg " \t0x%08X\n", readl(bdisp->regs + reg))
+>   
+> -static int bdisp_dbg_regs(struct seq_file *s, void *data)
+> +static int regs_show(struct seq_file *s, void *data)
+>   {
+>   	struct bdisp_dev *bdisp = s->private;
+>   	int ret;
+> @@ -582,7 +582,7 @@ static int bdisp_dbg_regs(struct seq_file *s, void *data)
+>   
+>   #define SECOND 1000000
+>   
+> -static int bdisp_dbg_perf(struct seq_file *s, void *data)
+> +static int perf_show(struct seq_file *s, void *data)
+>   {
+>   	struct bdisp_dev *bdisp = s->private;
+>   	struct bdisp_request *request = &bdisp->dbg.copy_request;
+> @@ -627,27 +627,15 @@ static int bdisp_dbg_perf(struct seq_file *s, void *data)
+>   	return 0;
+>   }
+>   
+> -#define bdisp_dbg_declare(name) \
+> -	static int bdisp_dbg_##name##_open(struct inode *i, struct file *f) \
+> -	{ \
+> -		return single_open(f, bdisp_dbg_##name, i->i_private); \
+> -	} \
+> -	static const struct file_operations bdisp_dbg_##name##_fops = { \
+> -		.open           = bdisp_dbg_##name##_open, \
+> -		.read           = seq_read, \
+> -		.llseek         = seq_lseek, \
+> -		.release        = single_release, \
+> -	}
+> -
+>   #define bdisp_dbg_create_entry(name) \
+>   	debugfs_create_file(#name, S_IRUGO, bdisp->dbg.debugfs_entry, bdisp, \
+> -			    &bdisp_dbg_##name##_fops)
+> +			    &name##_fops)
+>   
+> -bdisp_dbg_declare(regs);
+> -bdisp_dbg_declare(last_nodes);
+> -bdisp_dbg_declare(last_nodes_raw);
+> -bdisp_dbg_declare(last_request);
+> -bdisp_dbg_declare(perf);
+> +DEFINE_SHOW_ATTRIBUTE(regs);
+> +DEFINE_SHOW_ATTRIBUTE(last_nodes);
+> +DEFINE_SHOW_ATTRIBUTE(last_nodes_raw);
+> +DEFINE_SHOW_ATTRIBUTE(last_request);
+> +DEFINE_SHOW_ATTRIBUTE(perf);
+>   
+>   int bdisp_debugfs_create(struct bdisp_dev *bdisp)
+>   {
+> diff --git a/drivers/media/platform/sti/hva/hva-debugfs.c b/drivers/media/platform/sti/hva/hva-debugfs.c
+> index 9f7e8ac875d1..7d12a5b5d914 100644
+> --- a/drivers/media/platform/sti/hva/hva-debugfs.c
+> +++ b/drivers/media/platform/sti/hva/hva-debugfs.c
+> @@ -271,7 +271,7 @@ static void hva_dbg_perf_compute(struct hva_ctx *ctx)
+>    * device debug info
+>    */
+>   
+> -static int hva_dbg_device(struct seq_file *s, void *data)
+> +static int device_show(struct seq_file *s, void *data)
+>   {
+>   	struct hva_dev *hva = s->private;
+>   
+> @@ -281,7 +281,7 @@ static int hva_dbg_device(struct seq_file *s, void *data)
+>   	return 0;
+>   }
+>   
+> -static int hva_dbg_encoders(struct seq_file *s, void *data)
+> +static int encoders_show(struct seq_file *s, void *data)
+>   {
+>   	struct hva_dev *hva = s->private;
+>   	unsigned int i = 0;
+> @@ -299,7 +299,7 @@ static int hva_dbg_encoders(struct seq_file *s, void *data)
+>   	return 0;
+>   }
+>   
+> -static int hva_dbg_last(struct seq_file *s, void *data)
+> +static int last_show(struct seq_file *s, void *data)
+>   {
+>   	struct hva_dev *hva = s->private;
+>   	struct hva_ctx *last_ctx = &hva->dbg.last_ctx;
+> @@ -316,7 +316,7 @@ static int hva_dbg_last(struct seq_file *s, void *data)
+>   	return 0;
+>   }
+>   
+> -static int hva_dbg_regs(struct seq_file *s, void *data)
+> +static int regs_show(struct seq_file *s, void *data)
+>   {
+>   	struct hva_dev *hva = s->private;
+>   
+> @@ -325,26 +325,14 @@ static int hva_dbg_regs(struct seq_file *s, void *data)
+>   	return 0;
+>   }
+>   
+> -#define hva_dbg_declare(name)						  \
+> -	static int hva_dbg_##name##_open(struct inode *i, struct file *f) \
+> -	{								  \
+> -		return single_open(f, hva_dbg_##name, i->i_private);	  \
+> -	}								  \
+> -	static const struct file_operations hva_dbg_##name##_fops = {	  \
+> -		.open		= hva_dbg_##name##_open,		  \
+> -		.read		= seq_read,				  \
+> -		.llseek		= seq_lseek,				  \
+> -		.release	= single_release,			  \
+> -	}
+> -
+>   #define hva_dbg_create_entry(name)					 \
+>   	debugfs_create_file(#name, 0444, hva->dbg.debugfs_entry, hva, \
+> -			    &hva_dbg_##name##_fops)
+> +			    &name##_fops)
+>   
+> -hva_dbg_declare(device);
+> -hva_dbg_declare(encoders);
+> -hva_dbg_declare(last);
+> -hva_dbg_declare(regs);
+> +DEFINE_SHOW_ATTRIBUTE(device);
+> +DEFINE_SHOW_ATTRIBUTE(encoders);
+> +DEFINE_SHOW_ATTRIBUTE(last);
+> +DEFINE_SHOW_ATTRIBUTE(regs);
+>   
+>   void hva_debugfs_create(struct hva_dev *hva)
+>   {
+> @@ -380,7 +368,7 @@ void hva_debugfs_remove(struct hva_dev *hva)
+>    * context (instance) debug info
+>    */
+>   
+> -static int hva_dbg_ctx(struct seq_file *s, void *data)
+> +static int ctx_show(struct seq_file *s, void *data)
+>   {
+>   	struct hva_ctx *ctx = s->private;
+>   
+> @@ -392,7 +380,7 @@ static int hva_dbg_ctx(struct seq_file *s, void *data)
+>   	return 0;
+>   }
+>   
+> -hva_dbg_declare(ctx);
+> +DEFINE_SHOW_ATTRIBUTE(ctx);
+>   
+>   void hva_dbg_ctx_create(struct hva_ctx *ctx)
+>   {
+> @@ -407,7 +395,7 @@ void hva_dbg_ctx_create(struct hva_ctx *ctx)
+>   
+>   	ctx->dbg.debugfs_entry = debugfs_create_file(name, 0444,
+>   						     hva->dbg.debugfs_entry,
+> -						     ctx, &hva_dbg_ctx_fops);
+> +						     ctx, &ctx_fops);
+>   }
+>   
+>   void hva_dbg_ctx_remove(struct hva_ctx *ctx)
