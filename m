@@ -1,53 +1,66 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add proper regulator states for
- suspend-to-mem for odroid-u3
-Date: Thu, 6 Dec 2018 10:18:41 +0100
-Message-ID: <bb894ff5-0fe7-7532-3b73-018038cad855@samsung.com>
-References: <20181204194025.2719-1-linux.amoon@gmail.com>
-        <CAJKOXPcT-x0JWVw2CaxHzSthxbp3sDRcsa4Nc5gHYqUy98b_yw@mail.gmail.com>
-        <CGME20181205161223epcas2p24aca718c0d68056140f8430ee8219356@epcas2p2.samsung.com>
-        <CANAwSgSSOmTbqS4WUYZHXdB8XL5fjoiGbrh3unxufQ0gZXBPkQ@mail.gmail.com>
-        <ee0d71cd-a3e0-fbb0-3af8-0ecca1d53ec0@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 2/3] drm/exynos/fimd: create local helper for disabling
+ hardware window
+Date: Thu, 06 Dec 2018 10:38:56 +0100
+Message-ID: <20181206093857.22324-3-a.hajda@samsung.com>
+References: <20181206093857.22324-1-a.hajda@samsung.com>
+ <CGME20181206093906eucas1p201bdbdc03cabc2a3f60ea04b794ffd04@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ee0d71cd-a3e0-fbb0-3af8-0ecca1d53ec0@samsung.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20181206093857.22324-1-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi All,
-
-On 2018-12-06 09:25, Marek Szyprowski wrote:
-> On 2018-12-05 17:11, Anand Moon wrote:
->> On Wed, 5 Dec 2018 at 19:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> On Tue, 4 Dec 2018 at 20:40, Anand Moon <linux.amoon@gmail.com> wrote:
->>>> Add suspend-to-mem node to regulator core to be enabled or disabled
->>>> during system suspend and also support changing the regulator operating
->>>> mode during runtime and when the system enter sleep mode.
->>>>
->>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>> ---
->>>> Tested on Odroid U3+
->>>>
->>>> ...
->> Well I have tested this patch as following
->> with only one issue, before enable suspend number of On-line cpu is 4
->> after resume number of On-line cpu is 1.
-> This seems to be a regression in v4.20-rc1, not related to dts changes
-> at all. I'm investigating this now...
-
-
-Okay, I mixed kernel versions a bit. To be precise, this regression is
-between v4.20-rc2 and v4.20-rc3. Bisecting pointed commit 383fb3ee8024
-("ARM: spectre-v2: per-CPU vtables to work around big.Little systems").
-I will post a bug report about the regression.
-
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGFyZHdhcmUgd2luZG93IGRpc2FibGluZyBpcyBwZXJmb3JtZWQgaW4gbXVsdGlwbGUgcGxhY2Vz
+LiBDcmVhdGluZwpoZWxwZXIgZm9yIGl0IHNpbXBsaWZpZXMgdGhlIGNvZGUgYW5kIHByZXBhcmVz
+IGl0IGZvciBmdXJ0aGVyIGltcHJvdmVtZW50cy4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFq
+ZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2ZpbWQuYyB8IDIzICsrKysrKysrKysrLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdl
+ZCwgMTEgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9maW1kLmMKaW5kZXggYjdmNTY5MzVhNDZiLi4yMjYxMjdmMzUwNTIgMTAw
+NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwpAQCAtMzMxLDYgKzMzMSwx
+NCBAQCBzdGF0aWMgdm9pZCBmaW1kX2VuYWJsZV9zaGFkb3dfY2hhbm5lbF9wYXRoKHN0cnVjdCBm
+aW1kX2NvbnRleHQgKmN0eCwKIAl3cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBTSEFET1dDT04pOwog
+fQogCitzdGF0aWMgdm9pZCBmaW1kX2Rpc2FibGVfd2luKHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0
+eCwgaW50IHdpbikKK3sKKwlmaW1kX2VuYWJsZV92aWRlb19vdXRwdXQoY3R4LCB3aW4sIGZhbHNl
+KTsKKworCWlmIChjdHgtPmRyaXZlcl9kYXRhLT5oYXNfc2hhZG93Y29uKQorCQlmaW1kX2VuYWJs
+ZV9zaGFkb3dfY2hhbm5lbF9wYXRoKGN0eCwgd2luLCBmYWxzZSk7Cit9CisKIHN0YXRpYyB2b2lk
+IGZpbWRfY2xlYXJfY2hhbm5lbHMoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIHsKIAlz
+dHJ1Y3QgZmltZF9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7CkBAIC0zNDksMTIgKzM1Nyw3IEBA
+IHN0YXRpYyB2b2lkIGZpbWRfY2xlYXJfY2hhbm5lbHMoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAq
+Y3J0YykKIAkJdTMyIHZhbCA9IHJlYWRsKGN0eC0+cmVncyArIFdJTkNPTih3aW4pKTsKIAogCQlp
+ZiAodmFsICYgV0lOQ09OeF9FTldJTikgewotCQkJZmltZF9lbmFibGVfdmlkZW9fb3V0cHV0KGN0
+eCwgd2luLCBmYWxzZSk7Ci0KLQkJCWlmIChjdHgtPmRyaXZlcl9kYXRhLT5oYXNfc2hhZG93Y29u
+KQotCQkJCWZpbWRfZW5hYmxlX3NoYWRvd19jaGFubmVsX3BhdGgoY3R4LCB3aW4sCi0JCQkJCQkJ
+CWZhbHNlKTsKLQorCQkJZmltZF9kaXNhYmxlX3dpbihjdHgsIHdpbik7CiAJCQljaF9lbmFibGVk
+ID0gMTsKIAkJfQogCX0KQEAgLTgwNSwxNSArODA4LDExIEBAIHN0YXRpYyB2b2lkIGZpbWRfZGlz
+YWJsZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAogCQkJICAgICAgIHN0cnVj
+dCBleHlub3NfZHJtX3BsYW5lICpwbGFuZSkKIHsKIAlzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgg
+PSBjcnRjLT5jdHg7Ci0JdW5zaWduZWQgaW50IHdpbiA9IHBsYW5lLT5pbmRleDsKIAogCWlmIChj
+dHgtPnN1c3BlbmRlZCkKIAkJcmV0dXJuOwogCi0JZmltZF9lbmFibGVfdmlkZW9fb3V0cHV0KGN0
+eCwgd2luLCBmYWxzZSk7Ci0KLQlpZiAoY3R4LT5kcml2ZXJfZGF0YS0+aGFzX3NoYWRvd2NvbikK
+LQkJZmltZF9lbmFibGVfc2hhZG93X2NoYW5uZWxfcGF0aChjdHgsIHdpbiwgZmFsc2UpOworCWZp
+bWRfZGlzYWJsZV93aW4oY3R4LCBwbGFuZS0+aW5kZXgpOwogfQogCiBzdGF0aWMgdm9pZCBmaW1k
+X2VuYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQpAQCAtODQ4LDcgKzg0Nyw3IEBA
+IHN0YXRpYyB2b2lkIGZpbWRfZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQog
+CSAqIGEgZGVzdHJveWVkIGJ1ZmZlciBsYXRlci4KIAkgKi8KIAlmb3IgKGkgPSAwOyBpIDwgV0lO
+RE9XU19OUjsgaSsrKQotCQlmaW1kX2Rpc2FibGVfcGxhbmUoY3J0YywgJmN0eC0+cGxhbmVzW2ld
+KTsKKwkJZmltZF9kaXNhYmxlX3dpbihjdHgsIGkpOwogCiAJZmltZF9lbmFibGVfdmJsYW5rKGNy
+dGMpOwogCWZpbWRfd2FpdF9mb3JfdmJsYW5rKGNydGMpOwotLSAKMi4xNy4xCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
