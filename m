@@ -1,145 +1,159 @@
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Subject: RE: [PATCH] regulator: Use of_node_name_eq for node name comparisons
-Date: Wed, 5 Dec 2018 22:13:54 +0000
-Message-ID: <HE1PR1001MB1002F9F69B07DC91E0387A4180A80@HE1PR1001MB1002.EURPRD10.PROD.OUTLOOK.COM>
-References: <20181205195050.4759-21-robh@kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 2/5] devfreq: add support for suspend/resume of a
+ devfreq device
+Date: Thu, 06 Dec 2018 10:17:52 +0900
+Message-ID: <5C0878C0.4060500@samsung.com>
+References: <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181205110620eucas1p14de70dc092580b684a0304b5ce771605@eucas1p1.samsung.com>
+        <1544007956-28889-3-git-send-email-l.luba@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181205195050.4759-21-robh@kernel.org>
-Content-Language: en-US
+In-reply-to: <1544007956-28889-3-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Support Opensource <Support.Opensource@diasemi.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Lukasz Luba <l.luba@partner.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05 December 2018 19:51, Rob Herring wrote:
+Hi Lukasz,
 
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
->=20
-> For instances using of_node_cmp, this has the side effect of now using ca=
-se
-> sensitive comparisons. This should not matter for any FDT based system wh=
-ich all
-> of these are.
->=20
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Support Opensource <support.opensource@diasemi.com>
-> Cc: Sangbeom Kim <sbkim73@samsung.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-For da9052 regulator driver:
-
-Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-
+On 2018년 12월 05일 20:05, Lukasz Luba wrote:
+> The patch prepares devfreq device for handling suspend/resume
+> functionality. The new fields will store needed information during this
+> process. Devfreq framework handles opp-suspend DT entry and there is no
+> need of modyfications in the drivers code. It uses atomic variables to
+> make sure no race condition affects the process.
+> 
+> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  drivers/regulator/88pm8607.c               | 2 +-
->  drivers/regulator/da9052-regulator.c       | 2 +-
->  drivers/regulator/max8997-regulator.c      | 2 +-
->  drivers/regulator/mc13xxx-regulator-core.c | 2 +-
->  drivers/regulator/qcom-rpmh-regulator.c    | 2 +-
->  drivers/regulator/s5m8767.c                | 2 +-
->  6 files changed, 6 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/regulator/88pm8607.c b/drivers/regulator/88pm8607.c =
-index
-> fd86446e499b..28f55248eb90 100644
-> --- a/drivers/regulator/88pm8607.c
-> +++ b/drivers/regulator/88pm8607.c
-> @@ -328,7 +328,7 @@ static int pm8607_regulator_dt_init(struct
-> platform_device *pdev,
->  		return -ENODEV;
+>  drivers/devfreq/devfreq.c | 47 +++++++++++++++++++++++++++++++++++++++++------
+>  include/linux/devfreq.h   |  7 +++++++
+>  2 files changed, 48 insertions(+), 6 deletions(-)
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index a9fd61b..46517b6 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -316,6 +316,10 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+>  			"Couldn't update frequency transition information.\n");
+>  
+>  	devfreq->previous_freq = new_freq;
+> +
+> +	if (devfreq->suspend_freq)
+> +		devfreq->resume_freq = cur_freq;
+> +
+>  	return err;
+>  }
+>  
+> @@ -667,6 +671,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
 >  	}
->  	for_each_child_of_node(nproot, np) {
-> -		if (!of_node_cmp(np->name, info->desc.name)) {
-> +		if (of_node_name_eq(np, info->desc.name)) {
->  			config->init_data =3D
->  				of_get_regulator_init_data(&pdev->dev, np,
->  							   &info->desc);
-> diff --git a/drivers/regulator/da9052-regulator.c b/drivers/regulator/da9=
-052-
-> regulator.c
-> index 37e4025203e3..207cb3859dcc 100644
-> --- a/drivers/regulator/da9052-regulator.c
-> +++ b/drivers/regulator/da9052-regulator.c
-> @@ -435,7 +435,7 @@ static int da9052_regulator_probe(struct platform_dev=
-ice
-> *pdev)
->  			return -ENODEV;
->=20
->  		for_each_child_of_node(nproot, np) {
-> -			if (!of_node_cmp(np->name,
-> +			if (of_node_name_eq(np,
->  					 regulator->info->reg_desc.name)) {
->  				config.init_data =3D of_get_regulator_init_data(
->  					&pdev->dev, np,
-> diff --git a/drivers/regulator/max8997-regulator.c b/drivers/regulator/ma=
-x8997-
-> regulator.c
-> index 3bf5ddfaaea8..4d2487279a0a 100644
-> --- a/drivers/regulator/max8997-regulator.c
-> +++ b/drivers/regulator/max8997-regulator.c
-> @@ -925,7 +925,7 @@ static int max8997_pmic_dt_parse_pdata(struct
-> platform_device *pdev,
->  	pdata->regulators =3D rdata;
->  	for_each_child_of_node(regulators_np, reg_np) {
->  		for (i =3D 0; i < ARRAY_SIZE(regulators); i++)
-> -			if (!of_node_cmp(reg_np->name, regulators[i].name))
-> +			if (of_node_name_eq(reg_np, regulators[i].name))
->  				break;
->=20
->  		if (i =3D=3D ARRAY_SIZE(regulators)) {
-> diff --git a/drivers/regulator/mc13xxx-regulator-core.c
-> b/drivers/regulator/mc13xxx-regulator-core.c
-> index 65eb1e0350cf..2243138d8a58 100644
-> --- a/drivers/regulator/mc13xxx-regulator-core.c
-> +++ b/drivers/regulator/mc13xxx-regulator-core.c
-> @@ -186,7 +186,7 @@ struct mc13xxx_regulator_init_data
-> *mc13xxx_parse_regulators_dt(
->  		for (i =3D 0; i < num_regulators; i++) {
->  			if (!regulators[i].desc.name)
->  				continue;
-> -			if (!of_node_cmp(child->name,
-> +			if (of_node_name_eq(child,
->  					 regulators[i].desc.name)) {
->  				p->id =3D i;
->  				p->init_data =3D of_get_regulator_init_data( diff --
-> git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rp=
-mh-
-> regulator.c
-> index 39ccf53fdeb3..b2c2d01d1637 100644
-> --- a/drivers/regulator/qcom-rpmh-regulator.c
-> +++ b/drivers/regulator/qcom-rpmh-regulator.c
-> @@ -410,7 +410,7 @@ static int rpmh_regulator_init_vreg(struct rpmh_vreg
-> *vreg, struct device *dev,
->  	vreg->dev =3D dev;
->=20
->  	for (rpmh_data =3D pmic_rpmh_data; rpmh_data->name; rpmh_data++)
-> -		if (!strcmp(rpmh_data->name, node->name))
-> +		if (of_node_name_eq(node, rpmh_data->name))
->  			break;
->=20
->  	if (!rpmh_data->name) {
-> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c in=
-dex
-> 219b9afda0cb..654f65abcb5a 100644
-> --- a/drivers/regulator/s5m8767.c
-> +++ b/drivers/regulator/s5m8767.c
-> @@ -561,7 +561,7 @@ static int s5m8767_pmic_dt_parse_pdata(struct
-> platform_device *pdev,
->  	pdata->opmode =3D rmode;
->  	for_each_child_of_node(regulators_np, reg_np) {
->  		for (i =3D 0; i < ARRAY_SIZE(regulators); i++)
-> -			if (!of_node_cmp(reg_np->name, regulators[i].name))
-> +			if (of_node_name_eq(reg_np, regulators[i].name))
->  				break;
->=20
->  		if (i =3D=3D ARRAY_SIZE(regulators)) {
-> --
-> 2.19.1
+>  	devfreq->max_freq = devfreq->scaling_max_freq;
+>  
+> +	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
+> +	atomic_set(&devfreq->suspend_count, 0);
+> +
+>  	dev_set_name(&devfreq->dev, "devfreq%d",
+>  				atomic_inc_return(&devfreq_no));
+>  	err = device_register(&devfreq->dev);
+> @@ -867,14 +874,28 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
+>   */
+>  int devfreq_suspend_device(struct devfreq *devfreq)
+>  {
+> +	int ret;
+> +
+>  	if (!devfreq)
+>  		return -EINVAL;
+>  
+> -	if (!devfreq->governor)
+> +	if (atomic_inc_return(&devfreq->suspend_count) > 1)
+>  		return 0;
+>  
+> -	return devfreq->governor->event_handler(devfreq,
+> -				DEVFREQ_GOV_SUSPEND, NULL);
+> +	if (devfreq->governor) {
+> +		ret = devfreq->governor->event_handler(devfreq,
+> +					DEVFREQ_GOV_SUSPEND, NULL);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (devfreq->suspend_freq) {
+> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(devfreq_suspend_device);
+>  
+> @@ -888,14 +909,28 @@ EXPORT_SYMBOL(devfreq_suspend_device);
+>   */
+>  int devfreq_resume_device(struct devfreq *devfreq)
+>  {
+> +	int ret;
+> +
+>  	if (!devfreq)
+>  		return -EINVAL;
+>  
+> -	if (!devfreq->governor)
+> +	if (atomic_dec_return(&devfreq->suspend_count) >= 1)
+>  		return 0;
+>  
+> -	return devfreq->governor->event_handler(devfreq,
+> -				DEVFREQ_GOV_RESUME, NULL);
+> +	if (devfreq->resume_freq) {
+> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq, 0);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (devfreq->governor) {
+> +		ret = devfreq->governor->event_handler(devfreq,
+> +					DEVFREQ_GOV_RESUME, NULL);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(devfreq_resume_device);
+>  
+> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+> index e4963b0..d985199 100644
+> --- a/include/linux/devfreq.h
+> +++ b/include/linux/devfreq.h
+> @@ -131,6 +131,9 @@ struct devfreq_dev_profile {
+>   * @scaling_min_freq:	Limit minimum frequency requested by OPP interface
+>   * @scaling_max_freq:	Limit maximum frequency requested by OPP interface
+>   * @stop_polling:	 devfreq polling status of a device.
+> + * @suspend_freq:	 frequency of a device set during suspend phase.
+> + * @resume_freq:	 frequency of a device set in resume phase.
+> + * @suspend_count:	 suspend requests counter for a device.
+>   * @total_trans:	Number of devfreq transitions
+>   * @trans_table:	Statistics of devfreq transitions
+>   * @time_in_state:	Statistics of devfreq states
+> @@ -167,6 +170,10 @@ struct devfreq {
+>  	unsigned long scaling_max_freq;
+>  	bool stop_polling;
+>  
+> +	unsigned long suspend_freq;
+> +	unsigned long resume_freq;
+> +	atomic_t suspend_count;
+> +
+>  	/* information for device frequency transition */
+>  	unsigned int total_trans;
+>  	unsigned int *trans_table;
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
