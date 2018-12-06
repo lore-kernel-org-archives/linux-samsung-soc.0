@@ -1,15 +1,14 @@
-From: Fabien DESSENNE <fabien.dessenne@st.com>
-Subject: Re: [PATCH v2] media: remove bdisp_dbg_declare() and hva_dbg_declare()
-Date: Thu, 6 Dec 2018 11:49:12 +0000
-Message-ID: <aa26931d-c4f0-32d2-30d8-65fd4376d3d9@st.com>
-References: <20181202020425.9189-1-tiny.windzz@gmail.com>
+From: Benoit Parrot <bparrot@ti.com>
+Subject: Re: [PATCH] media: Use of_node_name_eq for node name comparisons
+Date: Thu, 6 Dec 2018 07:15:03 -0600
+Message-ID: <20181206131503.n543jp3ock3jzrzq@ti.com>
+References: <20181205195050.4759-13-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181202020425.9189-1-tiny.windzz@gmail.com>
-Content-Language: en-US
-Content-ID: <5564D1E2BE98B944B64A9343E59EACB0@st.com>
+Content-Disposition: inline
+In-Reply-To: <20181205195050.4759-13-robh@kernel.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,255 +18,142 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Yangtao Li <tiny.windzz@gmail.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "mchehab@kernel.org" <mchehab@kernel.org>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, Jean Christophe TROTIN <jean-christophe.trotin@st.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Rob,
 
-The patch itself is OK, but the commit talks about bdisp & hva while the 
-patch is also for fimc-is.
-Could you please update the commit header & messages?
+For ti-vpe/cal.c,
 
-BR
+Reviewed-by: Benoit Parrot <bparrot@ti.com>
 
-Fabien
+Regards,
+Benoit
 
-On 02/12/2018 3:04 AM, Yangtao Li wrote:
-> We already have the DEFINE_SHOW_ATTRIBUTE.There is no need to define
-> bdisp_dbg_declare and hva_dbg_declare,so remove them.Also use
-> DEFINE_SHOW_ATTRIBUTE to simplify some code.
->
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Rob Herring <robh@kernel.org> wrote on Wed [2018-Dec-05 13:50:29 -0600]:
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+> 
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Benoit Parrot <bparrot@ti.com>
+> Cc: Hyun Kwon <hyun.kwon@xilinx.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Michal Simek <michal.simek@xilinx.com>
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
-> Changes in v2:
-> -delete fimc_is_debugfs_open
-> ---
->   drivers/media/platform/exynos4-is/fimc-is.c   | 16 ++-------
->   .../media/platform/sti/bdisp/bdisp-debug.c    | 34 ++++++------------
->   drivers/media/platform/sti/hva/hva-debugfs.c  | 36 +++++++------------
->   3 files changed, 26 insertions(+), 60 deletions(-)
->
-> diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-> index f5fc54de19da..02da0b06e56a 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-is.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-is.c
-> @@ -738,7 +738,7 @@ int fimc_is_hw_initialize(struct fimc_is *is)
->   	return 0;
->   }
->   
-> -static int fimc_is_log_show(struct seq_file *s, void *data)
-> +static int fimc_is_show(struct seq_file *s, void *data)
->   {
->   	struct fimc_is *is = s->private;
->   	const u8 *buf = is->memory.vaddr + FIMC_IS_DEBUG_REGION_OFFSET;
-> @@ -752,17 +752,7 @@ static int fimc_is_log_show(struct seq_file *s, void *data)
->   	return 0;
->   }
->   
-> -static int fimc_is_debugfs_open(struct inode *inode, struct file *file)
-> -{
-> -	return single_open(file, fimc_is_log_show, inode->i_private);
-> -}
-> -
-> -static const struct file_operations fimc_is_debugfs_fops = {
-> -	.open		= fimc_is_debugfs_open,
-> -	.read		= seq_read,
-> -	.llseek		= seq_lseek,
-> -	.release	= single_release,
-> -};
-> +DEFINE_SHOW_ATTRIBUTE(fimc_is);
->   
->   static void fimc_is_debugfs_remove(struct fimc_is *is)
->   {
-> @@ -777,7 +767,7 @@ static int fimc_is_debugfs_create(struct fimc_is *is)
->   	is->debugfs_entry = debugfs_create_dir("fimc_is", NULL);
->   
->   	dentry = debugfs_create_file("fw_log", S_IRUGO, is->debugfs_entry,
-> -				     is, &fimc_is_debugfs_fops);
-> +				     is, &fimc_is_fops);
->   	if (!dentry)
->   		fimc_is_debugfs_remove(is);
->   
-> diff --git a/drivers/media/platform/sti/bdisp/bdisp-debug.c b/drivers/media/platform/sti/bdisp/bdisp-debug.c
-> index c6a4e2de5c0c..77ca7517fa3e 100644
-> --- a/drivers/media/platform/sti/bdisp/bdisp-debug.c
-> +++ b/drivers/media/platform/sti/bdisp/bdisp-debug.c
-> @@ -315,7 +315,7 @@ static void bdisp_dbg_dump_ivmx(struct seq_file *s,
->   	seq_puts(s, "Unknown conversion\n");
->   }
->   
-> -static int bdisp_dbg_last_nodes(struct seq_file *s, void *data)
-> +static int last_nodes_show(struct seq_file *s, void *data)
->   {
->   	/* Not dumping all fields, focusing on significant ones */
->   	struct bdisp_dev *bdisp = s->private;
-> @@ -388,7 +388,7 @@ static int bdisp_dbg_last_nodes(struct seq_file *s, void *data)
->   	return 0;
->   }
->   
-> -static int bdisp_dbg_last_nodes_raw(struct seq_file *s, void *data)
-> +static int last_nodes_raw_show(struct seq_file *s, void *data)
->   {
->   	struct bdisp_dev *bdisp = s->private;
->   	struct bdisp_node *node;
-> @@ -437,7 +437,7 @@ static const char *bdisp_fmt_to_str(struct bdisp_frame frame)
->   	}
->   }
->   
-> -static int bdisp_dbg_last_request(struct seq_file *s, void *data)
-> +static int last_request_show(struct seq_file *s, void *data)
->   {
->   	struct bdisp_dev *bdisp = s->private;
->   	struct bdisp_request *request = &bdisp->dbg.copy_request;
-> @@ -474,7 +474,7 @@ static int bdisp_dbg_last_request(struct seq_file *s, void *data)
->   
->   #define DUMP(reg) seq_printf(s, #reg " \t0x%08X\n", readl(bdisp->regs + reg))
->   
-> -static int bdisp_dbg_regs(struct seq_file *s, void *data)
-> +static int regs_show(struct seq_file *s, void *data)
->   {
->   	struct bdisp_dev *bdisp = s->private;
->   	int ret;
-> @@ -582,7 +582,7 @@ static int bdisp_dbg_regs(struct seq_file *s, void *data)
->   
->   #define SECOND 1000000
->   
-> -static int bdisp_dbg_perf(struct seq_file *s, void *data)
-> +static int perf_show(struct seq_file *s, void *data)
->   {
->   	struct bdisp_dev *bdisp = s->private;
->   	struct bdisp_request *request = &bdisp->dbg.copy_request;
-> @@ -627,27 +627,15 @@ static int bdisp_dbg_perf(struct seq_file *s, void *data)
->   	return 0;
->   }
->   
-> -#define bdisp_dbg_declare(name) \
-> -	static int bdisp_dbg_##name##_open(struct inode *i, struct file *f) \
-> -	{ \
-> -		return single_open(f, bdisp_dbg_##name, i->i_private); \
-> -	} \
-> -	static const struct file_operations bdisp_dbg_##name##_fops = { \
-> -		.open           = bdisp_dbg_##name##_open, \
-> -		.read           = seq_read, \
-> -		.llseek         = seq_lseek, \
-> -		.release        = single_release, \
-> -	}
-> -
->   #define bdisp_dbg_create_entry(name) \
->   	debugfs_create_file(#name, S_IRUGO, bdisp->dbg.debugfs_entry, bdisp, \
-> -			    &bdisp_dbg_##name##_fops)
-> +			    &name##_fops)
->   
-> -bdisp_dbg_declare(regs);
-> -bdisp_dbg_declare(last_nodes);
-> -bdisp_dbg_declare(last_nodes_raw);
-> -bdisp_dbg_declare(last_request);
-> -bdisp_dbg_declare(perf);
-> +DEFINE_SHOW_ATTRIBUTE(regs);
-> +DEFINE_SHOW_ATTRIBUTE(last_nodes);
-> +DEFINE_SHOW_ATTRIBUTE(last_nodes_raw);
-> +DEFINE_SHOW_ATTRIBUTE(last_request);
-> +DEFINE_SHOW_ATTRIBUTE(perf);
->   
->   int bdisp_debugfs_create(struct bdisp_dev *bdisp)
->   {
-> diff --git a/drivers/media/platform/sti/hva/hva-debugfs.c b/drivers/media/platform/sti/hva/hva-debugfs.c
-> index 9f7e8ac875d1..7d12a5b5d914 100644
-> --- a/drivers/media/platform/sti/hva/hva-debugfs.c
-> +++ b/drivers/media/platform/sti/hva/hva-debugfs.c
-> @@ -271,7 +271,7 @@ static void hva_dbg_perf_compute(struct hva_ctx *ctx)
->    * device debug info
->    */
->   
-> -static int hva_dbg_device(struct seq_file *s, void *data)
-> +static int device_show(struct seq_file *s, void *data)
->   {
->   	struct hva_dev *hva = s->private;
->   
-> @@ -281,7 +281,7 @@ static int hva_dbg_device(struct seq_file *s, void *data)
->   	return 0;
->   }
->   
-> -static int hva_dbg_encoders(struct seq_file *s, void *data)
-> +static int encoders_show(struct seq_file *s, void *data)
->   {
->   	struct hva_dev *hva = s->private;
->   	unsigned int i = 0;
-> @@ -299,7 +299,7 @@ static int hva_dbg_encoders(struct seq_file *s, void *data)
->   	return 0;
->   }
->   
-> -static int hva_dbg_last(struct seq_file *s, void *data)
-> +static int last_show(struct seq_file *s, void *data)
->   {
->   	struct hva_dev *hva = s->private;
->   	struct hva_ctx *last_ctx = &hva->dbg.last_ctx;
-> @@ -316,7 +316,7 @@ static int hva_dbg_last(struct seq_file *s, void *data)
->   	return 0;
->   }
->   
-> -static int hva_dbg_regs(struct seq_file *s, void *data)
-> +static int regs_show(struct seq_file *s, void *data)
->   {
->   	struct hva_dev *hva = s->private;
->   
-> @@ -325,26 +325,14 @@ static int hva_dbg_regs(struct seq_file *s, void *data)
->   	return 0;
->   }
->   
-> -#define hva_dbg_declare(name)						  \
-> -	static int hva_dbg_##name##_open(struct inode *i, struct file *f) \
-> -	{								  \
-> -		return single_open(f, hva_dbg_##name, i->i_private);	  \
-> -	}								  \
-> -	static const struct file_operations hva_dbg_##name##_fops = {	  \
-> -		.open		= hva_dbg_##name##_open,		  \
-> -		.read		= seq_read,				  \
-> -		.llseek		= seq_lseek,				  \
-> -		.release	= single_release,			  \
-> -	}
-> -
->   #define hva_dbg_create_entry(name)					 \
->   	debugfs_create_file(#name, 0444, hva->dbg.debugfs_entry, hva, \
-> -			    &hva_dbg_##name##_fops)
-> +			    &name##_fops)
->   
-> -hva_dbg_declare(device);
-> -hva_dbg_declare(encoders);
-> -hva_dbg_declare(last);
-> -hva_dbg_declare(regs);
-> +DEFINE_SHOW_ATTRIBUTE(device);
-> +DEFINE_SHOW_ATTRIBUTE(encoders);
-> +DEFINE_SHOW_ATTRIBUTE(last);
-> +DEFINE_SHOW_ATTRIBUTE(regs);
->   
->   void hva_debugfs_create(struct hva_dev *hva)
->   {
-> @@ -380,7 +368,7 @@ void hva_debugfs_remove(struct hva_dev *hva)
->    * context (instance) debug info
->    */
->   
-> -static int hva_dbg_ctx(struct seq_file *s, void *data)
-> +static int ctx_show(struct seq_file *s, void *data)
->   {
->   	struct hva_ctx *ctx = s->private;
->   
-> @@ -392,7 +380,7 @@ static int hva_dbg_ctx(struct seq_file *s, void *data)
->   	return 0;
->   }
->   
-> -hva_dbg_declare(ctx);
-> +DEFINE_SHOW_ATTRIBUTE(ctx);
->   
->   void hva_dbg_ctx_create(struct hva_ctx *ctx)
->   {
-> @@ -407,7 +395,7 @@ void hva_dbg_ctx_create(struct hva_ctx *ctx)
->   
->   	ctx->dbg.debugfs_entry = debugfs_create_file(name, 0444,
->   						     hva->dbg.debugfs_entry,
-> -						     ctx, &hva_dbg_ctx_fops);
-> +						     ctx, &ctx_fops);
->   }
->   
->   void hva_dbg_ctx_remove(struct hva_ctx *ctx)
+>  drivers/media/platform/exynos4-is/media-dev.c | 12 ++++++------
+>  drivers/media/platform/ti-vpe/cal.c           |  4 ++--
+>  drivers/media/platform/xilinx/xilinx-tpg.c    |  2 +-
+>  drivers/media/v4l2-core/v4l2-fwnode.c         |  6 ++----
+>  4 files changed, 11 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+> index 870501b0f351..ced14af56606 100644
+> --- a/drivers/media/platform/exynos4-is/media-dev.c
+> +++ b/drivers/media/platform/exynos4-is/media-dev.c
+> @@ -445,7 +445,7 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+>  	 */
+>  	np = of_get_parent(rem);
+>  
+> -	if (np && !of_node_cmp(np->name, "i2c-isp"))
+> +	if (of_node_name_eq(np, "i2c-isp"))
+>  		pd->fimc_bus_type = FIMC_BUS_TYPE_ISP_WRITEBACK;
+>  	else
+>  		pd->fimc_bus_type = pd->sensor_bus_type;
+> @@ -495,7 +495,7 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+>  	for_each_available_child_of_node(parent, node) {
+>  		struct device_node *port;
+>  
+> -		if (of_node_cmp(node->name, "csis"))
+> +		if (!of_node_name_eq(node, "csis"))
+>  			continue;
+>  		/* The csis node can have only port subnode. */
+>  		port = of_get_next_child(node, NULL);
+> @@ -720,13 +720,13 @@ static int fimc_md_register_platform_entities(struct fimc_md *fmd,
+>  			continue;
+>  
+>  		/* If driver of any entity isn't ready try all again later. */
+> -		if (!strcmp(node->name, CSIS_OF_NODE_NAME))
+> +		if (of_node_name_eq(node, CSIS_OF_NODE_NAME))
+>  			plat_entity = IDX_CSIS;
+> -		else if	(!strcmp(node->name, FIMC_IS_OF_NODE_NAME))
+> +		else if	(of_node_name_eq(node, FIMC_IS_OF_NODE_NAME))
+>  			plat_entity = IDX_IS_ISP;
+> -		else if (!strcmp(node->name, FIMC_LITE_OF_NODE_NAME))
+> +		else if (of_node_name_eq(node, FIMC_LITE_OF_NODE_NAME))
+>  			plat_entity = IDX_FLITE;
+> -		else if	(!strcmp(node->name, FIMC_OF_NODE_NAME) &&
+> +		else if	(of_node_name_eq(node, FIMC_OF_NODE_NAME) &&
+>  			 !of_property_read_bool(node, "samsung,lcd-wb"))
+>  			plat_entity = IDX_FIMC;
+>  
+> diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
+> index 95a093f41905..fc3c212b96e1 100644
+> --- a/drivers/media/platform/ti-vpe/cal.c
+> +++ b/drivers/media/platform/ti-vpe/cal.c
+> @@ -1615,7 +1615,7 @@ of_get_next_port(const struct device_node *parent,
+>  				return NULL;
+>  			}
+>  			prev = port;
+> -		} while (of_node_cmp(port->name, "port") != 0);
+> +		} while (!of_node_name_eq(port, "port"));
+>  	}
+>  
+>  	return port;
+> @@ -1635,7 +1635,7 @@ of_get_next_endpoint(const struct device_node *parent,
+>  		if (!ep)
+>  			return NULL;
+>  		prev = ep;
+> -	} while (of_node_cmp(ep->name, "endpoint") != 0);
+> +	} while (!of_node_name_eq(ep, "endpoint"));
+>  
+>  	return ep;
+>  }
+> diff --git a/drivers/media/platform/xilinx/xilinx-tpg.c b/drivers/media/platform/xilinx/xilinx-tpg.c
+> index 851d20dcd550..ce686b8d6cff 100644
+> --- a/drivers/media/platform/xilinx/xilinx-tpg.c
+> +++ b/drivers/media/platform/xilinx/xilinx-tpg.c
+> @@ -725,7 +725,7 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
+>  		const struct xvip_video_format *format;
+>  		struct device_node *endpoint;
+>  
+> -		if (!port->name || of_node_cmp(port->name, "port"))
+> +		if (!of_node_name_eq(port, "port"))
+>  			continue;
+>  
+>  		format = xvip_of_get_format(port);
+> diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+> index 218f0da0ce76..849326241b17 100644
+> --- a/drivers/media/v4l2-core/v4l2-fwnode.c
+> +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+> @@ -564,8 +564,7 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *__fwnode,
+>  	fwnode = fwnode_get_parent(__fwnode);
+>  	fwnode_property_read_u32(fwnode, port_prop, &link->local_port);
+>  	fwnode = fwnode_get_next_parent(fwnode);
+> -	if (is_of_node(fwnode) &&
+> -	    of_node_cmp(to_of_node(fwnode)->name, "ports") == 0)
+> +	if (is_of_node(fwnode) && of_node_name_eq(to_of_node(fwnode), "ports"))
+>  		fwnode = fwnode_get_next_parent(fwnode);
+>  	link->local_node = fwnode;
+>  
+> @@ -578,8 +577,7 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *__fwnode,
+>  	fwnode = fwnode_get_parent(fwnode);
+>  	fwnode_property_read_u32(fwnode, port_prop, &link->remote_port);
+>  	fwnode = fwnode_get_next_parent(fwnode);
+> -	if (is_of_node(fwnode) &&
+> -	    of_node_cmp(to_of_node(fwnode)->name, "ports") == 0)
+> +	if (is_of_node(fwnode) && of_node_name_eq(to_of_node(fwnode), "ports"))
+>  		fwnode = fwnode_get_next_parent(fwnode);
+>  	link->remote_node = fwnode;
+>  
+> -- 
+> 2.19.1
+> 
