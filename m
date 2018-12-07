@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 1/3] iio: adc: exynos-adc: Add S5PV210 variant
-Date: Fri,  7 Dec 2018 20:11:34 +0100
-Message-ID: <20181207191136.5464-2-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 2/3] iio: adc: Allow selection of Exynos ADC on S5PV210
+Date: Fri,  7 Dec 2018 20:11:35 +0100
+Message-ID: <20181207191136.5464-3-pawel.mikolaj.chmiel@gmail.com>
 References: <20181207191136.5464-1-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -15,53 +15,26 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Jonathan Bakker <xc-racer2@live.ca>
 
-S5PV210's ADC variant is almost the same as v1 except that it has 10
-channels and doesn't require the pmu register
+Make it possible to use Exynos ADC driver on S5PV210 based devices.
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- drivers/iio/adc/exynos_adc.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/iio/adc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index f10443f92e4c..fa2d2b5767f3 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -115,6 +115,7 @@
- #define MAX_ADC_V2_CHANNELS		10
- #define MAX_ADC_V1_CHANNELS		8
- #define MAX_EXYNOS3250_ADC_CHANNELS	2
-+#define MAX_S5PV210_ADC_CHANNELS	10
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index a52fea8749a9..20e126ff030e 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -274,7 +274,7 @@ config EP93XX_ADC
  
- /* Bit definitions common for ADC_V1 and ADC_V2 */
- #define ADC_CON_EN_START	(1u << 0)
-@@ -282,6 +283,16 @@ static const struct exynos_adc_data exynos_adc_v1_data = {
- 	.start_conv	= exynos_adc_v1_start_conv,
- };
- 
-+static const struct exynos_adc_data exynos_adc_s5pv210_data = {
-+	.num_channels	= MAX_S5PV210_ADC_CHANNELS,
-+	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
-+
-+	.init_hw	= exynos_adc_v1_init_hw,
-+	.exit_hw	= exynos_adc_v1_exit_hw,
-+	.clear_irq	= exynos_adc_v1_clear_irq,
-+	.start_conv	= exynos_adc_v1_start_conv,
-+};
-+
- static void exynos_adc_s3c2416_start_conv(struct exynos_adc *info,
- 					  unsigned long addr)
- {
-@@ -478,6 +489,9 @@ static const struct of_device_id exynos_adc_match[] = {
- 	}, {
- 		.compatible = "samsung,s3c6410-adc",
- 		.data = &exynos_adc_s3c64xx_data,
-+	}, {
-+		.compatible = "samsung,s5pv210-adc",
-+		.data = &exynos_adc_s5pv210_data,
- 	}, {
- 		.compatible = "samsung,exynos-adc-v1",
- 		.data = &exynos_adc_v1_data,
+ config EXYNOS_ADC
+ 	tristate "Exynos ADC driver support"
+-	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || (OF && COMPILE_TEST)
++	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210 || (OF && COMPILE_TEST)
+ 	depends on HAS_IOMEM
+ 	help
+ 	  Core support for the ADC block found in the Samsung EXYNOS series
 -- 
 2.17.1
