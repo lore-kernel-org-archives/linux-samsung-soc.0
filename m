@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 2/3] iio: adc: Allow selection of Exynos ADC on S5PV210
-Date: Fri,  7 Dec 2018 20:11:35 +0100
-Message-ID: <20181207191136.5464-3-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 3/3] dt-bindings: iio: adc: exynos-adc: Add S5PV210 variant
+Date: Fri,  7 Dec 2018 20:11:36 +0100
+Message-ID: <20181207191136.5464-4-pawel.mikolaj.chmiel@gmail.com>
 References: <20181207191136.5464-1-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -15,26 +15,35 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Jonathan Bakker <xc-racer2@live.ca>
 
-Make it possible to use Exynos ADC driver on S5PV210 based devices.
+Add information about new compatible for S5PV210
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- drivers/iio/adc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/iio/adc/samsung,exynos-adc.txt        | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index a52fea8749a9..20e126ff030e 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -274,7 +274,7 @@ config EP93XX_ADC
+diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
+index 6c49db7f8ad2..a10c1f89037d 100644
+--- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
++++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
+@@ -11,7 +11,7 @@ New driver handles the following
  
- config EXYNOS_ADC
- 	tristate "Exynos ADC driver support"
--	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || (OF && COMPILE_TEST)
-+	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210 || (OF && COMPILE_TEST)
- 	depends on HAS_IOMEM
- 	help
- 	  Core support for the ADC block found in the Samsung EXYNOS series
+ Required properties:
+ - compatible:		Must be "samsung,exynos-adc-v1"
+-				for exynos4412/5250 and s5pv210 controllers.
++				for exynos4412/5250 controllers.
+ 			Must be "samsung,exynos-adc-v2" for
+ 				future controllers.
+ 			Must be "samsung,exynos3250-adc" for
+@@ -28,6 +28,8 @@ Required properties:
+ 				the ADC in s3c2443 and compatibles
+ 			Must be "samsung,s3c6410-adc" for
+ 				the ADC in s3c6410 and compatibles
++			Must be "samsung,s5pv210-adc" for
++				the ADC in s5pv210 and compatibles
+ - reg:			List of ADC register address range
+ 			- The base address and range of ADC register
+ 			- The base address and range of ADC_PHY register (every
 -- 
 2.17.1
