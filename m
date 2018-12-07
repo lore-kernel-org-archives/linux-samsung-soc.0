@@ -1,29 +1,23 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] media: Use of_node_name_eq for node name comparisons
-Date: Fri, 07 Dec 2018 11:02:05 +0100
-Message-ID: <63971417-f761-e891-f410-9efa26dd2c6d@samsung.com>
-References: <20181206193519.13367-1-robh@kernel.org>
-        <CGME20181207100211epcas1p2caa3a1da5152bd7c1476d795e788e776@epcas1p2.samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] iio: adc: Replace license text w/ SPDX identifier
+Date: Fri, 7 Dec 2018 11:16:51 +0100
+Message-ID: <CACRpkdaHSZ-WSGo+CcCrMPc=z4Ofy6oG3kxhTGxQJABEw2DF0w@mail.gmail.com>
+References: <20181128175312.9634-1-matheus.bernardino@usp.br> <20181201165550.51a78366@archlinux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20181206193519.13367-1-robh@kernel.org>
-Content-language: en-GB
+In-Reply-To: <20181201165550.51a78366@archlinux>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benoit Parrot <bparrot@ti.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: matheus.bernardino@usp.br, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald <pmeerw@pmeerw.net>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, Ludovic Desroches <ludovic.desroches@microchip.com>, eugen.hristev@microchip.com, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Support Opensource <support.opensource@diasemi.com>, Kukjin Kim <kgene@kernel.org>, Krzy
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12/6/18 20:35, Rob Herring wrote:
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
+On Sat, Dec 1, 2018 at 5:56 PM Jonathan Cameron <jic23@kernel.org> wrote:
 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Benoit Parrot <bparrot@ti.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> v2:
-> - Also convert tabs to spaces between the 'if' and '('
+> +CC Linus Walleij as one of his files doesn't have a license...
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Sorry about that. I am fine with GPL-2.0 or GPL-2.0+ on
+any of "my" files. Feel free to add it with my Acked-by.
+
+Yours,
+Linus Walleij
