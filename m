@@ -1,66 +1,41 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 2/5] devfreq: add support for suspend/resume of a
- devfreq device
-Date: Sun, 9 Dec 2018 10:00:07 +0100
-Message-ID: <20181209090007.GD7561@amd>
-References: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
- <CGME20181203143131eucas1p217f22ac6d19682a54a57658a06980914@eucas1p2.samsung.com>
- <1543847475-7600-3-git-send-email-l.luba@partner.samsung.com>
- <5C06124B.5030409@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="0/kgSOzhNoDC5T3a"
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/4] ARM: defconfig: Exynos for v4.21
+Date: Sun,  9 Dec 2018 12:49:08 +0100
+Message-ID: <20181209114911.25194-2-krzk@kernel.org>
+References: <20181209114911.25194-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5C06124B.5030409@samsung.com>
+In-Reply-To: <20181209114911.25194-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Lukasz Luba <l.luba@partner.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
---0/kgSOzhNoDC5T3a
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
 
-On Tue 2018-12-04 14:36:11, Chanwoo Choi wrote:
-> Hi Lukasz,
->=20
-> Looks good to me. But, I add the some comments.
-> If you will fix it, feel free to add my tag:
-> Reviewed-by: Chanwoo choi <cw00.choi@samsung.com>
->=20
-> On 2018=EB=85=84 12=EC=9B=94 03=EC=9D=BC 23:31, Lukasz Luba wrote:
-> > The patch prepares devfreq device for handling suspend/resume
-> > functionality.  The new fields will store needed information during this
->=20
-> nitpick. Remove unneeded space. There are two spaces between '.' and 'The=
- new'.=20
+are available in the Git repository at:
 
-Yes. And that's because two spaces are okay at that place.
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.21
 
-https://www.writersdigest.com/online-editor/how-many-spaces-after-a-period
+for you to fetch changes up to 24c8e4b85399b00f4ae96e7957b0eeaa374e9380:
 
-Please don't cause unneeded noise on the list with trivial
-comments. If the patch is okay, apply the patch, no need to find
-trivial nit everywhere.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+  ARM: multi_v7_defconfig: Add TOSHIBA TC358764 bridge driver (2018-12-07 20:18:47 +0100)
 
---0/kgSOzhNoDC5T3a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+----------------------------------------------------------------
+Samsung defconfig changes for v4.21
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Enable drivers in exynos and multi_v7 defconfigs for MAX8952, MAX8998
+(Samsung UniversalC210 board) and TC358764 (Arndale board).
 
-iEYEARECAAYFAlwM2ZcACgkQMOfwapXb+vKjzQCcCsUqmaYo8aPuD0m/JrfCBl2z
-ZaUAnjMt+1X+vuWarQhgVM/LXGeYdeLw
-=2woN
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Marek Szyprowski (5):
+      ARM: exynos_defconfig: Add MAX8998 RTC and charger drivers
+      ARM: exynos_defconfig: Add MAX8952 regulator driver
+      ARM: exynos_defconfig: Add TOSHIBA TC358764 bridge driver
+      ARM: multi_v7_defconfig: Add MAX8952 regulator driver
+      ARM: multi_v7_defconfig: Add TOSHIBA TC358764 bridge driver
 
---0/kgSOzhNoDC5T3a--
+ arch/arm/configs/exynos_defconfig   | 4 ++++
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 2 files changed, 6 insertions(+)
