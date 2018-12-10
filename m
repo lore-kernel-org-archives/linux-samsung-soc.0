@@ -1,62 +1,28 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC/RFT 09/10] i2c: s3c2410: use core helper to mark adapter suspended
-Date: Mon, 10 Dec 2018 22:03:07 +0100
-Message-ID: <20181210210310.12677-10-wsa+renesas@sang-engineering.com>
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 5/5] clk: samsung: exynos5433: add imem clocks
+Date: Mon, 10 Dec 2018 16:33:22 -0600
+Message-ID: <20181210223322.GA16266@bogus>
+References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
+ <CGME20181204165318eucas1p2dccd5382ee8b9f4da8c3076fb56607ee@eucas1p2.samsung.com>
+ <20181204165248.17572-6-k.konieczny@partner.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+Content-Disposition: inline
+In-Reply-To: <20181204165248.17572-6-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Rejecting transfers should be handled by the core. Also, this will
-ensure proper locking which was forgotten in this open coded version.
+On Tue, Dec 04, 2018 at 05:52:48PM +0100, Kamil Konieczny wrote:
+> Add imem clocks for exynos5433. This will enable to use crypto Security
+> SubSystem (in short SSS) and SlimSSS IP blocks.
+> 
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c   | 193 +++++++++++++++++++++++++
+>  include/dt-bindings/clock/exynos5433.h |  55 +++++++
+>  2 files changed, 248 insertions(+)
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-s3c2410.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 2f2e28d60ef5..7c76edb25514 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -104,7 +104,6 @@ enum s3c24xx_i2c_state {
- struct s3c24xx_i2c {
- 	wait_queue_head_t	wait;
- 	kernel_ulong_t		quirks;
--	unsigned int		suspended:1;
- 
- 	struct i2c_msg		*msg;
- 	unsigned int		msg_num;
-@@ -703,9 +702,6 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
- 	unsigned long timeout;
- 	int ret;
- 
--	if (i2c->suspended)
--		return -EIO;
--
- 	ret = s3c24xx_i2c_set_master(i2c);
- 	if (ret != 0) {
- 		dev_err(i2c->dev, "cannot get bus (error %d)\n", ret);
-@@ -1246,7 +1242,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
- {
- 	struct s3c24xx_i2c *i2c = dev_get_drvdata(dev);
- 
--	i2c->suspended = 1;
-+	i2c_mark_adapter_suspended(&i2c->adap, true);
- 
- 	if (!IS_ERR(i2c->sysreg))
- 		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->sys_i2c_cfg);
-@@ -1267,7 +1263,7 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
- 		return ret;
- 	s3c24xx_i2c_init(i2c);
- 	clk_disable(i2c->clk);
--	i2c->suspended = 0;
-+	i2c_mark_adapter_suspended(&i2c->adap, false);
- 
- 	return 0;
- }
--- 
-2.11.0
+Lots of trailing whitespace checkpatch errors...
