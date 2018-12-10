@@ -1,28 +1,89 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 5/5] clk: samsung: exynos5433: add imem clocks
-Date: Mon, 10 Dec 2018 16:33:22 -0600
-Message-ID: <20181210223322.GA16266@bogus>
-References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
- <CGME20181204165318eucas1p2dccd5382ee8b9f4da8c3076fb56607ee@eucas1p2.samsung.com>
- <20181204165248.17572-6-k.konieczny@partner.samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 0/3] drm/exynos: add support for dynamic zpos in DECON
+ and FIMD
+Date: Tue, 11 Dec 2018 08:45:49 +0900
+Message-ID: <837a0841-cee1-c851-a01e-4b95d1670d32@samsung.com>
+References: <CGME20181206093905eucas1p133ead84adfb9dd7a9756ce91b6b35895@eucas1p1.samsung.com>
+ <20181206093857.22324-1-a.hajda@samsung.com>
+ <fa32dd3a-3e8a-ade1-5b3b-f8394ff34e75@samsung.com>
+ <a3173dbf-24c6-b70f-74d5-eada10ac99ac@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181204165248.17572-6-k.konieczny@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <a3173dbf-24c6-b70f-74d5-eada10ac99ac@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 05:52:48PM +0100, Kamil Konieczny wrote:
-> Add imem clocks for exynos5433. This will enable to use crypto Security
-> SubSystem (in short SSS) and SlimSSS IP blocks.
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c   | 193 +++++++++++++++++++++++++
->  include/dt-bindings/clock/exynos5433.h |  55 +++++++
->  2 files changed, 248 insertions(+)
-
-Lots of trailing whitespace checkpatch errors...
+SGkgQW5kcnplaiwKCjE4LiAxMi4gMTAuIOyYpO2bhCA0OjM17JeQIEFuZHJ6ZWogSGFqZGEg7J20
+KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IE9uIDEwLjEyLjIwMTggMDM6MjUsIElua2kg
+RGFlIHdyb3RlOgo+PiBIaSBBbmRyemVqLAo+Pgo+PiAxOC4gMTIuIDYuIOyYpO2bhCA2OjM47JeQ
+IEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+IEhpIElua2ksCj4+Pgo+Pj4gVGhp
+cyBzbWFsbCBwYXRjaHNldCBhZGRzIGR5bmFtaWMgenBvcyBzdXBwb3J0IGZvciBERUNPTiBhbmQg
+RklNRC4KPj4gVGhpcyBwYXRjaCB3aWxsIGFsbG93IHVzZXIgc3BhY2UgdG8gY2hhbmdlIHpwb3Mu
+IEhvd2V2ZXIsIERFQ09OIGFuZCBGSU1EIGRldmljZXMgaGF2ZSBmaXhlZCBwcmlvcml0eSBvZiBI
+VyBvdmVybGF5cy4KPj4gVGhpcyB3b3VsZCBtZWFuIHRoYXQgenBvcyBjaGFuZ2UgYnkgdXNlciBz
+cGFjZSBkb2Vzbid0IGd1YXJhbnRlZSBjb3JyZWN0IEhXIG92ZXJsYXkgcHJpb3JpdHkuCj4+Cj4+
+IFdoeSBkbyB5b3Ugd2FudCB0byBzdXBwb3J0IG11dGFibGUgenBvcz8KPiAKPiAKPiBQcmFjdGlj
+YWxseSB5b3UgaGF2ZSBwYXRjaGVzIHdoaWNoIHByb3ZlcyBpdCB3b3JrcywgeW91IGNhbiBzZWUg
+dGhhdAo+IGNoYW5naW5nIHpwb3MgdmFsdWUgcmVzdWx0cyBpbiBhZGVxdWF0ZSBjaGFuZ2UgaW4g
+ZGlzcGxheWVkIGltYWdlLgo+IAo+IENvbmNlcHR1YWxseSBpdCBpcyBqdXN0IGEgbWF0dGVyIG9m
+IGRpc2Nvbm5lY3RpbmcgaGFyZHdhcmUgd2luZG93cwo+IHByZXNlbnQgaW4gREVDT04gYW5kIEZJ
+TUQgZnJvbSBEUk0gcGxhbmVzIHdoaWNoIGFyZSBzb2Z0d2FyZSBlbnRpdGllcy4KPiAKPiBZb3Ug
+Y2FuIHJlYXNvbiBhYm91dCBpdCB0aGlzIHdheToKPiAKPiAtIGRybSBwbGFuZSBpcyBhIGZyYW1l
+YnVmZmVyIHBsdXMgaW5mb3JtYXRpb25zIGhvdyBpdCBzaG91bGQgYmUKPiB0cmFuc2Zvcm1lZC9k
+aXNwbGF5ZWQgb24gREVDT04vRklNRCwKPiAKPiAtIGh3IHdpbmRvdyBpbiBERUNPTi9GSU1EIGlz
+IGp1c3QgYSBjaGFubmVsIHRocm91Z2ggd2hpY2ggcGxhbmUgaXMgc2VuZAo+IHRvIHRoZSBkaXNw
+bGF5Lgo+IAo+IERFQ09OIGFuZCBGSU1EIGhhcyBmaXhlZCBodyB3aW5kb3dzIG9yZGVyIC0gd2lu
+ZG93cyB3aXRoIGxvd2VyIG51bWJlcnMKPiBhcmUgZGlzcGxheWVkIGJlbG93IHdpbmRvd3Mgd2l0
+aCBoaWdoZXIgbnVtYmVyLiBUbyBkaXNwbGF5IHBsYW5lcyBpbgo+IGdpdmVuIHotb3JkZXIgeW91
+IGp1c3QgbmVlZCB0byBzZW5kIHRoZW0gdmlhIHdpbmRvd3Mgd2l0aCBhcHByb3ByaWF0ZQo+IGlu
+ZGV4IC0gZmFydGhlc3QgcGxhbmUgc2hvdWxkIGdvIGFsd2F5cyB2aWEgd2luMCwgY2xvc2VyIG9u
+ZSB2aWEgd2luMSwKPiAuLi4sIHRpbGwgdGhlIGxhc3QgcGxhbmUuCj4gCj4gU28gZm9yIGV4YW1w
+bGUgaWYgeW91IGhhdmUgdGhyZWUgcGxhbmVzIGFuZCB3YW50IHRvIGRpc3BsYXkgdGhlbSBpbgo+
+IGZvbGxvd2luZyBvcmRlciAoZmlyc3Qgb25lIGZhcnRoZXN0LCBsYXN0IG9uZSBjbG9zZXN0KToK
+PiAKPiBwbGFuZTIsIHBsYW5lMSwgcGxhbmUzCj4gCj4geW91IHNob3VsZCBtYXAgdGhlbSB0byBw
+bGFuZXMgYXMgZm9sbG93Ogo+IAo+IHBsYW5lMiAtPiB3aW4wLCBwbGFuZTEgLT4gd2luMSwgcGxh
+bmUzIC0+IHdpbjIKPiAKPiB0aGVuIGZvciBleGFtcGxlIHBsYW5lMiBpcyBkaXNhYmxlZCwgd2Ug
+d2lsbCBoYXZlIGZvbGxvd2luZyBtYXBwaW5nOgo+IAo+IHBsYW5lMSAtPiB3aW4wLCBwbGFuZTMg
+LT4gd2luMSwgd2luMiAtIGRpc2FibGVkCgpQbGFuZTEgaXMgZGlzcGxheWVkIGJlbG93IFBsYW5l
+My4KCj4gCj4gdGhlbiBpZiB5b3UgY2hhbmdlIHpvcmRlciBvZiBwbGFuZXMgdG86IHBsYW5lMywg
+cGxhbmUxOgo+IAo+IHBsYW5lMyAtPiB3aW4wLCBwbGFuZTEgLT4gd2luMQoKUGxhbmUzIGlzIGRp
+c3BsYXllZCBiZWxvdyBQbGFuZTEgYmVjYXVzZSBERUNPTi9GSU1EIEhXIGFyZW4ndCBhYmxlIHRv
+IGNoYW5nZSBIVyBvdmVybGF5IHByaXJvdHkuCkhvd2V2ZXIsIHVzZXIgc3BhY2Ugd2FudGVkIHRo
+YXQgUGxhbmUxIGlzIGRpc3BsYXllZCBiZWxvdyBQbGFuZTMuIExpa2UgdGhpcywgenBvcyBjaGFu
+Z2UgYnkgdXNlciBzcGFjZSBkb2Vzbid0IGd1YXJhbnRlZSBjb3JyZWN0IEhXIG92ZXJsYXkgcHJp
+b3JpdHkuCkFuZCB0aGVyZSBpcyBubyBhbnkgcmVhc29uIHRvIGNoYW5nZSB6cG9zIGluIHVzZXIg
+c3BhY2UgZXhjZXB0aW5nIE1peGVyIGRldmljZSB3aGljaCBzdXBwb3J0cyBIVyBvdmVybGF5IHBy
+aW9yaXR5IGNoYW5nZS4KSW4gZmFjdCwgd2Ugc3VwcG9ydGVkIG11dGFibGUgenBvcyBiZWZvcmUg
+YnV0IGNoYW5nZWQgaXQgdG8gaW1tdXRhYmxlIHdpdGggc2FtZSByZWFzb24uCgpMYXN0bHksIHlv
+dXIgcGF0Y2ggbWFkZSByZWFsIHVzZXIgYnJva2VuLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiAK
+PiBBcyB5b3Ugc2VlIHRoZXJlIGlzIG5vIHJlbGF0aW9uIGJldHdlZW4gcGxhbmUgbnVtYmVyIGFu
+ZCB3aW5kb3cgbnVtYmVyLAo+IGJ1dCB3aW5kb3cgbnVtYmVyIGlzIGVxdWFsIHRvIHBsYW5lJ3Mg
+cG9zaXRpb24gaW4genBvcy1vcmRlcmVkIGxpc3Qgb2YKPiBwbGFuZXMgYW5kIHRoaXMgaXMgZXhh
+Y3QgdmFsdWUgb2Ygbm9ybWFsaXplZF96cG9zIGZpZWxkIGluIGRybV9wbGFuZV9zdGF0ZS4KPiAK
+PiAKPiBJIGhvcGUgdGhpcyBleHRlbmRlZCBleHBsYW5hdGlvbiB3aWxsIGNsYXJpZnkgdGhpbmdz
+Lgo+IAo+IAo+IFJlZ2FyZHMKPiAKPiBBbmRyemVqCj4gCj4gCj4gCj4+Cj4+IFRoYW5rcywKPj4g
+SW5raSBEYWUKPj4KPj4+IEl0IHdhcyB0ZXN0ZWQgb24gdG0yIGFuZCB0cmF0czIuCj4+Pgo+Pj4g
+UmVnYXJkcwo+Pj4gQW5kcnplago+Pj4KPj4+Cj4+PiBBbmRyemVqIEhhamRhICgzKToKPj4+ICAg
+ZHJtL2V4eW5vcy9kZWNvbjU0MzM6IGFkZCBkeW5hbWljIHpwb3Mgc3VwcG9ydAo+Pj4gICBkcm0v
+ZXh5bm9zL2ZpbWQ6IGNyZWF0ZSBsb2NhbCBoZWxwZXIgZm9yIGRpc2FibGluZyBoYXJkd2FyZSB3
+aW5kb3cKPj4+ICAgZHJtL2V4eW5vcy9maW1kOiBhZGQgZHluYW1pYyB6cG9zIHN1cHBvcnQKPj4+
+Cj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgMjMg
+KysrKystLS0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMg
+ICAgICB8IDQyICsrKysrKysrLS0tLS0tLS0tLS0KPj4+ICAyIGZpbGVzIGNoYW5nZWQsIDI5IGlu
+c2VydGlvbnMoKyksIDM2IGRlbGV0aW9ucygtKQo+Pj4KPj4KPiAKPiAKPiAKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
